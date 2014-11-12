@@ -100,7 +100,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.*" "$(OutDir)"</Command>
+      <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\bin\Windows\$(PlatformTarget)\*.*" "$(OutDir)"</Command>
       <Message>
       </Message>
     </PostBuildEvent>
@@ -119,7 +119,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.*" "$(OutDir)"</Command>
+      <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\bin\Windows\$(PlatformTarget)\*.*" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -140,7 +140,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.*" "$(OutDir)"</Command>
+      <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\bin\Windows\$(PlatformTarget)\*.*" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -161,7 +161,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.*" "$(OutDir)"</Command>
+      <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\bin\Windows\$(PlatformTarget)\*.*" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
