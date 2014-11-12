@@ -2,15 +2,6 @@
 [Bb]in/
 [Bb]in/[Dd]ebug/
 [Bb]in/[Rr]elease/
-[Dd]ebugPublic/
-[Rr]elease/
-[Rr]eleases/
-x64/
-x86/
-build/
-bld/
-[Bb]in/
-[Oo]bj/
 
 # Compiled Object files
 *.slo
