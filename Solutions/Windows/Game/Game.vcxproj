@@ -109,10 +109,10 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProfileGuidedDatabase>$(OutDir)$(TargetName).pgd</ProfileGuidedDatabase>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;glew32s.lib;Rendererd.lib;Inputd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;glew32s.lib;Inputd.lib;MPLd.lib;ECSLd.lib;Rendererd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.*" "$(OutDir)"</Command>
+      <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"</Command>
       <Message>
       </Message>
     </PostBuildEvent>
@@ -132,10 +132,10 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProfileGuidedDatabase>$(OutDir)$(TargetName).pgd</ProfileGuidedDatabase>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;glew32s.lib;Rendererd.lib;Inputd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;glew32s.lib;Inputd.lib;MPLd.lib;ECSLd.lib;Rendererd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.*" "$(OutDir)"</Command>
+      <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -157,10 +157,10 @@
       <OptimizeReferences>true</OptimizeReferences>
       <ProfileGuidedDatabase>$(OutDir)$(TargetName).pgd</ProfileGuidedDatabase>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;glew32s.lib;Rendererd.lib;Input.lib;Input.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;glew32s.lib;Input.lib;MPL.lib;ECSL.lib;Input.lib;Renderer.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.*" "$(OutDir)"</Command>
+      <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -182,10 +182,10 @@
       <OptimizeReferences>true</OptimizeReferences>
       <ProfileGuidedDatabase>$(OutDir)$(TargetName).pgd</ProfileGuidedDatabase>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;glew32s.lib;Rendererd.lib;Input.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;glew32s.lib;Input.lib;MPL.lib;ECSL.lib;Renderer.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.*" "$(OutDir)"</Command>
+      <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
