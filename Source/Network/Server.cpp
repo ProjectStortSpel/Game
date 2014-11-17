@@ -1,6 +1,5 @@
-#include "stdafx.h"
 #include "Server.h"
-#include <RakNet\MessageIdentifiers.h>
+#include <RakNet/MessageIdentifiers.h>
 
 #include <mutex>
 
@@ -16,7 +15,7 @@ Server::~Server()
 }
 
 
-ProjectStortSpel::StartResult Server::Connect()
+void Server::Connect()
 {
 	m_server->SetIncomingPassword(m_password.c_str(), (int)strlen(m_password.c_str()));
 	m_server->SetTimeoutTime(30000, RakNet::UNASSIGNED_SYSTEM_ADDRESS);
@@ -52,7 +51,7 @@ ProjectStortSpel::StartResult Server::Connect()
 	printf("Socket addresses used by RakNet:\n");
 	for (unsigned int i = 0; i < sockets.Size(); i++)
 	{
-		printf("%i. %s\n", i + 1, sockets[i]->GetBoundAddress().ToString(true));
+		//printf("%i. %s\n", i + 1, sockets[i]->GetBoundAddress().ToString(true));
 	}
 
 	printf("\nMy IP addresses:\n");
@@ -66,8 +65,9 @@ ProjectStortSpel::StartResult Server::Connect()
 
 	m_thread = std::thread(&Server::Run, this);
 
-	return ProjectStortSpel::UNKNOWN;
+	//return ProjectStortSpel::UNKNOWN;
 }
+
 void Server::Disconect()
 {
 }
@@ -126,7 +126,7 @@ void Server::RecivePackets()
 			break;
 
 		case ID_CONNECTION_LOST:
-			// Couldn't deliver a reliable packet - i.e. the other system was abnormally
+			// Couldn't deliver a reliable packet - i.e. the k system was abnormally
 			// terminated
 			printf("ID_CONNECTION_LOST from %s\n", packet->systemAddress.ToString(true));;
 			break;
@@ -140,9 +140,9 @@ void Server::RecivePackets()
 		//if (packetIdentifer == Server_Specific_Message
 		//		HandleMessage
 		//else
-		
 
-		
+
+
 	}
 }
 
@@ -158,7 +158,7 @@ RakNet::Packet* Server::GetPacket()
 		m_server->DeallocatePacket(m_packets.front());
 		m_packets.pop();
 	}
-	
+
 	return p;
 }
 

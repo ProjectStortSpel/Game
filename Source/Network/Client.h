@@ -4,12 +4,13 @@
 
 #include <functional>
 #include <queue>
-#include <RakNet\RakPeerInterface.h>
+#include <RakNet/RakPeerInterface.h>
 #include <mutex>
 #include <thread>
+#include <SDL/SDL.h>
 
 
-class Client
+class DECLSPEC Client
 {
 public:
 	Client();
