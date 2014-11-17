@@ -3,29 +3,13 @@
 
 #include <functional>
 #include <queue>
-#include <RakNet\RakPeerInterface.h>
+#include <RakNet/RakPeerInterface.h>
 #include <mutex>
 #include <thread>
-
-namespace ProjectStortSpel
-{
-	enum StartResult
-	{
-		NETWORK_STARTED,
-		NETWORK_ALREADY_STARTED,
-		INVALID_SOCKET_DESCRIPTORS,
-		INVALID_MAX_CONNECTIONS,
-		SOCKET_PORT_ALREADY_IN_USE,
-		SOCKET_FAILED_TO_BIND,
-		PORT_CANNOT_BE_ZERO,
-		FAILED_TO_CREATE_NETWORK_THREAD,
-		UNKNOWN
-	};
+#include <SDL/SDL.h>
 
 
-}
-
-class EventHandler
+class DECLSPEC EventHandler
 {
 public:
 	void AddHandler()
@@ -34,15 +18,17 @@ public:
 	}
 };
 
-class Server
+class DECLSPEC Server
 {
 
 
 public:
 	Server();
 	~Server();
-	
-	ProjectStortSpel::StartResult Connect();
+
+	//void Test() { return; }
+
+	void Connect();
 	void Disconect();
 
 	const char* GetIp(void) { return m_ipAddress.c_str(); }

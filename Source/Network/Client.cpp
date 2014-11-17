@@ -1,6 +1,5 @@
-#include "stdafx.h"
 #include "Client.h"
-#include <RakNet\MessageIdentifiers.h>
+#include <RakNet/MessageIdentifiers.h>
 
 
 
