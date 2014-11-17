@@ -18,7 +18,7 @@ int main(int argc, char** argv)
 			switch (e.type)
 			{
 			case SDL_WINDOWEVENT:
-				gdevice->PollEvents(e);
+				gdevice->PollEvent(e);
 			default:
 				break;
 			}
