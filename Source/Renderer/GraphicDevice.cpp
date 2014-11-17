@@ -49,12 +49,55 @@ void GraphicDevice::Update(float _dt)
 
 void GraphicDevice::Render()
 {
+	// DEFERRED RENDER STEPS
+	/*
+	(- Step0	Render shadowmaps)
 
+	- Step1	SETUP
+		- Output	normal + spec int
+					albedo + spec pow
+					depth
+
+		- Input		View
+					Projection
+
+	DRAW STUFF HERE
+
+	- Step2	PROCESS
+		- Input		normal + spec int
+					depth
+					random map
+
+		- Output
+					difflight + ssao
+					speclight
+
+	- Step3 FINISH
+		- Input		albedo + specpow
+					difflight + ssao
+					speclight
+
+	- Output	color
+	*/
+	// FORWARD RENDER
+	// POST RENDER EFFECTS?
+	// GUI RENDER
 }
 
 void GraphicDevice::ResizeWindow(int _width, int _height)
 {
-	std::cout << "Resize: " << _width << "x" << _height << std::endl;
+	// GRAPHIC CARD WORK GROUPS OF 16x16
+	int x, y;
+	x = _width / 16;
+	if (x == 0) x = 1;
+	y = _height / 16;
+	if (y == 0) y = 1;
+	m_clientWidth = x * 16;
+	m_clientHeight = y * 16;
+
+	std::cout << m_clientWidth << "x" << m_clientHeight << std::endl;
+
+	SDL_SetWindowSize(m_window, m_clientWidth, m_clientHeight);
 }
 
 bool GraphicDevice::InitSDLWindow()

@@ -25,7 +25,7 @@ namespace Renderer
 
 		void Init();
 
-		void PollEvents(SDL_Event _event);
+		void PollEvent(SDL_Event _event);
 		void Update(float _dt);
 		void Render();
 
