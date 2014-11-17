@@ -9,14 +9,30 @@ Client::Client()
 }
 
 
+
 Client::~Client()
 {
+	/*PacketHandler packet;
+
+	packet.StartPack("hest");
+	packet.WriteByte('p');
+	packet.WriteFloat(0.5f);
+	packet.WriteInt(1337);
+	packet.WriteString("HEST HEST HEST2");
+	auto p = packet.EndPack();
+
+	packet.StartUnPack(p);
+	auto c = packet.ReadByte();
+	auto f = packet.ReadFloat();
+	auto i = packet.ReadInt();
+	auto s = packet.ReadString();
+	auto fel = packet.ReadFloat();*/
+
 }
 
 
 void Client::Connect()
 {
-
 	m_client->AllowConnectionResponseIPMigration(false);
 
 	// Connecting the client is very simple.  0 means we don't care about
