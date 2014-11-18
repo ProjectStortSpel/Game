@@ -8,7 +8,7 @@
 #include <mutex>
 #include <thread>
 #include <SDL/SDL.h>
-
+#include "PacketHandler.h"
 
 class DECLSPEC Client
 {
@@ -18,6 +18,8 @@ public:
 
 	void Connect();
 	void Disconect();
+
+	void Send(PacketHandler::Packet _packet);
 
 	const char* GetIp(void) { return m_ipAddress.c_str(); }
 	const char* GetPassword(void) { return m_password.c_str(); }

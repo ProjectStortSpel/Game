@@ -20,10 +20,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Network\Client.cpp" />
+    <ClCompile Include="..\..\..\Source\Network\PacketHandler.cpp" />
     <ClCompile Include="..\..\..\Source\Network\Server.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Network\Client.h" />
+    <ClInclude Include="..\..\..\Source\Network\PacketHandler.h" />
     <ClInclude Include="..\..\..\Source\Network\Server.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -80,6 +82,7 @@
     <IntDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\VisualStudioLogs\$(ProjectName)\</IntDir>
     <IncludePath>$(SolutionDir)..\..\Externals\include\Windows\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -87,6 +90,7 @@
     <IntDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\VisualStudioLogs\$(ProjectName)\</IntDir>
     <IncludePath>$(SolutionDir)..\..\Externals\include\Windows\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -116,7 +120,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\$(TargetName)d.lib</ImportLibrary>
+      <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\$(TargetName).lib</ImportLibrary>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;ws2_32.lib;RakNetDLLd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
@@ -136,7 +140,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\$(TargetName)d.lib</ImportLibrary>
+      <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\$(TargetName).lib</ImportLibrary>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;ws2_32.lib;RakNetDLLd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>

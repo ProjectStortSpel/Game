@@ -12,12 +12,18 @@
     <ClCompile Include="..\..\..\Source\Network\Client.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Network\PacketHandler.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Network\Server.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Network\Client.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Network\PacketHandler.h">
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
