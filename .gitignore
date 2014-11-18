@@ -9,6 +9,7 @@ build/
 bld/
 [Bb]in/
 [Oo]bj/
+[Gg]ameLibs/
 
 # Compiled Object files
 *.slo

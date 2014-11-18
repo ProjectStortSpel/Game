@@ -69,14 +69,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(SolutionDir)../../Externals/include/Windows;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)../../Externals/lib/Windows/$(PlatformTarget)/;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\;$(SolutionDir)../../Externals/lib/Windows/$(PlatformTarget)/;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\</OutDir>
     <IntDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\VisualStudioLogs\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(SolutionDir)../../Externals/include/Windows;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)../../Externals/lib/Windows/$(PlatformTarget)/;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\;$(SolutionDir)../../Externals/lib/Windows/$(PlatformTarget)/;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\</OutDir>
     <IntDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\VisualStudioLogs\$(ProjectName)\</IntDir>
   </PropertyGroup>
@@ -85,14 +85,14 @@
     <OutDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\</OutDir>
     <IntDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\VisualStudioLogs\$(ProjectName)\</IntDir>
     <IncludePath>$(SolutionDir)../../Externals/include/Windows;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)../../Externals/lib/Windows/$(PlatformTarget)/;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\;$(SolutionDir)../../Externals/lib/Windows/$(PlatformTarget)/;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\</OutDir>
     <IntDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\VisualStudioLogs\$(ProjectName)\</IntDir>
     <IncludePath>$(SolutionDir)../../Externals/include/Windows;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)../../Externals/lib/Windows/$(PlatformTarget)/;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\;$(SolutionDir)../../Externals/lib/Windows/$(PlatformTarget)/;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
