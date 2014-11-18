@@ -44,6 +44,8 @@ protected:
 
 protected:
 
+#pragma warning( disable : 4251 )
+
 	std::string m_localAddress;
 	std::string m_password;
 	unsigned int m_incomingPort;
@@ -55,6 +57,8 @@ protected:
 
 	NetEvent m_onPlayerConnected;
 	NetEvent m_onPlayerDisconnected;
+
+#pragma warning( default : 4251 )
 
 private:
 	void Run(void);
