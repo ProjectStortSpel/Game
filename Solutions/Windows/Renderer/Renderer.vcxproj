@@ -78,6 +78,7 @@
     <IntDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\VisualStudioLogs\$(ProjectName)\</IntDir>
     <IncludePath>$(SolutionDir)..\..\Externals\include\Windows\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\;$(SolutionDir)../../Externals/lib/Windows/$(PlatformTarget)/;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)_$(PlatformTarget)d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -85,6 +86,7 @@
     <IntDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\VisualStudioLogs\$(ProjectName)\</IntDir>
     <IncludePath>$(SolutionDir)..\..\Externals\include\Windows\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\;$(SolutionDir)../../Externals/lib/Windows/$(PlatformTarget)/;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)_$(PlatformTarget)d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -92,6 +94,7 @@
     <IntDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\VisualStudioLogs\$(ProjectName)\</IntDir>
     <IncludePath>$(SolutionDir)..\..\Externals\include\Windows\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\;$(SolutionDir)../../Externals/lib/Windows/$(PlatformTarget)/;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)_$(PlatformTarget)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -99,6 +102,7 @@
     <IntDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\VisualStudioLogs\$(ProjectName)\</IntDir>
     <IncludePath>$(SolutionDir)..\..\Externals\include\Windows\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\;$(SolutionDir)../../Externals/lib/Windows/$(PlatformTarget)/;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)_$(PlatformTarget)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -113,7 +117,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName)d.lib</ImportLibrary>
+      <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName).lib</ImportLibrary>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;opengl32.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
@@ -132,7 +136,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName)d.lib</ImportLibrary>
+      <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName).lib</ImportLibrary>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;opengl32.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
