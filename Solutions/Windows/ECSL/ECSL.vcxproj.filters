@@ -14,18 +14,45 @@
     <Filter Include="Source Files\Interfaces">
       <UniqueIdentifier>{f0d2f4ad-5717-49f4-b6cd-2affee133f36}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Framework\Tables">
+      <UniqueIdentifier>{a0bfbc56-c395-4d52-8d88-e0f2970b507a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\ECSL\ECSL.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Test.h">
+    <ClInclude Include="..\..\..\Source\ECSL\Managers\ComponentManager.h">
+      <Filter>Source Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Interfaces\System.h">
+      <Filter>Source Files\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\World.h">
       <Filter>Source Files\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Tables\DataTable.h">
+      <Filter>Source Files\Framework\Tables</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Tables\DataArray.h">
+      <Filter>Source Files\Framework\Tables</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Test.cpp">
+    <ClCompile Include="..\..\..\Source\ECSL\Managers\ComponentManager.cpp">
+      <Filter>Source Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Interfaces\System.cpp">
+      <Filter>Source Files\Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\World.cpp">
       <Filter>Source Files\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Tables\DataTable.cpp">
+      <Filter>Source Files\Framework\Tables</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Tables\DataArray.cpp">
+      <Filter>Source Files\Framework\Tables</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
