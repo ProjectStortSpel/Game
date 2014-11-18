@@ -26,5 +26,8 @@
     <ClInclude Include="..\..\..\Source\Network\PacketHandler.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\Network\Stdafx.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
