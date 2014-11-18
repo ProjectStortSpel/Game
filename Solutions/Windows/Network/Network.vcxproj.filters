@@ -15,6 +15,9 @@
     <ClCompile Include="..\..\..\Source\Network\PacketHandler.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Network\BaseNetwork.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Network\Server.h">
@@ -27,6 +30,9 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Network\Stdafx.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Network\BaseNetwork.h">
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>

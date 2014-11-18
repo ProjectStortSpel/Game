@@ -2,37 +2,23 @@
 #include <RakNet/MessageIdentifiers.h>
 
 Client::Client()
-	:m_threadAlive(false)
+	: BaseNetwork()
 {
-	m_client = RakNet::RakPeerInterface::GetInstance();
+	m_outgoingPort = 5357;
+	m_incomingPort = 5358;
+	m_remoteAddress = "127.0.0.1";
 }
 
 Client::~Client()
 {
-	/*PacketHandler packet;
-
-	packet.StartPack("hest");
-	packet.WriteByte('p');
-	packet.WriteFloat(0.5f);
-	packet.WriteInt(1337);
-	packet.WriteString("HEST HEST HEST2");
-	auto p = packet.EndPack();
-
-	packet.StartUnPack(p);
-	auto c = packet.ReadByte();
-	auto f = packet.ReadFloat();
-	auto i = packet.ReadInt();
-	auto s = packet.ReadString();
-	auto fel = packet.ReadFloat();*/
-
 }
 
 void Client::Connect(const char* _ipAddress, const char* _password, const int _port, const int _clientPort)
 {
-	m_ipAddress = _ipAddress;
+	m_remoteAddress = _ipAddress;
 	m_password = _password;
-	m_port = _port;
-	m_clientPort = _clientPort;
+	m_outgoingPort = _port;
+	m_incomingPort = _clientPort;
 
 	Connect();
 }
@@ -40,23 +26,23 @@ void Client::Connect()
 {
 	// Disallow connection responses from any IP.
 	// Usable when connecting to a server with multiple IP addresses.
-	m_client->AllowConnectionResponseIPMigration(false);
+	m_rakInterface->AllowConnectionResponseIPMigration(false);
 
 	// Connecting the client is very simple.  0 means we don't care about
 	// a connectionValidationInteger, and false for low priority threads
 
 	// Describes the local socket used when connecting.
 	// socketFamily describes if we should use IPV4 or IPV6 (AF_INET is IPV4)
-	RakNet::SocketDescriptor socketDescriptor(m_clientPort, 0);
+	RakNet::SocketDescriptor socketDescriptor(m_incomingPort, 0);
 	socketDescriptor.socketFamily = AF_INET;
 
 	// Starts the network thread
-	m_client->Startup(8, &socketDescriptor, 1);
+	m_rakInterface->Startup(8, &socketDescriptor, 1);
 	// Send an occasional ping to the server to check for response
-	m_client->SetOccasionalPing(true);
+	m_rakInterface->SetOccasionalPing(true);
 
 	// Connect to the server
-	RakNet::ConnectionAttemptResult car = m_client->Connect(m_ipAddress.c_str(), m_port, m_password.c_str(), (int)strlen(m_password.c_str()));
+	RakNet::ConnectionAttemptResult car = m_rakInterface->Connect(m_remoteAddress.c_str(), m_outgoingPort, m_password.c_str(), (int)strlen(m_password.c_str()));
 	if (car == RakNet::CONNECTION_ATTEMPT_STARTED)
 	{
 		// Start a new thread to listen to packets on
@@ -69,37 +55,16 @@ void Client::Connect()
 
 void Client::Disconect()
 {
-	if (m_threadAlive)
+	if (m_receiveThreadAlive)
 		StopListen();
 
-	m_client->Shutdown(300);
-	RakNet::RakPeerInterface::DestroyInstance(m_client);
+	m_rakInterface->Shutdown(300);
+	RakNet::RakPeerInterface::DestroyInstance(m_rakInterface);
 }
 
-void Client::Send(PacketHandler::Packet _packet)
+void Client::SendToServer(PacketHandler::Packet _packet)
 {
-	m_client->Send((char*)_packet.Data, _packet.Length, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
-}
-
-void Client::StartListen()
-{
-	m_threadAlive = true;
-	m_thread = std::thread(&Client::Run, this);
-}
-
-void Client::StopListen()
-{
-	m_threadAlive = false;
-	m_thread.join();
-}
-
-void Client::Run()
-{
-	while (m_threadAlive)
-	{
-		NetSleep(30);
-		RecivePackets();
-	}
+	m_rakInterface->Send((char*)_packet.Data, _packet.Length, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 }
 
 void Client::RecivePackets()
@@ -107,11 +72,10 @@ void Client::RecivePackets()
 	RakNet::Packet* packet;
 	//m_server->DeallocatePacket(m_packet),
 	unsigned char packetIdentifier;
-	for (packet = m_client->Receive(); packet; packet = m_client->Receive())
+	for (packet = m_rakInterface->Receive(); packet; packet = m_rakInterface->Receive())
 	{
 		packetIdentifier = GetPacketIdentifier(packet);
 
-		PacketHandler::Packet p;
 		switch (packetIdentifier)
 		{
 		case ID_CONNECTION_REQUEST_ACCEPTED:
@@ -177,41 +141,27 @@ void Client::RecivePackets()
 			printf("Ping from %s\n", packet->systemAddress.ToString(true));
 			break;
 		case ID_USER_PACKET:
-			// Couldn't deliver a reliable packet - i.e. the k system was abnormally
-			// terminated
+		{
+			PacketHandler::Packet* p = new PacketHandler::Packet();
 			printf("ID_USER_PACKET from %s\n", packet->systemAddress.ToString(true));
-			p.Data = &packet->data[0];
+			p->Data = new unsigned char[packet->length];
+			memcpy(p->Data, &packet->data[0], packet->length);
 
-			p.Length = packet->length;
+			p->Length = packet->length;
+			p->Sender = packet->systemAddress;
 
 			m_packetLock.lock();
 			m_packets.push(p);
 			m_packetLock.unlock();
 
 			break;
+		}
 		default:
 			break;
 		}
 
-
+		m_rakInterface->DeallocatePacket(packet);
 	}
-}
-
-PacketHandler::Packet test2;
-PacketHandler::Packet* Client::GetPacket()
-{
-	//RecivePackets();
-
-	PacketHandler::Packet* p = NULL;
-
-	if (!m_packets.empty())
-	{
-		test2 = m_packets.front();
-		p = &test2;
-		m_packets.pop();
-	}
-
-	return p;
 }
 
 void Client::SetOnConnectedToServer(NetEvent _function)
@@ -227,34 +177,4 @@ void Client::SetOnDisconnectedFromServer(NetEvent _function)
 void Client::SetOnFailedToConnect(NetEvent _function)
 {
 	m_onFailedToConnect = _function;
-}
-
-void Client::SetOnPlayerConnected(NetEvent _function)
-{
-	m_onPlayerConnected = _function;
-}
-
-void Client::SetOnPlayerDisconnected(NetEvent _function)
-{
-	m_onPlayerDisconnected = _function;
-}
-
-unsigned char Client::GetPacketIdentifier(RakNet::Packet *p)
-{
-	if (p == 0)
-		return 255;
-
-	if ((unsigned char)p->data[0] == ID_TIMESTAMP)
-	{
-		RakAssert(p->length > sizeof(RakNet::MessageID) + sizeof(RakNet::Time));
-		return (unsigned char)p->data[sizeof(RakNet::MessageID) + sizeof(RakNet::Time)];
-	}
-	else
-		return (unsigned char)p->data[0];
-}
-
-void Client::TriggerEvent(NetEvent _function, unsigned char _identifier)
-{
-	if (_function)
-		_function(_identifier);
 }

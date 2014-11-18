@@ -3,20 +3,29 @@
 #include "Network/Client.h"
 #include "Network/Server.h"
 
+
+Client *c = new Client();
+bool connected = false;
+
+void OnConnect(unsigned char _token)
+{
+	connected = true;
+}
+
 int main(int argc, char** argv)
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
 
-	Client *c = new Client();
+	
 	Server *s = new Server();
+	s->Start();
 
-	s->SetNetPort(1234);
-	s->Connect();
-
-	c->SetIp("localhost");
-	c->SetNetPort(1234);
-	c->SetClientPort(12345);
+	c->SetOnConnectedToServer(&OnConnect);
 	c->Connect();
+	c->StartListen();
+
+	while (!connected)
+		NetSleep(30);
 
 	PacketHandler packet;
 
@@ -26,21 +35,22 @@ int main(int argc, char** argv)
 	packet.WriteInt(1337);
 	packet.WriteString("HEST HEST HEST2");
 	auto p = packet.EndPack();
-	system("pause");
-	c->Send(p);
+	//system("pause");
+	c->SendToServer(p);
 
 
-	PacketHandler::Packet* packetIn = NULL;
-	while (!packetIn)
-	{
+	PacketHandler::Packet* packetIn = 0;
+	while(!packetIn)
 		packetIn = s->GetPacket();
-	}
 
-	packet.StartUnPack(*packetIn);
-	auto c1 = packet.ReadByte();
-	auto f1 = packet.ReadFloat();
-	auto i1 = packet.ReadInt();
-	auto s1 = packet.ReadString();
+	packet.StartUnPack(packetIn);
+		auto c1 = packet.ReadByte();
+		auto f1 = packet.ReadFloat();
+		auto i1 = packet.ReadInt();
+		auto s1 = packet.ReadString();
+	packet.EndUnPack();
+
+	//delete packetIn.Data;
 
 	packet.StartPack("test2");
 	packet.WriteByte('p');
@@ -51,21 +61,20 @@ int main(int argc, char** argv)
 	
 	s->Broadcast(p);
 
-
-	packetIn = NULL;
+	packetIn = 0;
 	while (!packetIn)
-	{
 		packetIn = c->GetPacket();
-	}
 
-	packet.StartUnPack(*packetIn);
+	packet.StartUnPack(packetIn);
 	auto c2 = packet.ReadByte();
 	auto f2 = packet.ReadFloat();
 	auto i2 = packet.ReadInt();
 	auto s2 = packet.ReadString();
 
+	float f3 = 0.2f;
+
 	c->Disconect();
-	s->Disconect();
+	s->Stop();
 
 	system("pause");
 

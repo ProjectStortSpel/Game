@@ -27,10 +27,10 @@ void PacketHandler::StartPack(const char* _functionName)
 	WriteString(_functionName);
 }
 
-void PacketHandler::StartUnPack(Packet _packet)
+void PacketHandler::StartUnPack(Packet* _packet)
 {
 	m_packetReceive = _packet;
-	m_positionReceive = m_packetReceive.Data;
+	m_positionReceive = m_packetReceive->Data;
 
 	auto type = ReadByte();
 	auto hest = ReadString();
@@ -41,6 +41,23 @@ PacketHandler::Packet PacketHandler::EndPack()
 	unsigned short length = m_positionSend - m_packetSend;
 
 	return Packet(m_packetSend, length);
+}
+
+void PacketHandler::EndUnPack()
+{
+	if (m_packetReceive->Data)
+	{
+		delete m_packetReceive->Data;
+		m_packetReceive->Data = 0;
+	}
+
+	if (m_packetReceive)
+	{
+		delete m_packetReceive;
+		m_packetReceive = 0;
+	}
+
+	m_positionReceive = 0;
 }
 
 void PacketHandler::WriteByte(const unsigned char _byte)
@@ -86,7 +103,7 @@ char PacketHandler::ReadByte()
 {
 	char var = 0;
 
-	if (!IsOutOfBounds(m_packetReceive.Data, m_positionReceive + sizeof(char), m_packetReceive.Length))
+	if (!IsOutOfBounds(m_packetReceive->Data, m_positionReceive + sizeof(char), m_packetReceive->Length))
 	{
 		memcpy(&var, m_positionReceive, sizeof(char));
 		m_positionReceive += sizeof(char);
@@ -98,7 +115,7 @@ int PacketHandler::ReadInt()
 {
 	int var = 0;
 
-	if (!IsOutOfBounds(m_packetReceive.Data, m_positionReceive + sizeof(int), m_packetReceive.Length))
+	if (!IsOutOfBounds(m_packetReceive->Data, m_positionReceive + sizeof(int), m_packetReceive->Length))
 	{
 		memcpy(&var, m_positionReceive, sizeof(int));
 		m_positionReceive += sizeof(int);
@@ -111,7 +128,7 @@ char* PacketHandler::ReadString()
 	size_t length = strlen((char*)m_positionReceive) + 1;
 	char* var = new char[length];
 
-	if (!IsOutOfBounds(m_packetReceive.Data, m_positionReceive + length, m_packetReceive.Length))
+	if (!IsOutOfBounds(m_packetReceive->Data, m_positionReceive + length, m_packetReceive->Length))
 	{
 		strcpy_s(var, length, (char*)m_positionReceive);
 		m_positionReceive += length;
@@ -122,7 +139,7 @@ float PacketHandler::ReadFloat()
 {
 	float var = 0.f;
 
-	if (!IsOutOfBounds(m_packetReceive.Data, m_positionReceive + sizeof(float), m_packetReceive.Length))
+	if (!IsOutOfBounds(m_packetReceive->Data, m_positionReceive + sizeof(float), m_packetReceive->Length))
 	{
 		memcpy(&var, m_positionReceive, sizeof(float));
 		m_positionReceive += sizeof(float);

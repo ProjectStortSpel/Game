@@ -1,6 +1,8 @@
 #ifndef STDAFX_H
 #define STDAFX_H
 
+#define MAX_PLAYERS 8
+
 typedef std::function<void(unsigned char)> NetEvent;
 
 #ifdef _WIN32
