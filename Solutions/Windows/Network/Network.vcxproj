@@ -19,14 +19,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\Source\Network\BaseNetwork.cpp" />
     <ClCompile Include="..\..\..\Source\Network\Client.cpp" />
     <ClCompile Include="..\..\..\Source\Network\PacketHandler.cpp" />
     <ClCompile Include="..\..\..\Source\Network\Server.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Source\Network\BaseNetwork.h" />
     <ClInclude Include="..\..\..\Source\Network\Client.h" />
     <ClInclude Include="..\..\..\Source\Network\PacketHandler.h" />
     <ClInclude Include="..\..\..\Source\Network\Server.h" />
+    <ClInclude Include="..\..\..\Source\Network\Stdafx.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{76B48B4A-FB1E-417A-87E6-70CB865CCC09}</ProjectGuid>
