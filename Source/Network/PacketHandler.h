@@ -6,7 +6,7 @@
 #include <RakNet/MessageIdentifiers.h>
 #include <RakNet/RakNetTypes.h>
 
-#define MAX_PACKET_SIZE 2048
+#define MAX_PACKET_SIZE 65535	//max value for unsigned short 	
 
 enum MessageIDType
 {
@@ -63,7 +63,7 @@ public:
 	float ReadFloat();
 
 private:
-	bool IsOutOfBounds(unsigned char* _begin, unsigned char* _position, short _length);
+	bool IsOutOfBounds(unsigned char* _begin, unsigned char* _position, unsigned short _length);
 
 private:
 

@@ -148,7 +148,7 @@ float PacketHandler::ReadFloat()
 	return var;
 }
 
-bool PacketHandler::IsOutOfBounds(unsigned char* _begin, unsigned char* _position, short _length)
+bool PacketHandler::IsOutOfBounds(unsigned char* _begin, unsigned char* _position, unsigned short _length)
 {
 	if (_position - _begin > _length)
 	{
