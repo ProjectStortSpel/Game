@@ -59,6 +59,12 @@ void Client::Connect()
 
 void Client::Disconect()
 {
+	m_client->Shutdown(300);
+}
+
+void Client::Send(PacketHandler::Packet _packet)
+{
+	m_client->Send((char*)_packet.Data, _packet.Length, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 }
 
 void Client::Run()
@@ -78,6 +84,7 @@ void Client::RecivePackets()
 	{
 		packetIdentifier = GetPacketIdentifier(packet);
 
+		PacketHandler::Packet p;
 		switch (packetIdentifier)
 		{
 		case ID_DISCONNECTION_NOTIFICATION:
@@ -131,26 +138,38 @@ void Client::RecivePackets()
 		case ID_UNCONNECTED_PING:
 			printf("Ping from %s\n", packet->systemAddress.ToString(true));
 			break;
-		default:
+		case ID_USER_PACKET:
+			// Couldn't deliver a reliable packet - i.e. the k system was abnormally
+			// terminated
+			printf("ID_USER_PACKET from %s\n", packet->systemAddress.ToString(true));
+			p.Data = &packet->data[0];
+
+			p.Length = packet->length;
+
 			m_packetLock.lock();
-			m_packets.push(packet);
+			m_packets.push(p);
 			m_packetLock.unlock();
+
+			break;
+		default:
+			break;
 		}
 
 
 	}
 }
 
-RakNet::Packet* Client::GetPacket()
+PacketHandler::Packet test2;
+PacketHandler::Packet* Client::GetPacket()
 {
 	//RecivePackets();
 
-	RakNet::Packet* p = NULL;
+	PacketHandler::Packet* p = NULL;
 
 	if (!m_packets.empty())
 	{
-		RakNet::Packet* p = m_packets.front();
-		m_client->DeallocatePacket(m_packets.front());
+		test2 = m_packets.front();
+		p = &test2;
 		m_packets.pop();
 	}
 

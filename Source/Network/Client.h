@@ -5,6 +5,7 @@
 #include <functional>
 #include <queue>
 #include <RakNet/RakPeerInterface.h>
+#include <RakNet/BitStream.h>
 #include <mutex>
 #include <thread>
 #include <SDL/SDL.h>
@@ -31,7 +32,7 @@ public:
 	void SetClientPort(const int _port) { m_clientPort = _port; }
 	void SetPassword(const char* _password) { m_password = _password; }
 
-	RakNet::Packet* GetPacket();
+	PacketHandler::Packet* GetPacket();
 
 	// std::bind(&Class:Function, pointer to object, number of arguments (0)
 	void SetOnUserConnect(std::function<void()> _function);
@@ -47,6 +48,9 @@ private:
 	unsigned char GetPacketIdentifier(RakNet::Packet *p);
 
 private:
+
+#pragma warning( disable : 4251 )
+
 	std::function<void()> m_onUserConnect;
 	std::function<void()> m_onUserDisconnect;
 	std::function<void()> m_onUserTimeOut;
@@ -55,12 +59,15 @@ private:
 	std::string m_password;
 	int m_port, m_clientPort;
 
-	std::queue<RakNet::Packet*> m_packets;
+	std::queue<PacketHandler::Packet> m_packets;
 	std::mutex m_packetLock;
+
 
 	RakNet::RakPeerInterface *m_client;
 
 	std::thread m_thread;
+
+#pragma warning( default : 4251 )
 
 };
 

@@ -81,7 +81,7 @@ void InputWrapper::Update()
 	//	Push back events that couldn't be parsed
 	if (invalidEvents.size() > 0)
 	{
-		for (int n = 0; n < invalidEvents.size(); ++n)
+		for (unsigned int n = 0; n < invalidEvents.size(); ++n)
 			SDL_PushEvent(&invalidEvents[n]);
 
 		invalidEvents.clear();

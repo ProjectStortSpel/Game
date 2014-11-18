@@ -70,6 +70,12 @@ void Server::Connect()
 
 void Server::Disconect()
 {
+	m_server->Shutdown(300);
+}
+
+void Server::Broadcast(PacketHandler::Packet _packet)
+{
+	m_server->Send((char*)_packet.Data, _packet.Length, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true, true);
 }
 
 
@@ -91,11 +97,12 @@ void Server::RecivePackets()
 	{
 		packetIdentifier = GetPacketIdentifier(packet);
 
+		PacketHandler::Packet p;
 		switch (packetIdentifier)
 		{
 		case ID_DISCONNECTION_NOTIFICATION:
 			// Connection lost normally
-			printf("ID_DISCONNECTION_NOTIFICATION from %s\n", packet->systemAddress.ToString(true));;
+			printf("ID_DISCONNECTION_NOTIFICATION from %s\n", packet->systemAddress.ToString(true));
 			break;
 
 
@@ -128,13 +135,25 @@ void Server::RecivePackets()
 		case ID_CONNECTION_LOST:
 			// Couldn't deliver a reliable packet - i.e. the k system was abnormally
 			// terminated
-			printf("ID_CONNECTION_LOST from %s\n", packet->systemAddress.ToString(true));;
+			printf("ID_CONNECTION_LOST from %s\n", packet->systemAddress.ToString(true));
+			break;
+
+		case ID_USER_PACKET:
+			// Couldn't deliver a reliable packet - i.e. the k system was abnormally
+			// terminated
+			printf("ID_USER_PACKET from %s\n", packet->systemAddress.ToString(true));
+			p.Data = &packet->data[0];
+
+			p.Length = packet->length;
+
+			m_packetLock.lock();
+			m_packets.push(p);
+			m_packetLock.unlock();
+
 			break;
 
 		default:
-			m_packetLock.lock();
-			m_packets.push(packet);
-			m_packetLock.unlock();
+			break;
 		}
 
 		//if (packetIdentifer == Server_Specific_Message
@@ -145,17 +164,17 @@ void Server::RecivePackets()
 
 	}
 }
-
-RakNet::Packet* Server::GetPacket()
+PacketHandler::Packet test;
+PacketHandler::Packet* Server::GetPacket()
 {
 	//RecivePackets();
 
-	RakNet::Packet* p = NULL;
+	PacketHandler::Packet* p = NULL;
 
 	if (!m_packets.empty())
 	{
-		RakNet::Packet* p = m_packets.front();
-		m_server->DeallocatePacket(m_packets.front());
+		test = m_packets.front();
+		p = &test;
 		m_packets.pop();
 	}
 
