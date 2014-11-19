@@ -2,12 +2,14 @@
 {
 	"Settings"
 	{
+		"Table" "Array"
 	}
 	"Data"
 	{
 		"X"	"4"
 		"Y"	"float"
-		"Xpointer" "pointer"
+		"Yarray" "float" "100"
+		"Xpointer" "pointer" "1"
 	}
 	"Debug"
 	{
