@@ -57,7 +57,7 @@ void Server::Broadcast(PacketHandler::Packet _packet)
 	m_rakInterface->Send((char*)_packet.Data, _packet.Length, HIGH_PRIORITY, RELIABLE_ORDERED, 0, _packet.Sender, true);
 }
 
-void Server::RecivePackets()
+void Server::ReceivePackets()
 {
 	RakNet::Packet* packet;
 	//m_server->DeallocatePacket(m_packet),

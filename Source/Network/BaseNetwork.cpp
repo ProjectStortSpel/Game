@@ -34,7 +34,7 @@ void BaseNetwork::Run()
 	while (m_receiveThreadAlive)
 	{
 		NetSleep(30);
-		RecivePackets();
+		ReceivePackets();
 	}
 }
 

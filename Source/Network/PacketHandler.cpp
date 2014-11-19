@@ -33,7 +33,18 @@ void PacketHandler::StartUnPack(Packet* _packet)
 	m_positionReceive = m_packetReceive->Data;
 
 	auto type = ReadByte();
-	auto hest = ReadString();
+	auto messageName = ReadString();
+
+	if (m_functionMap.find(messageName) != m_functionMap.end())
+	{
+		m_functionMap[messageName](this);
+	}
+	else if (NET_DEBUG)
+	{
+		printf("MessageName \"%s\" not bound to any function.\n", messageName);
+	}
+
+	EndUnPack();
 }
 
 PacketHandler::Packet PacketHandler::EndPack()
@@ -58,6 +69,18 @@ void PacketHandler::EndUnPack()
 	}
 
 	m_positionReceive = 0;
+}
+
+void PacketHandler::AddNetMessageHook(char* _messageName, NetMessageHook _function)
+{
+
+	if (NET_DEBUG)
+	{
+		if (m_functionMap.find(_messageName) == m_functionMap.end())
+			printf("NetMessageHook already exist.\n");
+	}
+
+	m_functionMap[_messageName] = _function;
 }
 
 void PacketHandler::WriteByte(const unsigned char _byte)
@@ -92,7 +115,7 @@ void PacketHandler::WriteString(const char* _string)
 	size_t length = strlen(_string) + 1;
 	if (!IsOutOfBounds(m_packetSend, m_positionSend + length, MAX_PACKET_SIZE))
 	{
-		strcpy_s((char*)m_positionSend, length, _string);
+		memcpy((char*)m_positionSend, _string, length);
 		m_positionSend += length;
 	}
 }
@@ -130,7 +153,7 @@ char* PacketHandler::ReadString()
 
 	if (!IsOutOfBounds(m_packetReceive->Data, m_positionReceive + length, m_packetReceive->Length))
 	{
-		strcpy_s(var, length, (char*)m_positionReceive);
+		memcpy(var,(char*)m_positionReceive, length);
 		m_positionReceive += length;
 	}
 	return var;
@@ -148,7 +171,7 @@ float PacketHandler::ReadFloat()
 	return var;
 }
 
-bool PacketHandler::IsOutOfBounds(unsigned char* _begin, unsigned char* _position, short _length)
+bool PacketHandler::IsOutOfBounds(unsigned char* _begin, unsigned char* _position, unsigned short _length)
 {
 	if (_position - _begin > _length)
 	{

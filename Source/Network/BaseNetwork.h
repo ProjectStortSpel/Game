@@ -38,11 +38,13 @@ public:
 	void StopListen();
 
 protected:
-	virtual void RecivePackets(void) = 0;
+	virtual void ReceivePackets(void) = 0;
 	unsigned char GetPacketIdentifier(RakNet::Packet *p);
 	void TriggerEvent(NetEvent _function, unsigned char _identifier);
 
 protected:
+
+#pragma warning( disable : 4251 )
 
 	std::string m_localAddress;
 	std::string m_password;
@@ -55,6 +57,8 @@ protected:
 
 	NetEvent m_onPlayerConnected;
 	NetEvent m_onPlayerDisconnected;
+
+#pragma warning( default : 4251 )
 
 private:
 	void Run(void);

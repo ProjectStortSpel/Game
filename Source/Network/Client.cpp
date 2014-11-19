@@ -67,7 +67,7 @@ void Client::SendToServer(PacketHandler::Packet _packet)
 	m_rakInterface->Send((char*)_packet.Data, _packet.Length, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 }
 
-void Client::RecivePackets()
+void Client::ReceivePackets()
 {
 	RakNet::Packet* packet;
 	//m_server->DeallocatePacket(m_packet),

@@ -1,7 +1,12 @@
 #ifndef STDAFX_H
 #define STDAFX_H
 
+#include <functional>
+
 #define MAX_PLAYERS 8
+
+
+#define NET_DEBUG 1
 
 typedef std::function<void(unsigned char)> NetEvent;
 
