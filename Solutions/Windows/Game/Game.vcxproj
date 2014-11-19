@@ -69,14 +69,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(SolutionDir)../../Externals/include/Windows;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)../../Externals/lib/Windows/$(PlatformTarget)/;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\;$(SolutionDir)../../Externals/lib/Windows/$(PlatformTarget)/;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\</OutDir>
     <IntDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\VisualStudioLogs\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(SolutionDir)../../Externals/include/Windows;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)../../Externals/lib/Windows/$(PlatformTarget)/;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\;$(SolutionDir)../../Externals/lib/Windows/$(PlatformTarget)/;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\</OutDir>
     <IntDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\VisualStudioLogs\$(ProjectName)\</IntDir>
   </PropertyGroup>
@@ -85,14 +85,14 @@
     <OutDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\</OutDir>
     <IntDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\VisualStudioLogs\$(ProjectName)\</IntDir>
     <IncludePath>$(SolutionDir)../../Externals/include/Windows;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)../../Externals/lib/Windows/$(PlatformTarget)/;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\;$(SolutionDir)../../Externals/lib/Windows/$(PlatformTarget)/;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\</OutDir>
     <IntDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\VisualStudioLogs\$(ProjectName)\</IntDir>
     <IncludePath>$(SolutionDir)../../Externals/include/Windows;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)../../Externals/lib/Windows/$(PlatformTarget)/;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\;$(SolutionDir)../../Externals/lib/Windows/$(PlatformTarget)/;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -110,7 +110,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProfileGuidedDatabase>$(OutDir)$(TargetName).pgd</ProfileGuidedDatabase>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;glew32s.lib;Inputd.lib;Networkd.lib;RakNetDLLd.lib;MPLd.lib;ECSLd.lib;Rendererd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;glew32s.lib;Input_$(PlatformTarget)d.lib;Network_$(PlatformTarget)d.lib;MPL_$(PlatformTarget)d.lib;ECSL_$(PlatformTarget)d.lib;Renderer_$(PlatformTarget)d.lib;RakNet_$(PlatformTarget)d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"</Command>
@@ -133,7 +133,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProfileGuidedDatabase>$(OutDir)$(TargetName).pgd</ProfileGuidedDatabase>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;glew32s.lib;Inputd.lib;Networkd.lib;RakNetDLLd.lib;MPLd.lib;ECSLd.lib;Rendererd.lib%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;glew32s.lib;Input_$(PlatformTarget)d.lib;Network_$(PlatformTarget)d.lib;MPL_$(PlatformTarget)d.lib;ECSL_$(PlatformTarget)d.lib;Renderer_$(PlatformTarget)d.lib;RakNet_$(PlatformTarget)d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"</Command>
@@ -158,7 +158,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <ProfileGuidedDatabase>$(OutDir)$(TargetName).pgd</ProfileGuidedDatabase>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;glew32s.lib;Input.lib;Network.lib;RakNetDLL.lib;MPL.lib;ECSL.lib;Renderer.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;glew32s.lib;Input_$(PlatformTarget).lib;Network_$(PlatformTarget).lib;MPL_$(PlatformTarget).lib;ECSL_$(PlatformTarget).lib;Renderer_$(PlatformTarget).lib;RakNet_$(PlatformTarget)d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"</Command>
@@ -183,7 +183,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <ProfileGuidedDatabase>$(OutDir)$(TargetName).pgd</ProfileGuidedDatabase>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;glew32s.lib;Input.lib;Network.lib;RakNetDLL.lib;MPL.lib;ECSL.lib;Renderer.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;glew32s.lib;Input_$(PlatformTarget).lib;Network_$(PlatformTarget).lib;MPL_$(PlatformTarget).lib;ECSL_$(PlatformTarget).lib;Renderer_$(PlatformTarget).lib;RakNet_$(PlatformTarget)d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"</Command>

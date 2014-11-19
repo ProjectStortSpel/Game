@@ -1,7 +1,6 @@
 #include <SDL/SDL.h>
-#include "Network/PacketHandler.h"
-#include "Network/Client.h"
 #include "Network/Server.h"
+#include "Network/Client.h"
 
 
 Client *c = new Client();
@@ -12,11 +11,19 @@ void OnConnect(unsigned char _token)
 	connected = true;
 }
 
+void TestHook(PacketHandler* _ph)
+{
+	auto c1 = _ph->ReadByte();			printf("Server unpacking: '%c'\n", c1);
+	auto f1 = _ph->ReadFloat();			printf("Server unpacking: %f\n", f1);
+	auto i1 = _ph->ReadInt();				printf("Server unpacking: %i\n", i1);
+	auto s1 = _ph->ReadString();			printf("Server unpacking: \"%s\"\n", s1);
+}
+
 int main(int argc, char** argv)
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
 
-	
+
 	Server *s = new Server();
 	s->Start();
 
@@ -29,47 +36,40 @@ int main(int argc, char** argv)
 
 	PacketHandler packet;
 
-	packet.StartPack("hest");
-	packet.WriteByte('p');
-	packet.WriteFloat(0.5f);
-	packet.WriteInt(1337);
-	packet.WriteString("HEST HEST HEST2");
+	packet.AddNetMessageHook("TestHook", &TestHook);
+
+	packet.StartPack("TestHook");
+	packet.WriteByte('p');					printf("Client packing: 'p'\n");
+	packet.WriteFloat(0.5f);				printf("Client packing: 0.5\n");
+	packet.WriteInt(1337);					printf("Client packing: 1337\n");
+	packet.WriteString("HEST HEST HEST2");	printf("Client packing: \"HEST HEST HEST2\"\n");
 	auto p = packet.EndPack();
 	//system("pause");
-	c->SendToServer(p);
+	c->SendToServer(p);						printf("Client sending packet\n\n");
 
 
 	PacketHandler::Packet* packetIn = 0;
-	while(!packetIn)
+	while (!packetIn)
 		packetIn = s->GetPacket();
 
-	packet.StartUnPack(packetIn);
-		auto c1 = packet.ReadByte();
-		auto f1 = packet.ReadFloat();
-		auto i1 = packet.ReadInt();
-		auto s1 = packet.ReadString();
-	packet.EndUnPack();
+	packet.StartUnPack(packetIn);			printf("Server reciveing packet\n");
 
 	//delete packetIn.Data;
 
-	packet.StartPack("test2");
-	packet.WriteByte('p');
-	packet.WriteFloat(0.2f);
-	packet.WriteInt(107);
-	packet.WriteString("Testar en sak");
+	packet.StartPack("TestHooker");
+	packet.WriteByte('p');					printf("Server packing: 'p'\n");
+	packet.WriteFloat(0.2f);				printf("Server packing: 0.2\n");
+	packet.WriteInt(107);					printf("Server packing: 107\n");
+	packet.WriteString("Testar en sak");	printf("Server packing: \"Testar en sak\"\n");
 	p = packet.EndPack();
-	
-	s->Broadcast(p);
+
+	s->Broadcast(p);						printf("Server sending packet\n\n");
 
 	packetIn = 0;
 	while (!packetIn)
 		packetIn = c->GetPacket();
 
-	packet.StartUnPack(packetIn);
-	auto c2 = packet.ReadByte();
-	auto f2 = packet.ReadFloat();
-	auto i2 = packet.ReadInt();
-	auto s2 = packet.ReadString();
+	packet.StartUnPack(packetIn);			printf("Client reciveing packet\n");
 
 	float f3 = 0.2f;
 
