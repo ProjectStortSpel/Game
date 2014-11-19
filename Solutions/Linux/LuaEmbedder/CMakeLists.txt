@@ -20,6 +20,11 @@ if (WIN32)
   # Include directories
   include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../../Externals/include/Windows"
 		      "${CMAKE_CURRENT_SOURCE_DIR}/../../../Source")
+		      
+  # Link external dynamic libraries
+  target_link_libraries(LuaEmbedder
+			${EXTERNAL_WINDOWS_DYNAMIC_LIBRARIES}
+			${EXTERNAL_WINDOWS_STATIC_LUA52_LIBRARY})
 elseif (UNIX)
   # Include directories
   include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../../Externals/include/Linux"
@@ -27,7 +32,6 @@ elseif (UNIX)
 	
   # Link external shared libraries
   target_link_libraries(LuaEmbedder
-			${EXTERNAL_SHARED_LIBRARIES}
-			${EXTERNAL_STATIC_LUA_LIBRARY}
-			dl)
+			${EXTERNAL_UNIX_SHARED_LIBRARIES}
+			${EXTERNAL_UNIX_STATIC_LUA_LIBRARY})
 endif ()

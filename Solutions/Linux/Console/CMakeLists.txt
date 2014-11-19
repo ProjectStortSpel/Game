@@ -16,16 +16,20 @@ add_library(Console SHARED ${CONSOLE_SRC_FILES})
 #target_link_libraries(Console
 #		      Renderer)
 
-if (WIN32)
+if(WIN32)
   # Include directories
   include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../../Externals/include/Windows"
 		      "${CMAKE_CURRENT_SOURCE_DIR}/../../../Source")
-elseif (UNIX)
+		      
+  # Link external dynamic libraries
+  target_link_libraries(Console
+			${EXTERNAL_WINDOWS_DYNAMIC_LIBRARIES})
+elseif(UNIX)
   # Include directories
   include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../../Externals/include/Linux"
 		      "${CMAKE_CURRENT_SOURCE_DIR}/../../../Source")
-	
+
   # Link external shared libraries
   target_link_libraries(Console
-			${EXTERNAL_SHARED_LIBRARIES})
-endif ()
+			${EXTERNAL_UNIX_SHARED_LIBRARIES})
+endif()
