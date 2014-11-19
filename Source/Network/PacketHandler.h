@@ -19,7 +19,7 @@ class DECLSPEC PacketHandler
 {
 private:
 
-	typedef std::function<void(PacketHandler*)> NetMessageHook;
+	typedef std::function<void(PacketHandler*, NetConnection*)> NetMessageHook;
 
 public:
 
@@ -29,15 +29,15 @@ public:
 	{
 		unsigned char* Data;
 		unsigned short Length;
-		RakNet::SystemAddress Sender;
+		NetConnection* Sender;
 
 		Packet()
 		{
 			Data	= 0;
 			Length	= 0;
-			Sender	= RakNet::UNASSIGNED_SYSTEM_ADDRESS;
+			Sender	= NULL;
 		};
-		Packet(unsigned char* _data, unsigned short _length, RakNet::SystemAddress _sender = RakNet::UNASSIGNED_SYSTEM_ADDRESS)
+		Packet(unsigned char* _data, unsigned short _length, NetConnection* _sender = NULL)
 		{
 			Data = _data;
 			Length = _length;

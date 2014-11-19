@@ -37,7 +37,7 @@ void PacketHandler::StartUnPack(Packet* _packet)
 
 	if (m_functionMap.find(messageName) != m_functionMap.end())
 	{
-		m_functionMap[messageName](this);
+		m_functionMap[messageName](this, _packet->Sender);
 	}
 	else if (NET_DEBUG)
 	{
@@ -76,7 +76,7 @@ void PacketHandler::AddNetMessageHook(char* _messageName, NetMessageHook _functi
 
 	if (NET_DEBUG)
 	{
-		if (m_functionMap.find(_messageName) == m_functionMap.end())
+		if (m_functionMap.find(_messageName) != m_functionMap.end())
 			printf("NetMessageHook already exist.\n");
 	}
 
@@ -175,7 +175,10 @@ bool PacketHandler::IsOutOfBounds(unsigned char* _begin, unsigned char* _positio
 {
 	if (_position - _begin > _length)
 	{
-		printf("Out of bounds while reading/writing packet.\n");
+		if (NET_DEBUG)
+		{
+			printf("Out of bounds while reading/writing packet.\n");
+		}
 		return true;
 	}
 	else

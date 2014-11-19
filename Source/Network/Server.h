@@ -13,12 +13,15 @@ public:
 	void Start();
 	void Stop();
 
-	void Broadcast(PacketHandler::Packet _packet);
+	void Broadcast(PacketHandler::Packet _packet, NetConnection *_exclude = NULL);
+	void Send(PacketHandler::Packet _packet, NetConnection _connection);
 
 private:
 	void RecivePackets(void);
 
 private:
+
+
 
 };
 

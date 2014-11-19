@@ -15,6 +15,9 @@ class DECLSPEC BaseNetwork
 
 
 public:
+
+
+
 	BaseNetwork();
 	virtual ~BaseNetwork();
 
@@ -40,11 +43,16 @@ public:
 protected:
 	virtual void RecivePackets(void) = 0;
 	unsigned char GetPacketIdentifier(RakNet::Packet *p);
-	void TriggerEvent(NetEvent _function, unsigned char _identifier);
+	void TriggerEvent(NetEvent _function, unsigned char _identifier, RakNet::SystemAddress _address);
 
 protected:
 
 #pragma warning( disable : 4251 )
+
+
+	std::vector<NetConnection> m_connections;
+	std::map<NetConnection, RakNet::SystemAddress> m_addressMap;
+	std::map<RakNet::SystemAddress, NetConnection> m_connectionMap;
 
 	std::string m_localAddress;
 	std::string m_password;

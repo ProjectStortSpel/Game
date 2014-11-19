@@ -52,9 +52,27 @@ void Server::Stop()
 	RakNet::RakPeerInterface::DestroyInstance(m_rakInterface);
 }
 
-void Server::Broadcast(PacketHandler::Packet _packet)
+void Server::Broadcast(PacketHandler::Packet _packet, NetConnection* _exclude)
 {
-	m_rakInterface->Send((char*)_packet.Data, _packet.Length, HIGH_PRIORITY, RELIABLE_ORDERED, 0, _packet.Sender, true);
+	RakNet::SystemAddress exclude = RakNet::UNASSIGNED_SYSTEM_ADDRESS;
+
+	if (_exclude)
+	{
+		if (m_addressMap.find(*_exclude) != m_addressMap.end())
+		{
+			exclude = m_addressMap[*_exclude];
+		}
+	}	
+
+	m_rakInterface->Send((char*)_packet.Data, _packet.Length, HIGH_PRIORITY, RELIABLE_ORDERED, 0, exclude, true);
+}
+
+void Server::Send(PacketHandler::Packet _packet, NetConnection _connection)
+{
+	if (m_addressMap.find(_connection) != m_addressMap.end())
+	{
+		m_rakInterface->Send((char*)_packet.Data, _packet.Length, HIGH_PRIORITY, RELIABLE_ORDERED, 0, m_addressMap[_connection], false);
+	}	
 }
 
 void Server::RecivePackets()
@@ -70,16 +88,33 @@ void Server::RecivePackets()
 		{
 		case ID_NEW_INCOMING_CONNECTION:
 			// User connected to server
-			TriggerEvent(m_onPlayerConnected, packetIdentifier);
+		{
+			NetConnection c;
+			c = packet->systemAddress.ToString(true, ':');
+			m_connections.push_back(c);
+			m_connectionMap[packet->systemAddress] = c;
+			m_addressMap[c] = packet->systemAddress;
+			
+			TriggerEvent(m_onPlayerConnected, packetIdentifier, packet->systemAddress);
 			break;
 
+		}
+			
 
 		case ID_CONNECTION_LOST:
 			// User lost connection to server
 		case ID_DISCONNECTION_NOTIFICATION:
 			// User disconnected from server
-			TriggerEvent(m_onPlayerDisconnected, packetIdentifier);
+		{
+			NetConnection c = m_connectionMap[packet->systemAddress];
+			m_connectionMap.erase(packet->systemAddress);
+			m_addressMap.erase(c);
+
+			m_connections.erase(std::remove(m_connections.begin(), m_connections.end(), c), m_connections.end());
+
+			TriggerEvent(m_onPlayerDisconnected, packetIdentifier, packet->systemAddress);
 			break;
+		}		
 
 		case ID_INCOMPATIBLE_PROTOCOL_VERSION:
 			printf("ID_INCOMPATIBLE_PROTOCOL_VERSION\n");
@@ -100,7 +135,11 @@ void Server::RecivePackets()
 			memcpy(p->Data, &packet->data[0], packet->length);
 
 			p->Length = packet->length;
-			p->Sender = packet->systemAddress;
+
+			if (m_connectionMap.find(packet->systemAddress) != m_connectionMap.end())
+				p->Sender = &m_connectionMap[packet->systemAddress];
+			else
+				p->Sender = NULL;
 
 			m_packetLock.lock();
 			m_packets.push(p);

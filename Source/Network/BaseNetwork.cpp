@@ -8,6 +8,8 @@ BaseNetwork::BaseNetwork()
 	m_rakInterface = RakNet::RakPeerInterface::GetInstance();
 	m_localAddress = m_rakInterface->GetLocalIP(0);
 	m_password = "localhest";
+
+	m_packets = std::queue<PacketHandler::Packet*>();
 }
 
 BaseNetwork::~BaseNetwork()
@@ -75,8 +77,10 @@ unsigned char BaseNetwork::GetPacketIdentifier(RakNet::Packet *p)
 		return (unsigned char)p->data[0];
 }
 
-void BaseNetwork::TriggerEvent(NetEvent _function, unsigned char _identifier)
+void BaseNetwork::TriggerEvent(NetEvent _function, unsigned char _identifier, RakNet::SystemAddress _address)
 {
+
+
 	if (_function)
-		_function(_identifier);
+		_function(_identifier, &m_connectionMap[_address]);
 }

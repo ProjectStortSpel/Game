@@ -80,59 +80,60 @@ void Client::RecivePackets()
 		{
 		case ID_CONNECTION_REQUEST_ACCEPTED:
 			// This tells the client they have connected
-			TriggerEvent(m_onConnectedToServer, packetIdentifier);
+
+			TriggerEvent(m_onConnectedToServer, packetIdentifier, packet->systemAddress);
 			break;
 
 
 		case ID_DISCONNECTION_NOTIFICATION:
 			// Disconnected from the server
-			TriggerEvent(m_onDisconnectedFromServer, packetIdentifier);
+			TriggerEvent(m_onDisconnectedFromServer, packetIdentifier, packet->systemAddress);
 			break;
 		case ID_CONNECTION_LOST:
 			// Lost connection to the server
-			TriggerEvent(m_onDisconnectedFromServer, packetIdentifier);
+			TriggerEvent(m_onDisconnectedFromServer, packetIdentifier, packet->systemAddress);
 			break;
 
 
 		case ID_REMOTE_NEW_INCOMING_CONNECTION: 
 			// Another user connected to the server
-			TriggerEvent(m_onPlayerConnected, packetIdentifier);
+			TriggerEvent(m_onPlayerConnected, packetIdentifier, packet->systemAddress);
 			break;
 
 
 		case ID_REMOTE_CONNECTION_LOST:
 			// Another user lost connection to the server
-			TriggerEvent(m_onPlayerDisconnected, packetIdentifier);
+			TriggerEvent(m_onPlayerDisconnected, packetIdentifier, packet->systemAddress);
 			break;
 		case ID_REMOTE_DISCONNECTION_NOTIFICATION:
 			// Another user disconnected from the server
-			TriggerEvent(m_onPlayerDisconnected, packetIdentifier);
+			TriggerEvent(m_onPlayerDisconnected, packetIdentifier, packet->systemAddress);
 			break;
 
 
 		case ID_ALREADY_CONNECTED:
 			// Already connected to the server
-			TriggerEvent(m_onFailedToConnect, packetIdentifier);
+			TriggerEvent(m_onFailedToConnect, packetIdentifier, packet->systemAddress);
 			break;
 		case ID_CONNECTION_BANNED: 
 			// Banned from the server
-			TriggerEvent(m_onFailedToConnect, packetIdentifier);
+			TriggerEvent(m_onFailedToConnect, packetIdentifier, packet->systemAddress);
 			break;
 		case ID_NO_FREE_INCOMING_CONNECTIONS:
 			// Server is full
-			TriggerEvent(m_onFailedToConnect, packetIdentifier);
+			TriggerEvent(m_onFailedToConnect, packetIdentifier, packet->systemAddress);
 			break;
 		case ID_CONNECTION_ATTEMPT_FAILED:
 			// Failed to send a connect request to the server
-			TriggerEvent(m_onFailedToConnect, packetIdentifier);
+			TriggerEvent(m_onFailedToConnect, packetIdentifier, packet->systemAddress);
 			break;
 		case ID_INVALID_PASSWORD:
 			// Incorrect password to the server
-			TriggerEvent(m_onFailedToConnect, packetIdentifier);
+			TriggerEvent(m_onFailedToConnect, packetIdentifier, packet->systemAddress);
 			break;
 		case ID_INCOMPATIBLE_PROTOCOL_VERSION:
 			// Incompatible protocol version (IPV4/IPV6 ?)
-			TriggerEvent(m_onFailedToConnect, packetIdentifier);
+			TriggerEvent(m_onFailedToConnect, packetIdentifier, packet->systemAddress);
 			break;
 
 
@@ -148,7 +149,7 @@ void Client::RecivePackets()
 			memcpy(p->Data, &packet->data[0], packet->length);
 
 			p->Length = packet->length;
-			p->Sender = packet->systemAddress;
+			p->Sender = &m_connectionMap[packet->systemAddress];
 
 			m_packetLock.lock();
 			m_packets.push(p);
