@@ -5,6 +5,7 @@ Server::Server()
 	: BaseNetwork()
 {
 	m_incomingPort = 5357;
+	m_maxConnections = 8;
 }
 
 
@@ -15,6 +16,15 @@ Server::~Server()
 
 void Server::Start()
 {
+	if (NET_DEBUG)
+	{
+		printf("Starting server:\n");
+		printf("Ip address: \"%s\"\n", m_rakInterface->GetLocalIP(0));
+		printf("Port: \"%i\"\n", m_incomingPort);
+		printf("Password: \"%s\"\n", m_password.c_str());
+		printf("Max connections: \"%i\"\n", m_maxConnections);
+	}
+
 	m_rakInterface->SetIncomingPassword(m_password.c_str(), (int)strlen(m_password.c_str()));
 	m_rakInterface->SetTimeoutTime(30000, RakNet::UNASSIGNED_SYSTEM_ADDRESS);
 
@@ -27,14 +37,28 @@ void Server::Start()
 	socketDescriptors[1].port = m_incomingPort;
 	socketDescriptors[1].socketFamily = AF_INET6; // Test out IPV6
 
-	m_rakInterface->SetMaximumIncomingConnections(MAX_PLAYERS);
+	m_rakInterface->SetMaximumIncomingConnections(m_maxConnections);
 	
-	bool b = m_rakInterface->Startup(MAX_PLAYERS, socketDescriptors, 2) == RakNet::RAKNET_STARTED;
-	if (!b)
+	RakNet::StartupResult startResult = m_rakInterface->Startup(m_maxConnections, socketDescriptors, 2);
+	if (startResult == RakNet::RAKNET_STARTED)
 	{
-		b = m_rakInterface->Startup(MAX_PLAYERS, socketDescriptors, 1) == RakNet::RAKNET_STARTED;
-		if (!b)
+		if (NET_DEBUG)
+			printf("\nServer started with IPV6!\n");
+	}
+	else
+	{
+		startResult = m_rakInterface->Startup(m_maxConnections, socketDescriptors, 1);
+		if (startResult == RakNet::RAKNET_STARTED)
+		{
+			if (NET_DEBUG)
+				printf("\nServer started with IPV4!\n");
+		}
+		else
+		{
+			if (NET_DEBUG)
+				printf("\nServer failed to start. Exiting\n");
 			exit(1);
+		}
 	}
 
 	m_rakInterface->SetOccasionalPing(true);
@@ -70,32 +94,41 @@ void Server::ReceivePackets()
 		{
 		case ID_NEW_INCOMING_CONNECTION:
 			// User connected to server
+			if (NET_DEBUG)
+				printf("New client connected.\n");
 			TriggerEvent(m_onPlayerConnected, packetIdentifier);
 			break;
 
-
 		case ID_CONNECTION_LOST:
 			// User lost connection to server
+			if (NET_DEBUG)
+				printf("Client lost connection to server.\n");
+			TriggerEvent(m_onPlayerDisconnected, packetIdentifier);
+			break;
 		case ID_DISCONNECTION_NOTIFICATION:
+			if (NET_DEBUG)
+				printf("Client disconnected from server.\n");
 			// User disconnected from server
 			TriggerEvent(m_onPlayerDisconnected, packetIdentifier);
 			break;
 
 		case ID_INCOMPATIBLE_PROTOCOL_VERSION:
-			printf("ID_INCOMPATIBLE_PROTOCOL_VERSION\n");
+			if (NET_DEBUG)
+				printf("Incompatible protocl version - Server.\n");
 			break;
 
 		case ID_CONNECTED_PING:
 		case ID_UNCONNECTED_PING:
-			printf("Ping from %s\n", packet->systemAddress.ToString(true));
+			if (NET_DEBUG)
+				printf("Ping from %s\n", packet->systemAddress.ToString(true));
 			break;
 
 		case ID_USER_PACKET:
 		{
+			if (NET_DEBUG)
+				printf("Recieved user message from \"%s\"", packet->systemAddress.ToString(true));
+
 			PacketHandler::Packet* p = new PacketHandler::Packet();
-			// Couldn't deliver a reliable packet - i.e. the k system was abnormally
-			// terminated
-			printf("ID_USER_PACKET from %s\n", packet->systemAddress.ToString(true));
 			p->Data = new unsigned char[packet->length];
 			memcpy(p->Data, &packet->data[0], packet->length);
 

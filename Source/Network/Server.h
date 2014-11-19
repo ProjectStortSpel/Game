@@ -19,6 +19,7 @@ private:
 	void ReceivePackets(void);
 
 private:
+	int m_maxConnections;
 
 };
 

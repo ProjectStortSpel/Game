@@ -11,16 +11,25 @@ public:
 	Client();
 	~Client();
 
+	// Connect to the server using already set values on the ip address, password, outoing port & incoming port
 	void Connect();
-	void Connect(const char* _ipAddress, const char* m_password, const int m_port, const int m_clientPort);
+	// Connect to the server using specific values on the ip address, password, outgoing port & incoming port
+	// Note that any old values will be overriden
+	void Connect(const char* _ipAddress, const char* m_password, const int _outgoingPort, const int _incomingPort);
+	// Disconnect from the conencted server
 	void Disconect();
 
+	// Send a packet to the connected server
 	void SendToServer(PacketHandler::Packet _packet);
 
+	// Return the remote address the client will use to connect with
 	const char* GetRemoteAddress(void) { return m_remoteAddress.c_str(); }
+	// Return the outgoing port the client will use to connect with
 	const int GetOutgoingPort(void) { return m_outgoingPort; }
 
+	// Set the remote address the client will use to connect with
 	void SetRemoteAddress(const char *_ip) { m_remoteAddress = _ip; }
+	// Set the outgoing port the client will use to connect with
 	void SetOutgoingPort(const int _port) { m_outgoingPort = _port; }
 
 	// Bind function which will trigger when the client connect to the server

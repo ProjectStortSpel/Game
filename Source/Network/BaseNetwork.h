@@ -18,23 +18,35 @@ public:
 	BaseNetwork();
 	virtual ~BaseNetwork();
 
+	// Return the local address
 	const char* GetLocalAddress(void) { return m_localAddress.c_str(); }
+	// Return the server password
 	const char* GetServerPassword(void) { return m_password.c_str(); }
+	// Return the incoming port 
+	// This is the port the client will connect WITH
+	// and the port the server will allow clients to connect to
 	const int	GetIncomingPort(void) { return m_incomingPort; }
 	
+	// Will return a packet if any packet has been received
 	PacketHandler::Packet* GetPacket();
 
+	// Set the incoming port
+	// This is the port the client will connect WITH
+	// and the port the server will allow clients to connect to
 	void SetIncomingPort(const int _port) { m_incomingPort = _port; }
+	// Set the server password
 	void SetServerPassword(const char* _password) { m_password = _password; }
-
-	// std::bind(&Class:Function, pointer to object, number of arguments (0)
 
 	// Bind function which will trigger when another player connects to the server
 	void SetOnPlayerConnected(NetEvent _function);
 	// Bind function which will trigger when another player disconnects from the server
 	void SetOnPlayerDisconnected(NetEvent _function);
 
+	// Start listen for packets.
+	// Will be called when Start() on the server, or Connect() on the client is called
 	void StartListen();
+	// Stop listen for packets
+	// Will be called when Stop() on the server, or Disconnect() on the client is called
 	void StopListen();
 
 protected:
