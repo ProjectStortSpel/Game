@@ -35,6 +35,8 @@ void Parser::ParseFile(std::string _filename)
 			fileRows.push_back(tText);
 	}
 
+	//while (std::getline())
+
 	//	Start parsing out the different parts
 	ParsedComponent	tComponent = ParsedComponent();
 
