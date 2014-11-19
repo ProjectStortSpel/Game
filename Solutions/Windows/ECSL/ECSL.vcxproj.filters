@@ -15,7 +15,7 @@
       <UniqueIdentifier>{f0d2f4ad-5717-49f4-b6cd-2affee133f36}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Framework\Parsing">
-      <UniqueIdentifier>{dbe5907f-aeeb-44d9-aaf5-be0810e92aef}</UniqueIdentifier>
+      <UniqueIdentifier>{0726909e-886b-4af0-915b-c30154b9a36a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -25,7 +25,7 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Test.h">
       <Filter>Source Files\Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Parser\Parser.h">
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\Parser.h">
       <Filter>Source Files\Framework\Parsing</Filter>
     </ClInclude>
   </ItemGroup>
@@ -33,8 +33,11 @@
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Test.cpp">
       <Filter>Source Files\Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Parser\Parser.cpp">
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\Parser.cpp">
       <Filter>Source Files\Framework\Parsing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\ECSL.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
