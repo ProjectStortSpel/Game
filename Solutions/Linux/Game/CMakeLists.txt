@@ -9,7 +9,7 @@ project("Game")
 #add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Console" Console)
 #endif()
 if(NOT TARGET ECSL)
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../ECSL" ESCL)
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../ECSL" ECSL)
 endif()
 if(NOT TARGET Input)
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Input" Input)
@@ -48,6 +48,11 @@ if (WIN32)
   # Include directories
   include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../../Externals/include/Windows"
 		      "${CMAKE_CURRENT_SOURCE_DIR}/../../../Source")
+		      
+  # Link external dynamic libraries
+  target_link_libraries(Game
+			${EXTERNAL_WINDOWS_DYNAMIC_LIBRARIES}
+			${EXTERNAL_WINDOWS_STATIC_SDL2MAIN_LIBRARY})
 elseif (UNIX)
   # Include directories
   include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../../Externals/include/Linux"
@@ -55,5 +60,6 @@ elseif (UNIX)
 	
   # Link external shared libraries
   target_link_libraries(Game
-			${EXTERNAL_SHARED_LIBRARIES})
+			${EXTERNAL_UNIX_SHARED_LIBRARIES}
+			${EXTERNAL_UNIX_STATIC_SDL2MAIN_LIBRARY})
 endif ()

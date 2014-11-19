@@ -20,6 +20,10 @@ if (WIN32)
   # Include directories
   include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../../Externals/include/Windows"
 		      "${CMAKE_CURRENT_SOURCE_DIR}/../../../Source")
+		      
+  # Link external dynamic libraries
+  target_link_libraries(MPL
+			${EXTERNAL_WINDOWS_DYNAMIC_LIBRARIES})
 elseif (UNIX)
   # Include directories
   include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../../Externals/include/Linux"
@@ -27,5 +31,5 @@ elseif (UNIX)
 	
   # Link external shared libraries
   target_link_libraries(MPL
-			${EXTERNAL_SHARED_LIBRARIES})
+			${EXTERNAL_UNIX_SHARED_LIBRARIES})
 endif ()
