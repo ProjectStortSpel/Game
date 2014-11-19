@@ -99,7 +99,8 @@ void Client::ReceivePackets()
 			// This tells the client they have connected
 			if (NET_DEBUG)
 				printf("Client connected to server.\n");
-			TriggerEvent(m_onConnectedToServer, packetIdentifier);
+
+			TriggerEvent(m_onConnectedToServer, packetIdentifier, packet->systemAddress);
 			break;
 
 
@@ -107,13 +108,13 @@ void Client::ReceivePackets()
 			// Disconnected from the server
 			if (NET_DEBUG)
 				printf("Client disconnected from server.\n");
-			TriggerEvent(m_onDisconnectedFromServer, packetIdentifier);
+			TriggerEvent(m_onDisconnectedFromServer, packetIdentifier, packet->systemAddress);
 			break;
 		case ID_CONNECTION_LOST:
 			// Lost connection to the server
 			if (NET_DEBUG)
 				printf("Client lost connection from server.\n");
-			TriggerEvent(m_onDisconnectedFromServer, packetIdentifier);
+			TriggerEvent(m_onDisconnectedFromServer, packetIdentifier, packet->systemAddress);
 			break;
 
 
@@ -121,7 +122,7 @@ void Client::ReceivePackets()
 			// Another user connected to the server
 			if (NET_DEBUG)
 				printf("Another client connected to server.\n");
-			TriggerEvent(m_onPlayerConnected, packetIdentifier);
+			TriggerEvent(m_onPlayerConnected, packetIdentifier, packet->systemAddress);
 			break;
 
 
@@ -129,13 +130,13 @@ void Client::ReceivePackets()
 			// Another user lost connection to the server
 			if (NET_DEBUG)
 				printf("Another client lost connection to server.\n");
-			TriggerEvent(m_onPlayerDisconnected, packetIdentifier);
+			TriggerEvent(m_onPlayerDisconnected, packetIdentifier, packet->systemAddress);
 			break;
 		case ID_REMOTE_DISCONNECTION_NOTIFICATION:
 			// Another user disconnected from the server
 			if (NET_DEBUG)
 				printf("Another client disconnected from server.\n");
-			TriggerEvent(m_onPlayerDisconnected, packetIdentifier);
+			TriggerEvent(m_onPlayerDisconnected, packetIdentifier, packet->systemAddress);
 			break;
 
 
@@ -143,37 +144,37 @@ void Client::ReceivePackets()
 			// Already connected to the server
 			if (NET_DEBUG)
 				printf("Client already connected to server.\n");
-			TriggerEvent(m_onFailedToConnect, packetIdentifier);
+			TriggerEvent(m_onFailedToConnect, packetIdentifier, packet->systemAddress);
 			break;
 		case ID_CONNECTION_BANNED: 
 			// Banned from the server
 			if (NET_DEBUG)
 				printf("Client banned from server.\n");
-			TriggerEvent(m_onFailedToConnect, packetIdentifier);
+			TriggerEvent(m_onFailedToConnect, packetIdentifier, packet->systemAddress);
 			break;
 		case ID_NO_FREE_INCOMING_CONNECTIONS:
 			// Server is full
 			if (NET_DEBUG)
 				printf("Server connecting to is full.\n");
-			TriggerEvent(m_onFailedToConnect, packetIdentifier);
+			TriggerEvent(m_onFailedToConnect, packetIdentifier, packet->systemAddress);
 			break;
 		case ID_CONNECTION_ATTEMPT_FAILED:
 			// Failed to send a connect request to the server
 			if (NET_DEBUG)
 				printf("Failed to connect to server.\n");
-			TriggerEvent(m_onFailedToConnect, packetIdentifier);
+			TriggerEvent(m_onFailedToConnect, packetIdentifier, packet->systemAddress);
 			break;
 		case ID_INVALID_PASSWORD:
 			// Incorrect password to the server
 			if (NET_DEBUG)
 				printf("Invalid password to server.\n");
-			TriggerEvent(m_onFailedToConnect, packetIdentifier);
+			TriggerEvent(m_onFailedToConnect, packetIdentifier, packet->systemAddress);
 			break;
 		case ID_INCOMPATIBLE_PROTOCOL_VERSION:
 			// Incompatible protocol version (IPV4/IPV6 ?)
 			if (NET_DEBUG)
 				printf("Incompatible protocol version (IPV4/IPV6).\n");
-			TriggerEvent(m_onFailedToConnect, packetIdentifier);
+			TriggerEvent(m_onFailedToConnect, packetIdentifier, packet->systemAddress);
 			break;
 
 
@@ -193,7 +194,7 @@ void Client::ReceivePackets()
 			memcpy(p->Data, &packet->data[0], packet->length);
 
 			p->Length = packet->length;
-			p->Sender = packet->systemAddress;
+			p->Sender = &m_connectionMap[packet->systemAddress];
 
 			m_packetLock.lock();
 			m_packets.push(p);
