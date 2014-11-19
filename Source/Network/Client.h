@@ -18,7 +18,7 @@ public:
 	void SendToServer(PacketHandler::Packet _packet);
 
 	const char* GetRemoteAddress(void) { return m_remoteAddress.c_str(); }
-	const int GetOutoingPort(void) { return m_outgoingPort; }
+	const int GetOutgoingPort(void) { return m_outgoingPort; }
 
 	void SetRemoteAddress(const char *_ip) { m_remoteAddress = _ip; }
 	void SetOutgoingPort(const int _port) { m_outgoingPort = _port; }
@@ -31,7 +31,7 @@ public:
 	void SetOnFailedToConnect(NetEvent _function);
 
 private:
-	void RecivePackets(void);
+	void ReceivePackets(void);
 
 private:
 

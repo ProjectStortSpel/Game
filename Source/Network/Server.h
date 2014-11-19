@@ -16,7 +16,7 @@ public:
 	void Broadcast(PacketHandler::Packet _packet);
 
 private:
-	void RecivePackets(void);
+	void ReceivePackets(void);
 
 private:
 

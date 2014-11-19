@@ -38,7 +38,7 @@ public:
 	void StopListen();
 
 protected:
-	virtual void RecivePackets(void) = 0;
+	virtual void ReceivePackets(void) = 0;
 	unsigned char GetPacketIdentifier(RakNet::Packet *p);
 	void TriggerEvent(NetEvent _function, unsigned char _identifier);
 
