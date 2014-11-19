@@ -11,6 +11,14 @@ void OnConnect(unsigned char _token)
 	connected = true;
 }
 
+void TestHook(PacketHandler* _ph)
+{
+	auto c1 = _ph->ReadByte();			printf("Server unpacking: '%c'\n", c1);
+	auto f1 = _ph->ReadFloat();			printf("Server unpacking: %f\n", f1);
+	auto i1 = _ph->ReadInt();				printf("Server unpacking: %i\n", i1);
+	auto s1 = _ph->ReadString();			printf("Server unpacking: \"%s\"\n", s1);
+}
+
 int main(int argc, char** argv)
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
@@ -28,7 +36,9 @@ int main(int argc, char** argv)
 
 	PacketHandler packet;
 
-	packet.StartPack("hest");
+	packet.AddNetMessageHook("TestHook", &TestHook);
+
+	packet.StartPack("TestHook");
 	packet.WriteByte('p');					printf("Client packing: 'p'\n");
 	packet.WriteFloat(0.5f);				printf("Client packing: 0.5\n");
 	packet.WriteInt(1337);					printf("Client packing: 1337\n");
@@ -43,15 +53,10 @@ int main(int argc, char** argv)
 		packetIn = s->GetPacket();
 
 	packet.StartUnPack(packetIn);			printf("Server reciveing packet\n");
-	auto c1 = packet.ReadByte();			printf("Server unpacking: '%c'\n", c1);
-	auto f1 = packet.ReadFloat();			printf("Server unpacking: %f\n", f1);
-	auto i1 = packet.ReadInt();				printf("Server unpacking: %i\n", i1);
-	auto s1 = packet.ReadString();			printf("Server unpacking: \"%s\"\n", s1);
-	packet.EndUnPack();
 
 	//delete packetIn.Data;
 
-	packet.StartPack("test2");
+	packet.StartPack("TestHooker");
 	packet.WriteByte('p');					printf("Server packing: 'p'\n");
 	packet.WriteFloat(0.2f);				printf("Server packing: 0.2\n");
 	packet.WriteInt(107);					printf("Server packing: 107\n");
@@ -65,10 +70,6 @@ int main(int argc, char** argv)
 		packetIn = c->GetPacket();
 
 	packet.StartUnPack(packetIn);			printf("Client reciveing packet\n");
-	auto c2 = packet.ReadByte();			printf("Client unpacking: '%c'\n", c2);
-	auto f2 = packet.ReadFloat();			printf("Client unpacking: %f\n", f2);
-	auto i2 = packet.ReadInt();				printf("Client unpacking: %i\n", i2);
-	auto s2 = packet.ReadString();			printf("Client unpacking: \"%s\"\n", s2);
 
 	float f3 = 0.2f;
 

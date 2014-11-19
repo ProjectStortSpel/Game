@@ -2,9 +2,11 @@
 #define PACKETHANDLER_H
 
 #include <string>
+#include <map>
 #include <SDL/SDL.h>
 #include <RakNet/MessageIdentifiers.h>
 #include <RakNet/RakNetTypes.h>
+#include "Network/Stdafx.h"
 
 #define MAX_PACKET_SIZE 65535	//max value for unsigned short 	
 
@@ -15,6 +17,10 @@ enum MessageIDType
 
 class DECLSPEC PacketHandler
 {
+private:
+
+	typedef std::function<void(PacketHandler*)> NetMessageHook;
+
 public:
 
 
@@ -49,13 +55,14 @@ public:
 	void StartUnPack(Packet* _packet);
 
 	Packet EndPack();
-	void EndUnPack();
+	
 
 	void WriteByte(const unsigned char _byte);
 	void WriteInt(const int _int);
 	void WriteString(const char* _string);
 	void WriteFloat(const float _float);
 
+	void AddNetMessageHook(char* _messageName, NetMessageHook _function);
 
 	char ReadByte();
 	int ReadInt();
@@ -64,10 +71,14 @@ public:
 
 private:
 	bool IsOutOfBounds(unsigned char* _begin, unsigned char* _position, unsigned short _length);
+	void EndUnPack();
 
 private:
 
 #pragma warning( disable : 4251 )
+	
+
+	std::map<std::string, NetMessageHook> m_functionMap;
 
 	unsigned char* m_packetSend;
 	unsigned char* m_positionSend;
