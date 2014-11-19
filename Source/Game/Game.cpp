@@ -471,7 +471,7 @@ void RunClient()
 	c->SetOnConnectedToServer(&OnConnect);
 	c->SetOnDisconnectedFromServer(&OnDisconnect);
 	c->Connect();
-	c->StartListen();
+	//c->StartListen();
 
 	while (!connected)
 		NetSleep(30);

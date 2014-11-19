@@ -17,9 +17,10 @@ public:
 	void Send(PacketHandler::Packet _packet, NetConnection _connection);
 
 private:
-	void RecivePackets(void);
+	void ReceivePackets(void);
 
 private:
+	int m_maxConnections;
 
 
 

@@ -13,17 +13,27 @@ Client::~Client()
 {
 }
 
-void Client::Connect(const char* _ipAddress, const char* _password, const int _port, const int _clientPort)
+void Client::Connect(const char* _ipAddress, const char* _password, const int _outgoingPort, const int _incomingPort)
 {
+
 	m_remoteAddress = _ipAddress;
 	m_password = _password;
-	m_outgoingPort = _port;
-	m_incomingPort = _clientPort;
+	m_outgoingPort = _outgoingPort;
+	m_incomingPort = _incomingPort;
 
 	Connect();
 }
 void Client::Connect()
 {
+	if (NET_DEBUG)
+	{
+		printf("Client connecting to server:\n");
+		printf("Ip address: \"%s\"\n", m_remoteAddress.c_str());
+		printf("Remote Port: \"%i\"\n", m_outgoingPort);
+		printf("Local Port: \"%i\"\n", m_incomingPort);
+		printf("Password: \"%s\"\n", m_password.c_str());
+	}
+
 	// Disallow connection responses from any IP.
 	// Usable when connecting to a server with multiple IP addresses.
 	m_rakInterface->AllowConnectionResponseIPMigration(false);
@@ -37,7 +47,7 @@ void Client::Connect()
 	socketDescriptor.socketFamily = AF_INET;
 
 	// Starts the network thread
-	m_rakInterface->Startup(8, &socketDescriptor, 1);
+	m_rakInterface->Startup(1, &socketDescriptor, 1);
 	// Send an occasional ping to the server to check for response
 	m_rakInterface->SetOccasionalPing(true);
 
@@ -45,9 +55,10 @@ void Client::Connect()
 	RakNet::ConnectionAttemptResult car = m_rakInterface->Connect(m_remoteAddress.c_str(), m_outgoingPort, m_password.c_str(), (int)strlen(m_password.c_str()));
 	if (car == RakNet::CONNECTION_ATTEMPT_STARTED)
 	{
-		// Start a new thread to listen to packets on
-		//m_thread = std::thread(&Client::Run, this);
-		//Run();
+		if (NET_DEBUG)
+			printf("Client started to connect.\n");
+
+		StartListen();
 	}
 	else
 		printf("Unable to start connecting.\n");
@@ -55,6 +66,9 @@ void Client::Connect()
 
 void Client::Disconect()
 {
+	if (NET_DEBUG)
+		printf("Client disconnected from server.\n");
+
 	if (m_receiveThreadAlive)
 		StopListen();
 
@@ -65,9 +79,12 @@ void Client::Disconect()
 void Client::SendToServer(PacketHandler::Packet _packet)
 {
 	m_rakInterface->Send((char*)_packet.Data, _packet.Length, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
+
+	if (NET_DEBUG)
+		printf("Client sent packet to server.\n");
 }
 
-void Client::RecivePackets()
+void Client::ReceivePackets()
 {
 	RakNet::Packet* packet;
 	//m_server->DeallocatePacket(m_packet),
@@ -80,6 +97,8 @@ void Client::RecivePackets()
 		{
 		case ID_CONNECTION_REQUEST_ACCEPTED:
 			// This tells the client they have connected
+			if (NET_DEBUG)
+				printf("Client connected to server.\n");
 
 			TriggerEvent(m_onConnectedToServer, packetIdentifier, packet->systemAddress);
 			break;
@@ -87,64 +106,90 @@ void Client::RecivePackets()
 
 		case ID_DISCONNECTION_NOTIFICATION:
 			// Disconnected from the server
+			if (NET_DEBUG)
+				printf("Client disconnected from server.\n");
 			TriggerEvent(m_onDisconnectedFromServer, packetIdentifier, packet->systemAddress);
 			break;
 		case ID_CONNECTION_LOST:
 			// Lost connection to the server
+			if (NET_DEBUG)
+				printf("Client lost connection from server.\n");
 			TriggerEvent(m_onDisconnectedFromServer, packetIdentifier, packet->systemAddress);
 			break;
 
 
 		case ID_REMOTE_NEW_INCOMING_CONNECTION: 
 			// Another user connected to the server
+			if (NET_DEBUG)
+				printf("Another client connected to server.\n");
 			TriggerEvent(m_onPlayerConnected, packetIdentifier, packet->systemAddress);
 			break;
 
 
 		case ID_REMOTE_CONNECTION_LOST:
 			// Another user lost connection to the server
+			if (NET_DEBUG)
+				printf("Another client lost connection to server.\n");
 			TriggerEvent(m_onPlayerDisconnected, packetIdentifier, packet->systemAddress);
 			break;
 		case ID_REMOTE_DISCONNECTION_NOTIFICATION:
 			// Another user disconnected from the server
+			if (NET_DEBUG)
+				printf("Another client disconnected from server.\n");
 			TriggerEvent(m_onPlayerDisconnected, packetIdentifier, packet->systemAddress);
 			break;
 
 
 		case ID_ALREADY_CONNECTED:
 			// Already connected to the server
+			if (NET_DEBUG)
+				printf("Client already connected to server.\n");
 			TriggerEvent(m_onFailedToConnect, packetIdentifier, packet->systemAddress);
 			break;
 		case ID_CONNECTION_BANNED: 
 			// Banned from the server
+			if (NET_DEBUG)
+				printf("Client banned from server.\n");
 			TriggerEvent(m_onFailedToConnect, packetIdentifier, packet->systemAddress);
 			break;
 		case ID_NO_FREE_INCOMING_CONNECTIONS:
 			// Server is full
+			if (NET_DEBUG)
+				printf("Server connecting to is full.\n");
 			TriggerEvent(m_onFailedToConnect, packetIdentifier, packet->systemAddress);
 			break;
 		case ID_CONNECTION_ATTEMPT_FAILED:
 			// Failed to send a connect request to the server
+			if (NET_DEBUG)
+				printf("Failed to connect to server.\n");
 			TriggerEvent(m_onFailedToConnect, packetIdentifier, packet->systemAddress);
 			break;
 		case ID_INVALID_PASSWORD:
 			// Incorrect password to the server
+			if (NET_DEBUG)
+				printf("Invalid password to server.\n");
 			TriggerEvent(m_onFailedToConnect, packetIdentifier, packet->systemAddress);
 			break;
 		case ID_INCOMPATIBLE_PROTOCOL_VERSION:
 			// Incompatible protocol version (IPV4/IPV6 ?)
+			if (NET_DEBUG)
+				printf("Incompatible protocol version (IPV4/IPV6).\n");
 			TriggerEvent(m_onFailedToConnect, packetIdentifier, packet->systemAddress);
 			break;
 
 
 		case ID_CONNECTED_PING:
 		case ID_UNCONNECTED_PING:
-			printf("Ping from %s\n", packet->systemAddress.ToString(true));
+			if (NET_DEBUG)
+				printf("Ping from %s.\n", packet->systemAddress.ToString(true));
 			break;
 		case ID_USER_PACKET:
 		{
+			if (NET_DEBUG)
+				printf("Recieved user message from server.\n");
+
 			PacketHandler::Packet* p = new PacketHandler::Packet();
-			printf("ID_USER_PACKET from %s\n", packet->systemAddress.ToString(true));
+			printf("ID_USER_PACKET from %s.\n", packet->systemAddress.ToString(true));
 			p->Data = new unsigned char[packet->length];
 			memcpy(p->Data, &packet->data[0], packet->length);
 
@@ -167,15 +212,24 @@ void Client::RecivePackets()
 
 void Client::SetOnConnectedToServer(NetEvent _function)
 {
+	if (NET_DEBUG)
+		printf("Hooking function to OnConnectedToServer.\n");
+
 	m_onConnectedToServer = _function;
 }
 
 void Client::SetOnDisconnectedFromServer(NetEvent _function)
 {
+	if (NET_DEBUG)
+		printf("Hooking function to OnDisconnectedFromServer.\n");
+
 	m_onDisconnectedFromServer = _function;
 }
 
 void Client::SetOnFailedToConnect(NetEvent _function)
 {
+	if (NET_DEBUG)
+		printf("Hooking function to OnFailedToConnect.\n");
+
 	m_onFailedToConnect = _function;
 }
