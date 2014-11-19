@@ -32,6 +32,7 @@ bool CheckValidMove(std::string moves)
 			return false;
 		}
 	}
+	return true;
 }
 
 struct CardAddInstruction
@@ -92,7 +93,7 @@ bool connected = false;
 std::vector<Player> players;
 std::vector<MovementCard> mcardDeck;
 std::vector<AbilityCard> acardDeck;
-std::vector<MovementCard> playedCards;
+MovementCard *playedCards;
 
 void OnConnect(unsigned char _token, NetConnection* _connection)
 {
@@ -239,7 +240,8 @@ void selectedcards(PacketHandler* _ph, NetConnection* _connection)
 			// add cards to playedCards
 			for (int j = 0; j < CardsToPlay; j++)
 			{
-				playedCards.push_back(players[i].movementCards[selectedcards[j]]);
+				playedCards[CardsToPlay*i + j] = players[i].movementCards[selectedcards[j]];
+				//playedCards.push_back(players[i].movementCards[selectedcards[j]]);
 			}			
 			// remove cards
 			for (int j = players[i].movementCards.size() - 1; j >= 0; j--)
@@ -364,7 +366,7 @@ void RunServer()
 	std::getline(std::cin, input);
 	system("cls");
 
-
+	playedCards = new MovementCard[CardsToPlay*NrOfPlayers];
 	while (true)
 	{
 
@@ -421,11 +423,11 @@ void RunServer()
 		}
 
 		// Shuffle back the cards
-		for (int i = 0; i < playedCards.size(); i++)
+		for (int i = 0; i < CardsToPlay * NrOfPlayers; i++)
 		{
 			mcardDeck.push_back(playedCards[i]);
 		}
-		playedCards.clear();
+		//playedCards.clear();
 
 
 		std::cout << "PRESS ENTER KEY TO START NEW ROUND\n";
@@ -433,6 +435,7 @@ void RunServer()
 		system("cls");
 	}
 
+	delete playedCards;
 
 	s->Stop();
 }
