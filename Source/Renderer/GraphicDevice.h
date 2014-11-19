@@ -3,11 +3,8 @@
 
 #define GLEW_STATIC
 
-#include <SDL/SDL.h>
-#include <GLEW/glew.h>
-#include <SDL/SDL_opengl.h>
-#include <string>
-#include <vector>
+#include "stdafx.h"
+#include "Shader.h"
 
 namespace Renderer
 {
@@ -35,12 +32,20 @@ namespace Renderer
 	private:
 		bool InitSDLWindow();
 		bool InitDeferred();
+		bool InitShaders();
+
 		
 		SDL_Window*		m_window;
 		SDL_GLContext	m_glContext;
 
 		// Window size
 		int	m_clientWidth, m_clientHeight;
+
+		// Image buffers
+		GLuint m_outputImage;
+
+		// Shaders
+		Shader m_debuggTextShader;
 	};
 }
 

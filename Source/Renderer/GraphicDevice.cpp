@@ -1,6 +1,5 @@
 #include "GraphicDevice.h"
-#include <iostream>
-#include <stdio.h>
+
 using namespace Renderer;
 
 GraphicDevice::GraphicDevice()
@@ -132,5 +131,11 @@ bool GraphicDevice::InitSDLWindow()
 
 bool GraphicDevice::InitDeferred()
 {
+	glGenTextures(1, &m_outputImage);
+	glBindTexture(GL_TEXTURE_2D, m_outputImage);
+	glTexStorage2D(GL_TEXTURE_2D, 8, GL_RGBA32F, m_clientWidth, m_clientHeight);
+
+	glBindImageTexture(0, m_outputImage, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
+
 	return true;
 }

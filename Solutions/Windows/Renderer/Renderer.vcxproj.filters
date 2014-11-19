@@ -10,9 +10,16 @@
     <ClInclude Include="..\..\..\Source\Renderer\GraphicDevice.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\Shader.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Renderer\Shader.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

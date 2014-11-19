@@ -20,9 +20,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Renderer\GraphicDevice.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\Shader.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp" />
+    <ClCompile Include="..\..\..\Source\Renderer\Shader.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A71BE4D1-612E-49FE-9B2D-EA067C024F0A}</ProjectGuid>
