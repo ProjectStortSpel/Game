@@ -201,3 +201,6 @@ UpgradeLog*.htm
 
 # Microsoft Fakes
 FakesAssemblies/
+
+# KDevelop 4 Files
+*.kdev4
