@@ -4,7 +4,7 @@
 #include <algorithm>
 #include "Network/Server.h"
 #include "Network/Client.h"
-
+#include "ECSL/ECSL.h"
 
 int CardsInHand = 8;
 int CardsToPlay = 5;
@@ -525,7 +525,6 @@ int main(int argc, char** argv)
 	printf("s for server, c for client\n");
 	std::getline(std::cin, input);
 	ClearConsole();
-
 	if (input == "s")
 	{
 		RunServer();
@@ -534,7 +533,6 @@ int main(int argc, char** argv)
 	{
 		RunClient();
 	}
-
 	SDL_Quit();
 	return 0;
 }
