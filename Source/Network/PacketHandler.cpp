@@ -156,7 +156,8 @@ char* PacketHandler::ReadString()
 
 	if (!IsOutOfBounds(m_packetReceive->Data, m_positionReceive + length, m_packetReceive->Length))
 	{
-		strcpy_s(var, length, (char*)m_positionReceive);
+		memcpy(var, (char*)m_positionReceive, length);
+		//strcpy_s(var, length, (char*)m_positionReceive);
 		m_positionReceive += length;
 	}
 	return var;

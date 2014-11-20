@@ -1,14 +1,25 @@
 #include <SDL/SDL.h>
-#include "Network/Server.h"
-#include "Network/Client.h"
 #include <iostream>
 #include <string>
+#include <algorithm>
+#include "Network/Server.h"
+#include "Network/Client.h"
+#include "ECSL/ECSL.h"
 
 int CardsInHand = 8;
 int CardsToPlay = 5;
 int waitforplayers;
 
 std::string myName = "";
+
+void ClearConsole()
+{
+#ifdef _WIN32
+	system("cls");
+#else
+	system("clear");
+#endif
+}
 
 bool CheckValidMove(std::string moves)
 {
@@ -81,7 +92,6 @@ struct Player
 };
 
 
-
 PacketHandler packetHandler;
 
 Server *s = NULL;
@@ -112,6 +122,12 @@ void OnPlayerConnect(unsigned char _token, NetConnection* _connection)
 	Player p;
 	p.connection = _connection;
 	players.push_back(p);
+
+	ClearConsole();
+	printf("Players connected: %i\n", players.size());
+	printf("Wait for all clients to connect before starting!\n");
+	printf("PRESS ENTER TO START!\n");
+
 }
 
 void OnPlayerDisconnect(unsigned char _token, NetConnection* _connection)
@@ -136,6 +152,7 @@ void setusername(PacketHandler* _ph, NetConnection* _connection)
 		if (players[i].connection == _connection)
 		{
 			players[i].name = _ph->ReadString();
+			printf("%s is ready!\n", players[i].name.c_str());
 			break;
 		}
 	}
@@ -146,7 +163,7 @@ void setusername(PacketHandler* _ph, NetConnection* _connection)
 void sendusername(PacketHandler* _ph, NetConnection* _connection)
 {
 	std::string input;
-	system("cls");
+	ClearConsole();
 	std::cout << "Enter your name\n";
 	std::getline(std::cin, input);
 
@@ -159,7 +176,7 @@ void sendusername(PacketHandler* _ph, NetConnection* _connection)
 	c->SendToServer(p);
 
 	myName = input;
-	system("cls");
+	ClearConsole();
 	std::cout << "Name: " << myName << "\n";
 	std::cout << "Wait for your next turn\n";
 }
@@ -176,7 +193,7 @@ void selectcards(PacketHandler* _ph, NetConnection* _connection)
 
 	// Welcome msg
 	std::string input;
-	system("cls");
+	ClearConsole();
 	std::cout << "Name: " << myName << "\n";
 	std::cout << "Your turn\n";
 	std::cout << "-------------------------\n";
@@ -214,7 +231,7 @@ void selectcards(PacketHandler* _ph, NetConnection* _connection)
 	delete[] cards;
 	c->SendToServer(p);
 
-	system("cls");
+	ClearConsole();
 	std::cout << "Name: " << myName << "\n";
 	std::cout << "Wait for your next turn\n";
 
@@ -255,6 +272,7 @@ void selectedcards(PacketHandler* _ph, NetConnection* _connection)
 					}
 				}
 			}
+			printf("%s is ready!\n", players[i].name.c_str());
 			break;
 		}
 	}
@@ -269,22 +287,24 @@ void RunServer()
 	packetHandler.AddNetMessageHook("setusername", &setusername);
 
 	PacketHandler::Packet p;
+	std::string input;
 
 	s = new Server();
 	s->SetOnPlayerConnected(&OnPlayerConnect);
 	s->SetOnPlayerDisconnected(&OnPlayerDisconnect);
 	s->Start();
 
+	printf("Players connected: 0\n");
 	printf("Wait for all clients to connect before starting!\n");
-	system("pause");
-	system("cls");
+	printf("PRESS ENTER TO START!\n");
+	std::getline(std::cin, input);
+	ClearConsole();
 
 	
 	
 
 	int NrOfPlayers = players.size();
 	int NrOfCards = 0;
-	std::string input;
 
 	
 
@@ -295,6 +315,7 @@ void RunServer()
 
 
 	//Get user names from players
+	printf("Waiting for usernames\n");
 	packetHandler.StartPack("sendusername");
 	p = packetHandler.EndPack();
 
@@ -334,7 +355,7 @@ void RunServer()
 	if (NrOfCards < CardsInHand * NrOfPlayers)
 	{
 		std::cout << "Too few cards in deck. (PROGRAM MIGHT CRASH)\n";
-		Sleep(1000);
+		NetSleep(1000);
 	}
 
 	// Generation priolist
@@ -356,6 +377,7 @@ void RunServer()
 	}
 
 	// Welcome msg
+	ClearConsole();
 	std::cout << "New round started!\n";
 	std::cout << "-------------------------\n";
 	std::cout << "Players:   \t" << NrOfPlayers << "\n";
@@ -364,12 +386,12 @@ void RunServer()
 	std::cout << "-------------------------\n";
 	std::cout << "PRESS ENTER KEY TO START\n";
 	std::getline(std::cin, input);
-	system("cls");
+	ClearConsole();
 
 	playedCards = new MovementCard[CardsToPlay*NrOfPlayers];
 	while (true)
 	{
-
+		std::cout << "Waiting for all players to select cards.\n";
 		// Deal cards
 		for (int i = 0; i < players.size(); i++)
 		{
@@ -381,9 +403,8 @@ void RunServer()
 			}
 			
 			// Send Cards to player
-
+			
 			packetHandler.StartPack("selectcards");
-
 			for (MovementCard card : players[i].movementCards)
 			{
 				packetHandler.WriteString(card.name.c_str());
@@ -403,7 +424,7 @@ void RunServer()
 				packetIn = s->GetPacket();
 			packetHandler.StartUnPack(packetIn);
 		}
-		system("cls");
+		ClearConsole();
 		
 
 		// Move turns
@@ -419,7 +440,7 @@ void RunServer()
 			std::cout << "-------------------------\n";
 			std::cout << "Move players and ENTER.\n";
 			std::getline(std::cin, input);
-			system("cls");
+			ClearConsole();
 		}
 
 		// Shuffle back the cards
@@ -432,7 +453,7 @@ void RunServer()
 
 		std::cout << "PRESS ENTER KEY TO START NEW ROUND\n";
 		std::getline(std::cin, input);
-		system("cls");
+		ClearConsole();
 	}
 
 	delete playedCards;
@@ -456,7 +477,7 @@ void RunClient()
 		input = "localhost";
 
 	c->SetRemoteAddress(input.c_str());
-	system("cls");
+	ClearConsole();
 
 	printf("Enter incoming port\n");
 	std::getline(std::cin, input);
@@ -465,8 +486,8 @@ void RunClient()
 		input = "5358";
 
 	c->SetIncomingPort(atoi(input.c_str()));
-	system("cls");
-
+	ClearConsole();
+	printf("Connecting...\n");
 
 	c->SetOnConnectedToServer(&OnConnect);
 	c->SetOnDisconnectedFromServer(&OnDisconnect);
@@ -475,6 +496,10 @@ void RunClient()
 
 	while (!connected)
 		NetSleep(30);
+
+	ClearConsole();
+	printf("Connected!\n");
+	printf("Waiting for the server to start the game.\n");
 
 	while (connected)
 	{
@@ -499,8 +524,7 @@ int main(int argc, char** argv)
 
 	printf("s for server, c for client\n");
 	std::getline(std::cin, input);
-	system("cls");
-
+	ClearConsole();
 	if (input == "s")
 	{
 		RunServer();
@@ -509,7 +533,6 @@ int main(int argc, char** argv)
 	{
 		RunClient();
 	}
-
 	SDL_Quit();
 	return 0;
 }

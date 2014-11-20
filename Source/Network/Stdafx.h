@@ -4,7 +4,7 @@
 #include <functional>
 #include <string>
 
-#define NET_DEBUG 1
+#define NET_DEBUG 0
 
 typedef std::string NetConnection;
 
