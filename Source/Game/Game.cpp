@@ -426,16 +426,51 @@ void RunServer()
 		}
 		ClearConsole();
 		
-
+		std::vector<MovementCard> prioList;
+		std::vector<std::string> nameList;
+		bool hest = false;
 		// Move turns
 		for (int i = 0; i < CardsToPlay; i++)
 		{
+			
+			prioList.clear();
+			nameList.clear();
+			prioList.push_back(playedCards[0 + i]);
+			nameList.push_back(players[0].name);
+			for (int j = 0; j < NrOfPlayers; ++j)
+			{
+				hest = false;
+				for (int q = 0; q < prioList.size(); ++q)
+				{
+					if (prioList[q].prio > playedCards[CardsToPlay * j + i].prio)
+					{
+						auto pos = prioList.begin() + q;
+						auto namePos = nameList.begin() + q;
+
+						prioList.insert(pos, playedCards[CardsToPlay * j + i]);
+						nameList.insert(namePos, players[j].name);
+						hest = true;
+						break;
+					}
+
+				}
+				if (!hest)
+				{
+					if (j == 0)
+						continue;
+
+					prioList.push_back(playedCards[CardsToPlay * j + i]);
+					nameList.push_back(players[j].name);
+				}
+			}
+
 			std::cout << "Turn " << (i + 1) << "\n";
 			std::cout << "-------------------------\n";
 			// Print moves
 			for (int j = 0; j < NrOfPlayers; j++)
 			{
-				std::cout << players[j].name << ": " << playedCards[CardsToPlay*j + i].name << "\t" << playedCards[CardsToPlay*j + i].prio << "\n";
+				std::cout << nameList[j] << ": " << prioList[j].name << "\t" << prioList[j].prio << "\n";
+				//std::cout << players[j].name << ": " << playedCards[CardsToPlay*j + i].name << "\t" << playedCards[CardsToPlay*j + i].prio << "\n";
 			}
 			std::cout << "-------------------------\n";
 			std::cout << "Move players and ENTER.\n";
