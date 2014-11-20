@@ -14,19 +14,25 @@
     <Filter Include="Source Files\Interfaces">
       <UniqueIdentifier>{f0d2f4ad-5717-49f4-b6cd-2affee133f36}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Framework\Parsing">
+      <UniqueIdentifier>{dbe5907f-aeeb-44d9-aaf5-be0810e92aef}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\Framework\Tables">
-      <UniqueIdentifier>{a0bfbc56-c395-4d52-8d88-e0f2970b507a}</UniqueIdentifier>
+      <UniqueIdentifier>{c0c78c29-a52e-47fc-878e-32b05a4b26a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Framework\Systems">
+      <UniqueIdentifier>{1718f556-baac-48d2-a990-87c0fcaf8d06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Framework\Common">
+      <UniqueIdentifier>{ae52517a-b386-46ab-a9cf-d2483e3c0d17}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\ECSL\ECSL.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\ECSL\Managers\ComponentManager.h">
-      <Filter>Source Files\Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Source\ECSL\Interfaces\System.h">
-      <Filter>Source Files\Interfaces</Filter>
+    <ClInclude Include="Parser\Parser.h">
+      <Filter>Source Files\Framework\Parsing</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\ECSL\Framework\World.h">
       <Filter>Source Files\Framework</Filter>
@@ -37,13 +43,34 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Tables\DataArray.h">
       <Filter>Source Files\Framework\Tables</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Interfaces\System.h">
+      <Filter>Source Files\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Managers\ComponentManager.h">
+      <Filter>Source Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Tables\DataManager.h">
+      <Filter>Source Files\Framework\Tables</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemManager.h">
+      <Filter>Source Files\Framework\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Tables\EntityTable.h">
+      <Filter>Source Files\Framework\Tables</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\WorldInitializer.h">
+      <Filter>Source Files\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemWorkGroup.h">
+      <Filter>Source Files\Framework\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Common\BitSet.h">
+      <Filter>Source Files\Framework\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Source\ECSL\Managers\ComponentManager.cpp">
-      <Filter>Source Files\Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Source\ECSL\Interfaces\System.cpp">
-      <Filter>Source Files\Interfaces</Filter>
+    <ClCompile Include="Parser\Parser.cpp">
+      <Filter>Source Files\Framework\Parsing</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\World.cpp">
       <Filter>Source Files\Framework</Filter>
@@ -53,6 +80,27 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Tables\DataArray.cpp">
       <Filter>Source Files\Framework\Tables</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Interfaces\System.cpp">
+      <Filter>Source Files\Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Managers\ComponentManager.cpp">
+      <Filter>Source Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Tables\DataManager.cpp">
+      <Filter>Source Files\Framework\Tables</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemManager.cpp">
+      <Filter>Source Files\Framework\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Tables\EntityTable.cpp">
+      <Filter>Source Files\Framework\Tables</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\WorldInitializer.cpp">
+      <Filter>Source Files\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemWorkGroup.cpp">
+      <Filter>Source Files\Framework\Systems</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
