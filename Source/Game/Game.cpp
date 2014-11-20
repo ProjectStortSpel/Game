@@ -272,7 +272,7 @@ void selectedcards(PacketHandler* _ph, NetConnection* _connection)
 					}
 				}
 			}
-			printf("%s is ready!\n", players[i].name);
+			printf("%s is ready!\n", players[i].name.c_str());
 			break;
 		}
 	}
