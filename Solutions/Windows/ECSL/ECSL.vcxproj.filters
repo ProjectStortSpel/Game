@@ -26,13 +26,13 @@
     <Filter Include="Source Files\Framework\Common">
       <UniqueIdentifier>{ae52517a-b386-46ab-a9cf-d2483e3c0d17}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Framework\Components">
+      <UniqueIdentifier>{a224b77d-3a02-4d99-936f-6a00ce155a6d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\ECSL\ECSL.h">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Parser\Parser.h">
-      <Filter>Source Files\Framework\Parsing</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\ECSL\Framework\World.h">
       <Filter>Source Files\Framework</Filter>
@@ -64,14 +64,17 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemWorkGroup.h">
       <Filter>Source Files\Framework\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\ECSL\Common\BitSet.h">
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\Parser.h">
+      <Filter>Source Files\Framework\Parsing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Common\BitSet.h">
       <Filter>Source Files\Framework\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\ComponentType.h">
+      <Filter>Source Files\Framework\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Parser\Parser.cpp">
-      <Filter>Source Files\Framework\Parsing</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\World.cpp">
       <Filter>Source Files\Framework</Filter>
     </ClCompile>
@@ -101,6 +104,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemWorkGroup.cpp">
       <Filter>Source Files\Framework\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\Parser.cpp">
+      <Filter>Source Files\Framework\Parsing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\ComponentType.cpp">
+      <Filter>Source Files\Framework\Components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

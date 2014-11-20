@@ -1,187 +1,180 @@
 #include "Client.h"
 #include <RakNet/MessageIdentifiers.h>
 
-
-
 Client::Client()
+	: BaseNetwork()
 {
-	m_client = RakNet::RakPeerInterface::GetInstance();
+	m_outgoingPort = 5357;
+	m_incomingPort = 5358;
+	m_remoteAddress = "127.0.0.1";
 }
-
-
 
 Client::~Client()
 {
-	/*PacketHandler packet;
-
-	packet.StartPack("hest");
-	packet.WriteByte('p');
-	packet.WriteFloat(0.5f);
-	packet.WriteInt(1337);
-	packet.WriteString("HEST HEST HEST2");
-	auto p = packet.EndPack();
-
-	packet.StartUnPack(p);
-	auto c = packet.ReadByte();
-	auto f = packet.ReadFloat();
-	auto i = packet.ReadInt();
-	auto s = packet.ReadString();
-	auto fel = packet.ReadFloat();*/
-
 }
 
+void Client::Connect(const char* _ipAddress, const char* _password, const int _port, const int _clientPort)
+{
+	m_remoteAddress = _ipAddress;
+	m_password = _password;
+	m_outgoingPort = _port;
+	m_incomingPort = _clientPort;
 
+	Connect();
+}
 void Client::Connect()
 {
-	m_client->AllowConnectionResponseIPMigration(false);
+	// Disallow connection responses from any IP.
+	// Usable when connecting to a server with multiple IP addresses.
+	m_rakInterface->AllowConnectionResponseIPMigration(false);
 
 	// Connecting the client is very simple.  0 means we don't care about
 	// a connectionValidationInteger, and false for low priority threads
-	RakNet::SocketDescriptor socketDescriptor(m_clientPort, 0);
+
+	// Describes the local socket used when connecting.
+	// socketFamily describes if we should use IPV4 or IPV6 (AF_INET is IPV4)
+	RakNet::SocketDescriptor socketDescriptor(m_incomingPort, 0);
 	socketDescriptor.socketFamily = AF_INET;
-	m_client->Startup(8, &socketDescriptor, 1);
-	m_client->SetOccasionalPing(true);
 
-	RakNet::ConnectionAttemptResult car = m_client->Connect(m_ipAddress.c_str(), m_port, m_password.c_str(), (int)strlen(m_password.c_str()));
-	
-	printf("\nMy IP addresses:\n");
-	unsigned int i;
-	for (i = 0; i < m_client->GetNumberOfAddresses(); i++)
+	// Starts the network thread
+	m_rakInterface->Startup(8, &socketDescriptor, 1);
+	// Send an occasional ping to the server to check for response
+	m_rakInterface->SetOccasionalPing(true);
+
+	// Connect to the server
+	RakNet::ConnectionAttemptResult car = m_rakInterface->Connect(m_remoteAddress.c_str(), m_outgoingPort, m_password.c_str(), (int)strlen(m_password.c_str()));
+	if (car == RakNet::CONNECTION_ATTEMPT_STARTED)
 	{
-		printf("%i. %s\n", i + 1, m_client->GetLocalIP(i));
+		// Start a new thread to listen to packets on
+		//m_thread = std::thread(&Client::Run, this);
+		//Run();
 	}
-
-	printf("My GUID is %s\n", m_client->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString());
-
-	m_thread = std::thread(&Client::Run, this);
-
+	else
+		printf("Unable to start connecting.\n");
 }
 
 void Client::Disconect()
 {
+	if (m_receiveThreadAlive)
+		StopListen();
+
+	m_rakInterface->Shutdown(300);
+	RakNet::RakPeerInterface::DestroyInstance(m_rakInterface);
 }
 
-void Client::Run()
+void Client::SendToServer(PacketHandler::Packet _packet)
 {
-	while (1)
-	{
-		RecivePackets();
-	}
+	m_rakInterface->Send((char*)_packet.Data, _packet.Length, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 }
 
-void Client::RecivePackets()
+void Client::ReceivePackets()
 {
 	RakNet::Packet* packet;
 	//m_server->DeallocatePacket(m_packet),
 	unsigned char packetIdentifier;
-	for (packet = m_client->Receive(); packet; packet = m_client->Receive())
+	for (packet = m_rakInterface->Receive(); packet; packet = m_rakInterface->Receive())
 	{
 		packetIdentifier = GetPacketIdentifier(packet);
 
 		switch (packetIdentifier)
 		{
-		case ID_DISCONNECTION_NOTIFICATION:
-			// Connection lost normally
-			printf("ID_DISCONNECTION_NOTIFICATION\n");
-			break;
-		case ID_ALREADY_CONNECTED:
-			// Connection lost normally
-			printf("ID_ALREADY_CONNECTED with guid %" PRINTF_64_BIT_MODIFIER "u\n", packet->guid);
-			break;
-		case ID_INCOMPATIBLE_PROTOCOL_VERSION:
-			printf("ID_INCOMPATIBLE_PROTOCOL_VERSION\n");
-			break;
-		case ID_REMOTE_DISCONNECTION_NOTIFICATION: // Server telling the clients of another client disconnecting gracefully.  You can manually broadcast this in a peer to peer enviroment if you want.
-			printf("ID_REMOTE_DISCONNECTION_NOTIFICATION\n");
-			break;
-		case ID_REMOTE_CONNECTION_LOST: // Server telling the clients of another client disconnecting forcefully.  You can manually broadcast this in a peer to peer enviroment if you want.
-			printf("ID_REMOTE_CONNECTION_LOST\n");
-			break;
-		case ID_REMOTE_NEW_INCOMING_CONNECTION: // Server telling the clients of another client connecting.  You can manually broadcast this in a peer to peer enviroment if you want.
-			printf("ID_REMOTE_NEW_INCOMING_CONNECTION\n");
-			break;
-		case ID_CONNECTION_BANNED: // Banned from this server
-			printf("We are banned from this server.\n");
-			break;
-		case ID_CONNECTION_ATTEMPT_FAILED:
-			printf("Connection attempt failed\n");
-			break;
-		case ID_NO_FREE_INCOMING_CONNECTIONS:
-			// Sorry, the server is full.  I don't do anything here but
-			// A real app should tell the user
-			printf("ID_NO_FREE_INCOMING_CONNECTIONS\n");
-			break;
-
-		case ID_INVALID_PASSWORD:
-			printf("ID_INVALID_PASSWORD\n");
-			break;
-
-		case ID_CONNECTION_LOST:
-			// Couldn't deliver a reliable packet - i.e. the other system was abnormally
-			// terminated
-			printf("ID_CONNECTION_LOST\n");
-			break;
-
 		case ID_CONNECTION_REQUEST_ACCEPTED:
 			// This tells the client they have connected
-			printf("ID_CONNECTION_REQUEST_ACCEPTED to %s with GUID %s\n", packet->systemAddress.ToString(true), packet->guid.ToString());
-			printf("My external address is %s\n", m_client->GetExternalID(packet->systemAddress).ToString(true));
+			TriggerEvent(m_onConnectedToServer, packetIdentifier);
 			break;
+
+
+		case ID_DISCONNECTION_NOTIFICATION:
+			// Disconnected from the server
+			TriggerEvent(m_onDisconnectedFromServer, packetIdentifier);
+			break;
+		case ID_CONNECTION_LOST:
+			// Lost connection to the server
+			TriggerEvent(m_onDisconnectedFromServer, packetIdentifier);
+			break;
+
+
+		case ID_REMOTE_NEW_INCOMING_CONNECTION: 
+			// Another user connected to the server
+			TriggerEvent(m_onPlayerConnected, packetIdentifier);
+			break;
+
+
+		case ID_REMOTE_CONNECTION_LOST:
+			// Another user lost connection to the server
+			TriggerEvent(m_onPlayerDisconnected, packetIdentifier);
+			break;
+		case ID_REMOTE_DISCONNECTION_NOTIFICATION:
+			// Another user disconnected from the server
+			TriggerEvent(m_onPlayerDisconnected, packetIdentifier);
+			break;
+
+
+		case ID_ALREADY_CONNECTED:
+			// Already connected to the server
+			TriggerEvent(m_onFailedToConnect, packetIdentifier);
+			break;
+		case ID_CONNECTION_BANNED: 
+			// Banned from the server
+			TriggerEvent(m_onFailedToConnect, packetIdentifier);
+			break;
+		case ID_NO_FREE_INCOMING_CONNECTIONS:
+			// Server is full
+			TriggerEvent(m_onFailedToConnect, packetIdentifier);
+			break;
+		case ID_CONNECTION_ATTEMPT_FAILED:
+			// Failed to send a connect request to the server
+			TriggerEvent(m_onFailedToConnect, packetIdentifier);
+			break;
+		case ID_INVALID_PASSWORD:
+			// Incorrect password to the server
+			TriggerEvent(m_onFailedToConnect, packetIdentifier);
+			break;
+		case ID_INCOMPATIBLE_PROTOCOL_VERSION:
+			// Incompatible protocol version (IPV4/IPV6 ?)
+			TriggerEvent(m_onFailedToConnect, packetIdentifier);
+			break;
+
+
 		case ID_CONNECTED_PING:
 		case ID_UNCONNECTED_PING:
 			printf("Ping from %s\n", packet->systemAddress.ToString(true));
 			break;
-		default:
+		case ID_USER_PACKET:
+		{
+			PacketHandler::Packet* p = new PacketHandler::Packet();
+			printf("ID_USER_PACKET from %s\n", packet->systemAddress.ToString(true));
+			p->Data = new unsigned char[packet->length];
+			memcpy(p->Data, &packet->data[0], packet->length);
+
+			p->Length = packet->length;
+			p->Sender = packet->systemAddress;
+
 			m_packetLock.lock();
-			m_packets.push(packet);
+			m_packets.push(p);
 			m_packetLock.unlock();
+
+			break;
+		}
+		default:
+			break;
 		}
 
-
+		m_rakInterface->DeallocatePacket(packet);
 	}
 }
 
-RakNet::Packet* Client::GetPacket()
+void Client::SetOnConnectedToServer(NetEvent _function)
 {
-	//RecivePackets();
-
-	RakNet::Packet* p = NULL;
-
-	if (!m_packets.empty())
-	{
-		RakNet::Packet* p = m_packets.front();
-		m_client->DeallocatePacket(m_packets.front());
-		m_packets.pop();
-	}
-
-	return p;
+	m_onConnectedToServer = _function;
 }
 
-void Client::SetOnUserConnect(std::function<void()> _function)
+void Client::SetOnDisconnectedFromServer(NetEvent _function)
 {
-	m_onUserConnect = _function;
+	m_onDisconnectedFromServer = _function;
 }
 
-void Client::SetOnUserDisconnect(std::function<void()> _function)
+void Client::SetOnFailedToConnect(NetEvent _function)
 {
-	m_onUserDisconnect = _function;
-}
-
-void Client::SetOnUserTimeOut(std::function<void()> _function)
-{
-	m_onUserTimeOut = _function;
-}
-
-unsigned char Client::GetPacketIdentifier(RakNet::Packet *p)
-{
-	if (p == 0)
-		return 255;
-
-	if ((unsigned char)p->data[0] == ID_TIMESTAMP)
-	{
-		RakAssert(p->length > sizeof(RakNet::MessageID) + sizeof(RakNet::Time));
-		return (unsigned char)p->data[sizeof(RakNet::MessageID) + sizeof(RakNet::Time)];
-	}
-	else
-		return (unsigned char)p->data[0];
+	m_onFailedToConnect = _function;
 }

@@ -19,8 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Source\ECSL\Common\BitSet.h" />
     <ClInclude Include="..\..\..\Source\ECSL\ECSL.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Common\BitSet.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\ComponentType.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\Parser.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemWorkGroup.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemManager.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Tables\DataArray.h" />
@@ -31,9 +33,10 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\WorldInitializer.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Interfaces\System.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Managers\ComponentManager.h" />
-    <ClInclude Include="Parser\Parser.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\ComponentType.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\Parser.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemWorkGroup.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemManager.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Tables\DataArray.cpp" />
@@ -44,7 +47,6 @@
     <ClCompile Include="..\..\..\Source\ECSL\Framework\WorldInitializer.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Interfaces\System.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Managers\ComponentManager.cpp" />
-    <ClCompile Include="Parser\Parser.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C497EBB7-2E55-4F88-AEBD-D2529AC9B8C0}</ProjectGuid>

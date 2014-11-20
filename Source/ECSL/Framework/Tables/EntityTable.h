@@ -5,10 +5,11 @@
 #include <string>
 
 #include "DataArray.h"
+#include "../Common/BitSet.h"
 
 namespace ECSL
 {
-	enum EntityState
+	enum DECLSPEC EntityState
 	{
 		Dead,
 		Alive

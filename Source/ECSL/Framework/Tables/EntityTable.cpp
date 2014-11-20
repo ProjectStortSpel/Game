@@ -1,7 +1,5 @@
 #include "EntityTable.h"
 
-#include "../../Common/BitSet.h"
-
 using namespace ECSL;
 
 EntityTable::EntityTable(unsigned int _entityCount, unsigned int _componentCount)
@@ -24,6 +22,7 @@ EntityTable::~EntityTable()
 bool EntityTable::EntityHasComponent(unsigned int _entityId, std::string _componentType)
 {
 	unsigned __int64* componentBitSet = (unsigned __int64*)(m_dataTable->GetData(_entityId) + 1);
+	return true;
 }
 
 bool EntityTable::EntityHasComponents(unsigned int _entityId, BitSet::DataType* _mandatoryMask, BitSet::DataType* _oneOfMask, BitSet::DataType* _exclusionMask)
@@ -32,7 +31,7 @@ bool EntityTable::EntityHasComponents(unsigned int _entityId, BitSet::DataType* 
 	unsigned __int64* componentBitSet = (unsigned __int64*)(m_dataTable->GetData(_entityId) + 1);
 
 	/* Checks every component filter (breaks if fails) */
-	for (int i = 0; i < m_componentIntCount; ++i)
+	for (unsigned int i = 0; i < m_componentIntCount; ++i)
 	{
 		/* Entity doesn't have atleast one of the must-have components */
 		if ( !( (_mandatoryMask[i] & componentBitSet[i]) == _mandatoryMask[i]) )
