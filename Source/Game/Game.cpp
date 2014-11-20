@@ -152,7 +152,7 @@ void setusername(PacketHandler* _ph, NetConnection* _connection)
 		if (players[i].connection == _connection)
 		{
 			players[i].name = _ph->ReadString();
-			printf("%s is ready!\n", players[i].name);
+			printf("%s is ready!\n", players[i].name.c_str());
 			break;
 		}
 	}
@@ -355,7 +355,7 @@ void RunServer()
 	if (NrOfCards < CardsInHand * NrOfPlayers)
 	{
 		std::cout << "Too few cards in deck. (PROGRAM MIGHT CRASH)\n";
-		Sleep(1000);
+		NetSleep(1000);
 	}
 
 	// Generation priolist
