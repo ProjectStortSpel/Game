@@ -16,8 +16,6 @@ class DECLSPEC BaseNetwork
 
 public:
 
-
-
 	BaseNetwork();
 	virtual ~BaseNetwork();
 
