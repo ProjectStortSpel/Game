@@ -29,6 +29,9 @@ void PacketHandler::StartPack(const char* _functionName)
 
 void PacketHandler::StartUnPack(Packet* _packet)
 {
+	if (!_packet)
+		return;
+
 	m_packetReceive = _packet;
 	m_positionReceive = m_packetReceive->Data;
 
