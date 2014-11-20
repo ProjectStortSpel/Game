@@ -114,7 +114,7 @@
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
-if not exist "$(OutDir)Content" mkdir $(OutDir)Content
+if not exist "$(OutDir)Content" mkdir "$(OutDir)Content"
 xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)Content" /d /y /s /e </Command>
       <Message>
       </Message>
@@ -139,7 +139,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)Content" /d /y /s /e </C
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
-if not exist "$(OutDir)Content" mkdir $(OutDir)Content
+if not exist "$(OutDir)Content" mkdir "$(OutDir)Content"
 xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)Content" /d /y /s /e </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -166,7 +166,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)Content" /d /y /s /e </C
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
-if not exist "$(OutDir)Content" mkdir $(OutDir)Content
+if not exist "$(OutDir)Content" mkdir "$(OutDir)Content"
 xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)Content" /d /y /s /e </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -193,7 +193,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)Content" /d /y /s /e </C
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
-if not exist "$(OutDir)Content" mkdir $(OutDir)Content
+if not exist "$(OutDir)Content" mkdir "$(OutDir)Content"
 xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)Content" /d /y /s /e </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
