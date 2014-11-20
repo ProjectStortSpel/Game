@@ -114,7 +114,7 @@ void Server::ReceivePackets()
 			// User connected to server
 		{
 			if (NET_DEBUG)
-				printf("New client connected.\n");
+				printf("New client connected from %s.\n", packet->systemAddress.ToString(true));
 
 			NetConnection c;
 			c = packet->systemAddress.ToString(true, ':');
@@ -163,7 +163,7 @@ void Server::ReceivePackets()
 		case ID_USER_PACKET:
 		{
 			if (NET_DEBUG)
-				printf("Recieved user message from \"%s\"", packet->systemAddress.ToString(true));
+				printf("Recieved user message from \"%s\"\n", packet->systemAddress.ToString(true));
 
 			PacketHandler::Packet* p = new PacketHandler::Packet();
 			p->Data = new unsigned char[packet->length];
@@ -185,5 +185,71 @@ void Server::ReceivePackets()
 		default:
 			break;
 		}
+	}
+}
+
+void Server::KickClient(NetConnection* _connection, const char* _reason)
+{
+	std::string address = *_connection;
+	if (m_addressMap.find(address) != m_addressMap.end())
+	{
+
+		if (NET_DEBUG)
+			printf("%s was kicked from the server. Reason: %s.\n", address.c_str(), _reason);
+
+		char* packet = new char[16];
+
+		packet[0] = ID_USER_PACKET;
+		packet[1] = 'K';
+		packet[2] = 'i';
+		packet[3] = 'c';
+		packet[4] = 'k';
+		packet[5] = 'C';
+		packet[6] = 'l';
+		packet[7] = 'i';
+		packet[8] = 'e';
+		packet[9] = 'n';
+		packet[10] = 't';
+		packet[11] = '\0';
+		packet[12] = '1';
+		packet[13] = '2';
+		packet[14] = '3';
+		packet[15] = '\0';
+
+		m_rakInterface->Send(packet, 16, HIGH_PRIORITY, RELIABLE_ORDERED, 0, m_addressMap[address], false);
+		m_rakInterface->CloseConnection(m_addressMap[address], true);
+	}
+	else
+	{
+		if (NET_DEBUG)
+			printf("%s is not connected the the server.\n", address.c_str());
+	}
+}
+
+void Server::BanClient(NetConnection* _connection, const char* _reason, unsigned int _milliseconds)
+{
+	std::string address = *_connection;
+
+	if (NET_DEBUG)
+		printf("%s added to the banlist for %i milliseconds.\n", address.c_str(), _milliseconds);
+
+	m_rakInterface->AddToBanList(address.c_str(), _milliseconds);
+}
+
+void Server::UnbanClient(NetConnection* _connection)
+{
+	std::string address = *_connection;
+
+	if (m_rakInterface->IsBanned(address.c_str()))
+	{
+		if (NET_DEBUG)
+			printf("%s was removed from the banlist.\n", address.c_str());
+
+		m_rakInterface->RemoveFromBanList(address.c_str());
+	}
+	else
+	{
+		if (NET_DEBUG)
+			printf("%s is not on the banlist.\n", address.c_str());
 	}
 }
