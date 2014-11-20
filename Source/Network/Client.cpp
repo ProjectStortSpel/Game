@@ -186,10 +186,9 @@ void Client::ReceivePackets()
 		case ID_USER_PACKET:
 		{
 			if (NET_DEBUG)
-				printf("Recieved user message from server.\n");
+				printf("Recieved \"ID_USER_PACKET\" from server %s.\n", packet->systemAddress.ToString(true));
 
 			PacketHandler::Packet* p = new PacketHandler::Packet();
-			printf("ID_USER_PACKET from %s.\n", packet->systemAddress.ToString(true));
 			p->Data = new unsigned char[packet->length];
 			memcpy(p->Data, &packet->data[0], packet->length);
 
