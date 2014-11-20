@@ -14,10 +14,10 @@ std::string myName = "";
 
 void ClearConsole()
 {
-#ifdef linux
-	system("clear");
-#else
+#ifdef WIN32
 	system("cls");
+#else
+	system("clear");
 #endif
 }
 
