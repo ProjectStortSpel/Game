@@ -1,8 +1,10 @@
 #include <SDL/SDL.h>
-#include "Network/Server.h"
-#include "Network/Client.h"
 #include <iostream>
 #include <string>
+#include <algorithm>
+#include "Network/Server.h"
+#include "Network/Client.h"
+
 
 int CardsInHand = 8;
 int CardsToPlay = 5;
