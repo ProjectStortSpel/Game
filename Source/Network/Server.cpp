@@ -153,7 +153,8 @@ void Server::ReceivePackets()
 			m_addressMap.erase(c);
 			
 			//m_connections.erase(std::remove(m_connections.begin(), m_connections.end(), c), m_connections.end());
-			m_connections.erase(std::find(m_connections.begin(), m_connections.end(), c));
+			
+			m_connections.erase(std::remove<std::vector<NetConnection>::const_iterator, NetConnection>(m_connections.begin(), m_connections.end(), c), m_connections.end());
 			TriggerEvent(m_onPlayerDisconnected, packetIdentifier, packet->systemAddress);
 			break;
 		}		
