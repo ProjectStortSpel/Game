@@ -90,7 +90,6 @@ struct Player
 };
 
 
-
 PacketHandler packetHandler;
 
 Server *s = NULL;
