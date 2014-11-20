@@ -132,7 +132,16 @@ void Server::ReceivePackets()
 			// User lost connection to server
 			if (NET_DEBUG)
 				printf("Client lost connection to server.\n");
-			TriggerEvent(m_onPlayerDisconnected, packetIdentifier, packet->systemAddress);
+			{
+				NetConnection c = m_connectionMap[packet->systemAddress];
+				m_connectionMap.erase(packet->systemAddress);
+				m_addressMap.erase(c);
+
+				//m_connections.erase(std::remove(m_connections.begin(), m_connections.end(), c), m_connections.end());
+				m_connections.erase(std::find(m_connections.begin(), m_connections.end(), c));
+				TriggerEvent(m_onPlayerDisconnected, packetIdentifier, packet->systemAddress);
+				break;
+			}
 			break;
 		case ID_DISCONNECTION_NOTIFICATION:
 			if (NET_DEBUG)
@@ -142,9 +151,9 @@ void Server::ReceivePackets()
 			NetConnection c = m_connectionMap[packet->systemAddress];
 			m_connectionMap.erase(packet->systemAddress);
 			m_addressMap.erase(c);
-
-			m_connections.erase(std::remove(m_connections.begin(), m_connections.end(), c), m_connections.end());
-
+			
+			//m_connections.erase(std::remove(m_connections.begin(), m_connections.end(), c), m_connections.end());
+			m_connections.erase(std::find(m_connections.begin(), m_connections.end(), c));
 			TriggerEvent(m_onPlayerDisconnected, packetIdentifier, packet->systemAddress);
 			break;
 		}		
