@@ -37,7 +37,7 @@ target_link_libraries(Game
 #		      Console
 		      ECSL
 		      Input
-#		      LuaEmbedder
+		      LuaEmbedder
 		      MPL
 		      Network
 		      Renderer)

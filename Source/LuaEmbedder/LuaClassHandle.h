@@ -2,6 +2,8 @@
 #define LUACLASSHANDLE_H
  
 #include <Lua/lua.hpp>
+#include <ostream>
+#include <assert.h>
 
 #define METHOD(class, function) {#function, &class::function}
 
@@ -11,7 +13,6 @@ template <typename T> class LuaClassHandle
 public:
   typedef int (T::*FunctionPointer)(lua_State* L);
   typedef struct { const char* name; FunctionPointer function; } Method;
-private:
   typedef struct { T* object; } Type;
   
 // Functions
@@ -83,6 +84,58 @@ public:
     // Remove method and event table from stack
     lua_pop(L, 2);
   }
+  
+  static int Push(lua_State* L, T* object, bool gc = false)
+  {
+    if (!object)
+    {
+      lua_pushnil(L);
+      return 0;
+    }
+    luaL_getmetatable(L, T::s_className);
+    assert(!lua_isnil(L, -1));
+    int methods = lua_gettop(L);
+    SubTable(L, methods, "userdata", "v");
+    void* userData = nullptr;
+    lua_pushlightuserdata(L, object);
+    lua_gettable(L, -2);
+    if (lua_isnil(L, -1))
+    {
+      lua_pop(L, 1);
+      lua_checkstack(L, 3);
+      userData = lua_newuserdata(L, sizeof(Type));
+      lua_pushlightuserdata(L, object);
+      lua_pushvalue(L, -2);
+      lua_settable(L, -4);
+    }
+    Type* type = static_cast<Type*>(userData);
+    if (type)
+    {
+      type->object = object;
+      lua_pushvalue(L, methods);
+      lua_setmetatable(L, -2);
+      if (!gc)
+      {
+	lua_checkstack(L, 3);
+	SubTable(L, methods, "no_gc", "k");
+	lua_pushvalue(L, -2);
+	lua_pushboolean(L, 1);
+	lua_settable(L, -3);
+	lua_pop(L, 1);
+      }
+    }
+    lua_replace(L, methods);
+    lua_settop(L, methods);
+    return methods;
+  }
+  
+  static T* Get(lua_State* L, int narg)
+  {
+    Type* type = static_cast<Type*>(luaL_checkudata(L, narg, T::className));
+    if (!type)
+      return nullptr;
+    return type->object;
+  }
  
 private:
   LuaClass() { }
@@ -105,19 +158,68 @@ private:
   
   static int ToString(lua_State* L)
   {
-    //lua_pushfstring()
-
-    return 0;
+    // Get object
+    Type* type = static_cast<Type*>(lua_touserdata(L, 1));
+    T* object = type->object;
+    // Create string
+    std::ostringstream oss;
+    oss << T::s_className << " (" << (void*)object << ")";
+    // Push string to stack
+    lua_pushstring(L, oss.str().c_str());
+    // Return number of parameters
+    return 1;
   }
 
   static int DeleteObject(lua_State* L)
   {
+    // Don't delete object if it has "no_gc"-metafield
+    if (luaL_getmetafield(L, 1, "no_gc"))
+    {
+      lua_pushvalue(L, 1);
+      lua_gettable(L, -2);
+      if (!lua_isnil(L, -1))
+	return 0;
+    }
+    // Get object
+    Type* type = static_cast<Type*>(lua_touserdata(L, 1));
+    T* object = type->object;
+    // Delete object
+    if (object)
+      delete object;
     return 0;
   }
 
   static int CreateObject(lua_State* L)
   {
-    return 0;
+    lua_remove(L, 1);
+    T* object = new T(L);
+    Push(L, object, true);
+    return 1;
+  }
+  
+  static void SubTable(lua_State* L, int table, const char* name, const char* mode)
+  {
+    lua_pushstring(L, name);
+    lua_gettable(L, table);
+    if (lua_isnil(L, -1))
+    {
+      lua_pop(L, 1);
+      lua_checkstack(L, 3);
+      WeakTable(L, mode);
+      lua_pushstring(L, name);
+      lua_pushvalue(L, -2);
+      lua_settable(L, table);
+    }
+  }
+  
+  static void WeakTable(lua_State* L, const char* mode)
+  {
+    lua_newtable(L);
+    lua_pushvalue(L, -1);
+    lua_setmetatable(L, -2);
+    lua_pushliteral(L, "__mode");
+    lua_pushstring(L, mode);
+    lua_settable(L, -3);
   }
 };
  
