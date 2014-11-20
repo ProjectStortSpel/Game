@@ -23,7 +23,6 @@ private:
 	int m_maxConnections;
 
 
-
 };
 
 #endif
