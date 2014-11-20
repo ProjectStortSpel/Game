@@ -14,7 +14,7 @@ std::string myName = "";
 
 void ClearConsole()
 {
-#ifdef WIN32
+#ifdef _WIN32
 	system("cls");
 #else
 	system("clear");
