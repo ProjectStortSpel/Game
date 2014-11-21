@@ -1,8 +1,6 @@
 #ifndef GRAPHICDEVICE_H
 #define GRAPHICDEVICE_H
 
-#define GLEW_STATIC
-
 #include "stdafx.h"
 #include "Shader.h"
 
