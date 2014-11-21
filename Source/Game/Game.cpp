@@ -6,6 +6,21 @@
 #include "Network/Client.h"
 #include "ECSL/ECSL.h"
 
+#ifdef _WIN32
+	#define _CRTDBG_MAP_ALLOC
+
+	#ifdef _DEBUG
+		#ifndef DBG_NEW
+			#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+			#define new DBG_NEW
+		#endif
+	#endif  // _DEBUG
+
+
+	#include <stdlib.h>
+	#include <crtdbg.h>
+#endif
+
 int CardsInHand = 8;
 int CardsToPlay = 5;
 int waitforplayers;
@@ -290,10 +305,14 @@ void RunServer()
 	std::string input;
 
 	s = new Server();
-	s->SetOnPlayerConnected(&OnPlayerConnect);
-	s->SetOnPlayerDisconnected(&OnPlayerDisconnect);
+	//s->SetOnPlayerConnected(&OnPlayerConnect);
+	//s->SetOnPlayerDisconnected(&OnPlayerDisconnect);
 	s->Start();
 
+	delete s;
+	s = 0;
+
+	return;
 	printf("Players connected: 0\n");
 	printf("Wait for all clients to connect before starting!\n");
 	printf("PRESS ENTER TO START!\n");
@@ -551,6 +570,8 @@ void RunClient()
 
 int main(int argc, char** argv)
 {
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
 	SDL_Init(SDL_INIT_EVERYTHING);
 
 	packetHandler.AddNetMessageHook("printstring", &printstring);
@@ -568,6 +589,11 @@ int main(int argc, char** argv)
 	{
 		RunClient();
 	}
+	else if (input == "q")
+	{
+	}
 	SDL_Quit();
+
+//	_CrtDumpMemoryLeaks();
 	return 0;
 }
