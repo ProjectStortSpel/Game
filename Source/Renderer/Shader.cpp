@@ -65,8 +65,8 @@ GLuint Shader::Init(ShaderInfo p_ShaderInfo[3])
 	{
 		if (p_ShaderInfo[i].type != GL_NONE)
 		{
-			printf_s(p_ShaderInfo[i].file);
-			printf_s("\n");
+			printf(p_ShaderInfo[i].file);
+			printf("\n");
 			CompileShader(p_ShaderInfo[i].file, p_ShaderInfo[i].type, shader[i]);
 		}
 	}
@@ -91,7 +91,7 @@ GLuint Shader::Init(ShaderInfo p_ShaderInfo[3])
 		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
 		GLchar* infoLog = (GLchar *)malloc(maxLength);
 		glGetProgramInfoLog(program, maxLength, NULL, infoLog);
-		printf_s("Shader InfoLog:\n%s\n\n", infoLog);
+		printf("Shader InfoLog:\n%s\n\n", infoLog);
 		return false;
 	};
 	printf("Created Shader Program %i\n", program);
@@ -120,8 +120,6 @@ bool Shader::CompileShader(const char* p_ShaderFile, GLenum& p_Type, GLuint& p_S
 
 	while (!fileStream.eof())
 	{
-		strcpy_s(line, "");
-
 		fileStream.getline(line, 256);
 		shaderString += line;
 		shaderString += "\n";
