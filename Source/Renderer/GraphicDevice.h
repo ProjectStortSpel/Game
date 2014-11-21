@@ -33,7 +33,7 @@ namespace Renderer
 		bool InitSDLWindow();
 		bool InitDeferred();
 		bool InitShaders();
-
+		bool InitBuffers();
 		
 		SDL_Window*		m_window;
 		SDL_GLContext	m_glContext;
@@ -46,6 +46,7 @@ namespace Renderer
 
 		// Shaders
 		Shader m_debuggTextShader;
+		Shader m_fullScreenShader;
 	};
 }
 

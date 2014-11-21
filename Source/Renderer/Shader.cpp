@@ -2,9 +2,9 @@
 
 using namespace Renderer;
 
-bool Shader::setUniVariable(const char* p_Name, VariableTyp p_Typ, void* p_Value)
+bool Shader::SetUniVariable(const char* p_Name, VariableTyp p_Typ, void* p_Value)
 {
-	GLint location = glGetUniformLocation(m_ShaderProg, p_Name);
+	GLint location = glGetUniformLocation(m_shaderProg, p_Name);
 
 	if (location != -1)
 	{
@@ -49,7 +49,7 @@ bool Shader::setUniVariable(const char* p_Name, VariableTyp p_Typ, void* p_Value
 	return false;
 }
 
-GLuint Shader::init(ShaderInfo p_ShaderInfo[3])
+GLuint Shader::Init(ShaderInfo p_ShaderInfo[3])
 {
 	GLuint shader[3];
 	GLuint program = glCreateProgram();
@@ -95,13 +95,13 @@ GLuint Shader::init(ShaderInfo p_ShaderInfo[3])
 		return false;
 	};
 	printf("Created Shader Program %i\n", program);
-	m_ShaderProg = program;
+	m_shaderProg = program;
 	return program;
 }
 
 GLuint Shader::GetShaderProgram()
 {
-	return m_ShaderProg;
+	return m_shaderProg;
 }
 
 bool Shader::CompileShader(const char* p_ShaderFile, GLenum& p_Type, GLuint& p_Shader)

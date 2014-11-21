@@ -26,16 +26,16 @@ namespace Renderer
 	class Shader
 	{
 	public:
-		bool    setUniVariable(const char* p_variableName, VariableTyp p_variableType, void* p_Value);
+		bool    SetUniVariable(const char* p_variableName, VariableTyp p_variableType, void* p_Value);
 
-		GLuint	init(ShaderInfo p_ShaderInfo[3]);
+		GLuint	Init(ShaderInfo p_ShaderInfo[3]);
 		GLuint  GetShaderProgram(void);
 
 	private:
 		bool CompileShader(const char* p_ShaderFile, GLenum& p_Type, GLuint& p_Shader);
 
 	private:
-		GLuint m_ShaderProg;
+		GLuint m_shaderProg;
 	};
 }
 #endif

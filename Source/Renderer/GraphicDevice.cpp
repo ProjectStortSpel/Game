@@ -19,6 +19,10 @@ void GraphicDevice::Init()
 	SDL_GL_SetSwapInterval(0);
 
 	if (!InitDeferred()) std::cout << "INIT DEFERRED FAILED!" << std::endl;
+
+	if (!InitShaders()) std::cout << "INIT SHADERS FAILED!" << std::endl;
+
+	if (!InitBuffers()) std::cout << "INIT BUFFERS FAILED!" << std::endl;
 }
 
 void GraphicDevice::PollEvent(SDL_Event _event)
@@ -81,6 +85,19 @@ void GraphicDevice::Render()
 	// FORWARD RENDER
 	// POST RENDER EFFECTS?
 	// GUI RENDER
+
+
+	// Use Debuggtext
+	glUseProgram(m_debuggTextShader.GetShaderProgram());
+	// Run program
+	glDispatchCompute(m_clientWidth * 0.0625, m_clientHeight * 0.0625, 1); // 1/16 = 0.0625
+
+	// Clear, select the rendering program and draw a full screen quad	
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glUseProgram(m_fullScreenShader.GetShaderProgram());
+	glDrawArrays(GL_POINTS, 0, 1);
+	// Swap in the new buffer
+	SDL_GL_SwapWindow(m_window);
 }
 
 void GraphicDevice::ResizeWindow(int _width, int _height)
@@ -131,6 +148,35 @@ bool GraphicDevice::InitSDLWindow()
 
 bool GraphicDevice::InitDeferred()
 {
+	return true;
+}
+
+bool GraphicDevice::InitShaders()
+{
+	// debuggtext Shader
+	ShaderInfo shaderInfo[] =
+	{
+		{ GL_COMPUTE_SHADER, "content/shaders/debuggText.glsl" },
+		{ GL_NONE, NULL },
+		{ GL_NONE, NULL }
+	};
+	m_debuggTextShader.Init(shaderInfo);
+
+	// Full Screen Quad Shader
+	ShaderInfo shaderInfo9[] =
+	{
+		{ GL_VERTEX_SHADER, "content/shaders/fullscreen.vs" },
+		{ GL_GEOMETRY_SHADER, "content/shaders/fullscreen.gs" },
+		{ GL_FRAGMENT_SHADER, "content/shaders/fullscreen.ps" }
+	};
+	m_fullScreenShader.Init(shaderInfo9);
+
+	return true;
+}
+
+bool GraphicDevice::InitBuffers()
+{
+	// OutputImageBuffer
 	glGenTextures(1, &m_outputImage);
 	glBindTexture(GL_TEXTURE_2D, m_outputImage);
 	glTexStorage2D(GL_TEXTURE_2D, 8, GL_RGBA32F, m_clientWidth, m_clientHeight);

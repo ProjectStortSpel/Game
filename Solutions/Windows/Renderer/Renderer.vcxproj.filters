@@ -5,6 +5,9 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{dc55a425-a7b0-4bd7-a8d7-f602be89ea62}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Renderer\GraphicDevice.h">
@@ -22,5 +25,19 @@
     <ClCompile Include="..\..\..\Source\Renderer\Shader.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\Externals\content\shaders\debuggText.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\fullscreen.gs">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\fullscreen.ps">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\fullscreen.vs">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
