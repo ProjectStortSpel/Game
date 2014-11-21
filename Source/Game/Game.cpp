@@ -292,6 +292,7 @@ void RunServer()
 	s = new Server();
 	s->SetOnPlayerConnected(&OnPlayerConnect);
 	s->SetOnPlayerDisconnected(&OnPlayerDisconnect);
+	s->SetOnPlayerTimedOut(&OnPlayerDisconnect);
 	s->Start();
 
 	printf("Players connected: 0\n");
@@ -526,6 +527,7 @@ void RunClient()
 
 	c->SetOnConnectedToServer(&OnConnect);
 	c->SetOnDisconnectedFromServer(&OnDisconnect);
+	c->SetOnTimedOutFromServer(&OnDisconnect);
 	c->Connect();
 	//c->StartListen();
 
