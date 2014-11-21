@@ -4,6 +4,9 @@ using namespace Renderer;
 
 bool Shader::SetUniVariable(const char* p_Name, VariableTyp p_Typ, void* p_Value)
 {
+	// FIXA PREFETCH MED STD MAP
+
+
 	GLint location = glGetUniformLocation(m_shaderProg, p_Name);
 
 	if (location != -1)
