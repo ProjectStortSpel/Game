@@ -52,7 +52,8 @@ elseif(UNIX)
   # Define external libraries
   file(GLOB EXTERNAL_UNIX_SHARED_LIBRARIES
        "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Linux/${UNIX_SYSTEM}/*.so"
-       "dl")
+       "dl"
+       "GL")
   set(EXTERNAL_UNIX_STATIC_SDL2MAIN_LIBRARY
       "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Linux/${UNIX_SYSTEM}/libSDL2main.a")
   set(EXTERNAL_UNIX_STATIC_LUA_LIBRARY
