@@ -268,3 +268,27 @@ void Server::UnbanClient(NetConnection* _connection)
 			printf("%s is not on the banlist.\n", address.c_str());
 	}
 }
+
+void Server::SetOnPlayerConnected(NetEvent _function)
+{
+	if (NET_DEBUG)
+		printf("Hooking function to OnPlayerConnected.\n");
+
+	m_onPlayerConnected = _function;
+}
+
+void Server::SetOnPlayerDisconnected(NetEvent _function)
+{
+	if (NET_DEBUG)
+		printf("Hooking function to OnPlayerDisconnected.\n");
+
+	m_onPlayerDisconnected = _function;
+}
+
+void Server::SetOnPlayerTimedOut(NetEvent _function)
+{
+	if (NET_DEBUG)
+		printf("Hooking function to OnPlayerTimedOut.\n");
+
+	m_onPlayerTimedOut = _function;
+}
