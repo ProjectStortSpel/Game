@@ -17,6 +17,7 @@ Server::~Server()
 
 void Server::Start()
 {
+
 	if (NET_DEBUG)
 	{
 		printf("Starting server:\n");
@@ -75,6 +76,7 @@ void Server::Stop()
 
 	m_rakInterface->Shutdown(300);
 	RakNet::RakPeerInterface::DestroyInstance(m_rakInterface);
+	m_rakInterface = 0;
 }
 
 void Server::Broadcast(PacketHandler::Packet _packet, NetConnection* _exclude)

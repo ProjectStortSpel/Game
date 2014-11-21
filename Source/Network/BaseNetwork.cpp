@@ -5,6 +5,8 @@
 BaseNetwork::BaseNetwork()
 	:m_receiveThreadAlive(false)
 {
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
 	m_rakInterface = RakNet::RakPeerInterface::GetInstance();
 	m_localAddress = m_rakInterface->GetLocalIP(0);
 	m_password = "localhest";
@@ -14,8 +16,14 @@ BaseNetwork::BaseNetwork()
 
 BaseNetwork::~BaseNetwork()
 {
-	m_rakInterface->Shutdown(300);
-	RakNet::RakPeerInterface::DestroyInstance(m_rakInterface);
+	if (m_rakInterface)
+	{
+		m_rakInterface->Shutdown(300);
+		RakNet::RakPeerInterface::DestroyInstance(m_rakInterface);
+		m_rakInterface = 0;
+	}
+
+	StopListen();
 }
 
 void BaseNetwork::StartListen()
@@ -31,10 +39,11 @@ void BaseNetwork::StopListen()
 {
 	if (NET_DEBUG)
 		printf("Trying to stop listen. Stopping thread.\n");
-
-	m_receiveThreadAlive = false;
-	m_thread.join();
-
+	if (m_receiveThreadAlive)
+	{
+		m_receiveThreadAlive = false;
+		m_thread.join();
+	}
 	if (NET_DEBUG)
 		printf("Thread stopped.\n");
 }

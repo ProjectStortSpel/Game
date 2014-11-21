@@ -17,7 +17,7 @@ class DECLSPEC BaseNetwork
 public:
 
 	BaseNetwork();
-	virtual ~BaseNetwork();
+	~BaseNetwork();
 
 	// Return the local address
 	const char* GetLocalAddress(void) { return m_localAddress.c_str(); }
@@ -58,7 +58,6 @@ protected:
 protected:
 
 #pragma warning( disable : 4251 )
-
 
 	std::vector<NetConnection> m_connections;
 	std::map<NetConnection, RakNet::SystemAddress> m_addressMap;
