@@ -34,6 +34,8 @@ namespace Renderer
 		bool InitDeferred();
 		bool InitShaders();
 		bool InitBuffers();
+
+		void LoadTexture(string file);
 		
 		SDL_Window*		m_window;
 		SDL_GLContext	m_glContext;
@@ -43,6 +45,7 @@ namespace Renderer
 
 		// Image buffers
 		GLuint m_outputImage;
+		GLuint m_debuggText;
 
 		// Shaders
 		Shader m_debuggTextShader;

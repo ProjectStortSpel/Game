@@ -2,28 +2,27 @@
 #extension GL_EXT_texture_array : enable
 #extension GL_NV_texture_array : enable
 
-struct PointLight
-{ 
-	vec4 Diffuse;
-};
-
-// Texture
-uniform sampler2D v_Texture;
+// UNIFORMS
+layout (local_size_x = 16, local_size_y = 16) in;
 
 // output 
 layout (rgba32f, binding = 0) uniform image2D output_image;
 
+
+struct charecter
+{ 
+	int id;
+};
+layout (std430, binding = 1) buffer DebuggString { charecter debuggtext []; };
+
 void main(void)
 {
-	// Sample from imagebuffers
-    //vec3 ray_d			= imageLoad(ray_dirbuffer, ivec2(gl_GlobalInvocationID.xy)).xyz;
-    //vec3 ray_o			= imageLoad(ray_posbuffer, ivec2(gl_GlobalInvocationID.xy)).xyz;
-    //vec4 d				= imageLoad(hitbuffer, ivec2(gl_GlobalInvocationID.xy)).xyzw;
-	//vec3 prev_color		= imageLoad(output_image, ivec2(gl_GlobalInvocationID.xy)).xyz;
+	
+	vec4 something = vec4(float(debuggtext[gl_GlobalInvocationID.x].id)*0.01);
 
 	imageStore(
 		output_image,
 		ivec2(gl_GlobalInvocationID.xy),
-		vec4(0.0, 0.0, 1.0, 0.0)
+		something
 	);
 }

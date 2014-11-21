@@ -1,5 +1,8 @@
 #include "GraphicDevice.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include <stbimage/stb_image.h>
+
 using namespace Renderer;
 
 GraphicDevice::GraphicDevice()
@@ -23,6 +26,10 @@ void GraphicDevice::Init()
 	if (!InitShaders()) std::cout << "INIT SHADERS FAILED!" << std::endl;
 
 	if (!InitBuffers()) std::cout << "INIT BUFFERS FAILED!" << std::endl;
+
+
+
+
 }
 
 void GraphicDevice::PollEvent(SDL_Event _event)
@@ -86,12 +93,15 @@ void GraphicDevice::Render()
 	// POST RENDER EFFECTS?
 	// GUI RENDER
 
-
+	// DEBUGG TEXT
+	//glBindTexture(GL_TEXTURE_2D, m_debuggText);
 	// Use Debuggtext
 	glUseProgram(m_debuggTextShader.GetShaderProgram());
 	// Run program
 	glDispatchCompute(m_clientWidth * 0.0625, m_clientHeight * 0.0625, 1); // 1/16 = 0.0625
 
+	// FULL SCREEN QUAD
+	glBindTexture(GL_TEXTURE_2D, m_outputImage);
 	// Clear, select the rendering program and draw a full screen quad	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(m_fullScreenShader.GetShaderProgram());
@@ -176,6 +186,8 @@ bool GraphicDevice::InitShaders()
 
 bool GraphicDevice::InitBuffers()
 {
+	
+
 	// OutputImageBuffer
 	glGenTextures(1, &m_outputImage);
 	glBindTexture(GL_TEXTURE_2D, m_outputImage);
@@ -183,5 +195,23 @@ bool GraphicDevice::InitBuffers()
 
 	glBindImageTexture(0, m_outputImage, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
 
+	// load img test kod
+
+
 	return true;
+}
+
+void GraphicDevice::LoadTexture(string file)
+{
+	int w;
+	int h;
+	int comp;
+	unsigned char* image = stbi_load(file.c_str(), &w, &h, &comp, STBI_rgb_alpha);
+
+	if (image == nullptr)
+		return;
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+
+	stbi_image_free(image);
 }

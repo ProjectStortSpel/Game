@@ -131,6 +131,11 @@
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
+if not exist "$(OutDir)Content" mkdir $(OutDir)Content
+xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)Content" /d /y /s /e </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -150,6 +155,11 @@
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
+if not exist "$(OutDir)Content" mkdir $(OutDir)Content
+xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)Content" /d /y /s /e </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -173,6 +183,11 @@
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
+if not exist "$(OutDir)Content" mkdir $(OutDir)Content
+xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)Content" /d /y /s /e </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -196,6 +211,11 @@
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
+if not exist "$(OutDir)Content" mkdir $(OutDir)Content
+xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)Content" /d /y /s /e </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
