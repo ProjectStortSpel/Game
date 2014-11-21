@@ -113,7 +113,7 @@ void Client::ReceivePackets()
 			// Lost connection to the server
 			if (NET_DEBUG)
 				printf("Client lost connection from server.\n");
-			TriggerEvent(m_onDisconnectedFromServer, packetIdentifier, packet->systemAddress);
+			TriggerEvent(m_onTimedOutFromServer, packetIdentifier, packet->systemAddress);
 			break;
 
 
@@ -121,7 +121,7 @@ void Client::ReceivePackets()
 			// Another user connected to the server
 			if (NET_DEBUG)
 				printf("Another client connected to server.\n");
-			TriggerEvent(m_onPlayerConnected, packetIdentifier, packet->systemAddress);
+			TriggerEvent(m_onRemotePlayerConnected, packetIdentifier, packet->systemAddress);
 			break;
 
 
@@ -129,13 +129,13 @@ void Client::ReceivePackets()
 			// Another user lost connection to the server
 			if (NET_DEBUG)
 				printf("Another client lost connection to server.\n");
-			TriggerEvent(m_onPlayerDisconnected, packetIdentifier, packet->systemAddress);
+			TriggerEvent(m_onRemotePlayerTimedOut, packetIdentifier, packet->systemAddress);
 			break;
 		case ID_REMOTE_DISCONNECTION_NOTIFICATION:
 			// Another user disconnected from the server
 			if (NET_DEBUG)
 				printf("Another client disconnected from server.\n");
-			TriggerEvent(m_onPlayerDisconnected, packetIdentifier, packet->systemAddress);
+			TriggerEvent(m_onRemotePlayerDisconnected, packetIdentifier, packet->systemAddress);
 			break;
 
 
@@ -224,10 +224,42 @@ void Client::SetOnDisconnectedFromServer(NetEvent _function)
 	m_onDisconnectedFromServer = _function;
 }
 
+void Client::SetOnTimedOutFromServer(NetEvent _function)
+{
+	if (NET_DEBUG)
+		printf("Hooking function to OnTimedOutFromServer.\n");
+
+	m_onTimedOutFromServer = _function;
+}
+
 void Client::SetOnFailedToConnect(NetEvent _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnFailedToConnect.\n");
 
 	m_onFailedToConnect = _function;
+}
+
+void Client::SetOnRemotePlayerConnected(NetEvent _function)
+{
+	if (NET_DEBUG)
+		printf("Hooking function to OnRemotePlayerConnected.\n");
+
+	m_onRemotePlayerConnected = _function;
+}
+
+void Client::SetOnRemotePlayerDisconnected(NetEvent _function)
+{
+	if (NET_DEBUG)
+		printf("Hooking function to OnRemotePlayerDisconnected.\n");
+
+	m_onRemotePlayerDisconnected = _function;
+}
+
+void Client::SetOnRemotePlayerTimedOut(NetEvent _function)
+{
+	if (NET_DEBUG)
+		printf("Hooking function to OnRemotePlayerTimedOut.\n");
+
+	m_onRemotePlayerTimedOut = _function;
 }

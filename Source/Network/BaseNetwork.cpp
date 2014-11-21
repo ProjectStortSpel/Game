@@ -61,22 +61,6 @@ PacketHandler::Packet* BaseNetwork::GetPacket()
 	return p;
 }
 
-void BaseNetwork::SetOnPlayerConnected(NetEvent _function)
-{
-	if (NET_DEBUG)
-		printf("Hooking function to OnPlayerConnected.\n");
-
-	m_onPlayerConnected = _function;
-}
-
-void BaseNetwork::SetOnPlayerDisconnected(NetEvent _function)
-{
-	if (NET_DEBUG)
-		printf("Hooking function to OnPlayerDisconnected.\n");
-
-	m_onPlayerDisconnected = _function;
-}
-
 unsigned char BaseNetwork::GetPacketIdentifier(RakNet::Packet *p)
 {
 	if (p == 0)

@@ -38,11 +38,6 @@ public:
 	// Set the server password
 	void SetServerPassword(const char* _password) { m_password = _password; }
 
-	// Bind function which will trigger when another player connects to the server
-	void SetOnPlayerConnected(NetEvent _function);
-	// Bind function which will trigger when another player disconnects from the server
-	void SetOnPlayerDisconnected(NetEvent _function);
-
 	// Start listen for packets.
 	// Will be called when Start() on the server, or Connect() on the client is called
 	void StartListen();
@@ -73,8 +68,7 @@ protected:
 	std::queue<PacketHandler::Packet*> m_packets;
 	std::mutex m_packetLock;
 
-	NetEvent m_onPlayerConnected;
-	NetEvent m_onPlayerDisconnected;
+
 
 #pragma warning( default : 4251 )
 

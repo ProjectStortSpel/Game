@@ -31,11 +31,28 @@ public:
 	// Unban a ip address from the server
 	void UnbanClient(NetConnection* _connection);
 
+
+	// Bind function which will trigger when another player connects to the server
+	void SetOnPlayerConnected(NetEvent _function);
+	// Bind function which will trigger when another player disconnects from the server
+	void SetOnPlayerDisconnected(NetEvent _function);
+
+	// Bind function which will trigger when another player disconnects from the server
+	void SetOnPlayerTimedOut(NetEvent _function);
+
 private:
 	void ReceivePackets(void);
 
 private:
+
+#pragma warning( disable : 4251 )
+
 	int m_maxConnections;
+	NetEvent m_onPlayerConnected;
+	NetEvent m_onPlayerDisconnected;
+	NetEvent m_onPlayerTimedOut;
+
+#pragma warning( default : 4251 )
 
 
 };
