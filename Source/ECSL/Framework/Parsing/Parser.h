@@ -10,39 +10,49 @@
 
 namespace ECSL
 {
+	/* Section = The part between { and } */
+	struct Section
+	{
+		std::string Name;
+		std::vector<std::vector<std::string>> Tokens;
+		std::vector<Section> SubSections;
+	};
+
 	class DECLSPEC Parser
 	{
 	public:
 		Parser();
 		~Parser();
 
-		void ParseFile(std::string _filename);
-		ComponentType* ParseFilea(std::string _filename);
+		std::vector<Section>* ParseFile(const std::string& _filePath);
 
 	private:
-		const char m_delimiter = '"';
+		struct Line
+		{
+			enum LineType { None, SectionStartBracket, SectionEndBracket, Token };
+
+			LineType Type;
+			int TokenSymbolCounter;
+
+			Line() : Type(None), TokenSymbolCounter(0) { }
+		};
+
+		enum SymbolType { Alphanumeric, Bracket, TokenDelimiter, EmptySpace, Invalid };
+
+		const char DELIMITER_SYMBOL = '"';
+		const char NEW_SECTION_SYMBOL = '{';
+		const char END_SECTION_SYMBOL = '}';
 
 		std::map<std::string, int>* m_byteConversion;
 
-		bool	ParseComponentName(ComponentType& _Component, std::vector<std::string>& _FileRows);
+		bool TokensToSections(std::vector<Section>& _sections, const std::vector<std::vector<std::string>>& _tokenizedLines);
 
-		bool	ParseSection(ComponentType& _Component, std::vector<std::string>& _FileRows, std::vector<std::string>& _SectionData);
-		bool	ParseComponentSettingsEntry(ComponentType& _Component, std::string _SettingsLine);
-		bool	ParseComponentDataEntry(ComponentType& _Component, std::string _SettingsLine);
-		int		StringToByteSize(std::string _String);
-
-		//Will check so the wrap for an element is correct.
-		//I.e. has a name and {} surrounding it.
-		bool	CheckWrapSyntax(std::vector<std::string>& _FileRows);
-
-		//Strips the string from the banned symbols in the map
-		std::string	StripString(std::string _text, std::map<char, bool>& _bannedSymbols);
-
-		//Will parse the name of a given string, removing " symbols
-		std::string ParseName(std::string _text);
-
-
-
+		bool ValidateSymbols(const std::string& _line);
+		bool ValidateTokenStructure(const std::vector<std::string>& _trimmedLine);
+		inline bool IsLineEmpty(const std::string& _line);
+		void TrimLine(std::string& _line);
+		void ConvertLinesToTokens(std::vector<std::vector<std::string>>& _tokenizedLines, const std::vector<std::string>& _trimmedLines);
+		inline SymbolType GetSymbolType(char _symbol);
 	};
 }
 
