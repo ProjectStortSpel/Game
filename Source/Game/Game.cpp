@@ -305,8 +305,9 @@ void RunServer()
 	std::string input;
 
 	s = new Server();
-	//s->SetOnPlayerConnected(&OnPlayerConnect);
-	//s->SetOnPlayerDisconnected(&OnPlayerDisconnect);
+	s->SetOnPlayerConnected(&OnPlayerConnect);
+	s->SetOnPlayerDisconnected(&OnPlayerDisconnect);
+	s->SetOnPlayerTimedOut(&OnPlayerDisconnect);
 	s->Start();
 
 	delete s;
@@ -545,6 +546,7 @@ void RunClient()
 
 	c->SetOnConnectedToServer(&OnConnect);
 	c->SetOnDisconnectedFromServer(&OnDisconnect);
+	c->SetOnTimedOutFromServer(&OnDisconnect);
 	c->Connect();
 	//c->StartListen();
 
@@ -593,7 +595,5 @@ int main(int argc, char** argv)
 	{
 	}
 	SDL_Quit();
-
-//	_CrtDumpMemoryLeaks();
 	return 0;
 }
