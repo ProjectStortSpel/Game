@@ -30,14 +30,5 @@
     <None Include="..\..\..\Externals\content\shaders\debuggText.glsl">
       <Filter>shaders</Filter>
     </None>
-    <None Include="..\..\..\Externals\content\shaders\fullscreen.gs">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\shaders\fullscreen.ps">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\shaders\fullscreen.vs">
-      <Filter>shaders</Filter>
-    </None>
   </ItemGroup>
 </Project>
