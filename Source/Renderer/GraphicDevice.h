@@ -18,7 +18,7 @@ namespace Renderer
 		GraphicDevice();
 		~GraphicDevice();
 
-		void Init();
+		bool Init();
 
 		void PollEvent(SDL_Event _event);
 		void Update(float _dt);
@@ -29,6 +29,7 @@ namespace Renderer
 
 	private:
 		bool InitSDLWindow();
+		bool InitGLEW();
 		bool InitDeferred();
 		bool InitShaders();
 		bool InitBuffers();

@@ -13,23 +13,15 @@ GraphicDevice::~GraphicDevice()
 {
 }
 
-void GraphicDevice::Init()
+bool GraphicDevice::Init()
 {
-	if (!InitSDLWindow()) std::cout << "INIT SDL WINDOW FAILED!" << std::endl;
-	m_glContext = SDL_GL_CreateContext(m_window);
+	if (!InitSDLWindow()) { ERRORMSG("INIT SDL WINDOW FAILED\n"); return false; }
+	if (!InitGLEW()) { ERRORMSG("GLEW_VERSION_4_3 FAILED\n"); return false; }
+	if (!InitDeferred()) { ERRORMSG("INIT DEFERRED FAILED\n"); return false; }
+	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
+	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 
-	glewInit();
-	SDL_GL_SetSwapInterval(0);
-
-	if (!InitDeferred()) std::cout << "INIT DEFERRED FAILED!" << std::endl;
-
-	if (!InitShaders()) std::cout << "INIT SHADERS FAILED!" << std::endl;
-
-	if (!InitBuffers()) std::cout << "INIT BUFFERS FAILED!" << std::endl;
-
-
-
-
+	return true;
 }
 
 void GraphicDevice::PollEvent(SDL_Event _event)
@@ -155,6 +147,22 @@ bool GraphicDevice::InitSDLWindow()
 	return true;
 }
 
+bool GraphicDevice::InitGLEW()
+{
+	m_glContext = SDL_GL_CreateContext(m_window);
+
+	if (glewInit() != 0) return false;
+
+#ifdef WIN32
+	if (!GLEW_VERSION_4_3) { return false; }
+#else
+	if (!glewIsSupported("GLEW_VERSION_4_3")) { return false; }
+#endif
+
+	SDL_GL_SetSwapInterval(0);
+	
+	return true;
+}
 
 bool GraphicDevice::InitDeferred()
 {
