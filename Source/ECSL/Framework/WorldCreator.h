@@ -1,5 +1,5 @@
-#ifndef WORLDINITIALIZER_H
-#define WORLDINITIALIZER_H
+#ifndef WORLDCREATOR_H
+#define WORLDCREATOR_H
 
 #include <SDL/SDL.h>
 #include <vector>
@@ -10,7 +10,7 @@
 namespace ECSL
 {
 	// Used for easier creation of a World object
-	class DECLSPEC WorldInitializer
+	class DECLSPEC WorldCreator
 	{
 	private:
 		bool m_worldInitialized;
@@ -18,8 +18,8 @@ namespace ECSL
 		std::vector<int>* m_componentTypeIds;
 
 	public:
-		WorldInitializer();
-		~WorldInitializer();
+		WorldCreator();
+		~WorldCreator();
 
 		template<typename ComponentType>
 		void AddComponentType();
@@ -40,19 +40,19 @@ namespace ECSL
 	};
 	
 	template<typename ComponentType>
-	void WorldInitializer::AddComponentType()
+	void WorldCreator::AddComponentType()
 	{
 		
 	}
 
 	template<typename SystemType>
-	void WorldInitializer::AddSystem()
+	void WorldCreator::AddSystem()
 	{
 		m_systemWorkGroups->push_back(new SystemGroup(new SystemType()));
 	}
 
 	template<typename SystemType>
-	void WorldInitializer::AddSystemToGroup()
+	void WorldCreator::AddSystemToGroup()
 	{
 		m_systemWorkGroups->at(m_systemWorkGroups->size() - 1)->AddSystem<SystemType>();
 	}

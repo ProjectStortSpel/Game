@@ -1,16 +1,16 @@
-#include "WorldInitializer.h"
+#include "WorldCreator.h"
 
 #include <assert.h>
 
 using namespace ECSL;
 
-WorldInitializer::WorldInitializer() : m_worldInitialized(false)
+WorldCreator::WorldCreator() : m_worldInitialized(false)
 {
 	m_systemWorkGroups = new std::vector<SystemWorkGroup*>();
 	m_componentTypeIds = new std::vector<int>();
 }
 
-WorldInitializer::~WorldInitializer()
+WorldCreator::~WorldCreator()
 {
 	if (!m_worldInitialized)
 	{
@@ -24,23 +24,23 @@ WorldInitializer::~WorldInitializer()
 	}
 }
 
-void WorldInitializer::AddComponentType(std::string _componentType)
+void WorldCreator::AddComponentType(std::string _componentType)
 {
-
+	assert(!m_worldInitialized);
 }
 
-void WorldInitializer::AddSystemGroup()
+void WorldCreator::AddSystemGroup()
 {
+	assert(!m_worldInitialized);
+
 	m_systemWorkGroups->push_back(new SystemWorkGroup());
 }
 
-World* WorldInitializer::InitializeWorld(unsigned int _entityCount)
+World* WorldCreator::InitializeWorld(unsigned int _entityCount)
 {
 	assert(!m_worldInitialized);
 
 	World* world = new World(_entityCount, m_systemWorkGroups, m_componentTypeIds);
-
 	m_worldInitialized = true;
-
 	return world;
 }

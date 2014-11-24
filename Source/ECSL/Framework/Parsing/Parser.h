@@ -6,38 +6,29 @@
 #include <vector>
 #include <map>
 
+#include "Section.h"
 #include "../Components/ComponentType.h"
 
 namespace ECSL
 {
-	/* Section = The part between { and } */
-	struct Section
-	{
-		std::string Name;
-		std::vector<std::vector<std::string>> Tokens;
-		std::vector<Section> SubSections;
-	};
-
 	class DECLSPEC Parser
 	{
 	public:
 		Parser();
 		~Parser();
 
-		std::vector<Section>* ParseFile(const std::string& _filePath);
+		Section* ParseFile(const std::string& _filePath);
 
 	private:
+		enum LineType { None, SectionStartBracket, SectionEndBracket, Token };
+		enum SymbolType { Alphanumeric, Bracket, TokenDelimiter, EmptySpace, Invalid };
 		struct Line
 		{
-			enum LineType { None, SectionStartBracket, SectionEndBracket, Token };
-
 			LineType Type;
 			int TokenSymbolCounter;
 
 			Line() : Type(None), TokenSymbolCounter(0) { }
 		};
-
-		enum SymbolType { Alphanumeric, Bracket, TokenDelimiter, EmptySpace, Invalid };
 
 		const char DELIMITER_SYMBOL = '"';
 		const char NEW_SECTION_SYMBOL = '{';
@@ -45,14 +36,21 @@ namespace ECSL
 
 		std::map<std::string, int>* m_byteConversion;
 
-		bool TokensToSections(std::vector<Section>& _sections, const std::vector<std::vector<std::string>>& _tokenizedLines);
-
 		bool ValidateSymbols(const std::string& _line);
-		bool ValidateTokenStructure(const std::vector<std::string>& _trimmedLine);
-		inline bool IsLineEmpty(const std::string& _line);
 		void TrimLine(std::string& _line);
+
+		bool ValidateTokenStructure(const std::vector<std::string>& _trimmedLine);
+		bool ValidateTokenLine();
 		void ConvertLinesToTokens(std::vector<std::vector<std::string>>& _tokenizedLines, const std::vector<std::string>& _trimmedLines);
+		
+		void ConvertTokensToSections(Section* _sectionTree, const std::vector<std::vector<std::string>>& _tokenizedLines);
+		inline LineType GetLineType(const std::vector<std::string>& _tokens);
+		inline void AddNewSection(Section* _currentSection);
+		inline void EndSection(Section* _currentSection);
+		inline void AddTokens(Section* _currentSection, const std::vector<std::string>& _tokens);
+
 		inline SymbolType GetSymbolType(char _symbol);
+		inline bool IsLineEmpty(const std::string& _line);
 	};
 }
 
