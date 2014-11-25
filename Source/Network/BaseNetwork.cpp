@@ -10,6 +10,7 @@ BaseNetwork::BaseNetwork()
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
+	ISocket::Initialize();
 	m_listenSocket = ISocket::CreateISocket(AF_INET, SOCK_STREAM, 0);
 	m_password = "localhest";
 	m_packets = std::queue<PacketHandler::Packet*>();
@@ -84,58 +85,8 @@ PacketHandler::Packet* BaseNetwork::GetPacket()
 //		return (unsigned char)p->data[0];
 //}
 
-void BaseNetwork::TriggerEvent(NetEvent _function, unsigned char _identifier)// , RakNet::SystemAddress _address)
+void BaseNetwork::TriggerEvent(NetEvent _function, NetConnection _connection)
 {
-
 	if (_function)
-	{
-	//	_function(_identifier, &m_connectionMap[_address]);
-	}
-	else if (NET_DEBUG)
-	{
-		printf("Event ");
-
-		switch (_identifier)
-		{
-			case ID_NEW_INCOMING_CONNECTION:
-				printf("\"ID_NEW_INCOMING_CONNECTION\" not bound\n");
-				break;
-			case ID_CONNECTION_LOST:
-				printf("\"ID_CONNECTION_LOST\" not bound\n");
-				break;
-			case ID_DISCONNECTION_NOTIFICATION:
-				printf("\"ID_DISCONNECTION_NOTIFICATION\" not bound\n");
-				break;
-			case ID_CONNECTION_REQUEST_ACCEPTED:
-				printf("\"ID_CONNECTION_REQUEST_ACCEPTED\" not bound\n");
-				break;
-			case ID_REMOTE_NEW_INCOMING_CONNECTION:
-				printf("\"ID_REMOTE_NEW_INCOMING_CONNECTION\" not bound\n");
-				break;
-			case ID_REMOTE_CONNECTION_LOST:
-				printf("\"ID_REMOTE_CONNECTION_LOST\" not bound\n");
-				break;
-			case ID_REMOTE_DISCONNECTION_NOTIFICATION:
-				printf("\"ID_REMOTE_DISCONNECTION_NOTIFICATION\" not bound\n");
-				break;
-			case ID_ALREADY_CONNECTED:
-				printf("\"ID_ALREADY_CONNECTED\" not bound\n");
-				break;
-			case ID_CONNECTION_BANNED:
-				printf("\"ID_CONNECTION_BANNED\" not bound\n");
-				break;
-			case ID_NO_FREE_INCOMING_CONNECTIONS:
-				printf("\"ID_NO_FREE_INCOMING_CONNECTIONS\" not bound\n");
-				break;
-			case ID_CONNECTION_ATTEMPT_FAILED:
-				printf("\"ID_CONNECTION_ATTEMPT_FAILED\" not bound\n");
-				break;
-			case ID_INVALID_PASSWORD:
-				printf("\"ID_INVALID_PASSWORD\" not bound\n");
-				break;
-			default:
-				printf("\"UNHANDLED EVENT\" not bound\n");
-				break;
-		}
-	}
+		_function(_connection);
 }

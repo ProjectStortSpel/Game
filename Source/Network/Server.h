@@ -54,7 +54,8 @@ private:
 	NetEvent m_onPlayerDisconnected;
 	NetEvent m_onPlayerTimedOut;
 
-	std::vector<ISocket*> m_connectedClients;
+	std::map<NetConnection, ISocket*> m_connectionClients;
+
 	std::thread m_newConnectionsThread;
 
 #pragma warning( default : 4251 )

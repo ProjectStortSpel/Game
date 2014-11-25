@@ -5,7 +5,7 @@
 Server::Server()
 	: BaseNetwork(), m_listenForConnectionsThreadAlive(false)
 {
-	m_incomingPort = 5357;
+	m_incomingPort = 5358;
 	m_maxConnections = 8;
 }
 
@@ -181,16 +181,18 @@ void Server::ReceivePackets()
 
 void Server::ListenForConnections()
 {
+	NetConnection netConnection;
+
 	while (m_listenForConnectionsThreadAlive)
 	{
-		ISocket* newConnection = m_listenSocket->Accept();
+
+		ISocket* newConnection = m_listenSocket->Accept(netConnection);
 		if (!newConnection)
 			continue;
 
-		if (m_connectedClients.size() < m_maxConnections)
-			m_connectedClients.emplace_back(newConnection);
-		else
-			printf("KILL CONNECTION!\n");
+		m_connectionClients[netConnection] = newConnection;
+
+		TriggerEvent(m_onPlayerConnected, netConnection);
 	}
 }
 

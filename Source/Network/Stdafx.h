@@ -13,8 +13,45 @@
 #define NET_DEBUG 0
 #define SAFE_DELETE(x) if (x) { delete x; x = 0; }
 
-typedef std::string NetConnection;
-typedef std::function<void(unsigned char, NetConnection*)> NetEvent;
+struct NetConnection
+{
+	std::string IpAddress;
+	unsigned short Port;
+
+/*
+	bool operator<(const NetConnection& a)
+	{
+		if (this->Port < a.Port)
+			return true;
+	*///}
+};
+
+inline bool operator< (const NetConnection& lhs, const NetConnection& rhs)
+{ 
+	if (lhs.Port < rhs.Port)
+		return true;
+	
+	else if (lhs.Port == rhs.Port)
+	{
+		if (lhs.IpAddress.size() < rhs.IpAddress.size())
+			return true;
+
+		else if (lhs.IpAddress.size() == rhs.IpAddress.size())
+		{
+			for (int i = 0; i < lhs.IpAddress.size(); ++i)
+			{
+				if (lhs.IpAddress[i] < rhs.IpAddress[i])
+				{
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
+typedef std::function<void(NetConnection)> NetEvent;
 
 
 #ifdef WIN32

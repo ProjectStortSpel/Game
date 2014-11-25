@@ -53,7 +53,7 @@ public:
 
 protected:
 	virtual void ReceivePackets(void) = 0;
-	void TriggerEvent(NetEvent _function, unsigned char _identifier);// , RakNet::SystemAddress _address);
+	void TriggerEvent(NetEvent _function, NetConnection _connection);
 
 protected:
 	std::vector<NetConnection> m_connections;
