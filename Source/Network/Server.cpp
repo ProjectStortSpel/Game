@@ -29,7 +29,7 @@ void Server::Start()
 		printf("Max connections: \"%i\"\n", m_maxConnections);
 	}
 
-	if (!m_listenSocket->Listen(SOMAXCONN))
+	if (!m_listenSocket->Listen(128))
 	{
 		printf("ERROR!\n");
 	}
