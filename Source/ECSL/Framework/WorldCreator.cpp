@@ -27,6 +27,10 @@ WorldCreator::~WorldCreator()
 void WorldCreator::AddComponentType(std::string _componentType)
 {
 	assert(!m_worldInitialized);
+
+	//ComponentManager::GetTableId(_componentType);
+
+	int a = 2;
 }
 
 void WorldCreator::AddSystemGroup()

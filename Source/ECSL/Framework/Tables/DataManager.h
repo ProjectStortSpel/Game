@@ -13,9 +13,9 @@ namespace ECSL
 	{
 	private:
 		unsigned int m_entityCount;
-		unsigned int m_componentCount;
 		EntityTable* m_entityTable;
-		std::vector<DataTable>* m_componentTables;
+		std::vector<DataTable*>* m_componentTables;
+		std::vector<int>* m_componentTypeIds;
 
 	public:
 		explicit DataManager(unsigned int _entityCount);
@@ -23,16 +23,8 @@ namespace ECSL
 
 		void InitializeTables();
 
-		template<typename ComponentType>
-		void AddComponentType();
-		void AddComponentType(std::string _componentType);
+		void AddComponentType(int _componentType);
 	};
-
-	template<typename ComponentType>
-	void DataManager::AddComponentType()
-	{
-		++m_componentCount;
-	}
 }
 
 #endif
