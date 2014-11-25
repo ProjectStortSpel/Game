@@ -1,8 +1,7 @@
-#ifndef GAMESERVER_H
-#define GAMESERVER_H
+#ifndef SERVERSTATE_H
+#define SERVERSTATE_H
 
 #include "Network/Server.h"
-#include "Game/GameShared.h"
 
 
 struct CardAddInstruction
@@ -13,6 +12,21 @@ struct CardAddInstruction
 	{
 		name = n;
 		nrOfCards = nr;
+	}
+};
+
+struct MovementCard
+{
+	std::string name;
+	float prio;
+	MovementCard()
+	{
+
+	}
+	MovementCard(std::string n, float p)
+	{
+		name = n;
+		prio = p;
 	}
 };
 
@@ -36,45 +50,37 @@ struct Player
 };
 
 
-class GameServer;
 
 class ServerState
 {
 protected:
 
-	GameServer* m_gameServer = NULL;
+	class GameServer* m_gameServer;
 
 public:
 	ServerState(GameServer* _gameServer);
 	~ServerState(void);
 
-	virtual void Update(){}
+	virtual void Update() = 0;
 
-	virtual void SelectedCards(PacketHandler* _ph, NetConnection* _connection){}
-	virtual void SetUsername(PacketHandler* _ph, NetConnection* _connection){}
+	virtual void SelectedCards(PacketHandler* _ph, NetConnection* _connection) = 0;
+	virtual void SetUserName(PacketHandler* _ph, NetConnection* _connection) = 0;
 
-	virtual void OnPlayerConnected(NetConnection* _connection){}
-	virtual void OnPlayerDisonnected(NetConnection* _connection){}
+	virtual void OnPlayerConnected(char _token, NetConnection* _connection) = 0;
+	virtual void OnPlayerDisonnected(char _token, NetConnection* _connection) = 0;
 };
 
 class GameServer
 {
 private:
-	ServerState* m_currentState = NULL;
+	ServerState* m_currentState;
 	PacketHandler m_packetHandler;
 
 	// Game items
 	std::vector<Player> m_players;
-	std::vector<MovementCard> m_mCardDeck;
-	std::vector<AbilityCard> m_aCardDeck;
-	MovementCard *m_playedCards = NULL;
-
-	Server* m_server = NULL;
-
-	int m_cardsInHand = 8;
-	int m_cardsToPlay = 5;
-
-
+	std::vector<MovementCard> m_mcardDeck;
+	std::vector<AbilityCard> m_acardDeck;
+	MovementCard *m_playedCards;
 
 public:
 
@@ -83,28 +89,15 @@ public:
 
 	void Update();
 
+	void SetState(std::string _state);
+
 	void SetState(ServerState* _state) { SAFE_DELETE(m_currentState); m_currentState = _state; }
 
-	void SelectedCards(PacketHandler* _ph, NetConnection* _connection) { if (m_currentState) m_currentState->SelectedCards(_ph, _connection); }
-	void SetUsername(PacketHandler* _ph, NetConnection* _connection) { if (m_currentState) m_currentState->SetUsername(_ph, _connection); }
+	void SelectedCards(PacketHandler* _ph, NetConnection* _connection) { m_currentState->SelectedCards(_ph, _connection); }
+	void SetUserName(PacketHandler* _ph, NetConnection* _connection) { m_currentState->SetUserName(_ph, _connection); }
 
-	void OnPlayerConnected(NetConnection* _connection) { if (m_currentState) m_currentState->OnPlayerConnected(_connection); }
-	void OnPlayerDisonnected(NetConnection* _connection) { if (m_currentState) m_currentState->OnPlayerDisonnected(_connection); }
-
-	Server* GetServer() { return m_server; }
-
-	std::vector<Player>* GetPlayers() { return &m_players; }
-
-	MovementCard* GetPlayedCards() { return m_playedCards; }
-
-	int GetCardsInHand() { return m_cardsInHand; }
-	int GetCardsToPlay() { return m_cardsToPlay; }
-
-	std::vector<MovementCard>* GetMovementCardDeck() { return &m_mCardDeck; };
-
-	PacketHandler* GetPacketHandler() { return &m_packetHandler; }
-
-	void ResetGame();
+	void OnPlayerConnected(char _token, NetConnection* _connection) { m_currentState->OnPlayerConnected(_token, _connection); }
+	void OnPlayerDisonnected(char _token, NetConnection* _connection) { m_currentState->OnPlayerDisonnected(_token, _connection); }
 
 };
 
@@ -113,8 +106,6 @@ public:
 class LobbyState : public ServerState
 {
 
-	void PrintState();
-
 public:
 
 	LobbyState(GameServer* _gameServer);
@@ -122,18 +113,17 @@ public:
 
 	void Update();
 
-	void SetUsername(PacketHandler* _ph, NetConnection* _connection);
+	void SelectedCards(PacketHandler* _ph, NetConnection* _connection);
+	void SetUserName(PacketHandler* _ph, NetConnection* _connection);
 
-	void OnPlayerConnected(NetConnection* _connection);
-	void OnPlayerDisonnected(NetConnection* _connection);
+	void OnPlayerConnected(char _token, NetConnection* _connection);
+	void OnPlayerDisonnected(char _token, NetConnection* _connection);
 
 
 };
 
 class DealState : public ServerState
 {
-private:
-	std::vector<NetConnection*> m_playersWaitingFor;
 
 public:
 
@@ -143,17 +133,16 @@ public:
 	void Update();
 
 	void SelectedCards(PacketHandler* _ph, NetConnection* _connection);
+	void SetUserName(PacketHandler* _ph, NetConnection* _connection);
 
-	void OnPlayerConnected(NetConnection* _connection);
-	void OnPlayerDisonnected(NetConnection* _connection);
+	void OnPlayerConnected(char _token, NetConnection* _connection);
+	void OnPlayerDisonnected(char _token, NetConnection* _connection);
 
 
 };
 
 class StepState : public ServerState
 {
-
-	int m_currentStep;
 
 public:
 
@@ -162,8 +151,11 @@ public:
 
 	void Update();
 
-	void OnPlayerConnected(NetConnection* _connection);
-	void OnPlayerDisonnected(NetConnection* _connection);
+	void SelectedCards(PacketHandler* _ph, NetConnection* _connection);
+	void SetUserName(PacketHandler* _ph, NetConnection* _connection);
+
+	void OnPlayerConnected(char _token, NetConnection* _connection);
+	void OnPlayerDisonnected(char _token, NetConnection* _connection);
 
 
 };

@@ -8,7 +8,7 @@
 
 typedef std::string NetConnection;
 
-typedef std::function<void(NetConnection*)> NetEvent;
+typedef std::function<void(unsigned char, NetConnection*)> NetEvent;
 
 #define SAFE_DELETE(x) if (x) { delete x; x = 0; }
 

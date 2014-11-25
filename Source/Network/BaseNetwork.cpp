@@ -91,7 +91,7 @@ void BaseNetwork::TriggerEvent(NetEvent _function, unsigned char _identifier, Ra
 
 
 	if (_function)
-		_function(&m_connectionMap[_address]);
+		_function(_identifier, &m_connectionMap[_address]);
 	else if (NET_DEBUG)
 	{
 		printf("Event ");

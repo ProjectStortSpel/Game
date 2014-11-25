@@ -199,14 +199,10 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)Content" /d /y /s /e </C
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\Game.cpp" />
-    <ClCompile Include="..\..\..\Source\Game\GameClient.cpp" />
     <ClCompile Include="..\..\..\Source\Game\GameServer.cpp" />
-    <ClCompile Include="..\..\..\Source\Game\GameShared.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Source\Game\GameClient.h" />
     <ClInclude Include="..\..\..\Source\Game\GameServer.h" />
-    <ClInclude Include="..\..\..\Source\Game\GameShared.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
