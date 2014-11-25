@@ -16,7 +16,7 @@ public:
 	bool Bind(void* _sockaddr, int* _addrlen);
 	ISocket* Accept(void* _sockaddr, int* _addrlen);
 	bool Listen(int _backlog);
-	int Recv(void* _buffer, int _length, int _flags),
+	int Recv(void* _buffer, int _length, int _flags);
 	int Send(void* _buffer, int _length, int _flags);
 
 };
