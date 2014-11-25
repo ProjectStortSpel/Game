@@ -4,6 +4,12 @@
 #include <functional>
 #include <string>
 
+#ifdef _WIN32
+#else
+	#include <unistd.h>
+#endif
+
+
 #define NET_DEBUG 0
 #define SAFE_DELETE(x) if (x) { delete x; x = 0; }
 
