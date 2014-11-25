@@ -310,10 +310,6 @@ void RunServer()
 	s->SetOnPlayerTimedOut(&OnPlayerDisconnect);
 	s->Start();
 
-	delete s;
-	s = 0;
-
-	return;
 	printf("Players connected: 0\n");
 	printf("Wait for all clients to connect before starting!\n");
 	printf("PRESS ENTER TO START!\n");
