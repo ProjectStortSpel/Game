@@ -1,3 +1,6 @@
+/*
+Author: Anders, Christian
+*/
 #ifndef GRAPHICDEVICE_H
 #define GRAPHICDEVICE_H
 
@@ -33,8 +36,9 @@ namespace Renderer
 		bool InitShaders();
 		bool InitBuffers();
 
-		void LoadTexture(string file);
-		
+		void CreateGBufTex(GLenum texUnit, GLenum format, GLuint &texid);
+		void CreateDepthTex(GLuint &texid);
+
 		SDL_Window*		m_window;
 		SDL_GLContext	m_glContext;
 
@@ -44,11 +48,15 @@ namespace Renderer
 		// Image buffers
 		GLuint m_outputImage;
 		GLuint m_debuggText;
+		GLuint m_depthBuf, m_normTex, m_colorTex;
+
+		// Frame buffer object
+		GLuint m_deferredFBO;
 
 		// Shaders
 		Shader m_debuggTextShader;
 		Shader m_fullScreenShader;
-
+		Shader m_deferredShader1, m_deferredShader2;
 		int debugtext[4608];
 		GLuint debugtextbuffer;
 	};

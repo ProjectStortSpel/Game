@@ -23,7 +23,7 @@ int main(int argc, char** argv)
 			INPUT.PollEvent(e);
 		}
 
-		if (INPUT.GetKeyboard()->GetKeyState(SDL_SCANCODE_SPACE) == Input::InputState::PRESSED)
+		if (INPUT.GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
 			lol = false;
 	}
 		
