@@ -39,7 +39,6 @@ namespace Renderer
 
 		bool    SetUniVariable(const char* p_variableName, VariableTyp p_variableType, void* p_Value);
 
-		GLuint	Init(ShaderInfo p_ShaderInfo[3]);
 		GLuint  GetShaderProgram(void);
 
 	private:
