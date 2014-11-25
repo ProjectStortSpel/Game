@@ -20,7 +20,10 @@
     <ClInclude Include="..\..\..\Source\Renderer\TextureLoader.h">
       <Filter>Source</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="..\..\..\Source\Renderer\DebugText.h" />
+=======
+>>>>>>> Standard deferred added
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp">
@@ -37,7 +40,6 @@
     <None Include="..\..\..\Externals\content\shaders\debuggText.glsl">
       <Filter>shaders</Filter>
     </None>
-<<<<<<< HEAD
     <None Include="..\..\..\Externals\content\shaders\fullscreen.ps">
       <Filter>shaders</Filter>
     </None>
@@ -59,10 +61,11 @@
     <None Include="..\..\..\Externals\content\shaders\FSDeferredPass1.glsl">
       <Filter>shaders</Filter>
     </None>
+<<<<<<< HEAD
     <None Include="..\..\..\Externals\content\shaders\SimpleText.glsl">
       <Filter>shaders</Filter>
     </None>
 =======
->>>>>>> stuff
+>>>>>>> Standard deferred added
   </ItemGroup>
 </Project>
