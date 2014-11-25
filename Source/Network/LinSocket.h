@@ -4,7 +4,6 @@
 #define LINSOCKET_H
 #include <sys/socket.h>
 
-#include <netinet/in.h>
 #include <arpa/inet.h> 
 
 #include "Network/ISocket.h"
