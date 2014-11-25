@@ -5,8 +5,14 @@
 
 #include "Network/ISocket.h"
 
-class LinSocket : public ISocket
+class DECLSPEC LinSocket : public ISocket
 {
+
+	int m_socket;
+
+	std::string m_remoteIP;
+	int m_remotePort;
+	int m_localPort;
 
 public:
 	LinSocket(int _domain, int _type, int _protocol);

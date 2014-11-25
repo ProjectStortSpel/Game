@@ -1,9 +1,11 @@
 #ifndef ISOCKET_H
 #define ISOCKET_H
 
+#include <SDL/SDL.h>
+
 #include "Network/Stdafx.h"
 
-class ISocket
+class DECLSPEC ISocket
 {
 
 public:
