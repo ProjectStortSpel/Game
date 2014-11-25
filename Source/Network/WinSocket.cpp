@@ -73,23 +73,44 @@ ISocket* WinSocket::Accept()
 { 
 	sockaddr incomingAddress;
 	int incomingAddressLength;
-	accept(m_socket, &incomingAddress, &incomingAddressLength);
+	SOCKET newSocket = INVALID_SOCKET;
+	newSocket = accept(m_socket, &incomingAddress, &incomingAddressLength);
 
-	return 0; 
+	if (newSocket == INVALID_SOCKET)
+	{
+		printf("accept failed: %d\n", WSAGetLastError());
+		return NULL;
+	}
+
+	WinSocket* sock = new WinSocket(newSocket);
+
+	return sock;
 }
 
 bool WinSocket::Listen(int _backlog)
 { 
-	return false; 
+	int result = listen(m_socket, SOMAXCONN);
+
+	if (result == SOCKET_ERROR)
+	{
+		printf("accept failed with error: %d\n", WSAGetLastError());
+		return false;
+	}
+	return true;
 }
 
-int WinSocket::Recv(void* _buffer, int _length, int _flags)
+int WinSocket::Recv(char* _buffer, int _length, int _flags)
 { 
-	return -1; 
+	return recv(m_socket, _buffer, _length, _flags);
 }
 
-int WinSocket::Send(void* _buffer, int _length, int _flags)
+int WinSocket::Send(char* _buffer, int _length, int _flags)
 { 
-	return -1; 
+	int result = send(m_socket, _buffer, _length, _flags);
+	if (result == SOCKET_ERROR) 
+	{
+		printf("send failed with error: %d\n", WSAGetLastError());
+	}
+	return result;
 }
 #endif

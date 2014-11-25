@@ -38,12 +38,12 @@ bool LinSocket::Listen(int _backlog)
 	return false;
 }
 
-int LinSocket::Recv(void* _buffer, int _length, int _flags)
+int LinSocket::Recv(char* _buffer, int _length, int _flags)
 {
 	return -1;
 }
 
-int LinSocket::Send(void* _buffer, int _length, int _flags)
+int LinSocket::Send(char* _buffer, int _length, int _flags)
 {
 	return -1;
 }

@@ -16,6 +16,7 @@ class WinSocket : public ISocket
 
 
 public:
+	WinSocket(SOCKET _socket) : m_socket(_socket) {}
 	WinSocket(int _domain, int _type, int _protocol);
 	~WinSocket();
 
@@ -25,8 +26,8 @@ public:
 	bool Bind(const int _port);
 	ISocket* Accept();
 	bool Listen(int _backlog);
-	int Recv(void* _buffer, int _length, int _flags);
-	int Send(void* _buffer, int _length, int _flags);
+	int Recv(char* _buffer, int _length, int _flags);
+	int Send(char* _buffer, int _length, int _flags);
 
 };
 
