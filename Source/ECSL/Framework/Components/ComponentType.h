@@ -2,11 +2,11 @@
 #define COMPONENTTYPE_H
 
 #include <SDL/SDL.h>
-#include <vector>
+#include <string>
 
 namespace ECSL
 {
-	class ComponentSetting
+	/*class ComponentSetting
 	{
 	private:
 		std::string	m_name;
@@ -53,6 +53,20 @@ namespace ECSL
 		inline const std::vector<ComponentSetting>& GetSettings() const		{ return *m_settings; }
 		inline const std::vector<ComponentVariable>& GetVariables() const	{ return *m_variables; }
 		inline const std::vector<std::string>& GetDebugStrings() const		{ return *m_debugStrings; }
+	};*/
+	enum DECLSPEC TableType
+	{
+		Array,
+		Map
+	};
+
+	class DECLSPEC ComponentTypeInterface
+	{
+	public:
+		virtual const int GetByteSize() const = 0;
+		virtual const int GetIndexFor(std::string _var) const = 0;
+		virtual const TableType GetTableType() const = 0;
+		virtual const int GetNumberOfRows() const = 0;
 	};
 }
 
