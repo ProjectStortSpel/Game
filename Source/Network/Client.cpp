@@ -77,10 +77,10 @@ void Client::Disconect()
 //		RakNet::RakPeerInterface::DestroyInstance(m_rakInterface);
 //		m_rakInterface = 0;
 //	}
-//}
+}
 //
-//void Client::SendToServer(PacketHandler::Packet _packet)
-//{
+void Client::SendToServer(PacketHandler::Packet _packet)
+{
 //	m_rakInterface->Send((char*)_packet.Data, _packet.Length, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 //
 //	if (NET_DEBUG)

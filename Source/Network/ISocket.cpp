@@ -16,7 +16,7 @@ static bool Initialize()
 }
 
 
-static ISocket* CreateISocket(int _domain, int _type, int _protocol)
+ISocket* ISocket::CreateISocket(int _domain, int _type, int _protocol)
 {
 #ifdef _WIN32
 	return new WinSocket(_domain, _type, _protocol);
