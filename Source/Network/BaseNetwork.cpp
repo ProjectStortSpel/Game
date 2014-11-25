@@ -6,7 +6,7 @@
 BaseNetwork::BaseNetwork()
 	:m_listenForPacketsThreadAlive(false)
 {
-#ifdef _WIN32
+#ifdef WIN32
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 

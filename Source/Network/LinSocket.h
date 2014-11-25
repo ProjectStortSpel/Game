@@ -1,4 +1,4 @@
-#ifndef _WIN32
+#ifndef WIN32
 
 #ifndef LINSOCKET_H
 #define LINSOCKET_H

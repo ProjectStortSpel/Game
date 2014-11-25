@@ -1,7 +1,7 @@
 #ifndef PROJEKTCLIENT_H
 #define PROJEKTCLIENT_H
 
-#ifdef _WIN32
+#ifdef WIN32
 	#include "Network/WinSocket.h"
 #else
 	#include "Network/LinSocket.h"

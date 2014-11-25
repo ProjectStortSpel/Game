@@ -10,7 +10,7 @@
 #include "Network/PacketHandler.h"
 #include "Network/ISocket.h"
 
-#ifdef _WIN32
+#ifdef WIN32
 	#include "Network/WinSocket.h"
 #else
 	#include "Network/LinSocket.h"

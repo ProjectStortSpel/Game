@@ -6,7 +6,7 @@
 #include "Network/Client.h"
 #include "ECSL/ECSL.h"
 
-#ifdef _WIN32
+#ifdef WIN32
 	#define _CRTDBG_MAP_ALLOC
 
 	#ifdef _DEBUG
@@ -29,7 +29,7 @@ std::string myName = "";
 
 void ClearConsole()
 {
-#ifdef _WIN32
+#ifdef WIN32
 	system("cls");
 #else
 	system("clear");
@@ -568,7 +568,7 @@ void RunClient()
 
 int main(int argc, char** argv)
 {
-#ifdef _WIN32
+#ifdef WIN32
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 

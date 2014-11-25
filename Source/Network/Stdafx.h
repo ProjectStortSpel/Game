@@ -4,7 +4,7 @@
 #include <functional>
 #include <string>
 
-#ifdef _WIN32
+#ifdef WIN32
 #else
 	#include <unistd.h>
 #endif
@@ -17,7 +17,7 @@ typedef std::string NetConnection;
 typedef std::function<void(unsigned char, NetConnection*)> NetEvent;
 
 
-#ifdef _WIN32
+#ifdef WIN32
 	#define NetSleep(x) Sleep(x);
 #else
 	#define NetSleep(x) usleep(30 * 1000);
@@ -25,7 +25,7 @@ typedef std::function<void(unsigned char, NetConnection*)> NetEvent;
 
 
 
-#ifdef _WIN32
+#ifdef WIN32
 	#define _CRTDBG_MAP_ALLOC
 
 	#ifdef _DEBUG

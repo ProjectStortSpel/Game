@@ -1,4 +1,4 @@
-#ifdef _WIN32
+#ifdef WIN32
 #ifndef WINSOCKET_H
 #define WINSOCKET_H
 #include <WinSock2.h>

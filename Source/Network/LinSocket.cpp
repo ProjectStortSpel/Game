@@ -1,4 +1,4 @@
-#ifndef _WIN32
+#ifndef WIN32
 
 #include "Network/LinSocket.h"
 
