@@ -6,6 +6,7 @@
 #include <stbimage/stb_image.h>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 class TextureLoader{
 public:
 =======
@@ -14,6 +15,10 @@ static class TextureLoader{
 public:
 
 >>>>>>> Standard deferred added
+=======
+class TextureLoader{
+public:
+>>>>>>> texLoader test
 static unsigned int LoadTexture(char* file, GLenum textureSlot)
 {
 	int width, height, channels;

@@ -5,14 +5,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stbimage/stb_image.h>
 
-<<<<<<< HEAD
 class TextureLoader{
 public:
-=======
-static class TextureLoader{
-
-public:
-
 >>>>>>> Standard deferred added
 static unsigned int LoadTexture(char* file, GLenum textureSlot)
 {
