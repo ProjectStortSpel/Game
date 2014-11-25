@@ -1,8 +1,5 @@
-/*
-Author: Anders, Christian
-*/
-#ifndef GRAPHICDEVICE_H
-#define GRAPHICDEVICE_H
+#ifndef DEBUGTEXT_H
+#define DEBUGTEXT_H
 
 #include "stdafx.h"
 #include "Shader.h"
@@ -11,14 +8,14 @@ namespace Renderer
 {
 	struct RenderComponent
 	{
-		
+		int letter;
 	};
 
-	class DECLSPEC GraphicDevice
+	class DebugText
 	{
 	public:
-		GraphicDevice();
-		~GraphicDevice();
+		DebugText();
+		~DebugText();
 
 		bool Init();
 
@@ -36,8 +33,7 @@ namespace Renderer
 		bool InitShaders();
 		bool InitBuffers();
 
-		void CreateGBufTex(GLenum texUnit, GLenum format, GLuint &texid);
-		void CreateDepthTex(GLuint &texid);
+		void LoadTexture(string file);
 
 		SDL_Window*		m_window;
 		SDL_GLContext	m_glContext;
@@ -46,19 +42,12 @@ namespace Renderer
 		int	m_clientWidth, m_clientHeight;
 
 		// Image buffers
-		GLuint m_outputImage, m_inputImage;
+		GLuint m_outputImage;
 		GLuint m_debuggText;
-		GLuint m_depthBuf, m_normTex, m_colorTex;
-
-		// Frame buffer object
-		GLuint m_deferredFBO;
 
 		// Shaders
 		Shader m_debuggTextShader;
 		Shader m_fullScreenShader;
-		Shader m_deferredShader1, m_deferredShader2;
-		int debugtext[4608];
-		GLuint debugtextbuffer;
 	};
 }
 
