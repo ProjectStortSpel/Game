@@ -46,10 +46,10 @@ public:
 
 	// Start listen for packets.
 	// Will be called when Start() on the server, or Connect() on the client is called
-	void StartListen();
+	void StartListenForPackets();
 	// Stop listen for packets
 	// Will be called when Stop() on the server, or Disconnect() on the client is called
-	void StopListen();
+	void StopListenForPackets();
 
 protected:
 	virtual void ReceivePackets(void) = 0;
@@ -65,16 +65,16 @@ protected:
 	std::string m_localAddress;
 	std::string m_password;
 	unsigned int m_incomingPort;
-	bool m_receiveThreadAlive;
+	bool m_listenForPacketsThreadAlive;
 
 	std::queue<PacketHandler::Packet*> m_packets;
 	std::mutex m_packetLock;
 
 private:
-	void Run(void);
+	void ListenForPackets(void);
 
 private:
-	std::thread m_thread;
+	std::thread m_receivePacketThread;
 };
 
 #endif

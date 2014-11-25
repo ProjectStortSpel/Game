@@ -42,15 +42,20 @@ public:
 
 private:
 	void ReceivePackets(void);
+	void ListenForConnections(void);
 
 private:
 
 #pragma warning( disable : 4251 )
 
+	bool m_listenForConnectionsThreadAlive;
 	int m_maxConnections;
 	NetEvent m_onPlayerConnected;
 	NetEvent m_onPlayerDisconnected;
 	NetEvent m_onPlayerTimedOut;
+
+	std::vector<ISocket*> m_connectedClients;
+	std::thread m_newConnectionsThread;
 
 #pragma warning( default : 4251 )
 

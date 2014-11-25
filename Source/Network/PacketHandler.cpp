@@ -1,5 +1,5 @@
 #include "PacketHandler.h"
-#include <RakNet/BitStream.h>
+#include "Network/NetTypeMessageID.h"
 
 PacketHandler::PacketHandler()
 	: m_packetSend(0), m_positionSend(0), m_positionReceive(0)

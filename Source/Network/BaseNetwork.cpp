@@ -4,7 +4,7 @@
 #include "Network/NetTypeMessageID.h"
 
 BaseNetwork::BaseNetwork()
-	:m_receiveThreadAlive(false)
+	:m_listenForPacketsThreadAlive(false)
 {
 #ifdef _WIN32
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -23,34 +23,34 @@ BaseNetwork::~BaseNetwork()
 		m_listenSocket = 0;
 	}
 
-	StopListen();
+	StopListenForPackets();
 }
 
-void BaseNetwork::StartListen()
+void BaseNetwork::StartListenForPackets()
 {
-	m_receiveThreadAlive = true;
-	m_thread = std::thread(&BaseNetwork::Run, this);
+	m_listenForPacketsThreadAlive = true;
+	m_receivePacketThread = std::thread(&BaseNetwork::ListenForPackets, this);
 
 	if (NET_DEBUG)
 		printf("Started listen on new thread.\n\n");
 }
 
-void BaseNetwork::StopListen()
+void BaseNetwork::StopListenForPackets()
 {
 	if (NET_DEBUG)
 		printf("Trying to stop listen. Stopping thread.\n");
-	if (m_receiveThreadAlive)
+	if (m_listenForPacketsThreadAlive)
 	{
-		m_receiveThreadAlive = false;
-		m_thread.join();
+		m_listenForPacketsThreadAlive = false;
+		m_receivePacketThread.join();
 	}
 	if (NET_DEBUG)
 		printf("Thread stopped.\n");
 }
 
-void BaseNetwork::Run()
+void BaseNetwork::ListenForPackets()
 {
-	while (m_receiveThreadAlive)
+	while (m_listenForPacketsThreadAlive)
 	{
 		NetSleep(30);
 		ReceivePackets();
