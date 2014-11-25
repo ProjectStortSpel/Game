@@ -4,16 +4,9 @@
 #include <string>
 #include <map>
 #include <SDL/SDL.h>
-#include <RakNet/MessageIdentifiers.h>
-#include <RakNet/RakNetTypes.h>
 #include "Network/Stdafx.h"
 
 #define MAX_PACKET_SIZE 65535	//max value for unsigned short 	
-
-enum MessageIDType
-{
-	ID_USER_PACKET = ID_USER_PACKET_ENUM
-};
 
 class DECLSPEC PacketHandler
 {

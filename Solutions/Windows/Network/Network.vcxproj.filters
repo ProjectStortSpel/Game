@@ -4,6 +4,9 @@
     <Filter Include="Source">
       <UniqueIdentifier>{f3d297a7-9b7c-48c3-b710-2ec77831b7a8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\New">
+      <UniqueIdentifier>{1d535fb6-3605-4024-93fb-555102fe51d9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Network\Server.cpp">
@@ -19,10 +22,14 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Network\ISocket.cpp">
-      <Filter>Source</Filter>
+      <Filter>Source\New</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\Network\LinSocket.cpp" />
-    <ClCompile Include="..\..\..\Source\Network\WinSocket.cpp" />
+    <ClCompile Include="..\..\..\Source\Network\LinSocket.cpp">
+      <Filter>Source\New</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Network\WinSocket.cpp">
+      <Filter>Source\New</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Network\Server.h">
@@ -41,9 +48,13 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Network\ISocket.h">
-      <Filter>Source</Filter>
+      <Filter>Source\New</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\Network\WinSocket.h" />
-    <ClInclude Include="..\..\..\Source\Network\LinSocket.h" />
+    <ClInclude Include="..\..\..\Source\Network\WinSocket.h">
+      <Filter>Source\New</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Network\LinSocket.h">
+      <Filter>Source\New</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

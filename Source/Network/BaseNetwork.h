@@ -5,10 +5,10 @@
 #include <queue>
 #include <mutex>
 #include <thread>
-#include <RakNet/RakPeerInterface.h>
 
-#include "Network/PacketHandler.h"
 #include "Network/Stdafx.h"
+#include "Network/PacketHandler.h"
+#include "Network/ISocket.h"
 
 class DECLSPEC BaseNetwork
 {
@@ -16,8 +16,7 @@ class DECLSPEC BaseNetwork
 
 public:
 
-	BaseNetwork();
-	~BaseNetwork();
+	virtual ~BaseNetwork();
 
 	// Return the local address
 	const char* GetLocalAddress(void) { return m_localAddress.c_str(); }
@@ -27,7 +26,7 @@ public:
 	// This is the port the client will connect WITH
 	// and the port the server will allow clients to connect to
 	const int	GetIncomingPort(void) { return m_incomingPort; }
-	
+
 	// Will return a packet if any packet has been received
 	PacketHandler::Packet* GetPacket();
 
@@ -47,41 +46,24 @@ public:
 
 protected:
 	virtual void ReceivePackets(void) = 0;
-	unsigned char GetPacketIdentifier(RakNet::Packet *p);
-	void TriggerEvent(NetEvent _function, unsigned char _identifier, RakNet::SystemAddress _address);
+	void TriggerEvent(NetEvent _function, unsigned char _identifier);// , RakNet::SystemAddress _address);
 
 protected:
-
-#pragma warning( disable : 4251 )
-
 	std::vector<NetConnection> m_connections;
-	std::map<NetConnection, RakNet::SystemAddress> m_addressMap;
-	std::map<RakNet::SystemAddress, NetConnection> m_connectionMap;
+	//std::map<NetConnection, RakNet::SystemAddress> m_addressMap;
+	//std::map<RakNet::SystemAddress, NetConnection> m_connectionMap;
+
+	ISocket* m_listenSocket;
 
 	std::string m_localAddress;
 	std::string m_password;
 	unsigned int m_incomingPort;
 	bool m_receiveThreadAlive;
 
-	RakNet::RakPeerInterface* m_rakInterface;
 	std::queue<PacketHandler::Packet*> m_packets;
 	std::mutex m_packetLock;
 
-
-
-#pragma warning( default : 4251 )
-
 private:
-	void Run(void);
-
-private:
-
-#pragma warning( disable : 4251 )
-
-	std::thread m_thread;
-
-#pragma warning( default : 4251 )
-
 };
 
 #endif
