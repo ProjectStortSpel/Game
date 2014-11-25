@@ -22,8 +22,7 @@ if(WIN32)
       imm32
       winmm
       "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Windows/${WINDOWS_SYSTEM}/SDL2.lib"
-      debug "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Windows/${WINDOWS_SYSTEM}/RakNet_${WINDOWS_SYSTEM}d.lib"
-      optimized "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Windows/${WINDOWS_SYSTEM}/RakNet_${WINDOWS_SYSTEM}.lib")
+	  ws2_32)
   set(EXTERNAL_WINDOWS_STATIC_SDL2MAIN_LIBRARY
       "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Windows/${WINDOWS_SYSTEM}/SDL2main.lib")
   set(EXTERNAL_WINDOWS_STATIC_LUA52_LIBRARY
