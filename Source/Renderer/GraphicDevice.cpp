@@ -291,9 +291,9 @@ void GraphicDevice::Render()
 	//----------------------------------------------------------------------------------------
 
 	glm::mat4 viewMatrix = glm::lookAt(
-		vec3(0.0, 0.5, 4.0),//*m_cam->Get_pos(), // the position of your camera, in world space
+		vec3(0.0, 0.5, 4.0),	//*m_cam->Get_pos(), // the position of your camera, in world space
 		vec3(0.0, 0.0, 0.0),   // where you want to look at, in world space
-		vec3(0.0, 1.0, 0.0)        // probably glm::vec3(0,1,0), but (0,-1,0) would make you looking upside-down, which can be great too
+		vec3(0.0, 1.0, 0.0)		 // probably glm::vec3(0,1,0), but (0,-1,0) would make you looking upside-down, which can be great too
 		);
 
 	//Render scene
@@ -356,21 +356,24 @@ void GraphicDevice::Render()
 	//glBindTexture(GL_TEXTURE_2D, m_debuggText);
 	// Use Debuggtext
 	
-	/*
+	
 	m_debuggTextShader.UseProgram();
 	// Run program
-	glDispatchCompute(m_clientWidth * 0.0625, m_clientHeight * 0.0625, 1); // 1/16 = 0.0625
-
-	// FULL SCREEN QUAD
+	glActiveTexture(GL_TEXTURE9);
+	glBindTexture(GL_TEXTURE_2D, m_colorTex);
 	glActiveTexture(GL_TEXTURE10);
 	glBindTexture(GL_TEXTURE_2D, m_outputImage);
-	// Clear, select the rendering program and draw a full screen quad	
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glDispatchCompute(m_clientWidth * 0.0625, m_clientHeight * 0.0625, 1); // 1/16 = 0.0625
 
+	//glUseProgram(0);
+
+	////// FULL SCREEN QUAD
 	m_fullScreenShader.UseProgram();
+	glActiveTexture(GL_TEXTURE10);
+	// Clear, select the rendering program and draw a full screen quad	
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glDrawArrays(GL_POINTS, 0, 1);
-	*/
-
+	
 	// Swap in the new buffer
 	SDL_GL_SwapWindow(m_window);
 }
@@ -520,18 +523,30 @@ bool GraphicDevice::InitBuffers()
 	int location;
 
 	m_debuggTextShader.UseProgram();
-	glActiveTexture(GL_TEXTURE10);
-	// OutputImageBuffer
+	// Input ImageBuffer
+	
+	//glGenTextures(1, &m_inputImage);
+	glActiveTexture(GL_TEXTURE9);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, m_colorTex);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, m_clientWidth, m_clientHeight);
+	glBindImageTexture(0, m_colorTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
+
+	// Output ImageBuffer
 	glGenTextures(1, &m_outputImage);
+	glActiveTexture(GL_TEXTURE10);
+	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, m_outputImage);
-	glTexStorage2D(GL_TEXTURE_2D, 8, GL_RGBA32F, m_clientWidth, m_clientHeight);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, m_clientWidth, m_clientHeight);
 
-	glBindImageTexture(0, m_outputImage, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
+	glBindImageTexture(1, m_outputImage, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
 
-	location = glGetUniformLocation(m_debuggTextShader.GetShaderProgram(), "output_image");
+	m_fullScreenShader.UseProgram();
+	glActiveTexture(GL_TEXTURE10);
+	glEnable(GL_TEXTURE_2D);
+	location = glGetUniformLocation(m_fullScreenShader.GetShaderProgram(), "output_image");
 	glUniform1i(location, 10);
 	//glBindTexture(GL_TEXTURE_2D, 0);
-
 
 	m_deferredShader2.UseProgram();
 	CreateDrawQuad();
