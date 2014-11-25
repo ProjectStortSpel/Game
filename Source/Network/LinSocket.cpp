@@ -35,7 +35,7 @@ bool LinSocket::Connect(const char* _ip, const int _port)
 		return false;
 	} 
 
-	if( connect(sockfd, (struct sockaddr *)&address, sizeof(address)) < 0)
+	if( connect(m_socket, (struct sockaddr *)&address, sizeof(address)) < 0)
 	{
 		printf("\n Error : Connect Failed \n");
 		return false;
@@ -50,7 +50,7 @@ bool LinSocket::Bind(const int _port)
 	address.sin_port = htons(_port);
 	address.sin_addr.s_addr = INADDR_ANY;
 
-	if (bind(sockfd, (struct sockaddr *) &address, sizeof(address)) < 0)
+	if (bind(m_socket, (struct sockaddr *) &address, sizeof(address)) < 0)
 	{
 		perror("ERROR on binding");
 		return false;
