@@ -17,6 +17,9 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Renderer\stdafx.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\TextureLoader.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp">
@@ -28,6 +31,27 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\Externals\content\shaders\debuggText.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\fullscreen.ps">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\fullscreen.vs">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\fullscreen.gs">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\FSDeferredPass2.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\VSDeferredPass1.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\VSDeferredPass2.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\FSDeferredPass1.glsl">
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>
