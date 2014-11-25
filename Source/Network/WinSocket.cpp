@@ -1,3 +1,4 @@
+#ifdef _WIN32
 #include "Network/WinSocket.h"
 
 WinSocket::WinSocket(int _domain, int _type, int _protocol)
@@ -40,3 +41,4 @@ int Send(ISocket* _socket, void* _buffer, int _length, int _flags)
 { 
 	return -1; 
 }
+#endif
