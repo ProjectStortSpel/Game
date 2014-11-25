@@ -76,6 +76,9 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\WorldCreator.h">
       <Filter>Source Files\Framework</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\ComponentTypeReader.h">
+      <Filter>Source Files\Framework\Parsing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\World.cpp">
@@ -110,9 +113,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\ComponentType.cpp">
       <Filter>Source Files\Framework\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\Section.cpp">
-      <Filter>Source Files\Framework\Parsing</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\WorldCreator.cpp">
       <Filter>Source Files\Framework</Filter>

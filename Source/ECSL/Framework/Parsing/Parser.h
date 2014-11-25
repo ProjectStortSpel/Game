@@ -24,29 +24,27 @@ namespace ECSL
 		enum SymbolType { Alphanumeric, Bracket, TokenDelimiter, EmptySpace, Invalid };
 		struct Line
 		{
+			std::string Text;
 			LineType Type;
-			int TokenSymbolCounter;
+			unsigned int DelimiterSymbolCounter;
 
-			Line() : Type(None), TokenSymbolCounter(0) { }
+			Line() : Text(""), Type(None), DelimiterSymbolCounter(0) { }
 		};
 
 		const char DELIMITER_SYMBOL = '"';
 		const char NEW_SECTION_SYMBOL = '{';
 		const char END_SECTION_SYMBOL = '}';
 
-		std::map<std::string, int>* m_byteConversion;
+		bool ValidateSymbols(const std::string& _fileLine);
+		void TrimLine(std::string& _fileLine);
+		void GetLineData(Line& _line, const std::string& _fileLine);
 
-		bool ValidateSymbols(const std::string& _line);
-		void TrimLine(std::string& _line);
-
-		bool ValidateTokenStructure(const std::vector<std::string>& _trimmedLine);
-		bool ValidateTokenLine();
-		void ConvertLinesToTokens(std::vector<std::vector<std::string>>& _tokenizedLines, const std::vector<std::string>& _trimmedLines);
+		bool ValidateSyntax(const std::vector<Line>& _lines);
+		bool ValidateLineSyntax(const std::vector<Line>& _lines);
+		bool ValidateLineDependencies(const std::vector<Line>& _lines);
+		void ConvertLinesToTokens(std::vector<std::vector<std::string>>& _tokenizedLines, const std::vector<Line>& _lines);
 		
-		void ConvertTokensToSections(Section* _sectionTree, const std::vector<std::vector<std::string>>& _tokenizedLines);
-		inline LineType GetLineType(const std::vector<std::string>& _tokens);
-		inline void AddNewSection(Section* _currentSection);
-		inline void EndSection(Section* _currentSection);
+		void ConvertTokensToSections(Section* _sectionTree, const std::vector<std::vector<std::string>>& _tokenizedLines, const std::vector<Line>& _lines);
 		inline void AddTokens(Section* _currentSection, const std::vector<std::string>& _tokens);
 
 		inline SymbolType GetSymbolType(char _symbol);

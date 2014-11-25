@@ -6,18 +6,13 @@
 #include <sstream>
 #include <stdio.h>
 #include <cctype>
+#include <stack>
 
 using namespace ECSL;
 
 Parser::Parser()
 {
-	//	Add more symbols
-	m_byteConversion = new std::map<std::string, int>();
-	//m_byteConversion->insert(std::pair<std::string, int>("float", sizeof(float)));
-	//m_byteConversion->at("float") = sizeof(float);
-	//m_byteConversion->at("int") = sizeof(int);
-	//m_byteConversion->at("double") = sizeof(double);
-	//m_byteConversion->at("pointer") = sizeof(void*);
+
 }
 
 Parser::~Parser()
@@ -32,7 +27,7 @@ Section* Parser::ParseFile(const std::string& _filePath)
 	if (!file)
 		return 0;
 
-	std::vector<std::string> trimmedLines;
+	std::vector<Line> lines;
 	std::string fileLine;
 	/* Loop through each line in file. Validate symbols and trim the line */
 	for (int i = 0; std::getline(file, fileLine); ++i)
@@ -45,175 +40,194 @@ Section* Parser::ParseFile(const std::string& _filePath)
 		TrimLine(fileLine);
 		/* No point in adding empty lines */
 		if (!IsLineEmpty(fileLine))
-			trimmedLines.push_back(fileLine);
+		{
+			Line line;
+			GetLineData(line, fileLine);
+			lines.push_back(line);
+		}
 	}
 	file.close();
 
 	/* Check if the structure of the file is correct */
-	if (!ValidateTokenStructure(trimmedLines))
+	if (!ValidateSyntax(lines))
 	{
-		printf("Invalid text structure in file: %s\n", _filePath.c_str());
+		printf("Invalid syntax in file: %s\n", _filePath.c_str());
 		return 0;
 	}
 
 	std::vector<std::vector<std::string>> tokenizedLines;
-	ConvertLinesToTokens(tokenizedLines, trimmedLines);
+	ConvertLinesToTokens(tokenizedLines, lines);
 
 	Section* sectionTree = new Section();
-	ConvertTokensToSections(sectionTree, tokenizedLines);
+	ConvertTokensToSections(sectionTree, tokenizedLines, lines);
 
 	return sectionTree;
 }
 
-bool Parser::ValidateSymbols(const std::string& _line)
+bool Parser::ValidateSymbols(const std::string& _fileLine)
 {
-	for (unsigned int i = 0; i < _line.length(); ++i)
+	for (unsigned int symbolIndex = 0; symbolIndex < _fileLine.length(); ++symbolIndex)
 	{
-		char symbol = _line[i];
+		char symbol = _fileLine[symbolIndex];
 		if (GetSymbolType(symbol) == SymbolType::Invalid)
 			return false;
 	}
 	return true;
 }
 
-void Parser::TrimLine(std::string& _line)
+void Parser::TrimLine(std::string& _fileLine)
 {
 	std::string trimmedString = "";
-	for (unsigned int i = 0; i < _line.length(); ++i)
+	for (unsigned int symbolIndex = 0; symbolIndex < _fileLine.length(); ++symbolIndex)
 	{
-		char symbol = _line[i];
-		/* Remove all empty space */
+		char symbol = _fileLine[symbolIndex];
 		if (GetSymbolType(symbol) != SymbolType::EmptySpace)
 			trimmedString.push_back(symbol);
 	}
-	_line = trimmedString;
+	_fileLine = trimmedString;
 }
 
-//bool Parser::ValidateTokenStructure(const std::vector<std::string>& _trimmedLines)
-//{
-//	std::vector<Parser::Line> lines;
-//	int indentationCounter = 0;
-//
-//	/* Each line */
-//	for (unsigned int lineIndex = 0; lineIndex < _trimmedLines.size(); ++lineIndex)
-//	{
-//		Parser::Line line;
-//		bool insideToken = false;
-//		int symbolsCountInToken = 0;
-//		/* Each symbol in line */
-//		for (unsigned int symbolIndex = 0; symbolIndex < _trimmedLines[lineIndex].length(); ++symbolIndex)
-//		{
-//			char symbol = _trimmedLines[lineIndex][symbolIndex];
-//			SymbolType symbolType = GetSymbolType(symbol);
-//			/* Symbol is a bracket */
-//			if (symbolType == SymbolType::Bracket)
-//			{
-//				/* Generate an error if there already exists a token or a bracket on the line */
-//				if (line.Type == LineType::Token || line.Type == LineType::SectionStartBracket || line.Type == LineType::SectionEndBracket)
-//					return false;
-//				
-//				/* Start section bracket */
-//				if (symbol == NEW_SECTION_SYMBOL)
-//				{
-//					++indentationCounter;
-//					line.Type = LineType::SectionStartBracket;
-//				}
-//				/* End section bracket  */
-//				else if (symbol == END_SECTION_SYMBOL)
-//				{
-//					--indentationCounter;
-//					line.Type = LineType::SectionEndBracket;
-//				}
-//			}
-//			/* Symbol is a token delimiter symbol */
-//			else if (symbolType == SymbolType::TokenDelimiter)
-//			{
-//				/* Generate an error if there already exists a bracket on the line */
-//				if (line.Type == LineType::SectionStartBracket || line.Type == LineType::SectionEndBracket)
-//					return false;
-//
-//				/* Start of a token */
-//				if (!insideToken)
-//				{
-//					insideToken = true;
-//					symbolsCountInToken = 0;
-//				}
-//				/* End of a token */
-//				else if (insideToken)
-//				{
-//					insideToken = false;
-//					/* Generate an error if the number of symbols inside the token is zero */
-//					if (symbolsCountInToken == 0)
-//						return false;
-//				}
-//				line.Type = LineType::Token;
-//				++line.TokenSymbolCounter;
-//			}
-//			/* Symbol is an alphanumeric symbol */
-//			else if (symbolType == SymbolType::Alphanumeric)
-//			{
-//				/* Generate an error if the symbol isn't between the token delimiter symbols */
-//				if (!insideToken)
-//					return false;
-//				++symbolsCountInToken;
-//			}
-//		}
-//
-//		/* Generate an error if there are an uneven number of token delimiter symbols */
-//		if (line.TokenSymbolCounter % 2 == 1)
-//			return false;
-//
-//		/* If the line is a bracket line, then it needs to have a token in the earlier name (The name of the section)*/
-//		if (line.Type == LineType::SectionStartBracket)
-//		{
-//			/* Out of index */
-//			if (lineIndex == 0)
-//				return false;
-//			/* If line before it needs to be a token line */
-//			else if (lines[lineIndex - 1].Type != LineType::Token)
-//				return false;
-//			/* The number of tokens in the line before it needs to be one */
-//			else if (lines[lineIndex - 1].TokenSymbolCounter != 2)
-//				return false;
-//		}
-//
-//		/* Tokens that isn't a name and isn't between two brackets can't exist */
-//		if (line.Type == LineType::Token && indentationCounter == 0)
-//		{
-//			/* Out of index */
-//			if (lineIndex == _trimmedLines.size() - 1)
-//				return false;
-//			else if (GetLineType(_trimmedLines[lineIndex + 1]) != LineType::SectionStartBracket)
-//				return false;
-//		}
-//
-//		lines.push_back(line);
-//	}
-//
-//	if (indentationCounter != 0)
-//		return false;
-//
-//	return true;
-//}
-
-bool Parser::ValidateTokenStructure(const std::vector<std::string>& _trimmedLines)
+void Parser::GetLineData(Line& _line, const std::string& _fileLine)
 {
+	char firstSymbol = _fileLine[0];
+	if (firstSymbol == DELIMITER_SYMBOL)
+		_line.Type = LineType::Token;
+	else if (firstSymbol == NEW_SECTION_SYMBOL)
+		_line.Type = LineType::SectionStartBracket;
+	else if (firstSymbol == END_SECTION_SYMBOL)
+		_line.Type = LineType::SectionEndBracket;
+	else
+		_line.Type = LineType::None;
+
+	for (unsigned int symbolIndex = 0; symbolIndex < _fileLine.length(); ++symbolIndex)
+	{
+		char symbol = _fileLine[symbolIndex];
+		if (symbol == DELIMITER_SYMBOL)
+			++_line.DelimiterSymbolCounter;
+	}
+	_line.Text = _fileLine;
+}
+
+bool Parser::ValidateSyntax(const std::vector<Line>& _lines)
+{
+	if (!ValidateLineSyntax(_lines))
+		return false;
+	if (!ValidateLineDependencies(_lines))
+		return false;
 	return true;
 }
 
-void Parser::ConvertLinesToTokens(std::vector<std::vector<std::string>>& _tokenizedLines, const std::vector<std::string>& _trimmedLines)
+bool Parser::ValidateLineSyntax(const std::vector<Line>& _lines)
 {
-	for (unsigned int lineIndex = 0; lineIndex < _trimmedLines.size(); ++lineIndex)
+	/* Each line */
+	for (unsigned int lineIndex = 0; lineIndex < _lines.size(); ++lineIndex)
+	{
+		Line line = _lines[lineIndex];
+		bool insideToken = false;
+		int symbolsCountInToken = 0;
+		/* Each symbol in line */
+		for (unsigned int symbolIndex = 0; symbolIndex < _lines[lineIndex].Text.length(); ++symbolIndex)
+		{
+			char symbol = _lines[lineIndex].Text[symbolIndex];
+			SymbolType symbolType = GetSymbolType(symbol);
+			switch (symbolType)
+			{
+			case SymbolType::Bracket:
+				/* Generate an error if there already exists a token or a bracket on the line */
+				if (line.Type != LineType::SectionStartBracket && line.Type != LineType::SectionEndBracket)
+					return false;
+				break;
+
+			case SymbolType::TokenDelimiter:
+				/* Generate an error if there already exists a bracket on the line */
+				if (line.Type != LineType::Token)
+					return false;
+				
+				/* Start of a token */
+				if (!insideToken)
+				{
+					insideToken = true;
+					symbolsCountInToken = 0;
+				}
+				/* End of a token */
+				else if (insideToken)
+				{
+					insideToken = false;
+					/* Generate an error if the number of symbols inside the token is zero */
+					if (symbolsCountInToken == 0)
+						return false;
+				}
+				break;
+
+			case SymbolType::Alphanumeric:
+				/* Generate an error if the line isn't a token line */
+				if (line.Type != LineType::Token)
+					return false;
+
+				/* Generate an error if the symbol isn't between the token delimiter symbols */
+				if (!insideToken)
+					return false;
+				++symbolsCountInToken;
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		/* Generate an error if there is an uneven number of token delimiter symbols */
+		if (line.DelimiterSymbolCounter % 2 == 1)
+			return false;
+	}
+	return true;
+}
+
+bool Parser::ValidateLineDependencies(const std::vector<Line>& _lines)
+{
+	int indentationCounter = 0;
+
+	/* Each line */
+	for (unsigned int lineIndex = 0; lineIndex < _lines.size(); ++lineIndex)
+	{
+		Line line = _lines[lineIndex];
+		int indentationCounter = 0;
+		switch (line.Type)
+		{
+		case LineType::SectionStartBracket:
+			/* Generate an error if there isn't a token line before the start bracket line */
+			if (lineIndex == 0 || _lines[lineIndex - 1].Type != LineType::Token || _lines[lineIndex - 1].DelimiterSymbolCounter != 2)
+				return false;
+			++indentationCounter;
+			break;
+		case LineType::SectionEndBracket:
+			--indentationCounter;
+			break;
+		case LineType::Token:
+			/* Generate an error if a token line is the name of the section, but has more than two delimiter symbols (more than one token) */
+			if (lineIndex == _lines.size() - 1 || (_lines[lineIndex + 1].Type == LineType::SectionStartBracket && line.DelimiterSymbolCounter != 2))
+				return false;
+			break;
+		}
+	}
+
+	if (indentationCounter != 0)
+		return false;
+
+	return true;
+}
+
+void Parser::ConvertLinesToTokens(std::vector<std::vector<std::string>>& _tokenizedLines, const std::vector<Line>& _lines)
+{
+	/* Each line */
+	for (unsigned int lineIndex = 0; lineIndex < _lines.size(); ++lineIndex)
 	{
 		_tokenizedLines.push_back(std::vector<std::string>());
-		bool insideToken = false;
 		std::string token = "";
-		
-		for (unsigned int symbolIndex = 0; symbolIndex < _trimmedLines[lineIndex].length(); ++symbolIndex)
+		/* Each symbol in line */
+		for (unsigned int symbolIndex = 0; symbolIndex < _lines[lineIndex].Text.length(); ++symbolIndex)
 		{
-			char symbol = _trimmedLines[lineIndex][symbolIndex];
+			char symbol = _lines[lineIndex].Text[symbolIndex];
 			SymbolType symbolType = GetSymbolType(symbol);
-
 			switch (symbolType)
 			{
 			case SymbolType::Bracket:
@@ -239,67 +253,47 @@ void Parser::ConvertLinesToTokens(std::vector<std::vector<std::string>>& _tokeni
 	}
 }
 
-void Parser::ConvertTokensToSections(Section* _sectionTree, const std::vector<std::vector<std::string>>& _tokenizedLines)
+void Parser::ConvertTokensToSections(Section* _sectionTree, const std::vector<std::vector<std::string>>& _tokenizedLines, const std::vector<Line>& _lines)
 {
 	Section* currentSection = _sectionTree;
+	std::stack<Section*> sectionLevels;
+	sectionLevels.push(currentSection);
 	/* Loop through each line and add sections */
 	for (unsigned int lineIndex = 0; lineIndex < _tokenizedLines.size(); ++lineIndex)
 	{
+		Section newSection;
 		std::vector<std::string> tokenLine = _tokenizedLines[lineIndex];
-		LineType lineType = GetLineType(tokenLine);
-		switch (lineType)
+		switch (_lines[lineIndex].Type)
 		{
 		case LineType::SectionStartBracket:
-			AddNewSection(currentSection);
-			currentSection->Name = _tokenizedLines[lineIndex - 1][0];
+			newSection = Section();
+			newSection.Name = _tokenizedLines[lineIndex - 1][0];
+			(*currentSection).SubSections.push_back(newSection);
+			sectionLevels.push(&((*currentSection).SubSections.back()));
+			currentSection = sectionLevels.top();
 			break;
 		case LineType::SectionEndBracket:
-			EndSection(currentSection);
+			sectionLevels.pop();
+			currentSection = sectionLevels.top();
 			break;
 		case LineType::Token:
-			AddTokens(currentSection, _tokenizedLines[lineIndex]);
+			if (_lines[lineIndex + 1].Type != LineType::SectionStartBracket)
+				AddTokens(currentSection, _tokenizedLines[lineIndex]);
 			break;
 		default:
 			break;
 		}
 	}
-
-	/* Make _sectionTree be the root again. */
-	while (_sectionTree->ParentSection != 0)
-		_sectionTree = _sectionTree->ParentSection;
-}
-
-Parser::LineType Parser::GetLineType(const std::vector<std::string>& _tokens)
-{
-	if (_tokens[0][0] == NEW_SECTION_SYMBOL)
-		return LineType::SectionStartBracket;
-	else if (_tokens[0][0] == END_SECTION_SYMBOL)
-		return LineType::SectionEndBracket;
-	else
-		return LineType::Token;
-}
-
-void Parser::AddNewSection(Section* _currentSection)
-{
-	Section* lastSection = _currentSection;
-	_currentSection = new Section();
-	lastSection->SubSections->push_back(*_currentSection);
-	_currentSection->ParentSection = lastSection;
-}
-
-void Parser::EndSection(Section* _currentSection)
-{
-	_currentSection = _currentSection->ParentSection;
 }
 
 void Parser::AddTokens(Section* _currentSection, const std::vector<std::string>& _tokens)
 {
 	/* Add a new token line */
-	_currentSection->Tokens->push_back(new std::vector<std::string>());
+	_currentSection->Tokens.push_back(std::vector<std::string>());
 	/* Add the tokens to the line */
 	for (auto token : _tokens)
 	{
-		_currentSection->Tokens->back()->push_back(token);
+		_currentSection->Tokens.back().push_back(token);
 	}
 }
 
