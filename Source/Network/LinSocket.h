@@ -2,8 +2,10 @@
 
 #ifndef LINSOCKET_H
 #define LINSOCKET_H
+#include <sys/socket.h>
 
 #include "Network/ISocket.h"
+
 
 class DECLSPEC LinSocket : public ISocket
 {
