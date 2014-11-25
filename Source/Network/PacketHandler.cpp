@@ -27,7 +27,7 @@ void PacketHandler::StartPack(const char* _functionName)
 	WriteString(_functionName);
 }
 
-void PacketHandler::StartUnPack(Packet* _packet)
+void PacketHandler::ConsumePacket(Packet* _packet)
 {
 	if (!_packet)
 		return;

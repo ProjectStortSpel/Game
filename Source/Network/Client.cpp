@@ -71,12 +71,8 @@ void Client::Disconect()
 
 	if (m_receiveThreadAlive)
 		StopListen();
-	if (m_rakInterface)
-	{
-		m_rakInterface->Shutdown(300);
-		RakNet::RakPeerInterface::DestroyInstance(m_rakInterface);
-		m_rakInterface = 0;
-	}
+	m_rakInterface->Shutdown(300);
+	RakNet::RakPeerInterface::DestroyInstance(m_rakInterface);
 }
 
 void Client::SendToServer(PacketHandler::Packet _packet)

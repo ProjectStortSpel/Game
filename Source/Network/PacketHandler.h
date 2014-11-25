@@ -55,7 +55,7 @@ public:
 	void StartPack(const char* _name);
 	// Start to unpack a packet
 	// This will call the function hooked to the specific message
-	void StartUnPack(PacketHandler::Packet* _packet);
+	void ConsumePacket(PacketHandler::Packet* _packet);
 	// End pack of a packet
 	// Should always be called when finish with building a packet
 	PacketHandler::Packet EndPack();
