@@ -12,7 +12,7 @@ LinSocket::~LinSocket()
 
 }
 
-bool WinSocket::Initialize()
+bool LinSocket::Initialize()
 {
 	return false;
 }
