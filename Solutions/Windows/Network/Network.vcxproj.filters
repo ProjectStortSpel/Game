@@ -18,6 +18,11 @@
     <ClCompile Include="..\..\..\Source\Network\BaseNetwork.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Network\ISocket.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Network\LinSocket.cpp" />
+    <ClCompile Include="..\..\..\Source\Network\WinSocket.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Network\Server.h">
@@ -35,5 +40,10 @@
     <ClInclude Include="..\..\..\Source\Network\BaseNetwork.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\Network\ISocket.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Network\WinSocket.h" />
+    <ClInclude Include="..\..\..\Source\Network\LinSocket.h" />
   </ItemGroup>
 </Project>
