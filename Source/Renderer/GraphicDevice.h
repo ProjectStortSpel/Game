@@ -47,7 +47,7 @@ namespace Renderer
 		int	m_clientWidth, m_clientHeight;
 
 		// Image buffers
-		GLuint m_outputImage;
+		GLuint m_outputImage, m_inputImage;
 		GLuint m_debuggText;
 		GLuint m_depthBuf, m_normTex, m_colorTex;
 
