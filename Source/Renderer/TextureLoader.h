@@ -2,6 +2,7 @@
 #define TEXTURELOADER_H_
 #include "stdafx.h"
 
+#define STB_IMAGE_IMPLEMENTATION
 #include <stbimage/stb_image.h>
 
 class TextureLoader{
