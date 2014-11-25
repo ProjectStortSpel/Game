@@ -1,6 +1,11 @@
 #ifndef PROJEKTCLIENT_H
 #define PROJEKTCLIENT_H
 
+#ifdef _WIN32
+	#include "Network/WinSocket.h"
+#else
+	#include "Network/LinServer.h"
+#endif
 
 #include "Network/BaseNetwork.h"
 
