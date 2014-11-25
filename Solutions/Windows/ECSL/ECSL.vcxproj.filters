@@ -117,5 +117,8 @@
     <ClCompile Include="..\..\..\Source\ECSL\Framework\WorldCreator.cpp">
       <Filter>Source Files\Framework</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\ComponentTypeReader.cpp">
+      <Filter>Source Files\Framework\Parsing</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
