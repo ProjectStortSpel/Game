@@ -22,7 +22,7 @@ bool Shader::AddShader(const char* source_file, GLenum shader_type)
 	char line[256];
 	while (!file.eof())
 	{
-		strcpy_s(line, "");
+		memcpy(line, "", 256);
 		file.getline(line, 256);
 		shaderString += line;
 		shaderString += '\n';
@@ -192,56 +192,6 @@ bool Shader::SetUniVariable(const char* p_Name, VariableTyp p_Typ, void* p_Value
 
 	printf("Can't find Variable named '%s'\n", p_Name);
 	return false;
-}
-
-GLuint Shader::Init(ShaderInfo p_ShaderInfo[3])
-{
-	GLuint shader[3];
-	GLuint program = glCreateProgram();
-
-	if (program == 0)
-	{
-		printf("ERROR: Failed to create GL shader program\n");
-		return false;
-	};
-
-	// compile the shaders
-	for (int i = 0; i < 3; i++)
-	{
-		if (p_ShaderInfo[i].type != GL_NONE)
-		{
-			printf(p_ShaderInfo[i].file);
-			printf("\n");
-			CompileShader(p_ShaderInfo[i].file, p_ShaderInfo[i].type, shader[i]);
-		}
-	}
-
-	// attatch the shaders to the program
-	for (int i = 0; i < 3; i++)
-	{
-		if (p_ShaderInfo[i].type != GL_NONE)
-			glAttachShader(program, shader[i]);
-	}
-
-	// link program
-	glLinkProgram(program);
-
-	// verify the link
-	GLint status;
-	glGetProgramiv(program, GL_LINK_STATUS, &status);
-	if (status == GL_FALSE)
-	{
-		printf("ERROR: Failed to link GL shader program\n");
-		GLint maxLength = 0;
-		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
-		GLchar* infoLog = (GLchar *)malloc(maxLength);
-		glGetProgramInfoLog(program, maxLength, NULL, infoLog);
-		printf("Shader InfoLog:\n%s\n\n", infoLog);
-		return false;
-	};
-	printf("Created Shader Program %i\n", program);
-	m_shaderProg = program;
-	return program;
 }
 
 GLuint Shader::GetShaderProgram()
