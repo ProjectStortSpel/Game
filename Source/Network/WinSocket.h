@@ -1,7 +1,11 @@
+#ifdef _WIN32
 #ifndef WINSOCKET_H
 #define WINSOCKET_H
-
 #include <WinSock2.h>
+
+
+
+
 #include "Network/ISocket.h"
 
 class WinSocket : public ISocket
@@ -19,4 +23,6 @@ public:
 	int Send(ISocket* _socket, void* _buffer, int _length, int _flags) { return -1; }
 
 };
+
+#endif
 #endif
