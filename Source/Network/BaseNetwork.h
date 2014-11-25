@@ -13,7 +13,7 @@
 #ifdef _WIN32
 	#include "Network/WinSocket.h"
 #else
-	#include "Network/LinServer.h"
+	#include "Network/LinSocket.h"
 #endif
 
 class DECLSPEC BaseNetwork
