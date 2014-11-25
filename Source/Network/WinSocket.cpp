@@ -90,7 +90,7 @@ ISocket* WinSocket::Accept()
 
 bool WinSocket::Listen(int _backlog)
 { 
-	int result = listen(m_socket, SOMAXCONN);
+	int result = listen(m_socket, 128);
 
 	if (result == SOCKET_ERROR)
 	{
