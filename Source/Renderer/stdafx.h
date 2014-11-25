@@ -13,6 +13,8 @@
 #include <SDL/SDL_opengl.h>
 #include <glm/glm.hpp>
 
+using namespace glm;
+
 #define ERRORMSG(x) { SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "RENDERER ERROR", x, m_window); }
 
 #endif

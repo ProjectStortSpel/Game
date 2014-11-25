@@ -86,11 +86,25 @@ void GraphicDevice::Render()
 	// GUI RENDER
 
 	// DEBUGG TEXT
+
+
 	//glBindTexture(GL_TEXTURE_2D, m_debuggText);
 	// Use Debuggtext
+	for (int i = 0; i < 4608; i++)
+	{
+		debugtext[i] = rand() % 4608;
+	}
+
+	glBindBuffer(GL_ARRAY_BUFFER, debugtextbuffer);
+	GLvoid* p = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+	memcpy(p, &debugtext, sizeof(int) * 4608);
+	glUnmapBuffer(GL_ARRAY_BUFFER);
+
 	glUseProgram(m_debuggTextShader.GetShaderProgram());
 	// Run program
-	glDispatchCompute(m_clientWidth * 0.0625, m_clientHeight * 0.0625, 1); // 1/16 = 0.0625
+	glDispatchCompute(128, 36, 1); // 1/16 = 0.0625
+
+
 
 	// FULL SCREEN QUAD
 	glBindTexture(GL_TEXTURE_2D, m_outputImage);
@@ -99,6 +113,7 @@ void GraphicDevice::Render()
 	glUseProgram(m_fullScreenShader.GetShaderProgram());
 	glDrawArrays(GL_POINTS, 0, 1);
 	// Swap in the new buffer
+
 	SDL_GL_SwapWindow(m_window);
 }
 
@@ -204,6 +219,18 @@ bool GraphicDevice::InitBuffers()
 	glBindImageTexture(0, m_outputImage, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
 
 	// load img test kod
+
+	for (int i = 0; i < 4608; i++)
+	{
+		float x = (float)(i%128) / 128;
+		float y = (float)(i/128) / 36;
+		debugtext[i] = i;
+	}
+
+	glGenBuffers(1, &debugtextbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, debugtextbuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(int)* 4608, &debugtext, GL_DYNAMIC_COPY);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, debugtextbuffer);
 
 
 	return true;
