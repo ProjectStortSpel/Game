@@ -10,12 +10,19 @@
 #include "Network/PacketHandler.h"
 #include "Network/ISocket.h"
 
+#ifdef _WIN32
+	#include "Network/WinSocket.h"
+#else
+	#include "Network/LinServer.h"
+#endif
+
 class DECLSPEC BaseNetwork
 {
 
 
 public:
 
+	BaseNetwork();
 	virtual ~BaseNetwork();
 
 	// Return the local address
@@ -64,6 +71,10 @@ protected:
 	std::mutex m_packetLock;
 
 private:
+	void Run(void);
+
+private:
+	std::thread m_thread;
 };
 
 #endif

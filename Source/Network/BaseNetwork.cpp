@@ -1,6 +1,7 @@
 #include "BaseNetwork.h"
 
 #include <thread>
+#include "Network/NetTypeMessageID.h"
 
 BaseNetwork::BaseNetwork()
 	:m_receiveThreadAlive(false)
@@ -9,20 +10,17 @@ BaseNetwork::BaseNetwork()
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	m_rakInterface = RakNet::RakPeerInterface::GetInstance();
-	m_localAddress = m_rakInterface->GetLocalIP(0);
+	m_listenSocket = ISocket::CreateISocket(AF_INET, SOCK_STREAM, 0);
 	m_password = "localhest";
-
 	m_packets = std::queue<PacketHandler::Packet*>();
 }
 
 BaseNetwork::~BaseNetwork()
 {
-	if (m_rakInterface)
+	if (m_listenSocket)
 	{
-		m_rakInterface->Shutdown(300);
-		RakNet::RakPeerInterface::DestroyInstance(m_rakInterface);
-		m_rakInterface = 0;
+		// Shutdown
+		m_listenSocket = 0;
 	}
 
 	StopListen();
@@ -72,26 +70,27 @@ PacketHandler::Packet* BaseNetwork::GetPacket()
 	return p;
 }
 
-unsigned char BaseNetwork::GetPacketIdentifier(RakNet::Packet *p)
+//unsigned char BaseNetwork::GetPacketIdentifier(RakNet::Packet *p)
+//{
+//	if (p == 0)
+//		return 255;
+//
+//	if ((unsigned char)p->data[0] == ID_TIMESTAMP)
+//	{
+//		RakAssert(p->length > sizeof(RakNet::MessageID) + sizeof(RakNet::Time));
+//		return (unsigned char)p->data[sizeof(RakNet::MessageID) + sizeof(RakNet::Time)];
+//	}
+//	else
+//		return (unsigned char)p->data[0];
+//}
+
+void BaseNetwork::TriggerEvent(NetEvent _function, unsigned char _identifier)// , RakNet::SystemAddress _address)
 {
-	if (p == 0)
-		return 255;
-
-	if ((unsigned char)p->data[0] == ID_TIMESTAMP)
-	{
-		RakAssert(p->length > sizeof(RakNet::MessageID) + sizeof(RakNet::Time));
-		return (unsigned char)p->data[sizeof(RakNet::MessageID) + sizeof(RakNet::Time)];
-	}
-	else
-		return (unsigned char)p->data[0];
-}
-
-void BaseNetwork::TriggerEvent(NetEvent _function, unsigned char _identifier, RakNet::SystemAddress _address)
-{
-
 
 	if (_function)
-		_function(_identifier, &m_connectionMap[_address]);
+	{
+	//	_function(_identifier, &m_connectionMap[_address]);
+	}
 	else if (NET_DEBUG)
 	{
 		printf("Event ");

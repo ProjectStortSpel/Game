@@ -56,5 +56,8 @@
     <ClInclude Include="..\..\..\Source\Network\LinSocket.h">
       <Filter>Source\New</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\Network\NetTypeMessageID.h">
+      <Filter>Source\New</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,15 +1,9 @@
 #ifndef PROJEKTSERVER_H
 #define PROJEKTSERVER_H
 
-#ifdef _WIN32
-	#include "Network/WinSocket.h"
-#else
-	#include "Network/LinServer.h"
-#endif
-
 #include "Network/BaseNetwork.h"
 
-class DECLSPEC Server
+class DECLSPEC Server : public BaseNetwork
 {
 
 public:

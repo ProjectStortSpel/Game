@@ -32,6 +32,7 @@
     <ClInclude Include="..\..\..\Source\Network\Client.h" />
     <ClInclude Include="..\..\..\Source\Network\ISocket.h" />
     <ClInclude Include="..\..\..\Source\Network\LinSocket.h" />
+    <ClInclude Include="..\..\..\Source\Network\NetTypeMessageID.h" />
     <ClInclude Include="..\..\..\Source\Network\PacketHandler.h" />
     <ClInclude Include="..\..\..\Source\Network\Server.h" />
     <ClInclude Include="..\..\..\Source\Network\Stdafx.h" />
