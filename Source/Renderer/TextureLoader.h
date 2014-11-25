@@ -5,10 +5,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stbimage/stb_image.h>
 
-static class TextureLoader{
-
+class TextureLoader{
 public:
-
 static unsigned int LoadTexture(char* file, GLenum textureSlot)
 {
 	int width, height, channels;
