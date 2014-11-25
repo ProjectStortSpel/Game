@@ -3,7 +3,7 @@
 
 WinSocket::WinSocket(int _domain, int _type, int _protocol)
 {
-
+	m_socket = socket(_domain, _type, _protocol);
 }
 
 WinSocket::~WinSocket()
@@ -12,32 +12,32 @@ WinSocket::~WinSocket()
 }
 
 
-bool Connect(ISocket* _socket, void* _sockaddr, int* _addrlen)
+bool WinSocket::Connect(void* _sockaddr, int* _addrlen)
 { 
 	return false; 
 }
 
-bool Bind(ISocket* _socket, void* _sockaddr, int* _addrlen)
+bool WinSocket::Bind(void* _sockaddr, int* _addrlen)
 { 
 	return false; 
 }
 
-ISocket* Accept(ISocket* _socket, void* _sockaddr, int* _addrlen)
+ISocket* WinSocket::Accept(void* _sockaddr, int* _addrlen)
 { 
 	return 0; 
 }
 
-bool Listen(ISocket* _socket, int _backlog)
+bool WinSocket::Listen(int _backlog)
 { 
 	return false; 
 }
 
-int Recv(ISocket* _socket, void* _buffer, int _length, int _flags)
+int WinSocket::Recv(void* _buffer, int _length, int _flags)
 { 
 	return -1; 
 }
 
-int Send(ISocket* _socket, void* _buffer, int _length, int _flags)
+int WinSocket::Send(void* _buffer, int _length, int _flags)
 { 
 	return -1; 
 }
