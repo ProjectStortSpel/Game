@@ -58,7 +58,7 @@ bool LinSocket::Bind(const int _port)
 	return true;
 }
 
-ISocket* LinSocket::Accept()
+ISocket* LinSocket::Accept(NetConnection& _netConnection)
 {
 	return 0;
 }
