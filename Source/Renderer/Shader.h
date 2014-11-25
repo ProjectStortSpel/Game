@@ -1,3 +1,6 @@
+/*
+Author: Anders, Christian
+*/
 #ifndef SHADER_H
 #define SHADER_H
 
@@ -26,6 +29,14 @@ namespace Renderer
 	class Shader
 	{
 	public:
+		void	InitShaderProgram();
+		bool	AddShader(const char* source_file, GLenum shader_type);
+		bool	FinalizeShaderProgram();
+
+		void	UseProgram();
+
+		bool	SetUniformBuffer(GLuint shader_binding, GLuint data, int size);
+
 		bool    SetUniVariable(const char* p_variableName, VariableTyp p_variableType, void* p_Value);
 
 		GLuint	Init(ShaderInfo p_ShaderInfo[3]);
@@ -36,6 +47,7 @@ namespace Renderer
 
 	private:
 		GLuint m_shaderProg;
+		std::vector<GLuint>	m_shaders;
 	};
 }
 #endif
