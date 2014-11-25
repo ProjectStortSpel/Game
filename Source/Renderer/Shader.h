@@ -39,7 +39,14 @@ namespace Renderer
 
 		bool    SetUniVariable(const char* p_variableName, VariableTyp p_variableType, void* p_Value);
 
+<<<<<<< HEAD
 		GLuint  GetShaderProgram();
+=======
+		GLuint  GetShaderProgram(void);
+
+	private:
+		bool CompileShader(const char* p_ShaderFile, GLenum& p_Type, GLuint& p_Shader);
+>>>>>>> strcpy fix
 
 	private:
 		GLuint m_shaderProg;
