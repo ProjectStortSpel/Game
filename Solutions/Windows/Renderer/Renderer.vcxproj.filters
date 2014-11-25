@@ -28,6 +28,9 @@
     <ClCompile Include="..\..\..\Source\Renderer\Shader.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Renderer\DebugText.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\Externals\content\shaders\debuggText.glsl">
