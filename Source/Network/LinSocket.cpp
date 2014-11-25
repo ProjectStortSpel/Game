@@ -12,17 +12,23 @@ LinSocket::~LinSocket()
 
 }
 
-bool LinSocket::Connect(void* _sockaddr, int* _addrlen)
+bool WinSocket::Initialize()
 {
 	return false;
 }
 
-bool LinSocket::Bind(void* _sockaddr, int* _addrlen)
+
+bool LinSocket::Connect(const char* _ip, const int _port)
 {
 	return false;
 }
 
-ISocket* LinSocket::Accept(void* _sockaddr, int* _addrlen)
+bool LinSocket::Bind(const int _port)
+{
+	return false;
+}
+
+ISocket* LinSocket::Accept()
 {
 	return 0;
 }

@@ -6,6 +6,15 @@
 #include "Network/LinSocket.h"
 #endif
 
+static bool Initialize()
+{
+#ifdef _WIN32
+	return WinSocket::Initialize();
+#else
+	return LinSocket::Initialize();
+#endif
+}
+
 
 static ISocket* CreateISocket(int _domain, int _type, int _protocol)
 {
