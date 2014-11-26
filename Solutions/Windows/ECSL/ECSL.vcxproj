@@ -22,6 +22,7 @@
     <ClInclude Include="..\..\..\Source\ECSL\ECSL.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Common\BitSet.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\ComponentType.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\ComponentTypeReader.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\Parser.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\Section.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemBitMask.h" />
@@ -39,8 +40,8 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Common\BitSet.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\ComponentType.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\ComponentTypeReader.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\Parser.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\Section.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemWorkGroup.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemManager.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Tables\DataArray.cpp" />

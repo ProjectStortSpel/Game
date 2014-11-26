@@ -11,12 +11,8 @@ namespace ECSL
 	struct Section
 	{
 		std::string Name;
-		std::vector<std::vector<std::string>*>* Tokens;
-		Section* ParentSection;
-		std::vector<Section>* SubSections;
-
-		Section();
-		~Section();
+		std::vector<std::vector<std::string>> Tokens;
+		std::vector<Section> SubSections;
 	};
 }
 

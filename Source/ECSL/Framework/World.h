@@ -18,7 +18,6 @@ namespace ECSL
 		SystemManager* m_systemManager;
 
 	public:
-		// World needs to know the entity count, which systems and component types it will use in order to work.
 		World(unsigned int _entityCount, std::vector<SystemWorkGroup*>* _systemWorkGroups, std::vector<int>* _componentTypeIds);
 		~World();
 	};
