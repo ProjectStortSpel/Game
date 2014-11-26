@@ -21,14 +21,14 @@ EntityTable::~EntityTable()
 
 bool EntityTable::EntityHasComponent(unsigned int _entityId, std::string _componentType)
 {
-	unsigned __int64* componentBitSet = (unsigned __int64*)(m_dataTable->GetData(_entityId) + 1);
+	BitSet::DataType* componentBitSet = (BitSet::DataType*)(m_dataTable->GetData(_entityId) + 1);
 	return true;
 }
 
 bool EntityTable::EntityHasComponents(unsigned int _entityId, BitSet::DataType* _mandatoryMask, BitSet::DataType* _oneOfMask, BitSet::DataType* _exclusionMask)
 {
 	/* Component bit set for the entity */
-	unsigned __int64* componentBitSet = (unsigned __int64*)(m_dataTable->GetData(_entityId) + 1);
+	BitSet::DataType* componentBitSet = (BitSet::DataType*)(m_dataTable->GetData(_entityId) + 1);
 
 	/* Checks every component filter (breaks if fails) */
 	for (unsigned int i = 0; i < m_componentIntCount; ++i)
