@@ -70,6 +70,14 @@ bool WinSocket::Shutdown()
 
 bool WinSocket::Connect(const char* _ip, const int _port)
 { 
+	if (!m_initialized)
+	{
+		if (NET_DEBUG)
+			printf("Tried to connect without initializing.\n");
+
+		Initialize();
+	}
+
 	addrinfo hints = { 0 };
 	hints.ai_flags = AI_NUMERICHOST;
 	hints.ai_family = AF_INET;
@@ -110,6 +118,15 @@ bool WinSocket::Connect(const char* _ip, const int _port)
 
 bool WinSocket::Bind(const int _port)
 { 
+	if (!m_initialized)
+	{
+		if (NET_DEBUG)
+			printf("Tried to connect without initializing.\n");
+
+		Initialize();
+	}
+
+
 	sockaddr_in address;
 	address.sin_family = AF_INET;
 	address.sin_port = htons(_port);
@@ -174,6 +191,14 @@ ISocket* WinSocket::Accept(NetConnection& _netConnection)
 
 bool WinSocket::Listen(int _backlog)
 { 
+	if (!m_initialized)
+	{
+		if (NET_DEBUG)
+			printf("Tried to connect without initializing.\n");
+
+		Initialize();
+	}
+
 	int result = listen(m_socket, 128);
 
 	if (result == SOCKET_ERROR)
