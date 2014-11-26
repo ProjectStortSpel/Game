@@ -7,7 +7,7 @@
 #include "World.h"
 #include "Systems/SystemWorkGroup.h"
 #include "Components/ComponentType.h"
-#include "../Managers/ComponentManager.h"
+#include "../Managers/ComponentTypeManager.h"
 
 namespace ECSL
 {

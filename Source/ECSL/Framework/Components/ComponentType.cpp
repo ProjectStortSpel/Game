@@ -2,20 +2,19 @@
 
 using namespace ECSL;
 
-//ComponentType::ComponentType(int _byteSize, TableType _tableType, std::vector<std::pair<std::string, int>> _variables)
-//	: m_byteSize(_byteSize), m_tableType(_tableType)
-//{
-//	m_variableIndices = new std::map<std::string, int>();
-//	for (int n = 0; n < _variables.size(); ++n)
-//	{
-//		std::string tName = _variables[n].first;
-//		int tValue = _variables[n].second;
-//
-//		m_variableIndices->operator[]("tName") = tValue;
-//	}
-//}
-//
-//ComponentType::~ComponentType()
-//{
-//
-//}
+ComponentType::ComponentType(std::string _name,
+		TableType _tableType,
+		std::map<std::string, ComponentVariable>& _variables)
+		: m_name(_name), m_tableType(_tableType), m_byteSize(0)
+{
+	m_variables = _variables;
+
+	/* Calculate total byte size for component type */
+	for (auto it = _variables.begin(); it != _variables.end(); ++it)
+		m_byteSize += it->second.GetByteSize();
+}
+
+ComponentType::~ComponentType()
+{
+
+}

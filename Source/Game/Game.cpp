@@ -9,15 +9,18 @@
 int main(int argc, char** argv)
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
-	//ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
-	ECSL::Parser* parser = new ECSL::Parser();
-	ECSL::Section* haha = parser->ParseFile("content/components/component.cmp");
-	delete(parser);
-	delete(haha);
-	//worldInitializer.Add<int>();
-	//ECSL::World* world = worldCreator.InitializeWorld(100);
+	////ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
+	//ECSL::Parser* parser = new ECSL::Parser();
+	//ECSL::Section* section = parser->ParseFile("content/components/component.cmp");
+	//ECSL::ComponentTypeReader reader;
+	//std::vector<ECSL::ComponentType*> componentTypes = *reader.ReadComponents("content/components/component.cmp", section);
+	//delete(parser);
+	//delete(section);
+	////worldInitializer.Add<int>();
+	////ECSL::World* world = worldCreator.InitializeWorld(100);
+	ECSL::ComponentTypeManager::GetInstance().AddComponentTypesFromDirectory("Content/components");
 	SDL_Quit();
 	system("pause");
-	_CrtDumpMemoryLeaks();
+	//_CrtDumpMemoryLeaks();
 	return 0;
 }

@@ -1,5 +1,5 @@
 #include "World.h"
-#include "../Managers/ComponentManager.h"
+#include "../Managers/ComponentTypeManager.h"
 using namespace ECSL;
 
 World::World(unsigned int _entityCount, std::vector<SystemWorkGroup*>* _systemWorkGroups, std::vector<int>* _componentTypeIds)

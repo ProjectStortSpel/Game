@@ -1,5 +1,5 @@
 #include "DataManager.h"
-#include "ECSL/Managers/ComponentManager.h"
+#include "../../Managers/ComponentTypeManager.h"
 #include "DataArray.h"
 
 using namespace ECSL;
@@ -19,13 +19,12 @@ void DataManager::InitializeTables()
 
 	for (int n = 0; n < m_componentTypeIds->size(); ++n)
 	{
-		ComponentTypeInterface* componentType = ComponentTypeManager::GetInstance().GetComponentType(m_componentTypeIds->at(n));
+		ComponentType* componentType = ComponentTypeManager::GetInstance().GetComponentType(m_componentTypeIds->at(n));
 		if (!componentType)
 		{
 			printf("ERROR: Invalid ComponentType! (ID %d)\n", m_componentTypeIds->at(n));
 			continue;
 		}
-
 
 		switch (componentType->GetTableType())
 		{

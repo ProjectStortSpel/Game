@@ -11,12 +11,6 @@ namespace ECSL
 {
 	class DECLSPEC DataManager
 	{
-	private:
-		unsigned int m_entityCount;
-		EntityTable* m_entityTable;
-		std::vector<DataTable*>* m_componentTables;
-		std::vector<int>* m_componentTypeIds;
-
 	public:
 		explicit DataManager(unsigned int _entityCount);
 		~DataManager();
@@ -24,6 +18,12 @@ namespace ECSL
 		void InitializeTables();
 
 		void AddComponentType(int _componentType);
+
+	private:
+		unsigned int m_entityCount;
+		EntityTable* m_entityTable;
+		std::vector<DataTable*>* m_componentTables;
+		std::vector<int>* m_componentTypeIds;
 	};
 }
 

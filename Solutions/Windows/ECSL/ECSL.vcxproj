@@ -21,6 +21,8 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\ECSL\ECSL.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Common\BitSet.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Common\FileHelper.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Common\StringConverter.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\ComponentType.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\ComponentTypeReader.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\Parser.h" />
@@ -34,9 +36,11 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\World.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\WorldCreator.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Interfaces\System.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Managers\ComponentManager.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Managers\ComponentTypeManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Common\FileHelper.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Common\StringConverter.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\ComponentType.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\ComponentTypeReader.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\Parser.cpp" />
@@ -49,7 +53,7 @@
     <ClCompile Include="..\..\..\Source\ECSL\Framework\World.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\WorldCreator.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Interfaces\System.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Managers\ComponentManager.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Managers\ComponentTypeManager.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C497EBB7-2E55-4F88-AEBD-D2529AC9B8C0}</ProjectGuid>

@@ -46,9 +46,6 @@
     <ClInclude Include="..\..\..\Source\ECSL\Interfaces\System.h">
       <Filter>Source Files\Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\ECSL\Managers\ComponentManager.h">
-      <Filter>Source Files\Managers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Tables\DataManager.h">
       <Filter>Source Files\Framework\Tables</Filter>
     </ClInclude>
@@ -79,6 +76,15 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\ComponentTypeReader.h">
       <Filter>Source Files\Framework\Parsing</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Managers\ComponentTypeManager.h">
+      <Filter>Source Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Common\FileHelper.h">
+      <Filter>Source Files\Framework\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Common\StringConverter.h">
+      <Filter>Source Files\Framework\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\World.cpp">
@@ -92,9 +98,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Source\ECSL\Interfaces\System.cpp">
       <Filter>Source Files\Interfaces</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Source\ECSL\Managers\ComponentManager.cpp">
-      <Filter>Source Files\Managers</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Tables\DataManager.cpp">
       <Filter>Source Files\Framework\Tables</Filter>
@@ -119,6 +122,15 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\ComponentTypeReader.cpp">
       <Filter>Source Files\Framework\Parsing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Managers\ComponentTypeManager.cpp">
+      <Filter>Source Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Common\FileHelper.cpp">
+      <Filter>Source Files\Framework\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Common\StringConverter.cpp">
+      <Filter>Source Files\Framework\Common</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
