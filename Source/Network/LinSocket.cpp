@@ -72,7 +72,7 @@ bool LinSocket::Bind(const int _port)
 ISocket* LinSocket::Accept(NetConnection& _netConnection)
 {
 	sockaddr_in incomingAddress;
-	int incomingAddressLength = sizeof(incomingAddress);
+	socklen_t incomingAddressLength = sizeof(incomingAddress);
 	int newSocket = -1;
 	newSocket = accept(m_socket, (sockaddr*)&incomingAddress, &incomingAddressLength);
 
