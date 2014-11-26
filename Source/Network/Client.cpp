@@ -123,8 +123,8 @@ void Client::ReceivePackets()
 		}
 		else
 		{
-			if (NET_DEBUG)
-				printf("ReveivePackets failed. Error Code: %d\n.", WSAGetLastError());
+			//if (NET_DEBUG)
+			//	printf("ReveivePackets failed. Error Code: %d\n.", WSAGetLastError());
 		}
 		
 //		NetSleep(30);
