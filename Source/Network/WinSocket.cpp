@@ -131,7 +131,7 @@ ISocket* WinSocket::Accept(NetConnection& _netConnection)
 
 	sockaddr_in sin;
 	socklen_t len = sizeof(sin);
-	if (getsockname(newSocket, (struct sockaddr *)&sin, &len) == 0)
+	if (getsockname(newSocket, (sockaddr *)&sin, &len) == 0)
 		sock->m_localPort = ntohs(sin.sin_port);
 
 	sock->m_remoteIP = s;

@@ -90,7 +90,7 @@ ISocket* LinSocket::Accept(NetConnection& _netConnection)
 
 	sockaddr_in sin;
 	socklen_t len = sizeof(sin);
-	if (getsockname(newSocket, (struct sockaddr *)&sin, &len) == 0)
+	if (getsockname(newSocket, (sockaddr *)&sin, &len) == 0)
 		sock->m_localPort = ntohs(sin.sin_port);
 
 	sock->m_remoteIP = s;
@@ -104,17 +104,33 @@ ISocket* LinSocket::Accept(NetConnection& _netConnection)
 
 bool LinSocket::Listen(int _backlog)
 {
-	return false;
+	int result = listen(m_socket, 128);
+
+	if (result == -1)
+	{
+		if(NET_DEBUG)
+			printf("Failed to start listen.\n");
+		return false;
+	}
+	return true;
 }
 
 int LinSocket::Recv(char* _buffer, int _length, int _flags)
 {
-	return -1;
+	return recv(m_socket, (void*)_buffer, _length, _flags);
 }
 
 int LinSocket::Send(char* _buffer, int _length, int _flags)
 {
-	return -1;
+	int result = send(m_socket, (void*)_buffer, _length, _flags);
+	if (result == -1) 
+	{
+		if (NET_DEBUG)
+			printf("Failed to send packet of size '%i'.\n", _length);
+
+		return -1;
+	}
+	return result;
 }
 
 #endif
