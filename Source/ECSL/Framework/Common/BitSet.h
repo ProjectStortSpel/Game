@@ -4,12 +4,13 @@
 #include <SDL/SDL.h>
 #include <math.h>
 #include <vector>
+#include <inttypes.h>
 
 namespace ECSL
 {
 	namespace BitSet
 	{
-		typedef unsigned __int64 DataType;
+		typedef uint64_t DataType;
 
 		inline DECLSPEC unsigned int GetIntByteSize()
 		{
