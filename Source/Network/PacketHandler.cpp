@@ -24,7 +24,7 @@ void PacketHandler::StartPack(const char* _functionName)
 {
 	m_positionSend = m_packetSend;
 	WriteShort(0);
-	WriteByte(ID_USER_PACKET);
+	WriteByte(ID_CUSTOM_PACKET);
 	WriteString(_functionName);
 }
 
