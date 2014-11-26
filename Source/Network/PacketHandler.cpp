@@ -23,6 +23,7 @@ PacketHandler::~PacketHandler()
 void PacketHandler::StartPack(const char* _functionName)
 {
 	m_positionSend = m_packetSend;
+	WriteShort(0);
 	WriteByte(ID_USER_PACKET);
 	WriteString(_functionName);
 }
@@ -101,6 +102,15 @@ void PacketHandler::WriteFloat(const float _float)
 	{
 		memcpy(m_positionSend, &_float, sizeof(_float));
 		m_positionSend += sizeof(_float);
+	}
+}
+
+void PacketHandler::WriteShort(const short _short)
+{
+	if (!IsOutOfBounds(m_packetSend, m_positionSend + sizeof(int), MAX_PACKET_SIZE))
+	{
+		memcpy(m_positionSend, &_short, sizeof(_short));
+		m_positionSend += sizeof(_short);
 	}
 }
 
