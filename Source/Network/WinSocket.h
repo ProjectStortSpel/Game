@@ -18,7 +18,7 @@ private:
 	static bool m_initialized;
 
 public:
-	WinSocket(SOCKET _socket) : m_socket(_socket) {}
+	WinSocket(SOCKET _socket);
 	WinSocket(int _domain, int _type, int _protocol);
 	~WinSocket();
 

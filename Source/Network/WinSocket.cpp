@@ -5,6 +5,11 @@
 
 bool WinSocket::m_initialized = false;
 
+WinSocket::WinSocket(SOCKET _socket)
+{
+	m_socket = _socket;
+}
+
 WinSocket::WinSocket(int _domain, int _type, int _protocol)
 {
 	m_socket = socket(_domain, _type, _protocol);
@@ -71,18 +76,19 @@ bool WinSocket::Connect(const char* _ip, const int _port)
 
 	freeaddrinfo(addrs);
 
-	if (connect(m_socket, (sockaddr*)&address, sizeof(address)) == 0)
+	if (connect(m_socket, (sockaddr*)&address, sizeof(address)) < 0)
 	{
-		m_remoteIP = _ip;
-		m_remotePort = _port;
-		return true;
-	}
-	else if (NET_DEBUG)
-	{
-		printf("Failed to connect to Ip address %s:%i. Error Code: %d.\n", _ip, _port, WSAGetLastError());
+		if (NET_DEBUG)
+		{
+			printf("Failed to connect to Ip address %s:%i. Error Code: %d.\n", _ip, _port, WSAGetLastError());
+		}
+		return false;
 	}
 
-	return false;
+	m_remoteIP = _ip;
+	m_remotePort = _port;
+
+	return true;
 }
 
 bool WinSocket::Bind(const int _port)
@@ -99,6 +105,9 @@ bool WinSocket::Bind(const int _port)
 
 		return false;
 	}
+
+	m_localPort = _port;
+
 	return true;
 }
 
@@ -111,13 +120,22 @@ ISocket* WinSocket::Accept(NetConnection& _netConnection)
 
 	if (newSocket == INVALID_SOCKET)
 	{
-		printf("Accept failed. Error Code: %d.\n", WSAGetLastError());
+		if (NET_DEBUG)
+			printf("Accept failed. Error Code: %d.\n", WSAGetLastError());
 		return NULL;
 	}
 
 	WinSocket* sock = new WinSocket(newSocket);
 	char s[INET6_ADDRSTRLEN];
 	inet_ntop(incomingAddress.sin_family, &incomingAddress.sin_addr, s, sizeof(s));
+
+	sockaddr_in sin;
+	socklen_t len = sizeof(sin);
+	if (getsockname(newSocket, (struct sockaddr *)&sin, &len) == 0)
+		sock->m_localPort = ntohs(sin.sin_port);
+
+	sock->m_remoteIP = s;
+	sock->m_remotePort = incomingAddress.sin_port;
 
 	_netConnection.IpAddress = s;
 	_netConnection.Port = incomingAddress.sin_port;
