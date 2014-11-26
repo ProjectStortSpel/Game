@@ -64,10 +64,10 @@ void PacketHandler::StartUnPack(Packet* _packet, BaseNetwork* _base)
 		m_functionMap[messageName](this, _packet->Sender);
 	}
 
-	else if (NET_DEBUG)
-	{
-		printf("MessageName \"%s\" not bound to any function.\n", messageName);
-	}
+	//else if (NET_DEBUG)
+	//{
+	//	printf("MessageName \"%s\" not bound to any function.\n", messageName);
+	//}
 
 	EndUnPack();
 }
