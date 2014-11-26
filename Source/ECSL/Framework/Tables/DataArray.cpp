@@ -9,7 +9,7 @@ namespace ECSL
 	{
 		m_bytesPerRow = _bytesPerRow;
 		m_rowCount = _rowCount;
-		m_dataTable = new char[m_rowCount * m_bytesPerRow];
+		m_dataTable = (char*)calloc(m_rowCount * m_bytesPerRow, sizeof(char));
 	}
 
 	DataArray::~DataArray()

@@ -73,6 +73,9 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\WorldCreator.h">
       <Filter>Source Files\Framework</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemBitMask.h">
+      <Filter>Source Files\Framework\Systems</Filter>
+	</ClInclude>
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\ComponentTypeReader.h">
       <Filter>Source Files\Framework\Parsing</Filter>
     </ClInclude>
@@ -120,6 +123,9 @@
     <ClCompile Include="..\..\..\Source\ECSL\Framework\WorldCreator.cpp">
       <Filter>Source Files\Framework</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Common\BitSet.cpp">
+      <Filter>Source Files\Framework\Common</Filter>
+	</ClCompile>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\ComponentTypeReader.cpp">
       <Filter>Source Files\Framework\Parsing</Filter>
     </ClCompile>
