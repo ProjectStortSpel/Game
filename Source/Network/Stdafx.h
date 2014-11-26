@@ -10,7 +10,7 @@
 #endif
 
 
-#define NET_DEBUG 0
+#define NET_DEBUG 1
 #define SAFE_DELETE(x) if (x) { delete x; x = 0; }
 
 struct NetConnection
