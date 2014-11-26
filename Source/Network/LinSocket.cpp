@@ -81,10 +81,14 @@ bool LinSocket::Close()
 	{
 		if(NET_DEBUG)
 			printf("Failed to close linuxsocket. Error: %s.\n", strerror(errno));
+
+		return false;
 	}
+
+	return true;
 }
 
-ISocket* LinSocket::Accept(NetConnection& _netConnection)
+ISocket* LinSocket::Accept()
 {
 	printf("Accept.\n");
 	sockaddr_in incomingAddress;
@@ -111,9 +115,6 @@ ISocket* LinSocket::Accept(NetConnection& _netConnection)
 
 	sock->m_remoteAddress = s;
 	sock->m_remotePort = incomingAddress.sin_port;
-
-	_netConnection.IpAddress = s;
-	_netConnection.Port = incomingAddress.sin_port;
 
 	return sock;
 }

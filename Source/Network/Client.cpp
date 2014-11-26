@@ -12,6 +12,9 @@ Client::Client()
 
 Client::~Client()
 {
+	if (m_listenForPacketsThreadAlive)
+		StopListenForPackets();
+
 	if (m_socket)
 	{
 		m_socket->Shutdown();
@@ -19,7 +22,7 @@ Client::~Client()
 	}
 }
 
-void Client::Connect(const char* _ipAddress, const char* _password, const int _outgoingPort, const int _incomingPort)
+bool Client::Connect(const char* _ipAddress, const char* _password, const int _outgoingPort, const int _incomingPort)
 {
 
 	m_remoteAddress = _ipAddress;
@@ -27,9 +30,9 @@ void Client::Connect(const char* _ipAddress, const char* _password, const int _o
 	m_outgoingPort = _outgoingPort;
 	m_incomingPort = _incomingPort;
 
-	Connect();
+	return Connect();
 }
-void Client::Connect()
+bool Client::Connect()
 {
 	m_socket = ISocket::CreateISocket(AF_INET, SOCK_STREAM, 0);
 
@@ -47,39 +50,19 @@ void Client::Connect()
 		m_socket->Bind(m_incomingPort);
 		m_socketBound = true;
 	}
-	m_socket->Connect(m_remoteAddress.c_str(), m_outgoingPort);
 
-	//// Starts the network thread
-	//m_rakInterface->Startup(1, &socketDescriptor, 1);
-	//// Send an occasional ping to the server to check for response
-	//m_rakInterface->SetOccasionalPing(true);
-
-	//// Connect to the server
-	//RakNet::ConnectionAttemptResult car = m_rakInterface->Connect(m_remoteAddress.c_str(), m_outgoingPort, m_password.c_str(), (int)strlen(m_password.c_str()));
-	//if (car == RakNet::CONNECTION_ATTEMPT_STARTED)
-	//{
-	//	if (NET_DEBUG)
-	//		printf("Client started to connect.\n");
-
-	//	StartListen();
-	//}
-	//else
-	//	printf("Unable to start connecting.\n");
+	return m_socket->Connect(m_remoteAddress.c_str(), m_outgoingPort);
 }
 
 void Client::Disconect()
 {
-//	if (NET_DEBUG)
-//		printf("Client disconnected from server.\n");
-//
-//	if (m_receiveThreadAlive)
-//		StopListen();
-//	if (m_rakInterface)
-//	{
-//		m_rakInterface->Shutdown(300);
-//		RakNet::RakPeerInterface::DestroyInstance(m_rakInterface);
-//		m_rakInterface = 0;
-//	}
+	if (NET_DEBUG)
+		printf("Client disconnected from server.\n");
+	
+	StopListenForPackets();
+
+	SAFE_DELETE(m_socket);
+	m_socketBound = false;
 }
 //
 void Client::SendToServer(PacketHandler::Packet _packet)

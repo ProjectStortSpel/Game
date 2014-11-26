@@ -24,12 +24,7 @@ WinSocket::WinSocket(int _domain, int _type, int _protocol)
 
 WinSocket::~WinSocket()
 {
-	if (m_socket)
-	{
-		closesocket(m_socket);
-		m_socketOpen = false;
-
-	}
+	Close();
 
 }
 
@@ -157,7 +152,7 @@ bool WinSocket::Close()
 	return true;
 }
 
-ISocket* WinSocket::Accept(NetConnection& _netConnection)
+ISocket* WinSocket::Accept()
 { 
 	sockaddr_in incomingAddress;
 	int incomingAddressLength = sizeof(incomingAddress);
@@ -182,9 +177,6 @@ ISocket* WinSocket::Accept(NetConnection& _netConnection)
 
 	sock->m_remoteAddress = s;
 	sock->m_remotePort = incomingAddress.sin_port;
-
-	_netConnection.IpAddress = s;
-	_netConnection.Port = incomingAddress.sin_port;
 
 	return sock;
 }
