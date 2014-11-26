@@ -185,7 +185,7 @@ void Server::ListenForConnections()
 
 	while (m_listenForConnectionsThreadAlive)
 	{
-
+		printf("Start listen for incoming connections.\n");
 		ISocket* newConnection = m_listenSocket->Accept(netConnection);
 		if (!newConnection)
 			continue;

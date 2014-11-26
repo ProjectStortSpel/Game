@@ -52,6 +52,7 @@ bool LinSocket::Connect(const char* _ip, const int _port)
 
 bool LinSocket::Bind(const int _port)
 {
+	printf("Bind.\n");
 	sockaddr_in address;
 	address.sin_family = AF_INET;
 	address.sin_port = htons(_port);
@@ -71,6 +72,7 @@ bool LinSocket::Bind(const int _port)
 
 ISocket* LinSocket::Accept(NetConnection& _netConnection)
 {
+	printf("Accept.\n");
 	sockaddr_in incomingAddress;
 	socklen_t incomingAddressLength = sizeof(incomingAddress);
 	int newSocket = -1;
@@ -104,6 +106,7 @@ ISocket* LinSocket::Accept(NetConnection& _netConnection)
 
 bool LinSocket::Listen(int _backlog)
 {
+	printf("Listen.\n");
 	int result = listen(m_socket, 128);
 
 	if (result == -1)
