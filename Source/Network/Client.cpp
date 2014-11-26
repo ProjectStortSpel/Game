@@ -26,9 +26,9 @@ bool Client::Connect(const char* _ipAddress, const char* _password, const int _o
 {
 
 	m_remoteAddress = _ipAddress;
-	m_password = _password;
-	m_outgoingPort = _outgoingPort;
-	m_incomingPort = _incomingPort;
+	m_password		= _password;
+	m_outgoingPort	= _outgoingPort;
+	m_incomingPort	= _incomingPort;
 
 	return Connect();
 }
@@ -67,6 +67,9 @@ void Client::Disconect()
 //
 void Client::SendToServer(PacketHandler::Packet _packet)
 {
+	if (m_socketBound)
+		m_socket->Send((char*)_packet.Data, _packet.Length, 0);
+
 //	m_rakInterface->Send((char*)_packet.Data, _packet.Length, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 //
 //	if (NET_DEBUG)
