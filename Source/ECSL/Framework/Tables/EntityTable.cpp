@@ -11,6 +11,21 @@ EntityTable::EntityTable(unsigned int _entityCount, unsigned int _componentCount
 	m_componentByteCount = BitSet::GetByteCount(_componentCount);
 	m_componentIntCount = BitSet::GetIntCount(_componentCount);
 	m_dataTable = new DataArray(_entityCount, 1 + m_componentIntCount * BitSet::GetIntByteSize());
+
+	/*	TEST	*/
+	BitSet::BitSetConverter& bsc = BitSet::BitSetConverter::GetInstance();
+
+	//	Entity 0 has 1001
+	std::vector<unsigned int>* entityComponents = new std::vector<unsigned int>();
+	entityComponents->push_back(0);
+	entityComponents->push_back(24);
+	//entityComponents->push_back(45);
+	entityComponents->push_back(44);
+	entityComponents->push_back(64);
+
+	BitSet::DataType* obligatoryBits = bsc.GenerateBitmask(entityComponents, _componentCount);
+	BitSet::DataType test = obligatoryBits[0];
+	m_dataTable->SetData(0, 1, obligatoryBits, m_componentIntCount * sizeof(BitSet::DataType));
 }
 
 EntityTable::~EntityTable()
@@ -21,14 +36,14 @@ EntityTable::~EntityTable()
 
 bool EntityTable::EntityHasComponent(unsigned int _entityId, std::string _componentType)
 {
-	unsigned __int64* componentBitSet = (unsigned __int64*)(m_dataTable->GetData(_entityId) + 1);
+	BitSet::DataType* componentBitSet = (BitSet::DataType*)(m_dataTable->GetData(_entityId) + 1);
 	return true;
 }
 
 bool EntityTable::EntityHasComponents(unsigned int _entityId, BitSet::DataType* _mandatoryMask, BitSet::DataType* _oneOfMask, BitSet::DataType* _exclusionMask)
 {
 	/* Component bit set for the entity */
-	unsigned __int64* componentBitSet = (unsigned __int64*)(m_dataTable->GetData(_entityId) + 1);
+	BitSet::DataType* componentBitSet = (BitSet::DataType*)(m_dataTable->GetData(_entityId) + 1);
 
 	/* Checks every component filter (breaks if fails) */
 	for (unsigned int i = 0; i < m_componentIntCount; ++i)
