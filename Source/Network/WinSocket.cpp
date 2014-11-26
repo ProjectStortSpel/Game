@@ -25,7 +25,6 @@ WinSocket::WinSocket(int _domain, int _type, int _protocol)
 WinSocket::~WinSocket()
 {
 	Close();
-
 }
 
 bool WinSocket::Initialize()

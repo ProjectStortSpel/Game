@@ -56,19 +56,12 @@ void Server::Stop()
 
 	if (m_listenSocket)
 	{
-		m_listenSocket->Close();
 		SAFE_DELETE(m_listenSocket);
-		m_listenSocket = 0;
 	}
 
 	for (auto it = m_connectionClients.begin(); it != m_connectionClients.end(); ++it)
 	{
-		if (it->second)
-		{
-			it->second->Close();
 			SAFE_DELETE(it->second);
-			it->second = 0;
-		}
 	}
 
 	m_connectionClients.clear();

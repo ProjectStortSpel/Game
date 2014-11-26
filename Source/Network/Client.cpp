@@ -15,11 +15,7 @@ Client::~Client()
 	if (m_listenForPacketsThreadAlive)
 		StopListenForPackets();
 
-	if (m_socket)
-	{
-		m_socket->Shutdown();
-		m_socket = 0;
-	}
+	SAFE_DELETE(m_socket);
 }
 
 bool Client::Connect(const char* _ipAddress, const char* _password, const int _outgoingPort, const int _incomingPort)
