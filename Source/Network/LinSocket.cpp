@@ -66,7 +66,7 @@ bool LinSocket::Bind(const int _port)
 	if (bind(m_socket, (struct sockaddr *) &address, sizeof(address)) < 0)
 	{
 		if (NET_DEBUG)
-			perror("ERROR on binding");
+			printf("ERROR on binding");
 		return false;
 	}
 
@@ -80,7 +80,7 @@ bool LinSocket::Close()
 	if(close(m_socket) != 0)
 	{
 		if(NET_DEBUG)
-			perror("Failed to close linuxsocket. Error: %s.\n", strerror(errno));
+			printf("Failed to close linuxsocket. Error: %s.\n", strerror(errno));
 	}
 }
 
