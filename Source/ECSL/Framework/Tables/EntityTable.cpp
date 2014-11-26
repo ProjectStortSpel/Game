@@ -11,6 +11,21 @@ EntityTable::EntityTable(unsigned int _entityCount, unsigned int _componentCount
 	m_componentByteCount = BitSet::GetByteCount(_componentCount);
 	m_componentIntCount = BitSet::GetIntCount(_componentCount);
 	m_dataTable = new DataArray(_entityCount, 1 + m_componentIntCount * BitSet::GetIntByteSize());
+
+	/*	TEST	*/
+	BitSet::BitSetConverter& bsc = BitSet::BitSetConverter::GetInstance();
+
+	//	Entity 0 has 1001
+	std::vector<unsigned int>* entityComponents = new std::vector<unsigned int>();
+	entityComponents->push_back(0);
+	entityComponents->push_back(24);
+	//entityComponents->push_back(45);
+	entityComponents->push_back(44);
+	entityComponents->push_back(64);
+
+	BitSet::DataType* obligatoryBits = bsc.GenerateBitmask(entityComponents, _componentCount);
+	BitSet::DataType test = obligatoryBits[0];
+	m_dataTable->SetData(0, 1, obligatoryBits, m_componentIntCount * sizeof(BitSet::DataType));
 }
 
 EntityTable::~EntityTable()
