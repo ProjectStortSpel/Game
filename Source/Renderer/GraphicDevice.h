@@ -11,8 +11,7 @@ namespace Renderer
 {
 	struct RenderComponent
 	{
-
-
+		
 	};
 
 	class DECLSPEC GraphicDevice
@@ -29,6 +28,8 @@ namespace Renderer
 
 		void ResizeWindow(int _width, int _height);
 		void SetTitle(std::string _title);
+
+		void RenderSimpleText(std::string _text, int x, int y);
 
 	private:
 		bool InitSDLWindow();
@@ -47,6 +48,7 @@ namespace Renderer
 		int	m_clientWidth, m_clientHeight;
 
 		// Image buffers
+		GLuint m_textImage;
 		GLuint m_outputImage, m_inputImage;
 		GLuint m_debuggText;
 		GLuint m_depthBuf, m_normTex, m_colorTex;
@@ -55,10 +57,19 @@ namespace Renderer
 		GLuint m_deferredFBO;
 
 		// Shaders
-		Shader m_debuggTextShader;
+		Shader m_simpleTextShader;
+		Shader m_debuggTextShader; // TA BORT DENNA
 		Shader m_fullScreenShader;
 		Shader m_deferredShader1, m_deferredShader2;
+
+		int simpleText[4608];
+		int simpleTextX, simpleTextY;
+		GLuint simpleTextBuffer;
+
+		void RenderText();
 	};
 }
+
+
 
 #endif

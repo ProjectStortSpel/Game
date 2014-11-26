@@ -206,7 +206,7 @@ bool GraphicDevice::Init()
 	if (!InitSDLWindow()) { ERRORMSG("INIT SDL WINDOW FAILED\n"); return false; }
 	if (!InitGLEW()) { ERRORMSG("GLEW_VERSION_4_3 FAILED\n"); return false; }
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
-	if (!InitDeferred()) { ERRORMSG("INIT DEFERRED FAILED\n"); return false; }
+	//if (!InitDeferred()) { ERRORMSG("INIT DEFERRED FAILED\n"); return false; }
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 
 	return true;
@@ -271,7 +271,7 @@ void GraphicDevice::Render()
 
 	- Output	color
 	*/
-
+/*
 	//------Render deferred--------------------------------------------------------------------------
 	glEnable(GL_DEPTH_TEST);
 
@@ -355,24 +355,9 @@ void GraphicDevice::Render()
 	// DEBUGG TEXT
 	//glBindTexture(GL_TEXTURE_2D, m_debuggText);
 	// Use Debuggtext
+*/	
 	
-	
-	m_debuggTextShader.UseProgram();
-	// Run program
-	glActiveTexture(GL_TEXTURE9);
-	glBindTexture(GL_TEXTURE_2D, m_colorTex);
-	glActiveTexture(GL_TEXTURE10);
-	glBindTexture(GL_TEXTURE_2D, m_outputImage);
-	glDispatchCompute(m_clientWidth * 0.0625, m_clientHeight * 0.0625, 1); // 1/16 = 0.0625
-
-	//glUseProgram(0);
-
-	////// FULL SCREEN QUAD
-	m_fullScreenShader.UseProgram();
-	glActiveTexture(GL_TEXTURE10);
-	// Clear, select the rendering program and draw a full screen quad	
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glDrawArrays(GL_POINTS, 0, 1);
+	RenderText();
 	
 	// Swap in the new buffer
 	SDL_GL_SwapWindow(m_window);
@@ -492,9 +477,9 @@ bool GraphicDevice::InitDeferred()
 bool GraphicDevice::InitShaders()
 {
 	// debuggtext Shader
-	m_debuggTextShader.InitShaderProgram();
-	m_debuggTextShader.AddShader("Content/Shaders/debuggText.glsl", GL_COMPUTE_SHADER);
-	m_debuggTextShader.FinalizeShaderProgram();
+	m_simpleTextShader.InitShaderProgram();
+	m_simpleTextShader.AddShader("Content/Shaders/SimpleText.glsl", GL_COMPUTE_SHADER);
+	m_simpleTextShader.FinalizeShaderProgram();
 
 	// Full Screen Quad Shader
 	m_fullScreenShader.InitShaderProgram();
@@ -502,7 +487,7 @@ bool GraphicDevice::InitShaders()
 	m_fullScreenShader.AddShader("Content/Shaders/fullscreen.gs", GL_GEOMETRY_SHADER);
 	m_fullScreenShader.AddShader("Content/Shaders/fullscreen.ps", GL_FRAGMENT_SHADER);
 	m_fullScreenShader.FinalizeShaderProgram();
-
+/*
 	//Deferred pass 1
 	m_deferredShader1.InitShaderProgram();
 	m_deferredShader1.AddShader("Content/Shaders/VSDeferredPass1.glsl", GL_VERTEX_SHADER);
@@ -514,40 +499,14 @@ bool GraphicDevice::InitShaders()
 	m_deferredShader2.AddShader("Content/Shaders/VSDeferredPass2.glsl", GL_VERTEX_SHADER);
 	m_deferredShader2.AddShader("Content/Shaders/FSDeferredPass2.glsl", GL_FRAGMENT_SHADER);
 	m_deferredShader2.FinalizeShaderProgram();
-
+*/
 	return true;
 }
 
 bool GraphicDevice::InitBuffers()
 {
 	int location;
-
-	m_debuggTextShader.UseProgram();
-	// Input ImageBuffer
-	
-	//glGenTextures(1, &m_inputImage);
-	glActiveTexture(GL_TEXTURE9);
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, m_colorTex);
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, m_clientWidth, m_clientHeight);
-	glBindImageTexture(0, m_colorTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
-
-	// Output ImageBuffer
-	glGenTextures(1, &m_outputImage);
-	glActiveTexture(GL_TEXTURE10);
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, m_outputImage);
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, m_clientWidth, m_clientHeight);
-
-	glBindImageTexture(1, m_outputImage, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
-
-	m_fullScreenShader.UseProgram();
-	glActiveTexture(GL_TEXTURE10);
-	glEnable(GL_TEXTURE_2D);
-	location = glGetUniformLocation(m_fullScreenShader.GetShaderProgram(), "output_image");
-	glUniform1i(location, 10);
-	//glBindTexture(GL_TEXTURE_2D, 0);
-
+/*
 	m_deferredShader2.UseProgram();
 	CreateDrawQuad();
 
@@ -579,7 +538,113 @@ bool GraphicDevice::InitBuffers()
 	glActiveTexture(GL_TEXTURE3);
 	m_Ground = Object(texture, vec3(0.0, -1.5, 0.0));
 	CreateGround();
+*/
+
+
+
+	// OutputImageBuffer debugg text
+	m_simpleTextShader.UseProgram();
+
+	//glGenTextures(1, &m_textImage);
+
+
+	m_textImage = TextureLoader::LoadTexture("Content/Textures/SimpleText.png", 5);
+
+	//glBindImageTexture(5, m_textImage, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8);
+
+
+	glGenTextures(1, &m_outputImage);
+
+	glBindTexture(GL_TEXTURE_2D, m_outputImage);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, m_clientWidth, m_clientHeight);
+	//glBindImageTexture(6, m_outputImage, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
+	//glBindTexture(GL_TEXTURE_2D, 0);
+
+	m_fullScreenShader.UseProgram();
+	glActiveTexture(GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, m_outputImage);
+	location = glGetUniformLocation(m_fullScreenShader.GetShaderProgram(), "output_image");
+	glUniform1i(location, 5);
+
+	simpleTextX = m_clientWidth / 8;
+	simpleTextY = m_clientHeight / 16;
+	glGenBuffers(1, &simpleTextBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, simpleTextBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(int)* 4608, &simpleText, GL_DYNAMIC_COPY);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, simpleTextBuffer);
+	// debugg text end
+
 
 	return true;
 }
 
+void GraphicDevice::RenderText()
+{
+	// CLEAR CHRISTIANS DRAW
+	//SDL_GL_SwapWindow(m_window);
+
+	//glBindTexture(GL_TEXTURE_2D, m_debuggText);
+	// Use Debuggtext
+	/*for (int i = 0; i < 4608; i++)
+	{
+	SimpleText[i] = rand() % 95 + 32;
+	}*/
+
+	glBindBuffer(GL_ARRAY_BUFFER, simpleTextBuffer);
+	GLvoid* p = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+	memcpy(p, &simpleText, sizeof(int)* 4608);
+	glUnmapBuffer(GL_ARRAY_BUFFER);
+
+	m_simpleTextShader.UseProgram();
+	// Run program
+
+	// Bind buffers
+	glBindImageTexture(5, m_textImage, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
+	glBindImageTexture(6, m_outputImage, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+	// run program
+	glDispatchCompute(128, 36, 1); // 1/16 = 0.0625
+
+
+	// FULL SCREEN QUAD
+	m_fullScreenShader.UseProgram();
+	glActiveTexture(GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, m_outputImage);
+	// Clear, select the rendering program and draw a full screen quad	
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glDrawArrays(GL_POINTS, 0, 1);
+
+	for (int i = 0; i < 4608; i++)
+	{
+		simpleText[i] = 32;
+	}
+}
+
+void GraphicDevice::RenderSimpleText(std::string _text, int _x, int _y)
+{
+	int xoffset = 0;
+	int yoffset = 0;
+
+	for (int i = 0; i < _text.size(); i++)
+	{
+		int thischar = (int)_text[i];
+		if (thischar == 10)
+		{
+			xoffset = 0;
+			yoffset++;
+		}
+		else
+		{
+			int oob = _x + xoffset % (simpleTextX + 1);
+			if (oob == simpleTextX + 1)
+			{
+				xoffset = 0;
+				yoffset++;
+			}
+			int xy = _x + xoffset + (_y + yoffset) * simpleTextX;
+			simpleText[xy] = thischar;
+
+			xoffset++;
+		}
+	}
+}
