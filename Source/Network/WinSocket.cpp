@@ -18,7 +18,7 @@ WinSocket::WinSocket(int _domain, int _type, int _protocol)
 	else if(NET_DEBUG)
 		printf("Failed to create new win socket.\n");
 
-	m_remoteIP = "";
+	m_remoteAddress = "";
 	m_remotePort = 0;
 }
 
@@ -48,6 +48,23 @@ bool WinSocket::Initialize()
 
 	m_initialized = true;
 	return true;
+}
+
+bool WinSocket::Shutdown()
+{
+	if (!m_initialized)
+		return true;
+
+	if (WSACleanup() != 0)
+	{
+		if (NET_DEBUG)
+			std::printf("Failed to shutdown winsocket. Error Code: %d.\n", WSAGetLastError());
+		return false;
+	}
+
+	m_initialized = false;
+	return true;
+
 }
 
 
@@ -85,7 +102,7 @@ bool WinSocket::Connect(const char* _ip, const int _port)
 		return false;
 	}
 
-	m_remoteIP = _ip;
+	m_remoteAddress = _ip;
 	m_remotePort = _port;
 
 	return true;
@@ -107,6 +124,18 @@ bool WinSocket::Bind(const int _port)
 	}
 
 	m_localPort = _port;
+
+	return true;
+}
+
+bool WinSocket::Close()
+{
+	if (closesocket(m_socket) != 0)
+	{
+		if (NET_DEBUG)
+			printf("Failed to close winsocket. Error Code: %d.\n", WSAGetLastError());
+		return false;
+	}
 
 	return true;
 }
@@ -134,7 +163,7 @@ ISocket* WinSocket::Accept(NetConnection& _netConnection)
 	if (getsockname(newSocket, (sockaddr *)&sin, &len) == 0)
 		sock->m_localPort = ntohs(sin.sin_port);
 
-	sock->m_remoteIP = s;
+	sock->m_remoteAddress = s;
 	sock->m_remotePort = incomingAddress.sin_port;
 
 	_netConnection.IpAddress = s;

@@ -60,8 +60,6 @@ protected:
 	//std::map<NetConnection, RakNet::SystemAddress> m_addressMap;
 	//std::map<RakNet::SystemAddress, NetConnection> m_connectionMap;
 
-	ISocket* m_listenSocket;
-
 	std::string m_localAddress;
 	std::string m_password;
 	unsigned int m_incomingPort;

@@ -58,6 +58,8 @@ private:
 
 	std::thread m_newConnectionsThread;
 
+	ISocket* m_listenSocket;
+
 #pragma warning( default : 4251 )
 
 

@@ -12,11 +12,29 @@ Server::Server()
 
 Server::~Server()
 {
+	if (m_listenSocket)
+	{
+		m_listenSocket->Shutdown();
+		m_listenSocket = 0;
+	}
+
+	for (auto it = m_connectionClients.begin(); it != m_connectionClients.end(); ++it)
+	{
+		if (it->second)
+		{
+			it->second->Shutdown();
+			it->second = 0;
+		}
+	}
+
+	m_connectionClients.clear();
+
 }
 
 
 void Server::Start()
 {
+	m_listenSocket = ISocket::CreateISocket(AF_INET, SOCK_STREAM, 0);
 	m_listenSocket->Bind(m_incomingPort);
 
 

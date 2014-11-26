@@ -10,7 +10,7 @@ LinSocket::LinSocket(int _socket)
 LinSocket::LinSocket(int _domain, int _type, int _protocol)
 {
 	m_socket = socket(_domain, _type, _protocol);
-	m_remoteIP = "";
+	m_remoteAddress = "";
 	m_remotePort = 0;
 }
 
@@ -20,6 +20,11 @@ LinSocket::~LinSocket()
 }
 
 bool LinSocket::Initialize()
+{
+	return true;
+}
+
+bool LinSocket::Shutdown()
 {
 	return true;
 }
@@ -70,6 +75,15 @@ bool LinSocket::Bind(const int _port)
 	return true;
 }
 
+bool LinSocket::Close()
+{
+	if(close(m_socket) != 0)
+	{
+		if(NET_DEBUG)
+			perror("Failed to close linuxsocket. Error: %s.\n", strerror(errno));
+	}
+}
+
 ISocket* LinSocket::Accept(NetConnection& _netConnection)
 {
 	printf("Accept.\n");
@@ -82,7 +96,7 @@ ISocket* LinSocket::Accept(NetConnection& _netConnection)
 	if (newSocket == -1)
 	{
 		if (NET_DEBUG)
-			printf("Accept failed.");
+			printf("Accept failed.\n");
 		return NULL;
 	}
 
@@ -95,7 +109,7 @@ ISocket* LinSocket::Accept(NetConnection& _netConnection)
 	if (getsockname(newSocket, (sockaddr *)&sin, &len) == 0)
 		sock->m_localPort = ntohs(sin.sin_port);
 
-	sock->m_remoteIP = s;
+	sock->m_remoteAddress = s;
 	sock->m_remotePort = incomingAddress.sin_port;
 
 	_netConnection.IpAddress = s;

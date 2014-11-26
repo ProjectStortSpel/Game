@@ -15,6 +15,15 @@ bool ISocket::Initialize()
 #endif
 }
 
+bool ISocket::Shutdown()
+{
+#ifdef WIN32
+	return WinSocket::Shutdown();
+#else
+	return LinSocket::Shutdown();
+#endif
+}
+
 
 ISocket* ISocket::CreateISocket(int _domain, int _type, int _protocol)
 {

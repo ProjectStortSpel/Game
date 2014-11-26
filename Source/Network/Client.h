@@ -62,6 +62,9 @@ private:
 
 	std::string m_remoteAddress;
 	int m_outgoingPort;
+	bool m_socketBound;
+
+	ISocket* m_socket;
 
 	NetEvent m_onConnectedToServer;
 	NetEvent m_onDisconnectedFromServer;

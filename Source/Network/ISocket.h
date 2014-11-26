@@ -18,12 +18,22 @@ public:
 	virtual bool Listen(int _backlog) = 0;
 	virtual int Recv(char* _buffer, int _length, int _flags) = 0;
 	virtual int Send(char* _buffer, int _length, int _flags) = 0;
+	virtual bool Close() = 0;
+
+	std::string GetRemoteIpAddress() { return m_remoteAddress; }
+	int GetRemotePort() { return m_remotePort; }
+	int GetLocalPort() { return m_localPort; }
 
 	static bool Initialize();
+	static bool Shutdown();
 
 	static ISocket* CreateISocket(int domain, int type, int protocol);
 
 protected:
+
+	std::string m_remoteAddress;
+	int m_remotePort;
+	int m_localPort;
 
 	bool m_socketOpen;
 

@@ -11,10 +11,6 @@ class DECLSPEC WinSocket : public ISocket
 private:
 	SOCKET m_socket;
 	
-	std::string m_remoteIP;
-	int m_remotePort;
-	int m_localPort;
-
 	static bool m_initialized;
 
 public:
@@ -23,13 +19,16 @@ public:
 	~WinSocket();
 
 	static bool Initialize();
+	static bool Shutdown();
 
 	bool Connect(const char* _ip, const int _port);
 	bool Bind(const int _port);
+	bool Close();
 	ISocket* Accept(NetConnection& _netConnection);
 	bool Listen(int _backlog);
 	int Recv(char* _buffer, int _length, int _flags);
 	int Send(char* _buffer, int _length, int _flags);
+	
 
 };
 

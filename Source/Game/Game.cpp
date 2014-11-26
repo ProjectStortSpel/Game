@@ -45,8 +45,10 @@ int main(int argc, char** argv)
 
 	SDL_Init(SDL_INIT_EVERYTHING);
 
-	Server s;
-	s.Start();
+	Client c;
+	c.Connect("194.47.150.5", "localhest", 5358, 0);
+
+	ISocket::Shutdown();
 
 	std::string input;
 	std::getline(std::cin, input);

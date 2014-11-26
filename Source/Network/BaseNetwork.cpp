@@ -11,19 +11,12 @@ BaseNetwork::BaseNetwork()
 #endif
 
 	ISocket::Initialize();
-	m_listenSocket = ISocket::CreateISocket(AF_INET, SOCK_STREAM, 0);
 	m_password = "localhest";
 	m_packets = std::queue<PacketHandler::Packet*>();
 }
 
 BaseNetwork::~BaseNetwork()
 {
-	if (m_listenSocket)
-	{
-		// Shutdown
-		m_listenSocket = 0;
-	}
-
 	StopListenForPackets();
 }
 

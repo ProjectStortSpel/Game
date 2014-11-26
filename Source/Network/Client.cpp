@@ -7,10 +7,16 @@ Client::Client()
 	m_outgoingPort = 5357;
 	m_incomingPort = 5358;
 	m_remoteAddress = "127.0.0.1";
+	m_socketBound = false;
 }
 
 Client::~Client()
 {
+	if (m_socket)
+	{
+		m_socket->Shutdown();
+		m_socket = 0;
+	}
 }
 
 void Client::Connect(const char* _ipAddress, const char* _password, const int _outgoingPort, const int _incomingPort)
@@ -25,26 +31,23 @@ void Client::Connect(const char* _ipAddress, const char* _password, const int _o
 }
 void Client::Connect()
 {
-	//if (NET_DEBUG)
-	//{
-	//	printf("Client connecting to server:\n");
-	//	printf("Ip address: \"%s\"\n", m_remoteAddress.c_str());
-	//	printf("Remote Port: \"%i\"\n", m_outgoingPort);
-	//	printf("Local Port: \"%i\"\n", m_incomingPort);
-	//	printf("Password: \"%s\"\n", m_password.c_str());
-	//}
+	m_socket = ISocket::CreateISocket(AF_INET, SOCK_STREAM, 0);
 
-	//// Disallow connection responses from any IP.
-	//// Usable when connecting to a server with multiple IP addresses.
-	//m_rakInterface->AllowConnectionResponseIPMigration(false);
+	if (NET_DEBUG)
+	{
+		printf("Client connecting to server:\n");
+		printf("Ip address: \"%s\"\n", m_remoteAddress.c_str());
+		printf("Remote Port: \"%i\"\n", m_outgoingPort);
+		printf("Local Port: \"%i\"\n", m_incomingPort);
+		printf("Password: \"%s\"\n", m_password.c_str());
+	}
 
-	//// Connecting the client is very simple.  0 means we don't care about
-	//// a connectionValidationInteger, and false for low priority threads
-
-	//// Describes the local socket used when connecting.
-	//// socketFamily describes if we should use IPV4 or IPV6 (AF_INET is IPV4)
-	//RakNet::SocketDescriptor socketDescriptor(m_incomingPort, 0);
-	//socketDescriptor.socketFamily = AF_INET;
+	if (!m_socketBound)
+	{
+		m_socket->Bind(m_incomingPort);
+		m_socketBound = true;
+	}
+	m_socket->Connect(m_remoteAddress.c_str(), m_outgoingPort);
 
 	//// Starts the network thread
 	//m_rakInterface->Startup(1, &socketDescriptor, 1);
