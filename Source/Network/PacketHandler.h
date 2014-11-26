@@ -56,6 +56,9 @@ public:
 	// Write a byte to the packet
 	// StartPack should be called before this is used
 	void WriteByte(const unsigned char _byte);
+	// Write an short to the packet
+	// StartPack should be called before this is used
+	void WriteShort(const short _short);
 	// Write an int to the packet
 	// StartPack should be called before this is used
 	void WriteInt(const int _int);
