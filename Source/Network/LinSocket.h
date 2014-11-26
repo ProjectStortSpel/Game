@@ -19,6 +19,7 @@ class DECLSPEC LinSocket : public ISocket
 	int m_localPort;
 
 public:
+	LinSocket(int _socket);
 	LinSocket(int _domain, int _type, int _protocol);
 	~LinSocket();
 
