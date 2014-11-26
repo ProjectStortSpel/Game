@@ -5,38 +5,33 @@
 #include <map>
 #include <SDL/SDL.h>
 #include "Network/Stdafx.h"
+#include "Network/BaseNetwork.h"
 
-#define MAX_PACKET_SIZE 65535	//max value for unsigned short 	
+struct Packet
+{
+	unsigned char* Data;
+	unsigned short Length;
+	NetConnection Sender;
+
+	Packet()
+	{
+		Data = 0;
+		Length = 0;
+		Sender = NetConnection();
+	};
+	Packet(unsigned char* _data, unsigned short _length, NetConnection _sender = NetConnection())
+	{
+		Data = _data;
+		Length = _length;
+		Sender = _sender;
+	};
+
+};
 
 class DECLSPEC PacketHandler
 {
-private:
-
-	typedef std::function<void(PacketHandler*, NetConnection*)> NetMessageHook;
 
 public:
-
-	struct Packet
-	{
-		unsigned char* Data;
-		unsigned short Length;
-		NetConnection* Sender;
-
-		Packet()
-		{
-			Data	= 0;
-			Length	= 0;
-			Sender	= NULL;
-		};
-		Packet(unsigned char* _data, unsigned short _length, NetConnection* _sender = NULL)
-		{
-			Data = _data;
-			Length = _length;
-			Sender = _sender;
-		};
-
-	};
-
 
 public:
 	PacketHandler();
@@ -46,12 +41,13 @@ public:
 	// This should always be called before starting to write anything to the packet
 	// _name should be the string bound to a function with AddNetMessageHook
 	void StartPack(const char* _name);
+	void StartPack(char _identifier);
 	// Start to unpack a packet
 	// This will call the function hooked to the specific message
-	void StartUnPack(PacketHandler::Packet* _packet);
+	void StartUnPack(Packet* _packet, BaseNetwork* _base = 0);
 	// End pack of a packet
 	// Should always be called when finish with building a packet
-	PacketHandler::Packet EndPack();
+	Packet EndPack();
 	
 	// Write a byte to the packet
 	// StartPack should be called before this is used
@@ -103,7 +99,7 @@ private:
 	unsigned char* m_packetSend;
 	unsigned char* m_positionSend;
 
-	PacketHandler::Packet* m_packetReceive;
+	Packet* m_packetReceive;
 	unsigned char* m_positionReceive;
 
 #pragma warning( default : 4251 )

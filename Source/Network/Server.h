@@ -2,6 +2,8 @@
 #define PROJEKTSERVER_H
 
 #include "Network/BaseNetwork.h"
+#include "Network/Stdafx.h"
+#include "Network/PacketHandler.h"
 
 class DECLSPEC Server : public BaseNetwork
 {
@@ -20,9 +22,9 @@ public:
 
 	// Broadcast a message to all connected clients
 	// Use _exclude to tell the server to not broadcast to a specific client
-	void Broadcast(PacketHandler::Packet _packet, NetConnection *_exclude = NULL);
+	void Broadcast(Packet _packet, NetConnection *_exclude = NULL);
 	// Send a message to a specific connected client
-	void Send(PacketHandler::Packet _packet, NetConnection _connection);
+	void Send(Packet _packet, NetConnection _connection);
 	// Kick a connected client for a specific reason
 	void KickClient(NetConnection* _connection, const char* _reason);
 	// Ban a ip address for a specific reason
@@ -41,10 +43,13 @@ public:
 	void SetOnPlayerTimedOut(NetEvent _function);
 
 private:
-	void ReceivePackets(void);
+	void ReceivePackets(ISocket* _socket, int _id);
 	void ListenForConnections(void);
 
+	void NetConnectionAccepted(PacketHandler* _packetHandler, NetConnection _netConnection);
+
 private:
+
 
 #pragma warning( disable : 4251 )
 
@@ -59,6 +64,9 @@ private:
 	std::thread m_newConnectionsThread;
 
 	ISocket* m_listenSocket;
+
+	std::vector<std::thread> m_receivePacketThreads;
+	std::vector<bool> m_receivePacketsActive;
 
 #pragma warning( default : 4251 )
 

@@ -1,5 +1,4 @@
 #include "Server.h"
-#include <RakNet/MessageIdentifiers.h>
 #include <algorithm>
 
 #ifdef WIN32
@@ -12,6 +11,9 @@ Server::Server()
 {
 	m_incomingPort = 6112;
 	m_maxConnections = 8;
+
+
+	m_networkFunctionMap[ID_REMOTE_CONNECTION_KICKED] = std::bind(&Server::NetConnectionAccepted, this, std::placeholders::_1, std::placeholders::_2);
 }
 
 
@@ -50,8 +52,11 @@ void Server::Start()
 
 void Server::Stop()
 {
-	if (m_listenForPacketsThreadAlive)
-		StopListenForPackets();
+	for (int i = 0; i < m_receivePacketsActive.size(); ++i)
+		m_receivePacketsActive[i] = false;
+	
+	for (int i = 0; i < m_receivePacketThreads.size(); ++i)
+		m_receivePacketThreads[i].join();
 
 	if (m_listenForConnectionsThreadAlive)
 	{
@@ -75,7 +80,7 @@ void Server::Stop()
 	m_listenSocket = 0;
 }
 
-void Server::Broadcast(PacketHandler::Packet _packet, NetConnection* _exclude)
+void Server::Broadcast(Packet _packet, NetConnection* _exclude)
 {
 	//RakNet::SystemAddress exclude = RakNet::UNASSIGNED_SYSTEM_ADDRESS;
 
@@ -90,7 +95,7 @@ void Server::Broadcast(PacketHandler::Packet _packet, NetConnection* _exclude)
 	//m_rakInterface->Send((char*)_packet.Data, _packet.Length, HIGH_PRIORITY, RELIABLE_ORDERED, 0, exclude, true);
 }
 
-void Server::Send(PacketHandler::Packet _packet, NetConnection _connection)
+void Server::Send(Packet _packet, NetConnection _connection)
 {
 	//if (m_addressMap.find(_connection) != m_addressMap.end())
 	//{
@@ -98,107 +103,46 @@ void Server::Send(PacketHandler::Packet _packet, NetConnection _connection)
 	//}	
 }
 
-void Server::ReceivePackets()
+void Server::ReceivePackets(ISocket* _socket, int _id)
 {
-	//RakNet::Packet* packet;
-	////m_server->DeallocatePacket(m_packet),
-	//unsigned char packetIdentifier;
-	//for (packet = m_rakInterface->Receive(); packet; packet = m_rakInterface->Receive())
-	//{
-	//	packetIdentifier = GetPacketIdentifier(packet);
 
-	//	switch (packetIdentifier)
-	//	{
-	//	case ID_NEW_INCOMING_CONNECTION:
-	//		// User connected to server
-	//	{
-	//		if (NET_DEBUG)
-	//			printf("New client connected from %s.\n", packet->systemAddress.ToString(true));
+	while (m_receivePacketsActive[_id])
+	{
 
-	//		NetConnection c;
-	//		c = packet->systemAddress.ToString(true, ':');
-	//		m_connections.push_back(c);
-	//		m_connectionMap[packet->systemAddress] = c;
-	//		m_addressMap[c] = packet->systemAddress;
-	//		
-	//		TriggerEvent(m_onPlayerConnected, packetIdentifier, packet->systemAddress);
-	//		break;
+		int result = _socket->Recv(m_packetData, MAX_PACKET_SIZE, 0);
+		if (result > 0)
+		{
+			unsigned int packetSize = result;
 
-	//	}
-	//		
+			if (NET_DEBUG)
+				printf("Recieved message with length from server with length: %i.\n", packetSize);
 
-	//	case ID_CONNECTION_LOST:
-	//		// User lost connection to server
-	//		if (NET_DEBUG)
-	//			printf("Client lost connection to server.\n");
-	//		{
-	//			NetConnection c = m_connectionMap[packet->systemAddress];
-	//			m_connectionMap.erase(packet->systemAddress);
-	//			m_addressMap.erase(c);
+			Packet* p = new Packet();
+			p->Data = new unsigned char[packetSize];
+			p->Length = packetSize;
+			p->Sender = _socket->GetNetConnection();
+			memcpy(p->Data, m_packetData, packetSize);
 
-	//			//m_connections.erase(std::remove(m_connections.begin(), m_connections.end(), c), m_connections.end());
-	//			m_connections.erase(std::remove<std::vector<NetConnection>::iterator, NetConnection>(m_connections.begin(), m_connections.end(), c), m_connections.end());
-	//			//m_connections.erase(std::find(m_connections.begin(), m_connections.end(), c));
-	//			TriggerEvent(m_onPlayerDisconnected, packetIdentifier, packet->systemAddress);
-	//			break;
-	//		}
-	//		break;
-	//	case ID_DISCONNECTION_NOTIFICATION:
-	//		if (NET_DEBUG)
-	//			printf("Client disconnected from server.\n");
-	//		// User disconnected from server
-	//	{
-	//		NetConnection c = m_connectionMap[packet->systemAddress];
-	//		m_connectionMap.erase(packet->systemAddress);
-	//		m_addressMap.erase(c);
-	//		
-	//		//m_connections.erase(std::remove(m_connections.begin(), m_connections.end(), c), m_connections.end());
-	//		
-	//		m_connections.erase(std::remove<std::vector<NetConnection>::iterator, NetConnection>(m_connections.begin(), m_connections.end(), c), m_connections.end());
-	//		//m_connections.erase(std::find(m_connections.begin(), m_connections.end(), c));
-	//		TriggerEvent(m_onPlayerDisconnected, packetIdentifier, packet->systemAddress);
-	//		break;
-	//	}		
+			m_packetLock.lock();
+			m_packets.push(p);
+			m_packetLock.unlock();
 
-	//	case ID_INCOMPATIBLE_PROTOCOL_VERSION:
-	//		if (NET_DEBUG)
-	//			printf("Incompatible protocl version - Server.\n");
-	//		break;
+		}
+		else if (result == 0)
+		{
+			// Connection shut down graceful
+		}
+		else
+		{
+			if (NET_DEBUG)
+				printf("ReveivePackets failed. Error Code: %d\n.", WSAGetLastError());
+		}
+	}
 
-	//	case ID_CONNECTED_PING:
-	//	case ID_UNCONNECTED_PING:
-	//		if (NET_DEBUG)
-	//			printf("Ping from %s\n", packet->systemAddress.ToString(true));
-	//		break;
+	if (NET_DEBUG)
+		printf("Thread stopped!\n");
 
-	//	case ID_USER_PACKET:
-	//	{
-	//		if (NET_DEBUG)
-	//			printf("Recieved user message from \"%s\"\n", packet->systemAddress.ToString(true));
-
-	//		PacketHandler::Packet* p = new PacketHandler::Packet();
-	//		p->Data = new unsigned char[packet->length];
-	//		memcpy(p->Data, &packet->data[0], packet->length);
-
-	//		p->Length = packet->length;
-
-	//		if (m_connectionMap.find(packet->systemAddress) != m_connectionMap.end())
-	//			p->Sender = &m_connectionMap[packet->systemAddress];
-	//		else
-	//			p->Sender = NULL;
-
-	//		m_packetLock.lock();
-	//		m_packets.push(p);
-	//		m_packetLock.unlock();
-
-	//		break;
-	//	}
-	//	default:
-	//		break;
-	//	}
-	//}
 }
-
 
 void Server::ListenForConnections()
 {
@@ -220,7 +164,13 @@ void Server::ListenForConnections()
 		if (NET_DEBUG)
 			printf("New incoming connection from %s:%d\n", nc.IpAddress.c_str(), nc.Port);
 
-		TriggerEvent(m_onPlayerConnected, nc);
+		m_receivePacketsActive.push_back(true);
+		m_receivePacketThreads.push_back(std::thread(&Server::ReceivePackets, this, newConnection, m_receivePacketThreads.size()));
+
+		char* hest = new char[10];
+		//NetSleep(5000);
+		newConnection->Recv(hest, 10, 0);
+
 	}
 }
 
@@ -312,4 +262,9 @@ void Server::SetOnPlayerTimedOut(NetEvent _function)
 		printf("Hooking function to OnPlayerTimedOut.\n");
 
 	m_onPlayerTimedOut = _function;
+}
+
+void Server::NetConnectionAccepted(PacketHandler* _packetHandler, NetConnection _netConnection)
+{
+	printf("PEW PEW PEW PEWP EWP PEWPEWPE PEWP EWPEWP EPEWPEWPE PEWPEW PEWPE PEW!!!!!11!!!!!!!1!!oneeoneoneoneoneoen!!1!!!!1!!1.\n");
 }

@@ -5,16 +5,23 @@
 #include <queue>
 #include <mutex>
 #include <thread>
+#include <map>
 
 #include "Network/Stdafx.h"
-#include "Network/PacketHandler.h"
+//#include "Network/PacketHandler.h"
 #include "Network/ISocket.h"
+#include "Network/NetTypeMessageID.h"
 
 #ifdef WIN32
 	#include "Network/WinSocket.h"
 #else
 	#include "Network/LinSocket.h"
 #endif
+
+class PacketHandler;
+struct Packet;
+
+typedef std::function<void(PacketHandler*, NetConnection)> NetMessageHook;
 
 class DECLSPEC BaseNetwork
 {
@@ -35,7 +42,7 @@ public:
 	const int	GetIncomingPort(void) { return m_incomingPort; }
 
 	// Will return a packet if any packet has been received
-	PacketHandler::Packet* GetPacket();
+	Packet* GetPacket();
 
 	// Set the incoming port
 	// This is the port the client will connect WITH
@@ -44,35 +51,31 @@ public:
 	// Set the server password
 	void SetServerPassword(const char* _password) { m_password = _password; }
 
-	// Start listen for packets.
-	// Will be called when Start() on the server, or Connect() on the client is called
-	void StartListenForPackets();
-	// Stop listen for packets
-	// Will be called when Stop() on the server, or Disconnect() on the client is called
-	void StopListenForPackets();
+	NetMessageHook* GetNetworkFunction(NetTypeMessageId _function);
 
 protected:
-	virtual void ReceivePackets(void) = 0;
 	void TriggerEvent(NetEvent _function, NetConnection _connection);
 
 protected:
 	std::vector<NetConnection> m_connections;
+	std::map<NetTypeMessageId, NetMessageHook> m_networkFunctionMap;
 	//std::map<NetConnection, RakNet::SystemAddress> m_addressMap;
 	//std::map<RakNet::SystemAddress, NetConnection> m_connectionMap;
 
 	std::string m_localAddress;
 	std::string m_password;
 	unsigned int m_incomingPort;
-	bool m_listenForPacketsThreadAlive;
 
-	std::queue<PacketHandler::Packet*> m_packets;
+	std::queue<Packet*> m_packets;
 	std::mutex m_packetLock;
 
-private:
-	void ListenForPackets(void);
+	char m_packetData[MAX_PACKET_SIZE];
+
+
 
 private:
-	std::thread m_receivePacketThread;
+
+private:
 };
 
 #endif

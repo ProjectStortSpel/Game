@@ -25,7 +25,7 @@ public:
 	void Disconect();
 
 	// Send a packet to the connected server
-	void SendToServer(PacketHandler::Packet _packet);
+	void SendToServer(Packet _packet);
 
 	// Return the remote address the client will use to connect with
 	const char* GetRemoteAddress(void) { return m_remoteAddress.c_str(); }
@@ -65,6 +65,8 @@ private:
 	bool m_socketBound;
 
 	ISocket* m_socket;
+	std::thread m_receivePacketThread;
+	bool m_receivePacketsThreadAlive;
 
 	NetEvent m_onConnectedToServer;
 	NetEvent m_onDisconnectedFromServer;

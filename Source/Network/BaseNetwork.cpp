@@ -3,8 +3,8 @@
 #include <thread>
 #include "Network/NetTypeMessageID.h"
 
+
 BaseNetwork::BaseNetwork()
-	:m_listenForPacketsThreadAlive(false)
 {
 #ifdef WIN32
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -12,48 +12,16 @@ BaseNetwork::BaseNetwork()
 
 	ISocket::Initialize();
 	m_password = "localhest";
-	m_packets = std::queue<PacketHandler::Packet*>();
+	m_packets = std::queue<Packet*>();
 }
 
 BaseNetwork::~BaseNetwork()
 {
-	StopListenForPackets();
 }
 
-void BaseNetwork::StartListenForPackets()
+Packet* BaseNetwork::GetPacket()
 {
-	m_listenForPacketsThreadAlive = true;
-	m_receivePacketThread = std::thread(&BaseNetwork::ListenForPackets, this);
-
-	if (NET_DEBUG)
-		printf("Started listen on new thread.\n\n");
-}
-
-void BaseNetwork::StopListenForPackets()
-{
-	if (NET_DEBUG)
-		printf("Trying to stop listen. Stopping thread.\n");
-	if (m_listenForPacketsThreadAlive)
-	{
-		m_listenForPacketsThreadAlive = false;
-		m_receivePacketThread.join();
-	}
-	if (NET_DEBUG)
-		printf("Thread stopped.\n");
-}
-
-void BaseNetwork::ListenForPackets()
-{
-	while (m_listenForPacketsThreadAlive)
-	{
-		NetSleep(30);
-		ReceivePackets();
-	}
-}
-
-PacketHandler::Packet* BaseNetwork::GetPacket()
-{
-	PacketHandler::Packet* p = 0;
+	Packet* p = 0;
 
 	if (!m_packets.empty())
 	{
@@ -77,6 +45,17 @@ PacketHandler::Packet* BaseNetwork::GetPacket()
 //	else
 //		return (unsigned char)p->data[0];
 //}
+
+NetMessageHook* BaseNetwork::GetNetworkFunction(NetTypeMessageId _function)
+{
+	if (m_networkFunctionMap.find(_function) != m_networkFunctionMap.end())
+	{
+		return &m_networkFunctionMap[_function];
+	}
+
+	return 0;
+}
+
 
 void BaseNetwork::TriggerEvent(NetEvent _function, NetConnection _connection)
 {

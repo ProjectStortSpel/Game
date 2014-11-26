@@ -1,5 +1,7 @@
 #include "Client.h"
 
+#include "Network/PacketHandler.h"
+
 #ifdef WIN32
 #else
 #include <sys/socket.h>
@@ -12,12 +14,16 @@ Client::Client()
 	m_incomingPort = 0;
 	m_remoteAddress = "127.0.0.1";
 	m_socketBound = false;
+	m_receivePacketsThreadAlive = false;
 }
 
 Client::~Client()
 {
-	if (m_listenForPacketsThreadAlive)
-		StopListenForPackets();
+	if (m_receivePacketsThreadAlive)
+	{
+		m_receivePacketsThreadAlive = false;
+		m_receivePacketThread.join();
+	}
 
 	SAFE_DELETE(m_socket);
 }
@@ -51,7 +57,16 @@ bool Client::Connect()
 		m_socketBound = true;
 	}
 
-	return m_socket->Connect(m_remoteAddress.c_str(), m_outgoingPort);
+	if (!m_socket->Connect(m_remoteAddress.c_str(), m_outgoingPort))
+		return false;
+
+	m_receivePacketsThreadAlive = true;
+	m_receivePacketThread = std::thread(&Client::ReceivePackets, this);
+
+	if (NET_DEBUG)
+		printf("Started listen on new thread.\n\n");
+
+	return true;
 }
 
 void Client::Disconect()
@@ -59,13 +74,17 @@ void Client::Disconect()
 	if (NET_DEBUG)
 		printf("Client disconnected from server.\n");
 	
-	StopListenForPackets();
+	if (m_receivePacketsThreadAlive)
+	{
+		m_receivePacketsThreadAlive = false;
+		m_receivePacketThread.join();
+	}
 
 	SAFE_DELETE(m_socket);
 	m_socketBound = false;
 }
 //
-void Client::SendToServer(PacketHandler::Packet _packet)
+void Client::SendToServer(Packet _packet)
 {
 	if (m_socketBound)
 		m_socket->Send((char*)_packet.Data, _packet.Length, 0);
@@ -76,127 +95,41 @@ void Client::SendToServer(PacketHandler::Packet _packet)
 
 void Client::ReceivePackets()
 {
-	//RakNet::Packet* packet;
-	////m_server->DeallocatePacket(m_packet),
-	//unsigned char packetIdentifier;
-	//for (packet = m_rakInterface->Receive(); packet; packet = m_rakInterface->Receive())
-	//{
-	//	packetIdentifier = GetPacketIdentifier(packet);
+	while (m_receivePacketsThreadAlive)
+	{
+		int result = m_socket->Recv(m_packetData, MAX_PACKET_SIZE, 0);
 
-	//	switch (packetIdentifier)
-	//	{
-	//	case ID_CONNECTION_REQUEST_ACCEPTED:
-	//		// This tells the client they have connected
-	//		if (NET_DEBUG)
-	//			printf("Client connected to server.\n");
+		if (result > 0)
+		{
+			unsigned int packetSize = result;
 
-	//		TriggerEvent(m_onConnectedToServer, packetIdentifier, packet->systemAddress);
-	//		break;
+			if (NET_DEBUG)
+				printf("Recieved message with length from server with length: %i.\n", packetSize);
 
+			Packet* p = new Packet();
+			p->Data		= new unsigned char[packetSize];
+			p->Length	= packetSize;
+			p->Sender	= m_socket->GetNetConnection();
+			memcpy(p->Data, m_packetData, packetSize);
 
-	//	case ID_DISCONNECTION_NOTIFICATION:
-	//		// Disconnected from the server
-	//		if (NET_DEBUG)
-	//			printf("Client disconnected from server.\n");
-	//		TriggerEvent(m_onDisconnectedFromServer, packetIdentifier, packet->systemAddress);
-	//		break;
-	//	case ID_CONNECTION_LOST:
-	//		// Lost connection to the server
-	//		if (NET_DEBUG)
-	//			printf("Client lost connection from server.\n");
-	//		TriggerEvent(m_onTimedOutFromServer, packetIdentifier, packet->systemAddress);
-	//		break;
+			m_packetLock.lock();
+			m_packets.push(p);
+			m_packetLock.unlock();
 
+		}
+		else if (result == 0)
+		{
+			// Connection shut down graceful
+		}
+		else
+		{
+			if (NET_DEBUG)
+				printf("ReveivePackets failed. Error Code: %d\n.", WSAGetLastError());
+		}
+		
+//		NetSleep(30);
 
-	//	case ID_REMOTE_NEW_INCOMING_CONNECTION: 
-	//		// Another user connected to the server
-	//		if (NET_DEBUG)
-	//			printf("Another client connected to server.\n");
-	//		TriggerEvent(m_onRemotePlayerConnected, packetIdentifier, packet->systemAddress);
-	//		break;
-
-
-	//	case ID_REMOTE_CONNECTION_LOST:
-	//		// Another user lost connection to the server
-	//		if (NET_DEBUG)
-	//			printf("Another client lost connection to server.\n");
-	//		TriggerEvent(m_onRemotePlayerTimedOut, packetIdentifier, packet->systemAddress);
-	//		break;
-	//	case ID_REMOTE_DISCONNECTION_NOTIFICATION:
-	//		// Another user disconnected from the server
-	//		if (NET_DEBUG)
-	//			printf("Another client disconnected from server.\n");
-	//		TriggerEvent(m_onRemotePlayerDisconnected, packetIdentifier, packet->systemAddress);
-	//		break;
-
-
-	//	case ID_ALREADY_CONNECTED:
-	//		// Already connected to the server
-	//		if (NET_DEBUG)
-	//			printf("Client already connected to server.\n");
-	//		TriggerEvent(m_onFailedToConnect, packetIdentifier, packet->systemAddress);
-	//		break;
-	//	case ID_CONNECTION_BANNED: 
-	//		// Banned from the server
-	//		if (NET_DEBUG)
-	//			printf("Client banned from server.\n");
-	//		TriggerEvent(m_onFailedToConnect, packetIdentifier, packet->systemAddress);
-	//		break;
-	//	case ID_NO_FREE_INCOMING_CONNECTIONS:
-	//		// Server is full
-	//		if (NET_DEBUG)
-	//			printf("Server connecting to is full.\n");
-	//		TriggerEvent(m_onFailedToConnect, packetIdentifier, packet->systemAddress);
-	//		break;
-	//	case ID_CONNECTION_ATTEMPT_FAILED:
-	//		// Failed to send a connect request to the server
-	//		if (NET_DEBUG)
-	//			printf("Failed to connect to server.\n");
-	//		TriggerEvent(m_onFailedToConnect, packetIdentifier, packet->systemAddress);
-	//		break;
-	//	case ID_INVALID_PASSWORD:
-	//		// Incorrect password to the server
-	//		if (NET_DEBUG)
-	//			printf("Invalid password to server.\n");
-	//		TriggerEvent(m_onFailedToConnect, packetIdentifier, packet->systemAddress);
-	//		break;
-	//	case ID_INCOMPATIBLE_PROTOCOL_VERSION:
-	//		// Incompatible protocol version (IPV4/IPV6 ?)
-	//		if (NET_DEBUG)
-	//			printf("Incompatible protocol version (IPV4/IPV6).\n");
-	//		TriggerEvent(m_onFailedToConnect, packetIdentifier, packet->systemAddress);
-	//		break;
-
-
-	//	case ID_CONNECTED_PING:
-	//	case ID_UNCONNECTED_PING:
-	//		if (NET_DEBUG)
-	//			printf("Ping from %s.\n", packet->systemAddress.ToString(true));
-	//		break;
-	//	case ID_USER_PACKET:
-	//	{
-	//		if (NET_DEBUG)
-	//			printf("Recieved \"ID_USER_PACKET\" from server %s.\n", packet->systemAddress.ToString(true));
-
-	//		PacketHandler::Packet* p = new PacketHandler::Packet();
-	//		p->Data = new unsigned char[packet->length];
-	//		memcpy(p->Data, &packet->data[0], packet->length);
-
-	//		p->Length = packet->length;
-	//		p->Sender = &m_connectionMap[packet->systemAddress];
-
-	//		m_packetLock.lock();
-	//		m_packets.push(p);
-	//		m_packetLock.unlock();
-
-	//		break;
-	//	}
-	//	default:
-	//		break;
-	//	}
-
-	//	m_rakInterface->DeallocatePacket(packet);
-	//}
+	}
 }
 
 void Client::SetOnConnectedToServer(NetEvent _function)

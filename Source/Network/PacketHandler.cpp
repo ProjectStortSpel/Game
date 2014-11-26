@@ -28,7 +28,14 @@ void PacketHandler::StartPack(const char* _functionName)
 	WriteString(_functionName);
 }
 
-void PacketHandler::StartUnPack(Packet* _packet)
+void PacketHandler::StartPack(char _identifier)
+{
+	m_positionSend = m_packetSend;
+	WriteShort(0);
+	WriteByte(_identifier);
+}
+
+void PacketHandler::StartUnPack(Packet* _packet, BaseNetwork* _base)
 {
 	if (!_packet)
 		return;
@@ -37,12 +44,26 @@ void PacketHandler::StartUnPack(Packet* _packet)
 	m_positionReceive = m_packetReceive->Data;
 
 	auto type = ReadByte();
-	auto messageName = ReadString();
+	std::string messageName;
 
-	if (m_functionMap.find(messageName) != m_functionMap.end())
+	if ((NetTypeMessageId)type != ID_CUSTOM_PACKET)
 	{
+		if (_base)
+		{
+			auto function = _base->GetNetworkFunction(ID_CUSTOM_PACKET);
+			if (function)
+				(*function)(this, _packet->Sender);
+		}
+	}
+	else
+		messageName = ReadString();
+
+	if ((NetTypeMessageId)type == ID_CUSTOM_PACKET && m_functionMap.find(messageName) != m_functionMap.end())
+	{
+		
 		m_functionMap[messageName](this, _packet->Sender);
 	}
+
 	else if (NET_DEBUG)
 	{
 		printf("MessageName \"%s\" not bound to any function.\n", messageName);
@@ -51,7 +72,7 @@ void PacketHandler::StartUnPack(Packet* _packet)
 	EndUnPack();
 }
 
-PacketHandler::Packet PacketHandler::EndPack()
+Packet PacketHandler::EndPack()
 {
 	unsigned short length = m_positionSend - m_packetSend;
 

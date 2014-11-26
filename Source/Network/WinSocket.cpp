@@ -200,13 +200,13 @@ ISocket* WinSocket::Accept()
 
 
 	int flag = 1;
-	if (setsockopt(m_socket, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int)) < 0)
-	{
-		if (NET_DEBUG)
-			printf("Failed to enable TCP_NODELAY. Error Code: %d.\n", WSAGetLastError());
+	//if (setsockopt(m_socket, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int)) < 0)
+	//{
+	//	if (NET_DEBUG)
+	//		printf("Failed to enable TCP_NODELAY. Error Code: %d.\n", WSAGetLastError());
 
-		return false;
-	}
+	//	return false;
+	//}
 
 
 	return sock;

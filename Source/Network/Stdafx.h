@@ -9,12 +9,24 @@
 	#include <unistd.h>
 #endif
 
-
+#define MAX_PACKET_SIZE 65535	//max value for unsigned short 	
 #define NET_DEBUG 1
 #define SAFE_DELETE(x) if (x) { delete x; x = 0; }
 
 struct NetConnection
 {
+	NetConnection()
+	{
+		IpAddress = "";
+		Port = 0;
+	}
+
+	NetConnection(std::string _address, unsigned short _port)
+	{
+		IpAddress = _address;
+		Port = _port;
+	}
+
 	std::string IpAddress;
 	unsigned short Port;
 

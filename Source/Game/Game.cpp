@@ -45,14 +45,14 @@ int main(int argc, char** argv)
 
 	SDL_Init(SDL_INIT_EVERYTHING);
 
-	//Server s;
-	//s.Start();
-	//s.Stop();
+	Server s;
+	s.Start();
+	s.Stop();
 
-	Client c;
-	c.Connect("127.0.0.1", "localhest", 6112, 0);
+	//Client c;
+	//c.Connect("127.0.0.1", "localhest", 6112, 0);
 
-	c.Disconect();
+	//c.Disconect();
 
 	//ISocket::Shutdown();
 
