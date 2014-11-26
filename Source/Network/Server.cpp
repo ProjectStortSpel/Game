@@ -134,8 +134,8 @@ void Server::ReceivePackets(ISocket* _socket, int _id)
 		}
 		else
 		{
-			if (NET_DEBUG)
-				printf("ReveivePackets failed. Error Code: %d\n.", WSAGetLastError());
+			//if (NET_DEBUG)
+			//	printf("ReveivePackets failed. Error Code: %d\n.", WSAGetLastError());
 		}
 	}
 
