@@ -109,7 +109,7 @@ bool LinSocket::Close()
 	return true;
 }
 
-ISocket* LinSocket::Accept(NetConnection& _netConnection)
+ISocket* LinSocket::Accept()
 {
 	sockaddr_in incomingAddress;
 	socklen_t incomingAddressLength = sizeof(incomingAddress);

@@ -17,10 +17,10 @@ public:
 	~Client();
 
 	// Connect to the server using already set values on the ip address, password, outoing port & incoming port
-	void Connect();
+	bool Connect();
 	// Connect to the server using specific values on the ip address, password, outgoing port & incoming port
 	// Note that any old values will be overriden
-	void Connect(const char* _ipAddress, const char* m_password, const int _outgoingPort, const int _incomingPort);
+	bool Connect(const char* _ipAddress, const char* m_password, const int _outgoingPort, const int _incomingPort);
 	// Disconnect from the conencted server
 	void Disconect();
 

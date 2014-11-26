@@ -34,7 +34,6 @@ WinSocket::WinSocket(int _domain, int _type, int _protocol)
 WinSocket::~WinSocket()
 {
 	Close();
-
 }
 
 bool WinSocket::Initialize()
@@ -164,7 +163,7 @@ bool WinSocket::Close()
 	return true;
 }
 
-ISocket* WinSocket::Accept(NetConnection& _netConnection)
+ISocket* WinSocket::Accept()
 { 
 	sockaddr_in incomingAddress;
 	int incomingAddressLength = sizeof(incomingAddress);

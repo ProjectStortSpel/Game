@@ -5,30 +5,16 @@
 Server::Server()
 	: BaseNetwork(), m_listenForConnectionsThreadAlive(false)
 {
-	m_incomingPort = 5358;
+	m_incomingPort = 6112;
 	m_maxConnections = 8;
 }
 
 
 Server::~Server()
 {
-	if (m_listenSocket)
-	{
-		m_listenSocket->Shutdown();
-		m_listenSocket = 0;
-	}
+	Stop();
 
-	for (auto it = m_connectionClients.begin(); it != m_connectionClients.end(); ++it)
-	{
-		if (it->second)
-		{
-			it->second->Shutdown();
-			it->second = 0;
-		}
-	}
-
-	m_connectionClients.clear();
-
+	ISocket::Shutdown();
 }
 
 
@@ -68,7 +54,19 @@ void Server::Stop()
 		m_listenForConnectionsThreadAlive = false;
 	}
 
-	//Shutdown
+	if (m_listenSocket)
+	{
+		SAFE_DELETE(m_listenSocket);
+	}
+
+	for (auto it = m_connectionClients.begin(); it != m_connectionClients.end(); ++it)
+	{
+			SAFE_DELETE(it->second);
+	}
+
+	m_connectionClients.clear();
+	
+
 	m_listenSocket = 0;
 }
 
@@ -199,20 +197,25 @@ void Server::ReceivePackets()
 
 void Server::ListenForConnections()
 {
-	NetConnection netConnection;
+	if(NET_DEBUG)
+		printf("Start listen for incoming connections.\n");
 
 	while (m_listenForConnectionsThreadAlive)
 	{
-		printf("Start listen for incoming connections.\n");
-		ISocket* newConnection = m_listenSocket->Accept(netConnection);
+		ISocket* newConnection = m_listenSocket->Accept();
 		if (!newConnection)
 			continue;
 
-		printf("New incoming connection from %s:%d\n", netConnection.IpAddress.c_str(), netConnection.Port);
+		NetConnection nc;
+		nc.IpAddress = newConnection->GetRemoteIpAddress();
+		nc.Port		 = newConnection->GetRemotePort();
 
-		m_connectionClients[netConnection] = newConnection;
+		m_connectionClients[nc] = newConnection;
 
-		TriggerEvent(m_onPlayerConnected, netConnection);
+		if (NET_DEBUG)
+			printf("New incoming connection from %s:%d\n", nc.IpAddress.c_str(), nc.Port);
+
+		TriggerEvent(m_onPlayerConnected, nc);
 	}
 }
 

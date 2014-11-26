@@ -14,7 +14,7 @@ public:
 
 	virtual bool Connect(const char* _ip, const int _port) = 0;
 	virtual bool Bind(const int _port) = 0;
-	virtual ISocket* Accept(NetConnection& _netConnection) = 0;
+	virtual ISocket* Accept() = 0;
 	virtual bool Listen(int _backlog) = 0;
 	virtual int Recv(char* _buffer, int _length, int _flags) = 0;
 	virtual int Send(char* _buffer, int _length, int _flags) = 0;
