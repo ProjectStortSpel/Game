@@ -42,3 +42,8 @@ int LuaEmbedder::GetParameterInt(int index)
     "LuaEmbedder::GetParameterInt : \"Parameter is not an integer\"");
   return parameter;
 }
+
+void LuaEmbedder::SetParameterInt(int parameter)
+{
+  lua_pushinteger(m_L, parameter);
+}
