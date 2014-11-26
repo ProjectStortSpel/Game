@@ -1,6 +1,7 @@
 #ifndef TIMER_H
 #define TIMER_H
 #include <chrono>
+#include <ostream>
 
 class Timer {
 	typedef std::chrono::high_resolution_clock high_resolution_clock;
