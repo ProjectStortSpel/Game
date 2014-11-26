@@ -2,6 +2,11 @@
 #include <RakNet/MessageIdentifiers.h>
 #include <algorithm>
 
+#ifdef WIN32
+#else
+#include <sys/socket.h>
+#endif
+
 Server::Server()
 	: BaseNetwork(), m_listenForConnectionsThreadAlive(false)
 {
