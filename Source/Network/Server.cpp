@@ -190,6 +190,8 @@ void Server::ListenForConnections()
 		if (!newConnection)
 			continue;
 
+		printf("New incoming connection from %s:%d\n", netConnection.IpAddress.c_str(), netConnection.Port);
+
 		m_connectionClients[netConnection] = newConnection;
 
 		TriggerEvent(m_onPlayerConnected, netConnection);
