@@ -46,7 +46,7 @@ int main(int argc, char** argv)
 	SDL_Init(SDL_INIT_EVERYTHING);
 
 	Client c;
-	c.Connect("194.47.150.5", "localhest", 5358, 0);
+	c.Connect("194.47.150.128", "localhest", 6112, 0);
 
 	ISocket::Shutdown();
 

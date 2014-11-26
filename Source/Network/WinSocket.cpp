@@ -8,6 +8,14 @@ bool WinSocket::m_initialized = false;
 WinSocket::WinSocket(SOCKET _socket)
 {
 	m_socket = _socket;
+	if (m_socket != INVALID_SOCKET)
+		m_socketOpen = true;
+	else if (NET_DEBUG)
+		printf("Failed to create new winsocket(2).\n");
+
+	m_remoteAddress = "";
+	m_remotePort = 0;
+	m_localPort = 0;
 }
 
 WinSocket::WinSocket(int _domain, int _type, int _protocol)
@@ -16,20 +24,16 @@ WinSocket::WinSocket(int _domain, int _type, int _protocol)
 	if (m_socket != INVALID_SOCKET)
 		m_socketOpen = true;
 	else if(NET_DEBUG)
-		printf("Failed to create new win socket.\n");
+		printf("Failed to create new winsocket.\n");
 
 	m_remoteAddress = "";
 	m_remotePort = 0;
+	m_localPort = 0;
 }
 
 WinSocket::~WinSocket()
 {
-	if (m_socket)
-	{
-		closesocket(m_socket);
-		m_socketOpen = false;
-
-	}
+	Close();
 
 }
 
@@ -140,7 +144,10 @@ bool WinSocket::Bind(const int _port)
 		return false;
 	}
 
-	m_localPort = _port;
+	sockaddr_in sin;
+	socklen_t len = sizeof(sin);
+	if (getsockname(m_socket, (sockaddr *)&sin, &len) == 0)
+		m_localPort = ntohs(sin.sin_port);
 
 	return true;
 }
@@ -153,7 +160,7 @@ bool WinSocket::Close()
 			printf("Failed to close winsocket. Error Code: %d.\n", WSAGetLastError());
 		return false;
 	}
-
+	m_socketOpen = false;
 	return true;
 }
 
@@ -182,9 +189,6 @@ ISocket* WinSocket::Accept(NetConnection& _netConnection)
 
 	sock->m_remoteAddress = s;
 	sock->m_remotePort = incomingAddress.sin_port;
-
-	_netConnection.IpAddress = s;
-	_netConnection.Port = incomingAddress.sin_port;
 
 	return sock;
 }

@@ -4,8 +4,8 @@
 Client::Client()
 	: BaseNetwork()
 {
-	m_outgoingPort = 5357;
-	m_incomingPort = 5358;
+	m_outgoingPort = 6112;
+	m_incomingPort = 0;
 	m_remoteAddress = "127.0.0.1";
 	m_socketBound = false;
 }
