@@ -2,6 +2,10 @@
 
 #include "Network/LinSocket.h"
 
+#include <sys/socket.h>
+#include <netinet/tcp.h>
+#include <arpa/inet.h> 
+
 LinSocket::LinSocket(int _socket)
 {
 	m_socket = _socket;
@@ -23,7 +27,7 @@ LinSocket::LinSocket(int _domain, int _type, int _protocol)
 	if (m_socket != -1)
 		m_socketOpen = true;
 	else if (NET_DEBUG)
-		printf("Failed to create new linsocket(2).\n");
+		printf("Failed to create new linsocket.\n");
 
 	m_remoteAddress = "";
 	m_remotePort = 0;
@@ -58,14 +62,14 @@ bool LinSocket::Connect(const char* _ip, const int _port)
 	if(inet_pton(AF_INET, _ip, &address.sin_addr)<=0)
 	{
 		if (NET_DEBUG)
-			std::printf("Failed to get address info. Error Code: %d.\n", strerror(errno));
+			std::printf("Failed to get address info. Error: %s.\n", strerror(errno));
 		return false;
 	} 
 
 	if( connect(m_socket, (struct sockaddr *)&address, sizeof(address)) < 0)
 	{
 		if (NET_DEBUG)
-			printf("Failed to connect to Ip address %s:%i. Error Code: %d.\n", _ip, _port, strerror(errno));
+			printf("Failed to connect to Ip address %s:%i. Error: %s.\n", _ip, _port, strerror(errno));
 		return false;
 	} 
 
@@ -85,7 +89,7 @@ bool LinSocket::Bind(const int _port)
 	if (bind(m_socket, (sockaddr *) &address, sizeof(address)) < 0)
 	{
 		if (NET_DEBUG)
-			printf("Failed to bind socket. Error Code: %d.\n", strerror(errno));
+			printf("Failed to bind socket. Error: %s.\n", strerror(errno));
 		return false;
 	}
 
@@ -93,6 +97,17 @@ bool LinSocket::Bind(const int _port)
 	socklen_t len = sizeof(sin);
 	if (getsockname(m_socket, (sockaddr *)&sin, &len) == 0)
 		m_localPort = ntohs(sin.sin_port);
+
+
+	int flag = 1;
+	if (setsockopt(m_socket, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int)) < 0)
+	{
+		if (NET_DEBUG)
+			printf("Failed to enable TCP_NODELAY. Error: %s.\n", strerror(errno));
+
+		return false;
+	}
+
 
 	return true;
 }
@@ -120,7 +135,7 @@ ISocket* LinSocket::Accept()
 	if (newSocket == -1)
 	{
 		if (NET_DEBUG)
-			printf("Accept failed. Error Code: %d.\n", strerror(errno));
+			printf("Accept failed. Error: %s.\n", strerror(errno));
 		return NULL;
 	}
 
@@ -146,7 +161,7 @@ bool LinSocket::Listen(int _backlog)
 	if (result == -1)
 	{
 		if(NET_DEBUG)
-			printf("Failed to start listen. Error Code: %d.\n", strerror(errno));
+			printf("Failed to start listen. Error: %s.\n", strerror(errno));
 		return false;
 	}
 	return true;
@@ -163,7 +178,7 @@ int LinSocket::Send(char* _buffer, int _length, int _flags)
 	if (result == -1) 
 	{
 		if (NET_DEBUG)
-			printf("Failed to send packet of size '%i'. Error Code: %d.\n", _length, strerror(errno));
+			printf("Failed to send packet of size '%i'. Error: %s.\n", _length, strerror(errno));
 
 		return -1;
 	}

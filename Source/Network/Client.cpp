@@ -1,5 +1,9 @@
 #include "Client.h"
-#include <RakNet/MessageIdentifiers.h>
+
+#ifdef WIN32
+#else
+#include <sys/socket.h>
+#endif
 
 Client::Client()
 	: BaseNetwork()

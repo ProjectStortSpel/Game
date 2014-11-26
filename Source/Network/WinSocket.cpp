@@ -148,6 +148,15 @@ bool WinSocket::Bind(const int _port)
 	if (getsockname(m_socket, (sockaddr *)&sin, &len) == 0)
 		m_localPort = ntohs(sin.sin_port);
 
+	int flag = 1;
+	if (setsockopt(m_socket, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int)) < 0)
+	{
+		if (NET_DEBUG)
+			printf("Failed to enable TCP_NODELAY. Error Code: %d.\n", WSAGetLastError());
+
+		return false;
+	}
+
 	return true;
 }
 
@@ -188,6 +197,17 @@ ISocket* WinSocket::Accept()
 
 	sock->m_remoteAddress = s;
 	sock->m_remotePort = incomingAddress.sin_port;
+
+
+	int flag = 1;
+	if (setsockopt(m_socket, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int)) < 0)
+	{
+		if (NET_DEBUG)
+			printf("Failed to enable TCP_NODELAY. Error Code: %d.\n", WSAGetLastError());
+
+		return false;
+	}
+
 
 	return sock;
 }
