@@ -48,7 +48,8 @@ int main(int argc, char** argv)
 	Server s;
 	s.Start();
 
-	system("pause");
+	std::string input;
+	std::getline(std::cin, input);
 
 	SDL_Quit();
 	return 0;
