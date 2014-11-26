@@ -3,6 +3,7 @@
 
 #include <SDL/SDL.h>
 #include <math.h>
+#include <vector>
 
 namespace ECSL
 {
@@ -14,9 +15,9 @@ namespace ECSL
 		{
 			return sizeof(DataType);
 		}
-		inline DECLSPEC unsigned __int64* GenerateBitSet(unsigned int _bitCount) 
+		inline DECLSPEC DataType* GenerateBitSet(unsigned int _bitCount)
 		{ 
-			return new unsigned __int64[(_bitCount / GetIntByteSize()) + 1]; 
+			return new DataType[(_bitCount / GetIntByteSize()) + 1];
 		}
 		inline DECLSPEC unsigned int GetByteCount(unsigned int _bitCount) 
 		{ 
@@ -26,6 +27,23 @@ namespace ECSL
 		{ 
 			return (unsigned int)ceilf((float)_bitCount / (GetIntByteSize() * 8));
 		}
+
+		class DECLSPEC BitSetConverter
+		{
+		public:
+			~BitSetConverter();
+			static BitSetConverter& GetInstance();
+
+			DataType* GenerateBitmask(std::vector<unsigned int>* _numbersToConvert, unsigned int _maxNumberOfBits);
+			std::vector<unsigned int>* GenerateBoolArray(DataType* _bitmask, unsigned int _bitmaskCount);
+
+
+		private:
+			BitSetConverter();
+			DataType m_powerOfTwo[sizeof(DataType) * 8];
+
+		};
+
 	}
 }
 
