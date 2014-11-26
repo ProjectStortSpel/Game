@@ -70,10 +70,8 @@ void Client::SendToServer(PacketHandler::Packet _packet)
 	if (m_socketBound)
 		m_socket->Send((char*)_packet.Data, _packet.Length, 0);
 
-//	m_rakInterface->Send((char*)_packet.Data, _packet.Length, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
-//
-//	if (NET_DEBUG)
-//		printf("Client sent packet to server.\n");
+	if (NET_DEBUG)
+		printf("Client sent packet to server.\n");
 }
 
 void Client::ReceivePackets()
