@@ -3,6 +3,7 @@
 
 #include "Framework/Common/BitSet.h"
 #include "Framework/Components/ComponentType.h"
+#include "Framework/Parsing/ComponentTypeReader.h"
 #include "Framework/Parsing/Parser.h"
 #include "Framework/World.h"
 #include "Framework/WorldCreator.h"
@@ -14,6 +15,6 @@
 
 #include "Interfaces/System.h"
 
-#include "Managers/ComponentManager.h"
+#include "Managers/ComponentTypeManager.h"
 
 #endif

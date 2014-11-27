@@ -184,23 +184,22 @@ bool Parser::ValidateLineSyntax(const std::vector<Line>& _lines)
 
 bool Parser::ValidateLineDependencies(const std::vector<Line>& _lines)
 {
-	int indentationCounter = 0;
+	int depth = 0;
 
 	/* Each line */
 	for (unsigned int lineIndex = 0; lineIndex < _lines.size(); ++lineIndex)
 	{
 		Line line = _lines[lineIndex];
-		int indentationCounter = 0;
 		switch (line.Type)
 		{
 		case LineType::SectionStartBracket:
 			/* Generate an error if there isn't a token line before the start bracket line */
 			if (lineIndex == 0 || _lines[lineIndex - 1].Type != LineType::Token || _lines[lineIndex - 1].DelimiterSymbolCounter != 2)
 				return false;
-			++indentationCounter;
+			++depth;
 			break;
 		case LineType::SectionEndBracket:
-			--indentationCounter;
+			--depth;
 			break;
 		case LineType::Token:
 			/* Generate an error if a token line is the name of the section, but has more than two delimiter symbols (more than one token) */
@@ -210,7 +209,7 @@ bool Parser::ValidateLineDependencies(const std::vector<Line>& _lines)
 		}
 	}
 
-	if (indentationCounter != 0)
+	if (depth != 0)
 		return false;
 
 	return true;

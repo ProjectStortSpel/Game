@@ -11,14 +11,13 @@
 
 namespace ECSL
 {
-	class DECLSPEC Parser
+	class Parser
 	{
 	public:
 		Parser();
 		~Parser();
 
 		Section* ParseFile(const std::string& _filePath);
-
 	private:
 		enum LineType { None, SectionStartBracket, SectionEndBracket, Token };
 		enum SymbolType { Alphanumeric, Bracket, TokenDelimiter, EmptySpace, Invalid };
