@@ -54,7 +54,7 @@ namespace Renderer
 		GLuint m_deferredFBO;
 
 		// Shaders
-		Shader m_debuggTextShader;
+		Shader m_compDeferredPass2Shader;
 		Shader m_fullScreenShader;
 		Shader m_deferredShader1, m_deferredShader2;
 		int debugtext[4608];

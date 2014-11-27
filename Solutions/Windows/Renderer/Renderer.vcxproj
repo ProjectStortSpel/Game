@@ -31,7 +31,7 @@
     <ClCompile Include="..\..\..\Source\Renderer\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\Externals\content\shaders\debuggText.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\CSDeferredPass2.glsl" />
     <None Include="..\..\..\Externals\content\shaders\FSDeferredPass1.glsl" />
     <None Include="..\..\..\Externals\content\shaders\FSDeferredPass2.glsl" />
     <None Include="..\..\..\Externals\content\shaders\fullscreen.gs" />
