@@ -18,6 +18,7 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Renderer\stdafx.h" />
 <<<<<<< HEAD
+<<<<<<< HEAD
     <ClInclude Include="..\..\..\Source\Renderer\TextureLoader.h">
       <Filter>Source</Filter>
     </ClInclude>
@@ -34,6 +35,21 @@
       <Filter>Source</Filter>
     </ClInclude>
 >>>>>>> Text renderer, GLTimer and Timer
+=======
+    <ClInclude Include="..\..\..\Source\Renderer\TextureLoader.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\DebugText.h" />
+<<<<<<< HEAD
+    <ClInclude Include="..\..\..\Source\Renderer\GLTimer.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\SimpleText.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+=======
+>>>>>>> 264189ecbb29ed92de336788293523449bc35e93
+>>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp">
@@ -45,6 +61,18 @@
     <ClCompile Include="..\..\..\Source\Renderer\DebugText.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+    <ClCompile Include="..\..\..\Source\Renderer\GLTimer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Renderer\SimpleText.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+=======
+>>>>>>> 264189ecbb29ed92de336788293523449bc35e93
+>>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\Externals\content\shaders\debuggText.glsl">
@@ -73,6 +101,7 @@
     </None>
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     <None Include="..\..\..\Externals\content\shaders\SimpleText.glsl">
       <Filter>shaders</Filter>
     </None>
@@ -80,5 +109,10 @@
 >>>>>>> Standard deferred added
 =======
 >>>>>>> Text renderer, GLTimer and Timer
+=======
+    <None Include="..\..\..\Externals\content\shaders\SimpleText.glsl">
+      <Filter>shaders</Filter>
+    </None>
+>>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
   </ItemGroup>
 </Project>

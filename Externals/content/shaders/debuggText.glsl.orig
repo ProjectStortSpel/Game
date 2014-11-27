@@ -8,6 +8,7 @@ layout (rgba8, binding = 0) uniform image2D input_image;
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 // output 
 layout (rgba32f, binding = 1) uniform image2D output_image;
 
@@ -19,6 +20,8 @@ void main(void)
 =======
 =======
 >>>>>>> Text renderer, GLTimer and Timer
+=======
+>>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
 layout (std430, binding = 1) buffer debugtext { int letter []; };
 
 void main(void)
@@ -30,8 +33,11 @@ void main(void)
 
 	vec4 something = vec4(0,float(letter[xy].x)/4608.f * 0.5,0,0);
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> start of debugtext
 =======
+=======
+>>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
 =======
 // output 
 layout (rgba32f, binding = 1) uniform image2D output_image;
@@ -42,7 +48,10 @@ void main(void)
 	vec4 outData = imageLoad(input_image, ivec2(gl_GlobalInvocationID.xy));
 	//outData = vec4(1.0, 0.2, 0.2, 1.0);
 >>>>>>> compute shader read and write texture
+<<<<<<< HEAD
 >>>>>>> Text renderer, GLTimer and Timer
+=======
+>>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
 
 	//imageStore(
 	//	output_image,

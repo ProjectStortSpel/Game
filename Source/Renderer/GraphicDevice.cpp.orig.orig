@@ -207,11 +207,17 @@ bool GraphicDevice::Init()
 	if (!InitGLEW()) { ERRORMSG("GLEW_VERSION_4_3 FAILED\n"); return false; }
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
 <<<<<<< HEAD
+<<<<<<< HEAD
 	//if (!InitDeferred()) { ERRORMSG("INIT DEFERRED FAILED\n"); return false; }
 =======
 	if (!InitDeferred()) { ERRORMSG("INIT DEFERRED FAILED\n"); return false; }
 >>>>>>> Text renderer, GLTimer and Timer
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
+=======
+	//if (!InitDeferred()) { ERRORMSG("INIT DEFERRED FAILED\n"); return false; }
+	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
+	if (!InitTextRenderer()) { ERRORMSG("INIT TEXTRENDERER FAILED\n"); return false; }
+>>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
 
 	return true;
 }
@@ -238,7 +244,27 @@ void GraphicDevice::PollEvent(SDL_Event _event)
 
 void GraphicDevice::Update(float _dt)
 {
+<<<<<<< HEAD
 
+=======
+	m_dt = _dt; m_fps = 1 / _dt;
+
+	// Test kod för att rendera text
+	std::stringstream sstm;
+	sstm << m_fps << " fps";
+	m_textRenderer.RenderSimpleText(sstm.str(), 0, 0);
+
+	// PRINT m_glTimerValues
+	for (int i = 0; i < m_glTimerValues.size(); i++)
+	{
+		std::stringstream output;
+		int x = 0;
+		int y = 10;
+		output << m_glTimerValues[i].name << m_glTimerValues[i].ms;
+		m_textRenderer.RenderSimpleText(output.str(), x, y + i);
+	}
+	m_glTimerValues.clear();
+>>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
 }
 
 float rot = 0.0f;
@@ -276,10 +302,14 @@ void GraphicDevice::Render()
 	- Output	color
 	*/
 <<<<<<< HEAD
+<<<<<<< HEAD
 /*
 =======
 
 >>>>>>> Text renderer, GLTimer and Timer
+=======
+/*
+>>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
 	//------Render deferred--------------------------------------------------------------------------
 	glEnable(GL_DEPTH_TEST);
 
@@ -300,6 +330,7 @@ void GraphicDevice::Render()
 
 	glm::mat4 viewMatrix = glm::lookAt(
 <<<<<<< HEAD
+<<<<<<< HEAD
 		vec3(0.0, 0.5, 4.0),	//*m_cam->Get_pos(), // the position of your camera, in world space
 		vec3(0.0, 0.0, 0.0),   // where you want to look at, in world space
 		vec3(0.0, 1.0, 0.0)		 // probably glm::vec3(0,1,0), but (0,-1,0) would make you looking upside-down, which can be great too
@@ -308,6 +339,11 @@ void GraphicDevice::Render()
 		vec3(0.0, 0.0, 0.0),   // where you want to look at, in world space
 		vec3(0.0, 1.0, 0.0)        // probably glm::vec3(0,1,0), but (0,-1,0) would make you looking upside-down, which can be great too
 >>>>>>> Text renderer, GLTimer and Timer
+=======
+		vec3(0.0, 0.5, 4.0),	//*m_cam->Get_pos(), // the position of your camera, in world space
+		vec3(0.0, 0.0, 0.0),   // where you want to look at, in world space
+		vec3(0.0, 1.0, 0.0)		 // probably glm::vec3(0,1,0), but (0,-1,0) would make you looking upside-down, which can be great too
+>>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
 		);
 
 	//Render scene
@@ -368,6 +404,7 @@ void GraphicDevice::Render()
 
 	// DEBUGG TEXT
 <<<<<<< HEAD
+<<<<<<< HEAD
 	//glBindTexture(GL_TEXTURE_2D, m_debuggText);
 	// Use Debuggtext
 */	
@@ -425,10 +462,24 @@ void GraphicDevice::Render()
 
 	// FULL SCREEN QUAD
 	glActiveTexture(GL_TEXTURE10);
+=======
+	//glBindTexture(GL_TEXTURE_2D, m_debuggText);
+	// Use Debuggtext
+*/	
+<<<<<<< HEAD
+
+
+	m_textRenderer.RenderText();
+	
+	// FULL SCREEN QUAD
+	m_fullScreenShader.UseProgram();
+	glActiveTexture(GL_TEXTURE5);
+>>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
 	glBindTexture(GL_TEXTURE_2D, m_outputImage);
 	// Clear, select the rendering program and draw a full screen quad	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+<<<<<<< HEAD
 	m_fullScreenShader.UseProgram();
 	glDrawArrays(GL_POINTS, 0, 1);
 	*/
@@ -436,6 +487,16 @@ void GraphicDevice::Render()
 	// Swap in the new buffer
 
 >>>>>>> Text renderer, GLTimer and Timer
+=======
+	glDrawArrays(GL_POINTS, 0, 1);
+
+=======
+	
+	RenderText();
+	
+>>>>>>> 264189ecbb29ed92de336788293523449bc35e93
+	// Swap in the new buffer
+>>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
 	SDL_GL_SwapWindow(m_window);
 }
 
@@ -552,6 +613,7 @@ bool GraphicDevice::InitDeferred()
 
 bool GraphicDevice::InitShaders()
 {
+<<<<<<< HEAD
 	// debuggtext Shader
 <<<<<<< HEAD
 	m_simpleTextShader.InitShaderProgram();
@@ -563,6 +625,16 @@ bool GraphicDevice::InitShaders()
 	m_debuggTextShader.FinalizeShaderProgram();
 >>>>>>> Text renderer, GLTimer and Timer
 
+=======
+<<<<<<< HEAD
+=======
+	// debuggtext Shader
+	m_simpleTextShader.InitShaderProgram();
+	m_simpleTextShader.AddShader("Content/Shaders/SimpleText.glsl", GL_COMPUTE_SHADER);
+	m_simpleTextShader.FinalizeShaderProgram();
+
+>>>>>>> 264189ecbb29ed92de336788293523449bc35e93
+>>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
 	// Full Screen Quad Shader
 	m_fullScreenShader.InitShaderProgram();
 	m_fullScreenShader.AddShader("Content/Shaders/fullscreen.vs", GL_VERTEX_SHADER);
@@ -570,10 +642,14 @@ bool GraphicDevice::InitShaders()
 	m_fullScreenShader.AddShader("Content/Shaders/fullscreen.ps", GL_FRAGMENT_SHADER);
 	m_fullScreenShader.FinalizeShaderProgram();
 <<<<<<< HEAD
+<<<<<<< HEAD
 /*
 =======
 
 >>>>>>> Text renderer, GLTimer and Timer
+=======
+/*
+>>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
 	//Deferred pass 1
 	m_deferredShader1.InitShaderProgram();
 	m_deferredShader1.AddShader("Content/Shaders/VSDeferredPass1.glsl", GL_VERTEX_SHADER);
@@ -586,16 +662,21 @@ bool GraphicDevice::InitShaders()
 	m_deferredShader2.AddShader("Content/Shaders/FSDeferredPass2.glsl", GL_FRAGMENT_SHADER);
 	m_deferredShader2.FinalizeShaderProgram();
 <<<<<<< HEAD
+<<<<<<< HEAD
 */
 =======
 
 >>>>>>> Text renderer, GLTimer and Timer
+=======
+*/
+>>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
 	return true;
 }
 
 bool GraphicDevice::InitBuffers()
 {
 	int location;
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 /*
@@ -657,6 +738,9 @@ bool GraphicDevice::InitBuffers()
 
 
 >>>>>>> Text renderer, GLTimer and Timer
+=======
+/*
+>>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
 	m_deferredShader2.UseProgram();
 	CreateDrawQuad();
 
@@ -689,8 +773,20 @@ bool GraphicDevice::InitBuffers()
 	m_Ground = Object(texture, vec3(0.0, -1.5, 0.0));
 	CreateGround();
 <<<<<<< HEAD
+<<<<<<< HEAD
 */
 
+=======
+*/
+
+<<<<<<< HEAD
+	m_fullScreenShader.UseProgram();
+	glActiveTexture(GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, m_outputImage);
+	location = glGetUniformLocation(m_fullScreenShader.GetShaderProgram(), "output_image");
+	glUniform1i(location, 5);
+=======
+>>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
 
 
 	// OutputImageBuffer debugg text
@@ -725,13 +821,25 @@ bool GraphicDevice::InitBuffers()
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, simpleTextBuffer);
 	// debugg text end
 
+<<<<<<< HEAD
 =======
 >>>>>>> Text renderer, GLTimer and Timer
+=======
+>>>>>>> 264189ecbb29ed92de336788293523449bc35e93
+>>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
 
 	return true;
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+bool GraphicDevice::InitTextRenderer()
+{
+	GLuint m_textImage = TextureLoader::LoadTexture("Content/Textures/SimpleText.png", 5);
+	return m_textRenderer.Init(&m_outputImage, m_textImage, m_clientWidth, m_clientHeight);
+=======
+>>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
 void GraphicDevice::RenderText()
 {
 	// CLEAR CHRISTIANS DRAW
@@ -801,6 +909,11 @@ void GraphicDevice::RenderSimpleText(std::string _text, int _x, int _y)
 			xoffset++;
 		}
 	}
+<<<<<<< HEAD
 }
 =======
 >>>>>>> Text renderer, GLTimer and Timer
+=======
+>>>>>>> 264189ecbb29ed92de336788293523449bc35e93
+}
+>>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
