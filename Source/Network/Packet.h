@@ -13,7 +13,7 @@ public:
 	std::string IpAddress;
 	unsigned short Port;
 
-	bool NetConnection::operator==(const NetConnection &other) const
+	bool operator==(const NetConnection &other) const
 	{
 		if (this->Port == other.Port
 			&& this->IpAddress.compare(other.IpAddress) == 0)
