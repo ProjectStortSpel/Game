@@ -16,3 +16,13 @@ World::~World()
 	delete(m_dataManager);
 	delete(m_systemManager);
 }
+
+unsigned int World::CreateNewEntity()
+{
+	return m_dataManager->CreateNewEntity();
+}
+
+void CreateComponentAndAddTo(std::string& _componentType, unsigned int _id)
+{
+
+}

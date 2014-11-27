@@ -36,7 +36,7 @@ namespace ECSL
 		void Add(std::string _componentType)
 		{
 			/*	Check if the component type is already added	*/
-			for (int n = 0; n < m_addedComponentTypes->size(); ++n)
+			for (unsigned int n = 0; n < m_addedComponentTypes->size(); ++n)
 				if (_componentType == m_addedComponentTypes->at(n))
 					return;
 

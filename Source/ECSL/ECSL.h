@@ -3,15 +3,15 @@
 
 #include "Framework/Common/BitSet.h"
 #include "Framework/Components/ComponentType.h"
+#include "Framework/Components/DataManager.h"
+#include "Framework/Components/Tables/DataArray.h"
+#include "Framework/Components/Tables/DataTable.h"
 #include "Framework/Parsing/ComponentTypeReader.h"
 #include "Framework/Parsing/Parser.h"
-#include "Framework/World.h"
-#include "Framework/WorldCreator.h"
 #include "Framework/Systems/SystemWorkGroup.h"
 #include "Framework/Systems/SystemManager.h"
-#include "Framework/Tables/DataArray.h"
-#include "Framework/Tables/DataManager.h"
-#include "Framework/Tables/DataTable.h"
+#include "Framework/World.h"
+#include "Framework/WorldCreator.h"
 
 #include "Interfaces/System.h"
 
