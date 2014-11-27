@@ -1,23 +1,21 @@
-#include "PacketHandler.h"
-#include "Network/NetTypeMessageID.h"
+#include "Network/PacketHandler.h"
+#include "Network/NetTypeMessageId.h"
 
 PacketHandler::PacketHandler()
-	: m_packetSend(0), m_positionSend(0), m_positionReceive(0)
 {
-	m_packetSend = new unsigned char[MAX_PACKET_SIZE];
-}
-
-
-PacketHandler::~PacketHandler()
-{
-	if (m_packetSend)
-	{
-		delete m_packetSend;
-		m_packetSend = 0;
-	}
+	m_packetSend = 0;
+	m_packetReceive = 0;
 
 	m_positionSend = 0;
 	m_positionReceive = 0;
+}
+
+PacketHandler::~PacketHandler()
+{
+	SAFE_DELETE(m_packetSend);
+	m_positionSend = 0;
+
+	EndUnpack();
 }
 
 void PacketHandler::StartPack(const char* _functionName)
@@ -35,43 +33,6 @@ void PacketHandler::StartPack(char _identifier)
 	WriteByte(_identifier);
 }
 
-void PacketHandler::StartUnPack(Packet* _packet, BaseNetwork* _base)
-{
-	if (!_packet)
-		return;
-
-	m_packetReceive = _packet;
-	m_positionReceive = m_packetReceive->Data;
-
-	auto type = ReadByte();
-	std::string messageName;
-
-	if ((NetTypeMessageId)type != ID_CUSTOM_PACKET)
-	{
-		if (_base)
-		{
-			auto function = _base->GetNetworkFunction(ID_CUSTOM_PACKET);
-			if (function)
-				(*function)(this, _packet->Sender);
-		}
-	}
-	else
-		messageName = ReadString();
-
-	if ((NetTypeMessageId)type == ID_CUSTOM_PACKET && m_functionMap.find(messageName) != m_functionMap.end())
-	{
-		
-		m_functionMap[messageName](this, _packet->Sender);
-	}
-
-	//else if (NET_DEBUG)
-	//{
-	//	printf("MessageName \"%s\" not bound to any function.\n", messageName);
-	//}
-
-	EndUnPack();
-}
-
 Packet PacketHandler::EndPack()
 {
 	unsigned short length = m_positionSend - m_packetSend;
@@ -79,7 +40,7 @@ Packet PacketHandler::EndPack()
 	return Packet(m_packetSend, length);
 }
 
-void PacketHandler::EndUnPack()
+void PacketHandler::EndUnpack()
 {
 	if (m_packetReceive->Data)
 	{
@@ -96,17 +57,6 @@ void PacketHandler::EndUnPack()
 	m_positionReceive = 0;
 }
 
-void PacketHandler::AddNetMessageHook(char* _messageName, NetMessageHook _function)
-{
-
-	if (NET_DEBUG)
-	{
-		if (m_functionMap.find(_messageName) != m_functionMap.end())
-			printf("NetMessageHook already exist.\n");
-	}
-
-	m_functionMap[_messageName] = _function;
-}
 
 void PacketHandler::WriteByte(const unsigned char _byte)
 {
@@ -116,7 +66,6 @@ void PacketHandler::WriteByte(const unsigned char _byte)
 		m_positionSend += sizeof(_byte);
 	}
 }
-
 void PacketHandler::WriteFloat(const float _float)
 {
 	if (!IsOutOfBounds(m_packetSend, m_positionSend + sizeof(float), MAX_PACKET_SIZE))
@@ -125,7 +74,6 @@ void PacketHandler::WriteFloat(const float _float)
 		m_positionSend += sizeof(_float);
 	}
 }
-
 void PacketHandler::WriteShort(const short _short)
 {
 	if (!IsOutOfBounds(m_packetSend, m_positionSend + sizeof(int), MAX_PACKET_SIZE))
@@ -134,7 +82,6 @@ void PacketHandler::WriteShort(const short _short)
 		m_positionSend += sizeof(_short);
 	}
 }
-
 void PacketHandler::WriteInt(const int _int)
 {
 	if (!IsOutOfBounds(m_packetSend, m_positionSend + sizeof(int), MAX_PACKET_SIZE))
@@ -143,7 +90,6 @@ void PacketHandler::WriteInt(const int _int)
 		m_positionSend += sizeof(_int);
 	}
 }
-
 void PacketHandler::WriteString(const char* _string)
 {
 	size_t length = strlen(_string) + 1;
@@ -153,8 +99,6 @@ void PacketHandler::WriteString(const char* _string)
 		m_positionSend += length;
 	}
 }
-
-
 
 char PacketHandler::ReadByte()
 {
@@ -167,7 +111,6 @@ char PacketHandler::ReadByte()
 	}
 	return var;
 }
-
 int PacketHandler::ReadInt()
 {
 	int var = 0;

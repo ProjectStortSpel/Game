@@ -1,54 +1,23 @@
 #ifndef PACKETHANDLER_H
 #define PACKETHANDLER_H
 
-#include <string>
-#include <map>
-#include <SDL/SDL.h>
 #include "Network/Stdafx.h"
-#include "Network/BaseNetwork.h"
-
-struct Packet
-{
-	unsigned char* Data;
-	unsigned short Length;
-	NetConnection Sender;
-
-	Packet()
-	{
-		Data = 0;
-		Length = 0;
-		Sender = NetConnection();
-	};
-	Packet(unsigned char* _data, unsigned short _length, NetConnection _sender = NetConnection())
-	{
-		Data = _data;
-		Length = _length;
-		Sender = _sender;
-	};
-
-};
 
 class DECLSPEC PacketHandler
 {
 
 public:
 
-public:
-	PacketHandler();
-	~PacketHandler();
+	PacketHandler(void);
+	~PacketHandler(void);
 
-	// Start to pack a packet
-	// This should always be called before starting to write anything to the packet
-	// _name should be the string bound to a function with AddNetMessageHook
 	void StartPack(const char* _name);
 	void StartPack(char _identifier);
-	// Start to unpack a packet
-	// This will call the function hooked to the specific message
-	void StartUnPack(Packet* _packet, BaseNetwork* _base = 0);
-	// End pack of a packet
-	// Should always be called when finish with building a packet
-	Packet EndPack();
-	
+
+	Packet EndPack(void);
+
+	void Unpack(Packet* packet);
+
 	// Write a byte to the packet
 	// StartPack should be called before this is used
 	void WriteByte(const unsigned char _byte);
@@ -65,12 +34,6 @@ public:
 	// StartPack should be called before this is used
 	void WriteFloat(const float _float);
 
-	// Bind a function to a specific string
-	// _messageName takes the desired name
-	// _function is a function with "PacketHandler*" as only input parameter
-	// To bind a function outside of a class, send the address of the function (eg. &Function)
-	// To bind a function within a class you must use std::bind (eg. std::bind(this, Function, std::placeholders::_1)
-	void AddNetMessageHook(char* _messageName, NetMessageHook _function);
 
 	// Read a byte from a packet
 	// Should always be called from a function bound with AddNetMessageHook
@@ -87,22 +50,14 @@ public:
 
 private:
 	bool IsOutOfBounds(unsigned char* _begin, unsigned char* _position, unsigned short _length);
-	void EndUnPack();
+	void EndUnpack();
 
 private:
-
-#pragma warning( disable : 4251 )
-	
-
-	std::map<std::string, NetMessageHook> m_functionMap;
-
 	unsigned char* m_packetSend;
 	unsigned char* m_positionSend;
 
-	Packet* m_packetReceive;
+	Packet*		   m_packetReceive;
 	unsigned char* m_positionReceive;
-
-#pragma warning( default : 4251 )
 
 };
 

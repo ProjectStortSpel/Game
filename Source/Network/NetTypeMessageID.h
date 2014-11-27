@@ -15,7 +15,7 @@ enum NetTypeMessageId
 	ID_REMOTE_NEW_CONNECTION_ACCEPTED,	// New remote connection accepted to server
 	ID_REMOTE_CONNECTION_LOST,			// Remote connection to server timed out
 	ID_REMOTE_CONNECTION_DISCONNECTED,	// Remote connection disconencted
-	
+
 	ID_PING,							// Send an ping message to connection
 	ID_PONG,							// Send an response to ID_PING message
 

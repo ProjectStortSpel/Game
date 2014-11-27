@@ -1,7 +1,7 @@
 #ifndef SERVERSTATE_H
 #define SERVERSTATE_H
 
-#include "Network/Server.h"
+#include "Network/ServerNetwork.h"
 
 
 struct CardAddInstruction

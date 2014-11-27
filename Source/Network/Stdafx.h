@@ -1,92 +1,56 @@
 #ifndef STDAFX_H
 #define STDAFX_H
 
-#include <functional>
+#include <SDL/SDL.h>
 #include <string>
 
 #ifdef WIN32
+#define NetSleep(x) Sleep(x);
 #else
-	#include <unistd.h>
+#define NetSleep(x) usleep(30 * 1000);
 #endif
 
-#define MAX_PACKET_SIZE 65535	//max value for unsigned short 	
+#define MAX_PACKET_SIZE 65535 // Max value for unsigned short
 #define NET_DEBUG 1
-#define SAFE_DELETE(x) if (x) { delete x; x = 0; }
+#define SAFE_DELETE(x) if(x) { delete x; x = 0; }
 
 struct NetConnection
 {
+	std::string IpAddress;
+	unsigned short Port;
+
 	NetConnection()
 	{
 		IpAddress = "";
 		Port = 0;
 	}
-
 	NetConnection(std::string _address, unsigned short _port)
 	{
 		IpAddress = _address;
 		Port = _port;
 	}
-
-	std::string IpAddress;
-	unsigned short Port;
-
-/*
-	bool operator<(const NetConnection& a)
-	{
-		if (this->Port < a.Port)
-			return true;
-	*///}
 };
 
-inline bool operator< (const NetConnection& lhs, const NetConnection& rhs)
-{ 
-	if (lhs.Port < rhs.Port)
-		return true;
-	
-	else if (lhs.Port == rhs.Port)
-	{
-		if (lhs.IpAddress.size() < rhs.IpAddress.size())
-			return true;
+struct Packet
+{
+	unsigned char* Data;
+	unsigned short Length;
+	NetConnection Sender;
 
-		else if (lhs.IpAddress.size() == rhs.IpAddress.size())
-		{
-			for (int i = 0; i < lhs.IpAddress.size(); ++i)
-			{
-				if (lhs.IpAddress[i] < rhs.IpAddress[i])
-				{
-					return true;
-				}
-			}
-		}
+	Packet()
+	{
+		Data = 0;
+		Length = 0;
+		Sender = NetConnection();
 	}
 
-	return false;
-}
+	Packet(unsigned char* _data, unsigned short _length, NetConnection _sender = NetConnection())
+	{
+		Data = _data;
+		Length = _length;
+		Sender = _sender;
+	}
 
-typedef std::function<void(NetConnection)> NetEvent;
-
-
-#ifdef WIN32
-	#define NetSleep(x) Sleep(x);
-#else
-	#define NetSleep(x) usleep(30 * 1000);
-#endif
-
-
-
-#ifdef WIN32
-	#define _CRTDBG_MAP_ALLOC
-
-	#ifdef _DEBUG
-		#ifndef DBG_NEW
-			#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
-			#define new DBG_NEW
-		#endif
-	#endif  // _DEBUG
-
-
-	#include <stdlib.h>
-	#include <crtdbg.h>
-#endif
+};
 
 #endif

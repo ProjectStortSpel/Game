@@ -2,8 +2,9 @@
 #include <iostream>
 #include <string>
 #include <algorithm>
-#include "Network/Server.h"
-#include "Network/Client.h"
+#include "Network/ServerNetwork.h"
+#include "Network/ClientNetwork.h"
+#include "Network/PacketHandler.h"
 #include "ECSL/ECSL.h"
 
 #ifdef WIN32
@@ -45,19 +46,23 @@ int main(int argc, char** argv)
 
 	SDL_Init(SDL_INIT_EVERYTHING);
 
-	Server s;
-	s.Start();
-
-
 	std::string input;
 	std::getline(std::cin, input);
-
-	//Client c;
-	//c.Connect("127.0.0.1", "localhest", 6112, 0);
-
-	//c.Disconect();
-
 	
+	ClientNetwork c;
+	ServerNetwork s;
+	
+	if (input == "c")
+	{
+		c.Connect("127.0.0.1", "localhest", 6112, 0);
+
+		std::getline(std::cin, input);
+	}
+	else if (input == "s")
+	{
+		s.Start(6112, "localhest", 8);
+		std::getline(std::cin, input);
+	}	
 	SDL_Quit();
 	return 0;
 }
