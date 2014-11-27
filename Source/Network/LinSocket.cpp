@@ -203,7 +203,7 @@ ISocket* LinSocket::Accept()
 	return sock;
 }
 
-int LinSocket::Recv(char* _buffer, int _length, int _flags)
+int LinSocket::Receive(char* _buffer, int _length, int _flags)
 {
 	return 0;
 }
