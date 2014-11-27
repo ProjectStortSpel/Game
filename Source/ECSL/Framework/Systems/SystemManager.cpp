@@ -17,7 +17,6 @@ SystemManager::~SystemManager()
 
 void SystemManager::InitializeSystems()
 {
-	
 	/*	Initialize all system groups	*/
 	for (unsigned int groupId = 0; groupId < m_systemWorkGroups->size(); ++groupId)
 	{
@@ -28,7 +27,7 @@ void SystemManager::InitializeSystems()
 		{
 			systems->at(systemId)->Initialize();
 
-			GenerateSystemBitmask(systems->at(systemId), ComponentFilter::Mandatory);
+			//GenerateSystemBitmask(systems->at(systemId), ComponentFilter::Mandatory);
 			//GenerateSystemBitmask(systems->at(systemId), ComponentFilter::RequiresOneOf);
 			//GenerateSystemBitmask(systems->at(systemId), ComponentFilter::Excluded);
 		}
@@ -46,12 +45,11 @@ void SystemManager::GenerateSystemBitmask(System* _system, ComponentFilter _type
 	
 	for (int i = 0; i < componentTypes->size(); ++i)
 	{
-		TypeId componentTypeId = ComponentTypeManager::GetTableId(componentTypes->at(i));
-		//componentIds.push_back(componentTypeId);
+		TypeId componentTypeId = ComponentTypeManager::GetInstance().GetTableId(componentTypes->at(i));
+		componentIds.push_back(componentTypeId);
 		
 	}
-	//unsigned int componentTypeCount = ComponentTypeManager::GetInstance().GetComponentTypeCount();
-	//BitSet::DataType* convertedBitmask = BitSet::BitSetConverter::GetInstance().GenerateBitmask(&componentIds, componentTypeCount);
-
-	//tSystemBitmask->SetBitmask(convertedBitmask);
+	unsigned int componentTypeCount = ComponentTypeManager::GetInstance().GetComponentTypeCount();
+	BitSet::DataType* convertedBitmask = BitSet::BitSetConverter::GetInstance().GenerateBitmask(componentIds, componentTypeCount);
+	tSystemBitmask->SetBitmask(convertedBitmask);
 }

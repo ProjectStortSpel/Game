@@ -1,0 +1,26 @@
+"Namn" "
+{
+	"Settings"
+	{
+		"Table"			"Array"
+		"testastats"	"a"
+	}
+	"Data"
+	{
+		"X"	"4" "1"
+		"Y"	"float" "1"
+		"Yarray" "float" "100"
+		"Xpointer" "pointer" "1"
+	}
+	"Debug"
+	{
+		"asdasdasdasd"
+	}
+}
+
+
+{
+{
+{
+	
+}

@@ -27,7 +27,7 @@ namespace ECSL
 	void DataArray::ClearData()
 	{
 		Release();
-		m_dataTable = new char[m_rowCount * m_bytesPerRow];
+		m_dataTable = (char*)calloc(m_rowCount * m_bytesPerRow, sizeof(char));
 	}
 
 	DataLocation DataArray::GetData(unsigned const int _row) const

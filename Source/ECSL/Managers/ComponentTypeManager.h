@@ -13,12 +13,6 @@ namespace ECSL
 {
 	typedef size_t TypeId;
 
-	class ComponentManagerData
-	{
-	public:
-		
-	};
-
 	class DECLSPEC ComponentTypeManager
 	{
 	public:
@@ -32,6 +26,7 @@ namespace ECSL
 		void LoadComponentTypesFromFile(const std::string& _filePath);
 
 		ComponentType* GetComponentType(int _componentTypeId);
+		unsigned int GetComponentTypeCount(){ return m_componentTypes->size(); }
 
 		template<typename ComponentType>
 		TypeId GetTableId();

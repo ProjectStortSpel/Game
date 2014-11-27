@@ -64,9 +64,7 @@ namespace ECSL
 	template<typename SystemType>
 	void WorldCreator::AddSystemToCurrentGroup()
 	{
-
 		m_systemWorkGroups->at(m_systemWorkGroups->size() - 1)->AddSystem<SystemType>();
-		int a = 2;
 	}
 }
 #endif

@@ -4,7 +4,7 @@
 
 using namespace ECSL;
 
-DataManager::DataManager(unsigned int _entityCount, std::vector<int>* _componentTypeIds) : m_entityCount(_entityCount), m_componentTypeIds(_componentTypeIds)
+DataManager::DataManager(unsigned int _entityCount, std::vector<int>* _componentTypeIds) : m_entityCount(_entityCount), m_componentTypeIds(_componentTypeIds), m_componentTables(new std::vector<DataTable*>())
 {
 }
 
@@ -20,7 +20,6 @@ DataManager::~DataManager()
 
 void DataManager::InitializeTables()
 {
-	m_componentTables = new std::vector<DataTable*>();
 	m_entityTable = new EntityTable(m_entityCount, m_componentTypeIds->size());
 
 	for (unsigned int n = 0; n < m_componentTypeIds->size(); ++n)

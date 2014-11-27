@@ -19,17 +19,7 @@ namespace ECSL
 		~SystemManager();
 
 		void InitializeSystems();
-		
-		template<typename SystemType>
-		void AddSystem();
 	};
-
-	template<typename SystemType>
-	void SystemManager::AddSystem()
-	{
-		SystemType* system = new SystemType();
-		m_systems->push_back(system);
-	}
 }
 
 #endif
