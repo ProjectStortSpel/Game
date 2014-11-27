@@ -4,7 +4,9 @@
 #include "Luna.h"
 
 #include <Lua/lua.hpp>
+#include <assert.h>
 #include <string>
+#include <vector>
 
 #if defined(WIN32)
   #define EXPORT __declspec(dllexport)
@@ -14,75 +16,78 @@
   #define IMPORT
 #endif
 
-// Bridge between Lua and everything else to make the transition easy
-class EXPORT LuaEmbedder
+namespace LuaEmbedder
 {
-// Initialization
-public:
-  static LuaEmbedder& GetInstance();
-private:
-  LuaEmbedder();
-  LuaEmbedder(LuaEmbedder const&);
-  void operator=(LuaEmbedder const&);
-  ~LuaEmbedder();
-
-// Functions
-public:
-  void Run(const std::string& filepath);
+  lua_State* L = nullptr;
   
-  template<typename T> void EmbedClass(const char* className);
-  template<typename T> void EmbedClassFunction(const char* className, const char* methodName, int (T::*functionPointer)());
-  template<typename T> void EmbedClassProperty(const char* className, const char* propertyName, int (T::*getFunctionPointer)(), int (T::*setFunctionPointer)());
-  template<typename T> void AddObject(const char* className, T* object, const char* name);
-  template<typename T> int CallMethod(const char* className, const char* methodName, T* object, int argumentCount);
-  template<typename T> T* GetParameterObject(const char* className, int index);
-  template<typename T> void SetParameterObject(const char* className, T* object);
+  void EXPORT Init();
+  void EXPORT Quit();
   
-  int GetParameterInt(int index);
-  void SetParameterInt(int parameter);
+  void EXPORT Load(const std::string& filepath);
+  void EXPORT RunFunction(const std::string& functionName, int argumentCount = 0);
   
-// Variables
-private:
-  lua_State* m_L;
-};
-
-template<typename T>
-void LuaEmbedder::EmbedClass(const char* className)
-{
-  Luna<T>::Register(m_L, className);
-}
-template<typename T>
-void LuaEmbedder::EmbedClassFunction(const char* className, const char* methodName, int (T::*functionPointer)())
-{
-  Luna<T>::RegisterMethod(m_L, className, methodName, functionPointer);
-}
-template<typename T>
-void LuaEmbedder::EmbedClassProperty(const char* className, const char* propertyName, int (T::*getFunctionPointer)(), int (T::*setFunctionPointer)())
-{
-  Luna<T>::RegisterProperty(m_L, className, propertyName, getFunctionPointer, setFunctionPointer);
-}
-template<typename T>
-void LuaEmbedder::AddObject(const char* className, T* object, const char* name)
-{
-  Luna<T>::push(m_L, className, object);
-  lua_setglobal(m_L, name);
-}
-template<typename T>
-int LuaEmbedder::CallMethod(const char* className, const char* methodName, T* object, int argumentCount)
-{
-  Luna<T>::push(m_L, className, object);
-  lua_insert(m_L, -(argumentCount + 1));
-  return Luna<T>::CallMethod(m_L, className, methodName, argumentCount);
-}
-template<typename T>
-T* LuaEmbedder::GetParameterObject(const char* className, int index)
-{
-  return Luna<T>::check(m_L, className, index);
-}
-template<typename T>
-void LuaEmbedder::SetParameterObject(const char* className, T* object)
-{
-  Luna<T>::push(m_L, className, object);
+  void EXPORT EmbedDouble(const std::string& name, double value, const std::string& library = std::string());
+  void EXPORT EmbedInt(const std::string& name, int value, const std::string& library = std::string());
+  void EXPORT EmbedUnsignedInt(const std::string& name, unsigned int value, const std::string& library = std::string());
+  void EXPORT EmbedBool(const std::string& name, bool value, const std::string& library = std::string());
+  void EXPORT EmbedString(const std::string& name, const char* value, const std::string& library = std::string());
+  void EXPORT EmbedFunction(const std::string& name, int (*functionPointer)(), const std::string& library = std::string());
+  
+  double EXPORT PullDouble(int index);
+  double EXPORT PullDouble(const std::string& name, const std::string& library = std::string());
+  int EXPORT PullInt(int index);
+  int EXPORT PullInt(const std::string& name, const std::string& library = std::string());
+  unsigned int EXPORT PullUnsignedInt(int index);
+  unsigned int EXPORT PullUnsignedInt(const std::string& name, const std::string& library = std::string());
+  bool EXPORT PullBool(int index);
+  bool EXPORT PullBool(const std::string& name, const std::string& library = std::string());
+  std::string EXPORT PullString(int index);
+  std::string EXPORT PullString(const std::string& name, const std::string& library = std::string());
+  
+  void EXPORT PushDouble(double value);
+  void EXPORT PushInt(int value);
+  void EXPORT PushUnsignedInt(unsigned int value);
+  void EXPORT PushBool(bool value);
+  void EXPORT PushString(const std::string& value);
+  
+  template<typename T>
+  void EXPORT EmbedClass(const std::string& className)
+  {
+    Luna<T>::Register(L, className.c_str());
+  }
+  template<typename T>
+  void EXPORT EmbedClassFunction(const std::string& className, const std::string& methodName, int (T::*functionPointer)())
+  {
+    Luna<T>::RegisterMethod(L, className.c_str(), methodName.c_str(), functionPointer);
+  }
+  template<typename T>
+  void EXPORT EmbedClassProperty(const std::string& className, const std::string& propertyName, int (T::*getFunctionPointer)(), int (T::*setFunctionPointer)())
+  {
+    Luna<T>::RegisterProperty(L, className.c_str(), propertyName.c_str(), getFunctionPointer, setFunctionPointer);
+  }
+  template<typename T>
+  void EXPORT AddObject(const std::string& className, T* object, const std::string& name)
+  {
+    Luna<T>::push(L, className.c_str(), object);
+    lua_setglobal(L, name.c_str());
+  }
+  template<typename T>
+  int EXPORT CallMethod(const std::string& className, const std::string& methodName, T* object, int argumentCount)
+  {
+    Luna<T>::push(L, className.c_str(), object);
+    lua_insert(L, -(1 + argumentCount));
+    return Luna<T>::CallMethod(L, className.c_str(), methodName.c_str(), argumentCount);
+  }
+  template<typename T>
+  T* EXPORT PullObject(const std::string& className, int index)
+  {
+    return Luna<T>::check(L, className.c_str(), index);
+  }
+  template<typename T>
+  void EXPORT PushObject(const std::string& className, T* object)
+  {
+    Luna<T>::push(L, className.c_str(), object);
+  }
 }
 
 #endif

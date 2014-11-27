@@ -20,18 +20,16 @@ public:
 
   int Add()
   {
-    LuaEmbedder& le = LuaEmbedder::GetInstance();
-    TestClass* tc = le.GetParameterObject<TestClass>("TestClass", 1);
+    TestClass* tc = LuaEmbedder::PullObject<TestClass>("TestClass", 1);
     m_number += tc->Number();
     return 0;
   }
   
   int Do()
   {
-    LuaEmbedder& le = LuaEmbedder::GetInstance();
-    TestClass* tc = le.GetParameterObject<TestClass>("TestClass", 1);
-    le.SetParameterObject<TestClass>("TestClass", tc);
-    le.CallMethod<TestClass>("TestClass", "TestFunction", this, 1);
+    TestClass* tc = LuaEmbedder::PullObject<TestClass>("TestClass", 1);
+    LuaEmbedder::PushObject<TestClass>("TestClass", tc);
+    LuaEmbedder::CallMethod<TestClass>("TestClass", "TestFunction", this, 1);
     return 0;
   }
   
@@ -48,29 +46,27 @@ public:
   
   int GetNumber()
   {
-    LuaEmbedder& le = LuaEmbedder::GetInstance();
-    le.SetParameterInt(m_number);
+    //LuaEmbedder::PushInt(m_number);
     return 1;
   }
   
   int SetNumber()
   {
-    LuaEmbedder& le = LuaEmbedder::GetInstance();
-    m_number = le.GetParameterInt(1);
+    //m_number = LuaEmbedder::PullInt(1);
     return 0;
   }
 };
 
-class TestClass2
+struct TestClass2
 {
-private:
   int m_number;
-public:
+  
   TestClass2()
   {
     m_number = 2;
     std::cout << "Constructor called" << std::endl;
   }
+  
   ~TestClass2()
   {
     std::cout << "Destructor called" << std::endl;
@@ -78,18 +74,16 @@ public:
 
   int Add()
   {
-    LuaEmbedder& le = LuaEmbedder::GetInstance();
-    TestClass2* tc = le.GetParameterObject<TestClass2>("TestClass2", 1);
+    TestClass2* tc = LuaEmbedder::PullObject<TestClass2>("TestClass2", 1);
     m_number += tc->GetNumber();
     return 0;
   }
   
   int Do()
   {
-    LuaEmbedder& le = LuaEmbedder::GetInstance();
-    TestClass2* tc = le.GetParameterObject<TestClass2>("TestClass2", 1);
-    le.SetParameterObject<TestClass2>("TestClass2", tc);
-    le.CallMethod<TestClass2>("TestClass2", "TestFunction", this, 1);
+    TestClass2* tc = LuaEmbedder::PullObject<TestClass2>("TestClass2", 1);
+    LuaEmbedder::PushObject<TestClass2>("TestClass2", tc);
+    LuaEmbedder::CallMethod<TestClass2>("TestClass2", "TestFunction", this, 1);
     return 0;
   }
   
@@ -106,34 +100,57 @@ public:
   
   int Number()
   {
-    LuaEmbedder& le = LuaEmbedder::GetInstance();
-    le.SetParameterInt(5);
+    //LuaEmbedder::PushInt(5);
     return 1;
   }
 };
+
+static int GlobalTestFunction()
+{
+  double a = LuaEmbedder::PullDouble(1);
+  double b = LuaEmbedder::PullDouble(2);
+  LuaEmbedder::PushDouble(a + b);
+  return 1;
+}
 
 int main(int argc, char** argv)
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	
-	//TestClass d;
+	LuaEmbedder::Init();
 	
-	LuaEmbedder& le = LuaEmbedder::GetInstance();
-	le.EmbedClass<TestClass>("TestClass");
-	le.EmbedClassFunction<TestClass>("TestClass", "Add", &TestClass::Add);
-	le.EmbedClassFunction<TestClass>("TestClass", "Do", &TestClass::Do);
-	le.EmbedClassFunction<TestClass>("TestClass", "Print", &TestClass::Print);
-	le.EmbedClassProperty<TestClass>("TestClass", "Number", &TestClass::GetNumber, &TestClass::SetNumber);
-	//le.AddObject<TestClass>("TestClass", &d, "e");
+	TestClass d;
 	
-	le.EmbedClass<TestClass2>("TestClass2");
-	le.EmbedClassFunction<TestClass2>("TestClass2", "Add", &TestClass2::Add);
-	le.EmbedClassFunction<TestClass2>("TestClass2", "Do", &TestClass2::Do);
-	le.EmbedClassFunction<TestClass2>("TestClass2", "Print", &TestClass2::Print);
-	//le.EmbedClassProperty<TestClass2>("TestClass2", "Number", &TestClass2::Number);
-	//le.EmbedClassFunction<TestClass2>("TestClass2", "Number", &TestClass2::Number);
+	LuaEmbedder::EmbedClass<TestClass>("TestClass");
+	LuaEmbedder::EmbedClassFunction<TestClass>("TestClass", "Add", &TestClass::Add);
+	LuaEmbedder::EmbedClassFunction<TestClass>("TestClass", "Do", &TestClass::Do);
+	LuaEmbedder::EmbedClassFunction<TestClass>("TestClass", "Print", &TestClass::Print);
+	LuaEmbedder::EmbedClassProperty<TestClass>("TestClass", "Number", &TestClass::GetNumber, &TestClass::SetNumber);
+	LuaEmbedder::AddObject<TestClass>("TestClass", &d, "e");
 	
-	le.Run("test.lua");
+	LuaEmbedder::EmbedClass<TestClass2>("TestClass2");
+	LuaEmbedder::EmbedClassFunction<TestClass2>("TestClass2", "Add", &TestClass2::Add);
+	LuaEmbedder::EmbedClassFunction<TestClass2>("TestClass2", "Do", &TestClass2::Do);
+	LuaEmbedder::EmbedClassFunction<TestClass2>("TestClass2", "Print", &TestClass2::Print);
+	
+	LuaEmbedder::EmbedFunction("Func1", &GlobalTestFunction);
+	LuaEmbedder::EmbedFunction("Func2", &GlobalTestFunction, "Lib");
+	LuaEmbedder::EmbedFunction("Func3", &GlobalTestFunction, "Lib");
+	
+	LuaEmbedder::EmbedDouble("DeltaTime", 0.1, "Time");
+	LuaEmbedder::EmbedInt("Fekke", -12, "Time");
+	LuaEmbedder::EmbedUnsignedInt("DeltaTime", 12, "Time");
+	LuaEmbedder::EmbedBool("IsParty", true, "Time");
+	LuaEmbedder::EmbedString("Where", "Hos Mange", "Time");
+	
+	LuaEmbedder::Load("test.lua");
+	LuaEmbedder::RunFunction("Update");
+	LuaEmbedder::RunFunction("Update");
+	
+	int g = LuaEmbedder::PullInt("g", "Lib");
+	std::cout << g << std::endl;
+	
+	LuaEmbedder::Quit();
 
 	SDL_Quit();
 	return 0;

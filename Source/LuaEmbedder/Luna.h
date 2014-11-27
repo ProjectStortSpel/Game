@@ -102,28 +102,11 @@ public:
       Registers your class with Lua.  Leave namespac "" if you want to load it into the global space.
   */
   // REGISTER CLASS AS A GLOBAL TABLE 
-  static void Register(lua_State* L, const char* className, const char* namespac = NULL)
+  static void Register(lua_State* L, const char* className)
   {
-    if (namespac && strlen(namespac))
-    {
-      lua_getglobal(L, namespac);
-      if(lua_isnil(L,-1)) // Create namespace if not present
-      {
-	lua_newtable(L);
-	lua_pushvalue(L,-1); // Duplicate table pointer since setglobal pops the value
-	lua_setglobal(L,namespac);
-      }
-      lua_pushstring(L, className);
-      lua_pushcclosure(L, &Luna<T>::constructor, 1);
-      lua_setfield(L, -2, className);
-      lua_pop(L, 1);
-    }
-    else
-    {
-      lua_pushstring(L, className);
-      lua_pushcclosure(L, &Luna<T>::constructor, 1);
-      lua_setglobal(L, className);
-    }
+    lua_pushstring(L, className);
+    lua_pushcclosure(L, &Luna<T>::constructor, 1);
+    lua_setglobal(L, className);
     
     luaL_newmetatable(L, className);
     int metatable = lua_gettop(L);
