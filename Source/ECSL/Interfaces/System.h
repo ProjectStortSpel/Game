@@ -22,7 +22,7 @@ namespace ECSL
 		//World* m_world;
 	protected:
 		void AddComponentTypeToFilter(std::string _componentType, ComponentFilter _filter);
-		SystemBitmask* GetSystemBitmask(ComponentFilter _bitmaskType);
+		
 
 	public:
 		System() { }
@@ -33,6 +33,8 @@ namespace ECSL
 
 		virtual void OnEntityAdded(unsigned int _entityId) = 0;
 		virtual void OnEntityRemoved(unsigned int _entityId) = 0;
+
+		SystemBitmask* GetSystemBitmask(ComponentFilter _bitmaskType);
 	};
 }
 
