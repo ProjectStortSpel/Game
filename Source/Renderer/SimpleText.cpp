@@ -13,7 +13,7 @@ SimpleText::~SimpleText()
 bool SimpleText::Init(GLuint* _outputimage, GLuint _textimage, int _clientWidth, int _clientHeight)
 {
 	// Set output image
-	m_outputImage = _outputimage;
+	//m_outputImage = _outputimage;
 	m_textImage = _textimage;
 
 	// Shader Shader
@@ -27,10 +27,10 @@ bool SimpleText::Init(GLuint* _outputimage, GLuint _textimage, int _clientWidth,
 
 	//m_textImage = TextureLoader::LoadTexture("Content/Textures/SimpleText.png", 5);
 
-	glGenTextures(1, m_outputImage);
+	//glGenTextures(1, m_outputImage);
 
-	glBindTexture(GL_TEXTURE_2D, *m_outputImage);
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, _clientWidth, _clientHeight);
+	//glBindTexture(GL_TEXTURE_2D, *m_outputImage);
+	//glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, _clientWidth, _clientHeight);
 
 	simpleTextX = _clientWidth / 8;
 	simpleTextY = _clientHeight / 16;
@@ -53,8 +53,9 @@ void SimpleText::RenderText()
 	// Run program
 
 	// Bind buffers
-	glBindImageTexture(5, m_textImage, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
-	glBindImageTexture(6, *m_outputImage, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+	glBindImageTexture(1, m_textImage, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
+	//glBindImageTexture(5, *m_outputImage, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+
 	// run program
 	glDispatchCompute(128, 36, 1); // 1/16 = 0.0625
 
