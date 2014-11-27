@@ -14,20 +14,27 @@ BitSet::BitSetConverter::BitSetConverter()
 		m_powerOfTwo[n] = (BitSet::DataType)pow(2.0f, n);
 }
 
-BitSet::DataType* BitSet::BitSetConverter::GenerateBitmask(std::vector<unsigned int>* _numbersToConvert, unsigned int _maxNumberOfBits)
+BitSet::BitSetConverter::~BitSetConverter()
 {
+}
+
+BitSet::DataType* BitSet::BitSetConverter::GenerateBitmask(const std::vector<unsigned int>& _numbersToConvert, unsigned int _maxNumberOfBits)
+{
+	return 0;
 	/*	Calculate how many DataType(s) needed to cover all numbers	*/
 	int	numberOfInts = GetIntCount(_maxNumberOfBits);
+	return 0;
 	DataType* newBitSet = GenerateBitSet(_maxNumberOfBits);
+	return 0;
 
 	/*	Set all bits to zero	*/
 	for (int n = 0; n < numberOfInts; ++n)
 		newBitSet[n] = 0;
 
 	/*	Go through all numbers and place them in the correct bitset	*/
-	for (unsigned int i = 0; i < _numbersToConvert->size(); ++i)
+	for (unsigned int i = 0; i < _numbersToConvert.size(); ++i)
 	{
-		int currentInt = _numbersToConvert->at(i);
+		int currentInt = _numbersToConvert.at(i);
 
 		/*	Calculate at which index the current number should be represented	*/
 		int	bitmaskIndex = (int)floor((float)currentInt / (GetIntByteSize() * 8));

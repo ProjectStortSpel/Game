@@ -20,15 +20,15 @@ namespace ECSL
 		SystemBitmask()
 		{
 			m_addedComponentTypes = new std::vector<std::string>();
-			m_bitmask = 0;
+			m_bitSet = 0;
 		}
 		~SystemBitmask()
 		{
 			if (m_addedComponentTypes)
 				delete(m_addedComponentTypes);
 
-			if (m_bitmask)
-				delete[] m_bitmask;
+			if (m_bitSet)
+				delete[] m_bitSet;  
 		}
 
 		std::vector<std::string>* GetComponentTypes() const { return m_addedComponentTypes; }
@@ -44,13 +44,13 @@ namespace ECSL
 			m_addedComponentTypes->push_back(_componentType);
 		}
 
-		void SetBitmask(BitSet::DataType* _bitmask)
+		void SetBitmask(BitSet::DataType* _bitSet)
 		{
-			m_bitmask = _bitmask;
+			m_bitSet = _bitSet;
 		}
 
 	private:
-		BitSet::DataType* m_bitmask;
+		BitSet::DataType* m_bitSet;
 		std::vector<std::string>* m_addedComponentTypes;
 
 	};

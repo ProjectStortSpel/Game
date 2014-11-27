@@ -21,6 +21,9 @@ EntityTable::~EntityTable()
 {
 	if (m_dataTable)
 		delete(m_dataTable);
+
+	if (m_availableEntityIds)
+		delete(m_availableEntityIds);
 }
 
 bool EntityTable::EntityHasComponent(unsigned int _entityId, std::string _componentType)

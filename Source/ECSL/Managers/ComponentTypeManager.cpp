@@ -20,6 +20,27 @@ ComponentTypeManager::ComponentTypeManager()
 
 ComponentTypeManager::~ComponentTypeManager()
 {
+	if (m_stringTableId)
+	{
+		m_stringTableId->clear();
+		delete(m_stringTableId);
+	}
+
+	if (m_componentTypes)
+	{
+		for (auto it = m_componentTypes->begin(); it != m_componentTypes->end(); ++it)
+			delete it->second;
+
+		m_componentTypes->clear();
+		delete m_componentTypes;
+
+	}
+
+	if (m_componentTypeReader)
+		delete m_componentTypeReader;
+
+	if (m_parser)
+		delete m_parser;
 
 }
 

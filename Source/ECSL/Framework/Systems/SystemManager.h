@@ -12,22 +12,14 @@ namespace ECSL
 	private:
 		std::vector<SystemWorkGroup*>* m_systemWorkGroups;
 
+		void GenerateSystemBitmask(System* _system, ComponentFilter _type);
+
 	public:
 		explicit SystemManager(std::vector<SystemWorkGroup*>* _systemWorkGroups);
 		~SystemManager();
 
 		void InitializeSystems();
-		
-		template<typename SystemType>
-		void AddSystem();
 	};
-
-	template<typename SystemType>
-	void SystemManager::AddSystem()
-	{
-		SystemType* system = new SystemType();
-		m_systems->push_back(system);
-	}
 }
 
 #endif

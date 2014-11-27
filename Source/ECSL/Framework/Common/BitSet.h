@@ -35,7 +35,7 @@ namespace ECSL
 			~BitSetConverter();
 			static BitSetConverter& GetInstance();
 
-			DataType* GenerateBitmask(std::vector<unsigned int>* _numbersToConvert, unsigned int _maxNumberOfBits);
+			DataType* GenerateBitmask(const std::vector<unsigned int>& _numbersToConvert, unsigned int _maxNumberOfBits);
 			std::vector<unsigned int>* GenerateBoolArray(DataType* _bitmask, unsigned int _bitmaskCount);
 
 
