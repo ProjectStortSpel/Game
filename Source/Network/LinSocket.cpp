@@ -5,6 +5,7 @@
 #include <sys/socket.h>
 #include <netinet/tcp.h>
 #include <arpa/inet.h> 
+#include <sys/ioctl.h>
 
 LinSocket::LinSocket(int _socket)
 {
