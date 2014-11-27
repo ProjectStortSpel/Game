@@ -206,9 +206,9 @@ bool GraphicDevice::Init()
 	if (!InitSDLWindow()) { ERRORMSG("INIT SDL WINDOW FAILED\n"); return false; }
 	if (!InitGLEW()) { ERRORMSG("GLEW_VERSION_4_3 FAILED\n"); return false; }
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
-	//if (!InitDeferred()) { ERRORMSG("INIT DEFERRED FAILED\n"); return false; }
+	if (!InitDeferred()) { ERRORMSG("INIT DEFERRED FAILED\n"); return false; }
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
-	if (!InitTextRenderer()) { ERRORMSG("INIT TEXTRENDERER FAILED\n"); return false; }
+	//if (!InitTextRenderer()) { ERRORMSG("INIT TEXTRENDERER FAILED\n"); return false; }
 
 	return true;
 }
@@ -287,7 +287,7 @@ void GraphicDevice::Render()
 
 	- Output	color
 	*/
-/*
+
 	//------Render deferred--------------------------------------------------------------------------
 	glEnable(GL_DEPTH_TEST);
 
@@ -387,7 +387,7 @@ void GraphicDevice::Render()
 	glDispatchCompute(m_clientWidth * 0.0625, m_clientHeight * 0.0625, 1); // 1/16 = 0.0625
 	//---------------------------------------------------------------------------
 
-	m_textRenderer.RenderText();
+	//m_textRenderer.RenderText();
 	
 	// FULL SCREEN QUAD
 	m_fullScreenShader.UseProgram();
@@ -523,7 +523,7 @@ bool GraphicDevice::InitShaders()
 	m_fullScreenShader.AddShader("Content/Shaders/fullscreen.gs", GL_GEOMETRY_SHADER);
 	m_fullScreenShader.AddShader("Content/Shaders/fullscreen.ps", GL_FRAGMENT_SHADER);
 	m_fullScreenShader.FinalizeShaderProgram();
-/*
+
 	//Deferred pass 1
 	m_deferredShader1.InitShaderProgram();
 	m_deferredShader1.AddShader("Content/Shaders/VSDeferredPass1.glsl", GL_VERTEX_SHADER);
@@ -535,7 +535,7 @@ bool GraphicDevice::InitShaders()
 	m_deferredShader2.AddShader("Content/Shaders/VSDeferredPass2.glsl", GL_VERTEX_SHADER);
 	m_deferredShader2.AddShader("Content/Shaders/FSDeferredPass2.glsl", GL_FRAGMENT_SHADER);
 	m_deferredShader2.FinalizeShaderProgram();*/
-*/
+
 	return true;
 }
 
@@ -550,15 +550,11 @@ bool GraphicDevice::InitBuffers()
 	//normal
 	glBindImageTexture(0, m_normTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 
-	location = glGetUniformLocation(m_compDeferredPass2Shader.GetShaderProgram(), "NormalTex");
-	glUniform1i(location, 0);
 
 	glActiveTexture(GL_TEXTURE1);
 	//color
 	glBindImageTexture(1, m_colorTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
 
-	location = glGetUniformLocation(m_compDeferredPass2Shader.GetShaderProgram(), "ColorTex");
-	glUniform1i(location, 1);
 
 	glActiveTexture(GL_TEXTURE2);
 	location = glGetUniformLocation(m_compDeferredPass2Shader.GetShaderProgram(), "DepthTex");
@@ -595,7 +591,6 @@ bool GraphicDevice::InitBuffers()
 	glActiveTexture(GL_TEXTURE3);
 	m_Ground = Object(texture, vec3(0.0, -1.5, 0.0));
 	CreateGround();
-*/
 
 	m_fullScreenShader.UseProgram();
 	glActiveTexture(GL_TEXTURE5);
