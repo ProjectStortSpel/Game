@@ -375,7 +375,7 @@ void GraphicDevice::Render()
 //m_glTimerValues.push_back(GLTimerValue("Deferred stage2: ", glTimer.Stop()));
 //glTimer.Start();
 
-	m_textRenderer.RenderText();
+	m_textRenderer.RenderText(m_dt);
 
 //m_glTimerValues.push_back(GLTimerValue("Text Render: ", glTimer.Stop()));
 //glTimer.Start();
@@ -596,7 +596,7 @@ bool GraphicDevice::InitBuffers()
 bool GraphicDevice::InitTextRenderer()
 {
 	GLuint m_textImage = TextureLoader::LoadTexture("content/textures/SimpleText.png", GL_TEXTURE20);
-	return m_textRenderer.Init(&m_outputImage, m_textImage, m_clientWidth, m_clientHeight);
+	return m_textRenderer.Init(m_textImage, m_clientWidth, m_clientHeight);
 }
 bool GraphicDevice::RenderSimpleText(std::string _text, int _x, int _y)
 {
