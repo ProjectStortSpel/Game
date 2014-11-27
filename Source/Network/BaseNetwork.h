@@ -7,12 +7,12 @@
 #include <mutex>
 
 #include "Stdafx.h"
-#include "Network/NetTypeMessageId.h"
+#include "NetTypeMessageId.h"
 
 #ifdef WIN32
-#include "Socket/WinSocket.h"
+#include "WinSocket.h"
 #else
-#include "Socket/LinSocket.h"
+#include "LinSocket.h"
 #endif
 
 #include "PacketHandler.h"
