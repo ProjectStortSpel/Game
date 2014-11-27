@@ -12,7 +12,7 @@ namespace ECSL
 	class DECLSPEC DataManager
 	{
 	public:
-		explicit DataManager(unsigned int _entityCount);
+		explicit DataManager(unsigned int _entityCount, std::vector<int>* _componentTypeIds);
 		~DataManager();
 
 		void InitializeTables();

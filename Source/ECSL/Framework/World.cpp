@@ -4,13 +4,11 @@ using namespace ECSL;
 
 World::World(unsigned int _entityCount, std::vector<SystemWorkGroup*>* _systemWorkGroups, std::vector<int>* _componentTypeIds)
 {
-	m_dataManager = new DataManager(_entityCount);
+	m_dataManager = new DataManager(_entityCount, _componentTypeIds);
 	m_systemManager = new SystemManager(_systemWorkGroups);
 
-	for (int n = 0; n < _componentTypeIds->size(); ++n)
-		m_dataManager->AddComponentType(_componentTypeIds->at(n));
-
 	m_dataManager->InitializeTables();
+	m_systemManager->InitializeSystems();
 }
 
 World::~World()

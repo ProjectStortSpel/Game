@@ -4,12 +4,18 @@
 
 using namespace ECSL;
 
-DataManager::DataManager(unsigned int _entityCount) : m_entityCount(_entityCount), m_componentTypeIds(new std::vector<int>())
+DataManager::DataManager(unsigned int _entityCount, std::vector<int>* _componentTypeIds) : m_entityCount(_entityCount), m_componentTypeIds(_componentTypeIds)
 {
 }
 
 DataManager::~DataManager()
 {
+	for (int n = m_componentTables->size() - 1; n >= 0; --n)
+		delete m_componentTables->at(n);
+	delete m_componentTables;
+
+	delete m_entityTable;
+	delete m_componentTypeIds;
 }
 
 void DataManager::InitializeTables()
