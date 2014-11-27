@@ -45,7 +45,7 @@ void SystemManager::GenerateSystemBitmask(System* _system, ComponentFilter _type
 	
 	for (int i = 0; i < componentTypes->size(); ++i)
 	{
-		TypeId componentTypeId = ComponentTypeManager::GetInstance().GetTableId(componentTypes->at(i));
+		unsigned int componentTypeId = ComponentTypeManager::GetInstance().GetTableId(componentTypes->at(i));
 		componentIds.push_back(componentTypeId);
 		
 	}
