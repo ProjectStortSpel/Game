@@ -20,7 +20,7 @@ Parser::~Parser()
 
 }
 
-Section* Parser::ParseFile(const std::string& _filePath)
+bool Parser::ParseFile(Section& _out, const std::string& _filePath)
 {
 	std::ifstream file;
 	file.open(_filePath);
@@ -58,10 +58,10 @@ Section* Parser::ParseFile(const std::string& _filePath)
 	std::vector<std::vector<std::string>> tokenizedLines;
 	ConvertLinesToTokens(tokenizedLines, lines);
 
-	Section* sectionTree = new Section();
-	ConvertTokensToSections(sectionTree, tokenizedLines, lines);
+	_out = Section();
+	ConvertTokensToSections(&_out, tokenizedLines, lines);
 
-	return sectionTree;
+	return true;
 }
 
 bool Parser::ValidateSymbols(const std::string& _fileLine)

@@ -18,7 +18,7 @@ int main(int argc, char** argv)
 	//delete(section);
 	////worldInitializer.Add<int>();
 	////ECSL::World* world = worldCreator.InitializeWorld(100);
-	ECSL::ComponentTypeManager::GetInstance().AddComponentTypesFromDirectory("Content/components");
+	ECSL::ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("Content/components");
 	SDL_Quit();
 	system("pause");
 	//_CrtDumpMemoryLeaks();

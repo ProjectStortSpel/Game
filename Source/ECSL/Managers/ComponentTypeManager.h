@@ -7,6 +7,7 @@
 #include <map>
 
 #include "../Framework/Components/ComponentType.h"
+#include "../Framework/Parsing/ComponentTypeReader.h"
 
 namespace ECSL
 {
@@ -25,9 +26,9 @@ namespace ECSL
 
 		template<typename ComponentType>
 		void AddComponentType();
-		void AddComponentType(const std::string& _componentType);
-		void AddComponentTypesFromDirectory(const std::string& _directoryPath);
-		void AddComponentTypesFromFile(const std::string& _filePath);
+		void AddComponentType(ComponentType& _componentType);
+		void LoadComponentTypesFromDirectory(const std::string& _directoryPath);
+		void LoadComponentTypesFromFile(const std::string& _filePath);
 
 		ComponentType* GetComponentType(int _componentTypeId);
 
@@ -35,6 +36,8 @@ namespace ECSL
 		static TypeId GetTableId();
 		static TypeId GetTableId(const std::string& _componentType);
 	private:
+		Parser m_parser;
+		ComponentTypeReader m_componentTypeReader;
 		std::map<int, ComponentType*>* m_loadedComponentTypes;
 
 		ComponentTypeManager();
