@@ -8,29 +8,6 @@
 
 using namespace ECSL;
 
-class Test3
-{
-public:
-	unsigned int* a = new unsigned int[500];
-	inline unsigned int* Get() { return a; }
-};
-
-class Test2
-{
-	Test3* test;
-public:
-	Test2() { test = new Test3(); }
-	inline unsigned int* Get() { return test->Get(); }
-};
-
-class Test1
-{
-	Test2* test;
-public:
-	Test1() { test = new Test2(); }
-	inline unsigned int* Get() { return test->Get(); }
-};
-
 class TestSystem : public ECSL::System
 {
 public:
@@ -76,36 +53,30 @@ private:
 
 void lol()
 {
+	ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("Content/components");
 	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
 	worldCreator.AddSystemGroup();
 	worldCreator.AddSystemToCurrentGroup<TestSystem>();
-	ECSL::World* world = worldCreator.InitializeWorld(100);
+	worldCreator.AddComponentType("Position");
+	worldCreator.AddComponentType("Velocity");
+	ECSL::World* world = worldCreator.CreateWorld(100);
+
+	for (unsigned int x = 0; x < 1; ++x)
+	{
+		for (unsigned int i = 0; i < 100; ++i)
+		{
+			int id = world->CreateNewEntity();
+		}
+		for (unsigned int i = 0; i < 99; ++i)
+		{
+			world->KillEntity(i);
+		}
+	}
+
+	int id = world->CreateNewEntity();
+	world->CreateComponentAndAddTo("Position", id);
 
 	delete(world);
-
-	Test3 test0;
-	Test1 test1;
-
-	clock_t t;
-	double first, second;
-
-	t = clock();
-	for (int i = 0; i < 1000000000; ++i)
-	{
-		//for (int j = 0; j < 500; ++j)
-			test0.Get()[150] += 3;
-	}
-	t = clock() - t;
-	first = ((float)t) / CLOCKS_PER_SEC;
-
-	t = clock();
-	for (int i = 0; i < 1000000000; ++i)
-	{
-		//for (int j = 0; j < 500; ++j)
-			test1.Get()[150] += 3;
-	}
-	t = clock() - t;
-	second = ((float)t) / CLOCKS_PER_SEC;
 
 	//ECSL::Parser* parser = new ECSL::Parser();
 	//ECSL::Section* section = parser->ParseFile("content/components/component.cmp");
@@ -116,7 +87,6 @@ void lol()
 	////worldInitializer.Add<int>();
 
 	//ECSL::ComponentTypeManager::GetInstance().AddComponentTypesFromDirectory("Content/components");
-	printf("First: %f\nSecond: %f\n%f%f", first, second, test0.Get()[150], test1.Get()[150]);
 }
 
 int main(int argc, char** argv)

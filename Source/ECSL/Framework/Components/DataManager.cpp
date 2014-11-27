@@ -1,10 +1,12 @@
 #include "DataManager.h"
+
+#include <assert.h>
 #include "../../Managers/ComponentTypeManager.h"
 #include "Tables/DataArray.h"
 
 using namespace ECSL;
 
-DataManager::DataManager(unsigned int _entityCount, std::vector<int>* _componentTypeIds) : m_entityCount(_entityCount), m_componentTypeIds(_componentTypeIds)
+DataManager::DataManager(unsigned int _entityCount, std::vector<unsigned int>* _componentTypeIds) : m_entityCount(_entityCount), m_componentTypeIds(_componentTypeIds)
 {
 }
 
@@ -20,22 +22,21 @@ DataManager::~DataManager()
 
 void DataManager::InitializeTables()
 {
-	m_componentTables = new std::vector<DataTable*>();
+	m_componentTables = new std::map<unsigned int, DataTable*>();
 	m_entityTable = new EntityTable(m_entityCount, m_componentTypeIds->size());
 
 	for (unsigned int n = 0; n < m_componentTypeIds->size(); ++n)
 	{
-		ComponentType* componentType = ComponentTypeManager::GetInstance().GetComponentType(m_componentTypeIds->at(n));
-		if (!componentType)
-		{
-			printf("ERROR: Invalid ComponentType! (ID %d)\n", m_componentTypeIds->at(n));
-			continue;
-		}
+		unsigned int componentTypeId = m_componentTypeIds->at(n);
+		ComponentType* componentType = ComponentTypeManager::GetInstance().GetComponentType(componentTypeId);
+
+		/* Couldn't find component type. Is the type spelled correctly? */
+		assert(componentType);
 
 		switch (componentType->GetTableType())
 		{
 		case TableType::Array:
-			m_componentTables->push_back(new DataArray(m_entityCount, componentType->GetByteSize()));
+			m_componentTables->insert(std::pair<unsigned int, DataTable*>(componentTypeId, new DataArray(m_entityCount, componentType->GetByteSize())));
 			break;
 
 		case TableType::Map:
@@ -47,25 +48,20 @@ void DataManager::InitializeTables()
 			break;
 		}
 	}
-
-}
-
-void DataManager::AddComponentType(int _componentType)
-{
-	for (unsigned int n = 0; n < m_componentTypeIds->size(); ++n)
-		if (m_componentTypeIds->at(n) == _componentType)
-			return;
-
-	m_componentTypeIds->push_back(_componentType);
 }
 
 int DataManager::CreateNewEntity()
 {
-	int newEntityId = m_entityTable->GenerateNewEntityId();
-	return 0;
+	return m_entityTable->GenerateNewEntityId();
 }
 
-void DataManager::CreateComponentAndAddTo(std::string& _componentType, int _id)
+void DataManager::CreateComponentAndAddTo(const std::string& _componentType, unsigned int _id)
 {
-	
+	unsigned int tableId = ComponentTypeManager::GetInstance().GetTableId(_componentType);
+	m_componentTables->at(tableId);
+}
+
+void DataManager::KillEntity(unsigned int _id)
+{
+	m_entityTable->AddOldEntityId(_id);
 }

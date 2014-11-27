@@ -11,39 +11,32 @@
 
 namespace ECSL
 {
-	typedef size_t TypeId;
-
-	class ComponentManagerData
-	{
-	public:
-		
-	};
-
 	class DECLSPEC ComponentTypeManager
 	{
 	public:
 		~ComponentTypeManager();
 		static ComponentTypeManager& GetInstance();
 
-		template<typename ComponentType>
-		void AddComponentType();
-		void AddComponentType(ComponentType& _componentType);
 		void LoadComponentTypesFromDirectory(const std::string& _directoryPath);
 		void LoadComponentTypesFromFile(const std::string& _filePath);
 
 		ComponentType* GetComponentType(int _componentTypeId);
 
 		template<typename ComponentType>
-		TypeId GetTableId();
-		TypeId GetTableId(const std::string& _componentType);
+		unsigned int GetTableId();
+		unsigned int GetTableId(const std::string& _componentType);
 	private:
-		int m_nextTableId = -1;
+		ComponentTypeManager();
+
+		int m_nextTableId;
 		Parser* m_parser;
 		ComponentTypeReader* m_componentTypeReader;
 		std::map<int, ComponentType*>* m_componentTypes;
-		std::unordered_map<std::string, TypeId>* m_stringTableId;
+		std::unordered_map<std::string, unsigned int>* m_stringTableId;
 
-		ComponentTypeManager();
+		template<typename ComponentType>
+		void AddComponentType();
+		void AddComponentType(ComponentType& _componentType);
 	};
 
 	template<typename ComponentType>
@@ -57,7 +50,7 @@ namespace ECSL
 	}
 
 	template<typename ComponentType>
-	TypeId ComponentTypeManager::GetTableId()
+	unsigned int ComponentTypeManager::GetTableId()
 	{
 		static TypeId m_id = ++m_nextTableId;
 		return m_id;
