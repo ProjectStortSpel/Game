@@ -208,7 +208,7 @@ bool GraphicDevice::Init()
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
 	if (!InitDeferred()) { ERRORMSG("INIT DEFERRED FAILED\n"); return false; }
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
-	//if (!InitTextRenderer()) { ERRORMSG("INIT TEXTRENDERER FAILED\n"); return false; }
+	if (!InitTextRenderer()) { ERRORMSG("INIT TEXTRENDERER FAILED\n"); return false; }
 
 	return true;
 }
@@ -287,7 +287,8 @@ void GraphicDevice::Render()
 
 	- Output	color
 	*/
-
+//GLTimer glTimer;
+//glTimer.Start();
 	//------Render deferred--------------------------------------------------------------------------
 	glEnable(GL_DEPTH_TEST);
 
@@ -344,26 +345,8 @@ void GraphicDevice::Render()
 
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
-
-	//-----Pass2------------------
-/*	glClear(GL_COLOR_BUFFER_BIT);
-	glDisable(GL_DEPTH_TEST);
-
-	m_deferredShader2.UseProgram();
-	m_deferredShader2.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
-
-	glm::mat4 inverseProjection = glm::inverse(projectionMatrix);
-	m_deferredShader2.SetUniVariable("invProjection", mat4x4, &inverseProjection);
-
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, m_depthBuf);
-	//Full screen quad to draw to
-	glBindVertexArray(VAOFullscreenQuad);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-	//---------------------------
-	glActiveTexture(0);
-*/
-
+//m_glTimerValues.push_back(GLTimerValue("Deferred stage1: ", glTimer.Stop()));
+//glTimer.Start();
 	// FORWARD RENDER
 	// POST RENDER EFFECTS?
 	// GUI RENDER
@@ -384,17 +367,26 @@ void GraphicDevice::Render()
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, m_depthBuf);
 
+	glBindImageTexture(1, m_colorTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
+
 	glDispatchCompute(m_clientWidth * 0.0625, m_clientHeight * 0.0625, 1); // 1/16 = 0.0625
 	//---------------------------------------------------------------------------
 
-	//m_textRenderer.RenderText();
-	
+//m_glTimerValues.push_back(GLTimerValue("Deferred stage2: ", glTimer.Stop()));
+//glTimer.Start();
+
+	m_textRenderer.RenderText();
+
+//m_glTimerValues.push_back(GLTimerValue("Text Render: ", glTimer.Stop()));
+//glTimer.Start();
+
 	// FULL SCREEN QUAD
 	m_fullScreenShader.UseProgram();
 	glActiveTexture(GL_TEXTURE5);
 	//glBindTexture(GL_TEXTURE_2D, m_outputImage);
 	glDrawArrays(GL_POINTS, 0, 1);
 
+//m_glTimerValues.push_back(GLTimerValue("Full Screen: ", glTimer.Stop()));
 	// Swap in the new buffer
 	SDL_GL_SwapWindow(m_window);
 }
@@ -603,7 +595,7 @@ bool GraphicDevice::InitBuffers()
 
 bool GraphicDevice::InitTextRenderer()
 {
-	GLuint m_textImage = TextureLoader::LoadTexture("content/textures/SimpleText.png", 5);
+	GLuint m_textImage = TextureLoader::LoadTexture("content/textures/SimpleText.png", GL_TEXTURE20);
 	return m_textRenderer.Init(&m_outputImage, m_textImage, m_clientWidth, m_clientHeight);
 }
 bool GraphicDevice::RenderSimpleText(std::string _text, int _x, int _y)
