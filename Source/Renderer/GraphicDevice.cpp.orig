@@ -288,12 +288,7 @@ void GraphicDevice::Render()
 
 	- Output	color
 	*/
-<<<<<<< HEAD
 /*
-=======
-//GLTimer glTimer;
-//glTimer.Start();
->>>>>>> wtf it didn't change?
 	//------Render deferred--------------------------------------------------------------------------
 	glEnable(GL_DEPTH_TEST);
 
@@ -350,7 +345,6 @@ void GraphicDevice::Render()
 
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
-<<<<<<< HEAD
 
 	//-----Pass2------------------
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -371,41 +365,22 @@ void GraphicDevice::Render()
 	glActiveTexture(0);
 
 
-=======
-//m_glTimerValues.push_back(GLTimerValue("Deferred stage1: ", glTimer.Stop()));
-//glTimer.Start();
->>>>>>> wtf it didn't change?
 	// FORWARD RENDER
 	// POST RENDER EFFECTS?
 	// GUI RENDER
 
+<<<<<<< HEAD
 	// DEBUGG TEXT
 	//glBindTexture(GL_TEXTURE_2D, m_debuggText);
 	// Use Debuggtext
 */	
+=======
+	m_textRenderer.RenderText(m_dt);
+>>>>>>> added text delay to render
 
-<<<<<<< HEAD
 
 	m_textRenderer.RenderText();
 	
-=======
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, m_depthBuf);
-
-	glBindImageTexture(1, m_colorTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
-
-	glDispatchCompute(m_clientWidth * 0.0625, m_clientHeight * 0.0625, 1); // 1/16 = 0.0625
-	//---------------------------------------------------------------------------
-
-//m_glTimerValues.push_back(GLTimerValue("Deferred stage2: ", glTimer.Stop()));
-//glTimer.Start();
-
-	m_textRenderer.RenderText();
-
-//m_glTimerValues.push_back(GLTimerValue("Text Render: ", glTimer.Stop()));
-//glTimer.Start();
-
->>>>>>> wtf it didn't change?
 	// FULL SCREEN QUAD
 	m_fullScreenShader.UseProgram();
 	glActiveTexture(GL_TEXTURE5);
@@ -415,7 +390,6 @@ void GraphicDevice::Render()
 
 	glDrawArrays(GL_POINTS, 0, 1);
 
-//m_glTimerValues.push_back(GLTimerValue("Full Screen: ", glTimer.Stop()));
 	// Swap in the new buffer
 	SDL_GL_SwapWindow(m_window);
 }
@@ -603,8 +577,13 @@ bool GraphicDevice::InitBuffers()
 
 bool GraphicDevice::InitTextRenderer()
 {
-	GLuint m_textImage = TextureLoader::LoadTexture("content/textures/SimpleText.png", GL_TEXTURE20);
+<<<<<<< HEAD
+	GLuint m_textImage = TextureLoader::LoadTexture("content/textures/SimpleText.png", 5);
 	return m_textRenderer.Init(&m_outputImage, m_textImage, m_clientWidth, m_clientHeight);
+=======
+	GLuint m_textImage = TextureLoader::LoadTexture("content/textures/SimpleText.png", GL_TEXTURE20);
+	return m_textRenderer.Init(m_textImage, m_clientWidth, m_clientHeight);
+>>>>>>> added text delay to render
 }
 bool GraphicDevice::RenderSimpleText(std::string _text, int _x, int _y)
 {
