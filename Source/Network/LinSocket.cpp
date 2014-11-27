@@ -11,13 +11,14 @@ LinSocket::LinSocket(int _socket)
 	m_socket = _socket;
 
 	if (m_socket != -1)
+	{
 		m_socketOpen = true;
+		m_remoteAddress = "";
+		m_remotePort = 0;
+		m_localPort = 0;
+	}
 	else if (NET_DEBUG)
 		printf("Failed to create new linsocket(2).\n");
-
-	m_remoteAddress = "";
-	m_remotePort = 0;
-	m_localPort = 0;
 }
 
 LinSocket::LinSocket(int _domain, int _type, int _protocol)
@@ -25,13 +26,15 @@ LinSocket::LinSocket(int _domain, int _type, int _protocol)
 	m_socket = socket(_domain, _type, _protocol);
 
 	if (m_socket != -1)
+	{
 		m_socketOpen = true;
+		m_remoteAddress = "";
+		m_remotePort = 0;
+		m_localPort = 0;
+	}
 	else if (NET_DEBUG)
 		printf("Failed to create new linsocket.\n");
 
-	m_remoteAddress = "";
-	m_remotePort = 0;
-	m_localPort = 0;
 }
 
 LinSocket::~LinSocket()
