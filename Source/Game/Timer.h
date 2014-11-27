@@ -1,32 +1,30 @@
 #ifndef TIMER_H
 #define TIMER_H
-#include <chrono>
-#include <ostream>
 
-class Timer {
-	typedef std::chrono::high_resolution_clock high_resolution_clock;
-	typedef std::chrono::milliseconds milliseconds;
-public:
-	explicit Timer(bool run = false)
-	{
-		if (run)
-			Reset();
-	}
-	void Reset()
-	{
-		_start = high_resolution_clock::now();
-	}
-	milliseconds Elapsed() const
-	{
-		return std::chrono::duration_cast<milliseconds>(high_resolution_clock::now() - _start);
-	}
-	template <typename T, typename Traits>
-	friend std::basic_ostream<T, Traits>& operator<<(std::basic_ostream<T, Traits>& out, const Timer& timer)
-	{
-		return out << timer.Elapsed().count();
-	}
-private:
-	high_resolution_clock::time_point _start;
-};
+#ifdef WIN32
+#include <Windows.h>
+#include <cmath>
+#else
+#include <chrono>
 #endif
 
+class Timer
+{
+public:
+	Timer();
+
+	void Reset();
+
+	float ElapsedTimeInMilliseconds();
+	float ElapsedTimeInSeconds();
+
+private:
+#ifdef WIN32
+	float m_secondsPerCount;
+	__int64 m_prevTimePoint;
+#else
+	std::chrono::high_resolution_clock::time_point m_prevTimePoint;
+#endif
+};
+
+#endif

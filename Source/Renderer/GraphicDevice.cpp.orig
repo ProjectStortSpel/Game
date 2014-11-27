@@ -206,9 +206,8 @@ bool GraphicDevice::Init()
 	if (!InitSDLWindow()) { ERRORMSG("INIT SDL WINDOW FAILED\n"); return false; }
 	if (!InitGLEW()) { ERRORMSG("GLEW_VERSION_4_3 FAILED\n"); return false; }
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
-	//if (!InitDeferred()) { ERRORMSG("INIT DEFERRED FAILED\n"); return false; }
+	if (!InitDeferred()) { ERRORMSG("INIT DEFERRED FAILED\n"); return false; }
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
-	if (!InitTextRenderer()) { ERRORMSG("INIT TEXTRENDERER FAILED\n"); return false; }
 
 	return true;
 }
@@ -235,23 +234,7 @@ void GraphicDevice::PollEvent(SDL_Event _event)
 
 void GraphicDevice::Update(float _dt)
 {
-	m_dt = _dt; m_fps = 1 / _dt;
 
-	// Test kod för att rendera text
-	std::stringstream sstm;
-	sstm << m_fps << " fps";
-	m_textRenderer.RenderSimpleText(sstm.str(), 0, 0);
-
-	// PRINT m_glTimerValues
-	for (int i = 0; i < m_glTimerValues.size(); i++)
-	{
-		std::stringstream output;
-		int x = 0;
-		int y = 10;
-		output << m_glTimerValues[i].name << m_glTimerValues[i].ms;
-		m_textRenderer.RenderSimpleText(output.str(), x, y + i);
-	}
-	m_glTimerValues.clear();
 }
 
 float rot = 0.0f;
@@ -288,7 +271,7 @@ void GraphicDevice::Render()
 
 	- Output	color
 	*/
-/*
+
 	//------Render deferred--------------------------------------------------------------------------
 	glEnable(GL_DEPTH_TEST);
 
@@ -308,9 +291,9 @@ void GraphicDevice::Render()
 	//----------------------------------------------------------------------------------------
 
 	glm::mat4 viewMatrix = glm::lookAt(
-		vec3(0.0, 0.5, 4.0),	//*m_cam->Get_pos(), // the position of your camera, in world space
+		vec3(0.0, 0.5, 4.0),//*m_cam->Get_pos(), // the position of your camera, in world space
 		vec3(0.0, 0.0, 0.0),   // where you want to look at, in world space
-		vec3(0.0, 1.0, 0.0)		 // probably glm::vec3(0,1,0), but (0,-1,0) would make you looking upside-down, which can be great too
+		vec3(0.0, 1.0, 0.0)        // probably glm::vec3(0,1,0), but (0,-1,0) would make you looking upside-down, which can be great too
 		);
 
 	//Render scene
@@ -370,23 +353,44 @@ void GraphicDevice::Render()
 	// GUI RENDER
 
 	// DEBUGG TEXT
+
+
 	//glBindTexture(GL_TEXTURE_2D, m_debuggText);
 	// Use Debuggtext
-*/	
-
-
-	m_textRenderer.RenderText();
+<<<<<<< HEAD
 	
+	/*
+	m_debuggTextShader.UseProgram();
+=======
+	for (int i = 0; i < 4608; i++)
+	{
+		debugtext[i] = rand() % 4608;
+	}
+
+	glBindBuffer(GL_ARRAY_BUFFER, debugtextbuffer);
+	GLvoid* p = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+	memcpy(p, &debugtext, sizeof(int) * 4608);
+	glUnmapBuffer(GL_ARRAY_BUFFER);
+
+	glUseProgram(m_debuggTextShader.GetShaderProgram());
+>>>>>>> start of debugtext
+	// Run program
+	glDispatchCompute(128, 36, 1); // 1/16 = 0.0625
+
+
+
 	// FULL SCREEN QUAD
-	m_fullScreenShader.UseProgram();
-	glActiveTexture(GL_TEXTURE5);
+	glActiveTexture(GL_TEXTURE10);
 	glBindTexture(GL_TEXTURE_2D, m_outputImage);
 	// Clear, select the rendering program and draw a full screen quad	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	m_fullScreenShader.UseProgram();
 	glDrawArrays(GL_POINTS, 0, 1);
+	*/
 
 	// Swap in the new buffer
+
 	SDL_GL_SwapWindow(m_window);
 }
 
@@ -503,13 +507,18 @@ bool GraphicDevice::InitDeferred()
 
 bool GraphicDevice::InitShaders()
 {
+	// debuggtext Shader
+	m_debuggTextShader.InitShaderProgram();
+	m_debuggTextShader.AddShader("Content/Shaders/debuggText.glsl", GL_COMPUTE_SHADER);
+	m_debuggTextShader.FinalizeShaderProgram();
+
 	// Full Screen Quad Shader
 	m_fullScreenShader.InitShaderProgram();
 	m_fullScreenShader.AddShader("Content/Shaders/fullscreen.vs", GL_VERTEX_SHADER);
 	m_fullScreenShader.AddShader("Content/Shaders/fullscreen.gs", GL_GEOMETRY_SHADER);
 	m_fullScreenShader.AddShader("Content/Shaders/fullscreen.ps", GL_FRAGMENT_SHADER);
 	m_fullScreenShader.FinalizeShaderProgram();
-/*
+
 	//Deferred pass 1
 	m_deferredShader1.InitShaderProgram();
 	m_deferredShader1.AddShader("Content/Shaders/VSDeferredPass1.glsl", GL_VERTEX_SHADER);
@@ -521,14 +530,40 @@ bool GraphicDevice::InitShaders()
 	m_deferredShader2.AddShader("Content/Shaders/VSDeferredPass2.glsl", GL_VERTEX_SHADER);
 	m_deferredShader2.AddShader("Content/Shaders/FSDeferredPass2.glsl", GL_FRAGMENT_SHADER);
 	m_deferredShader2.FinalizeShaderProgram();
-*/
+
 	return true;
 }
 
 bool GraphicDevice::InitBuffers()
 {
 	int location;
-/*
+
+	m_debuggTextShader.UseProgram();
+	glActiveTexture(GL_TEXTURE10);
+	// OutputImageBuffer
+	glGenTextures(1, &m_outputImage);
+	glBindTexture(GL_TEXTURE_2D, m_outputImage);
+	glTexStorage2D(GL_TEXTURE_2D, 8, GL_RGBA32F, m_clientWidth, m_clientHeight);
+
+	glBindImageTexture(0, m_outputImage, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
+
+	location = glGetUniformLocation(m_debuggTextShader.GetShaderProgram(), "output_image");
+	glUniform1i(location, 10);
+	//glBindTexture(GL_TEXTURE_2D, 0);
+
+	for (int i = 0; i < 4608; i++)
+	{
+		float x = (float)(i%128) / 128;
+		float y = (float)(i/128) / 36;
+		debugtext[i] = i;
+	}
+
+	glGenBuffers(1, &debugtextbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, debugtextbuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(int)* 4608, &debugtext, GL_DYNAMIC_COPY);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, debugtextbuffer);
+
+
 	m_deferredShader2.UseProgram();
 	CreateDrawQuad();
 
@@ -560,19 +595,7 @@ bool GraphicDevice::InitBuffers()
 	glActiveTexture(GL_TEXTURE3);
 	m_Ground = Object(texture, vec3(0.0, -1.5, 0.0));
 	CreateGround();
-*/
-
-	m_fullScreenShader.UseProgram();
-	glActiveTexture(GL_TEXTURE5);
-	glBindTexture(GL_TEXTURE_2D, m_outputImage);
-	location = glGetUniformLocation(m_fullScreenShader.GetShaderProgram(), "output_image");
-	glUniform1i(location, 5);
 
 	return true;
 }
 
-bool GraphicDevice::InitTextRenderer()
-{
-	GLuint m_textImage = TextureLoader::LoadTexture("Content/Textures/SimpleText.png", 5);
-	return m_textRenderer.Init(&m_outputImage, m_textImage, m_clientWidth, m_clientHeight);
-}

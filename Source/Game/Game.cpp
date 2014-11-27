@@ -9,7 +9,7 @@
 int main(int argc, char** argv)
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
-	Timer timer(true);
+	Timer timer;
 
 	Renderer::GraphicDevice* gd = new Renderer::GraphicDevice();
 	Input::InputWrapper INPUT = Input::InputWrapper::GetInstance();
@@ -19,11 +19,11 @@ int main(int argc, char** argv)
 	while (lol)
 	{
 		// DT COUNTER
-		float ms = timer.Elapsed().count();
+		float dt = timer.ElapsedTimeInSeconds();
 		timer.Reset();
 
 		INPUT.Update();
-		gd->Update(ms*0.001f);
+		gd->Update(dt);
 		gd->Render();
 
 		

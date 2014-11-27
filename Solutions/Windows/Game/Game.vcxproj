@@ -199,6 +199,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)Content" /d /y /s /e </C
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\Game.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\Timer.h" />
