@@ -20,16 +20,17 @@
     <ClInclude Include="..\..\..\Source\Renderer\TextureLoader.h">
       <Filter>Source</Filter>
     </ClInclude>
-<<<<<<< HEAD
+
+
+
+
+
     <ClInclude Include="..\..\..\Source\Renderer\GLTimer.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Renderer\SimpleText.h">
       <Filter>Source</Filter>
     </ClInclude>
-=======
-    <ClInclude Include="..\..\..\Source\Renderer\DebugText.h" />
->>>>>>> Deferred pass 2 moved to compute shader
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp">
@@ -38,14 +39,12 @@
     <ClCompile Include="..\..\..\Source\Renderer\Shader.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-<<<<<<< HEAD
+
     <ClCompile Include="..\..\..\Source\Renderer\GLTimer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Renderer\SimpleText.cpp">
-=======
-    <ClCompile Include="..\..\..\Source\Renderer\DebugText.cpp">
->>>>>>> Deferred pass 2 moved to compute shader
+
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -71,11 +70,11 @@
     <None Include="..\..\..\Externals\content\shaders\FSDeferredPass1.glsl">
       <Filter>shaders</Filter>
     </None>
-<<<<<<< HEAD
+
     <None Include="..\..\..\Externals\content\shaders\SimpleText.glsl">
-=======
+
     <None Include="..\..\..\Externals\content\shaders\CSDeferredPass2.glsl">
->>>>>>> Deferred pass 2 moved to compute shader
+
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>
