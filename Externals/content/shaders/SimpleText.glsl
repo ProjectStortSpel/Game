@@ -16,7 +16,7 @@ uniform vec4 text_color;
 
 void main(void)
 {
-	vec4 color = vec4(1, 0, 1, 0);//imageLoad(output_image, ivec2(gl_GlobalInvocationID.xy));
+	vec4 color = vec4(0.1, 0.3, 0.4, 0);//imageLoad(output_image, ivec2(gl_GlobalInvocationID.xy));
 	uint x = gl_WorkGroupID.x;
 	uint y = (gl_NumWorkGroups.y-1)-gl_WorkGroupID.y;
 
@@ -47,7 +47,7 @@ void main(void)
 		imageStore(
 			output_image,
 			ivec2(gl_GlobalInvocationID.xy),
-			vec4(1,0,1,1)
+			color
 		);
 	}
 }
