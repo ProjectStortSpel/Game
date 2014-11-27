@@ -11,6 +11,9 @@ layout (rgba32f, binding = 6) uniform image2D output_image;
 
 layout (std430, binding = 7) buffer debugtext { int letter []; };
 
+// uniforms
+uniform vec4 text_color;
+
 void main(void)
 {
 	vec4 color = vec4(1, 0, 1, 0);//imageLoad(output_image, ivec2(gl_GlobalInvocationID.xy));
@@ -29,6 +32,7 @@ void main(void)
 	//vec4 something = vec4(float(texCoord.x)/159,float(texCoord.y)/59,0,1);
 
 	vec4 something = imageLoad(text_image, texCoord);
+	something *= text_color;
 
 	if ( something.w > 0 )
 	{

@@ -6,9 +6,22 @@ Author: Anders, Christian
 
 #include "stdafx.h"
 #include "Shader.h"
+#include "SimpleText.h"
+#include "GLTimer.h"
 
 namespace Renderer
 {
+	struct GLTimerValue
+	{
+		string name;
+		float ms;
+		GLTimerValue(string n, float m)
+		{
+			name = n;
+			ms = m;
+		}
+	};
+
 	struct RenderComponent
 	{
 		
@@ -29,14 +42,13 @@ namespace Renderer
 		void ResizeWindow(int _width, int _height);
 		void SetTitle(std::string _title);
 
-		void RenderSimpleText(std::string _text, int x, int y);
-
 	private:
 		bool InitSDLWindow();
 		bool InitGLEW();
 		bool InitDeferred();
 		bool InitShaders();
 		bool InitBuffers();
+		bool InitTextRenderer();
 
 		void CreateGBufTex(GLenum texUnit, GLenum format, GLuint &texid);
 		void CreateDepthTex(GLuint &texid);
@@ -44,11 +56,17 @@ namespace Renderer
 		SDL_Window*		m_window;
 		SDL_GLContext	m_glContext;
 
+		// dt and fps
+		float m_dt;
+		int m_fps;
+
+		// Timer for shader run time
+		vector<GLTimerValue> m_glTimerValues;
+
 		// Window size
 		int	m_clientWidth, m_clientHeight;
 
 		// Image buffers
-		GLuint m_textImage;
 		GLuint m_outputImage, m_inputImage;
 		GLuint m_debuggText;
 		GLuint m_depthBuf, m_normTex, m_colorTex;
@@ -57,16 +75,12 @@ namespace Renderer
 		GLuint m_deferredFBO;
 
 		// Shaders
-		Shader m_simpleTextShader;
 		Shader m_debuggTextShader; // TA BORT DENNA
 		Shader m_fullScreenShader;
 		Shader m_deferredShader1, m_deferredShader2;
 
-		int simpleText[4608];
-		int simpleTextX, simpleTextY;
-		GLuint simpleTextBuffer;
-
-		void RenderText();
+		// SimpleText
+		SimpleText m_textRenderer;
 	};
 }
 
