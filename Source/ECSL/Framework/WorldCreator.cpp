@@ -12,25 +12,11 @@ WorldCreator::WorldCreator() : m_worldInitialized(false)
 
 WorldCreator::~WorldCreator()
 {
-	if (!m_worldInitialized)
-	{
-		for (auto it = m_systemWorkGroups->begin(); it != m_systemWorkGroups->end(); ++it)
-		{
-			delete m_systemWorkGroups->back();
-			m_systemWorkGroups->pop_back();
-		}
-
-		delete(m_systemWorkGroups);
-	}
 }
 
 void WorldCreator::AddComponentType(std::string _componentType)
 {
 	assert(!m_worldInitialized);
-
-	//ComponentManager::GetTableId(_componentType);
-
-	int a = 2;
 }
 
 void WorldCreator::AddSystemGroup()

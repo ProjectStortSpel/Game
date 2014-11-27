@@ -7,17 +7,28 @@
 
 namespace ECSL
 {
+	enum DECLSPEC ComponentFilter
+	{
+		Mandatory,
+		RequiresOneOf,
+		Excluded
+	};
+
 	struct DECLSPEC SystemBitmask
 	{
 	public:
 		SystemBitmask()
 		{
 			m_addedComponentTypes = new std::vector<std::string>();
+			m_bitmask = 0;
 		}
 		~SystemBitmask()
 		{
 			if (m_addedComponentTypes)
 				delete(m_addedComponentTypes);
+
+			if (m_bitmask)
+				delete[] m_bitmask;
 		}
 
 		std::vector<std::string>* GetComponentTypes() const { return m_addedComponentTypes; }
@@ -25,7 +36,7 @@ namespace ECSL
 		void Add(std::string _componentType)
 		{
 			/*	Check if the component type is already added	*/
-			for (int n = 0; n < m_addedComponentTypes->size(); ++n)
+			for (unsigned int n = 0; n < m_addedComponentTypes->size(); ++n)
 				if (_componentType == m_addedComponentTypes->at(n))
 					return;
 

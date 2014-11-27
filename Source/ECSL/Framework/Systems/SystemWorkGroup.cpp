@@ -17,7 +17,7 @@ SystemWorkGroup::~SystemWorkGroup()
 {
 	if (m_systems)
 	{
-		for (auto it = m_systems->begin(); it != m_systems->end(); ++it)
+		for (int i = m_systems->size() - 1; i >= 0; --i)
 		{
 			delete m_systems->back();
 			m_systems->pop_back();

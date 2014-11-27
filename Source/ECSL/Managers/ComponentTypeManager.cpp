@@ -11,8 +11,13 @@ ComponentTypeManager& ComponentTypeManager::GetInstance()
 }
 
 ComponentTypeManager::ComponentTypeManager()
-: m_componentTypes(new std::map<int, ComponentType*>()), m_parser(new Parser()), m_componentTypeReader(new ComponentTypeReader())
+: m_componentTypes(new std::map<int, ComponentType*>()), m_parser(new Parser()), m_componentTypeReader(new ComponentTypeReader()), m_stringTableId(new std::unordered_map<std::string, TypeId>())
 {
+}
+
+ComponentTypeManager::~ComponentTypeManager()
+{
+
 }
 
 void ComponentTypeManager::AddComponentType(ComponentType& _componentType)
@@ -57,14 +62,13 @@ ComponentType* ComponentTypeManager::GetComponentType(int _componentTypeId)
 
 TypeId ComponentTypeManager::GetTableId(const std::string& _componentType)
 {
-	static std::unordered_map<std::string, TypeId> m_stringTableId = std::unordered_map<std::string, TypeId>();
 	// Try to find the id of the component type in the map. 
 	// If it doesn't exist then create it, else return the found value 
-	auto it = m_stringTableId.find(_componentType);
-	if (it == m_stringTableId.end())
+	auto it = m_stringTableId->find(_componentType);
+	if (it == m_stringTableId->end())
 	{
-		TypeId newId = ++ComponentManagerData::NextTableId;
-		m_stringTableId.insert(std::pair<std::string, TypeId>(_componentType, newId));
+		TypeId newId = ++m_nextTableId;
+		m_stringTableId->insert(std::pair<std::string, TypeId>(_componentType, newId));
 		return newId;
 	}
 	else
