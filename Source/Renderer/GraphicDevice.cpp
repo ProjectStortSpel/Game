@@ -444,7 +444,7 @@ bool GraphicDevice::InitGLEW()
 #ifdef WIN32
 	if (!GLEW_VERSION_4_3) { return false; }
 #else
-	if (!glewIsSupported("GLEW_VERSION_4_3")) { return false; }
+	if (!glewIsSupported("GL_VERSION_4_3")) { return false; }
 #endif
 
 	SDL_GL_SetSwapInterval(0);
