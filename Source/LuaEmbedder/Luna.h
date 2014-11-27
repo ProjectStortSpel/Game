@@ -367,7 +367,7 @@ public:
 	const char* className = lua_tostring(L, lua_upvalueindex(1));
 	
 	char c[128];
-	sprintf(c, "Trying to set the method [%s] of class [%s]", m_methods[_index ^ (1 << 8)].name, className);
+	printf(c, "Trying to set the method [%s] of class [%s]", m_methods[_index ^ (1 << 8)].name, className);
 	luaL_error(L , c);
 	return 0;
       }
