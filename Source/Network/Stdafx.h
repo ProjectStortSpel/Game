@@ -4,6 +4,13 @@
 #include <SDL/SDL.h>
 #include <string>
 
+// Includes
+#ifdef WIN32
+#else
+#include <unistd.h>
+#endif
+
+// Macros/Defines
 #ifdef WIN32
 #define NetSleep(x) Sleep(x);
 #else
