@@ -32,11 +32,15 @@ public:
 
 protected:
 
+#pragma warning( disable : 4251 )
+
 	std::string m_remoteAddress;
 	int m_remotePort;
 	int m_localPort;
 
 	bool m_socketOpen;
+
+#pragma warning( default : 4251 )
 
 };
 

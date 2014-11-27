@@ -9,7 +9,13 @@
 class DECLSPEC LinSocket : public ISocket
 {
 
+private:
+
+#pragma warning( disable : 4251 )
+
 	int m_socket;
+
+#pragma warning( default : 4251 )
 
 public:
 	LinSocket(int _socket);

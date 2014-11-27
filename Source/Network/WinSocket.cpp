@@ -3,42 +3,50 @@
 #include "Network/WinSocket.h"
 #include <WS2tcpip.h>
 
-bool WinSocket::m_initialized = false;
+bool WinSocket::g_initialized = false;
+unsigned int WinSocket::g_noActiveSockets = 0;
 
 WinSocket::WinSocket(SOCKET _socket)
 {
 	m_socket = _socket;
 	if (m_socket != INVALID_SOCKET)
+	{
 		m_socketOpen = true;
+		m_remoteAddress = "";
+		m_remotePort = 0;
+		m_localPort = 0;
+
+		g_noActiveSockets++; // Check if a lock is requiured
+	}
 	else if (NET_DEBUG)
 		printf("Failed to create new winsocket(2).\n");
-
-	m_remoteAddress = "";
-	m_remotePort = 0;
-	m_localPort = 0;
 }
 
 WinSocket::WinSocket(int _domain, int _type, int _protocol)
 {
 	m_socket = socket(_domain, _type, _protocol);
 	if (m_socket != INVALID_SOCKET)
+	{
 		m_socketOpen = true;
+		m_remoteAddress = "";
+		m_remotePort = 0;
+		m_localPort = 0;
+
+		g_noActiveSockets++; // Check if a lock is required
+	}
 	else if(NET_DEBUG)
 		printf("Failed to create new winsocket.\n");
-
-	m_remoteAddress = "";
-	m_remotePort = 0;
-	m_localPort = 0;
 }
 
 WinSocket::~WinSocket()
 {
 	Close();
+	Shutdown();
 }
 
 bool WinSocket::Initialize()
 {
-	if (m_initialized)
+	if (g_initialized)
 		return true;
 
 	WSADATA wsa;
@@ -49,13 +57,13 @@ bool WinSocket::Initialize()
 		return false;
 	}
 
-	m_initialized = true;
+	g_initialized = true;
 	return true;
 }
 
 bool WinSocket::Shutdown()
 {
-	if (!m_initialized)
+	if (!g_initialized && g_noActiveSockets == 0)
 		return true;
 
 	if (WSACleanup() != 0)
@@ -65,7 +73,7 @@ bool WinSocket::Shutdown()
 		return false;
 	}
 
-	m_initialized = false;
+	g_initialized = false;
 	return true;
 
 }
@@ -73,7 +81,7 @@ bool WinSocket::Shutdown()
 
 bool WinSocket::Connect(const char* _ip, const int _port)
 { 
-	if (!m_initialized)
+	if (!g_initialized)
 	{
 		if (NET_DEBUG)
 			printf("Tried to connect without initializing.\n");
@@ -121,7 +129,7 @@ bool WinSocket::Connect(const char* _ip, const int _port)
 
 bool WinSocket::Bind(const int _port)
 { 
-	if (!m_initialized)
+	if (!g_initialized)
 	{
 		if (NET_DEBUG)
 			printf("Tried to connect without initializing.\n");
@@ -169,6 +177,7 @@ bool WinSocket::Close()
 		return false;
 	}
 	m_socketOpen = false;
+	g_noActiveSockets--;
 	return true;
 }
 
@@ -177,12 +186,22 @@ ISocket* WinSocket::Accept()
 	sockaddr_in incomingAddress;
 	int incomingAddressLength = sizeof(incomingAddress);
 	SOCKET newSocket = INVALID_SOCKET;
-	newSocket = accept(m_socket, (sockaddr*)&incomingAddress, &incomingAddressLength);
+
+
+	u_long NonBlock = 1;
+	if (ioctlsocket(m_socket, FIONBIO, &NonBlock) == SOCKET_ERROR)
+	{
+		printf("Failed to set nonblock.\n");
+	}
+		newSocket = accept(m_socket, (sockaddr*)&incomingAddress, &incomingAddressLength);
 
 	if (newSocket == INVALID_SOCKET)
 	{
-		if (NET_DEBUG)
-			printf("Accept failed. Error Code: %d.\n", WSAGetLastError());
+		int error = WSAGetLastError();
+
+		if (error != 10035 && NET_DEBUG)
+			printf("Accept failed. Error Code: %d.\n", error);
+
 		return NULL;
 	}
 
@@ -200,13 +219,13 @@ ISocket* WinSocket::Accept()
 
 
 	int flag = 1;
-	//if (setsockopt(m_socket, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int)) < 0)
-	//{
-	//	if (NET_DEBUG)
-	//		printf("Failed to enable TCP_NODELAY. Error Code: %d.\n", WSAGetLastError());
+	if (setsockopt(m_socket, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int)) < 0)
+	{
+		if (NET_DEBUG)
+			printf("Failed to enable TCP_NODELAY. Error Code: %d.\n", WSAGetLastError());
 
-	//	return false;
-	//}
+		return false;
+	}
 
 
 	return sock;
@@ -214,7 +233,7 @@ ISocket* WinSocket::Accept()
 
 bool WinSocket::Listen(int _backlog)
 { 
-	if (!m_initialized)
+	if (!g_initialized)
 	{
 		if (NET_DEBUG)
 			printf("Tried to connect without initializing.\n");

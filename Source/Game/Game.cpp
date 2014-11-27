@@ -47,18 +47,17 @@ int main(int argc, char** argv)
 
 	Server s;
 	s.Start();
-	s.Stop();
+
+
+	std::string input;
+	std::getline(std::cin, input);
 
 	//Client c;
 	//c.Connect("127.0.0.1", "localhest", 6112, 0);
 
 	//c.Disconect();
 
-	//ISocket::Shutdown();
-
-	std::string input;
-	std::getline(std::cin, input);
-
+	
 	SDL_Quit();
 	return 0;
 }

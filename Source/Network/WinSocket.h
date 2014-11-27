@@ -9,9 +9,14 @@ class DECLSPEC WinSocket : public ISocket
 {
 
 private:
+
+#pragma warning( disable : 4251 )
+
 	SOCKET m_socket;
-	
-	static bool m_initialized;
+	static bool g_initialized;
+	static unsigned int g_noActiveSockets;
+
+#pragma warning( default : 4251 )
 
 public:
 	WinSocket(SOCKET _socket);

@@ -57,6 +57,9 @@ protected:
 	void TriggerEvent(NetEvent _function, NetConnection _connection);
 
 protected:
+
+#pragma warning( disable : 4251 )
+
 	std::vector<NetConnection> m_connections;
 	std::map<NetTypeMessageId, NetMessageHook> m_networkFunctionMap;
 	//std::map<NetConnection, RakNet::SystemAddress> m_addressMap;
@@ -71,7 +74,7 @@ protected:
 
 	char m_packetData[MAX_PACKET_SIZE];
 
-
+#pragma warning( default: 4251)
 
 private:
 

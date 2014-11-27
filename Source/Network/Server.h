@@ -17,7 +17,7 @@ public:
 	void Start(unsigned int _incomingPort, const char* _password, unsigned int _maxConnections);
 	// Start the server using the already defined servers
 	void Start();
-	// Shutdown the server
+	// Shutdown the server. Is called through the Decontructor and is not needed if you do not want to close the server early.
 	void Stop();
 
 	// Broadcast a message to all connected clients

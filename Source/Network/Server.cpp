@@ -20,8 +20,6 @@ Server::Server()
 Server::~Server()
 {
 	Stop();
-
-	ISocket::Shutdown();
 }
 
 
@@ -60,24 +58,20 @@ void Server::Stop()
 
 	if (m_listenForConnectionsThreadAlive)
 	{
-		m_newConnectionsThread.join();
 		m_listenForConnectionsThreadAlive = false;
+		m_newConnectionsThread.join();
 	}
 
 	if (m_listenSocket)
-	{
 		SAFE_DELETE(m_listenSocket);
-	}
 
 	for (auto it = m_connectionClients.begin(); it != m_connectionClients.end(); ++it)
 	{
-			SAFE_DELETE(it->second);
+		SAFE_DELETE(it->second);
 	}
 
 	m_connectionClients.clear();
 	
-
-	m_listenSocket = 0;
 }
 
 void Server::Broadcast(Packet _packet, NetConnection* _exclude)
@@ -108,7 +102,7 @@ void Server::ReceivePackets(ISocket* _socket, int _id)
 
 	while (m_receivePacketsActive[_id])
 	{
-
+		// NetSleep(30);
 		int result = _socket->Recv(m_packetData, MAX_PACKET_SIZE, 0);
 		if (result > 0)
 		{
@@ -151,6 +145,8 @@ void Server::ListenForConnections()
 
 	while (m_listenForConnectionsThreadAlive)
 	{
+		NetSleep(50);
+
 		ISocket* newConnection = m_listenSocket->Accept();
 		if (!newConnection)
 			continue;
