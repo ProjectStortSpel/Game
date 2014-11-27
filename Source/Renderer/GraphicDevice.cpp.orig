@@ -288,7 +288,12 @@ void GraphicDevice::Render()
 
 	- Output	color
 	*/
+<<<<<<< HEAD
 /*
+=======
+//GLTimer glTimer;
+//glTimer.Start();
+>>>>>>> wtf it didn't change?
 	//------Render deferred--------------------------------------------------------------------------
 	glEnable(GL_DEPTH_TEST);
 
@@ -345,6 +350,7 @@ void GraphicDevice::Render()
 
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
+<<<<<<< HEAD
 
 	//-----Pass2------------------
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -363,8 +369,16 @@ void GraphicDevice::Render()
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	//---------------------------
 	glActiveTexture(0);
+<<<<<<< HEAD
+
+=======
+>>>>>>> wtf it didn't change?
 
 
+=======
+//m_glTimerValues.push_back(GLTimerValue("Deferred stage1: ", glTimer.Stop()));
+//glTimer.Start();
+>>>>>>> wtf it didn't change?
 	// FORWARD RENDER
 	// POST RENDER EFFECTS?
 	// GUI RENDER
@@ -374,9 +388,31 @@ void GraphicDevice::Render()
 	// Use Debuggtext
 */	
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
 
 	m_textRenderer.RenderText();
 	
+=======
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, m_depthBuf);
+
+	glBindImageTexture(1, m_colorTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
+
+	glDispatchCompute(m_clientWidth * 0.0625, m_clientHeight * 0.0625, 1); // 1/16 = 0.0625
+	//---------------------------------------------------------------------------
+
+//m_glTimerValues.push_back(GLTimerValue("Deferred stage2: ", glTimer.Stop()));
+//glTimer.Start();
+>>>>>>> wtf it didn't change?
+
+	m_textRenderer.RenderText();
+
+//m_glTimerValues.push_back(GLTimerValue("Text Render: ", glTimer.Stop()));
+//glTimer.Start();
+
+>>>>>>> wtf it didn't change?
 	// FULL SCREEN QUAD
 	m_fullScreenShader.UseProgram();
 	glActiveTexture(GL_TEXTURE5);
@@ -386,6 +422,7 @@ void GraphicDevice::Render()
 
 	glDrawArrays(GL_POINTS, 0, 1);
 
+//m_glTimerValues.push_back(GLTimerValue("Full Screen: ", glTimer.Stop()));
 	// Swap in the new buffer
 	SDL_GL_SwapWindow(m_window);
 }
@@ -548,6 +585,7 @@ bool GraphicDevice::InitBuffers()
 	glUniform1i(location, 2);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 	
 	// Output ImageBuffer
@@ -568,6 +606,8 @@ bool GraphicDevice::InitBuffers()
 
 	
 >>>>>>> push to merge with dev
+=======
+>>>>>>> wtf it didn't change?
 	m_deferredShader1.UseProgram();
 	GLuint texture = TextureLoader::LoadTexture("Content/Textures/tiles.png", GL_TEXTURE3);
 	glActiveTexture(GL_TEXTURE3);
@@ -594,7 +634,7 @@ bool GraphicDevice::InitBuffers()
 
 bool GraphicDevice::InitTextRenderer()
 {
-	GLuint m_textImage = TextureLoader::LoadTexture("content/textures/SimpleText.png", 5);
+	GLuint m_textImage = TextureLoader::LoadTexture("content/textures/SimpleText.png", GL_TEXTURE20);
 	return m_textRenderer.Init(&m_outputImage, m_textImage, m_clientWidth, m_clientHeight);
 }
 bool GraphicDevice::RenderSimpleText(std::string _text, int _x, int _y)
