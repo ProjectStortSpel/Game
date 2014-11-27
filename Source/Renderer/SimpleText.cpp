@@ -18,7 +18,7 @@ bool SimpleText::Init(GLuint* _outputimage, GLuint _textimage, int _clientWidth,
 
 	// Shader Shader
 	m_simpleTextShader.InitShaderProgram();
-	m_simpleTextShader.AddShader("Content/Shaders/SimpleText.glsl", GL_COMPUTE_SHADER);
+	m_simpleTextShader.AddShader("content/shaders/SimpleText.glsl", GL_COMPUTE_SHADER);
 	m_simpleTextShader.FinalizeShaderProgram();
 
 	// Buffer init

@@ -505,9 +505,9 @@ bool GraphicDevice::InitShaders()
 {
 	// Full Screen Quad Shader
 	m_fullScreenShader.InitShaderProgram();
-	m_fullScreenShader.AddShader("Content/Shaders/fullscreen.vs", GL_VERTEX_SHADER);
-	m_fullScreenShader.AddShader("Content/Shaders/fullscreen.gs", GL_GEOMETRY_SHADER);
-	m_fullScreenShader.AddShader("Content/Shaders/fullscreen.ps", GL_FRAGMENT_SHADER);
+	m_fullScreenShader.AddShader("content/shaders/fullscreen.vs", GL_VERTEX_SHADER);
+	m_fullScreenShader.AddShader("content/shaders/fullscreen.gs", GL_GEOMETRY_SHADER);
+	m_fullScreenShader.AddShader("content/shaders/fullscreen.ps", GL_FRAGMENT_SHADER);
 	m_fullScreenShader.FinalizeShaderProgram();
 /*
 	//Deferred pass 1
@@ -573,7 +573,7 @@ bool GraphicDevice::InitBuffers()
 
 bool GraphicDevice::InitTextRenderer()
 {
-	GLuint m_textImage = TextureLoader::LoadTexture("Content/Textures/SimpleText.png", 5);
+	GLuint m_textImage = TextureLoader::LoadTexture("content/textures/SimpleText.png", 5);
 	return m_textRenderer.Init(&m_outputImage, m_textImage, m_clientWidth, m_clientHeight);
 }
 bool GraphicDevice::RenderSimpleText(std::string _text, int _x, int _y)
