@@ -7,7 +7,7 @@ World::World(unsigned int _entityCount, std::vector<SystemWorkGroup*>* _systemWo
 	m_dataManager = new DataManager(_entityCount);
 	m_systemManager = new SystemManager(_systemWorkGroups);
 
-	for (int n = 0; n < _componentTypeIds->size(); ++n)
+	for (unsigned int n = 0; n < _componentTypeIds->size(); ++n)
 		m_dataManager->AddComponentType(_componentTypeIds->at(n));
 
 	m_dataManager->InitializeTables();

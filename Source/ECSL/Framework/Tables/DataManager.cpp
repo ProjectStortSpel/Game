@@ -17,7 +17,7 @@ void DataManager::InitializeTables()
 	m_componentTables = new std::vector<DataTable*>();
 	m_entityTable = new EntityTable(m_entityCount, m_componentTypeIds->size());
 
-	for (int n = 0; n < m_componentTypeIds->size(); ++n)
+	for (unsigned int n = 0; n < m_componentTypeIds->size(); ++n)
 	{
 		ComponentType* componentType = ComponentTypeManager::GetInstance().GetComponentType(m_componentTypeIds->at(n));
 		if (!componentType)
@@ -46,7 +46,7 @@ void DataManager::InitializeTables()
 
 void DataManager::AddComponentType(int _componentType)
 {
-	for (int n = 0; n < m_componentTypeIds->size(); ++n)
+	for (unsigned int n = 0; n < m_componentTypeIds->size(); ++n)
 		if (m_componentTypeIds->at(n) == _componentType)
 			return;
 

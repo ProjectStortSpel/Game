@@ -25,12 +25,12 @@ BitSet::DataType* BitSet::BitSetConverter::GenerateBitmask(std::vector<unsigned 
 		newBitSet[n] = 0;
 
 	/*	Go through all numbers and place them in the correct bitset	*/
-	for (int i = 0; i < _numbersToConvert->size(); ++i)
+	for (unsigned int i = 0; i < _numbersToConvert->size(); ++i)
 	{
 		int currentInt = _numbersToConvert->at(i);
 
 		/*	Calculate at which index the current number should be represented	*/
-		int	bitmaskIndex = floor((float)currentInt / (GetIntByteSize() * 8));
+		int	bitmaskIndex = (int)floor((float)currentInt / (GetIntByteSize() * 8));
 		int	bitIndex = currentInt % (GetIntByteSize() * 8);
 
 		/*	Set the correct 'bit position'	*/

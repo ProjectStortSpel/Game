@@ -36,9 +36,9 @@ namespace ECSL
 		static TypeId GetTableId();
 		static TypeId GetTableId(const std::string& _componentType);
 	private:
-		Parser m_parser;
-		ComponentTypeReader m_componentTypeReader;
-		std::map<int, ComponentType*>* m_loadedComponentTypes;
+		Parser* m_parser;
+		ComponentTypeReader* m_componentTypeReader;
+		std::map<int, ComponentType*>* m_componentTypes;
 
 		ComponentTypeManager();
 	};
