@@ -46,7 +46,7 @@ namespace Renderer
 		GLuint m_debuggText;
 
 		// Shaders
-		Shader m_debuggTextShader;
+		Shader m_compDeferredPass2Shader;
 		Shader m_fullScreenShader;
 	};
 }
