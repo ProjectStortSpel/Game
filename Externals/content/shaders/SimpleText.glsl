@@ -4,10 +4,10 @@
 layout (local_size_x = 8, local_size_y = 16) in;
 
 // output 
-layout (rgba8, binding = 5) uniform image2D text_image;
+layout (rgba8, binding = 1) uniform image2D text_image;
 
 // output 
-layout (rgba32f, binding = 6) uniform image2D output_image;
+layout (rgba32f, binding = 5) uniform image2D output_image;
 
 layout (std430, binding = 7) buffer debugtext { int letter []; };
 
@@ -40,14 +40,6 @@ void main(void)
 			output_image,
 			ivec2(gl_GlobalInvocationID.xy),
 			something
-		);
-	}
-	else // REMOVE THIS ELSE BEFORE FINISH
-	{
-		imageStore(
-			output_image,
-			ivec2(gl_GlobalInvocationID.xy),
-			color
 		);
 	}
 }
