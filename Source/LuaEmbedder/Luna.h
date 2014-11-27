@@ -315,7 +315,7 @@ public:
     
     if (lua_isnumber(L, -1))   // Check if we got a valid index
     {    
-      int _index = lua_tonumber(L, -1);
+      int _index = (int)lua_tonumber(L, -1);
       
       T** obj = static_cast<T**>(lua_touserdata(L, 1));
       
@@ -352,7 +352,7 @@ public:
     
     if (lua_isnumber(L, -1)) // Check if we got a valid index
     {   
-      int _index = lua_tonumber(L, -1);
+      int _index = (int)lua_tonumber(L, -1);
       
       T** obj = static_cast<T**>(lua_touserdata(L, 1));
       

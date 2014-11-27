@@ -2,6 +2,7 @@
 
 namespace LuaEmbedder
 {
+  lua_State* L = nullptr;
   std::vector<int (*)()> Functions = std::vector<int (*)()>();
   
   void Init()
@@ -107,22 +108,22 @@ namespace LuaEmbedder
   double PullDouble(int index)
   {
     assert(lua_isnumber(L, index));
-    return lua_tonumber(L, index);
+    return (double)lua_tonumber(L, index);
   }
   int PullInt(int index)
   {
     assert(lua_isnumber(L, index));
-    return lua_tointeger(L, index);
+    return (int)lua_tointeger(L, index);
   }
   unsigned int PullUnsignedInt(int index)
   {
     assert(lua_isnumber(L, index));
-    return lua_tounsigned(L, index);
+    return (unsigned int)lua_tounsigned(L, index);
   }
   bool PullBool(int index)
   {
     assert(lua_isboolean(L, index));
-    return lua_toboolean(L, index);
+    return (bool)lua_toboolean(L, index);
   }
   std::string PullString(int index)
   {
@@ -169,15 +170,15 @@ namespace LuaEmbedder
   
   void PushDouble(double value)
   {
-    lua_pushnumber(L, value);
+    lua_pushnumber(L, (lua_Number)value);
   }
   void PushInt(int value)
   {
-    lua_pushinteger(L, value);
+    lua_pushinteger(L, (lua_Integer)value);
   }
   void PushUnsignedInt(unsigned int value)
   {
-    lua_pushunsigned(L, value);
+    lua_pushunsigned(L, (lua_Unsigned)value);
   }
   void PushBool(bool value)
   {

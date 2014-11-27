@@ -18,7 +18,7 @@
 
 namespace LuaEmbedder
 {
-  lua_State* L = nullptr;
+  extern lua_State IMPORT* L;
   
   void EXPORT Init();
   void EXPORT Quit();
@@ -79,7 +79,7 @@ namespace LuaEmbedder
     return Luna<T>::CallMethod(L, className.c_str(), methodName.c_str(), argumentCount);
   }
   template<typename T>
-  T* EXPORT PullObject(const std::string& className, int index)
+  T EXPORT* PullObject(const std::string& className, int index)
   {
     return Luna<T>::check(L, className.c_str(), index);
   }
