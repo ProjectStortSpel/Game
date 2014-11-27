@@ -5,11 +5,62 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 
+using namespace ECSL;
 
-int main(int argc, char** argv)
+class TestSystem : public ECSL::System
 {
-	SDL_Init(SDL_INIT_EVERYTHING);
-	////ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
+public:
+	TestSystem() { }
+	~TestSystem() { }
+
+	void Run()
+	{
+		printf("Testsystem run()\n");
+	}
+	void Initialize()
+	{
+		AddComponentTypeToFilter("TestComponenta", ECSL::ComponentFilter::Mandatory);
+		AddComponentTypeToFilter("TestComponentb", ECSL::ComponentFilter::Mandatory);
+		AddComponentTypeToFilter("TestComponentc", ECSL::ComponentFilter::Mandatory);
+		AddComponentTypeToFilter("TestComponentd", ECSL::ComponentFilter::Mandatory);
+
+		AddComponentTypeToFilter("TestComponente", ECSL::ComponentFilter::Excluded);
+		AddComponentTypeToFilter("TestComponentf", ECSL::ComponentFilter::Excluded);
+		AddComponentTypeToFilter("TestComponentg", ECSL::ComponentFilter::Excluded);
+		AddComponentTypeToFilter("TestComponenth", ECSL::ComponentFilter::Excluded);
+
+		AddComponentTypeToFilter("TestComponenti", ECSL::ComponentFilter::RequiresOneOf);
+		AddComponentTypeToFilter("TestComponentj", ECSL::ComponentFilter::RequiresOneOf);
+		AddComponentTypeToFilter("TestComponentk", ECSL::ComponentFilter::RequiresOneOf);
+		AddComponentTypeToFilter("TestComponentl", ECSL::ComponentFilter::RequiresOneOf);
+
+		SystemBitmask* test = GetSystemBitmask(ECSL::ComponentFilter::Mandatory);
+
+		printf("Testsystem Initialize()\n");
+	}
+
+	void OnEntityAdded(unsigned int _entityId)
+	{
+		printf("Testsystem OnEntityAdded()\n");
+	}
+	void OnEntityRemoved(unsigned int _entityId)
+	{
+		printf("Testsystem OnEntityRemoved()\n");
+	}
+private:
+};
+
+void lol()
+{
+	
+
+	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
+	worldCreator.AddSystemGroup();
+	worldCreator.AddSystemToCurrentGroup<TestSystem>();
+	ECSL::World* world = worldCreator.InitializeWorld(100);
+
+	delete(world);
+
 	//ECSL::Parser* parser = new ECSL::Parser();
 	//ECSL::Section* section = parser->ParseFile("content/components/component.cmp");
 	//ECSL::ComponentTypeReader reader;
@@ -17,10 +68,17 @@ int main(int argc, char** argv)
 	//delete(parser);
 	//delete(section);
 	////worldInitializer.Add<int>();
-	////ECSL::World* world = worldCreator.InitializeWorld(100);
-	ECSL::ComponentTypeManager::GetInstance().AddComponentTypesFromDirectory("Content/components");
+
+	//ECSL::ComponentTypeManager::GetInstance().AddComponentTypesFromDirectory("Content/components");
+	
+}
+
+int main(int argc, char** argv)
+{
+	SDL_Init(SDL_INIT_EVERYTHING);
+	lol();
 	SDL_Quit();
 	system("pause");
-	//_CrtDumpMemoryLeaks();
+	_CrtDumpMemoryLeaks();
 	return 0;
 }
