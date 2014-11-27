@@ -1,5 +1,6 @@
 #include "Timer.h"
 
+#ifdef WIN32
 Timer::Timer()
 {
 	__int64 countsPerSecond;
@@ -9,7 +10,6 @@ Timer::Timer()
 	Reset();
 }
 
-#ifdef WIN32
 void Timer::Reset()
 {
 	QueryPerformanceCounter((LARGE_INTEGER*)&m_prevTimePoint);
@@ -27,6 +27,11 @@ float Timer::ElapsedTimeInSeconds()
 	return (float)(currTimePoint - m_prevTimePoint) * m_secondsPerCount;
 }
 #else
+Timer::Timer()
+{
+	Reset();
+}
+
 void Timer::Reset()
 {
 	m_prevTimePoint = std::chrono::high_resolution_clock::now();
