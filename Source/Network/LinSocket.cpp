@@ -173,13 +173,13 @@ bool LinSocket::Listen(int _backlog)
 
 bool LinSocket::SetNonBlocking(bool _value)
 {
-	long value = _value;
-	if(ioctol(m_socket, (int)FIONBIO, (char*) &value))
-	{
-		if(NET_DEBUG)
-			printf("Failed to set socket to non blocking mode.\n");
-		return false;
-	}
+	//long value = _value;
+	//if(ioctol(m_socket, (int)FIONBIO, (char*) &value))
+	//{
+	//	if(NET_DEBUG)
+	//		printf("Failed to set socket to non blocking mode.\n");
+	//	return false;
+	//}
 
 	return true;
 }
