@@ -39,12 +39,13 @@ void Timer::Reset()
 
 float Timer::ElapsedTimeInMilliseconds()
 {
-	return (float)std::chrono::duration_cast<std::chrono::microseconds>(
-		std::chrono::high_resolution_clock::now() - m_prevTimePoint).count();
+	return (float)(0.001 * std::chrono::duration_cast<std::chrono::microseconds>(
+		std::chrono::high_resolution_clock::now() - m_prevTimePoint).count());
 }
 
 float Timer::ElapsedTimeInSeconds()
 {
-	return 0.001f * ElapsedTimeInMilliseconds();
+	return (float)(0.000001 * std::chrono::duration_cast<std::chrono::microseconds>(
+		std::chrono::high_resolution_clock::now() - m_prevTimePoint).count());
 }
 #endif
