@@ -1,6 +1,7 @@
 #ifndef STDAFX_H
 #define STDAFX_H
 
+#include <map>
 #include <vector>
 #include <string>
 #include <sstream>

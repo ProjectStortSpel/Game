@@ -22,11 +22,6 @@ namespace Renderer
 		}
 	};
 
-	struct RenderComponent
-	{
-		
-	};
-
 	class DECLSPEC GraphicDevice
 	{
 	public:

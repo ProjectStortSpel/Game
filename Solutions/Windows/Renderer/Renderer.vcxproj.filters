@@ -20,7 +20,6 @@
     <ClInclude Include="..\..\..\Source\Renderer\TextureLoader.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\Renderer\DebugText.h" />
     <ClInclude Include="..\..\..\Source\Renderer\GLTimer.h">
       <Filter>Source</Filter>
     </ClInclude>
@@ -33,9 +32,6 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Renderer\Shader.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Source\Renderer\DebugText.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Renderer\GLTimer.cpp">
