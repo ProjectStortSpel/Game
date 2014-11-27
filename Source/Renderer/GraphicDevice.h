@@ -66,7 +66,7 @@ namespace Renderer
 		int	m_clientWidth, m_clientHeight;
 
 		// Image buffers
-		GLuint m_outputImage, m_inputImage;
+		GLuint m_outputImage;
 		GLuint m_debuggText;
 		GLuint m_depthBuf, m_normTex, m_colorTex;
 
@@ -74,7 +74,8 @@ namespace Renderer
 		GLuint m_deferredFBO;
 
 		// Shaders
-		Shader m_debuggTextShader; // TA BORT DENNA
+		Shader m_compDeferredPass2Shader;
+
 		Shader m_fullScreenShader;
 		Shader m_deferredShader1, m_deferredShader2;
 
