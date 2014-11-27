@@ -15,8 +15,8 @@ public:
 	bool Start(void);
 	bool Stop(void);
 
-	void Broadcast(Packet _packet, NetConnection _exclude = NetConnection());
-	void Send(Packet _packet, NetConnection _connection);
+	void Broadcast(Packet* _packet, NetConnection _exclude = NetConnection());
+	void Send(Packet* _packet, NetConnection _connection);
 
 
 	// Bind function which will trigger when another player connects to the server

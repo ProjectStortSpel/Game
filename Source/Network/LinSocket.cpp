@@ -204,12 +204,20 @@ ISocket* LinSocket::Accept()
 
 int LinSocket::Receive(char* _buffer, int _length, int _flags)
 {
-	return 0;
+	return recv(m_socket, (void*)_buffer, _length, _flags);
 }
 
 int LinSocket::Send(char* _buffer, int _length, int _flags)
 {
-	return 0;
+	int result = send(m_socket, (void*)_buffer, _length, _flags);
+	if (result == -1) 
+	{
+		if (NET_DEBUG)
+			printf("Failed to send packet of size '%i'. Error: %s.\n", _length, strerror(errno));
+
+		return -1;
+	}
+	return result;
 }
 
 #endif

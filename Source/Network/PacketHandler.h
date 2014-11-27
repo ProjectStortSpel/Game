@@ -14,7 +14,7 @@ public:
 	void StartPack(const char* _name);
 	void StartPack(char _identifier);
 
-	Packet EndPack(void);
+	Packet* EndPack(void);
 
 	void Unpack(Packet* packet);
 

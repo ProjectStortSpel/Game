@@ -47,21 +47,81 @@ int main(int argc, char** argv)
 	SDL_Init(SDL_INIT_EVERYTHING);
 
 	std::string input;
-	std::getline(std::cin, input);
+
+	std::string ip = "127.0.0.1";
+	std::string pw = "localhest";
+	int port = 5357;
+
 	
 	ClientNetwork c;
 	ServerNetwork s;
 	
+	printf("Network console test!\n");
+
+	printf("Press \"c\" to start a client, or \"s\" to start a server.\n");
+	std::getline(std::cin, input);
+	ClearConsole();
+
 	if (input == "c")
 	{
-		c.Connect("127.0.0.1", "localhest", 6112, 0);
+		printf("Starting new client.\n");
+		printf("Enter Ip Address: ");
+		std::getline(std::cin, input);
+
+		if (input != "")
+			ip = input;
+
+
+		printf("Enter password: ");
+		std::getline(std::cin, input);
+
+		if (input != "")
+			pw = input;
+
+		printf("Enter port number: ");
+		std::getline(std::cin, input);
+
+		if (input != "")
+			port = atoi(input.c_str());
+
+		ClearConsole();
+
+		c.Connect(ip.c_str(), pw.c_str(), port, 0);
 
 		std::getline(std::cin, input);
 	}
 	else if (input == "s")
 	{
-		s.Start(6112, "localhest", 8);
+		printf("Starting new server.\n");
+
+		printf("Enter password: ");
 		std::getline(std::cin, input);
+
+		if (input != "")
+			pw = input;
+
+		printf("Enter port number: ");
+		std::getline(std::cin, input);
+
+		if (input != "")
+			port = atoi(input.c_str());
+
+		ClearConsole();
+
+		s.Start(port, pw.c_str(), 8);
+		std::getline(std::cin, input);
+
+		PacketHandler ph;
+		ph.StartPack(NetTypeMessageId::ID_CONNECTION_ACCEPTED);
+		ph.WriteInt(1337);
+
+		Packet* p = ph.EndPack();
+
+		s.Broadcast(p);
+
+		std::getline(std::cin, input);
+
+
 	}	
 	SDL_Quit();
 	return 0;

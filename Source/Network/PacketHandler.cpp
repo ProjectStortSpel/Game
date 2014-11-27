@@ -3,8 +3,8 @@
 
 PacketHandler::PacketHandler()
 {
-	m_packetSend = 0;
-	m_packetReceive = 0;
+	m_packetSend = new unsigned char[MAX_PACKET_SIZE];
+	m_packetReceive = new Packet();
 
 	m_positionSend = 0;
 	m_positionReceive = 0;
@@ -21,7 +21,6 @@ PacketHandler::~PacketHandler()
 void PacketHandler::StartPack(const char* _functionName)
 {
 	m_positionSend = m_packetSend;
-	WriteShort(0);
 	WriteByte(ID_CUSTOM_PACKET);
 	WriteString(_functionName);
 }
@@ -29,15 +28,19 @@ void PacketHandler::StartPack(const char* _functionName)
 void PacketHandler::StartPack(char _identifier)
 {
 	m_positionSend = m_packetSend;
-	WriteShort(0);
 	WriteByte(_identifier);
 }
 
-Packet PacketHandler::EndPack()
+Packet* PacketHandler::EndPack()
 {
 	unsigned short length = m_positionSend - m_packetSend;
 
-	return Packet(m_packetSend, length);
+	Packet* p = new Packet();
+	p->Data = new unsigned char[length];
+	memcpy(p->Data, m_packetSend, length);
+	p->Length = length;
+
+	return p;
 }
 
 void PacketHandler::EndUnpack()

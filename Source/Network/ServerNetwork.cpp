@@ -82,13 +82,32 @@ bool ServerNetwork::Stop()
 	return true;
 }
 
-void ServerNetwork::Broadcast(Packet _packet, NetConnection _exclude)
+void ServerNetwork::Broadcast(Packet* _packet, NetConnection _exclude)
 {
+	for (auto it = m_connectedClients.begin(); it != m_connectedClients.end(); it++)
+	{
+		if (it->first == _exclude)
+			continue;
+
+		it->second->Send((char*)_packet->Data, _packet->Length);
+	}
+
+	SAFE_DELETE(_packet);
 }
 
-void ServerNetwork::Send(Packet _packet, NetConnection _receiver)
+void ServerNetwork::Send(Packet* _packet, NetConnection _receiver)
 {
+	if (m_connectedClients.find(_receiver) == m_connectedClients.end())
+	{
+		if (NET_DEBUG)
+			printf("Connection to receiver \"%s:%i\" was not found.\n", _receiver.IpAddress.c_str(), _receiver.Port);
+		SAFE_DELETE(_packet);
+		return;
+	}
 
+	m_connectedClients[_receiver]->Send((char*)_packet->Data, _packet->Length);
+
+	SAFE_DELETE(_packet);
 }
 
 void ServerNetwork::ReceivePackets(ISocket* _socket, int _id)
@@ -101,21 +120,23 @@ void ServerNetwork::ReceivePackets(ISocket* _socket, int _id)
 		{
 			unsigned short packetSize = result;
 
-			if (NET_DEBUG)
-				printf("Received message with length \"%i\" from server.\n", packetSize);
-
 			Packet p;
 			p.Data = new unsigned char[packetSize];
 			p.Length = packetSize;
 			p.Sender = _socket->GetNetConnection();
 			memcpy(p.Data, m_packetData, packetSize);
 
+			if (NET_DEBUG)
+				printf("Received message with length \"%i\" from client \"%s:%i\".\n", packetSize, p.Sender.IpAddress.c_str(), p.Sender.Port);
+
 		}
 		else if (result == 0)
 		{
+			// server shutdown graceful
 		}
 		else
 		{
+			// Failed to receive packets
 		}
 
 	}
@@ -134,6 +155,7 @@ void ServerNetwork::ListenForConnections(void)
 			continue;
 
 		NetConnection nc = newConnection->GetNetConnection();
+		m_connectedClients[nc] = newConnection;
 
 		if (NET_DEBUG)
 			printf("New incoming connection from %s:%d\n", nc.IpAddress.c_str(), nc.Port);

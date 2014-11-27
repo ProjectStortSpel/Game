@@ -77,9 +77,44 @@ void ClientNetwork::ReceivePackets()
 	// On its on thread
 	while (m_receivePacketsThreadAlive)
 	{
+		int result = m_socket->Receive(m_packetData, MAX_PACKET_SIZE);
+
+		if (result > 0)
+		{
+			unsigned short packetSize = result;
+
+			if (NET_DEBUG)
+				printf("Received message with length \"%i\" from server.\n", packetSize);
+
+			Packet* p = new Packet();
+			p->Data = new unsigned char[packetSize];
+			p->Length = packetSize;
+			p->Sender = m_socket->GetNetConnection();
+			memcpy(p->Data, m_packetData, packetSize);
+
+			SAFE_DELETE(p);
+
+		}
+		else if (result == 0)
+		{
+			// server shutdown graceful
+		}
+		else
+		{
+			// Failed to receive packets
+		}
+
 	}
 }
 
-void ClientNetwork::Send(Packet _packet)
+void ClientNetwork::Send(Packet* _packet)
 {
+	if (!m_socketBound)
+	{
+		if (NET_DEBUG)
+			printf("Not connected to server.\n");
+		return;
+	}
+
+	m_socket->Send((char*)_packet->Data, _packet->Length);
 }

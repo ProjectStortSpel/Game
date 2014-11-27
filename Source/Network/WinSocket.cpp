@@ -251,11 +251,19 @@ ISocket* WinSocket::Accept(void)
 }
 int WinSocket::Send(char* _buffer, int _length, int _flags)
 {
-	return 0;
+	int result = send(m_socket, _buffer, _length, _flags);
+	if (result == SOCKET_ERROR)
+	{
+		if (NET_DEBUG)
+			printf("Failed to send packet of size '%i'. Error Code: %d.\n", _length, WSAGetLastError());
+
+		return -1;
+	}
+	return result;
 }
 int WinSocket::Receive(char* _buffer, int _length, int _flags)
 {
-	return 0;
+	return recv(m_socket, _buffer, _length, _flags);
 }
 
 #endif

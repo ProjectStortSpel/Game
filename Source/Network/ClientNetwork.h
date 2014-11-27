@@ -15,7 +15,7 @@ public:
 	bool Connect();
 	bool Connect(const char* _ipAddress, const char* _password, const int _outgoing, const int _incomingPort);
 	void Disconnect();
-	void Send(Packet _packet);
+	void Send(Packet* _packet);
 
 	const char* GetRemoteAddress(void) { return m_remoteAddress.c_str(); }
 	const int GetOutgoingPort(void) { return m_outgoingPort; }
