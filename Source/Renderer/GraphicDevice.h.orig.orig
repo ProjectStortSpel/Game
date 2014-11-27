@@ -6,15 +6,6 @@ Author: Anders, Christian
 
 #include "stdafx.h"
 #include "Shader.h"
-<<<<<<< HEAD
-
-namespace Renderer
-{
-	struct RenderComponent
-	{
-
-
-=======
 #include "SimpleText.h"
 #include "GLTimer.h"
 
@@ -22,7 +13,6 @@ namespace Renderer
 {
 	struct GLTimerValue
 	{
-<<<<<<< HEAD
 		string name;
 		float ms;
 		GLTimerValue(string n, float m)
@@ -32,14 +22,14 @@ namespace Renderer
 		}
 	};
 
+<<<<<<< HEAD
+=======
 	struct RenderComponent
 	{
-=======
->>>>>>> 264189ecbb29ed92de336788293523449bc35e93
 		
->>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
 	};
 
+>>>>>>> merge fix
 	class DECLSPEC GraphicDevice
 	{
 	public:
@@ -55,7 +45,9 @@ namespace Renderer
 		void ResizeWindow(int _width, int _height);
 		void SetTitle(std::string _title);
 
-		void RenderSimpleText(std::string _text, int x, int y);
+		// SIMPLETEXT FROM GAME
+		bool RenderSimpleText(std::string _text, int x, int y);
+		void SetSimpleTextColor(vec4 _color);
 
 	private:
 		bool InitSDLWindow();
@@ -63,26 +55,11 @@ namespace Renderer
 		bool InitDeferred();
 		bool InitShaders();
 		bool InitBuffers();
-<<<<<<< HEAD
-
-		void CreateGBufTex(GLenum texUnit, GLenum format, GLuint &texid);
-		void CreateDepthTex(GLuint &texid);
-
-		SDL_Window*		m_window;
-		SDL_GLContext	m_glContext;
-
-=======
 		bool InitTextRenderer();
 
 		void CreateGBufTex(GLenum texUnit, GLenum format, GLuint &texid);
 		void CreateDepthTex(GLuint &texid);
 
-<<<<<<< HEAD
-=======
-		void CreateGBufTex(GLenum texUnit, GLenum format, GLuint &texid);
-		void CreateDepthTex(GLuint &texid);
-
->>>>>>> 264189ecbb29ed92de336788293523449bc35e93
 		SDL_Window*		m_window;
 		SDL_GLContext	m_glContext;
 
@@ -93,19 +70,10 @@ namespace Renderer
 		// Timer for shader run time
 		vector<GLTimerValue> m_glTimerValues;
 
->>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
 		// Window size
 		int	m_clientWidth, m_clientHeight;
 
 		// Image buffers
-<<<<<<< HEAD
-		GLuint m_textImage;
-=======
-<<<<<<< HEAD
-=======
-		GLuint m_textImage;
->>>>>>> 264189ecbb29ed92de336788293523449bc35e93
->>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
 		GLuint m_outputImage, m_inputImage;
 		GLuint m_debuggText;
 		GLuint m_depthBuf, m_normTex, m_colorTex;
@@ -115,37 +83,22 @@ namespace Renderer
 
 		// Shaders
 <<<<<<< HEAD
-		Shader m_simpleTextShader;
-		Shader m_debuggTextShader; // TA BORT DENNA
-		Shader m_fullScreenShader;
-		Shader m_deferredShader1, m_deferredShader2;
 <<<<<<< HEAD
-=======
-
-=======
-<<<<<<< HEAD
-=======
-		Shader m_simpleTextShader;
->>>>>>> 264189ecbb29ed92de336788293523449bc35e93
 		Shader m_debuggTextShader; // TA BORT DENNA
+=======
+		Shader m_compDeferredPass2Shader;
+>>>>>>> Deferred pass 2 moved to compute shader
+=======
+		Shader m_compDeferredPass2Shader;
+=======
+		Shader m_debuggTextShader; // TA BORT DENNA
+>>>>>>> 49a7f410bee1810ff8e94f107f814ca8d7248530
+>>>>>>> merge fix
 		Shader m_fullScreenShader;
 		Shader m_deferredShader1, m_deferredShader2;
 
-<<<<<<< HEAD
 		// SimpleText
 		SimpleText m_textRenderer;
-=======
->>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
-		int simpleText[4608];
-		int simpleTextX, simpleTextY;
-		GLuint simpleTextBuffer;
-
-		void RenderText();
-<<<<<<< HEAD
->>>>>>> simpletext
-=======
->>>>>>> 264189ecbb29ed92de336788293523449bc35e93
->>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
 	};
 }
 

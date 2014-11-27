@@ -17,39 +17,29 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Renderer\stdafx.h" />
-<<<<<<< HEAD
-<<<<<<< HEAD
     <ClInclude Include="..\..\..\Source\Renderer\TextureLoader.h">
       <Filter>Source</Filter>
     </ClInclude>
 <<<<<<< HEAD
-    <ClInclude Include="..\..\..\Source\Renderer\DebugText.h" />
-=======
->>>>>>> Standard deferred added
-=======
 <<<<<<< HEAD
-    <ClInclude Include="..\..\..\Source\Renderer\TextureLoader.h">
 =======
-    <ClInclude Include="..\..\..\Source\Renderer\DebugText.h">
->>>>>>> start of debugtext
-      <Filter>Source</Filter>
-    </ClInclude>
->>>>>>> Text renderer, GLTimer and Timer
-=======
-    <ClInclude Include="..\..\..\Source\Renderer\TextureLoader.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Source\Renderer\DebugText.h" />
 <<<<<<< HEAD
+=======
+>>>>>>> merge fix
     <ClInclude Include="..\..\..\Source\Renderer\GLTimer.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Renderer\SimpleText.h">
       <Filter>Source</Filter>
     </ClInclude>
+<<<<<<< HEAD
 =======
->>>>>>> 264189ecbb29ed92de336788293523449bc35e93
->>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
+    <ClInclude Include="..\..\..\Source\Renderer\DebugText.h" />
+>>>>>>> Deferred pass 2 moved to compute shader
+=======
+>>>>>>> 49a7f410bee1810ff8e94f107f814ca8d7248530
+>>>>>>> merge fix
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp">
@@ -58,26 +48,30 @@
     <ClCompile Include="..\..\..\Source\Renderer\Shader.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
     <ClCompile Include="..\..\..\Source\Renderer\DebugText.cpp">
       <Filter>Source</Filter>
     </ClCompile>
 <<<<<<< HEAD
 =======
-<<<<<<< HEAD
+>>>>>>> merge fix
     <ClCompile Include="..\..\..\Source\Renderer\GLTimer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Renderer\SimpleText.cpp">
+=======
+    <ClCompile Include="..\..\..\Source\Renderer\DebugText.cpp">
+>>>>>>> Deferred pass 2 moved to compute shader
       <Filter>Source</Filter>
     </ClCompile>
+<<<<<<< HEAD
 =======
->>>>>>> 264189ecbb29ed92de336788293523449bc35e93
->>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
+>>>>>>> 49a7f410bee1810ff8e94f107f814ca8d7248530
+>>>>>>> merge fix
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\Externals\content\shaders\debuggText.glsl">
-      <Filter>shaders</Filter>
-    </None>
     <None Include="..\..\..\Externals\content\shaders\fullscreen.ps">
       <Filter>shaders</Filter>
     </None>
@@ -101,18 +95,17 @@
     </None>
 <<<<<<< HEAD
 <<<<<<< HEAD
-<<<<<<< HEAD
     <None Include="..\..\..\Externals\content\shaders\SimpleText.glsl">
-      <Filter>shaders</Filter>
-    </None>
 =======
->>>>>>> Standard deferred added
+    <None Include="..\..\..\Externals\content\shaders\CSDeferredPass2.glsl">
+>>>>>>> Deferred pass 2 moved to compute shader
 =======
->>>>>>> Text renderer, GLTimer and Timer
+    <None Include="..\..\..\Externals\content\shaders\CSDeferredPass2.glsl">
 =======
     <None Include="..\..\..\Externals\content\shaders\SimpleText.glsl">
+>>>>>>> 49a7f410bee1810ff8e94f107f814ca8d7248530
+>>>>>>> merge fix
       <Filter>shaders</Filter>
     </None>
->>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
   </ItemGroup>
 </Project>
