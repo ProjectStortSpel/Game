@@ -170,6 +170,19 @@ bool LinSocket::Listen(int _backlog)
 	return true;
 }
 
+bool LinSocket::SetNonBlocking(bool _value)
+{
+	long value = _value;
+	if(ioctol(m_socket, (int)FIONBIO, (char*) &value))
+	{
+		if(NET_DEBUG)
+			printf("Failed to set socket to non blocking mode.\n");
+		return false;
+	}
+
+	return true;
+}
+
 int LinSocket::Recv(char* _buffer, int _length, int _flags)
 {
 	return recv(m_socket, (void*)_buffer, _length, _flags);

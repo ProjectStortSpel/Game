@@ -28,6 +28,7 @@ public:
 	bool Connect(const char* _ip, const int _port);
 	bool Bind(const int _port);
 	bool Close();
+	bool SetNonBlocking(bool _value);
 	ISocket* Accept();
 	bool Listen(int _backlog);
 	int Recv(char* _buffer, int _length, int _flags);

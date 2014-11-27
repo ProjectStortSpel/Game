@@ -187,13 +187,7 @@ ISocket* WinSocket::Accept()
 	int incomingAddressLength = sizeof(incomingAddress);
 	SOCKET newSocket = INVALID_SOCKET;
 
-
-	u_long NonBlock = 1;
-	if (ioctlsocket(m_socket, FIONBIO, &NonBlock) == SOCKET_ERROR)
-	{
-		printf("Failed to set nonblock.\n");
-	}
-		newSocket = accept(m_socket, (sockaddr*)&incomingAddress, &incomingAddressLength);
+	newSocket = accept(m_socket, (sockaddr*)&incomingAddress, &incomingAddressLength);
 
 	if (newSocket == INVALID_SOCKET)
 	{
@@ -268,5 +262,18 @@ int WinSocket::Send(char* _buffer, int _length, int _flags)
 		return -1;
 	}
 	return result;
+}
+
+bool WinSocket::SetNonBlocking(bool _value)
+{
+	u_long value = _value;
+	if (ioctlsocket(m_socket, FIONBIO, &value) == SOCKET_ERROR)
+	{
+		if(NET_DEBUG)
+			printf("Failed to set nonblock.\n");
+		return false;
+	}
+
+	return true;
 }
 #endif

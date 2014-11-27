@@ -19,7 +19,9 @@ public:
 	virtual int Recv(char* _buffer, int _length, int _flags) = 0;
 	virtual int Send(char* _buffer, int _length, int _flags) = 0;
 	virtual bool Close() = 0;
-	
+	virtual bool SetNonBlocking(bool _value) = 0;
+
+
 	NetConnection GetNetConnection() {	return NetConnection(m_remoteAddress, m_remotePort); }
 	std::string GetRemoteIpAddress() { return m_remoteAddress; }
 	int GetRemotePort() { return m_remotePort; }

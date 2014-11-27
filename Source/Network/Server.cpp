@@ -26,8 +26,8 @@ Server::~Server()
 void Server::Start()
 {
 	m_listenSocket = ISocket::CreateISocket(AF_INET, SOCK_STREAM, 0);
+	m_listenSocket->SetNonBlocking(true);
 	m_listenSocket->Bind(m_incomingPort);
-
 
 	if (NET_DEBUG)
 	{
