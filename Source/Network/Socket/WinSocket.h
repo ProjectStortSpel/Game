@@ -5,7 +5,7 @@
 
 #include <WinSock2.h>
 
-#include "Network/Socket/ISocket.h"
+#include "ISocket.h"
 
 class DECLSPEC WinSocket : public ISocket
 {

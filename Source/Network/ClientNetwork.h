@@ -3,7 +3,7 @@
 
 #include <thread>
 
-#include "Network/BaseNetwork.h"
+#include "BaseNetwork.h"
 
 class DECLSPEC ClientNetwork : public BaseNetwork
 {

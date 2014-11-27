@@ -1,7 +1,7 @@
 #ifndef PACKETHANDLER_H
 #define PACKETHANDLER_H
 
-#include "Network/Stdafx.h"
+#include "Stdafx.h"
 
 class DECLSPEC PacketHandler
 {

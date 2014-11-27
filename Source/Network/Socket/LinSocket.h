@@ -3,7 +3,7 @@
 #ifndef LINSOCKET_H
 #define LINSOCKET_H
 
-#include "Network/Socket/ISocket.h"
+#include "ISocket.h"
 
 class DECLSPEC LinSocket : public ISocket
 {

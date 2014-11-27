@@ -1,7 +1,7 @@
 #ifndef ISOCKET_H
 #define ISOCKET_H
 
-#include "Network/Stdafx.h"
+#include "../Stdafx.h"
 
 class DECLSPEC ISocket
 {

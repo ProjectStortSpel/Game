@@ -1,4 +1,4 @@
-#include "Network/ClientNetwork.h"
+#include "ClientNetwork.h"
 
 #ifdef WIN32
 #else

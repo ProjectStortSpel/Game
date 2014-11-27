@@ -1,5 +1,5 @@
-#include "Network/PacketHandler.h"
-#include "Network/NetTypeMessageId.h"
+#include "PacketHandler.h"
+#include "NetTypeMessageId.h"
 
 PacketHandler::PacketHandler()
 {

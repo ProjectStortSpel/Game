@@ -1,6 +1,6 @@
 #ifndef WIN32
 
-#include "Network/Socket/LinSocket.h"
+#include "LinSocket.h"
 
 #include <sys/ioctl.h>
 #include <sys/socket.h>

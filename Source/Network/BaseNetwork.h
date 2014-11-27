@@ -6,16 +6,16 @@
 #include <queue>
 #include <mutex>
 
-#include "Network/Stdafx.h"
-#include "Network/NetTypeMessageId.h"
+#include "Stdafx.h"
+#include "NetTypeMessageId.h"
 
 #ifdef WIN32
-#include "Network/Socket/WinSocket.h"
+#include "Socket/WinSocket.h"
 #else
-#include "Network/Socket/LinSocket.h"
+#include "Socket/LinSocket.h"
 #endif
 
-#include "Network/PacketHandler.h"
+#include "PacketHandler.h"
 
 typedef std::function<void(PacketHandler*, NetConnection)> NetMessageHook;
 

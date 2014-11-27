@@ -1,4 +1,4 @@
-#include "Network/BaseNetwork.h"
+#include "BaseNetwork.h"
 
 BaseNetwork::BaseNetwork()
 {

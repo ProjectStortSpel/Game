@@ -1,9 +1,9 @@
-#include "Network/Socket/ISocket.h"
+#include "ISocket.h"
 
 #ifdef WIN32
-#include "Network/Socket/WinSocket.h"
+#include "WinSocket.h"
 #else
-#include "Network/Socket/LinSocket.h"
+#include "LinSocket.h"
 #endif
 
 bool ISocket::g_initialized = false;

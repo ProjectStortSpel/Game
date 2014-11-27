@@ -1,6 +1,6 @@
 #ifdef WIN32
 
-#include "Network/Socket/WinSocket.h"
+#include "WinSocket.h"
 
 #include <WS2tcpip.h>
 
