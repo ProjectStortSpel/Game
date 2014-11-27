@@ -24,6 +24,10 @@ int main(int argc, char** argv)
 
 		INPUT.Update();
 		gd->Update(dt);
+
+		gd->RenderSimpleText("This text render from GAME! \nThe x and y values in the function isn't pixel \ncoordinates, it's char position. Every char is \n8x16 pixels in size. Use \\n to change line.\n\n  !Not all chars is supported!\n\nRight now it clear the whole output image as well (Tell me when to remove this).", 10, 2);
+		
+
 		gd->Render();
 
 		
