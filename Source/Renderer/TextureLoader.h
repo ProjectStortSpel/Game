@@ -7,7 +7,6 @@
 
 class TextureLoader{
 public:
->>>>>>> Standard deferred added
 static unsigned int LoadTexture(char* file, GLenum textureSlot)
 {
 	int width, height, channels;
