@@ -42,6 +42,10 @@ namespace Renderer
 		void ResizeWindow(int _width, int _height);
 		void SetTitle(std::string _title);
 
+		// SIMPLETEXT FROM GAME
+		bool RenderSimpleText(std::string _text, int x, int y);
+		void SetSimpleTextColor(vec4 _color);
+
 	private:
 		bool InitSDLWindow();
 		bool InitGLEW();

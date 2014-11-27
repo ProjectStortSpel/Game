@@ -576,3 +576,11 @@ bool GraphicDevice::InitTextRenderer()
 	GLuint m_textImage = TextureLoader::LoadTexture("Content/Textures/SimpleText.png", 5);
 	return m_textRenderer.Init(&m_outputImage, m_textImage, m_clientWidth, m_clientHeight);
 }
+bool GraphicDevice::RenderSimpleText(std::string _text, int _x, int _y)
+{
+	return m_textRenderer.RenderSimpleText(_text, _x, _y);
+}
+void GraphicDevice::SetSimpleTextColor(vec4 _color)
+{
+	m_textRenderer.SetSimpleTextColor(_color);
+}
