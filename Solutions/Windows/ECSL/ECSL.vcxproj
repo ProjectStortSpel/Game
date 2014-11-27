@@ -40,6 +40,7 @@
     <ClInclude Include="..\..\..\Source\ECSL\Managers\ComponentTypeManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Common\BitSet.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Common\FileHelper.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Common\StringConverter.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\ComponentType.cpp" />

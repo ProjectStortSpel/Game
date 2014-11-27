@@ -12,7 +12,6 @@ namespace ECSL
 	class ComponentTypeReader
 	{
 	private:
-		std::vector<ComponentType*>* m_componentTypes;
 		std::string m_name;
 		TableType m_tableType;
 		std::map<std::string, ComponentVariable> m_variables;
@@ -29,7 +28,7 @@ namespace ECSL
 		ComponentTypeReader();
 		~ComponentTypeReader();
 
-		std::vector<ComponentType*>* ReadComponents(const std::string& _filePath, const Section* _section);
+		bool ReadComponents(std::vector<ComponentType*>& _out, const std::string& _filePath, const Section& _section);
 	};
 }
 

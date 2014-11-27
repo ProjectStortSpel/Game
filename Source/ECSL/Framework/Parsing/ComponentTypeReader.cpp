@@ -19,32 +19,32 @@ void ComponentTypeReader::ClearComponentType()
 	m_variables = std::map<std::string, ComponentVariable>();
 }
 
-std::vector<ComponentType*>* ComponentTypeReader::ReadComponents(const std::string& _filePath, const Section* _section)
+bool ComponentTypeReader::ReadComponents(std::vector<ComponentType*>& _out, const std::string& _filePath, const Section& _section)
 {
-	m_componentTypes = new std::vector<ComponentType*>();
 	ClearComponentType();
 
 	/* No sections at all in file */
-	if (_section->SubSections.size() == 0)
-		return 0;
+	if (_section.SubSections.size() == 0)
+		return false;
 
 	/* Loop through and interpret every component type in the section list */
-	for (unsigned int subSectionIndex = 0; subSectionIndex < _section->SubSections.size(); ++subSectionIndex)
+	for (unsigned int subSectionIndex = 0; subSectionIndex < _section.SubSections.size(); ++subSectionIndex)
 	{
-		if (!InterpretSubSection(&_section->SubSections[subSectionIndex], 1) || !ValidateComponentType())
+		if (!InterpretSubSection(&_section.SubSections[subSectionIndex], 1) || !ValidateComponentType())
 		{
 			printf("Invalid component type syntax in file: %s\n", _filePath.c_str());
-			return 0;
+			return false;
 		}
-		m_componentTypes->push_back(new ComponentType(m_name, m_tableType, m_variables));
+		_out.push_back(new ComponentType(m_name, m_tableType, m_variables));
 		ClearComponentType();
 	}
-	return m_componentTypes;
+
+	return true;
 }
 
 bool ComponentTypeReader::InterpretSubSection(const Section* _section, unsigned int _depth)
 {
-	/* First: Interpret the tokens*/
+	/* First: Interpret the tokens */
 	if (!InterpretTokens(_section, _depth))
 		return false;
 

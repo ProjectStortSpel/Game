@@ -14,26 +14,44 @@ ComponentTypeManager::ComponentTypeManager()
 {
 }
 
+void ComponentTypeManager::AddComponentType(ComponentType& _componentType)
+{
+	m_loadedComponentTypes->insert(std::pair<int, ComponentType*>(ComponentTypeManager::GetTableId(_componentType.GetName()), &_componentType));
+}
+
+void ComponentTypeManager::LoadComponentTypesFromDirectory(const std::string& _directoryPath)
+{
+	std::vector<std::string> filePaths;
+	/* Get all component type file paths in the specified directory */
+	FileHelper::GetFilesInDirectory(filePaths, _directoryPath, "cmp");
+	/* Load every component type from every file */
+	for (unsigned int i = 0; i < filePaths.size(); ++i)
+		LoadComponentTypesFromFile(filePaths[i]);
+}
+
+void ComponentTypeManager::LoadComponentTypesFromFile(const std::string& _filePath)
+{
+	Section section;
+	/* Parse the file into an interpretable section tree */
+	if (!m_parser.ParseFile(section, _filePath))
+		return;
+	
+	std::vector<ComponentType*> components;
+	/* Interpret the section tree into a component type */
+	if (!m_componentTypeReader.ReadComponents(components, _filePath, section))
+		return;
+
+	/* Add all component types that was read from the file */
+	for (int i = 0; i < components.size(); ++i)
+		AddComponentType(*components[i]);
+}
+
 ComponentType* ComponentTypeManager::GetComponentType(int _componentTypeId)
 {
-	//	Check if the given Component Type Id is loaded,
-	//	if it is return the correct object, otherwise
-	//	return null pointer
 	auto it = m_loadedComponentTypes->find(_componentTypeId);
 	if (it != m_loadedComponentTypes->end())
 		return it->second;
 	return 0;
-}
-
-void ComponentTypeManager::AddComponentTypesFromDirectory(const std::string& _directoryPath)
-{
-	std::vector<std::string> filePaths;
-	FileHelper::GetFilesInDirectory(filePaths, _directoryPath, "cmp");
-}
-
-void ComponentTypeManager::AddComponentTypesFromFile(const std::string& _filePath)
-{
-
 }
 
 TypeId ComponentTypeManager::GetTableId(const std::string& _componentType)

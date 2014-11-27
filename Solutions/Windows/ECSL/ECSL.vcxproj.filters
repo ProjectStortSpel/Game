@@ -135,5 +135,8 @@
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Common\StringConverter.cpp">
       <Filter>Source Files\Framework\Common</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Common\BitSet.cpp">
+      <Filter>Source Files\Framework\Common</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
