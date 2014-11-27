@@ -18,33 +18,83 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Source\Renderer\DebugText.h" />
+<<<<<<< HEAD
+    <ClInclude Include="..\..\..\Source\Renderer\GraphicDevice.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\Shader.h" />
+=======
+<<<<<<< HEAD
+    <ClInclude Include="..\..\..\Source\Renderer\GLTimer.h" />
+=======
+>>>>>>> 264189ecbb29ed92de336788293523449bc35e93
+    <ClInclude Include="..\..\..\Source\Renderer\GraphicDevice.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\Shader.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\SimpleText.h" />
+>>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
+    <ClInclude Include="..\..\..\Source\Renderer\stdafx.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\TextureLoader.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Source\Renderer\DebugText.cpp" />
+<<<<<<< HEAD
+    <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp" />
+    <ClCompile Include="..\..\..\Source\Renderer\Shader.cpp" />
+=======
+<<<<<<< HEAD
+    <ClCompile Include="..\..\..\Source\Renderer\GLTimer.cpp" />
+=======
+>>>>>>> 264189ecbb29ed92de336788293523449bc35e93
+    <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp" />
+    <ClCompile Include="..\..\..\Source\Renderer\Shader.cpp" />
+    <ClCompile Include="..\..\..\Source\Renderer\SimpleText.cpp" />
+>>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\Externals\content\shaders\debuggText.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\FSDeferredPass1.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\FSDeferredPass2.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\fullscreen.gs" />
+    <None Include="..\..\..\Externals\content\shaders\fullscreen.ps" />
+    <None Include="..\..\..\Externals\content\shaders\fullscreen.vs" />
+<<<<<<< HEAD
+<<<<<<< HEAD
+    <None Include="..\..\..\Externals\content\shaders\SimpleText.glsl" />
+=======
+>>>>>>> Standard deferred added
+=======
+    <None Include="..\..\..\Externals\content\shaders\SimpleText.glsl" />
+>>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
+    <None Include="..\..\..\Externals\content\shaders\VSDeferredPass1.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\VSDeferredPass2.glsl" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{B8EFCC27-B82E-4F58-A794-F312D54BDBDD}</ProjectGuid>
+    <ProjectGuid>{A71BE4D1-612E-49FE-9B2D-EA067C024F0A}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Game</RootNamespace>
+    <RootNamespace>SampleDLL</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -53,120 +103,96 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)../../Externals/include/Windows;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\;$(SolutionDir)../../Externals/lib/Windows/$(PlatformTarget)/;$(LibraryPath)</LibraryPath>
-    <OutDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\</OutDir>
-    <IntDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\VisualStudioLogs\$(ProjectName)\</IntDir>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)../../Externals/include/Windows;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\;$(SolutionDir)../../Externals/lib/Windows/$(PlatformTarget)/;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\</OutDir>
     <IntDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\VisualStudioLogs\$(ProjectName)\</IntDir>
+    <IncludePath>$(SolutionDir)..\..\Externals\include\Windows\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\;$(SolutionDir)../../Externals/lib/Windows/$(PlatformTarget)/;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)_$(PlatformTarget)d</TargetName>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\</OutDir>
     <IntDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\VisualStudioLogs\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)../../Externals/include/Windows;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\..\Externals\include\Windows\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\;$(SolutionDir)../../Externals/lib/Windows/$(PlatformTarget)/;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)_$(PlatformTarget)d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\</OutDir>
     <IntDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\VisualStudioLogs\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)../../Externals/include/Windows;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\..\Externals\include\Windows\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\;$(SolutionDir)../../Externals/lib/Windows/$(PlatformTarget)/;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)_$(PlatformTarget)</TargetName>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;_RAKNET_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Source\</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProfileGuidedDatabase>$(OutDir)$(TargetName).pgd</ProfileGuidedDatabase>
-      <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;OpenGL32.lib;glew32.lib;glew32s.lib;Input_$(PlatformTarget)d.lib;Network_$(PlatformTarget)d.lib;MPL_$(PlatformTarget)d.lib;ECSL_$(PlatformTarget)d.lib;Renderer_$(PlatformTarget)d.lib;RakNet_$(PlatformTarget)d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-    <PostBuildEvent>
-      <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
-if not exist "$(OutDir)Content" mkdir "$(OutDir)Content"
-xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)Content" /d /y /s /e </Command>
-      <Message>
-      </Message>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\</OutDir>
+    <IntDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\VisualStudioLogs\$(ProjectName)\</IntDir>
+    <IncludePath>$(SolutionDir)..\..\Externals\include\Windows\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\;$(SolutionDir)../../Externals/lib/Windows/$(PlatformTarget)/;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)_$(PlatformTarget)</TargetName>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;_RAKNET_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;SAMPLEDLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\Source\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProfileGuidedDatabase>$(OutDir)$(TargetName).pgd</ProfileGuidedDatabase>
+      <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName).lib</ImportLibrary>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;OpenGL32.lib;glew32.lib;glew32s.lib;Input_$(PlatformTarget)d.lib;Network_$(PlatformTarget)d.lib;MPL_$(PlatformTarget)d.lib;ECSL_$(PlatformTarget)d.lib;Renderer_$(PlatformTarget)d.lib;RakNet_$(PlatformTarget)d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
-if not exist "$(OutDir)Content" mkdir "$(OutDir)Content"
+if not exist "$(OutDir)Content" mkdir $(OutDir)Content
 xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)Content" /d /y /s /e </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;_RAKNET_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;SAMPLEDLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\Source\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <ProfileGuidedDatabase>$(OutDir)$(TargetName).pgd</ProfileGuidedDatabase>
+      <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName).lib</ImportLibrary>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;OpenGL32.lib;glew32.lib;glew32s.lib;Input_$(PlatformTarget).lib;Network_$(PlatformTarget).lib;MPL_$(PlatformTarget).lib;ECSL_$(PlatformTarget).lib;Renderer_$(PlatformTarget).lib;RakNet_$(PlatformTarget)d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
-if not exist "$(OutDir)Content" mkdir "$(OutDir)Content"
+if not exist "$(OutDir)Content" mkdir $(OutDir)Content
 xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)Content" /d /y /s /e </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -178,32 +204,54 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)Content" /d /y /s /e </C
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;_RAKNET_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;SAMPLEDLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\Source\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <ProfileGuidedDatabase>$(OutDir)$(TargetName).pgd</ProfileGuidedDatabase>
+      <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName).lib</ImportLibrary>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;OpenGL32.lib;glew32.lib;glew32s.lib;Input_$(PlatformTarget).lib;Network_$(PlatformTarget).lib;MPL_$(PlatformTarget).lib;ECSL_$(PlatformTarget).lib;Renderer_$(PlatformTarget).lib;RakNet_$(PlatformTarget)d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
-if not exist "$(OutDir)Content" mkdir "$(OutDir)Content"
+if not exist "$(OutDir)Content" mkdir $(OutDir)Content
 xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)Content" /d /y /s /e </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\..\Source\Game\Game.cpp" />
-    <ClCompile Include="..\..\..\Source\Game\Timer.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\..\Source\Game\Timer.h" />
-  </ItemGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;SAMPLEDLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Source\</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName).lib</ImportLibrary>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
+      <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
+if not exist "$(OutDir)Content" mkdir $(OutDir)Content
+xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)Content" /d /y /s /e </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
