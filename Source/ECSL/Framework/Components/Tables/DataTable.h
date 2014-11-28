@@ -13,7 +13,7 @@ namespace ECSL
 		
 	public:
 		DataTable() { }
-		virtual ~DataTable() = 0 { }
+		virtual ~DataTable() = 0;
 		
 		// Delete table data
 		virtual void Release() = 0;

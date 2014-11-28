@@ -2,4 +2,5 @@
 
 namespace ECSL
 {
+	DataTable::~DataTable(){}
 }
