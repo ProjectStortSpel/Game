@@ -42,23 +42,23 @@ void ClearConsole()
 
 void TestECSL()
 {
-	ECSL::ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("content/components");
-	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
-	worldCreator.AddSystemGroup();
-	worldCreator.AddComponentType("Position");
-	worldCreator.AddComponentType("Velocity");
+	//ECSL::ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("content/components");
+	//ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
+	//worldCreator.AddSystemGroup();
+	//worldCreator.AddComponentType("Position");
+	//worldCreator.AddComponentType("Velocity");
 
-	ECSL::World* world = worldCreator.CreateWorld(100);
+	//ECSL::World* world = worldCreator.CreateWorld(100);
 
-	int id = world->CreateNewEntity();
-	world->CreateComponentAndAddTo("Velocity", id);
-	world->CreateComponentAndAddTo("Position", id);
+	//int id = world->CreateNewEntity();
+	//world->CreateComponentAndAddTo("Velocity", id);
+	//world->CreateComponentAndAddTo("Position", id);
 
-	world->KillEntity(id);
+	//world->KillEntity(id);
 
-	delete world;
-	delete(&ECSL::ComponentTypeManager::GetInstance());
-	delete(&ECSL::BitSet::BitSetConverter::GetInstance());
+	//delete world;
+	//delete(&ECSL::ComponentTypeManager::GetInstance());
+	//delete(&ECSL::BitSet::BitSetConverter::GetInstance());
 }
 
 
