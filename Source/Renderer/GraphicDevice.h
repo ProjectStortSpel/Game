@@ -8,6 +8,7 @@ Author: Anders, Christian
 #include "Shader.h"
 #include "SimpleText.h"
 #include "GLTimer.h"
+#include "Camera.h""
 
 namespace Renderer
 {
