@@ -206,15 +206,9 @@ bool GraphicDevice::Init()
 	if (!InitSDLWindow()) { ERRORMSG("INIT SDL WINDOW FAILED\n"); return false; }
 	if (!InitGLEW()) { ERRORMSG("GLEW_VERSION_4_3 FAILED\n"); return false; }
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
-<<<<<<< HEAD
 	//if (!InitDeferred()) { ERRORMSG("INIT DEFERRED FAILED\n"); return false; }
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	if (!InitTextRenderer()) { ERRORMSG("INIT TEXTRENDERER FAILED\n"); return false; }
-=======
-	if (!InitDeferred()) { ERRORMSG("INIT DEFERRED FAILED\n"); return false; }
-	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
-	//if (!InitTextRenderer()) { ERRORMSG("INIT TEXTRENDERER FAILED\n"); return false; }
->>>>>>> merge fix
 
 	return true;
 }
@@ -296,8 +290,9 @@ void GraphicDevice::Render()
 <<<<<<< HEAD
 /*
 =======
-
->>>>>>> merge fix
+//GLTimer glTimer;
+//glTimer.Start();
+>>>>>>> this merge gonna break the game
 	//------Render deferred--------------------------------------------------------------------------
 	glEnable(GL_DEPTH_TEST);
 
@@ -354,26 +349,8 @@ void GraphicDevice::Render()
 
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
-
-	//-----Pass2------------------
-/*	glClear(GL_COLOR_BUFFER_BIT);
-	glDisable(GL_DEPTH_TEST);
-
-	m_deferredShader2.UseProgram();
-	m_deferredShader2.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
-
-	glm::mat4 inverseProjection = glm::inverse(projectionMatrix);
-	m_deferredShader2.SetUniVariable("invProjection", mat4x4, &inverseProjection);
-
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, m_depthBuf);
-	//Full screen quad to draw to
-	glBindVertexArray(VAOFullscreenQuad);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-	//---------------------------
-	glActiveTexture(0);
-*/
-
+//m_glTimerValues.push_back(GLTimerValue("Deferred stage1: ", glTimer.Stop()));
+//glTimer.Start();
 	// FORWARD RENDER
 	// POST RENDER EFFECTS?
 	// GUI RENDER
@@ -381,14 +358,6 @@ void GraphicDevice::Render()
 	// DEBUGG TEXT
 	//glBindTexture(GL_TEXTURE_2D, m_debuggText);
 	// Use Debuggtext
-<<<<<<< HEAD
-<<<<<<< HEAD
-*/	
-=======
-<<<<<<< HEAD
-*/	
-
-=======
 	
 	glClear(GL_COLOR_BUFFER_BIT);
 	glDisable(GL_DEPTH_TEST);
@@ -401,42 +370,70 @@ void GraphicDevice::Render()
 
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, m_depthBuf);
->>>>>>> Deferred pass 2 moved to compute shader
+<<<<<<< HEAD
+	//Full screen quad to draw to
+	glBindVertexArray(VAOFullscreenQuad);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	//---------------------------
+	glActiveTexture(0);
+<<<<<<< HEAD
+
 =======
-*/	
->>>>>>> merge fix
+>>>>>>> wtf it didn't change?
+=======
+>>>>>>> this merge gonna break the game
+
+	glBindImageTexture(1, m_colorTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
 
 	glDispatchCompute(m_clientWidth * 0.0625, m_clientHeight * 0.0625, 1); // 1/16 = 0.0625
 	//---------------------------------------------------------------------------
->>>>>>> Deferred pass 2 moved to compute shader
 
-	//m_textRenderer.RenderText();
+<<<<<<< HEAD
+<<<<<<< HEAD
+	// DEBUGG TEXT
+	//glBindTexture(GL_TEXTURE_2D, m_debuggText);
+	// Use Debuggtext
+*/	
+<<<<<<< HEAD
+
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+
+	m_textRenderer.RenderText();
 	
+=======
+>>>>>>> added text delay to render
+=======
+	m_textRenderer.RenderText(m_dt);
+>>>>>>> added text delay to render
+
+<<<<<<< HEAD
+//m_glTimerValues.push_back(GLTimerValue("Deferred stage2: ", glTimer.Stop()));
+//glTimer.Start();
+>>>>>>> wtf it didn't change?
+=======
+>>>>>>> added text delay to render
+
+	m_textRenderer.RenderText();
+	
+=======
+//m_glTimerValues.push_back(GLTimerValue("Deferred stage2: ", glTimer.Stop()));
+//glTimer.Start();
+
+	m_textRenderer.RenderText(m_dt);
+
+//m_glTimerValues.push_back(GLTimerValue("Text Render: ", glTimer.Stop()));
+//glTimer.Start();
+
+>>>>>>> this merge gonna break the game
 	// FULL SCREEN QUAD
 	m_fullScreenShader.UseProgram();
 	glActiveTexture(GL_TEXTURE5);
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> Deferred pass 2 moved to compute shader
-=======
->>>>>>> merge fix
-	glBindTexture(GL_TEXTURE_2D, m_outputImage);
-	// Clear, select the rendering program and draw a full screen quad	
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
 	//glBindTexture(GL_TEXTURE_2D, m_outputImage);
->>>>>>> Deferred pass 2 moved to compute shader
->>>>>>> Deferred pass 2 moved to compute shader
-=======
->>>>>>> merge fix
 	glDrawArrays(GL_POINTS, 0, 1);
 
+//m_glTimerValues.push_back(GLTimerValue("Full Screen: ", glTimer.Stop()));
 	// Swap in the new buffer
 	SDL_GL_SwapWindow(m_window);
 }
@@ -554,31 +551,18 @@ bool GraphicDevice::InitDeferred()
 
 bool GraphicDevice::InitShaders()
 {
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
 	// compute Shader
 	m_compDeferredPass2Shader.InitShaderProgram();
 	m_compDeferredPass2Shader.AddShader("Content/Shaders/CSDeferredPass2.glsl", GL_COMPUTE_SHADER);
 	m_compDeferredPass2Shader.FinalizeShaderProgram();
 
->>>>>>> Deferred pass 2 moved to compute shader
->>>>>>> Deferred pass 2 moved to compute shader
-=======
->>>>>>> merge fix
 	// Full Screen Quad Shader
 	m_fullScreenShader.InitShaderProgram();
 	m_fullScreenShader.AddShader("content/shaders/fullscreen.vs", GL_VERTEX_SHADER);
 	m_fullScreenShader.AddShader("content/shaders/fullscreen.gs", GL_GEOMETRY_SHADER);
 	m_fullScreenShader.AddShader("content/shaders/fullscreen.ps", GL_FRAGMENT_SHADER);
 	m_fullScreenShader.FinalizeShaderProgram();
-<<<<<<< HEAD
 /*
-=======
-
->>>>>>> merge fix
 	//Deferred pass 1
 	m_deferredShader1.InitShaderProgram();
 	m_deferredShader1.AddShader("Content/Shaders/VSDeferredPass1.glsl", GL_VERTEX_SHADER);
@@ -590,39 +574,20 @@ bool GraphicDevice::InitShaders()
 	m_deferredShader2.AddShader("Content/Shaders/VSDeferredPass2.glsl", GL_VERTEX_SHADER);
 	m_deferredShader2.AddShader("Content/Shaders/FSDeferredPass2.glsl", GL_FRAGMENT_SHADER);
 <<<<<<< HEAD
-<<<<<<< HEAD
-	m_deferredShader2.FinalizeShaderProgram();
-*/
-=======
-=======
->>>>>>> merge fix
-<<<<<<< HEAD
 	m_deferredShader2.FinalizeShaderProgram();
 */
 =======
 	m_deferredShader2.FinalizeShaderProgram();*/
 
-<<<<<<< HEAD
->>>>>>> Deferred pass 2 moved to compute shader
->>>>>>> Deferred pass 2 moved to compute shader
-=======
->>>>>>> merge fix
->>>>>>> merge fix
+>>>>>>> this merge gonna break the game
 	return true;
 }
 
 bool GraphicDevice::InitBuffers()
 {
 	int location;
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> Deferred pass 2 moved to compute shader
-/*
-	m_deferredShader2.UseProgram();
-	CreateDrawQuad();
 
+<<<<<<< HEAD
 	glActiveTexture(GL_TEXTURE0);
 	glEnable(GL_TEXTURE_2D);
 	location = glGetUniformLocation(m_deferredShader2.GetShaderProgram(), "NormalTex");
@@ -633,7 +598,6 @@ bool GraphicDevice::InitBuffers()
 	location = glGetUniformLocation(m_deferredShader2.GetShaderProgram(), "ColorTex");
 	glUniform1i(location, 1);
 =======
-
 	m_compDeferredPass2Shader.UseProgram();
 
 	// Compute shader input images
@@ -641,15 +605,12 @@ bool GraphicDevice::InitBuffers()
 	//normal
 	glBindImageTexture(0, m_normTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 
-	location = glGetUniformLocation(m_compDeferredPass2Shader.GetShaderProgram(), "NormalTex");
-	glUniform1i(location, 0);
 
 	glActiveTexture(GL_TEXTURE1);
 	//color
 	glBindImageTexture(1, m_colorTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
 
-	location = glGetUniformLocation(m_compDeferredPass2Shader.GetShaderProgram(), "ColorTex");
-	glUniform1i(location, 1);
+>>>>>>> this merge gonna break the game
 
 	glActiveTexture(GL_TEXTURE2);
 	location = glGetUniformLocation(m_compDeferredPass2Shader.GetShaderProgram(), "DepthTex");
@@ -657,9 +618,10 @@ bool GraphicDevice::InitBuffers()
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
->>>>>>> Deferred pass 2 moved to compute shader
+>>>>>>> this merge gonna break the game
 	
 	// Output ImageBuffer
 	glGenTextures(1, &m_outputImage);
@@ -670,43 +632,17 @@ bool GraphicDevice::InitBuffers()
 <<<<<<< HEAD
 	glBindImageTexture(5, m_outputImage, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 =======
+<<<<<<< HEAD
 	glBindImageTexture(5, m_outputImage, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
->>>>>>> Deferred pass 2 moved to compute shader
+=======
+	glBindImageTexture(5, m_outputImage, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+>>>>>>> c65b8ddea78f628a428a175da572a96e7fa75aac
+>>>>>>> this merge gonna break the game
 
 	m_fullScreenShader.UseProgram();
 	glActiveTexture(GL_TEXTURE5);
 	location = glGetUniformLocation(m_fullScreenShader.GetShaderProgram(), "output_image");
 	glUniform1i(location, 5);
-<<<<<<< HEAD
-=======
->>>>>>> Deferred pass 2 moved to compute shader
->>>>>>> Deferred pass 2 moved to compute shader
-=======
-/*
-	m_deferredShader2.UseProgram();
-	CreateDrawQuad();
-
-	glActiveTexture(GL_TEXTURE0);
-<<<<<<< HEAD
-	glEnable(GL_TEXTURE_2D);
-	location = glGetUniformLocation(m_deferredShader2.GetShaderProgram(), "NormalTex");
-	glUniform1i(location, 0);
-
-	glActiveTexture(GL_TEXTURE1);
-	glEnable(GL_TEXTURE_2D);
-	location = glGetUniformLocation(m_deferredShader2.GetShaderProgram(), "ColorTex");
-	glUniform1i(location, 1);
-=======
-	//normal
-	glBindImageTexture(0, m_normTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
-
-
-	glActiveTexture(GL_TEXTURE1);
-	//color
-	glBindImageTexture(1, m_colorTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
-
->>>>>>> merge fix
->>>>>>> merge fix
 
 	//m_deferredShader2.UseProgram();
 	//CreateDrawQuad();
@@ -715,7 +651,9 @@ bool GraphicDevice::InitBuffers()
 <<<<<<< HEAD
 >>>>>>> push to merge with dev
 =======
->>>>>>> Deferred pass 2 moved to compute shader
+>>>>>>> wtf it didn't change?
+=======
+>>>>>>> this merge gonna break the game
 	m_deferredShader1.UseProgram();
 	GLuint texture = TextureLoader::LoadTexture("Content/Textures/tiles.png", GL_TEXTURE3);
 	glActiveTexture(GL_TEXTURE3);
@@ -729,10 +667,7 @@ bool GraphicDevice::InitBuffers()
 	glActiveTexture(GL_TEXTURE3);
 	m_Ground = Object(texture, vec3(0.0, -1.5, 0.0));
 	CreateGround();
-<<<<<<< HEAD
 */
-=======
->>>>>>> merge fix
 
 	m_fullScreenShader.UseProgram();
 	glActiveTexture(GL_TEXTURE5);
@@ -745,29 +680,24 @@ bool GraphicDevice::InitBuffers()
 
 bool GraphicDevice::InitTextRenderer()
 {
+<<<<<<< HEAD
+<<<<<<< HEAD
 	GLuint m_textImage = TextureLoader::LoadTexture("content/textures/SimpleText.png", 5);
 	return m_textRenderer.Init(&m_outputImage, m_textImage, m_clientWidth, m_clientHeight);
+=======
+	GLuint m_textImage = TextureLoader::LoadTexture("content/textures/SimpleText.png", GL_TEXTURE20);
+	return m_textRenderer.Init(m_textImage, m_clientWidth, m_clientHeight);
+>>>>>>> added text delay to render
+=======
+	GLuint m_textImage = TextureLoader::LoadTexture("content/textures/SimpleText.png", GL_TEXTURE20);
+	return m_textRenderer.Init(m_textImage, m_clientWidth, m_clientHeight);
+>>>>>>> this merge gonna break the game
 }
 bool GraphicDevice::RenderSimpleText(std::string _text, int _x, int _y)
 {
 	return m_textRenderer.RenderSimpleText(_text, _x, _y);
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> merge fix
-}
-void GraphicDevice::SetSimpleTextColor(vec4 _color)
-{
-	m_textRenderer.SetSimpleTextColor(_color);
-<<<<<<< HEAD
-}
-=======
 }
 void GraphicDevice::SetSimpleTextColor(vec4 _color)
 {
 	m_textRenderer.SetSimpleTextColor(_color);
 }
->>>>>>> Deferred pass 2 moved to compute shader
-=======
-}
->>>>>>> merge fix
