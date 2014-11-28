@@ -50,14 +50,14 @@ private:
 
 void lol()
 {
-	ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("Content/components");
-	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
+	//ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("Content/components");
+	//ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
 
-	worldCreator.AddSystemGroup();
-	worldCreator.AddSystemToCurrentGroup<TestSystem>();
+	//worldCreator.AddSystemGroup();
+	//worldCreator.AddSystemToCurrentGroup<TestSystem>();
 
-	worldCreator.AddComponentType("Velocity");
-	ECSL::World* world = worldCreator.CreateWorld(100);
+	//worldCreator.AddComponentType("Velocity");
+	//ECSL::World* world = worldCreator.CreateWorld(100);
 
 	//for (unsigned int x = 0; x < 1; ++x)
 	//{
@@ -74,10 +74,10 @@ void lol()
 	//int id = world->CreateNewEntity();
 	//world->CreateComponentAndAddTo("Position", id);
 
-	delete(world);
+	//delete(world);
 
-	ECSL::DataMap* test = new ECSL::DataMap(24);
-	delete test;
+	//ECSL::DataMap* test = new ECSL::DataMap(24);
+	//delete test;
 }
 
 int main(int argc, char** argv)
