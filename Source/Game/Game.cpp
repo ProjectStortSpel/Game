@@ -2,9 +2,6 @@
 #include <ECSL/ECSL.h>
 #include <vector>
 #include <time.h>
-#define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
-#include <crtdbg.h>
 
 using namespace ECSL;
 
@@ -89,6 +86,6 @@ int main(int argc, char** argv)
 	lol();
 	SDL_Quit();
 	//system("pause");
-	_CrtDumpMemoryLeaks();
+	//_CrtDumpMemoryLeaks();
 	return 0;
 }
