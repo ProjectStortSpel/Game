@@ -15,6 +15,7 @@ DataManager::~DataManager()
 {
 	for (int n = m_componentTables->size() - 1; n >= 0; --n)
 	{
+		delete m_componentTables->at(n);
 		m_componentTables->erase(n);
 	}
 		

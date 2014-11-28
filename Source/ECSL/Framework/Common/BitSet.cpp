@@ -18,16 +18,16 @@ BitSet::BitSetConverter::~BitSetConverter()
 {
 }
 
-void BitSet::BitSetConverter::ValueToBitSet(DataType* _out, unsigned int _numberToConvert, unsigned int _maxNumberOfBits)
+BitSet::DataType* BitSet::BitSetConverter::ValueToBitSet(unsigned int _numberToConvert, unsigned int _maxNumberOfBits)
 {
 	/*	Calculate how many DataType(s) needed to cover all numbers	*/
 	int	numberOfInts = GetIntCount(_maxNumberOfBits);
 	DataType* newBitSet = GenerateBitSet(_maxNumberOfBits);
 
-
+	return newBitSet;
 }
 
-void BitSet::BitSetConverter::ArrayToBitSet(BitSet::DataType* _out, const std::vector<unsigned int>& _numbersToConvert, unsigned int _maxNumberOfBits)
+BitSet::DataType* BitSet::BitSetConverter::ArrayToBitSet(const std::vector<unsigned int>& _numbersToConvert, unsigned int _maxNumberOfBits)
 {
 	/*	Calculate how many DataType(s) needed to cover all numbers	*/
 	int	numberOfInts = GetIntCount(_maxNumberOfBits);
@@ -46,7 +46,7 @@ void BitSet::BitSetConverter::ArrayToBitSet(BitSet::DataType* _out, const std::v
 		newBitSet[bitmaskIndex] += m_powerOfTwo[bitIndex] | 0;
 	}
 
-	_out = newBitSet;
+	return newBitSet;
 }
 
 void BitSet::BitSetConverter::BitSetToArray(std::vector<unsigned int>& _out, BitSet::DataType* _bitmask, unsigned int _bitmaskCount)

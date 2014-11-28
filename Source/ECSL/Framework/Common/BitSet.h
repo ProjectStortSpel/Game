@@ -43,8 +43,8 @@ namespace ECSL
 			~BitSetConverter();
 			static BitSetConverter& GetInstance();
 
-			void ValueToBitSet(DataType* _out, unsigned int _numberToConvert, unsigned int _maxNumberOfBits);
-			void ArrayToBitSet(DataType* _out, const std::vector<unsigned int>& _numbersToConvert, unsigned int _maxNumberOfBits);
+			DataType* ValueToBitSet(unsigned int _numberToConvert, unsigned int _maxNumberOfBits);
+			DataType* ArrayToBitSet(const std::vector<unsigned int>& _numbersToConvert, unsigned int _maxNumberOfBits);
 			void BitSetToArray(std::vector<unsigned int>& _out, DataType* _bitmask, unsigned int _bitmaskCount);
 
 		private:

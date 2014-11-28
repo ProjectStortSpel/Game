@@ -20,22 +20,10 @@ public:
 	}
 	void Initialize()
 	{
-		AddComponentTypeToFilter("TestComponenta", ECSL::ComponentFilter::Mandatory);
-		AddComponentTypeToFilter("TestComponentb", ECSL::ComponentFilter::Mandatory);
-		AddComponentTypeToFilter("TestComponentc", ECSL::ComponentFilter::Mandatory);
-		AddComponentTypeToFilter("TestComponentd", ECSL::ComponentFilter::Mandatory);
-
-		AddComponentTypeToFilter("TestComponente", ECSL::ComponentFilter::Excluded);
-		AddComponentTypeToFilter("TestComponentf", ECSL::ComponentFilter::Excluded);
-		AddComponentTypeToFilter("TestComponentg", ECSL::ComponentFilter::Excluded);
-		AddComponentTypeToFilter("TestComponenth", ECSL::ComponentFilter::Excluded);
-
-		AddComponentTypeToFilter("TestComponenti", ECSL::ComponentFilter::RequiresOneOf);
-		AddComponentTypeToFilter("TestComponentj", ECSL::ComponentFilter::RequiresOneOf);
-		AddComponentTypeToFilter("TestComponentk", ECSL::ComponentFilter::RequiresOneOf);
-		AddComponentTypeToFilter("TestComponentl", ECSL::ComponentFilter::RequiresOneOf);
-
-		SystemBitmask* test = GetSystemBitmask(ECSL::ComponentFilter::Mandatory);
+		AddComponentTypeToFilter("Position", ECSL::ComponentFilter::Mandatory);
+		AddComponentTypeToFilter("Position", ECSL::ComponentFilter::RequiresOneOf);
+		AddComponentTypeToFilter("Velocity", ECSL::ComponentFilter::RequiresOneOf);
+		AddComponentTypeToFilter("Position", ECSL::ComponentFilter::Excluded);
 
 		printf("Testsystem Initialize()\n");
 	}
@@ -69,6 +57,7 @@ void lol()
 
 	delete(world);
 	delete(&ComponentTypeManager::GetInstance());
+	delete(&BitSet::BitSetConverter::GetInstance());
 }
 
 int main(int argc, char** argv)
