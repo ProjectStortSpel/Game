@@ -39,7 +39,7 @@ namespace Renderer
 
 		// SIMPLETEXT FROM GAME
 		bool RenderSimpleText(std::string _text, int x, int y);
-		void SetSimpleTextColor(vec4 _color);
+		void SetSimpleTextColor(glm::vec4 _color);
 
 	private:
 		bool InitSDLWindow();

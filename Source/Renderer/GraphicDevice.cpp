@@ -3,7 +3,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "TextureLoader.h"
 
-using glm::vec3;
+using namespace glm;
 
 using namespace Renderer;
 
