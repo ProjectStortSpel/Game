@@ -18,15 +18,20 @@ BitSet::BitSetConverter::~BitSetConverter()
 {
 }
 
-BitSet::DataType* BitSet::BitSetConverter::GenerateBitmask(const std::vector<unsigned int>& _numbersToConvert, unsigned int _maxNumberOfBits)
+void BitSet::BitSetConverter::ValueToBitSet(DataType* _out, unsigned int _numberToConvert, unsigned int _maxNumberOfBits)
 {
 	/*	Calculate how many DataType(s) needed to cover all numbers	*/
 	int	numberOfInts = GetIntCount(_maxNumberOfBits);
 	DataType* newBitSet = GenerateBitSet(_maxNumberOfBits);
 
-	/*	Set all bits to zero	*/
-	for (int n = 0; n < numberOfInts; ++n)
-		newBitSet[n] = 0;
+
+}
+
+void BitSet::BitSetConverter::ArrayToBitSet(BitSet::DataType* _out, const std::vector<unsigned int>& _numbersToConvert, unsigned int _maxNumberOfBits)
+{
+	/*	Calculate how many DataType(s) needed to cover all numbers	*/
+	int	numberOfInts = GetIntCount(_maxNumberOfBits);
+	DataType* newBitSet = GenerateBitSet(_maxNumberOfBits);
 
 	/*	Go through all numbers and place them in the correct bitset	*/
 	for (unsigned int i = 0; i < _numbersToConvert.size(); ++i)
@@ -41,28 +46,23 @@ BitSet::DataType* BitSet::BitSetConverter::GenerateBitmask(const std::vector<uns
 		newBitSet[bitmaskIndex] += m_powerOfTwo[bitIndex] | 0;
 	}
 
-	return newBitSet;
+	_out = newBitSet;
 }
 
-std::vector<unsigned int>* BitSet::BitSetConverter::GenerateBoolArray(BitSet::DataType* _bitmask, unsigned int _bitmaskCount)
+void BitSet::BitSetConverter::BitSetToArray(std::vector<unsigned int>& _out, BitSet::DataType* _bitmask, unsigned int _bitmaskCount)
 {
 	/*	Allocate a bool array with the size of the number of bits required to cover	*/
 	int bitCount = _bitmaskCount * GetIntByteSize() * 8;
-	std::vector<unsigned int>* convertedNumbers = new std::vector<unsigned int>();
 
 	/*	Go through all bitmasks	*/
 	for (unsigned int bitmaskIndex = 0; bitmaskIndex < _bitmaskCount; ++bitmaskIndex)
 	{
-
 		/*	Iterate over all bits inside each bitmask	*/
 		for (unsigned int bitIndex = 0; bitIndex < GetIntByteSize() * 8; ++bitIndex)
 		{
 			/*	Add the number to the resulting vector if it is in the bitmask	*/
 			if ((m_powerOfTwo[bitIndex] & _bitmask[bitmaskIndex]) == m_powerOfTwo[bitIndex])
-				convertedNumbers->push_back(bitmaskIndex * GetIntByteSize() * 8 + bitIndex);
+				_out.push_back(bitmaskIndex * GetIntByteSize() * 8 + bitIndex);
 		}
 	}
-		
-
-	return convertedNumbers;
 }

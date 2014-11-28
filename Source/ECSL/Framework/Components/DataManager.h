@@ -18,8 +18,8 @@ namespace ECSL
 		void InitializeTables();
 
 		int CreateNewEntity();
-		void CreateComponentAndAddTo(const std::string& _componentType, unsigned int _id);
-		void KillEntity(unsigned int _id);
+		void CreateComponentAndAddTo(const std::string& _componentType, unsigned int _entityId);
+		void KillEntity(unsigned int _entityId);
 
 	private:
 		unsigned int m_entityCount;

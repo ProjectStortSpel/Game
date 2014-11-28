@@ -18,7 +18,10 @@ void FileHelper::GetFilesInDirectory(std::vector<std::string>& _out, const std::
 #ifdef _WINDOWS
 	HANDLE dir;
 	WIN32_FIND_DATA file_data;
-	std::string currentDirectory = GetCurrentDir(0, 0);
+	char* buf = 0;
+	buf = GetCurrentDir(0, 0);
+	std::string currentDirectory(buf);
+	delete buf;
 	std::wstring directory = StringConverter::StringToWString(currentDirectory + "/" + _directory + "/*");
 	if ((dir = FindFirstFile(directory.c_str(), &file_data)) == INVALID_HANDLE_VALUE)
 		return; /* No files found */

@@ -59,13 +59,20 @@ int DataManager::CreateNewEntity()
 	return m_entityTable->GenerateNewEntityId();
 }
 
-void DataManager::CreateComponentAndAddTo(const std::string& _componentType, unsigned int _id)
+void DataManager::CreateComponentAndAddTo(const std::string& _componentType, unsigned int _entityId)
 {
-	unsigned int tableId = ComponentTypeManager::GetInstance().GetTableId(_componentType);
-	m_componentTables->at(tableId);
+	unsigned int componentTypeId = ComponentTypeManager::GetInstance().GetTableId(_componentType);
+	m_entityTable->AddComponentTo(_entityId, componentTypeId);
 }
 
-void DataManager::KillEntity(unsigned int _id)
+void DataManager::KillEntity(unsigned int _entityId)
 {
-	m_entityTable->AddOldEntityId(_id);
+	std::vector<unsigned int> components;
+	m_entityTable->GetEntityComponents(components, _entityId);
+	/* Clear the memory used by the entity. In other words, components */
+	for (int i = 0; i < components.size(); ++i)
+	{
+		m_componentTables->at(components[i])->ClearRow(_entityId);
+	}
+	m_entityTable->AddOldEntityId(_entityId);
 }

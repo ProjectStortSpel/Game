@@ -2,6 +2,9 @@
 #include <ECSL/ECSL.h>
 #include <vector>
 #include <time.h>
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
 
 using namespace ECSL;
 
@@ -50,34 +53,22 @@ private:
 
 void lol()
 {
-	//ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("Content/components");
-	//ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
+	ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("Content/components");
+	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
+	worldCreator.AddSystemGroup();
+	worldCreator.AddSystemToCurrentGroup<TestSystem>();
+	worldCreator.AddComponentType("Position");
+	worldCreator.AddComponentType("Velocity");
+	ECSL::World* world = worldCreator.CreateWorld(100);
 
-	//worldCreator.AddSystemGroup();
-	//worldCreator.AddSystemToCurrentGroup<TestSystem>();
+	int id = world->CreateNewEntity();
+	world->CreateComponentAndAddTo("Velocity", id);
+	world->CreateComponentAndAddTo("Position", id);
 
-	//worldCreator.AddComponentType("Velocity");
-	//ECSL::World* world = worldCreator.CreateWorld(100);
+	world->KillEntity(id);
 
-	//for (unsigned int x = 0; x < 1; ++x)
-	//{
-	//	for (unsigned int i = 0; i < 100; ++i)
-	//	{
-	//		int id = world->CreateNewEntity();
-	//	}
-	//	for (unsigned int i = 0; i < 99; ++i)
-	//	{
-	//		world->KillEntity(i);
-	//	}
-	//}
-
-	//int id = world->CreateNewEntity();
-	//world->CreateComponentAndAddTo("Position", id);
-
-	//delete(world);
-
-	//ECSL::DataMap* test = new ECSL::DataMap(24);
-	//delete test;
+	delete(world);
+	delete(&ComponentTypeManager::GetInstance());
 }
 
 int main(int argc, char** argv)
@@ -85,7 +76,7 @@ int main(int argc, char** argv)
 	SDL_Init(SDL_INIT_EVERYTHING);
 	lol();
 	SDL_Quit();
-	//system("pause");
-	//_CrtDumpMemoryLeaks();
+	system("pause");
+	_CrtDumpMemoryLeaks();
 	return 0;
 }

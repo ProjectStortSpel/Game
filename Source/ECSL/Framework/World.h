@@ -21,8 +21,8 @@ namespace ECSL
 		~World();
 
 		inline unsigned int CreateNewEntity();
-		inline void CreateComponentAndAddTo(const std::string& _componentType, unsigned int _id);
-		inline void KillEntity(unsigned int _id);
+		inline void CreateComponentAndAddTo(const std::string& _componentType, unsigned int _entityId);
+		inline void KillEntity(unsigned int _entityId);
 	};
 }
 

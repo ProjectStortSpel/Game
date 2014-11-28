@@ -22,12 +22,12 @@ unsigned int World::CreateNewEntity()
 	return m_dataManager->CreateNewEntity();
 }
 
-void World::CreateComponentAndAddTo(const std::string& _componentType, unsigned int _id)
+void World::CreateComponentAndAddTo(const std::string& _componentType, unsigned int _entityId)
 {
-	m_dataManager->CreateComponentAndAddTo(_componentType, _id);
+	m_dataManager->CreateComponentAndAddTo(_componentType, _entityId);
 }
 
-void World::KillEntity(unsigned int _id)
+void World::KillEntity(unsigned int _entityId)
 {
-	m_dataManager->KillEntity(_id);
+	m_dataManager->KillEntity(_entityId);
 }
