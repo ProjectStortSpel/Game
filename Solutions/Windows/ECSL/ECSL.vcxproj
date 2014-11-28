@@ -25,6 +25,7 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Common\StringConverter.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\ComponentType.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\DataManager.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\ComponentTable.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataArray.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataMap.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataTable.h" />
@@ -46,6 +47,7 @@
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Common\StringConverter.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\ComponentType.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\DataManager.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\ComponentTable.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataArray.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataMap.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataTable.cpp" />

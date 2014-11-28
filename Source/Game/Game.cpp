@@ -1,21 +1,13 @@
-#define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
-#include <crtdbg.h>
-
-#ifdef _DEBUG
-#ifndef DBG_NEW
-#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
-#define new DBG_NEW
-#endif
-#endif 
-
 #include <SDL/SDL.h>
 #include <ECSL/ECSL.h>
 #include <vector>
 #include <time.h>
-
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
 
 using namespace ECSL;
+
 class TestSystem : public ECSL::System
 {
 public:
@@ -61,14 +53,31 @@ private:
 
 void lol()
 {
+	ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("Content/components");
 	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
 
 	worldCreator.AddSystemGroup();
 	worldCreator.AddSystemToCurrentGroup<TestSystem>();
 
-	ECSL::World* world = worldCreator.InitializeWorld(100);
+	worldCreator.AddComponentType("Velocity");
+	ECSL::World* world = worldCreator.CreateWorld(100);
 
-	delete world;
+	for (unsigned int x = 0; x < 1; ++x)
+	{
+		for (unsigned int i = 0; i < 100; ++i)
+		{
+			int id = world->CreateNewEntity();
+		}
+		for (unsigned int i = 0; i < 99; ++i)
+		{
+			world->KillEntity(i);
+		}
+	}
+
+	int id = world->CreateNewEntity();
+	world->CreateComponentAndAddTo("Position", id);
+
+	delete(world);
 
 	ECSL::DataMap* test = new ECSL::DataMap(24);
 	delete test;
@@ -78,15 +87,8 @@ int main(int argc, char** argv)
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	lol();
-
-
-
-
-	delete(&ComponentTypeManager::GetInstance());
-	delete(&BitSet::BitSetConverter::GetInstance());
 	SDL_Quit();
 	//system("pause");
-
 	_CrtDumpMemoryLeaks();
 	return 0;
 }

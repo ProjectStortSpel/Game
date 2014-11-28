@@ -4,6 +4,7 @@
 #include <SDL/SDL.h>
 #include "Tables/EntityTable.h"
 
+#include <map>
 #include <vector>
 
 namespace ECSL
@@ -11,20 +12,20 @@ namespace ECSL
 	class DECLSPEC DataManager
 	{
 	public:
-		explicit DataManager(unsigned int _entityCount, std::vector<int>* _componentTypeIds);
+		explicit DataManager(unsigned int _entityCount, std::vector<unsigned int>* _componentTypeIds);
 		~DataManager();
 
 		void InitializeTables();
 
-		void AddComponentType(int _componentType);
 		int CreateNewEntity();
-		void CreateComponentAndAddTo(std::string& _componentType, int _id);
+		void CreateComponentAndAddTo(const std::string& _componentType, unsigned int _id);
+		void KillEntity(unsigned int _id);
 
 	private:
 		unsigned int m_entityCount;
 		EntityTable* m_entityTable;
-		std::vector<DataTable*>* m_componentTables;
-		std::vector<int>* m_componentTypeIds;
+		std::map<unsigned int, DataTable*>* m_componentTables;
+		std::vector<unsigned int>* m_componentTypeIds;
 	};
 }
 

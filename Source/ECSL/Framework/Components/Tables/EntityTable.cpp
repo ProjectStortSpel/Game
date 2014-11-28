@@ -13,7 +13,7 @@ EntityTable::EntityTable(unsigned int _entityCount, unsigned int _componentCount
 
 	/* All entity id slots are available from the beginning */
 	m_availableEntityIds = new std::stack<unsigned int>();
-	for (int i = _entityCount - 1; i <= 0; --i)
+	for (int i = _entityCount - 1; i >= 0; --i)
 		m_availableEntityIds->push(i);
 }
 
@@ -55,15 +55,18 @@ bool EntityTable::EntityHasComponents(unsigned int _entityId, BitSet::DataType* 
 
 unsigned int EntityTable::GenerateNewEntityId()
 {
-	assert(m_availableEntityIds->size() == 0);
+	/* Too many entities generated in the world. Increase entity count size! */
+	assert(m_availableEntityIds->size() != 0);
 
 	unsigned int id = m_availableEntityIds->top();
 	m_availableEntityIds->pop();
-	
+	m_dataTable->ClearRow(id);
 	return id;
 }
 
 void EntityTable::AddOldEntityId(unsigned int _id)
 {
+	assert(_id < m_entityCount);
+
 	m_availableEntityIds->push(_id);
 }

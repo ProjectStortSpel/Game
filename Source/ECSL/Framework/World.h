@@ -17,11 +17,12 @@ namespace ECSL
 		SystemManager* m_systemManager;
 
 	public:
-		World(unsigned int _entityCount, std::vector<SystemWorkGroup*>* _systemWorkGroups, std::vector<int>* _componentTypeIds);
+		World(unsigned int _entityCount, std::vector<SystemWorkGroup*>* _systemWorkGroups, std::vector<unsigned int>* _componentTypeIds);
 		~World();
 
 		inline unsigned int CreateNewEntity();
-		inline void CreateComponentAndAddTo(std::string& _componentType, unsigned int _id);
+		inline void CreateComponentAndAddTo(const std::string& _componentType, unsigned int _id);
+		inline void KillEntity(unsigned int _id);
 	};
 }
 

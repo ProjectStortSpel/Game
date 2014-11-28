@@ -17,7 +17,8 @@ namespace ECSL
 		
 		// Delete table data
 		virtual void Release() = 0;
-		virtual void ClearData() = 0;
+		virtual void ClearRow(unsigned const int _row) = 0;
+		virtual void ClearTable() = 0;
 
 		virtual const int GetRowCount() const = 0;
 

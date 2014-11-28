@@ -2,7 +2,7 @@
 #include "../Managers/ComponentTypeManager.h"
 using namespace ECSL;
 
-World::World(unsigned int _entityCount, std::vector<SystemWorkGroup*>* _systemWorkGroups, std::vector<int>* _componentTypeIds)
+World::World(unsigned int _entityCount, std::vector<SystemWorkGroup*>* _systemWorkGroups, std::vector<unsigned int>* _componentTypeIds)
 {
 	m_dataManager = new DataManager(_entityCount, _componentTypeIds);
 	m_systemManager = new SystemManager(_systemWorkGroups);
@@ -22,7 +22,12 @@ unsigned int World::CreateNewEntity()
 	return m_dataManager->CreateNewEntity();
 }
 
-void CreateComponentAndAddTo(std::string& _componentType, unsigned int _id)
+void World::CreateComponentAndAddTo(const std::string& _componentType, unsigned int _id)
 {
+	m_dataManager->CreateComponentAndAddTo(_componentType, _id);
+}
 
+void World::KillEntity(unsigned int _id)
+{
+	m_dataManager->KillEntity(_id);
 }

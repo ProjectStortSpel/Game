@@ -35,8 +35,6 @@ namespace ECSL
 		unsigned int m_componentByteCount;
 		unsigned int m_componentIntCount;
 		std::stack<unsigned int>* m_availableEntityIds;
-
-		void ClearEntityData(unsigned int);
 	};
 }
 

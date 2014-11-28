@@ -24,10 +24,14 @@ namespace ECSL
 			free(m_dataTable);
 	}
 
-	void DataArray::ClearData()
+	void DataArray::ClearRow(unsigned const int _row)
 	{
-		Release();
-		m_dataTable = (char*)calloc(m_rowCount * m_bytesPerRow, sizeof(char));
+		memset(m_dataTable + (_row * m_bytesPerRow), 0, m_bytesPerRow);
+	}
+
+	void DataArray::ClearTable()
+	{
+		memset(m_dataTable, 0, (m_rowCount * m_bytesPerRow));
 	}
 
 	DataLocation DataArray::GetData(unsigned const int _row) const

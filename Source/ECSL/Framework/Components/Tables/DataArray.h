@@ -18,8 +18,8 @@ namespace ECSL
 		~DataArray();
 		
 		void Release();
-		void ClearData();
-		void ClearRow();
+		void ClearRow(unsigned const int _row);
+		void ClearTable();
 
 		inline DataLocation GetData(unsigned const int _row) const;
 		inline DataLocation GetData(unsigned const int _row, unsigned const int _column) const;
