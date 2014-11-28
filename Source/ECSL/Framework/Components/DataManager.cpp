@@ -69,7 +69,7 @@ void DataManager::KillEntity(unsigned int _entityId)
 	std::vector<unsigned int> components;
 	m_entityTable->GetEntityComponents(components, _entityId);
 	/* Clear the memory used by the entity. In other words, components */
-	for (int i = 0; i < components.size(); ++i)
+	for (unsigned int i = 0; i < components.size(); ++i)
 	{
 		m_componentTables->at(components[i])->ClearRow(_entityId);
 	}

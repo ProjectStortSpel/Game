@@ -55,17 +55,17 @@ void lol()
 {
 	ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("Content/components");
 	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
-	worldCreator.AddSystemGroup();
-	worldCreator.AddSystemToCurrentGroup<TestSystem>();
-	worldCreator.AddComponentType("Position");
+	//worldCreator.AddSystemGroup();
+	//worldCreator.AddSystemToCurrentGroup<TestSystem>();
+	//worldCreator.AddComponentType("Position");
 	worldCreator.AddComponentType("Velocity");
 	ECSL::World* world = worldCreator.CreateWorld(100);
 
-	int id = world->CreateNewEntity();
-	world->CreateComponentAndAddTo("Velocity", id);
-	world->CreateComponentAndAddTo("Position", id);
+	//int id = world->CreateNewEntity();
+	//world->CreateComponentAndAddTo("Velocity", id);
+	//world->CreateComponentAndAddTo("Position", id);
 
-	world->KillEntity(id);
+	//world->KillEntity(id);
 
 	delete(world);
 	delete(&ComponentTypeManager::GetInstance());
