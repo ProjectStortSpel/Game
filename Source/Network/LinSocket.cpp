@@ -157,7 +157,9 @@ bool LinSocket::Listen(int _backlog)
 }
 bool LinSocket::SetNonBlocking(bool _value)
 {
-	printf("SetNonBlocking not yet working on linux! Something should probably fix this.\n");
+	int opt = 1;
+	ioctl(m_socket, FIONBIO, &opt);
+
 	return true;
 }
 bool LinSocket::CloseSocket()
