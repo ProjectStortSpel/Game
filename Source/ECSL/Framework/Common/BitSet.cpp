@@ -20,12 +20,9 @@ BitSet::BitSetConverter::~BitSetConverter()
 
 BitSet::DataType* BitSet::BitSetConverter::GenerateBitmask(const std::vector<unsigned int>& _numbersToConvert, unsigned int _maxNumberOfBits)
 {
-	return 0;
 	/*	Calculate how many DataType(s) needed to cover all numbers	*/
 	int	numberOfInts = GetIntCount(_maxNumberOfBits);
-	return 0;
 	DataType* newBitSet = GenerateBitSet(_maxNumberOfBits);
-	return 0;
 
 	/*	Set all bits to zero	*/
 	for (int n = 0; n < numberOfInts; ++n)

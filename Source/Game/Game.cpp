@@ -62,24 +62,16 @@ private:
 void lol()
 {
 	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
+
 	worldCreator.AddSystemGroup();
 	worldCreator.AddSystemToCurrentGroup<TestSystem>();
+
 	ECSL::World* world = worldCreator.InitializeWorld(100);
 
 	delete world;
 
-	//delete sGroup;
-	//delete cList;
-	int a = 2;
-	//ECSL::Parser* parser = new ECSL::Parser();
-	//ECSL::Section* section = parser->ParseFile("content/components/component.cmp");
-	//ECSL::ComponentTypeReader reader;
-	//std::vector<ECSL::ComponentType*> componentTypes = *reader.ReadComponents("content/components/component.cmp", section);
-	//delete(parser);
-	//delete(section);
-	////worldInitializer.Add<int>();
-
-	//ECSL::ComponentTypeManager::GetInstance().AddComponentTypesFromDirectory("Content/components");
+	ECSL::DataMap* test = new ECSL::DataMap(24);
+	delete test;
 }
 
 int main(int argc, char** argv)
@@ -93,7 +85,7 @@ int main(int argc, char** argv)
 	delete(&ComponentTypeManager::GetInstance());
 	delete(&BitSet::BitSetConverter::GetInstance());
 	SDL_Quit();
-	system("pause");
+	//system("pause");
 
 	_CrtDumpMemoryLeaks();
 	return 0;

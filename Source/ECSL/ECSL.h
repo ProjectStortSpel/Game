@@ -5,6 +5,7 @@
 #include "Framework/Components/ComponentType.h"
 #include "Framework/Components/DataManager.h"
 #include "Framework/Components/Tables/DataArray.h"
+#include "Framework/Components/Tables/DataMap.h"
 #include "Framework/Components/Tables/DataTable.h"
 #include "Framework/Parsing/ComponentTypeReader.h"
 #include "Framework/Parsing/Parser.h"
