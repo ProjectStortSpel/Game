@@ -300,7 +300,7 @@ void GraphicDevice::Render()
 	glClearColor(0.1, 0.1, 0.15, 1.0f);
 
 	m_deferredShader1.UseProgram();
-	rot += 0.05f;
+	rot += 40.f*m_dt;
 	//--------Uniforms-------------------------------------------------------------------------
 	glm::mat4 projectionMatrix = glm::perspective(45.0f, (float)m_clientWidth / (float)m_clientHeight, 0.2f, 100.f);
 	m_deferredShader1.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
@@ -559,7 +559,7 @@ bool GraphicDevice::InitBuffers()
 	glBindTexture(GL_TEXTURE_2D, m_outputImage);
 	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, m_clientWidth, m_clientHeight);
 
-	glBindImageTexture(5, m_outputImage, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
+	glBindImageTexture(5, m_outputImage, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 
 	m_fullScreenShader.UseProgram();
 	glActiveTexture(GL_TEXTURE5);
