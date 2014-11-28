@@ -1,58 +1,53 @@
 #ifndef PARSER_H
 #define PARSER_H
+
+#include <SDL/SDL.h>
 #include <string>
 #include <vector>
 #include <map>
 
+#include "Section.h"
+#include "../Components/ComponentType.h"
+
 namespace ECSL
 {
-	struct SettingsStruct
-	{
-		std::string	Name;
-		std::string	Value;
-	};
-	struct DataStruct
-	{
-		std::string	Name;
-		int ByteSize;
-	};
-
-	struct ParsedComponent
-	{
-		std::string	Name;
-		std::vector<SettingsStruct> Settings;
-		std::vector<DataStruct> Data;
-		std::vector<std::string> DebugStrings;
-	};
-
 	class Parser
 	{
 	public:
 		Parser();
-		~Parser();
+		DECLSPEC ~Parser();
 
-		void ParseFile(std::string _filename);
-
+		bool ParseFile(Section& _out, const std::string& _filePath);
 	private:
-		bool	ParseComponentName(ParsedComponent& _Component, std::vector<std::string>& _FileRows);
+		enum LineType { None, SectionStartBracket, SectionEndBracket, Token };
+		enum SymbolType { Alphanumeric, Bracket, TokenDelimiter, EmptySpace, Invalid };
+		struct Line
+		{
+			std::string Text;
+			LineType Type;
+			unsigned int DelimiterSymbolCounter;
 
-		bool	ParseSection(ParsedComponent& _Component, std::vector<std::string>& _FileRows, std::vector<std::string>& _SectionData);
-		bool	ParseComponentSettingsEntry(ParsedComponent& _Component, std::string _SettingsLine);
-		bool	ParseComponentDataEntry(ParsedComponent& _Component, std::string _SettingsLine);
-		int		StringToByteSize(std::string _String);
+			Line() : Text(""), Type(None), DelimiterSymbolCounter(0) { }
+		};
 
-		//Will check so the wrap for an element is correct.
-		//I.e. has a name and {} surrounding it.
-		bool	CheckWrapSyntax(std::vector<std::string>& _FileRows);
+		const char DELIMITER_SYMBOL = '"';
+		const char NEW_SECTION_SYMBOL = '{';
+		const char END_SECTION_SYMBOL = '}';
 
-		//Strips the string from the banned symbols in the map
-		std::string	StripString(std::string _text, std::map<char, bool>& _bannedSymbols);
+		bool ValidateSymbols(const std::string& _fileLine);
+		void TrimLine(std::string& _fileLine);
+		void GetLineData(Line& _line, const std::string& _fileLine);
 
-		//Will parse the name of a given string, removing " symbols
-		std::string ParseName(std::string _text);
+		bool ValidateSyntax(const std::vector<Line>& _lines);
+		bool ValidateLineSyntax(const std::vector<Line>& _lines);
+		bool ValidateLineDependencies(const std::vector<Line>& _lines);
+		void ConvertLinesToTokens(std::vector<std::vector<std::string>>& _tokenizedLines, const std::vector<Line>& _lines);
+		
+		void ConvertTokensToSections(Section* _sectionTree, const std::vector<std::vector<std::string>>& _tokenizedLines, const std::vector<Line>& _lines);
+		inline void AddTokens(Section* _currentSection, const std::vector<std::string>& _tokens);
 
-
-		std::map<std::string, int> m_byteConversion;
+		inline SymbolType GetSymbolType(char _symbol);
+		inline bool IsLineEmpty(const std::string& _line);
 	};
 }
 
