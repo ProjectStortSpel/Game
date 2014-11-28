@@ -26,6 +26,9 @@
     <ClInclude Include="..\..\..\Source\Renderer\SimpleText.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\Camera.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp">
@@ -38,6 +41,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Renderer\SimpleText.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Renderer\Camera.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
