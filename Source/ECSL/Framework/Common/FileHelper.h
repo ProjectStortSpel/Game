@@ -2,6 +2,7 @@
 #define FILEHELPER_H
 
 #include <vector>
+#include <string>
 
 namespace ECSL
 {
