@@ -2,8 +2,6 @@
 #include <stdio.h>
 using namespace Input;
 
-InputWrapper* InputWrapper::m_iwInstance = 0;
-
 #pragma region Constructor/Destructor and GetInstance
 InputWrapper::InputWrapper()
 {
