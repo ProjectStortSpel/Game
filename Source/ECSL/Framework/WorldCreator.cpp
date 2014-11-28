@@ -40,7 +40,7 @@ World* WorldCreator::CreateWorld(unsigned int _entityCount)
 bool WorldCreator::IsIdAdded(unsigned int _id)
 {
 	//	Check if the component type is already added
-	for (int i = 0; i < m_componentTypeIds->size(); ++i)
+	for (unsigned int i = 0; i < m_componentTypeIds->size(); ++i)
 		if (_id == m_componentTypeIds->at(i))
 			return true;
 	return false;

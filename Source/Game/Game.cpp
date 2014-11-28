@@ -61,32 +61,14 @@ void lol()
 	worldCreator.AddComponentType("Velocity");
 	ECSL::World* world = worldCreator.CreateWorld(100);
 
-	for (unsigned int x = 0; x < 1; ++x)
-	{
-		for (unsigned int i = 0; i < 100; ++i)
-		{
-			int id = world->CreateNewEntity();
-		}
-		for (unsigned int i = 0; i < 99; ++i)
-		{
-			world->KillEntity(i);
-		}
-	}
-
 	int id = world->CreateNewEntity();
+	world->CreateComponentAndAddTo("Velocity", id);
 	world->CreateComponentAndAddTo("Position", id);
 
+	world->KillEntity(id);
+
 	delete(world);
-
-	//ECSL::Parser* parser = new ECSL::Parser();
-	//ECSL::Section* section = parser->ParseFile("content/components/component.cmp");
-	//ECSL::ComponentTypeReader reader;
-	//std::vector<ECSL::ComponentType*> componentTypes = *reader.ReadComponents("content/components/component.cmp", section);
-	//delete(parser);
-	//delete(section);
-	////worldInitializer.Add<int>();
-
-	//ECSL::ComponentTypeManager::GetInstance().AddComponentTypesFromDirectory("Content/components");
+	delete(&ComponentTypeManager::GetInstance());
 }
 
 int main(int argc, char** argv)

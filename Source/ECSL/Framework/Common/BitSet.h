@@ -18,7 +18,7 @@ namespace ECSL
 		}
 		inline DECLSPEC DataType* GenerateBitSet(unsigned int _bitCount)
 		{ 
-			return new DataType[(_bitCount / GetIntByteSize()) + 1];
+			return (DataType*)calloc((_bitCount / GetIntByteSize()) + 1, GetIntByteSize());
 		}
 		inline DECLSPEC unsigned int GetByteCount(unsigned int _bitCount) 
 		{ 
@@ -28,6 +28,14 @@ namespace ECSL
 		{ 
 			return (unsigned int)ceilf((float)_bitCount / (GetIntByteSize() * 8));
 		}
+		inline DECLSPEC unsigned int GetBitSetIndex(unsigned int _bitIndex)
+		{
+			return (unsigned int)floor((float)_bitIndex / (BitSet::GetIntByteSize() * 8));
+		}
+		inline DECLSPEC unsigned int GetBitIndex(unsigned int _bitIndex)
+		{
+			return _bitIndex % (GetIntByteSize() * 8);
+		}
 
 		class DECLSPEC BitSetConverter
 		{
@@ -35,9 +43,9 @@ namespace ECSL
 			~BitSetConverter();
 			static BitSetConverter& GetInstance();
 
-			DataType* GenerateBitmask(const std::vector<unsigned int>& _numbersToConvert, unsigned int _maxNumberOfBits);
-			std::vector<unsigned int>* GenerateBoolArray(DataType* _bitmask, unsigned int _bitmaskCount);
-
+			void ValueToBitSet(DataType* _out, unsigned int _numberToConvert, unsigned int _maxNumberOfBits);
+			void ArrayToBitSet(DataType* _out, const std::vector<unsigned int>& _numbersToConvert, unsigned int _maxNumberOfBits);
+			void BitSetToArray(std::vector<unsigned int>& _out, DataType* _bitmask, unsigned int _bitmaskCount);
 
 		private:
 			BitSetConverter();

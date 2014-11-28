@@ -19,22 +19,24 @@ namespace ECSL
 	class DECLSPEC EntityTable
 	{
 	public:
-		EntityTable(unsigned int _entityCount, unsigned int _componentCount);
+		EntityTable(unsigned int _entityCount, unsigned int _componentTypeCount);
 		~EntityTable();
 
-		inline EntityState GetEntityState(unsigned int _entityId) { return (EntityState)(*(int*)(m_dataTable->GetData(_entityId))); }
-		inline bool EntityHasComponent(unsigned int _entityId, std::string _componentType);
-		inline bool EntityHasComponents(unsigned int _entityId, BitSet::DataType* _mandatoryMask, BitSet::DataType* _oneOfMask, BitSet::DataType* _exclusionMask);
-		inline unsigned int GenerateNewEntityId();
-		inline void AddOldEntityId(unsigned int _id);
+		void AddComponentTo(unsigned int _entityId, unsigned int _componentTypeId);
+		bool EntityHasComponent(unsigned int _entityId, unsigned int _componentTypeId);
+		bool EntityHasComponents(unsigned int _entityId, BitSet::DataType* _mandatoryMask, BitSet::DataType* _oneOfMask, BitSet::DataType* _exclusionMask);
+		unsigned int GenerateNewEntityId();
+		void AddOldEntityId(unsigned int _entityId);
 
+		inline EntityState GetEntityState(unsigned int _entityId) { return (EntityState)(*(int*)(m_dataTable->GetData(_entityId))); }
+		void GetEntityComponents(std::vector<unsigned int>& _out, unsigned int _entityId);
 	private:
-		DataArray* m_dataTable;
 		unsigned int m_entityCount;
-		unsigned int m_componentCount;
+		unsigned int m_componentTypeCount;
 		unsigned int m_componentByteCount;
 		unsigned int m_componentIntCount;
 		std::stack<unsigned int>* m_availableEntityIds;
+		DataArray* m_dataTable;
 	};
 }
 
