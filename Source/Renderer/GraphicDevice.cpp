@@ -521,7 +521,7 @@ bool GraphicDevice::InitBuffers()
 
 	
 	m_deferredShader1.UseProgram();
-	GLuint texture = TextureLoader::LoadTexture("Content/Textures/tiles.png", GL_TEXTURE3);
+	GLuint texture = TextureLoader::LoadTexture("content/textures/tiles.png", GL_TEXTURE3);
 	glActiveTexture(GL_TEXTURE3);
 	location = glGetUniformLocation(m_deferredShader1.GetShaderProgram(), "diffuseTex");
 	glUniform1i(location, 3);
@@ -529,7 +529,7 @@ bool GraphicDevice::InitBuffers()
 	m_Quad = Object(texture, vec3(0.0));
 	CreateQuad();
 
-	texture = TextureLoader::LoadTexture("Content/Textures/floor.png", GL_TEXTURE3);
+	texture = TextureLoader::LoadTexture("content/textures/floor.png", GL_TEXTURE3);
 	glActiveTexture(GL_TEXTURE3);
 	m_Ground = Object(texture, vec3(0.0, -1.5, 0.0));
 	CreateGround();
