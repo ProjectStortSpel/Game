@@ -40,3 +40,31 @@ std::function<void(PacketHandler* _packetHandler, Packet* _packet)>* BaseNetwork
 
 	return 0;
 }
+
+
+void BaseNetwork::HandlePacket(Packet* _packet)
+{
+	if (!_packet)
+		return;
+
+	char type = _packet->Data[0];
+
+	if (type == NetTypeMessageId::ID_CUSTOM_PACKET)
+	{
+		std::string functionName((char*)&_packet->Data[1]);
+		if (m_userFunctions.find(functionName) != m_userFunctions.end())
+		{
+			m_userFunctions[functionName](&m_packetHandler, _packet);
+		}
+
+	}
+	else
+	{
+		if (m_networkFunctions.find(type) != m_networkFunctions.end())
+		{
+			m_networkFunctions[type](&m_packetHandler, _packet);
+		}
+	}
+
+	SAFE_DELETE(_packet);
+}

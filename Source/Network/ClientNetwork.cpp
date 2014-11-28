@@ -49,8 +49,23 @@ bool ClientNetwork::Connect()
 		m_socketBound = true;
 	}
 
-	if (!m_socket->Connect(m_remoteAddress.c_str(), m_outgoingPort))
+	bool connected = false;
+	for (int i = 0; i < 5; ++i)
+	{
+		connected = m_socket->Connect(m_remoteAddress.c_str(), m_outgoingPort);
+		if (connected)
+			break;
+
+		NetSleep(1500);
+	}
+
+	if (!connected)
 		return false;
+	
+	m_packetHandler.StartPack(NetTypeMessageId::ID_PASSWORD_ATTEMPT);
+	m_packetHandler.WriteString(m_password.c_str());
+	auto packet = m_packetHandler.EndPack();
+	Send(packet);
 
 	m_receivePacketsThreadAlive = true;
 	m_receivePacketsThread = std::thread(&ClientNetwork::ReceivePackets, this);
@@ -92,7 +107,7 @@ void ClientNetwork::ReceivePackets()
 			p->Sender = m_socket->GetNetConnection();
 			memcpy(p->Data, m_packetData, packetSize);
 
-			SAFE_DELETE_PACKET(p);
+			HandlePacket(p);
 
 		}
 		else if (result == 0)

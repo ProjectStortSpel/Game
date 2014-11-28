@@ -59,7 +59,7 @@ char PacketHandler::StartUnpack(Packet* _packet)
 
 void PacketHandler::EndUnpack()
 {
-	SAFE_DELETE(m_packetReceive);
+	m_packetReceive = 0;
 	m_positionReceive = 0;
 }
 

@@ -179,19 +179,6 @@ void ServerNetwork::ReceivePackets(ISocket* _socket, int _id)
 			p->Sender = _socket->GetNetConnection();
 			memcpy(p->Data, m_packetData, packetSize);
 
-			p->Length = 10;
-			p->Data = new unsigned char[10];
-			p->Data[0] = NetTypeMessageId::ID_PASSWORD_ATTEMPT;
-			p->Data[1] = 'P';
-			p->Data[2] = 'E';
-			p->Data[3] = 'T';
-			p->Data[4] = 'T';
-			p->Data[5] = 'S';
-			p->Data[6] = 'O';
-			p->Data[7] = 'N';
-			p->Data[8] = '\0';
-
-
 			if (NET_DEBUG)
 				printf("Received message with length \"%i\" from client \"%s:%i\".\n", packetSize, p->Sender.IpAddress.c_str(), p->Sender.Port);
 			HandlePacket(p);
@@ -228,30 +215,5 @@ void ServerNetwork::ListenForConnections(void)
 
 		m_receivePacketsAlive.push_back(true);
 		m_receivePacketsThreads.push_back(std::thread(&ServerNetwork::ReceivePackets, this, newConnection, m_receivePacketsThreads.size()));
-	}
-}
-
-void ServerNetwork::HandlePacket(Packet* _packet)
-{
-	if (!_packet)
-		return;
-
-	char type = _packet->Data[0];
-
-	if (type == NetTypeMessageId::ID_CUSTOM_PACKET)
-	{
-		std::string functionName((char*)&_packet->Data[1]);
-		if (m_userFunctions.find(functionName) != m_userFunctions.end())
-		{
-			m_userFunctions[functionName](&m_packetHandler,_packet);
-		}
-
-	}
-	else
-	{
-		if (m_networkFunctions.find(type) != m_networkFunctions.end())
-		{
-			m_networkFunctions[type](&m_packetHandler, _packet);
-		}
 	}
 }

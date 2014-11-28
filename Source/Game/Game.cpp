@@ -50,13 +50,28 @@ int main(int argc, char** argv)
 	SDL_Init(SDL_INIT_EVERYTHING);
 	Timer timer;
 
+
+	std::string input;
+	printf("Starting network:\n\n");
+	printf("Press 's' to start a new server, 'c' to start a new client,\nor anything else to skip network: ");
+	std::getline(std::cin, input);
+	ClearConsole();
+	ServerNetwork server;
+	ClientNetwork client;
+
+	if (input.compare("s") == 0)
+	{
+		server.Start(6112, "localhest", 8);
+	}
+	else if (input.compare("c") == 0)
+	{
+		client.Connect("127.0.0.1", "localhest", 6112, 0);
+	}
+	
+
 	Renderer::GraphicDevice* gd = new Renderer::GraphicDevice();
 	Input::InputWrapper INPUT = Input::InputWrapper::GetInstance();
 	gd->Init();
-
-	ServerNetwork server;
-	server.Start(6112, "", 8);
-
 
 	bool lol = true;
 	while (lol)
@@ -90,5 +105,7 @@ int main(int argc, char** argv)
 	delete gd;
 
 	SDL_Quit();
+
+	_CrtDumpMemoryLeaks();
 	return 0;
 }

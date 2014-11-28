@@ -32,8 +32,6 @@ private:
 	void ReceivePackets(ISocket* _socket, int _id);
 	void ListenForConnections(void);
 
-	void HandlePacket(Packet* _packet);
-
 	void TestNetwork(PacketHandler* _packetHandler, Packet* _packet);
 	void TestUser(PacketHandler* _packetHandler, Packet* _packet);
 

@@ -42,6 +42,7 @@ public:
 
 protected:
 	void TriggerEvent(NetMessageHook _function, NetConnection _connection);
+	void HandlePacket(Packet* _packet);	
 protected:
 
 #pragma warning( disable : 4251 )
