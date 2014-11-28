@@ -2,7 +2,8 @@
 #define SYSTEM_H
 
 #include <SDL/SDL.h>
-#include "ECSL/Framework/Systems/SystemBitmask.h"
+#include "ECSL/Framework/Systems/SystemBitMask.h"
+
 #include <map>
 #include <vector>
 
