@@ -20,7 +20,6 @@ Mouse::Mouse()
 
 Mouse::~Mouse()
 {
-
 }
 
 void Mouse::Update()

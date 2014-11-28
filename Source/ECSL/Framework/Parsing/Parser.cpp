@@ -1,321 +1,316 @@
 #include "Parser.h"
+
 #include <fstream>
 #include <algorithm>
 #include <string>
-
+#include <sstream>
 #include <stdio.h>
+#include <cctype>
+#include <stack>
 
 using namespace ECSL;
 
 Parser::Parser()
 {
-	//	Add more symbols
-	m_byteConversion = std::map<std::string, int>();
-	m_byteConversion["float"] = sizeof(float);
-	m_byteConversion["int"] = sizeof(int);
-	m_byteConversion["double"] = sizeof(double);
-	m_byteConversion["pointer"] = sizeof(nullptr);
+
 }
+
 Parser::~Parser()
 {
 
 }
 
-void Parser::ParseFile(std::string _filename)
+bool Parser::ParseFile(Section& _out, const std::string& _filePath)
 {
-	std::ifstream fStream;
-	fStream.open(_filename);
+	std::ifstream file;
+	file.open(_filePath);
+	if (!file)
+		return 0;
 
-	if (!fStream)
-		return;
-
-	//	Create banned symbols
-	std::map<char, bool> bannedSymbols = std::map<char, bool>();
-	bannedSymbols['\t'] = true;
-	bannedSymbols[' '] = true;
-
-	//	Read the file
-	std::vector<std::string> fileRows = std::vector<std::string>();
-	std::string tLine;
-	while (std::getline(fStream, tLine))
+	std::vector<Line> lines;
+	std::string fileLine;
+	/* Loop through each line in file. Validate symbols and trim the line */
+	for (int i = 0; std::getline(file, fileLine); ++i)
 	{
-		tLine = StripString(tLine, bannedSymbols);
-
-		if (tLine.size() != 0)
-			fileRows.push_back(tLine);
-	}
-	fStream.close();
-
-	//	Start parsing out the different parts
-	ParsedComponent	tComponent = ParsedComponent();
-	std::vector<std::string> stringVector = std::vector<std::string>();
-
-	//	Parse the name for the component
-	if (!ParseComponentName(tComponent, fileRows))
-	{
-		printf("Something went wrong with 'ParseComponentName' method.\n");
-		return;
-	}
-	//	Parse the settings part
-	if (!ParseSection(tComponent, fileRows, stringVector) || stringVector.size() == 0)
-	{
-		printf("Something went wrong with 'ParseSection'(SETTINGS) method.\n");
-		return;
-	}
-
-	//	Parse the data entries
-	for (int n = 0; n < stringVector.size(); ++n)
-		ParseComponentSettingsEntry(tComponent, stringVector[n]);
-	stringVector.clear();
-
-	//	Parse the data part
-	if (!ParseSection(tComponent, fileRows, stringVector) || stringVector.size() == 0)
-	{
-		printf("Something went wrong with 'ParseSection'(DATA) method.\n");
-		return;
-	}
-
-	//	Parse the data entries
-	for (int n = 0; n < stringVector.size(); ++n)
-		ParseComponentDataEntry(tComponent, stringVector[n]);
-	stringVector.clear();
-
-	//	Parse the debug part
-	if (!ParseSection(tComponent, fileRows, stringVector) || stringVector.size() == 0)
-	{
-		printf("Something went wrong with 'ParseSection'(DEBUG) method.\n");
-		return;
-	}
-	//	Parse the data entries
-	for (int n = 0; n < stringVector.size(); ++n)
-		tComponent.DebugStrings.push_back(stringVector[n]);
-	stringVector.clear();
-}
-
-bool Parser::ParseComponentName(ParsedComponent& _Component, std::vector<std::string>& _FileRows)
-{
-	//	Check so syntax is followed. -> "Name"{}
-	if (!CheckWrapSyntax(_FileRows))
-		return false;
-
-	//	Parse the name
-	std::string	cName = ParseName(_FileRows[0]);
-
-	//	See if name is correct
-	if (cName.size() == 0)
-		return false;
-
-	//	Update the component with the new name and return
-	_Component.Name = cName;
-
-	//	Now remove the name and tags{} from the vector
-	_FileRows.erase(_FileRows.begin());		//	"<Name>"
-	_FileRows.erase(_FileRows.begin());		//	{
-	_FileRows.erase(_FileRows.end() - 1);	//	}
-
-	return true;
-}
-bool Parser::ParseSection(ParsedComponent& _Component, std::vector<std::string>& _FileRows, std::vector<std::string>& _SectionData)
-{
-	//	Check so syntax is followed. -> "Name"{}
-	if (!CheckWrapSyntax(_FileRows))
-		return false;
-
-	//	Parse the name
-	std::string	cName = ParseName(_FileRows[0]);
-
-	//	See if name is correct
-	if (cName.size() == 0)
-		return false;
-
-	//	Count number of settings
-	int	nSettings = 0;
-	for (int i = 2; i < _FileRows.size(); ++i)
-	{
-		if (_FileRows[i] == "}")
-			break;
-
-		++nSettings;
-	}
-
-	//	No settings
-	if (nSettings == 0)
-		return false;
-
-	//	Pop the two first rows -> Name and {
-	_FileRows.erase(_FileRows.begin());
-	_FileRows.erase(_FileRows.begin());
-
-	//	Start parsing settings entries
-	for (int n = 0; n < nSettings; ++n)
-	{
-		std::string tEntry = _FileRows[0];
-		_SectionData.push_back(tEntry);
-
-		//	Pop that row from the read lines
-		_FileRows.erase(_FileRows.begin());
-	}
-	//	Pop the last }
-	_FileRows.erase(_FileRows.begin());
-
-	return true;
-}
-
-bool Parser::ParseComponentSettingsEntry(ParsedComponent& _Component, std::string _SettingsLine)
-{
-	//	Split the string
-	int separateIndex[2] = { -1, -1 };
-	std::vector<std::string> splitEntries = std::vector<std::string>();
-	for (int i = _SettingsLine.size() - 1; i >= 0; --i)
-	{
-		char tChar = _SettingsLine[i];
-		if (tChar == '"')
+		if (!ValidateSymbols(fileLine))
 		{
-			if (separateIndex[1] == -1)
-				separateIndex[1] = i;
-			else if (separateIndex[0] == -1)
-				separateIndex[0] = i;
-
-			if (separateIndex[0] != -1 && separateIndex[1] != -1)
-			{
-				splitEntries.push_back(_SettingsLine.substr(separateIndex[0] + 1, (separateIndex[1] - separateIndex[0]) - 1));
-				separateIndex[0] = -1;
-				separateIndex[1] = -1;
-			}
+			printf("Invalid symbols used in file: %s\nLine: %i\n", _filePath.c_str(), i + 1);
+			return 0;
 		}
-
-
+		TrimLine(fileLine);
+		/* No point in adding empty lines */
+		if (!IsLineEmpty(fileLine))
+		{
+			Line line;
+			GetLineData(line, fileLine);
+			lines.push_back(line);
+		}
 	}
-	//	Not enough data
-	if (splitEntries.size() <= 1)
-		return false;
+	file.close();
 
-	std::string	tField = splitEntries[splitEntries.size() - 1];
-	std::string tValue = splitEntries[0];
+	/* Check if the structure of the file is correct */
+	if (!ValidateSyntax(lines))
+	{
+		printf("Invalid syntax in file: %s\n", _filePath.c_str());
+		return 0;
+	}
 
-	SettingsStruct	newEntry = SettingsStruct();
-	newEntry.Name = tField;
-	newEntry.Value = tValue;
+	std::vector<std::vector<std::string>> tokenizedLines;
+	ConvertLinesToTokens(tokenizedLines, lines);
 
-	_Component.Settings.push_back(newEntry);
-
+	_out = Section();
+	ConvertTokensToSections(&_out, tokenizedLines, lines);
 
 	return true;
 }
 
-bool Parser::ParseComponentDataEntry(ParsedComponent& _Component, std::string _SettingsLine)
+bool Parser::ValidateSymbols(const std::string& _fileLine)
 {
-	//	Split the string
-	int separateIndex[2] = { -1, -1 };
-	std::vector<std::string> splitEntries = std::vector<std::string>();
-	for (int i = _SettingsLine.size() - 1; i >= 0; --i)
+	for (unsigned int symbolIndex = 0; symbolIndex < _fileLine.length(); ++symbolIndex)
 	{
-		char tChar = _SettingsLine[i];
-		if (tChar == '"')
-		{
-			if (separateIndex[1] == -1)
-				separateIndex[1] = i;
-			else if (separateIndex[0] == -1)
-				separateIndex[0] = i;
-
-			if (separateIndex[0] != -1 && separateIndex[1] != -1)
-			{
-				splitEntries.push_back(_SettingsLine.substr(separateIndex[0] + 1, (separateIndex[1] - separateIndex[0]) - 1));
-				separateIndex[0] = -1;
-				separateIndex[1] = -1;
-			}
-		}
-
-
-	}
-	//	Not enough data
-	if (splitEntries.size() <= 1)
-		return false;
-
-	//	Pick out the right parts of the string
-	std::string	tField = splitEntries[splitEntries.size() - 1];
-	std::string tValue = splitEntries.size() == 2 ? splitEntries[0] : splitEntries[1];
-	int tElements = splitEntries.size() == 2 ? 1 : atoi(splitEntries[0].c_str());
-
-	//	Check so number of elements is a positive number
-	if (tElements <= 0)
-		return false;
-
-	DataStruct	newEntry = DataStruct();
-	newEntry.Name = tField;
-	int isNumber = atoi(tValue.c_str());
-	if (isNumber == 0)
-	{
-		if (m_byteConversion.find(tValue) == m_byteConversion.end())
+		char symbol = _fileLine[symbolIndex];
+		if (GetSymbolType(symbol) == SymbolType::Invalid)
 			return false;
-		
-		newEntry.ByteSize = m_byteConversion[tValue];
 	}
-	else
-		newEntry.ByteSize = isNumber;
-
-	newEntry.ByteSize *= tElements;
-
-	_Component.Data.push_back(newEntry);
-
-
 	return true;
 }
 
-std::string Parser::ParseName(std::string _text)
+void Parser::TrimLine(std::string& _fileLine)
 {
-	//	Pick out the first entry, name for component
-	std::string	firstValue = _text;
-
-	//	Empty string where name is supposed to be
-	if (firstValue.size() == 0)
-		return "";
-
-	//	Check if it has " symbols
-	char	firstChar = firstValue[0];
-	char	lastChar = firstValue[firstValue.size() - 1];
-
-	//	Wrong syntax
-	if (firstChar != '"' && lastChar != '"')
-		return "";
-
-	//	Remove the " symbols
-	firstValue = firstValue.substr(1, firstValue.size() - 2);
-
-	//	Name is empty -> ""
-	if (firstValue.size() == 0)
-		return "";
-
-	return firstValue;
-}
-
-bool Parser::CheckWrapSyntax(std::vector<std::string>& _FileRows)
-{
-	//	No data available
-	if (_FileRows.size() <= 3)
-		return false;
-
-	//	Check so each element is correct
-	if (_FileRows[0].size() == 0 || _FileRows[1].size() == 0 || _FileRows[_FileRows.size() - 1].size() == 0)
-		return false;
-
-	//	Check syntax
-	if (_FileRows[1][0] != '{' || _FileRows[_FileRows.size() - 1][0] != '}')
-		return false;
-
-	return true;
-}
-
-std::string Parser::StripString(std::string _text, std::map<char, bool>& _bannedSymbols)
-{
-	for (int i = _text.size() - 1; i >= 0; --i)
+	std::string trimmedString = "";
+	for (unsigned int symbolIndex = 0; symbolIndex < _fileLine.length(); ++symbolIndex)
 	{
-		char tChar = _text[i];
+		char symbol = _fileLine[symbolIndex];
+		if (GetSymbolType(symbol) != SymbolType::EmptySpace)
+			trimmedString.push_back(symbol);
+	}
+	_fileLine = trimmedString;
+}
 
-		if (_bannedSymbols.find(tChar) != _bannedSymbols.end())
-			_text.erase(_text.begin() + i);
+void Parser::GetLineData(Line& _line, const std::string& _fileLine)
+{
+	char firstSymbol = _fileLine[0];
+	if (firstSymbol == DELIMITER_SYMBOL)
+		_line.Type = LineType::Token;
+	else if (firstSymbol == NEW_SECTION_SYMBOL)
+		_line.Type = LineType::SectionStartBracket;
+	else if (firstSymbol == END_SECTION_SYMBOL)
+		_line.Type = LineType::SectionEndBracket;
+	else
+		_line.Type = LineType::None;
 
+	for (unsigned int symbolIndex = 0; symbolIndex < _fileLine.length(); ++symbolIndex)
+	{
+		char symbol = _fileLine[symbolIndex];
+		if (symbol == DELIMITER_SYMBOL)
+			++_line.DelimiterSymbolCounter;
+	}
+	_line.Text = _fileLine;
+}
+
+bool Parser::ValidateSyntax(const std::vector<Line>& _lines)
+{
+	if (!ValidateLineSyntax(_lines))
+		return false;
+	if (!ValidateLineDependencies(_lines))
+		return false;
+	return true;
+}
+
+bool Parser::ValidateLineSyntax(const std::vector<Line>& _lines)
+{
+	/* Each line */
+	for (unsigned int lineIndex = 0; lineIndex < _lines.size(); ++lineIndex)
+	{
+		Line line = _lines[lineIndex];
+		bool insideToken = false;
+		int symbolsCountInToken = 0;
+		/* Each symbol in line */
+		for (unsigned int symbolIndex = 0; symbolIndex < _lines[lineIndex].Text.length(); ++symbolIndex)
+		{
+			char symbol = _lines[lineIndex].Text[symbolIndex];
+			SymbolType symbolType = GetSymbolType(symbol);
+			switch (symbolType)
+			{
+			case SymbolType::Bracket:
+				/* Generate an error if there already exists a token or a bracket on the line */
+				if (line.Type != LineType::SectionStartBracket && line.Type != LineType::SectionEndBracket)
+					return false;
+				break;
+
+			case SymbolType::TokenDelimiter:
+				/* Generate an error if there already exists a bracket on the line */
+				if (line.Type != LineType::Token)
+					return false;
+				
+				/* Start of a token */
+				if (!insideToken)
+				{
+					insideToken = true;
+					symbolsCountInToken = 0;
+				}
+				/* End of a token */
+				else if (insideToken)
+				{
+					insideToken = false;
+					/* Generate an error if the number of symbols inside the token is zero */
+					if (symbolsCountInToken == 0)
+						return false;
+				}
+				break;
+
+			case SymbolType::Alphanumeric:
+				/* Generate an error if the line isn't a token line */
+				if (line.Type != LineType::Token)
+					return false;
+
+				/* Generate an error if the symbol isn't between the token delimiter symbols */
+				if (!insideToken)
+					return false;
+				++symbolsCountInToken;
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		/* Generate an error if there is an uneven number of token delimiter symbols */
+		if (line.DelimiterSymbolCounter % 2 == 1)
+			return false;
+	}
+	return true;
+}
+
+bool Parser::ValidateLineDependencies(const std::vector<Line>& _lines)
+{
+	int depth = 0;
+
+	/* Each line */
+	for (unsigned int lineIndex = 0; lineIndex < _lines.size(); ++lineIndex)
+	{
+		Line line = _lines[lineIndex];
+		switch (line.Type)
+		{
+		case LineType::SectionStartBracket:
+			/* Generate an error if there isn't a token line before the start bracket line */
+			if (lineIndex == 0 || _lines[lineIndex - 1].Type != LineType::Token || _lines[lineIndex - 1].DelimiterSymbolCounter != 2)
+				return false;
+			++depth;
+			break;
+		case LineType::SectionEndBracket:
+			--depth;
+			break;
+		case LineType::Token:
+			/* Generate an error if a token line is the name of the section, but has more than two delimiter symbols (more than one token) */
+			if (lineIndex == _lines.size() - 1 || (_lines[lineIndex + 1].Type == LineType::SectionStartBracket && line.DelimiterSymbolCounter != 2))
+				return false;
+			break;
+		}
 	}
 
-	return _text;
+	if (depth != 0)
+		return false;
+
+	return true;
 }
+
+void Parser::ConvertLinesToTokens(std::vector<std::vector<std::string>>& _tokenizedLines, const std::vector<Line>& _lines)
+{
+	/* Each line */
+	for (unsigned int lineIndex = 0; lineIndex < _lines.size(); ++lineIndex)
+	{
+		_tokenizedLines.push_back(std::vector<std::string>());
+		std::string token = "";
+		/* Each symbol in line */
+		for (unsigned int symbolIndex = 0; symbolIndex < _lines[lineIndex].Text.length(); ++symbolIndex)
+		{
+			char symbol = _lines[lineIndex].Text[symbolIndex];
+			SymbolType symbolType = GetSymbolType(symbol);
+			switch (symbolType)
+			{
+			case SymbolType::Bracket:
+				_tokenizedLines[lineIndex].push_back(std::string(1, symbol));
+				break;
+
+			case SymbolType::TokenDelimiter:
+				if (token != "")
+				{
+					_tokenizedLines[lineIndex].push_back(token);
+					token = "";
+				}
+				break;
+
+			case SymbolType::Alphanumeric:
+				token.push_back(symbol);
+				break;
+		
+			default:
+				break;
+			}
+		}
+	}
+}
+
+void Parser::ConvertTokensToSections(Section* _sectionTree, const std::vector<std::vector<std::string>>& _tokenizedLines, const std::vector<Line>& _lines)
+{
+	Section* currentSection = _sectionTree;
+	std::stack<Section*> sectionLevels;
+	sectionLevels.push(currentSection);
+	/* Loop through each line and add sections */
+	for (unsigned int lineIndex = 0; lineIndex < _tokenizedLines.size(); ++lineIndex)
+	{
+		Section newSection;
+		std::vector<std::string> tokenLine = _tokenizedLines[lineIndex];
+		switch (_lines[lineIndex].Type)
+		{
+		case LineType::SectionStartBracket:
+			newSection = Section();
+			newSection.Name = _tokenizedLines[lineIndex - 1][0];
+			(*currentSection).SubSections.push_back(newSection);
+			sectionLevels.push(&((*currentSection).SubSections.back()));
+			currentSection = sectionLevels.top();
+			break;
+		case LineType::SectionEndBracket:
+			sectionLevels.pop();
+			currentSection = sectionLevels.top();
+			break;
+		case LineType::Token:
+			if (_lines[lineIndex + 1].Type != LineType::SectionStartBracket)
+				AddTokens(currentSection, _tokenizedLines[lineIndex]);
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+void Parser::AddTokens(Section* _currentSection, const std::vector<std::string>& _tokens)
+{
+	/* Add a new token line */
+	_currentSection->Tokens.push_back(std::vector<std::string>());
+	/* Add the tokens to the line */
+	for (auto token : _tokens)
+	{
+		_currentSection->Tokens.back().push_back(token);
+	}
+}
+
+Parser::SymbolType Parser::GetSymbolType(char _symbol)
+{
+	if (_symbol == NEW_SECTION_SYMBOL || _symbol == END_SECTION_SYMBOL)
+		return SymbolType::Bracket;
+	else if (_symbol == DELIMITER_SYMBOL)
+		return SymbolType::TokenDelimiter;
+	else if (std::isalnum(_symbol))
+		return SymbolType::Alphanumeric;
+	else if (_symbol == '\t' || _symbol == ' ')
+		return SymbolType::EmptySpace;
+	return SymbolType::Invalid;
+}
+
+bool Parser::IsLineEmpty(const std::string& _line)
+{
+	return (_line.length() == 0);
+}
+

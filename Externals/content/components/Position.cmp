@@ -1,0 +1,13 @@
+"Position"
+{
+	"Settings"
+	{
+		"Table" "Array"
+	}
+	"Data"
+	{
+		"X" "float"
+		"Y" "float"
+		"Z" "float"
+	}
+}

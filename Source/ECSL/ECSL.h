@@ -1,23 +1,22 @@
 #ifndef ECSL_H
 #define ECSL_H
-#include <SDL/SDL.h>
-#include "Framework/Test.h"
 
+#include "Framework/Common/BitSet.h"
+#include "Framework/Components/ComponentType.h"
+#include "Framework/Components/DataManager.h"
+#include "Framework/Components/Tables/DataArray.h"
+#include "Framework/Components/Tables/DataMap.h"
+#include "Framework/Components/Tables/DataTable.h"
+#include "Framework/Components/Tables/EntityTable.h"
+#include "Framework/Parsing/ComponentTypeReader.h"
+#include "Framework/Parsing/Parser.h"
+#include "Framework/Systems/SystemWorkGroup.h"
+#include "Framework/Systems/SystemManager.h"
+#include "Framework/World.h"
+#include "Framework/WorldCreator.h"
 
-namespace ECSL
-{
-	class DECLSPEC ECSL_Tester
-	{
-	public:
-		ECSL_Tester();
-		~ECSL_Tester();
+#include "Interfaces/System.h"
 
-		void TestParser();
-
-	private:
-
-	};
-}
-
+#include "Managers/ComponentTypeManager.h"
 
 #endif

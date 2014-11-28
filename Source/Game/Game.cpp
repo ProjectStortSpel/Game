@@ -40,6 +40,28 @@ void ClearConsole()
 #endif
 }
 
+void TestECSL()
+{
+	//ECSL::ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("content/components");
+	//ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
+	//worldCreator.AddSystemGroup();
+	//worldCreator.AddComponentType("Position");
+	//worldCreator.AddComponentType("Velocity");
+
+	//ECSL::World* world = worldCreator.CreateWorld(100);
+
+	//int id = world->CreateNewEntity();
+	//world->CreateComponentAndAddTo("Velocity", id);
+	//world->CreateComponentAndAddTo("Position", id);
+
+	//world->KillEntity(id);
+
+	//delete world;
+	//delete(&ECSL::ComponentTypeManager::GetInstance());
+	//delete(&ECSL::BitSet::BitSetConverter::GetInstance());
+}
+
+
 int main(int argc, char** argv)
 {
 #ifdef WIN32
@@ -49,21 +71,22 @@ int main(int argc, char** argv)
 	Timer timer;
 
 	Renderer::GraphicDevice RENDERER = Renderer::GraphicDevice();
-	Input::InputWrapper INPUT = Input::InputWrapper::GetInstance();
+	Input::InputWrapper* INPUT = &Input::InputWrapper::GetInstance();
 	RENDERER.Init();
 
 	ServerNetwork server;
 	server.Start(6112, "", 8);
 
-
+	TestECSL();
 	bool lol = true;
+	float cd = 1.0f;
 	while (lol)
 	{
 		// DT COUNTER
 		float dt = timer.ElapsedTimeInSeconds();
 		timer.Reset();
 
-		INPUT.Update();
+		INPUT->Update();
 		RENDERER.Update(dt);
 		RENDERER.RenderSimpleText("This text render from GAME! \nThe x and y values in the function isn't pixel \ncoordinates, it's char position. Every char is \n8x16 pixels in size. Use \\n to change line.\n\n  !Not all chars is supported!\n\nRight now it clear the whole output image as well (Tell me when to remove this).", 10, 2);
 		
@@ -94,18 +117,18 @@ int main(int argc, char** argv)
 			case SDL_MOUSEBUTTONUP:
 			case SDL_MOUSEWHEEL:
 			case SDL_MULTIGESTURE:
-				INPUT.PollEvent(e);
+				INPUT->PollEvent(e);
 				break;
 			}
 				
 			
 		}
 
-		if (INPUT.GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
 		{
 			lol = false;
 		}
 	}
-
+	delete(INPUT);
 	return 0;
 }
