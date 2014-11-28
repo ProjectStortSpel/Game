@@ -5,6 +5,7 @@ using namespace Renderer;
 SimpleText::SimpleText()
 {
 	m_update = 0.5f;
+	m_clock = 0;
 }
 
 SimpleText::~SimpleText()
@@ -14,10 +15,6 @@ SimpleText::~SimpleText()
 bool SimpleText::Init(GLuint _textimage, int _clientWidth, int _clientHeight)
 {
 	// Set output image
-<<<<<<< HEAD
-=======
-	//m_outputImage = _outputimage;
->>>>>>> wtf it didn't change?
 	m_textImage = _textimage;
 
 	// Shader Shader
@@ -29,16 +26,6 @@ bool SimpleText::Init(GLuint _textimage, int _clientWidth, int _clientHeight)
 	m_simpleTextShader.UseProgram();
 	SetSimpleTextColor(vec4(1, 1, 1, 1));
 
-<<<<<<< HEAD
-=======
-	//m_textImage = TextureLoader::LoadTexture("Content/Textures/SimpleText.png", 5);
-
-	//glGenTextures(1, m_outputImage);
-
-	//glBindTexture(GL_TEXTURE_2D, *m_outputImage);
-	//glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, _clientWidth, _clientHeight);
-
->>>>>>> wtf it didn't change?
 	simpleTextX = _clientWidth / 8;
 	simpleTextY = _clientHeight / 16;
 	glGenBuffers(1, &simpleTextBuffer);
@@ -69,12 +56,6 @@ void SimpleText::RenderText(float _dt)
 	// Bind buffers
 	glBindImageTexture(1, m_textImage, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
 	//glBindImageTexture(5, *m_outputImage, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
-<<<<<<< HEAD
-=======
-
-	// run program
-	glDispatchCompute(128, 36, 1); // 1/16 = 0.0625
->>>>>>> wtf it didn't change?
 
 	if (m_clock > m_update)
 	{
