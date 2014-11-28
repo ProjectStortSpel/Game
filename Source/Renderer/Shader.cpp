@@ -1,6 +1,7 @@
 ﻿#include "Shader.h"
 
 using namespace Renderer;
+using namespace std;
 
 void Shader::InitShaderProgram()
 {
