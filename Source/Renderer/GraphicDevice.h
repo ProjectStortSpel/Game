@@ -74,6 +74,7 @@ namespace Renderer
 		GLuint m_deferredFBO;
 
 		// Shaders
+		Shader m_compDeferredPass2Shader;
 		Shader m_debuggTextShader; // TA BORT DENNA
 		Shader m_fullScreenShader;
 		Shader m_deferredShader1, m_deferredShader2;
