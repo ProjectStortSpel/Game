@@ -18,8 +18,8 @@ namespace ECSL
 		~DataMap();
 
 		void Release();
-		void ClearData();
-		void ClearRow();
+		void ClearRow(unsigned const int _row);
+		void ClearTable();
 
 		const int GetRowCount() const;
 

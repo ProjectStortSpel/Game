@@ -74,8 +74,8 @@ void lol()
 		}
 	}
 
-	int id = world->CreateNewEntity();
-	world->CreateComponentAndAddTo("Position", id);
+	//int id = world->CreateNewEntity();
+	//world->CreateComponentAndAddTo("Position", id);
 
 	delete(world);
 

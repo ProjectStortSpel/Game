@@ -21,21 +21,22 @@ namespace ECSL
 	{
 		if (m_dataMap != 0)
 		{
-			
 			for (auto it = m_dataMap->begin(); it != m_dataMap->end(); ++it)
-			{
 				delete it->second;
-			}
 			delete(m_dataMap);
 		}
 			
 	}
-
-	void DataMap::ClearData()
+	void DataMap::ClearTable()
 	{
 		Release();
 		m_dataMap = new std::map<unsigned int, char*>();
 	}
+	void DataMap::ClearRow(unsigned const int _row)
+	{
+		m_dataMap->erase(m_dataMap->find(_row));
+	}
+
 	DataLocation DataMap::GetData(unsigned const int _id) const
 	{
 		return m_dataMap->at(_id);
