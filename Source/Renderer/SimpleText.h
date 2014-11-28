@@ -6,7 +6,7 @@
 
 namespace Renderer
 {
-	class SimpleText
+	class DECLSPEC SimpleText
 	{
 	public:
 		SimpleText();
