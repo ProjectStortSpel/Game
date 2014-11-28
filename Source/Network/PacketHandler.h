@@ -53,11 +53,16 @@ private:
 	void EndUnpack();
 
 private:
+
+#pragma warning( disable : 4251 )
+
 	unsigned char* m_packetSend;
 	unsigned char* m_positionSend;
 
 	Packet*		   m_packetReceive;
 	unsigned char* m_positionReceive;
+
+#pragma warning( default : 4251 )
 
 };
 

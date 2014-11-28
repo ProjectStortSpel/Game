@@ -126,6 +126,8 @@ void ServerNetwork::ReceivePackets(ISocket* _socket, int _id)
 			p.Sender = _socket->GetNetConnection();
 			memcpy(p.Data, m_packetData, packetSize);
 
+			m_packetHandler.Unpack(&p);
+
 			if (NET_DEBUG)
 				printf("Received message with length \"%i\" from client \"%s:%i\".\n", packetSize, p.Sender.IpAddress.c_str(), p.Sender.Port);
 
@@ -136,7 +138,6 @@ void ServerNetwork::ReceivePackets(ISocket* _socket, int _id)
 		}
 		else
 		{
-			// Failed to receive packets
 		}
 
 	}
@@ -163,4 +164,9 @@ void ServerNetwork::ListenForConnections(void)
 		m_receivePacketsAlive.push_back(true);
 		m_receivePacketsThreads.push_back(std::thread(&ServerNetwork::ReceivePackets, this, newConnection, m_receivePacketsThreads.size()));
 	}
+}
+
+void ServerNetwork::HandlePacket(Packet* _packet)
+{
+
 }

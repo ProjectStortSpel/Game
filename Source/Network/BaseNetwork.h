@@ -40,17 +40,23 @@ protected:
 	void TriggerEvent(NetMessageHook _function, NetConnection _connection);
 protected:
 
+#pragma warning( disable : 4251 )
+
 	std::vector<NetConnection> m_connections;
 	std::map<NetTypeMessageId, NetMessageHook> m_networkFunctionMap;
 
 	std::queue<Packet*> m_packets;
-	//std::mutex m_packetLock;
+	std::mutex m_packetLock;
 
 	std::string m_localAddress;
 	std::string m_password;
 	unsigned int m_incomingPort;
 
+	PacketHandler m_packetHandler;
+
 	char m_packetData[MAX_PACKET_SIZE];
+
+#pragma warning( default : 4251 )
 
 };
 

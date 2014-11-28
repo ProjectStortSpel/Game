@@ -43,6 +43,27 @@ Packet* PacketHandler::EndPack()
 	return p;
 }
 
+void PacketHandler::Unpack(Packet* _packet)
+{
+	if (!_packet)
+		return;
+
+	m_packetReceive = _packet;
+	m_positionReceive = m_packetReceive->Data;
+
+	char type = ReadByte();
+
+	if (type == NetTypeMessageId::ID_CUSTOM_PACKET)
+	{
+		// Custom user packets
+	}
+	else
+	{
+		// Net specific packets
+	}
+
+}
+
 void PacketHandler::EndUnpack()
 {
 	if (m_packetReceive->Data)

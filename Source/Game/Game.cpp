@@ -89,6 +89,17 @@ int main(int argc, char** argv)
 		c.Connect(ip.c_str(), pw.c_str(), port, 0);
 
 		std::getline(std::cin, input);
+
+		PacketHandler ph;
+		ph.StartPack(NetTypeMessageId::ID_CONNECTION_ACCEPTED);
+		ph.WriteInt(1337);
+
+		Packet* p = ph.EndPack();
+
+		c.Send(p);
+
+		std::getline(std::cin, input);
+
 	}
 	else if (input == "s")
 	{

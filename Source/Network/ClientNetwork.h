@@ -44,6 +44,9 @@ private:
 	void ReceivePackets(void);
 
 private:
+
+#pragma warning( disable : 4251 )
+
 	std::string m_remoteAddress;
 	int m_outgoingPort;
 	bool m_socketBound;
@@ -52,6 +55,8 @@ private:
 
 	std::thread m_receivePacketsThread;
 	bool m_receivePacketsThreadAlive;
+
+#pragma warning( default : 4251 )
 };
 
 #endif

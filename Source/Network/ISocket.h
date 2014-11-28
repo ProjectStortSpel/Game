@@ -30,6 +30,7 @@ public:
 protected:
 
 #pragma warning( disable: 4251 )
+
 	static bool g_initialized;
 	static int  g_noActiveSockets;
 
@@ -37,6 +38,7 @@ protected:
 	int m_remotePort;
 	int m_localPort;
 	bool m_socketOpen;
+
 #pragma warning (default: 4251 )
 
 private:

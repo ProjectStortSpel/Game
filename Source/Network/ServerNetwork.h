@@ -31,7 +31,11 @@ private:
 	void ReceivePackets(ISocket* _socket, int _id);
 	void ListenForConnections(void);
 
+	void HandlePacket(Packet* _packet);
+
 private:
+
+#pragma warning( disable : 4251 )
 
 	bool m_listenForConnectionsAlive;
 	std::thread m_listenForConnectionsThread;
@@ -43,6 +47,8 @@ private:
 
 	std::vector<std::thread> m_receivePacketsThreads;
 	std::vector<bool> m_receivePacketsAlive;
+
+#pragma warning( default : 4251 )
 
 };
 

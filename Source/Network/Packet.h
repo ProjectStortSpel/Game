@@ -10,8 +10,12 @@ public:
 	NetConnection(std::string _address, unsigned short _port);
 	~NetConnection() {};
 
+#pragma warning( disable : 4251 )
+
 	std::string IpAddress;
 	unsigned short Port;
+
+#pragma warning( default : 4251 )
 
 	bool operator==(const NetConnection &other) const
 	{
@@ -56,9 +60,15 @@ public:
 	~Packet();
 
 public:
+
+#pragma warning( disable : 4251 )
+
 	unsigned char* Data;
 	unsigned short Length;
 	NetConnection Sender;
+
+#pragma warning( default : 4251 )
+
 };
 
 #endif

@@ -157,8 +157,12 @@ bool LinSocket::Listen(int _backlog)
 }
 bool LinSocket::SetNonBlocking(bool _value)
 {
-	int opt = 1;
-	ioctl(m_socket, FIONBIO, &opt);
+	int opt = _value;
+	if( ioctl(m_socket, FIONBIO, &opt) != 0)
+	{
+		if(NET_DEBUG)
+			printf("Failed to set nonblocking mode. Error: %s.\n", strerror(errno));
+	}
 
 	return true;
 }
