@@ -3,9 +3,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "TextureLoader.h"
 
-using namespace glm;
-
 using namespace Renderer;
+using namespace glm;
 
 struct Object
 {
