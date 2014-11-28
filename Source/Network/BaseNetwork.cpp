@@ -24,3 +24,19 @@ void BaseNetwork::TriggerEvent(NetMessageHook _function, NetConnection _connecti
 	//if (_function)
 	//	_function(m_packetHandler, _connection);
 }
+
+std::function<void()>* BaseNetwork::GetUserFunction(std::string _functionName)
+{
+	if (m_userFunctions.find(_functionName) != m_userFunctions.end())
+		return &m_userFunctions[_functionName];
+
+
+	return 0;
+}
+std::function<void()>* BaseNetwork::GetNetworkFunction(char _functionIdentifier)
+{
+	if (m_networkFunctions.find(_functionIdentifier) != m_networkFunctions.end())
+		return &m_networkFunctions[_functionIdentifier];
+
+	return 0;
+}

@@ -21,6 +21,9 @@ typedef std::function<void(PacketHandler*, NetConnection)> NetMessageHook;
 
 class DECLSPEC BaseNetwork
 {
+
+	friend class PacketHandler;
+
 public:
 	BaseNetwork();
 	virtual ~BaseNetwork();
@@ -43,7 +46,9 @@ protected:
 #pragma warning( disable : 4251 )
 
 	std::vector<NetConnection> m_connections;
-	std::map<NetTypeMessageId, NetMessageHook> m_networkFunctionMap;
+
+	std::map < std::string, std::function<void()> > m_userFunctions;
+	std::map < char, std::function<void()> > m_networkFunctions;
 
 	std::queue<Packet*> m_packets;
 	std::mutex m_packetLock;
@@ -57,6 +62,10 @@ protected:
 	char m_packetData[MAX_PACKET_SIZE];
 
 #pragma warning( default : 4251 )
+
+private:
+	std::function<void()>* GetUserFunction(std::string _functionName);
+	std::function<void()>* GetNetworkFunction(char _functionIdentifier);
 
 };
 

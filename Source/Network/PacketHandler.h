@@ -1,6 +1,8 @@
 #ifndef PACKETHANDLER_H
 #define PACKETHANDLER_H
 
+class BaseNetwork;
+
 #include "Stdafx.h"
 
 class DECLSPEC PacketHandler
@@ -16,7 +18,7 @@ public:
 
 	Packet* EndPack(void);
 
-	void Unpack(Packet* packet);
+	void Unpack(Packet* packet, BaseNetwork* _server);
 
 	// Write a byte to the packet
 	// StartPack should be called before this is used

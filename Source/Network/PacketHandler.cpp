@@ -1,5 +1,6 @@
 #include "PacketHandler.h"
 #include "NetTypeMessageID.h"
+#include "BaseNetwork.h"
 
 PacketHandler::PacketHandler()
 {
@@ -43,7 +44,7 @@ Packet* PacketHandler::EndPack()
 	return p;
 }
 
-void PacketHandler::Unpack(Packet* _packet)
+void PacketHandler::Unpack(Packet* _packet, BaseNetwork* _network)
 {
 	if (!_packet)
 		return;
@@ -55,10 +56,19 @@ void PacketHandler::Unpack(Packet* _packet)
 
 	if (type == NetTypeMessageId::ID_CUSTOM_PACKET)
 	{
+		std::string functionName = ReadString();
+		std::function<void()> function = *_network->GetUserFunction(functionName);
+		if (function)
+			function();
+
 		// Custom user packets
 	}
 	else
 	{
+		std::function<void()> function = *_network->GetNetworkFunction(type);
+		if (function)
+			function();
+
 		// Net specific packets
 	}
 

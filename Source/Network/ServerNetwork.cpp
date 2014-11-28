@@ -7,6 +7,11 @@
 #include <sys/socket.h>
 #endif
 
+void ServerNetwork::Test()
+{
+	printf("HEJ\n");
+}
+
 ServerNetwork::ServerNetwork()
 	: BaseNetwork()
 {
@@ -18,7 +23,12 @@ ServerNetwork::ServerNetwork()
 
 	m_listenSocket = 0;
 
+
+	m_networkFunctions['1'] = std::bind(&ServerNetwork::Test, this);
+
 }
+
+
 
 ServerNetwork::~ServerNetwork()
 {
@@ -129,10 +139,13 @@ void ServerNetwork::ReceivePackets(ISocket* _socket, int _id)
 			p->Sender = _socket->GetNetConnection();
 			memcpy(p->Data, m_packetData, packetSize);
 
+			HandlePacket(p);
+
+
 			if (NET_DEBUG)
 				printf("Received message with length \"%i\" from client \"%s:%i\".\n", packetSize, p->Sender.IpAddress.c_str(), p->Sender.Port);
 
-			m_packetHandler.Unpack(p);
+			m_packetHandler.Unpack(p, this);
 
 		}
 		else if (result == 0)
@@ -171,5 +184,12 @@ void ServerNetwork::ListenForConnections(void)
 
 void ServerNetwork::HandlePacket(Packet* _packet)
 {
+	if (_packet->Data[0] == NetTypeMessageId::ID_CUSTOM_PACKET)
+	{
 
+	}
+	else
+	{
+
+	}
 }

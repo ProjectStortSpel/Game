@@ -7,6 +7,7 @@
 
 class DECLSPEC ServerNetwork : public BaseNetwork
 {
+
 public:
 	ServerNetwork(void);
 	~ServerNetwork(void);
@@ -32,6 +33,8 @@ private:
 	void ListenForConnections(void);
 
 	void HandlePacket(Packet* _packet);
+
+	void Test(void);
 
 private:
 
