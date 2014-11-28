@@ -106,6 +106,8 @@ int main(int argc, char** argv)
 
 	SDL_Quit();
 
+#ifdef WIN32
 	_CrtDumpMemoryLeaks();
+#endif
 	return 0;
 }
