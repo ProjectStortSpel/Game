@@ -6,6 +6,7 @@
 using glm::vec3;
 
 using namespace Renderer;
+using namespace std;
 
 struct Object
 {
@@ -180,7 +181,7 @@ bool GraphicDevice::Init()
 	if (!InitDeferred()) { ERRORMSG("INIT DEFERRED FAILED\n"); return false; }
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	if (!InitTextRenderer()) { ERRORMSG("INIT TEXTRENDERER FAILED\n"); return false; }
-
+	
 	return true;
 }
 
@@ -404,6 +405,7 @@ bool GraphicDevice::InitSDLWindow()
 	}
 
 	SDL_GetWindowSize(m_window, &m_clientWidth, &m_clientHeight);
+
 	return true;
 }
 
@@ -485,7 +487,6 @@ bool GraphicDevice::InitShaders()
 	m_compDeferredPass2Shader.InitShaderProgram();
 	m_compDeferredPass2Shader.AddShader("Content/Shaders/CSDeferredPass2.glsl", GL_COMPUTE_SHADER);
 	m_compDeferredPass2Shader.FinalizeShaderProgram();
-
 
 	// Full Screen Quad
 	m_fullScreenShader.InitShaderProgram();

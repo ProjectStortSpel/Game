@@ -40,14 +40,12 @@ void ClearConsole()
 #endif
 }
 
-
 int main(int argc, char** argv)
 {
 #ifdef WIN32
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
-
-	SDL_Init(SDL_INIT_EVERYTHING);
+	
 	Timer timer;
 
 	Renderer::GraphicDevice RENDERER = Renderer::GraphicDevice();
@@ -109,6 +107,6 @@ int main(int argc, char** argv)
 		}
 	}
 
-	SDL_Quit();
+	_CrtDumpMemoryLeaks();
 	return 0;
 }
