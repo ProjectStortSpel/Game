@@ -7,6 +7,7 @@
 #include "Framework/Components/Tables/DataArray.h"
 #include "Framework/Components/Tables/DataMap.h"
 #include "Framework/Components/Tables/DataTable.h"
+#include "Framework/Components/Tables/EntityTable.h"
 #include "Framework/Parsing/ComponentTypeReader.h"
 #include "Framework/Parsing/Parser.h"
 #include "Framework/Systems/SystemWorkGroup.h"
