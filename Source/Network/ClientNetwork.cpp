@@ -92,7 +92,7 @@ void ClientNetwork::ReceivePackets()
 			p->Sender = m_socket->GetNetConnection();
 			memcpy(p->Data, m_packetData, packetSize);
 
-			SAFE_DELETE(p);
+			SAFE_DELETE_PACKET(p);
 
 		}
 		else if (result == 0)

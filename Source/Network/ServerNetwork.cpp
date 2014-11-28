@@ -7,9 +7,47 @@
 #include <sys/socket.h>
 #endif
 
-void ServerNetwork::Test()
+void ServerNetwork::TestNetwork(PacketHandler* _packetHandler, Packet* _packet)
 {
-	printf("HEJ\n");
+	printf("TestNetwork.\n");
+}
+
+void ServerNetwork::TestUser(PacketHandler* _packetHandler, Packet* _packet)
+{
+	printf("TestUser.\n");
+}
+
+void ServerNetwork::TestNewUser(PacketHandler* _packetHandler, Packet* _packet)
+{
+	char type = _packetHandler->StartUnpack(_packet);
+
+	switch (type)
+	{
+	case NetTypeMessageId::ID_PASSWORD_ATTEMPT:
+	{
+		std::string password = _packetHandler->ReadString();
+		if (m_password.compare(password) == 0)
+		{
+			_packetHandler->StartPack(NetTypeMessageId::ID_CONNECTION_ACCEPTED);
+			auto newPacket = _packetHandler->EndPack();
+			m_connectedClients[_packet->Sender]->Send((char*)newPacket->Data, newPacket->Length);
+		}
+		else
+		{
+			_packetHandler->StartPack(NetTypeMessageId::ID_PASSWORD_INVALID);
+			auto newPacket = _packetHandler->EndPack();
+			m_connectedClients[_packet->Sender]->Send((char*)newPacket->Data, newPacket->Length);
+			SAFE_DELETE(newPacket);
+		}
+		break;
+	}
+	case NetTypeMessageId::ID_PASSWORD_INVALID:
+		break;
+	default:
+		break;
+	}
+
+	_packetHandler->EndUnpack();
 }
 
 ServerNetwork::ServerNetwork()
@@ -23,8 +61,10 @@ ServerNetwork::ServerNetwork()
 
 	m_listenSocket = 0;
 
+	m_networkFunctions[NetTypeMessageId::ID_PASSWORD_ATTEMPT] = std::bind(&ServerNetwork::TestNewUser, this, std::placeholders::_1, std::placeholders::_2);
+	m_networkFunctions[NetTypeMessageId::ID_PASSWORD_INVALID] = std::bind(&ServerNetwork::TestNewUser, this, std::placeholders::_1, std::placeholders::_2);
 
-	m_networkFunctions['1'] = std::bind(&ServerNetwork::Test, this);
+	m_userFunctions["Test"] = std::bind(&ServerNetwork::TestUser, this, std::placeholders::_1, std::placeholders::_2);
 
 }
 
@@ -139,18 +179,27 @@ void ServerNetwork::ReceivePackets(ISocket* _socket, int _id)
 			p->Sender = _socket->GetNetConnection();
 			memcpy(p->Data, m_packetData, packetSize);
 
-			HandlePacket(p);
+			p->Length = 10;
+			p->Data = new unsigned char[10];
+			p->Data[0] = NetTypeMessageId::ID_PASSWORD_ATTEMPT;
+			p->Data[1] = 'P';
+			p->Data[2] = 'E';
+			p->Data[3] = 'T';
+			p->Data[4] = 'T';
+			p->Data[5] = 'S';
+			p->Data[6] = 'O';
+			p->Data[7] = 'N';
+			p->Data[8] = '\0';
 
 
 			if (NET_DEBUG)
 				printf("Received message with length \"%i\" from client \"%s:%i\".\n", packetSize, p->Sender.IpAddress.c_str(), p->Sender.Port);
+			HandlePacket(p);
 
-			m_packetHandler.Unpack(p, this);
 
 		}
 		else if (result == 0)
 		{
-			// server shutdown graceful
 		}
 		else
 		{
@@ -184,12 +233,25 @@ void ServerNetwork::ListenForConnections(void)
 
 void ServerNetwork::HandlePacket(Packet* _packet)
 {
-	if (_packet->Data[0] == NetTypeMessageId::ID_CUSTOM_PACKET)
+	if (!_packet)
+		return;
+
+	char type = _packet->Data[0];
+
+	if (type == NetTypeMessageId::ID_CUSTOM_PACKET)
 	{
+		std::string functionName((char*)&_packet->Data[1]);
+		if (m_userFunctions.find(functionName) != m_userFunctions.end())
+		{
+			m_userFunctions[functionName](&m_packetHandler,_packet);
+		}
 
 	}
 	else
 	{
-
+		if (m_networkFunctions.find(type) != m_networkFunctions.end())
+		{
+			m_networkFunctions[type](&m_packetHandler, _packet);
+		}
 	}
 }

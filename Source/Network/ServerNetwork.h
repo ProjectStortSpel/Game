@@ -34,7 +34,10 @@ private:
 
 	void HandlePacket(Packet* _packet);
 
-	void Test(void);
+	void TestNetwork(PacketHandler* _packetHandler, Packet* _packet);
+	void TestUser(PacketHandler* _packetHandler, Packet* _packet);
+
+	void TestNewUser(PacketHandler* _packetHandler, Packet* _packet);
 
 private:
 

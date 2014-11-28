@@ -18,7 +18,8 @@ public:
 
 	Packet* EndPack(void);
 
-	void Unpack(Packet* packet, BaseNetwork* _server);
+	char StartUnpack(Packet* packet);
+	void EndUnpack(void);
 
 	// Write a byte to the packet
 	// StartPack should be called before this is used
@@ -52,7 +53,6 @@ public:
 
 private:
 	bool IsOutOfBounds(unsigned char* _begin, unsigned char* _position, unsigned short _length);
-	void EndUnpack();
 
 private:
 

@@ -44,52 +44,22 @@ Packet* PacketHandler::EndPack()
 	return p;
 }
 
-void PacketHandler::Unpack(Packet* _packet, BaseNetwork* _network)
+char PacketHandler::StartUnpack(Packet* _packet)
 {
-	if (!_packet)
-		return;
-
 	m_packetReceive = _packet;
 	m_positionReceive = m_packetReceive->Data;
 
 	char type = ReadByte();
 
 	if (type == NetTypeMessageId::ID_CUSTOM_PACKET)
-	{
-		std::string functionName = ReadString();
-		std::function<void()> function = *_network->GetUserFunction(functionName);
-		if (function)
-			function();
+		ReadString();
 
-		// Custom user packets
-	}
-	else
-	{
-		std::function<void()> function = *_network->GetNetworkFunction(type);
-		if (function)
-			function();
-
-		// Net specific packets
-	}
-
-	SAFE_DELETE(m_packetReceive);
+	return type;
 }
 
 void PacketHandler::EndUnpack()
 {
-	if (m_packetReceive)
-	{
-		if (m_packetReceive->Data)
-		{
-			delete m_packetReceive->Data;
-			m_packetReceive->Data = 0;
-		}
-
-		delete m_packetReceive;
-		m_packetReceive = 0;
-	}
-	
-
+	SAFE_DELETE(m_packetReceive);
 	m_positionReceive = 0;
 }
 
