@@ -1,5 +1,5 @@
-#ifndef STDAFX_H
-#define STDAFX_H
+#ifndef STDAFX_NETWORK_H
+#define STDAFX_NETWORK_H
 
 #include <SDL/SDL.h>
 #include <string>

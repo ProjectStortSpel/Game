@@ -66,6 +66,9 @@ bool ServerNetwork::Stop()
 	for (int i = 0; i < m_receivePacketsThreads.size(); ++i)
 		m_receivePacketsThreads[i].join();
 
+	m_receivePacketsAlive.clear();
+	m_receivePacketsThreads.clear();
+
 	if (m_listenForConnectionsAlive)
 	{
 		m_listenForConnectionsAlive = false;
@@ -120,16 +123,16 @@ void ServerNetwork::ReceivePackets(ISocket* _socket, int _id)
 		{
 			unsigned short packetSize = result;
 
-			Packet p;
-			p.Data = new unsigned char[packetSize];
-			p.Length = packetSize;
-			p.Sender = _socket->GetNetConnection();
-			memcpy(p.Data, m_packetData, packetSize);
-
-			m_packetHandler.Unpack(&p);
+			Packet* p = new Packet();
+			p->Data = new unsigned char[packetSize];
+			p->Length = packetSize;
+			p->Sender = _socket->GetNetConnection();
+			memcpy(p->Data, m_packetData, packetSize);
 
 			if (NET_DEBUG)
-				printf("Received message with length \"%i\" from client \"%s:%i\".\n", packetSize, p.Sender.IpAddress.c_str(), p.Sender.Port);
+				printf("Received message with length \"%i\" from client \"%s:%i\".\n", packetSize, p->Sender.IpAddress.c_str(), p->Sender.Port);
+
+			m_packetHandler.Unpack(p);
 
 		}
 		else if (result == 0)

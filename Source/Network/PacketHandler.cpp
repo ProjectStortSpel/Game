@@ -4,7 +4,7 @@
 PacketHandler::PacketHandler()
 {
 	m_packetSend = new unsigned char[MAX_PACKET_SIZE];
-	m_packetReceive = new Packet();
+	m_packetReceive = 0;
 
 	m_positionSend = 0;
 	m_positionReceive = 0;
@@ -62,21 +62,23 @@ void PacketHandler::Unpack(Packet* _packet)
 		// Net specific packets
 	}
 
+	SAFE_DELETE(m_packetReceive);
 }
 
 void PacketHandler::EndUnpack()
 {
-	if (m_packetReceive->Data)
-	{
-		delete m_packetReceive->Data;
-		m_packetReceive->Data = 0;
-	}
-
 	if (m_packetReceive)
 	{
+		if (m_packetReceive->Data)
+		{
+			delete m_packetReceive->Data;
+			m_packetReceive->Data = 0;
+		}
+
 		delete m_packetReceive;
 		m_packetReceive = 0;
 	}
+	
 
 	m_positionReceive = 0;
 }

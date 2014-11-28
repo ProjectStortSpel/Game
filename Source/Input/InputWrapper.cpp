@@ -14,11 +14,21 @@ InputWrapper::InputWrapper()
 	}
 
 	m_keyboard = new Keyboard();
+	m_mouse = new Mouse();
 }
 InputWrapper::~InputWrapper()
 {
-	delete m_keyboard;
-	m_keyboard = 0;
+	if (m_keyboard)
+	{
+		delete m_keyboard;
+		m_keyboard = 0;
+	}
+	if (m_mouse)
+	{
+		delete m_mouse;
+		m_mouse = 0;
+	}
+
 }
 
 InputWrapper& InputWrapper::GetInstance()
@@ -31,61 +41,8 @@ InputWrapper& InputWrapper::GetInstance()
 #pragma region Update
 void InputWrapper::Update()
 {
-	std::vector<SDL_Event> invalidEvents = std::vector<SDL_Event>();
-	SDL_Event	tEvent;
-
-	while (SDL_PollEvent(&tEvent))
-	{
-		switch (tEvent.type)
-		{
-			/*	MOUSE	*/
-		case SDL_MOUSEBUTTONDOWN:
-		case SDL_MOUSEBUTTONUP:
-		case SDL_MOUSEMOTION:
-		case SDL_MOUSEWHEEL:
-
-			break;
-
-			/*	KEYBOARD	*/
-		case SDL_KEYDOWN:
-		case SDL_KEYUP:
-			m_keyboard->PollEvent(tEvent);
-			break;
-
-			/*	CONTROLLER	*/
-		case SDL_CONTROLLERDEVICEADDED:
-
-			break;
-		case SDL_CONTROLLERDEVICEREMOVED:
-
-			break;
-		case SDL_CONTROLLERDEVICEREMAPPED:
-
-			break;
-
-		case SDL_CONTROLLERBUTTONDOWN:
-		case SDL_CONTROLLERBUTTONUP:
-
-			break;
-
-		case SDL_CONTROLLERAXISMOTION:
-
-			break;
-
-		default:
-			invalidEvents.push_back(tEvent);
-			break;
-		}
-	}
-
-	//	Push back events that couldn't be parsed
-	if (invalidEvents.size() > 0)
-	{
-		for (unsigned int n = 0; n < invalidEvents.size(); ++n)
-			SDL_PushEvent(&invalidEvents[n]);
-
-		invalidEvents.clear();
-	}
+	m_keyboard->Update();
+	m_mouse->Update();
 }
 #pragma endregion
 
@@ -93,5 +50,52 @@ void InputWrapper::Update()
 Keyboard* InputWrapper::GetKeyboard()
 {
 	return m_keyboard;
+}
+Mouse* InputWrapper::GetMouse()
+{
+	return m_mouse;
+}
+#pragma endregion
+
+#pragma region Poll SDL Event
+void InputWrapper::PollEvent(SDL_Event& _e)
+{
+	switch (_e.type)
+	{
+		/*	MOUSE	*/
+	case SDL_MOUSEBUTTONDOWN:
+	case SDL_MOUSEBUTTONUP:
+	case SDL_MOUSEMOTION:
+	case SDL_MOUSEWHEEL:
+		m_mouse->PollEvent(_e);
+		break;
+
+		/*	KEYBOARD	*/
+	case SDL_KEYDOWN:
+	case SDL_KEYUP:
+		m_keyboard->PollEvent(_e);
+		break;
+
+		/*	CONTROLLER	*/
+	case SDL_CONTROLLERDEVICEADDED:
+
+		break;
+	case SDL_CONTROLLERDEVICEREMOVED:
+
+		break;
+	case SDL_CONTROLLERDEVICEREMAPPED:
+
+		break;
+
+	case SDL_CONTROLLERBUTTONDOWN:
+	case SDL_CONTROLLERBUTTONUP:
+
+		break;
+
+	case SDL_CONTROLLERAXISMOTION:
+
+		break;
+	}
+
 }
 #pragma endregion

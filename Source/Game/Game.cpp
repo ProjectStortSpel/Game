@@ -5,7 +5,10 @@
 #include "Network/ServerNetwork.h"
 #include "Network/ClientNetwork.h"
 #include "Network/PacketHandler.h"
+#include "Timer.h"
 #include "ECSL/ECSL.h"
+#include "Input/InputWrapper.h"
+#include "Renderer/GraphicDevice.h"
 
 #ifdef WIN32
 	#define _CRTDBG_MAP_ALLOC
@@ -45,95 +48,47 @@ int main(int argc, char** argv)
 #endif
 
 	SDL_Init(SDL_INIT_EVERYTHING);
+	Timer timer;
 
-	std::string input;
+	Renderer::GraphicDevice* gd = new Renderer::GraphicDevice();
+	Input::InputWrapper INPUT = Input::InputWrapper::GetInstance();
+	gd->Init();
 
-	std::string ip = "127.0.0.1";
-	std::string pw = "localhest";
-	int port = 5357;
+	ServerNetwork server;
+	server.Start(6112, "", 8);
 
-	
-	ClientNetwork c;
-	ServerNetwork s;
-	
-	printf("Network console test!\n");
 
-	printf("Press \"c\" to start a client, or \"s\" to start a server.\n");
-	std::getline(std::cin, input);
-	ClearConsole();
-
-	if (input == "c")
+	bool lol = true;
+	while (lol)
 	{
-		printf("Starting new client.\n");
-		printf("Enter Ip Address: ");
-		std::getline(std::cin, input);
+		// DT COUNTER
+		float dt = timer.ElapsedTimeInSeconds();
+		timer.Reset();
 
-		if (input != "")
-			ip = input;
+		INPUT.Update();
+		gd->Update(dt);
 
+		//gd->RenderSimpleText("This text render from GAME! \nThe x and y values in the function isn't pixel \ncoordinates, it's char position. Every char is \n8x16 pixels in size. Use \\n to change line.\n\n  !Not all chars is supported!\n\nRight now it clear the whole output image as well (Tell me when to remove this).", 10, 2);
+		//
 
-		printf("Enter password: ");
-		std::getline(std::cin, input);
+		gd->Render();
 
-		if (input != "")
-			pw = input;
+		
+		
+		SDL_Event e;
+		while (SDL_PollEvent(&e))
+		{
+			INPUT.PollEvent(e);
+		}
 
-		printf("Enter port number: ");
-		std::getline(std::cin, input);
-
-		if (input != "")
-			port = atoi(input.c_str());
-
-		ClearConsole();
-
-		c.Connect(ip.c_str(), pw.c_str(), port, 0);
-
-		std::getline(std::cin, input);
-
-		PacketHandler ph;
-		ph.StartPack(NetTypeMessageId::ID_CONNECTION_ACCEPTED);
-		ph.WriteInt(1337);
-
-		Packet* p = ph.EndPack();
-
-		c.Send(p);
-
-		std::getline(std::cin, input);
-
+		if (INPUT.GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
+		{
+			lol = false;
+		}
 	}
-	else if (input == "s")
-	{
-		printf("Starting new server.\n");
+		
+	delete gd;
 
-		printf("Enter password: ");
-		std::getline(std::cin, input);
-
-		if (input != "")
-			pw = input;
-
-		printf("Enter port number: ");
-		std::getline(std::cin, input);
-
-		if (input != "")
-			port = atoi(input.c_str());
-
-		ClearConsole();
-
-		s.Start(port, pw.c_str(), 8);
-		std::getline(std::cin, input);
-
-		PacketHandler ph;
-		ph.StartPack(NetTypeMessageId::ID_CONNECTION_ACCEPTED);
-		ph.WriteInt(1337);
-
-		Packet* p = ph.EndPack();
-
-		s.Broadcast(p);
-
-		std::getline(std::cin, input);
-
-
-	}	
 	SDL_Quit();
 	return 0;
 }

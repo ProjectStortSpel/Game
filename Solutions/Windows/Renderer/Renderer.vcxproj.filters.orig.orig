@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{dc55a425-a7b0-4bd7-a8d7-f602be89ea62}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Source\Renderer\GraphicDevice.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\Shader.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\stdafx.h" />
+<<<<<<< HEAD
+<<<<<<< HEAD
+    <ClInclude Include="..\..\..\Source\Renderer\TextureLoader.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+<<<<<<< HEAD
+    <ClInclude Include="..\..\..\Source\Renderer\DebugText.h" />
+=======
+>>>>>>> Standard deferred added
+=======
+<<<<<<< HEAD
+    <ClInclude Include="..\..\..\Source\Renderer\TextureLoader.h">
+=======
+    <ClInclude Include="..\..\..\Source\Renderer\DebugText.h">
+>>>>>>> start of debugtext
+      <Filter>Source</Filter>
+    </ClInclude>
+>>>>>>> Text renderer, GLTimer and Timer
+=======
+    <ClInclude Include="..\..\..\Source\Renderer\TextureLoader.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\DebugText.h" />
+<<<<<<< HEAD
+    <ClInclude Include="..\..\..\Source\Renderer\GLTimer.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\SimpleText.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+=======
+>>>>>>> 264189ecbb29ed92de336788293523449bc35e93
+>>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Renderer\Shader.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Renderer\DebugText.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+    <ClCompile Include="..\..\..\Source\Renderer\GLTimer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Renderer\SimpleText.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+=======
+>>>>>>> 264189ecbb29ed92de336788293523449bc35e93
+>>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\Externals\content\shaders\debuggText.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\fullscreen.ps">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\fullscreen.vs">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\fullscreen.gs">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\FSDeferredPass2.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\VSDeferredPass1.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\VSDeferredPass2.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\FSDeferredPass1.glsl">
+      <Filter>shaders</Filter>
+    </None>
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+    <None Include="..\..\..\Externals\content\shaders\SimpleText.glsl">
+      <Filter>shaders</Filter>
+    </None>
+=======
+>>>>>>> Standard deferred added
+=======
+>>>>>>> Text renderer, GLTimer and Timer
+=======
+    <None Include="..\..\..\Externals\content\shaders\SimpleText.glsl">
+      <Filter>shaders</Filter>
+    </None>
+>>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
+  </ItemGroup>
+</Project>
