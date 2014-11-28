@@ -64,7 +64,7 @@ unsigned int EntityTable::GenerateNewEntityId()
 	return id;
 }
 
-void EntityTable::AddOldEntityId(unsigned int _id)
+void ECSL::EntityTable::AddOldEntityId(unsigned int _id)
 {
 	assert(_id < m_entityCount);
 
