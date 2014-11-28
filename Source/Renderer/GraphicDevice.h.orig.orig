@@ -22,14 +22,6 @@ namespace Renderer
 		}
 	};
 
-<<<<<<< HEAD
-=======
-	struct RenderComponent
-	{
-		
-	};
-
->>>>>>> merge fix
 	class DECLSPEC GraphicDevice
 	{
 	public:
@@ -74,7 +66,7 @@ namespace Renderer
 		int	m_clientWidth, m_clientHeight;
 
 		// Image buffers
-		GLuint m_outputImage, m_inputImage;
+		GLuint m_outputImage;
 		GLuint m_debuggText;
 		GLuint m_depthBuf, m_normTex, m_colorTex;
 
@@ -82,18 +74,12 @@ namespace Renderer
 		GLuint m_deferredFBO;
 
 		// Shaders
-<<<<<<< HEAD
+		Shader m_compDeferredPass2Shader;
 <<<<<<< HEAD
 		Shader m_debuggTextShader; // TA BORT DENNA
 =======
-		Shader m_compDeferredPass2Shader;
->>>>>>> Deferred pass 2 moved to compute shader
-=======
-		Shader m_compDeferredPass2Shader;
-=======
-		Shader m_debuggTextShader; // TA BORT DENNA
->>>>>>> 49a7f410bee1810ff8e94f107f814ca8d7248530
->>>>>>> merge fix
+
+>>>>>>> c65b8ddea78f628a428a175da572a96e7fa75aac
 		Shader m_fullScreenShader;
 		Shader m_deferredShader1, m_deferredShader2;
 
