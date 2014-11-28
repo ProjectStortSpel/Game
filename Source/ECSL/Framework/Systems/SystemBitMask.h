@@ -4,6 +4,7 @@
 #include <SDL/SDL.h>
 #include <vector>
 #include "ECSL/Framework/Common/BitSet.h"
+#include <string>
 
 namespace ECSL
 {

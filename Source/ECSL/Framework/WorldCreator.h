@@ -58,7 +58,7 @@ namespace ECSL
 	template<typename SystemType>
 	void WorldCreator::AddSystemToNewGroup()
 	{
-		m_systemWorkGroups->push_back(new SystemGroup(new SystemType()));
+		m_systemWorkGroups->push_back(new SystemWorkGroup(new SystemType()));
 	}
 
 	template<typename SystemType>

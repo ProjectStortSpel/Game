@@ -3,6 +3,7 @@
 #ifdef _WINDOWS
 
 #include <vector>
+#include <string>
 
 namespace ECSL
 {
