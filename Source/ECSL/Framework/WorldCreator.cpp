@@ -17,7 +17,9 @@ void WorldCreator::AddComponentType(const std::string& _componentType)
 	assert(!m_worldInitialized);
 
 	unsigned int tableId = ComponentTypeManager::GetInstance().GetTableId(_componentType);
+
 	assert(!IsIdAdded(tableId));
+
 	m_componentTypeIds->push_back(tableId);
 }
 

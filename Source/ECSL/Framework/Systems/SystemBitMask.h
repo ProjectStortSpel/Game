@@ -29,7 +29,7 @@ namespace ECSL
 				delete(m_addedComponentTypes);
 
 			if (m_bitSet)
-				delete[] m_bitSet;  
+				delete m_bitSet;  
 		}
 
 		std::vector<std::string>* GetComponentTypes() const { return m_addedComponentTypes; }
