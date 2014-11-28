@@ -50,9 +50,9 @@ int main(int argc, char** argv)
 	SDL_Init(SDL_INIT_EVERYTHING);
 	Timer timer;
 
-	Renderer::GraphicDevice* gd = new Renderer::GraphicDevice();
+	Renderer::GraphicDevice RENDERER = Renderer::GraphicDevice();
 	Input::InputWrapper INPUT = Input::InputWrapper::GetInstance();
-	gd->Init();
+	RENDERER.Init();
 
 	ServerNetwork server;
 	server.Start(6112, "", 8);
@@ -66,19 +66,41 @@ int main(int argc, char** argv)
 		timer.Reset();
 
 		INPUT.Update();
-		gd->Update(dt);
-
+		RENDERER.Update(dt);
 		//gd->RenderSimpleText("This text render from GAME! \nThe x and y values in the function isn't pixel \ncoordinates, it's char position. Every char is \n8x16 pixels in size. Use \\n to change line.\n\n  !Not all chars is supported!\n\nRight now it clear the whole output image as well (Tell me when to remove this).", 10, 2);
 		//
 
-		gd->Render();
-
+		RENDERER.Render();
 		
 		
 		SDL_Event e;
 		while (SDL_PollEvent(&e))
 		{
-			INPUT.PollEvent(e);
+			switch (e.type)
+			{
+			case SDL_WINDOWEVENT:
+				RENDERER.PollEvent(e);
+				break;
+			case SDL_KEYDOWN: 
+			case SDL_KEYUP:
+			case SDL_FINGERMOTION:
+			case SDL_FINGERDOWN:
+			case SDL_FINGERUP:
+			case SDL_JOYAXISMOTION:
+			case SDL_JOYBALLMOTION:
+			case SDL_JOYHATMOTION:
+			case SDL_JOYBUTTONDOWN:
+			case SDL_JOYBUTTONUP:
+			case SDL_MOUSEMOTION:
+			case SDL_MOUSEBUTTONDOWN:
+			case SDL_MOUSEBUTTONUP:
+			case SDL_MOUSEWHEEL:
+			case SDL_MULTIGESTURE:
+				INPUT.PollEvent(e);
+				break;
+			}
+				
+			
 		}
 
 		if (INPUT.GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
@@ -86,8 +108,6 @@ int main(int argc, char** argv)
 			lol = false;
 		}
 	}
-		
-	delete gd;
 
 	SDL_Quit();
 	return 0;
