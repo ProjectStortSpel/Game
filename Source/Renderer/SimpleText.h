@@ -12,15 +12,17 @@ namespace Renderer
 		SimpleText();
 		~SimpleText();
 
-		bool Init(GLuint* _outputimage, GLuint _textimage, int _clientWidth, int _clientHeight);
+		bool Init(GLuint _textimage, int _clientWidth, int _clientHeight);
 
-		void RenderText();
+		void RenderText(float _dt);
 
 		bool RenderSimpleText(std::string _text, int x, int y);
 		void SetSimpleTextColor(vec4 _color);
 
 	private:
-		GLuint* m_outputImage;
+		float m_clock;
+		float m_update;
+
 		GLuint m_textImage;
 
 		Shader m_simpleTextShader;
