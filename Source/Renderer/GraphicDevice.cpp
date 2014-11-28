@@ -6,7 +6,6 @@
 using glm::vec3;
 
 using namespace Renderer;
-using namespace std;
 
 struct Object
 {
