@@ -19,13 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Source\Input\Devices\Controller.cpp" />
     <ClCompile Include="..\..\..\Source\Input\Devices\Keyboard.cpp" />
     <ClCompile Include="..\..\..\Source\Input\Devices\Mouse.cpp" />
     <ClCompile Include="..\..\..\Source\Input\InputWrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Source\Input\Devices\Controller.h" />
     <ClInclude Include="..\..\..\Source\Input\Devices\Keyboard.h" />
     <ClInclude Include="..\..\..\Source\Input\Devices\Mouse.h" />
     <ClInclude Include="..\..\..\Source\Input\InputEnums.h" />
