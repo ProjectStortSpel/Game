@@ -3,6 +3,7 @@
 #include <assert.h>
 #include "../../Managers/ComponentTypeManager.h"
 #include "Tables/DataArray.h"
+#include "Tables/DataMap.h"
 
 using namespace ECSL;
 
@@ -43,7 +44,7 @@ void DataManager::InitializeTables()
 			break;
 
 		case TableType::Map:
-			printf("WARNING: Map not implemented yet! (ID %d)\n", m_componentTypeIds->at(n));
+			m_componentTables->insert(std::pair<unsigned int, DataTable*>(componentTypeId, new DataMap(componentType->GetByteSize())));
 			break;
 
 		default:
