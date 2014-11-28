@@ -59,17 +59,17 @@ void lol()
 	worldCreator.AddComponentType("Velocity");
 	ECSL::World* world = worldCreator.CreateWorld(100);
 
-	for (unsigned int x = 0; x < 1; ++x)
-	{
-		for (unsigned int i = 0; i < 100; ++i)
-		{
-			int id = world->CreateNewEntity();
-		}
-		for (unsigned int i = 0; i < 99; ++i)
-		{
-			world->KillEntity(i);
-		}
-	}
+	//for (unsigned int x = 0; x < 1; ++x)
+	//{
+	//	for (unsigned int i = 0; i < 100; ++i)
+	//	{
+	//		int id = world->CreateNewEntity();
+	//	}
+	//	for (unsigned int i = 0; i < 99; ++i)
+	//	{
+	//		world->KillEntity(i);
+	//	}
+	//}
 
 	//int id = world->CreateNewEntity();
 	//world->CreateComponentAndAddTo("Position", id);
