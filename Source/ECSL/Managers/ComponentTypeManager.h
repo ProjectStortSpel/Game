@@ -43,11 +43,11 @@ namespace ECSL
 	template<typename ComponentType>
 	void ComponentTypeManager::AddComponentType()
 	{
-		unsigned int componentId = ComponentManager::GetTableId<ComponentType>();
+		unsigned int componentId = ComponentTypeManager::GetTableId<ComponentType>();
 
-		auto it = m_loadedComponentTypes->find(componentId);
-		if (it == m_loadedComponentTypes->end())
-			m_loadedComponentTypes->operator[](componentId) = new ComponentType();
+		auto it = m_componentTypes->find(componentId);
+		if (it == m_componentTypes->end())
+			m_componentTypes->operator[](componentId) = new ComponentType();
 	}
 
 	template<typename ComponentType>
