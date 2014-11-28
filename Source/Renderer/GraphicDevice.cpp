@@ -3,10 +3,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "TextureLoader.h"
 
-using glm::vec3;
-
 using namespace Renderer;
-using namespace std;
+using namespace glm;
 
 struct Object
 {
