@@ -6,7 +6,7 @@
 
 namespace Renderer
 {
-	class SimpleText
+	class DECLSPEC SimpleText
 	{
 	public:
 		SimpleText();
@@ -17,7 +17,7 @@ namespace Renderer
 		void RenderText(float _dt);
 
 		bool RenderSimpleText(std::string _text, int x, int y);
-		void SetSimpleTextColor(vec4 _color);
+		void SetSimpleTextColor(glm::vec4 _color);
 
 	private:
 		float m_clock;

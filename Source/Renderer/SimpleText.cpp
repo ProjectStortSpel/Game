@@ -1,6 +1,7 @@
 #include "SimpleText.h"
 
 using namespace Renderer;
+using namespace glm;
 
 SimpleText::SimpleText()
 {
