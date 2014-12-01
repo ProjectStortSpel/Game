@@ -29,6 +29,9 @@
     <ClInclude Include="..\..\..\Source\Renderer\Camera.h">
       <Filter>shaders\Source</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\Buffer.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp">
@@ -45,6 +48,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Renderer\Camera.cpp">
       <Filter>shaders\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Renderer\Buffer.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

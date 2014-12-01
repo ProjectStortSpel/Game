@@ -7,6 +7,8 @@ layout(binding = 0) uniform sampler2D NormalTex;
 layout(binding = 1) uniform sampler2D ColorTex;
 
 uniform sampler2D diffuseTex;
+uniform sampler2D normalTex;
+uniform sampler2D specularTex;
 
 layout (location = 0) out vec3 NormalData;
 layout (location = 1) out vec3 ColorData;
