@@ -142,8 +142,6 @@ void GraphicDevice::Render()
 	//-- DRAW MODELS
 	for (int i = 0; i < m_models.size(); i++)
 	{
-		m_models[i].rotation = rot;
-		m_models[i].Update();
 		glm::mat4 modelMatrix = m_models[i].modelMatrix;
 		glm::mat4 modelViewMatrix = viewMatrix * modelMatrix;
 		glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelViewMatrix)));
@@ -366,10 +364,6 @@ bool GraphicDevice::InitBuffers()
 	location = glGetUniformLocation(m_compDeferredPass2Shader.GetShaderProgram(), "DepthTex");
 	glUniform1i(location, 0);
 	
-	m_deferredShader1.UseProgram();
-
-	// ADDING TEMP OBJECTS
-	LoadModel("content/models/cube/", "cube.object", NULL);
 
 	// Output ImageBuffer
 	glGenTextures(1, &m_outputImage);
@@ -432,12 +426,14 @@ void GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_m
 	// Import Mesh
 	Buffer* mesh = AddMesh(obj.mesh);
 
+	// Set model
+	Model model = Model(mesh, texture, normal, specular);
+	model.modelMatrix = *_matrixPtr; // CHANGE THIS TO PTR LATER
 	// Push back the model
-	m_models.push_back(Model(mesh, texture, normal, specular));
+	m_models.push_back(model);
 	std::push_heap(m_models.begin(), m_models.end());
 
 	// LINK MATRIX HERE
-
 }
 
 Buffer* GraphicDevice::AddMesh(std::string _fileDir)
@@ -501,5 +497,8 @@ GLuint GraphicDevice::AddTexture(std::string _fileDir, GLenum _textureSlot)
 		if (it->first == _fileDir)
 			return it->second;
 	}
-	return TextureLoader::LoadTexture(_fileDir.c_str(), _textureSlot);
+	m_deferredShader1.UseProgram();
+	GLuint texture = TextureLoader::LoadTexture(_fileDir.c_str(), _textureSlot);
+	m_textures.insert(std::pair<const std::string, GLenum>(_fileDir, texture));
+	return texture;
 }

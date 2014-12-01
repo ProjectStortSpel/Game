@@ -23,7 +23,6 @@ void main()
 	vec3 normal_map = texture( normalTex, TexCoord ).rgb;
 	vec3 specglow_map = texture( specularTex, TexCoord ).rgb;
 
-
 	// -- OUTPUTS --
 	// Set Color output
 	ColorData.xyz = color_map.xyz;								// rgb = color
@@ -32,6 +31,6 @@ void main()
 	normal_map = (normal_map * 2.0f) - 1.0f;
 	mat3 texSpace = mat3(Tan, BiTan, Normal);
 	NormalData.xy = normalize( texSpace * normal_map ).xy;		// rg = normal
-	NormalData.z = specglow_map.x;								// b = spec shine
-	NormalData.z = specglow_map.g;								// a = spec 
+	NormalData.z = specglow_map.x;								// b = spec reflec
+	NormalData.w = specglow_map.y;								// a = spec shine
 }

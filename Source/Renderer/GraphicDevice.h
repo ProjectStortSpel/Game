@@ -35,14 +35,7 @@ namespace Renderer
 		GLuint norID;
 		GLuint speID;
 
-		glm::vec3 position;
-		float rotation;
-		glm::mat4 modelMatrix;
-
-		void Update()
-		{
-			modelMatrix = glm::translate(position) * glm::rotate(glm::mat4(1.0), rotation, glm::vec3(0.0, 1.0, 0.0));
-		}
+		glm::mat4 modelMatrix;	// GÖR DETTA TILL EN PEKARE NÄR E/C FUNGERAR
 	};
 
 
