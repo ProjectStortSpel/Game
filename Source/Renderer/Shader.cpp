@@ -11,14 +11,14 @@ void Shader::InitShaderProgram()
 bool Shader::AddShader(const char* source_file, GLenum shader_type)
 {
 	// load file into string
-	ifstream file;
+	std::ifstream file;
 	file.open(source_file);
 	if (!file.is_open())
 	{
 		std::printf("ERROR creating opening shader file %s\n", source_file);
 		return false;
 	}
-	string shaderString; // string to load shader into
+	std::string shaderString; // string to load shader into
 	char line[256];
 	while (!file.eof())
 	{
