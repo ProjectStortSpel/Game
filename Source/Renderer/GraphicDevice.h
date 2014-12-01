@@ -75,7 +75,7 @@ namespace Renderer
 		void SetSimpleTextColor(glm::vec4 _color);
 
 		// MODELLOADER
-		
+		void LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr);
 
 	private:
 		bool InitSDLWindow();
@@ -120,14 +120,13 @@ namespace Renderer
 
 		// Modelloader
 		std::vector<Model> m_models;
-		int LoadModel(std::string dir, std::string file);
 
 		// Meshs
 		std::map<const std::string, GLuint> m_meshs;
-		GLuint AddMesh(std::string fileDir);
+		GLuint AddMesh(std::string _fileDir);
 		// Textures
 		std::map<const std::string, GLuint> m_textures;
-		GLuint AddTexture(std::string fileDir, GLenum textureSlot);
+		GLuint AddTexture(std::string _fileDir, GLenum _textureSlot);
 	};
 }
 

@@ -591,7 +591,7 @@ void GraphicDevice::SetSimpleTextColor(vec4 _color)
 	m_textRenderer.SetSimpleTextColor(_color);
 }
 
-int GraphicDevice::LoadModel(std::string dir, std::string file)
+void GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr)
 {
 	// Import Object
 	ObjectData obj = ModelLoader::importObject("content/models/cube/", "cube.object");
@@ -612,18 +612,19 @@ int GraphicDevice::LoadModel(std::string dir, std::string file)
 	m_models.push_back(Model(mesh, texture, normal, specular));
 	std::push_heap(m_models.begin(), m_models.end());
 
-	return true;
+	// LINK MATRIX HERE
+
 }
 
-GLuint GraphicDevice::AddMesh(std::string fileDir)
+GLuint GraphicDevice::AddMesh(std::string _fileDir)
 {
 	for (std::map<const std::string, GLuint>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
 	{		
-		if (it->first == fileDir)
+		if (it->first == _fileDir)
 			return it->second;
 	}
 
-	std::vector<Vertex> verts = ModelLoader::importMesh(fileDir);
+	std::vector<Vertex> verts = ModelLoader::importMesh(_fileDir);
 
 	std::vector<float> positionData(verts.size() * 3);
 	std::vector<float> normalData(verts.size() * 3);
@@ -675,17 +676,17 @@ GLuint GraphicDevice::AddMesh(std::string fileDir)
 	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[2]);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
 
-	m_meshs.insert(std::pair<const std::string, GLuint>(fileDir, VAOHandle));
+	m_meshs.insert(std::pair<const std::string, GLuint>(_fileDir, VAOHandle));
 
 	return VAOHandle;
 }
 
-GLuint GraphicDevice::AddTexture(std::string fileDir, GLenum textureSlot)
+GLuint GraphicDevice::AddTexture(std::string _fileDir, GLenum _textureSlot)
 {
 	for (std::map<const std::string, GLuint>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
 	{
-		if (it->first == fileDir)
+		if (it->first == _fileDir)
 			return it->second;
 	}
-	return TextureLoader::LoadTexture(fileDir.c_str(), textureSlot);
+	return TextureLoader::LoadTexture(_fileDir.c_str(), _textureSlot);
 }
