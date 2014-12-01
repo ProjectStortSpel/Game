@@ -2,6 +2,7 @@
 #define DATATABLE_H
 
 #include <SDL/SDL.h>
+#include <cstring>
 
 namespace ECSL
 {
