@@ -17,5 +17,15 @@ void main()
 {
 	// Store position, norm, and diffuse color in g-buffer
 	NormalData.xy = Normal.xy;
+
+	//
+	//float4 normal_map;
+	//normal_map = gNormal.Sample( samp, input.Tex );
+	//normal_map = (normal_map * 2.0f) - 1.0f;
+
+	//float3x3 texSpace = float3x3(input.Tan, input.BiNorm, input.Norm);//biTangent, input.Norm);
+	//normal = normalize(mul(normal_map, texSpace));
+
+
 	ColorData = texture( diffuseTex, TexCoord ).rgb;
 }

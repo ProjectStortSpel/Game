@@ -325,8 +325,15 @@ void GraphicDevice::Render()
 		m_deferredShader1.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
 		m_deferredShader1.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
 
-		glActiveTexture(GL_TEXTURE3);
+		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, m_models[i].texID);
+
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, m_models[i].norID);
+
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, m_models[i].speID);
+
 		m_models[i].bufferPtr->draw();
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
@@ -384,7 +391,7 @@ void GraphicDevice::Render()
 	glm::mat4 inverseProjection = glm::inverse(projectionMatrix);
 	m_compDeferredPass2Shader.SetUniVariable("invProjection", mat4x4, &inverseProjection);
 
-	glActiveTexture(GL_TEXTURE2);
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_depthBuf);
 
 	glBindImageTexture(1, m_colorTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
@@ -553,22 +560,16 @@ bool GraphicDevice::InitBuffers()
 	m_compDeferredPass2Shader.UseProgram();
 
 	// Compute shader input images
-	glActiveTexture(GL_TEXTURE0);
 	//normal
 	glBindImageTexture(0, m_normTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 
-
-	glActiveTexture(GL_TEXTURE1);
 	//color
 	glBindImageTexture(1, m_colorTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
 
 
-	glActiveTexture(GL_TEXTURE2);
+	glActiveTexture(GL_TEXTURE0);
 	location = glGetUniformLocation(m_compDeferredPass2Shader.GetShaderProgram(), "DepthTex");
-	glUniform1i(location, 2);
-
-	
-
+	glUniform1i(location, 0);
 	
 	m_deferredShader1.UseProgram();
 	/*
@@ -640,13 +641,13 @@ void GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_m
 	// Import Normal map
 	GLuint normal = AddTexture(obj.norm, GL_TEXTURE2);
 	glActiveTexture(GL_TEXTURE2);
-	location = glGetUniformLocation(m_deferredShader1.GetShaderProgram(), "diffuseTex");
+	location = glGetUniformLocation(m_deferredShader1.GetShaderProgram(), "normalTex");
 	glUniform1i(location, 2);
 
 	// Import Specc Glow map
 	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
 	glActiveTexture(GL_TEXTURE3);
-	location = glGetUniformLocation(m_deferredShader1.GetShaderProgram(), "diffuseTex");
+	location = glGetUniformLocation(m_deferredShader1.GetShaderProgram(), "specularTex");
 	glUniform1i(location, 3);
 
 	// Import Mesh
@@ -672,6 +673,8 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir)
 
 	std::vector<float> positionData(verts.size() * 3);
 	std::vector<float> normalData(verts.size() * 3);
+	std::vector<float> tanData(verts.size() * 3);
+	std::vector<float> bitanData(verts.size() * 3);
 	std::vector<float> texCoordData(verts.size() * 2);
 
 	for (int i = 0; i < (int)verts.size(); i++)
@@ -682,6 +685,12 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir)
 		normalData[i * 3 + 0] = verts[i].no.x;
 		normalData[i * 3 + 1] = verts[i].no.y;
 		normalData[i * 3 + 2] = verts[i].no.z;
+		tanData[i * 3 + 0] = verts[i].ta.x;
+		tanData[i * 3 + 1] = verts[i].ta.y;
+		tanData[i * 3 + 2] = verts[i].ta.z;
+		bitanData[i * 3 + 0] = verts[i].bi.x;
+		bitanData[i * 3 + 1] = verts[i].bi.y;
+		bitanData[i * 3 + 2] = verts[i].bi.z;
 		texCoordData[i * 2 + 0] = verts[i].uv.x;
 		texCoordData[i * 2 + 1] = 1 - verts[i].uv.y;
 	}
@@ -694,7 +703,9 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir)
 	{
 		{ 0, 3, GL_FLOAT, (const GLvoid*)positionData.data(), positionData.size() * sizeof(float) },
 		{ 1, 3, GL_FLOAT, (const GLvoid*)normalData.data(), normalData.size()   * sizeof(float) },
-		{ 2, 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), texCoordData.size() * sizeof(float) }
+		{ 2, 3, GL_FLOAT, (const GLvoid*)tanData.data(), tanData.size()   * sizeof(float) },
+		{ 3, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), bitanData.size()   * sizeof(float) },
+		{ 4, 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), texCoordData.size() * sizeof(float) }
 	};
 	retbuffer->init(bufferData, sizeof(bufferData) / sizeof(bufferData[0]));
 	retbuffer->setCount((int)verts.size());
