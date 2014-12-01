@@ -19,10 +19,13 @@ BaseNetwork::~BaseNetwork()
 }
 
 
-void BaseNetwork::TriggerEvent(NetMessageHook _function, NetConnection _connection)
+void BaseNetwork::TriggerEvent(NetMessageHook _function, uint64_t _packetId, NetConnection _connection)
 {
-	//if (_function)
-	//	_function(m_packetHandler, _connection);
+	if (_function)
+	{
+		_function(&m_packetHandler, _packetId, _connection);
+		m_packetHandler.EndUnpack(_packetId);
+	}
 }
 
 std::function<void(PacketHandler* _packetHandler, Packet* _packet)>* BaseNetwork::GetUserFunction(std::string _functionName)
