@@ -5,7 +5,7 @@ enum NetTypeMessageId
 {
 	ID_CONNECTION_ACCEPTED = 1,			// Connection to server accepted (will most likely be called after PASSWORD_ATTEMPT)
 	ID_CONNECTION_LOST,					// Connection between server-client timed out
-	ID_CONNECTION_DISCONNECTED,			// Client disconnected from server or 
+	ID_CONNECTION_DISCONNECTED,			// Client disconnected from server or server closes the connection.
 	ID_CONNECTION_KICKED,				// Client kicked from server
 	ID_CONNECTION_BANNED,				// Client banned from server
 	ID_REMOTE_CONNECTION_KICKED,		// Remote connection kicked from server

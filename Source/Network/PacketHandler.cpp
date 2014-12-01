@@ -11,7 +11,7 @@ PacketHandler::~PacketHandler()
 	m_sendMutex.lock();
 	for (auto iterator = m_packetSendInfoMap.begin(); iterator != m_packetSendInfoMap.end(); iterator++)
 	{
-		delete iterator->second;
+		SAFE_DELETE(iterator->second);
 	}
 	m_packetSendInfoMap.clear();
 	m_sendMutex.unlock();
@@ -19,8 +19,8 @@ PacketHandler::~PacketHandler()
 	m_receiveMutex.lock();
 	for (auto iterator = m_packetReceiveInfoMap.begin(); iterator != m_packetReceiveInfoMap.end(); iterator++)
 	{
-		delete iterator->second->PacketData;
-		delete iterator->second;
+		SAFE_DELETE(iterator->second->PacketData);
+		SAFE_DELETE(iterator->second);
 	}
 	m_packetReceiveInfoMap.clear();
 	m_receiveMutex.unlock();
@@ -114,7 +114,7 @@ Packet* PacketHandler::EndPack(uint64_t _id)
 	m_sendMutex.lock();
 	m_packetSendInfoMap.erase(_id);
 	m_sendMutex.unlock();
-	delete psi;
+	SAFE_DELETE(psi);
 
 	return p;
 }
@@ -147,8 +147,8 @@ void PacketHandler::EndUnpack(uint64_t _id)
 		m_receiveMutex.lock();
 		m_packetReceiveInfoMap.erase(_id);
 		m_receiveMutex.unlock();
-		delete pri->PacketData;
-		delete pri;
+		SAFE_DELETE(pri->PacketData);
+		SAFE_DELETE(pri);
 	}
 }
 

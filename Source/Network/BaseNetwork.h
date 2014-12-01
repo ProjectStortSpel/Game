@@ -77,8 +77,8 @@ protected:
 #pragma warning( default : 4251 )
 
 private:
-	NetMessageHook* GetUserFunction(std::string _functionName);
-	NetMessageHook* GetNetworkFunction(char _functionIdentifier);
+	//NetMessageHook* GetUserFunction(std::string _functionName);
+	//NetMessageHook* GetNetworkFunction(char _functionIdentifier);
 
 };
 

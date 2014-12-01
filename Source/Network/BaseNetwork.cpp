@@ -40,21 +40,21 @@ void BaseNetwork::TriggerEvent(NetEvent _function, NetConnection _connection)
 	}
 }
 
-NetMessageHook* BaseNetwork::GetUserFunction(std::string _functionName)
-{
-	if (m_userFunctions.find(_functionName) != m_userFunctions.end())
-		return &m_userFunctions[_functionName];
-
-
-	return 0;
-}
-NetMessageHook* BaseNetwork::GetNetworkFunction(char _functionIdentifier)
-{
-	if (m_networkFunctions.find(_functionIdentifier) != m_networkFunctions.end())
-		return &m_networkFunctions[_functionIdentifier];
-
-	return 0;
-}
+//NetMessageHook* BaseNetwork::GetUserFunction(std::string _functionName)
+//{
+//	if (m_userFunctions.find(_functionName) != m_userFunctions.end())
+//		return &m_userFunctions[_functionName];
+//
+//
+//	return 0;
+//}
+//NetMessageHook* BaseNetwork::GetNetworkFunction(char _functionIdentifier)
+//{
+//	if (m_networkFunctions.find(_functionIdentifier) != m_networkFunctions.end())
+//		return &m_networkFunctions[_functionIdentifier];
+//
+//	return 0;
+//}
 
 void BaseNetwork::HandlePacket(Packet* _packet)
 {

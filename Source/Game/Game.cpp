@@ -61,6 +61,11 @@ void TestECSL()
 	//delete(&ECSL::BitSet::BitSetConverter::GetInstance());
 }
 
+void OnDisconnect(NetConnection nc)
+{
+	printf("Test\n");
+}
+
 
 int main(int argc, char** argv)
 {
@@ -87,11 +92,12 @@ int main(int argc, char** argv)
 	if (input.compare("s") == 0)
 	{
 		isServer = true;
+		server.SetOnPlayerDisconnected(&OnDisconnect);
 		server.Start(6112, "localhest", 8);
 	}
 	else if (input.compare("c") == 0)
 	{
-		client.Connect("127.0.0.1", "localhest", 6112, 0);
+		client.Connect("194.47.150.5", "localhest", 6112, 0);
 	}
 
 	TestECSL();

@@ -77,6 +77,10 @@ bool ClientNetwork::Connect()
 }
 void ClientNetwork::Disconnect()
 {
+	uint64_t id = m_packetHandler.StartPack(ID_CONNECTION_DISCONNECTED);
+	Packet* packet = m_packetHandler.EndPack(id);
+	Send(packet);
+
 	m_receivePacketsThreadAlive = false;
 
 	if (m_receivePacketsThread.joinable())	
@@ -134,6 +138,7 @@ void ClientNetwork::Send(Packet* _packet)
 	}
 
 	m_socket->Send((char*)_packet->Data, _packet->Length);
+	SAFE_DELETE(_packet);
 }
 
 void ClientNetwork::NetPasswordInvalid(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)

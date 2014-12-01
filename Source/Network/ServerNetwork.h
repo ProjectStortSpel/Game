@@ -36,13 +36,12 @@ public:
 	void SetOnPlayerTimedOut(NetEvent _function);
 
 private:
-	void ReceivePackets(ISocket* _socket, int _id);
+	void ReceivePackets(ISocket* _socket, bool* alive);
 	void ListenForConnections(void);
 
-	void TestNetwork(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
-	void TestUser(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
-
-	void TestNewUser(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
+	void NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
+	void NetConnectionLost(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
+	void NetConnectionDisconnected(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
 
 private:
 
@@ -57,8 +56,9 @@ private:
 	std::map<NetConnection, ISocket*> m_connectedClients;
 
 	std::vector<std::thread> m_receivePacketsThreads;
-	std::vector<bool> m_receivePacketsAlive;
+	std::vector<bool*> m_receivePacketsAlive;
 
+	//std::map<NetConnection
 
 	NetEvent m_onPlayerConnected;
 	NetEvent m_onPlayerDisconnected;
