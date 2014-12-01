@@ -70,9 +70,9 @@ int main(int argc, char** argv)
 
 	Timer timer;
 
-	Renderer::GraphicDevice RENDERER = Renderer::GraphicDevice();
+//	Renderer::GraphicDevice RENDERER = Renderer::GraphicDevice();
 	Input::InputWrapper* INPUT = &Input::InputWrapper::GetInstance();
-	RENDERER.Init();
+//	RENDERER.Init();
 
 	std::string input;
 	printf("Starting network:\n\n");
@@ -117,10 +117,10 @@ int main(int argc, char** argv)
 		}
 
 		INPUT->Update();
-		RENDERER.Update(dt);
-		RENDERER.RenderSimpleText("This text render from GAME! \nThe x and y values in the function isn't pixel \ncoordinates, it's char position. Every char is \n8x16 pixels in size. Use \\n to change line.\n\n  !Not all chars is supported!\n\nRight now it clear the whole output image as well (Tell me when to remove this).", 10, 2);
+	//	RENDERER.Update(dt);
+	//	RENDERER.RenderSimpleText("This text render from GAME! \nThe x and y values in the function isn't pixel \ncoordinates, it's char position. Every char is \n8x16 pixels in size. Use \\n to change line.\n\n  !Not all chars is supported!\n\nRight now it clear the whole output image as well (Tell me when to remove this).", 10, 2);
 
-		RENDERER.Render();
+	//	RENDERER.Render();
 
 		SDL_Event e;
 		while (SDL_PollEvent(&e))
@@ -128,7 +128,7 @@ int main(int argc, char** argv)
 			switch (e.type)
 			{
 			case SDL_WINDOWEVENT:
-				RENDERER.PollEvent(e);
+		//		RENDERER.PollEvent(e);
 				break;
 			case SDL_KEYDOWN:
 			case SDL_KEYUP:
