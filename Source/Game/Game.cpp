@@ -58,14 +58,16 @@ int main(int argc, char** argv)
 	ClearConsole();
 	ServerNetwork server;
 	ClientNetwork client;
+	bool isServer = false;
 
 	if (input.compare("s") == 0)
 	{
+		isServer = true;
 		server.Start(6112, "localhest", 8);
 	}
 	else if (input.compare("c") == 0)
 	{
-		client.Connect("127.0.0.1", "localhest", 6112, 0);
+		client.Connect("127.0.0.1", "loca453lhest", 6112, 0);
 	}
 	
 
@@ -80,6 +82,18 @@ int main(int argc, char** argv)
 		float dt = timer.ElapsedTimeInSeconds();
 		timer.Reset();
 
+		if (isServer)
+		{
+			do
+			{
+			} while (server.TriggerPacket() > 0);
+		}
+		else
+		{
+			do
+			{
+			} while (server.TriggerPacket() > 0);
+		}
 		INPUT.Update();
 		gd->Update(dt);
 

@@ -14,10 +14,14 @@ ClientNetwork::ClientNetwork()
 	m_socketBound = false;
 	m_receivePacketsThreadAlive = false;
 	m_socket = 0;
+
+	m_networkFunctions[NetTypeMessageId::ID_PASSWORD_INVALID] = std::bind(&ClientNetwork::NetPasswordInvalid, this, std::placeholders::_1, std::placeholders::_2);
+	m_networkFunctions[NetTypeMessageId::ID_CONNECTION_ACCEPTED] = std::bind(&ClientNetwork::NetConnectionAccepted, this, std::placeholders::_1, std::placeholders::_2);
 }
 
 ClientNetwork::~ClientNetwork()
 {
+	bool hest = m_receivePacketsThread.joinable();
 	Disconnect();
 }
 
@@ -67,18 +71,21 @@ bool ClientNetwork::Connect()
 	auto packet = m_packetHandler.EndPack();
 	Send(packet);
 
+	bool hest = m_receivePacketsThread.joinable();
+
 	m_receivePacketsThreadAlive = true;
 	m_receivePacketsThread = std::thread(&ClientNetwork::ReceivePackets, this);
+
+	hest = m_receivePacketsThread.joinable();
 
 	return true;
 }
 void ClientNetwork::Disconnect()
 {
-	if (m_receivePacketsThreadAlive)
-	{
-		m_receivePacketsThreadAlive = false;
+	if (m_receivePacketsThread.joinable())	
 		m_receivePacketsThread.join();
-	}
+
+	m_receivePacketsThreadAlive = false;
 
 	SAFE_DELETE(m_socket);
 	m_socketBound = 0;
@@ -132,4 +139,25 @@ void ClientNetwork::Send(Packet* _packet)
 	}
 
 	m_socket->Send((char*)_packet->Data, _packet->Length);
+}
+
+void ClientNetwork::NetPasswordInvalid(PacketHandler* _packetHandler, Packet* _packet)
+{
+	if (NET_DEBUG)
+		printf("Password \"%s\" invalid, connection refused.\n", m_password.c_str());
+
+	m_packetLock.lock();
+	m_packetLock.unlock();
+
+	//Disconnect();
+	m_receivePacketsThreadAlive = false;
+
+	SAFE_DELETE(m_socket);
+	m_socketBound = 0;
+
+}
+void ClientNetwork::NetConnectionAccepted(PacketHandler* _packetHandler, Packet* _packet)
+{
+	if (NET_DEBUG)
+		printf("Password accepted, connection accepted.\n");
 }

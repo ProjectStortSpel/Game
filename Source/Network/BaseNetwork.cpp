@@ -51,12 +51,9 @@ void BaseNetwork::HandlePacket(Packet* _packet)
 
 	if (type == NetTypeMessageId::ID_CUSTOM_PACKET)
 	{
-		std::string functionName((char*)&_packet->Data[1]);
-		if (m_userFunctions.find(functionName) != m_userFunctions.end())
-		{
-			m_userFunctions[functionName](&m_packetHandler, _packet);
-		}
-
+		m_packetLock.lock();
+		m_packets.push(_packet);
+		m_packetLock.unlock();
 	}
 	else
 	{
@@ -64,7 +61,37 @@ void BaseNetwork::HandlePacket(Packet* _packet)
 		{
 			m_networkFunctions[type](&m_packetHandler, _packet);
 		}
-	}
 
-	SAFE_DELETE(_packet);
+		SAFE_DELETE(_packet);
+	}
+}
+
+int BaseNetwork::TriggerPacket(void)
+{
+	int size = m_packets.size();
+
+	if (size == 0)
+		return size;
+
+	Packet* p = m_packets.front();
+	m_packets.pop();
+	size--;
+
+	if (p->Length <= 1)
+	{
+		if (NET_DEBUG)
+			printf("Corrupt packet, wrong size.\n");
+		return size;
+	}
+	std::string functionName((char*)&p->Data[1]);
+	if (m_userFunctions.find(functionName) != m_userFunctions.end())
+	{
+		m_userFunctions[functionName](&m_packetHandler, p);
+	}
+	else if (NET_DEBUG)
+		printf("Packet \"%s\" not bound to any function.\n", functionName);
+
+	m_packetHandler.EndUnpack();
+
+	return size;
 }

@@ -13,12 +13,24 @@ public:
 	PacketHandler(void);
 	~PacketHandler(void);
 
+	// Will make it possible to create a new packet to be sent to connection
+	// This should always be called before any Write function is called
+	// When done writing the packet EndPack should be called
 	void StartPack(const char* _name);
+	// Should never be called from outside of the dll
+	// Safty risk - FIX
 	void StartPack(char _identifier);
 
+	// Marks the end of a packet and should always be called when done with packing the packet
+	// Returns the newly created packet
 	Packet* EndPack(void);
 
+	// Will make it possible to unpack and read a packet
+	// This should always be called before and Read function is called
 	char StartUnpack(Packet* packet);
+	// Tell that the packet is unpacked and should be deleted
+	// Should never be called from outside of the dll as it will be called automatically
+	// Safty risk - FIX
 	void EndUnpack(void);
 
 	// Write a byte to the packet
