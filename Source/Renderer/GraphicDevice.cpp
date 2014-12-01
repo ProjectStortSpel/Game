@@ -683,7 +683,7 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir)
 		normalData[i * 3 + 1] = verts[i].no.y;
 		normalData[i * 3 + 2] = verts[i].no.z;
 		texCoordData[i * 2 + 0] = verts[i].uv.x;
-		texCoordData[i * 2 + 1] = verts[i].uv.y;
+		texCoordData[i * 2 + 1] = 1 - verts[i].uv.y;
 	}
 
 	//drawShaderHandle.UseProgram();
