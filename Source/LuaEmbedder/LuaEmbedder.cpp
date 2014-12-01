@@ -21,14 +21,24 @@ namespace LuaEmbedder
     assert(!luaL_dofile(L, filepath.c_str()));
     lua_gc(L, LUA_GCCOLLECT, 0);
   }
-  void RunFunction(const std::string& functionName, int argumentCount)
+  void CallFunction(const std::string& name, int argumentCount, const std::string& library)
   {
-    lua_getglobal(L, functionName.c_str());
+    if (library.empty())
+    {
+      lua_getglobal(L, name.c_str());
+    }
+    else
+    {
+      lua_getglobal(L, library.c_str());
+      assert(!lua_isnil(L, -1));
+      lua_pushstring(L, name.c_str());
+      lua_gettable(L, -2);
+    }
     assert(!lua_pcall(L, argumentCount, LUA_MULTRET, 0));
     lua_gc(L, LUA_GCCOLLECT, 0);
   }
   
-  #define EMBED_VARIABLE(type) \
+  #define ADD_VARIABLE(type) \
     if (library.empty()) \
     { \
       lua_push##type(L, value); \
@@ -48,25 +58,25 @@ namespace LuaEmbedder
       lua_settable(L, -3); \
       lua_setglobal(L, library.c_str()); \
     }
-  void EmbedDouble(const std::string& name, double value, const std::string& library)
+  void AddDouble(const std::string& name, double value, const std::string& library)
   {
-    EMBED_VARIABLE(number);
+    ADD_VARIABLE(number);
   }
-  void EmbedInt(const std::string& name, int value, const std::string& library)
+  void AddInt(const std::string& name, int value, const std::string& library)
   {
-    EMBED_VARIABLE(integer);
+    ADD_VARIABLE(integer);
   }
-  void EmbedUnsignedInt(const std::string& name, unsigned int value, const std::string& library)
+  void AddUnsignedInt(const std::string& name, unsigned int value, const std::string& library)
   {
-    EMBED_VARIABLE(unsigned);
+    ADD_VARIABLE(unsigned);
   }
-  void EmbedBool(const std::string& name, bool value, const std::string& library)
+  void AddBool(const std::string& name, bool value, const std::string& library)
   {
-    EMBED_VARIABLE(boolean);
+    ADD_VARIABLE(boolean);
   }
-  void EmbedString(const std::string& name, const char* value, const std::string& library)
+  void AddString(const std::string& name, const char* value, const std::string& library)
   {
-    EMBED_VARIABLE(string);
+    ADD_VARIABLE(string);
   }
   static int FunctionDispatch(lua_State* L)
   {
@@ -74,7 +84,7 @@ namespace LuaEmbedder
     int functionIndex = (int)lua_tonumber(L, lua_upvalueindex(1));
     return (*(Functions[functionIndex]))();
   }
-  void EmbedFunction(const std::string& name, int (*functionPointer)(), const std::string& library)
+  void AddFunction(const std::string& name, int (*functionPointer)(), const std::string& library)
   {
     if (library.empty())
     {
