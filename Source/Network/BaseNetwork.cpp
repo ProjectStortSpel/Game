@@ -66,5 +66,7 @@ void BaseNetwork::HandlePacket(Packet* _packet)
 		}
 	}
 
-	SAFE_DELETE(_packet);
+	m_packetHandler.EndUnpack((uint64_t)_packet);
+
+	//SAFE_DELETE(_packet);
 }

@@ -93,10 +93,6 @@ int main(int argc, char** argv)
 	}
 	
 	TestECSL();
-	
-	Renderer::GraphicDevice* gd = new Renderer::GraphicDevice();
-	Input::InputWrapper INPUT = Input::InputWrapper::GetInstance();
-	gd->Init();
 	bool lol = true;
 	float cd = 1.0f;
 	while (lol)

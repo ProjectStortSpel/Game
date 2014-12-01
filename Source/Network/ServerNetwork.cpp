@@ -19,23 +19,24 @@ void ServerNetwork::TestUser(PacketHandler* _packetHandler, Packet* _packet)
 
 void ServerNetwork::TestNewUser(PacketHandler* _packetHandler, Packet* _packet)
 {
-	char type = _packetHandler->StartUnpack(_packet);
+	char type = _packetHandler->GetNetTypeMessageId(_packet);
+	uint64_t id = _packetHandler->StartUnpack(_packet);
 
 	switch (type)
 	{
 	case NetTypeMessageId::ID_PASSWORD_ATTEMPT:
 	{
-		std::string password = _packetHandler->ReadString();
+		std::string password = _packetHandler->ReadString(id);
 		if (m_password.compare(password) == 0)
 		{
-			_packetHandler->StartPack(NetTypeMessageId::ID_CONNECTION_ACCEPTED);
-			auto newPacket = _packetHandler->EndPack();
+			uint64_t id2 = _packetHandler->StartPack(NetTypeMessageId::ID_CONNECTION_ACCEPTED);
+			auto newPacket = _packetHandler->EndPack(id2);
 			m_connectedClients[_packet->Sender]->Send((char*)newPacket->Data, newPacket->Length);
 		}
 		else
 		{
-			_packetHandler->StartPack(NetTypeMessageId::ID_PASSWORD_INVALID);
-			auto newPacket = _packetHandler->EndPack();
+			uint64_t id2 = _packetHandler->StartPack(NetTypeMessageId::ID_PASSWORD_INVALID);
+			auto newPacket = _packetHandler->EndPack(id2);
 			m_connectedClients[_packet->Sender]->Send((char*)newPacket->Data, newPacket->Length);
 			SAFE_DELETE(newPacket);
 		}
@@ -47,7 +48,6 @@ void ServerNetwork::TestNewUser(PacketHandler* _packetHandler, Packet* _packet)
 		break;
 	}
 
-	_packetHandler->EndUnpack();
 }
 
 ServerNetwork::ServerNetwork()

@@ -3,6 +3,7 @@
 
 #include <SDL/SDL.h>
 #include <string>
+#include <inttypes.h>
 
 #include "Packet.h"
 

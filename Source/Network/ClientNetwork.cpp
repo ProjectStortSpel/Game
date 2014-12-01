@@ -62,9 +62,9 @@ bool ClientNetwork::Connect()
 	if (!connected)
 		return false;
 	
-	m_packetHandler.StartPack(NetTypeMessageId::ID_PASSWORD_ATTEMPT);
-	m_packetHandler.WriteString(m_password.c_str());
-	auto packet = m_packetHandler.EndPack();
+	int id = m_packetHandler.StartPack(NetTypeMessageId::ID_PASSWORD_ATTEMPT);
+	m_packetHandler.WriteString(id, m_password.c_str());
+	auto packet = m_packetHandler.EndPack(id);
 	Send(packet);
 
 	m_receivePacketsThreadAlive = true;

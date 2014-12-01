@@ -4,156 +4,272 @@
 
 PacketHandler::PacketHandler()
 {
-	m_packetSend = new unsigned char[MAX_PACKET_SIZE];
-	m_packetReceive = 0;
-
-	m_positionSend = 0;
-	m_positionReceive = 0;
 }
 
 PacketHandler::~PacketHandler()
 {
-	SAFE_DELETE(m_packetSend);
-	m_positionSend = 0;
 
-	EndUnpack();
+	for (auto iterator = m_packetSendInfoMap.begin(); iterator != m_packetSendInfoMap.end(); iterator++)
+	{
+		delete iterator->second;
+	}
+	m_packetSendInfoMap.clear();
+
+	for (auto iterator = m_packetReceiveInfoMap.begin(); iterator != m_packetReceiveInfoMap.end(); iterator++)
+	{
+		delete iterator->second->Packet;
+		delete iterator->second;
+	}
+	m_packetReceiveInfoMap.clear();
 }
 
-void PacketHandler::StartPack(const char* _functionName)
+PacketHandler::PacketSendInfo* PacketHandler::GetPacketSendInfo(uint64_t _id)
 {
-	m_positionSend = m_packetSend;
-	WriteByte(ID_CUSTOM_PACKET);
-	WriteString(_functionName);
+	if (m_packetSendInfoMap.find(_id) != m_packetSendInfoMap.end())
+	{
+		return m_packetSendInfoMap[_id];
+	}
+	return 0;
 }
 
-void PacketHandler::StartPack(char _identifier)
+PacketHandler::PacketReceiveInfo* PacketHandler::GetPacketReceiveInfo(uint64_t _id)
 {
-	m_positionSend = m_packetSend;
-	WriteByte(_identifier);
+	if (m_packetReceiveInfoMap.find(_id) != m_packetReceiveInfoMap.end())
+	{
+		return m_packetReceiveInfoMap[_id];
+	}
+	return 0;
 }
 
-Packet* PacketHandler::EndPack()
+char PacketHandler::GetNetTypeMessageId(Packet* _packet)
 {
-	unsigned short length = m_positionSend - m_packetSend;
+	return _packet->Data[0];
+}
+
+uint64_t PacketHandler::StartPack(const char* _functionName)
+{
+	PacketSendInfo* psi = new PacketSendInfo();
+	uint64_t id = (uint64_t)psi;
+	
+	m_packetSendInfoMap[id] = psi;
+
+	psi->Position = psi->Data;
+
+	WriteByte(id, ID_CUSTOM_PACKET);
+	WriteString(id, _functionName);
+	return id;
+}
+
+uint64_t PacketHandler::StartPack(char _identifier)
+{
+	PacketSendInfo* psi = new PacketSendInfo();
+	uint64_t id = (uint64_t)psi;
+
+	m_packetSendInfoMap[id] = psi;
+
+	psi->Position = psi->Data;
+	WriteByte(id, _identifier);
+	return id;
+}
+
+Packet* PacketHandler::EndPack(uint64_t _id)
+{
+	PacketSendInfo* psi = GetPacketSendInfo(_id);
+
+	unsigned short length = psi->Position - psi->Data;
 
 	Packet* p = new Packet();
 	p->Data = new unsigned char[length];
-	memcpy(p->Data, m_packetSend, length);
+	memcpy(p->Data, psi->Data, length);
 	p->Length = length;
+
+
+	m_packetSendInfoMap.erase(_id);
+	delete psi;
 
 	return p;
 }
 
-char PacketHandler::StartUnpack(Packet* _packet)
+uint64_t PacketHandler::StartUnpack(Packet* _packet)
 {
-	m_packetReceive = _packet;
-	m_positionReceive = m_packetReceive->Data;
+	PacketReceiveInfo* pri = new PacketReceiveInfo();
+	pri->Packet = _packet;
+	pri->Position = pri->Packet->Data;
+	uint64_t id = (uint64_t)pri;
+	m_packetReceiveInfoMap[id] = pri;
 
-	char type = ReadByte();
+	char type = ReadByte(id);
 
 	if (type == NetTypeMessageId::ID_CUSTOM_PACKET)
-		ReadString();
+		ReadString(id);
 
-	return type;
-}
-
-void PacketHandler::EndUnpack()
-{
-	m_packetReceive = 0;
-	m_positionReceive = 0;
+	return id;
 }
 
+void PacketHandler::EndUnpack(uint64_t _id)
+{
+	PacketReceiveInfo* pri = GetPacketReceiveInfo(_id);
 
-void PacketHandler::WriteByte(const unsigned char _byte)
-{
-	if (!IsOutOfBounds(m_packetSend, m_positionSend + sizeof(unsigned char), MAX_PACKET_SIZE))
+	if (pri)
 	{
-		memcpy(m_positionSend, &_byte, sizeof(_byte));
-		m_positionSend += sizeof(_byte);
-	}
-}
-void PacketHandler::WriteFloat(const float _float)
-{
-	if (!IsOutOfBounds(m_packetSend, m_positionSend + sizeof(float), MAX_PACKET_SIZE))
-	{
-		memcpy(m_positionSend, &_float, sizeof(_float));
-		m_positionSend += sizeof(_float);
-	}
-}
-void PacketHandler::WriteShort(const short _short)
-{
-	if (!IsOutOfBounds(m_packetSend, m_positionSend + sizeof(int), MAX_PACKET_SIZE))
-	{
-		memcpy(m_positionSend, &_short, sizeof(_short));
-		m_positionSend += sizeof(_short);
-	}
-}
-void PacketHandler::WriteInt(const int _int)
-{
-	if (!IsOutOfBounds(m_packetSend, m_positionSend + sizeof(int), MAX_PACKET_SIZE))
-	{
-		memcpy(m_positionSend, &_int, sizeof(_int));
-		m_positionSend += sizeof(_int);
-	}
-}
-void PacketHandler::WriteString(const char* _string)
-{
-	size_t length = strlen(_string) + 1;
-	if (!IsOutOfBounds(m_packetSend, m_positionSend + length, MAX_PACKET_SIZE))
-	{
-		memcpy((char*)m_positionSend, _string, length);
-		m_positionSend += length;
+		m_packetReceiveInfoMap.erase(_id);
+		delete pri->Packet;
+		delete pri;
 	}
 }
 
-char PacketHandler::ReadByte()
+
+
+void PacketHandler::WriteByte(uint64_t _id, const unsigned char _byte)
+{
+	PacketSendInfo* psi = GetPacketSendInfo(_id);
+	if (psi)
+	{
+		if (!IsOutOfBounds(psi->Data, psi->Position + sizeof(unsigned char), MAX_PACKET_SIZE))
+		{
+			memcpy(psi->Position, &_byte, sizeof(_byte));
+			psi->Position += sizeof(_byte);
+		}
+	}	
+}
+void PacketHandler::WriteFloat(uint64_t _id, const float _float)
+{
+	PacketSendInfo* psi = GetPacketSendInfo(_id);
+	if (psi)
+	{
+		if (!IsOutOfBounds(psi->Data, psi->Position + sizeof(float), MAX_PACKET_SIZE))
+		{
+			memcpy(psi->Position, &_float, sizeof(_float));
+			psi->Position += sizeof(_float);
+		}
+	}
+}
+void PacketHandler::WriteShort(uint64_t _id, const short _short)
+{
+	PacketSendInfo* psi = GetPacketSendInfo(_id);
+	if (psi)
+	{
+		if (!IsOutOfBounds(psi->Data, psi->Position + sizeof(int), MAX_PACKET_SIZE))
+		{
+			memcpy(psi->Position, &_short, sizeof(_short));
+			psi->Position += sizeof(_short);
+		}
+	}
+}
+void PacketHandler::WriteInt(uint64_t _id, const int _int)
+{
+	PacketSendInfo* psi = GetPacketSendInfo(_id);
+	if (psi)
+	{
+		if (!IsOutOfBounds(psi->Data, psi->Position + sizeof(int), MAX_PACKET_SIZE))
+		{
+			memcpy(psi->Position, &_int, sizeof(_int));
+			psi->Position += sizeof(_int);
+		}
+	}
+}
+void PacketHandler::WriteString(uint64_t _id, const char* _string)
+{
+	PacketSendInfo* psi = GetPacketSendInfo(_id);
+	if (psi)
+	{
+		size_t length = strlen(_string) + 1;
+		if (!IsOutOfBounds(psi->Data, psi->Position + length, MAX_PACKET_SIZE))
+		{
+			memcpy((char*)psi->Position, _string, length);
+			psi->Position += length;
+		}
+	}
+}
+
+char PacketHandler::ReadByte(uint64_t _id)
 {
 	char var = 0;
 
-	if (!IsOutOfBounds(m_packetReceive->Data, m_positionReceive + sizeof(char), m_packetReceive->Length))
+	PacketReceiveInfo* pri = GetPacketReceiveInfo(_id);
+	if (pri)
 	{
-		memcpy(&var, m_positionReceive, sizeof(char));
-		m_positionReceive += sizeof(char);
+		if (!IsOutOfBounds(pri->Packet->Data, pri->Position + sizeof(char), pri->Packet->Length))
+		{
+			memcpy(&var, pri->Position, sizeof(char));
+			pri->Position += sizeof(char);
+		}
 	}
 	return var;
 }
-int PacketHandler::ReadInt()
+
+short PacketHandler::ReadShort(uint64_t _id)
+{
+	short var = 0;
+
+	PacketReceiveInfo* pri = GetPacketReceiveInfo(_id);
+	if (pri)
+	{
+		if (!IsOutOfBounds(pri->Packet->Data, pri->Position + sizeof(short), pri->Packet->Length))
+		{
+			memcpy(&var, pri->Position, sizeof(short));
+			pri->Position += sizeof(short);
+		}
+	}
+	return var;
+}
+
+int PacketHandler::ReadInt(uint64_t _id)
 {
 	int var = 0;
 
-	if (!IsOutOfBounds(m_packetReceive->Data, m_positionReceive + sizeof(int), m_packetReceive->Length))
+	PacketReceiveInfo* pri = GetPacketReceiveInfo(_id);
+	if (pri)
 	{
-		memcpy(&var, m_positionReceive, sizeof(int));
-		m_positionReceive += sizeof(int);
+		if (!IsOutOfBounds(pri->Packet->Data, pri->Position + sizeof(int), pri->Packet->Length))
+		{
+			memcpy(&var, pri->Position, sizeof(int));
+			pri->Position += sizeof(int);
+		}
 	}
-
 	return var;
 }
-char* PacketHandler::ReadString()
+
+char* PacketHandler::ReadString(uint64_t _id)
 {
-	size_t length = strlen((char*)m_positionReceive) + 1;
-	char* var = new char[length];
-
-	if (!IsOutOfBounds(m_packetReceive->Data, m_positionReceive + length, m_packetReceive->Length))
+	char* var = "";
+	PacketReceiveInfo* pri = GetPacketReceiveInfo(_id);
+	if (pri)
 	{
-		memcpy(var, (char*)m_positionReceive, length);
-		//strcpy_s(var, length, (char*)m_positionReceive);
-		m_positionReceive += length;
+		size_t length = strlen((char*)pri->Position) + 1;
+		var = new char[length];
+
+		if (!IsOutOfBounds(pri->Packet->Data, pri->Position + length, pri->Packet->Length))
+		{
+			memcpy(var, (char*)pri->Position, length);
+			//strcpy_s(var, length, (char*)m_userPacketReceiveInfo.Position);
+			pri->Position += length;
+		}
 	}
 	return var;
 }
-float PacketHandler::ReadFloat()
+
+float PacketHandler::ReadFloat(uint64_t _id)
 {
 	float var = 0.f;
-
-	if (!IsOutOfBounds(m_packetReceive->Data, m_positionReceive + sizeof(float), m_packetReceive->Length))
+	PacketReceiveInfo* pri = GetPacketReceiveInfo(_id);
+	if (pri)
 	{
-		memcpy(&var, m_positionReceive, sizeof(float));
-		m_positionReceive += sizeof(float);
+		if (!IsOutOfBounds(pri->Packet->Data, pri->Position + sizeof(float), pri->Packet->Length))
+		{
+			memcpy(&var, pri->Position, sizeof(float));
+			pri->Position += sizeof(float);
+		}
 	}
 
 	return var;
 }
+
+
+
+
+
+
 
 bool PacketHandler::IsOutOfBounds(unsigned char* _begin, unsigned char* _position, unsigned short _length)
 {
