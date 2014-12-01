@@ -77,8 +77,12 @@ int main(int argc, char** argv)
 	ServerNetwork server;
 	server.Start(6112, "", 8);
 
-	TestECSL();
+<<<<<<< HEAD
 
+
+=======
+	TestECSL();
+>>>>>>> 00b4423c38b8c8fad3d5a07794c93b50102e52ee
 	bool lol = true;
 	float cd = 1.0f;
 	while (lol)
@@ -93,7 +97,7 @@ int main(int argc, char** argv)
 		
 
 		RENDERER.Render();
-		INPUT->Update();
+		INPUT.Update();
 		
 		
 		SDL_Event e;
@@ -124,26 +128,26 @@ int main(int argc, char** argv)
 			}
 		}
 		
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_W) == Input::InputState::DOWN)
+		if (INPUT.GetKeyboard()->GetKeyState(SDL_SCANCODE_W) == Input::InputState::DOWN)
 			RENDERER.GetCamera()->MoveForward(dt);
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_S) == Input::InputState::DOWN)
+		if (INPUT.GetKeyboard()->GetKeyState(SDL_SCANCODE_S) == Input::InputState::DOWN)
 			RENDERER.GetCamera()->MoveBackward(dt);
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_A) == Input::InputState::DOWN)
+		if (INPUT.GetKeyboard()->GetKeyState(SDL_SCANCODE_A) == Input::InputState::DOWN)
 			RENDERER.GetCamera()->MoveLeft(dt);
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_D) == Input::InputState::DOWN)
+		if (INPUT.GetKeyboard()->GetKeyState(SDL_SCANCODE_D) == Input::InputState::DOWN)
 			RENDERER.GetCamera()->MoveRight(dt);
 
-		if (INPUT->GetMouse()->GetButtonState(Input::LeftButton) == Input::InputState::DOWN)
+		if (INPUT.GetMouse()->GetButtonState(Input::LeftButton) == Input::InputState::DOWN)
 		{
 			int sizeX, sizeY;
 			RENDERER.GetWindowSize(sizeX, sizeY);
 
-			RENDERER.GetCamera()->UpdateMouse(sizeX*0.5, sizeY*0.5, INPUT->GetMouse()->GetX(), INPUT->GetMouse()->GetY(), dt);
-			INPUT->GetMouse()->SetPosition(sizeX*0.5, sizeY*0.5);
-			INPUT->GetMouse()->HideCursor(true);
+			RENDERER.GetCamera()->UpdateMouse(sizeX*0.5, sizeY*0.5, INPUT.GetMouse()->GetX(), INPUT.GetMouse()->GetY(), dt);
+			INPUT.GetMouse()->SetPosition(sizeX*0.5, sizeY*0.5);
+			INPUT.GetMouse()->HideCursor(true);
 		}
 		else
-			INPUT->GetMouse()->HideCursor(false);
+			INPUT.GetMouse()->HideCursor(false);
 		
 
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)

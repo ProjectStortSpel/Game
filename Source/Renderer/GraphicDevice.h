@@ -12,6 +12,39 @@ Author: Anders, Christian
 
 namespace Renderer
 {
+	struct Model
+	{
+		bool operator> (const Model &m) { return VAOHandle > m.VAOHandle ? true : false; }
+		bool operator< (const Model &m) { return VAOHandle < m.VAOHandle ? true : false; }
+
+		bool operator== (const Model &m) { return VAOHandle == m.VAOHandle ? true : false; }
+		bool operator!= (const Model &m) { return VAOHandle == m.VAOHandle ? false : true; }
+
+		Model(){}
+		Model(GLuint vao, GLuint tex, GLuint nor, GLuint spe)
+		{
+			VAOHandle = vao;
+			texID = tex;
+			norID = nor;
+			speID = spe;
+			modelMatrix = glm::translate(glm::vec3(1));
+		}
+		GLuint VAOHandle;
+		GLuint texID;
+		GLuint norID;
+		GLuint speID;
+
+		glm::vec3 position;
+		float rotation;
+		glm::mat4 modelMatrix;
+
+		void Update()
+		{
+			modelMatrix = glm::translate(position) * glm::rotate(glm::mat4(1.0), rotation, glm::vec3(0.0, 1.0, 0.0));
+		}
+	};
+
+
 	struct GLTimerValue
 	{
 		std::string name;
@@ -44,6 +77,9 @@ namespace Renderer
 
 		Camera *GetCamera(){ return m_camera; }
 		void GetWindowSize(int &x, int &y){ x = m_clientWidth; y = m_clientHeight; }
+
+		// MODELLOADER
+		void LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr);
 
 	private:
 		bool InitSDLWindow();
@@ -86,6 +122,17 @@ namespace Renderer
 
 		// SimpleText
 		SimpleText m_textRenderer;
+
+
+		// Modelloader
+		std::vector<Model> m_models;
+
+		// Meshs
+		std::map<const std::string, GLuint> m_meshs;
+		GLuint AddMesh(std::string _fileDir);
+		// Textures
+		std::map<const std::string, GLuint> m_textures;
+		GLuint AddTexture(std::string _fileDir, GLenum _textureSlot);
 	};
 }
 
