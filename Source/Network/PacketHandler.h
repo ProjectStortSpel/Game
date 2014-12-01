@@ -4,6 +4,7 @@
 class BaseNetwork;
 
 #include <map>
+#include <mutex>
 #include "Stdafx.h"
 
 class DECLSPEC PacketHandler
@@ -85,6 +86,10 @@ private:
 
 	std::map<uint64_t, PacketSendInfo*> m_packetSendInfoMap;
 	std::map<uint64_t, PacketReceiveInfo*> m_packetReceiveInfoMap;
+
+	std::mutex m_sendMutex;
+	std::mutex m_receiveMutex;
+
 
 	//unsigned char* m_packetSend;
 	//unsigned char* m_positionSend;

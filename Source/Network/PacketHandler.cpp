@@ -8,36 +8,43 @@ PacketHandler::PacketHandler()
 
 PacketHandler::~PacketHandler()
 {
-
+	m_sendMutex.lock();
 	for (auto iterator = m_packetSendInfoMap.begin(); iterator != m_packetSendInfoMap.end(); iterator++)
 	{
 		delete iterator->second;
 	}
 	m_packetSendInfoMap.clear();
+	m_sendMutex.unlock();
 
+	m_receiveMutex.lock();
 	for (auto iterator = m_packetReceiveInfoMap.begin(); iterator != m_packetReceiveInfoMap.end(); iterator++)
 	{
 		delete iterator->second->PacketData;
 		delete iterator->second;
 	}
 	m_packetReceiveInfoMap.clear();
+	m_receiveMutex.unlock();
 }
 
 PacketHandler::PacketSendInfo* PacketHandler::GetPacketSendInfo(uint64_t _id)
 {
+	m_sendMutex.lock();
 	if (m_packetSendInfoMap.find(_id) != m_packetSendInfoMap.end())
 	{
 		return m_packetSendInfoMap[_id];
 	}
+	m_sendMutex.unlock();
 	return 0;
 }
 
 PacketHandler::PacketReceiveInfo* PacketHandler::GetPacketReceiveInfo(uint64_t _id)
 {
+	m_receiveMutex.lock();
 	if (m_packetReceiveInfoMap.find(_id) != m_packetReceiveInfoMap.end())
 	{
 		return m_packetReceiveInfoMap[_id];
 	}
+	m_receiveMutex.unlock();
 	return 0;
 }
 
@@ -51,7 +58,9 @@ uint64_t PacketHandler::StartPack(const char* _functionName)
 	PacketSendInfo* psi = new PacketSendInfo();
 	uint64_t id = (uint64_t)psi;
 	
+	m_sendMutex.lock();
 	m_packetSendInfoMap[id] = psi;
+	m_sendMutex.unlock();
 
 	psi->Position = psi->Data;
 
@@ -65,7 +74,9 @@ uint64_t PacketHandler::StartPack(char _identifier)
 	PacketSendInfo* psi = new PacketSendInfo();
 	uint64_t id = (uint64_t)psi;
 
+	m_sendMutex.lock();
 	m_packetSendInfoMap[id] = psi;
+	m_sendMutex.unlock();
 
 	psi->Position = psi->Data;
 	WriteByte(id, _identifier);
@@ -83,8 +94,9 @@ Packet* PacketHandler::EndPack(uint64_t _id)
 	memcpy(p->Data, psi->Data, length);
 	p->Length = length;
 
-
+	m_sendMutex.lock();
 	m_packetSendInfoMap.erase(_id);
+	m_sendMutex.unlock();
 	delete psi;
 
 	return p;
@@ -96,7 +108,10 @@ uint64_t PacketHandler::StartUnpack(Packet* _packet)
 	pri->PacketData = _packet;
 	pri->Position = pri->PacketData->Data;
 	uint64_t id = (uint64_t)pri;
+
+	m_receiveMutex.lock();
 	m_packetReceiveInfoMap[id] = pri;
+	m_receiveMutex.unlock();
 
 	char type = ReadByte(id);
 
@@ -112,7 +127,9 @@ void PacketHandler::EndUnpack(uint64_t _id)
 
 	if (pri)
 	{
+		m_receiveMutex.lock();
 		m_packetReceiveInfoMap.erase(_id);
+		m_receiveMutex.unlock();
 		delete pri->PacketData;
 		delete pri;
 	}
