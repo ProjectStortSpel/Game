@@ -183,10 +183,12 @@ void CreateGround()
 
 GraphicDevice::GraphicDevice()
 {
+	m_camera = new Camera();
 }
 
 GraphicDevice::~GraphicDevice()
 {
+	delete(m_camera);
 	// Delete buffers
 	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
 	{
@@ -307,11 +309,7 @@ void GraphicDevice::Render()
 
 	//----------------------------------------------------------------------------------------
 
-	glm::mat4 viewMatrix = glm::lookAt(
-		vec3(0.0, 0.5, 4.0),	//*m_cam->Get_pos(), // the position of your camera, in world space
-		vec3(0.0, 0.0, 0.0),   // where you want to look at, in world space
-		vec3(0.0, 1.0, 0.0)		 // probably glm::vec3(0,1,0), but (0,-1,0) would make you looking upside-down, which can be great too
-		);
+	glm::mat4 viewMatrix = *m_camera->GetViewMatrix();
 
 	//Render scene
 	
