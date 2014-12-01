@@ -51,3 +51,9 @@ void SystemManager::GenerateSystemBitmask(System* _system, ComponentFilter _type
 	BitSet::DataType* convertedBitmask = BitSet::BitSetConverter::GetInstance().ArrayToBitSet(componentIds, componentTypeCount);
 	tSystemBitmask->SetBitmask(convertedBitmask);
 }
+
+void SystemManager::Update(float _dt)
+{
+	for (int n = 0; n < m_systemWorkGroups->size(); ++n)
+		m_systemWorkGroups->at(n)->Update(n);
+}

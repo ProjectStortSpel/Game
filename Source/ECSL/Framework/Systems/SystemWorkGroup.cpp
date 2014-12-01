@@ -26,3 +26,9 @@ SystemWorkGroup::~SystemWorkGroup()
 		delete(m_systems);
 	}
 }
+
+void SystemWorkGroup::Update(float _dt)
+{
+	for (int n = 0; n < m_systems->size(); ++n)
+		m_systems->at(n)->Run();
+}

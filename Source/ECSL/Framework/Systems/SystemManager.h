@@ -19,6 +19,7 @@ namespace ECSL
 		~SystemManager();
 
 		void InitializeSystems();
+		void Update(float _dt);
 	};
 }
 
