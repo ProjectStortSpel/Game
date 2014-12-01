@@ -24,7 +24,7 @@ public:
 	void MoveLeft(float dt);
 	void MoveRight(float dt);
 
-	void UpdateMouse(float midX, float midY, int x, int y, float dt);
+	void UpdateMouse(float midX, float midY, int x, int y);
 
 	mat4 *GetViewMatrix();
 
