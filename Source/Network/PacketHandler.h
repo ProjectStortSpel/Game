@@ -24,6 +24,8 @@ public:
 	uint64_t StartPack(char _identifier);
 
 	char GetNetTypeMessageId(Packet* _p);
+	char GetNetTypeMessageId(uint64_t _id);
+
 	// Marks the end of a packet and should always be called when done with packing the packet
 	// Returns the newly created packet
 	Packet* EndPack(uint64_t _id);

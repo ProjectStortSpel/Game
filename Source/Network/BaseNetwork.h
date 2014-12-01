@@ -48,7 +48,7 @@ public:
 	//NetMessageHook* GetNetworkFunction(NetTypeMessageId _function);
 
 protected:
-	void TriggerEvent(NetMessageHook _function, NetConnection _connection);
+	void TriggerEvent(NetMessageHook _function, uint64_t _packetId, NetConnection _connection);
 	void HandlePacket(Packet* _packet);	
 protected:
 

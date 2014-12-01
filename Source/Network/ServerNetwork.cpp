@@ -17,37 +17,36 @@ void ServerNetwork::TestUser(PacketHandler* _packetHandler, uint64_t _id, NetCon
 
 void ServerNetwork::TestNewUser(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
-	//char type = _packetHandler->GetNetTypeMessageId(_packet);
-	//uint64_t id = _packetHandler->StartUnpack(_packet);
+	char type = _packetHandler->GetNetTypeMessageId(_id);
 
-	//switch (type)
-	//{
-	//case NetTypeMessageId::ID_PASSWORD_ATTEMPT:
-	//{
-	//	std::string password = _packetHandler->ReadString(id);
-	//	if (m_password.compare(password) == 0)
-	//	{
-	//		uint64_t id2 = _packetHandler->StartPack(NetTypeMessageId::ID_CONNECTION_ACCEPTED);
-	//		auto newPacket = _packetHandler->EndPack(id2);
-	//		m_connectedClients[_packet->Sender]->SetAccepted(true);	
-	//		m_connectedClients[_packet->Sender]->Send((char*)newPacket->Data, newPacket->Length);
-	//	}
-	//	else
-	//	{
-	//		uint64_t id2 = _packetHandler->StartPack(NetTypeMessageId::ID_PASSWORD_INVALID);
-	//		auto newPacket = _packetHandler->EndPack(id2);
-	//		m_connectedClients[_packet->Sender]->Send((char*)newPacket->Data, newPacket->Length);
-	//		m_connectedClients[_packet->Sender]->CloseSocket();
-	//		m_connectedClients.erase(_packet->Sender);
-	//		SAFE_DELETE(newPacket);
-	//	}
-	//	break;
-	//}
-	//case NetTypeMessageId::ID_PASSWORD_INVALID:
-	//	break;
-	//default:
-	//	break;
-	//}
+	switch (type)
+	{
+	case NetTypeMessageId::ID_PASSWORD_ATTEMPT:
+	{
+		std::string password = _packetHandler->ReadString(_id);
+		if (m_password.compare(password) == 0)
+		{
+			uint64_t id2 = _packetHandler->StartPack(NetTypeMessageId::ID_CONNECTION_ACCEPTED);
+			auto newPacket = _packetHandler->EndPack(id2);
+			m_connectedClients[_connection]->SetAccepted(true);
+			m_connectedClients[_connection]->Send((char*)newPacket->Data, newPacket->Length);
+		}
+		else
+		{
+			uint64_t id2 = _packetHandler->StartPack(NetTypeMessageId::ID_PASSWORD_INVALID);
+			auto newPacket = _packetHandler->EndPack(id2);
+			m_connectedClients[_connection]->Send((char*)newPacket->Data, newPacket->Length);
+			m_connectedClients[_connection]->CloseSocket();
+			m_connectedClients.erase(_connection);
+			SAFE_DELETE(newPacket);
+		}
+		break;
+	}
+	case NetTypeMessageId::ID_PASSWORD_INVALID:
+		break;
+	default:
+		break;
+	}
 
 }
 

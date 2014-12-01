@@ -28,29 +28,46 @@ PacketHandler::~PacketHandler()
 
 PacketHandler::PacketSendInfo* PacketHandler::GetPacketSendInfo(uint64_t _id)
 {
+	PacketHandler::PacketSendInfo* result = 0;
 	m_sendMutex.lock();
 	if (m_packetSendInfoMap.find(_id) != m_packetSendInfoMap.end())
 	{
-		return m_packetSendInfoMap[_id];
+		result = m_packetSendInfoMap[_id];
 	}
 	m_sendMutex.unlock();
-	return 0;
+	return result;
 }
 
 PacketHandler::PacketReceiveInfo* PacketHandler::GetPacketReceiveInfo(uint64_t _id)
 {
+	PacketHandler::PacketReceiveInfo* result = 0;
 	m_receiveMutex.lock();
 	if (m_packetReceiveInfoMap.find(_id) != m_packetReceiveInfoMap.end())
 	{
-		return m_packetReceiveInfoMap[_id];
+		result = m_packetReceiveInfoMap[_id];
 	}
 	m_receiveMutex.unlock();
-	return 0;
+	return result;
 }
 
 char PacketHandler::GetNetTypeMessageId(Packet* _packet)
 {
 	return _packet->Data[0];
+}
+
+char PacketHandler::GetNetTypeMessageId(uint64_t _id)
+{
+	PacketReceiveInfo* pri = GetPacketReceiveInfo(_id);
+
+	if (pri)
+	{
+		return pri->PacketData->Data[0];
+	}
+	else
+	{
+		return -1;
+	}
+
 }
 
 uint64_t PacketHandler::StartPack(const char* _functionName)
