@@ -46,6 +46,7 @@ public:
 	// Set the server password
 	void SetServerPassword(const char* _password) { m_password = _password; }
 
+	void AddNetworkHook(std::string _name, NetMessageHook _hook);
 	//NetMessageHook* GetNetworkFunction(NetTypeMessageId _function);
 
 protected:

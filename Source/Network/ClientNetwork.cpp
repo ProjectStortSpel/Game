@@ -15,8 +15,8 @@ ClientNetwork::ClientNetwork()
 	m_receivePacketsThreadAlive = false;
 	m_socket = 0;
 
-	m_networkFunctions[NetTypeMessageId::ID_PASSWORD_INVALID] = std::bind(&ClientNetwork::NetPasswordInvalid, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-	m_networkFunctions[NetTypeMessageId::ID_CONNECTION_ACCEPTED] = std::bind(&ClientNetwork::NetConnectionAccepted, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	m_networkFunctions[NetTypeMessageId::ID_PASSWORD_INVALID] = std::bind(&ClientNetwork::NetPasswordInvalid, this, NetworkHookPlaceholders);
+	m_networkFunctions[NetTypeMessageId::ID_CONNECTION_ACCEPTED] = std::bind(&ClientNetwork::NetConnectionAccepted, this, NetworkHookPlaceholders);
 }
 
 ClientNetwork::~ClientNetwork()
@@ -152,6 +152,20 @@ void ClientNetwork::NetConnectionAccepted(PacketHandler* _packetHandler, uint64_
 {
 	if (NET_DEBUG)
 		printf("Password accepted, connection accepted.\n");
+
+	uint64_t id = _packetHandler->StartPack("localhest");
+
+	_packetHandler->WriteByte(id, '3');
+	_packetHandler->WriteShort(id, 1337);
+	_packetHandler->WriteInt(id, 555);
+	_packetHandler->WriteFloat(id, 3.1415);
+	_packetHandler->WriteString(id, "test med mellanslag!?");
+	_packetHandler->WriteByte(id, '9');
+
+	Packet* packet = _packetHandler->EndPack(id);
+
+	Send(packet);
+
 }
 
 

@@ -13,6 +13,19 @@ void ServerNetwork::TestNetwork(PacketHandler* _packetHandler, uint64_t _id, Net
 
 void ServerNetwork::TestUser(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
+
+	char b1 = _packetHandler->ReadByte(_id);
+	short s1 = _packetHandler->ReadShort(_id);
+	int i1 = _packetHandler->ReadInt(_id);
+	float f1 = _packetHandler->ReadFloat(_id);
+	std::string str1 = _packetHandler->ReadString(_id);
+	char b2 = _packetHandler->ReadByte(_id);
+
+	printf("Test!\nByte 1: %c\nShort 1: %i\nInt 1: %i\nFloat 1: %f\nString 1: %s\nByte 2: %c\n", b1, s1, i1, f1, str1.c_str(), b2);
+
+	int breakhere = 123;
+
+
 }
 
 void ServerNetwork::TestNewUser(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
@@ -60,11 +73,10 @@ ServerNetwork::ServerNetwork()
 
 	m_listenSocket = 0;
 
-	m_networkFunctions[NetTypeMessageId::ID_PASSWORD_ATTEMPT] = std::bind(&ServerNetwork::TestNewUser, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-	m_networkFunctions[NetTypeMessageId::ID_PASSWORD_INVALID] = std::bind(&ServerNetwork::TestNewUser, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	m_networkFunctions[NetTypeMessageId::ID_PASSWORD_ATTEMPT] = std::bind(&ServerNetwork::TestNewUser, this, NetworkHookPlaceholders);
+	m_networkFunctions[NetTypeMessageId::ID_PASSWORD_INVALID] = std::bind(&ServerNetwork::TestNewUser, this, NetworkHookPlaceholders);
 
-	m_userFunctions["localhest"] = std::bind(&ServerNetwork::TestUser, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-
+	AddNetworkHook("localhest", std::bind(&ServerNetwork::TestUser, this, NetworkHookPlaceholders));
 }
 
 ServerNetwork::~ServerNetwork()
