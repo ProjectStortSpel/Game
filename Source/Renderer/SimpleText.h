@@ -27,7 +27,7 @@ namespace Renderer
 
 		Shader m_simpleTextShader;
 
-		int simpleText[4608];
+		std::vector<int> simpleText;
 		int simpleTextX, simpleTextY;
 		GLuint simpleTextBuffer;
 	};
