@@ -9,10 +9,18 @@ World::World(unsigned int _entityCount, std::vector<SystemWorkGroup*>* _systemWo
 
 	m_dataManager->InitializeTables();
 	m_systemManager->InitializeSystems();
+
+	m_simulation = new Simulation(m_dataManager, m_systemManager);
 }
 
 World::~World()
 {
 	delete(m_dataManager);
 	delete(m_systemManager);
+	delete(m_simulation);
+}
+
+void World::Update(float _dt)
+{
+	m_simulation->Update(_dt);
 }
