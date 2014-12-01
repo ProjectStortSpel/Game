@@ -476,13 +476,13 @@ bool GraphicDevice::InitShaders()
 {
 	// Deferred pass 1
 	m_deferredShader1.InitShaderProgram();
-	m_deferredShader1.AddShader("Content/Shaders/VSDeferredPass1.glsl", GL_VERTEX_SHADER);
-	m_deferredShader1.AddShader("Content/Shaders/FSDeferredPass1.glsl", GL_FRAGMENT_SHADER);
+	m_deferredShader1.AddShader("content/shaders/VSDeferredPass1.glsl", GL_VERTEX_SHADER);
+	m_deferredShader1.AddShader("content/shaders/FSDeferredPass1.glsl", GL_FRAGMENT_SHADER);
 	m_deferredShader1.FinalizeShaderProgram();
 
 	// Deferred pass 2 ( compute shader )
 	m_compDeferredPass2Shader.InitShaderProgram();
-	m_compDeferredPass2Shader.AddShader("Content/Shaders/CSDeferredPass2.glsl", GL_COMPUTE_SHADER);
+	m_compDeferredPass2Shader.AddShader("content/shaders/CSDeferredPass2.glsl", GL_COMPUTE_SHADER);
 	m_compDeferredPass2Shader.FinalizeShaderProgram();
 
 	// Full Screen Quad
