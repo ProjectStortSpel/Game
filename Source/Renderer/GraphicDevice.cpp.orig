@@ -11,6 +11,7 @@ using namespace glm;
 GraphicDevice::GraphicDevice()
 {
 	m_camera = new Camera();
+	m_vramUsage = 0;
 }
 
 GraphicDevice::~GraphicDevice()
@@ -82,6 +83,9 @@ void GraphicDevice::Update(float _dt)
 	}
 	m_glTimerValues.clear();
 
+	std::stringstream vram;
+	vram << "VRAM usage: " << ((float)m_vramUsage/1024.f)/1024.f << " Mb ";
+	m_textRenderer.RenderSimpleText(vram.str(), 0, 2);
 }
 
 float rot = 0.0f;
@@ -144,17 +148,9 @@ void GraphicDevice::Render()
 	//-- DRAW MODELS
 	for (int i = 0; i < m_models.size(); i++)
 	{
-<<<<<<< HEAD
-		m_models[i].rotation = rot;
-		m_models[i].Update();
 		mat4 modelMatrix = m_models[i].modelMatrix;
 		mat4 modelViewMatrix = viewMatrix * modelMatrix;
 		mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelViewMatrix)));
-=======
-		glm::mat4 modelMatrix = m_models[i].modelMatrix;
-		glm::mat4 modelViewMatrix = viewMatrix * modelMatrix;
-		glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelViewMatrix)));
->>>>>>> 9b5a0146afd244145bb5823f591072b8c219bd5a
 
 		m_deferredShader1.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
 		m_deferredShader1.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
@@ -244,8 +240,13 @@ bool GraphicDevice::InitSDLWindow()
 	const char*		Caption = "SDL Window";
 	int				PosX = 200;
 	int				PosY = 280;
+<<<<<<< HEAD
 	int				SizeX = 320 * 4;	//1280
 	int				SizeY = 180 * 4;	//720
+=======
+	int				SizeX = 256 * 5;
+	int				SizeY = 144 * 5;
+>>>>>>> dc7685747aa8529729a05da026484c75f673e102
 
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1){
 		std::cout << SDL_GetError() << std::endl;
@@ -328,6 +329,9 @@ bool GraphicDevice::InitDeferred()
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_normTex, 0);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_colorTex, 0);
 
+	m_vramUsage += ( m_clientWidth*m_clientHeight*sizeof(float) );
+	m_vramUsage += ( m_clientWidth*m_clientHeight*sizeof(float) * 4 * 2);
+
 	GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
 	glDrawBuffers(2, drawBuffers);
 	return true;
@@ -396,7 +400,8 @@ bool GraphicDevice::InitBuffers()
 
 bool GraphicDevice::InitTextRenderer()
 {
-	GLuint m_textImage = TextureLoader::LoadTexture("content/textures/SimpleText.png", GL_TEXTURE20);
+	int texSizeX, texSizeY;
+	GLuint m_textImage = TextureLoader::LoadTexture("content/textures/SimpleText.png", GL_TEXTURE20, texSizeX, texSizeY);
 	return m_textRenderer.Init(m_textImage, m_clientWidth, m_clientHeight);
 }
 bool GraphicDevice::RenderSimpleText(std::string _text, int _x, int _y)
@@ -480,6 +485,8 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir)
 		texCoordData[i * 2 + 1] = 1 - verts[i].uv.y;
 	}
 
+	m_vramUsage += ( 14 * (int)verts.size() * sizeof(float) );
+
 	Buffer* retbuffer = new Buffer();
 
 	BufferData bufferData[] =
@@ -505,8 +512,10 @@ GLuint GraphicDevice::AddTexture(std::string _fileDir, GLenum _textureSlot)
 		if (it->first == _fileDir)
 			return it->second;
 	}
+	int texSizeX, texSizeY;
 	m_deferredShader1.UseProgram();
-	GLuint texture = TextureLoader::LoadTexture(_fileDir.c_str(), _textureSlot);
+	GLuint texture = TextureLoader::LoadTexture(_fileDir.c_str(), _textureSlot, texSizeX, texSizeY);
 	m_textures.insert(std::pair<const std::string, GLenum>(_fileDir, texture));
+	m_vramUsage += (texSizeX * texSizeY * 4);
 	return texture;
 }
