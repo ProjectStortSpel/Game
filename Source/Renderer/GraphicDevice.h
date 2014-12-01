@@ -6,6 +6,7 @@ Author: Anders, Christian
 
 #include "stdafx.h"
 #include "Shader.h"
+#include "Buffer.h"
 #include "SimpleText.h"
 #include "GLTimer.h"
 
@@ -13,22 +14,22 @@ namespace Renderer
 {
 	struct Model
 	{
-		bool operator> (const Model &m) { return VAOHandle > m.VAOHandle ? true : false; }
-		bool operator< (const Model &m) { return VAOHandle < m.VAOHandle ? true : false; }
+		bool operator> (const Model &m) { return bufferPtr->getVAO() > m.bufferPtr->getVAO() ? true : false; }
+		bool operator< (const Model &m) { return bufferPtr->getVAO() < m.bufferPtr->getVAO() ? true : false; }
 
-		bool operator== (const Model &m) { return VAOHandle == m.VAOHandle ? true : false; }
-		bool operator!= (const Model &m) { return VAOHandle == m.VAOHandle ? false : true; }
+		bool operator== (const Model &m) { return bufferPtr->getVAO() == m.bufferPtr->getVAO() ? true : false; }
+		bool operator!= (const Model &m) { return bufferPtr->getVAO() == m.bufferPtr->getVAO() ? false : true; }
 
 		Model(){}
-		Model(GLuint vao, GLuint tex, GLuint nor, GLuint spe)
+		Model(Buffer* buffer, GLuint tex, GLuint nor, GLuint spe)
 		{
-			VAOHandle = vao;
+			bufferPtr = buffer;
 			texID = tex;
 			norID = nor;
 			speID = spe;
 			modelMatrix = glm::translate(glm::vec3(1));
 		}
-		GLuint VAOHandle;
+		Buffer* bufferPtr;
 		GLuint texID;
 		GLuint norID;
 		GLuint speID;
@@ -122,8 +123,8 @@ namespace Renderer
 		std::vector<Model> m_models;
 
 		// Meshs
-		std::map<const std::string, GLuint> m_meshs;
-		GLuint AddMesh(std::string _fileDir);
+		std::map<const std::string, Buffer*> m_meshs;
+		Buffer* AddMesh(std::string _fileDir);
 		// Textures
 		std::map<const std::string, GLuint> m_textures;
 		GLuint AddTexture(std::string _fileDir, GLenum _textureSlot);

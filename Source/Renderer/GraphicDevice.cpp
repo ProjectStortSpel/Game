@@ -187,6 +187,13 @@ GraphicDevice::GraphicDevice()
 
 GraphicDevice::~GraphicDevice()
 {
+	// Delete buffers
+	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
+	{
+		delete it->second;
+		it->second = nullptr;
+	}
+
 	SDL_GL_DeleteContext(m_glContext);
 	// Close and destroy the window
 	SDL_DestroyWindow(m_window);
@@ -293,7 +300,7 @@ void GraphicDevice::Render()
 	glClearColor(0.1, 0.1, 0.15, 1.0f);
 
 	m_deferredShader1.UseProgram();
-	rot += 0.05f;
+	rot += m_dt;
 	//--------Uniforms-------------------------------------------------------------------------
 	glm::mat4 projectionMatrix = glm::perspective(45.0f, (float)m_clientWidth / (float)m_clientHeight, 0.2f, 100.f);
 	m_deferredShader1.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
@@ -307,6 +314,25 @@ void GraphicDevice::Render()
 		);
 
 	//Render scene
+	
+	//-- DRAW MODELS
+	for (int i = 0; i < m_models.size(); i++)
+	{
+		m_models[i].rotation = rot;
+		m_models[i].Update();
+		glm::mat4 modelMatrix = m_models[i].modelMatrix;
+		glm::mat4 modelViewMatrix = viewMatrix * modelMatrix;
+		glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelViewMatrix)));
+
+		m_deferredShader1.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
+		m_deferredShader1.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
+
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, m_models[i].texID);
+		m_models[i].bufferPtr->draw();
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+/*
 	//--Object 1--------
 	m_Quad.rotation = rot;
 	m_Quad.Update();
@@ -322,7 +348,7 @@ void GraphicDevice::Render()
 	glBindVertexArray(m_Quad.VAOHandle);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindTexture(GL_TEXTURE_2D, 0);
-
+	
 	//---Object 2------------
 	modelMatrix = m_Ground.modelMatrix;
 	modelViewMatrix = viewMatrix * modelMatrix;
@@ -335,8 +361,11 @@ void GraphicDevice::Render()
 	glBindVertexArray(m_Ground.VAOHandle);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindTexture(GL_TEXTURE_2D, 0);
-
+*/
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	
+
+
 
 //m_glTimerValues.push_back(GLTimerValue("Deferred stage1: ", glTimer.Stop()));
 //glTimer.Start();
@@ -544,6 +573,7 @@ bool GraphicDevice::InitBuffers()
 
 	
 	m_deferredShader1.UseProgram();
+	/*
 	GLuint texture = TextureLoader::LoadTexture("content/textures/tiles.png", GL_TEXTURE3);
 	glActiveTexture(GL_TEXTURE3);
 	location = glGetUniformLocation(m_deferredShader1.GetShaderProgram(), "diffuseTex");
@@ -552,10 +582,15 @@ bool GraphicDevice::InitBuffers()
 	m_Quad = Object(texture, vec3(0.0));
 	CreateQuad();
 
+
 	texture = TextureLoader::LoadTexture("content/textures/floor.png", GL_TEXTURE3);
 	glActiveTexture(GL_TEXTURE3);
 	m_Ground = Object(texture, vec3(0.0, -1.5, 0.0));
 	CreateGround();
+	*/
+
+	// ADDING TEMP OBJECTS
+	LoadModel("content/models/cube/", "cube.object", &glm::mat4(1));
 
 
 	// Output ImageBuffer
@@ -593,20 +628,31 @@ void GraphicDevice::SetSimpleTextColor(vec4 _color)
 
 void GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr)
 {
+	int location;
+
 	// Import Object
 	ObjectData obj = ModelLoader::importObject("content/models/cube/", "cube.object");
 
-	// Import Mesh
-	GLuint mesh = AddMesh(obj.mesh);
-
 	// Import Texture
 	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
+	glActiveTexture(GL_TEXTURE1);
+	location = glGetUniformLocation(m_deferredShader1.GetShaderProgram(), "diffuseTex");
+	glUniform1i(location, 1);
 
 	// Import Normal map
 	GLuint normal = AddTexture(obj.norm, GL_TEXTURE2);
+	glActiveTexture(GL_TEXTURE2);
+	location = glGetUniformLocation(m_deferredShader1.GetShaderProgram(), "diffuseTex");
+	glUniform1i(location, 2);
 
 	// Import Specc Glow map
 	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
+	glActiveTexture(GL_TEXTURE3);
+	location = glGetUniformLocation(m_deferredShader1.GetShaderProgram(), "diffuseTex");
+	glUniform1i(location, 3);
+
+	// Import Mesh
+	Buffer* mesh = AddMesh(obj.mesh);
 
 	// Push back the model
 	m_models.push_back(Model(mesh, texture, normal, specular));
@@ -616,9 +662,9 @@ void GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_m
 
 }
 
-GLuint GraphicDevice::AddMesh(std::string _fileDir)
+Buffer* GraphicDevice::AddMesh(std::string _fileDir)
 {
-	for (std::map<const std::string, GLuint>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
+	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
 	{		
 		if (it->first == _fileDir)
 			return it->second;
@@ -644,46 +690,25 @@ GLuint GraphicDevice::AddMesh(std::string _fileDir)
 
 	//drawShaderHandle.UseProgram();
 
-	GLuint VAOHandle;
-	GLuint VBOHandles[3];
-	glGenBuffers(3, VBOHandles);
+	Buffer* retbuffer = new Buffer();
 
+	BufferData bufferData[] =
+	{
+		{ 0, 3, GL_FLOAT, (const GLvoid*)positionData.data(), positionData.size() * sizeof(float) },
+		{ 1, 3, GL_FLOAT, (const GLvoid*)normalData.data(), normalData.size()   * sizeof(float) },
+		{ 2, 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), texCoordData.size() * sizeof(float) }
+	};
+	retbuffer->init(bufferData, sizeof(bufferData) / sizeof(bufferData[0]));
+	retbuffer->setCount((int)verts.size());
 
-	// "Bind" (switch focus to) first buffer
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[0]);
-	glBufferData(GL_ARRAY_BUFFER, positionData.size() * sizeof(float), &positionData[0], GL_STATIC_DRAW);
+	m_meshs.insert(std::pair<const std::string, Buffer*>(_fileDir, retbuffer));
 
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[1]);
-	glBufferData(GL_ARRAY_BUFFER, normalData.size() * sizeof(float), &normalData[0], GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[2]);
-	glBufferData(GL_ARRAY_BUFFER, texCoordData.size() * sizeof(float), &texCoordData[0], GL_STATIC_DRAW);
-
-	glGenVertexArrays(1, &VAOHandle);
-	glBindVertexArray(VAOHandle);
-
-	glEnableVertexAttribArray(0); // position
-	glEnableVertexAttribArray(1); // normal
-	glEnableVertexAttribArray(2); // texCoord
-
-	// map indices to buffers
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[0]);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[1]);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[2]);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
-
-	m_meshs.insert(std::pair<const std::string, GLuint>(_fileDir, VAOHandle));
-
-	return VAOHandle;
+	return retbuffer;
 }
 
 GLuint GraphicDevice::AddTexture(std::string _fileDir, GLenum _textureSlot)
 {
-	for (std::map<const std::string, GLuint>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
+	for (std::map<const std::string, GLuint>::iterator it = m_textures.begin(); it != m_textures.end(); it++)
 	{
 		if (it->first == _fileDir)
 			return it->second;

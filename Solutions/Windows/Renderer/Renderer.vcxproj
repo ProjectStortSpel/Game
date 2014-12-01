@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Source\Renderer\Buffer.h" />
     <ClInclude Include="..\..\..\Source\Renderer\GLTimer.h" />
     <ClInclude Include="..\..\..\Source\Renderer\GraphicDevice.h" />
     <ClInclude Include="..\..\..\Source\Renderer\ModelLoader.h" />
@@ -28,6 +29,7 @@
     <ClInclude Include="..\..\..\Source\Renderer\TextureLoader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\Source\Renderer\Buffer.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\GLTimer.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\Shader.cpp" />
