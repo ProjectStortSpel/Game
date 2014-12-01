@@ -7,9 +7,9 @@
 
 class TextureLoader{
 public:
-static unsigned int LoadTexture(const char* file, GLenum textureSlot)
+static unsigned int LoadTexture(const char* file, GLenum textureSlot, int &height, int &width)
 {
-	int width, height, channels;
+	int channels;
 		// Load texture file and convert to openGL format
 	unsigned char* imgData = stbi_load(file, &width, &height, &channels, STBI_rgb_alpha);
 

@@ -39,8 +39,8 @@ float depthVal_tex;
 void phongModel(int index, out vec3 ambient, out vec3 diffuse, out vec3 spec) {
 
         //tmp material
-        Material.Ks = 0.7;
-        Material.Shininess = 30.0;
+        //Material.Ks = 0.7;
+        //Material.Shininess = 30.0;
 
         ambient = vec3(0.0);
         diffuse = vec3(0.0);
@@ -61,10 +61,11 @@ void phongModel(int index, out vec3 ambient, out vec3 diffuse, out vec3 spec) {
         if(diffuseFactor > 0)
         {
             vec3 v = reflect( lightVec, normal_tex );
-            float specFactor = pow( max( dot(v, normalize(viewPos)), 0.0 ), Material.Shininess );
+            float specFactor = max( pow( max( dot(v, normalize(viewPos)), 0.0f ), Material.Shininess ), 0.0f);
 
             diffuse = diffuseFactor * Lights[index].Color * Lights[index].Intensity.y;
             spec = specFactor * Lights[index].Color * Lights[index].Intensity.z * Material.Ks;
+			//spec = light[index].Color * pow(max(dot(v, normalize(viewPos)), 0.0f), Material.Shininess) * Material.Ks;
         }
 
         float att = 1 - pow((d/Lights[index].Range), 1.0f);
@@ -86,7 +87,7 @@ vec3 reconstructPosition(float p_depth, vec2 p_ndc)
 
 void main() 
 {
-	Lights[0].Position = vec4(0.0, 0.0, 3.0, 1.0);
+	Lights[0].Position = vec4(0.0, 1.0, 3.0, 1.0);
 	Lights[0].Intensity = vec3(0.2, 0.9, 0.9);
 	Lights[0].Color = vec3(0.9);
 	Lights[0].Range = 10.0f;
@@ -94,12 +95,22 @@ void main()
 	ivec2 texelCoord = ivec2( gl_GlobalInvocationID.x, gl_GlobalInvocationID.y);
 
 	// Retrieve position, normal and color information from the g-buffer textures
+	vec4 inputMap0 = texelFetch(DepthTex, texelCoord, 0);
+	vec4 inputMap1 = imageLoad(NormalTex, texelCoord);
+	vec4 inputMap2 = imageLoad(ColorTex, texelCoord);
+
 	// Normal haxxx
-	normal_tex.xy = vec2( imageLoad(NormalTex, texelCoord) );
+	normal_tex.xy = inputMap1.xy;
 	normal_tex.z = sqrt( 1 - (normal_tex.x*normal_tex.x) - (normal_tex.y*normal_tex.y) );
 	//--------------
-	albedo_tex.xyz = vec3( imageLoad(ColorTex, texelCoord) );
-	depthVal_tex = texelFetch(DepthTex, texelCoord, 0).x;
+	Material.Ks = inputMap1.z;
+    Material.Shininess = inputMap1.w * 255;
+	//--------------
+	albedo_tex.xyz = inputMap2.xyz;
+	//--------------
+	float glow = inputMap2.w;
+	//--------------
+	depthVal_tex = inputMap0.x;
 
 	vec2 ndc = vec2(texelCoord) / vec2( gl_WorkGroupSize.xy*gl_NumWorkGroups.xy ) * 2.0f - 1.0f;
 	viewPos = reconstructPosition(depthVal_tex, ndc);
@@ -121,6 +132,7 @@ void main()
 	//-------------------------
 
 	vec4 FragColor = vec4(ambient + diffuse, 1.0) * vec4(albedo_tex, 1.0) + vec4(spec, 0.0f);
+	//FragColor = vec4(spec, 0.0f) + vec4(1);
 	//vec4 FragColor = vec4( normal_tex, 1.0);
 	//vec4 FragColor = vec4( albedo_tex   +normal_tex-normal_tex, 1.0 );
 	//vec4 FragColor = vec4( vec3(viewPos  +normal_tex-normal_tex), 1.0 );

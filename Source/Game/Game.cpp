@@ -40,6 +40,22 @@ void ClearConsole()
 #endif
 }
 
+void LoadAlotOfBoxes(Renderer::GraphicDevice* r)
+{
+	// ADDING TEMP OBJECTS
+	mat4 mat;
+	for (int x = 0; x < 10; x++)
+	{
+		for (int y = 0; y < 10; y++)
+		{
+			mat = glm::translate(vec3(x - 5, -1, y - 5));
+			r->LoadModel("content/models/cube/", "cube.object", &mat);
+		}
+	}
+	mat = glm::translate(vec3(0, 0, 0));
+	r->LoadModel("content/models/cube/", "cube.object", &mat);
+}
+
 void TestECSL()
 {
 	//ECSL::ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("content/components");
@@ -78,6 +94,7 @@ int main(int argc, char** argv)
 	server.Start(6112, "", 8);
 
 	TestECSL();
+	LoadAlotOfBoxes(&RENDERER);
 
 	bool lol = true;
 	float cd = 1.0f;
