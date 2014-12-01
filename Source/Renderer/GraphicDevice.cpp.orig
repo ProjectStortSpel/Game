@@ -298,14 +298,13 @@ void GraphicDevice::Render()
 	m_deferredShader1.UseProgram();
 	rot += 40.f*m_dt;
 	//--------Uniforms-------------------------------------------------------------------------
-	mat4 projectionMatrix = glm::perspective(45.0f, (float)m_clientWidth / (float)m_clientHeight, 0.2f, 100.f);
+	glm::mat4 projectionMatrix = glm::perspective(45.0f, (float)m_clientWidth / (float)m_clientHeight, 0.2f, 100.f);
 	m_deferredShader1.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 
 	//----------------------------------------------------------------------------------------
 
 	glm::mat4 viewMatrix = *m_camera->GetViewMatrix();
 
-<<<<<<< HEAD
 	//Render scene
 	//--Object 1--------
 	m_Quad.rotation = rot;
@@ -335,27 +334,6 @@ void GraphicDevice::Render()
 	glBindVertexArray(m_Ground.VAOHandle);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindTexture(GL_TEXTURE_2D, 0);
-=======
-	//------Render scene--------------------------------------------------------------
-	
-	//-- DRAW MODELS
-	for (int i = 0; i < m_models.size(); i++)
-	{
-		m_models[i].rotation = rot;
-		m_models[i].Update();
-		mat4 modelMatrix = m_models[i].modelMatrix;
-		mat4 modelViewMatrix = viewMatrix * modelMatrix;
-		mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelViewMatrix)));
-
-		m_deferredShader1.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
-		m_deferredShader1.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
-
-		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, m_models[i].texID);
-		m_models[i].bufferPtr->draw();
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
->>>>>>> derp
 
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
@@ -578,6 +556,11 @@ bool GraphicDevice::InitBuffers()
 	m_Ground = Object(texture, vec3(0.0, -1.5, 0.0));
 	CreateGround();
 
+<<<<<<< HEAD
+=======
+	// ADDING TEMP OBJECTS
+	LoadModel("content/models/cube/", "cube.object", NULL);
+>>>>>>> trying to fix linux
 
 	// Output ImageBuffer
 	glGenTextures(1, &m_outputImage);
@@ -663,15 +646,11 @@ GLuint GraphicDevice::AddMesh(std::string _fileDir)
 		texCoordData[i * 2 + 1] = 1 - verts[i].uv.y;
 	}
 
-<<<<<<< HEAD
 	//drawShaderHandle.UseProgram();
 
 	GLuint VAOHandle;
 	GLuint VBOHandles[3];
 	glGenBuffers(3, VBOHandles);
-=======
-	Buffer* retbuffer = new Buffer();
->>>>>>> derp
 
 
 	// "Bind" (switch focus to) first buffer
