@@ -10,7 +10,7 @@ BaseNetwork::BaseNetwork()
 
 BaseNetwork::~BaseNetwork()
 {
-	for (int i = 0; i < m_packets.size(); ++i)
+	for (unsigned int i = 0; i < m_packets.size(); ++i)
 	{
 		auto packet = m_packets.front();
 		SAFE_DELETE(packet);

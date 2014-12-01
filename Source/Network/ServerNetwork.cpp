@@ -110,10 +110,10 @@ bool ServerNetwork::Start()
 
 bool ServerNetwork::Stop()
 {
-	for (int i = 0; i < m_receivePacketsAlive.size(); ++i)
+	for (unsigned int i = 0; i < m_receivePacketsAlive.size(); ++i)
 		m_receivePacketsAlive[i] = false;
 
-	for (int i = 0; i < m_receivePacketsThreads.size(); ++i)
+	for (unsigned int i = 0; i < m_receivePacketsThreads.size(); ++i)
 		m_receivePacketsThreads[i].join();
 
 	m_receivePacketsAlive.clear();
