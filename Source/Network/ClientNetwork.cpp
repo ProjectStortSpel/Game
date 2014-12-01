@@ -153,3 +153,60 @@ void ClientNetwork::NetConnectionAccepted(PacketHandler* _packetHandler, uint64_
 	if (NET_DEBUG)
 		printf("Password accepted, connection accepted.\n");
 }
+
+
+void ClientNetwork::SetOnConnectedToServer(NetEvent _function)
+{
+	if (NET_DEBUG)	
+		printf("Hooking function to OnConnectedToServer.\n");
+
+	m_onConnectedToServer = _function;
+}
+
+void ClientNetwork::SetOnDisconnectedFromServer(NetEvent _function)
+{
+	if (NET_DEBUG)
+		printf("Hooking function to OnDisconnectedFromServer.\n");
+
+	m_onDisconnectedFromServer = _function;
+}
+
+void ClientNetwork::SetOnTimedOutFromServer(NetEvent _function)
+{
+	if (NET_DEBUG)
+		printf("Hooking function to OnTimedOutFromServer.\n");
+
+	m_onTimedOutFromServer = _function;
+}
+
+void ClientNetwork::SetOnFailedToConnect(NetEvent _function)
+{
+	if (NET_DEBUG)
+		printf("Hooking function to OnFailedToConnect.\n");
+
+	m_onFailedToConnect = _function;
+}
+
+void ClientNetwork::SetOnRemotePlayerConnected(NetEvent _function)
+{
+	if (NET_DEBUG)
+		printf("Hooking function to OnRemotePlayerConnected.\n");
+
+	m_onRemotePlayerConnected = _function;
+}
+
+void ClientNetwork::SetOnRemotePlayerDisconnected(NetEvent _function)
+{
+	if (NET_DEBUG)
+		printf("Hooking function to OnRemotePlayerDisconnected.\n");
+
+	m_onRemotePlayerDisconnected = _function;
+}
+
+void ClientNetwork::SetOnRemotePlayerTimedOut(NetEvent _function)
+{
+	if (NET_DEBUG)
+		printf("Hooking function to OnRemotePlayerTimedOut.\n");
+
+	m_onRemotePlayerTimedOut = _function;
+}

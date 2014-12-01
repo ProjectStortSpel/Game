@@ -29,16 +29,15 @@ void ServerNetwork::TestNewUser(PacketHandler* _packetHandler, uint64_t _id, Net
 			uint64_t id2 = _packetHandler->StartPack(NetTypeMessageId::ID_CONNECTION_ACCEPTED);
 			auto newPacket = _packetHandler->EndPack(id2);
 			m_connectedClients[_connection]->SetAccepted(true);
-			m_connectedClients[_connection]->Send((char*)newPacket->Data, newPacket->Length);
+			Send(newPacket, _connection);
 		}
 		else
 		{
 			uint64_t id2 = _packetHandler->StartPack(NetTypeMessageId::ID_PASSWORD_INVALID);
 			auto newPacket = _packetHandler->EndPack(id2);
-			m_connectedClients[_connection]->Send((char*)newPacket->Data, newPacket->Length);
+			Send(newPacket, _connection);
 			m_connectedClients[_connection]->CloseSocket();
 			m_connectedClients.erase(_connection);
-			SAFE_DELETE(newPacket);
 		}
 		break;
 	}
@@ -67,8 +66,6 @@ ServerNetwork::ServerNetwork()
 	m_userFunctions["localhest"] = std::bind(&ServerNetwork::TestUser, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 
 }
-
-
 
 ServerNetwork::~ServerNetwork()
 {
@@ -196,6 +193,7 @@ void ServerNetwork::ReceivePackets(ISocket* _socket, int _id)
 
 	}
 }
+
 void ServerNetwork::ListenForConnections(void)
 {
 	if (NET_DEBUG)
@@ -218,4 +216,28 @@ void ServerNetwork::ListenForConnections(void)
 		m_receivePacketsAlive.push_back(true);
 		m_receivePacketsThreads.push_back(std::thread(&ServerNetwork::ReceivePackets, this, newConnection, m_receivePacketsThreads.size()));
 	}
+}
+
+void ServerNetwork::SetOnPlayerConnected(NetEvent _function)
+{
+	if (NET_DEBUG)
+		printf("Hooking function to OnPlayerConnected.\n");
+
+	m_onPlayerConnected = _function;
+}
+
+void ServerNetwork::SetOnPlayerDisconnected(NetEvent _function)
+{
+	if (NET_DEBUG)
+		printf("Hooking function to OnPlayerDisconnected.\n");
+
+	m_onPlayerDisconnected = _function;
+}
+
+void ServerNetwork::SetOnPlayerTimedOut(NetEvent _function)
+{
+	if (NET_DEBUG)
+		printf("Hooking function to OnPlayerTimedOut.\n");
+
+	m_onPlayerTimedOut = _function;
 }

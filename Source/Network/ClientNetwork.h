@@ -50,6 +50,24 @@ public:
 	// Bind function which will trigger when the client fails to connect to the server
 	void SetOnRemotePlayerTimedOut(NetMessageHook _function);
 
+
+	// Bind function which will trigger when the client connect to the server
+	void SetOnConnectedToServer(NetEvent _function);
+	// Bind function which will trigger when the client disconnect from the server
+	void SetOnDisconnectedFromServer(NetEvent _function);
+	// Bind function which will trigger when the client disconnect from the server
+	void SetOnTimedOutFromServer(NetEvent _function);
+	// Bind function which will trigger when the client fails to connect to the server
+	void SetOnFailedToConnect(NetEvent _function);
+
+	// Bind function which will trigger when the client connect to the server
+	void SetOnRemotePlayerConnected(NetEvent _function);
+	// Bind function which will trigger when the client disconnect from the server
+	void SetOnRemotePlayerDisconnected(NetEvent _function);
+	// Bind function which will trigger when the client fails to connect to the server
+	void SetOnRemotePlayerTimedOut(NetEvent _function);
+
+
 private:
 
 	void ReceivePackets(void);
@@ -69,6 +87,17 @@ private:
 
 	std::thread m_receivePacketsThread;
 	bool m_receivePacketsThreadAlive;
+
+
+	NetEvent m_onConnectedToServer;
+	NetEvent m_onDisconnectedFromServer;
+	NetEvent m_onTimedOutFromServer;
+	NetEvent m_onFailedToConnect;
+
+	NetEvent m_onRemotePlayerConnected;
+	NetEvent m_onRemotePlayerDisconnected;
+	NetEvent m_onRemotePlayerTimedOut;
+
 
 #pragma warning( default : 4251 )
 };

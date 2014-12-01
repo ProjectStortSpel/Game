@@ -29,12 +29,11 @@ public:
 
 
 	// Bind function which will trigger when another player connects to the server
-	void SetOnPlayerConnected(NetMessageHook _function);
+	void SetOnPlayerConnected(NetEvent _function);
 	// Bind function which will trigger when another player disconnects from the server
-	void SetOnPlayerDisconnected(NetMessageHook _function);
-
+	void SetOnPlayerDisconnected(NetEvent _function);
 	// Bind function which will trigger when another player disconnects from the server
-	void SetOnPlayerTimedOut(NetMessageHook _function);
+	void SetOnPlayerTimedOut(NetEvent _function);
 
 private:
 	void ReceivePackets(ISocket* _socket, int _id);
@@ -59,6 +58,11 @@ private:
 
 	std::vector<std::thread> m_receivePacketsThreads;
 	std::vector<bool> m_receivePacketsAlive;
+
+
+	NetEvent m_onPlayerConnected;
+	NetEvent m_onPlayerDisconnected;
+	NetEvent m_onPlayerTimedOut;
 
 #pragma warning( default : 4251 )
 

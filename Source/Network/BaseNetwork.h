@@ -19,6 +19,7 @@
 #include "Packet.h"
 
 typedef std::function<void(PacketHandler*, uint64_t, NetConnection)> NetMessageHook;
+typedef std::function<void(NetConnection)> NetEvent;
 
 class DECLSPEC BaseNetwork
 {
@@ -49,6 +50,8 @@ public:
 
 protected:
 	void TriggerEvent(NetMessageHook _function, uint64_t _packetId, NetConnection _connection);
+	void TriggerEvent(NetEvent _function, NetConnection _connection);
+
 	void HandlePacket(Packet* _packet);	
 protected:
 

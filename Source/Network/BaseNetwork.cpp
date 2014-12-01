@@ -28,6 +28,14 @@ void BaseNetwork::TriggerEvent(NetMessageHook _function, uint64_t _packetId, Net
 	}
 }
 
+void BaseNetwork::TriggerEvent(NetEvent _function, NetConnection _connection)
+{
+	if (_function)
+	{
+		_function(_connection);
+	}
+}
+
 NetMessageHook* BaseNetwork::GetUserFunction(std::string _functionName)
 {
 	if (m_userFunctions.find(_functionName) != m_userFunctions.end())
@@ -43,7 +51,6 @@ NetMessageHook* BaseNetwork::GetNetworkFunction(char _functionIdentifier)
 
 	return 0;
 }
-
 
 void BaseNetwork::HandlePacket(Packet* _packet)
 {
@@ -97,7 +104,7 @@ int BaseNetwork::TriggerPacket(void)
 		m_userFunctions[functionName](&m_packetHandler, id, p->Sender);
 	}
 	else if (NET_DEBUG)
-		printf("Packet \"%s\" not bound to any function.\n", functionName);
+		printf("Packet \"%s\" not bound to any function.\n", functionName.c_str());
 
 	m_packetHandler.EndUnpack(id);
 
