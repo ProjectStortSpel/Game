@@ -2,6 +2,7 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "TextureLoader.h"
+#include "ModelLoader.h"
 
 using namespace Renderer;
 using namespace glm;
@@ -29,6 +30,7 @@ Object m_Quad, m_Ground;
 
 void CreateQuad()
 {
+	/*
 	float positionData[] = {
 		-1.0, -1.0, 0.0,
 		1.0, 1.0, 0.0,
@@ -55,6 +57,26 @@ void CreateQuad()
 		1.0, 1 - 0.0,
 		1.0, 1 - 1.0
 	};
+	*/
+
+	ObjectData obj = ModelLoader::importObject("content/models/cube/", "cube.object");
+	std::vector<Vertex> verts = ModelLoader::importMesh(obj.mesh);
+
+	std::vector<float> positionData(verts.size() * 3);
+	std::vector<float> normalData(verts.size() * 3);
+	std::vector<float> texCoordData(verts.size() * 2);
+
+	for (int i = 0; i < (int)verts.size(); i++)
+	{
+		positionData[i * 3 + 0] = verts[i].po.x;
+		positionData[i * 3 + 1] = verts[i].po.y;
+		positionData[i * 3 + 2] = verts[i].po.z;
+		normalData[i * 3 + 0] = verts[i].no.x;
+		normalData[i * 3 + 1] = verts[i].no.y;
+		normalData[i * 3 + 2] = verts[i].no.z;
+		texCoordData[i * 2 + 0] = verts[i].uv.x;
+		texCoordData[i * 2 + 1] = verts[i].uv.y;
+	}
 
 	//drawShaderHandle.UseProgram();
 
@@ -65,13 +87,13 @@ void CreateQuad()
 
 	// "Bind" (switch focus to) first buffer
 	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[0]);
-	glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(float), positionData, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, positionData.size() * sizeof(float), &positionData[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[1]);
-	glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(float), normalData, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, normalData.size() * sizeof(float), &normalData[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[2]);
-	glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), texCoordData, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, texCoordData.size() * sizeof(float), &texCoordData[0], GL_STATIC_DRAW);
 
 	glGenVertexArrays(1, &VAOHandle);
 	glBindVertexArray(VAOHandle);
@@ -122,19 +144,20 @@ void CreateGround()
 		1.0, 1 - 1.0
 	};
 
+
 	GLuint VAOGround;
 	GLuint VBOHandles[3];
 	glGenBuffers(3, VBOHandles);
 
 	// "Bind" (switch focus to) first buffer
 	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[0]);
-	glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(float), positionData, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(float), &positionData, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[1]);
-	glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(float), normalData, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(float), &normalData, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[2]);
-	glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), texCoordData, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), &texCoordData, GL_STATIC_DRAW);
 
 	glGenVertexArrays(1, &VAOGround);
 	glBindVertexArray(VAOGround);
@@ -179,7 +202,7 @@ bool GraphicDevice::Init()
 	if (!InitDeferred()) { ERRORMSG("INIT DEFERRED FAILED\n"); return false; }
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	if (!InitTextRenderer()) { ERRORMSG("INIT TEXTRENDERER FAILED\n"); return false; }
-	
+
 	return true;
 }
 
