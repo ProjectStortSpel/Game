@@ -183,10 +183,13 @@ void CreateGround()
 
 GraphicDevice::GraphicDevice()
 {
+	m_camera = new Camera();
 }
 
 GraphicDevice::~GraphicDevice()
 {
+	delete(m_camera);
+
 	SDL_GL_DeleteContext(m_glContext);
 	// Close and destroy the window
 	SDL_DestroyWindow(m_window);
@@ -293,18 +296,14 @@ void GraphicDevice::Render()
 	glClearColor(0.1, 0.1, 0.15, 1.0f);
 
 	m_deferredShader1.UseProgram();
-	rot += 0.05f;
+	rot += 40.f*m_dt;
 	//--------Uniforms-------------------------------------------------------------------------
 	glm::mat4 projectionMatrix = glm::perspective(45.0f, (float)m_clientWidth / (float)m_clientHeight, 0.2f, 100.f);
 	m_deferredShader1.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 
 	//----------------------------------------------------------------------------------------
 
-	glm::mat4 viewMatrix = glm::lookAt(
-		vec3(0.0, 0.5, 4.0),	//*m_cam->Get_pos(), // the position of your camera, in world space
-		vec3(0.0, 0.0, 0.0),   // where you want to look at, in world space
-		vec3(0.0, 1.0, 0.0)		 // probably glm::vec3(0,1,0), but (0,-1,0) would make you looking upside-down, which can be great too
-		);
+	glm::mat4 viewMatrix = *m_camera->GetViewMatrix();
 
 	//Render scene
 	//--Object 1--------
