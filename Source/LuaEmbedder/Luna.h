@@ -13,6 +13,8 @@
  * 		Push given object onto the Lua stack.
  * 	CallMethod
  * 		Call class method in Lua.
+ * 	CallMethods
+ * 		Call all objects with given method in Lua.
  * 	check/lightcheck
  * 		Get object from given argument of class method call in Lua.
  * 

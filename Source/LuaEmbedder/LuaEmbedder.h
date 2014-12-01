@@ -53,6 +53,8 @@
  * 		Add global object to Lua instance.
  * 	CallMethod
  * 		Call class method in Lua.
+ * 	CallMethods
+ * 		Call all objects with given method in Lua.
  * 	PullObject
  * 		Pull object from Lua stack.
  * 	PushObject
