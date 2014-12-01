@@ -9,7 +9,7 @@ Camera::Camera()
 
 	m_camPitch = 0.0f;
 	m_camYaw = M_PI;
-	m_sensitivity = 0.5f;
+	m_sensitivity = 1.2f;
 	m_moveSpeed = 1.0f;
 }
 
