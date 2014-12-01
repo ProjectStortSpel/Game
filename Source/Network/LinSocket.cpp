@@ -190,7 +190,7 @@ ISocket* LinSocket::Accept()
 	if (newSocket == -1)
 	{
 		if (NET_DEBUG)
-			printf("Accept failed. Error: %s.\n", strerror(errno));
+			printf("Accept failed. Error: %i.\n", errno);
 		return NULL;
 	}
 
