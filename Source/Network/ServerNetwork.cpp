@@ -21,6 +21,8 @@ void ServerNetwork::TestUser(PacketHandler* _packetHandler, uint64_t _id, NetCon
 	std::string str1 = _packetHandler->ReadString(_id);
 	char b2 = _packetHandler->ReadByte(_id);
 
+	printf("Test!\nByte 1: %c\nShort 1: %i\nInt 1: %i\nFloat 1: %f\nString 1: %s\nByte 2: %c\n", b1, s1, i1, f1, str1.c_str(), b2);
+
 	int breakhere = 123;
 
 

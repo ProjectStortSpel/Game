@@ -155,12 +155,12 @@ void ClientNetwork::NetConnectionAccepted(PacketHandler* _packetHandler, uint64_
 
 	uint64_t id = _packetHandler->StartPack("localhest");
 
-	_packetHandler->WriteByte(id, 3);
+	_packetHandler->WriteByte(id, '3');
 	_packetHandler->WriteShort(id, 1337);
 	_packetHandler->WriteInt(id, 555);
 	_packetHandler->WriteFloat(id, 3.1415);
 	_packetHandler->WriteString(id, "test med mellanslag!?");
-	_packetHandler->WriteByte(id, 9);
+	_packetHandler->WriteByte(id, '9');
 
 	Packet* packet = _packetHandler->EndPack(id);
 
