@@ -7,180 +7,6 @@
 using namespace Renderer;
 using namespace glm;
 
-struct Object
-{
-	Object(){}
-	Object(GLuint tex, glm::vec3 pos)
-	{
-		texID = tex;
-		position = pos;
-		modelMatrix = glm::translate(pos);
-	}
-	GLuint texID, VAOHandle;
-	glm::vec3 position;
-	float rotation;
-	glm::mat4 modelMatrix;
-	void Update()
-	{
-		modelMatrix = glm::translate(position) * glm::rotate(glm::mat4(1.0), rotation, vec3(0.0, 1.0, 0.0));
-	}
-};
-
-Object m_Quad, m_Ground;
-
-void CreateQuad()
-{
-	/*
-	float positionData[] = {
-		-1.0, -1.0, 0.0,
-		1.0, 1.0, 0.0,
-		-1.0, 1.0, 0.0,
-		-1.0, -1.0, 0.0,
-		1.0, -1.0, 0.0,
-		1.0, 1.0, 0.0
-	};
-
-	float normalData[] = {
-		0.0, 0.0, 1.0,
-		0.0, 0.0, 1.0,
-		0.0, 0.0, 1.0,
-		0.0, 0.0, 1.0,
-		0.0, 0.0, 1.0,
-		0.0, 0.0, 1.0
-	};
-
-	float texCoordData[] = {
-		0.0, 1 - 0.0,
-		1.0, 1 - 1.0,
-		0.0, 1 - 1.0,
-		0.0, 1 - 0.0,
-		1.0, 1 - 0.0,
-		1.0, 1 - 1.0
-	};
-	*/
-
-	ObjectData obj = ModelLoader::importObject("content/models/cube/", "cube.object");
-	std::vector<Vertex> verts = ModelLoader::importMesh(obj.mesh);
-
-	std::vector<float> positionData(verts.size() * 3);
-	std::vector<float> normalData(verts.size() * 3);
-	std::vector<float> texCoordData(verts.size() * 2);
-
-	for (int i = 0; i < (int)verts.size(); i++)
-	{
-		positionData[i * 3 + 0] = verts[i].po.x;
-		positionData[i * 3 + 1] = verts[i].po.y;
-		positionData[i * 3 + 2] = verts[i].po.z;
-		normalData[i * 3 + 0] = verts[i].no.x;
-		normalData[i * 3 + 1] = verts[i].no.y;
-		normalData[i * 3 + 2] = verts[i].no.z;
-		texCoordData[i * 2 + 0] = verts[i].uv.x;
-		texCoordData[i * 2 + 1] = verts[i].uv.y;
-	}
-
-	//drawShaderHandle.UseProgram();
-
-	GLuint VAOHandle;
-	GLuint VBOHandles[3];
-	glGenBuffers(3, VBOHandles);
-
-
-	// "Bind" (switch focus to) first buffer
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[0]);
-	glBufferData(GL_ARRAY_BUFFER, positionData.size() * sizeof(float), &positionData[0], GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[1]);
-	glBufferData(GL_ARRAY_BUFFER, normalData.size() * sizeof(float), &normalData[0], GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[2]);
-	glBufferData(GL_ARRAY_BUFFER, texCoordData.size() * sizeof(float), &texCoordData[0], GL_STATIC_DRAW);
-
-	glGenVertexArrays(1, &VAOHandle);
-	glBindVertexArray(VAOHandle);
-
-	glEnableVertexAttribArray(0); // position
-	glEnableVertexAttribArray(1); // normal
-	glEnableVertexAttribArray(2); // texCoord
-
-	// map indices to buffers
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[0]);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[1]);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[2]);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
-
-	m_Quad.VAOHandle = VAOHandle;
-}
-
-void CreateGround()
-{
-	float positionData[] = {
-		-5.0, 0.0, 5.0,
-		5.0, 0.0, -5.0,
-		-5.0, 0.0, -5.0,
-		-5.0, 0.0, 5.0,
-		5.0, 0.0, 5.0,
-		5.0, 0.0, -5.0
-	};
-
-	float normalData[] = {
-		0.0, 1.0, 0.0,
-		0.0, 1.0, 0.0,
-		0.0, 1.0, 0.0,
-		0.0, 1.0, 0.0,
-		0.0, 1.0, 0.0,
-		0.0, 1.0, 0.0
-	};
-
-	float texCoordData[] = {
-		0.0, 1 - 0.0,
-		1.0, 1 - 1.0,
-		0.0, 1 - 1.0,
-		0.0, 1 - 0.0,
-		1.0, 1 - 0.0,
-		1.0, 1 - 1.0
-	};
-
-
-	GLuint VAOGround;
-	GLuint VBOHandles[3];
-	glGenBuffers(3, VBOHandles);
-
-	// "Bind" (switch focus to) first buffer
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[0]);
-	glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(float), &positionData, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[1]);
-	glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(float), &normalData, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[2]);
-	glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), &texCoordData, GL_STATIC_DRAW);
-
-	glGenVertexArrays(1, &VAOGround);
-	glBindVertexArray(VAOGround);
-
-	glEnableVertexAttribArray(0); // position
-	glEnableVertexAttribArray(1); // normal
-	glEnableVertexAttribArray(2); // texCoord
-
-	// map indices to buffers
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[0]);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[1]);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[2]);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
-
-	m_Ground.VAOHandle = VAOGround;
-}
-
-//-------------------------------------
-
 GraphicDevice::GraphicDevice()
 {
 	m_camera = new Camera();
@@ -289,8 +115,8 @@ void GraphicDevice::Render()
 
 	- Output	color
 	*/
-//GLTimer glTimer;
-//glTimer.Start();
+		//GLTimer glTimer;
+		//glTimer.Start();
 	//------Render deferred--------------------------------------------------------------------------
 	glEnable(GL_DEPTH_TEST);
 
@@ -330,43 +156,12 @@ void GraphicDevice::Render()
 		m_models[i].bufferPtr->draw();
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
-/*
-	//--Object 1--------
-	m_Quad.rotation = rot;
-	m_Quad.Update();
-	glm::mat4 modelMatrix = m_Quad.modelMatrix;
-	glm::mat4 modelViewMatrix = viewMatrix * modelMatrix;
-	glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelViewMatrix)));
 
-	m_deferredShader1.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
-	m_deferredShader1.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
-
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, m_Quad.texID);
-	glBindVertexArray(m_Quad.VAOHandle);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	
-	//---Object 2------------
-	modelMatrix = m_Ground.modelMatrix;
-	modelViewMatrix = viewMatrix * modelMatrix;
-	normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelViewMatrix)));
-
-	m_deferredShader1.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
-	m_deferredShader1.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
-	
-	glBindTexture(GL_TEXTURE_2D, m_Ground.texID);
-	glBindVertexArray(m_Ground.VAOHandle);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-	glBindTexture(GL_TEXTURE_2D, 0);
-*/
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	
 
-
-
-//m_glTimerValues.push_back(GLTimerValue("Deferred stage1: ", glTimer.Stop()));
-//glTimer.Start();
+		//m_glTimerValues.push_back(GLTimerValue("Deferred stage1: ", glTimer.Stop()));
+		//glTimer.Start();
 	// FORWARD RENDER
 	// POST RENDER EFFECTS?
 	// GUI RENDER
@@ -392,13 +187,13 @@ void GraphicDevice::Render()
 	glDispatchCompute(m_clientWidth * 0.0625, m_clientHeight * 0.0625, 1); // 1/16 = 0.0625
 	//---------------------------------------------------------------------------
 
-//m_glTimerValues.push_back(GLTimerValue("Deferred stage2: ", glTimer.Stop()));
-//glTimer.Start();
+		//m_glTimerValues.push_back(GLTimerValue("Deferred stage2: ", glTimer.Stop()));
+		//glTimer.Start();
 
 	m_textRenderer.RenderText(m_dt);
 
-//m_glTimerValues.push_back(GLTimerValue("Text Render: ", glTimer.Stop()));
-//glTimer.Start();
+		//m_glTimerValues.push_back(GLTimerValue("Text Render: ", glTimer.Stop()));
+		//glTimer.Start();
 
 	// FULL SCREEN QUAD
 	m_fullScreenShader.UseProgram();
@@ -406,7 +201,7 @@ void GraphicDevice::Render()
 	//glBindTexture(GL_TEXTURE_2D, m_outputImage);
 	glDrawArrays(GL_POINTS, 0, 1);
 
-//m_glTimerValues.push_back(GLTimerValue("Full Screen: ", glTimer.Stop()));
+		//m_glTimerValues.push_back(GLTimerValue("Full Screen: ", glTimer.Stop()));
 	// Swap in the new buffer
 	SDL_GL_SwapWindow(m_window);
 }
@@ -568,28 +363,10 @@ bool GraphicDevice::InitBuffers()
 	glUniform1i(location, 2);
 
 	
-
-	
 	m_deferredShader1.UseProgram();
-	/*
-	GLuint texture = TextureLoader::LoadTexture("content/textures/tiles.png", GL_TEXTURE3);
-	glActiveTexture(GL_TEXTURE3);
-	location = glGetUniformLocation(m_deferredShader1.GetShaderProgram(), "diffuseTex");
-	glUniform1i(location, 3);
-
-	m_Quad = Object(texture, vec3(0.0));
-	CreateQuad();
-
-
-	texture = TextureLoader::LoadTexture("content/textures/floor.png", GL_TEXTURE3);
-	glActiveTexture(GL_TEXTURE3);
-	m_Ground = Object(texture, vec3(0.0, -1.5, 0.0));
-	CreateGround();
-	*/
 
 	// ADDING TEMP OBJECTS
 	LoadModel("content/models/cube/", "cube.object", &glm::mat4(1));
-
 
 	// Output ImageBuffer
 	glGenTextures(1, &m_outputImage);
