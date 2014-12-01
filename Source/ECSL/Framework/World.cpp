@@ -17,17 +17,17 @@ World::~World()
 	delete(m_systemManager);
 }
 
-unsigned int World::CreateNewEntity()
+inline unsigned int World::CreateNewEntity()
 {
 	return m_dataManager->CreateNewEntity();
 }
 
-void World::CreateComponentAndAddTo(const std::string& _componentType, unsigned int _entityId)
+inline void World::CreateComponentAndAddTo(const std::string& _componentType, unsigned int _entityId)
 {
 	m_dataManager->CreateComponentAndAddTo(_componentType, _entityId);
 }
 
-void World::KillEntity(unsigned int _entityId)
+inline void World::KillEntity(unsigned int _entityId)
 {
 	m_dataManager->KillEntity(_entityId);
 }
