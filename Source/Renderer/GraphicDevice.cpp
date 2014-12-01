@@ -3,7 +3,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "TextureLoader.h"
 #include "ModelLoader.h"
-#include "VRAMInfo.h"
 
 using namespace Renderer;
 using namespace glm;
