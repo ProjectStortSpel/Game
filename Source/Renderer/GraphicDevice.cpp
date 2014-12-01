@@ -130,23 +130,23 @@ void GraphicDevice::Render()
 	m_deferredShader1.UseProgram();
 	rot += m_dt;
 	//--------Uniforms-------------------------------------------------------------------------
-	glm::mat4 projectionMatrix = glm::perspective(45.0f, (float)m_clientWidth / (float)m_clientHeight, 0.2f, 100.f);
+	mat4 projectionMatrix = glm::perspective(45.0f, (float)m_clientWidth / (float)m_clientHeight, 0.2f, 100.f);
 	m_deferredShader1.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 
 	//----------------------------------------------------------------------------------------
 
 	glm::mat4 viewMatrix = *m_camera->GetViewMatrix();
 
-	//Render scene
+	//------Render scene--------------------------------------------------------------
 	
 	//-- DRAW MODELS
 	for (int i = 0; i < m_models.size(); i++)
 	{
 		m_models[i].rotation = rot;
 		m_models[i].Update();
-		glm::mat4 modelMatrix = m_models[i].modelMatrix;
-		glm::mat4 modelViewMatrix = viewMatrix * modelMatrix;
-		glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelViewMatrix)));
+		mat4 modelMatrix = m_models[i].modelMatrix;
+		mat4 modelViewMatrix = viewMatrix * modelMatrix;
+		mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelViewMatrix)));
 
 		m_deferredShader1.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
 		m_deferredShader1.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
@@ -462,8 +462,6 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir)
 		texCoordData[i * 2 + 0] = verts[i].uv.x;
 		texCoordData[i * 2 + 1] = 1 - verts[i].uv.y;
 	}
-
-	//drawShaderHandle.UseProgram();
 
 	Buffer* retbuffer = new Buffer();
 
