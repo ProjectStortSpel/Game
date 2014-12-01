@@ -15,15 +15,26 @@ public:
 	PacketHandler(void);
 	~PacketHandler(void);
 
-
-	char GetNetTypeMessageId(Packet* _p);
-
+	// Will make it possible to create a new packet to be sent to connection
+	// This should always be called before any Write function is called
+	// When done writing the packet EndPack should be called
 	uint64_t StartPack(const char* _name);
+	// Should never be called from outside of the dll
+	// Safty risk - FIX
 	uint64_t StartPack(char _identifier);
 
+	char GetNetTypeMessageId(Packet* _p);
+	// Marks the end of a packet and should always be called when done with packing the packet
+	// Returns the newly created packet
 	Packet* EndPack(uint64_t _id);
 
+	// Will make it possible to unpack and read a packet
+	// This should always be called before and Read function is called
 	uint64_t StartUnpack(Packet* packet);
+	// Tell that the packet is unpacked and should be deleted
+	// Should never be called from outside of the dll as it will be called automatically
+	// Safty risk - FIX
+	void EndUnpack(uint64_t _id);
 
 	// Write a byte to the packet
 	// StartPack should be called before this is used
@@ -72,9 +83,6 @@ private:
 		unsigned char* Position;
 	};
 
-
-	void EndUnpack(uint64_t _id);
-	
 	PacketSendInfo* GetPacketSendInfo(uint64_t id);
 	PacketReceiveInfo* GetPacketReceiveInfo(uint64_t id);
 	

@@ -7,46 +7,47 @@
 #include <sys/socket.h>
 #endif
 
-void ServerNetwork::TestNetwork(PacketHandler* _packetHandler, Packet* _packet)
+void ServerNetwork::TestNetwork(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
-	printf("TestNetwork.\n");
 }
 
-void ServerNetwork::TestUser(PacketHandler* _packetHandler, Packet* _packet)
+void ServerNetwork::TestUser(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
-	printf("TestUser.\n");
 }
 
-void ServerNetwork::TestNewUser(PacketHandler* _packetHandler, Packet* _packet)
+void ServerNetwork::TestNewUser(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
-	char type = _packetHandler->GetNetTypeMessageId(_packet);
-	uint64_t id = _packetHandler->StartUnpack(_packet);
+	//char type = _packetHandler->GetNetTypeMessageId(_packet);
+	//uint64_t id = _packetHandler->StartUnpack(_packet);
 
-	switch (type)
-	{
-	case NetTypeMessageId::ID_PASSWORD_ATTEMPT:
-	{
-		std::string password = _packetHandler->ReadString(id);
-		if (m_password.compare(password) == 0)
-		{
-			uint64_t id2 = _packetHandler->StartPack(NetTypeMessageId::ID_CONNECTION_ACCEPTED);
-			auto newPacket = _packetHandler->EndPack(id2);
-			m_connectedClients[_packet->Sender]->Send((char*)newPacket->Data, newPacket->Length);
-		}
-		else
-		{
-			uint64_t id2 = _packetHandler->StartPack(NetTypeMessageId::ID_PASSWORD_INVALID);
-			auto newPacket = _packetHandler->EndPack(id2);
-			m_connectedClients[_packet->Sender]->Send((char*)newPacket->Data, newPacket->Length);
-			SAFE_DELETE(newPacket);
-		}
-		break;
-	}
-	case NetTypeMessageId::ID_PASSWORD_INVALID:
-		break;
-	default:
-		break;
-	}
+	//switch (type)
+	//{
+	//case NetTypeMessageId::ID_PASSWORD_ATTEMPT:
+	//{
+	//	std::string password = _packetHandler->ReadString(id);
+	//	if (m_password.compare(password) == 0)
+	//	{
+	//		uint64_t id2 = _packetHandler->StartPack(NetTypeMessageId::ID_CONNECTION_ACCEPTED);
+	//		auto newPacket = _packetHandler->EndPack(id2);
+	//		m_connectedClients[_packet->Sender]->SetAccepted(true);	
+	//		m_connectedClients[_packet->Sender]->Send((char*)newPacket->Data, newPacket->Length);
+	//	}
+	//	else
+	//	{
+	//		uint64_t id2 = _packetHandler->StartPack(NetTypeMessageId::ID_PASSWORD_INVALID);
+	//		auto newPacket = _packetHandler->EndPack(id2);
+	//		m_connectedClients[_packet->Sender]->Send((char*)newPacket->Data, newPacket->Length);
+	//		m_connectedClients[_packet->Sender]->CloseSocket();
+	//		m_connectedClients.erase(_packet->Sender);
+	//		SAFE_DELETE(newPacket);
+	//	}
+	//	break;
+	//}
+	//case NetTypeMessageId::ID_PASSWORD_INVALID:
+	//	break;
+	//default:
+	//	break;
+	//}
 
 }
 
@@ -61,10 +62,10 @@ ServerNetwork::ServerNetwork()
 
 	m_listenSocket = 0;
 
-	m_networkFunctions[NetTypeMessageId::ID_PASSWORD_ATTEMPT] = std::bind(&ServerNetwork::TestNewUser, this, std::placeholders::_1, std::placeholders::_2);
-	m_networkFunctions[NetTypeMessageId::ID_PASSWORD_INVALID] = std::bind(&ServerNetwork::TestNewUser, this, std::placeholders::_1, std::placeholders::_2);
+	m_networkFunctions[NetTypeMessageId::ID_PASSWORD_ATTEMPT] = std::bind(&ServerNetwork::TestNewUser, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	m_networkFunctions[NetTypeMessageId::ID_PASSWORD_INVALID] = std::bind(&ServerNetwork::TestNewUser, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 
-	m_userFunctions["Test"] = std::bind(&ServerNetwork::TestUser, this, std::placeholders::_1, std::placeholders::_2);
+	m_userFunctions["localhest"] = std::bind(&ServerNetwork::TestUser, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 
 }
 
@@ -139,7 +140,7 @@ void ServerNetwork::Broadcast(Packet* _packet, NetConnection _exclude)
 {
 	for (auto it = m_connectedClients.begin(); it != m_connectedClients.end(); it++)
 	{
-		if (it->first == _exclude)
+		if (it->first == _exclude || !it->second->GetAccepted())
 			continue;
 
 		it->second->Send((char*)_packet->Data, _packet->Length);
@@ -150,7 +151,9 @@ void ServerNetwork::Broadcast(Packet* _packet, NetConnection _exclude)
 
 void ServerNetwork::Send(Packet* _packet, NetConnection _receiver)
 {
-	if (m_connectedClients.find(_receiver) == m_connectedClients.end())
+	auto result = m_connectedClients.find(_receiver);
+
+	if (result == m_connectedClients.end() || !result->second->GetAccepted()) // Could be a problem, check and make sure
 	{
 		if (NET_DEBUG)
 			printf("Connection to receiver \"%s:%i\" was not found.\n", _receiver.IpAddress.c_str(), _receiver.Port);
@@ -168,7 +171,7 @@ void ServerNetwork::ReceivePackets(ISocket* _socket, int _id)
 	while (m_receivePacketsAlive[_id])
 	{
 		int result = _socket->Receive(m_packetData, MAX_PACKET_SIZE);
-		
+
 		if (result > 0)
 		{
 			unsigned short packetSize = result;

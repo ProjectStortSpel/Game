@@ -11,18 +11,18 @@
 #include "Renderer/GraphicDevice.h"
 
 #ifdef WIN32
-	#define _CRTDBG_MAP_ALLOC
+#define _CRTDBG_MAP_ALLOC
 
-	#ifdef _DEBUG
-		#ifndef DBG_NEW
-			#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
-			#define new DBG_NEW
-		#endif
-	#endif  // _DEBUG
+#ifdef _DEBUG
+#ifndef DBG_NEW
+#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+#define new DBG_NEW
+#endif
+#endif  // _DEBUG
 
 
-	#include <stdlib.h>
-	#include <crtdbg.h>
+#include <stdlib.h>
+#include <crtdbg.h>
 #endif
 
 int CardsInHand = 8;
@@ -67,7 +67,7 @@ int main(int argc, char** argv)
 #ifdef WIN32
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
-	
+
 	Timer timer;
 
 	Renderer::GraphicDevice RENDERER = Renderer::GraphicDevice();
@@ -81,17 +81,19 @@ int main(int argc, char** argv)
 	ClearConsole();
 	ServerNetwork server;
 	ClientNetwork client;
+	bool isServer = false;
 
-	
+
 	if (input.compare("s") == 0)
 	{
+		isServer = true;
 		server.Start(6112, "localhest", 8);
 	}
 	else if (input.compare("c") == 0)
 	{
-		client.Connect("127.0.0.1", "localhest", 6112, 0);
+		client.Connect("127.0.0.1", "loca453lhest", 6112, 0);
 	}
-	
+
 	TestECSL();
 	bool lol = true;
 	float cd = 1.0f;
@@ -101,14 +103,25 @@ int main(int argc, char** argv)
 		float dt = timer.ElapsedTimeInSeconds();
 		timer.Reset();
 
+		if (isServer)
+		{
+			do
+			{
+			} while (server.TriggerPacket() > 0);
+		}
+		else
+		{
+			do
+			{
+			} while (server.TriggerPacket() > 0);
+		}
+
 		INPUT->Update();
 		RENDERER.Update(dt);
 		RENDERER.RenderSimpleText("This text render from GAME! \nThe x and y values in the function isn't pixel \ncoordinates, it's char position. Every char is \n8x16 pixels in size. Use \\n to change line.\n\n  !Not all chars is supported!\n\nRight now it clear the whole output image as well (Tell me when to remove this).", 10, 2);
-		
 
 		RENDERER.Render();
-		
-		
+
 		SDL_Event e;
 		while (SDL_PollEvent(&e))
 		{
@@ -117,7 +130,7 @@ int main(int argc, char** argv)
 			case SDL_WINDOWEVENT:
 				RENDERER.PollEvent(e);
 				break;
-			case SDL_KEYDOWN: 
+			case SDL_KEYDOWN:
 			case SDL_KEYUP:
 			case SDL_FINGERMOTION:
 			case SDL_FINGERDOWN:
@@ -135,8 +148,8 @@ int main(int argc, char** argv)
 				INPUT->PollEvent(e);
 				break;
 			}
-				
-			
+
+
 		}
 
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)

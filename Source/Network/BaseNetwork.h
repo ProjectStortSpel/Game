@@ -18,7 +18,7 @@
 #include "PacketHandler.h"
 #include "Packet.h"
 
-typedef std::function<void(PacketHandler*, NetConnection)> NetMessageHook;
+typedef std::function<void(PacketHandler*, uint64_t, NetConnection)> NetMessageHook;
 
 class DECLSPEC BaseNetwork
 {
@@ -29,13 +29,20 @@ public:
 	BaseNetwork();
 	virtual ~BaseNetwork();
 
+	// Returns get local Ip Address
 	const char* GetLocalAddress(void) { return m_localAddress.c_str(); }
+	// Returns the server password
 	const char* GetServerPassword(void) { return m_password.c_str(); }
+	// Returns the incoming port
 	const int GetIncomingPort(void) { return m_incomingPort; }
 
-	//Packet* GetPacket();
+	// Reads the oldest user specific packet and calls its specified function
+	// Will return the number of packets remaining
+	int TriggerPacket(void);
 
+	// Set the incoming port
 	void SetIncomingPort(const int _port) { m_incomingPort = _port; }
+	// Set the server password
 	void SetServerPassword(const char* _password) { m_password = _password; }
 
 	//NetMessageHook* GetNetworkFunction(NetTypeMessageId _function);
@@ -49,8 +56,8 @@ protected:
 
 	std::vector<NetConnection> m_connections;
 
-	std::map < std::string, std::function<void(PacketHandler*, Packet*)> > m_userFunctions;
-	std::map < char, std::function<void(PacketHandler*, Packet*)> > m_networkFunctions;
+	std::map < std::string, NetMessageHook > m_userFunctions;
+	std::map < char, NetMessageHook > m_networkFunctions;
 
 	std::queue<Packet*> m_packets;
 	std::mutex m_packetLock;
@@ -66,8 +73,8 @@ protected:
 #pragma warning( default : 4251 )
 
 private:
-	std::function<void(PacketHandler*, Packet*)>* GetUserFunction(std::string _functionName);
-	std::function<void(PacketHandler*, Packet*)>* GetNetworkFunction(char _functionIdentifier);
+	NetMessageHook* GetUserFunction(std::string _functionName);
+	NetMessageHook* GetNetworkFunction(char _functionIdentifier);
 
 };
 

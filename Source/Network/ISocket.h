@@ -27,6 +27,9 @@ public:
 	int GetRemotePort() { return m_remotePort; }
 	int GetLocalPort() { return m_localPort; }
 
+	bool GetAccepted(void) { return m_accepted; }
+	void SetAccepted(bool _value) { m_accepted = _value; }
+
 protected:
 
 #pragma warning( disable: 4251 )
@@ -38,6 +41,7 @@ protected:
 	int m_remotePort;
 	int m_localPort;
 	bool m_socketOpen;
+	bool m_accepted;
 
 #pragma warning (default: 4251 )
 

@@ -12,15 +12,26 @@ public:
 	ClientNetwork();
 	~ClientNetwork();
 
+	// Connect to server using already predefined settings
 	bool Connect();
-	bool Connect(const char* _ipAddress, const char* _password, const int _outgoing, const int _incomingPort);
-	void Disconnect();
-	void Send(Packet* _packet);
 
+	// Connect to server with Ip Address, Password, outgoing port & incoming port
+	// Note that all previously information will be overridden
+	bool Connect(const char* _ipAddress, const char* _password, const int _outgoing, const int _incomingPort);
+	// Disconnect from the server 
+	// This is called in the deconstructor and is not necessary to close the program graceful
+	void Disconnect();
+	// Send a packet to the server
+	void Send(Packet* _packet);
+	
+	// Returns the remote Ip Address the client connects to
 	const char* GetRemoteAddress(void) { return m_remoteAddress.c_str(); }
+	// Returns the outgoing port the client connects to
 	const int GetOutgoingPort(void) { return m_outgoingPort; }
 
+	// Set the remote Ip Address the client will connect to
 	void SetRemoteAddress(const char* _ipAddress) { m_remoteAddress = _ipAddress; }
+	// Set the outgoing port which the client will connect to
 	void SetOutgoingPort(const int _port) { m_outgoingPort = _port; }
 
 	// Bind function which will trigger when the client connect to the server
@@ -42,6 +53,9 @@ public:
 private:
 
 	void ReceivePackets(void);
+
+	void NetPasswordInvalid(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
+	void NetConnectionAccepted(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
 
 private:
 

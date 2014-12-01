@@ -12,11 +12,19 @@ public:
 	ServerNetwork(void);
 	~ServerNetwork(void);
 
-	bool Start(unsigned int _incomingPort, const char* _password, unsigned int _maxConnections);
+	// Start the server using predefined settings
 	bool Start(void);
+	// Start the server using custom incoming port, password & max number of connections
+	// Note that all previously information will be overridden
+	bool Start(unsigned int _incomingPort, const char* _password, unsigned int _maxConnections);
+	// Stops the server
+	// This is called from the deconstructor and is not needed to close the server gracyfully
 	bool Stop(void);
 
+	// Send a message to all connected clients
+	// use _exclude to prevent the message to being sent to one client
 	void Broadcast(Packet* _packet, NetConnection _exclude = NetConnection());
+	// Send a message to a specific client
 	void Send(Packet* _packet, NetConnection _connection);
 
 
@@ -32,10 +40,10 @@ private:
 	void ReceivePackets(ISocket* _socket, int _id);
 	void ListenForConnections(void);
 
-	void TestNetwork(PacketHandler* _packetHandler, Packet* _packet);
-	void TestUser(PacketHandler* _packetHandler, Packet* _packet);
+	void TestNetwork(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
+	void TestUser(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
 
-	void TestNewUser(PacketHandler* _packetHandler, Packet* _packet);
+	void TestNewUser(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
 
 private:
 

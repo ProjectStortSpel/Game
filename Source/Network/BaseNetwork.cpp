@@ -28,7 +28,7 @@ void BaseNetwork::TriggerEvent(NetMessageHook _function, uint64_t _packetId, Net
 	}
 }
 
-std::function<void(PacketHandler* _packetHandler, Packet* _packet)>* BaseNetwork::GetUserFunction(std::string _functionName)
+NetMessageHook* BaseNetwork::GetUserFunction(std::string _functionName)
 {
 	if (m_userFunctions.find(_functionName) != m_userFunctions.end())
 		return &m_userFunctions[_functionName];
@@ -36,7 +36,7 @@ std::function<void(PacketHandler* _packetHandler, Packet* _packet)>* BaseNetwork
 
 	return 0;
 }
-std::function<void(PacketHandler* _packetHandler, Packet* _packet)>* BaseNetwork::GetNetworkFunction(char _functionIdentifier)
+NetMessageHook* BaseNetwork::GetNetworkFunction(char _functionIdentifier)
 {
 	if (m_networkFunctions.find(_functionIdentifier) != m_networkFunctions.end())
 		return &m_networkFunctions[_functionIdentifier];
@@ -54,22 +54,52 @@ void BaseNetwork::HandlePacket(Packet* _packet)
 
 	if (type == NetTypeMessageId::ID_CUSTOM_PACKET)
 	{
-		std::string functionName((char*)&_packet->Data[1]);
-		if (m_userFunctions.find(functionName) != m_userFunctions.end())
-		{
-			m_userFunctions[functionName](&m_packetHandler, _packet);
-		}
-
+		m_packetLock.lock();
+		m_packets.push(_packet);
+		m_packetLock.unlock();
 	}
 	else
 	{
+		uint64_t id = m_packetHandler.StartUnpack(_packet);
+
 		if (m_networkFunctions.find(type) != m_networkFunctions.end())
 		{
-			m_networkFunctions[type](&m_packetHandler, _packet);
+			m_networkFunctions[type](&m_packetHandler, id, _packet->Sender);
 		}
+
+		m_packetHandler.EndUnpack((uint64_t)_packet);
+	}
+}
+
+int BaseNetwork::TriggerPacket(void)
+{
+	int size = m_packets.size();
+
+	if (size == 0)
+		return size;
+
+	Packet* p = m_packets.front();
+	m_packets.pop();
+	size--;
+
+	if (p->Length <= 1)
+	{
+		if (NET_DEBUG)
+			printf("Corrupt packet, wrong size.\n");
+		return size;
 	}
 
-	m_packetHandler.EndUnpack((uint64_t)_packet);
+	uint64_t id = m_packetHandler.StartUnpack(p);
 
-	//SAFE_DELETE(_packet);
+	std::string functionName((char*)&p->Data[1]);
+	if (m_userFunctions.find(functionName) != m_userFunctions.end())
+	{
+		m_userFunctions[functionName](&m_packetHandler, id, p->Sender);
+	}
+	else if (NET_DEBUG)
+		printf("Packet \"%s\" not bound to any function.\n", functionName);
+
+	m_packetHandler.EndUnpack(id);
+
+	return size;
 }
