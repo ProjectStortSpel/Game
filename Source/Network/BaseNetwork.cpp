@@ -18,6 +18,10 @@ BaseNetwork::~BaseNetwork()
 	}
 }
 
+void BaseNetwork::AddNetworkHook(std::string _name, NetMessageHook _hook)
+{
+	m_userFunctions[_name] = _hook;
+}
 
 void BaseNetwork::TriggerEvent(NetMessageHook _function, uint64_t _packetId, NetConnection _connection)
 {
