@@ -3,6 +3,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "TextureLoader.h"
 #include "ModelLoader.h"
+#include "VRAMInfo.h"
 
 using namespace Renderer;
 using namespace glm;
@@ -80,6 +81,7 @@ void GraphicDevice::Update(float _dt)
 		m_textRenderer.RenderSimpleText(output.str(), x, y + i);
 	}
 	m_glTimerValues.clear();
+
 }
 
 float rot = 0.0f;
@@ -236,8 +238,8 @@ bool GraphicDevice::InitSDLWindow()
 	const char*		Caption = "SDL Window";
 	int				PosX = 200;
 	int				PosY = 280;
-	int				SizeX = 256 * 4;
-	int				SizeY = 144 * 4;
+	int				SizeX = 320 * 4;	//1280
+	int				SizeY = 180 * 4;	//720
 
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1){
 		std::cout << SDL_GetError() << std::endl;

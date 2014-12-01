@@ -124,6 +124,7 @@ int main(int argc, char** argv)
 			}
 		}
 		
+		//-----------CAMERA--------------------------------------------------------------------------------
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_W) == Input::InputState::DOWN)
 			RENDERER.GetCamera()->MoveForward(dt);
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_S) == Input::InputState::DOWN)
@@ -138,13 +139,13 @@ int main(int argc, char** argv)
 			int sizeX, sizeY;
 			RENDERER.GetWindowSize(sizeX, sizeY);
 
-			RENDERER.GetCamera()->UpdateMouse(sizeX*0.5, sizeY*0.5, INPUT->GetMouse()->GetX(), INPUT->GetMouse()->GetY(), dt);
+			RENDERER.GetCamera()->UpdateMouse(sizeX*0.5, sizeY*0.5, INPUT->GetMouse()->GetX(), INPUT->GetMouse()->GetY());
 			INPUT->GetMouse()->SetPosition(sizeX*0.5, sizeY*0.5);
 			INPUT->GetMouse()->HideCursor(true);
 		}
 		else
 			INPUT->GetMouse()->HideCursor(false);
-		
+		//-----------------------------------------------------------------------------------------------
 
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
 		{
