@@ -16,18 +16,3 @@ World::~World()
 	delete(m_dataManager);
 	delete(m_systemManager);
 }
-
-inline unsigned int World::CreateNewEntity()
-{
-	return m_dataManager->CreateNewEntity();
-}
-
-inline void World::CreateComponentAndAddTo(const std::string& _componentType, unsigned int _entityId)
-{
-	m_dataManager->CreateComponentAndAddTo(_componentType, _entityId);
-}
-
-inline void World::KillEntity(unsigned int _entityId)
-{
-	m_dataManager->KillEntity(_entityId);
-}
