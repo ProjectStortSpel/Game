@@ -2,198 +2,29 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "TextureLoader.h"
-
-using glm::vec3;
-GLuint	VAOFullscreenQuad;
+#include "ModelLoader.h"
 
 using namespace Renderer;
-
-struct Object
-{
-	Object(){}
-	Object(GLuint tex, glm::vec3 pos)
-	{
-		texID = tex;
-		position = pos;
-		modelMatrix = glm::translate(pos);
-	}
-	GLuint texID, VAOHandle;
-	glm::vec3 position;
-	float rotation;
-	glm::mat4 modelMatrix;
-	void Update()
-	{
-		modelMatrix = glm::translate(position) * glm::rotate(glm::mat4(1.0), rotation, vec3(0.0, 1.0, 0.0));
-	}
-};
-
-Object m_Quad, m_Ground;
-
-//---------TEMP------------------------
-void CreateDrawQuad()
-{
-	float positionData[] = {
-		-1.0, -1.0,
-		1.0, -1.0,
-		1.0, 1.0,
-		1.0, 1.0,
-		-1.0, 1.0,
-		-1.0, -1.0
-	};
-
-	//drawShaderHandle.UseProgram();
-
-	GLuint VBOHandle;
-	glGenBuffers(1, &VBOHandle);
-
-	glGenVertexArrays(1, &VAOFullscreenQuad);
-	glBindVertexArray(VAOFullscreenQuad);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandle);
-	glBufferData(GL_ARRAY_BUFFER, 2 * 6 * sizeof(float), positionData, GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(0); // position
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandle);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
-}
-
-void CreateQuad()
-{
-	float positionData[] = {
-		-1.0, -1.0, 0.0,
-		1.0, 1.0, 0.0,
-		-1.0, 1.0, 0.0,
-		-1.0, -1.0, 0.0,
-		1.0, -1.0, 0.0,
-		1.0, 1.0, 0.0
-	};
-
-	float normalData[] = {
-		0.0, 0.0, 1.0,
-		0.0, 0.0, 1.0,
-		0.0, 0.0, 1.0,
-		0.0, 0.0, 1.0,
-		0.0, 0.0, 1.0,
-		0.0, 0.0, 1.0
-	};
-
-	float texCoordData[] = {
-		0.0, 1 - 0.0,
-		1.0, 1 - 1.0,
-		0.0, 1 - 1.0,
-		0.0, 1 - 0.0,
-		1.0, 1 - 0.0,
-		1.0, 1 - 1.0
-	};
-
-	//drawShaderHandle.UseProgram();
-
-	GLuint VAOHandle;
-	GLuint VBOHandles[3];
-	glGenBuffers(3, VBOHandles);
-
-
-	// "Bind" (switch focus to) first buffer
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[0]);
-	glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(float), positionData, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[1]);
-	glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(float), normalData, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[2]);
-	glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), texCoordData, GL_STATIC_DRAW);
-
-	glGenVertexArrays(1, &VAOHandle);
-	glBindVertexArray(VAOHandle);
-
-	glEnableVertexAttribArray(0); // position
-	glEnableVertexAttribArray(1); // normal
-	glEnableVertexAttribArray(2); // texCoord
-
-	// map indices to buffers
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[0]);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[1]);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[2]);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
-
-	m_Quad.VAOHandle = VAOHandle;
-}
-
-void CreateGround()
-{
-	float positionData[] = {
-		-5.0, 0.0, 5.0,
-		5.0, 0.0, -5.0,
-		-5.0, 0.0, -5.0,
-		-5.0, 0.0, 5.0,
-		5.0, 0.0, 5.0,
-		5.0, 0.0, -5.0
-	};
-
-	float normalData[] = {
-		0.0, 1.0, 0.0,
-		0.0, 1.0, 0.0,
-		0.0, 1.0, 0.0,
-		0.0, 1.0, 0.0,
-		0.0, 1.0, 0.0,
-		0.0, 1.0, 0.0
-	};
-
-	float texCoordData[] = {
-		0.0, 1 - 0.0,
-		1.0, 1 - 1.0,
-		0.0, 1 - 1.0,
-		0.0, 1 - 0.0,
-		1.0, 1 - 0.0,
-		1.0, 1 - 1.0
-	};
-
-	GLuint VAOGround;
-	GLuint VBOHandles[3];
-	glGenBuffers(3, VBOHandles);
-
-	// "Bind" (switch focus to) first buffer
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[0]);
-	glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(float), positionData, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[1]);
-	glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(float), normalData, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[2]);
-	glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(float), texCoordData, GL_STATIC_DRAW);
-
-	glGenVertexArrays(1, &VAOGround);
-	glBindVertexArray(VAOGround);
-
-	glEnableVertexAttribArray(0); // position
-	glEnableVertexAttribArray(1); // normal
-	glEnableVertexAttribArray(2); // texCoord
-
-	// map indices to buffers
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[0]);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[1]);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[2]);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
-
-	m_Ground.VAOHandle = VAOGround;
-}
-
-//-------------------------------------
+using namespace glm;
 
 GraphicDevice::GraphicDevice()
 {
+	m_camera = new Camera();
 }
 
 GraphicDevice::~GraphicDevice()
 {
+	delete(m_camera);
+<<<<<<< HEAD
+=======
+	// Delete buffers
+	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
+	{
+		delete it->second;
+		it->second = nullptr;
+	}
+>>>>>>> yaya I am lorde
+
 	SDL_GL_DeleteContext(m_glContext);
 	// Close and destroy the window
 	SDL_DestroyWindow(m_window);
@@ -206,7 +37,7 @@ bool GraphicDevice::Init()
 	if (!InitSDLWindow()) { ERRORMSG("INIT SDL WINDOW FAILED\n"); return false; }
 	if (!InitGLEW()) { ERRORMSG("GLEW_VERSION_4_3 FAILED\n"); return false; }
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
-	//if (!InitDeferred()) { ERRORMSG("INIT DEFERRED FAILED\n"); return false; }
+	if (!InitDeferred()) { ERRORMSG("INIT DEFERRED FAILED\n"); return false; }
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	if (!InitTextRenderer()) { ERRORMSG("INIT TEXTRENDERER FAILED\n"); return false; }
 
@@ -255,7 +86,6 @@ void GraphicDevice::Update(float _dt)
 }
 
 float rot = 0.0f;
-
 void GraphicDevice::Render()
 {
 	// DEFERRED RENDER STEPS
@@ -288,7 +118,8 @@ void GraphicDevice::Render()
 
 	- Output	color
 	*/
-/*
+		//GLTimer glTimer;
+		//glTimer.Start();
 	//------Render deferred--------------------------------------------------------------------------
 	glEnable(GL_DEPTH_TEST);
 
@@ -300,20 +131,50 @@ void GraphicDevice::Render()
 	glClearColor(0.1, 0.1, 0.15, 1.0f);
 
 	m_deferredShader1.UseProgram();
+<<<<<<< HEAD
 	rot += 40.f*m_dt;
+=======
+	rot += m_dt;
+>>>>>>> yaya I am lorde
 	//--------Uniforms-------------------------------------------------------------------------
 	glm::mat4 projectionMatrix = glm::perspective(45.0f, (float)m_clientWidth / (float)m_clientHeight, 0.2f, 100.f);
 	m_deferredShader1.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 
 	//----------------------------------------------------------------------------------------
 
-	glm::mat4 viewMatrix = glm::lookAt(
-		vec3(0.0, 0.5, 4.0),	//*m_cam->Get_pos(), // the position of your camera, in world space
-		vec3(0.0, 0.0, 0.0),   // where you want to look at, in world space
-		vec3(0.0, 1.0, 0.0)		 // probably glm::vec3(0,1,0), but (0,-1,0) would make you looking upside-down, which can be great too
-		);
+	glm::mat4 viewMatrix = *m_camera->GetViewMatrix();
 
 	//Render scene
+<<<<<<< HEAD
+=======
+	
+	//-- DRAW MODELS
+	for (int i = 0; i < m_models.size(); i++)
+	{
+		m_models[i].rotation = rot;
+		m_models[i].Update();
+		glm::mat4 modelMatrix = m_models[i].modelMatrix;
+		glm::mat4 modelViewMatrix = viewMatrix * modelMatrix;
+		glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelViewMatrix)));
+
+		m_deferredShader1.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
+		m_deferredShader1.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, m_models[i].texID);
+
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, m_models[i].norID);
+
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, m_models[i].speID);
+
+		m_models[i].bufferPtr->draw();
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+<<<<<<< HEAD
+/*
+>>>>>>> fixing tang bitang and maps
 	//--Object 1--------
 	m_Quad.rotation = rot;
 	m_Quad.Update();
@@ -345,71 +206,56 @@ void GraphicDevice::Render()
 
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
-
-	//-----Pass2------------------
-	glClear(GL_COLOR_BUFFER_BIT);
-	glDisable(GL_DEPTH_TEST);
-
-	m_deferredShader2.UseProgram();
-	m_deferredShader2.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
-
-	glm::mat4 inverseProjection = glm::inverse(projectionMatrix);
-	m_deferredShader2.SetUniVariable("invProjection", mat4x4, &inverseProjection);
-
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, m_depthBuf);
-	//Full screen quad to draw to
-	glBindVertexArray(VAOFullscreenQuad);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-	//---------------------------
-	glActiveTexture(0);
-<<<<<<< HEAD
-
+//m_glTimerValues.push_back(GLTimerValue("Deferred stage1: ", glTimer.Stop()));
+//glTimer.Start();
 =======
->>>>>>> wtf it didn't change?
 
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	
 
+		//m_glTimerValues.push_back(GLTimerValue("Deferred stage1: ", glTimer.Stop()));
+		//glTimer.Start();
+>>>>>>> yaya I am lorde
 	// FORWARD RENDER
 	// POST RENDER EFFECTS?
 	// GUI RENDER
 
-<<<<<<< HEAD
 	// DEBUGG TEXT
 	//glBindTexture(GL_TEXTURE_2D, m_debuggText);
 	// Use Debuggtext
-*/	
-<<<<<<< HEAD
-
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-
-	m_textRenderer.RenderText();
 	
-=======
->>>>>>> added text delay to render
-=======
+	glClear(GL_COLOR_BUFFER_BIT);
+	glDisable(GL_DEPTH_TEST);
+	//----Compute shader (pass 2)------------------------------------------------
+	m_compDeferredPass2Shader.UseProgram();
+
+	m_compDeferredPass2Shader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
+	glm::mat4 inverseProjection = glm::inverse(projectionMatrix);
+	m_compDeferredPass2Shader.SetUniVariable("invProjection", mat4x4, &inverseProjection);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_depthBuf);
+
+	glBindImageTexture(1, m_colorTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
+
+	glDispatchCompute(m_clientWidth * 0.0625, m_clientHeight * 0.0625, 1); // 1/16 = 0.0625
+	//---------------------------------------------------------------------------
+
+		//m_glTimerValues.push_back(GLTimerValue("Deferred stage2: ", glTimer.Stop()));
+		//glTimer.Start();
+
 	m_textRenderer.RenderText(m_dt);
->>>>>>> added text delay to render
 
-<<<<<<< HEAD
-//m_glTimerValues.push_back(GLTimerValue("Deferred stage2: ", glTimer.Stop()));
-//glTimer.Start();
->>>>>>> wtf it didn't change?
-=======
->>>>>>> added text delay to render
+		//m_glTimerValues.push_back(GLTimerValue("Text Render: ", glTimer.Stop()));
+		//glTimer.Start();
 
-	m_textRenderer.RenderText();
-	
 	// FULL SCREEN QUAD
 	m_fullScreenShader.UseProgram();
 	glActiveTexture(GL_TEXTURE5);
-	glBindTexture(GL_TEXTURE_2D, m_outputImage);
-	// Clear, select the rendering program and draw a full screen quad	
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+	//glBindTexture(GL_TEXTURE_2D, m_outputImage);
 	glDrawArrays(GL_POINTS, 0, 1);
 
+		//m_glTimerValues.push_back(GLTimerValue("Full Screen: ", glTimer.Stop()));
 	// Swap in the new buffer
 	SDL_GL_SwapWindow(m_window);
 }
@@ -435,8 +281,8 @@ bool GraphicDevice::InitSDLWindow()
 	// WINDOW SETTINGS
 	unsigned int	Flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
 	const char*		Caption = "SDL Window";
-	int				PosX = 100;
-	int				PosY = 100;
+	int				PosX = 200;
+	int				PosY = 280;
 	int				SizeX = 256 * 4;
 	int				SizeY = 144 * 4;
 
@@ -456,6 +302,7 @@ bool GraphicDevice::InitSDLWindow()
 	}
 
 	SDL_GetWindowSize(m_window, &m_clientWidth, &m_clientHeight);
+
 	return true;
 }
 
@@ -476,19 +323,20 @@ bool GraphicDevice::InitGLEW()
 	return true;
 }
 
-void GraphicDevice::CreateGBufTex(GLenum texUnit, GLenum format, GLuint &texid) {
+void GraphicDevice::CreateGBufTex(GLenum texUnit, GLenum internalFormat, GLuint &texid) {
 	glActiveTexture(texUnit);
 	glGenTextures(1, &texid);
 	glBindTexture(GL_TEXTURE_2D, texid);
-	glTexStorage2D(GL_TEXTURE_2D, 1, format, m_clientWidth, m_clientHeight);
+	//glTexStorage2D(GL_TEXTURE_2D, 1, format, m_clientWidth, m_clientHeight);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_clientWidth, m_clientHeight, 0, GL_RGBA, GL_FLOAT, NULL);
 }
 
 void GraphicDevice::CreateDepthTex(GLuint &texid) {
-	//glActiveTexture(texUnit);
+	glActiveTexture(GL_TEXTURE2);
 	glGenTextures(1, &texid);
 	glBindTexture(GL_TEXTURE_2D, texid);
 
@@ -502,21 +350,20 @@ void GraphicDevice::CreateDepthTex(GLuint &texid) {
 
 bool GraphicDevice::InitDeferred()
 {
-	//use deferred 1 here?
 	m_deferredShader1.UseProgram();
+
 	// Create and bind the FBO
 	glGenFramebuffers(1, &m_deferredFBO);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_deferredFBO);
 
 	// The depth buffer
 	CreateDepthTex(m_depthBuf);
-	// The position, normal and color buffers
+	// The normal and color buffers
 	CreateGBufTex(GL_TEXTURE0, GL_RGBA32F, m_normTex); // Normal
-	CreateGBufTex(GL_TEXTURE1, GL_RGBA8, m_colorTex); // Color
+	CreateGBufTex(GL_TEXTURE1, GL_RGBA8, m_colorTex); // Color 
 
 	// Attach the images to the framebuffer
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthBuf, 0);
-
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_normTex, 0);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_colorTex, 0);
 
@@ -527,76 +374,48 @@ bool GraphicDevice::InitDeferred()
 
 bool GraphicDevice::InitShaders()
 {
-	// Full Screen Quad Shader
+	// Deferred pass 1
+	m_deferredShader1.InitShaderProgram();
+	m_deferredShader1.AddShader("content/shaders/VSDeferredPass1.glsl", GL_VERTEX_SHADER);
+	m_deferredShader1.AddShader("content/shaders/FSDeferredPass1.glsl", GL_FRAGMENT_SHADER);
+	m_deferredShader1.FinalizeShaderProgram();
+
+	// Deferred pass 2 ( compute shader )
+	m_compDeferredPass2Shader.InitShaderProgram();
+	m_compDeferredPass2Shader.AddShader("content/shaders/CSDeferredPass2.glsl", GL_COMPUTE_SHADER);
+	m_compDeferredPass2Shader.FinalizeShaderProgram();
+
+	// Full Screen Quad
 	m_fullScreenShader.InitShaderProgram();
 	m_fullScreenShader.AddShader("content/shaders/fullscreen.vs", GL_VERTEX_SHADER);
 	m_fullScreenShader.AddShader("content/shaders/fullscreen.gs", GL_GEOMETRY_SHADER);
 	m_fullScreenShader.AddShader("content/shaders/fullscreen.ps", GL_FRAGMENT_SHADER);
 	m_fullScreenShader.FinalizeShaderProgram();
-/*
-	//Deferred pass 1
-	m_deferredShader1.InitShaderProgram();
-	m_deferredShader1.AddShader("Content/Shaders/VSDeferredPass1.glsl", GL_VERTEX_SHADER);
-	m_deferredShader1.AddShader("Content/Shaders/FSDeferredPass1.glsl", GL_FRAGMENT_SHADER);
-	m_deferredShader1.FinalizeShaderProgram();
 
-	//Deferred pass 2
-	m_deferredShader2.InitShaderProgram();
-	m_deferredShader2.AddShader("Content/Shaders/VSDeferredPass2.glsl", GL_VERTEX_SHADER);
-	m_deferredShader2.AddShader("Content/Shaders/FSDeferredPass2.glsl", GL_FRAGMENT_SHADER);
-	m_deferredShader2.FinalizeShaderProgram();
-*/
 	return true;
 }
 
 bool GraphicDevice::InitBuffers()
 {
 	int location;
-/*
-	m_deferredShader2.UseProgram();
-	CreateDrawQuad();
+
+	m_compDeferredPass2Shader.UseProgram();
+
+	// Compute shader input images
+	//normal
+	glBindImageTexture(0, m_normTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
+
+	//color
+	glBindImageTexture(1, m_colorTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
+
 
 	glActiveTexture(GL_TEXTURE0);
-	glEnable(GL_TEXTURE_2D);
-	location = glGetUniformLocation(m_deferredShader2.GetShaderProgram(), "NormalTex");
+	location = glGetUniformLocation(m_compDeferredPass2Shader.GetShaderProgram(), "DepthTex");
+<<<<<<< HEAD
 	glUniform1i(location, 0);
-
-	glActiveTexture(GL_TEXTURE1);
-	glEnable(GL_TEXTURE_2D);
-	location = glGetUniformLocation(m_deferredShader2.GetShaderProgram(), "ColorTex");
-	glUniform1i(location, 1);
-
-	glActiveTexture(GL_TEXTURE2);
-	glEnable(GL_TEXTURE_2D);
-	location = glGetUniformLocation(m_deferredShader2.GetShaderProgram(), "DepthTex");
-	glUniform1i(location, 2);
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 	
-	// Output ImageBuffer
-	glGenTextures(1, &m_outputImage);
-	glActiveTexture(GL_TEXTURE5);
-	glBindTexture(GL_TEXTURE_2D, m_outputImage);
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, m_clientWidth, m_clientHeight);
-
-	glBindImageTexture(5, m_outputImage, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
-
-	m_fullScreenShader.UseProgram();
-	glActiveTexture(GL_TEXTURE5);
-	location = glGetUniformLocation(m_fullScreenShader.GetShaderProgram(), "output_image");
-	glUniform1i(location, 5);
-
-	//m_deferredShader2.UseProgram();
-	//CreateDrawQuad();
-
-	
->>>>>>> push to merge with dev
-=======
->>>>>>> wtf it didn't change?
 	m_deferredShader1.UseProgram();
-	GLuint texture = TextureLoader::LoadTexture("Content/Textures/tiles.png", GL_TEXTURE3);
+	GLuint texture = TextureLoader::LoadTexture("content/textures/tiles.png", GL_TEXTURE3);
 	glActiveTexture(GL_TEXTURE3);
 	location = glGetUniformLocation(m_deferredShader1.GetShaderProgram(), "diffuseTex");
 	glUniform1i(location, 3);
@@ -604,30 +423,47 @@ bool GraphicDevice::InitBuffers()
 	m_Quad = Object(texture, vec3(0.0));
 	CreateQuad();
 
-	texture = TextureLoader::LoadTexture("Content/Textures/floor.png", GL_TEXTURE3);
+	texture = TextureLoader::LoadTexture("content/textures/floor.png", GL_TEXTURE3);
 	glActiveTexture(GL_TEXTURE3);
 	m_Ground = Object(texture, vec3(0.0, -1.5, 0.0));
 	CreateGround();
-*/
+=======
+<<<<<<< HEAD
+	glUniform1i(location, 0);
+=======
+	glUniform1i(location, 2);
 
+>>>>>>> d04cb55758124f3f910c59e2aaf32e9a928f2243
+	
+	m_deferredShader1.UseProgram();
+
+	// ADDING TEMP OBJECTS
+	LoadModel("content/models/cube/", "cube.object", &glm::mat4(1));
+>>>>>>> yaya I am lorde
+
+	// Output ImageBuffer
+	glGenTextures(1, &m_outputImage);
+	glActiveTexture(GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, m_outputImage);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, m_clientWidth, m_clientHeight);
+
+	glBindImageTexture(5, m_outputImage, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
+
+	// FULL SCREEN QUAD
 	m_fullScreenShader.UseProgram();
 	glActiveTexture(GL_TEXTURE5);
 	glBindTexture(GL_TEXTURE_2D, m_outputImage);
 	location = glGetUniformLocation(m_fullScreenShader.GetShaderProgram(), "output_image");
 	glUniform1i(location, 5);
 
+
 	return true;
 }
 
 bool GraphicDevice::InitTextRenderer()
 {
-<<<<<<< HEAD
-	GLuint m_textImage = TextureLoader::LoadTexture("content/textures/SimpleText.png", 5);
-	return m_textRenderer.Init(&m_outputImage, m_textImage, m_clientWidth, m_clientHeight);
-=======
 	GLuint m_textImage = TextureLoader::LoadTexture("content/textures/SimpleText.png", GL_TEXTURE20);
 	return m_textRenderer.Init(m_textImage, m_clientWidth, m_clientHeight);
->>>>>>> added text delay to render
 }
 bool GraphicDevice::RenderSimpleText(std::string _text, int _x, int _y)
 {
@@ -636,4 +472,140 @@ bool GraphicDevice::RenderSimpleText(std::string _text, int _x, int _y)
 void GraphicDevice::SetSimpleTextColor(vec4 _color)
 {
 	m_textRenderer.SetSimpleTextColor(_color);
+}
+
+void GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr)
+{
+	// Import Object
+	ObjectData obj = ModelLoader::importObject("content/models/cube/", "cube.object");
+
+	// Import Mesh
+	GLuint mesh = AddMesh(obj.mesh);
+
+	// Import Texture
+	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
+
+	// Import Normal map
+	GLuint normal = AddTexture(obj.norm, GL_TEXTURE2);
+<<<<<<< HEAD
+
+	// Import Specc Glow map
+	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
+=======
+	glActiveTexture(GL_TEXTURE2);
+	location = glGetUniformLocation(m_deferredShader1.GetShaderProgram(), "normalTex");
+	glUniform1i(location, 2);
+
+	// Import Specc Glow map
+	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
+	glActiveTexture(GL_TEXTURE3);
+	location = glGetUniformLocation(m_deferredShader1.GetShaderProgram(), "specularTex");
+	glUniform1i(location, 3);
+
+	// Import Mesh
+	Buffer* mesh = AddMesh(obj.mesh);
+>>>>>>> fixing tang bitang and maps
+
+	// Push back the model
+	m_models.push_back(Model(mesh, texture, normal, specular));
+	std::push_heap(m_models.begin(), m_models.end());
+
+	// LINK MATRIX HERE
+
+}
+
+GLuint GraphicDevice::AddMesh(std::string _fileDir)
+{
+	for (std::map<const std::string, GLuint>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
+	{		
+		if (it->first == _fileDir)
+			return it->second;
+	}
+
+	std::vector<Vertex> verts = ModelLoader::importMesh(_fileDir);
+
+	std::vector<float> positionData(verts.size() * 3);
+	std::vector<float> normalData(verts.size() * 3);
+	std::vector<float> tanData(verts.size() * 3);
+	std::vector<float> bitanData(verts.size() * 3);
+	std::vector<float> texCoordData(verts.size() * 2);
+
+	for (int i = 0; i < (int)verts.size(); i++)
+	{
+		positionData[i * 3 + 0] = verts[i].po.x;
+		positionData[i * 3 + 1] = verts[i].po.y;
+		positionData[i * 3 + 2] = verts[i].po.z;
+		normalData[i * 3 + 0] = verts[i].no.x;
+		normalData[i * 3 + 1] = verts[i].no.y;
+		normalData[i * 3 + 2] = verts[i].no.z;
+		tanData[i * 3 + 0] = verts[i].ta.x;
+		tanData[i * 3 + 1] = verts[i].ta.y;
+		tanData[i * 3 + 2] = verts[i].ta.z;
+		bitanData[i * 3 + 0] = verts[i].bi.x;
+		bitanData[i * 3 + 1] = verts[i].bi.y;
+		bitanData[i * 3 + 2] = verts[i].bi.z;
+		texCoordData[i * 2 + 0] = verts[i].uv.x;
+		texCoordData[i * 2 + 1] = 1 - verts[i].uv.y;
+	}
+
+	//drawShaderHandle.UseProgram();
+
+	GLuint VAOHandle;
+	GLuint VBOHandles[3];
+	glGenBuffers(3, VBOHandles);
+
+<<<<<<< HEAD
+=======
+	BufferData bufferData[] =
+	{
+		{ 0, 3, GL_FLOAT, (const GLvoid*)positionData.data(), positionData.size() * sizeof(float) },
+		{ 1, 3, GL_FLOAT, (const GLvoid*)normalData.data(), normalData.size()   * sizeof(float) },
+		{ 2, 3, GL_FLOAT, (const GLvoid*)tanData.data(), tanData.size()   * sizeof(float) },
+		{ 3, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), bitanData.size()   * sizeof(float) },
+		{ 4, 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), texCoordData.size() * sizeof(float) }
+	};
+	retbuffer->init(bufferData, sizeof(bufferData) / sizeof(bufferData[0]));
+	retbuffer->setCount((int)verts.size());
+>>>>>>> fixing tang bitang and maps
+
+	// "Bind" (switch focus to) first buffer
+	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[0]);
+	glBufferData(GL_ARRAY_BUFFER, positionData.size() * sizeof(float), &positionData[0], GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[1]);
+	glBufferData(GL_ARRAY_BUFFER, normalData.size() * sizeof(float), &normalData[0], GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[2]);
+	glBufferData(GL_ARRAY_BUFFER, texCoordData.size() * sizeof(float), &texCoordData[0], GL_STATIC_DRAW);
+
+	glGenVertexArrays(1, &VAOHandle);
+	glBindVertexArray(VAOHandle);
+
+	glEnableVertexAttribArray(0); // position
+	glEnableVertexAttribArray(1); // normal
+	glEnableVertexAttribArray(2); // texCoord
+
+	// map indices to buffers
+	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[0]);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[1]);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[2]);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
+
+	m_meshs.insert(std::pair<const std::string, GLuint>(_fileDir, VAOHandle));
+
+	return VAOHandle;
+}
+
+GLuint GraphicDevice::AddTexture(std::string _fileDir, GLenum _textureSlot)
+{
+	for (std::map<const std::string, GLuint>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
+	{
+		if (it->first == _fileDir)
+			return it->second;
+	}
+	return TextureLoader::LoadTexture(_fileDir.c_str(), _textureSlot);
 }
