@@ -11,18 +11,18 @@
 #include "Renderer/GraphicDevice.h"
 
 #ifdef WIN32
-	#define _CRTDBG_MAP_ALLOC
+#define _CRTDBG_MAP_ALLOC
 
-	#ifdef _DEBUG
-		#ifndef DBG_NEW
-			#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
-			#define new DBG_NEW
-		#endif
-	#endif  // _DEBUG
+#ifdef _DEBUG
+#ifndef DBG_NEW
+#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+#define new DBG_NEW
+#endif
+#endif  // _DEBUG
 
 
-	#include <stdlib.h>
-	#include <crtdbg.h>
+#include <stdlib.h>
+#include <crtdbg.h>
 #endif
 
 int CardsInHand = 8;
@@ -40,6 +40,27 @@ void ClearConsole()
 #endif
 }
 
+void TestECSL()
+{
+	//ECSL::ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("content/components");
+	//ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
+	//worldCreator.AddSystemGroup();
+	//worldCreator.AddComponentType("Position");
+	//worldCreator.AddComponentType("Velocity");
+
+	//ECSL::World* world = worldCreator.CreateWorld(100);
+
+	//int id = world->CreateNewEntity();
+	//world->CreateComponentAndAddTo("Velocity", id);
+	//world->CreateComponentAndAddTo("Position", id);
+
+	//world->KillEntity(id);
+
+	//delete world;
+	//delete(&ECSL::ComponentTypeManager::GetInstance());
+	//delete(&ECSL::BitSet::BitSetConverter::GetInstance());
+}
+
 
 int main(int argc, char** argv)
 {
@@ -47,9 +68,11 @@ int main(int argc, char** argv)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	SDL_Init(SDL_INIT_EVERYTHING);
 	Timer timer;
 
+	Renderer::GraphicDevice RENDERER = Renderer::GraphicDevice();
+	Input::InputWrapper* INPUT = &Input::InputWrapper::GetInstance();
+	RENDERER.Init();
 
 	std::string input;
 	printf("Starting network:\n\n");
@@ -60,6 +83,7 @@ int main(int argc, char** argv)
 	ClientNetwork client;
 	bool isServer = false;
 
+
 	if (input.compare("s") == 0)
 	{
 		isServer = true;
@@ -69,13 +93,10 @@ int main(int argc, char** argv)
 	{
 		client.Connect("127.0.0.1", "loca453lhest", 6112, 0);
 	}
-	
 
-	Renderer::GraphicDevice* gd = new Renderer::GraphicDevice();
-	Input::InputWrapper INPUT = Input::InputWrapper::GetInstance();
-	gd->Init();
-
+	TestECSL();
 	bool lol = true;
+	float cd = 1.0f;
 	while (lol)
 	{
 		// DT COUNTER
@@ -94,31 +115,49 @@ int main(int argc, char** argv)
 			{
 			} while (server.TriggerPacket() > 0);
 		}
-		INPUT.Update();
-		gd->Update(dt);
 
-		//gd->RenderSimpleText("This text render from GAME! \nThe x and y values in the function isn't pixel \ncoordinates, it's char position. Every char is \n8x16 pixels in size. Use \\n to change line.\n\n  !Not all chars is supported!\n\nRight now it clear the whole output image as well (Tell me when to remove this).", 10, 2);
-		//
+		INPUT->Update();
+		RENDERER.Update(dt);
+		RENDERER.RenderSimpleText("This text render from GAME! \nThe x and y values in the function isn't pixel \ncoordinates, it's char position. Every char is \n8x16 pixels in size. Use \\n to change line.\n\n  !Not all chars is supported!\n\nRight now it clear the whole output image as well (Tell me when to remove this).", 10, 2);
 
-		gd->Render();
+		RENDERER.Render();
 
-		
-		
 		SDL_Event e;
 		while (SDL_PollEvent(&e))
 		{
-			INPUT.PollEvent(e);
+			switch (e.type)
+			{
+			case SDL_WINDOWEVENT:
+				RENDERER.PollEvent(e);
+				break;
+			case SDL_KEYDOWN:
+			case SDL_KEYUP:
+			case SDL_FINGERMOTION:
+			case SDL_FINGERDOWN:
+			case SDL_FINGERUP:
+			case SDL_JOYAXISMOTION:
+			case SDL_JOYBALLMOTION:
+			case SDL_JOYHATMOTION:
+			case SDL_JOYBUTTONDOWN:
+			case SDL_JOYBUTTONUP:
+			case SDL_MOUSEMOTION:
+			case SDL_MOUSEBUTTONDOWN:
+			case SDL_MOUSEBUTTONUP:
+			case SDL_MOUSEWHEEL:
+			case SDL_MULTIGESTURE:
+				INPUT->PollEvent(e);
+				break;
+			}
+
+
 		}
 
-		if (INPUT.GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
 		{
 			lol = false;
 		}
 	}
-		
-	delete gd;
-
-	SDL_Quit();
+	delete(INPUT);
 
 #ifdef WIN32
 	_CrtDumpMemoryLeaks();

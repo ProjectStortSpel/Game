@@ -6,8 +6,6 @@ Author: Anders, Christian
 
 #include "stdafx.h"
 
-using namespace std;
-
 namespace Renderer
 {
 	struct ShaderInfo

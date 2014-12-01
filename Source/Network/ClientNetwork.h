@@ -54,8 +54,8 @@ private:
 
 	void ReceivePackets(void);
 
-	void NetPasswordInvalid(PacketHandler* _packetHandler, Packet* _packet);
-	void NetConnectionAccepted(PacketHandler* _packetHandler, Packet* _packet);
+	void NetPasswordInvalid(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
+	void NetConnectionAccepted(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
 
 private:
 

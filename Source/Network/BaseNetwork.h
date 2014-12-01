@@ -18,7 +18,7 @@
 #include "PacketHandler.h"
 #include "Packet.h"
 
-typedef std::function<void(PacketHandler*, NetConnection)> NetMessageHook;
+typedef std::function<void(PacketHandler*, uint64_t, NetConnection)> NetMessageHook;
 
 class DECLSPEC BaseNetwork
 {
@@ -56,8 +56,8 @@ protected:
 
 	std::vector<NetConnection> m_connections;
 
-	std::map < std::string, std::function<void(PacketHandler*, Packet*)> > m_userFunctions;
-	std::map < char, std::function<void(PacketHandler*, Packet*)> > m_networkFunctions;
+	std::map < std::string, NetMessageHook > m_userFunctions;
+	std::map < char, NetMessageHook > m_networkFunctions;
 
 	std::queue<Packet*> m_packets;
 	std::mutex m_packetLock;
@@ -73,8 +73,8 @@ protected:
 #pragma warning( default : 4251 )
 
 private:
-	std::function<void(PacketHandler*, Packet*)>* GetUserFunction(std::string _functionName);
-	std::function<void(PacketHandler*, Packet*)>* GetNetworkFunction(char _functionIdentifier);
+	NetMessageHook* GetUserFunction(std::string _functionName);
+	NetMessageHook* GetNetworkFunction(char _functionIdentifier);
 
 };
 

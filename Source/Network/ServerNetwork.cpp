@@ -7,57 +7,48 @@
 #include <sys/socket.h>
 #endif
 
-void ServerNetwork::TestNetwork(PacketHandler* _packetHandler, Packet* _packet)
+void ServerNetwork::TestNetwork(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
-	printf("TestNetwork.\n");
 }
 
-void ServerNetwork::TestUser(PacketHandler* _packetHandler, Packet* _packet)
+void ServerNetwork::TestUser(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
-	_packetHandler->StartUnpack(_packet);
-
-	auto c = _packetHandler->ReadByte();
-	auto f = _packetHandler->ReadFloat();
-	auto i = _packetHandler->ReadInt();
-	auto s = _packetHandler->ReadString();
-
-	printf("TestUser.\n");
 }
 
-void ServerNetwork::TestNewUser(PacketHandler* _packetHandler, Packet* _packet)
+void ServerNetwork::TestNewUser(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
-	char type = _packetHandler->StartUnpack(_packet);
+	//char type = _packetHandler->GetNetTypeMessageId(_packet);
+	//uint64_t id = _packetHandler->StartUnpack(_packet);
 
-	switch (type)
-	{
-	case NetTypeMessageId::ID_PASSWORD_ATTEMPT:
-	{
-		std::string password = _packetHandler->ReadString();
-		if (m_password.compare(password) == 0)
-		{
-			_packetHandler->StartPack(NetTypeMessageId::ID_CONNECTION_ACCEPTED);
-			auto newPacket = _packetHandler->EndPack();
-			m_connectedClients[_packet->Sender]->SetAccepted(true);
-			m_connectedClients[_packet->Sender]->Send((char*)newPacket->Data, newPacket->Length);
-		}
-		else
-		{
-			_packetHandler->StartPack(NetTypeMessageId::ID_PASSWORD_INVALID);
-			auto newPacket = _packetHandler->EndPack();
-			m_connectedClients[_packet->Sender]->Send((char*)newPacket->Data, newPacket->Length);
-			m_connectedClients[_packet->Sender]->CloseSocket();
-			m_connectedClients.erase(_packet->Sender);
-			SAFE_DELETE(newPacket);
-		}
-		break;
-	}
-	case NetTypeMessageId::ID_PASSWORD_INVALID:
-		break;
-	default:
-		break;
-	}
+	//switch (type)
+	//{
+	//case NetTypeMessageId::ID_PASSWORD_ATTEMPT:
+	//{
+	//	std::string password = _packetHandler->ReadString(id);
+	//	if (m_password.compare(password) == 0)
+	//	{
+	//		uint64_t id2 = _packetHandler->StartPack(NetTypeMessageId::ID_CONNECTION_ACCEPTED);
+	//		auto newPacket = _packetHandler->EndPack(id2);
+	//		m_connectedClients[_packet->Sender]->SetAccepted(true);	
+	//		m_connectedClients[_packet->Sender]->Send((char*)newPacket->Data, newPacket->Length);
+	//	}
+	//	else
+	//	{
+	//		uint64_t id2 = _packetHandler->StartPack(NetTypeMessageId::ID_PASSWORD_INVALID);
+	//		auto newPacket = _packetHandler->EndPack(id2);
+	//		m_connectedClients[_packet->Sender]->Send((char*)newPacket->Data, newPacket->Length);
+	//		m_connectedClients[_packet->Sender]->CloseSocket();
+	//		m_connectedClients.erase(_packet->Sender);
+	//		SAFE_DELETE(newPacket);
+	//	}
+	//	break;
+	//}
+	//case NetTypeMessageId::ID_PASSWORD_INVALID:
+	//	break;
+	//default:
+	//	break;
+	//}
 
-	_packetHandler->EndUnpack();
 }
 
 ServerNetwork::ServerNetwork()
@@ -71,10 +62,10 @@ ServerNetwork::ServerNetwork()
 
 	m_listenSocket = 0;
 
-	m_networkFunctions[NetTypeMessageId::ID_PASSWORD_ATTEMPT] = std::bind(&ServerNetwork::TestNewUser, this, std::placeholders::_1, std::placeholders::_2);
-	m_networkFunctions[NetTypeMessageId::ID_PASSWORD_INVALID] = std::bind(&ServerNetwork::TestNewUser, this, std::placeholders::_1, std::placeholders::_2);
+	m_networkFunctions[NetTypeMessageId::ID_PASSWORD_ATTEMPT] = std::bind(&ServerNetwork::TestNewUser, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	m_networkFunctions[NetTypeMessageId::ID_PASSWORD_INVALID] = std::bind(&ServerNetwork::TestNewUser, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 
-	m_userFunctions["localhest"] = std::bind(&ServerNetwork::TestUser, this, std::placeholders::_1, std::placeholders::_2);
+	m_userFunctions["localhest"] = std::bind(&ServerNetwork::TestUser, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 
 }
 
@@ -90,8 +81,6 @@ bool ServerNetwork::Start(unsigned int _incomingPort, const char* _password, uns
 	m_incomingPort = _incomingPort;
 	m_password = _password;
 	m_maxConnections = _maxConnections;
-
-	m_packets.push(new Packet(0, 1));
 
 	return Start();
 }
@@ -122,10 +111,10 @@ bool ServerNetwork::Start()
 
 bool ServerNetwork::Stop()
 {
-	for (int i = 0; i < m_receivePacketsAlive.size(); ++i)
+	for (unsigned int i = 0; i < m_receivePacketsAlive.size(); ++i)
 		m_receivePacketsAlive[i] = false;
 
-	for (int i = 0; i < m_receivePacketsThreads.size(); ++i)
+	for (unsigned int i = 0; i < m_receivePacketsThreads.size(); ++i)
 		m_receivePacketsThreads[i].join();
 
 	m_receivePacketsAlive.clear();
@@ -171,7 +160,7 @@ void ServerNetwork::Send(Packet* _packet, NetConnection _receiver)
 		SAFE_DELETE(_packet);
 		return;
 	}
-	
+
 	m_connectedClients[_receiver]->Send((char*)_packet->Data, _packet->Length);
 
 	SAFE_DELETE(_packet);
@@ -182,7 +171,7 @@ void ServerNetwork::ReceivePackets(ISocket* _socket, int _id)
 	while (m_receivePacketsAlive[_id])
 	{
 		int result = _socket->Receive(m_packetData, MAX_PACKET_SIZE);
-		
+
 		if (result > 0)
 		{
 			unsigned short packetSize = result;

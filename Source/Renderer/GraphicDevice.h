@@ -13,9 +13,9 @@ namespace Renderer
 {
 	struct GLTimerValue
 	{
-		string name;
+		std::string name;
 		float ms;
-		GLTimerValue(string n, float m)
+		GLTimerValue(std::string n, float m)
 		{
 			name = n;
 			ms = m;
@@ -39,7 +39,7 @@ namespace Renderer
 
 		// SIMPLETEXT FROM GAME
 		bool RenderSimpleText(std::string _text, int x, int y);
-		void SetSimpleTextColor(vec4 _color);
+		void SetSimpleTextColor(glm::vec4 _color);
 
 	private:
 		bool InitSDLWindow();
@@ -60,7 +60,7 @@ namespace Renderer
 		int m_fps;
 
 		// Timer for shader run time
-		vector<GLTimerValue> m_glTimerValues;
+		std::vector<GLTimerValue> m_glTimerValues;
 
 		// Window size
 		int	m_clientWidth, m_clientHeight;
@@ -76,7 +76,7 @@ namespace Renderer
 		// Shaders
 		Shader m_debuggTextShader; // TA BORT DENNA
 		Shader m_fullScreenShader;
-		Shader m_deferredShader1, m_deferredShader2;
+		Shader m_deferredShader1, m_compDeferredPass2Shader;
 
 		// SimpleText
 		SimpleText m_textRenderer;

@@ -40,10 +40,10 @@ private:
 	void ReceivePackets(ISocket* _socket, int _id);
 	void ListenForConnections(void);
 
-	void TestNetwork(PacketHandler* _packetHandler, Packet* _packet);
-	void TestUser(PacketHandler* _packetHandler, Packet* _packet);
+	void TestNetwork(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
+	void TestUser(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
 
-	void TestNewUser(PacketHandler* _packetHandler, Packet* _packet);
+	void TestNewUser(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
 
 private:
 

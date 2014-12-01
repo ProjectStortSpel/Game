@@ -42,9 +42,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\Externals\content\shaders\debuggText.glsl">
-      <Filter>shaders</Filter>
-    </None>
     <None Include="..\..\..\Externals\content\shaders\fullscreen.ps">
       <Filter>shaders</Filter>
     </None>
@@ -67,6 +64,9 @@
       <Filter>shaders</Filter>
     </None>
     <None Include="..\..\..\Externals\content\shaders\SimpleText.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\CSDeferredPass2.glsl">
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>
