@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Renderer\GLTimer.h" />
     <ClInclude Include="..\..\..\Source\Renderer\GraphicDevice.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\ModelLoader.h" />
     <ClInclude Include="..\..\..\Source\Renderer\Shader.h" />
     <ClInclude Include="..\..\..\Source\Renderer\SimpleText.h" />
     <ClInclude Include="..\..\..\Source\Renderer\stdafx.h" />
