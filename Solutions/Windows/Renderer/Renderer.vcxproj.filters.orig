@@ -20,15 +20,17 @@
     <ClInclude Include="..\..\..\Source\Renderer\TextureLoader.h">
       <Filter>Source</Filter>
     </ClInclude>
-
-
-
-
-
     <ClInclude Include="..\..\..\Source\Renderer\GLTimer.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Renderer\SimpleText.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+<<<<<<< HEAD
+    <ClInclude Include="..\..\..\Source\Renderer\Camera.h">
+=======
+    <ClInclude Include="..\..\..\Source\Renderer\ModelLoader.h">
+>>>>>>> modelloader
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
@@ -39,12 +41,13 @@
     <ClCompile Include="..\..\..\Source\Renderer\Shader.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-
     <ClCompile Include="..\..\..\Source\Renderer\GLTimer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Renderer\SimpleText.cpp">
-
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Renderer\Camera.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -70,11 +73,10 @@
     <None Include="..\..\..\Externals\content\shaders\FSDeferredPass1.glsl">
       <Filter>shaders</Filter>
     </None>
-
     <None Include="..\..\..\Externals\content\shaders\SimpleText.glsl">
-
+      <Filter>shaders</Filter>
+    </None>
     <None Include="..\..\..\Externals\content\shaders\CSDeferredPass2.glsl">
-
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>
