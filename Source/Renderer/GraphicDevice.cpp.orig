@@ -3,6 +3,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "TextureLoader.h"
 #include "ModelLoader.h"
+#include "VRAMInfo.h"
 
 using namespace Renderer;
 using namespace glm;
@@ -248,6 +249,7 @@ void GraphicDevice::Update(float _dt)
 		m_textRenderer.RenderSimpleText(output.str(), x, y + i);
 	}
 	m_glTimerValues.clear();
+
 }
 
 float rot = 0.0f;
@@ -306,31 +308,12 @@ void GraphicDevice::Render()
 	glm::mat4 viewMatrix = *m_camera->GetViewMatrix();
 
 	//Render scene
-<<<<<<< HEAD
 	//--Object 1--------
 	m_Quad.rotation = rot;
 	m_Quad.Update();
 	glm::mat4 modelMatrix = m_Quad.modelMatrix;
 	glm::mat4 modelViewMatrix = viewMatrix * modelMatrix;
 	glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelViewMatrix)));
-=======
-	
-	//-- DRAW MODELS
-	for (int i = 0; i < m_models.size(); i++)
-	{
-		glm::mat4 modelMatrix = m_models[i].modelMatrix;
-		glm::mat4 modelViewMatrix = viewMatrix * modelMatrix;
-		glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelViewMatrix)));
-
-		m_deferredShader1.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
-		m_deferredShader1.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, m_models[i].texID);
-
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, m_models[i].norID);
->>>>>>> added specular maps
 
 	m_deferredShader1.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
 	m_deferredShader1.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
@@ -425,8 +408,13 @@ bool GraphicDevice::InitSDLWindow()
 	const char*		Caption = "SDL Window";
 	int				PosX = 200;
 	int				PosY = 280;
-	int				SizeX = 256 * 4;
-	int				SizeY = 144 * 4;
+<<<<<<< HEAD
+	int				SizeX = 320 * 4;	//1280
+	int				SizeY = 180 * 4;	//720
+=======
+	int				SizeX = 256 * 5;
+	int				SizeY = 144 * 5;
+>>>>>>> you can now start with different size to simpletext
 
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1){
 		std::cout << SDL_GetError() << std::endl;
@@ -561,7 +549,6 @@ bool GraphicDevice::InitBuffers()
 	
 
 	
-<<<<<<< HEAD
 	m_deferredShader1.UseProgram();
 	GLuint texture = TextureLoader::LoadTexture("content/textures/tiles.png", GL_TEXTURE3);
 	glActiveTexture(GL_TEXTURE3);
@@ -576,8 +563,6 @@ bool GraphicDevice::InitBuffers()
 	m_Ground = Object(texture, vec3(0.0, -1.5, 0.0));
 	CreateGround();
 
-=======
->>>>>>> added specular maps
 
 	// Output ImageBuffer
 	glGenTextures(1, &m_outputImage);
@@ -629,14 +614,12 @@ void GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_m
 	// Import Specc Glow map
 	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
 
-	// Set model
-	Model model = Model(mesh, texture, normal, specular);
-	model.modelMatrix = *_matrixPtr; // CHANGE THIS TO PTR LATER
 	// Push back the model
-	m_models.push_back(model);
+	m_models.push_back(Model(mesh, texture, normal, specular));
 	std::push_heap(m_models.begin(), m_models.end());
 
 	// LINK MATRIX HERE
+
 }
 
 GLuint GraphicDevice::AddMesh(std::string _fileDir)
@@ -711,8 +694,5 @@ GLuint GraphicDevice::AddTexture(std::string _fileDir, GLenum _textureSlot)
 		if (it->first == _fileDir)
 			return it->second;
 	}
-	m_deferredShader1.UseProgram();
-	GLuint texture = TextureLoader::LoadTexture(_fileDir.c_str(), _textureSlot);
-	m_textures.insert(std::pair<const std::string, GLenum>(_fileDir, texture));
-	return texture;
+	return TextureLoader::LoadTexture(_fileDir.c_str(), _textureSlot);
 }
