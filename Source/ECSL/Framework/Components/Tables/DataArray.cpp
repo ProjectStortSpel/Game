@@ -34,6 +34,11 @@ namespace ECSL
 		memset(m_dataTable, 0, (m_rowCount * m_bytesPerRow));
 	}
 
+	const int DataArray::GetRowCount() const
+	{
+		return m_rowCount;
+	}
+
 	const int DataArray::GetBytesPerRow() const
 	{
 		return m_bytesPerRow;
