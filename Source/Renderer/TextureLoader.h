@@ -7,7 +7,7 @@
 
 class TextureLoader{
 public:
-static unsigned int LoadTexture(char* file, GLenum textureSlot)
+static unsigned int LoadTexture(const char* file, GLenum textureSlot)
 {
 	int width, height, channels;
 		// Load texture file and convert to openGL format
