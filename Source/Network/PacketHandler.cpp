@@ -17,7 +17,7 @@ PacketHandler::~PacketHandler()
 
 	for (auto iterator = m_packetReceiveInfoMap.begin(); iterator != m_packetReceiveInfoMap.end(); iterator++)
 	{
-		delete iterator->second->Packet;
+		delete iterator->second->PacketData;
 		delete iterator->second;
 	}
 	m_packetReceiveInfoMap.clear();
@@ -93,8 +93,8 @@ Packet* PacketHandler::EndPack(uint64_t _id)
 uint64_t PacketHandler::StartUnpack(Packet* _packet)
 {
 	PacketReceiveInfo* pri = new PacketReceiveInfo();
-	pri->Packet = _packet;
-	pri->Position = pri->Packet->Data;
+	pri->PacketData = _packet;
+	pri->Position = pri->PacketData->Data;
 	uint64_t id = (uint64_t)pri;
 	m_packetReceiveInfoMap[id] = pri;
 
@@ -113,7 +113,7 @@ void PacketHandler::EndUnpack(uint64_t _id)
 	if (pri)
 	{
 		m_packetReceiveInfoMap.erase(_id);
-		delete pri->Packet;
+		delete pri->PacketData;
 		delete pri;
 	}
 }
@@ -187,7 +187,7 @@ char PacketHandler::ReadByte(uint64_t _id)
 	PacketReceiveInfo* pri = GetPacketReceiveInfo(_id);
 	if (pri)
 	{
-		if (!IsOutOfBounds(pri->Packet->Data, pri->Position + sizeof(char), pri->Packet->Length))
+		if (!IsOutOfBounds(pri->PacketData->Data, pri->Position + sizeof(char), pri->PacketData->Length))
 		{
 			memcpy(&var, pri->Position, sizeof(char));
 			pri->Position += sizeof(char);
@@ -203,7 +203,7 @@ short PacketHandler::ReadShort(uint64_t _id)
 	PacketReceiveInfo* pri = GetPacketReceiveInfo(_id);
 	if (pri)
 	{
-		if (!IsOutOfBounds(pri->Packet->Data, pri->Position + sizeof(short), pri->Packet->Length))
+		if (!IsOutOfBounds(pri->PacketData->Data, pri->Position + sizeof(short), pri->PacketData->Length))
 		{
 			memcpy(&var, pri->Position, sizeof(short));
 			pri->Position += sizeof(short);
@@ -219,7 +219,7 @@ int PacketHandler::ReadInt(uint64_t _id)
 	PacketReceiveInfo* pri = GetPacketReceiveInfo(_id);
 	if (pri)
 	{
-		if (!IsOutOfBounds(pri->Packet->Data, pri->Position + sizeof(int), pri->Packet->Length))
+		if (!IsOutOfBounds(pri->PacketData->Data, pri->Position + sizeof(int), pri->PacketData->Length))
 		{
 			memcpy(&var, pri->Position, sizeof(int));
 			pri->Position += sizeof(int);
@@ -237,7 +237,7 @@ char* PacketHandler::ReadString(uint64_t _id)
 		size_t length = strlen((char*)pri->Position) + 1;
 		var = new char[length];
 
-		if (!IsOutOfBounds(pri->Packet->Data, pri->Position + length, pri->Packet->Length))
+		if (!IsOutOfBounds(pri->PacketData->Data, pri->Position + length, pri->PacketData->Length))
 		{
 			memcpy(var, (char*)pri->Position, length);
 			//strcpy_s(var, length, (char*)m_userPacketReceiveInfo.Position);
@@ -253,7 +253,7 @@ float PacketHandler::ReadFloat(uint64_t _id)
 	PacketReceiveInfo* pri = GetPacketReceiveInfo(_id);
 	if (pri)
 	{
-		if (!IsOutOfBounds(pri->Packet->Data, pri->Position + sizeof(float), pri->Packet->Length))
+		if (!IsOutOfBounds(pri->PacketData->Data, pri->Position + sizeof(float), pri->PacketData->Length))
 		{
 			memcpy(&var, pri->Position, sizeof(float));
 			pri->Position += sizeof(float);

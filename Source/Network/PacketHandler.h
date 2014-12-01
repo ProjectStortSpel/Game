@@ -67,7 +67,7 @@ private:
 
 	struct PacketReceiveInfo
 	{
-		Packet*		   Packet;
+		Packet*		   PacketData;
 		unsigned char* Position;
 	};
 
