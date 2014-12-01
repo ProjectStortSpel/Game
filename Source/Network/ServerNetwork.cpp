@@ -219,13 +219,9 @@ void ServerNetwork::ReceivePackets(ISocket* _socket, bool* _alive)
 		}
 		else if (result == 0)
 		{
-			if (NET_DEBUG)
-				printf("Error code(0): %d\n", WSAGetLastError());
 		}
 		else
 		{
-			if (NET_DEBUG)
-				printf("Error code: %d\n", WSAGetLastError());
 		}
 
 	}
