@@ -590,3 +590,102 @@ void GraphicDevice::SetSimpleTextColor(vec4 _color)
 {
 	m_textRenderer.SetSimpleTextColor(_color);
 }
+
+int GraphicDevice::LoadModel(std::string dir, std::string file)
+{
+	// Import Object
+	ObjectData obj = ModelLoader::importObject("content/models/cube/", "cube.object");
+
+	// Import Mesh
+	GLuint mesh = AddMesh(obj.mesh);
+
+	// Import Texture
+	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
+
+	// Import Normal map
+	GLuint normal = AddTexture(obj.norm, GL_TEXTURE2);
+
+	// Import Specc Glow map
+	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
+
+	// Push back the model
+	m_models.push_back(Model(mesh, texture, normal, specular));
+	std::push_heap(m_models.begin(), m_models.end());
+
+	return true;
+}
+
+GLuint GraphicDevice::AddMesh(std::string fileDir)
+{
+	for (std::map<const std::string, GLuint>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
+	{		
+		if (it->first == fileDir)
+			return it->second;
+	}
+
+	std::vector<Vertex> verts = ModelLoader::importMesh(fileDir);
+
+	std::vector<float> positionData(verts.size() * 3);
+	std::vector<float> normalData(verts.size() * 3);
+	std::vector<float> texCoordData(verts.size() * 2);
+
+	for (int i = 0; i < (int)verts.size(); i++)
+	{
+		positionData[i * 3 + 0] = verts[i].po.x;
+		positionData[i * 3 + 1] = verts[i].po.y;
+		positionData[i * 3 + 2] = verts[i].po.z;
+		normalData[i * 3 + 0] = verts[i].no.x;
+		normalData[i * 3 + 1] = verts[i].no.y;
+		normalData[i * 3 + 2] = verts[i].no.z;
+		texCoordData[i * 2 + 0] = verts[i].uv.x;
+		texCoordData[i * 2 + 1] = verts[i].uv.y;
+	}
+
+	//drawShaderHandle.UseProgram();
+
+	GLuint VAOHandle;
+	GLuint VBOHandles[3];
+	glGenBuffers(3, VBOHandles);
+
+
+	// "Bind" (switch focus to) first buffer
+	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[0]);
+	glBufferData(GL_ARRAY_BUFFER, positionData.size() * sizeof(float), &positionData[0], GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[1]);
+	glBufferData(GL_ARRAY_BUFFER, normalData.size() * sizeof(float), &normalData[0], GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[2]);
+	glBufferData(GL_ARRAY_BUFFER, texCoordData.size() * sizeof(float), &texCoordData[0], GL_STATIC_DRAW);
+
+	glGenVertexArrays(1, &VAOHandle);
+	glBindVertexArray(VAOHandle);
+
+	glEnableVertexAttribArray(0); // position
+	glEnableVertexAttribArray(1); // normal
+	glEnableVertexAttribArray(2); // texCoord
+
+	// map indices to buffers
+	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[0]);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[1]);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBOHandles[2]);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
+
+	m_meshs.insert(std::pair<const std::string, GLuint>(fileDir, VAOHandle));
+
+	return VAOHandle;
+}
+
+GLuint GraphicDevice::AddTexture(std::string fileDir, GLenum textureSlot)
+{
+	for (std::map<const std::string, GLuint>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
+	{
+		if (it->first == fileDir)
+			return it->second;
+	}
+	return TextureLoader::LoadTexture(fileDir.c_str(), textureSlot);
+}

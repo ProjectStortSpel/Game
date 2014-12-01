@@ -11,6 +11,39 @@ Author: Anders, Christian
 
 namespace Renderer
 {
+	struct Model
+	{
+		bool Model::operator> (Model m) { return VAOHandle > m.VAOHandle ? true : false; }
+		bool Model::operator< (Model m) { return VAOHandle < m.VAOHandle ? true : false; }
+
+		bool Model::operator== (Model m) { return VAOHandle == m.VAOHandle ? true : false; }
+		bool Model::operator!= (Model m) { return VAOHandle == m.VAOHandle ? false : true; }
+
+		Model(){}
+		Model(GLuint vao, GLuint tex, GLuint nor, GLuint spe)
+		{
+			VAOHandle = vao;
+			texID = tex;
+			norID = nor;
+			speID = spe;
+			modelMatrix = glm::translate(glm::vec3(1));
+		}
+		GLuint VAOHandle;
+		GLuint texID;
+		GLuint norID;
+		GLuint speID;
+
+		glm::vec3 position;
+		float rotation;
+		glm::mat4 modelMatrix;
+
+		void Update()
+		{
+			modelMatrix = glm::translate(position) * glm::rotate(glm::mat4(1.0), rotation, glm::vec3(0.0, 1.0, 0.0));
+		}
+	};
+
+
 	struct GLTimerValue
 	{
 		std::string name;
@@ -40,6 +73,9 @@ namespace Renderer
 		// SIMPLETEXT FROM GAME
 		bool RenderSimpleText(std::string _text, int x, int y);
 		void SetSimpleTextColor(glm::vec4 _color);
+
+		// MODELLOADER
+		
 
 	private:
 		bool InitSDLWindow();
@@ -80,6 +116,18 @@ namespace Renderer
 
 		// SimpleText
 		SimpleText m_textRenderer;
+
+
+		// Modelloader
+		std::vector<Model> m_models;
+		int LoadModel(std::string dir, std::string file);
+
+		// Meshs
+		std::map<const std::string, GLuint> m_meshs;
+		GLuint AddMesh(std::string fileDir);
+		// Textures
+		std::map<const std::string, GLuint> m_textures;
+		GLuint AddTexture(std::string fileDir, GLenum textureSlot);
 	};
 }
 
