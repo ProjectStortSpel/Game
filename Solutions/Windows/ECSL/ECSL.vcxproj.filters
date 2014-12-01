@@ -94,6 +94,9 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\ComponentTable.h">
       <Filter>Source Files\Framework\Components\Tables</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Simulation.h">
+      <Filter>Source Files\Framework</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\World.cpp">
@@ -149,6 +152,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\ComponentTable.cpp">
       <Filter>Source Files\Framework\Components\Tables</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Simulation.cpp">
+      <Filter>Source Files\Framework</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
