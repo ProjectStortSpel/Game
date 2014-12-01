@@ -13,11 +13,11 @@ namespace Renderer
 {
 	struct Model
 	{
-		bool Model::operator> (const Model &m) { return VAOHandle > m.VAOHandle ? true : false; }
-		bool Model::operator< (const Model &m) { return VAOHandle < m.VAOHandle ? true : false; }
+		bool operator> (const Model &m) { return VAOHandle > m.VAOHandle ? true : false; }
+		bool operator< (const Model &m) { return VAOHandle < m.VAOHandle ? true : false; }
 
-		bool Model::operator== (const Model &m) { return VAOHandle == m.VAOHandle ? true : false; }
-		bool Model::operator!= (const Model &m) { return VAOHandle == m.VAOHandle ? false : true; }
+		bool operator== (const Model &m) { return VAOHandle == m.VAOHandle ? true : false; }
+		bool operator!= (const Model &m) { return VAOHandle == m.VAOHandle ? false : true; }
 
 		Model(){}
 		Model(GLuint vao, GLuint tex, GLuint nor, GLuint spe)
