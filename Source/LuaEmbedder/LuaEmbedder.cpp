@@ -198,4 +198,25 @@ namespace LuaEmbedder
   {
     lua_pushstring(L, value.c_str());
   }
+  
+  bool IsDouble(int index)
+  {
+    return lua_isnumber(L, index);
+  }
+  bool IsInt(int index)
+  {
+    return lua_isnumber(L, index);
+  }
+  bool IsUnsignedInt(int index)
+  {
+    return lua_isnumber(L, index);
+  }
+  bool IsBool(int index)
+  {
+    return lua_isboolean(L, index);
+  }
+  bool IsString(int index)
+  {
+    return lua_isstring(L, index);
+  }
 }
