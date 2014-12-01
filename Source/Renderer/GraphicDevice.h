@@ -42,6 +42,9 @@ namespace Renderer
 		bool RenderSimpleText(std::string _text, int x, int y);
 		void SetSimpleTextColor(glm::vec4 _color);
 
+		Camera *GetCamera(){ return m_camera; }
+		void GetWindowSize(int &x, int &y){ x = m_clientWidth; y = m_clientHeight; }
+
 	private:
 		bool InitSDLWindow();
 		bool InitGLEW();
@@ -52,6 +55,8 @@ namespace Renderer
 
 		void CreateGBufTex(GLenum texUnit, GLenum format, GLuint &texid);
 		void CreateDepthTex(GLuint &texid);
+
+		Camera* m_camera;
 
 		SDL_Window*		m_window;
 		SDL_GLContext	m_glContext;

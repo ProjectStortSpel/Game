@@ -56,6 +56,7 @@ int main(int argc, char** argv)
 	server.Start(6112, "", 8);
 
 
+
 	bool lol = true;
 	while (lol)
 	{
@@ -65,10 +66,11 @@ int main(int argc, char** argv)
 
 		INPUT.Update();
 		RENDERER.Update(dt);
-		RENDERER.RenderSimpleText("This text render from GAME! \nThe x and y values in the function isn't pixel \ncoordinates, it's char position. Every char is \n8x16 pixels in size. Use \\n to change line.\n\n  !Not all chars is supported!\n\nRight now it clear the whole output image as well (Tell me when to remove this).", 10, 2);
+		//RENDERER.RenderSimpleText("This text render from GAME! \nThe x and y values in the function isn't pixel \ncoordinates, it's char position. Every char is \n8x16 pixels in size. Use \\n to change line.\n\n  !Not all chars is supported!\n\nRight now it clear the whole output image as well (Tell me when to remove this).", 10, 2);
 		
 
 		RENDERER.Render();
+		INPUT.Update();
 		
 		
 		SDL_Event e;
@@ -97,9 +99,29 @@ int main(int argc, char** argv)
 				INPUT.PollEvent(e);
 				break;
 			}
-				
-			
 		}
+		
+		if (INPUT.GetKeyboard()->GetKeyState(SDL_SCANCODE_W) == Input::InputState::DOWN)
+			RENDERER.GetCamera()->MoveForward(dt);
+		if (INPUT.GetKeyboard()->GetKeyState(SDL_SCANCODE_S) == Input::InputState::DOWN)
+			RENDERER.GetCamera()->MoveBackward(dt);
+		if (INPUT.GetKeyboard()->GetKeyState(SDL_SCANCODE_A) == Input::InputState::DOWN)
+			RENDERER.GetCamera()->MoveLeft(dt);
+		if (INPUT.GetKeyboard()->GetKeyState(SDL_SCANCODE_D) == Input::InputState::DOWN)
+			RENDERER.GetCamera()->MoveRight(dt);
+
+		if (INPUT.GetMouse()->GetButtonState(Input::LeftButton) == Input::InputState::DOWN)
+		{
+			int sizeX, sizeY;
+			RENDERER.GetWindowSize(sizeX, sizeY);
+
+			RENDERER.GetCamera()->UpdateMouse(sizeX*0.5, sizeY*0.5, INPUT.GetMouse()->GetX(), INPUT.GetMouse()->GetY(), dt);
+			INPUT.GetMouse()->SetPosition(sizeX*0.5, sizeY*0.5);
+			INPUT.GetMouse()->HideCursor(true);
+		}
+		else
+			INPUT.GetMouse()->HideCursor(false);
+		
 
 		if (INPUT.GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
 		{
