@@ -369,7 +369,7 @@ bool GraphicDevice::InitBuffers()
 	m_deferredShader1.UseProgram();
 
 	// ADDING TEMP OBJECTS
-	LoadModel("content/models/cube/", "cube.object", &glm::mat4(1));
+	LoadModel("content/models/cube/", "cube.object", NULL);
 
 	// Output ImageBuffer
 	glGenTextures(1, &m_outputImage);
