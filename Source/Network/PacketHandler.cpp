@@ -118,8 +118,6 @@ void PacketHandler::EndUnpack(uint64_t _id)
 	}
 }
 
-
-
 void PacketHandler::WriteByte(uint64_t _id, const unsigned char _byte)
 {
 	PacketSendInfo* psi = GetPacketSendInfo(_id);
