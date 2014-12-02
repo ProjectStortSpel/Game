@@ -28,7 +28,6 @@ namespace Renderer
 			texID = tex;
 			norID = nor;
 			speID = spe;
-			modelMatrix = &glm::translate(glm::vec3(1));
 		}
 		Buffer* bufferPtr;
 		GLuint texID;

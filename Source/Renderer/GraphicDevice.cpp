@@ -147,7 +147,12 @@ void GraphicDevice::Render()
 	//-- DRAW MODELS
 	for (int i = 0; i < m_models.size(); i++)
 	{
-		glm::mat4 modelMatrix = *m_models[i].modelMatrix;
+		glm::mat4 modelMatrix;
+		if (m_models[i].modelMatrix == NULL)
+			modelMatrix = glm::translate(glm::vec3(1));
+		else
+			modelMatrix = *m_models[i].modelMatrix;
+
 		glm::mat4 modelViewMatrix = viewMatrix * modelMatrix;
 		glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelViewMatrix)));
 
