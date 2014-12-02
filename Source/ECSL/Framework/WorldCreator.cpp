@@ -52,3 +52,8 @@ void WorldCreator::AddLuaSystemToCurrentGroup(System* _system)
 {
 	m_systemWorkGroups->at(m_systemWorkGroups->size() - 1)->AddSystem(_system);
 }
+
+void WorldCreator::AddComponentType(ComponentType& _componentType)
+{
+	ComponentTypeManager::GetInstance().AddComponentType(_componentType);
+}

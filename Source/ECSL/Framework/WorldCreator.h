@@ -22,6 +22,7 @@ namespace ECSL
 		template<typename ComponentType>
 		void AddComponentType();
 		void AddComponentType(const std::string& _componentType);
+		void AddComponentType(ComponentType& _componentType);
 
 		/// Adds a system to a new group
 		template<typename SystemType>
