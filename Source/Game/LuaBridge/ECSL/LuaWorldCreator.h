@@ -15,6 +15,7 @@ namespace LuaBridge
     
     static void Embed();
     
+  private:
     int AddComponentType();
     int AddSystemGroup();
   };

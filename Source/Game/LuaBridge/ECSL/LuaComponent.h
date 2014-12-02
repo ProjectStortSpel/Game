@@ -15,6 +15,9 @@ namespace LuaBridge
     
     static void Embed();
     
+    ECSL::ComponentType GetComponentType();
+    
+  private:
     int GetName();
     int SetName();
     
@@ -22,8 +25,6 @@ namespace LuaBridge
     int SetTableType();
     
     int AddVariable();
-    
-    ECSL::ComponentType GetComponentType();
     
   private:
     std::string m_name;
