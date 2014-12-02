@@ -142,7 +142,7 @@ void GraphicDevice::Render()
 	//-- DRAW MODELS
 	for (int i = 0; i < m_models.size(); i++)
 	{
-		glm::mat4 modelMatrix = m_models[i].modelMatrix;
+		glm::mat4 modelMatrix = *m_models[i].modelMatrix;
 		glm::mat4 modelViewMatrix = viewMatrix * modelMatrix;
 		glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelViewMatrix)));
 
@@ -234,8 +234,8 @@ bool GraphicDevice::InitSDLWindow()
 	const char*		Caption = "SDL Window";
 	int				PosX = 200;
 	int				PosY = 280;
-	int				SizeX = 256 * 5;
-	int				SizeY = 144 * 5;
+	int				SizeX = 256 * 4;
+	int				SizeY = 144 * 4;
 
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1){
 		std::cout << SDL_GetError() << std::endl;
@@ -428,7 +428,7 @@ void GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_m
 
 	// Set model
 	Model model = Model(mesh, texture, normal, specular);
-	model.modelMatrix = *_matrixPtr; // CHANGE THIS TO PTR LATER
+	model.modelMatrix = _matrixPtr; // CHANGE THIS TO PTR LATER
 	// Push back the model
 	m_models.push_back(model);
 	std::push_heap(m_models.begin(), m_models.end());
