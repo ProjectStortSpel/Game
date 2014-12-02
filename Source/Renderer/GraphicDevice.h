@@ -28,14 +28,14 @@ namespace Renderer
 			texID = tex;
 			norID = nor;
 			speID = spe;
-			modelMatrix = glm::translate(glm::vec3(1));
+			modelMatrix = &glm::translate(glm::vec3(1));
 		}
 		Buffer* bufferPtr;
 		GLuint texID;
 		GLuint norID;
 		GLuint speID;
 
-		glm::mat4 modelMatrix;	// GÖR DETTA TILL EN PEKARE NÄR E/C FUNGERAR
+		glm::mat4* modelMatrix;	// GÖR DETTA TILL EN PEKARE NÄR E/C FUNGERAR
 	};
 
 

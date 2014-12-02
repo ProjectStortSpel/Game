@@ -38,7 +38,6 @@ bool GraphicDevice::Init()
 	if (!InitDeferred()) { ERRORMSG("INIT DEFERRED FAILED\n"); return false; }
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	if (!InitTextRenderer()) { ERRORMSG("INIT TEXTRENDERER FAILED\n"); return false; }
-	m_vramUsage += (m_textRenderer.GetArraySize() * sizeof(int));
 
 	return true;
 }
@@ -85,7 +84,7 @@ void GraphicDevice::Update(float _dt)
 
 	std::stringstream vram;
 	vram << "VRAM usage: " << ((float)m_vramUsage/1024.f)/1024.f << " Mb ";
-	m_textRenderer.RenderSimpleText(vram.str(), 20, 0);
+	m_textRenderer.RenderSimpleText(vram.str(), 0, 2);
 }
 
 float rot = 0.0f;
@@ -148,9 +147,15 @@ void GraphicDevice::Render()
 	//-- DRAW MODELS
 	for (int i = 0; i < m_models.size(); i++)
 	{
+<<<<<<< HEAD
 		glm::mat4 modelMatrix = *m_models[i].modelMatrix;
 		glm::mat4 modelViewMatrix = viewMatrix * modelMatrix;
 		glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelViewMatrix)));
+=======
+		mat4 modelMatrix = m_models[i].modelMatrix;
+		mat4 modelViewMatrix = viewMatrix * modelMatrix;
+		mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelViewMatrix)));
+>>>>>>> dd976c9f1d84e9e9a4133e4f5cc5266c1f28633b
 
 		m_deferredShader1.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
 		m_deferredShader1.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
@@ -396,7 +401,7 @@ bool GraphicDevice::InitBuffers()
 bool GraphicDevice::InitTextRenderer()
 {
 	int texSizeX, texSizeY;
-	GLuint m_textImage = AddTexture("content/textures/SimpleText.png", GL_TEXTURE20);
+	GLuint m_textImage = TextureLoader::LoadTexture("content/textures/SimpleText.png", GL_TEXTURE20, texSizeX, texSizeY);
 	return m_textRenderer.Init(m_textImage, m_clientWidth, m_clientHeight);
 }
 bool GraphicDevice::RenderSimpleText(std::string _text, int _x, int _y)
@@ -511,6 +516,6 @@ GLuint GraphicDevice::AddTexture(std::string _fileDir, GLenum _textureSlot)
 	m_deferredShader1.UseProgram();
 	GLuint texture = TextureLoader::LoadTexture(_fileDir.c_str(), _textureSlot, texSizeX, texSizeY);
 	m_textures.insert(std::pair<const std::string, GLenum>(_fileDir, texture));
-	m_vramUsage += (texSizeX * texSizeY * 4 * 4);
+	m_vramUsage += (texSizeX * texSizeY * 4);
 	return texture;
 }
