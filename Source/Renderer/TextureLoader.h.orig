@@ -5,23 +5,15 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stbimage/stb_image.h>
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 class TextureLoader{
 public:
+<<<<<<< HEAD
+static unsigned int LoadTexture(const char* file, GLenum textureSlot)
 =======
-static class TextureLoader{
-
-public:
-
->>>>>>> Standard deferred added
-=======
-class TextureLoader{
-public:
->>>>>>> texLoader test
-static unsigned int LoadTexture(char* file, GLenum textureSlot)
+static unsigned int LoadTexture(const char* file, GLenum textureSlot, int &height, int &width)
+>>>>>>> ba5ccfa3ec5e3a6b241e9b93e4a0ec04f1781926
 {
-	int width, height, channels;
+	int channels;
 		// Load texture file and convert to openGL format
 	unsigned char* imgData = stbi_load(file, &width, &height, &channels, STBI_rgb_alpha);
 
