@@ -18,6 +18,7 @@ namespace ECSL
 		
 		template<typename SystemType>
 		void AddSystem();
+		void AddSystem(System* _system);
 
 		void Update(float _dt);
 

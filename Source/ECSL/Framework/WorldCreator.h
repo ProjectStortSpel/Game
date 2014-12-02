@@ -29,6 +29,9 @@ namespace ECSL
 		// Adds a system to the most recently added group
 		template<typename SystemType>
 		void AddSystemToCurrentGroup();
+
+		void AddLuaSystemToCurrentGroup(System* _system);
+
 		// Adds a new system group
 		void AddSystemGroup();
 
