@@ -20,10 +20,10 @@
   </ItemGroup>
   <ItemGroup>
 <<<<<<< HEAD
-    <ClInclude Include="..\..\..\Source\Renderer\Camera.h" />
-=======
     <ClInclude Include="..\..\..\Source\Renderer\Buffer.h" />
->>>>>>> model loader fett nice
+=======
+    <ClInclude Include="..\..\..\Source\Renderer\Camera.h" />
+>>>>>>> 38f5cf8cb1da15968cfa7eb5c9d5b1dbb200eb0b
     <ClInclude Include="..\..\..\Source\Renderer\GLTimer.h" />
     <ClInclude Include="..\..\..\Source\Renderer\GraphicDevice.h" />
     <ClInclude Include="..\..\..\Source\Renderer\ModelLoader.h" />
@@ -34,10 +34,10 @@
   </ItemGroup>
   <ItemGroup>
 <<<<<<< HEAD
-    <ClCompile Include="..\..\..\Source\Renderer\Camera.cpp" />
-=======
     <ClCompile Include="..\..\..\Source\Renderer\Buffer.cpp" />
->>>>>>> model loader fett nice
+=======
+    <ClCompile Include="..\..\..\Source\Renderer\Camera.cpp" />
+>>>>>>> 38f5cf8cb1da15968cfa7eb5c9d5b1dbb200eb0b
     <ClCompile Include="..\..\..\Source\Renderer\GLTimer.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\Shader.cpp" />

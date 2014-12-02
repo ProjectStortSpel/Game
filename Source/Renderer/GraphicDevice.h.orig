@@ -76,12 +76,12 @@ namespace Renderer
 		void SetSimpleTextColor(glm::vec4 _color);
 
 <<<<<<< HEAD
-		// MODELLOADER
-		void LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr);
-=======
 		Camera *GetCamera(){ return m_camera; }
 		void GetWindowSize(int &x, int &y){ x = m_clientWidth; y = m_clientHeight; }
->>>>>>> FPS camera added
+=======
+		// MODELLOADER
+		void LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr);
+>>>>>>> 00b4423c38b8c8fad3d5a07794c93b50102e52ee
 
 	private:
 		bool InitSDLWindow();

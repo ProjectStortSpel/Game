@@ -28,6 +28,8 @@
 int CardsInHand = 8;
 int CardsToPlay = 5;
 int waitforplayers;
+mat4 mat[1000]; // SKA VARA I ENTITY/COMPONENT
+
 
 std::string myName = "";
 
@@ -38,6 +40,21 @@ void ClearConsole()
 #else
 	system("clear");
 #endif
+}
+
+void LoadAlotOfBoxes(Renderer::GraphicDevice* r)
+{
+	// ADDING TEMP OBJECTS
+	for (int x = 0; x < 10; x++)
+	{
+		for (int y = 0; y < 10; y++)
+		{
+			mat[x+y*10] = glm::translate(vec3(x - 5, -1, y - 5));
+			r->LoadModel("content/models/cube/", "cube.object", &mat[x + y * 10]);
+		}
+	}
+	mat[101] = glm::translate(vec3(0, 0, 0));
+	r->LoadModel("content/models/cube/", "cube.object", &mat[101]);
 }
 
 void TestECSL()
@@ -78,6 +95,8 @@ int main(int argc, char** argv)
 	server.Start(6112, "", 8);
 
 	TestECSL();
+	LoadAlotOfBoxes(&RENDERER);
+
 	bool lol = true;
 	float cd = 1.0f;
 	while (lol)
@@ -88,10 +107,11 @@ int main(int argc, char** argv)
 
 		INPUT->Update();
 		RENDERER.Update(dt);
-		RENDERER.RenderSimpleText("This text render from GAME! \nThe x and y values in the function isn't pixel \ncoordinates, it's char position. Every char is \n8x16 pixels in size. Use \\n to change line.\n\n  !Not all chars is supported!\n\nRight now it clear the whole output image as well (Tell me when to remove this).", 10, 2);
+		//RENDERER.RenderSimpleText("This text render from GAME! \nThe x and y values in the function isn't pixel \ncoordinates, it's char position. Every char is \n8x16 pixels in size. Use \\n to change line.\n\n  !Not all chars is supported!\n\nRight now it clear the whole output image as well (Tell me when to remove this).", 10, 2);
 		
 
 		RENDERER.Render();
+		INPUT->Update();
 		
 		
 		SDL_Event e;
@@ -120,9 +140,45 @@ int main(int argc, char** argv)
 				INPUT->PollEvent(e);
 				break;
 			}
-				
-			
 		}
+		
+		// MOVE CUBE
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_UP) == Input::InputState::DOWN)
+			mat[101] *= glm::translate(vec3(0, 0, -0.01f)); 
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_DOWN) == Input::InputState::DOWN)
+			mat[101] *= glm::translate(vec3(0, 0, 0.01f));
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_LEFT) == Input::InputState::DOWN)
+			mat[101] *= glm::translate(vec3(-0.01f, 0, 0));
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_RIGHT) == Input::InputState::DOWN)
+			mat[101] *= glm::translate(vec3(0.01f, 0, 0)); 
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_SPACE) == Input::InputState::DOWN)
+			mat[101] *= glm::translate(vec3(0, 0.01f, 0));
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_LSHIFT) == Input::InputState::DOWN)
+			mat[101] *= glm::translate(vec3(0, -0.01f, 0));
+
+		// MOVE CAMERA
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_W) == Input::InputState::DOWN)
+			RENDERER.GetCamera()->MoveForward(dt);
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_S) == Input::InputState::DOWN)
+			RENDERER.GetCamera()->MoveBackward(dt);
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_A) == Input::InputState::DOWN)
+			RENDERER.GetCamera()->MoveLeft(dt);
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_D) == Input::InputState::DOWN)
+			RENDERER.GetCamera()->MoveRight(dt);
+
+		// ROTATE CAMERA
+		if (INPUT->GetMouse()->GetButtonState(Input::LeftButton) == Input::InputState::DOWN)
+		{
+			int sizeX, sizeY;
+			RENDERER.GetWindowSize(sizeX, sizeY);
+
+			RENDERER.GetCamera()->UpdateMouse(sizeX*0.5, sizeY*0.5, INPUT->GetMouse()->GetX(), INPUT->GetMouse()->GetY());
+			INPUT->GetMouse()->SetPosition(sizeX*0.5, sizeY*0.5);
+			INPUT->GetMouse()->HideCursor(true);
+		}
+		else
+			INPUT->GetMouse()->HideCursor(false);
+		//-----------------------------------------------------------------------------------------------
 
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
 		{

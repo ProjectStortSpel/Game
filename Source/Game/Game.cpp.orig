@@ -43,7 +43,10 @@ void ClearConsole()
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> ba5ccfa3ec5e3a6b241e9b93e4a0ec04f1781926
 void LoadAlotOfBoxes(Renderer::GraphicDevice* r)
 {
 	// ADDING TEMP OBJECTS
@@ -59,7 +62,10 @@ void LoadAlotOfBoxes(Renderer::GraphicDevice* r)
 	r->LoadModel("content/models/cube/", "cube.object", &mat[101]);
 }
 
+<<<<<<< HEAD
 >>>>>>> moveing box, wololololooo
+=======
+>>>>>>> ba5ccfa3ec5e3a6b241e9b93e4a0ec04f1781926
 void TestECSL()
 {
 	//ECSL::ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("content/components");
@@ -98,6 +104,11 @@ int main(int argc, char** argv)
 	server.Start(6112, "", 8);
 
 	TestECSL();
+<<<<<<< HEAD
+=======
+	LoadAlotOfBoxes(&RENDERER);
+
+>>>>>>> ba5ccfa3ec5e3a6b241e9b93e4a0ec04f1781926
 	bool lol = true;
 	float cd = 1.0f;
 	while (lol)
@@ -108,10 +119,18 @@ int main(int argc, char** argv)
 
 		INPUT->Update();
 		RENDERER.Update(dt);
+<<<<<<< HEAD
 		RENDERER.RenderSimpleText("This text render from GAME! \nThe x and y values in the function isn't pixel \ncoordinates, it's char position. Every char is \n8x16 pixels in size. Use \\n to change line.\n\n  !Not all chars is supported!\n\nRight now it clear the whole output image as well (Tell me when to remove this).", 10, 2);
 		
 
 		RENDERER.Render();
+=======
+		//RENDERER.RenderSimpleText("This text render from GAME! \nThe x and y values in the function isn't pixel \ncoordinates, it's char position. Every char is \n8x16 pixels in size. Use \\n to change line.\n\n  !Not all chars is supported!\n\nRight now it clear the whole output image as well (Tell me when to remove this).", 10, 2);
+		
+
+		RENDERER.Render();
+		INPUT->Update();
+>>>>>>> ba5ccfa3ec5e3a6b241e9b93e4a0ec04f1781926
 		
 		
 		SDL_Event e;
@@ -140,12 +159,18 @@ int main(int argc, char** argv)
 				INPUT->PollEvent(e);
 				break;
 			}
+<<<<<<< HEAD
 				
 			
 		}
 <<<<<<< HEAD
 =======
 		
+=======
+		}
+		
+<<<<<<< HEAD
+>>>>>>> ba5ccfa3ec5e3a6b241e9b93e4a0ec04f1781926
 		// MOVE CUBE
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_UP) == Input::InputState::DOWN)
 			mat[101] *= glm::translate(vec3(0, 0, -0.01f)); 
@@ -161,6 +186,12 @@ int main(int argc, char** argv)
 			mat[101] *= glm::translate(vec3(0, -0.01f, 0));
 
 		// MOVE CAMERA
+<<<<<<< HEAD
+=======
+=======
+		//-----------CAMERA--------------------------------------------------------------------------------
+>>>>>>> dd976c9f1d84e9e9a4133e4f5cc5266c1f28633b
+>>>>>>> ba5ccfa3ec5e3a6b241e9b93e4a0ec04f1781926
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_W) == Input::InputState::DOWN)
 			RENDERER.GetCamera()->MoveForward(dt);
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_S) == Input::InputState::DOWN)
@@ -176,14 +207,22 @@ int main(int argc, char** argv)
 			int sizeX, sizeY;
 			RENDERER.GetWindowSize(sizeX, sizeY);
 
+<<<<<<< HEAD
 			RENDERER.GetCamera()->UpdateMouse(sizeX*0.5, sizeY*0.5, INPUT->GetMouse()->GetX(), INPUT->GetMouse()->GetY(), dt);
+=======
+			RENDERER.GetCamera()->UpdateMouse(sizeX*0.5, sizeY*0.5, INPUT->GetMouse()->GetX(), INPUT->GetMouse()->GetY());
+>>>>>>> ba5ccfa3ec5e3a6b241e9b93e4a0ec04f1781926
 			INPUT->GetMouse()->SetPosition(sizeX*0.5, sizeY*0.5);
 			INPUT->GetMouse()->HideCursor(true);
 		}
 		else
 			INPUT->GetMouse()->HideCursor(false);
+<<<<<<< HEAD
 		
 >>>>>>> moveing box, wololololooo
+=======
+		//-----------------------------------------------------------------------------------------------
+>>>>>>> ba5ccfa3ec5e3a6b241e9b93e4a0ec04f1781926
 
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
 		{
