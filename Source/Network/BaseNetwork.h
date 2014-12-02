@@ -75,6 +75,7 @@ protected:
 	std::queue<Packet*> m_customPackets;
 	std::mutex m_systemPacketLock;
 	std::mutex m_customPacketLock;
+	std::mutex m_TimeOutLock;
 
 	std::string m_localAddress;
 	std::string m_password;
