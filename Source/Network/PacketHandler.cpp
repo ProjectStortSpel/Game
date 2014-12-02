@@ -2,6 +2,11 @@
 #include "NetTypeMessageID.h"
 #include "BaseNetwork.h"
 
+#ifdef WIN32
+#else
+#include <arpa/inet.h>
+#endif
+
 PacketHandler::PacketHandler()
 {
 }
