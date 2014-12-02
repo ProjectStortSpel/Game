@@ -170,6 +170,9 @@ void ClientNetwork::Send(Packet* _packet)
 
 void ClientNetwork::UpdateTimeOut(float _dt)
 {
+	if (!m_socket)
+		return;
+
 	m_currentTimeOutIntervall += _dt;
 
 	if (m_currentTimeOutIntervall >= m_maxTimeOutIntervall)
