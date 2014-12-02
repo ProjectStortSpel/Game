@@ -1,4 +1,5 @@
 #include "ComponentTypeManager.h"
+#include <assert.h>
 
 #include "../Framework/Common/FileHelper.h"
 
@@ -96,5 +97,8 @@ unsigned int ComponentTypeManager::GetTableId(const std::string& _componentType)
 
 void ComponentTypeManager::AddComponentType(ComponentType& _componentType)
 {
+	/*	Trying to add a component that is already defined	*/
+	assert(m_stringTableId->find(_componentType.GetName()) != m_stringTableId->end());
+
 	m_componentTypes->insert(std::pair<int, ComponentType*>(ComponentTypeManager::GetTableId(_componentType.GetName()), &_componentType));
 }
