@@ -24,11 +24,18 @@
 using namespace ECSL;
 
 
+struct Player
+{
+	unsigned short Id = 0;
+	bool Connected = false;
+};
+
 mat4 mat[1000];
 ServerNetwork* server = 0;
 ClientNetwork* client = 0;
 bool isServer = false;
 std::string newPlayer = "";
+std::map<NetConnection, Player*> m_players;
 
 
 
@@ -155,12 +162,43 @@ void OnConnected(NetConnection nc)
 	newPlayer = ss.str();
 }
 
-void OnPlayerConnected(NetConnection nc)
+
+
+void OnPlayerConnected(NetConnection _nc)
 {
+	if (m_players.find(_nc) == m_players.end())
+	{
+		m_players[_nc] = new Player();
+		m_players[_nc]->Connected = true;
+		m_players[_nc]->Id = m_players.size();
+	}
+
+	PacketHandler* ph = server->GetPacketHandler();
+	uint64_t id = ph->StartPack("CubePos");
+	ph->WriteFloat(id, mat[100][3][0]);
+	ph->WriteFloat(id, mat[100][3][1]);
+	ph->WriteFloat(id, mat[100][3][2]);
+	Packet* p = ph->EndPack(id);
+	server->Send(p, _nc);
+
+
 	std::stringstream ss;
-	ss << nc.IpAddress.c_str() << ":" << nc.Port << " connected to server.\n";
+	ss << _nc.IpAddress.c_str() << ":" << _nc.Port << " connected to server.\n";
 	newPlayer = ss.str();
 }
+
+void OnPlayerDisconnected(NetConnection _nc)
+{
+	m_players[_nc]->Connected = false;
+}
+
+void CubePos(PacketHandler* _ph, uint64_t _id, NetConnection _nc)
+{
+	mat[100][3][0] = _ph->ReadFloat(_id);
+	mat[100][3][1] = _ph->ReadFloat(_id);
+	mat[100][3][2] = _ph->ReadFloat(_id);
+}
+
 void Start()
 {
 	std::string input;
@@ -183,10 +221,13 @@ void Start()
 		server = new ServerNetwork();
 		server->Start(6112, "localhest", 8);
 		server->SetOnPlayerConnected(&OnPlayerConnected);
+		server->SetOnPlayerDisconnected(&OnPlayerDisconnected);
+		server->SetOnPlayerTimedOut(&OnPlayerDisconnected);
 	}
 	else
 	{
 		client = new ClientNetwork();
+		client->AddNetworkHook("CubePos", &CubePos);
 		client->SetOnConnectedToServer(&OnConnected);
 
 		if (input.compare("c") == 0) // localhost
@@ -272,19 +313,60 @@ void Start()
 			}
 		}
 
-		// MOVE CUBE
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_UP) == Input::InputState::DOWN)
-			mat[100] *= glm::translate(vec3(0, 0, -0.01f));
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_DOWN) == Input::InputState::DOWN)
-			mat[100] *= glm::translate(vec3(0, 0, 0.01f));
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_LEFT) == Input::InputState::DOWN)
-			mat[100] *= glm::translate(vec3(-0.01f, 0, 0));
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_RIGHT) == Input::InputState::DOWN)
-			mat[100] *= glm::translate(vec3(0.01f, 0, 0));
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_SPACE) == Input::InputState::DOWN)
-			mat[100] *= glm::translate(vec3(0, 0.01f, 0));
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_LSHIFT) == Input::InputState::DOWN)
-			mat[100] *= glm::translate(vec3(0, -0.01f, 0));
+		
+
+		if (isServer)
+		{
+			bool cubeMoved = false;
+
+			// MOVE CUBE
+			if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_UP) == Input::InputState::DOWN)
+			{
+				cubeMoved = true;
+				mat[100] *= glm::translate(vec3(0, 0, -0.01f));
+			}
+
+			if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_DOWN) == Input::InputState::DOWN)
+			{
+				cubeMoved = true;
+				mat[100] *= glm::translate(vec3(0, 0, 0.01f));
+			}
+
+			if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_LEFT) == Input::InputState::DOWN)
+			{
+				cubeMoved = true;
+				mat[100] *= glm::translate(vec3(-0.01f, 0, 0));
+			}
+
+			if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_RIGHT) == Input::InputState::DOWN)
+			{
+				cubeMoved = true;
+				mat[100] *= glm::translate(vec3(0.01f, 0, 0));
+			}
+
+			if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_SPACE) == Input::InputState::DOWN)
+			{
+				cubeMoved = true;
+				mat[100] *= glm::translate(vec3(0, 0.01f, 0));
+			}
+
+			if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_LSHIFT) == Input::InputState::DOWN)
+			{
+				cubeMoved = true;
+				mat[100] *= glm::translate(vec3(0, -0.01f, 0));
+			}
+
+			if (cubeMoved)
+			{
+				PacketHandler* ph = server->GetPacketHandler();
+				uint64_t id = ph->StartPack("CubePos");
+				ph->WriteFloat(id, mat[100][3][0]);
+				ph->WriteFloat(id, mat[100][3][1]);
+				ph->WriteFloat(id, mat[100][3][2]);
+				Packet* p = ph->EndPack(id);
+				server->Broadcast(p);
+			}
+		}
 
 		// MOVE CAMERA
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_W) == Input::InputState::DOWN)
