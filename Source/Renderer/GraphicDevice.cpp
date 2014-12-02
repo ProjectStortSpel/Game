@@ -38,6 +38,7 @@ bool GraphicDevice::Init()
 	if (!InitDeferred()) { ERRORMSG("INIT DEFERRED FAILED\n"); return false; }
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	if (!InitTextRenderer()) { ERRORMSG("INIT TEXTRENDERER FAILED\n"); return false; }
+	m_vramUsage += (m_textRenderer.GetArraySize() * sizeof(int));
 
 	return true;
 }
@@ -84,7 +85,7 @@ void GraphicDevice::Update(float _dt)
 
 	std::stringstream vram;
 	vram << "VRAM usage: " << ((float)m_vramUsage/1024.f)/1024.f << " Mb ";
-	m_textRenderer.RenderSimpleText(vram.str(), 0, 2);
+	m_textRenderer.RenderSimpleText(vram.str(), 20, 0);
 }
 
 float rot = 0.0f;
@@ -244,8 +245,8 @@ bool GraphicDevice::InitSDLWindow()
 	const char*		Caption = "SDL Window";
 	int				PosX = 200;
 	int				PosY = 280;
-	int				SizeX = 256 * 4;
-	int				SizeY = 144 * 4;
+	int				SizeX = 256 * 5;
+	int				SizeY = 144 * 5;
 
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1){
 		std::cout << SDL_GetError() << std::endl;
@@ -400,7 +401,7 @@ bool GraphicDevice::InitBuffers()
 bool GraphicDevice::InitTextRenderer()
 {
 	int texSizeX, texSizeY;
-	GLuint m_textImage = TextureLoader::LoadTexture("content/textures/SimpleText.png", GL_TEXTURE20, texSizeX, texSizeY);
+	GLuint m_textImage = AddTexture("content/textures/SimpleText.png", GL_TEXTURE20);
 	return m_textRenderer.Init(m_textImage, m_clientWidth, m_clientHeight);
 }
 bool GraphicDevice::RenderSimpleText(std::string _text, int _x, int _y)
@@ -513,6 +514,6 @@ GLuint GraphicDevice::AddTexture(std::string _fileDir, GLenum _textureSlot)
 	m_deferredShader1.UseProgram();
 	GLuint texture = TextureLoader::LoadTexture(_fileDir.c_str(), _textureSlot, texSizeX, texSizeY);
 	m_textures.insert(std::pair<const std::string, GLenum>(_fileDir, texture));
-	m_vramUsage += (texSizeX * texSizeY * 4);
+	m_vramUsage += (texSizeX * texSizeY * 4 * 4);
 	return texture;
 }
