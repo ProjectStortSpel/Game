@@ -11,7 +11,7 @@ ComponentTypeManager& ComponentTypeManager::GetInstance()
 }
 
 ComponentTypeManager::ComponentTypeManager()
-:	m_componentTypes(new std::map<int, ComponentType*>()), 
+:	m_componentTypes(new std::map<unsigned int, ComponentType*>()), 
 	m_parser(new Parser()), m_componentTypeReader(new ComponentTypeReader()), 
 	m_stringTableId(new std::unordered_map<std::string, unsigned int>()),
 	m_nextTableId(-1)

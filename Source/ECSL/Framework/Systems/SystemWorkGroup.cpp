@@ -17,7 +17,7 @@ SystemWorkGroup::~SystemWorkGroup()
 {
 	if (m_systems)
 	{
-		for (int i = m_systems->size() - 1; i >= 0; --i)
+		for (int i = (unsigned int)m_systems->size() - 1; i >= 0; --i)
 		{
 			delete m_systems->back();
 			m_systems->pop_back();
@@ -25,4 +25,15 @@ SystemWorkGroup::~SystemWorkGroup()
 
 		delete(m_systems);
 	}
+}
+
+void SystemWorkGroup::Update(float _dt)
+{
+	for (int n = 0; n < m_systems->size(); ++n)
+		m_systems->at(n)->Run(_dt);
+}
+
+void SystemWorkGroup::AddSystem(System* _system)
+{
+	m_systems->push_back(_system);
 }

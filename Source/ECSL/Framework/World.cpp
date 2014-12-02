@@ -5,7 +5,8 @@ using namespace ECSL;
 World::World(unsigned int _entityCount, std::vector<SystemWorkGroup*>* _systemWorkGroups, std::vector<unsigned int>* _componentTypeIds)
 {
 	m_dataManager = new DataManager(_entityCount, _componentTypeIds);
-	m_systemManager = new SystemManager(_systemWorkGroups);
+	m_systemManager = new SystemManager(m_dataManager, _systemWorkGroups);
+	m_simulation = new Simulation(m_dataManager, m_systemManager);
 
 	m_dataManager->InitializeTables();
 	m_systemManager->InitializeSystems();
@@ -13,8 +14,14 @@ World::World(unsigned int _entityCount, std::vector<SystemWorkGroup*>* _systemWo
 
 World::~World()
 {
+	delete(m_simulation);
 	delete(m_dataManager);
 	delete(m_systemManager);
+}
+
+void World::Update(float _dt)
+{
+	m_simulation->Update(_dt);
 }
 
 unsigned int World::CreateNewEntity()
@@ -27,7 +34,12 @@ void World::CreateComponentAndAddTo(const std::string& _componentType, unsigned 
 	m_dataManager->CreateComponentAndAddTo(_componentType, _entityId);
 }
 
+void World::RemoveComponentFrom(const std::string& _componentType, unsigned int _entityId)
+{
+	m_dataManager->RemoveComponentFrom(_componentType, _entityId);
+}
+
 void World::KillEntity(unsigned int _entityId)
 {
-	m_dataManager->KillEntity(_entityId);
+	m_dataManager->RemoveEntity(_entityId);
 }
