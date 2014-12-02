@@ -437,12 +437,10 @@ void GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_m
 
 	// Set model
 	Model model = Model(mesh, texture, normal, specular);
-	model.modelMatrix = _matrixPtr; // CHANGE THIS TO PTR LATER
+	model.modelMatrix = _matrixPtr;
 	// Push back the model
 	m_models.push_back(model);
 	std::push_heap(m_models.begin(), m_models.end());
-
-	// LINK MATRIX HERE
 }
 
 Buffer* GraphicDevice::AddMesh(std::string _fileDir)
