@@ -9,6 +9,7 @@
 #include "ECSL/ECSL.h"
 #include "Input/InputWrapper.h"
 #include "Renderer/GraphicDevice.h"
+#include "LuaBridge/LuaBridge.h"
 
 #ifdef WIN32
 	#define _CRTDBG_MAP_ALLOC
@@ -82,6 +83,11 @@ int main(int argc, char** argv)
 #ifdef WIN32
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
+	
+	LuaBridge::Init();
+	
+	LuaBridge::Quit();
+	
 	
 	Timer timer;
 

@@ -116,6 +116,12 @@ namespace LuaEmbedder
   void EXPORT PushBool(bool value);
   void EXPORT PushString(const std::string& value);
   
+  bool EXPORT IsDouble(int index);
+  bool EXPORT IsInt(int index);
+  bool EXPORT IsUnsignedInt(int index);
+  bool EXPORT IsBool(int index);
+  bool EXPORT IsString(int index);
+  
   template<typename T>
   void EXPORT EmbedClass(const std::string& className)
   {

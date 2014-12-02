@@ -82,6 +82,7 @@ namespace LuaEmbedder
   {
     assert(lua_isnumber(L, lua_upvalueindex(1)));
     int functionIndex = (int)lua_tonumber(L, lua_upvalueindex(1));
+    lua_remove(L, 1);
     return (*(Functions[functionIndex]))();
   }
   void AddFunction(const std::string& name, int (*functionPointer)(), const std::string& library)
@@ -197,5 +198,26 @@ namespace LuaEmbedder
   void PushString(const std::string& value)
   {
     lua_pushstring(L, value.c_str());
+  }
+  
+  bool IsDouble(int index)
+  {
+    return lua_isnumber(L, index);
+  }
+  bool IsInt(int index)
+  {
+    return lua_isnumber(L, index);
+  }
+  bool IsUnsignedInt(int index)
+  {
+    return lua_isnumber(L, index);
+  }
+  bool IsBool(int index)
+  {
+    return lua_isboolean(L, index);
+  }
+  bool IsString(int index)
+  {
+    return lua_isstring(L, index);
   }
 }
