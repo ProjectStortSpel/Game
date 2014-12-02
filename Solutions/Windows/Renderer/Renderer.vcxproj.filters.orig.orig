@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{dc55a425-a7b0-4bd7-a8d7-f602be89ea62}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="shaders">
-      <UniqueIdentifier>{dc55a425-a7b0-4bd7-a8d7-f602be89ea62}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -17,30 +17,54 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Renderer\stdafx.h" />
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
     <ClInclude Include="..\..\..\Source\Renderer\TextureLoader.h">
       <Filter>Source</Filter>
     </ClInclude>
-<<<<<<< HEAD
-
-
-
-
-
-=======
-    <ClInclude Include="..\..\..\Source\Renderer\DebugText.h" />
-<<<<<<< HEAD
-=======
->>>>>>> c65b8ddea78f628a428a175da572a96e7fa75aac
+>>>>>>> dd976c9f1d84e9e9a4133e4f5cc5266c1f28633b
+>>>>>>> some stuff?
     <ClInclude Include="..\..\..\Source\Renderer\GLTimer.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Renderer\SimpleText.h">
+<<<<<<< HEAD
       <Filter>Source</Filter>
     </ClInclude>
-<<<<<<< HEAD
+    <ClInclude Include="..\..\..\Source\Renderer\Camera.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\ModelLoader.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\Buffer.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\TextureLoader.h" />
 =======
->>>>>>> 49a7f410bee1810ff8e94f107f814ca8d7248530
->>>>>>> c65b8ddea78f628a428a175da572a96e7fa75aac
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\Camera.h">
+<<<<<<< HEAD
+<<<<<<< HEAD
+      <Filter>shaders\Source</Filter>
+    </ClInclude>
+=======
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\ModelLoader.h" />
+>>>>>>> moveing box, wololololooo
+    <ClInclude Include="..\..\..\Source\Renderer\Buffer.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\TextureLoader.h" />
+=======
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\Buffer.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\ModelLoader.h" />
+>>>>>>> dd976c9f1d84e9e9a4133e4f5cc5266c1f28633b
+>>>>>>> some stuff?
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp">
@@ -49,26 +73,18 @@
     <ClCompile Include="..\..\..\Source\Renderer\Shader.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-<<<<<<< HEAD
-
-=======
-    <ClCompile Include="..\..\..\Source\Renderer\DebugText.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-<<<<<<< HEAD
-=======
->>>>>>> c65b8ddea78f628a428a175da572a96e7fa75aac
     <ClCompile Include="..\..\..\Source\Renderer\GLTimer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Renderer\SimpleText.cpp">
-
       <Filter>Source</Filter>
     </ClCompile>
-<<<<<<< HEAD
-=======
->>>>>>> 49a7f410bee1810ff8e94f107f814ca8d7248530
->>>>>>> c65b8ddea78f628a428a175da572a96e7fa75aac
+    <ClCompile Include="..\..\..\Source\Renderer\Camera.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Renderer\Buffer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\Externals\content\shaders\fullscreen.ps">
@@ -80,31 +96,16 @@
     <None Include="..\..\..\Externals\content\shaders\fullscreen.gs">
       <Filter>shaders</Filter>
     </None>
-    <None Include="..\..\..\Externals\content\shaders\FSDeferredPass2.glsl">
-      <Filter>shaders</Filter>
-    </None>
     <None Include="..\..\..\Externals\content\shaders\VSDeferredPass1.glsl">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\shaders\VSDeferredPass2.glsl">
       <Filter>shaders</Filter>
     </None>
     <None Include="..\..\..\Externals\content\shaders\FSDeferredPass1.glsl">
       <Filter>shaders</Filter>
     </None>
-<<<<<<< HEAD
-
     <None Include="..\..\..\Externals\content\shaders\SimpleText.glsl">
-
+      <Filter>shaders</Filter>
+    </None>
     <None Include="..\..\..\Externals\content\shaders\CSDeferredPass2.glsl">
-
-=======
-<<<<<<< HEAD
-    <None Include="..\..\..\Externals\content\shaders\CSDeferredPass2.glsl">
-=======
-    <None Include="..\..\..\Externals\content\shaders\SimpleText.glsl">
->>>>>>> 49a7f410bee1810ff8e94f107f814ca8d7248530
->>>>>>> c65b8ddea78f628a428a175da572a96e7fa75aac
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>
