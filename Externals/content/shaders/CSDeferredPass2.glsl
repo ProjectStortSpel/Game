@@ -109,7 +109,7 @@ void main()
 	normal_tex.z = sqrt( 1 - (normal_tex.x*normal_tex.x) - (normal_tex.y*normal_tex.y) );
 	//--------------
 	Material.Ks = inputMap1.z;
-    Material.Shininess = inputMap1.w * 255;
+    Material.Shininess = inputMap1.w * 254.0f + 1.0f;
 	//--------------
 	albedo_tex.xyz = inputMap2.xyz;
 	//--------------
