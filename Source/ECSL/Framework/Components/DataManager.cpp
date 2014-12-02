@@ -99,16 +99,11 @@ void DataManager::RemoveComponentFrom(const std::string& _componentType, unsigne
 void DataManager::RemoveComponentFrom(unsigned int _componentTypeId, unsigned int _entityId)
 {
 	/* Add entity and component to lists */
-	printf("1");
 	ContainerHelper::TryAddKey<unsigned int, std::vector<unsigned int>>(_entityId, *m_componentsToBeRemoved);
-	printf("3");
 	(*m_componentsToBeRemoved)[_entityId].push_back(_componentTypeId);
-	printf("4");
 	ContainerHelper::AddUniqueElement(_entityId, *m_changedEntities);
-	printf("5");
 
 	m_entityTable->RemoveComponentFrom(_entityId, _componentTypeId);
-	printf("6");
 }
 
 void DataManager::ClearComponentData()
@@ -117,7 +112,7 @@ void DataManager::ClearComponentData()
 	{
 		for (auto componentTypeId : entity->second)
 		{
-			m_componentTables->at(componentTypeId)->ClearRow(entity->first);
+			(*m_componentTables)[componentTypeId]->ClearRow(entity->first);
 		}
 	}
 }

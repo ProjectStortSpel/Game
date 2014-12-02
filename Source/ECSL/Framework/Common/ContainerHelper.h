@@ -21,9 +21,7 @@ namespace ECSL
 			auto it = _map.find(_key);
 			if (it == _map.end())
 			{
-				printf("2");
 				_map[_key] = ValueType();
-				printf("2.5");
 				return true;
 			}
 			return false;

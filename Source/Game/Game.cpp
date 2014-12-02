@@ -128,7 +128,7 @@ void PerfTest(void* data)
 
 void lol()
 {
-	ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("Content/components");
+	ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("content/components");
 	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
 	worldCreator.AddSystemGroup();
 	worldCreator.AddSystemToCurrentGroup<TestSystem>();
