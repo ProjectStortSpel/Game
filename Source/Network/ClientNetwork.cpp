@@ -17,6 +17,22 @@ ClientNetwork::ClientNetwork()
 
 	m_networkFunctions[NetTypeMessageId::ID_PASSWORD_INVALID] = std::bind(&ClientNetwork::NetPasswordInvalid, this, NetworkHookPlaceholders);
 	m_networkFunctions[NetTypeMessageId::ID_CONNECTION_ACCEPTED] = std::bind(&ClientNetwork::NetConnectionAccepted, this, NetworkHookPlaceholders);
+	m_networkFunctions[NetTypeMessageId::ID_SERVER_FULL] = std::bind(&ClientNetwork::NetConnectionServerFull, this, NetworkHookPlaceholders);
+
+	m_networkFunctions[NetTypeMessageId::ID_CONNECTION_LOST] = std::bind(&ClientNetwork::NetConnectionLost, this, NetworkHookPlaceholders);
+	m_networkFunctions[NetTypeMessageId::ID_CONNECTION_DISCONNECTED] = std::bind(&ClientNetwork::NetConnectionDisconnected, this, NetworkHookPlaceholders);
+
+	m_networkFunctions[NetTypeMessageId::ID_CONNECTION_KICKED] = std::bind(&ClientNetwork::NetConnectionKicked, this, NetworkHookPlaceholders);
+	m_networkFunctions[NetTypeMessageId::ID_CONNECTION_BANNED] = std::bind(&ClientNetwork::NetConnectionBanned, this, NetworkHookPlaceholders);
+
+	m_networkFunctions[NetTypeMessageId::ID_REMOTE_NEW_CONNECTION_ACCEPTED] = std::bind(&ClientNetwork::NetRemoteConnectionAccepted, this, NetworkHookPlaceholders);
+
+	m_networkFunctions[NetTypeMessageId::ID_REMOTE_CONNECTION_LOST] = std::bind(&ClientNetwork::NetRemoteConnectionLost, this, NetworkHookPlaceholders);
+	m_networkFunctions[NetTypeMessageId::ID_REMOTE_CONNECTION_DISCONNECTED] = std::bind(&ClientNetwork::NetRemoteConnectionDisconnected, this, NetworkHookPlaceholders);
+
+	m_networkFunctions[NetTypeMessageId::ID_REMOTE_CONNECTION_KICKED] = std::bind(&ClientNetwork::NetRemoteConnectionKicked, this, NetworkHookPlaceholders);
+	m_networkFunctions[NetTypeMessageId::ID_REMOTE_CONNECTION_BANNED] = std::bind(&ClientNetwork::NetRemoteConnectionBanned, this, NetworkHookPlaceholders);
+
 }
 
 ClientNetwork::~ClientNetwork()
@@ -63,7 +79,13 @@ bool ClientNetwork::Connect()
 	}
 
 	if (!connected)
+	{
+		if (m_onFailedToConnect)
+		{
+			m_onFailedToConnect(NetConnection(m_remoteAddress, m_outgoingPort));
+		}
 		return false;
+	}
 	
 	uint64_t id = m_packetHandler.StartPack(NetTypeMessageId::ID_PASSWORD_ATTEMPT);
 	m_packetHandler.WriteString(id, m_password.c_str());
@@ -152,26 +174,147 @@ void ClientNetwork::NetPasswordInvalid(PacketHandler* _packetHandler, uint64_t _
 	SAFE_DELETE(m_socket);
 	m_socketBound = 0;
 
+	if (m_onPasswordInvalid)
+		m_onPasswordInvalid(_connection);
+
 }
 void ClientNetwork::NetConnectionAccepted(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
 	if (NET_DEBUG)
 		printf("Password accepted, connection accepted.\n");
 
-	uint64_t id = _packetHandler->StartPack("localhest");
-
-	_packetHandler->WriteByte(id, '3');
-	_packetHandler->WriteShort(id, 1337);
-	_packetHandler->WriteInt(id, 555);
-	_packetHandler->WriteFloat(id, 3.1415);
-	_packetHandler->WriteString(id, "test med mellanslag!?");
-	_packetHandler->WriteByte(id, '9');
-
-	Packet* packet = _packetHandler->EndPack(id);
-
-	Send(packet);
-
+	if (m_onConnectedToServer)
+		m_onConnectedToServer(_connection);
 }
+
+void ClientNetwork::NetConnectionServerFull(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
+{
+	if (NET_DEBUG)
+		printf("Disconnected. Server is full.\n");
+
+	//Disconnect();
+	m_receivePacketsThreadAlive = false;
+
+	SAFE_DELETE(m_socket);
+	m_socketBound = 0;
+
+	if (m_onServerFull)
+		m_onServerFull(_connection);
+}
+
+void ClientNetwork::NetConnectionLost(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
+{
+	if (NET_DEBUG)
+		printf("Disconnected. Connection timed out.\n");
+
+	//Disconnect();
+	m_receivePacketsThreadAlive = false;
+
+	SAFE_DELETE(m_socket);
+	m_socketBound = 0;
+
+	if (m_onTimedOutFromServer)
+		m_onTimedOutFromServer(_connection);
+}
+
+void ClientNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
+{
+	if (NET_DEBUG)
+		printf("Disconnected. Server shutdown.\n");
+
+	//Disconnect();
+	m_receivePacketsThreadAlive = false;
+
+	SAFE_DELETE(m_socket);
+	m_socketBound = 0;
+
+	if (m_onDisconnectedFromServer)
+		m_onDisconnectedFromServer(_connection);
+}
+
+void ClientNetwork::NetConnectionKicked(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
+{
+	if (NET_DEBUG)
+		printf("Disconnected. You were kicked.\n");
+
+	//Disconnect();
+	m_receivePacketsThreadAlive = false;
+
+	SAFE_DELETE(m_socket);
+	m_socketBound = 0;
+
+	if (m_onKickedFromServer)
+		m_onKickedFromServer(_connection);
+}
+
+void ClientNetwork::NetConnectionBanned(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
+{
+	if (NET_DEBUG)
+		printf("Disconnected. You were banned.\n");
+
+	//Disconnect();
+	m_receivePacketsThreadAlive = false;
+
+	SAFE_DELETE(m_socket);
+	m_socketBound = 0;
+
+	if (m_onBannedFromServer)
+		m_onBannedFromServer(_connection);
+}
+
+//Remote
+void ClientNetwork::NetRemoteConnectionAccepted(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
+{
+	std::string address = _packetHandler->ReadString(_id);
+	if (NET_DEBUG)
+		printf("%s connected to the server.\n", address.c_str());
+
+	if (m_onRemotePlayerConnected)
+		m_onRemotePlayerConnected(_connection);
+}
+
+
+void ClientNetwork::NetRemoteConnectionLost(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
+{
+	std::string address = _packetHandler->ReadString(_id);
+	if (NET_DEBUG)
+		printf("%s timed out to the server.\n", address.c_str());
+
+	if (m_onRemotePlayerTimedOut)
+		m_onRemotePlayerTimedOut(_connection);
+}
+
+void ClientNetwork::NetRemoteConnectionDisconnected(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
+{
+	std::string address = _packetHandler->ReadString(_id);
+	if (NET_DEBUG)
+		printf("%s disconnected from the server.\n", address.c_str());
+
+	if (m_onRemotePlayerDisconnected)
+		m_onRemotePlayerDisconnected(_connection);
+}
+
+
+void ClientNetwork::NetRemoteConnectionKicked(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
+{
+	std::string address = _packetHandler->ReadString(_id);
+	if (NET_DEBUG)
+		printf("%s was kicked from the server.\n", address.c_str());
+
+	if (m_onRemotePlayerKicked)
+		m_onRemotePlayerKicked(_connection);
+}
+
+void ClientNetwork::NetRemoteConnectionBanned(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
+{
+	std::string address = _packetHandler->ReadString(_id);
+	if (NET_DEBUG)
+		printf("%s was banned from the server.\n", address.c_str());
+
+	if (m_onRemotePlayerBanned)
+		m_onRemotePlayerBanned(_connection);
+}
+
 
 
 void ClientNetwork::SetOnConnectedToServer(NetEvent _function)
@@ -206,6 +349,38 @@ void ClientNetwork::SetOnFailedToConnect(NetEvent _function)
 	m_onFailedToConnect = _function;
 }
 
+void ClientNetwork::SetOnPasswordInvalid(NetEvent _function)
+{
+	if (NET_DEBUG)
+		printf("Hooking function to OnPasswordInvalid.\n");
+
+	m_onPasswordInvalid = _function;
+}
+
+void ClientNetwork::SetOnKickedFromServer(NetEvent _function)
+{
+	if (NET_DEBUG)
+		printf("Hooking function to OnKickedFromServer.\n");
+
+	m_onKickedFromServer = _function;
+}
+
+void ClientNetwork::SetOnBannedFromServer(NetEvent _function)
+{
+	if (NET_DEBUG)
+		printf("Hooking function to OnBannedFromServer.\n");
+
+	m_onBannedFromServer = _function;
+}
+
+void ClientNetwork::SetOnServerFull(NetEvent _function)
+{
+	if (NET_DEBUG)
+		printf("Hooking function to OnServerFull.\n");
+
+	m_onServerFull = _function;
+}
+
 void ClientNetwork::SetOnRemotePlayerConnected(NetEvent _function)
 {
 	if (NET_DEBUG)
@@ -228,4 +403,20 @@ void ClientNetwork::SetOnRemotePlayerTimedOut(NetEvent _function)
 		printf("Hooking function to OnRemotePlayerTimedOut.\n");
 
 	m_onRemotePlayerTimedOut = _function;
+}
+
+void ClientNetwork::SetOnRemotePlayerKicked(NetEvent _function)
+{
+	if (NET_DEBUG)
+		printf("Hooking function to OnRemotePlayerKicked.\n");
+
+	m_onRemotePlayerKicked = _function;
+}
+
+void ClientNetwork::SetOnRemotePlayerBanned(NetEvent _function)
+{
+	if (NET_DEBUG)
+		printf("Hooking function to OnRemotePlayerBanned.\n");
+
+	m_onRemotePlayerBanned = _function;
 }
