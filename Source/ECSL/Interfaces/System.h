@@ -20,7 +20,7 @@ namespace ECSL
 		System();
 		virtual ~System() = 0;
 
-		virtual void Run() = 0;
+		virtual void Run(float _dt) = 0;
 		virtual void Initialize() = 0;
 
 		virtual void OnEntityAdded(unsigned int _entityId) = 0;

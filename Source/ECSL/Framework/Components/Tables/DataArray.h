@@ -16,10 +16,25 @@ namespace ECSL
 		void ClearRow(unsigned const int _row);
 		void ClearTable();
 
-		inline DataLocation GetData(unsigned const int _row) const;
-		inline DataLocation GetData(unsigned const int _row, unsigned const int _column) const;
-		inline virtual void SetData(unsigned const int _row, void* _data, unsigned const int _byteCount);
-		inline virtual void SetData(unsigned const int _row, unsigned const int _column, void* _data, unsigned const int _byteCount);
+
+		inline DataLocation GetData(unsigned const int _row) const
+		{
+			return m_dataTable + (_row * m_bytesPerRow);
+		}
+		inline DataLocation GetData(unsigned const int _row, unsigned const int _column) const
+		{
+			return (m_dataTable + (_row * m_bytesPerRow) + _column);
+		}
+
+		inline virtual void SetData(unsigned const int _row, void* _data, unsigned const int _byteCount)
+		{
+			memcpy(m_dataTable + (_row * m_bytesPerRow), _data, _byteCount);
+		}
+
+		inline virtual void SetData(unsigned const int _row, unsigned const int _column, void* _data, unsigned const int _byteCount)
+		{
+			memcpy(m_dataTable + (_row * m_bytesPerRow) + _column, _data, _byteCount);
+		}
 
 		const unsigned int GetRowCount() const;
 

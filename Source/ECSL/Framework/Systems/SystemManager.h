@@ -16,6 +16,8 @@ namespace ECSL
 
 		void InitializeSystems();
 
+		void Update(float _dt);
+
 		void SystemEntitiesUpdate();
 
 	private:

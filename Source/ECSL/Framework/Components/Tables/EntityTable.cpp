@@ -36,6 +36,13 @@ void EntityTable::AddComponentTo(unsigned int _entityId, unsigned int _component
 	BitSet::DataType* componentBitSet = (BitSet::DataType*)(m_dataTable->GetData(_entityId, 1));
 	unsigned int bitSetIndex = BitSet::GetBitSetIndex(_componentTypeId);
 	unsigned int bitIndex = BitSet::GetBitIndex(_componentTypeId);
+
+	/* The entity is dead */
+	assert(!(*(unsigned char*)m_dataTable->GetData(_entityId) == 0));
+
+	/* The component is already added to entity */
+	assert(!(componentBitSet[bitSetIndex] & ((BitSet::DataType)1 << bitIndex)));
+
 	componentBitSet[bitSetIndex] |= (BitSet::DataType)1 << bitIndex;
 }
 
@@ -44,6 +51,13 @@ void EntityTable::RemoveComponentFrom(unsigned int _entityId, unsigned int _comp
 	BitSet::DataType* componentBitSet = (BitSet::DataType*)(m_dataTable->GetData(_entityId, 1));
 	unsigned int bitSetIndex = BitSet::GetBitSetIndex(_componentTypeId);
 	unsigned int bitIndex = BitSet::GetBitIndex(_componentTypeId);
+
+	/* The entity is dead */
+	assert(!(*(unsigned char*)m_dataTable->GetData(_entityId) == 0));
+
+	/* The entity doesn't have that component */
+	assert(componentBitSet[bitSetIndex] & ((BitSet::DataType)1 << bitIndex));
+
 	componentBitSet[bitSetIndex] &= ~((BitSet::DataType)1 << bitIndex);
 }
 
@@ -86,6 +100,9 @@ unsigned int EntityTable::GenerateNewEntityId()
 	m_availableEntityIds->pop();
 	SDL_UnlockMutex(m_availableEntityMutex);
 
+	unsigned char alive = ((unsigned char)EntityState::Alive);
+	m_dataTable->SetData(id, &alive, 1);
+
 	return id;
 }
 
@@ -93,9 +110,7 @@ void EntityTable::AddOldEntityId(unsigned int _entityId)
 {
 	assert(_entityId < m_entityCount);
 
-	SDL_LockMutex(m_availableEntityMutex);
 	m_availableEntityIds->push(_entityId);
-	SDL_UnlockMutex(m_availableEntityMutex);
 
 	m_dataTable->ClearRow(_entityId);
 }

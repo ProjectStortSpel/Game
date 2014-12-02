@@ -7,6 +7,8 @@ set(USE_X86_64 ON CACHE BOOL "USE_X86_64")
 # Project name
 project("Large Game Project")
 
+add_definitions(-D_UNICODE -DUNICODE)
+
 if(WIN32)
   if(CMAKE_CL_64)
     set(WINDOWS_SYSTEM "x64")
@@ -22,8 +24,7 @@ if(WIN32)
       imm32
       winmm
       "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Windows/${WINDOWS_SYSTEM}/SDL2.lib"
-      debug "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Windows/${WINDOWS_SYSTEM}/RakNet_x86d.lib"
-      optimized "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Windows/${WINDOWS_SYSTEM}/RakNet_x86.lib")
+	  ws2_32)
   set(EXTERNAL_WINDOWS_STATIC_SDL2MAIN_LIBRARY
       "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Windows/${WINDOWS_SYSTEM}/SDL2main.lib")
   set(EXTERNAL_WINDOWS_STATIC_LUA52_LIBRARY
@@ -52,7 +53,8 @@ elseif(UNIX)
   # Define external libraries
   file(GLOB EXTERNAL_UNIX_SHARED_LIBRARIES
        "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Linux/${UNIX_SYSTEM}/*.so"
-       "dl")
+       "dl"
+       "GL")
   set(EXTERNAL_UNIX_STATIC_SDL2MAIN_LIBRARY
       "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Linux/${UNIX_SYSTEM}/libSDL2main.a")
   set(EXTERNAL_UNIX_STATIC_LUA_LIBRARY
@@ -90,6 +92,18 @@ elseif(UNIX)
   execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory
     "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/binaries/Linux/${UNIX_SYSTEM}"
     "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE}/bin")
+  
+  # Copy content to output directory
+  execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory
+    "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/content")
+  execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory
+    "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE}/content")
+  execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/content"
+    "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/content")
+  execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/content"
+    "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE}/content")
 endif()
 
 # Add subprojects
@@ -102,9 +116,9 @@ endif()
 if(NOT TARGET Input)
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Input" Input)
 endif()
-#if(NOT TARGET LuaEmbedder)
-#add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/LuaEmbedder" LuaEmbedder)
-#endif()
+if(NOT TARGET LuaEmbedder)
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/LuaEmbedder" LuaEmbedder)
+endif()
 if(NOT TARGET MPL)
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/MPL" MPL)
 endif()

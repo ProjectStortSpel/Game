@@ -19,10 +19,28 @@ namespace ECSL
 
 		const unsigned int GetRowCount() const;
 
-		inline DataLocation GetData(unsigned const int _id) const;
-		inline DataLocation GetData(unsigned const int _id, unsigned const int _index) const;
-		inline void SetData(unsigned const int _id, void* _data, unsigned const int _byteCount);
-		inline void SetData(unsigned const int _id, unsigned const int _index, void* _data, unsigned const int _byteCount);
+		inline DataLocation GetData(unsigned const int _id) const
+		{
+			return (*m_dataMap)[_id];
+		}
+		inline DataLocation GetData(unsigned const int _id, unsigned const int _index) const
+		{
+			return (*m_dataMap)[_id] + _index;
+		}
+		inline void SetData(unsigned const int _id, void* _data, unsigned const int _byteCount)
+		{
+			if ((*m_dataMap).find(_id) == (*m_dataMap).end())
+				(*m_dataMap)[_id] = new char[m_bytesPerRow];
+
+			memcpy((*m_dataMap)[_id], _data, _byteCount);
+		}
+		inline void SetData(unsigned const int _id, unsigned const int _index, void* _data, unsigned const int _byteCount)
+		{
+			if ((*m_dataMap).find(_id) == (*m_dataMap).end())
+				(*m_dataMap)[_id] = new char[m_bytesPerRow];
+
+			memcpy((*m_dataMap)[_id] + _index, _data, _byteCount);
+		}
 
 		/* Data usage */
 		const unsigned int GetBytesPerRow() const;

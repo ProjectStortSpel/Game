@@ -6,6 +6,7 @@ World::World(unsigned int _entityCount, std::vector<SystemWorkGroup*>* _systemWo
 {
 	m_dataManager = new DataManager(_entityCount, _componentTypeIds);
 	m_systemManager = new SystemManager(m_dataManager, _systemWorkGroups);
+	m_simulation = new Simulation(m_dataManager, m_systemManager);
 
 	m_dataManager->InitializeTables();
 	m_systemManager->InitializeSystems();
@@ -13,8 +14,14 @@ World::World(unsigned int _entityCount, std::vector<SystemWorkGroup*>* _systemWo
 
 World::~World()
 {
+	delete(m_simulation);
 	delete(m_dataManager);
 	delete(m_systemManager);
+}
+
+void World::Update(float _dt)
+{
+	m_simulation->Update(_dt);
 }
 
 unsigned int World::CreateNewEntity()

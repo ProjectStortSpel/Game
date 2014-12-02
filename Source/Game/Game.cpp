@@ -16,13 +16,14 @@ public:
 	TestSystem() { }
 	~TestSystem() { }
 
-	void Run()
+	void Run(float _dt)
 	{
 		printf("Testsystem run()\n");
 	}
 	void Initialize()
 	{
-		AddComponentTypeToFilter("Position", ECSL::FilterType::Mandatory);
+		AddComponentTypeToFilter("Velocity", ECSL::FilterType::Mandatory);
+		AddComponentTypeToFilter("Position", ECSL::FilterType::Excluded);
 		//AddComponentTypeToFilter("Velocity", ECSL::FilterType::RequiresOneOf);
 		//AddComponentTypeToFilter("Velocity", ECSL::ComponentFilter::RequiresOneOf);
 		//AddComponentTypeToFilter("Position", ECSL::ComponentFilter::Excluded);
@@ -129,17 +130,29 @@ void lol()
 	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
 	worldCreator.AddSystemGroup();
 	worldCreator.AddSystemToCurrentGroup<TestSystem>();
-	worldCreator.AddComponentType("Position");
-	worldCreator.AddComponentType("Velocity");
+	auto componentTypes = ComponentTypeManager::GetInstance().GetComponentTypes();
+	for (auto it = componentTypes->begin(); it != componentTypes->end(); ++it)
+		worldCreator.AddComponentType(it->second->GetName());
 	ECSL::World* world = worldCreator.CreateWorld(100);
 
 	int id = world->CreateNewEntity();
 	world->CreateComponentAndAddTo("Velocity", id);
-	world->CreateComponentAndAddTo("Position", id);
-	world->RemoveComponentFrom("Position", id);
+	//world->CreateComponentAndAddTo("Position", id);
+	//world->RemoveComponentFrom("Position", id);
+	//world->CreateComponentAndAddTo("Position", id);
+
+	//world->KillEntity(id);
+
+	world->Update(0.01f);
+
+	//world->KillEntity(id);
 	world->CreateComponentAndAddTo("Position", id);
 
-	world->KillEntity(id);
+	world->Update(0.01f);
+
+	world->RemoveComponentFrom("Position", id);
+
+	world->Update(0.01f);
 
 	delete(world);
 	delete(&ComponentTypeManager::GetInstance());
@@ -149,7 +162,6 @@ int main(int argc, char** argv)
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	lol();
-	SDL_Thread* thread1;
 	mutex = SDL_CreateMutex();
 	//if (!mutex)
 	//	printf("Mutex...");

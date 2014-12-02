@@ -11,9 +11,31 @@ file(GLOB_RECURSE LUAEMBEDDER_SRC_FILES
 add_library(LuaEmbedder SHARED ${LUAEMBEDDER_SRC_FILES})
 
 # Add subprojects
-#add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Renderer" "${CMAKE_CURRENT_BINARY_DIR}/Renderer")
+#if(NOT TARGET Console)
+#add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Console" Console)
+#endif()
+#if(NOT TARGET ECSL)
+#add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../ECSL" ECSL)
+#endif()
+#if(NOT TARGET Input)
+#add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Input" Input)
+#endif()
+#if(NOT TARGET MPL)
+#add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../MPL" MPL)
+#endif()
+#if(NOT TARGET Network)
+#add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Network" Network)
+#endif()
+#if(NOT TARGET Renderer)
+#add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Renderer" Renderer)
+#endif()
 # Link subproject shared libraries
 #target_link_libraries(LuaEmbedder
+#		      Console
+#		      ECSL
+#		      Input
+#		      MPL
+#		      Network
 #		      Renderer)
 
 if (WIN32)

@@ -4,6 +4,12 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 # Project name
 project("Game")
 
+# Create executable
+file(GLOB_RECURSE GAME_SRC_FILES
+     ${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/Game/*.h
+     ${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/Game/*.cpp)
+add_executable(Game ${GAME_SRC_FILES})
+
 # Add subprojects
 #if(NOT TARGET Console)
 #add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Console" Console)
@@ -14,9 +20,9 @@ endif()
 if(NOT TARGET Input)
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Input" Input)
 endif()
-#if(NOT TARGET LuaEmbedder)
-#add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../LuaEmbedder" LuaEmbedder)
-#endif()
+if(NOT TARGET LuaEmbedder)
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../LuaEmbedder" LuaEmbedder)
+endif()
 if(NOT TARGET MPL)
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../MPL" MPL)
 endif()
@@ -26,20 +32,12 @@ endif()
 if(NOT TARGET Renderer)
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Renderer" Renderer)
 endif()
-
-
-# Create executable
-file(GLOB_RECURSE GAME_SRC_FILES
-     ${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/Game/*.h
-     ${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/Game/*.cpp)
-add_executable(Game ${GAME_SRC_FILES})
-
 # Link subproject shared libraries
 target_link_libraries(Game
 #		      Console
 		      ECSL
 		      Input
-#		      LuaEmbedder
+		      LuaEmbedder
 		      MPL
 		      Network
 		      Renderer)

@@ -21,6 +21,7 @@ namespace ECSL
 		void LoadComponentTypesFromFile(const std::string& _filePath);
 
 		ComponentType* GetComponentType(int _componentTypeId);
+		std::map<unsigned int, ComponentType*>* GetComponentTypes() { return m_componentTypes; }
 		unsigned int GetComponentTypeCount(){ return (unsigned int)m_componentTypes->size(); }
 
 		template<typename ComponentType>

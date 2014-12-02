@@ -97,6 +97,9 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Common\ContainerHelper.h">
       <Filter>Source Files\Framework\Common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Simulation.h">
+      <Filter>Source Files\Framework</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\World.cpp">
@@ -158,6 +161,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Common\ContainerHelper.cpp">
       <Filter>Source Files\Framework\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Simulation.cpp">
+      <Filter>Source Files\Framework</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

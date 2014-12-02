@@ -13,8 +13,8 @@ namespace ECSL
 {
 	enum EntityState
 	{
-		Dead,
-		Alive
+		Dead = 0,
+		Alive = 1
 	};
 
 	class DECLSPEC EntityTable

@@ -19,6 +19,8 @@ namespace ECSL
 		template<typename SystemType>
 		void AddSystem();
 
+		void Update(float _dt);
+
 		std::vector<System*>* GetSystems() { return m_systems; }
 	};
 

@@ -15,7 +15,7 @@ using namespace ECSL;
 
 void FileHelper::GetFilesInDirectory(std::vector<std::string>& _out, const std::string& _directory, const std::string& _extension)
 {
-#ifdef _WINDOWS
+#ifdef WIN32
 	HANDLE dir;
 	WIN32_FIND_DATA file_data;
 	char* buf = 0;

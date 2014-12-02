@@ -24,8 +24,8 @@ namespace ECSL
 		void RemoveComponentFrom(const std::string& _componentType, unsigned int _entityId);
 		void RemoveComponentFrom(unsigned int _componentTypeId, unsigned int _entityId);
 
-		void RemoveComponents();
-		void RemoveEntities();
+		void ClearComponentData();
+		void RecycleEntityIds();
 		void ClearChangeLists();
 
 		inline unsigned int GetEntityCount() { return m_entityCount; }
@@ -38,7 +38,6 @@ namespace ECSL
 		EntityTable* m_entityTable;
 		std::map<unsigned int, DataTable*>* m_componentTables;
 		std::vector<unsigned int>* m_componentTypeIds;
-		std::vector<unsigned int>* m_entitiesToBeAdded;
 		std::vector<unsigned int>* m_entitiesToBeRemoved;
 		std::vector<unsigned int>* m_changedEntities;
 		std::map<unsigned int, std::vector<unsigned int>>* m_componentsToBeRemoved;

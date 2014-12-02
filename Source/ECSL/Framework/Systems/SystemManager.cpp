@@ -45,6 +45,14 @@ void SystemManager::InitializeSystems()
 	}
 }
 
+void SystemManager::Update(float _dt)
+{
+	for (auto workGroup : *m_systemWorkGroups)
+	{
+		workGroup->Update(_dt);
+	}
+}
+
 void SystemManager::AddEntityToSystem(unsigned int _entityId, System* _system)
 {
 	if (!_system->HasEntity(_entityId))

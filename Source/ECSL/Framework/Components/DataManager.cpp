@@ -10,8 +10,8 @@ using namespace ECSL;
 
 DataManager::DataManager(unsigned int _entityCount, std::vector<unsigned int>* _componentTypeIds)
 :	m_entityCount(_entityCount), m_componentTypeIds(_componentTypeIds),
-	m_entitiesToBeAdded(new std::vector<unsigned int>()), m_entitiesToBeRemoved(new std::vector<unsigned int>()),
-	m_componentsToBeRemoved(new std::map<unsigned int, std::vector<unsigned int>>()), m_changedEntities(new std::vector<unsigned int>())
+	m_entitiesToBeRemoved(new std::vector<unsigned int>()), m_changedEntities(new std::vector<unsigned int>()),
+	m_componentsToBeRemoved(new std::map<unsigned int, std::vector<unsigned int>>())
 {
 }
 
@@ -26,7 +26,6 @@ DataManager::~DataManager()
 	delete m_componentTables;
 	delete m_entityTable;
 	delete m_componentTypeIds;
-	delete m_entitiesToBeAdded;
 	delete m_entitiesToBeRemoved;
 	delete m_changedEntities;
 	delete m_componentsToBeRemoved;
@@ -71,7 +70,7 @@ void DataManager::RemoveEntity(unsigned int _entityId)
 	ContainerHelper::AddUniqueElement(_entityId, *m_entitiesToBeRemoved);
 
 	std::vector<unsigned int> components;
-	BitSet::BitSetConverter::BitSetToArray(components, m_entityTable->GetEntityComponents(_entityId), ComponentTypeManager::GetInstance().GetComponentTypeCount());
+	m_entityTable->GetEntityComponents(components, _entityId);
 	/* Remove every component from the entity */
 	for (unsigned int componentTypeId : components)
 		RemoveComponentFrom(componentTypeId, _entityId);
@@ -87,7 +86,6 @@ void DataManager::CreateComponentAndAddTo(const std::string& _componentType, uns
 void DataManager::CreateComponentAndAddTo(unsigned int _componentTypeId, unsigned int _entityId)
 {
 	/* Add entity to lists */
-	ContainerHelper::AddUniqueElement(_entityId, *m_entitiesToBeAdded);
 	ContainerHelper::AddUniqueElement(_entityId, *m_changedEntities);
 
 	m_entityTable->AddComponentTo(_entityId, _componentTypeId);
@@ -108,7 +106,7 @@ void DataManager::RemoveComponentFrom(unsigned int _componentTypeId, unsigned in
 	m_entityTable->RemoveComponentFrom(_entityId, _componentTypeId);
 }
 
-void DataManager::RemoveComponents()
+void DataManager::ClearComponentData()
 {
 	for (auto entity = m_componentsToBeRemoved->begin(); entity != m_componentsToBeRemoved->end(); ++entity)
 	{
@@ -119,24 +117,16 @@ void DataManager::RemoveComponents()
 	}
 }
 
-void DataManager::RemoveEntities()
+void DataManager::RecycleEntityIds()
 {
 	for (auto entityId : *m_entitiesToBeRemoved)
 	{
-		std::vector<unsigned int> components;
-		m_entityTable->GetEntityComponents(components, entityId);
-		/* Clear the memory used by the entity. In other words, components */
-		for (unsigned int i = 0; i < components.size(); ++i)
-		{
-			m_componentTables->at(components[i])->ClearRow(entityId);
-		}
 		m_entityTable->AddOldEntityId(entityId);
 	}
 }
 
 void DataManager::ClearChangeLists()
 {
-	m_entitiesToBeAdded->clear();
 	m_entitiesToBeRemoved->clear();
 	m_changedEntities->clear();
 	m_componentsToBeRemoved->clear();
