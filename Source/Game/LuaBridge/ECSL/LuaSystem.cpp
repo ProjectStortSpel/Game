@@ -7,12 +7,13 @@ namespace LuaBridge
   
   void LuaSystem::Embed()
   {
-    LuaEmbedder::EmbedClass<LuaSystem>("System");
+    LuaEmbedder::EmbedClass<LuaSystem>("System", false);
   }
   
-  void LuaSystem::Run()
+  void LuaSystem::Run(float _dt)
   {
-    LuaEmbedder::CallMethod<LuaSystem>("System", "Run", this);
+    LuaEmbedder::PushDouble((double)_dt);
+    LuaEmbedder::CallMethod<LuaSystem>("System", "Run", this, 1);
   }
 
   void LuaSystem::Initialize()

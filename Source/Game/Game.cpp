@@ -3,6 +3,7 @@
 #include "Input/InputWrapper.h"
 #include "Renderer/GraphicDevice.h"
 #include "Timer.h"
+#include "LuaBridge/LuaBridge.h"
 
 #ifdef WIN32
 	#define _CRTDBG_MAP_ALLOC
@@ -78,11 +79,17 @@ private:
 
 void lol()
 {
+	LuaBridge::Init();
+  
 	ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("content/components");
 	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
+	
+	LuaEmbedder::AddObject<ECSL::WorldCreator>("WorldCreator", &worldCreator, "worldCreator");
+	
 	worldCreator.AddSystemGroup();
 	worldCreator.AddSystemToCurrentGroup<TestSystem2>();
-	worldCreator.AddLuaSystemToCurrentGroup(new TestSystem());
+	LuaEmbedder::CallFunction("CreateSystem");
+	//worldCreator.AddLuaSystemToCurrentGroup(new TestSystem());
 	auto componentTypes = ComponentTypeManager::GetInstance().GetComponentTypes();
 	for (auto it = componentTypes->begin(); it != componentTypes->end(); ++it)
 		worldCreator.AddComponentType(it->second->GetName());
@@ -109,6 +116,8 @@ void lol()
 
 	delete(world);
 	delete(&ComponentTypeManager::GetInstance());
+	
+	LuaBridge::Quit();
 }
 void LoadAlotOfBoxes(Renderer::GraphicDevice* r)
 {
@@ -135,6 +144,8 @@ void Start()
 	int modelid = RENDERER.LoadModel("content/models/cube/", "cube.object", &mat[100]); // LOADMODEL RETURNS THE MODELID
 	RENDERER.ChangeModelTexture(modelid, "content/models/cube/NM_tst.png"); // CHANGING TEXTURE ON MODELID
 
+	lol();
+	
 	bool lol = true;
 	float cd = 1.0f;
 	Timer timer;

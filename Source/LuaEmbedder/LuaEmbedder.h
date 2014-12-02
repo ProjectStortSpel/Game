@@ -123,9 +123,9 @@ namespace LuaEmbedder
   bool EXPORT IsString(int index);
   
   template<typename T>
-  void EXPORT EmbedClass(const std::string& className)
+  void EXPORT EmbedClass(const std::string& className, bool gc = true)
   {
-    Luna<T>::Register(L, className.c_str());
+    Luna<T>::Register(L, className.c_str(), gc);
   }
   template<typename T>
   void EXPORT EmbedClassFunction(const std::string& className, const std::string& methodName, int (T::*functionPointer)())

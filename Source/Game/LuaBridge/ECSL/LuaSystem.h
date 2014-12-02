@@ -12,10 +12,11 @@ namespace LuaBridge
   {
   public:
     LuaSystem();
+    ~LuaSystem() { }
     
     static void Embed();
     
-    void Run();
+    void Run(float _dt);
     void Initialize();
     void OnEntityAdded(unsigned int _entityId);
     void OnEntityRemoved(unsigned int _entityId);

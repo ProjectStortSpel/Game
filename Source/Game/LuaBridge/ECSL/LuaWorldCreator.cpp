@@ -1,6 +1,7 @@
 #include "LuaWorldCreator.h"
 #include "LuaEmbedder/LuaEmbedder.h"
 #include "LuaComponent.h"
+#include "LuaSystem.h"
 
 namespace LuaBridge
 {
@@ -30,7 +31,7 @@ namespace LuaBridge
 
   int LuaWorldCreator::AddSystemGroup()
   {
-    WorldCreator::AddSystemGroup();
+    WorldCreator::AddLuaSystemToCurrentGroup(LuaEmbedder::PullObject<LuaSystem>("System", 1));
     return 0;
   }
 }
