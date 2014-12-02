@@ -119,7 +119,7 @@ int main(int argc, char** argv)
 		isServer = true;
 		server = new ServerNetwork();
 		server->AddNetworkHook("testvars", &Test);
-		server->Start(6112, "localhest", 8);	
+		server->Start(6112, "localhest", 1);	
 	}
 	else
 	{

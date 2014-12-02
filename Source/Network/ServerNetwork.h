@@ -56,6 +56,9 @@ private:
 
 	int m_maxConnections;
 
+	std::mutex m_timeOutLock;
+	std::mutex m_connectedClientsLock;
+
 	ISocket* m_listenSocket;
 	std::map<NetConnection, ISocket*> m_connectedClients;
 
