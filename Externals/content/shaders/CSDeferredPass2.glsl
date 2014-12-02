@@ -52,29 +52,34 @@ void phongModel(int index, out vec3 ambient, out vec3 diffuse, out vec3 spec) {
 
         if(d > Lights[index].Range)
             return;
-
-	   ambient = Lights[index].Color * Lights[index].Intensity.x;
-
         lightVec /= d; //normalizing
-        float diffuseFactor = dot( lightVec, normal_tex );
+        
 
-        if(diffuseFactor > 0)
-        {
-            vec3 v = reflect( lightVec, normal_tex );
-            float specFactor = max( pow( max( dot(v, normalize(viewPos)), 0.0f ), Material.Shininess ), 0.0f);
+		ambient = Lights[index].Color * Lights[index].Intensity.x;
 
-            diffuse = diffuseFactor * Lights[index].Color * Lights[index].Intensity.y;
-            spec = specFactor * Lights[index].Color * Lights[index].Intensity.z * Material.Ks;
-			//spec = light[index].Color * pow(max(dot(v, normalize(viewPos)), 0.0f), Material.Shininess) * Material.Ks;
-        }
+		vec3 E = normalize(-viewPos);
+		vec3 N = normalize(normal_tex);
 
-        float att = 1 - pow((d/Lights[index].Range), 1.0f);
+		float diffuseFactor = dot( lightVec, N );
 
-        ambient *= att;
-        diffuse *= att;
-        spec    *= att;
+		if(diffuseFactor > 0)
+		{
+			// diffuse
+			diffuse = diffuseFactor * Lights[index].Color * Lights[index].Intensity.y;
 
-        return;
+			// specular
+			vec3 v = normalize(2 * Material.Ks * N - lightVec);//reflect( lightVec, normal_tex );
+			float specFactor = max( pow( max( dot(v, E), 0.0f ), Material.Shininess ), 0.0f);
+			spec = specFactor * Lights[index].Color * Lights[index].Intensity.z * Material.Ks;        
+		}
+
+		float att = 1 - pow((d/Lights[index].Range), 1.0f);
+
+		ambient *= att;
+		diffuse *= att;
+		spec    *= att;
+
+		return;
 }
 
 vec3 reconstructPosition(float p_depth, vec2 p_ndc)
@@ -132,7 +137,7 @@ void main()
 	//-------------------------
 
 	vec4 FragColor = vec4(ambient + diffuse, 1.0) * vec4(albedo_tex, 1.0) + vec4(spec, 0.0f);
-	//FragColor = vec4(spec, 0.0f) + vec4(1);
+	//FragColor = vec4(diffuse, 1.0);
 	//vec4 FragColor = vec4( normal_tex, 1.0);
 	//vec4 FragColor = vec4( albedo_tex   +normal_tex-normal_tex, 1.0 );
 	//vec4 FragColor = vec4( vec3(viewPos  +normal_tex-normal_tex), 1.0 );

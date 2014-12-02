@@ -28,6 +28,8 @@
 int CardsInHand = 8;
 int CardsToPlay = 5;
 int waitforplayers;
+mat4 mat[1000]; // SKA VARA I ENTITY/COMPONENT
+
 
 std::string myName = "";
 
@@ -40,6 +42,24 @@ void ClearConsole()
 #endif
 }
 
+<<<<<<< HEAD
+=======
+void LoadAlotOfBoxes(Renderer::GraphicDevice* r)
+{
+	// ADDING TEMP OBJECTS
+	for (int x = 0; x < 10; x++)
+	{
+		for (int y = 0; y < 10; y++)
+		{
+			mat[x+y*10] = glm::translate(vec3(x - 5, -1, y - 5));
+			r->LoadModel("content/models/cube/", "cube.object", &mat[x + y * 10]);
+		}
+	}
+	mat[101] = glm::translate(vec3(0, 0, 0));
+	r->LoadModel("content/models/cube/", "cube.object", &mat[101]);
+}
+
+>>>>>>> moveing box, wololololooo
 void TestECSL()
 {
 	//ECSL::ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("content/components");
@@ -126,7 +146,21 @@ int main(int argc, char** argv)
 <<<<<<< HEAD
 =======
 		
-		//-----------CAMERA--------------------------------------------------------------------------------
+		// MOVE CUBE
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_UP) == Input::InputState::DOWN)
+			mat[101] *= glm::translate(vec3(0, 0, -0.01f)); 
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_DOWN) == Input::InputState::DOWN)
+			mat[101] *= glm::translate(vec3(0, 0, 0.01f));
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_LEFT) == Input::InputState::DOWN)
+			mat[101] *= glm::translate(vec3(-0.01f, 0, 0));
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_RIGHT) == Input::InputState::DOWN)
+			mat[101] *= glm::translate(vec3(0.01f, 0, 0)); 
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_SPACE) == Input::InputState::DOWN)
+			mat[101] *= glm::translate(vec3(0, 0.01f, 0));
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_LSHIFT) == Input::InputState::DOWN)
+			mat[101] *= glm::translate(vec3(0, -0.01f, 0));
+
+		// MOVE CAMERA
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_W) == Input::InputState::DOWN)
 			RENDERER.GetCamera()->MoveForward(dt);
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_S) == Input::InputState::DOWN)
@@ -136,19 +170,20 @@ int main(int argc, char** argv)
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_D) == Input::InputState::DOWN)
 			RENDERER.GetCamera()->MoveRight(dt);
 
+		// ROTATE CAMERA
 		if (INPUT->GetMouse()->GetButtonState(Input::LeftButton) == Input::InputState::DOWN)
 		{
 			int sizeX, sizeY;
 			RENDERER.GetWindowSize(sizeX, sizeY);
 
-			RENDERER.GetCamera()->UpdateMouse(sizeX*0.5, sizeY*0.5, INPUT->GetMouse()->GetX(), INPUT->GetMouse()->GetY());
+			RENDERER.GetCamera()->UpdateMouse(sizeX*0.5, sizeY*0.5, INPUT->GetMouse()->GetX(), INPUT->GetMouse()->GetY(), dt);
 			INPUT->GetMouse()->SetPosition(sizeX*0.5, sizeY*0.5);
 			INPUT->GetMouse()->HideCursor(true);
 		}
 		else
 			INPUT->GetMouse()->HideCursor(false);
-		//-----------------------------------------------------------------------------------------------
->>>>>>> commit to pull
+		
+>>>>>>> moveing box, wololololooo
 
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
 		{
