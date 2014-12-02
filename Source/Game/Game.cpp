@@ -4,9 +4,11 @@
 #include <vector>
 #include <algorithm>
 #include <time.h>
-#define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
-#include <crtdbg.h>
+#ifdef WIN32
+	#define _CRTDBG_MAP_ALLOC
+	#include <stdlib.h>
+	#include <crtdbg.h>
+#endif
 
 using namespace ECSL;
 
@@ -171,6 +173,8 @@ int main(int argc, char** argv)
 	SDL_DestroyMutex(mutex);
 	SDL_Quit();
 	system("pause");
+	#ifdef WIN32
 	_CrtDumpMemoryLeaks();
+	#endif
 	return 0;
 }
