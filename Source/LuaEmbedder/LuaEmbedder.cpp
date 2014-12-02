@@ -82,6 +82,7 @@ namespace LuaEmbedder
   {
     assert(lua_isnumber(L, lua_upvalueindex(1)));
     int functionIndex = (int)lua_tonumber(L, lua_upvalueindex(1));
+    lua_remove(L, 1);
     return (*(Functions[functionIndex]))();
   }
   void AddFunction(const std::string& name, int (*functionPointer)(), const std::string& library)
