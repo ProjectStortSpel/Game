@@ -61,9 +61,33 @@ void TestECSL()
 	//delete(&ECSL::BitSet::BitSetConverter::GetInstance());
 }
 
+ServerNetwork server;
+ClientNetwork client;
+
 void OnDisconnect(NetConnection nc)
 {
 	printf("Test\n");
+}
+
+void OnConnected(NetConnection nc)
+{
+	PacketHandler* ph = client.GetPacketHandler();
+
+	uint64_t id = ph->StartPack("testvars");
+
+	ph->WriteShort(id, 555);
+	ph->WriteInt(id, 240001);
+
+	client.Send(ph->EndPack(id));
+
+}
+
+void Test(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
+{
+	short s =_packetHandler->ReadShort(_id);
+	int i = _packetHandler->ReadInt(_id);
+
+	printf("%d - %d\n", s, i);
 }
 
 
@@ -84,8 +108,6 @@ int main(int argc, char** argv)
 	printf("Press 's' to start a new server, 'c' to start a new client,\nor anything else to skip network: ");
 	std::getline(std::cin, input);
 	ClearConsole();
-	ServerNetwork server;
-	ClientNetwork client;
 	bool isServer = false;
 
 
@@ -93,10 +115,12 @@ int main(int argc, char** argv)
 	{
 		isServer = true;
 		server.SetOnPlayerDisconnected(&OnDisconnect);
+		server.AddNetworkHook("testvars", &Test);
 		server.Start(6112, "localhest", 8);
 	}
 	else if (input.compare("c") == 0)
 	{
+		client.SetOnConnectedToServer(&OnConnected);
 		client.Connect("194.47.150.5", "localhest", 6112, 0);
 	}
 
