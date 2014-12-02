@@ -102,7 +102,14 @@ int main(int argc, char** argv)
 
 	std::string input;
 	printf("Starting network:\n\n");
-	printf("Press 's' to start a new server, 'c' to start a new client,\nor anything else to skip network: ");
+	printf("Press 's' to start a new server,\n");
+	printf("c to connect to localhost,\n");
+	printf("1 to connect to Jenkins Windows,\n");
+	printf("2 to connect to Jenkins Linux,\n");
+	printf("3 to connect to Jenkins Pontus,\n");
+	printf("4 to connect to Jenkins Erik,\n");
+	printf("or anything else to skip the network.\n");
+
 	std::getline(std::cin, input);
 	ClearConsole();
 
@@ -114,17 +121,21 @@ int main(int argc, char** argv)
 		server->AddNetworkHook("testvars", &Test);
 		server->Start(6112, "localhest", 8);	
 	}
-	else if (input.compare("c") == 0)
+	else
 	{
 		client = new ClientNetwork();
 		client->SetOnConnectedToServer(&OnConnected);
-		client->Connect("194.47.150.5", "localhest", 6112, 0);
-	}
-	else if (input.compare("l") == 0)
-	{
-		client = new ClientNetwork();
-		client->SetOnConnectedToServer(&OnConnected);
-		client->Connect("127.0.0.1", "localhest", 6112, 0);
+
+		if(input.compare("c") == 0) // localhost
+			client->Connect("127.0.0.1", "localhest", 6112, 0);
+		else if (input.compare("1") == 0) // Jenkins win
+			client->Connect("194.47.150.4", "localhest", 6112, 0);
+		else if (input.compare("2") == 0) // Jenkins lin
+			client->Connect("194.47.150.60", "localhest", 6112, 0);
+		else if (input.compare("3") == 0) // Pontus
+			client->Connect("194.47.150.128", "localhest", 6112, 0);
+		else if (input.compare("4") == 0) // Erik
+			client->Connect("194.47.150.5", "localhest", 6112, 0);
 	}
 
 	TestECSL();
