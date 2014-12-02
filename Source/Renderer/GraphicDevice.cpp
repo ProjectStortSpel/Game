@@ -476,7 +476,48 @@ bool GraphicDevice::ChangeModelTexture(int _id, std::string _fileDir)
 	}
 	return false;
 }
+bool GraphicDevice::ChangeModelNormalMap(int _id, std::string _fileDir)
+{
+	int location;
+	GLuint texture;
 
+	for (int i = 0; i < m_models.size(); i++)
+	{
+		if (m_models[i].modelID == _id)
+		{
+			texture = AddTexture(_fileDir, GL_TEXTURE2);
+			glActiveTexture(GL_TEXTURE2);
+			location = glGetUniformLocation(m_deferredShader1.GetShaderProgram(), "normalTex");
+			glUniform1i(location, 2);
+
+			m_models[i].texID = texture;
+
+			return true;
+		}
+	}
+	return false;
+}
+bool GraphicDevice::ChangeModelSpecularMap(int _id, std::string _fileDir)
+{
+	int location;
+	GLuint texture;
+
+	for (int i = 0; i < m_models.size(); i++)
+	{
+		if (m_models[i].modelID == _id)
+		{
+			texture = AddTexture(_fileDir, GL_TEXTURE3);
+			glActiveTexture(GL_TEXTURE3);
+			location = glGetUniformLocation(m_deferredShader1.GetShaderProgram(), "specularTex");
+			glUniform1i(location, 3);
+
+			m_models[i].texID = texture;
+
+			return true;
+		}
+	}
+	return false;
+}
 
 Buffer* GraphicDevice::AddMesh(std::string _fileDir)
 {

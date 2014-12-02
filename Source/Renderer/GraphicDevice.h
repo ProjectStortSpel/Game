@@ -75,6 +75,8 @@ namespace Renderer
 		// MODELLOADER
 		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr);
 		bool ChangeModelTexture(int _id, std::string _fileDir);
+		bool ChangeModelNormalMap(int _id, std::string _fileDir);
+		bool ChangeModelSpecularMap(int _id, std::string _fileDir);
 
 	private:
 		bool InitSDLWindow();
