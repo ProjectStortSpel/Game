@@ -19,52 +19,38 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Source\Renderer\DebugText.h" />
 <<<<<<< HEAD
-    <ClInclude Include="..\..\..\Source\Renderer\GraphicDevice.h" />
-    <ClInclude Include="..\..\..\Source\Renderer\Shader.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\Buffer.h" />
 =======
-<<<<<<< HEAD
+    <ClInclude Include="..\..\..\Source\Renderer\Camera.h" />
+>>>>>>> 38f5cf8cb1da15968cfa7eb5c9d5b1dbb200eb0b
     <ClInclude Include="..\..\..\Source\Renderer\GLTimer.h" />
-=======
->>>>>>> 264189ecbb29ed92de336788293523449bc35e93
     <ClInclude Include="..\..\..\Source\Renderer\GraphicDevice.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\ModelLoader.h" />
     <ClInclude Include="..\..\..\Source\Renderer\Shader.h" />
     <ClInclude Include="..\..\..\Source\Renderer\SimpleText.h" />
->>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
     <ClInclude Include="..\..\..\Source\Renderer\stdafx.h" />
     <ClInclude Include="..\..\..\Source\Renderer\TextureLoader.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Source\Renderer\DebugText.cpp" />
 <<<<<<< HEAD
-    <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp" />
-    <ClCompile Include="..\..\..\Source\Renderer\Shader.cpp" />
+    <ClCompile Include="..\..\..\Source\Renderer\Buffer.cpp" />
 =======
-<<<<<<< HEAD
+    <ClCompile Include="..\..\..\Source\Renderer\Camera.cpp" />
+>>>>>>> 38f5cf8cb1da15968cfa7eb5c9d5b1dbb200eb0b
     <ClCompile Include="..\..\..\Source\Renderer\GLTimer.cpp" />
-=======
->>>>>>> 264189ecbb29ed92de336788293523449bc35e93
     <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\Shader.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\SimpleText.cpp" />
->>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\Externals\content\shaders\debuggText.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\CSDeferredPass2.glsl" />
     <None Include="..\..\..\Externals\content\shaders\FSDeferredPass1.glsl" />
     <None Include="..\..\..\Externals\content\shaders\FSDeferredPass2.glsl" />
     <None Include="..\..\..\Externals\content\shaders\fullscreen.gs" />
     <None Include="..\..\..\Externals\content\shaders\fullscreen.ps" />
     <None Include="..\..\..\Externals\content\shaders\fullscreen.vs" />
-<<<<<<< HEAD
-<<<<<<< HEAD
     <None Include="..\..\..\Externals\content\shaders\SimpleText.glsl" />
-=======
->>>>>>> Standard deferred added
-=======
-    <None Include="..\..\..\Externals\content\shaders\SimpleText.glsl" />
->>>>>>> 80eaba5e3fca8b7fc54c82bdf53835239fe42d96
     <None Include="..\..\..\Externals\content\shaders\VSDeferredPass1.glsl" />
     <None Include="..\..\..\Externals\content\shaders\VSDeferredPass2.glsl" />
   </ItemGroup>
@@ -168,8 +154,8 @@
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
-if not exist "$(OutDir)Content" mkdir $(OutDir)Content
-xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)Content" /d /y /s /e </Command>
+if not exist "$(OutDir)content" mkdir $(OutDir)content
+xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -192,8 +178,8 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)Content" /d /y /s /e </C
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
-if not exist "$(OutDir)Content" mkdir $(OutDir)Content
-xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)Content" /d /y /s /e </Command>
+if not exist "$(OutDir)content" mkdir $(OutDir)content
+xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -220,8 +206,8 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)Content" /d /y /s /e </C
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
-if not exist "$(OutDir)Content" mkdir $(OutDir)Content
-xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)Content" /d /y /s /e </Command>
+if not exist "$(OutDir)content" mkdir $(OutDir)content
+xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -248,8 +234,8 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)Content" /d /y /s /e </C
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
-if not exist "$(OutDir)Content" mkdir $(OutDir)Content
-xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)Content" /d /y /s /e </Command>
+if not exist "$(OutDir)content" mkdir $(OutDir)content
+xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

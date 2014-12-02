@@ -20,6 +20,21 @@ namespace Input
 		int GetdX(){ return m_dx; }
 		int GetdY(){ return m_dy; }
 		int GetScroll(Axis _axis){ return (_axis == Axis::X) ? m_xScroll : m_yScroll; }
+
+		void SetPosition(int _x, int _y)
+		{
+			SDL_WarpMouseInWindow(NULL, _x, _y);
+			m_x = _x;
+			m_y = _y;
+		}
+
+		void HideCursor(bool _hide)
+		{
+			if (_hide)
+				SDL_ShowCursor(SDL_DISABLE);
+			else
+				SDL_ShowCursor(SDL_ENABLE);
+		}
 	private:
 		static const int m_numberOfButtons = 6;
 		bool m_thisState[m_numberOfButtons];
