@@ -111,15 +111,13 @@ int main(int argc, char** argv)
 
 		if (isServer)
 		{
-			do
-			{
-			} while (server.TriggerPacket() > 0);
+			server.Update();
+			while (server.TriggerPacket() > 0) {}
 		}
 		else
 		{
-			do
-			{
-			} while (client.TriggerPacket() > 0);
+			client.Update();
+			while (client.TriggerPacket() > 0) {}
 		}
 
 	//	INPUT->Update();

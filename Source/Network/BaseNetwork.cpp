@@ -10,11 +10,19 @@ BaseNetwork::BaseNetwork()
 
 BaseNetwork::~BaseNetwork()
 {
-	for (unsigned int i = 0; i < m_packets.size(); ++i)
+	for (unsigned int i = 0; i < m_customPackets.size(); ++i)
 	{
-		auto packet = m_packets.front();
+		auto packet = m_customPackets.front();
 		SAFE_DELETE(packet);
-		m_packets.pop();
+		m_customPackets.pop();
+	}
+
+
+	for (unsigned int i = 0; i < m_systemPackets.size(); ++i)
+	{
+		auto packet = m_systemPackets.front();
+		SAFE_DELETE(packet);
+		m_systemPackets.pop();
 	}
 }
 
@@ -65,32 +73,32 @@ void BaseNetwork::HandlePacket(Packet* _packet)
 
 	if (type == NetTypeMessageId::ID_CUSTOM_PACKET)
 	{
-		m_packetLock.lock();
-		m_packets.push(_packet);
-		m_packetLock.unlock();
+		m_customPacketLock.lock();
+		m_customPackets.push(_packet);
+		m_customPacketLock.unlock();
 	}
 	else
 	{
-		uint64_t id = m_packetHandler.StartUnpack(_packet);
-
-		if (m_networkFunctions.find(type) != m_networkFunctions.end())
-		{
-			m_networkFunctions[type](&m_packetHandler, id, _packet->Sender);
-		}
-
-		m_packetHandler.EndUnpack((uint64_t)_packet);
+		m_systemPacketLock.lock();
+		m_systemPackets.push(_packet);
+		m_systemPacketLock.unlock();
 	}
 }
 
 int BaseNetwork::TriggerPacket(void)
 {
-	int size = m_packets.size();
 
+	m_customPacketLock.lock();
+	int size = m_customPackets.size();
 	if (size == 0)
+	{
+		m_customPacketLock.unlock();
 		return size;
+	}
+	Packet* p = m_customPackets.front();
+	m_customPackets.pop();
+	m_customPacketLock.unlock();
 
-	Packet* p = m_packets.front();
-	m_packets.pop();
 	size--;
 
 	if (p->Length <= 1)
@@ -113,4 +121,32 @@ int BaseNetwork::TriggerPacket(void)
 	m_packetHandler.EndUnpack(id);
 
 	return size;
+}
+
+void BaseNetwork::Update(void)
+{
+
+	m_systemPacketLock.lock();
+	int num_sysPackets = m_systemPackets.size();
+	m_systemPacketLock.unlock();
+	
+	Packet *p;
+	for (int i = 0; i < num_sysPackets; ++num_sysPackets)
+	{
+		m_systemPacketLock.lock();
+		p = m_systemPackets.front();
+		m_systemPackets.pop();
+		m_systemPacketLock.unlock();
+
+		char type = p->Data[0];
+
+		uint64_t id = m_packetHandler.StartUnpack(p);
+
+		if (m_networkFunctions.find(type) != m_networkFunctions.end())
+		{
+			m_networkFunctions[type](&m_packetHandler, id, p->Sender);
+		}
+
+		m_packetHandler.EndUnpack((uint64_t)p);
+	}
 }

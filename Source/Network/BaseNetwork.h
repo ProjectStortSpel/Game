@@ -41,6 +41,8 @@ public:
 	// Will return the number of packets remaining
 	int TriggerPacket(void);
 
+	void Update(void);
+
 	// Set the incoming port
 	void SetIncomingPort(const int _port) { m_incomingPort = _port; }
 	// Set the server password
@@ -63,8 +65,10 @@ protected:
 	std::map < std::string, NetMessageHook > m_userFunctions;
 	std::map < char, NetMessageHook > m_networkFunctions;
 
-	std::queue<Packet*> m_packets;
-	std::mutex m_packetLock;
+	std::queue<Packet*> m_systemPackets;
+	std::queue<Packet*> m_customPackets;
+	std::mutex m_systemPacketLock;
+	std::mutex m_customPacketLock;
 
 	std::string m_localAddress;
 	std::string m_password;

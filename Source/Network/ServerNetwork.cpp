@@ -29,8 +29,7 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t _
 		uint64_t id2 = _packetHandler->StartPack(NetTypeMessageId::ID_PASSWORD_INVALID);
 		auto newPacket = _packetHandler->EndPack(id2);
 		Send(newPacket, _connection);
-		SAFE_DELETE(m_connectedClients[_connection]);
-		m_connectedClients.erase(_connection);
+		m_connectedClients[_connection]->SetActive(0);
 	}
 }
 
@@ -44,9 +43,6 @@ void ServerNetwork::NetConnectionLost(PacketHandler* _packetHandler, uint64_t _i
 void ServerNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
 	m_connectedClients[_connection]->SetActive(0);
-	
-
-	SAFE_DELETE(m_connectedClients[_connection]);
 	if(m_onPlayerDisconnected)
 		m_onPlayerDisconnected(_connection);
 }
@@ -192,6 +188,9 @@ void ServerNetwork::ReceivePackets(ISocket* _socket, bool* _alive)
 		}
 
 	}
+
+	SAFE_DELETE(_socket);
+	m_connectedClients.erase(_socket->GetNetConnection());
 }
 
 void ServerNetwork::ListenForConnections(void)
