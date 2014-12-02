@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\ECSL\ECSL.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Common\BitSet.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Common\ContainerHelper.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Common\FileHelper.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Common\StringConverter.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\ComponentType.h" />
@@ -33,7 +34,7 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\ComponentTypeReader.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\Parser.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\Section.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemBitmask.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\ComponentFilter.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemWorkGroup.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemManager.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\World.h" />
@@ -43,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Common\BitSet.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Common\ContainerHelper.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Common\FileHelper.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Common\StringConverter.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\ComponentType.cpp" />
@@ -54,6 +56,7 @@
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\EntityTable.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\ComponentTypeReader.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\Parser.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\ComponentFilter.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemWorkGroup.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemManager.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\World.cpp" />

@@ -1,23 +1,6 @@
 #include "BitSet.h"
 using namespace ECSL;
 
-BitSet::BitSetConverter& BitSet::BitSetConverter::GetInstance()
-{
-	static BitSet::BitSetConverter* instance = new BitSet::BitSetConverter();
-	return *instance;
-}
-
-BitSet::BitSetConverter::BitSetConverter()
-{
-	/*	Calculate power of two	*/
-	for (int n = 0; n < sizeof(BitSet::DataType) * 8; ++n)
-		m_powerOfTwo[n] = (BitSet::DataType)pow(2.0f, n);
-}
-
-BitSet::BitSetConverter::~BitSetConverter()
-{
-}
-
 BitSet::DataType* BitSet::BitSetConverter::ValueToBitSet(unsigned int _numberToConvert, unsigned int _maxNumberOfBits)
 {
 	/*	Calculate how many DataType(s) needed to cover all numbers	*/
@@ -36,33 +19,32 @@ BitSet::DataType* BitSet::BitSetConverter::ArrayToBitSet(const std::vector<unsig
 	/*	Go through all numbers and place them in the correct bitset	*/
 	for (unsigned int i = 0; i < _numbersToConvert.size(); ++i)
 	{
-		int currentInt = _numbersToConvert.at(i);
+		unsigned int currentBit = _numbersToConvert.at(i);
 
 		/*	Calculate at which index the current number should be represented	*/
-		int	bitmaskIndex = (int)floor((float)currentInt / (GetIntByteSize() * 8));
-		int	bitIndex = currentInt % (GetIntByteSize() * 8);
+		unsigned int bitSetIndex = GetBitSetIndex(currentBit);
+		unsigned int bitIndex = GetBitIndex(currentBit);
 
 		/*	Set the correct 'bit position'	*/
-		newBitSet[bitmaskIndex] += m_powerOfTwo[bitIndex] | 0;
+		newBitSet[bitSetIndex] |= ((DataType)1) << bitIndex;
 	}
-
 	return newBitSet;
 }
 
-void BitSet::BitSetConverter::BitSetToArray(std::vector<unsigned int>& _out, BitSet::DataType* _bitmask, unsigned int _bitmaskCount)
+void BitSet::BitSetConverter::BitSetToArray(std::vector<unsigned int>& _out, const BitSet::DataType* const _bitmask, unsigned int _bitmaskCount)
 {
-	/*	Allocate a bool array with the size of the number of bits required to cover	*/
-	int bitCount = _bitmaskCount * GetIntByteSize() * 8;
+	unsigned int bitsPerInt = GetIntByteSize() * 8;
+	unsigned int index = 0;
 
 	/*	Go through all bitmasks	*/
-	for (unsigned int bitmaskIndex = 0; bitmaskIndex < _bitmaskCount; ++bitmaskIndex)
+	for (unsigned int bitSetIndex = 0; bitSetIndex < _bitmaskCount; ++bitSetIndex)
 	{
 		/*	Iterate over all bits inside each bitmask	*/
-		for (unsigned int bitIndex = 0; bitIndex < GetIntByteSize() * 8; ++bitIndex)
+		for (unsigned int bitIndex = 0; bitIndex < bitsPerInt; ++bitIndex)
 		{
-			/*	Add the number to the resulting vector if it is in the bitmask	*/
-			if ((m_powerOfTwo[bitIndex] & _bitmask[bitmaskIndex]) == m_powerOfTwo[bitIndex])
-				_out.push_back(bitmaskIndex * GetIntByteSize() * 8 + bitIndex);
+			if (_bitmask[bitSetIndex] & ((DataType)1 << bitIndex))
+				_out.push_back(index);
+			++index;
 		}
 	}
 }

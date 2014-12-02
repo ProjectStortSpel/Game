@@ -8,11 +8,6 @@ namespace ECSL
 {
 	class DECLSPEC DataArray : public DataTable
 	{
-	private:
-		char* m_dataTable;
-		unsigned int m_bytesPerRow;
-		unsigned int m_rowCount;
-
 	public:
 		DataArray(unsigned const int _rowCount, unsigned const int _bytesPerRow);
 		~DataArray();
@@ -26,11 +21,16 @@ namespace ECSL
 		inline virtual void SetData(unsigned const int _row, void* _data, unsigned const int _byteCount);
 		inline virtual void SetData(unsigned const int _row, unsigned const int _column, void* _data, unsigned const int _byteCount);
 
-		const int GetRowCount() const;
+		const unsigned int GetRowCount() const;
 
 		/* Data usage */
-		const int GetBytesPerRow() const;
-		const int GetMemoryAllocated() const;
+		const unsigned int GetBytesPerRow() const;
+		const unsigned int GetMemoryAllocated() const;
+
+	private:
+		char* m_dataTable;
+		unsigned int m_bytesPerRow;
+		unsigned int m_rowCount;
 	};
 }
 #endif

@@ -20,8 +20,10 @@ namespace ECSL
 		World(unsigned int _entityCount, std::vector<SystemWorkGroup*>* _systemWorkGroups, std::vector<unsigned int>* _componentTypeIds);
 		~World();
 
+
 		inline unsigned int CreateNewEntity();
 		inline void CreateComponentAndAddTo(const std::string& _componentType, unsigned int _entityId);
+		inline void RemoveComponentFrom(const std::string& _componentType, unsigned int _entityId);
 		inline void KillEntity(unsigned int _entityId);
 	};
 }

@@ -54,17 +54,17 @@ namespace ECSL
 		memcpy(m_dataTable + (_row * m_bytesPerRow) + _column, _data, _byteCount);
 	}
 
-	const int DataArray::GetRowCount() const
+	const unsigned int DataArray::GetRowCount() const
 	{
 		return m_rowCount;
 	}
 
-	const int DataArray::GetBytesPerRow() const
+	const unsigned int DataArray::GetBytesPerRow() const
 	{
 		return m_bytesPerRow;
 	}
 
-	const int DataArray::GetMemoryAllocated() const
+	const unsigned int DataArray::GetMemoryAllocated() const
 	{
 		return sizeof(DataArray) + m_bytesPerRow * m_rowCount;
 	}
