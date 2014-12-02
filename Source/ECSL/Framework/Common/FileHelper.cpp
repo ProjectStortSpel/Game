@@ -8,7 +8,7 @@
 #else
 #include <dirent.h>
 #include <unistd.h>
-#define GetCurrentDir getcwd
+#include <sys/stat.h>
 #endif
 
 using namespace ECSL;
@@ -48,28 +48,32 @@ void FileHelper::GetFilesInDirectory(std::vector<std::string>& _out, const std::
 
 	FindClose(dir);
 #else
-	//DIR *dir;
-	//class dirent *ent;
-	//class stat st;
+	DIR *dir;
+	struct dirent *ent;
+	struct stat st;
 
-	//dir = opendir(directory);
-	//while ((ent = readdir(dir)) != NULL) {
-	//	const string file_name = ent->d_name;
-	//	const string full_file_name = _directory + "/" + file_name;
+	dir = opendir(_directory.c_str());
+	if (dir != NULL)
+	{
+		while (ent = readdir(dir))
+		{
+		  const std::string file_name = ent->d_name;
+		  const std::string full_file_name = _directory + std::string("/") + file_name;
 
-	//	if (file_name[0] == '.')
-	//		continue;
+		  if (file_name[0] == '.')
+			  continue;
 
-	//	if (stat(full_file_name.c_str(), &st) == -1)
-	//		continue;
+		  if (stat(full_file_name.c_str(), &st) == -1)
+			  continue;
 
-	//	const bool is_directory = (st.st_mode & S_IFDIR) != 0;
+		  const bool is_directory = (st.st_mode & S_IFDIR) != 0;
 
-	//	if (is_directory)
-	//		continue;
+		  if (is_directory)
+			  continue;
 
-	//	_out.push_back(full_file_name);
-	//}
-	//closedir(dir);
+		  _out.push_back(full_file_name);
+		}
+	}
+	closedir(dir);
 #endif
 }

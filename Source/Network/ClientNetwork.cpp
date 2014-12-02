@@ -51,6 +51,7 @@ bool ClientNetwork::Connect(const char* _ipAddress, const char* _password, const
 
 	return Connect();
 }
+
 bool ClientNetwork::Connect()
 {
 	if (NET_DEBUG)
@@ -99,6 +100,7 @@ bool ClientNetwork::Connect()
 
 	return true;
 }
+
 void ClientNetwork::Disconnect()
 {
 	uint64_t id = m_packetHandler.StartPack(ID_CONNECTION_DISCONNECTED);
@@ -208,6 +210,7 @@ void ClientNetwork::NetPasswordInvalid(PacketHandler* _packetHandler, uint64_t _
 		m_onPasswordInvalid(_connection);
 
 }
+
 void ClientNetwork::NetConnectionAccepted(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
 	if (NET_DEBUG)
@@ -271,6 +274,7 @@ void ClientNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uin
 		m_receivePacketsThread.join();
 }
 
+
 void ClientNetwork::NetConnectionKicked(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
 	if (NET_DEBUG)
@@ -307,6 +311,7 @@ void ClientNetwork::NetConnectionBanned(PacketHandler* _packetHandler, uint64_t 
 		m_receivePacketsThread.join();
 }
 
+
 void ClientNetwork::NetPing(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
 	if (NET_DEBUG)
@@ -323,7 +328,7 @@ void ClientNetwork::NetPong(PacketHandler* _packetHandler, uint64_t _id, NetConn
 		printf("Pong from: %s:%d\n", _connection.IpAddress.c_str(), _connection.Port);
 }
 
-//Remote
+
 void ClientNetwork::NetRemoteConnectionAccepted(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
 	std::string name = _packetHandler->ReadString(_id);
@@ -333,7 +338,6 @@ void ClientNetwork::NetRemoteConnectionAccepted(PacketHandler* _packetHandler, u
 	if (m_onRemotePlayerConnected)
 		m_onRemotePlayerConnected(_connection);
 }
-
 
 void ClientNetwork::NetRemoteConnectionLost(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
@@ -354,7 +358,6 @@ void ClientNetwork::NetRemoteConnectionDisconnected(PacketHandler* _packetHandle
 	if (m_onRemotePlayerDisconnected)
 		m_onRemotePlayerDisconnected(_connection);
 }
-
 
 void ClientNetwork::NetRemoteConnectionKicked(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {

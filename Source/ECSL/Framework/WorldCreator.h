@@ -22,6 +22,7 @@ namespace ECSL
 		template<typename ComponentType>
 		void AddComponentType();
 		void AddComponentType(const std::string& _componentType);
+		void AddComponentType(ComponentType& _componentType);
 
 		/// Adds a system to a new group
 		template<typename SystemType>
@@ -29,6 +30,9 @@ namespace ECSL
 		// Adds a system to the most recently added group
 		template<typename SystemType>
 		void AddSystemToCurrentGroup();
+
+		void AddLuaSystemToCurrentGroup(System* _system);
+
 		// Adds a new system group
 		void AddSystemGroup();
 

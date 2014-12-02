@@ -29,9 +29,15 @@ bool SimpleText::Init(GLuint _textimage, int _clientWidth, int _clientHeight)
 
 	simpleTextX = _clientWidth / 8;
 	simpleTextY = _clientHeight / 16;
+
+	for (int i = 0; i < simpleTextX*simpleTextY; i++)
+	{
+		simpleText.push_back(32);
+	}
+
 	glGenBuffers(1, &simpleTextBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, simpleTextBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(int)* 4608, &simpleText, GL_DYNAMIC_COPY);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(int)* simpleText.size(), &simpleText[0], GL_DYNAMIC_COPY);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, simpleTextBuffer);
 
 	return true;
@@ -45,7 +51,7 @@ void SimpleText::RenderText(float _dt)
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, simpleTextBuffer);
 		GLvoid* p = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-		memcpy(p, &simpleText, sizeof(int)* 4608);
+		memcpy(p, &simpleText[0], sizeof(int)* simpleText.size());
 		glUnmapBuffer(GL_ARRAY_BUFFER);
 
 		m_clock = 0;
@@ -60,7 +66,7 @@ void SimpleText::RenderText(float _dt)
 
 	if (m_clock > m_update)
 	{
-		for (int i = 0; i < 4608; i++)
+		for (int i = 0; i < simpleText.size(); i++)
 		{
 			simpleText[i] = 32;
 		}
@@ -68,7 +74,7 @@ void SimpleText::RenderText(float _dt)
 	}
 
 	// run program
-	glDispatchCompute(128, 36, 1); // 1/16 = 0.0625
+	glDispatchCompute(simpleTextX, simpleTextY, 1); // 1/16 = 0.0625
 }
 
 bool SimpleText::RenderSimpleText(std::string _text, int _x, int _y)

@@ -1,4 +1,5 @@
 #include "ComponentTypeManager.h"
+#include <assert.h>
 
 #include "../Framework/Common/FileHelper.h"
 
@@ -11,7 +12,7 @@ ComponentTypeManager& ComponentTypeManager::GetInstance()
 }
 
 ComponentTypeManager::ComponentTypeManager()
-:	m_componentTypes(new std::map<int, ComponentType*>()), 
+:	m_componentTypes(new std::map<unsigned int, ComponentType*>()), 
 	m_parser(new Parser()), m_componentTypeReader(new ComponentTypeReader()), 
 	m_stringTableId(new std::unordered_map<std::string, unsigned int>()),
 	m_nextTableId(-1)
@@ -96,5 +97,8 @@ unsigned int ComponentTypeManager::GetTableId(const std::string& _componentType)
 
 void ComponentTypeManager::AddComponentType(ComponentType& _componentType)
 {
+	/*	Trying to add a component that is already defined	*/
+	assert(m_stringTableId->find(_componentType.GetName()) != m_stringTableId->end());
+
 	m_componentTypes->insert(std::pair<int, ComponentType*>(ComponentTypeManager::GetTableId(_componentType.GetName()), &_componentType));
 }

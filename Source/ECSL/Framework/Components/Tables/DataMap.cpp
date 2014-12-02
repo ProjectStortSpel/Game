@@ -37,35 +37,18 @@ namespace ECSL
 		m_dataMap->erase(m_dataMap->find(_row));
 	}
 
-	DataLocation DataMap::GetData(unsigned const int _id) const
+	const unsigned int DataMap::GetRowCount() const
 	{
-		return (*m_dataMap)[_id];
-	}
-	DataLocation DataMap::GetData(unsigned const int _id, unsigned const int _index) const
-	{
-		return (*m_dataMap)[_id] + _index;
-	}
-	void DataMap::SetData(unsigned const int _id, void* _data, unsigned const int _byteCount)
-	{
-		memcpy((*m_dataMap)[_id], _data, _byteCount);
-	}
-	void DataMap::SetData(unsigned const int _id, unsigned const int _index, void* _data, unsigned const int _byteCount)
-	{
-		memcpy((*m_dataMap)[_id] + _index, _data, _byteCount);
+		return (unsigned int)m_dataMap->size();
 	}
 
-	const int DataMap::GetRowCount() const
-	{
-		return m_dataMap->size();
-	}
-
-	const int DataMap::GetBytesPerRow() const
+	const unsigned int DataMap::GetBytesPerRow() const
 	{
 		return m_bytesPerRow;
 	}
 
-	const int DataMap::GetMemoryAllocated() const
+	const unsigned int DataMap::GetMemoryAllocated() const
 	{
-		return sizeof(DataMap) + m_bytesPerRow * m_dataMap->size();
+		return (unsigned int)(sizeof(DataMap) + m_bytesPerRow * m_dataMap->size());
 	}
 }

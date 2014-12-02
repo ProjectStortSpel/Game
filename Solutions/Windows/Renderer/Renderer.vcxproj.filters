@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{dc55a425-a7b0-4bd7-a8d7-f602be89ea62}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="shaders">
-      <UniqueIdentifier>{dc55a425-a7b0-4bd7-a8d7-f602be89ea62}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -26,6 +26,10 @@
     <ClInclude Include="..\..\..\Source\Renderer\SimpleText.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\Camera.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\ModelLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp">
@@ -40,6 +44,9 @@
     <ClCompile Include="..\..\..\Source\Renderer\SimpleText.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Renderer\Camera.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\Externals\content\shaders\fullscreen.ps">
@@ -51,13 +58,7 @@
     <None Include="..\..\..\Externals\content\shaders\fullscreen.gs">
       <Filter>shaders</Filter>
     </None>
-    <None Include="..\..\..\Externals\content\shaders\FSDeferredPass2.glsl">
-      <Filter>shaders</Filter>
-    </None>
     <None Include="..\..\..\Externals\content\shaders\VSDeferredPass1.glsl">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\shaders\VSDeferredPass2.glsl">
       <Filter>shaders</Filter>
     </None>
     <None Include="..\..\..\Externals\content\shaders\FSDeferredPass1.glsl">

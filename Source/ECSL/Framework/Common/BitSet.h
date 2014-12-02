@@ -37,22 +37,12 @@ namespace ECSL
 			return _bitIndex % (GetIntByteSize() * 8);
 		}
 
-		class DECLSPEC BitSetConverter
+		namespace BitSetConverter
 		{
-		public:
-			~BitSetConverter();
-			static BitSetConverter& GetInstance();
-
 			DataType* ValueToBitSet(unsigned int _numberToConvert, unsigned int _maxNumberOfBits);
 			DataType* ArrayToBitSet(const std::vector<unsigned int>& _numbersToConvert, unsigned int _maxNumberOfBits);
-			void BitSetToArray(std::vector<unsigned int>& _out, DataType* _bitmask, unsigned int _bitmaskCount);
-
-		private:
-			BitSetConverter();
-			DataType m_powerOfTwo[sizeof(DataType) * 8];
-
-		};
-
+			void BitSetToArray(std::vector<unsigned int>& _out, const DataType* const _bitmask, unsigned int _bitmaskCount);
+		}
 	}
 }
 
