@@ -51,7 +51,7 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t _
 	{
 		uint64_t id2 = _packetHandler->StartPack(NetTypeMessageId::ID_CONNECTION_ACCEPTED);
 		auto newPacket = _packetHandler->EndPack(id2);
-		m_connectedClients[_connection]->SetAccepted(true);
+		m_connectedClients[_connection]->SetActive(2);
 		Send(newPacket, _connection);
 
 		if (m_onPlayerConnected)
@@ -69,14 +69,14 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t _
 
 void ServerNetwork::NetConnectionLost(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
-	m_connectedClients[_connection]->SetAccepted(false);
+	m_connectedClients[_connection]->SetActive(0);
 	if (m_onPlayerTimedOut)
 		m_onPlayerTimedOut(_connection);
 }
 
 void ServerNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
-
+	m_connectedClients[_connection]->SetActive(0);
 	
 
 	SAFE_DELETE(m_connectedClients[_connection]);
@@ -169,7 +169,7 @@ void ServerNetwork::Broadcast(Packet* _packet, NetConnection _exclude)
 {
 	for (auto it = m_connectedClients.begin(); it != m_connectedClients.end(); it++)
 	{
-		if (it->first == _exclude || !it->second->GetAccepted())
+		if (it->first == _exclude || it->second->GetActive() != 2)
 			continue;
 
 		it->second->Send((char*)_packet->Data, _packet->Length);
@@ -182,7 +182,7 @@ void ServerNetwork::Send(Packet* _packet, NetConnection _receiver)
 {
 	auto result = m_connectedClients.find(_receiver);
 
-	if (result == m_connectedClients.end() || !result->second->GetAccepted()) // Could be a problem, check and make sure
+	if (result == m_connectedClients.end() || result->second->GetActive() != 2) // Could be a problem, check and make sure
 	{
 		if (NET_DEBUG)
 			printf("Connection to receiver \"%s:%i\" was not found.\n", _receiver.IpAddress.c_str(), _receiver.Port);
@@ -197,7 +197,7 @@ void ServerNetwork::Send(Packet* _packet, NetConnection _receiver)
 
 void ServerNetwork::ReceivePackets(ISocket* _socket, bool* _alive)
 {
-	while (*_alive)
+	while (_socket->GetActive() != 0)
 	{
 		int result = _socket->Receive(m_packetData, MAX_PACKET_SIZE);
 

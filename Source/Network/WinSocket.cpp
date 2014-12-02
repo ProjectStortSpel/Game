@@ -15,7 +15,7 @@ WinSocket::WinSocket(void)
 		m_remoteAddress = "";
 		m_remotePort = 0;
 		m_localPort = 0;
-		m_accepted = false;
+		m_active = 1;
 
 		g_noActiveSockets++;
 	}
