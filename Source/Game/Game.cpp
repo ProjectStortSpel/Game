@@ -53,8 +53,6 @@ void LoadAlotOfBoxes(Renderer::GraphicDevice* r)
 			r->LoadModel("content/models/cube/", "cube.object", &mat[x + y * 10]);
 		}
 	}
-	mat[101] = glm::translate(vec3(0, 0, 0));
-	r->LoadModel("content/models/cube/", "cube.object", &mat[101]);
 }
 
 void TestECSL()
@@ -96,6 +94,9 @@ int main(int argc, char** argv)
 
 	TestECSL();
 	LoadAlotOfBoxes(&RENDERER);
+	mat[100] = glm::translate(vec3(0, 0, 0));
+	int modelid = RENDERER.LoadModel("content/models/cube/", "cube.object", &mat[100]); // LOADMODEL RETURNS THE MODELID
+	RENDERER.ChangeModelTexture(modelid, "content/models/cube/NM_tst.png"); // CHANGING TEXTURE ON MODELID
 
 	bool lol = true;
 	float cd = 1.0f;
@@ -144,17 +145,17 @@ int main(int argc, char** argv)
 		
 		// MOVE CUBE
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_UP) == Input::InputState::DOWN)
-			mat[101] *= glm::translate(vec3(0, 0, -0.01f)); 
+			mat[100] *= glm::translate(vec3(0, 0, -0.01f)); 
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_DOWN) == Input::InputState::DOWN)
-			mat[101] *= glm::translate(vec3(0, 0, 0.01f));
+			mat[100] *= glm::translate(vec3(0, 0, 0.01f));
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_LEFT) == Input::InputState::DOWN)
-			mat[101] *= glm::translate(vec3(-0.01f, 0, 0));
+			mat[100] *= glm::translate(vec3(-0.01f, 0, 0));
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_RIGHT) == Input::InputState::DOWN)
-			mat[101] *= glm::translate(vec3(0.01f, 0, 0)); 
+			mat[100] *= glm::translate(vec3(0.01f, 0, 0)); 
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_SPACE) == Input::InputState::DOWN)
-			mat[101] *= glm::translate(vec3(0, 0.01f, 0));
+			mat[100] *= glm::translate(vec3(0, 0.01f, 0));
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_LSHIFT) == Input::InputState::DOWN)
-			mat[101] *= glm::translate(vec3(0, -0.01f, 0));
+			mat[100] *= glm::translate(vec3(0, -0.01f, 0));
 
 		// MOVE CAMERA
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_W) == Input::InputState::DOWN)

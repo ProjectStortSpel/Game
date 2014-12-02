@@ -457,10 +457,24 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 
 bool GraphicDevice::ChangeModelTexture(int _id, std::string _fileDir)
 {
+	int location;
+	GLuint texture;
+
 	for (int i = 0; i < m_models.size(); i++)
 	{
+		if (m_models[i].modelID == _id)
+		{
+			texture = AddTexture(_fileDir, GL_TEXTURE1);
+			glActiveTexture(GL_TEXTURE1);
+			location = glGetUniformLocation(m_deferredShader1.GetShaderProgram(), "diffuseTex");
+			glUniform1i(location, 1);
+			
+			m_models[i].texID = texture;
+
+			return true;
+		}
 	}
-	return true;
+	return false;
 }
 
 
