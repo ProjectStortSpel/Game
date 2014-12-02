@@ -131,7 +131,7 @@ void BaseNetwork::Update(void)
 	m_systemPacketLock.unlock();
 	
 	Packet *p;
-	for (int i = 0; i < num_sysPackets; ++num_sysPackets)
+	for (int i = 0; i < num_sysPackets; ++i)
 	{
 		m_systemPacketLock.lock();
 		p = m_systemPackets.front();

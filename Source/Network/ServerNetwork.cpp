@@ -21,6 +21,13 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t _
 		m_connectedClients[_connection]->SetActive(2);
 		Send(newPacket, _connection);
 
+
+		uint64_t id3 = _packetHandler->StartPack(NetTypeMessageId::ID_REMOTE_CONNECTION_ACCEPTED);
+		_packetHandler->WriteString(id3, "Username_Temp");
+		Packet* p = _packetHandler->EndPack(id3);
+
+		Broadcast(p, _connection);
+
 		if (m_onPlayerConnected)
 			m_onPlayerConnected(_connection);
 	}
@@ -30,21 +37,40 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t _
 		auto newPacket = _packetHandler->EndPack(id2);
 		Send(newPacket, _connection);
 		m_connectedClients[_connection]->SetActive(0);
+		m_receivePacketsThreads[_connection].join();
 	}
 }
 
 void ServerNetwork::NetConnectionLost(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
 	m_connectedClients[_connection]->SetActive(0);
+
+	uint64_t id = _packetHandler->StartPack(NetTypeMessageId::ID_REMOTE_CONNECTION_LOST);
+	_packetHandler->WriteString(id, "Username_Temp");
+	Packet* p = _packetHandler->EndPack(id);
+
+	Broadcast(p, _connection);
+
 	if (m_onPlayerTimedOut)
 		m_onPlayerTimedOut(_connection);
+
+	m_receivePacketsThreads[_connection].join();
 }
 
 void ServerNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
 	m_connectedClients[_connection]->SetActive(0);
+
+	uint64_t id = _packetHandler->StartPack(NetTypeMessageId::ID_REMOTE_CONNECTION_DISCONNECTED);
+	_packetHandler->WriteString(id, "Username_Temp");
+	Packet* p = _packetHandler->EndPack(id);
+
+	Broadcast(p, _connection);
+
 	if(m_onPlayerDisconnected)
 		m_onPlayerDisconnected(_connection);
+
+	m_receivePacketsThreads[_connection].join();
 }
 
 ServerNetwork::ServerNetwork()
@@ -103,13 +129,20 @@ bool ServerNetwork::Start()
 
 bool ServerNetwork::Stop()
 {
-	for (unsigned int i = 0; i < m_receivePacketsAlive.size(); ++i)
-		m_receivePacketsAlive[i] = false;
+	uint64_t id = m_packetHandler.StartPack(NetTypeMessageId::ID_CONNECTION_DISCONNECTED);
+	Packet* p = m_packetHandler.EndPack(id);
+	Broadcast(p);
 
-	for (unsigned int i = 0; i < m_receivePacketsThreads.size(); ++i)
-		m_receivePacketsThreads[i].join();
+	for (auto it = m_connectedClients.begin(); it != m_connectedClients.end(); ++it)
+	{
+		it->second->SetActive(0);
+	}
 
-	m_receivePacketsAlive.clear();
+	for (auto it = m_receivePacketsThreads.begin(); it != m_receivePacketsThreads.end(); ++it)
+	{
+		it->second.join();
+	}
+
 	m_receivePacketsThreads.clear();
 
 	if (m_listenForConnectionsAlive)
@@ -158,7 +191,7 @@ void ServerNetwork::Send(Packet* _packet, NetConnection _receiver)
 	SAFE_DELETE(_packet);
 }
 
-void ServerNetwork::ReceivePackets(ISocket* _socket, bool* _alive)
+void ServerNetwork::ReceivePackets(ISocket* _socket)
 {
 	while (_socket->GetActive() != 0)
 	{
@@ -214,8 +247,7 @@ void ServerNetwork::ListenForConnections(void)
 
 		bool* b = new bool(true);
 
-		m_receivePacketsAlive.push_back(b);
-		m_receivePacketsThreads.push_back(std::thread(&ServerNetwork::ReceivePackets, this, newConnection, b));
+		m_receivePacketsThreads[nc] = std::thread(&ServerNetwork::ReceivePackets, this, newConnection);
 	}
 }
 

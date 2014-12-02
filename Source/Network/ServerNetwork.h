@@ -36,7 +36,7 @@ public:
 	void SetOnPlayerTimedOut(NetEvent _function);
 
 private:
-	void ReceivePackets(ISocket* _socket, bool* alive);
+	void ReceivePackets(ISocket* _socket);
 	void ListenForConnections(void);
 
 	void NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
@@ -55,8 +55,7 @@ private:
 	ISocket* m_listenSocket;
 	std::map<NetConnection, ISocket*> m_connectedClients;
 
-	std::vector<std::thread> m_receivePacketsThreads;
-	std::vector<bool*> m_receivePacketsAlive;
+	std::map<NetConnection, std::thread> m_receivePacketsThreads;
 
 	//std::map<NetConnection
 

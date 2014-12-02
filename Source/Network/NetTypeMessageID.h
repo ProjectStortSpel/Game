@@ -12,7 +12,7 @@ enum NetTypeMessageId
 	ID_REMOTE_CONNECTION_BANNED,		// Remote connection banned from server
 	ID_PASSWORD_ATTEMPT,				// Client send password to server
 	ID_PASSWORD_INVALID,				// Server return to client if ID_PASSWORD_ATTEMPT is unvalid
-	ID_REMOTE_NEW_CONNECTION_ACCEPTED,	// New remote connection accepted to server
+	ID_REMOTE_CONNECTION_ACCEPTED,		// New remote connection accepted to server
 	ID_REMOTE_CONNECTION_LOST,			// Remote connection to server timed out
 	ID_REMOTE_CONNECTION_DISCONNECTED,	// Remote connection disconencted
 
