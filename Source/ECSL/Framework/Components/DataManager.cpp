@@ -103,9 +103,12 @@ void DataManager::RemoveComponentFrom(unsigned int _componentTypeId, unsigned in
 	ContainerHelper::TryAddKey<unsigned int, std::vector<unsigned int>>(_entityId, *m_componentsToBeRemoved);
 	printf("3");
 	(*m_componentsToBeRemoved)[_entityId].push_back(_componentTypeId);
+	printf("4");
 	ContainerHelper::AddUniqueElement(_entityId, *m_changedEntities);
+	printf("5");
 
 	m_entityTable->RemoveComponentFrom(_entityId, _componentTypeId);
+	printf("6");
 }
 
 void DataManager::ClearComponentData()
