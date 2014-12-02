@@ -9,7 +9,7 @@ Camera::Camera()
 
 	m_camPitch = 0.0f;
 	m_camYaw = M_PI;
-	m_sensitivity = 0.6f;
+	m_sensitivity = 0.002f;
 	m_moveSpeed = 1.0f;
 }
 
@@ -38,10 +38,10 @@ void Camera::MoveRight(float dt)
 	m_pos += 5.0f*m_moveSpeed*dt*m_right;
 }
 
-void Camera::UpdateMouse(float midX, float midY, int x, int y, float dt)
+void Camera::UpdateMouse(float midX, float midY, int x, int y)
 {
-	m_camYaw += m_sensitivity*(midX - (float)x)*dt;
-	m_camPitch += m_sensitivity*(midY - (float)y)*dt;
+	m_camYaw += m_sensitivity*(midX - (float)x);
+	m_camPitch += m_sensitivity*(midY - (float)y);
 
 	m_look = vec3(cos(m_camPitch) * sin(m_camYaw), sin(m_camPitch), cos(m_camPitch)*cos(m_camYaw));
 	m_right = vec3(sin(m_camYaw - M_PI / 2.0f), 0, cos(m_camYaw - M_PI / 2.0f));

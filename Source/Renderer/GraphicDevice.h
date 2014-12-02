@@ -95,6 +95,8 @@ namespace Renderer
 		float m_dt;
 		int m_fps;
 
+		int m_vramUsage; //in bytes
+
 		// Timer for shader run time
 		std::vector<GLTimerValue> m_glTimerValues;
 
