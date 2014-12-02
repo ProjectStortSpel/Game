@@ -2,6 +2,11 @@
 #include "NetTypeMessageID.h"
 #include "BaseNetwork.h"
 
+#ifdef WIN32
+#else
+#include <arpa/inet.h>
+#endif
+
 PacketHandler::PacketHandler()
 {
 }
@@ -183,8 +188,9 @@ void PacketHandler::WriteShort(uint64_t _id, const short _short)
 	{
 		if (!IsOutOfBounds(psi->Data, psi->Position + sizeof(int), MAX_PACKET_SIZE))
 		{
-			memcpy(psi->Position, &_short, sizeof(_short));
-			psi->Position += sizeof(_short);
+			short s = htons(_short);
+			memcpy(psi->Position, &s, sizeof(s));
+			psi->Position += sizeof(s);
 		}
 	}
 }
@@ -195,8 +201,9 @@ void PacketHandler::WriteInt(uint64_t _id, const int _int)
 	{
 		if (!IsOutOfBounds(psi->Data, psi->Position + sizeof(int), MAX_PACKET_SIZE))
 		{
-			memcpy(psi->Position, &_int, sizeof(_int));
-			psi->Position += sizeof(_int);
+			int i = htonl(_int);
+			memcpy(psi->Position, &i, sizeof(i));
+			psi->Position += sizeof(i);
 		}
 	}
 }
@@ -240,6 +247,7 @@ short PacketHandler::ReadShort(uint64_t _id)
 		if (!IsOutOfBounds(pri->PacketData->Data, pri->Position + sizeof(short), pri->PacketData->Length))
 		{
 			memcpy(&var, pri->Position, sizeof(short));
+			var = ntohs(var);
 			pri->Position += sizeof(short);
 		}
 	}
@@ -256,6 +264,7 @@ int PacketHandler::ReadInt(uint64_t _id)
 		if (!IsOutOfBounds(pri->PacketData->Data, pri->Position + sizeof(int), pri->PacketData->Length))
 		{
 			memcpy(&var, pri->Position, sizeof(int));
+			var = ntohl(var);
 			pri->Position += sizeof(int);
 		}
 	}

@@ -61,14 +61,37 @@ void TestECSL()
 	//delete(&ECSL::BitSet::BitSetConverter::GetInstance());
 }
 
+
+ServerNetwork* server = 0;
+ClientNetwork* client = 0;
+bool isServer = false;
+
 void OnDisconnect(NetConnection nc)
 {
 	printf("Test\n");
 }
 
-ServerNetwork* server = 0;
-ClientNetwork* client = 0;
-bool isServer = false;
+void OnConnected(NetConnection nc)
+{
+	PacketHandler* ph = client->GetPacketHandler();
+
+	uint64_t id = ph->StartPack("testvars");
+
+	ph->WriteShort(id, 555);
+	ph->WriteInt(id, 240001);
+
+	client->Send(ph->EndPack(id));
+
+}
+
+void Test(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
+{
+	short s =_packetHandler->ReadShort(_id);
+	int i = _packetHandler->ReadInt(_id);
+
+	printf("%d - %d\n", s, i);
+}
+
 
 int main(int argc, char** argv)
 {
@@ -88,22 +111,25 @@ int main(int argc, char** argv)
 	std::getline(std::cin, input);
 	ClearConsole();
 
+
 	if (input.compare("s") == 0)
 	{
 		isServer = true;
 		server = new ServerNetwork();
 		server->SetOnPlayerDisconnected(&OnDisconnect);
-		server->Start(6112, "localhest", 8);
+		server->AddNetworkHook("testvars", &Test);
+		server->Start(6112, "localhest", 8);	
 	}
 	else if (input.compare("c") == 0)
 	{
 		client = new ClientNetwork();
-
+		client->SetOnConnectedToServer(&OnConnected);
 		client->Connect("194.47.150.5", "localhest", 6112, 0);
 	}
 	else if (input.compare("l") == 0)
 	{
 		client = new ClientNetwork();
+		client->SetOnConnectedToServer(&OnConnected);
 		client->Connect("127.0.0.1", "localhest", 6112, 0);
 	}
 

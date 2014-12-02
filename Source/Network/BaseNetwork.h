@@ -48,8 +48,10 @@ public:
 	// Set the server password
 	void SetServerPassword(const char* _password) { m_password = _password; }
 
-	void AddNetworkHook(std::string _name, NetMessageHook _hook);
+	void AddNetworkHook(char* _name, NetMessageHook _hook);
 	//NetMessageHook* GetNetworkFunction(NetTypeMessageId _function);
+
+	PacketHandler* GetPacketHandler() { return &m_packetHandler; }
 
 protected:
 	void TriggerEvent(NetMessageHook _function, uint64_t _packetId, NetConnection _connection);
