@@ -1,4 +1,6 @@
-#pragma once
+/*Author: Chris*/
+#ifndef CAMERA_H
+#define CAMERA_H
 #include "stdafx.h"
 
 #define M_PI 3.14159265359
@@ -35,3 +37,4 @@ public:
 
 };
 
+#endif
