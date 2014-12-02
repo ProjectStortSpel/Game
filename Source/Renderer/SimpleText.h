@@ -19,6 +19,8 @@ namespace Renderer
 		bool RenderSimpleText(std::string _text, int x, int y);
 		void SetSimpleTextColor(glm::vec4 _color);
 
+		int GetArraySize(){ return simpleText.size(); }
+
 	private:
 		float m_clock;
 		float m_update;
