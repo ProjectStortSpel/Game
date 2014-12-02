@@ -240,8 +240,8 @@ bool GraphicDevice::InitSDLWindow()
 	const char*		Caption = "SDL Window";
 	int				PosX = 200;
 	int				PosY = 280;
-	int				SizeX = 256 * 4;
-	int				SizeY = 144 * 4;
+	int				SizeX = 256 * 5;
+	int				SizeY = 144 * 5;
 
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1){
 		std::cout << SDL_GetError() << std::endl;
