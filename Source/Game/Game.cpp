@@ -66,11 +66,6 @@ ServerNetwork* server = 0;
 ClientNetwork* client = 0;
 bool isServer = false;
 
-void OnDisconnect(NetConnection nc)
-{
-	printf("Test\n");
-}
-
 void OnConnected(NetConnection nc)
 {
 	PacketHandler* ph = client->GetPacketHandler();
@@ -116,7 +111,6 @@ int main(int argc, char** argv)
 	{
 		isServer = true;
 		server = new ServerNetwork();
-		server->SetOnPlayerDisconnected(&OnDisconnect);
 		server->AddNetworkHook("testvars", &Test);
 		server->Start(6112, "localhest", 8);	
 	}

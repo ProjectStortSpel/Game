@@ -16,6 +16,9 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t _
 	std::string password = _packetHandler->ReadString(_id);
 	if (m_password.compare(password) == 0)
 	{
+		if (NET_DEBUG)
+			printf("Player accepted. IP: %s:%d\n", _connection.IpAddress.c_str(), _connection.Port);
+
 		uint64_t id2 = _packetHandler->StartPack(NetTypeMessageId::ID_CONNECTION_ACCEPTED);
 		auto newPacket = _packetHandler->EndPack(id2);
 		m_connectedClients[_connection]->SetActive(2);
@@ -33,6 +36,9 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t _
 	}
 	else
 	{
+		if (NET_DEBUG)
+			printf("Player connected with invalid password. IP: %s:%d\n", _connection.IpAddress.c_str(), _connection.Port);
+
 		uint64_t id2 = _packetHandler->StartPack(NetTypeMessageId::ID_PASSWORD_INVALID);
 		auto newPacket = _packetHandler->EndPack(id2);
 		Send(newPacket, _connection);
@@ -43,6 +49,9 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t _
 
 void ServerNetwork::NetConnectionLost(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
+	if (NET_DEBUG)
+		printf("Player timed out. IP: %s:%d\n", _connection.IpAddress.c_str(), _connection.Port);
+
 	m_connectedClients[_connection]->SetActive(0);
 
 	uint64_t id = _packetHandler->StartPack(NetTypeMessageId::ID_REMOTE_CONNECTION_LOST);
@@ -59,6 +68,9 @@ void ServerNetwork::NetConnectionLost(PacketHandler* _packetHandler, uint64_t _i
 
 void ServerNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
+	if (NET_DEBUG)
+		printf("Player disconnected. IP: %s:%d\n", _connection.IpAddress.c_str(), _connection.Port);
+
 	m_connectedClients[_connection]->SetActive(0);
 
 	uint64_t id = _packetHandler->StartPack(NetTypeMessageId::ID_REMOTE_CONNECTION_DISCONNECTED);
