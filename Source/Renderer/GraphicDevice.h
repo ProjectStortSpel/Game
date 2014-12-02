@@ -22,13 +22,15 @@ namespace Renderer
 		bool operator!= (const Model &m) { return bufferPtr->getVAO() == m.bufferPtr->getVAO() ? false : true; }
 
 		Model(){}
-		Model(Buffer* buffer, GLuint tex, GLuint nor, GLuint spe)
+		Model(int ID, Buffer* buffer, GLuint tex, GLuint nor, GLuint spe)
 		{
+			modelID = ID;
 			bufferPtr = buffer;
 			texID = tex;
 			norID = nor;
 			speID = spe;
 		}
+		int modelID;
 		Buffer* bufferPtr;
 		GLuint texID;
 		GLuint norID;
@@ -36,7 +38,6 @@ namespace Renderer
 
 		glm::mat4* modelMatrix;	// GÖR DETTA TILL EN PEKARE NÄR E/C FUNGERAR
 	};
-
 
 	struct GLTimerValue
 	{
@@ -72,7 +73,8 @@ namespace Renderer
 		void GetWindowSize(int &x, int &y){ x = m_clientWidth; y = m_clientHeight; }
 
 		// MODELLOADER
-		void LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr);
+		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr);
+		bool ChangeModelTexture(int _id, std::string _fileDir);
 
 	private:
 		bool InitSDLWindow();
@@ -118,8 +120,8 @@ namespace Renderer
 		// SimpleText
 		SimpleText m_textRenderer;
 
-
 		// Modelloader
+		int m_modelIDcounter;
 		std::vector<Model> m_models;
 
 		// Meshs
