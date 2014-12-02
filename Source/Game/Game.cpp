@@ -28,7 +28,7 @@ mat4 mat[1000];
 ServerNetwork* server = 0;
 ClientNetwork* client = 0;
 bool isServer = false;
-
+std::string newPlayer = "";
 
 
 
@@ -150,17 +150,17 @@ void LoadAlotOfBoxes(Renderer::GraphicDevice* r)
 }
 void OnConnected(NetConnection nc)
 {
-	//PacketHandler* ph = client->GetPacketHandler();
-
-	//uint64_t id = ph->StartPack("testvars");
-
-	//ph->WriteShort(id, 555);
-	//ph->WriteInt(id, 240001);
-
-	//client->Send(ph->EndPack(id));
-
+	std::stringstream ss;
+	ss << "connected to server " << nc.IpAddress.c_str() << ":" << nc.Port << ".\n";
+	newPlayer = ss.str();
 }
 
+void OnPlayerConnected(NetConnection nc)
+{
+	std::stringstream ss;
+	ss << nc.IpAddress.c_str() << ":" << nc.Port << " connected to server.\n";
+	newPlayer = ss.str();
+}
 void Start()
 {
 	std::string input;
@@ -182,6 +182,7 @@ void Start()
 		isServer = true;
 		server = new ServerNetwork();
 		server->Start(6112, "localhest", 8);
+		server->SetOnPlayerConnected(&OnPlayerConnected);
 	}
 	else
 	{
@@ -203,9 +204,8 @@ void Start()
 
 
 
-
-	/*	Initialize Renderer and Input	*/
 	Renderer::GraphicDevice RENDERER = Renderer::GraphicDevice();
+	/*	Initialize Renderer and Input	*/
 	RENDERER.Init();
 
 	Input::InputWrapper* INPUT = &Input::InputWrapper::GetInstance();
@@ -237,7 +237,7 @@ void Start()
 
 		INPUT->Update();
 		RENDERER.Update(dt);
-		RENDERER.RenderSimpleText("This text render from GAME! \nThe x and y values in the function isn't pixel \ncoordinates, it's char position. Every char is \n8x16 pixels in size. Use \\n to change line.\n\n  !Not all chars is supported!\n\nRight now it clear the whole output image as well (Tell me when to remove this).", 10, 2);
+		RENDERER.RenderSimpleText(newPlayer, 0, 2);
 
 
 		RENDERER.Render();
