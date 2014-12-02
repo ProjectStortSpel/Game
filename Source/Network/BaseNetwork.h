@@ -41,7 +41,7 @@ public:
 	// Will return the number of packets remaining
 	int TriggerPacket(void);
 
-	void Update(void);
+	void Update(float _dt);
 
 	// Set the incoming port
 	void SetIncomingPort(const int _port) { m_incomingPort = _port; }
@@ -53,16 +53,20 @@ public:
 
 	PacketHandler* GetPacketHandler() { return &m_packetHandler; }
 
+	void SetMaxTimeOutCounter(int _max) { m_maxIntervallCounter = _max; }
+	void SetMaxTimeOutIntervall(float _max) { m_maxTimeOutIntervall = _max; }
+
 protected:
 	void TriggerEvent(NetMessageHook _function, uint64_t _packetId, NetConnection _connection);
 	void TriggerEvent(NetEvent _function, NetConnection _connection);
 
 	void HandlePacket(Packet* _packet);	
+
+	virtual void UpdateTimeOut(float _dt) = 0;
+
 protected:
 
 #pragma warning( disable : 4251 )
-
-	std::vector<NetConnection> m_connections;
 
 	std::map < std::string, NetMessageHook > m_userFunctions;
 	std::map < char, NetMessageHook > m_networkFunctions;
@@ -77,6 +81,9 @@ protected:
 	unsigned int m_incomingPort;
 
 	PacketHandler m_packetHandler;
+
+	float m_maxTimeOutIntervall;
+	int m_maxIntervallCounter;
 
 	char m_packetData[MAX_PACKET_SIZE];
 

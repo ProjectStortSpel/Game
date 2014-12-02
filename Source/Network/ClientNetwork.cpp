@@ -19,11 +19,13 @@ ClientNetwork::ClientNetwork()
 	m_networkFunctions[NetTypeMessageId::ID_CONNECTION_ACCEPTED] = std::bind(&ClientNetwork::NetConnectionAccepted, this, NetworkHookPlaceholders);
 	m_networkFunctions[NetTypeMessageId::ID_SERVER_FULL] = std::bind(&ClientNetwork::NetConnectionServerFull, this, NetworkHookPlaceholders);
 
-	m_networkFunctions[NetTypeMessageId::ID_CONNECTION_LOST] = std::bind(&ClientNetwork::NetConnectionLost, this, NetworkHookPlaceholders);
 	m_networkFunctions[NetTypeMessageId::ID_CONNECTION_DISCONNECTED] = std::bind(&ClientNetwork::NetConnectionDisconnected, this, NetworkHookPlaceholders);
 
 	m_networkFunctions[NetTypeMessageId::ID_CONNECTION_KICKED] = std::bind(&ClientNetwork::NetConnectionKicked, this, NetworkHookPlaceholders);
 	m_networkFunctions[NetTypeMessageId::ID_CONNECTION_BANNED] = std::bind(&ClientNetwork::NetConnectionBanned, this, NetworkHookPlaceholders);
+
+	m_networkFunctions[NetTypeMessageId::ID_PING] = std::bind(&ClientNetwork::NetPing, this, NetworkHookPlaceholders);
+	m_networkFunctions[NetTypeMessageId::ID_PONG] = std::bind(&ClientNetwork::NetPong, this, NetworkHookPlaceholders);
 
 	m_networkFunctions[NetTypeMessageId::ID_REMOTE_CONNECTION_ACCEPTED] = std::bind(&ClientNetwork::NetRemoteConnectionAccepted, this, NetworkHookPlaceholders);
 
@@ -129,6 +131,9 @@ void ClientNetwork::ReceivePackets()
 			if (NET_DEBUG)
 				printf("Received message with length \"%i\" from server.\n", packetSize);
 
+			m_currentIntervallCounter = 0;
+			m_currentTimeOutIntervall = 0.0f;
+
 			Packet* p = new Packet();
 			p->Data = new unsigned char[packetSize];
 			p->Length = packetSize;
@@ -161,6 +166,28 @@ void ClientNetwork::Send(Packet* _packet)
 
 	m_socket->Send((char*)_packet->Data, _packet->Length);
 	SAFE_DELETE(_packet);
+}
+
+void ClientNetwork::UpdateTimeOut(float _dt)
+{
+	m_currentTimeOutIntervall += _dt;
+
+	if (m_currentTimeOutIntervall >= m_maxTimeOutIntervall)
+	{
+		++m_currentIntervallCounter;
+		m_currentTimeOutIntervall = 0;
+
+		if (m_currentIntervallCounter >= m_maxIntervallCounter)
+		{
+			m_currentIntervallCounter = 0;
+			NetConnectionLost(m_socket->GetNetConnection());
+			return;
+		}
+		uint64_t id = m_packetHandler.StartPack(ID_PING);
+		Packet* p = m_packetHandler.EndPack(id);
+
+		Send(p);
+	}
 }
 
 void ClientNetwork::NetPasswordInvalid(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
@@ -205,7 +232,7 @@ void ClientNetwork::NetConnectionServerFull(PacketHandler* _packetHandler, uint6
 		m_receivePacketsThread.join();
 }
 
-void ClientNetwork::NetConnectionLost(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
+void ClientNetwork::NetConnectionLost(NetConnection _connection)
 {
 	if (NET_DEBUG)
 		printf("Disconnected. Connection timed out.\n");
@@ -275,6 +302,22 @@ void ClientNetwork::NetConnectionBanned(PacketHandler* _packetHandler, uint64_t 
 
 	if (m_receivePacketsThread.joinable())
 		m_receivePacketsThread.join();
+}
+
+void ClientNetwork::NetPing(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
+{
+	if (NET_DEBUG)
+		printf("Ping from: %s:%d\n", _connection.IpAddress.c_str(), _connection.Port);
+
+	uint64_t id = _packetHandler->StartPack(ID_PONG);
+	Packet* p = _packetHandler->EndPack(id);
+	Send(p);
+}
+
+void ClientNetwork::NetPong(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
+{
+	if (NET_DEBUG)
+		printf("Pong from: %s:%d\n", _connection.IpAddress.c_str(), _connection.Port);
 }
 
 //Remote

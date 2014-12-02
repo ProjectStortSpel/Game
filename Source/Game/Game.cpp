@@ -138,12 +138,12 @@ int main(int argc, char** argv)
 
 		if (isServer)
 		{
-			server->Update();
+			server->Update(dt);
 			while (server->TriggerPacket() > 0) {}
 		}
 		else
 		{
-			client->Update();
+			client->Update(dt);
 			while (client->TriggerPacket() > 0) {}
 		}
 

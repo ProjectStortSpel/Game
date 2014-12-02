@@ -5,6 +5,9 @@ BaseNetwork::BaseNetwork()
 	m_password = "default";
 	m_localAddress = "";
 
+	m_maxTimeOutIntervall = 10.0f;
+	m_maxIntervallCounter = 3;
+
 	memset(m_packetData, 0, sizeof(m_packetData));
 }
 
@@ -124,8 +127,10 @@ int BaseNetwork::TriggerPacket(void)
 	return size;
 }
 
-void BaseNetwork::Update(void)
+void BaseNetwork::Update(float _dt)
 {
+
+	UpdateTimeOut(_dt);
 
 	m_systemPacketLock.lock();
 	int num_sysPackets = m_systemPackets.size();

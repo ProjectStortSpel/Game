@@ -70,16 +70,21 @@ private:
 
 	void ReceivePackets(void);
 
+	void UpdateTimeOut(float _dt);
+
 	void NetPasswordInvalid(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
 	void NetConnectionAccepted(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
 	void NetConnectionServerFull(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
 
-	void NetConnectionLost(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
+	void NetConnectionLost(NetConnection _connection);
 	void NetConnectionDisconnected(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
 
 	void NetConnectionKicked(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
 	void NetConnectionBanned(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
 	
+	void NetPing(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
+	void NetPong(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
+
 	//Remote
 	void NetRemoteConnectionAccepted(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
 
@@ -103,6 +108,9 @@ private:
 	std::thread m_receivePacketsThread;
 	bool m_receivePacketsThreadAlive;
 
+
+	float m_currentTimeOutIntervall;
+	int m_currentIntervallCounter;
 
 	NetEvent m_onConnectedToServer;
 	NetEvent m_onDisconnectedFromServer;

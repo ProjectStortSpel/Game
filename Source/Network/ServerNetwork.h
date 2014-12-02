@@ -40,8 +40,12 @@ private:
 	void ListenForConnections(void);
 
 	void NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
-	void NetConnectionLost(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
+	void NetConnectionLost(NetConnection _connection);
 	void NetConnectionDisconnected(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
+	void NetPing(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
+	void NetPong(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
+
+	void UpdateTimeOut(float _dt);
 
 private:
 
@@ -56,6 +60,8 @@ private:
 	std::map<NetConnection, ISocket*> m_connectedClients;
 
 	std::map<NetConnection, std::thread> m_receivePacketsThreads;
+	std::map<NetConnection, float> m_currentTimeOutIntervall;
+	std::map<NetConnection, int> m_currentIntervallCounter;
 
 	//std::map<NetConnection
 
