@@ -70,6 +70,8 @@ void ServerNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uin
 	if(m_onPlayerDisconnected)
 		m_onPlayerDisconnected(_connection);
 
+
+
 	m_receivePacketsThreads[_connection].join();
 }
 
@@ -140,7 +142,8 @@ bool ServerNetwork::Stop()
 
 	for (auto it = m_receivePacketsThreads.begin(); it != m_receivePacketsThreads.end(); ++it)
 	{
-		it->second.join();
+		if(it->second.joinable())
+			it->second.join();
 	}
 
 	m_receivePacketsThreads.clear();
@@ -222,8 +225,8 @@ void ServerNetwork::ReceivePackets(ISocket* _socket)
 
 	}
 
-	SAFE_DELETE(_socket);
 	m_connectedClients.erase(_socket->GetNetConnection());
+	SAFE_DELETE(_socket);
 }
 
 void ServerNetwork::ListenForConnections(void)

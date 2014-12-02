@@ -66,6 +66,9 @@ void OnDisconnect(NetConnection nc)
 	printf("Test\n");
 }
 
+ServerNetwork* server = 0;
+ClientNetwork* client = 0;
+bool isServer = false;
 
 int main(int argc, char** argv)
 {
@@ -75,29 +78,33 @@ int main(int argc, char** argv)
 
 	Timer timer;
 
-	//Renderer::GraphicDevice RENDERER = Renderer::GraphicDevice();
-//	Input::InputWrapper* INPUT = &Input::InputWrapper::GetInstance();
-	//RENDERER.Init();
+	Renderer::GraphicDevice RENDERER = Renderer::GraphicDevice();
+	Input::InputWrapper* INPUT = &Input::InputWrapper::GetInstance();
+	RENDERER.Init();
 
 	std::string input;
 	printf("Starting network:\n\n");
 	printf("Press 's' to start a new server, 'c' to start a new client,\nor anything else to skip network: ");
 	std::getline(std::cin, input);
 	ClearConsole();
-	ServerNetwork server;
-	ClientNetwork client;
-	bool isServer = false;
-
 
 	if (input.compare("s") == 0)
 	{
 		isServer = true;
-		server.SetOnPlayerDisconnected(&OnDisconnect);
-		server.Start(6112, "localhest", 8);
+		server = new ServerNetwork();
+		server->SetOnPlayerDisconnected(&OnDisconnect);
+		server->Start(6112, "localhest", 8);
 	}
 	else if (input.compare("c") == 0)
 	{
-		client.Connect("194.47.150.5", "localhest", 6112, 0);
+		client = new ClientNetwork();
+
+		client->Connect("194.47.150.5", "localhest", 6112, 0);
+	}
+	else if (input.compare("l") == 0)
+	{
+		client = new ClientNetwork();
+		client->Connect("127.0.0.1", "localhest", 6112, 0);
 	}
 
 	TestECSL();
@@ -111,20 +118,32 @@ int main(int argc, char** argv)
 
 		if (isServer)
 		{
-			server.Update();
-			while (server.TriggerPacket() > 0) {}
+			server->Update();
+			while (server->TriggerPacket() > 0) {}
 		}
 		else
 		{
-			client.Update();
-			while (client.TriggerPacket() > 0) {}
+			client->Update();
+			while (client->TriggerPacket() > 0) {}
 		}
 
-	//	INPUT->Update();
-		//RENDERER.Update(dt);
-		//RENDERER.RenderSimpleText("This text render from GAME! \nThe x and y values in the function isn't pixel \ncoordinates, it's char position. Every char is \n8x16 pixels in size. Use \\n to change line.\n\n  !Not all chars is supported!\n\nRight now it clear the whole output image as well (Tell me when to remove this).", 10, 2);
+		//std::getline(std::cin, input);
+		//if (isServer)
+		//{
+		//	SAFE_DELETE(server);
+		//	return true;
+		//}
+		//else
+		//{
+		//	SAFE_DELETE(client);
+		//	return true;
+		//}
 
-		//RENDERER.Render();
+		INPUT->Update();
+		RENDERER.Update(dt);
+		RENDERER.RenderSimpleText("This text render from GAME! \nThe x and y values in the function isn't pixel \ncoordinates, it's char position. Every char is \n8x16 pixels in size. Use \\n to change line.\n\n  !Not all chars is supported!\n\nRight now it clear the whole output image as well (Tell me when to remove this).", 10, 2);
+
+		RENDERER.Render();
 
 		SDL_Event e;
 		while (SDL_PollEvent(&e))
@@ -132,7 +151,7 @@ int main(int argc, char** argv)
 			switch (e.type)
 			{
 			case SDL_WINDOWEVENT:
-				//RENDERER.PollEvent(e);
+				RENDERER.PollEvent(e);
 				break;
 			case SDL_KEYDOWN:
 			case SDL_KEYUP:
@@ -149,19 +168,21 @@ int main(int argc, char** argv)
 			case SDL_MOUSEBUTTONUP:
 			case SDL_MOUSEWHEEL:
 			case SDL_MULTIGESTURE:
-				//INPUT->PollEvent(e);
+				INPUT->PollEvent(e);
 				break;
 			}
 
 
 		}
 
-		//if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
-		//{
-		//	lol = false;
-		//}
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
+		{
+			lol = false;
+		}
 	}
-	//delete(INPUT);
+	delete(INPUT);
+	SAFE_DELETE(server);
+	SAFE_DELETE(client);
 
 #ifdef WIN32
 	_CrtDumpMemoryLeaks();

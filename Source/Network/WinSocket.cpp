@@ -86,7 +86,7 @@ bool WinSocket::Initialize(void)
 
 bool WinSocket::Shutdown(void)
 {
-	if (!g_initialized && g_noActiveSockets == 0)
+	if (!g_initialized || g_noActiveSockets > 0)
 		return true;
 
 	if (WSACleanup() != 0)
