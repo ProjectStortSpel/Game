@@ -1,3 +1,4 @@
+/*Author: Anders*/
 #ifndef GLTIMER_H
 #define GLTIMER_H
 

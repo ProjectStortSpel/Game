@@ -1,3 +1,4 @@
+/*Author: Anders*/
 #ifndef SIMPLETEXT_H
 #define SIMPLETEXT_H
 
