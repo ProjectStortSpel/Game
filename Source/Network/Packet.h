@@ -38,7 +38,7 @@ inline bool operator< (const NetConnection& lhs, const NetConnection& rhs)
 
 		else if (lhs.IpAddress.size() == rhs.IpAddress.size())
 		{
-			for (int i = 0; i < lhs.IpAddress.size(); ++i)
+			for (unsigned int i = 0; i < lhs.IpAddress.size(); ++i)
 			{
 				if (lhs.IpAddress[i] < rhs.IpAddress[i])
 				{

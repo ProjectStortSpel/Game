@@ -2,17 +2,35 @@
 #include <ECSL/ECSL.h>
 #include "Input/InputWrapper.h"
 #include "Renderer/GraphicDevice.h"
+#include "Network/ServerNetwork.h"
+#include "Network/ClientNetwork.h"
 #include "Timer.h"
 
 #ifdef WIN32
 	#define _CRTDBG_MAP_ALLOC
+
+	#ifdef _DEBUG
+		#ifndef DBG_NEW
+			#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+			#define new DBG_NEW
+		#endif
+	#endif  // _DEBUG
+
+
 	#include <stdlib.h>
 	#include <crtdbg.h>
 #endif
 
 using namespace ECSL;
 
+
 mat4 mat[1000];
+ServerNetwork* server = 0;
+ClientNetwork* client = 0;
+bool isServer = false;
+std::string newPlayer = "";
+
+
 
 class TestSystem : public ECSL::System
 {
@@ -76,6 +94,14 @@ public:
 private:
 };
 
+void ClearConsole()
+{
+#ifdef WIN32
+	system("cls");
+#else
+	system("clear");
+#endif
+}
 void lol()
 {
 	ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("content/components");
@@ -122,14 +148,68 @@ void LoadAlotOfBoxes(Renderer::GraphicDevice* r)
 		}
 	}
 }
+void OnConnected(NetConnection nc)
+{
+	std::stringstream ss;
+	ss << "connected to server " << nc.IpAddress.c_str() << ":" << nc.Port << ".\n";
+	newPlayer = ss.str();
+}
+
+void OnPlayerConnected(NetConnection nc)
+{
+	std::stringstream ss;
+	ss << nc.IpAddress.c_str() << ":" << nc.Port << " connected to server.\n";
+	newPlayer = ss.str();
+}
 void Start()
 {
-	/*	Initialize Renderer and Input	*/
+	std::string input;
+	printf("Starting network:\n\n");
+	printf("Press 's' to start a new server,\n");
+	printf("c to connect to localhost,\n");
+	printf("1 to connect to Jenkins Windows,\n");
+	printf("2 to connect to Jenkins Linux,\n");
+	printf("3 to connect to Jenkins Pontus,\n");
+	printf("4 to connect to Jenkins Erik,\n");
+	printf("or anything else to skip the network.\n");
+
+	std::getline(std::cin, input);
+	ClearConsole();
+
+
+	if (input.compare("s") == 0)
+	{
+		isServer = true;
+		server = new ServerNetwork();
+		server->Start(6112, "localhest", 8);
+		server->SetOnPlayerConnected(&OnPlayerConnected);
+	}
+	else
+	{
+		client = new ClientNetwork();
+		client->SetOnConnectedToServer(&OnConnected);
+
+		if (input.compare("c") == 0) // localhost
+			client->Connect("127.0.0.1", "localhest", 6112, 0);
+		else if (input.compare("1") == 0) // Jenkins win
+			client->Connect("194.47.150.4", "localhest", 6112, 0);
+		else if (input.compare("2") == 0) // Jenkins lin
+			client->Connect("194.47.150.60", "localhest", 6112, 0);
+		else if (input.compare("3") == 0) // Pontus
+			client->Connect("194.47.150.128", "localhest", 6112, 0);
+		else if (input.compare("4") == 0) // Erik
+			client->Connect("194.47.150.5", "localhest", 6112, 0);
+	}
+
+
+
+
 	Renderer::GraphicDevice RENDERER = Renderer::GraphicDevice();
+	/*	Initialize Renderer and Input	*/
 	RENDERER.Init();
 
 	Input::InputWrapper* INPUT = &Input::InputWrapper::GetInstance();
-	
+
 	LoadAlotOfBoxes(&RENDERER);
 	mat[100] = glm::translate(vec3(0, 0, 0));
 	int modelid = RENDERER.LoadModel("content/models/cube/", "cube.object", &mat[100]); // LOADMODEL RETURNS THE MODELID
@@ -144,9 +224,20 @@ void Start()
 		float dt = timer.ElapsedTimeInSeconds();
 		timer.Reset();
 
+		if (isServer)
+		{
+			server->Update(dt);
+			while (server->TriggerPacket() > 0) {}
+		}
+		else
+		{
+			client->Update(dt);
+			while (client->TriggerPacket() > 0) {}
+		}
+
 		INPUT->Update();
 		RENDERER.Update(dt);
-		RENDERER.RenderSimpleText("This text render from GAME! \nThe x and y values in the function isn't pixel \ncoordinates, it's char position. Every char is \n8x16 pixels in size. Use \\n to change line.\n\n  !Not all chars is supported!\n\nRight now it clear the whole output image as well (Tell me when to remove this).", 10, 2);
+		RENDERER.RenderSimpleText(newPlayer, 0, 2);
 
 
 		RENDERER.Render();
@@ -225,14 +316,17 @@ void Start()
 		}
 	}
 
-	delete(INPUT);
+	SAFE_DELETE(INPUT);
+	SAFE_DELETE(server);
+	SAFE_DELETE(client);
 }
+
 
 int main(int argc, char** argv)
 {
 	Start();
-	#ifdef WIN32
+#ifdef WIN32
 	_CrtDumpMemoryLeaks();
-	#endif
+#endif
 	return 0;
 }

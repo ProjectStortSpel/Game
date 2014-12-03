@@ -27,6 +27,9 @@ public:
 	int GetRemotePort() { return m_remotePort; }
 	int GetLocalPort() { return m_localPort; }
 
+	int GetActive(void) { return m_active; }
+	void SetActive(int _value) { m_active = _value; }
+
 protected:
 
 #pragma warning( disable: 4251 )
@@ -38,6 +41,7 @@ protected:
 	int m_remotePort;
 	int m_localPort;
 	bool m_socketOpen;
+	int m_active;
 
 #pragma warning (default: 4251 )
 
