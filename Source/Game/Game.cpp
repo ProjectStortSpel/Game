@@ -158,7 +158,7 @@ void LoadAlotOfBoxes(Renderer::GraphicDevice* r)
 void OnConnected(NetConnection nc)
 {
 	std::stringstream ss;
-	ss << "connected to server " << nc.IpAddress.c_str() << ":" << nc.Port << ".\n";
+	ss << "connected to server " << nc.IpAddress << ":" << nc.Port << ".\n";
 	newPlayer = ss.str();
 }
 
@@ -183,7 +183,7 @@ void OnPlayerConnected(NetConnection _nc)
 
 
 	std::stringstream ss;
-	ss << _nc.IpAddress.c_str() << ":" << _nc.Port << " connected to server.\n";
+	ss << _nc.IpAddress << ":" << _nc.Port << " connected to server.\n";
 	newPlayer = ss.str();
 }
 

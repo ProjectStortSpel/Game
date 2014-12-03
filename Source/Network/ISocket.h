@@ -22,7 +22,7 @@ public:
 	virtual int Send(char* _buffer, int _length, int _flags = 0) = 0;
 	virtual int Receive(char* _buffer, int _length, int _flags = 0) = 0;
 
-	NetConnection GetNetConnection() { return NetConnection(m_remoteAddress, m_remotePort); }
+	NetConnection GetNetConnection() { return NetConnection(m_remoteAddress.c_str(), m_remotePort); }
 	std::string GetRemoteIpAddress() { return m_remoteAddress; }
 	int GetRemotePort() { return m_remotePort; }
 	int GetLocalPort() { return m_localPort; }

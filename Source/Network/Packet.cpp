@@ -6,7 +6,7 @@ NetConnection::NetConnection()
 	Port = 0;
 }
 
-NetConnection::NetConnection(std::string _address, unsigned short _port)
+NetConnection::NetConnection(const char* _address, unsigned short _port)
 {
 	IpAddress = _address;
 	Port = _port;

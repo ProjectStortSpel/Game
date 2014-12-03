@@ -7,12 +7,12 @@ class DECLSPEC NetConnection
 {
 public:
 	NetConnection();
-	NetConnection(std::string _address, unsigned short _port);
+	NetConnection(const char* _address, unsigned short _port);
 	~NetConnection() {};
 
 #pragma warning( disable : 4251 )
 
-	std::string IpAddress;
+	const char* IpAddress;
 	unsigned short Port;
 
 #pragma warning( default : 4251 )
@@ -20,7 +20,7 @@ public:
 	bool operator==(const NetConnection &other) const
 	{
 		if (this->Port == other.Port
-			&& this->IpAddress.compare(other.IpAddress) == 0)
+			&& strcmp(IpAddress, other.IpAddress) == 0)
 			return true;
 		return false;
 	}
@@ -33,12 +33,14 @@ inline bool operator< (const NetConnection& lhs, const NetConnection& rhs)
 
 	else if (lhs.Port == rhs.Port)
 	{
-		if (lhs.IpAddress.size() < rhs.IpAddress.size())
+		if (strlen(lhs.IpAddress) < strlen(rhs.IpAddress))
+		//if (lhs.IpAddress.size() < rhs.IpAddress.size())
 			return true;
 
-		else if (lhs.IpAddress.size() == rhs.IpAddress.size())
+		else if (strlen(lhs.IpAddress) == strlen(rhs.IpAddress))
+		//else if (lhs.IpAddress.size() == rhs.IpAddress.size())
 		{
-			for (unsigned int i = 0; i < lhs.IpAddress.size(); ++i)
+			for (unsigned int i = 0; i < strlen(lhs.IpAddress); ++i)
 			{
 				if (lhs.IpAddress[i] < rhs.IpAddress[i])
 				{

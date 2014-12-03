@@ -17,7 +17,7 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t _
 	if (m_password.compare(password) == 0)
 	{
 		if (NET_DEBUG)
-			printf("Player accepted. IP: %s:%d\n", _connection.IpAddress.c_str(), _connection.Port);
+			printf("Player accepted. IP: %s:%d\n", _connection.IpAddress, _connection.Port);
 
 		uint64_t id2 = _packetHandler->StartPack(NetTypeMessageId::ID_CONNECTION_ACCEPTED);
 		auto newPacket = _packetHandler->EndPack(id2);
@@ -39,7 +39,7 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t _
 	else
 	{
 		if (NET_DEBUG)
-			printf("Player connected with invalid password. IP: %s:%d\n", _connection.IpAddress.c_str(), _connection.Port);
+			printf("Player connected with invalid password. IP: %s:%d\n", _connection.IpAddress, _connection.Port);
 
 		uint64_t id2 = _packetHandler->StartPack(NetTypeMessageId::ID_PASSWORD_INVALID);
 		auto newPacket = _packetHandler->EndPack(id2);
@@ -54,7 +54,7 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t _
 void ServerNetwork::NetConnectionLost(NetConnection _connection)
 {
 	if (NET_DEBUG)
-		printf("Player timed out. IP: %s:%d\n", _connection.IpAddress.c_str(), _connection.Port);
+		printf("Player timed out. IP: %s:%d\n", _connection.IpAddress, _connection.Port);
 
 	m_connectedClientsLock.lock();
 	m_connectedClients[_connection]->SetActive(0);
@@ -80,7 +80,7 @@ void ServerNetwork::NetConnectionLost(NetConnection _connection)
 void ServerNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
 	if (NET_DEBUG)
-		printf("Player disconnected. IP: %s:%d\n", _connection.IpAddress.c_str(), _connection.Port);
+		printf("Player disconnected. IP: %s:%d\n", _connection.IpAddress, _connection.Port);
 
 	m_connectedClientsLock.lock();
 	m_connectedClients[_connection]->SetActive(0);
@@ -107,7 +107,7 @@ void ServerNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uin
 void ServerNetwork::NetPing(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
 	if (NET_DEBUG)
-		printf("Ping from: %s:%d\n", _connection.IpAddress.c_str(), _connection.Port);
+		printf("Ping from: %s:%d\n", _connection.IpAddress, _connection.Port);
 
 	uint64_t id = _packetHandler->StartPack(ID_PONG);
 	Packet* p = _packetHandler->EndPack(id);
@@ -117,7 +117,7 @@ void ServerNetwork::NetPing(PacketHandler* _packetHandler, uint64_t _id, NetConn
 void ServerNetwork::NetPong(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
 	if (NET_DEBUG)
-		printf("Pong from: %s:%d\n", _connection.IpAddress.c_str(), _connection.Port);
+		printf("Pong from: %s:%d\n", _connection.IpAddress, _connection.Port);
 }
 
 ServerNetwork::ServerNetwork()
@@ -238,16 +238,16 @@ void ServerNetwork::Send(Packet* _packet, NetConnection _receiver)
 		m_connectedClientsLock.unlock();
 
 		if (NET_DEBUG)
-			printf("Connection to receiver \"%s:%i\" was not found.\n", _receiver.IpAddress.c_str(), _receiver.Port);
-
-		SAFE_DELETE(_packet);
-		return;
+			printf("Connection to receiver \"%s:%i\" was not found.\n", _receiver.IpAddress, _receiver.Port);		
+	}
+	else
+	{
+		result->second->Send((char*)_packet->Data, _packet->Length);
+		m_connectedClientsLock.unlock();
 	}
 	
-	result->second->Send((char*)_packet->Data, _packet->Length);
-	m_connectedClientsLock.unlock();
-
 	SAFE_DELETE(_packet);
+	return;
 }
 
 void ServerNetwork::ReceivePackets(ISocket* _socket)
@@ -277,7 +277,7 @@ void ServerNetwork::ReceivePackets(ISocket* _socket)
 			memcpy(p->Data, m_packetData, packetSize);
 
 			if (NET_DEBUG)
-				printf("Received message with length \"%i\" from client \"%s:%i\".\n", packetSize, p->Sender.IpAddress.c_str(), p->Sender.Port);
+				printf("Received message with length \"%i\" from client \"%s:%i\".\n", packetSize, p->Sender.IpAddress, p->Sender.Port);
 
 			HandlePacket(p);
 
@@ -325,7 +325,7 @@ void ServerNetwork::ListenForConnections(void)
 
 			newConnection->Send((char*)p->Data, p->Length);
 			
-			printf("%s:%d tried to connect, but the server is full.\n", nc.IpAddress.c_str(), nc.Port);
+			printf("%s:%d tried to connect, but the server is full.\n", nc.IpAddress, nc.Port);
 
 			SAFE_DELETE(newConnection);
 
@@ -338,7 +338,7 @@ void ServerNetwork::ListenForConnections(void)
 
 
 		if (NET_DEBUG)
-			printf("New incoming connection from %s:%d\n", nc.IpAddress.c_str(), nc.Port);
+			printf("New incoming connection from %s:%d\n", nc.IpAddress, nc.Port);
 
 		bool* b = new bool(true);
 
