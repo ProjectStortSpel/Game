@@ -200,7 +200,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\Game.cpp" />
     <ClCompile Include="..\..\..\Source\Game\GameServer.cpp" />
-    <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponent.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponentType.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaWorld.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaWorldCreator.cpp" />
@@ -209,7 +209,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClCompile Include="..\..\..\Source\Game\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponent.h" />
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponentType.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaWorld.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaWorldCreator.h" />
