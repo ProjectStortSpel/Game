@@ -73,21 +73,19 @@ void ConsoleManager::ExecuteCommand(char* _command)
 }
 void ConsoleManager::AddCommand(char* _name, ConsoleHook _hook)
 {
-	//kolla så att _name inte innehåller ett mellanslag
+	char* spacePointer = strchr(_name, ' ');
 
-	for (int i = 0; i < strlen(_name); ++i)
+	if (spacePointer)
 	{
-		if (_name[i] == ' ')
+		if (CONSOLE_DEBUG)
 		{
-			if (CONSOLE_DEBUG)
-			{
-				printf("Command %s can not be added.\n", _name);
-			}
-			return;
+			printf("Command %s can not be added.\n", _name);
 		}
 	}
-
-	m_consoleHooks[_name] = _hook;
+	else
+	{
+		m_consoleHooks[_name] = _hook;
+	}
 
 }
 
