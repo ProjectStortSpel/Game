@@ -4,6 +4,7 @@
 #include "Renderer/GraphicDevice.h"
 #include "Network/ServerNetwork.h"
 #include "Network/ClientNetwork.h"
+#include "Console/Console.h"
 #include "Timer.h"
 
 #ifdef WIN32
@@ -412,6 +413,8 @@ void Start()
 
 int main(int argc, char** argv)
 {
+	Console::ConsoleManager cm;
+
 	Start();
 //#ifdef WIN32
 //	_CrtDumpMemoryLeaks();
