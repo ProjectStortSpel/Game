@@ -1,6 +1,42 @@
 #include "GameCreator.h"
 #include "Timer.h"
 
+class LOLSYSTEM : public ECSL::System
+{
+public:
+	LOLSYSTEM() { }
+	~LOLSYSTEM() { }
+
+	void Run(float _dt)
+	{
+		printf("TesLOLSYSTEMtsystem run()\n");
+
+		auto entites = GetEntities();
+
+	}
+	void Initialize()
+	{
+		AddComponentTypeToFilter("Velocity", ECSL::FilterType::Mandatory);
+		AddComponentTypeToFilter("Position", ECSL::FilterType::Excluded);
+		//AddComponentTypeToFilter("Velocity", ECSL::FilterType::RequiresOneOf);
+		//AddComponentTypeToFilter("Velocity", ECSL::ComponentFilter::RequiresOneOf);
+		//AddComponentTypeToFilter("Position", ECSL::ComponentFilter::Excluded);
+
+		printf("Testsystem Initialize()\n");
+	}
+
+	void OnEntityAdded(unsigned int _entityId)
+	{
+		printf("Testsystem OnEntityAdded()\n");
+	}
+	void OnEntityRemoved(unsigned int _entityId)
+	{
+		printf("Testsystem OnEntityRemoved()\n");
+	}
+
+};
+
+
 GameCreator::GameCreator() :
 m_graphics(0), m_input(0), m_world(0)
 {
@@ -48,11 +84,12 @@ void GameCreator::InitializeWorld()
 
 	LuaEmbedder::Load("../../../Externals/content/scripting/storaspel/components.lua");
 
-
 	auto componentTypes = ECSL::ComponentTypeManager::GetInstance().GetComponentTypes();
 	for (auto it = componentTypes->begin(); it != componentTypes->end(); ++it)
 		worldCreator.AddComponentType(it->second->GetName());
 
+	LuaEmbedder::Load("../../../Externals/content/scripting/storaspel/systems/movementsystem.lua");
+	worldCreator.AddSystemToCurrentGroup<LOLSYSTEM>();
 	m_world = worldCreator.CreateWorld(100);
 }
 
@@ -99,6 +136,7 @@ void GameCreator::StartGame()
 
 		m_graphics->Update(dt);
 		m_input->Update();
+		m_world->Update(dt);
 
 		PollSDLEvent();
 
