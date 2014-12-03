@@ -24,12 +24,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Source\Game\Game.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Source\Game\GameServer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Timer.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
@@ -50,6 +44,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponentType.cpp">
       <Filter>Lua Bridge\ECSL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\GameCreator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\NewGame.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -73,6 +73,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponentType.h">
       <Filter>Lua Bridge\ECSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\GameCreator.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
