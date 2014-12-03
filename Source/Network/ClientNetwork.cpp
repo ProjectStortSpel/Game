@@ -105,9 +105,12 @@ bool ClientNetwork::Connect()
 
 void ClientNetwork::Disconnect()
 {
-	uint64_t id = m_packetHandler.StartPack(ID_CONNECTION_DISCONNECTED);
-	Packet* packet = m_packetHandler.EndPack(id);
-	Send(packet);
+	if (m_socketBound)
+	{
+		uint64_t id = m_packetHandler.StartPack(ID_CONNECTION_DISCONNECTED);
+		Packet* packet = m_packetHandler.EndPack(id);
+		Send(packet);
+	}
 
 	m_receivePacketsThreadAlive = false;
 

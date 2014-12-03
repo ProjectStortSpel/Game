@@ -71,7 +71,7 @@ namespace Network
 		int ReadInt(uint64_t _id);
 		// Read a string from a packet
 		// Should always be called from a function bound with AddNetMessageHook
-		char* ReadString(uint64_t _id);
+		std::string ReadString(uint64_t _id);
 		// Read a float from a packet
 		// Should always be called from a function bound with AddNetMessageHook
 		float ReadFloat(uint64_t _id);

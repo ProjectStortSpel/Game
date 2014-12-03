@@ -19,7 +19,7 @@
 
 	#include <stdlib.h>
 	#include <crtdbg.h>
-	#include <vld.h>
+	#include <VLD/vld.h>
 #endif
 
 using namespace ECSL;
@@ -398,6 +398,11 @@ void Start()
 			lol = false;
 		}
 	}
+
+	for (auto it = m_players.begin(); it != m_players.end(); ++it)
+		SAFE_DELETE(it->second);
+	m_players.clear();
+
 
 	SAFE_DELETE(INPUT);
 	SAFE_DELETE(server);

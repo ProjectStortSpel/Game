@@ -340,8 +340,6 @@ void ServerNetwork::ListenForConnections(void)
 		if (NET_DEBUG)
 			printf("New incoming connection from %s:%d\n", nc.IpAddress, nc.Port);
 
-		bool* b = new bool(true);
-
 		m_receivePacketsThreads[nc] = std::thread(&ServerNetwork::ReceivePackets, this, newConnection);
 		m_timeOutLock.lock();
 		m_currentTimeOutIntervall[nc] = 0.0f;

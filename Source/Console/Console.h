@@ -3,6 +3,10 @@
 
 #include <SDL/SDL.h>
 
+#ifdef WIN32
+#include <VLD/vld.h>
+#endif
+
 
 
 #endif
