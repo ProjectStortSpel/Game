@@ -21,23 +21,26 @@ namespace ECSL
 		void LoadComponentTypesFromFile(const std::string& _filePath);
 
 		ComponentType* GetComponentType(int _componentTypeId);
-		unsigned int GetComponentTypeCount(){ return m_componentTypes->size(); }
+		std::map<unsigned int, ComponentType*>* GetComponentTypes() { return m_componentTypes; }
+		unsigned int GetComponentTypeCount(){ return (unsigned int)m_componentTypes->size(); }
 
 		template<typename ComponentType>
 		unsigned int GetTableId();
 		unsigned int GetTableId(const std::string& _componentType);
+
+		template<typename ComponentType>
+		void AddComponentType();
+		void AddComponentType(ComponentType& _componentType);
 	private:
 		ComponentTypeManager();
 
 		int m_nextTableId;
 		Parser* m_parser;
 		ComponentTypeReader* m_componentTypeReader;
-		std::map<int, ComponentType*>* m_componentTypes;
+		std::map<unsigned int, ComponentType*>* m_componentTypes;
 		std::unordered_map<std::string, unsigned int>* m_stringTableId;
 
-		template<typename ComponentType>
-		void AddComponentType();
-		void AddComponentType(ComponentType& _componentType);
+
 	};
 
 	template<typename ComponentType>

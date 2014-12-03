@@ -7,6 +7,8 @@
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
 
+using namespace Network;
+
 LinSocket::LinSocket()
 {
 	Initialize();
@@ -19,6 +21,7 @@ LinSocket::LinSocket()
 		m_remoteAddress = "";
 		m_remotePort = 0;
 		m_localPort = 0;
+		m_active = 1;
 
 		g_noActiveSockets++;
 	}
@@ -188,8 +191,10 @@ ISocket* LinSocket::Accept()
 
 	if (newSocket == -1)
 	{
-		if (NET_DEBUG)
-			printf("Accept failed. Error: %s.\n", strerror(errno));
+		int errorCode = errno;
+
+		if (errorCode != 11 && NET_DEBUG)
+			printf("Accept failed. Error: %s.\n", strerror(errorCode));
 		return NULL;
 	}
 

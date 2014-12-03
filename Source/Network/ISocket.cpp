@@ -6,6 +6,8 @@
 #include "LinSocket.h"
 #endif
 
+using namespace Network;
+
 bool ISocket::g_initialized = false;
 int ISocket::g_noActiveSockets = 0;
 

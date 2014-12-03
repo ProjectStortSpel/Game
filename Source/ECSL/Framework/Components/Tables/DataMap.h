@@ -9,10 +9,6 @@ namespace ECSL
 {
 	class DECLSPEC DataMap : public DataTable
 	{
-	private:
-		std::map<unsigned int, char*>* m_dataMap;
-		unsigned int m_bytesPerRow;
-
 	public:
 		DataMap(unsigned const int _bytesPerRow);
 		~DataMap();
@@ -21,17 +17,38 @@ namespace ECSL
 		void ClearRow(unsigned const int _row);
 		void ClearTable();
 
-		const int GetRowCount() const;
+		const unsigned int GetRowCount() const;
 
-		inline DataLocation GetData(unsigned const int _id) const;
-		inline DataLocation GetData(unsigned const int _id, unsigned const int _index) const;
+		inline DataLocation GetData(unsigned const int _id) const
+		{
+			return (*m_dataMap)[_id];
+		}
+		inline DataLocation GetData(unsigned const int _id, unsigned const int _index) const
+		{
+			return (*m_dataMap)[_id] + _index;
+		}
+		inline void SetData(unsigned const int _id, void* _data, unsigned const int _byteCount)
+		{
+			if ((*m_dataMap).find(_id) == (*m_dataMap).end())
+				(*m_dataMap)[_id] = new char[m_bytesPerRow];
 
-		inline void SetData(unsigned const int _id, void* _data, unsigned const int _byteCount);
-		inline void SetData(unsigned const int _id, unsigned const int _index, void* _data, unsigned const int _byteCount);
+			memcpy((*m_dataMap)[_id], _data, _byteCount);
+		}
+		inline void SetData(unsigned const int _id, unsigned const int _index, void* _data, unsigned const int _byteCount)
+		{
+			if ((*m_dataMap).find(_id) == (*m_dataMap).end())
+				(*m_dataMap)[_id] = new char[m_bytesPerRow];
+
+			memcpy((*m_dataMap)[_id] + _index, _data, _byteCount);
+		}
 
 		/* Data usage */
-		const int GetBytesPerRow() const;
-		const int GetMemoryAllocated() const;
+		const unsigned int GetBytesPerRow() const;
+		const unsigned int GetMemoryAllocated() const;
+
+	private:
+		std::map<unsigned int, char*>* m_dataMap;
+		unsigned int m_bytesPerRow;
 	};
 }
 #endif
