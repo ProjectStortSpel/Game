@@ -10,6 +10,7 @@
 #include <functional>
 #include <vector>
 #include <map>
+#include <cstring>
 
 
 namespace Console
