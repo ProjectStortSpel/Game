@@ -4,10 +4,15 @@
 namespace LuaBridge
 {
   LuaComponent::LuaComponent() { }
+
+  LuaComponent::~LuaComponent()
+  {
+    m_variables.clear();
+  }
   
   void LuaComponent::Embed()
   {
-    LuaEmbedder::EmbedClass<LuaComponent>("Component", false);
+    LuaEmbedder::EmbedClass<LuaComponent>("Component");
     LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "GetName", &LuaComponent::GetName);
     LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "SetName", &LuaComponent::SetName);
     LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "GetTableType", &LuaComponent::GetTableType);

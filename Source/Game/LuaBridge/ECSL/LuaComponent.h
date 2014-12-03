@@ -12,6 +12,7 @@ namespace LuaBridge
   {
   public:
     LuaComponent();
+	~LuaComponent();
     
     static void Embed();
     

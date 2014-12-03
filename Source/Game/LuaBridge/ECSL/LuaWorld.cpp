@@ -21,16 +21,16 @@ namespace LuaBridge
 
   int LuaWorld::CreateComponentAndAddTo()
   {
-    
+	  return 0;
   }
 
   int LuaWorld::RemoveComponentFrom()
   {
-
+	  return 0;
   }
 
   int LuaWorld::KillEntity()
   {
-
+	  return 0;
   }
 }

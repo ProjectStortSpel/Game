@@ -45,6 +45,12 @@
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\Input\LuaInput.cpp">
       <Filter>Lua Bridge\Input</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaSystem.cpp">
+      <Filter>Lua Bridge\ECSL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaWorld.cpp">
+      <Filter>Lua Bridge\ECSL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\Timer.h">
@@ -61,6 +67,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Input\LuaInput.h">
       <Filter>Lua Bridge\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaSystem.h">
+      <Filter>Lua Bridge\ECSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaWorld.h">
+      <Filter>Lua Bridge\ECSL</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
