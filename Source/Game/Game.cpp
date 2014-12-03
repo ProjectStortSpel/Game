@@ -191,7 +191,32 @@ void CubePos(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _
 	mat[100][3][2] = _ph->ReadFloat(_id);
 }
 
-Console::ConsoleManager cm;
+
+void first(std::vector<Argument>* _vec)
+{
+	if (_vec->size() != 3)
+		return;
+
+	for (int i = 0; i < 3; ++i)
+	{
+		if (_vec->at(i).ArgType != ArgumentType::Number)
+			return;
+	}
+
+	mat[100][3][0] = _vec->at(0).Number;
+	mat[100][3][1] = _vec->at(1).Number;
+	mat[100][3][2] = _vec->at(2).Number;
+
+	Network::PacketHandler* ph = server->GetPacketHandler();
+	uint64_t id = ph->StartPack("CubePos");
+	ph->WriteFloat(id, mat[100][3][0]);
+	ph->WriteFloat(id, mat[100][3][1]);
+	ph->WriteFloat(id, mat[100][3][2]);
+	Network::Packet* p = ph->EndPack(id);
+	server->Broadcast(p);
+}
+
+
 void Start()
 {
 	std::string input;
@@ -254,7 +279,12 @@ void Start()
 	Timer timer;
 
 
-	cm.ExecuteCommand("first 0 2.5 0");
+	Console::ConsoleManager cm;
+	if (isServer)
+	{
+		cm.AddCommand("first", &first);
+		cm.ExecuteCommand("first 0 10 0");
+	}
 	while (lol)
 	{
 		// DT COUNTER
@@ -404,21 +434,9 @@ void Start()
 	SAFE_DELETE(client);
 }
 
-void first(std::vector<Argument>* _vec)
-{
-	mat[100][3][0] = _vec->at(0).Data.Number;
-	mat[100][3][1] = _vec->at(1).Data.Number;
-	mat[100][3][2] = _vec->at(2).Data.Number;
-}
-
-
 int main(int argc, char** argv)
 {
 	
-	cm.AddCommand("first", &first);
-	
-	//cm.ExecuteCommand(" hest ");
-
 	Start();
 	return 0;
 }

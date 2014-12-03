@@ -36,14 +36,14 @@ namespace Console
 	{
 		ArgumentType ArgType;
 
-		union Arg
+		union
 		{
 			float Number;
 			char* Text;
-		} Data;
+		};
 
-		Argument(float f) { Data.Number = f; ArgType = ArgumentType::Number; }
-		Argument(char* s) { Data.Text = s; ArgType = ArgumentType::Text; }
+		Argument(float f) { Number = f; ArgType = ArgumentType::Number; }
+		Argument(char* s) { Text = s; ArgType = ArgumentType::Text; }
 	};
 		
 
