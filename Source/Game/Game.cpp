@@ -19,6 +19,7 @@
 
 	#include <stdlib.h>
 	#include <crtdbg.h>
+	#include <vld.h>
 #endif
 
 using namespace ECSL;
@@ -31,11 +32,11 @@ struct Player
 };
 
 mat4 mat[1000];
-ServerNetwork* server = 0;
-ClientNetwork* client = 0;
+Network::ServerNetwork* server = 0;
+Network::ClientNetwork* client = 0;
 bool isServer = false;
 std::string newPlayer = "";
-std::map<NetConnection, Player*> m_players;
+std::map<Network::NetConnection, Player*> m_players;
 
 
 
@@ -155,7 +156,7 @@ void LoadAlotOfBoxes(Renderer::GraphicDevice* r)
 		}
 	}
 }
-void OnConnected(NetConnection nc)
+void OnConnected(Network::NetConnection nc)
 {
 	std::stringstream ss;
 	ss << "connected to server " << nc.IpAddress << ":" << nc.Port << ".\n";
@@ -164,7 +165,7 @@ void OnConnected(NetConnection nc)
 
 
 
-void OnPlayerConnected(NetConnection _nc)
+void OnPlayerConnected(Network::NetConnection _nc)
 {
 	if (m_players.find(_nc) == m_players.end())
 	{
@@ -173,12 +174,12 @@ void OnPlayerConnected(NetConnection _nc)
 		m_players[_nc]->Id = m_players.size();
 	}
 
-	PacketHandler* ph = server->GetPacketHandler();
+	Network::PacketHandler* ph = server->GetPacketHandler();
 	uint64_t id = ph->StartPack("CubePos");
 	ph->WriteFloat(id, mat[100][3][0]);
 	ph->WriteFloat(id, mat[100][3][1]);
 	ph->WriteFloat(id, mat[100][3][2]);
-	Packet* p = ph->EndPack(id);
+	Network::Packet* p = ph->EndPack(id);
 	server->Send(p, _nc);
 
 
@@ -187,12 +188,12 @@ void OnPlayerConnected(NetConnection _nc)
 	newPlayer = ss.str();
 }
 
-void OnPlayerDisconnected(NetConnection _nc)
+void OnPlayerDisconnected(Network::NetConnection _nc)
 {
 	m_players[_nc]->Connected = false;
 }
 
-void CubePos(PacketHandler* _ph, uint64_t _id, NetConnection _nc)
+void CubePos(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _nc)
 {
 	mat[100][3][0] = _ph->ReadFloat(_id);
 	mat[100][3][1] = _ph->ReadFloat(_id);
@@ -218,7 +219,7 @@ void Start()
 	if (input.compare("s") == 0)
 	{
 		isServer = true;
-		server = new ServerNetwork();
+		server = new Network::ServerNetwork();
 		server->Start(6112, "localhest", 8);
 		server->SetOnPlayerConnected(&OnPlayerConnected);
 		server->SetOnPlayerDisconnected(&OnPlayerDisconnected);
@@ -226,7 +227,7 @@ void Start()
 	}
 	else
 	{
-		client = new ClientNetwork();
+		client = new Network::ClientNetwork();
 		client->AddNetworkHook("CubePos", &CubePos);
 		client->SetOnConnectedToServer(&OnConnected);
 
@@ -358,12 +359,12 @@ void Start()
 
 			if (cubeMoved)
 			{
-				PacketHandler* ph = server->GetPacketHandler();
+				Network::PacketHandler* ph = server->GetPacketHandler();
 				uint64_t id = ph->StartPack("CubePos");
 				ph->WriteFloat(id, mat[100][3][0]);
 				ph->WriteFloat(id, mat[100][3][1]);
 				ph->WriteFloat(id, mat[100][3][2]);
-				Packet* p = ph->EndPack(id);
+				Network::Packet* p = ph->EndPack(id);
 				server->Broadcast(p);
 			}
 		}
@@ -407,8 +408,8 @@ void Start()
 int main(int argc, char** argv)
 {
 	Start();
-#ifdef WIN32
-	_CrtDumpMemoryLeaks();
-#endif
+//#ifdef WIN32
+//	_CrtDumpMemoryLeaks();
+//#endif
 	return 0;
 }

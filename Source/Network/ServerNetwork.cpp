@@ -7,7 +7,7 @@
 #include <sys/socket.h>
 #endif
 
-
+using namespace Network;
 
 void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
@@ -315,7 +315,7 @@ void ServerNetwork::ListenForConnections(void)
 
 		m_connectedClientsLock.lock();
 		m_connectedClients[nc] = newConnection;
-		size_t size = m_connectedClients.size();
+		unsigned int size = m_connectedClients.size();
 		m_connectedClientsLock.unlock();
 
 		if (size > m_maxConnections)
@@ -380,13 +380,13 @@ void ServerNetwork::UpdateTimeOut(float _dt)
 	}
 	m_timeOutLock.unlock();
 
-	for (int i = 0; i < trash.size(); ++i)
+	for (unsigned int i = 0; i < trash.size(); ++i)
 	{
 		NetConnectionLost(trash[i]);
 	}
 
 	m_timeOutLock.lock();
-	for (int i = 0; i < trash.size(); ++i)
+	for (unsigned int i = 0; i < trash.size(); ++i)
 	{
 		m_currentIntervallCounter.erase(trash[i]);
 		m_currentTimeOutIntervall.erase(trash[i]);

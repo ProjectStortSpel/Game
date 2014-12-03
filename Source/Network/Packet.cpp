@@ -1,5 +1,7 @@
 #include "Packet.h"
 
+using namespace Network;
+
 NetConnection::NetConnection()
 {
 	IpAddress = "";

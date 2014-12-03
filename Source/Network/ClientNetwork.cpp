@@ -5,6 +5,8 @@
 #include <sys/socket.h>
 #endif
 
+using namespace Network;
+
 ClientNetwork::ClientNetwork()
 	: BaseNetwork()
 {

@@ -18,82 +18,87 @@
 #include "PacketHandler.h"
 #include "Packet.h"
 
-typedef std::function<void(PacketHandler*, uint64_t, NetConnection)> NetMessageHook;
-typedef std::function<void(NetConnection)> NetEvent;
-
-class DECLSPEC BaseNetwork
+namespace Network
 {
 
-	friend class PacketHandler;
+	typedef std::function<void(PacketHandler*, uint64_t, NetConnection)> NetMessageHook;
+	typedef std::function<void(NetConnection)> NetEvent;
 
-public:
-	BaseNetwork();
-	virtual ~BaseNetwork();
+	class DECLSPEC BaseNetwork
+	{
 
-	// Returns get local Ip Address
-	const char* GetLocalAddress(void) { return m_localAddress.c_str(); }
-	// Returns the server password
-	const char* GetServerPassword(void) { return m_password.c_str(); }
-	// Returns the incoming port
-	const int GetIncomingPort(void) { return m_incomingPort; }
+		friend class PacketHandler;
 
-	// Reads the oldest user specific packet and calls its specified function
-	// Will return the number of packets remaining
-	int TriggerPacket(void);
+	public:
+		BaseNetwork();
+		virtual ~BaseNetwork();
 
-	void Update(float _dt);
+		// Returns get local Ip Address
+		const char* GetLocalAddress(void) { return m_localAddress.c_str(); }
+		// Returns the server password
+		const char* GetServerPassword(void) { return m_password.c_str(); }
+		// Returns the incoming port
+		const int GetIncomingPort(void) { return m_incomingPort; }
 
-	// Set the incoming port
-	void SetIncomingPort(const int _port) { m_incomingPort = _port; }
-	// Set the server password
-	void SetServerPassword(const char* _password) { m_password = _password; }
+		// Reads the oldest user specific packet and calls its specified function
+		// Will return the number of packets remaining
+		int TriggerPacket(void);
 
-	void AddNetworkHook(char* _name, NetMessageHook _hook);
-	//NetMessageHook* GetNetworkFunction(NetTypeMessageId _function);
+		void Update(float _dt);
 
-	PacketHandler* GetPacketHandler() { return &m_packetHandler; }
+		// Set the incoming port
+		void SetIncomingPort(const int _port) { m_incomingPort = _port; }
+		// Set the server password
+		void SetServerPassword(const char* _password) { m_password = _password; }
 
-	void SetMaxTimeOutCounter(int _max) { m_maxIntervallCounter = _max; }
-	void SetMaxTimeOutIntervall(float _max) { m_maxTimeOutIntervall = _max; }
+		void AddNetworkHook(char* _name, NetMessageHook _hook);
+		//NetMessageHook* GetNetworkFunction(NetTypeMessageId _function);
 
-protected:
-	void TriggerEvent(NetMessageHook _function, uint64_t _packetId, NetConnection _connection);
-	void TriggerEvent(NetEvent _function, NetConnection _connection);
+		PacketHandler* GetPacketHandler() { return &m_packetHandler; }
 
-	void HandlePacket(Packet* _packet);	
+		void SetMaxTimeOutCounter(int _max) { m_maxIntervallCounter = _max; }
+		void SetMaxTimeOutIntervall(float _max) { m_maxTimeOutIntervall = _max; }
 
-	virtual void UpdateTimeOut(float _dt) = 0;
+	protected:
+		void TriggerEvent(NetMessageHook _function, uint64_t _packetId, NetConnection _connection);
+		void TriggerEvent(NetEvent _function, NetConnection _connection);
 
-protected:
+		void HandlePacket(Packet* _packet);
+
+		virtual void UpdateTimeOut(float _dt) = 0;
+
+	protected:
 
 #pragma warning( disable : 4251 )
 
-	std::map < std::string, NetMessageHook > m_userFunctions;
-	std::map < char, NetMessageHook > m_networkFunctions;
+		std::map < std::string, NetMessageHook > m_userFunctions;
+		std::map < char, NetMessageHook > m_networkFunctions;
 
-	std::queue<Packet*> m_systemPackets;
-	std::queue<Packet*> m_customPackets;
-	std::mutex m_systemPacketLock;
-	std::mutex m_customPacketLock;
-	
+		std::queue<Packet*> m_systemPackets;
+		std::queue<Packet*> m_customPackets;
+		std::mutex m_systemPacketLock;
+		std::mutex m_customPacketLock;
 
-	std::string m_localAddress;
-	std::string m_password;
-	unsigned int m_incomingPort;
 
-	PacketHandler m_packetHandler;
+		std::string m_localAddress;
+		std::string m_password;
+		unsigned int m_incomingPort;
 
-	float m_maxTimeOutIntervall;
-	int m_maxIntervallCounter;
+		PacketHandler m_packetHandler;
 
-	char m_packetData[MAX_PACKET_SIZE];
+		float m_maxTimeOutIntervall;
+		int m_maxIntervallCounter;
+
+		char m_packetData[MAX_PACKET_SIZE];
 
 #pragma warning( default : 4251 )
 
-private:
-	//NetMessageHook* GetUserFunction(std::string _functionName);
-	//NetMessageHook* GetNetworkFunction(char _functionIdentifier);
+	private:
+		//NetMessageHook* GetUserFunction(std::string _functionName);
+		//NetMessageHook* GetNetworkFunction(char _functionIdentifier);
 
-};
+	};
+
+}
 
 #endif

@@ -7,6 +7,8 @@
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
 
+using namespace Network;
+
 LinSocket::LinSocket()
 {
 	Initialize();

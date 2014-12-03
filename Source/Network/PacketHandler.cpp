@@ -7,6 +7,8 @@
 #include <arpa/inet.h>
 #endif
 
+using namespace Network;
+
 PacketHandler::PacketHandler()
 {
 }
