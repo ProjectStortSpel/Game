@@ -7,22 +7,13 @@
 
 namespace LuaBridge
 {
-  void Init()
+  void Embed()
   {
-    LuaEmbedder::Init();
-    
     LuaInput::Embed();
     
     LuaWorldCreator::Embed();
     LuaWorld::Embed();
     LuaSystem::Embed();
     LuaComponentType::Embed();
-    
-    LuaEmbedder::Load("test.lua");
-  }
-  
-  void Quit()
-  {
-    LuaEmbedder::Quit();
   }
 }
