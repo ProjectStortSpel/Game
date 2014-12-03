@@ -1,6 +1,11 @@
 #ifndef STDAFX_RENDERER_H
 #define STDAFX_RENDERER_H
 
+#ifdef WIN32
+	#include <VLD/vld.h>
+#else
+#endif
+
 #include <map>
 #include <vector>
 #include <algorithm>

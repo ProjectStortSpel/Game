@@ -108,9 +108,9 @@ elseif(UNIX)
 endif()
 
 # Add subprojects
-#if(NOT TARGET Console)
-#add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Console" Console)
-#endif()
+if(NOT TARGET Console)
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Console" Console)
+endif()
 if(NOT TARGET ECSL)
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/ECSL" ECSL)
 endif()

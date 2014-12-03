@@ -8,23 +8,13 @@
 #include "Timer.h"
 
 #ifdef WIN32
-	#define _CRTDBG_MAP_ALLOC
-
-	#ifdef _DEBUG
-		#ifndef DBG_NEW
-			#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
-			#define new DBG_NEW
-		#endif
-	#endif  // _DEBUG
-
-
 	#include <stdlib.h>
 	#include <crtdbg.h>
 	#include <VLD/vld.h>
 #endif
 
 using namespace ECSL;
-
+using namespace Console;
 
 struct Player
 {
@@ -414,10 +404,10 @@ void Start()
 int main(int argc, char** argv)
 {
 	Console::ConsoleManager cm;
-	cm.ExecuteCommand("hej");
+	cm.ExecuteCommand("first 0 third 2 ");
+	//cm.ExecuteCommand(" hest ");
+
 	Start();
-//#ifdef WIN32
-//	_CrtDumpMemoryLeaks();
-//#endif
+
 	return 0;
 }

@@ -58,6 +58,9 @@ namespace Console
 
 	public:
 
+		ConsoleManager();
+		~ConsoleManager();
+
 		void ExecuteCommand(char* _command);
 		void AddCommand(char* _name, ConsoleHook _hook);
 

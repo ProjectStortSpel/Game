@@ -4,8 +4,39 @@
 
 using namespace Console;
 
+ConsoleManager::ConsoleManager()
+{
+}
+
+ConsoleManager::~ConsoleManager()
+{
+}
+
 void ConsoleManager::ParseArgs(char* _args, std::vector<Argument>* _vector)
 {
+	_vector->clear();
+
+	std::string temp = _args;
+	std::string substring;
+
+	char* resultChar;
+	float resultInt;
+
+	size_t pos = temp.find_first_of(' ');
+	while (pos != std::string::npos)
+	{
+		substring = temp.substr(0, pos);
+		temp = temp.substr(pos + 1);
+
+		resultInt = strtof(substring.c_str(), &resultChar);
+		
+		if (*resultChar == '\0')
+			_vector->push_back(Argument(resultInt));
+		else
+			_vector->push_back(Argument(resultChar));
+
+		pos = temp.find_first_of(' ');
+	}
 
 }
 
