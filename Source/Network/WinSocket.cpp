@@ -4,6 +4,8 @@
 
 #include <WS2tcpip.h>
 
+using namespace Network;
+
 WinSocket::WinSocket(void)
 {
 	Initialize();
@@ -15,6 +17,7 @@ WinSocket::WinSocket(void)
 		m_remoteAddress = "";
 		m_remotePort = 0;
 		m_localPort = 0;
+		m_active = 1;
 
 		g_noActiveSockets++;
 	}
@@ -85,7 +88,7 @@ bool WinSocket::Initialize(void)
 
 bool WinSocket::Shutdown(void)
 {
-	if (!g_initialized && g_noActiveSockets == 0)
+	if (!g_initialized || g_noActiveSockets > 0)
 		return true;
 
 	if (WSACleanup() != 0)
