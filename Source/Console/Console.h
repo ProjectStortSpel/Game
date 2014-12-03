@@ -14,7 +14,10 @@
 
 namespace Console
 {
-	struct cmp_str
+
+#define CONSOLE_DEBUG 0
+
+	struct DECLSPEC cmp_str
 	{
 		bool operator()(char const *a, char const *b)
 		{
@@ -28,7 +31,7 @@ namespace Console
 		Number
 	};
 
-	struct Argument
+	struct DECLSPEC Argument
 	{
 		ArgumentType ArgType;
 

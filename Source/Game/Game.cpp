@@ -404,7 +404,7 @@ void Start()
 int main(int argc, char** argv)
 {
 	Console::ConsoleManager cm;
-
+	cm.ExecuteCommand("first 0 third 2 ");
 	//cm.ExecuteCommand(" hest ");
 
 	Start();
