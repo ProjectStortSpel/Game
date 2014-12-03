@@ -4,6 +4,7 @@
 #include <SDL/SDL.h>
 #include <string>
 #include <inttypes.h>
+#include <cstring>
 
 #include "Packet.h"
 
