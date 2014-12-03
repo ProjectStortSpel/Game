@@ -50,7 +50,7 @@ void LoadAlotOfBoxes(Renderer::GraphicDevice* r)
 		for (int y = 0; y < 10; y++)
 		{
 			mat[y+x*10] = glm::translate(vec3(x - 5, -1, y - 5));
-			r->LoadModel("content/models/cube/", "cube.object", &mat[y + x * 10]);
+			r->LoadModel("content/models/default_tile/", "default.object", &mat[y + x * 10]);
 		}
 	}
 }
@@ -95,8 +95,7 @@ int main(int argc, char** argv)
 	TestECSL();
 	LoadAlotOfBoxes(&RENDERER);
 	mat[100] = glm::translate(vec3(0, 0, 0));
-	int modelid = RENDERER.LoadModel("content/models/cube/", "cube.object", &mat[100]); // LOADMODEL RETURNS THE MODELID
-	RENDERER.ChangeModelTexture(modelid, "content/models/cube/NM_tst.png"); // CHANGING TEXTURE ON MODELID
+	int modelid = RENDERER.LoadModel("content/models/gamebrick/", "spelpjaas.object", &mat[100]); // LOADMODEL RETURNS THE MODELID
 
 	bool lol = true;
 	float cd = 1.0f;
@@ -145,17 +144,17 @@ int main(int argc, char** argv)
 		
 		// MOVE CUBE
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_UP) == Input::InputState::DOWN)
-			mat[50] *= glm::translate(vec3(0, 0, -0.01f)); 
+			mat[100] *= glm::translate(vec3(0, 0, -0.01f)); 
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_DOWN) == Input::InputState::DOWN)
-			mat[50] *= glm::translate(vec3(0, 0, 0.01f));
+			mat[100] *= glm::translate(vec3(0, 0, 0.01f));
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_LEFT) == Input::InputState::DOWN)
-			mat[50] *= glm::translate(vec3(-0.01f, 0, 0));
+			mat[100] *= glm::translate(vec3(-0.01f, 0, 0));
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_RIGHT) == Input::InputState::DOWN)
-			mat[50] *= glm::translate(vec3(0.01f, 0, 0)); 
+			mat[100] *= glm::translate(vec3(0.01f, 0, 0)); 
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_SPACE) == Input::InputState::DOWN)
-			mat[50] *= glm::translate(vec3(0, 0.01f, 0));
+			mat[100] *= glm::translate(vec3(0, 0.01f, 0));
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_LSHIFT) == Input::InputState::DOWN)
-			mat[50] *= glm::translate(vec3(0, -0.01f, 0));
+			mat[100] *= glm::translate(vec3(0, -0.01f, 0));
 
 		// MOVE CAMERA
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_W) == Input::InputState::DOWN)
