@@ -15,7 +15,7 @@
 namespace Console
 {
 
-#define CONSOLE_DEBUG 0
+#define CONSOLE_DEBUG 1
 
 	struct DECLSPEC cmp_str
 	{
