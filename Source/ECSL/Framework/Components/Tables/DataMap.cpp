@@ -27,14 +27,42 @@ namespace ECSL
 		}
 			
 	}
+
+	void DataMap::ClearRow(unsigned const int _row)
+	{
+		m_dataMap->erase(m_dataMap->find(_row));
+	}
+
 	void DataMap::ClearTable()
 	{
 		Release();
 		m_dataMap = new std::map<unsigned int, char*>();
 	}
-	void DataMap::ClearRow(unsigned const int _row)
+
+	DataLocation DataMap::GetData(unsigned const int _id)
 	{
-		m_dataMap->erase(m_dataMap->find(_row));
+		return (*m_dataMap)[_id];
+	}
+
+	DataLocation DataMap::GetData(unsigned const int _id, unsigned const int _index)
+	{
+		return (*m_dataMap)[_id] + _index;
+	}
+
+	void DataMap::SetData(unsigned const int _id, void* _data, unsigned const int _byteCount)
+	{
+		if ((*m_dataMap).find(_id) == (*m_dataMap).end())
+			(*m_dataMap)[_id] = new char[m_bytesPerRow];
+
+		memcpy((*m_dataMap)[_id], _data, _byteCount);
+	}
+
+	void DataMap::SetData(unsigned const int _id, unsigned const int _index, void* _data, unsigned const int _byteCount)
+	{
+		if ((*m_dataMap).find(_id) == (*m_dataMap).end())
+			(*m_dataMap)[_id] = new char[m_bytesPerRow];
+
+		memcpy((*m_dataMap)[_id] + _index, _data, _byteCount);
 	}
 
 	const unsigned int DataMap::GetRowCount() const
