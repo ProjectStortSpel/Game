@@ -22,7 +22,7 @@ public:
 
 	void Run(float _dt)
 	{
-		printf("Testsystem run()\n");
+
 	}
 	void Initialize()
 	{
@@ -53,11 +53,11 @@ public:
 
 	void Run(float _dt)
 	{
-		printf("Testsystem2 run()\n");
+
 	}
 	void Initialize()
 	{
-		AddComponentTypeToFilter("Velocity", ECSL::FilterType::Mandatory);
+		AddComponentTypeToFilter("MegaAwesomeComponent", ECSL::FilterType::Mandatory);
 		//AddComponentTypeToFilter("Velocity", ECSL::FilterType::RequiresOneOf);
 		//AddComponentTypeToFilter("Velocity", ECSL::ComponentFilter::RequiresOneOf);
 		//AddComponentTypeToFilter("Position", ECSL::ComponentFilter::Excluded);
@@ -76,40 +76,6 @@ public:
 private:
 };
 
-void lol()
-{
-	ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("content/components");
-	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
-	worldCreator.AddSystemGroup();
-	worldCreator.AddSystemToCurrentGroup<TestSystem2>();
-	worldCreator.AddLuaSystemToCurrentGroup(new TestSystem());
-	auto componentTypes = ComponentTypeManager::GetInstance().GetComponentTypes();
-	for (auto it = componentTypes->begin(); it != componentTypes->end(); ++it)
-		worldCreator.AddComponentType(it->second->GetName());
-	ECSL::World* world = worldCreator.CreateWorld(100);
-
-	int id = world->CreateNewEntity();
-	world->CreateComponentAndAddTo("Velocity", id);
-	//world->CreateComponentAndAddTo("Position", id);
-	//world->RemoveComponentFrom("Position", id);
-	//world->CreateComponentAndAddTo("Position", id);
-
-	//world->KillEntity(id);
-
-	world->Update(0.01f);
-
-	//world->KillEntity(id);
-	world->CreateComponentAndAddTo("Position", id);
-
-	world->Update(0.01f);
-
-	world->RemoveComponentFrom("Position", id);
-
-	world->Update(0.01f);
-
-	delete(world);
-	delete(&ComponentTypeManager::GetInstance());
-}
 void LoadAlotOfBoxes(Renderer::GraphicDevice* r)
 {
 	// ADDING TEMP OBJECTS
@@ -122,110 +88,147 @@ void LoadAlotOfBoxes(Renderer::GraphicDevice* r)
 		}
 	}
 }
+
+Renderer::GraphicDevice*	Graphics;
+Input::InputWrapper*		InputWrapper;
+
+
+void PollSDLEvents()
+{
+	SDL_Event e;
+	while (SDL_PollEvent(&e))
+	{
+		switch (e.type)
+		{
+		case SDL_WINDOWEVENT:
+			Graphics->PollEvent(e);
+			break;
+		case SDL_KEYDOWN:
+		case SDL_KEYUP:
+		case SDL_FINGERMOTION:
+		case SDL_FINGERDOWN:
+		case SDL_FINGERUP:
+		case SDL_JOYAXISMOTION:
+		case SDL_JOYBALLMOTION:
+		case SDL_JOYHATMOTION:
+		case SDL_JOYBUTTONDOWN:
+		case SDL_JOYBUTTONUP:
+		case SDL_MOUSEMOTION:
+		case SDL_MOUSEBUTTONDOWN:
+		case SDL_MOUSEBUTTONUP:
+		case SDL_MOUSEWHEEL:
+		case SDL_MULTIGESTURE:
+			InputWrapper->PollEvent(e);
+			break;
+		}
+	}
+}
 void Start()
 {
-	/*	Initialize Renderer and Input	*/
-	Renderer::GraphicDevice RENDERER = Renderer::GraphicDevice();
-	RENDERER.Init();
+	Graphics = new Renderer::GraphicDevice();
+	InputWrapper = &Input::InputWrapper::GetInstance();
 
-	Input::InputWrapper* INPUT = &Input::InputWrapper::GetInstance();
-	
-	LoadAlotOfBoxes(&RENDERER);
+	Graphics->Init();
+	LoadAlotOfBoxes(Graphics);
+
 	mat[100] = glm::translate(vec3(0, 0, 0));
-	int modelid = RENDERER.LoadModel("content/models/cube/", "cube.object", &mat[100]); // LOADMODEL RETURNS THE MODELID
-	RENDERER.ChangeModelTexture(modelid, "content/models/cube/NM_tst.png"); // CHANGING TEXTURE ON MODELID
 
-	bool lol = true;
-	float cd = 1.0f;
-	Timer timer;
-	while (lol)
+	int modelid = Graphics->LoadModel("content/models/cube/", "cube.object", &mat[100]); // LOADMODEL RETURNS THE MODELID
+	Graphics->ChangeModelTexture(modelid, "content/models/cube/NM_tst.png"); // CHANGING TEXTURE ON MODELID
+
+
+	/*	How to create a world	*/
+	ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("content/components");	//	Load all component types from 'content/components'
+
+	/*	1.	Create the 'World Creator'	*/
+	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
+	/*	2.	Add systems*/
+	worldCreator.AddSystemGroup();
+	worldCreator.AddSystemToCurrentGroup<TestSystem2>();
+	worldCreator.AddLuaSystemToCurrentGroup(new TestSystem());
+
+	/*	3.	Add all loaded component types	*/
+	auto componentTypes = ComponentTypeManager::GetInstance().GetComponentTypes();
+	for (auto it = componentTypes->begin(); it != componentTypes->end(); ++it)
+		worldCreator.AddComponentType(it->second->GetName());
+
+	/*	4.	Create the world	*/
+	ECSL::World* world = worldCreator.CreateWorld(50000);
+	int cId = ComponentTypeManager::GetInstance().GetTableId("MegaAwesomeComponent");
+	for (int n = 0; n < 50000; ++n)
 	{
-		// DT COUNTER
-		float dt = timer.ElapsedTimeInSeconds();
-		timer.Reset();
-
-		INPUT->Update();
-		RENDERER.Update(dt);
-		RENDERER.RenderSimpleText("This text render from GAME! \nThe x and y values in the function isn't pixel \ncoordinates, it's char position. Every char is \n8x16 pixels in size. Use \\n to change line.\n\n  !Not all chars is supported!\n\nRight now it clear the whole output image as well (Tell me when to remove this).", 10, 2);
+		int id = world->CreateNewEntity();
+		world->CreateComponentAndAddTo(cId, id);
+	}
+			
 
 
-		RENDERER.Render();
-		INPUT->Update();
+	/*	Temporary game loop	*/
+	Timer gameTimer;
+	while (true)
+	{
+		float dt = gameTimer.ElapsedTimeInSeconds();
+		gameTimer.Reset();
+
+		InputWrapper->Update();
+		Graphics->Update(dt);
+		PollSDLEvents();
 
 
-		SDL_Event e;
-		while (SDL_PollEvent(&e))
-		{
-			switch (e.type)
-			{
-			case SDL_WINDOWEVENT:
-				RENDERER.PollEvent(e);
-				break;
-			case SDL_KEYDOWN:
-			case SDL_KEYUP:
-			case SDL_FINGERMOTION:
-			case SDL_FINGERDOWN:
-			case SDL_FINGERUP:
-			case SDL_JOYAXISMOTION:
-			case SDL_JOYBALLMOTION:
-			case SDL_JOYHATMOTION:
-			case SDL_JOYBUTTONDOWN:
-			case SDL_JOYBUTTONUP:
-			case SDL_MOUSEMOTION:
-			case SDL_MOUSEBUTTONDOWN:
-			case SDL_MOUSEBUTTONUP:
-			case SDL_MOUSEWHEEL:
-			case SDL_MULTIGESTURE:
-				INPUT->PollEvent(e);
-				break;
-			}
-		}
+		world->Update(dt);
+		Graphics->RenderSimpleText("This text render from GAME! \nThe x and y values in the function isn't pixel \ncoordinates, it's char position. Every char is \n8x16 pixels in size. Use \\n to change line.\n\n  !Not all chars is supported!\n\nRight now it clear the whole output image as well (Tell me when to remove this).", 10, 2);
+
 
 		// MOVE CUBE
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_UP) == Input::InputState::DOWN)
+		if (InputWrapper->GetKeyboard()->GetKeyState(SDL_SCANCODE_UP) == Input::InputState::DOWN)
 			mat[100] *= glm::translate(vec3(0, 0, -0.01f));
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_DOWN) == Input::InputState::DOWN)
+		if (InputWrapper->GetKeyboard()->GetKeyState(SDL_SCANCODE_DOWN) == Input::InputState::DOWN)
 			mat[100] *= glm::translate(vec3(0, 0, 0.01f));
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_LEFT) == Input::InputState::DOWN)
+		if (InputWrapper->GetKeyboard()->GetKeyState(SDL_SCANCODE_LEFT) == Input::InputState::DOWN)
 			mat[100] *= glm::translate(vec3(-0.01f, 0, 0));
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_RIGHT) == Input::InputState::DOWN)
+		if (InputWrapper->GetKeyboard()->GetKeyState(SDL_SCANCODE_RIGHT) == Input::InputState::DOWN)
 			mat[100] *= glm::translate(vec3(0.01f, 0, 0));
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_SPACE) == Input::InputState::DOWN)
+		if (InputWrapper->GetKeyboard()->GetKeyState(SDL_SCANCODE_SPACE) == Input::InputState::DOWN)
 			mat[100] *= glm::translate(vec3(0, 0.01f, 0));
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_LSHIFT) == Input::InputState::DOWN)
+		if (InputWrapper->GetKeyboard()->GetKeyState(SDL_SCANCODE_LSHIFT) == Input::InputState::DOWN)
 			mat[100] *= glm::translate(vec3(0, -0.01f, 0));
 
 		// MOVE CAMERA
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_W) == Input::InputState::DOWN)
-			RENDERER.GetCamera()->MoveForward(dt);
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_S) == Input::InputState::DOWN)
-			RENDERER.GetCamera()->MoveBackward(dt);
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_A) == Input::InputState::DOWN)
-			RENDERER.GetCamera()->MoveLeft(dt);
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_D) == Input::InputState::DOWN)
-			RENDERER.GetCamera()->MoveRight(dt);
+		if (InputWrapper->GetKeyboard()->GetKeyState(SDL_SCANCODE_W) == Input::InputState::DOWN)
+			Graphics->GetCamera()->MoveForward(dt);
+		if (InputWrapper->GetKeyboard()->GetKeyState(SDL_SCANCODE_S) == Input::InputState::DOWN)
+			Graphics->GetCamera()->MoveBackward(dt);
+		if (InputWrapper->GetKeyboard()->GetKeyState(SDL_SCANCODE_A) == Input::InputState::DOWN)
+			Graphics->GetCamera()->MoveLeft(dt);
+		if (InputWrapper->GetKeyboard()->GetKeyState(SDL_SCANCODE_D) == Input::InputState::DOWN)
+			Graphics->GetCamera()->MoveRight(dt);
 
 		// ROTATE CAMERA
-		if (INPUT->GetMouse()->GetButtonState(Input::LeftButton) == Input::InputState::DOWN)
+		if (InputWrapper->GetMouse()->GetButtonState(Input::LeftButton) == Input::InputState::DOWN)
 		{
 			int sizeX, sizeY;
-			RENDERER.GetWindowSize(sizeX, sizeY);
+			Graphics->GetWindowSize(sizeX, sizeY);
 
-			RENDERER.GetCamera()->UpdateMouse(sizeX*0.5, sizeY*0.5, INPUT->GetMouse()->GetX(), INPUT->GetMouse()->GetY());
-			INPUT->GetMouse()->SetPosition(sizeX*0.5, sizeY*0.5);
-			INPUT->GetMouse()->HideCursor(true);
+			Graphics->GetCamera()->UpdateMouse(sizeX*0.5, sizeY*0.5, InputWrapper->GetMouse()->GetX(), InputWrapper->GetMouse()->GetY());
+			InputWrapper->GetMouse()->SetPosition(sizeX*0.5, sizeY*0.5);
+			InputWrapper->GetMouse()->HideCursor(true);
 		}
 		else
-			INPUT->GetMouse()->HideCursor(false);
-		//-----------------------------------------------------------------------------------------------
+			InputWrapper->GetMouse()->HideCursor(false);
 
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
-		{
-			lol = false;
-		}
+		if (InputWrapper->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
+			break;
+
+
+
+
+		Graphics->Render();
 	}
 
-	delete(INPUT);
+	delete(world);
+	delete(&ComponentTypeManager::GetInstance());
+	delete(InputWrapper);
+	delete(Graphics);
 }
 
 int main(int argc, char** argv)
