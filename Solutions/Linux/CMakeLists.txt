@@ -29,7 +29,7 @@ if(WIN32)
   set(EXTERNAL_WINDOWS_STATIC_SDL2MAIN_LIBRARY
       "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Windows/${WINDOWS_SYSTEM}/SDL2main.lib")
   set(EXTERNAL_WINDOWS_STATIC_LUA52_LIBRARY
-      "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Windows/${WINDOWS_SYSTEM}/lua52.lib")
+      "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Windows/${WINDOWS_SYSTEM}/lua53.lib")
 
   # Set output directory
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_SOURCE_DIR}/../../Bin/Debug/${WINDOWS_SYSTEM}")
