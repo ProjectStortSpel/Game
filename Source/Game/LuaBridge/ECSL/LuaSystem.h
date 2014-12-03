@@ -20,6 +20,9 @@ namespace LuaBridge
     void Initialize();
     void OnEntityAdded(unsigned int _entityId);
     void OnEntityRemoved(unsigned int _entityId);
+    
+  private:
+    int AddComponentTypeToFilter();
   };
 }
 

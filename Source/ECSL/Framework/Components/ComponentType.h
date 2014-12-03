@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <SDL/SDL.h>
 
 namespace ECSL
 {
@@ -32,7 +33,7 @@ namespace ECSL
 		inline void SetOffset(unsigned int _offset) { m_offset = _offset; }
 	};
 
-	class ComponentType
+	class DECLSPEC ComponentType
 	{
 	private:
 		std::string	m_name;

@@ -1,5 +1,5 @@
-#ifndef LUACOMPONENT_H
-#define LUACOMPONENT_H
+#ifndef LUACOMPONENTTYPE_H
+#define LUACOMPONENTTYPE_H
 
 #include "ECSL/Framework/Components/ComponentType.h"
 
@@ -8,14 +8,15 @@
 
 namespace LuaBridge
 {
-  class LuaComponent
+  class LuaComponentType
   {
   public:
-    LuaComponent();
+    LuaComponentType();
+    ~LuaComponentType();
     
     static void Embed();
     
-    ECSL::ComponentType GetComponentType();
+    ECSL::ComponentType* CreateComponentType();
     
   private:
     int GetName();

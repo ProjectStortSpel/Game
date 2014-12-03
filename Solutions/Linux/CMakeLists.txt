@@ -7,7 +7,7 @@ set(USE_X86_64 ON CACHE BOOL "USE_X86_64")
 # Project name
 project("Large Game Project")
 
-add_definitions(-D_UNICODE -DUNICODE)
+add_definitions(-DLUA_REAL_FLOAT -D_UNICODE -DUNICODE)
 
 if(WIN32)
   if(CMAKE_CL_64)

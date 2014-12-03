@@ -58,17 +58,13 @@ namespace LuaEmbedder
       lua_settable(L, -3); \
       lua_setglobal(L, library.c_str()); \
     }
-  void AddDouble(const std::string& name, double value, const std::string& library)
+  void AddFloat(const std::string& name, float value, const std::string& library)
   {
     ADD_VARIABLE(number);
   }
   void AddInt(const std::string& name, int value, const std::string& library)
   {
     ADD_VARIABLE(integer);
-  }
-  void AddUnsignedInt(const std::string& name, unsigned int value, const std::string& library)
-  {
-    ADD_VARIABLE(unsigned);
   }
   void AddBool(const std::string& name, bool value, const std::string& library)
   {
@@ -116,20 +112,15 @@ namespace LuaEmbedder
     }
   }
   
-  double PullDouble(int index)
+  float PullFloat(int index)
   {
     assert(lua_isnumber(L, index));
-    return (double)lua_tonumber(L, index);
+    return (float)lua_tonumber(L, index);
   }
   int PullInt(int index)
   {
     assert(lua_isnumber(L, index));
     return (int)lua_tointeger(L, index);
-  }
-  unsigned int PullUnsignedInt(int index)
-  {
-    assert(lua_isnumber(L, index));
-    return (unsigned int)lua_tounsigned(L, index);
   }
   bool PullBool(int index)
   {
@@ -153,20 +144,15 @@ namespace LuaEmbedder
       lua_pushstring(L, name.c_str()); \
       lua_gettable(L, -2); \
     }
-  double PullDouble(const std::string& name, const std::string& library)
+  float PullFloat(const std::string& name, const std::string& library)
   {
     PULL_GLOBAL_VARIABLE();
-    return PullDouble(-1);
+    return PullFloat(-1);
   }
   int PullInt(const std::string& name, const std::string& library)
   {
     PULL_GLOBAL_VARIABLE();
     return PullInt(-1);
-  }
-  unsigned int PullUnsignedInt(const std::string& name, const std::string& library)
-  {
-    PULL_GLOBAL_VARIABLE();
-    return PullUnsignedInt(-1);
   }
   bool PullBool(const std::string& name, const std::string& library)
   {
@@ -179,17 +165,13 @@ namespace LuaEmbedder
     return PullString(-1);
   }
   
-  void PushDouble(double value)
+  void PushFloat(float value)
   {
-    lua_pushnumber(L, (lua_Number)value);
+    lua_pushnumber(L, value);
   }
   void PushInt(int value)
   {
     lua_pushinteger(L, (lua_Integer)value);
-  }
-  void PushUnsignedInt(unsigned int value)
-  {
-    lua_pushunsigned(L, (lua_Unsigned)value);
   }
   void PushBool(bool value)
   {
@@ -200,15 +182,11 @@ namespace LuaEmbedder
     lua_pushstring(L, value.c_str());
   }
   
-  bool IsDouble(int index)
+  bool IsFloat(int index)
   {
     return lua_isnumber(L, index);
   }
   bool IsInt(int index)
-  {
-    return lua_isnumber(L, index);
-  }
-  bool IsUnsignedInt(int index)
   {
     return lua_isnumber(L, index);
   }

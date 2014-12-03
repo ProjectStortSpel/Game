@@ -1,8 +1,9 @@
 #include "LuaBridge.h"
 #include "Input/LuaInput.h"
 #include "ECSL/LuaWorldCreator.h"
+#include "ECSL/LuaWorld.h"
 #include "ECSL/LuaSystem.h"
-#include "ECSL/LuaComponent.h"
+#include "ECSL/LuaComponentType.h"
 
 namespace LuaBridge
 {
@@ -13,8 +14,9 @@ namespace LuaBridge
     LuaInput::Embed();
     
     LuaWorldCreator::Embed();
+    LuaWorld::Embed();
     LuaSystem::Embed();
-    LuaComponent::Embed();
+    LuaComponentType::Embed();
     
     LuaEmbedder::Load("test.lua");
   }
