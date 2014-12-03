@@ -107,7 +107,7 @@ namespace LuaEmbedder
 	Registers your class with Lua.  Leave namespac "" if you want to load it into the global space.
     */
     // REGISTER CLASS AS A GLOBAL TABLE 
-    static void Register(lua_State* L, const char* className)
+    static void Register(lua_State* L, const char* className, bool gc = true)
     {
       lua_pushstring(L, className);
       lua_pushcclosure(L, &Luna<T>::constructor, 1);
@@ -121,9 +121,12 @@ namespace LuaEmbedder
       lua_pushvalue(L, metatable);
       lua_settable(L, -3);
       
-      lua_pushstring(L, "__gc");
-      lua_pushcfunction(L, &Luna<T>::gc_obj);
-      lua_settable(L, metatable);
+      if (gc)
+      {
+	lua_pushstring(L, "__gc");
+	lua_pushcfunction(L, &Luna<T>::gc_obj);
+	lua_settable(L, metatable);
+      }
       
       lua_pushstring(L, "__tostring");
       lua_pushstring(L, className);
@@ -558,7 +561,11 @@ namespace LuaEmbedder
       T** obj = static_cast<T**>(lua_touserdata(L, 1));
       
       if(obj && *obj)
+      {
 	delete(*obj);
+	*obj = nullptr;
+	obj = nullptr;
+      }
       
       return 0;
     }
