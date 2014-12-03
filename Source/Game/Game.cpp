@@ -400,6 +400,10 @@ void Start()
 	SAFE_DELETE(client);
 }
 
+void first(std::vector<Argument>* _args)
+{
+
+}
 
 int main(int argc, char** argv)
 {
