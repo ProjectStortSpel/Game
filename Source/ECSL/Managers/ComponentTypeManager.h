@@ -27,6 +27,10 @@ namespace ECSL
 		template<typename ComponentType>
 		unsigned int GetTableId();
 		unsigned int GetTableId(const std::string& _componentType);
+
+		template<typename ComponentType>
+		void AddComponentType();
+		void AddComponentType(ComponentType& _componentType);
 	private:
 		ComponentTypeManager();
 
@@ -36,9 +40,7 @@ namespace ECSL
 		std::map<unsigned int, ComponentType*>* m_componentTypes;
 		std::unordered_map<std::string, unsigned int>* m_stringTableId;
 
-		template<typename ComponentType>
-		void AddComponentType();
-		void AddComponentType(ComponentType& _componentType);
+
 	};
 
 	template<typename ComponentType>

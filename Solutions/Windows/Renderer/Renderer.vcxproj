@@ -19,14 +19,19 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Source\Renderer\Buffer.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\Camera.h" />
     <ClInclude Include="..\..\..\Source\Renderer\GLTimer.h" />
     <ClInclude Include="..\..\..\Source\Renderer\GraphicDevice.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\ModelLoader.h" />
     <ClInclude Include="..\..\..\Source\Renderer\Shader.h" />
     <ClInclude Include="..\..\..\Source\Renderer\SimpleText.h" />
     <ClInclude Include="..\..\..\Source\Renderer\stdafx.h" />
     <ClInclude Include="..\..\..\Source\Renderer\TextureLoader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\Source\Renderer\Buffer.cpp" />
+    <ClCompile Include="..\..\..\Source\Renderer\Camera.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\GLTimer.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\Shader.cpp" />
@@ -35,13 +40,11 @@
   <ItemGroup>
     <None Include="..\..\..\Externals\content\shaders\CSDeferredPass2.glsl" />
     <None Include="..\..\..\Externals\content\shaders\FSDeferredPass1.glsl" />
-    <None Include="..\..\..\Externals\content\shaders\FSDeferredPass2.glsl" />
     <None Include="..\..\..\Externals\content\shaders\fullscreen.gs" />
     <None Include="..\..\..\Externals\content\shaders\fullscreen.ps" />
     <None Include="..\..\..\Externals\content\shaders\fullscreen.vs" />
     <None Include="..\..\..\Externals\content\shaders\SimpleText.glsl" />
     <None Include="..\..\..\Externals\content\shaders\VSDeferredPass1.glsl" />
-    <None Include="..\..\..\Externals\content\shaders\VSDeferredPass2.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A71BE4D1-612E-49FE-9B2D-EA067C024F0A}</ProjectGuid>

@@ -1,9 +1,9 @@
 #include <SDL/SDL.h>
-#include <SDL/SDL_thread.h>
 #include <ECSL/ECSL.h>
-#include <vector>
-#include <algorithm>
-#include <time.h>
+#include "Input/InputWrapper.h"
+#include "Renderer/GraphicDevice.h"
+#include "Timer.h"
+
 #ifdef WIN32
 	#define _CRTDBG_MAP_ALLOC
 	#include <stdlib.h>
@@ -11,6 +11,8 @@
 #endif
 
 using namespace ECSL;
+
+mat4 mat[1000];
 
 class TestSystem : public ECSL::System
 {
@@ -20,18 +22,12 @@ public:
 
 	void Update(float _dt)
 	{
-		const std::vector<unsigned int> entities = *GetEntities();
-		for (auto entity : entities)
-		{
-			float* x = (float*)GetComponent(entity, "Position", "X");
-			*x = *x + 5;
-			printf("Position: %f, %f\n", *(float*)GetComponent(entity, "Position", "X"), *(float*)GetComponent(entity, "Position", "Y"));
-		}
 		printf("Testsystem run()\n");
 	}
 	void Initialize()
 	{
-		AddComponentTypeToFilter("Position", ECSL::FilterType::Mandatory);
+		AddComponentTypeToFilter("Velocity", ECSL::FilterType::Mandatory);
+		AddComponentTypeToFilter("Position", ECSL::FilterType::Excluded);
 		//AddComponentTypeToFilter("Velocity", ECSL::FilterType::RequiresOneOf);
 		//AddComponentTypeToFilter("Velocity", ECSL::ComponentFilter::RequiresOneOf);
 		//AddComponentTypeToFilter("Position", ECSL::ComponentFilter::Excluded);
@@ -49,122 +45,192 @@ public:
 	}
 private:
 };
-
-
-
-std::vector<unsigned int>* testVec;
-ECSL::BitSet::DataType* testSet;
-SDL_mutex* mutex;
-void PerfTest(void* data)
+class TestSystem2 : public ECSL::System
 {
-	unsigned int entityCount = 10000;
-	unsigned int entitiesInSystem = 1500;
+public:
+	TestSystem2() { }
+	~TestSystem2() { }
 
-	testSet = BitSet::GenerateBitSet(entityCount);
-	unsigned int biggestEntityNum = 0;
-	testVec = new std::vector<unsigned int>();
-
-	srand(time(NULL));
-
-	for (int i = 0; i < entitiesInSystem; ++i)
+	void Update(float _dt)
 	{
-		int val = rand() % entityCount;
-		unsigned int bitIndex = BitSet::GetBitIndex(val);
-		unsigned int bitSetIndex = BitSet::GetBitSetIndex(val);
-		if (testSet[bitSetIndex] & ((BitSet::DataType)1) << bitIndex)
-		{
-			i--;
-			continue;
-		}
-		testSet[bitSetIndex] |= ((BitSet::DataType)1) << bitIndex;
-		if (val > biggestEntityNum)
-			biggestEntityNum = val;
-		testVec->push_back(val);
+		printf("Testsystem2 run()\n");
+	}
+	void Initialize()
+	{
+		AddComponentTypeToFilter("Velocity", ECSL::FilterType::Mandatory);
+		//AddComponentTypeToFilter("Velocity", ECSL::FilterType::RequiresOneOf);
+		//AddComponentTypeToFilter("Velocity", ECSL::ComponentFilter::RequiresOneOf);
+		//AddComponentTypeToFilter("Position", ECSL::ComponentFilter::Excluded);
+
+		printf("Testsystem2 Initialize()\n");
 	}
 
-
-	float testVal1 = 0;
-	float testVal2 = 0;
-	float abc = 1.0f;
-	float* abc2 = new float();
-	*abc2 = 1.0f;
-
-	clock_t start1, start2, end1, end2;
-	start1 = clock();
-	for (unsigned int i = 0; i < 1000000000; ++i)
+	void OnEntityAdded(unsigned int _entityId)
 	{
-		testVal1 += abc;
+		printf("Testsystem2 OnEntityAdded()\n");
 	}
-	end1 = clock();
-
-	start2 = clock();
-	for (unsigned int i = 0; i < 1000000000; ++i)
+	void OnEntityRemoved(unsigned int _entityId)
 	{
-		testVal2 += *abc2;
+		printf("Testsystem2 OnEntityRemoved()\n");
 	}
-	end2 = clock();
-
-	printf("Test1 Time: %f\n", (float)(end1 - start1) / CLOCKS_PER_SEC);
-	printf("Test2 Time: %f\n", (float)(end2 - start2) / CLOCKS_PER_SEC);
-	printf("%f, %f\n", testVal1, testVal2);
-
-	delete testVec;
-	delete testSet;
-}
-
-DataArray* ar1;
-DataArray* ar2;
+private:
+};
 
 void lol()
 {
-	ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("Content/components");
+	ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("content/components");
 	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
 	worldCreator.AddSystemGroup();
-	worldCreator.AddSystemToCurrentGroup<TestSystem>();
+	worldCreator.AddSystemToCurrentGroup<TestSystem2>();
+	worldCreator.AddLuaSystemToCurrentGroup(new TestSystem());
 	auto componentTypes = ComponentTypeManager::GetInstance().GetComponentTypes();
 	for (auto it = componentTypes->begin(); it != componentTypes->end(); ++it)
 		worldCreator.AddComponentType(it->second->GetName());
-	ECSL::World* world = worldCreator.CreateWorld(10000);
+	ECSL::World* world = worldCreator.CreateWorld(100);
 
 	int id = world->CreateNewEntity();
-	//world->CreateComponentAndAddTo("Velocity", id);
-	//float x = 4;
-	//world->SetComponent("Velocity", "X", &x, id);
-	
+	world->CreateComponentAndAddTo("Velocity", id);
+	//world->CreateComponentAndAddTo("Position", id);
+	//world->RemoveComponentFrom("Position", id);
+	//world->CreateComponentAndAddTo("Position", id);
+
+	//world->KillEntity(id);
+
+	world->Update(0.01f);
+
+	//world->KillEntity(id);
 	world->CreateComponentAndAddTo("Position", id);
-	//world->RemoveComponentFrom("Position", id);
-	//world->CreateComponentAndAddTo("Position", id);
-
-	//world->KillEntity(id);
 
 	world->Update(0.01f);
 
-	//world->KillEntity(id);
-	//world->CreateComponentAndAddTo("Position", id);
-
-	world->Update(0.01f);
-
-	//world->RemoveComponentFrom("Position", id);
+	world->RemoveComponentFrom("Position", id);
 
 	world->Update(0.01f);
 
 	delete(world);
 	delete(&ComponentTypeManager::GetInstance());
 }
+void LoadAlotOfBoxes(Renderer::GraphicDevice* r)
+{
+	// ADDING TEMP OBJECTS
+	for (int x = 0; x < 10; x++)
+	{
+		for (int y = 0; y < 10; y++)
+		{
+			mat[x + y * 10] = glm::translate(vec3(x - 5, -1, y - 5));
+			r->LoadModel("content/models/cube/", "cube.object", &mat[x + y * 10]);
+		}
+	}
+}
+void Start()
+{
+	/*	Initialize Renderer and Input	*/
+	Renderer::GraphicDevice RENDERER = Renderer::GraphicDevice();
+	RENDERER.Init();
+
+	Input::InputWrapper* INPUT = &Input::InputWrapper::GetInstance();
+	
+	LoadAlotOfBoxes(&RENDERER);
+	mat[100] = glm::translate(vec3(0, 0, 0));
+	int modelid = RENDERER.LoadModel("content/models/cube/", "cube.object", &mat[100]); // LOADMODEL RETURNS THE MODELID
+	RENDERER.ChangeModelTexture(modelid, "content/models/cube/NM_tst.png"); // CHANGING TEXTURE ON MODELID
+
+	bool lol = true;
+	float cd = 1.0f;
+	Timer timer;
+	while (lol)
+	{
+		// DT COUNTER
+		float dt = timer.ElapsedTimeInSeconds();
+		timer.Reset();
+
+		INPUT->Update();
+		RENDERER.Update(dt);
+		RENDERER.RenderSimpleText("This text render from GAME! \nThe x and y values in the function isn't pixel \ncoordinates, it's char position. Every char is \n8x16 pixels in size. Use \\n to change line.\n\n  !Not all chars is supported!\n\nRight now it clear the whole output image as well (Tell me when to remove this).", 10, 2);
+
+
+		RENDERER.Render();
+		INPUT->Update();
+
+
+		SDL_Event e;
+		while (SDL_PollEvent(&e))
+		{
+			switch (e.type)
+			{
+			case SDL_WINDOWEVENT:
+				RENDERER.PollEvent(e);
+				break;
+			case SDL_KEYDOWN:
+			case SDL_KEYUP:
+			case SDL_FINGERMOTION:
+			case SDL_FINGERDOWN:
+			case SDL_FINGERUP:
+			case SDL_JOYAXISMOTION:
+			case SDL_JOYBALLMOTION:
+			case SDL_JOYHATMOTION:
+			case SDL_JOYBUTTONDOWN:
+			case SDL_JOYBUTTONUP:
+			case SDL_MOUSEMOTION:
+			case SDL_MOUSEBUTTONDOWN:
+			case SDL_MOUSEBUTTONUP:
+			case SDL_MOUSEWHEEL:
+			case SDL_MULTIGESTURE:
+				INPUT->PollEvent(e);
+				break;
+			}
+		}
+
+		// MOVE CUBE
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_UP) == Input::InputState::DOWN)
+			mat[100] *= glm::translate(vec3(0, 0, -0.01f));
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_DOWN) == Input::InputState::DOWN)
+			mat[100] *= glm::translate(vec3(0, 0, 0.01f));
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_LEFT) == Input::InputState::DOWN)
+			mat[100] *= glm::translate(vec3(-0.01f, 0, 0));
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_RIGHT) == Input::InputState::DOWN)
+			mat[100] *= glm::translate(vec3(0.01f, 0, 0));
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_SPACE) == Input::InputState::DOWN)
+			mat[100] *= glm::translate(vec3(0, 0.01f, 0));
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_LSHIFT) == Input::InputState::DOWN)
+			mat[100] *= glm::translate(vec3(0, -0.01f, 0));
+
+		// MOVE CAMERA
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_W) == Input::InputState::DOWN)
+			RENDERER.GetCamera()->MoveForward(dt);
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_S) == Input::InputState::DOWN)
+			RENDERER.GetCamera()->MoveBackward(dt);
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_A) == Input::InputState::DOWN)
+			RENDERER.GetCamera()->MoveLeft(dt);
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_D) == Input::InputState::DOWN)
+			RENDERER.GetCamera()->MoveRight(dt);
+
+		// ROTATE CAMERA
+		if (INPUT->GetMouse()->GetButtonState(Input::LeftButton) == Input::InputState::DOWN)
+		{
+			int sizeX, sizeY;
+			RENDERER.GetWindowSize(sizeX, sizeY);
+
+			RENDERER.GetCamera()->UpdateMouse(sizeX*0.5, sizeY*0.5, INPUT->GetMouse()->GetX(), INPUT->GetMouse()->GetY());
+			INPUT->GetMouse()->SetPosition(sizeX*0.5, sizeY*0.5);
+			INPUT->GetMouse()->HideCursor(true);
+		}
+		else
+			INPUT->GetMouse()->HideCursor(false);
+		//-----------------------------------------------------------------------------------------------
+
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
+		{
+			lol = false;
+		}
+	}
+
+	delete(INPUT);
+}
 
 int main(int argc, char** argv)
 {
-	SDL_Init(SDL_INIT_EVERYTHING);
-	lol();
-	mutex = SDL_CreateMutex();
-	//if (!mutex)
-	//	printf("Mutex...");
-	//thread1 = SDL_CreateThread((SDL_ThreadFunction)PerfTest, "PerfTest", (void*)0);
-	//SDL_WaitThread(thread1, 0);
-	//PerfTest(0);
-	SDL_DestroyMutex(mutex);
-	SDL_Quit();
-	system("pause");
+	Start();
 	#ifdef WIN32
 	_CrtDumpMemoryLeaks();
 	#endif
