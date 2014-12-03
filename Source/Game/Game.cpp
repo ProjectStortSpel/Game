@@ -18,14 +18,20 @@ public:
 	TestSystem() { }
 	~TestSystem() { }
 
-	void Run(float _dt)
+	void Update(float _dt)
 	{
+		const std::vector<unsigned int> entities = *GetEntities();
+		for (auto entity : entities)
+		{
+			float* x = (float*)GetComponent(entity, "Position", "X");
+			*x = *x + 5;
+			printf("Position: %f, %f\n", *(float*)GetComponent(entity, "Position", "X"), *(float*)GetComponent(entity, "Position", "Y"));
+		}
 		printf("Testsystem run()\n");
 	}
 	void Initialize()
 	{
-		AddComponentTypeToFilter("Velocity", ECSL::FilterType::Mandatory);
-		AddComponentTypeToFilter("Position", ECSL::FilterType::Excluded);
+		AddComponentTypeToFilter("Position", ECSL::FilterType::Mandatory);
 		//AddComponentTypeToFilter("Velocity", ECSL::FilterType::RequiresOneOf);
 		//AddComponentTypeToFilter("Velocity", ECSL::ComponentFilter::RequiresOneOf);
 		//AddComponentTypeToFilter("Position", ECSL::ComponentFilter::Excluded);
@@ -44,77 +50,57 @@ public:
 private:
 };
 
-std::map<int, bool>* testMap;
+
+
+std::vector<unsigned int>* testVec;
 ECSL::BitSet::DataType* testSet;
 SDL_mutex* mutex;
 void PerfTest(void* data)
 {
 	unsigned int entityCount = 10000;
-	unsigned int numInSystem = 3000;
+	unsigned int entitiesInSystem = 1500;
 
-	testSet = ECSL::BitSet::GenerateBitSet(entityCount);
-	testMap = new std::map<int, bool>();
-	std::vector<unsigned int> loop;
+	testSet = BitSet::GenerateBitSet(entityCount);
+	unsigned int biggestEntityNum = 0;
+	testVec = new std::vector<unsigned int>();
 
-	srand((unsigned int)time(NULL));
+	srand(time(NULL));
 
-	for (unsigned int i = 0; i < numInSystem; ++i)
+	for (int i = 0; i < entitiesInSystem; ++i)
 	{
-		unsigned int number = rand() % entityCount;
-		if (testMap->count(number) == 1)
+		int val = rand() % entityCount;
+		unsigned int bitIndex = BitSet::GetBitIndex(val);
+		unsigned int bitSetIndex = BitSet::GetBitSetIndex(val);
+		if (testSet[bitSetIndex] & ((BitSet::DataType)1) << bitIndex)
 		{
-			--i;
+			i--;
 			continue;
 		}
-		unsigned int bitIndex = ECSL::BitSet::GetBitIndex(number);
-		unsigned int bitSetIndex = ECSL::BitSet::GetBitSetIndex(number);
-		testSet[bitSetIndex] |= ((ECSL::BitSet::DataType)1) << bitIndex;
-		(*testMap)[number] = true;
-		loop.push_back(number);
+		testSet[bitSetIndex] |= ((BitSet::DataType)1) << bitIndex;
+		if (val > biggestEntityNum)
+			biggestEntityNum = val;
+		testVec->push_back(val);
 	}
-	std::random_shuffle(loop.begin(), loop.end());
+
 
 	float testVal1 = 0;
 	float testVal2 = 0;
+	float abc = 1.0f;
+	float* abc2 = new float();
+	*abc2 = 1.0f;
 
 	clock_t start1, start2, end1, end2;
 	start1 = clock();
-	for (unsigned int i = 0; i < 1000; ++i)
+	for (unsigned int i = 0; i < 1000000000; ++i)
 	{
-		for (unsigned int n = 0; n < numInSystem; ++n)
-		{
-			unsigned int number = loop[n];
-			unsigned int bitIndex = ECSL::BitSet::GetBitIndex(number);
-			unsigned int bitSetIndex = ECSL::BitSet::GetBitSetIndex(number);
-			if (testSet[bitSetIndex] & ((ECSL::BitSet::DataType)1) << bitIndex)
-				testVal1 += n;
-		}
+		testVal1 += abc;
 	}
 	end1 = clock();
 
 	start2 = clock();
-	for (unsigned int i = 0; i < 1000; ++i)
+	for (unsigned int i = 0; i < 1000000000; ++i)
 	{
-		
-		for (unsigned int n = 0; n < numInSystem; ++n)
-		{
-			SDL_LockMutex(mutex);
-			unsigned int number = loop[n];
-			unsigned int bitIndex = ECSL::BitSet::GetBitIndex(number);
-			unsigned int bitSetIndex = ECSL::BitSet::GetBitSetIndex(number);
-			if (testSet[bitSetIndex] & ((ECSL::BitSet::DataType)1) << bitIndex)
-				testVal2 += n;
-			SDL_UnlockMutex(mutex);
-		}
-		
-
-		//for (unsigned int n = 0; n < numInSystem; ++n)
-		//{
-		//	unsigned int number = loop[n];
-		//	auto it = testMap->find(number);
-		//	if (it != testMap->end())
-		//		testVal2 += n;
-		//}
+		testVal2 += *abc2;
 	}
 	end2 = clock();
 
@@ -122,9 +108,12 @@ void PerfTest(void* data)
 	printf("Test2 Time: %f\n", (float)(end2 - start2) / CLOCKS_PER_SEC);
 	printf("%f, %f\n", testVal1, testVal2);
 
-	delete testMap;
+	delete testVec;
 	delete testSet;
 }
+
+DataArray* ar1;
+DataArray* ar2;
 
 void lol()
 {
@@ -135,11 +124,14 @@ void lol()
 	auto componentTypes = ComponentTypeManager::GetInstance().GetComponentTypes();
 	for (auto it = componentTypes->begin(); it != componentTypes->end(); ++it)
 		worldCreator.AddComponentType(it->second->GetName());
-	ECSL::World* world = worldCreator.CreateWorld(100);
+	ECSL::World* world = worldCreator.CreateWorld(10000);
 
 	int id = world->CreateNewEntity();
-	world->CreateComponentAndAddTo("Velocity", id);
-	//world->CreateComponentAndAddTo("Position", id);
+	//world->CreateComponentAndAddTo("Velocity", id);
+	//float x = 4;
+	//world->SetComponent("Velocity", "X", &x, id);
+	
+	world->CreateComponentAndAddTo("Position", id);
 	//world->RemoveComponentFrom("Position", id);
 	//world->CreateComponentAndAddTo("Position", id);
 
@@ -148,11 +140,11 @@ void lol()
 	world->Update(0.01f);
 
 	//world->KillEntity(id);
-	world->CreateComponentAndAddTo("Position", id);
+	//world->CreateComponentAndAddTo("Position", id);
 
 	world->Update(0.01f);
 
-	world->RemoveComponentFrom("Position", id);
+	//world->RemoveComponentFrom("Position", id);
 
 	world->Update(0.01f);
 
@@ -169,7 +161,7 @@ int main(int argc, char** argv)
 	//	printf("Mutex...");
 	//thread1 = SDL_CreateThread((SDL_ThreadFunction)PerfTest, "PerfTest", (void*)0);
 	//SDL_WaitThread(thread1, 0);
-	PerfTest(0);
+	//PerfTest(0);
 	SDL_DestroyMutex(mutex);
 	SDL_Quit();
 	system("pause");

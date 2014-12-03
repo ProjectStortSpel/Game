@@ -15,15 +15,27 @@ namespace ECSL
 			return true;
 		}
 
+		template<typename T>
+		bool RemoveUniqueElement(T _element, std::vector<T>& _vector)
+		{
+			for (auto it = _vector.begin(); it != _vector.end(); ++it)
+			{
+				if (_element == *it)
+				{
+					_vector.erase(it);
+					return true;
+				}
+			}
+			return false;
+		}
+
 		template<typename KeyType, typename ValueType>
 		bool TryAddKey(KeyType _key, std::map<KeyType, ValueType>& _map)
 		{
 			auto it = _map.find(_key);
 			if (it == _map.end())
 			{
-				printf("2");
 				_map[_key] = ValueType();
-				printf("2.5");
 				return true;
 			}
 			return false;

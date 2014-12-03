@@ -3,6 +3,7 @@
 #include <assert.h>
 #include "ECSL/Framework/Common/ContainerHelper.h"
 #include "ECSL/Managers/ComponentTypeManager.h"
+#include "Tables/ComponentTable.h"
 #include "Tables/DataArray.h"
 #include "Tables/DataMap.h"
 
@@ -19,7 +20,7 @@ DataManager::~DataManager()
 {
 	for (auto it = m_componentTables->begin(); it != m_componentTables->end(); ++it)
 	{
-		delete it->second;
+		delete *it;
 	}
 	m_componentTables->clear();
 		
@@ -33,7 +34,7 @@ DataManager::~DataManager()
 
 void DataManager::InitializeTables()
 {
-	m_componentTables = new std::map<unsigned int, DataTable*>();
+	m_componentTables = new std::vector<ComponentTable*>(ComponentTypeManager::GetInstance().GetComponentTypeCount());
 	m_entityTable = new EntityTable(m_entityCount, (unsigned int)m_componentTypeIds->size());
 
 	for (unsigned int n = 0; n < m_componentTypeIds->size(); ++n)
@@ -47,10 +48,10 @@ void DataManager::InitializeTables()
 		switch (componentType->GetTableType())
 		{
 		case TableType::Array:
-			m_componentTables->insert(std::pair<unsigned int, DataTable*>(componentTypeId, new DataArray(m_entityCount, componentType->GetByteSize())));
+			m_componentTables->at(componentTypeId) = new ComponentTable(new DataArray(m_entityCount, componentType->GetByteSize()), componentTypeId);
 			break;
 		case TableType::Map:
-			m_componentTables->insert(std::pair<unsigned int, DataTable*>(componentTypeId, new DataMap(componentType->GetByteSize())));
+			m_componentTables->at(componentTypeId) = new ComponentTable(new DataMap(componentType->GetByteSize()), componentTypeId);
 			break;
 		default:
 			printf("ERROR: Invalid Table Type! (ID %d)\n", m_componentTypeIds->at(n));
@@ -67,7 +68,7 @@ unsigned int DataManager::CreateNewEntity()
 void DataManager::RemoveEntity(unsigned int _entityId)
 {
 	/* Add entity to list */
-	ContainerHelper::AddUniqueElement(_entityId, *m_entitiesToBeRemoved);
+	m_entitiesToBeRemoved->push_back(_entityId);
 
 	std::vector<unsigned int> components;
 	m_entityTable->GetEntityComponents(components, _entityId);
@@ -86,7 +87,7 @@ void DataManager::CreateComponentAndAddTo(const std::string& _componentType, uns
 void DataManager::CreateComponentAndAddTo(unsigned int _componentTypeId, unsigned int _entityId)
 {
 	/* Add entity to lists */
-	ContainerHelper::AddUniqueElement(_entityId, *m_changedEntities);
+	m_changedEntities->push_back(_entityId);
 
 	m_entityTable->AddComponentTo(_entityId, _componentTypeId);
 }
@@ -99,16 +100,11 @@ void DataManager::RemoveComponentFrom(const std::string& _componentType, unsigne
 void DataManager::RemoveComponentFrom(unsigned int _componentTypeId, unsigned int _entityId)
 {
 	/* Add entity and component to lists */
-	printf("1");
 	ContainerHelper::TryAddKey<unsigned int, std::vector<unsigned int>>(_entityId, *m_componentsToBeRemoved);
-	printf("3");
 	(*m_componentsToBeRemoved)[_entityId].push_back(_componentTypeId);
-	printf("4");
-	ContainerHelper::AddUniqueElement(_entityId, *m_changedEntities);
-	printf("5");
+	m_changedEntities->push_back(_entityId);
 
 	m_entityTable->RemoveComponentFrom(_entityId, _componentTypeId);
-	printf("6");
 }
 
 void DataManager::ClearComponentData()
@@ -117,7 +113,7 @@ void DataManager::ClearComponentData()
 	{
 		for (auto componentTypeId : entity->second)
 		{
-			m_componentTables->at(componentTypeId)->ClearRow(entity->first);
+			m_componentTables->at(componentTypeId)->ClearComponent(entity->first);
 		}
 	}
 }

@@ -20,7 +20,7 @@ namespace ECSL
 		void LoadComponentTypesFromDirectory(const std::string& _directoryPath);
 		void LoadComponentTypesFromFile(const std::string& _filePath);
 
-		ComponentType* GetComponentType(int _componentTypeId);
+		ComponentType* GetComponentType(unsigned int _componentTypeId);
 		std::map<unsigned int, ComponentType*>* GetComponentTypes() { return m_componentTypes; }
 		unsigned int GetComponentTypeCount(){ return (unsigned int)m_componentTypes->size(); }
 
