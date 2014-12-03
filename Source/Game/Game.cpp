@@ -5,7 +5,6 @@
 #include "Network/ServerNetwork.h"
 #include "Network/ClientNetwork.h"
 #include "Timer.h"
-#include "LuaBridge/LuaBridge.h"
 
 #ifdef WIN32
 	#define _CRTDBG_MAP_ALLOC
@@ -113,16 +112,10 @@ void ClearConsole()
 }
 void lol()
 {
-	LuaBridge::Init();
-  
 	ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("content/components");
 	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
-	
-	LuaEmbedder::AddObject<ECSL::WorldCreator>("WorldCreator", &worldCreator, "worldCreator");
-	
 	worldCreator.AddSystemGroup();
 	worldCreator.AddSystemToCurrentGroup<TestSystem2>();
-	LuaEmbedder::CallFunction("CreateSystem");
 	//worldCreator.AddLuaSystemToCurrentGroup(new TestSystem());
 	auto componentTypes = ComponentTypeManager::GetInstance().GetComponentTypes();
 	for (auto it = componentTypes->begin(); it != componentTypes->end(); ++it)
@@ -150,8 +143,6 @@ void lol()
 
 	delete(world);
 	delete(&ComponentTypeManager::GetInstance());
-	
-	LuaBridge::Quit();
 }
 void LoadAlotOfBoxes(Renderer::GraphicDevice* r)
 {
