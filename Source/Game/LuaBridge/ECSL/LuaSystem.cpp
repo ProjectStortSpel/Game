@@ -18,10 +18,10 @@ namespace LuaBridge
     LuaEmbedder::AddInt("Excluded", (int)ECSL::FilterType::Excluded, "FilterType");
   }
   
-  void LuaSystem::Run(float _dt)
+  void LuaSystem::Update(float _dt)
   {
     LuaEmbedder::PushFloat(_dt);
-    LuaEmbedder::CallMethod<LuaSystem>("System", "Run", this, 1);
+    LuaEmbedder::CallMethod<LuaSystem>("System", "Update", this, 1);
   }
 
   void LuaSystem::Initialize()

@@ -1,17 +1,19 @@
 MovementSystem = System()
 
-MovementSystem.Run = function(self, dt)
-	print("Run")
+MovementSystem.Update = function(self, dt)
+
 end
 
 MovementSystem.Initialize = function(self)
 	print("Initialize")
 	self:AddComponentTypeToFilter("Velocity", FilterType.Mandatory)
-	--self:AddComponentTypeToFilter("Velocity", FilterType.Excluded)
+	self:AddComponentTypeToFilter("Position", FilterType.Excluded)
 end
 
 MovementSystem.OnEntityAdded = function(self, entityId)
 	print("OnEntityAdded")
+	--id = world:CreateNewEntity()
+	--world:CreateComponentAndAddTo("Position", id)
 end
 
 MovementSystem.OnEntityRemoved = function(self, entityId)

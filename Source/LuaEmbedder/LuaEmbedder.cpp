@@ -18,7 +18,8 @@ namespace LuaEmbedder
   
   void Load(const std::string& filepath)
   {
-    assert(!luaL_dofile(L, filepath.c_str()));
+	  bool isRight = luaL_dofile(L, filepath.c_str());
+    assert(!isRight);
     lua_gc(L, LUA_GCCOLLECT, 0);
   }
   void CallFunction(const std::string& name, int argumentCount, const std::string& library)

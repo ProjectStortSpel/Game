@@ -421,7 +421,7 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 	m_modelIDcounter++;
 
 	// Import Object
-	ObjectData obj = ModelLoader::importObject("content/models/cube/", "cube.object");
+	ObjectData obj = ModelLoader::importObject(_dir, _file);
 
 	// Import Texture
 	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
