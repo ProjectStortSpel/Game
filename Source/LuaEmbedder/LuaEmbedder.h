@@ -154,7 +154,6 @@ namespace LuaEmbedder
       Luna<T>::push(L, className.c_str(), object);
       lua_settable(L, -3);
       lua_setglobal(L, library.c_str());
-      lua_Number a = 4.0;
     }
   }
   template<typename T>
@@ -191,9 +190,9 @@ namespace LuaEmbedder
     return Luna<T>::check(L, className.c_str(), -1);
   }
   template<typename T>
-  void EXPORT PushObject(const std::string& className, T* object)
+  void EXPORT PushObject(const std::string& className, T* object, bool gc = false)
   {
-    Luna<T>::push(L, className.c_str(), object);
+    Luna<T>::push(L, className.c_str(), object, gc);
   }
 }
 

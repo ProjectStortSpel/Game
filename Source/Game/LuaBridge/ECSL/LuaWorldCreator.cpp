@@ -1,7 +1,8 @@
 #include "LuaWorldCreator.h"
 #include "LuaEmbedder/LuaEmbedder.h"
-#include "LuaComponent.h"
+#include "LuaComponentType.h"
 #include "LuaSystem.h"
+#include "LuaWorld.h"
 
 namespace LuaBridge
 {
@@ -12,6 +13,9 @@ namespace LuaBridge
     LuaEmbedder::EmbedClass<LuaWorldCreator>("WorldCreator");
     LuaEmbedder::EmbedClassFunction<LuaWorldCreator>("WorldCreator", "AddComponentType", &LuaWorldCreator::AddComponentType);
     LuaEmbedder::EmbedClassFunction<LuaWorldCreator>("WorldCreator", "AddSystemToCurrentGroup", &LuaWorldCreator::AddSystemToCurrentGroup);      
+    LuaEmbedder::EmbedClassFunction<LuaWorldCreator>("WorldCreator", "AddSystemGroup", &LuaWorldCreator::AddSystemGroup);
+    LuaEmbedder::EmbedClassFunction<LuaWorldCreator>("WorldCreator", "CreateWorld", &LuaWorldCreator::CreateWorld);
+    LuaEmbedder::EmbedClassFunction<LuaWorldCreator>("WorldCreator", "IsWorldInitialized", &LuaWorldCreator::IsWorldInitialized);
   }
   
   int LuaWorldCreator::AddComponentType()
@@ -22,10 +26,10 @@ namespace LuaBridge
     }
     else
     {
-      LuaComponent* luaComponent = LuaEmbedder::PullObject<LuaComponent>("Component", 1);
-      if (luaComponent)
+      LuaComponentType* componentType = LuaEmbedder::PullObject<LuaComponentType>("ComponentType", 1);
+      if (componentType)
       {
-	WorldCreator::AddComponentType(*luaComponent->CreateComponentType());
+	WorldCreator::AddComponentType(*componentType->CreateComponentType());
       }
     }
     return 0;
@@ -45,7 +49,9 @@ namespace LuaBridge
 
   int LuaWorldCreator::CreateWorld()
   {
-    //LuaEmbedder::PushObject<>();
+    unsigned int entityCount = (unsigned int)LuaEmbedder::PullInt(1);
+    ECSL::World* world = WorldCreator::CreateWorld(entityCount);
+    LuaEmbedder::PushObject<ECSL::World>("World", world, true);
     return 1;
   }
 

@@ -5,21 +5,20 @@
 
 namespace LuaBridge
 {
-  class LuaWorld
+  class LuaWorld : public ECSL::World
   {
   public:
     LuaWorld();
+    ~LuaWorld();
     
     static void Embed();
     
   private:
     int Update();
+    int CreateNewEntity();
     int CreateComponentAndAddTo();
     int RemoveComponentFrom();
     int KillEntity();
-    
-  private:
-    ECSL::World* m_world;
   };
 }
 
