@@ -1,7 +1,5 @@
 #include "Console/Console.h"
 
-#include <cstring>
-
 using namespace Console;
 
 ConsoleManager::ConsoleManager()
