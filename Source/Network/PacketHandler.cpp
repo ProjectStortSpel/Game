@@ -7,6 +7,8 @@
 #include <arpa/inet.h>
 #endif
 
+using namespace Network;
+
 PacketHandler::PacketHandler()
 {
 }
@@ -271,18 +273,24 @@ int PacketHandler::ReadInt(uint64_t _id)
 	return var;
 }
 
-char* PacketHandler::ReadString(uint64_t _id)
+std::string PacketHandler::ReadString(uint64_t _id)
 {
-	char* var = "";
+	std::string var = "";
 	PacketReceiveInfo* pri = GetPacketReceiveInfo(_id);
 	if (pri)
 	{
 		size_t length = strlen((char*)pri->Position) + 1;
-		var = new char[length];
+
+		
+
+		//var = new char[length];
 
 		if (!IsOutOfBounds(pri->PacketData->Data, pri->Position + length, pri->PacketData->Length))
 		{
-			memcpy(var, (char*)pri->Position, length);
+			var = (char*)pri->Position;
+
+			//memcpy(var, (char*)pri->Position, length);
+
 			//strcpy_s(var, length, (char*)m_userPacketReceiveInfo.Position);
 			pri->Position += length;
 		}

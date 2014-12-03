@@ -24,7 +24,8 @@ if(WIN32)
       imm32
       winmm
       "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Windows/${WINDOWS_SYSTEM}/SDL2.lib"
-	  ws2_32)
+	"${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Windows/${WINDOWS_SYSTEM}/vld.lib"
+	ws2_32)
   set(EXTERNAL_WINDOWS_STATIC_SDL2MAIN_LIBRARY
       "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Windows/${WINDOWS_SYSTEM}/SDL2main.lib")
   set(EXTERNAL_WINDOWS_STATIC_LUA52_LIBRARY

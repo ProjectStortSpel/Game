@@ -1,5 +1,7 @@
 #include "BaseNetwork.h"
 
+using namespace Network;
+
 BaseNetwork::BaseNetwork()
 {
 	m_password = "default";
@@ -77,11 +79,11 @@ int BaseNetwork::TriggerPacket(void)
 {
 
 	m_customPacketLock.lock();
-	int size = m_customPackets.size();
+	size_t size = m_customPackets.size();
 	if (size == 0)
 	{
 		m_customPacketLock.unlock();
-		return size;
+		return (int)size;
 	}
 	Packet* p = m_customPackets.front();
 	m_customPackets.pop();
@@ -93,7 +95,7 @@ int BaseNetwork::TriggerPacket(void)
 	{
 		if (NET_DEBUG)
 			printf("Corrupt packet, wrong size.\n");
-		return size;
+		return (int)size;
 	}
 
 	uint64_t id = m_packetHandler.StartUnpack(p);
@@ -108,7 +110,7 @@ int BaseNetwork::TriggerPacket(void)
 
 	m_packetHandler.EndUnpack(id);
 
-	return size;
+	return (int)size;
 }
 
 void BaseNetwork::Update(float _dt)
@@ -117,7 +119,7 @@ void BaseNetwork::Update(float _dt)
 	UpdateTimeOut(_dt);
 
 	m_systemPacketLock.lock();
-	int num_sysPackets = m_systemPackets.size();
+	size_t num_sysPackets = m_systemPackets.size();
 	m_systemPacketLock.unlock();
 	
 	Packet *p;

@@ -5,6 +5,8 @@
 #include <sys/socket.h>
 #endif
 
+using namespace Network;
+
 ClientNetwork::ClientNetwork()
 	: BaseNetwork()
 {
@@ -85,7 +87,7 @@ bool ClientNetwork::Connect()
 	{
 		if (m_onFailedToConnect)
 		{
-			m_onFailedToConnect(NetConnection(m_remoteAddress, m_outgoingPort));
+			m_onFailedToConnect(NetConnection(m_remoteAddress.c_str(), m_outgoingPort));
 		}
 		return false;
 	}
@@ -103,9 +105,12 @@ bool ClientNetwork::Connect()
 
 void ClientNetwork::Disconnect()
 {
-	uint64_t id = m_packetHandler.StartPack(ID_CONNECTION_DISCONNECTED);
-	Packet* packet = m_packetHandler.EndPack(id);
-	Send(packet);
+	if (m_socketBound)
+	{
+		uint64_t id = m_packetHandler.StartPack(ID_CONNECTION_DISCONNECTED);
+		Packet* packet = m_packetHandler.EndPack(id);
+		Send(packet);
+	}
 
 	m_receivePacketsThreadAlive = false;
 
@@ -315,7 +320,7 @@ void ClientNetwork::NetConnectionBanned(PacketHandler* _packetHandler, uint64_t 
 void ClientNetwork::NetPing(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
 	if (NET_DEBUG)
-		printf("Ping from: %s:%d\n", _connection.IpAddress.c_str(), _connection.Port);
+		printf("Ping from: %s:%d\n", _connection.IpAddress, _connection.Port);
 
 	uint64_t id = _packetHandler->StartPack(ID_PONG);
 	Packet* p = _packetHandler->EndPack(id);
@@ -325,7 +330,7 @@ void ClientNetwork::NetPing(PacketHandler* _packetHandler, uint64_t _id, NetConn
 void ClientNetwork::NetPong(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
 	if (NET_DEBUG)
-		printf("Pong from: %s:%d\n", _connection.IpAddress.c_str(), _connection.Port);
+		printf("Pong from: %s:%d\n", _connection.IpAddress, _connection.Port);
 }
 
 

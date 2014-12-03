@@ -4,6 +4,8 @@
 
 #include <WS2tcpip.h>
 
+using namespace Network;
+
 WinSocket::WinSocket(void)
 {
 	Initialize();

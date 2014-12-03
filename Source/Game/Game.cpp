@@ -19,16 +19,24 @@
 
 	#include <stdlib.h>
 	#include <crtdbg.h>
+	#include <VLD/vld.h>
 #endif
 
 using namespace ECSL;
 
 
+struct Player
+{
+	unsigned short Id = 0;
+	bool Connected = false;
+};
+
 mat4 mat[1000];
-ServerNetwork* server = 0;
-ClientNetwork* client = 0;
+Network::ServerNetwork* server = 0;
+Network::ClientNetwork* client = 0;
 bool isServer = false;
 std::string newPlayer = "";
+std::map<Network::NetConnection, Player*> m_players;
 
 
 
@@ -148,19 +156,50 @@ void LoadAlotOfBoxes(Renderer::GraphicDevice* r)
 		}
 	}
 }
-void OnConnected(NetConnection nc)
+void OnConnected(Network::NetConnection nc)
 {
 	std::stringstream ss;
-	ss << "connected to server " << nc.IpAddress.c_str() << ":" << nc.Port << ".\n";
+	ss << "connected to server " << nc.IpAddress << ":" << nc.Port << ".\n";
 	newPlayer = ss.str();
 }
 
-void OnPlayerConnected(NetConnection nc)
+
+
+void OnPlayerConnected(Network::NetConnection _nc)
 {
+	if (m_players.find(_nc) == m_players.end())
+	{
+		m_players[_nc] = new Player();
+		m_players[_nc]->Connected = true;
+		m_players[_nc]->Id = m_players.size();
+	}
+
+	Network::PacketHandler* ph = server->GetPacketHandler();
+	uint64_t id = ph->StartPack("CubePos");
+	ph->WriteFloat(id, mat[100][3][0]);
+	ph->WriteFloat(id, mat[100][3][1]);
+	ph->WriteFloat(id, mat[100][3][2]);
+	Network::Packet* p = ph->EndPack(id);
+	server->Send(p, _nc);
+
+
 	std::stringstream ss;
-	ss << nc.IpAddress.c_str() << ":" << nc.Port << " connected to server.\n";
+	ss << _nc.IpAddress << ":" << _nc.Port << " connected to server.\n";
 	newPlayer = ss.str();
 }
+
+void OnPlayerDisconnected(Network::NetConnection _nc)
+{
+	m_players[_nc]->Connected = false;
+}
+
+void CubePos(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _nc)
+{
+	mat[100][3][0] = _ph->ReadFloat(_id);
+	mat[100][3][1] = _ph->ReadFloat(_id);
+	mat[100][3][2] = _ph->ReadFloat(_id);
+}
+
 void Start()
 {
 	std::string input;
@@ -180,13 +219,16 @@ void Start()
 	if (input.compare("s") == 0)
 	{
 		isServer = true;
-		server = new ServerNetwork();
+		server = new Network::ServerNetwork();
 		server->Start(6112, "localhest", 8);
 		server->SetOnPlayerConnected(&OnPlayerConnected);
+		server->SetOnPlayerDisconnected(&OnPlayerDisconnected);
+		server->SetOnPlayerTimedOut(&OnPlayerDisconnected);
 	}
 	else
 	{
-		client = new ClientNetwork();
+		client = new Network::ClientNetwork();
+		client->AddNetworkHook("CubePos", &CubePos);
 		client->SetOnConnectedToServer(&OnConnected);
 
 		if (input.compare("c") == 0) // localhost
@@ -272,19 +314,60 @@ void Start()
 			}
 		}
 
-		// MOVE CUBE
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_UP) == Input::InputState::DOWN)
-			mat[100] *= glm::translate(vec3(0, 0, -0.01f));
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_DOWN) == Input::InputState::DOWN)
-			mat[100] *= glm::translate(vec3(0, 0, 0.01f));
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_LEFT) == Input::InputState::DOWN)
-			mat[100] *= glm::translate(vec3(-0.01f, 0, 0));
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_RIGHT) == Input::InputState::DOWN)
-			mat[100] *= glm::translate(vec3(0.01f, 0, 0));
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_SPACE) == Input::InputState::DOWN)
-			mat[100] *= glm::translate(vec3(0, 0.01f, 0));
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_LSHIFT) == Input::InputState::DOWN)
-			mat[100] *= glm::translate(vec3(0, -0.01f, 0));
+		
+
+		if (isServer)
+		{
+			bool cubeMoved = false;
+
+			// MOVE CUBE
+			if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_UP) == Input::InputState::DOWN)
+			{
+				cubeMoved = true;
+				mat[100] *= glm::translate(vec3(0, 0, -0.01f));
+			}
+
+			if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_DOWN) == Input::InputState::DOWN)
+			{
+				cubeMoved = true;
+				mat[100] *= glm::translate(vec3(0, 0, 0.01f));
+			}
+
+			if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_LEFT) == Input::InputState::DOWN)
+			{
+				cubeMoved = true;
+				mat[100] *= glm::translate(vec3(-0.01f, 0, 0));
+			}
+
+			if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_RIGHT) == Input::InputState::DOWN)
+			{
+				cubeMoved = true;
+				mat[100] *= glm::translate(vec3(0.01f, 0, 0));
+			}
+
+			if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_SPACE) == Input::InputState::DOWN)
+			{
+				cubeMoved = true;
+				mat[100] *= glm::translate(vec3(0, 0.01f, 0));
+			}
+
+			if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_LSHIFT) == Input::InputState::DOWN)
+			{
+				cubeMoved = true;
+				mat[100] *= glm::translate(vec3(0, -0.01f, 0));
+			}
+
+			if (cubeMoved)
+			{
+				Network::PacketHandler* ph = server->GetPacketHandler();
+				uint64_t id = ph->StartPack("CubePos");
+				ph->WriteFloat(id, mat[100][3][0]);
+				ph->WriteFloat(id, mat[100][3][1]);
+				ph->WriteFloat(id, mat[100][3][2]);
+				Network::Packet* p = ph->EndPack(id);
+				server->Broadcast(p);
+			}
+		}
 
 		// MOVE CAMERA
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_W) == Input::InputState::DOWN)
@@ -316,6 +399,11 @@ void Start()
 		}
 	}
 
+	for (auto it = m_players.begin(); it != m_players.end(); ++it)
+		SAFE_DELETE(it->second);
+	m_players.clear();
+
+
 	SAFE_DELETE(INPUT);
 	SAFE_DELETE(server);
 	SAFE_DELETE(client);
@@ -325,8 +413,8 @@ void Start()
 int main(int argc, char** argv)
 {
 	Start();
-#ifdef WIN32
-	_CrtDumpMemoryLeaks();
-#endif
+//#ifdef WIN32
+//	_CrtDumpMemoryLeaks();
+//#endif
 	return 0;
 }
