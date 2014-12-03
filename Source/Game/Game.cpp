@@ -414,7 +414,7 @@ void Start()
 int main(int argc, char** argv)
 {
 	Console::ConsoleManager cm;
-
+	cm.ExecuteCommand("hej");
 	Start();
 //#ifdef WIN32
 //	_CrtDumpMemoryLeaks();
