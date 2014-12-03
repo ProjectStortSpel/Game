@@ -100,13 +100,12 @@ int BaseNetwork::TriggerPacket(void)
 
 	uint64_t id = m_packetHandler.StartUnpack(p);
 
-	std::string functionName((char*)&p->Data[1]);
-	if (m_userFunctions.find(functionName) != m_userFunctions.end())
+	if (m_userFunctions.find((char*)&p->Data[1]) != m_userFunctions.end())
 	{
-		m_userFunctions[functionName](&m_packetHandler, id, p->Sender);
+		m_userFunctions[(char*)&p->Data[1]](&m_packetHandler, id, p->Sender);
 	}
 	else if (NET_DEBUG)
-		printf("Packet \"%s\" not bound to any function.\n", functionName.c_str());
+		printf("Packet \"%s\" not bound to any function.\n", (char*)&p->Data[1]);
 
 	m_packetHandler.EndUnpack(id);
 

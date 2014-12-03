@@ -4,6 +4,7 @@
 #include "Renderer/GraphicDevice.h"
 #include "Network/ServerNetwork.h"
 #include "Network/ClientNetwork.h"
+#include "Console/Console.h"
 #include "Timer.h"
 
 #ifdef WIN32
@@ -13,7 +14,7 @@
 #endif
 
 using namespace ECSL;
-
+using namespace Console;
 
 struct Player
 {
@@ -402,7 +403,10 @@ void Start()
 
 int main(int argc, char** argv)
 {
-	//lol();
+	Console::ConsoleManager cm;
+
+	//cm.ExecuteCommand(" hest ");
+
 	Start();
 
 	return 0;
