@@ -6,21 +6,7 @@
 #include "Network/ClientNetwork.h"
 #include "Timer.h"
 
-#ifdef WIN32
-	#define _CRTDBG_MAP_ALLOC
 
-	#ifdef _DEBUG
-		#ifndef DBG_NEW
-			#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
-			#define new DBG_NEW
-		#endif
-	#endif  // _DEBUG
-
-
-	#include <stdlib.h>
-	#include <crtdbg.h>
-	#include <VLD/vld.h>
-#endif
 
 using namespace ECSL;
 
@@ -202,6 +188,7 @@ void CubePos(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _
 
 void Start()
 {
+	
 	std::string input;
 	printf("Starting network:\n\n");
 	printf("Press 's' to start a new server,\n");
@@ -260,7 +247,7 @@ void Start()
 	bool lol = true;
 	float cd = 1.0f;
 	Timer timer;
-	while (lol)
+	while (false)
 	{
 		// DT COUNTER
 		float dt = timer.ElapsedTimeInSeconds();
@@ -403,18 +390,10 @@ void Start()
 		SAFE_DELETE(it->second);
 	m_players.clear();
 
-
+	
 	SAFE_DELETE(INPUT);
 	SAFE_DELETE(server);
 	SAFE_DELETE(client);
+	delete(&ComponentTypeManager::GetInstance());
 }
 
-
-int main(int argc, char** argv)
-{
-	Start();
-//#ifdef WIN32
-//	_CrtDumpMemoryLeaks();
-//#endif
-	return 0;
-}
