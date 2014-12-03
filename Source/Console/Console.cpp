@@ -12,32 +12,97 @@ ConsoleManager::~ConsoleManager()
 {
 }
 
-void ConsoleManager::ParseArgs(char* _args, std::vector<Argument>* _vector)
+bool ConsoleManager::ParseArgs(char* _args, std::vector<Argument>* _vector)
 {
 	_vector->clear();
 
-	std::string temp = _args;
-	std::string substring;
+	char* args = new char[strlen(_args) + 1];
+	memcpy(args, _args, strlen(_args) + 1);
 
-	char* resultChar;
-	float resultInt;
 
-	size_t pos = temp.find_first_of(' ');
-	while (pos != std::string::npos)
+	size_t len = strlen(args);
+
+
+	char* space = strchr(args, ' ');
+	char* fnutt = strchr(args, '\"');
+
+	char* prev = args;
+	char* current = args;
+
+	bool inFnutt = false;
+	bool lastrun = true;
+	while (space || fnutt || lastrun)
 	{
-		substring = temp.substr(0, pos);
-		temp = temp.substr(pos + 1);
-
-		resultInt = strtof(substring.c_str(), &resultChar);
-		
-		if (*resultChar == '\0')
-			_vector->push_back(Argument(resultInt));
+		bool nextInFnutt = false;
+		if (!space && !fnutt)
+			lastrun = false;
 		else
-			_vector->push_back(Argument(resultChar));
+		{
+			
+			if (inFnutt)
+			{
+				if (fnutt)
+				{
+					current = fnutt;
+					nextInFnutt = false;
+				}
+				else
+				{
+					break;
+				}
+			}
+			else
+			{
+				if (!space)
+				{
+					current = fnutt;
+					nextInFnutt = true;
+				}
+				else if (!fnutt || space < fnutt)
+				{
+					current = space;
+				}
+				else
+				{
+					current = fnutt;
+					nextInFnutt = true;
+				}
+			}
+			*current = '\0';
+			++current;
+		}
 
-		pos = temp.find_first_of(' ');
+		if (strlen(prev) > 0)
+		{
+			char* resultChar;
+			float resultFloat;
+
+			resultFloat = strtof(prev, &resultChar);
+			if (*resultChar == '\0' && !inFnutt)
+				_vector->push_back(Argument(resultFloat));
+			else
+				_vector->push_back(Argument(prev));
+
+			//_vector->push_back(Argument(prev));
+		}
+
+		prev = current;
+
+		space = strchr(current, ' ');
+		fnutt = strchr(current, '\"');
+		inFnutt = nextInFnutt;
+
 	}
+	delete args;
+	if (inFnutt)
+	{
+		_vector->clear();
 
+		if (CONSOLE_DEBUG)
+			printf("Invalid arguments!\n");
+		return false;
+	}
+	return true;
 }
 
 void ConsoleManager::ExecuteCommand(char* _command)
@@ -59,11 +124,11 @@ void ConsoleManager::ExecuteCommand(char* _command)
 
 	if (m_consoleHooks.find(command) != m_consoleHooks.end())
 	{
-		std::vector<Argument> _vec;
+		std::vector<Argument> vec;
 
-		ParseArgs(args, &_vec);
+		ParseArgs(args, &vec);
 
-		m_consoleHooks[_command](&_vec);
+		m_consoleHooks[command](&vec);
 	}
 
 	else if (CONSOLE_DEBUG)

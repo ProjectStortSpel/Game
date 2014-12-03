@@ -191,6 +191,7 @@ void CubePos(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _
 	mat[100][3][2] = _ph->ReadFloat(_id);
 }
 
+Console::ConsoleManager cm;
 void Start()
 {
 	std::string input;
@@ -251,6 +252,9 @@ void Start()
 	bool lol = true;
 	float cd = 1.0f;
 	Timer timer;
+
+
+	cm.ExecuteCommand("first 0 2.5 0");
 	while (lol)
 	{
 		// DT COUNTER
@@ -400,14 +404,21 @@ void Start()
 	SAFE_DELETE(client);
 }
 
+void first(std::vector<Argument>* _vec)
+{
+	mat[100][3][0] = _vec->at(0).Data.Number;
+	mat[100][3][1] = _vec->at(1).Data.Number;
+	mat[100][3][2] = _vec->at(2).Data.Number;
+}
+
 
 int main(int argc, char** argv)
 {
-	Console::ConsoleManager cm;
-	cm.ExecuteCommand("first 0 third 2 ");
+	
+	cm.AddCommand("first", &first);
+	
 	//cm.ExecuteCommand(" hest ");
 
 	Start();
-
 	return 0;
 }

@@ -54,7 +54,7 @@ namespace Console
 
 		std::map<char*, ConsoleHook, cmp_str> m_consoleHooks;
 
-		void ParseArgs(char* _args, std::vector<Argument>* _vector);
+		bool ParseArgs(char* _args, std::vector<Argument>* _vector);
 
 	public:
 
