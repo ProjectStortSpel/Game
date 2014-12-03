@@ -4,6 +4,8 @@
 
 #include "Renderer/GraphicDevice.h"
 #include "Input/InputWrapper.h"
+#include "LuaEmbedder/LuaEmbedder.h"
+#include "LuaBridge/LuaBridge.h"
 #include "ECSL/ECSL.h"
 
 class GameCreator
@@ -15,6 +17,7 @@ public:
 	void InitializeGraphics();
 	void InitializeInput();
 	void InitializeWorld();
+	void InitializeLua();
 
 	void StartGame();
 

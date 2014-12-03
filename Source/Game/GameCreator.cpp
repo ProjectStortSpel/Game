@@ -18,6 +18,8 @@ GameCreator::~GameCreator()
 	if (m_input)
 		delete m_input;
 
+	LuaEmbedder::Quit();
+
 	delete(&ECSL::ComponentTypeManager::GetInstance());
 }
 
@@ -32,10 +34,20 @@ void GameCreator::InitializeInput()
 	m_input = &Input::InputWrapper::GetInstance();
 }
 
+void GameCreator::InitializeLua()
+{
+	LuaEmbedder::Init();
+	LuaBridge::Embed();
+}
+
 void GameCreator::InitializeWorld()
 {
-	ECSL::ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("content/components");
+	//ECSL::ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("content/components");
 	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
+	LuaEmbedder::AddObject<ECSL::WorldCreator>("WorldCreator", &worldCreator, "worldCreator");
+
+	LuaEmbedder::Load("../../../Externals/content/scripting/storaspel/components.lua");
+
 
 	auto componentTypes = ECSL::ComponentTypeManager::GetInstance().GetComponentTypes();
 	for (auto it = componentTypes->begin(); it != componentTypes->end(); ++it)
