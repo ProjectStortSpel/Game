@@ -11,7 +11,7 @@ namespace LuaBridge
   {
     LuaEmbedder::EmbedClass<LuaWorldCreator>("WorldCreator");
     LuaEmbedder::EmbedClassFunction<LuaWorldCreator>("WorldCreator", "AddComponentType", &LuaWorldCreator::AddComponentType);
-    LuaEmbedder::EmbedClassFunction<LuaWorldCreator>("WorldCreator", "AddSystemGroup", &LuaWorldCreator::AddSystemGroup);      
+    LuaEmbedder::EmbedClassFunction<LuaWorldCreator>("WorldCreator", "AddSystemToCurrentGroup", &LuaWorldCreator::AddSystemToCurrentGroup);      
   }
   
   int LuaWorldCreator::AddComponentType()
@@ -23,15 +23,35 @@ namespace LuaBridge
     else
     {
       LuaComponent* luaComponent = LuaEmbedder::PullObject<LuaComponent>("Component", 1);
-      //if (luaComponent)
-	//WorldCreator::AddComponentType<luaComponent->GetComponentType()>();
+      if (luaComponent)
+      {
+	WorldCreator::AddComponentType(*luaComponent->CreateComponentType());
+      }
     }
     return 0;
   }
 
-  int LuaWorldCreator::AddSystemGroup()
+  int LuaWorldCreator::AddSystemToCurrentGroup()
   {
     WorldCreator::AddLuaSystemToCurrentGroup(LuaEmbedder::PullObject<LuaSystem>("System", 1));
     return 0;
+  }
+  
+  int LuaWorldCreator::AddSystemGroup()
+  {
+    WorldCreator::AddSystemGroup();
+    return 0;
+  }
+
+  int LuaWorldCreator::CreateWorld()
+  {
+    //LuaEmbedder::PushObject<>();
+    return 1;
+  }
+
+  int LuaWorldCreator::IsWorldInitialized()
+  {
+    LuaEmbedder::PushBool(WorldCreator::IsWorldInitialized());
+    return 1;
   }
 }

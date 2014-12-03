@@ -83,7 +83,6 @@ void lol()
   
 	ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("content/components");
 	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
-	
 	LuaEmbedder::AddObject<ECSL::WorldCreator>("WorldCreator", &worldCreator, "worldCreator");
 	
 	worldCreator.AddSystemGroup();
@@ -139,12 +138,12 @@ void Start()
 
 	Input::InputWrapper* INPUT = &Input::InputWrapper::GetInstance();
 	
+	lol();
+	
 	LoadAlotOfBoxes(&RENDERER);
 	mat[100] = glm::translate(vec3(0, 0, 0));
 	int modelid = RENDERER.LoadModel("content/models/cube/", "cube.object", &mat[100]); // LOADMODEL RETURNS THE MODELID
 	RENDERER.ChangeModelTexture(modelid, "content/models/cube/NM_tst.png"); // CHANGING TEXTURE ON MODELID
-
-	lol();
 	
 	bool lol = true;
 	float cd = 1.0f;

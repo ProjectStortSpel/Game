@@ -58,8 +58,8 @@ namespace LuaBridge
     return 0;
   }
   
-  ECSL::ComponentType LuaComponent::GetComponentType()
+  ECSL::ComponentType* LuaComponent::CreateComponentType()
   {
-    return ECSL::ComponentType(m_name, m_tableType, m_variables);
+    return new ECSL::ComponentType(m_name, m_tableType, m_variables);
   }
 }

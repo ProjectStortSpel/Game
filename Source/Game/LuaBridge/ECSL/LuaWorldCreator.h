@@ -3,9 +3,6 @@
 
 #include "ECSL/Framework/WorldCreator.h"
 
-#include <string>
-#include <map>
-
 namespace LuaBridge
 {
   class LuaWorldCreator : public ECSL::WorldCreator
@@ -17,7 +14,10 @@ namespace LuaBridge
     
   private:
     int AddComponentType();
+    int AddSystemToCurrentGroup();
     int AddSystemGroup();
+    int CreateWorld();
+    int IsWorldInitialized();
   };
 }
 

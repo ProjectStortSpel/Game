@@ -15,7 +15,7 @@ namespace LuaBridge
     
     static void Embed();
     
-    ECSL::ComponentType GetComponentType();
+    ECSL::ComponentType* CreateComponentType();
     
   private:
     int GetName();
