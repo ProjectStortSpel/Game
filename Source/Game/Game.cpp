@@ -53,7 +53,8 @@ public:
 
 	void Update(float _dt)
 	{
-
+		auto entities = *GetEntities();
+		int a = 2; 
 	}
 	void Initialize()
 	{
@@ -158,7 +159,7 @@ void Start()
 	for (int n = 0; n < 50000; ++n)
 	{
 		int id = world->CreateNewEntity();
-		world->CreateComponentAndAddTo(cId, id);
+		world->CreateComponentAndAddTo("MegaAwesomeComponent", id);
 	}
 			
 
