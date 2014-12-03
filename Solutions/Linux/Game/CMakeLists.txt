@@ -34,7 +34,7 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Renderer" Renderer)
 endif()
 # Link subproject shared libraries
 target_link_libraries(Game
-#		      Console
+		      Console
 		      ECSL
 		      Input
 		      LuaEmbedder
