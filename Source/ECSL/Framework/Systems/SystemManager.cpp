@@ -18,8 +18,6 @@ SystemManager::~SystemManager()
 		delete m_systemWorkGroups->at(n);
 
 	delete m_systemWorkGroups;
-	//delete m_entitiesToAdd;
-	//delete m_entitiesToRemove;
 }
 
 void SystemManager::InitializeSystems()

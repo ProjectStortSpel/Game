@@ -20,7 +20,7 @@ public:
 	TestSystem() { }
 	~TestSystem() { }
 
-	void Run(float _dt)
+	void Update(float _dt)
 	{
 
 	}
@@ -51,7 +51,7 @@ public:
 	TestSystem2() { }
 	~TestSystem2() { }
 
-	void Run(float _dt)
+	void Update(float _dt)
 	{
 
 	}

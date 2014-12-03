@@ -7,20 +7,13 @@
 
 namespace ECSL
 {
-	enum SystemType
-	{
-		Both = 0,
-		Listener = 1,
-		Updater
-	};
-
 	class DECLSPEC System
 	{
 	public:
 		System();
 		virtual ~System() = 0;
 
-		virtual void Run(float _dt) = 0;
+		virtual void Update(float _dt) = 0;
 		virtual void Initialize() = 0;
 
 		virtual void OnEntityAdded(unsigned int _entityId) = 0;
@@ -37,20 +30,27 @@ namespace ECSL
 		ComponentFilter* GetRequiresOneOfFilter() { return &m_requiresOneOfComponentTypes; }
 		ComponentFilter* GetExcludedFilter() { return &m_excludedComponentTypes; }
 
-		const SystemType GetSystemType() const { return m_systemType; }
-
 	protected:
+		DataLocation GetComponent(unsigned int _entityId, const std::string& _componentType, const std::string& _variableName);
+		DataLocation GetComponent(unsigned int _entityId, unsigned int _componentTypeId, unsigned int _index);
+
+		void SetComponent(unsigned int _entityId, const std::string& _componentType, const std::string& _variableName, void* _data);
+		void SetComponent(unsigned int _entityId, unsigned int _componentTypeId, unsigned int _index, void* _data, unsigned int _byteSize);
+
+		ComponentTable* GetComponentTable(const std::string& _componentType);
+
 		void AddComponentTypeToFilter(const std::string& _componentType, FilterType _filterType);
-		void SetSystemType(SystemType _systemType) { m_systemType = _systemType; }
+
+		const std::vector<unsigned int>* const GetEntities() { return m_entities; }
 
 	private:
 		bool m_initialized;
 		unsigned int m_workCount;
-		SystemType m_systemType;
 		ComponentFilter m_mandatoryComponentTypes;
 		ComponentFilter m_requiresOneOfComponentTypes;
 		ComponentFilter m_excludedComponentTypes;
-		BitSet::DataType* m_entities;
+		BitSet::DataType* m_entitiesBitSet;
+		std::vector<unsigned int>* m_entities;
 		DataManager* m_dataManager;
 	};
 }

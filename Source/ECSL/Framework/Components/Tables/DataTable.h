@@ -6,7 +6,7 @@
 
 namespace ECSL
 {
-	typedef const char* const DataLocation;
+	typedef char* DataLocation;
 
 	class DECLSPEC DataTable
 	{
@@ -22,13 +22,13 @@ namespace ECSL
 		virtual const unsigned int GetRowCount() const = 0;
 
 		// Get the location for all data for an id
-		virtual DataLocation GetData(unsigned const int _id) const = 0;
+		virtual DataLocation GetData(unsigned const int _row) = 0;
 		// Get the location for a variable for an id
-		virtual DataLocation GetData(unsigned const int _id, unsigned const int _index) const = 0;
+		virtual DataLocation GetData(unsigned const int _row, unsigned const int _index) = 0;
 		// Change all data for an id
-		virtual void SetData(unsigned const int _id, void* _data, unsigned const int _byteCount) = 0;
+		virtual void SetData(unsigned const int _row, void* _data, unsigned const int _byteCount) = 0;
 		// Change value of a variable for an id
-		virtual void SetData(unsigned const int _id, unsigned const int _index, void* _data, unsigned const int _byteCount) = 0;
+		virtual void SetData(unsigned const int _row, unsigned const int _index, void* _data, unsigned const int _byteCount) = 0;
 		
 		/* Data usage */
 		virtual const unsigned int GetBytesPerRow() const = 0;
