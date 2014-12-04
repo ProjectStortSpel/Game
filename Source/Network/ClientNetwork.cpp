@@ -360,7 +360,6 @@ void ClientNetwork::NetPong(PacketHandler* _packetHandler, uint64_t _id, NetConn
 
 	m_receiveTime = GetTickCount();
 	m_ping = m_receiveTime - m_sendTime;
-	printf("Ping: %f\n", m_ping);
 }
 
 
