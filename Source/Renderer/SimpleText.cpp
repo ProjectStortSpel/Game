@@ -37,7 +37,7 @@ bool SimpleText::Init(GLuint _textimage, int _clientWidth, int _clientHeight)
 
 	glGenBuffers(1, &simpleTextBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, simpleTextBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(int)* simpleText.size(), &simpleText[0], GL_DYNAMIC_COPY);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(int)* simpleText.size(), &simpleText[0], GL_STATIC_DRAW);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, simpleTextBuffer);
 
 	return true;
@@ -56,7 +56,7 @@ void SimpleText::RenderText(float _dt)
 
 		m_clock = 0;
 	}
-
+	
 	m_simpleTextShader.UseProgram();
 	// Run program
 
