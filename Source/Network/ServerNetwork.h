@@ -30,6 +30,7 @@ namespace Network
 		// Send a message to a specific client
 		void Send(Packet* _packet, NetConnection _connection);
 
+		void Kick(NetConnection _connection, char* _reason);
 
 		// Bind function which will trigger when another player connects to the server
 		void SetOnPlayerConnected(NetEvent _function);

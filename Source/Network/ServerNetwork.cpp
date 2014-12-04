@@ -470,3 +470,34 @@ void ServerNetwork::SetOnPlayerTimedOut(NetEvent _function)
 
 	m_onPlayerTimedOut = _function;
 }
+
+void ServerNetwork::Kick(NetConnection _connection, char* _reason)
+{
+	m_connectedClientsLock.lock();
+
+	if (m_connectedClients.find(_connection) == m_connectedClients.end())
+		return;
+
+	uint64_t id = m_packetHandler.StartPack(ID_CONNECTION_KICKED);
+	m_packetHandler.WriteString(id, _reason);
+	Packet* p1 = m_packetHandler.EndPack(id);
+
+	uint64_t id2 = m_packetHandler.StartPack(ID_REMOTE_CONNECTION_KICKED);
+	m_packetHandler.WriteString(id2, "Username_Temp");
+	Packet* p2 = m_packetHandler.EndPack(id2);
+
+	m_connectedClientsLock.unlock();
+
+	Send(p1, _connection);
+	Broadcast(p2, _connection);
+	
+	m_timeOutLock.lock();
+	m_currentTimeOutIntervall.erase(_connection);
+	m_currentIntervallCounter.erase(_connection);
+	m_timeOutLock.unlock();
+
+	m_connectedClientsLock.lock();
+	m_connectedClients[_connection]->SetActive(0);
+	m_connectedClientsLock.unlock();
+
+}
