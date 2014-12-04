@@ -37,6 +37,8 @@ namespace Renderer
 
 		bool    SetUniVariable(const char* p_variableName, VariableTyp p_variableType, void* p_Value);
 
+		void	CheckUniformLocation(const char* _uniformName, int _unitLocation);
+
 		GLuint  GetShaderProgram();
 
 	private:

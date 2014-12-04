@@ -29,6 +29,7 @@
     <ClInclude Include="..\..\..\Source\Renderer\Camera.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\Buffer.h" />
     <ClInclude Include="..\..\..\Source\Renderer\ModelLoader.h" />
   </ItemGroup>
   <ItemGroup>
@@ -45,6 +46,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Renderer\Camera.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Renderer\Buffer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -68,6 +72,12 @@
       <Filter>shaders</Filter>
     </None>
     <None Include="..\..\..\Externals\content\shaders\CSDeferredPass2.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\FSForwardShader.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\VSForwardShader.glsl">
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>

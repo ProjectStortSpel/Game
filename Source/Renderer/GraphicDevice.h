@@ -13,6 +13,9 @@ Author: Anders, Christian
 
 namespace Renderer
 {
+#define RENDER_DEFERRED 0
+#define RENDER_FORWARD  1
+
 	struct Model
 	{
 		bool operator> (const Model &m) { return bufferPtr->getVAO() > m.bufferPtr->getVAO() ? true : false; }
@@ -73,13 +76,14 @@ namespace Renderer
 		void GetWindowSize(int &x, int &y){ x = m_clientWidth; y = m_clientHeight; }
 
 		// MODELLOADER
-		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr);
+		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED);
 		bool ChangeModelTexture(int _id, std::string _fileDir);
 
 	private:
 		bool InitSDLWindow();
 		bool InitGLEW();
 		bool InitDeferred();
+		bool InitForward();
 		bool InitShaders();
 		bool InitBuffers();
 		bool InitTextRenderer();
@@ -105,28 +109,28 @@ namespace Renderer
 		int	m_clientWidth, m_clientHeight;
 
 		// Image buffers
-		GLuint m_outputImage, m_inputImage;
+		GLuint m_outputImage;
 		GLuint m_debuggText;
 		GLuint m_depthBuf, m_normTex, m_colorTex;
 
 		// Frame buffer object
-		GLuint m_deferredFBO;
+		GLuint m_deferredFBO, m_forwardFBO;
 
 		// Shaders
-		Shader m_debuggTextShader; // TA BORT DENNA
 		Shader m_fullScreenShader;
 		Shader m_deferredShader1, m_compDeferredPass2Shader;
+		Shader m_forwardShader;
 
 		// SimpleText
 		SimpleText m_textRenderer;
 
 		// Modelloader
 		int m_modelIDcounter;
-		std::vector<Model> m_models;
+		std::vector<Model> m_modelsDeferred, m_modelsForward;
 
 		// Meshs
 		std::map<const std::string, Buffer*> m_meshs;
-		Buffer* AddMesh(std::string _fileDir);
+		Buffer* AddMesh(std::string _fileDir, Shader *_shaderProg);
 		// Textures
 		std::map<const std::string, GLuint> m_textures;
 		GLuint AddTexture(std::string _fileDir, GLenum _textureSlot);
