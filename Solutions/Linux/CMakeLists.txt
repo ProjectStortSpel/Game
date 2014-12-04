@@ -93,19 +93,19 @@ elseif(UNIX)
   execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory
     "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/binaries/Linux/${UNIX_SYSTEM}"
     "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE}/bin")
-  
-  # Copy content to output directory
-  execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory
-    "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/content")
-  execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory
-    "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE}/content")
-  execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory
-    "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/content"
-    "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/content")
-  execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory
-    "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/content"
-    "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE}/content")
 endif()
+
+# Copy content to output directory
+execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory
+  "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/content")
+execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory
+  "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE}/content")
+execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory
+  "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/content"
+  "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/content")
+execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory
+  "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/content"
+  "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE}/content")
 
 # Add subprojects
 #if(NOT TARGET Console)
