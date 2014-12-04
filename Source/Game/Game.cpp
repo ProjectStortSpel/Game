@@ -6,6 +6,7 @@
 #include "Network/ClientNetwork.h"
 #include "Console/Console.h"
 #include "Timer.h"
+#include "Game/TextInput.h"
 
 #ifdef WIN32
 	#include <stdlib.h>
@@ -192,7 +193,7 @@ void CubePos(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _
 }
 
 
-void first(std::vector<Argument>* _vec)
+void MoveCube(std::vector<Argument>* _vec)
 {
 	if (_vec->size() != 3)
 		return;
@@ -220,6 +221,7 @@ void first(std::vector<Argument>* _vec)
 void Start()
 {
 	std::string input;
+
 	printf("Starting network:\n\n");
 	printf("Press 's' to start a new server,\n");
 	printf("c to connect to localhost,\n");
@@ -282,9 +284,14 @@ void Start()
 	Console::ConsoleManager cm;
 	if (isServer)
 	{
-		cm.AddCommand("first", &first);
-		cm.ExecuteCommand("first 0 10 0");
+		cm.AddCommand("MoveCube", &MoveCube);
+		//cm.ExecuteCommand("first 0 10 0");
 	}
+
+	TextInput ti;
+	ti.SetTextHook(std::bind(&Console::ConsoleManager::ExecuteCommand, &cm, std::placeholders::_1));
+	ti.SetActive(true);
+
 	while (lol)
 	{
 		// DT COUNTER
@@ -321,6 +328,7 @@ void Start()
 				break;
 			case SDL_KEYDOWN:
 			case SDL_KEYUP:
+			case SDL_TEXTINPUT:
 			case SDL_FINGERMOTION:
 			case SDL_FINGERDOWN:
 			case SDL_FINGERUP:
@@ -339,6 +347,8 @@ void Start()
 			}
 		}
 
+		ti.Update();
+		//char* test = ti.GetText();
 		
 
 		if (isServer)
@@ -404,6 +414,18 @@ void Start()
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_D) == Input::InputState::DOWN)
 			RENDERER.GetCamera()->MoveRight(dt);
 
+		// ToggleConsole
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_F1) == Input::InputState::PRESSED)
+		{
+			if (INPUT->GetKeyboard()->IsTextInputActive())
+				INPUT->GetKeyboard()->StopTextInput();
+			else
+				INPUT->GetKeyboard()->StartTextInput();
+		}
+
+		if (INPUT->GetKeyboard()->IsTextInputActive())
+			RENDERER.RenderSimpleText(ti.GetText(), 0, 10);
+
 		// ROTATE CAMERA
 		if (INPUT->GetMouse()->GetButtonState(Input::LeftButton) == Input::InputState::DOWN)
 		{
@@ -436,7 +458,7 @@ void Start()
 
 int main(int argc, char** argv)
 {
-	
+
 	Start();
 	return 0;
 }
