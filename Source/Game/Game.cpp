@@ -112,7 +112,7 @@ void lol2()
 	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
 	worldCreator.AddSystemGroup();
 	worldCreator.AddSystemToCurrentGroup<TestSystem2>();
-	worldCreator.AddLuaSystemToCurrentGroup(new TestSystem());
+	//worldCreator.AddLuaSystemToCurrentGroup(new TestSystem());
 	auto componentTypes = ComponentTypeManager::GetInstance().GetComponentTypes();
 	for (auto it = componentTypes->begin(); it != componentTypes->end(); ++it)
 		worldCreator.AddComponentType(it->second->GetName());
@@ -147,8 +147,8 @@ void LoadAlotOfBoxes(Renderer::GraphicDevice* r)
 	{
 		for (int y = 0; y < 10; y++)
 		{
-			mat[x + y * 10] = glm::translate(vec3(x - 5, -1, y - 5));
-			r->LoadModel("content/models/cube/", "cube.object", &mat[x + y * 10]);
+			mat[y+x*10] = glm::translate(vec3(x - 5, -1, y - 5));
+			r->LoadModel("content/models/default_tile/", "default.object", &mat[y + x * 10]);
 		}
 	}
 }
@@ -421,10 +421,10 @@ void Start()
 
 	LoadAlotOfBoxes(&RENDERER);
 	mat[100] = glm::translate(vec3(0, 0, 0));
-	int modelid = RENDERER.LoadModel("content/models/cube/", "cube.object", &mat[100]); // LOADMODEL RETURNS THE MODELID
-	RENDERER.ChangeModelTexture(modelid, "content/models/cube/NM_tst.png"); // CHANGING TEXTURE ON MODELID
+	int modelid = RENDERER.LoadModel("content/models/gamebrick/", "spelpjaas.object", &mat[100]); // LOADMODEL RETURNS THE MODELID
 
 	lol = true;
+	lol();
 	float cd = 1.0f;
 	Timer timer;
 

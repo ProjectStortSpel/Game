@@ -7,7 +7,7 @@ set(USE_X86_64 ON CACHE BOOL "USE_X86_64")
 # Project name
 project("Large Game Project")
 
-add_definitions(-D_UNICODE -DUNICODE)
+add_definitions(-DLUA_REAL_FLOAT -D_UNICODE -DUNICODE)
 
 if(WIN32)
   if(CMAKE_CL_64)
@@ -29,7 +29,7 @@ if(WIN32)
   set(EXTERNAL_WINDOWS_STATIC_SDL2MAIN_LIBRARY
       "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Windows/${WINDOWS_SYSTEM}/SDL2main.lib")
   set(EXTERNAL_WINDOWS_STATIC_LUA52_LIBRARY
-      "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Windows/${WINDOWS_SYSTEM}/lua52.lib")
+      "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Windows/${WINDOWS_SYSTEM}/lua53.lib")
 
   # Set output directory
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_SOURCE_DIR}/../../Bin/Debug/${WINDOWS_SYSTEM}")
@@ -93,19 +93,19 @@ elseif(UNIX)
   execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory
     "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/binaries/Linux/${UNIX_SYSTEM}"
     "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE}/bin")
-  
-  # Copy content to output directory
-  execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory
-    "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/content")
-  execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory
-    "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE}/content")
-  execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory
-    "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/content"
-    "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/content")
-  execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory
-    "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/content"
-    "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE}/content")
 endif()
+
+# Copy content to output directory
+execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory
+  "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/content")
+execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory
+  "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE}/content")
+execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory
+  "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/content"
+  "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/content")
+execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory
+  "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/content"
+  "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE}/content")
 
 # Add subprojects
 if(NOT TARGET Console)

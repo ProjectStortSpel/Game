@@ -25,12 +25,14 @@ namespace Renderer
 		Model(int ID, Buffer* buffer, GLuint tex, GLuint nor, GLuint spe)
 		{
 			modelID = ID;
+			active = true;
 			bufferPtr = buffer;
 			texID = tex;
 			norID = nor;
 			speID = spe;
 		}
 		int modelID;
+		bool active;
 		Buffer* bufferPtr;
 		GLuint texID;
 		GLuint norID;
@@ -74,6 +76,8 @@ namespace Renderer
 
 		// MODELLOADER
 		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr);
+		bool RemoveModel(int _id);
+		bool ActiveModel(int _id, bool _active);
 		bool ChangeModelTexture(int _id, std::string _fileDir);
 		bool ChangeModelNormalMap(int _id, std::string _fileDir);
 		bool ChangeModelSpecularMap(int _id, std::string _fileDir);

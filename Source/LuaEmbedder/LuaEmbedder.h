@@ -84,6 +84,8 @@
   #define IMPORT
 #endif
 
+#define LUA_REAL_FLOAT
+
 namespace LuaEmbedder
 {
   extern lua_State IMPORT* L;
@@ -94,34 +96,35 @@ namespace LuaEmbedder
   void EXPORT Load(const std::string& filepath);
   void EXPORT CallFunction(const std::string& name, int argumentCount = 0, const std::string& library = std::string());
   
-  void EXPORT AddDouble(const std::string& name, double value, const std::string& library = std::string());
+  void EXPORT AddFloat(const std::string& name, float value, const std::string& library = std::string());
   void EXPORT AddInt(const std::string& name, int value, const std::string& library = std::string());
-  void EXPORT AddUnsignedInt(const std::string& name, unsigned int value, const std::string& library = std::string());
   void EXPORT AddBool(const std::string& name, bool value, const std::string& library = std::string());
   void EXPORT AddString(const std::string& name, const char* value, const std::string& library = std::string());
   void EXPORT AddFunction(const std::string& name, int (*functionPointer)(), const std::string& library = std::string());
   
-  double EXPORT PullDouble(int index);
-  double EXPORT PullDouble(const std::string& name, const std::string& library = std::string());
+  float EXPORT PullFloat(int index);
+  float EXPORT PullFloat(const std::string& name, const std::string& library = std::string());
   int EXPORT PullInt(int index);
   int EXPORT PullInt(const std::string& name, const std::string& library = std::string());
-  unsigned int EXPORT PullUnsignedInt(int index);
-  unsigned int EXPORT PullUnsignedInt(const std::string& name, const std::string& library = std::string());
   bool EXPORT PullBool(int index);
   bool EXPORT PullBool(const std::string& name, const std::string& library = std::string());
   std::string EXPORT PullString(int index);
   std::string EXPORT PullString(const std::string& name, const std::string& library = std::string());
   
-  void EXPORT PushDouble(double value);
+  void EXPORT PushFloat(float value);
   void EXPORT PushInt(int value);
-  void EXPORT PushUnsignedInt(unsigned int value);
   void EXPORT PushBool(bool value);
   void EXPORT PushString(const std::string& value);
   
+  bool EXPORT IsFlota(int index);
+  bool EXPORT IsInt(int index);
+  bool EXPORT IsBool(int index);
+  bool EXPORT IsString(int index);
+  
   template<typename T>
-  void EXPORT EmbedClass(const std::string& className)
+  void EXPORT EmbedClass(const std::string& className, bool gc = true)
   {
-    Luna<T>::Register(L, className.c_str());
+    Luna<T>::Register(L, className.c_str(), gc);
   }
   template<typename T>
   void EXPORT EmbedClassFunction(const std::string& className, const std::string& methodName, int (T::*functionPointer)())
@@ -189,9 +192,9 @@ namespace LuaEmbedder
     return Luna<T>::check(L, className.c_str(), -1);
   }
   template<typename T>
-  void EXPORT PushObject(const std::string& className, T* object)
+  void EXPORT PushObject(const std::string& className, T* object, bool gc = false)
   {
-    Luna<T>::push(L, className.c_str(), object);
+    Luna<T>::push(L, className.c_str(), object, gc);
   }
 }
 
