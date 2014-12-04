@@ -6,8 +6,7 @@
 using namespace ECSL;
 
 SystemManager::SystemManager(DataManager* _dataManager, std::vector<SystemWorkGroup*>* _systemWorkGroups) 
-:	m_dataManager(_dataManager), m_systemWorkGroups(_systemWorkGroups)
-	//m_entitiesToAdd(new std::vector<unsigned int>()), m_entitiesToRemove(new std::vector<unsigned int>())
+:	m_nextSystemId(-1), m_dataManager(_dataManager), m_systemWorkGroups(_systemWorkGroups)
 {
 
 }
@@ -55,7 +54,7 @@ void SystemManager::AddEntityToSystem(unsigned int _entityId, System* _system)
 {
 	if (!_system->HasEntity(_entityId))
 	{
-		_system->AddEntity(_entityId);
+		_system->AddEntityToSystem(_entityId);
 		_system->OnEntityAdded(_entityId);
 	}
 }
@@ -64,7 +63,7 @@ void SystemManager::RemoveEntityFromSystem(unsigned int _entityId, System* _syst
 {
 	if (_system->HasEntity(_entityId))
 	{
-		_system->RemoveEntity(_entityId);
+		_system->RemoveEntityFromSystem(_entityId);
 		_system->OnEntityRemoved(_entityId);
 	}
 }
