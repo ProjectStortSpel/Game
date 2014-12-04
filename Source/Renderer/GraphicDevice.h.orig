@@ -6,44 +6,43 @@ Author: Anders, Christian
 
 #include "stdafx.h"
 #include "Shader.h"
+#include "Buffer.h"
 #include "SimpleText.h"
 #include "GLTimer.h"
 #include "Camera.h""
 
 namespace Renderer
 {
+#define RENDER_DEFERRED 0
+#define RENDER_FORWARD  1
+
 	struct Model
 	{
-		bool operator> (const Model &m) { return VAOHandle > m.VAOHandle ? true : false; }
-		bool operator< (const Model &m) { return VAOHandle < m.VAOHandle ? true : false; }
+		bool operator> (const Model &m) { return bufferPtr->getVAO() > m.bufferPtr->getVAO() ? true : false; }
+		bool operator< (const Model &m) { return bufferPtr->getVAO() < m.bufferPtr->getVAO() ? true : false; }
 
-		bool operator== (const Model &m) { return VAOHandle == m.VAOHandle ? true : false; }
-		bool operator!= (const Model &m) { return VAOHandle == m.VAOHandle ? false : true; }
+		bool operator== (const Model &m) { return bufferPtr->getVAO() == m.bufferPtr->getVAO() ? true : false; }
+		bool operator!= (const Model &m) { return bufferPtr->getVAO() == m.bufferPtr->getVAO() ? false : true; }
 
 		Model(){}
-		Model(GLuint vao, GLuint tex, GLuint nor, GLuint spe)
+		Model(int ID, Buffer* buffer, GLuint tex, GLuint nor, GLuint spe)
 		{
-			VAOHandle = vao;
+			modelID = ID;
+			active = true;
+			bufferPtr = buffer;
 			texID = tex;
 			norID = nor;
 			speID = spe;
-			modelMatrix = glm::translate(glm::vec3(1));
 		}
-		GLuint VAOHandle;
+		int modelID;
+		bool active;
+		Buffer* bufferPtr;
 		GLuint texID;
 		GLuint norID;
 		GLuint speID;
 
-		glm::vec3 position;
-		float rotation;
-		glm::mat4 modelMatrix;
-
-		void Update()
-		{
-			modelMatrix = glm::translate(position) * glm::rotate(glm::mat4(1.0), rotation, glm::vec3(0.0, 1.0, 0.0));
-		}
+		glm::mat4* modelMatrix;	// GÖR DETTA TILL EN PEKARE NÄR E/C FUNGERAR
 	};
-
 
 	struct GLTimerValue
 	{
@@ -75,18 +74,26 @@ namespace Renderer
 		bool RenderSimpleText(std::string _text, int x, int y);
 		void SetSimpleTextColor(glm::vec4 _color);
 
-<<<<<<< HEAD
 		Camera *GetCamera(){ return m_camera; }
 		void GetWindowSize(int &x, int &y){ x = m_clientWidth; y = m_clientHeight; }
-=======
+
 		// MODELLOADER
-		void LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr);
->>>>>>> 00b4423c38b8c8fad3d5a07794c93b50102e52ee
+<<<<<<< HEAD
+		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED);
+=======
+		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr);
+		bool RemoveModel(int _id);
+		bool ActiveModel(int _id, bool _active);
+>>>>>>> ffdb57729cf9b010734976bc4d85a3f437bb4054
+		bool ChangeModelTexture(int _id, std::string _fileDir);
+		bool ChangeModelNormalMap(int _id, std::string _fileDir);
+		bool ChangeModelSpecularMap(int _id, std::string _fileDir);
 
 	private:
 		bool InitSDLWindow();
 		bool InitGLEW();
 		bool InitDeferred();
+		bool InitForward();
 		bool InitShaders();
 		bool InitBuffers();
 		bool InitTextRenderer();
@@ -103,6 +110,8 @@ namespace Renderer
 		float m_dt;
 		int m_fps;
 
+		int m_vramUsage; //in bytes
+
 		// Timer for shader run time
 		std::vector<GLTimerValue> m_glTimerValues;
 
@@ -110,28 +119,28 @@ namespace Renderer
 		int	m_clientWidth, m_clientHeight;
 
 		// Image buffers
-		GLuint m_outputImage, m_inputImage;
+		GLuint m_outputImage;
 		GLuint m_debuggText;
 		GLuint m_depthBuf, m_normTex, m_colorTex;
 
 		// Frame buffer object
-		GLuint m_deferredFBO;
+		GLuint m_deferredFBO, m_forwardFBO;
 
 		// Shaders
-		Shader m_debuggTextShader; // TA BORT DENNA
 		Shader m_fullScreenShader;
 		Shader m_deferredShader1, m_compDeferredPass2Shader;
+		Shader m_forwardShader;
 
 		// SimpleText
 		SimpleText m_textRenderer;
 
-
 		// Modelloader
-		std::vector<Model> m_models;
+		int m_modelIDcounter;
+		std::vector<Model> m_modelsDeferred, m_modelsForward;
 
 		// Meshs
-		std::map<const std::string, GLuint> m_meshs;
-		GLuint AddMesh(std::string _fileDir);
+		std::map<const std::string, Buffer*> m_meshs;
+		Buffer* AddMesh(std::string _fileDir, Shader *_shaderProg);
 		// Textures
 		std::map<const std::string, GLuint> m_textures;
 		GLuint AddTexture(std::string _fileDir, GLenum _textureSlot);
