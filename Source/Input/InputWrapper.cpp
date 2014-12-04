@@ -71,6 +71,7 @@ void InputWrapper::PollEvent(SDL_Event& _e)
 		/*	KEYBOARD	*/
 	case SDL_KEYDOWN:
 	case SDL_KEYUP:
+	case SDL_TEXTINPUT:
 		m_keyboard->PollEvent(_e);
 		break;
 
