@@ -14,9 +14,10 @@ System::System()
 
 System::~System()
 {
+	if (m_systemName)
+		delete(m_systemName);
 	if (m_entitiesBitSet)
 		delete(m_entitiesBitSet);
-
 	if (m_entities)
 		delete m_entities;
 }
@@ -107,6 +108,21 @@ ComponentTable* System::GetComponentTable(unsigned int _componentTypeId)
 	return m_dataManager->GetComponentTable(_componentTypeId);
 }
 
+unsigned int System::GetComponentVariableIndex(const std::string& _componentType, const std::string& _variableName)
+{
+	return ComponentTypeManager::GetInstance().GetComponentType(ComponentTypeManager::GetInstance().GetTableId(_componentType))->GetVariables()->find(_variableName)->second.GetOffset();
+}
+
+unsigned int System::CreateNewEntity()
+{
+	return m_dataManager->CreateNewEntity();
+}
+
+void System::KillEntity(unsigned int _entityId)
+{
+	m_dataManager->RemoveEntity(_entityId);
+}
+
 void System::AddComponentTypeToFilter(const std::string& _componentType, FilterType _filterType)
 {
 	switch (_filterType)
@@ -124,14 +140,4 @@ void System::AddComponentTypeToFilter(const std::string& _componentType, FilterT
 		printf("Unknown ComponentFilter passed into AddComponentToFilter [System.cpp]\n");
 		break;
 	}
-}
-
-unsigned int System::CreateNewEntity()
-{
-	return m_dataManager->CreateNewEntity();
-}
-
-void System::KillEntity(unsigned int _entityId)
-{
-	m_dataManager->RemoveEntity(_entityId);
 }

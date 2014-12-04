@@ -16,21 +16,12 @@ namespace ECSL
 		explicit SystemWorkGroup(System* _system);
 		~SystemWorkGroup();
 		
-		template<typename SystemType>
-		void AddSystem();
 		void AddSystem(System* _system);
 
 		void Update(float _dt);
 
 		std::vector<System*>* GetSystems() { return m_systems; }
 	};
-
-	template<typename SystemType>
-	void SystemWorkGroup::AddSystem()
-	{
-		/*	TODO: Add check so same system doesn't get added	*/
-		m_systems->push_back(new SystemType());
-	}
 }
 
 #endif

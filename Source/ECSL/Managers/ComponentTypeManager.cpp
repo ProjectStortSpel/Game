@@ -81,8 +81,6 @@ ComponentType* ComponentTypeManager::GetComponentType(unsigned int _componentTyp
 
 unsigned int ComponentTypeManager::GetTableId(const std::string& _componentType)
 {
-	// Try to find the id of the component type in the map. 
-	// If it doesn't exist then create it, else return the found value 
 	auto it = m_stringTableId->find(_componentType);
 	if (it == m_stringTableId->end())
 	{
@@ -96,7 +94,7 @@ unsigned int ComponentTypeManager::GetTableId(const std::string& _componentType)
 
 void ComponentTypeManager::AddComponentType(ComponentType& _componentType)
 {
-	/*	Trying to add a component that is already defined	*/
+	/* Trying to add a component that is already defined */
 	assert(m_stringTableId->find(_componentType.GetName()) != m_stringTableId->end());
 
 	m_componentTypes->insert(std::pair<int, ComponentType*>(ComponentTypeManager::GetTableId(_componentType.GetName()), &_componentType));

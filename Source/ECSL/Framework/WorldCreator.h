@@ -6,9 +6,10 @@
 #include <vector>
 
 #include "World.h"
-#include "Systems/SystemWorkGroup.h"
 #include "Components/ComponentType.h"
-#include "../Managers/ComponentTypeManager.h"
+#include "Systems/SystemIdManager.h"
+#include "Systems/SystemWorkGroup.h"
+#include "ECSL/Managers/ComponentTypeManager.h"
 
 namespace ECSL
 {
@@ -24,17 +25,17 @@ namespace ECSL
 		void AddComponentType(const std::string& _componentType);
 		void AddComponentType(ComponentType& _componentType);
 
+		// Adds a new system group
+		void AddSystemGroup();
+
 		/// Adds a system to a new group
 		template<typename SystemType>
 		void AddSystemToNewGroup();
 		// Adds a system to the most recently added group
 		template<typename SystemType>
 		void AddSystemToCurrentGroup();
-
+		// Adds a Lua system to the most recently added group
 		void AddLuaSystemToCurrentGroup(System* _system);
-
-		// Adds a new system group
-		void AddSystemGroup();
 
 		World* CreateWorld(unsigned int _entityCount);
 
@@ -63,13 +64,17 @@ namespace ECSL
 	template<typename SystemType>
 	void WorldCreator::AddSystemToNewGroup()
 	{
-		m_systemWorkGroups->push_back(new SystemWorkGroup(new SystemType()));
+		System* system = new SystemType();
+		system->SetId(SystemIdManager::GetInstance().GetSystemId<SystemType>());
+		m_systemWorkGroups->push_back(new SystemWorkGroup(system));
 	}
 
 	template<typename SystemType>
 	void WorldCreator::AddSystemToCurrentGroup()
 	{
-		m_systemWorkGroups->at(m_systemWorkGroups->size() - 1)->AddSystem<SystemType>();
+		System* system = new SystemType();
+		system->SetId(SystemIdManager::GetInstance().GetSystemId<SystemType>());
+		m_systemWorkGroups->at(m_systemWorkGroups->size() - 1)->AddSystem(system);
 	}
 }
 #endif

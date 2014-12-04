@@ -23,11 +23,22 @@ void WorldCreator::AddComponentType(const std::string& _componentType)
 	m_componentTypeIds->push_back(tableId);
 }
 
+void WorldCreator::AddComponentType(ComponentType& _componentType)
+{
+	ComponentTypeManager::GetInstance().AddComponentType(_componentType);
+}
+
 void WorldCreator::AddSystemGroup()
 {
 	assert(!m_worldInitialized);
 
 	m_systemWorkGroups->push_back(new SystemWorkGroup());
+}
+
+void WorldCreator::AddLuaSystemToCurrentGroup(System* _system)
+{
+	_system->SetId(SystemIdManager::GetInstance().GetSystemId(_system->GetSystemName()));
+	m_systemWorkGroups->at(m_systemWorkGroups->size() - 1)->AddSystem(_system);
 }
 
 World* WorldCreator::CreateWorld(unsigned int _entityCount)
@@ -46,14 +57,4 @@ bool WorldCreator::IsIdAdded(unsigned int _id)
 		if (_id == m_componentTypeIds->at(i))
 			return true;
 	return false;
-}
-
-void WorldCreator::AddLuaSystemToCurrentGroup(System* _system)
-{
-	m_systemWorkGroups->at(m_systemWorkGroups->size() - 1)->AddSystem(_system);
-}
-
-void WorldCreator::AddComponentType(ComponentType& _componentType)
-{
-	ComponentTypeManager::GetInstance().AddComponentType(_componentType);
 }

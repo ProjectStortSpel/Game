@@ -12,6 +12,7 @@
 #include "Framework/Parsing/Parser.h"
 #include "Framework/Systems/SystemWorkGroup.h"
 #include "Framework/Systems/SystemManager.h"
+#include "Framework/Systems/Messaging/Message.h"
 #include "Framework/World.h"
 #include "Framework/WorldCreator.h"
 

@@ -4,6 +4,7 @@
 #include <SDL/SDL.h>
 #include "ECSL/Framework/Components/DataManager.h"
 #include "ECSL/Framework/Systems/ComponentFilter.h"
+#include "ECSL/Framework/Systems/Messaging/Message.h"
 
 namespace ECSL
 {
@@ -19,7 +20,7 @@ namespace ECSL
 		virtual void OnEntityAdded(unsigned int _entityId) = 0;
 		virtual void OnEntityRemoved(unsigned int _entityId) = 0;
 
-		void SetDataManager(DataManager* _dataManager) { m_dataManager = _dataManager; }
+		virtual void OnMessageRecieved(const System* _sender, const Message* _message) { }
 
 		void InitializeEntityList();
 		void AddEntityToSystem(unsigned int _entityId);
@@ -30,7 +31,10 @@ namespace ECSL
 		ComponentFilter* GetRequiresOneOfFilter() { return &m_requiresOneOfComponentTypes; }
 		ComponentFilter* GetExcludedFilter() { return &m_excludedComponentTypes; }
 
-		const std::string& GetSystemName() { return m_systemName; }
+		const std::string& GetSystemName() { return *m_systemName; }
+
+		void SetId(unsigned int _id) { m_id = _id; }
+		void SetDataManager(DataManager* _dataManager) { m_dataManager = _dataManager; }
 
 	protected:
 		DataLocation GetComponent(unsigned int _entityId, const std::string& _componentType, const std::string& _variableName);
@@ -47,18 +51,30 @@ namespace ECSL
 
 		ComponentTable* GetComponentTable(const std::string& _componentType);
 		ComponentTable* GetComponentTable(unsigned int _componentTypeId);
-		void AddComponentTypeToFilter(const std::string& _componentType, FilterType _filterType);
+		unsigned int GetComponentVariableIndex(const std::string& _componentType, const std::string& _variableName);
 
 		unsigned int CreateNewEntity();
 		void KillEntity(unsigned int _entityId);
 		const std::vector<unsigned int>* const GetEntities() { return m_entities; }
 
-		void SetSystemName(std::string _name);
+		void AddComponentTypeToFilter(const std::string& _componentType, FilterType _filterType);
+		void SetSystemName(std::string _name) { *m_systemName = _name; }
+
+		template<typename SystemType>
+		void SendMessage(unsigned int _messageType, Message* _message);
+		void SendMessage(unsigned int _messageType, Message* _message);
+
+		//template<typename SystemType>
+		//void SubscribeTo<SystemType>(unsigned int _messageType, void* _functionPointer);
+		//void SubscribeTo(const std::string& _systemName, unsigned int _messageType);
+		//template<typename SystemType>
+		//void UnsubscribeFrom<SystemType>(unsigned int _messageType);
+		//void UnsubscribeFrom(const std::string& _systemName, unsigned int _messageType);
 
 	private:
-		bool m_initialized;
 		unsigned int m_workCount;
-		std::string m_systemName;
+		unsigned int m_id;
+		std::string* m_systemName;
 		ComponentFilter m_mandatoryComponentTypes;
 		ComponentFilter m_requiresOneOfComponentTypes;
 		ComponentFilter m_excludedComponentTypes;

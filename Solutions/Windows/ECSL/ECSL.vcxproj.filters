@@ -29,6 +29,9 @@
     <Filter Include="Source Files\Framework\Components\Tables">
       <UniqueIdentifier>{7f441da5-71c6-4240-b83d-c131c037afd8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Framework\Systems\Messaging">
+      <UniqueIdentifier>{f74390fd-e17c-44c4-a0b6-55bf136b9927}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\ECSL\ECSL.h">
@@ -100,6 +103,18 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Simulation.h">
       <Filter>Source Files\Framework</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\Message.h">
+      <Filter>Source Files\Framework\Systems\Messaging</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\MessageManager.h">
+      <Filter>Source Files\Framework\Systems\Messaging</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\Subscription.h">
+      <Filter>Source Files\Framework\Systems\Messaging</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemIdManager.h">
+      <Filter>Source Files\Framework\Systems</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\World.cpp">
@@ -164,6 +179,18 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Simulation.cpp">
       <Filter>Source Files\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\Message.cpp">
+      <Filter>Source Files\Framework\Systems\Messaging</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\MessageManager.cpp">
+      <Filter>Source Files\Framework\Systems\Messaging</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\Subscription.cpp">
+      <Filter>Source Files\Framework\Systems\Messaging</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemIdManager.cpp">
+      <Filter>Source Files\Framework\Systems</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

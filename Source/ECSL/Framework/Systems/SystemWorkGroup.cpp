@@ -22,14 +22,12 @@ SystemWorkGroup::~SystemWorkGroup()
 			delete m_systems->back();
 			m_systems->pop_back();
 		}
-
 		delete(m_systems);
 	}
 }
 
 void SystemWorkGroup::AddSystem(System* _system)
 {
-	/* TODO: Add check so same system doesn't get added */
 	m_systems->push_back(_system);
 }
 
