@@ -72,6 +72,7 @@ namespace Network
 
 		void ReceivePackets(void);
 
+		void UpdateNetUsage(float _dt);
 		void UpdateTimeOut(float _dt);
 
 		void NetPasswordInvalid(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);

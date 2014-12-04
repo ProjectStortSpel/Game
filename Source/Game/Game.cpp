@@ -8,6 +8,8 @@
 #include "Timer.h"
 #include "Game/TextInput.h"
 
+#include <stdio.h>
+
 #ifdef WIN32
 	#include <stdlib.h>
 	#include <crtdbg.h>
@@ -257,7 +259,7 @@ void Start()
 		else if (input.compare("2") == 0) // Jenkins lin
 			client->Connect("194.47.150.60", "localhest", 6112, 0);
 		else if (input.compare("3") == 0) // Pontus
-			client->Connect("194.47.150.128", "localhest", 6112, 0);
+			client->Connect("83.233.56.219", "localhest", 6112, 0);
 		else if (input.compare("4") == 0) // Erik
 			client->Connect("194.47.150.5", "localhest", 6112, 0);
 	}
@@ -298,20 +300,49 @@ void Start()
 		float dt = timer.ElapsedTimeInSeconds();
 		timer.Reset();
 
+		float tBytesReceived = 0;
+		float tBytesSent = 0;
+
+		float cBytesReceived = 0;
+		float cBytesSent = 0;
+
 		if (isServer)
 		{
 			server->Update(dt);
 			while (server->TriggerPacket() > 0) {}
+
+			tBytesReceived = server->GetTotalBytesReceived() * 0.001;
+			tBytesSent = server->GetTotalBytesSent() * 0.001;
+
+			cBytesReceived = server->GetCurrentBytesReceived() * 0.001;
+			cBytesSent = server->GetCurrentBytesSent() * 0.001;
+
 		}
 		else
 		{
 			client->Update(dt);
 			while (client->TriggerPacket() > 0) {}
+
+			tBytesReceived = client->GetTotalBytesReceived() * 0.001;
+			tBytesSent = client->GetTotalBytesSent() * 0.001;
+
+			cBytesReceived = client->GetCurrentBytesReceived() * 0.001;
+			cBytesSent = client->GetCurrentBytesSent() * 0.001;
 		}
 
 		INPUT->Update();
 		RENDERER.Update(dt);
-		RENDERER.RenderSimpleText(newPlayer, 0, 2);
+
+
+		char buffer[125];
+#ifdef WIN32
+		sprintf_s(buffer, "Network usage:\nTotal received: %1.2f Kb\nTotal sent: %1.2f Kb\nCurrent received: %1.2f Kb\nCurrent sent: %1.2f Kb", tBytesReceived, tBytesSent, cBytesReceived, cBytesSent);
+#else
+		sprintf(buffer, "Network usage:\nTotal received: %1.2f Kb\nTotal sent: %1.2f Kb\nCurrent received: %1.2f Kb\nCurrent sent: %1.2f Kb", tBytesReceived, tBytesSent, cBytesReceived, cBytesSent);
+#endif
+
+		//std::string networkData = "Network usage:\nTotal received: " + std::to_string(tBytesReceived) + " Kb\nTotal sent: " + std::to_string(tBytesSent) + " Kb\nCurrent received: " + std::to_string(cBytesReceived) + " Kb\nCurrent sent: " + std::to_string(cBytesSent) + " Kb";
+		RENDERER.RenderSimpleText(buffer, 0, 2);
 
 
 		RENDERER.Render();

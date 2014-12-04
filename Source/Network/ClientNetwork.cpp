@@ -149,6 +149,8 @@ void ClientNetwork::ReceivePackets()
 
 			HandlePacket(p);
 
+			m_totalDataReceived += packetSize;
+
 		}
 		else if (result == 0)
 		{
@@ -171,8 +173,22 @@ void ClientNetwork::Send(Packet* _packet)
 		return;
 	}
 
-	m_socket->Send((char*)_packet->Data, _packet->Length);
+	float bytesSent = m_socket->Send((char*)_packet->Data, _packet->Length);
+	if (bytesSent != -1)
+		m_totalDataSent += bytesSent;
+
 	SAFE_DELETE(_packet);
+}
+
+void ClientNetwork::UpdateNetUsage(float _dt)
+{
+	m_usageDataTimer += _dt;
+	if (m_usageDataTimer >= 1.f)
+	{
+		m_usageDataTimer = 0;
+		m_currentDataReceived = 0;
+		m_currentDataSent = 0;
+	}
 }
 
 void ClientNetwork::UpdateTimeOut(float _dt)
