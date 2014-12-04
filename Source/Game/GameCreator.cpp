@@ -81,7 +81,7 @@ void SpawnShit(ECSL::World* _world, Renderer::GraphicDevice* _graphics, bool isT
 			int*		ModelId = (int*)_world->GetComponent(newEntity, "Render", "ModelId");
 
 			if (y % 2 == 0 && x % 2 == 0)
-				*ModelId = _graphics->LoadModel("content/models/Hole/", "hole_test.object", Matrix);
+				*ModelId = _graphics->LoadModel("content/models/Hole/", "hole.object", Matrix);
 			else
 				*ModelId = _graphics->LoadModel("content/models/Default_Tile/", "grass.object", Matrix);
 
