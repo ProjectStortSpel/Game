@@ -95,7 +95,7 @@ void main()
 	Lights[0].Position = vec4(0.0, 1.0, 3.0, 1.0);
 	Lights[0].Intensity = vec3(0.2, 0.9, 0.9);
 	Lights[0].Color = vec3(0.9);
-	Lights[0].Range = 10.0f;
+	Lights[0].Range = 100.0f;
 
 	ivec2 texelCoord = ivec2( gl_GlobalInvocationID.x, gl_GlobalInvocationID.y);
 

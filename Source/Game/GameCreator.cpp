@@ -1,80 +1,7 @@
 #include "GameCreator.h"
 #include "Timer.h"
-
-
-
-class LOLSYSTEM : public ECSL::System
-{
-public:
-	LOLSYSTEM(Renderer::GraphicDevice* _graphics) { m_graphics = _graphics; lol = false; }
-	~LOLSYSTEM() { }
-
-	void Update(float _dt)
-	{
-
-
-		auto entites = *GetEntities();
-		for (auto entity : entites)
-		{
-			float *Xp, *Yp, *Zp;
-			Xp = (float*)GetComponent((unsigned int)entity, 0, 0);
-			Yp = (float*)GetComponent(entity, "Position", "Y");
-			Zp = (float*)GetComponent(entity, "Position", "Z");
-
-			*Xp += 0.6f * _dt;
-
-			glm::mat4* eMat = (glm::mat4*)GetComponent(entity, "Render", "Mat");
-			*eMat = glm::translate(glm::vec3(*Xp, *Yp, *Zp));
-
-		}
-
-		//m_graphics->RenderSimpleText("")
-	}
-	void Initialize()
-	{
-		AddComponentTypeToFilter("Position", ECSL::FilterType::Mandatory);
-		AddComponentTypeToFilter("Velocity", ECSL::FilterType::Mandatory);
-		AddComponentTypeToFilter("Render", ECSL::FilterType::Mandatory);
-		//AddComponentTypeToFilter("Velocity", ECSL::ComponentFilter::RequiresOneOf);
-		//AddComponentTypeToFilter("Position", ECSL::ComponentFilter::Excluded);
-
-		printf("Testsystem Initialize()\n");
-	}
-
-	void OnEntityAdded(unsigned int _entityId)
-	{
-		printf("Testsystem OnLOLSYSTEMLOLSYSTEMLOLSYSTEMLOLSYSTEMEntityAdded()\n");
-		int* eModelId = (int*)GetComponent(_entityId, "Render", "ModelId");
-		glm::mat4* eMat = (glm::mat4*)GetComponent(_entityId, "Render", "Mat");
-		*eMat = glm::translate(glm::vec3(1));
-
-		if (!lol)
-		{
-			*eModelId = m_graphics->LoadModel("content/models/cube/", "cube.object", eMat);
-			int b = *eModelId;
-			int a = 2;
-		}
-		else
-		{
-			*eModelId = m_graphics->LoadModel("content/models/cube2/", "cube2.object", eMat);
-			int b = *eModelId;
-			int a = 2;
-		}
-		lol = true;
-	}
-	void OnEntityRemoved(unsigned int _entityId)
-	{
-		printf("Testsystem OnEntityRemoved()\n");
-
-		/*	PLocka ut modelid -> säga till grafiken att det idet är inaktivt	*/
-	}
-private:
-	Renderer::GraphicDevice* m_graphics;
-
-
-	bool lol;
-};
-
+#include "Systems/MovementSystem.h"
+#include "Systems/RenderSystem.h"
 
 GameCreator::GameCreator() :
 m_graphics(0), m_input(0), m_world(0)
@@ -133,10 +60,97 @@ void GameCreator::InitializeWorld()
 
 	LuaEmbedder::Load("../../../Externals/content/scripting/storaspel/systems/movementsystem.lua");
 	worldCreator.AddSystemGroup();
-	worldCreator.AddLuaSystemToCurrentGroup(new LOLSYSTEM(m_graphics));
-	m_world = worldCreator.CreateWorld(100);
+	worldCreator.AddSystemToCurrentGroup<MovementSystem>();
+	worldCreator.AddLuaSystemToCurrentGroup(new RenderSystem(m_graphics));
+	m_world = worldCreator.CreateWorld(10000);
 	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
 }
+
+void SpawnShit(ECSL::World* _world, Renderer::GraphicDevice* _graphics, bool isTrue = true)
+{
+	for (int x = -4; x <= 4; ++x)
+	{
+		for (int y = -4; y <= 4; ++y)
+		{
+			unsigned int newEntity = _world->CreateNewEntity();
+			_world->CreateComponentAndAddTo("Position", newEntity);
+			_world->CreateComponentAndAddTo("Scale", newEntity);
+			_world->CreateComponentAndAddTo("Rotation", newEntity);
+			_world->CreateComponentAndAddTo("Render", newEntity);
+
+			glm::mat4*	Matrix;
+			Matrix = (glm::mat4*)_world->GetComponent(newEntity, "Render", "Mat");
+			int*		ModelId = (int*)_world->GetComponent(newEntity, "Render", "ModelId");
+
+			if (y % 2 == 0 && x % 2 == 0)
+				*ModelId = _graphics->LoadModel("content/models/Hole/", "hole_test.object", Matrix);
+			else
+				*ModelId = _graphics->LoadModel("content/models/Default_Tile/", "grass.object", Matrix);
+
+			float* Position;
+			Position = (float*)_world->GetComponent(newEntity, "Position", "X");
+			Position[0] = 1.0f * x;
+			Position[1] = 0.0f;
+			Position[2] = 1.0f * y;
+		}
+	}
+
+}
+
+void GameCreator::StartGame()
+{
+	SpawnShit(m_world, m_graphics);
+
+	Timer gameTimer;
+	while (true)
+	{
+		float dt = gameTimer.ElapsedTimeInSeconds();
+		gameTimer.Reset(); 
+
+
+
+		m_graphics->Update(dt);
+		m_input->Update();
+		m_world->Update(dt);
+
+		std::stringstream sstm;
+		sstm << m_world->GetActiveEntities() << " entities";
+		m_graphics->RenderSimpleText(sstm.str(), 0, 2);
+
+		PollSDLEvent();
+
+		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_W) == Input::InputState::DOWN)
+			m_graphics->GetCamera()->MoveForward(dt);
+		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_S) == Input::InputState::DOWN)
+			m_graphics->GetCamera()->MoveBackward(dt);
+		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_A) == Input::InputState::DOWN)
+			m_graphics->GetCamera()->MoveLeft(dt);
+		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_D) == Input::InputState::DOWN)
+			m_graphics->GetCamera()->MoveRight(dt);
+
+		// ROTATE CAMERA
+		if (m_input->GetMouse()->GetButtonState(Input::LeftButton) == Input::InputState::DOWN)
+		{
+			int sizeX, sizeY;
+			m_graphics->GetWindowSize(sizeX, sizeY);
+
+			m_graphics->GetCamera()->UpdateMouse(sizeX*0.5, sizeY*0.5, m_input->GetMouse()->GetX(), m_input->GetMouse()->GetY());
+			m_input->GetMouse()->SetPosition(sizeX*0.5, sizeY*0.5);
+			m_input->GetMouse()->HideCursor(true);
+		}
+		else
+			m_input->GetMouse()->HideCursor(false);
+
+		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
+			break;
+
+		m_graphics->Render();
+	}
+}
+
+
+
+
 
 
 void GameCreator::PollSDLEvent()
@@ -167,66 +181,5 @@ void GameCreator::PollSDLEvent()
 			m_input->PollEvent(e);
 			break;
 		}
-	}
-}
-
-
-void GameCreator::StartGame()
-{
-	Timer gameTimer;
-	while (true)
-	{
-		float dt = gameTimer.ElapsedTimeInSeconds();
-		gameTimer.Reset(); 
-
-
-
-		m_graphics->Update(dt);
-		m_input->Update();
-		m_world->Update(dt);
-
-		//m_graphics->RenderSimpleText("lol", 0, 2);
-
-		PollSDLEvent();
-
-		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_SPACE) == Input::InputState::PRESSED)
-		{
-			unsigned int newEntity = m_world->CreateNewEntity();
-			m_world->CreateComponentAndAddTo("Position", newEntity);
-			//m_world->CreateComponentAndAddTo("Velocity", newEntity);
-			//m_world->CreateComponentAndAddTo("Render", newEntity);
-
-		}
-		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_H) == Input::InputState::PRESSED)
-		{
-			m_world->KillEntity(0);
-		}
-
-		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_W) == Input::InputState::DOWN)
-			m_graphics->GetCamera()->MoveForward(dt);
-		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_S) == Input::InputState::DOWN)
-			m_graphics->GetCamera()->MoveBackward(dt);
-		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_A) == Input::InputState::DOWN)
-			m_graphics->GetCamera()->MoveLeft(dt);
-		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_D) == Input::InputState::DOWN)
-			m_graphics->GetCamera()->MoveRight(dt);
-
-		// ROTATE CAMERA
-		if (m_input->GetMouse()->GetButtonState(Input::LeftButton) == Input::InputState::DOWN)
-		{
-			int sizeX, sizeY;
-			m_graphics->GetWindowSize(sizeX, sizeY);
-
-			m_graphics->GetCamera()->UpdateMouse(sizeX*0.5, sizeY*0.5, m_input->GetMouse()->GetX(), m_input->GetMouse()->GetY());
-			m_input->GetMouse()->SetPosition(sizeX*0.5, sizeY*0.5);
-			m_input->GetMouse()->HideCursor(true);
-		}
-		else
-			m_input->GetMouse()->HideCursor(false);
-
-		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
-			break;
-
-		m_graphics->Render();
 	}
 }

@@ -57,6 +57,12 @@
     <ClCompile Include="..\..\..\Source\Game\Systems\RenderSystem.cpp">
       <Filter>Game\Systems</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\CameraSystem.cpp">
+      <Filter>Game\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\MovementSystem.cpp">
+      <Filter>Game\Systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\Timer.h">
@@ -84,6 +90,12 @@
       <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\RenderSystem.h">
+      <Filter>Game\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\MovementSystem.h">
+      <Filter>Game\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\CameraSystem.h">
       <Filter>Game\Systems</Filter>
     </ClInclude>
   </ItemGroup>
