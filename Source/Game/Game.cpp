@@ -345,6 +345,12 @@ void Start()
 		RENDERER.RenderSimpleText(buffer, 0, 2);
 
 
+		if (INPUT->GetKeyboard()->IsTextInputActive())
+		{
+			RENDERER.RenderSimpleText("Console:", 0, 9);
+			RENDERER.RenderSimpleText(ti.GetText(), 0, 10);
+		}
+
 		RENDERER.Render();
 		INPUT->Update();
 
@@ -454,8 +460,6 @@ void Start()
 				INPUT->GetKeyboard()->StartTextInput();
 		}
 
-		if (INPUT->GetKeyboard()->IsTextInputActive())
-			RENDERER.RenderSimpleText(ti.GetText(), 0, 10);
 
 		// ROTATE CAMERA
 		if (INPUT->GetMouse()->GetButtonState(Input::LeftButton) == Input::InputState::DOWN)
