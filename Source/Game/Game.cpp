@@ -368,50 +368,11 @@ void Start()
 {
 	std::string input;
 
-	printf("Starting network:\n\n");
-	printf("Press 's' to start a new server,\n");
-	printf("c to connect to localhost,\n");
-	printf("1 to connect to Jenkins Windows,\n");
-	printf("2 to connect to Jenkins Linux,\n");
-	printf("3 to connect to Pontus,\n");
-	printf("4 to connect to Erik,\n");
-	printf("or anything else to skip the network.\n");
-
-	std::getline(std::cin, input);
-	ClearConsole();
-
 	consoleManager.AddCommand("connect", &Connect_Hook);
 	consoleManager.AddCommand("disconnect", &Disconnect_Hook);
 	consoleManager.AddCommand("host", &Host_Hook);
 	consoleManager.AddCommand("stop", &Stop_Hook);
 	consoleManager.AddCommand("quit", &Quit_Hook);
-
-
-	if (input.compare("s") == 0)
-	{
-		isServer = true;
-		server = new Network::ServerNetwork();
-		server->Start(6112, "localhest", 8);
-		server->SetOnPlayerConnected(&OnPlayerConnected);
-		server->SetOnPlayerDisconnected(&OnPlayerDisconnected);
-		server->SetOnPlayerTimedOut(&OnPlayerDisconnected);
-	}
-	else
-	{
-		if (input.compare("c") == 0) // localhost
-			Connect("127.0.0.1", 6112);
-		else if (input.compare("1") == 0) // Jenkins win
-			Connect("194.47.150.4", 6112);
-		else if (input.compare("2") == 0) // Jenkins lin
-			Connect("194.47.150.60", 6112);
-		else if (input.compare("3") == 0) // Pontus
-			Connect("88.129.202.196", 6112);
-		else if (input.compare("4") == 0) // Erik
-			Connect("194.47.150.5", 6112);
-	}
-
-
-
 
 	Renderer::GraphicDevice RENDERER = Renderer::GraphicDevice();
 	/*	Initialize Renderer and Input	*/
@@ -424,7 +385,7 @@ void Start()
 	int modelid = RENDERER.LoadModel("content/models/gamebrick/", "spelpjaas.object", &mat[100]); // LOADMODEL RETURNS THE MODELID
 
 	lol = true;
-	lol();
+	lol2();
 	float cd = 1.0f;
 	Timer timer;
 
