@@ -29,9 +29,9 @@ void main(void)
 		int(bokstav * 0.05f) * 16 + 16 - gl_LocalInvocationID.y
 	);
 	
-	//vec4 something = vec4(float(texCoord.x)/159,float(texCoord.y)/59,0,1);
+	vec4 something = vec4(float(texCoord.x)/159,float(texCoord.y)/59,0,1);
 
-	vec4 something = imageLoad(text_image, texCoord);
+	//vec4 something = imageLoad(text_image, texCoord);
 	something *= text_color;
 
 	if ( something.w > 0 )
