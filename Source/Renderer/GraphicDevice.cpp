@@ -590,7 +590,7 @@ bool GraphicDevice::ChangeModelNormalMap(int _id, std::string _fileDir)
 			texture = AddTexture(_fileDir, GL_TEXTURE2);
 			m_deferredShader1.CheckUniformLocation("normalTex", 2);
 
-			m_modelsDeferred[i].texID = texture;
+			m_modelsDeferred[i].norID = texture;
 
 			return true;
 		}
@@ -602,7 +602,7 @@ bool GraphicDevice::ChangeModelNormalMap(int _id, std::string _fileDir)
 			texture = AddTexture(_fileDir, GL_TEXTURE2);
 			m_forwardShader.CheckUniformLocation("normalTex", 2);
 
-			m_modelsForward[i].texID = texture;
+			m_modelsForward[i].norID = texture;
 
 			return true;
 		}
@@ -621,7 +621,7 @@ bool GraphicDevice::ChangeModelSpecularMap(int _id, std::string _fileDir)
 			texture = AddTexture(_fileDir, GL_TEXTURE3);
 			m_deferredShader1.CheckUniformLocation("specularTex", 3);
 
-			m_modelsDeferred[i].texID = texture;
+			m_modelsDeferred[i].speID = texture;
 
 			return true;
 		}
@@ -633,7 +633,7 @@ bool GraphicDevice::ChangeModelSpecularMap(int _id, std::string _fileDir)
 			texture = AddTexture(_fileDir, GL_TEXTURE3);
 			m_forwardShader.CheckUniformLocation("specularTex", 3);
 
-			m_modelsForward[i].texID = texture;
+			m_modelsForward[i].speID = texture;
 
 			return true;
 		}
