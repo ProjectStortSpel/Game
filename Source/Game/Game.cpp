@@ -157,8 +157,6 @@ void OnConnected(Network::NetConnection nc)
 	newPlayer = ss.str();
 }
 
-
-
 void OnPlayerConnected(Network::NetConnection _nc)
 {
 	if (m_players.find(_nc) == m_players.end())
@@ -187,6 +185,17 @@ void OnPlayerDisconnected(Network::NetConnection _nc)
 	m_players[_nc]->Connected = false;
 }
 
+void OnKicked(Network::NetConnection _nc)
+{
+	client->Disconnect();
+	printf("I was kicked from the server!\n");
+}
+
+void OnRemotePlayerKicked(Network::NetConnection _nc)
+{
+	printf("%s:%d was kicked from the server.\n", _nc.IpAddress, _nc.Port);
+}
+
 void CubePos(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _nc)
 {
 	mat[100][3][0] = _ph->ReadFloat(_id);
@@ -194,6 +203,15 @@ void CubePos(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _
 	mat[100][3][2] = _ph->ReadFloat(_id);
 }
 
+void KickPlayer(std::vector<Argument>* _args)
+{
+	if (m_players.size() == 0)
+		return;
+
+	auto firstplayer = m_players.begin();
+	server->Kick(firstplayer->first, "Why not?");
+	m_players.erase(firstplayer->first);
+}
 
 void MoveCube(std::vector<Argument>* _vec)
 {
@@ -251,6 +269,8 @@ void Start()
 		client = new Network::ClientNetwork();
 		client->AddNetworkHook("CubePos", &CubePos);
 		client->SetOnConnectedToServer(&OnConnected);
+		client->SetOnKickedFromServer(&OnKicked);
+		client->SetOnRemotePlayerKicked(&OnRemotePlayerKicked);
 
 		if (input.compare("c") == 0) // localhost
 			client->Connect("127.0.0.1", "localhest", 6112, 0);
@@ -287,6 +307,7 @@ void Start()
 	if (isServer)
 	{
 		cm.AddCommand("MoveCube", &MoveCube);
+		cm.AddCommand("KickPlayer", &KickPlayer);
 		//cm.ExecuteCommand("first 0 10 0");
 	}
 
