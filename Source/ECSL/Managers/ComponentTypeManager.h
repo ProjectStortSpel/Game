@@ -39,8 +39,6 @@ namespace ECSL
 		ComponentTypeReader* m_componentTypeReader;
 		std::map<unsigned int, ComponentType*>* m_componentTypes;
 		std::unordered_map<std::string, unsigned int>* m_stringTableId;
-
-
 	};
 
 	template<typename ComponentType>
@@ -56,8 +54,8 @@ namespace ECSL
 	template<typename ComponentType>
 	unsigned int ComponentTypeManager::GetTableId()
 	{
-		static unsigned int m_id = ++m_nextTableId;
-		return m_id;
+		static unsigned int id = ++m_nextTableId;
+		return id;
 	}
 }
 

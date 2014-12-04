@@ -27,7 +27,7 @@ void System::InitializeEntityList()
 	m_entitiesBitSet = BitSet::GenerateBitSet(m_dataManager->GetEntityCount());
 }
 
-void System::AddEntity(unsigned int _entityId)
+void System::AddEntityToSystem(unsigned int _entityId)
 {
 	unsigned int bitIndex = ECSL::BitSet::GetBitIndex(_entityId);
 	unsigned int bitSetIndex = ECSL::BitSet::GetBitSetIndex(_entityId);
@@ -35,7 +35,7 @@ void System::AddEntity(unsigned int _entityId)
 	m_entities->push_back(_entityId);
 }
 
-void System::RemoveEntity(unsigned int _entityId)
+void System::RemoveEntityFromSystem(unsigned int _entityId)
 {
 	unsigned int bitIndex = ECSL::BitSet::GetBitIndex(_entityId);
 	unsigned int bitSetIndex = ECSL::BitSet::GetBitSetIndex(_entityId);
@@ -57,6 +57,11 @@ DataLocation System::GetComponent(unsigned int _entityId, const std::string& _co
 	return m_dataManager->GetComponentTable(_componentType)->GetComponent(_entityId, _variableName);
 }
 
+DataLocation System::GetComponent(unsigned int _entityId, const std::string& _componentType, unsigned int _index)
+{
+	return m_dataManager->GetComponentTable(_componentType)->GetComponent(_entityId, _index);
+}
+
 DataLocation System::GetComponent(unsigned int _entityId, unsigned int _componentTypeId, unsigned int _index)
 {
 	return m_dataManager->GetComponentTable(_componentTypeId)->GetComponent(_entityId, _index);
@@ -70,6 +75,36 @@ void System::SetComponent(unsigned int _entityId, const std::string& _componentT
 void System::SetComponent(unsigned int _entityId, unsigned int _componentTypeId, unsigned int _index, void* _data, unsigned int _byteSize)
 {
 	m_dataManager->GetComponentTable(_componentTypeId)->SetComponent(_entityId, _index, _data, _byteSize);
+}
+
+void System::CreateComponentAndAddTo(const std::string& _componentType, unsigned int _entityId)
+{
+	m_dataManager->CreateComponentAndAddTo(_componentType, _entityId);
+}
+
+void System::CreateComponentAndAddTo(unsigned int _componentTypeId, unsigned int _entityId)
+{
+	m_dataManager->CreateComponentAndAddTo(_componentTypeId, _entityId);
+}
+
+void System::RemoveComponentFrom(const std::string& _componentType, unsigned int _entityId)
+{
+	m_dataManager->RemoveComponentFrom(_componentType, _entityId);
+}
+
+void System::RemoveComponentFrom(unsigned int _componentTypeId, unsigned int _entityId)
+{
+	m_dataManager->RemoveComponentFrom(_componentTypeId, _entityId);
+}
+
+ComponentTable* System::GetComponentTable(const std::string& _componentType)
+{
+	return m_dataManager->GetComponentTable(_componentType);
+}
+
+ComponentTable* System::GetComponentTable(unsigned int _componentTypeId)
+{
+	return m_dataManager->GetComponentTable(_componentTypeId);
 }
 
 void System::AddComponentTypeToFilter(const std::string& _componentType, FilterType _filterType)
@@ -89,4 +124,14 @@ void System::AddComponentTypeToFilter(const std::string& _componentType, FilterT
 		printf("Unknown ComponentFilter passed into AddComponentToFilter [System.cpp]\n");
 		break;
 	}
+}
+
+unsigned int System::CreateNewEntity()
+{
+	return m_dataManager->CreateNewEntity();
+}
+
+void System::KillEntity(unsigned int _entityId)
+{
+	m_dataManager->RemoveEntity(_entityId);
 }

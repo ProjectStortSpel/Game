@@ -41,13 +41,13 @@ namespace ECSL
 		bool IsWorldInitialized() const { return m_worldInitialized; }
 
 	private:
+
 		bool m_worldInitialized;
 		std::vector<SystemWorkGroup*>* m_systemWorkGroups;
 		std::vector<unsigned int>* m_componentTypeIds;
 
 		inline bool IsIdAdded(unsigned int _id);
 	};
-	
 	//template<typename ComponentType>
 	//void WorldCreator::AddComponentType()
 	//{
