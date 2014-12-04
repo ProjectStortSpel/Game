@@ -23,8 +23,7 @@ void main(void)
 	uint xy = x + y * gl_NumWorkGroups.x;
 
 	int bokstav = letter[xy] - 32;
-	//int bokstav = 40;
-
+	
 	ivec2 texCoord = ivec2(
 		mod(bokstav, 20) * 8 + gl_LocalInvocationID.x,
 		int(bokstav * 0.05f) * 16 + 16 - gl_LocalInvocationID.y
@@ -35,9 +34,7 @@ void main(void)
 	vec4 something = imageLoad(text_image, texCoord);
 	something *= text_color;
 
-	something = vec4(float(xy)/72);
-
-	//if ( something.w > 0 )
+	if ( something.w > 0 )
 	{
 		imageStore(
 			output_image,
