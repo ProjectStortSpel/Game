@@ -10,6 +10,14 @@ BaseNetwork::BaseNetwork()
 	m_maxTimeOutIntervall = 10.0f;
 	m_maxIntervallCounter = 3;
 
+	m_totalDataReceived = 0;
+	m_totalDataSent = 0;
+
+	m_currentDataReceived = 0;
+	m_currentDataSent = 0;
+
+	m_usageDataTimer = 0;
+
 	memset(m_packetData, 0, sizeof(m_packetData));
 }
 
@@ -115,6 +123,7 @@ int BaseNetwork::TriggerPacket(void)
 void BaseNetwork::Update(float _dt)
 {
 
+	UpdateNetUsage(_dt);
 	UpdateTimeOut(_dt);
 
 	m_systemPacketLock.lock();

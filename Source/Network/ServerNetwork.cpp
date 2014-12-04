@@ -215,21 +215,34 @@ bool ServerNetwork::Stop()
 
 void ServerNetwork::Broadcast(Packet* _packet, NetConnection _exclude)
 {
+	float bytesSent = 0;
+
 	m_connectedClientsLock.lock();
 	for (auto it = m_connectedClients.begin(); it != m_connectedClients.end(); it++)
 	{
 		if (it->first == _exclude || it->second->GetActive() != 2)
 			continue;
 
-		it->second->Send((char*)_packet->Data, _packet->Length);
+		bytesSent += it->second->Send((char*)_packet->Data, _packet->Length);
 	}
 	m_connectedClientsLock.unlock();
+
+
+	m_dataSentLock.lock();
+	if (bytesSent != -1)
+	{
+		m_totalDataSent += bytesSent;
+		m_currentDataSent += bytesSent;
+	}
+	m_dataSentLock.unlock();
 
 	SAFE_DELETE(_packet);
 }
 
 void ServerNetwork::Send(Packet* _packet, NetConnection _receiver)
 {
+	float bytesSent = -1;
+
 	m_connectedClientsLock.lock();
 	auto result = m_connectedClients.find(_receiver);
 
@@ -242,9 +255,18 @@ void ServerNetwork::Send(Packet* _packet, NetConnection _receiver)
 	}
 	else
 	{
-		result->second->Send((char*)_packet->Data, _packet->Length);
+		bytesSent = result->second->Send((char*)_packet->Data, _packet->Length);
+
 		m_connectedClientsLock.unlock();
 	}
+
+	m_dataSentLock.lock();
+	if (bytesSent != -1)
+	{
+		m_totalDataSent += bytesSent;
+		m_currentDataSent += bytesSent;
+	}
+	m_dataSentLock.unlock();
 	
 	SAFE_DELETE(_packet);
 	return;
@@ -254,7 +276,7 @@ void ServerNetwork::ReceivePackets(ISocket* _socket)
 {
 	while (_socket->GetActive() != 0)
 	{
-		int result = _socket->Receive(m_packetData, MAX_PACKET_SIZE);
+		float result = _socket->Receive(m_packetData, MAX_PACKET_SIZE);
 
 		if (result > 0)
 		{
@@ -281,7 +303,13 @@ void ServerNetwork::ReceivePackets(ISocket* _socket)
 
 			HandlePacket(p);
 
-
+			m_dataRecievedLock.lock();
+			if (result > 0)
+			{
+				m_totalDataReceived += packetSize;
+				m_currentDataReceived += packetSize;
+			}
+			m_dataRecievedLock.unlock();
 		}
 		else if (result == 0)
 		{
@@ -295,6 +323,7 @@ void ServerNetwork::ReceivePackets(ISocket* _socket)
 	m_connectedClientsLock.lock();
 	m_connectedClients.erase(_socket->GetNetConnection());
 	m_connectedClientsLock.unlock();
+
 	SAFE_DELETE(_socket);
 }
 
@@ -323,8 +352,8 @@ void ServerNetwork::ListenForConnections(void)
 			uint64_t id = m_packetHandler.StartPack(ID_SERVER_FULL);
 			Packet* p = m_packetHandler.EndPack(id);
 
-			newConnection->Send((char*)p->Data, p->Length);
-			
+			float bytesSent = newConnection->Send((char*)p->Data, p->Length);
+
 			printf("%s:%d tried to connect, but the server is full.\n", nc.IpAddress, nc.Port);
 
 			SAFE_DELETE(newConnection);
@@ -332,6 +361,14 @@ void ServerNetwork::ListenForConnections(void)
 			m_connectedClientsLock.lock();
 			m_connectedClients.erase(nc);
 			m_connectedClientsLock.unlock();
+
+			m_dataSentLock.lock();
+			if (bytesSent != -1)
+			{
+				m_totalDataReceived += bytesSent;
+				m_currentDataReceived += bytesSent;
+			}
+			m_dataSentLock.unlock();
 
 			continue;
 		}
@@ -345,6 +382,24 @@ void ServerNetwork::ListenForConnections(void)
 		m_currentTimeOutIntervall[nc] = 0.0f;
 		m_currentIntervallCounter[nc] = 0;
 		m_timeOutLock.unlock();
+	}
+}
+
+void ServerNetwork::UpdateNetUsage(float _dt)
+{
+	m_usageDataTimer += _dt;
+	if (m_usageDataTimer >= 1.f)
+	{
+		m_usageDataTimer = 0;
+
+		m_dataRecievedLock.lock();
+		m_currentDataReceived = 0;
+		m_dataRecievedLock.unlock();
+
+		m_dataSentLock.lock();
+		m_currentDataSent = 0;
+		m_dataSentLock.unlock();
+
 	}
 }
 
@@ -365,7 +420,6 @@ void ServerNetwork::UpdateTimeOut(float _dt)
 			{
 				m_currentIntervallCounter[it->first] = 0;
 				//NetConnectionLost(it->first);
-
 				trash.push_back(it->first);
 
 				continue;
