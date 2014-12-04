@@ -122,29 +122,31 @@ void GraphicDevice::Render()
 	//-- DRAW MODELS
 	for (int i = 0; i < m_modelsDeferred.size(); i++)
 	{
-		glm::mat4 modelMatrix;
-		if (m_modelsDeferred[i].modelMatrix == NULL)
-			modelMatrix = glm::translate(glm::vec3(1));
-		else
-			modelMatrix = *m_modelsDeferred[i].modelMatrix;
+		if (m_modelsDeferred[i].active) // IS MODEL ACTIVE?
+		{
+			glm::mat4 modelMatrix;
+			if (m_modelsDeferred[i].modelMatrix == NULL)
+				modelMatrix = glm::translate(glm::vec3(1));
+			else
+				modelMatrix = *m_modelsDeferred[i].modelMatrix;
 
-		glm::mat4 modelViewMatrix = viewMatrix * modelMatrix;
-		glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelViewMatrix)));
+			glm::mat4 modelViewMatrix = viewMatrix * modelMatrix;
+			glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelViewMatrix)));
 
-		m_deferredShader1.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
-		m_deferredShader1.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
+			m_deferredShader1.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
+			m_deferredShader1.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, m_modelsDeferred[i].texID);
 
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, m_modelsDeferred[i].texID);
+			glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, m_modelsDeferred[i].norID);
 
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, m_modelsDeferred[i].norID);
+			glActiveTexture(GL_TEXTURE3);
+			glBindTexture(GL_TEXTURE_2D, m_modelsDeferred[i].speID);
 
-		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, m_modelsDeferred[i].speID);
-
-		m_modelsDeferred[i].bufferPtr->draw();
-		glBindTexture(GL_TEXTURE_2D, 0);
+			m_modelsDeferred[i].bufferPtr->draw();
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
 	}
 
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
@@ -188,29 +190,32 @@ void GraphicDevice::Render()
 
 	for (int i = 0; i < m_modelsForward.size(); i++)
 	{
-		glm::mat4 modelMatrix;
-		if (m_modelsForward[i].modelMatrix == NULL)
-			modelMatrix = glm::translate(glm::vec3(1));
-		else
-			modelMatrix = *m_modelsForward[i].modelMatrix;
+		if (m_modelsForward[i].active) // IS MODEL ACTIVE?
+		{
+			glm::mat4 modelMatrix;
+			if (m_modelsForward[i].modelMatrix == NULL)
+				modelMatrix = glm::translate(glm::vec3(1));
+			else
+				modelMatrix = *m_modelsForward[i].modelMatrix;
 
-		glm::mat4 modelViewMatrix = viewMatrix * modelMatrix;
-		glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelViewMatrix)));
+			glm::mat4 modelViewMatrix = viewMatrix * modelMatrix;
+			glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelViewMatrix)));
 
-		m_forwardShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
-		m_forwardShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
+			m_forwardShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
+			m_forwardShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
 
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
 
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].norID);
+			glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].norID);
 
-		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].speID);
+			glActiveTexture(GL_TEXTURE3);
+			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].speID);
 
-		m_modelsForward[i].bufferPtr->draw();
-		glBindTexture(GL_TEXTURE_2D, 0);
+			m_modelsForward[i].bufferPtr->draw();
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
 	}
 
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
@@ -258,6 +263,7 @@ bool GraphicDevice::InitSDLWindow()
 	const char*		Caption = "SDL Window";
 	int				PosX = 200;
 	int				PosY = 280;
+
 	int				SizeX = 256 * 5;	//1280
 	int				SizeY = 144 * 5;	//720
 
@@ -341,6 +347,7 @@ bool GraphicDevice::InitDeferred()
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthBuf, 0);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_normTex, 0);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_colorTex, 0);
+
 
 	m_vramUsage += (m_clientWidth*m_clientHeight*sizeof(float));
 	m_vramUsage += (m_clientWidth*m_clientHeight*sizeof(float)* 4 * 2);
@@ -464,7 +471,7 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 		ERRORMSG("ERROR: INVALID RENDER SETTING");
 
 	// Import Object
-	ObjectData obj = ModelLoader::importObject("content/models/cube/", "cube.object");
+	ObjectData obj = ModelLoader::importObject(_dir, _file);
 
 	// Import Texture
 	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
@@ -500,14 +507,140 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 
 	return modelID;
 }
-
+bool GraphicDevice::RemoveModel(int _id)
+{
+	for (int i = 0; i < m_modelsDeferred.size(); i++)
+	{
+		if (m_modelsDeferred[i].modelID == _id)
+		{
+			m_modelsDeferred.erase(m_modelsDeferred.begin() + i);
+			return true;
+		}
+	}
+	for (int i = 0; i < m_modelsForward.size(); i++)
+	{
+		if (m_modelsForward[i].modelID == _id)
+		{
+			m_modelsForward.erase(m_modelsForward.begin() + i);
+			return true;
+		}
+	}
+	return false;
+}
+bool GraphicDevice::ActiveModel(int _id, bool _active)
+{
+	for (int i = 0; i < m_modelsDeferred.size(); i++)
+	{
+		if (m_modelsDeferred[i].modelID == _id)
+		{
+			m_modelsDeferred[i].active = _active;
+			return true;
+		}
+	}
+	for (int i = 0; i < m_modelsForward.size(); i++)
+	{
+		if (m_modelsForward[i].modelID == _id)
+		{
+			m_modelsForward[i].active = _active;
+			return true;
+		}
+	}
+	return false;
+}
 bool GraphicDevice::ChangeModelTexture(int _id, std::string _fileDir)
 {
-	//for (int i = 0; i < m_models.size(); i++)
-	//{
-	//}
-	return true;
+	int location;
+	GLuint texture;
+
+	for (int i = 0; i < m_modelsDeferred.size(); i++)
+	{
+		if (m_modelsDeferred[i].modelID == _id)
+		{
+			texture = AddTexture(_fileDir, GL_TEXTURE1);
+			m_deferredShader1.CheckUniformLocation("diffuseTex", 1);
+			
+			m_modelsDeferred[i].texID = texture;
+
+			return true;
+		}
+	}
+	for (int i = 0; i < m_modelsForward.size(); i++)
+	{
+		if (m_modelsForward[i].modelID == _id)
+		{
+			texture = AddTexture(_fileDir, GL_TEXTURE1);
+			m_forwardShader.CheckUniformLocation("diffuseTex", 1);
+
+			m_modelsForward[i].texID = texture;
+
+			return true;
+		}
+	}
+	return false;
 }
+bool GraphicDevice::ChangeModelNormalMap(int _id, std::string _fileDir)
+{
+	int location;
+	GLuint texture;
+
+	for (int i = 0; i < m_modelsDeferred.size(); i++)
+	{
+		if (m_modelsDeferred[i].modelID == _id)
+		{
+			texture = AddTexture(_fileDir, GL_TEXTURE2);
+			m_deferredShader1.CheckUniformLocation("normalTex", 2);
+
+			m_modelsDeferred[i].texID = texture;
+
+			return true;
+		}
+	}
+	for (int i = 0; i < m_modelsForward.size(); i++)
+	{
+		if (m_modelsForward[i].modelID == _id)
+		{
+			texture = AddTexture(_fileDir, GL_TEXTURE2);
+			m_forwardShader.CheckUniformLocation("normalTex", 2);
+
+			m_modelsForward[i].texID = texture;
+
+			return true;
+		}
+	}
+	return false;
+}
+bool GraphicDevice::ChangeModelSpecularMap(int _id, std::string _fileDir)
+{
+	int location;
+	GLuint texture;
+
+	for (int i = 0; i < m_modelsDeferred.size(); i++)
+	{
+		if (m_modelsDeferred[i].modelID == _id)
+		{
+			texture = AddTexture(_fileDir, GL_TEXTURE3);
+			m_deferredShader1.CheckUniformLocation("specularTex", 3);
+
+			m_modelsDeferred[i].texID = texture;
+
+			return true;
+		}
+	}
+	for (int i = 0; i < m_modelsForward.size(); i++)
+	{
+		if (m_modelsForward[i].modelID == _id)
+		{
+			texture = AddTexture(_fileDir, GL_TEXTURE3);
+			m_forwardShader.CheckUniformLocation("specularTex", 3);
+
+			m_modelsForward[i].texID = texture;
+
+			return true;
+		}
+	}
+	return false;
+}
+
 
 Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 {
@@ -528,7 +661,6 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 	Buffer* retbuffer = new Buffer();
 
 	_shaderProg->UseProgram();
-	//No need to check which renderType to use. UseProgram() is called before calling AddMesh (in LoadModel)
 
 	for (int i = 0; i < (int)verts.size(); i++)
 	{
@@ -565,7 +697,6 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 
 	return retbuffer;
 }
-
 GLuint GraphicDevice::AddTexture(std::string _fileDir, GLenum _textureSlot)
 {
 	for (std::map<const std::string, GLuint>::iterator it = m_textures.begin(); it != m_textures.end(); it++)

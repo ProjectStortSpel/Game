@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <SDL/SDL.h>
 
 namespace ECSL
 {
@@ -18,17 +19,21 @@ namespace ECSL
 	{
 	private:
 		std::string	m_name;
-		int m_byteSize;
+		unsigned int m_offset;
+		unsigned int m_byteSize;
 
 	public:
-		ComponentVariable(std::string _name, int _byteSize) : m_name(_name), m_byteSize(_byteSize) { }
+		ComponentVariable(std::string _name, unsigned int _byteSize) : m_name(_name), m_byteSize(_byteSize) { }
 		~ComponentVariable() { }
 
-		inline const std::string& GetName() const	{ return m_name; }
-		inline const int GetByteSize() const		{ return m_byteSize; }
+		inline const std::string& GetName() const		{ return m_name; }
+		inline const unsigned int GetOffset() const		{ return m_offset; }
+		inline const unsigned int GetByteSize() const	{ return m_byteSize; }
+
+		inline void SetOffset(unsigned int _offset) { m_offset = _offset; }
 	};
 
-	class ComponentType
+	class DECLSPEC ComponentType
 	{
 	private:
 		std::string	m_name;

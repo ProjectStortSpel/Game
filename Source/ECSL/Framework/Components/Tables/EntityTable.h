@@ -2,6 +2,7 @@
 #define ENTITYTABLE_H
 
 #include <SDL/SDL.h>
+#include <SDL/SDL_mutex.h>
 #include <stack>
 #include <string>
 
@@ -12,8 +13,8 @@ namespace ECSL
 {
 	enum EntityState
 	{
-		Dead,
-		Alive
+		Dead = 0,
+		Alive = 1
 	};
 
 	class DECLSPEC EntityTable
@@ -23,12 +24,15 @@ namespace ECSL
 		~EntityTable();
 
 		void AddComponentTo(unsigned int _entityId, unsigned int _componentTypeId);
+		void RemoveComponentFrom(unsigned int _entityId, unsigned int _componentTypeId);
 		bool EntityHasComponent(unsigned int _entityId, unsigned int _componentTypeId);
-		bool EntityHasComponents(unsigned int _entityId, BitSet::DataType* _mandatoryMask, BitSet::DataType* _oneOfMask, BitSet::DataType* _exclusionMask);
+		bool EntityPassFilters(unsigned int _entityId, const BitSet::DataType* _mandatoryMask, const BitSet::DataType* _oneOfMask, const BitSet::DataType* _exclusionMask);
 		unsigned int GenerateNewEntityId();
 		void AddOldEntityId(unsigned int _entityId);
+		void ClearEntityData(unsigned int _entityId);
 
-		inline EntityState GetEntityState(unsigned int _entityId) { return (EntityState)(*(int*)(m_dataTable->GetData(_entityId))); }
+		inline const EntityState GetEntityState(unsigned int _entityId) { return (EntityState)(*(int*)(m_dataTable->GetData(_entityId))); }
+		inline const BitSet::DataType* GetEntityComponents(unsigned int _entityId) { return (BitSet::DataType*)(m_dataTable->GetData(_entityId) + 1); }
 		void GetEntityComponents(std::vector<unsigned int>& _out, unsigned int _entityId);
 	private:
 		unsigned int m_entityCount;
@@ -36,6 +40,7 @@ namespace ECSL
 		unsigned int m_componentByteCount;
 		unsigned int m_componentIntCount;
 		std::stack<unsigned int>* m_availableEntityIds;
+		SDL_mutex* m_availableEntityMutex;
 		DataArray* m_dataTable;
 	};
 }

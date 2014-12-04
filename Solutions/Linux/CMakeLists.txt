@@ -7,7 +7,7 @@ set(USE_X86_64 ON CACHE BOOL "USE_X86_64")
 # Project name
 project("Large Game Project")
 
-add_definitions(-D_UNICODE -DUNICODE)
+add_definitions(-DLUA_REAL_FLOAT -D_UNICODE -DUNICODE)
 
 if(WIN32)
   if(CMAKE_CL_64)
@@ -24,11 +24,12 @@ if(WIN32)
       imm32
       winmm
       "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Windows/${WINDOWS_SYSTEM}/SDL2.lib"
-	  ws2_32)
+	"${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Windows/${WINDOWS_SYSTEM}/vld.lib"
+	ws2_32)
   set(EXTERNAL_WINDOWS_STATIC_SDL2MAIN_LIBRARY
       "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Windows/${WINDOWS_SYSTEM}/SDL2main.lib")
   set(EXTERNAL_WINDOWS_STATIC_LUA52_LIBRARY
-      "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Windows/${WINDOWS_SYSTEM}/lua52.lib")
+      "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Windows/${WINDOWS_SYSTEM}/lua53.lib")
 
   # Set output directory
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_SOURCE_DIR}/../../Bin/Debug/${WINDOWS_SYSTEM}")

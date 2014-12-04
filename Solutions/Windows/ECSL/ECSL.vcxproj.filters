@@ -73,9 +73,6 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Common\StringConverter.h">
       <Filter>Source Files\Framework\Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemBitmask.h">
-      <Filter>Source Files\Framework\Systems</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\DataManager.h">
       <Filter>Source Files\Framework\Components</Filter>
     </ClInclude>
@@ -93,6 +90,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\ComponentTable.h">
       <Filter>Source Files\Framework\Components\Tables</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\ComponentFilter.h">
+      <Filter>Source Files\Framework\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Common\ContainerHelper.h">
+      <Filter>Source Files\Framework\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Simulation.h">
+      <Filter>Source Files\Framework</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -149,6 +155,15 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\ComponentTable.cpp">
       <Filter>Source Files\Framework\Components\Tables</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\ComponentFilter.cpp">
+      <Filter>Source Files\Framework\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Common\ContainerHelper.cpp">
+      <Filter>Source Files\Framework\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Simulation.cpp">
+      <Filter>Source Files\Framework</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
