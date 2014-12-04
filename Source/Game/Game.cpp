@@ -341,7 +341,7 @@ void Connect_Hook(std::vector<Argument>* _vec)
 	if (_vec->size() == 2)
 	{
 		if (_vec->at(0).ArgType == ArgumentType::Text && _vec->at(1).ArgType == ArgumentType::Number)
-			Connect((char*)_vec->at(0).Text, (short)_vec->at(0).Number);
+			Connect((char*)_vec->at(0).Text, (short)_vec->at(1).Number);
 	}
 	
 }
