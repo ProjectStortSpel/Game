@@ -17,6 +17,11 @@ ClientNetwork::ClientNetwork()
 	m_receivePacketsThreadAlive = false;
 	m_socket = 0;
 
+	m_maxTimeOutIntervall = 1.0f;
+	m_maxIntervallCounter = 30;
+
+	m_ping = 0;
+
 	m_networkFunctions[NetTypeMessageId::ID_PASSWORD_INVALID] = std::bind(&ClientNetwork::NetPasswordInvalid, this, NetworkHookPlaceholders);
 	m_networkFunctions[NetTypeMessageId::ID_CONNECTION_ACCEPTED] = std::bind(&ClientNetwork::NetConnectionAccepted, this, NetworkHookPlaceholders);
 	m_networkFunctions[NetTypeMessageId::ID_SERVER_FULL] = std::bind(&ClientNetwork::NetConnectionServerFull, this, NetworkHookPlaceholders);
@@ -138,8 +143,9 @@ void ClientNetwork::ReceivePackets()
 			if (NET_DEBUG)
 				printf("Received message with length \"%i\" from server.\n", packetSize);
 
-			m_currentIntervallCounter = 0;
-			m_currentTimeOutIntervall = 0.0f;
+			// FIX
+			//m_currentIntervallCounter = 0;
+			//m_currentTimeOutIntervall = 0.0f;
 
 			Packet* p = new Packet();
 			p->Data = new unsigned char[packetSize];
@@ -175,8 +181,12 @@ void ClientNetwork::Send(Packet* _packet)
 
 	float bytesSent = m_socket->Send((char*)_packet->Data, _packet->Length);
 	if (bytesSent != -1)
-		m_totalDataSent += bytesSent;
+	{
+		if (_packet->Data[0] == ID_PING)
+			m_sendTime = GetTickCount();
 
+		m_totalDataSent += bytesSent;
+	}
 	SAFE_DELETE(_packet);
 }
 
@@ -347,6 +357,10 @@ void ClientNetwork::NetPong(PacketHandler* _packetHandler, uint64_t _id, NetConn
 {
 	if (NET_DEBUG)
 		printf("Pong from: %s:%d\n", _connection.IpAddress, _connection.Port);
+
+	m_receiveTime = GetTickCount();
+	m_ping = m_receiveTime - m_sendTime;
+	printf("Ping: %f\n", m_ping);
 }
 
 

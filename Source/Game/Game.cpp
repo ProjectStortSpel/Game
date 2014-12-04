@@ -299,6 +299,8 @@ void Start()
 		float cBytesReceived = 0;
 		float cBytesSent = 0;
 
+		float ping = 0;
+
 		if (isServer)
 		{
 			server->Update(dt);
@@ -321,6 +323,8 @@ void Start()
 
 			cBytesReceived = client->GetCurrentBytesReceived() * 0.001;
 			cBytesSent = client->GetCurrentBytesSent() * 0.001;
+
+			ping = client->GetPing();
 		}
 
 		INPUT->Update();
@@ -329,14 +333,13 @@ void Start()
 
 		char buffer[125];
 #ifdef WIN32
-		sprintf_s(buffer, "Network usage:\nTotal received: %1.2f Kb\nTotal sent: %1.2f Kb\nCurrent received: %1.2f Kb\nCurrent sent: %1.2f Kb", tBytesReceived, tBytesSent, cBytesReceived, cBytesSent);
+		sprintf_s(buffer, "Network usage:\nPing: %1.0fms\nTotal received: %1.2f Kb\nTotal sent: %1.2f Kb\nCurrent received: %1.2f Kb\nCurrent sent: %1.2f Kb", ping, tBytesReceived, tBytesSent, cBytesReceived, cBytesSent);
 #else
-		sprintf(buffer, "Network usage:\nTotal received: %1.2f Kb\nTotal sent: %1.2f Kb\nCurrent received: %1.2f Kb\nCurrent sent: %1.2f Kb", tBytesReceived, tBytesSent, cBytesReceived, cBytesSent);
+		sprintf(buffer, "Network usage:\nPing: %1.0fmsTotal received: %1.2f Kb\nTotal sent: %1.2f Kb\nCurrent received: %1.2f Kb\nCurrent sent: %1.2f Kb", ping, tBytesReceived, tBytesSent, cBytesReceived, cBytesSent);
 #endif
 
 		//std::string networkData = "Network usage:\nTotal received: " + std::to_string(tBytesReceived) + " Kb\nTotal sent: " + std::to_string(tBytesSent) + " Kb\nCurrent received: " + std::to_string(cBytesReceived) + " Kb\nCurrent sent: " + std::to_string(cBytesSent) + " Kb";
 		RENDERER.RenderSimpleText(buffer, 0, 2);
-
 
 		RENDERER.Render();
 		INPUT->Update();
