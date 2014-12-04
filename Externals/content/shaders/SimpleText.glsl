@@ -35,7 +35,7 @@ void main(void)
 	vec4 something = imageLoad(text_image, texCoord);
 	something *= text_color;
 
-	something = vec4(float(bokstav)/72);
+	something = vec4(float(xy)/72);
 
 	//if ( something.w > 0 )
 	{
