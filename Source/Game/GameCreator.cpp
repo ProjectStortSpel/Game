@@ -121,7 +121,7 @@ void GameCreator::InitializeWorld()
 	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
 	LuaEmbedder::AddObject<ECSL::WorldCreator>("WorldCreator", &worldCreator, "worldCreator");
 
-	LuaEmbedder::Load("../../../Externals/content/scripting/storaspel/components.lua");
+	LuaEmbedder::Load("../../../Externals/content/scripting/storaspel/init.lua");
 
 	auto componentTypes = ECSL::ComponentTypeManager::GetInstance().GetComponentTypes();
 	for (auto it = componentTypes->begin(); it != componentTypes->end(); ++it)
@@ -129,9 +129,7 @@ void GameCreator::InitializeWorld()
 		worldCreator.AddComponentType(it->second->GetName());
 		printf("%s added\n", it->second->GetName().c_str());
 	}
- 		
 
-	LuaEmbedder::Load("../../../Externals/content/scripting/storaspel/systems/movementsystem.lua");
 	worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(new LOLSYSTEM(m_graphics));
 	m_world = worldCreator.CreateWorld(100);
