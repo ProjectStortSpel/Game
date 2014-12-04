@@ -72,7 +72,7 @@ namespace Network
 #pragma warning( disable : 4251 )
 
 
-		std::map < char*, NetMessageHook, cmp_str > m_userFunctions;
+		std::map < std::string, NetMessageHook > m_userFunctions;
 		std::map < char, NetMessageHook > m_networkFunctions;
 
 		std::queue<Packet*> m_systemPackets;
