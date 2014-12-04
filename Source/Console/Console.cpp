@@ -154,3 +154,12 @@ void ConsoleManager::AddCommand(const char* _name, ConsoleHook _hook)
 
 }
 
+void ConsoleManager::RemoveCommand(const char* _name)
+{
+	m_consoleHooks.erase(_name);
+}
+
+void ConsoleManager::ClearCommands()
+{
+	m_consoleHooks.clear();
+}

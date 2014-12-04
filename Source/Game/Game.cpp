@@ -28,7 +28,9 @@ struct Player
 mat4 mat[1000];
 Network::ServerNetwork* server = 0;
 Network::ClientNetwork* client = 0;
+Console::ConsoleManager consoleManager;
 bool isServer = false;
+bool isClient = false;
 std::string newPlayer = "";
 std::map<Network::NetConnection, Player*> m_players;
 
@@ -104,7 +106,7 @@ void ClearConsole()
 	system("clear");
 #endif
 }
-void lol()
+void lol2()
 {
 	ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("content/components");
 	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
@@ -156,7 +158,6 @@ void OnConnected(Network::NetConnection nc)
 	ss << "connected to server " << nc.IpAddress << ":" << nc.Port << ".\n";
 	newPlayer = ss.str();
 }
-
 
 
 void OnPlayerConnected(Network::NetConnection _nc)
@@ -219,6 +220,126 @@ void MoveCube(std::vector<Argument>* _vec)
 	server->Broadcast(p);
 }
 
+void Disconnect()
+{
+	isClient = false;
+	if (client)
+		client->Disconnect();
+}
+
+void OnDisconnected(Network::NetConnection nc)
+{
+	isClient = false;
+}
+
+void Stop()
+{
+	consoleManager.RemoveCommand("movecube");
+	isServer = false;
+	if (server)
+		server->Stop();
+}
+
+bool Host(short _port)
+{
+	if (!isServer)
+	{
+		if (isClient)
+		{
+			Disconnect();
+		}
+		SAFE_DELETE(server);
+		server = new Network::ServerNetwork();
+		server->SetOnPlayerConnected(&OnPlayerConnected);
+		server->SetOnPlayerDisconnected(&OnPlayerDisconnected);
+		server->SetOnPlayerTimedOut(&OnPlayerDisconnected);
+		if (server->Start(_port, "localhest", 8))
+		{
+			consoleManager.AddCommand("movecube", &MoveCube);
+			isServer = true;
+			return true;
+		}
+		else
+		{
+			SAFE_DELETE(server);
+		}
+	}
+	return false;
+}
+
+void Stop_Hook(std::vector<Argument>* _vec)
+{
+	Stop();
+}
+
+
+bool Connect(char* _ip, short _port)
+{
+	if (!isClient)
+	{
+		if (isServer)
+		{
+			Stop();
+		}
+		SAFE_DELETE(client);
+		client = new Network::ClientNetwork();
+		client->AddNetworkHook("CubePos", &CubePos);
+		client->SetOnConnectedToServer(&OnConnected);
+		client->SetOnDisconnectedFromServer(&OnDisconnected);
+		if (client->Connect(_ip, "localhest", _port, 0))
+		{
+			isClient = true;
+			return true;
+		}
+		else
+		{
+			SAFE_DELETE(client);
+		}
+	}
+	return false;
+}
+
+void Disconnect_Hook(std::vector<Argument>* _vec)
+{
+	Disconnect();
+}
+
+void Connect_Hook(std::vector<Argument>* _vec)
+{
+	if (_vec->size() == 0)
+		Connect("127.0.0.1", 6112);
+
+	if (_vec->size() == 1)
+	{
+		if (_vec->at(0).ArgType == ArgumentType::Text)
+			Connect((char*)_vec->at(0).Text, 6112);
+	}
+
+	if (_vec->size() == 2)
+	{
+		if (_vec->at(0).ArgType == ArgumentType::Text && _vec->at(1).ArgType == ArgumentType::Number)
+			Connect((char*)_vec->at(0).Text, (short)_vec->at(0).Number);
+	}
+	
+}
+
+void Host_Hook(std::vector<Argument>* _vec)
+{
+	if (_vec->size() == 0)
+		Host(6112);
+	else if (_vec->size() == 1)
+	{
+		if (_vec->at(0).ArgType == ArgumentType::Number)
+			Host((short)_vec->at(0).Number);
+	}
+}
+
+bool lol;
+
+void Quit_Hook(std::vector<Argument>* _vec)
+{
+	lol = false;
+}
 
 void Start()
 {
@@ -229,12 +350,18 @@ void Start()
 	printf("c to connect to localhost,\n");
 	printf("1 to connect to Jenkins Windows,\n");
 	printf("2 to connect to Jenkins Linux,\n");
-	printf("3 to connect to Jenkins Pontus,\n");
-	printf("4 to connect to Jenkins Erik,\n");
+	printf("3 to connect to Pontus,\n");
+	printf("4 to connect to Erik,\n");
 	printf("or anything else to skip the network.\n");
 
 	std::getline(std::cin, input);
 	ClearConsole();
+
+	consoleManager.AddCommand("connect", &Connect_Hook);
+	consoleManager.AddCommand("disconnect", &Disconnect_Hook);
+	consoleManager.AddCommand("host", &Host_Hook);
+	consoleManager.AddCommand("stop", &Stop_Hook);
+	consoleManager.AddCommand("quit", &Quit_Hook);
 
 
 	if (input.compare("s") == 0)
@@ -248,20 +375,16 @@ void Start()
 	}
 	else
 	{
-		client = new Network::ClientNetwork();
-		client->AddNetworkHook("CubePos", &CubePos);
-		client->SetOnConnectedToServer(&OnConnected);
-
 		if (input.compare("c") == 0) // localhost
-			client->Connect("127.0.0.1", "localhest", 6112, 0);
+			Connect("127.0.0.1", 6112);
 		else if (input.compare("1") == 0) // Jenkins win
-			client->Connect("194.47.150.4", "localhest", 6112, 0);
+			Connect("194.47.150.4", 6112);
 		else if (input.compare("2") == 0) // Jenkins lin
-			client->Connect("194.47.150.60", "localhest", 6112, 0);
+			Connect("194.47.150.60", 6112);
 		else if (input.compare("3") == 0) // Pontus
-			client->Connect("88.129.202.196", "localhest", 6112, 0);
+			Connect("88.129.202.196", 6112);
 		else if (input.compare("4") == 0) // Erik
-			client->Connect("194.47.150.5", "localhest", 6112, 0);
+			Connect("194.47.150.5", 6112);
 	}
 
 
@@ -278,20 +401,12 @@ void Start()
 	int modelid = RENDERER.LoadModel("content/models/cube/", "cube.object", &mat[100]); // LOADMODEL RETURNS THE MODELID
 	RENDERER.ChangeModelTexture(modelid, "content/models/cube/NM_tst.png"); // CHANGING TEXTURE ON MODELID
 
-	bool lol = true;
+	lol = true;
 	float cd = 1.0f;
 	Timer timer;
 
-
-	Console::ConsoleManager cm;
-	if (isServer)
-	{
-		cm.AddCommand("MoveCube", &MoveCube);
-		//cm.ExecuteCommand("first 0 10 0");
-	}
-
 	TextInput ti;
-	ti.SetTextHook(std::bind(&Console::ConsoleManager::ExecuteCommand, &cm, std::placeholders::_1));
+	ti.SetTextHook(std::bind(&Console::ConsoleManager::ExecuteCommand, &consoleManager, std::placeholders::_1));
 	ti.SetActive(true);
 
 	while (lol)
@@ -320,7 +435,8 @@ void Start()
 			cBytesSent = server->GetCurrentBytesSent() / 1024;
 
 		}
-		else
+
+		if (isClient)
 		{
 			client->Update(dt);
 			while (client->TriggerPacket() > 0) {}
@@ -390,92 +506,104 @@ void Start()
 		ti.Update();
 		//char* test = ti.GetText();
 		
-
-		if (isServer)
+		if (!INPUT->GetKeyboard()->IsTextInputActive())
 		{
-			bool cubeMoved = false;
-
-			// MOVE CUBE
-			if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_UP) == Input::InputState::DOWN)
+			if (isServer)
 			{
-				cubeMoved = true;
-				mat[100] *= glm::translate(vec3(0, 0, -0.01f));
+				bool cubeMoved = false;
+
+				// MOVE CUBE
+				if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_UP) == Input::InputState::DOWN)
+				{
+					cubeMoved = true;
+					mat[100] *= glm::translate(vec3(0, 0, -0.01f));
+				}
+
+				if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_DOWN) == Input::InputState::DOWN)
+				{
+					cubeMoved = true;
+					mat[100] *= glm::translate(vec3(0, 0, 0.01f));
+				}
+
+				if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_LEFT) == Input::InputState::DOWN)
+				{
+					cubeMoved = true;
+					mat[100] *= glm::translate(vec3(-0.01f, 0, 0));
+				}
+
+				if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_RIGHT) == Input::InputState::DOWN)
+				{
+					cubeMoved = true;
+					mat[100] *= glm::translate(vec3(0.01f, 0, 0));
+				}
+
+				if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_SPACE) == Input::InputState::DOWN)
+				{
+					cubeMoved = true;
+					mat[100] *= glm::translate(vec3(0, 0.01f, 0));
+				}
+
+				if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_LSHIFT) == Input::InputState::DOWN)
+				{
+					cubeMoved = true;
+					mat[100] *= glm::translate(vec3(0, -0.01f, 0));
+				}
+
+				if (cubeMoved)
+				{
+					Network::PacketHandler* ph = server->GetPacketHandler();
+					uint64_t id = ph->StartPack("CubePos");
+					ph->WriteFloat(id, mat[100][3][0]);
+					ph->WriteFloat(id, mat[100][3][1]);
+					ph->WriteFloat(id, mat[100][3][2]);
+					Network::Packet* p = ph->EndPack(id);
+					server->Broadcast(p);
+				}
 			}
 
-			if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_DOWN) == Input::InputState::DOWN)
-			{
-				cubeMoved = true;
-				mat[100] *= glm::translate(vec3(0, 0, 0.01f));
-			}
+			// MOVE CAMERA
+		
+			if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_W) == Input::InputState::DOWN)
+				RENDERER.GetCamera()->MoveForward(dt);
+			if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_S) == Input::InputState::DOWN)
+				RENDERER.GetCamera()->MoveBackward(dt);
+			if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_A) == Input::InputState::DOWN)
+				RENDERER.GetCamera()->MoveLeft(dt);
+			if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_D) == Input::InputState::DOWN)
+				RENDERER.GetCamera()->MoveRight(dt);
+			
 
-			if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_LEFT) == Input::InputState::DOWN)
+			// ROTATE CAMERA
+			if (INPUT->GetMouse()->GetButtonState(Input::LeftButton) == Input::InputState::DOWN)
 			{
-				cubeMoved = true;
-				mat[100] *= glm::translate(vec3(-0.01f, 0, 0));
-			}
+				int sizeX, sizeY;
+				RENDERER.GetWindowSize(sizeX, sizeY);
 
-			if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_RIGHT) == Input::InputState::DOWN)
-			{
-				cubeMoved = true;
-				mat[100] *= glm::translate(vec3(0.01f, 0, 0));
+				RENDERER.GetCamera()->UpdateMouse(sizeX*0.5, sizeY*0.5, INPUT->GetMouse()->GetX(), INPUT->GetMouse()->GetY());
+				INPUT->GetMouse()->SetPosition(sizeX*0.5, sizeY*0.5);
+				INPUT->GetMouse()->HideCursor(true);
 			}
+			else
+				INPUT->GetMouse()->HideCursor(false);
 
-			if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_SPACE) == Input::InputState::DOWN)
-			{
-				cubeMoved = true;
-				mat[100] *= glm::translate(vec3(0, 0.01f, 0));
-			}
-
-			if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_LSHIFT) == Input::InputState::DOWN)
-			{
-				cubeMoved = true;
-				mat[100] *= glm::translate(vec3(0, -0.01f, 0));
-			}
-
-			if (cubeMoved)
-			{
-				Network::PacketHandler* ph = server->GetPacketHandler();
-				uint64_t id = ph->StartPack("CubePos");
-				ph->WriteFloat(id, mat[100][3][0]);
-				ph->WriteFloat(id, mat[100][3][1]);
-				ph->WriteFloat(id, mat[100][3][2]);
-				Network::Packet* p = ph->EndPack(id);
-				server->Broadcast(p);
-			}
 		}
-
-		// MOVE CAMERA
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_W) == Input::InputState::DOWN)
-			RENDERER.GetCamera()->MoveForward(dt);
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_S) == Input::InputState::DOWN)
-			RENDERER.GetCamera()->MoveBackward(dt);
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_A) == Input::InputState::DOWN)
-			RENDERER.GetCamera()->MoveLeft(dt);
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_D) == Input::InputState::DOWN)
-			RENDERER.GetCamera()->MoveRight(dt);
 
 		// ToggleConsole
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_F1) == Input::InputState::PRESSED)
 		{
 			if (INPUT->GetKeyboard()->IsTextInputActive())
+			{
 				INPUT->GetKeyboard()->StopTextInput();
+				ti.SetActive(false);
+			}
 			else
+			{
 				INPUT->GetKeyboard()->StartTextInput();
+				INPUT->GetKeyboard()->ResetTextInput();
+				ti.SetActive(true);
+			}
 		}
 
-
-		// ROTATE CAMERA
-		if (INPUT->GetMouse()->GetButtonState(Input::LeftButton) == Input::InputState::DOWN)
-		{
-			int sizeX, sizeY;
-			RENDERER.GetWindowSize(sizeX, sizeY);
-
-			RENDERER.GetCamera()->UpdateMouse(sizeX*0.5, sizeY*0.5, INPUT->GetMouse()->GetX(), INPUT->GetMouse()->GetY());
-			INPUT->GetMouse()->SetPosition(sizeX*0.5, sizeY*0.5);
-			INPUT->GetMouse()->HideCursor(true);
-		}
-		else
-			INPUT->GetMouse()->HideCursor(false);
 		//-----------------------------------------------------------------------------------------------
 
 		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
