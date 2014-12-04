@@ -203,6 +203,7 @@ void GraphicDevice::Render()
 	glBindTexture(GL_TEXTURE_2D, m_depthBuf);
 
 	glBindImageTexture(1, m_colorTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
+	glBindImageTexture(2, m_randomVectors, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
 
 	glDispatchCompute(m_clientWidth * 0.0625, m_clientHeight * 0.0625, 1); // 1/16 = 0.0625
 	//---------------------------------------------------------------------------
@@ -338,6 +339,7 @@ bool GraphicDevice::InitDeferred()
 
 	GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
 	glDrawBuffers(2, drawBuffers);
+
 	return true;
 }
 
@@ -376,6 +378,10 @@ bool GraphicDevice::InitBuffers()
 
 	//color
 	glBindImageTexture(1, m_colorTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
+
+	// Create random vector img for SSAO
+	m_randomVectors = AddTexture("content/textures/vectormap.png", GL_TEXTURE21);
+	glBindImageTexture(2, m_randomVectors, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
 
 
 	glActiveTexture(GL_TEXTURE0);

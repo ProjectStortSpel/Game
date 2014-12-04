@@ -136,6 +136,9 @@ namespace Renderer
 		// Textures
 		std::map<const std::string, GLuint> m_textures;
 		GLuint AddTexture(std::string _fileDir, GLenum _textureSlot);
+
+		// Random Vertors
+		GLuint m_randomVectors;
 	};
 }
 
