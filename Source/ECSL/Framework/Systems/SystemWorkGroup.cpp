@@ -29,7 +29,7 @@ SystemWorkGroup::~SystemWorkGroup()
 
 void SystemWorkGroup::AddSystem(System* _system)
 {
-	/*	TODO: Add check so same system doesn't get added	*/
+	/* TODO: Add check so same system doesn't get added */
 	m_systems->push_back(_system);
 }
 

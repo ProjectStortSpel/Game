@@ -32,6 +32,8 @@ public:
 		//AddComponentTypeToFilter("Velocity", ECSL::ComponentFilter::RequiresOneOf);
 		//AddComponentTypeToFilter("Position", ECSL::ComponentFilter::Excluded);
 
+		//float* x = (float*)GetComponent()
+
 		printf("Testsystem Initialize()\n");
 	}
 
