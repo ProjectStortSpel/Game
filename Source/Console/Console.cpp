@@ -14,18 +14,20 @@ bool ConsoleManager::ParseArgs(char* _args, std::vector<Argument>* _vector)
 {
 	_vector->clear();
 
-	char* args = new char[strlen(_args) + 1];
-	memcpy(args, _args, strlen(_args) + 1);
+	//char* args = new char[strlen(_args) + 1];
+	//memcpy(args, _args, strlen(_args) + 1);
+
+	//char* args = _args;
 
 
-	size_t len = strlen(args);
+	size_t len = strlen(_args);
 
 
-	char* space = strchr(args, ' ');
-	char* fnutt = strchr(args, '\"');
+	char* space = strchr(_args, ' ');
+	char* fnutt = strchr(_args, '\"');
 
-	char* prev = args;
-	char* current = args;
+	char* prev = _args;
+	char* current = _args;
 
 	bool inFnutt = false;
 	bool lastrun = true;
@@ -91,7 +93,7 @@ bool ConsoleManager::ParseArgs(char* _args, std::vector<Argument>* _vector)
 		inFnutt = nextInFnutt;
 
 	}
-	delete args;
+	//delete args;
 	if (inFnutt)
 	{
 		_vector->clear();
