@@ -17,7 +17,7 @@ public:
 		for (auto entity : entites)
 		{
 			float *Xp, *Yp, *Zp;
-			Xp = (float*)GetComponent(entity, "Position", "X");
+			Xp = (float*)GetComponent((unsigned int)entity, 0, 0);
 			Yp = (float*)GetComponent(entity, "Position", "Y");
 			Zp = (float*)GetComponent(entity, "Position", "Z");
 
@@ -28,6 +28,7 @@ public:
 
 		}
 
+		//m_graphics->RenderSimpleText("")
 	}
 	void Initialize()
 	{
@@ -184,14 +185,16 @@ void GameCreator::StartGame()
 		m_input->Update();
 		m_world->Update(dt);
 
+		//m_graphics->RenderSimpleText("lol", 0, 2);
+
 		PollSDLEvent();
 
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_SPACE) == Input::InputState::PRESSED)
 		{
 			unsigned int newEntity = m_world->CreateNewEntity();
 			m_world->CreateComponentAndAddTo("Position", newEntity);
-			m_world->CreateComponentAndAddTo("Velocity", newEntity);
-			m_world->CreateComponentAndAddTo("Render", newEntity);
+			//m_world->CreateComponentAndAddTo("Velocity", newEntity);
+			//m_world->CreateComponentAndAddTo("Render", newEntity);
 
 		}
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_H) == Input::InputState::PRESSED)

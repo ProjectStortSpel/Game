@@ -74,13 +74,17 @@ void SystemManager::SystemEntitiesUpdate()
 	const std::vector<unsigned int>* changedEntities = m_dataManager->GetChangedEntities();
 	EntityTable* entityTable = m_dataManager->GetEntityTable();
 
-	/* Loop through every system see if changed entities passes the filter */
-	for (auto workGroup : *m_systemWorkGroups)
+	/*	Loop through all entities	*/
+	for (int n = 0; n < changedEntities->size(); ++n)
 	{
-		for (auto system : *workGroup->GetSystems())
+		unsigned int entityId = changedEntities->at(n);
+
+		/* Loop through every system see if changed entities passes the filter */
+		for (auto workGroup : *m_systemWorkGroups)
 		{
-			for (auto entityId : *changedEntities)
+			for (auto system : *workGroup->GetSystems())
 			{
+
 				/* Try add entity to system if it passes filters, else try to remove it */
 				if (entityTable->EntityPassFilters(entityId, system->GetMandatoryFilter()->GetBitSet(), system->GetRequiresOneOfFilter()->GetBitSet(), system->GetExcludedFilter()->GetBitSet()))
 					AddEntityToSystem(entityId, system);
