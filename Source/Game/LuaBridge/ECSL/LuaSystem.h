@@ -16,13 +16,16 @@ namespace LuaBridge
     
     static void Embed();
     
-	void Update(float _dt);
+    void Update(float _dt);
     void Initialize();
     void OnEntityAdded(unsigned int _entityId);
     void OnEntityRemoved(unsigned int _entityId);
     
   private:
+    int GetComponent();
+    
     int AddComponentTypeToFilter();
+    int GetEntities();
   };
 }
 

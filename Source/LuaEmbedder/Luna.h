@@ -35,6 +35,7 @@
 #include <vector>
 #include <assert.h>
 #include <string>
+#include <iostream>
 
 namespace LuaEmbedder
 {
@@ -162,7 +163,7 @@ namespace LuaEmbedder
       lua_settable(L, -3);
       lua_setmetatable(L, metatable);
       
-      lua_pop(L, 1);
+      lua_pop(L, 2);
     }
     
     static void RegisterProperty(lua_State* L, const char* className, const char* propertyName, int (T::*getter)(), int (T::*setter)())
@@ -177,6 +178,8 @@ namespace LuaEmbedder
       lua_pushstring(L, propertyName);
       lua_pushnumber(L, propertyIndex);
       lua_settable(L, metatable);
+      
+      lua_pop(L, 1);
     }
     
     static void RegisterMethod(lua_State* L, const char* className, const char* methodName, int (T::*func)())
@@ -191,6 +194,8 @@ namespace LuaEmbedder
       lua_pushstring(L, methodName);
       lua_pushnumber(L, methodIndex | ( 1 << 8 ));
       lua_settable(L, metatable);
+      
+      lua_pop(L, 1);
     }
 
     /*

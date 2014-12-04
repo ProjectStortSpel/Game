@@ -21,12 +21,19 @@ MovementSystem.Initialize = function(self)
 end
 
 MovementSystem.OnEntityAdded = function(self, entityId)
-	print("OnEntityAdded (LUA)")
 	local id = world:CreateNewEntity()
-	print("ID ", id)
 	world:CreateComponentAndAddTo("Position", id)
 	world:CreateComponentAndAddTo("Velocity", id)
 	world:CreateComponentAndAddTo("Render", id)
+	
+	
+	local entities = self:GetEntities()
+	for i = 1, #entities do
+	  local entity = entities[i]
+	  local x = self:GetComponent(entity, 0, 0)
+	  print(entity, x.Float)
+	  --print("Entity: ", entities[i])
+	end
 end
 
 MovementSystem.OnEntityRemoved = function(self, entityId)

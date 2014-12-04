@@ -191,6 +191,9 @@ void GameCreator::StartGame()
 		{
 			unsigned int newEntity = m_world->CreateNewEntity();
 			m_world->CreateComponentAndAddTo("Position", newEntity);
+			float* Position = (float*)m_world->GetComponent(newEntity, "Position", "X");
+			Position[0] = 25.0f;
+			
 			//m_world->CreateComponentAndAddTo("Velocity", newEntity);
 			//m_world->CreateComponentAndAddTo("Render", newEntity);
 

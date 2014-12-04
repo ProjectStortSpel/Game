@@ -49,3 +49,8 @@ void World::KillEntity(unsigned int _entityId)
 {
 	m_dataManager->RemoveEntity(_entityId);
 }
+
+DataLocation World::GetComponent(unsigned int _entityId, const std::string& _componentType, const std::string& _variableName)
+{
+	return m_dataManager->GetComponentTable(_componentType)->GetComponent(_entityId, _variableName);
+}

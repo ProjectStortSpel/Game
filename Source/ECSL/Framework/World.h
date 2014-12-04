@@ -31,6 +31,8 @@ namespace ECSL
 		const ReturnType* const GetComponent(unsigned int _entityId, const std::string& _componentType, const std::string& _variableName);
 		void SetComponent(unsigned int _entityId, const std::string& _componentType, const std::string& _variableName, void* _data);
 		void KillEntity(unsigned int _entityId);
+		
+		DataLocation GetComponent(unsigned int _entityId, const std::string& _componentType, const std::string& _variableName);
 	};
 
 	template<typename ReturnType>

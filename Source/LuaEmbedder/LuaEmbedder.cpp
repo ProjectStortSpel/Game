@@ -182,6 +182,55 @@ namespace LuaEmbedder
   {
     lua_pushstring(L, value.c_str());
   }
+  void PushNull()
+  {
+    lua_pushnil(L);
+  }
+  void PushFloatArray(const float* values, unsigned int count)
+  {
+    lua_newtable(L);
+    for (unsigned int i = 0; i < count; ++i)
+    {
+      lua_pushnumber(L, values[i]);
+      lua_rawseti(L, -2, i + 1);
+    }
+  }
+  void PushIntArray(const int* values, unsigned int count)
+  {
+    lua_newtable(L);
+    for (unsigned int i = 0; i < count; ++i)
+    {
+      lua_pushinteger(L, values[i]);
+      lua_rawseti(L, -2, i + 1);
+    }
+  }
+  void PushUnsignedIntArray(const unsigned int* values, unsigned int count)
+  {
+    lua_newtable(L);
+    for (unsigned int i = 0; i < count; ++i)
+    {
+      lua_pushinteger(L, (int)values[i]);
+      lua_rawseti(L, -2, i + 1);
+    }
+  }
+  void PushBoolArray(const bool* values, unsigned int count)
+  {
+    lua_newtable(L);
+    for (unsigned int i = 0; i < count; ++i)
+    {
+      lua_pushboolean(L, (int)values[i]);
+      lua_rawseti(L, -2, i + 1);
+    }
+  }
+  void PushStringArray(const std::string* values, unsigned int count)
+  {
+    lua_newtable(L);
+    for (unsigned int i = 0; i < count; ++i)
+    {
+      lua_pushstring(L, values[i].c_str());
+      lua_rawseti(L, -2, i + 1);
+    }
+  }
   
   bool IsFloat(int index)
   {
