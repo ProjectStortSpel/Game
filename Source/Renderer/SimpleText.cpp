@@ -38,7 +38,7 @@ bool SimpleText::Init(GLuint _textimage, int _clientWidth, int _clientHeight)
 	glGenBuffers(1, &simpleTextBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, simpleTextBuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(int)* simpleText.size(), &simpleText[0], GL_DYNAMIC_COPY);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, simpleTextBuffer);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, simpleTextBuffer);
 
 	return true;
 }
