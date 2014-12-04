@@ -344,7 +344,7 @@ void ServerNetwork::ListenForConnections(void)
 
 		m_connectedClientsLock.lock();
 		m_connectedClients[nc] = newConnection;
-		unsigned int size = m_connectedClients.size();
+		unsigned int size = (unsigned int)m_connectedClients.size();
 		m_connectedClientsLock.unlock();
 
 		if (size > m_maxConnections)

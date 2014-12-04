@@ -31,16 +31,4 @@
 #define SAFE_DELETE_PACKET(x) if(x) { if (x->Data) { delete x->Data; x->Data = 0; } delete x; x = 0; }
 
 
-namespace Network
-{
-	struct cmp_str
-	{
-		bool operator()(char const *a, char const *b)
-		{
-			return std::strcmp(a, b) < 0;
-		}
-	};
-}
-
-
 #endif

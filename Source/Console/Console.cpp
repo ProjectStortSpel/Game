@@ -103,7 +103,7 @@ bool ConsoleManager::ParseArgs(char* _args, std::vector<Argument>* _vector)
 	return true;
 }
 
-void ConsoleManager::ExecuteCommand(char* _command)
+void ConsoleManager::ExecuteCommand(const char* _command)
 {
 	char* command = new char[strlen(_command)+1];
 	memcpy(command, _command, strlen(_command) + 1);
@@ -131,14 +131,14 @@ void ConsoleManager::ExecuteCommand(char* _command)
 
 	else if (CONSOLE_DEBUG)
 	{
-		printf("Command \"%s\" not bound.\n", "hej");
+		printf("Command \"%s\" not bound.\n", command);
 	}
 
 	delete command;	
 }
-void ConsoleManager::AddCommand(char* _name, ConsoleHook _hook)
+void ConsoleManager::AddCommand(const char* _name, ConsoleHook _hook)
 {
-	char* spacePointer = strchr(_name, ' ');
+	char* spacePointer = strchr((char*)_name, ' ');
 
 	if (spacePointer)
 	{

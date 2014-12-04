@@ -111,7 +111,7 @@ Packet* PacketHandler::EndPack(uint64_t _id)
 {
 	PacketSendInfo* psi = GetPacketSendInfo(_id);
 
-	unsigned short length = psi->Position - psi->Data;
+	unsigned short length = (unsigned short)(psi->Position - psi->Data);
 
 	Packet* p = new Packet();
 	p->Data = new unsigned char[length];

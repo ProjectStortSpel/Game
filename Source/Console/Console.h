@@ -18,14 +18,6 @@ namespace Console
 
 #define CONSOLE_DEBUG 1
 
-	struct DECLSPEC cmp_str
-	{
-		bool operator()(char const *a, char const *b)
-		{
-			return std::strcmp(a, b) < 0;
-		}
-	};
-
 	enum ArgumentType
 	{
 		Text,
@@ -39,11 +31,11 @@ namespace Console
 		union
 		{
 			float Number;
-			char* Text;
+			const char* Text;
 		};
 
 		Argument(float f) { Number = f; ArgType = ArgumentType::Number; }
-		Argument(char* s) { Text = s; ArgType = ArgumentType::Text; }
+		Argument(const char* s) { Text = s; ArgType = ArgumentType::Text; }
 	};
 		
 
@@ -53,7 +45,7 @@ namespace Console
 	{
 	private:
 
-		std::map<char*, ConsoleHook, cmp_str> m_consoleHooks;
+		std::map<std::string, ConsoleHook> m_consoleHooks;
 
 		bool ParseArgs(char* _args, std::vector<Argument>* _vector);
 
@@ -62,8 +54,8 @@ namespace Console
 		ConsoleManager();
 		~ConsoleManager();
 
-		void ExecuteCommand(char* _command);
-		void AddCommand(char* _name, ConsoleHook _hook);
+		void ExecuteCommand(const char* _command);
+		void AddCommand(const char* _name, ConsoleHook _hook);
 
 	};
 }
