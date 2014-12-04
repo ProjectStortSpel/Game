@@ -6,6 +6,22 @@ PositionComponent:AddVariable("Y", 4)
 PositionComponent:AddVariable("Z", ByteSize.Float)
 worldCreator:AddComponentType(PositionComponent)
 
+local ScaleComponent = ComponentType()
+ScaleComponent.Name = "Scale"
+ScaleComponent.TableType = TableType.Array
+ScaleComponent:AddVariable("X", 4)
+ScaleComponent:AddVariable("Y", 4)
+ScaleComponent:AddVariable("Z", ByteSize.Float)
+worldCreator:AddComponentType(ScaleComponent)
+
+local RotationComponent = ComponentType()
+RotationComponent.Name = "Rotation"
+RotationComponent.TableType = TableType.Array
+RotationComponent:AddVariable("X", 4)
+RotationComponent:AddVariable("Y", 4)
+RotationComponent:AddVariable("Z", ByteSize.Float)
+worldCreator:AddComponentType(RotationComponent)
+
 local VelocityComponent = ComponentType()
 VelocityComponent.Name = "Velocity"
 VelocityComponent.TableType = TableType.Array
