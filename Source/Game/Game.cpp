@@ -259,7 +259,7 @@ void Start()
 		else if (input.compare("2") == 0) // Jenkins lin
 			client->Connect("194.47.150.60", "localhest", 6112, 0);
 		else if (input.compare("3") == 0) // Pontus
-			client->Connect("83.233.56.219", "localhest", 6112, 0);
+			client->Connect("88.129.202.196", "localhest", 6112, 0);
 		else if (input.compare("4") == 0) // Erik
 			client->Connect("194.47.150.5", "localhest", 6112, 0);
 	}
@@ -313,11 +313,11 @@ void Start()
 			server->Update(dt);
 			while (server->TriggerPacket() > 0) {}
 
-			tBytesReceived = server->GetTotalBytesReceived() * 0.001;
-			tBytesSent = server->GetTotalBytesSent() * 0.001;
+			tBytesReceived = server->GetTotalBytesReceived() / 1024;
+			tBytesSent = server->GetTotalBytesSent() / 1024;
 
-			cBytesReceived = server->GetCurrentBytesReceived() * 0.001;
-			cBytesSent = server->GetCurrentBytesSent() * 0.001;
+			cBytesReceived = server->GetCurrentBytesReceived() / 1024;
+			cBytesSent = server->GetCurrentBytesSent() / 1024;
 
 		}
 		else
@@ -325,11 +325,11 @@ void Start()
 			client->Update(dt);
 			while (client->TriggerPacket() > 0) {}
 
-			tBytesReceived = client->GetTotalBytesReceived() * 0.001;
-			tBytesSent = client->GetTotalBytesSent() * 0.001;
+			tBytesReceived = client->GetTotalBytesReceived() / 1024;
+			tBytesSent = client->GetTotalBytesSent() / 1024;
 
-			cBytesReceived = client->GetCurrentBytesReceived() * 0.001;
-			cBytesSent = client->GetCurrentBytesSent() * 0.001;
+			cBytesReceived = client->GetCurrentBytesReceived() / 1024;
+			cBytesSent = client->GetCurrentBytesSent() / 1024;
 
 			ping = client->GetPing();
 		}
@@ -338,9 +338,9 @@ void Start()
 		RENDERER.Update(dt);
 
 
-		char buffer[125];
+		char buffer[256];
 #ifdef WIN32
-		sprintf_s(buffer, "Network usage:\nPing: %1.0fms\nTotal received: %1.2f Kb\nTotal sent: %1.2f Kb\nCurrent received: %1.2f Kb\nCurrent sent: %1.2f Kb", ping, tBytesReceived, tBytesSent, cBytesReceived, cBytesSent);
+		sprintf_s(buffer, "Network usage:\nPing: %1.0fms\nTotal received: %1.2f Kb\nTotal sent: %1.2f Kb\nCurrent received: %f Kb\nCurrent sent: %f Kb", ping, tBytesReceived, tBytesSent, cBytesReceived, cBytesSent);
 #else
 		sprintf(buffer, "Network usage:\nPing: %1.0fmsTotal received: %1.2f Kb\nTotal sent: %1.2f Kb\nCurrent received: %1.2f Kb\nCurrent sent: %1.2f Kb", ping, tBytesReceived, tBytesSent, cBytesReceived, cBytesSent);
 #endif
