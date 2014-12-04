@@ -143,9 +143,8 @@ void ClientNetwork::ReceivePackets()
 			if (NET_DEBUG)
 				printf("Received message with length \"%i\" from server.\n", packetSize);
 
-			// FIX
-			//m_currentIntervallCounter = 0;
-			//m_currentTimeOutIntervall = 0.0f;
+			m_currentIntervallCounter = 0;
+			m_currentTimeOutIntervall = 0.0f;
 
 			Packet* p = new Packet();
 			p->Data = new unsigned char[packetSize];
@@ -156,6 +155,7 @@ void ClientNetwork::ReceivePackets()
 			HandlePacket(p);
 
 			m_totalDataReceived += packetSize;
+			m_currentDataReceived += packetSize;
 
 		}
 		else if (result == 0)
@@ -183,9 +183,10 @@ void ClientNetwork::Send(Packet* _packet)
 	if (bytesSent != -1)
 	{
 		if (_packet->Data[0] == ID_PING)
-			m_sendTime = GetTickCount();
+			m_sendTime = GetMillisecondsTime();
 
 		m_totalDataSent += bytesSent;
+		m_currentDataSent += bytesSent;
 	}
 	SAFE_DELETE(_packet);
 }
@@ -358,7 +359,7 @@ void ClientNetwork::NetPong(PacketHandler* _packetHandler, uint64_t _id, NetConn
 	if (NET_DEBUG)
 		printf("Pong from: %s:%d\n", _connection.IpAddress, _connection.Port);
 
-	m_receiveTime = GetTickCount();
+	m_receiveTime = GetMillisecondsTime();
 	m_ping = m_receiveTime - m_sendTime;
 }
 

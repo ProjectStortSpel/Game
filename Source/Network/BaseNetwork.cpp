@@ -1,5 +1,10 @@
 #include "BaseNetwork.h"
 
+#ifdef WIN32
+#else
+#include <sys/time.h>
+#endif
+
 using namespace Network;
 
 BaseNetwork::BaseNetwork()
@@ -149,4 +154,15 @@ void BaseNetwork::Update(float _dt)
 
 		m_packetHandler.EndUnpack((uint64_t)p);
 	}
+}
+
+float BaseNetwork::GetMillisecondsTime()
+{
+#ifdef WIN32
+	return GetTickCount();
+#else
+	struct timeval tv;
+	if (gettimeofday(&tv, 0) != 0) return 0;
+	return (float)((tv.tv_sec * 1000ul) + (tv.tv_usec / 1000ul));
+#endif
 }
