@@ -34,20 +34,11 @@ void RenderSystem::Update(float _dt)
 
 void RenderSystem::OnEntityAdded(unsigned int _entityId)
 {
-	/*	Tell Graphics to enable model	*/
-	//m_graphics->
-
-
-
 	float*		Scale;
-	
-	glm::mat4*	Matrix;
-
 	Scale		=	(float*)GetComponent(_entityId, "Scale", 0);
 	Scale[0] = 1.0f;
 	Scale[1] = 1.0f;
 	Scale[2] = 1.0f;
-	Matrix		=	(glm::mat4*)GetComponent(_entityId, "Render", "Mat");
 	
 
 	/*	Update the matrix	*/
@@ -74,7 +65,10 @@ void RenderSystem::UpdateMatrix(unsigned int _entityId)
 	Scale		=	(float*)GetComponent(_entityId, "Scale", 0);
 	Matrix		=	(glm::mat4*)GetComponent(_entityId, "Render", "Mat");
 
-	*Matrix = glm::scale(glm::vec3(Scale[0], Scale[1], Scale[2]));
-	//*Matrix *= glm::rotate(glm::vec3(Rotation[0], Rotation[1], Rotation[2])); // quaternions?????
-	*Matrix *= glm::translate(glm::vec3(Position[0], Position[1], Position[2]));
+	*Matrix = glm::translate(glm::vec3(Position[0], Position[1], Position[2]));
+	*Matrix *= glm::rotate(Rotation[0], glm::vec3(0, 0, 1)); // quaternions?????
+	*Matrix *= glm::rotate(Rotation[1], glm::vec3(0, 1, 0)); // quaternions?????
+	*Matrix *= glm::rotate(Rotation[2], glm::vec3(1, 0, 0)); // quaternions?????
+	*Matrix *= glm::scale(glm::vec3(Scale[0], Scale[1], Scale[2]));
+	
 }

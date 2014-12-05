@@ -30,6 +30,9 @@ void RotationSystem::Update(float _dt)
 		float*	Rotation;
 		Spin = (float*)GetComponent(entity, "Spin", 0);
 		Rotation = (float*)GetComponent(entity, "Rotation", 0);
+
+		for (int n = 0; n < 3; ++n)
+			Rotation[n] += Spin[n] * _dt;
 	}
 
 }

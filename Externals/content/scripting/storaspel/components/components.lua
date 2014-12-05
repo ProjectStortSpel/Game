@@ -46,7 +46,7 @@ worldCreator:AddComponentType(RenderComponent)
 -- Spin Component
 local SpinComponent = ComponentType()
 SpinComponent.Name = "Spin"
-SpinComponent.TableType = TableType.Map
+SpinComponent.TableType = TableType.Array
 SpinComponent:AddVariable("X", 4)
 SpinComponent:AddVariable("Y", 4)
 SpinComponent:AddVariable("Z", 4)

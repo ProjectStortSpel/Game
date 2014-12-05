@@ -3,6 +3,7 @@
 #include "Systems/MovementSystem.h"
 #include "Systems/RenderSystem.h"
 #include "Systems/CameraSystem.h"
+#include "Systems/RotationSystem.h"
 
 GameCreator::GameCreator() :
 m_graphics(0), m_input(0), m_world(0)
@@ -66,12 +67,13 @@ void GameCreator::InitializeWorld()
 
 	worldCreator.AddSystemGroup();
 	worldCreator.AddSystemToCurrentGroup<MovementSystem>();
+	worldCreator.AddLuaSystemToCurrentGroup(new RotationSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new CameraSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderSystem(m_graphics));
+	
 	m_world = worldCreator.CreateWorld(10000);
 	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
 }
-unsigned int LOL;
 void SpawnShit(ECSL::World* _world, Renderer::GraphicDevice* _graphics, bool isTrue = true)
 {
 	int size = 3;
@@ -106,6 +108,7 @@ void SpawnShit(ECSL::World* _world, Renderer::GraphicDevice* _graphics, bool isT
 	unsigned int newEntity = _world->CreateNewEntity();
 	_world->CreateComponentAndAddTo("Position", newEntity);
 	_world->CreateComponentAndAddTo("Scale", newEntity);
+	_world->CreateComponentAndAddTo("Spin", newEntity);
 	_world->CreateComponentAndAddTo("Rotation", newEntity);
 	_world->CreateComponentAndAddTo("Render", newEntity);
 
@@ -119,7 +122,11 @@ void SpawnShit(ECSL::World* _world, Renderer::GraphicDevice* _graphics, bool isT
 	Position[1] = 1.5f;
 	Position[2] = 0.0f;
 
-	LOL = newEntity;
+	float* Spin;
+	Spin = (float*)_world->GetComponent(newEntity, "Spin", "X");
+	Spin[0] = M_PI * 0.0f;
+	Spin[1] = M_PI * 1.0f;
+	Spin[2] = M_PI * 0.0f;
 
 }
 
@@ -143,34 +150,9 @@ void GameCreator::StartGame()
 		/*	Update world (systems, entities etc)	*/
 		m_world->Update(dt);
 
-		if (m_input->GetInstance().GetKeyboard()->GetKeyState(SDL_SCANCODE_O) == Input::InputState::PRESSED)
-		{
-			m_world->KillEntity(LOL);
-		}
-		if (m_input->GetInstance().GetKeyboard()->GetKeyState(SDL_SCANCODE_P) == Input::InputState::PRESSED)
-		{
-			unsigned int newEntity = m_world->CreateNewEntity();
-			m_world->CreateComponentAndAddTo("Position", newEntity);
-			m_world->CreateComponentAndAddTo("Scale", newEntity);
-			m_world->CreateComponentAndAddTo("Rotation", newEntity);
-			m_world->CreateComponentAndAddTo("Render", newEntity);
-
-			glm::mat4*	Matrix;
-			Matrix = (glm::mat4*)m_world->GetComponent(newEntity, "Render", "Mat");
-			int* ModelId = (int*)m_world->GetComponent(newEntity, "Render", "ModelId");
-			*ModelId = m_graphics->LoadModel("content/models/Head/", "head.object", Matrix);
-			float* Position;
-			Position = (float*)m_world->GetComponent(newEntity, "Position", "X");
-			Position[0] = 0.0f;
-			Position[1] = 1.5f;
-			Position[2] = 0.0f;
-
-			LOL = newEntity;
-		}
-
 		std::stringstream sstm;
 		sstm << m_world->GetActiveEntities() << " entities";
-		m_graphics->RenderSimpleText(sstm.str(), 0, 2);
+		m_graphics->RenderSimpleText(sstm.str(), 0, 1);
 
 
 

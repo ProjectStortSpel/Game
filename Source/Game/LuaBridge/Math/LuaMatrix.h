@@ -1,6 +1,6 @@
 #ifndef LUAMATRIX_H
 #define LUAMATRIX_H
-
+#define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 
 namespace LuaBridge
