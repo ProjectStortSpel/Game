@@ -1,5 +1,10 @@
 #include "BaseNetwork.h"
 
+#ifdef WIN32
+#else
+#include <sys/time.h>
+#endif
+
 using namespace Network;
 
 BaseNetwork::BaseNetwork()
@@ -9,6 +14,14 @@ BaseNetwork::BaseNetwork()
 
 	m_maxTimeOutIntervall = 10.0f;
 	m_maxIntervallCounter = 3;
+
+	m_totalDataReceived = 0;
+	m_totalDataSent = 0;
+
+	m_currentDataReceived = 0;
+	m_currentDataSent = 0;
+
+	m_usageDataTimer = 0;
 
 	memset(m_packetData, 0, sizeof(m_packetData));
 }
@@ -100,13 +113,12 @@ int BaseNetwork::TriggerPacket(void)
 
 	uint64_t id = m_packetHandler.StartUnpack(p);
 
-	std::string functionName((char*)&p->Data[1]);
-	if (m_userFunctions.find(functionName) != m_userFunctions.end())
+	if (m_userFunctions.find((char*)&p->Data[1]) != m_userFunctions.end())
 	{
-		m_userFunctions[functionName](&m_packetHandler, id, p->Sender);
+		m_userFunctions[(char*)&p->Data[1]](&m_packetHandler, id, p->Sender);
 	}
 	else if (NET_DEBUG)
-		printf("Packet \"%s\" not bound to any function.\n", functionName.c_str());
+		printf("Packet \"%s\" not bound to any function.\n", (char*)&p->Data[1]);
 
 	m_packetHandler.EndUnpack(id);
 
@@ -116,6 +128,7 @@ int BaseNetwork::TriggerPacket(void)
 void BaseNetwork::Update(float _dt)
 {
 
+	UpdateNetUsage(_dt);
 	UpdateTimeOut(_dt);
 
 	m_systemPacketLock.lock();
@@ -141,4 +154,15 @@ void BaseNetwork::Update(float _dt)
 
 		m_packetHandler.EndUnpack((uint64_t)p);
 	}
+}
+
+float BaseNetwork::GetMillisecondsTime()
+{
+#ifdef WIN32
+	return GetTickCount();
+#else
+	struct timeval tv;
+	if (gettimeofday(&tv, 0) != 0) return 0;
+	return (float)((tv.tv_sec * 1000ul) + (tv.tv_usec / 1000ul));
+#endif
 }

@@ -17,36 +17,24 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Renderer\stdafx.h" />
-<<<<<<< HEAD
-=======
-    <ClInclude Include="..\..\..\Source\Renderer\TextureLoader.h">
-      <Filter>Source</Filter>
-    </ClInclude>
->>>>>>> dd976c9f1d84e9e9a4133e4f5cc5266c1f28633b
     <ClInclude Include="..\..\..\Source\Renderer\GLTimer.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Renderer\SimpleText.h">
-<<<<<<< HEAD
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Renderer\Camera.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Renderer\ModelLoader.h" />
+<<<<<<< HEAD
     <ClInclude Include="..\..\..\Source\Renderer\Buffer.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Renderer\TextureLoader.h" />
 =======
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Source\Renderer\Camera.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Source\Renderer\Buffer.h" />
-    <ClInclude Include="..\..\..\Source\Renderer\ModelLoader.h" />
->>>>>>> dd976c9f1d84e9e9a4133e4f5cc5266c1f28633b
+>>>>>>> Development
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp">

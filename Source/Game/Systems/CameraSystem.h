@@ -3,6 +3,7 @@
 
 #include "ECSL/Interfaces/System.h"
 #include "Renderer/GraphicDevice.h"
+#include "Input/InputWrapper.h"
 
 
 class CameraSystem : public ECSL::System
@@ -19,6 +20,7 @@ public:
 
 private:
 	Renderer::GraphicDevice* m_graphics;
+	Input::InputWrapper* m_input;
 };
 
 #endif

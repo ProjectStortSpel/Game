@@ -2,6 +2,7 @@
 #include "Timer.h"
 #include "Systems/MovementSystem.h"
 #include "Systems/RenderSystem.h"
+#include "Systems/CameraSystem.h"
 
 GameCreator::GameCreator() :
 m_graphics(0), m_input(0), m_world(0)
@@ -60,6 +61,7 @@ void GameCreator::InitializeWorld()
 
 	//worldCreator.AddSystemGroup();
 	//worldCreator.AddSystemToCurrentGroup<MovementSystem>();
+	worldCreator.AddLuaSystemToCurrentGroup(new CameraSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderSystem(m_graphics));
 	m_world = worldCreator.CreateWorld(10000);
 	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
@@ -67,9 +69,9 @@ void GameCreator::InitializeWorld()
 
 void SpawnShit(ECSL::World* _world, Renderer::GraphicDevice* _graphics, bool isTrue = true)
 {
-	for (int x = -4; x <= 4; ++x)
+	for (int x = -5; x <= 5; ++x)
 	{
-		for (int y = -4; y <= 4; ++y)
+		for (int y = -5; y <= 5; ++y)
 		{
 			unsigned int newEntity = _world->CreateNewEntity();
 			_world->CreateComponentAndAddTo("Position", newEntity);
@@ -100,6 +102,8 @@ void SpawnShit(ECSL::World* _world, Renderer::GraphicDevice* _graphics, bool isT
 		}
 	}
 
+	unsigned int newEntity = _world->CreateNewEntity();
+	_world->CreateComponentAndAddTo("Camera", newEntity);
 }
 
 void GameCreator::StartGame()
@@ -124,14 +128,7 @@ void GameCreator::StartGame()
 
 		PollSDLEvent();
 
-		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_W) == Input::InputState::DOWN)
-			m_graphics->GetCamera()->MoveForward(dt);
-		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_S) == Input::InputState::DOWN)
-			m_graphics->GetCamera()->MoveBackward(dt);
-		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_A) == Input::InputState::DOWN)
-			m_graphics->GetCamera()->MoveLeft(dt);
-		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_D) == Input::InputState::DOWN)
-			m_graphics->GetCamera()->MoveRight(dt);
+
 
 		// ROTATE CAMERA
 		if (m_input->GetMouse()->GetButtonState(Input::LeftButton) == Input::InputState::DOWN)

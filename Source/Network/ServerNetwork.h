@@ -30,6 +30,7 @@ namespace Network
 		// Send a message to a specific client
 		void Send(Packet* _packet, NetConnection _connection);
 
+		void Kick(NetConnection _connection, char* _reason);
 
 		// Bind function which will trigger when another player connects to the server
 		void SetOnPlayerConnected(NetEvent _function);
@@ -48,6 +49,7 @@ namespace Network
 		void NetPing(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
 		void NetPong(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
 
+		void UpdateNetUsage(float _dt);
 		void UpdateTimeOut(float _dt);
 
 	private:
@@ -61,6 +63,9 @@ namespace Network
 
 		std::mutex m_timeOutLock;
 		std::mutex m_connectedClientsLock;
+
+		std::mutex m_dataRecievedLock;
+		std::mutex m_dataSentLock;
 
 		ISocket* m_listenSocket;
 		std::map<NetConnection, ISocket*> m_connectedClients;

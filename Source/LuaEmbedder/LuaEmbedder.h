@@ -77,6 +77,8 @@
 #if defined(WIN32)
   #define EXPORT __declspec(dllexport)
   #define IMPORT __declspec(dllimport)
+
+  #include <VLD/vld.h>
 #else
   #define EXPORT __attribute__((visibility("default")))
   #define IMPORT
