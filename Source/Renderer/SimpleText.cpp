@@ -15,7 +15,7 @@ SimpleText::~SimpleText()
 
 bool SimpleText::Init(GLuint _textimage, int _clientWidth, int _clientHeight)
 {
-	// Set output image
+	// Set text image
 	m_textImage = _textimage;
 
 	// Shader Shader
