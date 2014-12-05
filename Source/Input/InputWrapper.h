@@ -1,5 +1,11 @@
 #ifndef INPUTWRAPPER_H
 #define INPUTWRAPPER_H
+
+#ifdef WIN32
+	#include <VLD/vld.h>
+#else
+#endif
+
 #include "Devices/Keyboard.h"
 #include "Devices/Mouse.h"
 
