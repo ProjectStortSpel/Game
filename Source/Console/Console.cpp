@@ -136,6 +136,11 @@ void ConsoleManager::ExecuteCommand(const char* _command)
 		printf("Command \"%s\" not bound.\n", command);
 	}
 
+	if (m_history.size() > 8)
+		m_history.erase(m_history.begin());
+
+	m_history.push_back(_command);
+
 	delete command;	
 }
 void ConsoleManager::AddCommand(const char* _name, ConsoleHook _hook)
@@ -164,4 +169,9 @@ void ConsoleManager::RemoveCommand(const char* _name)
 void ConsoleManager::ClearCommands()
 {
 	m_consoleHooks.clear();
+}
+
+std::vector<std::string> ConsoleManager::GetHistory()
+{
+	return m_history;
 }

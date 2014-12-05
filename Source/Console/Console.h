@@ -46,6 +46,7 @@ namespace Console
 	private:
 
 		std::map<std::string, ConsoleHook> m_consoleHooks;
+		std::vector<std::string> m_history;
 
 		bool ParseArgs(char* _args, std::vector<Argument>* _vector);
 
@@ -58,7 +59,7 @@ namespace Console
 		void AddCommand(const char* _name, ConsoleHook _hook);
 		void RemoveCommand(const char* _name);
 		void ClearCommands();
-
+		std::vector<std::string> GetHistory(void);
 	};
 }
 
