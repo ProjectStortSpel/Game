@@ -74,7 +74,7 @@ namespace Network
 		virtual void UpdateTimeOut(float _dt) = 0;
 		virtual void UpdateNetUsage(float _dt) = 0;
 
-		float GetMillisecondsTime();
+		unsigned int GetMillisecondsTime();
 
 	protected:
 
