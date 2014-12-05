@@ -33,8 +33,8 @@ bool isServer = false;
 bool isClient = false;
 std::string newPlayer = "";
 std::map<Network::NetConnection, Player*> m_players;
-
-
+Renderer::GraphicDevice* RENDERER;
+int lastModelId;
 
 class TestSystem : public ECSL::System
 {
@@ -215,6 +215,38 @@ void KickPlayer(std::vector<Argument>* _args)
 	m_players.erase(firstplayer->first);
 }
 
+void AddObject(std::vector<Argument>* _args)
+{
+	if (_args->at(0).ArgType != ArgumentType::Text)
+		return;
+
+	std::string modelName = _args->at(0).Text;
+	modelName.append(".object");
+	
+	std::string folderPath;
+	if (strcmp(_args->at(0).Text,"cube") == 0)
+		folderPath = "content/models/cube/";
+	else if (strcmp(_args->at(0).Text, "default") == 0)
+		folderPath = "content/models/default_tile/";
+	else if (strcmp(_args->at(0).Text, "spelpjaas") == 0)
+		folderPath = "content/models/gamebrick/";
+	else if (strcmp(_args->at(0).Text, "head") == 0)
+		folderPath = "content/models/head/";
+
+	vec3 position;
+
+
+	if (_args->size() < 4 ||
+		(_args->at(1).ArgType != ArgumentType::Number || _args->at(2).ArgType != ArgumentType::Number || _args->at(3).ArgType != ArgumentType::Number))
+		position = vec3(0, 0, 0);
+	else
+		position = vec3(_args->at(1).Number, _args->at(2).Number, _args->at(3).Number);
+
+	lastModelId = RENDERER->LoadModel(folderPath, modelName, &mat[lastModelId + 1]); // LOADMODEL RETURNS THE MODELID
+	mat[lastModelId] = glm::translate(position);
+	
+}
+
 void MoveCube(std::vector<Argument>* _vec)
 {
 	if (_vec->size() != 3)
@@ -373,16 +405,18 @@ void Start()
 	consoleManager.AddCommand("host", &Host_Hook);
 	consoleManager.AddCommand("stop", &Stop_Hook);
 	consoleManager.AddCommand("quit", &Quit_Hook);
+	consoleManager.AddCommand("addobject", &AddObject);
 
-	Renderer::GraphicDevice RENDERER = Renderer::GraphicDevice();
+	RENDERER = new Renderer::GraphicDevice();
 	/*	Initialize Renderer and Input	*/
-	RENDERER.Init();
+	RENDERER->Init();
 
 	Input::InputWrapper* INPUT = &Input::InputWrapper::GetInstance();
 
-	LoadAlotOfBoxes(&RENDERER);
-	mat[100] = glm::translate(vec3(0, 0, 0));
-	int modelid = RENDERER.LoadModel("content/models/gamebrick/", "spelpjaas.object", &mat[100]); // LOADMODEL RETURNS THE MODELID
+	LoadAlotOfBoxes(RENDERER);
+	int modelid = RENDERER->LoadModel("content/models/gamebrick/", "spelpjaas.object", &mat[100]); // LOADMODEL RETURNS THE MODELID
+	mat[modelid] = glm::translate(vec3(0, 0, 0));
+	lastModelId = modelid;
 
 	lol = true;
 	lol2();
@@ -435,7 +469,7 @@ void Start()
 		}
 
 		INPUT->Update();
-		RENDERER.Update(dt);
+		RENDERER->Update(dt);
 
 
 		char buffer[256];
@@ -446,15 +480,15 @@ void Start()
 #endif
 
 		//std::string networkData = "Network usage:\nTotal received: " + std::to_string(tBytesReceived) + " Kb\nTotal sent: " + std::to_string(tBytesSent) + " Kb\nCurrent received: " + std::to_string(cBytesReceived) + " Kb\nCurrent sent: " + std::to_string(cBytesSent) + " Kb";
-		RENDERER.RenderSimpleText(buffer, 0, 2);
+		RENDERER->RenderSimpleText(buffer, 0, 2);
 
 		if (INPUT->GetKeyboard()->IsTextInputActive())
 		{
-			RENDERER.RenderSimpleText("Console:", 0, 9);
-			RENDERER.RenderSimpleText(ti.GetText(), 0, 10);
+			RENDERER->RenderSimpleText("Console:", 0, 9);
+			RENDERER->RenderSimpleText(ti.GetText(), 0, 10);
 		}
 
-		RENDERER.Render();
+		RENDERER->Render();
 		INPUT->Update();
 
 
@@ -464,7 +498,7 @@ void Start()
 			switch (e.type)
 			{
 			case SDL_WINDOWEVENT:
-				RENDERER.PollEvent(e);
+				RENDERER->PollEvent(e);
 				break;
 			case SDL_KEYDOWN:
 			case SDL_KEYUP:
@@ -548,22 +582,22 @@ void Start()
 			// MOVE CAMERA
 		
 			if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_W) == Input::InputState::DOWN)
-				RENDERER.GetCamera()->MoveForward(dt);
+				RENDERER->GetCamera()->MoveForward(dt);
 			if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_S) == Input::InputState::DOWN)
-				RENDERER.GetCamera()->MoveBackward(dt);
+				RENDERER->GetCamera()->MoveBackward(dt);
 			if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_A) == Input::InputState::DOWN)
-				RENDERER.GetCamera()->MoveLeft(dt);
+				RENDERER->GetCamera()->MoveLeft(dt);
 			if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_D) == Input::InputState::DOWN)
-				RENDERER.GetCamera()->MoveRight(dt);
+				RENDERER->GetCamera()->MoveRight(dt);
 			
 
 			// ROTATE CAMERA
 			if (INPUT->GetMouse()->GetButtonState(Input::LeftButton) == Input::InputState::DOWN)
 			{
 				int sizeX, sizeY;
-				RENDERER.GetWindowSize(sizeX, sizeY);
+				RENDERER->GetWindowSize(sizeX, sizeY);
 
-				RENDERER.GetCamera()->UpdateMouse(sizeX*0.5, sizeY*0.5, INPUT->GetMouse()->GetX(), INPUT->GetMouse()->GetY());
+				RENDERER->GetCamera()->UpdateMouse(sizeX*0.5, sizeY*0.5, INPUT->GetMouse()->GetX(), INPUT->GetMouse()->GetY());
 				INPUT->GetMouse()->SetPosition(sizeX*0.5, sizeY*0.5);
 				INPUT->GetMouse()->HideCursor(true);
 			}
@@ -604,6 +638,7 @@ void Start()
 	SAFE_DELETE(INPUT);
 	SAFE_DELETE(server);
 	SAFE_DELETE(client);
+	SAFE_DELETE(RENDERER);
 }
 
 int main(int argc, char** argv)
