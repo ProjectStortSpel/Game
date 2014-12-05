@@ -1,6 +1,7 @@
 #ifndef INPUTWRAPPER_KEYBOARD_H
 #define INPUTWRAPPER_KEYBOARD_H
 #include <SDL/SDL.h>
+#include <string>
 #include "../InputEnums.h"
 
 namespace Input
@@ -11,6 +12,14 @@ namespace Input
 		Keyboard();
 		~Keyboard();
 
+		void StartTextInput() { SDL_StartTextInput(); }
+		void StopTextInput() { SDL_StopTextInput(); }
+		SDL_bool IsTextInputActive() { return SDL_IsTextInputActive(); }
+
+		char* GetTextInput() { return (char*)m_textInput->c_str(); }
+		void SetTextInput(const char* _text);
+		void ResetTextInput() { *m_textInput = ""; }
+
 		InputState GetKeyState(SDL_Scancode _key);
 		void Update();
 		void PollEvent(SDL_Event e);
@@ -19,6 +28,8 @@ namespace Input
 		static const int m_numberOfKeys = SDL_NUM_SCANCODES;
 		bool m_thisState[m_numberOfKeys];
 		bool m_lastState[m_numberOfKeys];
+
+		std::string* m_textInput;
 	};
 }
 
