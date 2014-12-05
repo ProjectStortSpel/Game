@@ -194,6 +194,16 @@ bool Shader::SetUniVariable(const char* p_Name, VariableTyp p_Typ, void* p_Value
 	return false;
 }
 
+void Shader::CheckUniformLocation(const char* _uniformName, int _unitLocation)
+{
+	this->UseProgram();
+	int location = glGetUniformLocation(m_shaderProg, _uniformName);
+	if (location < 0)
+		std::cout << "Error: Uniform sampler2D '" << _uniformName << "' not found/set." << std::endl;
+	else
+		glUniform1i(location, _unitLocation);
+}
+
 GLuint Shader::GetShaderProgram()
 {
 	return m_shaderProg;

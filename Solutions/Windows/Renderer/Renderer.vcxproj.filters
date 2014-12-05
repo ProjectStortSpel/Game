@@ -26,6 +26,7 @@
     <ClInclude Include="..\..\..\Source\Renderer\Camera.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\Buffer.h" />
     <ClInclude Include="..\..\..\Source\Renderer\ModelLoader.h" />
     <ClInclude Include="..\..\..\Source\Renderer\Buffer.h">
       <Filter>Source</Filter>
@@ -72,6 +73,12 @@
       <Filter>shaders</Filter>
     </None>
     <None Include="..\..\..\Externals\content\shaders\CSDeferredPass2.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\FSForwardShader.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\VSForwardShader.glsl">
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>
