@@ -348,9 +348,10 @@ bool GraphicDevice::InitDeferred()
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_normTex, 0);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_colorTex, 0);
 
-
+	// Add vramUsage calc if adding a new g-buffer texture
 	m_vramUsage += (m_clientWidth*m_clientHeight*sizeof(float));
-	m_vramUsage += (m_clientWidth*m_clientHeight*sizeof(float)* 4 * 2);
+	m_vramUsage += (m_clientWidth*m_clientHeight*sizeof(float)* 4);
+	m_vramUsage += (m_clientWidth*m_clientHeight* 1 * 4);
 
 	GLenum drawBuffersDeferred[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
 	glDrawBuffers(2, drawBuffersDeferred);
@@ -680,8 +681,6 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 		texCoordData[i * 2 + 1] = 1 - verts[i].uv.y;
 	}
 
-	m_vramUsage += (14 * (int)verts.size() * sizeof(float));
-
 	BufferData bufferData[] =
 	{
 		{ 0, 3, GL_FLOAT, (const GLvoid*)positionData.data(), positionData.size() * sizeof(float) },
@@ -690,6 +689,12 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 		{ 3, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), bitanData.size()   * sizeof(float) },
 		{ 4, 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), texCoordData.size() * sizeof(float) }
 	};
+
+	// Counts the size in bytes of all the buffered data
+	for (int i = 0; i < sizeof(bufferData) / sizeof(bufferData[0]); i++)
+		m_vramUsage += bufferData[i].dataSize;
+
+
 	retbuffer->init(bufferData, sizeof(bufferData) / sizeof(bufferData[0]));
 	retbuffer->setCount((int)verts.size());
 	
