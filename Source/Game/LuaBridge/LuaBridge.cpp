@@ -4,6 +4,10 @@
 #include "ECSL/LuaWorld.h"
 #include "ECSL/LuaSystem.h"
 #include "ECSL/LuaComponentType.h"
+#include "ECSL/LuaComponent.h"
+#include "Renderer/LuaGraphicDevice.h"
+#include "Renderer/LuaCamera.h"
+#include "Math/LuaMatrix.h"
 
 namespace LuaBridge
 {
@@ -15,5 +19,11 @@ namespace LuaBridge
     LuaWorld::Embed();
     LuaSystem::Embed();
     LuaComponentType::Embed();
+    LuaComponent::Embed();
+    
+    LuaGraphicDevice::Embed();
+    LuaCamera::Embed();
+    
+    LuaMatrix::Embed();
   }
 }

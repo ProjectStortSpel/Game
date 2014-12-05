@@ -9,7 +9,7 @@ Author: Anders, Christian
 #include "Buffer.h"
 #include "SimpleText.h"
 #include "GLTimer.h"
-#include "Camera.h""
+#include "Camera.h"
 
 namespace Renderer
 {
