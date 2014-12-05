@@ -2,6 +2,8 @@
 #define CLIENTNETWORK_H
 
 #include <thread>
+#include <time.h>
+#include <stdio.h>
 
 #include "BaseNetwork.h"
 
@@ -30,6 +32,8 @@ namespace Network
 		const char* GetRemoteAddress(void) { return m_remoteAddress.c_str(); }
 		// Returns the outgoing port the client connects to
 		const int GetOutgoingPort(void) { return m_outgoingPort; }
+
+		const float GetPing(void) { return m_ping; }
 
 		// Set the remote Ip Address the client will connect to
 		void SetRemoteAddress(const char* _ipAddress) { m_remoteAddress = _ipAddress; }
@@ -72,6 +76,7 @@ namespace Network
 
 		void ReceivePackets(void);
 
+		void UpdateNetUsage(float _dt);
 		void UpdateTimeOut(float _dt);
 
 		void NetPasswordInvalid(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection);
@@ -110,6 +115,9 @@ namespace Network
 		std::thread m_receivePacketsThread;
 		bool m_receivePacketsThreadAlive;
 
+		float m_ping;
+		float m_sendTime;
+		float m_receiveTime;
 
 		float m_currentTimeOutIntervall;
 		int m_currentIntervallCounter;

@@ -11,9 +11,9 @@ file(GLOB_RECURSE GAME_SRC_FILES
 add_executable(Game ${GAME_SRC_FILES})
 
 # Add subprojects
-#if(NOT TARGET Console)
-#add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Console" Console)
-#endif()
+if(NOT TARGET Console)
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Console" Console)
+endif()
 if(NOT TARGET ECSL)
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../ECSL" ECSL)
 endif()
@@ -34,7 +34,7 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Renderer" Renderer)
 endif()
 # Link subproject shared libraries
 target_link_libraries(Game
-#		      Console
+		      Console
 		      ECSL
 		      Input
 		      LuaEmbedder
