@@ -78,6 +78,7 @@ namespace Renderer
 		void GetWindowSize(int &x, int &y){ x = m_clientWidth; y = m_clientHeight; }
 
 		// MODELLOADER
+		bool PreLoadModel(std::string _dir, std::string _file, int _renderType = RENDER_DEFERRED);
 		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED);
 		bool RemoveModel(int _id);
 		bool ActiveModel(int _id, bool _active);
@@ -134,6 +135,10 @@ namespace Renderer
 		int m_modelIDcounter;
 		std::vector<Model> m_modelsDeferred, m_modelsForward;
 
+
+		// Objects
+		//std::map<const std::string, ObjectData> m_objects;
+		//class ObjectData AddObject(std::string _file, std::string _dir);
 		// Meshs
 		std::map<const std::string, Buffer*> m_meshs;
 		Buffer* AddMesh(std::string _fileDir, Shader *_shaderProg);
