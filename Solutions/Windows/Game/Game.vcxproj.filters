@@ -21,13 +21,16 @@
     <Filter Include="Game\Systems">
       <UniqueIdentifier>{ed783445-1604-40fc-8516-f5a867be6243}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lua Bridge\Math">
+      <UniqueIdentifier>{9c168d77-87eb-48c0-a75d-ed11b43e08c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lua Bridge\Renderer">
+      <UniqueIdentifier>{532ef4e9-8ba1-4cf6-9034-8ce80bb0bd4b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\Timer.cpp">
       <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Source\Game\TextInput.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\LuaBridge.cpp">
       <Filter>Lua Bridge</Filter>
@@ -62,13 +65,22 @@
     <ClCompile Include="..\..\..\Source\Game\Systems\MovementSystem.cpp">
       <Filter>Game\Systems</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponent.cpp">
+      <Filter>Lua Bridge\ECSL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\Math\LuaMatrix.cpp">
+      <Filter>Lua Bridge\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\Renderer\LuaCamera.cpp">
+      <Filter>Lua Bridge\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\Renderer\LuaGraphicDevice.cpp">
+      <Filter>Lua Bridge\Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\Timer.h">
       <Filter>Resource Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Source\Game\TextInput.h">
-      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h">
       <Filter>Lua Bridge</Filter>
@@ -99,6 +111,18 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\CameraSystem.h">
       <Filter>Game\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponent.h">
+      <Filter>Lua Bridge\ECSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\Math\LuaMatrix.h">
+      <Filter>Lua Bridge\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\Renderer\LuaCamera.h">
+      <Filter>Lua Bridge\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\Renderer\LuaGraphicDevice.h">
+      <Filter>Lua Bridge\Renderer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

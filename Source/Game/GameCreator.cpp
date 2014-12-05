@@ -64,8 +64,8 @@ void GameCreator::InitializeWorld()
 		printf("%s added\n", it->second->GetName().c_str());
 	}
 
-	//worldCreator.AddSystemGroup();
-	//worldCreator.AddSystemToCurrentGroup<MovementSystem>();
+	worldCreator.AddSystemGroup();
+	worldCreator.AddSystemToCurrentGroup<MovementSystem>();
 	worldCreator.AddLuaSystemToCurrentGroup(new CameraSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderSystem(m_graphics));
 	m_world = worldCreator.CreateWorld(10000);
@@ -74,9 +74,9 @@ void GameCreator::InitializeWorld()
 
 void SpawnShit(ECSL::World* _world, Renderer::GraphicDevice* _graphics, bool isTrue = true)
 {
-	for (int x = -5; x <= 5; ++x)
+	for (int x = -2; x <= 2; ++x)
 	{
-		for (int y = -5; y <= 5; ++y)
+		for (int y = -2; y <= 2; ++y)
 		{
 			unsigned int newEntity = _world->CreateNewEntity();
 			_world->CreateComponentAndAddTo("Position", newEntity);
@@ -84,11 +84,6 @@ void SpawnShit(ECSL::World* _world, Renderer::GraphicDevice* _graphics, bool isT
 			_world->CreateComponentAndAddTo("Rotation", newEntity);
 			_world->CreateComponentAndAddTo("Render", newEntity);
 			_world->CreateComponentAndAddTo("Velocity", newEntity);
-			float* Velocity;
-			Velocity = (float*)_world->GetComponent(newEntity, "Velocity", "X");
-			Velocity[0] = 0.2f;
-			Velocity[1] = 0.3f;
-			Velocity[2] = 0.1f;
 
 			glm::mat4*	Matrix;
 			Matrix = (glm::mat4*)_world->GetComponent(newEntity, "Render", "Mat");

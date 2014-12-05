@@ -199,12 +199,16 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\GameCreator.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponent.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponentType.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaWorld.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaWorldCreator.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\Input\LuaInput.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\LuaBridge.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\Math\LuaMatrix.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\Renderer\LuaCamera.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\Renderer\LuaGraphicDevice.cpp" />
     <ClCompile Include="..\..\..\Source\Game\NewGame.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\CameraSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\MovementSystem.cpp" />
@@ -213,12 +217,16 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\GameCreator.h" />
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponent.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponentType.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaWorld.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaWorldCreator.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Input\LuaInput.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h" />
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\Math\LuaMatrix.h" />
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\Renderer\LuaCamera.h" />
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\Renderer\LuaGraphicDevice.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\CameraSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\MovementSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\RenderSystem.h" />

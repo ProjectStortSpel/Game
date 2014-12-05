@@ -6,5 +6,5 @@ require "components"
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
 require "movementsystem"
 
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(MovementSystem)
+--worldCreator:AddSystemGroup()
+--worldCreator:AddSystemToCurrentGroup(MovementSystem)
