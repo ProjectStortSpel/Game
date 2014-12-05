@@ -77,6 +77,9 @@
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\Renderer\LuaGraphicDevice.cpp">
       <Filter>Lua Bridge\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\RotationSystem.cpp">
+      <Filter>Game\Systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\Timer.h">
@@ -123,6 +126,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Renderer\LuaGraphicDevice.h">
       <Filter>Lua Bridge\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\RotationSystem.h">
+      <Filter>Game\Systems</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -71,12 +71,13 @@ void GameCreator::InitializeWorld()
 	m_world = worldCreator.CreateWorld(10000);
 	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
 }
-
+unsigned int LOL;
 void SpawnShit(ECSL::World* _world, Renderer::GraphicDevice* _graphics, bool isTrue = true)
 {
-	for (int x = -2; x <= 2; ++x)
+	int size = 3;
+	for (int x = -size; x <= size; ++x)
 	{
-		for (int y = -2; y <= 2; ++y)
+		for (int y = -size; y <= size; ++y)
 		{
 			unsigned int newEntity = _world->CreateNewEntity();
 			_world->CreateComponentAndAddTo("Position", newEntity);
@@ -118,6 +119,8 @@ void SpawnShit(ECSL::World* _world, Renderer::GraphicDevice* _graphics, bool isT
 	Position[1] = 1.5f;
 	Position[2] = 0.0f;
 
+	LOL = newEntity;
+
 }
 
 void GameCreator::StartGame()
@@ -140,6 +143,30 @@ void GameCreator::StartGame()
 		/*	Update world (systems, entities etc)	*/
 		m_world->Update(dt);
 
+		if (m_input->GetInstance().GetKeyboard()->GetKeyState(SDL_SCANCODE_O) == Input::InputState::PRESSED)
+		{
+			m_world->KillEntity(LOL);
+		}
+		if (m_input->GetInstance().GetKeyboard()->GetKeyState(SDL_SCANCODE_P) == Input::InputState::PRESSED)
+		{
+			unsigned int newEntity = m_world->CreateNewEntity();
+			m_world->CreateComponentAndAddTo("Position", newEntity);
+			m_world->CreateComponentAndAddTo("Scale", newEntity);
+			m_world->CreateComponentAndAddTo("Rotation", newEntity);
+			m_world->CreateComponentAndAddTo("Render", newEntity);
+
+			glm::mat4*	Matrix;
+			Matrix = (glm::mat4*)m_world->GetComponent(newEntity, "Render", "Mat");
+			int* ModelId = (int*)m_world->GetComponent(newEntity, "Render", "ModelId");
+			*ModelId = m_graphics->LoadModel("content/models/Head/", "head.object", Matrix);
+			float* Position;
+			Position = (float*)m_world->GetComponent(newEntity, "Position", "X");
+			Position[0] = 0.0f;
+			Position[1] = 1.5f;
+			Position[2] = 0.0f;
+
+			LOL = newEntity;
+		}
 
 		std::stringstream sstm;
 		sstm << m_world->GetActiveEntities() << " entities";

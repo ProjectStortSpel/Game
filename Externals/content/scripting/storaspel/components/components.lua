@@ -43,6 +43,15 @@ RenderComponent:AddVariable("ModelId", 4)
 RenderComponent:AddVariable("Mat", 64)
 worldCreator:AddComponentType(RenderComponent)
 
+-- Spin Component
+local SpinComponent = ComponentType()
+SpinComponent.Name = "Spin"
+SpinComponent.TableType = TableType.Map
+SpinComponent:AddVariable("X", 4)
+SpinComponent:AddVariable("Y", 4)
+SpinComponent:AddVariable("Z", 4)
+worldCreator:AddComponentType(SpinComponent)
+
 -- Camera Component
 local CameraComponent = ComponentType()
 CameraComponent.Name = "Camera"
