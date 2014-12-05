@@ -20,8 +20,7 @@ void CameraSystem::Initialize()
 
 void CameraSystem::Update(float _dt)
 {
-	if (GetEntities()->size() == 0)
-		return;
+	/*	Fulhax just nu, enbart för att slippa ha det i gameloopen (REN OCH FIN)	*/
 
 	if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_W) == Input::InputState::DOWN)
 		m_graphics->GetCamera()->MoveForward(_dt);
@@ -31,6 +30,19 @@ void CameraSystem::Update(float _dt)
 		m_graphics->GetCamera()->MoveLeft(_dt);
 	if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_D) == Input::InputState::DOWN)
 		m_graphics->GetCamera()->MoveRight(_dt);
+
+	// ROTATE CAMERA
+	if (m_input->GetMouse()->GetButtonState(Input::LeftButton) == Input::InputState::DOWN)
+	{
+		int sizeX, sizeY;
+		m_graphics->GetWindowSize(sizeX, sizeY);
+
+		m_graphics->GetCamera()->UpdateMouse(sizeX*0.5, sizeY*0.5, m_input->GetMouse()->GetX(), m_input->GetMouse()->GetY());
+		m_input->GetMouse()->SetPosition(sizeX*0.5, sizeY*0.5);
+		m_input->GetMouse()->HideCursor(true);
+	}
+	else
+		m_input->GetMouse()->HideCursor(false);
 
 }
 

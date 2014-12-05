@@ -16,8 +16,10 @@ public:
 
 	void InitializeGraphics();
 	void InitializeInput();
+	void InitializeNetwork();
 	void InitializeWorld();
 	void InitializeLua();
+	
 
 	void StartGame();
 

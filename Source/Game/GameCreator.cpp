@@ -37,6 +37,11 @@ void GameCreator::InitializeInput()
 	m_input = &Input::InputWrapper::GetInstance();
 }
 
+void GameCreator::InitializeNetwork()
+{
+
+}
+
 void GameCreator::InitializeLua()
 {
 	LuaEmbedder::Init();
@@ -96,7 +101,21 @@ void SpawnShit(ECSL::World* _world, Renderer::GraphicDevice* _graphics, bool isT
 	}
 
 	unsigned int newEntity = _world->CreateNewEntity();
-	_world->CreateComponentAndAddTo("Camera", newEntity);
+	_world->CreateComponentAndAddTo("Position", newEntity);
+	_world->CreateComponentAndAddTo("Scale", newEntity);
+	_world->CreateComponentAndAddTo("Rotation", newEntity);
+	_world->CreateComponentAndAddTo("Render", newEntity);
+
+	glm::mat4*	Matrix;
+	Matrix = (glm::mat4*)_world->GetComponent(newEntity, "Render", "Mat");
+	int* ModelId = (int*)_world->GetComponent(newEntity, "Render", "ModelId");
+	*ModelId = _graphics->LoadModel("content/models/Head/", "head.object", Matrix);
+	float* Position;
+	Position = (float*)_world->GetComponent(newEntity, "Position", "X");
+	Position[0] = 0.0f;
+	Position[1] = 1.5f;
+	Position[2] = 0.0f;
+
 }
 
 void GameCreator::StartGame()
@@ -109,32 +128,22 @@ void GameCreator::StartGame()
 		float dt = gameTimer.ElapsedTimeInSeconds();
 		gameTimer.Reset(); 
 
-
-
-		m_graphics->Update(dt);
+		/*	Collect all input	*/
 		m_input->Update();
+		PollSDLEvent();
+
+		/*	Update graphics	*/
+		m_graphics->Update(dt);
+		
+		/*	Update world (systems, entities etc)	*/
 		m_world->Update(dt);
+
 
 		std::stringstream sstm;
 		sstm << m_world->GetActiveEntities() << " entities";
 		m_graphics->RenderSimpleText(sstm.str(), 0, 2);
 
-		PollSDLEvent();
 
-
-
-		// ROTATE CAMERA
-		if (m_input->GetMouse()->GetButtonState(Input::LeftButton) == Input::InputState::DOWN)
-		{
-			int sizeX, sizeY;
-			m_graphics->GetWindowSize(sizeX, sizeY);
-
-			m_graphics->GetCamera()->UpdateMouse(sizeX*0.5, sizeY*0.5, m_input->GetMouse()->GetX(), m_input->GetMouse()->GetY());
-			m_input->GetMouse()->SetPosition(sizeX*0.5, sizeY*0.5);
-			m_input->GetMouse()->HideCursor(true);
-		}
-		else
-			m_input->GetMouse()->HideCursor(false);
 
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
 			break;
