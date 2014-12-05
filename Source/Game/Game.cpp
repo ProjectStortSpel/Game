@@ -217,7 +217,7 @@ void KickPlayer(std::vector<Argument>* _args)
 
 void AddObject(std::vector<Argument>* _args)
 {
-	if (_args->at(0).ArgType != ArgumentType::Text)
+	if (_args->size() < 1 || _args->at(0).ArgType != ArgumentType::Text)
 		return;
 
 	std::string modelName = _args->at(0).Text;
@@ -472,20 +472,28 @@ void Start()
 		RENDERER->Update(dt);
 
 
-		char buffer[256];
-#ifdef WIN32
-		sprintf_s(buffer, "Network usage:\nPing: %ums\nTotal received: %1.2f Kb\nTotal sent: %1.2f Kb\nCurrent received: %f Kb\nCurrent sent: %f Kb", ping, tBytesReceived, tBytesSent, cBytesReceived, cBytesSent);
-#else
-		sprintf(buffer, "Network usage:\nPing: %umsTotal received: %1.2f Kb\nTotal sent: %1.2f Kb\nCurrent received: %1.2f Kb\nCurrent sent: %1.2f Kb", ping, tBytesReceived, tBytesSent, cBytesReceived, cBytesSent);
-#endif
 
-		//std::string networkData = "Network usage:\nTotal received: " + std::to_string(tBytesReceived) + " Kb\nTotal sent: " + std::to_string(tBytesSent) + " Kb\nCurrent received: " + std::to_string(cBytesReceived) + " Kb\nCurrent sent: " + std::to_string(cBytesSent) + " Kb";
-		RENDERER->RenderSimpleText(buffer, 0, 2);
 
 		if (INPUT->GetKeyboard()->IsTextInputActive())
 		{
-			RENDERER->RenderSimpleText("Console:", 0, 9);
-			RENDERER->RenderSimpleText(ti.GetText(), 0, 10);
+			std::string command = ti.GetText();
+			RENDERER->RenderSimpleText("Console:", 0, 10);
+			RENDERER->RenderSimpleText(command, 9, 10);
+			RENDERER->RenderSimpleText("_", 9 + command.length(), 10);
+
+			auto history = consoleManager.GetHistory();
+			for (int i = 0; i < history.size(); ++i)
+				RENDERER->RenderSimpleText(history[i], 0, 10 - history.size() + i);
+		}
+		else
+		{
+			char buffer[256];
+#ifdef WIN32
+			sprintf_s(buffer, "Network usage:\nPing: %ums\nTotal received: %1.2f Kb\nTotal sent: %1.2f Kb\nCurrent received: %f Kb\nCurrent sent: %f Kb", ping, tBytesReceived, tBytesSent, cBytesReceived, cBytesSent);
+#else
+			sprintf(buffer, "Network usage:\nPing: %umsTotal received: %1.2f Kb\nTotal sent: %1.2f Kb\nCurrent received: %1.2f Kb\nCurrent sent: %1.2f Kb", ping, tBytesReceived, tBytesSent, cBytesReceived, cBytesSent);
+#endif
+			RENDERER->RenderSimpleText(buffer, 0, 2);
 		}
 
 		RENDERER->Render();
