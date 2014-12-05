@@ -29,6 +29,7 @@ void GameCreator::InitializeGraphics()
 {
 	m_graphics = new Renderer::GraphicDevice();
 	m_graphics->Init();
+	LuaEmbedder::AddObject<Renderer::GraphicDevice>("GraphicDevice", m_graphics, "graphics");
 }
 
 void GameCreator::InitializeInput()
@@ -57,8 +58,8 @@ void GameCreator::InitializeWorld()
 		printf("%s added\n", it->second->GetName().c_str());
 	}
 
-	worldCreator.AddSystemGroup();
-	worldCreator.AddSystemToCurrentGroup<MovementSystem>();
+	//worldCreator.AddSystemGroup();
+	//worldCreator.AddSystemToCurrentGroup<MovementSystem>();
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderSystem(m_graphics));
 	m_world = worldCreator.CreateWorld(10000);
 	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
@@ -75,6 +76,12 @@ void SpawnShit(ECSL::World* _world, Renderer::GraphicDevice* _graphics, bool isT
 			_world->CreateComponentAndAddTo("Scale", newEntity);
 			_world->CreateComponentAndAddTo("Rotation", newEntity);
 			_world->CreateComponentAndAddTo("Render", newEntity);
+			_world->CreateComponentAndAddTo("Velocity", newEntity);
+			float* Velocity;
+			Velocity = (float*)_world->GetComponent(newEntity, "Velocity", "X");
+			Velocity[0] = 0.2f;
+			Velocity[1] = 0.3f;
+			Velocity[2] = 0.1f;
 
 			glm::mat4*	Matrix;
 			Matrix = (glm::mat4*)_world->GetComponent(newEntity, "Render", "Mat");
