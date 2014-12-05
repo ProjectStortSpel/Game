@@ -156,7 +156,7 @@ void BaseNetwork::Update(float _dt)
 	}
 }
 
-float BaseNetwork::GetMillisecondsTime()
+DWORD BaseNetwork::GetMillisecondsTime()
 {
 #ifdef WIN32
 	return GetTickCount();

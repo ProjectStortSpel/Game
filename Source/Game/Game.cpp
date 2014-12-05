@@ -405,7 +405,7 @@ void Start()
 		float cBytesReceived = 0;
 		float cBytesSent = 0;
 
-		float ping = 0;
+		DWORD ping = 0;
 
 		if (isServer)
 		{
@@ -440,9 +440,9 @@ void Start()
 
 		char buffer[256];
 #ifdef WIN32
-		sprintf_s(buffer, "Network usage:\nPing: %1.0fms\nTotal received: %1.2f Kb\nTotal sent: %1.2f Kb\nCurrent received: %f Kb\nCurrent sent: %f Kb", ping, tBytesReceived, tBytesSent, cBytesReceived, cBytesSent);
+		sprintf_s(buffer, "Network usage:\nPing: %lums\nTotal received: %1.2f Kb\nTotal sent: %1.2f Kb\nCurrent received: %f Kb\nCurrent sent: %f Kb", ping, tBytesReceived, tBytesSent, cBytesReceived, cBytesSent);
 #else
-		sprintf(buffer, "Network usage:\nPing: %1.0fmsTotal received: %1.2f Kb\nTotal sent: %1.2f Kb\nCurrent received: %1.2f Kb\nCurrent sent: %1.2f Kb", ping, tBytesReceived, tBytesSent, cBytesReceived, cBytesSent);
+		sprintf(buffer, "Network usage:\nPing: %lumsTotal received: %1.2f Kb\nTotal sent: %1.2f Kb\nCurrent received: %1.2f Kb\nCurrent sent: %1.2f Kb", ping, tBytesReceived, tBytesSent, cBytesReceived, cBytesSent);
 #endif
 
 		//std::string networkData = "Network usage:\nTotal received: " + std::to_string(tBytesReceived) + " Kb\nTotal sent: " + std::to_string(tBytesSent) + " Kb\nCurrent received: " + std::to_string(cBytesReceived) + " Kb\nCurrent sent: " + std::to_string(cBytesSent) + " Kb";
@@ -573,7 +573,7 @@ void Start()
 		}
 
 		// ToggleConsole
-		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_F1) == Input::InputState::PRESSED)
+		if (INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_GRAVE) == Input::InputState::PRESSED)
 		{
 			if (INPUT->GetKeyboard()->IsTextInputActive())
 			{
