@@ -33,7 +33,7 @@ namespace Network
 		// Returns the outgoing port the client connects to
 		const int GetOutgoingPort(void) { return m_outgoingPort; }
 
-		const DWORD GetPing(void) { return m_ping; }
+		const unsigned int GetPing(void) { return m_ping; }
 
 		// Set the remote Ip Address the client will connect to
 		void SetRemoteAddress(const char* _ipAddress) { m_remoteAddress = _ipAddress; }
@@ -115,8 +115,8 @@ namespace Network
 		std::thread m_receivePacketsThread;
 		bool m_receivePacketsThreadAlive;
 
-		DWORD m_ping;
-		DWORD m_sendTime;
+		unsigned int m_ping;
+		unsigned int m_sendTime;
 
 		float m_currentTimeOutIntervall;
 		int m_currentIntervallCounter;
