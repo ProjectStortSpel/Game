@@ -13,23 +13,18 @@ MessageManager::~MessageManager()
 
 }
 
-void MessageManager::AddSubscription(const std::string& _sender, System* _subscriber, unsigned int _messageType, void* _onEventFunction)
+void MessageManager::AddSubscription(unsigned int _subscriberId, unsigned int _senderId, unsigned int _messageType, void* _onEventFunction)
 {
-	(*m_systemSubscriptions)[SystemIdManager::GetInstance().GetSystemId(_sender)][_messageType].push_back(Subscription(_subscriber, _onEventFunction));
+	(*m_systemSubscriptions)[_senderId][_messageType].push_back(Subscription(_subscriberId, _senderId, _messageType, _onEventFunction));
 }
 
-void MessageManager::RemoveSubscription(const std::string& _sender, System* _subscriber, unsigned int _messageType)
+void MessageManager::RemoveSubscription(unsigned int _subscriberId, unsigned int _senderId, unsigned int _messageType)
 {
-	//std::vector<Subscription>* subscriptions = &((*m_systemSubscriptions)[SystemIdManager::GetInstance().GetSystemId(_sender)][_messageType]);
-	//for (auto it = subscriptions->begin(); it != subscriptions->end(); ++it)
-	//	if (it->GetSubscriber() == _subscriber)
-	//	{
-	//		subscriptions->erase(it);
-	//		return;
-	//	}
-}
-
-void SendMessage(System* _sender, unsigned int _messageType, Message* _message)
-{
-
+	std::vector<Subscription>* subscriptions = &((*m_systemSubscriptions)[_senderId][_messageType]);
+	for (auto it = subscriptions->begin(); it != subscriptions->end(); ++it)
+		if (it->GetSubscriberId() == _subscriberId)
+		{
+			subscriptions->erase(it);
+			return;
+		}
 }

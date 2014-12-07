@@ -18,6 +18,7 @@ void WorldCreator::AddComponentType(const std::string& _componentType)
 
 	unsigned int tableId = ComponentTypeManager::GetInstance().GetTableId(_componentType);
 
+	/* Component type is already added */
 	assert(!IsIdAdded(tableId));
 
 	m_componentTypeIds->push_back(tableId);
@@ -37,7 +38,6 @@ void WorldCreator::AddSystemGroup()
 
 void WorldCreator::AddLuaSystemToCurrentGroup(System* _system)
 {
-	_system->SetId(SystemIdManager::GetInstance().GetSystemId(_system->GetSystemName()));
 	m_systemWorkGroups->at(m_systemWorkGroups->size() - 1)->AddSystem(_system);
 }
 

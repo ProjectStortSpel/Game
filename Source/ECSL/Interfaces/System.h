@@ -5,6 +5,8 @@
 #include "ECSL/Framework/Components/DataManager.h"
 #include "ECSL/Framework/Systems/ComponentFilter.h"
 #include "ECSL/Framework/Systems/Messaging/Message.h"
+#include "MPL/Framework/Tasks/Task.h"
+#include "MPL/Framework/Tasks/TaskInfo.h"
 
 namespace ECSL
 {
@@ -14,7 +16,7 @@ namespace ECSL
 		System();
 		virtual ~System() = 0;
 
-		virtual void Update(float _dt) = 0;
+		virtual void Update(float _dt) = 0;//const MPL::TaskInfo& _taskInfo, void* _data) = 0;
 		virtual void Initialize() = 0;
 
 		virtual void OnEntityAdded(unsigned int _entityId) = 0;
@@ -31,6 +33,7 @@ namespace ECSL
 		ComponentFilter* GetRequiresOneOfFilter() { return &m_requiresOneOfComponentTypes; }
 		ComponentFilter* GetExcludedFilter() { return &m_excludedComponentTypes; }
 
+		unsigned int GetId() { return m_id; }
 		const std::string& GetSystemName() { return *m_systemName; }
 
 		void SetId(unsigned int _id) { m_id = _id; }
@@ -59,6 +62,10 @@ namespace ECSL
 
 		void AddComponentTypeToFilter(const std::string& _componentType, FilterType _filterType);
 		void SetSystemName(std::string _name) { *m_systemName = _name; }
+		void SetUpdateWorkCount(unsigned int _workCount);
+		void SetOnEntityWorkCount(unsigned int _workCount);
+		void SetOnMessageRecievedWorkCount(unsigned int _workCount);
+		void SetOnEventWorkCount(unsigned int _workCount, void* _onEventFunction);
 
 		template<typename SystemType>
 		void SendMessage(unsigned int _messageType, Message* _message);
@@ -72,7 +79,11 @@ namespace ECSL
 		//void UnsubscribeFrom(const std::string& _systemName, unsigned int _messageType);
 
 	private:
-		unsigned int m_workCount;
+		MPL::Task* m_updateTask;
+		MPL::Task* m_onEntityAddedTask;
+		MPL::Task* m_onEntityRemovedTask;
+		std::map<void*, MPL::Task*>* m_onEventWork;
+
 		unsigned int m_id;
 		std::string* m_systemName;
 		ComponentFilter m_mandatoryComponentTypes;

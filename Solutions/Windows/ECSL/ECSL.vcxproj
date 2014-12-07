@@ -38,6 +38,7 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\ComponentFilter.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\Message.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\MessageManager.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\SenderGroup.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\Subscription.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemIdManager.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemWorkGroup.h" />
@@ -65,6 +66,7 @@
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\ComponentFilter.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\Message.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\MessageManager.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\SenderGroup.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\Subscription.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemIdManager.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemWorkGroup.cpp" />

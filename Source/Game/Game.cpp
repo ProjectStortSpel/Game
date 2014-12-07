@@ -1,5 +1,7 @@
 #include <SDL/SDL.h>
 #include <ECSL/ECSL.h>
+#include <functional>
+#include <atomic>
 #include "Input/InputWrapper.h"
 #include "Renderer/GraphicDevice.h"
 #include "Timer.h"
@@ -8,6 +10,8 @@
 	#define _CRTDBG_MAP_ALLOC
 	#include <stdlib.h>
 	#include <crtdbg.h>
+	#include <ctime>
+	#include <chrono>
 #endif
 
 using namespace ECSL;
@@ -26,6 +30,7 @@ public:
 	}
 	void Initialize()
 	{
+		SetSystemName("TestSystem");
 		AddComponentTypeToFilter("Velocity", ECSL::FilterType::Mandatory);
 		AddComponentTypeToFilter("Position", ECSL::FilterType::Excluded);
 		//AddComponentTypeToFilter("Velocity", ECSL::FilterType::RequiresOneOf);
@@ -59,6 +64,7 @@ public:
 	}
 	void Initialize()
 	{
+		SetSystemName("TestSystem2");
 		AddComponentTypeToFilter("Velocity", ECSL::FilterType::Mandatory);
 		//AddComponentTypeToFilter("Velocity", ECSL::FilterType::RequiresOneOf);
 		//AddComponentTypeToFilter("Velocity", ECSL::ComponentFilter::RequiresOneOf);
@@ -76,6 +82,17 @@ public:
 		printf("Testsystem2 OnEntityRemoved()\n");
 	}
 private:
+};
+
+SDL_mutex* mutex;
+SDL_sem* sem;
+
+class Test
+{
+public:
+	float A;
+	float B;
+	std::string abc;
 };
 
 void lol()
@@ -108,6 +125,51 @@ void lol()
 	world->RemoveComponentFrom("Position", id);
 
 	world->Update(0.01f);
+
+	mutex = SDL_CreateMutex();
+	if (!mutex)
+		abort();
+	sem = SDL_CreateSemaphore(0);
+	if (!sem)
+		abort();
+
+	unsigned int sumValue1 = 0;
+	unsigned int sumValue2 = 0;
+	std::atomic<unsigned int> sumValue3 = 0;
+	std::vector<Test*> testar;
+	std::chrono::time_point<std::chrono::system_clock> start1, end1, start2, end2, start3, end3;
+
+	start1 = std::chrono::system_clock::now();
+	for (unsigned int i = 0; i < 1000000; ++i)
+	{
+		sumValue1 += (i % 1645);
+	}
+	end1 = std::chrono::system_clock::now();
+
+	start2 = std::chrono::system_clock::now();
+	for (unsigned int i = 0; i < 1000000; ++i)
+	{
+		SDL_mutexP(mutex);
+		sumValue2 += (i % 1645);
+		SDL_mutexV(mutex);
+	}
+	end2 = std::chrono::system_clock::now();
+
+	start3 = std::chrono::system_clock::now();
+	for (unsigned int i = 0; i < 1000000; ++i)
+	{
+		sumValue3 += (i % 1645);
+	}
+	end3 = std::chrono::system_clock::now();
+
+	std::chrono::duration<double> elapsed_seconds = end1 - start1;
+	printf("Time: %f\n", elapsed_seconds);
+	elapsed_seconds = end2 - start2;
+	printf("Time: %f\n", elapsed_seconds);
+	elapsed_seconds = end3 - start3;
+	printf("Time: %f\n", elapsed_seconds);
+
+	printf("Sums:\n%i\n%i\n%i\n", sumValue1, sumValue2, sumValue3);
 
 	delete(world);
 	delete(&ComponentTypeManager::GetInstance());
@@ -232,6 +294,7 @@ void Start()
 
 int main(int argc, char** argv)
 {
+	lol();
 	Start();
 	#ifdef WIN32
 	_CrtDumpMemoryLeaks();

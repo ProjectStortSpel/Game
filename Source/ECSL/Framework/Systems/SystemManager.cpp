@@ -1,12 +1,13 @@
 #include "SystemManager.h"
 
 #include <assert.h>
+#include "ECSL/Framework/Common/ContainerHelper.h"
 #include "ECSL/Managers/ComponentTypeManager.h"
 
 using namespace ECSL;
 
 SystemManager::SystemManager(DataManager* _dataManager, std::vector<SystemWorkGroup*>* _systemWorkGroups) 
-:	m_nextSystemId(-1), m_dataManager(_dataManager), m_systemWorkGroups(_systemWorkGroups)
+:	m_nextSystemId(-1), m_systemIdManager(new SystemIdManager()), m_dataManager(_dataManager), m_systemWorkGroups(_systemWorkGroups)
 {
 
 }
@@ -15,8 +16,8 @@ SystemManager::~SystemManager()
 {
 	for (int n = (unsigned int)m_systemWorkGroups->size() - 1; n >= 0; --n)
 		delete m_systemWorkGroups->at(n);
-
 	delete m_systemWorkGroups;
+	delete m_systemIdManager;
 }
 
 void SystemManager::InitializeSystems()
@@ -31,6 +32,13 @@ void SystemManager::InitializeSystems()
 		{
 			System* system = systems->at(systemId);
 			system->Initialize();
+			system->SetId(m_systemIdManager->GetSystemId(system->GetSystemName()));
+
+			#ifdef _DEBUG
+			static std::vector<unsigned int> alreadyAddedIds;
+			/* Two systems can't have the same name */
+			assert(ContainerHelper::AddUniqueElement(system->GetId(), alreadyAddedIds));
+			#endif
 
 			GenerateComponentFilter(system, FilterType::Mandatory);
 			GenerateComponentFilter(system, FilterType::RequiresOneOf);

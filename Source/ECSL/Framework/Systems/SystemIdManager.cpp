@@ -3,6 +3,7 @@
 using namespace ECSL;
 
 SystemIdManager::SystemIdManager()
+: m_nextSystemId(-1), m_stringSystemId(new std::unordered_map<std::string, unsigned int>)
 {
 
 }
@@ -10,12 +11,6 @@ SystemIdManager::SystemIdManager()
 SystemIdManager::~SystemIdManager()
 {
 	delete(m_stringSystemId);
-}
-
-SystemIdManager& SystemIdManager::GetInstance()
-{
-	static SystemIdManager* SystemIdManager = 0;
-	return *SystemIdManager;
 }
 
 unsigned int SystemIdManager::GetSystemId(const std::string& _systemName)

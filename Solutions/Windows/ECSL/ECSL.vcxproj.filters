@@ -115,6 +115,9 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemIdManager.h">
       <Filter>Source Files\Framework\Systems</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\SenderGroup.h">
+      <Filter>Source Files\Framework\Systems\Messaging</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\World.cpp">
@@ -191,6 +194,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemIdManager.cpp">
       <Filter>Source Files\Framework\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\SenderGroup.cpp">
+      <Filter>Source Files\Framework\Systems\Messaging</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

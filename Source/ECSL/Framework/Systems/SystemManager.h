@@ -3,8 +3,9 @@
 
 #include <SDL/SDL.h>
 #include <vector>
-#include "ECSL/Framework/Components/DataManager.h"
+#include "SystemIdManager.h"
 #include "SystemWorkGroup.h"
+#include "ECSL/Framework/Components/DataManager.h"
 
 namespace ECSL
 {
@@ -22,6 +23,7 @@ namespace ECSL
 
 	private:
 		int m_nextSystemId;
+		SystemIdManager* m_systemIdManager;
 		DataManager* m_dataManager;
 		std::vector<SystemWorkGroup*>* m_systemWorkGroups;
 

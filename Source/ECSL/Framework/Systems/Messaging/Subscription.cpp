@@ -2,13 +2,13 @@
 
 using namespace ECSL;
 
-//Subscription::Subscription(System* _subscriber, void* _onEventFunction)
-//: m_subscriber(_subscriber), m_onEventFunction(_onEventFunction)
-//{
-//
-//}
-//
-//Subscription::~Subscription()
-//{
-//
-//}
+Subscription::Subscription(unsigned int _subscriberId, unsigned int _senderId, unsigned int _messageType, void* _onEventFunction)
+: m_subscriberId(_subscriberId), m_senderId(_senderId), m_messageType(_messageType), m_onEventFunction(_onEventFunction)
+{
+
+}
+
+Subscription::~Subscription()
+{
+
+}

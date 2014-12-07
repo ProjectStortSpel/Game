@@ -10,27 +10,16 @@ namespace ECSL
 	class DECLSPEC SystemIdManager
 	{
 	public:
+		SystemIdManager();
 		~SystemIdManager();
 
-		static SystemIdManager& GetInstance();
-
-		template<typename SystemType>
-		unsigned int GetSystemId();
 		unsigned int GetSystemId(const std::string& _systemName);
 
 	private:
-		SystemIdManager();
 
 		int m_nextSystemId;
 		std::unordered_map<std::string, unsigned int>* m_stringSystemId;
 	};
-
-	template<typename SystemType>
-	unsigned int SystemIdManager::GetSystemId()
-	{
-		static unsigned int id = ++m_nextSystemId;
-		return id;
-	}
 }
 
 #endif

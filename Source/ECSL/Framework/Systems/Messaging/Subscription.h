@@ -2,14 +2,13 @@
 #define SUBSCRIPTION_H
 
 #include <SDL/SDL.h>
-#include "ECSL/Interfaces/System.h"
 
 namespace ECSL
 {
 	class DECLSPEC Subscription
 	{
 	public:
-		Subscription();
+		Subscription(unsigned int _subscriberId, unsigned int _senderId, unsigned int _messageType, void* _onEventFunction);
 		~Subscription();
 
 		unsigned int GetSubscriberId() { return m_subscriberId; }

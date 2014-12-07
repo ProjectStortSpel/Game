@@ -7,7 +7,6 @@
 
 #include "World.h"
 #include "Components/ComponentType.h"
-#include "Systems/SystemIdManager.h"
 #include "Systems/SystemWorkGroup.h"
 #include "ECSL/Managers/ComponentTypeManager.h"
 
@@ -25,16 +24,16 @@ namespace ECSL
 		void AddComponentType(const std::string& _componentType);
 		void AddComponentType(ComponentType& _componentType);
 
-		// Adds a new system group
+		// Adds a new system group. Every system in the same group will be executed simultaneously
 		void AddSystemGroup();
 
-		/// Adds a system to a new group
+		/// Adds a system to a new group. Every system in the same group will be executed simultaneously
 		template<typename SystemType>
 		void AddSystemToNewGroup();
-		// Adds a system to the most recently added group
+		// Adds a system to the most recently added group. Every system in the same group will be executed simultaneously
 		template<typename SystemType>
 		void AddSystemToCurrentGroup();
-		// Adds a Lua system to the most recently added group
+		// Adds a Lua system to the most recently added group. Every system in the same group will be executed simultaneously
 		void AddLuaSystemToCurrentGroup(System* _system);
 
 		World* CreateWorld(unsigned int _entityCount);
@@ -64,17 +63,13 @@ namespace ECSL
 	template<typename SystemType>
 	void WorldCreator::AddSystemToNewGroup()
 	{
-		System* system = new SystemType();
-		system->SetId(SystemIdManager::GetInstance().GetSystemId<SystemType>());
-		m_systemWorkGroups->push_back(new SystemWorkGroup(system));
+		m_systemWorkGroups->push_back(new SystemWorkGroup(new SystemType()));
 	}
 
 	template<typename SystemType>
 	void WorldCreator::AddSystemToCurrentGroup()
 	{
-		System* system = new SystemType();
-		system->SetId(SystemIdManager::GetInstance().GetSystemId<SystemType>());
-		m_systemWorkGroups->at(m_systemWorkGroups->size() - 1)->AddSystem(system);
+		m_systemWorkGroups->at(m_systemWorkGroups->size() - 1)->AddSystem(new SystemType());
 	}
 }
 #endif
