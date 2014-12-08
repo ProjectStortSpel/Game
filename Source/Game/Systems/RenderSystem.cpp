@@ -48,7 +48,7 @@ void RenderSystem::OnEntityAdded(unsigned int _entityId)
 void RenderSystem::OnEntityRemoved(unsigned int _entityId)
 {
 	/*	Tell Graphics to disable model	*/
-	int modelId = (int)GetComponent(_entityId, "Render", "ModelId");
+	int modelId = (int)*GetComponent(_entityId, "Render", "ModelId");
 	m_graphics->RemoveModel(modelId);
 }
 

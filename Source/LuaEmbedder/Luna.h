@@ -357,6 +357,7 @@ namespace LuaEmbedder
       }
       lua_insert(L, base);
       int status = lua_pcall(L, 1 + argumentCount, LUA_MULTRET, 0);
+      lua_gc(L, LUA_GCCOLLECT, 0);
       if (status != 0)
       {
 	lua_pop(L, 1);

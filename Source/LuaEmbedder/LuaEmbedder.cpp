@@ -194,6 +194,9 @@ namespace LuaEmbedder
       lua_pushnumber(L, values[i]);
       lua_rawseti(L, -2, i + 1);
     }
+    lua_pushliteral(L, "n");
+    lua_pushinteger(L, (int)count);
+    lua_rawset(L, -3);
   }
   void PushIntArray(const int* values, unsigned int count)
   {
@@ -203,6 +206,9 @@ namespace LuaEmbedder
       lua_pushinteger(L, values[i]);
       lua_rawseti(L, -2, i + 1);
     }
+    lua_pushliteral(L, "n");
+    lua_pushinteger(L, (int)count);
+    lua_rawset(L, -3);
   }
   void PushUnsignedIntArray(const unsigned int* values, unsigned int count)
   {
@@ -212,6 +218,9 @@ namespace LuaEmbedder
       lua_pushinteger(L, (int)values[i]);
       lua_rawseti(L, -2, i + 1);
     }
+    lua_pushliteral(L, "n");
+    lua_pushinteger(L, (int)count);
+    lua_rawset(L, -3);
   }
   void PushBoolArray(const bool* values, unsigned int count)
   {
@@ -221,6 +230,9 @@ namespace LuaEmbedder
       lua_pushboolean(L, (int)values[i]);
       lua_rawseti(L, -2, i + 1);
     }
+    lua_pushliteral(L, "n");
+    lua_pushinteger(L, (int)count);
+    lua_rawset(L, -3);
   }
   void PushStringArray(const std::string* values, unsigned int count)
   {
