@@ -8,57 +8,7 @@
 #pragma region LOL
 void SpawnShit(ECSL::World* _world, Renderer::GraphicDevice* _graphics, bool isTrue = true)
 {
-	int size = 3;
-	for (int x = -size; x <= size; ++x)
-	{
-		for (int y = -size; y <= size; ++y)
-		{
-			unsigned int newEntity = _world->CreateNewEntity();
-			_world->CreateComponentAndAddTo("Position", newEntity);
-			_world->CreateComponentAndAddTo("Scale", newEntity);
-			_world->CreateComponentAndAddTo("Rotation", newEntity);
-			_world->CreateComponentAndAddTo("Render", newEntity);
-			_world->CreateComponentAndAddTo("Velocity", newEntity);
 
-			glm::mat4*	Matrix;
-			Matrix = (glm::mat4*)_world->GetComponent(newEntity, "Render", "Mat");
-			int*		ModelId = (int*)_world->GetComponent(newEntity, "Render", "ModelId");
-
-			if (y % 2 == 0 && x % 2 == 0)
-				*ModelId = _graphics->LoadModel("content/models/Hole/", "hole.object", Matrix);
-			else
-				*ModelId = _graphics->LoadModel("content/models/Default_Tile/", "grass.object", Matrix);
-
-			float* Position;
-			Position = (float*)_world->GetComponent(newEntity, "Position", "X");
-			Position[0] = 1.0f * x;
-			Position[1] = 0.0f;
-			Position[2] = 1.0f * y;
-		}
-	}
-
-	unsigned int newEntity = _world->CreateNewEntity();
-	_world->CreateComponentAndAddTo("Position", newEntity);
-	_world->CreateComponentAndAddTo("Scale", newEntity);
-	_world->CreateComponentAndAddTo("Spin", newEntity);
-	_world->CreateComponentAndAddTo("Rotation", newEntity);
-	_world->CreateComponentAndAddTo("Render", newEntity);
-
-	glm::mat4*	Matrix;
-	Matrix = (glm::mat4*)_world->GetComponent(newEntity, "Render", "Mat");
-	int* ModelId = (int*)_world->GetComponent(newEntity, "Render", "ModelId");
-	*ModelId = _graphics->LoadModel("content/models/head/", "head.object", Matrix);
-	float* Position;
-	Position = (float*)_world->GetComponent(newEntity, "Position", "X");
-	Position[0] = 0.0f;
-	Position[1] = 1.5f;
-	Position[2] = 0.0f;
-
-	float* Spin;
-	Spin = (float*)_world->GetComponent(newEntity, "Spin", "X");
-	Spin[0] = M_PI * 0.0f;
-	Spin[1] = M_PI * 1.0f;
-	Spin[2] = M_PI * 0.0f;
 
 }
 #pragma endregion
