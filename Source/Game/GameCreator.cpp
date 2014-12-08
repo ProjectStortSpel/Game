@@ -5,15 +5,6 @@
 #include "Systems/CameraSystem.h"
 #include "Systems/RotationSystem.h"
 
-#pragma region LOL
-void SpawnShit(ECSL::World* _world, Renderer::GraphicDevice* _graphics, bool isTrue = true)
-{
-
-
-}
-#pragma endregion
-
-
 GameCreator::GameCreator() :
 m_graphics(0), m_input(0), m_world(0), m_console(0)
 {
@@ -99,7 +90,6 @@ void GameCreator::StartGame()
 		return;
 
 	m_console = new GameConsole(m_graphics, m_world);
-	SpawnShit(m_world, m_graphics);
 
 	m_consoleInput.SetTextHook(std::bind(&Console::ConsoleManager::ExecuteCommand, &m_consoleManager, std::placeholders::_1));
 	m_consoleInput.SetActive(true);
