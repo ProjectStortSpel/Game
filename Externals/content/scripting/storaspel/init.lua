@@ -3,8 +3,8 @@ package.path = package.path .. ";../../../Externals/content/scripting/storaspel/
 require "components"
 
 -- Systems
---package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
---require "movementsystem"
+package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
+require "movementsystem"
 
---worldCreator:AddSystemGroup()
---worldCreator:AddSystemToCurrentGroup(MovementSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(MovementSystem)

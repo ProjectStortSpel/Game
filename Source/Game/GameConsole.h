@@ -13,7 +13,10 @@ public:
 
 	void SetupHooks(Console::ConsoleManager* _consoleManager);
 
-	void SpawnGraphicalObjectAt(std::vector<Console::Argument>* _args);
+	void SpawnModel(std::vector<Console::Argument>* _args);
+	void AddComponent(std::vector<Console::Argument>* _args);
+	void ChangeComponent(std::vector<Console::Argument>* _args);
+	void RemoveComponent(std::vector<Console::Argument>* _args);
 
 private:
 	ECSL::World*	m_world;

@@ -47,7 +47,7 @@ void SpawnShit(ECSL::World* _world, Renderer::GraphicDevice* _graphics, bool isT
 	glm::mat4*	Matrix;
 	Matrix = (glm::mat4*)_world->GetComponent(newEntity, "Render", "Mat");
 	int* ModelId = (int*)_world->GetComponent(newEntity, "Render", "ModelId");
-	*ModelId = _graphics->LoadModel("content/models/Head/", "head.object", Matrix);
+	*ModelId = _graphics->LoadModel("content/models/head/", "head.object", Matrix);
 	float* Position;
 	Position = (float*)_world->GetComponent(newEntity, "Position", "X");
 	Position[0] = 0.0f;
@@ -132,8 +132,8 @@ void GameCreator::InitializeWorld()
 		printf("%s added\n", it->second->GetName().c_str());
 	}
 
-	worldCreator.AddSystemGroup();
-	worldCreator.AddSystemToCurrentGroup<MovementSystem>();
+	//worldCreator.AddSystemGroup();
+	//worldCreator.AddSystemToCurrentGroup<MovementSystem>();
 	worldCreator.AddLuaSystemToCurrentGroup(new RotationSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new CameraSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderSystem(m_graphics));
