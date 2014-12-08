@@ -59,6 +59,7 @@ namespace Console
 		void AddCommand(const char* _name, ConsoleHook _hook);
 		void RemoveCommand(const char* _name);
 		void ClearCommands();
+		void AddMessage(const char* _message);
 		std::vector<std::string> GetHistory(void);
 	};
 }

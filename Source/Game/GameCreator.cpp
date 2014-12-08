@@ -65,7 +65,7 @@ void SpawnShit(ECSL::World* _world, Renderer::GraphicDevice* _graphics, bool isT
 
 
 GameCreator::GameCreator() :
-m_graphics(0), m_input(0), m_world(0)
+m_graphics(0), m_input(0), m_world(0), m_console(0)
 {
 
 }
@@ -80,6 +80,9 @@ GameCreator::~GameCreator()
 
 	if (m_input)
 		delete m_input;
+
+	if (m_console)
+		delete m_console;
 
 	LuaEmbedder::Quit();
 
@@ -141,10 +144,18 @@ void GameCreator::InitializeWorld()
 
 void GameCreator::StartGame()
 {
+	/*	If atleast one object is not initialized the game can't start	*/
+	if (!m_graphics || !m_input || !m_world || m_console)
+		return;
+
+	m_console = new GameConsole(m_graphics, m_world);
 	SpawnShit(m_world, m_graphics);
 
 	m_consoleInput.SetTextHook(std::bind(&Console::ConsoleManager::ExecuteCommand, &m_consoleManager, std::placeholders::_1));
 	m_consoleInput.SetActive(true);
+
+	/*	Hook console	*/
+	m_console->SetupHooks(&m_consoleManager);
 	
 	Timer gameTimer;
 	while (true)

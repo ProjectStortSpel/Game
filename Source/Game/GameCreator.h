@@ -8,6 +8,7 @@
 #include "LuaEmbedder/LuaEmbedder.h"
 #include "LuaBridge/LuaBridge.h"
 #include "ECSL/ECSL.h"
+#include "GameConsole.h"
 
 class GameCreator
 {
@@ -34,6 +35,8 @@ private:
 	Renderer::GraphicDevice*	m_graphics;
 	Input::InputWrapper*		m_input;
 	ECSL::World*				m_world;
+	GameConsole*				m_console;
+
 
 	Console::ConsoleManager		m_consoleManager;
 	TextInput					m_consoleInput;

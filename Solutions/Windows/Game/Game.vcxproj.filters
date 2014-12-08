@@ -83,6 +83,9 @@
     <ClCompile Include="..\..\..\Source\Game\TextInput.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\GameConsole.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\Timer.h">
@@ -134,6 +137,9 @@
       <Filter>Game\Systems</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\TextInput.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\GameConsole.h">
       <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
