@@ -80,6 +80,9 @@
     <ClCompile Include="..\..\..\Source\Game\Systems\RotationSystem.cpp">
       <Filter>Game\Systems</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\TextInput.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\Timer.h">
@@ -129,6 +132,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\RotationSystem.h">
       <Filter>Game\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\TextInput.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

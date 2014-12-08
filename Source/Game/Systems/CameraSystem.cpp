@@ -20,6 +20,8 @@ void CameraSystem::Initialize()
 
 void CameraSystem::Update(float _dt)
 {
+	if (m_input->GetKeyboard()->IsTextInputActive())
+		return;
 	/*	Fulhax just nu, enbart för att slippa ha det i gameloopen (REN OCH FIN)	*/
 
 	if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_W) == Input::InputState::DOWN)
