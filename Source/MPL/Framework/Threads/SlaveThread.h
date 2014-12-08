@@ -17,14 +17,12 @@ namespace MPL
 		SlaveThread();
 		~SlaveThread();
 
-		void Deactivate() { m_active = false; }
-
+		void Deactivate();
 		bool StartThread(const std::string& _name);
 		void Execute();
 
-		ThreadState GetState() { return m_state; }
-
 	private:
+		bool m_active;
 		SDL_Thread* m_thread;
 
 		void Release();

@@ -32,6 +32,9 @@
     <Filter Include="Source Files\Framework\Systems\Messaging">
       <UniqueIdentifier>{f74390fd-e17c-44c4-a0b6-55bf136b9927}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Framework\Multithreading">
+      <UniqueIdentifier>{f1a91060-8b15-4325-b2e1-9ee760a9080b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\ECSL\ECSL.h">
@@ -118,6 +121,9 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\SenderGroup.h">
       <Filter>Source Files\Framework\Systems\Messaging</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Multithreading\ECSLScheduler.h">
+      <Filter>Source Files\Framework\Multithreading</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\World.cpp">
@@ -197,6 +203,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\SenderGroup.cpp">
       <Filter>Source Files\Framework\Systems\Messaging</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Multithreading\ECSLScheduler.cpp">
+      <Filter>Source Files\Framework\Multithreading</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

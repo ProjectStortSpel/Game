@@ -23,9 +23,9 @@ namespace MPL
 		Thread();
 		virtual ~Thread() = 0;
 
-		void Deactivate() { m_active = false; }
-
 		void Initialize(TaskPool* _taskPool);
+
+		virtual void Deactivate() = 0;
 
 		virtual bool StartThread(const std::string& _name) = 0;
 
@@ -35,7 +35,6 @@ namespace MPL
 
 	protected:
 		ThreadState m_state;
-		bool m_active;
 		void* m_data;
 		TaskPool* m_taskPool;
 

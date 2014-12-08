@@ -133,32 +133,30 @@ void lol()
 	if (!sem)
 		abort();
 
+	unsigned int num = 100000;
+
 	unsigned int sumValue1 = 0;
 	unsigned int sumValue2 = 0;
-	std::atomic<unsigned int> sumValue3 = 0;
-	std::vector<Test*> testar;
 	std::chrono::time_point<std::chrono::system_clock> start1, end1, start2, end2, start3, end3;
 
 	start1 = std::chrono::system_clock::now();
-	for (unsigned int i = 0; i < 1000000; ++i)
+	for (unsigned int i = 0; i < num; ++i)
 	{
-		sumValue1 += (i % 1645);
+		unsigned int abdc = SDL_GetCPUCount();
 	}
 	end1 = std::chrono::system_clock::now();
 
 	start2 = std::chrono::system_clock::now();
-	for (unsigned int i = 0; i < 1000000; ++i)
+	for (unsigned int i = 0; i < num; ++i)
 	{
-		SDL_mutexP(mutex);
-		sumValue2 += (i % 1645);
-		SDL_mutexV(mutex);
+		unsigned int abcd = 8;
 	}
 	end2 = std::chrono::system_clock::now();
 
 	start3 = std::chrono::system_clock::now();
 	for (unsigned int i = 0; i < 1000000; ++i)
 	{
-		sumValue3 += (i % 1645);
+		//sumValue3 += (i % 1645);
 	}
 	end3 = std::chrono::system_clock::now();
 
@@ -169,7 +167,7 @@ void lol()
 	elapsed_seconds = end3 - start3;
 	printf("Time: %f\n", elapsed_seconds);
 
-	printf("Sums:\n%i\n%i\n%i\n", sumValue1, sumValue2, sumValue3);
+	printf("Sums:\n%i\n%i\n", sumValue1, sumValue2);
 
 	delete(world);
 	delete(&ComponentTypeManager::GetInstance());

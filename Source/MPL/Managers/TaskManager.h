@@ -5,6 +5,7 @@
 #include <vector>
 #include "MPL/Framework/Tasks/TaskPool.h"
 #include "MPL/Framework/Threads/SlaveThread.h"
+#include "MPL/Framework/Threads/MasterThread.h"
 #include "MPL/Interfaces/Scheduler.h"
 
 namespace MPL
@@ -13,7 +14,7 @@ namespace MPL
 	{
 	public:
 		~TaskManager();
-		TaskManager& GetInstance();
+		static TaskManager& GetInstance();
 
 		void CreateThreads();
 		void SafeKillThreads();

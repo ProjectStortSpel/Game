@@ -21,6 +21,7 @@ TaskManager& TaskManager::GetInstance()
 void TaskManager::CreateThreads()
 {
 	m_threadCount = SDL_GetCPUCount();
+
 	/* Create slave threads equal to the number of logical processors - 1 */
 	for (unsigned int i = 0; i < m_threadCount - 1; ++i)
 	{
@@ -31,6 +32,11 @@ void TaskManager::CreateThreads()
 		else
 			delete(slave);
 	}
+
+	/* Add the master thread last. */
+	MasterThread* master = new MasterThread();
+	master->Initialize(m_taskPool);
+	m_threads->push_back(master);
 }
 
 void TaskManager::SafeKillThreads()
@@ -47,8 +53,15 @@ void TaskManager::SafeKillThreads()
 
 void TaskManager::Execute(const std::vector<Task*>& _tasks)
 {
-	//m_threadsDone = SDL_Sem m_threadCount;
+	/* Add new tasks to the task pool */
 	m_taskPool->AddTasks(_tasks);
+
+	/* Tell the threads its time to work */
 	for (auto thread : *m_threads)
 		thread->Execute();
+
+	/* Wait for all slave threads to finish their tasks */
+	for (unsigned int threadIndex = 0; threadIndex < m_threadCount - 1;)
+		if (m_threads->at(threadIndex)->GetState() != ThreadState::Working)
+			threadIndex++;
 }

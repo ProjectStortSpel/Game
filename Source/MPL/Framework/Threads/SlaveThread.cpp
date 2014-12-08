@@ -26,6 +26,11 @@ void SlaveThread::Release()
 	}
 }
 
+void SlaveThread::Deactivate()
+{
+	m_active = false;
+}
+
 bool SlaveThread::StartThread(const std::string& _name)
 {
 	m_active = true;
