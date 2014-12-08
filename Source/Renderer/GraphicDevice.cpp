@@ -218,6 +218,14 @@ void GraphicDevice::Render()
 		}
 	}
 
+	// DRAW SKYBOX
+	//m_skyBoxShader.UseProgram();
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, m_skyBox);
+	glDrawArrays(GL_POINTS, 0, 1);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	// -----------
+
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	//---------------------------------------------------------------------
 
@@ -348,7 +356,6 @@ bool GraphicDevice::InitDeferred()
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_normTex, 0);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_colorTex, 0);
 
-
 	m_vramUsage += (m_clientWidth*m_clientHeight*sizeof(float));
 	m_vramUsage += (m_clientWidth*m_clientHeight*sizeof(float)* 4 * 2);
 
@@ -371,6 +378,10 @@ bool GraphicDevice::InitForward()
 
 	GLenum drawBufferForward = GL_COLOR_ATTACHMENT0;
 	glDrawBuffers(1, &drawBufferForward);
+	
+	// skybox
+	m_skyBox = AddTexture("content/textures/skybox.jpg", GL_TEXTURE1);
+	m_skyBoxShader.CheckUniformLocation("diffuseTex", 1);
 
 	return true;
 }
@@ -387,6 +398,13 @@ bool GraphicDevice::InitShaders()
 	m_compDeferredPass2Shader.InitShaderProgram();
 	m_compDeferredPass2Shader.AddShader("content/shaders/CSDeferredPass2.glsl", GL_COMPUTE_SHADER);
 	m_compDeferredPass2Shader.FinalizeShaderProgram();
+
+	// Sky Box
+	m_skyBoxShader.InitShaderProgram();
+	m_skyBoxShader.AddShader("content/shaders/skyboxvs.glsl", GL_VERTEX_SHADER);
+	m_skyBoxShader.AddShader("content/shaders/skyboxgs.glsl", GL_GEOMETRY_SHADER);
+	m_skyBoxShader.AddShader("content/shaders/skyboxps.glsl", GL_FRAGMENT_SHADER);
+	m_skyBoxShader.FinalizeShaderProgram();
 
 	// Full Screen Quad
 	m_fullScreenShader.InitShaderProgram();
@@ -431,7 +449,6 @@ bool GraphicDevice::InitBuffers()
 
 	//Forward shader
 	m_forwardShader.CheckUniformLocation("diffuseTex", 1);
-
 
 	return true;
 }

@@ -186,6 +186,13 @@ void main()
 	}
 	//-------------------------
 
+	//DIR LIGHT ---------------
+	vec3 lightDir = (ViewMatrix * vec4(-3, 4, -2, 0)).xyz;
+	float lightIntensity = max(dot(normalize(lightDir), normalize(normal_tex)), 0.0 );;
+	if (lightIntensity > 0.0f)
+		diffuse += (vec3(0.6, 0.6, 0.6) * lightIntensity);
+	//-------------------------
+
 	vec4 FragColor = vec4(ambient + diffuse, 1.0) * vec4(albedo_tex, 1.0) + vec4(spec, 0.0f);
 	//FragColor = vec4(diffuse, 1.0);
 	//vec4 FragColor = vec4( normal_tex, 1.0);
