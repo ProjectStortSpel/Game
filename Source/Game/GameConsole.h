@@ -17,6 +17,7 @@ public:
 	void AddComponent(std::vector<Console::Argument>* _args);
 	void ChangeComponent(std::vector<Console::Argument>* _args);
 	void RemoveComponent(std::vector<Console::Argument>* _args);
+	void ListCommands(std::vector<Console::Argument>* _args);
 
 private:
 	ECSL::World*	m_world;

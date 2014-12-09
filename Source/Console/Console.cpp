@@ -1,9 +1,11 @@
 #include "Console/Console.h"
 #include <string>
+#include <regex>
 
 using namespace Console;
 
 ConsoleManager::ConsoleManager()
+	: m_match(), m_historyCounter(-1)
 {
 }
 
@@ -108,7 +110,9 @@ bool ConsoleManager::ParseArgs(char* _args, std::vector<Argument>* _vector)
 
 void ConsoleManager::ExecuteCommand(const char* _command)
 {
-	char* command = new char[strlen(_command)+1];
+	m_historyCounter = -1;
+
+	char* command = new char[strlen(_command) + 1];
 	memcpy(command, _command, strlen(_command) + 1);
 
 	for (int n = 0; n < strlen(_command); ++n)
@@ -130,7 +134,11 @@ void ConsoleManager::ExecuteCommand(const char* _command)
 	if (m_history.size() > 8)
 		m_history.erase(m_history.begin());
 
+	if (m_commandHistory.size() > 8)
+		m_commandHistory.erase(m_commandHistory.begin());
+
 	m_history.push_back(_command);
+	m_commandHistory.push_back(_command);
 
 	if (m_consoleHooks.find(command) != m_consoleHooks.end())
 	{
@@ -146,8 +154,10 @@ void ConsoleManager::ExecuteCommand(const char* _command)
 		printf("Command \"%s\" not bound.\n", command);
 	}
 
-	delete command;	
+	delete command;
+
 }
+
 void ConsoleManager::AddCommand(const char* _name, ConsoleHook _hook)
 {
 	char* spacePointer = strchr((char*)_name, ' ');
@@ -192,4 +202,62 @@ std::vector<std::string> ConsoleManager::GetHistory()
 void ConsoleManager::AddMessage(const char* _message)
 {
 	m_history.push_back(_message);
+}
+
+const char* ConsoleManager::GetFunctionMatch(const char* _command)
+{
+	m_match = "";
+
+	if (*_command == '\0')
+		return m_match.c_str();
+
+	std::string cmd(_command);
+	cmd = cmd.substr(0, cmd.find(' '));
+
+	for (int n = 0; n < strlen(cmd.c_str()); ++n)
+		cmd[n] = tolower(cmd[n]);
+
+
+
+	char buffer[256];
+#ifdef WIN32
+	sprintf_s(buffer, "^(%s)(.*)?$", cmd.c_str());
+#else
+	sprintf(buffer, "^(%s)(.*)?", cmd.c_str());
+#endif
+
+	std::regex reg(buffer);
+
+	for (auto it = m_consoleHooks.begin(); it != m_consoleHooks.end(); ++it)
+		if (std::regex_match(it->first, reg))
+		{
+			m_match = it->first;
+			break;
+		}
+
+	return m_match.c_str();
+}
+
+const char* ConsoleManager::GetPreviousHistory()
+{
+	int size = m_commandHistory.size() - 1;
+	if (size < 0)
+		return 0;
+
+	m_historyCounter = m_historyCounter >= size ? 0 : m_historyCounter + 1;
+	return m_commandHistory[size - m_historyCounter].c_str();
+
+	return m_match.c_str();
+}
+
+const char* ConsoleManager::GetNextHistory()
+{
+	int size = m_commandHistory.size() - 1;
+	if (size < 0)
+		return 0;
+
+	m_historyCounter = m_historyCounter <= 0 ? size : m_historyCounter - 1;
+
+	return m_commandHistory[size - m_historyCounter].c_str();
+
 }
