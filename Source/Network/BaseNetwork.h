@@ -40,6 +40,12 @@ namespace Network
 		// Returns the incoming port
 		const int GetIncomingPort(void) { return m_incomingPort; }
 
+		const float GetTotalBytesReceived(void) { return m_totalDataReceived; }
+		const float GetTotalBytesSent(void) { return m_totalDataSent; }
+
+		const float GetCurrentBytesReceived(void) { return m_currentDataReceived; }
+		const float GetCurrentBytesSent(void) { return m_currentDataSent; }
+
 		// Reads the oldest user specific packet and calls its specified function
 		// Will return the number of packets remaining
 		int TriggerPacket(void);
@@ -66,10 +72,14 @@ namespace Network
 		void HandlePacket(Packet* _packet);
 
 		virtual void UpdateTimeOut(float _dt) = 0;
+		virtual void UpdateNetUsage(float _dt) = 0;
+
+		unsigned int GetMillisecondsTime();
 
 	protected:
 
 #pragma warning( disable : 4251 )
+
 
 		std::map < std::string, NetMessageHook > m_userFunctions;
 		std::map < char, NetMessageHook > m_networkFunctions;
@@ -78,7 +88,6 @@ namespace Network
 		std::queue<Packet*> m_customPackets;
 		std::mutex m_systemPacketLock;
 		std::mutex m_customPacketLock;
-
 
 		std::string m_localAddress;
 		std::string m_password;
@@ -90,6 +99,13 @@ namespace Network
 		int m_maxIntervallCounter;
 
 		char m_packetData[MAX_PACKET_SIZE];
+
+		float m_totalDataReceived;
+		float m_totalDataSent;
+
+		float m_currentDataReceived;
+		float m_currentDataSent;
+		float m_usageDataTimer;
 
 #pragma warning( default : 4251 )
 

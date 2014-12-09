@@ -4,6 +4,7 @@
 #include <SDL/SDL.h>
 #include <string>
 #include <inttypes.h>
+#include <cstring>
 
 #include "Packet.h"
 
@@ -28,5 +29,6 @@
 #define NET_DEBUG 1
 #define SAFE_DELETE(x) if(x) { delete x; x = 0; }
 #define SAFE_DELETE_PACKET(x) if(x) { if (x->Data) { delete x->Data; x->Data = 0; } delete x; x = 0; }
+
 
 #endif

@@ -17,6 +17,11 @@ ClientNetwork::ClientNetwork()
 	m_receivePacketsThreadAlive = false;
 	m_socket = 0;
 
+	m_maxTimeOutIntervall = 1.0f;
+	m_maxIntervallCounter = 30;
+
+	m_ping = 0;
+
 	m_networkFunctions[NetTypeMessageId::ID_PASSWORD_INVALID] = std::bind(&ClientNetwork::NetPasswordInvalid, this, NetworkHookPlaceholders);
 	m_networkFunctions[NetTypeMessageId::ID_CONNECTION_ACCEPTED] = std::bind(&ClientNetwork::NetConnectionAccepted, this, NetworkHookPlaceholders);
 	m_networkFunctions[NetTypeMessageId::ID_SERVER_FULL] = std::bind(&ClientNetwork::NetConnectionServerFull, this, NetworkHookPlaceholders);
@@ -139,7 +144,7 @@ void ClientNetwork::ReceivePackets()
 				printf("Received message with length \"%i\" from server.\n", packetSize);
 
 			m_currentIntervallCounter = 0;
-			m_currentTimeOutIntervall = 0.0f;
+			//m_currentTimeOutIntervall = 0.0f;
 
 			Packet* p = new Packet();
 			p->Data = new unsigned char[packetSize];
@@ -148,6 +153,9 @@ void ClientNetwork::ReceivePackets()
 			memcpy(p->Data, m_packetData, packetSize);
 
 			HandlePacket(p);
+
+			m_totalDataReceived += packetSize;
+			m_currentDataReceived += packetSize;
 
 		}
 		else if (result == 0)
@@ -171,8 +179,27 @@ void ClientNetwork::Send(Packet* _packet)
 		return;
 	}
 
-	m_socket->Send((char*)_packet->Data, _packet->Length);
+	float bytesSent = (float)m_socket->Send((char*)_packet->Data, _packet->Length);
+	if (bytesSent != -1)
+	{
+		if (_packet->Data[0] == ID_PING)
+			m_sendTime = GetMillisecondsTime();
+
+		m_totalDataSent += bytesSent;
+		m_currentDataSent += bytesSent;
+	}
 	SAFE_DELETE(_packet);
+}
+
+void ClientNetwork::UpdateNetUsage(float _dt)
+{
+	m_usageDataTimer += _dt;
+	if (m_usageDataTimer >= 1.f)
+	{
+		m_usageDataTimer = 0;
+		m_currentDataReceived = 0;
+		m_currentDataSent = 0;
+	}
 }
 
 void ClientNetwork::UpdateTimeOut(float _dt)
@@ -331,6 +358,8 @@ void ClientNetwork::NetPong(PacketHandler* _packetHandler, uint64_t _id, NetConn
 {
 	if (NET_DEBUG)
 		printf("Pong from: %s:%d\n", _connection.IpAddress, _connection.Port);
+
+	m_ping = GetMillisecondsTime() - m_sendTime;
 }
 
 

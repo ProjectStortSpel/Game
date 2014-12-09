@@ -234,6 +234,14 @@ void GraphicDevice::Render()
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
+	// DRAW SKYBOX
+	//m_skyBoxShader.UseProgram();
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, m_skyBox);
+	glDrawArrays(GL_POINTS, 0, 1);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	// -----------
+
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	//---------------------------------------------------------------------
 
@@ -388,6 +396,10 @@ bool GraphicDevice::InitForward()
 
 	GLenum drawBufferForward = GL_COLOR_ATTACHMENT0;
 	glDrawBuffers(1, &drawBufferForward);
+	
+	// skybox
+	m_skyBox = AddTexture("content/textures/skybox.jpg", GL_TEXTURE1);
+	m_skyBoxShader.CheckUniformLocation("diffuseTex", 1);
 
 	return true;
 }
@@ -404,6 +416,13 @@ bool GraphicDevice::InitShaders()
 	m_compDeferredPass2Shader.InitShaderProgram();
 	m_compDeferredPass2Shader.AddShader("content/shaders/CSDeferredPass2.glsl", GL_COMPUTE_SHADER);
 	m_compDeferredPass2Shader.FinalizeShaderProgram();
+
+	// Sky Box
+	m_skyBoxShader.InitShaderProgram();
+	m_skyBoxShader.AddShader("content/shaders/skyboxvs.glsl", GL_VERTEX_SHADER);
+	m_skyBoxShader.AddShader("content/shaders/skyboxgs.glsl", GL_GEOMETRY_SHADER);
+	m_skyBoxShader.AddShader("content/shaders/skyboxps.glsl", GL_FRAGMENT_SHADER);
+	m_skyBoxShader.FinalizeShaderProgram();
 
 	// Full Screen Quad
 	m_fullScreenShader.InitShaderProgram();
@@ -449,7 +468,6 @@ bool GraphicDevice::InitBuffers()
 	//Forward shader
 	m_forwardShader.CheckUniformLocation("diffuseTex", 1);
 
-
 	return true;
 }
 
@@ -468,6 +486,43 @@ void GraphicDevice::SetSimpleTextColor(vec4 _color)
 	m_textRenderer.SetSimpleTextColor(_color);
 }
 
+bool GraphicDevice::PreLoadModel(std::string _dir, std::string _file, int _renderType)
+{
+	Shader *shaderPtr = NULL;
+	if (_renderType == RENDER_DEFERRED)
+	{
+		shaderPtr = &m_deferredShader1;
+		m_deferredShader1.UseProgram();
+	}
+	else if (_renderType == RENDER_FORWARD)
+	{
+		shaderPtr = &m_forwardShader;
+		m_forwardShader.UseProgram();
+	}
+	else
+		ERRORMSG("ERROR: INVALID RENDER SETTING");
+
+	// Import Object
+	//ObjectData obj = AddObject(_dir, _file);
+	ObjectData obj = ModelLoader::importObject(_dir, _file);
+
+	// Import Texture
+	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
+	shaderPtr->CheckUniformLocation("diffuseTex", 1);
+
+	// Import Normal map
+	GLuint normal = AddTexture(obj.norm, GL_TEXTURE2);
+	shaderPtr->CheckUniformLocation("normalTex", 2);
+
+	// Import Specc Glow map
+	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
+	shaderPtr->CheckUniformLocation("specularTex", 3);
+
+	// Import Mesh
+	Buffer* mesh = AddMesh(obj.mesh, shaderPtr);
+
+	return true;
+}
 int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType)
 {
 	int modelID = m_modelIDcounter;
@@ -488,6 +543,7 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 		ERRORMSG("ERROR: INVALID RENDER SETTING");
 
 	// Import Object
+	//ObjectData obj = AddObject(_dir, _file);
 	ObjectData obj = ModelLoader::importObject(_dir, _file);
 
 	// Import Texture
@@ -785,4 +841,14 @@ GLuint GraphicDevice::AddTexture(std::string _fileDir, GLenum _textureSlot)
 	m_vramUsage += (texSizeX * texSizeY * 4 * 4);
 	return texture;
 }
-
+//ObjectData GraphicDevice::AddObject(std::string _file, std::string _dir)
+//{
+//	std::string fileDir = _dir;
+//	fileDir.append(_file);
+//	for (std::map<const std::string, ObjectData>::iterator it = m_objects.begin(); it != m_objects.end(); it++)
+//	{
+//		if (it->first == fileDir)
+//			return it->second;
+//	}
+//	ObjectData obj = ModelLoader::importObject(_dir, _file);
+//}

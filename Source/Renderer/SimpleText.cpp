@@ -5,7 +5,7 @@ using namespace glm;
 
 SimpleText::SimpleText()
 {
-	m_update = 0.5f;
+	m_update = 0.1f;
 	m_clock = 0;
 }
 
