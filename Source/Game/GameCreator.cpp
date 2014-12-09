@@ -89,6 +89,8 @@ void GameCreator::InitializeWorld()
 	
 	m_world = worldCreator.CreateWorld(10000);
 	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
+	
+	LuaEmbedder::CallMethods<ECSL::System>("System", "PostInitialize");
 }
 
 void GameCreator::StartGame()
