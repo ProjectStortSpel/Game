@@ -36,6 +36,8 @@ namespace Console
 
 		Argument(float f) { Number = f; ArgType = ArgumentType::Number; }
 		Argument(const char* s) { Text = s; ArgType = ArgumentType::Text; }
+
+		std::string GetString();
 	};
 		
 
@@ -53,6 +55,7 @@ namespace Console
 
 		ConsoleManager();
 		~ConsoleManager();
+		static ConsoleManager& GetInstance();
 
 		void ExecuteCommand(const char* _command);
 		void AddCommand(const char* _name, ConsoleHook _hook);

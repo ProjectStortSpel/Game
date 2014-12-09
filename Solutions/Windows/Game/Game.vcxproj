@@ -200,8 +200,9 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\Game.cpp" />
     <ClCompile Include="..\..\..\Source\Game\GameServer.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\NetworkInstance.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\RemoteConsole.cpp" />
     <ClCompile Include="..\..\..\Source\Game\TextInput.cpp" />
-
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponentType.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaWorld.cpp" />
@@ -211,6 +212,8 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClCompile Include="..\..\..\Source\Game\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Source\Game\NetworkInstance.h" />
+    <ClInclude Include="..\..\..\Source\Game\RemoteConsole.h" />
     <ClInclude Include="..\..\..\Source\Game\TextInput.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponentType.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaSystem.h" />

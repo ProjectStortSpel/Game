@@ -7,6 +7,8 @@
 #include "Console/Console.h"
 #include "Timer.h"
 #include "Game/TextInput.h"
+#include "Game/RemoteConsole.h"
+#include "NetworkInstance.h"
 
 #include <stdio.h>
 
@@ -26,9 +28,8 @@ struct Player
 };
 
 mat4 mat[1000];
-Network::ServerNetwork* server = 0;
-Network::ClientNetwork* client = 0;
-Console::ConsoleManager consoleManager;
+RemoteConsole remoteConsole;
+//Console::ConsoleManager consoleManager;
 bool isServer = false;
 bool isClient = false;
 std::string newPlayer = "";
@@ -155,7 +156,7 @@ void LoadAlotOfBoxes(Renderer::GraphicDevice* r)
 void OnConnected(Network::NetConnection nc)
 {
 	std::stringstream ss;
-	ss << "connected to server " << nc.IpAddress << ":" << nc.Port << ".\n";
+	ss << "connected to server " << nc.GetIpAddress() << ":" << nc.GetPort() << ".\n";
 	newPlayer = ss.str();
 }
 
@@ -168,17 +169,17 @@ void OnPlayerConnected(Network::NetConnection _nc)
 		m_players[_nc]->Id = m_players.size();
 	}
 
-	Network::PacketHandler* ph = server->GetPacketHandler();
+	Network::PacketHandler* ph = NetworkInstance::GetServer()->GetPacketHandler();
 	uint64_t id = ph->StartPack("CubePos");
 	ph->WriteFloat(id, mat[100][3][0]);
 	ph->WriteFloat(id, mat[100][3][1]);
 	ph->WriteFloat(id, mat[100][3][2]);
 	Network::Packet* p = ph->EndPack(id);
-	server->Send(p, _nc);
+	NetworkInstance::GetServer()->Send(p, _nc);
 
 
 	std::stringstream ss;
-	ss << _nc.IpAddress << ":" << _nc.Port << " connected to server.\n";
+	ss << _nc.GetIpAddress() << ":" << _nc.GetPort() << " connected to server.\n";
 	newPlayer = ss.str();
 }
 
@@ -189,13 +190,13 @@ void OnPlayerDisconnected(Network::NetConnection _nc)
 
 void OnKicked(Network::NetConnection _nc)
 {
-	client->Disconnect();
+	NetworkInstance::GetClient()->Disconnect();
 	printf("I was kicked from the server!\n");
 }
 
 void OnRemotePlayerKicked(Network::NetConnection _nc)
 {
-	printf("%s:%d was kicked from the server.\n", _nc.IpAddress, _nc.Port);
+	printf("%s:%d was kicked from the server.\n", _nc.GetIpAddress(), _nc.GetPort());
 }
 
 void CubePos(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _nc)
@@ -211,7 +212,7 @@ void KickPlayer(std::vector<Argument>* _args)
 		return;
 
 	auto firstplayer = m_players.begin();
-	server->Kick(firstplayer->first, "Why not?");
+	NetworkInstance::GetServer()->Kick(firstplayer->first, "Why not?");
 	m_players.erase(firstplayer->first);
 }
 
@@ -230,34 +231,37 @@ void MoveCube(std::vector<Argument>* _vec)
 	mat[100][3][1] = _vec->at(1).Number;
 	mat[100][3][2] = _vec->at(2).Number;
 
-	Network::PacketHandler* ph = server->GetPacketHandler();
+	Network::PacketHandler* ph = NetworkInstance::GetServer()->GetPacketHandler();
 	uint64_t id = ph->StartPack("CubePos");
 	ph->WriteFloat(id, mat[100][3][0]);
 	ph->WriteFloat(id, mat[100][3][1]);
 	ph->WriteFloat(id, mat[100][3][2]);
 	Network::Packet* p = ph->EndPack(id);
-	server->Broadcast(p);
+	NetworkInstance::GetServer()->Broadcast(p);
 }
 
 void Disconnect()
 {
 	isClient = false;
-	if (client)
-		client->Disconnect();
+	remoteConsole.UpdateCommands();
+	if (NetworkInstance::GetClient())
+		NetworkInstance::GetClient()->Disconnect();
 }
 
 void OnDisconnected(Network::NetConnection nc)
 {
 	isClient = false;
+	remoteConsole.UpdateCommands();
 }
 
 void Stop()
 {
-	consoleManager.RemoveCommand("movecube");
-	consoleManager.RemoveCommand("kick");
+	Console::ConsoleManager::GetInstance().RemoveCommand("movecube");
+	Console::ConsoleManager::GetInstance().RemoveCommand("kick");
 	isServer = false;
-	if (server)
-		server->Stop();
+	remoteConsole.UpdateCommands();
+	if (NetworkInstance::GetServer())
+		NetworkInstance::GetServer()->Stop();
 }
 
 bool Host(short _port)
@@ -268,21 +272,21 @@ bool Host(short _port)
 		{
 			Disconnect();
 		}
-		SAFE_DELETE(server);
-		server = new Network::ServerNetwork();
-		server->SetOnPlayerConnected(&OnPlayerConnected);
-		server->SetOnPlayerDisconnected(&OnPlayerDisconnected);
-		server->SetOnPlayerTimedOut(&OnPlayerDisconnected);
-		if (server->Start(_port, "localhest", 8))
+		NetworkInstance::InitServer();
+		NetworkInstance::GetServer()->SetOnPlayerConnected(&OnPlayerConnected);
+		NetworkInstance::GetServer()->SetOnPlayerDisconnected(&OnPlayerDisconnected);
+		NetworkInstance::GetServer()->SetOnPlayerTimedOut(&OnPlayerDisconnected);
+		if (NetworkInstance::GetServer()->Start(_port, "localhest", 8))
 		{
-			consoleManager.AddCommand("movecube", &MoveCube);
-			consoleManager.AddCommand("kick", &KickPlayer);
+			remoteConsole.UpdateCommands();
+			Console::ConsoleManager::GetInstance().AddCommand("movecube", &MoveCube);
+			Console::ConsoleManager::GetInstance().AddCommand("kick", &KickPlayer);
 			isServer = true;
 			return true;
 		}
 		else
 		{
-			SAFE_DELETE(server);
+			NetworkInstance::DestroyServer();
 		}
 	}
 	return false;
@@ -302,21 +306,21 @@ bool Connect(char* _ip, short _port)
 		{
 			Stop();
 		}
-		SAFE_DELETE(client);
-		client = new Network::ClientNetwork();
-		client->AddNetworkHook("CubePos", &CubePos);
-		client->SetOnConnectedToServer(&OnConnected);
-		client->SetOnDisconnectedFromServer(&OnDisconnected);
-		client->SetOnKickedFromServer(&OnKicked);
-		client->SetOnRemotePlayerKicked(&OnRemotePlayerKicked);
-		if (client->Connect(_ip, "localhest", _port, 0))
+		NetworkInstance::InitClient();
+		NetworkInstance::GetClient()->AddNetworkHook("CubePos", &CubePos);
+		NetworkInstance::GetClient()->SetOnConnectedToServer(&OnConnected);
+		NetworkInstance::GetClient()->SetOnDisconnectedFromServer(&OnDisconnected);
+		NetworkInstance::GetClient()->SetOnKickedFromServer(&OnKicked);
+		NetworkInstance::GetClient()->SetOnRemotePlayerKicked(&OnRemotePlayerKicked);
+		if (NetworkInstance::GetClient()->Connect(_ip, "localhest", _port, 0))
 		{
+			remoteConsole.UpdateCommands();
 			isClient = true;
 			return true;
 		}
 		else
 		{
-			SAFE_DELETE(client);
+			NetworkInstance::DestroyClient();
 		}
 	}
 	return false;
@@ -368,11 +372,13 @@ void Start()
 {
 	std::string input;
 
-	consoleManager.AddCommand("connect", &Connect_Hook);
-	consoleManager.AddCommand("disconnect", &Disconnect_Hook);
-	consoleManager.AddCommand("host", &Host_Hook);
-	consoleManager.AddCommand("stop", &Stop_Hook);
-	consoleManager.AddCommand("quit", &Quit_Hook);
+	Console::ConsoleManager* CONSOLE = &Console::ConsoleManager::GetInstance();
+
+	CONSOLE->AddCommand("connect", &Connect_Hook);
+	CONSOLE->AddCommand("disconnect", &Disconnect_Hook);
+	CONSOLE->AddCommand("host", &Host_Hook);
+	CONSOLE->AddCommand("stop", &Stop_Hook);
+	CONSOLE->AddCommand("quit", &Quit_Hook);
 
 	Renderer::GraphicDevice RENDERER = Renderer::GraphicDevice();
 	/*	Initialize Renderer and Input	*/
@@ -390,7 +396,7 @@ void Start()
 	Timer timer;
 
 	TextInput ti;
-	ti.SetTextHook(std::bind(&Console::ConsoleManager::ExecuteCommand, &consoleManager, std::placeholders::_1));
+	ti.SetTextHook(std::bind(&Console::ConsoleManager::ExecuteCommand, CONSOLE, std::placeholders::_1));
 	ti.SetActive(true);
 
 	while (lol)
@@ -409,29 +415,29 @@ void Start()
 
 		if (isServer)
 		{
-			server->Update(dt);
-			while (server->TriggerPacket() > 0) {}
+			NetworkInstance::GetServer()->Update(dt);
+			while (NetworkInstance::GetServer()->TriggerPacket() > 0) {}
 
-			tBytesReceived = server->GetTotalBytesReceived() / 1024;
-			tBytesSent = server->GetTotalBytesSent() / 1024;
+			tBytesReceived = NetworkInstance::GetServer()->GetTotalBytesReceived() / 1024;
+			tBytesSent = NetworkInstance::GetServer()->GetTotalBytesSent() / 1024;
 
-			cBytesReceived = server->GetCurrentBytesReceived() / 1024;
-			cBytesSent = server->GetCurrentBytesSent() / 1024;
+			cBytesReceived = NetworkInstance::GetServer()->GetCurrentBytesReceived() / 1024;
+			cBytesSent = NetworkInstance::GetServer()->GetCurrentBytesSent() / 1024;
 
 		}
 
 		if (isClient)
 		{
-			client->Update(dt);
-			while (client->TriggerPacket() > 0) {}
+			NetworkInstance::GetClient()->Update(dt);
+			while (NetworkInstance::GetClient()->TriggerPacket() > 0) {}
 
-			tBytesReceived = client->GetTotalBytesReceived() / 1024;
-			tBytesSent = client->GetTotalBytesSent() / 1024;
+			tBytesReceived = NetworkInstance::GetClient()->GetTotalBytesReceived() / 1024;
+			tBytesSent = NetworkInstance::GetClient()->GetTotalBytesSent() / 1024;
 
-			cBytesReceived = client->GetCurrentBytesReceived() / 1024;
-			cBytesSent = client->GetCurrentBytesSent() / 1024;
+			cBytesReceived = NetworkInstance::GetClient()->GetCurrentBytesReceived() / 1024;
+			cBytesSent = NetworkInstance::GetClient()->GetCurrentBytesSent() / 1024;
 
-			ping = client->GetPing();
+			ping = NetworkInstance::GetClient()->GetPing();
 		}
 
 		INPUT->Update();
@@ -535,13 +541,13 @@ void Start()
 
 				if (cubeMoved)
 				{
-					Network::PacketHandler* ph = server->GetPacketHandler();
+					Network::PacketHandler* ph = NetworkInstance::GetServer()->GetPacketHandler();
 					uint64_t id = ph->StartPack("CubePos");
 					ph->WriteFloat(id, mat[100][3][0]);
 					ph->WriteFloat(id, mat[100][3][1]);
 					ph->WriteFloat(id, mat[100][3][2]);
 					Network::Packet* p = ph->EndPack(id);
-					server->Broadcast(p);
+					NetworkInstance::GetServer()->Broadcast(p);
 				}
 			}
 
@@ -601,9 +607,11 @@ void Start()
 	m_players.clear();
 
 
+
 	SAFE_DELETE(INPUT);
-	SAFE_DELETE(server);
-	SAFE_DELETE(client);
+	SAFE_DELETE(CONSOLE);
+	NetworkInstance::DestroyServer();
+	NetworkInstance::DestroyClient();
 }
 
 int main(int argc, char** argv)
