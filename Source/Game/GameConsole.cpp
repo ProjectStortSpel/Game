@@ -68,6 +68,9 @@ void GameConsole::AddComponent(std::vector<Console::Argument>* _args)
 
 void GameConsole::ChangeComponent(std::vector<Console::Argument>* _args)
 {
+	if (_args->size() < 3)
+		return;
+
 	unsigned int mId = (unsigned int)_args->at(0).Number;
 
 	std::string componentType = _args->at(1).Text;
