@@ -117,7 +117,7 @@ void GraphicDevice::Render()
 
 	mat4 viewMatrix = *m_camera->GetViewMatrix();
 
-	//------Render scene--------------------------------------------------------------
+	//------Render scene (for deferred)-----------------------------------------------------------
 	
 	//-- DRAW MODELS
 	for (int i = 0; i < m_modelsDeferred.size(); i++)
@@ -163,7 +163,6 @@ void GraphicDevice::Render()
 
 	//m_glTimerValues.push_back(GLTimerValue("Deferred stage1: ", glTimer.Stop()));
 	//glTimer.Start();	
-	
 	
 	glClear(GL_COLOR_BUFFER_BIT);
 	glDisable(GL_DEPTH_TEST);

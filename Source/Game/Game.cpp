@@ -148,7 +148,7 @@ void LoadAlotOfBoxes(Renderer::GraphicDevice* r)
 		for (int y = 0; y < 10; y++)
 		{
 			mat[y+x*10] = glm::translate(vec3(x - 5, -1, y - 5));
-			r->LoadModel("content/models/default_tile/", "default.object", &mat[y + x * 10]);
+			r->LoadModel("content/models/head/", "head.object", &mat[y + x * 10]);
 		}
 	}
 }
