@@ -17,6 +17,7 @@ namespace ECSL
 		Simulation* m_simulation;
 		DataManager* m_dataManager;
 		SystemManager* m_systemManager;
+		unsigned int m_activeEntities;
 
 	public:
 		World(unsigned int _entityCount, std::vector<SystemWorkGroup*>* _systemWorkGroups, std::vector<unsigned int>* _componentTypeIds);
@@ -27,7 +28,14 @@ namespace ECSL
 		unsigned int CreateNewEntity();
 		void CreateComponentAndAddTo(const std::string& _componentType, unsigned int _entityId);
 		void RemoveComponentFrom(const std::string& _componentType, unsigned int _entityId);
+
+		DataLocation GetComponent(unsigned int _entityId, const std::string& _componentType, const std::string& _variableName);
+		DataLocation GetComponent(unsigned int _entityId, const std::string& _componentType, const int _index);
+		void SetComponent(unsigned int _entityId, const std::string& _componentType, const std::string& _variableName, void* _data);
+
 		void KillEntity(unsigned int _entityId);
+
+		unsigned int GetActiveEntities(){ return m_activeEntities; }
 	};
 }
 

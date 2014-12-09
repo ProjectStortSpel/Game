@@ -27,13 +27,14 @@ SystemWorkGroup::~SystemWorkGroup()
 	}
 }
 
+void SystemWorkGroup::AddSystem(System* _system)
+{
+	/* TODO: Add check so same system doesn't get added */
+	m_systems->push_back(_system);
+}
+
 void SystemWorkGroup::Update(float _dt)
 {
 	for (int n = 0; n < m_systems->size(); ++n)
-		m_systems->at(n)->Run(_dt);
-}
-
-void SystemWorkGroup::AddSystem(System* _system)
-{
-	m_systems->push_back(_system);
+		m_systems->at(n)->Update(_dt);
 }

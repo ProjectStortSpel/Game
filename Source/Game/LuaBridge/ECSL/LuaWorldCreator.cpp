@@ -10,7 +10,7 @@ namespace LuaBridge
   
   void LuaWorldCreator::Embed()
   {
-    LuaEmbedder::EmbedClass<LuaWorldCreator>("WorldCreator");
+    LuaEmbedder::EmbedClass<LuaWorldCreator>("WorldCreator", false);
     LuaEmbedder::EmbedClassFunction<LuaWorldCreator>("WorldCreator", "AddComponentType", &LuaWorldCreator::AddComponentType);
     LuaEmbedder::EmbedClassFunction<LuaWorldCreator>("WorldCreator", "AddSystemToCurrentGroup", &LuaWorldCreator::AddSystemToCurrentGroup);      
     LuaEmbedder::EmbedClassFunction<LuaWorldCreator>("WorldCreator", "AddSystemGroup", &LuaWorldCreator::AddSystemGroup);

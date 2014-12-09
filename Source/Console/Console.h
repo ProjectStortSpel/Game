@@ -46,8 +46,13 @@ namespace Console
 	private:
 
 		std::map<std::string, ConsoleHook> m_consoleHooks;
+		std::vector<std::string> m_history;
+		std::vector<std::string> m_commandHistory;
+		std::string m_match;
 
 		bool ParseArgs(char* _args, std::vector<Argument>* _vector);
+
+		int m_historyCounter;
 
 	public:
 
@@ -58,7 +63,12 @@ namespace Console
 		void AddCommand(const char* _name, ConsoleHook _hook);
 		void RemoveCommand(const char* _name);
 		void ClearCommands();
-
+		void AddMessage(const char* _message);
+		std::vector<std::string> GetHistory(void);
+		const char* GetFunctionMatch(const char* _command);
+		const char* GetPreviousHistory();
+		const char* GetNextHistory();
+		const char* GetMatch() { return m_match.c_str(); };
 	};
 }
 
