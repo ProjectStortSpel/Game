@@ -29,18 +29,18 @@ namespace Network
 		void Send(Packet* _packet);
 
 		// Returns the remote Ip Address the client connects to
-		const char* GetRemoteAddress(void) { return m_remoteAddress.c_str(); }
+		const char* GetRemoteAddress(void) { return m_remoteAddress->c_str(); }
 		// Returns the outgoing port the client connects to
-		const int GetOutgoingPort(void) { return m_outgoingPort; }
+		const int GetOutgoingPort(void) { return *m_outgoingPort; }
 
-		const unsigned int GetPing(void) { return m_ping; }
+		const float GetPing(void) { return *m_ping; }
 
 		bool IsConnected() { return m_connected; }
 
 		// Set the remote Ip Address the client will connect to
-		void SetRemoteAddress(const char* _ipAddress) { m_remoteAddress = _ipAddress; }
+		void SetRemoteAddress(const char* _ipAddress) { *m_remoteAddress = _ipAddress; }
 		// Set the outgoing port which the client will connect to
-		void SetOutgoingPort(const int _port) { m_outgoingPort = _port; }
+		void SetOutgoingPort(const int _port) { *m_outgoingPort = _port; }
 
 
 		// Bind function which will trigger when the client connect to the server
@@ -105,42 +105,39 @@ namespace Network
 
 
 	private:
-
-#pragma warning( disable : 4251 )
-
-		std::string m_remoteAddress;
-		int m_outgoingPort;
-		bool m_socketBound;
-		bool m_connected;
-
 		ISocket* m_socket;
 
-		std::thread m_receivePacketsThread;
-		bool m_receivePacketsThreadAlive;
+		std::string* m_remoteAddress;
+		int* m_outgoingPort;
+		bool* m_socketBound;
 
-		unsigned int m_ping;
-		unsigned int m_sendTime;
+		std::thread* m_receivePacketsThread;
+		bool* m_receivePacketsThreadAlive;
+		bool* m_connected;
 
-		float m_currentTimeOutIntervall;
-		int m_currentIntervallCounter;
+		float* m_ping;
+		float* m_sendTime;
+		float* m_receiveTime;
 
-		NetEvent m_onConnectedToServer;
-		NetEvent m_onDisconnectedFromServer;
-		NetEvent m_onTimedOutFromServer;
-		NetEvent m_onFailedToConnect;
-		NetEvent m_onPasswordInvalid;
-		NetEvent m_onKickedFromServer;
-		NetEvent m_onBannedFromServer;
-		NetEvent m_onServerFull;
+		float* m_currentTimeOutIntervall;
+		int* m_currentIntervallCounter;
 
-		NetEvent m_onRemotePlayerConnected;
-		NetEvent m_onRemotePlayerDisconnected;
-		NetEvent m_onRemotePlayerTimedOut;
-		NetEvent m_onRemotePlayerKicked;
-		NetEvent m_onRemotePlayerBanned;
+		NetEvent* m_onConnectedToServer;
+		NetEvent* m_onDisconnectedFromServer;
+		NetEvent* m_onTimedOutFromServer;
+		NetEvent* m_onFailedToConnect;
+		NetEvent* m_onPasswordInvalid;
+		NetEvent* m_onKickedFromServer;
+		NetEvent* m_onBannedFromServer;
+		NetEvent* m_onServerFull;
+
+		NetEvent* m_onRemotePlayerConnected;
+		NetEvent* m_onRemotePlayerDisconnected;
+		NetEvent* m_onRemotePlayerTimedOut;
+		NetEvent* m_onRemotePlayerKicked;
+		NetEvent* m_onRemotePlayerBanned;
 
 
-#pragma warning( default : 4251 )
 	};
 
 }
