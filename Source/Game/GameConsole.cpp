@@ -138,13 +138,50 @@ void GameConsole::HostServer(std::vector<Console::Argument>* _args)
 }
 void GameConsole::StopServer(std::vector<Console::Argument>* _args)
 {
+	if (m_client->IsConnected() && strcmp(m_client->GetRemoteAddress(), "127.0.0.1") == 0)
+		m_client->Disconnect();
+
+	if (m_server->IsRunning())
+		m_server->Stop();
 }
 
 void GameConsole::ConnectClient(std::vector<Console::Argument>* _args)
 {
+	if (m_client->IsConnected())
+		m_client->Disconnect();
+
+	if (m_server->IsRunning())
+		m_server->Stop();
+
+	std::string ip = m_client->GetRemoteAddress();
+	unsigned int port = m_client->GetOutgoingPort();
+	std::string pw = m_client->GetServerPassword();
+	
+
+	if (_args->size() == 1)
+	{
+		if ((*_args)[0].ArgType == Console::ArgumentType::Text)
+			ip = (*_args)[0].Text;
+	}
+	else if (_args->size() == 3)
+	{
+		if ((*_args)[0].ArgType == Console::ArgumentType::Text &&
+			(*_args)[1].ArgType == Console::ArgumentType::Number &&
+			(*_args)[2].ArgType == Console::ArgumentType::Text)
+		{
+			ip = (*_args)[0].Text;
+			port = (*_args)[1].Number;
+			pw = (*_args)[2].Text;
+		}
+	}
+
+	m_client->Connect(ip.c_str(), pw.c_str(), port, 0);
+
 }
 void GameConsole::DisconnectClient(std::vector<Console::Argument>* _args)
 {
+	if (m_client->IsConnected())
+		m_client->Disconnect();
 }
 
 
@@ -156,5 +193,8 @@ void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 	m_consoleManager->AddCommand("ChangeComponent", std::bind(&GameConsole::ChangeComponent, this, std::placeholders::_1));
 	m_consoleManager->AddCommand("RemoveComponent", std::bind(&GameConsole::RemoveComponent, this, std::placeholders::_1));
 	m_consoleManager->AddCommand("Host", std::bind(&GameConsole::HostServer, this, std::placeholders::_1));
+	m_consoleManager->AddCommand("Stop", std::bind(&GameConsole::StopServer, this, std::placeholders::_1));
+	m_consoleManager->AddCommand("Connect", std::bind(&GameConsole::ConnectClient, this, std::placeholders::_1));
+	m_consoleManager->AddCommand("Disconnect", std::bind(&GameConsole::DisconnectClient, this, std::placeholders::_1));
 	m_consoleManager->AddCommand("List", std::bind(&GameConsole::ListCommands, this, std::placeholders::_1));
 }

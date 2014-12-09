@@ -7,8 +7,17 @@
 
 #pragma region LOL
 
+//mat4 mat[1000];
 void SpawnShit(ECSL::World* _world, Renderer::GraphicDevice* _graphics, bool isTrue = true)
 {
+	//for (int x = 0; x < 10; x++)
+	//{
+	//	for (int y = 0; y < 10; y++)
+	//	{
+	//		mat[y + x * 10] = glm::translate(vec3(x - 5, -1, y - 5));
+	//		_graphics->LoadModel("content/models/head/", "head.object", &mat[y + x * 10]);
+	//	}
+	//}
 }
 #pragma endregion
 
@@ -205,7 +214,6 @@ void GameCreator::RenderConsole()
 	auto match = m_consoleManager.GetFunctionMatch(command.c_str());
 	m_graphics->RenderSimpleText(match, 9, 11);
 }
-
 
 void GameCreator::PollSDLEvent()
 {
