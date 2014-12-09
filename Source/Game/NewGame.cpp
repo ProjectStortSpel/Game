@@ -1,7 +1,7 @@
 #include "GameCreator.h"
 
 #ifdef WIN32
-	#include <vld/vld.h>
+	#include <VLD/vld.h>
 #endif
 
 
