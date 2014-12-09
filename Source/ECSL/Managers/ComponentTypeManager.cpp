@@ -34,7 +34,6 @@ ComponentTypeManager::~ComponentTypeManager()
 
 		m_componentTypes->clear();
 		delete m_componentTypes;
-
 	}
 
 	if (m_componentTypeReader)
@@ -72,7 +71,7 @@ void ComponentTypeManager::LoadComponentTypesFromFile(const std::string& _filePa
 		AddComponentType(*components[i]);
 }
 
-ComponentType* ComponentTypeManager::GetComponentType(int _componentTypeId)
+ComponentType* ComponentTypeManager::GetComponentType(unsigned int _componentTypeId)
 {
 	auto it = m_componentTypes->find(_componentTypeId);
 	if (it != m_componentTypes->end())

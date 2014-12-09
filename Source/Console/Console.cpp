@@ -1,4 +1,5 @@
 #include "Console/Console.h"
+#include <string>
 
 using namespace Console;
 
@@ -110,6 +111,9 @@ void ConsoleManager::ExecuteCommand(const char* _command)
 	char* command = new char[strlen(_command)+1];
 	memcpy(command, _command, strlen(_command) + 1);
 
+	for (int n = 0; n < strlen(_command); ++n)
+		command[n] = tolower(command[n]);
+
 	char* args = strchr(command, ' ');
 
 	if (args != 0)
@@ -121,6 +125,12 @@ void ConsoleManager::ExecuteCommand(const char* _command)
 	{
 		args = command + strlen(command);
 	}
+
+
+	if (m_history.size() > 8)
+		m_history.erase(m_history.begin());
+
+	m_history.push_back(_command);
 
 	if (m_consoleHooks.find(command) != m_consoleHooks.end())
 	{
@@ -151,7 +161,15 @@ void ConsoleManager::AddCommand(const char* _name, ConsoleHook _hook)
 	}
 	else
 	{
-		m_consoleHooks[_name] = _hook;
+		char* name = new char[strlen(_name) + 1];
+		memcpy(name, _name, strlen(_name) + 1);
+
+		for (int n = 0; n < strlen(name); ++n)
+			name[n] = tolower(name[n]);
+
+		m_consoleHooks[name] = _hook;
+
+		delete name;
 	}
 
 }
@@ -164,4 +182,14 @@ void ConsoleManager::RemoveCommand(const char* _name)
 void ConsoleManager::ClearCommands()
 {
 	m_consoleHooks.clear();
+}
+
+std::vector<std::string> ConsoleManager::GetHistory()
+{
+	return m_history;
+}
+
+void ConsoleManager::AddMessage(const char* _message)
+{
+	m_history.push_back(_message);
 }

@@ -40,8 +40,8 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -135,7 +135,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProfileGuidedDatabase>$(OutDir)$(TargetName).pgd</ProfileGuidedDatabase>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;OpenGL32.lib;glew32.lib;glew32s.lib;lua53.lib;Input_$(PlatformTarget)d.lib;Network_$(PlatformTarget)d.lib;MPL_$(PlatformTarget)d.lib;ECSL_$(PlatformTarget)d.lib;Renderer_$(PlatformTarget)d.lib;LuaEmbedder_$(PlatformTarget)d.lib;Console_$(PlatformTarget)d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;glew32s.lib;lua53.lib;Input_$(PlatformTarget)d.lib;Network_$(PlatformTarget)d.lib;MPL_$(PlatformTarget)d.lib;ECSL_$(PlatformTarget)d.lib;Renderer_$(PlatformTarget)d.lib;LuaEmbedder_$(PlatformTarget)d.lib;Console_$(PlatformTarget)d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
@@ -162,7 +162,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
       <OptimizeReferences>true</OptimizeReferences>
       <ProfileGuidedDatabase>$(OutDir)$(TargetName).pgd</ProfileGuidedDatabase>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;OpenGL32.lib;glew32.lib;glew32s.lib;lua53.lib;Input_$(PlatformTarget).lib;Network_$(PlatformTarget).lib;MPL_$(PlatformTarget).lib;ECSL_$(PlatformTarget).lib;Renderer_$(PlatformTarget).lib;LuaEmbedder_$(PlatformTarget).lib;Console_$(PlatformTarget).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;glew32s.lib;lua53.lib;Input_$(PlatformTarget).lib;Network_$(PlatformTarget).lib;MPL_$(PlatformTarget).lib;ECSL_$(PlatformTarget).lib;Renderer_$(PlatformTarget).lib;LuaEmbedder_$(PlatformTarget).lib;Console_$(PlatformTarget).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
@@ -189,7 +189,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
       <OptimizeReferences>true</OptimizeReferences>
       <ProfileGuidedDatabase>$(OutDir)$(TargetName).pgd</ProfileGuidedDatabase>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;OpenGL32.lib;glew32.lib;glew32s.lib;lua53.lib;Input_$(PlatformTarget).lib;Network_$(PlatformTarget).lib;MPL_$(PlatformTarget).lib;ECSL_$(PlatformTarget).lib;Renderer_$(PlatformTarget).lib;LuaEmbedder_$(PlatformTarget).lib;Console_$(PlatformTarget).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;glew32s.lib;lua53.lib;Input_$(PlatformTarget).lib;Network_$(PlatformTarget).lib;MPL_$(PlatformTarget).lib;ECSL_$(PlatformTarget).lib;Renderer_$(PlatformTarget).lib;LuaEmbedder_$(PlatformTarget).lib;Console_$(PlatformTarget).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
@@ -198,26 +198,44 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Source\Game\Game.cpp" />
-    <ClCompile Include="..\..\..\Source\Game\GameServer.cpp" />
-    <ClCompile Include="..\..\..\Source\Game\TextInput.cpp" />
-
+    <ClCompile Include="..\..\..\Source\Game\GameConsole.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\GameCreator.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponent.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponentType.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaWorld.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaWorldCreator.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\Input\LuaInput.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\LuaBridge.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\Math\LuaMatrix.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\Renderer\LuaCamera.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\Renderer\LuaGraphicDevice.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\NewGame.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\Systems\CameraSystem.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\Systems\MovementSystem.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\Systems\RenderSystem.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\Systems\RotationSystem.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\TextInput.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Source\Game\TextInput.h" />
+    <ClInclude Include="..\..\..\Source\Game\GameConsole.h" />
+    <ClInclude Include="..\..\..\Source\Game\GameCreator.h" />
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponent.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponentType.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaWorld.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaWorldCreator.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Input\LuaInput.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h" />
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\Math\LuaMatrix.h" />
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\Renderer\LuaCamera.h" />
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\Renderer\LuaGraphicDevice.h" />
+    <ClInclude Include="..\..\..\Source\Game\Systems\CameraSystem.h" />
+    <ClInclude Include="..\..\..\Source\Game\Systems\MovementSystem.h" />
+    <ClInclude Include="..\..\..\Source\Game\Systems\RenderSystem.h" />
+    <ClInclude Include="..\..\..\Source\Game\Systems\RotationSystem.h" />
+    <ClInclude Include="..\..\..\Source\Game\TextInput.h" />
     <ClInclude Include="..\..\..\Source\Game\Timer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
