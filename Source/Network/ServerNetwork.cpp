@@ -133,6 +133,8 @@ ServerNetwork::ServerNetwork()
 	m_networkFunctions[NetTypeMessageId::ID_CONNECTION_DISCONNECTED] = std::bind(&ServerNetwork::NetConnectionDisconnected, this, NetworkHookPlaceholders);
 	m_networkFunctions[NetTypeMessageId::ID_PING] = std::bind(&ServerNetwork::NetPing, this, NetworkHookPlaceholders);
 	m_networkFunctions[NetTypeMessageId::ID_PONG] = std::bind(&ServerNetwork::NetPong, this, NetworkHookPlaceholders);
+
+	m_running = false;
 }
 
 ServerNetwork::~ServerNetwork()
@@ -151,6 +153,8 @@ bool ServerNetwork::Start(unsigned int _incomingPort, const char* _password, uns
 
 bool ServerNetwork::Start()
 {
+	m_running = false;
+
 	m_listenSocket = ISocket::CreateSocket();
 	m_listenSocket->SetNonBlocking(true);
 	m_listenSocket->Bind(m_incomingPort);
@@ -165,12 +169,13 @@ bool ServerNetwork::Start()
 	}
 
 	if (!m_listenSocket->Listen(128))
-		return false;
+		return m_running;
 
 	m_listenForConnectionsAlive = true;
 	m_listenForConnectionsThread = std::thread(&ServerNetwork::ListenForConnections, this);
 
-	return true;
+	m_running = true;
+	return m_running;
 }
 
 bool ServerNetwork::Stop()
@@ -210,7 +215,8 @@ bool ServerNetwork::Stop()
 	m_currentIntervallCounter.clear();
 	m_currentTimeOutIntervall.clear();
 
-	return true;
+	m_running = false;
+	return m_running;
 }
 
 void ServerNetwork::Broadcast(Packet* _packet, NetConnection _exclude)

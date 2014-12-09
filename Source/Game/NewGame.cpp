@@ -16,7 +16,7 @@ int main(int argc, char** argv)
 	newGame->InitializeGraphics();
 	newGame->InitializeInput();
 	newGame->InitializeWorld();
-	
+	newGame->InitializeNetwork();
 
 
 	newGame->StartGame();

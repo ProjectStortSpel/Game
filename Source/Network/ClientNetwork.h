@@ -35,6 +35,8 @@ namespace Network
 
 		const unsigned int GetPing(void) { return m_ping; }
 
+		bool IsConnected() { return m_connected; }
+
 		// Set the remote Ip Address the client will connect to
 		void SetRemoteAddress(const char* _ipAddress) { m_remoteAddress = _ipAddress; }
 		// Set the outgoing port which the client will connect to
@@ -109,6 +111,7 @@ namespace Network
 		std::string m_remoteAddress;
 		int m_outgoingPort;
 		bool m_socketBound;
+		bool m_connected;
 
 		ISocket* m_socket;
 

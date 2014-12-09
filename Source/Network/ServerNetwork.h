@@ -39,6 +39,9 @@ namespace Network
 		// Bind function which will trigger when another player disconnects from the server
 		void SetOnPlayerTimedOut(NetEvent _function);
 
+		bool IsRunning() { return m_running; }
+		unsigned int GetMaxConnections() { return m_maxConnections; }
+
 	private:
 		void ReceivePackets(ISocket* _socket);
 		void ListenForConnections(void);
@@ -75,6 +78,8 @@ namespace Network
 		std::map<NetConnection, int> m_currentIntervallCounter;
 
 		//std::map<NetConnection
+
+		bool m_running;
 
 		NetEvent m_onPlayerConnected;
 		NetEvent m_onPlayerDisconnected;

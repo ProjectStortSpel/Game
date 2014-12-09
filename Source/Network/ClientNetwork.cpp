@@ -16,6 +16,7 @@ ClientNetwork::ClientNetwork()
 	m_socketBound = false;
 	m_receivePacketsThreadAlive = false;
 	m_socket = 0;
+	m_connected = false;
 
 	m_maxTimeOutIntervall = 1.0f;
 	m_maxIntervallCounter = 30;
@@ -96,6 +97,9 @@ bool ClientNetwork::Connect()
 		}
 		return false;
 	}
+
+	m_connected = true;
+	m_socket->SetNonBlocking(true);
 	
 	uint64_t id = m_packetHandler.StartPack(NetTypeMessageId::ID_PASSWORD_ATTEMPT);
 	m_packetHandler.WriteString(id, m_password.c_str());

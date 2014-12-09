@@ -1,17 +1,17 @@
 #include "GameConsole.h"
 #include <string>
-GameConsole::GameConsole(Renderer::GraphicDevice* _graphics, ECSL::World* _world)
+GameConsole::GameConsole(Renderer::GraphicDevice* _graphics, ECSL::World* _world, Network::ClientNetwork* _client, Network::ServerNetwork* _server)
 {
 	m_graphics = _graphics;
 	m_world = _world;
+	m_client = _client;
+	m_server = _server;
 }
 
 GameConsole::~GameConsole()
 {
 
 }
-
-
 
 void GameConsole::SpawnModel(std::vector<Console::Argument>* _args)
 {
@@ -101,6 +101,53 @@ void GameConsole::ListCommands(std::vector<Console::Argument>* _args)
 	m_consoleManager->AddMessage("RemoveComponent - Id, ComponentType");
 }
 
+
+void GameConsole::HostServer(std::vector<Console::Argument>* _args)
+{
+	if (m_client->IsConnected())
+		m_client->Disconnect();
+
+	if (m_server->IsRunning())
+		m_server->Stop();
+
+
+	std::string pw = m_server->GetServerPassword();
+	unsigned int port = m_server->GetIncomingPort();
+	unsigned int connections = m_server->GetMaxConnections();
+
+	if (_args->size() == 1)
+	{
+		if ((*_args)[0].ArgType == Console::ArgumentType::Number)
+			port = (*_args)[0].Number;
+	}
+	else if (_args->size() == 3)
+	{
+		if ((*_args)[0].ArgType == Console::ArgumentType::Number &&
+			(*_args)[1].ArgType == Console::ArgumentType::Text &&
+			(*_args)[2].ArgType == Console::ArgumentType::Number)
+		{
+			port		= (*_args)[0].Number;
+			pw			= (*_args)[1].Text;
+			connections = (*_args)[2].Number;
+		}
+	}
+
+	m_server->Start(port, pw.c_str(), connections);
+
+	m_client->Connect("127.0.0.1", pw.c_str(), port, 0);
+}
+void GameConsole::StopServer(std::vector<Console::Argument>* _args)
+{
+}
+
+void GameConsole::ConnectClient(std::vector<Console::Argument>* _args)
+{
+}
+void GameConsole::DisconnectClient(std::vector<Console::Argument>* _args)
+{
+}
+
+
 void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 {
 	m_consoleManager = _consoleManager;
@@ -108,5 +155,6 @@ void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 	m_consoleManager->AddCommand("AddComponent", std::bind(&GameConsole::AddComponent, this, std::placeholders::_1));
 	m_consoleManager->AddCommand("ChangeComponent", std::bind(&GameConsole::ChangeComponent, this, std::placeholders::_1));
 	m_consoleManager->AddCommand("RemoveComponent", std::bind(&GameConsole::RemoveComponent, this, std::placeholders::_1));
+	m_consoleManager->AddCommand("Host", std::bind(&GameConsole::HostServer, this, std::placeholders::_1));
 	m_consoleManager->AddCommand("List", std::bind(&GameConsole::ListCommands, this, std::placeholders::_1));
 }
