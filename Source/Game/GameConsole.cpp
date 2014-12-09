@@ -93,11 +93,20 @@ void GameConsole::RemoveComponent(std::vector<Console::Argument>* _args)
 	m_world->RemoveComponentFrom(componentType, mId);
 }
 
+void GameConsole::ListCommands(std::vector<Console::Argument>* _args)
+{
+	m_consoleManager->AddMessage("LoadModel - Model, Path, X, Y, Z");
+	m_consoleManager->AddMessage("AddComponent - Id, ComponentType");
+	m_consoleManager->AddMessage("ChangeComponent - Id, ComponentType, X, Y, Z, ...");
+	m_consoleManager->AddMessage("RemoveComponent - Id, ComponentType");
+}
+
 void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 {
 	m_consoleManager = _consoleManager;
-	m_consoleManager->AddCommand("SpawnModel", std::bind(&GameConsole::SpawnModel, this, std::placeholders::_1));
+	m_consoleManager->AddCommand("LoadModel", std::bind(&GameConsole::SpawnModel, this, std::placeholders::_1));
 	m_consoleManager->AddCommand("AddComponent", std::bind(&GameConsole::AddComponent, this, std::placeholders::_1));
 	m_consoleManager->AddCommand("ChangeComponent", std::bind(&GameConsole::ChangeComponent, this, std::placeholders::_1));
 	m_consoleManager->AddCommand("RemoveComponent", std::bind(&GameConsole::RemoveComponent, this, std::placeholders::_1));
+	m_consoleManager->AddCommand("List", std::bind(&GameConsole::ListCommands, this, std::placeholders::_1));
 }
