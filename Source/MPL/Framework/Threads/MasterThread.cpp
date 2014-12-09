@@ -27,7 +27,7 @@ bool MasterThread::StartThread(const std::string& _name)
 
 void MasterThread::Execute()
 {
-	/* Can't start execution if thread isn't in waiting state */
+	/* Master thread must be in a waiting state to be able to start working. */
 	assert(m_state == ThreadState::Waiting);
 
 	m_state = ThreadState::Working;

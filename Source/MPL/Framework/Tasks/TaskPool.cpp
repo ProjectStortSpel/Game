@@ -11,7 +11,28 @@ TaskPool::TaskPool()
 
 TaskPool::~TaskPool()
 {
+	if (m_taskMutex)
+	{
+		SDL_DestroyMutex(m_taskMutex);
+		delete(m_taskMutex);
+		m_taskMutex = 0;
+	}
+	delete(m_tasks);
+}
 
+void TaskPool::AddTask(Task* _task)
+{
+	SDL_LockMutex(m_taskMutex);
+	m_tasks->push_back(_task);
+	SDL_UnlockMutex(m_taskMutex);
+}
+
+void TaskPool::AddTasks(const std::vector<Task*>& _tasks)
+{
+	SDL_LockMutex(m_taskMutex);
+	for (auto task : _tasks)
+		m_tasks->push_back(task);
+	SDL_UnlockMutex(m_taskMutex);
 }
 
 Task* TaskPool::GetTask()
@@ -27,4 +48,9 @@ Task* TaskPool::GetTask()
 		task = 0;
 	SDL_UnlockMutex(m_taskMutex);
 	return task;
+}
+
+unsigned int TaskPool::GetTaskCount()
+{
+	return m_tasks->size();
 }

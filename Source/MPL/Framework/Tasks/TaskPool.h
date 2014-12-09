@@ -13,8 +13,10 @@ namespace MPL
 		TaskPool();
 		~TaskPool();
 
-		void AddTasks(const std::vector<Task*>& _tasks) { m_tasks = new std::vector<Task*>(_tasks); }
+		void AddTask(Task* _task);
+		void AddTasks(const std::vector<Task*>& _tasks);
 		Task* GetTask();
+		unsigned int GetTaskCount();
 
 	private:
 		SDL_mutex* m_taskMutex;

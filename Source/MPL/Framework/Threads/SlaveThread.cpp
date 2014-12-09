@@ -40,10 +40,8 @@ bool SlaveThread::StartThread(const std::string& _name)
 
 void SlaveThread::Execute()
 {
-	/* Can't start execution if thread isn't in waiting state */
-	assert(m_state == ThreadState::Waiting);
-
-	m_state = ThreadState::Working;
+	if (m_state == ThreadState::Waiting)
+		m_state = ThreadState::Working;
 }
 
 int SlaveThread::BeginThreadLoop(void* _thread)
@@ -67,7 +65,6 @@ int SlaveThread::ThreadLoop()
 			/* Task fetched successfully */
 			if (currentTask)
 			{
-				/* PERFORM TASK */
 			}
 			/* No task available */
 			else

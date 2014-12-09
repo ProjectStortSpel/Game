@@ -18,9 +18,13 @@ namespace MPL
 
 		void CreateThreads();
 		void SafeKillThreads();
+		// All the threads including the main thread will perform the given tasks
 		void Execute(const std::vector<Task*>& _tasks);
+		// The slave threads will perform the given tasks. The main thread will continue as normal after adding the new tasks.
+		void ExecuteSlaves(const std::vector<Task*>& _tasks);
 
 		unsigned int GetThreadCount() { return m_threadCount; }
+		unsigned int GetTaskCount() { return m_taskPool->GetTaskCount(); }
 
 	private:
 		TaskManager();

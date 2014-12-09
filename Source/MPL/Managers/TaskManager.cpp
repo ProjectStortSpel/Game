@@ -9,7 +9,11 @@ TaskManager::TaskManager()
 
 TaskManager::~TaskManager()
 {
-
+	SafeKillThreads();
+	for (auto thread : *m_threads)
+		delete(thread);
+	delete(m_threads);
+	delete(m_taskPool);
 }
 
 TaskManager& TaskManager::GetInstance()
@@ -64,4 +68,14 @@ void TaskManager::Execute(const std::vector<Task*>& _tasks)
 	for (unsigned int threadIndex = 0; threadIndex < m_threadCount - 1;)
 		if (m_threads->at(threadIndex)->GetState() != ThreadState::Working)
 			threadIndex++;
+}
+
+void TaskManager::ExecuteSlaves(const std::vector<Task*>& _tasks)
+{
+	/* Add new tasks to the task pool */
+	m_taskPool->AddTasks(_tasks);
+
+	/* Tell the slave threads its time to work */
+	for (auto threadIt = m_threads->begin(); threadIt != m_threads->end() - 1; ++threadIt)
+		(*threadIt)->Execute();
 }

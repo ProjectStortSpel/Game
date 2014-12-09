@@ -1,6 +1,7 @@
 #include <SDL/SDL.h>
 #include <ECSL/ECSL.h>
 #include <functional>
+#include <deque>
 #include <atomic>
 #include "Input/InputWrapper.h"
 #include "Renderer/GraphicDevice.h"
@@ -87,6 +88,7 @@ private:
 SDL_mutex* mutex;
 SDL_sem* sem;
 
+
 class Test
 {
 public:
@@ -94,6 +96,18 @@ public:
 	float B;
 	std::string abc;
 };
+
+class Test2 : public Test
+{
+public:
+	std::string abcd;
+	float agsdg;
+	float srhijdfh;
+	float sdfiohj;
+};
+
+void* voidTest;
+Test* pointerTest;
 
 void lol()
 {
@@ -133,7 +147,11 @@ void lol()
 	if (!sem)
 		abort();
 
-	unsigned int num = 100000;
+	unsigned int num = 10000000;
+	Test2* test = new Test2();
+	test->agsdg = 2.0f;
+	pointerTest = test;
+	voidTest = test;
 
 	unsigned int sumValue1 = 0;
 	unsigned int sumValue2 = 0;
@@ -142,19 +160,19 @@ void lol()
 	start1 = std::chrono::system_clock::now();
 	for (unsigned int i = 0; i < num; ++i)
 	{
-		unsigned int abdc = SDL_GetCPUCount();
+		sumValue1 += ((Test2*)voidTest)->agsdg;
 	}
 	end1 = std::chrono::system_clock::now();
 
 	start2 = std::chrono::system_clock::now();
 	for (unsigned int i = 0; i < num; ++i)
 	{
-		unsigned int abcd = 8;
+		sumValue2 += ((Test2*)pointerTest)->agsdg;
 	}
 	end2 = std::chrono::system_clock::now();
 
 	start3 = std::chrono::system_clock::now();
-	for (unsigned int i = 0; i < 1000000; ++i)
+	for (unsigned int i = 0; i < 150; ++i)
 	{
 		//sumValue3 += (i % 1645);
 	}
