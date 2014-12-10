@@ -74,7 +74,7 @@ void GameCreator::InitializeWorld()
 {
 	//ECSL::ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("content/components");
 	ECSL::EntityTemplateManager::GetInstance().LoadComponentTypesFromDirectory("content/scripting/storaspel/templates");
-
+	
 	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
 	LuaEmbedder::AddObject<ECSL::WorldCreator>("WorldCreator", &worldCreator, "worldCreator");
 
