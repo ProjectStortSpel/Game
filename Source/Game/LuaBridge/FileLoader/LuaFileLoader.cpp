@@ -21,8 +21,9 @@ int LoadMap()
 	}
 	file.close();
 
-	int x = map.size() / y;
-
+	int x = 0;
+	if ( y != 0 )
+		 x = map.size() / y;
 
 	LuaEmbedder::PushInt(x);
 	LuaEmbedder::PushInt(y);
