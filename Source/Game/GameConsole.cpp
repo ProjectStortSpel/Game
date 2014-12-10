@@ -15,7 +15,6 @@ GameConsole::~GameConsole()
 
 void GameConsole::CreateObject(std::vector<Console::Argument>* _args)
 {
-
 	if (_args->at(0).ArgType != Console::ArgumentType::Text)
 		return;
 
@@ -26,6 +25,15 @@ void GameConsole::CreateObject(std::vector<Console::Argument>* _args)
 	std::stringstream ss;
 	ss << "Entity with id #" << mId << " has been created!";
 	m_consoleManager->AddMessage(ss.str().c_str());
+
+	if (_args->size() > 1)
+	{
+		float* objectPosition;
+		objectPosition = (float*)m_world->GetComponent(mId, "Position", 0);
+		objectPosition[0] = _args->at(1).Number;
+		objectPosition[1] = _args->at(2).Number;
+		objectPosition[2] = _args->at(3).Number;
+	}
 }
 
 void GameConsole::RemoveObject(std::vector<Console::Argument>* _args)
