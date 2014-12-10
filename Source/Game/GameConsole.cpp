@@ -162,6 +162,16 @@ void GameConsole::ConnectClient(std::vector<Console::Argument>* _args)
 	{
 		if ((*_args)[0].ArgType == Console::ArgumentType::Text)
 			ip = (*_args)[0].Text;
+		
+	}
+	else if (_args->size() == 2)
+	{
+		if ((*_args)[0].ArgType == Console::ArgumentType::Text &&
+			(*_args)[1].ArgType == Console::ArgumentType::Number)
+		{
+			ip = (*_args)[0].Text;
+			port = (*_args)[1].Number;
+		}
 	}
 	else if (_args->size() == 3)
 	{

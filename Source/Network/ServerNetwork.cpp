@@ -151,7 +151,7 @@ ServerNetwork::ServerNetwork()
 	(*m_networkFunctions)[NetTypeMessageId::ID_PING] = std::bind(&ServerNetwork::NetPing, this, NetworkHookPlaceholders);
 	(*m_networkFunctions)[NetTypeMessageId::ID_PONG] = std::bind(&ServerNetwork::NetPong, this, NetworkHookPlaceholders);
 
-	m_running = false;
+	m_running = new bool(false);
 }
 
 ServerNetwork::~ServerNetwork()
@@ -206,7 +206,7 @@ bool ServerNetwork::Start()
 	*m_listenForConnectionsAlive = true;
 	*m_listenForConnectionsThread = std::thread(&ServerNetwork::ListenForConnections, this);
 
-	m_running = true;
+	*m_running = true;
 	return m_running;
 }
 

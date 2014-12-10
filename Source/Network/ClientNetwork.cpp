@@ -26,7 +26,7 @@ ClientNetwork::ClientNetwork()
 
 	*m_incomingPort = 0;
 	m_socket = 0;
-	m_connected = false;
+	m_connected = new bool(false);
 
 	*m_maxTimeOutIntervall = 1.0f;
 	*m_maxIntervallCounter = 30;
@@ -83,6 +83,8 @@ ClientNetwork::~ClientNetwork()
 	SAFE_DELETE(m_receiveTime);
 	SAFE_DELETE(m_currentTimeOutIntervall);
 	SAFE_DELETE(m_currentIntervallCounter);
+	SAFE_DELETE(m_connected);
+	
 
 	SAFE_DELETE(m_onConnectedToServer);
 	SAFE_DELETE(m_onDisconnectedFromServer);
@@ -130,14 +132,14 @@ bool ClientNetwork::Connect()
 	}
 
 	bool connected = false;
-	for (int i = 0; i < 5; ++i)
-	{
+	//for (int i = 0; i < 5; ++i)
+	//{
 		connected = m_socket->Connect(m_remoteAddress->c_str(), *m_outgoingPort);
-		if (connected)
-			break;
+		//if (connected)
+		//	break;
 
-		NetSleep(1500);
-	}
+		//NetSleep(1500);
+	//}
 
 	if (!connected)
 	{
@@ -148,9 +150,9 @@ bool ClientNetwork::Connect()
 		return false;
 	}
 
-	m_connected = true;
+	*m_connected = true;
 	m_socket->SetNonBlocking(true);
-	
+
 	uint64_t id = m_packetHandler->StartPack(NetTypeMessageId::ID_PASSWORD_ATTEMPT);
 	m_packetHandler->WriteString(id, m_password->c_str());
 	auto packet = m_packetHandler->EndPack(id);

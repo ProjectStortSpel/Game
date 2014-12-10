@@ -226,6 +226,9 @@ std::vector<std::string> ConsoleManager::GetHistory()
 
 void ConsoleManager::AddMessage(const char* _message)
 {
+	if (m_history.size() > 8)
+		m_history.erase(m_history.begin());
+
 	m_history.push_back(_message);
 }
 

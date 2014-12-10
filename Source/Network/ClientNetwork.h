@@ -35,7 +35,7 @@ namespace Network
 
 		const float GetPing(void) { return *m_ping; }
 
-		bool IsConnected() { return m_connected; }
+		bool IsConnected() { return *m_connected; }
 
 		// Set the remote Ip Address the client will connect to
 		void SetRemoteAddress(const char* _ipAddress) { *m_remoteAddress = _ipAddress; }
