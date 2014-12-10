@@ -202,6 +202,30 @@ void GameConsole::DisconnectClient(std::vector<Console::Argument>* _args)
 		m_client->Disconnect();
 }
 
+void GameConsole::SetDebugTexture(std::vector<Console::Argument>* _args)
+{
+	if (_args->size() == 0)
+		return;
+
+	if ((*_args)[0].ArgType == Console::ArgumentType::Text)
+	{
+		if (strcmp((*_args)[0].Text, "standard") == 0)
+			m_graphics->SetDebugTexFlag(0);
+
+		else if (strcmp((*_args)[0].Text, "diffuse") == 0)
+			m_graphics->SetDebugTexFlag(1);
+
+		else if (strcmp((*_args)[0].Text, "normal") == 0)
+			m_graphics->SetDebugTexFlag(2);
+
+		else if (strcmp((*_args)[0].Text, "specular") == 0)
+			m_graphics->SetDebugTexFlag(3);
+
+		else if (strcmp((*_args)[0].Text, "glow") == 0)
+			m_graphics->SetDebugTexFlag(4);
+	}
+}
+
 
 void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 {
@@ -216,4 +240,5 @@ void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 	m_consoleManager->AddCommand("Connect", std::bind(&GameConsole::ConnectClient, this, std::placeholders::_1));
 	m_consoleManager->AddCommand("Disconnect", std::bind(&GameConsole::DisconnectClient, this, std::placeholders::_1));
 	m_consoleManager->AddCommand("List", std::bind(&GameConsole::ListCommands, this, std::placeholders::_1));
+	m_consoleManager->AddCommand("DebugRender", std::bind(&GameConsole::SetDebugTexture, this, std::placeholders::_1));
 }
