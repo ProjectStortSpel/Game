@@ -4,14 +4,13 @@
 #include "Console/Console.h"
 #include "Renderer/GraphicDevice.h"
 #include "ECSL/ECSL.h"
-#include "Network/ServerNetwork.h"
-#include "Network/ClientNetwork.h"
+#include "NetworkInstance.h"
 #include "Game/Network/NetworkHelper.h"
 
 class GameConsole
 {
 public:
-	GameConsole(Renderer::GraphicDevice* _graphics, ECSL::World* _world, Network::ClientNetwork* _client, Network::ServerNetwork* _server);
+	GameConsole(Renderer::GraphicDevice* _graphics, ECSL::World* _world);
 	~GameConsole();
 
 	void SetupHooks(Console::ConsoleManager* _consoleManager);
@@ -33,10 +32,6 @@ private:
 	ECSL::World*	m_world;
 	Renderer::GraphicDevice* m_graphics;
 	Console::ConsoleManager* m_consoleManager;
-	
-	Network::ClientNetwork*		m_client;
-	Network::ServerNetwork*		m_server;
-
 	NetworkHelper* m_networkHelper;
 
 };

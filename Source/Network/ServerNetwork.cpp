@@ -204,13 +204,13 @@ bool ServerNetwork::Start()
 	}
 
 	if (!m_listenSocket->Listen(128))
-		return m_running;
+		return *m_running;
 
 	*m_listenForConnectionsAlive = true;
 	*m_listenForConnectionsThread = std::thread(&ServerNetwork::ListenForConnections, this);
 
 	*m_running = true;
-	return m_running;
+	return *m_running;
 }
 
 bool ServerNetwork::Stop()
@@ -250,8 +250,8 @@ bool ServerNetwork::Stop()
 	m_currentIntervallCounter->clear();
 	m_currentTimeOutIntervall->clear();
 
-	m_running = false;
-	return m_running;
+	*m_running = false;
+	return *m_running;
 }
 
 void ServerNetwork::Broadcast(Packet* _packet, NetConnection _exclude)

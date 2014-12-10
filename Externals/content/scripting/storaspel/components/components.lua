@@ -74,6 +74,12 @@ NetworkComponent.Name = "Network"
 NetworkComponent.TableType = TableType.Map
 worldCreator:AddComponentType(NetworkComponent)
 
+-- Name Component
+local NameComponent = ComponentType()
+NameComponent.Name = "Name"
+NameComponent.TableType = TableType.Map
+NameComponent:AddVariable("Username", ByteSize.Text)
+worldCreator:AddComponentType(NameComponent)
 -- Direction Component
 local DirectionComponent = ComponentType()
 DirectionComponent.Name = "Direction"
