@@ -118,7 +118,6 @@ void GraphicDevice::Render()
 	mat4 viewMatrix = *m_camera->GetViewMatrix();
 
 	//------Render scene (for deferred)-----------------------------------------------------------
-	
 	//-- DRAW MODELS
 	for (int i = 0; i < m_modelsDeferred.size(); i++)
 	{
