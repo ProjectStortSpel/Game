@@ -35,6 +35,8 @@ namespace Network
 
 		const float GetPing(void) { return *m_ping; }
 
+		bool IsConnected() { return *m_connected; }
+
 		// Set the remote Ip Address the client will connect to
 		void SetRemoteAddress(const char* _ipAddress) { *m_remoteAddress = _ipAddress; }
 		// Set the outgoing port which the client will connect to
@@ -111,6 +113,7 @@ namespace Network
 
 		std::thread* m_receivePacketsThread;
 		bool* m_receivePacketsThreadAlive;
+		bool* m_connected;
 
 		float* m_ping;
 		float* m_sendTime;

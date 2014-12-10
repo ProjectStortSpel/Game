@@ -6,8 +6,7 @@
 using namespace ECSL;
 
 SystemManager::SystemManager(DataManager* _dataManager, std::vector<SystemWorkGroup*>* _systemWorkGroups) 
-:	m_dataManager(_dataManager), m_systemWorkGroups(_systemWorkGroups)
-	//m_entitiesToAdd(new std::vector<unsigned int>()), m_entitiesToRemove(new std::vector<unsigned int>())
+:	m_nextSystemId(-1), m_dataManager(_dataManager), m_systemWorkGroups(_systemWorkGroups)
 {
 
 }
@@ -18,8 +17,6 @@ SystemManager::~SystemManager()
 		delete m_systemWorkGroups->at(n);
 
 	delete m_systemWorkGroups;
-	//delete m_entitiesToAdd;
-	//delete m_entitiesToRemove;
 }
 
 void SystemManager::InitializeSystems()
@@ -57,7 +54,7 @@ void SystemManager::AddEntityToSystem(unsigned int _entityId, System* _system)
 {
 	if (!_system->HasEntity(_entityId))
 	{
-		_system->AddEntity(_entityId);
+		_system->AddEntityToSystem(_entityId);
 		_system->OnEntityAdded(_entityId);
 	}
 }
@@ -66,7 +63,7 @@ void SystemManager::RemoveEntityFromSystem(unsigned int _entityId, System* _syst
 {
 	if (_system->HasEntity(_entityId))
 	{
-		_system->RemoveEntity(_entityId);
+		_system->RemoveEntityFromSystem(_entityId);
 		_system->OnEntityRemoved(_entityId);
 	}
 }
@@ -76,13 +73,17 @@ void SystemManager::SystemEntitiesUpdate()
 	const std::vector<unsigned int>* changedEntities = m_dataManager->GetChangedEntities();
 	EntityTable* entityTable = m_dataManager->GetEntityTable();
 
-	/* Loop through every system see if changed entities passes the filter */
-	for (auto workGroup : *m_systemWorkGroups)
+	/*	Loop through all entities	*/
+	for (int n = 0; n < changedEntities->size(); ++n)
 	{
-		for (auto system : *workGroup->GetSystems())
+		unsigned int entityId = changedEntities->at(n);
+
+		/* Loop through every system see if changed entities passes the filter */
+		for (auto workGroup : *m_systemWorkGroups)
 		{
-			for (auto entityId : *changedEntities)
+			for (auto system : *workGroup->GetSystems())
 			{
+
 				/* Try add entity to system if it passes filters, else try to remove it */
 				if (entityTable->EntityPassFilters(entityId, system->GetMandatoryFilter()->GetBitSet(), system->GetRequiresOneOfFilter()->GetBitSet(), system->GetExcludedFilter()->GetBitSet()))
 					AddEntityToSystem(entityId, system);

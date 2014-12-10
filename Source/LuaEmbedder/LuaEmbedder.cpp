@@ -18,7 +18,8 @@ namespace LuaEmbedder
   
   void Load(const std::string& filepath)
   {
-    assert(!luaL_dofile(L, filepath.c_str()));
+	  bool isRight = luaL_dofile(L, filepath.c_str());
+    assert(!isRight);
     lua_gc(L, LUA_GCCOLLECT, 0);
   }
   void CallFunction(const std::string& name, int argumentCount, const std::string& library)
@@ -180,6 +181,67 @@ namespace LuaEmbedder
   void PushString(const std::string& value)
   {
     lua_pushstring(L, value.c_str());
+  }
+  void PushNull()
+  {
+    lua_pushnil(L);
+  }
+  void PushFloatArray(const float* values, unsigned int count)
+  {
+    lua_newtable(L);
+    for (unsigned int i = 0; i < count; ++i)
+    {
+      lua_pushnumber(L, values[i]);
+      lua_rawseti(L, -2, i + 1);
+    }
+    lua_pushliteral(L, "n");
+    lua_pushinteger(L, (int)count);
+    lua_rawset(L, -3);
+  }
+  void PushIntArray(const int* values, unsigned int count)
+  {
+    lua_newtable(L);
+    for (unsigned int i = 0; i < count; ++i)
+    {
+      lua_pushinteger(L, values[i]);
+      lua_rawseti(L, -2, i + 1);
+    }
+    lua_pushliteral(L, "n");
+    lua_pushinteger(L, (int)count);
+    lua_rawset(L, -3);
+  }
+  void PushUnsignedIntArray(const unsigned int* values, unsigned int count)
+  {
+    lua_newtable(L);
+    for (unsigned int i = 0; i < count; ++i)
+    {
+      lua_pushinteger(L, (int)values[i]);
+      lua_rawseti(L, -2, i + 1);
+    }
+    lua_pushliteral(L, "n");
+    lua_pushinteger(L, (int)count);
+    lua_rawset(L, -3);
+  }
+  void PushBoolArray(const bool* values, unsigned int count)
+  {
+    lua_newtable(L);
+    for (unsigned int i = 0; i < count; ++i)
+    {
+      lua_pushboolean(L, (int)values[i]);
+      lua_rawseti(L, -2, i + 1);
+    }
+    lua_pushliteral(L, "n");
+    lua_pushinteger(L, (int)count);
+    lua_rawset(L, -3);
+  }
+  void PushStringArray(const std::string* values, unsigned int count)
+  {
+    lua_newtable(L);
+    for (unsigned int i = 0; i < count; ++i)
+    {
+      lua_pushstring(L, values[i].c_str());
+      lua_rawseti(L, -2, i + 1);
+    }
   }
   
   bool IsFloat(int index)

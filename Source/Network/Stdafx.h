@@ -10,7 +10,7 @@
 
 // Includes
 #ifdef WIN32
-#include <VLD/vld.h>
+//#include <VLD/vld.h>
 #else
 #include <unistd.h>
 #endif

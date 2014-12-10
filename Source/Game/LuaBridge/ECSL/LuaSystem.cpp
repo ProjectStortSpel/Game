@@ -1,8 +1,6 @@
 #include "LuaSystem.h"
 #include "LuaEmbedder/LuaEmbedder.h"
-
-#include <cstdio>
-#include <stdio.h>
+#include "LuaComponent.h"
 
 namespace LuaBridge
 {
@@ -12,16 +10,18 @@ namespace LuaBridge
   {
     LuaEmbedder::EmbedClass<LuaSystem>("System", false);
     LuaEmbedder::EmbedClassFunction<LuaSystem>("System", "AddComponentTypeToFilter", &LuaSystem::AddComponentTypeToFilter);
+    LuaEmbedder::EmbedClassFunction<LuaSystem>("System", "GetEntities", &LuaSystem::GetEntities);
+    LuaEmbedder::EmbedClassFunction<LuaSystem>("System", "GetComponent", &LuaSystem::GetComponent);
     
     LuaEmbedder::AddInt("Mandatory", (int)ECSL::FilterType::Mandatory, "FilterType");
     LuaEmbedder::AddInt("RequiresOneOf", (int)ECSL::FilterType::RequiresOneOf, "FilterType");
     LuaEmbedder::AddInt("Excluded", (int)ECSL::FilterType::Excluded, "FilterType");
   }
   
-  void LuaSystem::Run(float _dt)
+  void LuaSystem::Update(float _dt)
   {
     LuaEmbedder::PushFloat(_dt);
-    LuaEmbedder::CallMethod<LuaSystem>("System", "Run", this, 1);
+    LuaEmbedder::CallMethod<LuaSystem>("System", "Update", this, 1);
   }
 
   void LuaSystem::Initialize()
@@ -41,11 +41,48 @@ namespace LuaBridge
     LuaEmbedder::CallMethod<LuaSystem>("System", "OnEntityRemoved", this, 1);
   }
   
+  int LuaSystem::GetComponent()
+  {
+    ECSL::DataLocation dataLocation;
+    unsigned int entityId = (unsigned int)LuaEmbedder::PullInt(1);
+    if (LuaEmbedder::IsInt(2))
+    {
+      unsigned int componentTypeId = (unsigned int)LuaEmbedder::PullInt(2);
+      unsigned int index = (unsigned int)LuaEmbedder::PullInt(3);
+      dataLocation = System::GetComponent(entityId, componentTypeId, index);
+    }
+    else
+    {
+      std::string componentType = LuaEmbedder::PullString(2);
+      if (LuaEmbedder::IsInt(3))
+      {
+	unsigned int index = (unsigned int)LuaEmbedder::PullInt(3);
+	dataLocation = System::GetComponent(entityId, componentType, index);
+      }
+      else
+      {
+	std::string variableName = LuaEmbedder::PullString(3);
+	dataLocation = System::GetComponent(entityId, componentType, variableName);
+      }
+    }
+    LuaComponent* component = new LuaComponent();
+    component->SetDataLocation(dataLocation);
+    LuaEmbedder::PushObject<LuaComponent>("Component", component, true);
+    return 1;
+  }
+
+  
   int LuaSystem::AddComponentTypeToFilter()
   {
     std::string componentType = LuaEmbedder::PullString(1);
     ECSL::FilterType filterType = (ECSL::FilterType)LuaEmbedder::PullInt(2);
     System::AddComponentTypeToFilter(componentType, filterType);
     return 0;
+  }
+  
+  int LuaSystem::GetEntities()
+  {
+    LuaEmbedder::PushUnsignedIntArray(System::GetEntities()->data(), System::GetEntities()->size());
+    return 1;
   }
 }

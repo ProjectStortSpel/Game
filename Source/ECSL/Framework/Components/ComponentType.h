@@ -50,7 +50,7 @@ namespace ECSL
 		inline const std::string& GetName() const									{ return m_name; }
 		inline const TableType GetTableType() const									{ return m_tableType; }
 		inline const int GetByteSize() const										{ return m_byteSize; }
-		inline const std::map<std::string, ComponentVariable>& GetVariables() const	{ return m_variables; }
+		inline const std::map<std::string, ComponentVariable>* GetVariables() const	{ return &m_variables; }
 	};
 }
 

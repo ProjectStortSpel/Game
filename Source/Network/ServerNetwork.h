@@ -39,6 +39,9 @@ namespace Network
 		// Bind function which will trigger when another player disconnects from the server
 		void SetOnPlayerTimedOut(NetEvent _function);
 
+		bool IsRunning() { return *m_running; }
+		unsigned int GetMaxConnections() { return *m_maxConnections; }
+
 	private:
 		void ReceivePackets(ISocket* _socket);
 		void ListenForConnections(void);
@@ -78,6 +81,8 @@ namespace Network
 		NetEvent* m_onPlayerConnected;
 		NetEvent* m_onPlayerDisconnected;
 		NetEvent* m_onPlayerTimedOut;
+		bool* m_running;
+
 
 
 	};
