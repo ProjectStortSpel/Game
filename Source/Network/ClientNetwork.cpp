@@ -178,7 +178,14 @@ void ClientNetwork::Disconnect()
 	if (m_receivePacketsThread->joinable())	
 		m_receivePacketsThread->join();
 
-	SAFE_DELETE(m_socket);
+	if (m_socket)
+	{
+		if (*m_onDisconnectedFromServer)
+			(*m_onDisconnectedFromServer)(m_socket->GetNetConnection());
+
+		delete m_socket;
+		m_socket = 0;
+	}
 	*m_socketBound = 0;
 
 	if (NET_DEBUG)

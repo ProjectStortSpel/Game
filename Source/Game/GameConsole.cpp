@@ -108,6 +108,10 @@ void GameConsole::ListCommands(std::vector<Console::Argument>* _args)
 	m_consoleManager->AddMessage("Stop");
 	m_consoleManager->AddMessage("Connect - Ip-address, Port, Password");
 	m_consoleManager->AddMessage("Disconnect");
+
+	char* name = m_world->GetComponent(0, "Name", "Username");
+
+	m_consoleManager->AddMessage(name);
 }
 
 void GameConsole::HostServer(std::vector<Console::Argument>* _args)

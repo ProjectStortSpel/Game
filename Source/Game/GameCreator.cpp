@@ -60,6 +60,7 @@ void GameCreator::InitializeNetwork()
 {
 	NetworkInstance::InitClient();
 	NetworkInstance::InitServer();
+
 }
 
 void GameCreator::InitializeLua()
@@ -87,12 +88,16 @@ void GameCreator::InitializeWorld()
 
 	//worldCreator.AddSystemGroup();
 	//worldCreator.AddSystemToCurrentGroup<MovementSystem>();
+
+	//NetworkMessagesSystem* nms = new NetworkMessagesSystem();
+	//nms->SetConsole(&m_consoleManager);
+
 	worldCreator.AddLuaSystemToCurrentGroup(new RotationSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new CameraSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new ModelSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new ReceivePacketSystem());
-
+	//worldCreator.AddLuaSystemToCurrentGroup(nms);
 	
 	m_world = worldCreator.CreateWorld(10000);
 	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
@@ -109,12 +114,12 @@ void GameCreator::StartGame()
 	m_console = new GameConsole(m_graphics, m_world);
 
 	m_consoleInput.SetTextHook(std::bind(&Console::ConsoleManager::ExecuteCommand, &m_consoleManager, std::placeholders::_1));
-	m_consoleInput.SetActive(true);
+	m_consoleInput.SetActive(false);
+	m_input->GetKeyboard()->StopTextInput();
 
 	/*	Hook console	*/
 	m_console->SetupHooks(&m_consoleManager);
 	
-
 	Timer gameTimer;
 	while (true)
 	{
@@ -159,9 +164,6 @@ void GameCreator::UpdateConsole()
 			m_input->GetKeyboard()->ResetTextInput();
 		}
 	}
-
-
-
 
 	// MOVE ?!
 	if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_UP) == Input::InputState::PRESSED)
@@ -239,3 +241,6 @@ void GameCreator::PollSDLEvent()
 		}
 	}
 }
+
+
+
