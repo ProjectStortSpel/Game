@@ -45,6 +45,9 @@
     <None Include="..\..\..\Externals\content\shaders\fullscreen.ps" />
     <None Include="..\..\..\Externals\content\shaders\fullscreen.vs" />
     <None Include="..\..\..\Externals\content\shaders\SimpleText.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\skyboxgs.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\skyboxps.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\skyboxvs.glsl" />
     <None Include="..\..\..\Externals\content\shaders\VSDeferredPass1.glsl" />
     <None Include="..\..\..\Externals\content\shaders\VSForwardShader.glsl" />
   </ItemGroup>

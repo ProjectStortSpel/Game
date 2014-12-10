@@ -41,11 +41,17 @@ namespace ECSL
 
 	DataLocation DataMap::GetData(unsigned const int _id)
 	{
+		if ((*m_dataMap).find(_id) == (*m_dataMap).end())
+			(*m_dataMap)[_id] = new char[m_bytesPerRow];
+
 		return (*m_dataMap)[_id];
 	}
 
 	DataLocation DataMap::GetData(unsigned const int _id, unsigned const int _index)
 	{
+		if ((*m_dataMap).find(_id) == (*m_dataMap).end())
+			(*m_dataMap)[_id] = new char[m_bytesPerRow];
+
 		return (*m_dataMap)[_id] + _index;
 	}
 

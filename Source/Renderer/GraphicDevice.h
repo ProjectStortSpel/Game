@@ -16,6 +16,20 @@ namespace Renderer
 #define RENDER_DEFERRED 0
 #define RENDER_FORWARD  1
 
+	struct Instance
+	{
+		int id;
+		bool active;
+		mat4* modelMatrix;
+		
+		Instance(int _id, bool _active, mat4* _model)
+		{
+			id = _id;
+			active = _active;
+			modelMatrix = _model;
+		}
+	};
+
 	struct Model
 	{
 		bool operator> (const Model &m) { return bufferPtr->getVAO() > m.bufferPtr->getVAO() ? true : false; }
@@ -27,22 +41,24 @@ namespace Renderer
 		Model(){}
 		Model(int ID, Buffer* buffer, GLuint tex, GLuint nor, GLuint spe)
 		{
-			modelID = ID;
-			active = true;
+			//modelID = ID;
+			//active = true;
 			bufferPtr = buffer;
 			texID = tex;
 			norID = nor;
 			speID = spe;
 		}
-		int modelID;
-		bool active;
+		//int modelID;
+		//bool active;
 		Buffer* bufferPtr;
 		GLuint texID;
 		GLuint norID;
 		GLuint speID;
 
-		glm::mat4* modelMatrix;	// GÖR DETTA TILL EN PEKARE NÄR E/C FUNGERAR
+		std::vector<Instance> instances;
 	};
+
+	
 
 	struct GLTimerValue
 	{
@@ -79,7 +95,7 @@ namespace Renderer
 
 		// MODELLOADER
 		bool PreLoadModel(std::string _dir, std::string _file, int _renderType = RENDER_DEFERRED);
-		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED);
+		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_FORWARD);
 		bool RemoveModel(int _id);
 		bool ActiveModel(int _id, bool _active);
 		bool ChangeModelTexture(int _id, std::string _fileDir);
@@ -116,6 +132,7 @@ namespace Renderer
 		int	m_clientWidth, m_clientHeight;
 
 		// Image buffers
+		GLuint m_skyBox;
 		GLuint m_outputImage;
 		GLuint m_debuggText;
 		GLuint m_depthBuf, m_normTex, m_colorTex;
@@ -125,6 +142,7 @@ namespace Renderer
 
 		// Shaders
 		Shader m_fullScreenShader;
+		Shader m_skyBoxShader;
 		Shader m_deferredShader1, m_compDeferredPass2Shader;
 		Shader m_forwardShader;
 

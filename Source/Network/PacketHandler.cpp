@@ -11,49 +11,60 @@ using namespace Network;
 
 PacketHandler::PacketHandler()
 {
+	m_packetSendInfoMap = new std::map<uint64_t, PacketSendInfo*>();
+	m_packetReceiveInfoMap = new std::map<uint64_t, PacketReceiveInfo*>();
+
+	m_sendMutex = new std::mutex();
+	m_receiveMutex = new std::mutex();
+
 }
 
 PacketHandler::~PacketHandler()
 {
-	m_sendMutex.lock();
-	for (auto iterator = m_packetSendInfoMap.begin(); iterator != m_packetSendInfoMap.end(); iterator++)
+	m_sendMutex->lock();
+	for (auto iterator = m_packetSendInfoMap->begin(); iterator != m_packetSendInfoMap->end(); iterator++)
 	{
 		SAFE_DELETE(iterator->second);
 	}
-	m_packetSendInfoMap.clear();
-	m_sendMutex.unlock();
+	m_packetSendInfoMap->clear();
+	m_sendMutex->unlock();
 
-	m_receiveMutex.lock();
-	for (auto iterator = m_packetReceiveInfoMap.begin(); iterator != m_packetReceiveInfoMap.end(); iterator++)
+	m_receiveMutex->lock();
+	for (auto iterator = m_packetReceiveInfoMap->begin(); iterator != m_packetReceiveInfoMap->end(); iterator++)
 	{
 		SAFE_DELETE(iterator->second->PacketData);
 		SAFE_DELETE(iterator->second);
 	}
-	m_packetReceiveInfoMap.clear();
-	m_receiveMutex.unlock();
+	m_packetReceiveInfoMap->clear();
+	m_receiveMutex->unlock();
+
+	SAFE_DELETE(m_packetSendInfoMap);
+	SAFE_DELETE(m_packetReceiveInfoMap);
+	SAFE_DELETE(m_sendMutex);
+	SAFE_DELETE(m_receiveMutex);
 }
 
 PacketHandler::PacketSendInfo* PacketHandler::GetPacketSendInfo(uint64_t _id)
 {
 	PacketHandler::PacketSendInfo* result = 0;
-	m_sendMutex.lock();
-	if (m_packetSendInfoMap.find(_id) != m_packetSendInfoMap.end())
+	m_sendMutex->lock();
+	if (m_packetSendInfoMap->find(_id) != m_packetSendInfoMap->end())
 	{
-		result = m_packetSendInfoMap[_id];
+		result = m_packetSendInfoMap->at(_id);
 	}
-	m_sendMutex.unlock();
+	m_sendMutex->unlock();
 	return result;
 }
 
 PacketHandler::PacketReceiveInfo* PacketHandler::GetPacketReceiveInfo(uint64_t _id)
 {
 	PacketHandler::PacketReceiveInfo* result = 0;
-	m_receiveMutex.lock();
-	if (m_packetReceiveInfoMap.find(_id) != m_packetReceiveInfoMap.end())
+	m_receiveMutex->lock();
+	if (m_packetReceiveInfoMap->find(_id) != m_packetReceiveInfoMap->end())
 	{
-		result = m_packetReceiveInfoMap[_id];
+		result = m_packetReceiveInfoMap->at(_id);
 	}
-	m_receiveMutex.unlock();
+	m_receiveMutex->unlock();
 	return result;
 }
 
@@ -82,9 +93,9 @@ uint64_t PacketHandler::StartPack(const char* _functionName)
 	PacketSendInfo* psi = new PacketSendInfo();
 	uint64_t id = (uint64_t)psi;
 	
-	m_sendMutex.lock();
-	m_packetSendInfoMap[id] = psi;
-	m_sendMutex.unlock();
+	m_sendMutex->lock();
+	(*m_packetSendInfoMap)[id] = psi;
+	m_sendMutex->unlock();
 
 	psi->Position = psi->Data;
 
@@ -98,9 +109,9 @@ uint64_t PacketHandler::StartPack(char _identifier)
 	PacketSendInfo* psi = new PacketSendInfo();
 	uint64_t id = (uint64_t)psi;
 
-	m_sendMutex.lock();
-	m_packetSendInfoMap[id] = psi;
-	m_sendMutex.unlock();
+	m_sendMutex->lock();
+	(*m_packetSendInfoMap)[id] = psi;
+	m_sendMutex->unlock();
 
 	psi->Position = psi->Data;
 	WriteByte(id, _identifier);
@@ -116,11 +127,11 @@ Packet* PacketHandler::EndPack(uint64_t _id)
 	Packet* p = new Packet();
 	p->Data = new unsigned char[length];
 	memcpy(p->Data, psi->Data, length);
-	p->Length = length;
+	*p->Length = length;
 
-	m_sendMutex.lock();
-	m_packetSendInfoMap.erase(_id);
-	m_sendMutex.unlock();
+	m_sendMutex->lock();
+	m_packetSendInfoMap->erase(_id);
+	m_sendMutex->unlock();
 	SAFE_DELETE(psi);
 
 	return p;
@@ -133,9 +144,9 @@ uint64_t PacketHandler::StartUnpack(Packet* _packet)
 	pri->Position = pri->PacketData->Data;
 	uint64_t id = (uint64_t)pri;
 
-	m_receiveMutex.lock();
-	m_packetReceiveInfoMap[id] = pri;
-	m_receiveMutex.unlock();
+	m_receiveMutex->lock();
+	(*m_packetReceiveInfoMap)[id] = pri;
+	m_receiveMutex->unlock();
 
 	char type = ReadByte(id);
 
@@ -151,9 +162,9 @@ void PacketHandler::EndUnpack(uint64_t _id)
 
 	if (pri)
 	{
-		m_receiveMutex.lock();
-		m_packetReceiveInfoMap.erase(_id);
-		m_receiveMutex.unlock();
+		m_receiveMutex->lock();
+		m_packetReceiveInfoMap->erase(_id);
+		m_receiveMutex->unlock();
 		SAFE_DELETE(pri->PacketData);
 		SAFE_DELETE(pri);
 	}
@@ -230,7 +241,7 @@ char PacketHandler::ReadByte(uint64_t _id)
 	PacketReceiveInfo* pri = GetPacketReceiveInfo(_id);
 	if (pri)
 	{
-		if (!IsOutOfBounds(pri->PacketData->Data, pri->Position + sizeof(char), pri->PacketData->Length))
+		if (!IsOutOfBounds(pri->PacketData->Data, pri->Position + sizeof(char), *pri->PacketData->Length))
 		{
 			memcpy(&var, pri->Position, sizeof(char));
 			pri->Position += sizeof(char);
@@ -246,7 +257,7 @@ short PacketHandler::ReadShort(uint64_t _id)
 	PacketReceiveInfo* pri = GetPacketReceiveInfo(_id);
 	if (pri)
 	{
-		if (!IsOutOfBounds(pri->PacketData->Data, pri->Position + sizeof(short), pri->PacketData->Length))
+		if (!IsOutOfBounds(pri->PacketData->Data, pri->Position + sizeof(short), *pri->PacketData->Length))
 		{
 			memcpy(&var, pri->Position, sizeof(short));
 			var = ntohs(var);
@@ -263,7 +274,7 @@ int PacketHandler::ReadInt(uint64_t _id)
 	PacketReceiveInfo* pri = GetPacketReceiveInfo(_id);
 	if (pri)
 	{
-		if (!IsOutOfBounds(pri->PacketData->Data, pri->Position + sizeof(int), pri->PacketData->Length))
+		if (!IsOutOfBounds(pri->PacketData->Data, pri->Position + sizeof(int), *pri->PacketData->Length))
 		{
 			memcpy(&var, pri->Position, sizeof(int));
 			var = ntohl(var);
@@ -273,9 +284,9 @@ int PacketHandler::ReadInt(uint64_t _id)
 	return var;
 }
 
-std::string PacketHandler::ReadString(uint64_t _id)
+char* PacketHandler::ReadString(uint64_t _id)
 {
-	std::string var = "";
+	char* var = 0;
 	PacketReceiveInfo* pri = GetPacketReceiveInfo(_id);
 	if (pri)
 	{
@@ -285,7 +296,7 @@ std::string PacketHandler::ReadString(uint64_t _id)
 
 		//var = new char[length];
 
-		if (!IsOutOfBounds(pri->PacketData->Data, pri->Position + length, pri->PacketData->Length))
+		if (!IsOutOfBounds(pri->PacketData->Data, pri->Position + length, *pri->PacketData->Length))
 		{
 			var = (char*)pri->Position;
 
@@ -304,7 +315,7 @@ float PacketHandler::ReadFloat(uint64_t _id)
 	PacketReceiveInfo* pri = GetPacketReceiveInfo(_id);
 	if (pri)
 	{
-		if (!IsOutOfBounds(pri->PacketData->Data, pri->Position + sizeof(float), pri->PacketData->Length))
+		if (!IsOutOfBounds(pri->PacketData->Data, pri->Position + sizeof(float), *pri->PacketData->Length))
 		{
 			memcpy(&var, pri->Position, sizeof(float));
 			pri->Position += sizeof(float);

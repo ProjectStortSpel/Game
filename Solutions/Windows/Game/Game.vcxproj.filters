@@ -101,6 +101,18 @@
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\FileLoader\LuaFileLoader.cpp">
       <Filter>Lua Bridge\FileLoader</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\ModelSystem.cpp">
+      <Filter>Game\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\RemoteConsole.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\NetworkInstance.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\ReceivePacketSystem.cpp">
+      <Filter>Game\Systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\Timer.h">
@@ -159,6 +171,18 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\FileLoader\LuaFileLoader.h">
       <Filter>Lua Bridge\FileLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\ModelSystem.h">
+      <Filter>Game\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\RemoteConsole.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\NetworkInstance.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\ReceivePacketSystem.h">
+      <Filter>Game\Systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
