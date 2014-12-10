@@ -22,7 +22,13 @@ Network::Packet* NetworkHelper::WriteEntity(Network::PacketHandler* _ph, unsigne
 	uint64_t id = _ph->StartPack("Entity");
 	_ph->WriteInt(id, _e);
 	
-	//Plocka bort komponenter som inte ska synkas
+	for (unsigned short i = components.size() - 1; i >= 0; --i)
+	{
+		if (!componentTypeManager->GetComponentType(components[i])->GetNetworkSyncState())
+		{
+			components.erase(components.begin() + i);
+		}
+	}
 
 	_ph->WriteInt(id, components.size());
 
