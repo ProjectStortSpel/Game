@@ -113,6 +113,12 @@
     <ClCompile Include="..\..\..\Source\Game\Systems\ReceivePacketSystem.cpp">
       <Filter>Game\Systems</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaEntityTemplate.cpp">
+      <Filter>Lua Bridge\ECSL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaEntityTemplateManager.cpp">
+      <Filter>Lua Bridge\ECSL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\Timer.h">
@@ -183,6 +189,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\ReceivePacketSystem.h">
       <Filter>Game\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaEntityTemplate.h">
+      <Filter>Lua Bridge\ECSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaEntityTemplateManager.h">
+      <Filter>Lua Bridge\ECSL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

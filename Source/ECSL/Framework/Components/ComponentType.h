@@ -86,7 +86,7 @@ namespace ECSL
 		~ComponentType();
 
 		inline const std::string& GetName() const									{ return m_name; }
-		inline const bool GetSyncState() const										{ return m_syncWithNetwork; }
+		inline const bool GetNetworkSyncState() const								{ return m_syncWithNetwork; }
 		inline const TableType GetTableType() const									{ return m_tableType; }
 		inline const int GetByteSize() const										{ return m_byteSize; }
 		inline const std::map<std::string, ComponentVariable>* GetVariables() const	{ return &m_variables; }
