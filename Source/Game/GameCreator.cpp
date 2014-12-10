@@ -34,6 +34,20 @@ GameCreator::~GameCreator()
 	delete(&ECSL::ComponentTypeManager::GetInstance());
 }
 
+glm::mat4 mat[1000];
+
+void SpawnStuff(Renderer::GraphicDevice* graphics)
+{
+	for (int x = 0; x < 10; x++)
+	{
+		for (int y = 0; y < 10; y++)
+		{
+			mat[y + x * 10] = glm::translate(vec3(x - 5, -1, y - 5));
+			graphics->LoadModel("content/models/default_tile/", "default.object", &mat[y + x * 10]);
+		}
+	}
+}
+
 void GameCreator::InitializeGraphics()
 {
 	m_graphics = new Renderer::GraphicDevice();
@@ -108,6 +122,7 @@ void GameCreator::StartGame()
 	/*	Hook console	*/
 	m_console->SetupHooks(&m_consoleManager);
 	
+	SpawnStuff(m_graphics);
 
 	Timer gameTimer;
 	while (true)
@@ -180,7 +195,6 @@ void GameCreator::UpdateConsole()
 	}
 }
 
-int counter = -1;
 void GameCreator::RenderConsole()
 {
 	if (!m_input->GetKeyboard()->IsTextInputActive())
