@@ -42,6 +42,9 @@
     <Filter Include="Scripting\Templates">
       <UniqueIdentifier>{e0263418-dd0f-437a-ab52-e9016f45bb5b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lua Bridge\Console">
+      <UniqueIdentifier>{bb35f23c-7282-4c2e-9288-5dc348c8fdba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\Timer.cpp">
@@ -122,6 +125,9 @@
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaEntityTemplateManager.cpp">
       <Filter>Lua Bridge\ECSL</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\Console\LuaConsole.cpp">
+      <Filter>Lua Bridge\Console</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\Timer.h">
@@ -198,6 +204,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaEntityTemplateManager.h">
       <Filter>Lua Bridge\ECSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\Console\LuaConsole.h">
+      <Filter>Lua Bridge\Console</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
