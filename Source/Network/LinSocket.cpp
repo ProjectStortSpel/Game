@@ -11,17 +11,22 @@ using namespace Network;
 
 LinSocket::LinSocket()
 {
+	m_remoteAddress = new std::string("");
+	m_remotePort = new int(0);
+	m_localPort = new int(0);
+	m_active = new int(1);
+	m_socket = new int(0);
+
 	Initialize();
 
 	m_socket = socket(AF_INET, SOCK_STREAM, 0);
 
-	if (m_socket != -1)
+	if (*m_socket != -1)
 	{
-		m_socketOpen = true;
-		m_remoteAddress = "";
-		m_remotePort = 0;
-		m_localPort = 0;
-		m_active = 1;
+		*m_remoteAddress = "";
+		*m_remotePort = 0;
+		*m_localPort = 0;
+		*m_active = 1;
 
 		g_noActiveSockets++;
 	}
@@ -31,16 +36,21 @@ LinSocket::LinSocket()
 
 LinSocket::LinSocket(int _socket)
 {
+	m_remoteAddress = new std::string("");
+	m_remotePort = new int(0);
+	m_localPort = new int(0);
+	m_active = new int(1);
+	m_socket = new int(0);
+
 	Initialize();
 
-	m_socket = _socket;
+	*m_socket = _socket;
 
-	if (m_socket != -1)
+	if (*m_socket != -1)
 	{
-		m_socketOpen = true;
-		m_remoteAddress = "";
-		m_remotePort = 0;
-		m_localPort = 0;
+		*m_remoteAddress = "";
+		*m_remotePort = 0;
+		*m_localPort = 0;
 
 		g_noActiveSockets++;
 	}
@@ -50,16 +60,21 @@ LinSocket::LinSocket(int _socket)
 
 LinSocket::LinSocket(int _domain, int _type, int _protocol)
 {
+	m_remoteAddress = new std::string("");
+	m_remotePort = new int(0);
+	m_localPort = new int(0);
+	m_active = new int(1);
+	m_socket = new int(0);
+
 	Initialize();
 
-	m_socket = socket(_domain, _type, _protocol);
+	*m_socket = socket(_domain, _type, _protocol);
 
-	if (m_socket != -1)
+	if (*m_socket != -1)
 	{
-		m_socketOpen = true;
-		m_remoteAddress = "";
-		m_remotePort = 0;
-		m_localPort = 0;
+		*m_remoteAddress = "";
+		*m_remotePort = 0;
+		*m_localPort = 0;
 
 		g_noActiveSockets++;
 	}
@@ -71,6 +86,12 @@ LinSocket::~LinSocket()
 {
 	CloseSocket();
 	Shutdown();
+
+	SAFE_DELETE(m_remoteAddress);
+	SAFE_DELETE(m_remotePort);
+	SAFE_DELETE(m_localPort);
+	SAFE_DELETE(m_active);
+	SAFE_DELETE(m_socket);
 }
 
 bool LinSocket::Initialize()
@@ -109,8 +130,8 @@ bool LinSocket::Connect(const char* _ip, const int _port)
 		return false;
 	}
 
-	m_remoteAddress = _ip;
-	m_remotePort = _port;
+	*m_remoteAddress = _ip;
+	*m_remotePort = _port;
 
 	return true;
 }
@@ -131,7 +152,7 @@ bool LinSocket::Bind(const int _port)
 	sockaddr_in sin;
 	socklen_t len = sizeof(sin);
 	if (getsockname(m_socket, (sockaddr *)&sin, &len) == 0)
-		m_localPort = ntohs(sin.sin_port);
+		*m_localPort = ntohs(sin.sin_port);
 
 
 	int flag = 1;
@@ -177,7 +198,6 @@ bool LinSocket::CloseSocket()
 			printf("Failed to close linsocket. Error: %s.\n", strerror(errno));
 		return false;
 	}
-	m_socketOpen = false;
 	g_noActiveSockets--;
 
 	return true;
@@ -205,10 +225,10 @@ ISocket* LinSocket::Accept()
 	sockaddr_in sin;
 	socklen_t len = sizeof(sin);
 	if (getsockname(newSocket, (sockaddr *)&sin, &len) == 0)
-		sock->m_localPort = ntohs(sin.sin_port);
+		*sock->m_localPort = ntohs(sin.sin_port);
 
-	sock->m_remoteAddress = s;
-	sock->m_remotePort = incomingAddress.sin_port;
+	*sock->m_remoteAddress = s;
+	*sock->m_remotePort = incomingAddress.sin_port;
 
 	return sock;
 }
