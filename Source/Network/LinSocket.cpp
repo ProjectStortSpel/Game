@@ -19,7 +19,7 @@ LinSocket::LinSocket()
 
 	Initialize();
 
-	m_socket = socket(AF_INET, SOCK_STREAM, 0);
+	*m_socket = socket(AF_INET, SOCK_STREAM, 0);
 
 	if (*m_socket != -1)
 	{
@@ -123,7 +123,7 @@ bool LinSocket::Connect(const char* _ip, const int _port)
 		return false;
 	}
 
-	if (connect(m_socket, (struct sockaddr *)&address, sizeof(address)) < 0)
+	if (connect(*m_socket, (struct sockaddr *)&address, sizeof(address)) < 0)
 	{
 		if (NET_DEBUG)
 			printf("Failed to connect to Ip address %s:%i. Error: %s.\n", _ip, _port, strerror(errno));
@@ -142,7 +142,7 @@ bool LinSocket::Bind(const int _port)
 	address.sin_port = htons(_port);
 	address.sin_addr.s_addr = INADDR_ANY;
 
-	if (bind(m_socket, (sockaddr *)&address, sizeof(address)) < 0)
+	if (bind(*m_socket, (sockaddr *)&address, sizeof(address)) < 0)
 	{
 		if (NET_DEBUG)
 			printf("Failed to bind socket. Error: %s.\n", strerror(errno));
@@ -151,12 +151,12 @@ bool LinSocket::Bind(const int _port)
 
 	sockaddr_in sin;
 	socklen_t len = sizeof(sin);
-	if (getsockname(m_socket, (sockaddr *)&sin, &len) == 0)
+	if (getsockname(*m_socket, (sockaddr *)&sin, &len) == 0)
 		*m_localPort = ntohs(sin.sin_port);
 
 
 	int flag = 1;
-	if (setsockopt(m_socket, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int)) < 0)
+	if (setsockopt(*m_socket, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int)) < 0)
 	{
 		if (NET_DEBUG)
 			printf("Failed to enable TCP_NODELAY. Error: %s.\n", strerror(errno));
@@ -169,7 +169,7 @@ bool LinSocket::Bind(const int _port)
 }
 bool LinSocket::Listen(int _backlog)
 {
-	int result = listen(m_socket, _backlog);
+	int result = listen(*m_socket, _backlog);
 
 	if (result == -1)
 	{
@@ -182,7 +182,7 @@ bool LinSocket::Listen(int _backlog)
 bool LinSocket::SetNonBlocking(bool _value)
 {
 	int opt = _value;
-	if( ioctl(m_socket, FIONBIO, &opt) != 0)
+	if( ioctl(*m_socket, FIONBIO, &opt) != 0)
 	{
 		if(NET_DEBUG)
 			printf("Failed to set nonblocking mode. Error: %s.\n", strerror(errno));
@@ -192,7 +192,7 @@ bool LinSocket::SetNonBlocking(bool _value)
 }
 bool LinSocket::CloseSocket()
 {
-	if (close(m_socket) != 0)
+	if (close(*m_socket) != 0)
 	{
 		if (NET_DEBUG)
 			printf("Failed to close linsocket. Error: %s.\n", strerror(errno));
@@ -207,7 +207,7 @@ ISocket* LinSocket::Accept()
 	sockaddr_in incomingAddress;
 	socklen_t incomingAddressLength = sizeof(incomingAddress);
 	int newSocket = -1;
-	newSocket = accept(m_socket, (sockaddr*)&incomingAddress, &incomingAddressLength);
+	newSocket = accept(*m_socket, (sockaddr*)&incomingAddress, &incomingAddressLength);
 
 	if (newSocket == -1)
 	{
@@ -235,12 +235,12 @@ ISocket* LinSocket::Accept()
 
 int LinSocket::Receive(char* _buffer, int _length, int _flags)
 {
-	return recv(m_socket, (void*)_buffer, _length, _flags);
+	return recv(*m_socket, (void*)_buffer, _length, _flags);
 }
 
 int LinSocket::Send(char* _buffer, int _length, int _flags)
 {
-	int result = send(m_socket, (void*)_buffer, _length, _flags);
+	int result = send(*m_socket, (void*)_buffer, _length, _flags);
 	if (result == -1) 
 	{
 		if (NET_DEBUG)
