@@ -225,5 +225,8 @@
     <None Include="..\..\..\Externals\content\scripting\storaspel\components\tilecomponents.lua">
       <Filter>Scripting\Components</Filter>
     </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\tilemovementsystem.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
   </ItemGroup>
 </Project>
