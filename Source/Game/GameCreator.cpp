@@ -137,14 +137,14 @@ void GameCreator::StartGame()
 	{
 		for (int y = 0; y < 10; y++)
 		{
-			std::string command = "createobject cube cube/ ";
+			std::string command;// = "createobject box";
 			if ((x + y) % 2)
 			{
-				command += "createobject hole_test Hole/ ";
+				command = "createobject hole ";
 			}
 			else
 			{
-				command += "createobject grass Default_Tile/ ";
+				command = "createobject grass ";
 			}
 			command += std::to_string(x);
 			command.append(" ");
