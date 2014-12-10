@@ -284,9 +284,9 @@ int PacketHandler::ReadInt(uint64_t _id)
 	return var;
 }
 
-std::string PacketHandler::ReadString(uint64_t _id)
+char* PacketHandler::ReadString(uint64_t _id)
 {
-	std::string var = "";
+	char* var = 0;
 	PacketReceiveInfo* pri = GetPacketReceiveInfo(_id);
 	if (pri)
 	{
