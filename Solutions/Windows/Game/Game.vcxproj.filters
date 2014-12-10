@@ -30,6 +30,18 @@
     <Filter Include="Network">
       <UniqueIdentifier>{eb9abd25-25c8-4d59-9404-43c6943ec52f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scripting">
+      <UniqueIdentifier>{70596d18-5310-46ea-bd29-887a0d6f8f93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripting\Components">
+      <UniqueIdentifier>{f278fcb7-b572-44d3-9db0-c76874ea73d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripting\Systems">
+      <UniqueIdentifier>{fe53bc13-c394-4b95-9978-28810d4bcb64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lua Bridge\FileLoader">
+      <UniqueIdentifier>{f75b5f79-7cf0-4857-b059-2797ae8d1deb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\Timer.cpp">
@@ -89,6 +101,9 @@
     <ClCompile Include="..\..\..\Source\Game\GameConsole.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\FileLoader\LuaFileLoader.cpp">
+      <Filter>Lua Bridge\FileLoader</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Systems\ModelSystem.cpp">
       <Filter>Game\Systems</Filter>
     </ClCompile>
@@ -103,6 +118,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Network\NetworkHelper.cpp">
       <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaEntityTemplate.cpp">
+      <Filter>Lua Bridge\ECSL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaEntityTemplateManager.cpp">
+      <Filter>Lua Bridge\ECSL</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -160,6 +181,9 @@
     <ClInclude Include="..\..\..\Source\Game\GameConsole.h">
       <Filter>Game</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\FileLoader\LuaFileLoader.h">
+      <Filter>Lua Bridge\FileLoader</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\ModelSystem.h">
       <Filter>Game\Systems</Filter>
     </ClInclude>
@@ -175,5 +199,28 @@
     <ClInclude Include="..\..\..\Source\Game\Network\NetworkHelper.h">
       <Filter>Network</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaEntityTemplate.h">
+      <Filter>Lua Bridge\ECSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaEntityTemplateManager.h">
+      <Filter>Lua Bridge\ECSL</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\init.lua">
+      <Filter>Scripting</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\components\components.lua">
+      <Filter>Scripting\Components</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\movementsystem.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\mapcreationsystem.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\TestSystems.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -71,6 +71,7 @@ namespace ECSL
 	{
 	private:
 		std::string	m_name;
+		bool m_syncWithNetwork;
 		TableType m_tableType;
 		unsigned int m_byteSize;
 		std::map<std::string, ComponentVariable> m_variables;
@@ -80,10 +81,12 @@ namespace ECSL
 			std::string	_name,
 			TableType _tableType,
 			std::map<std::string, ComponentVariable>& _variables,
-			std::map<unsigned int, ComponentDataType>& _offsetToTypes);
+			std::map<unsigned int, ComponentDataType>& _offsetToTypes,
+			bool _syncWithNetwork = true);
 		~ComponentType();
 
 		inline const std::string& GetName() const									{ return m_name; }
+		inline const bool GetNetworkSyncState() const								{ return m_syncWithNetwork; }
 		inline const TableType GetTableType() const									{ return m_tableType; }
 		inline const int GetByteSize() const										{ return m_byteSize; }
 		inline const std::map<std::string, ComponentVariable>* GetVariables() const	{ return &m_variables; }

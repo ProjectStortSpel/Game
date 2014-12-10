@@ -395,8 +395,8 @@ bool GraphicDevice::InitForward()
 	glDrawBuffers(1, &drawBufferForward);
 	
 	// skybox
-	m_skyBox = AddTexture("content/textures/skybox.jpg", GL_TEXTURE1);
-	m_skyBoxShader.CheckUniformLocation("diffuseTex", 1);
+	//m_skyBox = AddTexture("content/textures/skybox.jpg", GL_TEXTURE1);
+	//m_skyBoxShader.CheckUniformLocation("diffuseTex", 1);
 
 	return true;
 }
@@ -620,6 +620,9 @@ bool GraphicDevice::RemoveModel(int _id)
 			if (m_modelsDeferred[i].instances[j].id == _id)
 			{
 				m_modelsDeferred[i].instances.erase(m_modelsDeferred[i].instances.begin() + j);
+				if (j == 0)
+					m_modelsDeferred.erase(m_modelsDeferred.begin() + i);
+
 				return true;
 			}
 		}
@@ -631,6 +634,9 @@ bool GraphicDevice::RemoveModel(int _id)
 			if (m_modelsForward[i].instances[j].id == _id)
 			{
 				m_modelsForward[i].instances.erase(m_modelsForward[i].instances.begin() + j);
+				if (j == 0)
+					m_modelsForward.erase(m_modelsForward.begin() + i);
+
 				return true;
 			}
 		}
@@ -812,9 +818,10 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 		{ 4, 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), texCoordData.size() * sizeof(float) }
 	};
 
+	int test = sizeof(bufferData) / sizeof(bufferData[0]);
 	// Counts the size in bytes of all the buffered data
 	for (int i = 0; i < sizeof(bufferData) / sizeof(bufferData[0]); i++)
-		m_vramUsage += bufferData[i].dataSize;
+		m_vramUsage += (int)bufferData[i].dataSize;
 
 
 	retbuffer->init(bufferData, sizeof(bufferData) / sizeof(bufferData[0]));
