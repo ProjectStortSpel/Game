@@ -22,6 +22,9 @@
     <Filter Include="Lua Bridge\Input">
       <UniqueIdentifier>{7a8bc72d-4baf-4d5d-be55-04b4580544f8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Network">
+      <UniqueIdentifier>{f000e00d-f973-4e56-9f65-d245977c8a17}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\Game.cpp">
@@ -60,6 +63,12 @@
     <ClCompile Include="..\..\..\Source\Game\NetworkInstance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Network\Network.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Network\NetworkHelper.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\Timer.h">
@@ -91,6 +100,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\NetworkInstance.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Network\Network.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Network\NetworkHelper.h">
+      <Filter>Network</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
