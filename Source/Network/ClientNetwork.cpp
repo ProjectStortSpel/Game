@@ -184,7 +184,7 @@ void ClientNetwork::Disconnect()
 	if (NET_DEBUG)
 		printf("Client disconnected/shutdown.\n");
 
-	m_connected = false;
+	*m_connected = false;
 }
 
 void ClientNetwork::ReceivePackets()

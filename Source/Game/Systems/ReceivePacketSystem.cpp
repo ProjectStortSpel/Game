@@ -1,14 +1,11 @@
 #include "ReceivePacketSystem.h"
+#include "../NetworkInstance.h"
 
-ReceivePacketSystem::ReceivePacketSystem(Network::ClientNetwork* _client, Network::ServerNetwork* _server)
+ReceivePacketSystem::ReceivePacketSystem()
 {
-	m_client = _client;
-	m_server = _server;
 }
 ReceivePacketSystem::~ReceivePacketSystem()
 {
-	m_client = 0;
-	m_server = 0;
 }
 
 void ReceivePacketSystem::Initialize()
@@ -22,17 +19,18 @@ void ReceivePacketSystem::Initialize()
 
 void ReceivePacketSystem::Update(float _dt)
 {
-	if (m_server->IsRunning())
-		m_server->Update(_dt);
+	
+	if (NetworkInstance::GetServer()->IsRunning())
+		NetworkInstance::GetServer()->Update(_dt);
 
-	if(m_client->IsConnected())
-		m_client->Update(_dt);
+	if (NetworkInstance::GetClient()->IsConnected())
+		NetworkInstance::GetClient()->Update(_dt);
 
-	if (m_server->IsRunning())
-		while (m_server->GetPacket() > 0) {}
+	if (NetworkInstance::GetServer()->IsRunning())
+		while (NetworkInstance::GetServer()->GetPacket() > 0) {}
 
-	if (m_client->IsConnected())
-		while (m_client->GetPacket() > 0) {}
+	if (NetworkInstance::GetClient()->IsConnected())
+		while (NetworkInstance::GetClient()->GetPacket() > 0) {}
 
 }
 

@@ -7,11 +7,12 @@
 #include "Systems/ModelSystem.h"
 #include "Systems/ReceivePacketSystem.h"
 
+#include "NetworkInstance.h"
 #include "ECSL/ECSL.h"
 #include "ECSL/Managers/EntityTemplateManager.h"
 
 GameCreator::GameCreator() :
-m_graphics(0), m_input(0), m_world(0), m_console(0), m_client(0), m_server(0)
+m_graphics(0), m_input(0), m_world(0), m_console(0)
 {
 
 }
@@ -30,11 +31,8 @@ GameCreator::~GameCreator()
 	if (m_console)
 		delete m_console;
 
-	if (m_client)
-		delete m_client;
-
-	if (m_server)
-		delete m_server;
+	NetworkInstance::DestroyClient();
+	NetworkInstance::DestroyServer();
 
 	LuaEmbedder::Quit();
 
@@ -60,8 +58,8 @@ void GameCreator::InitializeInput()
 
 void GameCreator::InitializeNetwork()
 {
-	m_client = new Network::ClientNetwork();
-	m_server = new Network::ServerNetwork();
+	NetworkInstance::InitClient();
+	NetworkInstance::InitServer();
 }
 
 void GameCreator::InitializeLua()
@@ -93,7 +91,7 @@ void GameCreator::InitializeWorld()
 	worldCreator.AddLuaSystemToCurrentGroup(new CameraSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new ModelSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderSystem(m_graphics));
-	worldCreator.AddLuaSystemToCurrentGroup(new ReceivePacketSystem(m_client, m_server));
+	worldCreator.AddLuaSystemToCurrentGroup(new ReceivePacketSystem());
 
 	
 	m_world = worldCreator.CreateWorld(10000);
@@ -108,7 +106,7 @@ void GameCreator::StartGame()
 	if (!m_graphics || !m_input || !m_world || m_console)
 		return;
 
-	m_console = new GameConsole(m_graphics, m_world, m_client, m_server);
+	m_console = new GameConsole(m_graphics, m_world);
 
 	m_consoleInput.SetTextHook(std::bind(&Console::ConsoleManager::ExecuteCommand, &m_consoleManager, std::placeholders::_1));
 	m_consoleInput.SetActive(true);

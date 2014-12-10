@@ -1,11 +1,9 @@
 #include "GameConsole.h"
 #include <string>
-GameConsole::GameConsole(Renderer::GraphicDevice* _graphics, ECSL::World* _world, Network::ClientNetwork* _client, Network::ServerNetwork* _server)
+GameConsole::GameConsole(Renderer::GraphicDevice* _graphics, ECSL::World* _world)
 {
 	m_graphics = _graphics;
 	m_world = _world;
-	m_client = _client;
-	m_server = _server;
 }
 
 GameConsole::~GameConsole()
@@ -112,19 +110,18 @@ void GameConsole::ListCommands(std::vector<Console::Argument>* _args)
 	m_consoleManager->AddMessage("Disconnect");
 }
 
-
 void GameConsole::HostServer(std::vector<Console::Argument>* _args)
 {
-	if (m_client->IsConnected())
-		m_client->Disconnect();
+	if (NetworkInstance::GetClient()->IsConnected())
+		NetworkInstance::GetClient()->Disconnect();
 
-	if (m_server->IsRunning())
-		m_server->Stop();
+	if (NetworkInstance::GetServer()->IsRunning())
+		NetworkInstance::GetServer()->Stop();
 
 
-	std::string pw = m_server->GetServerPassword();
-	unsigned int port = m_server->GetIncomingPort();
-	unsigned int connections = m_server->GetMaxConnections();
+	std::string pw				= NetworkInstance::GetServer()->GetServerPassword();
+	unsigned int port			= NetworkInstance::GetServer()->GetIncomingPort();
+	unsigned int connections	= NetworkInstance::GetServer()->GetMaxConnections();
 
 	if (_args->size() == 1)
 	{
@@ -152,30 +149,33 @@ void GameConsole::HostServer(std::vector<Console::Argument>* _args)
 		}
 	}
 
-	m_server->Start(port, pw.c_str(), connections);
-
-	m_client->Connect("127.0.0.1", pw.c_str(), port, 0);
+	NetworkInstance::GetServer()->Start(port, pw.c_str(), connections);
+	NetworkInstance::GetClient()->Connect("127.0.0.1", pw.c_str(), port, 0);
 }
+
 void GameConsole::StopServer(std::vector<Console::Argument>* _args)
 {
-	if (m_client->IsConnected() && strcmp(m_client->GetRemoteAddress(), "127.0.0.1") == 0)
-		m_client->Disconnect();
+	if (NetworkInstance::GetClient()->IsConnected() && strcmp(NetworkInstance::GetClient()->GetRemoteAddress(), "127.0.0.1") == 0)
+		NetworkInstance::GetClient()->Disconnect();
 
-	if (m_server->IsRunning())
-		m_server->Stop();
+	if (NetworkInstance::GetServer()->IsRunning())
+		NetworkInstance::GetServer()->Stop();
 }
 
 void GameConsole::ConnectClient(std::vector<Console::Argument>* _args)
 {
-	if (m_client->IsConnected())
-		m_client->Disconnect();
+	if (NetworkInstance::GetClient()->IsConnected())
+		NetworkInstance::GetClient()->Disconnect();
 
-	if (m_server->IsRunning())
-		m_server->Stop();
+	if (strcmp(NetworkInstance::GetClient()->GetRemoteAddress(), "127.0.0.1") != 0)
+	{
+		if (NetworkInstance::GetServer()->IsRunning())
+			NetworkInstance::GetServer()->Stop();
+	}
 
-	std::string ip = m_client->GetRemoteAddress();
-	unsigned int port = m_client->GetOutgoingPort();
-	std::string pw = m_client->GetServerPassword();
+	std::string ip		= NetworkInstance::GetClient()->GetRemoteAddress();
+	unsigned int port	= NetworkInstance::GetClient()->GetOutgoingPort();
+	std::string pw		= NetworkInstance::GetClient()->GetServerPassword();
 	
 
 	if (_args->size() == 1)
@@ -205,16 +205,14 @@ void GameConsole::ConnectClient(std::vector<Console::Argument>* _args)
 		}
 	}
 
-	m_client->Connect(ip.c_str(), pw.c_str(), port, 0);
-
+	NetworkInstance::GetClient()->Connect(ip.c_str(), pw.c_str(), port, 0);
 }
 
 void GameConsole::DisconnectClient(std::vector<Console::Argument>* _args)
 {
-	if (m_client->IsConnected())
-		m_client->Disconnect();
+	if (NetworkInstance::GetClient()->IsConnected())
+		NetworkInstance::GetClient()->Disconnect();
 }
-
 
 void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 {
