@@ -90,6 +90,8 @@ void GameCreator::InitializeWorld()
 	
 	m_world = worldCreator.CreateWorld(10000);
 	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
+	
+	LuaEmbedder::CallMethods<ECSL::System>("System", "PostInitialize");
 }
 
 void GameCreator::StartGame()
@@ -106,7 +108,6 @@ void GameCreator::StartGame()
 	/*	Hook console	*/
 	m_console->SetupHooks(&m_consoleManager);
 	
-	m_world->CreateNewEntity("Stone");
 
 	Timer gameTimer;
 	while (true)
@@ -136,24 +137,50 @@ void GameCreator::StartGame()
 			else
 			{
 				m_input->GetKeyboard()->StartTextInput();
-				m_input->GetKeyboard()->ResetTextInput();
 				m_consoleInput.SetActive(true);
+				m_input->GetKeyboard()->ResetTextInput();
 			}
-
-
 		}
-
 
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
 			break;
 
+		UpdateConsole();
 		RenderConsole();
 		m_graphics->Render();
 	}
 }
 
+void GameCreator::UpdateConsole()
+{
+	// MOVE ?!
+	if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_UP) == Input::InputState::PRESSED)
+	{
+
+		auto previous = m_consoleManager.GetPreviousHistory();
+		if(previous)
+			m_input->GetKeyboard()->SetTextInput(previous);
+
+	}
+	else if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_DOWN) == Input::InputState::PRESSED)
+	{
+		auto next = m_consoleManager.GetNextHistory();
+		if (next)
+			m_input->GetKeyboard()->SetTextInput(next);
+	}
 
 
+
+	if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_TAB) == Input::InputState::PRESSED)
+	{
+		auto match = m_consoleManager.GetMatch();
+
+		if (match != "")
+			m_input->GetKeyboard()->SetTextInput(match);
+	}
+}
+
+int counter = -1;
 void GameCreator::RenderConsole()
 {
 	if (!m_input->GetKeyboard()->IsTextInputActive())
@@ -167,6 +194,9 @@ void GameCreator::RenderConsole()
 	auto history = m_consoleManager.GetHistory();
 	for (int i = 0; i < history.size(); ++i)
 		m_graphics->RenderSimpleText(history[i], 0, 10 - history.size() + i);
+
+	auto match = m_consoleManager.GetFunctionMatch(command.c_str());
+	m_graphics->RenderSimpleText(match, 9, 11);
 }
 
 

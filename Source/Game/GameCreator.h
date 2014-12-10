@@ -29,6 +29,7 @@ public:
 private:
 	void PollSDLEvent();
 
+	void UpdateConsole();
 	void RenderConsole();
 
 private:
