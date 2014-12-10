@@ -103,7 +103,7 @@ bool EntityTemplateReader::InterpretDataTokens(const Section* _section, const un
 		{
 			if (!ConvertDataEntry(componentType, tokens[nData]))
 			{
-				printf("Could not convert data correct for \"%s\" (\"%s\" unvalid!)\n", componentType, tokens[nData]);
+				printf("Could not convert data correct for \"%s\" (\"%s\" unvalid!)\n", componentType, tokens[nData].c_str());
 				return 0;
 			}
 		}
