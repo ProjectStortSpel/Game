@@ -3,15 +3,25 @@
 
 #include "Network/PacketHandler.h"
 #include "ECSL/Framework/World.h"
+#include <vector>
 
 class NetworkHelper
 {
 private:
 
+	ECSL::World* m_world;
+
+	std::map<unsigned int, unsigned int> m_NtoH;
+	std::map<unsigned int, unsigned int> m_HtoN;
+
 public:
 
-	static void WriteEntity(Network::PacketHandler* _ph, uint64_t _id, ECSL::World* _world, unsigned int _e);
-	static void ReadEntity(Network::PacketHandler* _ph, uint64_t _id, ECSL::World* _world, unsigned int _e);
+	NetworkHelper(ECSL::World* _world);
+	~NetworkHelper();
+
+
+	Network::Packet* WriteEntity(Network::PacketHandler* _ph, unsigned int _e);
+	void ReadEntity(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _nc);
 
 
 };

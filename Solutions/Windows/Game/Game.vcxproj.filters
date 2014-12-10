@@ -27,6 +27,9 @@
     <Filter Include="Lua Bridge\Renderer">
       <UniqueIdentifier>{532ef4e9-8ba1-4cf6-9034-8ce80bb0bd4b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Network">
+      <UniqueIdentifier>{eb9abd25-25c8-4d59-9404-43c6943ec52f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\Timer.cpp">
@@ -98,6 +101,9 @@
     <ClCompile Include="..\..\..\Source\Game\Systems\ReceivePacketSystem.cpp">
       <Filter>Game\Systems</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Network\NetworkHelper.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\Timer.h">
@@ -165,6 +171,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\ReceivePacketSystem.h">
       <Filter>Game\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Network\NetworkHelper.h">
+      <Filter>Network</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
