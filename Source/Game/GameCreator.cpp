@@ -134,9 +134,9 @@ void GameCreator::StartGame()
 
 	
 	/*	FULKOD START	*/
-	for (int x = 0; x < 10; x++)
+	for (int x = -5; x < 5; x++)
 	{
-		for (int y = 0; y < 10; y++)
+		for (int y = -5; y < 5; y++)
 		{
 			std::string command;// = "createobject box";
 			if ((x + y) % 2)
