@@ -1,35 +1,24 @@
 MapCreationSystem = System()
-MapCreationSystem.entities = { }
-
-MapCreationSystem.Update = function(self, dt)
-
-end
-
-MapCreationSystem.Initialize = function(self)
-	self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
-	self:AddComponentTypeToFilter("Rotation", FilterType.Mandatory)
-    self:AddComponentTypeToFilter("Scale", FilterType.Mandatory)
-	self:AddComponentTypeToFilter("Render", FilterType.Mandatory)
-    self:AddComponentTypeToFilter("MapPosition", FilterType.Mandatory)
-	
-	print("MapSystem initialized!")
-end
 
 MapCreationSystem.PostInitialize = function(self)
     print("Started to initialize map!")
     local mapX, mapY, map = File.LoadMap("content/maps/map.txt")
+    local posX, posZ
 
     for y = 1, mapY do
         for x = 1, mapX do
-            self:AddTile(x, y, map[y * mapX + x])
+            posX = x - mapX/2
+            posZ = y - mapY/2
+            self:AddTile(posX, posZ, x, y, map[y * mapX + x])
         end
     end
 
     print("Init map done!")
 end
 
-MapCreationSystem.AddTile = function(self, mapPosX, mapPosY, tiletype)
+MapCreationSystem.AddTile = function(self, posX, posY, mapPosX, mapPosY, tiletype)
     local entity = world:CreateNewEntity()
+
     world:CreateComponentAndAddTo("Position", entity)
     world:CreateComponentAndAddTo("Scale", entity)
     world:CreateComponentAndAddTo("Rotation", entity)
@@ -81,12 +70,4 @@ MapCreationSystem.AddTile = function(self, mapPosX, mapPosY, tiletype)
 
 
     table.insert(self.entities, entity)
-end
-
-MapCreationSystem.OnEntityAdded = function(self, entityId)
-	print("OnEntityAdded (LUA)")
-end
-
-MapCreationSystem.OnEntityRemoved = function(self, entityId)
-	print("OnEntityRemoved")
 end
