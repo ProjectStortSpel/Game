@@ -6,6 +6,7 @@
 #include "Systems/RotationSystem.h"
 #include "Systems/ModelSystem.h"
 #include "Systems/ReceivePacketSystem.h"
+#include "Systems/RenderRemoveSystem.h"
 
 #include "ECSL/ECSL.h"
 #include "ECSL/Managers/EntityTemplateManager.h"
@@ -108,6 +109,7 @@ void GameCreator::InitializeWorld()
 	worldCreator.AddLuaSystemToCurrentGroup(new CameraSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new ModelSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderSystem(m_graphics));
+	worldCreator.AddLuaSystemToCurrentGroup(new RenderRemoveSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new ReceivePacketSystem(m_client, m_server));
 
 	
@@ -140,7 +142,7 @@ void GameCreator::StartGame()
 			std::string command;// = "createobject box";
 			if ((x + y) % 2)
 			{
-				command = "createobject hole ";
+				command = "createobject grass ";
 			}
 			else
 			{

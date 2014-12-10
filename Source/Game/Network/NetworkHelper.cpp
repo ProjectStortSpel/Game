@@ -22,7 +22,7 @@ Network::Packet* NetworkHelper::WriteEntity(Network::PacketHandler* _ph, unsigne
 	uint64_t id = _ph->StartPack("Entity");
 	_ph->WriteInt(id, _e);
 	
-	for (unsigned short i = components.size() - 1; i >= 0; --i)
+	for (short i = components.size() - 1; i >= 0; --i)
 	{
 		if (!componentTypeManager->GetComponentType(components[i])->GetNetworkSyncState())
 		{
@@ -176,7 +176,7 @@ void NetworkHelper::ReceiveEntityKill(Network::PacketHandler* _ph, uint64_t _id,
 {
 	unsigned int idN = _ph->ReadInt(_id);
 	
-	if (m_NtoH.find(_id) != m_NtoH.end())
+	if (m_NtoH.find(idN) != m_NtoH.end())
 	{
 		unsigned int idH = m_NtoH[idN];
 		m_world->KillEntity(idH);
