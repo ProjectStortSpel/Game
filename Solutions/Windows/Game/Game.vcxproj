@@ -257,6 +257,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <None Include="..\..\..\Externals\content\scripting\storaspel\init.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\mapcreationsystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\movementsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\TestSystems.lua" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

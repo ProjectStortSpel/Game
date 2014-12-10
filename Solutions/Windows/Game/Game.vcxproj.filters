@@ -210,5 +210,8 @@
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\mapcreationsystem.lua">
       <Filter>Scripting\Systems</Filter>
     </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\TestSystems.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
   </ItemGroup>
 </Project>
