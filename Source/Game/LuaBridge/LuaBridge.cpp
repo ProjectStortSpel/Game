@@ -11,6 +11,7 @@
 #include "Renderer/LuaCamera.h"
 #include "Math/LuaMatrix.h"
 #include "FileLoader/LuaFileLoader.h"
+#include "Console/LuaConsole.h"
 
 namespace LuaBridge
 {
@@ -30,6 +31,8 @@ namespace LuaBridge
     LuaCamera::Embed();
     
     LuaMatrix::Embed();
+    
+    LuaConsole::Embed();
 
 	LuaEmbedder::AddFunction("LoadMap", &LoadMap, "File");
   }
