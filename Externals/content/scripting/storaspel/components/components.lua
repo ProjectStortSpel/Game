@@ -73,3 +73,44 @@ NetworkComponent.Name = "Network"
 NetworkComponent.TableType = TableType.Map
 worldCreator:AddComponentType(NetworkComponent)
 
+-- Direction Component
+local DirectionComponent = ComponentType()
+DirectionComponent.Name = "Direction"
+DirectionComponent.TableType = TableType.Array
+DirectionComponent:AddVariable("X", ByteSize.Int)
+DirectionComponent:AddVariable("Y", ByteSize.Int)
+worldCreator:AddComponentType(DirectionComponent)
+
+-- Move Forward Component
+local MoveForwardComponent = ComponentType()
+MoveForwardComponent.Name = "Forward"
+MoveForwardComponent.TableType = TableType.Array
+worldCreator:AddComponentType(MoveForwardComponent)
+
+-- Move Backward Component
+local MoveBackwardComponent = ComponentType()
+MoveBackwardComponent.Name = "Backward"
+MoveBackwardComponent.TableType = TableType.Array
+worldCreator:AddComponentType(MoveBackwardComponent)
+
+-- Turn Right Component
+local TurnRightComponent = ComponentType()
+TurnRightComponent.Name = "TurnRight"
+TurnRightComponent.TableType = TableType.Array
+worldCreator:AddComponentType(TurnRightComponent)
+
+-- Turn Left Component
+local TurnLeftComponent = ComponentType()
+TurnLeftComponent.Name = "TurnLeft"
+TurnLeftComponent.TableType = TableType.Array
+worldCreator:AddComponentType(TurnLeftComponent)
+
+-- Target Position Component
+local TargetPositionComponent = ComponentType()
+TargetPositionComponent.Name = "TargetPosition"
+TargetPositionComponent.TableType = TableType.Array
+SpinComponent:AddVariable("X", ByteSize.Float)
+SpinComponent:AddVariable("Y", ByteSize.Float)
+SpinComponent:AddVariable("Z", ByteSize.Float)
+worldCreator:AddComponentType(TargetPositionComponent)
+
