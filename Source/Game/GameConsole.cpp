@@ -13,7 +13,7 @@ GameConsole::~GameConsole()
 
 }
 
-void GameConsole::SpawnModel(std::vector<Console::Argument>* _args)
+void GameConsole::CreateObject(std::vector<Console::Argument>* _args)
 {
 	if (_args->size() != 5)
 		return;
@@ -47,6 +47,12 @@ void GameConsole::SpawnModel(std::vector<Console::Argument>* _args)
 	std::stringstream ss;
 	ss << "Entity with id #" << mId << " has been created!";
 	m_consoleManager->AddMessage(ss.str().c_str());
+}
+
+void GameConsole::RemoveObject(std::vector<Console::Argument>* _args)
+{
+	if (_args->size() > 0 && (*_args)[0].ArgType == Console::ArgumentType::Number)
+		m_world->KillEntity((*_args)[0].Number);
 }
 
 void GameConsole::AddComponent(std::vector<Console::Argument>* _args)
@@ -95,10 +101,15 @@ void GameConsole::RemoveComponent(std::vector<Console::Argument>* _args)
 
 void GameConsole::ListCommands(std::vector<Console::Argument>* _args)
 {
-	m_consoleManager->AddMessage("LoadModel - Model, Path, X, Y, Z");
+	m_consoleManager->AddMessage("CreateObject - Model, Path, X, Y, Z");
+	m_consoleManager->AddMessage("RemoveObject - Id");
 	m_consoleManager->AddMessage("AddComponent - Id, ComponentType");
 	m_consoleManager->AddMessage("ChangeComponent - Id, ComponentType, X, Y, Z, ...");
 	m_consoleManager->AddMessage("RemoveComponent - Id, ComponentType");
+	m_consoleManager->AddMessage("Host - Port, Password, MaxConnections");
+	m_consoleManager->AddMessage("Stop");
+	m_consoleManager->AddMessage("Connect - Ip-address, Port, Password");
+	m_consoleManager->AddMessage("Disconnect");
 }
 
 
@@ -119,6 +130,15 @@ void GameConsole::HostServer(std::vector<Console::Argument>* _args)
 	{
 		if ((*_args)[0].ArgType == Console::ArgumentType::Number)
 			port = (*_args)[0].Number;
+	}
+	else if (_args->size() == 2)
+	{
+		if ((*_args)[0].ArgType == Console::ArgumentType::Number &&
+			(*_args)[1].ArgType == Console::ArgumentType::Text)
+		{
+			port = (*_args)[0].Number;
+			pw = (*_args)[1].Text;
+		}
 	}
 	else if (_args->size() == 3)
 	{
@@ -188,6 +208,7 @@ void GameConsole::ConnectClient(std::vector<Console::Argument>* _args)
 	m_client->Connect(ip.c_str(), pw.c_str(), port, 0);
 
 }
+
 void GameConsole::DisconnectClient(std::vector<Console::Argument>* _args)
 {
 	if (m_client->IsConnected())
@@ -198,7 +219,8 @@ void GameConsole::DisconnectClient(std::vector<Console::Argument>* _args)
 void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 {
 	m_consoleManager = _consoleManager;
-	m_consoleManager->AddCommand("LoadModel", std::bind(&GameConsole::SpawnModel, this, std::placeholders::_1));
+	m_consoleManager->AddCommand("CreateObject", std::bind(&GameConsole::CreateObject, this, std::placeholders::_1));
+	m_consoleManager->AddCommand("RemoveObject", std::bind(&GameConsole::RemoveObject, this, std::placeholders::_1));
 	m_consoleManager->AddCommand("AddComponent", std::bind(&GameConsole::AddComponent, this, std::placeholders::_1));
 	m_consoleManager->AddCommand("ChangeComponent", std::bind(&GameConsole::ChangeComponent, this, std::placeholders::_1));
 	m_consoleManager->AddCommand("RemoveComponent", std::bind(&GameConsole::RemoveComponent, this, std::placeholders::_1));

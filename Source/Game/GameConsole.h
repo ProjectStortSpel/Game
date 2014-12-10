@@ -15,7 +15,8 @@ public:
 
 	void SetupHooks(Console::ConsoleManager* _consoleManager);
 
-	void SpawnModel(std::vector<Console::Argument>* _args);
+	void CreateObject(std::vector<Console::Argument>* _args);
+	void RemoveObject(std::vector<Console::Argument>* _args);
 	void AddComponent(std::vector<Console::Argument>* _args);
 	void ChangeComponent(std::vector<Console::Argument>* _args);
 	void RemoveComponent(std::vector<Console::Argument>* _args);
