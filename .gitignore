@@ -11,6 +11,8 @@ bld/
 [Oo]bj/
 [Gg]ameLibs/
 
+*.orig
+
 # Compiled Object files
 *.slo
 *.lo
