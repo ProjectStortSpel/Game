@@ -16,13 +16,15 @@ namespace LuaEmbedder
     lua_close(L);
   }
   
-  void Load(const std::string& filepath)
+  const char* Load(const std::string& filepath)
   {
-	  bool isRight = luaL_dofile(L, filepath.c_str());
-    assert(!isRight);
+    bool result = luaL_dofile(L, filepath.c_str());
+    if (result)
+      return lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error";
     lua_gc(L, LUA_GCCOLLECT, 0);
+    return NULL;
   }
-  void CallFunction(const std::string& name, int argumentCount, const std::string& library)
+  const char* CallFunction(const std::string& name, int argumentCount, const std::string& library)
   {
     if (library.empty())
     {
@@ -35,9 +37,11 @@ namespace LuaEmbedder
       lua_pushstring(L, name.c_str());
       lua_gettable(L, -2);
     }
-	bool result = lua_pcall(L, argumentCount, LUA_MULTRET, 0);
-    assert(!result);
+    bool result = lua_pcall(L, argumentCount, LUA_MULTRET, 0);
+    if (result)
+      return lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error";
     lua_gc(L, LUA_GCCOLLECT, 0);
+    return NULL;
   }
   
   #define ADD_VARIABLE(type) \

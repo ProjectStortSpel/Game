@@ -93,8 +93,8 @@ namespace LuaEmbedder
   void EXPORT Init();
   void EXPORT Quit();
   
-  void EXPORT Load(const std::string& filepath);
-  void EXPORT CallFunction(const std::string& name, int argumentCount = 0, const std::string& library = std::string());
+  const char* EXPORT Load(const std::string& filepath);
+  const char* EXPORT CallFunction(const std::string& name, int argumentCount = 0, const std::string& library = std::string());
   
   void EXPORT AddFloat(const std::string& name, float value, const std::string& library = std::string());
   void EXPORT AddInt(const std::string& name, int value, const std::string& library = std::string());

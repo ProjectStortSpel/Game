@@ -93,8 +93,13 @@ void GameCreator::InitializeWorld()
 	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
 	LuaEmbedder::AddObject<ECSL::WorldCreator>("WorldCreator", &worldCreator, "worldCreator");
 
-	LuaEmbedder::Load("../../../Externals/content/scripting/storaspel/init.lua");
-
+	const char* error = LuaEmbedder::Load("../../../Externals/content/scripting/storaspel/init.lua");
+	if (error)
+	{
+	  std::cout << error << std::endl;
+	  return;
+	}
+	
 	auto componentTypes = ECSL::ComponentTypeManager::GetInstance().GetComponentTypes();
 	for (auto it = componentTypes->begin(); it != componentTypes->end(); ++it)
 	{
