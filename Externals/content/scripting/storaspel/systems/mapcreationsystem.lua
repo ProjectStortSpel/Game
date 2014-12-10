@@ -1,5 +1,4 @@
 MapCreationSystem = System()
-MapCreationSystem.entities = { }
 
 MapCreationSystem.Update = function(self, dt)
 
