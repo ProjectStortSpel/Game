@@ -87,7 +87,7 @@ void GameCreator::InitializeLua()
 void GameCreator::InitializeWorld()
 {
 	//ECSL::ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("content/components");
-	ECSL::EntityTemplateManager::GetInstance().LoadComponentTypesFromDirectory("content/scripting/storaspel/templates");
+	//ECSL::EntityTemplateManager::GetInstance().LoadComponentTypesFromDirectory("content/scripting/storaspel/templates");
 
 	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
 	LuaEmbedder::AddObject<ECSL::WorldCreator>("WorldCreator", &worldCreator, "worldCreator");
@@ -130,7 +130,22 @@ void GameCreator::StartGame()
 	/*	Hook console	*/
 	m_console->SetupHooks(&m_consoleManager);
 	
-	SpawnStuff(m_graphics);
+	/*	FULKOD START	*/
+	for (int x = 0; x < 10; x++)
+	{
+		for (int y = 0; y < 10; y++)
+		{
+			std::string command = "createobject default default_tile/ ";
+			command += std::to_string(x);
+			command.append(" ");
+			command += std::to_string(-1);
+			command.append(" ");
+			command += std::to_string(y);
+			command.append("");
+			m_consoleManager.ExecuteCommand(command.c_str());
+		}
+	}
+	/*	FULKOD END		*/
 
 	Timer gameTimer;
 	while (true)
