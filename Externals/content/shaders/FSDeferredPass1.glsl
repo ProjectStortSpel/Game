@@ -4,6 +4,8 @@ in vec3 Tan;
 in vec3 BiTan;
 in vec2 TexCoord;
 
+//flat in int instanceID;
+
 // The g-buffer textures
 layout(binding = 0) uniform sampler2D NormalTex;
 layout(binding = 1) uniform sampler2D ColorTex;

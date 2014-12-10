@@ -16,6 +16,20 @@ namespace Renderer
 #define RENDER_DEFERRED 0
 #define RENDER_FORWARD  1
 
+	struct Instance
+	{
+		int id;
+		bool active;
+		mat4* modelMatrix;
+		
+		Instance(int _id, bool _active, mat4* _model)
+		{
+			id = _id;
+			active = _active;
+			modelMatrix = _model;
+		}
+	};
+
 	struct Model
 	{
 		bool operator> (const Model &m) { return bufferPtr->getVAO() > m.bufferPtr->getVAO() ? true : false; }
@@ -27,22 +41,24 @@ namespace Renderer
 		Model(){}
 		Model(int ID, Buffer* buffer, GLuint tex, GLuint nor, GLuint spe)
 		{
-			modelID = ID;
-			active = true;
+			//modelID = ID;
+			//active = true;
 			bufferPtr = buffer;
 			texID = tex;
 			norID = nor;
 			speID = spe;
 		}
-		int modelID;
-		bool active;
+		//int modelID;
+		//bool active;
 		Buffer* bufferPtr;
 		GLuint texID;
 		GLuint norID;
 		GLuint speID;
 
-		glm::mat4* modelMatrix;	// GÖR DETTA TILL EN PEKARE NÄR E/C FUNGERAR
+		std::vector<Instance> instances;
 	};
+
+	
 
 	struct GLTimerValue
 	{

@@ -55,6 +55,27 @@ bool Buffer::init(const BufferData* p_BufferData, GLsizei p_BufferDataSize,
 			p_BufferData[i].type, GL_FALSE, 0, 0);
 	}
 
+	//-------FOR INSTANCING----------------------------
+	glGenBuffers(1, &m_mvMatVBO); //gen buffer till matrisen
+	glBindBuffer(GL_ARRAY_BUFFER, m_mvMatVBO);
+	for (int i = 0; i < 4; i++)
+	{
+		glVertexAttribPointer(5 + i, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (const GLvoid*)(sizeof(float)* 4 * i));
+		glEnableVertexAttribArray(5 + i);
+		glVertexAttribDivisor(5 + i, 1);
+	}
+
+	glGenBuffers(1, &m_normalMatVBO); //gen buffer till matrisen
+	glBindBuffer(GL_ARRAY_BUFFER, m_normalMatVBO);
+	for (int i = 0; i < 3; i++)
+	{
+		glVertexAttribPointer(9 + i, 3, GL_FLOAT, GL_FALSE, sizeof(glm::mat3), (const GLvoid*)(sizeof(float)* 3 * i));
+		glEnableVertexAttribArray(9 + i);
+		glVertexAttribDivisor(9 + i, 1);
+	}
+
+	//-------------------------------------------------
+
 	// Initialize index buffer if specified
 	if (m_Type == IndexBased)
 	{
@@ -94,6 +115,35 @@ void Buffer::draw(GLint base, GLsizei count)
 		break;
 	case IndexBased:
 		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, (void*)(sizeof(GLuint)* base));
+		break;
+	}
+
+	// Unbind vertex array object
+	glBindVertexArray(0);
+}
+
+void Buffer::drawInstanced(GLint base, int instances, std::vector<glm::mat4> *mvMats, std::vector<glm::mat3> *normalMats)
+{
+	// Make sure there's no weird behaviour
+	if (m_Type == None)
+		return;
+
+	// Bind vertex array object
+	glBindVertexArray(m_VAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_mvMatVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4)*instances, &(*mvMats)[0], GL_DYNAMIC_DRAW); 
+	
+	glBindBuffer(GL_ARRAY_BUFFER, m_normalMatVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat3)*instances, &(*normalMats)[0], GL_DYNAMIC_DRAW);
+	// Draw based on based buffer type
+	switch (m_Type)
+	{
+	case VertexBased:
+		glDrawArraysInstanced(GL_TRIANGLES, base, m_Count, instances);
+		break;
+	case IndexBased:
+		glDrawElementsInstanced(GL_TRIANGLES, m_Count, GL_FLOAT, (void*)(sizeof(GLuint)* base), instances);
 		break;
 	}
 
