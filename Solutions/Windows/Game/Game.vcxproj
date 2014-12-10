@@ -224,6 +224,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClCompile Include="..\..\..\Source\Game\Systems\RenderRemoveSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\RenderSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\RotationSystem.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\Systems\SyncEntitiesSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\TextInput.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Timer.cpp" />
   </ItemGroup>
@@ -253,6 +254,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClInclude Include="..\..\..\Source\Game\Systems\RenderRemoveSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\RenderSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\RotationSystem.h" />
+    <ClInclude Include="..\..\..\Source\Game\Systems\SyncEntitiesSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\TextInput.h" />
     <ClInclude Include="..\..\..\Source\Game\Timer.h" />
   </ItemGroup>
