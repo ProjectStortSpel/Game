@@ -29,6 +29,9 @@
     <Filter Include="Source Files\Framework\Components\Tables">
       <UniqueIdentifier>{7f441da5-71c6-4240-b83d-c131c037afd8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Framework\Templates">
+      <UniqueIdentifier>{71d7e6f7-a1a6-4d92-ab63-2c53d3d8680d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\ECSL\ECSL.h">
@@ -100,6 +103,15 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Simulation.h">
       <Filter>Source Files\Framework</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Templates\EntityTemplate.h">
+      <Filter>Source Files\Framework\Templates</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\EntityTemplateReader.h">
+      <Filter>Source Files\Framework\Parsing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Managers\EntityTemplateManager.h">
+      <Filter>Source Files\Managers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\World.cpp">
@@ -164,6 +176,15 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Simulation.cpp">
       <Filter>Source Files\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\EntityTemplateReader.cpp">
+      <Filter>Source Files\Framework\Parsing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Templates\EntityTemplate.cpp">
+      <Filter>Source Files\Framework\Templates</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Managers\EntityTemplateManager.cpp">
+      <Filter>Source Files\Managers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,5 +1,6 @@
 #include "World.h"
 #include "../Managers/ComponentTypeManager.h"
+#include "../Managers/EntityTemplateManager.h"
 using namespace ECSL;
 
 World::World(unsigned int _entityCount, std::vector<SystemWorkGroup*>* _systemWorkGroups, std::vector<unsigned int>* _componentTypeIds)
@@ -59,4 +60,56 @@ void World::KillEntity(unsigned int _entityId)
 {
 	--m_activeEntities;
 	m_dataManager->RemoveEntity(_entityId);
+}
+
+unsigned int World::CreateNewEntity(std::string _templateName)
+{
+	unsigned int newId = CreateNewEntity();
+	EntityTemplate* entityTemplate = EntityTemplateManager::GetInstance().GetTemplate(_templateName);
+	std::map<std::string, std::vector<TemplateEntry>>* _components = entityTemplate->GetComponents();
+
+	for (auto component : *_components)
+	{
+		std::string componentType = component.first;
+		CreateComponentAndAddTo(componentType, newId);
+
+		if (component.second.size() != 0)
+		{
+			auto componentData = component.second;
+			int byteOffset = 0;
+			for (int n = 0; n < componentData.size(); ++n)
+			{
+				if (componentData[n].GetDataType() == ComponentDataType::INT)
+				{
+					int* dataLoc = (int*)GetComponent(newId, componentType, byteOffset);
+					dataLoc[0] = componentData[n].GetIntData();
+					byteOffset += sizeof(int);
+				}
+				else if (componentData[n].GetDataType() == ComponentDataType::FLOAT)
+				{
+					float* dataLoc = (float*)GetComponent(newId, componentType, byteOffset);
+					dataLoc[0] = componentData[n].GetFloatData();
+					byteOffset += sizeof(float);
+				}
+				else if (componentData[n].GetDataType() == ComponentDataType::REFERENCE)
+				{
+					int* dataLoc = (int*)GetComponent(newId, componentType, byteOffset);
+					dataLoc[0] = componentData[n].GetIntData();
+					byteOffset += sizeof(int);
+				}
+				else if (componentData[n].GetDataType() == ComponentDataType::CHAR)
+				{
+					char* dataLoc = (char*)GetComponent(newId, componentType, byteOffset);
+					std::string textData = componentData[n].GetTextData();
+					for (int i = 0; i < textData.size(); ++i)
+						dataLoc[i] = textData[i];
+					dataLoc[textData.size()] = '\0';
+					byteOffset += CHARSIZE * sizeof(char);
+				}
+				
+			}
+		}
+	}
+
+	return newId;
 }

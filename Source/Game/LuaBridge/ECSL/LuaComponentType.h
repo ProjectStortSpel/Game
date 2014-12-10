@@ -30,7 +30,9 @@ namespace LuaBridge
   private:
     std::string m_name;
     ECSL::TableType m_tableType;
-    std::map<std::string, ECSL::ComponentVariable> m_variables;
+	std::map<std::string, ECSL::ComponentVariable> m_variables;
+	std::map<unsigned int, ECSL::ComponentDataType> m_offsetToType;
+	int m_byteOffset;
   };
 }
 

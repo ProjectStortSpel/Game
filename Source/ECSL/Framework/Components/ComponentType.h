@@ -38,6 +38,9 @@ namespace ECSL
 		case ComponentDataType::CHAR:
 			return CHARSIZE*sizeof(char);
 			break;
+		case ComponentDataType::MATRIX:
+			return 64;
+			break;
 
 		case ComponentDataType::REFERENCE:
 			return sizeof(int);
