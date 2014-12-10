@@ -73,7 +73,7 @@ Network::Packet* NetworkHelper::WriteEntity(Network::PacketHandler* _ph, unsigne
 	return _ph->EndPack(id);
 }
 
-void NetworkHelper::ReadEntity(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _nc)
+void NetworkHelper::ReceiveEntity(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _nc)
 {
 	unsigned int idN = _ph->ReadInt(_id);
 	unsigned int idH;
@@ -163,4 +163,16 @@ void NetworkHelper::ReadEntity(Network::PacketHandler* _ph, uint64_t _id, Networ
 		m_world->RemoveComponentFrom(compName, idH);
 	}
 	
+}
+
+
+void NetworkHelper::ReceiveEntityKill(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _nc)
+{
+	unsigned int idN = _ph->ReadInt(_id);
+	
+	if (m_NtoH.find(_id) != m_NtoH.end())
+	{
+		unsigned int idH = m_NtoH[idN];
+		m_world->KillEntity(idH);
+	}
 }

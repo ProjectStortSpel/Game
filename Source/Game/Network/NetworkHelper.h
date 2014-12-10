@@ -21,7 +21,9 @@ public:
 
 
 	Network::Packet* WriteEntity(Network::PacketHandler* _ph, unsigned int _e);
-	void ReadEntity(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _nc);
+	void ReceiveEntity(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _nc);
+	void ReceiveEntityDelta(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _nc);
+	void ReceiveEntityKill(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _nc);
 
 
 };
