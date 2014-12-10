@@ -6,7 +6,7 @@
 #include "../Components/ComponentType.h"
 namespace ECSL
 {
-	struct TemplateEntry
+	struct DECLSPEC TemplateEntry
 	{
 		TemplateEntry(int data){ m_intData = data; m_dataType = ComponentDataType::INT; }
 		TemplateEntry(float data){ m_floatData = data; m_dataType = ComponentDataType::FLOAT; }
@@ -24,7 +24,7 @@ namespace ECSL
 		float m_floatData;
 	};
 
-	class EntityTemplate
+	class DECLSPEC EntityTemplate
 	{
 	public:
 		EntityTemplate(

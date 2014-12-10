@@ -39,6 +39,7 @@ GameCreator::~GameCreator()
 	LuaEmbedder::Quit();
 
 	delete(&ECSL::ComponentTypeManager::GetInstance());
+	delete(&ECSL::EntityTemplateManager::GetInstance());
 }
 
 glm::mat4 mat[1000];
@@ -129,6 +130,7 @@ void GameCreator::StartGame()
 
 	/*	Hook console	*/
 	m_console->SetupHooks(&m_consoleManager);
+
 	
 	/*	FULKOD START	*/
 	for (int x = 0; x < 10; x++)
@@ -136,6 +138,14 @@ void GameCreator::StartGame()
 		for (int y = 0; y < 10; y++)
 		{
 			std::string command = "createobject cube cube/ ";
+			if ((x + y) % 2)
+			{
+				command += "createobject hole_test Hole/ ";
+			}
+			else
+			{
+				command += "createobject grass Default_Tile/ ";
+			}
 			command += std::to_string(x);
 			command.append(" ");
 			command += std::to_string(-1);

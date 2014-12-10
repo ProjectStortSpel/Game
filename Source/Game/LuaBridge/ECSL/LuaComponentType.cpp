@@ -3,7 +3,7 @@
 
 namespace LuaBridge
 {
-	LuaComponentType::LuaComponentType() { m_byteOffset = 0; }
+	LuaComponentType::LuaComponentType() { m_byteOffset = 0; m_syncWithNetwork = true; }
 
   LuaComponentType::~LuaComponentType()
   {
@@ -19,7 +19,8 @@ namespace LuaBridge
     LuaEmbedder::EmbedClassFunction<LuaComponentType>("ComponentType", "GetTableType", &LuaComponentType::GetTableType);
     LuaEmbedder::EmbedClassFunction<LuaComponentType>("ComponentType", "SetTableType", &LuaComponentType::SetTableType);
     LuaEmbedder::EmbedClassFunction<LuaComponentType>("ComponentType", "AddVariable", &LuaComponentType::AddVariable);
-    LuaEmbedder::EmbedClassProperty<LuaComponentType>("ComponentType", "Name", &LuaComponentType::GetName, &LuaComponentType::SetName);
+	LuaEmbedder::EmbedClassProperty<LuaComponentType>("ComponentType", "Name", &LuaComponentType::GetName, &LuaComponentType::SetName);
+	LuaEmbedder::EmbedClassProperty<LuaComponentType>("ComponentType", "SyncNetwork", &LuaComponentType::GetSyncWithNetwork, &LuaComponentType::SetSyncWithNetwork);
     LuaEmbedder::EmbedClassProperty<LuaComponentType>("ComponentType", "TableType", &LuaComponentType::GetTableType, &LuaComponentType::SetTableType);
   
     LuaEmbedder::AddInt("None", (int)ECSL::TableType::None, "TableType");
@@ -35,14 +36,26 @@ namespace LuaBridge
   
   int LuaComponentType::GetName()
   {
-    LuaEmbedder::PushString(m_name);
-    return 1;
+	  LuaEmbedder::PushString(m_name);
+	  return 1;
   }
 
   int LuaComponentType::SetName()
   {
-    m_name = LuaEmbedder::PullString(1);
-    return 0;
+	  m_name = LuaEmbedder::PullString(1);
+	  return 0;
+  }
+
+  int LuaComponentType::GetSyncWithNetwork()
+  {
+	  LuaEmbedder::PushBool(m_syncWithNetwork);
+	  return 1;
+  }
+
+  int LuaComponentType::SetSyncWithNetwork()
+  {
+	  m_syncWithNetwork = LuaEmbedder::PullBool(1);
+	  return 0;
   }
 
   int LuaComponentType::GetTableType()
@@ -75,6 +88,6 @@ namespace LuaBridge
   
   ECSL::ComponentType* LuaComponentType::CreateComponentType()
   {
-	  return new ECSL::ComponentType(m_name, m_tableType, m_variables, m_offsetToType);
+	  return new ECSL::ComponentType(m_name, m_tableType, m_variables, m_offsetToType, m_syncWithNetwork);
   }
 }

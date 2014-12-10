@@ -12,8 +12,10 @@ ModelSystem::~ModelSystem()
 
 void ModelSystem::Initialize()
 {
-	/*	Rendersystem wants Position, Scale, Rotation and Render	*/
 	AddComponentTypeToFilter("Model", ECSL::FilterType::Mandatory);
+
+
+	AddComponentTypeToFilter("Render", ECSL::FilterType::Excluded);
 
 
 	printf("ModelSystem initialized!\n");
@@ -39,8 +41,6 @@ void ModelSystem::OnEntityAdded(unsigned int _entityId)
 	Matrix = (glm::mat4*)GetComponent(_entityId, "Render", "Mat");
 	int* ModelId = (int*)GetComponent(_entityId, "Render", "ModelId");
 	*ModelId = m_graphics->LoadModel(ModelPath, ModelName, Matrix);
-
-	RemoveComponentFrom("Model", _entityId);
 }
 
 void ModelSystem::OnEntityRemoved(unsigned int _entityId)
