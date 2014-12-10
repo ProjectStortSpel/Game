@@ -10,6 +10,7 @@ namespace ECSL
 	class DECLSPEC SystemWorkGroup
 	{
 	private:
+	  
 		std::vector<System*>* m_systems;
 	public:
 		SystemWorkGroup();

@@ -8,6 +8,10 @@ package.path = package.path .. ";../../../Externals/content/scripting/storaspel/
 require "movementsystem"
 require "mapcreationsystem"
 
+-- Templates
+package.path = package.path .. ";../../../Externals/content/scripting/storaspel/templates/?.lua"
+require "box"
+
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(MovementSystem)
 worldCreator:AddSystemToCurrentGroup(MapCreationSystem)
