@@ -5,9 +5,12 @@
 #include "ECSL/LuaSystem.h"
 #include "ECSL/LuaComponentType.h"
 #include "ECSL/LuaComponent.h"
+#include "ECSL/LuaEntityTemplate.h"
+#include "ECSL/LuaEntityTemplateManager.h"
 #include "Renderer/LuaGraphicDevice.h"
 #include "Renderer/LuaCamera.h"
 #include "Math/LuaMatrix.h"
+#include "FileLoader/LuaFileLoader.h"
 
 namespace LuaBridge
 {
@@ -20,10 +23,14 @@ namespace LuaBridge
     LuaSystem::Embed();
     LuaComponentType::Embed();
     LuaComponent::Embed();
+    LuaEntityTemplate::Embed();
+    LuaEntityTemplateManager::Embed();
     
     LuaGraphicDevice::Embed();
     LuaCamera::Embed();
     
     LuaMatrix::Embed();
+
+	LuaEmbedder::AddFunction("LoadMap", &LoadMap, "File");
   }
 }

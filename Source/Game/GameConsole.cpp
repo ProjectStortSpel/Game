@@ -15,8 +15,6 @@ GameConsole::~GameConsole()
 
 void GameConsole::CreateObject(std::vector<Console::Argument>* _args)
 {
-	if (_args->size() != 4)
-		return;
 
 	if (_args->at(0).ArgType != Console::ArgumentType::Text)
 		return;

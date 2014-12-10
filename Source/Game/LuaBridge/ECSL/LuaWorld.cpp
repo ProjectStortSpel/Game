@@ -28,7 +28,10 @@ namespace LuaBridge
   
   int LuaWorld::CreateNewEntity()
   {
-    LuaEmbedder::PushInt((int)World::CreateNewEntity());
+    if (LuaEmbedder::IsString(1))
+      LuaEmbedder::PushInt((int)World::CreateNewEntity(LuaEmbedder::PullString(1)));
+    else
+      LuaEmbedder::PushInt((int)World::CreateNewEntity());
     return 1;
   }
 

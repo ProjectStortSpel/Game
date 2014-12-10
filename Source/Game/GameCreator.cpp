@@ -41,6 +41,20 @@ GameCreator::~GameCreator()
 	delete(&ECSL::ComponentTypeManager::GetInstance());
 }
 
+glm::mat4 mat[1000];
+
+void SpawnStuff(Renderer::GraphicDevice* graphics)
+{
+	for (int x = 0; x < 10; x++)
+	{
+		for (int y = 0; y < 10; y++)
+		{
+			mat[y + x * 10] = glm::translate(vec3(x - 5, -1, y - 5));
+			graphics->LoadModel("content/models/default_tile/", "default.object", &mat[y + x * 10]);
+		}
+	}
+}
+
 void GameCreator::InitializeGraphics()
 {
 	m_graphics = new Renderer::GraphicDevice();
@@ -73,7 +87,7 @@ void GameCreator::InitializeLua()
 void GameCreator::InitializeWorld()
 {
 	//ECSL::ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("content/components");
-	ECSL::EntityTemplateManager::GetInstance().LoadComponentTypesFromDirectory("content/scripting/storaspel/templates");
+	//ECSL::EntityTemplateManager::GetInstance().LoadComponentTypesFromDirectory("content/scripting/storaspel/templates");
 
 	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
 	LuaEmbedder::AddObject<ECSL::WorldCreator>("WorldCreator", &worldCreator, "worldCreator");
@@ -116,6 +130,22 @@ void GameCreator::StartGame()
 	/*	Hook console	*/
 	m_console->SetupHooks(&m_consoleManager);
 	
+	/*	FULKOD START	*/
+	for (int x = 0; x < 10; x++)
+	{
+		for (int y = 0; y < 10; y++)
+		{
+			std::string command = "createobject cube cube/ ";
+			command += std::to_string(x);
+			command.append(" ");
+			command += std::to_string(-1);
+			command.append(" ");
+			command += std::to_string(y);
+			command.append("");
+			m_consoleManager.ExecuteCommand(command.c_str());
+		}
+	}
+	/*	FULKOD END		*/
 
 	Timer gameTimer;
 	while (true)

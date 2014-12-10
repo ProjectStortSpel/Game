@@ -35,7 +35,8 @@ namespace LuaEmbedder
       lua_pushstring(L, name.c_str());
       lua_gettable(L, -2);
     }
-    assert(!lua_pcall(L, argumentCount, LUA_MULTRET, 0));
+	bool result = lua_pcall(L, argumentCount, LUA_MULTRET, 0);
+    assert(!result);
     lua_gc(L, LUA_GCCOLLECT, 0);
   }
   
@@ -79,7 +80,6 @@ namespace LuaEmbedder
   {
     assert(lua_isnumber(L, lua_upvalueindex(1)));
     int functionIndex = (int)lua_tonumber(L, lua_upvalueindex(1));
-    lua_remove(L, 1);
     return (*(Functions[functionIndex]))();
   }
   void AddFunction(const std::string& name, int (*functionPointer)(), const std::string& library)
