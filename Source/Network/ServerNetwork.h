@@ -39,6 +39,9 @@ namespace Network
 		// Bind function which will trigger when another player disconnects from the server
 		void SetOnPlayerTimedOut(NetEvent _function);
 
+		bool IsRunning() { return *m_running; }
+		unsigned int GetMaxConnections() { return *m_maxConnections; }
+
 	private:
 		void ReceivePackets(ISocket* _socket);
 		void ListenForConnections(void);
@@ -54,33 +57,33 @@ namespace Network
 
 	private:
 
-#pragma warning( disable : 4251 )
+		bool* m_listenForConnectionsAlive;
 
-		bool m_listenForConnectionsAlive;
-		std::thread m_listenForConnectionsThread;
+		unsigned int* m_maxConnections;
 
-		unsigned int m_maxConnections;
 
-		std::mutex m_timeOutLock;
-		std::mutex m_connectedClientsLock;
+		std::thread* m_listenForConnectionsThread;
+		std::mutex* m_timeOutLock;
+		std::mutex* m_connectedClientsLock;
 
-		std::mutex m_dataRecievedLock;
-		std::mutex m_dataSentLock;
+		std::mutex* m_dataRecievedLock;
+		std::mutex* m_dataSentLock;
+		std::map<NetConnection, ISocket*>* m_connectedClients;
 
 		ISocket* m_listenSocket;
-		std::map<NetConnection, ISocket*> m_connectedClients;
 
-		std::map<NetConnection, std::thread> m_receivePacketsThreads;
-		std::map<NetConnection, float> m_currentTimeOutIntervall;
-		std::map<NetConnection, int> m_currentIntervallCounter;
+		std::map<NetConnection, std::thread>* m_receivePacketsThreads;
+		std::map<NetConnection, float>* m_currentTimeOutIntervall;
+		std::map<NetConnection, int>* m_currentIntervallCounter;
 
 		//std::map<NetConnection
 
-		NetEvent m_onPlayerConnected;
-		NetEvent m_onPlayerDisconnected;
-		NetEvent m_onPlayerTimedOut;
+		NetEvent* m_onPlayerConnected;
+		NetEvent* m_onPlayerDisconnected;
+		NetEvent* m_onPlayerTimedOut;
+		bool* m_running;
 
-#pragma warning( default : 4251 )
+
 
 	};
 }

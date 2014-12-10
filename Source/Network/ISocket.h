@@ -24,28 +24,25 @@ namespace Network
 		virtual int Send(char* _buffer, int _length, int _flags = 0) = 0;
 		virtual int Receive(char* _buffer, int _length, int _flags = 0) = 0;
 
-		NetConnection GetNetConnection() { return NetConnection(m_remoteAddress.c_str(), m_remotePort); }
-		std::string GetRemoteIpAddress() { return m_remoteAddress; }
-		int GetRemotePort() { return m_remotePort; }
-		int GetLocalPort() { return m_localPort; }
+		NetConnection GetNetConnection() { return NetConnection(m_remoteAddress->c_str(), *m_remotePort); }
+		std::string GetRemoteIpAddress() { return *m_remoteAddress; }
+		int GetRemotePort() { return *m_remotePort; }
+		int GetLocalPort() { return *m_localPort; }
 
-		int GetActive(void) { return m_active; }
-		void SetActive(int _value) { m_active = _value; }
+		int GetActive(void) { return *m_active; }
+		void SetActive(int _value) { *m_active = _value; }
 
 	protected:
 
-#pragma warning( disable: 4251 )
 
 		static bool g_initialized;
 		static int  g_noActiveSockets;
 
-		std::string m_remoteAddress;
-		int m_remotePort;
-		int m_localPort;
-		bool m_socketOpen;
-		int m_active;
+		std::string* m_remoteAddress;
+		int* m_remotePort;
+		int* m_localPort;
+		int* m_active;
 
-#pragma warning (default: 4251 )
 
 	private:
 	};

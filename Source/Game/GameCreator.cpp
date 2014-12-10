@@ -5,12 +5,13 @@
 #include "Systems/CameraSystem.h"
 #include "Systems/RotationSystem.h"
 #include "Systems/ModelSystem.h"
+#include "Systems/ReceivePacketSystem.h"
 
 #include "ECSL/ECSL.h"
 #include "ECSL/Managers/EntityTemplateManager.h"
 
 GameCreator::GameCreator() :
-m_graphics(0), m_input(0), m_world(0), m_console(0)
+m_graphics(0), m_input(0), m_world(0), m_console(0), m_client(0), m_server(0)
 {
 
 }
@@ -28,6 +29,12 @@ GameCreator::~GameCreator()
 
 	if (m_console)
 		delete m_console;
+
+	if (m_client)
+		delete m_client;
+
+	if (m_server)
+		delete m_server;
 
 	LuaEmbedder::Quit();
 
@@ -67,7 +74,8 @@ void GameCreator::InitializeInput()
 
 void GameCreator::InitializeNetwork()
 {
-
+	m_client = new Network::ClientNetwork();
+	m_server = new Network::ServerNetwork();
 }
 
 void GameCreator::InitializeLua()
@@ -99,8 +107,8 @@ void GameCreator::InitializeWorld()
 	worldCreator.AddLuaSystemToCurrentGroup(new CameraSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new ModelSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderSystem(m_graphics));
+	worldCreator.AddLuaSystemToCurrentGroup(new ReceivePacketSystem(m_client, m_server));
 
-	
 	
 	m_world = worldCreator.CreateWorld(10000);
 	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
@@ -114,7 +122,7 @@ void GameCreator::StartGame()
 	if (!m_graphics || !m_input || !m_world || m_console)
 		return;
 
-	m_console = new GameConsole(m_graphics, m_world);
+	m_console = new GameConsole(m_graphics, m_world, m_client, m_server);
 
 	m_consoleInput.SetTextHook(std::bind(&Console::ConsoleManager::ExecuteCommand, &m_consoleManager, std::placeholders::_1));
 	m_consoleInput.SetActive(true);
@@ -141,26 +149,11 @@ void GameCreator::StartGame()
 		/*	Update world (systems, entities etc)	*/
 		m_world->Update(dt);
 
-		/*	Toggle console	*/
-		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_GRAVE) == Input::InputState::PRESSED)
-		{
-			if (m_input->GetKeyboard()->IsTextInputActive())
-			{
-				m_input->GetKeyboard()->StopTextInput();
-				m_consoleInput.SetActive(false);
-			}
-			else
-			{
-				m_input->GetKeyboard()->StartTextInput();
-				m_consoleInput.SetActive(true);
-				m_input->GetKeyboard()->ResetTextInput();
-			}
-		}
+		UpdateConsole();
 
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
 			break;
 
-		UpdateConsole();
 		RenderConsole();
 		m_graphics->Render();
 	}
@@ -168,6 +161,25 @@ void GameCreator::StartGame()
 
 void GameCreator::UpdateConsole()
 {
+	/*	Toggle console	*/
+	if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_GRAVE) == Input::InputState::PRESSED)
+	{
+		if (m_input->GetKeyboard()->IsTextInputActive())
+		{
+			m_input->GetKeyboard()->StopTextInput();
+			m_consoleInput.SetActive(false);
+		}
+		else
+		{
+			m_input->GetKeyboard()->StartTextInput();
+			m_consoleInput.SetActive(true);
+			m_input->GetKeyboard()->ResetTextInput();
+		}
+	}
+
+
+
+
 	// MOVE ?!
 	if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_UP) == Input::InputState::PRESSED)
 	{
@@ -212,7 +224,6 @@ void GameCreator::RenderConsole()
 	auto match = m_consoleManager.GetFunctionMatch(command.c_str());
 	m_graphics->RenderSimpleText(match, 9, 11);
 }
-
 
 void GameCreator::PollSDLEvent()
 {
