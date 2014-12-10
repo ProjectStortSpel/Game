@@ -59,3 +59,9 @@ CameraComponent.TableType = TableType.Map
 CameraComponent:AddVariable("EntityId", 4)
 worldCreator:AddComponentType(CameraComponent)
 
+-- Network Component
+local NetworkComponent = ComponentType()
+NetworkComponent.Name = "Network"
+NetworkComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NetworkComponent)
+

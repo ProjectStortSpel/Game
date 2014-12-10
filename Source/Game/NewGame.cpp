@@ -15,8 +15,8 @@ int main(int argc, char** argv)
 	newGame->InitializeLua();
 	newGame->InitializeGraphics();
 	newGame->InitializeInput();
-	newGame->InitializeWorld();
 	newGame->InitializeNetwork();
+	newGame->InitializeWorld();
 
 
 	newGame->StartGame();

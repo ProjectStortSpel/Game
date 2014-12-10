@@ -126,7 +126,7 @@ void BaseNetwork::HandlePacket(Packet* _packet)
 	}
 }
 
-int BaseNetwork::TriggerPacket(void)
+int BaseNetwork::GetPacket(void)
 {
 
 	m_customPacketLock->lock();
