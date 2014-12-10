@@ -20,7 +20,7 @@ ForwardSystem.Update = function(self, dt)
 		
 		
 		local newtargetx = x + dx
-		local newtargety = y
+		local newtargety = y 
 		local newtargetz = z + dy
 		
 		targetposition.SetFloat3(newtargetx, newtargety, newtargetz)
@@ -58,7 +58,7 @@ RightTurnSystem.Update = function(self, dt)
 
 		local dir = self:GetComponent(entity, "Direction", 0)
 		
-		local dx, dy = dir.GetInt2()
+		local dx, dy = dir:GetInt2()
 		
 		
 		local tempdy = dx
@@ -99,7 +99,7 @@ LeftTurnSystem.Update = function(self, dt)
 
 		local dir = self:GetComponent(entity, "Direction", 0)
 		
-		local dx, dy = dir.GetFloat2()
+		local dx, dy = dir:GetFloat2()
 		
 		
 		local tempdy = dx
@@ -144,15 +144,15 @@ BackwardSystem.Update = function(self, dt)
 		world:CreateComponentAndAddTo("TargetPosition", entity)
 		local targetposition = self:GetComponent(entity, "TargetPosition", 0)
 		
-		local x, y, z = position.GetFloat3()
-		local dx, dy = dir.GetInt2()
+		local x, y, z = position:GetFloat3()
+		local dx, dy = dir:GetInt2()
 		
 		
 		local newtargetx = x - dx
-		local newtargety = y
+		local newtargety = y 
 		local newtargetz = z - dy
 		
-		targetposition.SetFloat3(newtargetx, newtargety, newtargetz)
+		targetposition:SetFloat3(newtargetx, newtargety, newtargetz)
 		
 		world:RemoveComponentFrom("Backward", entity);
 		
@@ -173,5 +173,45 @@ BackwardSystem.OnEntityAdded = function(self, entityId)
 end
 
 BackwardSystem.OnEntityRemoved = function(self, entityId)
+	print("OnEntityRemoved")
+end
+
+---------------------------- TurnAroundSystem
+
+TurnAroundSystem = System()
+
+TurnAroundSystem.Update = function(self, dt)
+
+	local entities = self:GetEntities()
+	for i = 1, #entities do
+		local entity = entities[i]
+
+		local dir = self:GetComponent(entity, "Direction", 0)
+		
+		local dx, dy = dir:GetFloat2()
+		
+		dx = -dx
+		dy = -dy
+		
+		dir:SetFloat2(dx, dy)
+		
+		world:RemoveComponentFrom("TurnAround", entity);
+		
+	end
+end
+
+TurnAroundSystem.Initialize = function(self)
+	self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
+	self:AddComponentTypeToFilter("Direction",FilterType.Mandatory)
+	self:AddComponentTypeToFilter("TurnAround",FilterType.Mandatory)
+	
+	print("TurnAroundSystem initialized!")
+end
+
+TurnAroundSystem.OnEntityAdded = function(self, entityId)
+	print("OnEntityAdded (LUA)")
+end
+
+TurnAroundSystem.OnEntityRemoved = function(self, entityId)
 	print("OnEntityRemoved")
 end
