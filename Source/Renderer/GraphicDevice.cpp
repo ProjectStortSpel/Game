@@ -12,6 +12,7 @@ GraphicDevice::GraphicDevice()
 	m_modelIDcounter = 0;
 	m_camera = new Camera();
 	m_vramUsage = 0;
+	m_debugTexFlag = 0;
 }
 
 GraphicDevice::~GraphicDevice()
@@ -116,6 +117,8 @@ void GraphicDevice::Render()
 	m_deferredShader1.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 
 	mat4 viewMatrix = *m_camera->GetViewMatrix();
+
+	m_deferredShader1.SetUniVariable("TexFlag", glint, &m_debugTexFlag);
 
 	//------Render scene (for deferred)-----------------------------------------------------------
 	//-- DRAW MODELS

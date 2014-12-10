@@ -131,11 +131,11 @@ void GameCreator::StartGame()
 	m_console->SetupHooks(&m_consoleManager);
 	
 	/*	FULKOD START	*/
-	for (int x = 0; x < 10; x++)
+	for (int x = -5; x < 5; x++)
 	{
-		for (int y = 0; y < 10; y++)
+		for (int y = -5; y < 5; y++)
 		{
-			std::string command = "createobject default default_tile/ ";
+			std::string command = "createobject cube cube2/ ";
 			command += std::to_string(x);
 			command.append(" ");
 			command += std::to_string(-1);

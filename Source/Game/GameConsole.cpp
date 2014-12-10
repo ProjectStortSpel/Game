@@ -19,9 +19,9 @@ void GameConsole::CreateObject(std::vector<Console::Argument>* _args)
 		return;
 
 	std::string _modelName = _args->at(0).Text;
-	_modelName.append(".object");
-	std::string _modelPath = "content/models/";
-	_modelPath.append(_args->at(1).Text);
+	//_modelName.append(".object");
+	//std::string _modelPath = "content/models/";
+	std::string _modelPath = _args->at(1).Text;
 
 	float x = _args->at(2).Number;
 	float y = _args->at(3).Number;
@@ -31,12 +31,18 @@ void GameConsole::CreateObject(std::vector<Console::Argument>* _args)
 	m_world->CreateComponentAndAddTo("Position", mId);
 	m_world->CreateComponentAndAddTo("Scale", mId);
 	m_world->CreateComponentAndAddTo("Rotation", mId);
-	m_world->CreateComponentAndAddTo("Render", mId);
+	m_world->CreateComponentAndAddTo("Model", mId);
 
-	glm::mat4*	Matrix;
-	Matrix = (glm::mat4*)m_world->GetComponent(mId, "Render", "Mat");
-	int* ModelId = (int*)m_world->GetComponent(mId, "Render", "ModelId");
-	*ModelId = m_graphics->LoadModel(_modelPath, _modelName, Matrix);
+	char* data;
+	data = (char*)m_world->GetComponent(mId, "Model", "ModelName");
+	for (int n = 0; n < _modelName.size(); ++n)
+		data[n] = _modelName[n];
+	data[_modelName.size()] = '\0';
+
+	data = (char*)m_world->GetComponent(mId, "Model", "ModelPath");
+	for (int n = 0; n < _modelPath.size(); ++n)
+		data[n] = _modelPath[n];
+	data[_modelPath.size()] = '\0';
 
 	float* Position;
 	Position = (float*)m_world->GetComponent(mId, "Position", "X");
@@ -215,6 +221,29 @@ void GameConsole::DisconnectClient(std::vector<Console::Argument>* _args)
 		m_client->Disconnect();
 }
 
+void GameConsole::SetDebugTexture(std::vector<Console::Argument>* _args)
+{
+	if (_args->size() == 0)
+		return;
+	
+	if ((*_args)[0].ArgType == Console::ArgumentType::Text)
+	{
+		if (strcmp((*_args)[0].Text, "standard") == 0)
+			m_graphics->SetDebugTexFlag(0);
+
+		else if (strcmp((*_args)[0].Text, "diffuse") == 0)
+			m_graphics->SetDebugTexFlag(1);
+
+		else if (strcmp((*_args)[0].Text, "normal") == 0)
+			m_graphics->SetDebugTexFlag(2);
+
+		else if (strcmp((*_args)[0].Text, "specular") == 0)
+			m_graphics->SetDebugTexFlag(3);
+
+		else if (strcmp((*_args)[0].Text, "glow") == 0)
+			m_graphics->SetDebugTexFlag(4);
+	}
+}
 
 void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 {
@@ -229,4 +258,5 @@ void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 	m_consoleManager->AddCommand("Connect", std::bind(&GameConsole::ConnectClient, this, std::placeholders::_1));
 	m_consoleManager->AddCommand("Disconnect", std::bind(&GameConsole::DisconnectClient, this, std::placeholders::_1));
 	m_consoleManager->AddCommand("List", std::bind(&GameConsole::ListCommands, this, std::placeholders::_1));
+	m_consoleManager->AddCommand("DebugRender", std::bind(&GameConsole::SetDebugTexture, this, std::placeholders::_1));
 }
