@@ -8,6 +8,7 @@
 #include "Renderer/LuaGraphicDevice.h"
 #include "Renderer/LuaCamera.h"
 #include "Math/LuaMatrix.h"
+#include "FileLoader/LuaFileLoader.h"
 
 namespace LuaBridge
 {
@@ -25,5 +26,7 @@ namespace LuaBridge
     LuaCamera::Embed();
     
     LuaMatrix::Embed();
+
+	LuaEmbedder::AddFunction("LoadMap", &LoadMap, "File");
   }
 }

@@ -58,4 +58,3 @@ CameraComponent.Name = "Camera"
 CameraComponent.TableType = TableType.Map
 CameraComponent:AddVariable("EntityId", 4)
 worldCreator:AddComponentType(CameraComponent)
-
