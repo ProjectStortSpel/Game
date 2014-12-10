@@ -26,6 +26,7 @@ MapCreationSystem.AddTile = function(self, posX, posZ, mapPosX, mapPosY, tiletyp
     local mapPosComp = self:GetComponent(entity, "MapPosition", 0)
     mapPosComp:SetInt2(mapPosX, mapPosY)
 
+
 --    if tiletype == 111 then -- 111 = o = out
 --        world:CreateComponentAndAddTo("Void", entity)
 

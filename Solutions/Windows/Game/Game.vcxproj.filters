@@ -39,6 +39,9 @@
     <Filter Include="Lua Bridge\FileLoader">
       <UniqueIdentifier>{f75b5f79-7cf0-4857-b059-2797ae8d1deb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scripting\Templates">
+      <UniqueIdentifier>{e0263418-dd0f-437a-ab52-e9016f45bb5b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\Timer.cpp">
@@ -113,6 +116,12 @@
     <ClCompile Include="..\..\..\Source\Game\Systems\ReceivePacketSystem.cpp">
       <Filter>Game\Systems</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaEntityTemplate.cpp">
+      <Filter>Lua Bridge\ECSL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaEntityTemplateManager.cpp">
+      <Filter>Lua Bridge\ECSL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\Timer.h">
@@ -184,6 +193,12 @@
     <ClInclude Include="..\..\..\Source\Game\Systems\ReceivePacketSystem.h">
       <Filter>Game\Systems</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaEntityTemplate.h">
+      <Filter>Lua Bridge\ECSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaEntityTemplateManager.h">
+      <Filter>Lua Bridge\ECSL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\Externals\content\scripting\storaspel\init.lua">
@@ -197,6 +212,15 @@
     </None>
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\mapcreationsystem.lua">
       <Filter>Scripting\Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\templates\box.lua">
+      <Filter>Scripting\Templates</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\templates\tile.lua">
+      <Filter>Scripting\Templates</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\components\tilecomponents.lua">
+      <Filter>Scripting\Components</Filter>
     </None>
   </ItemGroup>
 </Project>
