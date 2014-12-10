@@ -71,7 +71,7 @@ namespace Network
 		int ReadInt(uint64_t _id);
 		// Read a string from a packet
 		// Should always be called from a function bound with AddNetMessageHook
-		std::string ReadString(uint64_t _id);
+		char* ReadString(uint64_t _id);
 		// Read a float from a packet
 		// Should always be called from a function bound with AddNetMessageHook
 		float ReadFloat(uint64_t _id);
@@ -97,13 +97,12 @@ namespace Network
 
 	private:
 
-#pragma warning( disable : 4251 )
 
-		std::map<uint64_t, PacketSendInfo*> m_packetSendInfoMap;
-		std::map<uint64_t, PacketReceiveInfo*> m_packetReceiveInfoMap;
+		std::map<uint64_t, PacketSendInfo*>* m_packetSendInfoMap;
+		std::map<uint64_t, PacketReceiveInfo*>* m_packetReceiveInfoMap;
 
-		std::mutex m_sendMutex;
-		std::mutex m_receiveMutex;
+		std::mutex* m_sendMutex;
+		std::mutex* m_receiveMutex;
 
 
 		//unsigned char* m_packetSend;
@@ -112,7 +111,6 @@ namespace Network
 		//Packet*		   m_packetReceive;
 		//unsigned char* m_positionReceive;
 
-#pragma warning( default : 4251 )
 
 	};
 }

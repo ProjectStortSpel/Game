@@ -8,16 +8,21 @@ using namespace Network;
 
 WinSocket::WinSocket(void)
 {
+	m_remoteAddress = new std::string("");
+	m_remotePort = new int(0);
+	m_localPort = new int(0);
+	m_active = new int(1);
+
 	Initialize();
 
 	m_socket = socket(AF_INET, SOCK_STREAM, 0);
 
 	if (m_socket != INVALID_SOCKET)
 	{
-		m_remoteAddress = "";
-		m_remotePort = 0;
-		m_localPort = 0;
-		m_active = 1;
+		*m_remoteAddress = "";
+		*m_remotePort = 0;
+		*m_localPort = 0;
+		*m_active = 1;
 
 		g_noActiveSockets++;
 	}
@@ -28,15 +33,20 @@ WinSocket::WinSocket(void)
 
 WinSocket::WinSocket(SOCKET _socket)
 {
+	m_remoteAddress = new std::string("");
+	m_remotePort = new int(0);
+	m_localPort = new int(0);
+	m_active = new int(1);
+
 	Initialize();
 
 	m_socket = _socket;
 
 	if (m_socket != INVALID_SOCKET)
 	{
-		m_remoteAddress = "";
-		m_remotePort = 0;
-		m_localPort = 0;
+		*m_remoteAddress = "";
+		*m_remotePort = 0;
+		*m_localPort = 0;
 
 		g_noActiveSockets++;
 	}
@@ -46,15 +56,20 @@ WinSocket::WinSocket(SOCKET _socket)
 
 WinSocket::WinSocket(int _domain, int _type, int _protocol)
 {
+	m_remoteAddress = new std::string("");
+	m_remotePort = new int(0);
+	m_localPort = new int(0);
+	m_active = new int(1);
+
 	Initialize();
 
 	m_socket = socket(_domain, _type, _protocol);
 
 	if (m_socket != INVALID_SOCKET)
 	{
-		m_remoteAddress = "";
-		m_remotePort = 0;
-		m_localPort = 0;
+		*m_remoteAddress = "";
+		*m_remotePort = 0;
+		*m_localPort = 0;
 
 		g_noActiveSockets++;
 	}
@@ -66,6 +81,12 @@ WinSocket::~WinSocket(void)
 {
 	CloseSocket();
 	Shutdown();
+
+	SAFE_DELETE(m_remoteAddress);
+	SAFE_DELETE(m_remotePort);
+	SAFE_DELETE(m_localPort);
+	SAFE_DELETE(m_active);
+
 }
 
 bool WinSocket::Initialize(void)
@@ -136,8 +157,8 @@ bool WinSocket::Connect(const char* _ipAddress, const int _port)
 		return false;
 	}
 
-	m_remoteAddress = _ipAddress;
-	m_remotePort = _port;
+	*m_remoteAddress = _ipAddress;
+	*m_remotePort = _port;
 
 	return true;
 }
@@ -159,7 +180,7 @@ bool WinSocket::Bind(const int _port)
 	sockaddr_in sin;
 	socklen_t len = sizeof(sin);
 	if (getsockname(m_socket, (sockaddr *)&sin, &len) == 0)
-		m_localPort = ntohs(sin.sin_port);
+		*m_localPort = ntohs(sin.sin_port);
 
 	char value = 1;
 	if (setsockopt(m_socket, IPPROTO_TCP, TCP_NODELAY, &value, sizeof(value)) < 0)
@@ -206,7 +227,6 @@ bool WinSocket::CloseSocket(void)
 		return false;
 	}
 
-	m_socketOpen = false;
 	g_noActiveSockets--;
 
 	return true;
@@ -244,10 +264,10 @@ ISocket* WinSocket::Accept(void)
 	sockaddr_in sin;
 	socklen_t len = sizeof(sin);
 	if (getsockname(incomingSocket, (sockaddr *)&sin, &len) == 0)
-		newWinSocket->m_localPort = ntohs(sin.sin_port);
+		*newWinSocket->m_localPort = ntohs(sin.sin_port);
 
-	newWinSocket->m_remoteAddress = ipAddress;
-	newWinSocket->m_remotePort = incomingAddress.sin_port;
+	*newWinSocket->m_remoteAddress = ipAddress;
+	*newWinSocket->m_remotePort = incomingAddress.sin_port;
 
 	return newWinSocket;
 
