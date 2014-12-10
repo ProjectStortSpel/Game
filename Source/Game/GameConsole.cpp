@@ -15,34 +15,15 @@ GameConsole::~GameConsole()
 
 void GameConsole::CreateObject(std::vector<Console::Argument>* _args)
 {
-	if (_args->size() != 5)
+	if (_args->size() != 4)
 		return;
 
-	std::string _modelName = _args->at(0).Text;
-	_modelName.append(".object");
-	std::string _modelPath = "content/models/";
-	_modelPath.append(_args->at(1).Text);
+	if (_args->at(0).ArgType != Console::ArgumentType::Text)
+		return;
 
-	float x = _args->at(2).Number;
-	float y = _args->at(3).Number;
-	float z = _args->at(4).Number;
-
-	unsigned int mId = m_world->CreateNewEntity();
-	m_world->CreateComponentAndAddTo("Position", mId);
-	m_world->CreateComponentAndAddTo("Scale", mId);
-	m_world->CreateComponentAndAddTo("Rotation", mId);
-	m_world->CreateComponentAndAddTo("Render", mId);
-
-	glm::mat4*	Matrix;
-	Matrix = (glm::mat4*)m_world->GetComponent(mId, "Render", "Mat");
-	int* ModelId = (int*)m_world->GetComponent(mId, "Render", "ModelId");
-	*ModelId = m_graphics->LoadModel(_modelPath, _modelName, Matrix);
-
-	float* Position;
-	Position = (float*)m_world->GetComponent(mId, "Position", "X");
-	Position[0] = x;
-	Position[1] = y;
-	Position[2] = z;
+	std::string _template = _args->at(0).Text;
+	_template[0] = toupper(_template[0]);
+	unsigned int mId = m_world->CreateNewEntity(_template);
 
 	std::stringstream ss;
 	ss << "Entity with id #" << mId << " has been created!";
