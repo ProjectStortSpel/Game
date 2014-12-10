@@ -45,7 +45,7 @@ void phongModel(int index, out vec3 ambient, out vec3 diffuse, out vec3 spec) {
 	lightVec /= d; //normalizing
         
 	ambient = Lights[index].Color * Lights[index].Intensity.x;
-	vec3 E = normalize(-ViewPos);
+	vec3 E = normalize(ViewPos);
 	float diffuseFactor = dot( lightVec, NmNormal );
 
 	if(diffuseFactor > 0)
@@ -53,8 +53,8 @@ void phongModel(int index, out vec3 ambient, out vec3 diffuse, out vec3 spec) {
 		// diffuse
 		diffuse = diffuseFactor * Lights[index].Color * Lights[index].Intensity.y;
 		// specular
-		vec3 v = normalize(2 * Material.Ks * NmNormal - lightVec);//reflect( lightVec, normal_tex );
-		float specFactor = max( pow( max( dot(v, E), 0.0f ), Material.Shininess ), 0.0f);
+		vec3 v = reflect( lightVec, NmNormal );
+		float specFactor = pow( max( dot(v, E), 0.0 ), Material.Shininess );
 		spec = specFactor * Lights[index].Color * Lights[index].Intensity.z * Material.Ks;        
 	}
 

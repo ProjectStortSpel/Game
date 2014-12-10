@@ -8,12 +8,46 @@
 
 namespace ECSL
 {
+	#define	CHARSIZE 32
+
 	enum TableType
 	{
 		None,
 		Array,
 		Map
 	};
+
+	enum ComponentDataType
+	{
+		INT, FLOAT, CHAR,
+		MATRIX, REFERENCE
+	};
+
+	static int GetByteSizeFromType(ComponentDataType _type)
+	{
+		switch (_type)
+		{
+		case ComponentDataType::INT:
+			return sizeof(int);
+			break;
+
+		case ComponentDataType::FLOAT:
+			return sizeof(float);
+			break;
+
+		case ComponentDataType::CHAR:
+			return CHARSIZE*sizeof(char);
+			break;
+		case ComponentDataType::MATRIX:
+			return 64;
+			break;
+
+		case ComponentDataType::REFERENCE:
+			return sizeof(int);
+			break;
+		}
+		return 0;
+	}
 
 	class ComponentVariable 
 	{
@@ -40,17 +74,20 @@ namespace ECSL
 		TableType m_tableType;
 		unsigned int m_byteSize;
 		std::map<std::string, ComponentVariable> m_variables;
+		std::map<unsigned int, ComponentDataType> m_offsetToType;
 	public:
 		ComponentType(
 			std::string	_name,
 			TableType _tableType,
-			std::map<std::string, ComponentVariable>& _variables);
+			std::map<std::string, ComponentVariable>& _variables,
+			std::map<unsigned int, ComponentDataType>& _offsetToTypes);
 		~ComponentType();
 
 		inline const std::string& GetName() const									{ return m_name; }
 		inline const TableType GetTableType() const									{ return m_tableType; }
 		inline const int GetByteSize() const										{ return m_byteSize; }
 		inline const std::map<std::string, ComponentVariable>* GetVariables() const	{ return &m_variables; }
+		inline const std::map<unsigned int, ComponentDataType>* GetDataTypes() const { return &m_offsetToType; }
 	};
 }
 

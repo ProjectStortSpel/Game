@@ -96,12 +96,14 @@ namespace Renderer
 
 		// MODELLOADER
 		bool PreLoadModel(std::string _dir, std::string _file, int _renderType = RENDER_DEFERRED);
-		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_FORWARD);
+		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED);
 		bool RemoveModel(int _id);
 		bool ActiveModel(int _id, bool _active);
 		bool ChangeModelTexture(int _id, std::string _fileDir);
 		bool ChangeModelNormalMap(int _id, std::string _fileDir);
 		bool ChangeModelSpecularMap(int _id, std::string _fileDir);
+
+		void SetDebugTexFlag(int flag) { m_debugTexFlag = flag; }
 
 	private:
 		bool InitSDLWindow();
@@ -154,6 +156,8 @@ namespace Renderer
 		int m_modelIDcounter;
 		std::vector<Model> m_modelsDeferred, m_modelsForward;
 
+		// DEBUG variables ----
+		int m_debugTexFlag; // 0=standard, 1=diffuse, 2=normal, 3=specular+shine, 4=glow
 
 		// Objects
 		//std::map<const std::string, ObjectData> m_objects;

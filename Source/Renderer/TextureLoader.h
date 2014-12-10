@@ -16,7 +16,7 @@ static unsigned int LoadTexture(const char* file, GLenum textureSlot, int &heigh
 
 	if (!imgData)
 	{
-		printf("ERROR: Texture not loaded \n");
+		std::cout << "Texture '" << file << "' not loaded." << std::endl;
 	}
 
 	GLuint texHandle;

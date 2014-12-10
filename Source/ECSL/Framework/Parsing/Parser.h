@@ -11,11 +11,11 @@
 
 namespace ECSL
 {
-	class Parser
+	class DECLSPEC Parser
 	{
 	public:
 		Parser();
-		DECLSPEC ~Parser();
+		~Parser();
 
 		bool ParseFile(Section& _out, const std::string& _filePath);
 	private:

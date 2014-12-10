@@ -1,8 +1,27 @@
 #include "Console/Console.h"
 #include <string>
 #include <regex>
+#include <sstream>
 
 using namespace Console;
+
+std::string Argument::GetString()
+{
+	std::stringstream ss;
+
+	if (ArgType == ArgumentType::Text)
+	{
+		ss << "\"";
+		ss << Text;
+		ss << "\"";
+	}
+
+	else if (ArgType == ArgumentType::Number)
+	{
+		ss << Number;
+	}
+	return ss.str();
+}
 
 ConsoleManager::ConsoleManager()
 	: m_match(), m_historyCounter(-1)
@@ -11,6 +30,12 @@ ConsoleManager::ConsoleManager()
 
 ConsoleManager::~ConsoleManager()
 {
+}
+
+ConsoleManager& ConsoleManager::GetInstance()
+{
+	static ConsoleManager* instance = new ConsoleManager();
+	return *instance;
 }
 
 bool ConsoleManager::ParseArgs(char* _args, std::vector<Argument>* _vector)
@@ -201,6 +226,9 @@ std::vector<std::string> ConsoleManager::GetHistory()
 
 void ConsoleManager::AddMessage(const char* _message)
 {
+	if (m_history.size() > 8)
+		m_history.erase(m_history.begin());
+
 	m_history.push_back(_message);
 }
 
