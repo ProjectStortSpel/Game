@@ -200,11 +200,15 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\GameConsole.cpp" />
     <ClCompile Include="..\..\..\Source\Game\GameCreator.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\Console\LuaConsole.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponent.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponentType.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaEntityTemplate.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaEntityTemplateManager.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaWorld.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaWorldCreator.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\FileLoader\LuaFileLoader.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\Input\LuaInput.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\LuaBridge.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\Math\LuaMatrix.cpp" />
@@ -225,11 +229,15 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\GameConsole.h" />
     <ClInclude Include="..\..\..\Source\Game\GameCreator.h" />
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\Console\LuaConsole.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponent.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponentType.h" />
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaEntityTemplate.h" />
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaEntityTemplateManager.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaWorld.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaWorldCreator.h" />
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\FileLoader\LuaFileLoader.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Input\LuaInput.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Math\LuaMatrix.h" />
@@ -245,6 +253,17 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClInclude Include="..\..\..\Source\Game\Systems\RotationSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\TextInput.h" />
     <ClInclude Include="..\..\..\Source\Game\Timer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\components\components.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\components\tilecomponents.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\init.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\mapcreationsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\movementsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\TestSystems.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\tilemovementsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\templates\box.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\templates\tile.lua" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

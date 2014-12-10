@@ -16,13 +16,18 @@ namespace LuaEmbedder
     lua_close(L);
   }
   
-  void Load(const std::string& filepath)
+  bool Load(const std::string& filepath)
   {
-	  bool isRight = luaL_dofile(L, filepath.c_str());
-    assert(!isRight);
+    bool error = luaL_dofile(L, filepath.c_str());
+    if (error)
+    {
+      std::cout << (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error") << std::endl;
+      return false;
+    }
     lua_gc(L, LUA_GCCOLLECT, 0);
+    return true;
   }
-  void CallFunction(const std::string& name, int argumentCount, const std::string& library)
+  bool CallFunction(const std::string& name, int argumentCount, const std::string& library)
   {
     if (library.empty())
     {
@@ -35,8 +40,14 @@ namespace LuaEmbedder
       lua_pushstring(L, name.c_str());
       lua_gettable(L, -2);
     }
-    assert(!lua_pcall(L, argumentCount, LUA_MULTRET, 0));
+    bool error = lua_pcall(L, argumentCount, LUA_MULTRET, 0);
+    if (error)
+    {
+      std::cout << (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error") << std::endl;
+      return false;
+    }
     lua_gc(L, LUA_GCCOLLECT, 0);
+    return true;
   }
   
   #define ADD_VARIABLE(type) \
@@ -79,7 +90,6 @@ namespace LuaEmbedder
   {
     assert(lua_isnumber(L, lua_upvalueindex(1)));
     int functionIndex = (int)lua_tonumber(L, lua_upvalueindex(1));
-    lua_remove(L, 1);
     return (*(Functions[functionIndex]))();
   }
   void AddFunction(const std::string& name, int (*functionPointer)(), const std::string& library)

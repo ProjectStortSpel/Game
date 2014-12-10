@@ -11,7 +11,7 @@
 #include "ECSL/Managers/EntityTemplateManager.h"
 
 GameCreator::GameCreator() :
-m_graphics(0), m_input(0), m_world(0), m_console(0), m_client(0), m_server(0)
+m_graphics(0), m_input(0), m_world(0), m_console(0), m_client(0), m_server(0), m_consoleManager(Console::ConsoleManager::GetInstance())
 {
 
 }
@@ -39,6 +39,7 @@ GameCreator::~GameCreator()
 	LuaEmbedder::Quit();
 
 	delete(&ECSL::ComponentTypeManager::GetInstance());
+	delete(&ECSL::EntityTemplateManager::GetInstance());
 }
 
 glm::mat4 mat[1000];
@@ -92,8 +93,9 @@ void GameCreator::InitializeWorld()
 	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
 	LuaEmbedder::AddObject<ECSL::WorldCreator>("WorldCreator", &worldCreator, "worldCreator");
 
-	LuaEmbedder::Load("../../../Externals/content/scripting/storaspel/init.lua");
-
+	if (!LuaEmbedder::Load("../../../Externals/content/scripting/storaspel/init.lua"))
+	  return;
+	
 	auto componentTypes = ECSL::ComponentTypeManager::GetInstance().GetComponentTypes();
 	for (auto it = componentTypes->begin(); it != componentTypes->end(); ++it)
 	{
@@ -129,13 +131,22 @@ void GameCreator::StartGame()
 
 	/*	Hook console	*/
 	m_console->SetupHooks(&m_consoleManager);
+
 	
 	/*	FULKOD START	*/
-	for (int x = -5; x < 5; x++)
+	for (int x = 0; x < 10; x++)
 	{
-		for (int y = -5; y < 5; y++)
+		for (int y = 0; y < 10; y++)
 		{
-			std::string command = "createobject cube cube2/ ";
+			std::string command;// = "createobject box";
+			if ((x + y) % 2)
+			{
+				command = "createobject hole ";
+			}
+			else
+			{
+				command = "createobject grass ";
+			}
 			command += std::to_string(x);
 			command.append(" ");
 			command += std::to_string(-1);

@@ -34,12 +34,8 @@ void RenderSystem::Update(float _dt)
 
 void RenderSystem::OnEntityAdded(unsigned int _entityId)
 {
-	float*		Scale;
-	Scale		=	(float*)GetComponent(_entityId, "Scale", 0);
-	Scale[0] = 1.0f;
-	Scale[1] = 1.0f;
-	Scale[2] = 1.0f;
-	
+	int modelId = (int)*GetComponent(_entityId, "Render", "ModelId");
+	m_graphics->ActiveModel(modelId, true);
 
 	/*	Update the matrix	*/
 	UpdateMatrix(_entityId);
@@ -49,7 +45,7 @@ void RenderSystem::OnEntityRemoved(unsigned int _entityId)
 {
 	/*	Tell Graphics to disable model	*/
 	int modelId = (int)*GetComponent(_entityId, "Render", "ModelId");
-	m_graphics->RemoveModel(modelId);
+	m_graphics->ActiveModel(modelId, false);
 }
 
 

@@ -27,6 +27,10 @@ MovementSystem.Initialize = function(self)
 	print("MovementSystem initialized!")
 end
 
+MovementSystem.PostInitialize = function(self)
+
+end
+
 MovementSystem.OnEntityAdded = function(self, entityId)
 	print("OnEntityAdded (LUA)")
 end
