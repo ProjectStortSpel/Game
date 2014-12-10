@@ -32,24 +32,25 @@ namespace Renderer
 
 	struct Model
 	{
-		bool operator> (const Model &m) { return bufferPtr->getVAO() > m.bufferPtr->getVAO() ? true : false; }
-		bool operator< (const Model &m) { return bufferPtr->getVAO() < m.bufferPtr->getVAO() ? true : false; }
-
-		bool operator== (const Model &m) { return bufferPtr->getVAO() == m.bufferPtr->getVAO() ? true : false; }
-		bool operator!= (const Model &m) { return bufferPtr->getVAO() == m.bufferPtr->getVAO() ? false : true; }
+		bool operator== (const Model &m) { return Compare(m); }
+		bool operator!= (const Model &m) { return !Compare(m); }
 
 		Model(){}
 		Model(int ID, Buffer* buffer, GLuint tex, GLuint nor, GLuint spe)
 		{
-			//modelID = ID;
-			//active = true;
 			bufferPtr = buffer;
 			texID = tex;
 			norID = nor;
 			speID = spe;
 		}
-		//int modelID;
-		//bool active;
+		bool Compare(Model m)
+		{
+			if (texID != m.texID) return false;
+			if (bufferPtr != m.bufferPtr) return false;
+			if (speID != m.speID) return false;
+			if (norID != m.norID) return false;
+			return true;
+		}
 		Buffer* bufferPtr;
 		GLuint texID;
 		GLuint norID;

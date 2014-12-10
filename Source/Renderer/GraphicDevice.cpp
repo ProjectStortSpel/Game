@@ -122,8 +122,10 @@ void GraphicDevice::Render()
 	//-- DRAW MODELS
 	for (int i = 0; i < m_modelsDeferred.size(); i++)
 	{
-		std::vector<mat4> modelViewVector; 
-		std::vector<mat3> normalMatVector;
+		std::vector<mat4> modelViewVector(m_modelsDeferred[i].instances.size());
+		std::vector<mat3> normalMatVector(m_modelsDeferred[i].instances.size());
+
+		int nrOfInstances = 0;
 
 		for (int j = 0; j < m_modelsDeferred[i].instances.size(); j++)
 		{
@@ -136,10 +138,12 @@ void GraphicDevice::Render()
 					modelMatrix = *m_modelsDeferred[i].instances[j].modelMatrix;
 
 				mat4 modelViewMatrix = viewMatrix * modelMatrix;
-				modelViewVector.push_back(modelViewMatrix);
+				modelViewVector[nrOfInstances] = modelViewMatrix;
 				
 				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-				normalMatVector.push_back(normalMatrix);
+				normalMatVector[nrOfInstances] = normalMatrix;
+
+				nrOfInstances++;
 			}
 		}
 		
@@ -153,7 +157,7 @@ void GraphicDevice::Render()
 		glBindTexture(GL_TEXTURE_2D, m_modelsDeferred[i].speID);
 
 		//m_modelsDeferred[i].bufferPtr->draw();
-		m_modelsDeferred[i].bufferPtr->drawInstanced(0, m_modelsDeferred[i].instances.size(), &modelViewVector, &normalMatVector);
+		m_modelsDeferred[i].bufferPtr->drawInstanced(0, nrOfInstances, &modelViewVector, &normalMatVector);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		
 	}
@@ -198,8 +202,10 @@ void GraphicDevice::Render()
 
 	for (int i = 0; i < m_modelsForward.size(); i++)
 	{
-		std::vector<mat4> modelViewVector;
-		std::vector<mat3> normalMatVector;
+		std::vector<mat4> modelViewVector(m_modelsForward[i].instances.size());
+		std::vector<mat3> normalMatVector(m_modelsForward[i].instances.size());
+
+		int nrOfInstances = 0;
 
 		for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
 		{
@@ -212,10 +218,12 @@ void GraphicDevice::Render()
 					modelMatrix = *m_modelsForward[i].instances[j].modelMatrix;
 
 				mat4 modelViewMatrix = viewMatrix * modelMatrix;
-				modelViewVector.push_back(modelViewMatrix);
+				modelViewVector[nrOfInstances] = modelViewMatrix;
 
 				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-				normalMatVector.push_back(normalMatrix);
+				normalMatVector[nrOfInstances] = normalMatrix;
+
+				nrOfInstances++;
 			}
 		}
 
@@ -559,19 +567,17 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 
 	// Import Mesh
 	Buffer* mesh = AddMesh(obj.mesh, shaderPtr);
-	bool modelExists = false;
+
+	Model model = Model(modelID, mesh, texture, normal, specular);
 
 	if (_renderType == RENDER_DEFERRED)
 	{
 		for (int i = 0; i < m_modelsDeferred.size(); i++)
 		{
-			bool diffu = texture == m_modelsDeferred[i].texID;
-			bool modelMesh = mesh == m_modelsDeferred[i].bufferPtr;
-
-			if (diffu && modelMesh)
+			if (m_modelsDeferred[i] == model)
 			{
 				m_modelsDeferred[i].instances.push_back(Instance(modelID, true, _matrixPtr));
-				modelExists = true;
+				return modelID;
 			}
 		}
 	}
@@ -579,37 +585,22 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 	{
 		for (int i = 0; i < m_modelsForward.size(); i++)
 		{
-			bool diffu = texture == m_modelsForward[i].texID;
-			bool modelMesh = mesh == m_modelsForward[i].bufferPtr;
-
-			if (diffu && modelMesh)
+			if (m_modelsForward[i] == model)
 			{
 				m_modelsForward[i].instances.push_back(Instance(modelID, true, _matrixPtr));
-				modelExists = true;
+				return modelID;
 			}
 		}
 	}
 	
 	// Set model
 	//if model doesnt exist
-	if (!modelExists)
-	{
-		Model model = Model(modelID, mesh, texture, normal, specular);
-
-		model.instances.push_back(Instance(modelID, true, _matrixPtr));
-
-		// Push back the model
-		if (_renderType == RENDER_DEFERRED)
-		{
-			m_modelsDeferred.push_back(model);
-			std::push_heap(m_modelsDeferred.begin(), m_modelsDeferred.end());
-		}
-		else if (_renderType == RENDER_FORWARD)
-		{
-			m_modelsForward.push_back(model);
-			std::push_heap(m_modelsForward.begin(), m_modelsForward.end());
-		}
-	}
+	model.instances.push_back(Instance(modelID, true, _matrixPtr));
+	// Push back the model
+	if (_renderType == RENDER_DEFERRED)
+		m_modelsDeferred.push_back(model);
+	else if (_renderType == RENDER_FORWARD)
+		m_modelsForward.push_back(model);
 
 	return modelID;
 }
