@@ -4,10 +4,6 @@
 	#include <VLD/vld.h>
 #endif
 
-
-#include <glm/common.hpp>
-
-
 int main(int argc, char** argv)
 {
 	GameCreator* newGame = new GameCreator();

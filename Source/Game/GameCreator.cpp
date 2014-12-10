@@ -4,24 +4,11 @@
 #include "Systems/RenderSystem.h"
 #include "Systems/CameraSystem.h"
 #include "Systems/RotationSystem.h"
+#include "Systems/ModelSystem.h"
 #include "Systems/ReceivePacketSystem.h"
 
-#pragma region LOL
-
-//mat4 mat[1000];
-void SpawnShit(ECSL::World* _world, Renderer::GraphicDevice* _graphics, bool isTrue = true)
-{
-	//for (int x = 0; x < 10; x++)
-	//{
-	//	for (int y = 0; y < 10; y++)
-	//	{
-	//		mat[y + x * 10] = glm::translate(vec3(x - 5, -1, y - 5));
-	//		_graphics->LoadModel("content/models/head/", "head.object", &mat[y + x * 10]);
-	//	}
-	//}
-}
-#pragma endregion
-
+#include "ECSL/ECSL.h"
+#include "ECSL/Managers/EntityTemplateManager.h"
 
 GameCreator::GameCreator() :
 m_graphics(0), m_input(0), m_world(0), m_console(0), m_client(0), m_server(0)
@@ -86,6 +73,8 @@ void GameCreator::InitializeLua()
 void GameCreator::InitializeWorld()
 {
 	//ECSL::ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("content/components");
+	ECSL::EntityTemplateManager::GetInstance().LoadComponentTypesFromDirectory("content/scripting/storaspel/templates");
+
 	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
 	LuaEmbedder::AddObject<ECSL::WorldCreator>("WorldCreator", &worldCreator, "worldCreator");
 
@@ -102,11 +91,15 @@ void GameCreator::InitializeWorld()
 	//worldCreator.AddSystemToCurrentGroup<MovementSystem>();
 	worldCreator.AddLuaSystemToCurrentGroup(new RotationSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new CameraSystem(m_graphics));
+	worldCreator.AddLuaSystemToCurrentGroup(new ModelSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new ReceivePacketSystem(m_client, m_server));
 
+	
 	m_world = worldCreator.CreateWorld(10000);
 	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
+	
+	LuaEmbedder::CallMethods<ECSL::System>("System", "PostInitialize");
 }
 
 void GameCreator::StartGame()
@@ -116,7 +109,6 @@ void GameCreator::StartGame()
 		return;
 
 	m_console = new GameConsole(m_graphics, m_world, m_client, m_server);
-	SpawnShit(m_world, m_graphics);
 
 	m_consoleInput.SetTextHook(std::bind(&Console::ConsoleManager::ExecuteCommand, &m_consoleManager, std::placeholders::_1));
 	m_consoleInput.SetActive(true);
@@ -124,6 +116,7 @@ void GameCreator::StartGame()
 	/*	Hook console	*/
 	m_console->SetupHooks(&m_consoleManager);
 	
+
 	Timer gameTimer;
 	while (true)
 	{

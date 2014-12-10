@@ -214,6 +214,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClCompile Include="..\..\..\Source\Game\NewGame.cpp" />
     <ClCompile Include="..\..\..\Source\Game\RemoteConsole.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\CameraSystem.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\Systems\ModelSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\MovementSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\ReceivePacketSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\RenderSystem.cpp" />
@@ -237,6 +238,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClInclude Include="..\..\..\Source\Game\NetworkInstance.h" />
     <ClInclude Include="..\..\..\Source\Game\RemoteConsole.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\CameraSystem.h" />
+    <ClInclude Include="..\..\..\Source\Game\Systems\ModelSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\MovementSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\ReceivePacketSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\RenderSystem.h" />

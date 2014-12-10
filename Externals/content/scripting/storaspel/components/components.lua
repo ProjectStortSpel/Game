@@ -3,8 +3,8 @@
 local PositionComponent = ComponentType()
 PositionComponent.Name = "Position"
 PositionComponent.TableType = TableType.Array
-PositionComponent:AddVariable("X", 4)
-PositionComponent:AddVariable("Y", 4)
+PositionComponent:AddVariable("X", ByteSize.Float)
+PositionComponent:AddVariable("Y", ByteSize.Float)
 PositionComponent:AddVariable("Z", ByteSize.Float)
 worldCreator:AddComponentType(PositionComponent)
 
@@ -12,8 +12,8 @@ worldCreator:AddComponentType(PositionComponent)
 local ScaleComponent = ComponentType()
 ScaleComponent.Name = "Scale"
 ScaleComponent.TableType = TableType.Array
-ScaleComponent:AddVariable("X", 4)
-ScaleComponent:AddVariable("Y", 4)
+ScaleComponent:AddVariable("X", ByteSize.Float)
+ScaleComponent:AddVariable("Y", ByteSize.Float)
 ScaleComponent:AddVariable("Z", ByteSize.Float)
 worldCreator:AddComponentType(ScaleComponent)
 
@@ -21,8 +21,8 @@ worldCreator:AddComponentType(ScaleComponent)
 local RotationComponent = ComponentType()
 RotationComponent.Name = "Rotation"
 RotationComponent.TableType = TableType.Array
-RotationComponent:AddVariable("X", 4)
-RotationComponent:AddVariable("Y", 4)
+RotationComponent:AddVariable("X", ByteSize.Float)
+RotationComponent:AddVariable("Y", ByteSize.Float)
 RotationComponent:AddVariable("Z", ByteSize.Float)
 worldCreator:AddComponentType(RotationComponent)
 
@@ -30,8 +30,8 @@ worldCreator:AddComponentType(RotationComponent)
 local VelocityComponent = ComponentType()
 VelocityComponent.Name = "Velocity"
 VelocityComponent.TableType = TableType.Array
-VelocityComponent:AddVariable("X", 4)
-VelocityComponent:AddVariable("Y", 4)
+VelocityComponent:AddVariable("X", ByteSize.Float)
+VelocityComponent:AddVariable("Y", ByteSize.Float)
 VelocityComponent:AddVariable("Z", ByteSize.Float)
 worldCreator:AddComponentType(VelocityComponent)
 
@@ -39,24 +39,32 @@ worldCreator:AddComponentType(VelocityComponent)
 local RenderComponent = ComponentType()
 RenderComponent.Name = "Render"
 RenderComponent.TableType = TableType.Array
-RenderComponent:AddVariable("ModelId", 4)
-RenderComponent:AddVariable("Mat", 64)
+RenderComponent:AddVariable("ModelId", ByteSize.Int)
+RenderComponent:AddVariable("Mat", ByteSize.Matrix)
 worldCreator:AddComponentType(RenderComponent)
+
+--	Model Component
+local ModelComponent = ComponentType()
+ModelComponent.Name = "Model"
+ModelComponent.TableType = TableType.Map
+ModelComponent:AddVariable("ModelName", ByteSize.Text)
+ModelComponent:AddVariable("ModelPath", ByteSize.Text)
+worldCreator:AddComponentType(ModelComponent)
 
 -- Spin Component
 local SpinComponent = ComponentType()
 SpinComponent.Name = "Spin"
 SpinComponent.TableType = TableType.Array
-SpinComponent:AddVariable("X", 4)
-SpinComponent:AddVariable("Y", 4)
-SpinComponent:AddVariable("Z", 4)
+SpinComponent:AddVariable("X", ByteSize.Float)
+SpinComponent:AddVariable("Y", ByteSize.Float)
+SpinComponent:AddVariable("Z", ByteSize.Float)
 worldCreator:AddComponentType(SpinComponent)
 
 -- Camera Component
 local CameraComponent = ComponentType()
 CameraComponent.Name = "Camera"
 CameraComponent.TableType = TableType.Map
-CameraComponent:AddVariable("EntityId", 4)
+CameraComponent:AddVariable("EntityId", ByteSize.Reference)
 worldCreator:AddComponentType(CameraComponent)
 
 -- Network Component

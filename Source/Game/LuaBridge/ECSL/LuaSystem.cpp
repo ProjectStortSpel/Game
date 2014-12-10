@@ -41,6 +41,11 @@ namespace LuaBridge
     LuaEmbedder::CallMethod<LuaSystem>("System", "OnEntityRemoved", this, 1);
   }
   
+  void LuaSystem::PostInitialize()
+  {
+    LuaEmbedder::CallMethod<LuaSystem>("System", "PostInitialize", this);
+  }
+  
   int LuaSystem::GetComponent()
   {
     ECSL::DataLocation dataLocation;

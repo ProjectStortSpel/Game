@@ -21,6 +21,8 @@ namespace LuaBridge
     void OnEntityAdded(unsigned int _entityId);
     void OnEntityRemoved(unsigned int _entityId);
     
+    void PostInitialize();
+    
   private:
     int GetComponent();
     
