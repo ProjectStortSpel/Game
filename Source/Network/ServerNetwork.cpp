@@ -156,6 +156,9 @@ ServerNetwork::~ServerNetwork()
 {
 	Stop();
 
+	SAFE_DELETE(m_listenForConnectionsAlive);
+	SAFE_DELETE(m_maxConnections);
+
 	SAFE_DELETE(m_listenForConnectionsThread);
 	SAFE_DELETE(m_timeOutLock);
 	SAFE_DELETE(m_connectedClientsLock);
