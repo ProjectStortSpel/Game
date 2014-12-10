@@ -188,7 +188,7 @@ bool ServerNetwork::Start(unsigned int _incomingPort, const char* _password, uns
 
 bool ServerNetwork::Start()
 {
-	m_running = false;
+	*m_running = false;
 
 	m_listenSocket = ISocket::CreateSocket();
 	m_listenSocket->SetNonBlocking(true);

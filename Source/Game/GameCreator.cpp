@@ -4,6 +4,7 @@
 #include "Systems/RenderSystem.h"
 #include "Systems/CameraSystem.h"
 #include "Systems/RotationSystem.h"
+#include "Systems/ReceivePacketSystem.h"
 
 #pragma region LOL
 
@@ -102,7 +103,8 @@ void GameCreator::InitializeWorld()
 	worldCreator.AddLuaSystemToCurrentGroup(new RotationSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new CameraSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderSystem(m_graphics));
-	
+	worldCreator.AddLuaSystemToCurrentGroup(new ReceivePacketSystem(m_client, m_server));
+
 	m_world = worldCreator.CreateWorld(10000);
 	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
 }
