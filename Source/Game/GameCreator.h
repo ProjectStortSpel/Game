@@ -42,7 +42,7 @@ private:
 	Network::ClientNetwork*		m_client;
 	Network::ServerNetwork*		m_server;
 
-	Console::ConsoleManager		m_consoleManager;
+	Console::ConsoleManager&		m_consoleManager;
 	TextInput					m_consoleInput;
 };
 
