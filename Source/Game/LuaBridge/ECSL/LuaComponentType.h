@@ -21,6 +21,9 @@ namespace LuaBridge
   private:
     int GetName();
     int SetName();
+
+	int GetSyncWithNetwork();
+	int SetSyncWithNetwork();
     
     int GetTableType();
     int SetTableType();
@@ -29,6 +32,7 @@ namespace LuaBridge
     
   private:
     std::string m_name;
+	bool m_syncWithNetwork;
     ECSL::TableType m_tableType;
 	std::map<std::string, ECSL::ComponentVariable> m_variables;
 	std::map<unsigned int, ECSL::ComponentDataType> m_offsetToType;

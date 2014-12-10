@@ -10,7 +10,7 @@ using namespace Network;
 ClientNetwork::ClientNetwork()
 	: BaseNetwork()
 {
-	m_outgoingPort = new int(5357);
+	m_outgoingPort = new int(6112);
 	m_remoteAddress = new std::string("127.0.0.1");
 	m_socketBound = new bool(false);
 

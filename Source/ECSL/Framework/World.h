@@ -17,6 +17,7 @@ namespace ECSL
 	private:
 		Simulation* m_simulation;
 		DataManager* m_dataManager;
+
 		SystemManager* m_systemManager;
 		unsigned int m_activeEntities;
 
@@ -34,6 +35,8 @@ namespace ECSL
 
 		DataLocation GetComponent(unsigned int _entityId, const std::string& _componentType, const std::string& _variableName);
 		DataLocation GetComponent(unsigned int _entityId, const std::string& _componentType, const int _index);
+		DataLocation GetComponent(unsigned int _entityId, const unsigned int _componentType, const int _index);
+
 		void SetComponent(unsigned int _entityId, const std::string& _componentType, const std::string& _variableName, void* _data);
 
 		void KillEntity(unsigned int _entityId);
