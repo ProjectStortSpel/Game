@@ -6,10 +6,16 @@
 
 
 #include <glm/common.hpp>
+#include "ECSL/Framework/Parsing/EntityTemplateReader.h"
+#include "ECSL/Framework/Common/FileHelper.h"
 
 
 int main(int argc, char** argv)
 {
+
+
+
+
 	GameCreator* newGame = new GameCreator();
 
 	newGame->InitializeLua();

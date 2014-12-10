@@ -4,14 +4,10 @@
 #include "Systems/RenderSystem.h"
 #include "Systems/CameraSystem.h"
 #include "Systems/RotationSystem.h"
+#include "Systems/ModelSystem.h"
 
-#pragma region LOL
-
-void SpawnShit(ECSL::World* _world, Renderer::GraphicDevice* _graphics, bool isTrue = true)
-{
-}
-#pragma endregion
-
+#include "ECSL/ECSL.h"
+#include "ECSL/Managers/EntityTemplateManager.h"
 
 GameCreator::GameCreator() :
 m_graphics(0), m_input(0), m_world(0), m_console(0)
@@ -69,6 +65,8 @@ void GameCreator::InitializeLua()
 void GameCreator::InitializeWorld()
 {
 	//ECSL::ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("content/components");
+	ECSL::EntityTemplateManager::GetInstance().LoadComponentTypesFromDirectory("content/scripting/storaspel/templates");
+
 	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
 	LuaEmbedder::AddObject<ECSL::WorldCreator>("WorldCreator", &worldCreator, "worldCreator");
 
@@ -85,7 +83,10 @@ void GameCreator::InitializeWorld()
 	//worldCreator.AddSystemToCurrentGroup<MovementSystem>();
 	worldCreator.AddLuaSystemToCurrentGroup(new RotationSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new CameraSystem(m_graphics));
+	worldCreator.AddLuaSystemToCurrentGroup(new ModelSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderSystem(m_graphics));
+
+	
 	
 	m_world = worldCreator.CreateWorld(10000);
 	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
@@ -100,7 +101,6 @@ void GameCreator::StartGame()
 		return;
 
 	m_console = new GameConsole(m_graphics, m_world);
-	SpawnShit(m_world, m_graphics);
 
 	m_consoleInput.SetTextHook(std::bind(&Console::ConsoleManager::ExecuteCommand, &m_consoleManager, std::placeholders::_1));
 	m_consoleInput.SetActive(true);
@@ -108,6 +108,7 @@ void GameCreator::StartGame()
 	/*	Hook console	*/
 	m_console->SetupHooks(&m_consoleManager);
 	
+
 	Timer gameTimer;
 	while (true)
 	{

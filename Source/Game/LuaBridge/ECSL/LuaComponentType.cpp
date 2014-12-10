@@ -3,11 +3,12 @@
 
 namespace LuaBridge
 {
-  LuaComponentType::LuaComponentType() { }
+	LuaComponentType::LuaComponentType() { m_byteOffset = 0; }
 
   LuaComponentType::~LuaComponentType()
   {
     m_variables.clear();
+	m_offsetToType.clear();
   }
   
   void LuaComponentType::Embed()
@@ -25,9 +26,11 @@ namespace LuaBridge
     LuaEmbedder::AddInt("Array", (int)ECSL::TableType::Array, "TableType");
     LuaEmbedder::AddInt("Map", (int)ECSL::TableType::Map, "TableType");
     
-    LuaEmbedder::AddInt("Float", sizeof(float), "ByteSize");
-    LuaEmbedder::AddInt("Int", sizeof(int), "ByteSize");
-    LuaEmbedder::AddInt("Pointer", sizeof(void*), "ByteSize");
+	LuaEmbedder::AddInt("Float", ECSL::ComponentDataType::FLOAT, "ByteSize");
+	LuaEmbedder::AddInt("Int", ECSL::ComponentDataType::INT, "ByteSize");
+	LuaEmbedder::AddInt("Matrix", ECSL::ComponentDataType::MATRIX, "ByteSize");
+	LuaEmbedder::AddInt("Reference", ECSL::ComponentDataType::REFERENCE, "ByteSize");
+	LuaEmbedder::AddInt("Text", ECSL::ComponentDataType::CHAR, "ByteSize");
   }
   
   int LuaComponentType::GetName()
@@ -57,14 +60,21 @@ namespace LuaBridge
   int LuaComponentType::AddVariable()
   {
     std::string variableName = LuaEmbedder::PullString(1);
-    int byteSize = LuaEmbedder::PullInt(2);
-    ECSL::ComponentVariable variable = ECSL::ComponentVariable(variableName, byteSize);
+	int variableDataType = LuaEmbedder::PullInt(2);
+	int byteSize = ECSL::GetByteSizeFromType(ECSL::ComponentDataType(variableDataType));
+
+	
+
+	ECSL::ComponentVariable variable = ECSL::ComponentVariable(variableName, byteSize);
     m_variables.insert(std::pair<std::string, ECSL::ComponentVariable>(variableName, variable));
+
+	m_offsetToType.insert(std::pair<unsigned int, ECSL::ComponentDataType>(m_byteOffset, ECSL::ComponentDataType(variableDataType)));
+	m_byteOffset += byteSize;
     return 0;
   }
   
   ECSL::ComponentType* LuaComponentType::CreateComponentType()
   {
-    return new ECSL::ComponentType(m_name, m_tableType, m_variables);
+	  return new ECSL::ComponentType(m_name, m_tableType, m_variables, m_offsetToType);
   }
 }

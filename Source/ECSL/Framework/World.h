@@ -8,6 +8,7 @@
 #include "Components/DataManager.h"
 #include "Systems/SystemWorkGroup.h"
 #include "Systems/SystemManager.h"
+#include "Templates/EntityTemplate.h"
 
 namespace ECSL
 {
@@ -26,6 +27,8 @@ namespace ECSL
 		void Update(float _dt);
 
 		unsigned int CreateNewEntity();
+		unsigned int CreateNewEntity(std::string _templateName);
+
 		void CreateComponentAndAddTo(const std::string& _componentType, unsigned int _entityId);
 		void RemoveComponentFrom(const std::string& _componentType, unsigned int _entityId);
 
@@ -36,6 +39,9 @@ namespace ECSL
 		void KillEntity(unsigned int _entityId);
 
 		unsigned int GetActiveEntities(){ return m_activeEntities; }
+
+
+		void GetEntityComponents(std::vector<unsigned int>& _out, unsigned int _entityId){ m_dataManager->GetEntityTable()->GetEntityComponents(_out, _entityId); }
 	};
 }
 

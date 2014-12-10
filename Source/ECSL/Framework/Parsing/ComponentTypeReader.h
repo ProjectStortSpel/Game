@@ -15,6 +15,7 @@ namespace ECSL
 		std::string m_name;
 		TableType m_tableType;
 		std::map<std::string, ComponentVariable> m_variables;
+		std::map<unsigned int, ComponentDataType> m_offsetToType;
 
 		bool InterpretSubSection(const Section* _section, unsigned int _depth);
 		bool InterpretTokens(const Section* _section, const unsigned int _depth);
