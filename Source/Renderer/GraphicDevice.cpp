@@ -154,7 +154,6 @@ void GraphicDevice::Render()
 		//m_modelsDeferred[i].bufferPtr->draw();
 		m_modelsDeferred[i].bufferPtr->drawInstanced(0, m_modelsDeferred[i].instances.size(), &modelViewVector, &normalMatVector);
 		glBindTexture(GL_TEXTURE_2D, 0);
-		
 	}
 
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
