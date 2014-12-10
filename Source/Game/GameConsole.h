@@ -6,6 +6,7 @@
 #include "ECSL/ECSL.h"
 #include "Network/ServerNetwork.h"
 #include "Network/ClientNetwork.h"
+#include "Game/Network/NetworkHelper.h"
 
 class GameConsole
 {
@@ -35,6 +36,8 @@ private:
 	
 	Network::ClientNetwork*		m_client;
 	Network::ServerNetwork*		m_server;
+
+	NetworkHelper* m_networkHelper;
 
 };
 #endif
