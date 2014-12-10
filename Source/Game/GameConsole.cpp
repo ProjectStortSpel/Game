@@ -6,78 +6,40 @@ GameConsole::GameConsole(Renderer::GraphicDevice* _graphics, ECSL::World* _world
 	m_world = _world;
 	m_client = _client;
 	m_server = _server;
-	m_networkHelper = new NetworkHelper(_world);
 }
 
 GameConsole::~GameConsole()
 {
-	delete m_networkHelper;
+
 }
 
 void GameConsole::CreateObject(std::vector<Console::Argument>* _args)
 {
-	if (_args->size() != 5)
+	if (_args->at(0).ArgType != Console::ArgumentType::Text)
 		return;
 
-	std::string _modelName = _args->at(0).Text;
-	//_modelName.append(".object");
-	//std::string _modelPath = "content/models/";
-	std::string _modelPath = _args->at(1).Text;
-
-	float x = _args->at(2).Number;
-	float y = _args->at(3).Number;
-	float z = _args->at(4).Number;
-
-	unsigned int mId = m_world->CreateNewEntity();
-	m_world->CreateComponentAndAddTo("Position", mId);
-	m_world->CreateComponentAndAddTo("Scale", mId);
-	m_world->CreateComponentAndAddTo("Rotation", mId);
-	m_world->CreateComponentAndAddTo("Model", mId);
-
-	char* data;
-	data = (char*)m_world->GetComponent(mId, "Model", "ModelName");
-	for (int n = 0; n < _modelName.size(); ++n)
-		data[n] = _modelName[n];
-	data[_modelName.size()] = '\0';
-
-	data = (char*)m_world->GetComponent(mId, "Model", "ModelPath");
-	for (int n = 0; n < _modelPath.size(); ++n)
-		data[n] = _modelPath[n];
-	data[_modelPath.size()] = '\0';
-
-
-	float* Position;
-	Position = (float*)m_world->GetComponent(mId, "Position", "X");
-	Position[0] = x;
-	Position[1] = y;
-	Position[2] = z;
+	std::string _template = _args->at(0).Text;
+	_template[0] = toupper(_template[0]);
+	unsigned int mId = m_world->CreateNewEntity(_template);
 
 	std::stringstream ss;
 	ss << "Entity with id #" << mId << " has been created!";
 	m_consoleManager->AddMessage(ss.str().c_str());
 
-	if (m_server->IsRunning())
+	if (_args->size() > 1)
 	{
-		Network::Packet* p = m_networkHelper->WriteEntity(m_server->GetPacketHandler(), mId);
-		m_server->Broadcast(p);
+		float* objectPosition;
+		objectPosition = (float*)m_world->GetComponent(mId, "Position", 0);
+		objectPosition[0] = _args->at(1).Number;
+		objectPosition[1] = _args->at(2).Number;
+		objectPosition[2] = _args->at(3).Number;
 	}
 }
 
 void GameConsole::RemoveObject(std::vector<Console::Argument>* _args)
 {
 	if (_args->size() > 0 && (*_args)[0].ArgType == Console::ArgumentType::Number)
-	{
 		m_world->KillEntity((*_args)[0].Number);
-		
-		/*if (m_server->IsRunning())
-		{
-			Network::PacketHandler* ph = m_server->GetPacketHandler();
-			uint64_t id = ph->StartPack("EntityKill");
-			ph->WriteInt(id, (int)(*_args)[0].Number);
-			Network::Packet* p = ph->EndPack(id);
-			m_server->Broadcast(p);
-		}*/
-	}
 }
 
 void GameConsole::AddComponent(std::vector<Console::Argument>* _args)
@@ -179,7 +141,7 @@ void GameConsole::HostServer(std::vector<Console::Argument>* _args)
 
 	m_server->Start(port, pw.c_str(), connections);
 
-	//m_client->Connect("127.0.0.1", pw.c_str(), port, 0);
+	m_client->Connect("127.0.0.1", pw.c_str(), port, 0);
 }
 void GameConsole::StopServer(std::vector<Console::Argument>* _args)
 {
@@ -230,9 +192,6 @@ void GameConsole::ConnectClient(std::vector<Console::Argument>* _args)
 		}
 	}
 
-
-	m_client->AddNetworkHook("Entity", std::bind(&NetworkHelper::ReceiveEntity, m_networkHelper, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-	m_client->AddNetworkHook("EntityKill", std::bind(&NetworkHelper::ReceiveEntityKill, m_networkHelper, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	m_client->Connect(ip.c_str(), pw.c_str(), port, 0);
 
 }
