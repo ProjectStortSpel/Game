@@ -1,7 +1,41 @@
+TestMovementSystem = System()
+TestMovementSystem.entities = { }
+
+TestMovementSystem.Initialize = function(self)
+	self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
+	self:AddComponentTypeToFilter("Rotation",FilterType.Mandatory)
+	self:AddComponentTypeToFilter("Scale",FilterType.Mandatory)
+	self:AddComponentTypeToFilter("Model",FilterType.Mandatory)
+	self:AddComponentTypeToFilter("Direction",FilterType.Mandatory)
+		
+	print("TestMovementSystem initialized!")
+end
+
+TestMovementSystem.Update = function(self, dt)
+	
+	local entities = self:GetEntities()
+	
+	if Input.GetKeyState(Key.Up) == InputState.Pressed then
+		world:CreateComponentAndAddTo("Forward", entities[1])
+	elseif Input.GetKeyState(Key.Down) == InputState.Pressed then
+		world:CreateComponentAndAddTo("Backward", entities[1])
+	elseif Input.GetKeyState(Key.Left) == InputState.Pressed then
+		world:CreateComponentAndAddTo("TurnLeft", entities[1])
+	elseif Input.GetKeyState(Key.Right) == InputState.Pressed then
+		world:CreateComponentAndAddTo("TurnRight", entities[1])
+		
+	end
+end
+
+TestMovementSystem.PostInitialize = function(self)
+	local entity = world:CreateNewEntity("Player")
+	table.insert(self.entities, entity)
+end
 
 ---------------------------- ForwardSystem
 
 ForwardSystem = System()
+
 
 ForwardSystem.Update = function(self, dt)
 
@@ -12,18 +46,25 @@ ForwardSystem.Update = function(self, dt)
 		local position = self:GetComponent(entity, "Position", 0)
 		local dir = self:GetComponent(entity, "Direction", 0)
 		
-		world:CreateComponentAndAddTo("TargetPosition", entity)
-		local targetposition = self:GetComponent(entity, "TargetPosition", 0)
+		--world:CreateComponentAndAddTo("TargetPosition", entity)
+		--local targetposition = self:GetComponent(entity, "TargetPosition", 0)
 		
-		local x, y, z = position.GetFloat3()
-		local dx, dy = dir.GetInt2()
+		local x, y, z = position:GetFloat3()
+		local dx, dy = dir:GetInt2()
 		
 		
 		local newtargetx = x + dx
 		local newtargety = y 
 		local newtargetz = z + dy
 		
-		targetposition.SetFloat3(newtargetx, newtargety, newtargetz)
+		Console.Print(newtargetx)
+		Console.Print(newtargety)
+		Console.Print(newtargetz)
+		
+		--position:SetFloat3(newtargetx, newtargety, newtargetz)
+		position:SetFloat3(0, 2, 0)
+		
+		--targetposition.SetFloat3(newtargetx, newtargety, newtargetz)
 		
 		world:RemoveComponentFrom("Forward", entity);
 		
@@ -35,7 +76,7 @@ ForwardSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Direction",FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Forward",FilterType.Mandatory)
 	
-	self:AddComponentTypeToFilter("TargetPosition",FilterType.Excluded)
+	--self:AddComponentTypeToFilter("TargetPosition",FilterType.Excluded)
 	print("ForwardSystem initialized!")
 end
 
@@ -57,15 +98,18 @@ RightTurnSystem.Update = function(self, dt)
 		local entity = entities[i]
 
 		local dir = self:GetComponent(entity, "Direction", 0)
-		
-		local dx, dy = dir:GetInt2()
-		
+		local rot = self:GetComponent(entity, "Rotation", 4)
+		local dx, dy = dir:GetFloat2()
+		local roty = rot:GetFloat()
 		
 		local tempdy = dx
 		dx = -dy
 		dy = tempdy
 		
-		dir:SetInt2(dx, dy)
+		dir:SetFloat2(dx, dy)
+		
+		local newRot = roty - math.pi/2 
+		rot:SetFloat(newRot)
 		
 		world:RemoveComponentFrom("TurnRight", entity);
 		
@@ -74,6 +118,7 @@ end
 
 RightTurnSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Direction",FilterType.Mandatory)
+	self:AddComponentTypeToFilter("Rotation",FilterType.Mandatory)
 	self:AddComponentTypeToFilter("TurnRight",FilterType.Mandatory)
 	
 	print("RightTurnSystem initialized!")
@@ -98,15 +143,17 @@ LeftTurnSystem.Update = function(self, dt)
 		local entity = entities[i]
 
 		local dir = self:GetComponent(entity, "Direction", 0)
-		
+		local rot = self:GetComponent(entity, "Rotation", 4)
 		local dx, dy = dir:GetFloat2()
-		
-		
+		local roty = rot:GetFloat()
 		local tempdy = dx
 		dx = dy
 		dy = -tempdy
 		
 		dir:SetFloat2(dx, dy)
+		
+		local newRot = roty + math.pi/2 
+		rot:SetFloat(newRot)
 		
 		world:RemoveComponentFrom("TurnLeft", entity);
 		
@@ -115,6 +162,7 @@ end
 
 LeftTurnSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Direction",FilterType.Mandatory)
+	self:AddComponentTypeToFilter("Rotation",FilterType.Mandatory)
 	self:AddComponentTypeToFilter("TurnLeft",FilterType.Mandatory)
 	
 	print("LeftTurnSystem initialized!")

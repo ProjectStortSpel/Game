@@ -68,7 +68,7 @@ void GameCreator::InitializeNetwork()
 
 }
 
-void GameCreator::InitializeLua()
+void GameCreator::InitializeLua() 
 {
 	LuaEmbedder::Init();
 	LuaBridge::Embed();

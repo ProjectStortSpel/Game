@@ -1,19 +1,21 @@
 -- Components
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/components/?.lua"
 require "components"
-require "tilecomponents"
+require "maplogiccomponents"
+require "playerlogiccomponents"
+
 
 -- Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
 require "movementsystem"
 require "networkmessagessystem"
 require "mapcreationsystem"
-require "TestSystem"
+require "testsystem"
 
 -- Templates
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/templates/?.lua"
 require "box"
-require "tile"
+require "map"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(MovementSystem)
@@ -24,3 +26,4 @@ worldCreator:AddSystemToCurrentGroup(BackwardSystem)
 worldCreator:AddSystemToCurrentGroup(RightTurnSystem)
 worldCreator:AddSystemToCurrentGroup(LeftTurnSystem)
 worldCreator:AddSystemToCurrentGroup(TurnAroundSystem)
+worldCreator:AddSystemToCurrentGroup(TestMovementSystem)
