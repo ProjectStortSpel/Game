@@ -264,9 +264,6 @@
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\mapcreationsystem.lua">
       <Filter>Scripting\Systems</Filter>
     </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\TestSystems.lua">
-      <Filter>Scripting\Systems</Filter>
-    </None>
     <None Include="..\..\..\Externals\content\scripting\storaspel\templates\box.lua">
       <Filter>Scripting\Templates</Filter>
     </None>
@@ -277,6 +274,9 @@
       <Filter>Scripting\Components</Filter>
     </None>
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\tilemovementsystem.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\TestSystem.lua">
       <Filter>Scripting\Systems</Filter>
     </None>
   </ItemGroup>
