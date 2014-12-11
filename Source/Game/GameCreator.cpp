@@ -103,10 +103,14 @@ void GameCreator::InitializeWorld()
 	m_variables.insert(std::pair<std::string, ECSL::ComponentVariable>("ChangedComponents", start));
 	std::map<unsigned int, ECSL::ComponentDataType> m_offsetToType;
 	m_offsetToType[0] = ECSL::ComponentDataType::INT64;
+
 	ECSL::ComponentType* changedComponents = new ECSL::ComponentType("ChangedComponents", ECSL::TableType::Array, m_variables, m_offsetToType, false);
 	ECSL::ComponentTypeManager::GetInstance().AddComponentType(*changedComponents);
 	worldCreator.AddComponentType("ChangedComponents");
-	numberOfComponents = ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount();
+
+	ECSL::ComponentType* changedComponentsNetwork = new ECSL::ComponentType("ChangedComponentsNetwork", ECSL::TableType::Array, m_variables, m_offsetToType, false);
+	ECSL::ComponentTypeManager::GetInstance().AddComponentType(*changedComponentsNetwork);
+	worldCreator.AddComponentType("ChangedComponentsNetwork");
 
 	//NetworkMessagesSystem* nms = new NetworkMessagesSystem();
 	//nms->SetConsole(&m_consoleManager);

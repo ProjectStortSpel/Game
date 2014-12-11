@@ -115,7 +115,7 @@ void NetworkHelper::ReceiveEntity(Network::PacketHandler* _ph, uint64_t _id, Net
 	{
 		const char* compName = _ph->ReadString(_id);
 		unsigned int compType = componentTypeManager->GetTableId(compName);
-		
+
 		//	Check if the entity has the component
 		bool hasComponent = false;
 		for (short n = entityComponents.size() - 1; n >= 0; --n)
@@ -172,6 +172,12 @@ void NetworkHelper::ReceiveEntity(Network::PacketHandler* _ph, uint64_t _id, Net
 				break;
 			};
 		}
+
+		int bitSetIndex = ECSL::BitSet::GetBitSetIndex(compType);
+		int bitIndex = ECSL::BitSet::GetBitIndex(compType);
+
+		ECSL::BitSet::DataType* changedComponents = (ECSL::BitSet::DataType*)(*m_world)->GetComponent(idH, "ChangedComponents", 0);
+		changedComponents[bitSetIndex] |= ((ECSL::BitSet::DataType)1) << bitIndex;
 	}
 
 	//	All entries in entityComponents should be removed
