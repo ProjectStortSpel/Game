@@ -84,13 +84,14 @@ void NetworkHelper::ReceiveEntity(Network::PacketHandler* _ph, uint64_t _id, Net
 	unsigned int idN = _ph->ReadInt(_id);
 	unsigned int idH;
 
-	if (m_NtoH.find(_id) != m_NtoH.end())
+	if (m_NtoH.find(idN) != m_NtoH.end())
 	{
 		idH = m_NtoH[idN];
 	}
 	else
 	{
 		idH = (*m_world)->CreateNewEntity();
+		printf("Created Entity with ID(NETWORK): %d\n", idH);
 		m_NtoH[idN] = idH;
 		m_HtoN[idH] = idN;
 	}
@@ -102,6 +103,14 @@ void NetworkHelper::ReceiveEntity(Network::PacketHandler* _ph, uint64_t _id, Net
 	(*m_world)->GetEntityComponents(entityComponents, idH);
 
 	ECSL::ComponentTypeManager* componentTypeManager = &ECSL::ComponentTypeManager::GetInstance();
+	for (short n = entityComponents.size() - 1; n >= 0; --n)
+	{
+		if (!componentTypeManager->GetComponentType(entityComponents[n])->GetNetworkSyncState())
+		{
+			entityComponents.erase(entityComponents.begin() + n);
+		}
+	}
+
 	for (unsigned short i = 0; i < num_Comp; ++i)
 	{
 		const char* compName = _ph->ReadString(_id);
@@ -110,12 +119,15 @@ void NetworkHelper::ReceiveEntity(Network::PacketHandler* _ph, uint64_t _id, Net
 		//	Check if the entity has the component
 		bool hasComponent = false;
 		for (short n = entityComponents.size() - 1; n >= 0; --n)
+		{
 			if (compType == entityComponents[n])
 			{
 				hasComponent = true;
 				entityComponents.erase(entityComponents.begin() + n);
 				break;
 			}
+		}
+			
 		
 		if (!hasComponent)
 			(*m_world)->CreateComponentAndAddTo(compName, idH);

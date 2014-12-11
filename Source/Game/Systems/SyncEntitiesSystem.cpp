@@ -22,7 +22,7 @@ void SyncEntitiesSystem::Update(float _dt)
 	Network::ServerNetwork* server = NetworkInstance::GetServer();
 	if (server->IsRunning())
 	{
-		if (m_timer > 0.5f)
+		if (m_timer > 0.2f)
 		{
 			m_timer = 0;
 			auto entities = *GetEntities();
