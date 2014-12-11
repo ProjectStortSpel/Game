@@ -128,10 +128,6 @@ void GameCreator::InitializeWorld()
 	
 	LuaEmbedder::CallMethods<LuaBridge::LuaSystem>("System", "PostInitialize");
 
-	unsigned int id = m_world->CreateNewEntity("Player");
-	std::vector<unsigned int> cmp;
-	char* name = (char*)m_world->GetComponent(id, "Name", "Username");
-	m_world->GetEntityComponents(cmp, id);
 }
 
 void GameCreator::StartGame()
