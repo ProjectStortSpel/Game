@@ -1,5 +1,6 @@
 #include "LuaComponent.h"
 #include "LuaEmbedder/LuaEmbedder.h"
+#include "ECSL/Framework/Components/ComponentType.h"
 
 namespace LuaBridge
 {
@@ -34,6 +35,7 @@ namespace LuaBridge
     LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "SetBool", &LuaComponent::SetBool);
     LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "GetString", &LuaComponent::GetString);
     LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "SetString", &LuaComponent::SetString);
+    LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "SetModel", &LuaComponent::SetModel);
     
     LuaEmbedder::EmbedClassProperty<LuaComponent>("Component", "Float", &LuaComponent::GetFloat, &LuaComponent::SetFloat);
     LuaEmbedder::EmbedClassProperty<LuaComponent>("Component", "Int", &LuaComponent::GetInt, &LuaComponent::SetInt);
@@ -209,6 +211,19 @@ namespace LuaBridge
   {
     assert(m_dataLocation);
     m_dataLocation = (char*)LuaEmbedder::PullString(1).c_str();
+    return 0;
+  }
+  
+  int LuaComponent::SetModel()
+  {
+    std::string modelName = LuaEmbedder::PullString(1);
+    std::string folderName = LuaEmbedder::PullString(2);
+    for (int i = 0; i < modelName.size(); i++)
+      m_dataLocation[i] = modelName[i];
+    m_dataLocation[modelName.size()] = '\0';
+    for (int i = 0; i < folderName.size(); i++)
+      m_dataLocation[i + CHARSIZE] = folderName[i];
+    m_dataLocation[folderName.size() + CHARSIZE] = '\0';
     return 0;
   }
 }

@@ -49,6 +49,10 @@ DataLocation World::GetComponent(unsigned int _entityId, const std::string& _com
 {
 	return m_dataManager->GetComponentTable(_componentType)->GetComponent(_entityId, _index);
 }
+DataLocation World::GetComponent(unsigned int _entityId, const unsigned int _componentType, const int _index)
+{
+	return m_dataManager->GetComponentTable(_componentType)->GetComponent(_entityId, _index);
+}
 
 void World::SetComponent(unsigned int _entityId, const std::string& _componentType, const std::string& _variableName, void* _data)
 {

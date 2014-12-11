@@ -27,7 +27,6 @@ void RemoteConsole::UpdateCommands()
 		Console::ConsoleManager::GetInstance().AddCommand("password", std::bind(&RemoteConsole::SetServerPasswordConsole, this, std::placeholders::_1));
 		NetworkInstance::GetServer()->AddNetworkHook("rcon", std::bind(&RemoteConsole::ExecuteCommand, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	}
-
 	if (NetworkInstance::isClient())
 	{
 		Console::ConsoleManager::GetInstance().AddCommand("rcon_password", std::bind(&RemoteConsole::SetClientPasswordConsole, this, std::placeholders::_1));
