@@ -13,6 +13,8 @@
 #include "ECSL/ECSL.h"
 #include "ECSL/Managers/EntityTemplateManager.h"
 
+#include "LuaBridge/ECSL/LuaSystem.h"
+
 GameCreator::GameCreator() :
 m_graphics(0), m_input(0), m_world(0), m_console(0), m_consoleManager(Console::ConsoleManager::GetInstance())
 {
@@ -111,7 +113,7 @@ void GameCreator::InitializeWorld()
 	m_world = worldCreator.CreateWorld(10000);
 	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
 	
-	LuaEmbedder::CallMethods<ECSL::System>("System", "PostInitialize");
+	LuaEmbedder::CallMethods<LuaBridge::LuaSystem>("System", "PostInitialize");
 }
 
 void GameCreator::StartGame()
