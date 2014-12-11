@@ -43,20 +43,6 @@ GameCreator::~GameCreator()
 	delete(&ECSL::EntityTemplateManager::GetInstance());
 }
 
-glm::mat4 mat[1000];
-
-void SpawnStuff(Renderer::GraphicDevice* graphics)
-{
-	for (int x = 0; x < 10; x++)
-	{
-		for (int y = 0; y < 10; y++)
-		{
-			mat[y + x * 10] = glm::translate(vec3(x - 5, -1, y - 5));
-			graphics->LoadModel("content/models/default_tile/", "default.object", &mat[y + x * 10]);
-		}
-	}
-}
-
 void GameCreator::InitializeGraphics()
 {
 	m_graphics = new Renderer::GraphicDevice();
@@ -168,6 +154,7 @@ void GameCreator::StartGame()
 		}
 	}
 	/*	FULKOD END		*/
+
 
 	Timer gameTimer;
 	while (true)
