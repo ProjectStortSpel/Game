@@ -34,7 +34,7 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t _
 		Broadcast(p, _connection);
 
 		if (*m_onPlayerConnected)
-			(*m_onPlayerConnected)(_connection);
+			(*m_onPlayerConnected)(_connection, 0);
 	}
 	else
 	{
@@ -67,7 +67,7 @@ void ServerNetwork::NetConnectionLost(NetConnection _connection)
 	Broadcast(p, _connection);
 
 	if (*m_onPlayerTimedOut)
-		(*m_onPlayerTimedOut)(_connection);
+		(*m_onPlayerTimedOut)(_connection, 0);
 
 	m_timeOutLock->lock();
 	m_currentIntervallCounter->erase(_connection);
@@ -93,7 +93,7 @@ void ServerNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uin
 	Broadcast(p, _connection);
 
 	if(*m_onPlayerDisconnected)
-		(*m_onPlayerDisconnected)(_connection);
+		(*m_onPlayerDisconnected)(_connection, 0);
 
 	m_timeOutLock->lock();
 	m_currentIntervallCounter->erase(_connection);
@@ -517,7 +517,10 @@ void ServerNetwork::Kick(NetConnection _connection, char* _reason)
 	m_connectedClientsLock->lock();
 
 	if (m_connectedClients->find(_connection) == m_connectedClients->end())
+	{
+		m_connectedClientsLock->unlock();
 		return;
+	}
 
 	uint64_t id = m_packetHandler->StartPack(ID_CONNECTION_KICKED);
 	m_packetHandler->WriteString(id, _reason);
