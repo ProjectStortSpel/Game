@@ -135,3 +135,12 @@ void System::KillEntity(unsigned int _entityId)
 {
 	m_dataManager->RemoveEntity(_entityId);
 }
+
+void System::ComponentHasChanged(unsigned int _entityId, std::string _componentType)
+{
+	unsigned int componentTypeId = ECSL::ComponentTypeManager::GetInstance().GetTableId(_componentType);
+	int bitSetIndex = ECSL::BitSet::GetBitSetIndex(componentTypeId);
+	int bitIndex = ECSL::BitSet::GetBitIndex(componentTypeId);
+	ECSL::BitSet::DataType* changedComponents = (ECSL::BitSet::DataType*)GetComponent(_entityId, "ChangedComponents", 0);
+	changedComponents[bitSetIndex] |= ((ECSL::BitSet::DataType)1) << bitIndex;
+}

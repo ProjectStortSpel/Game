@@ -1,6 +1,7 @@
 #ifndef COMPONENTTYPE_H
 #define COMPONENTTYPE_H
 
+#include <inttypes.h>
 #include <map>
 #include <vector>
 #include <string>
@@ -20,13 +21,16 @@ namespace ECSL
 	enum ComponentDataType
 	{
 		INT, FLOAT, CHAR, BOOL,
-		MATRIX, REFERENCE
+		MATRIX, REFERENCE, INT64
 	};
 
 	static int GetByteSizeFromType(ComponentDataType _type)
 	{
 		switch (_type)
 		{
+		case ComponentDataType::INT64:
+			return sizeof(uint64_t);
+			break;
 		case ComponentDataType::INT:
 			return sizeof(int);
 			break;
