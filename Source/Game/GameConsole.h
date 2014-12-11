@@ -29,6 +29,10 @@ public:
 
 	void SetDebugTexture(std::vector<Console::Argument>* _args);
 
+	void SetObjectTexture(std::vector<Console::Argument>* _args);
+	void SetObjectNormal(std::vector<Console::Argument>* _args);
+	void SetObjectSpecular(std::vector<Console::Argument>* _args);
+
 private:
 	ECSL::World*	m_world;
 	Renderer::GraphicDevice* m_graphics;
