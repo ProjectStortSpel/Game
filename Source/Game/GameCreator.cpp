@@ -12,6 +12,8 @@
 #include "ECSL/ECSL.h"
 #include "ECSL/Managers/EntityTemplateManager.h"
 
+#include "LuaBridge/ECSL/LuaSystem.h"
+
 GameCreator::GameCreator() :
 m_graphics(0), m_input(0), m_world(0), m_console(0), m_consoleManager(Console::ConsoleManager::GetInstance())
 {
@@ -67,7 +69,7 @@ void GameCreator::InitializeNetwork()
 
 }
 
-void GameCreator::InitializeLua()
+void GameCreator::InitializeLua() 
 {
 	LuaEmbedder::Init();
 	LuaBridge::Embed();
@@ -109,7 +111,7 @@ void GameCreator::InitializeWorld()
 	m_world = worldCreator.CreateWorld(10000);
 	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
 	
-	LuaEmbedder::CallMethods<ECSL::System>("System", "PostInitialize");
+	LuaEmbedder::CallMethods<LuaBridge::LuaSystem>("System", "PostInitialize");
 
 	unsigned int id = m_world->CreateNewEntity("Player");
 	std::vector<unsigned int> cmp;
@@ -131,6 +133,7 @@ void GameCreator::StartGame()
 
 	/*	Hook console	*/
 	m_console->SetupHooks(&m_consoleManager);
+	m_consoleManager.AddCommand("Reload", std::bind(&GameCreator::Reload, this, std::placeholders::_1));
 
 	
 	/*	FULKOD START	*/
@@ -286,5 +289,21 @@ void GameCreator::PollSDLEvent()
 	}
 }
 
-
+void GameCreator::Reload(std::vector<Console::Argument>* _args)
+{
+  if (m_world)
+	  delete m_world;
+  NetworkInstance::DestroyClient();
+  NetworkInstance::DestroyServer();
+  NetworkInstance::DestroyNetworkHelper();
+  LuaEmbedder::Quit();
+  ECSL::ComponentTypeManager::GetInstance().Clear();
+  ECSL::EntityTemplateManager::GetInstance().Clear();
+  
+  
+  InitializeLua();
+  m_graphics->Clear();
+  InitializeNetwork();
+  InitializeWorld();
+}
 

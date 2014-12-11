@@ -375,6 +375,8 @@ namespace LuaBridge
 
 
 			NetworkInstance::GetServer()->Broadcast(p, nc);
+
+			return 0;
 		}
 
 		int Start()

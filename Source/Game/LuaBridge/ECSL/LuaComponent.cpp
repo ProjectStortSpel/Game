@@ -226,4 +226,8 @@ namespace LuaBridge
     m_dataLocation[folderName.size() + CHARSIZE] = '\0';
     return 0;
   }
+
+  int LuaComponent::SetNetworkSync()
+  {
+  }
 }

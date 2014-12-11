@@ -7,6 +7,8 @@
 using namespace Renderer;
 using namespace glm;
 
+float testArray[30];
+
 GraphicDevice::GraphicDevice()
 {
 	m_modelIDcounter = 0;
@@ -41,9 +43,9 @@ bool GraphicDevice::Init()
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	if (!InitForward()) { ERRORMSG("INIT FORWARD FAILED\n"); return false; }
 	if (!InitTextRenderer()) { ERRORMSG("INIT TEXTRENDERER FAILED\n"); return false; }
-	m_vramUsage += (m_textRenderer.GetArraySize() * sizeof(int));
-
-
+		m_vramUsage += (m_textRenderer.GetArraySize() * sizeof(int));
+	if (!InitLightBuffer()) { ERRORMSG("INIT LIGHTBUFFER FAILED\n"); return false; }
+	
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 
@@ -184,6 +186,10 @@ void GraphicDevice::Render()
 
 	glBindImageTexture(1, m_colorTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
 
+	//glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_pointlightBuffer);
+	//glBufferData(GL_SHADER_STORAGE_BUFFER, point_light_data_size, pointlight_data, GL_STATIC_DRAW);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
+	
 	glDispatchCompute(m_clientWidth * 0.0625, m_clientHeight * 0.0625, 1); // 1/16 = 0.0625
 	//---------------------------------------------------------------------------
 
@@ -293,8 +299,8 @@ bool GraphicDevice::InitSDLWindow()
 	// WINDOW SETTINGS
 	unsigned int	Flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
 	const char*		Caption = "SDL Window";
-	int				PosX = 200;
-	int				PosY = 280;
+	int				PosX = 650;
+	int				PosY = 170;
 
 	int				SizeX = 256 * 5;	//1280
 	int				SizeY = 144 * 5;	//720
@@ -477,6 +483,58 @@ bool GraphicDevice::InitBuffers()
 	m_forwardShader.CheckUniformLocation("diffuseTex", 1);
 
 	return true;
+}
+
+bool GraphicDevice::InitLightBuffer()
+{
+	/* TEMP. Ta bort när ljus skapas från E/C-system*/
+	int lights = 3;
+	for (int i = 0; i < lights; i++)
+	{
+		testArray[10*i + 0] = -5.0+i*5;	//pos x
+		testArray[10*i + 1] = 3.0;	//pos y
+		testArray[10*i + 2] = 0.0;	//pos z
+		testArray[10*i + 3] = 0.5;	 //int x
+		testArray[10*i + 4] = 0.9;	 //int y
+		testArray[10*i + 5] = 0.5;  //int z
+		testArray[10*i + 6] = 0.8;	//col x
+		testArray[10*i + 7] = 0.6;	//col y
+		testArray[10*i + 8] = 0.6;	//col z
+		testArray[10*i + 9] = 10.0;	//range
+	}
+	/* ---------------------------------------------- */
+	glGenBuffers(1, &m_pointlightBuffer);
+
+	if (m_pointlightBuffer < 0)
+		return false;
+	/* TMP  */
+	float **tmpPointersArray = new float*[lights];
+	for (int i = 0; i < lights; i++)
+	{
+		tmpPointersArray[i] = &testArray[10 * i];
+	}
+	BufferPointlights(lights, tmpPointersArray);
+	/* --------------------------------------------- */
+	return true;
+}
+
+void GraphicDevice::BufferPointlights(int _nrOfLights, float **_lightPointers)
+{
+	float *pointlight_data = new float[_nrOfLights * 10];
+
+	for (int i = 0; i < _nrOfLights; i++)
+	{
+		memcpy(&pointlight_data[10 * i], _lightPointers[i], 10 * sizeof(float));
+	}
+
+	int point_light_data_size = 10 * _nrOfLights * sizeof(float);
+
+	m_compDeferredPass2Shader.UseProgram();
+
+	glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer, 0, point_light_data_size);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, point_light_data_size, pointlight_data, GL_STATIC_DRAW);
+
+	delete pointlight_data;
 }
 
 bool GraphicDevice::InitTextRenderer()
@@ -850,3 +908,11 @@ GLuint GraphicDevice::AddTexture(std::string _fileDir, GLenum _textureSlot)
 //	}
 //	ObjectData obj = ModelLoader::importObject(_dir, _file);
 //}
+
+void GraphicDevice::Clear()
+{
+  m_modelIDcounter = 0;
+  
+  m_modelsDeferred.clear();
+  m_modelsForward.clear();
+}

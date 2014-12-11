@@ -22,30 +22,45 @@ namespace LuaBridge
 
 	void LuaSystem::Update(float _dt)
 	{
-		LuaEmbedder::PushFloat(_dt);
-		LuaEmbedder::CallMethod<LuaSystem>("System", "Update", this, 1);
+		if (LuaEmbedder::HasFunction<LuaSystem>(this, "Update"))
+		{
+			LuaEmbedder::PushFloat(_dt);
+			LuaEmbedder::CallMethod<LuaSystem>("System", "Update", this, 1);
+		}
 	}
 
 	void LuaSystem::Initialize()
 	{
-		LuaEmbedder::CallMethod<LuaSystem>("System", "Initialize", this);
+		if (LuaEmbedder::HasFunction<LuaSystem>(this, "Initialize"))
+		{
+			LuaEmbedder::CallMethod<LuaSystem>("System", "Initialize", this);
+		}
 	}
 
 	void LuaSystem::OnEntityAdded(unsigned int _entityId)
 	{
-		LuaEmbedder::PushInt((int)_entityId);
-		LuaEmbedder::CallMethod<LuaSystem>("System", "OnEntityAdded", this, 1);
+		if (LuaEmbedder::HasFunction<LuaSystem>(this, "OnEntityAdded"))
+		{
+			LuaEmbedder::PushInt((int)_entityId);
+			LuaEmbedder::CallMethod<LuaSystem>("System", "OnEntityAdded", this, 1);
+		}
 	}
 
 	void LuaSystem::OnEntityRemoved(unsigned int _entityId)
 	{
-		LuaEmbedder::PushInt((int)_entityId);
-		LuaEmbedder::CallMethod<LuaSystem>("System", "OnEntityRemoved", this, 1);
+		if (LuaEmbedder::HasFunction<LuaSystem>(this, "OnEntityRemoved"))
+		{
+			LuaEmbedder::PushInt((int)_entityId);
+			LuaEmbedder::CallMethod<LuaSystem>("System", "OnEntityRemoved", this, 1);
+		}
 	}
 
 	void LuaSystem::PostInitialize()
 	{
-		LuaEmbedder::CallMethod<LuaSystem>("System", "PostInitialize", this);
+		if (LuaEmbedder::HasFunction<LuaSystem>(this, "PostInitialize"))
+		{
+			LuaEmbedder::CallMethod<LuaSystem>("System", "PostInitialize", this);
+		}
 	}
 
 	int LuaSystem::GetComponent()
