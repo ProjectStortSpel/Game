@@ -13,6 +13,8 @@ RenderSystem::~RenderSystem()
 
 void RenderSystem::Initialize()
 {
+	SetSystemName("Render System");
+
 	/*	Rendersystem wants Position, Scale, Rotation and Render	*/
 	AddComponentTypeToFilter("Position",	ECSL::FilterType::Mandatory);
 	AddComponentTypeToFilter("Rotation",	ECSL::FilterType::Mandatory);

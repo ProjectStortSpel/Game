@@ -55,7 +55,7 @@ namespace ECSL
 		void KillEntity(unsigned int _entityId);
 		const std::vector<unsigned int>* const GetEntities() { return m_entities; }
 
-		void SetSystemName(std::string _name);
+		void SetSystemName(std::string _name){ m_systemName = _name; }
 
 	private:
 		bool m_initialized;

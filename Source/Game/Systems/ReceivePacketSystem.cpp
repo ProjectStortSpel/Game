@@ -10,6 +10,7 @@ ReceivePacketSystem::~ReceivePacketSystem()
 
 void ReceivePacketSystem::Initialize()
 {
+	SetSystemName("Receive Packet System");
 	/*	Rendersystem wants Network	*/
 	AddComponentTypeToFilter("Network", ECSL::FilterType::Mandatory);
 

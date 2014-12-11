@@ -9,6 +9,7 @@ ResetChangedSystem::~ResetChangedSystem()
 
 void ResetChangedSystem::Initialize()
 {
+	SetSystemName("Reset Changed System");
 	/*	Rendersystem wants Network	*/
 	//AddComponentTypeToFilter("ChangedComponents", ECSL::FilterType::Mandatory);
 
