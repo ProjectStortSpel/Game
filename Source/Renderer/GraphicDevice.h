@@ -165,6 +165,7 @@ namespace Renderer
 
 		// DEBUG variables ----
 		int m_debugTexFlag; // 0=standard, 1=diffuse, 2=normal, 3=specular+shine, 4=glow
+		int m_nrOfLights;
 
 		// Objects
 		//std::map<const std::string, ObjectData> m_objects;

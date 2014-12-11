@@ -15,6 +15,7 @@ GraphicDevice::GraphicDevice()
 	m_camera = new Camera();
 	m_vramUsage = 0;
 	m_debugTexFlag = 0;
+	m_nrOfLights = 0;
 }
 
 GraphicDevice::~GraphicDevice()
@@ -514,12 +515,16 @@ bool GraphicDevice::InitLightBuffer()
 		tmpPointersArray[i] = &testArray[10 * i];
 	}
 	BufferPointlights(lights, tmpPointersArray);
+	delete tmpPointersArray;
 	/* --------------------------------------------- */
 	return true;
 }
 
 void GraphicDevice::BufferPointlights(int _nrOfLights, float **_lightPointers)
 {
+	m_vramUsage -= m_nrOfLights*10*sizeof(float);
+	m_nrOfLights = _nrOfLights;
+
 	float *pointlight_data = new float[_nrOfLights * 10];
 
 	for (int i = 0; i < _nrOfLights; i++)
@@ -533,6 +538,7 @@ void GraphicDevice::BufferPointlights(int _nrOfLights, float **_lightPointers)
 
 	glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer, 0, point_light_data_size);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, point_light_data_size, pointlight_data, GL_STATIC_DRAW);
+	m_vramUsage += m_nrOfLights*10*sizeof(float);
 
 	delete pointlight_data;
 }
@@ -628,6 +634,9 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 	Buffer* mesh = AddMesh(obj.mesh, shaderPtr);
 
 	Model model = Model(modelID, mesh, texture, normal, specular);
+
+	//for the matrices (modelView + normal)
+	m_vramUsage += (16 + 9) * sizeof(float);
 
 	if (_renderType == RENDER_DEFERRED)
 	{
