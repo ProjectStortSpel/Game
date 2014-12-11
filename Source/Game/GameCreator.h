@@ -31,6 +31,8 @@ private:
 
 	void UpdateConsole();
 	void RenderConsole();
+	
+	void Reload(std::vector<Console::Argument>* _args);
 
 private:
 	Renderer::GraphicDevice*	m_graphics;

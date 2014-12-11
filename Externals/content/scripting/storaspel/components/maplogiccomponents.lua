@@ -34,3 +34,5 @@ local NotWalkableComponent = ComponentType()
 NotWalkableComponent.Name = "NotWalkable"
 NotWalkableComponent.TableType = TableType.Array
 worldCreator:AddComponentType(NotWalkableComponent)
+
+

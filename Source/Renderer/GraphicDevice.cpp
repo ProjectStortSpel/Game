@@ -496,8 +496,8 @@ bool GraphicDevice::InitLightBuffer()
 		testArray[10*i + 2] = 0.0;	//pos z
 		testArray[10*i + 3] = 0.5;	 //int x
 		testArray[10*i + 4] = 0.9;	 //int y
-		testArray[10*i + 5] = 0.1;  //int z
-		testArray[10*i + 6] = 1.0;	//col x
+		testArray[10*i + 5] = 0.5;  //int z
+		testArray[10*i + 6] = 0.8;	//col x
 		testArray[10*i + 7] = 0.6;	//col y
 		testArray[10*i + 8] = 0.6;	//col z
 		testArray[10*i + 9] = 10.0;	//range
@@ -908,3 +908,11 @@ GLuint GraphicDevice::AddTexture(std::string _fileDir, GLenum _textureSlot)
 //	}
 //	ObjectData obj = ModelLoader::importObject(_dir, _file);
 //}
+
+void GraphicDevice::Clear()
+{
+  m_modelIDcounter = 0;
+  
+  m_modelsDeferred.clear();
+  m_modelsForward.clear();
+}

@@ -105,6 +105,8 @@ namespace Renderer
 
 		void SetDebugTexFlag(int _flag) { m_debugTexFlag = _flag; }
 		void BufferPointlights(int _nrOfLights, float **_lightPointers);
+		
+		void Clear();
 
 	private:
 		bool InitSDLWindow();

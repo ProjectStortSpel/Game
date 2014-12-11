@@ -30,6 +30,7 @@ namespace ECSL
 
 		void AddTemplate(EntityTemplate& _template);
 		
+		void Clear();
 	private:
 		EntityTemplateManager();
 
