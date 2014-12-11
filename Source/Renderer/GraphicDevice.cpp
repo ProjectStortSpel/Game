@@ -301,8 +301,8 @@ bool GraphicDevice::InitSDLWindow()
 	// WINDOW SETTINGS
 	unsigned int	Flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
 	const char*		Caption = "SDL Window";
-	int				PosX = 650;
-	int				PosY = 170;
+	int				PosX = 630;
+	int				PosY = 160;
 
 	int				SizeX = 256 * 5;	//1280
 	int				SizeY = 144 * 5;	//720
@@ -784,47 +784,48 @@ bool GraphicDevice::ChangeModelTexture(int _id, std::string _fileDir, int _textu
 			if (m_modelsDeferred[i].instances[j].id == _id)
 			{
 				instance = m_modelsDeferred[i].instances[j];
-				m_modelsDeferred[i].instances.erase(m_modelsDeferred[i].instances.begin() + j);
-				if (m_modelsDeferred[i].instances.size() == 0)
-					m_modelsDeferred.erase(m_modelsDeferred.begin() + i);
-
 				model = Model(
 					m_modelsDeferred[i].bufferPtr,
 					m_modelsDeferred[i].texID,
 					m_modelsDeferred[i].norID,
 					m_modelsDeferred[i].speID
 					);
-
 				found = true;
 				renderType = RENDER_DEFERRED;
+				m_modelsDeferred[i].instances.erase(m_modelsDeferred[i].instances.begin() + j);
+				if (m_modelsDeferred[i].instances.size() == 0)
+					m_modelsDeferred.erase(m_modelsDeferred.begin() + i);
 			}
+			if (found) break;
 		}
+		if (found) break;
 	}
-
-	for (int i = 0; i < m_modelsForward.size(); i++)
+	if (!found)
 	{
-		for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
+		for (int i = 0; i < m_modelsForward.size(); i++)
 		{
-			if (m_modelsForward[i].instances[j].id == _id)
+			for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
 			{
-				instance = m_modelsForward[i].instances[j];
-				m_modelsForward[i].instances.erase(m_modelsForward[i].instances.begin() + j);
-				if (m_modelsForward[i].instances.size() == 0)
-					m_modelsForward.erase(m_modelsForward.begin() + i);
-
-				model = Model(
-					m_modelsForward[i].bufferPtr,
-					m_modelsForward[i].texID,
-					m_modelsForward[i].norID,
-					m_modelsForward[i].speID
-					);
-
-				found = true;
-				renderType = RENDER_FORWARD;
+				if (m_modelsForward[i].instances[j].id == _id)
+				{
+					instance = m_modelsForward[i].instances[j];
+					model = Model(
+						m_modelsForward[i].bufferPtr,
+						m_modelsForward[i].texID,
+						m_modelsForward[i].norID,
+						m_modelsForward[i].speID
+						);
+					found = true;
+					renderType = RENDER_FORWARD;
+					m_modelsForward[i].instances.erase(m_modelsForward[i].instances.begin() + j);
+					if (m_modelsForward[i].instances.size() == 0)
+						m_modelsForward.erase(m_modelsForward.begin() + i);
+				}
+				if (found) break;
 			}
+			if (found) break;
 		}
 	}
-
 	// Didn't we find it return false
 	if (!found) return false;
 

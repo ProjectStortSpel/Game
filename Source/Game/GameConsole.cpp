@@ -110,6 +110,16 @@ void GameConsole::ChangeComponent(std::vector<Console::Argument>* _args)
 	DATA = (float*)m_world->GetComponent(mId, componentType, 0);
 	for (int n = 0; n < nData; ++n)
 		DATA[n] = _args->at(2 + n).Number;
+
+	unsigned int componentTypeId = ECSL::ComponentTypeManager::GetInstance().GetTableId(componentType);
+	int bitSetIndex = ECSL::BitSet::GetBitSetIndex(componentTypeId);
+	int bitIndex = ECSL::BitSet::GetBitIndex(componentTypeId);
+
+	ECSL::BitSet::DataType* changedComponents = (ECSL::BitSet::DataType*)m_world->GetComponent(mId, "ChangedComponents", 0);
+	changedComponents[bitSetIndex] |= ((ECSL::BitSet::DataType)1) << bitIndex;
+
+	ECSL::BitSet::DataType* changedComponentsNetwork = (ECSL::BitSet::DataType*)m_world->GetComponent(mId, "ChangedComponentsNetwork", 0);
+	changedComponentsNetwork[bitSetIndex] |= ((ECSL::BitSet::DataType)1) << bitIndex;
 }
 
 void GameConsole::RemoveComponent(std::vector<Console::Argument>* _args)
@@ -126,9 +136,6 @@ void GameConsole::ListCommands(std::vector<Console::Argument>* _args)
 	m_consoleManager->AddMessage("Command           -   Arg1, Arg2, Arg3, ...");
 	m_consoleManager->AddMessage("CreateObject      -   Model, Path, X, Y, Z");
 	m_consoleManager->AddMessage("RemoveObject      -   Id");
-	m_consoleManager->AddMessage("ChangeTexture     -   Id, Path");
-	m_consoleManager->AddMessage("ChangeNormal      -   Id, Path");
-	m_consoleManager->AddMessage("ChangeSpecular    -   Id, Path");
 	m_consoleManager->AddMessage("AddComponent      -   Id, ComponentType");
 	m_consoleManager->AddMessage("ChangeComponent   -   Id, ComponentType, X, Y, Z, ...");
 	m_consoleManager->AddMessage("RemoveComponent   -   Id, ComponentType");
@@ -270,40 +277,6 @@ void GameConsole::SetDebugTexture(std::vector<Console::Argument>* _args)
 	}
 }
 
-void GameConsole::SetObjectTexture(std::vector<Console::Argument>* _args)
-{
-	if (_args->size() != 2)
-		return;
-	if ((*_args)[0].ArgType != Console::ArgumentType::Number)
-		return;
-	if ((*_args)[1].ArgType != Console::ArgumentType::Text)
-		return;
-	if (!m_graphics->ChangeModelTexture((*_args)[0].Number, (*_args)[1].Text, 0))
-		m_consoleManager->AddMessage("Unable to find ModelID");
-}
-void GameConsole::SetObjectNormal(std::vector<Console::Argument>* _args)
-{
-	if (_args->size() != 2)
-		return;
-	if ((*_args)[0].ArgType != Console::ArgumentType::Number)
-		return;
-	if ((*_args)[1].ArgType != Console::ArgumentType::Text)
-		return;
-	if (!m_graphics->ChangeModelTexture(_args->at(0).Number, _args->at(1).Text, 1))
-		m_consoleManager->AddMessage("Unable to find ModelID");
-}
-void GameConsole::SetObjectSpecular(std::vector<Console::Argument>* _args)
-{
-	if (_args->size() != 2)
-		return;
-	if ((*_args)[0].ArgType != Console::ArgumentType::Number)
-		return;
-	if ((*_args)[1].ArgType != Console::ArgumentType::Text)
-		return;
-	if (!m_graphics->ChangeModelTexture(_args->at(0).Number, _args->at(1).Text, 2))
-		m_consoleManager->AddMessage("Unable to find ModelID");
-}
-
 void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 {
 	m_consoleManager = _consoleManager;
@@ -319,11 +292,6 @@ void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 	m_consoleManager->AddCommand("List", std::bind(&GameConsole::ListCommands, this, std::placeholders::_1));
 
 	m_consoleManager->AddCommand("DebugRender", std::bind(&GameConsole::SetDebugTexture, this, std::placeholders::_1));
-
-	m_consoleManager->AddCommand("ChangeTexture", std::bind(&GameConsole::SetObjectTexture, this, std::placeholders::_1));
-	m_consoleManager->AddCommand("ChangeNormal", std::bind(&GameConsole::SetObjectNormal, this, std::placeholders::_1));
-	m_consoleManager->AddCommand("ChangeSpecular", std::bind(&GameConsole::SetObjectSpecular, this, std::placeholders::_1));
-
 
 	NetworkInstance::GetClient()->AddNetworkHook("Entity", std::bind(&NetworkHelper::ReceiveEntity, NetworkInstance::GetNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	NetworkInstance::GetClient()->AddNetworkHook("EntityKill", std::bind(&NetworkHelper::ReceiveEntityKill, NetworkInstance::GetNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
