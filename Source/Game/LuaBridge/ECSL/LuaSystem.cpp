@@ -67,28 +67,18 @@ namespace LuaBridge
 	{
 		ECSL::DataLocation dataLocation;
 		unsigned int entityId = (unsigned int)LuaEmbedder::PullInt(1);
-		if (LuaEmbedder::IsInt(2))
+		std::string componentType = LuaEmbedder::PullString(2);
+		if (LuaEmbedder::IsInt(3))
 		{
-			unsigned int componentTypeId = (unsigned int)LuaEmbedder::PullInt(2);
 			unsigned int index = (unsigned int)LuaEmbedder::PullInt(3);
-			dataLocation = System::GetComponent(entityId, componentTypeId, index);
+			dataLocation = System::GetComponent(entityId, componentType, index);
 		}
 		else
 		{
-			std::string componentType = LuaEmbedder::PullString(2);
-			if (LuaEmbedder::IsInt(3))
-			{
-				unsigned int index = (unsigned int)LuaEmbedder::PullInt(3);
-				dataLocation = System::GetComponent(entityId, componentType, index);
-			}
-			else
-			{
-				std::string variableName = LuaEmbedder::PullString(3);
-				dataLocation = System::GetComponent(entityId, componentType, variableName);
-			}
+			std::string variableName = LuaEmbedder::PullString(3);
+			dataLocation = System::GetComponent(entityId, componentType, variableName);
 		}
-		LuaComponent* component = new LuaComponent();
-		component->SetDataLocation(dataLocation);
+		LuaComponent* component = new LuaComponent(dataLocation, this, entityId, componentType);
 		LuaEmbedder::PushObject<LuaComponent>("Component", component, true);
 		return 1;
 	}

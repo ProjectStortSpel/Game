@@ -58,6 +58,7 @@ void SimpleText::RenderText(float _dt)
 	}
 	
 	m_simpleTextShader.UseProgram();
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, simpleTextBuffer);
 	// Run program
 
 	// Bind buffers

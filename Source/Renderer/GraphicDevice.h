@@ -16,12 +16,18 @@ namespace Renderer
 #define RENDER_DEFERRED 0
 #define RENDER_FORWARD  1
 
+#define TEXTURE_DIFFUSE		0
+#define TEXTURE_NORMAL		1
+#define TEXTURE_SPECULAR	2
+
+
 	struct Instance
 	{
 		int id;
 		bool active;
 		mat4* modelMatrix;
 		
+		Instance(){}
 		Instance(int _id, bool _active, mat4* _model)
 		{
 			id = _id;
@@ -36,7 +42,7 @@ namespace Renderer
 		bool operator!= (const Model &m) { return !Compare(m); }
 
 		Model(){}
-		Model(int ID, Buffer* buffer, GLuint tex, GLuint nor, GLuint spe)
+		Model(Buffer* buffer, GLuint tex, GLuint nor, GLuint spe)
 		{
 			bufferPtr = buffer;
 			texID = tex;
@@ -99,11 +105,12 @@ namespace Renderer
 		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED);
 		bool RemoveModel(int _id);
 		bool ActiveModel(int _id, bool _active);
-		bool ChangeModelTexture(int _id, std::string _fileDir);
+		bool ChangeModelTexture(int _id, std::string _fileDir, int _textureType = TEXTURE_DIFFUSE);
 		bool ChangeModelNormalMap(int _id, std::string _fileDir);
 		bool ChangeModelSpecularMap(int _id, std::string _fileDir);
 
-		void SetDebugTexFlag(int flag) { m_debugTexFlag = flag; }
+		void SetDebugTexFlag(int _flag) { m_debugTexFlag = _flag; }
+		void BufferPointlights(int _nrOfLights, float **_lightPointers);
 		
 		void Clear();
 
@@ -115,6 +122,7 @@ namespace Renderer
 		bool InitShaders();
 		bool InitBuffers();
 		bool InitTextRenderer();
+		bool InitLightBuffer();
 
 		void CreateGBufTex(GLenum texUnit, GLenum format, GLuint &texid);
 		void CreateDepthTex(GLuint &texid);
@@ -157,6 +165,9 @@ namespace Renderer
 		// Modelloader
 		int m_modelIDcounter;
 		std::vector<Model> m_modelsDeferred, m_modelsForward;
+
+		// Pointlights buffer
+		GLuint m_pointlightBuffer;
 
 		// DEBUG variables ----
 		int m_debugTexFlag; // 0=standard, 1=diffuse, 2=normal, 3=specular+shine, 4=glow

@@ -33,6 +33,8 @@ void RotationSystem::Update(float _dt)
 
 		for (int n = 0; n < 3; ++n)
 			Rotation[n] += Spin[n] * _dt;
+
+		ComponentHasChanged(entity, "Rotation");
 	}
 
 }

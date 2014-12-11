@@ -7,6 +7,8 @@
 using namespace Renderer;
 using namespace glm;
 
+float testArray[30];
+
 GraphicDevice::GraphicDevice()
 {
 	m_modelIDcounter = 0;
@@ -41,9 +43,9 @@ bool GraphicDevice::Init()
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	if (!InitForward()) { ERRORMSG("INIT FORWARD FAILED\n"); return false; }
 	if (!InitTextRenderer()) { ERRORMSG("INIT TEXTRENDERER FAILED\n"); return false; }
-	m_vramUsage += (m_textRenderer.GetArraySize() * sizeof(int));
-
-
+		m_vramUsage += (m_textRenderer.GetArraySize() * sizeof(int));
+	if (!InitLightBuffer()) { ERRORMSG("INIT LIGHTBUFFER FAILED\n"); return false; }
+	
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 
@@ -184,6 +186,10 @@ void GraphicDevice::Render()
 
 	glBindImageTexture(1, m_colorTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
 
+	//glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_pointlightBuffer);
+	//glBufferData(GL_SHADER_STORAGE_BUFFER, point_light_data_size, pointlight_data, GL_STATIC_DRAW);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
+	
 	glDispatchCompute(m_clientWidth * 0.0625, m_clientHeight * 0.0625, 1); // 1/16 = 0.0625
 	//---------------------------------------------------------------------------
 
@@ -293,8 +299,8 @@ bool GraphicDevice::InitSDLWindow()
 	// WINDOW SETTINGS
 	unsigned int	Flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
 	const char*		Caption = "SDL Window";
-	int				PosX = 200;
-	int				PosY = 280;
+	int				PosX = 650;
+	int				PosY = 170;
 
 	int				SizeX = 256 * 5;	//1280
 	int				SizeY = 144 * 5;	//720
@@ -479,6 +485,58 @@ bool GraphicDevice::InitBuffers()
 	return true;
 }
 
+bool GraphicDevice::InitLightBuffer()
+{
+	/* TEMP. Ta bort när ljus skapas från E/C-system*/
+	int lights = 3;
+	for (int i = 0; i < lights; i++)
+	{
+		testArray[10*i + 0] = -5.0+i*5;	//pos x
+		testArray[10*i + 1] = 3.0;	//pos y
+		testArray[10*i + 2] = 0.0;	//pos z
+		testArray[10*i + 3] = 0.5;	 //int x
+		testArray[10*i + 4] = 0.9;	 //int y
+		testArray[10*i + 5] = 0.5;  //int z
+		testArray[10*i + 6] = 0.8;	//col x
+		testArray[10*i + 7] = 0.6;	//col y
+		testArray[10*i + 8] = 0.6;	//col z
+		testArray[10*i + 9] = 10.0;	//range
+	}
+	/* ---------------------------------------------- */
+	glGenBuffers(1, &m_pointlightBuffer);
+
+	if (m_pointlightBuffer < 0)
+		return false;
+	/* TMP  */
+	float **tmpPointersArray = new float*[lights];
+	for (int i = 0; i < lights; i++)
+	{
+		tmpPointersArray[i] = &testArray[10 * i];
+	}
+	BufferPointlights(lights, tmpPointersArray);
+	/* --------------------------------------------- */
+	return true;
+}
+
+void GraphicDevice::BufferPointlights(int _nrOfLights, float **_lightPointers)
+{
+	float *pointlight_data = new float[_nrOfLights * 10];
+
+	for (int i = 0; i < _nrOfLights; i++)
+	{
+		memcpy(&pointlight_data[10 * i], _lightPointers[i], 10 * sizeof(float));
+	}
+
+	int point_light_data_size = 10 * _nrOfLights * sizeof(float);
+
+	m_compDeferredPass2Shader.UseProgram();
+
+	glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer, 0, point_light_data_size);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, point_light_data_size, pointlight_data, GL_STATIC_DRAW);
+
+	delete pointlight_data;
+}
+
 bool GraphicDevice::InitTextRenderer()
 {
 	int texSizeX, texSizeY;
@@ -569,7 +627,7 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 	// Import Mesh
 	Buffer* mesh = AddMesh(obj.mesh, shaderPtr);
 
-	Model model = Model(modelID, mesh, texture, normal, specular);
+	Model model = Model(mesh, texture, normal, specular);
 
 	if (_renderType == RENDER_DEFERRED)
 	{
@@ -664,105 +722,127 @@ bool GraphicDevice::ActiveModel(int _id, bool _active)
 	}
 	return false;
 }
-bool GraphicDevice::ChangeModelTexture(int _id, std::string _fileDir)
+bool GraphicDevice::ChangeModelTexture(int _id, std::string _fileDir, int _textureType)
 {
-	//Här måste ändras! Skapa ny modell om man vill byta till en texturkombination som inte finns. Använd all återanvändbar data (mesh osv...) till den nya modellen.
+	// Model Instance
+	Instance instance;
+	// Temp Model
+	Model model;
 
-	/*int location;
-	GLuint texture;
+	bool found = false;
+	int renderType;
 
+	// Find model Instance
 	for (int i = 0; i < m_modelsDeferred.size(); i++)
 	{
 		for (int j = 0; j < m_modelsDeferred[i].instances.size(); j++)
 		{
 			if (m_modelsDeferred[i].instances[j].id == _id)
 			{
-				texture = AddTexture(_fileDir, GL_TEXTURE1);
-				m_deferredShader1.CheckUniformLocation("diffuseTex", 1);
+				instance = m_modelsDeferred[i].instances[j];
+				model = Model(
+					m_modelsDeferred[i].bufferPtr,
+					m_modelsDeferred[i].texID,
+					m_modelsDeferred[i].norID,
+					m_modelsDeferred[i].speID
+					);
+				found = true;
+				renderType = RENDER_DEFERRED;
+				m_modelsDeferred[i].instances.erase(m_modelsDeferred[i].instances.begin() + j);
+				if (m_modelsDeferred[i].instances.size() == 0)
+					m_modelsDeferred.erase(m_modelsDeferred.begin() + i);
+			}
+			if (found) break;
+		}
+		if (found) break;
+	}
+	if (!found)
+	{
+		for (int i = 0; i < m_modelsForward.size(); i++)
+		{
+			for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
+			{
+				if (m_modelsForward[i].instances[j].id == _id)
+				{
+					instance = m_modelsForward[i].instances[j];
+					model = Model(
+						m_modelsForward[i].bufferPtr,
+						m_modelsForward[i].texID,
+						m_modelsForward[i].norID,
+						m_modelsForward[i].speID
+						);
+					found = true;
+					renderType = RENDER_FORWARD;
+					m_modelsForward[i].instances.erase(m_modelsForward[i].instances.begin() + j);
+					if (m_modelsForward[i].instances.size() == 0)
+						m_modelsForward.erase(m_modelsForward.begin() + i);
+				}
+				if (found) break;
+			}
+			if (found) break;
+		}
+	}
+	// Didn't we find it return false
+	if (!found) return false;
 
-				m_modelsDeferred[i].texID = texture;
+	// Set new Texture to TextureType
+	if (_textureType == TEXTURE_DIFFUSE)
+	{
+		model.texID = AddTexture(_fileDir, GL_TEXTURE1);
+		m_deferredShader1.CheckUniformLocation("diffuseTex", 1);
+	}
+	else if (_textureType == TEXTURE_NORMAL)
+	{
+		model.norID = AddTexture(_fileDir, GL_TEXTURE2);
+		m_deferredShader1.CheckUniformLocation("normalTex", 2);
+	}
+	else if (_textureType == TEXTURE_SPECULAR)
+	{
+		model.speID = AddTexture(_fileDir, GL_TEXTURE3);
+		m_deferredShader1.CheckUniformLocation("specularTex", 3);
+	}
 
+	// Check if our new Model type already exists and add instance
+	if (renderType == RENDER_DEFERRED)
+	{
+		for (int i = 0; i < m_modelsDeferred.size(); i++)
+		{
+			if (m_modelsDeferred[i] == model)
+			{
+				m_modelsDeferred[i].instances.push_back(instance);
 				return true;
 			}
 		}
 	}
-	for (int i = 0; i < m_modelsForward.size(); i++)
+	else if (renderType == RENDER_FORWARD)
 	{
-		if (m_modelsForward[i].modelID == _id)
+		for (int i = 0; i < m_modelsForward.size(); i++)
 		{
-			texture = AddTexture(_fileDir, GL_TEXTURE1);
-			m_forwardShader.CheckUniformLocation("diffuseTex", 1);
-
-			m_modelsForward[i].texID = texture;
-
-			return true;
+			if (m_modelsForward[i] == model)
+			{
+				m_modelsForward[i].instances.push_back(instance);
+				return true;
+			}
 		}
-	}*/
-	return false;
+	}
+
+	// Nothing found. Let's make a new Model type
+	model.instances.push_back(instance);
+	// Push back the model
+	if (renderType == RENDER_DEFERRED)
+		m_modelsDeferred.push_back(model);
+	else if (renderType == RENDER_FORWARD)
+		m_modelsForward.push_back(model);
+
+	return true;
 }
 bool GraphicDevice::ChangeModelNormalMap(int _id, std::string _fileDir)
 {
-	//Här måste ändras! Skapa ny modell om man vill byta till en texturkombination som inte finns. Använd all återanvändbar data (mesh osv...) till den nya modellen.
-	/*int location;
-	GLuint texture;
-
-	for (int i = 0; i < m_modelsDeferred.size(); i++)
-	{
-		if (m_modelsDeferred[i].modelID == _id)
-		{
-			texture = AddTexture(_fileDir, GL_TEXTURE2);
-			m_deferredShader1.CheckUniformLocation("normalTex", 2);
-
-			m_modelsDeferred[i].norID = texture;
-
-			return true;
-		}
-	}
-	for (int i = 0; i < m_modelsForward.size(); i++)
-	{
-		if (m_modelsForward[i].modelID == _id)
-		{
-			texture = AddTexture(_fileDir, GL_TEXTURE2);
-			m_forwardShader.CheckUniformLocation("normalTex", 2);
-
-			m_modelsForward[i].norID = texture;
-
-			return true;
-		}
-	}*/
-	return false;
+	return ChangeModelTexture(_id, _fileDir, TEXTURE_NORMAL);
 }
 bool GraphicDevice::ChangeModelSpecularMap(int _id, std::string _fileDir)
 {
-	//Här måste ändras! Skapa ny modell om man vill byta till en texturkombination som inte finns. Använd all återanvändbar data (mesh osv...) till den nya modellen.
-	/*int location;
-	GLuint texture;
-
-	for (int i = 0; i < m_modelsDeferred.size(); i++)
-	{
-		if (m_modelsDeferred[i].modelID == _id)
-		{
-			texture = AddTexture(_fileDir, GL_TEXTURE3);
-			m_deferredShader1.CheckUniformLocation("specularTex", 3);
-
-			m_modelsDeferred[i].speID = texture;
-
-			return true;
-		}
-	}
-	for (int i = 0; i < m_modelsForward.size(); i++)
-	{
-		if (m_modelsForward[i].modelID == _id)
-		{
-			texture = AddTexture(_fileDir, GL_TEXTURE3);
-			m_forwardShader.CheckUniformLocation("specularTex", 3);
-
-			m_modelsForward[i].speID = texture;
-
-			return true;
-		}
-	}*/
-	return false;
+	return ChangeModelTexture(_id, _fileDir, TEXTURE_SPECULAR);
 }
 
 Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
