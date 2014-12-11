@@ -12,7 +12,7 @@ SyncEntitiesSystem::~SyncEntitiesSystem()
 void SyncEntitiesSystem::Initialize()
 {
 	/*	Rendersystem wants Network	*/
-
+	AddComponentTypeToFilter("SyncNetwork", ECSL::FilterType::Mandatory);
 
 	printf("SyncEntitiesSystem initialized!\n");
 }

@@ -121,5 +121,11 @@ TargetPositionComponent:AddVariable("Y", ByteSize.Float)
 TargetPositionComponent:AddVariable("Z", ByteSize.Float)
 worldCreator:AddComponentType(TargetPositionComponent)
 
+-- Sync Network Component
+local SyncNetworkComponent = ComponentType()
+SyncNetworkComponent.Name = "SyncNetwork"
+SyncNetworkComponent.TableType = TableType.Map
+worldCreator:AddComponentType(SyncNetworkComponent)
+
 
 

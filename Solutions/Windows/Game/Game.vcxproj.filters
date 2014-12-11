@@ -155,6 +155,9 @@
     <ClCompile Include="..\..\..\Source\Game\Systems\RenderRemoveSystem.cpp">
       <Filter>Game\Systems</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\Console\LuaConsole.cpp">
+      <Filter>Lua Bridge\Console</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Systems\SyncEntitiesSystem.cpp">
       <Filter>Game\Systems</Filter>
     </ClCompile>
@@ -250,6 +253,9 @@
     <ClInclude Include="..\..\..\Source\Game\NetworkInstance.h">
       <Filter>Network</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\Console\LuaConsole.h">
+      <Filter>Lua Bridge\Console</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\Externals\content\scripting\storaspel\init.lua">
@@ -264,9 +270,6 @@
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\mapcreationsystem.lua">
       <Filter>Scripting\Systems</Filter>
     </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\TestSystems.lua">
-      <Filter>Scripting\Systems</Filter>
-    </None>
     <None Include="..\..\..\Externals\content\scripting\storaspel\templates\box.lua">
       <Filter>Scripting\Templates</Filter>
     </None>
@@ -277,6 +280,9 @@
       <Filter>Scripting\Components</Filter>
     </None>
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\tilemovementsystem.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\TestSystem.lua">
       <Filter>Scripting\Systems</Filter>
     </None>
   </ItemGroup>
