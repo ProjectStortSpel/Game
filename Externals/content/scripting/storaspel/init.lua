@@ -16,7 +16,6 @@ require "moveplayersystem"
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/templates/?.lua"
 require "box"
 require "map"
-require "player"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(MovementSystem)
