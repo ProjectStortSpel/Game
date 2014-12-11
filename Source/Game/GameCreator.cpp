@@ -111,14 +111,12 @@ void GameCreator::InitializeWorld()
 	//NetworkMessagesSystem* nms = new NetworkMessagesSystem();
 	//nms->SetConsole(&m_consoleManager);
 
-	worldCreator.AddLuaSystemToCurrentGroup(new ReceivePacketSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new RotationSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new CameraSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new ModelSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new SyncEntitiesSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderRemoveSystem(m_graphics));
-
 	worldCreator.AddLuaSystemToCurrentGroup(new ResetChangedSystem());
 
 	m_world = worldCreator.CreateWorld(10000);

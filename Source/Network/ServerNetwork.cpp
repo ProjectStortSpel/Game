@@ -19,16 +19,16 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t _
 		if (NET_DEBUG)
 			printf("Player accepted. IP: %s:%d\n", _connection.GetIpAddress(), _connection.GetPort());
 
-		std::string username = _packetHandler->ReadString(_id);
-		if (username.empty())
-		{
-			std::stringstream ss;
-			m_connectedClientsLock->lock();
-			ss << "DefaultUser" << m_connectedClients->size();
-			m_connectedClientsLock->unlock();
-			username = ss.str();
+		//std::string username = _packetHandler->ReadString(_id);
+		//if (username.empty())
+		//{
+		//	std::stringstream ss;
+		//	m_connectedClientsLock->lock();
+		//	ss << "DefaultUser" << m_connectedClients->size();
+		//	m_connectedClientsLock->unlock();
+		//	username = ss.str();
 
-		}
+		//}
 
 		uint64_t id2 = _packetHandler->StartPack(NetTypeMessageId::ID_CONNECTION_ACCEPTED);
 		auto newPacket = _packetHandler->EndPack(id2);
@@ -39,13 +39,13 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t _
 
 
 		uint64_t id3 = _packetHandler->StartPack(NetTypeMessageId::ID_REMOTE_CONNECTION_ACCEPTED);
-		_packetHandler->WriteString(id3, username.c_str());
+		//_packetHandler->WriteString(id3, username.c_str());
 		Packet* p = _packetHandler->EndPack(id3);
 
 		Broadcast(p, _connection);
 
 		if (*m_onPlayerConnected)
-			(*m_onPlayerConnected)(_connection, username.c_str());
+			(*m_onPlayerConnected)(_connection, "TEMP");
 	}
 	else
 	{

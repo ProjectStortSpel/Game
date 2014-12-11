@@ -66,6 +66,7 @@ TestMovementSystem.PostInitialize = function(self)
     comp:SetFloat3(pos[1], pos[2], pos[3])
     local comp = self:GetComponent(entity, "Position", 0)
     comp:SetFloat3(pos[1], pos[2], pos[3])
+	world:CreateComponentAndAddTo("SyncNetwork", entity)
 	
 	local entity = world:CreateNewEntity("Player")
 	world:CreateComponentAndAddTo("Spawn", entity)
@@ -74,6 +75,7 @@ TestMovementSystem.PostInitialize = function(self)
 	comp:SetFloat3(pos[1], pos[2], pos[3])
     local comp = self:GetComponent(entity, "Position", 0)
     comp:SetFloat3(pos[1], pos[2], pos[3])
+	world:CreateComponentAndAddTo("SyncNetwork", entity)
 	
 	local entity = world:CreateNewEntity("Player")
 	world:CreateComponentAndAddTo("Spawn", entity)
@@ -82,6 +84,7 @@ TestMovementSystem.PostInitialize = function(self)
     comp:SetFloat3(pos[1], pos[2], pos[3])
     local comp = self:GetComponent(entity, "Position", 0)
     comp:SetFloat3(pos[1], pos[2], pos[3])
+	world:CreateComponentAndAddTo("SyncNetwork", entity)
 	
 	local entity = world:CreateNewEntity("Player")
 	world:CreateComponentAndAddTo("Spawn", entity)
@@ -90,6 +93,7 @@ TestMovementSystem.PostInitialize = function(self)
     comp:SetFloat3(pos[1], pos[2], pos[3])
     local comp = self:GetComponent(entity, "Position", 0)
     comp:SetFloat3(pos[1], pos[2], pos[3])
+	world:CreateComponentAndAddTo("SyncNetwork", entity)
 	
 end
 
