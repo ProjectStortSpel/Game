@@ -300,8 +300,8 @@ bool GraphicDevice::InitSDLWindow()
 	// WINDOW SETTINGS
 	unsigned int	Flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
 	const char*		Caption = "SDL Window";
-	int				PosX = 650;
-	int				PosY = 170;
+	int				PosX = 630;
+	int				PosY = 160;
 
 	int				SizeX = 256 * 5;	//1280
 	int				SizeY = 144 * 5;	//720
