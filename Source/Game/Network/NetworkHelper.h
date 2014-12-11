@@ -9,14 +9,14 @@ class NetworkHelper
 {
 private:
 
-	ECSL::World* m_world;
+	ECSL::World** m_world;
 
 	std::map<unsigned int, unsigned int> m_NtoH;
 	std::map<unsigned int, unsigned int> m_HtoN;
 
 public:
 
-	NetworkHelper(ECSL::World* _world);
+	NetworkHelper(ECSL::World** _world);
 	~NetworkHelper();
 
 

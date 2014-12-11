@@ -5,7 +5,6 @@
 #include "Renderer/GraphicDevice.h"
 #include "ECSL/ECSL.h"
 #include "NetworkInstance.h"
-#include "Game/Network/NetworkHelper.h"
 
 class GameConsole
 {
@@ -34,7 +33,6 @@ private:
 	ECSL::World*	m_world;
 	Renderer::GraphicDevice* m_graphics;
 	Console::ConsoleManager* m_consoleManager;
-	NetworkHelper* m_networkHelper;
 
 };
 #endif

@@ -6,6 +6,8 @@
 #include "Systems/RotationSystem.h"
 #include "Systems/ModelSystem.h"
 #include "Systems/ReceivePacketSystem.h"
+#include "Systems/SyncEntitiesSystem.h"
+#include "Systems/RenderRemoveSystem.h"
 
 #include "NetworkInstance.h"
 #include "ECSL/ECSL.h"
@@ -33,6 +35,7 @@ GameCreator::~GameCreator()
 
 	NetworkInstance::DestroyClient();
 	NetworkInstance::DestroyServer();
+	NetworkInstance::DestroyNetworkHelper();
 
 	LuaEmbedder::Quit();
 
@@ -61,6 +64,7 @@ void GameCreator::InitializeNetwork()
 {
 	NetworkInstance::InitClient();
 	NetworkInstance::InitServer();
+	NetworkInstance::InitNetworkHelper(&m_world);
 
 }
 
@@ -99,7 +103,10 @@ void GameCreator::InitializeWorld()
 	worldCreator.AddLuaSystemToCurrentGroup(new ModelSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new ReceivePacketSystem());
-	//worldCreator.AddLuaSystemToCurrentGroup(nms);
+	worldCreator.AddLuaSystemToCurrentGroup(new SyncEntitiesSystem());
+	worldCreator.AddLuaSystemToCurrentGroup(new RenderRemoveSystem(m_graphics));
+
+
 	
 	m_world = worldCreator.CreateWorld(10000);
 	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");

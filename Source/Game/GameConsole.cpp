@@ -4,12 +4,10 @@ GameConsole::GameConsole(Renderer::GraphicDevice* _graphics, ECSL::World* _world
 {
 	m_graphics = _graphics;
 	m_world = _world;
-	m_networkHelper = new NetworkHelper(_world);
 }
 
 GameConsole::~GameConsole()
 {
-	delete m_networkHelper;
 }
 
 void GameConsole::CreateObject(std::vector<Console::Argument>* _args)
@@ -33,22 +31,30 @@ void GameConsole::CreateObject(std::vector<Console::Argument>* _args)
 		objectPosition[1] = _args->at(2).Number;
 		objectPosition[2] = _args->at(3).Number;
 	}
+
+	if (NetworkInstance::GetServer()->IsRunning())
+	{
+		//NetworkInstance::GetServer()->Broadcast(NetworkInstance::GetNetworkHelper()->WriteEntity(NetworkInstance::GetServer()->GetPacketHandler(), mId));
+	}
 }
 
 void GameConsole::RemoveObject(std::vector<Console::Argument>* _args)
 {
 	if (_args->size() > 0 && (*_args)[0].ArgType == Console::ArgumentType::Number)
 	{
+		std::stringstream ss;
+		ss << "Entity #" << (*_args)[0].Number << " removed!";
+		m_consoleManager->AddMessage(ss.str().c_str());
+
 		m_world->KillEntity((*_args)[0].Number);
-		
-		/*if (m_server->IsRunning())
+
+		if (NetworkInstance::GetServer()->IsRunning())
 		{
-			Network::PacketHandler* ph = m_server->GetPacketHandler();
+			Network::PacketHandler* ph = NetworkInstance::GetServer()->GetPacketHandler();
 			uint64_t id = ph->StartPack("EntityKill");
-			ph->WriteInt(id, (int)(*_args)[0].Number);
-			Network::Packet* p = ph->EndPack(id);
-			m_server->Broadcast(p);
-		}*/
+			ph->WriteInt(id, (*_args)[0].Number);
+			NetworkInstance::GetServer()->Broadcast(ph->EndPack(id));
+		}
 	}
 }
 
@@ -153,10 +159,9 @@ void GameConsole::HostServer(std::vector<Console::Argument>* _args)
 	}
 
 	NetworkInstance::GetServer()->Start(port, pw.c_str(), connections);
-	NetworkInstance::GetClient()->Connect("127.0.0.1", pw.c_str(), port, 0);
+	//NetworkInstance::GetClient()->Connect("127.0.0.1", pw.c_str(), port, 0);
 }
 
-	//m_client->Connect("127.0.0.1", pw.c_str(), port, 0);
 
 void GameConsole::StopServer(std::vector<Console::Argument>* _args)
 {
@@ -210,11 +215,9 @@ void GameConsole::ConnectClient(std::vector<Console::Argument>* _args)
 		}
 	}
 
-
-	NetworkInstance::GetClient()->AddNetworkHook("Entity", std::bind(&NetworkHelper::ReceiveEntity, m_networkHelper, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-	NetworkInstance::GetClient()->AddNetworkHook("EntityKill", std::bind(&NetworkHelper::ReceiveEntityKill, m_networkHelper, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+	NetworkInstance::GetClient()->AddNetworkHook("Entity", std::bind(&NetworkHelper::ReceiveEntity, NetworkInstance::GetNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+	NetworkInstance::GetClient()->AddNetworkHook("EntityKill", std::bind(&NetworkHelper::ReceiveEntityKill, NetworkInstance::GetNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	NetworkInstance::GetClient()->Connect(ip.c_str(), pw.c_str(), port, 0);
-
 }
 
 void GameConsole::DisconnectClient(std::vector<Console::Argument>* _args)
@@ -261,4 +264,7 @@ void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 	m_consoleManager->AddCommand("Disconnect", std::bind(&GameConsole::DisconnectClient, this, std::placeholders::_1));
 	m_consoleManager->AddCommand("List", std::bind(&GameConsole::ListCommands, this, std::placeholders::_1));
 	m_consoleManager->AddCommand("DebugRender", std::bind(&GameConsole::SetDebugTexture, this, std::placeholders::_1));
+
+	NetworkInstance::GetClient()->AddNetworkHook("Entity", std::bind(&NetworkHelper::ReceiveEntity, NetworkInstance::GetNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+	NetworkInstance::GetClient()->AddNetworkHook("EntityKill", std::bind(&NetworkHelper::ReceiveEntityKill, NetworkInstance::GetNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 }

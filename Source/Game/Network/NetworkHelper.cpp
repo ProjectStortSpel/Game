@@ -1,7 +1,7 @@
 #include "NetworkHelper.h"
 
 
-NetworkHelper::NetworkHelper(ECSL::World* _world)
+NetworkHelper::NetworkHelper(ECSL::World** _world)
 {
 	m_world = _world;
 }
@@ -15,14 +15,14 @@ Network::Packet* NetworkHelper::WriteEntity(Network::PacketHandler* _ph, unsigne
 {
 	
 	std::vector<unsigned int> components;
-	m_world->GetEntityComponents(components, _e);
+	(*m_world)->GetEntityComponents(components, _e);
 	
 	ECSL::ComponentTypeManager* componentTypeManager = &ECSL::ComponentTypeManager::GetInstance();
 	
 	uint64_t id = _ph->StartPack("Entity");
 	_ph->WriteInt(id, _e);
 	
-	for (unsigned short i = components.size() - 1; i >= 0; --i)
+	for (short i = components.size() - 1; i >= 0; --i)
 	{
 		if (!componentTypeManager->GetComponentType(components[i])->GetNetworkSyncState())
 		{
@@ -47,7 +47,7 @@ Network::Packet* NetworkHelper::WriteEntity(Network::PacketHandler* _ph, unsigne
 			
 			_ph->WriteInt(id, byteOffset);
 
-			char* data = m_world->GetComponent(_e, componentId, byteOffset);
+			char* data = (*m_world)->GetComponent(_e, componentId, byteOffset);
 
 			switch (dataType.second)
 			{
@@ -84,13 +84,14 @@ void NetworkHelper::ReceiveEntity(Network::PacketHandler* _ph, uint64_t _id, Net
 	unsigned int idN = _ph->ReadInt(_id);
 	unsigned int idH;
 
-	if (m_NtoH.find(_id) != m_NtoH.end())
+	if (m_NtoH.find(idN) != m_NtoH.end())
 	{
 		idH = m_NtoH[idN];
 	}
 	else
 	{
-		idH = m_world->CreateNewEntity();
+		idH = (*m_world)->CreateNewEntity();
+		printf("Created Entity with ID(NETWORK): %d\n", idH);
 		m_NtoH[idN] = idH;
 		m_HtoN[idH] = idN;
 	}
@@ -99,9 +100,17 @@ void NetworkHelper::ReceiveEntity(Network::PacketHandler* _ph, uint64_t _id, Net
 
 	//	Get the entities components
 	std::vector<unsigned int> entityComponents;
-	m_world->GetEntityComponents(entityComponents, idH);
+	(*m_world)->GetEntityComponents(entityComponents, idH);
 
 	ECSL::ComponentTypeManager* componentTypeManager = &ECSL::ComponentTypeManager::GetInstance();
+	for (short n = entityComponents.size() - 1; n >= 0; --n)
+	{
+		if (!componentTypeManager->GetComponentType(entityComponents[n])->GetNetworkSyncState())
+		{
+			entityComponents.erase(entityComponents.begin() + n);
+		}
+	}
+
 	for (unsigned short i = 0; i < num_Comp; ++i)
 	{
 		const char* compName = _ph->ReadString(_id);
@@ -110,22 +119,25 @@ void NetworkHelper::ReceiveEntity(Network::PacketHandler* _ph, uint64_t _id, Net
 		//	Check if the entity has the component
 		bool hasComponent = false;
 		for (short n = entityComponents.size() - 1; n >= 0; --n)
+		{
 			if (compType == entityComponents[n])
 			{
 				hasComponent = true;
 				entityComponents.erase(entityComponents.begin() + n);
 				break;
 			}
+		}
+			
 		
 		if (!hasComponent)
-			m_world->CreateComponentAndAddTo(compName, idH);
+			(*m_world)->CreateComponentAndAddTo(compName, idH);
 
 		auto dataTypes = componentTypeManager->GetComponentType(compType)->GetDataTypes();
 
 		for (unsigned short j = 0; j < dataTypes->size(); ++j)
 		{
 			unsigned int offset = _ph->ReadInt(_id);
-			char* data = m_world->GetComponent(idH, compType, offset);
+			char* data = (*m_world)->GetComponent(idH, compType, offset);
 
 			ECSL::ComponentDataType compDataType = dataTypes->at(offset);
 
@@ -166,7 +178,7 @@ void NetworkHelper::ReceiveEntity(Network::PacketHandler* _ph, uint64_t _id, Net
 	for (unsigned int componentId : entityComponents)
 	{
 		std::string compName = componentTypeManager->GetComponentType(componentId)->GetName();
-		m_world->RemoveComponentFrom(compName, idH);
+		(*m_world)->RemoveComponentFrom(compName, idH);
 	}
 	
 }
@@ -176,9 +188,9 @@ void NetworkHelper::ReceiveEntityKill(Network::PacketHandler* _ph, uint64_t _id,
 {
 	unsigned int idN = _ph->ReadInt(_id);
 	
-	if (m_NtoH.find(_id) != m_NtoH.end())
+	if (m_NtoH.find(idN) != m_NtoH.end())
 	{
 		unsigned int idH = m_NtoH[idN];
-		m_world->KillEntity(idH);
+		(*m_world)->KillEntity(idH);
 	}
 }

@@ -38,7 +38,7 @@ worldCreator:AddComponentType(VelocityComponent)
 -- Render Component
 local RenderComponent = ComponentType()
 RenderComponent.Name = "Render"
-PositionComponent.SyncNetwork = true
+RenderComponent.SyncNetwork = false
 RenderComponent.TableType = TableType.Array
 RenderComponent:AddVariable("ModelId", ByteSize.Int)
 RenderComponent:AddVariable("Mat", ByteSize.Matrix)
