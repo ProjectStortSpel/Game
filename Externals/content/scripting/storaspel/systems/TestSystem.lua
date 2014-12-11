@@ -51,18 +51,12 @@ ForwardSystem.Update = function(self, dt)
 		
 		local x, y, z = position:GetFloat3()
 		local dx, dy = dir:GetInt2()
-		
-		
+				
 		local newtargetx = x + dx
 		local newtargety = y 
 		local newtargetz = z + dy
 		
-		Console.Print(newtargetx)
-		Console.Print(newtargety)
-		Console.Print(newtargetz)
-		
-		--position:SetFloat3(newtargetx, newtargety, newtargetz)
-		position:SetFloat3(0, 2, 0)
+		position:SetFloat3(newtargetx, newtargety, newtargetz)
 		
 		--targetposition.SetFloat3(newtargetx, newtargety, newtargetz)
 		
@@ -88,6 +82,55 @@ ForwardSystem.OnEntityRemoved = function(self, entityId)
 	print("OnEntityRemoved")
 end
 
+---------------------------- BackwardSystem
+
+BackwardSystem = System()
+
+BackwardSystem.Update = function(self, dt)
+
+	local entities = self:GetEntities()
+	for i = 1, #entities do
+		local entity = entities[i]
+
+		local position = self:GetComponent(entity, "Position", 0)
+		local dir = self:GetComponent(entity, "Direction", 0)
+		
+		--world:CreateComponentAndAddTo("TargetPosition", entity)
+		--local targetposition = self:GetComponent(entity, "TargetPosition", 0)
+		
+		local x, y, z = position:GetFloat3()
+		local dx, dy = dir:GetInt2()
+				
+		local newtargetx = x - dx
+		local newtargety = y 
+		local newtargetz = z - dy
+		
+		position:SetFloat3(newtargetx, newtargety, newtargetz)
+		
+		--targetposition.SetFloat3(newtargetx, newtargety, newtargetz)
+		
+		world:RemoveComponentFrom("Backward", entity);
+		
+	end
+end
+
+BackwardSystem.Initialize = function(self)
+	self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
+	self:AddComponentTypeToFilter("Direction",FilterType.Mandatory)
+	self:AddComponentTypeToFilter("Backward",FilterType.Mandatory)
+	
+	self:AddComponentTypeToFilter("TargetPosition",FilterType.Excluded)
+	print("BackwardSystem initialized!")
+end
+
+BackwardSystem.OnEntityAdded = function(self, entityId)
+	print("OnEntityAdded (LUA)")
+end
+
+BackwardSystem.OnEntityRemoved = function(self, entityId)
+	print("OnEntityRemoved")
+end
+
 ---------------------------- RightTurnSystem
 RightTurnSystem = System()
 
@@ -99,14 +142,14 @@ RightTurnSystem.Update = function(self, dt)
 
 		local dir = self:GetComponent(entity, "Direction", 0)
 		local rot = self:GetComponent(entity, "Rotation", 4)
-		local dx, dy = dir:GetFloat2()
+		local dx, dy = dir:GetInt2()
 		local roty = rot:GetFloat()
 		
 		local tempdy = dx
 		dx = -dy
 		dy = tempdy
 		
-		dir:SetFloat2(dx, dy)
+		dir:SetInt2(dx, dy)
 		
 		local newRot = roty - math.pi/2 
 		rot:SetFloat(newRot)
@@ -144,13 +187,16 @@ LeftTurnSystem.Update = function(self, dt)
 
 		local dir = self:GetComponent(entity, "Direction", 0)
 		local rot = self:GetComponent(entity, "Rotation", 4)
-		local dx, dy = dir:GetFloat2()
+		local dx, dy = dir:GetInt2()
 		local roty = rot:GetFloat()
 		local tempdy = dx
 		dx = dy
 		dy = -tempdy
 		
-		dir:SetFloat2(dx, dy)
+		Console.Print(dx)
+		Console.Print(dy)
+		
+		dir:SetInt2(dx, dy)
 		
 		local newRot = roty + math.pi/2 
 		rot:SetFloat(newRot)
@@ -173,54 +219,6 @@ LeftTurnSystem.OnEntityAdded = function(self, entityId)
 end
 
 LeftTurnSystem.OnEntityRemoved = function(self, entityId)
-	print("OnEntityRemoved")
-end
-
----------------------------- BackwardSystem
-
-BackwardSystem = System()
-
-BackwardSystem.Update = function(self, dt)
-
-	local entities = self:GetEntities()
-	for i = 1, #entities do
-		local entity = entities[i]
-
-		local position = self:GetComponent(entity, "Position", 0)
-		local dir = self:GetComponent(entity, "Direction", 0)
-		
-		world:CreateComponentAndAddTo("TargetPosition", entity)
-		local targetposition = self:GetComponent(entity, "TargetPosition", 0)
-		
-		local x, y, z = position:GetFloat3()
-		local dx, dy = dir:GetInt2()
-		
-		
-		local newtargetx = x - dx
-		local newtargety = y 
-		local newtargetz = z - dy
-		
-		targetposition:SetFloat3(newtargetx, newtargety, newtargetz)
-		
-		world:RemoveComponentFrom("Backward", entity);
-		
-	end
-end
-
-BackwardSystem.Initialize = function(self)
-	self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
-	self:AddComponentTypeToFilter("Direction",FilterType.Mandatory)
-	self:AddComponentTypeToFilter("Backward",FilterType.Mandatory)
-	
-	self:AddComponentTypeToFilter("TargetPosition",FilterType.Excluded)
-	print("BackwardSystem initialized!")
-end
-
-BackwardSystem.OnEntityAdded = function(self, entityId)
-	print("OnEntityAdded (LUA)")
-end
-
-BackwardSystem.OnEntityRemoved = function(self, entityId)
 	print("OnEntityRemoved")
 end
 
