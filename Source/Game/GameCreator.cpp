@@ -5,7 +5,6 @@
 #include "Systems/CameraSystem.h"
 #include "Systems/RotationSystem.h"
 #include "Systems/ModelSystem.h"
-#include "Systems/ReceivePacketSystem.h"
 #include "Systems/SyncEntitiesSystem.h"
 #include "Systems/RenderRemoveSystem.h"
 
@@ -102,7 +101,6 @@ void GameCreator::InitializeWorld()
 	worldCreator.AddLuaSystemToCurrentGroup(new CameraSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new ModelSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderSystem(m_graphics));
-	worldCreator.AddLuaSystemToCurrentGroup(new ReceivePacketSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new SyncEntitiesSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderRemoveSystem(m_graphics));
 
@@ -112,6 +110,11 @@ void GameCreator::InitializeWorld()
 	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
 	
 	LuaEmbedder::CallMethods<ECSL::System>("System", "PostInitialize");
+
+	unsigned int id = m_world->CreateNewEntity("Player");
+	std::vector<unsigned int> cmp;
+	char* name = (char*)m_world->GetComponent(id, "Name", "Username");
+	m_world->GetEntityComponents(cmp, id);
 }
 
 void GameCreator::StartGame()

@@ -57,9 +57,6 @@
     <Filter Include="Game\Systems\Movement">
       <UniqueIdentifier>{72ff943e-dfdb-4010-b7cd-4eb3d68acf8d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Systems\ReceivePacket">
-      <UniqueIdentifier>{fa6b13b4-a17f-4660-befa-8ce8d6cee1fe}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game\Systems\Render">
       <UniqueIdentifier>{0e0f35b1-791a-4d9e-b1a6-178d5df590cb}</UniqueIdentifier>
     </Filter>
@@ -68,6 +65,9 @@
     </Filter>
     <Filter Include="Game\Systems\NetworkMessages">
       <UniqueIdentifier>{fe8b6957-8470-4d35-8963-c7f5ea14fbe1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lua Bridge\Network">
+      <UniqueIdentifier>{2ed0fa5c-4b1f-4c9d-aa5a-697978afdb5f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -137,9 +137,6 @@
     <ClCompile Include="..\..\..\Source\Game\RemoteConsole.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\Game\Systems\ReceivePacketSystem.cpp">
-      <Filter>Game\Systems</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Network\NetworkHelper.cpp">
       <Filter>Network</Filter>
     </ClCompile>
@@ -163,6 +160,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\NetworkInstance.cpp">
       <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\Network\LuaNetwork.cpp">
+      <Filter>Lua Bridge\Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -229,9 +229,6 @@
     <ClInclude Include="..\..\..\Source\Game\RemoteConsole.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\Game\Systems\ReceivePacketSystem.h">
-      <Filter>Game\Systems</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Network\NetworkHelper.h">
       <Filter>Network</Filter>
     </ClInclude>
@@ -255,6 +252,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Console\LuaConsole.h">
       <Filter>Lua Bridge\Console</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\Network\LuaNetwork.h">
+      <Filter>Lua Bridge\Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

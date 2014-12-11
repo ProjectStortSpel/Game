@@ -212,6 +212,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\Input\LuaInput.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\LuaBridge.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\Math\LuaMatrix.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\Network\LuaNetwork.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\Renderer\LuaCamera.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\Renderer\LuaGraphicDevice.cpp" />
     <ClCompile Include="..\..\..\Source\Game\NetworkInstance.cpp" />
@@ -221,7 +222,6 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClCompile Include="..\..\..\Source\Game\Systems\CameraSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\ModelSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\MovementSystem.cpp" />
-    <ClCompile Include="..\..\..\Source\Game\Systems\ReceivePacketSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\RenderRemoveSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\RenderSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\RotationSystem.cpp" />
@@ -244,6 +244,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Input\LuaInput.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Math\LuaMatrix.h" />
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\Network\LuaNetwork.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Renderer\LuaCamera.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Renderer\LuaGraphicDevice.h" />
     <ClInclude Include="..\..\..\Source\Game\NetworkInstance.h" />
@@ -252,7 +253,6 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClInclude Include="..\..\..\Source\Game\Systems\CameraSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\ModelSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\MovementSystem.h" />
-    <ClInclude Include="..\..\..\Source\Game\Systems\ReceivePacketSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\RenderRemoveSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\RenderSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\RotationSystem.h" />

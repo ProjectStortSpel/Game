@@ -48,7 +48,7 @@ namespace Network
 
 		// Reads the oldest user specific packet and calls its specified function
 		// Will return the number of packets remaining
-		int GetPacket(void);
+		int PopAndExecutePacket(void);
 
 		void Update(float _dt);
 

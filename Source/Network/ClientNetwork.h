@@ -32,7 +32,7 @@ namespace Network
 		const char* GetRemoteAddress(void) { return m_remoteAddress->c_str(); }
 		// Returns the outgoing port the client connects to
 		const int GetOutgoingPort(void) { return *m_outgoingPort; }
-
+		const char* GetUsername(void) { return m_username->c_str(); }
 		const float GetPing(void) { return *m_ping; }
 
 		bool IsConnected() { return *m_connected; }
@@ -42,6 +42,7 @@ namespace Network
 		// Set the outgoing port which the client will connect to
 		void SetOutgoingPort(const int _port) { *m_outgoingPort = _port; }
 
+		void SetUsername(const char* _name) { *m_username = _name; }
 
 		// Bind function which will trigger when the client connect to the server
 		void SetOnConnectedToServer(NetEvent _function);
@@ -108,6 +109,7 @@ namespace Network
 		ISocket* m_socket;
 
 		std::string* m_remoteAddress;
+		std::string* m_username;
 		int* m_outgoingPort;
 		bool* m_socketBound;
 
