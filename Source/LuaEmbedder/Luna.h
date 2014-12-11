@@ -113,6 +113,10 @@ namespace LuaEmbedder
     // REGISTER CLASS AS A GLOBAL TABLE 
     static void Register(lua_State* L, const char* className, bool gc = true)
     {
+      m_properties.clear();
+      m_methods.clear();
+      m_objectFunctionsMap.clear(),
+      
       lua_pushstring(L, className);
       lua_pushcclosure(L, &Luna<T>::constructor, 1);
       lua_setglobal(L, className);

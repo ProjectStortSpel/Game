@@ -850,3 +850,11 @@ GLuint GraphicDevice::AddTexture(std::string _fileDir, GLenum _textureSlot)
 //	}
 //	ObjectData obj = ModelLoader::importObject(_dir, _file);
 //}
+
+void GraphicDevice::Clear()
+{
+  m_modelIDcounter = 0;
+  
+  m_modelsDeferred.clear();
+  m_modelsForward.clear();
+}

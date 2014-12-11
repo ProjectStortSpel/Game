@@ -106,3 +106,33 @@ bool ComponentTypeManager::ComponentExists(std::string& _componentType)
 {
 	return m_stringTableId->find(_componentType) != m_stringTableId->end();
 }
+
+void ComponentTypeManager::Clear()
+{
+	if (m_stringTableId)
+	{
+		m_stringTableId->clear();
+		delete(m_stringTableId);
+	}
+
+	if (m_componentTypes)
+	{
+		for (auto it = m_componentTypes->begin(); it != m_componentTypes->end(); ++it)
+			delete it->second;
+
+		m_componentTypes->clear();
+		delete m_componentTypes;
+	}
+
+	if (m_componentTypeReader)
+		delete m_componentTypeReader;
+
+	if (m_parser)
+		delete m_parser;
+	
+	m_nextTableId = -1;
+	m_parser = new Parser();
+	m_componentTypeReader = new ComponentTypeReader();
+	m_componentTypes = new std::map<unsigned int, ComponentType*>();
+	m_stringTableId = new std::unordered_map<std::string, unsigned int>();
+}

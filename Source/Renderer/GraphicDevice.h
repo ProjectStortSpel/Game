@@ -104,6 +104,8 @@ namespace Renderer
 		bool ChangeModelSpecularMap(int _id, std::string _fileDir);
 
 		void SetDebugTexFlag(int flag) { m_debugTexFlag = flag; }
+		
+		void Clear();
 
 	private:
 		bool InitSDLWindow();
