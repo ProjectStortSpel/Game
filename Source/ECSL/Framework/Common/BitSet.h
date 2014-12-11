@@ -39,9 +39,9 @@ namespace ECSL
 
 		namespace BitSetConverter
 		{
-			DataType* ValueToBitSet(unsigned int _numberToConvert, unsigned int _maxNumberOfBits);
-			DataType* ArrayToBitSet(const std::vector<unsigned int>& _numbersToConvert, unsigned int _maxNumberOfBits);
-			void BitSetToArray(std::vector<unsigned int>& _out, const DataType* const _bitmask, unsigned int _bitmaskCount);
+			DECLSPEC DataType* ValueToBitSet(unsigned int _numberToConvert, unsigned int _maxNumberOfBits);
+			DECLSPEC DataType* ArrayToBitSet(const std::vector<unsigned int>& _numbersToConvert, unsigned int _maxNumberOfBits);
+			DECLSPEC void BitSetToArray(std::vector<unsigned int>& _out, const DataType* const _bitmask, unsigned int _bitmaskCount);
 		}
 	}
 }

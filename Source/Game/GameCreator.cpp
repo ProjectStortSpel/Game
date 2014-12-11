@@ -8,6 +8,7 @@
 #include "Systems/ReceivePacketSystem.h"
 #include "Systems/SyncEntitiesSystem.h"
 #include "Systems/RenderRemoveSystem.h"
+#include "Systems/ResetChangedSystem.h"
 
 #include "NetworkInstance.h"
 #include "ECSL/ECSL.h"
@@ -92,22 +93,34 @@ void GameCreator::InitializeWorld()
 		printf("%s added\n", it->second->GetName().c_str());
 	}
 
-	//worldCreator.AddSystemGroup();
-	//worldCreator.AddSystemToCurrentGroup<MovementSystem>();
+	/*	This component has to be added last!	*/
+	unsigned int numberOfComponents = ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount();
+	unsigned int numberOfInts = ECSL::BitSet::GetIntCount(numberOfComponents);
+	unsigned int numberOfBytes = numberOfInts*sizeof(ECSL::BitSet::DataType);
+	std::map<std::string, ECSL::ComponentVariable> m_variables;
+	ECSL::ComponentVariable start = ECSL::ComponentVariable("ChangedComponents", numberOfBytes);
+	m_variables.insert(std::pair<std::string, ECSL::ComponentVariable>("ChangedComponents", start));
+	std::map<unsigned int, ECSL::ComponentDataType> m_offsetToType;
+	m_offsetToType[0] = ECSL::ComponentDataType::INT64;
+	ECSL::ComponentType* changedComponents = new ECSL::ComponentType("ChangedComponents", ECSL::TableType::Array, m_variables, m_offsetToType, false);
+	ECSL::ComponentTypeManager::GetInstance().AddComponentType(*changedComponents);
+	worldCreator.AddComponentType("ChangedComponents");
+	numberOfComponents = ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount();
 
 	//NetworkMessagesSystem* nms = new NetworkMessagesSystem();
 	//nms->SetConsole(&m_consoleManager);
 
+	worldCreator.AddLuaSystemToCurrentGroup(new ReceivePacketSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new RotationSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new CameraSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new ModelSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderSystem(m_graphics));
-	worldCreator.AddLuaSystemToCurrentGroup(new ReceivePacketSystem());
+	
 	worldCreator.AddLuaSystemToCurrentGroup(new SyncEntitiesSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderRemoveSystem(m_graphics));
 
+	worldCreator.AddLuaSystemToCurrentGroup(new ResetChangedSystem());
 
-	
 	m_world = worldCreator.CreateWorld(10000);
 	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
 	

@@ -69,6 +69,9 @@
     <Filter Include="Game\Systems\NetworkMessages">
       <UniqueIdentifier>{fe8b6957-8470-4d35-8963-c7f5ea14fbe1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Systems\Changed">
+      <UniqueIdentifier>{dd4dc3ab-744e-425f-a006-98fb871278be}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\Timer.cpp">
@@ -98,15 +101,6 @@
     <ClCompile Include="..\..\..\Source\Game\NewGame.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\Game\Systems\RenderSystem.cpp">
-      <Filter>Game\Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Source\Game\Systems\CameraSystem.cpp">
-      <Filter>Game\Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Source\Game\Systems\MovementSystem.cpp">
-      <Filter>Game\Systems</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponent.cpp">
       <Filter>Lua Bridge\ECSL</Filter>
     </ClCompile>
@@ -119,9 +113,6 @@
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\Renderer\LuaGraphicDevice.cpp">
       <Filter>Lua Bridge\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\Game\Systems\RotationSystem.cpp">
-      <Filter>Game\Systems</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\TextInput.cpp">
       <Filter>Game</Filter>
     </ClCompile>
@@ -131,14 +122,8 @@
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\FileLoader\LuaFileLoader.cpp">
       <Filter>Lua Bridge\FileLoader</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\Game\Systems\ModelSystem.cpp">
-      <Filter>Game\Systems</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\RemoteConsole.cpp">
       <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Source\Game\Systems\ReceivePacketSystem.cpp">
-      <Filter>Game\Systems</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Network\NetworkHelper.cpp">
       <Filter>Network</Filter>
@@ -152,17 +137,38 @@
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\Console\LuaConsole.cpp">
       <Filter>Lua Bridge\Console</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\Game\Systems\RenderRemoveSystem.cpp">
-      <Filter>Game\Systems</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\Console\LuaConsole.cpp">
       <Filter>Lua Bridge\Console</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\Game\Systems\SyncEntitiesSystem.cpp">
-      <Filter>Game\Systems</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\NetworkInstance.cpp">
       <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\CameraSystem.cpp">
+      <Filter>Game\Systems\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\ModelSystem.cpp">
+      <Filter>Game\Systems\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\MovementSystem.cpp">
+      <Filter>Game\Systems\Movement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\ReceivePacketSystem.cpp">
+      <Filter>Game\Systems\ReceivePacket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\RenderSystem.cpp">
+      <Filter>Game\Systems\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\RotationSystem.cpp">
+      <Filter>Game\Systems\Rotation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\RenderRemoveSystem.cpp">
+      <Filter>Game\Systems\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\SyncEntitiesSystem.cpp">
+      <Filter>Game\Systems\NetworkMessages</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\ResetChangedSystem.cpp">
+      <Filter>Game\Systems\Changed</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -190,15 +196,6 @@
     <ClInclude Include="..\..\..\Source\Game\GameCreator.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\Game\Systems\RenderSystem.h">
-      <Filter>Game\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Source\Game\Systems\MovementSystem.h">
-      <Filter>Game\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Source\Game\Systems\CameraSystem.h">
-      <Filter>Game\Systems</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponent.h">
       <Filter>Lua Bridge\ECSL</Filter>
     </ClInclude>
@@ -211,9 +208,6 @@
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Renderer\LuaGraphicDevice.h">
       <Filter>Lua Bridge\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\Game\Systems\RotationSystem.h">
-      <Filter>Game\Systems</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\TextInput.h">
       <Filter>Game</Filter>
     </ClInclude>
@@ -223,14 +217,8 @@
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\FileLoader\LuaFileLoader.h">
       <Filter>Lua Bridge\FileLoader</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\Game\Systems\ModelSystem.h">
-      <Filter>Game\Systems</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\RemoteConsole.h">
       <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Source\Game\Systems\ReceivePacketSystem.h">
-      <Filter>Game\Systems</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Network\NetworkHelper.h">
       <Filter>Network</Filter>
@@ -244,17 +232,38 @@
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Console\LuaConsole.h">
       <Filter>Lua Bridge\Console</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\Game\Systems\RenderRemoveSystem.h">
-      <Filter>Game\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Source\Game\Systems\SyncEntitiesSystem.h">
-      <Filter>Game\Systems</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\NetworkInstance.h">
       <Filter>Network</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Console\LuaConsole.h">
       <Filter>Lua Bridge\Console</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\CameraSystem.h">
+      <Filter>Game\Systems\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\ModelSystem.h">
+      <Filter>Game\Systems\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\MovementSystem.h">
+      <Filter>Game\Systems\Movement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\ReceivePacketSystem.h">
+      <Filter>Game\Systems\ReceivePacket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\RenderSystem.h">
+      <Filter>Game\Systems\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\RotationSystem.h">
+      <Filter>Game\Systems\Rotation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\RenderRemoveSystem.h">
+      <Filter>Game\Systems\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\SyncEntitiesSystem.h">
+      <Filter>Game\Systems\NetworkMessages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\ResetChangedSystem.h">
+      <Filter>Game\Systems\Changed</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
