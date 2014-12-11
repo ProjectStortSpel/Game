@@ -24,7 +24,7 @@ TaskManager& TaskManager::GetInstance()
 
 void TaskManager::CreateThreads()
 {
-	m_threadCount = 4;//SDL_GetCPUCount();
+	m_threadCount = SDL_GetCPUCount() - 3;
 
 	/* Create slave threads equal to the number of logical processors - 1 */
 	for (unsigned int i = 0; i < m_threadCount - 1; ++i)

@@ -43,6 +43,4 @@ void ECSLScheduler::AddSystemGroupOnEntityRemoved(std::vector<System*>* m_system
 
 void ECSL::SystemUpdate(const MPL::TaskInfo& _taskInfo, void* _data)
 {
-	for (unsigned int a = 0; a < 100; ++a)
-		float abc = M_PI * 3.12321365 * 457.5476457457 / 3.349806346;
 }
