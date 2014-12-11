@@ -10,8 +10,6 @@ MapCreationSystem.PostInitialize = function(self)
         for x = 0, mapX-1 do
             posX = x - mapX/2
             posZ = y - mapY/2
-            print(posX, posZ, x, y, y * mapX + x + 1)
-
             self:AddTile(posX, posZ, x, y, map[y * mapX + x + 1])
         end
     end
