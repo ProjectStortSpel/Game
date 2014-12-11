@@ -56,6 +56,9 @@ namespace Console
 
 		int m_historyCounter;
 
+		int m_start;
+		int m_end;
+
 	public:
 
 		ConsoleManager();
@@ -72,6 +75,9 @@ namespace Console
 		const char* GetPreviousHistory();
 		const char* GetNextHistory();
 		const char* GetMatch() { return m_match.c_str(); };
+
+		void ScrollUp();
+		void ScrollDown();
 	};
 }
 

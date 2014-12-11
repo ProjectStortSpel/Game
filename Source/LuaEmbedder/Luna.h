@@ -36,6 +36,8 @@
 #include <assert.h>
 #include <string>
 #include <iostream>
+#include <map>
+#include <algorithm>
 
 namespace LuaEmbedder
 {
@@ -59,6 +61,7 @@ namespace LuaEmbedder
   private:
     static std::vector<PropertyType<T>> m_properties;
     static std::vector<FunctionType<T>> m_methods;
+    static std::map<T*, std::vector<std::string>> m_objectFunctionsMap;
     
   public:
     /*
@@ -345,6 +348,7 @@ namespace LuaEmbedder
       int base = lua_gettop(L) - argumentCount;
       if (!luaL_checkudata(L, base, className))
       {
+	std::cerr << "Luna::CallMethod : Object of class " << className << " undefined in Lua" << std::endl;
 	lua_pop(L, argumentCount + 1);
 	return -1;
       }
@@ -352,6 +356,7 @@ namespace LuaEmbedder
       lua_gettable(L, base);
       if (lua_isnil(L, -1))
       {
+	std::cerr << "Luna::CallMethod : Method " << methodName << " of class " << className << " undefined" << std::endl;
 	lua_pop(L, argumentCount + 2);
 	return -1;
       }
@@ -360,6 +365,7 @@ namespace LuaEmbedder
       lua_gc(L, LUA_GCCOLLECT, 0);
       if (status != 0)
       {
+	std::cerr << "Luna::CallMethod : " << (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error") << std::endl;
 	lua_pop(L, 1);
 	return -1;
       }
@@ -382,9 +388,15 @@ namespace LuaEmbedder
       {
 	if (lua_isuserdata(L, -1))
 	{
-	  for (int i = arguments - argumentCount + 1; i <= arguments; i++)
-	    lua_pushvalue(L, i);
-	  CallMethod(L, className, methodName, argumentCount);
+	  T** obj = static_cast<T**>(lua_touserdata(L, -1));
+	  if (HasFunction(*obj, std::string(methodName)))
+	  {
+	    for (int i = arguments - argumentCount + 1; i <= arguments; i++)
+	      lua_pushvalue(L, i);
+	    CallMethod(L, className, methodName, argumentCount);
+	  }
+	  else
+	    lua_pop(L, 1);
 	}
 	else
 	  lua_pop(L, 1);
@@ -529,9 +541,19 @@ namespace LuaEmbedder
 	lua_pushvalue(L, 2);
 	lua_pushvalue(L, 3);
 	lua_settable(L, members);
+	m_objectFunctionsMap[*obj].push_back(lua_tostring(L, 2));
       }
       lua_settop(L, 0);
       return 0;
+    }
+    
+    static bool HasFunction(T* object, const std::string& functionName)
+    {
+      typename std::map<T*, std::vector<std::string>>::iterator objectFunctionsIt = m_objectFunctionsMap.find(object);
+      if (objectFunctionsIt != m_objectFunctionsMap.end() &&
+	  std::find(objectFunctionsIt->second.begin(), objectFunctionsIt->second.end(), functionName) != objectFunctionsIt->second.end())
+	  return true;
+      return false;
     }
 
     /*
@@ -607,6 +629,7 @@ namespace LuaEmbedder
 
   template <class T> std::vector<PropertyType<T>> Luna<T>::m_properties = std::vector<PropertyType<T>>();
   template <class T> std::vector<FunctionType<T>> Luna<T>::m_methods = std::vector<FunctionType<T>>();
+  template <class T> std::map<T*, std::vector<std::string>> Luna<T>::m_objectFunctionsMap = std::map<T*, std::vector<std::string>>();
 }
 
 #endif

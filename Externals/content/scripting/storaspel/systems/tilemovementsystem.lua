@@ -28,7 +28,6 @@ TileMovementSystem.Initialize = function(self)
 end
 
 TileMovementSystem.PostInitialize = function(self)
-	local id = world:CreateNewEntity("Box")
 end
 
 TileMovementSystem.OnEntityAdded = function(self, entityId)

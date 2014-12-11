@@ -24,7 +24,7 @@ std::string Argument::GetString()
 }
 
 ConsoleManager::ConsoleManager()
-	: m_match(), m_historyCounter(-1)
+	: m_match(), m_historyCounter(-1), m_start(0), m_end(0)
 {
 }
 
@@ -155,14 +155,16 @@ void ConsoleManager::ExecuteCommand(const char* _command)
 		args = command + strlen(command);
 	}
 
+	AddMessage(_command);
+	
 
-	if (m_history.size() > 8)
-		m_history.erase(m_history.begin());
+	//if (m_history.size() > 8)
+	//	m_history.erase(m_history.begin());
 
 	if (m_commandHistory.size() > 8)
 		m_commandHistory.erase(m_commandHistory.begin());
 
-	m_history.push_back(_command);
+	//m_history.push_back(_command);
 	m_commandHistory.push_back(_command);
 
 	if (m_consoleHooks.find(command) != m_consoleHooks.end())
@@ -221,15 +223,19 @@ void ConsoleManager::ClearCommands()
 
 std::vector<std::string> ConsoleManager::GetHistory()
 {
-	return m_history;
+	std::vector<std::string>::const_iterator first = m_history.begin() + m_start;
+	std::vector<std::string>::const_iterator last = m_history.begin() + m_end;
+
+	return std::vector<std::string>(first, last);
 }
 
 void ConsoleManager::AddMessage(const char* _message)
 {
-	if (m_history.size() > 8)
-		m_history.erase(m_history.begin());
-
+	//if (m_history.size() > 8)
+	//	m_history.erase(m_history.begin());
 	m_history.push_back(_message);
+	++m_end;
+	m_start = m_history.size() > 29 ? m_start + 1 : m_start;
 }
 
 const char* ConsoleManager::GetFunctionMatch(const char* _command)
@@ -288,4 +294,18 @@ const char* ConsoleManager::GetNextHistory()
 
 	return m_commandHistory[size - m_historyCounter].c_str();
 
+}
+
+void ConsoleManager::ScrollUp()
+{
+	m_start = m_start - 1 < 0 ? 0 : m_start - 1;
+	m_end = m_start + 29 > m_history.size() ? m_history.size() : m_start + 29;
+
+	//m_end = m_history.size() < 10 ? 
+}
+
+void ConsoleManager::ScrollDown()
+{
+	m_end = m_end + 1 > m_history.size() ? m_history.size() : m_end + 1;
+	m_start = m_end - 29 < 0 ? 0 : m_end - 29;
 }

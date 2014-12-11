@@ -203,6 +203,11 @@ namespace LuaEmbedder
   {
     Luna<T>::push(L, className.c_str(), object, gc);
   }
+  template<typename T>
+  bool EXPORT HasFunction(T* object, const std::string& functionName)
+  {
+    return Luna<T>::HasFunction(object, functionName);
+  }
 }
 
 #endif

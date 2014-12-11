@@ -6,12 +6,17 @@
 #include "Systems/RotationSystem.h"
 #include "Systems/ModelSystem.h"
 #include "Systems/ReceivePacketSystem.h"
+#include "Systems/SyncEntitiesSystem.h"
+#include "Systems/RenderRemoveSystem.h"
 
+#include "NetworkInstance.h"
 #include "ECSL/ECSL.h"
 #include "ECSL/Managers/EntityTemplateManager.h"
 
+#include "LuaBridge/ECSL/LuaSystem.h"
+
 GameCreator::GameCreator() :
-m_graphics(0), m_input(0), m_world(0), m_console(0), m_client(0), m_server(0), m_consoleManager(Console::ConsoleManager::GetInstance())
+m_graphics(0), m_input(0), m_world(0), m_console(0), m_consoleManager(Console::ConsoleManager::GetInstance())
 {
 
 }
@@ -30,30 +35,14 @@ GameCreator::~GameCreator()
 	if (m_console)
 		delete m_console;
 
-	if (m_client)
-		delete m_client;
-
-	if (m_server)
-		delete m_server;
+	NetworkInstance::DestroyClient();
+	NetworkInstance::DestroyServer();
+	NetworkInstance::DestroyNetworkHelper();
 
 	LuaEmbedder::Quit();
 
 	delete(&ECSL::ComponentTypeManager::GetInstance());
 	delete(&ECSL::EntityTemplateManager::GetInstance());
-}
-
-glm::mat4 mat[1000];
-
-void SpawnStuff(Renderer::GraphicDevice* graphics)
-{
-	for (int x = 0; x < 10; x++)
-	{
-		for (int y = 0; y < 10; y++)
-		{
-			mat[y + x * 10] = glm::translate(vec3(x - 5, -1, y - 5));
-			graphics->LoadModel("content/models/default_tile/", "default.object", &mat[y + x * 10]);
-		}
-	}
 }
 
 void GameCreator::InitializeGraphics()
@@ -75,8 +64,10 @@ void GameCreator::InitializeInput()
 
 void GameCreator::InitializeNetwork()
 {
-	m_client = new Network::ClientNetwork();
-	m_server = new Network::ServerNetwork();
+	NetworkInstance::InitClient();
+	NetworkInstance::InitServer();
+	NetworkInstance::InitNetworkHelper(&m_world);
+
 }
 
 void GameCreator::InitializeLua()
@@ -105,17 +96,24 @@ void GameCreator::InitializeWorld()
 
 	//worldCreator.AddSystemGroup();
 	//worldCreator.AddSystemToCurrentGroup<MovementSystem>();
+
+	//NetworkMessagesSystem* nms = new NetworkMessagesSystem();
+	//nms->SetConsole(&m_consoleManager);
+
 	worldCreator.AddLuaSystemToCurrentGroup(new RotationSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new CameraSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new ModelSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderSystem(m_graphics));
-	worldCreator.AddLuaSystemToCurrentGroup(new ReceivePacketSystem(m_client, m_server));
+	worldCreator.AddLuaSystemToCurrentGroup(new ReceivePacketSystem());
+	worldCreator.AddLuaSystemToCurrentGroup(new SyncEntitiesSystem());
+	worldCreator.AddLuaSystemToCurrentGroup(new RenderRemoveSystem(m_graphics));
+
 
 	
 	m_world = worldCreator.CreateWorld(10000);
 	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
 	
-	LuaEmbedder::CallMethods<ECSL::System>("System", "PostInitialize");
+	LuaEmbedder::CallMethods<LuaBridge::LuaSystem>("System", "PostInitialize");
 }
 
 void GameCreator::StartGame()
@@ -124,39 +122,41 @@ void GameCreator::StartGame()
 	if (!m_graphics || !m_input || !m_world || m_console)
 		return;
 
-	m_console = new GameConsole(m_graphics, m_world, m_client, m_server);
+	m_console = new GameConsole(m_graphics, m_world);
 
 	m_consoleInput.SetTextHook(std::bind(&Console::ConsoleManager::ExecuteCommand, &m_consoleManager, std::placeholders::_1));
-	m_consoleInput.SetActive(true);
+	m_consoleInput.SetActive(false);
+	m_input->GetKeyboard()->StopTextInput();
 
 	/*	Hook console	*/
 	m_console->SetupHooks(&m_consoleManager);
 
 	
 	/*	FULKOD START	*/
-	for (int x = -5; x < 5; x++)
-	{
-		for (int y = -5; y < 5; y++)
-		{
-			std::string command;// = "createobject box";
-			if ((x + y) % 2)
-			{
-				command = "createobject hole ";
-			}
-			else
-			{
-				command = "createobject grass ";
-			}
-			command += std::to_string(x);
-			command.append(" ");
-			command += std::to_string(-1);
-			command.append(" ");
-			command += std::to_string(y);
-			command.append("");
-			m_consoleManager.ExecuteCommand(command.c_str());
-		}
-	}
+	//for (int x = -5; x < 5; x++)
+	//{
+	//	for (int y = -5; y < 5; y++)
+	//	{
+	//		std::string command;// = "createobject box";
+	//		if ((x + y) % 2)
+	//		{
+	//			command = "createobject hole ";
+	//		}
+	//		else
+	//		{
+	//			command = "createobject grass ";
+	//		}
+	//		command += std::to_string(x);
+	//		command.append(" ");
+	//		command += std::to_string(-1);
+	//		command.append(" ");
+	//		command += std::to_string(y);
+	//		command.append("");
+	//		m_consoleManager.ExecuteCommand(command.c_str());
+	//	}
+	//}
 	/*	FULKOD END		*/
+
 
 	Timer gameTimer;
 	while (true)
@@ -203,10 +203,7 @@ void GameCreator::UpdateConsole()
 		}
 	}
 
-
-
-
-	// MOVE ?!
+	// History, arrows up/down
 	if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_UP) == Input::InputState::PRESSED)
 	{
 
@@ -222,6 +219,11 @@ void GameCreator::UpdateConsole()
 			m_input->GetKeyboard()->SetTextInput(next);
 	}
 
+
+	if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_PAGEUP) == Input::InputState::PRESSED)
+		m_consoleManager.ScrollUp();
+	else if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_PAGEDOWN) == Input::InputState::PRESSED)
+		m_consoleManager.ScrollDown();
 
 
 	if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_TAB) == Input::InputState::PRESSED)
@@ -239,16 +241,16 @@ void GameCreator::RenderConsole()
 		return;
 
 	std::string command = m_consoleInput.GetText();
-	m_graphics->RenderSimpleText("Console:", 0, 10);
-	m_graphics->RenderSimpleText(command, 9, 10);
-	m_graphics->RenderSimpleText("_", 9 + command.length(), 10);
+	m_graphics->RenderSimpleText("Console:", 0, 30);
+	m_graphics->RenderSimpleText(command, 9, 30);
+	m_graphics->RenderSimpleText("_", 9 + command.length(), 30);
 
 	auto history = m_consoleManager.GetHistory();
 	for (int i = 0; i < history.size(); ++i)
-		m_graphics->RenderSimpleText(history[i], 0, 10 - history.size() + i);
+		m_graphics->RenderSimpleText(history[i], 0, 30 - history.size() + i);
 
 	auto match = m_consoleManager.GetFunctionMatch(command.c_str());
-	m_graphics->RenderSimpleText(match, 9, 11);
+	m_graphics->RenderSimpleText(match, 9, 31);
 }
 
 void GameCreator::PollSDLEvent()
@@ -282,3 +284,6 @@ void GameCreator::PollSDLEvent()
 		}
 	}
 }
+
+
+

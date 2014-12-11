@@ -12,7 +12,7 @@ int LoadMap()
 
 	std::vector<int> map;
 
-	int y = 0;
+	int y = 0;  
 	while (std::getline(file, line))
 	{
 		for (int i = 0; i < line.size(); i++)
@@ -22,7 +22,7 @@ int LoadMap()
 	file.close();
 
 	int x = 0;
-	if ( y != 0 )
+	if ( y != 0 ) 
 		 x = map.size() / y;
 
 	LuaEmbedder::PushInt(x);

@@ -654,7 +654,7 @@ bool GraphicDevice::RemoveModel(int _id)
 			if (m_modelsDeferred[i].instances[j].id == _id)
 			{
 				m_modelsDeferred[i].instances.erase(m_modelsDeferred[i].instances.begin() + j);
-				if (j == 0)
+				if (m_modelsDeferred[i].instances.size() == 0)
 					m_modelsDeferred.erase(m_modelsDeferred.begin() + i);
 
 				return true;
@@ -668,7 +668,7 @@ bool GraphicDevice::RemoveModel(int _id)
 			if (m_modelsForward[i].instances[j].id == _id)
 			{
 				m_modelsForward[i].instances.erase(m_modelsForward[i].instances.begin() + j);
-				if (j == 0)
+				if (m_modelsForward[i].instances.size() == 0)
 					m_modelsForward.erase(m_modelsForward.begin() + i);
 
 				return true;
