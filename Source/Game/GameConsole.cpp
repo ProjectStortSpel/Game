@@ -122,15 +122,17 @@ void GameConsole::RemoveComponent(std::vector<Console::Argument>* _args)
 
 void GameConsole::ListCommands(std::vector<Console::Argument>* _args)
 {
-	m_consoleManager->AddMessage("CreateObject - Model, Path, X, Y, Z");
-	m_consoleManager->AddMessage("RemoveObject - Id");
-	m_consoleManager->AddMessage("AddComponent - Id, ComponentType");
-	m_consoleManager->AddMessage("ChangeComponent - Id, ComponentType, X, Y, Z, ...");
-	m_consoleManager->AddMessage("RemoveComponent - Id, ComponentType");
-	m_consoleManager->AddMessage("Host - Port, Password, MaxConnections");
-	m_consoleManager->AddMessage("Stop");
-	m_consoleManager->AddMessage("Connect - Ip-address, Port, Password");
+	m_consoleManager->AddMessage("Command           -   Arg1, Arg2, Arg3, ...");
+	m_consoleManager->AddMessage("CreateObject      -   Model, Path, X, Y, Z");
+	m_consoleManager->AddMessage("RemoveObject      -   Id");
+	m_consoleManager->AddMessage("AddComponent      -   Id, ComponentType");
+	m_consoleManager->AddMessage("ChangeComponent   -   Id, ComponentType, X, Y, Z, ...");
+	m_consoleManager->AddMessage("RemoveComponent   -   Id, ComponentType");
+	m_consoleManager->AddMessage("Host              -   Port, Password, MaxConnections");
+	m_consoleManager->AddMessage("Connect           -   Ip-address, Port, Password");
+	m_consoleManager->AddMessage("DebugRender       -   RenderType");
 	m_consoleManager->AddMessage("Disconnect");
+	m_consoleManager->AddMessage("Stop");
 }
 
 void GameConsole::HostServer(std::vector<Console::Argument>* _args)
