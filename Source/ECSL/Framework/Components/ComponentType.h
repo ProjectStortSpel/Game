@@ -19,7 +19,7 @@ namespace ECSL
 
 	enum ComponentDataType
 	{
-		INT, FLOAT, CHAR,
+		INT, FLOAT, CHAR, BOOL,
 		MATRIX, REFERENCE
 	};
 

@@ -97,14 +97,6 @@ void BaseNetwork::TriggerEvent(NetMessageHook _function, uint64_t _packetId, Net
 	}
 }
 
-void BaseNetwork::TriggerEvent(NetEvent _function, NetConnection _connection)
-{
-	if (_function)
-	{
-		_function(_connection);
-	}
-}
-
 void BaseNetwork::HandlePacket(Packet* _packet)
 {
 	if (!_packet)
