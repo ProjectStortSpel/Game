@@ -109,7 +109,10 @@ namespace Renderer
 		bool ChangeModelNormalMap(int _id, std::string _fileDir);
 		bool ChangeModelSpecularMap(int _id, std::string _fileDir);
 
-		void SetDebugTexFlag(int flag) { m_debugTexFlag = flag; }
+		void SetDebugTexFlag(int _flag) { m_debugTexFlag = _flag; }
+		void BufferPointlights(int _nrOfLights, float **_lightPointers);
+		
+		void Clear();
 
 	private:
 		bool InitSDLWindow();
@@ -119,6 +122,7 @@ namespace Renderer
 		bool InitShaders();
 		bool InitBuffers();
 		bool InitTextRenderer();
+		bool InitLightBuffer();
 
 		void CreateGBufTex(GLenum texUnit, GLenum format, GLuint &texid);
 		void CreateDepthTex(GLuint &texid);
@@ -161,6 +165,9 @@ namespace Renderer
 		// Modelloader
 		int m_modelIDcounter;
 		std::vector<Model> m_modelsDeferred, m_modelsForward;
+
+		// Pointlights buffer
+		GLuint m_pointlightBuffer;
 
 		// DEBUG variables ----
 		int m_debugTexFlag; // 0=standard, 1=diffuse, 2=normal, 3=specular+shine, 4=glow

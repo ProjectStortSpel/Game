@@ -97,3 +97,33 @@ unsigned int EntityTemplateManager::GetTableId(const std::string& _templateName)
 	else
 		return it->second;
 }
+
+void EntityTemplateManager::Clear()
+{
+	if (m_stringTableId)
+	{
+		m_stringTableId->clear();
+		delete(m_stringTableId);
+	}
+
+	if (m_entityTemplates)
+	{
+		for (auto it = m_entityTemplates->begin(); it != m_entityTemplates->end(); ++it)
+			delete it->second;
+
+		m_entityTemplates->clear();
+		delete m_entityTemplates;
+	}
+
+	if (m_entityTemplateReader)
+		delete m_entityTemplateReader;
+
+	if (m_parser)
+		delete m_parser;
+	
+	m_nextTableId = -1;
+	m_parser = new Parser();
+	m_entityTemplateReader = new EntityTemplateReader();
+	m_entityTemplates = new std::map<unsigned int, EntityTemplate*>();
+	m_stringTableId = new std::unordered_map<std::string, unsigned int>();
+}
