@@ -21,7 +21,7 @@ namespace LuaEmbedder
     bool error = luaL_dofile(L, filepath.c_str());
     if (error)
     {
-      std::cerr << (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error") << std::endl;
+      std::cerr << "LuaEmbedder::Load : " << (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error") << std::endl;
       return false;
     }
     lua_gc(L, LUA_GCCOLLECT, 0);
@@ -43,7 +43,7 @@ namespace LuaEmbedder
     bool error = lua_pcall(L, argumentCount, LUA_MULTRET, 0);
     if (error)
     {
-      std::cerr << (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error") << std::endl;
+      std::cerr << "LuaEmbedder::Load : " << (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error") << std::endl;
       return false;
     }
     lua_gc(L, LUA_GCCOLLECT, 0);
