@@ -35,6 +35,8 @@ namespace MPL
 		unsigned int m_threadCount;
 		std::vector<Thread*>* m_threads;
 		TaskPool* m_taskPool;
+
+		unsigned int GetAvailableThreadsCount();
 	};
 };
 

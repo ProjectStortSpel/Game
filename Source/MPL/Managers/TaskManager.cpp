@@ -1,5 +1,7 @@
 #include "TaskManager.h"
 
+#include "MPL/Framework/Common/ThreadHelper.h"
+
 using namespace MPL;
 
 TaskManager::TaskManager()
@@ -24,9 +26,9 @@ TaskManager& TaskManager::GetInstance()
 
 void TaskManager::CreateThreads()
 {
-	m_threadCount = SDL_GetCPUCount() - 3;
+	m_threadCount = GetAvailableThreadsCount();
 
-	/* Create slave threads equal to the number of logical processors - 1 */
+	/* Create slave threads equal to the number of available threads - 1 */
 	for (unsigned int i = 0; i < m_threadCount - 1; ++i)
 	{
 		SlaveThread* slave = new SlaveThread();
@@ -96,4 +98,21 @@ void TaskManager::Sleep()
 {
 	for (auto thread : *m_threads)
 		thread->Sleep();
+}
+
+unsigned int TaskManager::GetAvailableThreadsCount()
+{
+	/* Fetch number of currently used threads */
+	int currentThreadCount = ThreadHelper::GetCurrentThreadCount();
+	if (currentThreadCount == -1)
+	{
+		printf("Warning: Couldn't fetch current thread count. No slave threads will be created.\n");
+		currentThreadCount = SDL_GetCPUCount() - 1;
+	}
+	/* Total number of logical processors - Number of threads currently used = Number of available threads */
+	int availableThreadsCount = SDL_GetCPUCount() - currentThreadCount;
+	/* There is always one available thread, the main thread */
+	if (availableThreadsCount <= 0)
+		availableThreadsCount = 1;	
+	return (unsigned int)availableThreadsCount;
 }
