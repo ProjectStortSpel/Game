@@ -97,53 +97,49 @@ float ComputeSSAO()
 */
 void phongModel(int index, out vec3 ambient, out vec3 diffuse, out vec3 spec) 
 {
-        //tmp material
-        //Material.Ks = 0.7;
-        //Material.Shininess = 30.0;
+    ambient = vec3(0.0);
+    diffuse = vec3(0.0);
+    spec    = vec3(0.0);
 
-        ambient = vec3(0.0);
-        diffuse = vec3(0.0);
-        spec    = vec3(0.0);
+	vec3 thisLightPosition	= vec3(pointlights[index].Position.x, pointlights[index].Position.y, pointlights[index].Position.z);
+	vec3 thisLightColor		= vec3(pointlights[index].Color.x, pointlights[index].Color.y, pointlights[index].Color.z);
+	vec3 thisLightIntensity = vec3(pointlights[index].Intensity.x, pointlights[index].Intensity.y, pointlights[index].Intensity.z);
 
-		vec3 thisLightPosition	= vec3(pointlights[index].Position.x, pointlights[index].Position.y, pointlights[index].Position.z);
-		vec3 thisLightColor		= vec3(pointlights[index].Color.x, pointlights[index].Color.y, pointlights[index].Color.z);
-		vec3 thisLightIntensity = vec3(pointlights[index].Intensity.x, pointlights[index].Intensity.y, pointlights[index].Intensity.z);
+    vec3 lightVec = (ViewMatrix * vec4(thisLightPosition, 1.0)).xyz - viewPos;
 
-        vec3 lightVec = (ViewMatrix * vec4(thisLightPosition, 1.0)).xyz - viewPos;
+    float d = length(lightVec);
 
-        float d = length(lightVec);
-
-        if(d > pointlights[index].Range)
-            return;
-        lightVec /= d; //normalizing
+    if(d > pointlights[index].Range)
+        return;
+    lightVec /= d; //normalizing
         
 
-		ambient = thisLightColor * thisLightIntensity.x;
+	ambient = thisLightColor * thisLightIntensity.x;
 
-		vec3 E = normalize(viewPos);
+	vec3 E = normalize(viewPos);
 
-		float diffuseFactor = dot( lightVec, normal_tex );
+	float diffuseFactor = dot( lightVec, normal_tex );
 
-		if(diffuseFactor > 0)
-		{
-			// diffuse
-			diffuse = diffuseFactor * thisLightColor * thisLightIntensity;
+	if(diffuseFactor > 0)
+	{
+		// diffuse
+		diffuse = diffuseFactor * thisLightColor * thisLightIntensity;
 
-			// specular
-			//vec3 v = normalize(2 * Material.Ks * normal_tex - lightVec);//reflect( lightVec, normal_tex );
-			vec3 v = reflect( lightVec, normal_tex );
-			//float specFactor = max( pow( max( dot(v, E), 0.0f ), Material.Shininess ), 0.0f);
-			float specFactor = pow( max( dot(v, E), 0.0 ), Material.Shininess );
-			spec = specFactor * thisLightColor * thisLightIntensity.z * Material.Ks;        
-		}
+		// specular
+		//vec3 v = normalize(2 * Material.Ks * normal_tex - lightVec);//reflect( lightVec, normal_tex );
+		vec3 v = reflect( lightVec, normal_tex );
+		//float specFactor = max( pow( max( dot(v, E), 0.0f ), Material.Shininess ), 0.0f);
+		float specFactor = pow( max( dot(v, E), 0.0 ), Material.Shininess );
+		spec = specFactor * thisLightColor * thisLightIntensity.z * Material.Ks;        
+	}
 
-		float att = 1 - pow((d/pointlights[index].Range), 1.0f);
+	float att = 1 - pow((d/pointlights[index].Range), 1.0f);
 
-		ambient *= att;
-		diffuse *= att;
-		spec    *= att;
+	ambient *= att;
+	diffuse *= att;
+	spec    *= att;
 
-		return;
+	return;
 }
 
 vec3 reconstructPosition(float p_depth, vec2 p_ndc)
