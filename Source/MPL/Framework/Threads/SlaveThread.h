@@ -20,9 +20,13 @@ namespace MPL
 		void Deactivate();
 		bool StartThread(const std::string& _name);
 		void Execute();
+		void WakeUp();
+		void Sleep();
 
 	private:
 		bool m_active;
+		bool m_awake;
+		SDL_sem* m_semSleep;
 		SDL_Thread* m_thread;
 
 		void Release();

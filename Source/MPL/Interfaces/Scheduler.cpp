@@ -5,6 +5,7 @@
 using namespace MPL;
 
 Scheduler::Scheduler()
+: m_tasks(new std::vector<Task*>())
 {
 
 }

@@ -8,8 +8,7 @@
 using namespace ECSL;
 
 System::System()
-:	m_systemName(new std::string()), m_updateTask(0), m_onEntityAddedTask(0), m_onEntityRemovedTask(0),
-	m_onEventWork(new std::map<void*, MPL::Task*>())
+:	m_systemName(new std::string())
 {
 
 }
@@ -142,26 +141,4 @@ void System::AddComponentTypeToFilter(const std::string& _componentType, FilterT
 		printf("Unknown ComponentFilter passed into AddComponentToFilter [System.cpp]\n");
 		break;
 	}
-}
-
-void System::SetUpdateWorkCount(unsigned int _workCount)
-{
-	//void (*functionPointer)(const MPL::TaskInfo&, void*) = 0;
-	//functionPointer = &System::Update;
-	//m_updateTask = new MPL::Task(_workCount, &System::Update);
-}
-
-void System::SetOnEntityWorkCount(unsigned int _workCount)
-{
-
-}
-
-void System::SetOnMessageRecievedWorkCount(unsigned int _workCount)
-{
-
-}
-
-void System::SetOnEventWorkCount(unsigned int _workCount, void* _onEventFunction)
-{
-
 }

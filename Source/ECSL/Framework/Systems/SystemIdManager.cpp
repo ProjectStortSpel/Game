@@ -1,27 +1,31 @@
 #include "SystemIdManager.h"
 
+#include <assert.h>
+
 using namespace ECSL;
 
 SystemIdManager::SystemIdManager()
-: m_nextSystemId(-1), m_stringSystemId(new std::unordered_map<std::string, unsigned int>)
+: m_nextSystemId(-1), m_systemStringIds(new std::unordered_map<std::string, unsigned int>)
 {
 
 }
 
 SystemIdManager::~SystemIdManager()
 {
-	delete(m_stringSystemId);
+	delete(m_systemStringIds);
+}
+
+unsigned int SystemIdManager::CreateSystemId(const std::string& _systemName)
+{
+	/* System id already created */
+	assert(m_systemStringIds->find(_systemName) == m_systemStringIds->end());
+
+	unsigned int id = ++m_nextSystemId;
+	m_systemStringIds->insert(std::pair<std::string, unsigned int>(_systemName, id));
+	return id;
 }
 
 unsigned int SystemIdManager::GetSystemId(const std::string& _systemName)
 {
-	auto it = m_stringSystemId->find(_systemName);
-	if (it == m_stringSystemId->end())
-	{
-		unsigned int newId = ++m_nextSystemId;
-		m_stringSystemId->insert(std::pair<std::string, unsigned int>(_systemName, newId));
-		return newId;
-	}
-	else
-		return it->second;
+	return m_systemStringIds->find(_systemName)->second;
 }

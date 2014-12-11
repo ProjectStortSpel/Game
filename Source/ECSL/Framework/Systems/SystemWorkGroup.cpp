@@ -33,6 +33,6 @@ void SystemWorkGroup::AddSystem(System* _system)
 
 void SystemWorkGroup::Update(float _dt)
 {
-	for (int n = 0; n < m_systems->size(); ++n)
-		m_systems->at(n)->Update(_dt);
+	//for (int n = 0; n < m_systems->size(); ++n)
+	//	m_systems->at(n)->Update(_dt);
 }

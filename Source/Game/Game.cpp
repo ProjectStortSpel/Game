@@ -1,5 +1,6 @@
 #include <SDL/SDL.h>
 #include <ECSL/ECSL.h>
+#include <MPL/MPL.h>
 #include <functional>
 #include <deque>
 #include <atomic>
@@ -85,9 +86,6 @@ public:
 private:
 };
 
-SDL_mutex* mutex;
-SDL_sem* sem;
-
 
 class Test
 {
@@ -106,16 +104,15 @@ public:
 	float sdfiohj;
 };
 
-void* voidTest;
-Test* pointerTest;
+ECSL::ECSLScheduler* scheduler;
 
 void lol()
 {
 	ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("content/components");
 	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
 	worldCreator.AddSystemGroup();
-	worldCreator.AddSystemToCurrentGroup<TestSystem2>();
-	worldCreator.AddLuaSystemToCurrentGroup(new TestSystem());
+	//worldCreator.AddSystemToCurrentGroup<TestSystem2>();
+	//worldCreator.AddLuaSystemToCurrentGroup(new TestSystem());
 	auto componentTypes = ComponentTypeManager::GetInstance().GetComponentTypes();
 	for (auto it = componentTypes->begin(); it != componentTypes->end(); ++it)
 		worldCreator.AddComponentType(it->second->GetName());
@@ -140,18 +137,12 @@ void lol()
 
 	world->Update(0.01f);
 
-	mutex = SDL_CreateMutex();
-	if (!mutex)
-		abort();
-	sem = SDL_CreateSemaphore(0);
-	if (!sem)
-		abort();
+	MPL::TaskManager::GetInstance().CreateThreads();
+	MPL::TaskManager::GetInstance().WakeUp();
+	scheduler = new ECSL::ECSLScheduler();
+
 
 	unsigned int num = 10000000;
-	Test2* test = new Test2();
-	test->agsdg = 2.0f;
-	pointerTest = test;
-	voidTest = test;
 
 	unsigned int sumValue1 = 0;
 	unsigned int sumValue2 = 0;
@@ -160,21 +151,21 @@ void lol()
 	start1 = std::chrono::system_clock::now();
 	for (unsigned int i = 0; i < num; ++i)
 	{
-		sumValue1 += ((Test2*)voidTest)->agsdg;
+
 	}
 	end1 = std::chrono::system_clock::now();
 
 	start2 = std::chrono::system_clock::now();
 	for (unsigned int i = 0; i < num; ++i)
 	{
-		sumValue2 += ((Test2*)pointerTest)->agsdg;
+
 	}
 	end2 = std::chrono::system_clock::now();
 
 	start3 = std::chrono::system_clock::now();
 	for (unsigned int i = 0; i < 150; ++i)
 	{
-		//sumValue3 += (i % 1645);
+
 	}
 	end3 = std::chrono::system_clock::now();
 
@@ -227,11 +218,16 @@ void Start()
 		INPUT->Update();
 		RENDERER.Update(dt);
 		RENDERER.RenderSimpleText("This text render from GAME! \nThe x and y values in the function isn't pixel \ncoordinates, it's char position. Every char is \n8x16 pixels in size. Use \\n to change line.\n\n  !Not all chars is supported!\n\nRight now it clear the whole output image as well (Tell me when to remove this).", 10, 2);
-
+		
 
 		RENDERER.Render();
 		INPUT->Update();
-
+		MPL::TaskManager::GetInstance().WakeUp();
+		scheduler->AddSystemGroupUpdate(0);
+		scheduler->AddSystemGroupUpdate(0);
+		scheduler->AddSystemGroupUpdate(0);
+		scheduler->AddSystemGroupUpdate(0);
+		MPL::TaskManager::GetInstance().Sleep();
 
 		SDL_Event e;
 		while (SDL_PollEvent(&e))
@@ -312,6 +308,7 @@ int main(int argc, char** argv)
 {
 	lol();
 	Start();
+	MPL::TaskManager::GetInstance().SafeKillThreads();
 	#ifdef WIN32
 	_CrtDumpMemoryLeaks();
 	#endif

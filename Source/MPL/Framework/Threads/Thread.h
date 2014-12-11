@@ -31,6 +31,10 @@ namespace MPL
 
 		virtual void Execute() = 0;
 
+		virtual void WakeUp();
+
+		virtual void Sleep();
+
 		ThreadState GetState() { return m_state; }
 
 	protected:

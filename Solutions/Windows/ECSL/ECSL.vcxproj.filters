@@ -124,6 +124,9 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Multithreading\ECSLScheduler.h">
       <Filter>Source Files\Framework\Multithreading</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Multithreading\SystemTask.h">
+      <Filter>Source Files\Framework\Multithreading</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\World.cpp">
@@ -205,6 +208,9 @@
       <Filter>Source Files\Framework\Systems\Messaging</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Multithreading\ECSLScheduler.cpp">
+      <Filter>Source Files\Framework\Multithreading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Multithreading\SystemTask.cpp">
       <Filter>Source Files\Framework\Multithreading</Filter>
     </ClCompile>
   </ItemGroup>

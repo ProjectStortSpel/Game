@@ -5,6 +5,7 @@
 using namespace MPL;
 
 TaskPool::TaskPool()
+: m_tasks(new std::vector<Task*>())
 {
 	m_taskMutex = SDL_CreateMutex();
 }

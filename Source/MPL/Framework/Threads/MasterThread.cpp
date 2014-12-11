@@ -47,7 +47,7 @@ void MasterThread::ThreadLoop()
 		/* Task fetched successfully */
 		if (currentTask)
 		{
-			/* PERFORM TASK */
+			currentTask->GetFunction()(TaskInfo(0, 0), (void*)0);
 		}
 		/* No task available */
 		else

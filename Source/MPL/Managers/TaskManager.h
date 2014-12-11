@@ -23,6 +23,9 @@ namespace MPL
 		// The slave threads will perform the given tasks. The main thread will continue as normal after adding the new tasks.
 		void ExecuteSlaves(const std::vector<Task*>& _tasks);
 
+		void WakeUp();
+		void Sleep();
+
 		unsigned int GetThreadCount() { return m_threadCount; }
 		unsigned int GetTaskCount() { return m_taskPool->GetTaskCount(); }
 

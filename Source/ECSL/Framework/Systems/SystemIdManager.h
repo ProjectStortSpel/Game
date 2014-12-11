@@ -13,12 +13,12 @@ namespace ECSL
 		SystemIdManager();
 		~SystemIdManager();
 
+		unsigned int CreateSystemId(const std::string& _systemName);
 		unsigned int GetSystemId(const std::string& _systemName);
 
 	private:
-
 		int m_nextSystemId;
-		std::unordered_map<std::string, unsigned int>* m_stringSystemId;
+		std::unordered_map<std::string, unsigned int>* m_systemStringIds;
 	};
 }
 

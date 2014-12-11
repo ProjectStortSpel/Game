@@ -22,7 +22,7 @@ SystemManager::~SystemManager()
 
 void SystemManager::InitializeSystems()
 {
-	/*	Initialize all system groups	*/
+	/*	Initialize all system groups */
 	for (unsigned int groupId = 0; groupId < m_systemWorkGroups->size(); ++groupId)
 	{
 		std::vector<System*>* systems = m_systemWorkGroups->at(groupId)->GetSystems();
@@ -32,19 +32,15 @@ void SystemManager::InitializeSystems()
 		{
 			System* system = systems->at(systemId);
 			system->Initialize();
-			system->SetId(m_systemIdManager->GetSystemId(system->GetSystemName()));
-
-			#ifdef _DEBUG
-			static std::vector<unsigned int> alreadyAddedIds;
-			/* Two systems can't have the same name */
-			assert(ContainerHelper::AddUniqueElement(system->GetId(), alreadyAddedIds));
-			#endif
+			system->SetId(m_systemIdManager->CreateSystemId(system->GetSystemName()));
+			system->SetGroupId(groupId);
+			system->SetDataManager(m_dataManager);
+			system->SetSystemIdManager(m_systemIdManager);
 
 			GenerateComponentFilter(system, FilterType::Mandatory);
 			GenerateComponentFilter(system, FilterType::RequiresOneOf);
 			GenerateComponentFilter(system, FilterType::Excluded);
 
-			system->SetDataManager(m_dataManager);
 			system->InitializeEntityList();
 		}
 	}

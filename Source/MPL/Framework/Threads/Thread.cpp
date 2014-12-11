@@ -19,3 +19,13 @@ void Thread::Initialize(TaskPool* _taskPool)
 	m_taskPool = _taskPool;
 	m_data = 0;
 }
+
+void Thread::WakeUp()
+{
+
+}
+
+void Thread::Sleep()
+{
+
+}
