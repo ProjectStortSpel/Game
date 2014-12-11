@@ -37,6 +37,15 @@ TurnAroundComponent.Name = "TurnAround"
 TurnAroundComponent.TableType = TableType.Array
 worldCreator:AddComponentType(TurnAroundComponent)
 
+-- Spawn Component
+local SpawnComponent = ComponentType()
+SpawnComponent.Name = "Spawn"
+SpawnComponent.TableType = TableType.Array
+SpawnComponent:AddVariable("X", ByteSize.Float)
+SpawnComponent:AddVariable("Y", ByteSize.Float)
+SpawnComponent:AddVariable("Z", ByteSize.Float)
+worldCreator:AddComponentType(SpawnComponent)
+
 -- TargetPosition Component
 local TargetPositionComponent = ComponentType()
 TargetPositionComponent.Name = "TargetPosition"
