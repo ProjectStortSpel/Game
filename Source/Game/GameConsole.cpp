@@ -61,11 +61,28 @@ void GameConsole::RemoveObject(std::vector<Console::Argument>* _args)
 
 void GameConsole::AddComponent(std::vector<Console::Argument>* _args)
 {
-	unsigned int mId = (unsigned int)_args->at(0).Number;
+	/*	Is the command valid in syntax?	*/
+	if (_args->size() < 2)
+		return;
+	if (_args->at(0).ArgType != Console::ArgumentType::Number)
+		return;
+	if (_args->at(1).ArgType != Console::ArgumentType::Text)
+		return;
 
+	/*	Get component type	*/
 	std::string componentType = _args->at(1).Text;
 	componentType[0] = toupper(componentType[0]);
 
+	if (!ECSL::ComponentTypeManager::GetInstance().ComponentExists(componentType))
+	{
+		std::stringstream ss;
+		ss << "Component " <<_args->at(1).Text << " was not found!";
+		m_consoleManager->AddMessage(ss.str().c_str());
+		return;
+	}
+		
+
+	unsigned int mId = (unsigned int)_args->at(0).Number;
 	m_world->CreateComponentAndAddTo(componentType, mId);
 
 	std::stringstream ss;
