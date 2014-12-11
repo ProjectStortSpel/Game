@@ -34,11 +34,13 @@ networkMessagesSystem.OnPasswordInvalid = function(self, _ip, _port)
 	print("[Client] Invalid password to server " .. _ip .. ":" .. _port)
 end
 networkMessagesSystem.OnRemotePlayerBanned = function(self, _ip, _port, _message)
-	print("[Client] Remote player banned from server")
+	local s = "[Client] Remote player " .. _message .. " connected"
+	Console.Print(s)
 end
 networkMessagesSystem.OnRemotePlayerConnected = function(self, _ip, _port, _message)
-	print("[Client] Remote player connected")
-	print(_message)
+	local s = "[Client] Remote player " .. _message .. " connected"
+	Console.Print(s)
+	--print(_message)
 end
 networkMessagesSystem.OnRemotePlayerDisconnected = function(self, _ip, _port, _message)
 	print("[Client] Remote player disconnected")

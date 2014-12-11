@@ -12,7 +12,7 @@
 #include "ECSL/Managers/EntityTemplateManager.h"
 
 GameCreator::GameCreator() :
-m_graphics(0), m_input(0), m_world(0), m_console(0), m_client(0), m_server(0), m_consoleManager(Console::ConsoleManager::GetInstance())
+m_graphics(0), m_input(0), m_world(0), m_console(0), m_consoleManager(Console::ConsoleManager::GetInstance())
 {
 
 }
@@ -38,20 +38,6 @@ GameCreator::~GameCreator()
 
 	delete(&ECSL::ComponentTypeManager::GetInstance());
 	delete(&ECSL::EntityTemplateManager::GetInstance());
-}
-
-glm::mat4 mat[1000];
-
-void SpawnStuff(Renderer::GraphicDevice* graphics)
-{
-	for (int x = 0; x < 10; x++)
-	{
-		for (int y = 0; y < 10; y++)
-		{
-			mat[y + x * 10] = glm::translate(vec3(x - 5, -1, y - 5));
-			graphics->LoadModel("content/models/default_tile/", "default.object", &mat[y + x * 10]);
-		}
-	}
 }
 
 void GameCreator::InitializeGraphics()
@@ -137,6 +123,31 @@ void GameCreator::StartGame()
 	m_console->SetupHooks(&m_consoleManager);
 
 	
+	/*	FULKOD START	*/
+	for (int x = -5; x < 5; x++)
+	{
+		for (int y = -5; y < 5; y++)
+		{
+			std::string command;// = "createobject box";
+			if ((x + y) % 2)
+			{
+				command = "createobject hole ";
+			}
+			else
+			{
+				command = "createobject grass ";
+			}
+			command += std::to_string(x);
+			command.append(" ");
+			command += std::to_string(-1);
+			command.append(" ");
+			command += std::to_string(y);
+			command.append("");
+			m_consoleManager.ExecuteCommand(command.c_str());
+		}
+	}
+	/*	FULKOD END		*/
+
 
 	Timer gameTimer;
 	while (true)
