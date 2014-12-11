@@ -43,7 +43,7 @@ namespace ECSL
 
 		unsigned int GetActiveEntities(){ return m_activeEntities; }
 
-
+		
 		void GetEntityComponents(std::vector<unsigned int>& _out, unsigned int _entityId){ m_dataManager->GetEntityTable()->GetEntityComponents(_out, _entityId); }
 	};
 }

@@ -117,3 +117,4 @@ unsigned int World::CreateNewEntity(std::string _templateName)
 
 	return newId;
 }
+
