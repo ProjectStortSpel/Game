@@ -27,6 +27,8 @@ public:
 	void ConnectClient(std::vector<Console::Argument>* _args);
 	void DisconnectClient(std::vector<Console::Argument>* _args);
 
+	void SetDebugTexture(std::vector<Console::Argument>* _args);
+
 private:
 	ECSL::World*	m_world;
 	Renderer::GraphicDevice* m_graphics;

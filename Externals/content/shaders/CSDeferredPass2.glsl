@@ -107,10 +107,9 @@ void phongModel(int index, out vec3 ambient, out vec3 diffuse, out vec3 spec)
 
 		ambient = Lights[index].Color * Lights[index].Intensity.x;
 
-		vec3 E = normalize(-viewPos);
-		vec3 N = normalize(normal_tex);
+		vec3 E = normalize(viewPos);
 
-		float diffuseFactor = dot( lightVec, N );
+		float diffuseFactor = dot( lightVec, normal_tex );
 
 		if(diffuseFactor > 0)
 		{
@@ -118,8 +117,10 @@ void phongModel(int index, out vec3 ambient, out vec3 diffuse, out vec3 spec)
 			diffuse = diffuseFactor * Lights[index].Color * Lights[index].Intensity.y;
 
 			// specular
-			vec3 v = normalize(2 * Material.Ks * N - lightVec);//reflect( lightVec, normal_tex );
-			float specFactor = max( pow( max( dot(v, E), 0.0f ), Material.Shininess ), 0.0f);
+			//vec3 v = normalize(2 * Material.Ks * normal_tex - lightVec);//reflect( lightVec, normal_tex );
+			vec3 v = reflect( lightVec, normal_tex );
+			//float specFactor = max( pow( max( dot(v, E), 0.0f ), Material.Shininess ), 0.0f);
+			float specFactor = pow( max( dot(v, E), 0.0 ), Material.Shininess );
 			spec = specFactor * Lights[index].Color * Lights[index].Intensity.z * Material.Ks;        
 		}
 
@@ -142,10 +143,10 @@ vec3 reconstructPosition(float p_depth, vec2 p_ndc)
 
 void main() 
 {
-	Lights[0].Position = vec4(0.0, 1.0, 3.0, 1.0);
-	Lights[0].Intensity = vec3(0.2, 0.9, 0.9);
+	Lights[0].Position = vec4(0.0, 3.0, 0.0, 1.0);
+	Lights[0].Intensity = vec3(0.5, 0.9, 0.9);
 	Lights[0].Color = vec3(0.9);
-	Lights[0].Range = 100.0f;
+	Lights[0].Range = 10.0f;
 
 	texelCoord = ivec2( gl_GlobalInvocationID.x, gl_GlobalInvocationID.y);
 
@@ -187,10 +188,10 @@ void main()
 	//-------------------------
 
 	//DIR LIGHT ---------------
-	vec3 lightDir = (ViewMatrix * vec4(-3, 4, -2, 0)).xyz;
+	/*vec3 lightDir = (ViewMatrix * vec4(-3, 4, -2, 0)).xyz;
 	float lightIntensity = max(dot(normalize(lightDir), normalize(normal_tex)), 0.0 );;
 	if (lightIntensity > 0.0f)
-		diffuse += (vec3(0.6, 0.6, 0.6) * lightIntensity);
+		diffuse += (vec3(0.6, 0.6, 0.6) * lightIntensity);*/
 	//-------------------------
 
 	vec4 FragColor = vec4(ambient + diffuse, 1.0) * vec4(albedo_tex, 1.0) + vec4(spec, 0.0f);
@@ -199,6 +200,7 @@ void main()
 	//vec4 FragColor = vec4( albedo_tex   +normal_tex-normal_tex, 1.0 );
 	//vec4 FragColor = vec4( vec3(viewPos  +normal_tex-normal_tex), 1.0 );
 	//vec4 FragColor = vec4( vec3(depthVal_tex), 1.0 );
+	
 	imageStore(
 		output_image,
 		ivec2(gl_GlobalInvocationID.xy),

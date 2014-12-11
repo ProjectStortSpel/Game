@@ -34,8 +34,8 @@ ConsoleManager::~ConsoleManager()
 
 ConsoleManager& ConsoleManager::GetInstance()
 {
-	static ConsoleManager* instance = new ConsoleManager();
-	return *instance;
+	static ConsoleManager instance;
+	return instance;
 }
 
 bool ConsoleManager::ParseArgs(char* _args, std::vector<Argument>* _vector)

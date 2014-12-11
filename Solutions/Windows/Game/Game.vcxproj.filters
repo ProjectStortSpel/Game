@@ -42,6 +42,12 @@
     <Filter Include="Lua Bridge\FileLoader">
       <UniqueIdentifier>{f75b5f79-7cf0-4857-b059-2797ae8d1deb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scripting\Templates">
+      <UniqueIdentifier>{e0263418-dd0f-437a-ab52-e9016f45bb5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lua Bridge\Console">
+      <UniqueIdentifier>{bb35f23c-7282-4c2e-9288-5dc348c8fdba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\Timer.cpp">
@@ -124,6 +130,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Systems\RenderRemoveSystem.cpp">
       <Filter>Game\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\Console\LuaConsole.cpp">
+      <Filter>Lua Bridge\Console</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Systems\SyncEntitiesSystem.cpp">
       <Filter>Game\Systems</Filter>
@@ -217,6 +226,9 @@
     <ClInclude Include="..\..\..\Source\Game\NetworkInstance.h">
       <Filter>Network</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\Console\LuaConsole.h">
+      <Filter>Lua Bridge\Console</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\Externals\content\scripting\storaspel\init.lua">
@@ -232,6 +244,18 @@
       <Filter>Scripting\Systems</Filter>
     </None>
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\TestSystems.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\templates\box.lua">
+      <Filter>Scripting\Templates</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\templates\tile.lua">
+      <Filter>Scripting\Templates</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\components\tilecomponents.lua">
+      <Filter>Scripting\Components</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\tilemovementsystem.lua">
       <Filter>Scripting\Systems</Filter>
     </None>
   </ItemGroup>

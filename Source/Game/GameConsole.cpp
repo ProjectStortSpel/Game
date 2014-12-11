@@ -226,6 +226,30 @@ void GameConsole::DisconnectClient(std::vector<Console::Argument>* _args)
 		NetworkInstance::GetClient()->Disconnect();
 }
 
+void GameConsole::SetDebugTexture(std::vector<Console::Argument>* _args)
+{
+	if (_args->size() == 0)
+		return;
+
+	if ((*_args)[0].ArgType == Console::ArgumentType::Text)
+	{
+		if (strcmp((*_args)[0].Text, "standard") == 0)
+			m_graphics->SetDebugTexFlag(0);
+
+		else if (strcmp((*_args)[0].Text, "diffuse") == 0)
+			m_graphics->SetDebugTexFlag(1);
+
+		else if (strcmp((*_args)[0].Text, "normal") == 0)
+			m_graphics->SetDebugTexFlag(2);
+
+		else if (strcmp((*_args)[0].Text, "specular") == 0)
+			m_graphics->SetDebugTexFlag(3);
+
+		else if (strcmp((*_args)[0].Text, "glow") == 0)
+			m_graphics->SetDebugTexFlag(4);
+	}
+}
+
 void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 {
 	m_consoleManager = _consoleManager;
@@ -240,6 +264,7 @@ void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 	m_consoleManager->AddCommand("Disconnect", std::bind(&GameConsole::DisconnectClient, this, std::placeholders::_1));
 	m_consoleManager->AddCommand("List", std::bind(&GameConsole::ListCommands, this, std::placeholders::_1));
 
+	m_consoleManager->AddCommand("DebugRender", std::bind(&GameConsole::SetDebugTexture, this, std::placeholders::_1));
 	NetworkInstance::GetClient()->AddNetworkHook("Entity", std::bind(&NetworkHelper::ReceiveEntity, NetworkInstance::GetNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	NetworkInstance::GetClient()->AddNetworkHook("EntityKill", std::bind(&NetworkHelper::ReceiveEntityKill, NetworkInstance::GetNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 }
