@@ -8,10 +8,13 @@
 #include "Systems/ReceivePacketSystem.h"
 #include "Systems/SyncEntitiesSystem.h"
 #include "Systems/RenderRemoveSystem.h"
+#include "Systems/ResetChangedSystem.h"
 
 #include "NetworkInstance.h"
 #include "ECSL/ECSL.h"
 #include "ECSL/Managers/EntityTemplateManager.h"
+
+#include "LuaBridge/ECSL/LuaSystem.h"
 
 GameCreator::GameCreator() :
 m_graphics(0), m_input(0), m_world(0), m_console(0), m_consoleManager(Console::ConsoleManager::GetInstance())
@@ -68,7 +71,7 @@ void GameCreator::InitializeNetwork()
 
 }
 
-void GameCreator::InitializeLua()
+void GameCreator::InitializeLua() 
 {
 	LuaEmbedder::Init();
 	LuaBridge::Embed();
@@ -92,26 +95,38 @@ void GameCreator::InitializeWorld()
 		printf("%s added\n", it->second->GetName().c_str());
 	}
 
-	//worldCreator.AddSystemGroup();
-	//worldCreator.AddSystemToCurrentGroup<MovementSystem>();
+	/*	This component has to be added last!	*/
+	unsigned int numberOfComponents = ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount();
+	unsigned int numberOfInts = ECSL::BitSet::GetIntCount(numberOfComponents);
+	unsigned int numberOfBytes = numberOfInts*sizeof(ECSL::BitSet::DataType);
+	std::map<std::string, ECSL::ComponentVariable> m_variables;
+	ECSL::ComponentVariable start = ECSL::ComponentVariable("ChangedComponents", numberOfBytes);
+	m_variables.insert(std::pair<std::string, ECSL::ComponentVariable>("ChangedComponents", start));
+	std::map<unsigned int, ECSL::ComponentDataType> m_offsetToType;
+	m_offsetToType[0] = ECSL::ComponentDataType::INT64;
+	ECSL::ComponentType* changedComponents = new ECSL::ComponentType("ChangedComponents", ECSL::TableType::Array, m_variables, m_offsetToType, false);
+	ECSL::ComponentTypeManager::GetInstance().AddComponentType(*changedComponents);
+	worldCreator.AddComponentType("ChangedComponents");
+	numberOfComponents = ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount();
 
 	//NetworkMessagesSystem* nms = new NetworkMessagesSystem();
 	//nms->SetConsole(&m_consoleManager);
 
+	worldCreator.AddLuaSystemToCurrentGroup(new ReceivePacketSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new RotationSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new CameraSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new ModelSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderSystem(m_graphics));
-	worldCreator.AddLuaSystemToCurrentGroup(new ReceivePacketSystem());
+	
 	worldCreator.AddLuaSystemToCurrentGroup(new SyncEntitiesSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderRemoveSystem(m_graphics));
 
+	worldCreator.AddLuaSystemToCurrentGroup(new ResetChangedSystem());
 
-	
 	m_world = worldCreator.CreateWorld(10000);
 	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
 	
-	LuaEmbedder::CallMethods<ECSL::System>("System", "PostInitialize");
+	LuaEmbedder::CallMethods<LuaBridge::LuaSystem>("System", "PostInitialize");
 }
 
 void GameCreator::StartGame()
@@ -128,6 +143,7 @@ void GameCreator::StartGame()
 
 	/*	Hook console	*/
 	m_console->SetupHooks(&m_consoleManager);
+	m_consoleManager.AddCommand("Reload", std::bind(&GameCreator::Reload, this, std::placeholders::_1));
 
 	
 	/*	FULKOD START	*/
@@ -201,7 +217,7 @@ void GameCreator::UpdateConsole()
 		}
 	}
 
-	// MOVE ?!
+	// History, arrows up/down
 	if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_UP) == Input::InputState::PRESSED)
 	{
 
@@ -217,6 +233,11 @@ void GameCreator::UpdateConsole()
 			m_input->GetKeyboard()->SetTextInput(next);
 	}
 
+
+	if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_PAGEUP) == Input::InputState::PRESSED)
+		m_consoleManager.ScrollUp();
+	else if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_PAGEDOWN) == Input::InputState::PRESSED)
+		m_consoleManager.ScrollDown();
 
 
 	if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_TAB) == Input::InputState::PRESSED)
@@ -234,16 +255,16 @@ void GameCreator::RenderConsole()
 		return;
 
 	std::string command = m_consoleInput.GetText();
-	m_graphics->RenderSimpleText("Console:", 0, 10);
-	m_graphics->RenderSimpleText(command, 9, 10);
-	m_graphics->RenderSimpleText("_", 9 + command.length(), 10);
+	m_graphics->RenderSimpleText("Console:", 0, 30);
+	m_graphics->RenderSimpleText(command, 9, 30);
+	m_graphics->RenderSimpleText("_", 9 + command.length(), 30);
 
 	auto history = m_consoleManager.GetHistory();
 	for (int i = 0; i < history.size(); ++i)
-		m_graphics->RenderSimpleText(history[i], 0, 10 - history.size() + i);
+		m_graphics->RenderSimpleText(history[i], 0, 30 - history.size() + i);
 
 	auto match = m_consoleManager.GetFunctionMatch(command.c_str());
-	m_graphics->RenderSimpleText(match, 9, 11);
+	m_graphics->RenderSimpleText(match, 9, 31);
 }
 
 void GameCreator::PollSDLEvent()
@@ -278,5 +299,21 @@ void GameCreator::PollSDLEvent()
 	}
 }
 
-
+void GameCreator::Reload(std::vector<Console::Argument>* _args)
+{
+  if (m_world)
+	  delete m_world;
+  NetworkInstance::DestroyClient();
+  NetworkInstance::DestroyServer();
+  NetworkInstance::DestroyNetworkHelper();
+  LuaEmbedder::Quit();
+  ECSL::ComponentTypeManager::GetInstance().Clear();
+  ECSL::EntityTemplateManager::GetInstance().Clear();
+  
+  
+  InitializeLua();
+  m_graphics->Clear();
+  InitializeNetwork();
+  InitializeWorld();
+}
 

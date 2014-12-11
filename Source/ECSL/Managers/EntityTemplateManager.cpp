@@ -98,7 +98,35 @@ unsigned int EntityTemplateManager::GetTableId(const std::string& _templateName)
 		return it->second;
 }
 
+
+
 bool EntityTemplateManager::HasTemplate(std::string& _template)
 {
+void EntityTemplateManager::Clear()
 	return m_stringTableId->find(_template) != m_stringTableId->end();
+}
+		m_stringTableId->clear();
+		delete(m_stringTableId);
+	}
+
+	if (m_entityTemplates)
+	{
+		for (auto it = m_entityTemplates->begin(); it != m_entityTemplates->end(); ++it)
+			delete it->second;
+
+		m_entityTemplates->clear();
+		delete m_entityTemplates;
+	}
+
+	if (m_entityTemplateReader)
+		delete m_entityTemplateReader;
+
+	if (m_parser)
+		delete m_parser;
+	
+	m_nextTableId = -1;
+	m_parser = new Parser();
+	m_entityTemplateReader = new EntityTemplateReader();
+	m_entityTemplates = new std::map<unsigned int, EntityTemplate*>();
+	m_stringTableId = new std::unordered_map<std::string, unsigned int>();
 }

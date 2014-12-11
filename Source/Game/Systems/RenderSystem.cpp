@@ -1,4 +1,5 @@
 #include "RenderSystem.h"
+#include "ECSL/Framework/Common/BitSet.h"
 
 RenderSystem::RenderSystem(Renderer::GraphicDevice* _graphics)
 {
@@ -25,10 +26,30 @@ void RenderSystem::Initialize()
 void RenderSystem::Update(float _dt)
 {
 	auto entities = *GetEntities();
+	int posId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Position");
+	int rotId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Rotation");
+	int scaleId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Scale");
 
 	/*	TODO: Some logic to not update matrix every frame	*/
 	for (auto entity : entities)
-		UpdateMatrix(entity);
+	{
+		std::vector<unsigned int> changedComponents;
+		ECSL::BitSet::BitSetConverter::BitSetToArray
+			(
+				changedComponents, 
+				(const ECSL::BitSet::DataType*)GetComponent(entity, "ChangedComponents", 0), 
+				ECSL::BitSet::GetIntCount(ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount())
+			);
+
+		for (auto componentType : changedComponents)
+			if (componentType == posId || componentType == rotId || componentType == scaleId)
+			{
+				UpdateMatrix(entity);
+				break;
+			}
+				
+	}
+		
 
 }
 
@@ -66,5 +87,6 @@ void RenderSystem::UpdateMatrix(unsigned int _entityId)
 	*Matrix *= glm::rotate(Rotation[1], glm::vec3(0, 1, 0)); // quaternions?????
 	*Matrix *= glm::rotate(Rotation[2], glm::vec3(1, 0, 0)); // quaternions?????
 	*Matrix *= glm::scale(glm::vec3(Scale[0], Scale[1], Scale[2]));
-	
+
+	ComponentHasChanged(_entityId, "Render");
 }

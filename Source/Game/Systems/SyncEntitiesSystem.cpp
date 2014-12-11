@@ -29,8 +29,22 @@ void SyncEntitiesSystem::Update(float _dt)
 
 			for (int i = 0; i < entities.size(); ++i)
 			{
-				Network::Packet* p = NetworkInstance::GetNetworkHelper()->WriteEntity(server->GetPacketHandler(), entities[i]);
-				server->Broadcast(p);
+				ECSL::BitSet::DataType* data;
+				data = (ECSL::BitSet::DataType*)GetComponent(entities[i], "ChangedComponents", 0);
+				std::vector<unsigned int> changedComponents;
+				ECSL::BitSet::BitSetConverter::BitSetToArray
+					(
+					changedComponents,
+					(const ECSL::BitSet::DataType*)data,
+					ECSL::BitSet::GetIntCount(ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount())
+					);
+
+				if (changedComponents.size() > 0)
+				{
+					Network::Packet* p = NetworkInstance::GetNetworkHelper()->WriteEntity(server->GetPacketHandler(), entities[i]);
+					server->Broadcast(p);
+				}
+
 			}
 		}
 		m_timer += _dt;

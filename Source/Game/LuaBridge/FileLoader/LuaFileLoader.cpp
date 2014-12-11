@@ -4,7 +4,7 @@
 #include <fstream>
 #include <string>
 
-int LoadMap()
+int LoadMap()  
 {
 	std::string filepath = LuaEmbedder::PullString(1);
 	std::ifstream file(filepath);

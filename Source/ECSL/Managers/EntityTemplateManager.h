@@ -32,6 +32,7 @@ namespace ECSL
 
 		bool HasTemplate(std::string& _template);
 		
+		void Clear();
 	private:
 		EntityTemplateManager();
 

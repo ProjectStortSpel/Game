@@ -33,6 +33,8 @@ namespace ECSL
 		void AddComponentType(ComponentType& _componentType);
 
 		bool ComponentExists(std::string& _componentType);
+		
+		void Clear();
 	private:
 		ComponentTypeManager();
 

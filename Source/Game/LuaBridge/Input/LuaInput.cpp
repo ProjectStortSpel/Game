@@ -8,9 +8,9 @@ namespace LuaBridge
     int GetKeyState();
     int GetMouseButtonState();
     int GetMousePosition();
-    int GetDeltaMousePosition();
+    int GetDeltaMousePosition(); 
     
-    void Embed()
+    void Embed() 
     {
       LuaEmbedder::AddFunction("GetKeyState", &GetKeyState, "Input");
       LuaEmbedder::AddFunction("GetMouseButtonState", &GetMouseButtonState, "Input");
@@ -49,7 +49,7 @@ namespace LuaBridge
       LuaEmbedder::AddInt("W", (int)SDL_SCANCODE_W, "Key");
       LuaEmbedder::AddInt("X", (int)SDL_SCANCODE_X, "Key");
       LuaEmbedder::AddInt("Y", (int)SDL_SCANCODE_Y, "Key");
-      LuaEmbedder::AddInt("Z", (int)SDL_SCANCODE_Z, "Key");
+      LuaEmbedder::AddInt("Z", (int)SDL_SCANCODE_Z, "Key"); 
       LuaEmbedder::AddInt("1", (int)SDL_SCANCODE_1, "Key");
       LuaEmbedder::AddInt("2", (int)SDL_SCANCODE_2, "Key");
       LuaEmbedder::AddInt("3", (int)SDL_SCANCODE_3, "Key");
@@ -59,7 +59,11 @@ namespace LuaBridge
       LuaEmbedder::AddInt("7", (int)SDL_SCANCODE_7, "Key");
       LuaEmbedder::AddInt("8", (int)SDL_SCANCODE_8, "Key");
       LuaEmbedder::AddInt("9", (int)SDL_SCANCODE_9, "Key");
-      LuaEmbedder::AddInt("0", (int)SDL_SCANCODE_0, "Key");
+	  LuaEmbedder::AddInt("0", (int)SDL_SCANCODE_0, "Key");
+	  LuaEmbedder::AddInt("Left", (int)SDL_SCANCODE_LEFT, "Key");
+	  LuaEmbedder::AddInt("Right", (int)SDL_SCANCODE_RIGHT, "Key");
+	  LuaEmbedder::AddInt("Up", (int)SDL_SCANCODE_UP, "Key");
+	  LuaEmbedder::AddInt("Down", (int)SDL_SCANCODE_DOWN, "Key");
       LuaEmbedder::AddInt("Return", (int)SDL_SCANCODE_RETURN, "Key");
       LuaEmbedder::AddInt("Escape", (int)SDL_SCANCODE_ESCAPE, "Key");
       LuaEmbedder::AddInt("Backspace", (int)SDL_SCANCODE_BACKSPACE, "Key");

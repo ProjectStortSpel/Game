@@ -2,7 +2,6 @@ MapCreationSystem = System()
 MapCreationSystem.entities = { }
 
 MapCreationSystem.PostInitialize = function(self)
-    print("Started to initialize map!")
     local mapX, mapY, map = File.LoadMap("content/maps/map.txt")
     local posX, posZ
 	

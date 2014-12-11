@@ -7,7 +7,7 @@ Camera::Camera()
 	m_right = vec3(1, 0, 0);
 	m_look = vec3(0, -1, 0);
 
-	m_camPitch = 0.0f;
+	m_camPitch = -M_PI/2.0f;
 	m_camYaw = M_PI;
 	m_sensitivity = 0.002f;
 	m_moveSpeed = 1.0f;
