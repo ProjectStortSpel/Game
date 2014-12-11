@@ -42,7 +42,7 @@ void BitSet::BitSetConverter::BitSetToArray(std::vector<unsigned int>& _out, con
 		/*	Iterate over all bits inside each bitmask	*/
 		for (unsigned int bitIndex = 0; bitIndex < bitsPerInt; ++bitIndex)
 		{
-			if (_bitmask[bitSetIndex] & ((DataType)1 << bitIndex))
+			if (_bitmask[bitSetIndex] & ((ECSL::BitSet::DataType)1 << bitIndex))
 				_out.push_back(index);
 			++index;
 		}

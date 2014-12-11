@@ -2,6 +2,7 @@
 #define LUACOMPONENT_H
 
 #include "ECSL/Framework/Components/Tables/DataTable.h"
+#include "ECSL/Interfaces/System.h"
 
 #include <string>
 #include <map>
@@ -12,11 +13,11 @@ namespace LuaBridge
   {
   public:
     LuaComponent();
+    LuaComponent(ECSL::DataLocation dataLocation, ECSL::System* system,
+		 unsigned int entityId, const std::string& componentName);
     ~LuaComponent();
     
     static void Embed();
-    
-    void SetDataLocation(ECSL::DataLocation dataLocation);
     
   private:
     int GetFloat();
@@ -50,6 +51,9 @@ namespace LuaBridge
     
   private:
     ECSL::DataLocation m_dataLocation;
+    ECSL::System* m_system;
+    unsigned int m_entityId;
+    std::string m_componentName;
   };
 }
 
