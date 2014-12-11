@@ -14,7 +14,11 @@ GameConsole::~GameConsole()
 
 void GameConsole::CreateObject(std::vector<Console::Argument>* _args)
 {
+<<<<<<< HEAD
 	if (_args->size() != 5)
+=======
+	if (_args->at(0).ArgType != Console::ArgumentType::Text)
+>>>>>>> Development
 		return;
 
 	std::string _modelName = _args->at(0).Text;
@@ -54,10 +58,20 @@ void GameConsole::CreateObject(std::vector<Console::Argument>* _args)
 	ss << "Entity with id #" << mId << " has been created!";
 	m_consoleManager->AddMessage(ss.str().c_str());
 
+<<<<<<< HEAD
 	if (NetworkInstance::GetServer()->IsRunning())
 	{
 		Network::Packet* p = m_networkHelper->WriteEntity(NetworkInstance::GetServer()->GetPacketHandler(), mId);
 		NetworkInstance::GetServer()->Broadcast(p);
+=======
+	if (_args->size() > 1)
+	{
+		float* objectPosition;
+		objectPosition = (float*)m_world->GetComponent(mId, "Position", 0);
+		objectPosition[0] = _args->at(1).Number;
+		objectPosition[1] = _args->at(2).Number;
+		objectPosition[2] = _args->at(3).Number;
+>>>>>>> Development
 	}
 }
 
@@ -249,6 +263,34 @@ void GameConsole::DisconnectClient(std::vector<Console::Argument>* _args)
 		NetworkInstance::GetClient()->Disconnect();
 }
 
+<<<<<<< HEAD
+=======
+void GameConsole::SetDebugTexture(std::vector<Console::Argument>* _args)
+{
+	if (_args->size() == 0)
+		return;
+
+	if ((*_args)[0].ArgType == Console::ArgumentType::Text)
+	{
+		if (strcmp((*_args)[0].Text, "standard") == 0)
+			m_graphics->SetDebugTexFlag(0);
+
+		else if (strcmp((*_args)[0].Text, "diffuse") == 0)
+			m_graphics->SetDebugTexFlag(1);
+
+		else if (strcmp((*_args)[0].Text, "normal") == 0)
+			m_graphics->SetDebugTexFlag(2);
+
+		else if (strcmp((*_args)[0].Text, "specular") == 0)
+			m_graphics->SetDebugTexFlag(3);
+
+		else if (strcmp((*_args)[0].Text, "glow") == 0)
+			m_graphics->SetDebugTexFlag(4);
+	}
+}
+
+
+>>>>>>> Development
 void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 {
 	m_consoleManager = _consoleManager;
@@ -262,4 +304,5 @@ void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 	m_consoleManager->AddCommand("Connect", std::bind(&GameConsole::ConnectClient, this, std::placeholders::_1));
 	m_consoleManager->AddCommand("Disconnect", std::bind(&GameConsole::DisconnectClient, this, std::placeholders::_1));
 	m_consoleManager->AddCommand("List", std::bind(&GameConsole::ListCommands, this, std::placeholders::_1));
+	m_consoleManager->AddCommand("DebugRender", std::bind(&GameConsole::SetDebugTexture, this, std::placeholders::_1));
 }

@@ -38,7 +38,7 @@ private:
 	ECSL::World*				m_world;
 	GameConsole*				m_console;
 
-	Console::ConsoleManager		m_consoleManager;
+	Console::ConsoleManager&		m_consoleManager;
 	TextInput					m_consoleInput;
 };
 

@@ -43,6 +43,8 @@ namespace LuaBridge
     int GetString();
     int SetString();
     
+    int SetModel();
+    
   private:
     ECSL::DataLocation m_dataLocation;
   };

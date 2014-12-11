@@ -13,6 +13,7 @@ require "TestSystem"
 -- Templates
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/templates/?.lua"
 require "box"
+require "tile"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(MovementSystem)
@@ -22,3 +23,4 @@ worldCreator:AddSystemToCurrentGroup(ForwardSystem)
 worldCreator:AddSystemToCurrentGroup(BackwardSystem)
 worldCreator:AddSystemToCurrentGroup(RightTurnSystem)
 worldCreator:AddSystemToCurrentGroup(LeftTurnSystem)
+worldCreator:AddSystemToCurrentGroup(TurnAroundSystem)

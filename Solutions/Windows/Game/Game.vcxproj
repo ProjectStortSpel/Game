@@ -200,6 +200,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\GameConsole.cpp" />
     <ClCompile Include="..\..\..\Source\Game\GameCreator.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\Console\LuaConsole.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponent.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponentType.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaEntityTemplate.cpp" />
@@ -229,6 +230,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\GameConsole.h" />
     <ClInclude Include="..\..\..\Source\Game\GameCreator.h" />
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\Console\LuaConsole.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponent.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponentType.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaEntityTemplate.h" />
@@ -256,10 +258,14 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\Externals\content\scripting\storaspel\components\components.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\components\tilecomponents.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\init.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\mapcreationsystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\movementsystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\TestSystems.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\tilemovementsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\templates\box.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\templates\tile.lua" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

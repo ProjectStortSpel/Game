@@ -21,7 +21,7 @@ namespace Renderer
 		vector3,
 		vector4,
 		glfloat,
-		sampler2D
+		glint
 	};
 
 	class Shader

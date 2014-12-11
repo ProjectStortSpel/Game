@@ -42,6 +42,12 @@
     <Filter Include="Lua Bridge\FileLoader">
       <UniqueIdentifier>{f75b5f79-7cf0-4857-b059-2797ae8d1deb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scripting\Templates">
+      <UniqueIdentifier>{e0263418-dd0f-437a-ab52-e9016f45bb5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lua Bridge\Console">
+      <UniqueIdentifier>{bb35f23c-7282-4c2e-9288-5dc348c8fdba}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Game\Systems\Camera">
       <UniqueIdentifier>{6f65ecb9-1fad-4717-9948-fc2a318b43a1}</UniqueIdentifier>
     </Filter>
@@ -149,6 +155,9 @@
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaEntityTemplateManager.cpp">
       <Filter>Lua Bridge\ECSL</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\Console\LuaConsole.cpp">
+      <Filter>Lua Bridge\Console</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\Timer.h">
@@ -232,6 +241,9 @@
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaEntityTemplateManager.h">
       <Filter>Lua Bridge\ECSL</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\Console\LuaConsole.h">
+      <Filter>Lua Bridge\Console</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\Externals\content\scripting\storaspel\init.lua">
@@ -247,6 +259,18 @@
       <Filter>Scripting\Systems</Filter>
     </None>
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\TestSystems.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\templates\box.lua">
+      <Filter>Scripting\Templates</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\templates\tile.lua">
+      <Filter>Scripting\Templates</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\components\tilecomponents.lua">
+      <Filter>Scripting\Components</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\tilemovementsystem.lua">
       <Filter>Scripting\Systems</Filter>
     </None>
   </ItemGroup>

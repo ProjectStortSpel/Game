@@ -12,7 +12,7 @@
 #include "ECSL/Managers/EntityTemplateManager.h"
 
 GameCreator::GameCreator() :
-m_graphics(0), m_input(0), m_world(0), m_console(0)
+m_graphics(0), m_input(0), m_world(0), m_console(0), m_client(0), m_server(0), m_consoleManager(Console::ConsoleManager::GetInstance())
 {
 
 }
@@ -92,8 +92,9 @@ void GameCreator::InitializeWorld()
 	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
 	LuaEmbedder::AddObject<ECSL::WorldCreator>("WorldCreator", &worldCreator, "worldCreator");
 
-	LuaEmbedder::Load("../../../Externals/content/scripting/storaspel/init.lua");
-
+	if (!LuaEmbedder::Load("../../../Externals/content/scripting/storaspel/init.lua"))
+	  return;
+	
 	auto componentTypes = ECSL::ComponentTypeManager::GetInstance().GetComponentTypes();
 	for (auto it = componentTypes->begin(); it != componentTypes->end(); ++it)
 	{
