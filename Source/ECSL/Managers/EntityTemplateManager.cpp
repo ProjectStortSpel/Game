@@ -97,3 +97,8 @@ unsigned int EntityTemplateManager::GetTableId(const std::string& _templateName)
 	else
 		return it->second;
 }
+
+bool EntityTemplateManager::HasTemplate(std::string& _template)
+{
+	return m_stringTableId->find(_template) != m_stringTableId->end();
+}
