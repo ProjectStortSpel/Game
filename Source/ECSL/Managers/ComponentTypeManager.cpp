@@ -101,3 +101,8 @@ void ComponentTypeManager::AddComponentType(ComponentType& _componentType)
 
 	m_componentTypes->insert(std::pair<int, ComponentType*>(ComponentTypeManager::GetTableId(_componentType.GetName()), &_componentType));
 }
+
+bool ComponentTypeManager::ComponentExists(std::string& _componentType)
+{
+	return m_stringTableId->find(_componentType) != m_stringTableId->end();
+}
