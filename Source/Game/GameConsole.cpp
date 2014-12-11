@@ -110,6 +110,16 @@ void GameConsole::ChangeComponent(std::vector<Console::Argument>* _args)
 	DATA = (float*)m_world->GetComponent(mId, componentType, 0);
 	for (int n = 0; n < nData; ++n)
 		DATA[n] = _args->at(2 + n).Number;
+
+	unsigned int componentTypeId = ECSL::ComponentTypeManager::GetInstance().GetTableId(componentType);
+	int bitSetIndex = ECSL::BitSet::GetBitSetIndex(componentTypeId);
+	int bitIndex = ECSL::BitSet::GetBitIndex(componentTypeId);
+
+	ECSL::BitSet::DataType* changedComponents = (ECSL::BitSet::DataType*)m_world->GetComponent(mId, "ChangedComponents", 0);
+	changedComponents[bitSetIndex] |= ((ECSL::BitSet::DataType)1) << bitIndex;
+
+	ECSL::BitSet::DataType* changedComponentsNetwork = (ECSL::BitSet::DataType*)m_world->GetComponent(mId, "ChangedComponentsNetwork", 0);
+	changedComponentsNetwork[bitSetIndex] |= ((ECSL::BitSet::DataType)1) << bitIndex;
 }
 
 void GameConsole::RemoveComponent(std::vector<Console::Argument>* _args)
