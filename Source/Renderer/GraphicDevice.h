@@ -171,6 +171,8 @@ namespace Renderer
 
 		// Random Vertors
 		GLuint m_randomVectors;
+
+		void BufferLights();
 	};
 }
 

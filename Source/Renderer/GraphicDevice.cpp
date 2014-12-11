@@ -32,6 +32,42 @@ GraphicDevice::~GraphicDevice()
 	SDL_Quit();
 }
 
+GLuint buffer_pointlights;
+int point_light_data_size;
+float *pointlight_data;
+
+void GraphicDevice::BufferLights()
+{
+	m_compDeferredPass2Shader.UseProgram();
+	
+	pointlight_data = new float[10];
+
+	int tmpCounter = 0;
+		pointlight_data[tmpCounter + 0] = 0.0;	//pos x
+		pointlight_data[tmpCounter + 1] = 2.0;	//pos y
+		pointlight_data[tmpCounter + 2] = 0.0;	//pos z
+
+		pointlight_data[tmpCounter + 3] = 0.5;	//int x
+		pointlight_data[tmpCounter + 4] = 0.9;	//int y
+		pointlight_data[tmpCounter + 5] = 0.9;	//int z
+
+		pointlight_data[tmpCounter + 6] = 1.0;	//col x
+		pointlight_data[tmpCounter + 7] = 0.4;	//col y
+		pointlight_data[tmpCounter + 8] = 0.4;	//col z
+
+		pointlight_data[tmpCounter + 9] = 10.0;	//range
+
+
+
+	point_light_data_size = (3 + 3 + 3 + 1) * 1 * sizeof(float);
+	glGenBuffers(1, &buffer_pointlights);
+
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, buffer_pointlights);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, point_light_data_size, pointlight_data, GL_STATIC_DRAW);
+
+	glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 4, buffer_pointlights, 0, point_light_data_size);
+}
+
 bool GraphicDevice::Init()
 {
 	if (!InitSDLWindow()) { ERRORMSG("INIT SDL WINDOW FAILED\n"); return false; }
@@ -42,7 +78,7 @@ bool GraphicDevice::Init()
 	if (!InitForward()) { ERRORMSG("INIT FORWARD FAILED\n"); return false; }
 	if (!InitTextRenderer()) { ERRORMSG("INIT TEXTRENDERER FAILED\n"); return false; }
 	m_vramUsage += (m_textRenderer.GetArraySize() * sizeof(int));
-
+	BufferLights();
 
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
@@ -184,6 +220,10 @@ void GraphicDevice::Render()
 
 	glBindImageTexture(1, m_colorTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
 
+	//glBindBuffer(GL_SHADER_STORAGE_BUFFER, buffer_pointlights);
+	//glBufferData(GL_SHADER_STORAGE_BUFFER, point_light_data_size, pointlight_data, GL_STATIC_DRAW);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, buffer_pointlights);
+	
 	glDispatchCompute(m_clientWidth * 0.0625, m_clientHeight * 0.0625, 1); // 1/16 = 0.0625
 	//---------------------------------------------------------------------------
 
@@ -293,8 +333,8 @@ bool GraphicDevice::InitSDLWindow()
 	// WINDOW SETTINGS
 	unsigned int	Flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
 	const char*		Caption = "SDL Window";
-	int				PosX = 200;
-	int				PosY = 280;
+	int				PosX = 650;
+	int				PosY = 170;
 
 	int				SizeX = 256 * 5;	//1280
 	int				SizeY = 144 * 5;	//720
