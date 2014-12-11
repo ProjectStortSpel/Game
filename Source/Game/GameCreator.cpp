@@ -134,28 +134,28 @@ void GameCreator::StartGame()
 
 	
 	/*	FULKOD START	*/
-	for (int x = -5; x < 5; x++)
-	{
-		for (int y = -5; y < 5; y++)
-		{
-			std::string command;// = "createobject box";
-			if ((x + y) % 2)
-			{
-				command = "createobject hole ";
-			}
-			else
-			{
-				command = "createobject grass ";
-			}
-			command += std::to_string(x);
-			command.append(" ");
-			command += std::to_string(-1);
-			command.append(" ");
-			command += std::to_string(y);
-			command.append("");
-			m_consoleManager.ExecuteCommand(command.c_str());
-		}
-	}
+	//for (int x = -5; x < 5; x++)
+	//{
+	//	for (int y = -5; y < 5; y++)
+	//	{
+	//		std::string command;// = "createobject box";
+	//		if ((x + y) % 2)
+	//		{
+	//			command = "createobject hole ";
+	//		}
+	//		else
+	//		{
+	//			command = "createobject grass ";
+	//		}
+	//		command += std::to_string(x);
+	//		command.append(" ");
+	//		command += std::to_string(-1);
+	//		command.append(" ");
+	//		command += std::to_string(y);
+	//		command.append("");
+	//		m_consoleManager.ExecuteCommand(command.c_str());
+	//	}
+	//}
 	/*	FULKOD END		*/
 
 	Timer gameTimer;
