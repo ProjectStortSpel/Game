@@ -45,7 +45,7 @@ bool GraphicDevice::Init()
 	if (!InitForward()) { ERRORMSG("INIT FORWARD FAILED\n"); return false; }
 	if (!InitTextRenderer()) { ERRORMSG("INIT TEXTRENDERER FAILED\n"); return false; }
 		m_vramUsage += (m_textRenderer.GetArraySize() * sizeof(int));
-	if (!InitLightBuffer()) { ERRORMSG("INIT LIGHTBUFFER FAILED\n"); return false; }
+	if (!InitLightBuffers()) { ERRORMSG("INIT LIGHTBUFFER FAILED\n"); return false; }
 	
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
@@ -187,9 +187,10 @@ void GraphicDevice::Render()
 
 	glBindImageTexture(1, m_colorTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
 
-	//glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_pointlightBuffer);
-	//glBufferData(GL_SHADER_STORAGE_BUFFER, point_light_data_size, pointlight_data, GL_STATIC_DRAW);
+	//---Light buffers----------
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
+	//--------------------------
 	
 	glDispatchCompute(m_clientWidth * 0.0625, m_clientHeight * 0.0625, 1); // 1/16 = 0.0625
 	//---------------------------------------------------------------------------
@@ -486,29 +487,29 @@ bool GraphicDevice::InitBuffers()
 	return true;
 }
 
-bool GraphicDevice::InitLightBuffer()
+bool GraphicDevice::InitLightBuffers()
 {
 	/* TEMP. Ta bort när ljus skapas från E/C-system*/
 	int lights = 3;
 	for (int i = 0; i < lights; i++)
 	{
 		testArray[10*i + 0] = -5.0+i*5;	//pos x
-		testArray[10*i + 1] = 3.0;	//pos y
-		testArray[10*i + 2] = 0.0;	//pos z
-		testArray[10*i + 3] = 0.5;	 //int x
-		testArray[10*i + 4] = 0.9;	 //int y
-		testArray[10*i + 5] = 0.5;  //int z
-		testArray[10*i + 6] = 0.8;	//col x
-		testArray[10*i + 7] = 0.6;	//col y
-		testArray[10*i + 8] = 0.6;	//col z
-		testArray[10*i + 9] = 10.0;	//range
+		testArray[10*i + 1] = 3.0;		//pos y
+		testArray[10*i + 2] = 0.0;		//pos z
+		testArray[10*i + 3] = 0.5;		 //int x
+		testArray[10*i + 4] = 0.9;		 //int y
+		testArray[10*i + 5] = 0.5;		 //int z
+		testArray[10*i + 6] = 0.9;		//col x
+		testArray[10*i + 7] = 0.5;		//col y
+		testArray[10*i + 8] = 0.5;		//col z
+		testArray[10*i + 9] = 5.0;		 //range
 	}
 	/* ---------------------------------------------- */
 	glGenBuffers(1, &m_pointlightBuffer);
 
 	if (m_pointlightBuffer < 0)
 		return false;
-	/* TMP  */
+	/* ------------------ TMP ------------------------------- */
 	float **tmpPointersArray = new float*[lights];
 	for (int i = 0; i < lights; i++)
 	{
@@ -516,7 +517,28 @@ bool GraphicDevice::InitLightBuffer()
 	}
 	BufferPointlights(lights, tmpPointersArray);
 	delete tmpPointersArray;
-	/* --------------------------------------------- */
+	/* ------------------------------------------------------ */
+
+//--------Directional light-------------------------------------------------------------------------
+	testArray[0] = 0.0;		//dir x
+	testArray[1] = -1.0;	//dir y
+	testArray[2] = -1.0;	//dir z
+	
+	testArray[3] = 0.2;		//int x
+	testArray[4] = 0.8;		//int y
+	testArray[5] = 0.8;		//int z
+	
+	testArray[6] = 0.9;		//col x
+	testArray[7] = 0.7;		//col y
+	testArray[8] = 0.7;		//col z
+
+	glGenBuffers(1, &m_dirLightBuffer);
+
+	if (m_dirLightBuffer < 0)
+		return false;
+
+	BufferDirectionalLight(&testArray[0]);
+
 	return true;
 }
 
@@ -541,6 +563,19 @@ void GraphicDevice::BufferPointlights(int _nrOfLights, float **_lightPointers)
 	m_vramUsage += m_nrOfLights*10*sizeof(float);
 
 	delete pointlight_data;
+}
+
+void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
+{
+	float *light_data = new float[9];
+	memcpy(&light_data[0], _lightPointer, 9 * sizeof(float));
+
+	m_compDeferredPass2Shader.UseProgram();
+
+	glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer, 0, 9 * sizeof(float));
+	glBufferData(GL_SHADER_STORAGE_BUFFER, 9 * sizeof(float), light_data, GL_STATIC_DRAW);
+
+	delete light_data;
 }
 
 bool GraphicDevice::InitTextRenderer()

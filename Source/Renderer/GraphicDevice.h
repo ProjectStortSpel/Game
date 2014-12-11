@@ -111,6 +111,7 @@ namespace Renderer
 
 		void SetDebugTexFlag(int _flag) { m_debugTexFlag = _flag; }
 		void BufferPointlights(int _nrOfLights, float **_lightPointers);
+		void BufferDirectionalLight(float *_lightPointer);
 		
 		void Clear();
 
@@ -122,7 +123,7 @@ namespace Renderer
 		bool InitShaders();
 		bool InitBuffers();
 		bool InitTextRenderer();
-		bool InitLightBuffer();
+		bool InitLightBuffers();
 
 		void CreateGBufTex(GLenum texUnit, GLenum format, GLuint &texid);
 		void CreateDepthTex(GLuint &texid);
@@ -167,7 +168,7 @@ namespace Renderer
 		std::vector<Model> m_modelsDeferred, m_modelsForward;
 
 		// Pointlights buffer
-		GLuint m_pointlightBuffer;
+		GLuint m_pointlightBuffer, m_dirLightBuffer;
 
 		// DEBUG variables ----
 		int m_debugTexFlag; // 0=standard, 1=diffuse, 2=normal, 3=specular+shine, 4=glow
