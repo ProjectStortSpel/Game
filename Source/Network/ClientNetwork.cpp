@@ -10,7 +10,7 @@ using namespace Network;
 ClientNetwork::ClientNetwork()
 	: BaseNetwork()
 {
-	m_outgoingPort = new int(5357);
+	m_outgoingPort = new int(6112);
 	m_remoteAddress = new std::string("127.0.0.1");
 	m_socketBound = new bool(false);
 
@@ -145,7 +145,7 @@ bool ClientNetwork::Connect()
 	{
 		if (*m_onFailedToConnect)
 		{
-			(*m_onFailedToConnect)(NetConnection(m_remoteAddress->c_str(), *m_outgoingPort));
+			(*m_onFailedToConnect)(NetConnection(m_remoteAddress->c_str(), *m_outgoingPort), 0);
 		}
 		return false;
 	}
@@ -178,13 +178,20 @@ void ClientNetwork::Disconnect()
 	if (m_receivePacketsThread->joinable())	
 		m_receivePacketsThread->join();
 
-	SAFE_DELETE(m_socket);
+	if (m_socket)
+	{
+		if (*m_onDisconnectedFromServer)
+			(*m_onDisconnectedFromServer)(m_socket->GetNetConnection(),0);
+
+		delete m_socket;
+		m_socket = 0;
+	}
 	*m_socketBound = 0;
 
 	if (NET_DEBUG)
 		printf("Client disconnected/shutdown.\n");
 
-	m_connected = false;
+	*m_connected = false;
 }
 
 void ClientNetwork::ReceivePackets()
@@ -297,7 +304,7 @@ void ClientNetwork::NetPasswordInvalid(PacketHandler* _packetHandler, uint64_t _
 	*m_socketBound = 0;
 
 	if (*m_onPasswordInvalid)
-		(*m_onPasswordInvalid)(_connection);
+		(*m_onPasswordInvalid)(_connection, 0);
 
 }
 
@@ -307,7 +314,7 @@ void ClientNetwork::NetConnectionAccepted(PacketHandler* _packetHandler, uint64_
 		printf("Password accepted, connection accepted.\n");
 
 	if (*m_onConnectedToServer)
-		(*m_onConnectedToServer)(_connection);
+		(*m_onConnectedToServer)(_connection, 0);
 }
 
 void ClientNetwork::NetConnectionServerFull(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
@@ -322,7 +329,7 @@ void ClientNetwork::NetConnectionServerFull(PacketHandler* _packetHandler, uint6
 	*m_socketBound = 0;
 
 	if (*m_onServerFull)
-		(*m_onServerFull)(_connection);
+		(*m_onServerFull)(_connection, 0);
 
 	if (m_receivePacketsThread->joinable())
 		m_receivePacketsThread->join();
@@ -340,7 +347,7 @@ void ClientNetwork::NetConnectionLost(NetConnection _connection)
 	*m_socketBound = 0;
 
 	if (*m_onTimedOutFromServer)
-		(*m_onTimedOutFromServer)(_connection);
+		(*m_onTimedOutFromServer)(_connection, 0);
 
 	if (m_receivePacketsThread->joinable())
 		m_receivePacketsThread->join();
@@ -358,7 +365,7 @@ void ClientNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uin
 	*m_socketBound = 0;
 
 	if (*m_onDisconnectedFromServer)
-		(*m_onDisconnectedFromServer)(_connection);
+		(*m_onDisconnectedFromServer)(_connection, 0);
 
 	if (m_receivePacketsThread->joinable())
 		m_receivePacketsThread->join();
@@ -370,6 +377,8 @@ void ClientNetwork::NetConnectionKicked(PacketHandler* _packetHandler, uint64_t 
 	if (NET_DEBUG)
 		printf("Disconnected. You were kicked.\n");
 
+	char* message = _packetHandler->ReadString(_id);
+
 	//Disconnect();
 	*m_receivePacketsThreadAlive = false;
 
@@ -377,7 +386,7 @@ void ClientNetwork::NetConnectionKicked(PacketHandler* _packetHandler, uint64_t 
 	*m_socketBound = 0;
 
 	if (*m_onKickedFromServer)
-		(*m_onKickedFromServer)(_connection);
+		(*m_onKickedFromServer)(_connection, message);
 
 	if (m_receivePacketsThread->joinable())
 		m_receivePacketsThread->join();
@@ -388,6 +397,8 @@ void ClientNetwork::NetConnectionBanned(PacketHandler* _packetHandler, uint64_t 
 	if (NET_DEBUG)
 		printf("Disconnected. You were banned.\n");
 
+	char* message = _packetHandler->ReadString(_id);
+
 	//Disconnect();
 	*m_receivePacketsThreadAlive = false;
 
@@ -395,7 +406,7 @@ void ClientNetwork::NetConnectionBanned(PacketHandler* _packetHandler, uint64_t 
 	*m_socketBound = 0;
 
 	if (*m_onBannedFromServer)
-		(*m_onBannedFromServer)(_connection);
+		(*m_onBannedFromServer)(_connection, message);
 
 	if (m_receivePacketsThread->joinable())
 		m_receivePacketsThread->join();
@@ -424,54 +435,55 @@ void ClientNetwork::NetPong(PacketHandler* _packetHandler, uint64_t _id, NetConn
 
 void ClientNetwork::NetRemoteConnectionAccepted(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
-	std::string name = _packetHandler->ReadString(_id);
+	char* name = _packetHandler->ReadString(_id);
 	if (NET_DEBUG)
-		printf("%s connected to the server.\n", name.c_str());
+		printf("%s connected to the server.\n", name);
 
 	if (*m_onRemotePlayerConnected)
-		(*m_onRemotePlayerConnected)(_connection);
+		(*m_onRemotePlayerConnected)(_connection, name);
 }
 
 void ClientNetwork::NetRemoteConnectionLost(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
-	std::string name = _packetHandler->ReadString(_id);
+	char* name = _packetHandler->ReadString(_id);
 	if (NET_DEBUG)
-		printf("%s timed out to the server.\n", name.c_str());
+		printf("%s timed out to the server.\n", name);
 
 	if (*m_onRemotePlayerTimedOut)
-		(*m_onRemotePlayerTimedOut)(_connection);
+		(*m_onRemotePlayerTimedOut)(_connection, name);
 }
 
 void ClientNetwork::NetRemoteConnectionDisconnected(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
-	std::string name = _packetHandler->ReadString(_id);
+	char* name = _packetHandler->ReadString(_id);
 	if (NET_DEBUG)
-		printf("%s disconnected from the server.\n", name.c_str());
+		printf("%s disconnected from the server.\n", name);
 
 	if (*m_onRemotePlayerDisconnected)
-		(*m_onRemotePlayerDisconnected)(_connection);
+		(*m_onRemotePlayerDisconnected)(_connection, name);
 }
 
 void ClientNetwork::NetRemoteConnectionKicked(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
-	std::string name = _packetHandler->ReadString(_id);
+	char* name = _packetHandler->ReadString(_id);
+
 	if (NET_DEBUG)
-		printf("%s was kicked from the server.\n", name.c_str());
+		printf("%s was kicked from the server.\n", name);
 
 	if (*m_onRemotePlayerKicked)
-		(*m_onRemotePlayerKicked)(_connection);
+		(*m_onRemotePlayerKicked)(_connection, name);
 }
 
 void ClientNetwork::NetRemoteConnectionBanned(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
 {
-	std::string name = _packetHandler->ReadString(_id);
+	char* name = _packetHandler->ReadString(_id);
+
 	if (NET_DEBUG)
-		printf("%s was banned from the server.\n", name.c_str());
+		printf("%s was banned from the server.\n", name);
 
 	if (*m_onRemotePlayerBanned)
-		(*m_onRemotePlayerBanned)(_connection);
+		(*m_onRemotePlayerBanned)(_connection, name);
 }
-
 
 
 void ClientNetwork::SetOnConnectedToServer(NetEvent _function)

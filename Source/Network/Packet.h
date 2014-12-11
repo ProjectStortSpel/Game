@@ -24,7 +24,7 @@ namespace Network
 
 		bool operator==(const NetConnection &other) const
 		{
-			if (this->Port == other.Port
+			if (*this->Port == *other.Port
 				&& IpAddress->compare(*other.IpAddress) == 0)
 				return true;
 			return false;

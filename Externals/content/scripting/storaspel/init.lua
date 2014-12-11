@@ -6,6 +6,7 @@ require "tilecomponents"
 -- Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
 require "movementsystem"
+require "networkmessagessystem"
 require "mapcreationsystem"
 require "TestSystem"
 
@@ -16,8 +17,8 @@ require "tile"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(MovementSystem)
+worldCreator:AddSystemToCurrentGroup(networkMessagesSystem)
 worldCreator:AddSystemToCurrentGroup(MapCreationSystem)
-
 worldCreator:AddSystemToCurrentGroup(ForwardSystem)
 worldCreator:AddSystemToCurrentGroup(BackwardSystem)
 worldCreator:AddSystemToCurrentGroup(RightTurnSystem)
