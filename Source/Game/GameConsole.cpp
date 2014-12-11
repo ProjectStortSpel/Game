@@ -125,9 +125,6 @@ void GameConsole::ListCommands(std::vector<Console::Argument>* _args)
 	m_consoleManager->AddMessage("Command           -   Arg1, Arg2, Arg3, ...");
 	m_consoleManager->AddMessage("CreateObject      -   Model, Path, X, Y, Z");
 	m_consoleManager->AddMessage("RemoveObject      -   Id");
-	m_consoleManager->AddMessage("ChangeTexture     -   Id, Path");
-	m_consoleManager->AddMessage("ChangeNormal      -   Id, Path");
-	m_consoleManager->AddMessage("ChangeSpecular    -   Id, Path");
 	m_consoleManager->AddMessage("AddComponent      -   Id, ComponentType");
 	m_consoleManager->AddMessage("ChangeComponent   -   Id, ComponentType, X, Y, Z, ...");
 	m_consoleManager->AddMessage("RemoveComponent   -   Id, ComponentType");
@@ -269,40 +266,6 @@ void GameConsole::SetDebugTexture(std::vector<Console::Argument>* _args)
 	}
 }
 
-void GameConsole::SetObjectTexture(std::vector<Console::Argument>* _args)
-{
-	if (_args->size() != 2)
-		return;
-	if ((*_args)[0].ArgType != Console::ArgumentType::Number)
-		return;
-	if ((*_args)[1].ArgType != Console::ArgumentType::Text)
-		return;
-	if (!m_graphics->ChangeModelTexture((*_args)[0].Number, (*_args)[1].Text, 0))
-		m_consoleManager->AddMessage("Unable to find ModelID");
-}
-void GameConsole::SetObjectNormal(std::vector<Console::Argument>* _args)
-{
-	if (_args->size() != 2)
-		return;
-	if ((*_args)[0].ArgType != Console::ArgumentType::Number)
-		return;
-	if ((*_args)[1].ArgType != Console::ArgumentType::Text)
-		return;
-	if (!m_graphics->ChangeModelTexture(_args->at(0).Number, _args->at(1).Text, 1))
-		m_consoleManager->AddMessage("Unable to find ModelID");
-}
-void GameConsole::SetObjectSpecular(std::vector<Console::Argument>* _args)
-{
-	if (_args->size() != 2)
-		return;
-	if ((*_args)[0].ArgType != Console::ArgumentType::Number)
-		return;
-	if ((*_args)[1].ArgType != Console::ArgumentType::Text)
-		return;
-	if (!m_graphics->ChangeModelTexture(_args->at(0).Number, _args->at(1).Text, 2))
-		m_consoleManager->AddMessage("Unable to find ModelID");
-}
-
 void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 {
 	m_consoleManager = _consoleManager;
@@ -318,11 +281,6 @@ void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 	m_consoleManager->AddCommand("List", std::bind(&GameConsole::ListCommands, this, std::placeholders::_1));
 
 	m_consoleManager->AddCommand("DebugRender", std::bind(&GameConsole::SetDebugTexture, this, std::placeholders::_1));
-
-	m_consoleManager->AddCommand("ChangeTexture", std::bind(&GameConsole::SetObjectTexture, this, std::placeholders::_1));
-	m_consoleManager->AddCommand("ChangeNormal", std::bind(&GameConsole::SetObjectNormal, this, std::placeholders::_1));
-	m_consoleManager->AddCommand("ChangeSpecular", std::bind(&GameConsole::SetObjectSpecular, this, std::placeholders::_1));
-
 
 	NetworkInstance::GetClient()->AddNetworkHook("Entity", std::bind(&NetworkHelper::ReceiveEntity, NetworkInstance::GetNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	NetworkInstance::GetClient()->AddNetworkHook("EntityKill", std::bind(&NetworkHelper::ReceiveEntityKill, NetworkInstance::GetNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
