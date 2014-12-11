@@ -10,7 +10,7 @@ package.path = package.path .. ";../../../Externals/content/scripting/storaspel/
 require "movementsystem"
 require "networkmessagessystem"
 require "mapcreationsystem"
-require "testsystem"
+require "moveplayersystem"
 
 -- Templates
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/templates/?.lua"
