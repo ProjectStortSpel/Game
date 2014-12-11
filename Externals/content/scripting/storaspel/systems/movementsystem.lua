@@ -2,7 +2,7 @@ MovementSystem = System()
 
 MovementSystem.Update = function(self, dt)
 
-	local entities = self:GetEntities()
+	local entities = self:GetEntities() 
 	for i = 1, #entities do
 		local entity = entities[i]
 

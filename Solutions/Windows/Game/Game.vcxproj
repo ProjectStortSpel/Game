@@ -266,8 +266,6 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <None Include="..\..\..\Externals\content\scripting\storaspel\init.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\mapcreationsystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\movementsystem.lua" />
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\TestSystem.lua" />
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\tilemovementsystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\templates\box.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\templates\tile.lua" />
   </ItemGroup>

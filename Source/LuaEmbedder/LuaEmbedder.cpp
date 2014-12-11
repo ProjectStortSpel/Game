@@ -115,7 +115,7 @@ namespace LuaEmbedder
       int functionIndex = (int)Functions.size();
       Functions.push_back(functionPointer);
       
-      lua_pushstring(L, name.c_str());
+      lua_pushstring(L, name.c_str()); 
       lua_pushinteger(L, functionIndex);
       lua_pushcclosure(L, FunctionDispatch, 1);
       lua_settable(L, -3);
