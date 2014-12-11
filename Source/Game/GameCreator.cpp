@@ -201,7 +201,7 @@ void GameCreator::UpdateConsole()
 		}
 	}
 
-	// MOVE ?!
+	// History, arrows up/down
 	if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_UP) == Input::InputState::PRESSED)
 	{
 
@@ -217,6 +217,11 @@ void GameCreator::UpdateConsole()
 			m_input->GetKeyboard()->SetTextInput(next);
 	}
 
+
+	if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_PAGEUP) == Input::InputState::PRESSED)
+		m_consoleManager.ScrollUp();
+	else if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_PAGEDOWN) == Input::InputState::PRESSED)
+		m_consoleManager.ScrollDown();
 
 
 	if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_TAB) == Input::InputState::PRESSED)
@@ -234,16 +239,16 @@ void GameCreator::RenderConsole()
 		return;
 
 	std::string command = m_consoleInput.GetText();
-	m_graphics->RenderSimpleText("Console:", 0, 10);
-	m_graphics->RenderSimpleText(command, 9, 10);
-	m_graphics->RenderSimpleText("_", 9 + command.length(), 10);
+	m_graphics->RenderSimpleText("Console:", 0, 30);
+	m_graphics->RenderSimpleText(command, 9, 30);
+	m_graphics->RenderSimpleText("_", 9 + command.length(), 30);
 
 	auto history = m_consoleManager.GetHistory();
 	for (int i = 0; i < history.size(); ++i)
-		m_graphics->RenderSimpleText(history[i], 0, 10 - history.size() + i);
+		m_graphics->RenderSimpleText(history[i], 0, 30 - history.size() + i);
 
 	auto match = m_consoleManager.GetFunctionMatch(command.c_str());
-	m_graphics->RenderSimpleText(match, 9, 11);
+	m_graphics->RenderSimpleText(match, 9, 31);
 }
 
 void GameCreator::PollSDLEvent()
