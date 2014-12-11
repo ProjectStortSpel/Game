@@ -16,51 +16,63 @@ networkMessagesSystem.OnEntityRemoved = function(self, entityId)
 end
 
 networkMessagesSystem.OnBannedFromServer = function(self, _ip, _port, _message)
-	print("[Client] Banned from server " .. _ip .. ":" .. _port)
+	local s = "[Client] You was banned from the server " .. _ip .. ":" .. _port .. ". Reason: " .. _message
+	Console.Print(s)
 end
 networkMessagesSystem.OnConnectedToServer = function(self, _ip, _port)
-	print("[Client] Connected to server " .. _ip .. ":" .. _port)
+	local s = "[Client] Connected to server " .. _ip .. ":" .. _port
+	Console.Print(s)
 end
 networkMessagesSystem.OnDisconnectedFromServer = function(self, _ip, _port)
-	print("[Client] Disconnected from server " .. _ip .. ":" .. _port)
+	local s = "[Client] Disconnected from server " .. _ip .. ":" .. _port
+	Console.Print(s)
 end
 networkMessagesSystem.OnFailedToConnect = function(self, _ip, _port)
-	print("[Client] Failed to connect to server " .. _ip .. ":" .. _port)
+	local s = "[Client] Failed to connect to server " .. _ip .. ":" .. _port
+	Console.Print(s)	
 end
 networkMessagesSystem.OnKickedFromServer = function(self, _ip, _port, _message)
-	print("[Client] Kicked from server " .. _ip .. ":" .. _port)
+	local s = "[Client] Kicked from server " .. _ip .. ":" .. _port .. ". Reason: " .. _message
+	Console.Print(s)	
 end
 networkMessagesSystem.OnPasswordInvalid = function(self, _ip, _port)
-	print("[Client] Invalid password to server " .. _ip .. ":" .. _port)
+	local s = "[Client] Invalid password to server " .. _ip .. ":" .. _port
+	Console.Print(s)	
 end
-networkMessagesSystem.OnRemotePlayerBanned = function(self, _ip, _port, _message)
+networkMessagesSystem.OnRemotePlayerBanned = function(self, _message)
+	local s = "[Client] Remote player " .. _message .. " was banned from the server"
+	Console.Print(s)
+end
+networkMessagesSystem.OnRemotePlayerConnected = function(self, _message)
 	local s = "[Client] Remote player " .. _message .. " connected"
 	Console.Print(s)
 end
-networkMessagesSystem.OnRemotePlayerConnected = function(self, _ip, _port, _message)
-	local s = "[Client] Remote player " .. _message .. " connected"
+networkMessagesSystem.OnRemotePlayerDisconnected = function(self, _message)
+	local s = "[Client] Remote player " .. _message .. " disconnected"
 	Console.Print(s)
-	--print(_message)
 end
-networkMessagesSystem.OnRemotePlayerDisconnected = function(self, _ip, _port, _message)
-	print("[Client] Remote player disconnected")
-end
-networkMessagesSystem.OnRemotePlayerKicked = function(self, _ip, _port, _message)
-	print("[Client] Remote player kicked")
+networkMessagesSystem.OnRemotePlayerKicked = function(self, _message)
+	local s = "[Client] Remote player " .. _message .. " was kicked from the server"
+	Console.Print(s)
 end
 networkMessagesSystem.OnServerFull = function(self, _ip, _port)
-	print("[Client] Server full")
+	local s = "[Client] Failed to connect to server " .. _ip .. ":" .. _port .. ". Server full"
+	Console.Print(s)	
 end
 networkMessagesSystem.OnTimedOutFromServer = function(self, _ip, _port)
-	print("[Client] Timed out from server")
+	local s = "[Client] Timed out from server " .. _ip .. ":" .. _port
+	Console.Print(s)	
 end
 
 networkMessagesSystem.OnPlayerConnected = function(self, _ip, _port)
-	print("[Server] Client " .. _ip .. ":" .. _port .. " connected to server")
+	local s = "[Server] Client " .. _ip .. ":" .. _port .. " connected to server"
+	Console.Print(s)
 end
 networkMessagesSystem.OnPlayerDisconnected = function(self, _ip, _port)
-	print("[Server] Client " .. _ip .. ":" .. _port .. " disconnected from server")
+local s = "[Server] Client " .. _ip .. ":" .. _port .. " disconnected from server"
+	Console.Print(s)
 end
 networkMessagesSystem.OnPlayerTimedOut = function(self, _ip, _port)
-	print("[Server] Client " .. _ip .. ":" .. _port .. " timed out from server")
+local s = "[Server] Client " .. _ip .. ":" .. _port .. " timed out from the server"
+	Console.Print(s)
 end

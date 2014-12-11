@@ -18,6 +18,7 @@ void GameConsole::CreateObject(std::vector<Console::Argument>* _args)
 	std::string _template = _args->at(0).Text;
 	_template[0] = toupper(_template[0]);
 	unsigned int mId = m_world->CreateNewEntity(_template);
+	m_world->CreateComponentAndAddTo("SyncNetwork", mId);
 
 	std::stringstream ss;
 	ss << "Entity with id #" << mId << " has been created!";
@@ -60,11 +61,28 @@ void GameConsole::RemoveObject(std::vector<Console::Argument>* _args)
 
 void GameConsole::AddComponent(std::vector<Console::Argument>* _args)
 {
-	unsigned int mId = (unsigned int)_args->at(0).Number;
+	/*	Is the command valid in syntax?	*/
+	if (_args->size() < 2)
+		return;
+	if (_args->at(0).ArgType != Console::ArgumentType::Number)
+		return;
+	if (_args->at(1).ArgType != Console::ArgumentType::Text)
+		return;
 
+	/*	Get component type	*/
 	std::string componentType = _args->at(1).Text;
 	componentType[0] = toupper(componentType[0]);
 
+	if (!ECSL::ComponentTypeManager::GetInstance().ComponentExists(componentType))
+	{
+		std::stringstream ss;
+		ss << "Component " <<_args->at(1).Text << " was not found!";
+		m_consoleManager->AddMessage(ss.str().c_str());
+		return;
+	}
+		
+
+	unsigned int mId = (unsigned int)_args->at(0).Number;
 	m_world->CreateComponentAndAddTo(componentType, mId);
 
 	std::stringstream ss;
@@ -104,19 +122,17 @@ void GameConsole::RemoveComponent(std::vector<Console::Argument>* _args)
 
 void GameConsole::ListCommands(std::vector<Console::Argument>* _args)
 {
-	m_consoleManager->AddMessage("CreateObject - Model, Path, X, Y, Z");
-	m_consoleManager->AddMessage("RemoveObject - Id");
-	m_consoleManager->AddMessage("AddComponent - Id, ComponentType");
-	m_consoleManager->AddMessage("ChangeComponent - Id, ComponentType, X, Y, Z, ...");
-	m_consoleManager->AddMessage("RemoveComponent - Id, ComponentType");
-	m_consoleManager->AddMessage("Host - Port, Password, MaxConnections");
-	m_consoleManager->AddMessage("Stop");
-	m_consoleManager->AddMessage("Connect - Ip-address, Port, Password");
+	m_consoleManager->AddMessage("Command           -   Arg1, Arg2, Arg3, ...");
+	m_consoleManager->AddMessage("CreateObject      -   Model, Path, X, Y, Z");
+	m_consoleManager->AddMessage("RemoveObject      -   Id");
+	m_consoleManager->AddMessage("AddComponent      -   Id, ComponentType");
+	m_consoleManager->AddMessage("ChangeComponent   -   Id, ComponentType, X, Y, Z, ...");
+	m_consoleManager->AddMessage("RemoveComponent   -   Id, ComponentType");
+	m_consoleManager->AddMessage("Host              -   Port, Password, MaxConnections");
+	m_consoleManager->AddMessage("Connect           -   Ip-address, Port, Password");
+	m_consoleManager->AddMessage("DebugRender       -   RenderType");
 	m_consoleManager->AddMessage("Disconnect");
-
-	char* name = m_world->GetComponent(0, "Name", "Username");
-
-	m_consoleManager->AddMessage(name);
+	m_consoleManager->AddMessage("Stop");
 }
 
 void GameConsole::HostServer(std::vector<Console::Argument>* _args)
@@ -263,8 +279,8 @@ void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 	m_consoleManager->AddCommand("Connect", std::bind(&GameConsole::ConnectClient, this, std::placeholders::_1));
 	m_consoleManager->AddCommand("Disconnect", std::bind(&GameConsole::DisconnectClient, this, std::placeholders::_1));
 	m_consoleManager->AddCommand("List", std::bind(&GameConsole::ListCommands, this, std::placeholders::_1));
-	m_consoleManager->AddCommand("DebugRender", std::bind(&GameConsole::SetDebugTexture, this, std::placeholders::_1));
 
+	m_consoleManager->AddCommand("DebugRender", std::bind(&GameConsole::SetDebugTexture, this, std::placeholders::_1));
 	NetworkInstance::GetClient()->AddNetworkHook("Entity", std::bind(&NetworkHelper::ReceiveEntity, NetworkInstance::GetNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	NetworkInstance::GetClient()->AddNetworkHook("EntityKill", std::bind(&NetworkHelper::ReceiveEntityKill, NetworkInstance::GetNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 }

@@ -171,31 +171,23 @@ namespace LuaBridge
 	}
 	void LuaSystem::OnRemotePlayerBanned(Network::NetConnection _nc, const char* _message)
 	{
-		LuaEmbedder::PushString(_nc.GetIpAddress());
-		LuaEmbedder::PushInt((int)_nc.GetPort());
 		LuaEmbedder::PushString(_message);
-		LuaEmbedder::CallMethod<LuaSystem>("System", "OnRemotePlayerBanned", this, 3);
+		LuaEmbedder::CallMethod<LuaSystem>("System", "OnRemotePlayerBanned", this, 1);
 	}
 	void LuaSystem::OnRemotePlayerConnected(Network::NetConnection _nc, const char* _message)
 	{
-		LuaEmbedder::PushString(_nc.GetIpAddress());
-		LuaEmbedder::PushInt((int)_nc.GetPort());
 		LuaEmbedder::PushString(_message);
-		LuaEmbedder::CallMethod<LuaSystem>("System", "OnRemotePlayerConnected", this, 3);
+		LuaEmbedder::CallMethod<LuaSystem>("System", "OnRemotePlayerConnected", this, 1);
 	}
 	void LuaSystem::OnRemotePlayerDisconnected(Network::NetConnection _nc, const char* _message)
 	{
-		LuaEmbedder::PushString(_nc.GetIpAddress());
-		LuaEmbedder::PushInt((int)_nc.GetPort());
 		LuaEmbedder::PushString(_message);
-		LuaEmbedder::CallMethod<LuaSystem>("System", "OnRemotePlayerDisconnected", this, 3);
+		LuaEmbedder::CallMethod<LuaSystem>("System", "OnRemotePlayerDisconnected", this, 1);
 	}
 	void LuaSystem::OnRemotePlayerKicked(Network::NetConnection _nc, const char* _message)
 	{
-		LuaEmbedder::PushString(_nc.GetIpAddress());
-		LuaEmbedder::PushInt((int)_nc.GetPort());
 		LuaEmbedder::PushString(_message);
-		LuaEmbedder::CallMethod<LuaSystem>("System", "OnRemotePlayerKicked", this, 3);
+		LuaEmbedder::CallMethod<LuaSystem>("System", "OnRemotePlayerKicked", this, 1);
 	}
 	void LuaSystem::OnServerFull(Network::NetConnection _nc, const char* _message)
 	{
