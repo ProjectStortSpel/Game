@@ -292,6 +292,7 @@ void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 	m_consoleManager->AddCommand("List", std::bind(&GameConsole::ListCommands, this, std::placeholders::_1));
 
 	m_consoleManager->AddCommand("DebugRender", std::bind(&GameConsole::SetDebugTexture, this, std::placeholders::_1));
+
 	NetworkInstance::GetClient()->AddNetworkHook("Entity", std::bind(&NetworkHelper::ReceiveEntity, NetworkInstance::GetNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	NetworkInstance::GetClient()->AddNetworkHook("EntityKill", std::bind(&NetworkHelper::ReceiveEntityKill, NetworkInstance::GetNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 }

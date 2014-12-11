@@ -2,7 +2,7 @@
 ---------------------------- TestMovementSystem
 
 TestMovementSystem = System()
-TestMovementSystem.entities = { }
+TestMovementSystem.currentPlayer = 1
 
 TestMovementSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
@@ -17,24 +17,80 @@ end
 TestMovementSystem.Update = function(self, dt)
 	
 	local entities = self:GetEntities()
+	--Console.Print(#entities)
 	
-	if Input.GetKeyState(Key.Up) == InputState.Pressed then
-		world:CreateComponentAndAddTo("Forward", entities[1])
-	elseif Input.GetKeyState(Key.Down) == InputState.Pressed then
-		world:CreateComponentAndAddTo("Backward", entities[1])
-	elseif Input.GetKeyState(Key.Left) == InputState.Pressed then
-		world:CreateComponentAndAddTo("TurnLeft", entities[1])
-	elseif Input.GetKeyState(Key.Right) == InputState.Pressed then
-		world:CreateComponentAndAddTo("TurnRight", entities[1])
-	elseif Input.GetKeyState(Key.T) == InputState.Pressed then
-		world:CreateComponentAndAddTo("TurnAround", entities[1])
+	if self.currentPlayer <= #entities then
+	
+		local switchplayer = false
+		if Input.GetKeyState(Key.Up) == InputState.Pressed then
+			world:CreateComponentAndAddTo("Forward", entities[self.currentPlayer])
+			switchplayer = true
+		elseif Input.GetKeyState(Key.Down) == InputState.Pressed then
+			world:CreateComponentAndAddTo("Backward", entities[self.currentPlayer])
+			switchplayer = true
+		elseif Input.GetKeyState(Key.Left) == InputState.Pressed then
+			world:CreateComponentAndAddTo("TurnLeft", entities[self.currentPlayer])
+			switchplayer = true
+		elseif Input.GetKeyState(Key.Right) == InputState.Pressed then
+			world:CreateComponentAndAddTo("TurnRight", entities[self.currentPlayer])
+			switchplayer = true
+		elseif Input.GetKeyState(Key.T) == InputState.Pressed then
+			world:CreateComponentAndAddTo("TurnAround", entities[self.currentPlayer])
+			switchplayer = true
+		elseif Input.GetKeyState(Key.Space) == InputState.Pressed then
+			local comp = self:GetComponent(entities[self.currentPlayer], "Spawn", 0)
+			local newPosX, newPosY, newPosZ = comp:GetFloat3()
+			local posComp = self:GetComponent(entities[self.currentPlayer], "Position", 0)
+			posComp:SetFloat3(newPosX, newPosY, newPosZ)
+			switchplayer = true
+			
+		end
 		
+		if switchplayer == true then
+			Console.Print(self.currentPlayer)
+			self.currentPlayer = self.currentPlayer + 1
+			--self.currentPlayer = 1
+		end
+	else
+		self.currentPlayer = 1
 	end
+	
+	
 end
 
 TestMovementSystem.PostInitialize = function(self)
 	local entity = world:CreateNewEntity("Player")
-	table.insert(self.entities, entity)
+	world:CreateComponentAndAddTo("Spawn", entity)
+	local pos = {-3.0, 1.0, 5.0}
+    local comp = self:GetComponent(entity, "Spawn", 0)
+    comp:SetFloat3(pos[1], pos[2], pos[3])
+    local comp = self:GetComponent(entity, "Position", 0)
+    comp:SetFloat3(pos[1], pos[2], pos[3])
+	
+	local entity = world:CreateNewEntity("Player")
+	world:CreateComponentAndAddTo("Spawn", entity)
+	local pos = {-1.0, 1.0, 5.0}
+    local comp = self:GetComponent(entity, "Spawn", 0)
+	comp:SetFloat3(pos[1], pos[2], pos[3])
+    local comp = self:GetComponent(entity, "Position", 0)
+    comp:SetFloat3(pos[1], pos[2], pos[3])
+	
+	local entity = world:CreateNewEntity("Player")
+	world:CreateComponentAndAddTo("Spawn", entity)
+	local pos = {1.0, 1.0, 5.0}
+    local comp = self:GetComponent(entity, "Spawn", 0)
+    comp:SetFloat3(pos[1], pos[2], pos[3])
+    local comp = self:GetComponent(entity, "Position", 0)
+    comp:SetFloat3(pos[1], pos[2], pos[3])
+	
+	local entity = world:CreateNewEntity("Player")
+	world:CreateComponentAndAddTo("Spawn", entity)
+	local pos = {3.0, 1.0, 5.0}
+    local comp = self:GetComponent(entity, "Spawn", 0)
+    comp:SetFloat3(pos[1], pos[2], pos[3])
+    local comp = self:GetComponent(entity, "Position", 0)
+    comp:SetFloat3(pos[1], pos[2], pos[3])
+	
 end
 
 ---------------------------- ForwardSystem
@@ -46,7 +102,7 @@ ForwardSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Direction",FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Forward",FilterType.Mandatory)
 	
-	--self:AddComponentTypeToFilter("TargetPosition",FilterType.Excluded)
+	self:AddComponentTypeToFilter("TargetPosition",FilterType.Excluded)
 	print("ForwardSystem initialized!")
 end
 
