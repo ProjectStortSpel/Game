@@ -270,6 +270,42 @@ void GameConsole::SetDebugTexture(std::vector<Console::Argument>* _args)
 	}
 }
 
+void GameConsole::ToggleText(std::vector<Console::Argument>* _args)
+{
+	if (_args->size() == 0)
+	{
+		m_graphics->ToggleSimpleText();
+		return;
+	}
+
+	if (strcmp((*_args)[0].Text, "ON") == 0)
+		m_graphics->ToggleSimpleText(true);
+
+	else if (strcmp((*_args)[0].Text, "OFF") == 0)
+		m_graphics->ToggleSimpleText(false);
+}
+
+void GameConsole::SetTextColor(std::vector<Console::Argument>* _args)
+{
+	if ((*_args)[0].ArgType == Console::ArgumentType::Text)
+		if (strcmp((*_args)[0].Text, "DISCO") == 0)
+			m_graphics->SetDisco();
+
+	if (_args->size() != 3)
+		return;
+
+	if ((*_args)[0].ArgType == Console::ArgumentType::Number &&
+		(*_args)[1].ArgType == Console::ArgumentType::Number &&
+		(*_args)[2].ArgType == Console::ArgumentType::Number)
+	{
+		float r, g, b;
+		r = _args->at(0).Number;
+		g = _args->at(1).Number;
+		b = _args->at(2).Number;
+		m_graphics->SetSimpleTextColor(r, g, b, 1);
+	}
+}
+
 void GameConsole::AddPointlight(std::vector<Console::Argument>* _args)
 {
 	if (_args->size() < 4)
@@ -312,6 +348,8 @@ void GameConsole::ListCommands(std::vector<Console::Argument>* _args)
 	m_consoleManager->AddMessage("RemoveComponent   -   Id, ComponentType");
 	m_consoleManager->AddMessage("Host              -   Port, Password, MaxConnections");
 	m_consoleManager->AddMessage("Connect           -   Ip-address, Port, Password");
+	m_consoleManager->AddMessage("ToggleText        -   ON/OFF");
+	m_consoleManager->AddMessage("TextColor         -   R G B");
 	m_consoleManager->AddMessage("DebugRender       -   RenderType");
 	m_consoleManager->AddMessage("Disconnect");
 	m_consoleManager->AddMessage("Stop");
@@ -330,6 +368,9 @@ void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 	m_consoleManager->AddCommand("Connect", std::bind(&GameConsole::ConnectClient, this, std::placeholders::_1));
 	m_consoleManager->AddCommand("Disconnect", std::bind(&GameConsole::DisconnectClient, this, std::placeholders::_1));
 	m_consoleManager->AddCommand("List", std::bind(&GameConsole::ListCommands, this, std::placeholders::_1));
+
+	m_consoleManager->AddCommand("ToggleText", std::bind(&GameConsole::ToggleText, this, std::placeholders::_1));
+	m_consoleManager->AddCommand("TextColor", std::bind(&GameConsole::SetTextColor, this, std::placeholders::_1));
 
 	m_consoleManager->AddCommand("DebugRender", std::bind(&GameConsole::SetDebugTexture, this, std::placeholders::_1));
 	m_consoleManager->AddCommand("AddPointlight", std::bind(&GameConsole::AddPointlight, this, std::placeholders::_1));
