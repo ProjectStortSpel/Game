@@ -13,21 +13,21 @@ PointlightSystem::~PointlightSystem()
 
 void PointlightSystem::Initialize()
 {
-	SetSystemName("PointLight System");
+	SetSystemName("Pointlight System");
 
 	/*	Rendersystem wants Position, Scale, Rotation and Render	*/
-	AddComponentTypeToFilter("PointLight", ECSL::FilterType::Mandatory);
+	AddComponentTypeToFilter("Pointlight", ECSL::FilterType::Mandatory);
 
 
 	std::vector<unsigned int> bitsetComponents;
-	bitsetComponents.push_back(ECSL::ComponentTypeManager::GetInstance().GetTableId("PointLight"));
+	bitsetComponents.push_back(ECSL::ComponentTypeManager::GetInstance().GetTableId("Pointlight"));
 
 	m_bitMask = ECSL::BitSet::BitSetConverter::ArrayToBitSet(bitsetComponents, ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount());
 	m_numberOfBitSets = ECSL::BitSet::GetIntCount(ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount());
 	m_changedComponentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("ChangedComponents");
-	m_pointLightId = ECSL::ComponentTypeManager::GetInstance().GetTableId("PointLight");
+	m_pointLightId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Pointlight");
 
-	printf("RenderSystem initialized!\n");
+	printf("Pointlight initialized!\n");
 }
 
 void PointlightSystem::Update(float _dt)
