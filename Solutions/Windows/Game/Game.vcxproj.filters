@@ -77,9 +77,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Source\Game\Timer.cpp">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\LuaBridge.cpp">
       <Filter>Lua Bridge</Filter>
     </ClCompile>
@@ -152,9 +149,6 @@
     <ClCompile Include="..\..\..\Source\Game\Systems\ModelSystem.cpp">
       <Filter>Game\Systems\Model</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\Game\Systems\ReceivePacketSystem.cpp">
-      <Filter>Game\Systems\ReceivePacket</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Systems\RenderSystem.cpp">
       <Filter>Game\Systems\Render</Filter>
     </ClCompile>
@@ -173,11 +167,11 @@
     <ClCompile Include="..\..\..\Source\Game\FrameCounter\FrameCounter.cpp">
       <Filter>Game\FrameCounter</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\Network\LuaNetwork.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Source\Game\Timer.h">
-      <Filter>Resource Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h">
       <Filter>Lua Bridge</Filter>
     </ClInclude>
@@ -246,9 +240,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\ModelSystem.h">
       <Filter>Game\Systems\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Source\Game\Systems\ReceivePacketSystem.h">
-      <Filter>Game\Systems\ReceivePacket</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\RenderSystem.h">
       <Filter>Game\Systems\Render</Filter>

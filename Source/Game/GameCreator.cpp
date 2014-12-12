@@ -1,5 +1,4 @@
 #include "GameCreator.h"
-#include "Timer.h"
 #include "Systems/MovementSystem.h"
 #include "Systems/RenderSystem.h"
 #include "Systems/CameraSystem.h"
@@ -43,6 +42,7 @@ GameCreator::~GameCreator()
 
 	delete(&ECSL::ComponentTypeManager::GetInstance());
 	delete(&ECSL::EntityTemplateManager::GetInstance());
+	delete(&Utility::FrameCounter::GetInstance());
 }
 
 void GameCreator::InitializeGraphics()
