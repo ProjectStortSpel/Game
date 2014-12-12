@@ -25,9 +25,9 @@ TestMovementSystem.Update = function(self, dt)
 	
 		local switchplayer = false
 		if Input.GetKeyState(Key.Up) == InputState.Pressed then
-			print("pre-forward")
+			--print("pre-forward")
 			world:CreateComponentAndAddTo("Forward", entities[self.currentPlayer])
-			print("added forward-component")
+			--print("added forward-component")
 			switchplayer = true
 		elseif Input.GetKeyState(Key.Down) == InputState.Pressed then
 			world:CreateComponentAndAddTo("Backward", entities[self.currentPlayer])
@@ -51,7 +51,7 @@ TestMovementSystem.Update = function(self, dt)
 		end
 		
 		if switchplayer == true then
-			Console.Print(self.currentPlayer)
+			--Console.Print(self.currentPlayer)
 			self.currentPlayer = self.currentPlayer + 1
 			--self.currentPlayer = 1
 		end
@@ -105,7 +105,7 @@ ForwardSystem.OnEntityAdded = function(self, entity)
 	local mapTargetY = mapY + dy
 	
 	
-	print("created all variables in forward")
+	--print("created all variables in forward")
 	
 	-- If the tile we are trying to reach is walkable, then we go there.
 	-- TODO: En metod som får in position vi vill gå till och riktning som spelaren vill gå. Kolla om rutan är walkable och returnera sant eller falskt, om det är en spelare (spelare2) så anropar den rekursivt samma metod med en ny position som gäller, dvs spelare2s position men med samma riktning.
@@ -117,11 +117,11 @@ ForwardSystem.OnEntityAdded = function(self, entity)
 		mapPos:SetInt2(mapTargetX, mapTargetY)
 		--targetposition.SetFloat3(newtargetx, newtargety, newtargetz)
 		
-		print("set variables done")
+		--print("set variables done")
 		
 	--end
 	world:RemoveComponentFrom("Forward", entity);
-	print("removed forward-component")
+	--print("removed forward-component")
 end
 
 ---------------------------- BackwardSystem

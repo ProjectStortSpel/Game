@@ -60,10 +60,7 @@ MapCreationSystem.AddTile = function(self, posX, posZ, tiletype)
 --        world:CreateComponentAndAddTo("", entity)
 
     elseif tiletype == 120 then -- 120 = x = stone
-	
-		print("pre add stone")
-		
-        world:CreateComponentAndAddTo("NotWalkable", entity)
+		world:CreateComponentAndAddTo("NotWalkable", entity)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
 		comp:SetModel("stone", "stone")
