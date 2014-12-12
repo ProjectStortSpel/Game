@@ -20,6 +20,9 @@
     <Filter Include="Source Files\Framework\Threads">
       <UniqueIdentifier>{e69a29ae-ad09-4eb9-b21a-522d0c0a7805}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Framework\Common">
+      <UniqueIdentifier>{801dd000-6628-4809-bf49-a8334b10448e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\MPL\MPL.h">
@@ -49,6 +52,9 @@
     <ClInclude Include="..\..\..\Source\MPL\Framework\Threads\MasterThread.h">
       <Filter>Source Files\Framework\Threads</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\MPL\Framework\Common\ThreadHelper.h">
+      <Filter>Source Files\Framework\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\MPL\Framework\Tasks\Task.cpp">
@@ -74,6 +80,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Source\MPL\Framework\Threads\MasterThread.cpp">
       <Filter>Source Files\Framework\Threads</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\MPL\Framework\Common\ThreadHelper.cpp">
+      <Filter>Source Files\Framework\Common</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

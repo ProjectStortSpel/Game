@@ -16,43 +16,11 @@
 	#include <chrono>
 #endif
 
-#define SDL_THREAD_WINDOWS 0
-
 using namespace ECSL;
 
 mat4 mat[1000];
 
-#if defined(_WIN32)
 
-#include <windows.h>
-#include <tlhelp32.h>
-
-//Returns the thread count of the current process or -1 in case of failure.
-int GetCurrentThreadCount()
-{
-	// first determine the id of the current process
-	DWORD const  id = GetCurrentProcessId();
-
-	// then get a process list snapshot.
-	HANDLE const  snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPALL, 0);
-
-	// initialize the process entry structure.
-	PROCESSENTRY32 entry = { 0 };
-	entry.dwSize = sizeof(entry);
-
-	// get the first process info.
-	BOOL  ret = true;
-	ret = Process32First(snapshot, &entry);
-	while (ret && entry.th32ProcessID != id) {
-		ret = Process32Next(snapshot, &entry);
-	}
-	CloseHandle(snapshot);
-	return ret
-		? entry.cntThreads
-		: -1;
-}
-
-#endif // _WIN32
 
 class TestSystem : public ECSL::System
 {
@@ -171,8 +139,6 @@ void lol()
 
 	world->Update(0.01f);
 
-	MPL::TaskManager::GetInstance().CreateThreads();
-	MPL::TaskManager::GetInstance().WakeUp();
 	scheduler = new ECSL::ECSLScheduler();
 
 
@@ -234,10 +200,10 @@ void Start()
 	RENDERER.Init();
 
 	Input::InputWrapper* INPUT = &Input::InputWrapper::GetInstance();
-	SDL_RendererInfo abc;
-	SDL_GetRendererInfo(SDL_GetRenderer(SDL_GL_GetCurrentWindow()), &abc);
-	//auto namn = glGetString(SDL_THREAD_WINDOWS);
-	int asdgsdgbc = GetCurrentThreadCount();
+
+	MPL::TaskManager::GetInstance().CreateThreads();
+	MPL::TaskManager::GetInstance().WakeUp();
+
 	LoadAlotOfBoxes(&RENDERER);
 	mat[100] = glm::translate(vec3(0, 0, 0));
 	int modelid = RENDERER.LoadModel("content/models/cube/", "cube.object", &mat[100]); // LOADMODEL RETURNS THE MODELID
