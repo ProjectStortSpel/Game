@@ -209,6 +209,9 @@ void GraphicDevice::Render()
 	m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 	m_forwardShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
 
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
+
 	for (int i = 0; i < m_modelsForward.size(); i++)
 	{
 		std::vector<mat4> modelViewVector(m_modelsForward[i].instances.size());
@@ -528,9 +531,9 @@ bool GraphicDevice::InitLightBuffers()
 	testArray[4] = 0.8;		//int y
 	testArray[5] = 0.8;		//int z
 	
-	testArray[6] = 0.9;		//col x
-	testArray[7] = 0.7;		//col y
-	testArray[8] = 0.7;		//col z
+	testArray[6] = 0.6;		//col x
+	testArray[7] = 0.4;		//col y
+	testArray[8] = 0.6;		//col z
 
 	glGenBuffers(1, &m_dirLightBuffer);
 
@@ -556,7 +559,7 @@ void GraphicDevice::BufferPointlights(int _nrOfLights, float **_lightPointers)
 
 	int point_light_data_size = 10 * _nrOfLights * sizeof(float);
 
-	m_compDeferredPass2Shader.UseProgram();
+	//m_compDeferredPass2Shader.UseProgram();
 
 	glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer, 0, point_light_data_size);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, point_light_data_size, pointlight_data, GL_STATIC_DRAW);
@@ -570,7 +573,7 @@ void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
 	float *light_data = new float[9];
 	memcpy(&light_data[0], _lightPointer, 9 * sizeof(float));
 
-	m_compDeferredPass2Shader.UseProgram();
+	//m_compDeferredPass2Shader.UseProgram();
 
 	glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer, 0, 9 * sizeof(float));
 	glBufferData(GL_SHADER_STORAGE_BUFFER, 9 * sizeof(float), light_data, GL_STATIC_DRAW);
