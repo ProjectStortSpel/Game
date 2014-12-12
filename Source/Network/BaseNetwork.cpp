@@ -82,7 +82,7 @@ BaseNetwork::~BaseNetwork()
 
 }
 
-void BaseNetwork::AddNetworkHook(char* _name, NetMessageHook& _hook)
+void BaseNetwork::AddNetworkHook(char* _name, NetMessageHook _hook)
 {
 	(*m_userFunctions)[_name] = _hook;
 	return;

@@ -466,7 +466,7 @@ void ClientNetwork::NetRemoteConnectionBanned(PacketHandler* _packetHandler, uin
 }
 
 
-void ClientNetwork::SetOnConnectedToServer(NetEvent& _function)
+void ClientNetwork::SetOnConnectedToServer(NetEvent _function)
 {
 	if (NET_DEBUG)	
 		printf("Hooking function to OnConnectedToServer.\n");
@@ -474,7 +474,7 @@ void ClientNetwork::SetOnConnectedToServer(NetEvent& _function)
 	m_onConnectedToServer->push_back(_function);
 }
 
-void ClientNetwork::SetOnDisconnectedFromServer(NetEvent& _function)
+void ClientNetwork::SetOnDisconnectedFromServer(NetEvent _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnDisconnectedFromServer.\n");
@@ -482,7 +482,7 @@ void ClientNetwork::SetOnDisconnectedFromServer(NetEvent& _function)
 	m_onDisconnectedFromServer->push_back(_function);
 }
 
-void ClientNetwork::SetOnTimedOutFromServer(NetEvent& _function)
+void ClientNetwork::SetOnTimedOutFromServer(NetEvent _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnTimedOutFromServer.\n");
@@ -490,7 +490,7 @@ void ClientNetwork::SetOnTimedOutFromServer(NetEvent& _function)
 	m_onTimedOutFromServer->push_back(_function);
 }
 
-void ClientNetwork::SetOnFailedToConnect(NetEvent& _function)
+void ClientNetwork::SetOnFailedToConnect(NetEvent _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnFailedToConnect.\n");
@@ -498,7 +498,7 @@ void ClientNetwork::SetOnFailedToConnect(NetEvent& _function)
 	m_onFailedToConnect->push_back(_function);
 }
 
-void ClientNetwork::SetOnPasswordInvalid(NetEvent& _function)
+void ClientNetwork::SetOnPasswordInvalid(NetEvent _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnPasswordInvalid.\n");
@@ -506,7 +506,7 @@ void ClientNetwork::SetOnPasswordInvalid(NetEvent& _function)
 	m_onPasswordInvalid->push_back(_function);
 }
 
-void ClientNetwork::SetOnKickedFromServer(NetEvent& _function)
+void ClientNetwork::SetOnKickedFromServer(NetEvent _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnKickedFromServer.\n");
@@ -514,7 +514,7 @@ void ClientNetwork::SetOnKickedFromServer(NetEvent& _function)
 	m_onKickedFromServer->push_back(_function);
 }
 
-void ClientNetwork::SetOnBannedFromServer(NetEvent& _function)
+void ClientNetwork::SetOnBannedFromServer(NetEvent _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnBannedFromServer.\n");
@@ -522,7 +522,7 @@ void ClientNetwork::SetOnBannedFromServer(NetEvent& _function)
 	m_onBannedFromServer->push_back(_function);
 }
 
-void ClientNetwork::SetOnServerFull(NetEvent& _function)
+void ClientNetwork::SetOnServerFull(NetEvent _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnServerFull.\n");
@@ -530,7 +530,7 @@ void ClientNetwork::SetOnServerFull(NetEvent& _function)
 	m_onServerFull->push_back(_function);
 }
 
-void ClientNetwork::SetOnRemotePlayerConnected(NetEvent& _function)
+void ClientNetwork::SetOnRemotePlayerConnected(NetEvent _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnRemotePlayerConnected.\n");
@@ -538,7 +538,7 @@ void ClientNetwork::SetOnRemotePlayerConnected(NetEvent& _function)
 	m_onRemotePlayerConnected->push_back(_function);
 }
 
-void ClientNetwork::SetOnRemotePlayerDisconnected(NetEvent& _function)
+void ClientNetwork::SetOnRemotePlayerDisconnected(NetEvent _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnRemotePlayerDisconnected.\n");
@@ -546,7 +546,7 @@ void ClientNetwork::SetOnRemotePlayerDisconnected(NetEvent& _function)
 	m_onRemotePlayerDisconnected->push_back(_function);
 }
 
-void ClientNetwork::SetOnRemotePlayerTimedOut(NetEvent& _function)
+void ClientNetwork::SetOnRemotePlayerTimedOut(NetEvent _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnRemotePlayerTimedOut.\n");
@@ -554,7 +554,7 @@ void ClientNetwork::SetOnRemotePlayerTimedOut(NetEvent& _function)
 	m_onRemotePlayerTimedOut->push_back(_function);
 }
 
-void ClientNetwork::SetOnRemotePlayerKicked(NetEvent& _function)
+void ClientNetwork::SetOnRemotePlayerKicked(NetEvent _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnRemotePlayerKicked.\n");
@@ -562,7 +562,7 @@ void ClientNetwork::SetOnRemotePlayerKicked(NetEvent& _function)
 	m_onRemotePlayerKicked->push_back(_function);
 }
 
-void ClientNetwork::SetOnRemotePlayerBanned(NetEvent& _function)
+void ClientNetwork::SetOnRemotePlayerBanned(NetEvent _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnRemotePlayerBanned.\n");

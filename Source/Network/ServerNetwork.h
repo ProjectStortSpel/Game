@@ -33,11 +33,11 @@ namespace Network
 		void Kick(NetConnection& _connection, char* _reason);
 
 		// Bind function which will trigger when another player connects to the server
-		void SetOnPlayerConnected(NetEvent& _function);
+		void SetOnPlayerConnected(NetEvent _function);
 		// Bind function which will trigger when another player disconnects from the server
-		void SetOnPlayerDisconnected(NetEvent& _function);
+		void SetOnPlayerDisconnected(NetEvent _function);
 		// Bind function which will trigger when another player disconnects from the server
-		void SetOnPlayerTimedOut(NetEvent& _function);
+		void SetOnPlayerTimedOut(NetEvent _function);
 
 		bool IsRunning() { return *m_running; }
 		unsigned int GetMaxConnections() { return *m_maxConnections; }

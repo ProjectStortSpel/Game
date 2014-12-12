@@ -25,7 +25,6 @@ void GameCreator::NetUsername(Network::PacketHandler* _ph, uint64_t _id, Network
 	char* ipAddress = (char*)_nc.GetIpAddress();
 	unsigned int port = _nc.GetPort();
 	bool tmp = false;
-
 	unsigned int id = m_world->CreateNewEntity("User");
 
 

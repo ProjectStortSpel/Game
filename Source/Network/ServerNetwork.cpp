@@ -483,7 +483,7 @@ void ServerNetwork::UpdateTimeOut(float& _dt)
 
 }
 
-void ServerNetwork::SetOnPlayerConnected(NetEvent& _function)
+void ServerNetwork::SetOnPlayerConnected(NetEvent _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnPlayerConnected.\n");
@@ -491,7 +491,7 @@ void ServerNetwork::SetOnPlayerConnected(NetEvent& _function)
 	m_onPlayerConnected->push_back(_function);
 }
 
-void ServerNetwork::SetOnPlayerDisconnected(NetEvent& _function)
+void ServerNetwork::SetOnPlayerDisconnected(NetEvent _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnPlayerDisconnected.\n");
@@ -499,7 +499,7 @@ void ServerNetwork::SetOnPlayerDisconnected(NetEvent& _function)
 	m_onPlayerDisconnected->push_back(_function);
 }
 
-void ServerNetwork::SetOnPlayerTimedOut(NetEvent& _function)
+void ServerNetwork::SetOnPlayerTimedOut(NetEvent _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnPlayerTimedOut.\n");
