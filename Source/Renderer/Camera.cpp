@@ -2,7 +2,7 @@
 
 Camera::Camera()
 {
-	m_pos = glm::vec3( 0, 12, 0 );
+	m_pos = glm::vec3( 7, 13, 7 );
 	m_up = vec3(0, 0, -1);
 	m_right = vec3(1, 0, 0);
 	m_look = vec3(0, -1, 0);

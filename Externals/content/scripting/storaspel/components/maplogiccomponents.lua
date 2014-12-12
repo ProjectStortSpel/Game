@@ -26,13 +26,13 @@ worldCreator:AddComponentType(CheckpointComponent)
 -- Hole and Out Component
 local VoidComponent = ComponentType()
 VoidComponent.Name = "Void"
-VoidComponent.TableType = TableType.Array
+VoidComponent.TableType = TableType.Map
 worldCreator:AddComponentType(VoidComponent)
 
 -- Not Walkable Component
 local NotWalkableComponent = ComponentType()
 NotWalkableComponent.Name = "NotWalkable"
-NotWalkableComponent.TableType = TableType.Array
+NotWalkableComponent.TableType = TableType.Map
 worldCreator:AddComponentType(NotWalkableComponent)
 
 
