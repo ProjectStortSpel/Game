@@ -24,10 +24,12 @@ end
 MapCreationSystem.AddPlayers = function(self)
 	
 	for i = 3, 9, 2 do
+	--for i = 2, 4, 1 do
 		local entity = world:CreateNewEntity("Player")
 		world:CreateComponentAndAddTo("Spawn", entity)
 		world:CreateComponentAndAddTo("SyncNetwork", entity)
-		local mapPos = {i,13}
+		local mapPos = {i,12}
+		--local mapPos = {i, 6}
 		self:SetPosition(entity, mapPos[1], 1.0, mapPos[2])
 		local comp = self:GetComponent(entity, "Spawn", 0)
 		comp:SetInt2(mapPos[1], mapPos[2])

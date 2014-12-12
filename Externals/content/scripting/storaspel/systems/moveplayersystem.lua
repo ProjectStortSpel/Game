@@ -61,22 +61,24 @@ end
 
 TestMovementSystem.MoveTo = function(self, entity, posX, posY, dirX, dirY)
 	-- If the tile we are trying to reach is walkable, then we go there.
-	-- TODO: En metod som får in position vi vill gå till och riktning som spelaren vill gå. Kolla om rutan är walkable och returnera sant eller falskt, om det är en spelare (spelare2) så anropar den rekursivt samma metod med en ny position som gäller, dvs spelare2s position men med samma riktning.
 		
 	if self:TileIsWalkable(posX, posY) then
-		--if self:PlayerOnTile(posX, posY) then
+		local playerId = self:PlayerOnTile(posX, posY)
+		
+		if -1 ~= playerId then
+			local newPosX = posX + dirX
+			local newPosY = posY + dirY
+			if self:MoveTo(playerId, newPosX, newPosY, dirX, dirY) then
+				MapCreationSystem:SetPosition(entity, posX, 1.0, posY)
+				return true
+			end
+		else
 			MapCreationSystem:SetPosition(entity, posX, 1.0, posY)
-			
-			--local pos = self:GetComponent(entity, "MapPosition", 0)
-			--local mapPos = self:GetComponent(entity, "Position", 0)
-			
-			--pos:SetFloat3(posX, 1.0, posZ)
-			--mapPos:SetInt2(posX, posZ)
-			--targetposition.SetFloat3(newtargetx, newtargety, newtargetz)
-			
-			--print("set variables done")
-		--end
+			return true
+		end	
 	end
+	
+	return false
 end
 
 TestMovementSystem.PostInitialize = function(self, posX, posY)
@@ -98,16 +100,21 @@ TestMovementSystem.PlayerOnTile = function(self, posX, posY)
 	
 	local entities = self:GetEntities()
 	
-	--for i = 1, #entities do
-	--	local entity = entities[i]
-	--	local posComp = self:GetComponent(entity, "MapPosition", 0)
-	--	local posX, posY = posComp:GetInt2()
-	--	
-	--	
-	--	--position:SetFloat3(px, py, pz)
-	--end
+	for i = 1, #entities do
+		local entity = entities[i]
+		local posComp = self:GetComponent(entity, "MapPosition", 0)
+		local playerPosX, playerPosY = posComp:GetInt2()
+		--print(posX, posY, playerPosX, playerPosY)
+		
+		if posX == playerPosX and posY == playerPosY then
+			
+			--MapCreationSystem:SetPosition(entity, posX, 1.0, posY)
+			return entity
+			--position:SetFloat3(px, py, pz)
+		end
+	end
 	
-	return false
+	return -1
 end
 
 ---------------------------- ForwardSystem
@@ -133,7 +140,7 @@ ForwardSystem.OnEntityAdded = function(self, entity)
 	local targetX = x + dirX
 	local targetY = y + dirY
 	
-	TestMovementSystem:MoveTo(entity, targetX, targetY, dirX, dirY)
+	local moved = TestMovementSystem:MoveTo(entity, targetX, targetY, dirX, dirY)
 	
 	world:RemoveComponentFrom("Forward", entity);
 end
@@ -161,7 +168,7 @@ BackwardSystem.OnEntityAdded = function(self, entity)
 	local targetX = x - dirX
 	local targetY = y - dirY
 	
-	TestMovementSystem:MoveTo(entity, targetX, targetY, dirX, dirY)
+	local moved = TestMovementSystem:MoveTo(entity, targetX, targetY, -dirX, -dirY)
 	
 	world:RemoveComponentFrom("Backward", entity);
 end
