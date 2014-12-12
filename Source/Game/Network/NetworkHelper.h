@@ -14,15 +14,24 @@ private:
 	std::map<unsigned int, unsigned int> m_NtoH;
 	std::map<unsigned int, unsigned int> m_HtoN;
 
+	void WriteComponents(Network::PacketHandler* _ph, uint64_t _id, unsigned int _e, std::vector<unsigned int>& _components, bool _data = true);
+
+	int	 StartReceiveEntity(Network::PacketHandler* _ph, uint64_t _id, std::vector<unsigned int>& _components);
+	void ReceiveComponents(Network::PacketHandler* _ph, uint64_t _id, unsigned int _e, std::vector<unsigned int>& _components, bool _data = true);
+	void EndReceiveEntity(unsigned int _e, std::vector<unsigned int>& _components);
+
 public:
 
 	NetworkHelper(ECSL::World** _world);
 	~NetworkHelper();
 
 
-	Network::Packet* WriteEntity(Network::PacketHandler* _ph, unsigned int _e);
-	void ReceiveEntity(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _nc);
+	Network::Packet* WriteEntityAll(Network::PacketHandler* _ph, unsigned int _e);
+	Network::Packet* WriteEntityDelta(Network::PacketHandler* _ph, unsigned int _e, std::vector<unsigned int>& _componentsChanged);
+
+	void ReceiveEntityAll(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _nc);
 	void ReceiveEntityDelta(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _nc);
+
 	void ReceiveEntityKill(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _nc);
 
 

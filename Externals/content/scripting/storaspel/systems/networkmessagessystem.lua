@@ -65,6 +65,10 @@ networkMessagesSystem.OnTimedOutFromServer = function(self, _ip, _port)
 end
 
 networkMessagesSystem.OnPlayerConnected = function(self, _ip, _port)
+	
+	-- Hämta alla entiteter som har komponenten "SyncNetwork"
+	-- Skicka dessa entiteter till klienten
+	
 	local s = "[Server] Client " .. _ip .. ":" .. _port .. " connected to server"
 	Console.Print(s)
 end
