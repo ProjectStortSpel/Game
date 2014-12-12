@@ -1,4 +1,4 @@
-#include "PointLightSystem.h"
+#include "PointlightSystem.h"
 #include "ECSL/Framework/Common/BitSet.h"
 
 PointlightSystem::PointlightSystem(Renderer::GraphicDevice* _graphics)
