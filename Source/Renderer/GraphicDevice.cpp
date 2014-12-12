@@ -559,8 +559,6 @@ void GraphicDevice::BufferPointlights(int _nrOfLights, float **_lightPointers)
 
 	int point_light_data_size = 10 * _nrOfLights * sizeof(float);
 
-	//m_compDeferredPass2Shader.UseProgram();
-
 	glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer, 0, point_light_data_size);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, point_light_data_size, pointlight_data, GL_STATIC_DRAW);
 	m_vramUsage += m_nrOfLights*10*sizeof(float);
@@ -572,8 +570,6 @@ void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
 {
 	float *light_data = new float[9];
 	memcpy(&light_data[0], _lightPointer, 9 * sizeof(float));
-
-	//m_compDeferredPass2Shader.UseProgram();
 
 	glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer, 0, 9 * sizeof(float));
 	glBufferData(GL_SHADER_STORAGE_BUFFER, 9 * sizeof(float), light_data, GL_STATIC_DRAW);
