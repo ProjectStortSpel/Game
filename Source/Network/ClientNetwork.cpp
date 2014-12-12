@@ -141,7 +141,8 @@ bool ClientNetwork::Connect()
 
 	if (!connected)
 	{
-		TriggerEvent(m_onFailedToConnect, NetConnection(m_remoteAddress->c_str(), *m_outgoingPort), 0);
+		NetConnection nc = NetConnection(m_remoteAddress->c_str(), *m_outgoingPort);
+		TriggerEvent(m_onFailedToConnect, nc, 0);
 		return false;
 	}
 
@@ -175,7 +176,8 @@ void ClientNetwork::Disconnect()
 
 	if (m_socket)
 	{
-		TriggerEvent(m_onDisconnectedFromServer, m_socket->GetNetConnection(), 0);
+		NetConnection nc = m_socket->GetNetConnection();
+		TriggerEvent(m_onDisconnectedFromServer, nc, 0);
 
 		delete m_socket;
 		m_socket = 0;
@@ -276,7 +278,8 @@ void ClientNetwork::UpdateTimeOut(float& _dt)
 		if (*m_currentIntervallCounter >= *m_maxIntervallCounter)
 		{
 			*m_currentIntervallCounter = 0;
-			NetConnectionLost(m_socket->GetNetConnection());
+			NetConnection nc = m_socket->GetNetConnection();
+			NetConnectionLost(nc);
 			return;
 		}
 		uint64_t id = m_packetHandler->StartPack(ID_PING);
