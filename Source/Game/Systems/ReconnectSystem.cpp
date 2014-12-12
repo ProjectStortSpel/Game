@@ -64,7 +64,8 @@ void ReconnectSystem::OnEntityAdded(unsigned int _entityId)
 			char* oldIp = GetComponent(matchId, "NetConnection", "IpAddress");
 			unsigned int oldPort = *(int*)GetComponent(matchId, "NetConnection", "Port");
 
-			NetworkInstance::GetServer()->Kick(Network::NetConnection(oldIp, oldPort), "Connected somewhere else");
+			Network::NetConnection nc(oldIp, oldPort);
+			NetworkInstance::GetServer()->Kick(nc, "Connected somewhere else");
 		}
 
 		SetComponent(matchId, "NetConnection", "IpAddress", ipAddress);
