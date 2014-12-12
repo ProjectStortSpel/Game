@@ -5,7 +5,8 @@ SyncEntitiesSystem::SyncEntitiesSystem()
 {
 	m_timer = 0;
 
-	Network::NetMessageHook hook = std::bind(&NetworkHelper::ReceiveEntityAll, NetworkInstance::GetNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	std::function<void(Network::PacketHandler*, uint64_t, Network::NetConnection)> hook = std::bind(&NetworkHelper::ReceiveEntityAll, NetworkInstance::GetNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	
 	NetworkInstance::GetClient()->AddNetworkHook("Entity", hook);
 
 	hook = std::bind(&NetworkHelper::ReceiveEntityDelta, NetworkInstance::GetNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);

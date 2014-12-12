@@ -18,7 +18,7 @@ void ReconnectSystem::Initialize()
 	printf("ReconnectSystem initialized!\n");
 
 
-	Network::NetEvent hook = std::bind(&ReconnectSystem::OnUserDisconnected, this, std::placeholders::_1, std::placeholders::_2);
+	std::function<void(Network::NetConnection, const char*)> hook = std::bind(&ReconnectSystem::OnUserDisconnected, this, std::placeholders::_1, std::placeholders::_2);
 	NetworkInstance::GetServer()->SetOnPlayerDisconnected(hook);
 
 	//NetworkInstance::GetServer()->SetOnPlayerTimedOut(hook);

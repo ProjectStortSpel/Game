@@ -33,11 +33,11 @@ namespace Network
 		void Kick(NetConnection& _connection, char* _reason);
 
 		// Bind function which will trigger when another player connects to the server
-		void SetOnPlayerConnected(NetEvent _function);
+		void SetOnPlayerConnected(std::function<void(NetConnection, const char*)> _function);
 		// Bind function which will trigger when another player disconnects from the server
-		void SetOnPlayerDisconnected(NetEvent _function);
+		void SetOnPlayerDisconnected(std::function<void(NetConnection, const char*)> _function);
 		// Bind function which will trigger when another player disconnects from the server
-		void SetOnPlayerTimedOut(NetEvent _function);
+		void SetOnPlayerTimedOut(std::function<void(NetConnection, const char*)> _function);
 
 		bool IsRunning() { return *m_running; }
 		unsigned int GetMaxConnections() { return *m_maxConnections; }
@@ -78,9 +78,9 @@ namespace Network
 
 		//std::map<NetConnection
 
-		std::vector<NetEvent>* m_onPlayerConnected;
-		std::vector<NetEvent>* m_onPlayerDisconnected;
-		std::vector<NetEvent>* m_onPlayerTimedOut;
+		std::vector<std::function<void(NetConnection, const char*)>>* m_onPlayerConnected;
+		std::vector<std::function<void(NetConnection, const char*)>>* m_onPlayerDisconnected;
+		std::vector<std::function<void(NetConnection, const char*)>>* m_onPlayerTimedOut;
 		bool* m_running;
 
 

@@ -61,19 +61,19 @@ namespace Network
 
 
 		// Read a byte from a packet
-		// Should always be called from a function bound with AddNetMessageHook
+		// Should always be called from a function bound with Addstd::function<void(PacketHandler*, uint64_t, NetConnection)>
 		char ReadByte(uint64_t _id);
 		// Read an int from a packet
-		// Should always be called from a function bound with AddNetMessageHook
+		// Should always be called from a function bound with Addstd::function<void(PacketHandler*, uint64_t, NetConnection)>
 		short ReadShort(uint64_t _id);
 		// Read a short from a packet
-		// Should always be called from a function bound with AddNetMessageHook
+		// Should always be called from a function bound with Addstd::function<void(PacketHandler*, uint64_t, NetConnection)>
 		int ReadInt(uint64_t _id);
 		// Read a string from a packet
-		// Should always be called from a function bound with AddNetMessageHook
+		// Should always be called from a function bound with Addstd::function<void(PacketHandler*, uint64_t, NetConnection)>
 		char* ReadString(uint64_t _id);
 		// Read a float from a packet
-		// Should always be called from a function bound with AddNetMessageHook
+		// Should always be called from a function bound with Addstd::function<void(PacketHandler*, uint64_t, NetConnection)>
 		float ReadFloat(uint64_t _id);
 
 	private:

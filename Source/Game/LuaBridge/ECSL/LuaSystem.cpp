@@ -101,7 +101,7 @@ namespace LuaBridge
 
 	int LuaSystem::InitializeNetworkEvents()
 	{
-		Network::NetEvent hook;
+		std::function<void(Network::NetConnection, const char*)> hook;
 
 		hook = std::bind(&LuaSystem::OnBannedFromServer, this, std::placeholders::_1, std::placeholders::_2);
 		NetworkInstance::GetClient()->SetOnBannedFromServer(hook);

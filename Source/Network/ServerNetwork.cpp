@@ -134,9 +134,9 @@ ServerNetwork::ServerNetwork()
 	m_currentTimeOutIntervall = new std::map<NetConnection, float>();
 	m_currentIntervallCounter = new std::map<NetConnection, int>();
 
-	m_onPlayerConnected = new std::vector<NetEvent>();
-	m_onPlayerDisconnected = new std::vector<NetEvent>();
-	m_onPlayerTimedOut = new std::vector<NetEvent>();
+	m_onPlayerConnected = new std::vector<std::function<void(NetConnection, const char*)>>();
+	m_onPlayerDisconnected = new std::vector<std::function<void(NetConnection, const char*)>>();
+	m_onPlayerTimedOut = new std::vector<std::function<void(NetConnection, const char*)>>();
 
 	*m_incomingPort = 6112;
 
@@ -483,7 +483,7 @@ void ServerNetwork::UpdateTimeOut(float& _dt)
 
 }
 
-void ServerNetwork::SetOnPlayerConnected(NetEvent _function)
+void ServerNetwork::SetOnPlayerConnected(std::function<void(NetConnection, const char*)> _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnPlayerConnected.\n");
@@ -491,7 +491,7 @@ void ServerNetwork::SetOnPlayerConnected(NetEvent _function)
 	m_onPlayerConnected->push_back(_function);
 }
 
-void ServerNetwork::SetOnPlayerDisconnected(NetEvent _function)
+void ServerNetwork::SetOnPlayerDisconnected(std::function<void(NetConnection, const char*)> _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnPlayerDisconnected.\n");
@@ -499,7 +499,7 @@ void ServerNetwork::SetOnPlayerDisconnected(NetEvent _function)
 	m_onPlayerDisconnected->push_back(_function);
 }
 
-void ServerNetwork::SetOnPlayerTimedOut(NetEvent _function)
+void ServerNetwork::SetOnPlayerTimedOut(std::function<void(NetConnection, const char*)> _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnPlayerTimedOut.\n");

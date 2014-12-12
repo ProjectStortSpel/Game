@@ -9,8 +9,8 @@ using namespace Network;
 
 BaseNetwork::BaseNetwork()
 {
-	m_userFunctions = new std::map < std::string, NetMessageHook >();
-	m_networkFunctions = new std::map < char, NetMessageHook >();
+	m_userFunctions = new std::map < std::string, std::function<void(PacketHandler*, uint64_t, NetConnection)> >();
+	m_networkFunctions = new std::map < char, std::function<void(PacketHandler*, uint64_t, NetConnection)> >();
 
 	m_systemPackets = new std::queue<Packet*>();
 	m_customPackets = new std::queue<Packet*>();
@@ -82,13 +82,13 @@ BaseNetwork::~BaseNetwork()
 
 }
 
-void BaseNetwork::AddNetworkHook(char* _name, NetMessageHook _hook)
+void BaseNetwork::AddNetworkHook(char* _name, std::function<void(PacketHandler*, uint64_t, NetConnection)> _hook)
 {
 	(*m_userFunctions)[_name] = _hook;
 	return;
 }
 
-void BaseNetwork::TriggerEvent(std::vector<NetEvent>* _event, NetConnection& _connection, const char* _message)
+void BaseNetwork::TriggerEvent(std::vector<std::function<void(NetConnection, const char*)>>* _event, NetConnection& _connection, const char* _message)
 {
 	for (int i = 0; i < _event->size(); ++i)
 		(*_event)[i](_connection, _message);
