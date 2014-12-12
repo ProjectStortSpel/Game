@@ -12,6 +12,7 @@
 #include "Math/LuaMatrix.h"
 #include "FileLoader/LuaFileLoader.h"
 #include "Console/LuaConsole.h"
+#include "Network/LuaNetwork.h"
 
 namespace LuaBridge
 {
@@ -34,6 +35,9 @@ namespace LuaBridge
     
     LuaConsole::Embed();
 
-    LuaEmbedder::AddFunction("LoadMap", &LoadMap, "File");
+	LuaClientNetwork::Embed();
+	LuaServerNetwork::Embed();
+
+	LuaEmbedder::AddFunction("LoadMap", &LoadMap, "File");
   }
 }

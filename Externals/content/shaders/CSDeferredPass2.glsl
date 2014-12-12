@@ -14,11 +14,15 @@ layout (rgba32f, binding = 5) uniform image2D output_image;
 
 uniform sampler2D DepthTex;
 
-const int nrOfLights = 1;
-
 struct vector3
 {
 	float x, y, z;
+};
+
+struct DirectionalLight {
+	vector3 Direction; // Light position in world coords.
+	vector3 Intensity; // Diffuse intensity
+	vector3 Color;
 };
 
 struct Pointlight {
@@ -28,6 +32,10 @@ struct Pointlight {
 	float Range;
 };
 
+layout (std430, binding = 3) buffer DirectionalLights   
+{
+	DirectionalLight directionalLight;
+};
 
 layout (std430, binding = 4) buffer PointLights   
 {
@@ -95,6 +103,39 @@ float ComputeSSAO()
 	return 1-ao;
 }
 */
+
+void phongModelDirLight(out vec3 ambient, out vec3 diffuse, out vec3 spec) 
+{
+    ambient = vec3(0.0);
+    diffuse = vec3(0.0);
+    spec    = vec3(0.0);
+
+	vec3 thisLightDirection	= vec3(directionalLight.Direction.x,	directionalLight.Direction.y,	directionalLight.Direction.z);
+	vec3 thisLightColor		= vec3(directionalLight.Color.x,		directionalLight.Color.y,		directionalLight.Color.z);
+	vec3 thisLightIntensity = vec3(directionalLight.Intensity.x,	directionalLight.Intensity.y,	directionalLight.Intensity.z);
+
+    vec3 lightVec = -normalize(( ViewMatrix*vec4(thisLightDirection, 0.0) ).xyz);
+
+	ambient = thisLightColor * thisLightIntensity.x;
+
+	vec3 E = normalize(viewPos);
+
+	float diffuseFactor = dot( lightVec, normal_tex );
+
+	if(diffuseFactor > 0)
+	{
+		// diffuse
+		diffuse = diffuseFactor * thisLightColor * thisLightIntensity;
+
+		// specular
+		vec3 v = reflect( lightVec, normal_tex );
+		float specFactor = pow( max( dot(v, E), 0.0 ), Material.Shininess );
+		spec = specFactor * thisLightColor * thisLightIntensity.z * Material.Ks;        
+	}
+
+	return;
+}
+
 void phongModel(int index, out vec3 ambient, out vec3 diffuse, out vec3 spec) 
 {
     ambient = vec3(0.0);
@@ -152,11 +193,6 @@ vec3 reconstructPosition(float p_depth, vec2 p_ndc)
 
 void main() 
 {
-	//pointlights[0].Position = vec4(0.0, 3.0, 0.0, 1.0);
-	//pointlights[0].Intensity = vec3(0.5, 0.9, 0.9);
-	//pointlights[0].Color = vec3(0.9);
-	//pointlights[0].Range = 10.0f;
-
 	texelCoord = ivec2( gl_GlobalInvocationID.x, gl_GlobalInvocationID.y);
 
 	// Retrieve position, normal and color information from the g-buffer textures
@@ -177,33 +213,41 @@ void main()
 	//--------------
 	depthVal_tex = inputMap0.x;
 
-	vec2 ndc = vec2(texelCoord) / vec2( gl_WorkGroupSize.xy*gl_NumWorkGroups.xy ) * 2.0f - 1.0f;
-	viewPos = reconstructPosition(depthVal_tex, ndc);
+	vec4 FragColor = vec4(0.0);
 
-	vec3 ambient = vec3(0.0);
-    vec3 diffuse = vec3(0.0);
-    vec3 spec    = vec3(0.0);
-
-	//för varje ljus-----------
-	for(int i = 0; i < pointlights.length(); i++)
+	if(depthVal_tex < 1.0)
 	{
-		vec3 a,d,s;
+		vec2 ndc = vec2(texelCoord) / vec2( gl_WorkGroupSize.xy*gl_NumWorkGroups.xy ) * 2.0f - 1.0f;
+		viewPos = reconstructPosition(depthVal_tex, ndc);
 
-		phongModel(i, a, d, s);
-		ambient += a;
-		diffuse += d;
-		spec    += s;
+		vec3 ambient = vec3(0.0);
+		vec3 diffuse = vec3(0.0);
+		vec3 spec    = vec3(0.0);
+
+		if(length( vec3(directionalLight.Intensity.x, directionalLight.Intensity.y, directionalLight.Intensity.z) ) > 0.0)
+		{
+			vec3 a,d,s;
+
+			phongModelDirLight(a, d, s);
+			ambient += a;
+			diffuse += d;
+			spec    += s;
+		}
+
+		//för varje ljus-----------
+		for(int i = 0; i < pointlights.length(); i++)
+		{
+			vec3 a,d,s;
+
+			phongModel(i, a, d, s);
+			ambient += a;
+			diffuse += d;
+			spec    += s;
+		}
+		//-------------------------
+		FragColor = vec4(ambient + diffuse, 1.0) * vec4(albedo_tex, 1.0) + vec4(spec, 0.0f);
 	}
-	//-------------------------
-
-	//DIR LIGHT ---------------
-	/*vec3 lightDir = (ViewMatrix * vec4(-3, 4, -2, 0)).xyz;
-	float lightIntensity = max(dot(normalize(lightDir), normalize(normal_tex)), 0.0 );;
-	if (lightIntensity > 0.0f)
-		diffuse += (vec3(0.6, 0.6, 0.6) * lightIntensity);*/
-	//-------------------------
-
-	vec4 FragColor = vec4(ambient + diffuse, 1.0) * vec4(albedo_tex, 1.0) + vec4(spec, 0.0f);
+	
 	//FragColor = vec4(diffuse, 1.0);
 	//vec4 FragColor = vec4( normal_tex, 1.0);
 	//vec4 FragColor = vec4( albedo_tex   +normal_tex-normal_tex, 1.0 );

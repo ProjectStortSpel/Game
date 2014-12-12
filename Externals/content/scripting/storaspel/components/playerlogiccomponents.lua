@@ -1,3 +1,8 @@
+-- Player Component
+local PlayerComponent = ComponentType()
+PlayerComponent.Name = "Player"
+PlayerComponent.TableType = TableType.Array
+worldCreator:AddComponentType(PlayerComponent)
 
 -- Direction Component
 local DirectionComponent = ComponentType()
@@ -19,6 +24,12 @@ TurnRightComponent.Name = "TurnRight"
 TurnRightComponent.TableType = TableType.Array
 worldCreator:AddComponentType(TurnRightComponent)
 
+-- Turn Around Component
+local TurnAroundComponent = ComponentType()
+TurnAroundComponent.Name = "TurnAround"
+TurnAroundComponent.TableType = TableType.Array
+worldCreator:AddComponentType(TurnAroundComponent)
+
 -- Forward Component
 local ForwardComponent = ComponentType()
 ForwardComponent.Name = "Forward"
@@ -31,11 +42,21 @@ BackwardComponent.Name = "Backward"
 BackwardComponent.TableType = TableType.Array
 worldCreator:AddComponentType(BackwardComponent)
 
--- Turn Around Component
-local TurnAroundComponent = ComponentType()
-TurnAroundComponent.Name = "TurnAround"
-TurnAroundComponent.TableType = TableType.Array
-worldCreator:AddComponentType(TurnAroundComponent)
+-- Spawn Component
+local SpawnComponent = ComponentType()
+SpawnComponent.Name = "Spawn"
+SpawnComponent.TableType = TableType.Array
+SpawnComponent:AddVariable("X", ByteSize.Int)
+SpawnComponent:AddVariable("Y", ByteSize.Int)
+worldCreator:AddComponentType(SpawnComponent)
+
+-- TargetCheckpoint Component
+local TargetCheckpointComponent = ComponentType()
+TargetCheckpointComponent.Name = "TargetCheckpoint"
+TargetCheckpointComponent.TableType = TableType.Array
+TargetCheckpointComponent:AddVariable("X", ByteSize.Int)
+TargetCheckpointComponent:AddVariable("Y", ByteSize.Int)
+worldCreator:AddComponentType(TargetCheckpointComponent)
 
 -- TargetPosition Component
 local TargetPositionComponent = ComponentType()
