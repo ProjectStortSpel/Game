@@ -586,7 +586,8 @@ namespace LuaBridge
 			unsigned int port = LuaEmbedder::PullInt(3);
 
 			Network::Packet* p = NetworkInstance::GetNetworkHelper()->WriteEntityAll(server->GetPacketHandler(), id);
-			server->Send(p, Network::NetConnection(ip.c_str(), port));
+			Network::NetConnection nc(ip.c_str(), port);
+			server->Send(p, nc);
 		}
 		int SendEntityKill()
 		{
@@ -599,7 +600,8 @@ namespace LuaBridge
 			unsigned int port	= LuaEmbedder::PullInt(3);
 
 			Network::Packet* p = NetworkInstance::GetNetworkHelper()->WriteEntityKill(server->GetPacketHandler(), id);
-			server->Send(p, Network::NetConnection(ip.c_str(), port));
+			Network::NetConnection nc(ip.c_str(), port);
+			server->Send(p, nc);
 		}
 
 		int BroadcastEntity()
