@@ -55,8 +55,8 @@ namespace LuaEmbedder
     static void Push(lua_State* L, const char* name, const T* array, unsigned int size, bool remove = true)
     {
       // If the array is empty or only contains one element
-      if (!array || size < 2)
-      {
+      /*if (!array || size < 2)
+      {*/
 	lua_newtable(L);
 	for (unsigned int i = 0; i < size; ++i)
 	{
@@ -66,7 +66,7 @@ namespace LuaEmbedder
 	lua_pushliteral(L, "n");
 	lua_pushinteger(L, (int)size);
 	lua_rawset(L, -3);
-      }
+      /*}
       else
       {
 	luaL_getmetatable(L, name);
@@ -102,7 +102,7 @@ namespace LuaEmbedder
 	}
 	lua_replace(L, metatable);
 	lua_settop(L, metatable);
-      }
+      }*/
     }
     
   private:
