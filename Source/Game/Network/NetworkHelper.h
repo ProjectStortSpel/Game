@@ -29,7 +29,7 @@ public:
 
 	Network::Packet* WriteEntityAll(Network::PacketHandler* _ph, unsigned int _e);
 	Network::Packet* WriteEntityDelta(Network::PacketHandler* _ph, unsigned int _e, std::vector<unsigned int>& _componentsChanged);
-	Network::Packet* NetworkHelper::WriteEntityKill(Network::PacketHandler* _ph, unsigned int _e);
+	Network::Packet* WriteEntityKill(Network::PacketHandler* _ph, unsigned int _e);
 
 	void ReceiveEntityAll(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _nc);
 	void ReceiveEntityDelta(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _nc);
