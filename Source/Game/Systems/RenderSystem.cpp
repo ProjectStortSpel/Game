@@ -1,5 +1,6 @@
 #include "RenderSystem.h"
 #include "ECSL/Framework/Common/BitSet.h"
+#include "Game/Quaternion.h"
 
 RenderSystem::RenderSystem(Renderer::GraphicDevice* _graphics)
 {
@@ -91,9 +92,25 @@ void RenderSystem::UpdateMatrix(unsigned int _entityId)
 	Matrix		=	(glm::mat4*)GetComponent(_entityId, "Render", "Mat");
 
 	*Matrix = glm::translate(glm::vec3(Position[0], Position[1], Position[2]));
-	*Matrix *= glm::rotate(Rotation[0], glm::vec3(0, 0, 1)); // quaternions?????
-	*Matrix *= glm::rotate(Rotation[1], glm::vec3(0, 1, 0)); // quaternions?????
-	*Matrix *= glm::rotate(Rotation[2], glm::vec3(1, 0, 0)); // quaternions?????
+
+	Quaternion q_f;
+	Quaternion q_x;
+	Quaternion q_y;
+	Quaternion q_z;
+
+	q_x.Rotate(glm::vec3(1, 0, 0), Rotation[2]);
+	q_y.Rotate(glm::vec3(0, 1, 0), Rotation[1]);
+	q_z.Rotate(glm::vec3(0, 0, 1), Rotation[0]);
+
+	q_f = q_x * q_f;
+	q_f = q_y * q_f;
+	q_f = q_z * q_f;
+
+	*Matrix *= q_f.QuaternionToMatrix();
+
+	//*Matrix *= glm::rotate(Rotation[0], glm::vec3(0, 0, 1)); // quaternions?????
+	//*Matrix *= glm::rotate(Rotation[1], glm::vec3(0, 1, 0)); // quaternions?????
+	//*Matrix *= glm::rotate(Rotation[2], glm::vec3(1, 0, 0)); // quaternions?????
 	*Matrix *= glm::scale(glm::vec3(Scale[0], Scale[1], Scale[2]));
 
 	ComponentHasChanged(_entityId, "Render");

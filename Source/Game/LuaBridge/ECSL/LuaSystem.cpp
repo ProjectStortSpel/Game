@@ -94,7 +94,8 @@ namespace LuaBridge
 
 	int LuaSystem::GetEntities()
 	{
-		LuaEmbedder::PushUnsignedIntArray(System::GetEntities()->data(), System::GetEntities()->size());
+		
+		LuaEmbedder::PushUnsignedIntArray(System::GetEntities()->data(), System::GetEntities()->size(), false);
 		return 1;
 	}
 
