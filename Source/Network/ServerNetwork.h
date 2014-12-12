@@ -26,7 +26,7 @@ namespace Network
 
 		// Send a message to all connected clients
 		// use _exclude to prevent the message to being sent to one client
-		void Broadcast(Packet* _packet, NetConnection& _exclude = NetConnection());
+		void Broadcast(Packet* _packet, const NetConnection& _exclude = NetConnection());
 		// Send a message to a specific client
 		void Send(Packet* _packet, NetConnection& _connection);
 

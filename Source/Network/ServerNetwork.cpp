@@ -257,7 +257,7 @@ bool ServerNetwork::Stop()
 	return *m_running;
 }
 
-void ServerNetwork::Broadcast(Packet* _packet, NetConnection& _exclude)
+void ServerNetwork::Broadcast(Packet* _packet, const NetConnection& _exclude)
 {
 	float bytesSent = 0;
 
