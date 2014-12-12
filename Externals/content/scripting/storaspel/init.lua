@@ -16,6 +16,7 @@ require "moveplayersystem"
 -- Templates
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/templates/?.lua"
 require "box"
+require "lights"
 require "map"
 
 worldCreator:AddSystemGroup()
