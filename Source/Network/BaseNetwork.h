@@ -21,7 +21,7 @@
 namespace Network
 {
 
-	typedef std::function<void(PacketHandler*, uint64_t, NetConnection&)> NetMessageHook;
+	typedef std::function<void(PacketHandler*, uint64_t, NetConnection)> NetMessageHook;
 	typedef std::function<void(NetConnection&, const char*)> NetEvent;
 
 	class DECLSPEC BaseNetwork
@@ -77,7 +77,7 @@ namespace Network
 
 	protected:
 		std::map < std::string, NetMessageHook >* m_userFunctions;
-		std::map < char, NetMessageHook& >* m_networkFunctions;
+		std::map < char, NetMessageHook >* m_networkFunctions;
 
 		std::queue<Packet*>* m_systemPackets;
 		std::queue<Packet*>* m_customPackets;
