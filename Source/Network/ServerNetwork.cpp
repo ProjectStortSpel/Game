@@ -141,10 +141,11 @@ ServerNetwork::ServerNetwork()
 	*m_incomingPort = 6112;
 
 	m_networkFunctions = new std::map < char, NetMessageHook >();
-	(*m_networkFunctions)[NetTypeMessageId::ID_PASSWORD_ATTEMPT] = std::bind(&ServerNetwork::NetPasswordAttempt, this, NetworkHookPlaceholders);
-	(*m_networkFunctions)[NetTypeMessageId::ID_CONNECTION_DISCONNECTED] = std::bind(&ServerNetwork::NetConnectionDisconnected, this, NetworkHookPlaceholders);
-	(*m_networkFunctions)[NetTypeMessageId::ID_PING] = std::bind(&ServerNetwork::NetPing, this, NetworkHookPlaceholders);
-	(*m_networkFunctions)[NetTypeMessageId::ID_PONG] = std::bind(&ServerNetwork::NetPong, this, NetworkHookPlaceholders);
+
+	m_networkFunctions->insert(std::pair<char, NetMessageHook>(NetTypeMessageId::ID_PASSWORD_ATTEMPT, std::bind(&ServerNetwork::NetPasswordAttempt, this, NetworkHookPlaceholders)));
+	m_networkFunctions->insert(std::pair<char, NetMessageHook>(NetTypeMessageId::ID_CONNECTION_DISCONNECTED, std::bind(&ServerNetwork::NetConnectionDisconnected, this, NetworkHookPlaceholders)));
+	m_networkFunctions->insert(std::pair<char, NetMessageHook>(NetTypeMessageId::ID_PING, std::bind(&ServerNetwork::NetPing, this, NetworkHookPlaceholders)));
+	m_networkFunctions->insert(std::pair<char, NetMessageHook>(NetTypeMessageId::ID_PONG, std::bind(&ServerNetwork::NetPong, this, NetworkHookPlaceholders)));
 
 	m_running = new bool(false);
 }
