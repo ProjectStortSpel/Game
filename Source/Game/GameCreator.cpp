@@ -274,19 +274,15 @@ void GameCreator::RenderConsole()
 	auto match = m_consoleManager.GetFunctionMatch(command.c_str());
 	m_graphics->RenderSimpleText(match, 9, 31);
 
-	m_graphics->RenderSimpleText("FPS:", 0, 33);
-
 	Network::ClientNetwork* client = NetworkInstance::GetClient();
 
 	if (client->IsConnected())
 	{
-		m_graphics->RenderSimpleText("FPS:", 0, 32);
-
 		std::ostringstream ss;
-		ss << client->GetPing();
+		ss << "Ping: " << client->GetPing() << "ms";
 		std::string s(ss.str());
 
-		m_graphics->RenderSimpleText(s, 5, 32);
+		m_graphics->RenderSimpleText(s, 0, 32);
 	}
 }
 
