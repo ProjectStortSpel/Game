@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "GameCreator.h"
 #include "Systems/MovementSystem.h"
 #include "Systems/RenderSystem.h"
@@ -150,9 +151,10 @@ void GameCreator::StartGame()
 	m_console->SetupHooks(&m_consoleManager);
 	m_consoleManager.AddCommand("Reload", std::bind(&GameCreator::Reload, this, std::placeholders::_1));
 
+	float maxDeltaTime = (float)(1.0f / 60.0f);
 	while (true)
 	{
-		float dt = m_frameCounter->GetDeltaTime();
+		float dt = std::min(maxDeltaTime, m_frameCounter->GetDeltaTime());
 
 		/*	Collect all input	*/
 		m_input->Update();
