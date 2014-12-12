@@ -17,7 +17,7 @@
 #include "LuaBridge/ECSL/LuaSystem.h"
 
 GameCreator::GameCreator() :
-m_graphics(0), m_input(0), m_world(0), m_console(0), m_consoleManager(Console::ConsoleManager::GetInstance())
+m_graphics(0), m_input(0), m_world(0), m_console(0), m_consoleManager(Console::ConsoleManager::GetInstance()), m_frameCounter(&Utility::FrameCounter::GetInstance())
 {
 
 }
@@ -145,38 +145,10 @@ void GameCreator::StartGame()
 	m_console->SetupHooks(&m_consoleManager);
 	m_consoleManager.AddCommand("Reload", std::bind(&GameCreator::Reload, this, std::placeholders::_1));
 
-	
-	/*	FULKOD START	*/
-	//for (int x = -5; x < 5; x++)
-	//{
-	//	for (int y = -5; y < 5; y++)
-	//	{
-	//		std::string command;// = "createobject box";
-	//		if ((x + y) % 2)
-	//		{
-	//			command = "createobject hole ";
-	//		}
-	//		else
-	//		{
-	//			command = "createobject grass ";
-	//		}
-	//		command += std::to_string(x);
-	//		command.append(" ");
-	//		command += std::to_string(-1);
-	//		command.append(" ");
-	//		command += std::to_string(y);
-	//		command.append("");
-	//		m_consoleManager.ExecuteCommand(command.c_str());
-	//	}
-	//}
-	/*	FULKOD END		*/
-
-
-	Timer gameTimer;
+	m_frameCounter->Tick();
 	while (true)
 	{
-		float dt = gameTimer.ElapsedTimeInSeconds();
-		gameTimer.Reset(); 
+		float dt = m_frameCounter->GetDeltaTime();
 
 		/*	Collect all input	*/
 		m_input->Update();
@@ -196,6 +168,8 @@ void GameCreator::StartGame()
 
 		RenderConsole();
 		m_graphics->Render();
+
+		m_frameCounter->Tick();
 	}
 }
 
@@ -215,6 +189,7 @@ void GameCreator::UpdateConsole()
 			m_consoleInput.SetActive(true);
 			m_input->GetKeyboard()->ResetTextInput();
 		}
+		printf("%d average fps\n", m_frameCounter->GetAverageFPS());
 	}
 
 	// History, arrows up/down

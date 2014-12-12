@@ -39,11 +39,12 @@ void SystemWorkGroup::Update(float _dt)
 	for (int n = 0; n < m_systems->size(); ++n)
 	{
 		beforeExecution = SDL_GetTicks();
-		afterExecution = 0;
 		m_systems->at(n)->Update(_dt);
 		afterExecution = SDL_GetTicks() - beforeExecution;
 
-		if (afterExecution != 0)
-			int a = 2;
+		if (afterExecution >= 4)
+		{
+			printf("[TIME!] \"%s\" took %d ms to update!\n", m_systems->at(n)->GetSystemName().c_str(), afterExecution);
+		}
 	}
 }

@@ -22,34 +22,40 @@ void RenderSystem::Initialize()
 	AddComponentTypeToFilter("Render",		ECSL::FilterType::Mandatory);
 
 
+	std::vector<unsigned int> bitsetComponents;
+	bitsetComponents.push_back(ECSL::ComponentTypeManager::GetInstance().GetTableId("Position"));
+	bitsetComponents.push_back(ECSL::ComponentTypeManager::GetInstance().GetTableId("Rotation"));
+	bitsetComponents.push_back(ECSL::ComponentTypeManager::GetInstance().GetTableId("Scale"));
+
+	m_bitMask = ECSL::BitSet::BitSetConverter::ArrayToBitSet(bitsetComponents, ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount());
+	m_numberOfBitSets = ECSL::BitSet::GetIntCount(ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount());
+	m_componentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("ChangedComponents");
 	printf("RenderSystem initialized!\n");
 }
 
 void RenderSystem::Update(float _dt)
 {
 	auto entities = *GetEntities();
-	int posId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Position");
-	int rotId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Rotation");
-	int scaleId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Scale");
 
 	/*	TODO: Some logic to not update matrix every frame	*/
 	for (auto entity : entities)
 	{
-		std::vector<unsigned int> changedComponents;
-		ECSL::BitSet::BitSetConverter::BitSetToArray
-			(
-				changedComponents, 
-				(const ECSL::BitSet::DataType*)GetComponent(entity, "ChangedComponents", 0), 
-				ECSL::BitSet::GetIntCount(ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount())
-			);
+		ECSL::BitSet::DataType* eBitMask = (ECSL::BitSet::DataType*)GetComponent(entity, m_componentId, 0);
 
-		for (auto componentType : changedComponents)
-			if (componentType == posId || componentType == rotId || componentType == scaleId)
+		bool needsUpdate = false;
+		for (unsigned int n = 0; n < m_numberOfBitSets; ++n)
+		{
+
+			if ((m_bitMask[n] & eBitMask[n]) != 0)
 			{
-				UpdateMatrix(entity);
+				needsUpdate = true;
 				break;
 			}
-				
+
+		}
+
+		if (needsUpdate)
+			UpdateMatrix(entity);
 	}
 		
 

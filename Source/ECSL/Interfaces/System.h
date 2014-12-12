@@ -56,6 +56,7 @@ namespace ECSL
 		const std::vector<unsigned int>* const GetEntities() { return m_entities; }
 
 		void SetSystemName(std::string _name){ m_systemName = _name; }
+		inline unsigned int GetEntityCountLimit(){ return m_dataManager->GetEntityCountLimit(); }
 
 	private:
 		bool m_initialized;

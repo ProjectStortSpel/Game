@@ -17,7 +17,8 @@ public:
 	void OnEntityRemoved(unsigned int _entityId);
 
 private:
-
+	unsigned int m_componentId;
+	unsigned int m_componentByteSize;
 };
 
 #endif
