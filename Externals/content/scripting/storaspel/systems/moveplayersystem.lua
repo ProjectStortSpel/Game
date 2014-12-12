@@ -25,9 +25,7 @@ TestMovementSystem.Update = function(self, dt)
 	
 		local switchplayer = false
 		if Input.GetKeyState(Key.Up) == InputState.Pressed then
-			--print("pre-forward")
 			world:CreateComponentAndAddTo("Forward", entities[self.currentPlayer])
-			--print("added forward-component")
 			switchplayer = true
 		elseif Input.GetKeyState(Key.Down) == InputState.Pressed then
 			world:CreateComponentAndAddTo("Backward", entities[self.currentPlayer])
@@ -44,8 +42,7 @@ TestMovementSystem.Update = function(self, dt)
 		elseif Input.GetKeyState(Key.Space) == InputState.Pressed then
 			local comp = self:GetComponent(entities[self.currentPlayer], "Spawn", 0)
 			local newPosX, newPosY = comp:GetInt2()
-			local posComp = self:GetComponent(entities[self.currentPlayer], "Position", 0)
-			posComp:SetInt2(newPosX, newPosY)
+			MapCreationSystem:SetPosition(entities[self.currentPlayer], newPosX, 1.0, newPosY)
 			switchplayer = true
 			
 		end
@@ -62,12 +59,55 @@ TestMovementSystem.Update = function(self, dt)
 	
 end
 
-TestMovementSystem.MoveTo = function(self)
-	
+TestMovementSystem.MoveTo = function(self, entity, posX, posY, dirX, dirY)
+	-- If the tile we are trying to reach is walkable, then we go there.
+	-- TODO: En metod som får in position vi vill gå till och riktning som spelaren vill gå. Kolla om rutan är walkable och returnera sant eller falskt, om det är en spelare (spelare2) så anropar den rekursivt samma metod med en ny position som gäller, dvs spelare2s position men med samma riktning.
+		
+	if self:TileIsWalkable(posX, posY) then
+		--if self:PlayerOnTile(posX, posY) then
+			MapCreationSystem:SetPosition(entity, posX, 1.0, posY)
+			
+			--local pos = self:GetComponent(entity, "MapPosition", 0)
+			--local mapPos = self:GetComponent(entity, "Position", 0)
+			
+			--pos:SetFloat3(posX, 1.0, posZ)
+			--mapPos:SetInt2(posX, posZ)
+			--targetposition.SetFloat3(newtargetx, newtargety, newtargetz)
+			
+			--print("set variables done")
+		--end
+	end
 end
 
-TestMovementSystem.PostInitialize = function(self)
+TestMovementSystem.PostInitialize = function(self, posX, posY)
 	
+	
+	return 
+end
+
+TestMovementSystem.TileIsWalkable = function(self, posX, posY)
+	
+	local index = MapCreationSystem.mapX * posY + posX + 1
+	entity = MapCreationSystem.entities[index]
+	
+	local returnValue = not self:EntityHasComponent(entity, "NotWalkable")
+	return returnValue 
+end
+
+TestMovementSystem.PlayerOnTile = function(self, posX, posY)
+	
+	local entities = self:GetEntities()
+	
+	--for i = 1, #entities do
+	--	local entity = entities[i]
+	--	local posComp = self:GetComponent(entity, "MapPosition", 0)
+	--	local posX, posY = posComp:GetInt2()
+	--	
+	--	
+	--	--position:SetFloat3(px, py, pz)
+	--end
+	
+	return false
 end
 
 ---------------------------- ForwardSystem
@@ -84,44 +124,18 @@ ForwardSystem.Initialize = function(self)
 end
 
 ForwardSystem.OnEntityAdded = function(self, entity)
-	local position = self:GetComponent(entity, "Position", 0)
 	local dir = self:GetComponent(entity, "Direction", 0)
 	local mapPos = self:GetComponent(entity, "MapPosition", 0)
 	
-	--world:CreateComponentAndAddTo("TargetPosition", entity)
-	--local targetposition = self:GetComponent(entity, "TargetPosition", 0)
+	local x, y = mapPos:GetInt2()
+	local dirX, dirY = dir:GetInt2()
 	
-	local x, y, z = position:GetFloat3()
-	local dx, dy = dir:GetInt2()
-	local mapX, mapY = mapPos:GetInt2()
+	local targetX = x + dirX
+	local targetY = y + dirY
 	
-	-- TODO: Gör resterande av metoden till en ny metod som både forward och backward anropar med dx- och dy-värden som skiljer sig bara.
-			
-	local newtargetx = x + dx
-	local newtargety = y 
-	local newtargetz = z + dy
+	TestMovementSystem:MoveTo(entity, targetX, targetY, dirX, dirY)
 	
-	local mapTargetX = mapX + dx
-	local mapTargetY = mapY + dy
-	
-	
-	--print("created all variables in forward")
-	
-	-- If the tile we are trying to reach is walkable, then we go there.
-	-- TODO: En metod som får in position vi vill gå till och riktning som spelaren vill gå. Kolla om rutan är walkable och returnera sant eller falskt, om det är en spelare (spelare2) så anropar den rekursivt samma metod med en ny position som gäller, dvs spelare2s position men med samma riktning.
-	--if walkable(mapTargetX, mapTargetY) then
-		
-		
-		
-		position:SetFloat3(newtargetx, newtargety, newtargetz)
-		mapPos:SetInt2(mapTargetX, mapTargetY)
-		--targetposition.SetFloat3(newtargetx, newtargety, newtargetz)
-		
-		--print("set variables done")
-		
-	--end
 	world:RemoveComponentFrom("Forward", entity);
-	--print("removed forward-component")
 end
 
 ---------------------------- BackwardSystem
@@ -138,22 +152,16 @@ BackwardSystem.Initialize = function(self)
 end
 
 BackwardSystem.OnEntityAdded = function(self, entity)
-	local position = self:GetComponent(entity, "Position", 0)
 	local dir = self:GetComponent(entity, "Direction", 0)
+	local mapPos = self:GetComponent(entity, "MapPosition", 0)
 	
-	--world:CreateComponentAndAddTo("TargetPosition", entity)
-	--local targetposition = self:GetComponent(entity, "TargetPosition", 0)
+	local x, y = mapPos:GetInt2()
+	local dirX, dirY = dir:GetInt2()
 	
-	local x, y, z = position:GetFloat3()
-	local dx, dy = dir:GetInt2()
-			
-	local newtargetx = x - dx
-	local newtargety = y 
-	local newtargetz = z - dy
+	local targetX = x - dirX
+	local targetY = y - dirY
 	
-	position:SetFloat3(newtargetx, newtargety, newtargetz)
-	
-	--targetposition.SetFloat3(newtargetx, newtargety, newtargetz)
+	TestMovementSystem:MoveTo(entity, targetX, targetY, dirX, dirY)
 	
 	world:RemoveComponentFrom("Backward", entity);
 end
