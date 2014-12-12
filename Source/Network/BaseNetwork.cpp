@@ -118,7 +118,7 @@ void BaseNetwork::HandlePacket(Packet* _packet)
 	}
 }
 
-int BaseNetwork::GetPacket(void)
+int BaseNetwork::PopAndExecutePacket(void)
 {
 
 	m_customPacketLock->lock();

@@ -120,6 +120,16 @@ void GameConsole::ChangeComponent(std::vector<Console::Argument>* _args)
 	DATA = (float*)m_world->GetComponent(mId, componentType, 0);
 	for (int n = 0; n < nData; ++n)
 		DATA[n] = _args->at(2 + n).Number;
+
+	unsigned int componentTypeId = ECSL::ComponentTypeManager::GetInstance().GetTableId(componentType);
+	int bitSetIndex = ECSL::BitSet::GetBitSetIndex(componentTypeId);
+	int bitIndex = ECSL::BitSet::GetBitIndex(componentTypeId);
+
+	ECSL::BitSet::DataType* changedComponents = (ECSL::BitSet::DataType*)m_world->GetComponent(mId, "ChangedComponents", 0);
+	changedComponents[bitSetIndex] |= ((ECSL::BitSet::DataType)1) << bitIndex;
+
+	ECSL::BitSet::DataType* changedComponentsNetwork = (ECSL::BitSet::DataType*)m_world->GetComponent(mId, "ChangedComponentsNetwork", 0);
+	changedComponentsNetwork[bitSetIndex] |= ((ECSL::BitSet::DataType)1) << bitIndex;
 }
 
 void GameConsole::RemoveComponent(std::vector<Console::Argument>* _args)
@@ -292,6 +302,7 @@ void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 	m_consoleManager->AddCommand("List", std::bind(&GameConsole::ListCommands, this, std::placeholders::_1));
 
 	m_consoleManager->AddCommand("DebugRender", std::bind(&GameConsole::SetDebugTexture, this, std::placeholders::_1));
+
 	NetworkInstance::GetClient()->AddNetworkHook("Entity", std::bind(&NetworkHelper::ReceiveEntity, NetworkInstance::GetNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	NetworkInstance::GetClient()->AddNetworkHook("EntityKill", std::bind(&NetworkHelper::ReceiveEntityKill, NetworkInstance::GetNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 }

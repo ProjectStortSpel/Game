@@ -32,7 +32,7 @@ void SyncEntitiesSystem::Update(float _dt)
 			for (int i = 0; i < entities.size(); ++i)
 			{
 				ECSL::BitSet::DataType* data;
-				data = (ECSL::BitSet::DataType*)GetComponent(entities[i], "ChangedComponents", 0);
+				data = (ECSL::BitSet::DataType*)GetComponent(entities[i], "ChangedComponentsNetwork", 0);
 				std::vector<unsigned int> changedComponents;
 				ECSL::BitSet::BitSetConverter::BitSetToArray
 					(
@@ -47,6 +47,9 @@ void SyncEntitiesSystem::Update(float _dt)
 					server->Broadcast(p);
 				}
 
+				//data = (ECSL::BitSet::DataType*)GetComponent(entities[i], "ChangedComponentsNetwork", 0);
+				for (int n = 0; n < ECSL::BitSet::GetIntCount(ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount()); ++n)
+					data[n] = 0;
 			}
 		}
 		m_timer += _dt;
