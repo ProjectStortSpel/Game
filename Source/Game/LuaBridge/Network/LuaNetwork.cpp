@@ -588,6 +588,8 @@ namespace LuaBridge
 			Network::Packet* p = NetworkInstance::GetNetworkHelper()->WriteEntityAll(server->GetPacketHandler(), id);
 			Network::NetConnection nc(ip.c_str(), port);
 			server->Send(p, nc);
+
+			return 0;
 		}
 		int SendEntityKill()
 		{
@@ -602,6 +604,8 @@ namespace LuaBridge
 			Network::Packet* p = NetworkInstance::GetNetworkHelper()->WriteEntityKill(server->GetPacketHandler(), id);
 			Network::NetConnection nc(ip.c_str(), port);
 			server->Send(p, nc);
+
+			return 0;
 		}
 
 		int BroadcastEntity()
@@ -614,6 +618,8 @@ namespace LuaBridge
 
 			Network::Packet* p = NetworkInstance::GetNetworkHelper()->WriteEntityAll(server->GetPacketHandler(), id);
 			server->Broadcast(p);
+
+			return 0;
 		}
 		int BroadcastEntityKill()
 		{
@@ -625,6 +631,8 @@ namespace LuaBridge
 
 			Network::Packet* p = NetworkInstance::GetNetworkHelper()->WriteEntityKill(server->GetPacketHandler(), id);
 			server->Broadcast(p);
+
+			return 0;
 		}
 
 	}
