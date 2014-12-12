@@ -161,15 +161,12 @@ void GameCreator::StartGame()
 	newLight = m_world->CreateNewEntity();
 	m_world->CreateComponentAndAddTo("Pointlight", newLight);
 
-	newLight = m_world->CreateNewEntity();
-	m_world->CreateComponentAndAddTo("Pointlight", newLight);
-
 	float* pointlightData = (float*)m_world->GetComponent(firstId, "Pointlight", 0);
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 3; i++)
 	{
-		pointlightData[10 * i + 0] = i * 2.2 - 2.2;	//pos x
+		pointlightData[10 * i + 0] = i * 2.2 + 5.2;	//pos x
 		pointlightData[10 * i + 1] = 2.0;		//pos y
-		pointlightData[10 * i + 2] = 0.0;		//pos z
+		pointlightData[10 * i + 2] = 7.0;		//pos z
 		pointlightData[10 * i + 3] = 0.8;		 //int x
 		pointlightData[10 * i + 4] = 0.9;		 //int y
 		pointlightData[10 * i + 5] = 0.5;		 //int z
