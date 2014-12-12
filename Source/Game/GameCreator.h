@@ -9,6 +9,7 @@
 #include "LuaBridge/LuaBridge.h"
 #include "ECSL/ECSL.h"
 #include "GameConsole.h"
+#include "FrameCounter/FrameCounter.h"
 
 class GameCreator
 {
@@ -40,8 +41,9 @@ private:
 	ECSL::World*				m_world;
 	GameConsole*				m_console;
 
-	Console::ConsoleManager&		m_consoleManager;
+	Console::ConsoleManager&	m_consoleManager;
 	TextInput					m_consoleInput;
+	Utility::FrameCounter*		m_frameCounter;
 };
 
 #endif

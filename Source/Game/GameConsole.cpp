@@ -1,4 +1,5 @@
 #include "GameConsole.h"
+#include "ECSL/Managers/EntityTemplateManager.h"
 #include <string>
 GameConsole::GameConsole(Renderer::GraphicDevice* _graphics, ECSL::World* _world)
 {
@@ -17,6 +18,15 @@ void GameConsole::CreateObject(std::vector<Console::Argument>* _args)
 
 	std::string _template = _args->at(0).Text;
 	_template[0] = toupper(_template[0]);
+	if (!ECSL::EntityTemplateManager::GetInstance().HasTemplate(_template))
+	{
+		std::stringstream ss;
+		ss << "Template \"" << _template << "\" is not valid!";
+		m_consoleManager->AddMessage(ss.str().c_str());
+		return;
+	}
+		
+
 	unsigned int mId = m_world->CreateNewEntity(_template);
 	m_world->CreateComponentAndAddTo("ChangedComponents", mId);
 	m_world->CreateComponentAndAddTo("SyncNetwork", mId);
@@ -77,7 +87,7 @@ void GameConsole::AddComponent(std::vector<Console::Argument>* _args)
 	if (!ECSL::ComponentTypeManager::GetInstance().ComponentExists(componentType))
 	{
 		std::stringstream ss;
-		ss << "Component " <<_args->at(1).Text << " was not found!";
+		ss << "Component \"" <<_args->at(1).Text << "\" was not found!";
 		m_consoleManager->AddMessage(ss.str().c_str());
 		return;
 	}

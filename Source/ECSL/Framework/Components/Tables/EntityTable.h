@@ -34,6 +34,8 @@ namespace ECSL
 		inline const EntityState GetEntityState(unsigned int _entityId) { return (EntityState)(*(int*)(m_dataTable->GetData(_entityId))); }
 		inline const BitSet::DataType* GetEntityComponents(unsigned int _entityId) { return (BitSet::DataType*)(m_dataTable->GetData(_entityId) + 1); }
 		void GetEntityComponents(std::vector<unsigned int>& _out, unsigned int _entityId);
+		inline unsigned int EntityCountLimit(){ return m_entityCount; }
+
 	private:
 		unsigned int m_entityCount;
 		unsigned int m_componentTypeCount;

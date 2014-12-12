@@ -1,4 +1,5 @@
 #include "ResetChangedSystem.h"
+#include "ECSL/Managers/ComponentTypeManager.h"
 
 ResetChangedSystem::ResetChangedSystem()
 {
@@ -9,22 +10,19 @@ ResetChangedSystem::~ResetChangedSystem()
 
 void ResetChangedSystem::Initialize()
 {
+	SetSystemName("Reset Changed System");
 	/*	Rendersystem wants Network	*/
 	//AddComponentTypeToFilter("ChangedComponents", ECSL::FilterType::Mandatory);
+
+	m_componentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("ChangedComponents");
+	m_componentByteSize = ECSL::ComponentTypeManager::GetInstance().GetComponentType(m_componentId)->GetByteSize();
 
 	printf("ResetChangedSystem initialized!\n");
 }
 
 void ResetChangedSystem::Update(float _dt)
 {
-	auto entities = *GetEntities();
-	for (auto entity : entities)
-	{
-		ECSL::BitSet::DataType* data;
-		data = (ECSL::BitSet::DataType*)GetComponent(entity, "ChangedComponents", 0);
-		for (int n = 0; n < ECSL::BitSet::GetIntCount(ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount()); ++n)
-			data[n] = 0;
-	}
+	memset(GetComponent(0, m_componentId, 0), 0, m_componentByteSize * GetEntityCountLimit());
 }
 
 void ResetChangedSystem::OnEntityAdded(unsigned int _entityId)

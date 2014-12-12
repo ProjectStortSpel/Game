@@ -72,11 +72,11 @@
     <Filter Include="Game\Systems\Changed">
       <UniqueIdentifier>{dd4dc3ab-744e-425f-a006-98fb871278be}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\FrameCounter">
+      <UniqueIdentifier>{74977182-a2c6-4922-bb9d-16b08dc3b3a7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Source\Game\Timer.cpp">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\LuaBridge.cpp">
       <Filter>Lua Bridge</Filter>
     </ClCompile>
@@ -149,12 +149,6 @@
     <ClCompile Include="..\..\..\Source\Game\Systems\ModelSystem.cpp">
       <Filter>Game\Systems\Model</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\Game\Systems\MovementSystem.cpp">
-      <Filter>Game\Systems\Movement</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Source\Game\Systems\ReceivePacketSystem.cpp">
-      <Filter>Game\Systems\ReceivePacket</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Systems\RenderSystem.cpp">
       <Filter>Game\Systems\Render</Filter>
     </ClCompile>
@@ -170,14 +164,14 @@
     <ClCompile Include="..\..\..\Source\Game\Systems\ResetChangedSystem.cpp">
       <Filter>Game\Systems\Changed</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\FrameCounter\FrameCounter.cpp">
+      <Filter>Game\FrameCounter</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\Network\LuaNetwork.cpp">
-      <Filter>Lua Bridge\Network</Filter>
+      <Filter>Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Source\Game\Timer.h">
-      <Filter>Resource Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h">
       <Filter>Lua Bridge</Filter>
     </ClInclude>
@@ -247,12 +241,6 @@
     <ClInclude Include="..\..\..\Source\Game\Systems\ModelSystem.h">
       <Filter>Game\Systems\Model</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\Game\Systems\MovementSystem.h">
-      <Filter>Game\Systems\Movement</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Source\Game\Systems\ReceivePacketSystem.h">
-      <Filter>Game\Systems\ReceivePacket</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\RenderSystem.h">
       <Filter>Game\Systems\Render</Filter>
     </ClInclude>
@@ -270,6 +258,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Network\LuaNetwork.h">
       <Filter>Lua Bridge\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\FrameCounter\FrameCounter.h">
+      <Filter>Game\FrameCounter</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -293,12 +284,6 @@
     </None>
     <None Include="..\..\..\Externals\content\scripting\storaspel\components\tilecomponents.lua">
       <Filter>Scripting\Components</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\tilemovementsystem.lua">
-      <Filter>Scripting\Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\TestSystem.lua">
-      <Filter>Scripting\Systems</Filter>
     </None>
   </ItemGroup>
 </Project>
