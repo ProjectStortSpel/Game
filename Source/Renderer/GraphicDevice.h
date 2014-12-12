@@ -10,6 +10,7 @@ Author: Anders, Christian
 #include "SimpleText.h"
 #include "GLTimer.h"
 #include "Camera.h"
+#include "SkyBox.h"
 
 namespace Renderer
 {
@@ -124,6 +125,7 @@ namespace Renderer
 		bool InitBuffers();
 		bool InitTextRenderer();
 		bool InitLightBuffers();
+		bool InitSkybox();
 
 		void CreateGBufTex(GLenum texUnit, GLenum format, GLuint &texid);
 		void CreateDepthTex(GLuint &texid);
@@ -146,7 +148,7 @@ namespace Renderer
 		int	m_clientWidth, m_clientHeight;
 
 		// Image buffers
-		GLuint m_skyBox;
+		//GLuint m_skyBox;
 		GLuint m_outputImage;
 		GLuint m_debuggText;
 		GLuint m_depthBuf, m_normTex, m_colorTex;
@@ -159,6 +161,9 @@ namespace Renderer
 		Shader m_skyBoxShader;
 		Shader m_deferredShader1, m_compDeferredPass2Shader;
 		Shader m_forwardShader;
+
+		// Skybox
+		SkyBox *m_skybox;
 
 		// SimpleText
 		SimpleText m_textRenderer;

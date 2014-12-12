@@ -32,6 +32,9 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Renderer\TextureLoader.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\SkyBox.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp">
@@ -50,6 +53,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Renderer\Buffer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Renderer\SkyBox.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -88,6 +94,12 @@
       <Filter>shaders</Filter>
     </None>
     <None Include="..\..\..\Externals\content\shaders\skyboxvs.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\skyboxShaderFS.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\skyboxShaderVS.glsl">
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>

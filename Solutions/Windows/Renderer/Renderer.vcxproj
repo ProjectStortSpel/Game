@@ -26,6 +26,7 @@
     <ClInclude Include="..\..\..\Source\Renderer\ModelLoader.h" />
     <ClInclude Include="..\..\..\Source\Renderer\Shader.h" />
     <ClInclude Include="..\..\..\Source\Renderer\SimpleText.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\SkyBox.h" />
     <ClInclude Include="..\..\..\Source\Renderer\stdafx.h" />
     <ClInclude Include="..\..\..\Source\Renderer\TextureLoader.h" />
   </ItemGroup>
@@ -36,6 +37,7 @@
     <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\Shader.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\SimpleText.cpp" />
+    <ClCompile Include="..\..\..\Source\Renderer\SkyBox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\Externals\content\shaders\CSDeferredPass2.glsl" />
@@ -47,6 +49,8 @@
     <None Include="..\..\..\Externals\content\shaders\SimpleText.glsl" />
     <None Include="..\..\..\Externals\content\shaders\skyboxgs.glsl" />
     <None Include="..\..\..\Externals\content\shaders\skyboxps.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\skyboxShaderFS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\skyboxShaderVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\skyboxvs.glsl" />
     <None Include="..\..\..\Externals\content\shaders\VSDeferredPass1.glsl" />
     <None Include="..\..\..\Externals\content\shaders\VSForwardShader.glsl" />

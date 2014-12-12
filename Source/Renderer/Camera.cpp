@@ -1,6 +1,6 @@
 #include "Camera.h"
 
-Camera::Camera()
+Camera::Camera(int windowWidth, int windowHeight)
 {
 	m_pos = glm::vec3( 0, 12, 0 );
 	m_up = vec3(0, 0, -1);
@@ -11,8 +11,15 @@ Camera::Camera()
 	m_camYaw = M_PI;
 	m_sensitivity = 0.002f;
 	m_moveSpeed = 1.0f;
+
+	m_farPlane = 100.f;
+
+	m_projectionMatrix = glm::perspective(45.0f, (float)windowWidth / (float)windowHeight, 0.1f, m_farPlane);
 }
 
+Camera::Camera()
+{
+}
 
 Camera::~Camera()
 {
@@ -53,4 +60,9 @@ mat4* Camera::GetViewMatrix()
 	m_viewMatrix = glm::lookAt(m_pos, m_pos + m_look, m_up);
 
 	return &m_viewMatrix;
+}
+
+void Camera::UpdateProjMatrix(int windowWidth, int windowHeight)
+{
+	m_projectionMatrix = glm::perspective(45.0f, (float)windowWidth / (float)windowHeight, 0.1f, 100.f);
 }
