@@ -7,6 +7,7 @@
 #include "Systems/SyncEntitiesSystem.h"
 #include "Systems/RenderRemoveSystem.h"
 #include "Systems/ResetChangedSystem.h"
+#include "Systems/PointlightSystem.h"
 
 #include "NetworkInstance.h"
 #include "ECSL/ECSL.h"
@@ -115,6 +116,7 @@ void GameCreator::InitializeWorld()
 	//NetworkMessagesSystem* nms = new NetworkMessagesSystem();
 	//nms->SetConsole(&m_consoleManager);
 
+	worldCreator.AddLuaSystemToCurrentGroup(new PointlightSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new RotationSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new CameraSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new ModelSystem(m_graphics));
@@ -146,7 +148,35 @@ void GameCreator::StartGame()
 	m_console->SetupHooks(&m_consoleManager);
 	m_consoleManager.AddCommand("Reload", std::bind(&GameCreator::Reload, this, std::placeholders::_1));
 
-	m_frameCounter->Tick();
+	/*	Tempkod för ljus (LUA FIX)	*/
+	unsigned int newLight = m_world->CreateNewEntity();
+	unsigned int firstId = newLight;
+	m_world->CreateComponentAndAddTo("Pointlight", newLight);
+
+	newLight = m_world->CreateNewEntity();
+	m_world->CreateComponentAndAddTo("Pointlight", newLight);
+
+	newLight = m_world->CreateNewEntity();
+	m_world->CreateComponentAndAddTo("Pointlight", newLight);
+
+	newLight = m_world->CreateNewEntity();
+	m_world->CreateComponentAndAddTo("Pointlight", newLight);
+
+	float* pointlightData = (float*)m_world->GetComponent(firstId, "Pointlight", 0);
+	for (int i = 0; i < 4; i++)
+	{
+		pointlightData[10 * i + 0] = i * 2.2 - 2.2;	//pos x
+		pointlightData[10 * i + 1] = 2.0;		//pos y
+		pointlightData[10 * i + 2] = 0.0;		//pos z
+		pointlightData[10 * i + 3] = 0.8;		 //int x
+		pointlightData[10 * i + 4] = 0.9;		 //int y
+		pointlightData[10 * i + 5] = 0.5;		 //int z
+		pointlightData[10 * i + 6] = 0.9;		//col x
+		pointlightData[10 * i + 7] = 0.5;		//col y
+		pointlightData[10 * i + 8] = 0.5;		//col z
+		pointlightData[10 * i + 9] = 2.2;		 //range
+	}
+
 	while (true)
 	{
 		float dt = m_frameCounter->GetDeltaTime();
