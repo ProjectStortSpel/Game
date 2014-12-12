@@ -45,7 +45,9 @@ namespace LuaBridge
 		int SetString();
 
 		int SetModel();
-
+		
+		int SetPointLight();
+		
 	private:
 		ECSL::DataLocation m_dataLocation;
 		ECSL::System* m_system;

@@ -23,6 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\LuaEmbedder\LuaEmbedder.h" />
+    <ClInclude Include="..\..\..\Source\LuaEmbedder\LuaNumberArray.h" />
     <ClInclude Include="..\..\..\Source\LuaEmbedder\Luna.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
