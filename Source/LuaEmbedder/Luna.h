@@ -115,11 +115,7 @@ namespace LuaEmbedder
     {
       m_properties.clear();
       m_methods.clear();
-      m_objectFunctionsMap.clear(),
-      
-      lua_pushstring(L, className);
-      lua_pushcclosure(L, &Luna<T>::constructor, 1);
-      lua_setglobal(L, className);
+      m_objectFunctionsMap.clear();
       
       luaL_newmetatable(L, className);
       int metatable = lua_gettop(L);
@@ -405,7 +401,6 @@ namespace LuaEmbedder
 	else
 	  lua_pop(L, 1);
       }
-      lua_pop(L, argumentCount);
     }
 
     /*

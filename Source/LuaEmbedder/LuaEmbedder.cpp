@@ -1,4 +1,5 @@
 #include "LuaEmbedder.h"
+#include "LuaNumberArray.h"
 
 namespace LuaEmbedder
 {
@@ -9,6 +10,10 @@ namespace LuaEmbedder
   {
     L = luaL_newstate();
     luaL_openlibs(L);
+    
+    LuaNumberArray<float>::Embed(L, "FloatArray");
+    LuaNumberArray<int>::Embed(L, "IntArray");
+    LuaNumberArray<unsigned int>::Embed(L, "UnsignedIntArray");
   }
   void Quit()
   {
@@ -125,22 +130,26 @@ namespace LuaEmbedder
   
   float PullFloat(int index)
   {
-    assert(lua_isnumber(L, index));
+    if (!lua_isnumber(L, index))
+      std::cerr << "LuaEmbedder::PullFloat : Element at index " << index << " is not a number" << std::endl;
     return (float)lua_tonumber(L, index);
   }
   int PullInt(int index)
   {
-    assert(lua_isnumber(L, index));
+    if (!lua_isnumber(L, index))
+      std::cerr << "LuaEmbedder::PullInt : Element at index " << index << " is not a number" << std::endl;
     return (int)lua_tointeger(L, index);
   }
   bool PullBool(int index)
   {
-    assert(lua_isboolean(L, index));
+    if (!lua_isboolean(L, index))
+      std::cerr << "LuaEmbedder::PullBool : Element at index " << index << " is not a boolean" << std::endl;
     return (bool)lua_toboolean(L, index);
   }
   std::string PullString(int index)
   {
-    assert(lua_isstring(L, index));
+    if (!lua_isstring(L, index))
+      std::cerr << "LuaEmbedder::PullString : Element at index " << index << " is not a string" << std::endl;
     return std::string(lua_tostring(L, index));
   }
   #define PULL_GLOBAL_VARIABLE() \
@@ -196,58 +205,34 @@ namespace LuaEmbedder
   {
     lua_pushnil(L);
   }
-  void PushFloatArray(const float* values, unsigned int count)
+  void PushFloatArray(const float* values, unsigned int size, bool remove)
   {
-    lua_newtable(L);
-    for (unsigned int i = 0; i < count; ++i)
-    {
-      lua_pushnumber(L, values[i]);
-      lua_rawseti(L, -2, i + 1);
-    }
-    lua_pushliteral(L, "n");
-    lua_pushinteger(L, (int)count);
-    lua_rawset(L, -3);
+    LuaNumberArray<float>::Push(L, "FloatArray", values, size, remove);
   }
-  void PushIntArray(const int* values, unsigned int count)
+  void PushIntArray(const int* values, unsigned int size, bool remove)
   {
-    lua_newtable(L);
-    for (unsigned int i = 0; i < count; ++i)
-    {
-      lua_pushinteger(L, values[i]);
-      lua_rawseti(L, -2, i + 1);
-    }
-    lua_pushliteral(L, "n");
-    lua_pushinteger(L, (int)count);
-    lua_rawset(L, -3);
+    LuaNumberArray<int>::Push(L, "IntArray", values, size, remove);
   }
-  void PushUnsignedIntArray(const unsigned int* values, unsigned int count)
+  void PushUnsignedIntArray(const unsigned int* values, unsigned int size, bool remove)
   {
-    lua_newtable(L);
-    for (unsigned int i = 0; i < count; ++i)
-    {
-      lua_pushinteger(L, (int)values[i]);
-      lua_rawseti(L, -2, i + 1);
-    }
-    lua_pushliteral(L, "n");
-    lua_pushinteger(L, (int)count);
-    lua_rawset(L, -3);
+    LuaNumberArray<unsigned int>::Push(L, "UnsignedIntArray", values, size, remove);
   }
-  void PushBoolArray(const bool* values, unsigned int count)
+  void PushBoolArray(const bool* values, unsigned int size)
   {
     lua_newtable(L);
-    for (unsigned int i = 0; i < count; ++i)
+    for (unsigned int i = 0; i < size; ++i)
     {
       lua_pushboolean(L, (int)values[i]);
       lua_rawseti(L, -2, i + 1);
     }
     lua_pushliteral(L, "n");
-    lua_pushinteger(L, (int)count);
+    lua_pushinteger(L, (int)size);
     lua_rawset(L, -3);
   }
-  void PushStringArray(const std::string* values, unsigned int count)
+  void PushStringArray(const std::string* values, unsigned int size)
   {
     lua_newtable(L);
-    for (unsigned int i = 0; i < count; ++i)
+    for (unsigned int i = 0; i < size; ++i)
     {
       lua_pushstring(L, values[i].c_str());
       lua_rawseti(L, -2, i + 1);

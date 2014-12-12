@@ -34,6 +34,6 @@ namespace LuaBridge
     
     LuaConsole::Embed();
 
-	LuaEmbedder::AddFunction("LoadMap", &LoadMap, "File");
+    LuaEmbedder::AddFunction("LoadMap", &LoadMap, "File");
   }
 }
