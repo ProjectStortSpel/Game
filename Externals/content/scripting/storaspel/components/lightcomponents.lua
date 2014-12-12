@@ -1,5 +1,5 @@
 
--- PointLight Component
+-- Pointlight Component
 local PointlightComponent = ComponentType()
 PointlightComponent.Name = "Pointlight"
 PointlightComponent.TableType = TableType.Array
