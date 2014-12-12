@@ -196,18 +196,21 @@ namespace LuaBridge
 	{
 		LuaEmbedder::PushString(_nc.GetIpAddress());
 		LuaEmbedder::PushInt((int)_nc.GetPort());
-		LuaEmbedder::CallMethod<LuaSystem>("System", "OnPlayerConnected", this, 2);
+		LuaEmbedder::PushString(_message);
+		LuaEmbedder::CallMethod<LuaSystem>("System", "OnPlayerConnected", this, 3);
 	}
 	void LuaSystem::OnPlayerDisconnected(Network::NetConnection _nc, const char* _message)
 	{
 		LuaEmbedder::PushString(_nc.GetIpAddress());
 		LuaEmbedder::PushInt((int)_nc.GetPort());
-		LuaEmbedder::CallMethod<LuaSystem>("System", "OnPlayerDisconnected", this, 2);
+		LuaEmbedder::PushString(_message);
+		LuaEmbedder::CallMethod<LuaSystem>("System", "OnPlayerDisconnected", this, 3);
 	}
 	void LuaSystem::OnPlayerTimedOut(Network::NetConnection _nc, const char* _message)
 	{
 		LuaEmbedder::PushString(_nc.GetIpAddress());
 		LuaEmbedder::PushInt((int)_nc.GetPort());
-		LuaEmbedder::CallMethod<LuaSystem>("System", "OnPlayerTimedOut", this, 2);
+		LuaEmbedder::PushString(_message);
+		LuaEmbedder::CallMethod<LuaSystem>("System", "OnPlayerTimedOut", this, 3);
 	}
 }

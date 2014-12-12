@@ -14,6 +14,9 @@ public:
 
 	void SetupHooks(Console::ConsoleManager* _consoleManager);
 
+	void AddPointlight(std::vector<Console::Argument>* _args);
+	void RemovePointlight(std::vector<Console::Argument>* _args);
+
 	void CreateObject(std::vector<Console::Argument>* _args);
 	void RemoveObject(std::vector<Console::Argument>* _args);
 	void AddComponent(std::vector<Console::Argument>* _args);

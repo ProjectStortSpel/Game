@@ -12,6 +12,7 @@ ClientNetwork::ClientNetwork()
 {
 	m_outgoingPort = new int(6112);
 	m_remoteAddress = new std::string("127.0.0.1");
+	m_username = new std::string("");
 	m_socketBound = new bool(false);
 
 	m_receivePacketsThread = new std::thread();
@@ -74,6 +75,7 @@ ClientNetwork::~ClientNetwork()
 	Disconnect();
 
 	SAFE_DELETE(m_remoteAddress);
+	SAFE_DELETE(m_username);
 	SAFE_DELETE(m_outgoingPort);
 	SAFE_DELETE(m_socketBound);
 	SAFE_DELETE(m_receivePacketsThread);
@@ -155,6 +157,7 @@ bool ClientNetwork::Connect()
 
 	uint64_t id = m_packetHandler->StartPack(NetTypeMessageId::ID_PASSWORD_ATTEMPT);
 	m_packetHandler->WriteString(id, m_password->c_str());
+	m_packetHandler->WriteString(id, m_username->c_str());
 	auto packet = m_packetHandler->EndPack(id);
 	Send(packet);
 

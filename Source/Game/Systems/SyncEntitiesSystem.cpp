@@ -15,6 +15,8 @@ SyncEntitiesSystem::~SyncEntitiesSystem()
 
 void SyncEntitiesSystem::Initialize()
 {
+	SetSystemName("Sync Entities System");
+
 	/*	Rendersystem wants Network	*/
 	AddComponentTypeToFilter("SyncNetwork", ECSL::FilterType::Mandatory);
 

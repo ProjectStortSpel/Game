@@ -1,6 +1,23 @@
 networkMessagesSystem = System()
 
 networkMessagesSystem.Update = function(self, dt)
+
+	if Server.IsRunning() then
+		Server.Update(dt)
+	end
+	
+	if Client.IsConnected() then
+		Client.Update(dt)
+	end
+	
+	if Server.IsRunning() then
+		while Server.HandlePacket() > 0 do	end
+	end
+		
+	if Client.IsConnected() then
+		while Client.HandlePacket() > 0 do	end
+	end
+
 end
 networkMessagesSystem.Initialize = function(self)
 	self:InitializeNetworkEvents()
@@ -35,6 +52,7 @@ networkMessagesSystem.OnKickedFromServer = function(self, _ip, _port, _message)
 	local s = "[Client] Kicked from server " .. _ip .. ":" .. _port .. ". Reason: " .. _message
 	Console.Print(s)	
 end
+
 networkMessagesSystem.OnPasswordInvalid = function(self, _ip, _port)
 	local s = "[Client] Invalid password to server " .. _ip .. ":" .. _port
 	Console.Print(s)	
@@ -64,19 +82,29 @@ networkMessagesSystem.OnTimedOutFromServer = function(self, _ip, _port)
 	Console.Print(s)	
 end
 
-networkMessagesSystem.OnPlayerConnected = function(self, _ip, _port)
+networkMessagesSystem.OnPlayerConnected = function(self, _ip, _port, _message)
+
+	local s = "[Server] " .. _message .. " (" .. _ip .. ":" .. _port .. ") connected to server"
+
 	
-	-- Hämta alla entiteter som har komponenten "SyncNetwork"
-	-- Skicka dessa entiteter till klienten
+	Console.Print(s)
 	
-	local s = "[Server] Client " .. _ip .. ":" .. _port .. " connected to server"
+	local id = Client.StartPack("Test")
+	Client.WriteFloat(id, 1.5)
+	Client.WriteString(id, "String")
+	Client.WriteBool(id, true)
+	Client.WriteInt(id, 5)
+	Client.Send(id)
+	
+	local id = Server.StartPack("Test2")
+	Server.Send(id, _ip, _port)
+
+end
+networkMessagesSystem.OnPlayerDisconnected = function(self, _ip, _port, _message)
+	local s = "[Server] " .. _message .. " (" .. _ip .. ":" .. _port .. ") disconnected from server"
 	Console.Print(s)
 end
-networkMessagesSystem.OnPlayerDisconnected = function(self, _ip, _port)
-local s = "[Server] Client " .. _ip .. ":" .. _port .. " disconnected from server"
-	Console.Print(s)
-end
-networkMessagesSystem.OnPlayerTimedOut = function(self, _ip, _port)
-local s = "[Server] Client " .. _ip .. ":" .. _port .. " timed out from the server"
+networkMessagesSystem.OnPlayerTimedOut = function(self, _ip, _port, _message)
+	local s = "[Server] " .. _message .. " (" .. _ip .. ":" .. _port .. ") timed out from the server"
 	Console.Print(s)
 end

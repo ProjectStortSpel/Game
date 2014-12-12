@@ -12,9 +12,13 @@ RenderRemoveSystem::~RenderRemoveSystem()
 
 void RenderRemoveSystem::Initialize()
 {
+	SetSystemName("Render Remove System");
+
 	/*	Rendersystem wants Position, Scale, Rotation and Render	*/
 	AddComponentTypeToFilter("Render", ECSL::FilterType::Mandatory);
 
+
+	
 
 	printf("RenderRemoveSystem initialized!\n");
 }

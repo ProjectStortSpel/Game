@@ -1,5 +1,5 @@
 #include "ServerNetwork.h"
-
+#include <sstream>
 //#include <algorithm>
 
 #ifdef WIN32
@@ -19,6 +19,17 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t _
 		if (NET_DEBUG)
 			printf("Player accepted. IP: %s:%d\n", _connection.GetIpAddress(), _connection.GetPort());
 
+		//std::string username = _packetHandler->ReadString(_id);
+		//if (username.empty())
+		//{
+		//	std::stringstream ss;
+		//	m_connectedClientsLock->lock();
+		//	ss << "DefaultUser" << m_connectedClients->size();
+		//	m_connectedClientsLock->unlock();
+		//	username = ss.str();
+
+		//}
+
 		uint64_t id2 = _packetHandler->StartPack(NetTypeMessageId::ID_CONNECTION_ACCEPTED);
 		auto newPacket = _packetHandler->EndPack(id2);
 		m_connectedClientsLock->lock();
@@ -28,13 +39,13 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t _
 
 
 		uint64_t id3 = _packetHandler->StartPack(NetTypeMessageId::ID_REMOTE_CONNECTION_ACCEPTED);
-		_packetHandler->WriteString(id3, "Username_Temp");
+		//_packetHandler->WriteString(id3, username.c_str());
 		Packet* p = _packetHandler->EndPack(id3);
 
 		Broadcast(p, _connection);
 
 		if (*m_onPlayerConnected)
-			(*m_onPlayerConnected)(_connection, 0);
+			(*m_onPlayerConnected)(_connection, "TEMP");
 	}
 	else
 	{
@@ -67,7 +78,7 @@ void ServerNetwork::NetConnectionLost(NetConnection _connection)
 	Broadcast(p, _connection);
 
 	if (*m_onPlayerTimedOut)
-		(*m_onPlayerTimedOut)(_connection, 0);
+		(*m_onPlayerTimedOut)(_connection, "Username_Temp");
 
 	m_timeOutLock->lock();
 	m_currentIntervallCounter->erase(_connection);
@@ -93,7 +104,7 @@ void ServerNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uin
 	Broadcast(p, _connection);
 
 	if(*m_onPlayerDisconnected)
-		(*m_onPlayerDisconnected)(_connection, 0);
+		(*m_onPlayerDisconnected)(_connection, "Username_Temp");
 
 	m_timeOutLock->lock();
 	m_currentIntervallCounter->erase(_connection);

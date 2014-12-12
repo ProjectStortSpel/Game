@@ -98,13 +98,16 @@ unsigned int EntityTemplateManager::GetTableId(const std::string& _templateName)
 		return it->second;
 }
 
+
+
+bool EntityTemplateManager::HasTemplate(std::string& _template)
+{
+	return m_stringTableId->find(_template) != m_stringTableId->end();
+}
 void EntityTemplateManager::Clear()
 {
-	if (m_stringTableId)
-	{
-		m_stringTableId->clear();
-		delete(m_stringTableId);
-	}
+	m_stringTableId->clear();
+	delete(m_stringTableId);
 
 	if (m_entityTemplates)
 	{

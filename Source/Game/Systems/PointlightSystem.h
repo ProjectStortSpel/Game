@@ -1,15 +1,15 @@
-#ifndef RENDERSYSTEM_H
-#define RENDERSYSTEM_H
+#ifndef POINTLIGHTSYSTEM_H
+#define POINTLIGHTSYSTEM_H
 
 #include "ECSL/Interfaces/System.h"
 #include "Renderer/GraphicDevice.h"
 
 
-class RenderSystem : public ECSL::System
+class PointlightSystem : public ECSL::System
 {
 public:
-	RenderSystem(Renderer::GraphicDevice* _graphics);
-	~RenderSystem();
+	PointlightSystem(Renderer::GraphicDevice* _graphics);
+	~PointlightSystem();
 
 	void Update(float _dt);
 	void Initialize();
@@ -18,11 +18,12 @@ public:
 	void OnEntityRemoved(unsigned int _entityId);
 
 private:
-	void UpdateMatrix(unsigned int _entityId);
+	void UpdatePointLights();
 
 	ECSL::BitSet::DataType* m_bitMask;
 	unsigned int m_numberOfBitSets;
-	unsigned int m_componentId;
+	unsigned int m_changedComponentId;
+	unsigned int m_pointLightId;;
 
 	Renderer::GraphicDevice* m_graphics;
 };
