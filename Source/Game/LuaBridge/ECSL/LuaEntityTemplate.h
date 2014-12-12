@@ -28,7 +28,8 @@ namespace LuaBridge
     int SetFloat();
     int SetFloat2();
     int SetFloat3();
-    int SetFloat4();
+	int SetFloat4();
+	int SetFloat5();
     
     int SetInt();
     int SetInt2();
