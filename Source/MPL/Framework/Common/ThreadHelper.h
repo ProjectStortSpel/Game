@@ -9,6 +9,8 @@ namespace MPL
 	{
 		/* Returns the thread count of the current process or -1 in case of failure. */
 		int GetCurrentThreadCount();
+
+		unsigned int GetAvailableThreadCount();
 	};
 };
 

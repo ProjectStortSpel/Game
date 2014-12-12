@@ -2,26 +2,24 @@
 #define TASK_H
 
 #include <SDL/SDL.h>
+#include "TaskId.h"
 #include "TaskInfo.h"
+#include "WorkItem.h"
 
 namespace MPL
 {
-	typedef void(*FunctionPointer)(const TaskInfo&, void*);
-
-	class DECLSPEC Task
+	class Task
 	{
 	public:
-		Task(FunctionPointer _function);
-		Task(FunctionPointer _function, void* _data);
+		Task(WorkItem _function);
 		~Task();
 
-		FunctionPointer GetFunction() { return m_function; }
-		void* GetData() { return m_data; }
-		void SetData(void* _data) { m_data = _data; }
-
 	private:
-		FunctionPointer m_function;
-		void* m_data;
+		TaskId m_taskId;
+		WorkItem* m_work;
+		TaskId m_parentId;
+		unsigned int m_openWorkItemCount;
+		TaskId m_dependency;
 	};
 };
 

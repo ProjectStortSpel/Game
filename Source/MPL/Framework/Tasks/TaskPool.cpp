@@ -21,6 +21,11 @@ TaskPool::~TaskPool()
 	delete(m_tasks);
 }
 
+TaskId TaskPool::GenerateId()
+{
+	return ++m_nextId;
+}
+
 void TaskPool::AddTask(Task* _task)
 {
 	SDL_LockMutex(m_taskMutex);

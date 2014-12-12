@@ -7,20 +7,24 @@
 
 namespace MPL
 {
-	class DECLSPEC TaskPool
+	class TaskPool
 	{
 	public:
 		TaskPool();
 		~TaskPool();
 
+		TaskId GenerateId();
 		void AddTask(Task* _task);
 		void AddTasks(const std::vector<Task*>& _tasks);
 		Task* GetTask();
 		unsigned int GetTaskCount();
 
 	private:
+		TaskId m_nextId;
 		SDL_mutex* m_taskMutex;
+		std::vector<TaskId>* m_availableIds;
 		std::vector<Task*>* m_tasks;
+		
 	};
 };
 

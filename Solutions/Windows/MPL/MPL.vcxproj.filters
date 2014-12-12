@@ -20,6 +20,9 @@
     <Filter Include="Source Files\Framework\Threads">
       <UniqueIdentifier>{e69a29ae-ad09-4eb9-b21a-522d0c0a7805}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Framework\Common">
+      <UniqueIdentifier>{7aa6bd98-58dd-425e-bd4a-382ddc3e37e0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\MPL\MPL.h">
@@ -37,17 +40,20 @@
     <ClInclude Include="..\..\..\Source\MPL\Interfaces\Scheduler.h">
       <Filter>Source Files\Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\MPL\Framework\Threads\Thread.h">
-      <Filter>Source Files\Framework\Threads</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Source\MPL\Framework\Tasks\TaskPool.h">
       <Filter>Source Files\Framework\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\MPL\Framework\Threads\SlaveThread.h">
       <Filter>Source Files\Framework\Threads</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\MPL\Framework\Threads\MasterThread.h">
-      <Filter>Source Files\Framework\Threads</Filter>
+    <ClInclude Include="..\..\..\Source\MPL\Framework\Common\ThreadHelper.h">
+      <Filter>Source Files\Framework\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\MPL\Framework\Tasks\WorkItem.h">
+      <Filter>Source Files\Framework\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\MPL\Framework\Tasks\TaskId.h">
+      <Filter>Source Files\Framework\Tasks</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -63,17 +69,14 @@
     <ClCompile Include="..\..\..\Source\MPL\Interfaces\Scheduler.cpp">
       <Filter>Source Files\Interfaces</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\MPL\Framework\Threads\Thread.cpp">
-      <Filter>Source Files\Framework\Threads</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Source\MPL\Framework\Tasks\TaskPool.cpp">
       <Filter>Source Files\Framework\Tasks</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\MPL\Framework\Threads\SlaveThread.cpp">
       <Filter>Source Files\Framework\Threads</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\MPL\Framework\Threads\MasterThread.cpp">
-      <Filter>Source Files\Framework\Threads</Filter>
+    <ClCompile Include="..\..\..\Source\MPL\Framework\Common\ThreadHelper.cpp">
+      <Filter>Source Files\Framework\Common</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -5,7 +5,6 @@
 #include <tlhelp32.h>
 #endif
 
-
 using namespace MPL;
 
 int ThreadHelper::GetCurrentThreadCount()
@@ -37,6 +36,17 @@ int ThreadHelper::GetCurrentThreadCount()
 	return SDL_GetCPUCount();
 
 	#endif
+}
 
+unsigned int ThreadHelper::GetAvailableThreadCount()
+{
+	/* Fetch number of currently used threads */
+	int currentThreadCount = ThreadHelper::GetCurrentThreadCount();
+	if (currentThreadCount == -1)
+	{
+		currentThreadCount = SDL_GetCPUCount();
+	}
 
+	/* Total number of logical processors - Number of threads currently used = Number of available threads */
+	return (unsigned int)(SDL_GetCPUCount() - currentThreadCount);
 }
