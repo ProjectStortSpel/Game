@@ -11,17 +11,20 @@ namespace ECSL
 		TemplateEntry(int data){ m_intData = data; m_dataType = ComponentDataType::INT; }
 		TemplateEntry(float data){ m_floatData = data; m_dataType = ComponentDataType::FLOAT; }
 		TemplateEntry(std::string data){ m_textData = data; m_dataType = ComponentDataType::CHAR; }
+		TemplateEntry(bool data){ m_boolData = data; m_dataType = ComponentDataType::BOOL; }
 
 		ComponentDataType GetDataType(){ return m_dataType; }
 		int GetIntData(){ return m_intData; }
 		float GetFloatData(){ return m_floatData; }
 		std::string GetTextData(){ return m_textData; }
+		bool GetBoolData() { return m_boolData; }
 
 	private:
 		ComponentDataType m_dataType;
 		std::string m_textData;
 		int m_intData;
 		float m_floatData;
+		bool m_boolData;
 	};
 
 	class DECLSPEC EntityTemplate

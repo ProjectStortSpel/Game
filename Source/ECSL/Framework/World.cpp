@@ -110,6 +110,12 @@ unsigned int World::CreateNewEntity(std::string _templateName)
 					dataLoc[textData.size()] = '\0';
 					byteOffset += CHARSIZE * sizeof(char);
 				}
+				else if (componentData[n].GetDataType() == ComponentDataType::BOOL)
+				{
+					bool* dataLoc = (bool*)GetComponent(newId, componentType, byteOffset);
+					dataLoc[0] = componentData[n].GetBoolData();
+					byteOffset += sizeof(bool);
+				}
 				
 			}
 		}

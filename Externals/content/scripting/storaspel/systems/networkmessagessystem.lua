@@ -21,7 +21,7 @@ networkMessagesSystem.Update = function(self, dt)
 end
 networkMessagesSystem.Initialize = function(self)
 	self:InitializeNetworkEvents()
-
+	
 	self:AddComponentTypeToFilter("Network", FilterType.Mandatory)
 	print("NetworkMessagesSystem initialized!")
 end
@@ -37,6 +37,9 @@ networkMessagesSystem.OnBannedFromServer = function(self, _ip, _port, _message)
 	Console.Print(s)
 end
 networkMessagesSystem.OnConnectedToServer = function(self, _ip, _port)
+	local id = Client.StartPack("Username")
+	Client.WriteString(id, "Username_Lua")
+	Client.Send(id)
 	local s = "[Client] Connected to server " .. _ip .. ":" .. _port
 	Console.Print(s)
 end
@@ -83,19 +86,9 @@ networkMessagesSystem.OnTimedOutFromServer = function(self, _ip, _port)
 end
 
 networkMessagesSystem.OnPlayerConnected = function(self, _ip, _port, _message)
-
+	
 	local s = "[Server] " .. _message .. " (" .. _ip .. ":" .. _port .. ") connected to server"
 	Console.Print(s)
-	
-	local id = Client.StartPack("Test")
-	Client.WriteFloat(id, 1.5)
-	Client.WriteString(id, "String")
-	Client.WriteBool(id, true)
-	Client.WriteInt(id, 5)
-	Client.Send(id)
-	
-	local id = Server.StartPack("Test2")
-	Server.Send(id, _ip, _port)
 
 end
 networkMessagesSystem.OnPlayerDisconnected = function(self, _ip, _port, _message)

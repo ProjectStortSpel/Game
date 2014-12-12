@@ -8,6 +8,7 @@
 #include "Systems/SyncEntitiesSystem.h"
 #include "Systems/RenderRemoveSystem.h"
 #include "Systems/ResetChangedSystem.h"
+#include "Systems/ReconnectSystem.h"
 
 #include "NetworkInstance.h"
 #include "ECSL/ECSL.h"
@@ -15,10 +16,27 @@
 
 #include "LuaBridge/ECSL/LuaSystem.h"
 
+void GameCreator::NetUsername(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _nc)
+{
+	char* name = _ph->ReadString(_id);
+	char* ipAddress = (char*)_nc.GetIpAddress();
+	unsigned int port = _nc.GetPort();
+	bool tmp = false;
+
+	unsigned int id = m_world->CreateNewEntity("TempPlayer");
+
+
+	m_world->SetComponent(id, "Username", "Name", name);
+
+	m_world->SetComponent(id, "NetConnection", "IpAddress", ipAddress);
+	m_world->SetComponent(id, "NetConnection", "Port", &port);
+	m_world->SetComponent(id, "NetConnection", "Active", &tmp);
+}
+
 GameCreator::GameCreator() :
 m_graphics(0), m_input(0), m_world(0), m_console(0), m_consoleManager(Console::ConsoleManager::GetInstance())
 {
-
+	
 }
 
 GameCreator::~GameCreator()
@@ -68,6 +86,8 @@ void GameCreator::InitializeNetwork()
 	NetworkInstance::InitServer();
 	NetworkInstance::InitNetworkHelper(&m_world);
 
+	Network::NetMessageHook hook = std::bind(&GameCreator::NetUsername, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	NetworkInstance::GetServer()->AddNetworkHook("Username", hook);
 }
 
 void GameCreator::InitializeLua() 
@@ -120,8 +140,10 @@ void GameCreator::InitializeWorld()
 	worldCreator.AddLuaSystemToCurrentGroup(new ModelSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new SyncEntitiesSystem());
-	worldCreator.AddLuaSystemToCurrentGroup(new RenderRemoveSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new ResetChangedSystem());
+	worldCreator.AddLuaSystemToCurrentGroup(new ReconnectSystem());
+	worldCreator.AddLuaSystemToCurrentGroup(new RenderRemoveSystem(m_graphics));
+	
 
 	m_world = worldCreator.CreateWorld(10000);
 	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");

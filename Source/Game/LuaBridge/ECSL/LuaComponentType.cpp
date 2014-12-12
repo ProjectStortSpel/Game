@@ -32,6 +32,7 @@ namespace LuaBridge
 	LuaEmbedder::AddInt("Matrix", ECSL::ComponentDataType::MATRIX, "ByteSize");
 	LuaEmbedder::AddInt("Reference", ECSL::ComponentDataType::REFERENCE, "ByteSize");
 	LuaEmbedder::AddInt("Text", ECSL::ComponentDataType::CHAR, "ByteSize");
+	LuaEmbedder::AddInt("Bool", ECSL::ComponentDataType::BOOL, "ByteSize");
   }
   
   int LuaComponentType::GetName()
@@ -75,8 +76,6 @@ namespace LuaBridge
     std::string variableName = LuaEmbedder::PullString(1);
 	int variableDataType = LuaEmbedder::PullInt(2);
 	int byteSize = ECSL::GetByteSizeFromType(ECSL::ComponentDataType(variableDataType));
-
-	
 
 	ECSL::ComponentVariable variable = ECSL::ComponentVariable(variableName, byteSize);
     m_variables.insert(std::pair<std::string, ECSL::ComponentVariable>(variableName, variable));

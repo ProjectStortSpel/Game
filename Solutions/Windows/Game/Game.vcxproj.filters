@@ -152,9 +152,6 @@
     <ClCompile Include="..\..\..\Source\Game\Systems\MovementSystem.cpp">
       <Filter>Game\Systems\Movement</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\Game\Systems\ReceivePacketSystem.cpp">
-      <Filter>Game\Systems\ReceivePacket</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Systems\RenderSystem.cpp">
       <Filter>Game\Systems\Render</Filter>
     </ClCompile>
@@ -172,6 +169,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\Network\LuaNetwork.cpp">
       <Filter>Lua Bridge\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\ReconnectSystem.cpp">
+      <Filter>Game\Systems</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -250,9 +250,6 @@
     <ClInclude Include="..\..\..\Source\Game\Systems\MovementSystem.h">
       <Filter>Game\Systems\Movement</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\Game\Systems\ReceivePacketSystem.h">
-      <Filter>Game\Systems\ReceivePacket</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\RenderSystem.h">
       <Filter>Game\Systems\Render</Filter>
     </ClInclude>
@@ -270,6 +267,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Network\LuaNetwork.h">
       <Filter>Lua Bridge\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\ReconnectSystem.h">
+      <Filter>Game\Systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -293,12 +293,6 @@
     </None>
     <None Include="..\..\..\Externals\content\scripting\storaspel\components\tilecomponents.lua">
       <Filter>Scripting\Components</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\tilemovementsystem.lua">
-      <Filter>Scripting\Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\TestSystem.lua">
-      <Filter>Scripting\Systems</Filter>
     </None>
   </ItemGroup>
 </Project>

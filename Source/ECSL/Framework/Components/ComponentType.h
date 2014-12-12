@@ -34,7 +34,6 @@ namespace ECSL
 		case ComponentDataType::INT:
 			return sizeof(int);
 			break;
-
 		case ComponentDataType::FLOAT:
 			return sizeof(float);
 			break;
@@ -48,6 +47,10 @@ namespace ECSL
 
 		case ComponentDataType::REFERENCE:
 			return sizeof(int);
+			break;
+
+		case ComponentDataType::BOOL:
+			return sizeof(bool);
 			break;
 		}
 		return 0;

@@ -10,12 +10,15 @@ TestMovementSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Scale",FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Model",FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Direction",FilterType.Mandatory)
-		
+	
+	self:InitializeNetworkEvents()
+	
 	print("TestMovementSystem initialized!")
 end
 
 TestMovementSystem.Update = function(self, dt)
 	
+
 	local entities = self:GetEntities()
 	--Console.Print(#entities)
 	
@@ -56,6 +59,15 @@ TestMovementSystem.Update = function(self, dt)
 	end
 	
 	
+end
+
+
+TestMovementSystem.OnConnectedToServer = function(self, _ip, _port)
+	local id = Client.StartPack("Username")
+	Client.WriteString(id, "Username_Lua")
+	Client.Send(id)
+	local s = "[Client] 2344564575662345fghftgConnected to server " .. _ip .. ":" .. _port
+	Console.Print(s)
 end
 
 TestMovementSystem.PostInitialize = function(self)

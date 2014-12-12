@@ -222,6 +222,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClCompile Include="..\..\..\Source\Game\Systems\CameraSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\ModelSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\MovementSystem.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\Systems\ReconnectSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\RenderRemoveSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\RenderSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\ResetChangedSystem.cpp" />
@@ -254,6 +255,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClInclude Include="..\..\..\Source\Game\Systems\CameraSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\ModelSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\MovementSystem.h" />
+    <ClInclude Include="..\..\..\Source\Game\Systems\ReconnectSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\RenderRemoveSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\RenderSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\ResetChangedSystem.h" />

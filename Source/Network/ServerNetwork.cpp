@@ -9,7 +9,7 @@
 
 using namespace Network;
 
-void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
+void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection)
 {
 	char type = _packetHandler->GetNetTypeMessageId(_id);
 
@@ -18,17 +18,6 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t _
 	{
 		if (NET_DEBUG)
 			printf("Player accepted. IP: %s:%d\n", _connection.GetIpAddress(), _connection.GetPort());
-
-		//std::string username = _packetHandler->ReadString(_id);
-		//if (username.empty())
-		//{
-		//	std::stringstream ss;
-		//	m_connectedClientsLock->lock();
-		//	ss << "DefaultUser" << m_connectedClients->size();
-		//	m_connectedClientsLock->unlock();
-		//	username = ss.str();
-
-		//}
 
 		uint64_t id2 = _packetHandler->StartPack(NetTypeMessageId::ID_CONNECTION_ACCEPTED);
 		auto newPacket = _packetHandler->EndPack(id2);
@@ -39,13 +28,11 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t _
 
 
 		uint64_t id3 = _packetHandler->StartPack(NetTypeMessageId::ID_REMOTE_CONNECTION_ACCEPTED);
-		//_packetHandler->WriteString(id3, username.c_str());
 		Packet* p = _packetHandler->EndPack(id3);
 
 		Broadcast(p, _connection);
 
-		if (*m_onPlayerConnected)
-			(*m_onPlayerConnected)(_connection, "TEMP");
+		TriggerEvent(m_onPlayerConnected, _connection, 0);
 	}
 	else
 	{
@@ -62,7 +49,7 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t _
 	}
 }
 
-void ServerNetwork::NetConnectionLost(NetConnection _connection)
+void ServerNetwork::NetConnectionLost(NetConnection& _connection)
 {
 	if (NET_DEBUG)
 		printf("Player timed out. IP: %s:%d\n", _connection.GetIpAddress(), _connection.GetPort());
@@ -72,13 +59,11 @@ void ServerNetwork::NetConnectionLost(NetConnection _connection)
 	m_connectedClientsLock->unlock();
 
 	uint64_t id = m_packetHandler->StartPack(NetTypeMessageId::ID_REMOTE_CONNECTION_LOST);
-	m_packetHandler->WriteString(id, "Username_Temp"); // remove laterz
 	Packet* p = m_packetHandler->EndPack(id);
 
 	Broadcast(p, _connection);
 
-	if (*m_onPlayerTimedOut)
-		(*m_onPlayerTimedOut)(_connection, "Username_Temp");
+	TriggerEvent(m_onPlayerTimedOut, _connection, 0);
 
 	m_timeOutLock->lock();
 	m_currentIntervallCounter->erase(_connection);
@@ -88,7 +73,7 @@ void ServerNetwork::NetConnectionLost(NetConnection _connection)
 	(*m_receivePacketsThreads)[_connection].join();
 }
 
-void ServerNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
+void ServerNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection)
 {
 	if (NET_DEBUG)
 		printf("Player disconnected. IP: %s:%d\n", _connection.GetIpAddress(), _connection.GetPort());
@@ -98,13 +83,11 @@ void ServerNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uin
 	m_connectedClientsLock->unlock();
 
 	uint64_t id = _packetHandler->StartPack(NetTypeMessageId::ID_REMOTE_CONNECTION_DISCONNECTED);
-	_packetHandler->WriteString(id, "Username_Temp");
 	Packet* p = _packetHandler->EndPack(id);
 
 	Broadcast(p, _connection);
 
-	if(*m_onPlayerDisconnected)
-		(*m_onPlayerDisconnected)(_connection, "Username_Temp");
+	TriggerEvent(m_onPlayerDisconnected, _connection, 0);
 
 	m_timeOutLock->lock();
 	m_currentIntervallCounter->erase(_connection);
@@ -115,7 +98,7 @@ void ServerNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uin
 	(*m_receivePacketsThreads)[_connection].join();
 }
 
-void ServerNetwork::NetPing(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
+void ServerNetwork::NetPing(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection)
 {
 	if (NET_DEBUG)
 		printf("Ping from: %s:%d\n", _connection.GetIpAddress(), _connection.GetPort());
@@ -125,7 +108,7 @@ void ServerNetwork::NetPing(PacketHandler* _packetHandler, uint64_t _id, NetConn
 	Send(p, _connection);
 }
 
-void ServerNetwork::NetPong(PacketHandler* _packetHandler, uint64_t _id, NetConnection _connection)
+void ServerNetwork::NetPong(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection)
 {
 	if (NET_DEBUG)
 		printf("Pong from: %s:%d\n", _connection.GetIpAddress(), _connection.GetPort());
@@ -151,9 +134,9 @@ ServerNetwork::ServerNetwork()
 	m_currentTimeOutIntervall = new std::map<NetConnection, float>();
 	m_currentIntervallCounter = new std::map<NetConnection, int>();
 
-	m_onPlayerConnected = new NetEvent();
-	m_onPlayerDisconnected = new NetEvent();
-	m_onPlayerTimedOut = new NetEvent();
+	m_onPlayerConnected = new std::vector<NetEvent>();
+	m_onPlayerDisconnected = new std::vector<NetEvent>();
+	m_onPlayerTimedOut = new std::vector<NetEvent>();
 
 	*m_incomingPort = 6112;
 
@@ -188,7 +171,7 @@ ServerNetwork::~ServerNetwork()
 	SAFE_DELETE(m_onPlayerTimedOut);
 }
 
-bool ServerNetwork::Start(unsigned int _incomingPort, const char* _password, unsigned int _maxConnections)
+bool ServerNetwork::Start(unsigned int& _incomingPort, const char* _password, unsigned int& _maxConnections)
 {
 	*m_incomingPort = _incomingPort;
 	*m_password = _password;
@@ -265,7 +248,7 @@ bool ServerNetwork::Stop()
 	return *m_running;
 }
 
-void ServerNetwork::Broadcast(Packet* _packet, NetConnection _exclude)
+void ServerNetwork::Broadcast(Packet* _packet, NetConnection& _exclude)
 {
 	float bytesSent = 0;
 
@@ -291,7 +274,7 @@ void ServerNetwork::Broadcast(Packet* _packet, NetConnection _exclude)
 	SAFE_DELETE(_packet);
 }
 
-void ServerNetwork::Send(Packet* _packet, NetConnection _receiver)
+void ServerNetwork::Send(Packet* _packet, NetConnection& _receiver)
 {
 	float bytesSent = -1;
 
@@ -437,7 +420,7 @@ void ServerNetwork::ListenForConnections(void)
 	}
 }
 
-void ServerNetwork::UpdateNetUsage(float _dt)
+void ServerNetwork::UpdateNetUsage(float& _dt)
 {
 	*m_usageDataTimer += _dt;
 	if (*m_usageDataTimer >= 1.f)
@@ -455,7 +438,7 @@ void ServerNetwork::UpdateNetUsage(float _dt)
 	}
 }
 
-void ServerNetwork::UpdateTimeOut(float _dt)
+void ServerNetwork::UpdateTimeOut(float& _dt)
 {
 	std::vector<NetConnection> trash;
 
@@ -479,7 +462,8 @@ void ServerNetwork::UpdateTimeOut(float _dt)
 			uint64_t id = m_packetHandler->StartPack(ID_PING);
 			Packet* p = m_packetHandler->EndPack(id);
 
-			Send(p, it->first);
+			NetConnection nc = it->first;
+			Send(p, nc);
 		}
 	}
 	m_timeOutLock->unlock();
@@ -499,31 +483,31 @@ void ServerNetwork::UpdateTimeOut(float _dt)
 
 }
 
-void ServerNetwork::SetOnPlayerConnected(NetEvent _function)
+void ServerNetwork::SetOnPlayerConnected(NetEvent& _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnPlayerConnected.\n");
 
-	*m_onPlayerConnected = _function;
+	m_onPlayerConnected->push_back(_function);
 }
 
-void ServerNetwork::SetOnPlayerDisconnected(NetEvent _function)
+void ServerNetwork::SetOnPlayerDisconnected(NetEvent& _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnPlayerDisconnected.\n");
 
-	*m_onPlayerDisconnected = _function;
+	m_onPlayerDisconnected->push_back(_function);
 }
 
-void ServerNetwork::SetOnPlayerTimedOut(NetEvent _function)
+void ServerNetwork::SetOnPlayerTimedOut(NetEvent& _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnPlayerTimedOut.\n");
 
-	*m_onPlayerTimedOut = _function;
+	m_onPlayerTimedOut->push_back(_function);
 }
 
-void ServerNetwork::Kick(NetConnection _connection, char* _reason)
+void ServerNetwork::Kick(NetConnection& _connection, char* _reason)
 {
 	m_connectedClientsLock->lock();
 
@@ -538,7 +522,6 @@ void ServerNetwork::Kick(NetConnection _connection, char* _reason)
 	Packet* p1 = m_packetHandler->EndPack(id);
 
 	uint64_t id2 = m_packetHandler->StartPack(ID_REMOTE_CONNECTION_KICKED);
-	m_packetHandler->WriteString(id2, "Username_Temp");
 	Packet* p2 = m_packetHandler->EndPack(id2);
 
 	m_connectedClientsLock->unlock();
