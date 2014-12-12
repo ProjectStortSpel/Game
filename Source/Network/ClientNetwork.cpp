@@ -29,7 +29,7 @@ ClientNetwork::ClientNetwork()
 	m_connected = new bool(false);
 
 	*m_maxTimeOutIntervall = 1.0f;
-	*m_maxIntervallCounter = 30;
+	*m_maxIntervallCounter = 300;
 
 	m_onConnectedToServer = new std::vector<NetEvent>();
 	m_onDisconnectedFromServer = new std::vector<NetEvent>();
@@ -367,13 +367,12 @@ void ClientNetwork::NetConnectionKicked(PacketHandler* _packetHandler, uint64_t&
 
 	char* message = _packetHandler->ReadString(_id);
 
-	//Disconnect();
+	TriggerEvent(m_onKickedFromServer, _connection, 0);
+
 	*m_receivePacketsThreadAlive = false;
 
 	SAFE_DELETE(m_socket);
 	*m_socketBound = 0;
-
-	TriggerEvent(m_onKickedFromServer, _connection, 0);
 
 	if (m_receivePacketsThread->joinable())
 		m_receivePacketsThread->join();

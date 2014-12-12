@@ -18,15 +18,18 @@
 
 void GameCreator::NetUsername(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _nc)
 {
-	char* name = _ph->ReadString(_id);
+	std::stringstream ss;
+	ss << _nc.GetIpAddress() << _nc.GetPort();
+
+	const char* name = ss.str().c_str();
 	char* ipAddress = (char*)_nc.GetIpAddress();
 	unsigned int port = _nc.GetPort();
 	bool tmp = false;
 
-	unsigned int id = m_world->CreateNewEntity("TempPlayer");
+	unsigned int id = m_world->CreateNewEntity("User");
 
 
-	m_world->SetComponent(id, "Username", "Name", name);
+	m_world->SetComponent(id, "Username", "Name", (char*)name);
 
 	m_world->SetComponent(id, "NetConnection", "IpAddress", ipAddress);
 	m_world->SetComponent(id, "NetConnection", "Port", &port);

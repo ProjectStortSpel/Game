@@ -3,6 +3,7 @@
 
 #include "ECSL/Interfaces/System.h"
 #include "ECSL/Framework/World.h"
+#include "Network/ServerNetwork.h"
 
 class ReconnectSystem : public ECSL::System
 {
@@ -18,6 +19,11 @@ public:
 
 	void OnEntityAdded(unsigned int _entityId);
 	void OnEntityRemoved(unsigned int _entityId);
+
+private:
+	void OnUserDisconnected(Network::NetConnection _nc, const char* _message);
+	void OnUserKicked(Network::NetConnection _nc, const char* _message);
+	void OnUserTimedOut(Network::NetConnection _nc, const char* _message);
 
 private:
 

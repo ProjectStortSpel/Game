@@ -23,10 +23,10 @@ GrassTile:SetFloat3("Scale", 1.0, 1.0, 1.0)
 GrassTile:SetModel("Model", "grass", "grass")
 EntityTemplateManager:AddTemplate(GrassTile)
 
-local TempPlayer = EntityTemplate()
-TempPlayer.Name = "TempPlayer"
-TempPlayer:SetString("Username", "DefaultPlayer")
-TempPlayer:SetString("NetConnection", "0.0.0.0", "IpAddress")
-TempPlayer:SetInt("NetConnection", 0, "Port")
-TempPlayer:SetBool("NetConnection", false, "Active")
-EntityTemplateManager:AddTemplate(TempPlayer)
+local User = EntityTemplate()
+User.Name = "User"
+User:SetString("Username", "DefaultPlayer")
+User:SetString("NetConnection", "0.0.0.0", "IpAddress")
+User:SetInt("NetConnection", 0, "Port")
+User:SetBool("NetConnection", false, "Active")
+EntityTemplateManager:AddTemplate(User)

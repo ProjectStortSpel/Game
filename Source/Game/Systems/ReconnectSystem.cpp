@@ -16,6 +16,12 @@ void ReconnectSystem::Initialize()
 	AddComponentTypeToFilter("NetConnection", ECSL::FilterType::Mandatory);
 
 	printf("ReconnectSystem initialized!\n");
+
+
+	Network::NetEvent hook = std::bind(&ReconnectSystem::OnUserDisconnected, this, std::placeholders::_1, std::placeholders::_2);
+	NetworkInstance::GetServer()->SetOnPlayerDisconnected(hook);
+
+	//NetworkInstance::GetServer()->SetOnPlayerTimedOut(hook);
 }
 
 void ReconnectSystem::Update(float _dt)
@@ -51,21 +57,21 @@ void ReconnectSystem::OnEntityAdded(unsigned int _entityId)
 
 	if (match) // Found an already existing user
 	{
-		bool active = *(bool*)GetComponent(matchId, "NetConnection", "Active");
+		bool setActive = true;
 
-		if (active) // If the matching user is still connected kick the new user
+		if (*(bool*)GetComponent(matchId, "NetConnection", "Active")) // If the matching user is still connected kick the new user
 		{
-			//NetworkInstance::GetServer()->Kick();
-			KillEntity(_entityId);
-		}
-		else // If the matching user is not connected anymore, change the ip & port to the new one
-		{
-			bool setActive = true;
+			char* oldIp = GetComponent(matchId, "NetConnection", "IpAddress");
+			unsigned int oldPort = *(int*)GetComponent(matchId, "NetConnection", "Port");
 
-			SetComponent(matchId, "NetConnection", "IpAddress", ipAddress);
-			SetComponent(matchId, "NetConnection", "Port", &port);
-			SetComponent(matchId, "NetConnection", "Active", &setActive);
+			NetworkInstance::GetServer()->Kick(Network::NetConnection(oldIp, oldPort), "Connected somewhere else");
 		}
+
+		SetComponent(matchId, "NetConnection", "IpAddress", ipAddress);
+		SetComponent(matchId, "NetConnection", "Port", &port);
+		SetComponent(matchId, "NetConnection", "Active", &setActive);
+
+		KillEntity(_entityId);
 
 	}
 	else
@@ -78,5 +84,24 @@ void ReconnectSystem::OnEntityAdded(unsigned int _entityId)
 
 void ReconnectSystem::OnEntityRemoved(unsigned int _entityId)
 {
+
+}
+
+void ReconnectSystem::OnUserDisconnected(Network::NetConnection _nc, const char* _message)
+{
+	const char* ipAddress = _nc.GetIpAddress();
+	unsigned int port = _nc.GetPort();
+
+	auto entities = *GetEntities();
+
+	for (int i = 0; i < entities.size(); ++i)
+	{
+		if (strcmp(ipAddress, GetComponent(entities[i], "NetConnection", "IpAddress")) == 0
+			&& port == *(int*)GetComponent(entities[i], "NetConnection", "Port"))
+		{
+			bool setActive = false;
+			SetComponent(entities[i], "NetConnection", "Active", &setActive);
+		}
+	}
 
 }

@@ -46,7 +46,7 @@ private:
 	Console::ConsoleManager&	m_consoleManager;
 	TextInput					m_consoleInput;
 	Utility::FrameCounter*		m_frameCounter;
-	std::map<char*, Network::NetConnection> m_users;
+	std::string					m_userName;
 };
 
 #endif
