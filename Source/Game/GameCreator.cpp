@@ -146,6 +146,11 @@ void GameCreator::StartGame()
 	m_console->SetupHooks(&m_consoleManager);
 	m_consoleManager.AddCommand("Reload", std::bind(&GameCreator::Reload, this, std::placeholders::_1));
 
+	/*	Tempkod för ljus (LUA FIX)	*/
+	unsigned int newLight = m_world->CreateNewEntity();
+	m_world->CreateComponentAndAddTo("Pointlight", newLight);
+	float* pointlightData = (float*)m_world->GetComponent(newLight, "Pointlight", 0);
+
 	m_frameCounter->Tick();
 	while (true)
 	{
