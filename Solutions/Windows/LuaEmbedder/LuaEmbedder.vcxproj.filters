@@ -18,5 +18,8 @@
     <ClInclude Include="..\..\..\Source\LuaEmbedder\Luna.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\LuaEmbedder\LuaNumberArray.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

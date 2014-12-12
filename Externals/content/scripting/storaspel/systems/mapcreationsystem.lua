@@ -166,7 +166,7 @@ MapCreationSystem.AddGroundTileBelow = function(self, posX, posZ)
 	local comp = self:GetComponent(groundEntity, "Model", 0)
 	comp:SetModel("grass", "grass")
 	
-	table.insert(self.entities, groundEntity)
+	--table.insert(self.entities, groundEntity)
 end 
 
 MapCreationSystem.SetPosition = function(self, entity, posX, posY, posZ)
