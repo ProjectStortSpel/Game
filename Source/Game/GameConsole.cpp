@@ -287,6 +287,9 @@ void GameConsole::ToggleText(std::vector<Console::Argument>* _args)
 
 void GameConsole::SetTextColor(std::vector<Console::Argument>* _args)
 {
+	if (_args->size() == 0)
+		return;
+
 	if ((*_args)[0].ArgType == Console::ArgumentType::Text)
 		if (strcmp((*_args)[0].Text, "DISCO") == 0)
 			m_graphics->SetDisco();
