@@ -12,6 +12,8 @@ ModelSystem::~ModelSystem()
 
 void ModelSystem::Initialize()
 {
+	SetSystemName("Initialize System");
+
 	AddComponentTypeToFilter("Model", ECSL::FilterType::Mandatory);
 
 

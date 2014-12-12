@@ -11,6 +11,7 @@ CameraSystem::~CameraSystem()
 
 void CameraSystem::Initialize()
 {
+	SetSystemName("Camera System");
 	/*	CameraSystem wants a position to place the camera at	*/
 	AddComponentTypeToFilter("Camera", ECSL::FilterType::Mandatory);
 
