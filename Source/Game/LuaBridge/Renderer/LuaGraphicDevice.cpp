@@ -55,7 +55,7 @@ namespace LuaBridge
     float g = LuaEmbedder::PullFloat(2);
     float b = LuaEmbedder::PullFloat(3);
     float a = LuaEmbedder::IsFloat(4) ? LuaEmbedder::PullFloat(4) : 1.0f;
-    GraphicDevice::SetSimpleTextColor(glm::vec4(r, g, b, a));
+    GraphicDevice::SetSimpleTextColor(r, g, b, a);
     return 0;
   }
 
