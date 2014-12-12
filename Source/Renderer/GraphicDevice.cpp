@@ -492,35 +492,10 @@ bool GraphicDevice::InitBuffers()
 
 bool GraphicDevice::InitLightBuffers()
 {
-	/* TEMP. Ta bort när ljus skapas från E/C-system*/
-	int lights = 3;
-	for (int i = 0; i < lights; i++)
-	{
-		testArray[10*i + 0] = -5.0+i*5;	//pos x
-		testArray[10*i + 1] = 3.0;		//pos y
-		testArray[10*i + 2] = 0.0;		//pos z
-		testArray[10*i + 3] = 0.5;		 //int x
-		testArray[10*i + 4] = 0.9;		 //int y
-		testArray[10*i + 5] = 0.5;		 //int z
-		testArray[10*i + 6] = 0.9;		//col x
-		testArray[10*i + 7] = 0.5;		//col y
-		testArray[10*i + 8] = 0.5;		//col z
-		testArray[10*i + 9] = 5.0;		 //range
-	}
-	/* ---------------------------------------------- */
 	glGenBuffers(1, &m_pointlightBuffer);
 
 	if (m_pointlightBuffer < 0)
 		return false;
-	/* ------------------ TMP ------------------------------- */
-	float **tmpPointersArray = new float*[lights];
-	for (int i = 0; i < lights; i++)
-	{
-		tmpPointersArray[i] = &testArray[10 * i];
-	}
-	BufferPointlights(lights, tmpPointersArray);
-	delete tmpPointersArray;
-	/* ------------------------------------------------------ */
 
 //--------Directional light-------------------------------------------------------------------------
 	testArray[0] = 0.0;		//dir x
