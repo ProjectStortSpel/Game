@@ -77,7 +77,7 @@ namespace Network
 
 	protected:
 		std::map < std::string, NetMessageHook >* m_userFunctions;
-		std::map < char, NetMessageHook >* m_networkFunctions;
+		std::map < char, NetMessageHook& >* m_networkFunctions;
 
 		std::queue<Packet*>* m_systemPackets;
 		std::queue<Packet*>* m_customPackets;
