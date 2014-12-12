@@ -15,6 +15,7 @@ namespace LuaBridge
     LuaEmbedder::EmbedClass<LuaEntityTemplate>("EntityTemplate");
     LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "GetName", &LuaEntityTemplate::GetName);
     LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "SetName", &LuaEntityTemplate::SetName);
+    LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "AddComponent", &LuaEntityTemplate::AddComponent);
     LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "SetFloat", &LuaEntityTemplate::SetFloat);
     LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "SetFloat2", &LuaEntityTemplate::SetFloat2);
     LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "SetFloat3", &LuaEntityTemplate::SetFloat3);
@@ -38,6 +39,13 @@ namespace LuaBridge
   int LuaEntityTemplate::SetName()
   {
     m_name = LuaEmbedder::PullString(1);
+    return 0;
+  }
+  
+  int LuaEntityTemplate::AddComponent()
+  {
+    std::string componentName = LuaEmbedder::PullString(1);
+    m_components[componentName] = std::vector<ECSL::TemplateEntry>();
     return 0;
   }
   

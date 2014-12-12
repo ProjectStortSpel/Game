@@ -13,6 +13,7 @@ namespace LuaBridge
 		LuaEmbedder::EmbedClassFunction<LuaSystem>("System", "AddComponentTypeToFilter", &LuaSystem::AddComponentTypeToFilter);
 		LuaEmbedder::EmbedClassFunction<LuaSystem>("System", "GetEntities", &LuaSystem::GetEntities);
 		LuaEmbedder::EmbedClassFunction<LuaSystem>("System", "GetComponent", &LuaSystem::GetComponent);
+		LuaEmbedder::EmbedClassFunction<LuaSystem>("System", "EntityHasComponent", &LuaSystem::EntityHasComponent);
 		LuaEmbedder::EmbedClassFunction<LuaSystem>("System", "InitializeNetworkEvents", &LuaSystem::InitializeNetworkEvents);
 
 		LuaEmbedder::AddInt("Mandatory", (int)ECSL::FilterType::Mandatory, "FilterType");
@@ -96,6 +97,14 @@ namespace LuaBridge
 	{
 		
 		LuaEmbedder::PushUnsignedIntArray(System::GetEntities()->data(), System::GetEntities()->size(), false);
+		return 1;
+	}
+	
+	int LuaSystem::EntityHasComponent()
+	{
+		unsigned int entityId = (unsigned int)LuaEmbedder::PullInt(1);
+		unsigned int componentTypeId = ECSL::ComponentTypeManager::GetInstance().GetTableId(LuaEmbedder::PullString(2));
+		LuaEmbedder::PushBool(System::EntityHasComponent(entityId, componentTypeId));
 		return 1;
 	}
 

@@ -23,6 +23,8 @@ namespace LuaBridge
     int GetName();
     int SetName();
     
+    int AddComponent();
+    
     int SetFloat();
     int SetFloat2();
     int SetFloat3();
