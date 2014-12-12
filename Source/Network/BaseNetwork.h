@@ -21,8 +21,8 @@
 namespace Network
 {
 
-	typedef std::function<void(PacketHandler*, uint64_t, NetConnection&)> NetMessageHook;
-	typedef std::function<void(NetConnection&, const char*)> NetEvent;
+	typedef std::function<void(PacketHandler*, uint64_t, NetConnection)> NetMessageHook;
+	typedef std::function<void(NetConnection, const char*)> NetEvent;
 
 	class DECLSPEC BaseNetwork
 	{
