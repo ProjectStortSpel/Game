@@ -28,6 +28,8 @@ namespace LuaBridge
     
     int AddComponentTypeToFilter();
     int GetEntities();
+    
+    int EntityHasComponent();
 
 	int InitializeNetworkEvents();
 
