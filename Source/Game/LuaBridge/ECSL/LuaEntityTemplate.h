@@ -39,7 +39,7 @@ namespace LuaBridge
     
     int SetModel();
     
-    int SetPointLight();
+    int SetPointlight();
     
   private:
     std::string m_name;

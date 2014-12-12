@@ -26,7 +26,7 @@ namespace LuaBridge
     LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "SetInt4", &LuaEntityTemplate::SetInt4);
     LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "SetString", &LuaEntityTemplate::SetString);
     LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "SetModel", &LuaEntityTemplate::SetModel);
-    LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "SetPointLight", &LuaEntityTemplate::SetPointLight);
+    LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "SetPointlight", &LuaEntityTemplate::SetPointlight);
     LuaEmbedder::EmbedClassProperty<LuaEntityTemplate>("EntityTemplate", "Name", &LuaEntityTemplate::GetName, &LuaEntityTemplate::SetName);
   }
   
@@ -128,7 +128,7 @@ namespace LuaBridge
     return 0;
   }
   
-  int LuaEntityTemplate::SetPointLight()
+  int LuaEntityTemplate::SetPointlight()
   {
     std::string componentName = LuaEmbedder::PullString(1);
     float posX = LuaEmbedder::PullFloat(2);
