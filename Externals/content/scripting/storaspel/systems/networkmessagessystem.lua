@@ -22,7 +22,7 @@ end
 networkMessagesSystem.Initialize = function(self)
 	self:InitializeNetworkEvents()
 
-	self:AddComponentTypeToFilter("Network", FilterType.Mandatory)
+	self:AddComponentTypeToFilter("SyncNetwork", FilterType.Mandatory)
 	print("NetworkMessagesSystem initialized!")
 end
 networkMessagesSystem.OnEntityAdded = function(self, entityId)
@@ -33,6 +33,13 @@ networkMessagesSystem.OnEntityRemoved = function(self, entityId)
 end
 
 networkMessagesSystem.OnBannedFromServer = function(self, _ip, _port, _message)
+	local entities = self:GetEntities();
+	for i = 1, #entities do
+		world:KillEntity(entities[i])
+	end
+
+	Client.ResetNetworkMaps()
+	
 	local s = "[Client] You was banned from the server " .. _ip .. ":" .. _port .. ". Reason: " .. _message
 	Console.Print(s)
 end
@@ -41,6 +48,13 @@ networkMessagesSystem.OnConnectedToServer = function(self, _ip, _port)
 	Console.Print(s)
 end
 networkMessagesSystem.OnDisconnectedFromServer = function(self, _ip, _port)
+	local entities = self:GetEntities();
+	for i = 1, #entities do
+		world:KillEntity(entities[i])
+	end
+	
+	Client.ResetNetworkMaps()
+
 	local s = "[Client] Disconnected from server " .. _ip .. ":" .. _port
 	Console.Print(s)
 end
@@ -49,10 +63,16 @@ networkMessagesSystem.OnFailedToConnect = function(self, _ip, _port)
 	Console.Print(s)	
 end
 networkMessagesSystem.OnKickedFromServer = function(self, _ip, _port, _message)
+	local entities = self:GetEntities();
+	for i = 1, #entities do
+		world:KillEntity(entities[i])
+	end
+	
+	Client.ResetNetworkMaps()
+
 	local s = "[Client] Kicked from server " .. _ip .. ":" .. _port .. ". Reason: " .. _message
 	Console.Print(s)	
 end
-
 networkMessagesSystem.OnPasswordInvalid = function(self, _ip, _port)
 	local s = "[Client] Invalid password to server " .. _ip .. ":" .. _port
 	Console.Print(s)	
@@ -78,33 +98,37 @@ networkMessagesSystem.OnServerFull = function(self, _ip, _port)
 	Console.Print(s)	
 end
 networkMessagesSystem.OnTimedOutFromServer = function(self, _ip, _port)
+	local entities = self:GetEntities();
+	for i = 1, #entities do
+		world:KillEntity(entities[i])
+	end
+	
+	Client.ResetNetworkMaps()
+	
 	local s = "[Client] Timed out from server " .. _ip .. ":" .. _port
 	Console.Print(s)	
 end
 
-networkMessagesSystem.OnPlayerConnected = function(self, _ip, _port, _message)
-
-	local s = "[Server] " .. _message .. " (" .. _ip .. ":" .. _port .. ") connected to server"
-
+networkMessagesSystem.OnPlayerConnected = function(self, _ip, _port)
 	
-	Console.Print(s)
+	-- Hämta alla entiteter som har komponenten "SyncNetwork"
+	-- Skicka dessa entiteter till klienten
 	
-	local id = Client.StartPack("Test")
-	Client.WriteFloat(id, 1.5)
-	Client.WriteString(id, "String")
-	Client.WriteBool(id, true)
-	Client.WriteInt(id, 5)
-	Client.Send(id)
+	local entities = self:GetEntities();
 	
-	local id = Server.StartPack("Test2")
-	Server.Send(id, _ip, _port)
-
-end
-networkMessagesSystem.OnPlayerDisconnected = function(self, _ip, _port, _message)
-	local s = "[Server] " .. _message .. " (" .. _ip .. ":" .. _port .. ") disconnected from server"
+	for i = 1, #entities do
+		Server.SendEntity(entities[i], _ip, _port)	
+		Console.Print("Send Entity: " .. entities[i])
+	end	
+	
+	local s = "[Server] Client " .. _ip .. ":" .. _port .. " connected to server"
 	Console.Print(s)
 end
-networkMessagesSystem.OnPlayerTimedOut = function(self, _ip, _port, _message)
-	local s = "[Server] " .. _message .. " (" .. _ip .. ":" .. _port .. ") timed out from the server"
+networkMessagesSystem.OnPlayerDisconnected = function(self, _ip, _port)
+local s = "[Server] Client " .. _ip .. ":" .. _port .. " disconnected from server"
+	Console.Print(s)
+end
+networkMessagesSystem.OnPlayerTimedOut = function(self, _ip, _port)
+local s = "[Server] Client " .. _ip .. ":" .. _port .. " timed out from the server"
 	Console.Print(s)
 end

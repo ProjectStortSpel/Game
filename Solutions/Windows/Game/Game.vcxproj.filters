@@ -167,11 +167,11 @@
     <ClCompile Include="..\..\..\Source\Game\FrameCounter\FrameCounter.cpp">
       <Filter>Game\FrameCounter</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\Game\LuaBridge\Network\LuaNetwork.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Systems\PointlightSystem.cpp">
       <Filter>Game\Systems\LightSystems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\Network\LuaNetwork.cpp">
+      <Filter>Lua Bridge\Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

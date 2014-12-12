@@ -11,6 +11,12 @@ NetworkHelper::~NetworkHelper()
 
 }
 
+void NetworkHelper::ResetNetworkMaps()
+{
+	m_HtoN.clear();
+	m_NtoH.clear();
+}
+
 Network::Packet* NetworkHelper::WriteEntityAll(Network::PacketHandler* _ph, unsigned int _e)
 {
 

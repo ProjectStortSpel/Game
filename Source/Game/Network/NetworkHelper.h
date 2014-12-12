@@ -25,6 +25,7 @@ public:
 	NetworkHelper(ECSL::World** _world);
 	~NetworkHelper();
 
+	void ResetNetworkMaps();
 
 	Network::Packet* WriteEntityAll(Network::PacketHandler* _ph, unsigned int _e);
 	Network::Packet* WriteEntityDelta(Network::PacketHandler* _ph, unsigned int _e, std::vector<unsigned int>& _componentsChanged);

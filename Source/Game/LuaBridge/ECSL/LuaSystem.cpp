@@ -166,7 +166,7 @@ namespace LuaBridge
 	}
 	void LuaSystem::OnRemotePlayerConnected(Network::NetConnection _nc, const char* _message)
 	{
-		LuaEmbedder::PushString(_message);
+		LuaEmbedder::PushString("asd");
 		LuaEmbedder::CallMethod<LuaSystem>("System", "OnRemotePlayerConnected", this, 1);
 	}
 	void LuaSystem::OnRemotePlayerDisconnected(Network::NetConnection _nc, const char* _message)
