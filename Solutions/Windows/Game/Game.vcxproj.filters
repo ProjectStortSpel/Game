@@ -60,9 +60,6 @@
     <Filter Include="Game\Systems\ReceivePacket">
       <UniqueIdentifier>{fa6b13b4-a17f-4660-befa-8ce8d6cee1fe}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Systems\Render">
-      <UniqueIdentifier>{0e0f35b1-791a-4d9e-b1a6-178d5df590cb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game\Systems\Rotation">
       <UniqueIdentifier>{ea327b7b-e869-40ca-9a6b-c029997c60c2}</UniqueIdentifier>
     </Filter>
@@ -71,6 +68,9 @@
     </Filter>
     <Filter Include="Game\Systems\Changed">
       <UniqueIdentifier>{dd4dc3ab-744e-425f-a006-98fb871278be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Systems\Render">
+      <UniqueIdentifier>{0e0f35b1-791a-4d9e-b1a6-178d5df590cb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -287,12 +287,6 @@
     </None>
     <None Include="..\..\..\Externals\content\scripting\storaspel\components\tilecomponents.lua">
       <Filter>Scripting\Components</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\tilemovementsystem.lua">
-      <Filter>Scripting\Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\TestSystem.lua">
-      <Filter>Scripting\Systems</Filter>
     </None>
   </ItemGroup>
 </Project>

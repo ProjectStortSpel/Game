@@ -50,13 +50,11 @@ void GameConsole::RemoveObject(std::vector<Console::Argument>* _args)
 
 		m_world->KillEntity((*_args)[0].Number);
 
-		if (NetworkInstance::GetServer()->IsRunning())
+		/*if (NetworkInstance::GetServer()->IsRunning())
 		{
 			Network::PacketHandler* ph = NetworkInstance::GetServer()->GetPacketHandler();
-			uint64_t id = ph->StartPack("EntityKill");
-			ph->WriteInt(id, (*_args)[0].Number);
-			NetworkInstance::GetServer()->Broadcast(ph->EndPack(id));
-		}
+			NetworkInstance::GetServer()->Broadcast(NetworkInstance::GetNetworkHelper()->WriteEntityKill(ph, (*_args)[0].Number));
+		}*/
 	}
 }
 

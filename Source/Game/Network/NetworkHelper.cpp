@@ -130,6 +130,13 @@ void NetworkHelper::WriteComponents(Network::PacketHandler* _ph, uint64_t _id, u
 	}
 }
 
+Network::Packet* NetworkHelper::WriteEntityKill(Network::PacketHandler* _ph, unsigned int _e)
+{
+	uint64_t id = _ph->StartPack("EntityKill");
+	_ph->WriteInt(id, _e);
+	return _ph->EndPack(id);
+}
+
 void NetworkHelper::ReceiveEntityAll(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _nc)
 {
 	std::vector<unsigned int> components;
@@ -280,5 +287,7 @@ void NetworkHelper::ReceiveEntityKill(Network::PacketHandler* _ph, uint64_t _id,
 	{
 		unsigned int idH = m_NtoH[idN];
 		(*m_world)->KillEntity(idH);
+		m_NtoH.erase(idN);
+		m_HtoN.erase(idH);
 	}
 }

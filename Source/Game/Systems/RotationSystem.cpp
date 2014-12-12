@@ -45,4 +45,5 @@ void RotationSystem::OnEntityAdded(unsigned int _entityId)
 
 void RotationSystem::OnEntityRemoved(unsigned int _entityId)
 {
+
 }

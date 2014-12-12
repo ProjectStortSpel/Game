@@ -41,6 +41,8 @@ void ModelSystem::OnEntityAdded(unsigned int _entityId)
 	Matrix = (glm::mat4*)GetComponent(_entityId, "Render", "Mat");
 	int* ModelId = (int*)GetComponent(_entityId, "Render", "ModelId");
 	*ModelId = m_graphics->LoadModel(ModelPath, ModelName, Matrix);
+	int a = *ModelId;
+	int b = 2;
 }
 
 void ModelSystem::OnEntityRemoved(unsigned int _entityId)

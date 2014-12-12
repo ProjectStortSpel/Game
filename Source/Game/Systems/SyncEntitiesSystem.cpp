@@ -70,5 +70,10 @@ void SyncEntitiesSystem::OnEntityAdded(unsigned int _entityId)
 
 void SyncEntitiesSystem::OnEntityRemoved(unsigned int _entityId)
 {
-
+	Network::ServerNetwork* server = NetworkInstance::GetServer();
+	if (server->IsRunning())
+	{
+		Network::Packet* p = NetworkInstance::GetNetworkHelper()->WriteEntityKill(server->GetPacketHandler(), _entityId);
+		server->Broadcast(p);
+	}
 }
