@@ -198,6 +198,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\Source\Game\FrameCounter\FrameCounter.cpp" />
     <ClCompile Include="..\..\..\Source\Game\GameConsole.cpp" />
     <ClCompile Include="..\..\..\Source\Game\GameCreator.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\Console\LuaConsole.cpp" />
@@ -218,10 +219,11 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClCompile Include="..\..\..\Source\Game\NetworkInstance.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Network\NetworkHelper.cpp" />
     <ClCompile Include="..\..\..\Source\Game\NewGame.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\Quaternion.cpp" />
     <ClCompile Include="..\..\..\Source\Game\RemoteConsole.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\CameraSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\ModelSystem.cpp" />
-    <ClCompile Include="..\..\..\Source\Game\Systems\MovementSystem.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\Systems\PointlightSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\ReconnectSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\RenderRemoveSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\RenderSystem.cpp" />
@@ -229,9 +231,9 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClCompile Include="..\..\..\Source\Game\Systems\RotationSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\SyncEntitiesSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\TextInput.cpp" />
-    <ClCompile Include="..\..\..\Source\Game\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Source\Game\FrameCounter\FrameCounter.h" />
     <ClInclude Include="..\..\..\Source\Game\GameConsole.h" />
     <ClInclude Include="..\..\..\Source\Game\GameCreator.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Console\LuaConsole.h" />
@@ -251,10 +253,11 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Renderer\LuaGraphicDevice.h" />
     <ClInclude Include="..\..\..\Source\Game\NetworkInstance.h" />
     <ClInclude Include="..\..\..\Source\Game\Network\NetworkHelper.h" />
+    <ClInclude Include="..\..\..\Source\Game\Quaternion.h" />
     <ClInclude Include="..\..\..\Source\Game\RemoteConsole.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\CameraSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\ModelSystem.h" />
-    <ClInclude Include="..\..\..\Source\Game\Systems\MovementSystem.h" />
+    <ClInclude Include="..\..\..\Source\Game\Systems\PointlightSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\ReconnectSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\RenderRemoveSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\RenderSystem.h" />
@@ -262,7 +265,6 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClInclude Include="..\..\..\Source\Game\Systems\RotationSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\SyncEntitiesSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\TextInput.h" />
-    <ClInclude Include="..\..\..\Source\Game\Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\Externals\content\scripting\storaspel\components\components.lua" />

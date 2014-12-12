@@ -24,6 +24,9 @@ int LoadMap()
 	int x = 0;
 	if ( y != 0 ) 
 		 x = map.size() / y;
+	
+	//int* array = new int[map.size()];
+	//memcpy(array, map.data(), map.size() * sizeof(int));
 
 	LuaEmbedder::PushInt(x);
 	LuaEmbedder::PushInt(y);

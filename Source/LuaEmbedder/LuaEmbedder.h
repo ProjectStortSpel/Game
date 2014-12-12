@@ -117,11 +117,11 @@ namespace LuaEmbedder
   void EXPORT PushBool(bool value);
   void EXPORT PushString(const std::string& value);
   void EXPORT PushNull();
-  void EXPORT PushFloatArray(const float* values, unsigned int count);
-  void EXPORT PushIntArray(const int* values, unsigned int count);
-  void EXPORT PushUnsignedIntArray(const unsigned int* values, unsigned int count);
-  void EXPORT PushBoolArray(const bool* values, unsigned int count);
-  void EXPORT PushStringArray(const std::string* values, unsigned int count);
+  void EXPORT PushFloatArray(const float* values, unsigned int size, bool remove = true);
+  void EXPORT PushIntArray(const int* values, unsigned int size, bool remove = true);
+  void EXPORT PushUnsignedIntArray(const unsigned int* values, unsigned int size, bool remove = true);
+  void EXPORT PushBoolArray(const bool* values, unsigned int size, bool remove = true);
+  void EXPORT PushStringArray(const std::string* values, unsigned int size, bool remove = true);
   
   bool EXPORT IsFloat(int index);
   bool EXPORT IsInt(int index);

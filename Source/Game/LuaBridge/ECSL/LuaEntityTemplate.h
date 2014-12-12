@@ -39,6 +39,8 @@ namespace LuaBridge
     
     int SetModel();
     
+    int SetPointLight();
+    
   private:
     std::string m_name;
     std::map<std::string, std::vector<ECSL::TemplateEntry>> m_components;

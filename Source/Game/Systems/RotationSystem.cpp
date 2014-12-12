@@ -11,6 +11,8 @@ RotationSystem::~RotationSystem()
 
 void RotationSystem::Initialize()
 {
+	SetSystemName("Rotation Remove System");
+
 	/*	Rendersystem wants Position, Scale, Rotation and Render	*/
 	AddComponentTypeToFilter("Spin", ECSL::FilterType::Mandatory);
 	AddComponentTypeToFilter("Rotation", ECSL::FilterType::Mandatory);
@@ -45,4 +47,5 @@ void RotationSystem::OnEntityAdded(unsigned int _entityId)
 
 void RotationSystem::OnEntityRemoved(unsigned int _entityId)
 {
+
 }

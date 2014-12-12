@@ -1,4 +1,5 @@
 #include "GameConsole.h"
+#include "ECSL/Managers/EntityTemplateManager.h"
 #include <string>
 GameConsole::GameConsole(Renderer::GraphicDevice* _graphics, ECSL::World* _world)
 {
@@ -17,6 +18,15 @@ void GameConsole::CreateObject(std::vector<Console::Argument>* _args)
 
 	std::string _template = _args->at(0).Text;
 	_template[0] = toupper(_template[0]);
+	if (!ECSL::EntityTemplateManager::GetInstance().HasTemplate(_template))
+	{
+		std::stringstream ss;
+		ss << "Template \"" << _template << "\" is not valid!";
+		m_consoleManager->AddMessage(ss.str().c_str());
+		return;
+	}
+		
+
 	unsigned int mId = m_world->CreateNewEntity(_template);
 	m_world->CreateComponentAndAddTo("ChangedComponents", mId);
 	m_world->CreateComponentAndAddTo("SyncNetwork", mId);
@@ -50,13 +60,11 @@ void GameConsole::RemoveObject(std::vector<Console::Argument>* _args)
 
 		m_world->KillEntity((*_args)[0].Number);
 
-		if (NetworkInstance::GetServer()->IsRunning())
+		/*if (NetworkInstance::GetServer()->IsRunning())
 		{
 			Network::PacketHandler* ph = NetworkInstance::GetServer()->GetPacketHandler();
-			uint64_t id = ph->StartPack("EntityKill");
-			ph->WriteInt(id, (*_args)[0].Number);
-			NetworkInstance::GetServer()->Broadcast(ph->EndPack(id));
-		}
+			NetworkInstance::GetServer()->Broadcast(NetworkInstance::GetNetworkHelper()->WriteEntityKill(ph, (*_args)[0].Number));
+		}*/
 	}
 }
 
@@ -77,7 +85,7 @@ void GameConsole::AddComponent(std::vector<Console::Argument>* _args)
 	if (!ECSL::ComponentTypeManager::GetInstance().ComponentExists(componentType))
 	{
 		std::stringstream ss;
-		ss << "Component " <<_args->at(1).Text << " was not found!";
+		ss << "Component \"" <<_args->at(1).Text << "\" was not found!";
 		m_consoleManager->AddMessage(ss.str().c_str());
 		return;
 	}
@@ -131,20 +139,7 @@ void GameConsole::RemoveComponent(std::vector<Console::Argument>* _args)
 	m_world->RemoveComponentFrom(componentType, mId);
 }
 
-void GameConsole::ListCommands(std::vector<Console::Argument>* _args)
-{
-	m_consoleManager->AddMessage("Command           -   Arg1, Arg2, Arg3, ...");
-	m_consoleManager->AddMessage("CreateObject      -   Model, Path, X, Y, Z");
-	m_consoleManager->AddMessage("RemoveObject      -   Id");
-	m_consoleManager->AddMessage("AddComponent      -   Id, ComponentType");
-	m_consoleManager->AddMessage("ChangeComponent   -   Id, ComponentType, X, Y, Z, ...");
-	m_consoleManager->AddMessage("RemoveComponent   -   Id, ComponentType");
-	m_consoleManager->AddMessage("Host              -   Port, Password, MaxConnections");
-	m_consoleManager->AddMessage("Connect           -   Ip-address, Port, Password");
-	m_consoleManager->AddMessage("DebugRender       -   RenderType");
-	m_consoleManager->AddMessage("Disconnect");
-	m_consoleManager->AddMessage("Stop");
-}
+
 
 void GameConsole::HostServer(std::vector<Console::Argument>* _args)
 {
@@ -242,12 +237,6 @@ void GameConsole::ConnectClient(std::vector<Console::Argument>* _args)
 		}
 	}
 
-	Network::NetMessageHook hook = std::bind(&NetworkHelper::ReceiveEntity, NetworkInstance::GetNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-	NetworkInstance::GetClient()->AddNetworkHook("Entity", hook);
-
-	hook = std::bind(&NetworkHelper::ReceiveEntityKill, NetworkInstance::GetNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-	NetworkInstance::GetClient()->AddNetworkHook("EntityKill", hook);
-
 	NetworkInstance::GetClient()->Connect(ip.c_str(), pw.c_str(), port, 0);
 }
 
@@ -281,6 +270,53 @@ void GameConsole::SetDebugTexture(std::vector<Console::Argument>* _args)
 	}
 }
 
+void GameConsole::AddPointlight(std::vector<Console::Argument>* _args)
+{
+	if (_args->size() < 4)
+		return;
+
+	for (int n = 0; n < _args->size(); ++n)
+		if (_args->at(n).ArgType != Console::ArgumentType::Number)
+			return;
+
+	unsigned int newLight = m_world->CreateNewEntity();
+	m_world->CreateComponentAndAddTo("Pointlight", newLight);
+	float* lightData = (float*)m_world->GetComponent(newLight, "Pointlight", 0);
+	//	Position
+	lightData[0] = _args->at(0).Number;
+	lightData[1] = _args->at(1).Number;
+	lightData[2] = _args->at(2).Number;
+	//	Intensity
+	lightData[3] = 0.2f;
+	lightData[4] = 1.0f;
+	lightData[5] = 1.0f;
+	//	Color
+	lightData[6] = 1.0f;
+	lightData[7] = 0.9f;
+	lightData[8] = 0.9f;
+	//	Range
+	lightData[9] = _args->at(3).Number;
+
+	std::stringstream ss;
+	ss << "Pointlight with id #" << newLight << " has been created!";
+	m_consoleManager->AddMessage(ss.str().c_str());
+}
+
+void GameConsole::ListCommands(std::vector<Console::Argument>* _args)
+{
+	m_consoleManager->AddMessage("Command           -   Arg1, Arg2, Arg3, ...");
+	m_consoleManager->AddMessage("CreateObject      -   Model, Path, X, Y, Z");
+	m_consoleManager->AddMessage("RemoveObject      -   Id");
+	m_consoleManager->AddMessage("AddComponent      -   Id, ComponentType");
+	m_consoleManager->AddMessage("ChangeComponent   -   Id, ComponentType, X, Y, Z, ...");
+	m_consoleManager->AddMessage("RemoveComponent   -   Id, ComponentType");
+	m_consoleManager->AddMessage("Host              -   Port, Password, MaxConnections");
+	m_consoleManager->AddMessage("Connect           -   Ip-address, Port, Password");
+	m_consoleManager->AddMessage("DebugRender       -   RenderType");
+	m_consoleManager->AddMessage("Disconnect");
+	m_consoleManager->AddMessage("Stop");
+}
+
 void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 {
 	m_consoleManager = _consoleManager;
@@ -296,10 +332,6 @@ void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 	m_consoleManager->AddCommand("List", std::bind(&GameConsole::ListCommands, this, std::placeholders::_1));
 
 	m_consoleManager->AddCommand("DebugRender", std::bind(&GameConsole::SetDebugTexture, this, std::placeholders::_1));
+	m_consoleManager->AddCommand("AddPointlight", std::bind(&GameConsole::AddPointlight, this, std::placeholders::_1));
 
-	//Network::NetMessageHook hook = std::bind(&NetworkHelper::ReceiveEntity, NetworkInstance::GetNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-	//NetworkInstance::GetClient()->AddNetworkHook("Entity", hook);
-
-	//hook = std::bind(&NetworkHelper::ReceiveEntityKill, NetworkInstance::GetNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-	//NetworkInstance::GetClient()->AddNetworkHook("EntityKill", hook);
 }

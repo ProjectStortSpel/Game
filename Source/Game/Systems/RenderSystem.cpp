@@ -1,5 +1,6 @@
 #include "RenderSystem.h"
 #include "ECSL/Framework/Common/BitSet.h"
+#include "Game/Quaternion.h"
 
 RenderSystem::RenderSystem(Renderer::GraphicDevice* _graphics)
 {
@@ -13,6 +14,8 @@ RenderSystem::~RenderSystem()
 
 void RenderSystem::Initialize()
 {
+	SetSystemName("Render System");
+
 	/*	Rendersystem wants Position, Scale, Rotation and Render	*/
 	AddComponentTypeToFilter("Position",	ECSL::FilterType::Mandatory);
 	AddComponentTypeToFilter("Rotation",	ECSL::FilterType::Mandatory);
@@ -20,34 +23,40 @@ void RenderSystem::Initialize()
 	AddComponentTypeToFilter("Render",		ECSL::FilterType::Mandatory);
 
 
+	std::vector<unsigned int> bitsetComponents;
+	bitsetComponents.push_back(ECSL::ComponentTypeManager::GetInstance().GetTableId("Position"));
+	bitsetComponents.push_back(ECSL::ComponentTypeManager::GetInstance().GetTableId("Rotation"));
+	bitsetComponents.push_back(ECSL::ComponentTypeManager::GetInstance().GetTableId("Scale"));
+
+	m_bitMask = ECSL::BitSet::BitSetConverter::ArrayToBitSet(bitsetComponents, ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount());
+	m_numberOfBitSets = ECSL::BitSet::GetIntCount(ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount());
+	m_componentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("ChangedComponents");
 	printf("RenderSystem initialized!\n");
 }
 
 void RenderSystem::Update(float _dt)
 {
 	auto entities = *GetEntities();
-	int posId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Position");
-	int rotId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Rotation");
-	int scaleId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Scale");
 
 	/*	TODO: Some logic to not update matrix every frame	*/
 	for (auto entity : entities)
 	{
-		std::vector<unsigned int> changedComponents;
-		ECSL::BitSet::BitSetConverter::BitSetToArray
-			(
-				changedComponents, 
-				(const ECSL::BitSet::DataType*)GetComponent(entity, "ChangedComponents", 0), 
-				ECSL::BitSet::GetIntCount(ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount())
-			);
+		ECSL::BitSet::DataType* eBitMask = (ECSL::BitSet::DataType*)GetComponent(entity, m_componentId, 0);
 
-		for (auto componentType : changedComponents)
-			if (componentType == posId || componentType == rotId || componentType == scaleId)
+		bool needsUpdate = false;
+		for (unsigned int n = 0; n < m_numberOfBitSets; ++n)
+		{
+
+			if ((m_bitMask[n] & eBitMask[n]) != 0)
 			{
-				UpdateMatrix(entity);
+				needsUpdate = true;
 				break;
 			}
-				
+
+		}
+
+		if (needsUpdate)
+			UpdateMatrix(entity);
 	}
 		
 
@@ -83,9 +92,25 @@ void RenderSystem::UpdateMatrix(unsigned int _entityId)
 	Matrix		=	(glm::mat4*)GetComponent(_entityId, "Render", "Mat");
 
 	*Matrix = glm::translate(glm::vec3(Position[0], Position[1], Position[2]));
-	*Matrix *= glm::rotate(Rotation[0], glm::vec3(0, 0, 1)); // quaternions?????
-	*Matrix *= glm::rotate(Rotation[1], glm::vec3(0, 1, 0)); // quaternions?????
-	*Matrix *= glm::rotate(Rotation[2], glm::vec3(1, 0, 0)); // quaternions?????
+
+	Quaternion q_f;
+	Quaternion q_x;
+	Quaternion q_y;
+	Quaternion q_z;
+
+	q_x.Rotate(glm::vec3(1, 0, 0), Rotation[2]);
+	q_y.Rotate(glm::vec3(0, 1, 0), Rotation[1]);
+	q_z.Rotate(glm::vec3(0, 0, 1), Rotation[0]);
+
+	q_f = q_x * q_f;
+	q_f = q_y * q_f;
+	q_f = q_z * q_f;
+
+	*Matrix *= q_f.QuaternionToMatrix();
+
+	//*Matrix *= glm::rotate(Rotation[0], glm::vec3(0, 0, 1)); // quaternions?????
+	//*Matrix *= glm::rotate(Rotation[1], glm::vec3(0, 1, 0)); // quaternions?????
+	//*Matrix *= glm::rotate(Rotation[2], glm::vec3(1, 0, 0)); // quaternions?????
 	*Matrix *= glm::scale(glm::vec3(Scale[0], Scale[1], Scale[2]));
 
 	ComponentHasChanged(_entityId, "Render");

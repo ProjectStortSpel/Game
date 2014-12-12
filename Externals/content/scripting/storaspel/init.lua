@@ -1,6 +1,7 @@
 -- Components
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/components/?.lua"
 require "components"
+require "lightcomponents"
 require "maplogiccomponents"
 require "playerlogiccomponents"
 

@@ -4,6 +4,10 @@
 SyncEntitiesSystem::SyncEntitiesSystem()
 {
 	m_timer = 0;
+
+	NetworkInstance::GetClient()->AddNetworkHook("Entity", std::bind(&NetworkHelper::ReceiveEntityAll, NetworkInstance::GetNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+	NetworkInstance::GetClient()->AddNetworkHook("EntityDelta", std::bind(&NetworkHelper::ReceiveEntityDelta, NetworkInstance::GetNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+	NetworkInstance::GetClient()->AddNetworkHook("EntityKill", std::bind(&NetworkHelper::ReceiveEntityKill, NetworkInstance::GetNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 }
 SyncEntitiesSystem::~SyncEntitiesSystem()
 {
@@ -11,6 +15,8 @@ SyncEntitiesSystem::~SyncEntitiesSystem()
 
 void SyncEntitiesSystem::Initialize()
 {
+	SetSystemName("Sync Entities System");
+
 	/*	Rendersystem wants Network	*/
 	AddComponentTypeToFilter("SyncNetwork", ECSL::FilterType::Mandatory);
 
@@ -22,7 +28,7 @@ void SyncEntitiesSystem::Update(float _dt)
 	Network::ServerNetwork* server = NetworkInstance::GetServer();
 	if (server->IsRunning())
 	{
-		if (m_timer > 0.2f)
+		if (m_timer > 0.05f)
 		{
 			m_timer = 0;
 			auto entities = *GetEntities();
@@ -41,7 +47,7 @@ void SyncEntitiesSystem::Update(float _dt)
 
 				if (changedComponents.size() > 0)
 				{
-					Network::Packet* p = NetworkInstance::GetNetworkHelper()->WriteEntity(server->GetPacketHandler(), entities[i]);
+					Network::Packet* p = NetworkInstance::GetNetworkHelper()->WriteEntityDelta(server->GetPacketHandler(), entities[i], changedComponents);
 					server->Broadcast(p);
 				}
 
@@ -56,10 +62,20 @@ void SyncEntitiesSystem::Update(float _dt)
 
 void SyncEntitiesSystem::OnEntityAdded(unsigned int _entityId)
 {
-
+	Network::ServerNetwork* server = NetworkInstance::GetServer();
+	if (server->IsRunning())
+	{
+		Network::Packet* p = NetworkInstance::GetNetworkHelper()->WriteEntityAll(server->GetPacketHandler(), _entityId);
+		server->Broadcast(p);
+	}
 }
 
 void SyncEntitiesSystem::OnEntityRemoved(unsigned int _entityId)
 {
-
+	Network::ServerNetwork* server = NetworkInstance::GetServer();
+	if (server->IsRunning())
+	{
+		Network::Packet* p = NetworkInstance::GetNetworkHelper()->WriteEntityKill(server->GetPacketHandler(), _entityId);
+		server->Broadcast(p);
+	}
 }

@@ -1,5 +1,4 @@
 #include "GameCreator.h"
-#include "Timer.h"
 #include "Systems/MovementSystem.h"
 #include "Systems/RenderSystem.h"
 #include "Systems/CameraSystem.h"
@@ -9,6 +8,7 @@
 #include "Systems/RenderRemoveSystem.h"
 #include "Systems/ResetChangedSystem.h"
 #include "Systems/ReconnectSystem.h"
+#include "Systems/PointlightSystem.h"
 
 #include "NetworkInstance.h"
 #include "ECSL/ECSL.h"
@@ -34,7 +34,7 @@ void GameCreator::NetUsername(Network::PacketHandler* _ph, uint64_t _id, Network
 }
 
 GameCreator::GameCreator() :
-m_graphics(0), m_input(0), m_world(0), m_console(0), m_consoleManager(Console::ConsoleManager::GetInstance())
+m_graphics(0), m_input(0), m_world(0), m_console(0), m_consoleManager(Console::ConsoleManager::GetInstance()), m_frameCounter(&Utility::FrameCounter::GetInstance())
 {
 	
 }
@@ -61,6 +61,7 @@ GameCreator::~GameCreator()
 
 	delete(&ECSL::ComponentTypeManager::GetInstance());
 	delete(&ECSL::EntityTemplateManager::GetInstance());
+	delete(&Utility::FrameCounter::GetInstance());
 }
 
 void GameCreator::InitializeGraphics()
@@ -135,15 +136,18 @@ void GameCreator::InitializeWorld()
 	//NetworkMessagesSystem* nms = new NetworkMessagesSystem();
 	//nms->SetConsole(&m_consoleManager);
 
+	worldCreator.AddLuaSystemToCurrentGroup(new PointlightSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new RotationSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new CameraSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new ModelSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderSystem(m_graphics));
+
 	worldCreator.AddLuaSystemToCurrentGroup(new SyncEntitiesSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new ResetChangedSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new ReconnectSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderRemoveSystem(m_graphics));
-	
+
+	worldCreator.AddLuaSystemToCurrentGroup(new ResetChangedSystem());
 
 	m_world = worldCreator.CreateWorld(10000);
 	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
@@ -168,38 +172,35 @@ void GameCreator::StartGame()
 	m_console->SetupHooks(&m_consoleManager);
 	m_consoleManager.AddCommand("Reload", std::bind(&GameCreator::Reload, this, std::placeholders::_1));
 
-	
-	/*	FULKOD START	*/
-	//for (int x = -5; x < 5; x++)
-	//{
-	//	for (int y = -5; y < 5; y++)
-	//	{
-	//		std::string command;// = "createobject box";
-	//		if ((x + y) % 2)
-	//		{
-	//			command = "createobject hole ";
-	//		}
-	//		else
-	//		{
-	//			command = "createobject grass ";
-	//		}
-	//		command += std::to_string(x);
-	//		command.append(" ");
-	//		command += std::to_string(-1);
-	//		command.append(" ");
-	//		command += std::to_string(y);
-	//		command.append("");
-	//		m_consoleManager.ExecuteCommand(command.c_str());
-	//	}
-	//}
-	/*	FULKOD END		*/
+	/*	Tempkod för ljus (LUA FIX)	*/
+	unsigned int newLight = m_world->CreateNewEntity();
+	unsigned int firstId = newLight;
+	m_world->CreateComponentAndAddTo("Pointlight", newLight);
 
+	newLight = m_world->CreateNewEntity();
+	m_world->CreateComponentAndAddTo("Pointlight", newLight);
 
-	Timer gameTimer;
+	newLight = m_world->CreateNewEntity();
+	m_world->CreateComponentAndAddTo("Pointlight", newLight);
+
+	float* pointlightData = (float*)m_world->GetComponent(firstId, "Pointlight", 0);
+	for (int i = 0; i < 3; i++)
+	{
+		pointlightData[10 * i + 0] = i * 2.2 + 5.2;	//pos x
+		pointlightData[10 * i + 1] = 2.0;		//pos y
+		pointlightData[10 * i + 2] = 7.0;		//pos z
+		pointlightData[10 * i + 3] = 0.8;		 //int x
+		pointlightData[10 * i + 4] = 0.9;		 //int y
+		pointlightData[10 * i + 5] = 0.5;		 //int z
+		pointlightData[10 * i + 6] = 0.9;		//col x
+		pointlightData[10 * i + 7] = 0.5;		//col y
+		pointlightData[10 * i + 8] = 0.5;		//col z
+		pointlightData[10 * i + 9] = 2.2;		 //range
+	}
+
 	while (true)
 	{
-		float dt = gameTimer.ElapsedTimeInSeconds();
-		gameTimer.Reset(); 
+		float dt = m_frameCounter->GetDeltaTime();
 
 		/*	Collect all input	*/
 		m_input->Update();
@@ -219,6 +220,8 @@ void GameCreator::StartGame()
 
 		RenderConsole();
 		m_graphics->Render();
+
+		m_frameCounter->Tick();
 	}
 }
 
@@ -238,6 +241,7 @@ void GameCreator::UpdateConsole()
 			m_consoleInput.SetActive(true);
 			m_input->GetKeyboard()->ResetTextInput();
 		}
+		printf("%d average fps\n", m_frameCounter->GetAverageFPS());
 	}
 
 	// History, arrows up/down
@@ -288,6 +292,17 @@ void GameCreator::RenderConsole()
 
 	auto match = m_consoleManager.GetFunctionMatch(command.c_str());
 	m_graphics->RenderSimpleText(match, 9, 31);
+
+	Network::ClientNetwork* client = NetworkInstance::GetClient();
+
+	if (client->IsConnected())
+	{
+		std::ostringstream ss;
+		ss << "Ping: " << client->GetPing() << "ms";
+		std::string s(ss.str());
+
+		m_graphics->RenderSimpleText(s, 0, 32);
+	}
 }
 
 void GameCreator::PollSDLEvent()

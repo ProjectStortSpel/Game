@@ -209,6 +209,9 @@ void GraphicDevice::Render()
 	m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 	m_forwardShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
 
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
+
 	for (int i = 0; i < m_modelsForward.size(); i++)
 	{
 		std::vector<mat4> modelViewVector(m_modelsForward[i].instances.size());
@@ -489,35 +492,10 @@ bool GraphicDevice::InitBuffers()
 
 bool GraphicDevice::InitLightBuffers()
 {
-	/* TEMP. Ta bort när ljus skapas från E/C-system*/
-	int lights = 3;
-	for (int i = 0; i < lights; i++)
-	{
-		testArray[10*i + 0] = -5.0+i*5;	//pos x
-		testArray[10*i + 1] = 3.0;		//pos y
-		testArray[10*i + 2] = 0.0;		//pos z
-		testArray[10*i + 3] = 0.5;		 //int x
-		testArray[10*i + 4] = 0.9;		 //int y
-		testArray[10*i + 5] = 0.5;		 //int z
-		testArray[10*i + 6] = 0.9;		//col x
-		testArray[10*i + 7] = 0.5;		//col y
-		testArray[10*i + 8] = 0.5;		//col z
-		testArray[10*i + 9] = 5.0;		 //range
-	}
-	/* ---------------------------------------------- */
 	glGenBuffers(1, &m_pointlightBuffer);
 
 	if (m_pointlightBuffer < 0)
 		return false;
-	/* ------------------ TMP ------------------------------- */
-	float **tmpPointersArray = new float*[lights];
-	for (int i = 0; i < lights; i++)
-	{
-		tmpPointersArray[i] = &testArray[10 * i];
-	}
-	BufferPointlights(lights, tmpPointersArray);
-	delete tmpPointersArray;
-	/* ------------------------------------------------------ */
 
 //--------Directional light-------------------------------------------------------------------------
 	testArray[0] = 0.0;		//dir x
@@ -528,9 +506,9 @@ bool GraphicDevice::InitLightBuffers()
 	testArray[4] = 0.8;		//int y
 	testArray[5] = 0.8;		//int z
 	
-	testArray[6] = 0.9;		//col x
-	testArray[7] = 0.7;		//col y
-	testArray[8] = 0.7;		//col z
+	testArray[6] = 0.6;		//col x
+	testArray[7] = 0.4;		//col y
+	testArray[8] = 0.6;		//col z
 
 	glGenBuffers(1, &m_dirLightBuffer);
 
@@ -556,8 +534,6 @@ void GraphicDevice::BufferPointlights(int _nrOfLights, float **_lightPointers)
 
 	int point_light_data_size = 10 * _nrOfLights * sizeof(float);
 
-	m_compDeferredPass2Shader.UseProgram();
-
 	glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer, 0, point_light_data_size);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, point_light_data_size, pointlight_data, GL_STATIC_DRAW);
 	m_vramUsage += m_nrOfLights*10*sizeof(float);
@@ -569,8 +545,6 @@ void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
 {
 	float *light_data = new float[9];
 	memcpy(&light_data[0], _lightPointer, 9 * sizeof(float));
-
-	m_compDeferredPass2Shader.UseProgram();
 
 	glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer, 0, 9 * sizeof(float));
 	glBufferData(GL_SHADER_STORAGE_BUFFER, 9 * sizeof(float), light_data, GL_STATIC_DRAW);
@@ -711,7 +685,7 @@ bool GraphicDevice::RemoveModel(int _id)
 {
 	for (int i = 0; i < m_modelsDeferred.size(); i++)
 	{
-		for (int j = 0; j < m_modelsDeferred.size(); j++)
+		for (int j = 0; j < m_modelsDeferred[i].instances.size(); j++)
 		{
 			if (m_modelsDeferred[i].instances[j].id == _id)
 			{
@@ -725,7 +699,7 @@ bool GraphicDevice::RemoveModel(int _id)
 	}
 	for (int i = 0; i < m_modelsForward.size(); i++)
 	{
-		for (int j = 0; j < m_modelsForward.size(); j++)
+		for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
 		{
 			if (m_modelsForward[i].instances[j].id == _id)
 			{
