@@ -21,6 +21,9 @@
 namespace Network
 {
 
+	typedef std::function<void(PacketHandler*, uint64_t, NetConnection&)> NetMessageHook;
+	typedef std::function<void(NetConnection&, const char*)> NetEvent;
+
 	class DECLSPEC BaseNetwork
 	{
 
@@ -54,8 +57,8 @@ namespace Network
 		// Set the server password
 		void SetServerPassword(const char* _password) { *m_password = _password; }
 
-		void AddNetworkHook(char* _name, std::function<void(PacketHandler*, uint64_t, NetConnection)> _hook);
-		//std::function<void(PacketHandler*, uint64_t, NetConnection)>* GetNetworkFunction(NetTypeMessageId _function);
+		void AddNetworkHook(char* _name, NetMessageHook& _hook);
+		//NetMessageHook* GetNetworkFunction(NetTypeMessageId _function);
 
 		PacketHandler* GetPacketHandler() { return m_packetHandler; }
 
@@ -63,7 +66,7 @@ namespace Network
 		void SetMaxTimeOutIntervall(float _max) { *m_maxTimeOutIntervall = _max; }
 
 	protected:
-		void TriggerEvent(std::vector<std::function<void(NetConnection, const char*)>>* _event, NetConnection& _connection, const char* _message);
+		void TriggerEvent(std::vector<NetEvent>* _event, NetConnection& _connection, const char* _message);
 
 		void HandlePacket(Packet* _packet);
 
@@ -73,8 +76,8 @@ namespace Network
 		unsigned int GetMillisecondsTime();
 
 	protected:
-		std::map < std::string, std::function<void(PacketHandler*, uint64_t, NetConnection)> >* m_userFunctions;
-		std::map < char, std::function<void(PacketHandler*, uint64_t, NetConnection)> >* m_networkFunctions;
+		std::map < std::string, NetMessageHook >* m_userFunctions;
+		std::map < char, NetMessageHook >* m_networkFunctions;
 
 		std::queue<Packet*>* m_systemPackets;
 		std::queue<Packet*>* m_customPackets;
@@ -103,8 +106,8 @@ namespace Network
 
 
 	private:
-		//std::function<void(PacketHandler*, uint64_t, NetConnection)>* GetUserFunction(std::string _functionName);
-		//std::function<void(PacketHandler*, uint64_t, NetConnection)>* GetNetworkFunction(char _functionIdentifier);
+		//NetMessageHook* GetUserFunction(std::string _functionName);
+		//NetMessageHook* GetNetworkFunction(char _functionIdentifier);
 
 	};
 

@@ -89,7 +89,7 @@ void GameCreator::InitializeNetwork()
 	NetworkInstance::InitServer();
 	NetworkInstance::InitNetworkHelper(&m_world);
 
-	std::function<void(Network::PacketHandler*, uint64_t, Network::NetConnection)> hook = std::bind(&GameCreator::NetUsername, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	Network::NetMessageHook hook = std::bind(&GameCreator::NetUsername, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 	NetworkInstance::GetServer()->AddNetworkHook("Username", hook);
 }
 

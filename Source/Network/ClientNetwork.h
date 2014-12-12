@@ -42,34 +42,34 @@ namespace Network
 		void SetOutgoingPort(const int _port) { *m_outgoingPort = _port; }
 
 		// Bind function which will trigger when the client connect to the server
-		void SetOnConnectedToServer(std::function<void(NetConnection, const char*)> _function);
+		void SetOnConnectedToServer(NetEvent& _function);
 		// Bind function which will trigger when the client disconnect from the server
-		void SetOnDisconnectedFromServer(std::function<void(NetConnection, const char*)> _function);
+		void SetOnDisconnectedFromServer(NetEvent& _function);
 		// Bind function which will trigger when the client disconnect from the server
-		void SetOnTimedOutFromServer(std::function<void(NetConnection, const char*)> _function);
+		void SetOnTimedOutFromServer(NetEvent& _function);
 		// Bind function which will trigger when the client fails to connect to the server
-		void SetOnFailedToConnect(std::function<void(NetConnection, const char*)> _function);
+		void SetOnFailedToConnect(NetEvent& _function);
 		// Bind function which will trigger when the client tried to connect with an invalid password
-		void SetOnPasswordInvalid(std::function<void(NetConnection, const char*)> _function);
+		void SetOnPasswordInvalid(NetEvent& _function);
 		// Bind function which will trigger when the client is kicked from the server.
-		void SetOnKickedFromServer(std::function<void(NetConnection, const char*)> _function);
+		void SetOnKickedFromServer(NetEvent& _function);
 		// Bind function which will trigger when the client is banned from the server.
-		void SetOnBannedFromServer(std::function<void(NetConnection, const char*)> _function);
+		void SetOnBannedFromServer(NetEvent& _function);
 		// Bind function which will trigger when the client tried to connect to a full server.
-		void SetOnServerFull(std::function<void(NetConnection, const char*)> _function);
+		void SetOnServerFull(NetEvent& _function);
 
 
 
 		// Bind function which will trigger when a client connect to the server
-		void SetOnRemotePlayerConnected(std::function<void(NetConnection, const char*)> _function);
+		void SetOnRemotePlayerConnected(NetEvent& _function);
 		// Bind function which will trigger when a client disconnect from the server
-		void SetOnRemotePlayerDisconnected(std::function<void(NetConnection, const char*)> _function);
+		void SetOnRemotePlayerDisconnected(NetEvent& _function);
 		// Bind function which will trigger when a client fails to connect to the server
-		void SetOnRemotePlayerTimedOut(std::function<void(NetConnection, const char*)> _function);
+		void SetOnRemotePlayerTimedOut(NetEvent& _function);
 		// Bind function which will trigger when a client is kicked from the server
-		void SetOnRemotePlayerKicked(std::function<void(NetConnection, const char*)> _function);
+		void SetOnRemotePlayerKicked(NetEvent& _function);
 		// Bind function which will trigger when a client is banned from the server
-		void SetOnRemotePlayerBanned(std::function<void(NetConnection, const char*)> _function);
+		void SetOnRemotePlayerBanned(NetEvent& _function);
 
 
 	private:
@@ -120,20 +120,20 @@ namespace Network
 		float* m_currentTimeOutIntervall;
 		int* m_currentIntervallCounter;
 
-		std::vector<std::function<void(NetConnection, const char*)>>* m_onConnectedToServer;
-		std::vector<std::function<void(NetConnection, const char*)>>* m_onDisconnectedFromServer;
-		std::vector<std::function<void(NetConnection, const char*)>>* m_onTimedOutFromServer;
-		std::vector<std::function<void(NetConnection, const char*)>>* m_onFailedToConnect;
-		std::vector<std::function<void(NetConnection, const char*)>>* m_onPasswordInvalid;
-		std::vector<std::function<void(NetConnection, const char*)>>* m_onKickedFromServer;
-		std::vector<std::function<void(NetConnection, const char*)>>* m_onBannedFromServer;
-		std::vector<std::function<void(NetConnection, const char*)>>* m_onServerFull;
+		std::vector<NetEvent>* m_onConnectedToServer;
+		std::vector<NetEvent>* m_onDisconnectedFromServer;
+		std::vector<NetEvent>* m_onTimedOutFromServer;
+		std::vector<NetEvent>* m_onFailedToConnect;
+		std::vector<NetEvent>* m_onPasswordInvalid;
+		std::vector<NetEvent>* m_onKickedFromServer;
+		std::vector<NetEvent>* m_onBannedFromServer;
+		std::vector<NetEvent>* m_onServerFull;
 
-		std::vector<std::function<void(NetConnection, const char*)>>* m_onRemotePlayerConnected;
-		std::vector<std::function<void(NetConnection, const char*)>>* m_onRemotePlayerDisconnected;
-		std::vector<std::function<void(NetConnection, const char*)>>* m_onRemotePlayerTimedOut;
-		std::vector<std::function<void(NetConnection, const char*)>>* m_onRemotePlayerKicked;
-		std::vector<std::function<void(NetConnection, const char*)>>* m_onRemotePlayerBanned;
+		std::vector<NetEvent>* m_onRemotePlayerConnected;
+		std::vector<NetEvent>* m_onRemotePlayerDisconnected;
+		std::vector<NetEvent>* m_onRemotePlayerTimedOut;
+		std::vector<NetEvent>* m_onRemotePlayerKicked;
+		std::vector<NetEvent>* m_onRemotePlayerBanned;
 
 
 	};

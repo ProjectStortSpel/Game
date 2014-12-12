@@ -31,20 +31,20 @@ ClientNetwork::ClientNetwork()
 	*m_maxTimeOutIntervall = 1.0f;
 	*m_maxIntervallCounter = 300;
 
-	m_onConnectedToServer = new std::vector<std::function<void(NetConnection, const char*)>>();
-	m_onDisconnectedFromServer = new std::vector<std::function<void(NetConnection, const char*)>>();
-	m_onTimedOutFromServer = new std::vector<std::function<void(NetConnection, const char*)>>();
-	m_onFailedToConnect = new std::vector<std::function<void(NetConnection, const char*)>>();
-	m_onPasswordInvalid = new std::vector<std::function<void(NetConnection, const char*)>>();
-	m_onKickedFromServer = new std::vector<std::function<void(NetConnection, const char*)>>();
-	m_onBannedFromServer = new std::vector<std::function<void(NetConnection, const char*)>>();
-	m_onServerFull = new std::vector<std::function<void(NetConnection, const char*)>>();
+	m_onConnectedToServer = new std::vector<NetEvent>();
+	m_onDisconnectedFromServer = new std::vector<NetEvent>();
+	m_onTimedOutFromServer = new std::vector<NetEvent>();
+	m_onFailedToConnect = new std::vector<NetEvent>();
+	m_onPasswordInvalid = new std::vector<NetEvent>();
+	m_onKickedFromServer = new std::vector<NetEvent>();
+	m_onBannedFromServer = new std::vector<NetEvent>();
+	m_onServerFull = new std::vector<NetEvent>();
 
-	m_onRemotePlayerConnected = new std::vector<std::function<void(NetConnection, const char*)>>();
-	m_onRemotePlayerDisconnected = new std::vector<std::function<void(NetConnection, const char*)>>();
-	m_onRemotePlayerTimedOut = new std::vector<std::function<void(NetConnection, const char*)>>();
-	m_onRemotePlayerKicked = new std::vector<std::function<void(NetConnection, const char*)>>();
-	m_onRemotePlayerBanned = new std::vector<std::function<void(NetConnection, const char*)>>();
+	m_onRemotePlayerConnected = new std::vector<NetEvent>();
+	m_onRemotePlayerDisconnected = new std::vector<NetEvent>();
+	m_onRemotePlayerTimedOut = new std::vector<NetEvent>();
+	m_onRemotePlayerKicked = new std::vector<NetEvent>();
+	m_onRemotePlayerBanned = new std::vector<NetEvent>();
 
 	(*m_networkFunctions)[NetTypeMessageId::ID_PASSWORD_INVALID] = std::bind(&ClientNetwork::NetPasswordInvalid, this, NetworkHookPlaceholders);
 	(*m_networkFunctions)[NetTypeMessageId::ID_CONNECTION_ACCEPTED] = std::bind(&ClientNetwork::NetConnectionAccepted, this, NetworkHookPlaceholders);
@@ -374,6 +374,8 @@ void ClientNetwork::NetConnectionKicked(PacketHandler* _packetHandler, uint64_t&
 	SAFE_DELETE(m_socket);
 	*m_socketBound = 0;
 
+	
+
 	if (m_receivePacketsThread->joinable())
 		m_receivePacketsThread->join();
 }
@@ -466,7 +468,7 @@ void ClientNetwork::NetRemoteConnectionBanned(PacketHandler* _packetHandler, uin
 }
 
 
-void ClientNetwork::SetOnConnectedToServer(std::function<void(NetConnection, const char*)> _function)
+void ClientNetwork::SetOnConnectedToServer(NetEvent& _function)
 {
 	if (NET_DEBUG)	
 		printf("Hooking function to OnConnectedToServer.\n");
@@ -474,7 +476,7 @@ void ClientNetwork::SetOnConnectedToServer(std::function<void(NetConnection, con
 	m_onConnectedToServer->push_back(_function);
 }
 
-void ClientNetwork::SetOnDisconnectedFromServer(std::function<void(NetConnection, const char*)> _function)
+void ClientNetwork::SetOnDisconnectedFromServer(NetEvent& _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnDisconnectedFromServer.\n");
@@ -482,7 +484,7 @@ void ClientNetwork::SetOnDisconnectedFromServer(std::function<void(NetConnection
 	m_onDisconnectedFromServer->push_back(_function);
 }
 
-void ClientNetwork::SetOnTimedOutFromServer(std::function<void(NetConnection, const char*)> _function)
+void ClientNetwork::SetOnTimedOutFromServer(NetEvent& _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnTimedOutFromServer.\n");
@@ -490,7 +492,7 @@ void ClientNetwork::SetOnTimedOutFromServer(std::function<void(NetConnection, co
 	m_onTimedOutFromServer->push_back(_function);
 }
 
-void ClientNetwork::SetOnFailedToConnect(std::function<void(NetConnection, const char*)> _function)
+void ClientNetwork::SetOnFailedToConnect(NetEvent& _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnFailedToConnect.\n");
@@ -498,7 +500,7 @@ void ClientNetwork::SetOnFailedToConnect(std::function<void(NetConnection, const
 	m_onFailedToConnect->push_back(_function);
 }
 
-void ClientNetwork::SetOnPasswordInvalid(std::function<void(NetConnection, const char*)> _function)
+void ClientNetwork::SetOnPasswordInvalid(NetEvent& _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnPasswordInvalid.\n");
@@ -506,7 +508,7 @@ void ClientNetwork::SetOnPasswordInvalid(std::function<void(NetConnection, const
 	m_onPasswordInvalid->push_back(_function);
 }
 
-void ClientNetwork::SetOnKickedFromServer(std::function<void(NetConnection, const char*)> _function)
+void ClientNetwork::SetOnKickedFromServer(NetEvent& _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnKickedFromServer.\n");
@@ -514,7 +516,7 @@ void ClientNetwork::SetOnKickedFromServer(std::function<void(NetConnection, cons
 	m_onKickedFromServer->push_back(_function);
 }
 
-void ClientNetwork::SetOnBannedFromServer(std::function<void(NetConnection, const char*)> _function)
+void ClientNetwork::SetOnBannedFromServer(NetEvent& _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnBannedFromServer.\n");
@@ -522,7 +524,7 @@ void ClientNetwork::SetOnBannedFromServer(std::function<void(NetConnection, cons
 	m_onBannedFromServer->push_back(_function);
 }
 
-void ClientNetwork::SetOnServerFull(std::function<void(NetConnection, const char*)> _function)
+void ClientNetwork::SetOnServerFull(NetEvent& _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnServerFull.\n");
@@ -530,7 +532,7 @@ void ClientNetwork::SetOnServerFull(std::function<void(NetConnection, const char
 	m_onServerFull->push_back(_function);
 }
 
-void ClientNetwork::SetOnRemotePlayerConnected(std::function<void(NetConnection, const char*)> _function)
+void ClientNetwork::SetOnRemotePlayerConnected(NetEvent& _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnRemotePlayerConnected.\n");
@@ -538,7 +540,7 @@ void ClientNetwork::SetOnRemotePlayerConnected(std::function<void(NetConnection,
 	m_onRemotePlayerConnected->push_back(_function);
 }
 
-void ClientNetwork::SetOnRemotePlayerDisconnected(std::function<void(NetConnection, const char*)> _function)
+void ClientNetwork::SetOnRemotePlayerDisconnected(NetEvent& _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnRemotePlayerDisconnected.\n");
@@ -546,7 +548,7 @@ void ClientNetwork::SetOnRemotePlayerDisconnected(std::function<void(NetConnecti
 	m_onRemotePlayerDisconnected->push_back(_function);
 }
 
-void ClientNetwork::SetOnRemotePlayerTimedOut(std::function<void(NetConnection, const char*)> _function)
+void ClientNetwork::SetOnRemotePlayerTimedOut(NetEvent& _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnRemotePlayerTimedOut.\n");
@@ -554,7 +556,7 @@ void ClientNetwork::SetOnRemotePlayerTimedOut(std::function<void(NetConnection, 
 	m_onRemotePlayerTimedOut->push_back(_function);
 }
 
-void ClientNetwork::SetOnRemotePlayerKicked(std::function<void(NetConnection, const char*)> _function)
+void ClientNetwork::SetOnRemotePlayerKicked(NetEvent& _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnRemotePlayerKicked.\n");
@@ -562,7 +564,7 @@ void ClientNetwork::SetOnRemotePlayerKicked(std::function<void(NetConnection, co
 	m_onRemotePlayerKicked->push_back(_function);
 }
 
-void ClientNetwork::SetOnRemotePlayerBanned(std::function<void(NetConnection, const char*)> _function)
+void ClientNetwork::SetOnRemotePlayerBanned(NetEvent& _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnRemotePlayerBanned.\n");

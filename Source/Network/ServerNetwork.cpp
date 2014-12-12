@@ -134,12 +134,13 @@ ServerNetwork::ServerNetwork()
 	m_currentTimeOutIntervall = new std::map<NetConnection, float>();
 	m_currentIntervallCounter = new std::map<NetConnection, int>();
 
-	m_onPlayerConnected = new std::vector<std::function<void(NetConnection, const char*)>>();
-	m_onPlayerDisconnected = new std::vector<std::function<void(NetConnection, const char*)>>();
-	m_onPlayerTimedOut = new std::vector<std::function<void(NetConnection, const char*)>>();
+	m_onPlayerConnected = new std::vector<NetEvent>();
+	m_onPlayerDisconnected = new std::vector<NetEvent>();
+	m_onPlayerTimedOut = new std::vector<NetEvent>();
 
 	*m_incomingPort = 6112;
 
+	m_networkFunctions = new std::map < char, NetMessageHook >();
 	(*m_networkFunctions)[NetTypeMessageId::ID_PASSWORD_ATTEMPT] = std::bind(&ServerNetwork::NetPasswordAttempt, this, NetworkHookPlaceholders);
 	(*m_networkFunctions)[NetTypeMessageId::ID_CONNECTION_DISCONNECTED] = std::bind(&ServerNetwork::NetConnectionDisconnected, this, NetworkHookPlaceholders);
 	(*m_networkFunctions)[NetTypeMessageId::ID_PING] = std::bind(&ServerNetwork::NetPing, this, NetworkHookPlaceholders);
@@ -483,7 +484,7 @@ void ServerNetwork::UpdateTimeOut(float& _dt)
 
 }
 
-void ServerNetwork::SetOnPlayerConnected(std::function<void(NetConnection, const char*)> _function)
+void ServerNetwork::SetOnPlayerConnected(NetEvent& _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnPlayerConnected.\n");
@@ -491,7 +492,7 @@ void ServerNetwork::SetOnPlayerConnected(std::function<void(NetConnection, const
 	m_onPlayerConnected->push_back(_function);
 }
 
-void ServerNetwork::SetOnPlayerDisconnected(std::function<void(NetConnection, const char*)> _function)
+void ServerNetwork::SetOnPlayerDisconnected(NetEvent& _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnPlayerDisconnected.\n");
@@ -499,7 +500,7 @@ void ServerNetwork::SetOnPlayerDisconnected(std::function<void(NetConnection, co
 	m_onPlayerDisconnected->push_back(_function);
 }
 
-void ServerNetwork::SetOnPlayerTimedOut(std::function<void(NetConnection, const char*)> _function)
+void ServerNetwork::SetOnPlayerTimedOut(NetEvent& _function)
 {
 	if (NET_DEBUG)
 		printf("Hooking function to OnPlayerTimedOut.\n");
