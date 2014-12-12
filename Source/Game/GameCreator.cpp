@@ -334,5 +334,7 @@ void GameCreator::Reload(std::vector<Console::Argument>* _args)
   m_graphics->Clear();
   InitializeNetwork();
   InitializeWorld();
+
+  m_console->SetWorld(m_world);
 }
 

@@ -57,6 +57,7 @@ namespace ECSL
 
 		void SetSystemName(std::string _name){ m_systemName = _name; }
 		inline unsigned int GetEntityCountLimit(){ return m_dataManager->GetEntityCountLimit(); }
+		inline bool EntityHasComponent(unsigned int _entityId, unsigned int _componentTypeId){ m_dataManager->EntityHasComponent(_entityId, _componentTypeId); }
 
 	private:
 		bool m_initialized;
