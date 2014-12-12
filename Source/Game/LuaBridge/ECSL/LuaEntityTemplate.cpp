@@ -15,17 +15,19 @@ namespace LuaBridge
     LuaEmbedder::EmbedClass<LuaEntityTemplate>("EntityTemplate");
     LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "GetName", &LuaEntityTemplate::GetName);
     LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "SetName", &LuaEntityTemplate::SetName);
+    LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "AddComponent", &LuaEntityTemplate::AddComponent);
     LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "SetFloat", &LuaEntityTemplate::SetFloat);
     LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "SetFloat2", &LuaEntityTemplate::SetFloat2);
     LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "SetFloat3", &LuaEntityTemplate::SetFloat3);
-    LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "SetFloat4", &LuaEntityTemplate::SetFloat4);
+	LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "SetFloat4", &LuaEntityTemplate::SetFloat4);
+	LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "SetFloat5", &LuaEntityTemplate::SetFloat5);
     LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "SetInt", &LuaEntityTemplate::SetInt);
     LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "SetInt2", &LuaEntityTemplate::SetInt2);
     LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "SetInt3", &LuaEntityTemplate::SetInt3);
     LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "SetInt4", &LuaEntityTemplate::SetInt4);
     LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "SetString", &LuaEntityTemplate::SetString);
     LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "SetModel", &LuaEntityTemplate::SetModel);
-    LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "SetPointLight", &LuaEntityTemplate::SetPointLight);
+    LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "SetPointlight", &LuaEntityTemplate::SetPointlight);
     LuaEmbedder::EmbedClassProperty<LuaEntityTemplate>("EntityTemplate", "Name", &LuaEntityTemplate::GetName, &LuaEntityTemplate::SetName);
   }
   
@@ -38,6 +40,13 @@ namespace LuaBridge
   int LuaEntityTemplate::SetName()
   {
     m_name = LuaEmbedder::PullString(1);
+    return 0;
+  }
+  
+  int LuaEntityTemplate::AddComponent()
+  {
+    std::string componentName = LuaEmbedder::PullString(1);
+    m_components[componentName] = std::vector<ECSL::TemplateEntry>();
     return 0;
   }
   
@@ -64,12 +73,22 @@ namespace LuaBridge
   }
   int LuaEntityTemplate::SetFloat4()
   {
-    std::string componentName = LuaEmbedder::PullString(1);
-    m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullFloat(2)));
-    m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullFloat(3)));
-    m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullFloat(4)));
-    m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullFloat(5)));
-    return 0;
+	  std::string componentName = LuaEmbedder::PullString(1);
+	  m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullFloat(2)));
+	  m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullFloat(3)));
+	  m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullFloat(4)));
+	  m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullFloat(5)));
+	  return 0;
+  }
+  int LuaEntityTemplate::SetFloat5()
+  {
+	  std::string componentName = LuaEmbedder::PullString(1);
+	  m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullFloat(2)));
+	  m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullFloat(3)));
+	  m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullFloat(4)));
+	  m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullFloat(5)));
+	  m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullFloat(6)));
+	  return 0;
   }
   
   int LuaEntityTemplate::SetInt()
@@ -120,7 +139,7 @@ namespace LuaBridge
     return 0;
   }
   
-  int LuaEntityTemplate::SetPointLight()
+  int LuaEntityTemplate::SetPointlight()
   {
     std::string componentName = LuaEmbedder::PullString(1);
     float posX = LuaEmbedder::PullFloat(2);
