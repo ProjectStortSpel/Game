@@ -166,13 +166,13 @@ void GameCreator::StartGame()
 		pointlightData[10 * i + 0] = i * 4 - 5.0;	//pos x
 		pointlightData[10 * i + 1] = 2.0;		//pos y
 		pointlightData[10 * i + 2] = 0.0;		//pos z
-		pointlightData[10 * i + 3] = 0.8;		 //int x
+		pointlightData[10 * i + 3] = 0.6;		 //int x
 		pointlightData[10 * i + 4] = 0.9;		 //int y
 		pointlightData[10 * i + 5] = 0.5;		 //int z
 		pointlightData[10 * i + 6] = 0.9;		//col x
 		pointlightData[10 * i + 7] = 0.5;		//col y
 		pointlightData[10 * i + 8] = 0.5;		//col z
-		pointlightData[10 * i + 9] = 4.0;		 //range
+		pointlightData[10 * i + 9] = 5.0;		 //range
 	}
 
 	while (true)
