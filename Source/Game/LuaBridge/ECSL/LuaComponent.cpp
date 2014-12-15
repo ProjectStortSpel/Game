@@ -249,7 +249,10 @@ namespace LuaBridge
 	int LuaComponent::SetString()
 	{
 		assert(m_dataLocation);
-		m_dataLocation = (char*)LuaEmbedder::PullString(1).c_str();
+		std::string text = LuaEmbedder::PullString(1);
+		for (int i = 0; i < (int)text.size(); i++)
+		  m_dataLocation[i] = text[i];
+		m_dataLocation[(int)text.size()] = '\0';
 		m_system->ComponentHasChanged(m_entityId, m_componentName);
 		return 0;
 	}

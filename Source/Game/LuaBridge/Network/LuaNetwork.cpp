@@ -5,6 +5,24 @@
 
 namespace LuaBridge
 {
+
+	namespace LuaNetwork
+	{
+		int Receive();
+
+		void Embed()
+		{
+			LuaEmbedder::AddFunction("Receive", &Receive, "Net");
+		}
+
+		int Receive()
+		{
+			std::string name = LuaEmbedder::PullString(1);
+			LuaEmbedder::SaveFunction(2, name);
+			return 0;
+		}
+	}
+
 	namespace LuaClientNetwork
 	{
 		int StartPack();
@@ -66,7 +84,9 @@ namespace LuaBridge
 				return 0;
 
 			std::string identifier = LuaEmbedder::PullString(1);
-			uint64_t id = NetworkInstance::GetClient()->GetPacketHandler()->StartPack(identifier.c_str());
+			uint64_t id = NetworkInstance::GetClient()->GetPacketHandler()->StartPack("LuaPacket");
+
+			NetworkInstance::GetClient()->GetPacketHandler()->WriteString(id, identifier.c_str());
 
 			std::ostringstream ss;
 			ss << id;
@@ -339,7 +359,9 @@ namespace LuaBridge
 				return 0;
 
 			std::string identifier = LuaEmbedder::PullString(1);
-			uint64_t id = NetworkInstance::GetServer()->GetPacketHandler()->StartPack(identifier.c_str());
+			uint64_t id = NetworkInstance::GetServer()->GetPacketHandler()->StartPack("LuaPacket");
+
+			NetworkInstance::GetServer()->GetPacketHandler()->WriteString(id, identifier.c_str());
 
 			std::ostringstream ss;
 			ss << id;
