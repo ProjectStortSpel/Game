@@ -9,6 +9,7 @@ EntityTemplateManager:AddTemplate(Tile)
 local Player = EntityTemplate()
 Player.Name = "Player"
 Player:SetFloat3("Position", 0.0, 1.0, 0.0)
+Player:SetInt2("MapPosition", 0.0, 0.0)
 Player:SetFloat3("Rotation", 0.0, math.pi, 0.0)
 Player:SetFloat3("Scale", 0.5, 0.5, 0.5)
 Player:SetModel("Model", "head", "head")

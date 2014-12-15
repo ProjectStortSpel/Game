@@ -95,3 +95,16 @@ local SyncNetworkComponent = ComponentType()
 SyncNetworkComponent.Name = "SyncNetwork"
 SyncNetworkComponent.TableType = TableType.Array
 worldCreator:AddComponentType(SyncNetworkComponent)
+
+-- New Round Component
+local NewRoundComponent = ComponentType()
+NewRoundComponent.Name = "NewRound"
+NewRoundComponent.TableType = TableType.Array
+worldCreator:AddComponentType(NewRoundComponent)
+
+-- New Step Component
+local NewStepComponent = ComponentType()
+NewStepComponent.Name = "NewStep"
+NewStepComponent.TableType = TableType.Array
+worldCreator:AddComponentType(NewStepComponent)
+

@@ -178,3 +178,21 @@ MapCreationSystem.SetPosition = function(self, entity, posX, posY, posZ)
     posComp:SetFloat3(posX, posY, posZ)
 	
 end
+
+MapCreationSystem.TileIsWalkable = function(self, posX, posY)
+	
+	return not self:TileHasComponent("NotWalkable", posX, posY)
+end
+
+MapCreationSystem.TileIsVoid = function(self, posX, posY)
+
+	return self:TileHasComponent("Void", posX, posY)
+end
+
+MapCreationSystem.TileHasComponent = function(self, component, posX, posY)
+	local index = self.mapX * posY + posX + 1
+	entity = self.entities[index]
+	
+	local returnValue = self:EntityHasComponent(entity, component)
+	return returnValue
+end
