@@ -3,6 +3,11 @@
 
 namespace LuaBridge
 {
+	namespace LuaNetwork
+	{
+		void Embed();
+	}
+
 	namespace LuaClientNetwork
 	{
 		void Embed();
