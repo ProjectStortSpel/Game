@@ -23,6 +23,9 @@ TestMovementSystem.Update = function(self, dt)
 	
 	--Console.Print(MapCreationSystem.testnumber)
 	
+	local cards = {}
+	cards = self:GetCardsFromPlayers()
+	
 	if self.currentPlayer <= #entities then
 	
 		local switchplayer = false
@@ -75,6 +78,10 @@ TestMovementSystem.Update = function(self, dt)
 		
 		switchplayer = true
 	end
+end
+
+TestMovementSystem.GetCardsFromPlayers = function(self)
+	
 end
 
 -- If the tile we are trying to reach is walkable, we go there.
@@ -171,6 +178,34 @@ RespawnSystem.OnEntityRemoved = function(self, entity)
 	world:RemoveComponentFrom("InactivePlayer", entity);
 	--print("Respawn removed")
 end
+
+---------------------------- Get Cards System
+
+GetCardsSystem = System()
+
+GetCardsSystem.Initialize = function(self)
+	self:SetName("Respawn System")
+	
+	self:AddComponentTypeToFilter("NewRound", FilterType.Excluded)
+	print("Get Cards System initialized!")
+end
+
+GetCardsSystem.OnEntityAdded = function(self, entity)
+
+	print("Get cards pre-add")
+	
+	
+	print("Get cards added")
+end
+
+GetCardsSystem.OnEntityRemoved = function(self, entity)
+	
+	print("Get cards pre-remove")
+	
+	print("Get cards removed")
+end
+
+
 
 
 ---------------------------- New Round System
