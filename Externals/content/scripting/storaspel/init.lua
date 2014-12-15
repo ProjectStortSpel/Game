@@ -30,5 +30,7 @@ worldCreator:AddSystemToCurrentGroup(RightTurnSystem)
 worldCreator:AddSystemToCurrentGroup(LeftTurnSystem)
 worldCreator:AddSystemToCurrentGroup(TurnAroundSystem)
 worldCreator:AddSystemToCurrentGroup(TestMovementSystem)
+worldCreator:AddSystemToCurrentGroup(RespawnSystem)
+worldCreator:AddSystemToCurrentGroup(NewRoundSystem)
 
 worldCreator:AddSystemToCurrentGroup(DiscoSystem)
