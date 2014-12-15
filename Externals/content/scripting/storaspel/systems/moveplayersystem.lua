@@ -53,15 +53,16 @@ TestMovementSystem.Update = function(self, dt)
 	else
 		self.currentPlayer = 1
 	end
-	
+	 
+ 	-- Tillfällig representation av en rundas slut.     
 	if Input.GetKeyState(Key.Space) == InputState.Pressed then
-			
-			local players = RespawnSystem:GetEntities()
-			for i = 1, #players do
-				world:CreateComponentAndAddTo("NewRound", players[i])
-			end
-			
-			switchplayer = true
+			 
+		local players = RespawnSystem:GetEntities()
+		for i = 1, #players do
+			world:CreateComponentAndAddTo("NewRound", players[i])
+		end
+		
+		switchplayer = true
 	end
 end
 
@@ -326,3 +327,20 @@ TurnAroundSystem.OnEntityAdded = function(self, entity)
 	
 	world:RemoveComponentFrom("TurnAround", entity);
 end
+
+---------------------------- WaterMovementSystem
+
+--WaterMovementSystem = System()
+--
+--WaterMovementSystem.Initialize = function(self)
+--	self:SetName("Water Movement System")
+--	self:AddComponentTypeToFilter("WaterDirection", FilterType.Mandatory)
+--	
+--	self:AddComponentTypeToFilter("NewRound", FilterType.Excluded)
+--	--self:AddComponentTypeToFilter("Position", FilterType.Excluded)
+--	print("Water Movement System initialized!")
+--end
+--
+--WaterMovementSystem.OnEntityAdded = function(self)
+--
+--end

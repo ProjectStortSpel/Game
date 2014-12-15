@@ -179,6 +179,9 @@
     <ClCompile Include="..\..\..\Source\Game\Quaternion.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\ReceivePacketSystem.cpp">
+      <Filter>Game\Systems\NetworkMessages</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h">
@@ -279,6 +282,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Quaternion.h">
       <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\ReceivePacketSystem.h">
+      <Filter>Game\Systems\NetworkMessages</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

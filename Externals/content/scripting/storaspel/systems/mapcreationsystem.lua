@@ -177,6 +177,33 @@ MapCreationSystem.SetPosition = function(self, entity, posX, posY, posZ)
     mapPosComp:SetInt2(posX, posZ)
     posComp:SetFloat3(posX, posY, posZ)
 	
+	local checkpointID = self:GetCheckPointId(posX, posZ)
+	
+	if -1 ~= checkpointID then
+		local targetComp = self:GetComponent(entity, "TargetCheckpoint", 0)
+		local targetCheckPointID = targetComp:GetInt()
+		
+		if targetCheckPointID == checkpointID then
+			targetComp:SetInt(checkpointID + 1)
+			local spawnComp = self:GetComponent(entity, "Spawn", 0)
+			spawnComp:SetInt2(posX, posZ)
+		end
+	end
+end
+
+MapCreationSystem.GetCheckPointId = function(self, posX, posY)
+	
+	local index = self.mapX * posY + posX + 1
+	entity = self.entities[index]
+	
+	if self:EntityHasComponent(entity, "Checkpoint") then
+		local comp = self:GetComponent(entity, "Checkpoint", 0)
+		
+		return comp:GetInt()
+	else
+		return -1
+	end
+	
 end
 
 MapCreationSystem.TileIsWalkable = function(self, posX, posY)

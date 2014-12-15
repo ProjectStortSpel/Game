@@ -125,7 +125,7 @@ void phongModelDirLight(out vec3 ambient, out vec3 diffuse, out vec3 spec)
 	if(diffuseFactor > 0)
 	{
 		// diffuse
-		diffuse = diffuseFactor * thisLightColor * thisLightIntensity;
+		diffuse = diffuseFactor * thisLightColor * thisLightIntensity.y;
 
 		// specular
 		vec3 v = reflect( lightVec, normal_tex );
@@ -164,7 +164,7 @@ void phongModel(int index, out vec3 ambient, out vec3 diffuse, out vec3 spec)
 	if(diffuseFactor > 0)
 	{
 		// diffuse
-		diffuse = diffuseFactor * thisLightColor * thisLightIntensity;
+		diffuse = diffuseFactor * thisLightColor * thisLightIntensity.y;
 
 		// specular
 		//vec3 v = normalize(2 * Material.Ks * normal_tex - lightVec);//reflect( lightVec, normal_tex );
