@@ -2,8 +2,7 @@ DiscoSystem = System()
 DiscoSystem.TotalTime = 0.0
 
 DiscoSystem.Update = function(self, dt)
-	
-	self.TotalTime = self.TotalTime + dt
+
 	local entities = self:GetEntities() 
 	for i = 1, #entities do
 		local entity = entities[i]
@@ -17,12 +16,17 @@ DiscoSystem.Update = function(self, dt)
 		px = rx + radius * math.sin((self.TotalTime + ry) * factor) 
 		py = py
 		pz = rz + radius * math.cos((self.TotalTime + ry) * factor)
+		print("Disco System initialized!")
 		
 		Pointlight:SetPointlight(px, py, pz, inta, intd, ints, colorR, colorG, colorB, range)
 	end
+	
+	collectgarbage()
 end
 
 DiscoSystem.Initialize = function(self)
+	self:SetName("Disco System")
+
 	self:AddComponentTypeToFilter("Pointlight", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("RotateAround", FilterType.Mandatory)
 	

@@ -21,6 +21,7 @@ MovementSystem.Update = function(self, dt)
 end
 
 MovementSystem.Initialize = function(self)
+	self:SetName("Movement System")
 	self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Velocity", FilterType.Mandatory)
 	

@@ -16,6 +16,8 @@ namespace LuaBridge
 		LuaEmbedder::EmbedClassFunction<LuaSystem>("System", "EntityHasComponent", &LuaSystem::EntityHasComponent);
 		LuaEmbedder::EmbedClassFunction<LuaSystem>("System", "InitializeNetworkEvents", &LuaSystem::InitializeNetworkEvents);
 
+		LuaEmbedder::EmbedClassFunction<LuaSystem>("System", "SetName", &LuaSystem::SetName);
+
 		LuaEmbedder::AddInt("Mandatory", (int)ECSL::FilterType::Mandatory, "FilterType");
 		LuaEmbedder::AddInt("RequiresOneOf", (int)ECSL::FilterType::RequiresOneOf, "FilterType");
 		LuaEmbedder::AddInt("Excluded", (int)ECSL::FilterType::Excluded, "FilterType");
@@ -84,6 +86,12 @@ namespace LuaBridge
 		return 1;
 	}
 
+	int LuaSystem::SetName()
+	{
+		std::string systemName = LuaEmbedder::PullString(1);
+		SetSystemName(systemName);
+		return 0;
+	}
 
 	int LuaSystem::AddComponentTypeToFilter()
 	{
