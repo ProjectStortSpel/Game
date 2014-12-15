@@ -10,6 +10,7 @@
 #include "Systems/ResetChangedSystem.h"
 #include "Systems/ReconnectSystem.h"
 #include "Systems/PointlightSystem.h"
+#include "Systems/ReceivePacketSystem.h"
 
 #include "NetworkInstance.h"
 #include "ECSL/ECSL.h"
@@ -143,10 +144,10 @@ void GameCreator::InitializeWorld()
 	worldCreator.AddLuaSystemToCurrentGroup(new RotationSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new CameraSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new ModelSystem(m_graphics));
-	worldCreator.AddLuaSystemToCurrentGroup(new RenderSystem(m_graphics));
 
 	worldCreator.AddLuaSystemToCurrentGroup(new SyncEntitiesSystem());
-	worldCreator.AddLuaSystemToCurrentGroup(new ResetChangedSystem());
+	worldCreator.AddLuaSystemToCurrentGroup(new ReceivePacketSystem());
+	worldCreator.AddLuaSystemToCurrentGroup(new RenderSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new ReconnectSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderRemoveSystem(m_graphics));
 

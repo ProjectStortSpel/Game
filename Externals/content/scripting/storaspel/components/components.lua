@@ -95,3 +95,9 @@ local SyncNetworkComponent = ComponentType()
 SyncNetworkComponent.Name = "SyncNetwork"
 SyncNetworkComponent.TableType = TableType.Array
 worldCreator:AddComponentType(SyncNetworkComponent)
+
+-- Null Component
+local NullComponent = ComponentType()
+NullComponent.Name = "Null"
+NullComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NullComponent)
