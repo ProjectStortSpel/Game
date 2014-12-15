@@ -4,18 +4,18 @@
 
 using namespace MPL;
 
-Scheduler::Scheduler()
-: m_tasks(new std::vector<Task*>())
-{
-
-}
-
-Scheduler::~Scheduler()
-{
-
-}
-
-void Scheduler::SendTasks()
-{
-	//TaskManager::GetInstance().Execute(*m_tasks);
-}
+//Scheduler::Scheduler()
+//: m_workItems(new std::vector<Task*>())
+//{
+//
+//}
+//
+//Scheduler::~Scheduler()
+//{
+//
+//}
+//
+//void Scheduler::SendTasks()
+//{
+//	TaskManager::GetInstance().(*m_tasks);
+//}

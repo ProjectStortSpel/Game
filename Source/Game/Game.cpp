@@ -189,6 +189,9 @@ void LoadAlotOfBoxes(Renderer::GraphicDevice* r)
 		}
 	}
 }
+
+ECSL::ECSLScheduler* scheduler;
+
 void Start()
 {
 	/*	Initialize Renderer and Input	*/
@@ -202,6 +205,9 @@ void Start()
 	int modelid = RENDERER.LoadModel("content/models/cube/", "cube.object", &mat[100]); // LOADMODEL RETURNS THE MODELID
 	RENDERER.ChangeModelTexture(modelid, "content/models/cube/NM_tst.png"); // CHANGING TEXTURE ON MODELID
 
+	MPL::TaskManager::GetInstance().CreateSlaves();
+	scheduler = new ECSL::ECSLScheduler();
+
 	bool lol = true;
 	float cd = 1.0f;
 	Timer timer;
@@ -214,10 +220,11 @@ void Start()
 		INPUT->Update();
 		RENDERER.Update(dt);
 		RENDERER.RenderSimpleText("This text render from GAME! \nThe x and y values in the function isn't pixel \ncoordinates, it's char position. Every char is \n8x16 pixels in size. Use \\n to change line.\n\n  !Not all chars is supported!\n\nRight now it clear the whole output image as well (Tell me when to remove this).", 10, 2);
-		
 
 		RENDERER.Render();
 		INPUT->Update();
+
+		scheduler->Execute();
 
 		SDL_Event e;
 		while (SDL_PollEvent(&e))

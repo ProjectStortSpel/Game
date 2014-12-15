@@ -32,5 +32,14 @@ int SlaveThread::BeginThreadLoop(void* _thread)
 
 int SlaveThread::ThreadLoop()
 {
+	while (true)
+	{
+		WorkItem* workItem = m_taskPool->FetchWork();
+		if (workItem != 0)
+		{
+			workItem->Work(TaskInfo(0, 0), (void*)0);
+			m_taskPool->WorkDone(workItem);
+		}
+	}
 	return 0;
 }

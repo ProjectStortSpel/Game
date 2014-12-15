@@ -22,13 +22,12 @@ namespace MPL
 		TaskId BeginAdd(TaskId _dependency, WorkItem* _workItem);
 		void AddChild(TaskId _id, WorkItem* _workItem);
 		void AddChildren(TaskId _id, std::vector<WorkItem*>* _workItems);
-		void DependsOn(TaskId _id, TaskId _dependsOnId);
 		void FinishAdd(TaskId _id);
+		void WaitFor(TaskId _id);
 
 	private:
 		TaskManager();
 
-		SDL_mutex* m_toBeAddedMutex;
 		std::vector<SlaveThread*>* m_slaves;
 		TaskPool* m_taskPool;
 	};

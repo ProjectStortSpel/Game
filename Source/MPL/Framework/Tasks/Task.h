@@ -12,7 +12,6 @@ namespace MPL
 	{
 		TaskId Id;
 		WorkItem* Work;
-		TaskId ParentId;
 		unsigned int OpenWorkItemCount;
 		TaskId Dependency;
 	};

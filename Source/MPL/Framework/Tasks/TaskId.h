@@ -6,6 +6,7 @@
 namespace MPL
 {
 	typedef long long TaskId;
+	const TaskId NoDependency = -1;
 };
 
 #endif

@@ -7,23 +7,23 @@
 
 namespace MPL
 {
-	class DECLSPEC Scheduler
-	{
-	public:
-		Scheduler();
-		virtual ~Scheduler() = 0;
+	//class DECLSPEC Scheduler
+	//{
+	//public:
+	//	Scheduler();
+	//	virtual ~Scheduler() = 0;
 
-		virtual void Execute() = 0;
+	//	virtual void Execute() = 0;
 
-		// Send tasks in list to the Task Manager and execute.
-		void SendTasks();
+	//	// Send tasks in list to the Task Manager and execute.
+	//	void SendTasks();
 
-	protected:
-		std::vector<Task*>* m_tasks;
+	//protected:
+	//	std::vector<WorkItem*>* m_workItems;
 
-	private:
-		
-	};
+	//private:
+	//	
+	//};
 };
 
 #endif

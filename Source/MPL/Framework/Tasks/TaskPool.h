@@ -3,7 +3,7 @@
 
 #include <SDL/SDL.h>
 #include <map>
-#include <deque>
+#include <list>
 #include "Task.h"
 
 namespace MPL
@@ -14,23 +14,26 @@ namespace MPL
 		TaskPool();
 		~TaskPool();
 
-		TaskId CreateTask(TaskId _dependency, WorkItem* _workItem);
+		TaskId BeginCreateTask(TaskId _dependency, WorkItem* _workItem);
+		void FinishCreateTask(TaskId _id);
 		void CreateChild(TaskId _parent, WorkItem* _workItem);
-		TaskId GenerateTaskId();
-		void AddToOpenList(Task* _task);
-		void RemoveFromOpenList(Task* _task);
-		void AddToQueue(WorkItem* _workItem, Task* _task);
+		WorkItem* FetchWork();
+		void WorkDone(WorkItem* _workItem);
+		bool IsTaskDone(TaskId _id);
 
 	private:
 		TaskId m_nextId;
 		SDL_mutex* m_idMutex;
-		SDL_mutex* m_workItemCountMutex;
-		SDL_mutex* m_openListMutex;
-		SDL_mutex* m_queueMutex;
+		SDL_mutex* m_taskMutex;
 		std::map<TaskId, Task*>* m_openList;
-		std::deque<WorkItem*>* m_queue;
-		std::map<WorkItem*, TaskId>* m_workTaskConnection;
-		
+		std::list<WorkItem*>* m_queue;
+		std::map<WorkItem*, Task*>* m_workTaskConnection;
+
+		TaskId GenerateTaskId();
+		void AddToOpenList(Task* _task);
+		void AddToQueue(WorkItem* _workItem, Task* _task);
+		void IncreaseWorkCount(Task* _task);
+		void DecreaseWorkCount(Task* _task);
 	};
 };
 

@@ -5,9 +5,9 @@
 using namespace MPL;
 
 TaskManager::TaskManager()
-//: m_openList(new std::map<TaskId, Task*>()), m_taskPool(new TaskPool())
+: m_slaves(new std::vector<SlaveThread*>()), m_taskPool(new TaskPool())
 {
-	m_toBeAddedMutex = SDL_CreateMutex();
+
 }
 
 TaskManager::~TaskManager()
@@ -28,10 +28,10 @@ void TaskManager::CreateSlaves()
 	{
 		SlaveThread* slave = new SlaveThread(m_taskPool);
 		if (!slave->StartThread("Slave " + i))
-			printf("Couldn't create slave thread. Id: %i", i);
+			printf("Couldn't create slave thread. Id: %i\n", i);
 		else
 		{
-			printf("Slave thread created. Id: %i", i);
+			printf("Slave thread successfully created. Id: %i\n", i);
 			m_slaves->push_back(slave);
 		}
 	}
@@ -39,34 +39,39 @@ void TaskManager::CreateSlaves()
 
 TaskId TaskManager::BeginAdd(TaskId _dependency)
 {
-	SDL_LockMutex(m_toBeAddedMutex);
-//	TaskId id = m_taskPool->GenerateId();
-//	(*m_openList)[id] = new Task();
-	SDL_UnlockMutex(m_toBeAddedMutex);
-	return 0;
+	return m_taskPool->BeginCreateTask(_dependency, 0);
 }
 
 TaskId TaskManager::BeginAdd(TaskId _dependency, WorkItem* _workItem)
 {
-	return 0;
+	return m_taskPool->BeginCreateTask(_dependency, _workItem);
 }
 
 void TaskManager::AddChild(TaskId _id, WorkItem* _workItem)
 {
-
+	m_taskPool->CreateChild(_id, _workItem);
 }
 
 void TaskManager::AddChildren(TaskId _id, std::vector<WorkItem*>* _workItems)
 {
-
-}
-
-void TaskManager::DependsOn(TaskId _id, TaskId _dependsOnId)
-{
-
+	for (auto workItem : *_workItems)
+		m_taskPool->CreateChild(_id, workItem);
 }
 
 void TaskManager::FinishAdd(TaskId _id)
 {
+	m_taskPool->FinishCreateTask(_id);
+}
 
+void TaskManager::WaitFor(TaskId _id)
+{
+	while (!m_taskPool->IsTaskDone(_id))
+	{
+		WorkItem* workItem = m_taskPool->FetchWork();
+		if (workItem != 0)
+		{
+			workItem->Work(TaskInfo(0, 0), (void*)0);
+			m_taskPool->WorkDone(workItem);
+		}
+	}
 }
