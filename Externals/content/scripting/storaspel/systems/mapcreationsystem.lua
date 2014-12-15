@@ -178,3 +178,12 @@ MapCreationSystem.SetPosition = function(self, entity, posX, posY, posZ)
     posComp:SetFloat3(posX, posY, posZ)
 	
 end
+
+MapCreationSystem.TileIsVoid = function(self, posX, posY)
+	-- Gör detta till en gemensam metod som heter typ TileHasComponent?
+	local index = MapCreationSystem.mapX * posY + posX + 1
+	entity = MapCreationSystem.entities[index]
+	
+	local returnValue = not self:EntityHasComponent(entity, "Void")
+	return returnValue
+end

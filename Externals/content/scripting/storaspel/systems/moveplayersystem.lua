@@ -59,10 +59,12 @@ TestMovementSystem.Update = function(self, dt)
 	
 end
 
+-- If the tile we are trying to reach is walkable, we go there.
 TestMovementSystem.MoveTo = function(self, entity, posX, posY, dirX, dirY)
-	-- If the tile we are trying to reach is walkable, then we go there.
-		
-	if self:TileIsWalkable(posX, posY) then
+	
+	if MapCreationSystem:TileIsWalkable(posX, posY) then
+	
+		-- Check if another player is on that tile, if so, recursively call this function to check whether the tile we are trying to push this player to is walkable or occupied.
 		local playerId = self:PlayerOnTile(posX, posY)
 		
 		if -1 ~= playerId then
@@ -72,6 +74,7 @@ TestMovementSystem.MoveTo = function(self, entity, posX, posY, dirX, dirY)
 				MapCreationSystem:SetPosition(entity, posX, 1.0, posY)
 				return true
 			end
+		-- No player on the tile, move there.
 		else
 			MapCreationSystem:SetPosition(entity, posX, 1.0, posY)
 			return true
@@ -87,15 +90,7 @@ TestMovementSystem.PostInitialize = function(self, posX, posY)
 	return 
 end
 
-TestMovementSystem.TileIsWalkable = function(self, posX, posY)
-	
-	local index = MapCreationSystem.mapX * posY + posX + 1
-	entity = MapCreationSystem.entities[index]
-	
-	local returnValue = not self:EntityHasComponent(entity, "NotWalkable")
-	return returnValue 
-end
-
+-- Checks if there is a player on the tile. If so, return the id of the entity, otherwise return -1.
 TestMovementSystem.PlayerOnTile = function(self, posX, posY)
 	
 	local entities = self:GetEntities()
