@@ -32,5 +32,8 @@ worldCreator:AddSystemToCurrentGroup(TurnAroundSystem)
 worldCreator:AddSystemToCurrentGroup(TestMovementSystem)
 worldCreator:AddSystemToCurrentGroup(RespawnSystem)
 worldCreator:AddSystemToCurrentGroup(NewRoundSystem)
+worldCreator:AddSystemToCurrentGroup(NewStepSystem)
+worldCreator:AddSystemToCurrentGroup(WaterMovementSystem)
+
 
 worldCreator:AddSystemToCurrentGroup(DiscoSystem)
