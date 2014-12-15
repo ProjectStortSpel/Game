@@ -35,6 +35,9 @@
     <ClInclude Include="..\..\..\Source\Renderer\SkyBox.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\ShadowMap.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp">
@@ -56,6 +59,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Renderer\SkyBox.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Renderer\ShadowMap.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

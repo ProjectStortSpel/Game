@@ -25,6 +25,7 @@
     <ClInclude Include="..\..\..\Source\Renderer\GraphicDevice.h" />
     <ClInclude Include="..\..\..\Source\Renderer\ModelLoader.h" />
     <ClInclude Include="..\..\..\Source\Renderer\Shader.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\ShadowMap.h" />
     <ClInclude Include="..\..\..\Source\Renderer\SimpleText.h" />
     <ClInclude Include="..\..\..\Source\Renderer\SkyBox.h" />
     <ClInclude Include="..\..\..\Source\Renderer\stdafx.h" />
@@ -36,6 +37,7 @@
     <ClCompile Include="..\..\..\Source\Renderer\GLTimer.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\Shader.cpp" />
+    <ClCompile Include="..\..\..\Source\Renderer\ShadowMap.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\SimpleText.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\SkyBox.cpp" />
   </ItemGroup>
