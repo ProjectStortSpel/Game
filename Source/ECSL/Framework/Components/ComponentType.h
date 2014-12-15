@@ -20,7 +20,7 @@ namespace ECSL
 
 	enum ComponentDataType
 	{
-		INT, FLOAT, CHAR, BOOL,
+		INT, FLOAT, TEXT, BOOL,
 		MATRIX, REFERENCE, INT64
 	};
 
@@ -38,7 +38,7 @@ namespace ECSL
 			return sizeof(float);
 			break;
 
-		case ComponentDataType::CHAR:
+		case ComponentDataType::TEXT:
 			return CHARSIZE*sizeof(char);
 			break;
 		case ComponentDataType::MATRIX:

@@ -101,7 +101,7 @@ unsigned int World::CreateNewEntity(std::string _templateName)
 					dataLoc[0] = componentData[n].GetIntData();
 					byteOffset += sizeof(int);
 				}
-				else if (componentData[n].GetDataType() == ComponentDataType::CHAR)
+				else if (componentData[n].GetDataType() == ComponentDataType::TEXT)
 				{
 					char* dataLoc = (char*)GetComponent(newId, componentType, byteOffset);
 					std::string textData = componentData[n].GetTextData();

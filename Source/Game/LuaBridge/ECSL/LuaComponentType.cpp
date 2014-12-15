@@ -31,7 +31,7 @@ namespace LuaBridge
 	LuaEmbedder::AddInt("Int", ECSL::ComponentDataType::INT, "ByteSize");
 	LuaEmbedder::AddInt("Matrix", ECSL::ComponentDataType::MATRIX, "ByteSize");
 	LuaEmbedder::AddInt("Reference", ECSL::ComponentDataType::REFERENCE, "ByteSize");
-	LuaEmbedder::AddInt("Text", ECSL::ComponentDataType::CHAR, "ByteSize");
+	LuaEmbedder::AddInt("Text", ECSL::ComponentDataType::TEXT, "ByteSize");
 	LuaEmbedder::AddInt("Bool", ECSL::ComponentDataType::BOOL, "ByteSize");
   }
   

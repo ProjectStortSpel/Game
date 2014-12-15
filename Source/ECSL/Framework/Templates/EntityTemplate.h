@@ -10,7 +10,7 @@ namespace ECSL
 	{
 		TemplateEntry(int data){ m_intData = data; m_dataType = ComponentDataType::INT; }
 		TemplateEntry(float data){ m_floatData = data; m_dataType = ComponentDataType::FLOAT; }
-		TemplateEntry(std::string data){ m_textData = data; m_dataType = ComponentDataType::CHAR; }
+		TemplateEntry(std::string data){ m_textData = data; m_dataType = ComponentDataType::TEXT; }
 		TemplateEntry(bool data){ m_boolData = data; m_dataType = ComponentDataType::BOOL; }
 
 		ComponentDataType GetDataType(){ return m_dataType; }
