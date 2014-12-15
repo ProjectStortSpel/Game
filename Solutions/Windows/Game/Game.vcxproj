@@ -183,7 +183,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\Source\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
@@ -219,10 +219,12 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClCompile Include="..\..\..\Source\Game\NetworkInstance.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Network\NetworkHelper.cpp" />
     <ClCompile Include="..\..\..\Source\Game\NewGame.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\Quaternion.cpp" />
     <ClCompile Include="..\..\..\Source\Game\RemoteConsole.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\CameraSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\ModelSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\PointlightSystem.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\Systems\ReconnectSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\RenderRemoveSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\RenderSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\ResetChangedSystem.cpp" />
@@ -251,10 +253,12 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Renderer\LuaGraphicDevice.h" />
     <ClInclude Include="..\..\..\Source\Game\NetworkInstance.h" />
     <ClInclude Include="..\..\..\Source\Game\Network\NetworkHelper.h" />
+    <ClInclude Include="..\..\..\Source\Game\Quaternion.h" />
     <ClInclude Include="..\..\..\Source\Game\RemoteConsole.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\CameraSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\ModelSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\PointlightSystem.h" />
+    <ClInclude Include="..\..\..\Source\Game\Systems\ReconnectSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\RenderRemoveSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\RenderSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\ResetChangedSystem.h" />

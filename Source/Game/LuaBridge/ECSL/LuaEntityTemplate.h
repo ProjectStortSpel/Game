@@ -23,10 +23,13 @@ namespace LuaBridge
     int GetName();
     int SetName();
     
+    int AddComponent();
+    
     int SetFloat();
     int SetFloat2();
     int SetFloat3();
-    int SetFloat4();
+	int SetFloat4();
+	int SetFloat5();
     
     int SetInt();
     int SetInt2();
@@ -34,8 +37,12 @@ namespace LuaBridge
     int SetInt4();
     
     int SetString();
+
+	int SetBool();
     
     int SetModel();
+    
+    int SetPointlight();
     
   private:
     std::string m_name;

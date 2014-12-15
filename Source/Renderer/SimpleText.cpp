@@ -7,6 +7,7 @@ SimpleText::SimpleText()
 {
 	m_update = 0.1f;
 	m_clock = 0;
+	m_disco = false;
 }
 
 SimpleText::~SimpleText()
@@ -46,6 +47,9 @@ bool SimpleText::Init(GLuint _textimage, int _clientWidth, int _clientHeight)
 void SimpleText::RenderText(float _dt)
 {
 	m_clock += _dt;
+
+	if (m_disco)
+		SetSimpleTextColor(vec4((float)(rand() % 100 * 0.01), (float)(rand() % 100 * 0.01), (float)(rand() % 100 * 0.01), 1));
 
 	if (m_clock > 10)
 	{

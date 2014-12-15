@@ -1,5 +1,17 @@
 
--- PointLight Component
+--	RotateAround Component
+local RotateAroundComponent = ComponentType()
+RotateAroundComponent.Name = "RotateAround"
+RotateAroundComponent.TableType = TableType.Array
+RotateAroundComponent:AddVariable("PosX", ByteSize.Float)
+RotateAroundComponent:AddVariable("PosY", ByteSize.Float)
+RotateAroundComponent:AddVariable("PosZ", ByteSize.Float)
+
+RotateAroundComponent:AddVariable("Radius", ByteSize.Float)
+RotateAroundComponent:AddVariable("Factor", ByteSize.Float)
+worldCreator:AddComponentType(RotateAroundComponent)
+
+-- Pointlight Component
 local PointlightComponent = ComponentType()
 PointlightComponent.Name = "Pointlight"
 PointlightComponent.TableType = TableType.Array

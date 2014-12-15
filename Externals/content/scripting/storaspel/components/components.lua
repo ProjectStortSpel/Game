@@ -74,15 +74,37 @@ NetworkComponent.Name = "Network"
 NetworkComponent.TableType = TableType.Map
 worldCreator:AddComponentType(NetworkComponent)
 
--- Name Component
+-- Username Component
 local NameComponent = ComponentType()
-NameComponent.Name = "Name"
+NameComponent.Name = "Username"
 NameComponent.TableType = TableType.Map
-NameComponent:AddVariable("Username", ByteSize.Text)
+NameComponent:AddVariable("Name", ByteSize.Text)
 worldCreator:AddComponentType(NameComponent)
+
+-- NetConnection Component
+local NetConnection = ComponentType()
+NetConnection.Name = "NetConnection"
+NetConnection.TableType = TableType.Map
+NetConnection:AddVariable("IpAddress", ByteSize.Text)
+NetConnection:AddVariable("Port", ByteSize.Int)
+NetConnection:AddVariable("Active", ByteSize.Bool)
+worldCreator:AddComponentType(NetConnection)
 
 -- Sync Network Component
 local SyncNetworkComponent = ComponentType()
 SyncNetworkComponent.Name = "SyncNetwork"
-SyncNetworkComponent.TableType = TableType.Map
+SyncNetworkComponent.TableType = TableType.Array
 worldCreator:AddComponentType(SyncNetworkComponent)
+
+-- New Round Component
+local NewRoundComponent = ComponentType()
+NewRoundComponent.Name = "NewRound"
+NewRoundComponent.TableType = TableType.Array
+worldCreator:AddComponentType(NewRoundComponent)
+
+-- New Step Component
+local NewStepComponent = ComponentType()
+NewStepComponent.Name = "NewStep"
+NewStepComponent.TableType = TableType.Array
+worldCreator:AddComponentType(NewStepComponent)
+

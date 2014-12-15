@@ -11,6 +11,7 @@ float testArray[30];
 
 GraphicDevice::GraphicDevice()
 {
+	m_renderSimpleText = true;
 	m_modelIDcounter = 0;
 	m_camera = new Camera();
 	m_vramUsage = 0;
@@ -266,8 +267,8 @@ void GraphicDevice::Render()
 
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
-
-	m_textRenderer.RenderText(m_dt);
+	if (m_renderSimpleText)
+		m_textRenderer.RenderText(m_dt);
 
 	//	//m_glTimerValues.push_back(GLTimerValue("Text Render: ", glTimer.Stop()));
 	//	//glTimer.Start();
@@ -562,10 +563,23 @@ bool GraphicDevice::RenderSimpleText(std::string _text, int _x, int _y)
 {
 	return m_textRenderer.RenderSimpleText(_text, _x, _y);
 }
-void GraphicDevice::SetSimpleTextColor(vec4 _color)
+void GraphicDevice::SetSimpleTextColor(float _r, float _g, float _b, float _a)
 {
-	m_textRenderer.SetSimpleTextColor(_color);
+	m_textRenderer.SetSimpleTextColor(vec4(_r,_g,_b,_a));
 }
+void GraphicDevice::SetDisco()
+{
+	m_textRenderer.Disco();
+}
+void GraphicDevice::ToggleSimpleText(bool _render)
+{
+	m_renderSimpleText = _render;
+}
+void GraphicDevice::ToggleSimpleText()
+{
+	m_renderSimpleText = !m_renderSimpleText;
+}
+
 
 bool GraphicDevice::PreLoadModel(std::string _dir, std::string _file, int _renderType)
 {
@@ -685,7 +699,7 @@ bool GraphicDevice::RemoveModel(int _id)
 {
 	for (int i = 0; i < m_modelsDeferred.size(); i++)
 	{
-		for (int j = 0; j < m_modelsDeferred.size(); j++)
+		for (int j = 0; j < m_modelsDeferred[i].instances.size(); j++)
 		{
 			if (m_modelsDeferred[i].instances[j].id == _id)
 			{
@@ -699,7 +713,7 @@ bool GraphicDevice::RemoveModel(int _id)
 	}
 	for (int i = 0; i < m_modelsForward.size(); i++)
 	{
-		for (int j = 0; j < m_modelsForward.size(); j++)
+		for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
 		{
 			if (m_modelsForward[i].instances[j].id == _id)
 			{

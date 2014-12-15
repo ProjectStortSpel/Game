@@ -35,6 +35,8 @@ private:
 	
 	void Reload(std::vector<Console::Argument>* _args);
 
+	void NetUsername(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _nc);
+
 private:
 	Renderer::GraphicDevice*	m_graphics;
 	Input::InputWrapper*		m_input;
@@ -44,6 +46,7 @@ private:
 	Console::ConsoleManager&	m_consoleManager;
 	TextInput					m_consoleInput;
 	Utility::FrameCounter*		m_frameCounter;
+	std::string					m_userName;
 };
 
 #endif

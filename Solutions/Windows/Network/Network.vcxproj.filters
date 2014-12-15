@@ -39,6 +39,9 @@
     <ClCompile Include="..\..\..\Source\Network\Packet.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Network\Stdafx.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Network\Stdafx.h">

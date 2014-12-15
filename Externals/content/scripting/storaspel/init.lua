@@ -12,10 +12,12 @@ require "movementsystem"
 require "networkmessagessystem"
 require "mapcreationsystem"
 require "moveplayersystem"
+require "discosystem"
 
 -- Templates
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/templates/?.lua"
 require "box"
+require "lights"
 require "map"
 
 worldCreator:AddSystemGroup()
@@ -28,3 +30,7 @@ worldCreator:AddSystemToCurrentGroup(RightTurnSystem)
 worldCreator:AddSystemToCurrentGroup(LeftTurnSystem)
 worldCreator:AddSystemToCurrentGroup(TurnAroundSystem)
 worldCreator:AddSystemToCurrentGroup(TestMovementSystem)
+worldCreator:AddSystemToCurrentGroup(RespawnSystem)
+worldCreator:AddSystemToCurrentGroup(NewRoundSystem)
+
+worldCreator:AddSystemToCurrentGroup(DiscoSystem)

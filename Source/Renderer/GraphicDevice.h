@@ -95,7 +95,10 @@ namespace Renderer
 
 		// SIMPLETEXT FROM GAME
 		bool RenderSimpleText(std::string _text, int x, int y);
-		void SetSimpleTextColor(glm::vec4 _color);
+		void SetSimpleTextColor(float _r, float _g, float _b, float _a);
+		void SetDisco();
+		void ToggleSimpleText();
+		void ToggleSimpleText(bool _on);
 
 		Camera *GetCamera(){ return m_camera; }
 		void GetWindowSize(int &x, int &y){ x = m_clientWidth; y = m_clientHeight; }
@@ -161,6 +164,7 @@ namespace Renderer
 		Shader m_forwardShader;
 
 		// SimpleText
+		bool m_renderSimpleText;
 		SimpleText m_textRenderer;
 
 		// Modelloader
@@ -172,7 +176,7 @@ namespace Renderer
 
 		// DEBUG variables ----
 		int m_debugTexFlag; // 0=standard, 1=diffuse, 2=normal, 3=specular+shine, 4=glow
-		int m_nrOfLights;
+		int m_nrOfLights; // DEBUG VARIBLE??!?!?!?!
 
 		// Objects
 		//std::map<const std::string, ObjectData> m_objects;
