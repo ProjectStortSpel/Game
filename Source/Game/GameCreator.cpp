@@ -175,7 +175,7 @@ void GameCreator::StartGame()
 	/*	Hook console	*/
 	m_console->SetupHooks(&m_consoleManager);
 	m_consoleManager.AddCommand("Reload", std::bind(&GameCreator::Reload, this, std::placeholders::_1));
-
+	
 	float maxDeltaTime = (float)(1.0f / 60.0f);
 	while (true)
 	{
@@ -191,6 +191,11 @@ void GameCreator::StartGame()
 		
 		/*	Update world (systems, entities etc)	*/
 		m_world->Update(dt);
+		
+		LuaEmbedder::CollectGarbage(1);
+		std::stringstream ss;
+		ss << "Lua memory usage: " << LuaEmbedder::GetMemoryUsage() << " bytes";
+		m_graphics->RenderSimpleText(ss.str(), 20, 1);
 
 		UpdateConsole();
 

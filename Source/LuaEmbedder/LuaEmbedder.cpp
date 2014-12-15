@@ -51,8 +51,23 @@ namespace LuaEmbedder
       std::cerr << "LuaEmbedder::CallFunction : " << (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error") << std::endl;
       return false;
     }
-    lua_gc(L, LUA_GCCOLLECT, 0);
     return true;
+  }
+  
+  void CollectGarbage()
+  {
+    lua_gc(L, LUA_GCCOLLECT, 0);
+  }
+  
+  void CollectGarbage(int durationInMilliseconds)
+  {
+    lua_gc(L, LUA_GCSETSTEPMUL, durationInMilliseconds);
+    lua_gc(L, LUA_GCSTEP, 0);
+  }
+  
+  int GetMemoryUsage()
+  {
+    return lua_gc(L, LUA_GCCOUNT, 0);
   }
   
   #define ADD_VARIABLE(type) \
@@ -311,7 +326,6 @@ namespace LuaEmbedder
       std::cerr << "LuaEmbedder::CallFunction : " << (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error") << std::endl;
       return false;
     }
-    lua_gc(L, LUA_GCCOLLECT, 0);
     
     return true;
   }
