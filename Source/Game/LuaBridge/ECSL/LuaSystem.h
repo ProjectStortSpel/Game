@@ -24,6 +24,8 @@ namespace LuaBridge
 	void PostInitialize();
     
   private:
+	int SetName();
+
     int GetComponent();
     
     int AddComponentTypeToFilter();

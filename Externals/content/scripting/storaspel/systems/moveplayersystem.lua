@@ -5,6 +5,8 @@ TestMovementSystem = System()
 TestMovementSystem.currentPlayer = 1
 
 TestMovementSystem.Initialize = function(self)
+	self:SetName("Test Movement System")
+	
 	self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Rotation",FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Scale",FilterType.Mandatory)
@@ -117,6 +119,7 @@ end
 ForwardSystem = System()
 
 ForwardSystem.Initialize = function(self)
+	self:SetName("Forward System")
 	self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Direction",FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Forward",FilterType.Mandatory)
@@ -145,6 +148,7 @@ end
 BackwardSystem = System()
 
 BackwardSystem.Initialize = function(self)
+	self:SetName("Backward System")
 	self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Direction",FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Backward",FilterType.Mandatory)
@@ -172,6 +176,7 @@ end
 RightTurnSystem = System()
 
 RightTurnSystem.Initialize = function(self)
+	self:SetName("Right Turn System")
 	self:AddComponentTypeToFilter("Direction",FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Rotation",FilterType.Mandatory)
 	self:AddComponentTypeToFilter("TurnRight",FilterType.Mandatory)
@@ -200,6 +205,7 @@ end
 LeftTurnSystem = System()
 
 LeftTurnSystem.Initialize = function(self)
+	self:SetName("Left Turn System")
 	self:AddComponentTypeToFilter("Direction",FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Rotation",FilterType.Mandatory)
 	self:AddComponentTypeToFilter("TurnLeft",FilterType.Mandatory)
@@ -227,6 +233,7 @@ end
 TurnAroundSystem = System()
 
 TurnAroundSystem.Initialize = function(self)
+	self:SetName("Turn Around System")
 	self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Direction",FilterType.Mandatory)
 	self:AddComponentTypeToFilter("TurnAround",FilterType.Mandatory)
