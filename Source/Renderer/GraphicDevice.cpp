@@ -186,7 +186,7 @@ void GraphicDevice::Render()
 
 	m_compDeferredPass2Shader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
 	mat4 inverseProjection = glm::inverse(*projectionMatrix);
-	m_compDeferredPass2Shader.SetUniVariable("invProjection", mat4x4, &inverseProjection);
+	m_compDeferredPass2Shader.SetUniVariable("InvProjection", mat4x4, &inverseProjection);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_depthBuf);
