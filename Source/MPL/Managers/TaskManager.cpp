@@ -5,17 +5,14 @@
 using namespace MPL;
 
 TaskManager::TaskManager()
-: m_threads(new std::vector<Thread*>()), m_taskPool(new TaskPool())
+//: m_openList(new std::map<TaskId, Task*>()), m_taskPool(new TaskPool())
 {
+	m_toBeAddedMutex = SDL_CreateMutex();
 }
 
 TaskManager::~TaskManager()
 {
-	SafeKillThreads();
-	for (auto thread : *m_threads)
-		delete(thread);
-	delete(m_threads);
-	delete(m_taskPool);
+
 }
 
 TaskManager& TaskManager::GetInstance()
@@ -24,95 +21,52 @@ TaskManager& TaskManager::GetInstance()
 	return *instance;
 }
 
-void TaskManager::CreateThreads()
+void TaskManager::CreateSlaves()
 {
-	m_threadCount = GetAvailableThreadsCount();
-
-	/* Create slave threads equal to the number of available threads - 1 */
-	for (unsigned int i = 0; i < m_threadCount - 1; ++i)
+	unsigned int availableThreadCount = ThreadHelper::GetAvailableThreadCount();
+	for (unsigned int i = 0; i < availableThreadCount; ++i)
 	{
-		SlaveThread* slave = new SlaveThread();
-		slave->Initialize(m_taskPool);
-		if (slave->StartThread("TaskManager " + i))
-		{
-			printf("Added slave: %i\n", i);
-			m_threads->push_back(slave);
-		}
+		SlaveThread* slave = new SlaveThread(m_taskPool);
+		if (!slave->StartThread("Slave " + i))
+			printf("Couldn't create slave thread. Id: %i", i);
 		else
 		{
-			printf("Failed to start slave thread, index: %i\n", i);
-			delete(slave);
+			printf("Slave thread created. Id: %i", i);
+			m_slaves->push_back(slave);
 		}
 	}
-
-	/* Add the master thread last */
-	MasterThread* master = new MasterThread();
-	master->Initialize(m_taskPool);
-	m_threads->push_back(master);
 }
 
-void TaskManager::SafeKillThreads()
+TaskId TaskManager::BeginAdd(TaskId _dependency)
 {
-	/* Signal every thread that it should end its life cycle as soon as possible */
-	for (auto thread : *m_threads)
-		thread->Deactivate();
-
-	/* Wait until all threads are dead */
-	for (unsigned int activeThread = 0; activeThread < m_threads->size();)
-		if (m_threads->at(activeThread)->GetState() == ThreadState::Dead)
-			++activeThread;
+	SDL_LockMutex(m_toBeAddedMutex);
+//	TaskId id = m_taskPool->GenerateId();
+//	(*m_openList)[id] = new Task();
+	SDL_UnlockMutex(m_toBeAddedMutex);
+	return 0;
 }
 
-void TaskManager::Execute(const std::vector<Task*>& _tasks)
+TaskId TaskManager::BeginAdd(TaskId _dependency, WorkItem* _workItem)
 {
-	/* Add new tasks to the task pool */
-	m_taskPool->AddTasks(_tasks);
-
-	/* Tell the threads its time to work */
-	for (auto thread : *m_threads)
-		thread->Execute();
-
-	/* Wait for all slave threads to finish their tasks */
-	for (unsigned int threadIndex = 0; threadIndex < m_threadCount - 1;)
-		if (m_threads->at(threadIndex)->GetState() != ThreadState::Working)
-			++threadIndex;
+	return 0;
 }
 
-void TaskManager::ExecuteSlaves(const std::vector<Task*>& _tasks)
+void TaskManager::AddChild(TaskId _id, WorkItem* _workItem)
 {
-	/* Add new tasks to the task pool */
-	m_taskPool->AddTasks(_tasks);
 
-	/* Tell the slave threads its time to work */
-	for (auto threadIt = m_threads->begin(); threadIt != m_threads->end() - 1; ++threadIt)
-		(*threadIt)->Execute();
 }
 
-void TaskManager::WakeUp()
+void TaskManager::AddChildren(TaskId _id, std::vector<WorkItem*>* _workItems)
 {
-	for (auto thread : *m_threads)
-		thread->WakeUp();
+
 }
 
-void TaskManager::Sleep()
+void TaskManager::DependsOn(TaskId _id, TaskId _dependsOnId)
 {
-	for (auto thread : *m_threads)
-		thread->Sleep();
+
 }
 
-unsigned int TaskManager::GetAvailableThreadsCount()
+void TaskManager::FinishAdd(TaskId _id)
 {
-	/* Fetch number of currently used threads */
-	int currentThreadCount = ThreadHelper::GetCurrentThreadCount();
-	if (currentThreadCount == -1)
-	{
-		printf("Warning: Couldn't fetch current thread count. No slave threads will be created.\n");
-		currentThreadCount = SDL_GetCPUCount() - 1;
-	}
-	/* Total number of logical processors - Number of threads currently used = Number of available threads */
-	int availableThreadsCount = SDL_GetCPUCount() - currentThreadCount;
-	/* There is always one available thread, the main thread */
-	if (availableThreadsCount <= 0)
-		availableThreadsCount = 1;	
-	return (unsigned int)availableThreadsCount;
+
 }

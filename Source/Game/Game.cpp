@@ -16,11 +16,11 @@
 	#include <chrono>
 #endif
 
+#define SDL_THREAD_WINDOWS 0
+
 using namespace ECSL;
 
 mat4 mat[1000];
-
-
 
 class TestSystem : public ECSL::System
 {
@@ -106,8 +106,6 @@ public:
 	float sdfiohj;
 };
 
-ECSL::ECSLScheduler* scheduler;
-
 void lol()
 {
 	ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("content/components");
@@ -138,8 +136,6 @@ void lol()
 	world->RemoveComponentFrom("Position", id);
 
 	world->Update(0.01f);
-
-	scheduler = new ECSL::ECSLScheduler();
 
 
 	unsigned int num = 10000000;
@@ -201,9 +197,6 @@ void Start()
 
 	Input::InputWrapper* INPUT = &Input::InputWrapper::GetInstance();
 
-	MPL::TaskManager::GetInstance().CreateThreads();
-	MPL::TaskManager::GetInstance().WakeUp();
-
 	LoadAlotOfBoxes(&RENDERER);
 	mat[100] = glm::translate(vec3(0, 0, 0));
 	int modelid = RENDERER.LoadModel("content/models/cube/", "cube.object", &mat[100]); // LOADMODEL RETURNS THE MODELID
@@ -225,12 +218,6 @@ void Start()
 
 		RENDERER.Render();
 		INPUT->Update();
-		//MPL::TaskManager::GetInstance().WakeUp();
-		scheduler->AddSystemGroupUpdate(0);
-		scheduler->AddSystemGroupUpdate(0);
-		scheduler->AddSystemGroupUpdate(0);
-		scheduler->AddSystemGroupUpdate(0);
-		//MPL::TaskManager::GetInstance().Sleep();
 
 		SDL_Event e;
 		while (SDL_PollEvent(&e))
@@ -311,7 +298,6 @@ int main(int argc, char** argv)
 {
 	lol();
 	Start();
-	MPL::TaskManager::GetInstance().SafeKillThreads();
 	#ifdef WIN32
 	_CrtDumpMemoryLeaks();
 	#endif

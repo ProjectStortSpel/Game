@@ -17,5 +17,5 @@ Scheduler::~Scheduler()
 
 void Scheduler::SendTasks()
 {
-	TaskManager::GetInstance().Execute(*m_tasks);
+	//TaskManager::GetInstance().Execute(*m_tasks);
 }

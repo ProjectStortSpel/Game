@@ -2,25 +2,35 @@
 #define TASKPOOL_H
 
 #include <SDL/SDL.h>
-#include <vector>
+#include <map>
+#include <deque>
 #include "Task.h"
 
 namespace MPL
 {
-	class DECLSPEC TaskPool
+	class TaskPool
 	{
 	public:
 		TaskPool();
 		~TaskPool();
 
-		void AddTask(Task* _task);
-		void AddTasks(const std::vector<Task*>& _tasks);
-		Task* GetTask();
-		unsigned int GetTaskCount();
+		TaskId CreateTask(TaskId _dependency, WorkItem* _workItem);
+		void CreateChild(TaskId _parent, WorkItem* _workItem);
+		TaskId GenerateTaskId();
+		void AddToOpenList(Task* _task);
+		void RemoveFromOpenList(Task* _task);
+		void AddToQueue(WorkItem* _workItem, Task* _task);
 
 	private:
-		SDL_mutex* m_taskMutex;
-		std::vector<Task*>* m_tasks;
+		TaskId m_nextId;
+		SDL_mutex* m_idMutex;
+		SDL_mutex* m_workItemCountMutex;
+		SDL_mutex* m_openListMutex;
+		SDL_mutex* m_queueMutex;
+		std::map<TaskId, Task*>* m_openList;
+		std::deque<WorkItem*>* m_queue;
+		std::map<WorkItem*, TaskId>* m_workTaskConnection;
+		
 	};
 };
 

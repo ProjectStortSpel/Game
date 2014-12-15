@@ -5,53 +5,71 @@
 using namespace MPL;
 
 TaskPool::TaskPool()
-: m_tasks(new std::vector<Task*>())
+: m_openList(new std::map<TaskId, Task*>()), m_queue(new std::deque<WorkItem*>())
 {
-	m_taskMutex = SDL_CreateMutex();
+	m_idMutex = SDL_CreateMutex();
+	m_workItemCountMutex = SDL_CreateMutex();
+	m_openListMutex = SDL_CreateMutex();
+	m_queueMutex = SDL_CreateMutex();
 }
 
 TaskPool::~TaskPool()
 {
-	if (m_taskMutex)
-	{
-		SDL_DestroyMutex(m_taskMutex);
-		delete(m_taskMutex);
-		m_taskMutex = 0;
-	}
-	delete(m_tasks);
+
 }
 
-void TaskPool::AddTask(Task* _task)
+TaskId TaskPool::CreateTask(TaskId _dependency, WorkItem* _workItem)
 {
-	SDL_LockMutex(m_taskMutex);
-	m_tasks->push_back(_task);
-	SDL_UnlockMutex(m_taskMutex);
+	Task* task = new Task();
+	task->Id = GenerateTaskId();
+	task->Dependency = _dependency;
+	task->ParentId = -1;
+	task->Work = _workItem;
+	task->OpenWorkItemCount = 1;
+	AddToOpenList(task);
+	if (task->Work != 0)
+		AddToQueue(_workItem, task);
+
+	return task->Id;
 }
 
-void TaskPool::AddTasks(const std::vector<Task*>& _tasks)
+void TaskPool::CreateChild(TaskId _parentId, WorkItem* _workItem)
 {
-	SDL_LockMutex(m_taskMutex);
-	for (auto task : _tasks)
-		m_tasks->push_back(task);
-	SDL_UnlockMutex(m_taskMutex);
+	AddToQueue(_workItem, (*m_openList)[_parentId]);
 }
 
-Task* TaskPool::GetTask()
+TaskId TaskPool::GenerateTaskId()
 {
-	Task* task;
-	SDL_LockMutex(m_taskMutex);
-	if (m_tasks->size() != 0)
-	{
-		task = m_tasks->back();
-		m_tasks->pop_back();
-	}
-	else
-		task = 0;
-	SDL_UnlockMutex(m_taskMutex);
-	return task;
+	SDL_LockMutex(m_idMutex);
+	TaskId id = ++m_nextId;
+	SDL_UnlockMutex(m_idMutex);
+	return id;
 }
 
-unsigned int TaskPool::GetTaskCount()
+void TaskPool::AddToOpenList(Task* _task)
 {
-	return m_tasks->size();
+	SDL_LockMutex(m_openListMutex);
+	(*m_openList)[_task->Id] = _task;
+	SDL_UnlockMutex(m_openListMutex);
+}
+
+void TaskPool::RemoveFromOpenList(Task* _task)
+{
+
+}
+
+void TaskPool::AddToQueue(WorkItem* _workItem, Task* _task)
+{
+	SDL_LockMutex(m_queueMutex);
+
+	/* Add work item to queue */
+	m_queue->push_back(_workItem);
+
+	/* Create connection between work item and task id */
+	(*m_workTaskConnection)[_workItem] = _task->Id;
+
+	/* Increase open work item count */
+	_task->OpenWorkItemCount;
+
+	SDL_UnlockMutex(m_queueMutex);
 }

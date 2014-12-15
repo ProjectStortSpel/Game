@@ -3,9 +3,9 @@
 
 #include <SDL/SDL.h>
 #include <vector>
+#include <map>
 #include "MPL/Framework/Tasks/TaskPool.h"
 #include "MPL/Framework/Threads/SlaveThread.h"
-#include "MPL/Framework/Threads/MasterThread.h"
 #include "MPL/Interfaces/Scheduler.h"
 
 namespace MPL
@@ -16,27 +16,21 @@ namespace MPL
 		~TaskManager();
 		static TaskManager& GetInstance();
 
-		void CreateThreads();
-		void SafeKillThreads();
-		// All the threads including the main thread will perform the given tasks
-		void Execute(const std::vector<Task*>& _tasks);
-		// The slave threads will perform the given tasks. The main thread will continue as normal after adding the new tasks.
-		void ExecuteSlaves(const std::vector<Task*>& _tasks);
+		void CreateSlaves();
 
-		void WakeUp();
-		void Sleep();
-
-		unsigned int GetThreadCount() { return m_threadCount; }
-		unsigned int GetTaskCount() { return m_taskPool->GetTaskCount(); }
+		TaskId BeginAdd(TaskId _dependency);
+		TaskId BeginAdd(TaskId _dependency, WorkItem* _workItem);
+		void AddChild(TaskId _id, WorkItem* _workItem);
+		void AddChildren(TaskId _id, std::vector<WorkItem*>* _workItems);
+		void DependsOn(TaskId _id, TaskId _dependsOnId);
+		void FinishAdd(TaskId _id);
 
 	private:
 		TaskManager();
 
-		unsigned int m_threadCount;
-		std::vector<Thread*>* m_threads;
+		SDL_mutex* m_toBeAddedMutex;
+		std::vector<SlaveThread*>* m_slaves;
 		TaskPool* m_taskPool;
-
-		unsigned int GetAvailableThreadsCount();
 	};
 };
 

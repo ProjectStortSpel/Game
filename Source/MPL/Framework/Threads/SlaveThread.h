@@ -7,32 +7,35 @@
 #include <string>
 #include "MPL/Framework/Tasks/Task.h"
 #include "MPL/Framework/Tasks/TaskPool.h"
-#include "MPL/Framework/Threads/Thread.h"
 
 namespace MPL
 {
-	class SlaveThread : public Thread
+	enum ThreadState
+	{
+		Waiting,
+		Working,
+		Dead
+	};
+
+	class SlaveThread
 	{
 	public:
-		SlaveThread();
+		SlaveThread(TaskPool* _taskPool);
 		~SlaveThread();
 
-		void Deactivate();
 		bool StartThread(const std::string& _name);
-		void Execute();
-		void WakeUp();
-		void Sleep();
+
+		ThreadState GetState() { return m_state; }
 
 	private:
-		bool m_active;
-		bool m_awake;
-		SDL_sem* m_semSleep;
+		ThreadState m_state;
 		SDL_Thread* m_thread;
-
-		void Release();
+		TaskPool* m_taskPool;
 
 		static int BeginThreadLoop(void* _thread);
 		int ThreadLoop();
+
+
 	};
 };
 
