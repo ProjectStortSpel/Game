@@ -540,7 +540,8 @@ namespace LuaEmbedder
 	lua_pushvalue(L, 2);
 	lua_pushvalue(L, 3);
 	lua_settable(L, members);
-	m_objectFunctionsMap[*obj].push_back(lua_tostring(L, 2));
+	if (lua_isfunction(L, 3))
+	  m_objectFunctionsMap[*obj].push_back(lua_tostring(L, 2));
       }
       lua_settop(L, 0);
       return 0;
