@@ -8,7 +8,7 @@
 using namespace Renderer;
 using namespace glm;
 
-float testArray[30];
+float testArray[20];
 
 GraphicDevice::GraphicDevice()
 {
@@ -513,7 +513,7 @@ bool GraphicDevice::InitLightBuffers()
 	glGenBuffers(1, &m_pointlightBuffer);
 
 	for (int i = 0; i < 10; i++)
-		testArray[0] = 0.0;		//init 0.0
+		testArray[9+i] = 0.0;		//init 0.0
 	
 	if (m_pointlightBuffer < 0)
 		return false;
@@ -550,6 +550,11 @@ bool GraphicDevice::InitLightBuffers()
 void GraphicDevice::BufferPointlights(int _nrOfLights, float **_lightPointers)
 {
 	m_vramUsage -= m_nrOfLights*10*sizeof(float);
+	if (_nrOfLights == 0)
+	{
+		_nrOfLights = 1;
+		_lightPointers[0] = &testArray[0];
+	}
 	m_nrOfLights = _nrOfLights;
 
 	float *pointlight_data = new float[_nrOfLights * 10];
@@ -995,4 +1000,8 @@ void GraphicDevice::Clear()
   
   m_modelsDeferred.clear();
   m_modelsForward.clear();
+
+  float **tmpPtr = new float*[1];
+  BufferPointlights(0, tmpPtr);
+  delete tmpPtr;
 }
