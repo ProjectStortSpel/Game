@@ -101,7 +101,7 @@ unsigned int World::CreateNewEntity(std::string _templateName)
 					dataLoc[0] = componentData[n].GetIntData();
 					byteOffset += sizeof(int);
 				}
-				else if (componentData[n].GetDataType() == ComponentDataType::CHAR)
+				else if (componentData[n].GetDataType() == ComponentDataType::TEXT)
 				{
 					char* dataLoc = (char*)GetComponent(newId, componentType, byteOffset);
 					std::string textData = componentData[n].GetTextData();
@@ -109,6 +109,12 @@ unsigned int World::CreateNewEntity(std::string _templateName)
 						dataLoc[i] = textData[i];
 					dataLoc[textData.size()] = '\0';
 					byteOffset += CHARSIZE * sizeof(char);
+				}
+				else if (componentData[n].GetDataType() == ComponentDataType::BOOL)
+				{
+					bool* dataLoc = (bool*)GetComponent(newId, componentType, byteOffset);
+					dataLoc[0] = componentData[n].GetBoolData();
+					byteOffset += sizeof(bool);
 				}
 				
 			}

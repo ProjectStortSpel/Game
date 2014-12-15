@@ -37,6 +37,8 @@ namespace LuaBridge
     int SetInt4();
     
     int SetString();
+
+	int SetBool();
     
     int SetModel();
     

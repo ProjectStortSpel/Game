@@ -112,12 +112,15 @@ void NetworkHelper::WriteComponents(Network::PacketHandler* _ph, uint64_t _id, u
 				case ECSL::ComponentDataType::BOOL:
 					_ph->WriteByte(_id, *data);
 					break;
-				case ECSL::ComponentDataType::CHAR:
+				case ECSL::ComponentDataType::TEXT:
 					_ph->WriteString(_id, data);
 					break;
 				case ECSL::ComponentDataType::INT:
 				case ECSL::ComponentDataType::REFERENCE:
 					_ph->WriteInt(_id, *(int*)data);
+					break;
+				case ECSL::ComponentDataType::INT64:
+					_ph->WriteInt64(_id, *(uint64_t*)data);
 					break;
 				case ECSL::ComponentDataType::FLOAT:
 					_ph->WriteFloat(_id, *(float*)data);
@@ -240,7 +243,7 @@ void NetworkHelper::ReceiveComponents(Network::PacketHandler* _ph, uint64_t _id,
 				{
 					*data = _ph->ReadByte(_id);
 				}
-				case ECSL::ComponentDataType::CHAR:
+				case ECSL::ComponentDataType::TEXT:
 				{
 					std::string strdata = _ph->ReadString(_id);
 					memcpy(data, strdata.c_str(), strdata.size() + 1);
@@ -248,6 +251,9 @@ void NetworkHelper::ReceiveComponents(Network::PacketHandler* _ph, uint64_t _id,
 				}
 				case ECSL::ComponentDataType::INT:
 					*(int*)data = _ph->ReadInt(_id);
+					break;
+				case ECSL::ComponentDataType::INT64:
+					*(int*)data = _ph->ReadInt64(_id);
 					break;
 				case ECSL::ComponentDataType::FLOAT:
 					*(float*)data = _ph->ReadFloat(_id);

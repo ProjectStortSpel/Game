@@ -21,8 +21,8 @@
 namespace Network
 {
 
-	typedef std::function<void(PacketHandler*, uint64_t, NetConnection)> NetMessageHook;
-	typedef std::function<void(NetConnection, const char*)> NetEvent;
+	typedef std::function<void(PacketHandler*, uint64_t&, NetConnection&)> NetMessageHook;
+	typedef std::function<void(NetConnection&, const char*)> NetEvent;
 
 	class DECLSPEC BaseNetwork
 	{
@@ -57,7 +57,7 @@ namespace Network
 		// Set the server password
 		void SetServerPassword(const char* _password) { *m_password = _password; }
 
-		void AddNetworkHook(char* _name, NetMessageHook _hook);
+		void AddNetworkHook(char* _name, NetMessageHook& _hook);
 		//NetMessageHook* GetNetworkFunction(NetTypeMessageId _function);
 
 		PacketHandler* GetPacketHandler() { return m_packetHandler; }
@@ -66,12 +66,12 @@ namespace Network
 		void SetMaxTimeOutIntervall(float _max) { *m_maxTimeOutIntervall = _max; }
 
 	protected:
-		void TriggerEvent(NetMessageHook _function, uint64_t _packetId, NetConnection _connection);
+		void TriggerEvent(std::vector<NetEvent>* _event, NetConnection& _connection, const char* _message);
 
 		void HandlePacket(Packet* _packet);
 
-		virtual void UpdateTimeOut(float _dt) = 0;
-		virtual void UpdateNetUsage(float _dt) = 0;
+		virtual void UpdateTimeOut(float& _dt) = 0;
+		virtual void UpdateNetUsage(float& _dt) = 0;
 
 		unsigned int GetMillisecondsTime();
 
