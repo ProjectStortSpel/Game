@@ -24,10 +24,14 @@ namespace LuaBridge
 	void PostInitialize();
     
   private:
+	int SetName();
+
     int GetComponent();
     
     int AddComponentTypeToFilter();
     int GetEntities();
+    
+    int EntityHasComponent();
 
 	int InitializeNetworkEvents();
 

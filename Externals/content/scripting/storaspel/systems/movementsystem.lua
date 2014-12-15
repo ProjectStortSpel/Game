@@ -1,7 +1,7 @@
 MovementSystem = System()
 
 MovementSystem.Update = function(self, dt)
-
+	
 	local entities = self:GetEntities() 
 	for i = 1, #entities do
 		local entity = entities[i]
@@ -21,6 +21,7 @@ MovementSystem.Update = function(self, dt)
 end
 
 MovementSystem.Initialize = function(self)
+	self:SetName("Movement System")
 	self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Velocity", FilterType.Mandatory)
 	

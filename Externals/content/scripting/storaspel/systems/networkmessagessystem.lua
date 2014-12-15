@@ -20,6 +20,7 @@ networkMessagesSystem.Update = function(self, dt)
 
 end
 networkMessagesSystem.Initialize = function(self)
+	self:SetName("Network Message System")
 	self:InitializeNetworkEvents()
 	
 	self:AddComponentTypeToFilter("SyncNetwork", FilterType.Mandatory)

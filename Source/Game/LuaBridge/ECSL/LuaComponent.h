@@ -24,10 +24,13 @@ namespace LuaBridge
 		int GetFloat2();
 		int GetFloat3();
 		int GetFloat4();
+		int GetFloat5();
 		int SetFloat();
 		int SetFloat2();
 		int SetFloat3();
 		int SetFloat4();
+		int SetFloat5();
+
 
 		int GetInt();
 		int GetInt2();
@@ -46,7 +49,8 @@ namespace LuaBridge
 
 		int SetModel();
 		
-		int SetPointLight();
+		int GetPointlight();
+		int SetPointlight();
 		
 	private:
 		ECSL::DataLocation m_dataLocation;

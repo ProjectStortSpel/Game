@@ -140,8 +140,8 @@ void ConsoleManager::ExecuteCommand(const char* _command)
 	char* command = new char[strlen(_command) + 1];
 	memcpy(command, _command, strlen(_command) + 1);
 
-	for (int n = 0; n < strlen(_command); ++n)
-		command[n] = tolower(command[n]);
+	/*for (int n = 0; n < strlen(_command); ++n)
+		command[n] = tolower(command[n]);*/
 
 	char* args = strchr(command, ' ');
 
@@ -154,6 +154,9 @@ void ConsoleManager::ExecuteCommand(const char* _command)
 	{
 		args = command + strlen(command);
 	}
+
+	for (int n = 0; n < strlen(command); ++n)
+		command[n] = tolower(command[n]);
 
 	AddMessage(_command);
 	

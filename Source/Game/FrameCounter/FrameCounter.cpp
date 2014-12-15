@@ -6,9 +6,10 @@ FrameCounter::FrameCounter()
 	m_nrSampleDivided = 1.0f / m_numberOfSamples;
 	m_countsPerSecond = 1.0f / SDL_GetPerformanceFrequency();
 	m_timeStamp = SDL_GetPerformanceCounter();
+	m_currentIndex = 0.0f;
 
 	for (int i = 0; i < m_numberOfSamples; ++i)
-		m_frameTimes[i] = 0;
+		m_frameTimes[i] = (float)(SDL_GetPerformanceFrequency());
 }
 
 FrameCounter::~FrameCounter()

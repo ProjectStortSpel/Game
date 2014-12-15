@@ -5,6 +5,8 @@ TestMovementSystem = System()
 TestMovementSystem.currentPlayer = 1
 
 TestMovementSystem.Initialize = function(self)
+	self:SetName("Test Movement System")
+	
 	self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Rotation",FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Scale",FilterType.Mandatory)
@@ -25,9 +27,7 @@ TestMovementSystem.Update = function(self, dt)
 	
 		local switchplayer = false
 		if Input.GetKeyState(Key.Up) == InputState.Pressed then
-			--print("pre-forward")
 			world:CreateComponentAndAddTo("Forward", entities[self.currentPlayer])
-			--print("added forward-component")
 			switchplayer = true
 		elseif Input.GetKeyState(Key.Down) == InputState.Pressed then
 			world:CreateComponentAndAddTo("Backward", entities[self.currentPlayer])
@@ -44,8 +44,7 @@ TestMovementSystem.Update = function(self, dt)
 		elseif Input.GetKeyState(Key.Space) == InputState.Pressed then
 			local comp = self:GetComponent(entities[self.currentPlayer], "Spawn", 0)
 			local newPosX, newPosY = comp:GetInt2()
-			local posComp = self:GetComponent(entities[self.currentPlayer], "Position", 0)
-			posComp:SetInt2(newPosX, newPosY)
+			MapCreationSystem:SetPosition(entities[self.currentPlayer], newPosX, 1.0, newPosY)
 			switchplayer = true
 			
 		end
@@ -62,12 +61,62 @@ TestMovementSystem.Update = function(self, dt)
 	
 end
 
-TestMovementSystem.MoveTo = function(self)
+TestMovementSystem.MoveTo = function(self, entity, posX, posY, dirX, dirY)
+	-- If the tile we are trying to reach is walkable, then we go there.
+		
+	if self:TileIsWalkable(posX, posY) then
+		local playerId = self:PlayerOnTile(posX, posY)
+		
+		if -1 ~= playerId then
+			local newPosX = posX + dirX
+			local newPosY = posY + dirY
+			if self:MoveTo(playerId, newPosX, newPosY, dirX, dirY) then
+				MapCreationSystem:SetPosition(entity, posX, 1.0, posY)
+				return true
+			end
+		else
+			MapCreationSystem:SetPosition(entity, posX, 1.0, posY)
+			return true
+		end	
+	end
 	
+	return false
 end
 
-TestMovementSystem.PostInitialize = function(self)
+TestMovementSystem.PostInitialize = function(self, posX, posY)
 	
+	
+	return 
+end
+
+TestMovementSystem.TileIsWalkable = function(self, posX, posY)
+	
+	local index = MapCreationSystem.mapX * posY + posX + 1
+	entity = MapCreationSystem.entities[index]
+	
+	local returnValue = not self:EntityHasComponent(entity, "NotWalkable")
+	return returnValue 
+end
+
+TestMovementSystem.PlayerOnTile = function(self, posX, posY)
+	
+	local entities = self:GetEntities()
+	
+	for i = 1, #entities do
+		local entity = entities[i]
+		local posComp = self:GetComponent(entity, "MapPosition", 0)
+		local playerPosX, playerPosY = posComp:GetInt2()
+		--print(posX, posY, playerPosX, playerPosY)
+		
+		if posX == playerPosX and posY == playerPosY then
+			
+			--MapCreationSystem:SetPosition(entity, posX, 1.0, posY)
+			return entity
+			--position:SetFloat3(px, py, pz)
+		end
+	end
+	
+	return -1
 end
 
 ---------------------------- ForwardSystem
@@ -75,6 +124,7 @@ end
 ForwardSystem = System()
 
 ForwardSystem.Initialize = function(self)
+	self:SetName("Forward System")
 	self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Direction",FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Forward",FilterType.Mandatory)
@@ -84,44 +134,18 @@ ForwardSystem.Initialize = function(self)
 end
 
 ForwardSystem.OnEntityAdded = function(self, entity)
-	local position = self:GetComponent(entity, "Position", 0)
 	local dir = self:GetComponent(entity, "Direction", 0)
 	local mapPos = self:GetComponent(entity, "MapPosition", 0)
 	
-	--world:CreateComponentAndAddTo("TargetPosition", entity)
-	--local targetposition = self:GetComponent(entity, "TargetPosition", 0)
+	local x, y = mapPos:GetInt2()
+	local dirX, dirY = dir:GetInt2()
 	
-	local x, y, z = position:GetFloat3()
-	local dx, dy = dir:GetInt2()
-	local mapX, mapY = mapPos:GetInt2()
+	local targetX = x + dirX
+	local targetY = y + dirY
 	
-	-- TODO: Gör resterande av metoden till en ny metod som både forward och backward anropar med dx- och dy-värden som skiljer sig bara.
-			
-	local newtargetx = x + dx
-	local newtargety = y 
-	local newtargetz = z + dy
+	local moved = TestMovementSystem:MoveTo(entity, targetX, targetY, dirX, dirY)
 	
-	local mapTargetX = mapX + dx
-	local mapTargetY = mapY + dy
-	
-	
-	--print("created all variables in forward")
-	
-	-- If the tile we are trying to reach is walkable, then we go there.
-	-- TODO: En metod som får in position vi vill gå till och riktning som spelaren vill gå. Kolla om rutan är walkable och returnera sant eller falskt, om det är en spelare (spelare2) så anropar den rekursivt samma metod med en ny position som gäller, dvs spelare2s position men med samma riktning.
-	--if walkable(mapTargetX, mapTargetY) then
-		
-		
-		
-		position:SetFloat3(newtargetx, newtargety, newtargetz)
-		mapPos:SetInt2(mapTargetX, mapTargetY)
-		--targetposition.SetFloat3(newtargetx, newtargety, newtargetz)
-		
-		--print("set variables done")
-		
-	--end
 	world:RemoveComponentFrom("Forward", entity);
-	--print("removed forward-component")
 end
 
 ---------------------------- BackwardSystem
@@ -129,6 +153,7 @@ end
 BackwardSystem = System()
 
 BackwardSystem.Initialize = function(self)
+	self:SetName("Backward System")
 	self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Direction",FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Backward",FilterType.Mandatory)
@@ -138,22 +163,16 @@ BackwardSystem.Initialize = function(self)
 end
 
 BackwardSystem.OnEntityAdded = function(self, entity)
-	local position = self:GetComponent(entity, "Position", 0)
 	local dir = self:GetComponent(entity, "Direction", 0)
+	local mapPos = self:GetComponent(entity, "MapPosition", 0)
 	
-	--world:CreateComponentAndAddTo("TargetPosition", entity)
-	--local targetposition = self:GetComponent(entity, "TargetPosition", 0)
+	local x, y = mapPos:GetInt2()
+	local dirX, dirY = dir:GetInt2()
 	
-	local x, y, z = position:GetFloat3()
-	local dx, dy = dir:GetInt2()
-			
-	local newtargetx = x - dx
-	local newtargety = y 
-	local newtargetz = z - dy
+	local targetX = x - dirX
+	local targetY = y - dirY
 	
-	position:SetFloat3(newtargetx, newtargety, newtargetz)
-	
-	--targetposition.SetFloat3(newtargetx, newtargety, newtargetz)
+	local moved = TestMovementSystem:MoveTo(entity, targetX, targetY, -dirX, -dirY)
 	
 	world:RemoveComponentFrom("Backward", entity);
 end
@@ -162,6 +181,7 @@ end
 RightTurnSystem = System()
 
 RightTurnSystem.Initialize = function(self)
+	self:SetName("Right Turn System")
 	self:AddComponentTypeToFilter("Direction",FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Rotation",FilterType.Mandatory)
 	self:AddComponentTypeToFilter("TurnRight",FilterType.Mandatory)
@@ -190,6 +210,7 @@ end
 LeftTurnSystem = System()
 
 LeftTurnSystem.Initialize = function(self)
+	self:SetName("Left Turn System")
 	self:AddComponentTypeToFilter("Direction",FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Rotation",FilterType.Mandatory)
 	self:AddComponentTypeToFilter("TurnLeft",FilterType.Mandatory)
@@ -217,6 +238,7 @@ end
 TurnAroundSystem = System()
 
 TurnAroundSystem.Initialize = function(self)
+	self:SetName("Turn Around System")
 	self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Direction",FilterType.Mandatory)
 	self:AddComponentTypeToFilter("TurnAround",FilterType.Mandatory)
