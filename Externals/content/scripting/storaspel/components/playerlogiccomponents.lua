@@ -54,8 +54,7 @@ worldCreator:AddComponentType(SpawnComponent)
 local TargetCheckpointComponent = ComponentType()
 TargetCheckpointComponent.Name = "TargetCheckpoint"
 TargetCheckpointComponent.TableType = TableType.Array
-TargetCheckpointComponent:AddVariable("X", ByteSize.Int)
-TargetCheckpointComponent:AddVariable("Y", ByteSize.Int)
+TargetCheckpointComponent:AddVariable("Id", ByteSize.Int)
 worldCreator:AddComponentType(TargetCheckpointComponent)
 
 -- TargetPosition Component
