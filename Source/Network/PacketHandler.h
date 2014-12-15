@@ -52,6 +52,9 @@ namespace Network
 		// Write an int to the packet
 		// StartPack should be called before this is used
 		void WriteInt(uint64_t _id, const int _int);
+		// Write an int64 to the packet
+		// StartPack should be called before this is used
+		void WriteInt64(uint64_t _id, const uint64_t _int);
 		// Write a string to the packet
 		// StartPack should be called before this is used
 		void WriteString(uint64_t _id, const char* _string);
@@ -61,19 +64,22 @@ namespace Network
 
 
 		// Read a byte from a packet
-		// Should always be called from a function bound with AddNetMessageHook
+		// Should always be called from a function bound with Addstd::function<void(PacketHandler*, uint64_t, NetConnection)>
 		char ReadByte(uint64_t _id);
 		// Read an int from a packet
-		// Should always be called from a function bound with AddNetMessageHook
+		// Should always be called from a function bound with Addstd::function<void(PacketHandler*, uint64_t, NetConnection)>
 		short ReadShort(uint64_t _id);
 		// Read a short from a packet
-		// Should always be called from a function bound with AddNetMessageHook
+		// Should always be called from a function bound with Addstd::function<void(PacketHandler*, uint64_t, NetConnection)>
 		int ReadInt(uint64_t _id);
+		// Read a short from a packet
+		// Should always be called from a function bound with Addstd::function<void(PacketHandler*, uint64_t, NetConnection)>
+		uint64_t ReadInt64(uint64_t _id);
 		// Read a string from a packet
-		// Should always be called from a function bound with AddNetMessageHook
+		// Should always be called from a function bound with Addstd::function<void(PacketHandler*, uint64_t, NetConnection)>
 		char* ReadString(uint64_t _id);
 		// Read a float from a packet
-		// Should always be called from a function bound with AddNetMessageHook
+		// Should always be called from a function bound with Addstd::function<void(PacketHandler*, uint64_t, NetConnection)>
 		float ReadFloat(uint64_t _id);
 
 	private:

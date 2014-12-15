@@ -31,4 +31,15 @@
 #define SAFE_DELETE_PACKET(x) if(x) { if (x->Data) { delete x->Data; x->Data = 0; } delete x; x = 0; }
 
 
+#define TYP_INIT 0 
+#define TYP_SMLE 1 
+#define TYP_BIGE 2 
+
+namespace Network
+{
+	unsigned long long htonll(unsigned long long src);
+	unsigned long long ntohll(unsigned long long src);
+}
+
+
 #endif
