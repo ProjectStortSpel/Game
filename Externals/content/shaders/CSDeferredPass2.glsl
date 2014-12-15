@@ -87,8 +87,10 @@ void main()
 		spec    += s;
 	}
 
+	// Do post renderer effect here
 
 
+	// Do frag calcs here
 	FragColor = vec4(ambient + diffuse, 1.0) * vec4(g_albedo, 1.0) + vec4(spec, 0.0f);
 
 	//FragColor = vec4(diffuse, 1.0);
