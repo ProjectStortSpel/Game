@@ -10,13 +10,13 @@ networkMessagesSystem.Update = function(self, dt)
 		Client.Update(dt)
 	end
 	
-	if Server.IsRunning() then
-		while Server.HandlePacket() > 0 do	end
-	end
+	--if Server.IsRunning() then
+	--	while Server.HandlePacket() > 0 do	end
+	--end
 		
-	if Client.IsConnected() then
-		while Client.HandlePacket() > 0 do	end
-	end
+	--if Client.IsConnected() then
+	--	while Client.HandlePacket() > 0 do	end
+	--end
 
 end
 networkMessagesSystem.Initialize = function(self)

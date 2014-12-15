@@ -29,7 +29,7 @@ void GameConsole::CreateObject(std::vector<Console::Argument>* _args)
 
 	unsigned int mId = m_world->CreateNewEntity(_template);
 	m_world->CreateComponentAndAddTo("ChangedComponents", mId);
-	//m_world->CreateComponentAndAddTo("SyncNetwork", mId);
+	m_world->CreateComponentAndAddTo("SyncNetwork", mId);
 
 	std::stringstream ss;
 	ss << "Entity with id #" << mId << " has been created!";
@@ -46,7 +46,7 @@ void GameConsole::CreateObject(std::vector<Console::Argument>* _args)
 
 	if (NetworkInstance::GetServer()->IsRunning())
 	{
-		//NetworkInstance::GetServer()->Broadcast(NetworkInstance::GetNetworkHelper()->WriteEntity(NetworkInstance::GetServer()->GetPacketHandler(), mId));
+		NetworkInstance::GetServer()->Broadcast(NetworkInstance::GetNetworkHelper()->WriteEntityAll(NetworkInstance::GetServer()->GetPacketHandler(), mId));
 	}
 }
 
@@ -326,13 +326,13 @@ void GameConsole::AddPointlight(std::vector<Console::Argument>* _args)
 	lightData[1] = _args->at(1).Number;
 	lightData[2] = _args->at(2).Number;
 	//	Intensity
-	lightData[3] = 0.2f;
+	lightData[3] = 0.5f;
 	lightData[4] = 1.0f;
 	lightData[5] = 1.0f;
 	//	Color
 	lightData[6] = 1.0f;
-	lightData[7] = 0.9f;
-	lightData[8] = 0.9f;
+	lightData[7] = 0.8f;
+	lightData[8] = 0.8f;
 	//	Range
 	lightData[9] = _args->at(3).Number;
 

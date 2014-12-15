@@ -1,13 +1,16 @@
 #include "Network/Stdafx.h"
 
-unsigned long long Network::htonll(unsigned long long src) {
+unsigned long long Network::htonll(unsigned long long src)
+{
 	static int typ = TYP_INIT;
 	unsigned char c;
-	union {
+	union 
+	{
 		unsigned long long ull;
 		unsigned char c[8];
 	} x;
-	if (typ == TYP_INIT) {
+	if (typ == TYP_INIT)
+	{
 		x.ull = 0x01;
 		typ = (x.c[7] == 0x01ULL) ? TYP_BIGE : TYP_SMLE;
 	}

@@ -3,17 +3,17 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "TextureLoader.h"
 #include "ModelLoader.h"
+#include "SkyBox.h"
 
 using namespace Renderer;
 using namespace glm;
 
-float testArray[30];
+float testArray[20];
 
 GraphicDevice::GraphicDevice()
 {
 	m_renderSimpleText = true;
 	m_modelIDcounter = 0;
-	m_camera = new Camera();
 	m_vramUsage = 0;
 	m_debugTexFlag = 0;
 	m_nrOfLights = 0;
@@ -22,6 +22,7 @@ GraphicDevice::GraphicDevice()
 GraphicDevice::~GraphicDevice()
 {
 	delete(m_camera);
+	delete(m_skybox);
 	// Delete buffers
 	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
 	{
@@ -39,11 +40,15 @@ GraphicDevice::~GraphicDevice()
 bool GraphicDevice::Init()
 {
 	if (!InitSDLWindow()) { ERRORMSG("INIT SDL WINDOW FAILED\n"); return false; }
+
+	m_camera = new Camera(m_clientWidth, m_clientHeight);
+
 	if (!InitGLEW()) { ERRORMSG("GLEW_VERSION_4_3 FAILED\n"); return false; }
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
 	if (!InitDeferred()) { ERRORMSG("INIT DEFERRED FAILED\n"); return false; }	
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	if (!InitForward()) { ERRORMSG("INIT FORWARD FAILED\n"); return false; }
+	if (!InitSkybox()) { ERRORMSG("INIT SKYBOX FAILED\n"); return false; }
 	if (!InitTextRenderer()) { ERRORMSG("INIT TEXTRENDERER FAILED\n"); return false; }
 		m_vramUsage += (m_textRenderer.GetArraySize() * sizeof(int));
 	if (!InitLightBuffers()) { ERRORMSG("INIT LIGHTBUFFER FAILED\n"); return false; }
@@ -117,8 +122,8 @@ void GraphicDevice::Render()
 	m_deferredShader1.UseProgram();
 	
 	//--------Uniforms-------------------------------------------------------------------------
-	mat4 projectionMatrix = glm::perspective(45.0f, (float)m_clientWidth / (float)m_clientHeight, 0.2f, 100.f);
-	m_deferredShader1.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
+	mat4 *projectionMatrix = m_camera->GetProjMatrix();;
+	m_deferredShader1.SetUniVariable("ProjectionMatrix", mat4x4, projectionMatrix);
 
 	mat4 viewMatrix = *m_camera->GetViewMatrix();
 
@@ -180,7 +185,7 @@ void GraphicDevice::Render()
 	m_compDeferredPass2Shader.UseProgram();
 
 	m_compDeferredPass2Shader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
-	mat4 inverseProjection = glm::inverse(projectionMatrix);
+	mat4 inverseProjection = glm::inverse(*projectionMatrix);
 	m_compDeferredPass2Shader.SetUniVariable("invProjection", mat4x4, &inverseProjection);
 
 	glActiveTexture(GL_TEXTURE0);
@@ -207,7 +212,7 @@ void GraphicDevice::Render()
 	glViewport(0, 0, m_clientWidth, m_clientHeight);
 
 	m_forwardShader.UseProgram();
-	m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
+	m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, projectionMatrix);
 	m_forwardShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
 
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer);
@@ -255,18 +260,17 @@ void GraphicDevice::Render()
 	}
 
 	// DRAW SKYBOX
-	//m_skyBoxShader.UseProgram();
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, m_skyBox);
-	glDrawArrays(GL_POINTS, 0, 1);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	m_skyBoxShader.UseProgram();
+	m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera);
 	// -----------
-
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-	//---------------------------------------------------------------------
 
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
+
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	//---------------------------------------------------------------------
+	
+
 	if (m_renderSimpleText)
 		m_textRenderer.RenderText(m_dt);
 
@@ -416,10 +420,6 @@ bool GraphicDevice::InitForward()
 
 	GLenum drawBufferForward = GL_COLOR_ATTACHMENT0;
 	glDrawBuffers(1, &drawBufferForward);
-	
-	// skybox
-	//m_skyBox = AddTexture("content/textures/skybox.jpg", GL_TEXTURE1);
-	//m_skyBoxShader.CheckUniformLocation("diffuseTex", 1);
 
 	return true;
 }
@@ -437,11 +437,11 @@ bool GraphicDevice::InitShaders()
 	m_compDeferredPass2Shader.AddShader("content/shaders/CSDeferredPass2.glsl", GL_COMPUTE_SHADER);
 	m_compDeferredPass2Shader.FinalizeShaderProgram();
 
-	// Sky Box
+	// SkyBox
 	m_skyBoxShader.InitShaderProgram();
-	m_skyBoxShader.AddShader("content/shaders/skyboxvs.glsl", GL_VERTEX_SHADER);
-	m_skyBoxShader.AddShader("content/shaders/skyboxgs.glsl", GL_GEOMETRY_SHADER);
-	m_skyBoxShader.AddShader("content/shaders/skyboxps.glsl", GL_FRAGMENT_SHADER);
+	m_skyBoxShader.AddShader("content/shaders/skyboxShaderVS.glsl", GL_VERTEX_SHADER);
+	//m_skyBoxShader.AddShader("content/shaders/skyboxgs.glsl", GL_GEOMETRY_SHADER);
+	m_skyBoxShader.AddShader("content/shaders/skyboxShaderFS.glsl", GL_FRAGMENT_SHADER);
 	m_skyBoxShader.FinalizeShaderProgram();
 
 	// Full Screen Quad
@@ -488,6 +488,23 @@ bool GraphicDevice::InitBuffers()
 	//Forward shader
 	m_forwardShader.CheckUniformLocation("diffuseTex", 1);
 
+	//Skybox shader
+	m_skyBoxShader.CheckUniformLocation("cubemap", 1);
+
+	return true;
+}
+
+bool GraphicDevice::InitSkybox()
+{
+	int w, h;
+	GLuint texHandle = TextureLoader::LoadCubeMap("content/textures/skybox", GL_TEXTURE1, w, h);
+	if (texHandle < 0)
+		return false;
+
+	m_skyBoxShader.UseProgram();
+	m_skybox = new SkyBox(texHandle, m_camera->GetFarPlane());
+	m_vramUsage += (w*h * 6 * 4 * sizeof(float));
+
 	return true;
 }
 
@@ -495,21 +512,30 @@ bool GraphicDevice::InitLightBuffers()
 {
 	glGenBuffers(1, &m_pointlightBuffer);
 
+	for (int i = 0; i < 10; i++)
+		testArray[9+i] = 0.0;		//init 0.0
+	
 	if (m_pointlightBuffer < 0)
 		return false;
+
+	float ** tmparray = new float*[1];
+	tmparray[0] = &testArray[0];
+
+	BufferPointlights(1, tmparray);
+	delete(tmparray);
 
 //--------Directional light-------------------------------------------------------------------------
 	testArray[0] = 0.0;		//dir x
 	testArray[1] = -1.0;	//dir y
-	testArray[2] = -1.0;	//dir z
+	testArray[2] = -0.6;	//dir z
 	
 	testArray[3] = 0.2;		//int x
-	testArray[4] = 0.8;		//int y
-	testArray[5] = 0.8;		//int z
+	testArray[4] = 0.7;		//int y
+	testArray[5] = 0.7;		//int z
 	
 	testArray[6] = 0.6;		//col x
-	testArray[7] = 0.4;		//col y
-	testArray[8] = 0.6;		//col z
+	testArray[7] = 0.6;		//col y
+	testArray[8] = 0.65;	//col z
 
 	glGenBuffers(1, &m_dirLightBuffer);
 
@@ -524,6 +550,11 @@ bool GraphicDevice::InitLightBuffers()
 void GraphicDevice::BufferPointlights(int _nrOfLights, float **_lightPointers)
 {
 	m_vramUsage -= m_nrOfLights*10*sizeof(float);
+	if (_nrOfLights == 0)
+	{
+		_nrOfLights = 1;
+		_lightPointers[0] = &testArray[0];
+	}
 	m_nrOfLights = _nrOfLights;
 
 	float *pointlight_data = new float[_nrOfLights * 10];
@@ -969,4 +1000,8 @@ void GraphicDevice::Clear()
   
   m_modelsDeferred.clear();
   m_modelsForward.clear();
+
+  float **tmpPtr = new float*[1];
+  BufferPointlights(0, tmpPtr);
+  delete tmpPtr;
 }

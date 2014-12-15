@@ -127,6 +127,10 @@ namespace LuaEmbedder
   bool EXPORT IsInt(int index);
   bool EXPORT IsBool(int index);
   bool EXPORT IsString(int index);
+  bool EXPORT IsFunction(int index);
+  
+  void EXPORT SaveFunction(int index, const std::string& key);
+  bool EXPORT CallSavedFunction(const std::string& key, int argumentCount = 0);
   
   template<typename T>
   void EXPORT EmbedClass(const std::string& className, bool gc = true)
