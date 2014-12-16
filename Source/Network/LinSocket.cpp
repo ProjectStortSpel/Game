@@ -235,7 +235,7 @@ ISocket* LinSocket::Accept()
 
 	return sock;
 }
-
+/*
 int LinSocket::Receive(char* _buffer, int _length, int _flags)
 {
 	return recv(*m_socket, (void*)_buffer, _length, _flags);
@@ -252,6 +252,39 @@ int LinSocket::Send(char* _buffer, int _length, int _flags)
 		return -1;
 	}
 	return result;
+}
+*/
+
+int LinSocket::Receive(char* _buffer, int _length, int _flags)
+{
+
+	static short len;
+
+	if (recv(*m_socket, (void*)&len, 2, MSG_WAITALL))
+	{
+		len = ntohs(len);
+		return recv(*m_socket, (void*)_buffer, len, MSG_WAITALL);
+	}
+	return 0;
+}
+
+int LinSocket::Send(char* _buffer, int _length, int _flags)
+{
+	static short len = 0;
+	len = htons(_length);
+	if (send(*m_socket, (void*)&len, 2, _flags) != -1)
+	{
+		int result = send(*m_socket, (void*)_buffer, _length, _flags);
+		if (result == -1)
+		{
+			if (NET_DEBUG)
+				printf("Failed to send packet of size '%i'. Error Code: %d.\n", _length, WSAGetLastError());
+
+			return -1;
+		}
+		return result;
+	}
+	return -1;
 }
 
 #endif

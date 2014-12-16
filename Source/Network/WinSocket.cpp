@@ -278,6 +278,7 @@ ISocket* WinSocket::Accept(void)
 	return newWinSocket;
 
 }
+/*
 int WinSocket::Send(char* _buffer, int _length, int _flags)
 {
 	int result = send(m_socket, _buffer, _length, _flags);
@@ -294,41 +295,41 @@ int WinSocket::Receive(char* _buffer, int _length, int _flags)
 {
 	return recv(m_socket, _buffer, _length, _flags);
 }
+*/
 
 
-/*
 int WinSocket::Send(char* _buffer, int _length, int _flags)
 {
-static short len = 0;
-len = htons(_length);
-if (send(m_socket, (char*)&len, 2, _flags) != SOCKET_ERROR)
-{
-int result = send(m_socket, _buffer, _length, _flags);
-if (result == SOCKET_ERROR)
-{
-if (NET_DEBUG)
-printf("Failed to send packet of size '%i'. Error Code: %d.\n", _length, WSAGetLastError());
+	static short len = 0;
+	len = htons(_length);
+	if (send(m_socket, (char*)&len, 2, _flags) != SOCKET_ERROR)
+	{
+		int result = send(m_socket, _buffer, _length, _flags);
+		if (result == SOCKET_ERROR)
+		{
+			if (NET_DEBUG)
+				printf("Failed to send packet of size '%i'. Error Code: %d.\n", _length, WSAGetLastError());
 
-return -1;
-}
-return result;
-}
-return -1;
+			return -1;
+		}
+		return result;
+	}
+	return -1;
 
 }
 int WinSocket::Receive(char* _buffer, int _length, int _flags)
 {
-static short len;
+	static short len;
 
-if (recv(m_socket, (char*)&len, 2, MSG_WAITALL))
-{
-len = ntohs(len);
-return recv(m_socket, _buffer, len, MSG_WAITALL);
+	if (recv(m_socket, (char*)&len, 2, MSG_WAITALL))
+	{
+		len = ntohs(len);
+		return recv(m_socket, _buffer, len, MSG_WAITALL);
+	}
+	return 0;
 }
-return 0;
-}
 
 
-*/
+
 
 #endif
