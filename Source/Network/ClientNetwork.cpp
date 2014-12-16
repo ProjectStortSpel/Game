@@ -28,7 +28,7 @@ ClientNetwork::ClientNetwork()
 	m_socket = 0;
 	m_connected = new bool(false);
 
-	*m_maxTimeOutIntervall = 1.0f;
+	*m_maxTimeOutIntervall = 100.0f;
 	*m_maxIntervallCounter = 300;
 
 	m_onConnectedToServer = new std::vector<NetEvent>();

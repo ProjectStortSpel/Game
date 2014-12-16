@@ -45,6 +45,7 @@ networkMessagesSystem.OnBannedFromServer = function(self, _ip, _port, _message)
 	Console.Print(s)
 end
 networkMessagesSystem.OnConnectedToServer = function(self, _ip, _port)
+	print("NetworkMessagesSystem Connected");
 	local id = Client.StartPack("Username")
 	Client.WriteString(id, "Username_Lua")
 	Client.Send(id)

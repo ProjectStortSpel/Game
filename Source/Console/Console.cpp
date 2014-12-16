@@ -224,6 +224,17 @@ void ConsoleManager::ClearCommands()
 	m_consoleHooks.clear();
 }
 
+void ConsoleManager::ClearHistory()
+{
+	m_history.clear();
+	m_commandHistory.clear();
+
+	m_match.clear();
+	m_historyCounter = -1;
+	m_start = 0;
+	m_end = 0;
+}
+
 std::vector<std::string> ConsoleManager::GetHistory()
 {
 	std::vector<std::string>::const_iterator first = m_history.begin() + m_start;

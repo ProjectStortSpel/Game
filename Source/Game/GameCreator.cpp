@@ -148,7 +148,7 @@ void GameCreator::InitializeWorld()
 	worldCreator.AddLuaSystemToCurrentGroup(new SyncEntitiesSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new ReceivePacketSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderSystem(m_graphics));
-	worldCreator.AddLuaSystemToCurrentGroup(new ReconnectSystem());
+	//worldCreator.AddLuaSystemToCurrentGroup(new ReconnectSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderRemoveSystem(m_graphics));
 
 	worldCreator.AddLuaSystemToCurrentGroup(new ResetChangedSystem());

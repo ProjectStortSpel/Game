@@ -12,6 +12,7 @@ require "movementsystem"
 require "networkmessagessystem"
 require "mapcreationsystem"
 require "moveplayersystem"
+require "reconnectsystem"
 require "discosystem"
 
 -- Templates
@@ -32,5 +33,6 @@ worldCreator:AddSystemToCurrentGroup(TurnAroundSystem)
 worldCreator:AddSystemToCurrentGroup(TestMovementSystem)
 worldCreator:AddSystemToCurrentGroup(RespawnSystem)
 worldCreator:AddSystemToCurrentGroup(NewRoundSystem)
+worldCreator:AddSystemToCurrentGroup(ReconnectSystem)
 
 worldCreator:AddSystemToCurrentGroup(DiscoSystem)

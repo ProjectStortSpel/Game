@@ -139,6 +139,10 @@ void GameConsole::RemoveComponent(std::vector<Console::Argument>* _args)
 	m_world->RemoveComponentFrom(componentType, mId);
 }
 
+void GameConsole::ClearHistory(std::vector<Console::Argument>* _args)
+{
+	m_consoleManager->ClearHistory();
+}
 
 
 void GameConsole::HostServer(std::vector<Console::Argument>* _args)
@@ -371,6 +375,7 @@ void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 	m_consoleManager->AddCommand("Connect", std::bind(&GameConsole::ConnectClient, this, std::placeholders::_1));
 	m_consoleManager->AddCommand("Disconnect", std::bind(&GameConsole::DisconnectClient, this, std::placeholders::_1));
 	m_consoleManager->AddCommand("List", std::bind(&GameConsole::ListCommands, this, std::placeholders::_1));
+	m_consoleManager->AddCommand("Clear", std::bind(&GameConsole::ClearHistory, this, std::placeholders::_1));
 
 	m_consoleManager->AddCommand("ToggleText", std::bind(&GameConsole::ToggleText, this, std::placeholders::_1));
 	m_consoleManager->AddCommand("TextColor", std::bind(&GameConsole::SetTextColor, this, std::placeholders::_1));

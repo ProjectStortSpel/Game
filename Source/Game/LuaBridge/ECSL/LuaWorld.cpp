@@ -17,6 +17,7 @@ namespace LuaBridge
     LuaEmbedder::EmbedClassFunction<LuaWorld>("World", "CreateComponentAndAddTo", &LuaWorld::CreateComponentAndAddTo);
     LuaEmbedder::EmbedClassFunction<LuaWorld>("World", "RemoveComponentFrom", &LuaWorld::RemoveComponentFrom);
     LuaEmbedder::EmbedClassFunction<LuaWorld>("World", "KillEntity", &LuaWorld::KillEntity);
+	LuaEmbedder::EmbedClassFunction<LuaWorld>("World", "SetComponent", &LuaWorld::SetComponent);
   }
   
   int LuaWorld::Update()
@@ -57,4 +58,51 @@ namespace LuaBridge
     World::KillEntity(entityId);
     return 0;
   }
+
+  int LuaWorld::SetComponent()
+  {
+	  unsigned int id = (unsigned int)LuaEmbedder::PullInt(1);
+	  std::string componentType = LuaEmbedder::PullString(2);
+	  std::string variableName = LuaEmbedder::PullString(3);
+	  void* data = 0;
+
+	  if (LuaEmbedder::IsBool(4))
+	  {
+		  bool h = LuaEmbedder::PullBool(4);
+		  data = &h;
+		  World::SetComponent(id, componentType, variableName, data);
+	  }
+	  else if (LuaEmbedder::IsInt(4))
+	  {
+		  int h = LuaEmbedder::PullInt(4);
+		  data = &h;
+		  World::SetComponent(id, componentType, variableName, data);
+	  }
+	  else if (LuaEmbedder::IsFloat(4))
+	  {
+		  float h = LuaEmbedder::PullFloat(4);
+		  data = &h;
+		  World::SetComponent(id, componentType, variableName, data);
+	  }
+	  else if (LuaEmbedder::IsString(4))
+	  {
+		  std::string h = LuaEmbedder::PullString(4);
+		  char* tmp = new char[h.size() + 1];
+
+		  for (int i = 0; i < h.size(); i++)
+			  tmp[i] = h[i];
+		  tmp[h.size()] = '\0';
+
+		  World::SetComponent(id, componentType, variableName, tmp);
+
+		  delete tmp;
+	  }
+	  else
+		  return 0;
+
+	  
+
+	  return 0;
+  }
+
 }

@@ -299,6 +299,7 @@ namespace LuaBridge
 		int IsRunning();
 		int Update();
 		int HandlePacket();
+		int Kick();
 
 		//int WriteByte();
 		int WriteFloat();
@@ -330,6 +331,7 @@ namespace LuaBridge
 			LuaEmbedder::AddFunction("IsRunning", &IsRunning, "Server");
 			LuaEmbedder::AddFunction("Update", &Update, "Server");
 			LuaEmbedder::AddFunction("HandlePacket", &HandlePacket, "Server");
+			LuaEmbedder::AddFunction("Kick", &Kick, "Server");
 
 			//LuaEmbedder::AddFunction("WriteByte", &WriteByte, "Server");
 			LuaEmbedder::AddFunction("WriteFloat", &WriteFloat, "Server");
@@ -485,6 +487,21 @@ namespace LuaBridge
 			LuaEmbedder::PushInt(remainingPackets);
 
 			return 1;
+		}
+
+		int Kick()
+		{
+			std::string ip = LuaEmbedder::PullString(1);
+			unsigned int port = LuaEmbedder::PullInt(2);
+			std::string reason = "";
+
+			if(LuaEmbedder::IsString(3))
+				reason = LuaEmbedder::PullString(3);
+
+			Network::NetConnection nc(ip.c_str(), port);
+			NetworkInstance::GetServer()->Kick(nc, reason.c_str());
+
+			return 0;
 		}
 
 		int WriteFloat()

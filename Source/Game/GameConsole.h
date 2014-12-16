@@ -23,6 +23,7 @@ public:
 	void ChangeComponent(std::vector<Console::Argument>* _args);
 	void RemoveComponent(std::vector<Console::Argument>* _args);
 	void ListCommands(std::vector<Console::Argument>* _args);
+	void ClearHistory(std::vector<Console::Argument>* _args);
 
 	void HostServer(std::vector<Console::Argument>* _args);
 	void StopServer(std::vector<Console::Argument>* _args);

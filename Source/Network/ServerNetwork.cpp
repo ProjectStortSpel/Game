@@ -516,7 +516,7 @@ void ServerNetwork::SetOnPlayerTimedOut(NetEvent& _function)
 	m_onPlayerTimedOut->push_back(_function);
 }
 
-void ServerNetwork::Kick(NetConnection& _connection, char* _reason)
+void ServerNetwork::Kick(NetConnection& _connection, const char* _reason)
 {
 	m_connectedClientsLock->lock();
 
