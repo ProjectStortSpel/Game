@@ -26,6 +26,8 @@ namespace ECSL
 
 		void ClearComponent(unsigned int _entityId);
 
+		float GetMemoryAllocated();
+
 	private:
 		unsigned int m_componentTypeId;
 		ComponentType* m_componentType;

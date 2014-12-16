@@ -181,7 +181,7 @@ end
 
 ---------------------------- Get Cards System
 
-GetCardsSystem = System()
+--[[GetCardsSystem = System()
 
 GetCardsSystem.Initialize = function(self)
 	self:SetName("Respawn System")
@@ -204,7 +204,7 @@ GetCardsSystem.OnEntityRemoved = function(self, entity)
 	
 	print("Get cards removed")
 end
-
+--]]
 
 
 
