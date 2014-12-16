@@ -1,8 +1,8 @@
 DiscoSystem = System()
-DiscoSystem.TotalTime = 0
+local TotalTime = 0
 
 DiscoSystem.Update = function(self, dt)
-	self.TotalTime = self.TotalTime + dt
+	TotalTime = TotalTime + dt
 	
 	local entities = self:GetEntities() 
 	for i = 1, #entities do
@@ -14,9 +14,9 @@ DiscoSystem.Update = function(self, dt)
 		local px, py, pz, inta, intd, ints, colorR, colorG, colorB, range = Pointlight:GetPointlight()
 		local rx, ry, rz, radius, factor = RotateAround:GetFloat5()
 		
-		px = rx + radius * math.sin((self.TotalTime + ry) * factor) 
+		px = rx + radius * math.sin((TotalTime + ry) * factor) 
 		py = py
-		pz = rz + radius * math.cos((self.TotalTime + ry) * factor)
+		pz = rz + radius * math.cos((TotalTime + ry) * factor)
 		
 		Pointlight:SetPointlight(px, py, pz, inta, intd, ints, colorR, colorG, colorB, range)
 	end

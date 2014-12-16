@@ -38,6 +38,8 @@ namespace ECSL
 		inline bool EntityHasComponent(unsigned int _entityId, unsigned int _componentTypeId){ return m_entityTable->EntityHasComponent(_entityId, _componentTypeId); }
 		inline unsigned int GetEntityCountLimit(){ return m_entityTable->EntityCountLimit(); }
 
+		inline unsigned int GetMemoryAllocated();
+
 	private:
 		unsigned int m_entityCount;
 		EntityTable* m_entityTable;

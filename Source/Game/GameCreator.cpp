@@ -128,7 +128,7 @@ void GameCreator::InitializeWorld()
 
 	worldCreator.AddLuaSystemToCurrentGroup(new ResetChangedSystem());
 
-	m_world = worldCreator.CreateWorld(10000);
+	m_world = worldCreator.CreateWorld(100000);
 	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
 	
 	LuaEmbedder::CallMethods<LuaBridge::LuaSystem>("System", "PostInitialize");
