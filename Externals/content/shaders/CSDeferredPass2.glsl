@@ -25,7 +25,6 @@ uniform mat4 InvProjection;
 ivec2 g_threadID;		// sample pixel position
 vec3 g_viewPos;			// position in view space
 vec3 g_albedo;			// albedo color (ColorTex.xyz)
-float g_glow;			// albedo color (ColorTex.w)
 vec3 g_normal;			// normal (NormalTex.xy, haxx)
 float g_ks;				// spec (NormalTex.z)
 float g_shininess;		// spec (NormalTex.w)
@@ -35,6 +34,8 @@ float g_depthVal;		// depthval (DepthTex.x)
 vec2 getRandom();
 float doAmbientOcclusion( vec2 offset );
 float ComputeSSAO();
+float ComputeGlow();
+
 void ComputeDirLight(out vec3 ambient, out vec3 diffuse, out vec3 spec);
 
 void phongModelDirLight(out vec3 ambient, out vec3 diffuse, out vec3 spec);
@@ -60,39 +61,38 @@ void main()
 	g_ks = inputMap1.z;
     g_shininess = inputMap1.w * 254.0f + 1.0f;
 	g_albedo.xyz = inputMap2.xyz;
-	g_glow = inputMap2.w;
 	g_depthVal = inputMap0.x;
 	g_viewPos = reconstructPosition(g_depthVal);
-
-	// Return if there is no hit data.
-	if(!(g_depthVal < 1.0))	
-		return;	
 
 	// Values
 	vec3 ambient = vec3(0.0);
 	vec3 diffuse = vec3(0.0);
 	vec3 spec    = vec3(0.0);
 
-	// Calc DirLight
-	ComputeDirLight(ambient, diffuse, spec);
-
-	// Calc PointLights
-	for(int i = 0; i < pointlights.length(); i++)
+	if((g_depthVal < 1.0))
 	{
-		vec3 a,d,s;
+		// Calc DirLight
+		ComputeDirLight(ambient, diffuse, spec);
 
-		phongModel(i, a, d, s);
-		ambient += a;
-		diffuse += d;
-		spec    += s;
+		// Calc PointLights
+		for(int i = 0; i < pointlights.length(); i++)
+		{
+			vec3 a,d,s;
+
+			phongModel(i, a, d, s);
+			ambient += a;
+			diffuse += d;
+			spec    += s;
+		}
 	}
 
 	// Do post renderer effect here
-
+	float glow = ComputeGlow();
+	vec4 glowvec = vec4(glow,glow,glow, 1.0);
 
 	// Do frag calcs here
-	FragColor = vec4(ambient + diffuse, 1.0) * vec4(g_albedo, 1.0) + vec4(spec, 0.0f);
-
+	FragColor = vec4(ambient + diffuse, 1.0) * vec4(g_albedo, 1.0) + vec4(spec, 0.0f) + glowvec;
+	//FragColor += glowvec;
 	//FragColor = vec4(diffuse, 1.0);
 	//FragColor = vec4( g_normal, 1.0);
 	//FragColor = vec4( g_albedo   +g_normal-g_normal, 1.0 );
@@ -112,6 +112,41 @@ void main()
 vec2 getRandom()
 {
 	return normalize( imageLoad(RandomTex, ivec2(gl_LocalInvocationID.xy)).xy * 2.0f - 1.0f );
+}
+
+float ComputeGlow()
+{
+	// IMPROVEMENTS CAN BE MADE. RIGHT NOW WE SAMPLE IN A SPIRAL. BETTER SOLUTION WOULD BE TO DO 2 SAMPLES AFTER EACHOTHER. BUT THIS WOULD NEED A NEW TEXTURE MAP AND A BARRIER. AND COST MORE.
+	/*
+	- - - - - - 5 - - - - - - 
+	- - - - - - - - - - 6 - - 
+	- - - 4 - - - - - - - - - 
+	- - - - - - - - - - - - - 
+	- - - - - - 1 2 - - - - - 
+	7 - - 3 - - 0 - - 3 - - 7
+	- - - - - 2 1 - - - - - - 
+	- - - - - - - - - - - - - 
+	- - - - - - - - - 4 - - - 
+	- - 6 - - - - - - - - - - 
+	- - - - - - 5 - - - - - - 
+	*/
+	float glow = 0;
+	glow += imageLoad(ColorTex, g_threadID + ivec2(-6, 0)).w * 0.0044299121055113265;
+	glow += imageLoad(ColorTex, g_threadID + ivec2(-4, -4)).w * 0.00895781211794;
+	glow += imageLoad(ColorTex, g_threadID + ivec2(0, -5)).w * 0.0215963866053;
+	glow += imageLoad(ColorTex, g_threadID + ivec2(3, -3)).w * 0.0443683338718;
+	glow += imageLoad(ColorTex, g_threadID + ivec2(-3, 0)).w * 0.0776744219933;
+	glow += imageLoad(ColorTex, g_threadID + ivec2(-1, -1)).w * 0.115876621105;
+	glow += imageLoad(ColorTex, g_threadID + ivec2(0, -1)).w * 0.147308056121;
+	glow += imageLoad(ColorTex, g_threadID).w * 0.159576912161;
+	glow += imageLoad(ColorTex, g_threadID + ivec2(0,  1)).w * 0.147308056121;
+	glow += imageLoad(ColorTex, g_threadID + ivec2(1,  1)).w * 0.115876621105;
+	glow += imageLoad(ColorTex, g_threadID + ivec2(3,  0)).w * 0.0776744219933;
+	glow += imageLoad(ColorTex, g_threadID + ivec2(-3,  3)).w * 0.0443683338718;
+	glow += imageLoad(ColorTex, g_threadID + ivec2(0,  5)).w * 0.0215963866053;
+	glow += imageLoad(ColorTex, g_threadID + ivec2(4,  4)).w * 0.00895781211794;
+	glow += imageLoad(ColorTex, g_threadID + ivec2(6,  0)).w * 0.0044299121055113265;
+	return glow;
 }
 
 /*
