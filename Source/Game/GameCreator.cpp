@@ -110,7 +110,7 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	gameMode << "../../../Externals/content/scripting/";
 	gameMode << _gameMode;
 	gameMode << "/init.lua";
-
+	std::string lol = gameMode.str();
 	if (!LuaEmbedder::Load(gameMode.str()))
 	  return;
 
