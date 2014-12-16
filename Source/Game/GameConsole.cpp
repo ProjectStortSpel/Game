@@ -1,6 +1,8 @@
 #include "GameConsole.h"
 #include "ECSL/Managers/EntityTemplateManager.h"
 #include <string>
+#include "LuaEmbedder/LuaEmbedder.h"
+
 GameConsole::GameConsole(Renderer::GraphicDevice* _graphics, ECSL::World* _world)
 {
 	m_graphics = _graphics;
@@ -143,10 +145,15 @@ void GameConsole::RemoveComponent(std::vector<Console::Argument>* _args)
 void GameConsole::HostServer(std::vector<Console::Argument>* _args)
 {
 	if (NetworkInstance::GetClient()->IsConnected())
+	{
 		NetworkInstance::GetClient()->Disconnect();
-
+		LuaEmbedder::AddBool("Client", false);
+	}
 	if (NetworkInstance::GetServer()->IsRunning())
+	{
 		NetworkInstance::GetServer()->Stop();
+		LuaEmbedder::AddBool("Server", false);
+	}
 
 
 	std::string pw				= NetworkInstance::GetServer()->GetServerPassword();
@@ -179,30 +186,36 @@ void GameConsole::HostServer(std::vector<Console::Argument>* _args)
 		}
 	}
 
-	NetworkInstance::GetServer()->Start(port, pw.c_str(), connections);
+	bool hosting = NetworkInstance::GetServer()->Start(port, pw.c_str(), connections);
+	LuaEmbedder::AddBool("Server", hosting);
 	//NetworkInstance::GetClient()->Connect("127.0.0.1", pw.c_str(), port, 0);
 }
 
 
 void GameConsole::StopServer(std::vector<Console::Argument>* _args)
 {
-	if (NetworkInstance::GetClient()->IsConnected() && strcmp(NetworkInstance::GetClient()->GetRemoteAddress(), "127.0.0.1") == 0)
-		NetworkInstance::GetClient()->Disconnect();
-
 	if (NetworkInstance::GetServer()->IsRunning())
+	{
 		NetworkInstance::GetServer()->Stop();
+		LuaEmbedder::AddBool("Server", false);
+	}
 }
 
 void GameConsole::ConnectClient(std::vector<Console::Argument>* _args)
 {
 	if (NetworkInstance::GetClient()->IsConnected())
-		NetworkInstance::GetClient()->Disconnect();
-
-	if (strcmp(NetworkInstance::GetClient()->GetRemoteAddress(), "127.0.0.1") != 0)
 	{
-		if (NetworkInstance::GetServer()->IsRunning())
-			NetworkInstance::GetServer()->Stop();
+		NetworkInstance::GetClient()->Disconnect();
+		LuaEmbedder::AddBool("Client", false);
 	}
+
+	
+	if (NetworkInstance::GetServer()->IsRunning())
+	{
+		NetworkInstance::GetServer()->Stop();
+		LuaEmbedder::AddBool("Server", false);
+	}
+	
 
 	std::string ip		= NetworkInstance::GetClient()->GetRemoteAddress();
 	unsigned int port	= NetworkInstance::GetClient()->GetOutgoingPort();
@@ -236,13 +249,17 @@ void GameConsole::ConnectClient(std::vector<Console::Argument>* _args)
 		}
 	}
 
-	NetworkInstance::GetClient()->Connect(ip.c_str(), pw.c_str(), port, 0);
+	bool connected = NetworkInstance::GetClient()->Connect(ip.c_str(), pw.c_str(), port, 0);
+	LuaEmbedder::AddBool("Client", connected);
 }
 
 void GameConsole::DisconnectClient(std::vector<Console::Argument>* _args)
 {
 	if (NetworkInstance::GetClient()->IsConnected())
+	{
 		NetworkInstance::GetClient()->Disconnect();
+		LuaEmbedder::AddBool("Client", false);
+	}
 }
 
 void GameConsole::SetDebugTexture(std::vector<Console::Argument>* _args)
