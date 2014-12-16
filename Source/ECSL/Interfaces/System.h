@@ -7,7 +7,6 @@
 #include "ECSL/Framework/Systems/SystemIdManager.h"
 #include "ECSL/Framework/Systems/Messaging/Message.h"
 #include "MPL/Framework/Tasks/Task.h"
-#include "MPL/Framework/Tasks/TaskInfo.h"
 
 namespace ECSL
 {
@@ -17,11 +16,11 @@ namespace ECSL
 		System();
 		virtual ~System() = 0;
 
-		virtual void Update(unsigned int _workIndex, float _dt) = 0;//const MPL::TaskInfo& _taskInfo, void* _data) = 0;
+		virtual void Update(unsigned int _taskIndex, float _dt) { }
 		virtual void Initialize() = 0;
 
-		virtual void OnEntityAdded(unsigned int _entityId) = 0;
-		virtual void OnEntityRemoved(unsigned int _entityId) = 0;
+		virtual void OnEntityAdded(unsigned int _taskIndex, float _dt, unsigned int _entityId) { }
+		virtual void OnEntityRemoved(unsigned int _taskIndex, float _dt, unsigned int _entityId) { }
 
 		virtual void OnMessageRecieved(const System* _sender, const Message* _message) { }
 
@@ -38,9 +37,9 @@ namespace ECSL
 		unsigned int GetGroupId() { return m_groupId; }
 		const std::string& GetSystemName() { return *m_systemName; }
 
-		unsigned int GetUpdateWorkCount() { return m_updateWorkCount; }
-		unsigned int GetOnEntityAddedWorkCount() { return m_onEntityAddedWorkCount; }
-		unsigned int GetOnEntityRemovedWorkCount() { return m_onEntityRemovedWorkCount; }
+		unsigned int GetUpdateTaskCount() { return m_updateTaskCount; }
+		unsigned int GetOnEntityAddedTaskCount() { return m_onEntityAddedTaskCount; }
+		unsigned int GetOnEntityRemovedTaskCount() { return m_onEntityRemovedTaskCount; }
 
 		void SetId(unsigned int _id) { m_id = _id; }
 		void SetGroupId(unsigned int _groupId) { m_groupId = _groupId; }
@@ -74,11 +73,11 @@ namespace ECSL
 
 		void AddComponentTypeToFilter(const std::string& _componentType, FilterType _filterType);
 		void SetSystemName(const std::string& _name) { *m_systemName = _name; }
-		void SetUpdateWorkCount(unsigned int _workCount) { m_updateWorkCount = _workCount; }
-		void SetOnEntityAddedWorkCount(unsigned int _workCount) { m_onEntityAddedWorkCount = _workCount; }
-		void SetOnEntityRemovedWorkCount(unsigned int _workCount) { m_onEntityRemovedWorkCount = _workCount; }
-		void SetOnMessageRecievedWorkCount(unsigned int _workCount) { m_onMessageRecievedWorkCount = _workCount; }
-		void SetOnEventWorkCount(unsigned int _workCount, void* _onEventFunction);
+		void SetUpdateTaskCount(unsigned int _taskCount) { m_updateTaskCount = _taskCount; }
+		void SetOnEntityAddedTaskCount(unsigned int _taskCount) { m_onEntityAddedTaskCount = _taskCount; }
+		void SetOnEntityRemovedTaskCount(unsigned int _taskCount) { m_onEntityRemovedTaskCount = _taskCount; }
+		void SetOnMessageRecievedTaskCount(unsigned int _taskCount) { m_onMessageRecievedTaskCount = _taskCount; }
+		void SetOnEventTaskCount(unsigned int _workCount, void* _onEventFunction);
 
 		//template<typename SystemType>
 		//void SubscribeTo<SystemType>(unsigned int _messageType, void* _functionPointer);
@@ -91,10 +90,10 @@ namespace ECSL
 		unsigned int m_id;
 		unsigned int m_groupId;
 		std::string* m_systemName;
-		unsigned int m_updateWorkCount;
-		unsigned int m_onEntityRemovedWorkCount;
-		unsigned int m_onEntityAddedWorkCount;
-		unsigned int m_onMessageRecievedWorkCount;
+		unsigned int m_updateTaskCount;
+		unsigned int m_onEntityRemovedTaskCount;
+		unsigned int m_onEntityAddedTaskCount;
+		unsigned int m_onMessageRecievedTaskCount;
 		
 		ComponentFilter m_mandatoryComponentTypes;
 		ComponentFilter m_requiresOneOfComponentTypes;

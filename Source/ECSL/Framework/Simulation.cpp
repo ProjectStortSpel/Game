@@ -1,10 +1,10 @@
 #include "Simulation.h"
 using namespace ECSL;
 
-Simulation::Simulation(DataManager* _dataManager, SystemManager* _systemManager)
+Simulation::Simulation(DataManager* _dataManager, Scheduler* _scheduler, SystemManager* _systemManager)
+:	m_dataManager(_dataManager), m_scheduler(_scheduler), m_systemManager(_systemManager)
 {
-	m_dataManager = _dataManager;
-	m_systemManager = _systemManager;
+
 }
 
 Simulation::~Simulation()
@@ -15,7 +15,7 @@ Simulation::~Simulation()
 void Simulation::Update(float _dt)
 {
 	/* Update systems */
-	m_systemManager->Update(_dt);
+	m_scheduler->Update(_dt);
 
 	/* Add and remove changed entities from systems */
 	m_systemManager->SystemEntitiesUpdate();

@@ -5,7 +5,7 @@
 
 namespace MPL
 {
-	typedef void(*FunctionPointer)(const TaskInfo&, void*);
+	typedef void(*FunctionPointer)(void*);
 
 	struct DECLSPEC WorkItem
 	{

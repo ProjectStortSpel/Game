@@ -28,9 +28,9 @@ public:
 	TestSystem() { }
 	~TestSystem() { }
 
-	void Update(float _dt)
+	void Update(unsigned int _taskIndex, float _dt)
 	{
-		printf("Testsystem run()\n");
+		//printf("Testsystem run()\n");
 	}
 	void Initialize()
 	{
@@ -40,6 +40,8 @@ public:
 		//AddComponentTypeToFilter("Velocity", ECSL::FilterType::RequiresOneOf);
 		//AddComponentTypeToFilter("Velocity", ECSL::ComponentFilter::RequiresOneOf);
 		//AddComponentTypeToFilter("Position", ECSL::ComponentFilter::Excluded);
+
+		SetUpdateTaskCount(8);
 
 		//float* x = (float*)GetComponent()
 
@@ -62,9 +64,9 @@ public:
 	TestSystem2() { }
 	~TestSystem2() { }
 
-	void Update(float _dt)
+	void Update(unsigned int _taskIndex, float _dt)
 	{
-		printf("Testsystem2 run()\n");
+		//printf("Testsystem2 run()\n");
 	}
 	void Initialize()
 	{
@@ -73,6 +75,7 @@ public:
 		//AddComponentTypeToFilter("Velocity", ECSL::FilterType::RequiresOneOf);
 		//AddComponentTypeToFilter("Velocity", ECSL::ComponentFilter::RequiresOneOf);
 		//AddComponentTypeToFilter("Position", ECSL::ComponentFilter::Excluded);
+		//SetUpdateTaskCount(4);
 
 		printf("Testsystem2 Initialize()\n");
 	}
@@ -111,7 +114,8 @@ void lol()
 	ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("content/components");
 	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
 	worldCreator.AddSystemGroup();
-	//worldCreator.AddSystemToCurrentGroup<TestSystem2>();
+	worldCreator.AddSystemToCurrentGroup<TestSystem>();
+	worldCreator.AddSystemToCurrentGroup<TestSystem2>();
 	//worldCreator.AddLuaSystemToCurrentGroup(new TestSystem());
 	auto componentTypes = ComponentTypeManager::GetInstance().GetComponentTypes();
 	for (auto it = componentTypes->begin(); it != componentTypes->end(); ++it)
@@ -190,8 +194,6 @@ void LoadAlotOfBoxes(Renderer::GraphicDevice* r)
 	}
 }
 
-ECSL::ECSLScheduler* scheduler;
-
 void Start()
 {
 	/*	Initialize Renderer and Input	*/
@@ -206,7 +208,17 @@ void Start()
 	RENDERER.ChangeModelTexture(modelid, "content/models/cube/NM_tst.png"); // CHANGING TEXTURE ON MODELID
 
 	MPL::TaskManager::GetInstance().CreateSlaves();
-	scheduler = new ECSL::ECSLScheduler();
+
+	ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("content/components");
+	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
+	worldCreator.AddSystemGroup();
+	worldCreator.AddSystemToCurrentGroup<TestSystem>();
+	worldCreator.AddSystemToCurrentGroup<TestSystem2>();
+	//worldCreator.AddLuaSystemToCurrentGroup(new TestSystem());
+	auto componentTypes = ComponentTypeManager::GetInstance().GetComponentTypes();
+	for (auto it = componentTypes->begin(); it != componentTypes->end(); ++it)
+		worldCreator.AddComponentType(it->second->GetName());
+	ECSL::World* world = worldCreator.CreateWorld(100);
 
 	bool lol = true;
 	float cd = 1.0f;
@@ -224,7 +236,7 @@ void Start()
 		RENDERER.Render();
 		INPUT->Update();
 
-		scheduler->Execute();
+		world->Update(dt);
 
 		SDL_Event e;
 		while (SDL_PollEvent(&e))
@@ -303,7 +315,7 @@ void Start()
 
 int main(int argc, char** argv)
 {
-	lol();
+	//lol();
 	Start();
 	#ifdef WIN32
 	_CrtDumpMemoryLeaks();

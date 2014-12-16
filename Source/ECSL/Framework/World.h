@@ -6,6 +6,7 @@
 
 #include "Simulation.h"
 #include "Components/DataManager.h"
+#include "Multithreading/Scheduler.h"
 #include "Systems/SystemWorkGroup.h"
 #include "Systems/SystemManager.h"
 
@@ -15,6 +16,7 @@ namespace ECSL
 	{
 	private:
 		Simulation* m_simulation;
+		Scheduler* m_scheduler;
 		DataManager* m_dataManager;
 		SystemManager* m_systemManager;
 

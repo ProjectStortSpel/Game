@@ -37,7 +37,7 @@ int SlaveThread::ThreadLoop()
 		WorkItem* workItem = m_taskPool->FetchWork();
 		if (workItem != 0)
 		{
-			workItem->Work(TaskInfo(0, 0), (void*)0);
+			workItem->Work(workItem->Data);
 			m_taskPool->WorkDone(workItem);
 		}
 	}

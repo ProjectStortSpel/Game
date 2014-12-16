@@ -6,8 +6,9 @@
 
 using namespace ECSL;
 
-SystemManager::SystemManager(DataManager* _dataManager, std::vector<SystemWorkGroup*>* _systemWorkGroups) 
-:	m_nextSystemId(-1), m_systemIdManager(new SystemIdManager()), m_dataManager(_dataManager), m_systemWorkGroups(_systemWorkGroups)
+SystemManager::SystemManager(DataManager* _dataManager, Scheduler* _scheduler, std::vector<SystemWorkGroup*>* _systemWorkGroups) 
+:	m_nextSystemId(-1), m_systemIdManager(new SystemIdManager()), 
+	m_dataManager(_dataManager), m_scheduler(_scheduler), m_systemWorkGroups(_systemWorkGroups)
 {
 
 }
@@ -26,6 +27,7 @@ void SystemManager::InitializeSystems()
 	for (unsigned int groupId = 0; groupId < m_systemWorkGroups->size(); ++groupId)
 	{
 		std::vector<System*>* systems = m_systemWorkGroups->at(groupId)->GetSystems();
+		std::vector<System*> systemsToUpdate;
 
 		/*	Go through all systems in the group and initialize them	*/
 		for (unsigned int systemId = 0; systemId < systems->size(); ++systemId)
@@ -42,7 +44,13 @@ void SystemManager::InitializeSystems()
 			GenerateComponentFilter(system, FilterType::Excluded);
 
 			system->InitializeEntityList();
+
+			/* Add system to the update group if the system has atleast one update task */
+			if (system->GetUpdateTaskCount() > 0)
+				systemsToUpdate.push_back(system);
 		}
+
+		m_scheduler->AddUpdateGroup(systemsToUpdate);
 	}
 }
 
@@ -59,7 +67,7 @@ void SystemManager::AddEntityToSystem(unsigned int _entityId, System* _system)
 	if (!_system->HasEntity(_entityId))
 	{
 		_system->AddEntityToSystem(_entityId);
-		_system->OnEntityAdded(_entityId);
+		//_system->OnEntityAdded(_entityId);
 	}
 }
 
@@ -68,7 +76,7 @@ void SystemManager::RemoveEntityFromSystem(unsigned int _entityId, System* _syst
 	if (_system->HasEntity(_entityId))
 	{
 		_system->RemoveEntityFromSystem(_entityId);
-		_system->OnEntityRemoved(_entityId);
+		//_system->OnEntityRemoved(_entityId);
 	}
 }
 

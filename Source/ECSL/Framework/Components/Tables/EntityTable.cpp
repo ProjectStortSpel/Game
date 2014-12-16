@@ -10,8 +10,8 @@ EntityTable::EntityTable(unsigned int _entityCount, unsigned int _componentTypeC
 
 	/* Each component state in every entity equals one bit, either it has the component (1) or it doesn't (0) */
 	m_componentByteCount = BitSet::GetByteCount(_componentTypeCount);
-	m_componentIntCount = BitSet::GetIntCount(_componentTypeCount);
-	m_dataTable = new DataArray(_entityCount, 1 + m_componentIntCount * BitSet::GetIntByteSize());
+	m_componentIntCount = BitSet::GetDataTypeCount(_componentTypeCount);
+	m_dataTable = new DataArray(_entityCount, 1 + m_componentIntCount * BitSet::GetDataTypeByteSize());
 
 	/* All entity id slots are available from the beginning */
 	m_availableEntityIds = new std::stack<unsigned int>();
@@ -123,13 +123,13 @@ void EntityTable::ClearEntityData(unsigned int _entityId)
 void EntityTable::GetEntityComponents(std::vector<unsigned int>& _out, unsigned int _entityId)
 {
 	BitSet::DataType* componentBitSet = (BitSet::DataType*)(m_dataTable->GetData(_entityId, 1));
-	unsigned int bitCount = BitSet::GetIntByteSize() * 8;
+	unsigned int bitCount = BitSet::GetDataTypeByteSize() * 8;
 	for (unsigned int bitSetIndex = 0; bitSetIndex < m_componentIntCount; ++bitSetIndex)
 	{
 		for (unsigned int bitIndex = 0; bitIndex < bitCount; ++bitIndex)
 		{
 			if (componentBitSet[bitSetIndex] & ((BitSet::DataType)1 << (bitIndex)))
-				_out.push_back(bitSetIndex * BitSet::GetIntByteSize() + bitIndex);
+				_out.push_back(bitSetIndex * BitSet::GetDataTypeByteSize() + bitIndex);
 		}
 	}
 }

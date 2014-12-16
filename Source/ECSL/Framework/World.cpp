@@ -4,9 +4,10 @@ using namespace ECSL;
 
 World::World(unsigned int _entityCount, std::vector<SystemWorkGroup*>* _systemWorkGroups, std::vector<unsigned int>* _componentTypeIds)
 {
+	m_scheduler = new Scheduler();
 	m_dataManager = new DataManager(_entityCount, _componentTypeIds);
-	m_systemManager = new SystemManager(m_dataManager, _systemWorkGroups);
-	m_simulation = new Simulation(m_dataManager, m_systemManager);
+	m_systemManager = new SystemManager(m_dataManager, m_scheduler, _systemWorkGroups);
+	m_simulation = new Simulation(m_dataManager, m_scheduler, m_systemManager);
 
 	m_dataManager->InitializeTables();
 	m_systemManager->InitializeSystems();
@@ -15,6 +16,7 @@ World::World(unsigned int _entityCount, std::vector<SystemWorkGroup*>* _systemWo
 World::~World()
 {
 	delete(m_simulation);
+	delete(m_scheduler);
 	delete(m_dataManager);
 	delete(m_systemManager);
 }

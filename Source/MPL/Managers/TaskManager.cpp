@@ -23,7 +23,7 @@ TaskManager& TaskManager::GetInstance()
 
 void TaskManager::CreateSlaves()
 {
-	unsigned int availableThreadCount = ThreadHelper::GetAvailableThreadCount();
+	unsigned int availableThreadCount = 3;//ThreadHelper::GetAvailableThreadCount();
 	for (unsigned int i = 0; i < availableThreadCount; ++i)
 	{
 		SlaveThread* slave = new SlaveThread(m_taskPool);
@@ -70,7 +70,7 @@ void TaskManager::WaitFor(TaskId _id)
 		WorkItem* workItem = m_taskPool->FetchWork();
 		if (workItem != 0)
 		{
-			workItem->Work(TaskInfo(0, 0), (void*)0);
+			workItem->Work(workItem->Data);
 			m_taskPool->WorkDone(workItem);
 		}
 	}

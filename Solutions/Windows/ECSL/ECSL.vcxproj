@@ -31,7 +31,7 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataMap.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataTable.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\EntityTable.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Multithreading\ECSLScheduler.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Multithreading\Scheduler.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Multithreading\SystemTask.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\ComponentTypeReader.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\Parser.h" />
@@ -62,7 +62,7 @@
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataMap.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataTable.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\EntityTable.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Multithreading\ECSLScheduler.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Multithreading\Scheduler.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Multithreading\SystemTask.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\ComponentTypeReader.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\Parser.cpp" />

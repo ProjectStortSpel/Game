@@ -3,7 +3,6 @@
 
 #include <SDL/SDL.h>
 #include "TaskId.h"
-#include "TaskInfo.h"
 #include "WorkItem.h"
 
 namespace MPL

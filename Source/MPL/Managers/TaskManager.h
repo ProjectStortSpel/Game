@@ -6,7 +6,6 @@
 #include <map>
 #include "MPL/Framework/Tasks/TaskPool.h"
 #include "MPL/Framework/Threads/SlaveThread.h"
-#include "MPL/Interfaces/Scheduler.h"
 
 namespace MPL
 {
@@ -24,6 +23,8 @@ namespace MPL
 		void AddChildren(TaskId _id, std::vector<WorkItem*>* _workItems);
 		void FinishAdd(TaskId _id);
 		void WaitFor(TaskId _id);
+
+		unsigned int GetSlavesCount() { return (unsigned int)m_slaves->size(); }
 
 	private:
 		TaskManager();
