@@ -192,7 +192,7 @@ void GameCreator::StartGame()
 		/*	Update world (systems, entities etc)	*/
 		m_world->Update(dt);
 		
-		LuaEmbedder::CollectGarbage(1);
+		//LuaEmbedder::CollectGarbage(1);
 		std::stringstream ss;
 		ss << "Lua memory usage: " << LuaEmbedder::GetMemoryUsage() << " bytes";
 		m_graphics->RenderSimpleText(ss.str(), 20, 1);

@@ -2,8 +2,9 @@
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/components/?.lua"
 require "components"
 require "lightcomponents"
-require "maplogiccomponents"
-require "playerlogiccomponents"
+require "mapcomponents"
+require "playercomponents"
+require "cardcomponents"
 
 
 -- Systems
@@ -11,8 +12,9 @@ package.path = package.path .. ";../../../Externals/content/scripting/storaspel/
 require "movementsystem"
 require "networkmessagessystem"
 require "mapcreationsystem"
+require "maplogicsystem"
 require "moveplayersystem"
-require "cardsystem"
+require "cardlogicsystem"
 require "discosystem"
 
 -- Templates
@@ -24,17 +26,22 @@ require "map"
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(MovementSystem)
 worldCreator:AddSystemToCurrentGroup(networkMessagesSystem)
+worldCreator:AddSystemToCurrentGroup(PlayerMovementSystem)
 worldCreator:AddSystemToCurrentGroup(MapCreationSystem)
+
+-- Map logic
+worldCreator:AddSystemToCurrentGroup(NewRoundSystem)
+worldCreator:AddSystemToCurrentGroup(NewStepSystem)
+worldCreator:AddSystemToCurrentGroup(RespawnSystem)
+worldCreator:AddSystemToCurrentGroup(WaterMovementSystem)
+
+-- Card logic
 worldCreator:AddSystemToCurrentGroup(ForwardSystem)
 worldCreator:AddSystemToCurrentGroup(BackwardSystem)
 worldCreator:AddSystemToCurrentGroup(RightTurnSystem)
 worldCreator:AddSystemToCurrentGroup(LeftTurnSystem)
 worldCreator:AddSystemToCurrentGroup(TurnAroundSystem)
-worldCreator:AddSystemToCurrentGroup(TestMovementSystem)
-worldCreator:AddSystemToCurrentGroup(RespawnSystem)
-worldCreator:AddSystemToCurrentGroup(NewRoundSystem)
-worldCreator:AddSystemToCurrentGroup(NewStepSystem)
-worldCreator:AddSystemToCurrentGroup(WaterMovementSystem)
+
 worldCreator:AddSystemToCurrentGroup(CardDeckSystem)
 
 worldCreator:AddSystemToCurrentGroup(DiscoSystem)
