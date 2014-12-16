@@ -25,6 +25,9 @@ void SyncEntitiesSystem::Initialize()
 	/*	Rendersystem wants Network	*/
 	AddComponentTypeToFilter("SyncNetwork", ECSL::FilterType::Mandatory);
 
+	m_numberOfBitSets = ECSL::BitSet::GetIntCount(ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount());
+	m_componentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("ChangedComponentsNetwork");
+
 	printf("SyncEntitiesSystem initialized!\n");
 }
 
@@ -41,17 +44,25 @@ void SyncEntitiesSystem::Update(float _dt)
 			for (int i = 0; i < entities.size(); ++i)
 			{
 				ECSL::BitSet::DataType* data;
-				data = (ECSL::BitSet::DataType*)GetComponent(entities[i], "ChangedComponentsNetwork", 0);
-				std::vector<unsigned int> changedComponents;
-				ECSL::BitSet::BitSetConverter::BitSetToArray
-					(
-					changedComponents,
-					(const ECSL::BitSet::DataType*)data,
-					ECSL::BitSet::GetIntCount(ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount())
-					);
+				data = (ECSL::BitSet::DataType*)GetComponent(entities[i], m_componentId, 0);
+				bool hasChanged = false;
+				for (int n = 0; n < m_numberOfBitSets; ++n)
+					if (data[n] != 0)
+					{
+						hasChanged = true;
+						break;
+					}
 
-				if (changedComponents.size() > 0)
+
+				if (hasChanged)
 				{
+					std::vector<unsigned int> changedComponents;
+					ECSL::BitSet::BitSetConverter::BitSetToArray
+						(
+						changedComponents,
+						(const ECSL::BitSet::DataType*)data,
+						ECSL::BitSet::GetIntCount(ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount())
+						);
 					Network::Packet* p = NetworkInstance::GetNetworkHelper()->WriteEntityDelta(server->GetPacketHandler(), entities[i], changedComponents);
 					server->Broadcast(p);
 				}
