@@ -46,6 +46,7 @@ namespace LuaBridge
 		int Host();
 		int Stop();
 		int IsRunning();
+		int Kick();
 
 		int SendEntity();
 		int SendEntityKill();
@@ -67,6 +68,8 @@ namespace LuaBridge
 			LuaEmbedder::AddFunction("Update", &Update, "Net");//
 
 			LuaEmbedder::AddFunction("ResetNetworkMaps", &ResetNetworkMaps, "Net");//
+
+			LuaEmbedder::AddFunction("Kick", &Kick, "Net");
 
 			//LuaEmbedder::AddFunction("WriteByte", &WriteByte, "Net");
 			LuaEmbedder::AddFunction("WriteFloat", &WriteFloat, "Net");//
@@ -417,6 +420,23 @@ namespace LuaBridge
 				}
 
 				server->Broadcast(p, nc);
+			}
+			return 0;
+		}
+		int Kick()
+		{
+			Network::ServerNetwork* server = NetworkInstance::GetServer();
+			if (server->IsRunning())
+			{
+				std::string ip = LuaEmbedder::PullString(1);
+				unsigned int port = LuaEmbedder::PullInt(2);
+				std::string reason = "";
+
+				if (LuaEmbedder::IsString(3))
+					reason = LuaEmbedder::PullString(3);
+
+				Network::NetConnection nc(ip.c_str(), port);
+				NetworkInstance::GetServer()->Kick(nc, reason.c_str());
 			}
 			return 0;
 		}

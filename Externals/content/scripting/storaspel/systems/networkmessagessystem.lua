@@ -41,8 +41,8 @@ end
 networkMessagesSystem.OnConnectedToServer = function(self, _ip, _port)
 	local id = Net.StartPack("Username")
 	Net.WriteString(id, "Username_Lua")
-	Net.Send(id)
-	local s = "[Client] Connected to server " .. _ip .. ":" .. _port
+	Net.SendToServer(id)
+	local s = "[Client] fgfghkdfgbdkfgjdojhkljfgjhkldfgklö Connected to server " .. _ip .. ":" .. _port
 	Console.Print(s)
 end
 networkMessagesSystem.OnDisconnectedFromServer = function(self, _ip, _port)

@@ -7,14 +7,9 @@ end
 ReconnectSystem.OnUsername = function(id, ipAddress, port)
 	Console.Print("ReconnectSystem.OnUsername");
 	
-	local name = "user" -- ipAddress .. port;
+	local name = ipAddress .. port;
 	local active = false;
-	
-	Console.Print("Name: " .. name);
-	Console.Print("Id: " .. id);
-	Console.Print("IpAddress: " .. ipAddress);
-	Console.Print("Port: " .. tostring(port));
-	
+
 	local eId = world:CreateNewEntity("User");
 	world:SetComponent(eId, "Username", "Name", name);
 	world:SetComponent(eId, "NetConnection", "IpAddress", ipAddress);
@@ -33,15 +28,12 @@ ReconnectSystem.Initialize = function(self)
 	Net.Receive("Username", ReconnectSystem.OnUsername);
 	
 	print("ReconnectSystem initialized!")
-	
 end
 ReconnectSystem.OnEntityAdded = function(self, entityId)
-	Console.Print("ReconnectSystem.OnEntityAdded");
 
 	local match = false;
 	local matchId = 0;
 	
-	Console.Print("Entityid: " .. entityId);
 	local username 	= self:GetComponent(entityId, "Username", "Name");
 	local ipAddress = self:GetComponent(entityId, "NetConnection", "IpAddress");
 	local port 		= self:GetComponent(entityId, "NetConnection", "Port");
@@ -50,15 +42,11 @@ ReconnectSystem.OnEntityAdded = function(self, entityId)
 	local entites = self:GetEntities();
 	for i = 1, #entites do
 	
-		Console.Print("Entityid2: " .. entites[i]);
-	
 		if entityId == math.floor(entites[i]) then
-			Console.Print("id1: " .. entityId);
-			Console.Print("id2: " .. entites[i]);
 		else
+		
 			local uname = self:GetComponent(entites[i], "Username", "Name");
-			Console.Print("Uname: " .. uname:GetString());
-			
+
 			if username:GetString() == uname:GetString() then
 				match = true;
 				matchId = math.floor(entites[i]);
@@ -76,12 +64,12 @@ ReconnectSystem.OnEntityAdded = function(self, entityId)
 		local isActive = self:GetComponent(matchId, "NetConnection", "Active");
 		
 		if isActive:GetBool() then
-			Console.Print("isActive");
+		
 			local oldIp 	= self:GetComponent(matchId, "NetConnection", "IpAddress");
 			local oldPort	= self:GetComponent(matchId, "NetConnection", "Port");
 			local reason	= "ReconnectSystem kicked you.";
 			
-			Server.Kick(oldIp:GetString(), oldPort:GetInt(), reason);
+			Net.Kick(oldIp:GetString(), oldPort:GetInt(), reason);
 			
 		end
 		
