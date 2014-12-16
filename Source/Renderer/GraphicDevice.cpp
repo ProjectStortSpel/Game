@@ -49,6 +49,7 @@ bool GraphicDevice::Init()
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	if (!InitForward()) { ERRORMSG("INIT FORWARD FAILED\n"); return false; }
 	if (!InitSkybox()) { ERRORMSG("INIT SKYBOX FAILED\n"); return false; }
+	if (!InitRandomVector()) { ERRORMSG("INIT RANDOMVECTOR FAIELD\n"); return false; }
 	if (!InitTextRenderer()) { ERRORMSG("INIT TEXTRENDERER FAILED\n"); return false; }
 		m_vramUsage += (m_textRenderer.GetArraySize() * sizeof(int));
 	if (!InitLightBuffers()) { ERRORMSG("INIT LIGHTBUFFER FAILED\n"); return false; }
@@ -117,7 +118,7 @@ void GraphicDevice::Render()
 	glViewport(0, 0, m_clientWidth, m_clientHeight);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glClearColor(0.1, 0.1, 0.15, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	
 	m_deferredShader1.UseProgram();
 	
@@ -186,12 +187,14 @@ void GraphicDevice::Render()
 
 	m_compDeferredPass2Shader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
 	mat4 inverseProjection = glm::inverse(*projectionMatrix);
-	m_compDeferredPass2Shader.SetUniVariable("invProjection", mat4x4, &inverseProjection);
+	m_compDeferredPass2Shader.SetUniVariable("InvProjection", mat4x4, &inverseProjection);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_depthBuf);
 
 	glBindImageTexture(1, m_colorTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
+
+	glBindImageTexture(2, m_randomVectors, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
 
 	//---Light buffers----------
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer);
@@ -504,6 +507,14 @@ bool GraphicDevice::InitSkybox()
 	m_skyBoxShader.UseProgram();
 	m_skybox = new SkyBox(texHandle, m_camera->GetFarPlane());
 	m_vramUsage += (w*h * 6 * 4 * sizeof(float));
+
+	return true;
+}
+
+bool GraphicDevice::InitRandomVector()
+{
+	int texSizeX, texSizeY;
+	m_randomVectors = AddTexture("content/textures/vectormap.png", GL_TEXTURE21);
 
 	return true;
 }

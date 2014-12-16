@@ -9,7 +9,6 @@
 #include "Systems/RenderRemoveSystem.h"
 #include "Systems/ResetChangedSystem.h"
 #include "Systems/PointlightSystem.h"
-#include "Systems/ReceivePacketSystem.h"
 
 #include "NetworkInstance.h"
 #include "ECSL/ECSL.h"
@@ -20,7 +19,6 @@
 GameCreator::GameCreator() :
 m_graphics(0), m_input(0), m_world(0), m_console(0), m_consoleManager(Console::ConsoleManager::GetInstance()), m_frameCounter(&Utility::FrameCounter::GetInstance())
 {
-	
 }
 
 GameCreator::~GameCreator()
@@ -70,6 +68,13 @@ void GameCreator::InitializeNetwork()
 	NetworkInstance::InitClient();
 	NetworkInstance::InitServer();
 	NetworkInstance::InitNetworkHelper(&m_world);
+
+	Network::NetMessageHook hook = std::bind(&GameCreator::LuaPacket, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	NetworkInstance::GetClient()->AddNetworkHook("LuaPacket", hook);
+	NetworkInstance::GetServer()->AddNetworkHook("LuaPacket", hook);
+
+	Network::NetEvent netEvent = std::bind(&GameCreator::OnConnectedToServer, this, std::placeholders::_1, std::placeholders::_2);
+	NetworkInstance::GetClient()->SetOnConnectedToServer(netEvent);
 }
 
 void GameCreator::InitializeLua() 
@@ -127,7 +132,7 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	worldCreator.AddLuaSystemToCurrentGroup(new ModelSystem(m_graphics));
 
 	worldCreator.AddLuaSystemToCurrentGroup(new SyncEntitiesSystem());
-	worldCreator.AddLuaSystemToCurrentGroup(new ReceivePacketSystem());
+	//worldCreator.AddLuaSystemToCurrentGroup(new ReceivePacketSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderSystem(m_graphics));
 	//worldCreator.AddLuaSystemToCurrentGroup(new ReconnectSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderRemoveSystem(m_graphics));
@@ -174,7 +179,9 @@ void GameCreator::StartGame()
 		/*	Update world (systems, entities etc)	*/
 		m_world->Update(dt);
 		
-		LuaEmbedder::CollectGarbage(1);
+		UpdateNetwork(dt);
+		//LuaEmbedder::CollectGarbage(1);
+
 		std::stringstream ss;
 		ss << "Lua memory usage: " << LuaEmbedder::GetMemoryUsage() << " bytes";
 		m_graphics->RenderSimpleText(ss.str(), 20, 1);
@@ -189,6 +196,36 @@ void GameCreator::StartGame()
 
 		m_frameCounter->Tick();
 	}
+}
+
+void GameCreator::UpdateNetwork(float _dt)
+{
+	Network::ServerNetwork* server = NetworkInstance::GetServer();
+	if (server->IsRunning())
+	{
+		server->Update(_dt);
+		while (server->PopAndExecutePacket() > 0) {}
+	}
+
+	Network::ClientNetwork* client = NetworkInstance::GetClient();
+	if (client->IsConnected())
+	{
+		client->Update(_dt);
+		while (client->PopAndExecutePacket() > 0) {}
+	}
+}
+
+void GameCreator::LuaPacket(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
+{
+	std::ostringstream ss;
+	ss << _id;
+
+	char* function = _ph->ReadString(_id);
+
+	LuaEmbedder::PushString(ss.str());
+	LuaEmbedder::PushString(_nc.GetIpAddress());
+	LuaEmbedder::PushInt((int)_nc.GetPort());
+	LuaEmbedder::CallSavedFunction(function, 3);
 }
 
 void GameCreator::UpdateConsole()
@@ -307,31 +344,46 @@ void GameCreator::Reload(std::vector<Console::Argument>* _args)
 {
 	if (m_world)
 		delete m_world;
-	NetworkInstance::DestroyClient();
-	NetworkInstance::DestroyServer();
-	NetworkInstance::DestroyNetworkHelper();
+	NetworkInstance::GetNetworkHelper()->ResetNetworkMaps();
+	bool server = LuaEmbedder::PullBool("Server");
+	bool client = LuaEmbedder::PullBool("Client");
 	LuaEmbedder::Quit();
 	ECSL::ComponentTypeManager::GetInstance().Clear();
 	ECSL::EntityTemplateManager::GetInstance().Clear();
 
 
 	InitializeLua();
+	LuaEmbedder::AddBool("Server", server);
+	LuaEmbedder::AddBool("Client", client);
 	m_graphics->Clear();
-	InitializeNetwork();
 	InitializeWorld(m_gameMode);
-
 	m_console->SetWorld(m_world);
+}
+
+void GameCreator::OnConnectedToServer(Network::NetConnection _nc, const char* _message)
+{
+ 	std::vector<Console::Argument>* args = new std::vector<Console::Argument>();
+	m_gameMode = "storaspel";
+	Reload(args);
+	delete args;
 }
 
 void GameCreator::GameMode(std::vector<Console::Argument>* _args)
 {
-	if (_args->size() != 1)
-		return;
-	if (_args->at(0).ArgType != Console::ArgumentType::Text)
-		return;
+	if (_args->size() == 0)
+	{
+		m_gameMode = "storaspel";
+		Reload(_args);
+	}
+	else if (_args->size() == 1)
+	{
+		if (_args->at(0).ArgType == Console::ArgumentType::Text)
+		{
+			std::string gameMode = _args->at(0).Text;
+			m_gameMode = gameMode;
 
-	std::string gameMode = _args->at(0).Text;
-	m_gameMode = gameMode;
-
-	Reload(_args);
+			Reload(_args);
+		}
+	}
+	return;	
 }

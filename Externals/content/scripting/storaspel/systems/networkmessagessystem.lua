@@ -2,7 +2,7 @@ networkMessagesSystem = System()
 
 networkMessagesSystem.Update = function(self, dt)
 
-	Net.Update(dt)
+	--Net.Update(dt)
 	
 	--if Server.IsRunning() then
 	--	while Server.HandlePacket() > 0 do	end

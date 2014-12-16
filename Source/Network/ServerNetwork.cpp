@@ -194,9 +194,12 @@ bool ServerNetwork::Start()
 	*m_running = false;
 
 	m_listenSocket = ISocket::CreateSocket();
-	m_listenSocket->SetNonBlocking(true);
+	m_listenSocket->SetNonBlocking(false);
 	m_listenSocket->Bind(*m_incomingPort);
 	m_listenSocket->SetNoDelay(true);
+
+	if (!m_listenSocket->SetNoDelay(true))
+		printf("Failed to set no delay\n");
 
 	if (NET_DEBUG)
 	{
@@ -385,7 +388,11 @@ void ServerNetwork::ListenForConnections(void)
 		if (!newConnection)
 			continue;
 
-		newConnection->SetNoDelay(true);
+		//newConnection->SetNonBlocking(true);
+
+		if (!newConnection->SetNoDelay(true))
+			printf("Failed to set no delay\n");
+
 		NetConnection nc = newConnection->GetNetConnection();
 
 		m_connectedClientsLock->lock();

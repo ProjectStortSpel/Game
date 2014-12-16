@@ -2,18 +2,25 @@
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/components/?.lua"
 require "components"
 require "lightcomponents"
-require "maplogiccomponents"
-require "playerlogiccomponents"
+require "mapcomponents"
+require "playercomponents"
+require "cardcomponents"
 
 
 -- Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
 require "movementsystem"
 require "networkmessagessystem"
+
+if Server then
 require "mapcreationsystem"
+end
+require "maplogicsystem"
+
 require "moveplayersystem"
 require "networkconnectsystem"
 require "cardsystem"
+require "cardlogicsystem"
 require "discosystem"
 
 -- Templates
@@ -25,13 +32,15 @@ require "map"
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(MovementSystem)
 worldCreator:AddSystemToCurrentGroup(networkMessagesSystem)
+if Server then
 worldCreator:AddSystemToCurrentGroup(MapCreationSystem)
+end
 worldCreator:AddSystemToCurrentGroup(ForwardSystem)
 worldCreator:AddSystemToCurrentGroup(BackwardSystem)
 worldCreator:AddSystemToCurrentGroup(RightTurnSystem)
 worldCreator:AddSystemToCurrentGroup(LeftTurnSystem)
 worldCreator:AddSystemToCurrentGroup(TurnAroundSystem)
-worldCreator:AddSystemToCurrentGroup(TestMovementSystem)
+worldCreator:AddSystemToCurrentGroup(PlayerMovementSystem)
 worldCreator:AddSystemToCurrentGroup(RespawnSystem)
 worldCreator:AddSystemToCurrentGroup(NewRoundSystem)
 worldCreator:AddSystemToCurrentGroup(NetworkConnectSystem)

@@ -129,7 +129,8 @@ bool ClientNetwork::Connect()
 		*m_socketBound = true;
 	}
 
-	m_socket->SetNoDelay(true);
+	if (!m_socket->SetNoDelay(true))
+		printf("Failed to set no delay CLIENT\n");
 
 	bool connected = false;
 	//for (int i = 0; i < 5; ++i)
@@ -149,7 +150,7 @@ bool ClientNetwork::Connect()
 	}
 
 	*m_connected = true;
-	m_socket->SetNonBlocking(true);
+	m_socket->SetNonBlocking(false);
 
 	uint64_t id = m_packetHandler->StartPack(NetTypeMessageId::ID_PASSWORD_ATTEMPT);
 	m_packetHandler->WriteString(id, m_password->c_str());
