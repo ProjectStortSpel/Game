@@ -40,7 +40,7 @@ public:
 		SlerpQuaternion()
 		slerp from this to target quaternion
 	*/
-	void SlerpQuaternion( Quaternion *target, float t);
+	void SlerpQuaternion(Quaternion *from, Quaternion *target, float t);
 
 	~Quaternion();
 

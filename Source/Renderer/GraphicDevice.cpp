@@ -117,7 +117,7 @@ void GraphicDevice::Render()
 	glViewport(0, 0, m_clientWidth, m_clientHeight);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glClearColor(0.1, 0.1, 0.15, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	
 	m_deferredShader1.UseProgram();
 	
@@ -186,7 +186,7 @@ void GraphicDevice::Render()
 
 	m_compDeferredPass2Shader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
 	mat4 inverseProjection = glm::inverse(*projectionMatrix);
-	m_compDeferredPass2Shader.SetUniVariable("invProjection", mat4x4, &inverseProjection);
+	m_compDeferredPass2Shader.SetUniVariable("InvProjection", mat4x4, &inverseProjection);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_depthBuf);

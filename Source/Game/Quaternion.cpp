@@ -165,13 +165,13 @@ void Quaternion::EulerToQuaternion( float roll, float pitch, float yaw )
 	this->m_z = cos_roll * cos_pitch * sin_yaw - sin_roll * sin_pitch * cos_yaw;
 }
 
-void Quaternion::SlerpQuaternion(Quaternion *target, float t)
+void Quaternion::SlerpQuaternion(Quaternion *from, Quaternion *target, float t)
 {
 	float           target1[4];
 	double			omega, cosom, sinom, scale0, scale1;
 
-	cosom = this->m_x * target->m_x + this->m_y * target->m_y + this->m_z * target->m_z
-		+ this->m_w * target->m_w;
+	cosom = from->m_x * target->m_x + from->m_y * target->m_y + from->m_z * target->m_z
+		+ from->m_w * target->m_w;
 
 	if (cosom < 0.0f)
 	{
@@ -201,10 +201,10 @@ void Quaternion::SlerpQuaternion(Quaternion *target, float t)
 		scale1 = t;
 	}
 
-	this->m_x = scale0 * this->m_x + scale1 * target1[0];
-	this->m_y = scale0 * this->m_y + scale1 * target1[1];
-	this->m_z = scale0 * this->m_z + scale1 * target1[2];
-	this->m_w = scale0 * this->m_w + scale1 * target1[3];
+	this->m_x = scale0 * from->m_x + scale1 * target1[0];
+	this->m_y = scale0 * from->m_y + scale1 * target1[1];
+	this->m_z = scale0 * from->m_z + scale1 * target1[2];
+	this->m_w = scale0 * from->m_w + scale1 * target1[3];
 }
 
 Quaternion::~Quaternion()

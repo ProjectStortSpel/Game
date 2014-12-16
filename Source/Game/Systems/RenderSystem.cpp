@@ -115,9 +115,6 @@ void RenderSystem::UpdateMatrix(unsigned int _entityId)
 
 	*Matrix *= q_f.QuaternionToMatrix();
 
-	//*Matrix *= glm::rotate(Rotation[0], glm::vec3(0, 0, 1)); // quaternions?????
-	//*Matrix *= glm::rotate(Rotation[1], glm::vec3(0, 1, 0)); // quaternions?????
-	//*Matrix *= glm::rotate(Rotation[2], glm::vec3(1, 0, 0)); // quaternions?????
 	*Matrix *= glm::scale(glm::vec3(Scale[0], Scale[1], Scale[2]));
 
 	ComponentHasChanged(_entityId, m_renderId);
