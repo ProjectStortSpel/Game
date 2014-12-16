@@ -21,7 +21,7 @@ public:
 	void InitializeConsole();
 	void InitializeInput();
 	void InitializeNetwork();
-	void InitializeWorld();
+	void InitializeWorld(std::string _gameMode);
 	void InitializeLua();
 	
 
@@ -33,6 +33,7 @@ private:
 	void UpdateConsole();
 	void RenderConsole();
 	
+	void GameMode(std::vector<Console::Argument>* _args);
 	void Reload(std::vector<Console::Argument>* _args);
 
 	void NetUsername(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _nc);
@@ -47,6 +48,7 @@ private:
 	TextInput					m_consoleInput;
 	Utility::FrameCounter*		m_frameCounter;
 	std::string					m_userName;
+	std::string					m_gameMode;
 };
 
 #endif
