@@ -30,7 +30,7 @@ MapCreationSystem.AddPlayers = function(self)
 		world:CreateComponentAndAddTo("SyncNetwork", entity)
 		local mapPos = {i,12}
 		--local mapPos = {i, 6}
-		self:SetPosition(entity, mapPos[1], 1.0, mapPos[2])
+		PlayerMovementSystem:SetPosition(entity, mapPos[1], 1.0, mapPos[2])
 		local comp = self:GetComponent(entity, "Spawn", 0)
 		comp:SetInt2(mapPos[1], mapPos[2])
 	end
@@ -170,31 +170,6 @@ MapCreationSystem.AddGroundTileBelow = function(self, posX, posZ)
 	
 	--table.insert(self.entities, groundEntity)
 end 
-
-MapCreationSystem.SetPosition = function(self, entity, posX, posY, posZ)
-	local mapPosComp = self:GetComponent(entity, "MapPosition", 0)
-    local posComp = self:GetComponent(entity, "Position", 0)
-    mapPosComp:SetInt2(posX, posZ)
-    posComp:SetFloat3(posX, posY, posZ)
-	
-	local checkpointID = self:GetCheckPointId(posX, posZ)
-	
-	if -1 ~= checkpointID then
-		local targetComp = self:GetComponent(entity, "TargetCheckpoint", 0)
-		local targetCheckPointID = targetComp:GetInt()
-		
-		if targetCheckPointID == checkpointID then
-			targetComp:SetInt(checkpointID + 1)
-			local spawnComp = self:GetComponent(entity, "Spawn", 0)
-			spawnComp:SetInt2(posX, posZ)
-		end	
-	elseif self:TileIsVoid(posX, posZ) then
-		--print("Tile Is Void", posX, posY)
-		world:CreateComponentAndAddTo("InactivePlayer", entity)
-		
-	end
-	
-end
 
 MapCreationSystem.GetCheckPointId = function(self, posX, posY)
 	
