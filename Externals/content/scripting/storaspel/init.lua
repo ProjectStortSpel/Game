@@ -36,5 +36,6 @@ worldCreator:AddSystemToCurrentGroup(NewRoundSystem)
 worldCreator:AddSystemToCurrentGroup(NewStepSystem)
 worldCreator:AddSystemToCurrentGroup(WaterMovementSystem)
 worldCreator:AddSystemToCurrentGroup(CardDeckSystem)
+worldCreator:AddSystemToCurrentGroup(GetCardsSystem)
 
 worldCreator:AddSystemToCurrentGroup(DiscoSystem)
