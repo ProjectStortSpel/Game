@@ -110,7 +110,7 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	gameMode << "../../../Externals/content/scripting/";
 	gameMode << _gameMode;
 	gameMode << "/init.lua";
-
+	std::string lol = gameMode.str();
 	if (!LuaEmbedder::Load(gameMode.str()))
 	  return;
 
@@ -197,7 +197,7 @@ void GameCreator::StartGame()
 		/*	Update world (systems, entities etc)	*/
 		m_world->Update(dt);
 		
-		LuaEmbedder::CollectGarbage(1);
+		//LuaEmbedder::CollectGarbage(1);
 		std::stringstream ss;
 		ss << "Lua memory usage: " << LuaEmbedder::GetMemoryUsage() << " bytes";
 		m_graphics->RenderSimpleText(ss.str(), 20, 1);

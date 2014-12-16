@@ -55,6 +55,10 @@ namespace LuaBridge
 
 		void Embed()
 		{
+			//init global bools
+			LuaEmbedder::AddBool("Client", false);
+			LuaEmbedder::AddBool("Server", false);
+
 			//Shared
 			LuaEmbedder::AddFunction("Receive", &Receive, "Net");//
 
