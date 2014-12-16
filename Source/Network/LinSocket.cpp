@@ -278,7 +278,7 @@ int LinSocket::Send(char* _buffer, int _length, int _flags)
 		if (result == -1)
 		{
 			if (NET_DEBUG)
-				printf("Failed to send packet of size '%i'. Error Code: %d.\n", _length, WSAGetLastError());
+				printf("Failed to send packet of size '%i'. Error: %s.\n", _length, strerror(errno));
 
 			return -1;
 		}
