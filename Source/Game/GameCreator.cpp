@@ -101,16 +101,20 @@ void GameCreator::InitializeLua()
 	LuaBridge::Embed();
 }
 
-void GameCreator::InitializeWorld()
+void GameCreator::InitializeWorld(std::string _gameMode)
 {
-	//ECSL::ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("content/components");
-	//ECSL::EntityTemplateManager::GetInstance().LoadComponentTypesFromDirectory("content/scripting/storaspel/templates");
-
 	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
 	LuaEmbedder::AddObject<ECSL::WorldCreator>("WorldCreator", &worldCreator, "worldCreator");
 
-	if (!LuaEmbedder::Load("../../../Externals/content/scripting/storaspel/init.lua"))
+	std::stringstream gameMode;
+	gameMode << "../../../Externals/content/scripting/";
+	gameMode << _gameMode;
+	gameMode << "/init.lua";
+
+	if (!LuaEmbedder::Load(gameMode.str()))
 	  return;
+
+	m_gameMode = _gameMode;
 	
 	auto componentTypes = ECSL::ComponentTypeManager::GetInstance().GetComponentTypes();
 	for (auto it = componentTypes->begin(); it != componentTypes->end(); ++it)
@@ -153,11 +157,11 @@ void GameCreator::InitializeWorld()
 
 	worldCreator.AddLuaSystemToCurrentGroup(new ResetChangedSystem());
 
-	m_world = worldCreator.CreateWorld(10000);
+	m_world = worldCreator.CreateWorld(1000);
 	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
 	
 	LuaEmbedder::CallMethods<LuaBridge::LuaSystem>("System", "PostInitialize");
-
+	
 }
 
 void GameCreator::StartGame()
@@ -175,8 +179,9 @@ void GameCreator::StartGame()
 	/*	Hook console	*/
 	m_console->SetupHooks(&m_consoleManager);
 	m_consoleManager.AddCommand("Reload", std::bind(&GameCreator::Reload, this, std::placeholders::_1));
+	m_consoleManager.AddCommand("GameMode", std::bind(&GameCreator::GameMode, this, std::placeholders::_1));
 	
-	float maxDeltaTime = (float)(1.0f / 60.0f);
+	float maxDeltaTime = (float)(1.0f / 20.0f);
 	while (true)
 	{
 		float dt = std::min(maxDeltaTime, m_frameCounter->GetDeltaTime());
@@ -323,21 +328,33 @@ void GameCreator::PollSDLEvent()
 
 void GameCreator::Reload(std::vector<Console::Argument>* _args)
 {
-  if (m_world)
-	  delete m_world;
-  NetworkInstance::DestroyClient();
-  NetworkInstance::DestroyServer();
-  NetworkInstance::DestroyNetworkHelper();
-  LuaEmbedder::Quit();
-  ECSL::ComponentTypeManager::GetInstance().Clear();
-  ECSL::EntityTemplateManager::GetInstance().Clear();
-  
-  
-  InitializeLua();
-  m_graphics->Clear();
-  InitializeNetwork();
-  InitializeWorld();
+	if (m_world)
+		delete m_world;
+	NetworkInstance::DestroyClient();
+	NetworkInstance::DestroyServer();
+	NetworkInstance::DestroyNetworkHelper();
+	LuaEmbedder::Quit();
+	ECSL::ComponentTypeManager::GetInstance().Clear();
+	ECSL::EntityTemplateManager::GetInstance().Clear();
 
-  m_console->SetWorld(m_world);
+
+	InitializeLua();
+	m_graphics->Clear();
+	InitializeNetwork();
+	InitializeWorld(m_gameMode);
+
+	m_console->SetWorld(m_world);
 }
 
+void GameCreator::GameMode(std::vector<Console::Argument>* _args)
+{
+	if (_args->size() != 1)
+		return;
+	if (_args->at(0).ArgType != Console::ArgumentType::Text)
+		return;
+
+	std::string gameMode = _args->at(0).Text;
+	m_gameMode = gameMode;
+
+	Reload(_args);
+}

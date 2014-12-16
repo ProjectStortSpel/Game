@@ -8,17 +8,527 @@ namespace LuaBridge
 
 	namespace LuaNetwork
 	{
+
+		//Shared
 		int Receive();
+
+		int StartPack();
+
+		int Update();
+		int HandlePacket();
+
+		int ResetNetworkMaps();
+
+		//int WriteByte();
+		int WriteFloat();
+		//int WriteShort();
+		int WriteString();
+		int WriteBool();
+		int WriteInt();
+
+		//int ReadByte();
+		int ReadFloat();
+		//int ReadShort();
+		int ReadString();
+		int ReadBool();
+		int ReadInt();
+
+		//Client
+		int SendToServer();
+		int Connect();
+		int Disconnect();
+		int IsConnected();		
+
+		//Server
+		int Send();
+		int Broadcast();
+
+		int Host();
+		int Stop();
+		int IsRunning();
+
+		int SendEntity();
+		int SendEntityKill();
+		int BroadcastEntity();
+		int BroadcastEntityKill();
+
 
 		void Embed()
 		{
-			LuaEmbedder::AddFunction("Receive", &Receive, "Net");
+			//Shared
+			LuaEmbedder::AddFunction("Receive", &Receive, "Net");//
+
+			LuaEmbedder::AddFunction("StartPack", &StartPack, "Net");//
+
+			LuaEmbedder::AddFunction("Update", &Update, "Net");//
+
+			LuaEmbedder::AddFunction("ResetNetworkMaps", &ResetNetworkMaps, "Net");//
+
+			//LuaEmbedder::AddFunction("WriteByte", &WriteByte, "Net");
+			LuaEmbedder::AddFunction("WriteFloat", &WriteFloat, "Net");//
+			//LuaEmbedder::AddFunction("WriteShort", &WriteShort, "Net");
+			LuaEmbedder::AddFunction("WriteString", &WriteString, "Net");//
+			LuaEmbedder::AddFunction("WriteBool", &WriteBool, "Net");//
+			LuaEmbedder::AddFunction("WriteInt", &WriteInt, "Net");//
+
+			//LuaEmbedder::AddFunction("ReadByte", &ReadByte, "Net");
+			LuaEmbedder::AddFunction("ReadFloat", &ReadFloat, "Net");//
+			//LuaEmbedder::AddFunction("ReadShort", &ReadShort, "Net");
+			LuaEmbedder::AddFunction("ReadString", &ReadString, "Net");//
+			LuaEmbedder::AddFunction("ReadBool", &ReadBool, "Net");//
+			LuaEmbedder::AddFunction("ReadInt", &ReadInt, "Net");//
+
+
+			//Client
+			LuaEmbedder::AddFunction("SendToServer", &SendToServer, "Net");//
+			LuaEmbedder::AddFunction("Connect", &Connect, "Net");//
+			LuaEmbedder::AddFunction("Disconnect", &Disconnect, "Net");//
+			LuaEmbedder::AddFunction("IsConnected", &IsConnected, "Net");//
+
+			//Server
+			LuaEmbedder::AddFunction("Send", &Send, "Net");//
+			LuaEmbedder::AddFunction("Broadcast", &Broadcast, "Net");//
+
+			LuaEmbedder::AddFunction("Host", &Host, "Net");//
+			LuaEmbedder::AddFunction("Stop", &Stop, "Net");//
+			LuaEmbedder::AddFunction("IsRunning", &IsRunning, "Net");//
+
+			LuaEmbedder::AddFunction("SendEntity", &SendEntity, "Net");
+			LuaEmbedder::AddFunction("SendEntityKill", &SendEntityKill, "Net");
+			LuaEmbedder::AddFunction("BroadcastEntity", &BroadcastEntity, "Net");
+			LuaEmbedder::AddFunction("BroadcastEntityKill", &BroadcastEntityKill, "Net");
+		}
+
+		//Shared
+
+		Network::PacketHandler* GetPacketHandler()
+		{
+			Network::ServerNetwork* server = NetworkInstance::GetServer();
+			Network::ClientNetwork* client = NetworkInstance::GetClient();
+
+			Network::PacketHandler* ph = NULL;
+
+			if (server->IsRunning())
+			{
+				ph = server->GetPacketHandler();
+			}
+			else if (client->IsConnected())
+			{
+				ph = client->GetPacketHandler();
+			}
+			return ph;
 		}
 
 		int Receive()
 		{
 			std::string name = LuaEmbedder::PullString(1);
 			LuaEmbedder::SaveFunction(2, name);
+			return 0;
+		}
+
+		int StartPack()
+		{
+			Network::PacketHandler *ph = GetPacketHandler();
+
+			if (!ph)
+				return 0;
+			
+			std::string identifier = LuaEmbedder::PullString(1);
+			uint64_t id = ph->StartPack("LuaPacket");
+
+			ph->WriteString(id, identifier.c_str());
+
+			std::ostringstream ss;
+			ss << id;
+			LuaEmbedder::PushString(ss.str().c_str());
+
+			return 1;
+		}
+
+		int Update()
+		{
+			Network::ServerNetwork* server = NetworkInstance::GetServer();
+			Network::ClientNetwork* client = NetworkInstance::GetClient();
+
+			if (server->IsRunning())
+			{
+				server->Update(LuaEmbedder::PullFloat(1));
+			}
+			else if (client->IsConnected())
+			{
+				client->Update(LuaEmbedder::PullFloat(1));
+			}
+
+			return 0;
+		}
+
+		int ResetNetworkMaps()
+		{
+			NetworkInstance::GetNetworkHelper()->ResetNetworkMaps();
+			return 0;
+		}
+
+		int WriteFloat()
+		{
+			Network::PacketHandler *ph = GetPacketHandler();
+
+			if (!ph)
+				return 0;
+
+			std::string sId = LuaEmbedder::PullString(1);
+			char* end;
+			uint64_t id = strtoull(sId.c_str(), &end, 10);
+
+			ph->WriteFloat(id, LuaEmbedder::PullFloat(2));
+
+			return 0;
+		}
+		int WriteString()
+		{
+			Network::PacketHandler *ph = GetPacketHandler();
+
+			if (!ph)
+				return 0;
+
+			std::string sId = LuaEmbedder::PullString(1);
+			char* end;
+			uint64_t id = strtoull(sId.c_str(), &end, 10);
+
+			ph->WriteString(id, LuaEmbedder::PullString(2).c_str());
+
+			return 0;
+		}
+		int WriteBool()
+		{
+			Network::PacketHandler *ph = GetPacketHandler();
+
+			if (!ph)
+				return 0;
+
+			std::string sId = LuaEmbedder::PullString(1);
+			char* end;
+			uint64_t id = strtoull(sId.c_str(), &end, 10);
+
+			ph->WriteByte(id, LuaEmbedder::PullBool(2));
+
+			return 0;
+		}
+		int WriteInt()
+		{
+			Network::PacketHandler *ph = GetPacketHandler();
+
+			if (!ph)
+				return 0;
+
+			std::string sId = LuaEmbedder::PullString(1);
+			char* end;
+			uint64_t id = strtoull(sId.c_str(), &end, 10);
+
+			ph->WriteInt(id, LuaEmbedder::PullInt(2));
+
+			return 0;
+		}
+
+		int ReadFloat()
+		{
+			Network::PacketHandler *ph = GetPacketHandler();
+
+			if (!ph)
+				return 0;
+
+			std::string sId = LuaEmbedder::PullString(1);
+			char* end;
+			uint64_t id = strtoull(sId.c_str(), &end, 10);
+
+			float value = ph->ReadFloat(id);
+			LuaEmbedder::PushFloat(value);
+
+			return 1;
+		}
+		int ReadString()
+		{
+			Network::PacketHandler *ph = GetPacketHandler();
+
+			if (!ph)
+				return 0;
+
+			std::string sId = LuaEmbedder::PullString(1);
+			char* end;
+			uint64_t id = strtoull(sId.c_str(), &end, 10);
+
+			std::string value = ph->ReadString(id);
+			LuaEmbedder::PushString(value.c_str());
+
+			return 1;
+		}
+		int ReadBool()
+		{
+			Network::PacketHandler *ph = GetPacketHandler();
+
+			if (!ph)
+				return 0;
+
+			std::string sId = LuaEmbedder::PullString(1);
+			char* end;
+			uint64_t id = strtoull(sId.c_str(), &end, 10);
+
+			bool value = (bool)ph->ReadByte(id);
+			LuaEmbedder::PushBool(value);
+
+			return 1;
+		}
+		int ReadInt()
+		{
+			Network::PacketHandler *ph = GetPacketHandler();
+
+			if (!ph)
+				return 0;
+
+			std::string sId = LuaEmbedder::PullString(1);
+			char* end;
+			uint64_t id = strtoull(sId.c_str(), &end, 10);
+
+			int value = ph->ReadInt(id);
+			LuaEmbedder::PushInt(value);
+
+			return 1;
+		}
+
+		//Client
+		int SendToServer()
+		{
+			Network::ClientNetwork* client = NetworkInstance::GetClient();
+			if (client->IsConnected())
+			{
+				std::string sId = LuaEmbedder::PullString(1);
+				char* end;
+				uint64_t id = strtoull(sId.c_str(), &end, 10);
+
+				Network::Packet* p = client->GetPacketHandler()->EndPack(id);
+				client->Send(p);
+			}
+			return 0;
+		}
+
+		int Connect()
+		{
+			Network::ServerNetwork* server = NetworkInstance::GetServer();
+			Network::ClientNetwork* client = NetworkInstance::GetClient();
+			if (server->IsRunning())
+				server->Stop();
+
+			if (client->IsConnected())
+				client->Disconnect();
+
+			std::string ip = client->GetRemoteAddress();
+			unsigned int port = client->GetOutgoingPort();
+			std::string pw = client->GetServerPassword();
+
+			if (LuaEmbedder::IsString(1) && LuaEmbedder::IsInt(2) && LuaEmbedder::IsString(3))
+			{
+				ip = LuaEmbedder::PullString(1);
+				port = LuaEmbedder::PullInt(2);
+				pw = LuaEmbedder::PullString(3);
+			}
+			else if (LuaEmbedder::IsString(1) && LuaEmbedder::IsInt(2))
+			{
+				ip = LuaEmbedder::PullString(1);
+				port = LuaEmbedder::PullInt(2);
+			}
+			else if (LuaEmbedder::IsString(1))
+			{
+				ip = LuaEmbedder::PullString(1);
+			}
+
+			bool connected = client->Connect(ip.c_str(), pw.c_str(), port, 0);
+			LuaEmbedder::AddBool("Client", connected);
+			LuaEmbedder::PushBool(connected);
+
+			return 1;
+		}
+		int Disconnect()
+		{
+			Network::ClientNetwork* client = NetworkInstance::GetClient();
+			if (client->IsConnected())
+			{
+				NetworkInstance::GetClient()->Disconnect();
+				LuaEmbedder::AddBool("Client", false);
+			}
+			return 0;
+		}
+		int IsConnected()
+		{
+			LuaEmbedder::PushBool(NetworkInstance::GetClient()->IsConnected());
+			return 1;
+		}
+
+		//Server
+		int Send()
+		{
+			Network::ServerNetwork* server = NetworkInstance::GetServer();
+			if (server->IsRunning())
+			{
+				std::string sId = LuaEmbedder::PullString(1);
+
+				char* end;
+				uint64_t id = strtoull(sId.c_str(), &end, 10);
+
+				Network::Packet* p = server->GetPacketHandler()->EndPack(id);
+
+				Network::NetConnection nc;
+				if (LuaEmbedder::IsString(2) && LuaEmbedder::IsInt(3))
+				{
+					nc = Network::NetConnection(LuaEmbedder::PullString(2).c_str(), LuaEmbedder::PullInt(3));
+				}
+				else if (LuaEmbedder::IsString(2))
+				{
+					// Get Netconnection based on username
+				}
+
+				server->Send(p, nc);
+			}
+
+			return 0;
+		}
+		int Broadcast()
+		{
+			Network::ServerNetwork* server = NetworkInstance::GetServer();
+			if (server->IsRunning())
+			{
+				std::string sId = LuaEmbedder::PullString(1);
+
+				char* end;
+				uint64_t id = strtoull(sId.c_str(), &end, 10);
+
+				Network::Packet* p = server->GetPacketHandler()->EndPack(id);
+
+				Network::NetConnection nc;
+				if (LuaEmbedder::IsString(2) && LuaEmbedder::IsInt(3))
+				{
+					nc = Network::NetConnection(LuaEmbedder::PullString(2).c_str(), LuaEmbedder::PullInt(3));
+				}
+				else if (LuaEmbedder::IsString(2))
+				{
+					// Get Netconnection based on username
+				}
+
+				server->Broadcast(p, nc);
+			}
+			return 0;
+		}
+
+		int Host()
+		{
+			if (NetworkInstance::GetClient()->IsConnected())
+				NetworkInstance::GetClient()->Disconnect();
+
+			Network::ServerNetwork* server = NetworkInstance::GetServer();
+			if (server->IsRunning())
+				server->Stop();
+
+
+			std::string pw = server->GetServerPassword();
+			unsigned int port = server->GetIncomingPort();
+			unsigned int connections = server->GetMaxConnections();
+
+			if (LuaEmbedder::IsString(1) && LuaEmbedder::IsInt(2) && LuaEmbedder::IsString(3))
+			{
+				port = LuaEmbedder::PullInt(1);
+				pw = LuaEmbedder::PullString(2);
+				connections = LuaEmbedder::PullInt(3);
+			}
+			else if (LuaEmbedder::IsString(1) && LuaEmbedder::IsInt(2))
+			{
+				port = LuaEmbedder::PullInt(1);
+				pw = LuaEmbedder::PullString(2);
+			}
+			else if (LuaEmbedder::IsString(1))
+			{
+				port = LuaEmbedder::PullInt(1);
+			}
+
+			bool hosting = server->Start(port, pw.c_str(), connections);
+
+			LuaEmbedder::AddBool("Server", hosting);
+			LuaEmbedder::PushBool(hosting);
+
+			return 1;
+		}
+		int Stop()
+		{
+			Network::ServerNetwork* server = NetworkInstance::GetServer();
+			if (server->IsRunning())
+			{
+				server->Stop();
+				LuaEmbedder::AddBool("Server", false);
+			}
+
+			return 0;
+		}
+		int IsRunning()
+		{
+			LuaEmbedder::PushBool(NetworkInstance::GetServer()->IsRunning());
+
+			return 1;
+		}
+
+		int SendEntity()
+		{
+			Network::ServerNetwork* server = NetworkInstance::GetServer();
+			if (!server->IsRunning())
+				return 0;
+
+			unsigned int id = LuaEmbedder::PullInt(1);
+			std::string ip = LuaEmbedder::PullString(2);
+			unsigned int port = LuaEmbedder::PullInt(3);
+
+			Network::Packet* p = NetworkInstance::GetNetworkHelper()->WriteEntityAll(server->GetPacketHandler(), id);
+			Network::NetConnection nc(ip.c_str(), port);
+			server->Send(p, nc);
+
+			return 0;
+		}
+		int SendEntityKill()
+		{
+			Network::ServerNetwork* server = NetworkInstance::GetServer();
+			if (!server->IsRunning())
+				return 0;
+
+			unsigned int id = LuaEmbedder::PullInt(1);
+			std::string ip = LuaEmbedder::PullString(2);
+			unsigned int port = LuaEmbedder::PullInt(3);
+
+			Network::Packet* p = NetworkInstance::GetNetworkHelper()->WriteEntityKill(server->GetPacketHandler(), id);
+			Network::NetConnection nc(ip.c_str(), port);
+			server->Send(p, nc);
+
+			return 0;
+		}
+
+		int BroadcastEntity()
+		{
+			Network::ServerNetwork* server = NetworkInstance::GetServer();
+			if (!server->IsRunning())
+				return 0;
+
+			unsigned int id = LuaEmbedder::PullInt(1);
+
+			Network::Packet* p = NetworkInstance::GetNetworkHelper()->WriteEntityAll(server->GetPacketHandler(), id);
+			server->Broadcast(p);
+
+			return 0;
+		}
+		int BroadcastEntityKill()
+		{
+			Network::ServerNetwork* server = NetworkInstance::GetServer();
+			if (!server->IsRunning())
+				return 0;
+
+			unsigned int id = LuaEmbedder::PullInt(1);
+
+			Network::Packet* p = NetworkInstance::GetNetworkHelper()->WriteEntityKill(server->GetPacketHandler(), id);
+			server->Broadcast(p);
+
 			return 0;
 		}
 	}
@@ -32,7 +542,6 @@ namespace LuaBridge
 		int Disconnect();
 		int IsConnected();
 		int Update();
-		int HandlePacket();
 
 		//int WriteByte();
 		int WriteFloat();
@@ -59,7 +568,6 @@ namespace LuaBridge
 			LuaEmbedder::AddFunction("Disconnect", &Disconnect, "Client");
 			LuaEmbedder::AddFunction("IsConnected", &IsConnected, "Client");
 			LuaEmbedder::AddFunction("Update", &Update, "Client");
-			LuaEmbedder::AddFunction("HandlePacket", &HandlePacket, "Client");
 
 			//LuaEmbedder::AddFunction("WriteByte", &WriteByte, "Client");
 			LuaEmbedder::AddFunction("WriteFloat", &WriteFloat, "Client");
@@ -161,13 +669,6 @@ namespace LuaBridge
 			NetworkInstance::GetClient()->Update(LuaEmbedder::PullFloat(1));
 
 			return 0;
-		}
-		int HandlePacket()
-		{
-			int remaningPackets = NetworkInstance::GetClient()->PopAndExecutePacket();
-			LuaEmbedder::PushInt(remaningPackets);
-
-			return 1;
 		}
 
 		int WriteFloat()
@@ -284,7 +785,7 @@ namespace LuaBridge
 		int ResetNetworkMaps()
 		{
 			NetworkInstance::GetNetworkHelper()->ResetNetworkMaps();
-			return 1;
+			return 0;
 		}
 	}
 
@@ -298,7 +799,6 @@ namespace LuaBridge
 		int Stop();
 		int IsRunning();
 		int Update();
-		int HandlePacket();
 
 		//int WriteByte();
 		int WriteFloat();
@@ -329,7 +829,6 @@ namespace LuaBridge
 			LuaEmbedder::AddFunction("Stop", &Stop, "Server");
 			LuaEmbedder::AddFunction("IsRunning", &IsRunning, "Server");
 			LuaEmbedder::AddFunction("Update", &Update, "Server");
-			LuaEmbedder::AddFunction("HandlePacket", &HandlePacket, "Server");
 
 			//LuaEmbedder::AddFunction("WriteByte", &WriteByte, "Server");
 			LuaEmbedder::AddFunction("WriteFloat", &WriteFloat, "Server");
@@ -478,13 +977,6 @@ namespace LuaBridge
 			NetworkInstance::GetServer()->Update(LuaEmbedder::PullFloat(1));
 
 			return 0;
-		}
-		int HandlePacket()
-		{
-			int remainingPackets = NetworkInstance::GetServer()->PopAndExecutePacket();
-			LuaEmbedder::PushInt(remainingPackets);
-
-			return 1;
 		}
 
 		int WriteFloat()

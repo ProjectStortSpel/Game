@@ -86,6 +86,6 @@ namespace ECSL
 
 	const unsigned int DataMap::GetMemoryAllocated() const
 	{
-		return (unsigned int)(sizeof(DataMap) + m_bytesPerRow * m_dataMap->max_size());
+		return (unsigned int)(sizeof(DataMap) + m_bytesPerRow * m_dataMap->size());
 	}
 }
