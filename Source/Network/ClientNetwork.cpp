@@ -150,7 +150,7 @@ bool ClientNetwork::Connect()
 	}
 
 	*m_connected = true;
-	m_socket->SetNonBlocking(true);
+	m_socket->SetNonBlocking(false);
 
 	uint64_t id = m_packetHandler->StartPack(NetTypeMessageId::ID_PASSWORD_ATTEMPT);
 	m_packetHandler->WriteString(id, m_password->c_str());

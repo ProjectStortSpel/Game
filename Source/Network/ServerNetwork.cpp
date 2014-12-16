@@ -194,7 +194,7 @@ bool ServerNetwork::Start()
 	*m_running = false;
 
 	m_listenSocket = ISocket::CreateSocket();
-	m_listenSocket->SetNonBlocking(true);
+	m_listenSocket->SetNonBlocking(false);
 	m_listenSocket->Bind(*m_incomingPort);
 
 	if (!m_listenSocket->SetNoDelay(true))
