@@ -19,7 +19,6 @@ require "maplogicsystem"
 
 require "moveplayersystem"
 require "networkconnectsystem"
-require "cardsystem"
 require "cardlogicsystem"
 require "discosystem"
 

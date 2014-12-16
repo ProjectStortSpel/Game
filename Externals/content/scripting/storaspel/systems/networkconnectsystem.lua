@@ -79,9 +79,12 @@ NetworkConnectSystem.OnEntityAdded = function(self, entityId)
 		world:KillEntity(entityId);
 	else
 
-		world:KillEntity(entityId);
-		local reason	= "No new players allowed while a game is already active.";
-		Net.Kick(ipAddress:GetString(), port:GetInt(), reason);
+		local setActive = true;
+		world:SetComponent(entityId, "NetConnection", "Active", setActive);
+	
+		--world:KillEntity(entityId);
+		--local reason	= "No new players allowed while a game is already active.";
+		--Net.Kick(ipAddress:GetString(), port:GetInt(), reason);
 		
 		
 	end
