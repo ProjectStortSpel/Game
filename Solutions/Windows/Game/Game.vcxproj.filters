@@ -309,5 +309,17 @@
     <None Include="..\..\..\Externals\content\scripting\storaspel\components\tilecomponents.lua">
       <Filter>Scripting\Components</Filter>
     </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cardsystem.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\discosystem.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\moveplayersystem.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\networkmessagessystem.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
   </ItemGroup>
 </Project>
