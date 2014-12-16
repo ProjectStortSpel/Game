@@ -93,12 +93,6 @@
     <None Include="..\..\..\Externals\content\shaders\VSForwardShader.glsl">
       <Filter>shaders</Filter>
     </None>
-    <None Include="..\..\..\Externals\content\shaders\skyboxgs.glsl">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\shaders\skyboxps.glsl">
-      <Filter>shaders</Filter>
-    </None>
     <None Include="..\..\..\Externals\content\shaders\skyboxvs.glsl">
       <Filter>shaders</Filter>
     </None>
@@ -106,6 +100,12 @@
       <Filter>shaders</Filter>
     </None>
     <None Include="..\..\..\Externals\content\shaders\skyboxShaderVS.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\shadowShaderDeferredFS.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\shadowShaderDeferredVS.glsl">
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>

@@ -8,8 +8,6 @@
 using namespace Renderer;
 using namespace glm;
 
-float testArray[20];
-
 GraphicDevice::GraphicDevice()
 {
 	m_renderSimpleText = true;
@@ -23,6 +21,7 @@ GraphicDevice::~GraphicDevice()
 {
 	delete(m_camera);
 	delete(m_skybox);
+	delete(m_shadowMap);
 	// Delete buffers
 	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
 	{
@@ -52,10 +51,11 @@ bool GraphicDevice::Init()
 	if (!InitTextRenderer()) { ERRORMSG("INIT TEXTRENDERER FAILED\n"); return false; }
 		m_vramUsage += (m_textRenderer.GetArraySize() * sizeof(int));
 	if (!InitLightBuffers()) { ERRORMSG("INIT LIGHTBUFFER FAILED\n"); return false; }
+
+	CreateShadowMap();
 	
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
 	return true;
@@ -122,8 +122,7 @@ void GraphicDevice::Render()
 	m_deferredShader1.UseProgram();
 	
 	//--------Uniforms-------------------------------------------------------------------------
-	mat4 *projectionMatrix = m_camera->GetProjMatrix();;
-	m_deferredShader1.SetUniVariable("ProjectionMatrix", mat4x4, projectionMatrix);
+	mat4 projectionMatrix = *m_camera->GetProjMatrix();
 
 	mat4 viewMatrix = *m_camera->GetViewMatrix();
 
@@ -133,7 +132,7 @@ void GraphicDevice::Render()
 	//-- DRAW MODELS
 	for (int i = 0; i < m_modelsDeferred.size(); i++)
 	{
-		std::vector<mat4> modelViewVector(m_modelsDeferred[i].instances.size());
+		std::vector<mat4> MVPVector(m_modelsDeferred[i].instances.size());
 		std::vector<mat3> normalMatVector(m_modelsDeferred[i].instances.size());
 
 		int nrOfInstances = 0;
@@ -149,7 +148,8 @@ void GraphicDevice::Render()
 					modelMatrix = *m_modelsDeferred[i].instances[j].modelMatrix;
 
 				mat4 modelViewMatrix = viewMatrix * modelMatrix;
-				modelViewVector[nrOfInstances] = modelViewMatrix;
+				mat4 mvp = projectionMatrix * modelViewMatrix;
+				MVPVector[nrOfInstances] = mvp;
 				
 				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
 				normalMatVector[nrOfInstances] = normalMatrix;
@@ -168,7 +168,7 @@ void GraphicDevice::Render()
 		glBindTexture(GL_TEXTURE_2D, m_modelsDeferred[i].speID);
 
 		//m_modelsDeferred[i].bufferPtr->draw();
-		m_modelsDeferred[i].bufferPtr->drawInstanced(0, nrOfInstances, &modelViewVector, &normalMatVector);
+		m_modelsDeferred[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
@@ -177,6 +177,52 @@ void GraphicDevice::Render()
 
 	//m_glTimerValues.push_back(GLTimerValue("Deferred stage1: ", glTimer.Stop()));
 	//glTimer.Start();	
+
+//------- Write shadow maps depths ----------
+	glBindFramebuffer(GL_FRAMEBUFFER, m_shadowMap->GetShadowFBOHandle());
+	//glClear(GL_DEPTH_BUFFER_BIT);
+
+	m_shadowShaderDeferred.UseProgram();
+
+	glCullFace(GL_FRONT);
+	glActiveTexture(GL_TEXTURE10);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	mat4 shadowProjection = *m_shadowMap->GetProjectionMatrix();
+	//----Render geometry-----------
+	for (int i = 0; i < m_modelsDeferred.size(); i++)
+	{
+		std::vector<mat4> MVPVector(m_modelsDeferred[i].instances.size());
+		std::vector<mat3> normalMatVector(m_modelsDeferred[i].instances.size());
+
+		int nrOfInstances = 0;
+
+		for (int j = 0; j < m_modelsDeferred[i].instances.size(); j++)
+		{
+			if (m_modelsDeferred[i].instances[j].active) // IS MODEL ACTIVE?
+			{
+				mat4 modelMatrix;
+				if (m_modelsDeferred[i].instances[j].modelMatrix == NULL)
+					modelMatrix = glm::translate(glm::vec3(1));
+				else
+					modelMatrix = *m_modelsDeferred[i].instances[j].modelMatrix;
+
+				mat4 mvp = shadowProjection * (*m_shadowMap->GetViewMatrix()) * modelMatrix;
+				MVPVector[nrOfInstances] = mvp;
+				//mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
+				//normalMatVector[nrOfInstances] = normalMatrix;
+
+				nrOfInstances++;
+			}
+		}
+
+		m_modelsDeferred[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector);
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glCullFace(GL_BACK);
+//------------------------------
+
 	
 	glClear(GL_COLOR_BUFFER_BIT);
 	glDisable(GL_DEPTH_TEST);
@@ -185,7 +231,7 @@ void GraphicDevice::Render()
 	m_compDeferredPass2Shader.UseProgram();
 
 	m_compDeferredPass2Shader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
-	mat4 inverseProjection = glm::inverse(*projectionMatrix);
+	mat4 inverseProjection = glm::inverse(projectionMatrix);
 	m_compDeferredPass2Shader.SetUniVariable("invProjection", mat4x4, &inverseProjection);
 
 	glActiveTexture(GL_TEXTURE0);
@@ -212,7 +258,7 @@ void GraphicDevice::Render()
 	glViewport(0, 0, m_clientWidth, m_clientHeight);
 
 	m_forwardShader.UseProgram();
-	m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, projectionMatrix);
+	m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 	m_forwardShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
 
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer);
@@ -440,7 +486,6 @@ bool GraphicDevice::InitShaders()
 	// SkyBox
 	m_skyBoxShader.InitShaderProgram();
 	m_skyBoxShader.AddShader("content/shaders/skyboxShaderVS.glsl", GL_VERTEX_SHADER);
-	//m_skyBoxShader.AddShader("content/shaders/skyboxgs.glsl", GL_GEOMETRY_SHADER);
 	m_skyBoxShader.AddShader("content/shaders/skyboxShaderFS.glsl", GL_FRAGMENT_SHADER);
 	m_skyBoxShader.FinalizeShaderProgram();
 
@@ -456,6 +501,12 @@ bool GraphicDevice::InitShaders()
 	m_forwardShader.AddShader("content/shaders/VSForwardShader.glsl", GL_VERTEX_SHADER);
 	m_forwardShader.AddShader("content/shaders/FSForwardShader.glsl", GL_FRAGMENT_SHADER);
 	m_forwardShader.FinalizeShaderProgram();
+
+	// ShadowShader deferred geometry
+	m_shadowShaderDeferred.InitShaderProgram();
+	m_shadowShaderDeferred.AddShader("content/shaders/shadowShaderDeferredVS.glsl", GL_VERTEX_SHADER);
+	m_shadowShaderDeferred.AddShader("content/shaders/shadowShaderDeferredFS.glsl", GL_FRAGMENT_SHADER);
+	m_shadowShaderDeferred.FinalizeShaderProgram();
 
 	return true;
 }
@@ -513,36 +564,36 @@ bool GraphicDevice::InitLightBuffers()
 	glGenBuffers(1, &m_pointlightBuffer);
 
 	for (int i = 0; i < 10; i++)
-		testArray[9+i] = 0.0;		//init 0.0
+		m_lightDefaults[9+i] = 0.0;		//init 0.0
 	
 	if (m_pointlightBuffer < 0)
 		return false;
 
 	float ** tmparray = new float*[1];
-	tmparray[0] = &testArray[0];
+	tmparray[0] = &m_lightDefaults[0];
 
 	BufferPointlights(1, tmparray);
 	delete(tmparray);
 
 //--------Directional light-------------------------------------------------------------------------
-	testArray[0] = 0.0;		//dir x
-	testArray[1] = -1.0;	//dir y
-	testArray[2] = -0.6;	//dir z
+	m_lightDefaults[0] = 0.0;		//dir x
+	m_lightDefaults[1] = -1.0;	//dir y
+	m_lightDefaults[2] = -0.6;	//dir z
 	
-	testArray[3] = 0.2;		//int x
-	testArray[4] = 0.7;		//int y
-	testArray[5] = 0.7;		//int z
+	m_lightDefaults[3] = 0.2;		//int x
+	m_lightDefaults[4] = 0.7;		//int y
+	m_lightDefaults[5] = 0.7;		//int z
 	
-	testArray[6] = 0.6;		//col x
-	testArray[7] = 0.6;		//col y
-	testArray[8] = 0.65;	//col z
+	m_lightDefaults[6] = 0.6;		//col x
+	m_lightDefaults[7] = 0.6;		//col y
+	m_lightDefaults[8] = 0.65;	//col z
 
 	glGenBuffers(1, &m_dirLightBuffer);
 
 	if (m_dirLightBuffer < 0)
 		return false;
 
-	BufferDirectionalLight(&testArray[0]);
+	BufferDirectionalLight(&m_lightDefaults[0]);
 
 	return true;
 }
@@ -553,7 +604,7 @@ void GraphicDevice::BufferPointlights(int _nrOfLights, float **_lightPointers)
 	if (_nrOfLights == 0)
 	{
 		_nrOfLights = 1;
-		_lightPointers[0] = &testArray[0];
+		_lightPointers[0] = &m_lightDefaults[0];
 	}
 	m_nrOfLights = _nrOfLights;
 
@@ -582,6 +633,15 @@ void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
 	glBufferData(GL_SHADER_STORAGE_BUFFER, 9 * sizeof(float), light_data, GL_STATIC_DRAW);
 
 	delete light_data;
+}
+
+void GraphicDevice::CreateShadowMap()
+{
+	int resolution = 2048;
+	m_shadowMap = new ShadowMap(vec3(7, 10, 10), vec3(7, 0, 7), resolution);
+	m_shadowMap->CreateShadowMapTexture(GL_TEXTURE10);
+
+	m_vramUsage += (resolution*resolution*sizeof(float));
 }
 
 bool GraphicDevice::InitTextRenderer()

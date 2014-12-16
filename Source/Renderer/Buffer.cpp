@@ -56,8 +56,8 @@ bool Buffer::init(const BufferData* p_BufferData, GLsizei p_BufferDataSize,
 	}
 
 	//-------FOR INSTANCING----------------------------
-	glGenBuffers(1, &m_mvMatVBO); //gen buffer till matrisen
-	glBindBuffer(GL_ARRAY_BUFFER, m_mvMatVBO);
+	glGenBuffers(1, &m_inMatVBO); //gen buffer till matrisen
+	glBindBuffer(GL_ARRAY_BUFFER, m_inMatVBO);
 	for (int i = 0; i < 4; i++)
 	{
 		glVertexAttribPointer(5 + i, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (const GLvoid*)(sizeof(float)* 4 * i));
@@ -122,7 +122,7 @@ void Buffer::draw(GLint base, GLsizei count)
 	glBindVertexArray(0);
 }
 
-void Buffer::drawInstanced(GLint base, int instances, std::vector<glm::mat4> *mvMats, std::vector<glm::mat3> *normalMats)
+void Buffer::drawInstanced(GLint base, int instances, std::vector<glm::mat4> *inMats, std::vector<glm::mat3> *normalMats)
 {
 	// Make sure there's no weird behaviour
 	if (m_Type == None)
@@ -131,8 +131,8 @@ void Buffer::drawInstanced(GLint base, int instances, std::vector<glm::mat4> *mv
 	// Bind vertex array object
 	glBindVertexArray(m_VAO);
 
-	glBindBuffer(GL_ARRAY_BUFFER, m_mvMatVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4)*instances, &(*mvMats)[0], GL_DYNAMIC_DRAW); 
+	glBindBuffer(GL_ARRAY_BUFFER, m_inMatVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4)*instances, &(*inMats)[0], GL_DYNAMIC_DRAW);
 	
 	glBindBuffer(GL_ARRAY_BUFFER, m_normalMatVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat3)*instances, &(*normalMats)[0], GL_DYNAMIC_DRAW);

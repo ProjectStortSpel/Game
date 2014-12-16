@@ -11,6 +11,7 @@ Author: Anders, Christian
 #include "GLTimer.h"
 #include "Camera.h"
 #include "SkyBox.h"
+#include "ShadowMap.h"
 
 namespace Renderer
 {
@@ -133,6 +134,8 @@ namespace Renderer
 		void CreateGBufTex(GLenum texUnit, GLenum format, GLuint &texid);
 		void CreateDepthTex(GLuint &texid);
 
+		void CreateShadowMap();
+
 		Camera* m_camera;
 
 		SDL_Window*		m_window;
@@ -143,6 +146,12 @@ namespace Renderer
 		int m_fps;
 
 		int m_vramUsage; //in bytes
+
+		//holds the reset values for lights
+		float m_lightDefaults[19];
+
+		//Le shadowmap
+		ShadowMap *m_shadowMap;
 
 		// Timer for shader run time
 		std::vector<GLTimerValue> m_glTimerValues;
@@ -164,6 +173,9 @@ namespace Renderer
 		Shader m_skyBoxShader;
 		Shader m_deferredShader1, m_compDeferredPass2Shader;
 		Shader m_forwardShader;
+
+		Shader m_shadowShaderDeferred, m_shadowShaderForward;
+
 
 		// Skybox
 		SkyBox *m_skybox;
