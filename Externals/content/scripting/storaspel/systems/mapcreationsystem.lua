@@ -27,7 +27,6 @@ MapCreationSystem.AddPlayers = function(self)
 	--for i = 2, 4, 1 do
 		local entity = world:CreateNewEntity("Player")
 		world:CreateComponentAndAddTo("Spawn", entity)
-		world:CreateComponentAndAddTo("SyncNetwork", entity)
 		local mapPos = {i,12}
 		--local mapPos = {i, 6}
 		self:SetPosition(entity, mapPos[1], 1.0, mapPos[2])
@@ -39,7 +38,6 @@ end
 MapCreationSystem.AddTile = function(self, posX, posZ, tiletype)
 	
     local entity = world:CreateNewEntity("Tile")
-
     local posComp = self:GetComponent(entity, "Position", 0)
     posComp:SetFloat3(posX, 0.0, posZ)
 
