@@ -10,7 +10,11 @@ require "playerlogiccomponents"
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
 require "movementsystem"
 require "networkmessagessystem"
+
+if Server then
 require "mapcreationsystem"
+end
+
 require "moveplayersystem"
 require "cardsystem"
 require "discosystem"
@@ -24,7 +28,9 @@ require "map"
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(MovementSystem)
 worldCreator:AddSystemToCurrentGroup(networkMessagesSystem)
+if Server then
 worldCreator:AddSystemToCurrentGroup(MapCreationSystem)
+end
 worldCreator:AddSystemToCurrentGroup(ForwardSystem)
 worldCreator:AddSystemToCurrentGroup(BackwardSystem)
 worldCreator:AddSystemToCurrentGroup(RightTurnSystem)
