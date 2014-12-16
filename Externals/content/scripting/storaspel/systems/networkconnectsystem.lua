@@ -1,11 +1,10 @@
-ReconnectSystem = System()
+NetworkConnectSystem = System()
 
-ReconnectSystem.Update = function(self, dt)
+NetworkConnectSystem.Update = function(self, dt)
 
 end
 
-ReconnectSystem.OnUsername = function(id, ipAddress, port)
-	Console.Print("ReconnectSystem.OnUsername");
+NetworkConnectSystem.OnUsername = function(id, ipAddress, port)
 	
 	local name = ipAddress .. port;
 	local active = false;
@@ -18,18 +17,18 @@ ReconnectSystem.OnUsername = function(id, ipAddress, port)
 
 end
 
-ReconnectSystem.Initialize = function(self)
+NetworkConnectSystem.Initialize = function(self)
 	self:SetName("Reconnect System")
 	self:InitializeNetworkEvents()
 	
 	self:AddComponentTypeToFilter("Username", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("NetConnection", FilterType.Mandatory)
 	
-	Net.Receive("Username", ReconnectSystem.OnUsername);
+	Net.Receive("Username", NetworkConnectSystem.OnUsername);
 	
-	print("ReconnectSystem initialized!")
+	print("NetworkConnectSystem initialized!")
 end
-ReconnectSystem.OnEntityAdded = function(self, entityId)
+NetworkConnectSystem.OnEntityAdded = function(self, entityId)
 
 	local match = false;
 	local matchId = 0;
@@ -39,17 +38,17 @@ ReconnectSystem.OnEntityAdded = function(self, entityId)
 	local port 		= self:GetComponent(entityId, "NetConnection", "Port");
 	
 	
-	local entites = self:GetEntities();
-	for i = 1, #entites do
+	local entities = self:GetEntities();
+	for i = 1, #entities do
 	
-		if entityId == math.floor(entites[i]) then
+		if entityId == math.floor(entities[i]) then
 		else
 		
-			local uname = self:GetComponent(entites[i], "Username", "Name");
+			local uname = self:GetComponent(entities[i], "Username", "Name");
 
 			if username:GetString() == uname:GetString() then
 				match = true;
-				matchId = math.floor(entites[i]);
+				matchId = math.floor(entities[i]);
 				break;
 			end
 			
@@ -67,7 +66,7 @@ ReconnectSystem.OnEntityAdded = function(self, entityId)
 		
 			local oldIp 	= self:GetComponent(matchId, "NetConnection", "IpAddress");
 			local oldPort	= self:GetComponent(matchId, "NetConnection", "Port");
-			local reason	= "ReconnectSystem kicked you.";
+			local reason	= "NetworkConnectSystem kicked you.";
 			
 			Net.Kick(oldIp:GetString(), oldPort:GetInt(), reason);
 			
@@ -79,11 +78,24 @@ ReconnectSystem.OnEntityAdded = function(self, entityId)
 		
 		world:KillEntity(entityId);
 	else
-		local setActive = true;
-		world:SetComponent(entityId, "NetConnection", "Active", setActive);
+
+		world:KillEntity(entityId);
+		local reason	= "No new players allowed while a game is already active.";
+		Net.Kick(ipAddress:GetString(), port:GetInt(), reason);
+		
+		
 	end
 	
 end
-ReconnectSystem.OnEntityRemoved = function(self, entityId)
+NetworkConnectSystem.OnEntityRemoved = function(self, entityId)
 
 end
+
+
+NetworkConnectSystem.OnConnectedToServer = function(self, _ip, _port)
+	local id = Net.StartPack("Username");
+	Net.WriteString(id, "Username_Lua");
+	Net.SendToServer(id);
+end
+
+

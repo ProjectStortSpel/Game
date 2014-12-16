@@ -47,6 +47,7 @@ namespace LuaBridge
 		int Stop();
 		int IsRunning();
 		int Kick();
+		int MaxConnections();
 
 		int SendEntity();
 		int SendEntityKill();
@@ -70,6 +71,8 @@ namespace LuaBridge
 			LuaEmbedder::AddFunction("ResetNetworkMaps", &ResetNetworkMaps, "Net");//
 
 			LuaEmbedder::AddFunction("Kick", &Kick, "Net");
+
+			LuaEmbedder::AddFunction("MaxConnections", &MaxConnections, "Net");
 
 			//LuaEmbedder::AddFunction("WriteByte", &WriteByte, "Net");
 			LuaEmbedder::AddFunction("WriteFloat", &WriteFloat, "Net");//
@@ -157,14 +160,8 @@ namespace LuaBridge
 			Network::ServerNetwork* server = NetworkInstance::GetServer();
 			Network::ClientNetwork* client = NetworkInstance::GetClient();
 
-			if (server->IsRunning())
-			{
-				server->Update(LuaEmbedder::PullFloat(1));
-			}
-			else if (client->IsConnected())
-			{
-				client->Update(LuaEmbedder::PullFloat(1));
-			}
+			server->Update(LuaEmbedder::PullFloat(1));
+			client->Update(LuaEmbedder::PullFloat(1));
 
 			return 0;
 		}
@@ -441,6 +438,13 @@ namespace LuaBridge
 			return 0;
 		}
 
+		int MaxConnections()
+		{
+			Network::ServerNetwork* server = NetworkInstance::GetServer();
+			LuaEmbedder::PushInt(server->GetMaxConnections());
+			return 1;
+		}
+
 		int Host()
 		{
 			if (NetworkInstance::GetClient()->IsConnected())
@@ -492,7 +496,6 @@ namespace LuaBridge
 		int IsRunning()
 		{
 			LuaEmbedder::PushBool(NetworkInstance::GetServer()->IsRunning());
-
 			return 1;
 		}
 

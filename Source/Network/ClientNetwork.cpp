@@ -129,6 +129,8 @@ bool ClientNetwork::Connect()
 		*m_socketBound = true;
 	}
 
+	m_socket->SetNoDelay(true);
+
 	bool connected = false;
 	//for (int i = 0; i < 5; ++i)
 	//{
@@ -370,7 +372,7 @@ void ClientNetwork::NetConnectionKicked(PacketHandler* _packetHandler, uint64_t&
 
 	char* message = _packetHandler->ReadString(_id);
 
-	TriggerEvent(m_onKickedFromServer, _connection, 0);
+	TriggerEvent(m_onKickedFromServer, _connection, message);
 
 	*m_receivePacketsThreadAlive = false;
 
@@ -396,7 +398,7 @@ void ClientNetwork::NetConnectionBanned(PacketHandler* _packetHandler, uint64_t&
 	SAFE_DELETE(m_socket);
 	*m_socketBound = 0;
 
-	TriggerEvent(m_onBannedFromServer, _connection, 0);
+	TriggerEvent(m_onBannedFromServer, _connection, message);
 
 	if (m_receivePacketsThread->joinable())
 		m_receivePacketsThread->join();

@@ -19,6 +19,7 @@ namespace Network
 		virtual bool Bind(const int _port) = 0;
 		virtual bool Listen(int _backlog) = 0;
 		virtual bool SetNonBlocking(bool _value) = 0;
+		virtual bool SetNoDelay(bool _value) = 0;
 		virtual bool CloseSocket(void) = 0;
 		virtual ISocket* Accept(void) = 0;
 		virtual int Send(char* _buffer, int _length, int _flags = 0) = 0;

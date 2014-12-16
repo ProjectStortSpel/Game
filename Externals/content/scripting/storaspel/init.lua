@@ -12,7 +12,7 @@ require "movementsystem"
 require "networkmessagessystem"
 require "mapcreationsystem"
 require "moveplayersystem"
-require "reconnectsystem"
+require "networkconnectsystem"
 require "cardsystem"
 require "discosystem"
 
@@ -34,7 +34,7 @@ worldCreator:AddSystemToCurrentGroup(TurnAroundSystem)
 worldCreator:AddSystemToCurrentGroup(TestMovementSystem)
 worldCreator:AddSystemToCurrentGroup(RespawnSystem)
 worldCreator:AddSystemToCurrentGroup(NewRoundSystem)
-worldCreator:AddSystemToCurrentGroup(ReconnectSystem)
+worldCreator:AddSystemToCurrentGroup(NetworkConnectSystem)
 worldCreator:AddSystemToCurrentGroup(NewStepSystem)
 worldCreator:AddSystemToCurrentGroup(WaterMovementSystem)
 worldCreator:AddSystemToCurrentGroup(CardDeckSystem)

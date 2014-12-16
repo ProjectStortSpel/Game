@@ -288,5 +288,17 @@ int WinSocket::Receive(char* _buffer, int _length, int _flags)
 {
 	return recv(m_socket, _buffer, _length, _flags);
 }
+bool WinSocket::SetNoDelay(bool _value)
+{
+	char value = 1;
+	if (setsockopt(m_socket, IPPROTO_TCP, TCP_NODELAY, &value, sizeof(value)) < 0)
+	{
+		if (NET_DEBUG)
+			printf("Failed to enable TCP_NODELAY on new socket. Error Code: %d.\n", WSAGetLastError());
 
+		return false;
+	}
+
+	return true;
+}
 #endif

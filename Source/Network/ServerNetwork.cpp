@@ -196,6 +196,7 @@ bool ServerNetwork::Start()
 	m_listenSocket = ISocket::CreateSocket();
 	m_listenSocket->SetNonBlocking(true);
 	m_listenSocket->Bind(*m_incomingPort);
+	m_listenSocket->SetNoDelay(true);
 
 	if (NET_DEBUG)
 	{
@@ -384,6 +385,7 @@ void ServerNetwork::ListenForConnections(void)
 		if (!newConnection)
 			continue;
 
+		newConnection->SetNoDelay(true);
 		NetConnection nc = newConnection->GetNetConnection();
 
 		m_connectedClientsLock->lock();
