@@ -74,15 +74,56 @@ NetworkComponent.Name = "Network"
 NetworkComponent.TableType = TableType.Map
 worldCreator:AddComponentType(NetworkComponent)
 
--- Name Component
+-- Username Component
 local NameComponent = ComponentType()
-NameComponent.Name = "Name"
+NameComponent.Name = "Username"
 NameComponent.TableType = TableType.Map
-NameComponent:AddVariable("Username", ByteSize.Text)
+NameComponent:AddVariable("Name", ByteSize.Text)
 worldCreator:AddComponentType(NameComponent)
+
+-- NetConnection Component
+local NetConnection = ComponentType()
+NetConnection.Name = "NetConnection"
+NetConnection.TableType = TableType.Map
+NetConnection:AddVariable("IpAddress", ByteSize.Text)
+NetConnection:AddVariable("Port", ByteSize.Int)
+NetConnection:AddVariable("Active", ByteSize.Bool)
+worldCreator:AddComponentType(NetConnection)
 
 -- Sync Network Component
 local SyncNetworkComponent = ComponentType()
 SyncNetworkComponent.Name = "SyncNetwork"
 SyncNetworkComponent.TableType = TableType.Array
 worldCreator:AddComponentType(SyncNetworkComponent)
+
+-- Null Component
+local NullComponent = ComponentType()
+NullComponent.Name = "Null"
+NullComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NullComponent)
+
+-- New Round Component
+local NewRoundComponent = ComponentType()
+NewRoundComponent.Name = "NewRound"
+NewRoundComponent.TableType = TableType.Array
+worldCreator:AddComponentType(NewRoundComponent)
+
+-- New Step Component
+local NewStepComponent = ComponentType()
+NewStepComponent.Name = "NewStep"
+NewStepComponent.TableType = TableType.Array
+worldCreator:AddComponentType(NewStepComponent)
+
+-- Card Prio Component
+local CardPrioComponent = ComponentType()
+CardPrioComponent.Name = "CardPrio"
+CardPrioComponent.TableType = TableType.Map
+CardPrioComponent:AddVariable("Prio", ByteSize.Int)
+worldCreator:AddComponentType(CardPrioComponent)
+
+-- Card Action Component
+local CardActionComponent = ComponentType()
+CardActionComponent.Name = "CardAction"
+CardActionComponent.TableType = TableType.Map
+CardActionComponent:AddVariable("Action", ByteSize.Text)
+worldCreator:AddComponentType(CardActionComponent)

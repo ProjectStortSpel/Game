@@ -12,6 +12,7 @@ require "movementsystem"
 require "networkmessagessystem"
 require "mapcreationsystem"
 require "moveplayersystem"
+require "cardsystem"
 require "discosystem"
 
 -- Templates
@@ -30,5 +31,10 @@ worldCreator:AddSystemToCurrentGroup(RightTurnSystem)
 worldCreator:AddSystemToCurrentGroup(LeftTurnSystem)
 worldCreator:AddSystemToCurrentGroup(TurnAroundSystem)
 worldCreator:AddSystemToCurrentGroup(TestMovementSystem)
+worldCreator:AddSystemToCurrentGroup(RespawnSystem)
+worldCreator:AddSystemToCurrentGroup(NewRoundSystem)
+worldCreator:AddSystemToCurrentGroup(NewStepSystem)
+worldCreator:AddSystemToCurrentGroup(WaterMovementSystem)
+worldCreator:AddSystemToCurrentGroup(CardDeckSystem)
 
 worldCreator:AddSystemToCurrentGroup(DiscoSystem)

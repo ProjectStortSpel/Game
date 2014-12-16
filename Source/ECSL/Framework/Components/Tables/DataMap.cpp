@@ -30,6 +30,9 @@ namespace ECSL
 
 	void DataMap::ClearRow(unsigned const int _row)
 	{
+		if ((*m_dataMap).find(_row) == (*m_dataMap).end())
+			return;
+
 		m_dataMap->erase(m_dataMap->find(_row));
 	}
 

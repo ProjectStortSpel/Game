@@ -23,6 +23,9 @@ TestMovementSystem.Update = function(self, dt)
 	
 	--Console.Print(MapCreationSystem.testnumber)
 	
+	local cards = {}
+	cards = self:GetCardsFromPlayers()
+	
 	if self.currentPlayer <= #entities then
 	
 		local switchplayer = false
@@ -41,11 +44,7 @@ TestMovementSystem.Update = function(self, dt)
 		elseif Input.GetKeyState(Key.T) == InputState.Pressed then
 			world:CreateComponentAndAddTo("TurnAround", entities[self.currentPlayer])
 			switchplayer = true
-		elseif Input.GetKeyState(Key.Space) == InputState.Pressed then
-			local comp = self:GetComponent(entities[self.currentPlayer], "Spawn", 0)
-			local newPosX, newPosY = comp:GetInt2()
-			MapCreationSystem:SetPosition(entities[self.currentPlayer], newPosX, 1.0, newPosY)
-			switchplayer = true
+		
 			
 		end
 		
@@ -57,14 +56,40 @@ TestMovementSystem.Update = function(self, dt)
 	else
 		self.currentPlayer = 1
 	end
+	 
+ 	-- Tillfällig representation av en rundas slut.     
+	if Input.GetKeyState(Key.Space) == InputState.Pressed then
+			 
+		local players = RespawnSystem:GetEntities()
+		for i = 1, #players do
+			world:CreateComponentAndAddTo("NewRound", players[i])
+		end
+		
+		switchplayer = true
+	end
 	
+	-- Tillfällig representation av ett step.     
+	if Input.GetKeyState(Key.P) == InputState.Pressed then
+		
+		for i = 1, #entities do
+			--print("p-key pressed, adding newstep to player ", i)
+			world:CreateComponentAndAddTo("NewStep", entities[i])
+		end
+		
+		switchplayer = true
+	end
+end
+
+TestMovementSystem.GetCardsFromPlayers = function(self)
 	
 end
 
+-- If the tile we are trying to reach is walkable, we go there.
 TestMovementSystem.MoveTo = function(self, entity, posX, posY, dirX, dirY)
-	-- If the tile we are trying to reach is walkable, then we go there.
-		
-	if self:TileIsWalkable(posX, posY) then
+	
+	if MapCreationSystem:TileIsWalkable(posX, posY) then
+	
+		-- Check if another player is on that tile, if so, recursively call this function to check whether the tile we are trying to push this player to is walkable or occupied.
 		local playerId = self:PlayerOnTile(posX, posY)
 		
 		if -1 ~= playerId then
@@ -74,10 +99,12 @@ TestMovementSystem.MoveTo = function(self, entity, posX, posY, dirX, dirY)
 				MapCreationSystem:SetPosition(entity, posX, 1.0, posY)
 				return true
 			end
+		-- No player on the tile, move there.
 		else
 			MapCreationSystem:SetPosition(entity, posX, 1.0, posY)
+			
 			return true
-		end	
+		end
 	end
 	
 	return false
@@ -89,15 +116,7 @@ TestMovementSystem.PostInitialize = function(self, posX, posY)
 	return 
 end
 
-TestMovementSystem.TileIsWalkable = function(self, posX, posY)
-	
-	local index = MapCreationSystem.mapX * posY + posX + 1
-	entity = MapCreationSystem.entities[index]
-	
-	local returnValue = not self:EntityHasComponent(entity, "NotWalkable")
-	return returnValue 
-end
-
+-- Checks if there is a player on the tile. If so, return the id of the entity, otherwise return -1.
 TestMovementSystem.PlayerOnTile = function(self, posX, posY)
 	
 	local entities = self:GetEntities()
@@ -118,6 +137,113 @@ TestMovementSystem.PlayerOnTile = function(self, posX, posY)
 	
 	return -1
 end
+
+---------------------------- RespawnSystem
+
+RespawnSystem = System()
+
+RespawnSystem.Initialize = function(self)
+	self:SetName("Respawn System")
+	self:AddComponentTypeToFilter("Spawn", FilterType.Mandatory)
+	self:AddComponentTypeToFilter("InactivePlayer", FilterType.Mandatory)
+	self:AddComponentTypeToFilter("MapPosition", FilterType.Mandatory)
+	
+	self:AddComponentTypeToFilter("NewRound", FilterType.Excluded)
+	--self:AddComponentTypeToFilter("Position", FilterType.Excluded)
+	print("Respawn System initialized!")
+end
+
+RespawnSystem.OnEntityAdded = function(self, entity)
+
+	--print("Respawn add")
+	if self:EntityHasComponent(entity, "Position" ) then
+		world:RemoveComponentFrom("Position", entity);
+	end
+	--print("Respawn added")
+end
+
+RespawnSystem.OnEntityRemoved = function(self, entity)
+	
+	--print("Respawn remove")
+	local spawnComp = self:GetComponent(entity, "Spawn", 0)
+	local spawnX, spawnY = spawnComp:GetInt2()
+	
+	local mapPosComp = self:GetComponent(entity, "MapPosition", 0)
+	mapPosComp:SetInt2(spawnX, spawnY)
+	
+	world:CreateComponentAndAddTo("Position", entity)
+	local posComp = self:GetComponent(entity, "Position", 0)
+	posComp:SetFloat3(spawnX, 1.0, spawnY)
+	
+	world:RemoveComponentFrom("InactivePlayer", entity);
+	--print("Respawn removed")
+end
+
+---------------------------- Get Cards System
+
+GetCardsSystem = System()
+
+GetCardsSystem.Initialize = function(self)
+	self:SetName("Respawn System")
+	
+	self:AddComponentTypeToFilter("NewRound", FilterType.Excluded)
+	print("Get Cards System initialized!")
+end
+
+GetCardsSystem.OnEntityAdded = function(self, entity)
+
+	print("Get cards pre-add")
+	
+	
+	print("Get cards added")
+end
+
+GetCardsSystem.OnEntityRemoved = function(self, entity)
+	
+	print("Get cards pre-remove")
+	
+	print("Get cards removed")
+end
+
+
+
+
+---------------------------- New Round System
+
+NewRoundSystem = System()
+
+NewRoundSystem.Initialize = function(self)
+	self:SetName("New Round System")
+	self:AddComponentTypeToFilter("NewRound", FilterType.Mandatory)
+	
+	self:AddComponentTypeToFilter("InactivePlayer",FilterType.Excluded)
+	print("New Round System initialized!")
+end
+
+NewRoundSystem.OnEntityAdded = function(self, entity)
+	
+	print("New Round System entity added")
+	world:RemoveComponentFrom("NewRound", entity);
+end
+
+---------------------------- New Step System
+
+NewStepSystem = System()
+
+NewStepSystem.Initialize = function(self)
+	self:SetName("New Step System")
+	self:AddComponentTypeToFilter("NewStep", FilterType.Mandatory)
+	
+	self:AddComponentTypeToFilter("InactivePlayer",FilterType.Excluded)
+	print("New Step System initialized!")
+end
+
+NewStepSystem.OnEntityAdded = function(self, entity)
+	
+	--print("New Step System entity added")
+	--world:RemoveComponentFrom("NewStep", entity);
+end
+
 
 ---------------------------- ForwardSystem
 
@@ -147,6 +273,7 @@ ForwardSystem.OnEntityAdded = function(self, entity)
 	
 	world:RemoveComponentFrom("Forward", entity);
 end
+
 
 ---------------------------- BackwardSystem
 
@@ -260,3 +387,47 @@ TurnAroundSystem.OnEntityAdded = function(self, entity)
 	
 	world:RemoveComponentFrom("TurnAround", entity);
 end
+
+---------------------------- WaterMovementSystem
+
+WaterMovementSystem = System()
+
+WaterMovementSystem.Initialize = function(self)
+	self:SetName("Water Movement System")
+	--self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
+	self:AddComponentTypeToFilter("MapPosition", FilterType.Mandatory)
+	--self:AddComponentTypeToFilter("Direction", FilterType.Mandatory)
+	
+	self:AddComponentTypeToFilter("NewStep", FilterType.Mandatory)
+	print("Water Movement System initialized!")
+end
+
+WaterMovementSystem.OnEntityAdded = function(self, entity)
+	
+	local mapPosComp = self:GetComponent(entity, "MapPosition", 0)
+	local mapPosX, mapPosY = mapPosComp:GetInt2()
+	
+	--print("Water entity added", mapPosX, mapPosY)
+	
+	--MapCreationSystem:TileHasComponent("WaterDirection", mapPosX, mapPosY)
+	
+	local index = MapCreationSystem.mapX * mapPosY + mapPosX + 1
+	local mapEntity = MapCreationSystem.entities[index]
+	
+	if MapCreationSystem:EntityHasComponent(mapEntity, "Water") then
+		
+		local waterDirComp = MapCreationSystem:GetComponent(mapEntity, "Water", 0)
+		local waterDirX, waterDirY = waterDirComp:GetInt2()
+		
+		MapCreationSystem:SetPosition(entity, mapPosX + waterDirX, 1.0, mapPosY + waterDirY)
+		
+	end
+	
+	--print("Water entity added done")
+	
+	world:RemoveComponentFrom("NewStep", entity);
+end
+
+
+
+

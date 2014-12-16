@@ -97,6 +97,10 @@ namespace LuaEmbedder
   bool EXPORT Load(const std::string& filepath);
   bool EXPORT CallFunction(const std::string& name, int argumentCount = 0, const std::string& library = std::string());
   
+  void EXPORT CollectGarbage();
+  void EXPORT CollectGarbage(int durationInMilliseconds);
+  int EXPORT GetMemoryUsage();
+  
   void EXPORT AddFloat(const std::string& name, float value, const std::string& library = std::string());
   void EXPORT AddInt(const std::string& name, int value, const std::string& library = std::string());
   void EXPORT AddBool(const std::string& name, bool value, const std::string& library = std::string());
@@ -127,6 +131,10 @@ namespace LuaEmbedder
   bool EXPORT IsInt(int index);
   bool EXPORT IsBool(int index);
   bool EXPORT IsString(int index);
+  bool EXPORT IsFunction(int index);
+  
+  void EXPORT SaveFunction(int index, const std::string& key);
+  bool EXPORT CallSavedFunction(const std::string& key, int argumentCount = 0);
   
   template<typename T>
   void EXPORT EmbedClass(const std::string& className, bool gc = true)

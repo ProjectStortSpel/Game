@@ -5,6 +5,24 @@
 
 namespace LuaBridge
 {
+
+	namespace LuaNetwork
+	{
+		int Receive();
+
+		void Embed()
+		{
+			LuaEmbedder::AddFunction("Receive", &Receive, "Net");
+		}
+
+		int Receive()
+		{
+			std::string name = LuaEmbedder::PullString(1);
+			LuaEmbedder::SaveFunction(2, name);
+			return 0;
+		}
+	}
+
 	namespace LuaClientNetwork
 	{
 		int StartPack();
@@ -66,7 +84,9 @@ namespace LuaBridge
 				return 0;
 
 			std::string identifier = LuaEmbedder::PullString(1);
-			uint64_t id = NetworkInstance::GetClient()->GetPacketHandler()->StartPack(identifier.c_str());
+			uint64_t id = NetworkInstance::GetClient()->GetPacketHandler()->StartPack("LuaPacket");
+
+			NetworkInstance::GetClient()->GetPacketHandler()->WriteString(id, identifier.c_str());
 
 			std::ostringstream ss;
 			ss << id;
@@ -339,7 +359,9 @@ namespace LuaBridge
 				return 0;
 
 			std::string identifier = LuaEmbedder::PullString(1);
-			uint64_t id = NetworkInstance::GetServer()->GetPacketHandler()->StartPack(identifier.c_str());
+			uint64_t id = NetworkInstance::GetServer()->GetPacketHandler()->StartPack("LuaPacket");
+
+			NetworkInstance::GetServer()->GetPacketHandler()->WriteString(id, identifier.c_str());
 
 			std::ostringstream ss;
 			ss << id;
@@ -586,7 +608,10 @@ namespace LuaBridge
 			unsigned int port = LuaEmbedder::PullInt(3);
 
 			Network::Packet* p = NetworkInstance::GetNetworkHelper()->WriteEntityAll(server->GetPacketHandler(), id);
-			server->Send(p, Network::NetConnection(ip.c_str(), port));
+			Network::NetConnection nc(ip.c_str(), port);
+			server->Send(p, nc);
+
+			return 0;
 		}
 		int SendEntityKill()
 		{
@@ -599,7 +624,10 @@ namespace LuaBridge
 			unsigned int port	= LuaEmbedder::PullInt(3);
 
 			Network::Packet* p = NetworkInstance::GetNetworkHelper()->WriteEntityKill(server->GetPacketHandler(), id);
-			server->Send(p, Network::NetConnection(ip.c_str(), port));
+			Network::NetConnection nc(ip.c_str(), port);
+			server->Send(p, nc);
+
+			return 0;
 		}
 
 		int BroadcastEntity()
@@ -612,6 +640,8 @@ namespace LuaBridge
 
 			Network::Packet* p = NetworkInstance::GetNetworkHelper()->WriteEntityAll(server->GetPacketHandler(), id);
 			server->Broadcast(p);
+
+			return 0;
 		}
 		int BroadcastEntityKill()
 		{
@@ -623,6 +653,8 @@ namespace LuaBridge
 
 			Network::Packet* p = NetworkInstance::GetNetworkHelper()->WriteEntityKill(server->GetPacketHandler(), id);
 			server->Broadcast(p);
+
+			return 0;
 		}
 
 	}

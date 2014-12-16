@@ -75,6 +75,15 @@ void PointlightSystem::OnEntityRemoved(unsigned int _entityId)
 void PointlightSystem::UpdatePointLights()
 {
 	auto ePointlights = *GetEntities();
+
+	if (ePointlights.size() == 0)
+	{
+		float** tempPointer = new float*[1];
+		m_graphics->BufferPointlights(ePointlights.size(), tempPointer);
+		delete tempPointer;
+		return;
+	}
+
 	float** lightPointers = new float*[ePointlights.size()];
 	for (int n = 0; n < ePointlights.size(); ++n)
 		lightPointers[n] = (float*)GetComponent(ePointlights.at(n), m_pointLightId, 0);

@@ -325,13 +325,13 @@ void GameConsole::AddPointlight(std::vector<Console::Argument>* _args)
 	lightData[1] = _args->at(1).Number;
 	lightData[2] = _args->at(2).Number;
 	//	Intensity
-	lightData[3] = 0.2f;
+	lightData[3] = 0.5f;
 	lightData[4] = 1.0f;
 	lightData[5] = 1.0f;
 	//	Color
 	lightData[6] = 1.0f;
-	lightData[7] = 0.9f;
-	lightData[8] = 0.9f;
+	lightData[7] = 0.8f;
+	lightData[8] = 0.8f;
 	//	Range
 	lightData[9] = _args->at(3).Number;
 

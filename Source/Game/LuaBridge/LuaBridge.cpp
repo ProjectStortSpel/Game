@@ -35,6 +35,7 @@ namespace LuaBridge
     
     LuaConsole::Embed();
 
+	LuaNetwork::Embed();
 	LuaClientNetwork::Embed();
 	LuaServerNetwork::Embed();
 

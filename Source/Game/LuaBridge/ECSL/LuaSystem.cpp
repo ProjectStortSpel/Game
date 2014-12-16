@@ -118,117 +118,192 @@ namespace LuaBridge
 
 	int LuaSystem::InitializeNetworkEvents()
 	{
-		NetworkInstance::GetClient()->SetOnBannedFromServer(std::bind(&LuaSystem::OnBannedFromServer, this, std::placeholders::_1, std::placeholders::_2));
-		NetworkInstance::GetClient()->SetOnConnectedToServer(std::bind(&LuaSystem::OnConnectedToServer, this, std::placeholders::_1, std::placeholders::_2));
-		NetworkInstance::GetClient()->SetOnDisconnectedFromServer(std::bind(&LuaSystem::OnDisconnectedFromServer, this, std::placeholders::_1, std::placeholders::_2));
-		NetworkInstance::GetClient()->SetOnFailedToConnect(std::bind(&LuaSystem::OnFailedToConnect, this, std::placeholders::_1, std::placeholders::_2));
-		NetworkInstance::GetClient()->SetOnKickedFromServer(std::bind(&LuaSystem::OnKickedFromServer, this, std::placeholders::_1, std::placeholders::_2));
-		NetworkInstance::GetClient()->SetOnPasswordInvalid(std::bind(&LuaSystem::OnPasswordInvalid, this, std::placeholders::_1, std::placeholders::_2));
-		NetworkInstance::GetClient()->SetOnRemotePlayerBanned(std::bind(&LuaSystem::OnRemotePlayerBanned, this, std::placeholders::_1, std::placeholders::_2));
-		NetworkInstance::GetClient()->SetOnRemotePlayerConnected(std::bind(&LuaSystem::OnRemotePlayerConnected, this, std::placeholders::_1, std::placeholders::_2));
-		NetworkInstance::GetClient()->SetOnRemotePlayerDisconnected(std::bind(&LuaSystem::OnRemotePlayerDisconnected, this, std::placeholders::_1, std::placeholders::_2));
-		NetworkInstance::GetClient()->SetOnRemotePlayerKicked(std::bind(&LuaSystem::OnRemotePlayerKicked, this, std::placeholders::_1, std::placeholders::_2));
-		NetworkInstance::GetClient()->SetOnServerFull(std::bind(&LuaSystem::OnServerFull, this, std::placeholders::_1, std::placeholders::_2));
-		NetworkInstance::GetClient()->SetOnTimedOutFromServer(std::bind(&LuaSystem::OnTimedOutFromServer, this, std::placeholders::_1, std::placeholders::_2));
+		Network::NetEvent  hook;
 
-		NetworkInstance::GetServer()->SetOnPlayerConnected(std::bind(&LuaSystem::OnPlayerConnected, this, std::placeholders::_1, std::placeholders::_2));
-		NetworkInstance::GetServer()->SetOnPlayerDisconnected(std::bind(&LuaSystem::OnPlayerDisconnected, this, std::placeholders::_1, std::placeholders::_2));
-		NetworkInstance::GetServer()->SetOnPlayerTimedOut(std::bind(&LuaSystem::OnPlayerTimedOut, this, std::placeholders::_1, std::placeholders::_2));
+		hook = std::bind(&LuaSystem::OnBannedFromServer, this, std::placeholders::_1, std::placeholders::_2);
+		NetworkInstance::GetClient()->SetOnBannedFromServer(hook);
+
+		hook = std::bind(&LuaSystem::OnConnectedToServer, this, std::placeholders::_1, std::placeholders::_2);
+		NetworkInstance::GetClient()->SetOnConnectedToServer(hook);
+
+		hook = std::bind(&LuaSystem::OnDisconnectedFromServer, this, std::placeholders::_1, std::placeholders::_2);
+		NetworkInstance::GetClient()->SetOnDisconnectedFromServer(hook);
+
+		hook = std::bind(&LuaSystem::OnFailedToConnect, this, std::placeholders::_1, std::placeholders::_2);
+		NetworkInstance::GetClient()->SetOnFailedToConnect(hook);
+
+		hook = std::bind(&LuaSystem::OnKickedFromServer, this, std::placeholders::_1, std::placeholders::_2);
+		NetworkInstance::GetClient()->SetOnKickedFromServer(hook);
+
+		hook = std::bind(&LuaSystem::OnPasswordInvalid, this, std::placeholders::_1, std::placeholders::_2);
+		NetworkInstance::GetClient()->SetOnPasswordInvalid(hook);
+
+		hook = std::bind(&LuaSystem::OnRemotePlayerBanned, this, std::placeholders::_1, std::placeholders::_2);
+		NetworkInstance::GetClient()->SetOnRemotePlayerBanned(hook);
+
+		hook = std::bind(&LuaSystem::OnRemotePlayerConnected, this, std::placeholders::_1, std::placeholders::_2);
+		NetworkInstance::GetClient()->SetOnRemotePlayerConnected(hook);
+
+		hook = std::bind(&LuaSystem::OnRemotePlayerDisconnected, this, std::placeholders::_1, std::placeholders::_2);
+		NetworkInstance::GetClient()->SetOnRemotePlayerDisconnected(hook);
+
+		hook = std::bind(&LuaSystem::OnRemotePlayerKicked, this, std::placeholders::_1, std::placeholders::_2);
+		NetworkInstance::GetClient()->SetOnRemotePlayerKicked(hook);
+
+		hook = std::bind(&LuaSystem::OnServerFull, this, std::placeholders::_1, std::placeholders::_2);
+		NetworkInstance::GetClient()->SetOnServerFull(hook);
+
+		hook = std::bind(&LuaSystem::OnTimedOutFromServer, this, std::placeholders::_1, std::placeholders::_2);
+		NetworkInstance::GetClient()->SetOnTimedOutFromServer(hook);
+
+		hook = std::bind(&LuaSystem::OnPlayerConnected, this, std::placeholders::_1, std::placeholders::_2);
+		NetworkInstance::GetServer()->SetOnPlayerConnected(hook);
+
+		hook = std::bind(&LuaSystem::OnPlayerDisconnected, this, std::placeholders::_1, std::placeholders::_2);
+		NetworkInstance::GetServer()->SetOnPlayerDisconnected(hook);
+
+		hook = std::bind(&LuaSystem::OnPlayerTimedOut, this, std::placeholders::_1, std::placeholders::_2);
+		NetworkInstance::GetServer()->SetOnPlayerTimedOut(hook);
 
 		return 0;
 	}
 
 	void LuaSystem::OnBannedFromServer(Network::NetConnection _nc, const char* _message)
 	{
-		LuaEmbedder::PushString(_nc.GetIpAddress());
-		LuaEmbedder::PushInt((int)_nc.GetPort());
-		LuaEmbedder::PushString(_message);
-		LuaEmbedder::CallMethod<LuaSystem>("System", "OnBannedFromServer", this, 3);
+		if (LuaEmbedder::HasFunction<LuaSystem>(this, "OnBannedFromServer"))
+		{
+			LuaEmbedder::PushString(_nc.GetIpAddress());
+			LuaEmbedder::PushInt((int)_nc.GetPort());
+			LuaEmbedder::PushString("OnBannedFromServer");
+			LuaEmbedder::CallMethod<LuaSystem>("System", "OnBannedFromServer", this, 3);
+		}
 	}
 	void LuaSystem::OnConnectedToServer(Network::NetConnection _nc, const char* _message)
 	{
-		LuaEmbedder::PushString(_nc.GetIpAddress());
-		LuaEmbedder::PushInt((int)_nc.GetPort());
-
-		LuaEmbedder::CallMethod<LuaSystem>("System", "OnConnectedToServer", this, 2);
+		if (LuaEmbedder::HasFunction<LuaSystem>(this, "OnConnectedToServer"))
+		{
+			LuaEmbedder::PushString(_nc.GetIpAddress());
+			LuaEmbedder::PushInt((int)_nc.GetPort());
+			LuaEmbedder::CallMethod<LuaSystem>("System", "OnConnectedToServer", this, 2);
+		}
 	}
 	void LuaSystem::OnDisconnectedFromServer(Network::NetConnection _nc, const char* _message)
 	{
-		LuaEmbedder::PushString(_nc.GetIpAddress());
-		LuaEmbedder::PushInt((int)_nc.GetPort());
-		LuaEmbedder::CallMethod<LuaSystem>("System", "OnDisconnectedFromServer", this, 2);
+		if (LuaEmbedder::HasFunction<LuaSystem>(this, "OnDisconnectedFromServer"))
+		{
+			LuaEmbedder::PushString(_nc.GetIpAddress());
+			LuaEmbedder::PushInt((int)_nc.GetPort());
+			LuaEmbedder::CallMethod<LuaSystem>("System", "OnDisconnectedFromServer", this, 2);
+		}
 	}
 	void LuaSystem::OnFailedToConnect(Network::NetConnection _nc, const char* _message)
 	{
-		LuaEmbedder::PushString(_nc.GetIpAddress());
-		LuaEmbedder::PushInt((int)_nc.GetPort());
-		LuaEmbedder::CallMethod<LuaSystem>("System", "OnFailedToConnect", this, 2);
+		if (LuaEmbedder::HasFunction<LuaSystem>(this, "OnFailedToConnect"))
+		{
+			LuaEmbedder::PushString(_nc.GetIpAddress());
+			LuaEmbedder::PushInt((int)_nc.GetPort());
+			LuaEmbedder::CallMethod<LuaSystem>("System", "OnFailedToConnect", this, 2);
+		}
 	}
 	void LuaSystem::OnKickedFromServer(Network::NetConnection _nc, const char* _message)
 	{
-		LuaEmbedder::PushString(_nc.GetIpAddress());
-		LuaEmbedder::PushInt((int)_nc.GetPort());
-		LuaEmbedder::PushString(_message);
-		LuaEmbedder::CallMethod<LuaSystem>("System", "OnKickedFromServer", this, 3);
+		if (LuaEmbedder::HasFunction<LuaSystem>(this, "OnKickedFromServer"))
+		{
+			LuaEmbedder::PushString(_nc.GetIpAddress());
+			LuaEmbedder::PushInt((int)_nc.GetPort());
+			LuaEmbedder::PushString("OnKickedFromServer");
+			LuaEmbedder::CallMethod<LuaSystem>("System", "OnKickedFromServer", this, 3);
+		}
 	}
 	void LuaSystem::OnPasswordInvalid(Network::NetConnection _nc, const char* _message)
 	{
-		LuaEmbedder::PushString(_nc.GetIpAddress());
-		LuaEmbedder::PushInt((int)_nc.GetPort());
-		LuaEmbedder::CallMethod<LuaSystem>("System", "OnPasswordInvalid", this, 2);
+		if (LuaEmbedder::HasFunction<LuaSystem>(this, "OnPasswordInvalid"))
+		{
+			LuaEmbedder::PushString(_nc.GetIpAddress());
+			LuaEmbedder::PushInt((int)_nc.GetPort());
+			LuaEmbedder::CallMethod<LuaSystem>("System", "OnPasswordInvalid", this, 2);
+		}
 	}
 	void LuaSystem::OnRemotePlayerBanned(Network::NetConnection _nc, const char* _message)
 	{
-		LuaEmbedder::PushString(_message);
-		LuaEmbedder::CallMethod<LuaSystem>("System", "OnRemotePlayerBanned", this, 1);
+		if (LuaEmbedder::HasFunction<LuaSystem>(this, "OnRemotePlayerBanned"))
+		{
+			LuaEmbedder::PushString("OnRemotePlayerBanned");
+			LuaEmbedder::CallMethod<LuaSystem>("System", "OnRemotePlayerBanned", this, 1);
+		}
 	}
 	void LuaSystem::OnRemotePlayerConnected(Network::NetConnection _nc, const char* _message)
 	{
-		LuaEmbedder::PushString("asd");
-		LuaEmbedder::CallMethod<LuaSystem>("System", "OnRemotePlayerConnected", this, 1);
+		if (LuaEmbedder::HasFunction<LuaSystem>(this, "OnRemotePlayerConnected"))
+		{
+			LuaEmbedder::PushString("OnRemotePlayerConnected");
+			LuaEmbedder::CallMethod<LuaSystem>("System", "OnRemotePlayerConnected", this, 1);
+		}
 	}
 	void LuaSystem::OnRemotePlayerDisconnected(Network::NetConnection _nc, const char* _message)
 	{
-		LuaEmbedder::PushString(_message);
-		LuaEmbedder::CallMethod<LuaSystem>("System", "OnRemotePlayerDisconnected", this, 1);
+		if (LuaEmbedder::HasFunction<LuaSystem>(this, "OnRemotePlayerDisconnected"))
+		{
+			LuaEmbedder::PushString("OnRemotePlayerDisconnected");
+			LuaEmbedder::CallMethod<LuaSystem>("System", "OnRemotePlayerDisconnected", this, 1);
+
+		}
 	}
 	void LuaSystem::OnRemotePlayerKicked(Network::NetConnection _nc, const char* _message)
 	{
-		LuaEmbedder::PushString(_message);
-		LuaEmbedder::CallMethod<LuaSystem>("System", "OnRemotePlayerKicked", this, 1);
+		if (LuaEmbedder::HasFunction<LuaSystem>(this, "OnRemotePlayerKicked"))
+		{
+			LuaEmbedder::PushString("OnRemotePlayerKicked");
+			LuaEmbedder::CallMethod<LuaSystem>("System", "OnRemotePlayerKicked", this, 1);
+		}
 	}
 	void LuaSystem::OnServerFull(Network::NetConnection _nc, const char* _message)
 	{
-		LuaEmbedder::PushString(_nc.GetIpAddress());
-		LuaEmbedder::PushInt((int)_nc.GetPort());
-		LuaEmbedder::CallMethod<LuaSystem>("System", "OnServerFull", this, 2);
+		if (LuaEmbedder::HasFunction<LuaSystem>(this, "OnServerFull"))
+		{
+			LuaEmbedder::PushString(_nc.GetIpAddress());
+			LuaEmbedder::PushInt((int)_nc.GetPort());
+			LuaEmbedder::CallMethod<LuaSystem>("System", "OnServerFull", this, 2);
+		}
 	}
 	void LuaSystem::OnTimedOutFromServer(Network::NetConnection _nc, const char* _message)
 	{
-		LuaEmbedder::PushString(_nc.GetIpAddress());
-		LuaEmbedder::PushInt((int)_nc.GetPort());
-		LuaEmbedder::CallMethod<LuaSystem>("System", "OnTimedOutFromServer", this, 2);
+		if (LuaEmbedder::HasFunction<LuaSystem>(this, "OnTimedOutFromServer"))
+		{
+			LuaEmbedder::PushString(_nc.GetIpAddress());
+			LuaEmbedder::PushInt((int)_nc.GetPort());
+			LuaEmbedder::CallMethod<LuaSystem>("System", "OnTimedOutFromServer", this, 2);
+		}
 	}
 
 	void LuaSystem::OnPlayerConnected(Network::NetConnection _nc, const char* _message)
 	{
-		LuaEmbedder::PushString(_nc.GetIpAddress());
-		LuaEmbedder::PushInt((int)_nc.GetPort());
-		LuaEmbedder::PushString(_message);
-		LuaEmbedder::CallMethod<LuaSystem>("System", "OnPlayerConnected", this, 3);
+		if (LuaEmbedder::HasFunction<LuaSystem>(this, "OnPlayerConnected"))
+		{
+			LuaEmbedder::PushString(_nc.GetIpAddress());
+			LuaEmbedder::PushInt((int)_nc.GetPort());
+			LuaEmbedder::PushString("OnPlayerConnected");
+			LuaEmbedder::CallMethod<LuaSystem>("System", "OnPlayerConnected", this, 3);
+		}
 	}
 	void LuaSystem::OnPlayerDisconnected(Network::NetConnection _nc, const char* _message)
 	{
-		LuaEmbedder::PushString(_nc.GetIpAddress());
-		LuaEmbedder::PushInt((int)_nc.GetPort());
-		LuaEmbedder::PushString(_message);
-		LuaEmbedder::CallMethod<LuaSystem>("System", "OnPlayerDisconnected", this, 3);
+		if (LuaEmbedder::HasFunction<LuaSystem>(this, "OnPlayerDisconnected"))
+		{
+			LuaEmbedder::PushString(_nc.GetIpAddress());
+			LuaEmbedder::PushInt((int)_nc.GetPort());
+			LuaEmbedder::PushString("OnPlayerDisconnected");
+			LuaEmbedder::CallMethod<LuaSystem>("System", "OnPlayerDisconnected", this, 3);
+		}
 	}
 	void LuaSystem::OnPlayerTimedOut(Network::NetConnection _nc, const char* _message)
 	{
-		LuaEmbedder::PushString(_nc.GetIpAddress());
-		LuaEmbedder::PushInt((int)_nc.GetPort());
-		LuaEmbedder::PushString(_message);
-		LuaEmbedder::CallMethod<LuaSystem>("System", "OnPlayerTimedOut", this, 3);
+		if (LuaEmbedder::HasFunction<LuaSystem>(this, "OnPlayerTimedOut"))
+		{
+			LuaEmbedder::PushString(_nc.GetIpAddress());
+			LuaEmbedder::PushInt((int)_nc.GetPort());
+			LuaEmbedder::PushString("OnPlayerTimedOut");
+			LuaEmbedder::CallMethod<LuaSystem>("System", "OnPlayerTimedOut", this, 3);
+		}
 	}
 }

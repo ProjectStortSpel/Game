@@ -8,7 +8,9 @@
 #include "Systems/SyncEntitiesSystem.h"
 #include "Systems/RenderRemoveSystem.h"
 #include "Systems/ResetChangedSystem.h"
+#include "Systems/ReconnectSystem.h"
 #include "Systems/PointlightSystem.h"
+#include "Systems/ReceivePacketSystem.h"
 
 #include "NetworkInstance.h"
 #include "ECSL/ECSL.h"
@@ -16,10 +18,29 @@
 
 #include "LuaBridge/ECSL/LuaSystem.h"
 
+void GameCreator::NetUsername(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _nc)
+{
+	std::stringstream ss;
+	ss << _nc.GetIpAddress() << _nc.GetPort();
+
+	const char* name = ss.str().c_str();
+	char* ipAddress = (char*)_nc.GetIpAddress();
+	unsigned int port = _nc.GetPort();
+	bool tmp = false;
+	unsigned int id = m_world->CreateNewEntity("User");
+
+
+	m_world->SetComponent(id, "Username", "Name", (char*)name);
+
+	m_world->SetComponent(id, "NetConnection", "IpAddress", ipAddress);
+	m_world->SetComponent(id, "NetConnection", "Port", &port);
+	m_world->SetComponent(id, "NetConnection", "Active", &tmp);
+}
+
 GameCreator::GameCreator() :
 m_graphics(0), m_input(0), m_world(0), m_console(0), m_consoleManager(Console::ConsoleManager::GetInstance()), m_frameCounter(&Utility::FrameCounter::GetInstance())
 {
-
+	
 }
 
 GameCreator::~GameCreator()
@@ -70,6 +91,8 @@ void GameCreator::InitializeNetwork()
 	NetworkInstance::InitServer();
 	NetworkInstance::InitNetworkHelper(&m_world);
 
+	Network::NetMessageHook hook = std::bind(&GameCreator::NetUsername, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	NetworkInstance::GetServer()->AddNetworkHook("Username", hook);
 }
 
 void GameCreator::InitializeLua() 
@@ -121,9 +144,11 @@ void GameCreator::InitializeWorld()
 	worldCreator.AddLuaSystemToCurrentGroup(new RotationSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new CameraSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new ModelSystem(m_graphics));
-	worldCreator.AddLuaSystemToCurrentGroup(new RenderSystem(m_graphics));
 
 	worldCreator.AddLuaSystemToCurrentGroup(new SyncEntitiesSystem());
+	worldCreator.AddLuaSystemToCurrentGroup(new ReceivePacketSystem());
+	worldCreator.AddLuaSystemToCurrentGroup(new RenderSystem(m_graphics));
+	worldCreator.AddLuaSystemToCurrentGroup(new ReconnectSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderRemoveSystem(m_graphics));
 
 	worldCreator.AddLuaSystemToCurrentGroup(new ResetChangedSystem());
@@ -150,7 +175,7 @@ void GameCreator::StartGame()
 	/*	Hook console	*/
 	m_console->SetupHooks(&m_consoleManager);
 	m_consoleManager.AddCommand("Reload", std::bind(&GameCreator::Reload, this, std::placeholders::_1));
-
+	
 	float maxDeltaTime = (float)(1.0f / 60.0f);
 	while (true)
 	{
@@ -166,6 +191,11 @@ void GameCreator::StartGame()
 		
 		/*	Update world (systems, entities etc)	*/
 		m_world->Update(dt);
+		
+		LuaEmbedder::CollectGarbage(1);
+		std::stringstream ss;
+		ss << "Lua memory usage: " << LuaEmbedder::GetMemoryUsage() << " bytes";
+		m_graphics->RenderSimpleText(ss.str(), 20, 1);
 
 		UpdateConsole();
 

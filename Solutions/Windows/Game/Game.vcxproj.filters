@@ -173,8 +173,14 @@
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\Network\LuaNetwork.cpp">
       <Filter>Lua Bridge\Network</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\ReconnectSystem.cpp">
+      <Filter>Game\Systems</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Quaternion.cpp">
       <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\ReceivePacketSystem.cpp">
+      <Filter>Game\Systems\NetworkMessages</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -265,6 +271,9 @@
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Network\LuaNetwork.h">
       <Filter>Lua Bridge\Network</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\ReconnectSystem.h">
+      <Filter>Game\Systems</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\FrameCounter\FrameCounter.h">
       <Filter>Game\FrameCounter</Filter>
     </ClInclude>
@@ -273,6 +282,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Quaternion.h">
       <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\ReceivePacketSystem.h">
+      <Filter>Game\Systems\NetworkMessages</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

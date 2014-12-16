@@ -82,19 +82,16 @@ BaseNetwork::~BaseNetwork()
 
 }
 
-void BaseNetwork::AddNetworkHook(char* _name, NetMessageHook _hook)
+void BaseNetwork::AddNetworkHook(char* _name, NetMessageHook& _hook)
 {
 	(*m_userFunctions)[_name] = _hook;
 	return;
 }
 
-void BaseNetwork::TriggerEvent(NetMessageHook _function, uint64_t _packetId, NetConnection _connection)
+void BaseNetwork::TriggerEvent(std::vector<NetEvent>* _event, NetConnection& _connection, const char* _message)
 {
-	if (_function)
-	{
-		_function(m_packetHandler, _packetId, _connection);
-		m_packetHandler->EndUnpack(_packetId);
-	}
+	for (int i = 0; i < _event->size(); ++i)
+		(*_event)[i](_connection, _message);
 }
 
 void BaseNetwork::HandlePacket(Packet* _packet)

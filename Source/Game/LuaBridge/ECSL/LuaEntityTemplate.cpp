@@ -26,6 +26,7 @@ namespace LuaBridge
     LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "SetInt3", &LuaEntityTemplate::SetInt3);
     LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "SetInt4", &LuaEntityTemplate::SetInt4);
     LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "SetString", &LuaEntityTemplate::SetString);
+	LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "SetBool", &LuaEntityTemplate::SetBool);
     LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "SetModel", &LuaEntityTemplate::SetModel);
     LuaEmbedder::EmbedClassFunction<LuaEntityTemplate>("EntityTemplate", "SetPointlight", &LuaEntityTemplate::SetPointlight);
     LuaEmbedder::EmbedClassProperty<LuaEntityTemplate>("EntityTemplate", "Name", &LuaEntityTemplate::GetName, &LuaEntityTemplate::SetName);
@@ -129,6 +130,16 @@ namespace LuaBridge
     return 0;
   }
   
+  int LuaEntityTemplate::SetBool()
+  {
+	  bool active = LuaEmbedder::PullBool(2);
+
+	  std::string componentName = LuaEmbedder::PullString(1);
+	  m_components[componentName].push_back(ECSL::TemplateEntry(active));
+
+	  return 0;
+  };
+
   int LuaEntityTemplate::SetModel()
   {
     std::string componentName = LuaEmbedder::PullString(1);

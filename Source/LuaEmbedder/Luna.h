@@ -362,7 +362,6 @@ namespace LuaEmbedder
       }
       lua_insert(L, base);
       int status = lua_pcall(L, 1 + argumentCount, LUA_MULTRET, 0);
-      lua_gc(L, LUA_GCCOLLECT, 0);
       if (status != 0)
       {
 	std::cerr << "Luna::CallMethod : " << (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error") << std::endl;
@@ -540,7 +539,8 @@ namespace LuaEmbedder
 	lua_pushvalue(L, 2);
 	lua_pushvalue(L, 3);
 	lua_settable(L, members);
-	m_objectFunctionsMap[*obj].push_back(lua_tostring(L, 2));
+	if (lua_isfunction(L, 3))
+	  m_objectFunctionsMap[*obj].push_back(lua_tostring(L, 2));
       }
       lua_settop(L, 0);
       return 0;

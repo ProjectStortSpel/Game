@@ -10,19 +10,19 @@ networkMessagesSystem.Update = function(self, dt)
 		Client.Update(dt)
 	end
 	
-	if Server.IsRunning() then
-		while Server.HandlePacket() > 0 do	end
-	end
+	--if Server.IsRunning() then
+	--	while Server.HandlePacket() > 0 do	end
+	--end
 		
-	if Client.IsConnected() then
-		while Client.HandlePacket() > 0 do	end
-	end
+	--if Client.IsConnected() then
+	--	while Client.HandlePacket() > 0 do	end
+	--end
 
 end
 networkMessagesSystem.Initialize = function(self)
 	self:SetName("Network Message System")
 	self:InitializeNetworkEvents()
-
+	
 	self:AddComponentTypeToFilter("SyncNetwork", FilterType.Mandatory)
 	print("NetworkMessagesSystem initialized!")
 end
@@ -45,6 +45,9 @@ networkMessagesSystem.OnBannedFromServer = function(self, _ip, _port, _message)
 	Console.Print(s)
 end
 networkMessagesSystem.OnConnectedToServer = function(self, _ip, _port)
+	local id = Client.StartPack("Username")
+	Client.WriteString(id, "Username_Lua")
+	Client.Send(id)
 	local s = "[Client] Connected to server " .. _ip .. ":" .. _port
 	Console.Print(s)
 end
@@ -110,7 +113,7 @@ networkMessagesSystem.OnTimedOutFromServer = function(self, _ip, _port)
 	Console.Print(s)	
 end
 
-networkMessagesSystem.OnPlayerConnected = function(self, _ip, _port)
+networkMessagesSystem.OnPlayerConnected = function(self, _ip, _port, _message)
 	
 	-- Hämta alla entiteter som har komponenten "SyncNetwork"
 	-- Skicka dessa entiteter till klienten
