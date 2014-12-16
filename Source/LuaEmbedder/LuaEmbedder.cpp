@@ -48,7 +48,7 @@ namespace LuaEmbedder
     bool error = lua_pcall(L, argumentCount, LUA_MULTRET, 0);
     if (error)
     {
-      std::cerr << "LuaEmbedder::Load : " << (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error") << std::endl;
+      std::cerr << "LuaEmbedder::CallFunction : " << (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error") << std::endl;
       return false;
     }
     lua_gc(L, LUA_GCCOLLECT, 0);
@@ -254,5 +254,65 @@ namespace LuaEmbedder
   bool IsString(int index)
   {
     return lua_isstring(L, index);
+  }
+  bool IsFunction(int index)
+  {
+    return lua_isfunction(L, index);
+  }
+    
+  void SaveFunction(int index, const std::string& key)
+  {
+    if (!lua_isfunction(L, index))
+    {
+      std::cerr << "LuaEmbedder::SaveFunction : Element at index " << index << " is not a function" << std::endl;
+      return;
+    }
+    
+    lua_getglobal(L, "saved_functions");
+    if (lua_isnil(L, -1))
+    {
+      lua_pop(L, 1);
+      lua_newtable(L);
+      lua_pushglobaltable(L);
+      lua_pushstring(L, "saved_functions");
+      lua_pushvalue(L, -3);
+      lua_settable(L, -3);
+      lua_pop(L, 1);
+    }
+    lua_pushstring(L, key.c_str());
+    lua_pushvalue(L, index);
+    lua_settable(L, -3);
+    lua_pop(L, 1);
+  }
+  
+  bool CallSavedFunction(const std::string& key, int argumentCount)
+  {
+    lua_getglobal(L, "saved_functions");
+    if (lua_isnil(L, -1))
+    {
+      std::cerr << "LuaEmbedder::CallSavedFunction : Invalid key " << key << std::endl;
+      return false;
+    }
+    
+    lua_pushstring(L, key.c_str());
+    lua_gettable(L, -2);
+    if (lua_isnil(L, -1))
+    {
+      std::cerr << "LuaEmbedder::CallSavedFunction : Invalid key " << key << std::endl;
+      return false;
+    }
+    
+    lua_remove(L, -2);
+    
+    lua_insert(L, -(1 + argumentCount));
+    bool error = lua_pcall(L, argumentCount, LUA_MULTRET, 0);
+    if (error)
+    {
+      std::cerr << "LuaEmbedder::CallFunction : " << (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error") << std::endl;
+      return false;
+    }
+    lua_gc(L, LUA_GCCOLLECT, 0);
+    
+    return true;
   }
 }

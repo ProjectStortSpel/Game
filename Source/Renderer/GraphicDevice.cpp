@@ -110,9 +110,56 @@ void GraphicDevice::Render()
 {
 		//GLTimer glTimer;
 		//glTimer.Start();
-	//------Render deferred--------------------------------------------------------------------------
+	
 	glEnable(GL_DEPTH_TEST);
 
+	//------- Write shadow maps depths ----------
+	glBindFramebuffer(GL_FRAMEBUFFER, m_shadowMap->GetShadowFBOHandle());
+	glClear(GL_DEPTH_BUFFER_BIT);
+	glViewport(0, 0, m_shadowMap->GetResolution(), m_shadowMap->GetResolution());
+
+	m_shadowShaderDeferred.UseProgram();
+
+	glCullFace(GL_FRONT);
+	glActiveTexture(GL_TEXTURE10);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	mat4 shadowProjection = *m_shadowMap->GetProjectionMatrix();
+	//----Render geometry-----------
+	for (int i = 0; i < m_modelsDeferred.size(); i++)
+	{
+		std::vector<mat4> MVPVector(m_modelsDeferred[i].instances.size());
+		std::vector<mat3> normalMatVector(m_modelsDeferred[i].instances.size());
+
+		int nrOfInstances = 0;
+
+		for (int j = 0; j < m_modelsDeferred[i].instances.size(); j++)
+		{
+			if (m_modelsDeferred[i].instances[j].active) // IS MODEL ACTIVE?
+			{
+				mat4 modelMatrix;
+				if (m_modelsDeferred[i].instances[j].modelMatrix == NULL)
+					modelMatrix = glm::translate(glm::vec3(1));
+				else
+					modelMatrix = *m_modelsDeferred[i].instances[j].modelMatrix;
+
+				mat4 mvp = shadowProjection * (*m_shadowMap->GetViewMatrix()) * modelMatrix;
+				MVPVector[nrOfInstances] = mvp;
+				//mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
+				//normalMatVector[nrOfInstances] = normalMatrix;
+
+				nrOfInstances++;
+			}
+		}
+
+		m_modelsDeferred[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector);
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glCullFace(GL_BACK);
+	//------------------------------
+
+//------Render deferred--------------------------------------------------------------------------
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_deferredFBO);
 	glViewport(0, 0, m_clientWidth, m_clientHeight);
 
@@ -178,51 +225,6 @@ void GraphicDevice::Render()
 	//m_glTimerValues.push_back(GLTimerValue("Deferred stage1: ", glTimer.Stop()));
 	//glTimer.Start();	
 
-//------- Write shadow maps depths ----------
-	glBindFramebuffer(GL_FRAMEBUFFER, m_shadowMap->GetShadowFBOHandle());
-	//glClear(GL_DEPTH_BUFFER_BIT);
-
-	m_shadowShaderDeferred.UseProgram();
-
-	glCullFace(GL_FRONT);
-	glActiveTexture(GL_TEXTURE10);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	mat4 shadowProjection = *m_shadowMap->GetProjectionMatrix();
-	//----Render geometry-----------
-	for (int i = 0; i < m_modelsDeferred.size(); i++)
-	{
-		std::vector<mat4> MVPVector(m_modelsDeferred[i].instances.size());
-		std::vector<mat3> normalMatVector(m_modelsDeferred[i].instances.size());
-
-		int nrOfInstances = 0;
-
-		for (int j = 0; j < m_modelsDeferred[i].instances.size(); j++)
-		{
-			if (m_modelsDeferred[i].instances[j].active) // IS MODEL ACTIVE?
-			{
-				mat4 modelMatrix;
-				if (m_modelsDeferred[i].instances[j].modelMatrix == NULL)
-					modelMatrix = glm::translate(glm::vec3(1));
-				else
-					modelMatrix = *m_modelsDeferred[i].instances[j].modelMatrix;
-
-				mat4 mvp = shadowProjection * (*m_shadowMap->GetViewMatrix()) * modelMatrix;
-				MVPVector[nrOfInstances] = mvp;
-				//mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-				//normalMatVector[nrOfInstances] = normalMatrix;
-
-				nrOfInstances++;
-			}
-		}
-
-		m_modelsDeferred[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector);
-	}
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glCullFace(GL_BACK);
-//------------------------------
-
 	
 	glClear(GL_COLOR_BUFFER_BIT);
 	glDisable(GL_DEPTH_TEST);
@@ -232,7 +234,7 @@ void GraphicDevice::Render()
 
 	m_compDeferredPass2Shader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
 	mat4 inverseProjection = glm::inverse(projectionMatrix);
-	m_compDeferredPass2Shader.SetUniVariable("invProjection", mat4x4, &inverseProjection);
+	m_compDeferredPass2Shader.SetUniVariable("InvProjection", mat4x4, &inverseProjection);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_depthBuf);
@@ -638,7 +640,7 @@ void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
 void GraphicDevice::CreateShadowMap()
 {
 	int resolution = 2048;
-	m_shadowMap = new ShadowMap(vec3(7, 10, 10), vec3(7, 0, 7), resolution);
+	m_shadowMap = new ShadowMap(vec3(7, 5, 10), vec3(7, 0, 7), resolution);
 	m_shadowMap->CreateShadowMapTexture(GL_TEXTURE10);
 
 	m_vramUsage += (resolution*resolution*sizeof(float));
@@ -670,7 +672,6 @@ void GraphicDevice::ToggleSimpleText()
 {
 	m_renderSimpleText = !m_renderSimpleText;
 }
-
 
 bool GraphicDevice::PreLoadModel(std::string _dir, std::string _file, int _renderType)
 {

@@ -23,7 +23,7 @@ end
 
 MapCreationSystem.AddPlayers = function(self)
 	
-	for i = 3, 9, 2 do
+	for i = 4, 10, 2 do
 	--for i = 2, 4, 1 do
 		local entity = world:CreateNewEntity("Player")
 		world:CreateComponentAndAddTo("Spawn", entity)
@@ -109,7 +109,7 @@ MapCreationSystem.AddTile = function(self, posX, posZ, tiletype)
     elseif tiletype == 117 then -- 117 = u = water up
         world:CreateComponentAndAddTo("Water", entity)
         local comp = self:GetComponent(entity, "Water", 0)
-        comp:SetInt2(0, 1)
+        comp:SetInt2(0, -1)
 		local comp = self:GetComponent(entity, "Rotation", 0)
 		comp:SetFloat3(0, -math.pi/2, 0)
 		world:CreateComponentAndAddTo("Model", entity)
@@ -119,7 +119,7 @@ MapCreationSystem.AddTile = function(self, posX, posZ, tiletype)
     elseif tiletype == 100 then -- 100 = d = water down
         world:CreateComponentAndAddTo("Water", entity)
         local comp = self:GetComponent(entity, "Water", 0)
-        comp:SetInt2(0, -1)
+        comp:SetInt2(0, 1)
 		local comp = self:GetComponent(entity, "Rotation", 0)
 		comp:SetFloat3(0, math.pi/2, 0)
 		world:CreateComponentAndAddTo("Model", entity)
@@ -187,8 +187,13 @@ MapCreationSystem.SetPosition = function(self, entity, posX, posY, posZ)
 			targetComp:SetInt(checkpointID + 1)
 			local spawnComp = self:GetComponent(entity, "Spawn", 0)
 			spawnComp:SetInt2(posX, posZ)
-		end
+		end	
+	elseif self:TileIsVoid(posX, posZ) then
+		--print("Tile Is Void", posX, posY)
+		world:CreateComponentAndAddTo("InactivePlayer", entity)
+		
 	end
+	
 end
 
 MapCreationSystem.GetCheckPointId = function(self, posX, posY)

@@ -25,6 +25,8 @@ public:
 
 	void CreateShadowMapTexture(GLuint _textureUnit);
 	void ChangeResolution(int res);
+
+	int GetResolution(){ return m_resolution; }
 	
 	GLuint GetShadowFBOHandle()
 		{ return m_shadowFBO; }
