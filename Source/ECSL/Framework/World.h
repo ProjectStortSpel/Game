@@ -45,6 +45,8 @@ namespace ECSL
 
 		
 		void GetEntityComponents(std::vector<unsigned int>& _out, unsigned int _entityId){ m_dataManager->GetEntityTable()->GetEntityComponents(_out, _entityId); }
+
+		float GetMemoryUsage();
 	};
 }
 

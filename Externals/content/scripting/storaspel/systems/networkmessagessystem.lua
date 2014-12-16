@@ -2,13 +2,7 @@ networkMessagesSystem = System()
 
 networkMessagesSystem.Update = function(self, dt)
 
-	if Server.IsRunning() then
-		Server.Update(dt)
-	end
-	
-	if Client.IsConnected() then
-		Client.Update(dt)
-	end
+	Net.Update(dt)
 	
 	--if Server.IsRunning() then
 	--	while Server.HandlePacket() > 0 do	end
@@ -39,16 +33,15 @@ networkMessagesSystem.OnBannedFromServer = function(self, _ip, _port, _message)
 		world:KillEntity(entities[i])
 	end
 
-	Client.ResetNetworkMaps()
+	Net.ResetNetworkMaps()
 	
 	local s = "[Client] You was banned from the server " .. _ip .. ":" .. _port .. ". Reason: " .. _message
 	Console.Print(s)
 end
 networkMessagesSystem.OnConnectedToServer = function(self, _ip, _port)
-	print("NetworkMessagesSystem Connected");
-	local id = Client.StartPack("Username")
-	Client.WriteString(id, "Username_Lua")
-	Client.Send(id)
+	local id = Net.StartPack("Username")
+	Net.WriteString(id, "Username_Lua")
+	Net.Send(id)
 	local s = "[Client] Connected to server " .. _ip .. ":" .. _port
 	Console.Print(s)
 end
@@ -58,7 +51,7 @@ networkMessagesSystem.OnDisconnectedFromServer = function(self, _ip, _port)
 		world:KillEntity(entities[i])
 	end
 	
-	Client.ResetNetworkMaps()
+	Net.ResetNetworkMaps()
 
 	local s = "[Client] Disconnected from server " .. _ip .. ":" .. _port
 	Console.Print(s)
@@ -73,7 +66,7 @@ networkMessagesSystem.OnKickedFromServer = function(self, _ip, _port, _message)
 		world:KillEntity(entities[i])
 	end
 	
-	Client.ResetNetworkMaps()
+	Net.ResetNetworkMaps()
 
 	local s = "[Client] Kicked from server " .. _ip .. ":" .. _port .. ". Reason: " .. _message
 	Console.Print(s)	
@@ -108,7 +101,7 @@ networkMessagesSystem.OnTimedOutFromServer = function(self, _ip, _port)
 		world:KillEntity(entities[i])
 	end
 	
-	Client.ResetNetworkMaps()
+	Net.ResetNetworkMaps()
 	
 	local s = "[Client] Timed out from server " .. _ip .. ":" .. _port
 	Console.Print(s)	
@@ -122,7 +115,7 @@ networkMessagesSystem.OnPlayerConnected = function(self, _ip, _port, _message)
 	local entities = self:GetEntities();
 	
 	for i = 1, #entities do
-		Server.SendEntity(entities[i], _ip, _port)	
+		Net.SendEntity(entities[i], _ip, _port)	
 		Console.Print("Send Entity: " .. entities[i])
 	end	
 	

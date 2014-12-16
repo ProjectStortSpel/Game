@@ -19,6 +19,7 @@ public:
 	void OnEntityRemoved(unsigned int _entityId);
 
 private:
+	unsigned int m_rotationId, m_spinId;
 };
 
 #endif

@@ -16,3 +16,9 @@ Player:SetModel("Model", "head", "head")
 Player:SetInt2("Direction", 0, -1)
 Player:SetInt2("TargetCheckpoint", 1)
 EntityTemplateManager:AddTemplate(Player)
+
+local Card = EntityTemplate()
+Card.Name = "Card"
+Card:AddComponent("CardPrio")
+Card:AddComponent("CardAction")
+EntityTemplateManager:AddTemplate(Card)

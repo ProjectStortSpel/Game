@@ -36,6 +36,8 @@ public:
 	void SetTextColor(std::vector<Console::Argument>* _args);
 	void ToggleText(std::vector<Console::Argument>* _args);
 
+	void ECSLMemoryUsage(std::vector<Console::Argument>* _args);
+
 	void SetWorld(ECSL::World* _world){ m_world = _world; }
 private:
 	ECSL::World*	m_world;

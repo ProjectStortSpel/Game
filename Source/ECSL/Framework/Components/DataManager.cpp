@@ -132,3 +132,16 @@ void DataManager::ClearChangeLists()
 	m_changedEntities->clear();
 	m_componentsToBeRemoved->clear();
 }
+
+unsigned int DataManager::GetMemoryAllocated()
+{
+	unsigned int memoryUsage = 0;
+
+	for (auto dataTable : *m_componentTables)
+		memoryUsage += (dataTable->GetMemoryAllocated());
+
+	memoryUsage += sizeof(DataManager);
+
+	float megabytes = ((float)memoryUsage) / (1024.f * 1024.f);
+ 	return (unsigned int)megabytes;
+}

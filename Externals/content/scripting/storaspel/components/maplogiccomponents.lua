@@ -35,8 +35,8 @@ NotWalkableComponent.Name = "NotWalkable"
 NotWalkableComponent.TableType = TableType.Map
 worldCreator:AddComponentType(NotWalkableComponent)
 
--- Respawn Component
-local RespawnComponent = ComponentType()
-RespawnComponent.Name = "Respawn"
-RespawnComponent.TableType = TableType.Map
-worldCreator:AddComponentType(RespawnComponent)
+-- Inactive Player Component
+local InactivePlayerComponent = ComponentType()
+InactivePlayerComponent.Name = "InactivePlayer"
+InactivePlayerComponent.TableType = TableType.Map
+worldCreator:AddComponentType(InactivePlayerComponent)
