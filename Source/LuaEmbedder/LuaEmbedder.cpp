@@ -46,6 +46,7 @@ namespace LuaEmbedder
       lua_gettable(L, -2);
     }
     bool error = lua_pcall(L, argumentCount, LUA_MULTRET, 0);
+    lua_gc(L, LUA_GCCOLLECT, 0);
     if (error)
     {
       std::cerr << "LuaEmbedder::CallFunction : " << (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error") << std::endl;
@@ -321,6 +322,7 @@ namespace LuaEmbedder
     
     lua_insert(L, -(1 + argumentCount));
     bool error = lua_pcall(L, argumentCount, LUA_MULTRET, 0);
+    lua_gc(L, LUA_GCCOLLECT, 0);
     if (error)
     {
       std::cerr << "LuaEmbedder::CallFunction : " << (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error") << std::endl;

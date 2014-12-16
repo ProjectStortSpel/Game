@@ -124,3 +124,7 @@ unsigned int World::CreateNewEntity(std::string _templateName)
 	return newId;
 }
 
+float World::GetMemoryUsage()
+{
+	return m_dataManager->GetMemoryAllocated();
+}

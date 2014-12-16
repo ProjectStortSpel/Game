@@ -43,5 +43,6 @@ worldCreator:AddSystemToCurrentGroup(LeftTurnSystem)
 worldCreator:AddSystemToCurrentGroup(TurnAroundSystem)
 
 worldCreator:AddSystemToCurrentGroup(CardDeckSystem)
+worldCreator:AddSystemToCurrentGroup(GetCardsSystem)
 
 worldCreator:AddSystemToCurrentGroup(DiscoSystem)

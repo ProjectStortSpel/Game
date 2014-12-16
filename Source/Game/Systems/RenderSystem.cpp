@@ -31,6 +31,14 @@ void RenderSystem::Initialize()
 	m_bitMask = ECSL::BitSet::BitSetConverter::ArrayToBitSet(bitsetComponents, ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount());
 	m_numberOfBitSets = ECSL::BitSet::GetIntCount(ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount());
 	m_componentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("ChangedComponents");
+
+	m_positionId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Position");
+	m_rotationId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Rotation");
+	m_scaleId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Scale");
+	m_renderId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Render");
+	m_renderOffset = ECSL::ComponentTypeManager::GetInstance().GetComponentType(m_renderId)->GetVariables()->at("Mat").GetOffset();
+
+
 	printf("RenderSystem initialized!\n");
 }
 
@@ -38,7 +46,6 @@ void RenderSystem::Update(float _dt)
 {
 	auto entities = *GetEntities();
 
-	/*	TODO: Some logic to not update matrix every frame	*/
 	for (auto entity : entities)
 	{
 		ECSL::BitSet::DataType* eBitMask = (ECSL::BitSet::DataType*)GetComponent(entity, m_componentId, 0);
@@ -86,10 +93,10 @@ void RenderSystem::UpdateMatrix(unsigned int _entityId)
 	float*		Scale;
 	glm::mat4*	Matrix;
 
-	Position	=	(float*)GetComponent(_entityId, "Position", 0);
-	Rotation	=	(float*)GetComponent(_entityId, "Rotation", 0);
-	Scale		=	(float*)GetComponent(_entityId, "Scale", 0);
-	Matrix		=	(glm::mat4*)GetComponent(_entityId, "Render", "Mat");
+	Position	=	(float*)GetComponent(_entityId, m_positionId , 0);
+	Rotation	=	(float*)GetComponent(_entityId, m_rotationId, 0);
+	Scale		=	(float*)GetComponent(_entityId, m_scaleId, 0);
+	Matrix		=	(glm::mat4*)GetComponent(_entityId, m_renderId, m_renderOffset);
 
 	*Matrix = glm::translate(glm::vec3(Position[0], Position[1], Position[2]));
 
@@ -113,5 +120,5 @@ void RenderSystem::UpdateMatrix(unsigned int _entityId)
 	//*Matrix *= glm::rotate(Rotation[2], glm::vec3(1, 0, 0)); // quaternions?????
 	*Matrix *= glm::scale(glm::vec3(Scale[0], Scale[1], Scale[2]));
 
-	ComponentHasChanged(_entityId, "Render");
+	ComponentHasChanged(_entityId, m_renderId);
 }
