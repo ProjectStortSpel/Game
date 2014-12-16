@@ -140,12 +140,22 @@ int BaseNetwork::PopAndExecutePacket(void)
 
 	uint64_t id = m_packetHandler->StartUnpack(p);
 
-	if (m_userFunctions->find((char*)&p->Data[1]) != m_userFunctions->end())
+	m_packetHandler->ReadByte(id);
+	char* functionName = m_packetHandler->ReadString(id);
+
+	static int numEnt = 0;
+	if (strcmp(functionName, "Entity") == 0)
 	{
-		(*m_userFunctions)[(char*)&p->Data[1]](m_packetHandler, id, *p->Sender);
+		++numEnt;
+		printf("Nument: %d\n", numEnt);
+	}
+
+	if (m_userFunctions->find(functionName) != m_userFunctions->end())
+	{
+		(*m_userFunctions)[functionName](m_packetHandler, id, *p->Sender);
 	}
 	else if (NET_DEBUG)
-		printf("Packet \"%s\" not bound to any function.\n", (char*)&p->Data[1]);
+		printf("Packet \"%s\" not bound to any function.\n", functionName);
 
 	m_packetHandler->EndUnpack(id);
 
@@ -170,9 +180,11 @@ void BaseNetwork::Update(float _dt)
 		m_systemPackets->pop();
 		m_systemPacketLock->unlock();
 
-		char type = p->Data[0];
 
 		uint64_t id = m_packetHandler->StartUnpack(p);
+
+
+		char type = m_packetHandler->ReadByte(id);
 
 		if (m_networkFunctions->find(type) != m_networkFunctions->end())
 		{

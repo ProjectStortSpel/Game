@@ -154,17 +154,6 @@ bool LinSocket::Bind(const int _port)
 	if (getsockname(*m_socket, (sockaddr *)&sin, &len) == 0)
 		*m_localPort = ntohs(sin.sin_port);
 
-
-	int flag = 1;
-	if (setsockopt(*m_socket, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int)) < 0)
-	{
-		if (NET_DEBUG)
-			printf("Failed to enable TCP_NODELAY. Error: %s.\n", strerror(errno));
-
-		return false;
-	}
-
-
 	return true;
 }
 bool LinSocket::Listen(int _backlog)
@@ -190,6 +179,20 @@ bool LinSocket::SetNonBlocking(bool _value)
 
 	return true;
 }
+bool LinSocket::SetNoDelay(bool _value)
+{
+	int flag = _value;
+	if (setsockopt(*m_socket, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int)) < 0)
+	{
+		if (NET_DEBUG)
+			printf("Failed to enable TCP_NODELAY. Error: %s.\n", strerror(errno));
+
+		return false;
+	}
+
+	return true;
+}
+
 bool LinSocket::CloseSocket()
 {
 	if (close(*m_socket) != 0)

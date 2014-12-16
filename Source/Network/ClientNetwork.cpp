@@ -129,6 +129,9 @@ bool ClientNetwork::Connect()
 		*m_socketBound = true;
 	}
 
+	if (!m_socket->SetNoDelay(true))
+		printf("Failed to set no delay CLIENT\n");
+
 	bool connected = false;
 	//for (int i = 0; i < 5; ++i)
 	//{
