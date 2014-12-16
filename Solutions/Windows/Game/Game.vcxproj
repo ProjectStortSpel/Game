@@ -279,7 +279,8 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\moveplayersystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\networkmessagessystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\templates\box.lua" />
-    <None Include="..\..\..\Externals\content\scripting\storaspel\templates\tile.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\templates\lights.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\templates\map.lua" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

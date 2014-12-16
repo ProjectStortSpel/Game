@@ -303,9 +303,6 @@
     <None Include="..\..\..\Externals\content\scripting\storaspel\templates\box.lua">
       <Filter>Scripting\Templates</Filter>
     </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\templates\tile.lua">
-      <Filter>Scripting\Templates</Filter>
-    </None>
     <None Include="..\..\..\Externals\content\scripting\storaspel\components\tilecomponents.lua">
       <Filter>Scripting\Components</Filter>
     </None>
@@ -320,6 +317,12 @@
     </None>
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\networkmessagessystem.lua">
       <Filter>Scripting\Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\templates\lights.lua">
+      <Filter>Scripting\Templates</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\templates\map.lua">
+      <Filter>Scripting\Templates</Filter>
     </None>
   </ItemGroup>
 </Project>
