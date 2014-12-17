@@ -18,9 +18,9 @@ PlayersSystem.OnEntityAdded = function(self, entityId)
 	local playerNumber = 1
 	local newEntityId = world:CreateNewEntity("Unit")
 	
-	world:SetComponent(newEntityId, "Model", "ModelName", "head");
-	world:SetComponent(newEntityId, "Model", "ModelPath", "head");
-	world:SetComponent(newEntityId, "PlayerNumber", "Number", playerNumber)
+	--world:SetComponent(newEntityId, "Model", "ModelName", "head");
+	--world:SetComponent(newEntityId, "Model", "ModelPath", "head");
+	--world:SetComponent(newEntityId, "PlayerNumber", "Number", playerNumber)
 	
 	print("Unit ", newEntityId)
 end
