@@ -194,8 +194,12 @@ bool ServerNetwork::Start()
 	*m_running = false;
 
 	m_listenSocket = ISocket::CreateSocket();
-	m_listenSocket->SetNonBlocking(true);
+	m_listenSocket->SetNonBlocking(false);
 	m_listenSocket->Bind(*m_incomingPort);
+	m_listenSocket->SetNoDelay(true);
+
+	if (!m_listenSocket->SetNoDelay(true))
+		printf("Failed to set no delay\n");
 
 	if (NET_DEBUG)
 	{
@@ -384,6 +388,11 @@ void ServerNetwork::ListenForConnections(void)
 		if (!newConnection)
 			continue;
 
+		//newConnection->SetNonBlocking(true);
+		newConnection->SetTimeoutDelay(1000);
+		if (!newConnection->SetNoDelay(true))
+			printf("Failed to set no delay\n");
+
 		NetConnection nc = newConnection->GetNetConnection();
 
 		m_connectedClientsLock->lock();
@@ -516,7 +525,7 @@ void ServerNetwork::SetOnPlayerTimedOut(NetEvent& _function)
 	m_onPlayerTimedOut->push_back(_function);
 }
 
-void ServerNetwork::Kick(NetConnection& _connection, char* _reason)
+void ServerNetwork::Kick(NetConnection& _connection, const char* _reason)
 {
 	m_connectedClientsLock->lock();
 

@@ -3,6 +3,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "TextureLoader.h"
 #include "ModelLoader.h"
+#include "ModelExporter.h"
 #include "SkyBox.h"
 
 using namespace Renderer;
@@ -49,6 +50,7 @@ bool GraphicDevice::Init()
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	if (!InitForward()) { ERRORMSG("INIT FORWARD FAILED\n"); return false; }
 	if (!InitSkybox()) { ERRORMSG("INIT SKYBOX FAILED\n"); return false; }
+	if (!InitRandomVector()) { ERRORMSG("INIT RANDOMVECTOR FAIELD\n"); return false; }
 	if (!InitTextRenderer()) { ERRORMSG("INIT TEXTRENDERER FAILED\n"); return false; }
 		m_vramUsage += (m_textRenderer.GetArraySize() * sizeof(int));
 	if (!InitLightBuffers()) { ERRORMSG("INIT LIGHTBUFFER FAILED\n"); return false; }
@@ -192,6 +194,8 @@ void GraphicDevice::Render()
 	glBindTexture(GL_TEXTURE_2D, m_depthBuf);
 
 	glBindImageTexture(1, m_colorTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
+
+	glBindImageTexture(2, m_randomVectors, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
 
 	//---Light buffers----------
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer);
@@ -504,6 +508,14 @@ bool GraphicDevice::InitSkybox()
 	m_skyBoxShader.UseProgram();
 	m_skybox = new SkyBox(texHandle, m_camera->GetFarPlane());
 	m_vramUsage += (w*h * 6 * 4 * sizeof(float));
+
+	return true;
+}
+
+bool GraphicDevice::InitRandomVector()
+{
+	int texSizeX, texSizeY;
+	m_randomVectors = AddTexture("content/textures/vectormap.png", GL_TEXTURE21);
 
 	return true;
 }
@@ -916,36 +928,18 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 			return it->second;
 	}
 
-	std::vector<Vertex> verts = ModelLoader::importMesh(_fileDir);
-
-	std::vector<float> positionData(verts.size() * 3);
-	std::vector<float> normalData(verts.size() * 3);
-	std::vector<float> tanData(verts.size() * 3);
-	std::vector<float> bitanData(verts.size() * 3);
-	std::vector<float> texCoordData(verts.size() * 2);
+	ModelExporter modelExporter;
+	modelExporter.OpenFileForRead(_fileDir.c_str());
+	std::vector<float> positionData = modelExporter.ReadDataFromFile();
+	std::vector<float> normalData = modelExporter.ReadDataFromFile();
+	std::vector<float> tanData = modelExporter.ReadDataFromFile();
+	std::vector<float> bitanData = modelExporter.ReadDataFromFile();
+	std::vector<float> texCoordData = modelExporter.ReadDataFromFile();
+	modelExporter.CloseFile();
 
 	Buffer* retbuffer = new Buffer();
 
 	_shaderProg->UseProgram();
-
-	for (int i = 0; i < (int)verts.size(); i++)
-	{
-		positionData[i * 3 + 0] = verts[i].po.x;
-		positionData[i * 3 + 1] = verts[i].po.y;
-		positionData[i * 3 + 2] = verts[i].po.z;
-		normalData[i * 3 + 0] = verts[i].no.x;
-		normalData[i * 3 + 1] = verts[i].no.y;
-		normalData[i * 3 + 2] = verts[i].no.z;
-		tanData[i * 3 + 0] = verts[i].ta.x;
-		tanData[i * 3 + 1] = verts[i].ta.y;
-		tanData[i * 3 + 2] = verts[i].ta.z;
-		bitanData[i * 3 + 0] = verts[i].bi.x;
-		bitanData[i * 3 + 1] = verts[i].bi.y;
-		bitanData[i * 3 + 2] = verts[i].bi.z;
-		texCoordData[i * 2 + 0] = verts[i].uv.x;
-		texCoordData[i * 2 + 1] = 1 - verts[i].uv.y;
-	}
-
 	BufferData bufferData[] =
 	{
 		{ 0, 3, GL_FLOAT, (const GLvoid*)positionData.data(), positionData.size() * sizeof(float) },
@@ -960,9 +954,8 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 	for (int i = 0; i < sizeof(bufferData) / sizeof(bufferData[0]); i++)
 		m_vramUsage += (int)bufferData[i].dataSize;
 
-
 	retbuffer->init(bufferData, sizeof(bufferData) / sizeof(bufferData[0]));
-	retbuffer->setCount((int)verts.size());
+	retbuffer->setCount((int)positionData.size());
 	
 	m_meshs.insert(std::pair<const std::string, Buffer*>(_fileDir, retbuffer));
 

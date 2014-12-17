@@ -32,6 +32,7 @@ float g_depthVal;		// depthval (DepthTex.x)
 
 // ---- FUNCTION DEFINES ---- 
 vec2 getRandom();
+vec3 getPosition(ivec2 samplePos);
 float doAmbientOcclusion( vec2 offset );
 float ComputeSSAO();
 float ComputeGlow();
@@ -48,7 +49,7 @@ void main()
 	vec4 FragColor = vec4(0.0);
 
 	// Get threadID
-	g_threadID = ivec2( gl_GlobalInvocationID.x, gl_GlobalInvocationID.y);
+	g_threadID = ivec2( gl_GlobalInvocationID.x, gl_GlobalInvocationID.y );
 
 	// Retrieve position, normal and color information from the g-buffer textures
 	vec4 inputMap0 = texelFetch(DepthTex, g_threadID, 0);
@@ -89,11 +90,14 @@ void main()
 	// Do post renderer effect here
 	float glow = ComputeGlow();
 	vec4 glowvec = vec4(glow,glow,glow, 1.0);
+	float SSAO = ComputeSSAO();
+	vec4 SSAOvec = vec4(SSAO,SSAO,SSAO, 1.0);
+
 
 	// Do frag calcs here
-	FragColor = vec4(ambient + diffuse, 1.0) * vec4(g_albedo, 1.0) + vec4(spec, 0.0f) + glowvec;
-	//FragColor += glowvec;
-	//FragColor = vec4(diffuse, 1.0);
+	FragColor = vec4(ambient + diffuse, 1.0) * vec4(g_albedo, 1.0) * SSAOvec + vec4(spec, 0.0f) + glowvec;
+	//FragColor = glowvec;
+	//FragColor = SSAOvec;
 	//FragColor = vec4( g_normal, 1.0);
 	//FragColor = vec4( g_albedo   +g_normal-g_normal, 1.0 );
 	//FragColor = vec4( vec3(g_viewPos  +g_normal-g_normal), 1.0 );
@@ -131,7 +135,7 @@ float ComputeGlow()
 	- - - - - - 5 - - - - - - 
 	*/
 	float glow = 0;
-	glow += imageLoad(ColorTex, g_threadID + ivec2(-6, 0)).w * 0.0044299121055113265;
+	/*glow += imageLoad(ColorTex, g_threadID + ivec2(-6, 0)).w * 0.0044299121055113265;
 	glow += imageLoad(ColorTex, g_threadID + ivec2(-4, -4)).w * 0.00895781211794;
 	glow += imageLoad(ColorTex, g_threadID + ivec2(0, -5)).w * 0.0215963866053;
 	glow += imageLoad(ColorTex, g_threadID + ivec2(3, -3)).w * 0.0443683338718;
@@ -146,27 +150,48 @@ float ComputeGlow()
 	glow += imageLoad(ColorTex, g_threadID + ivec2(0,  5)).w * 0.0215963866053;
 	glow += imageLoad(ColorTex, g_threadID + ivec2(4,  4)).w * 0.00895781211794;
 	glow += imageLoad(ColorTex, g_threadID + ivec2(6,  0)).w * 0.0044299121055113265;
+	*/
 	return glow;
 }
 
-/*
+vec3 getPosition(ivec2 samplePos)
+{
+	float depthVal = texelFetch(DepthTex, samplePos, 0).x;
+
+
+	vec2 ndc = vec2(g_threadID) / vec2( gl_WorkGroupSize.xy*gl_NumWorkGroups.xy - ivec2(1,1)) * 2.0f - 1.0f;
+
+    vec4 H = vec4(	
+					ndc,
+					depthVal * 2.0 - 1.0,
+					1.0
+				);
+
+    vec4 D = InvProjection * H;
+    return (D.xyz / D.w);
+}
+
 float doAmbientOcclusion( vec2 offset )
 {
-	float g_scale = 8;
-	float g_intensity = 12;
+	float g_scale = 0.4;
+	float g_intensity = 0.3;
 	float g_bias = 0.00;
 
-	g_threadID;
+	offset = offset * vec2(gl_WorkGroupSize.xy*gl_NumWorkGroups.xy);
 
-	vec3 diff = getPosition(g_threadID + offset) - p;
+	ivec2 ssaoSamp;
+	ssaoSamp.x = int(min(max(g_threadID.x + ivec2(offset).x, 0), gl_WorkGroupSize.x*gl_NumWorkGroups.x-1));
+	ssaoSamp.y = int(min(max(g_threadID.y + ivec2(offset).y, 0), gl_WorkGroupSize.y*gl_NumWorkGroups.y-1));
+
+	vec3 diff = getPosition(ssaoSamp) - g_viewPos;
 	vec3 v = normalize(diff);
 	float d = length(diff)*g_scale;
-	return max(0.0,dot(cnorm,v)-g_bias)*(1.0/(1.0+d))*g_intensity;
+	return max(0.0,dot(g_normal,v)-g_bias)*(1.0/(1.0+d))*g_intensity;
 }
 
 float ComputeSSAO()
 {
-	float g_sample_rad = 1.2;
+	float g_sample_rad = 0.3;
 	vec2 vec[4] = { vec2(1,0), vec2(-1,0), vec2(0,1), vec2(0,-1) };
 
 	vec2 rand = getRandom();
@@ -177,20 +202,20 @@ float ComputeSSAO()
 	//SSAO Calculation
 	for (int j = 0; j < 4; ++j)
 	{
-		vec2 coord1 = reflect(vec[j],rand)*rad;
+		vec2 coord1 = vec2(reflect(vec[j],rand)*rad);
 		vec2 coord2 = vec2(coord1.x*0.707 - coord1.y*0.707, coord1.x*0.707 + coord1.y*0.707);
   
-		ao += doAmbientOcclusion(uv,coord1*0.25, p, n);
-		ao += doAmbientOcclusion(uv,coord2*0.5, p, n);
-		ao += doAmbientOcclusion(uv,coord1*0.75, p, n);
-		ao += doAmbientOcclusion(uv,coord2, p, n);
+		ao += doAmbientOcclusion(coord1*0.25);
+		ao += doAmbientOcclusion(coord2*0.5);
+		ao += doAmbientOcclusion(coord1*0.75);
+		ao += doAmbientOcclusion(coord2);
 	} 
 
 	ao/= 16;
 
 	return 1-ao;
 }
-*/
+
 void ComputeDirLight(out vec3 ambient, out vec3 diffuse, out vec3 spec)
 {
 	if(length( vec3(directionalLight.Intensity.x, directionalLight.Intensity.y, directionalLight.Intensity.z) ) > 0.0)

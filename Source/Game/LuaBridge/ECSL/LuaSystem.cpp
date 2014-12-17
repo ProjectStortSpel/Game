@@ -156,6 +156,8 @@ namespace LuaBridge
 		hook = std::bind(&LuaSystem::OnTimedOutFromServer, this, std::placeholders::_1, std::placeholders::_2);
 		NetworkInstance::GetClient()->SetOnTimedOutFromServer(hook);
 
+
+
 		hook = std::bind(&LuaSystem::OnPlayerConnected, this, std::placeholders::_1, std::placeholders::_2);
 		NetworkInstance::GetServer()->SetOnPlayerConnected(hook);
 
@@ -211,7 +213,7 @@ namespace LuaBridge
 		{
 			LuaEmbedder::PushString(_nc.GetIpAddress());
 			LuaEmbedder::PushInt((int)_nc.GetPort());
-			LuaEmbedder::PushString("OnKickedFromServer");
+			LuaEmbedder::PushString(_message);
 			LuaEmbedder::CallMethod<LuaSystem>("System", "OnKickedFromServer", this, 3);
 		}
 	}
