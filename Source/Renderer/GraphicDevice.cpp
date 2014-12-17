@@ -1094,7 +1094,7 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 		m_vramUsage += (int)bufferData[i].dataSize;
 
 	retbuffer->init(bufferData, sizeof(bufferData) / sizeof(bufferData[0]));
-	retbuffer->setCount((int)positionData.size());
+	retbuffer->setCount((int)positionData.size() / 3);
 	
 	m_meshs.insert(std::pair<const std::string, Buffer*>(_fileDir, retbuffer));
 
