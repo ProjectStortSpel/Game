@@ -34,9 +34,3 @@ local NotWalkableComponent = ComponentType()
 NotWalkableComponent.Name = "NotWalkable"
 NotWalkableComponent.TableType = TableType.Map
 worldCreator:AddComponentType(NotWalkableComponent)
-
--- Inactive Player Component
-local InactivePlayerComponent = ComponentType()
-InactivePlayerComponent.Name = "InactivePlayer"
-InactivePlayerComponent.TableType = TableType.Map
-worldCreator:AddComponentType(InactivePlayerComponent)

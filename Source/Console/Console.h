@@ -70,6 +70,7 @@ namespace Console
 		void RemoveCommand(const char* _name);
 		void ClearCommands();
 		void AddMessage(const char* _message);
+		void ClearHistory();
 		std::vector<std::string> GetHistory(void);
 		const char* GetFunctionMatch(const char* _command);
 		const char* GetPreviousHistory();

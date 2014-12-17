@@ -269,7 +269,10 @@ void NetworkHelper::ReceiveComponents(Network::PacketHandler* _ph, uint64_t _id,
 				case ECSL::ComponentDataType::REFERENCE:
 					*(int*)data = m_NtoH[_ph->ReadByte(_id)];
 					break;
-				};
+				default:
+					printf("[NETWORK ERROR] Undefined data type for message\n");
+					break;
+				}
 			}
 			int bitSetIndex = ECSL::BitSet::GetBitSetIndex(compType);
 			int bitIndex = ECSL::BitSet::GetBitIndex(compType);

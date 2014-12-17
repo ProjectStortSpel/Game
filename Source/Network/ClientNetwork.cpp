@@ -28,7 +28,7 @@ ClientNetwork::ClientNetwork()
 	m_socket = 0;
 	m_connected = new bool(false);
 
-	*m_maxTimeOutIntervall = 1.0f;
+	*m_maxTimeOutIntervall = 1.f;
 	*m_maxIntervallCounter = 300;
 
 	m_onConnectedToServer = new std::vector<NetEvent>();
@@ -129,6 +129,9 @@ bool ClientNetwork::Connect()
 		*m_socketBound = true;
 	}
 
+	m_socket->SetTimeoutDelay(1000);
+	m_socket->SetNoDelay(true);
+
 	bool connected = false;
 	//for (int i = 0; i < 5; ++i)
 	//{
@@ -147,7 +150,7 @@ bool ClientNetwork::Connect()
 	}
 
 	*m_connected = true;
-	m_socket->SetNonBlocking(true);
+	m_socket->SetNonBlocking(false);
 
 	uint64_t id = m_packetHandler->StartPack(NetTypeMessageId::ID_PASSWORD_ATTEMPT);
 	m_packetHandler->WriteString(id, m_password->c_str());
@@ -370,7 +373,7 @@ void ClientNetwork::NetConnectionKicked(PacketHandler* _packetHandler, uint64_t&
 
 	char* message = _packetHandler->ReadString(_id);
 
-	TriggerEvent(m_onKickedFromServer, _connection, 0);
+	TriggerEvent(m_onKickedFromServer, _connection, message);
 
 	*m_receivePacketsThreadAlive = false;
 
@@ -396,7 +399,7 @@ void ClientNetwork::NetConnectionBanned(PacketHandler* _packetHandler, uint64_t&
 	SAFE_DELETE(m_socket);
 	*m_socketBound = 0;
 
-	TriggerEvent(m_onBannedFromServer, _connection, 0);
+	TriggerEvent(m_onBannedFromServer, _connection, message);
 
 	if (m_receivePacketsThread->joinable())
 		m_receivePacketsThread->join();

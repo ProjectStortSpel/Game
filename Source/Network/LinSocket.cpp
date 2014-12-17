@@ -154,17 +154,6 @@ bool LinSocket::Bind(const int _port)
 	if (getsockname(*m_socket, (sockaddr *)&sin, &len) == 0)
 		*m_localPort = ntohs(sin.sin_port);
 
-
-	int flag = 1;
-	if (setsockopt(*m_socket, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int)) < 0)
-	{
-		if (NET_DEBUG)
-			printf("Failed to enable TCP_NODELAY. Error: %s.\n", strerror(errno));
-
-		return false;
-	}
-
-
 	return true;
 }
 bool LinSocket::Listen(int _backlog)
@@ -190,6 +179,31 @@ bool LinSocket::SetNonBlocking(bool _value)
 
 	return true;
 }
+bool LinSocket::SetNoDelay(bool _value)
+{
+	int flag = _value;
+	if (setsockopt(*m_socket, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int)) < 0)
+	{
+		if (NET_DEBUG)
+			printf("Failed to enable TCP_NODELAY. Error: %s.\n", strerror(errno));
+
+		return false;
+	}
+
+	return true;
+}
+
+bool LinSocket::SetTimeoutDelay(int _value)
+{
+	int timeout = _value;
+
+	if (setsockopt(*m_socket, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout, sizeof(timeout)) != 0)
+		return false;
+
+	if (setsockopt(*m_socket, SOL_SOCKET, SO_SNDTIMEO, (const char*)&timeout, sizeof(timeout)) != 0)
+		return false;
+}
+
 bool LinSocket::CloseSocket()
 {
 	if (close(*m_socket) != 0)
@@ -232,7 +246,7 @@ ISocket* LinSocket::Accept()
 
 	return sock;
 }
-
+/*
 int LinSocket::Receive(char* _buffer, int _length, int _flags)
 {
 	return recv(*m_socket, (void*)_buffer, _length, _flags);
@@ -249,6 +263,39 @@ int LinSocket::Send(char* _buffer, int _length, int _flags)
 		return -1;
 	}
 	return result;
+}
+*/
+
+int LinSocket::Receive(char* _buffer, int _length, int _flags)
+{
+
+	static short len;
+
+	if (recv(*m_socket, (void*)&len, 2, MSG_WAITALL))
+	{
+		len = ntohs(len);
+		return recv(*m_socket, (void*)_buffer, len, MSG_WAITALL);
+	}
+	return 0;
+}
+
+int LinSocket::Send(char* _buffer, int _length, int _flags)
+{
+	static short len = 0;
+	len = htons(_length);
+	if (send(*m_socket, (void*)&len, 2, _flags) != -1)
+	{
+		int result = send(*m_socket, (void*)_buffer, _length, _flags);
+		if (result == -1)
+		{
+			if (NET_DEBUG)
+				printf("Failed to send packet of size '%i'. Error: %s.\n", _length, strerror(errno));
+
+			return -1;
+		}
+		return result;
+	}
+	return -1;
 }
 
 #endif

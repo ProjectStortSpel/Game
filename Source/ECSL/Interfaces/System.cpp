@@ -139,9 +139,13 @@ void System::KillEntity(unsigned int _entityId)
 void System::ComponentHasChanged(unsigned int _entityId, std::string _componentType)
 {
 	unsigned int componentTypeId = ECSL::ComponentTypeManager::GetInstance().GetTableId(_componentType);
-	int bitSetIndex = ECSL::BitSet::GetBitSetIndex(componentTypeId);
-	int bitIndex = ECSL::BitSet::GetBitIndex(componentTypeId);
+	ComponentHasChanged(_entityId, componentTypeId);
+}
 
+void System::ComponentHasChanged(unsigned int _entityId, unsigned int _componentTypeId)
+{
+	int bitSetIndex = ECSL::BitSet::GetBitSetIndex(_componentTypeId);
+	int bitIndex = ECSL::BitSet::GetBitIndex(_componentTypeId);
 	ECSL::BitSet::DataType* changedComponents = (ECSL::BitSet::DataType*)GetComponent(_entityId, "ChangedComponents", 0);
 	changedComponents[bitSetIndex] |= ((ECSL::BitSet::DataType)1) << bitIndex;
 

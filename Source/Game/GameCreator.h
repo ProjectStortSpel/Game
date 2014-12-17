@@ -21,7 +21,7 @@ public:
 	void InitializeConsole();
 	void InitializeInput();
 	void InitializeNetwork();
-	void InitializeWorld();
+	void InitializeWorld(std::string _gameMode);
 	void InitializeLua();
 	
 
@@ -30,12 +30,17 @@ public:
 private:
 	void PollSDLEvent();
 
+	void UpdateNetwork(float _dt);
 	void UpdateConsole();
 	void RenderConsole();
 	
+	void GameMode(std::vector<Console::Argument>* _args);
 	void Reload(std::vector<Console::Argument>* _args);
+	void StartTemp(std::vector<Console::Argument>* _args);
+	void StopGame(std::vector<Console::Argument>* _args);
 
-	void NetUsername(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _nc);
+	void OnConnectedToServer(Network::NetConnection _nc, const char* _message);
+	void LuaPacket(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
 
 private:
 	Renderer::GraphicDevice*	m_graphics;
@@ -47,6 +52,9 @@ private:
 	TextInput					m_consoleInput;
 	Utility::FrameCounter*		m_frameCounter;
 	std::string					m_userName;
+	std::string					m_gameMode;
+
+	bool						m_running;
 };
 
 #endif

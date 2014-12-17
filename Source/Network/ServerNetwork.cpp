@@ -194,8 +194,10 @@ bool ServerNetwork::Start()
 	*m_running = false;
 
 	m_listenSocket = ISocket::CreateSocket();
-	m_listenSocket->SetNonBlocking(true);
 	m_listenSocket->Bind(*m_incomingPort);
+	m_listenSocket->SetNoDelay(true);
+	//m_listenSocket->SetTimeoutDelay(1000);
+	m_listenSocket->SetNonBlocking(true);
 
 	if (NET_DEBUG)
 	{
@@ -384,6 +386,10 @@ void ServerNetwork::ListenForConnections(void)
 		if (!newConnection)
 			continue;
 
+		newConnection->SetNonBlocking(false);
+		newConnection->SetTimeoutDelay(1000);
+		newConnection->SetNoDelay(true);
+
 		NetConnection nc = newConnection->GetNetConnection();
 
 		m_connectedClientsLock->lock();
@@ -516,7 +522,7 @@ void ServerNetwork::SetOnPlayerTimedOut(NetEvent& _function)
 	m_onPlayerTimedOut->push_back(_function);
 }
 
-void ServerNetwork::Kick(NetConnection& _connection, char* _reason)
+void ServerNetwork::Kick(NetConnection& _connection, const char* _reason)
 {
 	m_connectedClientsLock->lock();
 

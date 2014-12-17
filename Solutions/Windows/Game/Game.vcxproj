@@ -224,8 +224,6 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClCompile Include="..\..\..\Source\Game\Systems\CameraSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\ModelSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\PointlightSystem.cpp" />
-    <ClCompile Include="..\..\..\Source\Game\Systems\ReceivePacketSystem.cpp" />
-    <ClCompile Include="..\..\..\Source\Game\Systems\ReconnectSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\RenderRemoveSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\RenderSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\ResetChangedSystem.cpp" />
@@ -259,8 +257,6 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClInclude Include="..\..\..\Source\Game\Systems\CameraSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\ModelSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\PointlightSystem.h" />
-    <ClInclude Include="..\..\..\Source\Game\Systems\ReceivePacketSystem.h" />
-    <ClInclude Include="..\..\..\Source\Game\Systems\ReconnectSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\RenderRemoveSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\RenderSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\ResetChangedSystem.h" />
@@ -272,10 +268,15 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <None Include="..\..\..\Externals\content\scripting\storaspel\components\components.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\components\tilecomponents.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\init.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cardsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\discosystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\mapcreationsystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\movementsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\moveplayersystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\networkmessagessystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\templates\box.lua" />
-    <None Include="..\..\..\Externals\content\scripting\storaspel\templates\tile.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\templates\lights.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\templates\map.lua" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

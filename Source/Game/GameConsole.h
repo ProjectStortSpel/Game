@@ -23,6 +23,7 @@ public:
 	void ChangeComponent(std::vector<Console::Argument>* _args);
 	void RemoveComponent(std::vector<Console::Argument>* _args);
 	void ListCommands(std::vector<Console::Argument>* _args);
+	void ClearHistory(std::vector<Console::Argument>* _args);
 
 	void HostServer(std::vector<Console::Argument>* _args);
 	void StopServer(std::vector<Console::Argument>* _args);
@@ -34,6 +35,8 @@ public:
 
 	void SetTextColor(std::vector<Console::Argument>* _args);
 	void ToggleText(std::vector<Console::Argument>* _args);
+
+	void ECSLMemoryUsage(std::vector<Console::Argument>* _args);
 
 	void SetWorld(ECSL::World* _world){ m_world = _world; }
 private:

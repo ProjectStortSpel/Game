@@ -21,6 +21,8 @@ public:
 
 private:
 
+	unsigned int m_componentId;
+	unsigned int m_numberOfBitSets;
 };
 
 #endif

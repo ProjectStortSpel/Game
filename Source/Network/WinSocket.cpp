@@ -182,15 +182,6 @@ bool WinSocket::Bind(const int _port)
 	if (getsockname(m_socket, (sockaddr *)&sin, &len) == 0)
 		*m_localPort = ntohs(sin.sin_port);
 
-	char value = 1;
-	if (setsockopt(m_socket, IPPROTO_TCP, TCP_NODELAY, &value, sizeof(value)) < 0)
-	{
-		if (NET_DEBUG)
-			printf("Failed to enable TCP_NODELAY on new socket. Error Code: %d.\n", WSAGetLastError());
-
-		return 0;
-	}
-
 	return true;
 
 }
@@ -218,6 +209,33 @@ bool WinSocket::SetNonBlocking(bool _value)
 
 	return true;
 }
+
+bool WinSocket::SetNoDelay(bool _value)
+{
+	char value = _value;
+	if (setsockopt(m_socket, IPPROTO_TCP, TCP_NODELAY, &value, sizeof(value)) < 0)
+	{
+		if (NET_DEBUG)
+			printf("Failed to enable TCP_NODELAY on new socket. Error Code: %d.\n", WSAGetLastError());
+
+		return true;
+	}
+
+	return true;
+}
+bool WinSocket::SetTimeoutDelay(int _value)
+{
+	int timeout = _value;
+
+	if (setsockopt(m_socket, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout, sizeof(timeout)) != 0)
+		return false;
+
+	if (setsockopt(m_socket, SOL_SOCKET, SO_SNDTIMEO, (const char*)&timeout, sizeof(timeout)) != 0)
+		return false;
+
+	return true;
+}
+
 bool WinSocket::CloseSocket(void)
 {
 	if (closesocket(m_socket) != 0)
@@ -272,6 +290,7 @@ ISocket* WinSocket::Accept(void)
 	return newWinSocket;
 
 }
+/*
 int WinSocket::Send(char* _buffer, int _length, int _flags)
 {
 	int result = send(m_socket, _buffer, _length, _flags);
@@ -288,5 +307,41 @@ int WinSocket::Receive(char* _buffer, int _length, int _flags)
 {
 	return recv(m_socket, _buffer, _length, _flags);
 }
+*/
+
+
+int WinSocket::Send(char* _buffer, int _length, int _flags)
+{
+	static short len = 0;
+	len = htons(_length);
+	if (send(m_socket, (char*)&len, 2, _flags) != SOCKET_ERROR)
+	{
+		int result = send(m_socket, _buffer, _length, _flags);
+		if (result == SOCKET_ERROR)
+		{
+			if (NET_DEBUG)
+				printf("Failed to send packet of size '%i'. Error Code: %d.\n", _length, WSAGetLastError());
+
+			return -1;
+		}
+		return result;
+	}
+	return -1;
+
+}
+int WinSocket::Receive(char* _buffer, int _length, int _flags)
+{
+	static short len;
+
+	if (recv(m_socket, (char*)&len, 2, MSG_WAITALL))
+	{
+		len = ntohs(len);
+		return recv(m_socket, _buffer, len, MSG_WAITALL);
+	}
+	return 0;
+}
+
+
+
 
 #endif

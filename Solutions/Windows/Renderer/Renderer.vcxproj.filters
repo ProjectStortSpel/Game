@@ -38,6 +38,7 @@
     <ClInclude Include="..\..\..\Source\Renderer\ShadowMap.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\ModelExporter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp">

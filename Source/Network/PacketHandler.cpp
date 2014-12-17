@@ -148,11 +148,6 @@ uint64_t PacketHandler::StartUnpack(Packet* _packet)
 	(*m_packetReceiveInfoMap)[id] = pri;
 	m_receiveMutex->unlock();
 
-	char type = ReadByte(id);
-
-	if (type == NetTypeMessageId::ID_CUSTOM_PACKET)
-		ReadString(id);
-
 	return id;
 }
 

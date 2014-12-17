@@ -24,6 +24,10 @@ private:
 	unsigned int m_numberOfBitSets;
 	unsigned int m_componentId;
 
+	unsigned int m_positionId, m_rotationId;
+	unsigned int m_scaleId;
+	unsigned int m_renderId, m_renderOffset;
+
 	Renderer::GraphicDevice* m_graphics;
 };
 

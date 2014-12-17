@@ -14,9 +14,6 @@ Simulation::~Simulation()
 
 void Simulation::Update(float _dt)
 {
-	/* Update systems */
-	m_systemManager->Update(_dt);
-
 	/* Add and remove changed entities from systems */
 	m_systemManager->SystemEntitiesUpdate();
 
@@ -28,4 +25,7 @@ void Simulation::Update(float _dt)
 
 	/* Clear all the used lists */
 	m_dataManager->ClearChangeLists();
+
+	/* Update systems */
+	m_systemManager->Update(_dt);
 }
