@@ -1,3 +1,6 @@
+GameRunning = false;
+
+
 -- Components
 package.path = package.path .. ";../../../Externals/content/scripting/lobby/components/?.lua"
 require "components"
@@ -15,7 +18,6 @@ require "systems"
 	require "clientlobbysystem"
 	require "clientconnectsystem"
 --end
-
 
 -- Templates
 package.path = package.path .. ";../../../Externals/content/scripting/lobby/templates/?.lua"

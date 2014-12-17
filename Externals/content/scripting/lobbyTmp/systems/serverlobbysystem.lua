@@ -16,14 +16,15 @@ end
 
 ServerLobbySystem.Update = function(self, dt)
 	
-	if GameRunning then
+	if GameRunning == true or Net.IsConnected() == true then
 		return
 	end
 	
 	if Net.IsRunning() then
 		ServerLobbySystem:UpdateServerOnline();
-	else
-		--ServerLobbySystem:UpdateServerOffline();
+	end
+	if Net.IsConnected() == false then
+		graphics:RenderSimpleText("This is a lobby state!", 70, 4);
 	end
 
 end
@@ -36,7 +37,7 @@ ServerLobbySystem.UpdateServerOnline = function(self)
 	local entities = self:GetEntities();
 	for i = 1, #entities do
 		local username = self:GetComponent(entities[i], "Username", "Name");
-		graphics:RenderSimpleText("Player" .. tostring(i) .. ": " .. username:GetString(), 55, 6 + (i * 2));
+		graphics:RenderSimpleText("Player" .. tostring(i) .. ": " .. username:GetString(), 70, 6 + (i * 2));
 	end
 	
 	if Input.GetKeyState(Key.Return) == InputState.Pressed and Console.IsOpen() == false then
@@ -53,7 +54,7 @@ end
 
 ServerLobbySystem.OnEntityAdded = function(self, entityId)
 	
-	if GameRunning then
+	if GameRunning == true or Net.IsConnected() == true  then
 		return
 	end
 
@@ -61,7 +62,7 @@ ServerLobbySystem.OnEntityAdded = function(self, entityId)
 end
 ServerLobbySystem.OnEntityRemoved = function(self, entityId)
 
-	if GameRunning then
+	if GameRunning == true or Net.IsConnected() == true then
 		return
 	end
 

@@ -13,30 +13,32 @@ end
 
 ClientLobbySystem.Update = function(self, dt)
 	
-	if GameRunning then
+	if GameRunning == true or Net.IsRunning() == true then
 		return
 	end
 	
 	
 	if Net.IsConnected() then
-	
 		local text = "Connected to server.";	
-		graphics:RenderSimpleText(text, 55, 5);
+		graphics:RenderSimpleText(text, 70, 5);
+	end
 	
+	if Net.IsRunning() == false then
+		graphics:RenderSimpleText("This is a lobby state!", 70, 4);
 	end
 
 end
 
 ClientLobbySystem.OnEntityAdded = function(self, entityId)
 
-	if GameRunning then
+	if GameRunning == true or Net.IsRunning() == true then
 		return
 	end
 
 end
 ClientLobbySystem.OnEntityRemoved = function(self, entityId)
 
-	if GameRunning then
+	if GameRunning == true or Net.IsRunning() == true then
 		return
 	end
 

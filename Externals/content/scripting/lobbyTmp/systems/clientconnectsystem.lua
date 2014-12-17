@@ -4,8 +4,8 @@ ClientConnectSystem = System()
 
 ClientConnectSystem.Update = function(self, dt)
 
-	if GameRunning then
-		return
+	if GameRunning == true or Net.IsRunning() == true then
+		return;
 	end
 
 end
@@ -23,39 +23,40 @@ end
 
 ClientConnectSystem.OnEntityAdded = function(self, entityId)
 
-	if GameRunning then
-		return
+	if GameRunning == true or Net.IsRunning() == true then
+		Console.Print("RETURN TRUE");
+		return;
 	end
 
-	Console.Print("ClientConnectSystem.OnConnectedToServer");
+	Console.Print("ClientConnectSystem.OnEntityAdded");
 end
 
 ClientConnectSystem.OnEntityRemoved = function(self, entityId)
 
-	if GameRunning then
-		return
+	if GameRunning == true or Net.IsRunning() == true then
+		return;
 	end
 
-	Console.Print("ClientConnectSystem.OnConnectedToServer");
+	Console.Print("ClientConnectSystem.OnEntityRemoved");
 end
 
 ClientConnectSystem.OnConnectedToServer = function(self, _ip, _port)
 
-	if GameRunning then
-		return
+	if GameRunning == true or Net.IsRunning() == true then
+		return;
 	end
 
 	Console.Print("ClientConnectSystem.OnConnectedToServer");
 	
-	local id = Net.StartPack("Username");
+	local id = Net.StartPack("UsernameLobby");
 	Net.WriteString(id, "USERNAME_ClientConnectSystem");
 	Net.SendToServer(id);
 end
 
 ClientConnectSystem.OnDisconnectedFromServer = function(self, _ip, _port)
 
-	if GameRunning then
-		return
+	if GameRunning == true or Net.IsRunning() == true then
+		return;
 	end
 
 	Console.Print("ClientConnectSystem.OnDisconnectedFromServer");
@@ -63,8 +64,8 @@ end
 
 ClientConnectSystem.OnTimedOutFromServer = function(self, _ip, _port)
 
-	if GameRunning then
-		return
+	if GameRunning == true or Net.IsRunning() == true then
+		return;
 	end
 
 	Console.Print("ClientConnectSystem.OnTimedOutFromServer");
@@ -72,7 +73,7 @@ end
 
 ClientConnectSystem.OnRemotePlayerConnected = function(self, _ip, _port)
 
-	if GameRunning then
+	if GameRunning == true or Net.IsRunning() == true then
 		return
 	end
 
@@ -83,7 +84,7 @@ end
 
 ClientConnectSystem.OnRemotePlayerDisconnected = function(self, _ip, _port)
 
-	if GameRunning then
+	if GameRunning == true or Net.IsRunning() == true then
 		return
 	end
 
@@ -92,7 +93,7 @@ end
 
 ClientConnectSystem.OnRemotePlayerKicked = function(self, _ip, _port)
 
-	if GameRunning then
+	if GameRunning == true or Net.IsRunning() == true then
 		return
 	end
 
@@ -103,7 +104,7 @@ end
 
 ServerConnectSystem.RemovePlayer = function(self, _ip, _port)
 
-	if GameRunning then
+	if GameRunning == true or Net.IsRunning() == true then
 		return
 	end
 

@@ -5,7 +5,7 @@ ServerConnectSystem.Initialize = function(self)
 	
 	self:InitializeNetworkEvents();
 	
-	Net.Receive("Username", ServerConnectSystem.OnUsername);
+	Net.Receive("UsernameLobby", ServerConnectSystem.OnUsername);
 	
 	self:AddComponentTypeToFilter("Username", FilterType.Mandatory);
 	self:AddComponentTypeToFilter("NetConnection", FilterType.Mandatory);
@@ -15,7 +15,7 @@ end
 
 ServerConnectSystem.Update = function(self, dt)
 
-	if GameRunning then
+	if GameRunning == true or Net.IsConnected() == true  then
 		return
 	end
 
@@ -23,7 +23,7 @@ end
 
 ServerConnectSystem.OnEntityAdded = function(self, entityId)
 
-	if GameRunning then
+	if GameRunning == true or Net.IsConnected() == true  then
 		return
 	end
 
@@ -83,7 +83,7 @@ end
 
 ServerConnectSystem.OnEntityRemoved = function(self, entityId)
 
-	if GameRunning then
+	if GameRunning == true or Net.IsConnected() == true  then
 		return
 	end
 
@@ -92,7 +92,7 @@ end
 
 ServerConnectSystem.OnPlayerTimedOut = function(self, _ip, _port)
 
-	if GameRunning then
+	if GameRunning == true or Net.IsConnected() == true  then
 		return
 	end
 
@@ -103,7 +103,7 @@ end
 
 ServerConnectSystem.OnPlayerDisconnected = function(self, _ip, _port)
 
-	if GameRunning then
+	if GameRunning == true or Net.IsConnected() == true  then
 		return
 	end
 
@@ -114,13 +114,16 @@ end
 
 ServerConnectSystem.OnUsername = function(self, _ip, _port)
 
-	if GameRunning then
+	Console.Print("ServerConnectSystem.OnUsername");
+
+	if GameRunning == true or Net.IsConnected() == true then
 		return
 	end
 
 	Console.Print("ServerConnectSystem.OnUsername");
 	
 	local name = _ip .. _port;
+	print(name);
 	local active = false;
 	
 	local eId = world:CreateNewEntity("User");
@@ -135,7 +138,7 @@ end
 
 ServerConnectSystem.RemovePlayer = function(self, _ip, _port)
 
-	if GameRunning then
+	if GameRunning == true or Net.IsConnected() == true  then
 		return
 	end
 
