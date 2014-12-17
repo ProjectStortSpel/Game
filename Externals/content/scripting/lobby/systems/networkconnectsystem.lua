@@ -15,6 +15,14 @@ NetworkConnectSystem.Update = function(self, dt)
 			local username 	= self:GetComponent(entities[i], "Username", "Name");
 			graphics:RenderSimpleText("Player" .. tostring(i) .. ": " .. username:GetString(), 55, 6 + (i*2));
 		end
+		
+		if Input.GetKeyState(Key.Return) == InputState.Pressed then
+			
+			for i = 1, #entities do
+			end
+			
+		end
+		
 	end
 	
 end
@@ -32,6 +40,11 @@ NetworkConnectSystem.OnUsername = function(id, ipAddress, port)
 
 end
 
+NetworkConnectSystem.OnStartGame = function(id, ipAddress, port)
+
+
+end
+
 NetworkConnectSystem.Initialize = function(self)
 	self:SetName("Reconnect System")
 	self:InitializeNetworkEvents()
@@ -40,6 +53,7 @@ NetworkConnectSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("NetConnection", FilterType.Mandatory)
 	
 	Net.Receive("Username", NetworkConnectSystem.OnUsername);
+	Net.Receive("StartGame", NetworkConnectSystem.OnStartGame);
 	maxConnections = Net.MaxConnections();
 	
 	print("NetworkConnectSystem initialized!")

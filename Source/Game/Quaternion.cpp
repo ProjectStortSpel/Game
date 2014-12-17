@@ -133,6 +133,7 @@ void Quaternion::MatrixToQuaternion(const glm::mat4 &rotation_matrix)
 		{ 
 			s = 0.5 / s; 
 		}
+
 		q[3] = (rotation_matrix[j][k] - rotation_matrix[k][j])*s;
 		q[j] = (rotation_matrix[i][j] + rotation_matrix[j][i])*s;
 		q[k] = (rotation_matrix[i][k] + rotation_matrix[k][i])*s;
