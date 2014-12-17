@@ -233,7 +233,7 @@ void phongModelDirLight(out vec3 ambient, out vec3 diffuse, out vec3 spec)
 		vec4 worldPos = inverse(ViewMatrix) * vec4(g_viewPos, 1.0);
 		vec4 shadowCoord = BiasMatrix * ShadowViewProj * worldPos;
 		float shadow = 1.0;// = textureProj(ShadowDepthTex, shadowCoord);
-		 The sum of the comparisons with nearby texels  
+		// The sum of the comparisons with nearby texels  
 		float sum = 0;
 		// Sum contributions from texels around ShadowCoord  
 		sum += textureProjOffset(ShadowDepthTex, shadowCoord, ivec2(-1,-1));  
@@ -242,9 +242,8 @@ void phongModelDirLight(out vec3 ambient, out vec3 diffuse, out vec3 spec)
 		sum += textureProjOffset(ShadowDepthTex, shadowCoord, ivec2(1,-1));  
 
 		float shadowResult = sum * 0.25;
-		//float shadowResult = textureProj(ShadowDepthTex, shadowCoord);
-		float bias = 0.22;
-		
+		float bias = min( pow(shadowCoord.z, 10 - 10*shadowCoord.z), 0.40);
+
 		if ( shadowResult < (shadowCoord.z - bias)/shadowCoord.w) 
 		{
 		   shadow = shadowResult;

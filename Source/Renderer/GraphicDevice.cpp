@@ -8,8 +8,6 @@
 using namespace Renderer;
 using namespace glm;
 
-vec3 dirLightDirection;
-
 GraphicDevice::GraphicDevice()
 {
 	m_renderSimpleText = true;
@@ -107,22 +105,16 @@ void GraphicDevice::Update(float _dt)
 	vram << "VRAM usage: " << ((float)m_vramUsage/1024.f)/1024.f << " Mb ";
 	m_textRenderer.RenderSimpleText(vram.str(), 20, 0);
 
-	//dirLightDirection += vec3(0.0, 0.0, -0.0025);
-	//m_lightDefaults[0] = dirLightDirection.x;	//dir x
-	//m_lightDefaults[1] = dirLightDirection.y;	//dir y
-	//m_lightDefaults[2] = dirLightDirection.z;	//dir z
+	//m_dirLightDirection += vec3(0.0, 0.0, -0.0025);
+	//m_lightDefaults[0] = m_dirLightDirection.x;	//dir x
+	//m_lightDefaults[1] = m_dirLightDirection.y;	//dir y
+	//m_lightDefaults[2] = m_dirLightDirection.z;	//dir z
 	//BufferDirectionalLight(&m_lightDefaults[0]);
-	//m_shadowMap->UpdateViewMatrix(vec3(8, 0, 8) - (10.0f*normalize(dirLightDirection)), vec3(8, 0, 8));
+	//m_shadowMap->UpdateViewMatrix(vec3(8, 0, 8) - (10.0f*normalize(m_dirLightDirection)), vec3(8, 0, 8));
 }
 
-void GraphicDevice::Render()
+void GraphicDevice::WriteShadowMapDepth()
 {
-		//GLTimer glTimer;
-		//glTimer.Start();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
-	glEnable(GL_DEPTH_TEST);
-
 	//------- Write shadow maps depths ----------
 	glBindFramebuffer(GL_FRAMEBUFFER, m_shadowMap->GetShadowFBOHandle());
 	glClear(GL_DEPTH_BUFFER_BIT);
@@ -132,12 +124,12 @@ void GraphicDevice::Render()
 
 	//glCullFace(GL_FRONT);
 	glEnable(GL_POLYGON_OFFSET_FILL);
-	glPolygonOffset(1.5, 18000.0);	//glPolygonOffset(-1.0, 0.0);	//glPolygonMode(GL_BACK, GL_FILL);
+	glPolygonOffset(1.5, 18000.0);	//glPolygonOffset(-1.0, 0.0);	glPolygonMode(GL_FRONT, GL_FILL);
 	glActiveTexture(GL_TEXTURE10);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	mat4 shadowProjection = *m_shadowMap->GetProjectionMatrix();
-	//----Render geometry-----------
+	//----Render deferred geometry-----------
 	for (int i = 0; i < m_modelsDeferred.size(); i++)
 	{
 		std::vector<mat4> MVPVector(m_modelsDeferred[i].instances.size());
@@ -157,8 +149,6 @@ void GraphicDevice::Render()
 
 				mat4 mvp = shadowProjection * (*m_shadowMap->GetViewMatrix()) * modelMatrix;
 				MVPVector[nrOfInstances] = mvp;
-				//mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-				//normalMatVector[nrOfInstances] = normalMatrix;
 
 				nrOfInstances++;
 			}
@@ -167,11 +157,54 @@ void GraphicDevice::Render()
 		m_modelsDeferred[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector);
 	}
 
+	//------Forward------------------------------------
+	m_shadowShaderForward.UseProgram();
+	//Forward models
+	for (int i = 0; i < m_modelsForward.size(); i++)
+	{
+		std::vector<mat4> MVPVector(m_modelsForward[i].instances.size());
+		std::vector<mat3> normalMatVector(m_modelsForward[i].instances.size());
+
+		int nrOfInstances = 0;
+
+		for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
+		{
+			if (m_modelsForward[i].instances[j].active) // IS MODEL ACTIVE?
+			{
+				mat4 modelMatrix;
+				if (m_modelsForward[i].instances[j].modelMatrix == NULL)
+					modelMatrix = glm::translate(glm::vec3(1));
+				else
+					modelMatrix = *m_modelsForward[i].instances[j].modelMatrix;
+
+				mat4 mvp = shadowProjection * (*m_shadowMap->GetViewMatrix()) * modelMatrix;
+				MVPVector[nrOfInstances] = mvp;
+
+				nrOfInstances++;
+			}
+		}
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
+
+		m_modelsForward[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector);
+	}
+	//------------------------------------------------
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glCullFace(GL_BACK);
-	//glPolygonMode(GL_FRONT, GL_FILL);
+	glPolygonMode(GL_BACK, GL_FILL);
 	glDisable(GL_POLYGON_OFFSET_FILL);
 	//------------------------------
+}
+
+void GraphicDevice::Render()
+{
+		//GLTimer glTimer;
+		//glTimer.Start();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
+
+	WriteShadowMapDepth();
 
 //------Render deferred--------------------------------------------------------------------------
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_deferredFBO);
@@ -249,7 +282,7 @@ void GraphicDevice::Render()
 	m_compDeferredPass2Shader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
 	mat4 inverseProjection = glm::inverse(projectionMatrix);
 	m_compDeferredPass2Shader.SetUniVariable("InvProjection", mat4x4, &inverseProjection);
-	m_compDeferredPass2Shader.SetUniVariable("BiasMatrix", mat4x4, m_shadowMap->GetBiasMatrix());
+	
 	mat4 shadowVP = (*m_shadowMap->GetProjectionMatrix()) * (*m_shadowMap->GetViewMatrix());
 	m_compDeferredPass2Shader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
 
@@ -272,16 +305,24 @@ void GraphicDevice::Render()
 		//m_glTimerValues.push_back(GLTimerValue("Deferred stage2: ", glTimer.Stop()));
 		//glTimer.Start();
 
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_forwardFBO);
+
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
+
+	// DRAW SKYBOX
+	m_skyBoxShader.UseProgram();
+	m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera);
+	// -----------
+
 
 	//------FORWARD RENDERING--------------------------------------------
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_forwardFBO);
-	glViewport(0, 0, m_clientWidth, m_clientHeight);
+	glEnable(GL_BLEND);
 
 	m_forwardShader.UseProgram();
 	m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 	m_forwardShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
+
+	m_forwardShader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
 
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
@@ -327,18 +368,12 @@ void GraphicDevice::Render()
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	// DRAW SKYBOX
-	m_skyBoxShader.UseProgram();
-	m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera);
-	// -----------
-
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	//---------------------------------------------------------------------
 	
-
 	if (m_renderSimpleText)
 		m_textRenderer.RenderText(m_dt);
 
@@ -532,6 +567,12 @@ bool GraphicDevice::InitShaders()
 	m_shadowShaderDeferred.AddShader("content/shaders/shadowShaderDeferredFS.glsl", GL_FRAGMENT_SHADER);
 	m_shadowShaderDeferred.FinalizeShaderProgram();
 
+	// ShadowShader forward geometry
+	m_shadowShaderForward.InitShaderProgram();
+	m_shadowShaderForward.AddShader("content/shaders/shadowShaderForwardVS.glsl", GL_VERTEX_SHADER);
+	m_shadowShaderForward.AddShader("content/shaders/shadowShaderForwardFS.glsl", GL_FRAGMENT_SHADER);
+	m_shadowShaderForward.FinalizeShaderProgram();
+
 	return true;
 }
 
@@ -565,6 +606,9 @@ bool GraphicDevice::InitBuffers()
 
 	//Skybox shader
 	m_skyBoxShader.CheckUniformLocation("cubemap", 1);
+
+	//Shadow forward shader
+	m_shadowShaderForward.CheckUniformLocation("diffuseTex", 1);
 
 	return true;
 }
@@ -600,11 +644,11 @@ bool GraphicDevice::InitLightBuffers()
 	delete(tmparray);
 
 //--------Directional light-------------------------------------------------------------------------
-	dirLightDirection = vec3(-0.2, -1.0, 0.7);
+	m_dirLightDirection = vec3(-0.38, -1.0, 0.7);
 
-	m_lightDefaults[0] = dirLightDirection.x;	//dir x
-	m_lightDefaults[1] = dirLightDirection.y;	//dir y
-	m_lightDefaults[2] = dirLightDirection.z;	//dir z
+	m_lightDefaults[0] = m_dirLightDirection.x;	//dir x
+	m_lightDefaults[1] = m_dirLightDirection.y;	//dir y
+	m_lightDefaults[2] = m_dirLightDirection.z;	//dir z
 	
 	m_lightDefaults[3] = 0.3;		//int x
 	m_lightDefaults[4] = 0.7;		//int y
@@ -663,15 +707,21 @@ void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
 
 void GraphicDevice::CreateShadowMap()
 {
-	int resolution = 2048;
+	int resolution = 2048*2;
 	vec3 midMap = vec3(8.0, 0.0, 8.0);
-	vec3 lightPos = midMap - (10.0f*normalize(dirLightDirection));
-	m_shadowMap = new ShadowMap(lightPos, lightPos + normalize(dirLightDirection), resolution);
+	vec3 lightPos = midMap - (10.0f*normalize(m_dirLightDirection));
+	m_shadowMap = new ShadowMap(lightPos, lightPos + normalize(m_dirLightDirection), resolution);
 	m_shadowMap->CreateShadowMapTexture(GL_TEXTURE10);
+
+	m_compDeferredPass2Shader.UseProgram();
+	m_compDeferredPass2Shader.SetUniVariable("BiasMatrix", mat4x4, m_shadowMap->GetBiasMatrix());
 	m_compDeferredPass2Shader.CheckUniformLocation("ShadowDepthTex", 10);
 
-	m_vramUsage += (resolution*resolution*sizeof(float));
+	m_forwardShader.UseProgram();
+	m_forwardShader.SetUniVariable("BiasMatrix", mat4x4, m_shadowMap->GetBiasMatrix());
+	m_forwardShader.CheckUniformLocation("ShadowDepthTex", 10);
 
+	m_vramUsage += (resolution*resolution*sizeof(float));
 }
 
 bool GraphicDevice::InitTextRenderer()

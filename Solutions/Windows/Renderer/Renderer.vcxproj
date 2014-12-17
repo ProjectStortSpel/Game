@@ -50,6 +50,8 @@
     <None Include="..\..\..\Externals\content\shaders\fullscreen.vs" />
     <None Include="..\..\..\Externals\content\shaders\shadowShaderDeferredFS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\shadowShaderDeferredVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\shadowShaderForwardFS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\shadowShaderForwardVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\SimpleText.glsl" />
     <None Include="..\..\..\Externals\content\shaders\skyboxShaderFS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\skyboxShaderVS.glsl" />

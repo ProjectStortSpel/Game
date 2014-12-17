@@ -152,6 +152,7 @@ namespace Renderer
 
 		//Le shadowmap
 		ShadowMap *m_shadowMap;
+		void WriteShadowMapDepth();
 
 		// Timer for shader run time
 		std::vector<GLTimerValue> m_glTimerValues;
@@ -176,7 +177,6 @@ namespace Renderer
 
 		Shader m_shadowShaderDeferred, m_shadowShaderForward;
 
-
 		// Skybox
 		SkyBox *m_skybox;
 
@@ -190,10 +190,11 @@ namespace Renderer
 
 		// Pointlights buffer
 		GLuint m_pointlightBuffer, m_dirLightBuffer;
+		vec3 m_dirLightDirection;
 
 		// DEBUG variables ----
 		int m_debugTexFlag; // 0=standard, 1=diffuse, 2=normal, 3=specular+shine, 4=glow
-		int m_nrOfLights; // DEBUG VARIBLE??!?!?!?!
+		int m_nrOfLights; // lol
 
 		// Objects
 		//std::map<const std::string, ObjectData> m_objects;

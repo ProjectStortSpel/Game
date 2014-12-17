@@ -108,5 +108,11 @@
     <None Include="..\..\..\Externals\content\shaders\shadowShaderDeferredVS.glsl">
       <Filter>shaders</Filter>
     </None>
+    <None Include="..\..\..\Externals\content\shaders\shadowShaderForwardFS.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\shadowShaderForwardVS.glsl">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
