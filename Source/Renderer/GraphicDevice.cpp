@@ -929,18 +929,18 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 	}
 
 
-	std::vector<Vertex> verts = ModelLoader::importMesh(_fileDir + "OLD");
+	//std::vector<Vertex> verts = ModelLoader::importMesh(_fileDir + "OLD");
 
 
-	/*ModelExporter modelExporter;
+	ModelExporter modelExporter;
 	modelExporter.OpenFileForRead(_fileDir.c_str());
 	std::vector<float> positionData = modelExporter.ReadDataFromFile();
 	std::vector<float> normalData = modelExporter.ReadDataFromFile();
 	std::vector<float> tanData = modelExporter.ReadDataFromFile();
 	std::vector<float> bitanData = modelExporter.ReadDataFromFile();
 	std::vector<float> texCoordData = modelExporter.ReadDataFromFile();
-	modelExporter.CloseFile();*/
-
+	modelExporter.CloseFile();
+	/*
 	int realsize = verts.size() - 1;
 	std::vector<float> positionData(realsize * 3);
 	std::vector<float> normalData(realsize * 3);
@@ -964,8 +964,7 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 		texCoordData[i * 2 + 0] = verts[i].uv.x;
 		texCoordData[i * 2 + 1] = 1 - verts[i].uv.y;
 	}
-
-
+	*/
 	Buffer* retbuffer = new Buffer();
 
 	_shaderProg->UseProgram();
