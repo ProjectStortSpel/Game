@@ -1,64 +1,56 @@
 ServerLobbySystem = System()
 
-noConnections = 0;
-maxConnections = 3;
-
-ServerLobbySystem.Update = function(self, dt)
-
-	if Net.IsRunning() then 
-	
-		local text = "Server started. " .. tostring(noConnections) .. "/" .. tostring(maxConnections) .. " connected. Connected players are: ";	
-		graphics:RenderSimpleText(text, 55, 5);
-		
-		local entities = self:GetEntities();
-		for i = 1, #entities do
-			local username 	= self:GetComponent(entities[i], "Username", "Name");
-			graphics:RenderSimpleText("Player" .. tostring(i) .. ": " .. username:GetString(), 55, 6 + (i*2));
-		end
-		
-		if Input.GetKeyState(Key.Return) == InputState.Pressed then
-			
-			for i = 1, #entities do
-			end
-			
-		end
-		
-	end
-	
-end
-
-ServerLobbySystem.OnUsername = function(id, ipAddress, port)
-	
-	local name = ipAddress .. port;
-	local active = false;
-
-	local eId = world:CreateNewEntity("User");
-	world:SetComponent(eId, "Username", "Name", name);
-	world:SetComponent(eId, "NetConnection", "IpAddress", ipAddress);
-	world:SetComponent(eId, "NetConnection", "Port", port);
-	world:SetComponent(eId, "NetConnection", "Active", active);
-
-end
-
-ServerLobbySystem.OnStartGame = function(id, ipAddress, port)
-
-
-end
+ServerLobbySystem.m_noConnections = 0;
+ServerLobbySystem.m_maxConnections = 3;
 
 ServerLobbySystem.Initialize = function(self)
 	self:SetName("ServerLobbySystem System")
-	
+
 	self:AddComponentTypeToFilter("Username", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("NetConnection", FilterType.Mandatory)
 	
-	Net.Receive("Username", ServerLobbySystem.OnUsername);
-	Net.Receive("StartGame", ServerLobbySystem.OnStartGame);
-	maxConnections = Net.MaxConnections();
+	ServerLobbySystem.m_maxConnections = Net.MaxConnections();
 	
 	print("ServerLobbySystem initialized!")
 end
 
+ServerLobbySystem.Update = function(self, dt)
+	
+	if Net.IsRunning() then
+		ServerLobbySystem:UpdateServerOnline();
+	else
+		--ServerLobbySystem:UpdateServerOffline();
+	end
+
+end
+
+ServerLobbySystem.UpdateServerOnline = function(self)
+
+	local text = "Server started. " .. tostring(ServerLobbySystem.m_noConnections) .. "/" .. tostring(ServerLobbySystem.m_maxConnections) .. " connected. Connected players are: ";	
+	graphics:RenderSimpleText(text, 55, 5);
+	
+	local entities = self:GetEntities();
+	for i = 1, #entities do
+		local username = self:GetComponent(entities[i], "Username", "Name");
+		graphics:RenderSimpleText("Player" .. tostring(i) .. ": " .. username:GetString(), 55, 6 + (i * 2));
+	end
+		
+end
+
+ServerLobbySystem.UpdateServerOffline = function(self)
+	local text = "Server not running.";
+	graphics:RenderSimpleText(text, 55, 5);
+end
+
+ServerLobbySystem.RenderPlayers = function(self)
+
+
+
+end
+
 ServerLobbySystem.OnEntityAdded = function(self, entityId)
+	ServerLobbySystem.m_noConnections = ServerLobbySystem.m_noConnections + 1;
 end
 ServerLobbySystem.OnEntityRemoved = function(self, entityId)
+	ServerLobbySystem.m_noConnections = ServerLobbySystem.m_noConnections - 1;
 end

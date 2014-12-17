@@ -28,8 +28,8 @@ ClientNetwork::ClientNetwork()
 	m_socket = 0;
 	m_connected = new bool(false);
 
-	*m_maxTimeOutIntervall = 1.f;
-	*m_maxIntervallCounter = 300;
+	*m_maxTimeOutIntervall = 10.f;
+	*m_maxIntervallCounter = 3;
 
 	m_onConnectedToServer = new std::vector<NetEvent>();
 	m_onDisconnectedFromServer = new std::vector<NetEvent>();
@@ -129,8 +129,9 @@ bool ClientNetwork::Connect()
 		*m_socketBound = true;
 	}
 
-	m_socket->SetTimeoutDelay(1000);
+	m_socket->SetTimeoutDelay(2500);
 	m_socket->SetNoDelay(true);
+	m_socket->SetNonBlocking(false);
 
 	bool connected = false;
 	//for (int i = 0; i < 5; ++i)
@@ -150,8 +151,7 @@ bool ClientNetwork::Connect()
 	}
 
 	*m_connected = true;
-	m_socket->SetNonBlocking(false);
-
+	
 	uint64_t id = m_packetHandler->StartPack(NetTypeMessageId::ID_PASSWORD_ATTEMPT);
 	m_packetHandler->WriteString(id, m_password->c_str());
 	auto packet = m_packetHandler->EndPack(id);
@@ -443,7 +443,7 @@ void ClientNetwork::NetRemoteConnectionLost(PacketHandler* _packetHandler, uint6
 
 	TriggerEvent(m_onRemotePlayerTimedOut, _connection, 0);
 }
-
+	
 void ClientNetwork::NetRemoteConnectionDisconnected(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection)
 {
 	char* name = _packetHandler->ReadString(_id);

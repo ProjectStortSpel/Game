@@ -1,7 +1,10 @@
 ClientLobbySystem = System()
 
-noConnections = 0;
-maxConnections = 3;
+ClientLobbySystem.Initialize = function(self)
+	self:SetName("ClientLobbySystem System")
+
+	print("ClientLobbySystem initialized!")
+end
 
 ClientLobbySystem.Update = function(self, dt)
 	
@@ -14,23 +17,7 @@ ClientLobbySystem.Update = function(self, dt)
 
 end
 
-ClientLobbySystem.Initialize = function(self)
-	self:SetName("ClientLobbySystem System")
-	
-	self:AddComponentTypeToFilter("Username", FilterType.Mandatory)
-	self:AddComponentTypeToFilter("NetConnection", FilterType.Mandatory)
-	
-	Net.Receive("StartGame", ClientLobbySystem.OnStartGame);
-	maxConnections = Net.MaxConnections();
-	
-	print("ClientLobbySystem initialized!")
-end
-
 ClientLobbySystem.OnEntityAdded = function(self, entityId)
 end
 ClientLobbySystem.OnEntityRemoved = function(self, entityId)
-end
-
-
-ClientLobbySystem.OnStartGame = function(self, _ip, _port)
 end

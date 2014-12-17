@@ -387,7 +387,7 @@ void ServerNetwork::ListenForConnections(void)
 			continue;
 
 		newConnection->SetNonBlocking(false);
-		newConnection->SetTimeoutDelay(1000);
+		//newConnection->SetTimeoutDelay(2000);
 		newConnection->SetNoDelay(true);
 
 		NetConnection nc = newConnection->GetNetConnection();

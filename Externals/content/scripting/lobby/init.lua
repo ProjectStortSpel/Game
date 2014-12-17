@@ -7,8 +7,13 @@ package.path = package.path .. ";../../../Externals/content/scripting/lobby/syst
 require "systems"
 
 --if Server then
-	--require "serverlobbysystem"
+	require "serverlobbysystem"
 	require "serverconnectsystem"
+--end
+
+--if Client then
+	require "clientlobbysystem"
+	require "clientconnectsystem"
 --end
 
 
@@ -18,5 +23,13 @@ require "templates"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(StartUpSystem)
---worldCreator:AddSystemToCurrentGroup(ServerLobbySystem)
-worldCreator:AddSystemToCurrentGroup(ServerConnectSystem)
+
+--if Server then
+	worldCreator:AddSystemToCurrentGroup(ServerLobbySystem)
+	worldCreator:AddSystemToCurrentGroup(ServerConnectSystem)
+--end
+
+--if Client then
+	worldCreator:AddSystemToCurrentGroup(ClientLobbySystem)
+	worldCreator:AddSystemToCurrentGroup(ClientConnectSystem)
+--end

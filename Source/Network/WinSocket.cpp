@@ -218,7 +218,7 @@ bool WinSocket::SetNoDelay(bool _value)
 		if (NET_DEBUG)
 			printf("Failed to enable TCP_NODELAY on new socket. Error Code: %d.\n", WSAGetLastError());
 
-		return true;
+		return false;
 	}
 
 	return true;
@@ -230,8 +230,8 @@ bool WinSocket::SetTimeoutDelay(int _value)
 	if (setsockopt(m_socket, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout, sizeof(timeout)) != 0)
 		return false;
 
-	if (setsockopt(m_socket, SOL_SOCKET, SO_SNDTIMEO, (const char*)&timeout, sizeof(timeout)) != 0)
-		return false;
+	//if (setsockopt(m_socket, SOL_SOCKET, SO_SNDTIMEO, (const char*)&timeout, sizeof(timeout)) != 0)
+	//	return false;
 
 	return true;
 }
