@@ -6,7 +6,7 @@ end
 
 NetworkConnectSystem.OnUsername = function(id, ipAddress, port)
 	
-	local name = ipAddress .. port;
+	local name = ipAddress;-- .. port;
 	local active = false;
 
 	local eId = world:CreateNewEntity("User");
@@ -57,7 +57,6 @@ NetworkConnectSystem.OnEntityAdded = function(self, entityId)
 	end
 
 	if match then
-		Console.Print("Match!")
 		
 		local setActive = true;
 		local isActive = self:GetComponent(matchId, "NetConnection", "Active");
@@ -71,14 +70,14 @@ NetworkConnectSystem.OnEntityAdded = function(self, entityId)
 			Net.Kick(oldIp:GetString(), oldPort:GetInt(), reason);
 			
 		end
-		
+
 		world:SetComponent(matchId, "NetConnection", "IpAddress", ipAddress:GetString());
 		world:SetComponent(matchId, "NetConnection", "Port", port:GetInt());
 		world:SetComponent(matchId, "NetConnection", "Active", setActive);
 		
 		world:KillEntity(entityId);
 	else
-
+	
 		local setActive = true;
 		world:SetComponent(entityId, "NetConnection", "Active", setActive);
 	
@@ -91,6 +90,7 @@ NetworkConnectSystem.OnEntityAdded = function(self, entityId)
 	
 end
 NetworkConnectSystem.OnEntityRemoved = function(self, entityId)
+
 end
 
 
@@ -102,7 +102,41 @@ end
 
 
 NetworkConnectSystem.OnPlayerDisconnected = function(self, _ip, _port)
+
+	local entities = self:GetEntities();
+	local ip;
+	local port;
+	for i = 1, #entities do
+
+		ip 		= self:GetComponent(entities[i], "NetConnection", "IpAddress"):GetString();
+		port 	= self:GetComponent(entities[i], "NetConnection", "Port"):GetInt();
+
+		if ip == _ip and port == _port then
+			local setActive = false;
+			world:SetComponent(entities[i], "NetConnection", "Active", setActive);
+			break;
+		end
+		
+	end
+
 end
 
 NetworkConnectSystem.OnPlayerTimedOut = function(self, _ip, _port)
+
+	local entities = self:GetEntities();
+	local ip;
+	local port;
+	for i = 1, #entities do
+
+		ip 		= self:GetComponent(entities[i], "NetConnection", "IpAddress"):GetString();
+		port 	= self:GetComponent(entities[i], "NetConnection", "Port"):GetInt();
+
+		if ip == _ip and port == _port then
+			local setActive = false;
+			world:SetComponent(entities[i], "NetConnection", "Active", setActive);
+			break;
+		end
+		
+	end
+
 end
