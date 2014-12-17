@@ -928,6 +928,10 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 			return it->second;
 	}
 
+
+	std::vector<Vertex> model = ModelLoader::importMesh(_fileDir + "OLD");
+
+
 	ModelExporter modelExporter;
 	modelExporter.OpenFileForRead(_fileDir.c_str());
 	std::vector<float> positionData = modelExporter.ReadDataFromFile();
@@ -936,6 +940,19 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 	std::vector<float> bitanData = modelExporter.ReadDataFromFile();
 	std::vector<float> texCoordData = modelExporter.ReadDataFromFile();
 	modelExporter.CloseFile();
+
+
+	for (int i = 0; i < positionData.size() / 3; i++)
+	{
+		if (model[i].po.x != positionData[i * 3])
+			ERRORMSG("YOUSUCK!\n");
+		if (model[i].po.y != positionData[i*3+1])
+			ERRORMSG("YOUSUCK!\n");
+		if (model[i].po.z != positionData[i * 3 + 2])
+			ERRORMSG("YOUSUCK!\n");
+		
+	}
+
 
 	Buffer* retbuffer = new Buffer();
 
