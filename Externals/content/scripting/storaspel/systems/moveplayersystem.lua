@@ -4,8 +4,10 @@
 PlayerMovementSystem = System()
 PlayerMovementSystem.currentPlayer = 1
 
+PlayerMovementSystem.cardplayed = 100
+
 PlayerMovementSystem.Initialize = function(self)
-	self:SetName("Test Movement System")
+	self:SetName("Player Movement System")
 	
 	self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Rotation",FilterType.Mandatory)
@@ -21,10 +23,57 @@ PlayerMovementSystem.Update = function(self, dt)
 	local entities = self:GetEntities()
 	--Console.Print(#entities)
 	
-	--Console.Print(MapCreationSystem.testnumber)
+	--Console.Print(MapSystem.testnumber)
 	
-	local cards = {}
-	cards = self:GetCardsFromPlayers()
+	if self.cardplayed <= 5 then
+		--print("Card played: ", self.cardplayed)
+		--print("NEW UPDATE MODDAFACKERS!!!!")
+		
+		for i = 1, #entities do
+			
+			local index = self.cardplayed + (i-1)*5
+			
+			
+			local comp = self:GetComponent(CardDeckSystem.DealtCards[index], "CardAction", 0)
+			local stringData = comp:GetString()
+			--print(stringData, entities[i])
+			
+			if self:EntityHasComponent(entities[i], "Position") then
+				--print("try to add component", stringData)
+				world:CreateComponentAndAddTo(stringData, entities[i])
+				--print(index)
+				--print(stringData, "component added")
+				--print("number of entites", #entities)
+			end
+		end
+		
+		
+		
+		--comp = self:GetComponent(CardDeckSystem.DealtCards[self.cardplayed + 5], "CardAction", 0)
+		--stringData = comp:GetString()
+		--print(stringData)
+		--world:CreateComponentAndAddTo(stringData, entities[2])
+		--
+		--
+		--comp = self:GetComponent(CardDeckSystem.DealtCards[self.cardplayed + 10], "CardAction", 0)
+		--stringData = comp:GetString()
+		--print(stringData)
+		--world:CreateComponentAndAddTo(stringData, entities[3])
+		--
+		--comp = self:GetComponent(CardDeckSystem.DealtCards[self.cardplayed + 15], "CardAction", 0)
+		--stringData = comp:GetString()
+		--print(stringData)
+		--world:CreateComponentAndAddTo(stringData, entities[4])
+		
+		self.cardplayed = self.cardplayed + 1
+		--print(self.cardplayed)
+	end
+	
+	
+	
+	
+	--local cards = {}
+	--cards = self:GetCardsFromPlayers()
 	
 	if self.currentPlayer <= #entities then
 	
@@ -78,16 +127,24 @@ PlayerMovementSystem.Update = function(self, dt)
 		
 		switchplayer = true
 	end
+	
+	
+	if Input.GetKeyState(Key.N) == InputState.Pressed then
+		PlayerMovementSystem:GetCardsFromPlayers()
+	end
 end
 
 PlayerMovementSystem.GetCardsFromPlayers = function(self)
-	
+	PlayerMovementSystem.cardplayed = 1
+	for i = 1, CardDeckSystem.NR_OF_PLAYERS do
+		CardDeckSystem:GetCards(5)
+	end
 end
 
 -- If the tile we are trying to reach is walkable, we go there.
 PlayerMovementSystem.MoveTo = function(self, entity, posX, posY, dirX, dirY)
 	
-	if MapCreationSystem:TileIsWalkable(posX, posY) then
+	if MapSystem:TileIsWalkable(posX, posY) then
 	
 		-- Check if another player is on that tile, if so, recursively call this function to check whether the tile we are trying to push this player to is walkable or occupied.
 		local playerId = self:PlayerOnTile(posX, posY)
@@ -144,19 +201,21 @@ PlayerMovementSystem.SetPosition = function(self, entity, posX, posY, posZ)
     mapPosComp:SetInt2(posX, posZ)
     posComp:SetFloat3(posX, posY, posZ)
 	
-	local checkpointID = MapCreationSystem:GetCheckPointId(posX, posZ)
+	local checkpointID = MapSystem:GetCheckPointId(posX, posZ)
 	
 	if -1 ~= checkpointID then
 		local targetComp = self:GetComponent(entity, "TargetCheckpoint", 0)
 		local targetCheckPointID = targetComp:GetInt()
-		
+				
 		if targetCheckPointID == checkpointID then
+		
 			targetComp:SetInt(checkpointID + 1)
 			local spawnComp = self:GetComponent(entity, "Spawn", 0)
 			spawnComp:SetInt2(posX, posZ)
 		end	
-	elseif MapCreationSystem:TileIsVoid(posX, posZ) then
+	elseif MapSystem:TileIsVoid(posX, posZ) then
 		--print("Tile Is Void", posX, posY)
+		
 		world:CreateComponentAndAddTo("InactivePlayer", entity)
 		
 	end

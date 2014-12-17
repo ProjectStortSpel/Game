@@ -91,7 +91,6 @@ NetworkConnectSystem.OnEntityAdded = function(self, entityId)
 	
 end
 NetworkConnectSystem.OnEntityRemoved = function(self, entityId)
-
 end
 
 
@@ -102,3 +101,8 @@ NetworkConnectSystem.OnConnectedToServer = function(self, _ip, _port)
 end
 
 
+NetworkConnectSystem.OnPlayerDisconnected = function(self, _ip, _port)
+end
+
+NetworkConnectSystem.OnPlayerTimedOut = function(self, _ip, _port)
+end

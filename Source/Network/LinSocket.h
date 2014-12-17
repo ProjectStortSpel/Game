@@ -23,6 +23,7 @@ namespace Network
 		bool Listen(int _backlog);
 		bool SetNonBlocking(bool _value);
 		bool SetNoDelay(bool _value);
+		bool SetTimeoutDelay(int _value);
 		bool CloseSocket(void);
 		ISocket* Accept(void);
 		int Send(char* _buffer, int _length, int _flags = 0);

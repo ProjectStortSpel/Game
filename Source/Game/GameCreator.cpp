@@ -23,6 +23,10 @@ m_graphics(0), m_input(0), m_world(0), m_console(0), m_consoleManager(Console::C
 
 GameCreator::~GameCreator()
 {
+	NetworkInstance::DestroyClient();
+	NetworkInstance::DestroyServer();
+	NetworkInstance::DestroyNetworkHelper();
+
 	if (m_world)
 		delete m_world;
 
@@ -33,11 +37,7 @@ GameCreator::~GameCreator()
 		delete m_input;
 
 	if (m_console)
-		delete m_console;
-
-	NetworkInstance::DestroyClient();
-	NetworkInstance::DestroyServer();
-	NetworkInstance::DestroyNetworkHelper();
+		delete m_console;	
 
 	LuaEmbedder::Quit();
 
@@ -92,7 +92,7 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	gameMode << "../../../Externals/content/scripting/";
 	gameMode << _gameMode;
 	gameMode << "/init.lua";
-	std::string lol = gameMode.str();
+
 	if (!LuaEmbedder::Load(gameMode.str()))
 	  return;
 
@@ -102,7 +102,8 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	for (auto it = componentTypes->begin(); it != componentTypes->end(); ++it)
 	{
 		worldCreator.AddComponentType(it->second->GetName());
-		printf("%s added\n", it->second->GetName().c_str());
+		int id = ECSL::ComponentTypeManager::GetInstance().GetTableId(it->second->GetName());
+		printf("[#%d] %s added\n", id, it->second->GetName().c_str());
 	}
 
 	/*	This component has to be added last!	*/
