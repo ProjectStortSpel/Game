@@ -15,7 +15,6 @@ NetworkConnectSystem.Update = function(self, dt)
 			local username 	= self:GetComponent(entities[i], "Username", "Name");
 			graphics:RenderSimpleText("Player" .. tostring(i) .. ": " .. username:GetString(), 55, 6 + (i*2));
 		end
-		
 	end
 	
 end
