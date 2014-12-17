@@ -129,6 +129,7 @@ bool ClientNetwork::Connect()
 		*m_socketBound = true;
 	}
 
+	m_socket->SetTimeoutDelay(1000);
 	if (!m_socket->SetNoDelay(true))
 		printf("Failed to set no delay CLIENT\n");
 

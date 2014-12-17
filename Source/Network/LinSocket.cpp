@@ -193,6 +193,17 @@ bool LinSocket::SetNoDelay(bool _value)
 	return true;
 }
 
+bool LinSocket::SetTimeoutDelay(int _value)
+{
+	int timeout = _value;
+
+	if (setsockopt(*m_socket, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout, sizeof(timeout)) != 0)
+		return false;
+
+	if (setsockopt(*m_socket, SOL_SOCKET, SO_SNDTIMEO, (const char*)&timeout, sizeof(timeout)) != 0)
+		return false;
+}
+
 bool LinSocket::CloseSocket()
 {
 	if (close(*m_socket) != 0)
