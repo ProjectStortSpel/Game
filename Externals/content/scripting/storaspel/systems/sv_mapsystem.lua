@@ -16,25 +16,8 @@ MapSystem.PostInitialize = function(self)
             self:AddTile(x, y, map[y * self.mapX + x + 1])
         end
     end
-	
-	
-	self:AddPlayers()
 
     print("Init map done!")
-end
-
-MapSystem.AddPlayers = function(self)
-	
-	for i = 4, 10, 2 do
-	--for i = 2, 4, 1 do
-		local entity = world:CreateNewEntity("Player")
-		world:CreateComponentAndAddTo("Spawn", entity)
-		local mapPos = {i,12}
-		----local mapPos = {i, 6}
-		PlayerMovementSystem:SetPosition(entity, mapPos[1], 1.0, mapPos[2])
-		local comp = self:GetComponent(entity, "Spawn", 0)
-		comp:SetInt2(mapPos[1], mapPos[2])
-	end
 end
 
 MapSystem.AddTile = function(self, posX, posZ, tiletype)
