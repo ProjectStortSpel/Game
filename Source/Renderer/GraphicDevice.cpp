@@ -8,6 +8,8 @@
 using namespace Renderer;
 using namespace glm;
 
+vec3 dirLightDirection;
+
 GraphicDevice::GraphicDevice()
 {
 	m_renderSimpleText = true;
@@ -104,12 +106,20 @@ void GraphicDevice::Update(float _dt)
 	std::stringstream vram;
 	vram << "VRAM usage: " << ((float)m_vramUsage/1024.f)/1024.f << " Mb ";
 	m_textRenderer.RenderSimpleText(vram.str(), 20, 0);
+
+	//dirLightDirection += vec3(0.0, 0.0, -0.0025);
+	//m_lightDefaults[0] = dirLightDirection.x;	//dir x
+	//m_lightDefaults[1] = dirLightDirection.y;	//dir y
+	//m_lightDefaults[2] = dirLightDirection.z;	//dir z
+	//BufferDirectionalLight(&m_lightDefaults[0]);
+	//m_shadowMap->UpdateViewMatrix(vec3(8, 0, 8) - (10.0f*normalize(dirLightDirection)), vec3(8, 0, 8));
 }
 
 void GraphicDevice::Render()
 {
 		//GLTimer glTimer;
 		//glTimer.Start();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	glEnable(GL_DEPTH_TEST);
 
@@ -120,7 +130,9 @@ void GraphicDevice::Render()
 
 	m_shadowShaderDeferred.UseProgram();
 
-	glCullFace(GL_FRONT);
+	//glCullFace(GL_FRONT);
+	glEnable(GL_POLYGON_OFFSET_FILL);
+	glPolygonOffset(1.5, 18000.0);	//glPolygonOffset(-1.0, 0.0);	//glPolygonMode(GL_BACK, GL_FILL);
 	glActiveTexture(GL_TEXTURE10);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -157,6 +169,8 @@ void GraphicDevice::Render()
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glCullFace(GL_BACK);
+	//glPolygonMode(GL_FRONT, GL_FILL);
+	glDisable(GL_POLYGON_OFFSET_FILL);
 	//------------------------------
 
 //------Render deferred--------------------------------------------------------------------------
@@ -235,9 +249,15 @@ void GraphicDevice::Render()
 	m_compDeferredPass2Shader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
 	mat4 inverseProjection = glm::inverse(projectionMatrix);
 	m_compDeferredPass2Shader.SetUniVariable("InvProjection", mat4x4, &inverseProjection);
+	m_compDeferredPass2Shader.SetUniVariable("BiasMatrix", mat4x4, m_shadowMap->GetBiasMatrix());
+	mat4 shadowVP = (*m_shadowMap->GetProjectionMatrix()) * (*m_shadowMap->GetViewMatrix());
+	m_compDeferredPass2Shader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_depthBuf);
+
+	glActiveTexture(GL_TEXTURE10);
+	glBindTexture(GL_TEXTURE_2D, m_shadowMap->GetDepthTexHandle());
 
 	glBindImageTexture(1, m_colorTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
 
@@ -327,6 +347,8 @@ void GraphicDevice::Render()
 
 	// FULL SCREEN QUAD
 	m_fullScreenShader.UseProgram();
+	//glActiveTexture(GL_TEXTURE5);
+	//glBindTexture(GL_TEXTURE_2D, m_shadowMap->GetDepthTexHandle());
 	glDrawArrays(GL_POINTS, 0, 1);
 
 	glUseProgram(0);
@@ -578,17 +600,19 @@ bool GraphicDevice::InitLightBuffers()
 	delete(tmparray);
 
 //--------Directional light-------------------------------------------------------------------------
-	m_lightDefaults[0] = 0.0;		//dir x
-	m_lightDefaults[1] = -1.0;	//dir y
-	m_lightDefaults[2] = -0.6;	//dir z
+	dirLightDirection = vec3(-0.2, -1.0, 0.7);
+
+	m_lightDefaults[0] = dirLightDirection.x;	//dir x
+	m_lightDefaults[1] = dirLightDirection.y;	//dir y
+	m_lightDefaults[2] = dirLightDirection.z;	//dir z
 	
-	m_lightDefaults[3] = 0.2;		//int x
+	m_lightDefaults[3] = 0.3;		//int x
 	m_lightDefaults[4] = 0.7;		//int y
 	m_lightDefaults[5] = 0.7;		//int z
 	
-	m_lightDefaults[6] = 0.6;		//col x
-	m_lightDefaults[7] = 0.6;		//col y
-	m_lightDefaults[8] = 0.65;	//col z
+	m_lightDefaults[6] = 0.7;		//col x
+	m_lightDefaults[7] = 0.75;		//col y
+	m_lightDefaults[8] = 0.85;	//col z
 
 	glGenBuffers(1, &m_dirLightBuffer);
 
@@ -640,10 +664,14 @@ void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
 void GraphicDevice::CreateShadowMap()
 {
 	int resolution = 2048;
-	m_shadowMap = new ShadowMap(vec3(7, 5, 10), vec3(7, 0, 7), resolution);
+	vec3 midMap = vec3(8.0, 0.0, 8.0);
+	vec3 lightPos = midMap - (10.0f*normalize(dirLightDirection));
+	m_shadowMap = new ShadowMap(lightPos, lightPos + normalize(dirLightDirection), resolution);
 	m_shadowMap->CreateShadowMapTexture(GL_TEXTURE10);
+	m_compDeferredPass2Shader.CheckUniformLocation("ShadowDepthTex", 10);
 
 	m_vramUsage += (resolution*resolution*sizeof(float));
+
 }
 
 bool GraphicDevice::InitTextRenderer()

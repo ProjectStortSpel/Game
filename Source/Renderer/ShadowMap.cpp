@@ -7,12 +7,14 @@ ShadowMap::ShadowMap(vec3 lightPos, vec3 target, int res)
 	m_targetDirection = target;
 
 	m_resolution = res;
-	m_projectionMatrix = glm::perspective(90.0f, (float)res/(float)res, 1.0f, 100.0f);
+	m_projectionMatrix = glm::ortho(-10.0, 10.0, -10.0, 10.0, 3.0, 18.0); 
+	//glm::perspective(45.0f, (float)res / (float)res, 1.0f, 50.0f);
 	m_viewMatrix = glm::lookAt(m_lightPosition, m_targetDirection, vec3(0.0f, 1.0f, 0.0f));
-	m_biasMatrix = mat4(0.5, 0.0, 0.0, 0.0,
-						0.0, 0.5, 0.0, 0.0,
-						0.0, 0.0, 0.5, 0.0,
-						0.5, 0.5, 0.5, 1.0);
+	float val = 0.5f;
+	m_biasMatrix = mat4(val, 0.0, 0.0, 0.0,
+						0.0, val, 0.0, 0.0,
+						0.0, 0.0, val, 0.0,
+						val, val, val, 1.0);
 }
 
 ShadowMap::ShadowMap()
@@ -30,7 +32,7 @@ void ShadowMap::CreateShadowMapTexture(GLuint _textureUnit)
 	//The shadow maptexture  
 	glGenTextures(1, &m_depthTex); 
 	glBindTexture(GL_TEXTURE_2D, m_depthTex); 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_resolution, m_resolution, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL); 
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_resolution, m_resolution, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL); 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER); 
@@ -54,15 +56,15 @@ void ShadowMap::CreateShadowMapTexture(GLuint _textureUnit)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0); 
 }
 
-void ShadowMap::SetLightPos(vec3 pos)
+void ShadowMap::UpdateViewMatrix(vec3 lightPos, vec3 target)
 { 
-	m_viewMatrix = glm::lookAt(pos, pos+vec3(0.0f, -1.0f, -0.001f), vec3(0.0, 1.0, 0.0));
+	m_viewMatrix = glm::lookAt(lightPos, target, vec3(0.0f, 1.0f, 0.0f));
 }
 
 void ShadowMap::ChangeResolution(int res)
 {
 	m_resolution = res;
 	glBindTexture(GL_TEXTURE_2D, m_depthTex); 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_resolution, m_resolution, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_resolution, m_resolution, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 	glBindTexture(GL_TEXTURE_2D, 0); 
 }

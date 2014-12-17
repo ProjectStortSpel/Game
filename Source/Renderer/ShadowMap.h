@@ -34,7 +34,7 @@ public:
 	mat4* GetViewMatrix(){ return &m_viewMatrix; }
 	mat4* GetProjectionMatrix(){ return &m_projectionMatrix; }
 	mat4* GetBiasMatrix(){ return &m_biasMatrix; }
-	void SetLightPos(vec3 pos);
+	void UpdateViewMatrix(vec3 lightPos, vec3 target);
 };
 #endif 
 
