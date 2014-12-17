@@ -23,6 +23,7 @@
     <ClInclude Include="..\..\..\Source\Renderer\Camera.h" />
     <ClInclude Include="..\..\..\Source\Renderer\GLTimer.h" />
     <ClInclude Include="..\..\..\Source\Renderer\GraphicDevice.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\ModelExporter.h" />
     <ClInclude Include="..\..\..\Source\Renderer\ModelLoader.h" />
     <ClInclude Include="..\..\..\Source\Renderer\Shader.h" />
     <ClInclude Include="..\..\..\Source\Renderer\ShadowMap.h" />
