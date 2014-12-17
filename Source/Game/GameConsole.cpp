@@ -31,6 +31,7 @@ void GameConsole::CreateObject(std::vector<Console::Argument>* _args)
 
 	unsigned int mId = m_world->CreateNewEntity(_template);
 	m_world->CreateComponentAndAddTo("ChangedComponents", mId);
+	m_world->CreateComponentAndAddTo("SyncNetwork", mId);
 
 	std::stringstream ss;
 	ss << "Entity with id #" << mId << " has been created!";
@@ -43,11 +44,6 @@ void GameConsole::CreateObject(std::vector<Console::Argument>* _args)
 		objectPosition[0] = _args->at(1).Number;
 		objectPosition[1] = _args->at(2).Number;
 		objectPosition[2] = _args->at(3).Number;
-	}
-
-	if (NetworkInstance::GetServer()->IsRunning())
-	{
-		//NetworkInstance::GetServer()->Broadcast(NetworkInstance::GetNetworkHelper()->WriteEntity(NetworkInstance::GetServer()->GetPacketHandler(), mId));
 	}
 }
 
