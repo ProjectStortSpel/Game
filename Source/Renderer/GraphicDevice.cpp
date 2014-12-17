@@ -30,6 +30,9 @@ GraphicDevice::~GraphicDevice()
 		it->second = nullptr;
 	}
 
+	glDeleteBuffers(1, &m_pointlightBuffer);
+	glDeleteBuffers(1, &m_dirLightBuffer);
+
 	SDL_GL_DeleteContext(m_glContext);
 	// Close and destroy the window
 	SDL_DestroyWindow(m_window);

@@ -6,7 +6,7 @@ ool..........o
 o.u..x.h..xxxo
 o.u.4x.dlllllo
 o.u.xx.d.....o
-o.u....d.ll..o
+o.u....d.....o
 o.u....d...h.o
 o2u....d..3.oo
 oru..h.d...ooo
