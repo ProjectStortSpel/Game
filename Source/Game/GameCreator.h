@@ -36,6 +36,7 @@ private:
 	
 	void GameMode(std::vector<Console::Argument>* _args);
 	void Reload(std::vector<Console::Argument>* _args);
+	void StartTemp(std::vector<Console::Argument>* _args);
 
 	void OnConnectedToServer(Network::NetConnection _nc, const char* _message);
 	void LuaPacket(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);

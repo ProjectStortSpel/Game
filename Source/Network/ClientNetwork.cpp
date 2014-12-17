@@ -28,7 +28,7 @@ ClientNetwork::ClientNetwork()
 	m_socket = 0;
 	m_connected = new bool(false);
 
-	*m_maxTimeOutIntervall = 100.0f;
+	*m_maxTimeOutIntervall = 1.f;
 	*m_maxIntervallCounter = 300;
 
 	m_onConnectedToServer = new std::vector<NetEvent>();
@@ -130,8 +130,7 @@ bool ClientNetwork::Connect()
 	}
 
 	m_socket->SetTimeoutDelay(1000);
-	if (!m_socket->SetNoDelay(true))
-		printf("Failed to set no delay CLIENT\n");
+	m_socket->SetNoDelay(true);
 
 	bool connected = false;
 	//for (int i = 0; i < 5; ++i)

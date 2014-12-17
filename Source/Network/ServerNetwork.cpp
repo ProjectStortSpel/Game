@@ -388,8 +388,7 @@ void ServerNetwork::ListenForConnections(void)
 
 		newConnection->SetNonBlocking(false);
 		newConnection->SetTimeoutDelay(1000);
-		if (!newConnection->SetNoDelay(true))
-			printf("Failed to set no delay\n");
+		newConnection->SetNoDelay(true);
 
 		NetConnection nc = newConnection->GetNetConnection();
 

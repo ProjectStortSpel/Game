@@ -163,6 +163,7 @@ void GameCreator::StartGame()
 	m_console->SetupHooks(&m_consoleManager);
 	m_consoleManager.AddCommand("Reload", std::bind(&GameCreator::Reload, this, std::placeholders::_1));
 	m_consoleManager.AddCommand("GameMode", std::bind(&GameCreator::GameMode, this, std::placeholders::_1));
+	m_consoleManager.AddCommand("Start", std::bind(&GameCreator::StartTemp, this, std::placeholders::_1));
 	
 	float maxDeltaTime = (float)(1.0f / 20.0f);
 	while (true)
@@ -357,6 +358,9 @@ void GameCreator::Reload(std::vector<Console::Argument>* _args)
 	LuaEmbedder::AddBool("Server", server);
 	LuaEmbedder::AddBool("Client", client);
 	m_graphics->Clear();
+	
+	LuaEmbedder::AddObject<Renderer::GraphicDevice>("GraphicDevice", m_graphics, "graphics");
+
 	InitializeWorld(m_gameMode);
 	m_console->SetWorld(m_world);
 }
@@ -387,4 +391,9 @@ void GameCreator::GameMode(std::vector<Console::Argument>* _args)
 		}
 	}
 	return;	
+}
+
+void GameCreator::StartTemp(std::vector<Console::Argument>* _args)
+{
+
 }
