@@ -928,10 +928,6 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 			return it->second;
 	}
 
-
-	//std::vector<Vertex> verts = ModelLoader::importMesh(_fileDir + "OLD");
-
-
 	ModelExporter modelExporter;
 	modelExporter.OpenFileForRead(_fileDir.c_str());
 	std::vector<float> positionData = modelExporter.ReadDataFromFile();
@@ -940,31 +936,7 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 	std::vector<float> bitanData = modelExporter.ReadDataFromFile();
 	std::vector<float> texCoordData = modelExporter.ReadDataFromFile();
 	modelExporter.CloseFile();
-	/*
-	int realsize = verts.size() - 1;
-	std::vector<float> positionData(realsize * 3);
-	std::vector<float> normalData(realsize * 3);
-	std::vector<float> tanData(realsize * 3);
-	std::vector<float> bitanData(realsize * 3);
-	std::vector<float> texCoordData(realsize * 2);
-	for (int i = 0; i < realsize; i++)
-	{
-		positionData[i * 3 + 0] = verts[i].po.x;
-		positionData[i * 3 + 1] = verts[i].po.y;
-		positionData[i * 3 + 2] = verts[i].po.z;
-		normalData[i * 3 + 0] = verts[i].no.x;
-		normalData[i * 3 + 1] = verts[i].no.y;
-		normalData[i * 3 + 2] = verts[i].no.z;
-		tanData[i * 3 + 0] = verts[i].ta.x;
-		tanData[i * 3 + 1] = verts[i].ta.y;
-		tanData[i * 3 + 2] = verts[i].ta.z;
-		bitanData[i * 3 + 0] = verts[i].bi.x;
-		bitanData[i * 3 + 1] = verts[i].bi.y;
-		bitanData[i * 3 + 2] = verts[i].bi.z;
-		texCoordData[i * 2 + 0] = verts[i].uv.x;
-		texCoordData[i * 2 + 1] = 1 - verts[i].uv.y;
-	}
-	*/
+
 	Buffer* retbuffer = new Buffer();
 
 	_shaderProg->UseProgram();
