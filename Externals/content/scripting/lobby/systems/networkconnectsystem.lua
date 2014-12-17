@@ -40,20 +40,14 @@ NetworkConnectSystem.OnUsername = function(id, ipAddress, port)
 
 end
 
-NetworkConnectSystem.OnStartGame = function(id, ipAddress, port)
-
-
-end
-
 NetworkConnectSystem.Initialize = function(self)
-	self:SetName("Reconnect System")
+	self:SetName("NetworkConnectSystem System")
 	self:InitializeNetworkEvents()
 	
 	self:AddComponentTypeToFilter("Username", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("NetConnection", FilterType.Mandatory)
 	
 	Net.Receive("Username", NetworkConnectSystem.OnUsername);
-	Net.Receive("StartGame", NetworkConnectSystem.OnStartGame);
 	maxConnections = Net.MaxConnections();
 	
 	print("NetworkConnectSystem initialized!")

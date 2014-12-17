@@ -12,7 +12,7 @@ int main(int argc, char** argv)
 	newGame->InitializeGraphics();
 	newGame->InitializeInput();
 	newGame->InitializeNetwork();
-	newGame->InitializeWorld("storaspel");
+	newGame->InitializeWorld("lobby");
 
 
 	newGame->StartGame();

@@ -5,7 +5,16 @@ require "components"
 -- Systems
 package.path = package.path .. ";../../../Externals/content/scripting/lobby/systems/?.lua"
 require "systems"
-require "networkconnectsystem"
+
+if Server then
+	require "serverlobbysystem"
+	require "serverconnectsystem"
+end
+
+if Client then
+	require "clientlobbysystem"
+	require "clientconnectsystem"
+end
 
 -- Templates
 package.path = package.path .. ";../../../Externals/content/scripting/lobby/templates/?.lua"
@@ -13,4 +22,7 @@ require "templates"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(StartUpSystem)
-worldCreator:AddSystemToCurrentGroup(NetworkConnectSystem)
+worldCreator:AddSystemToCurrentGroup(ServerLobbySystem)
+worldCreator:AddSystemToCurrentGroup(ServerConnectSystem)
+worldCreator:AddSystemToCurrentGroup(ClientLobbySystem)
+worldCreator:AddSystemToCurrentGroup(ClientConnectSystem)
