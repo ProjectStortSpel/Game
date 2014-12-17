@@ -21,10 +21,10 @@ networkMessagesSystem.Initialize = function(self)
 	print("NetworkMessagesSystem initialized!")
 end
 networkMessagesSystem.OnEntityAdded = function(self, entityId)
-	print("OnEntityAdded (LUA)")
+	--print("OnEntityAdded (LUA)")
 end
 networkMessagesSystem.OnEntityRemoved = function(self, entityId)
-	print("OnEntityRemoved (LUA)")
+	--print("OnEntityRemoved (LUA)")
 end
 
 networkMessagesSystem.OnBannedFromServer = function(self, _ip, _port, _message)

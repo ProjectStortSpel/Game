@@ -1,10 +1,8 @@
 -- Components
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/components/?.lua"
 require "components"
-require "lightcomponents"
 require "mapcomponents"
 require "playercomponents"
-require "cardcomponents"
 
 
 -- Systems
@@ -13,39 +11,34 @@ require "movementsystem"
 require "networkmessagessystem"
 
 if Server then
-require "mapsystem"
+	require "sv_mapsystem"
+	--require "sv_moveplayersystem"
+	require "sv_onplayerconnected"
+	require "sv_playerssystem"
 end
-require "maplogicsystem"
-
-require "moveplayersystem"
-require "networkconnectsystem"
-require "cardlogicsystem"
-require "discosystem"
+if Client then
+--require "cl_pickingphasesystem"
+end
 
 -- Templates
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/templates/?.lua"
-require "box"
-require "lights"
 require "map"
+require "playertemplates"
+
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(MovementSystem)
 worldCreator:AddSystemToCurrentGroup(networkMessagesSystem)
-if Server then
-worldCreator:AddSystemToCurrentGroup(MapSystem)
-end
-worldCreator:AddSystemToCurrentGroup(ForwardSystem)
-worldCreator:AddSystemToCurrentGroup(BackwardSystem)
-worldCreator:AddSystemToCurrentGroup(RightTurnSystem)
-worldCreator:AddSystemToCurrentGroup(LeftTurnSystem)
-worldCreator:AddSystemToCurrentGroup(TurnAroundSystem)
-worldCreator:AddSystemToCurrentGroup(PlayerMovementSystem)
-worldCreator:AddSystemToCurrentGroup(RespawnSystem)
-worldCreator:AddSystemToCurrentGroup(NewRoundSystem)
-worldCreator:AddSystemToCurrentGroup(NetworkConnectSystem)
-worldCreator:AddSystemToCurrentGroup(NewStepSystem)
-worldCreator:AddSystemToCurrentGroup(WaterMovementSystem)
-worldCreator:AddSystemToCurrentGroup(CardDeckSystem)
---worldCreator:AddSystemToCurrentGroup(GetCardsSystem)
 
-worldCreator:AddSystemToCurrentGroup(DiscoSystem)
+if Server then
+	worldCreator:AddSystemToCurrentGroup(MapSystem)
+	--worldCreator:AddSystemToCurrentGroup(PlayerMovementSystem)
+	
+	worldCreator:AddSystemToCurrentGroup(OnPlayerConnectedSystem)
+	worldCreator:AddSystemToCurrentGroup(PlayersSystem)
+end
+
+if Client then
+--worldCreator:AddSystemToCurrentGroup(ClientSendCardSystem)
+end
+
