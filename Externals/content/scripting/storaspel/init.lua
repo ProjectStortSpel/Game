@@ -1,65 +1,38 @@
 -- Components
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/components/?.lua"
 require "components"
-require "lightcomponents"
-require "mapcomponents"
+
 require "playercomponents"
-require "cardcomponents"
-require "phasecomponents"
 
 
 -- Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
+--require "mapsystem"
 require "movementsystem"
 require "networkmessagessystem"
-require "pickingphasesystem"
 
 if Server then
-require "mapcreationsystem"
-require "sv_pickingphasesystem"
+	require "sv_onplayerconnected"
+	require "sv_playerssystem"
 end
 if Client then
-require "cl_pickingphasesystem"
+--require "cl_pickingphasesystem"
 end
-require "maplogicsystem"
-
-require "moveplayersystem"
-require "networkconnectsystem"
-require "cardlogicsystem"
-require "discosystem"
 
 -- Templates
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/templates/?.lua"
-require "box"
-require "lights"
-require "map"
+require "playertemplates"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(MovementSystem)
 worldCreator:AddSystemToCurrentGroup(networkMessagesSystem)
 
 if Server then
-worldCreator:AddSystemToCurrentGroup(MapCreationSystem)
-worldCreator:AddSystemToCurrentGroup(RecievingPickedCards)
+	worldCreator:AddSystemToCurrentGroup(OnPlayerConnectedSystem)
+	worldCreator:AddSystemToCurrentGroup(PlayersSystem)
 end
 
---	Phase systems
-worldCreator:AddSystemToCurrentGroup(PickingPhaseSystem)
+if Client then
+--worldCreator:AddSystemToCurrentGroup(ClientSendCardSystem)
+end
 
---	Card systems
-worldCreator:AddSystemToCurrentGroup(ForwardSystem)
-worldCreator:AddSystemToCurrentGroup(BackwardSystem)
-worldCreator:AddSystemToCurrentGroup(RightTurnSystem)
-worldCreator:AddSystemToCurrentGroup(LeftTurnSystem)
-worldCreator:AddSystemToCurrentGroup(TurnAroundSystem)
-
-worldCreator:AddSystemToCurrentGroup(PlayerMovementSystem)
-worldCreator:AddSystemToCurrentGroup(RespawnSystem)
-worldCreator:AddSystemToCurrentGroup(NewRoundSystem)
-worldCreator:AddSystemToCurrentGroup(NetworkConnectSystem)
-worldCreator:AddSystemToCurrentGroup(NewStepSystem)
-worldCreator:AddSystemToCurrentGroup(WaterMovementSystem)
-worldCreator:AddSystemToCurrentGroup(CardDeckSystem)
---worldCreator:AddSystemToCurrentGroup(GetCardsSystem)
-
-worldCreator:AddSystemToCurrentGroup(DiscoSystem)

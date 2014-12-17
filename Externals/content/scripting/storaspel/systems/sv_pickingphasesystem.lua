@@ -29,19 +29,14 @@ RecievingPickedCards.Update = function(self, dt)
 	--	if the timer reaches zero
 	self.PickingTimer = self.PickingTimer - dt
 	if(self.PickingTimer <= 0.0) then
-	
-		local packetId = Net.StartPack("PickedCardsFromClient")
-		Net.WriteInt(packetId, 101)
-		Net.WriteString(packetId, "Forward")
-		Net.Send(packetId, "127.0.0.1", 6112)
 		
 		--	Remove any entities in this system
 		for eId = 0, #activeEntities do
-			world:KillEntity(eId)
+			world:RemoveComponentFrom("PickingPhase", eId)
 		end
 	
 	
-		print("TIME IS OUT! RANDOM CARDS!")
+		print("TIME IS OUT! RANDOM CARDS! (SERVER)")
 		self.PickingTimer = 0.0
 	end
 	
@@ -50,6 +45,7 @@ end
 RecievingPickedCards.Initialize = function(self)
 	self:SetName("Picking Phase System")
 
+	self:AddComponentTypeToFilter("PickingPhase", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("PickingPhase", FilterType.Mandatory)
 end
 

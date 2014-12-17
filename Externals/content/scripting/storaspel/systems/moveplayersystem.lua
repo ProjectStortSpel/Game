@@ -109,12 +109,12 @@ PlayerMovementSystem.Update = function(self, dt)
  	-- Tillfällig representation av en rundas slut.     
 	if Input.GetKeyState(Key.Space) == InputState.Pressed then
 			 
-		local players = RespawnSystem:GetEntities()
-		for i = 1, #players do
-			world:CreateComponentAndAddTo("NewRound", players[i])
-		end
+		--local players = RespawnSystem:GetEntities()
+		--for i = 1, #players do
+		--	world:CreateComponentAndAddTo("NewRound", players[i])
+		--end
 		
-		switchplayer = true
+		--switchplayer = true
 	end
 	
 	-- Tillfällig representation av ett step.     

@@ -20,15 +20,9 @@ ClientSendCardSystem.Update = function(self, dt)
 		local packetId = Net.StartPack("PickedCardsFromClient")
 		Net.WriteInt(packetId, 101)
 		Net.WriteString(packetId, "Forward")
-		Net.Send(packetId, "127.0.0.1", 6112)
+		Net.SendToServer(packetId)
 		
-		--	Remove any entities in this system
-		for eId = 0, #activeEntities do
-			world:KillEntity(eId)
-		end
-	
-	
-		print("TIME IS OUT! RANDOM CARDS!")
+		print("TIME IS OUT! RANDOM CARDS! (CLIENT)")
 		self.PickingTimer = 0.0
 	end
 	
