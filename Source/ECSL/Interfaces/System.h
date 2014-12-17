@@ -3,6 +3,7 @@
 
 #include <SDL/SDL.h>
 #include "ECSL/Framework/Components/DataManager.h"
+#include "ECSL/Framework/Multithreading/RuntimeInfo.h"
 #include "ECSL/Framework/Systems/ComponentFilter.h"
 #include "ECSL/Framework/Systems/SystemIdManager.h"
 #include "ECSL/Framework/Systems/Messaging/Message.h"
@@ -16,7 +17,7 @@ namespace ECSL
 		System();
 		virtual ~System() = 0;
 
-		virtual void Update(unsigned int _taskIndex, float _dt) { }
+		virtual void Update(const RuntimeInfo& _runtime) { }
 		virtual void Initialize() = 0;
 
 		virtual void OnEntityAdded(unsigned int _taskIndex, float _dt, unsigned int _entityId) { }

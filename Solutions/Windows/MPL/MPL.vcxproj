@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Source\MPL\Framework\Common\MathHelper.h" />
     <ClInclude Include="..\..\..\Source\MPL\Framework\Common\ThreadHelper.h" />
     <ClInclude Include="..\..\..\Source\MPL\Framework\Tasks\Task.h" />
     <ClInclude Include="..\..\..\Source\MPL\Framework\Tasks\TaskId.h" />
@@ -29,6 +30,7 @@
     <ClInclude Include="..\..\..\Source\MPL\MPL.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\Source\MPL\Framework\Common\MathHelper.cpp" />
     <ClCompile Include="..\..\..\Source\MPL\Framework\Common\ThreadHelper.cpp" />
     <ClCompile Include="..\..\..\Source\MPL\Framework\Tasks\Task.cpp" />
     <ClCompile Include="..\..\..\Source\MPL\Framework\Tasks\TaskPool.cpp" />

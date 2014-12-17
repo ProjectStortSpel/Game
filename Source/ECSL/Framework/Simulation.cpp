@@ -15,7 +15,7 @@ Simulation::~Simulation()
 void Simulation::Update(float _dt)
 {
 	/* Update systems */
-	m_scheduler->Update(_dt);
+	m_scheduler->ScheduleUpdate(_dt);
 
 	/* Add and remove changed entities from systems */
 	m_systemManager->SystemEntitiesUpdate();

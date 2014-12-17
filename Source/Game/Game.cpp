@@ -28,7 +28,7 @@ public:
 	TestSystem() { }
 	~TestSystem() { }
 
-	void Update(unsigned int _taskIndex, float _dt)
+	void Update(const RuntimeInfo& _runtime)
 	{
 		//printf("Testsystem run()\n");
 	}
@@ -64,7 +64,7 @@ public:
 	TestSystem2() { }
 	~TestSystem2() { }
 
-	void Update(unsigned int _taskIndex, float _dt)
+	void Update(const RuntimeInfo& _runtime)
 	{
 		//printf("Testsystem2 run()\n");
 	}

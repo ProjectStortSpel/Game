@@ -24,7 +24,11 @@ namespace MPL
 		void FinishAdd(TaskId _id);
 		void WaitFor(TaskId _id);
 
-		unsigned int GetSlavesCount() { return (unsigned int)m_slaves->size(); }
+		/* Number of created slave threads */
+		unsigned int GetSlaveCount() { return (unsigned int)m_slaves->size(); }
+
+		/* Number of created slaves plus main threads */
+		unsigned int GetThreadCount() { return (unsigned int)m_slaves->size() + 1; }
 
 	private:
 		TaskManager();

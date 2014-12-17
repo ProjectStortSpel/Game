@@ -49,6 +49,9 @@
     <ClInclude Include="..\..\..\Source\MPL\Framework\Tasks\TaskId.h">
       <Filter>Source Files\Framework\Tasks</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\MPL\Framework\Common\MathHelper.h">
+      <Filter>Source Files\Framework\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\MPL\Framework\Tasks\Task.cpp">
@@ -64,6 +67,9 @@
       <Filter>Source Files\Framework\Threads</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\MPL\Framework\Common\ThreadHelper.cpp">
+      <Filter>Source Files\Framework\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\MPL\Framework\Common\MathHelper.cpp">
       <Filter>Source Files\Framework\Common</Filter>
     </ClCompile>
   </ItemGroup>
