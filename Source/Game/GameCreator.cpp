@@ -23,6 +23,10 @@ m_graphics(0), m_input(0), m_world(0), m_console(0), m_consoleManager(Console::C
 
 GameCreator::~GameCreator()
 {
+	NetworkInstance::DestroyClient();
+	NetworkInstance::DestroyServer();
+	NetworkInstance::DestroyNetworkHelper();
+
 	if (m_world)
 		delete m_world;
 
@@ -33,11 +37,7 @@ GameCreator::~GameCreator()
 		delete m_input;
 
 	if (m_console)
-		delete m_console;
-
-	NetworkInstance::DestroyClient();
-	NetworkInstance::DestroyServer();
-	NetworkInstance::DestroyNetworkHelper();
+		delete m_console;	
 
 	LuaEmbedder::Quit();
 
