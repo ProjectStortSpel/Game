@@ -7,14 +7,14 @@ AI:AddComponent("SyncNetwork")			--	Sync this entity
 EntityTemplateManager:AddTemplate(AI)	--	Add the template
 
 --	Player template
-local Player = EntityTemplate()
-Player.Name = "Player"
-Player:AddComponent("Player")
-Player:SetString("NetConnection", "0.0.0.0", "IpAddress")
-Player:SetInt("NetConnection", 0, "Port")
-Player:SetBool("NetConnection", false, "Active")
+local PlayerTemplate = EntityTemplate()
+PlayerTemplate.Name = "Player"
+PlayerTemplate:AddComponent("Player")
+PlayerTemplate:SetString("NetConnection", "0.0.0.0", "IpAddress")
+PlayerTemplate:SetInt("NetConnection", 0, "Port")
+PlayerTemplate:SetBool("NetConnection", false, "Active")
 --Player:AddComponent("SyncNetwork")			--	Sync this entity
-EntityTemplateManager:AddTemplate(Player)	--	Add the template
+EntityTemplateManager:AddTemplate(PlayerTemplate)	--	Add the template
 
 
 --	Unit template
@@ -29,9 +29,9 @@ Unit.Name = "Unit"
 	
 	--	Game Logic
 	Unit:AddComponent("PlayerNumber")			--	The number of the player [1, Number of players]
-	Unit:AddComponent("Direction")
-	Unit:AddComponent("TargetCheckpoint")
-	Unit:AddComponent("MapPosition")
+	--Unit:AddComponent("Direction")
+	--Unit:AddComponent("TargetCheckpoint")
+	--Unit:AddComponent("MapPosition")
 	
 	
 	--	Misc

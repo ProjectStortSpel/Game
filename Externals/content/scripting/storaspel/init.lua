@@ -1,17 +1,18 @@
 -- Components
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/components/?.lua"
 require "components"
-
+require "mapcomponents"
 require "playercomponents"
 
 
 -- Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
---require "mapsystem"
 require "movementsystem"
 require "networkmessagessystem"
 
 if Server then
+	require "sv_mapsystem"
+	--require "sv_moveplayersystem"
 	require "sv_onplayerconnected"
 	require "sv_playerssystem"
 end
@@ -21,13 +22,18 @@ end
 
 -- Templates
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/templates/?.lua"
+require "map"
 require "playertemplates"
+
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(MovementSystem)
 worldCreator:AddSystemToCurrentGroup(networkMessagesSystem)
 
 if Server then
+	worldCreator:AddSystemToCurrentGroup(MapSystem)
+	--worldCreator:AddSystemToCurrentGroup(PlayerMovementSystem)
+	
 	worldCreator:AddSystemToCurrentGroup(OnPlayerConnectedSystem)
 	worldCreator:AddSystemToCurrentGroup(PlayersSystem)
 end
