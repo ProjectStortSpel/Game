@@ -11,7 +11,7 @@ require "cardcomponents"
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
 require "movementsystem"
 require "networkmessagessystem"
-require "mapcreationsystem"
+require "mapsystem"
 require "maplogicsystem"
 require "moveplayersystem"
 require "cardlogicsystem"
@@ -26,7 +26,7 @@ require "map"
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(MovementSystem)
 worldCreator:AddSystemToCurrentGroup(networkMessagesSystem)
-worldCreator:AddSystemToCurrentGroup(MapCreationSystem)
+worldCreator:AddSystemToCurrentGroup(MapSystem)
 worldCreator:AddSystemToCurrentGroup(ForwardSystem)
 worldCreator:AddSystemToCurrentGroup(BackwardSystem)
 worldCreator:AddSystemToCurrentGroup(RightTurnSystem)

@@ -1,27 +1,29 @@
-MapCreationSystem = System()
-MapCreationSystem.entities = { }
-MapCreationSystem.mapX = 0
-MapCreationSystem.mapY = 0
+MapSystem = System()
+MapSystem.entities = { }
+MapSystem.mapX = 0
+MapSystem.mapY = 0
 
-MapCreationSystem.PostInitialize = function(self)
+MapSystem.PostInitialize = function(self)
 	local map
     self.mapX, self.mapY, map = File.LoadMap("content/maps/map.txt")
     local posX, posZ
 	
-	self:AddPlayers()
 	
 	for y = 0, self.mapY-1 do
         for x = 0, self.mapX-1 do
-            posX = x - self.mapX/2
-            posZ = y - self.mapY/2
+            --posX = x - self.mapX/2
+            --posZ = y - self.mapY/2
             self:AddTile(x, y, map[y * self.mapX + x + 1])
         end
     end
+	
+	
+	self:AddPlayers()
 
     print("Init map done!")
 end
 
-MapCreationSystem.AddPlayers = function(self)
+MapSystem.AddPlayers = function(self)
 	
 	for i = 4, 10, 2 do
 	--for i = 2, 4, 1 do
@@ -29,20 +31,20 @@ MapCreationSystem.AddPlayers = function(self)
 		world:CreateComponentAndAddTo("Spawn", entity)
 		world:CreateComponentAndAddTo("SyncNetwork", entity)
 		local mapPos = {i,12}
-		--local mapPos = {i, 6}
+		----local mapPos = {i, 6}
 		PlayerMovementSystem:SetPosition(entity, mapPos[1], 1.0, mapPos[2])
 		local comp = self:GetComponent(entity, "Spawn", 0)
 		comp:SetInt2(mapPos[1], mapPos[2])
 	end
 end
 
-MapCreationSystem.AddTile = function(self, posX, posZ, tiletype)
+MapSystem.AddTile = function(self, posX, posZ, tiletype)
 	
     local entity = world:CreateNewEntity("Tile")
 
     local posComp = self:GetComponent(entity, "Position", 0)
     posComp:SetFloat3(posX, 0.0, posZ)
-
+	
     world:CreateComponentAndAddTo("MapPosition", entity)
     local mapPosComp = self:GetComponent(entity, "MapPosition", 0)
     mapPosComp:SetInt2(posX, posZ)
@@ -154,7 +156,7 @@ MapCreationSystem.AddTile = function(self, posX, posZ, tiletype)
     table.insert(self.entities, entity)
 end
 
-MapCreationSystem.AddGroundTileBelow = function(self, posX, posZ)
+MapSystem.AddGroundTileBelow = function(self, posX, posZ)
 
 	local groundEntity = world:CreateNewEntity("Tile")
 	local posComp = self:GetComponent(groundEntity, "Position", 0)
@@ -171,7 +173,7 @@ MapCreationSystem.AddGroundTileBelow = function(self, posX, posZ)
 	--table.insert(self.entities, groundEntity)
 end 
 
-MapCreationSystem.GetCheckPointId = function(self, posX, posY)
+MapSystem.GetCheckPointId = function(self, posX, posY)
 	
 	local index = self.mapX * posY + posX + 1
 	entity = self.entities[index]
@@ -186,17 +188,17 @@ MapCreationSystem.GetCheckPointId = function(self, posX, posY)
 	
 end
 
-MapCreationSystem.TileIsWalkable = function(self, posX, posY)
+MapSystem.TileIsWalkable = function(self, posX, posY)
 	
 	return not self:TileHasComponent("NotWalkable", posX, posY)
 end
 
-MapCreationSystem.TileIsVoid = function(self, posX, posY)
+MapSystem.TileIsVoid = function(self, posX, posY)
 
 	return self:TileHasComponent("Void", posX, posY)
 end
 
-MapCreationSystem.TileHasComponent = function(self, component, posX, posY)
+MapSystem.TileHasComponent = function(self, component, posX, posY)
 	local index = self.mapX * posY + posX + 1
 	entity = self.entities[index]
 	
