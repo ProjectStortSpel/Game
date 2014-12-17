@@ -13,7 +13,7 @@ require "movementsystem"
 require "networkmessagessystem"
 
 if Server then
-require "mapcreationsystem"
+require "mapsystem"
 end
 require "maplogicsystem"
 
@@ -32,7 +32,7 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(MovementSystem)
 worldCreator:AddSystemToCurrentGroup(networkMessagesSystem)
 if Server then
-worldCreator:AddSystemToCurrentGroup(MapCreationSystem)
+worldCreator:AddSystemToCurrentGroup(MapSystem)
 end
 worldCreator:AddSystemToCurrentGroup(ForwardSystem)
 worldCreator:AddSystemToCurrentGroup(BackwardSystem)

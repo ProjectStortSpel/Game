@@ -1,88 +1,59 @@
-CardDeck = { }
-NROFPLAYERS = 4
 
 CardDeckSystem = System()
+
+CardDeckSystem.CardDeck = { }
+CardDeckSystem.DealtCards = { }
+CardDeckSystem.NR_OF_CARDS_PER_PLAYER = 8
+CardDeckSystem.NR_OF_PLAYERS = 4
 
 CardDeckSystem.Update = function( self, dt )
 	
 end
 
 CardDeckSystem.PostInitialize = function ( self )
-	
-	
-	local prio = 0
-	math.randomseed(os.time())
-	
-	for i = 1, 10*NROFPLAYERS do
-		
-		prio = prio + 1
-		local entity = world:CreateNewEntity("Card")
-		
-		local cardpriocomp = self:GetComponent(entity, "CardPrio", 0)
-		local cardactioncomp = self:GetComponent( entity, "CardAction", 0)
-		
-		cardpriocomp:SetInt(prio)
-		cardactioncomp:SetString("Forward")
-		
-		if i > 1 then
-			table.insert(CardDeck, math.random(1, #CardDeck), entity)
-		else
-			table.insert(CardDeck, entity)
-		end
-	end
-	
-	for i = 1, 8*NROFPLAYERS do
-		
-		prio = prio + 1
-		local entity = world:CreateNewEntity("Card")
-		
-		local cardpriocomp = self:GetComponent(entity, "CardPrio", 0)
-		local cardactioncomp = self:GetComponent( entity, "CardAction", 0)
-		
-		cardpriocomp:SetInt(prio)
-		cardactioncomp:SetString("Backward")
-		
-		table.insert(CardDeck, math.random(1, #CardDeck), entity)
-	end
-	
-	for i = 1, 5*NROFPLAYERS do
-		
-		prio = prio + 1
-		local entity = world:CreateNewEntity("Card")
-		
-		local cardpriocomp = self:GetComponent(entity, "CardPrio", 0)
-		local cardactioncomp = self:GetComponent( entity, "CardAction", 0)
-		
-		cardpriocomp:SetInt(prio)
-		cardactioncomp:SetString("TurnLeft")
-		
-		table.insert(CardDeck, math.random(1, #CardDeck), entity)
-	end
-	
-	for i = 1, 5*NROFPLAYERS do
-		
-		prio = prio + 1
-		local entity = world:CreateNewEntity("Card")
-		
-		local cardpriocomp = self:GetComponent(entity, "CardPrio", 0)
-		local cardactioncomp = self:GetComponent( entity, "CardAction", 0)
-		
-		cardpriocomp:SetInt(prio)
-		cardactioncomp:SetString("TurnRight")
-		
-		table.insert(CardDeck, math.random(1, #CardDeck), entity)
-	end
-	
-	for i = 1, #CardDeck do
-		local entity = CardDeck[i]
-		--local cardpriocomp = self:GetComponent(entity, "CardPrio", 0)
-		local cardactioncomp = self:GetComponent( entity, "CardAction", 0)
-		--local cardprio = cardpriocomp:GetInt()
-		local cardaction = cardactioncomp:GetString()
-		Console.Print(cardaction)
-	end
+
+	self:CreateDeck()
 	
 	print("Card Deck System Initialized")
+end
+
+CardDeckSystem.CreateDeck = function (self)
+
+	local prio = 0
+	
+	local mySeed = os.time() - 1418742000 -- dont ask
+	
+	math.randomseed(mySeed)
+	
+	for i = 1, 50 * self.NR_OF_PLAYERS do
+		
+		prio = prio + 1
+		local entity = world:CreateNewEntity("Card")
+		
+		local cardpriocomp = self:GetComponent(entity, "CardPrio", 0)
+		local cardactioncomp = self:GetComponent( entity, "CardAction", 0)
+		
+		cardpriocomp:SetInt(prio)
+		
+		local rand = math.random(1, 90)
+		
+		if rand < 30 then
+			cardactioncomp:SetString("Forward")
+		elseif rand < 50 then
+			cardactioncomp:SetString("Backward")
+		elseif rand < 65 then
+			cardactioncomp:SetString("TurnRight")
+		elseif rand < 80 then
+			cardactioncomp:SetString("TurnLeft")
+		elseif rand < 90 then
+			cardactioncomp:SetString("TurnAround")
+		else
+			cardactioncomp:SetString("Forward")
+			
+		end
+		
+		table.insert(self.CardDeck, entity)
+	end
 end
 
 CardDeckSystem.GetCards = function (self, noOfCards)
@@ -90,8 +61,11 @@ CardDeckSystem.GetCards = function (self, noOfCards)
 	local set = {}
 	
 	for i = 1, noOfCards do
-		local card = CardDeck[i]
-		table.insert(set, card)
+		local card = self.CardDeck[1]
+		set[i] = card
+		--DeltCards[]
+		table.insert(self.DealtCards, card)
+		table.remove(self.CardDeck, 1)
 	end
 	
 	return set

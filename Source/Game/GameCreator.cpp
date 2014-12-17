@@ -92,7 +92,7 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	gameMode << "../../../Externals/content/scripting/";
 	gameMode << _gameMode;
 	gameMode << "/init.lua";
-	std::string lol = gameMode.str();
+
 	if (!LuaEmbedder::Load(gameMode.str()))
 	  return;
 
@@ -102,7 +102,8 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	for (auto it = componentTypes->begin(); it != componentTypes->end(); ++it)
 	{
 		worldCreator.AddComponentType(it->second->GetName());
-		printf("%s added\n", it->second->GetName().c_str());
+		int id = ECSL::ComponentTypeManager::GetInstance().GetTableId(it->second->GetName());
+		printf("[#%d] %s added\n", id, it->second->GetName().c_str());
 	}
 
 	/*	This component has to be added last!	*/

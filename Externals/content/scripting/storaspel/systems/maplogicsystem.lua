@@ -53,6 +53,7 @@ RespawnSystem.OnEntityAdded = function(self, entity)
 
 	--print("Respawn add")
 	if self:EntityHasComponent(entity, "Position" ) then
+		--print("remove position")
 		world:RemoveComponentFrom("Position", entity);
 	end
 	--print("Respawn added")
@@ -96,14 +97,14 @@ WaterMovementSystem.OnEntityAdded = function(self, entity)
 	
 	--print("Water entity added", mapPosX, mapPosY)
 	
-	--MapCreationSystem:TileHasComponent("WaterDirection", mapPosX, mapPosY)
+	--MapSystem:TileHasComponent("WaterDirection", mapPosX, mapPosY)
 	
-	local index = MapCreationSystem.mapX * mapPosY + mapPosX + 1
-	local mapEntity = MapCreationSystem.entities[index]
+	local index = MapSystem.mapX * mapPosY + mapPosX + 1
+	local mapEntity = MapSystem.entities[index]
 	
-	if MapCreationSystem:EntityHasComponent(mapEntity, "Water") then
+	if MapSystem:EntityHasComponent(mapEntity, "Water") then
 		
-		local waterDirComp = MapCreationSystem:GetComponent(mapEntity, "Water", 0)
+		local waterDirComp = MapSystem:GetComponent(mapEntity, "Water", 0)
 		local waterDirX, waterDirY = waterDirComp:GetInt2()
 		
 		PlayerMovementSystem:SetPosition(entity, mapPosX + waterDirX, 1.0, mapPosY + waterDirY)
