@@ -129,6 +129,7 @@ namespace Renderer
 		bool InitTextRenderer();
 		bool InitLightBuffers();
 		bool InitSkybox();
+		bool InitRandomVector();
 
 		void CreateGBufTex(GLenum texUnit, GLenum format, GLuint &texid);
 		void CreateDepthTex(GLuint &texid);

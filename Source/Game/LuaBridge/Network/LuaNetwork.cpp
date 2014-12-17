@@ -46,6 +46,8 @@ namespace LuaBridge
 		int Host();
 		int Stop();
 		int IsRunning();
+		int Kick();
+		int MaxConnections();
 
 		int SendEntity();
 		int SendEntityKill();
@@ -67,6 +69,10 @@ namespace LuaBridge
 			LuaEmbedder::AddFunction("Update", &Update, "Net");//
 
 			LuaEmbedder::AddFunction("ResetNetworkMaps", &ResetNetworkMaps, "Net");//
+
+			LuaEmbedder::AddFunction("Kick", &Kick, "Net");
+
+			LuaEmbedder::AddFunction("MaxConnections", &MaxConnections, "Net");
 
 			//LuaEmbedder::AddFunction("WriteByte", &WriteByte, "Net");
 			LuaEmbedder::AddFunction("WriteFloat", &WriteFloat, "Net");//
@@ -154,14 +160,8 @@ namespace LuaBridge
 			Network::ServerNetwork* server = NetworkInstance::GetServer();
 			Network::ClientNetwork* client = NetworkInstance::GetClient();
 
-			if (server->IsRunning())
-			{
-				server->Update(LuaEmbedder::PullFloat(1));
-			}
-			else if (client->IsConnected())
-			{
-				client->Update(LuaEmbedder::PullFloat(1));
-			}
+			server->Update(LuaEmbedder::PullFloat(1));
+			client->Update(LuaEmbedder::PullFloat(1));
 
 			return 0;
 		}
@@ -420,6 +420,30 @@ namespace LuaBridge
 			}
 			return 0;
 		}
+		int Kick()
+		{
+			Network::ServerNetwork* server = NetworkInstance::GetServer();
+			if (server->IsRunning())
+			{
+				std::string ip = LuaEmbedder::PullString(1);
+				unsigned int port = LuaEmbedder::PullInt(2);
+				std::string reason = "";
+
+				if (LuaEmbedder::IsString(3))
+					reason = LuaEmbedder::PullString(3);
+
+				Network::NetConnection nc(ip.c_str(), port);
+				NetworkInstance::GetServer()->Kick(nc, reason.c_str());
+			}
+			return 0;
+		}
+
+		int MaxConnections()
+		{
+			Network::ServerNetwork* server = NetworkInstance::GetServer();
+			LuaEmbedder::PushInt(server->GetMaxConnections());
+			return 1;
+		}
 
 		int Host()
 		{
@@ -472,7 +496,6 @@ namespace LuaBridge
 		int IsRunning()
 		{
 			LuaEmbedder::PushBool(NetworkInstance::GetServer()->IsRunning());
-
 			return 1;
 		}
 
@@ -803,6 +826,7 @@ namespace LuaBridge
 		int Stop();
 		int IsRunning();
 		int Update();
+		int Kick();
 
 		//int WriteByte();
 		int WriteFloat();
@@ -833,6 +857,7 @@ namespace LuaBridge
 			LuaEmbedder::AddFunction("Stop", &Stop, "Server");
 			LuaEmbedder::AddFunction("IsRunning", &IsRunning, "Server");
 			LuaEmbedder::AddFunction("Update", &Update, "Server");
+			LuaEmbedder::AddFunction("Kick", &Kick, "Server");
 
 			//LuaEmbedder::AddFunction("WriteByte", &WriteByte, "Server");
 			LuaEmbedder::AddFunction("WriteFloat", &WriteFloat, "Server");
@@ -979,6 +1004,21 @@ namespace LuaBridge
 		int Update()
 		{
 			NetworkInstance::GetServer()->Update(LuaEmbedder::PullFloat(1));
+
+			return 0;
+		}
+
+		int Kick()
+		{
+			std::string ip = LuaEmbedder::PullString(1);
+			unsigned int port = LuaEmbedder::PullInt(2);
+			std::string reason = "";
+
+			if(LuaEmbedder::IsString(3))
+				reason = LuaEmbedder::PullString(3);
+
+			Network::NetConnection nc(ip.c_str(), port);
+			NetworkInstance::GetServer()->Kick(nc, reason.c_str());
 
 			return 0;
 		}

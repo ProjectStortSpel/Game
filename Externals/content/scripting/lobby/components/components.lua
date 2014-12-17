@@ -51,3 +51,19 @@ ModelComponent.TableType = TableType.Map
 ModelComponent:AddVariable("ModelName", ByteSize.Text)
 ModelComponent:AddVariable("ModelPath", ByteSize.Text)
 worldCreator:AddComponentType(ModelComponent)
+
+-- Username Component
+local NameComponent = ComponentType()
+NameComponent.Name = "Username"
+NameComponent.TableType = TableType.Map
+NameComponent:AddVariable("Name", ByteSize.Text)
+worldCreator:AddComponentType(NameComponent)
+
+-- NetConnection Component
+local NetConnection = ComponentType()
+NetConnection.Name = "NetConnection"
+NetConnection.TableType = TableType.Map
+NetConnection:AddVariable("IpAddress", ByteSize.Text)
+NetConnection:AddVariable("Port", ByteSize.Int)
+NetConnection:AddVariable("Active", ByteSize.Bool)
+worldCreator:AddComponentType(NetConnection)
