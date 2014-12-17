@@ -122,7 +122,7 @@ void DataManager::RemoveComponentFrom(unsigned int _componentTypeId, unsigned in
 	//m_entityTable->RemoveComponentFrom(_entityId, _componentTypeId);
 }
 
-void DataManager::UpdateEntityComponents(const RuntimeInfo& _runtime)
+void DataManager::UpdateEntityTable(const RuntimeInfo& _runtime)
 {
 	unsigned int startAt, endAt;
 	MPL::MathHelper::SplitIterations(startAt, endAt, m_changedEntities->size(), _runtime.TaskIndex, _runtime.TaskCount);

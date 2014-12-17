@@ -18,7 +18,7 @@ namespace ECSL
 	protected:
 
 	public:
-		Simulation(DataManager* _dataManager, Scheduler* _scheduler, SystemManager* _systemManager);
+		Simulation(DataManager* _dataManager, SystemManager* _systemManager, Scheduler* _scheduler);
 		~Simulation();
 
 		void Update(float _dt);

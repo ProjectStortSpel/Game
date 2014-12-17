@@ -27,7 +27,7 @@ namespace ECSL
 		void RemoveComponentFrom(unsigned int _componentTypeId, unsigned int _entityId);
 
 		/* Update the entity table for added and removed components to entities */
-		void UpdateEntityComponents(const RuntimeInfo& _runtime);
+		void UpdateEntityTable(const RuntimeInfo& _runtime);
 
 		/* Clear the entity table for dead entities */
 		void ClearDeadEntities(const RuntimeInfo& _runtime);

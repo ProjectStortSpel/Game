@@ -20,8 +20,8 @@ namespace ECSL
 		virtual void Update(const RuntimeInfo& _runtime) { }
 		virtual void Initialize() = 0;
 
-		virtual void OnEntityAdded(unsigned int _taskIndex, float _dt, unsigned int _entityId) { }
-		virtual void OnEntityRemoved(unsigned int _taskIndex, float _dt, unsigned int _entityId) { }
+		virtual void OnEntityAdded(float _dt) { }
+		virtual void OnEntityRemoved(float _dt) { }
 
 		virtual void OnMessageRecieved(const System* _sender, const Message* _message) { }
 

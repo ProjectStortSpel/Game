@@ -3,7 +3,7 @@
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_mutex.h>
-#include <stack>
+#include <vector>
 #include <string>
 
 #include "DataArray.h"
@@ -39,7 +39,7 @@ namespace ECSL
 		unsigned int m_componentTypeCount;
 		unsigned int m_componentByteCount;
 		unsigned int m_componentIntCount;
-		std::stack<unsigned int>* m_availableEntityIds;
+		std::vector<unsigned int>* m_availableEntityIds;
 		SDL_mutex* m_availableEntityMutex;
 		DataArray* m_dataTable;
 	};

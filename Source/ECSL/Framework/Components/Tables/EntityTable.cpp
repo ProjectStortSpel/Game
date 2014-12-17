@@ -14,9 +14,9 @@ EntityTable::EntityTable(unsigned int _entityCount, unsigned int _componentTypeC
 	m_dataTable = new DataArray(_entityCount, 1 + m_componentIntCount * BitSet::GetDataTypeByteSize());
 
 	/* All entity id slots are available from the beginning */
-	m_availableEntityIds = new std::stack<unsigned int>();
+	m_availableEntityIds = new std::vector<unsigned int>();
 	for (int i = _entityCount - 1; i >= 0; --i)
-		m_availableEntityIds->push(i);
+		m_availableEntityIds->push_back(i);
 }
 
 EntityTable::~EntityTable()
@@ -96,8 +96,8 @@ unsigned int EntityTable::GenerateNewEntityId()
 	assert(m_availableEntityIds->size() != 0);
 
 	SDL_LockMutex(m_availableEntityMutex);
-	unsigned int id = m_availableEntityIds->top();
-	m_availableEntityIds->pop();
+	unsigned int id = m_availableEntityIds->back();
+	m_availableEntityIds->pop_back();
 	SDL_UnlockMutex(m_availableEntityMutex);
 
 	unsigned char alive = ((unsigned char)EntityState::Alive);
@@ -110,9 +110,7 @@ void EntityTable::AddOldEntityId(unsigned int _entityId)
 {
 	assert(_entityId < m_entityCount);
 
-	m_availableEntityIds->push(_entityId);
-
-	m_dataTable->ClearRow(_entityId);
+	m_availableEntityIds->push_back(_entityId);
 }
 
 void EntityTable::ClearEntityData(unsigned int _entityId)
