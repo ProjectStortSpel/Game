@@ -17,7 +17,7 @@
 #include "LuaBridge/ECSL/LuaSystem.h"
 
 GameCreator::GameCreator() :
-m_graphics(0), m_input(0), m_world(0), m_console(0), m_consoleManager(Console::ConsoleManager::GetInstance()), m_frameCounter(&Utility::FrameCounter::GetInstance())
+m_graphics(0), m_input(0), m_world(0), m_console(0), m_consoleManager(Console::ConsoleManager::GetInstance()), m_frameCounter(&Utility::FrameCounter::GetInstance()), m_running(true)
 {
 }
 
@@ -162,10 +162,11 @@ void GameCreator::StartGame()
 	/*	Hook console	*/
 	m_console->SetupHooks(&m_consoleManager);
 	m_consoleManager.AddCommand("Reload", std::bind(&GameCreator::Reload, this, std::placeholders::_1));
+	m_consoleManager.AddCommand("Quit", std::bind(&GameCreator::StopGame, this, std::placeholders::_1));
 	m_consoleManager.AddCommand("GameMode", std::bind(&GameCreator::GameMode, this, std::placeholders::_1));
 	
 	float maxDeltaTime = (float)(1.0f / 20.0f);
-	while (true)
+	while (m_running)
 	{
 		float dt = std::min(maxDeltaTime, m_frameCounter->GetDeltaTime());
 
@@ -359,6 +360,11 @@ void GameCreator::Reload(std::vector<Console::Argument>* _args)
 	m_graphics->Clear();
 	InitializeWorld(m_gameMode);
 	m_console->SetWorld(m_world);
+}
+
+void GameCreator::StopGame(std::vector<Console::Argument>* _args)
+{
+	m_running = false;
 }
 
 void GameCreator::OnConnectedToServer(Network::NetConnection _nc, const char* _message)
