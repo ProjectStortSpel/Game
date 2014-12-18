@@ -11,7 +11,20 @@ Scheduler::Scheduler(DataManager* _dataManager, SystemManager* _systemManager)
 	m_updateEntityComponentsWorkItems(new std::vector<MPL::WorkItem*>()),
 	m_clearDeadEntitiesWorkItems(new std::vector<MPL::WorkItem*>())
 {
-
+	const std::vector<SystemWorkGroup*>* workGroups = m_systemManager->GetSystemWorkGroups();
+	unsigned int workCount = MPL::TaskManager::GetInstance().GetThreadCount();
+	m_entityAddedRequests = new std::vector<std::vector<System*>*>[workCount];
+	m_entityRemovedRequests = new std::vector<std::vector<System*>*>[workCount];
+	for (unsigned int threadIndex = 0; threadIndex < workCount; ++threadIndex)
+	{
+		m_entityAddedRequests[threadIndex] = std::vector<std::vector<System*>*>(workGroups->size());
+		m_entityRemovedRequests[threadIndex] = std::vector<std::vector<System*>*>(workGroups->size());
+		for (unsigned int i = 0; i < workGroups->size(); ++i)
+		{
+			m_entityAddedRequests[threadIndex][i] = new std::vector<System*>();
+			m_entityAddedRequests[threadIndex][i] = new std::vector<System*>();
+		}
+	}
 }
 
 Scheduler::~Scheduler()
@@ -38,7 +51,7 @@ MPL::TaskId Scheduler::ScheduleUpdate()
 		/* Send the work items to the TaskManager and create a task out of it */
 		lastTaskId = currentTaskId;
 		currentTaskId = MPL::TaskManager::GetInstance().BeginAdd(lastTaskId);
-		MPL::TaskManager::GetInstance().AddChildren(currentTaskId, workItems);
+		MPL::TaskManager::GetInstance().AddChildren(currentTaskId, *workItems);
 		MPL::TaskManager::GetInstance().FinishAdd(currentTaskId);
 	}
 
@@ -48,7 +61,7 @@ MPL::TaskId Scheduler::ScheduleUpdate()
 MPL::TaskId Scheduler::ScheduleUpdateEntityTable(MPL::TaskId _dependency)
 {
 	MPL::TaskId updateEntityComponents = MPL::TaskManager::GetInstance().BeginAdd(_dependency);
-	MPL::TaskManager::GetInstance().AddChildren(updateEntityComponents, m_updateEntityComponentsWorkItems);
+	MPL::TaskManager::GetInstance().AddChildren(updateEntityComponents, *m_updateEntityComponentsWorkItems);
 	MPL::TaskManager::GetInstance().FinishAdd(updateEntityComponents);
 	return updateEntityComponents;
 }
@@ -56,7 +69,7 @@ MPL::TaskId Scheduler::ScheduleUpdateEntityTable(MPL::TaskId _dependency)
 MPL::TaskId Scheduler::ScheduleClearDeadEntities(MPL::TaskId _dependency)
 {
 	MPL::TaskId clearDeadEntities = MPL::TaskManager::GetInstance().BeginAdd(_dependency);
-	MPL::TaskManager::GetInstance().AddChildren(clearDeadEntities, m_clearDeadEntitiesWorkItems);
+	MPL::TaskManager::GetInstance().AddChildren(clearDeadEntities, *m_clearDeadEntitiesWorkItems);
 	MPL::TaskManager::GetInstance().FinishAdd(clearDeadEntities);
 	return clearDeadEntities;
 }
@@ -130,40 +143,25 @@ void Scheduler::AddClearDeadEntitiesTask()
 	}
 }
 
-void Scheduler::AddCopyChangedEntitiesTask()
+void Scheduler::AddUpdateSystemEntityListsTasks()
 {
-	CopyChangedEntitiesData* data = new CopyChangedEntitiesData();
-	data->SystemManager = m_systemManager;
-	data->RuntimeInfo.TaskIndex = 0;
-	data->RuntimeInfo.TaskCount = 1;
-	MPL::WorkItem* workItem = new MPL::WorkItem();
-	workItem->Work = &SystemManagerCopyChangedEntities;
-	workItem->Data = data;
-	m_updateEntityComponentsWorkItems->push_back(workItem);
-}
+	const unsigned int workCount = MPL::TaskManager::GetInstance().GetThreadCount();
 
-void Scheduler::AddUpdateGroupEntityListsTasks()
-{
-	const unsigned int taskCount = m_updateWorkItems->size();
-	const unsigned int workCountPerTask = MPL::TaskManager::GetInstance().GetThreadCount();
-
-	for (unsigned int taskIndex = 0; taskIndex < taskCount; ++taskIndex)
+	std::vector<MPL::WorkItem*>* workItems = new std::vector<MPL::WorkItem*>();
+	for (unsigned int workIndex = 0; workIndex < workCount; ++workIndex)
 	{
-		std::vector<MPL::WorkItem*>* workItems = new std::vector<MPL::WorkItem*>();
-		for (unsigned int workIndex = 0; workIndex < workCountPerTask; ++workIndex)
-		{
-			UpdateGroupEntitiesListData* data = new UpdateGroupEntitiesListData();
-			data->SystemManager = m_systemManager;
-			data->GroupIndex = taskIndex;
-			data->RuntimeInfo.TaskIndex = workIndex;
-			data->RuntimeInfo.TaskCount = workCountPerTask;
-			MPL::WorkItem* workItem = new MPL::WorkItem();
-			workItem->Work = &SystemManagerCopyChangedEntities;
-			workItem->Data = data;
-			m_updateEntityComponentsWorkItems->push_back(workItem);
-		}
-		m_updateGroupEntityListsWorkItems->push_back(workItems);
+		UpdateSystemEntityListsData* data = new UpdateSystemEntityListsData();
+		data->SystemManager = m_systemManager;
+		data->EntityAddedRequests = &m_entityAddedRequests[workIndex];
+		data->EntityRemovedRequests = &m_entityRemovedRequests[workIndex];
+		data->RuntimeInfo.TaskIndex = workIndex;
+		data->RuntimeInfo.TaskCount = workCount;
+		MPL::WorkItem* workItem = new MPL::WorkItem();
+		workItem->Work = &SystemManagerUpdateSystemEntityLists;
+		workItem->Data = data;
+		m_updateEntityComponentsWorkItems->push_back(workItem);
 	}
+	m_updateGroupEntityListsWorkItems->push_back(workItems);
 }
 
 void ECSL::SystemUpdate(void* _data)
@@ -196,14 +194,8 @@ void ECSL::DataManagerClearDeadEntities(void* _data)
 	data->DataManager->ClearDeadEntities(data->RuntimeInfo);
 }
 
-void ECSL::SystemManagerCopyChangedEntities(void* _data)
+void ECSL::SystemManagerUpdateSystemEntityLists(void* _data)
 {
-	CopyChangedEntitiesData* data = (CopyChangedEntitiesData*)_data;
-	data->SystemManager->CopyChangedEntities(data->RuntimeInfo);
-}
-
-void ECSL::SystemManagerUpdateGroupEntitiesList(void* _data)
-{
-	UpdateGroupEntitiesListData* data = (UpdateGroupEntitiesListData*)_data;
-	data->SystemManager->UpdateGroupEntityLists(data->RuntimeInfo, data->GroupIndex);
+	UpdateSystemEntityListsData* data = (UpdateSystemEntityListsData*)_data;
+	//data->SystemManager->UpdateSystemEntityLists(data->RuntimeInfo, data->GroupIndex);
 }

@@ -52,10 +52,9 @@ void TaskManager::AddChild(TaskId _id, WorkItem* _workItem)
 	m_taskPool->CreateChild(_id, _workItem);
 }
 
-void TaskManager::AddChildren(TaskId _id, std::vector<WorkItem*>* _workItems)
+void TaskManager::AddChildren(TaskId _id, const std::vector<WorkItem*>& _workItems)
 {
-	for (auto workItem : *_workItems)
-		m_taskPool->CreateChild(_id, workItem);
+	m_taskPool->CreateChildren(_id, _workItems);
 }
 
 void TaskManager::FinishAdd(TaskId _id)

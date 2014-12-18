@@ -44,6 +44,14 @@ void TaskPool::CreateChild(TaskId _parentId, WorkItem* _workItem)
 	SDL_UnlockMutex(m_taskMutex);
 }
 
+void TaskPool::CreateChildren(TaskId _parentId, const std::vector<WorkItem*>& _workItems)
+{
+	SDL_LockMutex(m_taskMutex);
+	for (auto workItem : _workItems)
+		AddToQueue(workItem, (*m_openList)[_parentId]);
+	SDL_UnlockMutex(m_taskMutex);
+}
+
 TaskId TaskPool::GenerateTaskId()
 {
 	SDL_LockMutex(m_idMutex);
@@ -95,19 +103,26 @@ WorkItem* TaskPool::FetchWork()
 	SDL_LockMutex(m_taskMutex);
 
 	WorkItem* workItem = 0;
+	unsigned int iterations = 0;
 
 	/* Fetch work to do from the queue */
 	for (auto it = m_queue->begin(); it != m_queue->end(); ++it)
 	{
 		TaskId dependency = (*m_workTaskConnection)[*it]->Dependency;
 		/* Accept the task if the dependency task is already done or if task doesn't have dependency */
-		if ((dependency != -1 && m_openList->find(dependency) == m_openList->end()) || dependency == -1)
+		if (dependency == -1 || m_openList->find(dependency) == m_openList->end())
 		{
 			workItem = *it;
 			m_queue->erase(it);
 			break;
 		}
+		++iterations;
 	}
+
+	/* All work items at the front of the queue that
+	** have a dependency will be moved to the back of the queue */
+	if (workItem != 0 && iterations > 0)
+		MoveFrontToBack(iterations);
 
 	SDL_UnlockMutex(m_taskMutex);
 
@@ -144,3 +159,11 @@ bool TaskPool::IsTaskDone(TaskId _id)
 	return isDone;
 }
 
+void TaskPool::MoveFrontToBack(unsigned int _count)
+{
+	for (unsigned int i = 0; i < _count; ++i)
+	{
+		m_queue->push_back(m_queue->front());
+		m_queue->pop_front();
+	}
+}

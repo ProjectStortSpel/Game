@@ -34,7 +34,7 @@ void Simulation::Update(float _dt)
 	MPL::TaskManager::GetInstance().WaitFor(clearDeadEntities);
 
 	/* Add and remove changed entities from systems */
-	m_systemManager->UpdateSystemEntityLists();
+	//m_systemManager->UpdateSystemEntityLists();
 
 	/* Clear entity component data */
 	//m_dataManager->ClearComponentData();

@@ -20,7 +20,7 @@ namespace MPL
 		TaskId BeginAdd(TaskId _dependency);
 		TaskId BeginAdd(TaskId _dependency, WorkItem* _workItem);
 		void AddChild(TaskId _id, WorkItem* _workItem);
-		void AddChildren(TaskId _id, std::vector<WorkItem*>* _workItems);
+		void AddChildren(TaskId _id, const std::vector<WorkItem*>& _workItems);
 		void FinishAdd(TaskId _id);
 		void WaitFor(TaskId _id);
 

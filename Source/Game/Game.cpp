@@ -109,40 +109,48 @@ public:
 	float sdfiohj;
 };
 
+bool* boolTest;
+
 void lol()
 {
-	ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("content/components");
-	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
-	worldCreator.AddSystemGroup();
-	worldCreator.AddSystemToCurrentGroup<TestSystem>();
-	worldCreator.AddSystemToCurrentGroup<TestSystem2>();
-	//worldCreator.AddLuaSystemToCurrentGroup(new TestSystem());
-	auto componentTypes = ComponentTypeManager::GetInstance().GetComponentTypes();
-	for (auto it = componentTypes->begin(); it != componentTypes->end(); ++it)
-		worldCreator.AddComponentType(it->second->GetName());
-	ECSL::World* world = worldCreator.CreateWorld(100);
+	//ComponentTypeManager::GetInstance().LoadComponentTypesFromDirectory("content/components");
+	//ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
+	//worldCreator.AddSystemGroup();
+	//worldCreator.AddSystemToCurrentGroup<TestSystem>();
+	//worldCreator.AddSystemToCurrentGroup<TestSystem2>();
+	////worldCreator.AddLuaSystemToCurrentGroup(new TestSystem());
+	//auto componentTypes = ComponentTypeManager::GetInstance().GetComponentTypes();
+	//for (auto it = componentTypes->begin(); it != componentTypes->end(); ++it)
+	//	worldCreator.AddComponentType(it->second->GetName());
+	//ECSL::World* world = worldCreator.CreateWorld(100);
 
-	int id = world->CreateNewEntity();
-	world->CreateComponentAndAddTo("Velocity", id);
+	//int id = world->CreateNewEntity();
+	//world->CreateComponentAndAddTo("Velocity", id);
+	////world->CreateComponentAndAddTo("Position", id);
+	////world->RemoveComponentFrom("Position", id);
+	////world->CreateComponentAndAddTo("Position", id);
+
+	////world->KillEntity(id);
+
+	//world->Update(0.01f);
+
+	////world->KillEntity(id);
 	//world->CreateComponentAndAddTo("Position", id);
+
+	//world->Update(0.01f);
+
 	//world->RemoveComponentFrom("Position", id);
-	//world->CreateComponentAndAddTo("Position", id);
 
-	//world->KillEntity(id);
+	//world->Update(0.01f);
 
-	world->Update(0.01f);
+	boolTest = new bool[500];
 
-	//world->KillEntity(id);
-	world->CreateComponentAndAddTo("Position", id);
+	boolTest[50] = true;
+	boolTest[120] = true;
+	boolTest[230] = true;
+	boolTest[430] = true;
 
-	world->Update(0.01f);
-
-	world->RemoveComponentFrom("Position", id);
-
-	world->Update(0.01f);
-
-
-	unsigned int num = 10000000;
+	unsigned int num = 1500;
 
 	unsigned int sumValue1 = 0;
 	unsigned int sumValue2 = 0;
@@ -151,7 +159,11 @@ void lol()
 	start1 = std::chrono::system_clock::now();
 	for (unsigned int i = 0; i < num; ++i)
 	{
-
+		for (unsigned int n = 0; n < 500; ++n)
+			if (boolTest[n] == true)
+			{
+				++sumValue1;
+			}
 	}
 	end1 = std::chrono::system_clock::now();
 
@@ -177,9 +189,6 @@ void lol()
 	printf("Time: %f\n", elapsed_seconds);
 
 	printf("Sums:\n%i\n%i\n", sumValue1, sumValue2);
-
-	delete(world);
-	delete(&ComponentTypeManager::GetInstance());
 }
 void LoadAlotOfBoxes(Renderer::GraphicDevice* r)
 {
@@ -315,7 +324,7 @@ void Start()
 
 int main(int argc, char** argv)
 {
-	//lol();
+	lol();
 	Start();
 	#ifdef WIN32
 	_CrtDumpMemoryLeaks();

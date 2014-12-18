@@ -18,23 +18,19 @@ namespace ECSL
 
 		void InitializeSystems();
 
-		void CopyChangedEntities(const RuntimeInfo& _runtime);
-
-		void UpdateGroupEntityLists(const RuntimeInfo& _runtime, unsigned int _groupIndex);
+		void UpdateSystemEntityLists(const RuntimeInfo& _runtime,
+			std::vector<std::vector<System*>*>& _entityAddedRequests,
+			std::vector<std::vector<System*>*>& _entityRemovedRequests);
 
 		const std::vector<SystemWorkGroup*>* GetSystemWorkGroups() { return m_systemWorkGroups; }
 
 	private:
 		SystemIdManager* m_systemIdManager;
 		DataManager* m_dataManager;
+		std::vector<System*>* m_systems;
 		std::vector<SystemWorkGroup*>* m_systemWorkGroups;
-		std::vector<unsigned int>* m_changedEntitiesCopy;
-
-		void AddEntityToSystem(unsigned int _entityId, System* _system);
-		void RemoveEntityFromSystem(unsigned int _entityId, System* _system);
 
 		void GenerateComponentFilter(System* _system, FilterType _filterType);
-		unsigned int GetSystemId(System* _system);
 	};
 }
 

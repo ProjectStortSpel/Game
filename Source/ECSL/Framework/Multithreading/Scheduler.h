@@ -29,17 +29,12 @@ namespace ECSL
 		RuntimeInfo RuntimeInfo;
 	};
 
-	struct CopyChangedEntitiesData
+	struct UpdateSystemEntityListsData
 	{
 		SystemManager* SystemManager;
 		RuntimeInfo RuntimeInfo;
-	};
-
-	struct UpdateGroupEntitiesListData
-	{
-		SystemManager* SystemManager;
-		RuntimeInfo RuntimeInfo;
-		unsigned int GroupIndex;
+		std::vector<std::vector<System*>*>* EntityAddedRequests;
+		std::vector<std::vector<System*>*>* EntityRemovedRequests;
 	};
 
 	class DECLSPEC Scheduler
@@ -58,8 +53,7 @@ namespace ECSL
 		void AddOnEntityRemovedTask(const std::vector<System*>& _systems);
 		void AddUpdateEntityTableTask();
 		void AddClearDeadEntitiesTask();
-		void AddCopyChangedEntitiesTask();
-		void AddUpdateGroupEntityListsTasks();
+		void AddUpdateSystemEntityListsTasks();
 
 	private:
 		DataManager* m_dataManager;
@@ -68,6 +62,8 @@ namespace ECSL
 		std::vector<MPL::WorkItem*>* m_updateEntityComponentsWorkItems;
 		std::vector<MPL::WorkItem*>* m_clearDeadEntitiesWorkItems;
 		std::vector<std::vector<MPL::WorkItem*>*>* m_updateGroupEntityListsWorkItems;
+		std::vector<std::vector<System*>*>* m_entityAddedRequests;
+		std::vector<std::vector<System*>*>* m_entityRemovedRequests;
 	};
 
 	static void SystemUpdate(void* _data);
@@ -80,9 +76,7 @@ namespace ECSL
 
 	static void DataManagerClearDeadEntities(void* _data);
 
-	static void SystemManagerCopyChangedEntities(void* _data);
-
-	static void SystemManagerUpdateGroupEntitiesList(void* _data);
+	static void SystemManagerUpdateSystemEntityLists(void* _data);
 };
 
 #endif
