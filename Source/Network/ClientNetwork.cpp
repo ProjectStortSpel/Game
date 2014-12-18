@@ -129,7 +129,7 @@ bool ClientNetwork::Connect()
 		*m_socketBound = true;
 	}
 
-	m_socket->SetTimeoutDelay(5000);
+	m_socket->SetTimeoutDelay(100);
 	m_socket->SetNoDelay(true);
 	m_socket->SetNonBlocking(false);
 

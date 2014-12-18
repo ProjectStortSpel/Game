@@ -102,7 +102,7 @@ end
 
 
 
-ServerConnectSystem.RemovePlayer = function(self, _ip, _port)
+ClientConnectSystem.RemovePlayer = function(self, _ip, _port)
 
 	if GameRunning == true or Net.IsRunning() == true then
 		return

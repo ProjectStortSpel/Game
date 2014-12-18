@@ -21,6 +21,9 @@ networkMessagesSystem.Initialize = function(self)
 	self:SetName("Network Message System")
 	self:InitializeNetworkEvents()
 	
+	
+	Net.Receive("NewGameLoaded", networkMessagesSystem.NewGameLoaded);
+	
 	self:AddComponentTypeToFilter("SyncNetwork", FilterType.Mandatory)
 	print("NetworkMessagesSystem initialized!")
 end
@@ -112,4 +115,22 @@ networkMessagesSystem.OnPlayerConnected = function(self, _ip, _port, _message)
 		Net.SendEntity(entities[i], _ip, _port)	
 		Console.Print("Send Entity: " .. entities[i])
 	end	
+end
+
+networkMessagesSystem.NewGameLoaded = function(_ip, _port)
+
+	Console.Print("networkMessagesSystem.NewGameLoaded");
+
+	if GameRunning == false or Net.IsConnected() == true then
+		return;
+	end
+	
+	local entities = networkMessagesSystem:GetEntities();
+
+		for i = 1, #entities do
+			Net.BroadcastEntity(entities[i]);
+		end
+	
+	
+
 end

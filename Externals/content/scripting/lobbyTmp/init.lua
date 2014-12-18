@@ -18,15 +18,16 @@ require "cardcomponents"
 package.path = package.path .. ";../../../Externals/content/scripting/lobbyTmp/systems/?.lua"
 require "systems"
 
---if Server then
+if Server then
 	require "serverlobbysystem"
+	require "servergamesystem"
 	require "serverconnectsystem"
---end
+end
 
---if Client then
+if Client then
 	require "clientlobbysystem"
 	require "clientconnectsystem"
---end
+end
 
 
 
@@ -41,7 +42,7 @@ require "mapsystem"
 end
 require "maplogicsystem"
 require "moveplayersystem"
-require "networkconnectsystem"
+--require "networkconnectsystem"
 require "cardlogicsystem"
 require "discosystem"
 
@@ -67,15 +68,16 @@ require "map"
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(StartUpSystem)
 
---if Server then
+if Server then
 	worldCreator:AddSystemToCurrentGroup(ServerLobbySystem)
+	worldCreator:AddSystemToCurrentGroup(ServerGameSystem)
 	worldCreator:AddSystemToCurrentGroup(ServerConnectSystem)
---end
+end
 
---if Client then
+if Client then
 	worldCreator:AddSystemToCurrentGroup(ClientLobbySystem)
 	worldCreator:AddSystemToCurrentGroup(ClientConnectSystem)
---end
+end
 
 
 
@@ -99,7 +101,7 @@ worldCreator:AddSystemToCurrentGroup(TurnAroundSystem)
 worldCreator:AddSystemToCurrentGroup(PlayerMovementSystem)
 worldCreator:AddSystemToCurrentGroup(RespawnSystem)
 worldCreator:AddSystemToCurrentGroup(NewRoundSystem)
-worldCreator:AddSystemToCurrentGroup(NetworkConnectSystem)
+--worldCreator:AddSystemToCurrentGroup(NetworkConnectSystem)
 worldCreator:AddSystemToCurrentGroup(NewStepSystem)
 worldCreator:AddSystemToCurrentGroup(WaterMovementSystem)
 worldCreator:AddSystemToCurrentGroup(CardDeckSystem)

@@ -15,7 +15,7 @@ end
 
 ServerConnectSystem.Update = function(self, dt)
 
-	if GameRunning == true or Net.IsConnected() == true  then
+	if Net.IsConnected() == true  then
 		return
 	end
 
@@ -23,7 +23,7 @@ end
 
 ServerConnectSystem.OnEntityAdded = function(self, entityId)
 
-	if GameRunning == true or Net.IsConnected() == true  then
+	if Net.IsConnected() == true  then
 		return
 	end
 
@@ -83,7 +83,7 @@ end
 
 ServerConnectSystem.OnEntityRemoved = function(self, entityId)
 
-	if GameRunning == true or Net.IsConnected() == true  then
+	if Net.IsConnected() == true  then
 		return
 	end
 
@@ -92,7 +92,7 @@ end
 
 ServerConnectSystem.OnPlayerTimedOut = function(self, _ip, _port)
 
-	if GameRunning == true or Net.IsConnected() == true  then
+	if Net.IsConnected() == true  then
 		return
 	end
 
@@ -103,7 +103,7 @@ end
 
 ServerConnectSystem.OnPlayerDisconnected = function(self, _ip, _port)
 
-	if GameRunning == true or Net.IsConnected() == true  then
+	if Net.IsConnected() == true  then
 		return
 	end
 
@@ -116,7 +116,7 @@ ServerConnectSystem.OnUsername = function(self, _ip, _port)
 
 	Console.Print("ServerConnectSystem.OnUsername");
 
-	if GameRunning == true or Net.IsConnected() == true then
+	if Net.IsConnected() == true then
 		return
 	end
 
@@ -135,10 +135,9 @@ ServerConnectSystem.OnUsername = function(self, _ip, _port)
 end
 
 
-
 ServerConnectSystem.RemovePlayer = function(self, _ip, _port)
 
-	if GameRunning == true or Net.IsConnected() == true  then
+	if Net.IsConnected() == true  then
 		return
 	end
 
