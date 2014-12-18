@@ -10,7 +10,7 @@ Camera::Camera(int windowWidth, int windowHeight)
 	m_camPitch = -M_PI/2.0f;
 	m_camYaw = M_PI;
 	m_sensitivity = 0.002f;
-	m_moveSpeed = 1.0f;
+	m_moveSpeed = 5.0f;
 
 	m_farPlane = 100.f;
 
@@ -27,22 +27,22 @@ Camera::~Camera()
 
 void Camera::MoveForward(float dt)
 {
-	m_pos += 5.f*m_moveSpeed*dt*m_look;
+	m_pos += m_moveSpeed*dt*m_look;
 }
 
 void Camera::MoveBackward(float dt)
 {
-	m_pos -= 5.f*m_moveSpeed*dt*m_look;
+	m_pos -= m_moveSpeed*dt*m_look;
 }
 
 void Camera::MoveLeft(float dt)
 {
-	m_pos -= 5.0f*m_moveSpeed*dt*m_right;
+	m_pos -= m_moveSpeed*dt*m_right;
 }
 
 void Camera::MoveRight(float dt)
 {
-	m_pos += 5.0f*m_moveSpeed*dt*m_right;
+	m_pos += m_moveSpeed*dt*m_right;
 }
 
 void Camera::UpdateMouse(float midX, float midY, int x, int y)
@@ -64,5 +64,5 @@ mat4* Camera::GetViewMatrix()
 
 void Camera::UpdateProjMatrix(int windowWidth, int windowHeight)
 {
-	m_projectionMatrix = glm::perspective(45.0f, (float)windowWidth / (float)windowHeight, 0.1f, 100.f);
+	m_projectionMatrix = glm::perspective(45.0f, (float)windowWidth / (float)windowHeight, 0.15f, m_farPlane);
 }
