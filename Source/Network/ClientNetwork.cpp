@@ -129,9 +129,9 @@ bool ClientNetwork::Connect()
 		*m_socketBound = true;
 	}
 
-	m_socket->SetTimeoutDelay(100);
+	//m_socket->SetTimeoutDelay(100);
 	m_socket->SetNoDelay(true);
-	m_socket->SetNonBlocking(false);
+	m_socket->SetNonBlocking(true);
 
 	bool connected = false;
 	//for (int i = 0; i < 5; ++i)

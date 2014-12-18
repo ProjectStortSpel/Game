@@ -150,11 +150,16 @@ bool WinSocket::Connect(const char* _ipAddress, const int _port)
 
 	if (connect(m_socket, (sockaddr*)&address, sizeof(address)) < 0)
 	{
-		if (NET_DEBUG)
+		int errorCode = WSAGetLastError();
+		if (errorCode != 10035)
 		{
-			printf("Failed to connect to Ip address %s:%i. Error Code: %d.\n", _ipAddress, _port, WSAGetLastError());
+
+			if (NET_DEBUG)
+			{
+				printf("Failed to connect to Ip address %s:%i. Error Code: %d.\n", _ipAddress, _port, errorCode);
+			}
+			return false;
 		}
-		return false;
 	}
 
 	*m_remoteAddress = _ipAddress;
@@ -315,8 +320,8 @@ int WinSocket::Send(char* _buffer, int _length, int _flags)
 	short len = 0;
 	len = htons(_length);
 
-	if (send(m_socket, (char*)&len, 2, _flags) != SOCKET_ERROR)
-	{
+	//if (send(m_socket, (char*)&len, 2, _flags) != SOCKET_ERROR)
+	//{
 		int result = send(m_socket, _buffer, _length, _flags);
 		if (result == SOCKET_ERROR)
 		{
@@ -326,22 +331,24 @@ int WinSocket::Send(char* _buffer, int _length, int _flags)
 			return -1;
 		}
 		return result;
-	}
+	//}
 	return -1;
 
 }
 int WinSocket::Receive(char* _buffer, int _length, int _flags)
 {
-	short len;
+	short size = 0;
 
-	if (recv(m_socket, (char*)&len, 2, _flags))
+	int dataReceived = 0;
+	do
 	{
-		int len2 = (int)ntohs(len);
-		int sizeReceived = recv(m_socket, _buffer, len2, _flags);
+		size = recv(m_socket, _buffer + dataReceived, MAX_PACKET_SIZE, 0);
+		if(size > 0)
+			dataReceived += size;
 
-		return sizeReceived;
-	}
-	return 0;
+	} while (size > 0);
+
+	return dataReceived;
 }
 
 

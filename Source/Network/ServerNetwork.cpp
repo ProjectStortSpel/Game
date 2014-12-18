@@ -393,7 +393,7 @@ void ServerNetwork::ListenForConnections(void)
 		if (!newConnection)
 			continue;
 
-		newConnection->SetNonBlocking(false);
+		newConnection->SetNonBlocking(true);
 		//newConnection->SetTimeoutDelay(2000);
 		newConnection->SetNoDelay(true);
 
