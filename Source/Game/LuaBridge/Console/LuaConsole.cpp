@@ -7,11 +7,12 @@ namespace LuaBridge
   namespace LuaConsole
   {
     int Print();
-	int StartGame();
+	int IsOpen();
 
     void Embed()
     {
       LuaEmbedder::AddFunction("Print", &Print, "Console");
+	  LuaEmbedder::AddFunction("IsOpen", &IsOpen, "Console");
     }
     
     int Print()
@@ -20,9 +21,12 @@ namespace LuaBridge
       return 0;
     }
 
-	int StartGame()
+	int IsOpen()
 	{
-		return 0;
+		bool open = Console::ConsoleManager::GetInstance().IsOpen();
+		LuaEmbedder::PushBool(open);
+
+		return 1;
 	}
 
 

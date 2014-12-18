@@ -24,7 +24,7 @@ std::string Argument::GetString()
 }
 
 ConsoleManager::ConsoleManager()
-	: m_match(), m_historyCounter(-1), m_start(0), m_end(0)
+	: m_match(), m_historyCounter(-1), m_start(0), m_end(0), m_open(false)
 {
 }
 
