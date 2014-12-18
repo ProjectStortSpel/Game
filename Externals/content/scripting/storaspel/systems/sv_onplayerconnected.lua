@@ -17,11 +17,11 @@ OnPlayerConnectedSystem.Initialize = function(self)
 end
 
 OnPlayerConnectedSystem.OnEntityAdded = function(self, entityId)
-	world:SetComponent(entityId, "NetConnection", "Active", true);
+	--world:SetComponent(entityId, "NetConnection", "Active", true);
 end
 
 OnPlayerConnectedSystem.OnEntityRemoved = function(self, entityId)
-	world:SetComponent(entityId, "NetConnection", "Active", false);
+	--world:SetComponent(entityId, "NetConnection", "Active", false);
 end
 
 OnPlayerConnectedSystem.OnPlayerConnected = function(self, _ip, _port, _message)
@@ -36,12 +36,31 @@ OnPlayerConnectedSystem.OnPlayerConnected = function(self, _ip, _port, _message)
 	local strAdress = _ip .. ""
 	local strPort = _port .. ""
 	
-	world:SetComponent(newEntityId, "Player", "PlayerName", newName);
+	world:SetComponent(newEntityId, "PlayerName", "Name", newName);
 	world:SetComponent(newEntityId, "NetConnection", "IpAddress", strAdress);
 	world:SetComponent(newEntityId, "NetConnection", "Port", strPort);
-	world:SetComponent(newEntityId, "NetConnection", "Active", true);
+
+	world:CreateComponentAndAddTo("ActiveNetConnection", newEntityId)
 	
-	world:SetComponent(newEntityId, "Player", "PlayerNumber", self.ConnectedPlayers);
+	--world:SetComponent(newEntityId, "PlayerNumber", "Number", self.ConnectedPlayers);
+end
+
+OnPlayerConnectedSystem.OnPlayerDisconnected = function(self, _ip, _port, _message)
+
+	local entities = self:GetEntities();
+	
+	for i = 1, #entities do
+		
+		local ip = self:GetComponent(entities[i], "NetConnection", "IpAddress"):GetString()
+		local port = self:GetComponent(entities[i], "NetConnection", "Port"):GetInt()
+		
+		if _ip == ip and _port == port then
+
+			world:RemoveComponentFrom("ActiveNetConnection", entities[i])
+			break
+
+		end
+	end	
 end
 
 

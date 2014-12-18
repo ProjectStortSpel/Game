@@ -10,16 +10,20 @@ EntityTemplateManager:AddTemplate(AI)	--	Add the template
 local PlayerTemplate = EntityTemplate()
 PlayerTemplate.Name = "Player"
 PlayerTemplate:AddComponent("Player")
+PlayerTemplate:AddComponent("PlayerNumber")
+PlayerTemplate:AddComponent("PlayerName")
+PlayerTemplate:AddComponent("UnitEntityId")
 PlayerTemplate:SetString("NetConnection", "0.0.0.0", "IpAddress")
 PlayerTemplate:SetInt("NetConnection", 0, "Port")
-PlayerTemplate:SetBool("NetConnection", false, "Active")
---Player:AddComponent("SyncNetwork")			--	Sync this entity
+PlayerTemplate:AddComponent("SyncNetwork")			--	Sync this entity
 EntityTemplateManager:AddTemplate(PlayerTemplate)	--	Add the template
 
 
 --	Unit template
 local Unit = EntityTemplate()
 Unit.Name = "Unit"
+
+	Unit:AddComponent("Unit")
 
 	--	Model data
 	Unit:SetFloat3("Position", 0.0, 1.0, 0.0)
@@ -32,6 +36,7 @@ Unit.Name = "Unit"
 	--Unit:AddComponent("Direction")
 	--Unit:AddComponent("TargetCheckpoint")
 	--Unit:AddComponent("MapPosition")
+	Unit:AddComponent("Spawnpoint")
 	
 	
 	--	Misc

@@ -282,35 +282,74 @@
     <None Include="..\..\..\Externals\content\scripting\storaspel\components\components.lua">
       <Filter>Scripting\Components</Filter>
     </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\movementsystem.lua">
-      <Filter>Scripting\Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\mapcreationsystem.lua">
-      <Filter>Scripting\Systems</Filter>
-    </None>
     <None Include="..\..\..\Externals\content\scripting\storaspel\templates\box.lua">
       <Filter>Scripting\Templates</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\components\tilecomponents.lua">
-      <Filter>Scripting\Components</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cardsystem.lua">
-      <Filter>Scripting\Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\discosystem.lua">
-      <Filter>Scripting\Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\moveplayersystem.lua">
-      <Filter>Scripting\Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\networkmessagessystem.lua">
-      <Filter>Scripting\Systems</Filter>
     </None>
     <None Include="..\..\..\Externals\content\scripting\storaspel\templates\lights.lua">
       <Filter>Scripting\Templates</Filter>
     </None>
     <None Include="..\..\..\Externals\content\scripting\storaspel\templates\map.lua">
       <Filter>Scripting\Templates</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\components\mapcomponents.lua">
+      <Filter>Scripting\Components</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\components\phasecomponents.lua">
+      <Filter>Scripting\Components</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\components\playercomponents.lua">
+      <Filter>Scripting\Components</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\components\cardcomponents.lua">
+      <Filter>Scripting\Components</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\components\lightcomponents.lua">
+      <Filter>Scripting\Components</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\maplogicsystem.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\movementsystem.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\networkconnectsystem.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\networkmessagessystem.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_mapsystem.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_moveplayersystem.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_onplayerconnected.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_pickingphasesystem.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_playerssystem.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cardlogicsystem.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_pickingphasesystem.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\discosystem.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\templates\playertemplates.lua">
+      <Filter>Scripting\Templates</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_spawnsystem.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_createspawnpointsystem.lua">
+      <Filter>Scripting\Systems</Filter>
     </None>
   </ItemGroup>
 </Project>

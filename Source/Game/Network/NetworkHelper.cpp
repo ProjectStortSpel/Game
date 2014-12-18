@@ -267,8 +267,25 @@ void NetworkHelper::ReceiveComponents(Network::PacketHandler* _ph, uint64_t _id,
 					break;
 				}
 				case ECSL::ComponentDataType::REFERENCE:
-					*(int*)data = m_NtoH[_ph->ReadByte(_id)];
+				{
+					int idN = _ph->ReadInt(_id);
+					int idH = 0;
+					if (m_NtoH.find(idN) != m_NtoH.end())
+					{
+						idH = m_NtoH[idN];
+					}
+					else
+					{
+						idH = (*m_world)->CreateNewEntity();
+						printf("Created Entity from network reference with ID: %d\n", idH);
+						m_NtoH[idN] = idH;
+						m_HtoN[idH] = idN;
+					}
+					*(int*)data = idH;
 					break;
+				}
+
+
 				default:
 					printf("[NETWORK ERROR] Undefined data type for message\n");
 					break;
