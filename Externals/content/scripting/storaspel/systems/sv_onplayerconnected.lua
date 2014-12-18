@@ -1,5 +1,6 @@
 OnPlayerConnectedSystem = System()
-OnPlayerConnectedSystem.ConnectedPlayers = 0
+OnPlayerConnectedSystem.NumPlayers = 0
+OnPlayerConnectedSystem.PlayerId = 1
 
 
 OnPlayerConnectedSystem.Update = function(self, dt)
@@ -26,11 +27,46 @@ end
 
 OnPlayerConnectedSystem.OnPlayerConnected = function(self, _ip, _port, _message)
 
+	if GameRunning then
+
+		local entities = self:GetEntities();
+
+
+		for i = 1, #entities do
+		
+			local ip = self:GetComponent(entities[i], "NetConnection", "IpAddress"):GetString()
+			local port = self:GetComponent(entities[i], "NetConnection", "Port"):GetInt()
+		
+			if _ip == ip and _port == port then
+
+				if GameRunning then
+					world:RemoveComponentFrom("ActiveNetConnection", entities[i])
+				else
+					world:KillEntity(entities[i])
+					self.NumPlayer = self.NumPlayer - 1				
+				end
+			
+				break
+
+			end
+		end	
+
+		
+		--Kolla om spelaren finns och låt han komma tbx
+		Net.Kick(_ip, _port, "Game has started.")
+		return
+	end
+
+	if self.NumPlayer > 4 then
+		
+		Net.Kick(_ip, _port, "Server is full.")
+		return
+	end
+	self.NumPlayer = self.NumPlayer + 1
 	--	Hax new ID
-	self.ConnectedPlayers = self.ConnectedPlayers + 1
 	
 	--	Create the new player
-	local newName = "Player_" .. tostring(self.ConnectedPlayers)
+	local newName = "Player_" .. tostring(self.PlayerId)
 	
 	local newEntityId = world:CreateNewEntity("Player")
 	local strAdress = _ip .. ""
@@ -43,6 +79,8 @@ OnPlayerConnectedSystem.OnPlayerConnected = function(self, _ip, _port, _message)
 	world:CreateComponentAndAddTo("ActiveNetConnection", newEntityId)
 	
 	--world:SetComponent(newEntityId, "PlayerNumber", "Number", self.ConnectedPlayers);
+
+	self.PlayerId = self.PlayerId + 1
 end
 
 OnPlayerConnectedSystem.OnPlayerDisconnected = function(self, _ip, _port, _message)
@@ -56,7 +94,13 @@ OnPlayerConnectedSystem.OnPlayerDisconnected = function(self, _ip, _port, _messa
 		
 		if _ip == ip and _port == port then
 
-			world:RemoveComponentFrom("ActiveNetConnection", entities[i])
+			if GameRunning then
+				world:RemoveComponentFrom("ActiveNetConnection", entities[i])
+			else
+				world:KillEntity(entities[i])
+				self.NumPlayer = self.NumPlayer - 1				
+			end
+			
 			break
 
 		end

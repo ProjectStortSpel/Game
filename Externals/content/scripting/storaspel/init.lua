@@ -25,7 +25,6 @@ end
 
 
 
-
 -- Templates
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/templates/?.lua"
 require "map"
@@ -55,3 +54,6 @@ if Client then
 --worldCreator:AddSystemToCurrentGroup(ClientSendCardSystem)
 end
 
+
+
+GameRunning = false
