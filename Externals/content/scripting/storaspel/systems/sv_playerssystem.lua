@@ -1,4 +1,6 @@
 PlayersSystem = System()
+PlayersSystem.NextSlot = 1
+PlayersSystem.FreeSlots = {}
 
 PlayersSystem.Update = function(self, dt)
 
@@ -8,28 +10,45 @@ PlayersSystem.Initialize = function(self)
 	self:SetName("Players Connected System")
 	
 	self:AddComponentTypeToFilter("Player", FilterType.Mandatory)
+	self:AddComponentTypeToFilter("ActiveNetConnection", FilterType.Mandatory)
+
+	print("Players Connected System initialized!")
 end
 
 PlayersSystem.OnEntityAdded = function(self, entityId)
 	print("Ny spelare!")
 	
-	
-	local playerComp = self:GetComponent(entityId, "Player", "PlayerNumber")
-	local playerNumber = 1
+	local playerNumber
+	if #PlayersSystem.FreeSlots ~= 0 then
+		playerNumber = PlayersSystem.FreeSlots[1]
+		table.remove(PlayersSystem.FreeSlots, 1)
+	else
+		playerNumber = PlayersSystem.NextSlot
+		PlayersSystem.NextSlot = PlayersSystem.NextSlot + 1
+	end
+
 	local newEntityId = world:CreateNewEntity("Unit")
 	
-	--world:CreateComponentAndAddTo("Spawn", newEntityId) KRASH
 	world:SetComponent(newEntityId, "Model", "ModelName", "head");
 	world:SetComponent(newEntityId, "Model", "ModelPath", "head");
+
 	world:SetComponent(newEntityId, "PlayerNumber", "Number", playerNumber)
-	
-	--PlayerMovementSystem:SetPosition(newEntityId, 6.0, 1.0, 12.0)
-	--local comp = self:GetComponent(entity, "Spawn", 0)
-	--comp:SetInt2(6.0, 12.0)
+	world:SetComponent(newEntityId, "PlayerEntityId", "Id", entityId)
+
+	world:SetComponent(entityId, "PlayerNumber", "Number", playerNumber)
+	world:SetComponent(entityId, "UnitEntityId", "Id", newEntityId)
 	
 	print("Unit ", newEntityId)
 end
 
 PlayersSystem.OnEntityRemoved = function(self, entityId)
 	print("Rip spelare")
+
+	local plyNum = self:GetComponent(entityId, "PlayerNumber", "Number"):GetInt()
+	table.insert(PlayersSystem.FreeSlots, plyNum)
+
+	local unitId = self:GetComponent(entityId, "UnitEntityId", "Id"):GetInt()
+
+	world:KillEntity(unitId)
+
 end

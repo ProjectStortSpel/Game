@@ -102,7 +102,6 @@ namespace Network
 		float* m_usageDataTimer;
 
 
-		char m_packetData[MAX_PACKET_SIZE];
 
 
 	private:
