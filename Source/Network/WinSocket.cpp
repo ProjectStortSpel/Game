@@ -150,11 +150,15 @@ bool WinSocket::Connect(const char* _ipAddress, const int _port)
 
 	if (connect(m_socket, (sockaddr*)&address, sizeof(address)) < 0)
 	{
-		if (NET_DEBUG)
-		{
-			printf("Failed to connect to Ip address %s:%i. Error Code: %d.\n", _ipAddress, _port, WSAGetLastError());
+		int errorCode = WSAGetLastError();
+		if (errorCode != 10035)
+		{		
+			if (NET_DEBUG)
+			{
+				printf("Failed to connect to Ip address %s:%i. Error Code: %d.\n", _ipAddress, _port, errorCode);
+			}
+			return false;
 		}
-		return false;
 	}
 
 	*m_remoteAddress = _ipAddress;
@@ -315,31 +319,71 @@ int WinSocket::Send(char* _buffer, int _length, int _flags)
 	short len = 0;
 	len = htons(_length);
 
-	if (send(m_socket, (char*)&len, 2, _flags) != SOCKET_ERROR)
+	int byteSent = send(m_socket, (char*)&len, 2, _flags);
+	if (byteSent == 2)
 	{
-		int result = send(m_socket, _buffer, _length, _flags);
-		if (result == SOCKET_ERROR)
+		byteSent = send(m_socket, _buffer, _length, _flags);
+		if (byteSent == SOCKET_ERROR)
 		{
 			if (NET_DEBUG)
 				printf("Failed to send packet of size '%i'. Error Code: %d.\n", _length, WSAGetLastError());
 
-			return -1;
 		}
-		return result;
 	}
-	return -1;
+	else if (byteSent == SOCKET_ERROR)
+	{
+		int errorCode = WSAGetLastError();
+
+		if (errorCode != 10035)
+		{
+			if (NET_DEBUG)
+				printf("Failed to send \"Size packet\" of size '%i'. Error Code: %d.\n", byteSent, errorCode);
+		}		
+	}
+	return byteSent;
 
 }
+
+//int WinSocket::Receive(char* _buffer, int _length, int _flags)
+//{
+//	return recv(m_socket, _buffer, _length, _flags);
+//}
+
 int WinSocket::Receive(char* _buffer, int _length, int _flags)
 {
 	short len;
-
-	if (recv(m_socket, (char*)&len, 2, _flags))
+	int len2 = recv(m_socket, (char*)&len, 2, MSG_WAITALL);
+	if (len2 == 2)
 	{
-		int len2 = (int)ntohs(len);
-		int sizeReceived = recv(m_socket, _buffer, len2, _flags);
+		len = ntohs(len);
+		int sizeReceived = recv(m_socket, _buffer, (int)len, MSG_WAITALL);
+
+		if (sizeReceived != len)
+		{
+			if (NET_DEBUG)
+				printf("Error: Wrong packet size on received packet!\n");
+			//return 0;
+		}
+
+		if (len > _length)
+		{
+			if (NET_DEBUG)
+				printf("Error: To large packet received!\n");
+			return 0;
+		}
 
 		return sizeReceived;
+	}
+	else if (len2 == SOCKET_ERROR)
+	{
+		if (NET_DEBUG)
+			printf("Error: Failed to receive \"Size packet\". Error code: %d\n", WSAGetLastError());
+	}
+	else
+	{
+		if (NET_DEBUG)
+			printf("Error: \"Size packet\" corrupt! Length: %d\n", len2);
+		//return 0;
 	}
 	return 0;
 }

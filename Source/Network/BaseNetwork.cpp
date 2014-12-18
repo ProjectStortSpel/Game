@@ -23,8 +23,8 @@ BaseNetwork::BaseNetwork()
 
 	m_packetHandler = new PacketHandler();
 
-	m_maxTimeOutIntervall = new float(10.0f);
-	m_maxIntervallCounter = new int(3);
+	m_maxTimeOutIntervall = new float(1.0f);
+	m_maxIntervallCounter = new int(30);
 
 	m_totalDataReceived = new float(0);
 	m_totalDataSent = new float(0);
@@ -32,10 +32,6 @@ BaseNetwork::BaseNetwork()
 	m_currentDataReceived = new float(0);
 	m_currentDataSent = new float(0);
 	m_usageDataTimer = new float(0);
-
-
-
-	memset(m_packetData, 0, sizeof(m_packetData));
 }
 
 BaseNetwork::~BaseNetwork()
