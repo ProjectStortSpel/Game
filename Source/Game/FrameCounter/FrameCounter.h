@@ -7,9 +7,8 @@ namespace Utility
 	class FrameCounter
 	{
 	public:
+		FrameCounter();
 		~FrameCounter();
-
-		static FrameCounter& GetInstance();
 
 		int GetFPS();
 		int GetAverageFPS();
@@ -17,9 +16,12 @@ namespace Utility
 		float GetAverageDeltaTime();
 
 		void Tick();
+		
+		void Reset();
+		float GetMinDeltaTime();
+		float GetMaxDeltaTime();
+		
 	private:
-		FrameCounter();
-
 		static const unsigned int m_numberOfSamples = 128;
 
 		float m_nrSampleDivided;

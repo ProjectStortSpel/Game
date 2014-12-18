@@ -19,6 +19,11 @@ namespace LuaBridge
     int MoveRight();
     
     int UpdateMouse();
+    
+    int GetRight();
+    int GetUp();
+    int GetLook();
+    int GetPosition();
   };
 }
 
