@@ -19,6 +19,7 @@ if Server then
 	require "sv_createspawnpointsystem"
 	require "sv_spawnsystem"
 	require "sv_lobbysystem"
+	require "sv_cardlogicsystem"
 end
 
 
@@ -54,6 +55,7 @@ if Server then
 	worldCreator:AddSystemToCurrentGroup(CreateSpawnpointSystem)
 	worldCreator:AddSystemToCurrentGroup(SpawnSystem)
 	worldCreator:AddSystemToCurrentGroup(ServerLobbySystem)
+	worldCreator:AddSystemToCurrentGroup(CardDeckSystem)
 end
 
 if Client then
