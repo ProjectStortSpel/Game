@@ -11,4 +11,8 @@ local Card = EntityTemplate()
 Card.Name = "Card"
 Card:AddComponent("CardPrio")
 Card:AddComponent("CardAction")
+Card:SetFloat3("Position", 0.0, 0.0, 0.0)
+Card:SetFloat3("Rotation", 0.0, 0.0, 0.0)
+Card:SetFloat3("Scale", 1.0, 1.0, 1.0)
+Card:SetModel("Model", "forward", "cards")
 EntityTemplateManager:AddTemplate(Card)
