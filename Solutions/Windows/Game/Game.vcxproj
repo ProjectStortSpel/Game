@@ -265,18 +265,31 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClInclude Include="..\..\..\Source\Game\TextInput.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\components\cardcomponents.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\components\components.lua" />
-    <None Include="..\..\..\Externals\content\scripting\storaspel\components\tilecomponents.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\components\lightcomponents.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\components\mapcomponents.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\components\phasecomponents.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\components\playercomponents.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\init.lua" />
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cardsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cardlogicsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_pickingphasesystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\discosystem.lua" />
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\mapcreationsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\maplogicsystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\movementsystem.lua" />
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\moveplayersystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\networkconnectsystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\networkmessagessystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_createspawnpointsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_mapsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_moveplayersystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_onplayerconnected.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_pickingphasesystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_playerssystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_spawnsystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\templates\box.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\templates\lights.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\templates\map.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\templates\playertemplates.lua" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

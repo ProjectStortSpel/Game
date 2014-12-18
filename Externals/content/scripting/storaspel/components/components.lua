@@ -84,11 +84,18 @@ worldCreator:AddComponentType(NameComponent)
 -- NetConnection Component
 local NetConnection = ComponentType()
 NetConnection.Name = "NetConnection"
+NetConnection.SyncNetwork = false
 NetConnection.TableType = TableType.Map
 NetConnection:AddVariable("IpAddress", ByteSize.Text)
 NetConnection:AddVariable("Port", ByteSize.Int)
-NetConnection:AddVariable("Active", ByteSize.Bool)
 worldCreator:AddComponentType(NetConnection)
+
+-- Active NetConnection Component
+local ActiveNetConnection = ComponentType()
+ActiveNetConnection.Name = "ActiveNetConnection"
+ActiveNetConnection.SyncNetwork = false
+ActiveNetConnection.TableType = TableType.Map
+worldCreator:AddComponentType(ActiveNetConnection)
 
 -- Sync Network Component
 local SyncNetworkComponent = ComponentType()

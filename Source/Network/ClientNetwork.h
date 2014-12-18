@@ -136,6 +136,7 @@ namespace Network
 		std::vector<NetEvent>* m_onRemotePlayerBanned;
 
 
+		char m_packetData[MAX_PACKET_SIZE];
 	};
 
 }
