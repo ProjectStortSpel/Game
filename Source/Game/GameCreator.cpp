@@ -376,7 +376,7 @@ void GameCreator::StopGame(std::vector<Console::Argument>* _args)
 void GameCreator::OnConnectedToServer(Network::NetConnection _nc, const char* _message)
 {
  	std::vector<Console::Argument>* args = new std::vector<Console::Argument>();
-	//m_gameMode = "storaspel";
+	m_gameMode = "storaspel";
 	Reload(args);
 	delete args;
 }
