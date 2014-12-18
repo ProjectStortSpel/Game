@@ -129,7 +129,7 @@ void GraphicDevice::WriteShadowMapDepth()
 
 	//glCullFace(GL_FRONT);
 	glEnable(GL_POLYGON_OFFSET_FILL);
-	glPolygonOffset(1.5, 18000.0);	//glPolygonOffset(-1.0, 0.0);	glPolygonMode(GL_FRONT, GL_FILL);
+	glPolygonOffset(4.5, 18000.0);	//glPolygonOffset(-1.0, 0.0);	glPolygonMode(GL_FRONT, GL_FILL);
 	glActiveTexture(GL_TEXTURE10);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -394,7 +394,7 @@ void GraphicDevice::Render()
 	glDrawArrays(GL_POINTS, 0, 1);
 
 	glUseProgram(0);
-		//m_glTimerValues.push_back(GLTimerValue("Full Screen: ", glTimer.Stop()));
+		//m_glTimerValues.push_back(GLTimerValue("RENDER: ", glTimer.Stop()));
 
 	// Swap in the new buffer
 	SDL_GL_SwapWindow(m_window);
@@ -486,7 +486,7 @@ void GraphicDevice::CreateDepthTex(GLuint &texid) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, m_clientWidth, m_clientHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, m_clientWidth, m_clientHeight, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0);
 }
 
 bool GraphicDevice::InitDeferred()
@@ -809,12 +809,12 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 	m_modelIDcounter++;
 
 	Shader *shaderPtr = NULL;
-	if (_renderType == RENDER_DEFERRED)
+	if (_renderType == 0)
 	{
 		shaderPtr = &m_deferredShader1;
 		m_deferredShader1.UseProgram();
 	}
-	else if (_renderType == RENDER_FORWARD)
+	else if (_renderType == 1)
 	{
 		shaderPtr = &m_forwardShader;
 		m_forwardShader.UseProgram();

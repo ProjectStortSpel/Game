@@ -61,9 +61,20 @@ void main()
 
 	// Set globals
 	g_normal.xy = inputMap1.xy;
-	g_normal.z = sqrt( 1 - (g_normal.x*g_normal.x) - (g_normal.y*g_normal.y) );
+	
 	g_ks = inputMap1.z;
-    g_shininess = inputMap1.w * 254.0f + 1.0f;
+	if(inputMap1.w < 0.5)
+	{
+		g_normal.z = sqrt( 1 - (g_normal.x*g_normal.x) - (g_normal.y*g_normal.y) );
+		g_shininess = inputMap1.w * 508.0f + 1.0f;
+	}
+	else
+	{
+		g_normal.z = sqrt( 1 - (g_normal.x*g_normal.x) - (g_normal.y*g_normal.y) );
+		g_normal.z *= -1;
+		g_shininess = (inputMap1.w - 0.5) * 508.0f + 1.0f;
+	}
+
 	g_albedo.xyz = inputMap2.xyz;
 	g_depthVal = inputMap0.x;
 	g_viewPos = reconstructPosition(g_depthVal);
@@ -104,8 +115,8 @@ void main()
 	//FragColor = glowvec;
 	//FragColor = SSAOvec;
 	//FragColor = vec4( g_normal, 1.0);
-	//FragColor = vec4( g_albedo   +g_normal-g_normal, 1.0 );
-	//FragColor = vec4( vec3(g_viewPos  +g_normal-g_normal), 1.0 );
+	//FragColor = vec4( g_albedo   +g_normal-g_normal , 1.0 )-vec4( g_albedo   +g_normal-g_normal , 1.0 ) +SSAOvec +glowvec-glowvec;
+	//FragColor = vec4( vec3(g_normal  + g_viewPos-g_viewPos +g_albedo-g_albedo), 1.0 ) + SSAOvec-SSAOvec +glowvec-glowvec;
 	//FragColor = vec4( vec3(g_depthVal), 1.0 );
 	
 	imageStore(
@@ -117,7 +128,7 @@ void main()
 
 
 
-// ---- FUNCTIONS ---- 
+ //---- FUNCTIONS ---- 
 
 float ComputeGlow()
 {

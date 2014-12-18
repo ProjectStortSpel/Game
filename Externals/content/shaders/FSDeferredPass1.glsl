@@ -37,9 +37,14 @@ void main()
 		// Set Normal output
 		normal_map = (normal_map * 2.0f) - 1.0f;
 		mat3 texSpace = mat3(Tan, BiTan, Normal);
-		NormalData.xy = normalize( texSpace * normal_map ).xy;		// rg = normal
+		vec3 allNormalData = normalize( texSpace * normal_map );
+		NormalData.xy = allNormalData.xy;	//+allNormalData.xy-allNormalData.xy;							// rg = normal
 		NormalData.z = specglow_map.x;								// b = spec reflec
-		NormalData.w = specglow_map.y;								// a = spec shine
+		if(allNormalData.z > 0)
+			NormalData.w = specglow_map.y*0.5;						// a = spec shine + normal.z flag
+		else
+			NormalData.w = specglow_map.y*0.5 + 0.5;
+			
 	}
 	else if(TexFlag == 1) //diffuse only
 	{
