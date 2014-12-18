@@ -8,6 +8,7 @@ namespace LuaBridge
 	{
 		m_dataLocation = nullptr;
 		m_system = nullptr;
+		m_world = nullptr;
 	}
 
 	LuaComponent::LuaComponent(ECSL::DataLocation dataLocation, ECSL::System* system,
@@ -15,6 +16,17 @@ namespace LuaBridge
 	{
 		m_dataLocation = dataLocation;
 		m_system = system;
+		m_world = nullptr;
+		m_entityId = entityId;
+		m_componentName = componentName;
+	}
+	
+	LuaComponent::LuaComponent(ECSL::DataLocation dataLocation, ECSL::World* world,
+		unsigned int entityId, const std::string& componentName)
+	{
+		m_dataLocation = dataLocation;
+		m_system = nullptr;
+		m_world = world;
 		m_entityId = entityId;
 		m_componentName = componentName;
 	}
@@ -107,7 +119,7 @@ namespace LuaBridge
 			((float*)m_dataLocation)[LuaEmbedder::PullInt(2)] = LuaEmbedder::PullFloat(1);
 		else
 			((float*)m_dataLocation)[0] = LuaEmbedder::PullFloat(1);
-		m_system->ComponentHasChanged(m_entityId, m_componentName);
+		ComponentHasChanged();
 		return 0;
 	}
 	int LuaComponent::SetFloat2()
@@ -115,7 +127,7 @@ namespace LuaBridge
 		assert(m_dataLocation);
 		((float*)m_dataLocation)[0] = LuaEmbedder::PullFloat(1);
 		((float*)m_dataLocation)[1] = LuaEmbedder::PullFloat(2);
-		m_system->ComponentHasChanged(m_entityId, m_componentName);
+		ComponentHasChanged();
 		return 0;
 	}
 	int LuaComponent::SetFloat3()
@@ -124,7 +136,7 @@ namespace LuaBridge
 		((float*)m_dataLocation)[0] = LuaEmbedder::PullFloat(1);
 		((float*)m_dataLocation)[1] = LuaEmbedder::PullFloat(2);
 		((float*)m_dataLocation)[2] = LuaEmbedder::PullFloat(3);
-		m_system->ComponentHasChanged(m_entityId, m_componentName);
+		ComponentHasChanged();
 		return 0;
 	}
 	int LuaComponent::SetFloat4()
@@ -134,7 +146,7 @@ namespace LuaBridge
 		((float*)m_dataLocation)[1] = LuaEmbedder::PullFloat(2);
 		((float*)m_dataLocation)[2] = LuaEmbedder::PullFloat(3);
 		((float*)m_dataLocation)[3] = LuaEmbedder::PullFloat(4);
-		m_system->ComponentHasChanged(m_entityId, m_componentName);
+		ComponentHasChanged();
 		return 0;
 	}
 	int LuaComponent::SetFloat5()
@@ -145,7 +157,7 @@ namespace LuaBridge
 		((float*)m_dataLocation)[2] = LuaEmbedder::PullFloat(3);
 		((float*)m_dataLocation)[3] = LuaEmbedder::PullFloat(4);
 		((float*)m_dataLocation)[4] = LuaEmbedder::PullFloat(5);
-		m_system->ComponentHasChanged(m_entityId, m_componentName);
+		ComponentHasChanged();
 		return 0;
 	}
 
@@ -189,7 +201,7 @@ namespace LuaBridge
 			((int*)m_dataLocation)[LuaEmbedder::PullInt(2)] = LuaEmbedder::PullInt(1);
 		else
 			((int*)m_dataLocation)[0] = LuaEmbedder::PullInt(1);
-		m_system->ComponentHasChanged(m_entityId, m_componentName);
+		ComponentHasChanged();
 		return 0;
 	}
 	int LuaComponent::SetInt2()
@@ -197,7 +209,7 @@ namespace LuaBridge
 		assert(m_dataLocation);
 		((int*)m_dataLocation)[0] = LuaEmbedder::PullInt(1);
 		((int*)m_dataLocation)[1] = LuaEmbedder::PullInt(2);
-		m_system->ComponentHasChanged(m_entityId, m_componentName);
+		ComponentHasChanged();
 		return 0;
 	}
 	int LuaComponent::SetInt3()
@@ -206,7 +218,7 @@ namespace LuaBridge
 		((int*)m_dataLocation)[0] = LuaEmbedder::PullInt(1);
 		((int*)m_dataLocation)[1] = LuaEmbedder::PullInt(2);
 		((int*)m_dataLocation)[2] = LuaEmbedder::PullInt(3);
-		m_system->ComponentHasChanged(m_entityId, m_componentName);
+		ComponentHasChanged();
 		return 0;
 	}
 	int LuaComponent::SetInt4()
@@ -216,7 +228,7 @@ namespace LuaBridge
 		((int*)m_dataLocation)[1] = LuaEmbedder::PullInt(2);
 		((int*)m_dataLocation)[2] = LuaEmbedder::PullInt(3);
 		((int*)m_dataLocation)[3] = LuaEmbedder::PullInt(4);
-		m_system->ComponentHasChanged(m_entityId, m_componentName);
+		ComponentHasChanged();
 		return 0;
 	}
 
@@ -236,7 +248,7 @@ namespace LuaBridge
 			((bool*)m_dataLocation)[LuaEmbedder::PullInt(2)] = LuaEmbedder::PullBool(1);
 		else
 			((bool*)m_dataLocation)[0] = LuaEmbedder::PullBool(1);
-		m_system->ComponentHasChanged(m_entityId, m_componentName);
+		ComponentHasChanged();
 		return 0;
 	}
 
@@ -253,7 +265,7 @@ namespace LuaBridge
 		for (int i = 0; i < (int)text.size(); i++)
 		  m_dataLocation[i] = text[i];
 		m_dataLocation[(int)text.size()] = '\0';
-		m_system->ComponentHasChanged(m_entityId, m_componentName);
+		ComponentHasChanged();
 		return 0;
 	}
 
@@ -268,7 +280,7 @@ namespace LuaBridge
 		for (int i = 0; i < folderName.size(); i++)
 			m_dataLocation[i + CHARSIZE] = folderName[i];
 		m_dataLocation[folderName.size() + CHARSIZE] = '\0';
-		m_system->ComponentHasChanged(m_entityId, m_componentName);
+		ComponentHasChanged();
 		return 0;
 	}
 	
@@ -285,7 +297,7 @@ namespace LuaBridge
 		((float*)m_dataLocation)[7] = LuaEmbedder::PullFloat(8);
 		((float*)m_dataLocation)[8] = LuaEmbedder::PullFloat(9);
 		((float*)m_dataLocation)[9] = LuaEmbedder::PullFloat(10);
-		m_system->ComponentHasChanged(m_entityId, m_componentName);
+		ComponentHasChanged();
 		return 0;
 	}
 
@@ -303,5 +315,13 @@ namespace LuaBridge
 		LuaEmbedder::PushFloat((float)(((float*)m_dataLocation)[8]));
 		LuaEmbedder::PushFloat((float)(((float*)m_dataLocation)[9]));
 		return 10;
+	}
+	
+	void LuaComponent::ComponentHasChanged()
+	{
+		if (m_system != nullptr)
+		  m_system->ComponentHasChanged(m_entityId, m_componentName);
+		else if (m_world != nullptr)
+		  m_world->ComponentHasChanged(m_entityId, m_componentName);
 	}
 }
