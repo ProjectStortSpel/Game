@@ -307,12 +307,13 @@ int WinSocket::Send(char* _buffer, int _length, int _flags)
 	}
 	return result;
 }
+*/
+/*
 int WinSocket::Receive(char* _buffer, int _length, int _flags)
 {
 	return recv(m_socket, _buffer, _length, _flags);
 }
 */
-
 
 int WinSocket::Send(char* _buffer, int _length, int _flags)
 {
@@ -338,15 +339,36 @@ int WinSocket::Send(char* _buffer, int _length, int _flags)
 		{
 			if (NET_DEBUG)
 				printf("Failed to send \"Size packet\" of size '%i'. Error Code: %d.\n", byteSent, errorCode);
-		}		
+		}
 	}
 	return byteSent;
 
 }
 
+
+
+
+
+
 //int WinSocket::Receive(char* _buffer, int _length, int _flags)
 //{
 //	return recv(m_socket, _buffer, _length, _flags);
+//}
+
+//int WinSocket::Receive(char* _buffer, int length, int _flags)
+//{
+//	short size = 0;
+//
+//	int dataReceived = 0;
+//	do
+//	{
+//		size = recv(m_socket, _buffer + dataReceived, MAX_PACKET_SIZE, 0);
+//		if (size > 0)
+//			dataReceived += size;
+//
+//	} while (size > 0);
+//
+//	return dataReceived;
 //}
 
 int WinSocket::Receive(char* _buffer, int _length, int _flags)
