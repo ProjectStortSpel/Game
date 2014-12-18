@@ -16,8 +16,10 @@
 
 #include "LuaBridge/ECSL/LuaSystem.h"
 
+#include <iomanip>
+
 GameCreator::GameCreator() :
-m_graphics(0), m_input(0), m_world(0), m_console(0), m_consoleManager(Console::ConsoleManager::GetInstance()), m_frameCounter(&Utility::FrameCounter::GetInstance()), m_running(true)
+m_graphics(0), m_input(0), m_world(0), m_console(0), m_consoleManager(Console::ConsoleManager::GetInstance()), m_frameCounter(new Utility::FrameCounter()), m_running(true)
 {
 }
 
@@ -43,7 +45,7 @@ GameCreator::~GameCreator()
 
 	delete(&ECSL::ComponentTypeManager::GetInstance());
 	delete(&ECSL::EntityTemplateManager::GetInstance());
-	delete(&Utility::FrameCounter::GetInstance());
+	delete(m_frameCounter);
 }
 
 void GameCreator::InitializeGraphics()
@@ -171,31 +173,42 @@ void GameCreator::StartGame()
 	{
 		float dt = std::min(maxDeltaTime, m_frameCounter->GetDeltaTime());
 
+		m_inputCounter.Reset();
 		/*	Collect all input	*/
 		m_input->Update();
 		PollSDLEvent();
 		m_consoleInput.Update();
-
-		/*	Update graphics	*/
-		m_graphics->Update(dt);
+		UpdateConsole();
+		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
+			break;
+		m_inputCounter.Tick();
 		
+		m_worldCounter.Reset();
 		/*	Update world (systems, entities etc)	*/
 		m_world->Update(dt);
+		m_worldCounter.Tick();
 		
-		UpdateNetwork(dt);
-		//LuaEmbedder::CollectGarbage(1);
-
 		std::stringstream ss;
 		ss << "Lua memory usage: " << LuaEmbedder::GetMemoryUsage() << " bytes";
 		m_graphics->RenderSimpleText(ss.str(), 20, 1);
-
-		UpdateConsole();
-
-		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
-			break;
-
+		
+		m_networkCounter.Reset();
+		UpdateNetwork(dt);
+		m_networkCounter.Tick();
+		
+		/*	Update graphics	*/
+		m_graphics->Update(dt);
 		RenderConsole();
+		m_graphicsCounter.Reset();
 		m_graphics->Render();
+		m_graphicsCounter.Tick();
+		
+		m_graphics->RenderSimpleText("Time Statistics", 60, 0);
+		PrintSectionTime("Total   ", m_frameCounter, 60, 1);
+		PrintSectionTime("Input   ", &m_inputCounter, 60, 2);
+		PrintSectionTime("World   ", &m_worldCounter, 60, 3);
+		PrintSectionTime("Network ", &m_networkCounter, 60, 4);
+		PrintSectionTime("Graphics", &m_graphicsCounter, 60, 5);
 
 		m_frameCounter->Tick();
 	}
@@ -402,4 +415,18 @@ void GameCreator::GameMode(std::vector<Console::Argument>* _args)
 void GameCreator::StartTemp(std::vector<Console::Argument>* _args)
 {
 
+}
+
+void GameCreator::PrintSectionTime(const std::string& sectionName, Utility::FrameCounter* frameCounter, int x, int y)
+{
+	float average = 1000.f * frameCounter->GetAverageDeltaTime();
+	float min = 1000.0f * frameCounter->GetMinDeltaTime();
+	float max = 1000.0f * frameCounter->GetMaxDeltaTime();
+	float anomality = 0.5f * ((average - min) + (max - average));
+	
+	std::stringstream ss;
+	ss << sectionName <<
+	  "   Average: " << std::fixed << std::setprecision(3) << average << " ms" <<
+	  "   Anomality: " << std::fixed << std::setprecision(3) << anomality << " ms";
+	m_graphics->RenderSimpleText(ss.str(), x, y);
 }
