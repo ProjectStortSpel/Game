@@ -253,12 +253,14 @@ void GameCreator::UpdateConsole()
 		{
 			m_input->GetKeyboard()->StopTextInput();
 			m_consoleInput.SetActive(false);
+			m_consoleManager.SetOpen(false);
 		}
 		else
 		{
 			m_input->GetKeyboard()->StartTextInput();
 			m_consoleInput.SetActive(true);
 			m_input->GetKeyboard()->ResetTextInput();
+			m_consoleManager.SetOpen(true);
 		}
 		printf("%d average fps\n", m_frameCounter->GetAverageFPS());
 	}

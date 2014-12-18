@@ -218,7 +218,7 @@ bool WinSocket::SetNoDelay(bool _value)
 		if (NET_DEBUG)
 			printf("Failed to enable TCP_NODELAY on new socket. Error Code: %d.\n", WSAGetLastError());
 
-		return true;
+		return false;
 	}
 
 	return true;
@@ -230,8 +230,8 @@ bool WinSocket::SetTimeoutDelay(int _value)
 	if (setsockopt(m_socket, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout, sizeof(timeout)) != 0)
 		return false;
 
-	if (setsockopt(m_socket, SOL_SOCKET, SO_SNDTIMEO, (const char*)&timeout, sizeof(timeout)) != 0)
-		return false;
+	//if (setsockopt(m_socket, SOL_SOCKET, SO_SNDTIMEO, (const char*)&timeout, sizeof(timeout)) != 0)
+	//	return false;
 
 	return true;
 }
@@ -312,8 +312,9 @@ int WinSocket::Receive(char* _buffer, int _length, int _flags)
 
 int WinSocket::Send(char* _buffer, int _length, int _flags)
 {
-	static short len = 0;
+	short len = 0;
 	len = htons(_length);
+
 	if (send(m_socket, (char*)&len, 2, _flags) != SOCKET_ERROR)
 	{
 		int result = send(m_socket, _buffer, _length, _flags);
@@ -331,12 +332,14 @@ int WinSocket::Send(char* _buffer, int _length, int _flags)
 }
 int WinSocket::Receive(char* _buffer, int _length, int _flags)
 {
-	static short len;
+	short len;
 
-	if (recv(m_socket, (char*)&len, 2, MSG_WAITALL))
+	if (recv(m_socket, (char*)&len, 2, _flags))
 	{
-		len = ntohs(len);
-		return recv(m_socket, _buffer, len, MSG_WAITALL);
+		int len2 = (int)ntohs(len);
+		int sizeReceived = recv(m_socket, _buffer, len2, _flags);
+
+		return sizeReceived;
 	}
 	return 0;
 }

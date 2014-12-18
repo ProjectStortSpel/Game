@@ -269,7 +269,14 @@ void ServerNetwork::Broadcast(Packet* _packet, const NetConnection& _exclude)
 		if (it->first == _exclude || it->second->GetActive() != 2)
 			continue;
 
-		bytesSent += it->second->Send((char*)_packet->Data, *_packet->Length);
+
+
+		int size = it->second->Send((char*)_packet->Data, *_packet->Length);
+
+		if (NET_DEBUG)
+			printf("Broadcasted packet with size %i\n", size);
+
+		bytesSent += size;
 	}
 	m_connectedClientsLock->unlock();
 
@@ -387,7 +394,7 @@ void ServerNetwork::ListenForConnections(void)
 			continue;
 
 		newConnection->SetNonBlocking(false);
-		newConnection->SetTimeoutDelay(1000);
+		//newConnection->SetTimeoutDelay(2000);
 		newConnection->SetNoDelay(true);
 
 		NetConnection nc = newConnection->GetNetConnection();
