@@ -1,6 +1,7 @@
 #include "LuaWorld.h"
 #include "LuaEmbedder/LuaEmbedder.h"
 #include "LuaSystem.h"
+#include "LuaComponent.h"
 
 namespace LuaBridge
 {
@@ -17,7 +18,8 @@ namespace LuaBridge
     LuaEmbedder::EmbedClassFunction<LuaWorld>("World", "CreateComponentAndAddTo", &LuaWorld::CreateComponentAndAddTo);
     LuaEmbedder::EmbedClassFunction<LuaWorld>("World", "RemoveComponentFrom", &LuaWorld::RemoveComponentFrom);
     LuaEmbedder::EmbedClassFunction<LuaWorld>("World", "KillEntity", &LuaWorld::KillEntity);
-	LuaEmbedder::EmbedClassFunction<LuaWorld>("World", "SetComponent", &LuaWorld::SetComponent);
+    LuaEmbedder::EmbedClassFunction<LuaWorld>("World", "SetComponent", &LuaWorld::SetComponent);
+    LuaEmbedder::EmbedClassFunction<LuaWorld>("World", "GetComponent", &LuaWorld::GetComponent);
   }
   
   int LuaWorld::Update()
@@ -104,5 +106,24 @@ namespace LuaBridge
 
 	  return 0;
   }
-
+  
+  int LuaWorld::GetComponent()
+  {
+	  ECSL::DataLocation dataLocation;
+	  unsigned int entityId = (unsigned int)LuaEmbedder::PullInt(1);
+	  std::string componentType = LuaEmbedder::PullString(2);
+	  if (LuaEmbedder::IsInt(3))
+	  {
+		  unsigned int index = (unsigned int)LuaEmbedder::PullInt(3);
+		  dataLocation = World::GetComponent(entityId, componentType, index);
+	  }
+	  else
+	  {
+		  std::string variableName = LuaEmbedder::PullString(3);
+		  dataLocation = World::GetComponent(entityId, componentType, variableName);
+	  }
+	  LuaComponent* component = new LuaComponent(dataLocation, this, entityId, componentType);
+	  LuaEmbedder::PushObject<LuaComponent>("Component", component, true);
+	  return 1;
+  }
 }
