@@ -3,6 +3,7 @@
 
 #include "ECSL/Framework/Components/Tables/DataTable.h"
 #include "ECSL/Interfaces/System.h"
+#include "ECSL/Framework/World.h"
 
 #include <string>
 #include <map>
@@ -14,6 +15,8 @@ namespace LuaBridge
 	public:
 		LuaComponent();
 		LuaComponent(ECSL::DataLocation dataLocation, ECSL::System* system,
+			unsigned int entityId, const std::string& componentName);
+		LuaComponent(ECSL::DataLocation dataLocation, ECSL::World* world,
 			unsigned int entityId, const std::string& componentName);
 		~LuaComponent();
 
@@ -52,9 +55,12 @@ namespace LuaBridge
 		int GetPointlight();
 		int SetPointlight();
 		
+		void ComponentHasChanged();
+		
 	private:
 		ECSL::DataLocation m_dataLocation;
 		ECSL::System* m_system;
+		ECSL::World* m_world;
 		unsigned int m_entityId;
 		std::string m_componentName;
 	};

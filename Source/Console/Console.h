@@ -58,6 +58,7 @@ namespace Console
 
 		int m_start;
 		int m_end;
+		bool m_open;
 
 	public:
 
@@ -79,6 +80,9 @@ namespace Console
 
 		void ScrollUp();
 		void ScrollDown();
+
+		bool IsOpen() { return m_open; }
+		void SetOpen(bool _value) { m_open = _value; }
 	};
 }
 

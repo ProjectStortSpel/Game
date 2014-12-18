@@ -19,7 +19,8 @@ namespace LuaBridge
     int CreateComponentAndAddTo();
     int RemoveComponentFrom();
     int KillEntity();
-	int SetComponent();
+    int SetComponent();
+    int GetComponent();
   };
 }
 
