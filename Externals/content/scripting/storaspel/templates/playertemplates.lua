@@ -1,4 +1,3 @@
-
 --	Player template [TODO: Add shit]
 local AI = EntityTemplate()
 AI.Name = "AI"
