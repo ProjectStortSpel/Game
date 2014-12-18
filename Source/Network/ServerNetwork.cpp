@@ -327,14 +327,35 @@ void ServerNetwork::Send(Packet* _packet, NetConnection& _receiver)
 
 void ServerNetwork::ReceivePackets(ISocket* _socket)
 {
+	char* packetData = new char[MAX_PACKET_SIZE];
+	unsigned short nextPacketSize;
+	unsigned short dataReceived;
 	while (_socket->GetActive() != 0)
 	{
-		float result = _socket->Receive(m_packetData, MAX_PACKET_SIZE);
 
-		if (result > 0)
+
+		//nextPacketSize = 2;
+		//dataReceived = 0;
+		//while (dataReceived < nextPacketSize)
+		//{
+		//	int res = _socket->Receive(packetData + dataReceived, nextPacketSize - dataReceived);
+		//	if (res > 0)
+		//		dataReceived += (unsigned short)res;
+		//}
+		//
+		//nextPacketSize = ntohs(*(unsigned short*)packetData);
+		//dataReceived = 0;
+		//while (dataReceived < nextPacketSize)
+		//{
+		//	int res = _socket->Receive(packetData + dataReceived, nextPacketSize - dataReceived);
+		//	if (res > 0)
+		//		dataReceived += (unsigned short)res;
+		//}
+
+		dataReceived = _socket->Receive(packetData, MAX_PACKET_SIZE);
+
+		if (dataReceived > 0)
 		{
-			unsigned short packetSize = result;
-
 			m_timeOutLock->lock();
 
 			if (m_currentIntervallCounter->find(_socket->GetNetConnection()) != m_currentIntervallCounter->end())
@@ -346,25 +367,25 @@ void ServerNetwork::ReceivePackets(ISocket* _socket)
 			m_timeOutLock->unlock();
 
 			Packet* p = new Packet();
-			p->Data = new unsigned char[packetSize];
-			*p->Length = packetSize;
+			p->Data = new unsigned char[dataReceived];
+			*p->Length = dataReceived;
 			*p->Sender = _socket->GetNetConnection();
-			memcpy(p->Data, m_packetData, packetSize);
+			memcpy(p->Data, packetData, dataReceived);
 
 			if (NET_DEBUG)
-				printf("Received message with length \"%i\" from client \"%s:%i\".\n", packetSize, p->Sender->GetIpAddress(), p->Sender->GetPort());
+				printf("Received message with length \"%i\" from client \"%s:%i\".\n", dataReceived, p->Sender->GetIpAddress(), p->Sender->GetPort());
 
 			HandlePacket(p);
 
 			m_dataRecievedLock->lock();
-			if (result > 0)
+			if (dataReceived > 0)
 			{
-				*m_totalDataReceived += packetSize;
-				*m_currentDataReceived += packetSize;
+				*m_totalDataReceived += dataReceived;
+				*m_currentDataReceived += dataReceived;
 			}
 			m_dataRecievedLock->unlock();
 		}
-		else if (result == 0)
+		else if (dataReceived == 0)
 		{
 		}
 		else
@@ -377,6 +398,7 @@ void ServerNetwork::ReceivePackets(ISocket* _socket)
 	m_connectedClients->erase(_socket->GetNetConnection());
 	m_connectedClientsLock->unlock();
 
+	delete packetData;
 	SAFE_DELETE(_socket);
 }
 
@@ -392,10 +414,10 @@ void ServerNetwork::ListenForConnections(void)
 		ISocket* newConnection = m_listenSocket->Accept();
 		if (!newConnection)
 			continue;
-
+		
 		newConnection->SetNonBlocking(false);
-		//newConnection->SetTimeoutDelay(2000);
 		newConnection->SetNoDelay(true);
+		newConnection->SetTimeoutDelay(5000);
 
 		NetConnection nc = newConnection->GetNetConnection();
 
