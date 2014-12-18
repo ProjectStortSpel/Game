@@ -3,13 +3,18 @@
 
 ShadowMap::ShadowMap(vec3 lightPos, vec3 target, int res)
 {
-	mLightPosition = lightPos;
-	mTargetDirection = target;
+	m_lightPosition = lightPos;
+	m_targetDirection = target;
 
-	mResolution = res;
-	mProjectionMatrix = glm::perspective(140.0f, (float)res/(float)res, 1.0f, 300.0f);
-	mViewMatrix = glm::lookAt(mLightPosition, mTargetDirection, vec3(0.0f, 1.0f, 0.0f));
-
+	m_resolution = res;
+	m_projectionMatrix = glm::ortho(-10.0, 10.0, -10.0, 10.0, 3.0, 18.0); 
+	//glm::perspective(45.0f, (float)res / (float)res, 1.0f, 50.0f);
+	m_viewMatrix = glm::lookAt(m_lightPosition, m_targetDirection, vec3(0.0f, 1.0f, 0.0f));
+	float val = 0.5f;
+	m_biasMatrix = mat4(val, 0.0, 0.0, 0.0,
+						0.0, val, 0.0, 0.0,
+						0.0, 0.0, val, 0.0,
+						val, val, val, 1.0);
 }
 
 ShadowMap::ShadowMap()
@@ -20,14 +25,14 @@ ShadowMap::~ShadowMap()
 {
 }
 
-void ShadowMap::CreateShadowMapTexture(int i)
+void ShadowMap::CreateShadowMapTexture(GLuint _textureUnit)
 {
 	GLfloat border[] = { 1.0, 0.0, 0.0, 0.0 };
 
 	//The shadow maptexture  
-	glGenTextures(1, &mDepthTex); 
-	glBindTexture(GL_TEXTURE_2D, mDepthTex); 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, mResolution, mResolution, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL); 
+	glGenTextures(1, &m_depthTex); 
+	glBindTexture(GL_TEXTURE_2D, m_depthTex); 
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_resolution, m_resolution, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL); 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER); 
@@ -37,13 +42,13 @@ void ShadowMap::CreateShadowMapTexture(int i)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
 
 	//Assign the shadow map to texture channel 1 
-	glActiveTexture(GL_TEXTURE5+i);
-	glBindTexture(GL_TEXTURE_2D, mDepthTex);
+	glActiveTexture(_textureUnit);
+	glBindTexture(GL_TEXTURE_2D, m_depthTex);
 
 	//Create and set up the FBO 
-	glGenFramebuffers(1, &mShadowFBO); 
-	glBindFramebuffer(GL_FRAMEBUFFER, mShadowFBO); 
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, mDepthTex, 0);
+	glGenFramebuffers(1, &m_shadowFBO); 
+	glBindFramebuffer(GL_FRAMEBUFFER, m_shadowFBO); 
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthTex, 0);
 	GLenum drawBuffers[] = { GL_NONE }; 
 	glDrawBuffers(1, drawBuffers);
 	
@@ -51,23 +56,15 @@ void ShadowMap::CreateShadowMapTexture(int i)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0); 
 }
 
-void ShadowMap::SetLightPos(vec3 pos)
+void ShadowMap::UpdateViewMatrix(vec3 lightPos, vec3 target)
 { 
-	mViewMatrix = glm::lookAt(pos, pos+vec3(0.0f, -1.0f, -0.001f), vec3(0.0, 1.0, 0.0));
+	m_viewMatrix = glm::lookAt(lightPos, target, vec3(0.0f, 1.0f, 0.0f));
 }
 
 void ShadowMap::ChangeResolution(int res)
 {
-	mResolution = res;
-	glBindTexture(GL_TEXTURE_2D, mDepthTex); 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, mResolution, mResolution, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL);
+	m_resolution = res;
+	glBindTexture(GL_TEXTURE_2D, m_depthTex); 
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_resolution, m_resolution, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 	glBindTexture(GL_TEXTURE_2D, 0); 
-}
-
-mat4 ShadowMap::GetBiasMatrix()
-{
-	return  mat4( 0.5, 0.0, 0.0, 0.0,
-                  0.0, 0.5, 0.0, 0.0,
-                  0.0, 0.0, 0.5, 0.0,
-                  0.5, 0.5, 0.5, 1.0);
 }

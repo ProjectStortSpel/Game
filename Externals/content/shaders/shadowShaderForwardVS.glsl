@@ -9,19 +9,14 @@ layout( location = 5 ) in mat4 MVP;
 layout( location = 9 ) in mat3 NormalMatrix;
 // used locations 9-12
 
-//flat out int instanceID;
-
-out vec3 Normal;
-out vec3 Tan;
-out vec3 BiTan;
 out vec2 TexCoord;
+
+
+//Matrices-----------------------------------------
+uniform mat4 ProjectionMatrix;	
 
 void main()
 {
-	Normal = normalize( NormalMatrix * VertexNormal);
-	Tan = normalize( NormalMatrix * VertexTangent);
-	BiTan = normalize( NormalMatrix * VertexBiTangent);
 	TexCoord = VertexTexCoord;
-	gl_Position = MVP * vec4(VertexPosition, 1.0);
-	//instanceID = gl_InstanceID;
+	gl_Position = MVP * vec4(VertexPosition,1.0);
 }

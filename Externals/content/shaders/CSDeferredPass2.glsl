@@ -8,6 +8,7 @@ struct Pointlight {	vector3 Position; vector3 Intensity; vector3 Color; float Ra
 
 // ---- INPUTS ----
 uniform sampler2D DepthTex;
+uniform sampler2DShadow ShadowDepthTex;
 layout (rgba32f, binding = 0) uniform readonly image2D NormalTex;
 layout (rgba8, binding = 1) uniform readonly image2D ColorTex;
 layout (rgba8, binding = 2) uniform readonly image2D RandomTex;
@@ -20,6 +21,8 @@ layout (rgba32f, binding = 5) uniform image2D output_image;
 // ---- Uniforms ---- 
 uniform mat4 ViewMatrix;
 uniform mat4 InvProjection;
+uniform mat4 BiasMatrix;
+uniform mat4 ShadowViewProj;
 
 // ---- PER THREAD GLOBALS ---- 
 ivec2 g_threadID;		// sample pixel position
@@ -64,6 +67,8 @@ void main()
 	g_albedo.xyz = inputMap2.xyz;
 	g_depthVal = inputMap0.x;
 	g_viewPos = reconstructPosition(g_depthVal);
+
+	
 
 	// Values
 	vec3 ambient = vec3(0.0);
@@ -113,10 +118,6 @@ void main()
 
 
 // ---- FUNCTIONS ---- 
-vec2 getRandom()
-{
-	return normalize( imageLoad(RandomTex, ivec2(gl_LocalInvocationID.xy)).xy * 2.0f - 1.0f );
-}
 
 float ComputeGlow()
 {
@@ -135,22 +136,22 @@ float ComputeGlow()
 	- - - - - - 5 - - - - - - 
 	*/
 	float glow = 0;
-	/*glow += imageLoad(ColorTex, g_threadID + ivec2(-6, 0)).w * 0.0044299121055113265;
-	glow += imageLoad(ColorTex, g_threadID + ivec2(-4, -4)).w * 0.00895781211794;
-	glow += imageLoad(ColorTex, g_threadID + ivec2(0, -5)).w * 0.0215963866053;
-	glow += imageLoad(ColorTex, g_threadID + ivec2(3, -3)).w * 0.0443683338718;
-	glow += imageLoad(ColorTex, g_threadID + ivec2(-3, 0)).w * 0.0776744219933;
-	glow += imageLoad(ColorTex, g_threadID + ivec2(-1, -1)).w * 0.115876621105;
-	glow += imageLoad(ColorTex, g_threadID + ivec2(0, -1)).w * 0.147308056121;
-	glow += imageLoad(ColorTex, g_threadID).w * 0.159576912161;
-	glow += imageLoad(ColorTex, g_threadID + ivec2(0,  1)).w * 0.147308056121;
-	glow += imageLoad(ColorTex, g_threadID + ivec2(1,  1)).w * 0.115876621105;
-	glow += imageLoad(ColorTex, g_threadID + ivec2(3,  0)).w * 0.0776744219933;
-	glow += imageLoad(ColorTex, g_threadID + ivec2(-3,  3)).w * 0.0443683338718;
-	glow += imageLoad(ColorTex, g_threadID + ivec2(0,  5)).w * 0.0215963866053;
-	glow += imageLoad(ColorTex, g_threadID + ivec2(4,  4)).w * 0.00895781211794;
-	glow += imageLoad(ColorTex, g_threadID + ivec2(6,  0)).w * 0.0044299121055113265;
-	*/
+	//glow += imageLoad(ColorTex, g_threadID + ivec2(-6, 0)).w * 0.0044299121055113265;
+	//glow += imageLoad(ColorTex, g_threadID + ivec2(-4, -4)).w * 0.00895781211794;
+	//glow += imageLoad(ColorTex, g_threadID + ivec2(0, -5)).w * 0.0215963866053;
+	//glow += imageLoad(ColorTex, g_threadID + ivec2(3, -3)).w * 0.0443683338718;
+	//glow += imageLoad(ColorTex, g_threadID + ivec2(-3, 0)).w * 0.0776744219933;
+	//glow += imageLoad(ColorTex, g_threadID + ivec2(-1, -1)).w * 0.115876621105;
+	//glow += imageLoad(ColorTex, g_threadID + ivec2(0, -1)).w * 0.147308056121;
+	//glow += imageLoad(ColorTex, g_threadID).w * 0.159576912161;
+	//glow += imageLoad(ColorTex, g_threadID + ivec2(0,  1)).w * 0.147308056121;
+	//glow += imageLoad(ColorTex, g_threadID + ivec2(1,  1)).w * 0.115876621105;
+	//glow += imageLoad(ColorTex, g_threadID + ivec2(3,  0)).w * 0.0776744219933;
+	//glow += imageLoad(ColorTex, g_threadID + ivec2(-3,  3)).w * 0.0443683338718;
+	//glow += imageLoad(ColorTex, g_threadID + ivec2(0,  5)).w * 0.0215963866053;
+	//glow += imageLoad(ColorTex, g_threadID + ivec2(4,  4)).w * 0.00895781211794;
+	//glow += imageLoad(ColorTex, g_threadID + ivec2(6,  0)).w * 0.0044299121055113265;
+	
 	return glow;
 }
 
@@ -170,6 +171,12 @@ vec3 getPosition(ivec2 samplePos)
     vec4 D = InvProjection * H;
     return (D.xyz / D.w);
 }
+
+vec2 getRandom()
+{
+	return normalize( imageLoad(RandomTex, ivec2(gl_LocalInvocationID.xy)).xy * 2.0f - 1.0f );
+}
+
 
 float doAmbientOcclusion( vec2 offset )
 {
@@ -249,13 +256,33 @@ void phongModelDirLight(out vec3 ambient, out vec3 diffuse, out vec3 spec)
 
 	if(diffuseFactor > 0)
 	{
+		// For shadows
+		vec4 worldPos = inverse(ViewMatrix) * vec4(g_viewPos, 1.0);
+		vec4 shadowCoord = BiasMatrix * ShadowViewProj * worldPos;
+		float shadow = 1.0;// = textureProj(ShadowDepthTex, shadowCoord);
+		// The sum of the comparisons with nearby texels  
+		float sum = 0;
+		// Sum contributions from texels around ShadowCoord  
+		sum += textureProjOffset(ShadowDepthTex, shadowCoord, ivec2(-1,-1));  
+		sum += textureProjOffset(ShadowDepthTex, shadowCoord, ivec2(-1,1));  
+		sum += textureProjOffset(ShadowDepthTex, shadowCoord, ivec2(1,1));  
+		sum += textureProjOffset(ShadowDepthTex, shadowCoord, ivec2(1,-1));  
+
+		float shadowResult = sum * 0.25;
+		float bias = min( pow(shadowCoord.z, 10 - 10*shadowCoord.z), 0.40);
+
+		if ( shadowResult < (shadowCoord.z - bias)/shadowCoord.w) 
+		{
+		   shadow = shadowResult;
+		}
+
 		// diffuse
-		diffuse = diffuseFactor * thisLightColor * thisLightIntensity.y;
+		diffuse = diffuseFactor * thisLightColor * thisLightIntensity.y * shadow;
 
 		// specular
 		vec3 v = reflect( lightVec, g_normal );
 		float specFactor = pow( max( dot(v, E), 0.0 ), g_shininess );
-		spec = specFactor * thisLightColor * thisLightIntensity.z * g_ks;        
+		spec = specFactor * thisLightColor * thisLightIntensity.z * g_ks * shadow;        
 	}
 
 	return;

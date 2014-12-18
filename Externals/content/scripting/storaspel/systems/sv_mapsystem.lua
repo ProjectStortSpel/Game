@@ -29,7 +29,6 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
     world:CreateComponentAndAddTo("MapPosition", entity)
     local mapPosComp = self:GetComponent(entity, "MapPosition", 0)
     mapPosComp:SetInt2(posX, posZ)
-	
 
     if tiletype == 111 then -- 111 = o = out
         world:CreateComponentAndAddTo("Void", entity)
@@ -39,7 +38,6 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
 		comp:SetModel("hole_test", "hole")
-
 --  No need???
 --    elseif tiletype == 46 then -- 46 = . = grass
 --        world:CreateComponentAndAddTo("", entity)
