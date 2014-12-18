@@ -129,7 +129,7 @@ void GraphicDevice::WriteShadowMapDepth()
 
 	//glCullFace(GL_FRONT);
 	glEnable(GL_POLYGON_OFFSET_FILL);
-	glPolygonOffset(4.5, 18000.0);	//glPolygonOffset(-1.0, 0.0);	glPolygonMode(GL_FRONT, GL_FILL);
+	glPolygonOffset(4.5, 18000.0);
 	glActiveTexture(GL_TEXTURE10);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -197,7 +197,6 @@ void GraphicDevice::WriteShadowMapDepth()
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glCullFace(GL_BACK);
-	glPolygonMode(GL_BACK, GL_FILL);
 	glDisable(GL_POLYGON_OFFSET_FILL);
 	//------------------------------
 }
