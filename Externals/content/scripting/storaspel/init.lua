@@ -18,9 +18,14 @@ if Server then
 	require "sv_playerssystem"
 	require "sv_createspawnpointsystem"
 	require "sv_spawnsystem"
+	require "sv_lobbysystem"
 end
+
+
 if Client then
 --require "cl_pickingphasesystem"
+	require "cl_lobbysystem"
+
 end
 
 
@@ -48,9 +53,11 @@ if Server then
 	worldCreator:AddSystemToCurrentGroup(PlayersSystem)
 	worldCreator:AddSystemToCurrentGroup(CreateSpawnpointSystem)
 	worldCreator:AddSystemToCurrentGroup(SpawnSystem)
+	worldCreator:AddSystemToCurrentGroup(ServerLobbySystem)
 end
 
 if Client then
+	worldCreator:AddSystemToCurrentGroup(ClientLobbySystem)
 --worldCreator:AddSystemToCurrentGroup(ClientSendCardSystem)
 end
 
