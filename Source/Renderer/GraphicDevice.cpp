@@ -119,7 +119,6 @@ void GraphicDevice::Update(float _dt)
 	m_lightDefaults[2] = m_dirLightDirection.z;	//dir z
 	BufferDirectionalLight(&m_lightDefaults[0]);
 	m_shadowMap->UpdateViewMatrix(vec3(8, 0, 8) - (10.0f*normalize(m_dirLightDirection)), vec3(8, 0, 8));
-	
 }
 
 void GraphicDevice::WriteShadowMapDepth()
