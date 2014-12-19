@@ -202,6 +202,10 @@ float doAmbientOcclusion( vec2 offset )
 	ssaoSamp.y = int(min(max(g_threadID.y + ivec2(offset).y, 0), gl_WorkGroupSize.y*gl_NumWorkGroups.y-1));
 
 	vec3 diff = getPosition(ssaoSamp) - g_viewPos;
+
+	if(diff.z > 0.25)
+		return 0.0;
+
 	vec3 v = normalize(diff);
 	float d = length(diff)*g_scale;
 	return max(0.0,dot(g_normal,v)-g_bias)*(1.0/(1.0+d))*g_intensity;
@@ -209,7 +213,7 @@ float doAmbientOcclusion( vec2 offset )
 
 float ComputeSSAO()
 {
-	float g_sample_rad = 0.2;
+	float g_sample_rad = 0.18;
 	vec2 vec[4] = { vec2(1,0), vec2(-1,0), vec2(0,1), vec2(0,-1) };
 
 	vec2 rand = getRandom();
