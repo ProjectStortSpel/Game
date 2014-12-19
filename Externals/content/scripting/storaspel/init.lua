@@ -27,6 +27,7 @@ if Client then
 --require "cl_pickingphasesystem"
 	require "cl_lobbysystem"
 	require "cl_cardpositionsystem"
+	require "cl_cardlogicsystem"
 end
 
 
@@ -61,6 +62,7 @@ end
 if Client then
 	worldCreator:AddSystemToCurrentGroup(ClientLobbySystem)
 	worldCreator:AddSystemToCurrentGroup(CardPositionSystem)
+	worldCreator:AddSystemToCurrentGroup(SelectCardSystem)
 --worldCreator:AddSystemToCurrentGroup(ClientSendCardSystem)
 end
 

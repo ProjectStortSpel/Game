@@ -126,7 +126,7 @@ DealCardSystem.DealCards = function (self, numCards)
 			Net.SendEntity(card, ip, port)	
 		end
 		
-		Net.Send(Net.StartPack("SelectCards"), ip, port)
+		Net.Send(Net.StartPack("Client.SelectCards"), ip, port)
 	end
 
 end
@@ -159,34 +159,15 @@ DealCardSystem.GetPlayers = function (self)
 	return players
 end
 
+Net.Receive("Server.SelectCards", function( id, ip, port )	
 
-
-
-SelectCardSystem = System()
-SelectCardSystem.DealCard = false
-SelectCardSystem.FirstDeal = true
-
-SelectCardSystem.Initialize = function ( self )
-	self:SetName("SelectCardSystem")
-	self:AddComponentTypeToFilter("CardAction", FilterType.Mandatory)
-	self:AddComponentTypeToFilter("DealtCard", FilterType.Mandatory)
-
-	print("SelectCardSystem Initialized")
-end
-
-SelectCardSystem.Update = function( self, dt )
-
-
-
-end
-
-SelectCardSystem.ReceiveSelectedCards = function( id, ip, port )
-	
+	print("Client selected cards:")
+	print("")
 	for i = 1, 5 do
 
 		local card = Net.ReadInt(id)
-
-		if  SelectCardSystem:EntityHasComponent(card, "DealtCard") then
+		print("EntID: " .. card)
+		if  DealCardSystem:EntityHasComponent(card, "DealtCard") then
 			
 			local player = world:GetComponent(card, "DealtCard", "PlayerEntityId"):GetInt()
 			local playerIp = world:GetComponent(player, "NetConnection", "IpAddress"):GetString()
@@ -199,21 +180,17 @@ SelectCardSystem.ReceiveSelectedCards = function( id, ip, port )
 				local unit = world:GetComponent(player, "UnitEntityId", "Id"):GetInt()
 				world:SetComponent(card, "CardStep", "UnitEntityId", unit)
 			else
-				Net.Send(Net.StartPack("SelectCards"), ip, port)
+				Net.Send(Net.StartPack("Client.SelectCards"), ip, port)
 				return
 			end
 
 		else
-			Net.Send(Net.StartPack("SelectCards"), ip, port)
+			Net.Send(Net.StartPack("Client.SelectCards"), ip, port)
 			return
 		end
 
-	end
-
-	
-	
-end
-
+	end	
+end)
 
 
 --CardDeckSystem.GetStartingCards = function (self, nrOfCardsPerPlayer, nrOfPlayers)
