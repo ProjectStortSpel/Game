@@ -81,7 +81,7 @@ bool EntityTable::EntityPassFilters(unsigned int _entityId, const BitSet::DataTy
 		if (!( (_mandatoryMask[i] & componentBitSet[i]) == _mandatoryMask[i]) )
 			return false;
 		/* Entity has none of the atleast-one-of components */
-		else if ((_oneOfMask[i] & componentBitSet[i]) != 0)
+		else if ((_oneOfMask[i] & componentBitSet[i]) == 0 && _oneOfMask[i])
 			return false;
 		/* Entity has atleast one of the excluded components  */
 		else if ((_exclusionMask[i] & componentBitSet[i]) != 0)
