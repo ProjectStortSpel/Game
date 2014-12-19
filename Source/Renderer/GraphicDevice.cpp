@@ -86,6 +86,7 @@ void GraphicDevice::PollEvent(SDL_Event _event)
 	}
 }
 
+float lightCounter = 0;
 void GraphicDevice::Update(float _dt)
 {
 	m_dt = _dt; m_fps = 1 / _dt;
@@ -110,12 +111,14 @@ void GraphicDevice::Update(float _dt)
 	vram << "VRAM usage: " << ((float)m_vramUsage/1024.f)/1024.f << " Mb ";
 	m_textRenderer.RenderSimpleText(vram.str(), 20, 0);
 
-	//m_dirLightDirection += vec3(0.0, 0.0, -0.0025);
-	//m_lightDefaults[0] = m_dirLightDirection.x;	//dir x
-	//m_lightDefaults[1] = m_dirLightDirection.y;	//dir y
-	//m_lightDefaults[2] = m_dirLightDirection.z;	//dir z
-	//BufferDirectionalLight(&m_lightDefaults[0]);
-	//m_shadowMap->UpdateViewMatrix(vec3(8, 0, 8) - (10.0f*normalize(m_dirLightDirection)), vec3(8, 0, 8));
+	lightCounter += 0.15*_dt;
+	m_dirLightDirection = vec3(-0.38, -1.0, 3*sin(lightCounter));
+
+	m_lightDefaults[0] = m_dirLightDirection.x;	//dir x
+	m_lightDefaults[1] = m_dirLightDirection.y;	//dir y
+	m_lightDefaults[2] = m_dirLightDirection.z;	//dir z
+	BufferDirectionalLight(&m_lightDefaults[0]);
+	m_shadowMap->UpdateViewMatrix(vec3(8, 0, 8) - (10.0f*normalize(m_dirLightDirection)), vec3(8, 0, 8));
 }
 
 void GraphicDevice::WriteShadowMapDepth()
@@ -129,7 +132,7 @@ void GraphicDevice::WriteShadowMapDepth()
 
 	//glCullFace(GL_FRONT);
 	glEnable(GL_POLYGON_OFFSET_FILL);
-	glPolygonOffset(4.5, 18000.0);	//glPolygonOffset(-1.0, 0.0);	glPolygonMode(GL_FRONT, GL_FILL);
+	glPolygonOffset(4.5, 18000.0);
 	glActiveTexture(GL_TEXTURE10);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -197,7 +200,6 @@ void GraphicDevice::WriteShadowMapDepth()
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glCullFace(GL_BACK);
-	glPolygonMode(GL_BACK, GL_FILL);
 	glDisable(GL_POLYGON_OFFSET_FILL);
 	//------------------------------
 }

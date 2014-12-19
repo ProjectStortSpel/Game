@@ -171,7 +171,7 @@ vec3 getPosition(ivec2 samplePos)
 	float depthVal = texelFetch(DepthTex, samplePos, 0).x;
 
 
-	vec2 ndc = vec2(g_threadID) / vec2( gl_WorkGroupSize.xy*gl_NumWorkGroups.xy - ivec2(1,1)) * 2.0f - 1.0f;
+	vec2 ndc = vec2(samplePos) / (vec2( gl_WorkGroupSize.xy*gl_NumWorkGroups.xy) ) * 2.0f - 1.0f;
 
     vec4 H = vec4(	
 					ndc,
@@ -191,9 +191,9 @@ vec2 getRandom()
 
 float doAmbientOcclusion( vec2 offset )
 {
-	float g_scale = 0.4;
-	float g_intensity = 0.3;
-	float g_bias = 0.00;
+	float g_scale = 1.6;
+	float g_intensity = 3;
+	float g_bias = 0.25;
 
 	offset = offset * vec2(gl_WorkGroupSize.xy*gl_NumWorkGroups.xy);
 
@@ -209,7 +209,7 @@ float doAmbientOcclusion( vec2 offset )
 
 float ComputeSSAO()
 {
-	float g_sample_rad = 0.12;
+	float g_sample_rad = 0.2;
 	vec2 vec[4] = { vec2(1,0), vec2(-1,0), vec2(0,1), vec2(0,-1) };
 
 	vec2 rand = getRandom();

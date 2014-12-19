@@ -54,7 +54,11 @@ void main()
 
 		NormalData.xy = Normal.xy;						// rg = normal
 		NormalData.z = 0.0;								// b = spec reflec
-		NormalData.w = 0.0;								// a = spec shine
+		float shine = 0.0;
+		if(Normal.z > 0)
+			NormalData.w = shine*0.5;						// a = spec shine + normal.z flag
+		else
+			NormalData.w = shine*0.5 + 0.5;
 	}
 	else if(TexFlag == 2) //normal only
 	{
@@ -63,9 +67,14 @@ void main()
 
 		normal_map = (normal_map * 2.0f) - 1.0f;
 		mat3 texSpace = mat3(Tan, BiTan, Normal);
-		NormalData.xy = normalize( texSpace * normal_map ).xy;	// rg = normal
+		vec3 allNormalData = normalize( texSpace * normal_map );
+		NormalData.xy = allNormalData.xy;
 		NormalData.z = 0.4;										// b = spec reflec
-		NormalData.w = 0.05;										// a = spec shine
+		float shine = 0.05;										// a = spec shine
+		if(allNormalData.z > 0)
+			NormalData.w = shine*0.5;						// a = spec shine + normal.z flag
+		else
+			NormalData.w = shine*0.5 + 0.5;
 	}
 	else if(TexFlag == 3) //specular only
 	{
@@ -74,15 +83,21 @@ void main()
 
 		NormalData.xy = Normal.xy;						// rg = normal
 		NormalData.z = specglow_map.x;					// b = spec reflec
-		NormalData.w = specglow_map.y;					// a = spec shine
+		if(Normal.z > 0)
+			NormalData.w = specglow_map.y*0.5;						// a = spec shine + normal.z flag
+		else
+			NormalData.w = specglow_map.y*0.5 + 0.5;
 	}
 	else if(TexFlag == 4) //glow only
 	{
 		ColorData.xyz = vec3(0.5, 0.5, 0.8);			// rgb = color
 		ColorData.w = specglow_map.z;					// a = glow
-
 		NormalData.xy = Normal.xy;						// rg = normal
 		NormalData.z = 0.0;								// b = spec reflec
-		NormalData.w = 0.0;								// a = spec shine
+		float shine = 0.0;										// a = spec shine
+		if(Normal.z > 0)
+			NormalData.w = shine*0.5;						// a = spec shine + normal.z flag
+		else
+			NormalData.w = shine*0.5 + 0.5;
 	}
 }
