@@ -357,5 +357,8 @@
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_cardlogicsystem.lua">
       <Filter>Scripting\Systems</Filter>
     </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_cardpositionsystem.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
   </ItemGroup>
 </Project>

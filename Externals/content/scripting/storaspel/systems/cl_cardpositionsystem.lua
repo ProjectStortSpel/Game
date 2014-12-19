@@ -63,7 +63,7 @@ end
 
 CardPositionSystem.Initialize = function(self)
 	self:SetName("Card position System")
-	self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
+	--self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("CardAction", FilterType.Mandatory)
 	
 	print("Card position System initialized!")
@@ -71,8 +71,15 @@ end
 
 CardPositionSystem.OnEntityAdded = function(self, entityId)
 
+	print("CardPositionSystem.OnEntityAdded")
+
+	world:CreateComponentAndAddTo("Model", entityId)
+	world:CreateComponentAndAddTo("Position", entityId)
+	world:CreateComponentAndAddTo("Rotation", entityId)
+	world:CreateComponentAndAddTo("Scale", entityId)
+
 	local model = self:GetComponent(entityId, "Model", 0)
-	local action = self:GetComponent(entityId, "CardAction", 0)
+	local action = self:GetComponent(entityId, "CardAction", 0):GetString()
 	if action == "Forward" then
 		model:SetModel("forward", "cards")
 	elseif action == "Backward" then
