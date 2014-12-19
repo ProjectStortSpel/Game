@@ -130,9 +130,7 @@ bool ClientNetwork::Connect()
 		*m_socketBound = true;
 	}
 
-	m_socket->SetTimeoutDelay(5000);
-	m_socket->SetNonBlocking(false);
-	m_socket->SetNoDelay(true);
+	
 
 	bool connected = false;
 	//for (int i = 0; i < 5; ++i)
@@ -141,7 +139,7 @@ bool ClientNetwork::Connect()
 		//if (connected)
 		//	break;
 
-		NetSleep(1500);
+		//NetSleep(1500);
 	//}
 
 	if (!connected)
@@ -150,6 +148,10 @@ bool ClientNetwork::Connect()
 		TriggerEvent(m_onFailedToConnect, nc, 0);
 		return false;
 	}
+
+	m_socket->SetTimeoutDelay(5000);
+	m_socket->SetNonBlocking(false);
+	m_socket->SetNoDelay(true);
 
 	*m_connected = true;
 	
