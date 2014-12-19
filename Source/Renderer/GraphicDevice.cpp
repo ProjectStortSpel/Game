@@ -86,6 +86,7 @@ void GraphicDevice::PollEvent(SDL_Event _event)
 	}
 }
 
+float lightCounter = 0;
 void GraphicDevice::Update(float _dt)
 {
 	m_dt = _dt; m_fps = 1 / _dt;
@@ -110,12 +111,15 @@ void GraphicDevice::Update(float _dt)
 	vram << "VRAM usage: " << ((float)m_vramUsage/1024.f)/1024.f << " Mb ";
 	m_textRenderer.RenderSimpleText(vram.str(), 20, 0);
 
-	//m_dirLightDirection += vec3(0.0, 0.0, -0.0025);
-	//m_lightDefaults[0] = m_dirLightDirection.x;	//dir x
-	//m_lightDefaults[1] = m_dirLightDirection.y;	//dir y
-	//m_lightDefaults[2] = m_dirLightDirection.z;	//dir z
-	//BufferDirectionalLight(&m_lightDefaults[0]);
-	//m_shadowMap->UpdateViewMatrix(vec3(8, 0, 8) - (10.0f*normalize(m_dirLightDirection)), vec3(8, 0, 8));
+	lightCounter += 0.15*_dt;
+	m_dirLightDirection = vec3(-0.38, -1.0, 3*sin(lightCounter));
+
+	m_lightDefaults[0] = m_dirLightDirection.x;	//dir x
+	m_lightDefaults[1] = m_dirLightDirection.y;	//dir y
+	m_lightDefaults[2] = m_dirLightDirection.z;	//dir z
+	BufferDirectionalLight(&m_lightDefaults[0]);
+	m_shadowMap->UpdateViewMatrix(vec3(8, 0, 8) - (10.0f*normalize(m_dirLightDirection)), vec3(8, 0, 8));
+	
 }
 
 void GraphicDevice::WriteShadowMapDepth()

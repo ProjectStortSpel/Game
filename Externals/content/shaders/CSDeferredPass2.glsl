@@ -111,11 +111,11 @@ void main()
 
 
 	// Do frag calcs here
-	FragColor = vec4(ambient + diffuse, 1.0) * vec4(g_albedo, 1.0) * SSAOvec + vec4(spec, 0.0f) + glowvec;
+	//FragColor = vec4(ambient + diffuse, 1.0) * vec4(g_albedo, 1.0) * SSAOvec + vec4(spec, 0.0f) + glowvec;
 	//FragColor = glowvec;
 	//FragColor = SSAOvec;
 	//FragColor = vec4( g_normal, 1.0);
-	//FragColor = vec4( g_albedo   +g_normal-g_normal , 1.0 )-vec4( g_albedo   +g_normal-g_normal , 1.0 ) +SSAOvec +glowvec-glowvec;
+	FragColor = vec4( g_albedo   +g_normal-g_normal , 1.0 )-vec4( g_albedo   +g_normal-g_normal , 1.0 ) +SSAOvec +glowvec-glowvec;
 	//FragColor = vec4( vec3(g_normal  + g_viewPos-g_viewPos +g_albedo-g_albedo), 1.0 ) + SSAOvec-SSAOvec +glowvec-glowvec;
 	//FragColor = vec4( vec3(g_depthVal), 1.0 );
 	
