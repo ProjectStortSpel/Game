@@ -207,14 +207,26 @@ void GameCreator::UpdateNetwork(float _dt)
 	if (server->IsRunning())
 	{
 		server->Update(_dt);
-		while (server->PopAndExecutePacket() > 0) {}
+		int tmp = 0;
+		while (server->PopAndExecutePacket() > 0) 
+		{
+			tmp++;
+			if (tmp >= 5)
+				break;;
+		}
 	}
 
 	Network::ClientNetwork* client = NetworkInstance::GetClient();
 	if (client->IsConnected())
 	{
 		client->Update(_dt);
-		while (client->PopAndExecutePacket() > 0) {}
+		int tmp = 0;
+		while (client->PopAndExecutePacket() > 0) 
+		{
+			tmp++;
+			if (tmp >= 5)
+				break;;
+		}
 	}
 }
 

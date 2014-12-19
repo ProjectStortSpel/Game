@@ -317,38 +317,68 @@ int WinSocket::Receive(char* _buffer, int _length, int _flags)
 
 int WinSocket::Send(char* _buffer, int _length, int _flags)
 {
-	short len = 0;
-	len = htons(_length);
+	u_long packet_size = htonl(_length);
 
-	//if (send(m_socket, (char*)&len, 2, _flags) != SOCKET_ERROR)
-	//{
-		int result = send(m_socket, _buffer, _length, _flags);
-		if (result == SOCKET_ERROR)
+	if (send(m_socket, (char*)&packet_size, 4, 0) > 0)
+	{
+		int result = send(m_socket, _buffer, _length, 0);
+		if (result < 0)
 		{
 			if (NET_DEBUG)
-				printf("Failed to send packet of size '%i'. Error Code: %d.\n", _length, WSAGetLastError());
+				printf("Failed to send packet of size '%iä. Error Code: %d.\n", _length, WSAGetLastError());
 
 			return -1;
 		}
-		return result;
-	//}
-	return -1;
 
+		printf("Sent packet with size: %i.\n", result);
+		return result;
+	}
+
+	return -1;
 }
 int WinSocket::Receive(char* _buffer, int _length, int _flags)
 {
-	short size = 0;
-
-	int dataReceived = 0;
-	do
+	u_long packet_size;
+	int bytes_to_read = 4;
+	int result;
+	char* p_size = (char*)&packet_size;
+	//NetSleep(0.5);
+	while (bytes_to_read > 0)
 	{
-		size = recv(m_socket, _buffer + dataReceived, MAX_PACKET_SIZE, 0);
-		if(size > 0)
-			dataReceived += size;
+		result = recv(m_socket, p_size, bytes_to_read, 0);
+		if (result > 0)
+		{
+			bytes_to_read -= result;
+			p_size += result;
+		}
+		else if (result == 0 || this->m_active == 0)
+		{
+			printf("0\n");
+			return 0;
+		}
+	}
 
-	} while (size > 0);
+	packet_size = ntohl(packet_size);
+	bytes_to_read = packet_size;
+	int totalSize = 0;
+	while (bytes_to_read > 0)
+	{
+		result = recv(m_socket, _buffer, bytes_to_read, 0);
+		if (result > 0)
+		{
+			bytes_to_read -= result;
+			_buffer += result;
+			totalSize += result;
+		}
+		else if (result == 0 || this->m_active == 0)
+		{
+			printf("0 no2\n");
+			return 0;
+		}
+	}
 
-	return dataReceived;
+	printf("Received packet with size: %i.\n", totalSize);
+	return totalSize;
 }
 
 
