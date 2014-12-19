@@ -113,7 +113,7 @@ void main()
 	// Do frag calcs here
 	FragColor = vec4(ambient + diffuse, 1.0) * vec4(g_albedo, 1.0) * SSAOvec + vec4(spec, 0.0f) + glowvec;
 	//FragColor = glowvec;
-	FragColor = SSAOvec;
+	//FragColor = SSAOvec;
 	//FragColor = vec4( g_normal, 1.0);
 	//FragColor = vec4( g_albedo   +g_normal-g_normal , 1.0 )-vec4( g_albedo   +g_normal-g_normal , 1.0 ) +SSAOvec +glowvec-glowvec;
 	//FragColor = vec4( vec3(g_normal  + g_viewPos-g_viewPos +g_albedo-g_albedo), 1.0 ) + SSAOvec-SSAOvec +glowvec-glowvec;
@@ -191,8 +191,8 @@ vec2 getRandom()
 
 float doAmbientOcclusion( vec2 offset )
 {
-	float g_scale = 0.8;
-	float g_intensity = 1.2;
+	float g_scale = 0.4;
+	float g_intensity = 0.3;
 	float g_bias = 0.00;
 
 	offset = offset * vec2(gl_WorkGroupSize.xy*gl_NumWorkGroups.xy);
