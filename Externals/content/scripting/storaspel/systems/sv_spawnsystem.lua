@@ -12,9 +12,6 @@ SpawnSystem.Initialize = function(self)
 	print("SpawnSystem initialized!")
 end
 
-SpawnSystem.PostInitialize = function(self)
-
-end
 
 SpawnSystem.OnEntityAdded = function(self, entityId)
 	

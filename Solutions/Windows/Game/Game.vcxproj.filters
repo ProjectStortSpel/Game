@@ -333,9 +333,6 @@
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_playerssystem.lua">
       <Filter>Scripting\Systems</Filter>
     </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cardlogicsystem.lua">
-      <Filter>Scripting\Systems</Filter>
-    </None>
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_pickingphasesystem.lua">
       <Filter>Scripting\Systems</Filter>
     </None>
@@ -349,6 +346,18 @@
       <Filter>Scripting\Systems</Filter>
     </None>
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_createspawnpointsystem.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_lobbysystem.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_lobbysystem.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_cardlogicsystem.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_cardpositionsystem.lua">
       <Filter>Scripting\Systems</Filter>
     </None>
   </ItemGroup>

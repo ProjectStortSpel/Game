@@ -272,7 +272,9 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <None Include="..\..\..\Externals\content\scripting\storaspel\components\phasecomponents.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\components\playercomponents.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\init.lua" />
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cardlogicsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_cardpositionsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_cardlogicsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_lobbysystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_pickingphasesystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\discosystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\maplogicsystem.lua" />
@@ -280,6 +282,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\networkconnectsystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\networkmessagessystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_createspawnpointsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_lobbysystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_mapsystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_moveplayersystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_onplayerconnected.lua" />

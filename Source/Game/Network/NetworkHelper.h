@@ -36,6 +36,8 @@ public:
 
 	void ReceiveEntityKill(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _nc);
 
+	unsigned int NetToHost(unsigned int _idN);
+	unsigned int HostToNet(unsigned int _idH);
 
 };
 

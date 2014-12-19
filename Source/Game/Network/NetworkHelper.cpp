@@ -325,3 +325,21 @@ void NetworkHelper::ReceiveEntityKill(Network::PacketHandler* _ph, uint64_t _id,
 		m_HtoN.erase(idH);
 	}
 }
+
+unsigned int NetworkHelper::NetToHost(unsigned int _idN)
+{
+	if (m_NtoH.find(_idN) != m_NtoH.end())
+	{
+		return m_NtoH[_idN];
+	}
+	return 0;
+}
+
+unsigned int NetworkHelper::HostToNet(unsigned int _idH)
+{
+	if (m_HtoN.find(_idH) != m_HtoN.end())
+	{
+		return m_HtoN[_idH];
+	}
+	return 0;
+}

@@ -10,11 +10,19 @@ CardDeckSystem.Update = function( self, dt )
 	
 end
 
+CardDeckSystem.Initialize = function ( self )
+	self:SetName("SpawnSystem")
+	
+	self:AddComponentTypeToFilter("Unit", FilterType.Mandatory)
+
+	print("Card Deck System Initialized")
+end
+
 CardDeckSystem.PostInitialize = function ( self )
 
-	self:CreateDeck()
+	--self:CreateDeck()
 	
-	print("Card Deck System Initialized")
+	print("Card Deck System Post Initialized")
 end
 
 CardDeckSystem.CreateDeck = function (self)
