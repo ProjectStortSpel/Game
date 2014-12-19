@@ -159,38 +159,40 @@ DealCardSystem.GetPlayers = function (self)
 	return players
 end
 
-Net.Receive("Server.SelectCards", function( id, ip, port )	
+Net.Receive("Server.SelectCards", 
+	function( id, ip, port )	
 
-	print("Client selected cards:")
-	print("")
-	for i = 1, 5 do
+		print("Client selected cards:")
+		print("")
+		for i = 1, 5 do
 
-		local card = Net.ReadInt(id)
-		print("EntID: " .. card)
-		if  DealCardSystem:EntityHasComponent(card, "DealtCard") then
+			local card = Net.ReadInt(id)
+			print("EntID: " .. card)
+			if  DealCardSystem:EntityHasComponent(card, "DealtCard") then
 			
-			local player = world:GetComponent(card, "DealtCard", "PlayerEntityId"):GetInt()
-			local playerIp = world:GetComponent(player, "NetConnection", "IpAddress"):GetString()
-			local playerPort = world:GetComponent(player, "NetConnection", "Port"):GetInt()
+				local player = world:GetComponent(card, "DealtCard", "PlayerEntityId"):GetInt()
+				local playerIp = world:GetComponent(player, "NetConnection", "IpAddress"):GetString()
+				local playerPort = world:GetComponent(player, "NetConnection", "Port"):GetInt()
 
-			if playerIp == ip and playerPort == port then
-				world:RemoveComponentFrom("DealtCard", card)
-				world:CreateComponentAndAddTo("CardStep", card)
-				world:SetComponent(card, "CardStep", "Step", i)
-				local unit = world:GetComponent(player, "UnitEntityId", "Id"):GetInt()
-				world:SetComponent(card, "CardStep", "UnitEntityId", unit)
+				if playerIp == ip and playerPort == port then
+					world:RemoveComponentFrom("DealtCard", card)
+					world:CreateComponentAndAddTo("CardStep", card)
+					world:SetComponent(card, "CardStep", "Step", i)
+					local unit = world:GetComponent(player, "UnitEntityId", "Id"):GetInt()
+					world:SetComponent(card, "CardStep", "UnitEntityId", unit)
+				else
+					Net.Send(Net.StartPack("Client.SelectCards"), ip, port)
+					return
+				end
+
 			else
 				Net.Send(Net.StartPack("Client.SelectCards"), ip, port)
 				return
 			end
 
-		else
-			Net.Send(Net.StartPack("Client.SelectCards"), ip, port)
-			return
-		end
-
-	end	
-end)
+		end	
+	end
+)
 
 
 --CardDeckSystem.GetStartingCards = function (self, nrOfCardsPerPlayer, nrOfPlayers)
