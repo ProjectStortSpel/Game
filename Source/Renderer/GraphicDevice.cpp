@@ -112,7 +112,7 @@ void GraphicDevice::Update(float _dt)
 	m_textRenderer.RenderSimpleText(vram.str(), 20, 0);
 
 	lightCounter += 0.15*_dt;
-	m_dirLightDirection = vec3(-0.38, -1.0, 3*sin(lightCounter));
+	m_dirLightDirection = vec3(-0.38, -1.0, 2.5*sin(lightCounter));
 
 	m_lightDefaults[0] = m_dirLightDirection.x;	//dir x
 	m_lightDefaults[1] = m_dirLightDirection.y;	//dir y
