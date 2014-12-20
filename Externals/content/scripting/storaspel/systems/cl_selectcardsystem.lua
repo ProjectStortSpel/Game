@@ -45,8 +45,8 @@ SelectCardSystem.ToggleSelectCard = function( self, index )
 
 		if index2 == index then
 
-			if self:EntityHasComponent(cards[i], "SelectCard") then
-				
+			if world:EntityHasComponent(cards[i], "SelectCard") then
+
 				world:RemoveComponentFrom("SelectCard", cards[i])
 				world:RemoveComponentFrom("CardSelected", cards[i])
 
