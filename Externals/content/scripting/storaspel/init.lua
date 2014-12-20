@@ -8,8 +8,8 @@ require "cardcomponents"
 
 -- Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
-require "movementsystem"
-require "networkmessagessystem"
+require "sh_movementsystem"
+require "sh_networkmessagessystem"
 
 if Server then
 	require "sv_mapsystem"
@@ -27,7 +27,12 @@ if Client then
 --require "cl_pickingphasesystem"
 	require "cl_lobbysystem"
 	require "cl_cardpositionsystem"
-	require "cl_cardlogicsystem"
+	require "cl_givecardindexsystem"
+	require "cl_selectcardsystem"
+	require "cl_sortcardindexsystem"
+	require "cl_sortselectedcardssystem"
+	require "cl_sendselectedcardssystem"
+	--require "cl_givecardindexsystem"
 end
 
 
@@ -62,7 +67,11 @@ end
 if Client then
 	worldCreator:AddSystemToCurrentGroup(ClientLobbySystem)
 	worldCreator:AddSystemToCurrentGroup(CardPositionSystem)
+	worldCreator:AddSystemToCurrentGroup(GiveCardIndexSystem)
 	worldCreator:AddSystemToCurrentGroup(SelectCardSystem)
+	worldCreator:AddSystemToCurrentGroup(SortCardIndexSystem)
+	worldCreator:AddSystemToCurrentGroup(SortSelectedCardSystem)
+	worldCreator:AddSystemToCurrentGroup(SendSelectCardSystem)
 --worldCreator:AddSystemToCurrentGroup(ClientSendCardSystem)
 end
 
