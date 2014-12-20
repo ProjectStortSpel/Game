@@ -33,6 +33,9 @@ CardPositionSystem.Update = function(self, dt)
 
 	local entities = self:GetEntities()
 	for i = 1, #entities do
+		
+		local index = world:GetComponent(entities[i], "CardIndex", "Index"):GetInt()
+
 		local camera = graphics:GetCamera()
 		local px, py, pz = camera:GetPosition()
 		local lx, ly, lz = camera:GetLook()
@@ -40,9 +43,9 @@ CardPositionSystem.Update = function(self, dt)
 		local ux, uy, uz = camera:GetUp()
 		
 		local halfentities = #entities/2
-		px = px + lx * self.CameraDistance + rx * (-halfentities + i - 0.5) * 0.08 + ux * self.UpOffset
-		py = py + ly * self.CameraDistance + ry * (-halfentities + i - 0.5) * 0.08 + uy * self.UpOffset
-		pz = pz + lz * self.CameraDistance + rz * (-halfentities + i - 0.5) * 0.08 + uz * self.UpOffset
+		px = px + lx * self.CameraDistance + rx * (-halfentities + index - 0.5) * 0.08 + ux * self.UpOffset
+		py = py + ly * self.CameraDistance + ry * (-halfentities + index - 0.5) * 0.08 + uy * self.UpOffset
+		pz = pz + lz * self.CameraDistance + rz * (-halfentities + index - 0.5) * 0.08 + uz * self.UpOffset
 		
 		local rx, ry, rz
 		rx = 0.0
@@ -65,6 +68,7 @@ CardPositionSystem.Initialize = function(self)
 	self:SetName("Card position System")
 	--self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("CardAction", FilterType.Mandatory)
+	self:AddComponentTypeToFilter("CardIndex", FilterType.Mandatory)
 	
 	print("Card position System initialized!")
 end

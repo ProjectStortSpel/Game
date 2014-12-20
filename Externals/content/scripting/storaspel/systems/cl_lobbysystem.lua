@@ -40,8 +40,5 @@ ClientLobbySystem.NewGame = function(self, _ip, _port)
 	Console.Print("ClientLobbySystem.NewGame");
 
 	GameRunning = true
-
-	local id = Net.StartPack("NewGameLoaded");
-	Net.SendToServer(id);
 	
 end
