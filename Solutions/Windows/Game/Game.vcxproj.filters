@@ -375,5 +375,14 @@
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sh_movementsystem.lua">
       <Filter>Scripting\Systems</Filter>
     </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\components\gamestatecomponents.lua">
+      <Filter>Scripting\Components</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_createdecksystem.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_dealcardssystem.lua">
+      <Filter>Scripting\Systems</Filter>
+    </None>
   </ItemGroup>
 </Project>
