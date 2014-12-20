@@ -6,6 +6,18 @@ ServerLobbySystem.Initialize = function(self)
 
 	self:AddComponentTypeToFilter("Null", FilterType.Mandatory);
 	
+	Console.AddCommand("Start", 
+		function (command, ...)
+			
+			Console.Print("Game started");
+			GameRunning = true;
+			local id = Net.StartPack("NewGame");
+			Net.Broadcast(id);
+			Console.Print("NewGame");
+
+		end 
+	)
+
 	print("ServerLobbySystem initialized!");
 end
 
@@ -18,11 +30,11 @@ end
 
 ServerLobbySystem.UpdateServerOnline = function(self)
 	
-	if Input.GetKeyState(Key.Return) == InputState.Pressed and not Console.IsOpen() then
-		Console.Print("Game started");
-		GameRunning = true;
-		local id = Net.StartPack("NewGame");
-		Net.Broadcast(id);
-		Console.Print("NewGame");
-	end
+	--if Input.GetKeyState(Key.Return) == InputState.Pressed and not Console.IsOpen() then
+		--Console.Print("Game started");
+		--GameRunning = true;
+		--local id = Net.StartPack("NewGame");
+		--Net.Broadcast(id);
+		--Console.Print("NewGame");
+	--end
 end
