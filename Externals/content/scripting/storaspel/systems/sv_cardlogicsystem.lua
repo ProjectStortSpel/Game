@@ -120,9 +120,10 @@ DealCardSystem.DealCards = function (self, numCards)
 		print("NumCards:" .. numCards)
 		print("")
 		for j = 1, numCards do
-			local card = cards[(i - 1) * #players + j]
+			local card = cards[(i - 1) * numCards + j]
 			world:CreateComponentAndAddTo("DealtCard", card)
 			world:SetComponent(card, "DealtCard", "PlayerEntityId", players[i])
+			
 			Net.SendEntity(card, ip, port)	
 		end
 		
@@ -174,7 +175,10 @@ Net.Receive("Server.SelectCards",
 				local playerIp = world:GetComponent(player, "NetConnection", "IpAddress"):GetString()
 				local playerPort = world:GetComponent(player, "NetConnection", "Port"):GetInt()
 
+				local action = world:GetComponent(card, "CardAction", "Action"):GetString()
+				print("Action: " .. action)
 				if playerIp == ip and playerPort == port then
+					print("Confirmed!")
 					world:RemoveComponentFrom("DealtCard", card)
 					world:CreateComponentAndAddTo("CardStep", card)
 					world:SetComponent(card, "CardStep", "Step", i)
