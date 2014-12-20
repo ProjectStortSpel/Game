@@ -44,7 +44,7 @@ void SystemWorkGroup::Update(float _dt)
 
 		if (afterExecution >= 4)
 		{
-			printf("[TIME!] \"%s\" took %d ms to update!\n", m_systems->at(n)->GetSystemName().c_str(), afterExecution);
+			//printf("[TIME!] \"%s\" took %d ms to update!\n", m_systems->at(n)->GetSystemName().c_str(), afterExecution);
 		}
 	}
 }
