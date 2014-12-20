@@ -4,6 +4,7 @@ require "components"
 require "mapcomponents"
 require "playercomponents"
 require "cardcomponents"
+require "gamestatecomponents"
 
 
 -- Systems
@@ -19,7 +20,8 @@ if Server then
 	require "sv_createspawnpointsystem"
 	require "sv_spawnsystem"
 	require "sv_lobbysystem"
-	require "sv_cardlogicsystem"
+	require "sv_createdecksystem"
+	require "sv_dealcardssystem"
 end
 
 
@@ -61,7 +63,7 @@ if Server then
 	worldCreator:AddSystemToCurrentGroup(SpawnSystem)
 	worldCreator:AddSystemToCurrentGroup(ServerLobbySystem)
 	worldCreator:AddSystemToCurrentGroup(CreateDeckSystem)
-	worldCreator:AddSystemToCurrentGroup(DealCardSystem)
+	worldCreator:AddSystemToCurrentGroup(DealCardsSystem)
 end
 
 if Client then
@@ -75,6 +77,3 @@ if Client then
 --worldCreator:AddSystemToCurrentGroup(ClientSendCardSystem)
 end
 
-
-
-GameRunning = false

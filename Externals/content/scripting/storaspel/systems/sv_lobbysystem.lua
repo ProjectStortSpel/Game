@@ -4,15 +4,20 @@ ServerLobbySystem = System()
 ServerLobbySystem.Initialize = function(self)
 	self:SetName("ServerLobbySystem System");
 
-	self:AddComponentTypeToFilter("Null", FilterType.Mandatory);
+	self:AddComponentTypeToFilter("GameRunning", FilterType.Mandatory);
 	
 	Console.AddCommand("Start", 
 		function (command, ...)
 			
 			Console.Print("Game started");
-			GameRunning = true;
-			local id = Net.StartPack("NewGame");
-			Net.Broadcast(id);
+
+			local id = world:CreateNewEntity()
+			world:CreateComponentAndAddTo("GameRunning", id)
+			world:CreateComponentAndAddTo("SyncNetwork", id)
+
+			id = world:CreateNewEntity()
+			world:CreateComponentAndAddTo("CreateDeck", id)
+			
 			Console.Print("NewGame");
 
 		end 
@@ -23,7 +28,7 @@ end
 
 ServerLobbySystem.Update = function(self, dt)
 	
-	if not GameRunning and Net.IsRunning() then
+	if #self:GetEntities() > 0 then
 		ServerLobbySystem:UpdateServerOnline();
 	end
 end

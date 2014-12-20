@@ -11,14 +11,15 @@ OnPlayerConnectedSystem.Initialize = function(self)
 	self:SetName("On Player ConnectedSystem System")
 	self:InitializeNetworkEvents()
 	
-	self:AddComponentTypeToFilter("Player", FilterType.Mandatory)
-	self:AddComponentTypeToFilter("NetConnection", FilterType.Mandatory)
+	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("Player", FilterType.RequiresOneOf)
 	
 	print("On Player Connected System!")
 end
 
 OnPlayerConnectedSystem.OnEntityAdded = function(self, entityId)
 	--world:SetComponent(entityId, "NetConnection", "Active", true);
+
 end
 
 OnPlayerConnectedSystem.OnEntityRemoved = function(self, entityId)
@@ -27,7 +28,7 @@ end
 
 OnPlayerConnectedSystem.OnPlayerConnected = function(self, _ip, _port, _message)
 
-	if GameRunning then
+	if #self.GetEntities("GameRunning") > 0 then
 
 		local foundPlayer = false
 		local entities = self:GetEntities();		
@@ -85,7 +86,7 @@ OnPlayerConnectedSystem.OnPlayerDisconnected = function(self, _ip, _port, _messa
 		
 		if _ip == ip and _port == port then
 
-			if GameRunning then
+			if #self.GetEntities("GameRunning") > 0 then
 				world:RemoveComponentFrom("ActiveNetConnection", entities[i])
 			else
 				world:KillEntity(entities[i])		
