@@ -20,6 +20,7 @@ namespace LuaBridge
     LuaEmbedder::EmbedClassFunction<LuaWorld>("World", "KillEntity", &LuaWorld::KillEntity);
     LuaEmbedder::EmbedClassFunction<LuaWorld>("World", "SetComponent", &LuaWorld::SetComponent);
     LuaEmbedder::EmbedClassFunction<LuaWorld>("World", "GetComponent", &LuaWorld::GetComponent);
+	LuaEmbedder::EmbedClassFunction<LuaWorld>("World", "EntityHasComponent", &LuaWorld::EntityHasComponent);
   }
   
   int LuaWorld::Update()
@@ -124,6 +125,25 @@ namespace LuaBridge
 	  }
 	  LuaComponent* component = new LuaComponent(dataLocation, this, entityId, componentType);
 	  LuaEmbedder::PushObject<LuaComponent>("Component", component, true);
+	  return 1;
+  }
+
+  int LuaWorld::EntityHasComponent()
+  {
+	  unsigned int entityId = (unsigned int)LuaEmbedder::PullInt(1);
+	  std::string componentType = LuaEmbedder::PullString(2);
+	  std::vector<unsigned int> components;
+	  World::GetEntityComponents(components, entityId);
+	  unsigned int compID = ECSL::ComponentTypeManager::GetInstance().GetTableId(componentType);
+	  for (int i = 0; i < components.size(); ++i)
+	  {
+		  if (components[i] == compID)
+		  {
+			  LuaEmbedder::PushBool(true);
+			  return 1;
+		  }
+	  }
+	  LuaEmbedder::PushBool(false);
 	  return 1;
   }
 }
