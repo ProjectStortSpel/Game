@@ -12,7 +12,16 @@ SortSelectedCardSystem.OnEntityAdded = function( self, entityId )
 
 	local cards = self:GetEntities()
 
-	world:SetComponent(entityId, "SelectCard", "Index", #cards) --#cards + 1?
+	local index = 1
+	for i = 1, #cards do
+		
+		if world:EntityHasComponent(cards[i], "CardSelected") then
+			index = index + 1
+		end
+
+	end
+
+	world:SetComponent(entityId, "SelectCard", "Index", index)
 	world:CreateComponentAndAddTo("CardSelected", entityId)
 
 end
