@@ -163,10 +163,10 @@ void GameCreator::StartGame()
 
 	/*	Hook console	*/
 	m_console->SetupHooks(&m_consoleManager);
-	m_consoleManager.AddCommand("Reload", std::bind(&GameCreator::Reload, this, std::placeholders::_1));
-	m_consoleManager.AddCommand("Quit", std::bind(&GameCreator::StopGame, this, std::placeholders::_1));
-	m_consoleManager.AddCommand("GameMode", std::bind(&GameCreator::GameMode, this, std::placeholders::_1));
-	m_consoleManager.AddCommand("Start", std::bind(&GameCreator::StartTemp, this, std::placeholders::_1));
+	m_consoleManager.AddCommand("Reload", std::bind(&GameCreator::Reload, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager.AddCommand("Quit", std::bind(&GameCreator::StopGame, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager.AddCommand("GameMode", std::bind(&GameCreator::GameMode, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager.AddCommand("Start", std::bind(&GameCreator::StartTemp, this, std::placeholders::_1, std::placeholders::_2));
 	
 	float maxDeltaTime = (float)(1.0f / 20.0f);
 	while (m_running)
@@ -178,6 +178,7 @@ void GameCreator::StartGame()
 		m_input->Update();
 		PollSDLEvent();
 		m_consoleInput.Update();
+		Console::ConsoleManager::GetInstance().ExecuteCommandQueue();
 		UpdateConsole();
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
 			break;
@@ -358,7 +359,7 @@ void GameCreator::PollSDLEvent()
 	}
 }
 
-void GameCreator::Reload(std::vector<Console::Argument>* _args)
+void GameCreator::Reload(std::string _command, std::vector<Console::Argument>* _args)
 {
 	if (m_world)
 		delete m_world;
@@ -381,7 +382,7 @@ void GameCreator::Reload(std::vector<Console::Argument>* _args)
 	m_console->SetWorld(m_world);
 }
 
-void GameCreator::StopGame(std::vector<Console::Argument>* _args)
+void GameCreator::StopGame(std::string _command, std::vector<Console::Argument>* _args)
 {
 	m_running = false;
 }
@@ -390,16 +391,16 @@ void GameCreator::OnConnectedToServer(Network::NetConnection _nc, const char* _m
 {
  	std::vector<Console::Argument>* args = new std::vector<Console::Argument>();
 	m_gameMode = "storaspel";
-	Reload(args);
+	Reload("OnConnectedToServer", args);
 	delete args;
 }
 
-void GameCreator::GameMode(std::vector<Console::Argument>* _args)
+void GameCreator::GameMode(std::string _command, std::vector<Console::Argument>* _args)
 {
 	if (_args->size() == 0)
 	{
 		m_gameMode = "storaspel";
-		Reload(_args);
+		Reload(_command, _args);
 	}
 	else if (_args->size() == 1)
 	{
@@ -408,13 +409,13 @@ void GameCreator::GameMode(std::vector<Console::Argument>* _args)
 			std::string gameMode = _args->at(0).Text;
 			m_gameMode = gameMode;
 
-			Reload(_args);
+			Reload(_command, _args);
 		}
 	}
 	return;	
 }
 
-void GameCreator::StartTemp(std::vector<Console::Argument>* _args)
+void GameCreator::StartTemp(std::string _command, std::vector<Console::Argument>* _args)
 {
 
 }

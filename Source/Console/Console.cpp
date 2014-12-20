@@ -133,6 +133,21 @@ bool ConsoleManager::ParseArgs(char* _args, std::vector<Argument>* _vector)
 	return true;
 }
 
+void ConsoleManager::ExecuteCommandQueue()
+{
+	while (!m_commandQueue.empty())
+	{
+		ExecuteCommand(m_commandQueue.front().c_str());
+		m_commandQueue.pop();
+	}
+}
+
+void ConsoleManager::AddToCommandQueue(const char* _command)
+{
+	m_commandQueue.push(_command);
+}
+
+
 void ConsoleManager::ExecuteCommand(const char* _command)
 {
 	m_historyCounter = -1;
@@ -176,7 +191,7 @@ void ConsoleManager::ExecuteCommand(const char* _command)
 
 		ParseArgs(args, &vec);
 
-		m_consoleHooks[command](&vec);
+		m_consoleHooks[command](command, &vec);
 	}
 
 	else if (CONSOLE_DEBUG)

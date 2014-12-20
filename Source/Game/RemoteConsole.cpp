@@ -24,19 +24,19 @@ void RemoteConsole::UpdateCommands()
 
 	if (NetworkInstance::isServer())
 	{
-		Console::ConsoleManager::GetInstance().AddCommand("password", std::bind(&RemoteConsole::SetServerPasswordConsole, this, std::placeholders::_1));
+		Console::ConsoleManager::GetInstance().AddCommand("password", std::bind(&RemoteConsole::SetServerPasswordConsole, this, std::placeholders::_1, std::placeholders::_2));
 
 		Network::NetMessageHook hook = std::bind(&RemoteConsole::ExecuteCommand, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 		NetworkInstance::GetServer()->AddNetworkHook("rcon", hook);
 	}
 	if (NetworkInstance::isClient())
 	{
-		Console::ConsoleManager::GetInstance().AddCommand("rcon_password", std::bind(&RemoteConsole::SetClientPasswordConsole, this, std::placeholders::_1));
-		Console::ConsoleManager::GetInstance().AddCommand("rcon", std::bind(&RemoteConsole::ExecuteCommandClient, this, std::placeholders::_1));
+		Console::ConsoleManager::GetInstance().AddCommand("rcon_password", std::bind(&RemoteConsole::SetClientPasswordConsole, this, std::placeholders::_1, std::placeholders::_2));
+		Console::ConsoleManager::GetInstance().AddCommand("rcon", std::bind(&RemoteConsole::ExecuteCommandClient, this, std::placeholders::_1, std::placeholders::_2));
 	}
 }
 
-void RemoteConsole::ExecuteCommandClient(std::vector<Console::Argument>* _vec)
+void RemoteConsole::ExecuteCommandClient(std::string _command, std::vector<Console::Argument>* _vec)
 {
 	if (_vec->size() > 0 && NetworkInstance::isClient())
 	{
@@ -67,7 +67,7 @@ void RemoteConsole::ExecuteCommandClient(std::vector<Console::Argument>* _vec)
 	}
 }
 
-void RemoteConsole::SetServerPasswordConsole(std::vector<Console::Argument>* _vec)
+void RemoteConsole::SetServerPasswordConsole(std::string _command, std::vector<Console::Argument>* _vec)
 {
 	if (_vec->size() == 1)
 	{
@@ -82,7 +82,7 @@ void RemoteConsole::SetServerPasswordConsole(std::vector<Console::Argument>* _ve
 	}
 }
 
-void RemoteConsole::SetClientPasswordConsole(std::vector<Console::Argument>* _vec)
+void RemoteConsole::SetClientPasswordConsole(std::string _command, std::vector<Console::Argument>* _vec)
 {
 	if (_vec->size() == 1)
 	{

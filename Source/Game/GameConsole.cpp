@@ -13,7 +13,7 @@ GameConsole::~GameConsole()
 {
 }
 
-void GameConsole::CreateObject(std::vector<Console::Argument>* _args)
+void GameConsole::CreateObject(std::string _command, std::vector<Console::Argument>* _args)
 {
 	if (_args->at(0).ArgType != Console::ArgumentType::Text)
 		return;
@@ -47,7 +47,7 @@ void GameConsole::CreateObject(std::vector<Console::Argument>* _args)
 	}
 }
 
-void GameConsole::RemoveObject(std::vector<Console::Argument>* _args)
+void GameConsole::RemoveObject(std::string _command, std::vector<Console::Argument>* _args)
 {
 	if (_args->size() > 0 && (*_args)[0].ArgType == Console::ArgumentType::Number)
 	{
@@ -65,7 +65,7 @@ void GameConsole::RemoveObject(std::vector<Console::Argument>* _args)
 	}
 }
 
-void GameConsole::AddComponent(std::vector<Console::Argument>* _args)
+void GameConsole::AddComponent(std::string _command, std::vector<Console::Argument>* _args)
 {
 	/*	Is the command valid in syntax?	*/
 	if (_args->size() < 2)
@@ -96,10 +96,10 @@ void GameConsole::AddComponent(std::vector<Console::Argument>* _args)
 	m_consoleManager->AddMessage(ss.str().c_str());
 
 	if (_args->size() > 2)
-		ChangeComponent(_args);
+		ChangeComponent(_command, _args);
 }
 
-void GameConsole::ChangeComponent(std::vector<Console::Argument>* _args)
+void GameConsole::ChangeComponent(std::string _command, std::vector<Console::Argument>* _args)
 {
 	if (_args->size() < 3)
 		return;
@@ -127,7 +127,7 @@ void GameConsole::ChangeComponent(std::vector<Console::Argument>* _args)
 	changedComponentsNetwork[bitSetIndex] |= ((ECSL::BitSet::DataType)1) << bitIndex;
 }
 
-void GameConsole::RemoveComponent(std::vector<Console::Argument>* _args)
+void GameConsole::RemoveComponent(std::string _command, std::vector<Console::Argument>* _args)
 {
 	unsigned int mId = (unsigned int)_args->at(0).Number;
 
@@ -136,13 +136,13 @@ void GameConsole::RemoveComponent(std::vector<Console::Argument>* _args)
 	m_world->RemoveComponentFrom(componentType, mId);
 }
 
-void GameConsole::ClearHistory(std::vector<Console::Argument>* _args)
+void GameConsole::ClearHistory(std::string _command, std::vector<Console::Argument>* _args)
 {
 	m_consoleManager->ClearHistory();
 }
 
 
-void GameConsole::HostServer(std::vector<Console::Argument>* _args)
+void GameConsole::HostServer(std::string _command, std::vector<Console::Argument>* _args)
 {
 	if (NetworkInstance::GetClient()->IsConnected())
 	{
@@ -192,7 +192,7 @@ void GameConsole::HostServer(std::vector<Console::Argument>* _args)
 }
 
 
-void GameConsole::StopServer(std::vector<Console::Argument>* _args)
+void GameConsole::StopServer(std::string _command, std::vector<Console::Argument>* _args)
 {
 	if (NetworkInstance::GetServer()->IsRunning())
 	{
@@ -201,7 +201,7 @@ void GameConsole::StopServer(std::vector<Console::Argument>* _args)
 	}
 }
 
-void GameConsole::ConnectClient(std::vector<Console::Argument>* _args)
+void GameConsole::ConnectClient(std::string _command, std::vector<Console::Argument>* _args)
 {
 	if (NetworkInstance::GetClient()->IsConnected())
 	{
@@ -253,7 +253,7 @@ void GameConsole::ConnectClient(std::vector<Console::Argument>* _args)
 	LuaEmbedder::AddBool("Client", connected);
 }
 
-void GameConsole::DisconnectClient(std::vector<Console::Argument>* _args)
+void GameConsole::DisconnectClient(std::string _command, std::vector<Console::Argument>* _args)
 {
 	if (NetworkInstance::GetClient()->IsConnected())
 	{
@@ -262,7 +262,7 @@ void GameConsole::DisconnectClient(std::vector<Console::Argument>* _args)
 	}
 }
 
-void GameConsole::SetDebugTexture(std::vector<Console::Argument>* _args)
+void GameConsole::SetDebugTexture(std::string _command, std::vector<Console::Argument>* _args)
 {
 	if (_args->size() == 0)
 		return;
@@ -286,7 +286,7 @@ void GameConsole::SetDebugTexture(std::vector<Console::Argument>* _args)
 	}
 }
 
-void GameConsole::ToggleText(std::vector<Console::Argument>* _args)
+void GameConsole::ToggleText(std::string _command, std::vector<Console::Argument>* _args)
 {
 	if (_args->size() == 0)
 	{
@@ -301,7 +301,7 @@ void GameConsole::ToggleText(std::vector<Console::Argument>* _args)
 		m_graphics->ToggleSimpleText(false);
 }
 
-void GameConsole::SetTextColor(std::vector<Console::Argument>* _args)
+void GameConsole::SetTextColor(std::string _command, std::vector<Console::Argument>* _args)
 {
 	if (_args->size() == 0)
 		return;
@@ -325,7 +325,7 @@ void GameConsole::SetTextColor(std::vector<Console::Argument>* _args)
 	}
 }
 
-void GameConsole::AddPointlight(std::vector<Console::Argument>* _args)
+void GameConsole::AddPointlight(std::string _command, std::vector<Console::Argument>* _args)
 {
 	if (_args->size() < 4)
 		return;
@@ -357,14 +357,14 @@ void GameConsole::AddPointlight(std::vector<Console::Argument>* _args)
 	m_consoleManager->AddMessage(ss.str().c_str());
 }
 
-void GameConsole::ECSLMemoryUsage(std::vector<Console::Argument>* _args)
+void GameConsole::ECSLMemoryUsage(std::string _command, std::vector<Console::Argument>* _args)
 {
 	std::stringstream ss;
 	ss << m_world->GetMemoryUsage() << " mb is allocated by ECSL!";
 	m_consoleManager->AddMessage(ss.str().c_str());
 }
 
-void GameConsole::ListCommands(std::vector<Console::Argument>* _args)
+void GameConsole::ListCommands(std::string _command, std::vector<Console::Argument>* _args)
 {
 	m_consoleManager->AddMessage("Command           -   Arg1, Arg2, Arg3, ...");
 	m_consoleManager->AddMessage("CreateObject      -   Model, Path, X, Y, Z");
@@ -384,23 +384,23 @@ void GameConsole::ListCommands(std::vector<Console::Argument>* _args)
 void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 {
 	m_consoleManager = _consoleManager;
-	m_consoleManager->AddCommand("CreateObject", std::bind(&GameConsole::CreateObject, this, std::placeholders::_1));
-	m_consoleManager->AddCommand("RemoveObject", std::bind(&GameConsole::RemoveObject, this, std::placeholders::_1));
-	m_consoleManager->AddCommand("AddComponent", std::bind(&GameConsole::AddComponent, this, std::placeholders::_1));
-	m_consoleManager->AddCommand("ChangeComponent", std::bind(&GameConsole::ChangeComponent, this, std::placeholders::_1));
-	m_consoleManager->AddCommand("RemoveComponent", std::bind(&GameConsole::RemoveComponent, this, std::placeholders::_1));
-	m_consoleManager->AddCommand("Host", std::bind(&GameConsole::HostServer, this, std::placeholders::_1));
-	m_consoleManager->AddCommand("Stop", std::bind(&GameConsole::StopServer, this, std::placeholders::_1));
-	m_consoleManager->AddCommand("Connect", std::bind(&GameConsole::ConnectClient, this, std::placeholders::_1));
-	m_consoleManager->AddCommand("Disconnect", std::bind(&GameConsole::DisconnectClient, this, std::placeholders::_1));
-	m_consoleManager->AddCommand("List", std::bind(&GameConsole::ListCommands, this, std::placeholders::_1));
-	m_consoleManager->AddCommand("Clear", std::bind(&GameConsole::ClearHistory, this, std::placeholders::_1));
+	m_consoleManager->AddCommand("CreateObject", std::bind(&GameConsole::CreateObject, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager->AddCommand("RemoveObject", std::bind(&GameConsole::RemoveObject, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager->AddCommand("AddComponent", std::bind(&GameConsole::AddComponent, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager->AddCommand("ChangeComponent", std::bind(&GameConsole::ChangeComponent, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager->AddCommand("RemoveComponent", std::bind(&GameConsole::RemoveComponent, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager->AddCommand("Host", std::bind(&GameConsole::HostServer, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager->AddCommand("Stop", std::bind(&GameConsole::StopServer, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager->AddCommand("Connect", std::bind(&GameConsole::ConnectClient, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager->AddCommand("Disconnect", std::bind(&GameConsole::DisconnectClient, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager->AddCommand("List", std::bind(&GameConsole::ListCommands, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager->AddCommand("Clear", std::bind(&GameConsole::ClearHistory, this, std::placeholders::_1, std::placeholders::_2));
 
-	m_consoleManager->AddCommand("ToggleText", std::bind(&GameConsole::ToggleText, this, std::placeholders::_1));
-	m_consoleManager->AddCommand("TextColor", std::bind(&GameConsole::SetTextColor, this, std::placeholders::_1));
+	m_consoleManager->AddCommand("ToggleText", std::bind(&GameConsole::ToggleText, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager->AddCommand("TextColor", std::bind(&GameConsole::SetTextColor, this, std::placeholders::_1, std::placeholders::_2));
 
-	m_consoleManager->AddCommand("DebugRender", std::bind(&GameConsole::SetDebugTexture, this, std::placeholders::_1));
-	m_consoleManager->AddCommand("AddPointlight", std::bind(&GameConsole::AddPointlight, this, std::placeholders::_1));
+	m_consoleManager->AddCommand("DebugRender", std::bind(&GameConsole::SetDebugTexture, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager->AddCommand("AddPointlight", std::bind(&GameConsole::AddPointlight, this, std::placeholders::_1, std::placeholders::_2));
 
-	m_consoleManager->AddCommand("MemoryUsage", std::bind(&GameConsole::ECSLMemoryUsage, this, std::placeholders::_1));
+	m_consoleManager->AddCommand("MemoryUsage", std::bind(&GameConsole::ECSLMemoryUsage, this, std::placeholders::_1, std::placeholders::_2));
 }
