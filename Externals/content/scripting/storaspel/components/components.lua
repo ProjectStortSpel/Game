@@ -120,17 +120,3 @@ local NewStepComponent = ComponentType()
 NewStepComponent.Name = "NewStep"
 NewStepComponent.TableType = TableType.Array
 worldCreator:AddComponentType(NewStepComponent)
-
--- Card Prio Component
-local CardPrioComponent = ComponentType()
-CardPrioComponent.Name = "CardPrio"
-CardPrioComponent.TableType = TableType.Map
-CardPrioComponent:AddVariable("Prio", ByteSize.Int)
-worldCreator:AddComponentType(CardPrioComponent)
-
--- Card Action Component
-local CardActionComponent = ComponentType()
-CardActionComponent.Name = "CardAction"
-CardActionComponent.TableType = TableType.Map
-CardActionComponent:AddVariable("Action", ByteSize.Text)
-worldCreator:AddComponentType(CardActionComponent)
