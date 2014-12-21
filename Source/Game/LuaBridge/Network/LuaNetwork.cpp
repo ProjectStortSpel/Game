@@ -15,7 +15,6 @@ namespace LuaBridge
 		int StartPack();
 
 		int Update();
-		int HandlePacket();
 
 		int ResetNetworkMaps();
 
@@ -50,6 +49,7 @@ namespace LuaBridge
 		int IsRunning();
 		int Kick();
 		int MaxConnections();
+		int ConnectedClients();
 
 		int SendEntity();
 		int SendEntityKill();
@@ -64,49 +64,50 @@ namespace LuaBridge
 			LuaEmbedder::AddBool("Server", false);
 
 			//Shared
-			LuaEmbedder::AddFunction("Receive", &Receive, "Net");//
+			LuaEmbedder::AddFunction("Receive", &Receive, "Net");
 
-			LuaEmbedder::AddFunction("StartPack", &StartPack, "Net");//
+			LuaEmbedder::AddFunction("StartPack", &StartPack, "Net");
 
-			LuaEmbedder::AddFunction("Update", &Update, "Net");//
+			LuaEmbedder::AddFunction("Update", &Update, "Net");
 
-			LuaEmbedder::AddFunction("ResetNetworkMaps", &ResetNetworkMaps, "Net");//
+			LuaEmbedder::AddFunction("ResetNetworkMaps", &ResetNetworkMaps, "Net");
 
-			LuaEmbedder::AddFunction("Kick", &Kick, "Net");
-
-			LuaEmbedder::AddFunction("MaxConnections", &MaxConnections, "Net");
+			
 
 			//LuaEmbedder::AddFunction("WriteByte", &WriteByte, "Net");
-			LuaEmbedder::AddFunction("WriteFloat", &WriteFloat, "Net");//
+			LuaEmbedder::AddFunction("WriteFloat", &WriteFloat, "Net");
 			//LuaEmbedder::AddFunction("WriteShort", &WriteShort, "Net");
-			LuaEmbedder::AddFunction("WriteString", &WriteString, "Net");//
-			LuaEmbedder::AddFunction("WriteBool", &WriteBool, "Net");//
-			LuaEmbedder::AddFunction("WriteInt", &WriteInt, "Net");//
+			LuaEmbedder::AddFunction("WriteString", &WriteString, "Net");
+			LuaEmbedder::AddFunction("WriteBool", &WriteBool, "Net");
+			LuaEmbedder::AddFunction("WriteInt", &WriteInt, "Net");
 
 			//LuaEmbedder::AddFunction("ReadByte", &ReadByte, "Net");
-			LuaEmbedder::AddFunction("ReadFloat", &ReadFloat, "Net");//
+			LuaEmbedder::AddFunction("ReadFloat", &ReadFloat, "Net");
 			//LuaEmbedder::AddFunction("ReadShort", &ReadShort, "Net");
-			LuaEmbedder::AddFunction("ReadString", &ReadString, "Net");//
-			LuaEmbedder::AddFunction("ReadBool", &ReadBool, "Net");//
-			LuaEmbedder::AddFunction("ReadInt", &ReadInt, "Net");//
+			LuaEmbedder::AddFunction("ReadString", &ReadString, "Net");
+			LuaEmbedder::AddFunction("ReadBool", &ReadBool, "Net");
+			LuaEmbedder::AddFunction("ReadInt", &ReadInt, "Net");
 
 
 			//Client
-			LuaEmbedder::AddFunction("SendToServer", &SendToServer, "Net");//
-			LuaEmbedder::AddFunction("Connect", &Connect, "Net");//
-			LuaEmbedder::AddFunction("Disconnect", &Disconnect, "Net");//
-			LuaEmbedder::AddFunction("IsConnected", &IsConnected, "Net");//
+			LuaEmbedder::AddFunction("SendToServer", &SendToServer, "Net");
+			LuaEmbedder::AddFunction("Connect", &Connect, "Net");
+			LuaEmbedder::AddFunction("Disconnect", &Disconnect, "Net");
+			LuaEmbedder::AddFunction("IsConnected", &IsConnected, "Net");
 
-			LuaEmbedder::AddFunction("ToServerID", &ToServerID, "Net");//
-			LuaEmbedder::AddFunction("ToClientID", &ToClientID, "Net");//
+			LuaEmbedder::AddFunction("ToServerID", &ToServerID, "Net");
+			LuaEmbedder::AddFunction("ToClientID", &ToClientID, "Net");
 
 			//Server
-			LuaEmbedder::AddFunction("Send", &Send, "Net");//
-			LuaEmbedder::AddFunction("Broadcast", &Broadcast, "Net");//
+			LuaEmbedder::AddFunction("Send", &Send, "Net");
+			LuaEmbedder::AddFunction("Broadcast", &Broadcast, "Net");
 
-			LuaEmbedder::AddFunction("Host", &Host, "Net");//
-			LuaEmbedder::AddFunction("Stop", &Stop, "Net");//
-			LuaEmbedder::AddFunction("IsRunning", &IsRunning, "Net");//
+			LuaEmbedder::AddFunction("Host", &Host, "Net");
+			LuaEmbedder::AddFunction("Stop", &Stop, "Net");
+			LuaEmbedder::AddFunction("IsRunning", &IsRunning, "Net");
+			LuaEmbedder::AddFunction("Kick", &Kick, "Net");
+			LuaEmbedder::AddFunction("MaxConnections", &MaxConnections, "Net");
+			LuaEmbedder::AddFunction("ConnectedClients", &ConnectedClients, "Net");
 
 			LuaEmbedder::AddFunction("SendEntity", &SendEntity, "Net");
 			LuaEmbedder::AddFunction("SendEntityKill", &SendEntityKill, "Net");
@@ -456,6 +457,23 @@ namespace LuaBridge
 			}
 			return 0;
 		}
+
+		int ConnectedClients()
+		{
+			Network::ServerNetwork* server = NetworkInstance::GetServer();
+			if (server->IsRunning())
+			{
+				std::vector<Network::NetConnection> nc = server->GetConnectedClients();
+				
+				for (int i = 0; i < nc.size(); ++i)
+				{
+					LuaEmbedder::PushString(nc[i].GetIpAddress());
+					LuaEmbedder::PushInt(nc[i].GetPort());
+				}
+				return nc.size() * 2;
+			}
+			return 0;
+		}		
 
 		int MaxConnections()
 		{
