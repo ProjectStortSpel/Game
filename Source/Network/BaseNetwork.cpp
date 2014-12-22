@@ -139,13 +139,6 @@ int BaseNetwork::PopAndExecutePacket(void)
 	m_packetHandler->ReadByte(id);
 	char* functionName = m_packetHandler->ReadString(id);
 
-	static int numEnt = 0;
-	if (strcmp(functionName, "Entity") == 0)
-	{
-		++numEnt;
-		printf("Nument: %d\n", numEnt);
-	}
-
 	if (m_userFunctions->find(functionName) != m_userFunctions->end())
 	{
 		(*m_userFunctions)[functionName](m_packetHandler, id, *p->Sender);
