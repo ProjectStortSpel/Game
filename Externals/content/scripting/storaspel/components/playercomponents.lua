@@ -42,9 +42,9 @@ worldCreator:AddComponentType(UnitEntityIdComponent)
 -- Direction Component
 local DirectionComponent = ComponentType()
 DirectionComponent.Name = "Direction"
-DirectionComponent.TableType = TableType.Array
+DirectionComponent.TableType = TableType.Map
 DirectionComponent:AddVariable("X", ByteSize.Int)
-DirectionComponent:AddVariable("Y", ByteSize.Int)
+DirectionComponent:AddVariable("Z", ByteSize.Int)
 worldCreator:AddComponentType(DirectionComponent)
 
 -- Spawn Component
@@ -80,5 +80,11 @@ local SpawnComponent = ComponentType()
 SpawnComponent.Name = "Spawnpoint"
 SpawnComponent.TableType = TableType.Array
 SpawnComponent:AddVariable("X", ByteSize.Int)
-SpawnComponent:AddVariable("Y", ByteSize.Int)
+SpawnComponent:AddVariable("Z", ByteSize.Int)
 worldCreator:AddComponentType(SpawnComponent)
+
+-- Spawnpoint Component
+local UnitSelectedCardsComponent = ComponentType()
+UnitSelectedCardsComponent.Name = "UnitSelectedCards"
+UnitSelectedCardsComponent.TableType = TableType.Map
+worldCreator:AddComponentType(UnitSelectedCardsComponent)

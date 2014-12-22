@@ -16,11 +16,13 @@ end
 SpawnSystem.OnEntityAdded = function(self, entityId)
 	
 	local posComp = self:GetComponent(entityId, "Position", 0)
+	local mapPosComp = self:GetComponent(entityId, "MapPosition", 0)
 	local spawnpointComp = self:GetComponent(entityId, "Spawnpoint", 0)
 
 	local X, Z = spawnpointComp:GetInt2()
 
     posComp:SetFloat3(X, 1, Z)
+	mapPosComp:SetInt2(X, Z)
 
 	world:RemoveComponentFrom("Spawn", entityId)
 	print("Spawned at " .. X .. " - " .. Z)

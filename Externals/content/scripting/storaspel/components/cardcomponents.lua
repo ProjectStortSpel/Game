@@ -6,39 +6,39 @@ CardComponent.TableType = TableType.Map
 worldCreator:AddComponentType(CardComponent)
 
 -- Turn Left Component
-local TurnLeftComponent = ComponentType()
-TurnLeftComponent.SyncNetwork = false
-TurnLeftComponent.Name = "TurnLeft"
-TurnLeftComponent.TableType = TableType.Map
-worldCreator:AddComponentType(TurnLeftComponent)
+local UnitTurnLeftComponent = ComponentType()
+UnitTurnLeftComponent.SyncNetwork = false
+UnitTurnLeftComponent.Name = "UnitTurnLeft"
+UnitTurnLeftComponent.TableType = TableType.Map
+worldCreator:AddComponentType(UnitTurnLeftComponent)
 
 -- Turn Right Component
-local TurnRightComponent = ComponentType()
-TurnRightComponent.SyncNetwork = false
-TurnRightComponent.Name = "TurnRight"
-TurnRightComponent.TableType = TableType.Map
-worldCreator:AddComponentType(TurnRightComponent)
+local UnitTurnRightComponent = ComponentType()
+UnitTurnRightComponent.SyncNetwork = false
+UnitTurnRightComponent.Name = "UnitTurnRight"
+UnitTurnRightComponent.TableType = TableType.Map
+worldCreator:AddComponentType(UnitTurnRightComponent)
 
 -- Turn Around Component
-local TurnAroundComponent = ComponentType()
-TurnAroundComponent.SyncNetwork = false
-TurnAroundComponent.Name = "TurnAround"
-TurnAroundComponent.TableType = TableType.Map
-worldCreator:AddComponentType(TurnAroundComponent)
+local UnitTurnAroundComponent = ComponentType()
+UnitTurnAroundComponent.SyncNetwork = false
+UnitTurnAroundComponent.Name = "UnitTurnAround"
+UnitTurnAroundComponent.TableType = TableType.Map
+worldCreator:AddComponentType(UnitTurnAroundComponent)
 
 -- Forward Component
-local ForwardComponent = ComponentType()
-ForwardComponent.SyncNetwork = false
-ForwardComponent.Name = "Forward"
-ForwardComponent.TableType = TableType.Map
-worldCreator:AddComponentType(ForwardComponent)
+local UnitForwardComponent = ComponentType()
+UnitForwardComponent.SyncNetwork = false
+UnitForwardComponent.Name = "UnitForward"
+UnitForwardComponent.TableType = TableType.Map
+worldCreator:AddComponentType(UnitForwardComponent)
 
 -- Backward Component
-local BackwardComponent = ComponentType()
-BackwardComponent.SyncNetwork = false
-BackwardComponent.Name = "Backward"
-BackwardComponent.TableType = TableType.Map
-worldCreator:AddComponentType(BackwardComponent)
+local UnitBackwardComponent = ComponentType()
+UnitBackwardComponent.SyncNetwork = false
+UnitBackwardComponent.Name = "UnitBackward"
+UnitBackwardComponent.TableType = TableType.Map
+worldCreator:AddComponentType(UnitBackwardComponent)
 
 -- Card Prio Component
 local CardPrioComponent = ComponentType()

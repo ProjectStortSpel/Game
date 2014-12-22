@@ -22,6 +22,12 @@ if Server then
 	require "sv_lobbysystem"
 	require "sv_createdecksystem"
 	require "sv_dealcardssystem"
+	require "sv_startnewroundsystem"
+	require "sv_newstepsystem"
+	require "sv_playcardssystem"
+	require "sv_riversystem"
+	require "sv_moveplayersystem"
+	require "sv_steptimersystem"
 end
 
 
@@ -64,6 +70,19 @@ if Server then
 	worldCreator:AddSystemToCurrentGroup(ServerLobbySystem)
 	worldCreator:AddSystemToCurrentGroup(CreateDeckSystem)
 	worldCreator:AddSystemToCurrentGroup(DealCardsSystem)
+	worldCreator:AddSystemToCurrentGroup(StartNewRoundSystem)
+	worldCreator:AddSystemToCurrentGroup(NewStepSystem)
+	worldCreator:AddSystemToCurrentGroup(PlayCardsSystem)
+	worldCreator:AddSystemToCurrentGroup(RiverSystem)
+
+	worldCreator:AddSystemToCurrentGroup(TurnAroundSystem)
+	worldCreator:AddSystemToCurrentGroup(TurnLeftSystem)
+	worldCreator:AddSystemToCurrentGroup(TurnRightSystem)
+	worldCreator:AddSystemToCurrentGroup(MoveForwardSystem)
+	worldCreator:AddSystemToCurrentGroup(MoveBackwardSystem)
+
+	worldCreator:AddSystemToCurrentGroup(StepTimerSystem)
+
 end
 
 if Client then

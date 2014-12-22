@@ -30,11 +30,13 @@ RiverSystem.OnEntityAdded = function(self, entity)
 					world:SetComponent(units[i], "MapPosition", "X", unitX + riverDirX)
 					world:SetComponent(units[i], "MapPosition", "Z", unitZ + riverDirZ)
 
-					local X = world:GetComponent(units[i], "Position", "X"):GetFloat()
-					local Z = world:GetComponent(units[i], "Position", "Z"):GetFloat()
+					local pos = world:GetComponent(units[i], "Position", 0)
+					local X, Y, Z = pos:GetFloat3()
+					pos:SetFloat3(X + riverDirX, Y, Z + riverDirZ)
 
-					world:SetComponent(units[i], "Position", "X", unitX + riverDirX)
-					world:SetComponent(units[i], "Position", "Z", unitZ + riverDirZ)
+
+					--world:SetComponent(units[i], "Position", "X", unitX + riverDirX)
+					--world:SetComponent(units[i], "Position", "Z", unitZ + riverDirZ)
 					break
 
 				end
@@ -46,8 +48,8 @@ RiverSystem.OnEntityAdded = function(self, entity)
 		world:KillEntity( entity )
 
 		local id = world:CreateNewEntity()
-		world:CreateComponentAndAddTo("NewStep", id)
+		world:CreateComponentAndAddTo("StepTimer", id)
+		world:GetComponent(id, "StepTimer", "Time"):SetFloat(2)
 
 	end
-
 end

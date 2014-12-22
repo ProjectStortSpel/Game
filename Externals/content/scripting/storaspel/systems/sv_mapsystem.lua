@@ -88,8 +88,8 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
 		--posComp:SetFloat3(posX, 1.0, posZ)
 
     elseif tiletype == 117 then -- 117 = u = water up
-        world:CreateComponentAndAddTo("Water", entity)
-        local comp = self:GetComponent(entity, "Water", 0)
+        world:CreateComponentAndAddTo("River", entity)
+        local comp = self:GetComponent(entity, "River", 0)
         comp:SetInt2(0, -1)
 		local comp = self:GetComponent(entity, "Rotation", 0)
 		comp:SetFloat3(0, -math.pi/2, 0)
@@ -98,8 +98,8 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
 		comp:SetModel("riverstraight", "riverstraight")
 
     elseif tiletype == 100 then -- 100 = d = water down
-        world:CreateComponentAndAddTo("Water", entity)
-        local comp = self:GetComponent(entity, "Water", 0)
+        world:CreateComponentAndAddTo("River", entity)
+        local comp = self:GetComponent(entity, "River", 0)
         comp:SetInt2(0, 1)
 		local comp = self:GetComponent(entity, "Rotation", 0)
 		comp:SetFloat3(0, math.pi/2, 0)
@@ -108,16 +108,16 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
 		comp:SetModel("riverstraight", "riverstraight")
 
     elseif tiletype == 108 then -- 108 = l = water left
-        world:CreateComponentAndAddTo("Water", entity)
-        local comp = self:GetComponent(entity, "Water", 0)
+        world:CreateComponentAndAddTo("River", entity)
+        local comp = self:GetComponent(entity, "River", 0)
         comp:SetInt2(-1, 0)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
 		comp:SetModel("riverstraight", "riverstraight")
 
     elseif tiletype == 114 then -- 114 = r = water right
-        world:CreateComponentAndAddTo("Water", entity)
-        local comp = self:GetComponent(entity, "Water", 0)
+        world:CreateComponentAndAddTo("River", entity)
+        local comp = self:GetComponent(entity, "River", 0)
         comp:SetInt2(1, 0)
 		local comp = self:GetComponent(entity, "Rotation", 0)
 		comp:SetFloat3(0, math.pi, 0)

@@ -93,21 +93,21 @@ end
 WaterMovementSystem.OnEntityAdded = function(self, entity)
 	
 	local mapPosComp = self:GetComponent(entity, "MapPosition", 0)
-	local mapPosX, mapPosY = mapPosComp:GetInt2()
+	local mapPosX, mapPosZ = mapPosComp:GetInt2()
 	
-	--print("Water entity added", mapPosX, mapPosY)
+	--print("Water entity added", mapPosX, mapPosZ)
 	
-	--MapSystem:TileHasComponent("WaterDirection", mapPosX, mapPosY)
+	--MapSystem:TileHasComponent("WaterDirection", mapPosX, mapPosZ)
 	
-	local index = MapSystem.mapX * mapPosY + mapPosX + 1
+	local index = MapSystem.mapX * mapPosZ + mapPosX + 1
 	local mapEntity = MapSystem.entities[index]
 	
-	if MapSystem:EntityHasComponent(mapEntity, "Water") then
+	if MapSystem:EntityHasComponent(mapEntity, "River") then
 		
-		local waterDirComp = MapSystem:GetComponent(mapEntity, "Water", 0)
-		local waterDirX, waterDirY = waterDirComp:GetInt2()
+		local waterDirComp = MapSystem:GetComponent(mapEntity, "River", 0)
+		local waterDirX, waterDirZ = waterDirComp:GetInt2()
 		
-		PlayerMovementSystem:SetPosition(entity, mapPosX + waterDirX, 1.0, mapPosY + waterDirY)
+		PlayerMovementSystem:SetPosition(entity, mapPosX + waterDirX, 1.0, mapPosZ + waterDirZ)
 		
 	end
 	

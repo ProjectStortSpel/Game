@@ -1,8 +1,5 @@
 CreateDeckSystem = System()
 
-CreateDeckSystem.GameRunning = false
-
-
 CreateDeckSystem.Initialize = function ( self )
 	self:SetName("CreateDeckSystem")
 	

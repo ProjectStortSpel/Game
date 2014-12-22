@@ -109,14 +109,3 @@ NullComponent.Name = "Null"
 NullComponent.TableType = TableType.Map
 worldCreator:AddComponentType(NullComponent)
 
--- New Round Component
-local NewRoundComponent = ComponentType()
-NewRoundComponent.Name = "NewRound"
-NewRoundComponent.TableType = TableType.Array
-worldCreator:AddComponentType(NewRoundComponent)
-
--- New Step Component
-local NewStepComponent = ComponentType()
-NewStepComponent.Name = "NewStep"
-NewStepComponent.TableType = TableType.Array
-worldCreator:AddComponentType(NewStepComponent)

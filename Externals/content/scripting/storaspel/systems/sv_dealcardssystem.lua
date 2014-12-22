@@ -65,59 +65,28 @@ DealCardsSystem.DealCards = function (self, numCards)
 
 end
 
---DealCardsSystem.GetCards = function (self)
-	--
-	--local cards = {}
-	--local index = 1;
-	--local entities = self:GetEntities()
-	--for i = 1, #entities do
-		--if self:EntityHasComponent(entities[i], "CardAction") then
-			--cards[index] = entities[i]
-			--index = index + 1
-		--end
-	--end
-	--return cards
---end
---
---DealCardsSystem.GetPlayers = function (self)
-	--
-	--local players = {}
-	--local index = 1;
-	--local entities = self:GetEntities()
-	--for i = 1, #entities do
-		--if self:EntityHasComponent(entities[i], "Player") then
-			--players[index] = entities[i]
-			--index = index + 1
-		--end
-	--end
-	--return players
---end
-
 Net.Receive("Server.SelectCards", 
 	function( id, ip, port )	
 
 		print("Client selected cards:")
 		print("")
+
+		local selectedCards = { }
+		local player
 		for i = 1, 5 do
 
 			local card = Net.ReadInt(id)
 			if  world:EntityHasComponent(card, "DealtCard") then
 			
-				local player = world:GetComponent(card, "DealtCard", "PlayerEntityId"):GetInt()
+				player = world:GetComponent(card, "DealtCard", "PlayerEntityId"):GetInt()
 				local playerIp = world:GetComponent(player, "NetConnection", "IpAddress"):GetString()
 				local playerPort = world:GetComponent(player, "NetConnection", "Port"):GetInt()
 
 				
 				if playerIp == ip and playerPort == port then
-					local action = world:GetComponent(card, "CardAction", "Action"):GetString()
-					local prio = world:GetComponent(card, "CardPrio", "Prio"):GetInt()
-					print("Action: " .. action .. " - Prio: " .. prio)
+					
+					table.insert(selectedCards, card)
 
-					world:RemoveComponentFrom("DealtCard", card)
-					world:CreateComponentAndAddTo("CardStep", card)
-					world:SetComponent(card, "CardStep", "Step", i)
-					local unit = world:GetComponent(player, "UnitEntityId", "Id"):GetInt()
-					world:SetComponent(card, "CardStep", "UnitEntityId", unit)
 				else
 					Net.Send(Net.StartPack("Client.SelectCards"), ip, port)
 					return
@@ -129,5 +98,29 @@ Net.Receive("Server.SelectCards",
 			end
 
 		end	
+
+		local unit = world:GetComponent(player, "UnitEntityId", "Id"):GetInt()
+
+		for i = 1, 5 do
+			local action = world:GetComponent(selectedCards[i], "CardAction", "Action"):GetString()
+			local prio = world:GetComponent(selectedCards[i], "CardPrio", "Prio"):GetInt()
+			print("Action: " .. action .. " - Prio: " .. prio)
+
+			world:RemoveComponentFrom("DealtCard", selectedCards[i])
+			world:CreateComponentAndAddTo("CardStep", selectedCards[i])
+			world:SetComponent(selectedCards[i], "CardStep", "Step", i)
+			world:SetComponent(selectedCards[i], "CardStep", "UnitEntityId", unit)
+
+			local playerIp = world:GetComponent(player, "NetConnection", "IpAddress"):GetString()
+			local playerPort = world:GetComponent(player, "NetConnection", "Port"):GetInt()
+
+			Net.SendEntityKill(selectedCards[i], playerIp, playerPort)
+		end
+
+		world:CreateComponentAndAddTo("UnitSelectedCards", unit)
+
+		local id = world:CreateNewEntity()
+		world:CreateComponentAndAddTo("NotifyStartNewRound", id)
+
 	end
 )

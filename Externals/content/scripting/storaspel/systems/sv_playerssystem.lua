@@ -28,16 +28,19 @@ PlayersSystem.OnEntityAdded = function(self, entityId)
 	end
 
 	local newEntityId = world:CreateNewEntity("Unit")
-	
+
 	world:SetComponent(newEntityId, "Model", "ModelName", "head");
 	world:SetComponent(newEntityId, "Model", "ModelPath", "head");
 
 	world:SetComponent(newEntityId, "PlayerNumber", "Number", playerNumber)
 	world:SetComponent(newEntityId, "PlayerEntityId", "Id", entityId)
+	world:GetComponent(newEntityId, "Direction", 0):SetInt2(0, -1)
+
 
 	world:SetComponent(entityId, "PlayerNumber", "Number", playerNumber)
 	world:SetComponent(entityId, "UnitEntityId", "Id", newEntityId)
-	
+
+
 	print("Unit ", newEntityId)
 end
 
