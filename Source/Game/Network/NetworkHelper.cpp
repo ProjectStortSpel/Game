@@ -183,7 +183,7 @@ int	NetworkHelper::StartReceiveEntity(Network::PacketHandler* _ph, uint64_t _id,
 	else
 	{
 		idH = (*m_world)->CreateNewEntity();
-		printf("Created Entity with ID(NETWORK): %d\n", idH);
+		//printf("Created Entity with ID(NETWORK): %d\n", idH);
 		m_NtoH[idN] = idH;
 		m_HtoN[idH] = idN;
 	}
