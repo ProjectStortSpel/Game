@@ -75,6 +75,9 @@ void GameCreator::InitializeNetwork()
 	NetworkInstance::GetClient()->AddNetworkHook("LuaPacket", hook);
 	NetworkInstance::GetServer()->AddNetworkHook("LuaPacket", hook);
 
+	hook = std::bind(&GameCreator::NetworkGameMode, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	NetworkInstance::GetClient()->AddNetworkHook("Gamemode", hook);
+
 	Network::NetEvent netEvent = std::bind(&GameCreator::OnConnectedToServer, this, std::placeholders::_1, std::placeholders::_2);
 	NetworkInstance::GetClient()->SetOnConnectedToServer(netEvent);
 }
@@ -163,10 +166,10 @@ void GameCreator::StartGame()
 
 	/*	Hook console	*/
 	m_console->SetupHooks(&m_consoleManager);
-	m_consoleManager.AddCommand("Reload", std::bind(&GameCreator::Reload, this, std::placeholders::_1, std::placeholders::_2));
-	m_consoleManager.AddCommand("Quit", std::bind(&GameCreator::StopGame, this, std::placeholders::_1, std::placeholders::_2));
-	m_consoleManager.AddCommand("GameMode", std::bind(&GameCreator::GameMode, this, std::placeholders::_1, std::placeholders::_2));
-	m_consoleManager.AddCommand("Start", std::bind(&GameCreator::StartTemp, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager.AddCommand("Reload", std::bind(&GameCreator::ConsoleReload, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager.AddCommand("Quit", std::bind(&GameCreator::ConsoleStopGame, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager.AddCommand("GameMode", std::bind(&GameCreator::ConsoleGameMode, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager.AddCommand("Start", std::bind(&GameCreator::ConsoleStartTemp, this, std::placeholders::_1, std::placeholders::_2));
 	
 	float maxDeltaTime = (float)(1.0f / 20.0f);
 	while (m_running)
@@ -232,6 +235,44 @@ void GameCreator::UpdateNetwork(float _dt)
 	}
 }
 
+void GameCreator::GameMode(std::string _gamemode)
+{
+	m_gameMode = _gamemode;
+	Reload();
+}
+
+void GameCreator::Reload()
+{
+	if (m_world)
+		delete m_world;
+	NetworkInstance::GetNetworkHelper()->ResetNetworkMaps();
+	bool server = LuaEmbedder::PullBool("Server");
+	bool client = LuaEmbedder::PullBool("Client");
+	LuaEmbedder::Quit();
+	ECSL::ComponentTypeManager::GetInstance().Clear();
+	ECSL::EntityTemplateManager::GetInstance().Clear();
+
+
+	InitializeLua();
+	LuaEmbedder::AddBool("Server", server);
+	LuaEmbedder::AddBool("Client", client);
+	m_graphics->Clear();
+
+	LuaEmbedder::AddObject<Renderer::GraphicDevice>("GraphicDevice", m_graphics, "graphics");
+
+	InitializeWorld(m_gameMode);
+	m_console->SetWorld(m_world);
+
+	if (NetworkInstance::GetServer()->IsRunning())
+	{
+		Network::ServerNetwork* server = NetworkInstance::GetServer();
+		Network::PacketHandler* ph = server->GetPacketHandler();
+		uint64_t id = ph->StartPack("Gamemode");
+		ph->WriteString(id, m_gameMode.c_str());
+		NetworkInstance::GetServer()->Broadcast(ph->EndPack(id));
+	}
+}
+
 void GameCreator::LuaPacket(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
 {
 	std::ostringstream ss;
@@ -243,6 +284,11 @@ void GameCreator::LuaPacket(Network::PacketHandler* _ph, uint64_t& _id, Network:
 	LuaEmbedder::PushString(_nc.GetIpAddress());
 	LuaEmbedder::PushInt((int)_nc.GetPort());
 	LuaEmbedder::CallSavedFunction(function, 3);
+}
+
+void GameCreator::NetworkGameMode(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
+{
+	GameMode(_ph->ReadString(_id));
 }
 
 void GameCreator::UpdateConsole()
@@ -359,63 +405,38 @@ void GameCreator::PollSDLEvent()
 	}
 }
 
-void GameCreator::Reload(std::string _command, std::vector<Console::Argument>* _args)
+void GameCreator::ConsoleReload(std::string _command, std::vector<Console::Argument>* _args)
 {
-	if (m_world)
-		delete m_world;
-	NetworkInstance::GetNetworkHelper()->ResetNetworkMaps();
-	bool server = LuaEmbedder::PullBool("Server");
-	bool client = LuaEmbedder::PullBool("Client");
-	LuaEmbedder::Quit();
-	ECSL::ComponentTypeManager::GetInstance().Clear();
-	ECSL::EntityTemplateManager::GetInstance().Clear();
-
-
-	InitializeLua();
-	LuaEmbedder::AddBool("Server", server);
-	LuaEmbedder::AddBool("Client", client);
-	m_graphics->Clear();
-	
-	LuaEmbedder::AddObject<Renderer::GraphicDevice>("GraphicDevice", m_graphics, "graphics");
-
-	InitializeWorld(m_gameMode);
-	m_console->SetWorld(m_world);
+	Reload();
 }
 
-void GameCreator::StopGame(std::string _command, std::vector<Console::Argument>* _args)
+void GameCreator::ConsoleStopGame(std::string _command, std::vector<Console::Argument>* _args)
 {
 	m_running = false;
 }
 
 void GameCreator::OnConnectedToServer(Network::NetConnection _nc, const char* _message)
 {
- 	std::vector<Console::Argument>* args = new std::vector<Console::Argument>();
-	m_gameMode = "storaspel";
-	Reload("OnConnectedToServer", args);
-	delete args;
+	GameMode("storaspel");
 }
 
-void GameCreator::GameMode(std::string _command, std::vector<Console::Argument>* _args)
+void GameCreator::ConsoleGameMode(std::string _command, std::vector<Console::Argument>* _args)
 {
 	if (_args->size() == 0)
 	{
-		m_gameMode = "storaspel";
-		Reload(_command, _args);
+		GameMode("storaspel");
 	}
 	else if (_args->size() == 1)
 	{
 		if (_args->at(0).ArgType == Console::ArgumentType::Text)
 		{
-			std::string gameMode = _args->at(0).Text;
-			m_gameMode = gameMode;
-
-			Reload(_command, _args);
+			GameMode(_args->at(0).Text);
 		}
 	}
 	return;	
 }
 
-void GameCreator::StartTemp(std::string _command, std::vector<Console::Argument>* _args)
+void GameCreator::ConsoleStartTemp(std::string _command, std::vector<Console::Argument>* _args)
 {
 
 }

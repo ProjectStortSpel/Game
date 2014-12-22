@@ -34,14 +34,18 @@ private:
 	void UpdateConsole();
 	void RenderConsole();
 	
-	void GameMode(std::string _command, std::vector<Console::Argument>* _args);
-	void Reload(std::string _command, std::vector<Console::Argument>* _args);
-	void StartTemp(std::string _command, std::vector<Console::Argument>* _args);
-	void StopGame(std::string _command, std::vector<Console::Argument>* _args);
+	void GameMode(std::string _gamemode);
+	void Reload();
+
+	void ConsoleGameMode(std::string _command, std::vector<Console::Argument>* _args);
+	void ConsoleReload(std::string _command, std::vector<Console::Argument>* _args);
+	void ConsoleStartTemp(std::string _command, std::vector<Console::Argument>* _args);
+	void ConsoleStopGame(std::string _command, std::vector<Console::Argument>* _args);
 
 	void OnConnectedToServer(Network::NetConnection _nc, const char* _message);
 	void LuaPacket(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
-	
+	void NetworkGameMode(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
+
 	void PrintSectionTime(const std::string& sectionName, Utility::FrameCounter* frameCounter, int x, int y);
 
 private:
