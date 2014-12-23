@@ -1,6 +1,6 @@
 #include "ServerNetwork.h"
 #include <sstream>
-//#include <algorithm>
+#include <algorithm>
 
 #ifdef WIN32
 #else
