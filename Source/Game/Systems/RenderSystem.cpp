@@ -22,6 +22,8 @@ void RenderSystem::Initialize()
 	AddComponentTypeToFilter("Scale",		ECSL::FilterType::Mandatory);
 	AddComponentTypeToFilter("Render",		ECSL::FilterType::Mandatory);
 
+	AddComponentTypeToFilter("Hide",		ECSL::FilterType::Excluded);
+
 
 	std::vector<unsigned int> bitsetComponents;
 	bitsetComponents.push_back(ECSL::ComponentTypeManager::GetInstance().GetTableId("Position"));
