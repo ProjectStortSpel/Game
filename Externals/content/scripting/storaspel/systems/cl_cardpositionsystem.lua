@@ -42,10 +42,16 @@ CardPositionSystem.Update = function(self, dt)
 		local rx, ry, rz = camera:GetRight()
 		local ux, uy, uz = camera:GetUp()
 		
+		local offsetYfactor = 1.0
+
+		if world:EntityHasComponent(entities[i], "SelectCard") then
+			offsetYfactor = 0.7
+		end
+		
 		local halfentities = #entities/2
-		px = px + lx * self.CameraDistance + rx * (-halfentities + index - 0.5) * 0.08 + ux * self.UpOffset
-		py = py + ly * self.CameraDistance + ry * (-halfentities + index - 0.5) * 0.08 + uy * self.UpOffset
-		pz = pz + lz * self.CameraDistance + rz * (-halfentities + index - 0.5) * 0.08 + uz * self.UpOffset
+		px = px + lx * self.CameraDistance + rx * (-halfentities + index - 0.5) * 0.08 + ux * self.UpOffset * offsetYfactor
+		py = py + ly * self.CameraDistance + ry * (-halfentities + index - 0.5) * 0.08 + uy * self.UpOffset * offsetYfactor
+		pz = pz + lz * self.CameraDistance + rz * (-halfentities + index - 0.5) * 0.08 + uz * self.UpOffset * offsetYfactor
 		
 		local rx, ry, rz
 		rx = 0.0
