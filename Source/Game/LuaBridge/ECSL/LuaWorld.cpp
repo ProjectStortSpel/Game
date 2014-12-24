@@ -130,20 +130,8 @@ namespace LuaBridge
 
   int LuaWorld::EntityHasComponent()
   {
-	  unsigned int entityId = (unsigned int)LuaEmbedder::PullInt(1);
-	  std::string componentType = LuaEmbedder::PullString(2);
 	  std::vector<unsigned int> components;
-	  World::GetEntityComponents(components, entityId);
-	  unsigned int compID = ECSL::ComponentTypeManager::GetInstance().GetTableId(componentType);
-	  for (int i = 0; i < components.size(); ++i)
-	  {
-		  if (components[i] == compID)
-		  {
-			  LuaEmbedder::PushBool(true);
-			  return 1;
-		  }
-	  }
-	  LuaEmbedder::PushBool(false);
+	  LuaEmbedder::PushBool(World::EntityHasComponent((unsigned int)LuaEmbedder::PullInt(1), LuaEmbedder::PullString(2)));
 	  return 1;
   }
 }
