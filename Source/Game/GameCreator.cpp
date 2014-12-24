@@ -112,7 +112,7 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	}
 
 	/*	This component has to be added last!	*/
-	unsigned int numberOfComponents = ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount();
+	unsigned int numberOfComponents = ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount() + 2;
 	unsigned int numberOfInts = ECSL::BitSet::GetIntCount(numberOfComponents);
 	unsigned int numberOfBytes = numberOfInts*sizeof(ECSL::BitSet::DataType);
 	std::map<std::string, ECSL::ComponentVariable> m_variables;
