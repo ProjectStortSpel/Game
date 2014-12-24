@@ -33,7 +33,7 @@ Unit.Name = "Unit"
 	--	Game Logic
 	Unit:AddComponent("PlayerNumber")			--	The number of the player [1, Number of players]
 	Unit:AddComponent("Direction")
-	--Unit:AddComponent("TargetCheckpoint")
+	Unit:AddComponent("TargetCheckpoint")
 	Unit:AddComponent("MapPosition")
 	Unit:AddComponent("Spawnpoint")
 	

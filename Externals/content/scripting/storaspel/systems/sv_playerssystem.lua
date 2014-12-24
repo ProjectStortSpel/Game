@@ -34,7 +34,9 @@ PlayersSystem.OnEntityAdded = function(self, entityId)
 
 	world:SetComponent(newEntityId, "PlayerNumber", "Number", playerNumber)
 	world:SetComponent(newEntityId, "PlayerEntityId", "Id", entityId)
+	world:SetComponent(newEntityId, "TargetCheckpoint", "Id", 1)
 	world:GetComponent(newEntityId, "Direction", 0):SetInt2(0, -1)
+
 
 
 	world:SetComponent(entityId, "PlayerNumber", "Number", playerNumber)

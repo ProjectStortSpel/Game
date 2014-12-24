@@ -24,6 +24,10 @@ SpawnSystem.OnEntityAdded = function(self, entityId)
     posComp:SetFloat3(X, 1, Z)
 	mapPosComp:SetInt2(X, Z)
 
+	if world:EntityHasComponent(entityId, "Hide") then
+		world:RemoveComponentFrom("Hide", entityId)
+	end
+
 	world:RemoveComponentFrom("Spawn", entityId)
 	print("Spawned at " .. X .. " - " .. Z)
 
