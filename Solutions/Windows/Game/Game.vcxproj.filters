@@ -417,13 +417,22 @@
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_startnewroundsystem.lua">
       <Filter>Scripting\Systems\Server Systems\Round Systems</Filter>
     </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_playcardssystem.lua">
-      <Filter>Scripting\Systems\Server Systems\Round Systems</Filter>
-    </None>
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_moveplayersystem.lua">
       <Filter>Scripting\Systems\Server Systems\Round Systems</Filter>
     </None>
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_steptimersystem.lua">
+      <Filter>Scripting\Systems\Server Systems\Round Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_playcardsystem.lua">
+      <Filter>Scripting\Systems\Server Systems\Round Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_playcardtimersystem.lua">
+      <Filter>Scripting\Systems\Server Systems\Round Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_voidsystem.lua">
+      <Filter>Scripting\Systems\Server Systems\Round Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_respawnsystem.lua">
       <Filter>Scripting\Systems\Server Systems\Round Systems</Filter>
     </None>
   </ItemGroup>

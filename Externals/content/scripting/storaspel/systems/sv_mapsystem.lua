@@ -26,7 +26,6 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
     local posComp = self:GetComponent(entity, "Position", 0)
     posComp:SetFloat3(posX, 0.0, posZ)
 	
-    world:CreateComponentAndAddTo("MapPosition", entity)
     local mapPosComp = self:GetComponent(entity, "MapPosition", 0)
     mapPosComp:SetInt2(posX, posZ)
 
@@ -141,7 +140,6 @@ MapSystem.AddGroundTileBelow = function(self, posX, posZ)
 	local posComp = self:GetComponent(groundEntity, "Position", 0)
 	posComp:SetFloat3(posX, 0.0, posZ)
 	
-	world:CreateComponentAndAddTo("MapPosition", groundEntity)
 	local mapPosComp = self:GetComponent(groundEntity, "MapPosition", 0)
 	mapPosComp:SetInt2(posX, posZ)
 	

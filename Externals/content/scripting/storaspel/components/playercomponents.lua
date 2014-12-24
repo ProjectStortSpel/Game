@@ -56,14 +56,14 @@ worldCreator:AddComponentType(SpawnComponent)
 -- TargetCheckpoint Component
 local TargetCheckpointComponent = ComponentType()
 TargetCheckpointComponent.Name = "TargetCheckpoint"
-TargetCheckpointComponent.TableType = TableType.Array
+TargetCheckpointComponent.TableType = TableType.Map
 TargetCheckpointComponent:AddVariable("Id", ByteSize.Int)
 worldCreator:AddComponentType(TargetCheckpointComponent)
 
 -- TargetPosition Component
 local TargetPositionComponent = ComponentType()
 TargetPositionComponent.Name = "TargetPosition"
-TargetPositionComponent.TableType = TableType.Array
+TargetPositionComponent.TableType = TableType.Map
 TargetPositionComponent:AddVariable("X", ByteSize.Float)
 TargetPositionComponent:AddVariable("Y", ByteSize.Float)
 TargetPositionComponent:AddVariable("Z", ByteSize.Float)
@@ -75,10 +75,16 @@ InactivePlayerComponent.Name = "InactivePlayer"
 InactivePlayerComponent.TableType = TableType.Map
 worldCreator:AddComponentType(InactivePlayerComponent)
 
+-- Unit Dead Component
+local UnitDeadComponent = ComponentType()
+UnitDeadComponent.Name = "UnitDead"
+UnitDeadComponent.TableType = TableType.Map
+worldCreator:AddComponentType(UnitDeadComponent)
+
 -- Spawnpoint Component
 local SpawnComponent = ComponentType()
 SpawnComponent.Name = "Spawnpoint"
-SpawnComponent.TableType = TableType.Array
+SpawnComponent.TableType = TableType.Map
 SpawnComponent:AddVariable("X", ByteSize.Int)
 SpawnComponent:AddVariable("Z", ByteSize.Int)
 worldCreator:AddComponentType(SpawnComponent)

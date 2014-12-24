@@ -11,7 +11,7 @@ end
 NewStepSystem.OnEntityAdded = function(self, entity)
 	
 	if world:EntityHasComponent( entity, "NewRound") then
-		print("NEW ROUND!")
+		print("\n\nNEW ROUND!")
 		self.Step = 1
 		local id = world:CreateNewEntity()
 		world:CreateComponentAndAddTo("NewStep", id)
@@ -20,17 +20,22 @@ NewStepSystem.OnEntityAdded = function(self, entity)
 		
 		if self.Step <= 5 then
 			local id = world:CreateNewEntity()
-			world:CreateComponentAndAddTo("PlayCards", id)
-			world:SetComponent(id, "PlayCards", "Step", self.Step)
+			world:CreateComponentAndAddTo("PlayCard", id)
+			world:SetComponent(id, "PlayCard", "Step", self.Step)
 
-			print("NEW STEP: " .. self.Step)
+			print("\nNEW STEP: " .. self.Step)
 
 			self.Step = self.Step + 1
 		else
 			--local id = world:CreateNewEntity()
 			--world:CreateComponentAndAddTo("EndRound", id)
-
+			
+			--Respawn
 			local id = world:CreateNewEntity()
+			world:CreateComponentAndAddTo("RespawnUnits", id)
+
+			--Deal cards
+			id = world:CreateNewEntity()
 			world:CreateComponentAndAddTo("DealCards", id)
 			world:SetComponent(id, "DealCards", "NumCards", 5)
 

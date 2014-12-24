@@ -148,6 +148,10 @@ MoveForwardSystem.OnEntityAdded = function(self, entity)
 	pos:SetFloat3(posX + dirX, posY, posZ + dirZ)
 
 	world:RemoveComponentFrom("UnitForward", entity)
+
+	local id = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("PostMove", id)
+
 end
 
 MoveBackwardSystem = System()
@@ -175,4 +179,8 @@ MoveBackwardSystem.OnEntityAdded = function(self, entity)
 	pos:SetFloat3(posX - dirX, posY, posZ - dirZ)
 
 	world:RemoveComponentFrom("UnitBackward", entity)
+
+	local id = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("PostMove", id)
+
 end

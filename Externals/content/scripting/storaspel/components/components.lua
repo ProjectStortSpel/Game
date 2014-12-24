@@ -44,6 +44,13 @@ RenderComponent:AddVariable("ModelId", ByteSize.Int)
 RenderComponent:AddVariable("Mat", ByteSize.Matrix)
 worldCreator:AddComponentType(RenderComponent)
 
+-- Hide Component
+local HideComponent = ComponentType()
+HideComponent.Name = "Hide"
+HideComponent.TableType = TableType.Map
+worldCreator:AddComponentType(HideComponent)
+
+
 --	Model Component
 local ModelComponent = ComponentType()
 ModelComponent.Name = "Model"

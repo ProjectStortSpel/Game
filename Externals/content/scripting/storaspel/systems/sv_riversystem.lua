@@ -13,7 +13,7 @@ end
 RiverSystem.OnEntityAdded = function(self, entity)
 	
 	if world:EntityHasComponent( entity, "MoveRiver") then
-		
+		print("Move River")
 		local units = self:GetEntities("Unit")
 		local rivers = self:GetEntities("River")
 
@@ -49,7 +49,8 @@ RiverSystem.OnEntityAdded = function(self, entity)
 
 		local id = world:CreateNewEntity()
 		world:CreateComponentAndAddTo("StepTimer", id)
-		world:GetComponent(id, "StepTimer", "Time"):SetFloat(2)
+		world:GetComponent(id, "StepTimer", "Time"):SetFloat(1)
+
 
 	end
 end

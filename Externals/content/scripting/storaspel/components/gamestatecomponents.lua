@@ -25,30 +25,63 @@ worldCreator:AddComponentType(NotifyStartNewRoundComponent)
 
 local NewRoundComponent = ComponentType()
 NewRoundComponent.Name = "NewRound"
-NewRoundComponent.TableType = TableType.Array
+NewRoundComponent.TableType = TableType.Map
 worldCreator:AddComponentType(NewRoundComponent)
 
 local NewStepComponent = ComponentType()
 NewStepComponent.Name = "NewStep"
-NewStepComponent.TableType = TableType.Array
+NewStepComponent.TableType = TableType.Map
 worldCreator:AddComponentType(NewStepComponent)
 
 local PlayCardsComponent = ComponentType()
-PlayCardsComponent.Name = "PlayCards"
-PlayCardsComponent.TableType = TableType.Array
+PlayCardsComponent.Name = "PlayCard"
+PlayCardsComponent.TableType = TableType.Map
 PlayCardsComponent:AddVariable("Step", ByteSize.Int)
 worldCreator:AddComponentType(PlayCardsComponent)
 
+local PostMoveComponent = ComponentType()
+PostMoveComponent.Name = "PostMove"
+PostMoveComponent.TableType = TableType.Map
+worldCreator:AddComponentType(PostMoveComponent)
+
 local MoveRiverComponent = ComponentType()
 MoveRiverComponent.Name = "MoveRiver"
-MoveRiverComponent.TableType = TableType.Array
+MoveRiverComponent.TableType = TableType.Map
 worldCreator:AddComponentType(MoveRiverComponent)
+
+local RespawnUnitsComponent = ComponentType()
+RespawnUnitsComponent.Name = "RespawnUnits"
+RespawnUnitsComponent.TableType = TableType.Map
+worldCreator:AddComponentType(RespawnUnitsComponent)
+
+local CheckVoidComponent = ComponentType()
+CheckVoidComponent.Name = "CheckVoid"
+CheckVoidComponent.TableType = TableType.Map
+worldCreator:AddComponentType(CheckVoidComponent)
+
+local CheckCheckpointComponent = ComponentType()
+CheckCheckpointComponent.Name = "CheckCheckpoint"
+CheckCheckpointComponent.TableType = TableType.Map
+worldCreator:AddComponentType(CheckCheckpointComponent)
+
+local UpdateSpawnpointComponent = ComponentType()
+UpdateSpawnpointComponent.Name = "UpdateSpawnpoint"
+UpdateSpawnpointComponent:AddVariable("Unit", ByteSize.Reference)
+UpdateSpawnpointComponent.TableType = TableType.Map
+worldCreator:AddComponentType(UpdateSpawnpointComponent)
 
 local StepTimerComponent = ComponentType()
 StepTimerComponent.Name = "StepTimer"
 StepTimerComponent:AddVariable("Time", ByteSize.Float)
 StepTimerComponent.TableType = TableType.Map
 worldCreator:AddComponentType(StepTimerComponent)
+
+local PlayCardTimerComponent = ComponentType()
+PlayCardTimerComponent.Name = "PlayCardTimer"
+PlayCardTimerComponent:AddVariable("Time", ByteSize.Float)
+PlayCardTimerComponent:AddVariable("Step", ByteSize.Int)
+PlayCardTimerComponent.TableType = TableType.Map
+worldCreator:AddComponentType(PlayCardTimerComponent)
 
 local EndRoundComponent = ComponentType()
 EndRoundComponent.Name = "EndRound"

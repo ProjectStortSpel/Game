@@ -26,10 +26,18 @@ if Server then
 	require "sv_dealcardssystem"
 	require "sv_startnewroundsystem"
 	require "sv_newstepsystem"
-	require "sv_playcardssystem"
+	require "sv_playcardsystem"
+
+	require "sv_postmovesystem"
+	require "sv_checkpointsystem"
+	require "sv_voidsystem"
 	require "sv_riversystem"
+	require "sv_respawnsystem"
+
 	require "sv_moveplayersystem"
+
 	require "sv_steptimersystem"
+	require "sv_playcardtimersystem"
 end
 
 
@@ -67,6 +75,8 @@ worldCreator:AddSystemToCurrentGroup(networkMessagesSystem)
 if Server then
 	worldCreator:AddSystemToCurrentGroup(MapSystem)
 	--worldCreator:AddSystemToCurrentGroup(PlayerMovementSystem)
+
+
 	worldCreator:AddSystemToCurrentGroup(OnPlayerConnectedSystem)
 	worldCreator:AddSystemToCurrentGroup(PlayersSystem)
 	worldCreator:AddSystemToCurrentGroup(CreateSpawnpointSystem)
@@ -76,8 +86,13 @@ if Server then
 	worldCreator:AddSystemToCurrentGroup(DealCardsSystem)
 	worldCreator:AddSystemToCurrentGroup(StartNewRoundSystem)
 	worldCreator:AddSystemToCurrentGroup(NewStepSystem)
-	worldCreator:AddSystemToCurrentGroup(PlayCardsSystem)
+	worldCreator:AddSystemToCurrentGroup(PlayCardSystem)
+
+	worldCreator:AddSystemToCurrentGroup(PostMoveSystem)
+	worldCreator:AddSystemToCurrentGroup(CheckpointSystem)
+	worldCreator:AddSystemToCurrentGroup(VoidSystem)
 	worldCreator:AddSystemToCurrentGroup(RiverSystem)
+	worldCreator:AddSystemToCurrentGroup(RespawnSystem)
 
 	worldCreator:AddSystemToCurrentGroup(TurnAroundSystem)
 	worldCreator:AddSystemToCurrentGroup(TurnLeftSystem)
@@ -86,6 +101,7 @@ if Server then
 	worldCreator:AddSystemToCurrentGroup(MoveBackwardSystem)
 
 	worldCreator:AddSystemToCurrentGroup(StepTimerSystem)
+	worldCreator:AddSystemToCurrentGroup(PlayCardTimerSystem)
 
 end
 
