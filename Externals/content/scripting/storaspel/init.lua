@@ -6,6 +6,8 @@ require "playercomponents"
 require "cardcomponents"
 require "gamestatecomponents"
 
+require "lightcomponents"
+
 
 -- Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
@@ -50,6 +52,8 @@ package.path = package.path .. ";../../../Externals/content/scripting/storaspel/
 require "map"
 require "playertemplates"
 
+require "box"
+require "lights"
 
 
 
