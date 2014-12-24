@@ -31,7 +31,9 @@ void GameConsole::CreateObject(std::string _command, std::vector<Console::Argume
 
 	unsigned int mId = m_world->CreateNewEntity(_template);
 	m_world->CreateComponentAndAddTo("ChangedComponents", mId);
-	m_world->CreateComponentAndAddTo("SyncNetwork", mId);
+
+	if (!m_world->EntityHasComponent(mId, "SyncNetwork"))
+		m_world->CreateComponentAndAddTo("SyncNetwork", mId);
 
 	std::stringstream ss;
 	ss << "Entity with id #" << mId << " has been created!";
