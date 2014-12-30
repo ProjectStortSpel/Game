@@ -51,7 +51,7 @@ android {
 
     task ndkBuild(type: Exec) {
         if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-            commandLine '../../../Externals/android/ndk/ndk-build.cmd', '-C', file('jni').absolutePath
+            commandLine file('../../../Externals/android/ndk/ndk-build.cmd'), '-C', file('jni').absolutePath
         } else {
             commandLine '../../../Externals/android/ndk/ndk-build', '-C', file('jni').absolutePath
         }

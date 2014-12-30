@@ -8,7 +8,7 @@ InputWrapper::InputWrapper()
 	if (SDL_Init(SDL_INIT_GAMECONTROLLER) != 0)
 	{
 		std::string initErrorMessage = "Initializing SDL_INIT_GAMECONTROLLER failed!\n";
-		printf(initErrorMessage.c_str());
+		printf("%s", initErrorMessage.c_str());
 	}
 
 	m_keyboard = new Keyboard();

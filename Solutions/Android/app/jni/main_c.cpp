@@ -13,9 +13,9 @@
 #include <math.h>
 
 #include "SDL/SDL.h"
-#include "Lua/lua.h"
-#include "Lua/lualib.h"
-#include "Lua/lauxlib.h"
+#include "Lua/lua.hpp"
+
+#include "../../../../Source/Input/InputWrapper.h"
 
 #include <stdlib.h>
 
@@ -74,67 +74,67 @@ float framespersecond;
 
 // This function gets called once on startup.
 void fpsinit() {
-	
+
 	// Set all frame times to 0ms.
 	memset(frametimes, 0, sizeof(frametimes));
 	framecount = 0;
 	framespersecond = 0;
 	frametimelast = SDL_GetTicks();
-	
+
 }
 
 void fpsthink() {
-	
+
 	Uint32 frametimesindex;
 	Uint32 getticks;
 	Uint32 count;
 	Uint32 i;
-	
+
 	// frametimesindex is the position in the array. It ranges from 0 to FRAME_VALUES.
 	// This value rotates back to 0 after it hits FRAME_VALUES.
 	frametimesindex = framecount % FRAME_VALUES;
-	
+
 	// store the current time
 	getticks = SDL_GetTicks();
-	
+
 	// save the frame time value
 	frametimes[frametimesindex] = getticks - frametimelast;
-	
+
 	// save the last frame time for the next fpsthink
 	frametimelast = getticks;
-	
+
 	// increment the frame count
 	framecount++;
-	
+
 	// Work out the current framerate
-	
+
 	// The code below could be moved into another function if you don't need the value every frame.
-	
+
 	// I've included a test to see if the whole array has been written to or not. This will stop
 	// strange values on the first few (FRAME_VALUES) frames.
 	if (framecount < FRAME_VALUES) {
-		
+
 		count = framecount;
-		
+
 	} else {
-		
+
 		count = FRAME_VALUES;
-		
+
 	}
-	
+
 	// add up all the values and divide to get the average frame time.
 	framespersecond = 0;
 	for (i = 0; i < count; i++) {
-		
+
 		framespersecond += frametimes[i];
-		
+
 	}
-	
+
 	framespersecond /= count;
-	
+
 	// now to make it an actual frames per second value...
 	framespersecond = 1000.f / framespersecond;
-	
+
 }
 
 
@@ -221,17 +221,17 @@ initializeHappyFaces()
 void
 render(SDL_Renderer *renderer)
 {
-	
+
     int i;
     SDL_Rect srcRect;
     SDL_Rect dstRect;
-	
+
     /* setup boundaries for happyface bouncing */
     Uint16 maxx = SCREEN_WIDTH - HAPPY_FACE_SIZE;
     Uint16 maxy = SCREEN_HEIGHT - HAPPY_FACE_SIZE;
     Uint16 minx = 0;
     Uint16 miny = 0;
-	
+
     /* setup rects for drawing */
     srcRect.x = 0;
     srcRect.y = 0;
@@ -239,11 +239,11 @@ render(SDL_Renderer *renderer)
     srcRect.h = HAPPY_FACE_SIZE;
     dstRect.w = HAPPY_FACE_SIZE;
     dstRect.h = HAPPY_FACE_SIZE;
-	
+
     /* fill background in with black */
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
-	
+
     /*
 	 loop through all the happy faces:
 	 - update position
@@ -273,26 +273,26 @@ render(SDL_Renderer *renderer)
     }
     /* update screen */
     SDL_RenderPresent(renderer);
-	
+
 }
-void ShowFrame(void* renderer)
+/*void ShowFrame(void* renderer)
 {
 	Uint32 startFrame;
     Uint32 endFrame;
 	static Uint32 my_fps_print_timer = 0;
-	
+
 	startFrame = SDL_GetTicks();
-	
+
 	render(renderer);
 	endFrame = SDL_GetTicks();
-	
+
 	fpsthink();
 	if( (my_fps_print_timer +  3000) < (endFrame))
 	{
 		SDL_Log("%f\n", framespersecond);
 		my_fps_print_timer = endFrame;
 	}
-}
+}*/
 
 /*
  loads the happyface graphic into a texture
@@ -309,14 +309,14 @@ initializeTexture(SDL_Renderer *renderer)
     /* set white to transparent on the happyface */
     SDL_SetColorKey(bmp_surface, 1,
                     SDL_MapRGB(bmp_surface->format, 255, 255, 255));
-	
+
     /* convert RGBA surface to texture */
     texture = SDL_CreateTextureFromSurface(renderer, bmp_surface);
     if (texture == 0) {
         fatalError("could not create texture");
     }
     SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
-	
+
     /* free up allocated memory */
     SDL_FreeSurface(bmp_surface);
 }
@@ -351,15 +351,15 @@ int main(int argc, char *argv[])
     int done;
 
 	Uint32 my_fps_print_timer = 0;
-	
-	
+
+
     /* initialize SDL */
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         SDL_Log("Could not initialize SDL");
     }
 #if 1
         SDL_Log("SDL_CreateWindow");
-	
+
     window = SDL_CreateWindow(NULL, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
     //window = SDL_CreateWindow(NULL, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT,
 //							  SDL_WINDOW_RESIZABLE);
@@ -377,12 +377,12 @@ int main(int argc, char *argv[])
 	{
         SDL_Log("SDL_CreateRenderer failed");
         SDL_Log("SDL_CreateRenderer failed %s", SDL_GetError());
-		
+
 	}
 	else
 	{
         SDL_Log("SDL_CreateRenderer passed");
-	}	
+	}
 
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");  // make the scaled rendering look smoother.
 	SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -393,10 +393,10 @@ int main(int argc, char *argv[])
     initializeHappyFaces();
         SDL_Log("initializeHappyFaces passed");
 #endif
-	
 
-	
-	
+
+
+
 	done = 0;
 	while ( !done ) {
 		SDL_Event event;
@@ -404,9 +404,9 @@ int main(int argc, char *argv[])
 
         startFrame = SDL_GetTicks();
 
-		
+
 #if 1
-		
+
 		/* Check for events */
 		do
 		{
@@ -427,7 +427,7 @@ int main(int argc, char *argv[])
 						if(event.key.keysym.sym == SDLK_AC_BACK)
 						{
 							SDL_Log("Android back button pressed, going to quit, %d", the_result);
-							
+
 							done = 1;
 						}
 						break;
@@ -442,7 +442,7 @@ int main(int argc, char *argv[])
 				}
 			}
 		} while(the_result > 0);
-		
+
 #endif
 		render(renderer);
 
@@ -460,10 +460,10 @@ int main(int argc, char *argv[])
         } else if (delay > MILLESECONDS_PER_FRAME) {
             delay = MILLESECONDS_PER_FRAME;
         }
-		
+
 		SDL_Delay(delay);
 	}
-	
+
 
 	SDL_DestroyTexture(texture);
 
