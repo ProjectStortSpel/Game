@@ -15,7 +15,11 @@
 #include "SDL/SDL.h"
 #include "Lua/lua.hpp"
 
-#include "../../../../Source/Input/InputWrapper.h"
+#include "Input/InputWrapper.h"
+#include "Console/Console.h"
+#include "LuaEmbedder/LuaEmbedder.h"
+#include "Network/BaseNetwork.h"
+#include "ECSL/ECSL.h"
 
 #include <stdlib.h>
 

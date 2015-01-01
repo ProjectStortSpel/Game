@@ -6,6 +6,7 @@
 #include <sys/socket.h>
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
+#include <errno.h>
 
 using namespace Network;
 
@@ -119,7 +120,7 @@ bool LinSocket::Connect(const char* _ip, const int _port)
 	if (inet_pton(AF_INET, _ip, &address.sin_addr) <= 0)
 	{
 		if (NET_DEBUG)
-			std::printf("Failed to get address info. Error: %s.\n", strerror(errno));
+			printf("Failed to get address info. Error: %s.\n", strerror(errno));
 		return false;
 	}
 
