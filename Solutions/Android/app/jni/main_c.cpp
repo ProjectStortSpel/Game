@@ -20,6 +20,7 @@
 #include "LuaEmbedder/LuaEmbedder.h"
 #include "Network/BaseNetwork.h"
 #include "ECSL/ECSL.h"
+//#include "Renderer/GraphicDevice.h"
 
 #include <stdlib.h>
 
