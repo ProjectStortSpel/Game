@@ -54,6 +54,7 @@ namespace LuaEmbedder
 					std::string file = sourceString.substr(currRequireIndex, length);
 					std::string subSourceString = UnpackFile(directory + file + std::string(".lua"));
 					currRequireIndex -= 9;
+					SDL_Log("Erasing require: %s", sourceString.substr(currRequireIndex, length + 10).c_str());
 					sourceString.erase(currRequireIndex, length + 10);
 					sourceString.insert(sourceString.begin() + currRequireIndex, subSourceString.begin(), subSourceString.end());
 				}
@@ -72,19 +73,21 @@ namespace LuaEmbedder
 					else
 						directory = sourceString.substr(currPackagePathIndex, length);
 					currPackagePathIndex -= 33;
+					SDL_Log("Erasing package path: %s", sourceString.substr(currPackagePathIndex, length + 39).c_str());
 					sourceString.erase(currPackagePathIndex, length + 39);
 				}
 				prevPackagePathIndex = currPackagePathIndex;
 			}
 		}
-
+		sourceString.push_back('\n');
 		return sourceString;
 	  }
 
   bool Load(const std::string& filepath)
   {
-	std::string source = UnpackFile(filepath);
-	bool error = luaL_dostring(L, source.c_str());
+	//std::string source = UnpackFile(filepath);
+	//bool error = luaL_dostring(L, source.c_str());
+	bool error = luaL_dofile(L, filepath.c_str());
     if (error)
     {
       SDL_Log("LuaEmbedder::Load : %s", (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error"));
