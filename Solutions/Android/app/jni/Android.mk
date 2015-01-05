@@ -32,7 +32,7 @@ GAME_SRC_FILES := $(shell find $(LOCAL_PATH)/../../../../Source/Game/ -name "*.c
 GAME_SRC_FILES := $(addprefix ../../../../Source/Game/, $(GAME_SRC_FILES))
 endif
 
-LOCAL_SRC_FILES := main_c.cpp $(INPUT_SRC_FILES) $(CONSOLE_SRC_FILES) $(LUAEMBEDDER_SRC_FILES) $(NETWORK_SRC_FILES) $(ECSL_SRC_FILES) #$(RENDERER_SRC_FILES) #$(GAME_SRC_FILES)
+LOCAL_SRC_FILES := $(INPUT_SRC_FILES) $(CONSOLE_SRC_FILES) $(LUAEMBEDDER_SRC_FILES) $(NETWORK_SRC_FILES) $(ECSL_SRC_FILES) $(RENDERER_SRC_FILES) $(GAME_SRC_FILES)
 
 # Includes
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../../../Source/ $(LOCAL_PATH)/../../../../Externals/android/include/
@@ -40,7 +40,7 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../../../Source/ $(LOCAL_PATH)/../../../../
 # Libs
 LOCAL_SHARED_LIBRARIES := SDL2main_shared SDL2_shared
 LOCAL_STATIC_LIBRARIES := lua
-LOCAL_LDLIBS := -llog
+LOCAL_LDLIBS := -llog -landroid -lGLESv2
 
 include $(BUILD_SHARED_LIBRARY)
 
