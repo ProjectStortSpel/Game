@@ -1,5 +1,6 @@
 #include "Buffer.h"
 
+#ifndef __ANDROID__
 using namespace Renderer;
 
 Buffer::Buffer(void)
@@ -155,3 +156,4 @@ void Buffer::setCount(GLsizei count)
 {
 	m_Count = count;
 }
+#endif

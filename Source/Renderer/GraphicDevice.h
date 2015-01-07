@@ -38,6 +38,7 @@ namespace Renderer
 		}
 	};
 
+	#ifndef __ANDROID__
 	struct Model
 	{
 		bool operator== (const Model &m) { return Compare(m); }
@@ -66,6 +67,7 @@ namespace Renderer
 
 		std::vector<Instance> instances;
 	};
+	#endif
 
 	
 
@@ -80,6 +82,7 @@ namespace Renderer
 		}
 	};
 
+	#ifndef __ANDROID__
 	class DECLSPEC GraphicDevice
 	{
 	public:
@@ -210,6 +213,52 @@ namespace Renderer
 		// Random Vertors
 		GLuint m_randomVectors;
 	};
+	#else
+	class DECLSPEC GraphicDevice
+	{
+	public:
+		GraphicDevice();
+		~GraphicDevice();
+
+		bool Init();
+
+		void PollEvent(SDL_Event _event);
+		void Update(float _dt);
+		void Render();
+
+		void ResizeWindow(int _width, int _height);
+		void SetTitle(std::string _title);
+
+		// SIMPLETEXT FROM GAME
+		bool RenderSimpleText(std::string _text, int x, int y);
+		void SetSimpleTextColor(float _r, float _g, float _b, float _a);
+		void SetDisco();
+		void ToggleSimpleText();
+		void ToggleSimpleText(bool _on);
+
+		Camera *GetCamera(){ }
+		void GetWindowSize(int &x, int &y){ }
+
+		// MODELLOADER
+		bool PreLoadModel(std::string _dir, std::string _file, int _renderType = RENDER_DEFERRED);
+		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED);
+		bool RemoveModel(int _id);
+		bool ActiveModel(int _id, bool _active);
+		bool ChangeModelTexture(int _id, std::string _fileDir, int _textureType = TEXTURE_DIFFUSE);
+		bool ChangeModelNormalMap(int _id, std::string _fileDir);
+		bool ChangeModelSpecularMap(int _id, std::string _fileDir);
+
+		void SetDebugTexFlag(int _flag) { }
+		void BufferPointlights(int _nrOfLights, float **_lightPointers);
+		void BufferDirectionalLight(float *_lightPointer);
+
+		void Clear();
+
+	private:
+		SDL_Window*		m_window;
+		SDL_GLContext	m_glContext;
+	};
+	#endif
 }
 
 

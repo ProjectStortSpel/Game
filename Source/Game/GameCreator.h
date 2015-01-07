@@ -1,6 +1,9 @@
 #ifndef GAMECREATOR_H
 #define GAMECREATOR_H
 #include <SDL/SDL.h>
+#ifdef __ANDROID__
+#include <android/log.h>
+#endif
 #include "Console/Console.h"
 #include "TextInput.h"
 #include "Renderer/GraphicDevice.h"

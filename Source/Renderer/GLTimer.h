@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 
+#ifndef __ANDROID__
 class GLTimer
 {
 public:
@@ -20,5 +21,6 @@ private:
 	GLuint64 startTime, endTime;
 	GLint stopTimerAvailibale;
 };
+#endif
 
 #endif

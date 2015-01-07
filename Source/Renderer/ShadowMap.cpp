@@ -34,7 +34,8 @@ void ShadowMap::CreateShadowMapTexture(GLuint _textureUnit)
 	glBindTexture(GL_TEXTURE_2D, m_depthTex); 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_resolution, m_resolution, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	#ifndef __ANDROID__
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER); 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER); 
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, border);
@@ -53,7 +54,8 @@ void ShadowMap::CreateShadowMapTexture(GLuint _textureUnit)
 	glDrawBuffers(1, drawBuffers);
 	
 	// Revert to the default framebuffer for now 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0); 
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	#endif
 }
 
 void ShadowMap::UpdateViewMatrix(vec3 lightPos, vec3 target)

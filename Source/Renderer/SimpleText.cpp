@@ -1,5 +1,6 @@
 #include "SimpleText.h"
 
+#ifndef __ANDROID__
 using namespace Renderer;
 using namespace glm;
 
@@ -124,3 +125,4 @@ void SimpleText::SetSimpleTextColor(vec4 _color)
 	m_simpleTextShader.UseProgram();
 	m_simpleTextShader.SetUniVariable("text_color", vector4, &_color);
 }
+#endif

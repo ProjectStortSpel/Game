@@ -5,6 +5,7 @@
 #include "Shader.h"
 #include "stdafx.h"
 
+#ifndef __ANDROID__
 namespace Renderer
 {
 	class DECLSPEC SimpleText
@@ -39,4 +40,5 @@ namespace Renderer
 		GLuint simpleTextBuffer;
 	};
 }
+#endif
 #endif

@@ -4,7 +4,6 @@
 PointlightSystem::PointlightSystem(Renderer::GraphicDevice* _graphics)
 {
 	m_graphics = _graphics;
-
 }
 PointlightSystem::~PointlightSystem()
 {

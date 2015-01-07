@@ -139,7 +139,9 @@ void Shader::UseProgram()
 bool Shader::SetUniformBuffer(GLuint shader_binding, GLuint data, int size)
 {
 	//glGetProgramResourceIndex​( m_Program, GL_SHADER_STORAGE_BLOCK​​, const char *name​ );
+	#ifndef __ANDROID__
 	glBindBufferRange(GL_SHADER_STORAGE_BUFFER, shader_binding, data, 0, size);
+	#endif
 
 	return true;
 }

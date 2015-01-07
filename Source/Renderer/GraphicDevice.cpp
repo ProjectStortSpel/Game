@@ -9,6 +9,7 @@
 using namespace Renderer;
 using namespace glm;
 
+#ifndef __ANDROID__
 GraphicDevice::GraphicDevice()
 {
 	m_renderSimpleText = true;
@@ -91,7 +92,7 @@ void GraphicDevice::Update(float _dt)
 {
 	m_dt = _dt; m_fps = 1 / _dt;
 
-	// Test kod för att rendera text
+	// Test kod fï¿½r att rendera text
 	std::stringstream sstm;
 	sstm << m_fps << " fps";
 	m_textRenderer.RenderSimpleText(sstm.str(), 0, 0);
@@ -132,7 +133,8 @@ void GraphicDevice::WriteShadowMapDepth()
 
 	//glCullFace(GL_FRONT);
 	glEnable(GL_POLYGON_OFFSET_FILL);
-	glPolygonOffset(4.5, 18000.0);
+	glPolygonOffset(4.5, 18000.0);
+
 	glActiveTexture(GL_TEXTURE10);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -1142,3 +1144,133 @@ void GraphicDevice::Clear()
   BufferPointlights(0, tmpPtr);
   delete tmpPtr;
 }
+#else
+GraphicDevice::GraphicDevice()
+{
+}
+
+GraphicDevice::~GraphicDevice()
+{
+	SDL_GL_DeleteContext(m_glContext);
+	SDL_DestroyWindow(m_window);
+	SDL_Quit();
+}
+
+bool GraphicDevice::Init()
+{
+	if (SDL_Init(SDL_INIT_VIDEO) == -1){
+		std::cout << SDL_GetError() << std::endl;
+		return false;
+	}
+
+	unsigned int	Flags = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN | SDL_WINDOW_RESIZABLE;
+	const char*		Caption = "SDL Window";
+	int				PosX = 0;
+	int				PosY = 0;
+
+	SDL_DisplayMode dm;
+	SDL_GetDisplayMode(0, 0, &dm);
+	int				SizeX = dm.w;	//1280
+	int				SizeY = dm.h;	//720
+
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+
+	m_window = SDL_CreateWindow(NULL, PosX, PosY, SizeX, SizeY, Flags);
+
+	if (m_window == NULL){
+		//__android_log_print(ANDROID_LOG_VERBOSE, "Game", "Windows equals NULL");
+		std::cout << SDL_GetError() << std::endl;
+		return false;
+	}
+
+	m_glContext = SDL_GL_CreateContext(m_window);
+
+	return true;
+}
+
+void GraphicDevice::PollEvent(SDL_Event _event)
+{
+	if (_event.type == SDL_FINGERDOWN || _event.type == SDL_QUIT)
+	{
+		//__android_log_print(ANDROID_LOG_VERBOSE, "Game", "EXIT");
+		exit(0);
+	}
+}
+
+void GraphicDevice::Update(float _dt)
+{
+}
+
+void GraphicDevice::Render()
+{
+	glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	SDL_GL_SwapWindow(m_window);
+	SDL_Delay(10);
+}
+
+void GraphicDevice::ResizeWindow(int _width, int _height)
+{
+}
+
+void GraphicDevice::BufferPointlights(int _nrOfLights, float **_lightPointers)
+{
+}
+void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
+{
+}
+
+bool GraphicDevice::RenderSimpleText(std::string _text, int _x, int _y)
+{
+}
+void GraphicDevice::SetSimpleTextColor(float _r, float _g, float _b, float _a)
+{
+}
+void GraphicDevice::SetDisco()
+{
+}
+void GraphicDevice::ToggleSimpleText(bool _render)
+{
+}
+void GraphicDevice::ToggleSimpleText()
+{
+}
+
+bool GraphicDevice::PreLoadModel(std::string _dir, std::string _file, int _renderType)
+{
+	return true;
+}
+int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType)
+{
+	return 0;
+}
+bool GraphicDevice::RemoveModel(int _id)
+{
+	return false;
+}
+bool GraphicDevice::ActiveModel(int _id, bool _active)
+{
+	return false;
+}
+bool GraphicDevice::ChangeModelTexture(int _id, std::string _fileDir, int _textureType)
+{
+	return true;
+}
+bool GraphicDevice::ChangeModelNormalMap(int _id, std::string _fileDir)
+{
+	return true;
+}
+bool GraphicDevice::ChangeModelSpecularMap(int _id, std::string _fileDir)
+{
+	return true;
+}
+
+void GraphicDevice::Clear()
+{
+}
+#endif

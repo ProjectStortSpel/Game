@@ -18,6 +18,7 @@
 
 #include <iomanip>
 
+
 GameCreator::GameCreator() :
 m_graphics(0), m_input(0), m_world(0), m_console(0), m_consoleManager(Console::ConsoleManager::GetInstance()), m_frameCounter(new Utility::FrameCounter()), m_running(true)
 {
@@ -94,12 +95,13 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	LuaEmbedder::AddObject<ECSL::WorldCreator>("WorldCreator", &worldCreator, "worldCreator");
 
 	std::stringstream gameMode;
-	gameMode << "../../../Externals/content/scripting/";
+	gameMode << "content/scripting/";
 	gameMode << _gameMode;
 	gameMode << "/init.lua";
 
 	if (!LuaEmbedder::Load(gameMode.str()))
 	  return;
+
 
 	m_gameMode = _gameMode;
 	
@@ -108,7 +110,7 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	{
 		worldCreator.AddComponentType(it->second->GetName());
 		int id = ECSL::ComponentTypeManager::GetInstance().GetTableId(it->second->GetName());
-		printf("[#%d] %s added\n", id, it->second->GetName().c_str());
+		SDL_Log("[#%d] %s added", id, it->second->GetName().c_str());
 	}
 
 	/*	This component has to be added last!	*/
@@ -149,7 +151,7 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
 	
 	LuaEmbedder::CallMethods<LuaBridge::LuaSystem>("System", "PostInitialize");
-	
+
 }
 
 void GameCreator::StartGame()
@@ -378,11 +380,12 @@ void GameCreator::PollSDLEvent()
 	SDL_Event e;
 	while (SDL_PollEvent(&e))
 	{
+		m_graphics->PollEvent(e);
 		switch (e.type)
 		{
-		case SDL_WINDOWEVENT:
-			m_graphics->PollEvent(e);
-			break;
+		//case SDL_WINDOWEVENT:
+			//m_graphics->PollEvent(e);
+			//break;
 		case SDL_KEYDOWN:
 		case SDL_KEYUP:
 		case SDL_FINGERMOTION:
@@ -412,7 +415,7 @@ void GameCreator::ConsoleReload(std::string _command, std::vector<Console::Argum
 
 void GameCreator::ConsoleStopGame(std::string _command, std::vector<Console::Argument>* _args)
 {
-	m_running = false;
+	//m_running = false;
 }
 
 void GameCreator::OnConnectedToServer(Network::NetConnection _nc, const char* _message)

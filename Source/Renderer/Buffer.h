@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 
+#ifndef __ANDROID__
 namespace Renderer
 {
 	struct BufferData
@@ -49,5 +50,6 @@ namespace Renderer
 		GLsizei m_Count;
 	};
 }
+#endif
 
 #endif

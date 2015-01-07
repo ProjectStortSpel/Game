@@ -1,5 +1,6 @@
 #include "GLTimer.h"
 
+#ifndef __ANDROID__
 GLTimer::GLTimer()
 {
 	glGenQueries(1, &startQuery);
@@ -29,3 +30,4 @@ float GLTimer::Stop()
 	glGetQueryObjectui64v(endQuery, GL_QUERY_RESULT, &endTime);
 	return (endTime - startTime) / 1000000.0;
 }
+#endif

@@ -36,6 +36,7 @@ void SkyBox::BindBuffers(float _far)
 	 1, 2, 6, 5,
 	};
 
+	#ifndef __ANDROID__
 	glGenVertexArrays(1, &m_VAOHandle);
 	glBindVertexArray(m_VAOHandle);
 
@@ -52,10 +53,12 @@ void SkyBox::BindBuffers(float _far)
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	#endif
 }
 
 void SkyBox::Draw(GLuint _shaderProgHandle, Camera *_cam)
 {
+	#ifndef __ANDROID__
 	GLuint location = glGetUniformLocation(_shaderProgHandle, "MVP");
 
 	mat4 MVP = *_cam->GetProjMatrix() * (*_cam->GetViewMatrix()) * glm::translate(mat4(1.0f), *_cam->GetPos());
@@ -66,4 +69,5 @@ void SkyBox::Draw(GLuint _shaderProgHandle, Camera *_cam)
 	glBindTexture(GL_TEXTURE_2D, m_textureHandle);
 	glBindVertexArray(m_VAOHandle);
 	glDrawElements( GL_QUADS, 24, GL_UNSIGNED_INT, 0);
+	#endif
 }
