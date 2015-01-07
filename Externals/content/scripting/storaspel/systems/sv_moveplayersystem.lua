@@ -153,18 +153,24 @@ TestMoveSystem.OnEntityAdded = function(self, entity)
 		local moveUnits = { }
 		
 		local X1, Z1 = posX, posZ
-		for i = 1, #units do
+
+		local bla = true
+
+		while bla do
 			
-			local X2, Z2 = world:GetComponent(units[i], "MapPosition", 0):GetInt2()
+			bla = false
+			for i = 1, #units do
+			
+				local X2, Z2 = world:GetComponent(units[i], "MapPosition", 0):GetInt2()
 
-			if X1 == X2 and Z1 == Z2 then
+				if X1 == X2 and Z1 == Z2 then
 				
-				moveUnits[#moveUnits + 1] = units[i]
-				X1 = X1 + dirX
-				Z1 = Z1 + dirZ
-				i = 0
+					moveUnits[#moveUnits + 1] = units[i]
+					X1 = X1 + dirX
+					Z1 = Z1 + dirZ
+					bla = true
+				end
 			end
-
 
 		end
 
@@ -183,6 +189,8 @@ TestMoveSystem.OnEntityAdded = function(self, entity)
 
 		if isWalkable then
 			
+			print("Push units: " .. #moveUnits)
+
 			for i = 1, #moveUnits do
 				
 				local mapPos = world:GetComponent(moveUnits[i], "MapPosition", 0)
