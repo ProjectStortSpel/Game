@@ -40,7 +40,7 @@ void EntityTable::AddComponentTo(unsigned int _entityId, unsigned int _component
 	/* The entity is dead */
 	assert(!(*(unsigned char*)m_dataTable->GetData(_entityId) == 0));
 
-	/* The component is already added to entity */
+	/* The component is already added to the entity */
 	assert(!(componentBitSet[bitSetIndex] & ((BitSet::DataType)1 << bitIndex)));
 
 	componentBitSet[bitSetIndex] |= (BitSet::DataType)1 << bitIndex;

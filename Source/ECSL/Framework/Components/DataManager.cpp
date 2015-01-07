@@ -73,7 +73,6 @@ unsigned int DataManager::CreateNewEntity()
 void DataManager::RemoveEntity(unsigned int _entityId)
 {
 	ToBeRemoved(_entityId);
-
 	Changed(_entityId);
 
 	///* Add entity to removal list */

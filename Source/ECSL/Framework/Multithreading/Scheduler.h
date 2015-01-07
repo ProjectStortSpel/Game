@@ -45,23 +45,24 @@ namespace ECSL
 
 		void UpdateDt(float _dt);
 		MPL::TaskId ScheduleUpdate();
+		MPL::TaskId ScheduleUpdateSystemEntityLists(MPL::TaskId _dependency);
 		MPL::TaskId ScheduleUpdateEntityTable(MPL::TaskId _dependency);
 		MPL::TaskId ScheduleClearDeadEntities(MPL::TaskId _dependency);
 
 		void AddUpdateTasks(const std::vector<SystemWorkGroup*>& _systemGroups);
 		void AddOnEntityAddedTask(const std::vector<System*>& _systems);
 		void AddOnEntityRemovedTask(const std::vector<System*>& _systems);
+		void AddUpdateSystemEntityListsTasks();
 		void AddUpdateEntityTableTask();
 		void AddClearDeadEntitiesTask();
-		void AddUpdateSystemEntityListsTasks();
 
 	private:
 		DataManager* m_dataManager;
 		SystemManager* m_systemManager;
 		std::vector<std::vector<MPL::WorkItem*>*>* m_updateWorkItems;
-		std::vector<MPL::WorkItem*>* m_updateEntityComponentsWorkItems;
+		std::vector<MPL::WorkItem*>* m_updateEntityTableWorkItems;
 		std::vector<MPL::WorkItem*>* m_clearDeadEntitiesWorkItems;
-		std::vector<std::vector<MPL::WorkItem*>*>* m_updateGroupEntityListsWorkItems;
+		std::vector<MPL::WorkItem*>* m_updateSystemEntityListsWorkItems;
 		std::vector<std::vector<System*>*>* m_entityAddedRequests;
 		std::vector<std::vector<System*>*>* m_entityRemovedRequests;
 	};

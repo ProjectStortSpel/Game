@@ -25,8 +25,11 @@ void Simulation::Update(float _dt)
 	/* Update systems */
 	MPL::TaskId lastUpdateTask = m_scheduler->ScheduleUpdate();
 
-	/* Update entity component data*/
-	MPL::TaskId updateEntityTable = m_scheduler->ScheduleUpdateEntityTable(lastUpdateTask);
+	/* Update system entity lists */
+	MPL::TaskId updateSystemEntityLists = m_scheduler->ScheduleUpdateSystemEntityLists(lastUpdateTask);
+
+	/* Update entity component data */
+	MPL::TaskId updateEntityTable = m_scheduler->ScheduleUpdateEntityTable(updateSystemEntityLists);
 
 	/* Clear dead entities from entity table */
 	MPL::TaskId clearDeadEntities = m_scheduler->ScheduleClearDeadEntities(updateEntityTable);
