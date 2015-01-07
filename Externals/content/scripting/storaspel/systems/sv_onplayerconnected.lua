@@ -56,7 +56,7 @@ OnPlayerConnectedSystem.OnPlayerConnected = function(self, _ip, _port, _message)
 		return
 	end
 
-	if self.NumPlayers >= 2 then
+	if self.NumPlayers >= 5 then
 		
 		Net.Kick(_ip, _port, "Server is full.")
 		return
