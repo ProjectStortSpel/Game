@@ -99,6 +99,7 @@ if Server then
 	worldCreator:AddSystemToCurrentGroup(TurnRightSystem)
 	worldCreator:AddSystemToCurrentGroup(MoveForwardSystem)
 	worldCreator:AddSystemToCurrentGroup(MoveBackwardSystem)
+	worldCreator:AddSystemToCurrentGroup(TestMoveSystem)
 
 	worldCreator:AddSystemToCurrentGroup(StepTimerSystem)
 	worldCreator:AddSystemToCurrentGroup(PlayCardTimerSystem)

@@ -59,6 +59,17 @@ CheckVoidComponent.Name = "CheckVoid"
 CheckVoidComponent.TableType = TableType.Map
 worldCreator:AddComponentType(CheckVoidComponent)
 
+local TestMoveComponent = ComponentType()
+TestMoveComponent.Name = "TestMove"
+TestMoveComponent.TableType = TableType.Map
+TestMoveComponent:AddVariable("Unit", ByteSize.Reference)
+TestMoveComponent:AddVariable("PosX", ByteSize.Int)
+TestMoveComponent:AddVariable("PosZ", ByteSize.Int)
+TestMoveComponent:AddVariable("DirX", ByteSize.Int)
+TestMoveComponent:AddVariable("DirZ", ByteSize.Int)
+worldCreator:AddComponentType(TestMoveComponent)
+
+
 local CheckCheckpointComponent = ComponentType()
 CheckCheckpointComponent.Name = "CheckCheckpoint"
 CheckCheckpointComponent.TableType = TableType.Map

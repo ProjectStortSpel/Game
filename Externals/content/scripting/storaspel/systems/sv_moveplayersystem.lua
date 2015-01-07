@@ -123,6 +123,96 @@ TurnRightSystem.OnEntityAdded = function(self, entity)
 	world:RemoveComponentFrom("UnitTurnRight", entity)
 end
 
+TestMoveSystem = System()
+
+TestMoveSystem.Initialize = function(self)
+	
+	self:SetName("TestMoveSystem")
+	
+	self:AddComponentTypeToFilter("Unit",FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("NotWalkable",FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("TestMove",FilterType.RequiresOneOf)
+		
+	print("TestMoveSystem initialized!")
+
+end
+
+TestMoveSystem.OnEntityAdded = function(self, entity)
+	
+	if world:EntityHasComponent( entity, "TestMove") then
+		
+		local units = self:GetEntities("Unit")
+		local notWalkable = self:GetEntities("NotWalkable")
+
+		local unit = world:GetComponent(entity, "TestMove", "Unit"):GetInt()
+		local posX = world:GetComponent(entity, "TestMove", "PosX"):GetInt()
+		local posZ = world:GetComponent(entity, "TestMove", "PosZ"):GetInt()
+		local dirX = world:GetComponent(entity, "TestMove", "DirX"):GetInt()
+		local dirZ = world:GetComponent(entity, "TestMove", "DirZ"):GetInt()
+
+		local moveUnits = { }
+		
+		local X1, Z1 = posX, posZ
+		for i = 1, #units do
+			
+			local X2, Z2 = world:GetComponent(units[i], "MapPosition", 0):GetInt2()
+
+			if X1 == X2 and Z1 == Z2 then
+				
+				moveUnits[#moveUnits + 1] = units[i]
+				X1 = X1 + dirX
+				Z1 = Z1 + dirZ
+				i = 0
+			end
+
+
+		end
+
+		local isWalkable = true
+		for i = 1, #notWalkable do
+			
+			local X2, Z2 = world:GetComponent(notWalkable[i], "MapPosition", 0):GetInt2()
+
+			if X1 == X2 and Z1 == Z2 then
+				
+				isWalkable = false
+				break
+
+			end
+		end
+
+		if isWalkable then
+			
+			for i = 1, #moveUnits do
+				
+				local mapPos = world:GetComponent(moveUnits[i], "MapPosition", 0)
+				local pos = world:GetComponent(moveUnits[i], "Position", 0)
+
+				local mapPosX, mapPosZ = mapPos:GetInt2()
+				local newPosX, newPosY, newPosZ = pos:GetFloat3()
+
+				mapPos:SetInt2(mapPosX + dirX, mapPosZ + dirZ)
+				pos:SetFloat3(newPosX + dirX, newPosY, newPosZ + dirZ)
+
+			end
+			local posY = world:GetComponent(unit, "Position", "Y"):GetFloat()
+			world:GetComponent(unit, "MapPosition", 0):SetInt2(posX, posZ)			
+			world:GetComponent(unit, "Position", 0):SetFloat3(posX, posY, posZ)
+
+
+			local id = world:CreateNewEntity()
+			world:CreateComponentAndAddTo("PostMove", id)
+
+		end
+
+
+		world:KillEntity(entity)
+
+	end
+	
+end
+
+
 MoveForwardSystem = System()
 
 MoveForwardSystem.Initialize = function(self)
@@ -136,21 +226,27 @@ end
 
 MoveForwardSystem.OnEntityAdded = function(self, entity)
 	
-	local dir = world:GetComponent(entity, "Direction", 0)
-	local mapPos = world:GetComponent(entity, "MapPosition", 0)
-	local pos = world:GetComponent(entity, "Position", 0)
+	local dirX, dirZ = world:GetComponent(entity, "Direction", 0):GetInt2()
+	local mapPosX, mapPosZ = world:GetComponent(entity, "MapPosition", 0):GetInt2()
 
-	local dirX, dirZ = dir:GetInt2()
-	local mapPosX, mapPosZ = mapPos:GetInt2()
-	local posX, posY, posZ = pos:GetFloat3()
+	
+	if dirX ~= 0 then
+		dirX = dirX / math.abs(dirX)
+	end
 
-	mapPos:SetInt2(mapPosX + dirX, mapPosZ + dirZ)
-	pos:SetFloat3(posX + dirX, posY, posZ + dirZ)
-
-	world:RemoveComponentFrom("UnitForward", entity)
+	if dirZ ~= 0 then
+		dirZ = dirZ / math.abs(dirZ)
+	end
 
 	local id = world:CreateNewEntity()
-	world:CreateComponentAndAddTo("PostMove", id)
+	world:CreateComponentAndAddTo("TestMove", id)
+	world:SetComponent(id, "TestMove", "Unit", entity)
+	world:SetComponent(id, "TestMove", "PosX", mapPosX + dirX)
+	world:SetComponent(id, "TestMove", "PosZ", mapPosZ + dirZ)
+	world:SetComponent(id, "TestMove", "DirX", dirX)
+	world:SetComponent(id, "TestMove", "DirZ", dirZ)
+	
+	world:RemoveComponentFrom("UnitForward", entity)
 
 end
 
@@ -167,20 +263,25 @@ end
 
 MoveBackwardSystem.OnEntityAdded = function(self, entity)
 	
-	local dir = world:GetComponent(entity, "Direction", 0)
-	local mapPos = world:GetComponent(entity, "MapPosition", 0)
-	local pos = world:GetComponent(entity, "Position", 0)
+	local dirX, dirZ = world:GetComponent(entity, "Direction", 0):GetInt2()
+	local mapPosX, mapPosZ = world:GetComponent(entity, "MapPosition", 0):GetInt2()
 
-	local dirX, dirZ = dir:GetInt2()
-	local mapPosX, mapPosZ = mapPos:GetInt2()
-	local posX, posY, posZ = pos:GetFloat3()
+	if dirX ~= 0 then
+		dirX = dirX / math.abs(dirX)
+	end
 
-	mapPos:SetInt2(mapPosX - dirX, mapPosZ - dirZ)
-	pos:SetFloat3(posX - dirX, posY, posZ - dirZ)
-
-	world:RemoveComponentFrom("UnitBackward", entity)
+	if dirZ ~= 0 then
+		dirZ = dirZ / math.abs(dirZ)
+	end
 
 	local id = world:CreateNewEntity()
-	world:CreateComponentAndAddTo("PostMove", id)
+	world:CreateComponentAndAddTo("TestMove", id)
+	world:SetComponent(id, "TestMove", "Unit", entity)
+	world:SetComponent(id, "TestMove", "PosX", mapPosX - dirX)
+	world:SetComponent(id, "TestMove", "PosZ", mapPosZ - dirZ)
+	world:SetComponent(id, "TestMove", "DirX", -dirX)
+	world:SetComponent(id, "TestMove", "DirZ", -dirZ)
+	
+	world:RemoveComponentFrom("UnitBackward", entity)
 
 end
