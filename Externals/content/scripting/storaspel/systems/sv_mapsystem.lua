@@ -50,40 +50,20 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
 		
 		self:AddGroundTileBelow(posX, posZ)
 
-    elseif tiletype == 49 then -- 49 = 1 = first checkpoint
+    elseif tiletype >= 49 and tiletype <= 57 then -- 49 = 1 = first checkpoint, 47 = 9 = 9th checkpoint
         world:CreateComponentAndAddTo("Checkpoint", entity)
         local comp = self:GetComponent(entity, "Checkpoint", 0)
-        comp:SetInt(1)
+        comp:SetInt(tiletype - 48)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
 		comp:SetModel("checkpoint", "checkpoint")
 		--posComp:SetFloat3(posX, 1.0, posZ)
 
-    elseif tiletype == 50 then -- 50 = 2 = second checkpoint
-        world:CreateComponentAndAddTo("Checkpoint", entity)
-        local comp = self:GetComponent(entity, "Checkpoint", 0)
-        comp:SetInt(2)
+    elseif tiletype == 102 then -- 102 = f = finish
+        world:CreateComponentAndAddTo("Finish", entity)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
-		comp:SetModel("checkpoint", "checkpoint")
-		--posComp:SetFloat3(posX, 1.0, posZ)
-
-    elseif tiletype == 51 then -- 51 = 3 = third checkpoint
-        world:CreateComponentAndAddTo("Checkpoint", entity)
-        local comp = self:GetComponent(entity, "Checkpoint", 0)
-        comp:SetInt(3)
-		world:CreateComponentAndAddTo("Model", entity)
-		local comp = self:GetComponent(entity, "Model", 0)
-		comp:SetModel("checkpoint", "checkpoint")
-		--posComp:SetFloat3(posX, 1.0, posZ)
-
-    elseif tiletype == 52 then -- 52 = 4 = fourth checkpoint
-        world:CreateComponentAndAddTo("Checkpoint", entity)
-        local comp = self:GetComponent(entity, "Checkpoint", 0)
-        comp:SetInt(4)
-		world:CreateComponentAndAddTo("Model", entity)
-		local comp = self:GetComponent(entity, "Model", 0)
-		comp:SetModel("checkpoint", "checkpoint")
+		comp:SetModel("finish", "finish")
 		--posComp:SetFloat3(posX, 1.0, posZ)
 
     elseif tiletype == 117 then -- 117 = u = water up
