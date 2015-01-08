@@ -2,25 +2,32 @@
 -- Map Position Component
 local MapPositionComponent = ComponentType()
 MapPositionComponent.Name = "MapPosition"
-MapPositionComponent.TableType = TableType.Array
-MapPositionComponent:AddVariable("X", 4)
-MapPositionComponent:AddVariable("Y", 4)
+MapPositionComponent.TableType = TableType.Map
+MapPositionComponent:AddVariable("X", ByteSize.Int)
+MapPositionComponent:AddVariable("Z", ByteSize.Int)
 worldCreator:AddComponentType(MapPositionComponent)
 
 -- Water Component
-local WaterComponent = ComponentType()
-WaterComponent.Name = "Water"
-WaterComponent.TableType = TableType.Array
-WaterComponent:AddVariable("DirX", 4)
-WaterComponent:AddVariable("DirY", 4)
-worldCreator:AddComponentType(WaterComponent)
+local RiverComponent = ComponentType()
+RiverComponent.Name = "River"
+RiverComponent.TableType = TableType.Map
+RiverComponent:AddVariable("DirX", ByteSize.Int)
+RiverComponent:AddVariable("DirZ", ByteSize.Int)
+worldCreator:AddComponentType(RiverComponent)
 
 -- Checkpoint Component
 local CheckpointComponent = ComponentType()
 CheckpointComponent.Name = "Checkpoint"
-CheckpointComponent.TableType = TableType.Array
-CheckpointComponent:AddVariable("Number", 4)
+CheckpointComponent.TableType = TableType.Map
+CheckpointComponent:AddVariable("Number", ByteSize.Int)
 worldCreator:AddComponentType(CheckpointComponent)
+
+
+-- Finish Component
+local FinishComponent = ComponentType()
+FinishComponent.Name = "Finish"
+FinishComponent.TableType = TableType.Map
+worldCreator:AddComponentType(FinishComponent)
 
 -- Edge?
 -- Hole and Out Component

@@ -11,6 +11,7 @@
 #include <vector>
 #include <map>
 #include <cstring>
+#include <queue>
 
 
 namespace Console
@@ -41,7 +42,7 @@ namespace Console
 	};
 		
 
-	typedef std::function<void(std::vector<Argument>*)> ConsoleHook;
+	typedef std::function<void(std::string, std::vector<Argument>*)> ConsoleHook;
 
 	class DECLSPEC ConsoleManager
 	{
@@ -51,6 +52,7 @@ namespace Console
 		std::vector<std::string> m_history;
 		std::vector<std::string> m_commandHistory;
 		std::string m_match;
+		std::queue<std::string> m_commandQueue;
 
 		bool ParseArgs(char* _args, std::vector<Argument>* _vector);
 
@@ -66,6 +68,8 @@ namespace Console
 		~ConsoleManager();
 		static ConsoleManager& GetInstance();
 
+		void ExecuteCommandQueue();
+		void AddToCommandQueue(const char* _command);
 		void ExecuteCommand(const char* _command);
 		void AddCommand(const char* _name, ConsoleHook _hook);
 		void RemoveCommand(const char* _name);

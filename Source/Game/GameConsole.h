@@ -14,29 +14,29 @@ public:
 
 	void SetupHooks(Console::ConsoleManager* _consoleManager);
 
-	void AddPointlight(std::vector<Console::Argument>* _args);
-	void RemovePointlight(std::vector<Console::Argument>* _args);
+	void AddPointlight(std::string _command, std::vector<Console::Argument>* _args);
+	void RemovePointlight(std::string _command, std::vector<Console::Argument>* _args);
 
-	void CreateObject(std::vector<Console::Argument>* _args);
-	void RemoveObject(std::vector<Console::Argument>* _args);
-	void AddComponent(std::vector<Console::Argument>* _args);
-	void ChangeComponent(std::vector<Console::Argument>* _args);
-	void RemoveComponent(std::vector<Console::Argument>* _args);
-	void ListCommands(std::vector<Console::Argument>* _args);
-	void ClearHistory(std::vector<Console::Argument>* _args);
+	void CreateObject(std::string _command, std::vector<Console::Argument>* _args);
+	void RemoveObject(std::string _command, std::vector<Console::Argument>* _args);
+	void AddComponent(std::string _command, std::vector<Console::Argument>* _args);
+	void ChangeComponent(std::string _command, std::vector<Console::Argument>* _args);
+	void RemoveComponent(std::string _command, std::vector<Console::Argument>* _args);
+	void ListCommands(std::string _command, std::vector<Console::Argument>* _args);
+	void ClearHistory(std::string _command, std::vector<Console::Argument>* _args);
 
-	void HostServer(std::vector<Console::Argument>* _args);
-	void StopServer(std::vector<Console::Argument>* _args);
+	void HostServer(std::string _command, std::vector<Console::Argument>* _args);
+	void StopServer(std::string _command, std::vector<Console::Argument>* _args);
 
-	void ConnectClient(std::vector<Console::Argument>* _args);
-	void DisconnectClient(std::vector<Console::Argument>* _args);
+	void ConnectClient(std::string _command, std::vector<Console::Argument>* _args);
+	void DisconnectClient(std::string _command, std::vector<Console::Argument>* _args);
 
-	void SetDebugTexture(std::vector<Console::Argument>* _args);
+	void SetDebugTexture(std::string _command, std::vector<Console::Argument>* _args);
 
-	void SetTextColor(std::vector<Console::Argument>* _args);
-	void ToggleText(std::vector<Console::Argument>* _args);
+	void SetTextColor(std::string _command, std::vector<Console::Argument>* _args);
+	void ToggleText(std::string _command, std::vector<Console::Argument>* _args);
 
-	void ECSLMemoryUsage(std::vector<Console::Argument>* _args);
+	void ECSLMemoryUsage(std::string _command, std::vector<Console::Argument>* _args);
 
 	void SetWorld(ECSL::World* _world){ m_world = _world; }
 private:

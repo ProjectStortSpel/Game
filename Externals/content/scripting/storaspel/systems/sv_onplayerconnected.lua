@@ -8,17 +8,25 @@ OnPlayerConnectedSystem.Update = function(self, dt)
 end
 
 OnPlayerConnectedSystem.Initialize = function(self)
-	self:SetName("On Player ConnectedSystem System")
+	self:SetName("OnPlayerConnectedSystemSystem")
 	self:InitializeNetworkEvents()
 	
-	self:AddComponentTypeToFilter("Player", FilterType.Mandatory)
-	self:AddComponentTypeToFilter("NetConnection", FilterType.Mandatory)
+	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("Player", FilterType.RequiresOneOf)
 	
-	print("On Player Connected System!")
+	print("OnPlayerConnectedSystem initialized!")
+end
+
+OnPlayerConnectedSystem.PostInitialize = function(self)
+
+	self:AddConnectedPlayers()
+
+	print("OnPlayerConnectedSystem post initialized!")
 end
 
 OnPlayerConnectedSystem.OnEntityAdded = function(self, entityId)
 	--world:SetComponent(entityId, "NetConnection", "Active", true);
+
 end
 
 OnPlayerConnectedSystem.OnEntityRemoved = function(self, entityId)
@@ -27,7 +35,7 @@ end
 
 OnPlayerConnectedSystem.OnPlayerConnected = function(self, _ip, _port, _message)
 
-	if GameRunning then
+	if #self:GetEntities("GameRunning") > 0 then
 
 		local foundPlayer = false
 		local entities = self:GetEntities();		
@@ -48,7 +56,7 @@ OnPlayerConnectedSystem.OnPlayerConnected = function(self, _ip, _port, _message)
 		return
 	end
 
-	if self.NumPlayers >= 2 then
+	if self.NumPlayers >= 5 then
 		
 		Net.Kick(_ip, _port, "Server is full.")
 		return
@@ -60,16 +68,14 @@ OnPlayerConnectedSystem.OnPlayerConnected = function(self, _ip, _port, _message)
 	local newName = "Player_" .. tostring(self.PlayerId)
 	
 	local newEntityId = world:CreateNewEntity("Player")
-	local strAdress = _ip .. ""
-	local strPort = _port .. ""
+
+	print("Player_: " .. newEntityId)
 	
 	world:SetComponent(newEntityId, "PlayerName", "Name", newName);
-	world:SetComponent(newEntityId, "NetConnection", "IpAddress", strAdress);
-	world:SetComponent(newEntityId, "NetConnection", "Port", strPort);
+	world:SetComponent(newEntityId, "NetConnection", "IpAddress", _ip);
+	world:SetComponent(newEntityId, "NetConnection", "Port", _port);
 
 	world:CreateComponentAndAddTo("ActiveNetConnection", newEntityId)
-	
-	--world:SetComponent(newEntityId, "PlayerNumber", "Number", self.ConnectedPlayers);
 
 	self.PlayerId = self.PlayerId + 1
 end
@@ -85,7 +91,7 @@ OnPlayerConnectedSystem.OnPlayerDisconnected = function(self, _ip, _port, _messa
 		
 		if _ip == ip and _port == port then
 
-			if GameRunning then
+			if #self:GetEntities("GameRunning") > 0 then
 				world:RemoveComponentFrom("ActiveNetConnection", entities[i])
 			else
 				world:KillEntity(entities[i])		
@@ -97,7 +103,41 @@ OnPlayerConnectedSystem.OnPlayerDisconnected = function(self, _ip, _port, _messa
 	self.NumPlayers = self.NumPlayers - 1		
 end
 
+OnPlayerConnectedSystem.AddConnectedPlayers = function(self)
+	
+	local clients = { Net.ConnectedClients() }
+	
 
+	for i = 1, #clients, 2 do
+		
+		local ip = clients[i]
+		local port = clients[i+1]
+
+		if self.NumPlayers >= 2 then
+			Net.Kick(ip, port, "Server is full.")
+			return
+		end
+		self.NumPlayers = self.NumPlayers + 1
+		--	Hax new ID
+	
+		--	Create the new player
+		local newName = "Player_" .. tostring(self.PlayerId)
+	
+		local newEntityId = world:CreateNewEntity("Player")
+	
+		world:SetComponent(newEntityId, "PlayerName", "Name", newName);
+		world:SetComponent(newEntityId, "NetConnection", "IpAddress", ip);
+		world:SetComponent(newEntityId, "NetConnection", "Port", port);
+
+		world:CreateComponentAndAddTo("ActiveNetConnection", newEntityId)
+	
+		--world:SetComponent(newEntityId, "PlayerNumber", "Number", self.ConnectedPlayers);
+
+		self.PlayerId = self.PlayerId + 1
+
+	end
+
+end
 
 
 

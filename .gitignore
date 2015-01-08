@@ -206,3 +206,7 @@ FakesAssemblies/
 
 # KDevelop 4 Files
 *.kdev4
+
+Externals/android/ndk/
+Externals/android/sdk/
+Solutions/Android/app/libs/

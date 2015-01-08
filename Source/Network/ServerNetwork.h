@@ -32,6 +32,8 @@ namespace Network
 
 		void Kick(NetConnection& _connection, const char* _reason);
 
+		const std::vector<NetConnection> GetConnectedClients() { return m_connectedClientsNC; }
+
 		// Bind function which will trigger when another player connects to the server
 		void SetOnPlayerConnected(NetEvent& _function);
 		// Bind function which will trigger when another player disconnects from the server
@@ -68,6 +70,8 @@ namespace Network
 
 		std::mutex* m_dataRecievedLock;
 		std::mutex* m_dataSentLock;
+
+		std::vector<NetConnection>	m_connectedClientsNC;
 		std::map<NetConnection, ISocket*>* m_connectedClients;
 
 		ISocket* m_listenSocket;

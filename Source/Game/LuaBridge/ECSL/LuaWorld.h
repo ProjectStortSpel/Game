@@ -21,6 +21,7 @@ namespace LuaBridge
     int KillEntity();
     int SetComponent();
     int GetComponent();
+	int EntityHasComponent();
   };
 }
 

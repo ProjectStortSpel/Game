@@ -145,3 +145,14 @@ void World::ComponentHasChanged(unsigned int _entityId, unsigned int _componentT
 	ECSL::BitSet::DataType* changedComponentsNetwork = (ECSL::BitSet::DataType*)GetComponent(_entityId, "ChangedComponentsNetwork", 0);
 	changedComponentsNetwork[bitSetIndex] |= ((ECSL::BitSet::DataType)1) << bitIndex;
 }
+
+bool World::EntityHasComponent(unsigned int _entityId, std::string _componentType)
+{
+	unsigned int componentTypeId = ECSL::ComponentTypeManager::GetInstance().GetTableId(_componentType);
+	return EntityHasComponent(_entityId, componentTypeId);
+}
+
+bool World::EntityHasComponent(unsigned int _entityId, unsigned int _componentTypeId)
+{
+	return m_dataManager->EntityHasComponent(_entityId, _componentTypeId);	
+}

@@ -1,6 +1,6 @@
 #include "ServerNetwork.h"
 #include <sstream>
-//#include <algorithm>
+#include <algorithm>
 
 #ifdef WIN32
 #else
@@ -23,6 +23,7 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t& 
 		auto newPacket = _packetHandler->EndPack(id2);
 		m_connectedClientsLock->lock();
 		(*m_connectedClients)[_connection]->SetActive(2);
+		m_connectedClientsNC.push_back(_connection);
 		m_connectedClientsLock->unlock();
 		Send(newPacket, _connection);
 
@@ -396,6 +397,7 @@ void ServerNetwork::ReceivePackets(ISocket* _socket)
 
 	m_connectedClientsLock->lock();
 	m_connectedClients->erase(_socket->GetNetConnection());
+	m_connectedClientsNC.erase(std::remove(m_connectedClientsNC.begin(), m_connectedClientsNC.end(), _socket->GetNetConnection()), m_connectedClientsNC.end());
 	m_connectedClientsLock->unlock();
 
 	delete packetData;

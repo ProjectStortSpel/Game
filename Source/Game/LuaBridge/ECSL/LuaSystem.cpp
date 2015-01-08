@@ -103,8 +103,31 @@ namespace LuaBridge
 
 	int LuaSystem::GetEntities()
 	{
-		
-		LuaEmbedder::PushUnsignedIntArray(System::GetEntities()->data(), System::GetEntities()->size(), false);
+		const std::vector<unsigned int>* entities = System::GetEntities();
+
+		if (LuaEmbedder::IsString(1))
+		{
+			std::string comp = LuaEmbedder::PullString(1);
+			unsigned int componentTypeId = ECSL::ComponentTypeManager::GetInstance().GetTableId(comp);
+
+			unsigned int* selectedEntities = new unsigned int[entities->size()];
+
+			int index = 0;
+			for (int i = 0; i < entities->size(); ++i)
+			{
+				if (System::EntityHasComponent(entities->at(i), componentTypeId))
+				{
+					selectedEntities[index] = entities->at(i);
+					++index;
+				}
+			}
+			LuaEmbedder::PushUnsignedIntArray(selectedEntities, index);
+		}
+		else
+		{
+			LuaEmbedder::PushUnsignedIntArray(entities->data(), entities->size(), false);
+		}
+
 		return 1;
 	}
 	

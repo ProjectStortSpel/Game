@@ -13,10 +13,10 @@ private:
 	std::string m_passwordServer;
 	std::string m_passwordClient;
 
-	void ExecuteCommandClient(std::vector<Console::Argument>* _vec);
+	void ExecuteCommandClient(std::string _command, std::vector<Console::Argument>* _vec);
 
-	void SetServerPasswordConsole(std::vector<Console::Argument>* _vec);
-	void SetClientPasswordConsole(std::vector<Console::Argument>* _vec);
+	void SetServerPasswordConsole(std::string _command, std::vector<Console::Argument>* _vec);
+	void SetClientPasswordConsole(std::string _command, std::vector<Console::Argument>* _vec);
 
 
 public:

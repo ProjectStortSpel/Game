@@ -85,7 +85,7 @@
   #define IMPORT
 #endif
 
-#define LUA_REAL_FLOAT
+//#define LUA_REAL_FLOAT
 
 namespace LuaEmbedder
 {
