@@ -308,7 +308,7 @@ int LinSocket::Receive(char* _buffer, int _length, int _flags)
 	else if (len2 == -1)
 	{
 		if (NET_DEBUG)
-			printf("Error: Failed to receive \"Size packet\". Error: %s.\n", strerror(errorCode));
+			printf("Error: Failed to receive \"Size packet\". Error: %s.\n", strerror(errno));
 	}
 	else
 	{
