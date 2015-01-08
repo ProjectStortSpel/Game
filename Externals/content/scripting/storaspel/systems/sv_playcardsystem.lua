@@ -30,7 +30,7 @@ PlayCardSystem.OnEntityAdded = function(self, entity)
 			end
 
 			world:RemoveComponentFrom("CardStep", card)
-			world:CreateComponentAndAddTo("UsedCard", card)
+			--world:CreateComponentAndAddTo("UsedCard", card)
 
 			local id = world:CreateNewEntity()
 			world:CreateComponentAndAddTo("PlayCardTimer", id)
