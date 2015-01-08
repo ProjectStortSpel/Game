@@ -10,31 +10,33 @@ void Shader::InitShaderProgram()
 
 bool Shader::AddShader(const char* source_file, GLenum shader_type)
 {
-	// load file into string
-	std::ifstream file;
-	file.open(source_file);
-	if (!file.is_open())
+	// Open file
+	SDL_RWops* file = SDL_RWFromFile(source_file, "r");
+	if (file == NULL)
 	{
-		std::printf("ERROR creating opening shader file %s\n", source_file);
+		SDL_Log("File %s not found", source_file);
 		return false;
 	}
-	std::string shaderString; // string to load shader into
-	char line[256];
-	while (!file.eof())
+	// Get file length
+	Sint64 length = SDL_RWseek(file, 0, RW_SEEK_END);
+	if (length <= 0)
 	{
-		memcpy(line, "", 256);
-		file.getline(line, 256);
-		shaderString += line;
-		shaderString += '\n';
+		SDL_Log("Length of file %s lower than or equal to zero", source_file);
+		return false;
 	}
-	file.close();
+	SDL_RWseek(file, 0, RW_SEEK_SET);
+	// Read data
+	char* data = new char[length + 1];
+	SDL_RWread(file, data, length, 1);
+	data[length] = '\0';
+	// Close file
+	SDL_RWclose(file);
 
 	GLuint shader;
 	/* CREATING THE SHADER */
 	shader = glCreateShader(shader_type);
 
-	// load source from a char array
-	const char* source = shaderString.c_str();
+	const char* source = (const char*)data;
 	/* ATTACH THE SOURCE TO THE SHADER */
 	glShaderSource(shader, 1, &source, NULL);
 	/* COMPILE SHADER */
@@ -56,11 +58,7 @@ bool Shader::AddShader(const char* source_file, GLenum shader_type)
 		glGetShaderInfoLog(shader, logSize, &logSize, &errorLog[0]);
 
 		/* PRINT THE ERROR LOG */
-		for (int i = 0; i < logSize; i++)
-		{
-			std::printf("%c", errorLog[i]);
-		}
-		std::printf("\n");
+		SDL_Log("%s", errorLog);
 
 		/* DO SOME CLEANING :) */
 		delete(errorLog);
@@ -74,6 +72,8 @@ bool Shader::AddShader(const char* source_file, GLenum shader_type)
 
 	/* STORE THE SHADER SO WE CAN DETACH/DELETE IT LATER */
 	m_shaders.push_back(shader);
+
+	delete data;
 
 	return true;
 	/* TODO: WE SHOULD ADD ERROR HANDELING HERE LATER! */

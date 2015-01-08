@@ -20,7 +20,7 @@ namespace Renderer
 #define TEXTURE_SPECULAR	2
 
 
-	struct Instance
+	/*struct Instance
 	{
 		int id;
 		bool active;
@@ -33,7 +33,7 @@ namespace Renderer
 			active = _active;
 			modelMatrix = _model;
 		}
-	};
+	};*/
 
 	struct Model
 	{
@@ -60,8 +60,10 @@ namespace Renderer
 		GLuint texID;
 		GLuint norID;
 		GLuint speID;
-
-		std::vector<Instance> instances;
+		
+		int id;
+		bool active;
+		mat4* modelMatrix;
 	};
 
 	class DECLSPEC GraphicDevice
