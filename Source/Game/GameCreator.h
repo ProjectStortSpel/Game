@@ -41,6 +41,8 @@ private:
 
 	void OnConnectedToServer(Network::NetConnection _nc, const char* _message);
 	void LuaPacket(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
+	
+	void PrintSectionTime(const std::string& sectionName, Utility::FrameCounter* frameCounter, int x, int y);
 
 private:
 	Renderer::GraphicDevice*	m_graphics;
@@ -55,6 +57,11 @@ private:
 	std::string					m_gameMode;
 
 	bool						m_running;
+	
+	Utility::FrameCounter m_inputCounter;
+	Utility::FrameCounter m_worldCounter;
+	Utility::FrameCounter m_networkCounter;
+	Utility::FrameCounter m_graphicsCounter;
 };
 
 #endif

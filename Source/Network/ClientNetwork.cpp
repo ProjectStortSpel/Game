@@ -28,8 +28,8 @@ ClientNetwork::ClientNetwork()
 	m_socket = 0;
 	m_connected = new bool(false);
 
-	*m_maxTimeOutIntervall = 10.f;
-	*m_maxIntervallCounter = 3;
+	//*m_maxTimeOutIntervall = 1.f;
+	//*m_maxIntervallCounter = 30;
 
 	m_onConnectedToServer = new std::vector<NetEvent>();
 	m_onDisconnectedFromServer = new std::vector<NetEvent>();
@@ -66,6 +66,7 @@ ClientNetwork::ClientNetwork()
 	(*m_networkFunctions)[NetTypeMessageId::ID_REMOTE_CONNECTION_KICKED] = std::bind(&ClientNetwork::NetRemoteConnectionKicked, this, NetworkHookPlaceholders);
 	(*m_networkFunctions)[NetTypeMessageId::ID_REMOTE_CONNECTION_BANNED] = std::bind(&ClientNetwork::NetRemoteConnectionBanned, this, NetworkHookPlaceholders);
 
+	memset(m_packetData, 0, sizeof(m_packetData));
 }
 
 ClientNetwork::~ClientNetwork()
@@ -83,7 +84,7 @@ ClientNetwork::~ClientNetwork()
 	SAFE_DELETE(m_currentTimeOutIntervall);
 	SAFE_DELETE(m_currentIntervallCounter);
 	SAFE_DELETE(m_connected);
-	
+
 	SAFE_DELETE(m_onConnectedToServer);
 	SAFE_DELETE(m_onDisconnectedFromServer);
 	SAFE_DELETE(m_onTimedOutFromServer);
@@ -129,18 +130,16 @@ bool ClientNetwork::Connect()
 		*m_socketBound = true;
 	}
 
-	//m_socket->SetTimeoutDelay(100);
-	m_socket->SetNoDelay(true);
-	m_socket->SetNonBlocking(true);
+
 
 	bool connected = false;
 	//for (int i = 0; i < 5; ++i)
 	//{
-		connected = m_socket->Connect(m_remoteAddress->c_str(), *m_outgoingPort);
-		//if (connected)
-		//	break;
+	connected = m_socket->Connect(m_remoteAddress->c_str(), *m_outgoingPort);
+	//if (connected)
+	//	break;
 
-		//NetSleep(1500);
+	//NetSleep(1500);
 	//}
 
 	if (!connected)
@@ -150,8 +149,12 @@ bool ClientNetwork::Connect()
 		return false;
 	}
 
+	m_socket->SetTimeoutDelay(5000);
+	m_socket->SetNonBlocking(false);
+	m_socket->SetNoDelay(true);
+
 	*m_connected = true;
-	
+
 	uint64_t id = m_packetHandler->StartPack(NetTypeMessageId::ID_PASSWORD_ATTEMPT);
 	m_packetHandler->WriteString(id, m_password->c_str());
 	auto packet = m_packetHandler->EndPack(id);
@@ -174,7 +177,7 @@ void ClientNetwork::Disconnect()
 
 	*m_receivePacketsThreadAlive = false;
 
-	if (m_receivePacketsThread->joinable())	
+	if (m_receivePacketsThread->joinable())
 		m_receivePacketsThread->join();
 
 	if (m_socket)
@@ -196,33 +199,53 @@ void ClientNetwork::Disconnect()
 void ClientNetwork::ReceivePackets()
 {
 	// On its on thread
+	unsigned short nextPacketSize;
+	unsigned short dataReceived;
 	while (*m_receivePacketsThreadAlive)
 	{
-		int result = m_socket->Receive(m_packetData, MAX_PACKET_SIZE);
+		//nextPacketSize = 2;
+		//dataReceived = 0;
+		//while (dataReceived < nextPacketSize)
+		//{
+		//	int res = m_socket->Receive(m_packetData + dataReceived, nextPacketSize - dataReceived);
+		//	if (res > 0)
+		//		dataReceived += (unsigned short)res;
+		//}
 
-		if (result > 0)
+		//nextPacketSize = ntohs(*(unsigned short*)m_packetData);
+		//printf("SIZE: %d\n", nextPacketSize);
+		//dataReceived = 0;
+		//while (dataReceived < nextPacketSize)
+		//{
+		//	int res = m_socket->Receive(m_packetData + dataReceived, nextPacketSize - dataReceived);
+		//	if (res > 0)
+		//		dataReceived += (unsigned short)res;
+		//}
+
+		dataReceived = m_socket->Receive(m_packetData, MAX_PACKET_SIZE);
+		//unsigned short packetSize = (unsigned short)m_socket->Receive(m_packetData, MAX_PACKET_SIZE);
+
+		if (dataReceived > 0)
 		{
-			unsigned short packetSize = result;
-
 			if (NET_DEBUG)
-				printf("Received message with length \"%i\" from server.\n", packetSize);
+				printf("Received message with length \"%i\" from server.\n", dataReceived);
 
 			*m_currentIntervallCounter = 0;
 			*m_currentTimeOutIntervall = 0.0f;
 
 			Packet* p = new Packet();
-			p->Data = new unsigned char[packetSize];
-			*p->Length = packetSize;
+			p->Data = new unsigned char[dataReceived];
+			*p->Length = dataReceived;
 			*p->Sender = m_socket->GetNetConnection();
-			memcpy(p->Data, m_packetData, packetSize);
+			memcpy(p->Data, m_packetData, dataReceived);
 
 			HandlePacket(p);
 
-			*m_totalDataReceived += packetSize;
-			*m_currentDataReceived += packetSize;
+			*m_totalDataReceived += dataReceived;
+			*m_currentDataReceived += dataReceived;
 
 		}
-		else if (result == 0)
+		else if (dataReceived == 0)
 		{
 			// server shutdown graceful
 		}
@@ -380,7 +403,7 @@ void ClientNetwork::NetConnectionKicked(PacketHandler* _packetHandler, uint64_t&
 	SAFE_DELETE(m_socket);
 	*m_socketBound = 0;
 
-	
+
 
 	if (m_receivePacketsThread->joinable())
 		m_receivePacketsThread->join();
@@ -443,7 +466,7 @@ void ClientNetwork::NetRemoteConnectionLost(PacketHandler* _packetHandler, uint6
 
 	TriggerEvent(m_onRemotePlayerTimedOut, _connection, 0);
 }
-	
+
 void ClientNetwork::NetRemoteConnectionDisconnected(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection)
 {
 	char* name = _packetHandler->ReadString(_id);
@@ -476,7 +499,7 @@ void ClientNetwork::NetRemoteConnectionBanned(PacketHandler* _packetHandler, uin
 
 void ClientNetwork::SetOnConnectedToServer(NetEvent& _function)
 {
-	if (NET_DEBUG)	
+	if (NET_DEBUG)
 		printf("Hooking function to OnConnectedToServer.\n");
 
 	m_onConnectedToServer->push_back(_function);

@@ -141,6 +141,8 @@ void NetworkHelper::WriteComponents(Network::PacketHandler* _ph, uint64_t _id, u
 
 Network::Packet* NetworkHelper::WriteEntityKill(Network::PacketHandler* _ph, unsigned int _e)
 {
+	printf("WriteEntityKill\n");
+
 	uint64_t id = _ph->StartPack("EntityKill");
 	_ph->WriteInt(id, _e);
 	return _ph->EndPack(id);
@@ -267,8 +269,25 @@ void NetworkHelper::ReceiveComponents(Network::PacketHandler* _ph, uint64_t _id,
 					break;
 				}
 				case ECSL::ComponentDataType::REFERENCE:
-					*(int*)data = m_NtoH[_ph->ReadByte(_id)];
+				{
+					int idN = _ph->ReadInt(_id);
+					int idH = 0;
+					if (m_NtoH.find(idN) != m_NtoH.end())
+					{
+						idH = m_NtoH[idN];
+					}
+					else
+					{
+						idH = (*m_world)->CreateNewEntity();
+						printf("Created Entity from network reference with ID: %d\n", idH);
+						m_NtoH[idN] = idH;
+						m_HtoN[idH] = idN;
+					}
+					*(int*)data = idH;
 					break;
+				}
+
+
 				default:
 					printf("[NETWORK ERROR] Undefined data type for message\n");
 					break;
@@ -305,4 +324,22 @@ void NetworkHelper::ReceiveEntityKill(Network::PacketHandler* _ph, uint64_t _id,
 		m_NtoH.erase(idN);
 		m_HtoN.erase(idH);
 	}
+}
+
+unsigned int NetworkHelper::NetToHost(unsigned int _idN)
+{
+	if (m_NtoH.find(_idN) != m_NtoH.end())
+	{
+		return m_NtoH[_idN];
+	}
+	return 0;
+}
+
+unsigned int NetworkHelper::HostToNet(unsigned int _idH)
+{
+	if (m_HtoN.find(_idH) != m_HtoN.end())
+	{
+		return m_HtoN[_idH];
+	}
+	return 0;
 }

@@ -86,6 +86,7 @@ void GraphicDevice::PollEvent(SDL_Event _event)
 	}
 }
 
+float lightCounter = 0;
 void GraphicDevice::Update(float _dt)
 {
 	m_dt = _dt; m_fps = 1 / _dt;
@@ -110,12 +111,14 @@ void GraphicDevice::Update(float _dt)
 	vram << "VRAM usage: " << ((float)m_vramUsage/1024.f)/1024.f << " Mb ";
 	m_textRenderer.RenderSimpleText(vram.str(), 20, 0);
 
-	//m_dirLightDirection += vec3(0.0, 0.0, -0.0025);
-	//m_lightDefaults[0] = m_dirLightDirection.x;	//dir x
-	//m_lightDefaults[1] = m_dirLightDirection.y;	//dir y
-	//m_lightDefaults[2] = m_dirLightDirection.z;	//dir z
-	//BufferDirectionalLight(&m_lightDefaults[0]);
-	//m_shadowMap->UpdateViewMatrix(vec3(8, 0, 8) - (10.0f*normalize(m_dirLightDirection)), vec3(8, 0, 8));
+	lightCounter += 0.15*_dt;
+	m_dirLightDirection = vec3(-0.38, -1.0, 2.5*sin(lightCounter));
+
+	m_lightDefaults[0] = m_dirLightDirection.x;	//dir x
+	m_lightDefaults[1] = m_dirLightDirection.y;	//dir y
+	m_lightDefaults[2] = m_dirLightDirection.z;	//dir z
+	BufferDirectionalLight(&m_lightDefaults[0]);
+	m_shadowMap->UpdateViewMatrix(vec3(8, 0, 8) - (10.0f*normalize(m_dirLightDirection)), vec3(8, 0, 8));
 }
 
 void GraphicDevice::WriteShadowMapDepth()
@@ -129,7 +132,7 @@ void GraphicDevice::WriteShadowMapDepth()
 
 	//glCullFace(GL_FRONT);
 	glEnable(GL_POLYGON_OFFSET_FILL);
-	glPolygonOffset(1.5, 18000.0);	//glPolygonOffset(-1.0, 0.0);	glPolygonMode(GL_FRONT, GL_FILL);
+	glPolygonOffset(4.5, 18000.0);
 	glActiveTexture(GL_TEXTURE10);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -197,7 +200,6 @@ void GraphicDevice::WriteShadowMapDepth()
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glCullFace(GL_BACK);
-	glPolygonMode(GL_BACK, GL_FILL);
 	glDisable(GL_POLYGON_OFFSET_FILL);
 	//------------------------------
 }
@@ -394,7 +396,7 @@ void GraphicDevice::Render()
 	glDrawArrays(GL_POINTS, 0, 1);
 
 	glUseProgram(0);
-		//m_glTimerValues.push_back(GLTimerValue("Full Screen: ", glTimer.Stop()));
+		//m_glTimerValues.push_back(GLTimerValue("RENDER: ", glTimer.Stop()));
 
 	// Swap in the new buffer
 	SDL_GL_SwapWindow(m_window);
@@ -486,7 +488,7 @@ void GraphicDevice::CreateDepthTex(GLuint &texid) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, m_clientWidth, m_clientHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, m_clientWidth, m_clientHeight, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0);
 }
 
 bool GraphicDevice::InitDeferred()
@@ -809,12 +811,12 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 	m_modelIDcounter++;
 
 	Shader *shaderPtr = NULL;
-	if (_renderType == RENDER_DEFERRED)
+	if (_renderType == 0)
 	{
 		shaderPtr = &m_deferredShader1;
 		m_deferredShader1.UseProgram();
 	}
-	else if (_renderType == RENDER_FORWARD)
+	else if (_renderType == 1)
 	{
 		shaderPtr = &m_forwardShader;
 		m_forwardShader.UseProgram();

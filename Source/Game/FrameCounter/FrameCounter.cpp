@@ -1,4 +1,5 @@
 #include "FrameCounter.h"
+#include <algorithm>
 using namespace Utility;
 
 FrameCounter::FrameCounter()
@@ -14,12 +15,6 @@ FrameCounter::FrameCounter()
 
 FrameCounter::~FrameCounter()
 {
-}
-
-FrameCounter& FrameCounter::GetInstance()
-{
-	static FrameCounter* mInstance = new FrameCounter();
-	return *mInstance;
 }
 
 void FrameCounter::Tick()
@@ -61,4 +56,19 @@ float FrameCounter::GetAverageDeltaTime()
 		tTotal += m_frameTimes[i];
 
 	return (((float)tTotal * m_nrSampleDivided) * m_countsPerSecond);
+}
+
+void FrameCounter::Reset()
+{
+	m_timeStamp = SDL_GetPerformanceCounter();
+}
+
+float FrameCounter::GetMinDeltaTime()
+{
+	return (float)*std::min_element(m_frameTimes, m_frameTimes + m_numberOfSamples) * m_countsPerSecond;
+}
+
+float FrameCounter::GetMaxDeltaTime()
+{
+	return (float)*std::max_element(m_frameTimes, m_frameTimes + m_numberOfSamples) * m_countsPerSecond;
 }

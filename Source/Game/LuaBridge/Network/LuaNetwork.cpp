@@ -37,7 +37,9 @@ namespace LuaBridge
 		int SendToServer();
 		int Connect();
 		int Disconnect();
-		int IsConnected();		
+		int IsConnected();	
+		int ToClientID();
+		int ToServerID();
 
 		//Server
 		int Send();
@@ -94,6 +96,9 @@ namespace LuaBridge
 			LuaEmbedder::AddFunction("Connect", &Connect, "Net");//
 			LuaEmbedder::AddFunction("Disconnect", &Disconnect, "Net");//
 			LuaEmbedder::AddFunction("IsConnected", &IsConnected, "Net");//
+
+			LuaEmbedder::AddFunction("ToServerID", &ToServerID, "Net");//
+			LuaEmbedder::AddFunction("ToClientID", &ToClientID, "Net");//
 
 			//Server
 			LuaEmbedder::AddFunction("Send", &Send, "Net");//
@@ -363,6 +368,20 @@ namespace LuaBridge
 		int IsConnected()
 		{
 			LuaEmbedder::PushBool(NetworkInstance::GetClient()->IsConnected());
+			return 1;
+		}
+		int ToServerID()
+		{
+			unsigned int idH = LuaEmbedder::PullInt(1);
+			unsigned int idN = NetworkInstance::GetNetworkHelper()->HostToNet(idH);
+			LuaEmbedder::PushInt(idN);
+			return 1;
+		}
+		int ToClientID()
+		{
+			unsigned int idN = LuaEmbedder::PullInt(1);
+			unsigned int idH = NetworkInstance::GetNetworkHelper()->NetToHost(idN);
+			LuaEmbedder::PushInt(idH);
 			return 1;
 		}
 

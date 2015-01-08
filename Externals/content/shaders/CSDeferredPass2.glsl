@@ -61,9 +61,20 @@ void main()
 
 	// Set globals
 	g_normal.xy = inputMap1.xy;
-	g_normal.z = sqrt( 1 - (g_normal.x*g_normal.x) - (g_normal.y*g_normal.y) );
+	
 	g_ks = inputMap1.z;
-    g_shininess = inputMap1.w * 254.0f + 1.0f;
+	if(inputMap1.w < 0.5)
+	{
+		g_normal.z = sqrt( 1 - (g_normal.x*g_normal.x) - (g_normal.y*g_normal.y) );
+		g_shininess = inputMap1.w * 508.0f + 1.0f;
+	}
+	else
+	{
+		g_normal.z = sqrt( 1 - (g_normal.x*g_normal.x) - (g_normal.y*g_normal.y) );
+		g_normal.z *= -1;
+		g_shininess = (inputMap1.w - 0.5) * 508.0f + 1.0f;
+	}
+
 	g_albedo.xyz = inputMap2.xyz;
 	g_depthVal = inputMap0.x;
 	g_viewPos = reconstructPosition(g_depthVal);
@@ -104,8 +115,8 @@ void main()
 	//FragColor = glowvec;
 	//FragColor = SSAOvec;
 	//FragColor = vec4( g_normal, 1.0);
-	//FragColor = vec4( g_albedo   +g_normal-g_normal, 1.0 );
-	//FragColor = vec4( vec3(g_viewPos  +g_normal-g_normal), 1.0 );
+	//FragColor = vec4( g_albedo   +g_normal-g_normal , 1.0 )-vec4( g_albedo   +g_normal-g_normal , 1.0 ) +SSAOvec +glowvec-glowvec;
+	//FragColor = vec4( vec3(g_normal  + g_viewPos-g_viewPos +g_albedo-g_albedo), 1.0 ) + SSAOvec-SSAOvec +glowvec-glowvec;
 	//FragColor = vec4( vec3(g_depthVal), 1.0 );
 	
 	imageStore(
@@ -117,7 +128,7 @@ void main()
 
 
 
-// ---- FUNCTIONS ---- 
+ //---- FUNCTIONS ---- 
 
 float ComputeGlow()
 {
@@ -160,7 +171,7 @@ vec3 getPosition(ivec2 samplePos)
 	float depthVal = texelFetch(DepthTex, samplePos, 0).x;
 
 
-	vec2 ndc = vec2(g_threadID) / vec2( gl_WorkGroupSize.xy*gl_NumWorkGroups.xy - ivec2(1,1)) * 2.0f - 1.0f;
+	vec2 ndc = vec2(samplePos) / (vec2( gl_WorkGroupSize.xy*gl_NumWorkGroups.xy) ) * 2.0f - 1.0f;
 
     vec4 H = vec4(	
 					ndc,
@@ -180,9 +191,9 @@ vec2 getRandom()
 
 float doAmbientOcclusion( vec2 offset )
 {
-	float g_scale = 0.4;
-	float g_intensity = 0.3;
-	float g_bias = 0.00;
+	float g_scale = 1.6;
+	float g_intensity = 3;
+	float g_bias = 0.25;
 
 	offset = offset * vec2(gl_WorkGroupSize.xy*gl_NumWorkGroups.xy);
 
@@ -191,6 +202,10 @@ float doAmbientOcclusion( vec2 offset )
 	ssaoSamp.y = int(min(max(g_threadID.y + ivec2(offset).y, 0), gl_WorkGroupSize.y*gl_NumWorkGroups.y-1));
 
 	vec3 diff = getPosition(ssaoSamp) - g_viewPos;
+
+	if(diff.z > 0.25)
+		return 0.0;
+
 	vec3 v = normalize(diff);
 	float d = length(diff)*g_scale;
 	return max(0.0,dot(g_normal,v)-g_bias)*(1.0/(1.0+d))*g_intensity;
@@ -198,7 +213,7 @@ float doAmbientOcclusion( vec2 offset )
 
 float ComputeSSAO()
 {
-	float g_sample_rad = 0.3;
+	float g_sample_rad = 0.18;
 	vec2 vec[4] = { vec2(1,0), vec2(-1,0), vec2(0,1), vec2(0,-1) };
 
 	vec2 rand = getRandom();
