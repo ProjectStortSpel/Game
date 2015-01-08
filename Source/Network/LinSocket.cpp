@@ -266,16 +266,55 @@ int LinSocket::Send(char* _buffer, int _length, int _flags)
 	return result;
 }
 */
+//
+//int LinSocket::Receive(char* _buffer, int _length, int _flags)
+//{
+//
+//	static short len;
+//
+//	if (recv(*m_socket, (void*)&len, 2, MSG_WAITALL))
+//	{
+//		len = ntohs(len);
+//		return recv(*m_socket, (void*)_buffer, len, MSG_WAITALL);
+//	}
+//	return 0;
+//}
 
 int LinSocket::Receive(char* _buffer, int _length, int _flags)
 {
-
-	static short len;
-
-	if (recv(*m_socket, (void*)&len, 2, MSG_WAITALL))
+	short len;
+	int len2 = recv(*m_socket, (void*)&len, 2, MSG_WAITALL);
+	if (len2 == 2)
 	{
 		len = ntohs(len);
-		return recv(*m_socket, (void*)_buffer, len, MSG_WAITALL);
+		int sizeReceived = recv(*m_socket, (void*)_buffer, len, MSG_WAITALL);
+
+		if (sizeReceived != len)
+		{
+			if (NET_DEBUG)
+				printf("Error: Wrong packet size on received packet!\n");
+			//return 0;
+		}
+
+		if (len > _length)
+		{
+			if (NET_DEBUG)
+				printf("Error: To large packet received!\n");
+			return 0;
+		}
+
+		return sizeReceived;
+	}
+	else if (len2 == -1)
+	{
+		if (NET_DEBUG)
+			printf("Error: Failed to receive \"Size packet\". Error: %s.\n", strerror(errorCode));
+	}
+	else
+	{
+		if (NET_DEBUG)
+			printf("Error: \"Size packet\" corrupt! Length: %d\n", len2);
+		//return 0;
 	}
 	return 0;
 }
