@@ -2,7 +2,11 @@
 #define ROTATIONSYSTEM_H
 
 #include "ECSL/Interfaces/System.h"
+#ifdef __ANDROID__
+#include "AndroidRenderer/GraphicDevice.h"
+#else
 #include "Renderer/GraphicDevice.h"
+#endif
 #include "Input/InputWrapper.h"
 
 

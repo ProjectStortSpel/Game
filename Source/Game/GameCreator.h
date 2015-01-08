@@ -3,7 +3,11 @@
 #include <SDL/SDL.h>
 #include "Console/Console.h"
 #include "TextInput.h"
+#ifdef __ANDROID__
+#include "AndroidRenderer/GraphicDevice.h"
+#else
 #include "Renderer/GraphicDevice.h"
+#endif
 #include "Input/InputWrapper.h"
 #include "LuaEmbedder/LuaEmbedder.h"
 #include "LuaBridge/LuaBridge.h"

@@ -94,7 +94,11 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	LuaEmbedder::AddObject<ECSL::WorldCreator>("WorldCreator", &worldCreator, "worldCreator");
 
 	std::stringstream gameMode;
+#ifdef __ANDROID__
+	gameMode << "content/scripting/";
+#else
 	gameMode << "../../../Externals/content/scripting/";
+#endif
 	gameMode << _gameMode;
 	gameMode << "/init.lua";
 
@@ -387,6 +391,9 @@ void GameCreator::PollSDLEvent()
 		case SDL_KEYUP:
 		case SDL_FINGERMOTION:
 		case SDL_FINGERDOWN:
+#ifdef __ANDROID__
+			exit(0);
+#endif
 		case SDL_FINGERUP:
 		case SDL_TEXTINPUT:
 		case SDL_JOYAXISMOTION:
