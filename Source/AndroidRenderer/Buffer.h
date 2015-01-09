@@ -23,9 +23,9 @@ namespace Renderer
 		~Buffer(void);
 
 		// Returns true on success
-		bool init(const BufferData* p_BufferData, GLsizei p_BufferDataSize);
+		bool init(const BufferData* p_BufferData, GLsizei p_BufferDataSize, GLuint program);
 		bool init(const BufferData* p_BufferData, GLsizei p_BufferDataSize,
-			const GLuint* p_Indices, GLsizei p_IndexDataSize);
+			const GLuint* p_Indices, GLsizei p_IndexDataSize, GLuint program);
 
 		void draw(void);
 		void draw(GLint base, GLsizei count);

@@ -41,7 +41,7 @@ namespace Renderer
 		bool operator!= (const Model &m) { return !Compare(m); }
 
 		Model(){}
-		Model(Buffer* buffer, GLuint tex, GLuint nor, GLuint spe)
+		Model(Buffer* buffer, GLuint tex, GLuint nor, GLuint spe, int id, bool active, mat4* model)
 		{
 			bufferPtr = buffer;
 			texID = tex;

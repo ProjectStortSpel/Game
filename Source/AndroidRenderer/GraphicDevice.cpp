@@ -103,45 +103,39 @@ void GraphicDevice::Render()
 	m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 	m_forwardShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
 
-	//for (int i = 0; i < m_modelsForward.size(); i++)
-	//{
-	//	//std::vector<mat4> modelViewVector(m_modelsForward[i].instances.size());
-	//	//std::vector<mat3> normalMatVector(m_modelsForward[i].instances.size());
+	for (int i = 0; i < m_modelsForward.size(); i++)
+	{
+		//std::vector<mat4> modelViewVector(m_modelsForward[i].instances.size());
+		//std::vector<mat3> normalMatVector(m_modelsForward[i].instances.size());
 
-	//	int nrOfInstances = 0;
+		if (m_modelsForward[i].active) // IS MODEL ACTIVE?
+		{
+			mat4 modelMatrix;
+			if (m_modelsForward[i].modelMatrix == NULL)
+				modelMatrix = glm::translate(glm::vec3(1));
+			else
+				modelMatrix = *m_modelsForward[i].modelMatrix;
 
-	//	for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
-	//	{
-	//		if (m_modelsForward[i].instances[j].active) // IS MODEL ACTIVE?
-	//		{
-	//			mat4 modelMatrix;
-	//			if (m_modelsForward[i].instances[j].modelMatrix == NULL)
-	//				modelMatrix = glm::translate(glm::vec3(1));
-	//			else
-	//				modelMatrix = *m_modelsForward[i].instances[j].modelMatrix;
+			mat4 modelViewMatrix = viewMatrix * modelMatrix;
+			m_forwardShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
 
-	//			mat4 modelViewMatrix = viewMatrix * modelMatrix;
-	//			modelViewVector[nrOfInstances] = modelViewMatrix;
+			mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
+			m_forwardShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
 
-	//			mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-	//			normalMatVector[nrOfInstances] = normalMatrix;
 
-	//			nrOfInstances++;
-	//		}
-	//	}
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
 
-	//	glActiveTexture(GL_TEXTURE1);
-	//	glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
+			/*glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].norID);
 
-	//	glActiveTexture(GL_TEXTURE2);
-	//	glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].norID);
+			glActiveTexture(GL_TEXTURE3);
+			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].speID);*/
 
-	//	glActiveTexture(GL_TEXTURE3);
-	//	glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].speID);
-
-	//	m_modelsForward[i].bufferPtr->draw();
-	//	glBindTexture(GL_TEXTURE_2D, 0);
-	//}
+			m_modelsForward[i].bufferPtr->draw();
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+	}
 
 	glUseProgram(0);
 
@@ -323,7 +317,7 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 	// Import Mesh
 	Buffer* mesh = AddMesh(obj.mesh, shaderPtr);
 
-	Model model = Model(mesh, texture, normal, specular); // plus modelID o matrixPointer
+	Model model = Model(mesh, texture, normal, specular, modelID, true, _matrixPtr); // plus modelID o matrixPointer, active
 
 	
 	// Push back the model
@@ -473,7 +467,7 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 	for (int i = 0; i < sizeof(bufferData) / sizeof(bufferData[0]); i++)
 		m_vramUsage += (int)bufferData[i].dataSize;
 
-	retbuffer->init(bufferData, sizeof(bufferData) / sizeof(bufferData[0]));
+	retbuffer->init(bufferData, sizeof(bufferData) / sizeof(bufferData[0]), _shaderProg->GetShaderProgram());
 	retbuffer->setCount((int)positionData.size() / 3);
 	
 	m_meshs.insert(std::pair<const std::string, Buffer*>(_fileDir, retbuffer));

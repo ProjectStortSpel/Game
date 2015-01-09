@@ -17,13 +17,13 @@ Buffer::~Buffer(void)
 	}
 }
 
-bool Buffer::init(const BufferData* p_BufferData, GLsizei p_BufferDataSize)
+bool Buffer::init(const BufferData* p_BufferData, GLsizei p_BufferDataSize, GLuint program)
 {
-	return init(p_BufferData, p_BufferDataSize, NULL, 0);
+	return init(p_BufferData, p_BufferDataSize, NULL, 0, program);
 }
 
 bool Buffer::init(const BufferData* p_BufferData, GLsizei p_BufferDataSize,
-	const GLuint* p_Indices, GLsizei p_IndexDataSize)
+	const GLuint* p_Indices, GLsizei p_IndexDataSize, GLuint program)
 {
 	// Make sure there's no weird behaviour
 	if (m_Type != None || p_BufferData == NULL || p_BufferDataSize == 0)
@@ -38,14 +38,28 @@ bool Buffer::init(const BufferData* p_BufferData, GLsizei p_BufferDataSize,
 	glGenBuffers(bufferSize, &m_Buffers[0]);
 
 	// Initialize every vertex buffer
+//-- Ta hand om alla buffrar här-----------------------
+	glBindAttribLocation(program, 0, "VertexPosition");
+	glBindAttribLocation(program, 1, "VertexNormal");
+	glBindAttribLocation(program, 2, "VertexTangent");
+	glBindAttribLocation(program, 3, "VertexBiTangent");
+	glBindAttribLocation(program, 4, "VertexTexCoord");
+
+
 	for (int i = 0; i < p_BufferDataSize; i++)
 	{
 		// Allocate and buffer data
 		glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[i]);
-		glBufferData(GL_ARRAY_BUFFER, p_BufferData[i].dataSize,
-			p_BufferData[i].data, GL_STATIC_DRAW);
-
+		glBufferData(GL_ARRAY_BUFFER, p_BufferData[i].dataSize, p_BufferData[i].data, GL_STATIC_DRAW);
 	}
+
+	/*for (int i = 0; i < p_BufferDataSize; i++)
+	{
+		glVertexAttribPointer(i, p_BufferData[i].componentCount, GL_FLOAT, GL_FALSE, 0, p_BufferData[i].data);
+		glEnableVertexAttribArray(i);
+	}*/
+
+//--------------------------------------------------------
 
 	// Initialize index buffer if specified
 	if (m_Type == IndexBased)
@@ -81,8 +95,7 @@ void Buffer::draw(GLint base, GLsizei count)
 		// Allocate and buffer data
 		glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[i]);
 		// Define attribute data (for shaders)
-		glVertexAttribPointer(m_BufferData[i].location, m_BufferData[i].componentCount,
-			m_BufferData[i].type, GL_FALSE, 0, 0);
+		glVertexAttribPointer(m_BufferData[i].location, m_BufferData[i].componentCount, m_BufferData[i].type, GL_FALSE, 0, 0);
 		glEnableVertexAttribArray(m_BufferData[i].location);
 	}
 

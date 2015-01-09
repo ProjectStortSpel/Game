@@ -11,7 +11,11 @@
 #include <stdio.h>
 
 #include <SDL/SDL.h>
+#ifdef __ANDROID__
 #include <GLES2/gl2.h>
+#else
+#include <GLEW/glew.h>
+#endif
 #include <SDL/SDL_opengles.h>
 
 #define GLM_FORCE_RADIANS
