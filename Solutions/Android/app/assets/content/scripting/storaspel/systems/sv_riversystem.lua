@@ -48,8 +48,12 @@ RiverSystem.OnEntityAdded = function(self, entity)
 		world:KillEntity( entity )
 
 		local id = world:CreateNewEntity()
+		world:CreateComponentAndAddTo("PostMove", id)
+
+		local id = world:CreateNewEntity()
 		world:CreateComponentAndAddTo("StepTimer", id)
 		world:GetComponent(id, "StepTimer", "Time"):SetFloat(1)
+
 
 
 	end

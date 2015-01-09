@@ -41,10 +41,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\Externals\content\shaders\AndroidForwardVS.glsl">
+    <None Include="..\..\Android\app\assets\content\shaders\AndroidForwardFS.glsl">
       <Filter>shaders</Filter>
     </None>
-    <None Include="..\..\..\Externals\content\shaders\AndroidForwardFS.glsl">
+    <None Include="..\..\Android\app\assets\content\shaders\AndroidForwardVS.glsl">
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>

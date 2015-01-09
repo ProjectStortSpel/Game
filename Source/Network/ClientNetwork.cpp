@@ -115,11 +115,11 @@ bool ClientNetwork::Connect()
 {
 	if (NET_DEBUG)
 	{
-		printf("Client connecting to server:\n");
-		printf("Ip address: \"%s\"\n", m_remoteAddress->c_str());
-		printf("Remote Port: \"%i\"\n", *m_outgoingPort);
-		printf("Local Port: \"%i\"\n", *m_incomingPort);
-		printf("Password: \"%s\"\n", m_password->c_str());
+		SDL_Log("Client connecting to server:\n");
+		SDL_Log("Ip address: \"%s\"\n", m_remoteAddress->c_str());
+		SDL_Log("Remote Port: \"%i\"\n", *m_outgoingPort);
+		SDL_Log("Local Port: \"%i\"\n", *m_incomingPort);
+		SDL_Log("Password: \"%s\"\n", m_password->c_str());
 	}
 
 	m_socket = ISocket::CreateSocket();
@@ -191,7 +191,7 @@ void ClientNetwork::Disconnect()
 	*m_socketBound = 0;
 
 	if (NET_DEBUG)
-		printf("Client disconnected/shutdown.\n");
+		SDL_Log("Client disconnected/shutdown.\n");
 
 	*m_connected = false;
 }
@@ -213,7 +213,7 @@ void ClientNetwork::ReceivePackets()
 		//}
 
 		//nextPacketSize = ntohs(*(unsigned short*)m_packetData);
-		//printf("SIZE: %d\n", nextPacketSize);
+		//SDL_Log("SIZE: %d\n", nextPacketSize);
 		//dataReceived = 0;
 		//while (dataReceived < nextPacketSize)
 		//{
@@ -228,7 +228,7 @@ void ClientNetwork::ReceivePackets()
 		if (dataReceived > 0)
 		{
 			if (NET_DEBUG)
-				printf("Received message with length \"%i\" from server.\n", dataReceived);
+				SDL_Log("Received message with length \"%i\" from server.\n", dataReceived);
 
 			*m_currentIntervallCounter = 0;
 			*m_currentTimeOutIntervall = 0.0f;
@@ -262,7 +262,7 @@ void ClientNetwork::Send(Packet* _packet)
 	if (!*m_socketBound)
 	{
 		if (NET_DEBUG)
-			printf("Not connected to server.\n");
+			SDL_Log("Not connected to server.\n");
 		return;
 	}
 
@@ -318,7 +318,7 @@ void ClientNetwork::UpdateTimeOut(float& _dt)
 void ClientNetwork::NetPasswordInvalid(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection)
 {
 	if (NET_DEBUG)
-		printf("Password \"%s\" invalid, connection refused.\n", m_password->c_str());
+		SDL_Log("Password \"%s\" invalid, connection refused.\n", m_password->c_str());
 
 	//Disconnect();
 	*m_receivePacketsThreadAlive = false;
@@ -332,7 +332,7 @@ void ClientNetwork::NetPasswordInvalid(PacketHandler* _packetHandler, uint64_t& 
 void ClientNetwork::NetConnectionAccepted(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection)
 {
 	if (NET_DEBUG)
-		printf("Password accepted, connection accepted.\n");
+		SDL_Log("Password accepted, connection accepted.\n");
 
 	TriggerEvent(m_onConnectedToServer, _connection, 0);
 }
@@ -340,7 +340,7 @@ void ClientNetwork::NetConnectionAccepted(PacketHandler* _packetHandler, uint64_
 void ClientNetwork::NetConnectionServerFull(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection)
 {
 	if (NET_DEBUG)
-		printf("Disconnected. Server is full.\n");
+		SDL_Log("Disconnected. Server is full.\n");
 
 	//Disconnect();
 	*m_receivePacketsThreadAlive = false;
@@ -357,7 +357,7 @@ void ClientNetwork::NetConnectionServerFull(PacketHandler* _packetHandler, uint6
 void ClientNetwork::NetConnectionLost(NetConnection& _connection)
 {
 	if (NET_DEBUG)
-		printf("Disconnected. Connection timed out.\n");
+		SDL_Log("Disconnected. Connection timed out.\n");
 
 	//Disconnect();
 	*m_receivePacketsThreadAlive = false;
@@ -374,7 +374,7 @@ void ClientNetwork::NetConnectionLost(NetConnection& _connection)
 void ClientNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection)
 {
 	if (NET_DEBUG)
-		printf("Disconnected. Server shutdown.\n");
+		SDL_Log("Disconnected. Server shutdown.\n");
 
 	//Disconnect();
 	*m_receivePacketsThreadAlive = false;
@@ -392,7 +392,7 @@ void ClientNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uin
 void ClientNetwork::NetConnectionKicked(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection)
 {
 	if (NET_DEBUG)
-		printf("Disconnected. You were kicked.\n");
+		SDL_Log("Disconnected. You were kicked.\n");
 
 	char* message = _packetHandler->ReadString(_id);
 
@@ -412,7 +412,7 @@ void ClientNetwork::NetConnectionKicked(PacketHandler* _packetHandler, uint64_t&
 void ClientNetwork::NetConnectionBanned(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection)
 {
 	if (NET_DEBUG)
-		printf("Disconnected. You were banned.\n");
+		SDL_Log("Disconnected. You were banned.\n");
 
 	char* message = _packetHandler->ReadString(_id);
 
@@ -432,7 +432,7 @@ void ClientNetwork::NetConnectionBanned(PacketHandler* _packetHandler, uint64_t&
 void ClientNetwork::NetPing(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection)
 {
 	if (NET_DEBUG)
-		printf("Ping from: %s:%d\n", _connection.GetIpAddress(), _connection.GetPort());
+		SDL_Log("Ping from: %s:%d\n", _connection.GetIpAddress(), _connection.GetPort());
 
 	uint64_t id = _packetHandler->StartPack(ID_PONG);
 	Packet* p = _packetHandler->EndPack(id);
@@ -442,7 +442,7 @@ void ClientNetwork::NetPing(PacketHandler* _packetHandler, uint64_t& _id, NetCon
 void ClientNetwork::NetPong(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection)
 {
 	if (NET_DEBUG)
-		printf("Pong from: %s:%d\n", _connection.GetIpAddress(), _connection.GetPort());
+		SDL_Log("Pong from: %s:%d\n", _connection.GetIpAddress(), _connection.GetPort());
 
 	*m_receiveTime = GetMillisecondsTime();
 	*m_ping = *m_receiveTime - *m_sendTime;
@@ -453,7 +453,7 @@ void ClientNetwork::NetRemoteConnectionAccepted(PacketHandler* _packetHandler, u
 {
 	char* name = _packetHandler->ReadString(_id);
 	if (NET_DEBUG)
-		printf("%s connected to the server.\n", name);
+		SDL_Log("%s connected to the server.\n", name);
 
 	TriggerEvent(m_onRemotePlayerConnected, _connection, 0);
 }
@@ -462,7 +462,7 @@ void ClientNetwork::NetRemoteConnectionLost(PacketHandler* _packetHandler, uint6
 {
 	char* name = _packetHandler->ReadString(_id);
 	if (NET_DEBUG)
-		printf("%s timed out to the server.\n", name);
+		SDL_Log("%s timed out to the server.\n", name);
 
 	TriggerEvent(m_onRemotePlayerTimedOut, _connection, 0);
 }
@@ -471,7 +471,7 @@ void ClientNetwork::NetRemoteConnectionDisconnected(PacketHandler* _packetHandle
 {
 	char* name = _packetHandler->ReadString(_id);
 	if (NET_DEBUG)
-		printf("%s disconnected from the server.\n", name);
+		SDL_Log("%s disconnected from the server.\n", name);
 
 	TriggerEvent(m_onRemotePlayerDisconnected, _connection, 0);
 }
@@ -481,7 +481,7 @@ void ClientNetwork::NetRemoteConnectionKicked(PacketHandler* _packetHandler, uin
 	char* name = _packetHandler->ReadString(_id);
 
 	if (NET_DEBUG)
-		printf("%s was kicked from the server.\n", name);
+		SDL_Log("%s was kicked from the server.\n", name);
 
 	TriggerEvent(m_onRemotePlayerKicked, _connection, 0);
 }
@@ -491,7 +491,7 @@ void ClientNetwork::NetRemoteConnectionBanned(PacketHandler* _packetHandler, uin
 	char* name = _packetHandler->ReadString(_id);
 
 	if (NET_DEBUG)
-		printf("%s was banned from the server.\n", name);
+		SDL_Log("%s was banned from the server.\n", name);
 
 	TriggerEvent(m_onRemotePlayerBanned, _connection, 0);
 }
@@ -500,7 +500,7 @@ void ClientNetwork::NetRemoteConnectionBanned(PacketHandler* _packetHandler, uin
 void ClientNetwork::SetOnConnectedToServer(NetEvent& _function)
 {
 	if (NET_DEBUG)	
-		printf("Hooking function to OnConnectedToServer.\n");
+		SDL_Log("Hooking function to OnConnectedToServer.\n");
 
 	m_onConnectedToServer->push_back(_function);
 }
@@ -508,7 +508,7 @@ void ClientNetwork::SetOnConnectedToServer(NetEvent& _function)
 void ClientNetwork::SetOnDisconnectedFromServer(NetEvent& _function)
 {
 	if (NET_DEBUG)
-		printf("Hooking function to OnDisconnectedFromServer.\n");
+		SDL_Log("Hooking function to OnDisconnectedFromServer.\n");
 
 	m_onDisconnectedFromServer->push_back(_function);
 }
@@ -516,7 +516,7 @@ void ClientNetwork::SetOnDisconnectedFromServer(NetEvent& _function)
 void ClientNetwork::SetOnTimedOutFromServer(NetEvent& _function)
 {
 	if (NET_DEBUG)
-		printf("Hooking function to OnTimedOutFromServer.\n");
+		SDL_Log("Hooking function to OnTimedOutFromServer.\n");
 
 	m_onTimedOutFromServer->push_back(_function);
 }
@@ -524,7 +524,7 @@ void ClientNetwork::SetOnTimedOutFromServer(NetEvent& _function)
 void ClientNetwork::SetOnFailedToConnect(NetEvent& _function)
 {
 	if (NET_DEBUG)
-		printf("Hooking function to OnFailedToConnect.\n");
+		SDL_Log("Hooking function to OnFailedToConnect.\n");
 
 	m_onFailedToConnect->push_back(_function);
 }
@@ -532,7 +532,7 @@ void ClientNetwork::SetOnFailedToConnect(NetEvent& _function)
 void ClientNetwork::SetOnPasswordInvalid(NetEvent& _function)
 {
 	if (NET_DEBUG)
-		printf("Hooking function to OnPasswordInvalid.\n");
+		SDL_Log("Hooking function to OnPasswordInvalid.\n");
 
 	m_onPasswordInvalid->push_back(_function);
 }
@@ -540,7 +540,7 @@ void ClientNetwork::SetOnPasswordInvalid(NetEvent& _function)
 void ClientNetwork::SetOnKickedFromServer(NetEvent& _function)
 {
 	if (NET_DEBUG)
-		printf("Hooking function to OnKickedFromServer.\n");
+		SDL_Log("Hooking function to OnKickedFromServer.\n");
 
 	m_onKickedFromServer->push_back(_function);
 }
@@ -548,7 +548,7 @@ void ClientNetwork::SetOnKickedFromServer(NetEvent& _function)
 void ClientNetwork::SetOnBannedFromServer(NetEvent& _function)
 {
 	if (NET_DEBUG)
-		printf("Hooking function to OnBannedFromServer.\n");
+		SDL_Log("Hooking function to OnBannedFromServer.\n");
 
 	m_onBannedFromServer->push_back(_function);
 }
@@ -556,7 +556,7 @@ void ClientNetwork::SetOnBannedFromServer(NetEvent& _function)
 void ClientNetwork::SetOnServerFull(NetEvent& _function)
 {
 	if (NET_DEBUG)
-		printf("Hooking function to OnServerFull.\n");
+		SDL_Log("Hooking function to OnServerFull.\n");
 
 	m_onServerFull->push_back(_function);
 }
@@ -564,7 +564,7 @@ void ClientNetwork::SetOnServerFull(NetEvent& _function)
 void ClientNetwork::SetOnRemotePlayerConnected(NetEvent& _function)
 {
 	if (NET_DEBUG)
-		printf("Hooking function to OnRemotePlayerConnected.\n");
+		SDL_Log("Hooking function to OnRemotePlayerConnected.\n");
 
 	m_onRemotePlayerConnected->push_back(_function);
 }
@@ -572,7 +572,7 @@ void ClientNetwork::SetOnRemotePlayerConnected(NetEvent& _function)
 void ClientNetwork::SetOnRemotePlayerDisconnected(NetEvent& _function)
 {
 	if (NET_DEBUG)
-		printf("Hooking function to OnRemotePlayerDisconnected.\n");
+		SDL_Log("Hooking function to OnRemotePlayerDisconnected.\n");
 
 	m_onRemotePlayerDisconnected->push_back(_function);
 }
@@ -580,7 +580,7 @@ void ClientNetwork::SetOnRemotePlayerDisconnected(NetEvent& _function)
 void ClientNetwork::SetOnRemotePlayerTimedOut(NetEvent& _function)
 {
 	if (NET_DEBUG)
-		printf("Hooking function to OnRemotePlayerTimedOut.\n");
+		SDL_Log("Hooking function to OnRemotePlayerTimedOut.\n");
 
 	m_onRemotePlayerTimedOut->push_back(_function);
 }
@@ -588,7 +588,7 @@ void ClientNetwork::SetOnRemotePlayerTimedOut(NetEvent& _function)
 void ClientNetwork::SetOnRemotePlayerKicked(NetEvent& _function)
 {
 	if (NET_DEBUG)
-		printf("Hooking function to OnRemotePlayerKicked.\n");
+		SDL_Log("Hooking function to OnRemotePlayerKicked.\n");
 
 	m_onRemotePlayerKicked->push_back(_function);
 }
@@ -596,7 +596,7 @@ void ClientNetwork::SetOnRemotePlayerKicked(NetEvent& _function)
 void ClientNetwork::SetOnRemotePlayerBanned(NetEvent& _function)
 {
 	if (NET_DEBUG)
-		printf("Hooking function to OnRemotePlayerBanned.\n");
+		SDL_Log("Hooking function to OnRemotePlayerBanned.\n");
 
 	m_onRemotePlayerBanned->push_back(_function);
 }

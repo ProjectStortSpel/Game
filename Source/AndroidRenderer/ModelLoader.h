@@ -75,16 +75,54 @@ public:
 		std::string fileDir = dir;
 		fileDir.append(file);
 
-		std::ifstream fileIn(fileDir);
+		// Open file
+		SDL_RWops* fileIn = SDL_RWFromFile(fileDir.c_str(), "r");
+		if (fileIn == NULL)
+		{
+			SDL_Log("File %s not found", fileDir.c_str());
+			return objectdata;
+		}
+		// Get file length
+		Sint64 length = SDL_RWseek(fileIn, 0, RW_SEEK_END);
+		if (length <= 0)
+		{
+			SDL_Log("Length of file %s lower than or equal to zero", fileDir.c_str());
+			return objectdata;
+		}
+		SDL_RWseek(fileIn, 0, RW_SEEK_SET);
+		// Read data
+		char* data = new char[length + 1];
+		std::string dataString = std::string(data);
+		delete data;
+		SDL_RWread(fileIn, data, length, 1);
+		data[length] = '\0';
+		// Close file
+		SDL_RWclose(fileIn);
 
+		//std::ifstream fileIn(fileDir);
+
+
+		size_t prevFileIndex = 0, nextFileIndex = std::string::npos;
 		std::string temp;
-		getline(fileIn, temp);
+		nextFileIndex = dataString.find('\n', prevFileIndex);
+		temp = dataString.substr(prevFileIndex, nextFileIndex - prevFileIndex);
+		prevFileIndex = nextFileIndex + 1;
+		SDL_Log("Mesh: %s", temp.c_str());
 		objectdata.mesh.append(temp);
-		getline(fileIn, temp);
+		nextFileIndex = dataString.find('\n', prevFileIndex);
+		temp = dataString.substr(prevFileIndex, nextFileIndex - prevFileIndex);
+		prevFileIndex = nextFileIndex + 1;
+		SDL_Log("Text: %s", temp.c_str());
 		objectdata.text.append(temp);
-		getline(fileIn, temp);
+		nextFileIndex = dataString.find('\n', prevFileIndex);
+		temp = dataString.substr(prevFileIndex, nextFileIndex - prevFileIndex);
+		prevFileIndex = nextFileIndex + 1;
+		SDL_Log("Norm: %s", temp.c_str());
 		objectdata.norm.append(temp);
-		getline(fileIn, temp);
+		nextFileIndex = dataString.find('\n', prevFileIndex);
+		temp = dataString.substr(prevFileIndex, nextFileIndex - prevFileIndex);
+		prevFileIndex = nextFileIndex + 1;
+		SDL_Log("Spec: %s", temp.c_str());
 		objectdata.spec.append(temp);
 
 		return objectdata;

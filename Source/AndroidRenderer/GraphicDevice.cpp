@@ -292,6 +292,8 @@ bool GraphicDevice::PreLoadModel(std::string _dir, std::string _file, int _rende
 }
 int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType)
 {
+	SDL_Log("LoadModel");
+
 	int modelID = m_modelIDcounter;
 	m_modelIDcounter++;
 

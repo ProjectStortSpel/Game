@@ -39,5 +39,5 @@ void main()
 	vec4 albedo_tex = texture( diffuseTex, TexCoord );
 
 	//gl_FragColor = vec4(ambient + diffuse, 1.0) * albedo_tex + vec4(spec, 0.0f);
-	gl_FragColor = albedo_tex;
+	gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0); //albedo_tex;
 }

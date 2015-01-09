@@ -189,6 +189,7 @@ void GameConsole::HostServer(std::string _command, std::vector<Console::Argument
 	}
 
 	bool hosting = NetworkInstance::GetServer()->Start(port, pw.c_str(), connections);
+	SDL_Log("Hosting: %d", (int)hosting);
 	LuaEmbedder::AddBool("Server", hosting);
 	//NetworkInstance::GetClient()->Connect("127.0.0.1", pw.c_str(), port, 0);
 }

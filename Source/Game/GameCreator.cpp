@@ -88,6 +88,7 @@ void GameCreator::InitializeLua()
 	LuaBridge::Embed();
 }
 
+bool something = false;
 void GameCreator::InitializeWorld(std::string _gameMode)
 {
 	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
@@ -103,10 +104,10 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	gameMode << "/init.lua";
 
 	if (!LuaEmbedder::Load(gameMode.str()))
-	  return;
+		return;
 
 	m_gameMode = _gameMode;
-	
+
 	auto componentTypes = ECSL::ComponentTypeManager::GetInstance().GetComponentTypes();
 	for (auto it = componentTypes->begin(); it != componentTypes->end(); ++it)
 	{
@@ -151,18 +152,32 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 
 	m_world = worldCreator.CreateWorld(1000);
 	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
-	
+
 	LuaEmbedder::CallMethods<LuaBridge::LuaSystem>("System", "PostInitialize");
-	
 }
 
 void GameCreator::StartGame()
 {
+	SDL_Log("Graphics: %d", (int)m_graphics);
+	SDL_Log("Input: %d", (int)m_input);
+	SDL_Log("World: %d", (int)m_world);
+	SDL_Log("Console: %d", (int)m_console);
+
 	/*	If atleast one object is not initialized the game can't start	*/
 	if (!m_graphics || !m_input || !m_world || m_console)
 		return;
 
 	m_console = new GameConsole(m_graphics, m_world);
+
+#ifdef __ANDROID__
+	if (!something)
+	{
+		something = true;
+		std::vector<Console::Argument> temp;
+		m_console->HostServer(std::string(), &temp);
+		GameMode("storaspel");
+	}
+#endif
 
 	m_consoleInput.SetTextHook(std::bind(&Console::ConsoleManager::ExecuteCommand, &m_consoleManager, std::placeholders::_1));
 	m_consoleInput.SetActive(false);
@@ -190,27 +205,27 @@ void GameCreator::StartGame()
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
 			break;
 		m_inputCounter.Tick();
-		
+
 		m_worldCounter.Reset();
 		/*	Update world (systems, entities etc)	*/
 		m_world->Update(dt);
 		m_worldCounter.Tick();
-		
+
 		std::stringstream ss;
 		ss << "Lua memory usage: " << LuaEmbedder::GetMemoryUsage() << " bytes";
 		m_graphics->RenderSimpleText(ss.str(), 20, 1);
-		
+
 		m_networkCounter.Reset();
 		UpdateNetwork(dt);
 		m_networkCounter.Tick();
-		
+
 		/*	Update graphics	*/
 		m_graphics->Update(dt);
 		RenderConsole();
 		m_graphicsCounter.Reset();
 		m_graphics->Render();
 		m_graphicsCounter.Tick();
-		
+
 		m_graphics->RenderSimpleText("Time Statistics", 60, 0);
 		PrintSectionTime("Total   ", m_frameCounter, 60, 1);
 		PrintSectionTime("Input   ", &m_inputCounter, 60, 2);

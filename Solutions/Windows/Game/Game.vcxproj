@@ -299,6 +299,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_playcardsystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_playcardtimersystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_playerssystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_postmovesystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_respawnsystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_riversystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_spawnsystem.lua" />

@@ -12,11 +12,7 @@ int main(int argc, char** argv)
 	newGame->InitializeGraphics();
 	newGame->InitializeInput();
 	newGame->InitializeNetwork();
-//#ifdef __ANDROID__
-	//newGame->InitializeWorld("storaspel");
-//#else
 	newGame->InitializeWorld("lobby");
-//#endif
 
 
 	newGame->StartGame();

@@ -130,7 +130,7 @@ int BaseNetwork::PopAndExecutePacket(void)
 	if (*p->Length <= 1)
 	{
 		if (NET_DEBUG)
-			printf("Corrupt packet, wrong size.\n");
+			SDL_Log("Corrupt packet, wrong size.\n");
 		return (int)size;
 	}
 
@@ -144,7 +144,7 @@ int BaseNetwork::PopAndExecutePacket(void)
 		(*m_userFunctions)[functionName](m_packetHandler, id, *p->Sender);
 	}
 	else if (NET_DEBUG)
-		printf("Packet \"%s\" not bound to any function.\n", functionName);
+		SDL_Log("Packet \"%s\" not bound to any function.\n", functionName);
 
 	m_packetHandler->EndUnpack(id);
 
