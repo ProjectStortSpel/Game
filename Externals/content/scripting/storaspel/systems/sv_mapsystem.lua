@@ -30,20 +30,54 @@ MapSystem.PostInitialize = function(self)
 	for waterA = 1, #waterTiles do
 		
 		local waterPosA = world:GetComponent(waterTiles[waterA], "MapPosition", 0)
-		local waterAX, waterAY = waterPosA:GetInt2()
+		local waterDirA = world:GetComponent(waterTiles[waterA], "River", 0)
+		local posAX, posAY = waterPosA:GetInt2()
+		local dirAX, dirAY = waterDirA:GetInt2()
+
+		--print("Water[ " .. posAX .. ", " .. posAY .. "] with direction [" .. dirAX .. ", " .. dirAY .. "]")
 
 		for waterB = 1, #waterTiles do
 
-			--if waterA ~= waterB then
-				--local waterPosB = world:GetComponent(waterTiles[waterB], "MapPosition", 0)
-				--local waterBX, waterBY = waterPosB:GetInt2()
+			if waterA ~= waterB then
+				local waterPosB = world:GetComponent(waterTiles[waterB], "MapPosition", 0)
+				local waterDirB = world:GetComponent(waterTiles[waterB], "River", 0)
+				local posBX, posBY = waterPosB:GetInt2()
+				local dirBX, dirBY = waterDirB:GetInt2()
 
-				--local diffX = waterAX - waterBX
-				--local diffY = waterYX - waterYX
+				if posAX + dirAX == posBX and posAY + dirAY == posBY then
+					if dirAX ~= dirBX and dirAY ~= dirBY then
 
-			--do
+						local comp = self:GetComponent(waterTiles[waterB], "Model", 0)
+						comp:SetModel("rivercorner", "rivercorner", 0, 0)
 
+
+						--	LEFT TURN (Correct rotation)
+						--if dirAX == 1 and dirBY == -1 then
+						--elseif dirAX == -1 and dirBY == 1 then
+						--elseif dirAY == -1 and dirBX == -1 then
+						--elseif dirAY == 1 and dirBX == 1 then
+
+						local comp = self:GetComponent(waterTiles[waterB], "Rotation", 0)
+						local currentRotation = comp:GetFloat(1)
+
+						--	RIGHT TURN
+						if dirAX == 1 and dirBY == 1 then
+							comp:SetFloat3(0, currentRotation - math.pi/2, 0)
+						elseif dirAX == -1 and dirBY == -1 then
+							comp:SetFloat3(0, currentRotation - math.pi/2, 0)
+						elseif dirAY == 1 and dirBX == -1 then
+							comp:SetFloat3(0, currentRotation - math.pi/2, 0)
+						elseif dirAY == -1 and dirBX == 1 then
+							comp:SetFloat3(0, currentRotation - math.pi/2, 0)
+						end
+
+
+
+					end
+				end
+			end
 		end
+
 	end
 
     print("Init map done!")
