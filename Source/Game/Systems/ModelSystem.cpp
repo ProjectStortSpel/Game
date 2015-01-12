@@ -45,6 +45,8 @@ void ModelSystem::OnEntityAdded(unsigned int _entityId)
 	*ModelId = m_graphics->LoadModel(ModelPath, ModelName, Matrix);
 	int a = *ModelId;
 	int b = 2;
+	
+	
 }
 
 void ModelSystem::OnEntityRemoved(unsigned int _entityId)

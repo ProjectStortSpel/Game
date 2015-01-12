@@ -10,10 +10,29 @@ class TextureLoader{
 public:
 static unsigned int LoadTexture(const char* file, GLenum textureSlot, int &height, int &width)
 {
+	// Open file
+	SDL_RWops* fileIn = SDL_RWFromFile(file, "r");
+	if (fileIn == NULL)
+		SDL_Log("File %s not found", file);
+	// Get file length
+	Sint64 length = SDL_RWseek(fileIn, 0, RW_SEEK_END);
+	if (length <= 0)
+		SDL_Log("Length of file %s lower than or equal to zero", file);
+	SDL_RWseek(fileIn, 0, RW_SEEK_SET);
+	// Read data
+	char* data = new char[length + 1];
+	SDL_RWread(fileIn, data, length, 1);
+	data[length] = '\0';
+	std::string dataString = std::string(data);
+	delete data;
+	// Close file
+	SDL_RWclose(fileIn);
+  
 	int channels;
 		// Load texture file and convert to openGL format
-	unsigned char* imgData = stbi_load(file, &width, &height, &channels, STBI_rgb_alpha);
-
+	//unsigned char* imgData = stbi_load(file, &width, &height, &channels, STBI_rgb_alpha);
+	unsigned char* imgData = stbi_load_from_memory((const unsigned char*)dataString.c_str(), (int)length, &width, &height, &channels, STBI_rgb_alpha);
+	
 	if (!imgData)
 	{
 		std::cout << "Texture '" << file << "' not loaded." << std::endl;

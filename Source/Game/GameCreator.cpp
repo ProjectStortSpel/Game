@@ -158,11 +158,6 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 
 void GameCreator::StartGame()
 {
-	SDL_Log("Graphics: %d", (int)m_graphics);
-	SDL_Log("Input: %d", (int)m_input);
-	SDL_Log("World: %d", (int)m_world);
-	SDL_Log("Console: %d", (int)m_console);
-
 	/*	If atleast one object is not initialized the game can't start	*/
 	if (!m_graphics || !m_input || !m_world || m_console)
 		return;

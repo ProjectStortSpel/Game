@@ -24,11 +24,10 @@ namespace LuaEmbedder
     lua_close(L);
   }
   
-  bool DoFile(const std::string& filepath)
+  std::string LoadFile(const std::string& filepath)
   {
     // Read source
-    unsigned int size;
-    char* source = File::Read(filepath, &size);
+    char* source = File::Read(filepath);
     std::string sourceString = std::string(source);
     delete source;
     // Set directory string
@@ -60,10 +59,11 @@ namespace LuaEmbedder
 	{
 	  size_t length = foundQuotationMark - currRequireIndex;
 	  std::string file = sourceString.substr(currRequireIndex, length);
-	  if (!DoFile(directory + file + std::string(".lua")))
-	    return false;
+	  std::string subSourceString = LoadFile(directory + file + std::string(".lua"));
+	  subSourceString.push_back('\n');
 	  currRequireIndex -= 9;
 	  sourceString.erase(currRequireIndex, length + 10);
+	  sourceString.insert(currRequireIndex, subSourceString);
 	}
 	prevRequireIndex = currRequireIndex;
       }
@@ -82,7 +82,7 @@ namespace LuaEmbedder
 	if (foundQuestionMark != std::string::npos)
 	{
 	  size_t length = foundQuestionMark - currPackagePathIndex;
-	  #ifdef DEBUG
+	  #ifdef _DEBUG
 	    directory = sourceString.substr(currPackagePathIndex, length);
 	  #else
 	    size_t foundContentFolder = sourceString.find("content/", currPackagePathIndex);
@@ -97,7 +97,13 @@ namespace LuaEmbedder
 	prevPackagePathIndex = currPackagePathIndex;
       }
     }
-    bool error = luaL_dostring(L, sourceString.c_str());
+    return sourceString;
+  }
+
+  bool Load(const std::string& filepath)
+  {
+    std::string source = LoadFile(filepath);
+    bool error = luaL_dostring(L, source.c_str());
     if (error)
     {
       SDL_Log("LuaEmbedder::Load : %s", (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error"));
@@ -105,11 +111,6 @@ namespace LuaEmbedder
     }
     lua_gc(L, LUA_GCCOLLECT, 0);
     return true;
-  }
-
-  bool Load(const std::string& filepath)
-  {
-    return DoFile(filepath.c_str());
   }
   bool CallFunction(const std::string& name, int argumentCount, const std::string& library)
   {

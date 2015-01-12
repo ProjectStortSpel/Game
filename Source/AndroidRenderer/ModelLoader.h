@@ -92,10 +92,10 @@ public:
 		SDL_RWseek(fileIn, 0, RW_SEEK_SET);
 		// Read data
 		char* data = new char[length + 1];
-		std::string dataString = std::string(data);
-		delete data;
 		SDL_RWread(fileIn, data, length, 1);
 		data[length] = '\0';
+		std::string dataString = std::string(data);
+		delete data;
 		// Close file
 		SDL_RWclose(fileIn);
 
@@ -107,22 +107,18 @@ public:
 		nextFileIndex = dataString.find('\n', prevFileIndex);
 		temp = dataString.substr(prevFileIndex, nextFileIndex - prevFileIndex);
 		prevFileIndex = nextFileIndex + 1;
-		SDL_Log("Mesh: %s", temp.c_str());
 		objectdata.mesh.append(temp);
 		nextFileIndex = dataString.find('\n', prevFileIndex);
 		temp = dataString.substr(prevFileIndex, nextFileIndex - prevFileIndex);
 		prevFileIndex = nextFileIndex + 1;
-		SDL_Log("Text: %s", temp.c_str());
 		objectdata.text.append(temp);
 		nextFileIndex = dataString.find('\n', prevFileIndex);
 		temp = dataString.substr(prevFileIndex, nextFileIndex - prevFileIndex);
 		prevFileIndex = nextFileIndex + 1;
-		SDL_Log("Norm: %s", temp.c_str());
 		objectdata.norm.append(temp);
 		nextFileIndex = dataString.find('\n', prevFileIndex);
 		temp = dataString.substr(prevFileIndex, nextFileIndex - prevFileIndex);
 		prevFileIndex = nextFileIndex + 1;
-		SDL_Log("Spec: %s", temp.c_str());
 		objectdata.spec.append(temp);
 
 		return objectdata;
