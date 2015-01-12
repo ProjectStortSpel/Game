@@ -24,70 +24,88 @@ namespace LuaEmbedder
     lua_close(L);
   }
   
-	 std::string UnpackFile(const std::string& filepath)
-	 {
-		// Read source
-		unsigned int size;
-		char* source = File::Read(filepath, &size);
-		std::string sourceString = std::string(source);
-		delete source;
-		// Set directory string
-		std::string directory = filepath.substr(0, filepath.rfind('\\/') + 1);
-	  
-		size_t prevPackagePathIndex = 0;
-		size_t prevRequireIndex = 0;
-		while (true)
-		{
-			size_t currPackagePathIndex = sourceString.find("package.path = package.path .. \";", prevPackagePathIndex);
-			size_t currRequireIndex = sourceString.find("require \"", prevRequireIndex);
+  std::string LoadFile(const std::string& filepath)
+  {
+    // Read source
+    char* source = File::Read(filepath);
+    std::string sourceString = std::string(source);
+    delete source;
+    // Set directory string
+    std::string directory = filepath.substr(0, filepath.rfind('\\/') + 1);
+    
+    SDL_Log("Do file: %s", filepath.c_str());
 
-			if (currRequireIndex == std::string::npos)
-			break;
+    size_t prevPackagePathIndex = 0;
+    size_t prevRequireIndex = 0;
+    while (true)
+    {
+      size_t currPackagePathIndex = sourceString.find("package.path = package.path .. \";", prevPackagePathIndex);
+      size_t currRequireIndex = sourceString.find("require \"", prevRequireIndex);
 
-			if (currPackagePathIndex == std::string::npos || currRequireIndex < currPackagePathIndex)
-			{
-				currRequireIndex += 9;
-				size_t foundQuotationMark = sourceString.find("\"", currRequireIndex);
-				if (foundQuotationMark != std::string::npos)
-				{
-					size_t length = foundQuotationMark - currRequireIndex;
-					std::string file = sourceString.substr(currRequireIndex, length);
-					std::string subSourceString = UnpackFile(directory + file + std::string(".lua"));
-					currRequireIndex -= 9;
-					SDL_Log("Erasing require: %s", sourceString.substr(currRequireIndex, length + 10).c_str());
-					sourceString.erase(currRequireIndex, length + 10);
-					sourceString.insert(sourceString.begin() + currRequireIndex, subSourceString.begin(), subSourceString.end());
-				}
-				prevRequireIndex = currRequireIndex;
-			}
-			else
-			{
-				currPackagePathIndex += 33;
-				size_t foundQuestionMark = sourceString.find("?.lua", currPackagePathIndex);
-				if (foundQuestionMark != std::string::npos)
-				{
-					size_t length = foundQuestionMark - currPackagePathIndex;
-					size_t foundContentFolder = sourceString.find("content/", currPackagePathIndex);
-					if (foundContentFolder != std::string::npos)
-						directory = sourceString.substr(foundContentFolder, foundQuestionMark - foundContentFolder);
-					else
-						directory = sourceString.substr(currPackagePathIndex, length);
-					currPackagePathIndex -= 33;
-					SDL_Log("Erasing package path: %s", sourceString.substr(currPackagePathIndex, length + 39).c_str());
-					sourceString.erase(currPackagePathIndex, length + 39);
-				}
-				prevPackagePathIndex = currPackagePathIndex;
-			}
-		}
-		sourceString.push_back('\n');
-		return sourceString;
-	  }
+      if (currRequireIndex == std::string::npos)
+	break;
+
+      if (currPackagePathIndex == std::string::npos || currRequireIndex < currPackagePathIndex)
+      {
+	size_t commentIndex = sourceString.find_last_of("--", currRequireIndex);
+	size_t newlineIndex = sourceString.find_last_of('\n', currRequireIndex);
+	if (commentIndex > newlineIndex)
+	{
+	  prevRequireIndex = sourceString.find('\n', currRequireIndex);
+	  continue;
+	}
+	
+	currRequireIndex += 9;
+	size_t foundQuotationMark = sourceString.find("\"", currRequireIndex);
+	if (foundQuotationMark != std::string::npos)
+	{
+	  size_t length = foundQuotationMark - currRequireIndex;
+	  std::string file = sourceString.substr(currRequireIndex, length);
+	  std::string subSourceString = LoadFile(directory + file + std::string(".lua"));
+	  subSourceString.push_back('\n');
+	  currRequireIndex -= 9;
+	  sourceString.erase(currRequireIndex, length + 10);
+	  sourceString.insert(currRequireIndex, subSourceString);
+	}
+	prevRequireIndex = currRequireIndex;
+      }
+      else
+      {
+	size_t commentIndex = sourceString.find_last_of("--", currPackagePathIndex);
+	size_t newlineIndex = sourceString.find_last_of('\n', currPackagePathIndex);
+	if (commentIndex > newlineIndex)
+	{
+	  prevPackagePathIndex = sourceString.find('\n', currPackagePathIndex);
+	  continue;
+	}
+	
+	currPackagePathIndex += 33;
+	size_t foundQuestionMark = sourceString.find("?.lua", currPackagePathIndex);
+	if (foundQuestionMark != std::string::npos)
+	{
+	  size_t length = foundQuestionMark - currPackagePathIndex;
+	  #ifdef DEBUG
+	    directory = sourceString.substr(currPackagePathIndex, length);
+	  #else
+	    size_t foundContentFolder = sourceString.find("content/", currPackagePathIndex);
+	    if (foundContentFolder != std::string::npos)
+	      directory = sourceString.substr(foundContentFolder, foundQuestionMark - foundContentFolder);
+	    else
+	      directory = sourceString.substr(currPackagePathIndex, length);
+	  #endif
+	  currPackagePathIndex -= 33;
+	  sourceString.erase(currPackagePathIndex, length + 39);
+	}
+	prevPackagePathIndex = currPackagePathIndex;
+      }
+    }
+    return sourceString;
+  }
 
   bool Load(const std::string& filepath)
   {
-	//std::string source = UnpackFile(filepath);
-	//bool error = luaL_dostring(L, source.c_str());
-	bool error = luaL_dofile(L, filepath.c_str());
+    std::string source = LoadFile(filepath);
+    bool error = luaL_dostring(L, source.c_str());
     if (error)
     {
       SDL_Log("LuaEmbedder::Load : %s", (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error"));
