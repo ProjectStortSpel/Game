@@ -76,6 +76,8 @@ void GraphicDevice::Update(float _dt)
 	
 }
 
+GLuint mBuffer;
+
 void GraphicDevice::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -95,6 +97,20 @@ void GraphicDevice::Render()
 	//m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera);
 	// -----------
 
+	vec3 tPos = *m_camera->GetPos() + *m_camera->GetLook();
+
+	GLfloat vVertices[] = { 0.0f, 0.5f, 0.0f,
+						   -0.5f, -0.5f, 0.0f,
+						    0.5f, -0.5f, 0.0f };
+
+	mat4 modelMat = glm::translate(tPos);
+
+	glGenBuffers(1, &mBuffer);
+
+	glBindAttribLocation(m_forwardShader.GetShaderProgram(), 0, "VertexPosition");
+
+	glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
+	glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(float), vVertices, GL_STATIC_DRAW);
 
 	//------FORWARD RENDERING--------------------------------------------
 	glEnable(GL_BLEND);
@@ -103,39 +119,47 @@ void GraphicDevice::Render()
 	m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 	m_forwardShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
 
-	for (int i = 0; i < m_modelsForward.size(); i++)
-	{
-		//std::vector<mat4> modelViewVector(m_modelsForward[i].instances.size());
-		//std::vector<mat3> normalMatVector(m_modelsForward[i].instances.size());
+	mat4 modelView = viewMatrix * modelMat;
+	m_forwardShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelView);
 
-		if (m_modelsForward[i].active) // IS MODEL ACTIVE?
-		{
-			mat4 modelMatrix;
-			if (m_modelsForward[i].modelMatrix == NULL)
-				modelMatrix = glm::translate(glm::vec3(1));
-			else
-				modelMatrix = *m_modelsForward[i].modelMatrix;
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(0);
 
-			mat4 modelViewMatrix = viewMatrix * modelMatrix;
-			m_forwardShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
+	glDrawArrays(GL_TRIANGLES, 0, 3);
 
-			mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-			m_forwardShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
+	//for (int i = 0; i < m_modelsForward.size(); i++)
+	//{
+	//	//std::vector<mat4> modelViewVector(m_modelsForward[i].instances.size());
+	//	//std::vector<mat3> normalMatVector(m_modelsForward[i].instances.size());
+
+	//	if (m_modelsForward[i].active) // IS MODEL ACTIVE?
+	//	{
+	//		mat4 modelMatrix;
+	//		if (m_modelsForward[i].modelMatrix == NULL)
+	//			modelMatrix = glm::translate(glm::vec3(1));
+	//		else
+	//			modelMatrix = *m_modelsForward[i].modelMatrix;
+
+	//		mat4 modelViewMatrix = viewMatrix * modelMatrix;
+	//		m_forwardShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
+
+	//		mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
+	//		m_forwardShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
 
 
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
+	//		glActiveTexture(GL_TEXTURE1);
+	//		glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
 
-			/*glActiveTexture(GL_TEXTURE2);
-			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].norID);
+	//		/*glActiveTexture(GL_TEXTURE2);
+	//		glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].norID);
 
-			glActiveTexture(GL_TEXTURE3);
-			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].speID);*/
+	//		glActiveTexture(GL_TEXTURE3);
+	//		glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].speID);*/
 
-			m_modelsForward[i].bufferPtr->draw();
-			glBindTexture(GL_TEXTURE_2D, 0);
-		}
-	}
+	//		m_modelsForward[i].bufferPtr->draw();
+	//		glBindTexture(GL_TEXTURE_2D, 0);
+	//	}
+	//}
 
 	glUseProgram(0);
 

@@ -1,13 +1,13 @@
 
-varying vec3 Normal;
-varying vec3 Tan;
-varying vec3 BiTan;
-varying vec2 TexCoord;
+//varying vec3 Normal;
+//varying vec3 Tan;
+//varying vec3 BiTan;
+//varying vec2 TexCoord;
 varying vec3 ViewPos;
 
 
 //Input textures
-uniform sampler2D diffuseTex;
+//uniform sampler2D diffuseTex;
 //uniform sampler2D normalTex;
 //uniform sampler2D specularTex;
 
@@ -36,8 +36,8 @@ uniform sampler2D diffuseTex;
 void main() 
 {
 	// Diffuse tex
-	vec4 albedo_tex = texture2D( diffuseTex, TexCoord );
+	//vec4 albedo_tex = texture2D( diffuseTex, TexCoord );
 
 	//gl_FragColor = vec4(ambient + diffuse, 1.0) * albedo_tex + vec4(spec, 0.0f);
-	gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0)+albedo_tex-albedo_tex; //albedo_tex;
+	gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0); //albedo_tex;
 }
