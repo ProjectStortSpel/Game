@@ -282,7 +282,7 @@ int LinSocket::Send(char* _buffer, int _length, int _flags)
 
 int LinSocket::Receive(char* _buffer, int _length, int _flags)
 {
-	if (m_socket == -1)
+	if (*m_socket == -1)
 		return -1;
 
 	short len;
