@@ -97,7 +97,7 @@ void GraphicDevice::Render()
 
 
 	//------FORWARD RENDERING--------------------------------------------
-	glEnable(GL_BLEND);
+	//glEnable(GL_BLEND);
 
 	m_forwardShader.UseProgram();
 	m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
@@ -110,6 +110,8 @@ void GraphicDevice::Render()
 
 		if (m_modelsForward[i].active) // IS MODEL ACTIVE?
 		{
+			SDL_Log("Render model");
+			
 			mat4 modelMatrix;
 			if (m_modelsForward[i].modelMatrix == NULL)
 				modelMatrix = glm::translate(glm::vec3(1));
@@ -284,16 +286,18 @@ bool GraphicDevice::PreLoadModel(std::string _dir, std::string _file, int _rende
 	// Import Specc Glow map
 	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
 	shaderPtr->CheckUniformLocation("specularTex", 3);
+	
+	SDL_Log("preLoaded all textures");
 
 	// Import Mesh
 	Buffer* mesh = AddMesh(obj.mesh, shaderPtr);
+	
+	SDL_Log("preCompleted mesh");
 
 	return true;
 }
 int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType)
 {
-	SDL_Log("LoadModel");
-
 	int modelID = m_modelIDcounter;
 	m_modelIDcounter++;
 

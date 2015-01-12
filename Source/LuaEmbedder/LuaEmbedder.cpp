@@ -32,8 +32,6 @@ namespace LuaEmbedder
     delete source;
     // Set directory string
     std::string directory = filepath.substr(0, filepath.rfind('\\/') + 1);
-    
-    SDL_Log("Do file: %s", filepath.c_str());
 
     size_t prevPackagePathIndex = 0;
     size_t prevRequireIndex = 0;
@@ -84,7 +82,7 @@ namespace LuaEmbedder
 	if (foundQuestionMark != std::string::npos)
 	{
 	  size_t length = foundQuestionMark - currPackagePathIndex;
-	  #ifdef DEBUG
+	  #ifdef _DEBUG
 	    directory = sourceString.substr(currPackagePathIndex, length);
 	  #else
 	    size_t foundContentFolder = sourceString.find("content/", currPackagePathIndex);
