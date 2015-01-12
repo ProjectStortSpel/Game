@@ -23,12 +23,12 @@ local Unit = EntityTemplate()
 Unit.Name = "Unit"
 
 	Unit:AddComponent("Unit")
+	Unit:AddComponent("Model")
 
 	--	Model data
 	Unit:SetFloat3("Position", 0.0, 1.0, 0.0)
 	Unit:SetFloat3("Rotation", 0.0, math.pi, 0.0)
 	Unit:SetFloat3("Scale", 0.5, 0.5, 0.5)
-	Unit:SetModel("Model", "head", "head")
 	
 	--	Game Logic
 	Unit:AddComponent("PlayerNumber")			--	The number of the player [1, Number of players]

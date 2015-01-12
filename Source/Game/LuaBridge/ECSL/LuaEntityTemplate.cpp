@@ -144,9 +144,13 @@ namespace LuaBridge
   {
     std::string componentName = LuaEmbedder::PullString(1);
     std::string modelName = LuaEmbedder::PullString(2);
-    std::string folderName = LuaEmbedder::PullString(3);
+	std::string folderName = LuaEmbedder::PullString(3);
+	int renderType = LuaEmbedder::PullInt(4);
+	bool viewSpace = LuaEmbedder::PullBool(5);
     m_components[componentName].push_back(ECSL::TemplateEntry(modelName));
-    m_components[componentName].push_back(ECSL::TemplateEntry(folderName));
+	m_components[componentName].push_back(ECSL::TemplateEntry(folderName));
+	m_components[componentName].push_back(ECSL::TemplateEntry(renderType));
+	m_components[componentName].push_back(ECSL::TemplateEntry(viewSpace));
     return 0;
   }
   

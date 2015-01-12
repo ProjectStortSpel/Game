@@ -274,12 +274,26 @@ namespace LuaBridge
 		assert(m_dataLocation);
 		std::string modelName = LuaEmbedder::PullString(1);
 		std::string folderName = LuaEmbedder::PullString(2);
+		int renderType = LuaEmbedder::PullInt(3);
+		int viewSpace = LuaEmbedder::PullInt(4);
+
+		int modelComponentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Model");
+		int modelNameOffset = ECSL::ComponentTypeManager::GetInstance().GetComponentType(modelComponentId)->GetVariables()->at("ModelName").GetOffset();
+		int modelPathOffset = ECSL::ComponentTypeManager::GetInstance().GetComponentType(modelComponentId)->GetVariables()->at("ModelPath").GetOffset();
+		int modelRenderTypeOffset = ECSL::ComponentTypeManager::GetInstance().GetComponentType(modelComponentId)->GetVariables()->at("RenderType").GetOffset();
+		int modelViewSpaceOffset = ECSL::ComponentTypeManager::GetInstance().GetComponentType(modelComponentId)->GetVariables()->at("ViewSpace").GetOffset();
+
 		for (int i = 0; i < modelName.size(); i++)
-			m_dataLocation[i] = modelName[i];
-		m_dataLocation[modelName.size()] = '\0';
+			m_dataLocation[modelNameOffset + i] = modelName[i];
+		m_dataLocation[modelNameOffset + modelName.size()] = '\0';
+
 		for (int i = 0; i < folderName.size(); i++)
-			m_dataLocation[i + CHARSIZE] = folderName[i];
-		m_dataLocation[folderName.size() + CHARSIZE] = '\0';
+			m_dataLocation[modelPathOffset + i] = folderName[i];
+		m_dataLocation[modelPathOffset + folderName.size()] = '\0';
+
+		*(int*)(m_dataLocation + modelRenderTypeOffset) = renderType;
+		*(int*)(m_dataLocation + modelViewSpaceOffset) = viewSpace;
+
 		ComponentHasChanged();
 		return 0;
 	}

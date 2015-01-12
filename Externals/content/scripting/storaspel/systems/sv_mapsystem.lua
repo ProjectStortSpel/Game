@@ -17,6 +17,35 @@ MapSystem.PostInitialize = function(self)
         end
     end
 
+	local activeEntities = MapSystem.entities
+	local waterTiles = {}
+	for i = 1, #activeEntities do
+		if world:EntityHasComponent(activeEntities[i], "River") then
+			waterTiles[#waterTiles + 1] = activeEntities[i]
+		end
+	end
+
+	print("Water size: " .. #waterTiles)
+
+	for waterA = 1, #waterTiles do
+		
+		local waterPosA = world:GetComponent(waterTiles[waterA], "MapPosition", 0)
+		local waterAX, waterAY = waterPosA:GetInt2()
+
+		for waterB = 1, #waterTiles do
+
+			--if waterA ~= waterB then
+				--local waterPosB = world:GetComponent(waterTiles[waterB], "MapPosition", 0)
+				--local waterBX, waterBY = waterPosB:GetInt2()
+
+				--local diffX = waterAX - waterBX
+				--local diffY = waterYX - waterYX
+
+			--do
+
+		end
+	end
+
     print("Init map done!")
 end
 
@@ -36,7 +65,7 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
         world:CreateComponentAndAddTo("Void", entity)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
-		comp:SetModel("hole_test", "hole")
+		comp:SetModel("hole_test", "hole", 0, 0)
 --  No need???
 --    elseif tiletype == 46 then -- 46 = . = grass
 --        world:CreateComponentAndAddTo("", entity)
@@ -45,7 +74,7 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
 		world:CreateComponentAndAddTo("NotWalkable", entity)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
-		comp:SetModel("stone", "stone")
+		comp:SetModel("stone", "stone", 0, 0)
 		posComp:SetFloat3(posX, 1.0, posZ)
 		
 		self:AddGroundTileBelow(posX, posZ)
@@ -56,14 +85,14 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
         comp:SetInt(tiletype - 48)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
-		comp:SetModel("checkpoint", "checkpoint")
+		comp:SetModel("checkpoint", "checkpoint", 0, 0)
 		--posComp:SetFloat3(posX, 1.0, posZ)
 
     elseif tiletype == 102 then -- 102 = f = finish
         world:CreateComponentAndAddTo("Finish", entity)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
-		comp:SetModel("finish", "finish")
+		comp:SetModel("finish", "finish", 0, 0)
 		--posComp:SetFloat3(posX, 1.0, posZ)
 
     elseif tiletype == 117 then -- 117 = u = water up
@@ -74,7 +103,7 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
 		comp:SetFloat3(0, -math.pi/2, 0)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
-		comp:SetModel("riverstraight", "riverstraight")
+		comp:SetModel("riverstraight", "riverstraight", 0, 0)
 
     elseif tiletype == 100 then -- 100 = d = water down
         world:CreateComponentAndAddTo("River", entity)
@@ -84,7 +113,7 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
 		comp:SetFloat3(0, math.pi/2, 0)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
-		comp:SetModel("riverstraight", "riverstraight")
+		comp:SetModel("riverstraight", "riverstraight", 0, 0)
 
     elseif tiletype == 108 then -- 108 = l = water left
         world:CreateComponentAndAddTo("River", entity)
@@ -92,7 +121,7 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
         comp:SetInt2(-1, 0)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
-		comp:SetModel("riverstraight", "riverstraight")
+		comp:SetModel("riverstraight", "riverstraight", 0, 0)
 
     elseif tiletype == 114 then -- 114 = r = water right
         world:CreateComponentAndAddTo("River", entity)
@@ -102,12 +131,12 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
 		comp:SetFloat3(0, math.pi, 0)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
-		comp:SetModel("riverstraight", "riverstraight")
+		comp:SetModel("riverstraight", "riverstraight", 0, 0)
 		
 	else
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
-		comp:SetModel("grass", "grass")
+		comp:SetModel("grass", "grass", 0, 0)
 		
     end
 
@@ -125,7 +154,7 @@ MapSystem.AddGroundTileBelow = function(self, posX, posZ)
 	
 	world:CreateComponentAndAddTo("Model", groundEntity)
 	local comp = self:GetComponent(groundEntity, "Model", 0)
-	comp:SetModel("grass", "grass")
+	comp:SetModel("grass", "grass", 0, 0)
 	
 	--table.insert(self.entities, groundEntity)
 end 
