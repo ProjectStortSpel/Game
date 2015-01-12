@@ -21,7 +21,6 @@ namespace Network
 		virtual bool SetNonBlocking(bool _value) = 0;
 		virtual bool SetNoDelay(bool _value) = 0;
 		virtual bool SetTimeoutDelay(int _value) = 0;
-		virtual void SetInvalidSocket(void) = 0;
 		virtual bool CloseSocket(void) = 0;
 		virtual ISocket* Accept(void) = 0;
 		virtual int Send(char* _buffer, int _length, int _flags = 0) = 0;

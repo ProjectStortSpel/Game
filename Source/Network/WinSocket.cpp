@@ -240,11 +240,6 @@ bool WinSocket::SetTimeoutDelay(int _value)
 	return true;
 }
 
-void WinSocket::SetInvalidSocket(void)
-{
-	m_socket = INVALID_SOCKET;
-}
-
 bool WinSocket::CloseSocket(void)
 {
 	if (closesocket(m_socket) != 0)

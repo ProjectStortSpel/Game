@@ -205,11 +205,6 @@ bool LinSocket::SetTimeoutDelay(int _value)
 		return false;
 }
 
-void LinSocket::SetInvalidSocket(void)
-{
-	m_socket = -1;
-}
-
 bool LinSocket::CloseSocket()
 {
 	if (close(*m_socket) != 0)

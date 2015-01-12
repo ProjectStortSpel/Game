@@ -174,8 +174,9 @@ void ClientNetwork::Disconnect()
 		Packet* packet = m_packetHandler->EndPack(id);
 		Send(packet);
 	}
-
-	m_socket->SetInvalidSocket();
+	if(m_socket)
+		m_socket->CloseSocket();
+	//m_socket->SetInvalidSocket();
 	*m_receivePacketsThreadAlive = false;
 
 	if (m_receivePacketsThread->joinable())

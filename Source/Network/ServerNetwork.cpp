@@ -228,7 +228,7 @@ bool ServerNetwork::Stop()
 	m_connectedClientsLock->lock();
 	for (auto it = m_connectedClients->begin(); it != m_connectedClients->end(); ++it)
 	{
-		it->second->SetInvalidSocket();
+		it->second->CloseSocket();
 		it->second->SetActive(0);
 	}
 	m_connectedClientsLock->unlock();
