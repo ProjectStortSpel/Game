@@ -248,7 +248,12 @@ void GraphicDevice::Render()
 				else
 					modelMatrix = *m_modelsDeferred[i].instances[j].modelMatrix;
 
-				mat4 modelViewMatrix = viewMatrix * modelMatrix;
+				mat4 modelViewMatrix;
+				if (m_modelsDeferred[i].instances[j].viewspace)
+					modelViewMatrix = modelMatrix;
+				else
+					modelViewMatrix = viewMatrix * modelMatrix;
+
 				mat4 mvp = projectionMatrix * modelViewMatrix;
 				MVPVector[nrOfInstances] = mvp;
 				
@@ -353,7 +358,12 @@ void GraphicDevice::Render()
 				else
 					modelMatrix = *m_modelsForward[i].instances[j].modelMatrix;
 
-				mat4 modelViewMatrix = viewMatrix * modelMatrix;
+				mat4 modelViewMatrix;
+				if (m_modelsForward[i].instances[j].viewspace)
+					modelViewMatrix = modelMatrix;
+				else
+					modelViewMatrix = viewMatrix * modelMatrix;
+
 				modelViewVector[nrOfInstances] = modelViewMatrix;
 
 				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
@@ -805,7 +815,7 @@ bool GraphicDevice::PreLoadModel(std::string _dir, std::string _file, int _rende
 
 	return true;
 }
-int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType)
+int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType, bool _renderinviewspace)
 {
 	int modelID = m_modelIDcounter;
 	m_modelIDcounter++;
@@ -854,7 +864,7 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 		{
 			if (m_modelsDeferred[i] == model)
 			{
-				m_modelsDeferred[i].instances.push_back(Instance(modelID, true, _matrixPtr));
+				m_modelsDeferred[i].instances.push_back(Instance(modelID, true, _matrixPtr, _renderinviewspace));
 				return modelID;
 			}
 		}
@@ -865,7 +875,7 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 		{
 			if (m_modelsForward[i] == model)
 			{
-				m_modelsForward[i].instances.push_back(Instance(modelID, true, _matrixPtr));
+				m_modelsForward[i].instances.push_back(Instance(modelID, true, _matrixPtr, _renderinviewspace));
 				return modelID;
 			}
 		}
@@ -873,7 +883,7 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 	
 	// Set model
 	//if model doesnt exist
-	model.instances.push_back(Instance(modelID, true, _matrixPtr));
+	model.instances.push_back(Instance(modelID, true, _matrixPtr, _renderinviewspace));
 	// Push back the model
 	if (_renderType == RENDER_DEFERRED)
 		m_modelsDeferred.push_back(model);

@@ -22,18 +22,20 @@ namespace Renderer
 #define TEXTURE_NORMAL		1
 #define TEXTURE_SPECULAR	2
 
-
+	
 	struct Instance
 	{
 		int id;
 		bool active;
+		bool viewspace;
 		mat4* modelMatrix;
 		
 		Instance(){}
-		Instance(int _id, bool _active, mat4* _model)
+		Instance(int _id, bool _active, mat4* _model, bool _viewspace = false)
 		{
 			id = _id;
 			active = _active;
+			viewspace = _viewspace;
 			modelMatrix = _model;
 		}
 	};
@@ -107,7 +109,7 @@ namespace Renderer
 
 		// MODELLOADER
 		bool PreLoadModel(std::string _dir, std::string _file, int _renderType = RENDER_DEFERRED);
-		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED);
+		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED, bool _renderinviewspace = false);
 		bool RemoveModel(int _id);
 		bool ActiveModel(int _id, bool _active);
 		bool ChangeModelTexture(int _id, std::string _fileDir, int _textureType = TEXTURE_DIFFUSE);
