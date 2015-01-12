@@ -152,7 +152,7 @@ bool WinSocket::Connect(const char* _ipAddress, const int _port)
 	{
 		int errorCode = WSAGetLastError();
 		if (errorCode != 10035)
-		{		
+		{
 			if (NET_DEBUG)
 			{
 				printf("Failed to connect to Ip address %s:%i. Error Code: %d.\n", _ipAddress, _port, errorCode);
@@ -297,21 +297,21 @@ ISocket* WinSocket::Accept(void)
 /*
 int WinSocket::Send(char* _buffer, int _length, int _flags)
 {
-	int result = send(m_socket, _buffer, _length, _flags);
-	if (result == SOCKET_ERROR)
-	{
-		if (NET_DEBUG)
-			printf("Failed to send packet of size '%i'. Error Code: %d.\n", _length, WSAGetLastError());
+int result = send(m_socket, _buffer, _length, _flags);
+if (result == SOCKET_ERROR)
+{
+if (NET_DEBUG)
+printf("Failed to send packet of size '%i'. Error Code: %d.\n", _length, WSAGetLastError());
 
-		return -1;
-	}
-	return result;
+return -1;
+}
+return result;
 }
 */
 /*
 int WinSocket::Receive(char* _buffer, int _length, int _flags)
 {
-	return recv(m_socket, _buffer, _length, _flags);
+return recv(m_socket, _buffer, _length, _flags);
 }
 */
 
@@ -373,6 +373,9 @@ int WinSocket::Send(char* _buffer, int _length, int _flags)
 
 int WinSocket::Receive(char* _buffer, int _length, int _flags)
 {
+	if (m_socket == INVALID_SOCKET)
+		return -1;
+
 	short len;
 	int len2 = recv(m_socket, (char*)&len, 2, MSG_WAITALL);
 	if (len2 == 2)
