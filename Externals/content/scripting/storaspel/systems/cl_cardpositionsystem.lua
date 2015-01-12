@@ -44,8 +44,13 @@ CardPositionSystem.Update = function(self, dt)
 		
 		local offsetYfactor = 1.0
 
-		if world:EntityHasComponent(entities[i], "SelectCard") then
-			offsetYfactor = 0.7
+		local entity = entities[i]
+
+		if world:EntityHasComponent(entity, "SelectCard") then
+
+			local data = self:GetComponent(entity, "SelectCard", "Index"):GetInt()
+			offsetYfactor = 0.7 - (data*0.08)
+
 		end
 		
 		local halfentities = #entities/2
@@ -58,7 +63,6 @@ CardPositionSystem.Update = function(self, dt)
 		ry = atan2custom(lz, lx)
 		rz = atan2custom(ly, math.sqrt(lx * lx + lz * lz))
 	  
-		local entity = entities[i]
 		local position = self:GetComponent(entity, "Position", 0)
 		position:SetFloat3(px, py, pz)
 		
