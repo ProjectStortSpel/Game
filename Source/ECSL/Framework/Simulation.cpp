@@ -25,26 +25,20 @@ void Simulation::Update(float _dt)
 	/* Update systems */
 	MPL::TaskId lastUpdateTask = m_scheduler->ScheduleUpdate();
 
-	/* Update system entity lists */
-	MPL::TaskId updateSystemEntityLists = m_scheduler->ScheduleUpdateSystemEntityLists(lastUpdateTask);
+	/* Update entity table data */
+	MPL::TaskId updateEntityTable = m_scheduler->ScheduleUpdateEntityTable(lastUpdateTask);
 
-	/* Update entity component data */
-	MPL::TaskId updateEntityTable = m_scheduler->ScheduleUpdateEntityTable(updateSystemEntityLists);
+	/* Update system entity lists */
+	MPL::TaskId updateSystemEntityLists = m_scheduler->ScheduleUpdateSystemEntityLists(updateEntityTable);
 
 	/* Clear dead entities from entity table */
-	MPL::TaskId clearDeadEntities = m_scheduler->ScheduleClearDeadEntities(updateEntityTable);
+	MPL::TaskId clearDeadEntities = m_scheduler->ScheduleClearDeadEntities(updateSystemEntityLists);
 
 	MPL::TaskManager::GetInstance().WaitFor(clearDeadEntities);
 
-	/* Add and remove changed entities from systems */
-	//m_systemManager->UpdateSystemEntityLists();
-
-	/* Clear entity component data */
-	//m_dataManager->ClearComponentData();
-
-	/* Recycle the id back to the list of ids */
-	//m_dataManager->RecycleEntityIds();
+	/* Recycle all dead ids back to the list of available ids */
+	m_dataManager->RecycleEntityIds();
 
 	/* Clear all the used lists */
-	//m_dataManager->ClearChangeLists();
+	m_dataManager->ClearChangeLists();
 }

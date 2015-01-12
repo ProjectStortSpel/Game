@@ -163,7 +163,7 @@ void DataManager::ClearDeadEntities(const RuntimeInfo& _runtime)
 	}
 }
 
-void DataManager::RecycleEntityIds(const RuntimeInfo& _runtime)
+void DataManager::RecycleEntityIds()
 {
 	for (auto entityId : *m_entitiesToBeRemoved)
 	{
@@ -171,7 +171,7 @@ void DataManager::RecycleEntityIds(const RuntimeInfo& _runtime)
 	}
 }
 
-void DataManager::ClearChangeLists(const RuntimeInfo& _runtime)
+void DataManager::ClearChangeLists()
 {
 	m_changedEntities->clear();
 	m_entitiesToBeRemoved->clear();

@@ -32,9 +32,9 @@ namespace ECSL
 		/* Clear the entity table for dead entities */
 		void ClearDeadEntities(const RuntimeInfo& _runtime);
 
-		void RecycleEntityIds(const RuntimeInfo& _runtime);
+		void RecycleEntityIds();
 
-		void ClearChangeLists(const RuntimeInfo& _runtime);
+		void ClearChangeLists();
 
 		inline unsigned int GetEntityCount() { return m_entityCount; }
 		inline EntityTable* GetEntityTable() { return m_entityTable; }

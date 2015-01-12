@@ -30,7 +30,6 @@ void SystemManager::InitializeSystems()
 	for (unsigned int groupId = 0; groupId < m_systemWorkGroups->size(); ++groupId)
 	{
 		std::vector<System*>* systems = m_systemWorkGroups->at(groupId)->GetSystems();
-		std::vector<System*> systemsToUpdate;
 
 		/*	Go through all systems in the group and initialize them	*/
 		for (unsigned int systemId = 0; systemId < systems->size(); ++systemId)
@@ -47,10 +46,6 @@ void SystemManager::InitializeSystems()
 			GenerateComponentFilter(system, FilterType::Excluded);
 
 			system->InitializeEntityList();
-
-			/* Add system to the update group if the system has atleast one update task */
-			if (system->GetUpdateTaskCount() > 0)
-				systemsToUpdate.push_back(system);
 
 			m_systems->push_back(system);
 		}
