@@ -17,6 +17,11 @@ MapSystem.PostInitialize = function(self)
         end
     end
 
+	local activeEntities = MapSystem.entities
+	print("Tiles: " .. #activeEntities)
+	print("Tiles: " .. activeEntities[4])
+	print("Tiles: " .. activeEntities[4])
+
     print("Init map done!")
 end
 
