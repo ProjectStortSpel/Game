@@ -38,6 +38,11 @@ void ModelSystem::OnEntityAdded(unsigned int _entityId)
 	ModelPath.append(std::string(ModelData));
 	ModelPath.append("/");
 
+	int RenderType = *(int*)GetComponent(_entityId, "Model", "RenderType");
+	bool ViewSpace = *(bool*)GetComponent(_entityId, "Model", "ViewSpace");
+	if (RenderType >= 0)
+		int a = 2;
+
 	CreateComponentAndAddTo("Render", _entityId);
 	glm::mat4*	Matrix;
 	Matrix = (glm::mat4*)GetComponent(_entityId, "Render", "Mat");
