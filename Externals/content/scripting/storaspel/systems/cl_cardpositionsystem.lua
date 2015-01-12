@@ -48,8 +48,8 @@ CardPositionSystem.Update = function(self, dt)
 
 		if world:EntityHasComponent(entity, "SelectCard") then
 
-			--local data = self:GetComponent(entity, "SelectCard", "Index"):GetInt()
-			offsetYfactor = 0.7
+			local data = self:GetComponent(entity, "SelectCard", "Index"):GetInt()
+			offsetYfactor = 0.7 - (data*0.08)
 
 		end
 		
