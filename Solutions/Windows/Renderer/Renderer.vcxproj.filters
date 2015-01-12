@@ -115,5 +115,14 @@
     <None Include="..\..\..\Externals\content\shaders\shadowShaderForwardVS.glsl">
       <Filter>shaders</Filter>
     </None>
+    <None Include="..\..\..\Externals\content\shaders\TwoDShaderGS.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\TwoDShaderPS.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\TwoDShaderVS.glsl">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

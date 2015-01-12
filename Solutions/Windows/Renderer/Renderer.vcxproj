@@ -57,6 +57,9 @@
     <None Include="..\..\..\Externals\content\shaders\skyboxShaderFS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\skyboxShaderVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\skyboxvs.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\TwoDShaderGS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\TwoDShaderPS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\TwoDShaderVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\VSDeferredPass1.glsl" />
     <None Include="..\..\..\Externals\content\shaders\VSForwardShader.glsl" />
   </ItemGroup>
