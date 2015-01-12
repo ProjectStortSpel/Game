@@ -8,6 +8,7 @@ DealCardsSystem.Initialize = function ( self )
 	self:AddComponentTypeToFilter("Player", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("CardAction", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("UsedCard", FilterType.Excluded)
+	self:AddComponentTypeToFilter("CardStep", FilterType.Excluded)
 	self:AddComponentTypeToFilter("DealtCard", FilterType.Excluded)
 
 	print("DealCardsSystem Initialized")
