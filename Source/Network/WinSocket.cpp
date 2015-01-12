@@ -240,6 +240,11 @@ bool WinSocket::SetTimeoutDelay(int _value)
 	return true;
 }
 
+void WinSocket::SetInvalidSocket(void)
+{
+	m_socket = INVALID_SOCKET;
+}
+
 bool WinSocket::CloseSocket(void)
 {
 	if (closesocket(m_socket) != 0)
@@ -373,6 +378,9 @@ int WinSocket::Send(char* _buffer, int _length, int _flags)
 
 int WinSocket::Receive(char* _buffer, int _length, int _flags)
 {
+	if (m_socket == INVALID_SOCKET)
+		return -1;
+
 	short len;
 	int len2 = recv(m_socket, (char*)&len, 2, MSG_WAITALL);
 	if (len2 == 2)

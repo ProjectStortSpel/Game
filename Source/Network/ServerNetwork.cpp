@@ -228,6 +228,7 @@ bool ServerNetwork::Stop()
 	m_connectedClientsLock->lock();
 	for (auto it = m_connectedClients->begin(); it != m_connectedClients->end(); ++it)
 	{
+		it->second->SetInvalidSocket();
 		it->second->SetActive(0);
 	}
 	m_connectedClientsLock->unlock();
@@ -334,7 +335,6 @@ void ServerNetwork::ReceivePackets(ISocket* _socket)
 	while (_socket->GetActive() != 0)
 	{
 
-
 		//nextPacketSize = 2;
 		//dataReceived = 0;
 		//while (dataReceived < nextPacketSize)
@@ -419,7 +419,7 @@ void ServerNetwork::ListenForConnections(void)
 
 		newConnection->SetNonBlocking(false);
 		newConnection->SetNoDelay(true);
-		newConnection->SetTimeoutDelay(5000);
+		//newConnection->SetTimeoutDelay(5000);
 
 		NetConnection nc = newConnection->GetNetConnection();
 

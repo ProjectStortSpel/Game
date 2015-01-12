@@ -149,7 +149,7 @@ bool ClientNetwork::Connect()
 		return false;
 	}
 
-	m_socket->SetTimeoutDelay(5000);
+	//m_socket->SetTimeoutDelay(5000);
 	m_socket->SetNonBlocking(false);
 	m_socket->SetNoDelay(true);
 
@@ -175,6 +175,7 @@ void ClientNetwork::Disconnect()
 		Send(packet);
 	}
 
+	m_socket->SetInvalidSocket();
 	*m_receivePacketsThreadAlive = false;
 
 	if (m_receivePacketsThread->joinable())
