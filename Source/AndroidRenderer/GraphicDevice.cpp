@@ -184,7 +184,7 @@ void GraphicDevice::ResizeWindow(int _width, int _height)
 bool GraphicDevice::InitSDLWindow()
 {
 	if (SDL_Init(SDL_INIT_VIDEO) == -1){
-		std::cout << SDL_GetError() << std::endl;
+		SDL_Log( SDL_GetError() );
 		return false;
 	}
 
@@ -209,7 +209,7 @@ bool GraphicDevice::InitSDLWindow()
 	m_window = SDL_CreateWindow(Caption, PosX, PosY, SizeX, SizeY, Flags);
 
 	if (m_window == NULL){
-		std::cout << SDL_GetError() << std::endl;
+		SDL_Log( SDL_GetError() );
 		return false;
 	}
 
