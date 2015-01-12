@@ -19,9 +19,10 @@ namespace ECSL
 		void InitializeSystems();
 
 		void UpdateSystemEntityLists(const RuntimeInfo& _runtime,
-			std::vector<std::vector<System*>*>& _entityAddedRequests,
-			std::vector<std::vector<System*>*>& _entityRemovedRequests);
+			std::vector<std::vector<unsigned int>*>& _entitiesToAddToSystems,
+			std::vector<std::vector<unsigned int>*>& _entitiesToRemoveFromSystems);
 
+		const std::vector<System*>* GetSystems() { return m_systems; }
 		const std::vector<SystemWorkGroup*>* GetSystemWorkGroups() { return m_systemWorkGroups; }
 
 	private:

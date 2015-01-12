@@ -16,11 +16,18 @@ namespace ECSL
 		RuntimeInfo RuntimeInfo;
 	};
 
-	struct OnEntityData
+	struct OnEntityAddedData
 	{
 		System* System;
 		RuntimeInfo RuntimeInfo;
-		unsigned int EntityId;
+		std::vector<std::vector<unsigned int>*>* EntitiesToAddToSystems;
+	};
+
+	struct OnEntityRemovedData
+	{
+		System* System;
+		RuntimeInfo RuntimeInfo;
+		std::vector<std::vector<unsigned int>*>* EntitiesToRemoveFromSystems;
 	};
 
 	struct DataManagerData
@@ -33,8 +40,8 @@ namespace ECSL
 	{
 		SystemManager* SystemManager;
 		RuntimeInfo RuntimeInfo;
-		std::vector<std::vector<System*>*>* EntityAddedRequests;
-		std::vector<std::vector<System*>*>* EntityRemovedRequests;
+		std::vector<std::vector<unsigned int>*>* EntitiesToAddToSystems;
+		std::vector<std::vector<unsigned int>*>* EntitiesToRemoveFromSystems;
 	};
 
 	class DECLSPEC Scheduler
@@ -44,27 +51,32 @@ namespace ECSL
 		~Scheduler();
 
 		void UpdateDt(float _dt);
-		MPL::TaskId ScheduleUpdate();
-		MPL::TaskId ScheduleUpdateSystemEntityLists(MPL::TaskId _dependency);
+		MPL::TaskId ScheduleUpdateSystems();
 		MPL::TaskId ScheduleUpdateEntityTable(MPL::TaskId _dependency);
+		MPL::TaskId ScheduleUpdateSystemEntityLists(MPL::TaskId _dependency);
+		MPL::TaskId ScheduleOnEntityAddedTasks(MPL::TaskId _dependency);
+		MPL::TaskId ScheduleOnEntityRemovedTasks(MPL::TaskId _dependency);
 		MPL::TaskId ScheduleClearDeadEntities(MPL::TaskId _dependency);
 
-		void AddUpdateTasks(const std::vector<SystemWorkGroup*>& _systemGroups);
-		void AddOnEntityAddedTask(const std::vector<System*>& _systems);
-		void AddOnEntityRemovedTask(const std::vector<System*>& _systems);
+		void AddUpdateSystemsTasks();
 		void AddUpdateSystemEntityListsTasks();
+		void AddOnEntityAddedTasks();
+		void AddOnEntityRemovedTasks();
 		void AddUpdateEntityTableTask();
 		void AddClearDeadEntitiesTask();
 
 	private:
 		DataManager* m_dataManager;
 		SystemManager* m_systemManager;
+		MPL::TaskId m_onEntityTaskId;
 		std::vector<std::vector<MPL::WorkItem*>*>* m_updateWorkItems;
 		std::vector<MPL::WorkItem*>* m_updateEntityTableWorkItems;
-		std::vector<MPL::WorkItem*>* m_clearDeadEntitiesWorkItems;
 		std::vector<MPL::WorkItem*>* m_updateSystemEntityListsWorkItems;
-		std::vector<std::vector<System*>*>* m_entityAddedRequests;
-		std::vector<std::vector<System*>*>* m_entityRemovedRequests;
+		std::vector<std::vector<MPL::WorkItem*>*>* m_onEntityAddedWorkItems;
+		std::vector<std::vector<MPL::WorkItem*>*>* m_onEntityRemovedWorkItems;
+		std::vector<MPL::WorkItem*>* m_clearDeadEntitiesWorkItems;
+		std::vector<std::vector<unsigned int>*>* m_entitiesToAddToSystems;
+		std::vector<std::vector<unsigned int>*>* m_entitiesToRemoveFromSystems;
 	};
 
 	static void SystemUpdate(void* _data);

@@ -7,8 +7,11 @@ using namespace ECSL;
 Simulation::Simulation(DataManager* _dataManager, SystemManager* _systemManager, Scheduler* _scheduler)
 :	m_dataManager(_dataManager), m_scheduler(_scheduler), m_systemManager(_systemManager)
 {
-	m_scheduler->AddUpdateTasks(*(m_systemManager->GetSystemWorkGroups()));
+	m_scheduler->AddUpdateSystemsTasks();
 	m_scheduler->AddUpdateEntityTableTask();
+	m_scheduler->AddUpdateSystemEntityListsTasks();
+	m_scheduler->AddOnEntityAddedTasks();
+	m_scheduler->AddOnEntityRemovedTasks();
 	m_scheduler->AddClearDeadEntitiesTask();
 }
 
@@ -23,10 +26,10 @@ void Simulation::Update(float _dt)
 	m_scheduler->UpdateDt(_dt);
 
 	/* Update systems */
-	MPL::TaskId lastUpdateTask = m_scheduler->ScheduleUpdate();
+	MPL::TaskId updateSystems = m_scheduler->ScheduleUpdateSystems();
 
-	/* Update entity table data */
-	MPL::TaskId updateEntityTable = m_scheduler->ScheduleUpdateEntityTable(lastUpdateTask);
+	/* Update entity component table data */
+	MPL::TaskId updateEntityTable = m_scheduler->ScheduleUpdateEntityTable(updateSystems);
 
 	/* Update system entity lists */
 	MPL::TaskId updateSystemEntityLists = m_scheduler->ScheduleUpdateSystemEntityLists(updateEntityTable);

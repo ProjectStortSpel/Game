@@ -13,6 +13,7 @@ using namespace ECSL;
 DataManager::DataManager(unsigned int _entityCount, std::vector<unsigned int>* _componentTypeIds)
 :	m_entityCount(_entityCount), m_componentTypeIds(_componentTypeIds),
 	m_entitiesToBeRemoved(new std::vector<unsigned int>()), m_changedEntities(new std::vector<unsigned int>()),
+	m_componentsToBeAdded(new std::map<unsigned int, std::vector<unsigned int>>()),
 	m_componentsToBeRemoved(new std::map<unsigned int, std::vector<unsigned int>>())
 {
 	m_changedEntitiesMutex = SDL_CreateMutex();
