@@ -32,7 +32,7 @@ static unsigned int LoadTexture(const char* file, GLenum textureSlot, int &heigh
 	
 	if (!imgData)
 	{
-		std::cout << "Texture '" << file << "' not loaded." << std::endl;
+		SDL_Log( "Texture '%s' not loaded." , file);
 	}
 
 	GLuint texHandle;
@@ -84,7 +84,7 @@ static unsigned int LoadCubeMap(const char* file, GLenum textureSlot, int &heigh
 		unsigned char* imgData = stbi_load(texName.str().c_str(), &width, &height, &channels, STBI_rgb_alpha);
 
 		if (!imgData)
-			std::cout << "Cubemap texture '" << texName.str() << "' not loaded." << std::endl;
+			SDL_Log("Cubemap texture '%s' not loaded.", texName.str().c_str() );
 
 		glTexImage2D(targets[i], 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imgData);
 

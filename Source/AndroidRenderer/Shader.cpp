@@ -102,9 +102,9 @@ bool Shader::FinalizeShaderProgram()
 		/* PRINT THE ERROR LOG */
 		for (int i = 0; i < logSize; i++)
 		{
-			printf("%c", errorLog[i]);
+			SDL_Log("%c", errorLog[i]);
 		}
-		printf("\n");
+		SDL_Log("\n");
 
 		/* DO SOME CLEANING :) */
 		delete(errorLog);
@@ -120,7 +120,7 @@ bool Shader::FinalizeShaderProgram()
 		m_shaders.clear();
 		return false;
 	}
-	printf("Created Shader Program : %i\n", m_shaderProg);
+	SDL_Log("Created Shader Program : %i\n", m_shaderProg);
 	/* DETACH THE SHADERS NOW WHEN THE PROGRAM IS LINKED */
 	for (int i = 0; i < m_shaders.size(); i++)
 	{
@@ -181,13 +181,13 @@ bool Shader::SetUniVariable(const char* p_Name, VariableTyp p_Typ, void* p_Value
 			return true;
 			break;
 		default:
-			printf("Dont support given type for variable '%s'\n", p_Name);
+			SDL_Log("Dont support given type for variable '%s'\n", p_Name);
 			return false;
 			break;
 		}
 	}
 
-	printf("Can't find Variable named '%s'\n", p_Name);
+	SDL_Log("Can't find Variable named '%s'\n", p_Name);
 	return false;
 }
 
