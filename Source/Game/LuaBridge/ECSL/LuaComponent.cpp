@@ -275,7 +275,7 @@ namespace LuaBridge
 		std::string modelName = LuaEmbedder::PullString(1);
 		std::string folderName = LuaEmbedder::PullString(2);
 		int renderType = LuaEmbedder::PullInt(3);
-		bool viewSpace = LuaEmbedder::PullBool(4);
+		int viewSpace = LuaEmbedder::PullInt(4);
 
 		int modelComponentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Model");
 		int modelNameOffset = ECSL::ComponentTypeManager::GetInstance().GetComponentType(modelComponentId)->GetVariables()->at("ModelName").GetOffset();
@@ -291,8 +291,8 @@ namespace LuaBridge
 			m_dataLocation[modelPathOffset + i] = folderName[i];
 		m_dataLocation[modelPathOffset + folderName.size()] = '\0';
 
-		*(int*)(m_dataLocation + modelRenderTypeOffset) = viewSpace;
-		m_dataLocation[modelViewSpaceOffset] = viewSpace;
+		*(int*)(m_dataLocation + modelRenderTypeOffset) = renderType;
+		*(int*)(m_dataLocation + modelViewSpaceOffset) = viewSpace;
 
 		ComponentHasChanged();
 		return 0;

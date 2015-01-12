@@ -32,7 +32,7 @@ PlayersSystem.OnEntityAdded = function(self, entityId)
 	world:SetComponent(newEntityId, "Model", "ModelName", "ply" .. playerNumber);
 	world:SetComponent(newEntityId, "Model", "ModelPath", "head");
 	world:SetComponent(newEntityId, "Model", "RenderType", 0);
-	world:SetComponent(newEntityId, "Model", "ViewSpace", false);
+	world:SetComponent(newEntityId, "Model", "ViewSpace", 0);
 
 	world:SetComponent(newEntityId, "PlayerNumber", "Number", playerNumber)
 	world:SetComponent(newEntityId, "PlayerEntityId", "Id", entityId)

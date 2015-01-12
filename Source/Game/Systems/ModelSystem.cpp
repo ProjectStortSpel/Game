@@ -38,8 +38,13 @@ void ModelSystem::OnEntityAdded(unsigned int _entityId)
 	ModelPath.append(std::string(ModelData));
 	ModelPath.append("/");
 
+
+
 	int RenderType = *(int*)GetComponent(_entityId, "Model", "RenderType");
-	bool ViewSpace = *(bool*)GetComponent(_entityId, "Model", "ViewSpace");
+	int ViewSpace = *(int*)GetComponent(_entityId, "Model", "ViewSpace");
+
+	if (ModelName == "ply1.object")
+		int a = 2;
 
 	CreateComponentAndAddTo("Render", _entityId);
 	glm::mat4*	Matrix;
