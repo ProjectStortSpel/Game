@@ -84,7 +84,7 @@ namespace LuaEmbedder
 	if (foundQuestionMark != std::string::npos)
 	{
 	  size_t length = foundQuestionMark - currPackagePathIndex;
-	  #ifdef DEBUG
+	  #ifdef _DEBUG
 	    directory = sourceString.substr(currPackagePathIndex, length);
 	  #else
 	    size_t foundContentFolder = sourceString.find("content/", currPackagePathIndex);
