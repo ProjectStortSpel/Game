@@ -566,7 +566,9 @@ namespace LuaEmbedder
       int i = (int)lua_tonumber(L, lua_upvalueindex(1));
       T** obj = static_cast<T**>(lua_touserdata(L, lua_upvalueindex(2)));
       
-      lua_remove(L, 1);
+	  // Small fix for now
+	  if (lua_gettop(L) > 0)
+		lua_remove(L, 1);
       
       return ((*obj)->*(m_methods[i].func))();
     }

@@ -94,7 +94,11 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	LuaEmbedder::AddObject<ECSL::WorldCreator>("WorldCreator", &worldCreator, "worldCreator");
 
 	std::stringstream gameMode;
+#ifdef _DEBUG
 	gameMode << "../../../Externals/content/scripting/";
+#else
+	gameMode << "content/scripting/";
+#endif
 	gameMode << _gameMode;
 	gameMode << "/init.lua";
 

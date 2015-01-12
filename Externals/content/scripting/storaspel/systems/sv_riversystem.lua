@@ -32,7 +32,7 @@ RiverSystem.OnEntityAdded = function(self, entity)
 
 					local pos = world:GetComponent(units[i], "Position", 0)
 					local X, Y, Z = pos:GetFloat3()
-					pos:SetFloat3(X + riverDirX, Y, Z + riverDirZ)
+					--pos:SetFloat3(X + riverDirX, Y, Z + riverDirZ)
 
 
 					--world:SetComponent(units[i], "Position", "X", unitX + riverDirX)
