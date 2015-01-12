@@ -97,9 +97,9 @@ void GraphicDevice::Render()
 	//m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera);
 	// -----------
 
-	vec3 tPos = *m_camera->GetPos() + *m_camera->GetLook();
+	vec3 tPos = *m_camera->GetPos() + 8.0f* (*m_camera->GetLook());
 
-	GLfloat vVertices[] = { 0.0f, 0.5f, 0.0f,
+	/*GLfloat vVertices[] = { 0.0f, 0.5f, 0.0f,
 						   -0.5f, -0.5f, 0.0f,
 						    0.5f, -0.5f, 0.0f };
 
@@ -110,56 +110,55 @@ void GraphicDevice::Render()
 	glBindAttribLocation(m_forwardShader.GetShaderProgram(), 0, "VertexPosition");
 
 	glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
-	glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(float), vVertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(float), vVertices, GL_STATIC_DRAW);*/
 
 	//------FORWARD RENDERING--------------------------------------------
 	glEnable(GL_BLEND);
 
 	m_forwardShader.UseProgram();
 	m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
-	m_forwardShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
+	//m_forwardShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
 
-	mat4 modelView = viewMatrix * modelMat;
+	/*mat4 modelView = viewMatrix * modelMat;
 	m_forwardShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelView);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(0);
 
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+	glDrawArrays(GL_TRIANGLES, 0, 3);*/
 
-	//for (int i = 0; i < m_modelsForward.size(); i++)
-	//{
-	//	//std::vector<mat4> modelViewVector(m_modelsForward[i].instances.size());
-	//	//std::vector<mat3> normalMatVector(m_modelsForward[i].instances.size());
+	for (int i = 0; i < m_modelsForward.size(); i++)
+	{
+		//std::vector<mat4> modelViewVector(m_modelsForward[i].instances.size());
+		//std::vector<mat3> normalMatVector(m_modelsForward[i].instances.size());
 
-	//	if (m_modelsForward[i].active) // IS MODEL ACTIVE?
-	//	{
-	//		mat4 modelMatrix;
-	//		if (m_modelsForward[i].modelMatrix == NULL)
-	//			modelMatrix = glm::translate(glm::vec3(1));
-	//		else
-	//			modelMatrix = *m_modelsForward[i].modelMatrix;
+		if (m_modelsForward[i].active) // IS MODEL ACTIVE?
+		{
+			mat4 modelMatrix;
+			if (m_modelsForward[i].modelMatrix == NULL)
+				modelMatrix = glm::translate(glm::vec3(1));
+			else
+				modelMatrix = *m_modelsForward[i].modelMatrix;
 
-	//		mat4 modelViewMatrix = viewMatrix * modelMatrix;
-	//		m_forwardShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
+			mat4 modelViewMatrix = viewMatrix * modelMatrix;
+			m_forwardShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
 
-	//		mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-	//		m_forwardShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
+			//mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
+			//m_forwardShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
 
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
 
-	//		glActiveTexture(GL_TEXTURE1);
-	//		glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
+			/*glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].norID);
 
-	//		/*glActiveTexture(GL_TEXTURE2);
-	//		glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].norID);
+			glActiveTexture(GL_TEXTURE3);
+			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].speID);*/
 
-	//		glActiveTexture(GL_TEXTURE3);
-	//		glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].speID);*/
-
-	//		m_modelsForward[i].bufferPtr->draw();
-	//		glBindTexture(GL_TEXTURE_2D, 0);
-	//	}
-	//}
+			m_modelsForward[i].bufferPtr->draw();
+			//glBindTexture(GL_TEXTURE_2D, 0);
+		}
+	}
 
 	glUseProgram(0);
 
@@ -316,8 +315,6 @@ bool GraphicDevice::PreLoadModel(std::string _dir, std::string _file, int _rende
 }
 int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType)
 {
-	SDL_Log("LoadModel");
-
 	int modelID = m_modelIDcounter;
 	m_modelIDcounter++;
 
@@ -334,11 +331,11 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 
 	// Import Normal map
 	GLuint normal = AddTexture(obj.norm, GL_TEXTURE2);
-	shaderPtr->CheckUniformLocation("normalTex", 2);
+	//shaderPtr->CheckUniformLocation("normalTex", 2);
 
 	// Import Specc Glow map
 	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
-	shaderPtr->CheckUniformLocation("specularTex", 3);
+	//shaderPtr->CheckUniformLocation("specularTex", 3);
 
 	// Import Mesh
 	Buffer* mesh = AddMesh(obj.mesh, shaderPtr);
@@ -481,11 +478,11 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 	_shaderProg->UseProgram();
 	BufferData bufferData[] =
 	{
-		{ 0, 3, GL_FLOAT, (const GLvoid*)positionData.data(), positionData.size() * sizeof(float) },
-		{ 1, 3, GL_FLOAT, (const GLvoid*)normalData.data(), normalData.size()   * sizeof(float) },
-		{ 2, 3, GL_FLOAT, (const GLvoid*)tanData.data(), tanData.size()   * sizeof(float) },
-		{ 3, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), bitanData.size()   * sizeof(float) },
-		{ 4, 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), texCoordData.size() * sizeof(float) }
+		{ 0, 3, GL_FLOAT, (const GLvoid*)positionData.data(), (GLsizeiptr)(positionData.size() * sizeof(float)) },
+		{ 1, 3, GL_FLOAT, (const GLvoid*)normalData.data(), (GLsizeiptr)(normalData.size()   * sizeof(float)) },
+		{ 2, 3, GL_FLOAT, (const GLvoid*)tanData.data(), (GLsizeiptr)(tanData.size()   * sizeof(float)) },
+		{ 3, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), (GLsizeiptr)(bitanData.size()   * sizeof(float)) },
+		{ 4, 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), (GLsizeiptr)(texCoordData.size() * sizeof(float)) }
 	};
 
 	int test = sizeof(bufferData) / sizeof(bufferData[0]);

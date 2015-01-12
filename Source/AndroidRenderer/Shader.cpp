@@ -196,7 +196,7 @@ void Shader::CheckUniformLocation(const char* _uniformName, int _unitLocation)
 	this->UseProgram();
 	int location = glGetUniformLocation(m_shaderProg, _uniformName);
 	if (location < 0)
-		std::cout << "Error: Uniform sampler2D '" << _uniformName << "' not found/set." << std::endl;
+		SDL_Log("Error: Uniform sampler2D '%s' not found/set.", _uniformName);
 	else
 		glUniform1i(location, _unitLocation);
 }

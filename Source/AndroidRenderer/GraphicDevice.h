@@ -47,6 +47,10 @@ namespace Renderer
 			texID = tex;
 			norID = nor;
 			speID = spe;
+			
+			this->id = id;
+			this->active = active;
+			this->modelMatrix = model;
 		}
 		bool Compare(Model m)
 		{
