@@ -43,10 +43,10 @@ bool GraphicDevice::Init()
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	//if (!InitSkybox()) { ERRORMSG("INIT SKYBOX FAILED\n"); return false; }
 	
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glClearColor(0.0f, 1.0f, 0.0f, 0.0f);
+	glDisable(GL_CULL_FACE);
+	//glCullFace(GL_BACK);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	return true;
 }
@@ -73,7 +73,6 @@ void GraphicDevice::PollEvent(SDL_Event _event)
 
 void GraphicDevice::Update(float _dt)
 {
-	
 }
 
 GLuint mBuffer;
@@ -113,7 +112,7 @@ void GraphicDevice::Render()
 	glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(float), vVertices, GL_STATIC_DRAW);*/
 
 	//------FORWARD RENDERING--------------------------------------------
-	glEnable(GL_BLEND);
+	//glEnable(GL_BLEND);
 
 	m_forwardShader.UseProgram();
 	m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
@@ -146,7 +145,7 @@ void GraphicDevice::Render()
 			//mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
 			//m_forwardShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
 
-			glActiveTexture(GL_TEXTURE1);
+			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
 
 			/*glActiveTexture(GL_TEXTURE2);
@@ -297,8 +296,8 @@ bool GraphicDevice::PreLoadModel(std::string _dir, std::string _file, int _rende
 	ObjectData obj = ModelLoader::importObject(_dir, _file);
 
 	// Import Texture
-	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
-	shaderPtr->CheckUniformLocation("diffuseTex", 1);
+	GLuint texture = AddTexture(obj.text, GL_TEXTURE0);
+	shaderPtr->CheckUniformLocation("diffuseTex", 0);
 
 	// Import Normal map
 	GLuint normal = AddTexture(obj.norm, GL_TEXTURE2);
@@ -326,8 +325,8 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 	ObjectData obj = ModelLoader::importObject(_dir, _file);
 
 	// Import Texture
-	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
-	shaderPtr->CheckUniformLocation("diffuseTex", 1);
+	GLuint texture = AddTexture(obj.text, GL_TEXTURE0);
+	shaderPtr->CheckUniformLocation("diffuseTex", 0);
 
 	// Import Normal map
 	GLuint normal = AddTexture(obj.norm, GL_TEXTURE2);

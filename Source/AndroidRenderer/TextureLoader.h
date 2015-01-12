@@ -29,7 +29,14 @@ static unsigned int LoadTexture(const char* file, GLenum textureSlot, int &heigh
 		// Load texture file and convert to openGL format
 	//unsigned char* imgData = stbi_load(file, &width, &height, &channels, STBI_rgb_alpha);
 	unsigned char* imgData = stbi_load_from_memory((const unsigned char*)data, (int)length, &width, &height, &channels, STBI_rgb_alpha);
-	
+
+    SDL_Log("Length: %d", length);
+    SDL_Log("Width: %d", width);
+    SDL_Log("Height: %d", height);
+    SDL_Log("Channels: %d", channels);
+
+    SDL_Log( "Texture '%s' loaded." , file);
+
 	if (!imgData)
 	{
 		SDL_Log( "Texture '%s' not loaded." , file);

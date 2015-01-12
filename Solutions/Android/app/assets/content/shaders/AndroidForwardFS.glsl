@@ -37,5 +37,5 @@ uniform sampler2D diffuseTex;
 void main() 
 {
 	//gl_FragColor = vec4(ambient + diffuse, 1.0) * albedo_tex + vec4(spec, 0.0f);
-	gl_FragColor = texture2D( diffuseTex, TexCoord ); //albedo_tex;
+	gl_FragColor = texture( diffuseTex, TexCoord ); //albedo_tex;
 }
