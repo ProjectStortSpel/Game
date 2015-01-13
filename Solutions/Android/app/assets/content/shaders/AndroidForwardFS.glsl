@@ -1,12 +1,12 @@
 varying vec3 Normal;
 //varying vec3 Tan;
 //varying vec3 BiTan;
-varying vec2 TexCoord;
+//varying vec2 TexCoord;
 varying vec3 ViewPos;
 
 
 //Input textures
-uniform sampler2D diffuseTex;
+//uniform sampler2D diffuseTex;
 //uniform sampler2D normalTex;
 //uniform sampler2D specularTex;
 
@@ -53,7 +53,7 @@ void phongModel(int index, out vec3 ambient, out vec3 diffuse, out vec3 spec) {
 	vec3 E = normalize(ViewPos);
 	float diffuseFactor = dot( lightVec, Normal );
 
-	if(diffuseFactor > 0)
+	if(diffuseFactor > 0.0)
 	{
 		// diffuse
 		diffuse = diffuseFactor * thisLightColor * thisLightIntensity.y;
@@ -63,7 +63,7 @@ void phongModel(int index, out vec3 ambient, out vec3 diffuse, out vec3 spec) {
 		spec = specFactor * thisLightColor * thisLightIntensity.z * Material.Ks;          
 	}
 
-	float att = 1 - pow((d/pointlights[index].Range), 1.0f);
+	float att = 1.0 - pow((d/pointlights[index].Range), 1.0f);
 
 	ambient *= att;
 	diffuse *= att;
@@ -98,10 +98,10 @@ void main()
 	    spec    += s;
     }
     
-    vec4 albedo_tex = texture2D( diffuseTex, TexCoord );
+    //vec4 albedo_tex = texture2D( diffuseTex, TexCoord );
 
     //gl_FragColor = vec4(ambient + diffuse, 1.0) * albedo_tex + vec4(spec, 0.0f);
-    gl_FragColor = vec4(ambient + diffuse, 1.0f) * albedo_tex + vec4(spec, 1.0f); //albedo_tex;
+    gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);// * vec4(ambient + diffuse, 1.0f) * vec4(spec, 1.0f); //albedo_tex;
 }
 
 

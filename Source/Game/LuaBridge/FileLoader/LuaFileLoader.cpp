@@ -39,6 +39,7 @@ int LoadMap()
 		if (nextFileIndex == std::string::npos)
 		  break;
 		line = source.substr(prevFileIndex, nextFileIndex - prevFileIndex);
+		line.erase(std::remove(line.begin(), line.end(), 13), line.end());
 		prevFileIndex = nextFileIndex + 1;
 	  
 		for (int i = 0; i < line.size(); i++)

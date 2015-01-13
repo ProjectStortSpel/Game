@@ -121,9 +121,9 @@ void GraphicDevice::Render()
 			mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
 			m_forwardShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
 
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
-			m_forwardShader.CheckUniformLocation("diffuseTex", 1);
+			//glActiveTexture(GL_TEXTURE1);
+			//glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
+			//m_forwardShader.CheckUniformLocation("diffuseTex", 1);
 
 			/*glActiveTexture(GL_TEXTURE2);
 			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].norID);
@@ -303,7 +303,7 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 
 	// Import Texture
 	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
-	shaderPtr->CheckUniformLocation("diffuseTex", 1);
+	//shaderPtr->CheckUniformLocation("diffuseTex", 1);
 
 	// Import Normal map
 	GLuint normal = AddTexture(obj.norm, GL_TEXTURE2);
@@ -460,16 +460,20 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 	  SDL_Log("texCoord[%d] = %f", i, texCoordData[i]);*/
 	modelExporter.CloseFile();
 
+	std::vector<float> padData = std::vector<float>((int)positionData.size() / 3);
+
 	Buffer* retbuffer = new Buffer();
 
 	_shaderProg->UseProgram();
 	BufferData bufferData[] =
 	{
 		{ 0, 3, GL_FLOAT, (const GLvoid*)positionData.data(), (GLsizeiptr)(positionData.size() * sizeof(float)) },
-		{ 1, 3, GL_FLOAT, (const GLvoid*)normalData.data(), (GLsizeiptr)(normalData.size()   * sizeof(float)) },
+		{ 1, 1, GL_FLOAT, (const GLvoid*)padData.data(), (GLsizeiptr)(padData.size() * sizeof(float)) },
+		{ 2, 3, GL_FLOAT, (const GLvoid*)normalData.data(), (GLsizeiptr)(normalData.size()   * sizeof(float)) },
+		{ 3, 1, GL_FLOAT, (const GLvoid*)padData.data(), (GLsizeiptr)(padData.size() * sizeof(float)) },
 		//{ 2, 3, GL_FLOAT, (const GLvoid*)tanData.data(), (GLsizeiptr)(tanData.size()   * sizeof(float)) },
 		//{ 3, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), (GLsizeiptr)(bitanData.size()   * sizeof(float)) },
-		{ 2, 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), (GLsizeiptr)(texCoordData.size() * sizeof(float)) }
+		//{ 2, 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), (GLsizeiptr)(texCoordData.size() * sizeof(float)) }
 	};
 
 	int test = sizeof(bufferData) / sizeof(bufferData[0]);

@@ -101,23 +101,26 @@ public:
 
 		//std::ifstream fileIn(fileDir);
 
-
 		size_t prevFileIndex = 0, nextFileIndex = std::string::npos;
 		std::string temp;
 		nextFileIndex = dataString.find('\n', prevFileIndex);
 		temp = dataString.substr(prevFileIndex, nextFileIndex - prevFileIndex);
+		temp.erase(std::remove(temp.begin(), temp.end(), 13), temp.end());
 		prevFileIndex = nextFileIndex + 1;
 		objectdata.mesh.append(temp);
 		nextFileIndex = dataString.find('\n', prevFileIndex);
 		temp = dataString.substr(prevFileIndex, nextFileIndex - prevFileIndex);
+		temp.erase(std::remove(temp.begin(), temp.end(), 13), temp.end());
 		prevFileIndex = nextFileIndex + 1;
 		objectdata.text.append(temp);
 		nextFileIndex = dataString.find('\n', prevFileIndex);
 		temp = dataString.substr(prevFileIndex, nextFileIndex - prevFileIndex);
+		temp.erase(std::remove(temp.begin(), temp.end(), 13), temp.end());
 		prevFileIndex = nextFileIndex + 1;
 		objectdata.norm.append(temp);
 		nextFileIndex = dataString.find('\n', prevFileIndex);
 		temp = dataString.substr(prevFileIndex, nextFileIndex - prevFileIndex);
+		temp.erase(std::remove(temp.begin(), temp.end(), 13), temp.end());
 		prevFileIndex = nextFileIndex + 1;
 		objectdata.spec.append(temp);
 
