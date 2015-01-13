@@ -200,7 +200,7 @@ TestMoveSystem.OnEntityAdded = function(self, entity)
 				local newPosX, newPosY, newPosZ = pos:GetFloat3()
 
 				mapPos:SetInt2(mapPosX + dirX, mapPosZ + dirZ)
-				pos:SetFloat3(newPosX + dirX, newPosY, newPosZ + dirZ)
+				--pos:SetFloat3(newPosX + dirX, newPosY, newPosZ + dirZ)
 
 			end
 			local posY = world:GetComponent(unit, "Position", "Y"):GetFloat()
