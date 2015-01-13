@@ -95,6 +95,14 @@ UnitSelectedCardsComponent.Name = "UnitSelectedCards"
 UnitSelectedCardsComponent.TableType = TableType.Map
 worldCreator:AddComponentType(UnitSelectedCardsComponent)
 
+--	PickingDone Component
+local PickingDone = ComponentType()
+PickingDone.Name = "PickingDone"
+PickingDone.TableType = TableType.Map
+PickingDone:AddVariable("Done", ByteSize.Int)
+worldCreator:AddComponentType(PickingDone)
+worldCreator:AddComponentType(UnitSelectedCardsComponent)
+
 --	NeedSpawnLocation Component
 local NeedSpawnLocation = ComponentType()
 NeedSpawnLocation.Name = "NeedSpawnLocation"
