@@ -29,7 +29,10 @@ CardHoverSystem.Update = function(self, dt)
 				
 				local action = self:GetComponent(entity, "CardAction", 0):GetString()
 				
+				local prio = self:GetComponent(entity, "CardPrio", 0):GetInt()
+				
 				graphics:RenderSimpleText(action, 0,44)
+				graphics:RenderSimpleText(prio, 15,44)
 				
 				scale:SetFloat3(self.Scale, self.Scale, self.Scale)
 				
