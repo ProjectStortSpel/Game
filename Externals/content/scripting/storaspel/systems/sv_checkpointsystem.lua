@@ -29,7 +29,6 @@ CheckpointSystem.AddTotemPole = function(self, playerId, currentCP, noCP, X, Y, 
 	world:SetComponent(head, "Model", "ModelName", "ply" .. playerId);
 	world:SetComponent(head, "Model", "ModelPath", "head");
 	world:SetComponent(head, "Model", "RenderType", 0);
-	world:SetComponent(head, "Model", "ViewSpace", 0);
 	self.TotemCount[currentCP] = self.TotemCount[currentCP] + 1
 end
 
@@ -61,9 +60,6 @@ CheckpointSystem.OnEntityAdded = function(self, entity)
 						
 						print("Unit reached a checkpoint")
 						
-						local nextPosX, nextPosZ = world:GetComponent(checkpoints[j + 1], "MapPosition", 0):GetInt2()
-						print("nextPosX: " .. nextPosX)
-						print("nextPosZ: " .. nextPosZ)
 						
 						local playerId = world:GetComponent(units[i], "PlayerNumber", 0):GetInt()
 						self.AddTotemPole(self, playerId, j, #checkpoints, checkpointX, Y, checkpointZ)
