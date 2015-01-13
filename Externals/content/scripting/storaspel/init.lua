@@ -13,13 +13,15 @@ require "lightcomponents"
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
 require "sh_movementsystem"
 require "sh_networkmessagessystem"
+require "sh_moveplayersystem"
 
 if Server then
 	require "sv_mapsystem"
 	--require "sv_moveplayersystem"
 	require "sv_onplayerconnected"
 	require "sv_playerssystem"
-	require "sv_createspawnpointsystem"
+	require "sv_givespawnlocation"
+	--require "sv_createspawnpointsystem"
 	require "sv_spawnsystem"
 	require "sv_lobbysystem"
 	require "sv_createdecksystem"
@@ -43,6 +45,7 @@ end
 
 if Client then
 --require "cl_pickingphasesystem"
+	
 	require "cl_lobbysystem"
 	require "cl_cardpositionsystem"
 	require "cl_givecardindexsystem"
@@ -53,7 +56,7 @@ if Client then
 	require "cl_playerdonevisualizersystem"
 	--require "cl_givecardindexsystem"
 end
-
+	
 
 
 -- Templates
@@ -72,6 +75,7 @@ require "lights"
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(MovementSystem)
 worldCreator:AddSystemToCurrentGroup(networkMessagesSystem)
+worldCreator:AddSystemToCurrentGroup(TrueTestMoveSystem)
 
 if Server then
 	worldCreator:AddSystemToCurrentGroup(MapSystem)
@@ -80,7 +84,8 @@ if Server then
 
 	worldCreator:AddSystemToCurrentGroup(OnPlayerConnectedSystem)
 	worldCreator:AddSystemToCurrentGroup(PlayersSystem)
-	worldCreator:AddSystemToCurrentGroup(CreateSpawnpointSystem)
+	worldCreator:AddSystemToCurrentGroup(GiveSpawnLocation)
+	--worldCreator:AddSystemToCurrentGroup(CreateSpawnpointSystem)
 	worldCreator:AddSystemToCurrentGroup(SpawnSystem)
 	worldCreator:AddSystemToCurrentGroup(ServerLobbySystem)
 	worldCreator:AddSystemToCurrentGroup(CreateDeckSystem)
@@ -101,7 +106,6 @@ if Server then
 	worldCreator:AddSystemToCurrentGroup(MoveForwardSystem)
 	worldCreator:AddSystemToCurrentGroup(MoveBackwardSystem)
 	worldCreator:AddSystemToCurrentGroup(TestMoveSystem)
-	worldCreator:AddSystemToCurrentGroup(TrueTestMoveSystem)
 	
 	worldCreator:AddSystemToCurrentGroup(StepTimerSystem)
 	worldCreator:AddSystemToCurrentGroup(PlayCardTimerSystem)

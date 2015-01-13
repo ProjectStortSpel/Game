@@ -816,8 +816,14 @@ bool GraphicDevice::PreLoadModel(std::string _dir, std::string _file, int _rende
 
 	return true;
 }
-int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType, bool _renderinviewspace)
+int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType)
 {
+	bool _renderinviewspace = false;
+	if (_renderType == RENDER_INTERFACE)
+	{
+		_renderinviewspace = true;
+		_renderType = RENDER_FORWARD;
+	}
 	int modelID = m_modelIDcounter;
 	m_modelIDcounter++;
 

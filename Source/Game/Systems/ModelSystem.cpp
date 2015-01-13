@@ -41,7 +41,6 @@ void ModelSystem::OnEntityAdded(unsigned int _entityId)
 
 
 	int RenderType = *(int*)GetComponent(_entityId, "Model", "RenderType");
-	int ViewSpace = *(int*)GetComponent(_entityId, "Model", "ViewSpace");
 
 	if (ModelName == "ply1.object")
 		int a = 2;
@@ -50,7 +49,7 @@ void ModelSystem::OnEntityAdded(unsigned int _entityId)
 	glm::mat4*	Matrix;
 	Matrix = (glm::mat4*)GetComponent(_entityId, "Render", "Mat");
 	int* ModelId = (int*)GetComponent(_entityId, "Render", "ModelId");
-	*ModelId = m_graphics->LoadModel(ModelPath, ModelName, Matrix, RenderType, ViewSpace);
+	*ModelId = m_graphics->LoadModel(ModelPath, ModelName, Matrix, RenderType);
 }
 
 void ModelSystem::OnEntityRemoved(unsigned int _entityId)

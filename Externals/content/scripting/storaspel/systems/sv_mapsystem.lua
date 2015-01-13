@@ -99,7 +99,7 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
         world:CreateComponentAndAddTo("Void", entity)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
-		comp:SetModel("hole_test", "hole", 0, 0)
+		comp:SetModel("hole_test", "hole", 0)
 --  No need???
 --    elseif tiletype == 46 then -- 46 = . = grass
 --        world:CreateComponentAndAddTo("", entity)
@@ -108,7 +108,7 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
 		world:CreateComponentAndAddTo("NotWalkable", entity)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
-		comp:SetModel("stone", "stone", 0, 0)
+		comp:SetModel("stone", "stone", 0)
 		posComp:SetFloat3(posX, 1.0, posZ)
 		
 		self:AddGroundTileBelow(posX, posZ)
@@ -119,14 +119,14 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
         comp:SetInt(tiletype - 48)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
-		comp:SetModel("checkpoint", "checkpoint", 0, 0)
+		comp:SetModel("checkpoint", "checkpoint", 0)
 		--posComp:SetFloat3(posX, 1.0, posZ)
 
     elseif tiletype == 102 then -- 102 = f = finish
         world:CreateComponentAndAddTo("Finish", entity)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
-		comp:SetModel("finish", "finish", 0, 0)
+		comp:SetModel("finish", "finish", 0)
 		--posComp:SetFloat3(posX, 1.0, posZ)
 
     elseif tiletype == 117 then -- 117 = u = water up
@@ -137,7 +137,7 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
 		comp:SetFloat3(0, -math.pi/2, 0)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
-		comp:SetModel("riverstraight", "riverstraight", 0, 0)
+		comp:SetModel("riverstraight", "riverstraight", 0)
 
     elseif tiletype == 100 then -- 100 = d = water down
         world:CreateComponentAndAddTo("River", entity)
@@ -147,7 +147,7 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
 		comp:SetFloat3(0, math.pi/2, 0)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
-		comp:SetModel("riverstraight", "riverstraight", 0, 0)
+		comp:SetModel("riverstraight", "riverstraight", 0)
 
     elseif tiletype == 108 then -- 108 = l = water left
         world:CreateComponentAndAddTo("River", entity)
@@ -155,7 +155,7 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
         comp:SetInt2(-1, 0)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
-		comp:SetModel("riverstraight", "riverstraight", 0, 0)
+		comp:SetModel("riverstraight", "riverstraight", 0)
 
     elseif tiletype == 114 then -- 114 = r = water right
         world:CreateComponentAndAddTo("River", entity)
@@ -165,12 +165,23 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
 		comp:SetFloat3(0, math.pi, 0)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
-		comp:SetModel("riverstraight", "riverstraight", 0, 0)
+		comp:SetModel("riverstraight", "riverstraight", 0)
+		
+	elseif tiletype == 115 then -- 115 = s = Available spawn point
+		world:CreateComponentAndAddTo("Model", entity)
+		local comp = self:GetComponent(entity, "Model", 0)
+		comp:SetModel("grass", "grass", 0, 0)
+		
+		
+		local newSpawnId = world:CreateNewEntity()
+		world:CreateComponentAndAddTo("AvailableSpawnpoint", newSpawnId)
+		local newSpawn = self:GetComponent(newSpawnId, "AvailableSpawnpoint", 0)
+		newSpawn:SetInt2(posX, posZ)
 		
 	else
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
-		comp:SetModel("grass", "grass", 0, 0)
+		comp:SetModel("grass", "grass", 0)
 		
     end
 
@@ -188,7 +199,7 @@ MapSystem.AddGroundTileBelow = function(self, posX, posZ)
 	
 	world:CreateComponentAndAddTo("Model", groundEntity)
 	local comp = self:GetComponent(groundEntity, "Model", 0)
-	comp:SetModel("grass", "grass", 0, 0)
+	comp:SetModel("grass", "grass", 0)
 	
 	--table.insert(self.entities, groundEntity)
 end 
