@@ -43,6 +43,7 @@ end
 
 if Client then
 --require "cl_pickingphasesystem"
+	require "cl_moveplayersystem"
 	require "cl_lobbysystem"
 	require "cl_cardpositionsystem"
 	require "cl_givecardindexsystem"
@@ -100,7 +101,6 @@ if Server then
 	worldCreator:AddSystemToCurrentGroup(MoveForwardSystem)
 	worldCreator:AddSystemToCurrentGroup(MoveBackwardSystem)
 	worldCreator:AddSystemToCurrentGroup(TestMoveSystem)
-	worldCreator:AddSystemToCurrentGroup(TrueTestMoveSystem)
 	
 	worldCreator:AddSystemToCurrentGroup(StepTimerSystem)
 	worldCreator:AddSystemToCurrentGroup(PlayCardTimerSystem)
@@ -115,6 +115,8 @@ if Client then
 	worldCreator:AddSystemToCurrentGroup(SortCardIndexSystem)
 	worldCreator:AddSystemToCurrentGroup(SortSelectedCardSystem)
 	worldCreator:AddSystemToCurrentGroup(SendSelectCardSystem)
+	worldCreator:AddSystemToCurrentGroup(TrueTestMoveSystem)
+
 --worldCreator:AddSystemToCurrentGroup(ClientSendCardSystem)
 end
 
