@@ -26,6 +26,11 @@ CardHoverSystem.Update = function(self, dt)
 			if mY > pY-100 and mY < pY+100 then
 
 				local scale = self:GetComponent(entity, "Scale", 0)
+				
+				local action = self:GetComponent(entity, "CardAction", 0):GetString()
+				
+				graphics:RenderSimpleText(action, 0,44)
+				
 				scale:SetFloat3(self.Scale, self.Scale, self.Scale)
 				
 			end
