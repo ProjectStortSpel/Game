@@ -25,9 +25,13 @@ public:
 	void InitializeLua();
 	
 
-	void StartGame();
+	void StartGame(int argc, char** argv);
 
 private:
+
+
+	void RunStartupCommands(int argc, char** argv);
+
 	void PollSDLEvent();
 
 	void UpdateNetwork(float _dt);

@@ -10,7 +10,9 @@
 
 // Includes
 #ifdef WIN32
+//#ifdef _DEBUG
 //#include <VLD/vld.h>
+//#endif
 #else
 #include <unistd.h>
 #endif

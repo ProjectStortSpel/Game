@@ -37,8 +37,13 @@ DealCardsSystem.DealCards = function (self, numCards)
 	print("NumCardsToDeal: " .. numCards)
 
 	print("")
+	
 	for i = 1, #players do
 
+		local pickingStartedID = Net.StartPack("Client.RemotePickingStarted")
+		Net.WriteInt(pickingStartedID, players[i])
+		Net.Broadcast(pickingStartedID)
+	
 		local ip = world:GetComponent(players[i], "NetConnection", "IpAddress"):GetString()
 		local port = world:GetComponent(players[i], "NetConnection", "Port"):GetInt()
 
@@ -102,6 +107,9 @@ Net.Receive("Server.SelectCards",
 
 		local unit = world:GetComponent(player, "UnitEntityId", "Id"):GetInt()
 
+		local playerIp = world:GetComponent(player, "NetConnection", "IpAddress"):GetString()
+		local playerPort = world:GetComponent(player, "NetConnection", "Port"):GetInt()
+		
 		for i = 1, 5 do
 			local action = world:GetComponent(selectedCards[i], "CardAction", "Action"):GetString()
 			local prio = world:GetComponent(selectedCards[i], "CardPrio", "Prio"):GetInt()
@@ -112,12 +120,15 @@ Net.Receive("Server.SelectCards",
 			world:SetComponent(selectedCards[i], "CardStep", "Step", i)
 			world:SetComponent(selectedCards[i], "CardStep", "UnitEntityId", unit)
 
-			local playerIp = world:GetComponent(player, "NetConnection", "IpAddress"):GetString()
-			local playerPort = world:GetComponent(player, "NetConnection", "Port"):GetInt()
+
 
 			Net.SendEntityKill(selectedCards[i], playerIp, playerPort)
+			
 		end
-
+		local pickingDoneID = Net.StartPack("Client.RemotePickingDone")
+		Net.WriteInt(pickingDoneID, player)
+		Net.Broadcast(pickingDoneID)
+		
 		world:CreateComponentAndAddTo("UnitSelectedCards", unit)
 
 		local id = world:CreateNewEntity()

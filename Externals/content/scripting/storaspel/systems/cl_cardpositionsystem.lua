@@ -1,5 +1,5 @@
 CardPositionSystem = System()
-CardPositionSystem.Scale = 0.05
+CardPositionSystem.Scale = 0.5
 CardPositionSystem.UpOffset = -0.2
 
 CardPositionSystem.Update = function(self, dt)
@@ -16,14 +16,14 @@ CardPositionSystem.Update = function(self, dt)
 		if world:EntityHasComponent(entity, "SelectCard") then
 
 			local data = self:GetComponent(entity, "SelectCard", "Index"):GetInt()
-			offsetYfactor = 0.7 - (data*0.08)
+			offsetYfactor = 1.2 - (data*0.08)
 
 		end
 
 		local halfentities = #entities/2
 		px = (-halfentities + index - 0.5) * self.Scale * 0.8
 		py = -offsetYfactor * self.Scale
-		pz = -0.2
+		pz = -2
 		
 		local position = self:GetComponent(entity, "Position", 0)
 		position:SetFloat3(px, py, pz)
