@@ -73,9 +73,8 @@ void GraphicDevice::PollEvent(SDL_Event _event)
 
 void GraphicDevice::Update(float _dt)
 {
+  //SDL_Log("FPS: %f", 1.0f/_dt);
 }
-
-GLuint mBuffer;
 
 void GraphicDevice::Render()
 {
@@ -89,8 +88,6 @@ void GraphicDevice::Render()
 
 	mat4 viewMatrix = *m_camera->GetViewMatrix();
 
-	glEnable(GL_DEPTH_TEST);
-
 	// DRAW SKYBOX
 	//m_skyBoxShader.UseProgram();
 	//m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera);
@@ -98,33 +95,12 @@ void GraphicDevice::Render()
 
 	vec3 tPos = *m_camera->GetPos() + 8.0f* (*m_camera->GetLook());
 
-	/*GLfloat vVertices[] = { 0.0f, 0.5f, 0.0f,
-						   -0.5f, -0.5f, 0.0f,
-						    0.5f, -0.5f, 0.0f };
-
-	mat4 modelMat = glm::translate(tPos);
-
-	glGenBuffers(1, &mBuffer);
-
-	glBindAttribLocation(m_forwardShader.GetShaderProgram(), 0, "VertexPosition");
-
-	glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
-	glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(float), vVertices, GL_STATIC_DRAW);*/
-
 	//------FORWARD RENDERING--------------------------------------------
 	//glEnable(GL_BLEND);
 
 	m_forwardShader.UseProgram();
 	m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
-	//m_forwardShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
-
-	/*mat4 modelView = viewMatrix * modelMat;
-	m_forwardShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelView);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	glEnableVertexAttribArray(0);
-
-	glDrawArrays(GL_TRIANGLES, 0, 3);*/
+	m_forwardShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
 
 	for (int i = 0; i < m_modelsForward.size(); i++)
 	{
@@ -142,11 +118,12 @@ void GraphicDevice::Render()
 			mat4 modelViewMatrix = viewMatrix * modelMatrix;
 			m_forwardShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
 
-			//mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-			//m_forwardShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
+			mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
+			m_forwardShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
 
-			glActiveTexture(GL_TEXTURE0);
+			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
+			m_forwardShader.CheckUniformLocation("diffuseTex", 1);
 
 			/*glActiveTexture(GL_TEXTURE2);
 			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].norID);
@@ -296,8 +273,8 @@ bool GraphicDevice::PreLoadModel(std::string _dir, std::string _file, int _rende
 	ObjectData obj = ModelLoader::importObject(_dir, _file);
 
 	// Import Texture
-	GLuint texture = AddTexture(obj.text, GL_TEXTURE0);
-	shaderPtr->CheckUniformLocation("diffuseTex", 0);
+	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
+	shaderPtr->CheckUniformLocation("diffuseTex", 1);
 
 	// Import Normal map
 	GLuint normal = AddTexture(obj.norm, GL_TEXTURE2);
@@ -325,8 +302,8 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 	ObjectData obj = ModelLoader::importObject(_dir, _file);
 
 	// Import Texture
-	GLuint texture = AddTexture(obj.text, GL_TEXTURE0);
-	shaderPtr->CheckUniformLocation("diffuseTex", 0);
+	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
+	shaderPtr->CheckUniformLocation("diffuseTex", 1);
 
 	// Import Normal map
 	GLuint normal = AddTexture(obj.norm, GL_TEXTURE2);
@@ -470,6 +447,17 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 	std::vector<float> tanData = modelExporter.ReadDataFromFile();
 	std::vector<float> bitanData = modelExporter.ReadDataFromFile();
 	std::vector<float> texCoordData = modelExporter.ReadDataFromFile();
+	/*for (int i = 0; i < (int)texCoordData.size(); i++)
+	{
+	  if (texCoordData[i] < 0.0f)
+	    texCoordData[i] = 0.0f;
+	  else if (texCoordData[i] > 1.0f)
+	    texCoordData[i] = 1.0f;
+	}*/
+	/*SDL_Log("File: %s", _fileDir.c_str());
+	SDL_Log("texCoordData size: %d", texCoordData.size());
+	for (int i = 0; i < 4; i++)
+	  SDL_Log("texCoord[%d] = %f", i, texCoordData[i]);*/
 	modelExporter.CloseFile();
 
 	Buffer* retbuffer = new Buffer();
@@ -479,9 +467,9 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 	{
 		{ 0, 3, GL_FLOAT, (const GLvoid*)positionData.data(), (GLsizeiptr)(positionData.size() * sizeof(float)) },
 		{ 1, 3, GL_FLOAT, (const GLvoid*)normalData.data(), (GLsizeiptr)(normalData.size()   * sizeof(float)) },
-		{ 2, 3, GL_FLOAT, (const GLvoid*)tanData.data(), (GLsizeiptr)(tanData.size()   * sizeof(float)) },
-		{ 3, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), (GLsizeiptr)(bitanData.size()   * sizeof(float)) },
-		{ 4, 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), (GLsizeiptr)(texCoordData.size() * sizeof(float)) }
+		//{ 2, 3, GL_FLOAT, (const GLvoid*)tanData.data(), (GLsizeiptr)(tanData.size()   * sizeof(float)) },
+		//{ 3, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), (GLsizeiptr)(bitanData.size()   * sizeof(float)) },
+		{ 2, 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), (GLsizeiptr)(texCoordData.size() * sizeof(float)) }
 	};
 
 	int test = sizeof(bufferData) / sizeof(bufferData[0]);
