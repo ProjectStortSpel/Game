@@ -17,7 +17,7 @@ int main(int argc, char** argv)
 	newGame->InitializeWorld("lobby");
 
 
-	newGame->StartGame();
+	newGame->StartGame(argc, argv);
 
 	delete newGame;
 	return 0;
