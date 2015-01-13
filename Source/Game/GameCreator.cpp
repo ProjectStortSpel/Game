@@ -88,17 +88,16 @@ void GameCreator::InitializeLua()
 	LuaBridge::Embed();
 }
 
-bool something = false;
 void GameCreator::InitializeWorld(std::string _gameMode)
 {
 	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
 	LuaEmbedder::AddObject<ECSL::WorldCreator>("WorldCreator", &worldCreator, "worldCreator");
 
 	std::stringstream gameMode;
-#ifdef __ANDROID__
-	gameMode << "content/scripting/";
-#else
+#if defined(_DEBUG) && !defined(__ANDROID__)
 	gameMode << "../../../Externals/content/scripting/";
+#else
+	gameMode << "content/scripting/";
 #endif
 	gameMode << _gameMode;
 	gameMode << "/init.lua";
@@ -165,6 +164,7 @@ void GameCreator::StartGame()
 	m_console = new GameConsole(m_graphics, m_world);
 
 #ifdef __ANDROID__
+	static bool something = false;
 	if (!something)
 	{
 		something = true;

@@ -1,33 +1,6 @@
 CardPositionSystem = System()
-CardPositionSystem.CameraDistance = 0.5
-CardPositionSystem.Scale = 0.1
+CardPositionSystem.Scale = 0.05
 CardPositionSystem.UpOffset = -0.2
-
-function atan2custom(Y, X)
-  local pi = 3.14159265358979
-  local product = 0
-
-  if tonumber(Y) == nil or tonumber(X) == nil then
-    return 0
-  end
-
-  if X == 0 and Y == 0 then
-    return 0
-  end
-
-  if X == 0 then
-    product = pi / 2
-    if Y < 0 then
-      product = product * 3
-    end
-  else
-    product = math.atan(Y / X)
-    if X < 0 then
-      product = product + pi
-    end
-  end
-  return product
-end
 
 CardPositionSystem.Update = function(self, dt)
 
@@ -35,35 +8,28 @@ CardPositionSystem.Update = function(self, dt)
 	for i = 1, #entities do
 		
 		local index = world:GetComponent(entities[i], "CardIndex", "Index"):GetInt()
+		
+		local offsetYfactor = 1.5
 
-		local camera = graphics:GetCamera()
-		local px, py, pz = camera:GetPosition()
-		local lx, ly, lz = camera:GetLook()
-		local rx, ry, rz = camera:GetRight()
-		local ux, uy, uz = camera:GetUp()
-		
-		local offsetYfactor = 1.0
-
-		if world:EntityHasComponent(entities[i], "SelectCard") then
-			offsetYfactor = 0.7
-		end
-		
-		local halfentities = #entities/2
-		px = px + lx * self.CameraDistance + rx * (-halfentities + index - 0.5) * 0.08 + ux * self.UpOffset * offsetYfactor
-		py = py + ly * self.CameraDistance + ry * (-halfentities + index - 0.5) * 0.08 + uy * self.UpOffset * offsetYfactor
-		pz = pz + lz * self.CameraDistance + rz * (-halfentities + index - 0.5) * 0.08 + uz * self.UpOffset * offsetYfactor
-		
-		local rx, ry, rz
-		rx = 0.0
-		ry = atan2custom(lz, lx)
-		rz = atan2custom(ly, math.sqrt(lx * lx + lz * lz))
-	  
 		local entity = entities[i]
+
+		if world:EntityHasComponent(entity, "SelectCard") then
+
+			local data = self:GetComponent(entity, "SelectCard", "Index"):GetInt()
+			offsetYfactor = 0.7 - (data*0.08)
+
+		end
+
+		local halfentities = #entities/2
+		px = (-halfentities + index - 0.5) * self.Scale * 0.8
+		py = -offsetYfactor * self.Scale
+		pz = -0.2
+		
 		local position = self:GetComponent(entity, "Position", 0)
 		position:SetFloat3(px, py, pz)
 		
 		local rotation = self:GetComponent(entity, "Rotation", 0)
-		rotation:SetFloat3(-rx, -ry + 0.5 * 3.14159265358979, -rz - 0.5 * 3.14159265358979)
+		rotation:SetFloat3(0, 3.14159265358979, 1.51 * 3.14159265358979)
 		
 		local scale = self:GetComponent(entity, "Scale", 0)
 		scale:SetFloat3(self.Scale, self.Scale, self.Scale)
@@ -91,16 +57,16 @@ CardPositionSystem.OnEntityAdded = function(self, entityId)
 	local model = self:GetComponent(entityId, "Model", 0)
 	local action = self:GetComponent(entityId, "CardAction", 0):GetString()
 	if action == "Forward" then
-		model:SetModel("forward", "cards")
+		model:SetModel("forward", "cards", 2)
 	elseif action == "Backward" then
-		model:SetModel("back", "cards")
+		model:SetModel("back", "cards", 2)
 	elseif action == "TurnRight" then
-		model:SetModel("turnright", "cards")
+		model:SetModel("turnright", "cards", 2)
 	elseif action == "TurnLeft" then
-		model:SetModel("turnleft", "cards")
+		model:SetModel("turnleft", "cards", 2)
 	elseif action == "TurnAround" then
-		model:SetModel("turnaround", "cards")
+		model:SetModel("turnaround", "cards", 2)
 	else
-		model:SetModel("dodge", "cards")
+		model:SetModel("dodge", "cards", 2)
 	end
 end

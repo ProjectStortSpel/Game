@@ -205,7 +205,7 @@ TestMoveSystem.OnEntityAdded = function(self, entity)
 			end
 			local posY = world:GetComponent(unit, "Position", "Y"):GetFloat()
 			world:GetComponent(unit, "MapPosition", 0):SetInt2(posX, posZ)			
-			world:GetComponent(unit, "Position", 0):SetFloat3(posX, posY, posZ)
+			--world:GetComponent(unit, "Position", 0):SetFloat3(posX, posY, posZ)
 
 
 			local id = world:CreateNewEntity()
@@ -221,6 +221,10 @@ TestMoveSystem.OnEntityAdded = function(self, entity)
 end
 
 
+
+
+
+
 MoveForwardSystem = System()
 
 MoveForwardSystem.Initialize = function(self)
@@ -234,28 +238,27 @@ end
 
 MoveForwardSystem.OnEntityAdded = function(self, entity)
 	
-	local dirX, dirZ = world:GetComponent(entity, "Direction", 0):GetInt2()
-	local mapPosX, mapPosZ = world:GetComponent(entity, "MapPosition", 0):GetInt2()
+		local dirX, dirZ = world:GetComponent(entity, "Direction", 0):GetInt2()
+		local mapPosX, mapPosZ = world:GetComponent(entity, "MapPosition", 0):GetInt2()
 
 	
-	if dirX ~= 0 then
-		dirX = dirX / math.abs(dirX)
-	end
+		if dirX ~= 0 then
+			dirX = dirX / math.abs(dirX)
+		end
 
-	if dirZ ~= 0 then
-		dirZ = dirZ / math.abs(dirZ)
-	end
+		if dirZ ~= 0 then
+			dirZ = dirZ / math.abs(dirZ)
+		end
 
-	local id = world:CreateNewEntity()
-	world:CreateComponentAndAddTo("TestMove", id)
-	world:SetComponent(id, "TestMove", "Unit", entity)
-	world:SetComponent(id, "TestMove", "PosX", mapPosX + dirX)
-	world:SetComponent(id, "TestMove", "PosZ", mapPosZ + dirZ)
-	world:SetComponent(id, "TestMove", "DirX", dirX)
-	world:SetComponent(id, "TestMove", "DirZ", dirZ)
+		local id = world:CreateNewEntity()
+		world:CreateComponentAndAddTo("TestMove", id)
+		world:SetComponent(id, "TestMove", "Unit", entity)
+		world:SetComponent(id, "TestMove", "PosX", mapPosX + dirX)
+		world:SetComponent(id, "TestMove", "PosZ", mapPosZ + dirZ)
+		world:SetComponent(id, "TestMove", "DirX", dirX)
+		world:SetComponent(id, "TestMove", "DirZ", dirZ)
 	
-	world:RemoveComponentFrom("UnitForward", entity)
-
+		world:RemoveComponentFrom("UnitForward", entity)
 end
 
 MoveBackwardSystem = System()

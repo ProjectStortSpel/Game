@@ -118,7 +118,7 @@ void ServerNetwork::NetPong(PacketHandler* _packetHandler, uint64_t& _id, NetCon
 ServerNetwork::ServerNetwork()
 	: BaseNetwork()
 {
-	
+
 	m_listenForConnectionsAlive = new bool(false);
 	m_maxConnections = new unsigned int(8);
 
@@ -228,13 +228,14 @@ bool ServerNetwork::Stop()
 	m_connectedClientsLock->lock();
 	for (auto it = m_connectedClients->begin(); it != m_connectedClients->end(); ++it)
 	{
+		it->second->CloseSocket();
 		it->second->SetActive(0);
 	}
 	m_connectedClientsLock->unlock();
 
 	for (auto it = m_receivePacketsThreads->begin(); it != m_receivePacketsThreads->end(); ++it)
 	{
-		if(it->second.joinable())
+		if (it->second.joinable())
 			it->second.join();
 	}
 
@@ -321,7 +322,7 @@ void ServerNetwork::Send(Packet* _packet, NetConnection& _receiver)
 		*m_currentDataSent += bytesSent;
 	}
 	m_dataSentLock->unlock();
-	
+
 	SAFE_DELETE(_packet);
 	return;
 }
@@ -333,7 +334,6 @@ void ServerNetwork::ReceivePackets(ISocket* _socket)
 	unsigned short dataReceived;
 	while (_socket->GetActive() != 0)
 	{
-
 
 		//nextPacketSize = 2;
 		//dataReceived = 0;
@@ -416,10 +416,10 @@ void ServerNetwork::ListenForConnections(void)
 		ISocket* newConnection = m_listenSocket->Accept();
 		if (!newConnection)
 			continue;
-		
+
 		newConnection->SetNonBlocking(false);
 		newConnection->SetNoDelay(true);
-		newConnection->SetTimeoutDelay(5000);
+		//newConnection->SetTimeoutDelay(5000);
 
 		NetConnection nc = newConnection->GetNetConnection();
 
@@ -574,7 +574,7 @@ void ServerNetwork::Kick(NetConnection& _connection, const char* _reason)
 
 	Send(p1, _connection);
 	Broadcast(p2, _connection);
-	
+
 	m_timeOutLock->lock();
 	m_currentTimeOutIntervall->erase(_connection);
 	m_currentIntervallCounter->erase(_connection);
