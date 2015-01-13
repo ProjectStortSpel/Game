@@ -17,6 +17,7 @@ namespace Renderer
 {
 #define RENDER_DEFERRED 0
 #define RENDER_FORWARD  1
+#define RENDER_INTERFACE  2
 
 #define TEXTURE_DIFFUSE		0
 #define TEXTURE_NORMAL		1
@@ -109,7 +110,7 @@ namespace Renderer
 
 		// MODELLOADER
 		bool PreLoadModel(std::string _dir, std::string _file, int _renderType = RENDER_DEFERRED);
-		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED, bool _renderinviewspace = false);
+		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED);
 		bool RemoveModel(int _id);
 		bool ActiveModel(int _id, bool _active);
 		bool ChangeModelTexture(int _id, std::string _fileDir, int _textureType = TEXTURE_DIFFUSE);
