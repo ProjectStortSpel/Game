@@ -1,7 +1,9 @@
 #include "GameCreator.h"
 
 #ifdef WIN32
-	#include <VLD/vld.h>
+#ifdef _DEBUG
+#include <VLD/vld.h>
+#endif
 #endif
 
 int main(int argc, char** argv)

@@ -2,7 +2,9 @@
 #define ECSL_H
 
 #ifdef WIN32
-	#include <VLD/vld.h>
+#ifdef _DEBUG
+#include <VLD/vld.h>
+#endif
 #else
 #endif
 
