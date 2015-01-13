@@ -57,16 +57,16 @@ CardPositionSystem.OnEntityAdded = function(self, entityId)
 	local model = self:GetComponent(entityId, "Model", 0)
 	local action = self:GetComponent(entityId, "CardAction", 0):GetString()
 	if action == "Forward" then
-		model:SetModel("forward", "cards", 1, 1)
+		model:SetModel("forward", "cards", 2)
 	elseif action == "Backward" then
-		model:SetModel("back", "cards", 1, 1)
+		model:SetModel("back", "cards", 2)
 	elseif action == "TurnRight" then
-		model:SetModel("turnright", "cards", 1, 1)
+		model:SetModel("turnright", "cards", 2)
 	elseif action == "TurnLeft" then
-		model:SetModel("turnleft", "cards", 1, 1)
+		model:SetModel("turnleft", "cards", 2)
 	elseif action == "TurnAround" then
-		model:SetModel("turnaround", "cards", 1, 1)
+		model:SetModel("turnaround", "cards", 2)
 	else
-		model:SetModel("dodge", "cards", 1, 1)
+		model:SetModel("dodge", "cards", 2)
 	end
 end
