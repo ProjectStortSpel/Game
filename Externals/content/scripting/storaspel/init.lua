@@ -52,6 +52,7 @@ if Client then
 	require "cl_sortselectedcardssystem"
 	require "cl_sendselectedcardssystem"
 	--require "cl_givecardindexsystem"
+	require "cl_cardhoversystem"
 end
 
 
@@ -117,6 +118,7 @@ if Client then
 	worldCreator:AddSystemToCurrentGroup(SortCardIndexSystem)
 	worldCreator:AddSystemToCurrentGroup(SortSelectedCardSystem)
 	worldCreator:AddSystemToCurrentGroup(SendSelectCardSystem)
+	worldCreator:AddSystemToCurrentGroup(CardHoverSystem)
 --worldCreator:AddSystemToCurrentGroup(ClientSendCardSystem)
 end
 

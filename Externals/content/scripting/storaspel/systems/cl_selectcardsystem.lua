@@ -29,8 +29,36 @@ SelectCardSystem.Update = function( self, dt )
 			self:ToggleSelectCard(7)
 		elseif Input.GetKeyState(Key._8) == InputState.Pressed then
 			self:ToggleSelectCard(8)
-		end
+		elseif Input.GetMouseButtonState(MouseButton.RightButton) == InputState.Pressed then
+		
+			local entities = self:GetEntities()
+			for i = 1, #entities do
+				local entity = entities[i]
+			
+				local index = world:GetComponent(entity, "CardIndex", "Index"):GetInt()
+			
+				local scale = self:GetComponent(entity, "Scale", 0)
+			
+				local position = self:GetComponent(entity, "Position", 0)
+			
+				X, Y, Z = position:GetFloat3()
+			
+				mX, mY = Input.GetMousePosition()
 
+				wX, wY = graphics:GetWindowSize()
+			
+				pX = 0.25*X*wX+wX/2
+				pY = wY-0.445*Y*wY-wY/2
+				if mX > pX-50 and mX < pX+50 then
+					if mY > pY-100 and mY < pY+100 then
+
+						self:ToggleSelectCard(index)
+						
+					end
+				end
+			end
+		
+		end
 	end
 
 end

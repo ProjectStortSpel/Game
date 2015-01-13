@@ -46,6 +46,8 @@
     <None Include="..\..\..\Externals\content\shaders\CSDeferredPass2.glsl" />
     <None Include="..\..\..\Externals\content\shaders\FSDeferredPass1.glsl" />
     <None Include="..\..\..\Externals\content\shaders\FSForwardShader.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\FSInterfaceShader.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\FSViewspaceShader.glsl" />
     <None Include="..\..\..\Externals\content\shaders\fullscreen.gs" />
     <None Include="..\..\..\Externals\content\shaders\fullscreen.ps" />
     <None Include="..\..\..\Externals\content\shaders\fullscreen.vs" />
@@ -59,6 +61,8 @@
     <None Include="..\..\..\Externals\content\shaders\skyboxvs.glsl" />
     <None Include="..\..\..\Externals\content\shaders\VSDeferredPass1.glsl" />
     <None Include="..\..\..\Externals\content\shaders\VSForwardShader.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\VSInterfaceShader.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\VSViewspaceShader.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A71BE4D1-612E-49FE-9B2D-EA067C024F0A}</ProjectGuid>
