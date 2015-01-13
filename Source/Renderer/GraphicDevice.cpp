@@ -1071,6 +1071,35 @@ bool GraphicDevice::RemoveModel(int _id)
 			}
 		}
 	}
+	for (int i = 0; i < m_modelsViewspace.size(); i++)
+	{
+		for (int j = 0; j < m_modelsViewspace[i].instances.size(); j++)
+		{
+			if (m_modelsViewspace[i].instances[j].id == _id)
+			{
+				m_modelsViewspace[i].instances.erase(m_modelsViewspace[i].instances.begin() + j);
+				if (m_modelsViewspace[i].instances.size() == 0)
+					m_modelsViewspace.erase(m_modelsViewspace.begin() + i);
+
+				return true;
+			}
+		}
+	}
+	for (int i = 0; i < m_modelsInterface.size(); i++)
+	{
+		for (int j = 0; j < m_modelsInterface[i].instances.size(); j++)
+		{
+			if (m_modelsInterface[i].instances[j].id == _id)
+			{
+				m_modelsInterface[i].instances.erase(m_modelsInterface[i].instances.begin() + j);
+				if (m_modelsInterface[i].instances.size() == 0)
+					m_modelsInterface.erase(m_modelsInterface.begin() + i);
+
+				return true;
+			}
+		}
+	}
+
 	return false;
 }
 bool GraphicDevice::ActiveModel(int _id, bool _active)
@@ -1098,10 +1127,35 @@ bool GraphicDevice::ActiveModel(int _id, bool _active)
 			}
 		}
 	}
+
+	for (int i = 0; i < m_modelsViewspace.size(); i++)
+	{
+		for (int j = 0; j < m_modelsViewspace[i].instances.size(); j++)
+		{
+			if (m_modelsViewspace[i].instances[j].id == _id)
+			{
+				m_modelsViewspace[i].instances[j].active = _active;
+				return true;
+			}
+		}
+	}
+
+	for (int i = 0; i < m_modelsInterface.size(); i++)
+	{
+		for (int j = 0; j < m_modelsInterface[i].instances.size(); j++)
+		{
+			if (m_modelsInterface[i].instances[j].id == _id)
+			{
+				m_modelsInterface[i].instances[j].active = _active;
+				return true;
+			}
+		}
+	}
 	return false;
 }
 bool GraphicDevice::ChangeModelTexture(int _id, std::string _fileDir, int _textureType)
 {
+	// TODO: Do this for Interface and Viewspace
 	// Model Instance
 	Instance instance;
 	// Temp Model
@@ -1216,10 +1270,12 @@ bool GraphicDevice::ChangeModelTexture(int _id, std::string _fileDir, int _textu
 }
 bool GraphicDevice::ChangeModelNormalMap(int _id, std::string _fileDir)
 {
+	// TODO: Do this for Interface and Viewspace
 	return ChangeModelTexture(_id, _fileDir, TEXTURE_NORMAL);
 }
 bool GraphicDevice::ChangeModelSpecularMap(int _id, std::string _fileDir)
 {
+	// TODO: Do this for Interface and Viewspace
 	return ChangeModelTexture(_id, _fileDir, TEXTURE_SPECULAR);
 }
 
@@ -1296,6 +1352,8 @@ void GraphicDevice::Clear()
   
   m_modelsDeferred.clear();
   m_modelsForward.clear();
+  m_modelsViewspace.clear();
+  m_modelsInterface.clear();
 
   float **tmpPtr = new float*[1];
   BufferPointlights(0, tmpPtr);
