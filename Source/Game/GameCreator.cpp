@@ -222,9 +222,7 @@ void GameCreator::StartGame(int argc, char** argv)
 	m_consoleManager.AddCommand("GameMode", std::bind(&GameCreator::ConsoleGameMode, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager.AddCommand("Start", std::bind(&GameCreator::ConsoleStartTemp, this, std::placeholders::_1, std::placeholders::_2));
 	
-
 	RunStartupCommands(argc, argv);
-
 
 	float maxDeltaTime = (float)(1.0f / 20.0f);
 	while (m_running)
