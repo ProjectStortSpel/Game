@@ -13,6 +13,7 @@ require "lightcomponents"
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
 require "sh_movementsystem"
 require "sh_networkmessagessystem"
+require "sh_moveplayersystem"
 
 if Server then
 	require "sv_mapsystem"
@@ -44,7 +45,7 @@ end
 
 if Client then
 --require "cl_pickingphasesystem"
-	require "cl_moveplayersystem"
+	
 	require "cl_lobbysystem"
 	require "cl_cardpositionsystem"
 	require "cl_givecardindexsystem"
@@ -54,7 +55,7 @@ if Client then
 	require "cl_sendselectedcardssystem"
 	--require "cl_givecardindexsystem"
 end
-
+	
 
 
 -- Templates
@@ -73,6 +74,7 @@ require "lights"
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(MovementSystem)
 worldCreator:AddSystemToCurrentGroup(networkMessagesSystem)
+worldCreator:AddSystemToCurrentGroup(TrueTestMoveSystem)
 
 if Server then
 	worldCreator:AddSystemToCurrentGroup(MapSystem)
@@ -117,7 +119,7 @@ if Client then
 	worldCreator:AddSystemToCurrentGroup(SortCardIndexSystem)
 	worldCreator:AddSystemToCurrentGroup(SortSelectedCardSystem)
 	worldCreator:AddSystemToCurrentGroup(SendSelectCardSystem)
-	worldCreator:AddSystemToCurrentGroup(TrueTestMoveSystem)
+	
 
 --worldCreator:AddSystemToCurrentGroup(ClientSendCardSystem)
 end

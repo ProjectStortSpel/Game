@@ -441,8 +441,8 @@
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_postmovesystem.lua">
       <Filter>Scripting\Systems\Server Systems\Round Systems</Filter>
     </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_moveplayersystem.lua">
-      <Filter>Scripting\Systems\Client Systems\Round Systems</Filter>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sh_moveplayersystem.lua">
+      <Filter>Scripting\Systems\Shared Systems</Filter>
     </None>
   </ItemGroup>
 </Project>
