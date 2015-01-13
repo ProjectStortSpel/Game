@@ -19,7 +19,8 @@ if Server then
 	--require "sv_moveplayersystem"
 	require "sv_onplayerconnected"
 	require "sv_playerssystem"
-	require "sv_createspawnpointsystem"
+	require "sv_givespawnlocation"
+	--require "sv_createspawnpointsystem"
 	require "sv_spawnsystem"
 	require "sv_lobbysystem"
 	require "sv_createdecksystem"
@@ -80,7 +81,8 @@ if Server then
 
 	worldCreator:AddSystemToCurrentGroup(OnPlayerConnectedSystem)
 	worldCreator:AddSystemToCurrentGroup(PlayersSystem)
-	worldCreator:AddSystemToCurrentGroup(CreateSpawnpointSystem)
+	worldCreator:AddSystemToCurrentGroup(GiveSpawnLocation)
+	--worldCreator:AddSystemToCurrentGroup(CreateSpawnpointSystem)
 	worldCreator:AddSystemToCurrentGroup(SpawnSystem)
 	worldCreator:AddSystemToCurrentGroup(ServerLobbySystem)
 	worldCreator:AddSystemToCurrentGroup(CreateDeckSystem)

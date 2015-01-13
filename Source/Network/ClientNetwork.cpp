@@ -84,7 +84,7 @@ ClientNetwork::~ClientNetwork()
 	SAFE_DELETE(m_currentTimeOutIntervall);
 	SAFE_DELETE(m_currentIntervallCounter);
 	SAFE_DELETE(m_connected);
-	
+
 	SAFE_DELETE(m_onConnectedToServer);
 	SAFE_DELETE(m_onDisconnectedFromServer);
 	SAFE_DELETE(m_onTimedOutFromServer);
@@ -130,16 +130,16 @@ bool ClientNetwork::Connect()
 		*m_socketBound = true;
 	}
 
-	
+
 
 	bool connected = false;
 	//for (int i = 0; i < 5; ++i)
 	//{
-		connected = m_socket->Connect(m_remoteAddress->c_str(), *m_outgoingPort);
-		//if (connected)
-		//	break;
+	connected = m_socket->Connect(m_remoteAddress->c_str(), *m_outgoingPort);
+	//if (connected)
+	//	break;
 
-		//NetSleep(1500);
+	//NetSleep(1500);
 	//}
 
 	if (!connected)
@@ -149,12 +149,12 @@ bool ClientNetwork::Connect()
 		return false;
 	}
 
-	m_socket->SetTimeoutDelay(5000);
+	//m_socket->SetTimeoutDelay(5000);
 	m_socket->SetNonBlocking(false);
 	m_socket->SetNoDelay(true);
 
 	*m_connected = true;
-	
+
 	uint64_t id = m_packetHandler->StartPack(NetTypeMessageId::ID_PASSWORD_ATTEMPT);
 	m_packetHandler->WriteString(id, m_password->c_str());
 	auto packet = m_packetHandler->EndPack(id);
@@ -174,10 +174,12 @@ void ClientNetwork::Disconnect()
 		Packet* packet = m_packetHandler->EndPack(id);
 		Send(packet);
 	}
-
+	if(m_socket)
+		m_socket->CloseSocket();
+	//m_socket->SetInvalidSocket();
 	*m_receivePacketsThreadAlive = false;
 
-	if (m_receivePacketsThread->joinable())	
+	if (m_receivePacketsThread->joinable())
 		m_receivePacketsThread->join();
 
 	if (m_socket)
@@ -403,7 +405,7 @@ void ClientNetwork::NetConnectionKicked(PacketHandler* _packetHandler, uint64_t&
 	SAFE_DELETE(m_socket);
 	*m_socketBound = 0;
 
-	
+
 
 	if (m_receivePacketsThread->joinable())
 		m_receivePacketsThread->join();
@@ -466,7 +468,7 @@ void ClientNetwork::NetRemoteConnectionLost(PacketHandler* _packetHandler, uint6
 
 	TriggerEvent(m_onRemotePlayerTimedOut, _connection, 0);
 }
-	
+
 void ClientNetwork::NetRemoteConnectionDisconnected(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection)
 {
 	char* name = _packetHandler->ReadString(_id);
@@ -499,7 +501,7 @@ void ClientNetwork::NetRemoteConnectionBanned(PacketHandler* _packetHandler, uin
 
 void ClientNetwork::SetOnConnectedToServer(NetEvent& _function)
 {
-	if (NET_DEBUG)	
+	if (NET_DEBUG)
 		printf("Hooking function to OnConnectedToServer.\n");
 
 	m_onConnectedToServer->push_back(_function);
