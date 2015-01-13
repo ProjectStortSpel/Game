@@ -17,23 +17,26 @@ namespace Renderer
 {
 #define RENDER_DEFERRED 0
 #define RENDER_FORWARD  1
+#define RENDER_INTERFACE  2
 
 #define TEXTURE_DIFFUSE		0
 #define TEXTURE_NORMAL		1
 #define TEXTURE_SPECULAR	2
 
-
+	
 	struct Instance
 	{
 		int id;
 		bool active;
+		bool viewspace;
 		mat4* modelMatrix;
 		
 		Instance(){}
-		Instance(int _id, bool _active, mat4* _model)
+		Instance(int _id, bool _active, mat4* _model, bool _viewspace = false)
 		{
 			id = _id;
 			active = _active;
+			viewspace = _viewspace;
 			modelMatrix = _model;
 		}
 	};
