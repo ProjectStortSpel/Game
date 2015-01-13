@@ -167,6 +167,17 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
 		local comp = self:GetComponent(entity, "Model", 0)
 		comp:SetModel("riverstraight", "riverstraight", 0, 0)
 		
+	elseif tiletype == 115 then -- 115 = s = Available spawn point
+		world:CreateComponentAndAddTo("Model", entity)
+		local comp = self:GetComponent(entity, "Model", 0)
+		comp:SetModel("grass", "grass", 0, 0)
+		
+		
+		local newSpawnId = world:CreateNewEntity()
+		world:CreateComponentAndAddTo("AvailableSpawnpoint", newSpawnId)
+		local newSpawn = self:GetComponent(newSpawnId, "AvailableSpawnpoint", 0)
+		newSpawn:SetInt2(posX, posZ)
+		
 	else
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
