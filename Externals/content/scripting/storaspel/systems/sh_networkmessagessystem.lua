@@ -79,3 +79,7 @@ networkMessagesSystem.OnPlayerConnected = function(self, _ip, _port, _message)
 		Console.Print("Send Entity: " .. entities[i])
 	end	
 end
+
+networkMessagesSystem.OnRemotePlayerConnected = function(self, _ip, _port)
+	print("HEJ")
+end

@@ -12,6 +12,7 @@ PlayerTemplate:AddComponent("Player")
 PlayerTemplate:AddComponent("PlayerNumber")
 PlayerTemplate:AddComponent("PlayerName")
 PlayerTemplate:AddComponent("UnitEntityId")
+PlayerTemplate:AddComponent("PickingDone")
 PlayerTemplate:SetString("NetConnection", "0.0.0.0", "IpAddress")
 PlayerTemplate:SetInt("NetConnection", 0, "Port")
 PlayerTemplate:AddComponent("SyncNetwork")			--	Sync this entity

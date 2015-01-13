@@ -53,6 +53,7 @@ if Client then
 	require "cl_sortcardindexsystem"
 	require "cl_sortselectedcardssystem"
 	require "cl_sendselectedcardssystem"
+	require "cl_playerdonevisualizersystem"
 	--require "cl_givecardindexsystem"
 end
 	
@@ -119,8 +120,7 @@ if Client then
 	worldCreator:AddSystemToCurrentGroup(SortCardIndexSystem)
 	worldCreator:AddSystemToCurrentGroup(SortSelectedCardSystem)
 	worldCreator:AddSystemToCurrentGroup(SendSelectCardSystem)
-	
-
+	worldCreator:AddSystemToCurrentGroup(PlayerDoneVisualizer)
 --worldCreator:AddSystemToCurrentGroup(ClientSendCardSystem)
 end
 
