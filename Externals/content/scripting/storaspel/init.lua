@@ -100,6 +100,7 @@ if Server then
 	worldCreator:AddSystemToCurrentGroup(VoidSystem)
 	worldCreator:AddSystemToCurrentGroup(RiverSystem)
 	worldCreator:AddSystemToCurrentGroup(RespawnSystem)
+	worldCreator:AddSystemToCurrentGroup(TestMoveRiverSystem)
 
 	worldCreator:AddSystemToCurrentGroup(TurnAroundSystem)
 	worldCreator:AddSystemToCurrentGroup(TurnLeftSystem)
@@ -110,7 +111,7 @@ if Server then
 	
 	worldCreator:AddSystemToCurrentGroup(StepTimerSystem)
 	worldCreator:AddSystemToCurrentGroup(PlayCardTimerSystem)
-
+	
 end
 
 if Client then
