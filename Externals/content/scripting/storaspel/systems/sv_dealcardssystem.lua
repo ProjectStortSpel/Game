@@ -26,6 +26,10 @@ DealCardsSystem.OnEntityAdded = function(self, entityId)
 	
 end
 
+DealCardsSystem.OnEntityRemoved = function(self, entityId)
+
+end
+
 DealCardsSystem.DealCards = function (self, numCards)
 
 	local players = self:GetEntities("Player")
@@ -55,8 +59,8 @@ DealCardsSystem.DealCards = function (self, numCards)
 		for j = 1, numCards do
 
 			local cardIndex = math.random(1, cardsLeft)
-
 			local card = cards[cardIndex]
+			
 			world:CreateComponentAndAddTo("DealtCard", card)
 			world:SetComponent(card, "DealtCard", "PlayerEntityId", players[i])
 			
@@ -69,6 +73,8 @@ DealCardsSystem.DealCards = function (self, numCards)
 		Net.Send(Net.StartPack("Client.SelectCards"), ip, port)
 	end
 
+	print("EEEEhh, NIP ME DIPP")
+	
 end
 
 Net.Receive("Server.SelectCards", 

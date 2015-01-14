@@ -43,8 +43,15 @@ PlayersSystem.OnEntityAdded = function(self, entityId)
 	world:SetComponent(entityId, "PlayerNumber", "Number", playerNumber)
 	world:SetComponent(entityId, "UnitEntityId", "Id", newEntityId)
 
+	local ip = world:GetComponent(entityId, "NetConnection", "IpAddress"):GetString()
+	local port = world:GetComponent(entityId, "NetConnection", "Port"):GetInt()
+
 
 	print("Unit ", newEntityId)
+
+	local id = Net.StartPack("Client.SendPlayerUnitId")
+	Net.WriteInt(id, playerNumber)
+	Net.Send(id, ip, port)
 end
 
 PlayersSystem.OnEntityRemoved = function(self, entityId)

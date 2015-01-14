@@ -72,21 +72,34 @@ bool EntityTable::EntityHasComponent(unsigned int _entityId, unsigned int _compo
 bool EntityTable::EntityPassFilters(unsigned int _entityId, const BitSet::DataType* _mandatoryMask, const BitSet::DataType* _oneOfMask, const BitSet::DataType* _exclusionMask)
 {
 	/* Component bit set for the entity */
-	BitSet::DataType* componentBitSet = (BitSet::DataType*)(m_dataTable->GetData(_entityId) + 1);
+	BitSet::DataType* componentBitSet = (BitSet::DataType*)(m_dataTable->GetData(_entityId, 1));
+
+	char requiresOneOf = 0;
 
 	/* Checks every component filter (breaks if fails) */
 	for (unsigned int i = 0; i < m_componentIntCount; ++i)
 	{
 		/* Entity doesn't have atleast one of the must-have components */
-		if (!( (_mandatoryMask[i] & componentBitSet[i]) == _mandatoryMask[i]) )
+		if (!((_mandatoryMask[i] & componentBitSet[i]) == _mandatoryMask[i]))
 			return false;
-		/* Entity has none of the atleast-one-of components */
-		else if ((_oneOfMask[i] & componentBitSet[i]) == 0 && _oneOfMask[i])
-			return false;
+
 		/* Entity has atleast one of the excluded components  */
-		else if ((_exclusionMask[i] & componentBitSet[i]) != 0)
+		else if (_exclusionMask[i] && (_exclusionMask[i] & componentBitSet[i]) != 0)
 			return false;
+
+		/* Entity has none of the atleast-one-of components */
+		else if (_oneOfMask[i] && requiresOneOf < 2)
+		{
+			requiresOneOf = 1;
+			if((_oneOfMask[i] & componentBitSet[i]) != 0)
+				requiresOneOf = 2;
+		}
+
 	}
+
+	if (requiresOneOf == 1)
+		return false;
+
 	return true;
 }
 

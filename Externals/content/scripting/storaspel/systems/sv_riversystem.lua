@@ -49,6 +49,5 @@ RiverSystem.OnEntityAdded = function(self, entity)
 		world:GetComponent(id, "StepTimer", "Time"):SetFloat(1)
 
 
-
 	end
 end
