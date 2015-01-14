@@ -18,6 +18,7 @@ private:
 	void SetServerPasswordConsole(std::string _command, std::vector<Console::Argument>* _vec);
 	void SetClientPasswordConsole(std::string _command, std::vector<Console::Argument>* _vec);
 
+	void UpdateCommands();
 
 public:
 
@@ -31,8 +32,6 @@ public:
 	void SetClientPassword(std::string _password);
 	const char* GetClientPassword();
 	bool CheckClientPassword(std::string _password);
-
-	void UpdateCommands();
 
 	void ExecuteCommand(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _nc);
 };

@@ -116,13 +116,3 @@ AvailableSpawnpoint.TableType = TableType.Map
 AvailableSpawnpoint:AddVariable("X", ByteSize.Int)
 AvailableSpawnpoint:AddVariable("Z", ByteSize.Int)
 worldCreator:AddComponentType(AvailableSpawnpoint)
-
-
-
-
-
-
-
-
-
-
