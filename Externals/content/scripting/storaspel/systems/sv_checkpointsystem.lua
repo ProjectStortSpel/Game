@@ -32,7 +32,7 @@ CheckpointSystem.AddTotemPole = function(self, playerId, currentCP, noCP, X, Y, 
 	end
 
 	rotation:SetFloat3(0, axis, 0)
-	position:SetFloat3(X, 1 + self.TotemCount[currentCP] * setScale, Z)
+	position:SetFloat3(X, 0.4 + self.TotemCount[currentCP] * setScale, Z)
 	scale:SetFloat3(setScale, setScale, setScale)
 	
 	world:SetComponent(head, "Model", "ModelName", "ply" .. playerId);
