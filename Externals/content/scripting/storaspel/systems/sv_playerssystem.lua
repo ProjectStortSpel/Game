@@ -11,6 +11,7 @@ PlayersSystem.Initialize = function(self)
 	
 	self:AddComponentTypeToFilter("Player", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("ActiveNetConnection", FilterType.Mandatory)
+	self:AddComponentTypeToFilter("IsSpectator", FilterType.Excluded)
 
 	print("Players Connected System initialized!")
 end

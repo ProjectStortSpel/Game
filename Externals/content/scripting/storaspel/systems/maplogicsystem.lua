@@ -7,6 +7,7 @@ NewStepSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("NewStep", FilterType.Mandatory)
 	
 	self:AddComponentTypeToFilter("InactivePlayer",FilterType.Excluded)
+	self:AddComponentTypeToFilter("IsSpectator", FilterType.Excluded)
 	print("New Step System initialized!")
 end
 

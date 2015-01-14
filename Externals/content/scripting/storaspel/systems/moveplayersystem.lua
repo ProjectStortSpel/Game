@@ -14,6 +14,7 @@ PlayerMovementSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Scale",FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Model",FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Direction",FilterType.Mandatory)
+	self:AddComponentTypeToFilter("IsSpectator", FilterType.Excluded)
 		
 	print("PlayerMovementSystem initialized!")
 end

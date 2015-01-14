@@ -15,6 +15,7 @@ OnPlayerConnectedSystem.Initialize = function(self)
 	
 	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("Player", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("IsSpectator", FilterType.Excluded)
 	
 	print("OnPlayerConnectedSystem initialized!")
 end
@@ -37,62 +38,75 @@ end
 
 OnPlayerConnectedSystem.OnPlayerConnected = function(self, _ip, _port, _message)
 
-	if #self:GetEntities("GameRunning") > 0 then
+	local addSpectator = false
 
-		local foundPlayer = false
-		local entities = self:GetEntities();		
-		for i = 1, #entities do
+	if #self:GetEntities("GameRunning") > 0 then -- If the game is running
+	
+		local playerFound = false
+		local entities = self:GetEntities()
+		
+		for i = 1, #entities do -- Go through all entities
 		
 			local ip = self:GetComponent(entities[i], "NetConnection", "IpAddress"):GetString()
-			local port = self:GetComponent(entities[i], "NetConnection", "Port"):GetInt()
-		
+			local port = self:GetComponent(entities[i], "NetConnection", "Port"):GetInt()	
+
 			if _ip == ip and _port == port then
-				world:CreateComponentAndAddTo("ActiveNetConnection", entities[i])				
-				break
+				world:CreateComponentAndAddTo("ActiveNetConnection", entities[i])
+				playerFound = true
+				print("Player recnnected")
+				return
 			end
-		end	
-		
-		if not foundPlayer then
-			--Net.Kick(_ip, _port, "Game has started.")
+			
 		end
-		return
-	end
-
-	if self.NumPlayers >= self.MaxPlayers then
-		
-		if self.NumSpectators >= 5 then
-			Net.Kick(_ip, _port, "Server is full.")
-		else
-			print("New spectator connected")
-			self.NumSpectators = self.NumSpectators + 1
+	
+		if not playerFound then
+			addSpectator = true
 		end
-		
-		return
+	
+	else -- If the game is not running yet
+	
+		if self.NumPlayers >= self.MaxPlayers then
+			addSpectator = true
+		end
+	
 	end
-	self.NumPlayers = self.NumPlayers + 1
-	--	Hax new ID
 	
-	--	Create the new player
-	local newName = "Player_" .. tostring(self.PlayerId)
+	local newPlayer = world:CreateNewEntity("Player")
 	
-	local newEntityId = world:CreateNewEntity("Player")
-
-	print("Player_: " .. newEntityId)
+	world:SetComponent(newPlayer, "NetConnection", "IpAddress", _ip);
+	world:SetComponent(newPlayer, "NetConnection", "Port", _port);
+	world:CreateComponentAndAddTo("ActiveNetConnection", newPlayer)
 	
-	world:SetComponent(newEntityId, "PlayerName", "Name", newName);
-	world:SetComponent(newEntityId, "NetConnection", "IpAddress", _ip);
-	world:SetComponent(newEntityId, "NetConnection", "Port", _port);
+	if addSpectator then
+	
+		local newName = "Spectator_" .. tostring(self.NumSpectators + 1)
+		world:SetComponent(newPlayer, "PlayerName", "Name", newName);
+	
+	
+		world:CreateComponentAndAddTo("IsSpectator", newPlayer)
+		self.NumSpectators = self.NumSpectators + 1
+		
+		print("Spectator_: " .. newPlayer .. " connected")
+	else
+	
+		local newName = "Player_" .. tostring(self.PlayerId)
+		world:SetComponent(newPlayer, "PlayerName", "Name", newName);
+	
+		self.NumPlayers = self.NumPlayers + 1
+		self.PlayerId = self.PlayerId + 1
+		
+		print("Player_: " .. newPlayer .. " connected")
+	end
+	
+	
 
-	world:CreateComponentAndAddTo("ActiveNetConnection", newEntityId)
-
-	self.PlayerId = self.PlayerId + 1
 end
 
 OnPlayerConnectedSystem.OnPlayerDisconnected = function(self, _ip, _port, _message)
 
 	local entities = self:GetEntities();
 	local foundPlayer = false
-	
+	local isSpectator = false
 	
 	for i = 1, #entities do
 		
@@ -106,24 +120,27 @@ OnPlayerConnectedSystem.OnPlayerDisconnected = function(self, _ip, _port, _messa
 			else
 				world:KillEntity(entities[i])		
 			end
+			
+			isSpectator = world:EntityHasComponent(entities[i], "IsSpectator")
+			
 			break
 
 		end
 	end	
 	
 	if foundPlayer then
-		self.NumPlayers = self.NumPlayers - 1
 		
-		if self.NumPlayers == 0 then
-			Console.AddToCommandQueue("reload") -- Reload the gamemode to allow new players to connect
+		if isSpectator then
+			print("Spectator disconnected")
+			self.NumSpectators = self.NumSpectators - 1
+		else
+			print("Player disconnected")
+			self.NumPlayers = self.NumPlayers - 1
+			if self.NumPlayers == 0 then
+				Console.AddToCommandQueue("reload") -- Reload the gamemode to allow new players to connect
+			end
 		end
-		
-	else
-		print("Spectator disconnected")
-		self.NumSpectators = self.NumSpectators - 1
 	end
-
-
 	
 end
 
