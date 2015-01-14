@@ -19,7 +19,7 @@
 #include <iomanip>
 
 GameCreator::GameCreator() :
-m_graphics(0), m_input(0), m_world(0), m_console(0), m_consoleManager(Console::ConsoleManager::GetInstance()), m_frameCounter(new Utility::FrameCounter()), m_running(true)
+m_graphics(0), m_input(0), m_world(0), m_console(0), m_remoteConsole(0), m_consoleManager(Console::ConsoleManager::GetInstance()), m_frameCounter(new Utility::FrameCounter()), m_running(true)
 {
 }
 
@@ -40,6 +40,9 @@ GameCreator::~GameCreator()
 
 	if (m_console)
 		delete m_console;	
+
+	if (m_remoteConsole)
+		delete m_remoteConsole;
 
 	LuaEmbedder::Quit();
 
@@ -80,6 +83,8 @@ void GameCreator::InitializeNetwork()
 
 	Network::NetEvent netEvent = std::bind(&GameCreator::OnConnectedToServer, this, std::placeholders::_1, std::placeholders::_2);
 	NetworkInstance::GetClient()->SetOnConnectedToServer(netEvent);
+
+	m_remoteConsole = new RemoteConsole();
 }
 
 void GameCreator::InitializeLua() 
