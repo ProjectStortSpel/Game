@@ -20,10 +20,11 @@ end
 CheckpointSystem.AddTotemPole = function(self, playerId, currentCP, noCP, X, Y, Z)
 
 	local head = world:CreateNewEntity("Head")
-	local rotation = world:GetComponent(head, "Rotation", 0)
-	local position = world:GetComponent(head, "Position", 0)
-	
+	local rotation 	= world:GetComponent(head, "Rotation", 0)
+	local position 	= world:GetComponent(head, "Position", 0)
+	local scale		= world:GetComponent(head, "Scale", 0)
 	local axis = math.pi
+	local setScale = 0.5
 	
 	-- Position
 	if self.TotemCount[currentCP] == nil then
@@ -31,7 +32,9 @@ CheckpointSystem.AddTotemPole = function(self, playerId, currentCP, noCP, X, Y, 
 	end
 
 	rotation:SetFloat3(0, axis, 0)
-	position:SetFloat3(X, math.pi, Z)
+	position:SetFloat3(X, self.TotemCount[currentCP] * setScale, Z)
+	scale:SetFloat3(setScale, setScale, setScale)
+	
 	world:SetComponent(head, "Model", "ModelName", "ply" .. playerId);
 	world:SetComponent(head, "Model", "ModelPath", "head");
 	world:SetComponent(head, "Model", "RenderType", 0);
