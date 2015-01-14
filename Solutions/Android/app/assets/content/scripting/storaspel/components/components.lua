@@ -57,6 +57,7 @@ ModelComponent.Name = "Model"
 ModelComponent.TableType = TableType.Map
 ModelComponent:AddVariable("ModelName", ByteSize.Text)
 ModelComponent:AddVariable("ModelPath", ByteSize.Text)
+ModelComponent:AddVariable("RenderType", ByteSize.Int)
 worldCreator:AddComponentType(ModelComponent)
 
 -- Spin Component

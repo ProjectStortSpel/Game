@@ -27,16 +27,10 @@ RiverSystem.OnEntityAdded = function(self, entity)
 
 				if unitX == riverX and unitZ == riverZ then
 					local riverDirX, riverDirZ = world:GetComponent(rivers[j], "River", 0):GetInt2()
-					world:SetComponent(units[i], "MapPosition", "X", unitX + riverDirX)
-					world:SetComponent(units[i], "MapPosition", "Z", unitZ + riverDirZ)
+					local posX = unitX + riverDirX
+					local posZ = unitZ + riverDirZ
 
-					local pos = world:GetComponent(units[i], "Position", 0)
-					local X, Y, Z = pos:GetFloat3()
-					pos:SetFloat3(X + riverDirX, Y, Z + riverDirZ)
-
-
-					--world:SetComponent(units[i], "Position", "X", unitX + riverDirX)
-					--world:SetComponent(units[i], "Position", "Z", unitZ + riverDirZ)
+					world:GetComponent(units[i], "MapPosition", 0):SetInt2(posX, posZ)
 					break
 
 				end

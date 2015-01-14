@@ -282,6 +282,9 @@ int LinSocket::Send(char* _buffer, int _length, int _flags)
 
 int LinSocket::Receive(char* _buffer, int _length, int _flags)
 {
+	if (*m_socket == -1)
+		return -1;
+
 	short len;
 	int len2 = recv(*m_socket, (void*)&len, 2, MSG_WAITALL);
 	if (len2 == 2)

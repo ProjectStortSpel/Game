@@ -10,7 +10,9 @@ public:
 	SDL_RWops* fileIn;
 	bool OpenFileForRead(const char* fileDir)
 	{
-		fileIn = SDL_RWFromFile(fileDir, "rb");
+		std::string fp = std::string(fileDir);
+		fp.erase(std::remove(fp.begin(), fp.end(), 13), fp.end());
+		fileIn = SDL_RWFromFile(fp.c_str(), "rb");
 		if (fileIn == NULL)
 		  return false;
 		return true;

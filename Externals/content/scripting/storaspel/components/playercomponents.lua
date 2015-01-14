@@ -89,8 +89,33 @@ SpawnComponent:AddVariable("X", ByteSize.Int)
 SpawnComponent:AddVariable("Z", ByteSize.Int)
 worldCreator:AddComponentType(SpawnComponent)
 
--- Spawnpoint Component
+-- UnitSelectedCards Component
 local UnitSelectedCardsComponent = ComponentType()
 UnitSelectedCardsComponent.Name = "UnitSelectedCards"
 UnitSelectedCardsComponent.TableType = TableType.Map
 worldCreator:AddComponentType(UnitSelectedCardsComponent)
+
+--	NeedSpawnLocation Component
+local NeedSpawnLocation = ComponentType()
+NeedSpawnLocation.Name = "NeedSpawnLocation"
+NeedSpawnLocation.TableType = TableType.Map
+worldCreator:AddComponentType(NeedSpawnLocation)
+
+
+-- Available Spawnpoint
+local AvailableSpawnpoint = ComponentType()
+AvailableSpawnpoint.Name = "AvailableSpawnpoint"
+AvailableSpawnpoint.TableType = TableType.Map
+AvailableSpawnpoint:AddVariable("X", ByteSize.Int)
+AvailableSpawnpoint:AddVariable("Z", ByteSize.Int)
+worldCreator:AddComponentType(AvailableSpawnpoint)
+
+
+
+
+
+
+
+
+
+

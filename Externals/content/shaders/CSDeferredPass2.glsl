@@ -147,6 +147,7 @@ float ComputeGlow()
 	- - - - - - 5 - - - - - - 
 	*/
 	float glow = 0;
+	glow += imageLoad(ColorTex, g_threadID).w;
 	//glow += imageLoad(ColorTex, g_threadID + ivec2(-6, 0)).w * 0.0044299121055113265;
 	//glow += imageLoad(ColorTex, g_threadID + ivec2(-4, -4)).w * 0.00895781211794;
 	//glow += imageLoad(ColorTex, g_threadID + ivec2(0, -5)).w * 0.0215963866053;
@@ -161,7 +162,7 @@ float ComputeGlow()
 	//glow += imageLoad(ColorTex, g_threadID + ivec2(-3,  3)).w * 0.0443683338718;
 	//glow += imageLoad(ColorTex, g_threadID + ivec2(0,  5)).w * 0.0215963866053;
 	//glow += imageLoad(ColorTex, g_threadID + ivec2(4,  4)).w * 0.00895781211794;
-	//glow += imageLoad(ColorTex, g_threadID + ivec2(6,  0)).w * 0.0044299121055113265;
+	//glow += imageLoad(ColorTex, g_threadID + ivec2(6,  0)).w * 0.0044299121055113265;s
 	
 	return glow;
 }

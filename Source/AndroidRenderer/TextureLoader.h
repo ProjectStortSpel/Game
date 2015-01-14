@@ -10,32 +10,31 @@ class TextureLoader{
 public:
 static unsigned int LoadTexture(const char* file, GLenum textureSlot, int &height, int &width)
 {
+	std::string fp = std::string(file);
+	fp.erase(std::remove(fp.begin(), fp.end(), 13), fp.end());
 	// Open file
-	SDL_RWops* fileIn = SDL_RWFromFile(file, "r");
+	SDL_RWops* fileIn = SDL_RWFromFile(fp.c_str(), "rb");
 	if (fileIn == NULL)
-		SDL_Log("File %s not found", file);
+		SDL_Log("File %s not found", fp.c_str());
 	// Get file length
 	Sint64 length = SDL_RWseek(fileIn, 0, RW_SEEK_END);
 	if (length <= 0)
-		SDL_Log("Length of file %s lower than or equal to zero", file);
+		SDL_Log("Length of file %s lower than or equal to zero", fp.c_str());
 	SDL_RWseek(fileIn, 0, RW_SEEK_SET);
 	// Read data
-	char* data = new char[length + 1];
+	char* data = new char[length];
 	SDL_RWread(fileIn, data, length, 1);
-	data[length] = '\0';
-	std::string dataString = std::string(data);
-	delete data;
 	// Close file
 	SDL_RWclose(fileIn);
   
 	int channels;
 		// Load texture file and convert to openGL format
 	//unsigned char* imgData = stbi_load(file, &width, &height, &channels, STBI_rgb_alpha);
-	unsigned char* imgData = stbi_load_from_memory((const unsigned char*)dataString.c_str(), (int)length, &width, &height, &channels, STBI_rgb_alpha);
-	
+	unsigned char* imgData = stbi_load_from_memory((const unsigned char*)data, (int)length, &width, &height, &channels, STBI_rgb_alpha);
+
 	if (!imgData)
 	{
-		SDL_Log( "Texture '%s' not loaded." , file);
+		SDL_Log( "Texture '%s' not loaded." , fp.c_str());
 	}
 
 	GLuint texHandle;
@@ -50,6 +49,7 @@ static unsigned int LoadTexture(const char* file, GLenum textureSlot, int &heigh
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imgData);
 
 	stbi_image_free(imgData);
+	delete data;
 	return texHandle;
 }
 
