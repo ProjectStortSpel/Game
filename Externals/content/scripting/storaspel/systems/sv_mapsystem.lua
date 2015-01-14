@@ -8,14 +8,37 @@ MapSystem.PostInitialize = function(self)
     self.mapX, self.mapY, map = File.LoadMap("content/maps/map.txt")
     local posX, posZ
 	
+	local highestCP = 0
+	local finishList = { }
 	
 	for y = 0, self.mapY-1 do
         for x = 0, self.mapX-1 do
             --posX = x - self.mapX/2
             --posZ = y - self.mapY/2
-            self:AddTile(x, y, map[y * self.mapX + x + 1])
+
+			local tiletype = map[y * self.mapX + x + 1]
+
+            local entity = self:AddTile(x, y, tiletype)
+
+			if tiletype >= 49 and tiletype <= 57 then -- 49 = 1 = first checkpoint, 47 = 9 = 9th checkpoint
+
+				highestCP = math.max(highestCP, tiletype - 48)
+
+			elseif tiletype == 102 then -- 102 = f = finish
+				
+				finishList[#finishList + 1] = entity
+
+			end
+
         end
     end
+
+	for i = 1, #finishList do
+
+		local comp = self:GetComponent(finishList[i], "Checkpoint", 0)
+        comp:SetInt(highestCP + 1)
+
+	end
 
 	local activeEntities = MapSystem.entities
 	local waterTiles = {}
@@ -123,6 +146,7 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
 		--posComp:SetFloat3(posX, 1.0, posZ)
 
     elseif tiletype == 102 then -- 102 = f = finish
+		world:CreateComponentAndAddTo("Checkpoint", entity)
         world:CreateComponentAndAddTo("Finish", entity)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
@@ -186,6 +210,8 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
     end
 
     table.insert(self.entities, entity)
+
+	return entity
 end
 
 MapSystem.AddGroundTileBelow = function(self, posX, posZ)
