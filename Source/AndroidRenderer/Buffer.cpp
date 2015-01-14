@@ -37,29 +37,12 @@ bool Buffer::init(const BufferData* p_BufferData, GLsizei p_BufferDataSize,
 	m_Buffers.resize(bufferSize);
 	glGenBuffers(bufferSize, &m_Buffers[0]);
 
-	// Initialize every vertex buffer
-//-- Ta hand om alla buffrar här-----------------------
-	glBindAttribLocation(program, 0, "VertexPosition");
-	glBindAttribLocation(program, 1, "Pad1");
-	glBindAttribLocation(program, 2, "VertexNormal");
-	glBindAttribLocation(program, 3, "Pad2");
-	//glBindAttribLocation(program, 2, "VertexTangent");
-	//glBindAttribLocation(program, 3, "VertexBiTangent");
-	//glBindAttribLocation(program, 2, "VertexTexCoord");
-
-
 	for (int i = 0; i < p_BufferDataSize; i++)
 	{
 		// Allocate and buffer data
 		glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[i]);
 		glBufferData(GL_ARRAY_BUFFER, p_BufferData[i].dataSize, p_BufferData[i].data, GL_STATIC_DRAW);
 	}
-
-	/*for (int i = 0; i < p_BufferDataSize; i++)
-	{
-		glVertexAttribPointer(i, p_BufferData[i].componentCount, GL_FLOAT, GL_FALSE, 0, p_BufferData[i].data);
-		glEnableVertexAttribArray(i);
-	}*/
 
 //--------------------------------------------------------
 

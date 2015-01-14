@@ -43,10 +43,10 @@ bool GraphicDevice::Init()
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	//if (!InitSkybox()) { ERRORMSG("INIT SKYBOX FAILED\n"); return false; }
 	
-	glDisable(GL_CULL_FACE);
-	//glCullFace(GL_BACK);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(0.0f, 0.2f, 0.6f, 1.0f);
 
 	return true;
 }
@@ -73,7 +73,7 @@ void GraphicDevice::PollEvent(SDL_Event _event)
 
 void GraphicDevice::Update(float _dt)
 {
-  //SDL_Log("FPS: %f", 1.0f/_dt);
+  SDL_Log("FPS: %f", 1.0f/_dt);
 }
 
 void GraphicDevice::Render()
@@ -121,18 +121,17 @@ void GraphicDevice::Render()
 			mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
 			m_forwardShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
 
-			//glActiveTexture(GL_TEXTURE1);
-			//glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
-			//m_forwardShader.CheckUniformLocation("diffuseTex", 1);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
 
-			/*glActiveTexture(GL_TEXTURE2);
+			glActiveTexture(GL_TEXTURE2);
 			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].norID);
 
 			glActiveTexture(GL_TEXTURE3);
-			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].speID);*/
+			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].speID);
 
 			m_modelsForward[i].bufferPtr->draw();
-			//glBindTexture(GL_TEXTURE_2D, 0);
+			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 	}
 
@@ -303,15 +302,15 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 
 	// Import Texture
 	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
-	//shaderPtr->CheckUniformLocation("diffuseTex", 1);
+	shaderPtr->CheckUniformLocation("diffuseTex", 1);
 
 	// Import Normal map
 	GLuint normal = AddTexture(obj.norm, GL_TEXTURE2);
-	//shaderPtr->CheckUniformLocation("normalTex", 2);
+	shaderPtr->CheckUniformLocation("normalTex", 2);
 
 	// Import Specc Glow map
 	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
-	//shaderPtr->CheckUniformLocation("specularTex", 3);
+	shaderPtr->CheckUniformLocation("specularTex", 3);
 
 	// Import Mesh
 	Buffer* mesh = AddMesh(obj.mesh, shaderPtr);
@@ -460,20 +459,22 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 	  SDL_Log("texCoord[%d] = %f", i, texCoordData[i]);*/
 	modelExporter.CloseFile();
 
-	std::vector<float> padData = std::vector<float>((int)positionData.size() / 3);
-
 	Buffer* retbuffer = new Buffer();
+
+	GLuint vpLoc	= glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexPosition");
+	GLuint vnLoc	= glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexNormal");
+	GLuint tanLoc	= glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTangent");
+	GLuint bitanLoc = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexBiTangent");
+	GLuint tcLoc	= glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTexCoord");
 
 	_shaderProg->UseProgram();
 	BufferData bufferData[] =
 	{
-		{ 0, 3, GL_FLOAT, (const GLvoid*)positionData.data(), (GLsizeiptr)(positionData.size() * sizeof(float)) },
-		{ 1, 1, GL_FLOAT, (const GLvoid*)padData.data(), (GLsizeiptr)(padData.size() * sizeof(float)) },
-		{ 2, 3, GL_FLOAT, (const GLvoid*)normalData.data(), (GLsizeiptr)(normalData.size()   * sizeof(float)) },
-		{ 3, 1, GL_FLOAT, (const GLvoid*)padData.data(), (GLsizeiptr)(padData.size() * sizeof(float)) },
-		//{ 2, 3, GL_FLOAT, (const GLvoid*)tanData.data(), (GLsizeiptr)(tanData.size()   * sizeof(float)) },
-		//{ 3, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), (GLsizeiptr)(bitanData.size()   * sizeof(float)) },
-		//{ 2, 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), (GLsizeiptr)(texCoordData.size() * sizeof(float)) }
+		{ vpLoc,	3, GL_FLOAT, (const GLvoid*)positionData.data(), (GLsizeiptr)(positionData.size() * sizeof(float)) },
+		{ vnLoc,	3, GL_FLOAT, (const GLvoid*)normalData.data(), (GLsizeiptr)(normalData.size()   * sizeof(float)) },
+		{ tanLoc,	3, GL_FLOAT, (const GLvoid*)tanData.data(), (GLsizeiptr)(tanData.size()   * sizeof(float)) },
+		{ bitanLoc, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), (GLsizeiptr)(bitanData.size()   * sizeof(float)) },
+		{ tcLoc,	2, GL_FLOAT, (const GLvoid*)texCoordData.data(), (GLsizeiptr)(texCoordData.size() * sizeof(float)) }
 	};
 
 	int test = sizeof(bufferData) / sizeof(bufferData[0]);

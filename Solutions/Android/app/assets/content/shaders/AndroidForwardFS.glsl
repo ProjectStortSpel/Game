@@ -1,14 +1,14 @@
 varying vec3 Normal;
-//varying vec3 Tan;
-//varying vec3 BiTan;
-//varying vec2 TexCoord;
+varying vec3 Tan;
+varying vec3 BiTan;
+varying vec2 TexCoord;
 varying vec3 ViewPos;
 
 
 //Input textures
-//uniform sampler2D diffuseTex;
-//uniform sampler2D normalTex;
-//uniform sampler2D specularTex;
+uniform sampler2D diffuseTex;
+uniform sampler2D normalTex;
+uniform sampler2D specularTex;
 
 uniform mat4 ViewMatrix;
 
@@ -32,6 +32,8 @@ struct MaterialInfo {
 };
 MaterialInfo Material;
 
+vec3 NmNormal;
+
 void phongModel(int index, out vec3 ambient, out vec3 diffuse, out vec3 spec) {
 
 	ambient = vec3(0.0);
@@ -51,14 +53,14 @@ void phongModel(int index, out vec3 ambient, out vec3 diffuse, out vec3 spec) {
         
 	ambient = thisLightColor * thisLightIntensity.x;
 	vec3 E = normalize(ViewPos);
-	float diffuseFactor = dot( lightVec, Normal );
+	float diffuseFactor = dot( lightVec, NmNormal );
 
 	if(diffuseFactor > 0.0)
 	{
 		// diffuse
 		diffuse = diffuseFactor * thisLightColor * thisLightIntensity.y;
 		// specular
-		vec3 v = reflect( lightVec, Normal );
+		vec3 v = reflect( lightVec, NmNormal );
 		float specFactor = pow( max( dot(v, E), 0.0 ), Material.Shininess );
 		spec = specFactor * thisLightColor * thisLightIntensity.z * Material.Ks;          
 	}
@@ -80,8 +82,21 @@ void main()
     pointlights[0].Color = vec3(1.0f, 1.0f, 1.0f);
     pointlights[0].Range = 20.0f;
     
-    Material.Ks = 0.1f;
-    Material.Shininess = 20.0f;
+    //Material.Ks = 0.1f;
+    //Material.Shininess = 20.0f;
+
+	vec4 albedo_tex = texture2D( diffuseTex, TexCoord );
+
+	// Normal data
+	vec3 normal_map	  = texture2D( normalTex, TexCoord ).rgb;
+	normal_map = (normal_map * 2.0f) - 1.0f;
+	mat3 texSpace = mat3(Tan, BiTan, Normal);
+	NmNormal = normalize( texSpace * normal_map );
+
+	// Spec data
+	vec3 spec_map = texture2D( specularTex, TexCoord ).rgb;
+	Material.Ks			= spec_map.x;
+	Material.Shininess  = spec_map.y * 254.0f + 1.0f;
     
     vec3 ambient = vec3(0.0f);
     vec3 diffuse = vec3(0.0f);
@@ -98,10 +113,10 @@ void main()
 	    spec    += s;
     }
     
-    //vec4 albedo_tex = texture2D( diffuseTex, TexCoord );
-
-    //gl_FragColor = vec4(ambient + diffuse, 1.0) * albedo_tex + vec4(spec, 0.0f);
-    gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);// * vec4(ambient + diffuse, 1.0f) * vec4(spec, 1.0f); //albedo_tex;
+    gl_FragColor = vec4(ambient + diffuse, 1.0) * albedo_tex + vec4(spec, 0.0f);
+	//gl_FragColor = vec4( (inverse(ViewMatrix) * vec4(Normal, 0.0)).xyz, 1.0);
+	//gl_FragColor = vec4(Normal, 1.0);
+    //gl_FragColor = vec4(ambient + diffuse, 1.0f) * vec4(0.0, 0.0, 1.0, 1.0) + vec4(spec, 0.0f); //albedo_tex;
 }
 
 
