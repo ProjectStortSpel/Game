@@ -67,8 +67,18 @@ CheckpointSystem.OnEntityAdded = function(self, entity)
 					if unitX == checkpointX and unitZ == checkpointZ then
 						
 						
-						print("Unit reached a checkpoint")
 						
+						
+						if world:EntityHasComponent(checkpoints[j], "Finish") then
+							
+							print("Unit reached the finish")
+
+						else
+							
+							print("Unit reached a checkpoint")
+
+						end
+
 						
 						local playerId = world:GetComponent(units[i], "PlayerNumber", 0):GetInt()
 						self.AddTotemPole(self, playerId, j, #checkpoints, checkpointX, Y, checkpointZ)
