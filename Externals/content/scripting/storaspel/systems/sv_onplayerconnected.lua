@@ -1,5 +1,6 @@
 OnPlayerConnectedSystem = System()
 OnPlayerConnectedSystem.NumPlayers = 0
+OnPlayerConnectedSystem.MaxPlayers = 5
 OnPlayerConnectedSystem.PlayerId = 1
 
 
@@ -56,7 +57,7 @@ OnPlayerConnectedSystem.OnPlayerConnected = function(self, _ip, _port, _message)
 		return
 	end
 
-	if self.NumPlayers >= 5 then
+	if self.NumPlayers >= self.MaxPlayers then
 		
 		Net.Kick(_ip, _port, "Server is full.")
 		return
@@ -113,7 +114,7 @@ OnPlayerConnectedSystem.AddConnectedPlayers = function(self)
 		local ip = clients[i]
 		local port = clients[i+1]
 
-		if self.NumPlayers >= 2 then
+		if self.NumPlayers >= self.MaxPlayers then
 			Net.Kick(ip, port, "Server is full.")
 			return
 		end
