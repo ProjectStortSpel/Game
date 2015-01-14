@@ -41,9 +41,9 @@ bool Buffer::init(const BufferData* p_BufferData, GLsizei p_BufferDataSize,
 //-- Ta hand om alla buffrar här-----------------------
 	glBindAttribLocation(program, 0, "VertexPosition");
 	glBindAttribLocation(program, 1, "VertexNormal");
-	glBindAttribLocation(program, 2, "VertexTangent");
-	glBindAttribLocation(program, 3, "VertexBiTangent");
-	glBindAttribLocation(program, 4, "VertexTexCoord");
+	//glBindAttribLocation(program, 2, "VertexTangent");
+	//glBindAttribLocation(program, 3, "VertexBiTangent");
+	//glBindAttribLocation(program, 4, "VertexTexCoord");
 
 
 	for (int i = 0; i < p_BufferDataSize; i++)

@@ -1,9 +1,9 @@
 #version 140
 
-//varying vec3 Normal;
+varying vec3 Normal;
 //varying vec3 Tan;
 //varying vec3 BiTan;
-varying vec2 TexCoord;
+//varying vec2 TexCoord;
 //varying vec3 ViewPos;
 
 
@@ -37,5 +37,5 @@ uniform sampler2D diffuseTex;
 void main() 
 {
 	//gl_FragColor = vec4(ambient + diffuse, 1.0) * albedo_tex + vec4(spec, 0.0f);
-	gl_FragColor = texture2D( diffuseTex, TexCoord ); //albedo_tex;
+	gl_FragColor = vec4( 0.0, 0.0, 1.0, 1.0 ); //texture2D( diffuseTex, TexCoord ); //albedo_tex;
 }
