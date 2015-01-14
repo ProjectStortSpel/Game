@@ -7,21 +7,7 @@ MapSystem.PostInitialize = function(self)
 	local map
     self.mapX, self.mapY, map = File.LoadMap("content/maps/map.txt")
     local posX, posZ
-	
-	--for y = 0, self.mapY-1 do
-    --    for x = 0, self.mapX-1 do
-    --        --posX = x - self.mapX/2
-    --        --posZ = y - self.mapY/2
-    --        self:AddTile(x, y, map[y * self.mapX + x + 1])
-	--		
-	--		--if y == 15 && x == 0 then
-	--			--print("hej")
-	--		--end
-	--		
-	--		print(x, y, y * self.mapX + x + 1)
-	--	end
-	--end
-	
+		
 	for x = 0, self.mapX+1 do
 		self:AddTile(x, 1, 111) -- 111 = void
 	end
@@ -112,18 +98,12 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
 	
     local mapPosComp = self:GetComponent(entity, "MapPosition", 0)
     mapPosComp:SetInt2(posX, posZ)
-
-    --if tiletype == 111 then -- 111 = o = void
-    --    world:CreateComponentAndAddTo("Void", entity)
 		
     if tiletype == 104 then -- 104 = h = hole
         world:CreateComponentAndAddTo("Void", entity)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
 		comp:SetModel("hole_test", "hole", 0)
---  No need???
---    elseif tiletype == 46 then -- 46 = . = grass
---        world:CreateComponentAndAddTo("", entity)
 
     elseif tiletype == 120 then -- 120 = x = stone
 		world:CreateComponentAndAddTo("NotWalkable", entity)
