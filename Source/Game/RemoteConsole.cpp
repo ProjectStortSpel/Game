@@ -18,22 +18,30 @@ RemoteConsole::~RemoteConsole()
 
 void RemoteConsole::UpdateCommands()
 {
-	Console::ConsoleManager::GetInstance().RemoveCommand("password");
-	Console::ConsoleManager::GetInstance().RemoveCommand("rcon");
-	Console::ConsoleManager::GetInstance().RemoveCommand("rcon_password");
+	//Console::ConsoleManager::GetInstance().RemoveCommand("password");
+	//Console::ConsoleManager::GetInstance().RemoveCommand("rcon");
+	//Console::ConsoleManager::GetInstance().RemoveCommand("rcon_password");
 
-	if (NetworkInstance::isServer())
-	{
-		Console::ConsoleManager::GetInstance().AddCommand("password", std::bind(&RemoteConsole::SetServerPasswordConsole, this, std::placeholders::_1, std::placeholders::_2));
+	//if (NetworkInstance::isServer())
+	//{
+	//	Console::ConsoleManager::GetInstance().AddCommand("password", std::bind(&RemoteConsole::SetServerPasswordConsole, this, std::placeholders::_1, std::placeholders::_2));
 
-		Network::NetMessageHook hook = std::bind(&RemoteConsole::ExecuteCommand, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-		NetworkInstance::GetServer()->AddNetworkHook("rcon", hook);
-	}
-	if (NetworkInstance::isClient())
-	{
-		Console::ConsoleManager::GetInstance().AddCommand("rcon_password", std::bind(&RemoteConsole::SetClientPasswordConsole, this, std::placeholders::_1, std::placeholders::_2));
-		Console::ConsoleManager::GetInstance().AddCommand("rcon", std::bind(&RemoteConsole::ExecuteCommandClient, this, std::placeholders::_1, std::placeholders::_2));
-	}
+	//	Network::NetMessageHook hook = std::bind(&RemoteConsole::ExecuteCommand, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	//	NetworkInstance::GetServer()->AddNetworkHook("rcon", hook);
+	//}
+	//if (NetworkInstance::isClient())
+	//{
+	//	Console::ConsoleManager::GetInstance().AddCommand("rcon_password", std::bind(&RemoteConsole::SetClientPasswordConsole, this, std::placeholders::_1, std::placeholders::_2));
+	//	Console::ConsoleManager::GetInstance().AddCommand("rcon", std::bind(&RemoteConsole::ExecuteCommandClient, this, std::placeholders::_1, std::placeholders::_2));
+	//}
+
+	Console::ConsoleManager::GetInstance().AddCommand("password", std::bind(&RemoteConsole::SetServerPasswordConsole, this, std::placeholders::_1, std::placeholders::_2));
+
+	Network::NetMessageHook hook = std::bind(&RemoteConsole::ExecuteCommand, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	NetworkInstance::GetServer()->AddNetworkHook("rcon", hook);
+
+	Console::ConsoleManager::GetInstance().AddCommand("rcon_password", std::bind(&RemoteConsole::SetClientPasswordConsole, this, std::placeholders::_1, std::placeholders::_2));
+	Console::ConsoleManager::GetInstance().AddCommand("rcon", std::bind(&RemoteConsole::ExecuteCommandClient, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 void RemoteConsole::ExecuteCommandClient(std::string _command, std::vector<Console::Argument>* _vec)
@@ -99,15 +107,18 @@ void RemoteConsole::SetClientPasswordConsole(std::string _command, std::vector<C
 
 void RemoteConsole::ExecuteCommand(Network::PacketHandler* _ph, uint64_t _id, Network::NetConnection _nc)
 {
-	if (CheckServerPassword(_ph->ReadString(_id)))
+	if (NetworkInstance::isServer())
 	{
-		std::string command = _ph->ReadString(_id);
-		Console::ConsoleManager::GetInstance().ExecuteCommand(command.c_str());
-	}
-	else
-	{
-		printf("Invalid rcon password\n");
-	}
+		if (CheckServerPassword(_ph->ReadString(_id)))
+		{
+			std::string command = _ph->ReadString(_id);
+			Console::ConsoleManager::GetInstance().ExecuteCommand(command.c_str());
+		}
+		else
+		{
+			printf("Invalid rcon password\n");
+		}
+	}	
 }
 
 
