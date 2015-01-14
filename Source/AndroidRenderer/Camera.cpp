@@ -55,12 +55,22 @@ void Camera::UpdateMouse(float midX, float midY, int x, int y)
 	m_up = glm::cross(m_right, m_look);
 }
 
+void Camera::UpdateTouch(float dx, float dy)
+{
+	m_camYaw += m_sensitivity*dx;
+	m_camPitch += m_sensitivity*dy;
+
+	m_look = vec3(cos(m_camPitch) * sin(m_camYaw), sin(m_camPitch), cos(m_camPitch)*cos(m_camYaw));
+	m_right = vec3(sin(m_camYaw - M_PI / 2.0f), 0, cos(m_camYaw - M_PI / 2.0f));
+	m_up = glm::cross(m_right, m_look);
+}
+
 mat4* Camera::GetViewMatrix()
 {
-	if (m_pos.y > 1.2)
-		m_pos -= vec3(0.0, 0.025, -0.002);
+	//if (m_pos.y > 1.2)
+		//m_pos -= vec3(0.0, 0.025, -0.002);
 
-	m_viewMatrix = glm::lookAt(m_pos, vec3(7.0, 1.0, 6.0), m_up);
+	m_viewMatrix = glm::lookAt(m_pos, m_pos + m_look, m_up);
 
 	return &m_viewMatrix;
 }

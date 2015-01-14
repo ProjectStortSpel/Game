@@ -402,7 +402,7 @@ void GameCreator::PollSDLEvent()
 		case SDL_FINGERMOTION:
 		case SDL_FINGERDOWN:
 #ifdef __ANDROID__
-			exit(0);
+			//exit(0);
 #endif
 		case SDL_FINGERUP:
 		case SDL_TEXTINPUT:

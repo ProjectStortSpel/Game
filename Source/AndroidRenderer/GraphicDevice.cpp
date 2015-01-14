@@ -73,7 +73,7 @@ void GraphicDevice::PollEvent(SDL_Event _event)
 
 void GraphicDevice::Update(float _dt)
 {
-  SDL_Log("FPS: %f", 1.0f/_dt);
+  //SDL_Log("FPS: %f", 1.0f/_dt);
 }
 
 void GraphicDevice::Render()
