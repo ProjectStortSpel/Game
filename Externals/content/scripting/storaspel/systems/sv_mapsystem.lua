@@ -8,6 +8,20 @@ MapSystem.PostInitialize = function(self)
     self.mapX, self.mapY, map = File.LoadMap("content/maps/map.txt")
     local posX, posZ
 	
+	--for y = 0, self.mapY-1 do
+    --    for x = 0, self.mapX-1 do
+    --        --posX = x - self.mapX/2
+    --        --posZ = y - self.mapY/2
+    --        self:AddTile(x, y, map[y * self.mapX + x + 1])
+	--		
+	--		--if y == 15 && x == 0 then
+	--			--print("hej")
+	--		--end
+	--		
+	--		print(x, y, y * self.mapX + x + 1)
+	--	end
+	--end
+	
 	for x = 0, self.mapX+1 do
 		self:AddTile(x, 1, 111) -- 111 = void
 	end
@@ -23,7 +37,7 @@ MapSystem.PostInitialize = function(self)
 	for x = 0, self.mapX+1 do
 		self:AddTile(x, self.mapY, 111) -- 111 = void
 	end
-
+    
 	local activeEntities = MapSystem.entities
 	local waterTiles = {}
 	for i = 1, #activeEntities do
@@ -99,10 +113,10 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
     local mapPosComp = self:GetComponent(entity, "MapPosition", 0)
     mapPosComp:SetInt2(posX, posZ)
 
-    if tiletype == 111 then -- 111 = o = void
-        world:CreateComponentAndAddTo("Void", entity)
+    --if tiletype == 111 then -- 111 = o = void
+    --    world:CreateComponentAndAddTo("Void", entity)
 		
-    elseif tiletype == 104 then -- 104 = h = hole
+    if tiletype == 104 then -- 104 = h = hole
         world:CreateComponentAndAddTo("Void", entity)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
@@ -185,10 +199,16 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
 		local newSpawn = self:GetComponent(newSpawnId, "AvailableSpawnpoint", 0)
 		newSpawn:SetInt2(posX, posZ)
 		
-	else
+	elseif tiletype == 46 then -- 46 = . = grass
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
 		comp:SetModel("grass", "grass", 0)
+		
+	else
+        world:CreateComponentAndAddTo("Void", entity)
+		--world:CreateComponentAndAddTo("Model", entity)
+		--local comp = self:GetComponent(entity, "Model", 0)
+		--comp:SetModel("grass", "grass", 0)
 		
     end
 
