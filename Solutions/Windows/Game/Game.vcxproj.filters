@@ -444,5 +444,11 @@
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sh_moveplayersystem.lua">
       <Filter>Scripting\Systems\Shared Systems</Filter>
     </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_playerdonevisualizersystem.lua">
+      <Filter>Scripting\Systems\Client Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_playerindicatorsystem.lua">
+      <Filter>Scripting\Systems\Client Systems\Card Systems</Filter>
+    </None>
   </ItemGroup>
 </Project>

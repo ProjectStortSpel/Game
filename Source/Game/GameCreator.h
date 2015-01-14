@@ -10,6 +10,7 @@
 #include "ECSL/ECSL.h"
 #include "GameConsole.h"
 #include "FrameCounter/FrameCounter.h"
+#include "Game/RemoteConsole.h"
 
 class GameCreator
 {
@@ -57,6 +58,7 @@ private:
 	Input::InputWrapper*		m_input;
 	ECSL::World*				m_world;
 	GameConsole*				m_console;
+	RemoteConsole*				m_remoteConsole;
 
 	Console::ConsoleManager&	m_consoleManager;
 	TextInput					m_consoleInput;
@@ -70,6 +72,7 @@ private:
 	Utility::FrameCounter m_worldCounter;
 	Utility::FrameCounter m_networkCounter;
 	Utility::FrameCounter m_graphicsCounter;
+
 };
 
 #endif
