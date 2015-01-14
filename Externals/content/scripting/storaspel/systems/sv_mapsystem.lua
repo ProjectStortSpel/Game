@@ -12,13 +12,39 @@ MapSystem.PostInitialize = function(self)
 		self:AddTile(x, 1, 111) -- 111 = void
 	end
 	
+
+	local highestCP = 0
+	local finishList = { }
+
 	for y = 1, self.mapY do
 		self:AddTile(0, y, 111) -- 111 = void
 		for x = 1, self.mapX do
-			self:AddTile(x, y, map[(y - 1) * self.mapX + x])
+
+			local tiletype = map[(y - 1) * self.mapX + x]
+
+            local entity = self:AddTile(x, y, tiletype)
+
+			if tiletype >= 49 and tiletype <= 57 then -- 49 = 1 = first checkpoint, 47 = 9 = 9th checkpoint
+
+				highestCP = math.max(highestCP, tiletype - 48)
+
+			elseif tiletype == 102 then -- 102 = f = finish
+				
+				finishList[#finishList + 1] = entity
+
+			end
+
+
         end
 		self:AddTile(self.mapX + 1, y, 111) -- 111 = void
     end
+
+	for i = 1, #finishList do
+
+		local comp = self:GetComponent(finishList[i], "Checkpoint", 0)
+        comp:SetInt(highestCP + 1)
+
+	end
 	
 	for x = 0, self.mapX+1 do
 		self:AddTile(x, self.mapY, 111) -- 111 = void
@@ -193,6 +219,8 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
     end
 
     table.insert(self.entities, entity)
+
+	return entity
 end
 
 MapSystem.AddGroundTileBelow = function(self, posX, posZ)

@@ -450,5 +450,11 @@
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_playerindicatorsystem.lua">
       <Filter>Scripting\Systems\Client Systems\Card Systems</Filter>
     </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_checkpointsystem.lua">
+      <Filter>Scripting\Systems\Server Systems\Round Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_finishsystem.lua">
+      <Filter>Scripting\Systems\Server Systems\Round Systems</Filter>
+    </None>
   </ItemGroup>
 </Project>
