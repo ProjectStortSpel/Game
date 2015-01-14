@@ -1,6 +1,7 @@
 OnPlayerConnectedSystem = System()
 OnPlayerConnectedSystem.NumPlayers = 0
 OnPlayerConnectedSystem.NumSpectators = 0
+OnPlayerConnectedSystem.MaxPlayers = 5
 OnPlayerConnectedSystem.PlayerId = 1
 
 
@@ -57,7 +58,7 @@ OnPlayerConnectedSystem.OnPlayerConnected = function(self, _ip, _port, _message)
 		return
 	end
 
-	if self.NumPlayers >= 5 then
+	if self.NumPlayers >= self.MaxPlayers then
 		
 		if self.NumSpectators >= 5 then
 			Net.Kick(_ip, _port, "Server is full.")
@@ -112,10 +113,17 @@ OnPlayerConnectedSystem.OnPlayerDisconnected = function(self, _ip, _port, _messa
 	
 	if foundPlayer then
 		self.NumPlayers = self.NumPlayers - 1
+		
+		if self.NumPlayers == 0 then
+			Console.AddToCommandQueue("reload") -- Reload the gamemode to allow new players to connect
+		end
+		
 	else
 		print("Spectator disconnected")
 		self.NumSpectators = self.NumSpectators - 1
 	end
+
+
 	
 end
 
@@ -129,7 +137,7 @@ OnPlayerConnectedSystem.AddConnectedPlayers = function(self)
 		local ip = clients[i]
 		local port = clients[i+1]
 
-		if self.NumPlayers >= 2 then
+		if self.NumPlayers >= self.MaxPlayers then
 			Net.Kick(ip, port, "Server is full.")
 			return
 		end
