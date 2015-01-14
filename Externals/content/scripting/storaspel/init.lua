@@ -45,7 +45,6 @@ end
 
 if Client then
 --require "cl_pickingphasesystem"
-	
 	require "cl_lobbysystem"
 	require "cl_cardpositionsystem"
 	require "cl_givecardindexsystem"
@@ -56,6 +55,7 @@ if Client then
 	require "cl_playerdonevisualizersystem"
 	--require "cl_givecardindexsystem"
 	require "cl_cardhoversystem"
+	require "cl_playerindicatorsystem"
 end
 	
 
@@ -123,6 +123,7 @@ if Client then
 	worldCreator:AddSystemToCurrentGroup(SendSelectCardSystem)
 	worldCreator:AddSystemToCurrentGroup(CardHoverSystem)
 	worldCreator:AddSystemToCurrentGroup(PlayerDoneVisualizer)
+	worldCreator:AddSystemToCurrentGroup(PlayerIndicatorSystem)
 --worldCreator:AddSystemToCurrentGroup(ClientSendCardSystem)
 end
 
