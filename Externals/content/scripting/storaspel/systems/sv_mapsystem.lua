@@ -8,14 +8,21 @@ MapSystem.PostInitialize = function(self)
     self.mapX, self.mapY, map = File.LoadMap("content/maps/map.txt")
     local posX, posZ
 	
+	for x = 0, self.mapX+1 do
+		self:AddTile(x, 1, 111) -- 111 = void
+	end
 	
-	for y = 0, self.mapY-1 do
-        for x = 0, self.mapX-1 do
-            --posX = x - self.mapX/2
-            --posZ = y - self.mapY/2
-            self:AddTile(x, y, map[y * self.mapX + x + 1])
+	for y = 1, self.mapY do
+		self:AddTile(0, y, 111) -- 111 = void
+		for x = 1, self.mapX do
+			self:AddTile(x, y, map[(y - 1) * self.mapX + x])
         end
+		self:AddTile(self.mapX + 1, y, 111) -- 111 = void
     end
+	
+	for x = 0, self.mapX+1 do
+		self:AddTile(x, self.mapY, 111) -- 111 = void
+	end
 
 	local activeEntities = MapSystem.entities
 	local waterTiles = {}
@@ -92,7 +99,7 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
     local mapPosComp = self:GetComponent(entity, "MapPosition", 0)
     mapPosComp:SetInt2(posX, posZ)
 
-    if tiletype == 111 then -- 111 = o = out
+    if tiletype == 111 then -- 111 = o = void
         world:CreateComponentAndAddTo("Void", entity)
 		
     elseif tiletype == 104 then -- 104 = h = hole
