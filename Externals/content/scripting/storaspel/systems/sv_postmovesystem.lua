@@ -15,6 +15,7 @@ PostMoveSystem.OnEntityAdded = function(self, entity)
 
 	id = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("CheckCheckpoint", id)
+	print(id)
 	
 	world:KillEntity( entity )
 end

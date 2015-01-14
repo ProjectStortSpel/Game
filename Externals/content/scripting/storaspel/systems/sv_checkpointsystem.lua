@@ -11,6 +11,12 @@ CheckpointSystem.Initialize = function(self)
 	print("CheckpointSystem initialized!")
 end
 
+CheckpointSystem.Update = function(self, dt)
+
+	--print("NoOfEntities: " .. #self:GetEntities())
+
+end
+
 CheckpointSystem.AddTotemPole = function(self, playerId, currentCP, noCP, X, Y, Z)
 
 	local head = world:CreateNewEntity("Head")
@@ -33,7 +39,7 @@ CheckpointSystem.AddTotemPole = function(self, playerId, currentCP, noCP, X, Y, 
 end
 
 CheckpointSystem.OnEntityAdded = function(self, entity)
-	
+
 	if world:EntityHasComponent( entity, "CheckCheckpoint") then
 		
 		local units = self:GetEntities("Unit")
@@ -76,4 +82,5 @@ CheckpointSystem.OnEntityAdded = function(self, entity)
 		world:KillEntity( entity )
 
 	end
+	
 end
