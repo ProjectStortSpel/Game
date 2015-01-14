@@ -33,8 +33,6 @@ MapSystem.PostInitialize = function(self)
 				finishList[#finishList + 1] = entity
 
 			end
-
-
         end
 		self:AddTile(self.mapX + 1, y, 111) -- 111 = void
     end
@@ -47,9 +45,9 @@ MapSystem.PostInitialize = function(self)
 	end
 	
 	for x = 0, self.mapX+1 do
-		self:AddTile(x, self.mapY, 111) -- 111 = void
+		self:AddTile(x, self.mapY+1, 111) -- 111 = void
 	end
-    
+	    
 	local activeEntities = MapSystem.entities
 	local waterTiles = {}
 	for i = 1, #activeEntities do
@@ -261,6 +259,7 @@ end
 
 MapSystem.TileIsVoid = function(self, posX, posY)
 
+	print ("Void", posX, posY)
 	return self:TileHasComponent("Void", posX, posY)
 end
 

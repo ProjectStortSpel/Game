@@ -27,7 +27,7 @@ VoidSystem.OnEntityAdded = function(self, entity)
 
 				if unitX == voidX and unitZ == voidZ then
 					
-					print("Unit walked into a void.")
+					print("Unit walked into a void.", voidX, voidZ)
 
 					if not world:EntityHasComponent(units[i], "UnitDead") then
 						world:CreateComponentAndAddTo("UnitDead", units[i])
