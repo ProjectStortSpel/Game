@@ -101,7 +101,12 @@ OnPlayerConnectedSystem.OnPlayerDisconnected = function(self, _ip, _port, _messa
 
 		end
 	end	
-	self.NumPlayers = self.NumPlayers - 1		
+	self.NumPlayers = self.NumPlayers - 1	
+
+	if self.NumPlayers == 0 then
+		Console.AddToCommandQueue("reload") --Reload the gamemode to allow new players to connect
+	end
+		
 end
 
 OnPlayerConnectedSystem.AddConnectedPlayers = function(self)
