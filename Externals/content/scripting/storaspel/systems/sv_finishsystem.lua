@@ -64,9 +64,17 @@ FinishSystem.OnEntityAdded = function(self, entity)
 					
 					local playerId = world:GetComponent(units[i], "PlayerEntityId", "Id"):GetInt()
 					print("PlayerId: " .. playerId)
-					--world:CreateComponentAndAddTo("IsSpectator", playerId)
 					
-					--world:KillEntity(units[i])
+					local id = world:CreateNewEntity()
+					world:CreateComponentAndAddTo("TakeCardsFromPlayer", id)
+					world:GetComponent(id, "TakeCardsFromPlayer", "Player"):SetInt(playerId)
+					
+					id = world:CreateNewEntity()
+					world:CreateComponentAndAddTo("TakeCardStepsFromUnit", id)
+					world:GetComponent(id, "TakeCardStepsFromUnit", "Unit"):SetInt(units[i])
+					
+					world:CreateComponentAndAddTo("IsSpectator", playerId)
+					world:KillEntity(units[i])
 					
 				end
 				

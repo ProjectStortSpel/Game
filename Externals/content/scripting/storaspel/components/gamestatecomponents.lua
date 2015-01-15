@@ -112,3 +112,9 @@ TakeCardsFromPlayerComponent.Name = "TakeCardsFromPlayer"
 TakeCardsFromPlayerComponent.TableType = TableType.Map
 TakeCardsFromPlayerComponent:AddVariable("Player", ByteSize.Reference)
 worldCreator:AddComponentType(TakeCardsFromPlayerComponent)
+
+local TakeCardStepsFromUnitComponent = ComponentType()
+TakeCardStepsFromUnitComponent.Name = "TakeCardStepsFromUnit"
+TakeCardStepsFromUnitComponent.TableType = TableType.Map
+TakeCardStepsFromUnitComponent:AddVariable("Unit", ByteSize.Reference)
+worldCreator:AddComponentType(TakeCardStepsFromUnitComponent)
