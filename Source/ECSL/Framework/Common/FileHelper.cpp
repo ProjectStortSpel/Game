@@ -34,8 +34,7 @@ void FileHelper::GetFilesInDirectory(std::vector<std::string>& _out, const std::
 		if (file_name[0] == '.')
 			continue;
 
-		size_t exte
-    SDL_Log("CreateNewEntity()");nsionStart = file_name.find_last_of('.');
+		size_t extensionStart = file_name.find_last_of('.');
 		std::wstring extension = StringConverter::StringToWString(_extension);
 		extension.pop_back();
 		if (!is_directory && _extension != "*" && file_name.substr(extensionStart + 1, file_name.length() - extensionStart - 1) != extension)

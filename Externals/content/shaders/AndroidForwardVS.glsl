@@ -1,9 +1,8 @@
-
-layout( location = 0 ) attribute vec3 VertexPosition;
-layout( location = 1 ) attribute vec3 VertexNormal;
-layout( location = 2 ) attribute vec3 VertexTangent;
-layout( location = 3 ) attribute vec3 VertexBiTangent;
-layout( location = 4 ) attribute vec2 VertexTexCoord;
+attribute vec3 VertexPosition;
+attribute vec3 VertexNormal;
+attribute vec3 VertexTangent;
+attribute vec3 VertexBiTangent;
+attribute vec2 VertexTexCoord;
 
 varying vec3 Normal;
 varying vec3 Tan;
@@ -17,7 +16,7 @@ uniform mat3 NormalMatrix;
 
 void main()
 {
-	Normal = normalize( NormalMatrix * VertexNormal);
+	Normal = normalize(NormalMatrix * VertexNormal);
 	Tan = normalize( NormalMatrix * VertexTangent);
 	BiTan = normalize( NormalMatrix * VertexBiTangent);
 	TexCoord = VertexTexCoord;

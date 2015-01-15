@@ -38,10 +38,12 @@ int LoadMap()
 	{
 		nextFileIndex = source.find('\n', prevFileIndex);
 		if (nextFileIndex == std::string::npos)
-		  break;
+			nextFileIndex = source.size() - 1;
 		line = source.substr(prevFileIndex, nextFileIndex - prevFileIndex);
 		line.erase(std::remove(line.begin(), line.end(), 13), line.end());
 		prevFileIndex = nextFileIndex + 1;
+		if (prevFileIndex >= source.size())
+			prevFileIndex = std::string::npos;
 	  
 		if (x < line.size())
 		{
@@ -51,6 +53,9 @@ int LoadMap()
 		for (int i = 0; i < line.size(); i++)
 			map.push_back((int)line[i]);
 		y++;
+
+		if (prevFileIndex == std::string::npos)
+			break;
 	}
 
 	int* array = new int[map.size()];
