@@ -5,9 +5,9 @@
 # relying on foward compatibility reveals strange runtime error bugs on newer OS's and devices
 # that are really hard to diagnose and nobody at Google tests for because they all test the latest.)
 APP_PLATFORM := android-19
-APP_ABI := armeabi-v7a
+APP_ABI := armeabi armeabi-v7a x86
 APP_OPTIM := release
 #APP_OPTIM := debug
-APP_CPPFLAGS := -std=c++0x
+APP_CPPFLAGS := -std=gnu++0x
 APP_STL := gnustl_static
 STLPORT_FORCE_REBUILD := true

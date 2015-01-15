@@ -2,7 +2,11 @@
 #define MODELSYSTEM_H
 
 #include "ECSL/Interfaces/System.h"
+#ifdef __ANDROID__
+#include "AndroidRenderer/GraphicDevice.h"
+#else
 #include "Renderer/GraphicDevice.h"
+#endif
 
 
 class ModelSystem : public ECSL::System

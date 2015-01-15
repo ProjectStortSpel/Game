@@ -43,6 +43,8 @@ if Server then
 
 	require "sv_steptimersystem"
 	require "sv_playcardtimersystem"
+
+	require "sv_takecardsfromplayersystem"
 end
 
 
@@ -117,6 +119,8 @@ if Server then
 	
 	worldCreator:AddSystemToCurrentGroup(StepTimerSystem)
 	worldCreator:AddSystemToCurrentGroup(PlayCardTimerSystem)
+
+	worldCreator:AddSystemToCurrentGroup(TakeCardsFromPlayerSystem)
 	
 end
 

@@ -17,7 +17,7 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t& 
 	if (m_password->compare(password) == 0)
 	{
 		if (NET_DEBUG)
-			printf("Player accepted. IP: %s:%d\n", _connection.GetIpAddress(), _connection.GetPort());
+			SDL_Log("Player accepted. IP: %s:%d\n", _connection.GetIpAddress(), _connection.GetPort());
 
 		uint64_t id2 = _packetHandler->StartPack(NetTypeMessageId::ID_CONNECTION_ACCEPTED);
 		auto newPacket = _packetHandler->EndPack(id2);
@@ -38,7 +38,7 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t& 
 	else
 	{
 		if (NET_DEBUG)
-			printf("Player connected with invalid password. IP: %s:%d\n", _connection.GetIpAddress(), _connection.GetPort());
+			SDL_Log("Player connected with invalid password. IP: %s:%d\n", _connection.GetIpAddress(), _connection.GetPort());
 
 		uint64_t id2 = _packetHandler->StartPack(NetTypeMessageId::ID_PASSWORD_INVALID);
 		auto newPacket = _packetHandler->EndPack(id2);
@@ -53,7 +53,7 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t& 
 void ServerNetwork::NetConnectionLost(NetConnection& _connection)
 {
 	if (NET_DEBUG)
-		printf("Player timed out. IP: %s:%d\n", _connection.GetIpAddress(), _connection.GetPort());
+		SDL_Log("Player timed out. IP: %s:%d\n", _connection.GetIpAddress(), _connection.GetPort());
 
 	m_connectedClientsLock->lock();
 	(*m_connectedClients)[_connection]->SetActive(0);
@@ -77,7 +77,7 @@ void ServerNetwork::NetConnectionLost(NetConnection& _connection)
 void ServerNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection)
 {
 	if (NET_DEBUG)
-		printf("Player disconnected. IP: %s:%d\n", _connection.GetIpAddress(), _connection.GetPort());
+		SDL_Log("Player disconnected. IP: %s:%d\n", _connection.GetIpAddress(), _connection.GetPort());
 
 	m_connectedClientsLock->lock();
 	(*m_connectedClients)[_connection]->SetActive(0);
@@ -102,7 +102,7 @@ void ServerNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uin
 void ServerNetwork::NetPing(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection)
 {
 	if (NET_DEBUG)
-		printf("Ping from: %s:%d\n", _connection.GetIpAddress(), _connection.GetPort());
+		SDL_Log("Ping from: %s:%d\n", _connection.GetIpAddress(), _connection.GetPort());
 
 	uint64_t id = _packetHandler->StartPack(ID_PONG);
 	Packet* p = _packetHandler->EndPack(id);
@@ -112,7 +112,7 @@ void ServerNetwork::NetPing(PacketHandler* _packetHandler, uint64_t& _id, NetCon
 void ServerNetwork::NetPong(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection)
 {
 	if (NET_DEBUG)
-		printf("Pong from: %s:%d\n", _connection.GetIpAddress(), _connection.GetPort());
+		SDL_Log("Pong from: %s:%d\n", _connection.GetIpAddress(), _connection.GetPort());
 }
 
 ServerNetwork::ServerNetwork()
@@ -120,7 +120,7 @@ ServerNetwork::ServerNetwork()
 {
 
 	m_listenForConnectionsAlive = new bool(false);
-	m_maxConnections = new unsigned int(8);
+	m_maxConnections = new unsigned int(64);
 
 	m_listenSocket = 0;
 
@@ -202,11 +202,11 @@ bool ServerNetwork::Start()
 
 	if (NET_DEBUG)
 	{
-		printf("Starting server:\n");
-		printf("Ip address: \"INSERT IP HERE\"\n");
-		printf("Port: \"%i\"\n", *m_incomingPort);
-		printf("Password: \"%s\"\n", m_password->c_str());
-		printf("Max connections: \"%i\"\n", *m_maxConnections);
+		SDL_Log("Starting server:\n");
+		SDL_Log("Ip address: \"INSERT IP HERE\"\n");
+		SDL_Log("Port: \"%i\"\n", *m_incomingPort);
+		SDL_Log("Password: \"%s\"\n", m_password->c_str());
+		SDL_Log("Max connections: \"%i\"\n", *m_maxConnections);
 	}
 
 	if (!m_listenSocket->Listen(128))
@@ -276,7 +276,7 @@ void ServerNetwork::Broadcast(Packet* _packet, const NetConnection& _exclude)
 		int size = it->second->Send((char*)_packet->Data, *_packet->Length);
 
 		if (NET_DEBUG)
-			printf("Broadcasted packet with size %i\n", size);
+			SDL_Log("Broadcasted packet with size %i\n", size);
 
 		bytesSent += size;
 	}
@@ -306,7 +306,7 @@ void ServerNetwork::Send(Packet* _packet, NetConnection& _receiver)
 		m_connectedClientsLock->unlock();
 
 		if (NET_DEBUG)
-			printf("Connection to receiver \"%s:%i\" was not found.\n", _receiver.GetIpAddress(), _receiver.GetPort());
+			SDL_Log("Connection to receiver \"%s:%i\" was not found.\n", _receiver.GetIpAddress(), _receiver.GetPort());
 	}
 	else
 	{
@@ -374,7 +374,7 @@ void ServerNetwork::ReceivePackets(ISocket* _socket)
 			memcpy(p->Data, packetData, dataReceived);
 
 			if (NET_DEBUG)
-				printf("Received message with length \"%i\" from client \"%s:%i\".\n", dataReceived, p->Sender->GetIpAddress(), p->Sender->GetPort());
+				SDL_Log("Received message with length \"%i\" from client \"%s:%i\".\n", dataReceived, p->Sender->GetIpAddress(), p->Sender->GetPort());
 
 			HandlePacket(p);
 
@@ -407,7 +407,7 @@ void ServerNetwork::ReceivePackets(ISocket* _socket)
 void ServerNetwork::ListenForConnections(void)
 {
 	if (NET_DEBUG)
-		printf("Start listen for incoming connections.\n");
+		SDL_Log("Start listen for incoming connections.\n");
 
 	while (*m_listenForConnectionsAlive)
 	{
@@ -435,7 +435,7 @@ void ServerNetwork::ListenForConnections(void)
 
 			float bytesSent = newConnection->Send((char*)p->Data, *p->Length);
 
-			printf("%s:%d tried to connect, but the server is full.\n", nc.GetIpAddress(), nc.GetPort());
+			SDL_Log("%s:%d tried to connect, but the server is full.\n", nc.GetIpAddress(), nc.GetPort());
 
 			SAFE_DELETE(newConnection);
 
@@ -456,7 +456,7 @@ void ServerNetwork::ListenForConnections(void)
 
 
 		if (NET_DEBUG)
-			printf("New incoming connection from %s:%d\n", nc.GetIpAddress(), nc.GetPort());
+			SDL_Log("New incoming connection from %s:%d\n", nc.GetIpAddress(), nc.GetPort());
 
 		(*m_receivePacketsThreads)[nc] = std::thread(&ServerNetwork::ReceivePackets, this, newConnection);
 		m_timeOutLock->lock();
@@ -532,7 +532,7 @@ void ServerNetwork::UpdateTimeOut(float& _dt)
 void ServerNetwork::SetOnPlayerConnected(NetEvent& _function)
 {
 	if (NET_DEBUG)
-		printf("Hooking function to OnPlayerConnected.\n");
+		SDL_Log("Hooking function to OnPlayerConnected.\n");
 
 	m_onPlayerConnected->push_back(_function);
 }
@@ -540,7 +540,7 @@ void ServerNetwork::SetOnPlayerConnected(NetEvent& _function)
 void ServerNetwork::SetOnPlayerDisconnected(NetEvent& _function)
 {
 	if (NET_DEBUG)
-		printf("Hooking function to OnPlayerDisconnected.\n");
+		SDL_Log("Hooking function to OnPlayerDisconnected.\n");
 
 	m_onPlayerDisconnected->push_back(_function);
 }
@@ -548,7 +548,7 @@ void ServerNetwork::SetOnPlayerDisconnected(NetEvent& _function)
 void ServerNetwork::SetOnPlayerTimedOut(NetEvent& _function)
 {
 	if (NET_DEBUG)
-		printf("Hooking function to OnPlayerTimedOut.\n");
+		SDL_Log("Hooking function to OnPlayerTimedOut.\n");
 
 	m_onPlayerTimedOut->push_back(_function);
 }

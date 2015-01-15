@@ -32,8 +32,6 @@ namespace LuaEmbedder
     delete source;
     // Set directory string
     std::string directory = filepath.substr(0, filepath.rfind('\\/') + 1);
-    
-    SDL_Log("Do file: %s", filepath.c_str());
 
     size_t prevPackagePathIndex = 0;
     size_t prevRequireIndex = 0;
@@ -131,7 +129,7 @@ namespace LuaEmbedder
     lua_gc(L, LUA_GCCOLLECT, 0);
     if (error)
     {
-      std::cerr << "LuaEmbedder::CallFunction : " << (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error") << std::endl;
+	  SDL_Log("LuaEmbedder::CallFunction : %s", (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error"));
       return false;
     }
     return true;
@@ -229,25 +227,25 @@ namespace LuaEmbedder
   float PullFloat(int index)
   {
     if (!lua_isnumber(L, index))
-      std::cerr << "LuaEmbedder::PullFloat : Element at index " << index << " is not a number" << std::endl;
+	  SDL_Log("LuaEmbedder::PullFloat : Element at index %d is not a number", index);
     return (float)lua_tonumber(L, index);
   }
   int PullInt(int index)
   {
     if (!lua_isnumber(L, index))
-      std::cerr << "LuaEmbedder::PullInt : Element at index " << index << " is not a number" << std::endl;
+	  SDL_Log("LuaEmbedder::PullInt : Element at index %d is not a number", index);
     return (int)lua_tointeger(L, index);
   }
   bool PullBool(int index)
   {
     if (!lua_isboolean(L, index))
-      std::cerr << "LuaEmbedder::PullBool : Element at index " << index << " is not a boolean" << std::endl;
+	  SDL_Log("LuaEmbedder::PullBool : Element at index %d is not a boolean", index);
     return (bool)lua_toboolean(L, index);
   }
   std::string PullString(int index)
   {
     if (!lua_isstring(L, index))
-      std::cerr << "LuaEmbedder::PullString : Element at index " << index << " is not a string" << std::endl;
+      SDL_Log("LuaEmbedder::PullString : Element at index %d is not a string", index);
     return std::string(lua_tostring(L, index));
   }
   #define PULL_GLOBAL_VARIABLE() \
@@ -362,7 +360,7 @@ namespace LuaEmbedder
   {
     if (!lua_isfunction(L, index))
     {
-      std::cerr << "LuaEmbedder::SaveFunction : Element at index " << index << " is not a function" << std::endl;
+      SDL_Log("LuaEmbedder::SaveFunction : Element at index %d is not a function", index);
       return;
     }
     
@@ -388,7 +386,7 @@ namespace LuaEmbedder
     lua_getglobal(L, "saved_functions");
     if (lua_isnil(L, -1))
     {
-      std::cerr << "LuaEmbedder::CallSavedFunction : Invalid key " << key << std::endl;
+      SDL_Log("LuaEmbedder::CallSavedFunction : Invalid key %s", key.c_str());
       return false;
     }
     
@@ -396,7 +394,7 @@ namespace LuaEmbedder
     lua_gettable(L, -2);
     if (lua_isnil(L, -1))
     {
-      std::cerr << "LuaEmbedder::CallSavedFunction : Invalid key " << key << std::endl;
+      SDL_Log("LuaEmbedder::CallSavedFunction : Invalid key %s", key.c_str());
       return false;
     }
     
@@ -407,7 +405,7 @@ namespace LuaEmbedder
     lua_gc(L, LUA_GCCOLLECT, 0);
     if (error)
     {
-      std::cerr << "LuaEmbedder::CallFunction : " << (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error") << std::endl;
+      SDL_Log("LuaEmbedder::CallFunction : %s", (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error"));
       return false;
     }
     

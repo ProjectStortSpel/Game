@@ -122,3 +122,9 @@ local IsSpectator = ComponentType()
 IsSpectator.Name = "IsSpectator"
 IsSpectator.TableType = TableType.Map
 worldCreator:AddComponentType(IsSpectator)
+
+-- PlayerIndicator Component
+local PlayerIndicator = ComponentType()
+PlayerIndicator.Name = "PlayerIndicator"
+PlayerIndicator.TableType = TableType.Map
+worldCreator:AddComponentType(PlayerIndicator)
