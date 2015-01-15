@@ -1,5 +1,4 @@
 CardPositionSystem = System()
-CardPositionSystem.Scale = 1
 CardPositionSystem.UpOffset = -0.2
 
 CardPositionSystem.Update = function(self, dt)
@@ -11,7 +10,7 @@ CardPositionSystem.Update = function(self, dt)
 		local offsetYfactor = 1.5
 		local entity = entities[i]
 
-		if world:EntityHasComponent(entity, "SelectCard") then
+		if world:EntityHasComponent(entity, "CardSelected") then
 
 			local data = self:GetComponent(entity, "SelectCard", "Index"):GetInt()
 			offsetYfactor = 1.2 - (data*0.08)
@@ -19,8 +18,8 @@ CardPositionSystem.Update = function(self, dt)
 		end
 
 		local halfentities = #entities/2
-		px = (-halfentities + index - 0.5) * self.Scale * 0.8
-		py = -offsetYfactor * self.Scale
+		px = (-halfentities + index - 0.5) * 0.8
+		py = -offsetYfactor
 		pz = -4
 		
 		local position = self:GetComponent(entity, "Position", 0)
@@ -28,9 +27,6 @@ CardPositionSystem.Update = function(self, dt)
 		
 		local rotation = self:GetComponent(entity, "Rotation", 0)
 		rotation:SetFloat3(0, 3.14159265358979, 1.50 * 3.14159265358979)
-		
-		local scale = self:GetComponent(entity, "Scale", 0)
-		scale:SetFloat3(self.Scale, self.Scale, self.Scale)
 	end
 end
 
@@ -54,13 +50,10 @@ CardPositionSystem.OnEntityAdded = function(self, entityId)
 	world:CreateComponentAndAddTo("PickBox", entityId)
 	
 	local pickbox = self:GetComponent(entityId, "PickBox", 0)
-	
 	pickbox:SetFloat2(0.6, 1.0)
 	
-	local a, b = pickbox:GetFloat2()
-	
-	
-	print (a.." : "..b)
+	local scale = self:GetComponent(entityId, "Scale", 0)
+	scale:SetFloat3(1, 1, 1)
 	
 	local model = self:GetComponent(entityId, "Model", 0)
 	local action = self:GetComponent(entityId, "CardAction", 0):GetString()

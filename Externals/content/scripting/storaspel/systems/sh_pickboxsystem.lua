@@ -2,17 +2,15 @@ PickBoxSystem = System()
 
 PickBoxSystem.Update = function(self, dt)
 
-	-- TODO: Fetch aspectratio from graphics:
-	local AspectX = 1
-	local AspectY = 0.5625
+	-- Fetch Aspect ratio from graphics:
+	local AspectX, AspectY = graphics:GetAspectRatio()
 
-	-- Get stuff for ray
-	local mX, mY = Input.GetMousePosition()
-	local wX, wY = graphics:GetWindowSize()
-	
-	-- calc viewspace ray dir
-	local rX = (mX/wX - 0.5) * AspectX * -2
-	local rY = (-mY/wY + 0.5) * AspectY * -2
+	-- Get touch position for ray
+	local tX, tY = graphics:GetTouchPosition()
+
+	-- Calc view space ray dir
+	local rX = tX * AspectX * -2
+	local rY = tY * AspectY * -2
 	
 	---- intersect section
 	local entities = self:GetEntities()

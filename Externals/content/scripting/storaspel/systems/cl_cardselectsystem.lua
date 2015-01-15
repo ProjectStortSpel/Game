@@ -2,7 +2,7 @@ CardSelectSystem = System()
 
 CardSelectSystem.Update = function(self, dt)
 
-	if Input.GetMouseButtonState(MouseButton.LeftButton) == InputState.Released then
+	if Input.GetTouchState() == InputState.Released then
 	
 		-- TODO gör så att de bara går att selecta i selection phase
 		local entities = self:GetEntities()

@@ -1,6 +1,5 @@
 CardHoverSystem = System()
 CardHoverSystem.Scale = 1.1
-CardHoverSystem.UpOffset = -0.2
 
 CardHoverSystem.Update = function(self, dt)
 
@@ -9,13 +8,10 @@ CardHoverSystem.Update = function(self, dt)
 		local entity = entities[i]
     
 		local action = self:GetComponent(entity, "CardAction", 0):GetString()
-		local scale = self:GetComponent(entity, "Scale", 0)
 		local prio = self:GetComponent(entity, "CardPrio", 0):GetInt()
 		
 		graphics:RenderSimpleText(action, 0,44)
 		graphics:RenderSimpleText(prio, 15,44)
-		
-		scale:SetFloat3(self.Scale, self.Scale, self.Scale)
 		
 	end
 		
@@ -28,4 +24,24 @@ CardHoverSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("OnPickBoxHit", FilterType.Mandatory)
 	
 	print("Card hover System initialized!")
+end
+
+CardHoverSystem.OnEntityAdded = function(self, entityId)
+
+	local action = self:GetComponent(entityId, "CardAction", 0):GetString()
+	local scale = self:GetComponent(entityId, "Scale", 0)
+	local prio = self:GetComponent(entityId, "CardPrio", 0):GetInt()
+	
+	graphics:RenderSimpleText(action, 0,44)
+	graphics:RenderSimpleText(prio, 15,44)
+	
+	scale:SetFloat3(self.Scale, self.Scale, self.Scale)
+		
+end
+
+CardHoverSystem.OnEntityRemoved = function(self, entityId)
+
+	local scale = self:GetComponent(entityId, "Scale", 0)
+	scale:SetFloat3(1, 1, 1)
+		
 end
