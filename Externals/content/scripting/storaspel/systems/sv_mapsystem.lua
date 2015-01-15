@@ -5,7 +5,7 @@ MapSystem.mapY = 0
 
 MapSystem.PostInitialize = function(self)
 	local map
-    self.mapX, self.mapY, map = File.LoadMap("content/maps/map.txt")
+    self.mapX, self.mapY, map = File.LoadMap("content/maps/map2.txt")
     local posX, posZ
 		
 	for x = 0, self.mapX+1 do
@@ -148,7 +148,7 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
 		--posComp:SetFloat3(posX, 1.0, posZ)
 
     elseif tiletype == 102 then -- 102 = f = finish
-        world:CreateComponentAndAddTo("Finish", entity)
+        world:CreateComponentAndAddTo("Finishpoint", entity)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
 		comp:SetModel("finish", "finish", 0)

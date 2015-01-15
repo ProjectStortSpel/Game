@@ -32,6 +32,7 @@ if Server then
 
 	require "sv_postmovesystem"
 	require "sv_checkpointsystem"
+	require "sv_finishsystem"
 	require "sv_voidsystem"
 	require "sv_riversystem"
 	require "sv_respawnsystem"
@@ -96,6 +97,7 @@ if Server then
 	worldCreator:AddSystemToCurrentGroup(PlayCardSystem)
 
 	worldCreator:AddSystemToCurrentGroup(PostMoveSystem)
+	worldCreator:AddSystemToCurrentGroup(FinishSystem)
 	worldCreator:AddSystemToCurrentGroup(CheckpointSystem)
 	worldCreator:AddSystemToCurrentGroup(VoidSystem)
 	worldCreator:AddSystemToCurrentGroup(RiverSystem)

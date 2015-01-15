@@ -70,6 +70,11 @@ CheckCheckpointComponent.Name = "CheckCheckpoint"
 CheckCheckpointComponent.TableType = TableType.Map
 worldCreator:AddComponentType(CheckCheckpointComponent)
 
+local CheckFinishpointComponent = ComponentType()
+CheckFinishpointComponent.Name = "CheckFinishpoint"
+CheckFinishpointComponent.TableType = TableType.Map
+worldCreator:AddComponentType(CheckFinishpointComponent)
+
 local UpdateSpawnpointComponent = ComponentType()
 UpdateSpawnpointComponent.Name = "UpdateSpawnpoint"
 UpdateSpawnpointComponent:AddVariable("Unit", ByteSize.Reference)
