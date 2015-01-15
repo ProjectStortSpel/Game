@@ -67,6 +67,9 @@ void Camera::UpdateTouch(float dx, float dy)
 
 mat4* Camera::GetViewMatrix()
 {
+	//if (m_pos.y > 1.2)
+		//m_pos -= vec3(0.0, 0.025, -0.002);
+
 	m_viewMatrix = glm::lookAt(m_pos, m_pos + m_look, m_up);
 
 	return &m_viewMatrix;

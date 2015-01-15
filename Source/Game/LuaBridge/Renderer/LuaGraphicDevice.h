@@ -1,7 +1,11 @@
 #ifndef LUAGRAPHICDEVICE_H
 #define LUAGRAPHICDEVICE_H
 
+#ifdef __ANDROID__
+#include "AndroidRenderer/GraphicDevice.h"
+#else
 #include "Renderer/GraphicDevice.h"
+#endif
 
 namespace LuaBridge
 {

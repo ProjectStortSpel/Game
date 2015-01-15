@@ -19,20 +19,29 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Source\Input\Devices\Keyboard.cpp" />
-    <ClCompile Include="..\..\..\Source\Input\Devices\Mouse.cpp" />
-    <ClCompile Include="..\..\..\Source\Input\Devices\Touch.cpp" />
-    <ClCompile Include="..\..\..\Source\Input\InputWrapper.cpp" />
+    <ClCompile Include="..\..\..\Source\AndroidRenderer\Buffer.cpp" />
+    <ClCompile Include="..\..\..\Source\AndroidRenderer\Camera.cpp" />
+    <ClCompile Include="..\..\..\Source\AndroidRenderer\GraphicDevice.cpp" />
+    <ClCompile Include="..\..\..\Source\AndroidRenderer\Shader.cpp" />
+    <ClCompile Include="..\..\..\Source\AndroidRenderer\SkyBox.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Source\Input\Devices\Keyboard.h" />
-    <ClInclude Include="..\..\..\Source\Input\Devices\Mouse.h" />
-    <ClInclude Include="..\..\..\Source\Input\Devices\Touch.h" />
-    <ClInclude Include="..\..\..\Source\Input\InputEnums.h" />
-    <ClInclude Include="..\..\..\Source\Input\InputWrapper.h" />
+    <ClInclude Include="..\..\..\Source\AndroidRenderer\Buffer.h" />
+    <ClInclude Include="..\..\..\Source\AndroidRenderer\Camera.h" />
+    <ClInclude Include="..\..\..\Source\AndroidRenderer\GraphicDevice.h" />
+    <ClInclude Include="..\..\..\Source\AndroidRenderer\ModelExporter.h" />
+    <ClInclude Include="..\..\..\Source\AndroidRenderer\ModelLoader.h" />
+    <ClInclude Include="..\..\..\Source\AndroidRenderer\Shader.h" />
+    <ClInclude Include="..\..\..\Source\AndroidRenderer\SkyBox.h" />
+    <ClInclude Include="..\..\..\Source\AndroidRenderer\stdafx.h" />
+    <ClInclude Include="..\..\..\Source\AndroidRenderer\TextureLoader.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Android\app\assets\content\shaders\AndroidForwardFS.glsl" />
+    <None Include="..\..\Android\app\assets\content\shaders\AndroidForwardVS.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{9CBEB33A-B752-47FA-8995-C717E1BC509D}</ProjectGuid>
+    <ProjectGuid>{FB35D84C-BAE5-47E2-8A37-C81AE2184C76}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>SampleDLL</RootNamespace>
   </PropertyGroup>
@@ -125,10 +134,15 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
+if not exist "$(OutDir)content" mkdir "$(OutDir)content"
+xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -144,10 +158,15 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
+if not exist "$(OutDir)content" mkdir "$(OutDir)content"
+xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -167,10 +186,15 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
+if not exist "$(OutDir)content" mkdir "$(OutDir)content"
+xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -190,10 +214,15 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
+if not exist "$(OutDir)content" mkdir "$(OutDir)content"
+xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

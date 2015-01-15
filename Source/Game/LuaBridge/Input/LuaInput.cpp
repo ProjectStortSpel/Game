@@ -10,6 +10,9 @@ namespace LuaBridge
     int GetMousePosition();
 	int GetMouseScreenPosition();
     int GetDeltaMousePosition(); 
+	int GetFingerState();
+	int GetFingerPosition();
+	int GetFingerDeltaPosition();
     
     void Embed() 
     {
@@ -18,6 +21,9 @@ namespace LuaBridge
       LuaEmbedder::AddFunction("GetMousePosition", &GetMousePosition, "Input");
 	  LuaEmbedder::AddFunction("GetMouseScreenPosition", &GetMouseScreenPosition, "Input");
       LuaEmbedder::AddFunction("GetDeltaMousePosition", &GetDeltaMousePosition, "Input");
+	  LuaEmbedder::AddFunction("GetFingerState", &GetFingerState, "Input");
+	  LuaEmbedder::AddFunction("GetFingerPosition", &GetFingerPosition, "Input");
+	  LuaEmbedder::AddFunction("GetFingerDeltaPosition", &GetFingerDeltaPosition, "Input");
       
       LuaEmbedder::AddInt("Up", (int)Input::InputState::UP, "InputState");
       LuaEmbedder::AddInt("Down", (int)Input::InputState::DOWN, "InputState");
@@ -118,5 +124,31 @@ namespace LuaBridge
       LuaEmbedder::PushInt(inputWrapper.GetMouse()->GetdY());
       return 2;
     }
+
+	int GetFingerState()
+	{
+		Input::InputWrapper& inputWrapper = Input::InputWrapper::GetInstance();
+		int fingerState = inputWrapper.GetTouch()->GetFingerState((SDL_FingerID)LuaEmbedder::PullInt(1));
+		LuaEmbedder::PushInt(fingerState);
+		return 1;
+	}
+
+	int GetFingerPosition()
+	{
+		Input::InputWrapper& inputWrapper = Input::InputWrapper::GetInstance();
+		SDL_FingerID finger = (SDL_FingerID)LuaEmbedder::PullInt(1);
+		LuaEmbedder::PushFloat(inputWrapper.GetTouch()->GetX(finger));
+		LuaEmbedder::PushFloat(inputWrapper.GetTouch()->GetY(finger));
+		return 2;
+	}
+
+	int GetFingerDeltaPosition()
+	{
+		Input::InputWrapper& inputWrapper = Input::InputWrapper::GetInstance();
+		SDL_FingerID finger = (SDL_FingerID)LuaEmbedder::PullInt(1);
+		LuaEmbedder::PushFloat(inputWrapper.GetTouch()->GetdX(finger));
+		LuaEmbedder::PushFloat(inputWrapper.GetTouch()->GetdY(finger));
+		return 2;
+	}
   }
 }

@@ -31,6 +31,7 @@
 #define LUNA_H
 
 #include <Lua/lua.hpp>
+#include <SDL/SDL.h>
 #include <string.h> // For strlen
 #include <vector>
 #include <assert.h>
@@ -348,7 +349,7 @@ namespace LuaEmbedder
       int base = lua_gettop(L) - argumentCount;
       if (!luaL_checkudata(L, base, className))
       {
-	std::cerr << "Luna::CallMethod : Object of class " << className << " undefined in Lua" << std::endl;
+	SDL_Log("Luna::CallMethod : Object of class %s undefined in Lua", className);
 	lua_pop(L, argumentCount + 1);
 	return -1;
       }
@@ -356,7 +357,7 @@ namespace LuaEmbedder
       lua_gettable(L, base);
       if (lua_isnil(L, -1))
       {
-	std::cerr << "Luna::CallMethod : Method " << methodName << " of class " << className << " undefined" << std::endl;
+	SDL_Log("Luna::CallMethod : Method %s of class %s undefined", methodName, className);
 	lua_pop(L, argumentCount + 2);
 	return -1;
       }
@@ -365,7 +366,7 @@ namespace LuaEmbedder
       lua_gc(L, LUA_GCCOLLECT, 0);
       if (status != 0)
       {
-	std::cerr << "Luna::CallMethod : " << (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error") << std::endl;
+	SDL_Log("Luna::CallMethod : %s", (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error"));
 	lua_pop(L, 1);
 	return -1;
       }

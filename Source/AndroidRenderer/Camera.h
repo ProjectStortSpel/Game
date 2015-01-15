@@ -3,8 +3,6 @@
 #define CAMERA_H
 #include "stdafx.h"
 
-#define M_PI 3.14159265359
-
 using glm::vec3; 
 using glm::vec4;
 using glm::mat4;
