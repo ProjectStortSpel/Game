@@ -65,7 +65,7 @@ void CameraSystem::Update(float _dt)
 		m_graphics->GetCamera()->MoveRight(_dt);
 
 	// ROTATE CAMERA
-	if (m_input->GetMouse()->GetButtonState(Input::LeftButton) == Input::InputState::DOWN)
+	if (m_input->GetMouse()->GetButtonState(Input::RightButton) == Input::InputState::DOWN)
 	{
 		int sizeX, sizeY;
 		m_graphics->GetWindowSize(sizeX, sizeY);

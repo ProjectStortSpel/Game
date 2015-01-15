@@ -1,53 +1,31 @@
 CardHoverSystem = System()
-CardHoverSystem.Scale = 0.6
+CardHoverSystem.Scale = 1.1
 CardHoverSystem.UpOffset = -0.2
 
 CardHoverSystem.Update = function(self, dt)
 
-	if Input.GetMouseButtonState(MouseButton.RightButton) == InputState.Down then
-		local entities = self:GetEntities()
-		for i = 1, #entities do
-			local entity = entities[i]
-			
-			local index = world:GetComponent(entities[i], "CardIndex", "Index"):GetInt()
-			
-			local scale = self:GetComponent(entity, "Scale", 0)
-			
-			local position = self:GetComponent(entity, "Position", 0)
-			
-			X, Y, Z = position:GetFloat3()
-			
-			mX, mY = Input.GetMousePosition()
-
-			wX, wY = graphics:GetWindowSize()
-			
-			pX = 0.25*X*wX+wX/2
-			pY = wY-0.445*Y*wY-wY/2
-			if mX > pX-50 and mX < pX+50 then
-				if mY > pY-100 and mY < pY+100 then
-
-					local scale = self:GetComponent(entity, "Scale", 0)
-					
-					local action = self:GetComponent(entity, "CardAction", 0):GetString()
-					
-					local prio = self:GetComponent(entity, "CardPrio", 0):GetInt()
-					
-					graphics:RenderSimpleText(action, 0,44)
-					graphics:RenderSimpleText(prio, 15,44)
-					
-					scale:SetFloat3(self.Scale, self.Scale, self.Scale)
-					
-				end
-			end
-		end
+	local entities = self:GetEntities()
+	for i = 1, #entities do
+		local entity = entities[i]
+    
+		local action = self:GetComponent(entity, "CardAction", 0):GetString()
+		local scale = self:GetComponent(entity, "Scale", 0)
+		local prio = self:GetComponent(entity, "CardPrio", 0):GetInt()
+		
+		graphics:RenderSimpleText(action, 0,44)
+		graphics:RenderSimpleText(prio, 15,44)
+		
+		scale:SetFloat3(self.Scale, self.Scale, self.Scale)
+		
 	end
+		
 end
 
 CardHoverSystem.Initialize = function(self)
 	self:SetName("Card hover System")
-	--self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
+	self:AddComponentTypeToFilter("CardPrio", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("CardAction", FilterType.Mandatory)
-	self:AddComponentTypeToFilter("CardIndex", FilterType.Mandatory)
+	self:AddComponentTypeToFilter("OnPickBoxHit", FilterType.Mandatory)
 	
 	print("Card hover System initialized!")
 end
