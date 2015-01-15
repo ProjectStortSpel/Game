@@ -104,9 +104,6 @@ void GraphicDevice::Render()
 
 	for (int i = 0; i < m_modelsForward.size(); i++)
 	{
-		//std::vector<mat4> modelViewVector(m_modelsForward[i].instances.size());
-		//std::vector<mat3> normalMatVector(m_modelsForward[i].instances.size());
-
 		if (m_modelsForward[i].active) // IS MODEL ACTIVE?
 		{
 			mat4 modelMatrix;
@@ -131,6 +128,41 @@ void GraphicDevice::Render()
 			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].speID);
 
 			m_modelsForward[i].bufferPtr->draw();
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+	}
+
+
+	// RENDER VIEWSPACE STUFF
+	m_viewspaceShader.UseProgram();
+	m_viewspaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
+
+	for (int i = 0; i < m_modelsViewspace.size(); i++)
+	{
+		if (m_modelsViewspace[i].active) // IS MODEL ACTIVE?
+		{
+			mat4 modelMatrix;
+			if (m_modelsViewspace[i].modelMatrix == NULL)
+				modelMatrix = glm::translate(glm::vec3(1));
+			else
+				modelMatrix = *m_modelsViewspace[i].modelMatrix;
+
+			mat4 modelViewMatrix = viewMatrix * modelMatrix;
+			m_forwardShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
+
+			mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
+			m_forwardShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
+
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, m_modelsViewspace[i].texID);
+
+			glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, m_modelsViewspace[i].norID);
+
+			glActiveTexture(GL_TEXTURE3);
+			glBindTexture(GL_TEXTURE_2D, m_modelsViewspace[i].speID);
+
+			m_modelsViewspace[i].bufferPtr->draw();
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 	}
@@ -199,16 +231,17 @@ bool GraphicDevice::InitSDLWindow()
 
 bool GraphicDevice::InitShaders()
 {
-	// Deferred pass 1
-	/*m_deferredShader1.InitShaderProgram();
-	m_deferredShader1.AddShader("content/shaders/VSDeferredPass1.glsl", GL_VERTEX_SHADER);
-	m_deferredShader1.AddShader("content/shaders/FSDeferredPass1.glsl", GL_FRAGMENT_SHADER);
-	m_deferredShader1.FinalizeShaderProgram();*/
-
+	// Standard forward
 	m_forwardShader.InitShaderProgram();
 	m_forwardShader.AddShader("content/shaders/AndroidForwardVS.glsl", GL_VERTEX_SHADER);
 	m_forwardShader.AddShader("content/shaders/AndroidForwardFS.glsl", GL_FRAGMENT_SHADER);
 	m_forwardShader.FinalizeShaderProgram();
+
+	// Viewspace shader
+	m_viewspaceShader.InitShaderProgram();
+	m_viewspaceShader.AddShader("content/shaders/AndroidViewspaceShaderVS.glsl", GL_VERTEX_SHADER);
+	m_viewspaceShader.AddShader("content/shaders/AndroidViewspaceShaderFS.glsl", GL_FRAGMENT_SHADER);
+	m_viewspaceShader.FinalizeShaderProgram();
 
 	return true;
 }
@@ -293,11 +326,30 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 	int modelID = m_modelIDcounter;
 	m_modelIDcounter++;
 
-	Shader *shaderPtr = &m_forwardShader;
-	m_forwardShader.UseProgram();
+	//Shader *shaderPtr = &m_forwardShader;
+	//m_forwardShader.UseProgram();
+
+	Shader *shaderPtr = NULL;
+
+	if (_renderType == RENDER_FORWARD)
+	{
+		shaderPtr = &m_forwardShader;
+		m_forwardShader.UseProgram();
+	}
+	else if (_renderType == RENDER_VIEWSPACE)
+	{
+		shaderPtr = &m_viewspaceShader;
+		m_viewspaceShader.UseProgram();
+	}
+	/*else if (_renderType == RENDER_INTERFACE)
+	{
+		shaderPtr = &m_interfaceShader;
+		m_interfaceShader.UseProgram();
+	}*/
+	else
+		ERRORMSG("ERROR: INVALID RENDER SETTING");
 
 	// Import Object
-	//ObjectData obj = AddObject(_dir, _file);
 	ObjectData obj = ModelLoader::importObject(_dir, _file);
 
 	// Import Texture
@@ -317,9 +369,14 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 
 	Model model = Model(mesh, texture, normal, specular, modelID, true, _matrixPtr); // plus modelID o matrixPointer, active
 
-	
+
 	// Push back the model
-	m_modelsForward.push_back(model);
+	if (_renderType == RENDER_FORWARD)
+		m_modelsForward.push_back(model);
+	else if (_renderType == RENDER_VIEWSPACE)
+		m_modelsViewspace.push_back(model);
+	//else if (_renderType == RENDER_INTERFACE)
+	//	m_modelsInterface.push_back(model);
 
 	return modelID;
 }
