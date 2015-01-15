@@ -11,35 +11,40 @@ end
 SortSelectedCardSystem.OnEntityAdded = function( self, entityId )
 
 	local cards = self:GetEntities()
+	if #cards <= 5 then
+		local index = 1
+		for i = 1, #cards do
+			
+			if world:EntityHasComponent(cards[i], "CardSelected") then
+				index = index + 1
+			end
 
-	local index = 1
-	for i = 1, #cards do
-		
-		if world:EntityHasComponent(cards[i], "CardSelected") then
-			index = index + 1
 		end
 
+		world:SetComponent(entityId, "SelectCard", "Index", index)
+		world:CreateComponentAndAddTo("CardSelected", entityId)
+	else
+		world:RemoveComponentFrom("SelectCard", entityId)
 	end
-
-	world:SetComponent(entityId, "SelectCard", "Index", index)
-	world:CreateComponentAndAddTo("CardSelected", entityId)
-
 end
 
 
 SortSelectedCardSystem.OnEntityRemoved = function( self, entityId )
 
-	local index = world:GetComponent(entityId, "SelectCard", "Index"):GetInt()
+	if world:EntityHasComponent(entityId, "CardSelected") then
+	
+		local index = world:GetComponent(entityId, "SelectCard", "Index"):GetInt()
 
-	local cards = self:GetEntities()
+		local cards = self:GetEntities()
 
-	for i = 1, #cards do
-		local index2 = world:GetComponent(cards[i], "SelectCard", "Index"):GetInt()
-		
-		if index2 > index then
-			world:SetComponent(cards[i], "SelectCard", "Index", index2 - 1)
+		for i = 1, #cards do
+			local index2 = world:GetComponent(cards[i], "SelectCard", "Index"):GetInt()
+			
+			if index2 > index then
+				world:SetComponent(cards[i], "SelectCard", "Index", index2 - 1)
+			end
+
 		end
 
 	end
-
 end

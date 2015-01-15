@@ -7,6 +7,8 @@
 #include "Renderer/GraphicDevice.h"
 #endif
 
+#include "Input/InputWrapper.h"
+
 namespace LuaBridge
 {
   class LuaGraphicDevice : public Renderer::GraphicDevice
@@ -17,6 +19,9 @@ namespace LuaBridge
     static void Embed();
     
   private:
+	int GetAspectRatio();
+	int GetTouchPosition();
+
     int ResizeWindow();
     int SetTitle();
     
