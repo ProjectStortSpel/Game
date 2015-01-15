@@ -10,6 +10,7 @@ DealCardsSystem.Initialize = function ( self )
 	self:AddComponentTypeToFilter("UsedCard", FilterType.Excluded)
 	self:AddComponentTypeToFilter("CardStep", FilterType.Excluded)
 	self:AddComponentTypeToFilter("DealtCard", FilterType.Excluded)
+	self:AddComponentTypeToFilter("IsSpectator", FilterType.Excluded)
 
 	print("DealCardsSystem Initialized")
 end
@@ -24,6 +25,10 @@ DealCardsSystem.OnEntityAdded = function(self, entityId)
 
 	end
 	
+end
+
+DealCardsSystem.OnEntityRemoved = function(self, entityId)
+
 end
 
 DealCardsSystem.DealCards = function (self, numCards)
@@ -55,8 +60,8 @@ DealCardsSystem.DealCards = function (self, numCards)
 		for j = 1, numCards do
 
 			local cardIndex = math.random(1, cardsLeft)
-
 			local card = cards[cardIndex]
+			
 			world:CreateComponentAndAddTo("DealtCard", card)
 			world:SetComponent(card, "DealtCard", "PlayerEntityId", players[i])
 			
@@ -68,7 +73,7 @@ DealCardsSystem.DealCards = function (self, numCards)
 		
 		Net.Send(Net.StartPack("Client.SelectCards"), ip, port)
 	end
-
+	
 end
 
 Net.Receive("Server.SelectCards", 

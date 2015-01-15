@@ -117,12 +117,8 @@ AvailableSpawnpoint:AddVariable("X", ByteSize.Int)
 AvailableSpawnpoint:AddVariable("Z", ByteSize.Int)
 worldCreator:AddComponentType(AvailableSpawnpoint)
 
-
-
-
-
-
-
-
-
-
+-- IsSpectator Component
+local IsSpectator = ComponentType()
+IsSpectator.Name = "IsSpectator"
+IsSpectator.TableType = TableType.Map
+worldCreator:AddComponentType(IsSpectator)

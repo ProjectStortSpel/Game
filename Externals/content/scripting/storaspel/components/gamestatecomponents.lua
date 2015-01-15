@@ -98,3 +98,13 @@ local EndRoundComponent = ComponentType()
 EndRoundComponent.Name = "EndRound"
 EndRoundComponent.TableType = TableType.Map
 worldCreator:AddComponentType(EndRoundComponent)
+
+
+
+local TestRiverComponent = ComponentType()
+TestRiverComponent.Name = "TestRiver"
+TestRiverComponent.TableType = TableType.Map
+TestRiverComponent:AddVariable("Unit", ByteSize.Reference)
+TestRiverComponent:AddVariable("PosX", ByteSize.Int)
+TestRiverComponent:AddVariable("PosZ", ByteSize.Int)
+worldCreator:AddComponentType(TestRiverComponent)

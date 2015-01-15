@@ -12,19 +12,21 @@ int LoadMap()
 
 	std::vector<int> map;
 
+	int x = 0;
 	int y = 0;  
 	while (std::getline(file, line))
 	{
+		if (x < line.size())
+		{
+			x = line.size();
+			std::cout << x << std::endl;
+		}
 		for (int i = 0; i < line.size(); i++)
 			map.push_back((int)line[i]);
 		y++;
 	}
 	file.close();
 
-	int x = 0;
-	if ( y != 0 ) 
-		 x = map.size() / y;
-	
 	int* array = new int[map.size()];
 	memcpy(array, map.data(), map.size() * sizeof(int));
 

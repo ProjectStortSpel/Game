@@ -273,6 +273,8 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <None Include="..\..\..\Externals\content\scripting\storaspel\components\phasecomponents.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\components\playercomponents.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\init.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_playerdonevisualizersystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_playerindicatorsystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sh_moveplayersystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_selectcardsystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_cardpositionsystem.lua" />
@@ -288,9 +290,11 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sh_movementsystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\networkconnectsystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sh_networkmessagessystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_checkpointsystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_createdecksystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_createspawnpointsystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_dealcardssystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_finishsystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_lobbysystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_mapsystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_moveplayersystem.lua" />
