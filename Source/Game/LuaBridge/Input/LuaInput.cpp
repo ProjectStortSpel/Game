@@ -8,6 +8,7 @@ namespace LuaBridge
     int GetKeyState();
     int GetMouseButtonState();
     int GetMousePosition();
+	int GetMouseScreenPosition();
     int GetDeltaMousePosition(); 
     
     void Embed() 
@@ -15,6 +16,7 @@ namespace LuaBridge
       LuaEmbedder::AddFunction("GetKeyState", &GetKeyState, "Input");
       LuaEmbedder::AddFunction("GetMouseButtonState", &GetMouseButtonState, "Input");
       LuaEmbedder::AddFunction("GetMousePosition", &GetMousePosition, "Input");
+	  LuaEmbedder::AddFunction("GetMouseScreenPosition", &GetMouseScreenPosition, "Input");
       LuaEmbedder::AddFunction("GetDeltaMousePosition", &GetDeltaMousePosition, "Input");
       
       LuaEmbedder::AddInt("Up", (int)Input::InputState::UP, "InputState");
@@ -100,6 +102,14 @@ namespace LuaBridge
       LuaEmbedder::PushInt(inputWrapper.GetMouse()->GetY());
       return 2;
     }
+
+	int GetMouseScreenPosition()
+	{
+		Input::InputWrapper& inputWrapper = Input::InputWrapper::GetInstance();
+		LuaEmbedder::PushInt(inputWrapper.GetMouse()->GetX());
+		LuaEmbedder::PushInt(inputWrapper.GetMouse()->GetY());
+		return 2;
+	}
     
     int GetDeltaMousePosition()
     {
