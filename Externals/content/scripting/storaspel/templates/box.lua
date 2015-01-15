@@ -16,7 +16,7 @@ Hole.Name = "Hole"
 Hole:SetFloat3("Position", 0.0, 0.0, 0.0)
 Hole:SetFloat3("Rotation", 0.0, 0.0, 0.0)
 Hole:SetFloat3("Scale", 1.0, 1.0, 1.0)
-Hole:SetModel("Model", "hole_test", "hole")
+Hole:SetModel("Model", "hole_test", "hole" , 0)
 EntityTemplateManager:AddTemplate(Hole)
 
 local Stone = EntityTemplate()
@@ -24,7 +24,7 @@ Stone.Name = "Stone"
 Stone:SetFloat3("Position", 0.0, 0.0, 0.0)
 Stone:SetFloat3("Rotation", 0.0, 0.0, 0.0)
 Stone:SetFloat3("Scale", 0.6, 0.3, 0.6)
-Stone:SetModel("Model", "stone", "stone")
+Stone:SetModel("Model", "stone", "stone", 0)
 EntityTemplateManager:AddTemplate(Stone)
 
 local GrassTile = EntityTemplate()
@@ -32,7 +32,7 @@ GrassTile.Name = "Grass"
 GrassTile:SetFloat3("Position", 0.0, 0.0, 0.0)
 GrassTile:SetFloat3("Rotation", 0.0, 0.0, 0.0)
 GrassTile:SetFloat3("Scale", 1.0, 1.0, 1.0)
-GrassTile:SetModel("Model", "grass", "grass")
+GrassTile:SetModel("Model", "grass", "grass", 0)
 EntityTemplateManager:AddTemplate(GrassTile)
 
 local User = EntityTemplate()

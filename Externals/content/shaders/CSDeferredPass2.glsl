@@ -8,7 +8,7 @@ struct Pointlight {	vector3 Position; vector3 Intensity; vector3 Color; float Ra
 
 // ---- INPUTS ----
 uniform sampler2D DepthTex;
-uniform sampler2DShadow ShadowDepthTex;
+uniform sampler2D ShadowDepthTex;
 layout (rgba32f, binding = 0) uniform readonly image2D NormalTex;
 layout (rgba8, binding = 1) uniform readonly image2D ColorTex;
 layout (rgba8, binding = 2) uniform readonly image2D RandomTex;
@@ -275,22 +275,31 @@ void phongModelDirLight(out vec3 ambient, out vec3 diffuse, out vec3 spec)
 		// For shadows
 		vec4 worldPos = inverse(ViewMatrix) * vec4(g_viewPos, 1.0);
 		vec4 shadowCoord = BiasMatrix * ShadowViewProj * worldPos;
-		float shadow = 1.0;// = textureProj(ShadowDepthTex, shadowCoord);
+		// = textureProj(ShadowDepthTex, shadowCoord);
 		// The sum of the comparisons with nearby texels  
-		float sum = 0;
-		// Sum contributions from texels around ShadowCoord  
-		sum += textureProjOffset(ShadowDepthTex, shadowCoord, ivec2(-1,-1));  
-		sum += textureProjOffset(ShadowDepthTex, shadowCoord, ivec2(-1,1));  
-		sum += textureProjOffset(ShadowDepthTex, shadowCoord, ivec2(1,1));  
-		sum += textureProjOffset(ShadowDepthTex, shadowCoord, ivec2(1,-1));  
+		//float sum = 0;
+		//// Sum contributions from texels around ShadowCoord  
+		//sum += textureProjOffset(ShadowDepthTex, shadowCoord, ivec2(-1,-1));  
+		//sum += textureProjOffset(ShadowDepthTex, shadowCoord, ivec2(-1,1));  
+		//sum += textureProjOffset(ShadowDepthTex, shadowCoord, ivec2(1,1));  
+		//sum += textureProjOffset(ShadowDepthTex, shadowCoord, ivec2(1,-1));  
 
-		float shadowResult = sum * 0.25;
-		float bias = min( pow(shadowCoord.z, 10 - 10*shadowCoord.z), 0.40);
+		//float shadowResult = sum * 0.25;
+		//float bias = min( pow(shadowCoord.z, 10 - 10*shadowCoord.z), 0.40);
 
-		if ( shadowResult < (shadowCoord.z - bias)/shadowCoord.w) 
-		{
-		   shadow = shadowResult;
-		}
+		//if ( shadowResult < (shadowCoord.z - bias)/shadowCoord.w) 
+		//{
+		//   shadow = shadowResult;
+		//}
+
+		float shadow = 1.0;
+		//Shadow AMD fix. Temp? No PCF filtering
+		vec4 shadowCoordinateWdivide = shadowCoord / shadowCoord.w;
+		shadowCoordinateWdivide.z -= 0.0005;
+		float distanceFromLight = texture(ShadowDepthTex, shadowCoordinateWdivide.st).z;
+		
+		if (shadowCoord.w > 0.0)
+	 		shadow = distanceFromLight < shadowCoordinateWdivide.z ? 0.0 : 1.0 ;
 
 		// diffuse
 		diffuse = diffuseFactor * thisLightColor * thisLightIntensity.y * shadow;

@@ -148,7 +148,7 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
 		--posComp:SetFloat3(posX, 1.0, posZ)
 
     elseif tiletype == 102 then -- 102 = f = finish
-        world:CreateComponentAndAddTo("Finish", entity)
+        world:CreateComponentAndAddTo("Finishpoint", entity)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
 		comp:SetModel("finish", "finish", 0)
