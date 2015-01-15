@@ -230,6 +230,8 @@ void GameCreator::StartGame(int argc, char** argv)
 	RunStartupCommands(argc, argv);
 
 	float maxDeltaTime = (float)(1.0f / 20.0f);
+	float bytesToMegaBytes = 1.f / (1024.f*1024.f);
+	bool showDebugInfo = false;
 	while (m_running)
 	{
 		float dt = std::min(maxDeltaTime, m_frameCounter->GetDeltaTime());
@@ -250,9 +252,7 @@ void GameCreator::StartGame(int argc, char** argv)
 		m_world->Update(dt);
 		m_worldCounter.Tick();
 		
-		std::stringstream ss;
-		ss << "Lua memory usage: " << LuaEmbedder::GetMemoryUsage() << " bytes";
-		m_graphics->RenderSimpleText(ss.str(), 20, 1);
+
 		
 		m_networkCounter.Reset();
 		UpdateNetwork(dt);
@@ -264,13 +264,33 @@ void GameCreator::StartGame(int argc, char** argv)
 		m_graphicsCounter.Reset();
 		m_graphics->Render();
 		m_graphicsCounter.Tick();
-		
-		m_graphics->RenderSimpleText("Time Statistics", 60, 0);
-		PrintSectionTime("Total   ", m_frameCounter, 60, 1);
-		PrintSectionTime("Input   ", &m_inputCounter, 60, 2);
-		PrintSectionTime("World   ", &m_worldCounter, 60, 3);
-		PrintSectionTime("Network ", &m_networkCounter, 60, 4);
-		PrintSectionTime("Graphics", &m_graphicsCounter, 60, 5);
+
+		/*	DEBUG PRINT INFO	*/
+		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_Z) == Input::InputState::PRESSED)
+			showDebugInfo = !showDebugInfo;
+
+		if (showDebugInfo)
+		{
+			std::stringstream sstm;
+			sstm << (int)(1 / dt) << " fps";
+			m_graphics->RenderSimpleText(sstm.str(), 0, 0);
+
+			std::stringstream vram;
+			vram << "VRAM usage: " << (float)(m_graphics->GetVRamUsage()*bytesToMegaBytes) << " Mb ";
+			m_graphics->RenderSimpleText(vram.str(), 20, 0);
+
+			std::stringstream ss;
+			ss << "Lua memory usage: " << LuaEmbedder::GetMemoryUsage() << " bytes";
+			m_graphics->RenderSimpleText(ss.str(), 20, 1);
+
+			m_graphics->RenderSimpleText("Time Statistics", 60, 0);
+			PrintSectionTime("Total   ", m_frameCounter, 60, 1);
+			PrintSectionTime("Input   ", &m_inputCounter, 60, 2);
+			PrintSectionTime("World   ", &m_worldCounter, 60, 3);
+			PrintSectionTime("Network ", &m_networkCounter, 60, 4);
+			PrintSectionTime("Graphics", &m_graphicsCounter, 60, 5);
+		}
+
 
 		m_frameCounter->Tick();
 	}

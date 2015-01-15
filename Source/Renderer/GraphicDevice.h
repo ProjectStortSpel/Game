@@ -123,6 +123,8 @@ namespace Renderer
 		
 		void Clear();
 
+		int GetVRamUsage(){ return m_vramUsage; }
+
 	private:
 		bool InitSDLWindow();
 		bool InitGLEW();

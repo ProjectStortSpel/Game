@@ -91,10 +91,7 @@ void GraphicDevice::Update(float _dt)
 {
 	m_dt = _dt; m_fps = 1 / _dt;
 
-	// Test kod för att rendera text
-	std::stringstream sstm;
-	sstm << m_fps << " fps";
-	m_textRenderer.RenderSimpleText(sstm.str(), 0, 0);
+
 
 	// PRINT m_glTimerValues
 	for (int i = 0; i < m_glTimerValues.size(); i++)
@@ -107,9 +104,7 @@ void GraphicDevice::Update(float _dt)
 	}
 	m_glTimerValues.clear();
 
-	std::stringstream vram;
-	vram << "VRAM usage: " << ((float)m_vramUsage/1024.f)/1024.f << " Mb ";
-	m_textRenderer.RenderSimpleText(vram.str(), 20, 0);
+
 
 	lightCounter += 0.15*_dt;
 	m_dirLightDirection = vec3(-0.38, -1.0, 2.5*sin(lightCounter));
