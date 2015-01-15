@@ -108,3 +108,9 @@ TestRiverComponent:AddVariable("Unit", ByteSize.Reference)
 TestRiverComponent:AddVariable("PosX", ByteSize.Int)
 TestRiverComponent:AddVariable("PosZ", ByteSize.Int)
 worldCreator:AddComponentType(TestRiverComponent)
+
+local TakeCardsFromPlayerComponent = ComponentType()
+TakeCardsFromPlayerComponent.Name = "TakeCardsFromPlayer"
+TakeCardsFromPlayerComponent.TableType = TableType.Map
+TakeCardsFromPlayerComponent:AddVariable("Player", ByteSize.Reference)
+worldCreator:AddComponentType(TakeCardsFromPlayerComponent)
