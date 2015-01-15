@@ -27,7 +27,7 @@ WinSocket::WinSocket(void)
 		g_noActiveSockets++;
 	}
 	else if (NET_DEBUG)
-		printf("Failed to create new winsocket.\n");
+		SDL_Log("Failed to create new winsocket.\n");
 
 }
 
@@ -51,7 +51,7 @@ WinSocket::WinSocket(SOCKET _socket)
 		g_noActiveSockets++;
 	}
 	else if (NET_DEBUG)
-		printf("Failed to create new winsocket.\n");
+		SDL_Log("Failed to create new winsocket.\n");
 }
 
 WinSocket::WinSocket(int _domain, int _type, int _protocol)
@@ -74,7 +74,7 @@ WinSocket::WinSocket(int _domain, int _type, int _protocol)
 		g_noActiveSockets++;
 	}
 	else if (NET_DEBUG)
-		printf("Failed to create new winsocket.\n");
+		SDL_Log("Failed to create new winsocket.\n");
 }
 
 WinSocket::~WinSocket(void)
@@ -99,7 +99,7 @@ bool WinSocket::Initialize(void)
 	if (WSAStartup(MAKEWORD(2, 0), &wsaData) != 0)
 	{
 		if (NET_DEBUG)
-			printf("Failed to initialize winsock. Error Code: %d.\n", WSAGetLastError());
+			SDL_Log("Failed to initialize winsock. Error Code: %d.\n", WSAGetLastError());
 		return false;
 	}
 
@@ -115,7 +115,7 @@ bool WinSocket::Shutdown(void)
 	if (WSACleanup() != 0)
 	{
 		if (NET_DEBUG)
-			printf("Failed to shutdown winsock. Error Code: %d.\n", WSAGetLastError());
+			SDL_Log("Failed to shutdown winsock. Error Code: %d.\n", WSAGetLastError());
 		return false;
 	}
 
@@ -135,7 +135,7 @@ bool WinSocket::Connect(const char* _ipAddress, const int _port)
 	{
 		if (NET_DEBUG)
 		{
-			std::printf("Failed to get address info. Error Code: %d.\n", WSAGetLastError());
+			SDL_Log("Failed to get address info. Error Code: %d.\n", WSAGetLastError());
 		}
 
 		return false;
@@ -155,7 +155,7 @@ bool WinSocket::Connect(const char* _ipAddress, const int _port)
 		{
 			if (NET_DEBUG)
 			{
-				printf("Failed to connect to Ip address %s:%i. Error Code: %d.\n", _ipAddress, _port, errorCode);
+				SDL_Log("Failed to connect to Ip address %s:%i. Error Code: %d.\n", _ipAddress, _port, errorCode);
 			}
 			return false;
 		}
@@ -176,7 +176,7 @@ bool WinSocket::Bind(const int _port)
 	if (bind(m_socket, (sockaddr*)(&address), sizeof(address)) != 0)
 	{
 		if (NET_DEBUG)
-			printf("Failed to bind socket. Error Code: %d.\n", WSAGetLastError());
+			SDL_Log("Failed to bind socket. Error Code: %d.\n", WSAGetLastError());
 
 		return false;
 	}
@@ -196,7 +196,7 @@ bool WinSocket::Listen(int _backlog)
 	if (result == SOCKET_ERROR)
 	{
 		if (NET_DEBUG)
-			printf("Failed to start listen. Error Code: %d.\n", WSAGetLastError());
+			SDL_Log("Failed to start listen. Error Code: %d.\n", WSAGetLastError());
 		return false;
 	}
 	return true;
@@ -207,7 +207,7 @@ bool WinSocket::SetNonBlocking(bool _value)
 	if (ioctlsocket(m_socket, FIONBIO, &value) == SOCKET_ERROR)
 	{
 		if (NET_DEBUG)
-			printf("Failed to set nonblock.\n");
+			SDL_Log("Failed to set nonblock.\n");
 		return false;
 	}
 
@@ -220,7 +220,7 @@ bool WinSocket::SetNoDelay(bool _value)
 	if (setsockopt(m_socket, IPPROTO_TCP, TCP_NODELAY, &value, sizeof(value)) < 0)
 	{
 		if (NET_DEBUG)
-			printf("Failed to enable TCP_NODELAY on new socket. Error Code: %d.\n", WSAGetLastError());
+			SDL_Log("Failed to enable TCP_NODELAY on new socket. Error Code: %d.\n", WSAGetLastError());
 
 		return false;
 	}
@@ -245,7 +245,7 @@ bool WinSocket::CloseSocket(void)
 	if (closesocket(m_socket) != 0)
 	{
 		if (NET_DEBUG)
-			printf("Failed to close winsocket. Error Code: %d.\n", WSAGetLastError());
+			SDL_Log("Failed to close winsocket. Error Code: %d.\n", WSAGetLastError());
 		return false;
 	}
 
@@ -265,7 +265,7 @@ ISocket* WinSocket::Accept(void)
 	{
 		int errorCode = WSAGetLastError();
 		if (errorCode != 10035 && NET_DEBUG)
-			printf("Accept failed. Error Code: %d.\n", errorCode);
+			SDL_Log("Accept failed. Error Code: %d.\n", errorCode);
 
 		return 0;
 	}
@@ -274,7 +274,7 @@ ISocket* WinSocket::Accept(void)
 	if (setsockopt(incomingSocket, IPPROTO_TCP, TCP_NODELAY, &value, sizeof(value)) < 0)
 	{
 		if (NET_DEBUG)
-			printf("Failed to enable TCP_NODELAY on new socket. Error Code: %d.\n", WSAGetLastError());
+			SDL_Log("Failed to enable TCP_NODELAY on new socket. Error Code: %d.\n", WSAGetLastError());
 
 		return 0;
 	}
@@ -301,7 +301,7 @@ int result = send(m_socket, _buffer, _length, _flags);
 if (result == SOCKET_ERROR)
 {
 if (NET_DEBUG)
-printf("Failed to send packet of size '%i'. Error Code: %d.\n", _length, WSAGetLastError());
+SDL_Log("Failed to send packet of size '%i'. Error Code: %d.\n", _length, WSAGetLastError());
 
 return -1;
 }
@@ -327,7 +327,7 @@ int WinSocket::Send(char* _buffer, int _length, int _flags)
 		if (byteSent == SOCKET_ERROR)
 		{
 			if (NET_DEBUG)
-				printf("Failed to send packet of size '%i'. Error Code: %d.\n", _length, WSAGetLastError());
+				SDL_Log("Failed to send packet of size '%i'. Error Code: %d.\n", _length, WSAGetLastError());
 
 		}
 	}
@@ -338,7 +338,7 @@ int WinSocket::Send(char* _buffer, int _length, int _flags)
 		if (errorCode != 10035)
 		{
 			if (NET_DEBUG)
-				printf("Failed to send \"Size packet\" of size '%i'. Error Code: %d.\n", byteSent, errorCode);
+				SDL_Log("Failed to send \"Size packet\" of size '%i'. Error Code: %d.\n", byteSent, errorCode);
 		}
 	}
 	return byteSent;
@@ -386,14 +386,14 @@ int WinSocket::Receive(char* _buffer, int _length, int _flags)
 		if (sizeReceived != len)
 		{
 			if (NET_DEBUG)
-				printf("Error: Wrong packet size on received packet!\n");
+				SDL_Log("Error: Wrong packet size on received packet!\n");
 			//return 0;
 		}
 
 		if (len > _length)
 		{
 			if (NET_DEBUG)
-				printf("Error: To large packet received!\n");
+				SDL_Log("Error: To large packet received!\n");
 			return 0;
 		}
 
@@ -402,12 +402,12 @@ int WinSocket::Receive(char* _buffer, int _length, int _flags)
 	else if (len2 == SOCKET_ERROR)
 	{
 		if (NET_DEBUG)
-			printf("Error: Failed to receive \"Size packet\". Error code: %d\n", WSAGetLastError());
+			SDL_Log("Error: Failed to receive \"Size packet\". Error code: %d\n", WSAGetLastError());
 	}
 	else
 	{
 		if (NET_DEBUG)
-			printf("Error: \"Size packet\" corrupt! Length: %d\n", len2);
+			SDL_Log("Error: \"Size packet\" corrupt! Length: %d\n", len2);
 		//return 0;
 	}
 	return 0;

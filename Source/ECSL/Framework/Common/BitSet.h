@@ -10,7 +10,11 @@ namespace ECSL
 {
 	namespace BitSet
 	{
+#ifdef __ANDROID__
+		typedef unsigned int DataType;
+#else
 		typedef uint64_t DataType;
+#endif
 
 		inline DECLSPEC unsigned int GetIntByteSize()
 		{

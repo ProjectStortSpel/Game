@@ -1,4 +1,5 @@
 #include "CameraSystem.h"
+#include <glm/glm.hpp>
 
 CameraSystem::CameraSystem(Renderer::GraphicDevice* _graphics)
 {
@@ -21,6 +22,35 @@ void CameraSystem::Initialize()
 
 void CameraSystem::Update(float _dt)
 {
+#ifdef __ANDROID__
+	static float prevDistance0, prevDistance1;
+	if (m_input->GetTouch()->GetFingerState(0) == Input::InputState::PRESSED ||
+		m_input->GetTouch()->GetFingerState(1) == Input::InputState::PRESSED)
+	{
+		glm::vec2 halfSize = glm::vec2(0.5f, 0.5f);
+		prevDistance0 = glm::length(glm::vec2(m_input->GetTouch()->GetX(0), m_input->GetTouch()->GetY(0)) - halfSize);
+		prevDistance1 = glm::length(glm::vec2(m_input->GetTouch()->GetX(1), m_input->GetTouch()->GetY(1)) - halfSize);
+	}
+	if (m_input->GetTouch()->GetFingerState(0) == Input::InputState::DOWN &&
+		m_input->GetTouch()->GetFingerState(1) == Input::InputState::DOWN)
+	{
+		glm::vec2 halfSize = glm::vec2(0.5f, 0.5f);
+		float currDistance0 = glm::length(glm::vec2(m_input->GetTouch()->GetX(0), m_input->GetTouch()->GetY(0)) - halfSize);
+		float currDistance1 = glm::length(glm::vec2(m_input->GetTouch()->GetX(1), m_input->GetTouch()->GetY(1)) - halfSize);
+		float diff0 = prevDistance0 - currDistance0;
+		float diff1 = prevDistance1 - currDistance1;
+		float d = diff0 + diff1;
+		prevDistance0 = currDistance0;
+		prevDistance1 = currDistance1;
+		m_graphics->GetCamera()->MoveForward(-d * _dt * 100.0f);
+	}
+	else if (m_input->GetTouch()->GetFingerState(0) == Input::InputState::DOWN)
+	{
+		m_graphics->GetCamera()->UpdateTouch(m_input->GetTouch()->GetdX((SDL_FingerID)0) * 1500.0f,
+											 m_input->GetTouch()->GetdY((SDL_FingerID)0) * 1500.0f);
+	}
+
+#else
 	if (m_input->GetKeyboard()->IsTextInputActive())
 		return;
 	/*	Fulhax just nu, enbart för att slippa ha det i gameloopen (REN OCH FIN)	*/
@@ -46,7 +76,7 @@ void CameraSystem::Update(float _dt)
 	}
 	else
 		m_input->GetMouse()->HideCursor(false);
-
+#endif
 }
 
 void CameraSystem::OnEntityAdded(unsigned int _entityId)

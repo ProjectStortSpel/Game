@@ -87,6 +87,7 @@ unsigned int ComponentTypeManager::GetTableId(const std::string& _componentType)
 	if (it == m_stringTableId->end())
 	{
 		unsigned int newId = ++m_nextTableId;
+
 		m_stringTableId->insert(std::pair<std::string, unsigned int>(_componentType, newId));
 		return newId;
 	}

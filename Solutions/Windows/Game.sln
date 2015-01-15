@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.30110.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "Game\Game.vcxproj", "{B8EFCC27-B82E-4F58-A794-F312D54BDBDD}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -27,6 +27,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Console", "Console\Console.vcxproj", "{83599D6A-4684-4D29-AC7E-388A26E7AFED}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LuaEmbedder", "LuaEmbedder\LuaEmbedder.vcxproj", "{2E9DCA51-2BDC-4EC9-B23C-00BB73948D21}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AndroidRenderer", "AndroidRenderer\AndroidRenderer.vcxproj", "{FB35D84C-BAE5-47E2-8A37-C81AE2184C76}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -134,6 +136,12 @@ Global
 		{2E9DCA51-2BDC-4EC9-B23C-00BB73948D21}.Release|x64.Build.0 = Release|x64
 		{2E9DCA51-2BDC-4EC9-B23C-00BB73948D21}.Release|x86.ActiveCfg = Release|Win32
 		{2E9DCA51-2BDC-4EC9-B23C-00BB73948D21}.Release|x86.Build.0 = Release|Win32
+		{FB35D84C-BAE5-47E2-8A37-C81AE2184C76}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FB35D84C-BAE5-47E2-8A37-C81AE2184C76}.Debug|x64.ActiveCfg = Debug|x64
+		{FB35D84C-BAE5-47E2-8A37-C81AE2184C76}.Debug|x86.ActiveCfg = Debug|Win32
+		{FB35D84C-BAE5-47E2-8A37-C81AE2184C76}.Release|Win32.ActiveCfg = Release|Win32
+		{FB35D84C-BAE5-47E2-8A37-C81AE2184C76}.Release|x64.ActiveCfg = Release|x64
+		{FB35D84C-BAE5-47E2-8A37-C81AE2184C76}.Release|x86.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

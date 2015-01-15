@@ -29,7 +29,7 @@ SelectCardSystem.Update = function( self, dt )
 			self:ToggleSelectCard(7)
 		elseif Input.GetKeyState(Key._8) == InputState.Pressed then
 			self:ToggleSelectCard(8)
-		elseif Input.GetMouseButtonState(MouseButton.RightButton) == InputState.Pressed then
+		elseif Input.GetMouseButtonState(MouseButton.RightButton) == InputState.Released then
 		
 			local entities = self:GetEntities()
 			for i = 1, #entities do

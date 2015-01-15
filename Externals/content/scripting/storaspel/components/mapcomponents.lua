@@ -10,6 +10,7 @@ worldCreator:AddComponentType(MapPositionComponent)
 -- Water Component
 local RiverComponent = ComponentType()
 RiverComponent.Name = "River"
+MapPositionComponent.SyncNetwork = true
 RiverComponent.TableType = TableType.Map
 RiverComponent:AddVariable("DirX", ByteSize.Int)
 RiverComponent:AddVariable("DirZ", ByteSize.Int)
