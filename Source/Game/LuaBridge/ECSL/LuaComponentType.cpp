@@ -3,7 +3,7 @@
 
 namespace LuaBridge
 {
-	LuaComponentType::LuaComponentType() { m_byteOffset = 0; m_syncWithNetwork = true; }
+	LuaComponentType::LuaComponentType() { m_byteOffset = 0; m_syncWithNetwork = false; }
 
   LuaComponentType::~LuaComponentType()
   {
