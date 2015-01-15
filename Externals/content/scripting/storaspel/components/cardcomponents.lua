@@ -1,4 +1,4 @@
--- Turn Left Component
+-- Card Component
 local CardComponent = ComponentType()
 CardComponent.SyncNetwork = true
 CardComponent.Name = "Card"
