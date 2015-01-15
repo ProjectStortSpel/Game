@@ -79,7 +79,9 @@
   #define EXPORT __declspec(dllexport)
   #define IMPORT __declspec(dllimport)
 
-  #include <VLD/vld.h>
+#ifdef _DEBUG
+#include <VLD/vld.h>
+#endif
 #else
   #define EXPORT __attribute__((visibility("default")))
   #define IMPORT

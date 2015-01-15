@@ -19,7 +19,7 @@
 #include <iomanip>
 
 GameCreator::GameCreator() :
-m_graphics(0), m_input(0), m_world(0), m_console(0), m_consoleManager(Console::ConsoleManager::GetInstance()), m_frameCounter(new Utility::FrameCounter()), m_running(true)
+m_graphics(0), m_input(0), m_world(0), m_console(0), m_remoteConsole(0), m_consoleManager(Console::ConsoleManager::GetInstance()), m_frameCounter(new Utility::FrameCounter()), m_running(true)
 {
 }
 
@@ -40,6 +40,9 @@ GameCreator::~GameCreator()
 
 	if (m_console)
 		delete m_console;	
+
+	if (m_remoteConsole)
+		delete m_remoteConsole;
 
 	LuaEmbedder::Quit();
 
@@ -80,6 +83,8 @@ void GameCreator::InitializeNetwork()
 
 	Network::NetEvent netEvent = std::bind(&GameCreator::OnConnectedToServer, this, std::placeholders::_1, std::placeholders::_2);
 	NetworkInstance::GetClient()->SetOnConnectedToServer(netEvent);
+
+	m_remoteConsole = new RemoteConsole();
 }
 
 void GameCreator::InitializeLua() 
@@ -155,7 +160,54 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	LuaEmbedder::CallMethods<LuaBridge::LuaSystem>("System", "PostInitialize");
 }
 
-void GameCreator::StartGame()
+void GameCreator::RunStartupCommands(int argc, char** argv)
+{
+	for (int i = 1; i < argc; ++i)
+	{
+		if (argv[i][0] == '-')
+		{
+			int start = i;
+			int stop = i;
+
+			for (++i; i < argc; ++i)
+			{
+				if (argv[i][0] == '-')
+				{
+					--i;
+					break;
+				}
+				stop = i;
+			}
+
+			int size = 0;
+
+			for (int j = start; j <= stop; ++j)
+			{
+				size += strlen(argv[j]);
+			}
+
+			size += stop - start;
+
+			char* command = new char[size];
+			memcpy(command, argv[start] + 1, strlen(argv[start]) - 1);
+			int offset = strlen(argv[start]);
+			command[offset - 1] = ' ';
+			for (int j = start + 1; j <= stop; ++j)
+			{
+				memcpy(command + offset, argv[j], strlen(argv[j]));
+				offset += strlen(argv[j]);
+
+				if (start < stop)
+					command[offset] = ' ';
+			}
+
+			command[size - 1] = '\0';
+			Console::ConsoleManager::GetInstance().ExecuteCommand(command);
+		}
+	}
+}
+
+void GameCreator::StartGame(int argc, char** argv)
 {
 	/*	If atleast one object is not initialized the game can't start	*/
 	if (!m_graphics || !m_input || !m_world || m_console)
@@ -185,6 +237,8 @@ void GameCreator::StartGame()
 	m_consoleManager.AddCommand("GameMode", std::bind(&GameCreator::ConsoleGameMode, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager.AddCommand("Start", std::bind(&GameCreator::ConsoleStartTemp, this, std::placeholders::_1, std::placeholders::_2));
 	
+	RunStartupCommands(argc, argv);
+
 	float maxDeltaTime = (float)(1.0f / 20.0f);
 	while (m_running)
 	{

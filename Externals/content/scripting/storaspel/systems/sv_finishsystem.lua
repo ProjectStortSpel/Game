@@ -1,30 +1,30 @@
-CheckpointSystem = System()
-CheckpointSystem.TotemCount = {}
+FinishSystem = System()
+FinishSystem.TotemCount = {}
 
-CheckpointSystem.Initialize = function(self)
-	self:SetName("CheckpointSystem System")
+FinishSystem.Initialize = function(self)
+	self:SetName("FinishSystem System")
 
 	self:AddComponentTypeToFilter("Unit", FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter("Checkpoint", FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter("CheckCheckpoint", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("Finish", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("CheckFinish", FilterType.RequiresOneOf)
 
-	print("CheckpointSystem initialized!")
+	print("FinishSystem initialized!")
 end
 
-CheckpointSystem.Update = function(self, dt)
+FinishSystem.Update = function(self, dt)
 
 	--print("NoOfEntities: " .. #self:GetEntities())
 
 end
 
-CheckpointSystem.AddTotemPole = function(self, playerId, currentCP, noCP, X, Y, Z)
+FinishSystem.AddTotemPole = function(self, playerId, currentCP, noCP, X, Y, Z)
 
 	local head = world:CreateNewEntity("Head")
 	local rotation 	= world:GetComponent(head, "Rotation", 0)
 	local position 	= world:GetComponent(head, "Position", 0)
 	local scale		= world:GetComponent(head, "Scale", 0)
 	local axis = math.pi
-	local setScale = 0.25
+	local setScale = 0.5
 	
 	-- Position
 	if self.TotemCount[currentCP] == nil then
@@ -32,7 +32,7 @@ CheckpointSystem.AddTotemPole = function(self, playerId, currentCP, noCP, X, Y, 
 	end
 
 	rotation:SetFloat3(0, axis, 0)
-	position:SetFloat3(X, 0.4 + self.TotemCount[currentCP] * setScale, Z)
+	position:SetFloat3(X, self.TotemCount[currentCP] * setScale, Z)
 	scale:SetFloat3(setScale, setScale, setScale)
 	
 	world:SetComponent(head, "Model", "ModelName", "ply" .. playerId);
@@ -41,12 +41,12 @@ CheckpointSystem.AddTotemPole = function(self, playerId, currentCP, noCP, X, Y, 
 	self.TotemCount[currentCP] = self.TotemCount[currentCP] + 1
 end
 
-CheckpointSystem.OnEntityAdded = function(self, entity)
+FinishSystem.OnEntityAdded = function(self, entity)
 
-	if world:EntityHasComponent( entity, "CheckCheckpoint") then
+	if world:EntityHasComponent( entity, "CheckFinishpoint") then
 		
 		local units = self:GetEntities("Unit")
-		local checkpoints = self:GetEntities("Checkpoint")
+		local checkpoints = self:GetEntities("Finish")
 		local nextCP = nil
 
 		for i = 1, #units do
@@ -67,18 +67,8 @@ CheckpointSystem.OnEntityAdded = function(self, entity)
 					if unitX == checkpointX and unitZ == checkpointZ then
 						
 						
+						print("Unit reached a checkpoint")
 						
-						
-						if world:EntityHasComponent(checkpoints[j], "Finish") then
-							
-							print("Unit reached the finish")
-
-						else
-							
-							print("Unit reached a checkpoint")
-
-						end
-
 						
 						local playerId = world:GetComponent(units[i], "PlayerNumber", 0):GetInt()
 						self.AddTotemPole(self, playerId, j, #checkpoints, checkpointX, Y, checkpointZ)

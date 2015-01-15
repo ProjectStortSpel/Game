@@ -120,7 +120,7 @@ ServerNetwork::ServerNetwork()
 {
 
 	m_listenForConnectionsAlive = new bool(false);
-	m_maxConnections = new unsigned int(8);
+	m_maxConnections = new unsigned int(64);
 
 	m_listenSocket = 0;
 

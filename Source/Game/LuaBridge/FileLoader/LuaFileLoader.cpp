@@ -31,7 +31,8 @@ int LoadMap()
 	size_t prevFileIndex = 0, nextFileIndex = std::string::npos;
 
 	std::vector<int> map;
-	
+
+	int x = 0;
 	int y = 0;  
 	while (true)
 	{
@@ -42,15 +43,16 @@ int LoadMap()
 		line.erase(std::remove(line.begin(), line.end(), 13), line.end());
 		prevFileIndex = nextFileIndex + 1;
 	  
+		if (x < line.size())
+		{
+			x = line.size();
+			std::cout << x << std::endl;
+		}
 		for (int i = 0; i < line.size(); i++)
 			map.push_back((int)line[i]);
 		y++;
 	}
 
-	int x = 0;
-	if ( y != 0 ) 
-		 x = map.size() / y;
-	
 	int* array = new int[map.size()];
 	memcpy(array, map.data(), map.size() * sizeof(int));
 

@@ -4,7 +4,9 @@
 #include <SDL/SDL.h>
 
 #ifdef WIN32
+#ifdef _DEBUG
 #include <VLD/vld.h>
+#endif
 #endif
 
 #include <functional>

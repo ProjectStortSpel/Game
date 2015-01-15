@@ -14,6 +14,7 @@ worldCreator:AddComponentType(RotateAroundComponent)
 -- Pointlight Component
 local PointlightComponent = ComponentType()
 PointlightComponent.Name = "Pointlight"
+PointlightComponent.SyncNetwork = true
 PointlightComponent.TableType = TableType.Array
 PointlightComponent:AddVariable("PosX", ByteSize.Float)
 PointlightComponent:AddVariable("PosY", ByteSize.Float)

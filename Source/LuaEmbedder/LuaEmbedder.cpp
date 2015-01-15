@@ -16,7 +16,7 @@ namespace LuaEmbedder
     
     LuaNumberArray<float>::Embed(L, "FloatArray");
     LuaNumberArray<int>::Embed(L, "IntArray");
-    LuaNumberArray<unsigned int>::Embed(L, "UnsignedIntArray");
+    LuaNumberArray<unsigned int>::Embed(L, "UnsignedIntArray");  
   }
   void Quit()
   {

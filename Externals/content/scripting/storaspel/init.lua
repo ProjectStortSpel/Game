@@ -13,6 +13,7 @@ require "lightcomponents"
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
 require "sh_movementsystem"
 require "sh_networkmessagessystem"
+require "sh_moveplayersystem"
 
 if Server then
 	require "sv_mapsystem"
@@ -44,7 +45,6 @@ end
 
 if Client then
 --require "cl_pickingphasesystem"
-	require "cl_moveplayersystem"
 	require "cl_lobbysystem"
 	require "cl_cardpositionsystem"
 	require "cl_givecardindexsystem"
@@ -52,9 +52,12 @@ if Client then
 	require "cl_sortcardindexsystem"
 	require "cl_sortselectedcardssystem"
 	require "cl_sendselectedcardssystem"
+	require "cl_playerdonevisualizersystem"
 	--require "cl_givecardindexsystem"
+	require "cl_cardhoversystem"
+	require "cl_playerindicatorsystem"
 end
-
+	
 
 
 -- Templates
@@ -73,6 +76,7 @@ require "lights"
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(MovementSystem)
 worldCreator:AddSystemToCurrentGroup(networkMessagesSystem)
+worldCreator:AddSystemToCurrentGroup(TrueTestMoveSystem)
 
 if Server then
 	worldCreator:AddSystemToCurrentGroup(MapSystem)
@@ -96,6 +100,7 @@ if Server then
 	worldCreator:AddSystemToCurrentGroup(VoidSystem)
 	worldCreator:AddSystemToCurrentGroup(RiverSystem)
 	worldCreator:AddSystemToCurrentGroup(RespawnSystem)
+	worldCreator:AddSystemToCurrentGroup(TestMoveRiverSystem)
 
 	worldCreator:AddSystemToCurrentGroup(TurnAroundSystem)
 	worldCreator:AddSystemToCurrentGroup(TurnLeftSystem)
@@ -106,7 +111,7 @@ if Server then
 	
 	worldCreator:AddSystemToCurrentGroup(StepTimerSystem)
 	worldCreator:AddSystemToCurrentGroup(PlayCardTimerSystem)
-
+	
 end
 
 if Client then
@@ -117,8 +122,9 @@ if Client then
 	worldCreator:AddSystemToCurrentGroup(SortCardIndexSystem)
 	worldCreator:AddSystemToCurrentGroup(SortSelectedCardSystem)
 	worldCreator:AddSystemToCurrentGroup(SendSelectCardSystem)
-	worldCreator:AddSystemToCurrentGroup(TrueTestMoveSystem)
-
+	worldCreator:AddSystemToCurrentGroup(CardHoverSystem)
+	worldCreator:AddSystemToCurrentGroup(PlayerDoneVisualizer)
+	worldCreator:AddSystemToCurrentGroup(PlayerIndicatorSystem)
 --worldCreator:AddSystemToCurrentGroup(ClientSendCardSystem)
 end
 

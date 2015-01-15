@@ -26,11 +26,21 @@ RiverSystem.OnEntityAdded = function(self, entity)
 				local riverX, riverZ = world:GetComponent(rivers[j], "MapPosition", 0):GetInt2() 
 
 				if unitX == riverX and unitZ == riverZ then
-					local riverDirX, riverDirZ = world:GetComponent(rivers[j], "River", 0):GetInt2()
-					local posX = unitX + riverDirX
-					local posZ = unitZ + riverDirZ
 
-					world:GetComponent(units[i], "MapPosition", 0):SetInt2(posX, posZ)
+					local riverDirX, riverDirZ = world:GetComponent(rivers[j], "River", 0):GetInt2()
+					local posXs = unitX + riverDirX
+					local posZs = unitZ + riverDirZ
+
+					--world:GetComponent(units[i], "MapPosition", 0):SetInt2(posX, posZ)
+
+					--print(entity)
+
+					local id = world:CreateNewEntity()
+					world:CreateComponentAndAddTo("TestRiver", id)
+					world:SetComponent(id, "TestRiver", "Unit", units[i])
+					world:SetComponent(id, "TestRiver", "PosX", posXs)
+					world:SetComponent(id, "TestRiver", "PosZ", posZs)
+
 					break
 
 				end
@@ -49,6 +59,45 @@ RiverSystem.OnEntityAdded = function(self, entity)
 		world:GetComponent(id, "StepTimer", "Time"):SetFloat(1)
 
 
+	end
+end
 
+
+TestMoveRiverSystem = System()
+
+TestMoveRiverSystem.Initialize = function(self)
+	self:SetName("TestMoveRiverSystem System")
+
+	self:AddComponentTypeToFilter("TestRiver", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("NotWalkable", FilterType.RequiresOneOf)
+
+	print("TestMoveRiverSystem initialized!")
+end
+
+TestMoveRiverSystem.OnEntityAdded = function(self, entity)
+	
+	if world:EntityHasComponent( entity, "TestRiver") then
+		
+		local notWalkable = self:GetEntities("NotWalkable")
+
+		local unit = world:GetComponent(entity, "TestRiver", "Unit"):GetInt()
+		local posX = world:GetComponent(entity, "TestRiver", "PosX"):GetInt()
+		local posZ = world:GetComponent(entity, "TestRiver", "PosZ"):GetInt()
+
+		local canMove = true
+
+		for i = 1, #notWalkable do
+			local X2, Z2 = world:GetComponent(notWalkable[i], "MapPosition", 0):GetInt2()
+			if posX == X2 and posZ == Z2 then
+				canMove = false
+				break
+			end
+		end 
+
+		if canMove then
+			world:GetComponent(unit, "MapPosition", 0):SetInt2(posX, posZ)
+		end
+
+		world:KillEntity(entity)
 	end
 end
