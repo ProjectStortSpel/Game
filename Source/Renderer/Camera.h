@@ -29,6 +29,7 @@ public:
 	void MoveRight(float dt);
 
 	void UpdateMouse(float midX, float midY, int x, int y);
+	void UpdateTouch(float dx, float dy);
 
 	mat4 *GetViewMatrix();
 	mat4 *GetProjMatrix() { return &m_projectionMatrix; }

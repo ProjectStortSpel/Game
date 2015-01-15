@@ -99,7 +99,7 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	LuaEmbedder::AddObject<ECSL::WorldCreator>("WorldCreator", &worldCreator, "worldCreator");
 
 	std::stringstream gameMode;
-#ifdef _DEBUG
+#if defined(_DEBUG) && !defined(__ANDROID__)
 	gameMode << "../../../Externals/content/scripting/";
 #else
 	gameMode << "content/scripting/";
@@ -108,10 +108,10 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	gameMode << "/init.lua";
 
 	if (!LuaEmbedder::Load(gameMode.str()))
-	  return;
+		return;
 
 	m_gameMode = _gameMode;
-	
+
 	auto componentTypes = ECSL::ComponentTypeManager::GetInstance().GetComponentTypes();
 	for (auto it = componentTypes->begin(); it != componentTypes->end(); ++it)
 	{
@@ -156,9 +156,8 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 
 	m_world = worldCreator.CreateWorld(1000);
 	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
-	
+
 	LuaEmbedder::CallMethods<LuaBridge::LuaSystem>("System", "PostInitialize");
-	
 }
 
 void GameCreator::RunStartupCommands(int argc, char** argv)
@@ -216,6 +215,20 @@ void GameCreator::StartGame(int argc, char** argv)
 
 	m_console = new GameConsole(m_graphics, m_world);
 
+#ifdef __ANDROID__
+	static bool something = false;
+	if (!something)
+	{
+		something = true;
+		//std::vector<Console::Argument> temp;
+		//m_console->HostServer(std::string(), &temp);
+		std::vector<Console::Argument> arg;
+		arg.push_back(Console::Argument("194.47.150.5"));
+		m_console->ConnectClient("connect", &arg);
+		//GameMode("storaspel");
+	}
+#endif
+
 	m_consoleInput.SetTextHook(std::bind(&Console::ConsoleManager::ExecuteCommand, &m_consoleManager, std::placeholders::_1));
 	m_consoleInput.SetActive(false);
 	m_input->GetKeyboard()->StopTextInput();
@@ -246,18 +259,18 @@ void GameCreator::StartGame(int argc, char** argv)
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
 			break;
 		m_inputCounter.Tick();
-		
+
 		m_worldCounter.Reset();
 		/*	Update world (systems, entities etc)	*/
 		m_world->Update(dt);
 		m_worldCounter.Tick();
-		
 
-		
+
+
 		m_networkCounter.Reset();
 		UpdateNetwork(dt);
 		m_networkCounter.Tick();
-		
+
 		/*	Update graphics	*/
 		m_graphics->Update(dt);
 		RenderConsole();
@@ -465,6 +478,9 @@ void GameCreator::PollSDLEvent()
 		case SDL_KEYUP:
 		case SDL_FINGERMOTION:
 		case SDL_FINGERDOWN:
+#ifdef __ANDROID__
+			//exit(0);
+#endif
 		case SDL_FINGERUP:
 		case SDL_TEXTINPUT:
 		case SDL_JOYAXISMOTION:

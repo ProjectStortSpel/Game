@@ -53,32 +53,27 @@ CheckpointSystem.OnEntityAdded = function(self, entity)
 			
 			local targetId = world:GetComponent(units[i], "TargetCheckpoint", "Id"):GetInt()
 
+			if targetId > #checkpoints then	
+				print("targetId > #checkpoints")
+				local finishId = world:CreateNewEntity()
+				world:CreateComponentAndAddTo("CheckFinishpoint", finishId)
+				
+				world:KillEntity( entity )
+				return
+			end
 			
 			for j = 1, #checkpoints do
 				
-				
-				
 				local cpId = world:GetComponent(checkpoints[j], "Checkpoint", "Number"):GetInt()
-
+				local unitX, unitZ = world:GetComponent(units[i], "MapPosition", 0):GetInt2() 
+				
 				if cpId == targetId then
 					local checkpointX, checkpointZ = world:GetComponent(checkpoints[j], "MapPosition", 0):GetInt2() 
-					local unitX, unitZ = world:GetComponent(units[i], "MapPosition", 0):GetInt2() 
+					
 
 					if unitX == checkpointX and unitZ == checkpointZ then
 						
-						
-						
-						
-						if world:EntityHasComponent(checkpoints[j], "Finish") then
-							
-							print("Unit reached the finish")
-
-						else
-							
-							print("Unit reached a checkpoint")
-
-						end
-
+						print("Unit reached a checkpoint")
 						
 						local playerId = world:GetComponent(units[i], "PlayerNumber", 0):GetInt()
 						self.AddTotemPole(self, playerId, j, #checkpoints, checkpointX, Y, checkpointZ)
@@ -90,6 +85,7 @@ CheckpointSystem.OnEntityAdded = function(self, entity)
 					end
 				end
 			end
+			
 		end
 
 		world:KillEntity( entity )

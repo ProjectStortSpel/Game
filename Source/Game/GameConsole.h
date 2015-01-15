@@ -2,7 +2,11 @@
 #define GAMECONSOLE_H
 
 #include "Console/Console.h"
+#ifdef __ANDROID__
+#include "AndroidRenderer/GraphicDevice.h"
+#else
 #include "Renderer/GraphicDevice.h"
+#endif
 #include "ECSL/ECSL.h"
 #include "NetworkInstance.h"
 

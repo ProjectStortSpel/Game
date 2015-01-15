@@ -88,7 +88,6 @@ void DataManager::CreateComponentAndAddTo(unsigned int _componentTypeId, unsigne
 {
 	/* Add entity to lists */
 	m_changedEntities->push_back(_entityId);
-
 	m_entityTable->AddComponentTo(_entityId, _componentTypeId);
 }
 

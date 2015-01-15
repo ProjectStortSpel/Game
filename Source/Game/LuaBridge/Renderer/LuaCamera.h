@@ -1,7 +1,11 @@
 #ifndef LUACAMERA_H
 #define LUACAMERA_H
 
+#ifdef __ANDROID__
+#include "AndroidRenderer/Camera.h"
+#else
 #include "Renderer/Camera.h"
+#endif
 
 namespace LuaBridge
 {

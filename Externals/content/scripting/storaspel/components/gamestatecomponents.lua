@@ -70,6 +70,11 @@ CheckCheckpointComponent.Name = "CheckCheckpoint"
 CheckCheckpointComponent.TableType = TableType.Map
 worldCreator:AddComponentType(CheckCheckpointComponent)
 
+local CheckFinishpointComponent = ComponentType()
+CheckFinishpointComponent.Name = "CheckFinishpoint"
+CheckFinishpointComponent.TableType = TableType.Map
+worldCreator:AddComponentType(CheckFinishpointComponent)
+
 local UpdateSpawnpointComponent = ComponentType()
 UpdateSpawnpointComponent.Name = "UpdateSpawnpoint"
 UpdateSpawnpointComponent:AddVariable("Unit", ByteSize.Reference)
@@ -101,3 +106,15 @@ TestRiverComponent:AddVariable("Unit", ByteSize.Reference)
 TestRiverComponent:AddVariable("PosX", ByteSize.Int)
 TestRiverComponent:AddVariable("PosZ", ByteSize.Int)
 worldCreator:AddComponentType(TestRiverComponent)
+
+local TakeCardsFromPlayerComponent = ComponentType()
+TakeCardsFromPlayerComponent.Name = "TakeCardsFromPlayer"
+TakeCardsFromPlayerComponent.TableType = TableType.Map
+TakeCardsFromPlayerComponent:AddVariable("Player", ByteSize.Reference)
+worldCreator:AddComponentType(TakeCardsFromPlayerComponent)
+
+local TakeCardStepsFromUnitComponent = ComponentType()
+TakeCardStepsFromUnitComponent.Name = "TakeCardStepsFromUnit"
+TakeCardStepsFromUnitComponent.TableType = TableType.Map
+TakeCardStepsFromUnitComponent:AddVariable("Unit", ByteSize.Reference)
+worldCreator:AddComponentType(TakeCardStepsFromUnitComponent)
