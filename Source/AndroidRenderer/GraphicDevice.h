@@ -12,9 +12,9 @@ Author: Anders, Christian
 
 namespace Renderer
 {
-#define RENDER_FORWARD  0
-#define RENDER_VIEWSPACE  1
-#define RENDER_INTERFACE  2
+#define RENDER_FORWARD  1
+#define RENDER_VIEWSPACE  2
+#define RENDER_INTERFACE  3
 
 #define TEXTURE_DIFFUSE		0
 #define TEXTURE_NORMAL		1

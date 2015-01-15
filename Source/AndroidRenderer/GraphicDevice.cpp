@@ -132,6 +132,7 @@ void GraphicDevice::Render()
 		}
 	}
 
+	glDisable(GL_DEPTH_TEST);
 
 	// RENDER VIEWSPACE STUFF
 	m_viewspaceShader.UseProgram();
@@ -147,7 +148,7 @@ void GraphicDevice::Render()
 			else
 				modelMatrix = *m_modelsViewspace[i].modelMatrix;
 
-			mat4 modelViewMatrix = viewMatrix * modelMatrix;
+			mat4 modelViewMatrix = modelMatrix;
 			m_forwardShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
 
 			mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
@@ -168,6 +169,7 @@ void GraphicDevice::Render()
 	}
 
 	glUseProgram(0);
+	glEnable(GL_DEPTH_TEST);
 
 	SDL_GL_SwapWindow(m_window);
 }
@@ -347,7 +349,11 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 		m_interfaceShader.UseProgram();
 	}*/
 	else
-		ERRORMSG("ERROR: INVALID RENDER SETTING");
+	{
+		shaderPtr = &m_forwardShader;
+		m_forwardShader.UseProgram();
+		SDL_Log("ERROR: INVALID RENDER SETTING. Selecting FORWARD");
+	}
 
 	// Import Object
 	ObjectData obj = ModelLoader::importObject(_dir, _file);
@@ -375,6 +381,9 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 		m_modelsForward.push_back(model);
 	else if (_renderType == RENDER_VIEWSPACE)
 		m_modelsViewspace.push_back(model);
+	else
+		m_modelsForward.push_back(model);
+
 	//else if (_renderType == RENDER_INTERFACE)
 	//	m_modelsInterface.push_back(model);
 
@@ -391,6 +400,16 @@ bool GraphicDevice::RemoveModel(int _id)
 			return true;
 		}*/
 	}
+	for (int i = 0; i < m_modelsViewspace.size(); i++)
+	{
+		if (m_modelsViewspace[i].id == _id)
+		{
+			m_modelsViewspace.erase(m_modelsViewspace.begin() + i);
+
+			return true;
+		}
+	}
+
 	return false;
 }
 bool GraphicDevice::ActiveModel(int _id, bool _active)

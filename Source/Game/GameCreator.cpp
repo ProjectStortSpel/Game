@@ -220,11 +220,11 @@ void GameCreator::StartGame(int argc, char** argv)
 	if (!something)
 	{
 		something = true;
-		std::vector<Console::Argument> temp;
-		m_console->HostServer(std::string(), &temp);
-		//std::vector<Console::Argument> arg;
-		//arg.push_back(Console::Argument("194.47.150.57"));
-		//m_console->ConnectClient("connect", &arg);
+		//std::vector<Console::Argument> temp;
+	//	m_console->HostServer(std::string(), &temp);
+		std::vector<Console::Argument> arg;
+		arg.push_back(Console::Argument("194.47.150.44"));
+		m_console->ConnectClient("connect", &arg);
 		GameMode("storaspel");
 	}
 #endif
