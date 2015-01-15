@@ -64,6 +64,7 @@ if Client then
 	require "cl_cardhoversystem"
 	require "cl_cardselectsystem"
 	require "cl_playerindicatorsystem"
+	require "cl_cardprintselectionsystem" -- Debug systems for cards
 end
 	
 
@@ -138,6 +139,7 @@ if Client then
 	worldCreator:AddSystemToCurrentGroup(SendSelectCardSystem)
 	worldCreator:AddSystemToCurrentGroup(CardHoverSystem)
 	worldCreator:AddSystemToCurrentGroup(CardSelectSystem)
+	worldCreator:AddSystemToCurrentGroup(CardPrintSelectionSystem)
 	worldCreator:AddSystemToCurrentGroup(PlayerDoneVisualizer)
 	worldCreator:AddSystemToCurrentGroup(PlayerIndicatorSystem)
 --worldCreator:AddSystemToCurrentGroup(ClientSendCardSystem)

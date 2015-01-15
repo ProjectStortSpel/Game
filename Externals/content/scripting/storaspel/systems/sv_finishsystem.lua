@@ -1,5 +1,6 @@
 FinishSystem = System()
 FinishSystem.TotemCount = {}
+FinishSystem.NoPlayers = 0
 
 FinishSystem.Initialize = function(self)
 	self:SetName("FinishSystem System")
@@ -18,6 +19,11 @@ FinishSystem.Update = function(self, dt)
 end
 
 FinishSystem.AddTotemPole = function(self, playerId, currentCP, noCP, X, Y, Z)
+	
+	print("PlayerId: " .. playerId)
+	print("CurrentCP: " .. currentCP)
+	print("noCP: " .. noCP)
+
 
 	local head = world:CreateNewEntity("Head")
 	local rotation 	= world:GetComponent(head, "Rotation", 0)
@@ -43,14 +49,20 @@ end
 
 FinishSystem.OnEntityAdded = function(self, entity)
 
-	if world:EntityHasComponent( entity, "CheckFinishpoint") then
+	if world:EntityHasComponent( entity, "Unit") then
+	
+		print("world:EntityHasComponent( entity, \"Unit\")")
+		self.NoPlayers = self.NoPlayers + 1
+		print("NoPlayers: " .. self.NoPlayers)
+
+	elseif world:EntityHasComponent( entity, "CheckFinishpoint") then
 	
 		print("FinishSystem.OnEntityAdded")
 	
 		local units = self:GetEntities("Unit")
 		local finishpoints = self:GetEntities("Finishpoint")
 		local nextCP = nil
-
+		print("NoUnits: " .. #units)
 		for i = 1, #units do
 			
 			local unitX, unitZ = world:GetComponent(units[i], "MapPosition", 0):GetInt2()
@@ -62,8 +74,13 @@ FinishSystem.OnEntityAdded = function(self, entity)
 				if unitX == finishpointX and unitZ == finishpointZ then
 					print("Unit reached a finishpoint")
 					
+					
+					
 					local playerId = world:GetComponent(units[i], "PlayerEntityId", "Id"):GetInt()
+					local playerNum = world:GetComponent(units[i], "PlayerNumber", 0):GetInt()
 					print("PlayerId: " .. playerId)
+					self.AddTotemPole(self, playerNum, j, 0, finishpointX, 1, finishpointZ)
+					
 					
 					local id = world:CreateNewEntity()
 					world:CreateComponentAndAddTo("TakeCardsFromPlayer", id)
@@ -75,6 +92,15 @@ FinishSystem.OnEntityAdded = function(self, entity)
 					
 					world:CreateComponentAndAddTo("IsSpectator", playerId)
 					world:KillEntity(units[i])
+					
+					self.NoPlayers = self.NoPlayers - 1
+					print("NoPlayers: " .. self.NoPlayers)
+					
+					if self.NoPlayers <= 0 then
+						print("Game is over, restart game")
+						Console.AddToCommandQueue("reload")
+					end
+					
 					
 				end
 				
