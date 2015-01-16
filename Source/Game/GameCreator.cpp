@@ -215,23 +215,14 @@ void GameCreator::StartGame(int argc, char** argv)
 
 	m_console = new GameConsole(m_graphics, m_world);
 
-#ifdef __ANDROID__
-	static bool something = false;
-	if (!something)
-	{
-		something = true;
-		//std::vector<Console::Argument> temp;
-	//	m_console->HostServer(std::string(), &temp);
-		std::vector<Console::Argument> arg;
-		arg.push_back(Console::Argument("194.47.150.44"));
-		m_console->ConnectClient("connect", &arg);
-		GameMode("storaspel");
-	}
-#endif
-
 	m_consoleInput.SetTextHook(std::bind(&Console::ConsoleManager::ExecuteCommand, &m_consoleManager, std::placeholders::_1));
+#ifdef __ANDROID__
+	m_consoleInput.SetActive(true);
+	m_input->GetKeyboard()->StartTextInput();
+#else
 	m_consoleInput.SetActive(false);
 	m_input->GetKeyboard()->StopTextInput();
+#endif
 
 	/*	Hook console	*/
 	m_console->SetupHooks(&m_consoleManager);

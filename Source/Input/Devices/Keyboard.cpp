@@ -42,6 +42,9 @@ void Keyboard::PollEvent(SDL_Event e)
 	//text
 	case SDL_TEXTINPUT:
 		*m_textInput += e.text.text;
+#if __ANDROID__
+		SDL_Log("Text: %s", (*m_textInput).c_str());
+#endif
 		break;
 	}
 }
