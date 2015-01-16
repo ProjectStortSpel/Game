@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source">
+      <UniqueIdentifier>{f3d297a7-9b7c-48c3-b710-2ec77831b7a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Socket">
+      <UniqueIdentifier>{6d958252-4296-4fc1-a570-de940cf016e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Server">
+      <UniqueIdentifier>{d479002a-801a-4fe6-8906-1b19afef7128}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Client">
+      <UniqueIdentifier>{d330dc4d-9e10-4741-a2d9-93a09abc55a0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Source\Network\BaseNetwork.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Network\PacketHandler.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Network\ISocket.cpp">
+      <Filter>Source\Socket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Network\LinSocket.cpp">
+      <Filter>Source\Socket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Network\WinSocket.cpp">
+      <Filter>Source\Socket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Network\ClientNetwork.cpp">
+      <Filter>Source\Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Network\ServerNetwork.cpp">
+      <Filter>Source\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Network\Packet.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Network\Stdafx.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Source\Network\Stdafx.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Network\BaseNetwork.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Network\PacketHandler.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Network\NetTypeMessageID.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Network\ISocket.h">
+      <Filter>Source\Socket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Network\LinSocket.h">
+      <Filter>Source\Socket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Network\WinSocket.h">
+      <Filter>Source\Socket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Network\ClientNetwork.h">
+      <Filter>Source\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Network\ServerNetwork.h">
+      <Filter>Source\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Network\Packet.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

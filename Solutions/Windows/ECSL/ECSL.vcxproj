@@ -1,0 +1,243 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Source\ECSL\ECSL.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Common\BitSet.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Common\ContainerHelper.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Common\FileHelper.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Common\StringConverter.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\ComponentType.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\DataManager.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\ComponentTable.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataArray.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataMap.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataTable.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\EntityTable.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\ComponentTypeReader.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\EntityTemplateReader.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\Parser.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\Section.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Simulation.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\ComponentFilter.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemWorkGroup.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemManager.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Templates\EntityTemplate.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\World.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\WorldCreator.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Interfaces\System.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Managers\ComponentTypeManager.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Managers\EntityTemplateManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Common\BitSet.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Common\ContainerHelper.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Common\FileHelper.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Common\StringConverter.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\ComponentType.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\DataManager.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\ComponentTable.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataArray.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataMap.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataTable.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\EntityTable.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\ComponentTypeReader.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\EntityTemplateReader.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\Parser.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Simulation.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\ComponentFilter.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemWorkGroup.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemManager.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Templates\EntityTemplate.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\World.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\WorldCreator.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Interfaces\System.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Managers\ComponentTypeManager.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Managers\EntityTemplateManager.cpp" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{C497EBB7-2E55-4F88-AEBD-D2529AC9B8C0}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>ECSL</RootNamespace>
+    <ProjectName>ECSL</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\</OutDir>
+    <IntDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\VisualStudioLogs\$(ProjectName)\</IntDir>
+    <IncludePath>$(SolutionDir)..\..\Externals\include\Windows\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\;$(SolutionDir)../../Externals/lib/Windows/$(PlatformTarget)/;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)_$(PlatformTarget)d</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\</OutDir>
+    <IntDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\VisualStudioLogs\$(ProjectName)\</IntDir>
+    <IncludePath>$(SolutionDir)..\..\Externals\include\Windows\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\;$(SolutionDir)../../Externals/lib/Windows/$(PlatformTarget)/;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)_$(PlatformTarget)d</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\</OutDir>
+    <IntDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\VisualStudioLogs\$(ProjectName)\</IntDir>
+    <IncludePath>$(SolutionDir)..\..\Externals\include\Windows\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\;$(SolutionDir)../../Externals/lib/Windows/$(PlatformTarget)/;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)_$(PlatformTarget)</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\</OutDir>
+    <IntDir>$(SolutionDir)..\..\Bin\$(Configuration)\$(PlatformTarget)\VisualStudioLogs\$(ProjectName)\</IntDir>
+    <IncludePath>$(SolutionDir)..\..\Externals\include\Windows\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\;$(SolutionDir)../../Externals/lib/Windows/$(PlatformTarget)/;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)_$(PlatformTarget)</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;SAMPLEDLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Source\</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName).lib</ImportLibrary>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
+      <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;SAMPLEDLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Source\</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName).lib</ImportLibrary>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
+      <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;SAMPLEDLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Source\</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName).lib</ImportLibrary>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
+      <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;SAMPLEDLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Source\</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName).lib</ImportLibrary>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
+      <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

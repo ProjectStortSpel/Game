@@ -1,0 +1,11 @@
+prefix=/home/marcus/Libraries/i386/glew-1.11.0/install
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include/GL
+
+Name: glew
+Description: The OpenGL Extension Wrangler library
+Version: 1.11.0
+Cflags: -I${includedir} 
+Libs: -L${libdir} -lGLEW
+Requires: glu

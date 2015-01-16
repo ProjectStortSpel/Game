@@ -16,6 +16,12 @@
     <ClCompile Include="..\..\..\Source\Input\Devices\Keyboard.cpp">
       <Filter>Source\Devices</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Input\Devices\Mouse.cpp">
+      <Filter>Source\Devices</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Input\Devices\Touch.cpp">
+      <Filter>Source\Devices</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Input\InputWrapper.h">
@@ -26,6 +32,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Input\InputEnums.h">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Input\Devices\Mouse.h">
+      <Filter>Source\Devices</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Input\Devices\Touch.h">
+      <Filter>Source\Devices</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
