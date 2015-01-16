@@ -7,5 +7,5 @@ uniform samplerCube cubemap;
 
 void main()
 {
-	ColorData = texture(cubemap, TexCoord);//vec4(1.0,1.0,1.0,1.0);//
+	ColorData = texture(cubemap, TexCoord);
 }

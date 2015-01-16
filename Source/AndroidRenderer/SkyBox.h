@@ -9,10 +9,13 @@ class SkyBox
 {
 private:
 	GLuint m_textureHandle;
-	GLuint m_VAOHandle;
+	GLuint m_attribLoc;
+
+	GLuint vboCubeVertices;
+	GLuint iboCubeIndices;
 
 public:
-	SkyBox(GLuint _texHandle, float _camFarPlane);
+	SkyBox(GLuint _texHandle, float _camFarPlane, GLuint loc);
 	SkyBox();
 	~SkyBox();
 
