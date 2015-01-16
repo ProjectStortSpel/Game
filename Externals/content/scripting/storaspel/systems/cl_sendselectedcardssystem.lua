@@ -17,7 +17,7 @@ SendSelectCardSystem.Update = function(self, dt)
 
 	if #button > 0 then
 	
-		if world:EntityHasComponent(button[1], "OnPickBoxHit") and Input.GetTouchState() == InputState.Released then
+		if world:EntityHasComponent(button[1], "OnPickBoxHit") and Input.GetTouchState(0) == InputState.Released then
 		
 			self:SendSelectedCards()
 			self:DeselectAll()
