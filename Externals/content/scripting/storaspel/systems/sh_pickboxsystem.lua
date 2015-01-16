@@ -5,15 +5,9 @@ PickBoxSystem.Update = function(self, dt)
 	-- Fetch Aspect ratio from graphics:
 	local AspectX, AspectY = graphics:GetAspectRatio()
 
-	graphics:RenderSimpleText(AspectX, 0,33)
-	graphics:RenderSimpleText(AspectY, 0,34)
-	
 	-- Get touch position for ray
 	local tX, tY = graphics:GetTouchPosition()
 
-	graphics:RenderSimpleText(tX, 0,36)
-	graphics:RenderSimpleText(tY, 0,37)
-	
 	-- Calc view space ray dir
 	local rX = tX * AspectX * -2
 	local rY = tY * AspectY * -2

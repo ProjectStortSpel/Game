@@ -19,6 +19,8 @@ end
 
 CheckpointSystem.AddTotemPole = function(self, playerId, currentCP, noCP, X, Y, Z)
 
+	-- TODO: FIX THIS SO IT DOESN'T USE ARRAYS FOR TOTEMS. DOESN'T WORK IN DEBUG
+
 	local head = world:CreateNewEntity("Head")
 	local rotation 	= world:GetComponent(head, "Rotation", 0)
 	local position 	= world:GetComponent(head, "Position", 0)
