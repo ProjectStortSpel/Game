@@ -12,28 +12,14 @@ Author: Anders, Christian
 
 namespace Renderer
 {
-#define RENDER_DEFERRED 0
 #define RENDER_FORWARD  1
+#define RENDER_VIEWSPACE  2
+#define RENDER_INTERFACE  3
 
 #define TEXTURE_DIFFUSE		0
 #define TEXTURE_NORMAL		1
 #define TEXTURE_SPECULAR	2
 
-
-	/*struct Instance
-	{
-		int id;
-		bool active;
-		mat4* modelMatrix;
-		
-		Instance(){}
-		Instance(int _id, bool _active, mat4* _model)
-		{
-			id = _id;
-			active = _active;
-			modelMatrix = _model;
-		}
-	};*/
 
 	struct Model
 	{
@@ -96,8 +82,8 @@ namespace Renderer
 		void GetWindowSize(int &x, int &y){ x = m_clientWidth; y = m_clientHeight; }
 
 		// MODELLOADER
-		bool PreLoadModel(std::string _dir, std::string _file, int _renderType = RENDER_DEFERRED);
-		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED);
+		bool PreLoadModel(std::string _dir, std::string _file, int _renderType = RENDER_FORWARD);
+		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_FORWARD);
 		bool RemoveModel(int _id);
 		bool ActiveModel(int _id, bool _active);
 		bool ChangeModelTexture(int _id, std::string _fileDir, int _textureType = TEXTURE_DIFFUSE);
@@ -132,18 +118,15 @@ namespace Renderer
 
 		// Shaders
 		Shader m_skyBoxShader;
-		Shader m_forwardShader;
+		Shader m_forwardShader, m_viewspaceShader;
 
 		// Skybox
 		SkyBox *m_skybox;
 
 		// Modelloader
 		int m_modelIDcounter;
-		std::vector<Model> m_modelsForward;
+		std::vector<Model> m_modelsForward, m_modelsViewspace;
 
-		// Objects
-		//std::map<const std::string, ObjectData> m_objects;
-		//class ObjectData AddObject(std::string _file, std::string _dir);
 		// Meshs
 		std::map<const std::string, Buffer*> m_meshs;
 		Buffer* AddMesh(std::string _fileDir, Shader *_shaderProg);
