@@ -13,6 +13,7 @@ ButtonHoverSystem.OnEntityAdded = function(self, entityId)
 
 	local scale = self:GetComponent(entityId, "Scale", 0)
 	scale:SetFloat3(self.Scale, self.Scale, self.Scale)
+	
 		
 end
 
