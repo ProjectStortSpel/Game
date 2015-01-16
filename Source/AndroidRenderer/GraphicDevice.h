@@ -93,6 +93,8 @@ namespace Renderer
 		void SetDebugTexFlag(int _flag) {  }
 		void BufferPointlights(int _nrOfLights, float **_lightPointers);
 		void BufferDirectionalLight(float *_lightPointer);
+
+		int GetVRamUsage(){ return 0; }
 		
 		void Clear();
 
