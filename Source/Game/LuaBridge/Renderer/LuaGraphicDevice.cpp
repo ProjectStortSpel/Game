@@ -40,13 +40,11 @@ namespace LuaBridge
 
   int LuaGraphicDevice::GetTouchPosition()
   {
-	  #ifdef __ANDROID__
-	  Input::InputWrapper& inputWrapper = Input::InputWrapper::GetInstance();
+	  /*Input::InputWrapper& inputWrapper = Input::InputWrapper::GetInstance();
 	  SDL_FingerID finger = (SDL_FingerID)LuaEmbedder::PullInt(1);
 	  LuaEmbedder::PushFloat(inputWrapper.GetTouch()->GetX(finger)-0.5f);
-	  LuaEmbedder::PushFloat(inputWrapper.GetTouch()->GetY(finger)-0.5f);
-	  return 2;
-	  #else
+	  LuaEmbedder::PushFloat(-inputWrapper.GetTouch()->GetY(finger)+0.5f);
+	  return 2;*/
 	  Input::InputWrapper& inputWrapper = Input::InputWrapper::GetInstance();
 	  int wX, wY;
 	  GraphicDevice::GetWindowSize(wX, wY);
@@ -56,7 +54,6 @@ namespace LuaBridge
 	  LuaEmbedder::PushFloat((float)(mX) / (float)(wX) - 0.5f);
 	  LuaEmbedder::PushFloat((float)(-mY) / (float)(wY) + 0.5f);
 	  return 2;
-	  #endif
   }
 
   int LuaGraphicDevice::ResizeWindow()

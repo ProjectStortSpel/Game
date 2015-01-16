@@ -177,7 +177,7 @@ void GraphicDevice::Render()
 void GraphicDevice::ResizeWindow(int _width, int _height)
 {
 	// GRAPHIC CARD WORK GROUPS OF 16x16
-	int x, y;
+	/*int x, y;
 	x = _width / 16;
 	if (x == 0) x = 1;
 	y = _height / 16;
@@ -185,7 +185,11 @@ void GraphicDevice::ResizeWindow(int _width, int _height)
 	m_clientWidth = x * 16;
 	m_clientHeight = y * 16;
 
-	std::cout << m_clientWidth << "x" << m_clientHeight << std::endl;
+	std::cout << m_clientWidth << "x" << m_clientHeight << std::endl;*/
+
+	m_clientWidth = _width;
+	m_clientHeight = _height;
+	SDL_Log("W: %d H: %d", m_clientWidth, m_clientHeight);
 
 	SDL_SetWindowSize(m_window, m_clientWidth, m_clientHeight);
 }
@@ -223,6 +227,7 @@ bool GraphicDevice::InitSDLWindow()
 	}
 
 	SDL_GetWindowSize(m_window, &m_clientWidth, &m_clientHeight);
+	SDL_Log("W: %d H: %d", m_clientWidth, m_clientHeight);
 
 	m_glContext = SDL_GL_CreateContext(m_window);
 
