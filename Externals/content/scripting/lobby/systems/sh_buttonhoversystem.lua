@@ -12,13 +12,13 @@ end
 ButtonHoverSystem.OnEntityAdded = function(self, entityId)
 
 	local scale = self:GetComponent(entityId, "Scale", 0)
-	scale:SetFloat3(self.Scale, self.Scale, self.Scale)
+	scale:SetFloat3(self.Scale, 0.5 * self.Scale, self.Scale)
 		
 end
 
 ButtonHoverSystem.OnEntityRemoved = function(self, entityId)
 
 	local scale = self:GetComponent(entityId, "Scale", 0)
-	scale:SetFloat3(1, 1, 1)
+	scale:SetFloat3(1, 0.5, 1)
 		
 end

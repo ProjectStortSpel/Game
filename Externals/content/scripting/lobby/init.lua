@@ -12,6 +12,7 @@ package.path = package.path .. ";../../../Externals/content/scripting/lobby/syst
 require "systems"
 
 require "sh_pickboxsystem"
+require "sh_buttonhoversystem"
 require "sh_buttonpressedsystem"
 
 --if Server then
@@ -33,6 +34,7 @@ worldCreator:AddSystemToCurrentGroup(StartUpSystem)
 
 worldCreator:AddSystemToCurrentGroup(PickBoxSystem)
 worldCreator:AddSystemToCurrentGroup(ButtonPressedSystem)
+worldCreator:AddSystemToCurrentGroup(ButtonHoverSystem)
 
 --if Server then
 	worldCreator:AddSystemToCurrentGroup(ServerLobbySystem)
