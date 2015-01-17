@@ -1,4 +1,3 @@
-
 -- Position Component
 local PositionComponent = ComponentType()
 PositionComponent.Name = "Position"

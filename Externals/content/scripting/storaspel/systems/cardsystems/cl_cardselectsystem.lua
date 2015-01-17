@@ -10,7 +10,6 @@ CardSelectSystem.Update = function(self, dt)
 
 			if world:EntityHasComponent(entities[i], "SelectCard") then
 				world:RemoveComponentFrom("SelectCard", entities[i])
-				world:RemoveComponentFrom("CardSelected", entities[i])
 			else
 				world:CreateComponentAndAddTo("SelectCard", entities[i])	
 			end

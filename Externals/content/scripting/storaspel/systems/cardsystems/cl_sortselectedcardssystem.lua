@@ -32,19 +32,20 @@ end
 SortSelectedCardSystem.OnEntityRemoved = function( self, entityId )
 
 	if world:EntityHasComponent(entityId, "CardSelected") then
-	
+		
 		local index = world:GetComponent(entityId, "SelectCard", "Index"):GetInt()
 
 		local cards = self:GetEntities()
 
 		for i = 1, #cards do
 			local index2 = world:GetComponent(cards[i], "SelectCard", "Index"):GetInt()
-			
+
 			if index2 > index then
 				world:SetComponent(cards[i], "SelectCard", "Index", index2 - 1)
 			end
 
 		end
-
+		
+		world:RemoveComponentFrom("CardSelected", entityId)
 	end
 end

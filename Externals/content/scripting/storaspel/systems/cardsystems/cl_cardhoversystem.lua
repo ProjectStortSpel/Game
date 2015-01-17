@@ -1,5 +1,6 @@
 CardHoverSystem = System()
-CardHoverSystem.Scale = 1.1
+CardHoverSystem.HoverScale = 1
+CardHoverSystem.DefaultScale = 0.9
 
 CardHoverSystem.Update = function(self, dt)
 
@@ -34,14 +35,15 @@ CardHoverSystem.OnEntityAdded = function(self, entityId)
 	
 	graphics:RenderSimpleText(action, 0,44)
 	graphics:RenderSimpleText(prio, 15,44)
-	
-	scale:SetFloat3(self.Scale, self.Scale, self.Scale)
+
+	scale:SetFloat3(self.HoverScale, self.HoverScale, self.HoverScale)
 		
 end
 
 CardHoverSystem.OnEntityRemoved = function(self, entityId)
 
 	local scale = self:GetComponent(entityId, "Scale", 0)
-	scale:SetFloat3(1, 1, 1)
+
+	scale:SetFloat3(self.DefaultScale, self.DefaultScale, self.DefaultScale)
 		
 end
