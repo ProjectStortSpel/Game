@@ -130,6 +130,15 @@ ButtonPressedSystem.PostInitialize = function(self)
 	
 	
 	
+
+	File.Create("blabla.txt")
+	local file = File.Append("blabla.txt")
+	
+	print("Pointer: " .. file)
+	
+	File.Write(file, "tjabba\n")
+	File.Write(file, "tja")
+	File.Close(file)
 	
 	print("ButtonPressedSystem post initialized!")
 end
