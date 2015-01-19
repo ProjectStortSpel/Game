@@ -215,7 +215,7 @@ bool GraphicDevice::InitSDLWindow()
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
 	m_window = SDL_CreateWindow(Caption, PosX, PosY, SizeX, SizeY, Flags);
@@ -338,9 +338,6 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 	int modelID = m_modelIDcounter;
 	m_modelIDcounter++;
 
-	//Shader *shaderPtr = &m_forwardShader;
-	//m_forwardShader.UseProgram();
-
 	Shader *shaderPtr = NULL;
 
 	if (_renderType == RENDER_FORWARD)
@@ -362,7 +359,7 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 	{
 		shaderPtr = &m_forwardShader;
 		m_forwardShader.UseProgram();
-		SDL_Log("ERROR: INVALID RENDER SETTING. Selecting FORWARD");
+		SDL_Log("Deferred requested. Selecting FORWARD");
 	}
 
 	// Import Object
