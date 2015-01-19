@@ -56,6 +56,7 @@ TotemPoleSystem.OnEntityAdded = function(self, entity)
 		
 		end
 		
+		--self.CheckCheckPoints(self, totemNr
 
 	end
 end
