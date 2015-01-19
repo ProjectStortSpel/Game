@@ -3,6 +3,7 @@
 
 #include <SDL/SDL.h>
 #include <File/File.h>
+#include <sstream>
 
 namespace LuaEmbedder
 {
@@ -233,8 +234,39 @@ namespace LuaEmbedder
   int PullInt(int index)
   {
     if (!lua_isnumber(L, index))
+	{
 	  SDL_Log("LuaEmbedder::PullInt : Element at index %d is not a number", index);
-    return (int)lua_tointeger(L, index);
+	  /*lua_Debug debugInfo;
+	  lua_getstack(L, 1, &debugInfo);
+	  lua_getinfo(L, "nSlu", &debugInfo);
+	  std::string source = std::string(debugInfo.source);
+	  int currentLine = 0, targetLine = debugInfo.currentline;
+
+	  std::istringstream iss(source);
+	  std::string line;
+	  std::string info;
+	  while (std::getline(iss, line))
+	  {
+		  if (currentLine == targetLine - 1)
+		  {
+			  info.insert(info.end(), line.begin(), line.end());
+			  info.push_back('\n');
+		  }
+		  else if (currentLine == targetLine)
+		  {
+			  info.insert(info.end(), line.begin(), line.end());
+			  info.push_back('\n');
+		  }
+		  else if (currentLine == targetLine + 1)
+		  {
+			  info.insert(info.end(), line.begin(), line.end());
+			  SDL_Log("%s", info.c_str());
+			  break;
+		  }
+		  currentLine++;
+	  }*/
+	}
+	return (int)lua_tointeger(L, index);
   }
   bool PullBool(int index)
   {

@@ -4,6 +4,7 @@ require "components"
 require "mapcomponents"
 require "playercomponents"
 require "cardcomponents"
+require "lerpcomponents"
 require "gamestatecomponents"
 
 require "lightcomponents"
@@ -16,7 +17,12 @@ require "sh_movementsystem"
 require "sh_networkmessagessystem"
 require "sh_moveplayersystem"
 
+-- PICKBOX SYSTEMS
+package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/pickboxsystems/?.lua"
 require "sh_pickboxsystem"
+package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
+
+require "sh_lerpsystem"
 
 if Server then
 	require "sv_mapsystem"
@@ -44,7 +50,7 @@ if Server then
 
 	require "sv_steptimersystem"
 	require "sv_playcardtimersystem"
-
+	
 	require "sv_takecardsfromplayersystem"
 	require "sv_takecardstepsfromunitsystem"
 end
@@ -53,18 +59,27 @@ end
 if Client then
 --require "cl_pickingphasesystem"
 	require "cl_lobbysystem"
-	require "cl_cardpositionsystem"
-	require "cl_givecardindexsystem"
 	--require "cl_selectcardsystem"
+	require "cl_playerdonevisualizersystem"
+	--require "cl_givecardindexsystem"
+	
+	-- CARD SYSTEMS
+	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/cardsystems/?.lua"
+	require "cl_givecardindexsystem"
 	require "cl_sortcardindexsystem"
 	require "cl_sortselectedcardssystem"
 	require "cl_sendselectedcardssystem"
-	require "cl_playerdonevisualizersystem"
-	--require "cl_givecardindexsystem"
+	
+	require "cl_cardaddmodelsystem"
 	require "cl_cardhoversystem"
+	require "cl_cardpositionsystem"
+	require "cl_cardpositionsystem2"
 	require "cl_cardselectsystem"
-	require "cl_playerindicatorsystem"
 	require "cl_cardprintselectionsystem" -- Debug systems for cards
+	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
+
+	require "cl_playerindicatorsystem"
+
 end
 	
 
@@ -88,6 +103,8 @@ worldCreator:AddSystemToCurrentGroup(networkMessagesSystem)
 worldCreator:AddSystemToCurrentGroup(TrueTestMoveSystem)
 
 worldCreator:AddSystemToCurrentGroup(PickBoxSystem)
+
+worldCreator:AddSystemToCurrentGroup(LerpSystem)
 
 if Server then
 	worldCreator:AddSystemToCurrentGroup(MapSystem)
@@ -131,12 +148,14 @@ end
 
 if Client then
 	worldCreator:AddSystemToCurrentGroup(ClientLobbySystem)
-	worldCreator:AddSystemToCurrentGroup(CardPositionSystem)
 	worldCreator:AddSystemToCurrentGroup(GiveCardIndexSystem)
 	--worldCreator:AddSystemToCurrentGroup(SelectCardSystem)
 	worldCreator:AddSystemToCurrentGroup(SortCardIndexSystem)
 	worldCreator:AddSystemToCurrentGroup(SortSelectedCardSystem)
 	worldCreator:AddSystemToCurrentGroup(SendSelectCardSystem)
+	worldCreator:AddSystemToCurrentGroup(CardPositionSystem)
+	worldCreator:AddSystemToCurrentGroup(CardPositionSystem2)
+	worldCreator:AddSystemToCurrentGroup(CardAddModelSystem)
 	worldCreator:AddSystemToCurrentGroup(CardHoverSystem)
 	worldCreator:AddSystemToCurrentGroup(CardSelectSystem)
 	worldCreator:AddSystemToCurrentGroup(CardPrintSelectionSystem)

@@ -113,8 +113,6 @@ namespace Renderer
 		float m_dt;
 		int m_fps;
 
-		int m_vramUsage; //in bytes
-
 		// Window size
 		int	m_clientWidth, m_clientHeight;
 

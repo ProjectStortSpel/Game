@@ -47,9 +47,11 @@ worldCreator:AddComponentType(RenderComponent)
 --	Model Component
 local ModelComponent = ComponentType()
 ModelComponent.Name = "Model"
+ModelComponent.SyncNetwork = true
 ModelComponent.TableType = TableType.Map
 ModelComponent:AddVariable("ModelName", ByteSize.Text)
 ModelComponent:AddVariable("ModelPath", ByteSize.Text)
+ModelComponent:AddVariable("RenderType", ByteSize.Int)
 worldCreator:AddComponentType(ModelComponent)
 
 -- Username Component
