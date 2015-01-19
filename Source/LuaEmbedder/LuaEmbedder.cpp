@@ -244,15 +244,23 @@ namespace LuaEmbedder
 
 	  std::istringstream iss(source);
 	  std::string line;
+	  std::string info;
 	  while (std::getline(iss, line))
 	  {
 		  if (currentLine == targetLine - 1)
-			  SDL_Log("%s", line.c_str());
+		  {
+			  info.insert(info.end(), line.begin(), line.end());
+			  info.push_back('\n');
+		  }
 		  else if (currentLine == targetLine)
-			  SDL_Log("%s", line.c_str());
+		  {
+			  info.insert(info.end(), line.begin(), line.end());
+			  info.push_back('\n');
+		  }
 		  else if (currentLine == targetLine + 1)
 		  {
-			  SDL_Log("%s", line.c_str());
+			  info.insert(info.end(), line.begin(), line.end());
+			  SDL_Log("%s", info.c_str());
 			  break;
 		  }
 		  currentLine++;

@@ -1,3 +1,7 @@
+#version 100
+
+precision mediump float;
+
 varying vec3 Normal;
 varying vec3 Tan;
 varying vec3 BiTan;
@@ -65,7 +69,7 @@ void phongModel(int index, out vec3 ambient, out vec3 diffuse, out vec3 spec) {
 		spec = specFactor * thisLightColor * thisLightIntensity.z * Material.Ks;          
 	}
 
-	float att = 1.0 - pow((d/pointlights[index].Range), 1.0f);
+	float att = 1.0 - pow((d/pointlights[index].Range), 1.0);
 
 	ambient *= att;
 	diffuse *= att;
@@ -77,30 +81,27 @@ void phongModel(int index, out vec3 ambient, out vec3 diffuse, out vec3 spec) {
 
 void main() 
 {
-    pointlights[0].Position = vec3(8.0f, 10.0f, 8.0f);
-    pointlights[0].Intensity = vec3(0.2f, 1.0f, 1.0f);
-    pointlights[0].Color = vec3(1.0f, 1.0f, 1.0f);
-    pointlights[0].Range = 20.0f;
-    
-    //Material.Ks = 0.1f;
-    //Material.Shininess = 20.0f;
+    pointlights[0].Position = vec3(8.0, 10.0, 8.0);
+    pointlights[0].Intensity = vec3(0.2, 1.0, 1.0);
+    pointlights[0].Color = vec3(1.0, 1.0, 1.0);
+    pointlights[0].Range = 20.0;
 
 	vec4 albedo_tex = texture2D( diffuseTex, TexCoord );
 
 	// Normal data
 	vec3 normal_map	  = texture2D( normalTex, TexCoord ).rgb;
-	normal_map = (normal_map * 2.0f) - 1.0f;
+	normal_map = (normal_map * 2.0) - 1.0;
 	mat3 texSpace = mat3(Tan, BiTan, Normal);
 	NmNormal = normalize( texSpace * normal_map );
 
 	// Spec data
 	vec3 spec_map = texture2D( specularTex, TexCoord ).rgb;
 	Material.Ks			= spec_map.x;
-	Material.Shininess  = spec_map.y * 254.0f + 1.0f;
+	Material.Shininess  = spec_map.y * 254.0 + 1.0;
     
-    vec3 ambient = vec3(0.0f);
-    vec3 diffuse = vec3(0.0f);
-    vec3 spec 	 = vec3(0.0f);
+    vec3 ambient = vec3(0.0);
+    vec3 diffuse = vec3(0.0);
+    vec3 spec 	 = vec3(0.0);
     
     //för varje ljus-----------
     for(int i = 0; i < 1; i++)
@@ -113,10 +114,10 @@ void main()
 	    spec    += s;
     }
     
-    gl_FragColor = vec4(ambient + diffuse, 1.0) * albedo_tex + vec4(spec, 0.0f);
+    gl_FragColor = vec4(ambient + diffuse, 1.0) * albedo_tex + vec4(spec, 0.0);
 	//gl_FragColor = vec4( (inverse(ViewMatrix) * vec4(Normal, 0.0)).xyz, 1.0);
 	//gl_FragColor = vec4(Normal, 1.0);
-    //gl_FragColor = vec4(ambient + diffuse, 1.0f) * vec4(0.0, 0.0, 1.0, 1.0) + vec4(spec, 0.0f); //albedo_tex;
+    //gl_FragColor = vec4(ambient + diffuse, 1.0) * vec4(0.0, 0.0, 1.0, 1.0) + vec4(spec, 0.0); //albedo_tex;
 }
 
 
