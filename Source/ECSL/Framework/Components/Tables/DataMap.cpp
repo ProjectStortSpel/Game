@@ -30,6 +30,9 @@ namespace ECSL
 
 	void DataMap::ClearRow(unsigned const int _row)
 	{
+		if ((*m_dataMap).find(_row) == (*m_dataMap).end())
+			return;
+
 		m_dataMap->erase(m_dataMap->find(_row));
 	}
 
@@ -41,11 +44,17 @@ namespace ECSL
 
 	DataLocation DataMap::GetData(unsigned const int _id)
 	{
+		if ((*m_dataMap).find(_id) == (*m_dataMap).end())
+			(*m_dataMap)[_id] = new char[m_bytesPerRow];
+
 		return (*m_dataMap)[_id];
 	}
 
 	DataLocation DataMap::GetData(unsigned const int _id, unsigned const int _index)
 	{
+		if ((*m_dataMap).find(_id) == (*m_dataMap).end())
+			(*m_dataMap)[_id] = new char[m_bytesPerRow];
+
 		return (*m_dataMap)[_id] + _index;
 	}
 

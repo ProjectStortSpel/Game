@@ -26,6 +26,7 @@
     <ClCompile Include="..\..\..\Source\Network\Packet.cpp" />
     <ClCompile Include="..\..\..\Source\Network\PacketHandler.cpp" />
     <ClCompile Include="..\..\..\Source\Network\ServerNetwork.cpp" />
+    <ClCompile Include="..\..\..\Source\Network\Stdafx.cpp" />
     <ClCompile Include="..\..\..\Source\Network\WinSocket.cpp" />
   </ItemGroup>
   <ItemGroup>

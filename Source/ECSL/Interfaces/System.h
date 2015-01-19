@@ -29,6 +29,8 @@ namespace ECSL
 		void AddEntityToSystem(unsigned int _entityId);
 		void RemoveEntityFromSystem(unsigned int _entityId);
 		bool HasEntity(unsigned int _entityId);
+		void ComponentHasChanged(unsigned int _entityId, std::string _componentType);
+		void ComponentHasChanged(unsigned int _entityId, unsigned int _componentTypeId);
 
 		ComponentFilter* GetMandatoryFilter() { return &m_mandatoryComponentTypes; }
 		ComponentFilter* GetRequiresOneOfFilter() { return &m_requiresOneOfComponentTypes; }
@@ -38,7 +40,7 @@ namespace ECSL
 		unsigned int GetGroupId() { return m_groupId; }
 		const std::string& GetSystemName() { return *m_systemName; }
 
-		unsigned int GetUpdateTaskCount() { return m_updateTaskCount; }
+
 		unsigned int GetEntitiesAddedTaskCount() { return m_entitiesAddedTaskCount; }
 		unsigned int GetEntitiesRemovedTaskCount() { return m_entitiesRemovedTaskCount; }
 		unsigned int GetMessagesRecievedTaskCount() { return m_messagesRecievedTaskCount; }
@@ -73,13 +75,15 @@ namespace ECSL
 		void KillEntity(unsigned int _entityId);
 		const std::vector<unsigned int>* const GetEntities() { return m_entities; }
 
+
+		inline unsigned int GetEntityCountLimit(){ return m_dataManager->GetEntityCountLimit(); }
+		inline bool EntityHasComponent(unsigned int _entityId, unsigned int _componentTypeId){ return m_dataManager->EntityHasComponent(_entityId, _componentTypeId); }
 		void AddComponentTypeToFilter(const std::string& _componentType, FilterType _filterType);
 		void SetSystemName(const std::string& _name) { *m_systemName = _name; m_id = m_systemIdManager->CreateSystemId(_name); }
 		void SetUpdateTaskCount(unsigned int _taskCount) { m_updateTaskCount = _taskCount; }
 		void SetEntitiesAddedTaskCount(unsigned int _taskCount) { m_entitiesAddedTaskCount = _taskCount; }
 		void SetEntitiesRemovedTaskCount(unsigned int _taskCount) { m_entitiesRemovedTaskCount = _taskCount; }
 		void SetMessagesRecievedTaskCount(unsigned int _taskCount) { m_messagesRecievedTaskCount = _taskCount; }
-
 		void SubscribeTo(const std::string& _systemName, unsigned int _messageType);
 		void SendMessage(Message* _message);
 

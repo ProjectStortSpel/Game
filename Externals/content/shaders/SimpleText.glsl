@@ -1,4 +1,4 @@
-#version 430 core
+#version 440 core
 
 // UNIFORMS
 layout (local_size_x = 8, local_size_y = 16) in;
@@ -9,7 +9,7 @@ layout (rgba8, binding = 1) uniform image2D text_image;
 // output 
 layout (rgba32f, binding = 5) uniform image2D output_image;
 
-layout (std430, binding = 7) buffer debugtext { int letter []; };
+layout (std430, binding = 4) buffer debugtext { int letter []; };
 
 // uniforms
 uniform vec4 text_color;

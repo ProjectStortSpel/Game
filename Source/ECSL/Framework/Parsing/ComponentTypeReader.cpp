@@ -17,6 +17,7 @@ void ComponentTypeReader::ClearComponentType()
 	m_name = "";
 	m_tableType = TableType::None;
 	m_variables = std::map<std::string, ComponentVariable>();
+	m_offsetToType = std::map<unsigned int, ComponentDataType>();
 }
 
 bool ComponentTypeReader::ReadComponents(std::vector<ComponentType*>& _out, const std::string& _filePath, const Section& _section)
@@ -35,7 +36,7 @@ bool ComponentTypeReader::ReadComponents(std::vector<ComponentType*>& _out, cons
 			printf("Invalid component type syntax in file: %s\n", _filePath.c_str());
 			return false;
 		}
-		_out.push_back(new ComponentType(m_name, m_tableType, m_variables));
+		_out.push_back(new ComponentType(m_name, m_tableType, m_variables, m_offsetToType));
 		ClearComponentType();
 	}
 
@@ -120,8 +121,12 @@ bool ComponentTypeReader::InterpretDataTokens(const Section* _section, const uns
 				byteSize = sizeof(float);
 			else if (secondToken == "int")
 				byteSize = sizeof(int);
-			else if (secondToken == "pointer")
-				byteSize = sizeof(void*);
+			else if (secondToken == "matrix")
+				byteSize = sizeof(64);
+			else if (secondToken == "char")
+				byteSize = sizeof(CHARSIZE * sizeof(char));
+			else if (secondToken == "reference")
+				byteSize = sizeof(int);
 			else
 				return false;
 		}

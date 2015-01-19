@@ -1,6 +1,13 @@
 #ifndef ECSL_H
 #define ECSL_H
 
+#ifdef WIN32
+#ifdef _DEBUG
+#include <VLD/vld.h>
+#endif
+#else
+#endif
+
 #include "Framework/Common/BitSet.h"
 #include "Framework/Components/ComponentType.h"
 #include "Framework/Components/DataManager.h"

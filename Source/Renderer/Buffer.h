@@ -29,6 +29,7 @@ namespace Renderer
 
 		void draw(void);
 		void draw(GLint base, GLsizei count);
+		void drawInstanced(GLint base, int instances, std::vector<glm::mat4> *inMats, std::vector<glm::mat3> *normalMats);
 
 		void setCount(GLsizei count);
 
@@ -44,7 +45,7 @@ namespace Renderer
 
 		GLuint m_VAO;
 		std::vector<GLuint> m_Buffers;
-
+		GLuint m_inMatVBO, m_normalMatVBO;
 		GLsizei m_Count;
 	};
 }

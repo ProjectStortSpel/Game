@@ -42,6 +42,11 @@ namespace ECSL
 		inline ComponentTable* GetComponentTable(unsigned int _componentTypeId) { return m_componentTables->at(_componentTypeId); }
 		inline const std::vector<unsigned int>* GetChangedEntities() { return m_changedEntities; }
 
+		inline bool EntityHasComponent(unsigned int _entityId, unsigned int _componentTypeId){ return m_entityTable->EntityHasComponent(_entityId, _componentTypeId); }
+		inline unsigned int GetEntityCountLimit(){ return m_entityTable->EntityCountLimit(); }
+
+		unsigned int GetMemoryAllocated();
+
 	private:
 		SDL_mutex* m_changedEntitiesMutex;
 		SDL_mutex* m_entitiesToBeRemovedMutex;

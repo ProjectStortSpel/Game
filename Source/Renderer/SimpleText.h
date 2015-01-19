@@ -22,9 +22,13 @@ namespace Renderer
 
 		int GetArraySize(){ return simpleText.size(); }
 
+		void Disco() { m_disco = !m_disco; };
+
 	private:
 		float m_clock;
 		float m_update;
+
+		bool m_disco;
 
 		GLuint m_textImage;
 

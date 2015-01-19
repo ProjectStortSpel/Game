@@ -23,9 +23,12 @@
     <ClInclude Include="..\..\..\Source\Renderer\Camera.h" />
     <ClInclude Include="..\..\..\Source\Renderer\GLTimer.h" />
     <ClInclude Include="..\..\..\Source\Renderer\GraphicDevice.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\ModelExporter.h" />
     <ClInclude Include="..\..\..\Source\Renderer\ModelLoader.h" />
     <ClInclude Include="..\..\..\Source\Renderer\Shader.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\ShadowMap.h" />
     <ClInclude Include="..\..\..\Source\Renderer\SimpleText.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\SkyBox.h" />
     <ClInclude Include="..\..\..\Source\Renderer\stdafx.h" />
     <ClInclude Include="..\..\..\Source\Renderer\TextureLoader.h" />
   </ItemGroup>
@@ -35,16 +38,31 @@
     <ClCompile Include="..\..\..\Source\Renderer\GLTimer.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\Shader.cpp" />
+    <ClCompile Include="..\..\..\Source\Renderer\ShadowMap.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\SimpleText.cpp" />
+    <ClCompile Include="..\..\..\Source\Renderer\SkyBox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\Externals\content\shaders\CSDeferredPass2.glsl" />
     <None Include="..\..\..\Externals\content\shaders\FSDeferredPass1.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\FSForwardShader.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\FSInterfaceShader.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\FSViewspaceShader.glsl" />
     <None Include="..\..\..\Externals\content\shaders\fullscreen.gs" />
     <None Include="..\..\..\Externals\content\shaders\fullscreen.ps" />
     <None Include="..\..\..\Externals\content\shaders\fullscreen.vs" />
+    <None Include="..\..\..\Externals\content\shaders\shadowShaderDeferredFS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\shadowShaderDeferredVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\shadowShaderForwardFS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\shadowShaderForwardVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\SimpleText.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\skyboxShaderFS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\skyboxShaderVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\skyboxvs.glsl" />
     <None Include="..\..\..\Externals\content\shaders\VSDeferredPass1.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\VSForwardShader.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\VSInterfaceShader.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\VSViewspaceShader.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A71BE4D1-612E-49FE-9B2D-EA067C024F0A}</ProjectGuid>
@@ -146,7 +164,7 @@
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
-if not exist "$(OutDir)content" mkdir $(OutDir)content
+if not exist "$(OutDir)content" mkdir "$(OutDir)content"
 xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -170,7 +188,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
-if not exist "$(OutDir)content" mkdir $(OutDir)content
+if not exist "$(OutDir)content" mkdir "$(OutDir)content"
 xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -198,7 +216,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
-if not exist "$(OutDir)content" mkdir $(OutDir)content
+if not exist "$(OutDir)content" mkdir "$(OutDir)content"
 xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -226,7 +244,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
-if not exist "$(OutDir)content" mkdir $(OutDir)content
+if not exist "$(OutDir)content" mkdir "$(OutDir)content"
 xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

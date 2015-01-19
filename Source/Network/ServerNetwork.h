@@ -5,51 +5,92 @@
 
 #include "BaseNetwork.h"
 
-class DECLSPEC ServerNetwork : public BaseNetwork
+namespace Network
 {
-public:
-	ServerNetwork(void);
-	~ServerNetwork(void);
 
-	bool Start(unsigned int _incomingPort, const char* _password, unsigned int _maxConnections);
-	bool Start(void);
-	bool Stop(void);
+	class DECLSPEC ServerNetwork : public BaseNetwork
+	{
 
-	void Broadcast(Packet* _packet, NetConnection _exclude = NetConnection());
-	void Send(Packet* _packet, NetConnection _connection);
+	public:
+		ServerNetwork(void);
+		~ServerNetwork(void);
+
+		// Start the server using predefined settings
+		bool Start(void);
+		// Start the server using custom incoming port, password & max number of connections
+		// Note that all previously information will be overridden
+		bool Start(unsigned int& _incomingPort, const char* _password, unsigned int& _maxConnections);
+		// Stops the server
+		// This is called from the deconstructor and is not needed to close the server gracyfully
+		bool Stop(void);
+
+		// Send a message to all connected clients
+		// use _exclude to prevent the message to being sent to one client
+		void Broadcast(Packet* _packet, const NetConnection& _exclude = NetConnection());
+		// Send a message to a specific client
+		void Send(Packet* _packet, NetConnection& _connection);
+
+		void Kick(NetConnection& _connection, const char* _reason);
+
+		const std::vector<NetConnection> GetConnectedClients() { return m_connectedClientsNC; }
+
+		// Bind function which will trigger when another player connects to the server
+		void SetOnPlayerConnected(NetEvent& _function);
+		// Bind function which will trigger when another player disconnects from the server
+		void SetOnPlayerDisconnected(NetEvent& _function);
+		// Bind function which will trigger when another player disconnects from the server
+		void SetOnPlayerTimedOut(NetEvent& _function);
+
+		bool IsRunning() { return *m_running; }
+		unsigned int GetMaxConnections() { return *m_maxConnections; }
+
+	private:
+		void ReceivePackets(ISocket* _socket);
+		void ListenForConnections(void);
+
+		void NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection);
+		void NetConnectionLost(NetConnection& _connection);
+		void NetConnectionDisconnected(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection);
+		void NetPing(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection);
+		void NetPong(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection);
+
+		void UpdateNetUsage(float& _dt);
+		void UpdateTimeOut(float& _dt);
+
+	private:
+
+		bool* m_listenForConnectionsAlive;
+
+		unsigned int* m_maxConnections;
 
 
-	// Bind function which will trigger when another player connects to the server
-	void SetOnPlayerConnected(NetMessageHook _function);
-	// Bind function which will trigger when another player disconnects from the server
-	void SetOnPlayerDisconnected(NetMessageHook _function);
+		std::thread* m_listenForConnectionsThread;
+		std::mutex* m_timeOutLock;
+		std::mutex* m_connectedClientsLock;
 
-	// Bind function which will trigger when another player disconnects from the server
-	void SetOnPlayerTimedOut(NetMessageHook _function);
+		std::mutex* m_dataRecievedLock;
+		std::mutex* m_dataSentLock;
 
-private:
-	void ReceivePackets(ISocket* _socket, int _id);
-	void ListenForConnections(void);
+		std::vector<NetConnection>	m_connectedClientsNC;
+		std::map<NetConnection, ISocket*>* m_connectedClients;
 
-	void HandlePacket(Packet* _packet);
+		ISocket* m_listenSocket;
 
-private:
+		std::map<NetConnection, std::thread>* m_receivePacketsThreads;
+		std::map<NetConnection, float>* m_currentTimeOutIntervall;
+		std::map<NetConnection, int>* m_currentIntervallCounter;
 
-#pragma warning( disable : 4251 )
+		//std::map<NetConnection
 
-	bool m_listenForConnectionsAlive;
-	std::thread m_listenForConnectionsThread;
+		std::vector<NetEvent>* m_onPlayerConnected;
+		std::vector<NetEvent>* m_onPlayerDisconnected;
+		std::vector<NetEvent>* m_onPlayerTimedOut;
+		bool* m_running;
 
-	int m_maxConnections;
 
-	ISocket* m_listenSocket;
-	std::map<NetConnection, ISocket*> m_connectedClients;
 
-	std::vector<std::thread> m_receivePacketsThreads;
-	std::vector<bool> m_receivePacketsAlive;
+	};
+}
 
-#pragma warning( default : 4251 )
-
-};
 
 #endif

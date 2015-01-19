@@ -85,6 +85,7 @@ unsigned int ComponentTypeManager::GetTableId(const std::string& _componentType)
 	if (it == m_stringTableId->end())
 	{
 		unsigned int newId = ++m_nextTableId;
+
 		m_stringTableId->insert(std::pair<std::string, unsigned int>(_componentType, newId));
 		return newId;
 	}
@@ -94,8 +95,41 @@ unsigned int ComponentTypeManager::GetTableId(const std::string& _componentType)
 
 void ComponentTypeManager::AddComponentType(ComponentType& _componentType)
 {
-	/* Trying to add a component that is already defined */
-	assert(m_stringTableId->find(_componentType.GetName()) == m_stringTableId->end());
 
 	m_componentTypes->insert(std::pair<int, ComponentType*>(ComponentTypeManager::GetTableId(_componentType.GetName()), &_componentType));
+}
+
+bool ComponentTypeManager::ComponentExists(std::string& _componentType)
+{
+	return m_stringTableId->find(_componentType) != m_stringTableId->end();
+}
+
+void ComponentTypeManager::Clear()
+{
+	if (m_stringTableId)
+	{
+		m_stringTableId->clear();
+		delete(m_stringTableId);
+	}
+
+	if (m_componentTypes)
+	{
+		for (auto it = m_componentTypes->begin(); it != m_componentTypes->end(); ++it)
+			delete it->second;
+
+		m_componentTypes->clear();
+		delete m_componentTypes;
+	}
+
+	if (m_componentTypeReader)
+		delete m_componentTypeReader;
+
+	if (m_parser)
+		delete m_parser;
+	
+	m_nextTableId = -1;
+	m_parser = new Parser();
+	m_componentTypeReader = new ComponentTypeReader();
+	m_componentTypes = new std::map<unsigned int, ComponentType*>();
+	m_stringTableId = new std::unordered_map<std::string, unsigned int>();
 }

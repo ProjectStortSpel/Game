@@ -11,7 +11,11 @@ namespace ECSL
 {
 	namespace BitSet
 	{
+#ifdef __ANDROID__
+		typedef unsigned int DataType;
+#else
 		typedef uint64_t DataType;
+#endif
 
 		const DataType BitSetIndexMask = std::numeric_limits<DataType>::max() ^ ((sizeof(DataType) * 8) - 1);
 		const DataType BitIndexMask = (sizeof(DataType)* 8) - 1;
@@ -43,9 +47,9 @@ namespace ECSL
 
 		namespace BitSetConverter
 		{
-			DataType* ValueToBitSet(unsigned int _numberToConvert, unsigned int _maxNumberOfBits);
-			DataType* ArrayToBitSet(const std::vector<unsigned int>& _numbersToConvert, unsigned int _maxNumberOfBits);
-			void BitSetToArray(std::vector<unsigned int>& _out, const DataType* const _bitmask, unsigned int _bitmaskCount);
+			DECLSPEC DataType* ValueToBitSet(unsigned int _numberToConvert, unsigned int _maxNumberOfBits);
+			DECLSPEC DataType* ArrayToBitSet(const std::vector<unsigned int>& _numbersToConvert, unsigned int _maxNumberOfBits);
+			DECLSPEC void BitSetToArray(std::vector<unsigned int>& _out, const DataType* const _bitmask, unsigned int _bitmaskCount);
 		}
 	}
 }

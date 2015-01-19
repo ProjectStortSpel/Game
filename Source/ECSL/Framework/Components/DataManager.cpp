@@ -97,7 +97,6 @@ void DataManager::CreateComponentAndAddTo(unsigned int _componentTypeId, unsigne
 {
 	ToBeAdded(_entityId, _componentTypeId);
 	Changed(_entityId);
-
 	///* Add entity to lists */
 	//m_changedEntities->push_back(_entityId);
 
@@ -180,30 +179,15 @@ void DataManager::ClearChangeLists(const RuntimeInfo& _runtime)
 	m_componentsToBeRemoved->clear();
 }
 
-void DataManager::Changed(unsigned int _entityId)
+unsigned int DataManager::GetMemoryAllocated()
 {
-	SDL_LockMutex(m_changedEntitiesMutex);
-	ContainerHelper::AddUniqueElement<unsigned int>(_entityId, (*m_changedEntities));
-	SDL_UnlockMutex(m_changedEntitiesMutex);
-}
+	unsigned int memoryUsage = 0;
 
-void DataManager::ToBeAdded(unsigned int _entityId, unsigned int _componentTypeId)
-{
-	SDL_LockMutex(m_componentsToBeAddedMutex);
-	ContainerHelper::AddUniqueElement<unsigned int>(_componentTypeId, (*m_componentsToBeAdded)[_entityId]);
-	SDL_UnlockMutex(m_componentsToBeAddedMutex);
-}
+	for (auto dataTable : *m_componentTables)
+		memoryUsage += (dataTable->GetMemoryAllocated());
 
-void DataManager::ToBeRemoved(unsigned int _entityId)
-{
-	SDL_LockMutex(m_entitiesToBeRemovedMutex);
-	ContainerHelper::AddUniqueElement<unsigned int>(_entityId, (*m_entitiesToBeRemoved));
-	SDL_UnlockMutex(m_entitiesToBeRemovedMutex);
-}
+	memoryUsage += sizeof(DataManager);
 
-void DataManager::ToBeRemoved(unsigned int _entityId, unsigned int _componentTypeId)
-{
-	SDL_LockMutex(m_componentsToBeRemovedMutex);
-	ContainerHelper::AddUniqueElement<unsigned int>(_componentTypeId, (*m_componentsToBeRemoved)[_entityId]);
-	SDL_UnlockMutex(m_componentsToBeRemovedMutex);
-}
+	float megabytes = ((float)memoryUsage) / (1024.f * 1024.f);
+ 	return (unsigned int)megabytes;
+}}

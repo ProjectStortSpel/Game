@@ -34,6 +34,7 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Multithreading\RuntimeInfo.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Multithreading\Scheduler.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\ComponentTypeReader.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\EntityTemplateReader.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\Parser.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\Section.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Simulation.h" />
@@ -44,10 +45,12 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemIdManager.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemWorkGroup.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemManager.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Templates\EntityTemplate.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\World.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\WorldCreator.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Interfaces\System.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Managers\ComponentTypeManager.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Managers\EntityTemplateManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Common\BitSet.cpp" />
@@ -63,6 +66,7 @@
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\EntityTable.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Multithreading\Scheduler.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\ComponentTypeReader.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\EntityTemplateReader.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\Parser.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Simulation.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\ComponentFilter.cpp" />
@@ -72,10 +76,12 @@
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemIdManager.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemWorkGroup.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemManager.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Templates\EntityTemplate.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\World.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\WorldCreator.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Interfaces\System.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Managers\ComponentTypeManager.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Managers\EntityTemplateManager.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C497EBB7-2E55-4F88-AEBD-D2529AC9B8C0}</ProjectGuid>

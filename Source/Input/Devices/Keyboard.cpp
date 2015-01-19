@@ -8,9 +8,12 @@ Keyboard::Keyboard()
 		m_thisState[i] = false;
 		m_lastState[i] = false;
 	}
+	m_textInput = new std::string();
+	SDL_StopTextInput();
 }
 Keyboard::~Keyboard()
 {
+	delete m_textInput;
 }
 
 void Keyboard::Update()
@@ -25,10 +28,23 @@ void Keyboard::PollEvent(SDL_Event e)
 	{
 	case SDL_KEYDOWN:
 		m_thisState[e.key.keysym.scancode] = true;
+
+		//text
+		if (SDL_IsTextInputActive() && e.key.keysym.sym == SDLK_BACKSPACE && m_textInput->length() > 0)
+		{
+			*m_textInput = m_textInput->substr(0, m_textInput->length() - 1);
+		}
 		break;
 
 	case SDL_KEYUP:
 		m_thisState[e.key.keysym.scancode] = false;
+		break;
+	//text
+	case SDL_TEXTINPUT:
+		*m_textInput += e.text.text;
+#if __ANDROID__
+		SDL_Log("Text: %s", (*m_textInput).c_str());
+#endif
 		break;
 	}
 }
@@ -48,4 +64,9 @@ InputState Keyboard::GetKeyState(SDL_Scancode _key)
 		return InputState::RELEASED;
 
 	return InputState::UP;
+}
+
+void Keyboard::SetTextInput(const char* _text)
+{
+	*m_textInput = _text;
 }

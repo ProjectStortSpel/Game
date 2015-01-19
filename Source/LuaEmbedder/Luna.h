@@ -31,10 +31,14 @@
 #define LUNA_H
 
 #include <Lua/lua.hpp>
+#include <SDL/SDL.h>
 #include <string.h> // For strlen
 #include <vector>
 #include <assert.h>
 #include <string>
+#include <iostream>
+#include <map>
+#include <algorithm>
 
 namespace LuaEmbedder
 {
@@ -58,6 +62,7 @@ namespace LuaEmbedder
   private:
     static std::vector<PropertyType<T>> m_properties;
     static std::vector<FunctionType<T>> m_methods;
+    static std::map<T*, std::vector<std::string>> m_objectFunctionsMap;
     
   public:
     /*
@@ -107,11 +112,11 @@ namespace LuaEmbedder
 	Registers your class with Lua.  Leave namespac "" if you want to load it into the global space.
     */
     // REGISTER CLASS AS A GLOBAL TABLE 
-    static void Register(lua_State* L, const char* className)
+    static void Register(lua_State* L, const char* className, bool gc = true)
     {
-      lua_pushstring(L, className);
-      lua_pushcclosure(L, &Luna<T>::constructor, 1);
-      lua_setglobal(L, className);
+      m_properties.clear();
+      m_methods.clear();
+      m_objectFunctionsMap.clear();
       
       luaL_newmetatable(L, className);
       int metatable = lua_gettop(L);
@@ -121,9 +126,12 @@ namespace LuaEmbedder
       lua_pushvalue(L, metatable);
       lua_settable(L, -3);
       
-      lua_pushstring(L, "__gc");
-      lua_pushcfunction(L, &Luna<T>::gc_obj);
-      lua_settable(L, metatable);
+      if (gc)
+      {
+	lua_pushstring(L, "__gc");
+	lua_pushcfunction(L, &Luna<T>::gc_obj);
+	lua_settable(L, metatable);
+      }
       
       lua_pushstring(L, "__tostring");
       lua_pushstring(L, className);
@@ -159,7 +167,7 @@ namespace LuaEmbedder
       lua_settable(L, -3);
       lua_setmetatable(L, metatable);
       
-      lua_pop(L, 1);
+      lua_pop(L, 2);
     }
     
     static void RegisterProperty(lua_State* L, const char* className, const char* propertyName, int (T::*getter)(), int (T::*setter)())
@@ -174,6 +182,8 @@ namespace LuaEmbedder
       lua_pushstring(L, propertyName);
       lua_pushnumber(L, propertyIndex);
       lua_settable(L, metatable);
+      
+      lua_pop(L, 1);
     }
     
     static void RegisterMethod(lua_State* L, const char* className, const char* methodName, int (T::*func)())
@@ -188,6 +198,8 @@ namespace LuaEmbedder
       lua_pushstring(L, methodName);
       lua_pushnumber(L, methodIndex | ( 1 << 8 ));
       lua_settable(L, metatable);
+      
+      lua_pop(L, 1);
     }
 
     /*
@@ -337,6 +349,7 @@ namespace LuaEmbedder
       int base = lua_gettop(L) - argumentCount;
       if (!luaL_checkudata(L, base, className))
       {
+	SDL_Log("Luna::CallMethod : Object of class %s undefined in Lua", className);
 	lua_pop(L, argumentCount + 1);
 	return -1;
       }
@@ -344,13 +357,16 @@ namespace LuaEmbedder
       lua_gettable(L, base);
       if (lua_isnil(L, -1))
       {
+	SDL_Log("Luna::CallMethod : Method %s of class %s undefined", methodName, className);
 	lua_pop(L, argumentCount + 2);
 	return -1;
       }
       lua_insert(L, base);
       int status = lua_pcall(L, 1 + argumentCount, LUA_MULTRET, 0);
+      lua_gc(L, LUA_GCCOLLECT, 0);
       if (status != 0)
       {
+	SDL_Log("Luna::CallMethod : %s", (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error"));
 	lua_pop(L, 1);
 	return -1;
       }
@@ -373,14 +389,19 @@ namespace LuaEmbedder
       {
 	if (lua_isuserdata(L, -1))
 	{
-	  for (int i = arguments - argumentCount + 1; i <= arguments; i++)
-	    lua_pushvalue(L, i);
-	  CallMethod(L, className, methodName, argumentCount);
+	  T** obj = static_cast<T**>(lua_touserdata(L, -1));
+	  if (HasFunction(*obj, std::string(methodName)))
+	  {
+	    for (int i = arguments - argumentCount + 1; i <= arguments; i++)
+	      lua_pushvalue(L, i);
+	    CallMethod(L, className, methodName, argumentCount);
+	  }
+	  else
+	    lua_pop(L, 1);
 	}
 	else
 	  lua_pop(L, 1);
       }
-      lua_pop(L, argumentCount);
     }
 
     /*
@@ -520,9 +541,20 @@ namespace LuaEmbedder
 	lua_pushvalue(L, 2);
 	lua_pushvalue(L, 3);
 	lua_settable(L, members);
+	if (lua_isfunction(L, 3))
+	  m_objectFunctionsMap[*obj].push_back(lua_tostring(L, 2));
       }
       lua_settop(L, 0);
       return 0;
+    }
+    
+    static bool HasFunction(T* object, const std::string& functionName)
+    {
+      typename std::map<T*, std::vector<std::string>>::iterator objectFunctionsIt = m_objectFunctionsMap.find(object);
+      if (objectFunctionsIt != m_objectFunctionsMap.end() &&
+	  std::find(objectFunctionsIt->second.begin(), objectFunctionsIt->second.end(), functionName) != objectFunctionsIt->second.end())
+	  return true;
+      return false;
     }
 
     /*
@@ -535,7 +567,9 @@ namespace LuaEmbedder
       int i = (int)lua_tonumber(L, lua_upvalueindex(1));
       T** obj = static_cast<T**>(lua_touserdata(L, lua_upvalueindex(2)));
       
-      lua_remove(L, 1);
+	  // Small fix for now
+	  if (lua_gettop(L) > 0)
+		lua_remove(L, 1);
       
       return ((*obj)->*(m_methods[i].func))();
     }
@@ -558,7 +592,11 @@ namespace LuaEmbedder
       T** obj = static_cast<T**>(lua_touserdata(L, 1));
       
       if(obj && *obj)
+      {
 	delete(*obj);
+	*obj = nullptr;
+	obj = nullptr;
+      }
       
       return 0;
     }
@@ -594,6 +632,7 @@ namespace LuaEmbedder
 
   template <class T> std::vector<PropertyType<T>> Luna<T>::m_properties = std::vector<PropertyType<T>>();
   template <class T> std::vector<FunctionType<T>> Luna<T>::m_methods = std::vector<FunctionType<T>>();
+  template <class T> std::map<T*, std::vector<std::string>> Luna<T>::m_objectFunctionsMap = std::map<T*, std::vector<std::string>>();
 }
 
 #endif

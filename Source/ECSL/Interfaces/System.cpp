@@ -169,3 +169,20 @@ void System::SendMessage(Message* _message)
 	m_messages->push_back(_message);
 	SDL_UnlockMutex(m_messagesMutex);
 }
+
+void System::ComponentHasChanged(unsigned int _entityId, std::string _componentType)
+{
+	unsigned int componentTypeId = ECSL::ComponentTypeManager::GetInstance().GetTableId(_componentType);
+	ComponentHasChanged(_entityId, componentTypeId);
+}
+
+void System::ComponentHasChanged(unsigned int _entityId, unsigned int _componentTypeId)
+{
+	int bitSetIndex = ECSL::BitSet::GetBitSetIndex(_componentTypeId);
+	int bitIndex = ECSL::BitSet::GetBitIndex(_componentTypeId);
+	ECSL::BitSet::DataType* changedComponents = (ECSL::BitSet::DataType*)GetComponent(_entityId, "ChangedComponents", 0);
+	changedComponents[bitSetIndex] |= ((ECSL::BitSet::DataType)1) << bitIndex;
+
+	ECSL::BitSet::DataType* changedComponentsNetwork = (ECSL::BitSet::DataType*)GetComponent(_entityId, "ChangedComponentsNetwork", 0);
+	changedComponentsNetwork[bitSetIndex] |= ((ECSL::BitSet::DataType)1) << bitIndex;
+}

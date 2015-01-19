@@ -8,11 +8,12 @@ InputWrapper::InputWrapper()
 	if (SDL_Init(SDL_INIT_GAMECONTROLLER) != 0)
 	{
 		std::string initErrorMessage = "Initializing SDL_INIT_GAMECONTROLLER failed!\n";
-		printf(initErrorMessage.c_str());
+		printf("%s", initErrorMessage.c_str());
 	}
 
 	m_keyboard = new Keyboard();
 	m_mouse = new Mouse();
+	m_touch = new Touch();
 }
 InputWrapper::~InputWrapper()
 {
@@ -26,7 +27,11 @@ InputWrapper::~InputWrapper()
 		delete m_mouse;
 		m_mouse = 0;
 	}
-
+	if (m_touch)
+	{
+		delete m_touch;
+		m_touch = 0;
+	}
 }
 
 InputWrapper& InputWrapper::GetInstance()
@@ -41,6 +46,7 @@ void InputWrapper::Update()
 {
 	m_keyboard->Update();
 	m_mouse->Update();
+	m_touch->Update();
 }
 #pragma endregion
 
@@ -52,6 +58,10 @@ Keyboard* InputWrapper::GetKeyboard()
 Mouse* InputWrapper::GetMouse()
 {
 	return m_mouse;
+}
+Touch* InputWrapper::GetTouch()
+{
+	return m_touch;
 }
 #pragma endregion
 
@@ -71,7 +81,15 @@ void InputWrapper::PollEvent(SDL_Event& _e)
 		/*	KEYBOARD	*/
 	case SDL_KEYDOWN:
 	case SDL_KEYUP:
+	case SDL_TEXTINPUT:
 		m_keyboard->PollEvent(_e);
+		break;
+
+		/* TOUCH */	
+	case SDL_FINGERDOWN:
+	case SDL_FINGERUP:
+	case SDL_FINGERMOTION:
+		m_touch->PollEvent(_e);
 		break;
 
 		/*	CONTROLLER	*/

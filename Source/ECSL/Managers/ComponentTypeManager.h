@@ -31,6 +31,10 @@ namespace ECSL
 		template<typename ComponentType>
 		void AddComponentType();
 		void AddComponentType(ComponentType& _componentType);
+
+		bool ComponentExists(std::string& _componentType);
+		
+		void Clear();
 	private:
 		ComponentTypeManager();
 
