@@ -17,8 +17,11 @@ SystemIdManager::~SystemIdManager()
 
 unsigned int SystemIdManager::CreateSystemId(const std::string& _systemName)
 {
-	/* System id already created */
+	/* System with that name is already created */
 	assert(m_systemStringIds->find(_systemName) == m_systemStringIds->end());
+
+	/* System doesn't have a name */
+	assert(_systemName != "");
 
 	unsigned int id = ++m_nextSystemId;
 	m_systemStringIds->insert(std::pair<std::string, unsigned int>(_systemName, id));

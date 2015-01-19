@@ -35,12 +35,11 @@ void SystemManager::InitializeSystems()
 		for (unsigned int systemId = 0; systemId < systems->size(); ++systemId)
 		{
 			System* system = systems->at(systemId);
-			system->Initialize();
-			system->SetId(m_systemIdManager->CreateSystemId(system->GetSystemName()));
-			system->SetGroupId(groupId);
-			system->SetDataManager(m_dataManager);
 			system->SetSystemIdManager(m_systemIdManager);
+			system->SetDataManager(m_dataManager);
+			system->SetGroupId(groupId);
 
+			system->Initialize();
 			GenerateComponentFilter(system, FilterType::Mandatory);
 			GenerateComponentFilter(system, FilterType::RequiresOneOf);
 			GenerateComponentFilter(system, FilterType::Excluded);
@@ -61,25 +60,26 @@ void SystemManager::UpdateSystemEntityLists(
 	EntityTable* entityTable = m_dataManager->GetEntityTable();
 
 	unsigned int startAt, endAt;
-	MPL::MathHelper::SplitIterations(startAt, endAt, m_systems->size(), _runtime.TaskIndex, _runtime.TaskCount);
+	MPL::MathHelper::SplitIterations(startAt, endAt, (unsigned int)m_systems->size(), _runtime.TaskIndex, _runtime.TaskCount);
 	/* Loop through every system see if changed entities passes the filter */
 	for (unsigned int i = startAt; i < endAt; ++i)
 	{
 		System* system = m_systems->at(i);
-		for (auto entityId : *changedEntities)
+		for (unsigned int j = 0; j < changedEntities->size(); ++j)
 		{
+			unsigned int entityId = changedEntities->at(j);
 			/* Try add entity to system if it passes filters, else try to remove it */
 			if (entityTable->EntityPassFilters(entityId, system->GetMandatoryFilter()->GetBitSet(), system->GetRequiresOneOfFilter()->GetBitSet(), system->GetExcludedFilter()->GetBitSet())
 				&& !system->HasEntity(entityId))
 			{
 				system->AddEntityToSystem(entityId);
-				if (system->GetOnEntityAddedTaskCount() > 0)
+				if (system->GetEntitiesAddedTaskCount() > 0)
 					_entitiesToAddToSystems[i]->push_back(entityId);
 			}
 			else if (system->HasEntity(entityId))
 			{
 				system->RemoveEntityFromSystem(entityId);
-				if (system->GetOnEntityRemovedTaskCount() > 0)
+				if (system->GetEntitiesRemovedTaskCount() > 0)
 					_entitiesToRemoveFromSystems[i]->push_back(entityId);
 			}
 		}

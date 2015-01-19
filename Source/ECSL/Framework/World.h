@@ -9,6 +9,7 @@
 #include "Multithreading/Scheduler.h"
 #include "Systems/SystemWorkGroup.h"
 #include "Systems/SystemManager.h"
+#include "Systems/Messaging/MessageManager.h"
 
 namespace ECSL
 {
@@ -16,7 +17,7 @@ namespace ECSL
 	{
 	private:
 		Simulation* m_simulation;
-		Scheduler* m_scheduler;
+		MessageManager* m_messageManager;
 		DataManager* m_dataManager;
 		SystemManager* m_systemManager;
 

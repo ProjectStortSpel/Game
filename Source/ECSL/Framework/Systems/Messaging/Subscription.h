@@ -2,25 +2,31 @@
 #define SUBSCRIPTION_H
 
 #include <SDL/SDL.h>
+#include <string>
 
 namespace ECSL
 {
-	class DECLSPEC Subscription
+	class Subscription
 	{
 	public:
-		Subscription(unsigned int _subscriberId, unsigned int _senderId, unsigned int _messageType, void* _onEventFunction);
+		Subscription(const std::string& _subscriberName, const std::string& _subscribesToName, unsigned int _messageType);
 		~Subscription();
 
 		unsigned int GetSubscriberId() { return m_subscriberId; }
-		unsigned int GetSenderId() { return m_senderId; }
+		unsigned int GetSubscribesToId() { return m_subscribesToId; }
 		unsigned int GetMessageType() { return m_messageType; }
-		void* GetOnEventFunction() { return m_onEventFunction; }
+		const std::string& GetSubscriberName() { return m_subscriberName; }
+		const std::string& GetSubscribesToName() { return m_subscribesToName; }
+
+		void SetSubscriberId(unsigned int _id) { m_subscriberId = _id; }
+		void SetSubscribesToId(unsigned int _id) { m_subscribesToId = _id; }
 
 	private:
 		unsigned int m_subscriberId;
-		unsigned int m_senderId;
+		unsigned int m_subscribesToId;
 		unsigned int m_messageType;
-		void* m_onEventFunction;
+		std::string m_subscriberName;
+		std::string m_subscribesToName;
 	};
 }
 

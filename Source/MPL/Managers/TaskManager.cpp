@@ -23,18 +23,25 @@ TaskManager& TaskManager::GetInstance()
 
 void TaskManager::CreateSlaves()
 {
-	unsigned int availableThreadCount = 3;//ThreadHelper::GetAvailableThreadCount();
+	int availableThreadCount = SDL_GetCPUCount() - 3;//ThreadHelper::GetAvailableThreadCount();
 	for (unsigned int i = 0; i < availableThreadCount; ++i)
 	{
-		SlaveThread* slave = new SlaveThread(m_taskPool);
+		SlaveThread* slave = new SlaveThread(m_taskPool, m_slaves);
 		if (!slave->StartThread("Slave " + i))
-			printf("Couldn't create slave thread. Id: %i\n", i);
+			printf("Creation of slave thread was unsuccessful. Id: %i\n", i);
 		else
 		{
 			printf("Slave thread successfully created. Id: %i\n", i);
 			m_slaves->push_back(slave);
 		}
 	}
+}
+
+TaskId TaskManager::Add(TaskId _dependency, const std::vector<WorkItem*>& _workItems)
+{
+	TaskId id = m_taskPool->CreateTask(_dependency, _workItems);
+	WakeThreads();
+	return id;
 }
 
 TaskId TaskManager::BeginAdd(TaskId _dependency)
@@ -50,11 +57,13 @@ TaskId TaskManager::BeginAdd(TaskId _dependency, WorkItem* _workItem)
 void TaskManager::AddChild(TaskId _id, WorkItem* _workItem)
 {
 	m_taskPool->CreateChild(_id, _workItem);
+	WakeThreads();
 }
 
 void TaskManager::AddChildren(TaskId _id, const std::vector<WorkItem*>& _workItems)
 {
 	m_taskPool->CreateChildren(_id, _workItems);
+	WakeThreads();
 }
 
 void TaskManager::FinishAdd(TaskId _id)
@@ -66,11 +75,19 @@ void TaskManager::WaitFor(TaskId _id)
 {
 	while (!m_taskPool->IsTaskDone(_id))
 	{
-		WorkItem* workItem = m_taskPool->FetchWork();
-		if (workItem != 0)
+		FetchWorkStatus fetchWorkStatus;
+		WorkItem* workItem = m_taskPool->FetchWork(fetchWorkStatus);
+		if (fetchWorkStatus == OK)
 		{
 			workItem->Work(workItem->Data);
 			m_taskPool->WorkDone(workItem);
 		}
 	}
+}
+
+void TaskManager::WakeThreads()
+{
+	for (auto slaveThread : *m_slaves)
+		if (slaveThread->IsSleeping())
+			slaveThread->WakeUp();
 }

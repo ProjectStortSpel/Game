@@ -8,17 +8,19 @@ World::World(unsigned int _entityCount, std::vector<SystemWorkGroup*>* _systemWo
 {
 	m_dataManager = new DataManager(_entityCount, _componentTypeIds);
 	m_systemManager = new SystemManager(m_dataManager, _systemWorkGroups);
-	m_scheduler = new Scheduler(m_dataManager, m_systemManager);
-	m_simulation = new Simulation(m_dataManager, m_systemManager, m_scheduler);
+	m_messageManager = new MessageManager(m_systemManager);
 
 	m_dataManager->InitializeTables();
-	m_systemManager->InitializeSystems();
+	m_systemManager->InitializeSystems();	
+	m_messageManager->Initialize();
+
+	m_simulation = new Simulation(m_dataManager, m_systemManager, m_messageManager);
 }
 
 World::~World()
 {
 	delete(m_simulation);
-	delete(m_scheduler);
+	delete(m_messageManager);
 	delete(m_dataManager);
 	delete(m_systemManager);
 }

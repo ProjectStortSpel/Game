@@ -2,28 +2,31 @@
 #define MESSAGEMANAGER_H
 
 #include <SDL/SDL.h>
-#include <map>
+#include <unordered_map>
 #include <vector>
+#include <deque>
 #include "Subscription.h"
+#include "ECSL/Framework/Systems/SystemManager.h"
 
 namespace ECSL
 {
 	class DECLSPEC MessageManager
 	{
 	public:
-		MessageManager();
+		MessageManager(SystemManager* _systemManager);
 		~MessageManager();
 
-		void AddSubscription(unsigned int _subscriberId, unsigned int _senderId, unsigned int _messageType, void* _onEventFunction);
-		void RemoveSubscription(unsigned int _subscriberId, unsigned int _senderId, unsigned int _messageType);
+		void Initialize();
 
-		void GatherMessages();
-		void SendMessages();
-		void DeleteMessages();
+		void SortMessages(const RuntimeInfo& _runtime);
+		void DeleteMessages(const RuntimeInfo& _runtime);
+
+		const std::vector<Message*>* GetMessagesToSystem(unsigned int _systemId) { return (*m_messagesToSystems)[_systemId]; }
 
 	private:
-		/* m_systemSubscriptions[SenderId][MessageType].Subscription */
-		std::map<unsigned int, std::map<unsigned int, std::vector<Subscription>>>* m_systemSubscriptions;
+		SystemManager* m_systemManager;
+		std::vector<System*>* m_subscribers;
+		std::unordered_map<unsigned int, std::vector<Message*>*>* m_messagesToSystems;
 	};
 }
 

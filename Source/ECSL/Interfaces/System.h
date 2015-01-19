@@ -7,6 +7,7 @@
 #include "ECSL/Framework/Systems/ComponentFilter.h"
 #include "ECSL/Framework/Systems/SystemIdManager.h"
 #include "ECSL/Framework/Systems/Messaging/Message.h"
+#include "ECSL/Framework/Systems/Messaging/Subscription.h"
 #include "MPL/Framework/Tasks/Task.h"
 
 namespace ECSL
@@ -20,10 +21,9 @@ namespace ECSL
 		virtual void Update(const RuntimeInfo& _runtime) { }
 		virtual void Initialize() = 0;
 
-		virtual void OnEntityAdded(float _dt) { }
-		virtual void OnEntityRemoved(float _dt) { }
-
-		virtual void OnMessageRecieved(const System* _sender, const Message* _message) { }
+		virtual void EntitiesAdded(const RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities) { }
+		virtual void EntitiesRemoved(const RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities) { }
+		virtual void MessagesRecieved(const std::vector<Message*>& _messages) { }
 
 		void InitializeEntityList();
 		void AddEntityToSystem(unsigned int _entityId);
@@ -39,13 +39,18 @@ namespace ECSL
 		const std::string& GetSystemName() { return *m_systemName; }
 
 		unsigned int GetUpdateTaskCount() { return m_updateTaskCount; }
-		unsigned int GetOnEntityAddedTaskCount() { return m_onEntityAddedTaskCount; }
-		unsigned int GetOnEntityRemovedTaskCount() { return m_onEntityRemovedTaskCount; }
+		unsigned int GetEntitiesAddedTaskCount() { return m_entitiesAddedTaskCount; }
+		unsigned int GetEntitiesRemovedTaskCount() { return m_entitiesRemovedTaskCount; }
+		unsigned int GetMessagesRecievedTaskCount() { return m_messagesRecievedTaskCount; }
 
-		void SetId(unsigned int _id) { m_id = _id; }
+		const std::vector<Subscription*>* GetSubscriptions() { return m_subscriptions; }
+		const std::vector<Message*>* GetMessages() { return m_messages; }
+
 		void SetGroupId(unsigned int _groupId) { m_groupId = _groupId; }
 		void SetDataManager(DataManager* _dataManager) { m_dataManager = _dataManager; }
 		void SetSystemIdManager(SystemIdManager* _idManager) { m_systemIdManager = _idManager; }
+
+		void ClearMessages() { m_messages->clear(); }
 
 	protected:
 		DataLocation GetComponent(unsigned int _entityId, const std::string& _componentType, const std::string& _variableName);
@@ -68,39 +73,33 @@ namespace ECSL
 		void KillEntity(unsigned int _entityId);
 		const std::vector<unsigned int>* const GetEntities() { return m_entities; }
 
-		template<typename SystemType>
-		void SendMessage(unsigned int _messageType, Message* _message);
-		void SendMessage(unsigned int _messageType, Message* _message);
-
 		void AddComponentTypeToFilter(const std::string& _componentType, FilterType _filterType);
-		void SetSystemName(const std::string& _name) { *m_systemName = _name; }
+		void SetSystemName(const std::string& _name) { *m_systemName = _name; m_id = m_systemIdManager->CreateSystemId(_name); }
 		void SetUpdateTaskCount(unsigned int _taskCount) { m_updateTaskCount = _taskCount; }
-		void SetOnEntityAddedTaskCount(unsigned int _taskCount) { m_onEntityAddedTaskCount = _taskCount; }
-		void SetOnEntityRemovedTaskCount(unsigned int _taskCount) { m_onEntityRemovedTaskCount = _taskCount; }
-		void SetOnMessageRecievedTaskCount(unsigned int _taskCount) { m_onMessageRecievedTaskCount = _taskCount; }
-		void SetOnEventTaskCount(unsigned int _workCount, void* _onEventFunction);
+		void SetEntitiesAddedTaskCount(unsigned int _taskCount) { m_entitiesAddedTaskCount = _taskCount; }
+		void SetEntitiesRemovedTaskCount(unsigned int _taskCount) { m_entitiesRemovedTaskCount = _taskCount; }
+		void SetMessagesRecievedTaskCount(unsigned int _taskCount) { m_messagesRecievedTaskCount = _taskCount; }
 
-		//template<typename SystemType>
-		//void SubscribeTo<SystemType>(unsigned int _messageType, void* _functionPointer);
-		//void SubscribeTo(const std::string& _systemName, unsigned int _messageType);
-		//template<typename SystemType>
-		//void UnsubscribeFrom<SystemType>(unsigned int _messageType);
-		//void UnsubscribeFrom(const std::string& _systemName, unsigned int _messageType);
+		void SubscribeTo(const std::string& _systemName, unsigned int _messageType);
+		void SendMessage(Message* _message);
 
 	private:
 		unsigned int m_id;
 		unsigned int m_groupId;
 		std::string* m_systemName;
 		unsigned int m_updateTaskCount;
-		unsigned int m_onEntityRemovedTaskCount;
-		unsigned int m_onEntityAddedTaskCount;
-		unsigned int m_onMessageRecievedTaskCount;
+		unsigned int m_entitiesAddedTaskCount;
+		unsigned int m_entitiesRemovedTaskCount;
+		unsigned int m_messagesRecievedTaskCount;
 		
+		SDL_mutex* m_messagesMutex;
 		ComponentFilter m_mandatoryComponentTypes;
 		ComponentFilter m_requiresOneOfComponentTypes;
 		ComponentFilter m_excludedComponentTypes;
 		BitSet::DataType* m_entitiesBitSet;
 		std::vector<unsigned int>* m_entities;
+		std::vector<Subscription*>* m_subscriptions;
+		std::vector<Message*>* m_messages;
 		DataManager* m_dataManager;
 		SystemIdManager* m_systemIdManager;
 	};

@@ -4,20 +4,26 @@
 
 using namespace ECSL;
 
-Simulation::Simulation(DataManager* _dataManager, SystemManager* _systemManager, Scheduler* _scheduler)
-:	m_dataManager(_dataManager), m_scheduler(_scheduler), m_systemManager(_systemManager)
+Simulation::Simulation(DataManager* _dataManager, SystemManager* _systemManager, MessageManager* _messageManager)
+: m_dataManager(_dataManager), m_systemManager(_systemManager), m_messageManager(_messageManager)
 {
+	m_scheduler = new Scheduler(_dataManager, _systemManager, _messageManager);
 	m_scheduler->AddUpdateSystemsTasks();
 	m_scheduler->AddUpdateEntityTableTask();
 	m_scheduler->AddUpdateSystemEntityListsTasks();
-	m_scheduler->AddOnEntityAddedTasks();
-	m_scheduler->AddOnEntityRemovedTasks();
+	m_scheduler->AddEntitiesAddedTasks();
+	m_scheduler->AddEntitiesRemovedTasks();
+	m_scheduler->AddSortMessagesTask();
+	m_scheduler->AddMessagesRecievedTasks();
+	m_scheduler->AddDeleteMessagesTask();
 	m_scheduler->AddClearDeadEntitiesTask();
+	m_scheduler->AddRecycleEntityIdsTask();
+	m_scheduler->AddClearChangeListsTask();
 }
 
 Simulation::~Simulation()
 {
-
+	delete(m_scheduler);
 }
 
 void Simulation::Update(float _dt)
@@ -26,22 +32,38 @@ void Simulation::Update(float _dt)
 	m_scheduler->UpdateDt(_dt);
 
 	/* Update systems */
-	MPL::TaskId updateSystems = m_scheduler->ScheduleUpdateSystems();
+	MPL::TaskId updateSystems = m_scheduler->ScheduleUpdateSystems(MPL::NoDependency);
+
+	/* Sort all messages sent by systems */
+	MPL::TaskId sortMessages = m_scheduler->ScheduleSortMessages(updateSystems);
+
+	/* Call MessagesRecieved() for each system that has atleast one message recieved */
+	MPL::TaskId messagesRecieved = m_scheduler->ScheduleMessagesRecieved(sortMessages);
+
+	/* Delete all messages */
+	MPL::TaskId deleteMessages = m_scheduler->ScheduleDeleteMessages(messagesRecieved);
 
 	/* Update entity component table data */
-	MPL::TaskId updateEntityTable = m_scheduler->ScheduleUpdateEntityTable(updateSystems);
+	MPL::TaskId updateEntityTable = m_scheduler->ScheduleUpdateEntityTable(deleteMessages);
 
-	/* Update system entity lists */
+	/* Update every systems' entity list */
 	MPL::TaskId updateSystemEntityLists = m_scheduler->ScheduleUpdateSystemEntityLists(updateEntityTable);
 
-	/* Clear dead entities from entity table */
-	MPL::TaskId clearDeadEntities = m_scheduler->ScheduleClearDeadEntities(updateSystemEntityLists);
+	/* Call EntitiesAdded for each system that has atleast one newly added entity */
+	MPL::TaskId entitiesAdded = m_scheduler->ScheduleEntitiesAdded(updateSystemEntityLists);
 
-	MPL::TaskManager::GetInstance().WaitFor(clearDeadEntities);
+	/* Call EntitiesRemoved for each system that has atleast one newly removed entity */
+	MPL::TaskId entitiesRemoved = m_scheduler->ScheduleEntitiesRemoved(entitiesAdded);
+
+	/* Clear dead entities from entity table */
+	/* TODO: Kill Entity under EntitiesAdded/EntitiesRemoved orsakar problem */
+	MPL::TaskId clearDeadEntities = m_scheduler->ScheduleClearDeadEntities(entitiesRemoved);
 
 	/* Recycle all dead ids back to the list of available ids */
-	m_dataManager->RecycleEntityIds();
+	MPL::TaskId recycleEntityIds = m_scheduler->ScheduleRecycleEntities(clearDeadEntities);
 
 	/* Clear all the used lists */
-	m_dataManager->ClearChangeLists();
+	MPL::TaskId clearChangeLists = m_scheduler->ScheduleClearChangeLists(recycleEntityIds);
+
+	MPL::TaskManager::GetInstance().WaitFor(clearChangeLists);
 }

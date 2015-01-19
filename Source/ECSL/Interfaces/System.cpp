@@ -8,9 +8,11 @@
 using namespace ECSL;
 
 System::System()
-:	m_systemName(new std::string())
+:	m_systemName(new std::string()),
+	m_subscriptions(new std::vector<Subscription*>()),
+	m_messages(new std::vector<Message*>())
 {
-
+	m_messagesMutex = SDL_CreateMutex();
 }
 
 System::~System()
@@ -20,7 +22,20 @@ System::~System()
 	if (m_entitiesBitSet)
 		delete(m_entitiesBitSet);
 	if (m_entities)
-		delete m_entities;
+		delete(m_entities);
+	if (m_subscriptions)
+	{
+		for (auto subscription : *m_subscriptions)
+			delete(subscription);
+		delete(m_subscriptions);
+	}
+	if (m_messages)
+	{
+		for (unsigned int i = 0; i < m_messages->size(); ++i)
+			delete(m_messages->at(i));
+		delete(m_messages);
+	}
+	SDL_DestroyMutex(m_messagesMutex);
 }
 
 void System::InitializeEntityList()
@@ -141,4 +156,16 @@ void System::AddComponentTypeToFilter(const std::string& _componentType, FilterT
 		printf("Unknown ComponentFilter passed into AddComponentToFilter [System.cpp]\n");
 		break;
 	}
+}
+
+void System::SubscribeTo(const std::string& _systemName, unsigned int _messageType)
+{
+	m_subscriptions->push_back(new Subscription(*m_systemName, _systemName, _messageType));
+}
+
+void System::SendMessage(Message* _message)
+{
+	SDL_LockMutex(m_messagesMutex);
+	m_messages->push_back(_message);
+	SDL_UnlockMutex(m_messagesMutex);
 }

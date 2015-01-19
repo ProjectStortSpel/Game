@@ -118,9 +118,6 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemIdManager.h">
       <Filter>Source Files\Framework\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\SenderGroup.h">
-      <Filter>Source Files\Framework\Systems\Messaging</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Multithreading\Scheduler.h">
       <Filter>Source Files\Framework\Multithreading</Filter>
     </ClInclude>
@@ -203,9 +200,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemIdManager.cpp">
       <Filter>Source Files\Framework\Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\SenderGroup.cpp">
-      <Filter>Source Files\Framework\Systems\Messaging</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Multithreading\Scheduler.cpp">
       <Filter>Source Files\Framework\Multithreading</Filter>

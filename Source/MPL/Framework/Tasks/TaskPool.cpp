@@ -16,6 +16,19 @@ TaskPool::~TaskPool()
 
 }
 
+TaskId TaskPool::CreateTask(TaskId _dependency, const std::vector<WorkItem*>& _workItems)
+{
+	Task* task = new Task();
+	task->Id = GenerateTaskId();
+	task->Dependency = _dependency;
+	task->Work = 0;
+	task->OpenWorkItemCount = 0;
+	AddToOpenList(task);
+	AddToQueue(_workItems, task->Id);
+
+	return task->Id;
+}
+
 TaskId TaskPool::BeginCreateTask(TaskId _dependency, WorkItem* _workItem)
 {
 	Task* task = new Task();
@@ -25,7 +38,7 @@ TaskId TaskPool::BeginCreateTask(TaskId _dependency, WorkItem* _workItem)
 	task->OpenWorkItemCount = 1;
 	AddToOpenList(task);
 	if (task->Work != 0)
-		AddToQueue(_workItem, task);
+		AddToQueue(_workItem, task->Id);
 
 	return task->Id;
 }
@@ -39,17 +52,13 @@ void TaskPool::FinishCreateTask(TaskId _id)
 
 void TaskPool::CreateChild(TaskId _parentId, WorkItem* _workItem)
 {
-	SDL_LockMutex(m_taskMutex);
-	AddToQueue(_workItem, (*m_openList)[_parentId]);
-	SDL_UnlockMutex(m_taskMutex);
+	AddToQueue(_workItem, _parentId);
 }
 
 void TaskPool::CreateChildren(TaskId _parentId, const std::vector<WorkItem*>& _workItems)
 {
-	SDL_LockMutex(m_taskMutex);
 	for (auto workItem : _workItems)
-		AddToQueue(workItem, (*m_openList)[_parentId]);
-	SDL_UnlockMutex(m_taskMutex);
+		AddToQueue(workItem, _parentId);
 }
 
 TaskId TaskPool::GenerateTaskId()
@@ -67,18 +76,41 @@ void TaskPool::AddToOpenList(Task* _task)
 	SDL_UnlockMutex(m_taskMutex);
 }
 
-void TaskPool::AddToQueue(WorkItem* _workItem, Task* _task)
+void TaskPool::AddToQueue(WorkItem* _workItem, TaskId _taskId)
 {
 	SDL_LockMutex(m_taskMutex);
+
+	Task* task = (*m_openList)[_taskId];
 
 	/* Add work item to queue */
 	m_queue->push_back(_workItem);
 
 	/* Create connection between work item and task id */
-	(*m_workTaskConnection)[_workItem] = _task;
+	(*m_workTaskConnection)[_workItem] = task;
 
 	/* Increase open work item count */
-	IncreaseWorkCount(_task);
+	IncreaseWorkCount(task);
+
+	SDL_UnlockMutex(m_taskMutex);
+}
+
+void TaskPool::AddToQueue(const std::vector<WorkItem*>& _workItems, TaskId _taskId)
+{
+	SDL_LockMutex(m_taskMutex);
+
+	Task* task = (*m_openList)[_taskId];
+
+	for (auto workItem : _workItems)
+	{
+		/* Add work item to queue */
+		m_queue->push_back(workItem);
+
+		/* Create connection between work item and task id */
+		(*m_workTaskConnection)[workItem] = task;
+
+		/* Increase open work item count */
+		IncreaseWorkCount(task);
+	}
 
 	SDL_UnlockMutex(m_taskMutex);
 }
@@ -98,57 +130,66 @@ void TaskPool::DecreaseWorkCount(Task* _task)
 	}
 }
 
-WorkItem* TaskPool::FetchWork()
+WorkItem* TaskPool::FetchWork(FetchWorkStatus& _out)
 {
-	SDL_LockMutex(m_taskMutex);
-
+	_out = WAITING_FOR_TASK;
 	WorkItem* workItem = 0;
-	unsigned int iterations = 0;
 
+	SDL_LockMutex(m_taskMutex);
+	if (m_queue->size() == 0)
+		_out = EMPTY_WORK_LIST;
 	/* Fetch work to do from the queue */
-	for (auto it = m_queue->begin(); it != m_queue->end(); ++it)
+	if (m_queue->size() > 0)
 	{
-		TaskId dependency = (*m_workTaskConnection)[*it]->Dependency;
-		/* Accept the task if the dependency task is already done or if task doesn't have dependency */
+		WorkItem* front = m_queue->front();
+		TaskId dependency = (*m_workTaskConnection)[front]->Dependency;
 		if (dependency == -1 || m_openList->find(dependency) == m_openList->end())
 		{
-			workItem = *it;
-			m_queue->erase(it);
-			break;
+			workItem = front;
+			m_queue->pop_front();
+			_out = OK;
 		}
-		++iterations;
 	}
-
-	/* All work items at the front of the queue that
-	** have a dependency will be moved to the back of the queue */
-	if (workItem != 0 && iterations > 0)
-		MoveFrontToBack(iterations);
-
+	//for (auto it = m_queue->begin(); it != m_queue->end(); ++it)
+	//{
+	//	TaskId dependency = (*m_workTaskConnection)[*it]->Dependency;
+	//	/* Accept the task if the dependency task is already done or if task doesn't have dependency */
+	//	if (dependency == -1 || m_openList->find(dependency) == m_openList->end())
+	//	{
+	//		workItem = *it;
+	//		m_queue->erase(it);
+	//		_out = OK;
+	//		break;
+	//	}
+	//}
 	SDL_UnlockMutex(m_taskMutex);
 
 	return workItem;
 }
 
-void TaskPool::WorkDone(WorkItem* _workItem)
+WorkDoneStatus TaskPool::WorkDone(WorkItem* _workItem)
 {
-	SDL_LockMutex(m_taskMutex);
+	WorkDoneStatus status = WorkDoneStatus();
 
-	/* Find and remove the work item from the queue */
-	for (auto it = m_queue->begin(); it != m_queue->end(); ++it)
-		if (*it == _workItem)
-		{
-			m_queue->erase(it);
-			m_workTaskConnection->erase(*it);
-			break;
-		}
+	SDL_LockMutex(m_taskMutex);
 
 	/* Get task through the work task connection */
 	Task* task = (*m_workTaskConnection)[_workItem];
 
+	/* Check if task is completed */
+	if (task->OpenWorkItemCount == 1)
+		status.TaskCompleted = true;
+
 	/* Decrease open work item count */
 	DecreaseWorkCount(task);
 
+	/* Check if m_openList is empty */
+	if (m_openList->size() == 0)
+		status.OpenListEmpty = true;
+
 	SDL_UnlockMutex(m_taskMutex);
+
+	return status;
 }
 
 bool TaskPool::IsTaskDone(TaskId _id)
@@ -157,13 +198,4 @@ bool TaskPool::IsTaskDone(TaskId _id)
 	bool isDone = (m_openList->find(_id) == m_openList->end());
 	SDL_UnlockMutex(m_taskMutex);
 	return isDone;
-}
-
-void TaskPool::MoveFrontToBack(unsigned int _count)
-{
-	for (unsigned int i = 0; i < _count; ++i)
-	{
-		m_queue->push_back(m_queue->front());
-		m_queue->pop_front();
-	}
 }

@@ -15,10 +15,11 @@ namespace ECSL
 		Scheduler* m_scheduler;
 		DataManager* m_dataManager;
 		SystemManager* m_systemManager;
+		MessageManager* m_messageManager;
 	protected:
 
 	public:
-		Simulation(DataManager* _dataManager, SystemManager* _systemManager, Scheduler* _scheduler);
+		Simulation(DataManager* _dataManager, SystemManager* _systemManager, MessageManager* _messageManager);
 		~Simulation();
 
 		void Update(float _dt);

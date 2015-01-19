@@ -30,31 +30,47 @@ public:
 
 	void Update(const RuntimeInfo& _runtime)
 	{
+
+		for (unsigned int i = 0; i < 10; ++i)
+		{
+			mat4* test = new mat4[1000];
+			delete(test);
+		}
+
 		//printf("Testsystem run()\n");
 	}
 	void Initialize()
 	{
 		SetSystemName("TestSystem");
 		AddComponentTypeToFilter("Velocity", ECSL::FilterType::Mandatory);
-		AddComponentTypeToFilter("Position", ECSL::FilterType::Excluded);
+		AddComponentTypeToFilter("Position", ECSL::FilterType::Mandatory);
 		//AddComponentTypeToFilter("Velocity", ECSL::FilterType::RequiresOneOf);
 		//AddComponentTypeToFilter("Velocity", ECSL::ComponentFilter::RequiresOneOf);
 		//AddComponentTypeToFilter("Position", ECSL::ComponentFilter::Excluded);
 
-		SetUpdateTaskCount(8);
+		SetUpdateTaskCount(16);
+		SetEntitiesAddedTaskCount(1);
+		SetEntitiesRemovedTaskCount(1);
+		SetMessagesRecievedTaskCount(1);
+		SubscribeTo("TestSystem2", 0);
 
 		//float* x = (float*)GetComponent()
 
 		printf("Testsystem Initialize()\n");
 	}
 
-	void OnEntityAdded(unsigned int _entityId)
+	void EntitiesAdded(const RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities)
 	{
-		printf("Testsystem OnEntityAdded()\n");
+		//printf("Testsystem OnEntityAdded()\n");
 	}
-	void OnEntityRemoved(unsigned int _entityId)
+	void EntitiesRemoved(const RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities)
 	{
-		printf("Testsystem OnEntityRemoved()\n");
+		//printf("Testsystem OnEntityRemoved()\n");
+	}
+
+	void MessagesRecieved(const RuntimeInfo& _runtime, const std::vector<Message*>& _messages)
+	{
+		printf("Messages recieved!");
 	}
 private:
 };
@@ -109,6 +125,9 @@ public:
 	float sdfiohj;
 };
 
+std::unordered_map<unsigned int, std::vector<unsigned int>*>* map;
+std::vector<std::vector<unsigned int>*>* vec;
+
 bool* boolTest;
 
 void lol()
@@ -143,6 +162,26 @@ void lol()
 
 	//world->Update(0.01f);
 
+	map = new std::unordered_map<unsigned int, std::vector<unsigned int>*>();
+	vec = new std::vector<std::vector<unsigned int>*>();
+	srand(time(NULL));
+
+	for (unsigned int i = 0; i < 1000; ++i)
+	{
+		for (unsigned int n = 0; n < 4; ++n)
+		{
+			if (n == 0)
+			{
+				(*map)[i] = new std::vector<unsigned int>();
+				(*map)[i]->push_back(i);
+				vec->push_back(new std::vector<unsigned int>());
+				(*vec)[i]->push_back(i);
+			}
+			else
+				(*vec)[i]->push_back(0);
+		}
+	}
+
 	boolTest = new bool[500];
 
 	boolTest[50] = true;
@@ -150,35 +189,37 @@ void lol()
 	boolTest[230] = true;
 	boolTest[430] = true;
 
-	unsigned int num = 1500;
+	unsigned int num = 1000;
 
 	unsigned int sumValue1 = 0;
 	unsigned int sumValue2 = 0;
+	unsigned int sumValue3 = 0;
 	std::chrono::time_point<std::chrono::system_clock> start1, end1, start2, end2, start3, end3;
 
 	start1 = std::chrono::system_clock::now();
 	for (unsigned int i = 0; i < num; ++i)
 	{
-		for (unsigned int n = 0; n < 500; ++n)
-			if (boolTest[n] == true)
-			{
-				++sumValue1;
-			}
+		for (auto value : *map)
+		{
+			for (auto second : *value.second)
+				sumValue1 += second;
+		}
 	}
 	end1 = std::chrono::system_clock::now();
 
 	start2 = std::chrono::system_clock::now();
 	for (unsigned int i = 0; i < num; ++i)
 	{
-
+		for (auto value : *vec)
+		{
+			for (auto second : *value)
+				sumValue2 += second;
+		}
 	}
 	end2 = std::chrono::system_clock::now();
 
 	start3 = std::chrono::system_clock::now();
-	for (unsigned int i = 0; i < 150; ++i)
-	{
 
-	}
 	end3 = std::chrono::system_clock::now();
 
 	std::chrono::duration<double> elapsed_seconds = end1 - start1;
@@ -188,7 +229,7 @@ void lol()
 	elapsed_seconds = end3 - start3;
 	printf("Time: %f\n", elapsed_seconds);
 
-	printf("Sums:\n%i\n%i\n", sumValue1, sumValue2);
+	printf("Sums:\n%i\n%i\n%i\n", sumValue1, sumValue2, sumValue3);
 }
 void LoadAlotOfBoxes(Renderer::GraphicDevice* r)
 {
@@ -223,11 +264,17 @@ void Start()
 	worldCreator.AddSystemGroup();
 	worldCreator.AddSystemToCurrentGroup<TestSystem>();
 	worldCreator.AddSystemToCurrentGroup<TestSystem2>();
+	//for (unsigned int i = 0; i < 3; ++i)
+	//{
+	//	worldCreator.AddSystemGroup();
+	//	for (int j = 0; j < 5; ++j)
+	//		worldCreator.AddLuaSystemToCurrentGroup(new TestSystem());
+	//}
 	//worldCreator.AddLuaSystemToCurrentGroup(new TestSystem());
 	auto componentTypes = ComponentTypeManager::GetInstance().GetComponentTypes();
 	for (auto it = componentTypes->begin(); it != componentTypes->end(); ++it)
 		worldCreator.AddComponentType(it->second->GetName());
-	ECSL::World* world = worldCreator.CreateWorld(100);
+	ECSL::World* world = worldCreator.CreateWorld(1000);
 
 	bool lol = true;
 	float cd = 1.0f;
@@ -245,7 +292,20 @@ void Start()
 		RENDERER.Render();
 		INPUT->Update();
 
+		//unsigned int ids[50];
+		//for (unsigned int i = 0; i < 50; ++i)
+		//{
+		//	ids[i] = world->CreateNewEntity();
+		//	world->CreateComponentAndAddTo("Position", ids[i]);
+		//	world->CreateComponentAndAddTo("Velocity", ids[i]);
+		//}
+
 		world->Update(dt);
+
+		//for (unsigned int i = 0; i < 50; ++i)
+		//{
+		//	world->KillEntity(ids[i]);
+		//}
 
 		SDL_Event e;
 		while (SDL_PollEvent(&e))

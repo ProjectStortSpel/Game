@@ -24,6 +24,7 @@ namespace ECSL
 
 		const std::vector<System*>* GetSystems() { return m_systems; }
 		const std::vector<SystemWorkGroup*>* GetSystemWorkGroups() { return m_systemWorkGroups; }
+		SystemIdManager* GetSystemIdManager() { return m_systemIdManager; }
 
 	private:
 		SystemIdManager* m_systemIdManager;

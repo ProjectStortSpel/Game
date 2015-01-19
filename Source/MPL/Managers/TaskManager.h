@@ -17,6 +17,7 @@ namespace MPL
 
 		void CreateSlaves();
 
+		TaskId Add(TaskId _dependency, const std::vector<WorkItem*>& _workItems);
 		TaskId BeginAdd(TaskId _dependency);
 		TaskId BeginAdd(TaskId _dependency, WorkItem* _workItem);
 		void AddChild(TaskId _id, WorkItem* _workItem);
@@ -35,6 +36,8 @@ namespace MPL
 
 		std::vector<SlaveThread*>* m_slaves;
 		TaskPool* m_taskPool;
+
+		void WakeThreads();
 	};
 };
 
