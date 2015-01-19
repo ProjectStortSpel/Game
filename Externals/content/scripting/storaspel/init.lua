@@ -42,10 +42,12 @@ if Server then
 	require "sv_postmovesystem"
 	require "sv_checkpointsystem"
 	require "sv_finishsystem"
+	require "sv_totempolesystem"
 	require "sv_voidsystem"
 	require "sv_riversystem"
 	require "sv_respawnsystem"
-
+	require "sv_gameoversystem"
+	
 	require "sv_moveplayersystem"
 
 	require "sv_steptimersystem"
@@ -126,10 +128,12 @@ if Server then
 	worldCreator:AddSystemToCurrentGroup(PostMoveSystem)
 	worldCreator:AddSystemToCurrentGroup(FinishSystem)
 	worldCreator:AddSystemToCurrentGroup(CheckpointSystem)
+	worldCreator:AddSystemToCurrentGroup(TotemPoleSystem)
 	worldCreator:AddSystemToCurrentGroup(VoidSystem)
 	worldCreator:AddSystemToCurrentGroup(RiverSystem)
 	worldCreator:AddSystemToCurrentGroup(RespawnSystem)
 	worldCreator:AddSystemToCurrentGroup(TestMoveRiverSystem)
+	worldCreator:AddSystemToCurrentGroup(GameOverSystem)
 
 	worldCreator:AddSystemToCurrentGroup(TurnAroundSystem)
 	worldCreator:AddSystemToCurrentGroup(TurnLeftSystem)
