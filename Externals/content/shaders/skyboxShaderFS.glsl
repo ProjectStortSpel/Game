@@ -1,4 +1,4 @@
-#version 430
+#version 440
 
 in vec3 TexCoord;
 layout( location = 0 ) out vec4 ColorData;
