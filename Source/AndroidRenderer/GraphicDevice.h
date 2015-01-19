@@ -1,5 +1,6 @@
 /*
-Author: Anders, Christian
+--ANDROID VERSION--
+Author: Christian
 */
 #ifndef GRAPHICDEVICE_H
 #define GRAPHICDEVICE_H
@@ -112,8 +113,6 @@ namespace Renderer
 		// dt and fps
 		float m_dt;
 		int m_fps;
-
-		int m_vramUsage; //in bytes
 
 		// Window size
 		int	m_clientWidth, m_clientHeight;

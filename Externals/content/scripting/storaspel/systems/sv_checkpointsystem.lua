@@ -19,6 +19,8 @@ end
 
 CheckpointSystem.AddTotemPole = function(self, playerId, currentCP, noCP, X, Y, Z)
 
+	-- TODO: FIX THIS SO IT DOESN'T USE ARRAYS FOR TOTEMS. DOESN'T WORK IN DEBUG
+
 	local head = world:CreateNewEntity("Head")
 	local rotation 	= world:GetComponent(head, "Rotation", 0)
 	local position 	= world:GetComponent(head, "Position", 0)
@@ -28,7 +30,7 @@ CheckpointSystem.AddTotemPole = function(self, playerId, currentCP, noCP, X, Y, 
 	
 	-- Position
 	if self.TotemCount[currentCP] == nil then
-		table.insert(self.TotemCount, currentCP, 1)
+		self.TotemCount[currentCP] = 1
 	end
 
 	rotation:SetFloat3(0, axis, 0)
@@ -43,53 +45,80 @@ end
 
 CheckpointSystem.OnEntityAdded = function(self, entity)
 
+	-- If the entity has a CheckCheckpoint component
 	if world:EntityHasComponent( entity, "CheckCheckpoint") then
-		
+
+		-- Get all units currently on the playfield
 		local units = self:GetEntities("Unit")
-		local checkpoints = self:GetEntities("Checkpoint")
-		local nextCP = nil
-
+		-- Get all checkpoints on the map
+		local checkPoints = self:GetEntities("Checkpoint")
+		
 		for i = 1, #units do
-			
+		
+			-- Get the id of the unit's next checkpoint
 			local targetId = world:GetComponent(units[i], "TargetCheckpoint", "Id"):GetInt()
-
-			if targetId > #checkpoints then	
-				print("targetId > #checkpoints")
-				local finishId = world:CreateNewEntity()
-				world:CreateComponentAndAddTo("CheckFinishpoint", finishId)
-				
-				world:KillEntity( entity )
-				return
-			end
 			
-			for j = 1, #checkpoints do
+			if targetId > #checkPoints then
+			
+				local newId = world:CreateNewEntity()
+				world:CreateComponentAndAddTo("CheckFinishpoint", newId)
+				world:CreateComponentAndAddTo("UnitEntityId", newId)
+				world:SetComponent(newId, "UnitEntityId", "Id", units[i])
+			
+			else
+			
+				-- Get the unit's MapPosition
+				local unitPosX, unitPosZ = world:GetComponent(units[i], "MapPosition", 0):GetInt2()
+			
+				-- Go through all checksoints
+				for j = 1, #checkPoints do
 				
-				local cpId = world:GetComponent(checkpoints[j], "Checkpoint", "Number"):GetInt()
-				local unitX, unitZ = world:GetComponent(units[i], "MapPosition", 0):GetInt2() 
-				
-				if cpId == targetId then
-					local checkpointX, checkpointZ = world:GetComponent(checkpoints[j], "MapPosition", 0):GetInt2() 
+					-- Get the current checkpoints Id
+					local cpId = world:GetComponent(checkPoints[j], "Checkpoint", "Number"):GetInt()
 					
-
-					if unitX == checkpointX and unitZ == checkpointZ then
+					-- If the id is the same as the unit's target checkpoint
+					if cpId == targetId then
 						
-						print("Unit reached a checkpoint")
+						-- Get the checkpoint's MapPosition
+						local cpPosX, cpPosZ = world:GetComponent(checkPoints[j], "MapPosition", 0):GetInt2()
 						
-						local playerId = world:GetComponent(units[i], "PlayerNumber", 0):GetInt()
-						self.AddTotemPole(self, playerId, j, #checkpoints, checkpointX, Y, checkpointZ)
-												
-						world:SetComponent(units[i], "TargetCheckpoint", "Id", targetId + 1)
-						world:GetComponent(units[i], "Spawnpoint", 0):SetInt2(checkpointX, checkpointZ)
-
-						break
+						-- If the unit's position and the checkpoint's position is the same
+						if unitPosX == cpPosX and unitPosZ == cpPosZ then
+						
+							-- Get the number of the player controlling the unit
+							local playerNum = world:GetComponent(units[i], "PlayerNumber", 0):GetInt()
+						
+							print("Player#" .. playerNum .. " reached checkpoint#" .. cpId)
+							
+							local totemPieceId = world:CreateNewEntity()
+							world:CreateComponentAndAddTo("AddTotemPiece", totemPieceId)
+							world:CreateComponentAndAddTo("PlayerNumber", totemPieceId)
+							world:CreateComponentAndAddTo("CheckpointId", totemPieceId)
+							print("CreateComponentAndAddTo done")
+							world:SetComponent(totemPieceId, "PlayerNumber", "Number", playerNum)
+							print("PlayerNumber done")
+							world:SetComponent(totemPieceId, "CheckpointId", "Id", cpId)
+							print("CheckpointId done")
+							
+							-- Set the new target checkpoint
+							world:SetComponent(units[i], "TargetCheckpoint", "Id", targetId + 1)
+							-- Set the units spawnpoint
+							world:GetComponent(units[i], "Spawnpoint", 0):SetInt2(cpPosX, cpPosZ)
+						
+							break
+						
+						end
+					
 					end
+				
 				end
-			end
 			
+			end
+		
 		end
-
-		world:KillEntity( entity )
-
+		
+		world:KillEntity(entity)
+		
 	end
-	
+
 end

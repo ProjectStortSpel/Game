@@ -32,9 +32,9 @@ namespace LuaBridge
   {
 	  int x, y;
 	  GraphicDevice::GetWindowSize(x, y);
-	  float ration = (float)(y) / (float)(x);
-	  LuaEmbedder::PushFloat(1);
-	  LuaEmbedder::PushFloat(ration);
+	  float ratioX = (float)(x) / (float)(y);
+	  LuaEmbedder::PushFloat(ratioX * 0.5625);
+	  LuaEmbedder::PushFloat(1 * 0.5625);
 	  return 2;
   }
 

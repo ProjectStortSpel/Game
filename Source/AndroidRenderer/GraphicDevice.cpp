@@ -12,7 +12,6 @@ using namespace glm;
 GraphicDevice::GraphicDevice()
 {
 	m_modelIDcounter = 0;
-	m_vramUsage = 0;
 }
 
 GraphicDevice::~GraphicDevice()
@@ -41,7 +40,7 @@ bool GraphicDevice::Init()
 
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
-	//if (!InitSkybox()) { ERRORMSG("INIT SKYBOX FAILED\n"); return false; }
+	if (!InitSkybox()) { ERRORMSG("INIT SKYBOX FAILED\n"); return false; }
 	
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
@@ -85,15 +84,7 @@ void GraphicDevice::Render()
 	
 	//--------Uniforms-------------------------------------------------------------------------
 	mat4 projectionMatrix = *m_camera->GetProjMatrix();
-
 	mat4 viewMatrix = *m_camera->GetViewMatrix();
-
-	// DRAW SKYBOX
-	//m_skyBoxShader.UseProgram();
-	//m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera);
-	// -----------
-
-	vec3 tPos = *m_camera->GetPos() + 8.0f* (*m_camera->GetLook());
 
 	//------FORWARD RENDERING--------------------------------------------
 	//glEnable(GL_BLEND);
@@ -131,7 +122,15 @@ void GraphicDevice::Render()
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 	}
+	//-------------------------------------------------------------------------
 
+	glDisable(GL_CULL_FACE);
+	// DRAW SKYBOX
+	m_skyBoxShader.UseProgram();
+	m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera);
+	// -----------
+
+	glEnable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
 
 	// RENDER VIEWSPACE STUFF
@@ -216,7 +215,7 @@ bool GraphicDevice::InitSDLWindow()
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
 	m_window = SDL_CreateWindow(Caption, PosX, PosY, SizeX, SizeY, Flags);
@@ -244,6 +243,12 @@ bool GraphicDevice::InitShaders()
 	m_forwardShader.AddShader("content/shaders/AndroidForwardFS.glsl", GL_FRAGMENT_SHADER);
 	m_forwardShader.FinalizeShaderProgram();
 
+	// SkyBox
+	m_skyBoxShader.InitShaderProgram();
+	m_skyBoxShader.AddShader("content/shaders/AndroidSkyboxShaderVS.glsl", GL_VERTEX_SHADER);
+	m_skyBoxShader.AddShader("content/shaders/AndroidSkyboxShaderFS.glsl", GL_FRAGMENT_SHADER);
+	m_skyBoxShader.FinalizeShaderProgram();
+
 	// Viewspace shader
 	m_viewspaceShader.InitShaderProgram();
 	m_viewspaceShader.AddShader("content/shaders/AndroidViewspaceShaderVS.glsl", GL_VERTEX_SHADER);
@@ -256,21 +261,21 @@ bool GraphicDevice::InitShaders()
 bool GraphicDevice::InitBuffers()
 {
 	//Skybox shader
-	//m_skyBoxShader.CheckUniformLocation("cubemap", 1);
+	m_skyBoxShader.CheckUniformLocation("cubemap", 1);
 
 	return true;
 }
 
 bool GraphicDevice::InitSkybox()
 {
-	/*int w, h;
+	int w, h;
 	GLuint texHandle = TextureLoader::LoadCubeMap("content/textures/skybox", GL_TEXTURE1, w, h);
 	if (texHandle < 0)
 		return false;
 
 	m_skyBoxShader.UseProgram();
-	m_skybox = new SkyBox(texHandle, m_camera->GetFarPlane());
-	m_vramUsage += (w*h * 6 * 4 * sizeof(float));*/
+	GLuint loc = glGetAttribLocation(m_skyBoxShader.GetShaderProgram(), "VertexPoint");
+	m_skybox = new SkyBox(texHandle, m_camera->GetFarPlane(), loc);
 
 	return true;
 }
@@ -333,9 +338,6 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 	int modelID = m_modelIDcounter;
 	m_modelIDcounter++;
 
-	//Shader *shaderPtr = &m_forwardShader;
-	//m_forwardShader.UseProgram();
-
 	Shader *shaderPtr = NULL;
 
 	if (_renderType == RENDER_FORWARD)
@@ -357,7 +359,7 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 	{
 		shaderPtr = &m_forwardShader;
 		m_forwardShader.UseProgram();
-		SDL_Log("ERROR: INVALID RENDER SETTING. Selecting FORWARD");
+		SDL_Log("Deferred requested. Selecting FORWARD");
 	}
 
 	// Import Object
@@ -398,12 +400,12 @@ bool GraphicDevice::RemoveModel(int _id)
 {
 	for (int i = 0; i < m_modelsForward.size(); i++)
 	{
-		/*if (m_modelsForward[i].id == _id)
+		if (m_modelsForward[i].id == _id)
 		{
-			m_modelsForward[i].erase(m_modelsForward[i].begin() + i);
+			m_modelsForward.erase(m_modelsForward.begin() + i);
 
 			return true;
-		}*/
+		}
 	}
 	for (int i = 0; i < m_modelsViewspace.size(); i++)
 	{
@@ -421,11 +423,11 @@ bool GraphicDevice::ActiveModel(int _id, bool _active)
 {
 	for (int i = 0; i < m_modelsForward.size(); i++)
 	{
-		/*if (m_modelsForward[i].id == _id)
+		if (m_modelsForward[i].id == _id)
 		{
 			m_modelsForward[i].active = _active;
 			return true;
-		}*/
+		}
 	}
 	return false;
 }
@@ -558,11 +560,6 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 		{ tcLoc,	2, GL_FLOAT, (const GLvoid*)texCoordData.data(), (GLsizeiptr)(texCoordData.size() * sizeof(float)) }
 	};
 
-	int test = sizeof(bufferData) / sizeof(bufferData[0]);
-	// Counts the size in bytes of all the buffered data
-	for (int i = 0; i < sizeof(bufferData) / sizeof(bufferData[0]); i++)
-		m_vramUsage += (int)bufferData[i].dataSize;
-
 	retbuffer->init(bufferData, sizeof(bufferData) / sizeof(bufferData[0]), _shaderProg->GetShaderProgram());
 	retbuffer->setCount((int)positionData.size() / 3);
 	
@@ -581,7 +578,6 @@ GLuint GraphicDevice::AddTexture(std::string _fileDir, GLenum _textureSlot)
 	//m_deferredShader1.UseProgram();
 	GLuint texture = TextureLoader::LoadTexture(_fileDir.c_str(), _textureSlot, texSizeX, texSizeY);
 	m_textures.insert(std::pair<const std::string, GLenum>(_fileDir, texture));
-	m_vramUsage += (texSizeX * texSizeY * 4 * 4);
 	return texture;
 }
 //ObjectData GraphicDevice::AddObject(std::string _file, std::string _dir)

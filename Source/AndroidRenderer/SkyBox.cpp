@@ -6,64 +6,63 @@ SkyBox::SkyBox()
 SkyBox::~SkyBox()
 { }
 
-SkyBox::SkyBox(GLuint _texHandle, float _camFarPlane)
+SkyBox::SkyBox(GLuint _texHandle, float _camFarPlane, GLuint loc)
 {
 	m_textureHandle = _texHandle;
-	BindBuffers(_camFarPlane*0.55);
+	m_attribLoc = loc;
+	BindBuffers(_camFarPlane*0.55f);
 }
 
 void SkyBox::BindBuffers(float _far)
 {
-	//// cube vertices for vertex buffer object
-	//GLfloat cubeVertices[] = {
-	//  -1.0*_far,  1.0*_far,  1.0*_far,
-	//  -1.0*_far, -1.0*_far,  1.0*_far,
-	//   1.0*_far, -1.0*_far,  1.0*_far,
-	//   1.0*_far,  1.0*_far,  1.0*_far,
-	//  -1.0*_far,  1.0*_far, -1.0*_far,
-	//  -1.0*_far, -1.0*_far, -1.0*_far,
-	//   1.0*_far, -1.0*_far, -1.0*_far,
-	//   1.0*_far,  1.0*_far, -1.0*_far,
-	//};
+	static const GLfloat cubeVertices[] = {
+		-1.0f*_far, -1.0f*_far,  1.0f*_far,
+		 1.0f*_far, -1.0f*_far,  1.0f*_far,
+		-1.0f*_far,  1.0f*_far,  1.0f*_far,
+		 1.0f*_far,  1.0f*_far,  1.0f*_far,
+		-1.0f*_far, -1.0f*_far, -1.0f*_far,
+		 1.0f*_far, -1.0f*_far, -1.0f*_far,
+		-1.0f*_far,  1.0f*_far, -1.0f*_far,
+		 1.0f*_far,  1.0f*_far, -1.0f*_far,
+	};
 
-	//// cube indices for index buffer object
-	//GLuint cubeIndices[] = {
-	//  3, 2, 1, 0,
-	//  7, 6, 2, 3,
-	//  4, 5, 6, 7,
-	//  0, 1, 5, 4,
-	//  4, 7, 3, 0,
-	// 1, 2, 6, 5,
-	//};
+	static const GLushort cubeIndices[] = {
+		0, 1, 2, 3, 
+		1, 5, 3, 7, 
+		5, 4, 7, 6, 
+		7, 6, 3, 2,
+		2, 6, 0, 4,
+		0, 4, 1, 5,
+	};
 
-	//glGenVertexArrays(1, &m_VAOHandle);
-	//glBindVertexArray(m_VAOHandle);
+	glGenBuffers(1, &vboCubeVertices);
+	glBindBuffer(GL_ARRAY_BUFFER, vboCubeVertices);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
 
-	//GLuint vboCubeVertices;
-	//glGenBuffers(1, &vboCubeVertices);
-	//glBindBuffer(GL_ARRAY_BUFFER, vboCubeVertices);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
+	glGenBuffers(1, &iboCubeIndices);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboCubeIndices);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cubeIndices), cubeIndices, GL_STATIC_DRAW);
 
-
-	//GLuint iboCubeIndices;
-	//glGenBuffers(1, &iboCubeIndices);
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboCubeIndices);
-	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cubeIndices), cubeIndices, GL_STATIC_DRAW);
-
-	//glEnableVertexAttribArray(0);
-	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 }
 
 void SkyBox::Draw(GLuint _shaderProgHandle, Camera *_cam)
 {
-	/*GLuint location = glGetUniformLocation(_shaderProgHandle, "MVP");
+	GLuint location = glGetUniformLocation(_shaderProgHandle, "MVP");
 
-	mat4 MVP = *_cam->GetProjMatrix() * (*_cam->GetViewMatrix()) * glm::translate(mat4(1.0f), *_cam->GetPos());
+	mat4 MVP = (*_cam->GetProjMatrix()) * (*_cam->GetViewMatrix()) * glm::translate(glm::mat4(1.0f), (*_cam->GetPos()));
 
 	glUniformMatrix4fv(location, 1, GL_FALSE, &MVP[0][0]);
 	
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, m_textureHandle);
-	glBindVertexArray(m_VAOHandle);
-	glDrawElements( GL_QUADS, 24, GL_UNSIGNED_INT, 0);*/
+	//glActiveTexture(GL_TEXTURE1);
+	//glBindTexture(GL_TEXTURE_2D, m_textureHandle);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vboCubeVertices);
+	glVertexAttribPointer(m_attribLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(m_attribLoc);
+
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboCubeIndices);
+	//glVertexAttribPointer(m_attribLoc, m_BufferData[i].componentCount, m_BufferData[i].type, GL_FALSE, 0, 0);
+	//glEnableVertexAttribArray(m_BufferData[i].location);
+
+	glDrawElements(GL_TRIANGLE_STRIP, 24, GL_UNSIGNED_SHORT, 0);
 }
