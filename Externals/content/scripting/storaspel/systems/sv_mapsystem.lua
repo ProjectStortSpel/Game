@@ -9,19 +9,16 @@ MapSystem.PostInitialize = function(self)
     local posX, posZ
 		
 	for x = 0, self.mapX+1 do
-		self:AddTile(x, 1, 111) -- 111 = void
+		self:AddTile(x, 0, 111) -- 111 = void
 	end
 	
-
 	local highestCP = 0
 	local finishList = { }
-
+	
 	for y = 1, self.mapY do
 		self:AddTile(0, y, 111) -- 111 = void
 		for x = 1, self.mapX do
-
-			local tiletype = map[(y - 1) * self.mapX + x]
-
+			local tiletype = map[(y - 1) * self.mapX + x]			
             local entity = self:AddTile(x, y, tiletype)
 
 			if tiletype >= 49 and tiletype <= 57 then -- 49 = 1 = first checkpoint, 47 = 9 = 9th checkpoint
