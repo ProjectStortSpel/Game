@@ -91,10 +91,7 @@ void GraphicDevice::Update(float _dt)
 {
 	m_dt = _dt; m_fps = 1 / _dt;
 
-	// Test kod för att rendera text
-	std::stringstream sstm;
-	sstm << m_fps << " fps";
-	m_textRenderer.RenderSimpleText(sstm.str(), 0, 0);
+
 
 	// PRINT m_glTimerValues
 	for (int i = 0; i < m_glTimerValues.size(); i++)
@@ -107,9 +104,7 @@ void GraphicDevice::Update(float _dt)
 	}
 	m_glTimerValues.clear();
 
-	std::stringstream vram;
-	vram << "VRAM usage: " << ((float)m_vramUsage/1024.f)/1024.f << " Mb ";
-	m_textRenderer.RenderSimpleText(vram.str(), 20, 0);
+
 
 	lightCounter += 0.15*_dt;
 	m_dirLightDirection = vec3(-0.38, -1.0, 2.5*sin(lightCounter));
@@ -132,7 +127,8 @@ void GraphicDevice::WriteShadowMapDepth()
 
 	//glCullFace(GL_FRONT);
 	glEnable(GL_POLYGON_OFFSET_FILL);
-	glPolygonOffset(4.5, 18000.0);
+	glPolygonOffset(4.5, 18000.0);
+
 	glActiveTexture(GL_TEXTURE10);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -248,7 +244,9 @@ void GraphicDevice::Render()
 				else
 					modelMatrix = *m_modelsDeferred[i].instances[j].modelMatrix;
 
-				mat4 modelViewMatrix = viewMatrix * modelMatrix;
+				mat4 modelViewMatrix;
+				modelViewMatrix = viewMatrix * modelMatrix;
+
 				mat4 mvp = projectionMatrix * modelViewMatrix;
 				MVPVector[nrOfInstances] = mvp;
 				
@@ -353,7 +351,9 @@ void GraphicDevice::Render()
 				else
 					modelMatrix = *m_modelsForward[i].instances[j].modelMatrix;
 
-				mat4 modelViewMatrix = viewMatrix * modelMatrix;
+				mat4 modelViewMatrix;
+				modelViewMatrix = viewMatrix * modelMatrix;
+
 				modelViewVector[nrOfInstances] = modelViewMatrix;
 
 				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
@@ -372,12 +372,108 @@ void GraphicDevice::Render()
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].speID);
 
-		//m_modelsDeferred[i].bufferPtr->draw();
 		m_modelsForward[i].bufferPtr->drawInstanced(0, m_modelsForward[i].instances.size(), &modelViewVector, &normalMatVector);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	glDisable(GL_DEPTH_TEST);
+
+	// RENDER VIEWSPACE STUFF
+	m_viewspaceShader.UseProgram();
+	m_viewspaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
+
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
+
+	for (int i = 0; i < m_modelsViewspace.size(); i++)
+	{
+		std::vector<mat4> modelViewVector(m_modelsViewspace[i].instances.size());
+		std::vector<mat3> normalMatVector(m_modelsViewspace[i].instances.size());
+
+		int nrOfInstances = 0;
+
+		for (int j = 0; j < m_modelsViewspace[i].instances.size(); j++)
+		{
+			if (m_modelsViewspace[i].instances[j].active) // IS MODEL ACTIVE?
+			{
+				mat4 modelMatrix;
+				if (m_modelsViewspace[i].instances[j].modelMatrix == NULL)
+					modelMatrix = glm::translate(glm::vec3(1));
+				else
+					modelMatrix = *m_modelsViewspace[i].instances[j].modelMatrix;
+
+				mat4 modelViewMatrix;
+				modelViewMatrix = modelMatrix;
+
+				modelViewVector[nrOfInstances] = modelViewMatrix;
+
+				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
+				normalMatVector[nrOfInstances] = normalMatrix;
+
+				nrOfInstances++;
+			}
+		}
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, m_modelsViewspace[i].texID);
+
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, m_modelsViewspace[i].norID);
+
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, m_modelsViewspace[i].speID);
+
+		m_modelsViewspace[i].bufferPtr->drawInstanced(0, m_modelsViewspace[i].instances.size(), &modelViewVector, &normalMatVector);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	// RENDER INTERFACE STUFF
+	m_interfaceShader.UseProgram();
+	m_interfaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
+
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
+
+	for (int i = 0; i < m_modelsInterface.size(); i++)
+	{
+		std::vector<mat4> modelViewVector(m_modelsInterface[i].instances.size());
+		std::vector<mat3> normalMatVector(m_modelsInterface[i].instances.size());
+
+		int nrOfInstances = 0;
+
+		for (int j = 0; j < m_modelsInterface[i].instances.size(); j++)
+		{
+			if (m_modelsInterface[i].instances[j].active) // IS MODEL ACTIVE?
+			{
+				mat4 modelMatrix;
+				if (m_modelsInterface[i].instances[j].modelMatrix == NULL)
+					modelMatrix = glm::translate(glm::vec3(1));
+				else
+					modelMatrix = *m_modelsInterface[i].instances[j].modelMatrix;
+
+				mat4 modelViewMatrix;
+				modelViewMatrix = modelMatrix;
+
+				modelViewVector[nrOfInstances] = modelViewMatrix;
+
+				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
+				normalMatVector[nrOfInstances] = normalMatrix;
+
+				nrOfInstances++;
+			}
+		}
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, m_modelsInterface[i].texID);
+
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, m_modelsInterface[i].norID);
+
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, m_modelsInterface[i].speID);
+
+		m_modelsInterface[i].bufferPtr->drawInstanced(0, m_modelsInterface[i].instances.size(), &modelViewVector, &normalMatVector);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
 	glDisable(GL_BLEND);
 
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
@@ -423,8 +519,8 @@ bool GraphicDevice::InitSDLWindow()
 	// WINDOW SETTINGS
 	unsigned int	Flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
 	const char*		Caption = "SDL Window";
-	int				PosX = 630;
-	int				PosY = 160;
+	int				PosX = 2;
+	int				PosY = 2;
 
 	int				SizeX = 256 * 5;	//1280
 	int				SizeY = 144 * 5;	//720
@@ -569,6 +665,18 @@ bool GraphicDevice::InitShaders()
 	m_forwardShader.AddShader("content/shaders/VSForwardShader.glsl", GL_VERTEX_SHADER);
 	m_forwardShader.AddShader("content/shaders/FSForwardShader.glsl", GL_FRAGMENT_SHADER);
 	m_forwardShader.FinalizeShaderProgram();
+
+	// Viewspace shader
+	m_viewspaceShader.InitShaderProgram();
+	m_viewspaceShader.AddShader("content/shaders/VSViewspaceShader.glsl", GL_VERTEX_SHADER);
+	m_viewspaceShader.AddShader("content/shaders/FSViewspaceShader.glsl", GL_FRAGMENT_SHADER);
+	m_viewspaceShader.FinalizeShaderProgram();
+
+	// Interface shader
+	m_interfaceShader.InitShaderProgram();
+	m_interfaceShader.AddShader("content/shaders/VSInterfaceShader.glsl", GL_VERTEX_SHADER);
+	m_interfaceShader.AddShader("content/shaders/FSInterfaceShader.glsl", GL_FRAGMENT_SHADER);
+	m_interfaceShader.FinalizeShaderProgram();
 
 	// ShadowShader deferred geometry
 	m_shadowShaderDeferred.InitShaderProgram();
@@ -781,6 +889,16 @@ bool GraphicDevice::PreLoadModel(std::string _dir, std::string _file, int _rende
 		shaderPtr = &m_forwardShader;
 		m_forwardShader.UseProgram();
 	}
+	else if (_renderType == RENDER_VIEWSPACE)
+	{
+		shaderPtr = &m_viewspaceShader;
+		m_viewspaceShader.UseProgram();
+	}
+	else if (_renderType == RENDER_INTERFACE)
+	{
+		shaderPtr = &m_viewspaceShader;
+		m_interfaceShader.UseProgram();
+	}
 	else
 		ERRORMSG("ERROR: INVALID RENDER SETTING");
 
@@ -811,15 +929,25 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 	m_modelIDcounter++;
 
 	Shader *shaderPtr = NULL;
-	if (_renderType == 0)
+	if (_renderType == RENDER_DEFERRED)
 	{
 		shaderPtr = &m_deferredShader1;
 		m_deferredShader1.UseProgram();
 	}
-	else if (_renderType == 1)
+	else if (_renderType == RENDER_FORWARD)
 	{
 		shaderPtr = &m_forwardShader;
 		m_forwardShader.UseProgram();
+	}
+	else if (_renderType == RENDER_VIEWSPACE)
+	{
+		shaderPtr = &m_viewspaceShader;
+		m_viewspaceShader.UseProgram();
+	}
+	else if (_renderType == RENDER_INTERFACE)
+	{
+		shaderPtr = &m_interfaceShader;
+		m_interfaceShader.UseProgram();
 	}
 	else
 		ERRORMSG("ERROR: INVALID RENDER SETTING");
@@ -870,6 +998,28 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 			}
 		}
 	}
+	else if (_renderType == RENDER_VIEWSPACE)
+	{
+		for (int i = 0; i < m_modelsViewspace.size(); i++)
+		{
+			if (m_modelsViewspace[i] == model)
+			{
+				m_modelsViewspace[i].instances.push_back(Instance(modelID, true, _matrixPtr));
+				return modelID;
+			}
+		}
+	}
+	else if (_renderType == RENDER_INTERFACE)
+	{
+		for (int i = 0; i < m_modelsInterface.size(); i++)
+		{
+			if (m_modelsInterface[i] == model)
+			{
+				m_modelsInterface[i].instances.push_back(Instance(modelID, true, _matrixPtr));
+				return modelID;
+			}
+		}
+	}
 	
 	// Set model
 	//if model doesnt exist
@@ -879,6 +1029,10 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 		m_modelsDeferred.push_back(model);
 	else if (_renderType == RENDER_FORWARD)
 		m_modelsForward.push_back(model);
+	else if (_renderType == RENDER_VIEWSPACE)
+		m_modelsViewspace.push_back(model);
+	else if (_renderType == RENDER_INTERFACE)
+		m_modelsInterface.push_back(model);
 
 	return modelID;
 }
@@ -912,6 +1066,35 @@ bool GraphicDevice::RemoveModel(int _id)
 			}
 		}
 	}
+	for (int i = 0; i < m_modelsViewspace.size(); i++)
+	{
+		for (int j = 0; j < m_modelsViewspace[i].instances.size(); j++)
+		{
+			if (m_modelsViewspace[i].instances[j].id == _id)
+			{
+				m_modelsViewspace[i].instances.erase(m_modelsViewspace[i].instances.begin() + j);
+				if (m_modelsViewspace[i].instances.size() == 0)
+					m_modelsViewspace.erase(m_modelsViewspace.begin() + i);
+
+				return true;
+			}
+		}
+	}
+	for (int i = 0; i < m_modelsInterface.size(); i++)
+	{
+		for (int j = 0; j < m_modelsInterface[i].instances.size(); j++)
+		{
+			if (m_modelsInterface[i].instances[j].id == _id)
+			{
+				m_modelsInterface[i].instances.erase(m_modelsInterface[i].instances.begin() + j);
+				if (m_modelsInterface[i].instances.size() == 0)
+					m_modelsInterface.erase(m_modelsInterface.begin() + i);
+
+				return true;
+			}
+		}
+	}
+
 	return false;
 }
 bool GraphicDevice::ActiveModel(int _id, bool _active)
@@ -939,10 +1122,35 @@ bool GraphicDevice::ActiveModel(int _id, bool _active)
 			}
 		}
 	}
+
+	for (int i = 0; i < m_modelsViewspace.size(); i++)
+	{
+		for (int j = 0; j < m_modelsViewspace[i].instances.size(); j++)
+		{
+			if (m_modelsViewspace[i].instances[j].id == _id)
+			{
+				m_modelsViewspace[i].instances[j].active = _active;
+				return true;
+			}
+		}
+	}
+
+	for (int i = 0; i < m_modelsInterface.size(); i++)
+	{
+		for (int j = 0; j < m_modelsInterface[i].instances.size(); j++)
+		{
+			if (m_modelsInterface[i].instances[j].id == _id)
+			{
+				m_modelsInterface[i].instances[j].active = _active;
+				return true;
+			}
+		}
+	}
 	return false;
 }
 bool GraphicDevice::ChangeModelTexture(int _id, std::string _fileDir, int _textureType)
 {
+	// TODO: Do this for Interface and Viewspace
 	// Model Instance
 	Instance instance;
 	// Temp Model
@@ -1057,10 +1265,12 @@ bool GraphicDevice::ChangeModelTexture(int _id, std::string _fileDir, int _textu
 }
 bool GraphicDevice::ChangeModelNormalMap(int _id, std::string _fileDir)
 {
+	// TODO: Do this for Interface and Viewspace
 	return ChangeModelTexture(_id, _fileDir, TEXTURE_NORMAL);
 }
 bool GraphicDevice::ChangeModelSpecularMap(int _id, std::string _fileDir)
 {
+	// TODO: Do this for Interface and Viewspace
 	return ChangeModelTexture(_id, _fileDir, TEXTURE_SPECULAR);
 }
 
@@ -1137,6 +1347,8 @@ void GraphicDevice::Clear()
   
   m_modelsDeferred.clear();
   m_modelsForward.clear();
+  m_modelsViewspace.clear();
+  m_modelsInterface.clear();
 
   float **tmpPtr = new float*[1];
   BufferPointlights(0, tmpPtr);

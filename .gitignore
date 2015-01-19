@@ -210,3 +210,5 @@ FakesAssemblies/
 Externals/android/ndk/
 Externals/android/sdk/
 Solutions/Android/app/libs/
+Solutions/Android/app/assets/
+Solutions/Android/local.properties

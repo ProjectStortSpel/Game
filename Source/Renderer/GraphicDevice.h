@@ -17,16 +17,19 @@ namespace Renderer
 {
 #define RENDER_DEFERRED 0
 #define RENDER_FORWARD  1
+#define RENDER_VIEWSPACE  2
+#define RENDER_INTERFACE  3
 
 #define TEXTURE_DIFFUSE		0
 #define TEXTURE_NORMAL		1
 #define TEXTURE_SPECULAR	2
 
-
+	
 	struct Instance
 	{
 		int id;
 		bool active;
+		bool viewspace;
 		mat4* modelMatrix;
 		
 		Instance(){}
@@ -120,6 +123,8 @@ namespace Renderer
 		
 		void Clear();
 
+		int GetVRamUsage(){ return m_vramUsage; }
+
 	private:
 		bool InitSDLWindow();
 		bool InitGLEW();
@@ -175,6 +180,8 @@ namespace Renderer
 		Shader m_skyBoxShader;
 		Shader m_deferredShader1, m_compDeferredPass2Shader;
 		Shader m_forwardShader;
+		Shader m_viewspaceShader;
+		Shader m_interfaceShader;
 
 		Shader m_shadowShaderDeferred, m_shadowShaderForward;
 
@@ -187,7 +194,7 @@ namespace Renderer
 
 		// Modelloader
 		int m_modelIDcounter;
-		std::vector<Model> m_modelsDeferred, m_modelsForward;
+		std::vector<Model> m_modelsDeferred, m_modelsForward, m_modelsViewspace, m_modelsInterface;
 
 		// Pointlights buffer
 		GLuint m_pointlightBuffer, m_dirLightBuffer;

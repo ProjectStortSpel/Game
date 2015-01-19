@@ -1,4 +1,3 @@
-
 -- PickingPhase Component
 local PickingPhaseComponent = ComponentType()
 PickingPhaseComponent.Name = "PickingPhase"

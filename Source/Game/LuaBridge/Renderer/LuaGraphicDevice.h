@@ -1,7 +1,13 @@
 #ifndef LUAGRAPHICDEVICE_H
 #define LUAGRAPHICDEVICE_H
 
+#ifdef __ANDROID__
+#include "AndroidRenderer/GraphicDevice.h"
+#else
 #include "Renderer/GraphicDevice.h"
+#endif
+
+#include "Input/InputWrapper.h"
 
 namespace LuaBridge
 {
@@ -13,6 +19,9 @@ namespace LuaBridge
     static void Embed();
     
   private:
+	int GetAspectRatio();
+	int GetTouchPosition();
+
     int ResizeWindow();
     int SetTitle();
     

@@ -143,7 +143,6 @@ void GameConsole::ClearHistory(std::string _command, std::vector<Console::Argume
 	m_consoleManager->ClearHistory();
 }
 
-
 void GameConsole::HostServer(std::string _command, std::vector<Console::Argument>* _args)
 {
 	if (NetworkInstance::GetClient()->IsConnected())
@@ -189,10 +188,10 @@ void GameConsole::HostServer(std::string _command, std::vector<Console::Argument
 	}
 
 	bool hosting = NetworkInstance::GetServer()->Start(port, pw.c_str(), connections);
+	SDL_Log("Hosting: %d", (int)hosting);
 	LuaEmbedder::AddBool("Server", hosting);
 	//NetworkInstance::GetClient()->Connect("127.0.0.1", pw.c_str(), port, 0);
 }
-
 
 void GameConsole::StopServer(std::string _command, std::vector<Console::Argument>* _args)
 {

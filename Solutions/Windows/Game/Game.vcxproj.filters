@@ -102,6 +102,9 @@
     <Filter Include="Scripting\Systems\Server Systems\Round Systems">
       <UniqueIdentifier>{6a9b274c-f66c-4751-9720-1db180c9c247}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scripting\Systems\Client Systems\Round Systems">
+      <UniqueIdentifier>{93c941f5-4243-495c-b31e-ec351fff0db2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\LuaBridge.cpp">
@@ -437,6 +440,24 @@
     </None>
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_postmovesystem.lua">
       <Filter>Scripting\Systems\Server Systems\Round Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sh_moveplayersystem.lua">
+      <Filter>Scripting\Systems\Shared Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_playerdonevisualizersystem.lua">
+      <Filter>Scripting\Systems\Client Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_playerindicatorsystem.lua">
+      <Filter>Scripting\Systems\Client Systems\Card Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_checkpointsystem.lua">
+      <Filter>Scripting\Systems\Server Systems\Round Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_finishsystem.lua">
+      <Filter>Scripting\Systems\Server Systems\Round Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_takecardsfromplayersystem.lua">
+      <Filter>Scripting\Systems\Server Systems\Card Systems</Filter>
     </None>
   </ItemGroup>
 </Project>

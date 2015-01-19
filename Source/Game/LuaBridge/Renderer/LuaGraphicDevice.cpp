@@ -11,6 +11,9 @@ namespace LuaBridge
   {
     LuaEmbedder::EmbedClass<LuaGraphicDevice>("GraphicDevice");
     
+	LuaEmbedder::EmbedClassFunction<LuaGraphicDevice>("GraphicDevice", "GetTouchPosition", &LuaGraphicDevice::GetTouchPosition);
+	LuaEmbedder::EmbedClassFunction<LuaGraphicDevice>("GraphicDevice", "GetAspectRatio", &LuaGraphicDevice::GetAspectRatio);
+
     LuaEmbedder::EmbedClassFunction<LuaGraphicDevice>("GraphicDevice", "ResizeWindow", &LuaGraphicDevice::ResizeWindow);
     LuaEmbedder::EmbedClassFunction<LuaGraphicDevice>("GraphicDevice", "SetTitle", &LuaGraphicDevice::SetTitle);
     LuaEmbedder::EmbedClassFunction<LuaGraphicDevice>("GraphicDevice", "RenderSimpleText", &LuaGraphicDevice::RenderSimpleText);
@@ -24,7 +27,35 @@ namespace LuaBridge
     
     LuaEmbedder::EmbedClassProperty<LuaGraphicDevice>("GraphicDevice", "Camera", &LuaGraphicDevice::GetCamera, &LuaGraphicDevice::SetCamera);
   }
-  
+
+  int LuaGraphicDevice::GetAspectRatio()
+  {
+	  int x, y;
+	  GraphicDevice::GetWindowSize(x, y);
+	  float ratioX = (float)(x) / (float)(y);
+	  LuaEmbedder::PushFloat(ratioX * 0.5625);
+	  LuaEmbedder::PushFloat(1 * 0.5625);
+	  return 2;
+  }
+
+  int LuaGraphicDevice::GetTouchPosition()
+  {
+	  /*Input::InputWrapper& inputWrapper = Input::InputWrapper::GetInstance();
+	  SDL_FingerID finger = (SDL_FingerID)LuaEmbedder::PullInt(1);
+	  LuaEmbedder::PushFloat(inputWrapper.GetTouch()->GetX(finger)-0.5f);
+	  LuaEmbedder::PushFloat(-inputWrapper.GetTouch()->GetY(finger)+0.5f);
+	  return 2;*/
+	  Input::InputWrapper& inputWrapper = Input::InputWrapper::GetInstance();
+	  int wX, wY;
+	  GraphicDevice::GetWindowSize(wX, wY);
+	  int mX = inputWrapper.GetMouse()->GetX();
+	  int mY = inputWrapper.GetMouse()->GetY();
+
+	  LuaEmbedder::PushFloat((float)(mX) / (float)(wX) - 0.5f);
+	  LuaEmbedder::PushFloat((float)(-mY) / (float)(wY) + 0.5f);
+	  return 2;
+  }
+
   int LuaGraphicDevice::ResizeWindow()
   {
     int width = LuaEmbedder::PullInt(1);

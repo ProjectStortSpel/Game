@@ -1,22 +1,18 @@
 local GameRunningComponent = ComponentType()
-GameRunningComponent.SyncNetwork = false
 GameRunningComponent.Name = "GameRunning"
 GameRunningComponent.TableType = TableType.Map
 worldCreator:AddComponentType(GameRunningComponent)
 
 local CreateDeckComponent = ComponentType()
-CreateDeckComponent.SyncNetwork = false
 CreateDeckComponent.Name = "CreateDeck"
 CreateDeckComponent.TableType = TableType.Map
 worldCreator:AddComponentType(CreateDeckComponent)
 
 local DealCardsComponent = ComponentType()
-DealCardsComponent.SyncNetwork = false
 DealCardsComponent.Name = "DealCards"
 DealCardsComponent:AddVariable("NumCards", ByteSize.Int)
 DealCardsComponent.TableType = TableType.Map
 worldCreator:AddComponentType(DealCardsComponent)
-
 
 local NotifyStartNewRoundComponent = ComponentType()
 NotifyStartNewRoundComponent.Name = "NotifyStartNewRound"
@@ -69,11 +65,15 @@ TestMoveComponent:AddVariable("DirX", ByteSize.Int)
 TestMoveComponent:AddVariable("DirZ", ByteSize.Int)
 worldCreator:AddComponentType(TestMoveComponent)
 
-
 local CheckCheckpointComponent = ComponentType()
 CheckCheckpointComponent.Name = "CheckCheckpoint"
 CheckCheckpointComponent.TableType = TableType.Map
 worldCreator:AddComponentType(CheckCheckpointComponent)
+
+local CheckFinishpointComponent = ComponentType()
+CheckFinishpointComponent.Name = "CheckFinishpoint"
+CheckFinishpointComponent.TableType = TableType.Map
+worldCreator:AddComponentType(CheckFinishpointComponent)
 
 local UpdateSpawnpointComponent = ComponentType()
 UpdateSpawnpointComponent.Name = "UpdateSpawnpoint"
@@ -98,3 +98,23 @@ local EndRoundComponent = ComponentType()
 EndRoundComponent.Name = "EndRound"
 EndRoundComponent.TableType = TableType.Map
 worldCreator:AddComponentType(EndRoundComponent)
+
+local TestRiverComponent = ComponentType()
+TestRiverComponent.Name = "TestRiver"
+TestRiverComponent.TableType = TableType.Map
+TestRiverComponent:AddVariable("Unit", ByteSize.Reference)
+TestRiverComponent:AddVariable("PosX", ByteSize.Int)
+TestRiverComponent:AddVariable("PosZ", ByteSize.Int)
+worldCreator:AddComponentType(TestRiverComponent)
+
+local TakeCardsFromPlayerComponent = ComponentType()
+TakeCardsFromPlayerComponent.Name = "TakeCardsFromPlayer"
+TakeCardsFromPlayerComponent.TableType = TableType.Map
+TakeCardsFromPlayerComponent:AddVariable("Player", ByteSize.Reference)
+worldCreator:AddComponentType(TakeCardsFromPlayerComponent)
+
+local TakeCardStepsFromUnitComponent = ComponentType()
+TakeCardStepsFromUnitComponent.Name = "TakeCardStepsFromUnit"
+TakeCardStepsFromUnitComponent.TableType = TableType.Map
+TakeCardStepsFromUnitComponent:AddVariable("Unit", ByteSize.Reference)
+worldCreator:AddComponentType(TakeCardStepsFromUnitComponent)

@@ -10,6 +10,7 @@ worldCreator:AddComponentType(MapPositionComponent)
 -- Water Component
 local RiverComponent = ComponentType()
 RiverComponent.Name = "River"
+MapPositionComponent.SyncNetwork = true
 RiverComponent.TableType = TableType.Map
 RiverComponent:AddVariable("DirX", ByteSize.Int)
 RiverComponent:AddVariable("DirZ", ByteSize.Int)
@@ -23,11 +24,11 @@ CheckpointComponent:AddVariable("Number", ByteSize.Int)
 worldCreator:AddComponentType(CheckpointComponent)
 
 
--- Finish Component
-local FinishComponent = ComponentType()
-FinishComponent.Name = "Finish"
-FinishComponent.TableType = TableType.Map
-worldCreator:AddComponentType(FinishComponent)
+-- Finishpoint Component
+local FinishpointComponent = ComponentType()
+FinishpointComponent.Name = "Finishpoint"
+FinishpointComponent.TableType = TableType.Map
+worldCreator:AddComponentType(FinishpointComponent)
 
 -- Edge?
 -- Hole and Out Component

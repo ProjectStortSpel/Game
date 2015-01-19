@@ -32,7 +32,7 @@ LinSocket::LinSocket()
 		g_noActiveSockets++;
 	}
 	else if (NET_DEBUG)
-		printf("Failed to create new linsocket.\n");
+		SDL_Log("Failed to create new linsocket.\n");
 }
 
 LinSocket::LinSocket(int _socket)
@@ -56,7 +56,7 @@ LinSocket::LinSocket(int _socket)
 		g_noActiveSockets++;
 	}
 	else if (NET_DEBUG)
-		printf("Failed to create new linsocket.\n");
+		SDL_Log("Failed to create new linsocket.\n");
 }
 
 LinSocket::LinSocket(int _domain, int _type, int _protocol)
@@ -80,7 +80,7 @@ LinSocket::LinSocket(int _domain, int _type, int _protocol)
 		g_noActiveSockets++;
 	}
 	else if (NET_DEBUG)
-		printf("Failed to create new linsocket.\n");
+		SDL_Log("Failed to create new linsocket.\n");
 }
 
 LinSocket::~LinSocket()
@@ -120,14 +120,14 @@ bool LinSocket::Connect(const char* _ip, const int _port)
 	if (inet_pton(AF_INET, _ip, &address.sin_addr) <= 0)
 	{
 		if (NET_DEBUG)
-			printf("Failed to get address info. Error: %s.\n", strerror(errno));
+			SDL_Log("Failed to get address info. Error: %s.\n", strerror(errno));
 		return false;
 	}
 
 	if (connect(*m_socket, (struct sockaddr *)&address, sizeof(address)) < 0)
 	{
 		if (NET_DEBUG)
-			printf("Failed to connect to Ip address %s:%i. Error: %s.\n", _ip, _port, strerror(errno));
+			SDL_Log("Failed to connect to Ip address %s:%i. Error: %s.\n", _ip, _port, strerror(errno));
 		return false;
 	}
 
@@ -146,7 +146,7 @@ bool LinSocket::Bind(const int _port)
 	if (bind(*m_socket, (sockaddr *)&address, sizeof(address)) < 0)
 	{
 		if (NET_DEBUG)
-			printf("Failed to bind socket. Error: %s.\n", strerror(errno));
+			SDL_Log("Failed to bind socket. Error: %s.\n", strerror(errno));
 		return false;
 	}
 
@@ -164,7 +164,7 @@ bool LinSocket::Listen(int _backlog)
 	if (result == -1)
 	{
 		if (NET_DEBUG)
-			printf("Failed to start listen. Error: %s.\n", strerror(errno));
+			SDL_Log("Failed to start listen. Error: %s.\n", strerror(errno));
 		return false;
 	}
 	return true;
@@ -175,7 +175,7 @@ bool LinSocket::SetNonBlocking(bool _value)
 	if( ioctl(*m_socket, FIONBIO, &opt) != 0)
 	{
 		if(NET_DEBUG)
-			printf("Failed to set nonblocking mode. Error: %s.\n", strerror(errno));
+			SDL_Log("Failed to set nonblocking mode. Error: %s.\n", strerror(errno));
 	}
 
 	return true;
@@ -186,7 +186,7 @@ bool LinSocket::SetNoDelay(bool _value)
 	if (setsockopt(*m_socket, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int)) < 0)
 	{
 		if (NET_DEBUG)
-			printf("Failed to enable TCP_NODELAY. Error: %s.\n", strerror(errno));
+			SDL_Log("Failed to enable TCP_NODELAY. Error: %s.\n", strerror(errno));
 
 		return false;
 	}
@@ -210,7 +210,7 @@ bool LinSocket::CloseSocket()
 	if (close(*m_socket) != 0)
 	{
 		if (NET_DEBUG)
-			printf("Failed to close linsocket. Error: %s.\n", strerror(errno));
+			SDL_Log("Failed to close linsocket. Error: %s.\n", strerror(errno));
 		return false;
 	}
 	g_noActiveSockets--;
@@ -229,7 +229,7 @@ ISocket* LinSocket::Accept()
 		int errorCode = errno;
 
 		if (errorCode != 11 && NET_DEBUG)
-			printf("Accept failed. Error: %s.\n", strerror(errorCode));
+			SDL_Log("Accept failed. Error: %s.\n", strerror(errorCode));
 		return NULL;
 	}
 
@@ -259,7 +259,7 @@ int LinSocket::Send(char* _buffer, int _length, int _flags)
 	if (result == -1) 
 	{
 		if (NET_DEBUG)
-			printf("Failed to send packet of size '%i'. Error: %s.\n", _length, strerror(errno));
+			SDL_Log("Failed to send packet of size '%i'. Error: %s.\n", _length, strerror(errno));
 
 		return -1;
 	}
@@ -282,6 +282,9 @@ int LinSocket::Send(char* _buffer, int _length, int _flags)
 
 int LinSocket::Receive(char* _buffer, int _length, int _flags)
 {
+	if (*m_socket == -1)
+		return -1;
+
 	short len;
 	int len2 = recv(*m_socket, (void*)&len, 2, MSG_WAITALL);
 	if (len2 == 2)
@@ -292,14 +295,14 @@ int LinSocket::Receive(char* _buffer, int _length, int _flags)
 		if (sizeReceived != len)
 		{
 			if (NET_DEBUG)
-				printf("Error: Wrong packet size on received packet!\n");
+				SDL_Log("Error: Wrong packet size on received packet!\n");
 			//return 0;
 		}
 
 		if (len > _length)
 		{
 			if (NET_DEBUG)
-				printf("Error: To large packet received!\n");
+				SDL_Log("Error: To large packet received!\n");
 			return 0;
 		}
 
@@ -308,12 +311,12 @@ int LinSocket::Receive(char* _buffer, int _length, int _flags)
 	else if (len2 == -1)
 	{
 		if (NET_DEBUG)
-			printf("Error: Failed to receive \"Size packet\". Error: %s.\n", strerror(errno));
+			SDL_Log("Error: Failed to receive \"Size packet\". Error: %s.\n", strerror(errno));
 	}
 	else
 	{
 		if (NET_DEBUG)
-			printf("Error: \"Size packet\" corrupt! Length: %d\n", len2);
+			SDL_Log("Error: \"Size packet\" corrupt! Length: %d\n", len2);
 		//return 0;
 	}
 	return 0;
@@ -329,7 +332,7 @@ int LinSocket::Send(char* _buffer, int _length, int _flags)
 		if (result == -1)
 		{
 			if (NET_DEBUG)
-				printf("Failed to send packet of size '%i'. Error: %s.\n", _length, strerror(errno));
+				SDL_Log("Failed to send packet of size '%i'. Error: %s.\n", _length, strerror(errno));
 
 			return -1;
 		}

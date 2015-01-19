@@ -38,16 +38,20 @@ void ModelSystem::OnEntityAdded(unsigned int _entityId)
 	ModelPath.append(std::string(ModelData));
 	ModelPath.append("/");
 
+
+
+	int RenderType = *(int*)GetComponent(_entityId, "Model", "RenderType");
+
+	if (ModelName == "ply1.object")
+		int a = 2;
+
 	CreateComponentAndAddTo("Render", _entityId);
 	glm::mat4*	Matrix;
 	Matrix = (glm::mat4*)GetComponent(_entityId, "Render", "Mat");
 	int* ModelId = (int*)GetComponent(_entityId, "Render", "ModelId");
-	*ModelId = m_graphics->LoadModel(ModelPath, ModelName, Matrix);
-	int a = *ModelId;
-	int b = 2;
+	*ModelId = m_graphics->LoadModel(ModelPath, ModelName, Matrix, RenderType);
 }
 
 void ModelSystem::OnEntityRemoved(unsigned int _entityId)
 {
-	int a = 2;
 }

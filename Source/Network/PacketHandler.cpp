@@ -364,7 +364,7 @@ bool PacketHandler::IsOutOfBounds(unsigned char* _begin, unsigned char* _positio
 	{
 		if (NET_DEBUG)
 		{
-			printf("Out of bounds while reading/writing packet.\n");
+			SDL_Log("Out of bounds while reading/writing packet.\n");
 		}
 		return true;
 	}

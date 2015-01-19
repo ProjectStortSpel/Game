@@ -19,7 +19,7 @@
 #include <iomanip>
 
 GameCreator::GameCreator() :
-m_graphics(0), m_input(0), m_world(0), m_console(0), m_consoleManager(Console::ConsoleManager::GetInstance()), m_frameCounter(new Utility::FrameCounter()), m_running(true)
+m_graphics(0), m_input(0), m_world(0), m_console(0), m_remoteConsole(0), m_consoleManager(Console::ConsoleManager::GetInstance()), m_frameCounter(new Utility::FrameCounter()), m_running(true)
 {
 }
 
@@ -40,6 +40,9 @@ GameCreator::~GameCreator()
 
 	if (m_console)
 		delete m_console;	
+
+	if (m_remoteConsole)
+		delete m_remoteConsole;
 
 	LuaEmbedder::Quit();
 
@@ -80,6 +83,8 @@ void GameCreator::InitializeNetwork()
 
 	Network::NetEvent netEvent = std::bind(&GameCreator::OnConnectedToServer, this, std::placeholders::_1, std::placeholders::_2);
 	NetworkInstance::GetClient()->SetOnConnectedToServer(netEvent);
+
+	m_remoteConsole = new RemoteConsole();
 }
 
 void GameCreator::InitializeLua() 
@@ -94,15 +99,19 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	LuaEmbedder::AddObject<ECSL::WorldCreator>("WorldCreator", &worldCreator, "worldCreator");
 
 	std::stringstream gameMode;
+#if defined(_DEBUG) && !defined(__ANDROID__)
 	gameMode << "../../../Externals/content/scripting/";
+#else
+	gameMode << "content/scripting/";
+#endif
 	gameMode << _gameMode;
 	gameMode << "/init.lua";
 
 	if (!LuaEmbedder::Load(gameMode.str()))
-	  return;
+		return;
 
 	m_gameMode = _gameMode;
-	
+
 	auto componentTypes = ECSL::ComponentTypeManager::GetInstance().GetComponentTypes();
 	for (auto it = componentTypes->begin(); it != componentTypes->end(); ++it)
 	{
@@ -147,12 +156,58 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 
 	m_world = worldCreator.CreateWorld(1000);
 	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
-	
+
 	LuaEmbedder::CallMethods<LuaBridge::LuaSystem>("System", "PostInitialize");
-	
 }
 
-void GameCreator::StartGame()
+void GameCreator::RunStartupCommands(int argc, char** argv)
+{
+	for (int i = 1; i < argc; ++i)
+	{
+		if (argv[i][0] == '-')
+		{
+			int start = i;
+			int stop = i;
+
+			for (++i; i < argc; ++i)
+			{
+				if (argv[i][0] == '-')
+				{
+					--i;
+					break;
+				}
+				stop = i;
+			}
+
+			int size = 0;
+
+			for (int j = start; j <= stop; ++j)
+			{
+				size += strlen(argv[j]);
+			}
+
+			size += stop - start;
+
+			char* command = new char[size];
+			memcpy(command, argv[start] + 1, strlen(argv[start]) - 1);
+			int offset = strlen(argv[start]);
+			command[offset - 1] = ' ';
+			for (int j = start + 1; j <= stop; ++j)
+			{
+				memcpy(command + offset, argv[j], strlen(argv[j]));
+				offset += strlen(argv[j]);
+
+				if (start < stop)
+					command[offset] = ' ';
+			}
+
+			command[size - 1] = '\0';
+			Console::ConsoleManager::GetInstance().ExecuteCommand(command);
+		}
+	}
+}
+
+void GameCreator::StartGame(int argc, char** argv)
 {
 	/*	If atleast one object is not initialized the game can't start	*/
 	if (!m_graphics || !m_input || !m_world || m_console)
@@ -161,8 +216,13 @@ void GameCreator::StartGame()
 	m_console = new GameConsole(m_graphics, m_world);
 
 	m_consoleInput.SetTextHook(std::bind(&Console::ConsoleManager::ExecuteCommand, &m_consoleManager, std::placeholders::_1));
+#ifdef __ANDROID__
+	m_consoleInput.SetActive(true);
+	m_input->GetKeyboard()->StartTextInput();
+#else
 	m_consoleInput.SetActive(false);
 	m_input->GetKeyboard()->StopTextInput();
+#endif
 
 	/*	Hook console	*/
 	m_console->SetupHooks(&m_consoleManager);
@@ -171,7 +231,11 @@ void GameCreator::StartGame()
 	m_consoleManager.AddCommand("GameMode", std::bind(&GameCreator::ConsoleGameMode, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager.AddCommand("Start", std::bind(&GameCreator::ConsoleStartTemp, this, std::placeholders::_1, std::placeholders::_2));
 	
+	RunStartupCommands(argc, argv);
+
 	float maxDeltaTime = (float)(1.0f / 20.0f);
+	float bytesToMegaBytes = 1.f / (1024.f*1024.f);
+	bool showDebugInfo = false;
 	while (m_running)
 	{
 		float dt = std::min(maxDeltaTime, m_frameCounter->GetDeltaTime());
@@ -186,33 +250,51 @@ void GameCreator::StartGame()
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
 			break;
 		m_inputCounter.Tick();
-		
+
 		m_worldCounter.Reset();
 		/*	Update world (systems, entities etc)	*/
 		m_world->Update(dt);
 		m_worldCounter.Tick();
-		
-		std::stringstream ss;
-		ss << "Lua memory usage: " << LuaEmbedder::GetMemoryUsage() << " bytes";
-		m_graphics->RenderSimpleText(ss.str(), 20, 1);
-		
+
+
+
 		m_networkCounter.Reset();
 		UpdateNetwork(dt);
 		m_networkCounter.Tick();
-		
+
 		/*	Update graphics	*/
 		m_graphics->Update(dt);
 		RenderConsole();
 		m_graphicsCounter.Reset();
 		m_graphics->Render();
 		m_graphicsCounter.Tick();
-		
-		m_graphics->RenderSimpleText("Time Statistics", 60, 0);
-		PrintSectionTime("Total   ", m_frameCounter, 60, 1);
-		PrintSectionTime("Input   ", &m_inputCounter, 60, 2);
-		PrintSectionTime("World   ", &m_worldCounter, 60, 3);
-		PrintSectionTime("Network ", &m_networkCounter, 60, 4);
-		PrintSectionTime("Graphics", &m_graphicsCounter, 60, 5);
+
+		/*	DEBUG PRINT INFO	*/
+		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_Z) == Input::InputState::PRESSED)
+			showDebugInfo = !showDebugInfo;
+
+		if (showDebugInfo)
+		{
+			std::stringstream sstm;
+			sstm << (int)(1 / dt) << " fps";
+			m_graphics->RenderSimpleText(sstm.str(), 0, 0);
+
+			std::stringstream vram;
+			vram << "VRAM usage: " << (float)(m_graphics->GetVRamUsage()*bytesToMegaBytes) << " Mb ";
+			m_graphics->RenderSimpleText(vram.str(), 20, 0);
+
+			std::stringstream ss;
+			ss << "Lua memory usage: " << LuaEmbedder::GetMemoryUsage() << " bytes";
+			m_graphics->RenderSimpleText(ss.str(), 20, 1);
+
+			m_graphics->RenderSimpleText("Time Statistics", 60, 0);
+			PrintSectionTime("Total   ", m_frameCounter, 60, 1);
+			PrintSectionTime("Input   ", &m_inputCounter, 60, 2);
+			PrintSectionTime("World   ", &m_worldCounter, 60, 3);
+			PrintSectionTime("Network ", &m_networkCounter, 60, 4);
+			PrintSectionTime("Graphics", &m_graphicsCounter, 60, 5);
+		}
+
 
 		m_frameCounter->Tick();
 	}
@@ -387,6 +469,9 @@ void GameCreator::PollSDLEvent()
 		case SDL_KEYUP:
 		case SDL_FINGERMOTION:
 		case SDL_FINGERDOWN:
+#ifdef __ANDROID__
+			//exit(0);
+#endif
 		case SDL_FINGERUP:
 		case SDL_TEXTINPUT:
 		case SDL_JOYAXISMOTION:

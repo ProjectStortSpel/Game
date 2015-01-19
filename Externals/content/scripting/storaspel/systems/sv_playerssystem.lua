@@ -11,6 +11,7 @@ PlayersSystem.Initialize = function(self)
 	
 	self:AddComponentTypeToFilter("Player", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("ActiveNetConnection", FilterType.Mandatory)
+	self:AddComponentTypeToFilter("IsSpectator", FilterType.Excluded)
 
 	print("Players Connected System initialized!")
 end
@@ -31,19 +32,27 @@ PlayersSystem.OnEntityAdded = function(self, entityId)
 
 	world:SetComponent(newEntityId, "Model", "ModelName", "head");
 	world:SetComponent(newEntityId, "Model", "ModelPath", "head");
+	world:SetComponent(newEntityId, "Model", "RenderType", 0);
 
 	world:SetComponent(newEntityId, "PlayerNumber", "Number", playerNumber)
 	world:SetComponent(newEntityId, "PlayerEntityId", "Id", entityId)
 	world:SetComponent(newEntityId, "TargetCheckpoint", "Id", 1)
 	world:GetComponent(newEntityId, "Direction", 0):SetInt2(0, -1)
-
+	world:CreateComponentAndAddTo("NeedSpawnLocation", newEntityId)
 
 
 	world:SetComponent(entityId, "PlayerNumber", "Number", playerNumber)
 	world:SetComponent(entityId, "UnitEntityId", "Id", newEntityId)
 
+	local ip = world:GetComponent(entityId, "NetConnection", "IpAddress"):GetString()
+	local port = world:GetComponent(entityId, "NetConnection", "Port"):GetInt()
+
 
 	print("Unit ", newEntityId)
+
+	local id = Net.StartPack("Client.SendPlayerUnitId")
+	Net.WriteInt(id, playerNumber)
+	Net.Send(id, ip, port)
 end
 
 PlayersSystem.OnEntityRemoved = function(self, entityId)
