@@ -28,6 +28,11 @@ namespace LuaBridge
     int GetUp();
     int GetLook();
     int GetPosition();
+
+	int SetRight();
+	int SetUp();
+	int SetLook();
+	int SetPosition();
   };
 }
 

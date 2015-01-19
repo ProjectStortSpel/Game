@@ -4,8 +4,8 @@ CardPositionSystem.UpOffset = -1.6
 CardPositionSystem.OnEntityAdded = function( self, entityId )
 
 	local entities = self:GetEntities()
-	for i = 1, #entities do
-		local entity = entities[i]
+	--for i = 1, #entities do
+		local entity = entityId--entities[i]
 		
 		local index = world:GetComponent(entity, "CardIndex", "Index"):GetInt()
 		
@@ -21,7 +21,7 @@ CardPositionSystem.OnEntityAdded = function( self, entityId )
 		local position = self:GetComponent(entity, "LerpTargetPosition", 0)
 		position:SetFloat3(px, py, pz)
 		
-	end
+	--end
 	
 end
 

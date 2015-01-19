@@ -17,6 +17,10 @@ namespace LuaBridge
     LuaEmbedder::EmbedClassFunction<LuaCamera>("Camera", "GetUp", &LuaCamera::GetUp);
     LuaEmbedder::EmbedClassFunction<LuaCamera>("Camera", "GetLook", &LuaCamera::GetLook);
     LuaEmbedder::EmbedClassFunction<LuaCamera>("Camera", "GetPosition", &LuaCamera::GetPosition);
+	LuaEmbedder::EmbedClassFunction<LuaCamera>("Camera", "SetRight", &LuaCamera::SetRight);
+	LuaEmbedder::EmbedClassFunction<LuaCamera>("Camera", "SetUp", &LuaCamera::SetUp);
+	LuaEmbedder::EmbedClassFunction<LuaCamera>("Camera", "SetLook", &LuaCamera::SetLook);
+	LuaEmbedder::EmbedClassFunction<LuaCamera>("Camera", "SetPosition", &LuaCamera::SetPosition);
   }
   
   int LuaCamera::MoveForward()
@@ -92,4 +96,53 @@ namespace LuaBridge
     LuaEmbedder::PushFloat(position->z);
     return 3;
   }
+
+  int LuaCamera::SetRight()
+  {
+	  float x = LuaEmbedder::PullFloat(1);
+	  float y = LuaEmbedder::PullFloat(2);
+	  float z = LuaEmbedder::PullFloat(2);
+	  glm::vec3* right = Camera::GetRight();
+	  right->x = x;
+	  right->y = y;
+	  right->z = z;
+	  return 0;
+  }
+
+  int LuaCamera::SetUp()
+  {
+	  float x = LuaEmbedder::PullFloat(1);
+	  float y = LuaEmbedder::PullFloat(2);
+	  float z = LuaEmbedder::PullFloat(2);
+	  glm::vec3* up = Camera::GetUp();
+	  up->x = x;
+	  up->y = y;
+	  up->z = z;
+	  return 0;
+  }
+
+  int LuaCamera::SetLook()
+  {
+	  float x = LuaEmbedder::PullFloat(1);
+	  float y = LuaEmbedder::PullFloat(2);
+	  float z = LuaEmbedder::PullFloat(2);
+	  glm::vec3* look = Camera::GetLook();
+	  look->x = x;
+	  look->y = y;
+	  look->z = z;
+	  return 0;
+  }
+
+  int LuaCamera::SetPosition()
+  {
+	  float x = LuaEmbedder::PullFloat(1);
+	  float y = LuaEmbedder::PullFloat(2);
+	  float z = LuaEmbedder::PullFloat(2);
+	  glm::vec3* position = Camera::GetPos();
+	  position->x = x;
+	  position->y = y;
+	  position->z = z;
+	  return 0;
+  }
+
 }
