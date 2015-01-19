@@ -71,6 +71,7 @@ void ServerNetwork::NetConnectionLost(NetConnection& _connection)
 	m_currentTimeOutIntervall->erase(_connection);
 	m_timeOutLock->unlock();
 
+	(*m_connectedClients)[_connection]->CloseSocket();
 	(*m_receivePacketsThreads)[_connection].join();
 }
 
@@ -95,7 +96,7 @@ void ServerNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uin
 	m_currentTimeOutIntervall->erase(_connection);
 	m_timeOutLock->unlock();
 
-
+	(*m_connectedClients)[_connection]->CloseSocket();
 	(*m_receivePacketsThreads)[_connection].join();
 }
 
