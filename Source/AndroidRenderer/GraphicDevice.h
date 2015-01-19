@@ -1,5 +1,6 @@
 /*
-Author: Anders, Christian
+--ANDROID VERSION--
+Author: Christian
 */
 #ifndef GRAPHICDEVICE_H
 #define GRAPHICDEVICE_H

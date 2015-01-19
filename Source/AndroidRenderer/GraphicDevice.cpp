@@ -338,9 +338,6 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 	int modelID = m_modelIDcounter;
 	m_modelIDcounter++;
 
-	//Shader *shaderPtr = &m_forwardShader;
-	//m_forwardShader.UseProgram();
-
 	Shader *shaderPtr = NULL;
 
 	if (_renderType == RENDER_FORWARD)
@@ -362,7 +359,7 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 	{
 		shaderPtr = &m_forwardShader;
 		m_forwardShader.UseProgram();
-		SDL_Log("ERROR: INVALID RENDER SETTING. Selecting FORWARD");
+		SDL_Log("Deferred requested. Selecting FORWARD");
 	}
 
 	// Import Object

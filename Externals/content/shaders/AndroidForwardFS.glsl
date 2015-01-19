@@ -85,9 +85,6 @@ void main()
     pointlights[0].Intensity = vec3(0.2, 1.0, 1.0);
     pointlights[0].Color = vec3(1.0, 1.0, 1.0);
     pointlights[0].Range = 20.0;
-    
-    //Material.Ks = 0.1;
-    //Material.Shininess = 20.0;
 
 	vec4 albedo_tex = texture2D( diffuseTex, TexCoord );
 
