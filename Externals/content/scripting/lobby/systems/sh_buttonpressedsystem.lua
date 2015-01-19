@@ -2,7 +2,7 @@ ButtonPressedSystem = System()
 
 ButtonPressedSystem.Update = function(self, dt)
 
-	if Input.GetTouchState() == InputState.Released then
+	if Input.GetTouchState(0) == InputState.Released then
 	
 		-- TODO gör så att de bara går att selecta i selection phase
 		local pressedButtons = self:GetEntities("OnPickBoxHit")
