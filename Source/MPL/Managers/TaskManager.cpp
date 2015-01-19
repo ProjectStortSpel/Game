@@ -12,7 +12,21 @@ TaskManager::TaskManager()
 
 TaskManager::~TaskManager()
 {
-
+	for (auto slave : *m_slaves)
+	{
+		slave->Kill();
+		slave->WakeUp();
+	}
+	for (auto slave : *m_slaves)
+	{
+		int status;
+		SDL_WaitThread(slave->GetThread(), &status);
+		if (status != 0)
+			printf("Thread unsuccessfully destroyed\n");
+		delete(slave);
+	}
+	delete(m_slaves);
+	delete(m_taskPool);
 }
 
 TaskManager& TaskManager::GetInstance()
@@ -24,7 +38,7 @@ TaskManager& TaskManager::GetInstance()
 void TaskManager::CreateSlaves()
 {
 	int availableThreadCount = SDL_GetCPUCount() - 3;//ThreadHelper::GetAvailableThreadCount();
-	for (unsigned int i = 0; i < availableThreadCount; ++i)
+	for (unsigned int i = 0; i < (unsigned int)availableThreadCount; ++i)
 	{
 		SlaveThread* slave = new SlaveThread(m_taskPool, m_slaves);
 		if (!slave->StartThread("Slave " + i))

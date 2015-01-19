@@ -19,6 +19,7 @@ Simulation::Simulation(DataManager* _dataManager, SystemManager* _systemManager,
 	m_scheduler->AddClearDeadEntitiesTask();
 	m_scheduler->AddRecycleEntityIdsTask();
 	m_scheduler->AddClearChangeListsTask();
+	m_scheduler->AddClearListsTask();
 }
 
 Simulation::~Simulation()
@@ -62,8 +63,11 @@ void Simulation::Update(float _dt)
 	/* Recycle all dead ids back to the list of available ids */
 	MPL::TaskId recycleEntityIds = m_scheduler->ScheduleRecycleEntities(clearDeadEntities);
 
-	/* Clear all the used lists */
+	/* Clear all the used lists in DataManager */
 	MPL::TaskId clearChangeLists = m_scheduler->ScheduleClearChangeLists(recycleEntityIds);
+
+	/* Clear all the used lists in Scheduler */
+	MPL::TaskId clearLists = m_scheduler->ScheduleClearLists(clearChangeLists);
 
 	MPL::TaskManager::GetInstance().WaitFor(clearChangeLists);
 }

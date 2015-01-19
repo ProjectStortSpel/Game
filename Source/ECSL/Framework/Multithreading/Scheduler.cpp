@@ -34,7 +34,27 @@ Scheduler::Scheduler(DataManager* _dataManager, SystemManager* _systemManager, M
 
 Scheduler::~Scheduler()
 {
+	for (auto workItem : *m_workItems)
+		delete(workItem);
+	delete(m_updateWorkItems);
+	delete(m_updateEntityTableWorkItems);
+	delete(m_entitiesAddedWorkItems);
+	delete(m_entitiesRemovedWorkItems);
+	delete(m_sortMessagesWorkItems);
+	delete(m_messagesRecievedWorkItems);
+	delete(m_deleteMessagesWorkItems);
+	delete(m_updateSystemEntityListsWorkItems);
+	delete(m_clearDeadEntitiesWorkItems);
+	delete(m_recycleEntityIdsWorkItems);
+	delete(m_clearChangeListsWorkItems);
+	delete(m_clearListsWorkItems);
 
+	for (auto systemGroup : *m_entitiesToAddToSystems)
+		delete(systemGroup);
+	for (auto systemGroup : *m_entitiesToRemoveFromSystems)
+		delete(systemGroup);
+	delete(m_entitiesToAddToSystems);
+	delete(m_entitiesToRemoveFromSystems);
 }
 
 void Scheduler::UpdateDt(float _dt)
@@ -399,7 +419,7 @@ void Scheduler::AddClearListsTask()
 		data->RuntimeInfo.TaskIndex = i;
 		data->RuntimeInfo.TaskCount = clearListsWorkCount;
 		MPL::WorkItem* workItem = new MPL::WorkItem();
-		workItem->Work = &DataManagerClearDeadEntities;
+		workItem->Work = &SchedulerClearLists;
 		workItem->Data = data;
 		m_clearListsWorkItems->push_back(workItem);
 		m_workItems->push_back(workItem);
@@ -408,7 +428,10 @@ void Scheduler::AddClearListsTask()
 
 void Scheduler::ClearLists(const RuntimeInfo& _runtimeInfo)
 {
-
+	for (auto systemGroup : *m_entitiesToAddToSystems)
+		systemGroup->clear();
+	for (auto systemGroup : *m_entitiesToRemoveFromSystems)
+		systemGroup->clear();
 }
 
 void ECSL::SystemUpdate(void* _data)

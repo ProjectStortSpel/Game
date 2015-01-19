@@ -17,13 +17,15 @@ SlaveThread::~SlaveThread()
 		SDL_DetachThread(m_thread);
 		m_thread = 0;
 	}
+	SDL_DestroySemaphore(m_sleepSem);
 }
 
 bool SlaveThread::StartThread(const std::string& _name)
 {
 	m_thread = SDL_CreateThread(BeginThreadLoop, _name.c_str(), this);
 	m_sleepSem = SDL_CreateSemaphore(0);
-	m_isSleeping = false;
+	m_alive = true;
+	m_sleeping = false;
 	return (m_thread != 0);
 }
 
@@ -39,7 +41,7 @@ int SlaveThread::BeginThreadLoop(void* _thread)
 
 int SlaveThread::ThreadLoop()
 {
-	while (true)
+	while (m_alive)
 	{
 		FetchWorkStatus fetchWorkStatus;
 		WorkItem* workItem = m_taskPool->FetchWork(fetchWorkStatus);
@@ -58,9 +60,9 @@ int SlaveThread::ThreadLoop()
 
 void SlaveThread::Sleep()
 {
-	m_isSleeping = true;
+	m_sleeping = true;
 	SDL_SemWait(m_sleepSem);
-	m_isSleeping = false;
+	m_sleeping = false;
 }
 
 void SlaveThread::WakeThreads()

@@ -11,13 +11,6 @@
 
 namespace MPL
 {
-	enum ThreadState
-	{
-		Waiting,
-		Working,
-		Dead
-	};
-
 	class SlaveThread
 	{
 	public:
@@ -26,16 +19,18 @@ namespace MPL
 
 		bool StartThread(const std::string& _name);
 		void WakeUp();
+		void Kill() { m_alive = false; }
 
-		ThreadState GetState() { return m_state; }
-		bool IsSleeping() { return m_isSleeping; }
+		bool IsSleeping() { return m_sleeping; }
+		SDL_Thread* GetThread() { return m_thread; }
+		
 
 	private:
-		ThreadState m_state;
 		SDL_Thread* m_thread;
 		TaskPool* m_taskPool;
 		SDL_sem* m_sleepSem;
-		bool m_isSleeping;
+		bool m_sleeping;
+		bool m_alive;
 		std::vector<SlaveThread*>* m_slaves;
 
 		static int BeginThreadLoop(void* _thread);
