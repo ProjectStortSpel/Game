@@ -24,6 +24,11 @@ GraphicDevice::~GraphicDevice()
 		delete it->second;
 		it->second = nullptr;
 	}
+	
+	for (std::map<const std::string, GLuint>::iterator it = m_textures.begin(); it != m_textures.end(); it++)
+	{
+		glDeleteTextures(1, &it->second);
+	}
 
 	SDL_GL_DeleteContext(m_glContext);
 	// Close and destroy the window
@@ -538,17 +543,6 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 	std::vector<float> tanData = modelExporter.ReadDataFromFile();
 	std::vector<float> bitanData = modelExporter.ReadDataFromFile();
 	std::vector<float> texCoordData = modelExporter.ReadDataFromFile();
-	/*for (int i = 0; i < (int)texCoordData.size(); i++)
-	{
-	  if (texCoordData[i] < 0.0f)
-	    texCoordData[i] = 0.0f;
-	  else if (texCoordData[i] > 1.0f)
-	    texCoordData[i] = 1.0f;
-	}*/
-	/*SDL_Log("File: %s", _fileDir.c_str());
-	SDL_Log("texCoordData size: %d", texCoordData.size());
-	for (int i = 0; i < 4; i++)
-	  SDL_Log("texCoord[%d] = %f", i, texCoordData[i]);*/
 	modelExporter.CloseFile();
 
 	Buffer* retbuffer = new Buffer();

@@ -2,6 +2,11 @@
 
 using namespace Renderer;
 
+Shader::~Shader()
+{
+	glDeleteProgram(m_shaderProg);
+}
+
 void Shader::InitShaderProgram()
 {
 	/* CREATE THE PROGRAM */
@@ -125,6 +130,7 @@ bool Shader::FinalizeShaderProgram()
 	for (int i = 0; i < m_shaders.size(); i++)
 	{
 		glDetachShader(m_shaderProg, m_shaders[i]);
+		glDeleteShader(m_shaders[i]);
 	}
 	m_shaders.clear();
 	return true;
