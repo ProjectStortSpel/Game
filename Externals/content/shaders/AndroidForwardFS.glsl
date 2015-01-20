@@ -16,11 +16,13 @@ uniform sampler2D specularTex;
 
 uniform mat4 ViewMatrix;
 
-//struct DirectionalLight {
-//	vec3 Direction; // Light position in world coords.
-//	vec3 Intensity; // Diffuse intensity
-//	vec3 Color;
-//};
+struct DirectionalLight {
+	vec3 Direction; // Light position in world coords.
+	vec3 Intensity; // Diffuse intensity
+	vec3 Color;
+};
+uniform DirectionalLight dirlight;
+
 
 struct Pointlight {
 	vec3 Position; // Light position in world coords.
@@ -37,6 +39,34 @@ struct MaterialInfo {
 MaterialInfo Material;
 
 vec3 NmNormal;
+
+void phongModelDirLight(out vec3 ambient, out vec3 diffuse, out vec3 spec) 
+{
+    ambient = vec3(0.0);
+    diffuse = vec3(0.0);
+    spec    = vec3(0.0);
+
+    vec3 lightVec = -normalize(( ViewMatrix*vec4(dirlight.Direction, 0.0) ).xyz);
+
+	ambient = dirlight.Color * dirlight.Intensity.x;
+
+	vec3 E = normalize(ViewPos);
+
+	float diffuseFactor = dot( lightVec, NmNormal );
+
+	if(diffuseFactor > 0.0)
+	{
+		// diffuse
+		diffuse = diffuseFactor * dirlight.Color * dirlight.Intensity.y;
+
+		// specular
+		vec3 v = reflect( lightVec, NmNormal );
+		float specFactor = pow( max( dot(v, E), 0.0 ), Material.Shininess );
+		spec = specFactor * dirlight.Color * dirlight.Intensity.z * Material.Ks;        
+	}
+
+	return;
+}
 
 void phongModel(int index, out vec3 ambient, out vec3 diffuse, out vec3 spec) {
 
@@ -103,15 +133,25 @@ void main()
     vec3 diffuse = vec3(0.0);
     vec3 spec 	 = vec3(0.0);
     
+	if(length( dirlight.Intensity ) > 0.0)
+	{
+		vec3 a,d,s;
+
+		phongModelDirLight(a, d, s);
+		ambient += a;
+		diffuse += d;
+		spec    += s;
+	}
+
     //för varje ljus-----------
     //for(int i = 0; i < 1; i++)
     //{
-	    vec3 a,d,s;
+	    //vec3 a,d,s;
 
-	    phongModel(0, a, d, s);
-	    diffuse += d;
-	    ambient += a;
-	    spec    += s;
+	    //phongModel(0, a, d, s);
+	    //diffuse += d;
+	    //ambient += a;
+	    //spec    += s;
     //}
     
     gl_FragColor = vec4(ambient + diffuse, 1.0) * albedo_tex + vec4(spec, 0.0);

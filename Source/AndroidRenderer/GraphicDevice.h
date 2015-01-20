@@ -117,6 +117,9 @@ namespace Renderer
 		// Window size
 		int	m_clientWidth, m_clientHeight;
 
+		// Light info
+		vec3 m_dirLightDirection;
+
 		// Shaders
 		Shader m_skyBoxShader;
 		Shader m_forwardShader, m_viewspaceShader;
