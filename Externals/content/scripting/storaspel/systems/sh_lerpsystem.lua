@@ -1,5 +1,5 @@
 LerpSystem = System()
-LerpSystem.LerpTime = 0.2
+LerpSystem.LerpTime = 0.5
 
 LerpSystem.Update = function(self, dt)
 	local entities = self:GetEntities("LerpTime")
@@ -19,18 +19,24 @@ LerpSystem.Update = function(self, dt)
 			local startpos = self:GetComponent(entity, "LerpStartPosition", 0)
 			local sX, sY, sZ = startpos:GetFloat3(0)
 
-			local X = sX + (tX - sX) * _timer / _time
-			local Y = sY + (tY - sY) * _timer / _time
-			local Z = sZ + (tZ - sZ) * _timer / _time
+			local t = _timer / _time
+			
+			-- smoothstep for nice flow
+			t = t * t * t * (t * (6*t - 15) + 10)
+			
+			local X = sX + (tX - sX) * t
+			local Y = sY + (tY - sY) * t
+			local Z = sZ + (tZ - sZ) * t
 			
 			position:SetFloat3(X, Y, Z)
 			
-			timer:SetFloat2(_time, _timer + dt)
+			timer:SetFloat2(_time, _timer)
 			
 		else
 		
 			position:SetFloat3(tX, tY, tZ)
 
+			-- TODO: IF SOMETHING GETS REMOVED AT THE SAME FRAME AS IT GETS ADDED IT WILL BE REMOVED
 			world:RemoveComponentFrom("LerpTime", entity)
 			world:RemoveComponentFrom("LerpTargetPosition", entity)
 			world:RemoveComponentFrom("LerpStartPosition", entity)
@@ -60,9 +66,8 @@ LerpSystem.OnEntityAdded = function(self, entityId)
 
 	if not world:EntityHasComponent(entityId, "LerpTime") then
 		world:CreateComponentAndAddTo("LerpTime", entityId)
+		local timer = self:GetComponent(entityId, "LerpTime", 0)
+		timer:SetFloat2(self.LerpTime, 0)
 	end
-	
-	local timer = self:GetComponent(entityId, "LerpTime", 0)
-	timer:SetFloat2(self.LerpTime, 0)
-	
+
 end

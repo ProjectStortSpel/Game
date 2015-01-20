@@ -10,6 +10,7 @@ require "gamestatecomponents"
 require "lightcomponents"
 
 require "interfacecomponents"
+require "cameracomponents"
 
 -- Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
@@ -80,6 +81,12 @@ if Client then
 	require "cl_cardpositionsystem2"
 	require "cl_cardselectsystem"
 	require "cl_cardprintselectionsystem" -- Debug systems for cards
+	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
+	
+	-- CAMERA SYSTEMS
+	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/camerasystems/?.lua"
+	--require "cl_cameracreationsystem"
+	require "cl_newcamerasystem"
 	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
 
 	require "cl_playerindicatorsystem"
@@ -168,5 +175,6 @@ if Client then
 	worldCreator:AddSystemToCurrentGroup(PlayerDoneVisualizer)
 	worldCreator:AddSystemToCurrentGroup(PlayerIndicatorSystem)
 --worldCreator:AddSystemToCurrentGroup(ClientSendCardSystem)
-end
 
+	worldCreator:AddSystemToCurrentGroup(NewCameraSystem)
+end
