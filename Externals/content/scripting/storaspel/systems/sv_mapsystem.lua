@@ -5,7 +5,7 @@ MapSystem.mapY = 0
 
 MapSystem.PostInitialize = function(self)
 	local map
-    self.mapX, self.mapY, map = File.LoadMap("content/maps/map2.txt")
+    self.mapX, self.mapY, map = File.LoadMap("content/maps/map.txt")
     local posX, posZ
 		
 	for x = 0, self.mapX+1 do
