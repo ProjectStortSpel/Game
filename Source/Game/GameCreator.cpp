@@ -122,7 +122,7 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 
 	/*	This component has to be added last!	*/
 	unsigned int numberOfComponents = ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount() + 2;
-	unsigned int numberOfInts = ECSL::BitSet::GetIntCount(numberOfComponents);
+	unsigned int numberOfInts = ECSL::BitSet::GetDataTypeCount(numberOfComponents);
 	unsigned int numberOfBytes = numberOfInts*sizeof(ECSL::BitSet::DataType);
 	std::map<std::string, ECSL::ComponentVariable> m_variables;
 	ECSL::ComponentVariable start = ECSL::ComponentVariable("ChangedComponents", numberOfBytes);
@@ -155,9 +155,39 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	worldCreator.AddLuaSystemToCurrentGroup(new ResetChangedSystem());
 
 	m_world = worldCreator.CreateWorld(1000);
-	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
+	//LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
 
-	LuaEmbedder::CallMethods<LuaBridge::LuaSystem>("System", "PostInitialize");
+	//LuaEmbedder::CallMethods<LuaBridge::LuaSystem>("System", "PostInitialize");
+
+	unsigned int newEntity = m_world->CreateNewEntity();
+	m_world->CreateComponentAndAddTo("Model", newEntity);
+	m_world->CreateComponentAndAddTo("Position", newEntity);
+	m_world->CreateComponentAndAddTo("Rotation", newEntity);
+	m_world->CreateComponentAndAddTo("Scale", newEntity);
+
+	char* modelComp = m_world->GetComponent(newEntity, "Model", "ModelPath");
+	std::string modelPath = "quad";
+	for (int i = 0; i < modelPath.size(); ++i)
+		modelComp[i] = modelPath[i];
+	modelComp[modelPath.size()] = '\0';
+	
+	
+	modelComp = m_world->GetComponent(newEntity, "Model", "ModelName");
+	std::string modelName = "host";
+	for (int i = 0; i < modelName.size(); ++i)
+		modelComp[i] = modelName[i];
+	modelComp[modelName.size()] = '\0';
+
+	float* position = (float*)m_world->GetComponent(newEntity, "Position", 0);
+	position[0] = -2.0f;
+	position[1] = 1.0f;
+	position[2] = -4.0f;
+
+	position = (float*)m_world->GetComponent(newEntity, "Scale", 0);
+	position[0] = 1.0f;
+	position[1] = 0.5f;
+	position[2] = 1.0f;
+
 }
 
 void GameCreator::RunStartupCommands(int argc, char** argv)

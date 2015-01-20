@@ -9,6 +9,7 @@
 #include "ECSL/Framework/Systems/Messaging/Message.h"
 #include "ECSL/Framework/Systems/Messaging/Subscription.h"
 #include "MPL/Framework/Tasks/Task.h"
+#include "MPL/Managers/TaskManager.h"
 
 namespace ECSL
 {
@@ -40,7 +41,7 @@ namespace ECSL
 		unsigned int GetGroupId() { return m_groupId; }
 		const std::string& GetSystemName() { return *m_systemName; }
 
-
+		unsigned int GetUpdateTaskCount() { return m_updateTaskCount; }
 		unsigned int GetEntitiesAddedTaskCount() { return m_entitiesAddedTaskCount; }
 		unsigned int GetEntitiesRemovedTaskCount() { return m_entitiesRemovedTaskCount; }
 		unsigned int GetMessagesRecievedTaskCount() { return m_messagesRecievedTaskCount; }
@@ -75,6 +76,7 @@ namespace ECSL
 		void KillEntity(unsigned int _entityId);
 		const std::vector<unsigned int>* const GetEntities() { return m_entities; }
 
+		const unsigned int GetThreadCount() { return MPL::TaskManager::GetInstance().GetThreadCount(); }
 
 		inline unsigned int GetEntityCountLimit(){ return m_dataManager->GetEntityCountLimit(); }
 		inline bool EntityHasComponent(unsigned int _entityId, unsigned int _componentTypeId){ return m_dataManager->EntityHasComponent(_entityId, _componentTypeId); }

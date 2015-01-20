@@ -15,11 +15,11 @@ public:
 	RenderSystem(Renderer::GraphicDevice* _graphics);
 	~RenderSystem();
 
-	void Update(float _dt);
+	void Update(const ECSL::RuntimeInfo& _runtime);
 	void Initialize();
 
-	void OnEntityAdded(unsigned int _entityId);
-	void OnEntityRemoved(unsigned int _entityId);
+	void EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities);
+	void EntitiesRemoved(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities);
 
 private:
 	void UpdateMatrix(unsigned int _entityId);

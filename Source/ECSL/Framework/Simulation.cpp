@@ -69,5 +69,5 @@ void Simulation::Update(float _dt)
 	/* Clear all the used lists in Scheduler */
 	MPL::TaskId clearLists = m_scheduler->ScheduleClearLists(clearChangeLists);
 
-	MPL::TaskManager::GetInstance().WaitFor(clearChangeLists);
+	MPL::TaskManager::GetInstance().WaitFor(clearLists);
 }

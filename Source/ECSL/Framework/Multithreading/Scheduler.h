@@ -29,8 +29,8 @@ namespace ECSL
 		MPL::TaskId ScheduleDeleteMessages(MPL::TaskId _dependency);
 		MPL::TaskId ScheduleClearDeadEntities(MPL::TaskId _dependency);
 		MPL::TaskId ScheduleRecycleEntities(MPL::TaskId _dependency);
-		MPL::TaskId ScheduleClearChangeLists(MPL::TaskId _dependency);
-		MPL::TaskId ScheduleClearLists(MPL::TaskId _dependency);
+		MPL::TaskId ScheduleClearComponentChangeLists(MPL::TaskId _dependency);
+		MPL::TaskId ScheduleClearSystemEntityChangeLists(MPL::TaskId _dependency);
 
 		void AddUpdateSystemsTasks();
 		void AddUpdateEntityTableTask();
@@ -42,10 +42,10 @@ namespace ECSL
 		void AddDeleteMessagesTask();
 		void AddClearDeadEntitiesTask();
 		void AddRecycleEntityIdsTask();
-		void AddClearChangeListsTask();
-		void AddClearListsTask();
+		void AddClearClearComponentChangeListsTask();
+		void AddClearSystemEntityChangeListsTask();
 
-		void ClearLists(const RuntimeInfo& _runtimeInfo);
+		void ClearSystemEntityChangeLists(const RuntimeInfo& _runtimeInfo);
 
 	private:
 		DataManager* m_dataManager;
@@ -84,7 +84,7 @@ namespace ECSL
 
 	static void DataManagerRecycleEntityIds(void* _data);
 
-	static void DataManagerClearChangeLists(void* _data);
+	static void DataManagerClearComponentChangeLists(void* _data);
 
 	static void SystemManagerUpdateSystemEntityLists(void* _data);
 
@@ -92,7 +92,7 @@ namespace ECSL
 
 	static void MessageManagerDeleteMessages(void* _data);
 
-	static void SchedulerClearLists(void* _data);
+	static void SchedulerClearSystemEntityChangeLists(void* _data);
 
 	struct RuntimeData
 	{

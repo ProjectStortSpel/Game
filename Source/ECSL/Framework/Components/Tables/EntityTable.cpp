@@ -140,7 +140,7 @@ void EntityTable::GetEntityComponents(std::vector<unsigned int>& _out, unsigned 
 		for (unsigned int bitIndex = 0; bitIndex < bitCount; ++bitIndex)
 		{
 			if (componentBitSet[bitSetIndex] & ((BitSet::DataType)1 << (bitIndex)))
-				_out.push_back(bitSetIndex * BitSet::GetIntByteSize() * 8 + bitIndex);
+				_out.push_back(bitSetIndex * BitSet::GetDataTypeByteSize() * 8 + bitIndex);
 		}
 	}
 }

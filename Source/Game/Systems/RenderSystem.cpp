@@ -14,7 +14,11 @@ RenderSystem::~RenderSystem()
 
 void RenderSystem::Initialize()
 {
-	SetSystemName("Render System");
+	SetSystemName("RenderSystem");
+
+	SetUpdateTaskCount(GetThreadCount());
+	SetEntitiesAddedTaskCount(1);
+	SetEntitiesRemovedTaskCount(1);
 
 	/*	Rendersystem wants Position, Scale, Rotation and Render	*/
 	AddComponentTypeToFilter("Position",	ECSL::FilterType::Mandatory);
@@ -22,7 +26,7 @@ void RenderSystem::Initialize()
 	AddComponentTypeToFilter("Scale",		ECSL::FilterType::Mandatory);
 	AddComponentTypeToFilter("Render",		ECSL::FilterType::Mandatory);
 
-	AddComponentTypeToFilter("Hide",		ECSL::FilterType::Excluded);
+	//AddComponentTypeToFilter("Hide",		ECSL::FilterType::Excluded);
 
 
 	std::vector<unsigned int> bitsetComponents;
@@ -31,7 +35,7 @@ void RenderSystem::Initialize()
 	bitsetComponents.push_back(ECSL::ComponentTypeManager::GetInstance().GetTableId("Scale"));
 
 	m_bitMask = ECSL::BitSet::BitSetConverter::ArrayToBitSet(bitsetComponents, ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount());
-	m_numberOfBitSets = ECSL::BitSet::GetIntCount(ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount());
+	m_numberOfBitSets = ECSL::BitSet::GetDataTypeCount(ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount());
 	m_componentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("ChangedComponents");
 
 	m_positionId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Position");
@@ -44,12 +48,14 @@ void RenderSystem::Initialize()
 	printf("RenderSystem initialized!\n");
 }
 
-void RenderSystem::Update(float _dt)
+void RenderSystem::Update(const ECSL::RuntimeInfo& _runtime)
 {
 	auto entities = *GetEntities();
-
-	for (auto entity : entities)
+	unsigned int startAt, endAt;
+	MPL::MathHelper::SplitIterations(startAt, endAt, (unsigned int)entities.size(), _runtime.TaskIndex, _runtime.TaskCount);
+	for (unsigned int i = startAt; i < endAt; ++i)
 	{
+		unsigned int entity = entities[i];
 		ECSL::BitSet::DataType* eBitMask = (ECSL::BitSet::DataType*)GetComponent(entity, m_componentId, 0);
 
 		bool needsUpdate = false;
@@ -71,20 +77,26 @@ void RenderSystem::Update(float _dt)
 
 }
 
-void RenderSystem::OnEntityAdded(unsigned int _entityId)
+void RenderSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities)
 {
-	int modelId = *(int*)GetComponent(_entityId, "Render", "ModelId");
-	m_graphics->ActiveModel(modelId, true);
+	for (auto entityId : _entities)
+	{
+		int modelId = *(int*)GetComponent(entityId, "Render", "ModelId");
+		m_graphics->ActiveModel(modelId, true);
 
-	/*	Update the matrix	*/
-	UpdateMatrix(_entityId);
+		/*	Update the matrix	*/
+		UpdateMatrix(entityId);
+	}
 }
 
-void RenderSystem::OnEntityRemoved(unsigned int _entityId)
+void RenderSystem::EntitiesRemoved(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities)
 {
-	/*	Tell Graphics to disable model	*/
-	int modelId = *(int*)GetComponent(_entityId, "Render", "ModelId");
-	m_graphics->ActiveModel(modelId, false);
+	for (auto entityId : _entities)
+	{
+		/*	Tell Graphics to disable model	*/
+		int modelId = *(int*)GetComponent(entityId, "Render", "ModelId");
+		m_graphics->ActiveModel(modelId, false);
+	}
 }
 
 

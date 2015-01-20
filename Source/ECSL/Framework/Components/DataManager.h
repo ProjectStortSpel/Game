@@ -11,6 +11,19 @@
 
 namespace ECSL
 {
+	class EntityComponents
+	{
+	public:
+		unsigned int m_entityId;
+		std::vector<unsigned int>* m_componentTypeIds;
+	private:
+		EntityComponents(unsigned int _entityId) : m_entityId(_entityId) { m_componentTypeIds = new std::vector<unsigned int>(); }
+		~EntityComponents() { delete(m_componentTypeIds); }
+
+		void AddComponentTypeId(unsigned int _componentTypeId) { m_componentTypeIds->push_back(_componentTypeId); }
+		void ClearComponentTypes() { m_componentTypeIds->clear(); }
+	};
+
 	class DECLSPEC DataManager
 	{
 	public:
@@ -34,7 +47,11 @@ namespace ECSL
 
 		void RecycleEntityIds(const RuntimeInfo& _runtime);
 
-		void ClearChangeLists(const RuntimeInfo& _runtime);
+		void ClearComponentData(const RuntimeInfo& _runtime);
+
+		void ClearComponentChangeLists(const RuntimeInfo& _runtime);
+
+		void ClearDeadEntitiesChangeLists(const RuntimeInfo& _runtime);
 
 		inline unsigned int GetEntityCount() { return m_entityCount; }
 		inline EntityTable* GetEntityTable() { return m_entityTable; }
@@ -52,19 +69,22 @@ namespace ECSL
 		SDL_mutex* m_entitiesToBeRemovedMutex;
 		SDL_mutex* m_componentsToBeAddedMutex;
 		SDL_mutex* m_componentsToBeRemovedMutex;
+		SDL_mutex* m_componentDataToBeClearedMutex;
 		unsigned int m_entityCount;
 		EntityTable* m_entityTable;
 		std::vector<ComponentTable*>* m_componentTables;
 		std::vector<unsigned int>* m_componentTypeIds;
 		std::vector<unsigned int>* m_changedEntities;
 		std::vector<unsigned int>* m_entitiesToBeRemoved;
-		std::map<unsigned int, std::vector<unsigned int>>* m_componentsToBeAdded;
-		std::map<unsigned int, std::vector<unsigned int>>* m_componentsToBeRemoved;
+		std::map<unsigned int, std::vector<unsigned int>*>* m_componentsToBeAdded;
+		std::map<unsigned int, std::vector<unsigned int>*>* m_componentsToBeRemoved;
+		std::vector<EntityComponents*>* m_componentDataToBeCleared;
 
 		void Changed(unsigned int _entityId);
 		void ToBeAdded(unsigned int _entityId, unsigned int _componentTypeId);
 		void ToBeRemoved(unsigned int _entityId);
 		void ToBeRemoved(unsigned int _entityId, unsigned int _componentTypeId);
+		void DataToBeCleared(unsigned int _entityId, unsigned int _componentTypeId);
 	};
 }
 

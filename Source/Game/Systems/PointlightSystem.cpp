@@ -23,7 +23,7 @@ void PointlightSystem::Initialize()
 	bitsetComponents.push_back(ECSL::ComponentTypeManager::GetInstance().GetTableId("Pointlight"));
 
 	m_bitMask = ECSL::BitSet::BitSetConverter::ArrayToBitSet(bitsetComponents, ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount());
-	m_numberOfBitSets = ECSL::BitSet::GetIntCount(ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount());
+	m_numberOfBitSets = ECSL::BitSet::GetDataTypeCount(ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount());
 	m_changedComponentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("ChangedComponents");
 	m_pointLightId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Pointlight");
 

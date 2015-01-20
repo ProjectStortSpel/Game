@@ -17,7 +17,7 @@ namespace ECSL
 		typedef uint64_t DataType;
 #endif
 
-		const DataType BitSetIndexMask = std::numeric_limits<DataType>::max() ^ ((sizeof(DataType) * 8) - 1);
+		const DataType BitSetIndexMask = (std::numeric_limits<DataType>::max)() ^ ((sizeof(DataType)* 8) - 1);
 		const DataType BitIndexMask = (sizeof(DataType)* 8) - 1;
 
 		inline DECLSPEC unsigned int GetDataTypeByteSize()

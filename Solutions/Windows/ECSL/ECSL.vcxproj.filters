@@ -35,6 +35,9 @@
     <Filter Include="Source Files\Framework\Multithreading">
       <UniqueIdentifier>{f1a91060-8b15-4325-b2e1-9ee760a9080b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Framework\Templates">
+      <UniqueIdentifier>{99478cef-1fb8-4d40-92a6-86e4b7cf0bf6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\ECSL\ECSL.h">
@@ -124,6 +127,15 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Multithreading\RuntimeInfo.h">
       <Filter>Source Files\Framework\Multithreading</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Managers\EntityTemplateManager.h">
+      <Filter>Source Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Templates\EntityTemplate.h">
+      <Filter>Source Files\Framework\Templates</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\EntityTemplateReader.h">
+      <Filter>Source Files\Framework\Parsing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\World.cpp">
@@ -203,6 +215,15 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Multithreading\Scheduler.cpp">
       <Filter>Source Files\Framework\Multithreading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Managers\EntityTemplateManager.cpp">
+      <Filter>Source Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Templates\EntityTemplate.cpp">
+      <Filter>Source Files\Framework\Templates</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\EntityTemplateReader.cpp">
+      <Filter>Source Files\Framework\Parsing</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
