@@ -91,8 +91,6 @@ void GraphicDevice::Update(float _dt)
 {
 	m_dt = _dt; m_fps = 1 / _dt;
 
-
-
 	// PRINT m_glTimerValues
 	for (int i = 0; i < m_glTimerValues.size(); i++)
 	{
@@ -104,7 +102,7 @@ void GraphicDevice::Update(float _dt)
 	}
 	m_glTimerValues.clear();
 
-	
+	m_shadowMap->UpdateViewMatrix(vec3(8.0f, 0.0f, 8.0f) - (10.0f*normalize(m_dirLightDirection)), vec3(8.0f, 0.0f, 8.0f));
 }
 
 void GraphicDevice::WriteShadowMapDepth()
@@ -745,11 +743,10 @@ bool GraphicDevice::InitRandomVector()
 
 bool GraphicDevice::InitLightBuffers()
 {
-	glGenBuffers(1, &m_dirLightBuffer);
 	glGenBuffers(1, &m_pointlightBuffer);
 
 	for (int i = 0; i < 10; i++)
-		m_lightDefaults[9+i] = 0.0;		//init 0.0
+		m_lightDefaults[i] = 0.0;		//init 0.0
 	
 	if (m_pointlightBuffer < 0)
 		return false;
@@ -758,10 +755,15 @@ bool GraphicDevice::InitLightBuffers()
 	tmparray[0] = &m_lightDefaults[0];
 
 	BufferPointlights(1, tmparray);
+
 	delete(tmparray);
-
 	
+	glGenBuffers(1, &m_dirLightBuffer);
+	if (m_dirLightBuffer < 0)
+		return false;
 
+	BufferDirectionalLight(&m_lightDefaults[0]);
+	
 	return true;
 }
 
@@ -797,8 +799,6 @@ void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
 	glBufferData(GL_SHADER_STORAGE_BUFFER, 9 * sizeof(float), _lightPointer, GL_STATIC_DRAW);
 
 	m_dirLightDirection = vec3(_lightPointer[0], _lightPointer[1], _lightPointer[2]);
-
-	m_shadowMap->UpdateViewMatrix(vec3(8, 0, 8) - (10.0f*normalize(m_dirLightDirection)), vec3(8, 0, 8));
 }
 
 void GraphicDevice::CreateShadowMap()
