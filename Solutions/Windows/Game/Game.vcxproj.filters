@@ -206,6 +206,9 @@
     <ClCompile Include="..\..\..\Source\Game\Quaternion.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\DirectionalLightSystem.cpp">
+      <Filter>Game\Systems\LightSystems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h">
@@ -303,6 +306,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Quaternion.h">
       <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\DirectionalLightSystem.h">
+      <Filter>Game\Systems\LightSystems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

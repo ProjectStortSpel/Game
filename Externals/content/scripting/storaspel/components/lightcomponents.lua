@@ -30,3 +30,23 @@ PointlightComponent:AddVariable("ColorBlue", ByteSize.Float)
 
 PointlightComponent:AddVariable("Range", ByteSize.Float)
 worldCreator:AddComponentType(PointlightComponent)
+
+-- DirectionalLight Component
+local DirectionalLightComponent = ComponentType()
+DirectionalLightComponent.Name = "DirectionalLight"
+DirectionalLightComponent.SyncNetwork = true
+DirectionalLightComponent.TableType = TableType.Array
+DirectionalLightComponent:AddVariable("DirX", ByteSize.Float)
+DirectionalLightComponent:AddVariable("DirY", ByteSize.Float)
+DirectionalLightComponent:AddVariable("DirZ", ByteSize.Float)
+
+DirectionalLightComponent:AddVariable("AmbientInt", ByteSize.Float)
+DirectionalLightComponent:AddVariable("DiffuseInt", ByteSize.Float)
+DirectionalLightComponent:AddVariable("SpecularInt", ByteSize.Float)
+
+DirectionalLightComponent:AddVariable("ColorRed", ByteSize.Float)
+DirectionalLightComponent:AddVariable("ColorGreen", ByteSize.Float)
+DirectionalLightComponent:AddVariable("ColorBlue", ByteSize.Float)
+
+DirectionalLightComponent:AddVariable("Range", ByteSize.Float)
+worldCreator:AddComponentType(DirectionalLightComponent)

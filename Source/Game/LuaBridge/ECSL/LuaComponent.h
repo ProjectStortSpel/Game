@@ -54,6 +54,9 @@ namespace LuaBridge
 		
 		int GetPointlight();
 		int SetPointlight();
+
+		int GetDirectionalLight();
+		int SetDirectionalLight();
 		
 		void ComponentHasChanged();
 		

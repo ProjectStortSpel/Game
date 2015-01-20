@@ -53,6 +53,8 @@ if Server then
 	
 	require "sv_takecardsfromplayersystem"
 	require "sv_takecardstepsfromunitsystem"
+	
+	require "sv_directionallightsystem"
 end
 
 
@@ -143,7 +145,7 @@ if Server then
 
 	worldCreator:AddSystemToCurrentGroup(TakeCardsFromPlayerSystem)
 	worldCreator:AddSystemToCurrentGroup(TakeCardStepsFromUnitSystem)
-	
+	worldCreator:AddSystemToCurrentGroup(DirectionalLightSystem)
 end
 
 if Client then
