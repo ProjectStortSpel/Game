@@ -128,3 +128,9 @@ local PlayerIndicator = ComponentType()
 PlayerIndicator.Name = "PlayerIndicator"
 PlayerIndicator.TableType = TableType.Map
 worldCreator:AddComponentType(PlayerIndicator)
+
+-- HasSelectedCards Component
+local HasSelectedCardsComponent = ComponentType()
+HasSelectedCardsComponent.Name = "HasSelectedCards"
+HasSelectedCardsComponent.TableType = TableType.Map
+worldCreator:AddComponentType(HasSelectedCardsComponent)

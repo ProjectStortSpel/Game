@@ -44,7 +44,11 @@ DealCardsSystem.DealCards = function (self, numCards)
 	print("")
 	
 	for i = 1, #players do
-
+		
+		if world:EntityHasComponent(players[i], "HasSelectedCards") then
+			world:RemoveComponentFrom("HasSelectedCards", players[i])
+		end
+		
 		local pickingStartedID = Net.StartPack("Client.RemotePickingStarted")
 		Net.WriteInt(pickingStartedID, players[i])
 		Net.Broadcast(pickingStartedID)
@@ -73,6 +77,10 @@ DealCardsSystem.DealCards = function (self, numCards)
 		
 		Net.Send(Net.StartPack("Client.SelectCards"), ip, port)
 	end
+	
+	--	Notify players about timer
+	local newId = world:CreateNewEntity();
+	world:CreateComponentAndAddTo("OnPickingPhase", newId);
 	
 end
 
@@ -114,6 +122,8 @@ Net.Receive("Server.SelectCards",
 
 		local playerIp = world:GetComponent(player, "NetConnection", "IpAddress"):GetString()
 		local playerPort = world:GetComponent(player, "NetConnection", "Port"):GetInt()
+		
+		world:CreateComponentAndAddTo("HasSelectedCards", player)
 		
 		for i = 1, 5 do
 			local action = world:GetComponent(selectedCards[i], "CardAction", "Action"):GetString()
