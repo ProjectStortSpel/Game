@@ -212,6 +212,9 @@
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\File\LuaFile.cpp">
       <Filter>Lua Bridge\File</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\DirectionalLightSystem.cpp">
+      <Filter>Game\Systems\LightSystems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h">
@@ -312,6 +315,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\File\LuaFile.h">
       <Filter>Lua Bridge\File</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\DirectionalLightSystem.h">
+      <Filter>Game\Systems\LightSystems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
