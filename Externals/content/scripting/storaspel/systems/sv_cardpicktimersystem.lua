@@ -69,14 +69,15 @@ UpdateCardPickTimer = System()
 UpdateCardPickTimer.Initialize = function(self)
 	self:SetName("UpdateCardPickTimer")
 
-	self:AddComponentTypeToFilter("PickingPhaseTimer", FilterType.Mandatory)
+	self:AddComponentTypeToFilter("PickingPhaseTimer", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("OnPickingPhase", FilterType.RequiresOneOf)
 
 	print("UpdateCardPickTimer initialized!")
 end
 
 UpdateCardPickTimer.Update = function(self, dt)
 
-	local Timers = self:GetEntities()
+	local Timers = self:GetEntities("PickingPhaseTimer")
 	if #Timers > 0 then
 		
 		local Timer = world:GetComponent(Timers[1], "PickingPhaseTimer", "Timer")
@@ -92,9 +93,25 @@ UpdateCardPickTimer.Update = function(self, dt)
 
 end
 
+UpdateCardPickTimer.OnEntityAdded = function(self, entity)
+	
+	if world:EntityHasComponent(entity, "OnPickingPhase") then
+		local Timers = self:GetEntities("PickingPhaseTimer")
+		print("DELETE TIMERS!!! -> " .. #Timers)
+		for i = 1, #Timers do
+			world:KillEntity(Timers[i])
+		end
+		
+		world:KillEntity(entity)
+	end
+	
+	--	Send time amount in message to all players
+	
+end
+
 
 CreateCardPickTimer = System()
-CreateCardPickTimer.TimeLimit = 0.0
+CreateCardPickTimer.TimeLimit = 30.0
 
 CreateCardPickTimer.Initialize = function(self)
 	self:SetName("CreateCardPickTimer")
@@ -109,6 +126,8 @@ CreateCardPickTimer.OnEntityAdded = function(self, entity)
 	local newId = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("PickingPhaseTimer", newId)
 	world:GetComponent(newId, "PickingPhaseTimer", "Timer"):SetFloat(self.TimeLimit)
+	
+	
 	
 	--	Send time amount in message to all players
 	
