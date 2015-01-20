@@ -361,7 +361,7 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 	{
 		shaderPtr = &m_forwardShader;
 		m_forwardShader.UseProgram();
-		SDL_Log("Deferred requested. Selecting FORWARD");
+		//SDL_Log("Deferred requested. Selecting FORWARD");
 	}
 
 	// Import Object
