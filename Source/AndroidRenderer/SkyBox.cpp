@@ -4,7 +4,11 @@ SkyBox::SkyBox()
 { }
 
 SkyBox::~SkyBox()
-{ }
+{
+	glDeleteBuffers(1, &vboCubeVertices);
+	glDeleteBuffers(1, &iboCubeIndices);
+	glDeleteTextures(1, &m_textureHandle);
+}
 
 SkyBox::SkyBox(GLuint _texHandle, float _camFarPlane, GLuint loc)
 {
