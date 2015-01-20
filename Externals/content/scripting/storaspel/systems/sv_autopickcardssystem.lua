@@ -8,6 +8,7 @@ AutoPickCards.Initialize = function(self)
 	self:AddComponentTypeToFilter("Player", FilterType.RequiresOneOf)
 	
 	self:AddComponentTypeToFilter("HasSelectedCards", FilterType.Excluded)
+	self:AddComponentTypeToFilter("IsSpectator", FilterType.Excluded)
 	print("AutoPickCards initialized!")
 end
 
