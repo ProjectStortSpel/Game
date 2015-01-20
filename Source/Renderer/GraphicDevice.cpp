@@ -797,6 +797,9 @@ void GraphicDevice::BufferPointlights(int _nrOfLights, float **_lightPointers)
 
 void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
 {
+	if (_lightPointer == 0)
+		_lightPointer = &m_lightDefaults[0];
+
 	glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer, 0, 9 * sizeof(float));
 	glBufferData(GL_SHADER_STORAGE_BUFFER, 9 * sizeof(float), _lightPointer, GL_STATIC_DRAW);
 

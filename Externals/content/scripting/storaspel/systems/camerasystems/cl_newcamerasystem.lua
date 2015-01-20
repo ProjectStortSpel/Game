@@ -20,18 +20,18 @@ NewCameraSystem.Update = function(self, dt)
 	for i = 1, #button do
 		if world:EntityHasComponent(button[i], "OnPickBoxHit") and Input.GetTouchState(0) == InputState.Released then
 		
-			if world:EntityHasComponent(button[i], "CameraLeftButton") then
+			if world:EntityHasComponent(button[i], "CameraRightButton") then
 				local temp = self.CameraUpX
 				self.CameraUpX = self.CameraUpZ
 				self.CameraUpZ = -1*temp
 			end
-			if world:EntityHasComponent(button[i], "CameraRightButton") then
+			if world:EntityHasComponent(button[i], "CameraLeftButton") then
 				local temp = self.CameraUpX
 				self.CameraUpX = self.CameraUpZ*-1
 				self.CameraUpZ = temp
 			end
 
-			self.Camera:MoveToAndLookAt(6.5,13,6.5,self.CameraUpX,0,self.CameraUpZ,6.5,0,6.5,1)
+			self.Camera:MoveToAndLookAt(6.5-self.CameraUpX*7.5,10,6.5-self.CameraUpZ*7.5,self.CameraUpX,0,self.CameraUpZ,6.5,-4.5,6.5,1)
 		end
 	end
 	
@@ -78,6 +78,6 @@ NewCameraSystem.PostInitialize = function(self)
 	local lpickbox = self:GetComponent(id, "PickBox", 0)
 	lpickbox:SetFloat2(1, 1)
 			
-	self.Camera:MoveToAndLookAt(6.5,13,6.5,self.CameraUpX,0,self.CameraUpZ,6.5,0,6.5,1)
+	self.Camera:MoveToAndLookAt(6.5-self.CameraUpX*7.5,10,6.5-self.CameraUpZ*7.5,self.CameraUpX,0,self.CameraUpZ,6.5,-4.5,6.5,1)
 	
 end
