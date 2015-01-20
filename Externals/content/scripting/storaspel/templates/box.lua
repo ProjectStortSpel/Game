@@ -2,8 +2,7 @@
 local Head = EntityTemplate()
 Head.Name = "Head"
 Head:AddComponent("Model")
-
-	--	Model data
+--	Model data
 Head:SetFloat3("Position", 0.0, 1.0, 0.0)
 Head:SetFloat3("Rotation", 0.0, math.pi, 0.0)
 Head:SetFloat3("Scale", 0.5, 0.5, 0.5)
