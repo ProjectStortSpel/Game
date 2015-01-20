@@ -94,7 +94,7 @@ end
 
 
 CreateCardPickTimer = System()
-CreateCardPickTimer.TimeLimit = 1.50
+CreateCardPickTimer.TimeLimit = 0.0
 
 CreateCardPickTimer.Initialize = function(self)
 	self:SetName("CreateCardPickTimer")
