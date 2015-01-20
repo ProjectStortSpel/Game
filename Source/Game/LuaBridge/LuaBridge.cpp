@@ -13,6 +13,7 @@
 #include "FileLoader/LuaFileLoader.h"
 #include "Console/LuaConsole.h"
 #include "Network/LuaNetwork.h"
+#include "File/LuaFile.h"
 
 namespace LuaBridge
 {
@@ -36,6 +37,9 @@ namespace LuaBridge
     LuaConsole::Embed();
 
 	LuaNetwork::Embed();
+
+	LuaFile::Embed();
+
 	//LuaClientNetwork::Embed();
 	//LuaServerNetwork::Embed();
 
