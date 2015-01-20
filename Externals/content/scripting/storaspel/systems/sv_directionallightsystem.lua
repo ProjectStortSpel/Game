@@ -13,6 +13,7 @@ DirectionalLightSystem.PostInitialize = function(self)
 	
 	local entity = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("DirectionalLight", entity)
+	world:CreateComponentAndAddTo("SyncNetwork", entity)
     local directionalLight = self:GetComponent(entity, "DirectionalLight", 0)
 	directionalLight:SetDirectionalLight(-0.38, -1.0, 0.7, 0.3, 0.7, 0.7, 0.7, 0.75, 0.85)
 
