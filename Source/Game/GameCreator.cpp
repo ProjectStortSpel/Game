@@ -244,7 +244,8 @@ void GameCreator::StartGame(int argc, char** argv)
 		m_consoleInput.Update();
 		Console::ConsoleManager::GetInstance().ExecuteCommandQueue();
 		UpdateConsole();
-		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
+		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED ||
+		    m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_AC_BACK) == Input::InputState::PRESSED)
 			break;
 		m_inputCounter.Tick();
 
@@ -466,9 +467,6 @@ void GameCreator::PollSDLEvent()
 		case SDL_KEYUP:
 		case SDL_FINGERMOTION:
 		case SDL_FINGERDOWN:
-#ifdef __ANDROID__
-			//exit(0);
-#endif
 		case SDL_FINGERUP:
 		case SDL_TEXTINPUT:
 		case SDL_JOYAXISMOTION:
