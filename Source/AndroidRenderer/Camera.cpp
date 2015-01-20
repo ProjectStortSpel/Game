@@ -25,6 +25,64 @@ Camera::~Camera()
 {
 }
 
+void Camera::Update(float dt)
+{
+	if (doLerp)
+	{
+		float t = m_timer / m_time;
+
+		t = t * t * t * (t * (6 * t - 15) + 10); //SMOOTH AS FUCK
+
+		m_pos = lerp(m_startP, m_targetP, t);
+		m_right = slerp(m_startR, m_targetR, t);
+		m_up = slerp(m_startU, m_targetU, t);
+		m_look = slerp(m_startL, m_targetL, t);
+		m_timer += dt;
+		if (m_timer > m_time)
+		{
+			doLerp = false;
+			m_pos = m_targetP;
+			m_right = m_targetR;
+			m_up = m_targetU;
+			m_look = m_targetL;
+		}
+	}
+}
+
+vec3 Camera::lerp(vec3 start, vec3 end, float percent)
+{
+	return (start + (end - start)*percent);
+}
+
+vec3 Camera::slerp(vec3 start, vec3 end, float percent)
+{
+	return (1 - percent)*start + end*percent;
+}
+
+
+void Camera::MoveToAndLookAt(vec3 p_Pos, vec3 p_Up, vec3 p_Target, float p_Time)
+{
+	m_targetP = vec3(0.0f, 0.0f, 0.0f);
+	m_targetR = vec3(1.0f, 0.0f, 0.0f);
+	m_targetU = p_Up;
+	m_targetL = vec3(0.0f, 0.0f, 1.0f);
+
+	m_startP = m_pos;
+	m_startU = m_up;
+	m_startR = m_right;
+	m_startL = m_look;
+
+	m_targetP = p_Pos;
+
+	m_targetL = glm::normalize(p_Target - m_targetP);
+	m_targetR = glm::normalize(glm::cross(m_targetU, m_targetL));
+	m_targetU = glm::cross(m_targetL, m_targetR);
+
+	m_time = p_Time;
+	m_timer = 0;
+	doLerp = true;
+}
+
 void Camera::MoveForward(float dt)
 {
 	m_pos += m_moveSpeed*dt*m_look;

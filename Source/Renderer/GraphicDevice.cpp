@@ -91,6 +91,8 @@ void GraphicDevice::Update(float _dt)
 {
 	m_dt = _dt; m_fps = 1 / _dt;
 
+	m_camera->Update(_dt);
+
 	// PRINT m_glTimerValues
 	for (int i = 0; i < m_glTimerValues.size(); i++)
 	{
