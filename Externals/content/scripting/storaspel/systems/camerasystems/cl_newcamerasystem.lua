@@ -60,7 +60,7 @@ NewCameraSystem.PostInitialize = function(self)
 	local rposition = self:GetComponent(id, "Position", 0)
 	rposition:SetFloat3(4, 0, -4)		
 	local rscale = self:GetComponent(id, "Scale", 0)
-	rscale:SetFloat3(0.5, 10, 0.5)	
+	rscale:SetFloat3(1, 10, 0.5)	
 	local rpickbox = self:GetComponent(id, "PickBox", 0)
 	rpickbox:SetFloat2(1, 1)
 	
