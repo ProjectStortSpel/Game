@@ -127,7 +127,6 @@ ButtonPressedSystem.PostInitialize = function(self)
 	--connect anders
 	button = self:CreateButton("anders", "quad", 2, -1)
 	self:AddCommandToButton("connect 194.47.150.100", button)
-	
 
 	print("ButtonPressedSystem post initialized!")
 end

@@ -269,6 +269,20 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClInclude Include="..\..\..\Source\Game\TextInput.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\..\Externals\content\scripting\lobby\components\buttoncomponents.lua" />
+    <None Include="..\..\..\Externals\content\scripting\lobby\components\components.lua" />
+    <None Include="..\..\..\Externals\content\scripting\lobby\components\interfacecomponents.lua" />
+    <None Include="..\..\..\Externals\content\scripting\lobby\components\lobby.lua" />
+    <None Include="..\..\..\Externals\content\scripting\lobby\init.lua" />
+    <None Include="..\..\..\Externals\content\scripting\lobby\systems\clientconnectsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\lobby\systems\clientlobbysystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\lobby\systems\serverconnectsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\lobby\systems\serverlobbysystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\lobby\systems\sh_buttonhoversystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\lobby\systems\sh_buttonpressedsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\lobby\systems\sh_pickboxsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\lobby\systems\systems.lua" />
+    <None Include="..\..\..\Externals\content\scripting\lobby\templates\templates.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\components\cardcomponents.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\components\components.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\components\gamestatecomponents.lua" />
