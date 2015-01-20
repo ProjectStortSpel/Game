@@ -54,6 +54,9 @@ if Server then
 	require "sv_steptimersystem"
 	require "sv_playcardtimersystem"
 	
+	require "sv_cardpicktimersystem"
+	require "sv_autopickcardssystem"
+	
 	require "sv_takecardsfromplayersystem"
 	require "sv_takecardstepsfromunitsystem"
 	
@@ -156,6 +159,15 @@ if Server then
 	worldCreator:AddSystemToCurrentGroup(TakeCardsFromPlayerSystem)
 	worldCreator:AddSystemToCurrentGroup(TakeCardStepsFromUnitSystem)
 	worldCreator:AddSystemToCurrentGroup(DirectionalLightSystem)
+	
+	--	Timer for picking phase
+	worldCreator:AddSystemToCurrentGroup(CreateCardPickTimer)
+	worldCreator:AddSystemToCurrentGroup(SetCardPickTimer)
+	worldCreator:AddSystemToCurrentGroup(AddCardPickTimer)
+	worldCreator:AddSystemToCurrentGroup(UpdateCardPickTimer)
+	worldCreator:AddSystemToCurrentGroup(AutoPickCards)
+	
+	
 end
 
 if Client then
