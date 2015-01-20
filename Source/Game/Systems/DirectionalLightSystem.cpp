@@ -78,9 +78,7 @@ void DirectionalLightSystem::UpdateDirectionalLight()
 
 	if (eDirLights.size() == 0)
 	{
-		float** tempPointer = new float*[1];
-		m_graphics->BufferDirectionalLight(*tempPointer);
-		delete tempPointer;
+		m_graphics->BufferDirectionalLight(0);
 		return;
 	}
 

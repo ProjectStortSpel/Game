@@ -66,8 +66,23 @@ FinishSystem.OnEntityAdded = function(self, entity)
 						-- which will remove the player from the game and add him as a spectator
 						world:CreateComponentAndAddTo("IsSpectator", playerId)
 						
+						
+						print("finishPoints[i]: " .. finishPoints[i])
+						
+						local totemPieceId = world:CreateNewEntity()
+						world:CreateComponentAndAddTo("AddTotemPiece", totemPieceId)
+						world:CreateComponentAndAddTo("PlayerNumber", totemPieceId)
+						world:CreateComponentAndAddTo("CheckpointId", totemPieceId)
+						print("CreateComponentAndAddTo done")
+						world:SetComponent(totemPieceId, "PlayerNumber", "Number", playerNum)
+						print("PlayerNumber done")
+						world:SetComponent(totemPieceId, "CheckpointId", "Id", finishPoints[i])
+						print("CheckpointId done")
+						
+						
+						
 						-- Kill the unit entity
-						world:KillEntity(units[j])
+						--world:KillEntity(units[j])
 						
 						
 					end

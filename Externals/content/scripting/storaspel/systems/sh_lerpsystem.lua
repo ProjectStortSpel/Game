@@ -1,5 +1,5 @@
 LerpSystem = System()
-LerpSystem.LerpTime = 0.5
+LerpSystem.LerpTime = 0.1
 
 LerpSystem.Update = function(self, dt)
 	local entities = self:GetEntities("LerpTime")
@@ -66,8 +66,9 @@ LerpSystem.OnEntityAdded = function(self, entityId)
 
 	if not world:EntityHasComponent(entityId, "LerpTime") then
 		world:CreateComponentAndAddTo("LerpTime", entityId)
-		local timer = self:GetComponent(entityId, "LerpTime", 0)
-		timer:SetFloat2(self.LerpTime, 0)
 	end
+	
+	local timer = self:GetComponent(entityId, "LerpTime", 0)
+	timer:SetFloat2(self.LerpTime, 0)
 
 end
