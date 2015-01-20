@@ -56,6 +56,7 @@ void ServerNetwork::NetConnectionLost(NetConnection& _connection)
 		SDL_Log("Player timed out. IP: %s:%d\n", _connection.GetIpAddress(), _connection.GetPort());
 
 	m_connectedClientsLock->lock();
+	(*m_connectedClients)[_connection]->CloseSocket();
 	(*m_connectedClients)[_connection]->SetActive(0);
 	m_connectedClientsLock->unlock();
 
@@ -71,7 +72,7 @@ void ServerNetwork::NetConnectionLost(NetConnection& _connection)
 	m_currentTimeOutIntervall->erase(_connection);
 	m_timeOutLock->unlock();
 
-	(*m_connectedClients)[_connection]->CloseSocket();
+	
 	(*m_receivePacketsThreads)[_connection].join();
 }
 
@@ -81,6 +82,7 @@ void ServerNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uin
 		SDL_Log("Player disconnected. IP: %s:%d\n", _connection.GetIpAddress(), _connection.GetPort());
 
 	m_connectedClientsLock->lock();
+	(*m_connectedClients)[_connection]->CloseSocket();
 	(*m_connectedClients)[_connection]->SetActive(0);
 	m_connectedClientsLock->unlock();
 
@@ -96,7 +98,7 @@ void ServerNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uin
 	m_currentTimeOutIntervall->erase(_connection);
 	m_timeOutLock->unlock();
 
-	(*m_connectedClients)[_connection]->CloseSocket();
+	
 	(*m_receivePacketsThreads)[_connection].join();
 }
 
