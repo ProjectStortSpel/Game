@@ -130,6 +130,8 @@ if Server then
 	--worldCreator:AddSystemToCurrentGroup(CreateSpawnpointSystem)
 	worldCreator:AddSystemToCurrentGroup(SpawnSystem)
 	worldCreator:AddSystemToCurrentGroup(ServerLobbySystem)
+	worldCreator:AddSystemToCurrentGroup(LogStartSystem)
+	
 	worldCreator:AddSystemToCurrentGroup(CreateDeckSystem)
 	worldCreator:AddSystemToCurrentGroup(DealCardsSystem)
 	worldCreator:AddSystemToCurrentGroup(StartNewRoundSystem)

@@ -29,7 +29,7 @@ Unit.Name = "Unit"
 	--	Model data
 	Unit:SetFloat3("Position", 0.0, 1.0, 0.0)
 	Unit:SetFloat3("Rotation", 0.0, math.pi, 0.0)
-	Unit:SetFloat3("Scale", 0.5, 0.5, 0.5)
+	Unit:SetFloat3("Scale", 0.8, 0.8, 0.8)
 	
 	--	Game Logic
 	Unit:AddComponent("PlayerNumber")			--	The number of the player [1, Number of players]

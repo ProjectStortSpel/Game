@@ -155,7 +155,7 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
 			comp:SetModel("checkpoint", "checkpoint", 0)
 		end
 
-		--posComp:SetFloat3(posX, 1.0, posZ)
+		--posComp:SetFloat3(posX, 0.5, posZ)
 
     elseif tiletype == 102 then -- 102 = f = finish
         world:CreateComponentAndAddTo("Finishpoint", entity)
