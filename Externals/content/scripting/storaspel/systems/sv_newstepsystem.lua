@@ -12,6 +12,10 @@ NewStepSystem.OnEntityAdded = function(self, entity)
 	
 	if world:EntityHasComponent( entity, "NewRound") then
 		print("\n\nNEW ROUND!")
+		local file = File.Append("gamelog.txt")
+		File.WriteLine(file, "NewRound")
+		File.Close(file)
+
 		self.Step = 1
 		local id = world:CreateNewEntity()
 		world:CreateComponentAndAddTo("NewStep", id)
@@ -24,6 +28,11 @@ NewStepSystem.OnEntityAdded = function(self, entity)
 			world:SetComponent(id, "PlayCard", "Step", self.Step)
 
 			print("\nNEW STEP: " .. self.Step)
+
+			local file = File.Append("gamelog.txt")
+			File.WriteLine(file, "NewStep " .. self.Step)
+			File.Close(file)
+
 
 			self.Step = self.Step + 1
 		else

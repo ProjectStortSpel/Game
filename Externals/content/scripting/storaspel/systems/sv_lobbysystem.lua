@@ -11,7 +11,7 @@ ServerLobbySystem.Initialize = function(self)
 			
 			Console.Print("Game started");
 
-			File.Create("gamelog.txt")
+			
 			
 			local id = world:CreateNewEntity()
 			world:CreateComponentAndAddTo("GameRunning", id)
@@ -44,4 +44,41 @@ ServerLobbySystem.UpdateServerOnline = function(self)
 		--Net.Broadcast(id);
 		--Console.Print("NewGame");
 	--end
+end
+
+
+LogStartSystem = System()
+
+
+LogStartSystem.Initialize = function(self)
+	self:SetName("LogStartSystem System");
+
+	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf);
+	self:AddComponentTypeToFilter("Unit", FilterType.RequiresOneOf);
+	
+
+	print("LogStartSystem initialized!");
+end
+
+LogStartSystem.OnEntityAdded = function(self, entity)
+	
+	if world:EntityHasComponent(entity, "GameRunning") then
+		
+		File.Create("gamelog.txt")
+
+		local units = self:GetEntities("Unit")
+
+		local file = File.Append("gamelog.txt")
+
+		for i = 1, #units do
+			
+			local plyNum = world:GetComponent(units[i], "PlayerNumber", "Number"):GetInt()
+			local mapPosX, mapPosZ = world:GetComponent(units[i], "MapPosition", 0):GetInt2()
+			File.WriteLine(file, "Unit " .. plyNum .. " " .. mapPosX .. " " .. mapPosZ)
+
+		end
+
+		File.Close(file)
+
+	end
 end
