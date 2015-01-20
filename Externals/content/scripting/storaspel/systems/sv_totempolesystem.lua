@@ -23,16 +23,16 @@ TotemPoleSystem.AddTotemPiece = function(self, playerNumber, height, X, Z)
 	local scale		= world:GetComponent(totemPiece, "Scale", 0)
 
 	-- Rotation
-	rotation:SetFloat3(0, math.pi, 0)	
+	rotation:SetFloat3(0, 0, 0)	
 	
 	-- Position
-	position:SetFloat3(X, 0.6 + height * 0.25, Z)
+	position:SetFloat3(X, 0.95 + height*0.27, Z)
 	
 	-- Scale
-	scale:SetFloat3(0.25,0.25,0.25)
+	scale:SetFloat3(1,1,1)
 	
-	world:SetComponent(totemPiece, "Model", "ModelName", "ply" .. playerNumber)
-	world:SetComponent(totemPiece, "Model", "ModelPath", "head")
+	world:SetComponent(totemPiece, "Model", "ModelName", "totem" .. playerNumber)
+	world:SetComponent(totemPiece, "Model", "ModelPath", "totem")
 	world:SetComponent(totemPiece, "Model", "RenderType", 0)
 end
 

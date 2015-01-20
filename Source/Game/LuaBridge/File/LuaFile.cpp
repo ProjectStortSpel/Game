@@ -198,7 +198,7 @@ namespace LuaBridge
 
 		int WriteLine()
 		{
-			std::string sId = LuaEmbedder::PullString(1);
+			/*std::string sId = LuaEmbedder::PullString(1);
 			char* end;
 			SDL_RWops* file = (SDL_RWops*)strtoull(sId.c_str(), &end, 16);
 
@@ -211,7 +211,7 @@ namespace LuaBridge
 			text = ss.str();
 
 			SDL_RWwrite(file, text.c_str(), 1, text.size());
-
+			*/
 			return 0;
 		}
 
