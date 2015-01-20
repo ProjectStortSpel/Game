@@ -55,9 +55,9 @@ bool GraphicDevice::Init()
 	if (!InitRandomVector()) { ERRORMSG("INIT RANDOMVECTOR FAIELD\n"); return false; }
 	if (!InitTextRenderer()) { ERRORMSG("INIT TEXTRENDERER FAILED\n"); return false; }
 		m_vramUsage += (m_textRenderer.GetArraySize() * sizeof(int));
-	if (!InitLightBuffers()) { ERRORMSG("INIT LIGHTBUFFER FAILED\n"); return false; }
-
+	
 	CreateShadowMap();
+	if (!InitLightBuffers()) { ERRORMSG("INIT LIGHTBUFFER FAILED\n"); return false; }
 	
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
@@ -103,8 +103,6 @@ void GraphicDevice::Update(float _dt)
 		m_textRenderer.RenderSimpleText(output.str(), x, y + i);
 	}
 	m_glTimerValues.clear();
-
-	m_shadowMap->UpdateViewMatrix(vec3(8.0f, 0.0f, 8.0f) - (10.0f*normalize(m_dirLightDirection)), vec3(8.0f, 0.0f, 8.0f));
 }
 
 void GraphicDevice::WriteShadowMapDepth()
@@ -804,6 +802,7 @@ void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
 	glBufferData(GL_SHADER_STORAGE_BUFFER, 9 * sizeof(float), _lightPointer, GL_STATIC_DRAW);
 
 	m_dirLightDirection = vec3(_lightPointer[0], _lightPointer[1], _lightPointer[2]);
+	m_shadowMap->UpdateViewMatrix(vec3(8.0f, 0.0f, 8.0f) - (10.0f*normalize(m_dirLightDirection)), vec3(8.0f, 0.0f, 8.0f));
 }
 
 void GraphicDevice::CreateShadowMap()

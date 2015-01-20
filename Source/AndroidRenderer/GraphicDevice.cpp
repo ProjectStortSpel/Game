@@ -289,7 +289,14 @@ void GraphicDevice::BufferPointlights(int _nrOfLights, float **_lightPointers)
 
 void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
 {
+	//direction, intensity, color
+	m_dirLightDirection = vec3(_lightPointer[0], _lightPointer[1], _lightPointer[2]);
+	vec3 intens = vec3(_lightPointer[3], _lightPointer[4], _lightPointer[5]);
+	vec3 color = vec3(_lightPointer[6], _lightPointer[7], _lightPointer[8]);
 
+	m_forwardShader.SetUniVariable("dirlight.Direction", vector3, &m_dirLightDirection);
+	m_forwardShader.SetUniVariable("dirlight.Intensity", vector3, &intens);
+	m_forwardShader.SetUniVariable("dirlight.Color", vector3, &color);
 }
 
 bool GraphicDevice::RenderSimpleText(std::string _text, int _x, int _y)
