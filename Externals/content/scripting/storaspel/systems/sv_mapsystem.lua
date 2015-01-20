@@ -135,13 +135,26 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
 		
 		self:AddGroundTileBelow(posX, posZ)
 
-    elseif tiletype >= 49 and tiletype <= 57 then -- 49 = 1 = first checkpoint, 47 = 9 = 9th checkpoint
+    elseif tiletype >= 49 and tiletype <= 57 then -- 49 = 1 = first checkpoint, 57 = 9 = 9th checkpoint
+
         world:CreateComponentAndAddTo("Checkpoint", entity)
         local comp = self:GetComponent(entity, "Checkpoint", 0)
         comp:SetInt(tiletype - 48)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
-		comp:SetModel("checkpoint", "checkpoint", 0)
+		
+		if tiletype == 49 then
+			comp:SetModel("checkpoint1", "checkpoint", 0)
+		elseif tiletype == 50 then
+			comp:SetModel("checkpoint2", "checkpoint", 0)
+		elseif tiletype == 51 then
+			comp:SetModel("checkpoint3", "checkpoint", 0)
+		elseif tiletype == 52 then
+			comp:SetModel("checkpoint4", "checkpoint", 0)
+		else
+			comp:SetModel("checkpoint", "checkpoint", 0)
+		end
+
 		--posComp:SetFloat3(posX, 1.0, posZ)
 
     elseif tiletype == 102 then -- 102 = f = finish
