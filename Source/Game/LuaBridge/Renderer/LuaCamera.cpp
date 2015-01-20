@@ -8,6 +8,7 @@ namespace LuaBridge
   void LuaCamera::Embed()
   {
     LuaEmbedder::EmbedClass<LuaCamera>("Camera");
+	LuaEmbedder::EmbedClassFunction<LuaCamera>("Camera", "MoveToAndLookAt", &LuaCamera::MoveToAndLookAt);
     LuaEmbedder::EmbedClassFunction<LuaCamera>("Camera", "MoveForward", &LuaCamera::MoveForward);
     LuaEmbedder::EmbedClassFunction<LuaCamera>("Camera", "MoveBackward", &LuaCamera::MoveBackward);
     LuaEmbedder::EmbedClassFunction<LuaCamera>("Camera", "MoveLeft", &LuaCamera::MoveLeft);
@@ -23,6 +24,26 @@ namespace LuaBridge
 	LuaEmbedder::EmbedClassFunction<LuaCamera>("Camera", "SetPosition", &LuaCamera::SetPosition);
   }
   
+  int LuaCamera::MoveToAndLookAt()
+  {
+	  float px = LuaEmbedder::PullFloat(1);
+	  float py = LuaEmbedder::PullFloat(2);
+	  float pz = LuaEmbedder::PullFloat(3);
+
+	  float ux = LuaEmbedder::PullFloat(4);
+	  float uy = LuaEmbedder::PullFloat(5);
+	  float uz = LuaEmbedder::PullFloat(6);
+
+	  float tx = LuaEmbedder::PullFloat(7);
+	  float ty = LuaEmbedder::PullFloat(8);
+	  float tz = LuaEmbedder::PullFloat(9);
+
+	  float time = LuaEmbedder::PullFloat(10);
+
+	  Camera::MoveToAndLookAt(vec3(px, py, pz), vec3(ux, uy, uz), vec3(tx, ty, tz), time);
+	  return 0;
+  }
+
   int LuaCamera::MoveForward()
   {
     float dt = LuaEmbedder::PullFloat(1);
@@ -101,7 +122,7 @@ namespace LuaBridge
   {
 	  float x = LuaEmbedder::PullFloat(1);
 	  float y = LuaEmbedder::PullFloat(2);
-	  float z = LuaEmbedder::PullFloat(2);
+	  float z = LuaEmbedder::PullFloat(3);
 	  glm::vec3* right = Camera::GetRight();
 	  right->x = x;
 	  right->y = y;
@@ -113,7 +134,7 @@ namespace LuaBridge
   {
 	  float x = LuaEmbedder::PullFloat(1);
 	  float y = LuaEmbedder::PullFloat(2);
-	  float z = LuaEmbedder::PullFloat(2);
+	  float z = LuaEmbedder::PullFloat(3);
 	  glm::vec3* up = Camera::GetUp();
 	  up->x = x;
 	  up->y = y;
@@ -125,7 +146,7 @@ namespace LuaBridge
   {
 	  float x = LuaEmbedder::PullFloat(1);
 	  float y = LuaEmbedder::PullFloat(2);
-	  float z = LuaEmbedder::PullFloat(2);
+	  float z = LuaEmbedder::PullFloat(3);
 	  glm::vec3* look = Camera::GetLook();
 	  look->x = x;
 	  look->y = y;
@@ -137,7 +158,7 @@ namespace LuaBridge
   {
 	  float x = LuaEmbedder::PullFloat(1);
 	  float y = LuaEmbedder::PullFloat(2);
-	  float z = LuaEmbedder::PullFloat(2);
+	  float z = LuaEmbedder::PullFloat(3);
 	  glm::vec3* position = Camera::GetPos();
 	  position->x = x;
 	  position->y = y;

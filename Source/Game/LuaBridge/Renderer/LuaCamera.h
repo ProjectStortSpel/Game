@@ -17,6 +17,8 @@ namespace LuaBridge
     static void Embed();
     
   private:
+	int MoveToAndLookAt();
+
     int MoveForward();
     int MoveBackward();
     int MoveLeft();

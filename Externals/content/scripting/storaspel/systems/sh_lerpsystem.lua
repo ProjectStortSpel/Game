@@ -66,9 +66,8 @@ LerpSystem.OnEntityAdded = function(self, entityId)
 
 	if not world:EntityHasComponent(entityId, "LerpTime") then
 		world:CreateComponentAndAddTo("LerpTime", entityId)
+		local timer = self:GetComponent(entityId, "LerpTime", 0)
+		timer:SetFloat2(self.LerpTime, 0)
 	end
-	
-	local timer = self:GetComponent(entityId, "LerpTime", 0)
-	timer:SetFloat2(self.LerpTime, 0)
-	
+
 end

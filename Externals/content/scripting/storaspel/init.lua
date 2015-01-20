@@ -84,6 +84,7 @@ if Client then
 	-- CAMERA SYSTEMS
 	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/camerasystems/?.lua"
 	--require "cl_cameracreationsystem"
+	require "cl_newcamerasystem"
 	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
 
 	require "cl_playerindicatorsystem"
@@ -173,6 +174,6 @@ if Client then
 	worldCreator:AddSystemToCurrentGroup(PlayerIndicatorSystem)
 --worldCreator:AddSystemToCurrentGroup(ClientSendCardSystem)
 
-	--worldCreator:AddSystemToCurrentGroup(CameraCreationSystem)
+	worldCreator:AddSystemToCurrentGroup(NewCameraSystem)
 end
 
