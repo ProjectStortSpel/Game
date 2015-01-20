@@ -78,6 +78,6 @@ NewCameraSystem.PostInitialize = function(self)
 	local lpickbox = self:GetComponent(id, "PickBox", 0)
 	lpickbox:SetFloat2(1, 1)
 			
-	self.Camera:MoveToAndLookAt(6.5,7,6.5,0,0,-1,6.5,0,6.5,0.5)
+	self.Camera:MoveToAndLookAt(6.5,13,6.5,self.CameraUpX,0,self.CameraUpZ,6.5,0,6.5,1)
 	
 end
