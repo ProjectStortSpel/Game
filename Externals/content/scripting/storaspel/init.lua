@@ -62,7 +62,6 @@ end
 
 
 if Client then
---require "cl_pickingphasesystem"
 	require "cl_lobbysystem"
 	--require "cl_selectcardsystem"
 	require "cl_playerdonevisualizersystem"
