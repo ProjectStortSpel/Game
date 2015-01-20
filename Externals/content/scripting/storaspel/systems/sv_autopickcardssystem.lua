@@ -65,5 +65,7 @@ AutoPickCards.OnEntityAdded = function(self, entity)
 		
 		local id = world:CreateNewEntity()
 		world:CreateComponentAndAddTo("NotifyStartNewRound", id)
+		
+		world:KillEntity(entity)
 	end
 end
