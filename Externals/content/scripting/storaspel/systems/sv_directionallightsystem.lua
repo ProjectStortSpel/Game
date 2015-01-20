@@ -28,9 +28,9 @@ DirectionalLightSystem.Update = function(self, dt)
 		
 	local dirLight = self:GetComponent(directionalLight[1], "DirectionalLight", 0) 
 	local dX, dY, dZ, inta, intd, ints, colorR, colorG, colorB = dirLight:GetDirectionalLight()
-	dX = math.sin((self.TotalTime)) 
+	dX = math.sin( 0.05 * self.TotalTime ) 
 	dY = -1.0
-	dZ = math.cos((self.TotalTime))
+	dZ = math.cos( 0.05 * self.TotalTime )
 	
 	dirLight:SetDirectionalLight(dX, dY, dZ, inta, intd, ints, colorR, colorG, colorB)
 		
