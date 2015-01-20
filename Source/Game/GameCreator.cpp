@@ -218,13 +218,8 @@ void GameCreator::StartGame(int argc, char** argv)
 	m_console = new GameConsole(m_graphics, m_world);
 
 	m_consoleInput.SetTextHook(std::bind(&Console::ConsoleManager::ExecuteCommand, &m_consoleManager, std::placeholders::_1));
-#ifdef __ANDROID__
-	m_consoleInput.SetActive(true);
-	m_input->GetKeyboard()->StartTextInput();
-#else
 	m_consoleInput.SetActive(false);
 	m_input->GetKeyboard()->StopTextInput();
-#endif
 
 	/*	Hook console	*/
 	m_console->SetupHooks(&m_consoleManager);
@@ -249,7 +244,8 @@ void GameCreator::StartGame(int argc, char** argv)
 		m_consoleInput.Update();
 		Console::ConsoleManager::GetInstance().ExecuteCommandQueue();
 		UpdateConsole();
-		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
+		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED ||
+		    m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_AC_BACK) == Input::InputState::PRESSED)
 			break;
 		m_inputCounter.Tick();
 
@@ -471,9 +467,6 @@ void GameCreator::PollSDLEvent()
 		case SDL_KEYUP:
 		case SDL_FINGERMOTION:
 		case SDL_FINGERDOWN:
-#ifdef __ANDROID__
-			//exit(0);
-#endif
 		case SDL_FINGERUP:
 		case SDL_TEXTINPUT:
 		case SDL_JOYAXISMOTION:
