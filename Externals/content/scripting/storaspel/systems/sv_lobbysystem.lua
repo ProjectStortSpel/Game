@@ -11,10 +11,12 @@ ServerLobbySystem.Initialize = function(self)
 			
 			Console.Print("Game started");
 
+			File.Create("gamelog.txt")
+			
 			local id = world:CreateNewEntity()
 			world:CreateComponentAndAddTo("GameRunning", id)
 			world:CreateComponentAndAddTo("SyncNetwork", id)
-
+			
 			id = world:CreateNewEntity()
 			world:CreateComponentAndAddTo("CreateDeck", id)
 			

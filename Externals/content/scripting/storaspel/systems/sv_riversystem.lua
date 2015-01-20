@@ -14,6 +14,11 @@ RiverSystem.OnEntityAdded = function(self, entity)
 	
 	if world:EntityHasComponent( entity, "MoveRiver") then
 		print("Move River")
+
+		File.Append("gamelog.txt")
+		File.WriteLine("MoveRiver")
+		File.Close()
+
 		local units = self:GetEntities("Unit")
 		local rivers = self:GetEntities("River")
 
