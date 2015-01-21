@@ -15,6 +15,8 @@ Camera::Camera(int windowWidth, int windowHeight)
 	m_farPlane = 100.f;
 
 	m_projectionMatrix = glm::perspective(45.0f, (float)windowWidth / (float)windowHeight, 0.15f, m_farPlane);
+	
+	doLerp = false;
 }
 
 Camera::Camera()
