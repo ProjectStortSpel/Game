@@ -124,15 +124,19 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
         world:CreateComponentAndAddTo("Void", entity)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
-		comp:SetModel("hole_test", "hole", 0)
+		comp:SetModel("hole", "hole", 0)
+		local rotComp = self:GetComponent(entity, "Rotation", 0)
+		rotComp:SetFloat3(0, math.pi * 0.5 * math.random(0, 4), 0)
 
     elseif tiletype == 120 then -- 120 = x = stone
 		world:CreateComponentAndAddTo("NotWalkable", entity)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
 		comp:SetModel("stone", "stone", 0)
-		posComp:SetFloat3(posX, 1.0, posZ)
+		posComp:SetFloat3(posX, 0.8 + 0.1* math.random(-1, 1), posZ)
 		
+		local rotComp = self:GetComponent(entity, "Rotation", 0)
+		rotComp:SetFloat3(math.pi * 0.01 * math.random(0, 25), math.pi * 0.01 * math.random(0, 100), math.pi * 0.01 * math.random(0, 25))
 		self:AddGroundTileBelow(posX, posZ)
 
     elseif tiletype >= 49 and tiletype <= 57 then -- 49 = 1 = first checkpoint, 57 = 9 = 9th checkpoint
