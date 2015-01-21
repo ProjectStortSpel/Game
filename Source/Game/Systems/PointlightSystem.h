@@ -15,11 +15,11 @@ public:
 	PointlightSystem(Renderer::GraphicDevice* _graphics);
 	~PointlightSystem();
 
-	void Update(float _dt);
 	void Initialize();
+	void Update(const ECSL::RuntimeInfo& _runtime);
 
-	void OnEntityAdded(unsigned int _entityId);
-	void OnEntityRemoved(unsigned int _entityId);
+	void EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities);
+	void EntitiesRemoved(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities);
 
 private:
 	void UpdatePointLights();

@@ -15,6 +15,10 @@ void PointlightSystem::Initialize()
 {
 	SetSystemName("Pointlight System");
 
+	SetUpdateTaskCount(1);
+	SetEntitiesAddedTaskCount(1);
+	SetEntitiesRemovedTaskCount(1);
+
 	/*	Rendersystem wants Position, Scale, Rotation and Render	*/
 	AddComponentTypeToFilter("Pointlight", ECSL::FilterType::Mandatory);
 
@@ -30,7 +34,7 @@ void PointlightSystem::Initialize()
 	printf("Pointlight initialized!\n");
 }
 
-void PointlightSystem::Update(float _dt)
+void PointlightSystem::Update(const ECSL::RuntimeInfo& _runtime)
 {
 	auto entities = *GetEntities();
 
@@ -61,12 +65,12 @@ void PointlightSystem::Update(float _dt)
 
 }
 
-void PointlightSystem::OnEntityAdded(unsigned int _entityId)
+void PointlightSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities)
 {
 	UpdatePointLights();
 }
 
-void PointlightSystem::OnEntityRemoved(unsigned int _entityId)
+void PointlightSystem::EntitiesRemoved(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities)
 {
 	UpdatePointLights();
 }

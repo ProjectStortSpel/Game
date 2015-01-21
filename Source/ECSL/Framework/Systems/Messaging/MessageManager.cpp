@@ -47,7 +47,7 @@ void MessageManager::SortMessages(const RuntimeInfo& _runtime)
 {
 	const std::vector<System*>* systems = m_systemManager->GetSystems();
 	unsigned int startAt, endAt;
-	MPL::MathHelper::SplitIterations(startAt, endAt, m_subscribers->size(), _runtime.TaskIndex, _runtime.TaskCount);
+	MPL::MathHelper::SplitIterations(startAt, endAt, (unsigned int)m_subscribers->size(), _runtime.TaskIndex, _runtime.TaskCount);
 	/* Loop through each subscriber system */
 	for (unsigned int i = startAt; i < endAt; ++i)
 	{
@@ -73,7 +73,7 @@ void MessageManager::DeleteMessages(const RuntimeInfo& _runtime)
 {
 	const std::vector<System*>* systems = m_systemManager->GetSystems();
 	unsigned int startAt, endAt;
-	MPL::MathHelper::SplitIterations(startAt, endAt, systems->size(), _runtime.TaskIndex, _runtime.TaskCount);
+	MPL::MathHelper::SplitIterations(startAt, endAt, (unsigned int)systems->size(), _runtime.TaskIndex, _runtime.TaskCount);
 	/* Loop through each subscriber system */
 	for (unsigned int i = startAt; i < endAt; ++i)
 	{

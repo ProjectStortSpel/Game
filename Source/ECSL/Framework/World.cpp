@@ -75,7 +75,7 @@ unsigned int World::CreateNewEntity(std::string _templateName)
 {
 	unsigned int newId = CreateNewEntity();
 	EntityTemplate* entityTemplate = EntityTemplateManager::GetInstance().GetTemplate(_templateName);
-	std::map<std::string, std::vector<TemplateEntry>>* _components = entityTemplate->GetComponents();
+	std::map<std::string, std::vector<TemplateEntry*>>* _components = entityTemplate->GetComponents();
 
 	for (auto component : *_components)
 	{
@@ -88,37 +88,37 @@ unsigned int World::CreateNewEntity(std::string _templateName)
 			int byteOffset = 0;
 			for (int n = 0; n < componentData.size(); ++n)
 			{
-				if (componentData[n].GetDataType() == ComponentDataType::INT)
+				if (componentData[n]->GetDataType() == ComponentDataType::INT)
 				{
 					int* dataLoc = (int*)GetComponent(newId, componentType, byteOffset);
-					dataLoc[0] = componentData[n].GetIntData();
+					dataLoc[0] = componentData[n]->GetIntData();
 					byteOffset += sizeof(int);
 				}
-				else if (componentData[n].GetDataType() == ComponentDataType::FLOAT)
+				else if (componentData[n]->GetDataType() == ComponentDataType::FLOAT)
 				{
 					float* dataLoc = (float*)GetComponent(newId, componentType, byteOffset);
-					dataLoc[0] = componentData[n].GetFloatData();
+					dataLoc[0] = componentData[n]->GetFloatData();
 					byteOffset += sizeof(float);
 				}
-				else if (componentData[n].GetDataType() == ComponentDataType::REFERENCE)
+				else if (componentData[n]->GetDataType() == ComponentDataType::REFERENCE)
 				{
 					int* dataLoc = (int*)GetComponent(newId, componentType, byteOffset);
-					dataLoc[0] = componentData[n].GetIntData();
+					dataLoc[0] = componentData[n]->GetIntData();
 					byteOffset += sizeof(int);
 				}
-				else if (componentData[n].GetDataType() == ComponentDataType::TEXT)
+				else if (componentData[n]->GetDataType() == ComponentDataType::TEXT)
 				{
 					char* dataLoc = (char*)GetComponent(newId, componentType, byteOffset);
-					std::string textData = componentData[n].GetTextData();
+					std::string textData = componentData[n]->GetTextData();
 					for (int i = 0; i < textData.size(); ++i)
 						dataLoc[i] = textData[i];
 					dataLoc[textData.size()] = '\0';
 					byteOffset += CHARSIZE * sizeof(char);
 				}
-				else if (componentData[n].GetDataType() == ComponentDataType::BOOL)
+				else if (componentData[n]->GetDataType() == ComponentDataType::BOOL)
 				{
 					bool* dataLoc = (bool*)GetComponent(newId, componentType, byteOffset);
-					dataLoc[0] = componentData[n].GetBoolData();
+					dataLoc[0] = componentData[n]->GetBoolData();
 					byteOffset += sizeof(bool);
 				}
 				
@@ -129,7 +129,7 @@ unsigned int World::CreateNewEntity(std::string _templateName)
 	return newId;
 }
 
-float World::GetMemoryUsage()
+unsigned int World::GetMemoryUsage()
 {
 	return m_dataManager->GetMemoryAllocated();
 }

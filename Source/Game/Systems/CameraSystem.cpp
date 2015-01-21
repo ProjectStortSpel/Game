@@ -13,6 +13,9 @@ CameraSystem::~CameraSystem()
 void CameraSystem::Initialize()
 {
 	SetSystemName("Camera System");
+
+	SetUpdateTaskCount(1);
+
 	/*	CameraSystem wants a position to place the camera at	*/
 	AddComponentTypeToFilter("Camera", ECSL::FilterType::Mandatory);
 
@@ -20,7 +23,7 @@ void CameraSystem::Initialize()
 	printf("CameraSystem initialized!\n");
 }
 
-void CameraSystem::Update(float _dt)
+void CameraSystem::Update(const ECSL::RuntimeInfo& _runtime)
 {
 #ifdef __ANDROID__
 	static float prevDistance0, prevDistance1;
@@ -56,13 +59,13 @@ void CameraSystem::Update(float _dt)
 	/*	Fulhax just nu, enbart för att slippa ha det i gameloopen (REN OCH FIN)	*/
 
 	if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_W) == Input::InputState::DOWN)
-		m_graphics->GetCamera()->MoveForward(_dt);
+		m_graphics->GetCamera()->MoveForward(_runtime.Dt);
 	if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_S) == Input::InputState::DOWN)
-		m_graphics->GetCamera()->MoveBackward(_dt);
+		m_graphics->GetCamera()->MoveBackward(_runtime.Dt);
 	if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_A) == Input::InputState::DOWN)
-		m_graphics->GetCamera()->MoveLeft(_dt);
+		m_graphics->GetCamera()->MoveLeft(_runtime.Dt);
 	if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_D) == Input::InputState::DOWN)
-		m_graphics->GetCamera()->MoveRight(_dt);
+		m_graphics->GetCamera()->MoveRight(_runtime.Dt);
 
 	// ROTATE CAMERA
 	if (m_input->GetMouse()->GetButtonState(Input::RightButton) == Input::InputState::DOWN)
@@ -77,14 +80,4 @@ void CameraSystem::Update(float _dt)
 	else
 		m_input->GetMouse()->HideCursor(false);
 #endif
-}
-
-void CameraSystem::OnEntityAdded(unsigned int _entityId)
-{
-
-}
-
-void CameraSystem::OnEntityRemoved(unsigned int _entityId)
-{
-
 }

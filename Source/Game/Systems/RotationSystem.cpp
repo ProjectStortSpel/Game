@@ -13,6 +13,8 @@ void RotationSystem::Initialize()
 {
 	SetSystemName("Rotation Remove System");
 
+	SetUpdateTaskCount(1);
+
 	/*	Rendersystem wants Position, Scale, Rotation and Render	*/
 	AddComponentTypeToFilter("Spin", ECSL::FilterType::Mandatory);
 	AddComponentTypeToFilter("Rotation", ECSL::FilterType::Mandatory);
@@ -23,7 +25,7 @@ void RotationSystem::Initialize()
 	printf("RenderSystem initialized!\n");
 }
 
-void RotationSystem::Update(float _dt)
+void RotationSystem::Update(const ECSL::RuntimeInfo& _runtime)
 {
 	auto entities = *GetEntities();
 
@@ -36,18 +38,8 @@ void RotationSystem::Update(float _dt)
 		Rotation = (float*)GetComponent(entity, m_rotationId, 0);
 
 		for (int n = 0; n < 3; ++n)
-			Rotation[n] += Spin[n] * _dt;
+			Rotation[n] += Spin[n] * _runtime.Dt;
 
 		ComponentHasChanged(entity, m_rotationId);
 	}
-
-}
-
-void RotationSystem::OnEntityAdded(unsigned int _entityId)
-{
-}
-
-void RotationSystem::OnEntityRemoved(unsigned int _entityId)
-{
-
 }

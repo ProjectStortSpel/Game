@@ -15,11 +15,9 @@ public:
 	RenderRemoveSystem(Renderer::GraphicDevice* _graphics);
 	~RenderRemoveSystem();
 
-	void Update(float _dt);
 	void Initialize();
 
-	void OnEntityAdded(unsigned int _entityId);
-	void OnEntityRemoved(unsigned int _entityId);
+	void EntitiesRemoved(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities);
 
 private:
 	void UpdateMatrix(unsigned int _entityId);

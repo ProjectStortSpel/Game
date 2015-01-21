@@ -14,8 +14,7 @@ DataManager::DataManager(unsigned int _entityCount, std::vector<unsigned int>* _
 :	m_entityCount(_entityCount), m_componentTypeIds(_componentTypeIds),
 	m_entitiesToBeRemoved(new std::vector<unsigned int>()), m_changedEntities(new std::vector<unsigned int>()),
 	m_componentsToBeAdded(new std::map<unsigned int, std::vector<unsigned int>*>()),
-	m_componentsToBeRemoved(new std::map<unsigned int, std::vector<unsigned int>*>()),
-	m_componentDataToBeCleared(new std::map<unsigned int, std::vector<unsigned int>*>())
+	m_componentsToBeRemoved(new std::map<unsigned int, std::vector<unsigned int>*>())
 {
 	m_changedEntitiesMutex = SDL_CreateMutex();
 	m_entitiesToBeRemovedMutex = SDL_CreateMutex();
@@ -110,25 +109,13 @@ void DataManager::RemoveComponentFrom(unsigned int _componentTypeId, unsigned in
 void DataManager::UpdateEntityTable(const RuntimeInfo& _runtime)
 {
 	unsigned int startAt, endAt;
-	MPL::MathHelper::SplitIterations(startAt, endAt, m_changedEntities->size(), _runtime.TaskIndex, _runtime.TaskCount);
+	MPL::MathHelper::SplitIterations(startAt, endAt, m_changedEntitiesCopy->size(), _runtime.TaskIndex, _runtime.TaskCount);
 	for (unsigned int i = startAt; i < endAt; ++i)
 	{
-		unsigned int entityId = m_changedEntities->at(i);
+		unsigned int entityId = m_changedEntitiesCopy->at(i);
 
-		auto it = m_componentsToBeRemoved->find(entityId);
-		if (it != m_componentsToBeRemoved->end())
-		{
-			std::vector<unsigned int>* componentTypeIds = it->second;
-			for (unsigned int componentTypeId : *componentTypeIds)
-			{
-				m_entityTable->RemoveComponentFrom(entityId, componentTypeId);
-				DataToBeCleared(entityId, componentTypeId);
-			}
-			componentTypeIds->clear();
-		}
-
-		it = m_componentsToBeAdded->find(entityId);
-		if (it != m_componentsToBeAdded->end())
+		auto it = m_componentsToBeAddedCopy->find(entityId);
+		if (it != m_componentsToBeAddedCopy->end())
 		{
 			std::vector<unsigned int>* componentTypeIds = it->second;
 			for (unsigned int componentTypeId : *componentTypeIds)
@@ -137,12 +124,19 @@ void DataManager::UpdateEntityTable(const RuntimeInfo& _runtime)
 			}
 			componentTypeIds->clear();
 		}
-	}
-}
 
-void DataManager::ClearDeadEntities(const RuntimeInfo& _runtime)
-{
-	unsigned int startAt, endAt;
+		it = m_componentsToBeRemovedCopy->find(entityId);
+		if (it != m_componentsToBeRemovedCopy->end())
+		{
+			std::vector<unsigned int>* componentTypeIds = it->second;
+			for (unsigned int componentTypeId : *componentTypeIds)
+			{
+				m_entityTable->RemoveComponentFrom(entityId, componentTypeId);
+			}
+			componentTypeIds->clear();
+		}
+	}
+
 	MPL::MathHelper::SplitIterations(startAt, endAt, m_entitiesToBeRemoved->size(), _runtime.TaskIndex, _runtime.TaskCount);
 	for (unsigned int i = startAt; i < endAt; ++i)
 	{
@@ -152,31 +146,57 @@ void DataManager::ClearDeadEntities(const RuntimeInfo& _runtime)
 
 void DataManager::RecycleEntityIds(const RuntimeInfo& _runtime)
 {
-	for (auto entityId : *m_entitiesToBeRemoved)
+	for (auto entityId : *m_entitiesToBeRemovedCopy)
 	{
 		m_entityTable->AddOldEntityId(entityId);
 	}
 }
 
-void DataManager::ClearComponentData(const RuntimeInfo& _runtime)
+void DataManager::CopyCurrentLists(const RuntimeInfo& _runtime)
 {
-	unsigned int startAt, endAt;
-	MPL::MathHelper::SplitIterations(startAt, endAt, m_componentDataToBeCleared->size(), _runtime.TaskIndex, _runtime.TaskCount);
-	for (unsigned int i = startAt; i < endAt; ++i)
+	m_componentsToBeAddedCopy = m_componentsToBeAdded;
+	m_componentsToBeRemovedCopy = m_componentsToBeRemoved;
+	m_entitiesToBeRemovedCopy = m_entitiesToBeRemoved;
+	m_changedEntitiesCopy = m_changedEntities;
+
+	m_componentsToBeAdded = new std::map<unsigned int, std::vector<unsigned int>*>();
+	m_componentsToBeRemoved = new std::map<unsigned int, std::vector<unsigned int>*>();
+	m_entitiesToBeRemoved = new std::vector<unsigned int>();
+	m_changedEntities = new std::vector<unsigned int>();
+}
+
+void DataManager::ClearCopiedLists(const RuntimeInfo& _runtime)
+{
+	for (auto keyValuePair : *m_componentsToBeAddedCopy)
+		delete(keyValuePair.second);
+	delete(m_componentsToBeAddedCopy);
+	for (auto keyValuePair : *m_componentsToBeRemovedCopy)
+		delete(keyValuePair.second);
+	delete(m_componentsToBeRemovedCopy);
+	delete(m_entitiesToBeRemovedCopy);
+	delete(m_changedEntitiesCopy);
+}
+
+void DataManager::DeleteComponentData(const RuntimeInfo& _runtime)
+{
+	/* Remove individual components from componentsToBeRemovedCopy */
+	for (auto entityComponentsPair : *m_componentsToBeRemovedCopy)
 	{
-		auto it = m_componentDataToBeCleared->at(i);
-		m_componentTables[m_componentDataToBeCleared->at(i)];
+		for (auto component : *entityComponentsPair.second)
+		{
+			(*m_componentTables)[component]->ClearComponent(entityComponentsPair.first);
+		}
 	}
-}
 
-void DataManager::ClearComponentChangeLists(const RuntimeInfo& _runtime)
-{
-	m_changedEntities->clear();
-}
-
-void DataManager::ClearDeadEntitiesChangeLists(const RuntimeInfo& _runtime)
-{
-	m_entitiesToBeRemoved->clear();
+	/* Delete every component from a dead entity */
+	for (auto entityId : *m_entitiesToBeRemoved)
+	{
+		for (auto componentTypeId : *m_componentTypeIds)
+		{
+			if (m_entityTable->EntityHasComponent(entityId, componentTypeId))
+				(*m_componentTables)[componentTypeId]->ClearComponent(entityId);
+		}
+	}
 }
 
 unsigned int DataManager::GetMemoryAllocated()
@@ -202,6 +222,9 @@ void DataManager::Changed(unsigned int _entityId)
 void DataManager::ToBeAdded(unsigned int _entityId, unsigned int _componentTypeId)
 {
 	SDL_LockMutex(m_componentsToBeAddedMutex);
+	auto it = m_componentsToBeAdded->find(_entityId);
+	if (it == m_componentsToBeAdded->end())
+		(*m_componentsToBeAdded)[_entityId] = new std::vector<unsigned int>();
 	ContainerHelper::AddUniqueElement<unsigned int>(_componentTypeId, *(*m_componentsToBeAdded)[_entityId]);
 	SDL_UnlockMutex(m_componentsToBeAddedMutex);
 }
@@ -216,13 +239,9 @@ void DataManager::ToBeRemoved(unsigned int _entityId)
 void DataManager::ToBeRemoved(unsigned int _entityId, unsigned int _componentTypeId)
 {
 	SDL_LockMutex(m_componentsToBeRemovedMutex);
+	auto it = m_componentsToBeRemoved->find(_entityId);
+	if (it == m_componentsToBeRemoved->end())
+		(*m_componentsToBeRemoved)[_entityId] = new std::vector<unsigned int>();
 	ContainerHelper::AddUniqueElement<unsigned int>(_componentTypeId, *(*m_componentsToBeRemoved)[_entityId]);
 	SDL_UnlockMutex(m_componentsToBeRemovedMutex);
-}
-
-void DataManager::DataToBeCleared(unsigned int _entityId, unsigned int _componentTypeId)
-{
-	SDL_LockMutex(m_componentDataToBeClearedMutex);
-	ContainerHelper::AddUniqueElement<unsigned int>(_componentTypeId, *(*m_componentDataToBeCleared)[_entityId]);
-	SDL_UnlockMutex(m_componentDataToBeClearedMutex);
 }

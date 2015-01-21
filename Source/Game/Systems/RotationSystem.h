@@ -16,11 +16,8 @@ public:
 	RotationSystem();
 	~RotationSystem();
 
-	void Update(float _dt);
 	void Initialize();
-
-	void OnEntityAdded(unsigned int _entityId);
-	void OnEntityRemoved(unsigned int _entityId);
+	void Update(const ECSL::RuntimeInfo& _runtime);
 
 private:
 	unsigned int m_rotationId, m_spinId;

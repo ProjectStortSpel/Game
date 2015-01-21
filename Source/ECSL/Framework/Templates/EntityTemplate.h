@@ -8,15 +8,17 @@ namespace ECSL
 {
 	struct DECLSPEC TemplateEntry
 	{
-		TemplateEntry(int data){ m_intData = data; m_dataType = ComponentDataType::INT; }
-		TemplateEntry(float data){ m_floatData = data; m_dataType = ComponentDataType::FLOAT; }
-		TemplateEntry(std::string data){ m_textData = data; m_dataType = ComponentDataType::TEXT; }
-		TemplateEntry(bool data){ m_boolData = data; m_dataType = ComponentDataType::BOOL; }
+		TemplateEntry(int _data);
+		TemplateEntry(float _data);
+		TemplateEntry(std::string& _data);
+		TemplateEntry(bool _data);
+
+		~TemplateEntry();
 
 		ComponentDataType GetDataType(){ return m_dataType; }
 		int GetIntData(){ return m_intData; }
 		float GetFloatData(){ return m_floatData; }
-		std::string GetTextData(){ return m_textData; }
+		const std::string& GetTextData(){ return m_textData; }
 		bool GetBoolData() { return m_boolData; }
 
 	private:
@@ -31,17 +33,17 @@ namespace ECSL
 	{
 	public:
 		EntityTemplate(
-			std::string	_name,
-			std::map<std::string, std::vector<TemplateEntry>>& _components
+			const std::string& _name,
+			std::map<std::string, std::vector<TemplateEntry*>>& _components
 			);
 		~EntityTemplate();
 
-		inline std::string& GetName(){ return m_name; }
-		inline std::map<std::string, std::vector<TemplateEntry>>* GetComponents() { return &m_components; }
+		inline const std::string& GetName(){ return *m_name; }
+		inline std::map<std::string, std::vector<TemplateEntry*>>* GetComponents() { return m_components; }
 
 	private:
-		std::string	m_name;
-		std::map<std::string, std::vector<TemplateEntry>> m_components;
+		std::string* m_name;
+		std::map<std::string, std::vector<TemplateEntry*>>* m_components;
 	};
 }
 

@@ -114,6 +114,8 @@ void GraphicDevice::Update(float _dt)
 	m_lightDefaults[2] = m_dirLightDirection.z;	//dir z
 	BufferDirectionalLight(&m_lightDefaults[0]);
 	m_shadowMap->UpdateViewMatrix(vec3(8, 0, 8) - (10.0f*normalize(m_dirLightDirection)), vec3(8, 0, 8));
+
+	BufferModels();
 }
 
 void GraphicDevice::WriteShadowMapDepth()
@@ -928,23 +930,37 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 	int modelID = m_modelIDcounter;
 	m_modelIDcounter++;
 
+	//	Lägg till i en lista, följande
+	//	std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType
+
+	ModelToLoad* modelToLoad = new ModelToLoad();
+	modelToLoad->Dir = _dir;
+	modelToLoad->File = _file;
+	modelToLoad->MatrixPtr = _matrixPtr;
+	modelToLoad->RenderType = _renderType;
+	m_modelsToLoad[modelID] = modelToLoad;
+
+	return modelID;
+}
+void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
+{
 	Shader *shaderPtr = NULL;
-	if (_renderType == RENDER_DEFERRED)
+	if (_modelToLoad->RenderType == RENDER_DEFERRED)
 	{
 		shaderPtr = &m_deferredShader1;
 		m_deferredShader1.UseProgram();
 	}
-	else if (_renderType == RENDER_FORWARD)
+	else if (_modelToLoad->RenderType == RENDER_FORWARD)
 	{
 		shaderPtr = &m_forwardShader;
 		m_forwardShader.UseProgram();
 	}
-	else if (_renderType == RENDER_VIEWSPACE)
+	else if (_modelToLoad->RenderType == RENDER_VIEWSPACE)
 	{
 		shaderPtr = &m_viewspaceShader;
 		m_viewspaceShader.UseProgram();
 	}
-	else if (_renderType == RENDER_INTERFACE)
+	else if (_modelToLoad->RenderType == RENDER_INTERFACE)
 	{
 		shaderPtr = &m_interfaceShader;
 		m_interfaceShader.UseProgram();
@@ -954,7 +970,7 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 
 	// Import Object
 	//ObjectData obj = AddObject(_dir, _file);
-	ObjectData obj = ModelLoader::importObject(_dir, _file);
+	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
 
 	// Import Texture
 	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
@@ -976,65 +992,72 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 	//for the matrices (modelView + normal)
 	m_vramUsage += (16 + 9) * sizeof(float);
 
-	if (_renderType == RENDER_DEFERRED)
+	if (_modelToLoad->RenderType == RENDER_DEFERRED)
 	{
 		for (int i = 0; i < m_modelsDeferred.size(); i++)
 		{
 			if (m_modelsDeferred[i] == model)
 			{
-				m_modelsDeferred[i].instances.push_back(Instance(modelID, true, _matrixPtr));
-				return modelID;
+				m_modelsDeferred[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr));
+				return;
 			}
 		}
 	}
-	else if (_renderType == RENDER_FORWARD)
+	else if (_modelToLoad->RenderType == RENDER_FORWARD)
 	{
 		for (int i = 0; i < m_modelsForward.size(); i++)
 		{
 			if (m_modelsForward[i] == model)
 			{
-				m_modelsForward[i].instances.push_back(Instance(modelID, true, _matrixPtr));
-				return modelID;
+				m_modelsForward[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr));
+				return;
 			}
 		}
 	}
-	else if (_renderType == RENDER_VIEWSPACE)
+	else if (_modelToLoad->RenderType == RENDER_VIEWSPACE)
 	{
 		for (int i = 0; i < m_modelsViewspace.size(); i++)
 		{
 			if (m_modelsViewspace[i] == model)
 			{
-				m_modelsViewspace[i].instances.push_back(Instance(modelID, true, _matrixPtr));
-				return modelID;
+				m_modelsViewspace[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr));
+				return;
 			}
 		}
 	}
-	else if (_renderType == RENDER_INTERFACE)
+	else if (_modelToLoad->RenderType == RENDER_INTERFACE)
 	{
 		for (int i = 0; i < m_modelsInterface.size(); i++)
 		{
 			if (m_modelsInterface[i] == model)
 			{
-				m_modelsInterface[i].instances.push_back(Instance(modelID, true, _matrixPtr));
-				return modelID;
+				m_modelsInterface[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr));
+				return;
 			}
 		}
 	}
-	
+
 	// Set model
 	//if model doesnt exist
-	model.instances.push_back(Instance(modelID, true, _matrixPtr));
+	model.instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr));
 	// Push back the model
-	if (_renderType == RENDER_DEFERRED)
+	if (_modelToLoad->RenderType == RENDER_DEFERRED)
 		m_modelsDeferred.push_back(model);
-	else if (_renderType == RENDER_FORWARD)
+	else if (_modelToLoad->RenderType == RENDER_FORWARD)
 		m_modelsForward.push_back(model);
-	else if (_renderType == RENDER_VIEWSPACE)
+	else if (_modelToLoad->RenderType == RENDER_VIEWSPACE)
 		m_modelsViewspace.push_back(model);
-	else if (_renderType == RENDER_INTERFACE)
+	else if (_modelToLoad->RenderType == RENDER_INTERFACE)
 		m_modelsInterface.push_back(model);
-
-	return modelID;
+}
+void GraphicDevice::BufferModels()
+{
+	for (auto pair : m_modelsToLoad)
+	{
+		BufferModel(pair.first, pair.second);
+		delete(pair.second);
+	}
+	m_modelsToLoad.clear();
 }
 bool GraphicDevice::RemoveModel(int _id)
 {

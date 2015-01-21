@@ -14,6 +14,8 @@ void RenderRemoveSystem::Initialize()
 {
 	SetSystemName("Render Remove System");
 
+	SetEntitiesRemovedTaskCount(1);
+
 	/*	Rendersystem wants Position, Scale, Rotation and Render	*/
 	AddComponentTypeToFilter("Render", ECSL::FilterType::Mandatory);
 
@@ -23,17 +25,12 @@ void RenderRemoveSystem::Initialize()
 	printf("RenderRemoveSystem initialized!\n");
 }
 
-void RenderRemoveSystem::Update(float _dt)
+void RenderRemoveSystem::EntitiesRemoved(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities)
 {
-}
-
-void RenderRemoveSystem::OnEntityAdded(unsigned int _entityId)
-{
-}
-
-void RenderRemoveSystem::OnEntityRemoved(unsigned int _entityId)
-{
-	/*	Tell Graphics to disable model	*/
-	int modelId = *(int*)GetComponent(_entityId, "Render", "ModelId");
-	m_graphics->RemoveModel(modelId);
+	for (auto entityId : _entities)
+	{
+		/*	Tell Graphics to disable model	*/
+		int modelId = *(int*)GetComponent(entityId, "Render", "ModelId");
+		m_graphics->RemoveModel(modelId);
+	}
 }

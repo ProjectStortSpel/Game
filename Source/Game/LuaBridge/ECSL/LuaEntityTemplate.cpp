@@ -7,6 +7,11 @@ namespace LuaBridge
 
   LuaEntityTemplate::~LuaEntityTemplate()
   {
+	  for (auto keyValuePair : m_components)
+	  {
+		  for (auto templateEntry : keyValuePair.second)
+			  delete(templateEntry);
+	  }
     m_components.clear();
   }
   
@@ -47,86 +52,86 @@ namespace LuaBridge
   int LuaEntityTemplate::AddComponent()
   {
     std::string componentName = LuaEmbedder::PullString(1);
-    m_components[componentName] = std::vector<ECSL::TemplateEntry>();
+    m_components[componentName] = std::vector<ECSL::TemplateEntry*>();
     return 0;
   }
   
   int LuaEntityTemplate::SetFloat()
   {
     std::string componentName = LuaEmbedder::PullString(1);
-    m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullFloat(2)));
+    m_components[componentName].push_back(new ECSL::TemplateEntry(LuaEmbedder::PullFloat(2)));
     return 0;
   }
   int LuaEntityTemplate::SetFloat2()
   {
     std::string componentName = LuaEmbedder::PullString(1);
-    m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullFloat(2)));
-    m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullFloat(3)));
+    m_components[componentName].push_back(new ECSL::TemplateEntry(LuaEmbedder::PullFloat(2)));
+    m_components[componentName].push_back(new ECSL::TemplateEntry(LuaEmbedder::PullFloat(3)));
     return 0;
   }
   int LuaEntityTemplate::SetFloat3()
   {
     std::string componentName = LuaEmbedder::PullString(1);
-    m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullFloat(2)));
-    m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullFloat(3)));
-    m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullFloat(4)));
+    m_components[componentName].push_back(new ECSL::TemplateEntry(LuaEmbedder::PullFloat(2)));
+    m_components[componentName].push_back(new ECSL::TemplateEntry(LuaEmbedder::PullFloat(3)));
+    m_components[componentName].push_back(new ECSL::TemplateEntry(LuaEmbedder::PullFloat(4)));
     return 0;
   }
   int LuaEntityTemplate::SetFloat4()
   {
 	  std::string componentName = LuaEmbedder::PullString(1);
-	  m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullFloat(2)));
-	  m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullFloat(3)));
-	  m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullFloat(4)));
-	  m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullFloat(5)));
+	  m_components[componentName].push_back(new ECSL::TemplateEntry(LuaEmbedder::PullFloat(2)));
+	  m_components[componentName].push_back(new ECSL::TemplateEntry(LuaEmbedder::PullFloat(3)));
+	  m_components[componentName].push_back(new ECSL::TemplateEntry(LuaEmbedder::PullFloat(4)));
+	  m_components[componentName].push_back(new ECSL::TemplateEntry(LuaEmbedder::PullFloat(5)));
 	  return 0;
   }
   int LuaEntityTemplate::SetFloat5()
   {
 	  std::string componentName = LuaEmbedder::PullString(1);
-	  m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullFloat(2)));
-	  m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullFloat(3)));
-	  m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullFloat(4)));
-	  m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullFloat(5)));
-	  m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullFloat(6)));
+	  m_components[componentName].push_back(new ECSL::TemplateEntry(LuaEmbedder::PullFloat(2)));
+	  m_components[componentName].push_back(new ECSL::TemplateEntry(LuaEmbedder::PullFloat(3)));
+	  m_components[componentName].push_back(new ECSL::TemplateEntry(LuaEmbedder::PullFloat(4)));
+	  m_components[componentName].push_back(new ECSL::TemplateEntry(LuaEmbedder::PullFloat(5)));
+	  m_components[componentName].push_back(new ECSL::TemplateEntry(LuaEmbedder::PullFloat(6)));
 	  return 0;
   }
   
   int LuaEntityTemplate::SetInt()
   {
     std::string componentName = LuaEmbedder::PullString(1);
-    m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullInt(2)));
+	m_components[componentName].push_back(new ECSL::TemplateEntry(LuaEmbedder::PullInt(2)));
     return 0;
   }
   int LuaEntityTemplate::SetInt2()
   {
     std::string componentName = LuaEmbedder::PullString(1);
-    m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullInt(2)));
-    m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullInt(3)));
+	m_components[componentName].push_back(new ECSL::TemplateEntry(LuaEmbedder::PullInt(2)));
+	m_components[componentName].push_back(new ECSL::TemplateEntry(LuaEmbedder::PullInt(3)));
     return 0;
   }
   int LuaEntityTemplate::SetInt3()
   {
     std::string componentName = LuaEmbedder::PullString(1);
-    m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullInt(2)));
-    m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullInt(3)));
-    m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullInt(4)));
+	m_components[componentName].push_back(new ECSL::TemplateEntry(LuaEmbedder::PullInt(2)));
+	m_components[componentName].push_back(new ECSL::TemplateEntry(LuaEmbedder::PullInt(3)));
+	m_components[componentName].push_back(new ECSL::TemplateEntry(LuaEmbedder::PullInt(4)));
     return 0;
   }
   int LuaEntityTemplate::SetInt4()
   {
     std::string componentName = LuaEmbedder::PullString(1);
-    m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullInt(2)));
-    m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullInt(3)));
-    m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullInt(4)));
-    m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullInt(5)));
+	m_components[componentName].push_back(new ECSL::TemplateEntry(LuaEmbedder::PullInt(2)));
+	m_components[componentName].push_back(new ECSL::TemplateEntry(LuaEmbedder::PullInt(3)));
+	m_components[componentName].push_back(new ECSL::TemplateEntry(LuaEmbedder::PullInt(4)));
+	m_components[componentName].push_back(new ECSL::TemplateEntry(LuaEmbedder::PullInt(5)));
     return 0;
   }
 
   int LuaEntityTemplate::SetString()
   {
     std::string componentName = LuaEmbedder::PullString(1);
-    m_components[componentName].push_back(ECSL::TemplateEntry(LuaEmbedder::PullString(2)));
+	m_components[componentName].push_back(new ECSL::TemplateEntry(LuaEmbedder::PullString(2)));
     return 0;
   }
   
@@ -135,7 +140,7 @@ namespace LuaBridge
 	  bool active = LuaEmbedder::PullBool(2);
 
 	  std::string componentName = LuaEmbedder::PullString(1);
-	  m_components[componentName].push_back(ECSL::TemplateEntry(active));
+	  m_components[componentName].push_back(new ECSL::TemplateEntry(active));
 
 	  return 0;
   };
@@ -146,9 +151,9 @@ namespace LuaBridge
     std::string modelName = LuaEmbedder::PullString(2);
 	std::string folderName = LuaEmbedder::PullString(3);
 	int renderType = LuaEmbedder::PullInt(4);
-    m_components[componentName].push_back(ECSL::TemplateEntry(modelName));
-	m_components[componentName].push_back(ECSL::TemplateEntry(folderName));
-	m_components[componentName].push_back(ECSL::TemplateEntry(renderType));
+	m_components[componentName].push_back(new ECSL::TemplateEntry(modelName));
+	m_components[componentName].push_back(new ECSL::TemplateEntry(folderName));
+	m_components[componentName].push_back(new ECSL::TemplateEntry(renderType));
     return 0;
   }
   
@@ -165,16 +170,16 @@ namespace LuaBridge
     float colorGreen = LuaEmbedder::PullFloat(9);
     float colorBlue = LuaEmbedder::PullFloat(10);
     float range = LuaEmbedder::PullFloat(11);
-    m_components[componentName].push_back(ECSL::TemplateEntry(posX));
-    m_components[componentName].push_back(ECSL::TemplateEntry(posY));
-    m_components[componentName].push_back(ECSL::TemplateEntry(posZ));
-    m_components[componentName].push_back(ECSL::TemplateEntry(ambientInt));
-    m_components[componentName].push_back(ECSL::TemplateEntry(diffuseInt));
-    m_components[componentName].push_back(ECSL::TemplateEntry(specularInt));
-    m_components[componentName].push_back(ECSL::TemplateEntry(colorRed));
-    m_components[componentName].push_back(ECSL::TemplateEntry(colorGreen));
-    m_components[componentName].push_back(ECSL::TemplateEntry(colorBlue));
-    m_components[componentName].push_back(ECSL::TemplateEntry(range));
+	m_components[componentName].push_back(new ECSL::TemplateEntry(posX));
+	m_components[componentName].push_back(new ECSL::TemplateEntry(posY));
+	m_components[componentName].push_back(new ECSL::TemplateEntry(posZ));
+	m_components[componentName].push_back(new ECSL::TemplateEntry(ambientInt));
+	m_components[componentName].push_back(new ECSL::TemplateEntry(diffuseInt));
+	m_components[componentName].push_back(new ECSL::TemplateEntry(specularInt));
+	m_components[componentName].push_back(new ECSL::TemplateEntry(colorRed));
+	m_components[componentName].push_back(new ECSL::TemplateEntry(colorGreen));
+	m_components[componentName].push_back(new ECSL::TemplateEntry(colorBlue));
+	m_components[componentName].push_back(new ECSL::TemplateEntry(range));
     return 0;
   }
   

@@ -22,10 +22,10 @@ SlaveThread::~SlaveThread()
 
 bool SlaveThread::StartThread(const std::string& _name)
 {
-	m_thread = SDL_CreateThread(BeginThreadLoop, _name.c_str(), this);
 	m_sleepSem = SDL_CreateSemaphore(0);
 	m_alive = true;
 	m_sleeping = false;
+	m_thread = SDL_CreateThread(BeginThreadLoop, _name.c_str(), this);
 	return (m_thread != 0);
 }
 

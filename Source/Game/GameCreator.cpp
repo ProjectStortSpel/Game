@@ -87,6 +87,11 @@ void GameCreator::InitializeNetwork()
 	m_remoteConsole = new RemoteConsole();
 }
 
+void GameCreator::InitializeThreads()
+{
+	MPL::TaskManager::GetInstance().CreateSlaves();
+}
+
 void GameCreator::InitializeLua() 
 {
 	LuaEmbedder::Init();
@@ -141,21 +146,27 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	//NetworkMessagesSystem* nms = new NetworkMessagesSystem();
 	//nms->SetConsole(&m_consoleManager);
 
+	worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(new PointlightSystem(m_graphics));
+	worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(new RotationSystem());
+	worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(new CameraSystem(m_graphics));
+	worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(new ModelSystem(m_graphics));
-
+	worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(new SyncEntitiesSystem());
 	//worldCreator.AddLuaSystemToCurrentGroup(new ReceivePacketSystem());
+	worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderSystem(m_graphics));
 	//worldCreator.AddLuaSystemToCurrentGroup(new ReconnectSystem());
+	worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderRemoveSystem(m_graphics));
-
+	worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(new ResetChangedSystem());
 
 	m_world = worldCreator.CreateWorld(1000);
-	//LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
+	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
 
 	//LuaEmbedder::CallMethods<LuaBridge::LuaSystem>("System", "PostInitialize");
 

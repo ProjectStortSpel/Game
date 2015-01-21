@@ -36,8 +36,6 @@ void ModelSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::ve
 		ModelPath.append(std::string(ModelData));
 		ModelPath.append("/");
 
-
-
 		int RenderType = *(int*)GetComponent(entityId, "Model", "RenderType");
 		RenderType = 2;
 

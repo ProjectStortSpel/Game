@@ -3,19 +3,26 @@
 using namespace ECSL;
 
 EntityTemplateReader::EntityTemplateReader()
+: m_name(new std::string()), m_components(new std::map<std::string, std::vector<TemplateEntry*>>())
 {
 
 }
 
 EntityTemplateReader::~EntityTemplateReader()
 {
-
+	delete(m_name);
+	for (auto keyValuePair : *m_components)
+	{
+		for (auto templateEntry : keyValuePair.second)
+			delete(templateEntry);
+	}
+	delete(m_components);
 }
 
 void EntityTemplateReader::ClearEntityTemplate()
 {
-	m_name = "";
-	m_components = std::map<std::string, std::vector<TemplateEntry>>();
+	m_name = new std::string("");
+	m_components = new std::map<std::string, std::vector<TemplateEntry*>>();
 }
 
 bool EntityTemplateReader::ReadTemplates(std::vector<EntityTemplate*>& _out, const std::string& _filePath, const Section& _section)
@@ -34,7 +41,7 @@ bool EntityTemplateReader::ReadTemplates(std::vector<EntityTemplate*>& _out, con
 			printf("Invalid component type syntax in file: %s\n", _filePath.c_str());
 			return false;
 		}
-		_out.push_back(new EntityTemplate(m_name, m_components));
+		_out.push_back(new EntityTemplate(*m_name, *m_components));
 		ClearEntityTemplate();
 	}
 
@@ -76,7 +83,9 @@ bool EntityTemplateReader::InterpretTokens(const Section* _section, const unsign
 
 bool EntityTemplateReader::InterpretTemplateName(const Section* _section, const unsigned int _depth)
 {
-	m_name = _section->Name;
+	if (m_name)
+		delete(m_name);
+	m_name = new std::string(_section->Name);
 	return true;
 }
 
@@ -87,7 +96,7 @@ bool EntityTemplateReader::InterpretComponentTokens(const Section* _section, con
 		std::vector<std::string> tokens = _section->Tokens[tokenLineIndex];
 		std::string firstToken = tokens[0];
 
-		m_components.insert(std::pair<std::string, std::vector<TemplateEntry>>(firstToken, std::vector<TemplateEntry>()));
+		(*m_components).insert(std::pair<std::string, std::vector<TemplateEntry*>>(firstToken, std::vector<TemplateEntry*>()));
 	}
 	return true;
 }
@@ -124,15 +133,15 @@ bool EntityTemplateReader::ConvertDataEntry(std::string& _componentType, std::st
 			
 	if (isText)
 	{
-		m_components[_componentType].push_back(TemplateEntry(_dataEntry));
+		(*m_components)[_componentType].push_back(new TemplateEntry(_dataEntry));
 	}
 	else
 	{
 		/*	Is the number a integer or float	*/
 		if (tolower(_dataEntry[_dataEntry.size() - 1]) == 'f')
-			m_components[_componentType].push_back((float)atof(_dataEntry.c_str()));
+			(*m_components)[_componentType].push_back(new TemplateEntry((float)atof(_dataEntry.c_str())));
 		else
-			m_components[_componentType].push_back(atoi(_dataEntry.c_str()));
+			(*m_components)[_componentType].push_back(new TemplateEntry(atoi(_dataEntry.c_str())));
 	}
 
 	return true;
@@ -141,7 +150,7 @@ bool EntityTemplateReader::ConvertDataEntry(std::string& _componentType, std::st
 bool EntityTemplateReader::ValidateEntityTemplate()
 {
 	/*	Check if valid data was read	*/
-	if (m_name.size() == 0 || m_components.size() == 0)
+	if (m_name->size() == 0 || (*m_components).size() == 0)
 		return false;
 
 	return true;

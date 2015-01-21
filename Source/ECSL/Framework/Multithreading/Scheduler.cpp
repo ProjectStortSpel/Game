@@ -8,16 +8,17 @@ Scheduler::Scheduler(DataManager* _dataManager, SystemManager* _systemManager, M
 	m_messageManager(_messageManager),
 	m_workItems(new std::vector<MPL::WorkItem*>()),
 	m_updateWorkItems(new std::vector<std::vector<MPL::WorkItem*>*>()),
-	m_updateEntityTableWorkItems(new std::vector<MPL::WorkItem*>()),
 	m_entitiesAddedWorkItems(new std::vector<std::vector<MPL::WorkItem*>*>()),
 	m_entitiesRemovedWorkItems(new std::vector<std::vector<MPL::WorkItem*>*>()),
 	m_sortMessagesWorkItems(new std::vector<MPL::WorkItem*>()),
 	m_messagesRecievedWorkItems(new std::vector<std::vector<MPL::WorkItem*>*>()),
 	m_deleteMessagesWorkItems(new std::vector<MPL::WorkItem*>()),
 	m_updateSystemEntityListsWorkItems(new std::vector<MPL::WorkItem*>()),
-	m_clearDeadEntitiesWorkItems(new std::vector<MPL::WorkItem*>()),
+	m_copyCurrentListsWorkItems(new std::vector<MPL::WorkItem*>()),
+	m_updateEntityTableWorkItems(new std::vector<MPL::WorkItem*>()),
+	m_deleteComponentDataWorkItems(new std::vector<MPL::WorkItem*>()),
 	m_recycleEntityIdsWorkItems(new std::vector<MPL::WorkItem*>()),
-	m_clearChangeListsWorkItems(new std::vector<MPL::WorkItem*>()),
+	m_clearCopiedListsWorkItems(new std::vector<MPL::WorkItem*>()),
 	m_clearListsWorkItems(new std::vector<MPL::WorkItem*>())
 {
 	unsigned int workCount = MPL::TaskManager::GetInstance().GetThreadCount();
@@ -37,16 +38,14 @@ Scheduler::~Scheduler()
 	for (auto workItem : *m_workItems)
 		delete(workItem);
 	delete(m_updateWorkItems);
-	delete(m_updateEntityTableWorkItems);
 	delete(m_entitiesAddedWorkItems);
 	delete(m_entitiesRemovedWorkItems);
 	delete(m_sortMessagesWorkItems);
 	delete(m_messagesRecievedWorkItems);
 	delete(m_deleteMessagesWorkItems);
 	delete(m_updateSystemEntityListsWorkItems);
-	delete(m_clearDeadEntitiesWorkItems);
+	delete(m_updateEntityTableWorkItems);
 	delete(m_recycleEntityIdsWorkItems);
-	delete(m_clearChangeListsWorkItems);
 	delete(m_clearListsWorkItems);
 
 	for (auto systemGroup : *m_entitiesToAddToSystems)
@@ -77,11 +76,6 @@ MPL::TaskId Scheduler::ScheduleUpdateSystems(MPL::TaskId _dependency)
 		currentTaskId = m_taskManager->Add(lastTaskId, *workItems);
 	}
 	return currentTaskId;
-}
-
-MPL::TaskId Scheduler::ScheduleUpdateEntityTable(MPL::TaskId _dependency)
-{
-	return m_taskManager->Add(_dependency, *m_updateEntityTableWorkItems);
 }
 
 MPL::TaskId Scheduler::ScheduleUpdateSystemEntityLists(MPL::TaskId _dependency)
@@ -141,9 +135,19 @@ MPL::TaskId Scheduler::ScheduleDeleteMessages(MPL::TaskId _dependency)
 	return m_taskManager->Add(_dependency, *m_deleteMessagesWorkItems);
 }
 
-MPL::TaskId Scheduler::ScheduleClearDeadEntities(MPL::TaskId _dependency)
+MPL::TaskId Scheduler::ScheduleCopyCurrentLists(MPL::TaskId _dependency)
 {
-	return m_taskManager->Add(_dependency, *m_clearDeadEntitiesWorkItems);
+	return m_taskManager->Add(_dependency, *m_copyCurrentListsWorkItems);
+}
+
+MPL::TaskId Scheduler::ScheduleUpdateEntityTable(MPL::TaskId _dependency)
+{
+	return m_taskManager->Add(_dependency, *m_updateEntityTableWorkItems);
+}
+
+MPL::TaskId Scheduler::ScheduleDeleteComponentData(MPL::TaskId _dependency)
+{
+	return m_taskManager->Add(_dependency, *m_deleteComponentDataWorkItems);
 }
 
 MPL::TaskId Scheduler::ScheduleRecycleEntities(MPL::TaskId _dependency)
@@ -151,12 +155,12 @@ MPL::TaskId Scheduler::ScheduleRecycleEntities(MPL::TaskId _dependency)
 	return m_taskManager->Add(_dependency, *m_recycleEntityIdsWorkItems);
 }
 
-MPL::TaskId Scheduler::ScheduleClearChangeLists(MPL::TaskId _dependency)
+MPL::TaskId Scheduler::ScheduleClearCopiedLists(MPL::TaskId _dependency)
 {
-	return m_taskManager->Add(_dependency, *m_clearChangeListsWorkItems);
+	return m_taskManager->Add(_dependency, *m_clearCopiedListsWorkItems);
 }
 
-MPL::TaskId Scheduler::ScheduleClearLists(MPL::TaskId _dependency)
+MPL::TaskId Scheduler::ScheduleClearSystemEntityChangeLists(MPL::TaskId _dependency)
 {
 	return m_taskManager->Add(_dependency, *m_clearListsWorkItems);
 }
@@ -187,24 +191,6 @@ void Scheduler::AddUpdateSystemsTasks()
 			m_updateWorkItems->push_back(workItems);
 		else
 			delete(workItems);
-	}
-}
-
-void Scheduler::AddUpdateEntityTableTask()
-{
-	const unsigned int updateEntityTableWorkCount = 1;
-	
-	for (unsigned int i = 0; i < updateEntityTableWorkCount; ++i)
-	{
-		UpdateEntityTableData* data = new UpdateEntityTableData();
-		data->DataManager = m_dataManager;
-		data->RuntimeInfo.TaskIndex = i;
-		data->RuntimeInfo.TaskCount = updateEntityTableWorkCount;
-		MPL::WorkItem* workItem = new MPL::WorkItem();
-		workItem->Work = &DataManagerUpdateEntityTable;
-		workItem->Data = data;
-		m_updateEntityTableWorkItems->push_back(workItem);
-		m_workItems->push_back(workItem);
 	}
 }
 
@@ -354,20 +340,56 @@ void Scheduler::AddDeleteMessagesTask()
 	}
 }
 
-void Scheduler::AddClearDeadEntitiesTask()
+void Scheduler::AddCopyCurrentListsTask()
 {
-	const unsigned int clearDeadEntitiesWorkCount = 1;
+	const unsigned int copyCurrentListsWorkCount = 1;
 
-	for (unsigned int i = 0; i < clearDeadEntitiesWorkCount; ++i)
+	for (unsigned int i = 0; i < copyCurrentListsWorkCount; ++i)
 	{
-		ClearDeadEntitiesData* data = new ClearDeadEntitiesData();
+		CopyCurrentListsData* data = new CopyCurrentListsData();
 		data->DataManager = m_dataManager;
 		data->RuntimeInfo.TaskIndex = i;
-		data->RuntimeInfo.TaskCount = clearDeadEntitiesWorkCount;
+		data->RuntimeInfo.TaskCount = copyCurrentListsWorkCount;
 		MPL::WorkItem* workItem = new MPL::WorkItem();
-		workItem->Work = &DataManagerClearDeadEntities;
+		workItem->Work = &DataManagerCopyCurrentLists;
 		workItem->Data = data;
-		m_clearDeadEntitiesWorkItems->push_back(workItem);
+		m_copyCurrentListsWorkItems->push_back(workItem);
+		m_workItems->push_back(workItem);
+	}
+}
+
+void Scheduler::AddUpdateEntityTableTask()
+{
+	const unsigned int updateEntityTableWorkCount = 1;
+
+	for (unsigned int i = 0; i < updateEntityTableWorkCount; ++i)
+	{
+		UpdateEntityTableData* data = new UpdateEntityTableData();
+		data->DataManager = m_dataManager;
+		data->RuntimeInfo.TaskIndex = i;
+		data->RuntimeInfo.TaskCount = updateEntityTableWorkCount;
+		MPL::WorkItem* workItem = new MPL::WorkItem();
+		workItem->Work = &DataManagerUpdateEntityTable;
+		workItem->Data = data;
+		m_updateEntityTableWorkItems->push_back(workItem);
+		m_workItems->push_back(workItem);
+	}
+}
+
+void Scheduler::AddDeleteComponentDataTask()
+{
+	const unsigned int deleteComponentDataWorkCount = 1;
+
+	for (unsigned int i = 0; i < deleteComponentDataWorkCount; ++i)
+	{
+		DeleteComponentDataData* data = new DeleteComponentDataData();
+		data->DataManager = m_dataManager;
+		data->RuntimeInfo.TaskIndex = i;
+		data->RuntimeInfo.TaskCount = deleteComponentDataWorkCount;
+		MPL::WorkItem* workItem = new MPL::WorkItem();
+		workItem->Work = &DataManagerDeleteComponentData;
+		workItem->Data = data;
+		m_deleteComponentDataWorkItems->push_back(workItem);
 		m_workItems->push_back(workItem);
 	}
 }
@@ -390,43 +412,43 @@ void Scheduler::AddRecycleEntityIdsTask()
 	}
 }
 
-void Scheduler::AddClearChangeListsTask()
+void Scheduler::AddClearCopiedListsTask()
 {
-	const unsigned int clearChangeListsWorkCount = 1;
+	const unsigned int clearCopiedListsWorkCount = 1;
 
-	for (unsigned int i = 0; i < clearChangeListsWorkCount; ++i)
+	for (unsigned int i = 0; i < clearCopiedListsWorkCount; ++i)
 	{
-		ClearChangeListsData* data = new ClearChangeListsData();
+		ClearCopiedListsData* data = new ClearCopiedListsData();
 		data->DataManager = m_dataManager;
 		data->RuntimeInfo.TaskIndex = i;
-		data->RuntimeInfo.TaskCount = clearChangeListsWorkCount;
+		data->RuntimeInfo.TaskCount = clearCopiedListsWorkCount;
 		MPL::WorkItem* workItem = new MPL::WorkItem();
-		workItem->Work = &DataManagerClearChangeLists;
+		workItem->Work = &DataManagerClearCopiedLists;
 		workItem->Data = data;
-		m_clearChangeListsWorkItems->push_back(workItem);
+		m_clearCopiedListsWorkItems->push_back(workItem);
 		m_workItems->push_back(workItem);
 	}
 }
 
-void Scheduler::AddClearListsTask()
+void Scheduler::AddClearSystemEntityChangeListsTask()
 {
-	const unsigned int clearListsWorkCount = 1;
+	const unsigned int clearSystemEntityChangeListsCount = 1;
 
-	for (unsigned int i = 0; i < clearListsWorkCount; ++i)
+	for (unsigned int i = 0; i < clearSystemEntityChangeListsCount; ++i)
 	{
 		ClearListsData* data = new ClearListsData();
 		data->Scheduler = this;
 		data->RuntimeInfo.TaskIndex = i;
-		data->RuntimeInfo.TaskCount = clearListsWorkCount;
+		data->RuntimeInfo.TaskCount = clearSystemEntityChangeListsCount;
 		MPL::WorkItem* workItem = new MPL::WorkItem();
-		workItem->Work = &SchedulerClearLists;
+		workItem->Work = &SchedulerClearSystemEntityChangeLists;
 		workItem->Data = data;
 		m_clearListsWorkItems->push_back(workItem);
 		m_workItems->push_back(workItem);
 	}
 }
 
-void Scheduler::ClearLists(const RuntimeInfo& _runtimeInfo)
+void Scheduler::ClearSystemEntityChangeLists(const RuntimeInfo& _runtimeInfo)
 {
 	for (auto systemGroup : *m_entitiesToAddToSystems)
 		systemGroup->clear();
@@ -462,16 +484,22 @@ void ECSL::SystemMessagesRecieved(void* _data)
 	data->System->MessagesRecieved(*data->MessageManager->GetMessagesToSystem(data->System->GetId()));
 }
 
+void ECSL::DataManagerCopyCurrentLists(void* _data)
+{
+	CopyCurrentListsData* data = (CopyCurrentListsData*)_data;
+	data->DataManager->CopyCurrentLists(data->RuntimeInfo);
+}
+
 void ECSL::DataManagerUpdateEntityTable(void* _data)
 {
 	UpdateEntityTableData* data = (UpdateEntityTableData*)_data;
 	data->DataManager->UpdateEntityTable(data->RuntimeInfo);
 }
 
-void ECSL::DataManagerClearDeadEntities(void* _data)
+void ECSL::DataManagerDeleteComponentData(void* _data)
 {
-	ClearDeadEntitiesData* data = (ClearDeadEntitiesData*)_data;
-	data->DataManager->ClearDeadEntities(data->RuntimeInfo);
+	DeleteComponentDataData* data = (DeleteComponentDataData*)_data;
+	data->DataManager->DeleteComponentData(data->RuntimeInfo);
 }
 
 void ECSL::DataManagerRecycleEntityIds(void* _data)
@@ -480,10 +508,10 @@ void ECSL::DataManagerRecycleEntityIds(void* _data)
 	data->DataManager->RecycleEntityIds(data->RuntimeInfo);
 }
 
-void ECSL::DataManagerClearChangeLists(void* _data)
+void ECSL::DataManagerClearCopiedLists(void* _data)
 {
-	ClearChangeListsData* data = (ClearChangeListsData*)_data;
-	data->DataManager->ClearChangeLists(data->RuntimeInfo);
+	ClearCopiedListsData* data = (ClearCopiedListsData*)_data;
+	data->DataManager->ClearCopiedLists(data->RuntimeInfo);
 }
 
 void ECSL::SystemManagerUpdateSystemEntityLists(void* _data)
@@ -504,8 +532,8 @@ void ECSL::MessageManagerDeleteMessages(void* _data)
 	data->MessageManager->DeleteMessages(data->RuntimeInfo);
 }
 
-void ECSL::SchedulerClearLists(void* _data)
+void ECSL::SchedulerClearSystemEntityChangeLists(void* _data)
 {
 	ClearListsData* data = (ClearListsData*)_data;
-	data->Scheduler->ClearLists(data->RuntimeInfo);
+	data->Scheduler->ClearSystemEntityChangeLists(data->RuntimeInfo);
 }

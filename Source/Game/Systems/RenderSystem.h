@@ -15,8 +15,8 @@ public:
 	RenderSystem(Renderer::GraphicDevice* _graphics);
 	~RenderSystem();
 
-	void Update(const ECSL::RuntimeInfo& _runtime);
 	void Initialize();
+	void Update(const ECSL::RuntimeInfo& _runtime);
 
 	void EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities);
 	void EntitiesRemoved(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities);

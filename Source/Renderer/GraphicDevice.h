@@ -83,6 +83,14 @@ namespace Renderer
 		}
 	};
 
+	struct ModelToLoad
+	{
+		std::string Dir;
+		std::string File;
+		glm::mat4* MatrixPtr;
+		int RenderType;
+	};
+
 	class DECLSPEC GraphicDevice
 	{
 	public:
@@ -142,6 +150,9 @@ namespace Renderer
 
 		void CreateShadowMap();
 
+		void BufferModels();
+		void BufferModel(int _modelId, ModelToLoad* _modelToLoad);
+
 		Camera* m_camera;
 
 		SDL_Window*		m_window;
@@ -195,6 +206,7 @@ namespace Renderer
 		// Modelloader
 		int m_modelIDcounter;
 		std::vector<Model> m_modelsDeferred, m_modelsForward, m_modelsViewspace, m_modelsInterface;
+		std::map<int, ModelToLoad*> m_modelsToLoad;
 
 		// Pointlights buffer
 		GLuint m_pointlightBuffer, m_dirLightBuffer;

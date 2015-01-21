@@ -16,11 +16,8 @@ public:
 	CameraSystem(Renderer::GraphicDevice* _graphics);
 	~CameraSystem();
 
-	void Update(float _dt);
 	void Initialize();
-
-	void OnEntityAdded(unsigned int _entityId);
-	void OnEntityRemoved(unsigned int _entityId);
+	void Update(const ECSL::RuntimeInfo& _runtime);
 
 private:
 	Renderer::GraphicDevice* m_graphics;

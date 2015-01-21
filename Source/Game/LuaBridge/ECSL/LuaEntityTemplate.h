@@ -46,7 +46,7 @@ namespace LuaBridge
     
   private:
     std::string m_name;
-    std::map<std::string, std::vector<ECSL::TemplateEntry>> m_components;
+    std::map<std::string, std::vector<ECSL::TemplateEntry*>> m_components;
   };
 }
 

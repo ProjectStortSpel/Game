@@ -26,6 +26,7 @@ public:
 	void InitializeConsole();
 	void InitializeInput();
 	void InitializeNetwork();
+	void InitializeThreads();
 	void InitializeWorld(std::string _gameMode);
 	void InitializeLua();
 	

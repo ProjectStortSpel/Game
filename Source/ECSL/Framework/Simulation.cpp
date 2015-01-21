@@ -9,17 +9,18 @@ Simulation::Simulation(DataManager* _dataManager, SystemManager* _systemManager,
 {
 	m_scheduler = new Scheduler(_dataManager, _systemManager, _messageManager);
 	m_scheduler->AddUpdateSystemsTasks();
-	m_scheduler->AddUpdateEntityTableTask();
 	m_scheduler->AddUpdateSystemEntityListsTasks();
 	m_scheduler->AddEntitiesAddedTasks();
 	m_scheduler->AddEntitiesRemovedTasks();
 	m_scheduler->AddSortMessagesTask();
 	m_scheduler->AddMessagesRecievedTasks();
 	m_scheduler->AddDeleteMessagesTask();
-	m_scheduler->AddClearDeadEntitiesTask();
+	m_scheduler->AddCopyCurrentListsTask();
+	m_scheduler->AddUpdateEntityTableTask();
+	m_scheduler->AddDeleteComponentDataTask();
 	m_scheduler->AddRecycleEntityIdsTask();
-	m_scheduler->AddClearChangeListsTask();
-	m_scheduler->AddClearListsTask();
+	m_scheduler->AddClearCopiedListsTask();
+	m_scheduler->AddClearSystemEntityChangeListsTask();
 }
 
 Simulation::~Simulation()
@@ -44,8 +45,11 @@ void Simulation::Update(float _dt)
 	/* Delete all messages */
 	MPL::TaskId deleteMessages = m_scheduler->ScheduleDeleteMessages(messagesRecieved);
 
+	/* Copy all entity and component changes to new lists */
+	MPL::TaskId copyCurrentLists = m_scheduler->ScheduleCopyCurrentLists(deleteMessages);
+
 	/* Update entity component table data */
-	MPL::TaskId updateEntityTable = m_scheduler->ScheduleUpdateEntityTable(deleteMessages);
+	MPL::TaskId updateEntityTable = m_scheduler->ScheduleUpdateEntityTable(copyCurrentLists);
 
 	/* Update every systems' entity list */
 	MPL::TaskId updateSystemEntityLists = m_scheduler->ScheduleUpdateSystemEntityLists(updateEntityTable);
@@ -56,18 +60,17 @@ void Simulation::Update(float _dt)
 	/* Call EntitiesRemoved for each system that has atleast one newly removed entity */
 	MPL::TaskId entitiesRemoved = m_scheduler->ScheduleEntitiesRemoved(entitiesAdded);
 
-	/* Clear dead entities from entity table */
-	/* TODO: Kill Entity under EntitiesAdded/EntitiesRemoved orsakar problem */
-	MPL::TaskId clearDeadEntities = m_scheduler->ScheduleClearDeadEntities(entitiesRemoved);
+	/* Clear all the used lists in Scheduler (used for entitiesAdded and entitiesRemoved) */
+	MPL::TaskId clearSystemEntityChangeLists = m_scheduler->ScheduleClearSystemEntityChangeLists(entitiesRemoved);
+
+	/* Delete component data */
+	MPL::TaskId deleteComponentData = m_scheduler->ScheduleDeleteComponentData(clearSystemEntityChangeLists);
 
 	/* Recycle all dead ids back to the list of available ids */
-	MPL::TaskId recycleEntityIds = m_scheduler->ScheduleRecycleEntities(clearDeadEntities);
+	MPL::TaskId recycleEntityIds = m_scheduler->ScheduleRecycleEntities(deleteComponentData);
 
 	/* Clear all the used lists in DataManager */
-	MPL::TaskId clearChangeLists = m_scheduler->ScheduleClearChangeLists(recycleEntityIds);
+	MPL::TaskId clearCopiedLists = m_scheduler->ScheduleClearCopiedLists(recycleEntityIds);
 
-	/* Clear all the used lists in Scheduler */
-	MPL::TaskId clearLists = m_scheduler->ScheduleClearLists(clearChangeLists);
-
-	MPL::TaskManager::GetInstance().WaitFor(clearLists);
+	MPL::TaskManager::GetInstance().WaitFor(clearCopiedLists);
 }

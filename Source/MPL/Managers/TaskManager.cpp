@@ -37,7 +37,7 @@ TaskManager& TaskManager::GetInstance()
 
 void TaskManager::CreateSlaves()
 {
-	int availableThreadCount = SDL_GetCPUCount() - 3;//ThreadHelper::GetAvailableThreadCount();
+	int availableThreadCount = SDL_GetCPUCount() - 4;//ThreadHelper::GetAvailableThreadCount();
 	for (unsigned int i = 0; i < (unsigned int)availableThreadCount; ++i)
 	{
 		SlaveThread* slave = new SlaveThread(m_taskPool, m_slaves);

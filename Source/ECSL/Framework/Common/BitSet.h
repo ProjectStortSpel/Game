@@ -19,6 +19,7 @@ namespace ECSL
 
 		const DataType BitSetIndexMask = (std::numeric_limits<DataType>::max)() ^ ((sizeof(DataType)* 8) - 1);
 		const DataType BitIndexMask = (sizeof(DataType)* 8) - 1;
+		const unsigned int ByteCountMask = (std::numeric_limits<unsigned int>::max)() ^ 7;
 
 		inline DECLSPEC unsigned int GetDataTypeByteSize()
 		{
@@ -38,7 +39,7 @@ namespace ECSL
 		}
 		inline DECLSPEC unsigned int GetByteCount(unsigned int _bitCount)
 		{
-			return (unsigned int)ceilf((float)_bitCount / 8);
+			return (((_bitCount - 1) & ByteCountMask) >> 3) + 1;
 		}
 		inline DECLSPEC unsigned int GetDataTypeCount(unsigned int _bitCount)
 		{

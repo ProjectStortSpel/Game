@@ -16,6 +16,10 @@ namespace LuaBridge
 		LuaEmbedder::EmbedClassFunction<LuaSystem>("System", "EntityHasComponent", &LuaSystem::EntityHasComponent);
 		LuaEmbedder::EmbedClassFunction<LuaSystem>("System", "InitializeNetworkEvents", &LuaSystem::InitializeNetworkEvents);
 
+		LuaEmbedder::EmbedClassFunction<LuaSystem>("System", "SetUpdateTaskCount", &LuaSystem::SetUpdateTaskCount);
+		LuaEmbedder::EmbedClassFunction<LuaSystem>("System", "SetEntitiesAddedTaskCount", &LuaSystem::SetEntitiesAddedTaskCount);
+		LuaEmbedder::EmbedClassFunction<LuaSystem>("System", "SetEntitiesRemovedTaskCount", &LuaSystem::SetEntitiesRemovedTaskCount);
+
 		LuaEmbedder::EmbedClassFunction<LuaSystem>("System", "SetName", &LuaSystem::SetName);
 
 		LuaEmbedder::AddInt("Mandatory", (int)ECSL::FilterType::Mandatory, "FilterType");
@@ -23,13 +27,12 @@ namespace LuaBridge
 		LuaEmbedder::AddInt("Excluded", (int)ECSL::FilterType::Excluded, "FilterType");
 	}
 
-	void LuaSystem::Update(float _dt)
+	void LuaSystem::Update(const ECSL::RuntimeInfo& _runtime)
 	{
-		if (LuaEmbedder::HasFunction<LuaSystem>(this, "Update"))
-		{
-			LuaEmbedder::PushFloat(_dt);
-			LuaEmbedder::CallMethod<LuaSystem>("System", "Update", this, 1);
-		}
+		LuaEmbedder::PushFloat(_runtime.Dt);
+		LuaEmbedder::PushInt(_runtime.TaskIndex);
+		LuaEmbedder::PushInt(_runtime.TaskCount);
+		LuaEmbedder::CallMethod<LuaSystem>("System", "Update", this, 3);
 	}
 
 	void LuaSystem::Initialize()
@@ -40,22 +43,22 @@ namespace LuaBridge
 		}
 	}
 
-	void LuaSystem::OnEntityAdded(unsigned int _entityId)
+	void LuaSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities)
 	{
-		if (LuaEmbedder::HasFunction<LuaSystem>(this, "OnEntityAdded"))
-		{
-			LuaEmbedder::PushInt((int)_entityId);
-			LuaEmbedder::CallMethod<LuaSystem>("System", "OnEntityAdded", this, 1);
-		}
+		LuaEmbedder::PushFloat(_runtime.Dt);
+		LuaEmbedder::PushInt(_runtime.TaskIndex);
+		LuaEmbedder::PushInt(_runtime.TaskCount);
+		LuaEmbedder::PushUnsignedIntArray(_entities.data(), _entities.size(), false);
+		LuaEmbedder::CallMethod<LuaSystem>("System", "EntitiesAdded", this, 4);
 	}
 
-	void LuaSystem::OnEntityRemoved(unsigned int _entityId)
+	void LuaSystem::EntitiesRemoved(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities)
 	{
-		if (LuaEmbedder::HasFunction<LuaSystem>(this, "OnEntityRemoved"))
-		{
-			LuaEmbedder::PushInt((int)_entityId);
-			LuaEmbedder::CallMethod<LuaSystem>("System", "OnEntityRemoved", this, 1);
-		}
+		LuaEmbedder::PushFloat(_runtime.Dt);
+		LuaEmbedder::PushInt(_runtime.TaskIndex);
+		LuaEmbedder::PushInt(_runtime.TaskCount);
+		LuaEmbedder::PushUnsignedIntArray(_entities.data(), _entities.size(), false);
+		LuaEmbedder::CallMethod<LuaSystem>("System", "EntitiesRemoved", this, 4);
 	}
 
 	void LuaSystem::PostInitialize()
@@ -190,6 +193,25 @@ namespace LuaBridge
 		hook = std::bind(&LuaSystem::OnPlayerTimedOut, this, std::placeholders::_1, std::placeholders::_2);
 		NetworkInstance::GetServer()->SetOnPlayerTimedOut(hook);
 
+		return 0;
+	}
+
+	int LuaSystem::SetUpdateTaskCount()
+	{
+		int updateTaskCount = LuaEmbedder::PullInt(1);
+		System::SetUpdateTaskCount(updateTaskCount);
+		return 0;
+	}
+	int LuaSystem::SetEntitiesAddedTaskCount()
+	{
+		int entitiesAddedTaskCount = LuaEmbedder::PullInt(1);
+		System::SetEntitiesAddedTaskCount(entitiesAddedTaskCount);
+		return 0;
+	}
+	int LuaSystem::SetEntitiesRemovedTaskCount()
+	{
+		int entitiesRemovedTaskCount = LuaEmbedder::PullInt(1);
+		System::SetEntitiesAddedTaskCount(entitiesRemovedTaskCount);
 		return 0;
 	}
 
