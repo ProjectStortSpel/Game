@@ -1,6 +1,14 @@
 #include "Quaternion.h"
 #define DELTA 0.0001f
 
+Quaternion::Quaternion()
+{
+	this->m_w = 1;
+	this->m_x = 0;
+	this->m_y = 0;
+	this->m_z = 0;
+}
+
 Quaternion Quaternion::operator* (Quaternion q)
 {
 	Quaternion q1 = *this;
@@ -35,13 +43,6 @@ Quaternion Quaternion::operator* (Quaternion q)
 	return ret_value;
 }
 
-Quaternion::Quaternion()
-{
-	this->m_w = 1;
-	this->m_x = 0;
-	this->m_y = 0;
-	this->m_z = 0;
-}
 
 void Quaternion::Rotate( const glm::vec3 &vector, float w)
 {

@@ -2,6 +2,8 @@
 #include "ECSL/Framework/Common/BitSet.h"
 #include "Game/Quaternion.h"
 
+float tasta = 0.0f;
+
 RenderSystem::RenderSystem(Renderer::GraphicDevice* _graphics)
 {
 	m_graphics = _graphics;
@@ -44,6 +46,8 @@ void RenderSystem::Initialize()
 	printf("RenderSystem initialized!\n");
 }
 
+
+
 void RenderSystem::Update(float _dt)
 {
 	auto entities = *GetEntities();
@@ -51,7 +55,7 @@ void RenderSystem::Update(float _dt)
 	for (auto entity : entities)
 	{
 		ECSL::BitSet::DataType* eBitMask = (ECSL::BitSet::DataType*)GetComponent(entity, m_componentId, 0);
-
+		UpdateMatrix(entity);
 		bool needsUpdate = false;
 		for (unsigned int n = 0; n < m_numberOfBitSets; ++n)
 		{
@@ -68,7 +72,6 @@ void RenderSystem::Update(float _dt)
 			UpdateMatrix(entity);
 	}
 		
-
 }
 
 void RenderSystem::OnEntityAdded(unsigned int _entityId)
@@ -88,6 +91,7 @@ void RenderSystem::OnEntityRemoved(unsigned int _entityId)
 }
 
 
+
 void RenderSystem::UpdateMatrix(unsigned int _entityId)
 {
 	float*		Position;
@@ -95,12 +99,14 @@ void RenderSystem::UpdateMatrix(unsigned int _entityId)
 	float*		Scale;
 	glm::mat4*	Matrix;
 
-	Position	=	(float*)GetComponent(_entityId, m_positionId , 0);
-	Rotation	=	(float*)GetComponent(_entityId, m_rotationId, 0);
-	Scale		=	(float*)GetComponent(_entityId, m_scaleId, 0);
-	Matrix		=	(glm::mat4*)GetComponent(_entityId, m_renderId, m_renderOffset);
+	Position = (float*)GetComponent(_entityId, m_positionId, 0);
+	Rotation = (float*)GetComponent(_entityId, m_rotationId, 0);
+	Scale = (float*)GetComponent(_entityId, m_scaleId, 0);
+	Matrix = (glm::mat4*)GetComponent(_entityId, m_renderId, m_renderOffset);
 
 	*Matrix = glm::translate(glm::vec3(Position[0], Position[1], Position[2]));
+
+	const glm::vec3 temps(1, 1, 1);
 
 	Quaternion q_f;
 	Quaternion q_x;
