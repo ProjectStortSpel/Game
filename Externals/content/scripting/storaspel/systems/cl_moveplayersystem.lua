@@ -5,7 +5,7 @@ TrueTestMoveSystem.Initialize = function(self)
 	self:SetName("TrueTestMoveSystem")
 	
 	self:AddComponentTypeToFilter("MapPosition",FilterType.Mandatory)
-	self:AddComponentTypeToFilter("Unit", FilterType.Mandatory)
+	--self:AddComponentTypeToFilter("Unit", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Position",FilterType.Mandatory)
 		
 	print("TrueTestMoveSystem initialized!")
@@ -18,6 +18,7 @@ end
 
 TrueTestMoveSystem.Update = function(self, dt)
 	local entities = self:GetEntities()
+
 	for i = 1, #entities do
 
 		local entity = entities[i]
@@ -36,8 +37,8 @@ TrueTestMoveSystem.Update = function(self, dt)
 			dirposX = dirposX/total
 			dirposZ = dirposZ/total
 
-			newPosX = newPosX + dirposX * dt * 1.7
-			newPosZ = newPosZ + dirposZ * dt * 1.7
+			newPosX = newPosX + dirposX * dt * 1.5
+			newPosZ = newPosZ + dirposZ * dt * 1.5
 
 			if tempX <= 0.05 then
 				newPosX = mapPositionX

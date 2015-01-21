@@ -33,7 +33,7 @@ PlayCardSystem.OnEntityAdded = function(self, entity)
 
 				local cardAction = "Unit" .. action
 				world:CreateComponentAndAddTo(cardAction, unit)
-				time = 1.0
+				time = 1.5
 			end
 
 			world:RemoveComponentFrom("CardStep", card)
