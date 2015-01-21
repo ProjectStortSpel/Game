@@ -127,8 +127,6 @@ CreateCardPickTimer.OnEntityAdded = function(self, entity)
 	world:CreateComponentAndAddTo("PickingPhaseTimer", newId)
 	world:GetComponent(newId, "PickingPhaseTimer", "Timer"):SetFloat(self.TimeLimit)
 	
-	world:KillEntity(entity)
-	
 	--	Send time amount in message to all players
 	
 end
