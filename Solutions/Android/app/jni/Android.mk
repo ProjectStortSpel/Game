@@ -48,7 +48,7 @@ LOCAL_SRC_FILES := $(INPUT_SRC_FILES) $(CONSOLE_SRC_FILES) $(LUAEMBEDDER_SRC_FIL
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../../../Source/ $(LOCAL_PATH)/../../../../Externals/android/include/
 
 # Libs
-LOCAL_SHARED_LIBRARIES := SDL2main_shared SDL2_shared
+LOCAL_SHARED_LIBRARIES := SDL2main_shared SDL2_shared SDL2_ttf_shared
 LOCAL_STATIC_LIBRARIES := lua
 LOCAL_LDLIBS := -llog -landroid -lGLESv2
 
