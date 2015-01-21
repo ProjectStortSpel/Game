@@ -16,7 +16,7 @@ end
 
 TotemPoleSystem.AddTotemPiece = function(self, playerNumber, height, X, Z)
 
-	local totemPiece = world:CreateNewEntity("Head")
+	local totemPiece = world:CreateNewEntity("TotemPiece")
 
 	local rotation 	= world:GetComponent(totemPiece, "Rotation", 0)
 	local position 	= world:GetComponent(totemPiece, "Position", 0)
@@ -26,7 +26,9 @@ TotemPoleSystem.AddTotemPiece = function(self, playerNumber, height, X, Z)
 	rotation:SetFloat3(0, 0, 0)	
 	
 	-- Position
-	position:SetFloat3(X, 0.95 + height*0.27, Z)
+	local offsetX = 0.10;
+	local offsetZ = 0.10;
+	position:SetFloat3(X + offsetX, 0.95 + height*0.27, Z + offsetZ)
 	
 	-- Scale
 	scale:SetFloat3(1,1,1)
