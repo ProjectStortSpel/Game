@@ -123,6 +123,9 @@
     <Filter Include="Scripting\Lobby\Templates">
       <UniqueIdentifier>{1528248f-3c68-4ace-9f4b-fe60b3166bae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Logger">
+      <UniqueIdentifier>{7be89050-32a7-43b1-aab6-9c2f0df5f18d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\LuaBridge.cpp">
@@ -230,6 +233,9 @@
     <ClCompile Include="..\..\..\Source\Game\Systems\DirectionalLightSystem.cpp">
       <Filter>Game\Systems\LightSystems</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Logger\Logger.cpp">
+      <Filter>Logger</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h">
@@ -333,6 +339,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\DirectionalLightSystem.h">
       <Filter>Game\Systems\LightSystems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Logger\Logger.h">
+      <Filter>Logger</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
