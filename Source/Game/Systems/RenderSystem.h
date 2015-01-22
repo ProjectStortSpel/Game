@@ -23,7 +23,6 @@ public:
 
 private:
 	void UpdateMatrix(unsigned int _entityId);
-
 	ECSL::BitSet::DataType* m_bitMask;
 	unsigned int m_numberOfBitSets;
 	unsigned int m_componentId;

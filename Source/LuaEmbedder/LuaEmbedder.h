@@ -87,74 +87,77 @@
   #define IMPORT
 #endif
 
-//#define LUA_REAL_FLOAT
-
 namespace LuaEmbedder
 {
-  extern lua_State IMPORT* L;
-  
-  void EXPORT Init();
+  EXPORT lua_State*  CreateState();
+  EXPORT lua_State*  CopyState(lua_State* L);
   void EXPORT Quit();
   
-  bool EXPORT Load(const std::string& filepath);
-  bool EXPORT CallFunction(const std::string& name, int argumentCount = 0, const std::string& library = std::string());
+  bool EXPORT Load(lua_State* L, const std::string& filepath);
+  bool EXPORT CallFunction(lua_State* L, const std::string& name, int argumentCount = 0, const std::string& library = std::string());
   
-  void EXPORT CollectGarbage();
-  void EXPORT CollectGarbage(int durationInMilliseconds);
+  void EXPORT CollectGarbage(lua_State* L);
+  void EXPORT CollectGarbage(lua_State* L, int durationInMilliseconds);
   int EXPORT GetMemoryUsage();
+  void EXPORT CollectGarbage();
   
+  void EXPORT AddFloat(lua_State* L, const std::string& name, float value, const std::string& library = std::string());
+  void EXPORT AddInt(lua_State* L, const std::string& name, int value, const std::string& library = std::string());
+  void EXPORT AddBool(lua_State* L, const std::string& name, bool value, const std::string& library = std::string());
+  void EXPORT AddString(lua_State* L, const std::string& name, const char* value, const std::string& library = std::string());
+  void EXPORT AddFunction(lua_State* L, const std::string& name, int (*functionPointer)(lua_State*), const std::string& library = std::string());
   void EXPORT AddFloat(const std::string& name, float value, const std::string& library = std::string());
   void EXPORT AddInt(const std::string& name, int value, const std::string& library = std::string());
   void EXPORT AddBool(const std::string& name, bool value, const std::string& library = std::string());
   void EXPORT AddString(const std::string& name, const char* value, const std::string& library = std::string());
-  void EXPORT AddFunction(const std::string& name, int (*functionPointer)(), const std::string& library = std::string());
+  void EXPORT AddFunction(const std::string& name, int (*functionPointer)(lua_State*), const std::string& library = std::string());
   
-  float EXPORT PullFloat(int index);
-  float EXPORT PullFloat(const std::string& name, const std::string& library = std::string());
-  int EXPORT PullInt(int index);
-  int EXPORT PullInt(const std::string& name, const std::string& library = std::string());
-  bool EXPORT PullBool(int index);
-  bool EXPORT PullBool(const std::string& name, const std::string& library = std::string());
-  std::string EXPORT PullString(int index);
-  std::string EXPORT PullString(const std::string& name, const std::string& library = std::string());
+  float EXPORT PullFloat(lua_State* L, int index);
+  float EXPORT PullFloat(lua_State* L, const std::string& name, const std::string& library = std::string());
+  int EXPORT PullInt(lua_State* L, int index);
+  int EXPORT PullInt(lua_State* L, const std::string& name, const std::string& library = std::string());
+  bool EXPORT PullBool(lua_State* L, int index);
+  bool EXPORT PullBool(lua_State* L, const std::string& name, const std::string& library = std::string());
+  std::string EXPORT PullString(lua_State* L, int index);
+  std::string EXPORT PullString(lua_State* L, const std::string& name, const std::string& library = std::string());
   
-  void EXPORT PushFloat(float value);
-  void EXPORT PushInt(int value);
-  void EXPORT PushBool(bool value);
-  void EXPORT PushString(const std::string& value);
-  void EXPORT PushNull();
-  void EXPORT PushFloatArray(const float* values, unsigned int size, bool remove = true);
-  void EXPORT PushIntArray(const int* values, unsigned int size, bool remove = true);
-  void EXPORT PushUnsignedIntArray(const unsigned int* values, unsigned int size, bool remove = true);
-  void EXPORT PushBoolArray(const bool* values, unsigned int size, bool remove = true);
-  void EXPORT PushStringArray(const std::string* values, unsigned int size, bool remove = true);
+  void EXPORT PushFloat(lua_State* L, float value);
+  void EXPORT PushInt(lua_State* L, int value);
+  void EXPORT PushBool(lua_State* L, bool value);
+  void EXPORT PushString(lua_State* L, const std::string& value);
+  void EXPORT PushNull(lua_State* L);
+  void EXPORT PushFloatArray(lua_State* L, const float* values, unsigned int size, bool remove = true);
+  void EXPORT PushIntArray(lua_State* L, const int* values, unsigned int size, bool remove = true);
+  void EXPORT PushUnsignedIntArray(lua_State* L, const unsigned int* values, unsigned int size, bool remove = true);
+  void EXPORT PushBoolArray(lua_State* L, const bool* values, unsigned int size, bool remove = true);
+  void EXPORT PushStringArray(lua_State* L, const std::string* values, unsigned int size, bool remove = true);
   
-  bool EXPORT IsFloat(int index);
-  bool EXPORT IsInt(int index);
-  bool EXPORT IsBool(int index);
-  bool EXPORT IsString(int index);
-  bool EXPORT IsFunction(int index);
+  bool EXPORT IsFloat(lua_State* L, int index);
+  bool EXPORT IsInt(lua_State* L, int index);
+  bool EXPORT IsBool(lua_State* L, int index);
+  bool EXPORT IsString(lua_State* L, int index);
+  bool EXPORT IsFunction(lua_State* L, int index);
   
-  void EXPORT SaveFunction(int index, const std::string& key);
-  bool EXPORT CallSavedFunction(const std::string& key, int argumentCount = 0);
+  void EXPORT SaveFunction(lua_State* L, int index, const std::string& key);
+  bool EXPORT CallSavedFunction(lua_State* L, const std::string& key, int argumentCount = 0);
   
   template<typename T>
-  void EXPORT EmbedClass(const std::string& className, bool gc = true)
+  void EXPORT EmbedClass(lua_State* L, const std::string& className, bool gc = true)
   {
     Luna<T>::Register(L, className.c_str(), gc);
   }
   template<typename T>
-  void EXPORT EmbedClassFunction(const std::string& className, const std::string& methodName, int (T::*functionPointer)())
+  void EXPORT EmbedClassFunction(lua_State* L, const std::string& className, const std::string& methodName, int (T::*functionPointer)(lua_State*))
   {
     Luna<T>::RegisterMethod(L, className.c_str(), methodName.c_str(), functionPointer);
   }
   template<typename T>
-  void EXPORT EmbedClassProperty(const std::string& className, const std::string& propertyName, int (T::*getFunctionPointer)(), int (T::*setFunctionPointer)())
+  void EXPORT EmbedClassProperty(lua_State* L, const std::string& className, const std::string& propertyName, int (T::*getFunctionPointer)(lua_State*), int (T::*setFunctionPointer)(lua_State*))
   {
     Luna<T>::RegisterProperty(L, className.c_str(), propertyName.c_str(), getFunctionPointer, setFunctionPointer);
   }
   template<typename T>
-  void EXPORT AddObject(const std::string& className, T* object, const std::string& name, const std::string& library = std::string())
+  void EXPORT AddObject(lua_State* L, const std::string& className, T* object, const std::string& name, const std::string& library = std::string())
   {
     if (library.empty())
     {
@@ -176,24 +179,24 @@ namespace LuaEmbedder
     }
   }
   template<typename T>
-  int EXPORT CallMethod(const std::string& className, const std::string& methodName, T* object, int argumentCount = 0)
+  int EXPORT CallMethod(lua_State* L, const std::string& className, const std::string& methodName, T* object, int argumentCount = 0)
   {
     Luna<T>::push(L, className.c_str(), object);
     lua_insert(L, -(1 + argumentCount));
     return Luna<T>::CallMethod(L, className.c_str(), methodName.c_str(), argumentCount);
   }
   template<typename T>
-  void EXPORT CallMethods(const std::string& className, const std::string& methodName, int argumentCount = 0)
+  void EXPORT CallMethods(lua_State* L, const std::string& className, const std::string& methodName, int argumentCount = 0)
   {
     Luna<T>::CallMethods(L, className.c_str(), methodName.c_str(), argumentCount);
   }
   template<typename T>
-  T EXPORT* PullObject(const std::string& className, int index)
+  T EXPORT* PullObject(lua_State* L, const std::string& className, int index)
   {
     return Luna<T>::check(L, className.c_str(), index);
   }
   template<typename T>
-  T EXPORT* PullObject(const std::string& className, const std::string& name, const std::string& library = std::string())
+  T EXPORT* PullObject(lua_State* L, const std::string& className, const std::string& name, const std::string& library = std::string())
   {
     if (library.empty())
     {
@@ -209,12 +212,12 @@ namespace LuaEmbedder
     return Luna<T>::check(L, className.c_str(), -1);
   }
   template<typename T>
-  void EXPORT PushObject(const std::string& className, T* object, bool gc = false)
+  void EXPORT PushObject(lua_State* L, const std::string& className, T* object, bool gc = false)
   {
     Luna<T>::push(L, className.c_str(), object, gc);
   }
   template<typename T>
-  bool EXPORT HasFunction(T* object, const std::string& functionName)
+  bool EXPORT HasFunction(lua_State* L, T* object, const std::string& functionName)
   {
     return Luna<T>::HasFunction(object, functionName);
   }

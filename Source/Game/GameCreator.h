@@ -77,7 +77,9 @@ private:
 	Utility::FrameCounter m_worldCounter;
 	Utility::FrameCounter m_networkCounter;
 	Utility::FrameCounter m_graphicsCounter;
-
+	
+	lua_State* m_clientLuaState;
+	lua_State* m_serverLuaState;
 };
 
 #endif

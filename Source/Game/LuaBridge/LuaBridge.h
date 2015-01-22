@@ -5,7 +5,7 @@
 
 namespace LuaBridge
 {
-  void Embed();
+  void Embed(lua_State* L);
 }
 
 #endif

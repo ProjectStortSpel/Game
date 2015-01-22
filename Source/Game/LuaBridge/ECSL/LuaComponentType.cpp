@@ -3,7 +3,7 @@
 
 namespace LuaBridge
 {
-	LuaComponentType::LuaComponentType() { m_byteOffset = 0; m_syncWithNetwork = false; }
+	LuaComponentType::LuaComponentType(lua_State* L) { m_byteOffset = 0; m_syncWithNetwork = false; }
 
   LuaComponentType::~LuaComponentType()
   {
@@ -11,70 +11,70 @@ namespace LuaBridge
 	m_offsetToType.clear();
   }
   
-  void LuaComponentType::Embed()
+  void LuaComponentType::Embed(lua_State* L)
   {
-    LuaEmbedder::EmbedClass<LuaComponentType>("ComponentType");
-    LuaEmbedder::EmbedClassFunction<LuaComponentType>("ComponentType", "GetName", &LuaComponentType::GetName);
-    LuaEmbedder::EmbedClassFunction<LuaComponentType>("ComponentType", "SetName", &LuaComponentType::SetName);
-    LuaEmbedder::EmbedClassFunction<LuaComponentType>("ComponentType", "GetTableType", &LuaComponentType::GetTableType);
-    LuaEmbedder::EmbedClassFunction<LuaComponentType>("ComponentType", "SetTableType", &LuaComponentType::SetTableType);
-    LuaEmbedder::EmbedClassFunction<LuaComponentType>("ComponentType", "AddVariable", &LuaComponentType::AddVariable);
-	LuaEmbedder::EmbedClassProperty<LuaComponentType>("ComponentType", "Name", &LuaComponentType::GetName, &LuaComponentType::SetName);
-	LuaEmbedder::EmbedClassProperty<LuaComponentType>("ComponentType", "SyncNetwork", &LuaComponentType::GetSyncWithNetwork, &LuaComponentType::SetSyncWithNetwork);
-    LuaEmbedder::EmbedClassProperty<LuaComponentType>("ComponentType", "TableType", &LuaComponentType::GetTableType, &LuaComponentType::SetTableType);
+    LuaEmbedder::EmbedClass<LuaComponentType>(L, "ComponentType");
+    LuaEmbedder::EmbedClassFunction<LuaComponentType>(L, "ComponentType", "GetName", &LuaComponentType::GetName);
+    LuaEmbedder::EmbedClassFunction<LuaComponentType>(L, "ComponentType", "SetName", &LuaComponentType::SetName);
+    LuaEmbedder::EmbedClassFunction<LuaComponentType>(L, "ComponentType", "GetTableType", &LuaComponentType::GetTableType);
+    LuaEmbedder::EmbedClassFunction<LuaComponentType>(L, "ComponentType", "SetTableType", &LuaComponentType::SetTableType);
+    LuaEmbedder::EmbedClassFunction<LuaComponentType>(L, "ComponentType", "AddVariable", &LuaComponentType::AddVariable);
+	LuaEmbedder::EmbedClassProperty<LuaComponentType>(L, "ComponentType", "Name", &LuaComponentType::GetName, &LuaComponentType::SetName);
+	LuaEmbedder::EmbedClassProperty<LuaComponentType>(L, "ComponentType", "SyncNetwork", &LuaComponentType::GetSyncWithNetwork, &LuaComponentType::SetSyncWithNetwork);
+    LuaEmbedder::EmbedClassProperty<LuaComponentType>(L, "ComponentType", "TableType", &LuaComponentType::GetTableType, &LuaComponentType::SetTableType);
   
-    LuaEmbedder::AddInt("None", (int)ECSL::TableType::None, "TableType");
-    LuaEmbedder::AddInt("Array", (int)ECSL::TableType::Array, "TableType");
-    LuaEmbedder::AddInt("Map", (int)ECSL::TableType::Map, "TableType");
+    LuaEmbedder::AddInt(L, "None", (int)ECSL::TableType::None, "TableType");
+    LuaEmbedder::AddInt(L, "Array", (int)ECSL::TableType::Array, "TableType");
+    LuaEmbedder::AddInt(L, "Map", (int)ECSL::TableType::Map, "TableType");
     
-	LuaEmbedder::AddInt("Float", ECSL::ComponentDataType::FLOAT, "ByteSize");
-	LuaEmbedder::AddInt("Int", ECSL::ComponentDataType::INT, "ByteSize");
-	LuaEmbedder::AddInt("Matrix", ECSL::ComponentDataType::MATRIX, "ByteSize");
-	LuaEmbedder::AddInt("Reference", ECSL::ComponentDataType::REFERENCE, "ByteSize");
-	LuaEmbedder::AddInt("Text", ECSL::ComponentDataType::TEXT, "ByteSize");
-	LuaEmbedder::AddInt("Bool", ECSL::ComponentDataType::BOOL, "ByteSize");
+	LuaEmbedder::AddInt(L, "Float", ECSL::ComponentDataType::FLOAT, "ByteSize");
+	LuaEmbedder::AddInt(L, "Int", ECSL::ComponentDataType::INT, "ByteSize");
+	LuaEmbedder::AddInt(L, "Matrix", ECSL::ComponentDataType::MATRIX, "ByteSize");
+	LuaEmbedder::AddInt(L, "Reference", ECSL::ComponentDataType::REFERENCE, "ByteSize");
+	LuaEmbedder::AddInt(L, "Text", ECSL::ComponentDataType::TEXT, "ByteSize");
+	LuaEmbedder::AddInt(L, "Bool", ECSL::ComponentDataType::BOOL, "ByteSize");
   }
   
-  int LuaComponentType::GetName()
+  int LuaComponentType::GetName(lua_State* L)
   {
-	  LuaEmbedder::PushString(m_name);
+	  LuaEmbedder::PushString(L, m_name);
 	  return 1;
   }
 
-  int LuaComponentType::SetName()
+  int LuaComponentType::SetName(lua_State* L)
   {
-	  m_name = LuaEmbedder::PullString(1);
+	  m_name = LuaEmbedder::PullString(L, 1);
 	  return 0;
   }
 
-  int LuaComponentType::GetSyncWithNetwork()
+  int LuaComponentType::GetSyncWithNetwork(lua_State* L)
   {
-	  LuaEmbedder::PushBool(m_syncWithNetwork);
+	  LuaEmbedder::PushBool(L, m_syncWithNetwork);
 	  return 1;
   }
 
-  int LuaComponentType::SetSyncWithNetwork()
+  int LuaComponentType::SetSyncWithNetwork(lua_State* L)
   {
-	  m_syncWithNetwork = LuaEmbedder::PullBool(1);
+	  m_syncWithNetwork = LuaEmbedder::PullBool(L, 1);
 	  return 0;
   }
 
-  int LuaComponentType::GetTableType()
+  int LuaComponentType::GetTableType(lua_State* L)
   {
-    LuaEmbedder::PushInt(m_tableType);
+    LuaEmbedder::PushInt(L, m_tableType);
     return 1;
   }
 
-  int LuaComponentType::SetTableType()
+  int LuaComponentType::SetTableType(lua_State* L)
   {
-    m_tableType = (ECSL::TableType)LuaEmbedder::PullInt(1);
+    m_tableType = (ECSL::TableType)LuaEmbedder::PullInt(L, 1);
     return 0;
   }
   
-  int LuaComponentType::AddVariable()
+  int LuaComponentType::AddVariable(lua_State* L)
   {
-    std::string variableName = LuaEmbedder::PullString(1);
-	int variableDataType = LuaEmbedder::PullInt(2);
+    std::string variableName = LuaEmbedder::PullString(L, 1);
+	int variableDataType = LuaEmbedder::PullInt(L, 2);
 	int byteSize = ECSL::GetByteSizeFromType(ECSL::ComponentDataType(variableDataType));
 
 	ECSL::ComponentVariable variable = ECSL::ComponentVariable(variableName, byteSize);

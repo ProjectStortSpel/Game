@@ -27,6 +27,8 @@ namespace Renderer
 	class Shader
 	{
 	public:
+		~Shader();
+	  
 		void	InitShaderProgram();
 		bool	AddShader(const char* source_file, GLenum shader_type);
 		bool	FinalizeShaderProgram();

@@ -1,6 +1,8 @@
 #ifndef LUAFILELOADER_H
 #define LUAFILELOADER_H
 
-int LoadMap();
+#include <LuaEmbedder/LuaEmbedder.h>
+
+int LoadMap(lua_State* L);
 
 #endif

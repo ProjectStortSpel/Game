@@ -46,15 +46,15 @@ namespace LuaEmbedder
   struct PropertyType
   {
     const char* name;
-    int (T::*getter)();
-    int (T::*setter)();
+    int (T::*getter)(lua_State*);
+    int (T::*setter)(lua_State*);
   };
 
   template <class T>
   struct FunctionType
   {
     const char* name;
-    int (T::*func)();
+    int (T::*func)(lua_State*);
   };
 
   template <class T> class Luna
@@ -170,7 +170,7 @@ namespace LuaEmbedder
       lua_pop(L, 2);
     }
     
-    static void RegisterProperty(lua_State* L, const char* className, const char* propertyName, int (T::*getter)(), int (T::*setter)())
+    static void RegisterProperty(lua_State* L, const char* className, const char* propertyName, int (T::*getter)(lua_State*), int (T::*setter)(lua_State*))
     {
       int propertyIndex = (int)m_properties.size();
       PropertyType<T> property = { propertyName, getter, setter };
@@ -186,7 +186,7 @@ namespace LuaEmbedder
       lua_pop(L, 1);
     }
     
-    static void RegisterMethod(lua_State* L, const char* className, const char* methodName, int (T::*func)())
+    static void RegisterMethod(lua_State* L, const char* className, const char* methodName, int (T::*func)(lua_State*))
     {
       int methodIndex = (int)m_methods.size();
       FunctionType<T> method = { methodName, func };
@@ -210,7 +210,7 @@ namespace LuaEmbedder
     static int constructor(lua_State* L)
     {
       lua_remove(L, 1);
-      T* ap = new T();
+      T* ap = new T(L);
       const char* className = lua_tostring(L, lua_upvalueindex(1));
       push(L, className, ap, true);
       return 1;
@@ -219,7 +219,7 @@ namespace LuaEmbedder
     static int Clone(lua_State* L)
     {
       lua_remove(L, 1);
-      T* ap = new T();
+      T* ap = new T(L);
       const char* className = lua_tostring(L, lua_upvalueindex(1));
       push(L, className, ap, true);
       int object = lua_gettop(L);
@@ -436,7 +436,7 @@ namespace LuaEmbedder
 	lua_remove(L, 1); // Remove userdata
 	lua_remove(L, 1); // Remove [key]
 	
-	return ((*obj)->*(m_properties[_index].getter))();
+	return ((*obj)->*(m_properties[_index].getter))(L);
       }
       else
       {
@@ -505,7 +505,7 @@ namespace LuaEmbedder
 	  lua_remove(L, 1); // Remove userdata
 	  lua_remove(L, 1); // Remove [key]
 	  
-	  return ((*obj)->*(m_properties[_index].setter))();
+	  return ((*obj)->*(m_properties[_index].setter))(L);
 	}
       }
       else
@@ -571,7 +571,7 @@ namespace LuaEmbedder
 	  if (lua_gettop(L) > 0)
 		lua_remove(L, 1);
       
-      return ((*obj)->*(m_methods[i].func))();
+      return ((*obj)->*(m_methods[i].func))(L);
     }
 
     /*

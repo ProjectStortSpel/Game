@@ -136,9 +136,45 @@ OnPlayerConnectedSystem.OnPlayerDisconnected = function(self, _ip, _port, _messa
 		else
 			print("Player disconnected")
 			self.NumPlayers = self.NumPlayers - 1
-			if self.NumPlayers == 0 then
-				Console.AddToCommandQueue("reload") -- Reload the gamemode to allow new players to connect
+		end
+	end
+	
+end
+
+OnPlayerConnectedSystem.OnPlayerTimedOut = function(self, _ip, _port, _message)
+
+	local entities = self:GetEntities();
+	local foundPlayer = false
+	local isSpectator = false
+	
+	for i = 1, #entities do
+		
+		local ip = self:GetComponent(entities[i], "NetConnection", "IpAddress"):GetString()
+		local port = self:GetComponent(entities[i], "NetConnection", "Port"):GetInt()
+		
+		if _ip == ip and _port == port then
+			foundPlayer = true
+			if #self:GetEntities("GameRunning") > 0 then
+				world:RemoveComponentFrom("ActiveNetConnection", entities[i])
+			else
+				world:KillEntity(entities[i])		
 			end
+			
+			isSpectator = world:EntityHasComponent(entities[i], "IsSpectator")
+			
+			break
+
+		end
+	end	
+	
+	if foundPlayer then
+		
+		if isSpectator then
+			print("Spectator timed out")
+			self.NumSpectators = self.NumSpectators - 1
+		else
+			print("Player timed out")
+			self.NumPlayers = self.NumPlayers - 1
 		end
 	end
 	

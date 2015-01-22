@@ -21,7 +21,7 @@ SpawnSystem.OnEntityAdded = function(self, entityId)
 
 	local X, Z = spawnpointComp:GetInt2()
 
-    posComp:SetFloat3(X, 1, Z)
+    posComp:SetFloat3(X, 0.5, Z)
 	mapPosComp:SetInt2(X, Z)
 
 	if world:EntityHasComponent(entityId, "Hide") then

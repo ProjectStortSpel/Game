@@ -60,5 +60,5 @@ void main()
 	vec3 diffuse = vec3(0.0);
 	vec3 spec    = vec3(0.0);
 
-	ColorData = vec4(ambient + diffuse, 1.0) * albedo_tex + vec4(spec, 0.0f);
+	ColorData = vec4(ambient + diffuse, 1.0) * albedo_tex + vec4(spec, 0.0f) + vec4(specglow_map-specglow_map+normal_map-normal_map, 0.0);
 }
