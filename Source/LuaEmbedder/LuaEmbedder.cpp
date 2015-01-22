@@ -2,7 +2,6 @@
 #include "LuaNumberArray.h"
 
 #include <SDL/SDL.h>
-#include <File/File.h>
 #include <sstream>
 
 namespace LuaEmbedder

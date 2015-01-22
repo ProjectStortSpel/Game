@@ -68,7 +68,7 @@ void Logger::Log(unsigned int _groupIndex, LogSeverity _severity, const std::str
 
 	/*	If the group is active in filter print the message	*/
 	if (m_filterMask & ((unsigned int)1 << _groupIndex))
-		printf(newMessage.str().c_str());
+		printf("%s", newMessage.str().c_str());
 }
 
 void Logger::DumpLog()

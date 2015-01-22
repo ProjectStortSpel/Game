@@ -18,12 +18,14 @@ LUAEMBEDDER_SRC_FILES := $(shell for /F "tokens=*" %%A in ('dir /s /b %CD%\..\..
 NETWORK_SRC_FILES := $(shell for /F "tokens=*" %%A in ('dir /s /b %CD%\..\..\..\..\Source\Network\*.cpp') do @echo %%~dpnxA)
 ECSL_SRC_FILES := $(shell for /F "tokens=*" %%A in ('dir /s /b %CD%\..\..\..\..\Source\ECSL\*.cpp') do @echo %%~dpnxA)
 RENDERER_SRC_FILES := $(shell for /F "tokens=*" %%A in ('dir /s /b %CD%\..\..\..\..\Source\AndroidRenderer\*.cpp') do @echo %%~dpnxA)
+MPL_SRC_FILES := $(shell for /F "tokens=*" %%A in ('dir /s /b %CD%\..\..\..\..\Source\MPL\*.cpp') do @echo %%~dpnxA)
 GAME_SRC_FILES := $(shell for /F "tokens=*" %%A in ('dir /s /b %CD%\..\..\..\..\Source\Game\*.cpp') do @echo %%~dpnxA)
 
 else ifeq ($(HOST_OS), linux)
 
 $(info $(shell rm -rfv ../assets/content/*))
 $(info $(shell cp -r ../../../../Externals/content/* ../assets/content))
+
 
 INPUT_SRC_FILES := $(shell find $(LOCAL_PATH)/../../../../Source/Input/ -name "*.cpp" -type f -printf "%P \n")
 INPUT_SRC_FILES := $(addprefix ../../../../Source/Input/, $(INPUT_SRC_FILES))
@@ -37,12 +39,14 @@ ECSL_SRC_FILES := $(shell find $(LOCAL_PATH)/../../../../Source/ECSL/ -name "*.c
 ECSL_SRC_FILES := $(addprefix ../../../../Source/ECSL/, $(ECSL_SRC_FILES))
 RENDERER_SRC_FILES := $(shell find $(LOCAL_PATH)/../../../../Source/AndroidRenderer/ -name "*.cpp" -type f -printf "%P \n")
 RENDERER_SRC_FILES := $(addprefix ../../../../Source/AndroidRenderer/, $(RENDERER_SRC_FILES))
+MPL_SRC_FILES := $(shell find $(LOCAL_PATH)/../../../../Source/MPL/ -name "*.cpp" -type f -printf "%P \n")
+MPL_SRC_FILES := $(addprefix ../../../../Source/MPL/, $(MPL_SRC_FILES))
 GAME_SRC_FILES := $(shell find $(LOCAL_PATH)/../../../../Source/Game/ -name "*.cpp" -type f -printf "%P \n")
 GAME_SRC_FILES := $(addprefix ../../../../Source/Game/, $(GAME_SRC_FILES))
 
 endif
 
-LOCAL_SRC_FILES := $(INPUT_SRC_FILES) $(CONSOLE_SRC_FILES) $(LUAEMBEDDER_SRC_FILES) $(NETWORK_SRC_FILES) $(ECSL_SRC_FILES) $(RENDERER_SRC_FILES) $(GAME_SRC_FILES)
+LOCAL_SRC_FILES := $(INPUT_SRC_FILES) $(CONSOLE_SRC_FILES) $(LUAEMBEDDER_SRC_FILES) $(NETWORK_SRC_FILES) $(ECSL_SRC_FILES) $(RENDERER_SRC_FILES) $(MPL_SRC_FILES) $(GAME_SRC_FILES)
 
 # Includes
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../../../Source/ $(LOCAL_PATH)/../../../../Externals/android/include/
