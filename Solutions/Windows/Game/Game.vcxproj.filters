@@ -236,6 +236,9 @@
     <ClCompile Include="MapIslandCreatorSystem.cpp">
       <Filter>Game\Systems\Map</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\SlerpRotationSystem.cpp">
+      <Filter>Game\Systems\Rotation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h">
@@ -342,6 +345,9 @@
     </ClInclude>
     <ClInclude Include="MapIslandCreatorSystem.h">
       <Filter>Game\Systems\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\SlerpRotationSystem.h">
+      <Filter>Game\Systems\Rotation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,6 @@
 #include "Quaternion.h"
 #define DELTA 0.0001f
+#define PI_Q 3.14159265359f
 #include <iostream>
 
 Quaternion::Quaternion()
@@ -43,7 +44,6 @@ Quaternion Quaternion::operator* (Quaternion q)
 
 	return ret_value;
 }
-
 
 void Quaternion::Rotate( const glm::vec3 &vector, float w)
 {
@@ -211,6 +211,22 @@ void Quaternion::SlerpQuaternion(Quaternion &result, Quaternion *target, float t
 	result.m_y = scale0 * from->m_y + scale1 * target1[1];
 	result.m_z = scale0 * from->m_z + scale1 * target1[2];
 	result.m_w = scale0 * from->m_w + scale1 * target1[3];
+}
+
+glm::vec3 Quaternion::QuaternionToEuler()
+{
+	glm::vec3 ret_value;
+
+	float sqw = this->m_w * this->m_w;
+	float sqx = this->m_x * this->m_x;
+	float sqy = this->m_y * this->m_y;
+	float sqz = this->m_z * this->m_z;
+
+	ret_value.z = atan2f(2.0f * (this->m_x*this->m_y + this->m_z*this->m_w), (sqx - sqy - sqz + sqw)) * (180.0f / PI_Q);
+	ret_value.x = atan2f(2.0f * (this->m_y*this->m_z + this->m_x*this->m_w), (-sqx - sqy + sqz + sqw)) * (180.0f / PI_Q);
+	ret_value.y = asinf(-2.0f * (this->m_x*this->m_z - this->m_y*this->m_w)) * (180.0f / PI_Q);
+
+	return ret_value;
 }
 
 Quaternion::~Quaternion()

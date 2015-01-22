@@ -53,6 +53,15 @@ TurnLeftSystem.OnEntityAdded = function(self, entity)
 	
 	local dir = world:GetComponent(entity, "Direction", 0)
 	local rot = world:GetComponent(entity, "Rotation", 0)
+
+	local rot_x, rot_y, rot_z = rot:GetFloat3()
+
+	world:CreateComponentAndAddTo("SlerpRotation", entity)
+	
+	print(rot_y)
+
+	world:GetComponent(entity, "SlerpRotation", "fromX"):SetFloat3(rot_x, rot_y, rot_z)
+	
 	local x, z = dir:GetInt2()
 
 	if	x == 0 and z == 1 then
@@ -72,10 +81,12 @@ TurnLeftSystem.OnEntityAdded = function(self, entity)
 		z = 1
 		rotY = 0
 	end
-
-
+	
+	world:GetComponent(entity, "SlerpRotation", "toX"):SetFloat3(rot_x, rotY, rot_z)
+	world:GetComponent(entity, "SlerpRotation", "time"):SetFloat( 0 )
+	
 	dir:SetInt2(x, z)
-	world:GetComponent(entity, "Rotation", "Y"):SetFloat(rotY)
+	--world:GetComponent(entity, "Rotation", "Y"):SetFloat(rotY)
 
 	world:RemoveComponentFrom("UnitTurnLeft", entity)
 
