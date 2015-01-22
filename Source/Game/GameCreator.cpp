@@ -11,6 +11,7 @@
 #include "Systems/PointlightSystem.h"
 #include "Systems/DirectionalLightSystem.h"
 
+#include "Network/ClientDatabase.h"
 #include "NetworkInstance.h"
 #include "ECSL/ECSL.h"
 #include "ECSL/Managers/EntityTemplateManager.h"
@@ -313,6 +314,8 @@ void GameCreator::UpdateNetwork(float _dt)
 		client->Update(_dt);
 		while (client->PopAndExecutePacket() > 0) {}
 	}
+
+	ClientDatabase::GetInstance().Update(_dt);
 }
 
 void GameCreator::GameMode(std::string _gamemode)
