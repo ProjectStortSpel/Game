@@ -61,6 +61,7 @@ namespace ECSL
 		void ClearSystemEntityChangeLists(const RuntimeInfo& _runtimeInfo);
 
 	private:
+		int m_currentGroupId;
 		DataManager* m_dataManager;
 		SystemManager* m_systemManager;
 		MessageManager* m_messageManager;

@@ -22,7 +22,7 @@ namespace MPL
 		SlaveThread(TaskPool* _taskPool, std::vector<SlaveThread*>* _slaves);
 		~SlaveThread();
 
-		bool StartThread(const std::string& _name);
+		bool StartThread(const std::string& _name, unsigned int _threadId);
 		void WakeUp();
 		void Kill() { m_alive = false; }
 
@@ -32,6 +32,7 @@ namespace MPL
 
 	private:
 		SDL_Thread* m_thread;
+		unsigned int m_threadId;
 		TaskPool* m_taskPool;
 		SDL_sem* m_sleepSem;
 		bool m_sleeping;

@@ -10,11 +10,12 @@ namespace MPL
 
 	struct DECLSPEC WorkItem
 	{
-		~WorkItem() { delete(Name); }
+		~WorkItem() { delete(ProfilerName); }
 
 		FunctionPointer Work;
 		void* Data;
-		std::string* Name;
+		std::string* ProfilerName;
+		unsigned int ProfilerGroupId;
 	};
 };
 

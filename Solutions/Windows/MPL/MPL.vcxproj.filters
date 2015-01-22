@@ -52,6 +52,9 @@
     <ClInclude Include="..\..\..\Source\MPL\Framework\Common\MathHelper.h">
       <Filter>Source Files\Framework\Common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\MPL\Managers\Profiler.h">
+      <Filter>Source Files\Managers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\MPL\Framework\Tasks\Task.cpp">
@@ -71,6 +74,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Source\MPL\Framework\Common\MathHelper.cpp">
       <Filter>Source Files\Framework\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\MPL\Managers\Profiler.cpp">
+      <Filter>Source Files\Managers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

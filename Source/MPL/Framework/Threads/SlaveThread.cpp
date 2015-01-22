@@ -1,6 +1,7 @@
 #include "SlaveThread.h"
 
 #include <assert.h>
+#include "MPL/Managers/Profiler.h"
 
 using namespace MPL;
 
@@ -20,11 +21,12 @@ SlaveThread::~SlaveThread()
 	SDL_DestroySemaphore(m_sleepSem);
 }
 
-bool SlaveThread::StartThread(const std::string& _name)
+bool SlaveThread::StartThread(const std::string& _name, unsigned int _threadId)
 {
-	m_sleepSem = SDL_CreateSemaphore(0);
+	m_threadId = _threadId;
 	m_alive = true;
 	m_sleeping = false;
+	m_sleepSem = SDL_CreateSemaphore(0);
 	m_thread = SDL_CreateThread(BeginThreadLoop, _name.c_str(), this);
 	return (m_thread != 0);
 }
@@ -52,7 +54,7 @@ int SlaveThread::ThreadLoop()
 			if (!workDoneStatus.OpenListEmpty && workDoneStatus.TaskCompleted)
 				WakeThreads();
 		}
-		else //if (fetchWorkStatus == EMPTY_WORK_LIST)
+		else
 			Sleep();		
 	}
 	return 0;

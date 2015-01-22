@@ -41,7 +41,7 @@ void TaskManager::CreateSlaves()
 	for (unsigned int i = 0; i < (unsigned int)availableThreadCount; ++i)
 	{
 		SlaveThread* slave = new SlaveThread(m_taskPool, m_slaves);
-		if (!slave->StartThread("Slave " + i))
+		if (!slave->StartThread("Slave " + i, i))
 			printf("Creation of slave thread was unsuccessful. Id: %i\n", i);
 		else
 		{
