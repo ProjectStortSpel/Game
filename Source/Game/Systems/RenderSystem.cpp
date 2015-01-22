@@ -112,33 +112,11 @@ void RenderSystem::UpdateMatrix(unsigned int _entityId)
 
 	*Matrix = glm::translate(glm::vec3(Position[0], Position[1], Position[2]));
 
-	const glm::vec3 temps(1, 1, 1);
+	/*Convert to quaternions*/
+	Quaternion q_rotation;
+	q_rotation.EulerToQuaternion(Rotation[0], Rotation[1], Rotation[2]);
+	*Matrix *= q_rotation.QuaternionToMatrix();
 
-	//Quaternion q_from;
-
-	//q_from.Rotate(temps, 2);
-
-	Quaternion q_f;
-	Quaternion q_x;
-	Quaternion q_y;
-	Quaternion q_z;
-	//Quaternion q_final;
-	
-	q_x.Rotate(glm::vec3(1, 0, 0), Rotation[2]);
-	q_y.Rotate(glm::vec3(0, 1, 0), Rotation[1]);
-	q_z.Rotate(glm::vec3(0, 0, 1), Rotation[0]);
-
-	q_f = q_x * q_f;
-	q_f = q_y * q_f;
-	q_f = q_z * q_f;
-
-	//q_from.SlerpQuaternion(q_final, &q_f, tasta);
-
-	*Matrix *= q_f.QuaternionToMatrix();
-
-	//*Matrix *= q_final.QuaternionToMatrix();
-
-	
 	*Matrix *= glm::scale(glm::vec3(Scale[0], Scale[1], Scale[2]));
 
 	ComponentHasChanged(_entityId, m_renderId);

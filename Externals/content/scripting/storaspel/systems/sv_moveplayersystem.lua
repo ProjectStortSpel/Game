@@ -34,7 +34,6 @@ TurnAroundSystem.OnEntityAdded = function(self, entity)
 
 	world:GetComponent(entity, "Rotation", "Y"):SetFloat(rotY)
 
-
 	world:RemoveComponentFrom("UnitTurnAround", entity)
 end
 

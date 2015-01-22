@@ -1,9 +1,4 @@
 -- Camera Free Look Component
-local CameraLeftButton = ComponentType()
-CameraLeftButton.Name = "CameraLeftButton"
-worldCreator:AddComponentType(CameraLeftButton)
-
--- Camera Free Look Component
-local CameraRightButton = ComponentType()
-CameraRightButton.Name = "CameraRightButton"
-worldCreator:AddComponentType(CameraRightButton)
+local CameraSystemComponent = ComponentType()
+CameraSystemComponent.Name = "CameraSystemComponent"
+worldCreator:AddComponentType(CameraSystemComponent)
