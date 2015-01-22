@@ -69,23 +69,30 @@ namespace LuaBridge
 	  std::string variableName = LuaEmbedder::PullString(3);
 	  void* data = 0;
 
+	  bool notifyNetwork = true;
+
+	  if (LuaEmbedder::IsBool(5))
+	  {
+		  notifyNetwork = LuaEmbedder::PullBool(5);
+	  }
+
 	  if (LuaEmbedder::IsBool(4))
 	  {
 		  bool h = LuaEmbedder::PullBool(4);
 		  data = &h;
-		  World::SetComponent(id, componentType, variableName, data);
+		  World::SetComponent(id, componentType, variableName, data, notifyNetwork);
 	  }
 	  else if (LuaEmbedder::IsInt(4))
 	  {
 		  int h = LuaEmbedder::PullInt(4);
 		  data = &h;
-		  World::SetComponent(id, componentType, variableName, data);
+		  World::SetComponent(id, componentType, variableName, data, notifyNetwork);
 	  }
 	  else if (LuaEmbedder::IsFloat(4))
 	  {
 		  float h = LuaEmbedder::PullFloat(4);
 		  data = &h;
-		  World::SetComponent(id, componentType, variableName, data);
+		  World::SetComponent(id, componentType, variableName, data, notifyNetwork);
 	  }
 	  else if (LuaEmbedder::IsString(4))
 	  {
@@ -96,7 +103,7 @@ namespace LuaBridge
 			  tmp[i] = h[i];
 		  tmp[h.size()] = '\0';
 
-		  World::SetComponent(id, componentType, variableName, tmp);
+		  World::SetComponent(id, componentType, variableName, tmp, notifyNetwork);
 
 		  delete tmp;
 	  }

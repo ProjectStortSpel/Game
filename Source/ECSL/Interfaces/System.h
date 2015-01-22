@@ -32,8 +32,8 @@ namespace ECSL
 
 		const std::string& GetSystemName() { return m_systemName; }
 
-		void ComponentHasChanged(unsigned int _entityId, std::string _componentType);
-		void ComponentHasChanged(unsigned int _entityId, unsigned int _componentTypeId);
+		void ComponentHasChanged(unsigned int _entityId, std::string _componentType, bool _notifyNetwork = true);
+		void ComponentHasChanged(unsigned int _entityId, unsigned int _componentTypeId, bool _notifyNetwork = true);
 		
 	protected:
 		DataLocation GetComponent(unsigned int _entityId, const std::string& _componentType, const std::string& _variableName);
