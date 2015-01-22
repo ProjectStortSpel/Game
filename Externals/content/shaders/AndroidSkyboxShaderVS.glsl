@@ -1,3 +1,5 @@
+#version 100
+
 attribute vec3 VertexPoint;
 
 varying vec3 TexCoord;

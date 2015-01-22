@@ -91,3 +91,38 @@ local CardSelectedComponent = ComponentType()
 CardSelectedComponent.Name = "CardSelected"
 CardSelectedComponent.TableType = TableType.Map
 worldCreator:AddComponentType(CardSelectedComponent)
+
+
+
+-- OnPickingPhase Component
+local OnPickingPhaseComponent = ComponentType()
+OnPickingPhaseComponent.Name = "OnPickingPhase"
+OnPickingPhaseComponent.TableType = TableType.Map
+worldCreator:AddComponentType(OnPickingPhaseComponent)
+
+-- Picking Timer Component
+local PickingPhaseTimerComponent = ComponentType()
+PickingPhaseTimerComponent.Name = "PickingPhaseTimer"
+PickingPhaseTimerComponent.TableType = TableType.Map
+PickingPhaseTimerComponent:AddVariable("Timer", ByteSize.Float)
+worldCreator:AddComponentType(PickingPhaseTimerComponent)
+
+local SetPickingPhaserComponent = ComponentType()
+SetPickingPhaserComponent.Name = "SetPickingPhaseTimer"
+SetPickingPhaserComponent.TableType = TableType.Map
+SetPickingPhaserComponent:AddVariable("Amount", ByteSize.Float)
+worldCreator:AddComponentType(SetPickingPhaserComponent)
+
+local AddToPickingPhaseTimerComponent = ComponentType()
+AddToPickingPhaseTimerComponent.Name = "AddToPickingPhaseTimer"
+AddToPickingPhaseTimerComponent.TableType = TableType.Map
+AddToPickingPhaseTimerComponent:AddVariable("Amount", ByteSize.Float)
+worldCreator:AddComponentType(AddToPickingPhaseTimerComponent)
+
+local AutoPickCardsComponent = ComponentType()
+AutoPickCardsComponent.Name = "AutoPickCards"
+AutoPickCardsComponent.TableType = TableType.Map
+worldCreator:AddComponentType(AutoPickCardsComponent)
+
+
+

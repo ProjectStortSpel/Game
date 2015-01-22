@@ -10,12 +10,13 @@ require "gamestatecomponents"
 require "lightcomponents"
 
 require "interfacecomponents"
+require "cameracomponents"
 
 -- Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
 require "sh_movementsystem"
 require "sh_networkmessagessystem"
-require "sh_moveplayersystem"
+
 
 -- PICKBOX SYSTEMS
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/pickboxsystems/?.lua"
@@ -23,6 +24,7 @@ require "sh_pickboxsystem"
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
 
 require "sh_lerpsystem"
+require "sh_moveplayersystem"
 
 if Server then
 	require "sv_mapsystem"
@@ -42,27 +44,36 @@ if Server then
 	require "sv_postmovesystem"
 	require "sv_checkpointsystem"
 	require "sv_finishsystem"
+	require "sv_totempolesystem"
 	require "sv_voidsystem"
 	require "sv_riversystem"
 	require "sv_respawnsystem"
-
+	require "sv_gameoversystem"
+	
 	require "sv_moveplayersystem"
 
 	require "sv_steptimersystem"
 	require "sv_playcardtimersystem"
 	
+	require "sv_cardpicktimersystem"
+	require "sv_autopickcardssystem"
+	
 	require "sv_takecardsfromplayersystem"
 	require "sv_takecardstepsfromunitsystem"
+	
+	require "sv_directionallightsystem"
+	
 end
 
 
+
 if Client then
---require "cl_pickingphasesystem"
 	require "cl_lobbysystem"
 	--require "cl_selectcardsystem"
 	require "cl_playerdonevisualizersystem"
 	--require "cl_givecardindexsystem"
-	
+
+
 	-- CARD SYSTEMS
 	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/cardsystems/?.lua"
 	require "cl_givecardindexsystem"
@@ -76,6 +87,12 @@ if Client then
 	require "cl_cardpositionsystem2"
 	require "cl_cardselectsystem"
 	require "cl_cardprintselectionsystem" -- Debug systems for cards
+	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
+	
+	-- CAMERA SYSTEMS
+	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/camerasystems/?.lua"
+	--require "cl_cameracreationsystem"
+	require "cl_newcamerasystem"
 	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
 
 	require "cl_playerindicatorsystem"
@@ -100,11 +117,14 @@ require "lights"
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(MovementSystem)
 worldCreator:AddSystemToCurrentGroup(networkMessagesSystem)
-worldCreator:AddSystemToCurrentGroup(TrueTestMoveSystem)
+
 
 worldCreator:AddSystemToCurrentGroup(PickBoxSystem)
 
 worldCreator:AddSystemToCurrentGroup(LerpSystem)
+
+
+worldCreator:AddSystemToCurrentGroup(TrueTestMoveSystem)
 
 if Server then
 	worldCreator:AddSystemToCurrentGroup(MapSystem)
@@ -117,6 +137,8 @@ if Server then
 	--worldCreator:AddSystemToCurrentGroup(CreateSpawnpointSystem)
 	worldCreator:AddSystemToCurrentGroup(SpawnSystem)
 	worldCreator:AddSystemToCurrentGroup(ServerLobbySystem)
+	worldCreator:AddSystemToCurrentGroup(LogStartSystem)
+	
 	worldCreator:AddSystemToCurrentGroup(CreateDeckSystem)
 	worldCreator:AddSystemToCurrentGroup(DealCardsSystem)
 	worldCreator:AddSystemToCurrentGroup(StartNewRoundSystem)
@@ -126,10 +148,12 @@ if Server then
 	worldCreator:AddSystemToCurrentGroup(PostMoveSystem)
 	worldCreator:AddSystemToCurrentGroup(FinishSystem)
 	worldCreator:AddSystemToCurrentGroup(CheckpointSystem)
+	worldCreator:AddSystemToCurrentGroup(TotemPoleSystem)
 	worldCreator:AddSystemToCurrentGroup(VoidSystem)
 	worldCreator:AddSystemToCurrentGroup(RiverSystem)
 	worldCreator:AddSystemToCurrentGroup(RespawnSystem)
 	worldCreator:AddSystemToCurrentGroup(TestMoveRiverSystem)
+	worldCreator:AddSystemToCurrentGroup(GameOverSystem)
 
 	worldCreator:AddSystemToCurrentGroup(TurnAroundSystem)
 	worldCreator:AddSystemToCurrentGroup(TurnLeftSystem)
@@ -143,10 +167,21 @@ if Server then
 
 	worldCreator:AddSystemToCurrentGroup(TakeCardsFromPlayerSystem)
 	worldCreator:AddSystemToCurrentGroup(TakeCardStepsFromUnitSystem)
+	worldCreator:AddSystemToCurrentGroup(DirectionalLightSystem)
+	
+	--	Timer for picking phase
+	worldCreator:AddSystemToCurrentGroup(CreateCardPickTimer)
+	worldCreator:AddSystemToCurrentGroup(SetCardPickTimer)
+	worldCreator:AddSystemToCurrentGroup(AddCardPickTimer)
+	worldCreator:AddSystemToCurrentGroup(UpdateCardPickTimer)
+	worldCreator:AddSystemToCurrentGroup(AutoPickCards)
 	
 end
 
 if Client then
+
+	
+
 	worldCreator:AddSystemToCurrentGroup(ClientLobbySystem)
 	worldCreator:AddSystemToCurrentGroup(GiveCardIndexSystem)
 	--worldCreator:AddSystemToCurrentGroup(SelectCardSystem)
@@ -162,5 +197,6 @@ if Client then
 	worldCreator:AddSystemToCurrentGroup(PlayerDoneVisualizer)
 	worldCreator:AddSystemToCurrentGroup(PlayerIndicatorSystem)
 --worldCreator:AddSystemToCurrentGroup(ClientSendCardSystem)
-end
 
+	worldCreator:AddSystemToCurrentGroup(NewCameraSystem)
+end

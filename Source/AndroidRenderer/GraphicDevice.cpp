@@ -24,6 +24,11 @@ GraphicDevice::~GraphicDevice()
 		delete it->second;
 		it->second = nullptr;
 	}
+	
+	for (std::map<const std::string, GLuint>::iterator it = m_textures.begin(); it != m_textures.end(); it++)
+	{
+		glDeleteTextures(1, &it->second);
+	}
 
 	SDL_GL_DeleteContext(m_glContext);
 	// Close and destroy the window
@@ -72,6 +77,8 @@ void GraphicDevice::PollEvent(SDL_Event _event)
 
 void GraphicDevice::Update(float _dt)
 {
+	m_camera->Update(_dt);
+
   //SDL_Log("FPS: %f", 1.0f/_dt);
 }
 
@@ -215,7 +222,7 @@ bool GraphicDevice::InitSDLWindow()
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
 	m_window = SDL_CreateWindow(Caption, PosX, PosY, SizeX, SizeY, Flags);
@@ -287,7 +294,14 @@ void GraphicDevice::BufferPointlights(int _nrOfLights, float **_lightPointers)
 
 void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
 {
+	//direction, intensity, color
+	m_dirLightDirection = vec3(_lightPointer[0], _lightPointer[1], _lightPointer[2]);
+	vec3 intens = vec3(_lightPointer[3], _lightPointer[4], _lightPointer[5]);
+	vec3 color = vec3(_lightPointer[6], _lightPointer[7], _lightPointer[8]);
 
+	m_forwardShader.SetUniVariable("dirlight.Direction", vector3, &m_dirLightDirection);
+	m_forwardShader.SetUniVariable("dirlight.Intensity", vector3, &intens);
+	m_forwardShader.SetUniVariable("dirlight.Color", vector3, &color);
 }
 
 bool GraphicDevice::RenderSimpleText(std::string _text, int _x, int _y)
@@ -338,9 +352,6 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 	int modelID = m_modelIDcounter;
 	m_modelIDcounter++;
 
-	//Shader *shaderPtr = &m_forwardShader;
-	//m_forwardShader.UseProgram();
-
 	Shader *shaderPtr = NULL;
 
 	if (_renderType == RENDER_FORWARD)
@@ -362,7 +373,7 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 	{
 		shaderPtr = &m_forwardShader;
 		m_forwardShader.UseProgram();
-		SDL_Log("ERROR: INVALID RENDER SETTING. Selecting FORWARD");
+		//SDL_Log("Deferred requested. Selecting FORWARD");
 	}
 
 	// Import Object
@@ -532,17 +543,6 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 	std::vector<float> tanData = modelExporter.ReadDataFromFile();
 	std::vector<float> bitanData = modelExporter.ReadDataFromFile();
 	std::vector<float> texCoordData = modelExporter.ReadDataFromFile();
-	/*for (int i = 0; i < (int)texCoordData.size(); i++)
-	{
-	  if (texCoordData[i] < 0.0f)
-	    texCoordData[i] = 0.0f;
-	  else if (texCoordData[i] > 1.0f)
-	    texCoordData[i] = 1.0f;
-	}*/
-	/*SDL_Log("File: %s", _fileDir.c_str());
-	SDL_Log("texCoordData size: %d", texCoordData.size());
-	for (int i = 0; i < 4; i++)
-	  SDL_Log("texCoord[%d] = %f", i, texCoordData[i]);*/
 	modelExporter.CloseFile();
 
 	Buffer* retbuffer = new Buffer();

@@ -21,6 +21,13 @@ CardPositionSystem.OnEntityAdded = function( self, entityId )
 		local position = self:GetComponent(entity, "LerpTargetPosition", 0)
 		position:SetFloat3(px, py, pz)
 		
+		if not world:EntityHasComponent(entity, "LerpTime") then
+			world:CreateComponentAndAddTo("LerpTime", entity)
+		end
+		
+		local timer = self:GetComponent(entity, "LerpTime", 0)
+		timer:SetFloat2(0.1, 0)
+		
 	end
 	
 end

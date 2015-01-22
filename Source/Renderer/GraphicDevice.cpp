@@ -55,9 +55,9 @@ bool GraphicDevice::Init()
 	if (!InitRandomVector()) { ERRORMSG("INIT RANDOMVECTOR FAIELD\n"); return false; }
 	if (!InitTextRenderer()) { ERRORMSG("INIT TEXTRENDERER FAILED\n"); return false; }
 		m_vramUsage += (m_textRenderer.GetArraySize() * sizeof(int));
-	if (!InitLightBuffers()) { ERRORMSG("INIT LIGHTBUFFER FAILED\n"); return false; }
-
+	
 	CreateShadowMap();
+	if (!InitLightBuffers()) { ERRORMSG("INIT LIGHTBUFFER FAILED\n"); return false; }
 	
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
@@ -91,7 +91,7 @@ void GraphicDevice::Update(float _dt)
 {
 	m_dt = _dt; m_fps = 1 / _dt;
 
-
+	m_camera->Update(_dt);
 
 	// PRINT m_glTimerValues
 	for (int i = 0; i < m_glTimerValues.size(); i++)
@@ -103,17 +103,6 @@ void GraphicDevice::Update(float _dt)
 		m_textRenderer.RenderSimpleText(output.str(), x, y + i);
 	}
 	m_glTimerValues.clear();
-
-
-
-	lightCounter += 0.15*_dt;
-	m_dirLightDirection = vec3(-0.38, -1.0, 2.5*sin(lightCounter));
-
-	m_lightDefaults[0] = m_dirLightDirection.x;	//dir x
-	m_lightDefaults[1] = m_dirLightDirection.y;	//dir y
-	m_lightDefaults[2] = m_dirLightDirection.z;	//dir z
-	BufferDirectionalLight(&m_lightDefaults[0]);
-	m_shadowMap->UpdateViewMatrix(vec3(8, 0, 8) - (10.0f*normalize(m_dirLightDirection)), vec3(8, 0, 8));
 
 	BufferModels();
 }
@@ -759,7 +748,7 @@ bool GraphicDevice::InitLightBuffers()
 	glGenBuffers(1, &m_pointlightBuffer);
 
 	for (int i = 0; i < 10; i++)
-		m_lightDefaults[9+i] = 0.0;		//init 0.0
+		m_lightDefaults[i] = 0.0;		//init 0.0
 	
 	if (m_pointlightBuffer < 0)
 		return false;
@@ -768,30 +757,15 @@ bool GraphicDevice::InitLightBuffers()
 	tmparray[0] = &m_lightDefaults[0];
 
 	BufferPointlights(1, tmparray);
+
 	delete(tmparray);
-
-//--------Directional light-------------------------------------------------------------------------
-	m_dirLightDirection = vec3(-0.38, -1.0, 0.7);
-
-	m_lightDefaults[0] = m_dirLightDirection.x;	//dir x
-	m_lightDefaults[1] = m_dirLightDirection.y;	//dir y
-	m_lightDefaults[2] = m_dirLightDirection.z;	//dir z
 	
-	m_lightDefaults[3] = 0.3;		//int x
-	m_lightDefaults[4] = 0.7;		//int y
-	m_lightDefaults[5] = 0.7;		//int z
-	
-	m_lightDefaults[6] = 0.7;		//col x
-	m_lightDefaults[7] = 0.75;		//col y
-	m_lightDefaults[8] = 0.85;	//col z
-
 	glGenBuffers(1, &m_dirLightBuffer);
-
 	if (m_dirLightBuffer < 0)
 		return false;
 
 	BufferDirectionalLight(&m_lightDefaults[0]);
-
+	
 	return true;
 }
 
@@ -823,13 +797,14 @@ void GraphicDevice::BufferPointlights(int _nrOfLights, float **_lightPointers)
 
 void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
 {
-	float *light_data = new float[9];
-	memcpy(&light_data[0], _lightPointer, 9 * sizeof(float));
+	if (_lightPointer == 0)
+		_lightPointer = &m_lightDefaults[0];
 
 	glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer, 0, 9 * sizeof(float));
-	glBufferData(GL_SHADER_STORAGE_BUFFER, 9 * sizeof(float), light_data, GL_STATIC_DRAW);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, 9 * sizeof(float), _lightPointer, GL_STATIC_DRAW);
 
-	delete light_data;
+	m_dirLightDirection = vec3(_lightPointer[0], _lightPointer[1], _lightPointer[2]);
+	m_shadowMap->UpdateViewMatrix(vec3(8.0f, 0.0f, 8.0f) - (10.0f*normalize(m_dirLightDirection)), vec3(8.0f, 0.0f, 8.0f));
 }
 
 void GraphicDevice::CreateShadowMap()

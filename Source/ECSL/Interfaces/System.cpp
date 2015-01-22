@@ -174,19 +174,22 @@ void System::SendMessage(Message* _message)
 	SDL_UnlockMutex(m_messagesMutex);
 }
 
-void System::ComponentHasChanged(unsigned int _entityId, std::string _componentType)
+void System::ComponentHasChanged(unsigned int _entityId, std::string _componentType, bool _notifyNetwork)
 {
 	unsigned int componentTypeId = ECSL::ComponentTypeManager::GetInstance().GetTableId(_componentType);
-	ComponentHasChanged(_entityId, componentTypeId);
+	ComponentHasChanged(_entityId, componentTypeId, _notifyNetwork);
 }
 
-void System::ComponentHasChanged(unsigned int _entityId, unsigned int _componentTypeId)
+void System::ComponentHasChanged(unsigned int _entityId, unsigned int _componentTypeId, bool _notifyNetwork)
 {
 	int bitSetIndex = ECSL::BitSet::GetBitSetIndex(_componentTypeId);
 	int bitIndex = ECSL::BitSet::GetBitIndex(_componentTypeId);
 	ECSL::BitSet::DataType* changedComponents = (ECSL::BitSet::DataType*)GetComponent(_entityId, "ChangedComponents", 0);
 	changedComponents[bitSetIndex] |= ((ECSL::BitSet::DataType)1) << bitIndex;
 
-	ECSL::BitSet::DataType* changedComponentsNetwork = (ECSL::BitSet::DataType*)GetComponent(_entityId, "ChangedComponentsNetwork", 0);
-	changedComponentsNetwork[bitSetIndex] |= ((ECSL::BitSet::DataType)1) << bitIndex;
+	if (_notifyNetwork)
+	{
+		ECSL::BitSet::DataType* changedComponentsNetwork = (ECSL::BitSet::DataType*)GetComponent(_entityId, "ChangedComponentsNetwork", 0);
+		changedComponentsNetwork[bitSetIndex] |= ((ECSL::BitSet::DataType)1) << bitIndex;
+	}
 }

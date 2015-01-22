@@ -58,10 +58,11 @@ DataLocation World::GetComponent(unsigned int _entityId, const unsigned int _com
 	return m_dataManager->GetComponentTable(_componentType)->GetComponent(_entityId, _index);
 }
 
-void World::SetComponent(unsigned int _entityId, const std::string& _componentType, const std::string& _variableName, void* _data)
+void World::SetComponent(unsigned int _entityId, const std::string& _componentType, const std::string& _variableName, void* _data, bool _notifyNetwork)
 {
 	ComponentTable* componentTable = m_dataManager->GetComponentTable(ComponentTypeManager::GetInstance().GetTableId(_componentType));
 	componentTable->SetComponent(_entityId, _variableName, _data);
+	ComponentHasChanged(_entityId, _componentType, _notifyNetwork);
 }
 
 void World::KillEntity(unsigned int _entityId)
@@ -132,21 +133,24 @@ unsigned int World::GetMemoryUsage()
 	return m_dataManager->GetMemoryAllocated();
 }
 
-void World::ComponentHasChanged(unsigned int _entityId, std::string _componentType)
+void World::ComponentHasChanged(unsigned int _entityId, std::string _componentType, bool _notifyNetwork)
 {
 	unsigned int componentTypeId = ECSL::ComponentTypeManager::GetInstance().GetTableId(_componentType);
-	ComponentHasChanged(_entityId, componentTypeId);
+	ComponentHasChanged(_entityId, componentTypeId, _notifyNetwork);
 }
 
-void World::ComponentHasChanged(unsigned int _entityId, unsigned int _componentTypeId)
+void World::ComponentHasChanged(unsigned int _entityId, unsigned int _componentTypeId, bool _notifyNetwork)
 {
 	int bitSetIndex = ECSL::BitSet::GetBitSetIndex(_componentTypeId);
 	int bitIndex = ECSL::BitSet::GetBitIndex(_componentTypeId);
 	ECSL::BitSet::DataType* changedComponents = (ECSL::BitSet::DataType*)GetComponent(_entityId, "ChangedComponents", 0);
 	changedComponents[bitSetIndex] |= ((ECSL::BitSet::DataType)1) << bitIndex;
 
-	ECSL::BitSet::DataType* changedComponentsNetwork = (ECSL::BitSet::DataType*)GetComponent(_entityId, "ChangedComponentsNetwork", 0);
-	changedComponentsNetwork[bitSetIndex] |= ((ECSL::BitSet::DataType)1) << bitIndex;
+	if (_notifyNetwork)
+	{
+		ECSL::BitSet::DataType* changedComponentsNetwork = (ECSL::BitSet::DataType*)GetComponent(_entityId, "ChangedComponentsNetwork", 0);
+		changedComponentsNetwork[bitSetIndex] |= ((ECSL::BitSet::DataType)1) << bitIndex;
+	}	
 }
 
 bool World::EntityHasComponent(unsigned int _entityId, std::string _componentType)

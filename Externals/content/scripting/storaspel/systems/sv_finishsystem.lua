@@ -1,6 +1,4 @@
 FinishSystem = System()
-FinishSystem.TotemCount = {}
-FinishSystem.NoPlayers = 0
 
 FinishSystem.Initialize = function(self)
 	self:SetName("FinishSystem System")
@@ -13,104 +11,95 @@ FinishSystem.Initialize = function(self)
 end
 
 FinishSystem.Update = function(self, dt)
-
-	--print("NoOfEntities: " .. #self:GetEntities())
-
-end
-
-FinishSystem.AddTotemPole = function(self, playerId, currentCP, noCP, X, Y, Z)
-	
-	print("PlayerId: " .. playerId)
-	print("CurrentCP: " .. currentCP)
-	print("noCP: " .. noCP)
-
-
-	local head = world:CreateNewEntity("Head")
-	local rotation 	= world:GetComponent(head, "Rotation", 0)
-	local position 	= world:GetComponent(head, "Position", 0)
-	local scale		= world:GetComponent(head, "Scale", 0)
-	local axis = math.pi
-	local setScale = 0.25
-	
-	-- Position
-	if self.TotemCount[currentCP] == nil then
-		table.insert(self.TotemCount, currentCP, 1)
-	end
-
-	rotation:SetFloat3(0, axis, 0)
-	position:SetFloat3(X, 0.4 + self.TotemCount[currentCP] * setScale, Z)
-	scale:SetFloat3(setScale, setScale, setScale)
-	
-	world:SetComponent(head, "Model", "ModelName", "ply" .. playerId);
-	world:SetComponent(head, "Model", "ModelPath", "head");
-	world:SetComponent(head, "Model", "RenderType", 0);
-	self.TotemCount[currentCP] = self.TotemCount[currentCP] + 1
 end
 
 FinishSystem.OnEntityAdded = function(self, entity)
 
-	if world:EntityHasComponent( entity, "Unit") then
+	if world:EntityHasComponent(entity, "CheckFinishpoint") then 
 	
-		print("world:EntityHasComponent( entity, \"Unit\")")
-		self.NoPlayers = self.NoPlayers + 1
-		print("NoPlayers: " .. self.NoPlayers)
-
-	elseif world:EntityHasComponent( entity, "CheckFinishpoint") then
-	
-		print("FinishSystem.OnEntityAdded")
-	
+		-- Get all units currently on the playfield
 		local units = self:GetEntities("Unit")
-		local finishpoints = self:GetEntities("Finishpoint")
-		local nextCP = nil
-		print("NoUnits: " .. #units)
-		for i = 1, #units do
+		
+		-- Get all finishpoints on the map
+		local finishPoints = self:GetEntities("Finishpoint")
+		
+		for i = 1, #finishPoints do
+		
+			-- Get the unit's id to check for
+			local unitId = world:GetComponent(entity, "UnitEntityId", 0):GetInt()
 			
-			local unitX, unitZ = world:GetComponent(units[i], "MapPosition", 0):GetInt2()
-			
-			for j = 1, #finishpoints do
-			
-				local finishpointX, finishpointZ = world:GetComponent(finishpoints[j], "MapPosition", 0):GetInt2()
+			-- Get the position of the finishPoints[i]
+			local finishPosX, finishPosZ = world:GetComponent(finishPoints[i], "MapPosition", 0):GetInt2()
+		
+			-- Go through all units currently active
+			for j = 1, #units do
 				
-				if unitX == finishpointX and unitZ == finishpointZ then
-					print("Unit reached a finishpoint")
+				-- If the unitId to check for equals the current unit
+				if unitId == units[j] then
+				
+					-- Get the units MapPosition
+					local unitPosX, unitPosZ = world:GetComponent(units[j], "MapPosition", 0):GetInt2()
 					
+					-- If the unit is at the same position as the finishpoint
+					if unitPosX == finishPosX and unitPosZ == finishPosZ then
 					
-					
-					local playerId = world:GetComponent(units[i], "PlayerEntityId", "Id"):GetInt()
-					local playerNum = world:GetComponent(units[i], "PlayerNumber", 0):GetInt()
-					print("PlayerId: " .. playerId)
-					self.AddTotemPole(self, playerNum, j, 0, finishpointX, 1, finishpointZ)
-					
-					
-					local id = world:CreateNewEntity()
-					world:CreateComponentAndAddTo("TakeCardsFromPlayer", id)
-					world:GetComponent(id, "TakeCardsFromPlayer", "Player"):SetInt(playerId)
-					
-					id = world:CreateNewEntity()
-					world:CreateComponentAndAddTo("TakeCardStepsFromUnit", id)
-					world:GetComponent(id, "TakeCardStepsFromUnit", "Unit"):SetInt(units[i])
-					
-					world:CreateComponentAndAddTo("IsSpectator", playerId)
-					world:KillEntity(units[i])
-					
-					self.NoPlayers = self.NoPlayers - 1
-					print("NoPlayers: " .. self.NoPlayers)
-					
-					if self.NoPlayers <= 0 then
-						print("Game is over, restart game")
-						Console.AddToCommandQueue("reload")
+						-- Get the player id and number that is controlling the unit
+						local playerId = world:GetComponent(units[j], "PlayerEntityId", "Id"):GetInt()
+						local playerNum = world:GetComponent(units[j], "PlayerNumber", 0):GetInt()
+						print("Player#" .. playerNum .. " has reached the finishpoint!")
+						
+						-- Add a new piece to the totempole at the finishpoint
+						--self.AddTotemPole(self, playerNum, i, 0, finishPosX, 1, finishPosZ)
+						
+						
+						-- Create a new entity which will take the player's cards
+						local newId = world:CreateNewEntity()
+						world:CreateComponentAndAddTo("TakeCardsFromPlayer", newId)
+						world:GetComponent(newId, "TakeCardsFromPlayer", "Player"):SetInt(playerId)
+						
+						-- Create a new entity which will take the player's CardSteps
+						newId = world:CreateNewEntity()
+						world:CreateComponentAndAddTo("TakeCardStepsFromUnit", newId)
+						world:GetComponent(newId, "TakeCardStepsFromUnit", "Unit"):SetInt(units[j])
+						
+						-- Add a spectator to the current player,
+						-- which will remove the player from the game and add him as a spectator
+						world:CreateComponentAndAddTo("IsSpectator", playerId)
+						
+						
+						print("finishPoints[i]: " .. finishPoints[i])
+						
+						local totemPieceId = world:CreateNewEntity()
+						world:CreateComponentAndAddTo("AddTotemPiece", totemPieceId)
+						world:CreateComponentAndAddTo("PlayerNumber", totemPieceId)
+						world:CreateComponentAndAddTo("CheckpointId", totemPieceId)
+						print("CreateComponentAndAddTo done")
+						world:SetComponent(totemPieceId, "PlayerNumber", "Number", playerNum)
+						print("PlayerNumber done")
+						world:SetComponent(totemPieceId, "CheckpointId", "Id", finishPoints[i])
+						print("CheckpointId done")
+						
+						
+						
+						-- Kill the unit entity
+						--world:KillEntity(units[j])
+						
+						
 					end
 					
 					
 				end
 				
+				
+				
 			
 			end
-			
+		
 		end
-
-		world:KillEntity( entity )
-
+	
+		-- Remove the CheckFinishpoint entity
+		world:KillEntity(entity)
+	
 	end
 	
 end

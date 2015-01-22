@@ -1,5 +1,6 @@
 /*
-Author: Anders, Christian
+--ANDROID VERSION--
+Author: Christian
 */
 #ifndef GRAPHICDEVICE_H
 #define GRAPHICDEVICE_H
@@ -115,6 +116,9 @@ namespace Renderer
 
 		// Window size
 		int	m_clientWidth, m_clientHeight;
+
+		// Light info
+		vec3 m_dirLightDirection;
 
 		// Shaders
 		Shader m_skyBoxShader;
