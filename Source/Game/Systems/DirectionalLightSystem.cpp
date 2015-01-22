@@ -15,7 +15,8 @@ void DirectionalLightSystem::Initialize()
 {
 	SetSystemName("DirectionalLight System");
 
-	/*	Rendersystem wants Position, Scale, Rotation and Render	*/
+	/*	Rendersystem wants Position, Scale, 
+	n and Render	*/
 	AddComponentTypeToFilter("DirectionalLight", ECSL::FilterType::Mandatory);
 
 

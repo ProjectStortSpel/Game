@@ -30,6 +30,7 @@ CardAddModelSystem.OnEntityAdded = function(self, entityId)
 	
 	local rotation = self:GetComponent(entityId, "Rotation", 0)
 	rotation:SetFloat3(0, 3.14159265358979, 1.50 * 3.14159265358979)
+	--rotation:SetFloat3(0, 90, 0)
 	
 	local model = self:GetComponent(entityId, "Model", 0)
 	local action = self:GetComponent(entityId, "CardAction", 0):GetString()

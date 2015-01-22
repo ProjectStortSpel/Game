@@ -1,5 +1,6 @@
 #include "Quaternion.h"
 #define DELTA 0.0001f
+#include <iostream>
 
 Quaternion::Quaternion()
 {
@@ -148,15 +149,16 @@ void Quaternion::MatrixToQuaternion(const glm::mat4 &rotation_matrix)
 
 void Quaternion::EulerToQuaternion( float roll, float pitch, float yaw )
 {
+
 	float cos_roll, cos_pitch, cos_yaw, sin_roll, sin_pitch, sin_yaw, cos_p_cos_y, sin_p_sin_y;
 
 	cos_roll = cosf(roll / 2);
 	cos_pitch = cosf(pitch / 2);
 	cos_yaw = cosf(yaw / 2);
 
-	sin_roll = cosf(roll / 2);
-	sin_pitch = cosf(pitch / 2);
-	sin_yaw = cosf(yaw / 2);
+	sin_roll = sinf(roll / 2);
+	sin_pitch = sinf(pitch / 2);
+	sin_yaw = sinf(yaw / 2);
 
 	cos_p_cos_y = cos_pitch * cos_yaw;
 	sin_p_sin_y = sin_pitch * sin_yaw;
@@ -171,8 +173,6 @@ void Quaternion::SlerpQuaternion(Quaternion &result, Quaternion *target, float t
 {
 	float           target1[4];
 	double			omega, cosom, sinom, scale0, scale1;
-
-	t = t * t * t * (t * (6 * t - 15) + 10); //SMOOTH AS FUCK
 
 	Quaternion* from = this;
 

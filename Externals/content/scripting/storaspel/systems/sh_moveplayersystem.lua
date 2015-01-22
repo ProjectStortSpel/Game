@@ -47,7 +47,7 @@ TrueTestMoveSystem.Update = function(self, dt)
 				newPosZ = mapPositionZ
 			end
 
-			world:GetComponent(entity, "Position", 0):SetFloat3(newPosX, newPosY, newPosZ)
+			world:GetComponent(entity, "Position", 0):SetFloat3(newPosX, newPosY, newPosZ, false)
 		end
 
 	end
