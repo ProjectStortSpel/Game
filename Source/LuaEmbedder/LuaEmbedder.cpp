@@ -166,7 +166,7 @@ namespace LuaEmbedder
     if (error)
     {
 	  SDL_Log("LuaEmbedder::CallFunction : %s", (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error"));
-      return false;
+	  return false;
     }
     return true;
   }
@@ -224,12 +224,18 @@ namespace LuaEmbedder
   void AddFloat(lua_State* L, const std::string& name, float value, const std::string& library)
   {
     std::map<lua_State*, lua_State*>::iterator it0 = LuaThreads.find(L);
-    if (it0 == LuaThreads.end())
+    std::map<lua_State*, std::vector<lua_State*>>::iterator it1;
+    if (it0 != LuaThreads.end())
+      it1 = LuaStates.find(it0->second);
+    else
     {
-      ADD_VARIABLE(L, number);
-      return;
+      it1 = LuaStates.find(L);
+      if (it1 == LuaStates.end())
+      {
+	ADD_VARIABLE(L, number);
+	return;
+      }
     }
-    std::map<lua_State*, std::vector<lua_State*>>::iterator it1 = LuaStates.find(it0->second);
     assert(it1 != LuaStates.end());
     for (std::vector<lua_State*>::iterator it2 = it1->second.begin(); it2 != it1->second.end(); it2++)
       ADD_VARIABLE((*it2), number);
@@ -238,12 +244,18 @@ namespace LuaEmbedder
   void AddInt(lua_State* L, const std::string& name, int value, const std::string& library)
   {
     std::map<lua_State*, lua_State*>::iterator it0 = LuaThreads.find(L);
-    if (it0 == LuaThreads.end())
+    std::map<lua_State*, std::vector<lua_State*>>::iterator it1;
+    if (it0 != LuaThreads.end())
+      it1 = LuaStates.find(it0->second);
+    else
     {
-      ADD_VARIABLE(L, integer);
-      return;
+      it1 = LuaStates.find(L);
+      if (it1 == LuaStates.end())
+      {
+	ADD_VARIABLE(L, integer);
+	return;
+      }
     }
-    std::map<lua_State*, std::vector<lua_State*>>::iterator it1 = LuaStates.find(it0->second);
     assert(it1 != LuaStates.end());
     for (std::vector<lua_State*>::iterator it2 = it1->second.begin(); it2 != it1->second.end(); it2++)
       ADD_VARIABLE((*it2), integer);
@@ -252,12 +264,18 @@ namespace LuaEmbedder
   void AddBool(lua_State* L, const std::string& name, bool value, const std::string& library)
   {
     std::map<lua_State*, lua_State*>::iterator it0 = LuaThreads.find(L);
-    if (it0 == LuaThreads.end())
+    std::map<lua_State*, std::vector<lua_State*>>::iterator it1;
+    if (it0 != LuaThreads.end())
+      it1 = LuaStates.find(it0->second);
+    else
     {
-      ADD_VARIABLE(L, boolean);
-      return;
+      it1 = LuaStates.find(L);
+      if (it1 == LuaStates.end())
+      {
+	ADD_VARIABLE(L, boolean);
+	return;
+      }
     }
-    std::map<lua_State*, std::vector<lua_State*>>::iterator it1 = LuaStates.find(it0->second);
     assert(it1 != LuaStates.end());
     for (std::vector<lua_State*>::iterator it2 = it1->second.begin(); it2 != it1->second.end(); it2++)
       ADD_VARIABLE((*it2), boolean);
@@ -266,12 +284,18 @@ namespace LuaEmbedder
   void AddString(lua_State* L, const std::string& name, const char* value, const std::string& library)
   {
     std::map<lua_State*, lua_State*>::iterator it0 = LuaThreads.find(L);
-    if (it0 == LuaThreads.end())
+    std::map<lua_State*, std::vector<lua_State*>>::iterator it1;
+    if (it0 != LuaThreads.end())
+      it1 = LuaStates.find(it0->second);
+    else
     {
-      ADD_VARIABLE(L, string);
-      return;
+      it1 = LuaStates.find(L);
+      if (it1 == LuaStates.end())
+      {
+	ADD_VARIABLE(L, string);
+	return;
+      }
     }
-    std::map<lua_State*, std::vector<lua_State*>>::iterator it1 = LuaStates.find(it0->second);
     assert(it1 != LuaStates.end());
     for (std::vector<lua_State*>::iterator it2 = it1->second.begin(); it2 != it1->second.end(); it2++)
       ADD_VARIABLE((*it2), string);
@@ -311,12 +335,18 @@ namespace LuaEmbedder
   void AddFunction(lua_State* L, const std::string& name, int (*functionPointer)(lua_State*), const std::string& library)
   {
     std::map<lua_State*, lua_State*>::iterator it0 = LuaThreads.find(L);
-    if (it0 == LuaThreads.end())
+    std::map<lua_State*, std::vector<lua_State*>>::iterator it1;
+    if (it0 != LuaThreads.end())
+      it1 = LuaStates.find(it0->second);
+    else
     {
-      ADD_FUNCTION(L);
-      return;
+      it1 = LuaStates.find(L);
+      if (it1 == LuaStates.end())
+      {
+	ADD_FUNCTION(L);
+	return;
+      }
     }
-    std::map<lua_State*, std::vector<lua_State*>>::iterator it1 = LuaStates.find(it0->second);
     assert(it1 != LuaStates.end());
     for (std::vector<lua_State*>::iterator it2 = it1->second.begin(); it2 != it1->second.end(); it2++)
       ADD_FUNCTION((*it2));
@@ -530,7 +560,7 @@ namespace LuaEmbedder
   {
     return lua_isfunction(L, index);
   }
-    
+  
   void SaveFunction(lua_State* L, int index, const std::string& key)
   {
     if (!lua_isfunction(L, index))
