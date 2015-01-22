@@ -2,8 +2,6 @@
 #include "ECSL/Framework/Common/BitSet.h"
 #include "Game/Quaternion.h"
 
-float tasta = 0.0f;
-float speedtasta = 0.001f;
 RenderSystem::RenderSystem(Renderer::GraphicDevice* _graphics)
 {
 	m_graphics = _graphics;
@@ -51,17 +49,10 @@ void RenderSystem::Initialize()
 void RenderSystem::Update(float _dt)
 {
 	auto entities = *GetEntities();
-	tasta += speedtasta;
 
-	if (tasta > 1 || tasta < 0)
-	{
-		speedtasta = -speedtasta;
-	}
-	
 	for (auto entity : entities)
 	{
 		ECSL::BitSet::DataType* eBitMask = (ECSL::BitSet::DataType*)GetComponent(entity, m_componentId, 0);
-		UpdateMatrix(entity);
 		bool needsUpdate = false;
 		for (unsigned int n = 0; n < m_numberOfBitSets; ++n)
 		{
