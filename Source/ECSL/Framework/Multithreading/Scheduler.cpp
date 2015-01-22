@@ -60,7 +60,7 @@ void Scheduler::UpdateDt(float _dt)
 {
 	for (auto workItem : *m_workItems)
 	{
-		((RuntimeData*)workItem->Data)->RuntimeInfo.Dt = _dt;
+		((RuntimeData*)workItem->Data)->runtimeInfo.Dt = _dt;
 	}
 }
 
@@ -176,9 +176,9 @@ void Scheduler::AddUpdateSystemsTasks()
 			for (unsigned int taskIndex = 0; taskIndex < system->GetUpdateTaskCount(); ++taskIndex)
 			{
 				UpdateData* data = new UpdateData();
-				data->System = system;
-				data->RuntimeInfo.TaskIndex = taskIndex;
-				data->RuntimeInfo.TaskCount = system->GetUpdateTaskCount();
+				data->system = system;
+				data->runtimeInfo.TaskIndex = taskIndex;
+				data->runtimeInfo.TaskCount = system->GetUpdateTaskCount();
 				MPL::WorkItem* workItem = new MPL::WorkItem();
 				workItem->Work = &SystemUpdate;
 				workItem->Data = data;
@@ -201,11 +201,11 @@ void Scheduler::AddUpdateSystemEntityListsTasks()
 	for (unsigned int i = 0; i < updateSystemEntityListsWorkCount; ++i)
 	{
 		UpdateSystemEntityListsData* data = new UpdateSystemEntityListsData();
-		data->SystemManager = m_systemManager;
-		data->EntitiesToAddToSystems = m_entitiesToAddToSystems;
-		data->EntitiesToRemoveFromSystems = m_entitiesToRemoveFromSystems;
-		data->RuntimeInfo.TaskIndex = i;
-		data->RuntimeInfo.TaskCount = updateSystemEntityListsWorkCount;
+		data->systemManager = m_systemManager;
+		data->entitiesToAddToSystems = m_entitiesToAddToSystems;
+		data->entitiesToRemoveFromSystems = m_entitiesToRemoveFromSystems;
+		data->runtimeInfo.TaskIndex = i;
+		data->runtimeInfo.TaskCount = updateSystemEntityListsWorkCount;
 		MPL::WorkItem* workItem = new MPL::WorkItem();
 		workItem->Work = &SystemManagerUpdateSystemEntityLists;
 		workItem->Data = data;
@@ -225,10 +225,10 @@ void Scheduler::AddEntitiesAddedTasks()
 			for (unsigned int taskIndex = 0; taskIndex < system->GetEntitiesAddedTaskCount(); ++taskIndex)
 			{
 				EntitiesAddedData* data = new EntitiesAddedData();
-				data->System = system;
-				data->RuntimeInfo.TaskIndex = taskIndex;
-				data->RuntimeInfo.TaskCount = system->GetEntitiesAddedTaskCount();
-				data->EntitiesToAddToSystems = m_entitiesToAddToSystems;
+				data->system = system;
+				data->runtimeInfo.TaskIndex = taskIndex;
+				data->runtimeInfo.TaskCount = system->GetEntitiesAddedTaskCount();
+				data->entitiesToAddToSystems = m_entitiesToAddToSystems;
 				MPL::WorkItem* workItem = new MPL::WorkItem();
 				workItem->Work = &SystemEntitiesAdded;
 				workItem->Data = data;
@@ -255,10 +255,10 @@ void Scheduler::AddEntitiesRemovedTasks()
 			for (unsigned int taskIndex = 0; taskIndex < system->GetEntitiesRemovedTaskCount(); ++taskIndex)
 			{
 				EntitiesRemovedData* data = new EntitiesRemovedData();
-				data->System = system;
-				data->RuntimeInfo.TaskIndex = taskIndex;
-				data->RuntimeInfo.TaskCount = system->GetEntitiesRemovedTaskCount();
-				data->EntitiesToRemoveFromSystems = m_entitiesToRemoveFromSystems;
+				data->system = system;
+				data->runtimeInfo.TaskIndex = taskIndex;
+				data->runtimeInfo.TaskCount = system->GetEntitiesRemovedTaskCount();
+				data->entitiesToRemoveFromSystems = m_entitiesToRemoveFromSystems;
 				MPL::WorkItem* workItem = new MPL::WorkItem();
 				workItem->Work = &SystemEntitiesRemoved;
 				workItem->Data = data;
@@ -281,9 +281,9 @@ void Scheduler::AddSortMessagesTask()
 	for (unsigned int i = 0; i < sortMessagesWorkCount; ++i)
 	{
 		SortMessagesData* data = new SortMessagesData();
-		data->MessageManager = m_messageManager;
-		data->RuntimeInfo.TaskIndex = i;
-		data->RuntimeInfo.TaskCount = sortMessagesWorkCount;
+		data->messageManager = m_messageManager;
+		data->runtimeInfo.TaskIndex = i;
+		data->runtimeInfo.TaskCount = sortMessagesWorkCount;
 		MPL::WorkItem* workItem = new MPL::WorkItem();
 		workItem->Work = &MessageManagerSortMessages;
 		workItem->Data = data;
@@ -303,10 +303,10 @@ void Scheduler::AddMessagesRecievedTasks()
 			for (unsigned int taskIndex = 0; taskIndex < system->GetMessagesRecievedTaskCount(); ++taskIndex)
 			{
 				MessagesRecievedData* data = new MessagesRecievedData();
-				data->MessageManager = m_messageManager;
-				data->System = system;
-				data->RuntimeInfo.TaskIndex = taskIndex;
-				data->RuntimeInfo.TaskCount = system->GetMessagesRecievedTaskCount();
+				data->messageManager = m_messageManager;
+				data->system = system;
+				data->runtimeInfo.TaskIndex = taskIndex;
+				data->runtimeInfo.TaskCount = system->GetMessagesRecievedTaskCount();
 				MPL::WorkItem* workItem = new MPL::WorkItem();
 				workItem->Work = &SystemMessagesRecieved;
 				workItem->Data = data;
@@ -329,9 +329,9 @@ void Scheduler::AddDeleteMessagesTask()
 	for (unsigned int i = 0; i < deleteMessagesWorkCount; ++i)
 	{
 		DeleteMessagesData* data = new DeleteMessagesData();
-		data->MessageManager = m_messageManager;
-		data->RuntimeInfo.TaskIndex = i;
-		data->RuntimeInfo.TaskCount = deleteMessagesWorkCount;
+		data->messageManager = m_messageManager;
+		data->runtimeInfo.TaskIndex = i;
+		data->runtimeInfo.TaskCount = deleteMessagesWorkCount;
 		MPL::WorkItem* workItem = new MPL::WorkItem();
 		workItem->Work = &MessageManagerDeleteMessages;
 		workItem->Data = data;
@@ -347,9 +347,9 @@ void Scheduler::AddCopyCurrentListsTask()
 	for (unsigned int i = 0; i < copyCurrentListsWorkCount; ++i)
 	{
 		CopyCurrentListsData* data = new CopyCurrentListsData();
-		data->DataManager = m_dataManager;
-		data->RuntimeInfo.TaskIndex = i;
-		data->RuntimeInfo.TaskCount = copyCurrentListsWorkCount;
+		data->dataManager = m_dataManager;
+		data->runtimeInfo.TaskIndex = i;
+		data->runtimeInfo.TaskCount = copyCurrentListsWorkCount;
 		MPL::WorkItem* workItem = new MPL::WorkItem();
 		workItem->Work = &DataManagerCopyCurrentLists;
 		workItem->Data = data;
@@ -365,9 +365,9 @@ void Scheduler::AddUpdateEntityTableTask()
 	for (unsigned int i = 0; i < updateEntityTableWorkCount; ++i)
 	{
 		UpdateEntityTableData* data = new UpdateEntityTableData();
-		data->DataManager = m_dataManager;
-		data->RuntimeInfo.TaskIndex = i;
-		data->RuntimeInfo.TaskCount = updateEntityTableWorkCount;
+		data->dataManager = m_dataManager;
+		data->runtimeInfo.TaskIndex = i;
+		data->runtimeInfo.TaskCount = updateEntityTableWorkCount;
 		MPL::WorkItem* workItem = new MPL::WorkItem();
 		workItem->Work = &DataManagerUpdateEntityTable;
 		workItem->Data = data;
@@ -383,9 +383,9 @@ void Scheduler::AddDeleteComponentDataTask()
 	for (unsigned int i = 0; i < deleteComponentDataWorkCount; ++i)
 	{
 		DeleteComponentDataData* data = new DeleteComponentDataData();
-		data->DataManager = m_dataManager;
-		data->RuntimeInfo.TaskIndex = i;
-		data->RuntimeInfo.TaskCount = deleteComponentDataWorkCount;
+		data->dataManager = m_dataManager;
+		data->runtimeInfo.TaskIndex = i;
+		data->runtimeInfo.TaskCount = deleteComponentDataWorkCount;
 		MPL::WorkItem* workItem = new MPL::WorkItem();
 		workItem->Work = &DataManagerDeleteComponentData;
 		workItem->Data = data;
@@ -401,9 +401,9 @@ void Scheduler::AddRecycleEntityIdsTask()
 	for (unsigned int i = 0; i < recycleEntityIdsWorkCount; ++i)
 	{
 		RecycleEntityIdsData* data = new RecycleEntityIdsData();
-		data->DataManager = m_dataManager;
-		data->RuntimeInfo.TaskIndex = i;
-		data->RuntimeInfo.TaskCount = recycleEntityIdsWorkCount;
+		data->dataManager = m_dataManager;
+		data->runtimeInfo.TaskIndex = i;
+		data->runtimeInfo.TaskCount = recycleEntityIdsWorkCount;
 		MPL::WorkItem* workItem = new MPL::WorkItem();
 		workItem->Work = &DataManagerRecycleEntityIds;
 		workItem->Data = data;
@@ -419,9 +419,9 @@ void Scheduler::AddClearCopiedListsTask()
 	for (unsigned int i = 0; i < clearCopiedListsWorkCount; ++i)
 	{
 		ClearCopiedListsData* data = new ClearCopiedListsData();
-		data->DataManager = m_dataManager;
-		data->RuntimeInfo.TaskIndex = i;
-		data->RuntimeInfo.TaskCount = clearCopiedListsWorkCount;
+		data->dataManager = m_dataManager;
+		data->runtimeInfo.TaskIndex = i;
+		data->runtimeInfo.TaskCount = clearCopiedListsWorkCount;
 		MPL::WorkItem* workItem = new MPL::WorkItem();
 		workItem->Work = &DataManagerClearCopiedLists;
 		workItem->Data = data;
@@ -437,9 +437,9 @@ void Scheduler::AddClearSystemEntityChangeListsTask()
 	for (unsigned int i = 0; i < clearSystemEntityChangeListsCount; ++i)
 	{
 		ClearListsData* data = new ClearListsData();
-		data->Scheduler = this;
-		data->RuntimeInfo.TaskIndex = i;
-		data->RuntimeInfo.TaskCount = clearSystemEntityChangeListsCount;
+		data->scheduler = this;
+		data->runtimeInfo.TaskIndex = i;
+		data->runtimeInfo.TaskCount = clearSystemEntityChangeListsCount;
 		MPL::WorkItem* workItem = new MPL::WorkItem();
 		workItem->Work = &SchedulerClearSystemEntityChangeLists;
 		workItem->Data = data;
@@ -459,81 +459,81 @@ void Scheduler::ClearSystemEntityChangeLists(const RuntimeInfo& _runtimeInfo)
 void ECSL::SystemUpdate(void* _data)
 {
 	UpdateData* data = (UpdateData*)_data;
-	data->System->Update(data->RuntimeInfo);
+	data->system->Update(data->runtimeInfo);
 }
 
 void ECSL::SystemEntitiesAdded(void* _data)
 {
 	EntitiesAddedData* data = (EntitiesAddedData*)_data;
-	auto entitiesToAdd = data->EntitiesToAddToSystems->at(data->System->GetId());
+	auto entitiesToAdd = data->entitiesToAddToSystems->at(data->system->GetId());
 	if (entitiesToAdd->size() > 0)
-		data->System->EntitiesAdded(data->RuntimeInfo, *entitiesToAdd);
+		data->system->EntitiesAdded(data->runtimeInfo, *entitiesToAdd);
 }
 
 void ECSL::SystemEntitiesRemoved(void* _data)
 {
 	EntitiesRemovedData* data = (EntitiesRemovedData*)_data;
-	auto entitiesToRemove = data->EntitiesToRemoveFromSystems->at(data->System->GetId());
+	auto entitiesToRemove = data->entitiesToRemoveFromSystems->at(data->system->GetId());
 	if (entitiesToRemove->size() > 0)
-		data->System->EntitiesRemoved(data->RuntimeInfo, *entitiesToRemove);
+		data->system->EntitiesRemoved(data->runtimeInfo, *entitiesToRemove);
 }
 
 void ECSL::SystemMessagesRecieved(void* _data)
 {
 	MessagesRecievedData* data = (MessagesRecievedData*)_data;
-	data->System->MessagesRecieved(*data->MessageManager->GetMessagesToSystem(data->System->GetId()));
+	data->system->MessagesRecieved(*data->messageManager->GetMessagesToSystem(data->system->GetId()));
 }
 
 void ECSL::DataManagerCopyCurrentLists(void* _data)
 {
 	CopyCurrentListsData* data = (CopyCurrentListsData*)_data;
-	data->DataManager->CopyCurrentLists(data->RuntimeInfo);
+	data->dataManager->CopyCurrentLists(data->runtimeInfo);
 }
 
 void ECSL::DataManagerUpdateEntityTable(void* _data)
 {
 	UpdateEntityTableData* data = (UpdateEntityTableData*)_data;
-	data->DataManager->UpdateEntityTable(data->RuntimeInfo);
+	data->dataManager->UpdateEntityTable(data->runtimeInfo);
 }
 
 void ECSL::DataManagerDeleteComponentData(void* _data)
 {
 	DeleteComponentDataData* data = (DeleteComponentDataData*)_data;
-	data->DataManager->DeleteComponentData(data->RuntimeInfo);
+	data->dataManager->DeleteComponentData(data->runtimeInfo);
 }
 
 void ECSL::DataManagerRecycleEntityIds(void* _data)
 {
 	RecycleEntityIdsData* data = (RecycleEntityIdsData*)_data;
-	data->DataManager->RecycleEntityIds(data->RuntimeInfo);
+	data->dataManager->RecycleEntityIds(data->runtimeInfo);
 }
 
 void ECSL::DataManagerClearCopiedLists(void* _data)
 {
 	ClearCopiedListsData* data = (ClearCopiedListsData*)_data;
-	data->DataManager->ClearCopiedLists(data->RuntimeInfo);
+	data->dataManager->ClearCopiedLists(data->runtimeInfo);
 }
 
 void ECSL::SystemManagerUpdateSystemEntityLists(void* _data)
 {
 	UpdateSystemEntityListsData* data = (UpdateSystemEntityListsData*)_data;
-	data->SystemManager->UpdateSystemEntityLists(data->RuntimeInfo, *data->EntitiesToAddToSystems, *data->EntitiesToRemoveFromSystems);
+	data->systemManager->UpdateSystemEntityLists(data->runtimeInfo, *data->entitiesToAddToSystems, *data->entitiesToRemoveFromSystems);
 }
 
 void ECSL::MessageManagerSortMessages(void* _data)
 {
 	SortMessagesData* data = (SortMessagesData*)_data;
-	data->MessageManager->SortMessages(data->RuntimeInfo);
+	data->messageManager->SortMessages(data->runtimeInfo);
 }
 
 void ECSL::MessageManagerDeleteMessages(void* _data)
 {
 	DeleteMessagesData* data = (DeleteMessagesData*)_data;
-	data->MessageManager->DeleteMessages(data->RuntimeInfo);
+	data->messageManager->DeleteMessages(data->runtimeInfo);
 }
 
 void ECSL::SchedulerClearSystemEntityChangeLists(void* _data)
 {
 	ClearListsData* data = (ClearListsData*)_data;
-	data->Scheduler->ClearSystemEntityChangeLists(data->RuntimeInfo);
+	data->scheduler->ClearSystemEntityChangeLists(data->runtimeInfo);
 }

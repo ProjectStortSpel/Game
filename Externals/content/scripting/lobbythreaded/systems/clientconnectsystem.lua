@@ -2,7 +2,7 @@
 
 ClientConnectSystem = System()
 
-ClientConnectSystem.Update = function(self, dt)
+ClientConnectSystem.Update = function(self, dt, taskIndex, taskCount)
 
 	if GameRunning then
 		return
@@ -11,7 +11,7 @@ ClientConnectSystem.Update = function(self, dt)
 end
 
 ClientConnectSystem.Initialize = function(self)
-	self:SetName("ClientConnectSystem System");
+	self:SetName("ClientConnectSystem");
 	
 	self:InitializeNetworkEvents();
 	

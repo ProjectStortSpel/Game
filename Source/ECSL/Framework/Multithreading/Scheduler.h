@@ -112,90 +112,90 @@ namespace ECSL
 
 	struct RuntimeData
 	{
-		RuntimeInfo RuntimeInfo;
+		RuntimeInfo runtimeInfo;
 	};
 
 	struct UpdateData
 	{
-		RuntimeInfo RuntimeInfo;
-		System* System;
+		RuntimeInfo runtimeInfo;
+		System* system;
 	};
 
 	struct UpdateSystemEntityListsData
 	{
-		RuntimeInfo RuntimeInfo;
-		SystemManager* SystemManager;
-		std::vector<std::vector<unsigned int>*>* EntitiesToAddToSystems;
-		std::vector<std::vector<unsigned int>*>* EntitiesToRemoveFromSystems;
+		RuntimeInfo runtimeInfo;
+		SystemManager* systemManager;
+		std::vector<std::vector<unsigned int>*>* entitiesToAddToSystems;
+		std::vector<std::vector<unsigned int>*>* entitiesToRemoveFromSystems;
 	};
 
 	struct EntitiesAddedData
 	{
-		RuntimeInfo RuntimeInfo;
-		System* System;
-		std::vector<std::vector<unsigned int>*>* EntitiesToAddToSystems;
+		RuntimeInfo runtimeInfo;
+		System* system;
+		std::vector<std::vector<unsigned int>*>* entitiesToAddToSystems;
 	};
 
 	struct EntitiesRemovedData
 	{
-		RuntimeInfo RuntimeInfo;
-		System* System;
-		std::vector<std::vector<unsigned int>*>* EntitiesToRemoveFromSystems;
+		RuntimeInfo runtimeInfo;
+		System* system;
+		std::vector<std::vector<unsigned int>*>* entitiesToRemoveFromSystems;
 	};
 
 	struct SortMessagesData
 	{
-		RuntimeInfo RuntimeInfo;
-		MessageManager* MessageManager;
+		RuntimeInfo runtimeInfo;
+		MessageManager* messageManager;
 	};
 
 	struct MessagesRecievedData
 	{
-		RuntimeInfo RuntimeInfo;
-		MessageManager* MessageManager;
-		System* System;
+		RuntimeInfo runtimeInfo;
+		MessageManager* messageManager;
+		System* system;
 	};
 
 	struct DeleteMessagesData
 	{
-		RuntimeInfo RuntimeInfo;
-		MessageManager* MessageManager;
+		RuntimeInfo runtimeInfo;
+		MessageManager* messageManager;
 	};
 
 	struct CopyCurrentListsData
 	{
-		RuntimeInfo RuntimeInfo;
-		DataManager* DataManager;
+		RuntimeInfo runtimeInfo;
+		DataManager* dataManager;
 	};
 
 	struct UpdateEntityTableData
 	{
-		RuntimeInfo RuntimeInfo;
-		DataManager* DataManager;
+		RuntimeInfo runtimeInfo;
+		DataManager* dataManager;
 	};
 
 	struct DeleteComponentDataData
 	{
-		RuntimeInfo RuntimeInfo;
-		DataManager* DataManager;
+		RuntimeInfo runtimeInfo;
+		DataManager* dataManager;
 	};
 
 	struct RecycleEntityIdsData
 	{
-		RuntimeInfo RuntimeInfo;
-		DataManager* DataManager;
+		RuntimeInfo runtimeInfo;
+		DataManager* dataManager;
 	};
 
 	struct ClearCopiedListsData
 	{
-		RuntimeInfo RuntimeInfo;
-		DataManager* DataManager;
+		RuntimeInfo runtimeInfo;
+		DataManager* dataManager;
 	};
 
 	struct ClearListsData
 	{
-		RuntimeInfo RuntimeInfo;
-		Scheduler* Scheduler;
+		RuntimeInfo runtimeInfo;
+		Scheduler* scheduler;
 	};
 };
 
