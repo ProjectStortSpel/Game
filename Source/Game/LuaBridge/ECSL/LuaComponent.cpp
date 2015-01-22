@@ -4,7 +4,7 @@
 
 namespace LuaBridge
 {
-	LuaComponent::LuaComponent()
+	LuaComponent::LuaComponent(lua_State* L)
 	{
 		m_dataLocation = nullptr;
 		m_system = nullptr;
@@ -33,235 +33,235 @@ namespace LuaBridge
 
 	LuaComponent::~LuaComponent() { }
 
-	void LuaComponent::Embed()
+	void LuaComponent::Embed(lua_State* L)
 	{
-		LuaEmbedder::EmbedClass<LuaComponent>("Component");
+		LuaEmbedder::EmbedClass<LuaComponent>(L, "Component");
 
-		LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "GetFloat", &LuaComponent::GetFloat);
-		LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "GetFloat2", &LuaComponent::GetFloat2);
-		LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "GetFloat3", &LuaComponent::GetFloat3);
-		LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "GetFloat4", &LuaComponent::GetFloat4);
-		LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "GetFloat5", &LuaComponent::GetFloat5);
-		LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "SetFloat", &LuaComponent::SetFloat);
-		LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "SetFloat2", &LuaComponent::SetFloat2);
-		LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "SetFloat3", &LuaComponent::SetFloat3);
-		LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "SetFloat4", &LuaComponent::SetFloat4);
-		LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "SetFloat5", &LuaComponent::SetFloat5);
-		LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "GetInt", &LuaComponent::GetInt);
-		LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "GetInt2", &LuaComponent::GetInt2);
-		LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "GetInt3", &LuaComponent::GetInt3);
-		LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "GetInt4", &LuaComponent::GetInt4);
-		LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "SetInt", &LuaComponent::SetInt);
-		LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "SetInt2", &LuaComponent::SetInt2);
-		LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "SetInt3", &LuaComponent::SetInt3);
-		LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "SetInt4", &LuaComponent::SetInt4);
-		LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "GetBool", &LuaComponent::GetBool);
-		LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "SetBool", &LuaComponent::SetBool);
-		LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "GetString", &LuaComponent::GetString);
-		LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "SetString", &LuaComponent::SetString);
-		LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "SetModel", &LuaComponent::SetModel);
-		LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "SetPointlight", &LuaComponent::SetPointlight);
-		LuaEmbedder::EmbedClassFunction<LuaComponent>("Component", "GetPointlight", &LuaComponent::GetPointlight);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetFloat", &LuaComponent::GetFloat);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetFloat2", &LuaComponent::GetFloat2);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetFloat3", &LuaComponent::GetFloat3);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetFloat4", &LuaComponent::GetFloat4);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetFloat5", &LuaComponent::GetFloat5);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetFloat", &LuaComponent::SetFloat);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetFloat2", &LuaComponent::SetFloat2);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetFloat3", &LuaComponent::SetFloat3);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetFloat4", &LuaComponent::SetFloat4);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetFloat5", &LuaComponent::SetFloat5);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetInt", &LuaComponent::GetInt);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetInt2", &LuaComponent::GetInt2);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetInt3", &LuaComponent::GetInt3);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetInt4", &LuaComponent::GetInt4);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetInt", &LuaComponent::SetInt);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetInt2", &LuaComponent::SetInt2);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetInt3", &LuaComponent::SetInt3);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetInt4", &LuaComponent::SetInt4);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetBool", &LuaComponent::GetBool);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetBool", &LuaComponent::SetBool);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetString", &LuaComponent::GetString);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetString", &LuaComponent::SetString);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetModel", &LuaComponent::SetModel);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetPointlight", &LuaComponent::SetPointlight);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetPointlight", &LuaComponent::GetPointlight);
 		
-		LuaEmbedder::EmbedClassProperty<LuaComponent>("Component", "Float", &LuaComponent::GetFloat, &LuaComponent::SetFloat);
-		LuaEmbedder::EmbedClassProperty<LuaComponent>("Component", "Int", &LuaComponent::GetInt, &LuaComponent::SetInt);
-		LuaEmbedder::EmbedClassProperty<LuaComponent>("Component", "Bool", &LuaComponent::GetBool, &LuaComponent::SetBool);
-		LuaEmbedder::EmbedClassProperty<LuaComponent>("Component", "String", &LuaComponent::GetString, &LuaComponent::SetString);
+		LuaEmbedder::EmbedClassProperty<LuaComponent>(L, "Component", "Float", &LuaComponent::GetFloat, &LuaComponent::SetFloat);
+		LuaEmbedder::EmbedClassProperty<LuaComponent>(L, "Component", "Int", &LuaComponent::GetInt, &LuaComponent::SetInt);
+		LuaEmbedder::EmbedClassProperty<LuaComponent>(L, "Component", "Bool", &LuaComponent::GetBool, &LuaComponent::SetBool);
+		LuaEmbedder::EmbedClassProperty<LuaComponent>(L, "Component", "String", &LuaComponent::GetString, &LuaComponent::SetString);
 	}
 
-	int LuaComponent::GetFloat()
+	int LuaComponent::GetFloat(lua_State* L)
 	{
 		assert(m_dataLocation);
-		if (LuaEmbedder::IsInt(1))
-			LuaEmbedder::PushFloat((float)(((float*)m_dataLocation)[LuaEmbedder::PullInt(1)]));
+		if (LuaEmbedder::IsInt(L, 1))
+			LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[LuaEmbedder::PullInt(L, 1)]));
 		else
-			LuaEmbedder::PushFloat((float)((float*)m_dataLocation)[0]);
+			LuaEmbedder::PushFloat(L, (float)((float*)m_dataLocation)[0]);
 		return 1;
 	}
-	int LuaComponent::GetFloat2()
+	int LuaComponent::GetFloat2(lua_State* L)
 	{
 		assert(m_dataLocation);
-		LuaEmbedder::PushFloat((float)(((float*)m_dataLocation)[0]));
-		LuaEmbedder::PushFloat((float)(((float*)m_dataLocation)[1]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[0]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[1]));
 		return 2;
 	}
-	int LuaComponent::GetFloat3()
+	int LuaComponent::GetFloat3(lua_State* L)
 	{
 		assert(m_dataLocation);
-		LuaEmbedder::PushFloat((float)(((float*)m_dataLocation)[0]));
-		LuaEmbedder::PushFloat((float)(((float*)m_dataLocation)[1]));
-		LuaEmbedder::PushFloat((float)(((float*)m_dataLocation)[2]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[0]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[1]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[2]));
 		return 3;
 	}
-	int LuaComponent::GetFloat4()
+	int LuaComponent::GetFloat4(lua_State* L)
 	{
 		assert(m_dataLocation);
-		LuaEmbedder::PushFloat((float)(((float*)m_dataLocation)[0]));
-		LuaEmbedder::PushFloat((float)(((float*)m_dataLocation)[1]));
-		LuaEmbedder::PushFloat((float)(((float*)m_dataLocation)[2]));
-		LuaEmbedder::PushFloat((float)(((float*)m_dataLocation)[3]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[0]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[1]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[2]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[3]));
 		return 4;
 	}
-	int LuaComponent::GetFloat5()
+	int LuaComponent::GetFloat5(lua_State* L)
 	{
 		assert(m_dataLocation);
-		LuaEmbedder::PushFloat((float)(((float*)m_dataLocation)[0]));
-		LuaEmbedder::PushFloat((float)(((float*)m_dataLocation)[1]));
-		LuaEmbedder::PushFloat((float)(((float*)m_dataLocation)[2]));
-		LuaEmbedder::PushFloat((float)(((float*)m_dataLocation)[3]));
-		LuaEmbedder::PushFloat((float)(((float*)m_dataLocation)[4]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[0]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[1]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[2]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[3]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[4]));
 		return 5;
 	}
-	int LuaComponent::SetFloat()
+	int LuaComponent::SetFloat(lua_State* L)
 	{
 		assert(m_dataLocation);
-		if (LuaEmbedder::IsInt(2))
-			((float*)m_dataLocation)[LuaEmbedder::PullInt(2)] = LuaEmbedder::PullFloat(1);
+		if (LuaEmbedder::IsInt(L, 2))
+			((float*)m_dataLocation)[LuaEmbedder::PullInt(L, 2)] = LuaEmbedder::PullFloat(L, 1);
 		else
-			((float*)m_dataLocation)[0] = LuaEmbedder::PullFloat(1);
+			((float*)m_dataLocation)[0] = LuaEmbedder::PullFloat(L, 1);
 		ComponentHasChanged();
 		return 0;
 	}
-	int LuaComponent::SetFloat2()
+	int LuaComponent::SetFloat2(lua_State* L)
 	{
 		assert(m_dataLocation);
-		((float*)m_dataLocation)[0] = LuaEmbedder::PullFloat(1);
-		((float*)m_dataLocation)[1] = LuaEmbedder::PullFloat(2);
+		((float*)m_dataLocation)[0] = LuaEmbedder::PullFloat(L, 1);
+		((float*)m_dataLocation)[1] = LuaEmbedder::PullFloat(L, 2);
 		ComponentHasChanged();
 		return 0;
 	}
-	int LuaComponent::SetFloat3()
+	int LuaComponent::SetFloat3(lua_State* L)
 	{
 		assert(m_dataLocation);
-		((float*)m_dataLocation)[0] = LuaEmbedder::PullFloat(1);
-		((float*)m_dataLocation)[1] = LuaEmbedder::PullFloat(2);
-		((float*)m_dataLocation)[2] = LuaEmbedder::PullFloat(3);
+		((float*)m_dataLocation)[0] = LuaEmbedder::PullFloat(L, 1);
+		((float*)m_dataLocation)[1] = LuaEmbedder::PullFloat(L, 2);
+		((float*)m_dataLocation)[2] = LuaEmbedder::PullFloat(L, 3);
 		ComponentHasChanged();
 		return 0;
 	}
-	int LuaComponent::SetFloat4()
+	int LuaComponent::SetFloat4(lua_State* L)
 	{
 		assert(m_dataLocation);
-		((float*)m_dataLocation)[0] = LuaEmbedder::PullFloat(1);
-		((float*)m_dataLocation)[1] = LuaEmbedder::PullFloat(2);
-		((float*)m_dataLocation)[2] = LuaEmbedder::PullFloat(3);
-		((float*)m_dataLocation)[3] = LuaEmbedder::PullFloat(4);
+		((float*)m_dataLocation)[0] = LuaEmbedder::PullFloat(L, 1);
+		((float*)m_dataLocation)[1] = LuaEmbedder::PullFloat(L, 2);
+		((float*)m_dataLocation)[2] = LuaEmbedder::PullFloat(L, 3);
+		((float*)m_dataLocation)[3] = LuaEmbedder::PullFloat(L, 4);
 		ComponentHasChanged();
 		return 0;
 	}
-	int LuaComponent::SetFloat5()
+	int LuaComponent::SetFloat5(lua_State* L)
 	{
 		assert(m_dataLocation);
-		((float*)m_dataLocation)[0] = LuaEmbedder::PullFloat(1);
-		((float*)m_dataLocation)[1] = LuaEmbedder::PullFloat(2);
-		((float*)m_dataLocation)[2] = LuaEmbedder::PullFloat(3);
-		((float*)m_dataLocation)[3] = LuaEmbedder::PullFloat(4);
-		((float*)m_dataLocation)[4] = LuaEmbedder::PullFloat(5);
+		((float*)m_dataLocation)[0] = LuaEmbedder::PullFloat(L, 1);
+		((float*)m_dataLocation)[1] = LuaEmbedder::PullFloat(L, 2);
+		((float*)m_dataLocation)[2] = LuaEmbedder::PullFloat(L, 3);
+		((float*)m_dataLocation)[3] = LuaEmbedder::PullFloat(L, 4);
+		((float*)m_dataLocation)[4] = LuaEmbedder::PullFloat(L, 5);
 		ComponentHasChanged();
 		return 0;
 	}
 
-	int LuaComponent::GetInt()
+	int LuaComponent::GetInt(lua_State* L)
 	{
 		assert(m_dataLocation);
-		if (LuaEmbedder::IsInt(1))
-			LuaEmbedder::PushInt((int)(((int*)m_dataLocation)[LuaEmbedder::PullInt(1)]));
+		if (LuaEmbedder::IsInt(L, 1))
+			LuaEmbedder::PushInt(L, (int)(((int*)m_dataLocation)[LuaEmbedder::PullInt(L, 1)]));
 		else
-			LuaEmbedder::PushInt((int)((int*)m_dataLocation)[0]);
+			LuaEmbedder::PushInt(L, (int)((int*)m_dataLocation)[0]);
 		return 1;
 	}
-	int LuaComponent::GetInt2()
+	int LuaComponent::GetInt2(lua_State* L)
 	{
 		assert(m_dataLocation);
-		LuaEmbedder::PushInt((int)(((int*)m_dataLocation)[0]));
-		LuaEmbedder::PushInt((int)(((int*)m_dataLocation)[1]));
+		LuaEmbedder::PushInt(L, (int)(((int*)m_dataLocation)[0]));
+		LuaEmbedder::PushInt(L, (int)(((int*)m_dataLocation)[1]));
 		return 2;
 	}
-	int LuaComponent::GetInt3()
+	int LuaComponent::GetInt3(lua_State* L)
 	{
 		assert(m_dataLocation);
-		LuaEmbedder::PushInt((int)(((int*)m_dataLocation)[0]));
-		LuaEmbedder::PushInt((int)(((int*)m_dataLocation)[1]));
-		LuaEmbedder::PushInt((int)(((int*)m_dataLocation)[2]));
+		LuaEmbedder::PushInt(L, (int)(((int*)m_dataLocation)[0]));
+		LuaEmbedder::PushInt(L, (int)(((int*)m_dataLocation)[1]));
+		LuaEmbedder::PushInt(L, (int)(((int*)m_dataLocation)[2]));
 		return 3;
 	}
-	int LuaComponent::GetInt4()
+	int LuaComponent::GetInt4(lua_State* L)
 	{
 		assert(m_dataLocation);
-		LuaEmbedder::PushInt((int)(((int*)m_dataLocation)[0]));
-		LuaEmbedder::PushInt((int)(((int*)m_dataLocation)[1]));
-		LuaEmbedder::PushInt((int)(((int*)m_dataLocation)[2]));
-		LuaEmbedder::PushInt((int)(((int*)m_dataLocation)[3]));
+		LuaEmbedder::PushInt(L, (int)(((int*)m_dataLocation)[0]));
+		LuaEmbedder::PushInt(L, (int)(((int*)m_dataLocation)[1]));
+		LuaEmbedder::PushInt(L, (int)(((int*)m_dataLocation)[2]));
+		LuaEmbedder::PushInt(L, (int)(((int*)m_dataLocation)[3]));
 		return 4;
 	}
-	int LuaComponent::SetInt()
+	int LuaComponent::SetInt(lua_State* L)
 	{
 		assert(m_dataLocation);
-		if (LuaEmbedder::IsInt(2))
-			((int*)m_dataLocation)[LuaEmbedder::PullInt(2)] = LuaEmbedder::PullInt(1);
+		if (LuaEmbedder::IsInt(L, 2))
+			((int*)m_dataLocation)[LuaEmbedder::PullInt(L, 2)] = LuaEmbedder::PullInt(L, 1);
 		else
-			((int*)m_dataLocation)[0] = LuaEmbedder::PullInt(1);
+			((int*)m_dataLocation)[0] = LuaEmbedder::PullInt(L, 1);
 		ComponentHasChanged();
 		return 0;
 	}
-	int LuaComponent::SetInt2()
+	int LuaComponent::SetInt2(lua_State* L)
 	{
 		assert(m_dataLocation);
-		((int*)m_dataLocation)[0] = LuaEmbedder::PullInt(1);
-		((int*)m_dataLocation)[1] = LuaEmbedder::PullInt(2);
+		((int*)m_dataLocation)[0] = LuaEmbedder::PullInt(L, 1);
+		((int*)m_dataLocation)[1] = LuaEmbedder::PullInt(L, 2);
 		ComponentHasChanged();
 		return 0;
 	}
-	int LuaComponent::SetInt3()
+	int LuaComponent::SetInt3(lua_State* L)
 	{
 		assert(m_dataLocation);
-		((int*)m_dataLocation)[0] = LuaEmbedder::PullInt(1);
-		((int*)m_dataLocation)[1] = LuaEmbedder::PullInt(2);
-		((int*)m_dataLocation)[2] = LuaEmbedder::PullInt(3);
+		((int*)m_dataLocation)[0] = LuaEmbedder::PullInt(L, 1);
+		((int*)m_dataLocation)[1] = LuaEmbedder::PullInt(L, 2);
+		((int*)m_dataLocation)[2] = LuaEmbedder::PullInt(L, 3);
 		ComponentHasChanged();
 		return 0;
 	}
-	int LuaComponent::SetInt4()
+	int LuaComponent::SetInt4(lua_State* L)
 	{
 		assert(m_dataLocation);
-		((int*)m_dataLocation)[0] = LuaEmbedder::PullInt(1);
-		((int*)m_dataLocation)[1] = LuaEmbedder::PullInt(2);
-		((int*)m_dataLocation)[2] = LuaEmbedder::PullInt(3);
-		((int*)m_dataLocation)[3] = LuaEmbedder::PullInt(4);
+		((int*)m_dataLocation)[0] = LuaEmbedder::PullInt(L, 1);
+		((int*)m_dataLocation)[1] = LuaEmbedder::PullInt(L, 2);
+		((int*)m_dataLocation)[2] = LuaEmbedder::PullInt(L, 3);
+		((int*)m_dataLocation)[3] = LuaEmbedder::PullInt(L, 4);
 		ComponentHasChanged();
 		return 0;
 	}
 
-	int LuaComponent::GetBool()
+	int LuaComponent::GetBool(lua_State* L)
 	{
 		assert(m_dataLocation);
-		if (LuaEmbedder::IsInt(1))
-			LuaEmbedder::PushBool((bool)(((bool*)m_dataLocation)[LuaEmbedder::PullInt(1)]));
+		if (LuaEmbedder::IsInt(L, 1))
+			LuaEmbedder::PushBool(L, (bool)(((bool*)m_dataLocation)[LuaEmbedder::PullInt(L, 1)]));
 		else
-			LuaEmbedder::PushBool((bool)((bool*)m_dataLocation)[0]);
+			LuaEmbedder::PushBool(L, (bool)((bool*)m_dataLocation)[0]);
 		return 1;
 	}
-	int LuaComponent::SetBool()
+	int LuaComponent::SetBool(lua_State* L)
 	{
 		assert(m_dataLocation);
-		if (LuaEmbedder::IsInt(2))
-			((bool*)m_dataLocation)[LuaEmbedder::PullInt(2)] = LuaEmbedder::PullBool(1);
+		if (LuaEmbedder::IsInt(L, 2))
+			((bool*)m_dataLocation)[LuaEmbedder::PullInt(L, 2)] = LuaEmbedder::PullBool(L, 1);
 		else
-			((bool*)m_dataLocation)[0] = LuaEmbedder::PullBool(1);
+			((bool*)m_dataLocation)[0] = LuaEmbedder::PullBool(L, 1);
 		ComponentHasChanged();
 		return 0;
 	}
 
-	int LuaComponent::GetString()
+	int LuaComponent::GetString(lua_State* L)
 	{
 		assert(m_dataLocation);
-		LuaEmbedder::PushString(std::string((char*)m_dataLocation));
+		LuaEmbedder::PushString(L, std::string((char*)m_dataLocation));
 		return 1;
 	}
-	int LuaComponent::SetString()
+	int LuaComponent::SetString(lua_State* L)
 	{
 		assert(m_dataLocation);
-		std::string text = LuaEmbedder::PullString(1);
+		std::string text = LuaEmbedder::PullString(L, 1);
 		for (int i = 0; i < (int)text.size(); i++)
 		  m_dataLocation[i] = text[i];
 		m_dataLocation[(int)text.size()] = '\0';
@@ -269,12 +269,12 @@ namespace LuaBridge
 		return 0;
 	}
 
-	int LuaComponent::SetModel()
+	int LuaComponent::SetModel(lua_State* L)
 	{
 		assert(m_dataLocation);
-		std::string modelName = LuaEmbedder::PullString(1);
-		std::string folderName = LuaEmbedder::PullString(2);
-		int renderType = LuaEmbedder::PullInt(3);
+		std::string modelName = LuaEmbedder::PullString(L, 1);
+		std::string folderName = LuaEmbedder::PullString(L, 2);
+		int renderType = LuaEmbedder::PullInt(L, 3);
 
 		int modelComponentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Model");
 		int modelNameOffset = ECSL::ComponentTypeManager::GetInstance().GetComponentType(modelComponentId)->GetVariables()->at("ModelName").GetOffset();
@@ -295,36 +295,36 @@ namespace LuaBridge
 		return 0;
 	}
 	
-	int LuaComponent::SetPointlight()
+	int LuaComponent::SetPointlight(lua_State* L)
 	{
 		assert(m_dataLocation);
-		((float*)m_dataLocation)[0] = LuaEmbedder::PullFloat(1);
-		((float*)m_dataLocation)[1] = LuaEmbedder::PullFloat(2);
-		((float*)m_dataLocation)[2] = LuaEmbedder::PullFloat(3);
-		((float*)m_dataLocation)[3] = LuaEmbedder::PullFloat(4);
-		((float*)m_dataLocation)[4] = LuaEmbedder::PullFloat(5);
-		((float*)m_dataLocation)[5] = LuaEmbedder::PullFloat(6);
-		((float*)m_dataLocation)[6] = LuaEmbedder::PullFloat(7);
-		((float*)m_dataLocation)[7] = LuaEmbedder::PullFloat(8);
-		((float*)m_dataLocation)[8] = LuaEmbedder::PullFloat(9);
-		((float*)m_dataLocation)[9] = LuaEmbedder::PullFloat(10);
+		((float*)m_dataLocation)[0] = LuaEmbedder::PullFloat(L, 1);
+		((float*)m_dataLocation)[1] = LuaEmbedder::PullFloat(L, 2);
+		((float*)m_dataLocation)[2] = LuaEmbedder::PullFloat(L, 3);
+		((float*)m_dataLocation)[3] = LuaEmbedder::PullFloat(L, 4);
+		((float*)m_dataLocation)[4] = LuaEmbedder::PullFloat(L, 5);
+		((float*)m_dataLocation)[5] = LuaEmbedder::PullFloat(L, 6);
+		((float*)m_dataLocation)[6] = LuaEmbedder::PullFloat(L, 7);
+		((float*)m_dataLocation)[7] = LuaEmbedder::PullFloat(L, 8);
+		((float*)m_dataLocation)[8] = LuaEmbedder::PullFloat(L, 9);
+		((float*)m_dataLocation)[9] = LuaEmbedder::PullFloat(L, 10);
 		ComponentHasChanged();
 		return 0;
 	}
 
-	int LuaComponent::GetPointlight()
+	int LuaComponent::GetPointlight(lua_State* L)
 	{
 		assert(m_dataLocation);
-		LuaEmbedder::PushFloat((float)(((float*)m_dataLocation)[0]));
-		LuaEmbedder::PushFloat((float)(((float*)m_dataLocation)[1]));
-		LuaEmbedder::PushFloat((float)(((float*)m_dataLocation)[2]));
-		LuaEmbedder::PushFloat((float)(((float*)m_dataLocation)[3]));
-		LuaEmbedder::PushFloat((float)(((float*)m_dataLocation)[4]));
-		LuaEmbedder::PushFloat((float)(((float*)m_dataLocation)[5]));
-		LuaEmbedder::PushFloat((float)(((float*)m_dataLocation)[6]));
-		LuaEmbedder::PushFloat((float)(((float*)m_dataLocation)[7]));
-		LuaEmbedder::PushFloat((float)(((float*)m_dataLocation)[8]));
-		LuaEmbedder::PushFloat((float)(((float*)m_dataLocation)[9]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[0]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[1]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[2]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[3]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[4]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[5]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[6]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[7]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[8]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[9]));
 		return 10;
 	}
 	

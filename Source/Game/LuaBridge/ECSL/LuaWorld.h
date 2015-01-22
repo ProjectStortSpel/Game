@@ -2,26 +2,27 @@
 #define LUAWORLD_H
 
 #include "ECSL/Framework/World.h"
+#include <LuaEmbedder/LuaEmbedder.h>
 
 namespace LuaBridge
 {
   class LuaWorld : public ECSL::World
   {
   public:
-    LuaWorld();
+    LuaWorld(lua_State* L);
     ~LuaWorld();
     
-    static void Embed();
+    static void Embed(lua_State* L);
     
   private:
-    int Update();
-    int CreateNewEntity();
-    int CreateComponentAndAddTo();
-    int RemoveComponentFrom();
-    int KillEntity();
-    int SetComponent();
-    int GetComponent();
-	int EntityHasComponent();
+    int Update(lua_State* L);
+    int CreateNewEntity(lua_State* L);
+    int CreateComponentAndAddTo(lua_State* L);
+    int RemoveComponentFrom(lua_State* L);
+    int KillEntity(lua_State* L);
+    int SetComponent(lua_State* L);
+    int GetComponent(lua_State* L);
+    int EntityHasComponent(lua_State* L);
   };
 }
 

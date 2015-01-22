@@ -15,6 +15,7 @@
 #include "ECSL/Managers/EntityTemplateManager.h"
 
 #include "LuaBridge/ECSL/LuaSystem.h"
+#include "LuaBridge/ECSL/LuaWorldCreator.h"
 
 #include <iomanip>
 
@@ -56,7 +57,7 @@ void GameCreator::InitializeGraphics()
 {
 	m_graphics = new Renderer::GraphicDevice();
 	m_graphics->Init();
-	LuaEmbedder::AddObject<Renderer::GraphicDevice>("GraphicDevice", m_graphics, "graphics");
+	LuaEmbedder::AddObject<Renderer::GraphicDevice>(m_clientLuaState, "GraphicDevice", m_graphics, "graphics");
 }
 
 void GameCreator::InitializeConsole()
@@ -95,14 +96,14 @@ void GameCreator::InitializeThreads()
 
 void GameCreator::InitializeLua() 
 {
-	LuaEmbedder::Init();
-	LuaBridge::Embed();
+	m_clientLuaState = LuaEmbedder::CreateState();
+	LuaBridge::Embed(m_clientLuaState);
 }
 
 void GameCreator::InitializeWorld(std::string _gameMode)
 {
-	ECSL::WorldCreator worldCreator = ECSL::WorldCreator();
-	LuaEmbedder::AddObject<ECSL::WorldCreator>("WorldCreator", &worldCreator, "worldCreator");
+	LuaBridge::LuaWorldCreator worldCreator = LuaBridge::LuaWorldCreator();
+	LuaEmbedder::AddObject<LuaBridge::LuaWorldCreator>(m_clientLuaState, "WorldCreator", &worldCreator, "worldCreator");
 
 	std::stringstream gameMode;
 #if defined(_DEBUG) && !defined(__ANDROID__)
@@ -113,8 +114,15 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	gameMode << _gameMode;
 	gameMode << "/init.lua";
 
-	if (!LuaEmbedder::Load(gameMode.str()))
+	if (!LuaEmbedder::Load(m_clientLuaState, gameMode.str()))
 		return;
+	
+	std::vector<LuaBridge::LuaSystem*>* systemsAdded = worldCreator.GetSystemsAdded();
+	for (std::vector<LuaBridge::LuaSystem*>::iterator it = systemsAdded->begin(); it != systemsAdded->end(); it++)
+	{
+	  lua_State* clientLuaStateCopy = LuaEmbedder::CopyState(m_clientLuaState);
+	  (*it)->SetLuaState(clientLuaStateCopy);
+	}
 
 	m_gameMode = _gameMode;
 
@@ -167,9 +175,12 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	worldCreator.AddLuaSystemToCurrentGroup(new ResetChangedSystem());
 
 	m_world = worldCreator.CreateWorld(1000);
-	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
+	LuaEmbedder::AddObject<ECSL::World>(m_clientLuaState, "World", m_world, "world");
 
 	//LuaEmbedder::CallMethods<LuaBridge::LuaSystem>("System", "PostInitialize");
+	for (std::vector<LuaBridge::LuaSystem*>::iterator it = systemsAdded->begin(); it != systemsAdded->end(); it++)
+	  (*it)->PostInitialize();
+	systemsAdded->clear();
 
 	unsigned int newEntity = m_world->CreateNewEntity();
 	m_world->CreateComponentAndAddTo("Model", newEntity);
@@ -326,7 +337,7 @@ void GameCreator::StartGame(int argc, char** argv)
 			m_graphics->RenderSimpleText(vram.str(), 20, 0);
 
 			std::stringstream ss;
-			ss << "Lua memory usage: " << LuaEmbedder::GetMemoryUsage() << " bytes";
+			ss << "Lua memory usage: " << LuaEmbedder::GetMemoryUsage(m_clientLuaState) << " bytes";
 			m_graphics->RenderSimpleText(ss.str(), 20, 1);
 
 			m_graphics->RenderSimpleText("Time Statistics", 60, 0);
@@ -370,8 +381,8 @@ void GameCreator::Reload()
 	if (m_world)
 		delete m_world;
 	NetworkInstance::GetNetworkHelper()->ResetNetworkMaps();
-	bool server = LuaEmbedder::PullBool("Server");
-	bool client = LuaEmbedder::PullBool("Client");
+	bool server = LuaEmbedder::PullBool(m_clientLuaState, "Server");
+	bool client = LuaEmbedder::PullBool(m_clientLuaState, "Client");
 	LuaEmbedder::Quit();
 	ECSL::ComponentTypeManager::GetInstance().Clear();
 	ECSL::EntityTemplateManager::GetInstance().Clear();
@@ -382,7 +393,7 @@ void GameCreator::Reload()
 	LuaEmbedder::AddBool("Client", client);
 	m_graphics->Clear();
 
-	LuaEmbedder::AddObject<Renderer::GraphicDevice>("GraphicDevice", m_graphics, "graphics");
+	LuaEmbedder::AddObject<Renderer::GraphicDevice>(m_clientLuaState, "GraphicDevice", m_graphics, "graphics");
 
 	InitializeWorld(m_gameMode);
 	m_console->SetWorld(m_world);
@@ -404,10 +415,10 @@ void GameCreator::LuaPacket(Network::PacketHandler* _ph, uint64_t& _id, Network:
 
 	char* function = _ph->ReadString(_id);
 
-	LuaEmbedder::PushString(ss.str());
-	LuaEmbedder::PushString(_nc.GetIpAddress());
-	LuaEmbedder::PushInt((int)_nc.GetPort());
-	LuaEmbedder::CallSavedFunction(function, 3);
+	LuaEmbedder::PushString(m_clientLuaState, ss.str());
+	LuaEmbedder::PushString(m_clientLuaState, _nc.GetIpAddress());
+	LuaEmbedder::PushInt(m_clientLuaState, (int)_nc.GetPort());
+	LuaEmbedder::CallSavedFunction(m_clientLuaState, function, 3);
 }
 
 void GameCreator::NetworkGameMode(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)

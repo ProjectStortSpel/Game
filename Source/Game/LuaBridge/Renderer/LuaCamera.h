@@ -7,27 +7,29 @@
 #include "Renderer/Camera.h"
 #endif
 
+#include <LuaEmbedder/LuaEmbedder.h>
+
 namespace LuaBridge
 {
   class LuaCamera : public Camera
   {
   public:
-    LuaCamera();
+    LuaCamera(lua_State* L);
     
-    static void Embed();
+    static void Embed(lua_State* L);
     
   private:
-    int MoveForward();
-    int MoveBackward();
-    int MoveLeft();
-    int MoveRight();
+    int MoveForward(lua_State* L);
+    int MoveBackward(lua_State* L);
+    int MoveLeft(lua_State* L);
+    int MoveRight(lua_State* L);
     
-    int UpdateMouse();
+    int UpdateMouse(lua_State* L);
     
-    int GetRight();
-    int GetUp();
-    int GetLook();
-    int GetPosition();
+    int GetRight(lua_State* L);
+    int GetUp(lua_State* L);
+    int GetLook(lua_State* L);
+    int GetPosition(lua_State* L);
   };
 }
 

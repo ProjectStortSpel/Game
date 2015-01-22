@@ -16,29 +16,29 @@
 
 namespace LuaBridge
 {
-  void Embed()
+  void Embed(lua_State* L)
   {
-    LuaInput::Embed();
+    LuaInput::Embed(L);
     
-    LuaWorldCreator::Embed();
-    LuaWorld::Embed();
-    LuaSystem::Embed();
-    LuaComponentType::Embed();
-    LuaComponent::Embed();
-    LuaEntityTemplate::Embed();
-    LuaEntityTemplateManager::Embed();
+    LuaWorldCreator::Embed(L);
+    LuaWorld::Embed(L);
+    LuaSystem::Embed(L);
+    LuaComponentType::Embed(L);
+    LuaComponent::Embed(L);
+    LuaEntityTemplate::Embed(L);
+    LuaEntityTemplateManager::Embed(L);
     
-    LuaGraphicDevice::Embed();
-    LuaCamera::Embed();
+    LuaGraphicDevice::Embed(L);
+    LuaCamera::Embed(L);
     
-    LuaMatrix::Embed();
+    LuaMatrix::Embed(L);
     
-    LuaConsole::Embed();
+    LuaConsole::Embed(L);
 
-	LuaNetwork::Embed();
-	//LuaClientNetwork::Embed();
-	//LuaServerNetwork::Embed();
+    LuaNetwork::Embed(L);
+    //LuaClientNetwork::Embed();
+    //LuaServerNetwork::Embed();
 
-	LuaEmbedder::AddFunction("LoadMap", &LoadMap, "File");
+    LuaEmbedder::AddFunction(L, "LoadMap", &LoadMap, "File");
   }
 }

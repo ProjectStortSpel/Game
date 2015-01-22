@@ -5,9 +5,9 @@
 #include <string>
 #include <SDL/SDL.h>
 
-int LoadMap()  
+int LoadMap(lua_State* L)  
 {
-	std::string filepath = LuaEmbedder::PullString(1);
+	std::string filepath = LuaEmbedder::PullString(L, 1);
 	
 	// Open file
 	SDL_RWops* file = SDL_RWFromFile(filepath.c_str(), "r");
@@ -61,8 +61,8 @@ int LoadMap()
 	int* array = new int[map.size()];
 	memcpy(array, map.data(), map.size() * sizeof(int));
 
-	LuaEmbedder::PushInt(x);
-	LuaEmbedder::PushInt(y);
-	LuaEmbedder::PushIntArray(array, map.size());
+	LuaEmbedder::PushInt(L, x);
+	LuaEmbedder::PushInt(L, y);
+	LuaEmbedder::PushIntArray(L, array, map.size());
 	return 3;
 }

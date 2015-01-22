@@ -8,35 +8,36 @@
 #endif
 
 #include "Input/InputWrapper.h"
+#include <LuaEmbedder/LuaEmbedder.h>
 
 namespace LuaBridge
 {
   class LuaGraphicDevice : public Renderer::GraphicDevice
   {
   public:
-    LuaGraphicDevice();
+    LuaGraphicDevice(lua_State* L);
     
-    static void Embed();
+    static void Embed(lua_State* L);
     
   private:
-	int GetAspectRatio();
-	int GetTouchPosition();
+	int GetAspectRatio(lua_State* L);
+	int GetTouchPosition(lua_State* L);
 
-    int ResizeWindow();
-    int SetTitle();
+    int ResizeWindow(lua_State* L);
+    int SetTitle(lua_State* L);
     
-    int RenderSimpleText();
-    int SetSimpleTextColor();
+    int RenderSimpleText(lua_State* L);
+    int SetSimpleTextColor(lua_State* L);
     
-    int GetCamera();
-    int SetCamera();
+    int GetCamera(lua_State* L);
+    int SetCamera(lua_State* L);
     
-    int GetWindowSize();
+    int GetWindowSize(lua_State* L);
     
-    int LoadModel();
-    int ChangeModelTexture();
-    int ChangeModelNormalMap();
-    int ChangeModelSpecularMap();
+    int LoadModel(lua_State* L);
+    int ChangeModelTexture(lua_State* L);
+    int ChangeModelNormalMap(lua_State* L);
+    int ChangeModelSpecularMap(lua_State* L);
   };
 }
 

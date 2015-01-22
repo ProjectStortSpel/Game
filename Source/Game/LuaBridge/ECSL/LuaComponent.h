@@ -4,6 +4,7 @@
 #include "ECSL/Framework/Components/Tables/DataTable.h"
 #include "ECSL/Interfaces/System.h"
 #include "ECSL/Framework/World.h"
+#include <LuaEmbedder/LuaEmbedder.h>
 
 #include <string>
 #include <map>
@@ -13,47 +14,47 @@ namespace LuaBridge
 	class LuaComponent
 	{
 	public:
-		LuaComponent();
+		LuaComponent(lua_State* L);
 		LuaComponent(ECSL::DataLocation dataLocation, ECSL::System* system,
 			unsigned int entityId, const std::string& componentName);
 		LuaComponent(ECSL::DataLocation dataLocation, ECSL::World* world,
 			unsigned int entityId, const std::string& componentName);
 		~LuaComponent();
 
-		static void Embed();
+		static void Embed(lua_State* L);
 
 	private:
-		int GetFloat();
-		int GetFloat2();
-		int GetFloat3();
-		int GetFloat4();
-		int GetFloat5();
-		int SetFloat();
-		int SetFloat2();
-		int SetFloat3();
-		int SetFloat4();
-		int SetFloat5();
+		int GetFloat(lua_State* L);
+		int GetFloat2(lua_State* L);
+		int GetFloat3(lua_State* L);
+		int GetFloat4(lua_State* L);
+		int GetFloat5(lua_State* L);
+		int SetFloat(lua_State* L);
+		int SetFloat2(lua_State* L);
+		int SetFloat3(lua_State* L);
+		int SetFloat4(lua_State* L);
+		int SetFloat5(lua_State* L);
 
 
-		int GetInt();
-		int GetInt2();
-		int GetInt3();
-		int GetInt4();
-		int SetInt();
-		int SetInt2();
-		int SetInt3();
-		int SetInt4();
+		int GetInt(lua_State* L);
+		int GetInt2(lua_State* L);
+		int GetInt3(lua_State* L);
+		int GetInt4(lua_State* L);
+		int SetInt(lua_State* L);
+		int SetInt2(lua_State* L);
+		int SetInt3(lua_State* L);
+		int SetInt4(lua_State* L);
 
-		int GetBool();
-		int SetBool();
+		int GetBool(lua_State* L);
+		int SetBool(lua_State* L);
 
-		int GetString();
-		int SetString();
+		int GetString(lua_State* L);
+		int SetString(lua_State* L);
 
-		int SetModel();
+		int SetModel(lua_State* L);
 		
-		int GetPointlight();
-		int SetPointlight();
+		int GetPointlight(lua_State* L);
+		int SetPointlight(lua_State* L);
 		
 		void ComponentHasChanged();
 		

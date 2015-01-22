@@ -3,6 +3,7 @@
 
 #include "ECSL/Interfaces/System.h"
 #include "Network/Packet.h"
+#include <LuaEmbedder/LuaEmbedder.h>
 
 #include <string>
 #include <map>
@@ -12,32 +13,34 @@ namespace LuaBridge
   class LuaSystem : public ECSL::System
   {
   public:
-    LuaSystem();
+    LuaSystem(lua_State* L);
     ~LuaSystem() { }
     
-    static void Embed();
+    static void Embed(lua_State* L);
     
     void Initialize();
 	void Update(const ECSL::RuntimeInfo& _runtime);
 	void EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities);
 	void EntitiesRemoved(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities);
 	void PostInitialize();
+	
+	void SetLuaState(lua_State* L) { m_L = L; }
     
   private:
-	int SetName();
+	int SetName(lua_State* L);
 
-    int GetComponent();
+    int GetComponent(lua_State* L);
     
-    int AddComponentTypeToFilter();
-    int GetEntities();
+    int AddComponentTypeToFilter(lua_State* L);
+    int GetEntities(lua_State* L);
     
-    int EntityHasComponent();
+    int EntityHasComponent(lua_State* L);
 
-	int InitializeNetworkEvents();
+	int InitializeNetworkEvents(lua_State* L);
 
-	int SetUpdateTaskCount();
-	int SetEntitiesAddedTaskCount();
-	int SetEntitiesRemovedTaskCount();
+	int SetUpdateTaskCount(lua_State* L);
+	int SetEntitiesAddedTaskCount(lua_State* L);
+	int SetEntitiesRemovedTaskCount(lua_State* L);
 
 	void OnBannedFromServer(Network::NetConnection _nc, const char* _message);
 	void OnConnectedToServer(Network::NetConnection _nc, const char* _message);
@@ -55,6 +58,9 @@ namespace LuaBridge
 	void OnPlayerConnected(Network::NetConnection _nc, const char* _message);
 	void OnPlayerDisconnected(Network::NetConnection _nc, const char* _message);
 	void OnPlayerTimedOut(Network::NetConnection _nc, const char* _message);
+	
+  private:
+    lua_State* m_L;
   };
 }
 

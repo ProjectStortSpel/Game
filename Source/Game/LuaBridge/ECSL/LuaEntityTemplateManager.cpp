@@ -7,16 +7,16 @@ namespace LuaBridge
 {
   namespace LuaEntityTemplateManager
   {
-    int AddTemplate();
+    int AddTemplate(lua_State* L);
     
-    void Embed()
+    void Embed(lua_State* L)
     {
-      LuaEmbedder::AddFunction("AddTemplate", &AddTemplate, "EntityTemplateManager");
+      LuaEmbedder::AddFunction(L, "AddTemplate", &AddTemplate, "EntityTemplateManager");
     }
     
-    int AddTemplate()
+    int AddTemplate(lua_State* L)
     {
-      LuaEntityTemplate* entityTemplate = LuaEmbedder::PullObject<LuaEntityTemplate>("EntityTemplate", 2);
+      LuaEntityTemplate* entityTemplate = LuaEmbedder::PullObject<LuaEntityTemplate>(L, "EntityTemplate", 2);
       ECSL::EntityTemplateManager::GetInstance().AddTemplate(*entityTemplate->CreateEntityTemplate());
       return 0;
     }
