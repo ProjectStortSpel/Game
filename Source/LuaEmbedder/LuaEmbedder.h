@@ -89,8 +89,8 @@
 
 namespace LuaEmbedder
 {
-  lua_State* EXPORT CreateState();
-  lua_State* EXPORT CopyState(lua_State* L);
+  EXPORT lua_State*  CreateState();
+  EXPORT lua_State*  CopyState(lua_State* L);
   void EXPORT Quit();
   
   bool EXPORT Load(lua_State* L, const std::string& filepath);
