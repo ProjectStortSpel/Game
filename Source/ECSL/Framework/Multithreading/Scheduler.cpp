@@ -216,11 +216,14 @@ void Scheduler::AddUpdateSystemEntityListsTasks()
 
 void Scheduler::AddEntitiesAddedTasks()
 {
+	int workSize = m_systemManager->GetSystemWorkGroups()->size();
 	for (auto systemGroup : *m_systemManager->GetSystemWorkGroups())
 	{
+	  int workSize2 = systemGroup->GetSystems()->size();
 		std::vector<MPL::WorkItem*>* workItems = new std::vector<MPL::WorkItem*>();
 		for (auto system : *systemGroup->GetSystems())
 		{
+		  int workSize3 = system->GetEntitiesAddedTaskCount();
 			/* Create one work item for each systems' OnEntityAdded task */
 			for (unsigned int taskIndex = 0; taskIndex < system->GetEntitiesAddedTaskCount(); ++taskIndex)
 			{

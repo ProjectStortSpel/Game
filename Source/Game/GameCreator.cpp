@@ -21,6 +21,7 @@
 GameCreator::GameCreator() :
 m_graphics(0), m_input(0), m_world(0), m_console(0), m_remoteConsole(0), m_consoleManager(Console::ConsoleManager::GetInstance()), m_frameCounter(new Utility::FrameCounter()), m_running(true)
 {
+  
 }
 
 GameCreator::~GameCreator()

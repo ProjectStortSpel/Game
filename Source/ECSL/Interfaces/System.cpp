@@ -13,6 +13,10 @@ System::System()
 	m_messages(new std::vector<Message*>())
 {
 	m_messagesMutex = SDL_CreateMutex();
+	m_updateTaskCount = 0;
+	m_entitiesAddedTaskCount = 0;
+	m_entitiesRemovedTaskCount = 0;
+	m_messagesRecievedTaskCount = 0;
 }
 
 System::~System()
