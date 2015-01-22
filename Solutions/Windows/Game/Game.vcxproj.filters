@@ -123,6 +123,9 @@
     <Filter Include="Scripting\Lobby\Templates">
       <UniqueIdentifier>{1528248f-3c68-4ace-9f4b-fe60b3166bae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Systems\Map">
+      <UniqueIdentifier>{6e376179-3445-48ae-a79e-a3865a17fdf9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\LuaBridge.cpp">
@@ -230,6 +233,9 @@
     <ClCompile Include="..\..\..\Source\Game\Systems\DirectionalLightSystem.cpp">
       <Filter>Game\Systems\LightSystems</Filter>
     </ClCompile>
+    <ClCompile Include="MapIslandCreatorSystem.cpp">
+      <Filter>Game\Systems\Map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h">
@@ -333,6 +339,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\DirectionalLightSystem.h">
       <Filter>Game\Systems\LightSystems</Filter>
+    </ClInclude>
+    <ClInclude Include="MapIslandCreatorSystem.h">
+      <Filter>Game\Systems\Map</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

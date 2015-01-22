@@ -139,3 +139,9 @@ CheckpointIdComponent.Name = "CheckpointId"
 CheckpointIdComponent.TableType = TableType.Map
 CheckpointIdComponent:AddVariable("Id", ByteSize.Int)
 worldCreator:AddComponentType(CheckpointIdComponent)
+
+-- TILE Component
+local TileComponent = ComponentType()
+TileComponent.Name = "TileComp"
+TileComponent.TableType = TableType.Map
+worldCreator:AddComponentType(TileComponent)
