@@ -211,7 +211,7 @@ namespace LuaBridge
 	int LuaSystem::SetEntitiesRemovedTaskCount()
 	{
 		int entitiesRemovedTaskCount = LuaEmbedder::PullInt(1);
-		System::SetEntitiesAddedTaskCount(entitiesRemovedTaskCount);
+		System::SetEntitiesRemovedTaskCount(entitiesRemovedTaskCount);
 		return 0;
 	}
 

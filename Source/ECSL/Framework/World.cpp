@@ -32,7 +32,6 @@ void World::Update(float _dt)
 
 unsigned int World::CreateNewEntity()
 {
-	++m_activeEntities;
 	return m_dataManager->CreateNewEntity();
 }
 
@@ -67,11 +66,10 @@ void World::SetComponent(unsigned int _entityId, const std::string& _componentTy
 
 void World::KillEntity(unsigned int _entityId)
 {
-	--m_activeEntities;
 	m_dataManager->RemoveEntity(_entityId);
 }
 
-unsigned int World::CreateNewEntity(std::string _templateName)
+unsigned int World::CreateNewEntity(const std::string& _templateName)
 {
 	unsigned int newId = CreateNewEntity();
 	EntityTemplate* entityTemplate = EntityTemplateManager::GetInstance().GetTemplate(_templateName);

@@ -22,7 +22,6 @@ namespace ECSL
 		DataManager* m_dataManager;
 
 		SystemManager* m_systemManager;
-		unsigned int m_activeEntities;
 
 	public:
 		World(unsigned int _entityCount, std::vector<SystemWorkGroup*>* _systemWorkGroups, std::vector<unsigned int>* _componentTypeIds);
@@ -31,7 +30,7 @@ namespace ECSL
 		void Update(float _dt);
 
 		unsigned int CreateNewEntity();
-		unsigned int CreateNewEntity(std::string _templateName);
+		unsigned int CreateNewEntity(const std::string& _templateName);
 
 		void CreateComponentAndAddTo(const std::string& _componentType, unsigned int _entityId);
 		void RemoveComponentFrom(const std::string& _componentType, unsigned int _entityId);
@@ -43,9 +42,6 @@ namespace ECSL
 		void SetComponent(unsigned int _entityId, const std::string& _componentType, const std::string& _variableName, void* _data);
 
 		void KillEntity(unsigned int _entityId);
-
-		unsigned int GetActiveEntities(){ return m_activeEntities; }
-
 		
 		void GetEntityComponents(std::vector<unsigned int>& _out, unsigned int _entityId){ m_dataManager->GetEntityTable()->GetEntityComponents(_out, _entityId); }
 

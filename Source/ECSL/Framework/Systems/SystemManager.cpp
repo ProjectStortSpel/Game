@@ -69,12 +69,14 @@ void SystemManager::UpdateSystemEntityLists(
 		{
 			unsigned int entityId = changedEntities->at(j);
 			/* Try add entity to system if it passes filters, else try to remove it */
-			if (entityTable->EntityPassFilters(entityId, system->GetMandatoryFilter()->GetBitSet(), system->GetRequiresOneOfFilter()->GetBitSet(), system->GetExcludedFilter()->GetBitSet())
-				&& !system->HasEntity(entityId))
+			if (entityTable->EntityPassFilters(entityId, system->GetMandatoryFilter()->GetBitSet(), system->GetRequiresOneOfFilter()->GetBitSet(), system->GetExcludedFilter()->GetBitSet()))
 			{
-				system->AddEntityToSystem(entityId);
-				if (system->GetEntitiesAddedTaskCount() > 0)
-					_entitiesToAddToSystems[i]->push_back(entityId);
+				if (!system->HasEntity(entityId))
+				{
+					system->AddEntityToSystem(entityId);
+					if (system->GetEntitiesAddedTaskCount() > 0)
+						_entitiesToAddToSystems[i]->push_back(entityId);
+				}
 			}
 			else if (system->HasEntity(entityId))
 			{
