@@ -10,6 +10,7 @@ namespace MPL
 
 	struct DECLSPEC WorkItem
 	{
+		WorkItem() { Name = new std::string(""); }
 		~WorkItem() { delete(Name); }
 
 		FunctionPointer Work;
