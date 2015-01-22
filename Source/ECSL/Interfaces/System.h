@@ -30,8 +30,6 @@ namespace ECSL
 		void AddEntityToSystem(unsigned int _entityId);
 		void RemoveEntityFromSystem(unsigned int _entityId);
 		bool HasEntity(unsigned int _entityId);
-		void ComponentHasChanged(unsigned int _entityId, std::string _componentType);
-		void ComponentHasChanged(unsigned int _entityId, unsigned int _componentTypeId);
 
 		ComponentFilter* GetMandatoryFilter() { return &m_mandatoryComponentTypes; }
 		ComponentFilter* GetRequiresOneOfFilter() { return &m_requiresOneOfComponentTypes; }
@@ -52,6 +50,9 @@ namespace ECSL
 		void SetGroupId(unsigned int _groupId) { m_groupId = _groupId; }
 		void SetDataManager(DataManager* _dataManager) { m_dataManager = _dataManager; }
 		void SetSystemIdManager(SystemIdManager* _idManager) { m_systemIdManager = _idManager; }
+
+		void ComponentHasChanged(unsigned int _entityId, std::string _componentType, bool _notifyNetwork = true);
+		void ComponentHasChanged(unsigned int _entityId, unsigned int _componentTypeId, bool _notifyNetwork = true);
 
 		void ClearMessages() { m_messages->clear(); }
 

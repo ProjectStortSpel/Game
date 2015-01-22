@@ -2,14 +2,22 @@
 local Head = EntityTemplate()
 Head.Name = "Head"
 Head:AddComponent("Model")
-
-	--	Model data
+--	Model data
 Head:SetFloat3("Position", 0.0, 1.0, 0.0)
 Head:SetFloat3("Rotation", 0.0, math.pi, 0.0)
-Head:SetFloat3("Scale", 0.5, 0.5, 0.5)
+Head:SetFloat3("Scale", 1, 1, 1)
 Head:AddComponent("SyncNetwork")
-
 EntityTemplateManager:AddTemplate(Head)
+
+local TotemHead = EntityTemplate()
+TotemHead.Name = "TotemPiece"
+TotemHead:AddComponent("Model")
+--	Model data
+TotemHead:SetFloat3("Position", 0.0, 1.0, 0.0)
+TotemHead:SetFloat3("Rotation", 0.0, math.pi, 0.0)
+TotemHead:SetFloat3("Scale", 1, 1, 1)
+TotemHead:AddComponent("SyncNetwork")
+EntityTemplateManager:AddTemplate(TotemHead)
 
 local Hole = EntityTemplate()
 Hole.Name = "Hole"

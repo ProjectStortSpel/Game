@@ -1,3 +1,5 @@
+#version 100
+
 attribute vec3 VertexPosition;
 attribute vec3 VertexNormal;
 attribute vec3 VertexTangent;

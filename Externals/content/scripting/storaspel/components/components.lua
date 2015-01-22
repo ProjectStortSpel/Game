@@ -124,3 +124,24 @@ NullComponent.Name = "Null"
 NullComponent.SyncNetwork = true
 NullComponent.TableType = TableType.Map
 worldCreator:AddComponentType(NullComponent)
+
+
+-- TotemPole Component
+local TotemPoleComponent = ComponentType()
+TotemPoleComponent.Name = "TotemPole"
+TotemPoleComponent:AddVariable("Height", ByteSize.Int)
+TotemPoleComponent.TableType = TableType.Map
+worldCreator:AddComponentType(TotemPoleComponent)
+
+-- CheckpointId Component
+local CheckpointIdComponent = ComponentType()
+CheckpointIdComponent.Name = "CheckpointId"
+CheckpointIdComponent.TableType = TableType.Map
+CheckpointIdComponent:AddVariable("Id", ByteSize.Int)
+worldCreator:AddComponentType(CheckpointIdComponent)
+
+-- TILE Component
+local TileComponent = ComponentType()
+TileComponent.Name = "TileComp"
+TileComponent.TableType = TableType.Map
+worldCreator:AddComponentType(TileComponent)

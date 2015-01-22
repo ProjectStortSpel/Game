@@ -5,7 +5,7 @@ MapSystem.mapY = 0
 
 MapSystem.PostInitialize = function(self)
 	local map
-    self.mapX, self.mapY, map = File.LoadMap("content/maps/map.txt")
+    self.mapX, self.mapY, map = File.LoadMap("content/maps/smallmap.txt")
     local posX, posZ
 		
 	for x = 0, self.mapX+1 do
@@ -124,25 +124,42 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
         world:CreateComponentAndAddTo("Void", entity)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
-		comp:SetModel("hole_test", "hole", 0)
+		comp:SetModel("hole", "hole", 0)
+		local rotComp = self:GetComponent(entity, "Rotation", 0)
+		rotComp:SetFloat3(0, math.pi * 0.5 * math.random(0, 4), 0)
 
     elseif tiletype == 120 then -- 120 = x = stone
 		world:CreateComponentAndAddTo("NotWalkable", entity)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
 		comp:SetModel("stone", "stone", 0)
-		posComp:SetFloat3(posX, 1.0, posZ)
+		posComp:SetFloat3(posX, 0.8 + 0.1* math.random(-1, 1), posZ)
 		
+		local rotComp = self:GetComponent(entity, "Rotation", 0)
+		rotComp:SetFloat3(math.pi * 0.01 * math.random(0, 25), math.pi * 0.01 * math.random(0, 100), math.pi * 0.01 * math.random(0, 25))
 		self:AddGroundTileBelow(posX, posZ)
 
-    elseif tiletype >= 49 and tiletype <= 57 then -- 49 = 1 = first checkpoint, 47 = 9 = 9th checkpoint
+    elseif tiletype >= 49 and tiletype <= 57 then -- 49 = 1 = first checkpoint, 57 = 9 = 9th checkpoint
+
         world:CreateComponentAndAddTo("Checkpoint", entity)
         local comp = self:GetComponent(entity, "Checkpoint", 0)
         comp:SetInt(tiletype - 48)
 		world:CreateComponentAndAddTo("Model", entity)
 		local comp = self:GetComponent(entity, "Model", 0)
-		comp:SetModel("checkpoint", "checkpoint", 0)
-		--posComp:SetFloat3(posX, 1.0, posZ)
+		
+		if tiletype == 49 then
+			comp:SetModel("checkpoint1", "checkpoint", 0)
+		elseif tiletype == 50 then
+			comp:SetModel("checkpoint2", "checkpoint", 0)
+		elseif tiletype == 51 then
+			comp:SetModel("checkpoint3", "checkpoint", 0)
+		elseif tiletype == 52 then
+			comp:SetModel("checkpoint4", "checkpoint", 0)
+		else
+			comp:SetModel("checkpoint", "checkpoint", 0)
+		end
+
+		--posComp:SetFloat3(posX, 0.5, posZ)
 
     elseif tiletype == 102 then -- 102 = f = finish
         world:CreateComponentAndAddTo("Finishpoint", entity)

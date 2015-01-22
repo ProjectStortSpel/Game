@@ -34,7 +34,6 @@ TurnAroundSystem.OnEntityAdded = function(self, entity)
 
 	world:GetComponent(entity, "Rotation", "Y"):SetFloat(rotY)
 
-
 	world:RemoveComponentFrom("UnitTurnAround", entity)
 end
 
@@ -204,8 +203,9 @@ TestMoveSystem.OnEntityAdded = function(self, entity)
 
 			end
 
-			local posY = world:GetComponent(unit, "Position", "Y"):GetFloat()
-			world:GetComponent(unit, "MapPosition", 0):SetInt2(posX, posZ)			
+			--local posY = world:GetComponent(unit, "Position", "Y"):GetFloat()
+			world:GetComponent(unit, "MapPosition", 0):SetInt2(posX, posZ)		
+			
 			--world:GetComponent(unit, "Position", 0):SetFloat3(posX, posY, posZ)
 
 

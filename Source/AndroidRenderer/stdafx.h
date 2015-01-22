@@ -13,10 +13,11 @@
 #include <SDL/SDL.h>
 #ifdef __ANDROID__
 #include <GLES2/gl2.h>
+#include <SDL/SDL_opengles2.h>
 #else
 #include <GLEW/glew.h>
+#include <SDL/SDL_opengl.h>
 #endif
-#include <SDL/SDL_opengles.h>
 
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>

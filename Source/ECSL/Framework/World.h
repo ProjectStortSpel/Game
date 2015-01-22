@@ -39,7 +39,7 @@ namespace ECSL
 		DataLocation GetComponent(unsigned int _entityId, const std::string& _componentType, const int _index);
 		DataLocation GetComponent(unsigned int _entityId, const unsigned int _componentType, const int _index);
 
-		void SetComponent(unsigned int _entityId, const std::string& _componentType, const std::string& _variableName, void* _data);
+		void SetComponent(unsigned int _entityId, const std::string& _componentType, const std::string& _variableName, void* _data, bool _notifyNetwork = true);
 
 		void KillEntity(unsigned int _entityId);
 		
@@ -47,8 +47,8 @@ namespace ECSL
 
 		unsigned int GetMemoryUsage();
 		
-		void ComponentHasChanged(unsigned int _entityId, std::string _componentType);
-		void ComponentHasChanged(unsigned int _entityId, unsigned int _componentTypeId);
+		void ComponentHasChanged(unsigned int _entityId, std::string _componentType, bool _notifyNetwork = true);
+		void ComponentHasChanged(unsigned int _entityId, unsigned int _componentTypeId, bool _notifyNetwork = true);
 
 		bool EntityHasComponent(unsigned int _entityId, std::string _componentType);
 		bool EntityHasComponent(unsigned int _entityId, unsigned int _componentTypeId);

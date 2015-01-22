@@ -17,7 +17,10 @@ void CameraSystem::Initialize()
 	SetUpdateTaskCount(1);
 
 	/*	CameraSystem wants a position to place the camera at	*/
-	AddComponentTypeToFilter("Camera", ECSL::FilterType::Mandatory);
+	AddComponentTypeToFilter("CameraPosition", ECSL::FilterType::Mandatory);
+	AddComponentTypeToFilter("CameraLook", ECSL::FilterType::Mandatory);
+	AddComponentTypeToFilter("CameraUp", ECSL::FilterType::Mandatory);
+	AddComponentTypeToFilter("CameraRight", ECSL::FilterType::Mandatory);
 
 	m_input = &Input::InputWrapper::GetInstance();
 	printf("CameraSystem initialized!\n");
@@ -26,7 +29,7 @@ void CameraSystem::Initialize()
 void CameraSystem::Update(const ECSL::RuntimeInfo& _runtime)
 {
 #ifdef __ANDROID__
-	static float prevDistance0, prevDistance1;
+	/*static float prevDistance0, prevDistance1;
 	if (m_input->GetTouch()->GetFingerState(0) == Input::InputState::PRESSED ||
 		m_input->GetTouch()->GetFingerState(1) == Input::InputState::PRESSED)
 	{
@@ -51,7 +54,7 @@ void CameraSystem::Update(const ECSL::RuntimeInfo& _runtime)
 	{
 		m_graphics->GetCamera()->UpdateTouch(m_input->GetTouch()->GetdX((SDL_FingerID)0) * 1500.0f,
 											 m_input->GetTouch()->GetdY((SDL_FingerID)0) * 1500.0f);
-	}
+	}*/
 
 #else
 	if (m_input->GetKeyboard()->IsTextInputActive())
