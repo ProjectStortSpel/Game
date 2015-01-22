@@ -58,7 +58,7 @@ namespace LuaBridge
 		int GetDirectionalLight();
 		int SetDirectionalLight();
 		
-		void ComponentHasChanged();
+		void ComponentHasChanged(bool _notifyNetwork);
 		
 	private:
 		ECSL::DataLocation m_dataLocation;

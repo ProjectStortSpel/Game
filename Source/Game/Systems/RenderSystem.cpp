@@ -53,7 +53,6 @@ void RenderSystem::Update(float _dt)
 	for (auto entity : entities)
 	{
 		ECSL::BitSet::DataType* eBitMask = (ECSL::BitSet::DataType*)GetComponent(entity, m_componentId, 0);
-		UpdateMatrix(entity);
 		bool needsUpdate = false;
 		for (unsigned int n = 0; n < m_numberOfBitSets; ++n)
 		{
