@@ -14,7 +14,7 @@ int main(int argc, char** argv)
 	newGame->InitializeGraphics();
 	newGame->InitializeInput();
 	newGame->InitializeNetwork();
-	//newGame->InitializeThreads();
+	newGame->InitializeThreads();
 	newGame->InitializeWorld("lobbythreaded");
 	 
 

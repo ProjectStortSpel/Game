@@ -37,10 +37,7 @@ namespace LuaEmbedder
     for (std::map<lua_State*, std::vector<lua_State*>>::iterator it0 = LuaStates.begin(); it0 != LuaStates.end(); it0++)
     {
       for (std::vector<lua_State*>::iterator it1 = it0->second.begin(); it1 != it0->second.end(); it1++)
-      {
 	lua_gc((*it1), LUA_GCCOLLECT, 0);
-	lua_close((*it1));
-      }
       lua_gc((it0->first), LUA_GCCOLLECT, 0);
       lua_close((it0->first));
     }
@@ -183,9 +180,16 @@ namespace LuaEmbedder
     lua_gc(L, LUA_GCSETSTEPMUL, durationInMilliseconds);
     lua_gc(L, LUA_GCSTEP, 0);
   }
-  int GetMemoryUsage(lua_State* L)
+  int GetMemoryUsage()
   {
-    return lua_gc(L, LUA_GCCOUNT, 0);
+    int memoryUsage = 0;
+    for (std::map<lua_State*, std::vector<lua_State*>>::iterator it0 = LuaStates.begin(); it0 != LuaStates.end(); it0++)
+    {
+      for (std::vector<lua_State*>::iterator it1 = it0->second.begin(); it1 != it0->second.end(); it1++)
+	memoryUsage += lua_gc((*it1), LUA_GCCOUNT, 0);
+      memoryUsage += lua_gc((it0->first), LUA_GCCOUNT, 0);
+    }
+    return memoryUsage;
   }
   void CollectGarbage()
   {

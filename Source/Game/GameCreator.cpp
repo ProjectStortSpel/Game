@@ -337,7 +337,7 @@ void GameCreator::StartGame(int argc, char** argv)
 			m_graphics->RenderSimpleText(vram.str(), 20, 0);
 
 			std::stringstream ss;
-			ss << "Lua memory usage: " << LuaEmbedder::GetMemoryUsage(m_clientLuaState) << " bytes";
+			ss << "Lua memory usage: " << LuaEmbedder::GetMemoryUsage() << " bytes";
 			m_graphics->RenderSimpleText(ss.str(), 20, 1);
 
 			m_graphics->RenderSimpleText("Time Statistics", 60, 0);

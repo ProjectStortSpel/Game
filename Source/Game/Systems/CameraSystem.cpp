@@ -45,7 +45,7 @@ void CameraSystem::Update(const ECSL::RuntimeInfo& _runtime)
 		float d = diff0 + diff1;
 		prevDistance0 = currDistance0;
 		prevDistance1 = currDistance1;
-		m_graphics->GetCamera()->MoveForward(-d * _dt * 100.0f);
+		m_graphics->GetCamera()->MoveForward(-d * _runtime.Dt * 100.0f);
 	}
 	else if (m_input->GetTouch()->GetFingerState(0) == Input::InputState::DOWN)
 	{

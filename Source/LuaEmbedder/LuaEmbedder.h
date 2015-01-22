@@ -98,7 +98,7 @@ namespace LuaEmbedder
   
   void EXPORT CollectGarbage(lua_State* L);
   void EXPORT CollectGarbage(lua_State* L, int durationInMilliseconds);
-  int EXPORT GetMemoryUsage(lua_State* L);
+  int EXPORT GetMemoryUsage();
   void EXPORT CollectGarbage();
   
   void EXPORT AddFloat(lua_State* L, const std::string& name, float value, const std::string& library = std::string());
