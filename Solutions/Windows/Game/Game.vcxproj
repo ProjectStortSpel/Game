@@ -232,6 +232,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClCompile Include="..\..\..\Source\Game\Systems\RotationSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\SyncEntitiesSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\TextInput.cpp" />
+    <ClCompile Include="MapIslandCreatorSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\FrameCounter\FrameCounter.h" />
@@ -267,6 +268,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClInclude Include="..\..\..\Source\Game\Systems\RotationSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\SyncEntitiesSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\TextInput.h" />
+    <ClInclude Include="MapIslandCreatorSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\Externals\content\scripting\lobby\components\buttoncomponents.lua" />
