@@ -123,8 +123,8 @@
     <Filter Include="Scripting\Lobby\Templates">
       <UniqueIdentifier>{1528248f-3c68-4ace-9f4b-fe60b3166bae}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Logger">
-      <UniqueIdentifier>{7be89050-32a7-43b1-aab6-9c2f0df5f18d}</UniqueIdentifier>
+    <Filter Include="Game\Systems\Map">
+      <UniqueIdentifier>{6e376179-3445-48ae-a79e-a3865a17fdf9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -233,8 +233,8 @@
     <ClCompile Include="..\..\..\Source\Game\Systems\DirectionalLightSystem.cpp">
       <Filter>Game\Systems\LightSystems</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\Game\Logger\Logger.cpp">
-      <Filter>Logger</Filter>
+    <ClCompile Include="MapIslandCreatorSystem.cpp">
+      <Filter>Game\Systems\Map</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -340,8 +340,8 @@
     <ClInclude Include="..\..\..\Source\Game\Systems\DirectionalLightSystem.h">
       <Filter>Game\Systems\LightSystems</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\Game\Logger\Logger.h">
-      <Filter>Logger</Filter>
+    <ClInclude Include="MapIslandCreatorSystem.h">
+      <Filter>Game\Systems\Map</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -477,9 +477,6 @@
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_postmovesystem.lua">
       <Filter>Scripting\Storaspel\Systems\Server Systems\Round Systems</Filter>
     </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sh_moveplayersystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Shared Systems</Filter>
-    </None>
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_playerdonevisualizersystem.lua">
       <Filter>Scripting\Storaspel\Systems\Client Systems</Filter>
     </None>
@@ -539,6 +536,9 @@
     </None>
     <None Include="..\..\..\Externals\content\scripting\lobby\components\buttoncomponents.lua">
       <Filter>Scripting\Lobby\Components</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_moveplayersystem.lua">
+      <Filter>Scripting\Storaspel\Systems\Client Systems\Round Systems</Filter>
     </None>
   </ItemGroup>
 </Project>

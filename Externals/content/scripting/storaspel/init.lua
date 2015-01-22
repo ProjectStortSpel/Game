@@ -16,7 +16,7 @@ require "cameracomponents"
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
 require "sh_movementsystem"
 require "sh_networkmessagessystem"
-require "sh_moveplayersystem"
+
 
 -- PICKBOX SYSTEMS
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/pickboxsystems/?.lua"
@@ -24,6 +24,7 @@ require "sh_pickboxsystem"
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
 
 require "sh_lerpsystem"
+require "sh_moveplayersystem"
 
 if Server then
 	require "sv_mapsystem"
@@ -61,7 +62,9 @@ if Server then
 	require "sv_takecardstepsfromunitsystem"
 	
 	require "sv_directionallightsystem"
+	
 end
+
 
 
 if Client then
@@ -69,7 +72,8 @@ if Client then
 	--require "cl_selectcardsystem"
 	require "cl_playerdonevisualizersystem"
 	--require "cl_givecardindexsystem"
-	
+
+
 	-- CARD SYSTEMS
 	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/cardsystems/?.lua"
 	require "cl_givecardindexsystem"
@@ -113,11 +117,14 @@ require "lights"
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(MovementSystem)
 worldCreator:AddSystemToCurrentGroup(networkMessagesSystem)
-worldCreator:AddSystemToCurrentGroup(TrueTestMoveSystem)
+
 
 worldCreator:AddSystemToCurrentGroup(PickBoxSystem)
 
 worldCreator:AddSystemToCurrentGroup(LerpSystem)
+
+
+worldCreator:AddSystemToCurrentGroup(TrueTestMoveSystem)
 
 if Server then
 	worldCreator:AddSystemToCurrentGroup(MapSystem)
@@ -169,10 +176,12 @@ if Server then
 	worldCreator:AddSystemToCurrentGroup(UpdateCardPickTimer)
 	worldCreator:AddSystemToCurrentGroup(AutoPickCards)
 	
-	
 end
 
 if Client then
+
+	
+
 	worldCreator:AddSystemToCurrentGroup(ClientLobbySystem)
 	worldCreator:AddSystemToCurrentGroup(GiveCardIndexSystem)
 	--worldCreator:AddSystemToCurrentGroup(SelectCardSystem)

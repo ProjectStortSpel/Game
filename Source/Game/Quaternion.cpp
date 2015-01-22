@@ -1,5 +1,14 @@
 #include "Quaternion.h"
 #define DELTA 0.0001f
+#include <iostream>
+
+Quaternion::Quaternion()
+{
+	this->m_w = 1;
+	this->m_x = 0;
+	this->m_y = 0;
+	this->m_z = 0;
+}
 
 Quaternion Quaternion::operator* (Quaternion q)
 {
@@ -35,13 +44,6 @@ Quaternion Quaternion::operator* (Quaternion q)
 	return ret_value;
 }
 
-Quaternion::Quaternion()
-{
-	this->m_w = 1;
-	this->m_x = 0;
-	this->m_y = 0;
-	this->m_z = 0;
-}
 
 void Quaternion::Rotate( const glm::vec3 &vector, float w)
 {
@@ -147,15 +149,16 @@ void Quaternion::MatrixToQuaternion(const glm::mat4 &rotation_matrix)
 
 void Quaternion::EulerToQuaternion( float roll, float pitch, float yaw )
 {
+
 	float cos_roll, cos_pitch, cos_yaw, sin_roll, sin_pitch, sin_yaw, cos_p_cos_y, sin_p_sin_y;
 
 	cos_roll = cosf(roll / 2);
 	cos_pitch = cosf(pitch / 2);
 	cos_yaw = cosf(yaw / 2);
 
-	sin_roll = cosf(roll / 2);
-	sin_pitch = cosf(pitch / 2);
-	sin_yaw = cosf(yaw / 2);
+	sin_roll = sinf(roll / 2);
+	sin_pitch = sinf(pitch / 2);
+	sin_yaw = sinf(yaw / 2);
 
 	cos_p_cos_y = cos_pitch * cos_yaw;
 	sin_p_sin_y = sin_pitch * sin_yaw;
@@ -166,10 +169,12 @@ void Quaternion::EulerToQuaternion( float roll, float pitch, float yaw )
 	this->m_z = cos_roll * cos_pitch * sin_yaw - sin_roll * sin_pitch * cos_yaw;
 }
 
-void Quaternion::SlerpQuaternion(Quaternion *from, Quaternion *target, float t)
+void Quaternion::SlerpQuaternion(Quaternion &result, Quaternion *target, float t)
 {
 	float           target1[4];
 	double			omega, cosom, sinom, scale0, scale1;
+
+	Quaternion* from = this;
 
 	cosom = from->m_x * target->m_x + from->m_y * target->m_y + from->m_z * target->m_z
 		+ from->m_w * target->m_w;
@@ -202,10 +207,10 @@ void Quaternion::SlerpQuaternion(Quaternion *from, Quaternion *target, float t)
 		scale1 = t;
 	}
 
-	this->m_x = scale0 * from->m_x + scale1 * target1[0];
-	this->m_y = scale0 * from->m_y + scale1 * target1[1];
-	this->m_z = scale0 * from->m_z + scale1 * target1[2];
-	this->m_w = scale0 * from->m_w + scale1 * target1[3];
+	result.m_x = scale0 * from->m_x + scale1 * target1[0];
+	result.m_y = scale0 * from->m_y + scale1 * target1[1];
+	result.m_z = scale0 * from->m_z + scale1 * target1[2];
+	result.m_w = scale0 * from->m_w + scale1 * target1[3];
 }
 
 Quaternion::~Quaternion()

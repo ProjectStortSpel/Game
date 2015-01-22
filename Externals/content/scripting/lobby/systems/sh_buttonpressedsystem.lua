@@ -69,6 +69,11 @@ ButtonPressedSystem.CreateButton = function(self, object, folder, posx, posy)
 	local numcommands = self:GetComponent(id, "Button", "NumCommands")
 	numcommands:SetInt(0)
 	
+	
+	local rotation = self:GetComponent(id, "Rotation", 0)
+	rotation:SetFloat3( 0, 0, 0)
+	
+	
 	print("ADASDnumcommands: " .. numcommands:GetInt())
 	
 	return id	

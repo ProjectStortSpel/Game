@@ -12,11 +12,15 @@ PickBoxSystem.Update = function(self, dt)
 	local rX = tX * AspectX * -2
 	local rY = tY * AspectY * -2
 	
+	local t = -10000000
+	local hitentity = nil
+	local hit = false
+	
 	---- intersect section
 	local entities = self:GetEntities()
 	for i = 1, #entities do
 		local entity = entities[i]
-	
+		
 		local scale = self:GetComponent(entity, "Scale", 0)
 		local position = self:GetComponent(entity, "Position", 0)
 		local pickbox = self:GetComponent(entity, "PickBox", 0)
@@ -37,22 +41,24 @@ PickBoxSystem.Update = function(self, dt)
 		local hitX = rX * Z
 		local hitY = rY * Z
 		
-		local hit = false
 		-- check if pickbox is hit
-		if hitX > X-halfwidth and hitX < X+halfwidth then
-			if hitY > Y-halfheight and hitY < Y+halfheight then
-				hit = true
+		if Z < 0.1 and Z > t then
+			if hitX > X-halfwidth and hitX < X+halfwidth then
+				if hitY > Y-halfheight and hitY < Y+halfheight then
+						hit = true
+						hitentity = entities[i]
+						t = Z
+				end
 			end
 		end
-		
-		if hit == false and world:EntityHasComponent(entities[i], "OnPickBoxHit") then
+		if world:EntityHasComponent(entities[i], "OnPickBoxHit") then
 			world:RemoveComponentFrom("OnPickBoxHit", entities[i])
 		end
-		
-		if hit == true and not world:EntityHasComponent(entities[i], "OnPickBoxHit") then
-			world:CreateComponentAndAddTo("OnPickBoxHit", entities[i])
+	end
+	if hit == true then
+		if not world:EntityHasComponent(hitentity, "OnPickBoxHit") then
+			world:CreateComponentAndAddTo("OnPickBoxHit", hitentity)
 		end
-		
 	end
 end
 
