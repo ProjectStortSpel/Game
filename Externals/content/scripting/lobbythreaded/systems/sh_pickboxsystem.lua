@@ -1,6 +1,16 @@
 PickBoxSystem = System()
 
-PickBoxSystem.Update = function(self, dt)
+PickBoxSystem.Initialize = function(self)
+	self:SetName("PickBox System")
+	self:SetUpdateTaskCount(1)
+	self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
+	self:AddComponentTypeToFilter("Scale", FilterType.Mandatory)
+	self:AddComponentTypeToFilter("PickBox", FilterType.Mandatory)
+	
+	print("PickBox System initialized!")
+end
+
+PickBoxSystem.Update = function(self, dt, taskIndex, taskCount)
 
 	-- Fetch Aspect ratio from graphics:
 	local AspectX, AspectY = graphics:GetAspectRatio()
@@ -54,13 +64,4 @@ PickBoxSystem.Update = function(self, dt)
 		end
 		
 	end
-end
-
-PickBoxSystem.Initialize = function(self)
-	self:SetName("PickBox System")
-	self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
-	self:AddComponentTypeToFilter("Scale", FilterType.Mandatory)
-	self:AddComponentTypeToFilter("PickBox", FilterType.Mandatory)
-	
-	print("PickBox System initialized!")
 end

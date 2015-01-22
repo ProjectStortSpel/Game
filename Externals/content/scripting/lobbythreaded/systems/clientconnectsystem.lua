@@ -2,16 +2,11 @@
 
 ClientConnectSystem = System()
 
-ClientConnectSystem.Update = function(self, dt, taskIndex, taskCount)
-
-	if GameRunning then
-		return
-	end
-
-end
-
 ClientConnectSystem.Initialize = function(self)
 	self:SetName("ClientConnectSystem");
+	self:SetUpdateTaskCount(1)
+	self:SetEntitiesAddedTaskCount(1)
+	self:SetEntitiesRemovedTaskCount(1)
 	
 	self:InitializeNetworkEvents();
 	
@@ -21,7 +16,15 @@ ClientConnectSystem.Initialize = function(self)
 	print("ClientConnectSystem initialized!");
 end
 
-ClientConnectSystem.OnEntityAdded = function(self, entityId)
+ClientConnectSystem.Update = function(self, dt, taskIndex, taskCount)
+
+	if GameRunning then
+		return
+	end
+
+end
+
+ClientConnectSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 
 	if GameRunning then
 		return
@@ -30,7 +33,7 @@ ClientConnectSystem.OnEntityAdded = function(self, entityId)
 	Console.Print("ClientConnectSystem.OnConnectedToServer");
 end
 
-ClientConnectSystem.OnEntityRemoved = function(self, entityId)
+ClientConnectSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
 
 	if GameRunning then
 		return

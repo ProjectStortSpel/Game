@@ -2,6 +2,9 @@ ServerConnectSystem = System()
 
 ServerConnectSystem.Initialize = function(self)
 	self:SetName("ServerConnectSystem System");
+	self:SetUpdateTaskCount(1)
+	self:SetEntitiesAddedTaskCount(1)
+	self:SetEntitiesRemovedTaskCount(1)
 	
 	self:InitializeNetworkEvents();
 	
@@ -13,7 +16,7 @@ ServerConnectSystem.Initialize = function(self)
 	print("ServerConnectSystem initialized!");
 end
 
-ServerConnectSystem.Update = function(self, dt)
+ServerConnectSystem.Update = function(self, dt, taskIndex, taskCount)
 
 	if GameRunning then
 		return
@@ -21,67 +24,65 @@ ServerConnectSystem.Update = function(self, dt)
 
 end
 
-ServerConnectSystem.OnEntityAdded = function(self, entityId)
-
-	if GameRunning then
-		return
-	end
-
-	Console.Print("ServerConnectSystem.OnEntityAdded");
-	local match = false;
-	local matchId = 0;
-	
-	local username 	= self:GetComponent(entityId, "Username", "Name"):GetString();
-	local ipAddress = self:GetComponent(entityId, "NetConnection", "IpAddress"):GetString();
-	local port 		= self:GetComponent(entityId, "NetConnection", "Port"):GetInt();
-
-	local entities = self:GetEntities();
+ServerConnectSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 	for i = 1, #entities do
-	
-		if entityId ~= entities[i] then
-			local uname = self:GetComponent(entities[i], "Username", "Name"):GetString();
+		local entityId = entities[i]
+		if GameRunning then
+			return
+		end
+
+		Console.Print("ServerConnectSystem.OnEntityAdded");
+		local match = false;
+		local matchId = 0;
+		
+		local username 	= self:GetComponent(entityId, "Username", "Name"):GetString();
+		local ipAddress = self:GetComponent(entityId, "NetConnection", "IpAddress"):GetString();
+		local port 		= self:GetComponent(entityId, "NetConnection", "Port"):GetInt();
+
+		local systemEntities = self:GetEntities();
+		for i = 1, #systemEntities do
+		
+			if entityId ~= systemEntities[i] then
+				local uname = self:GetComponent(entities[i], "Username", "Name"):GetString();
+				
+				if username == uname then
+					match = true;
+					matchId = entities[i];
+					break;
+				end
+				
+				
+			end
+		
+		end
+		
+		if match then
 			
-			if username == uname then
-				match = true;
-				matchId = entities[i];
-				break;
+			local setActive = true;
+			local isActive = self:GetComponent(matchId, "NetConnection", "Active"):GetBool();
+			
+			if isActive then
+				local oldIp 	= self:GetComponent(matchId, "NetConnection", "IpAddress"):GetString();
+				local oldPort	= self:GetComponent(matchId, "NetConnection", "Port"):GetInt();
+				local reason	= "ServerConnectSystem kicked you.";
+				
+				Net.Kick(oldIp, oldPort, reason);
 			end
 			
-			
-		end
-	
-	end
-	
-	if match then
+			world:SetComponent(matchId, "NetConnection", "IpAddress", ipAddress);
+			world:SetComponent(matchId, "NetConnection", "Port", port);
+			world:SetComponent(matchId, "NetConnection", "Active", setActive);
+			world:KillEntity(entityId);
+		else
 		
-		local setActive = true;
-		local isActive = self:GetComponent(matchId, "NetConnection", "Active"):GetBool();
-		
-		if isActive then
-			local oldIp 	= self:GetComponent(matchId, "NetConnection", "IpAddress"):GetString();
-			local oldPort	= self:GetComponent(matchId, "NetConnection", "Port"):GetInt();
-			local reason	= "ServerConnectSystem kicked you.";
-			
-			Net.Kick(oldIp, oldPort, reason);
+			local setActive = true;
+			world:SetComponent(entityId, "NetConnection", "Active", setActive);
 		end
 		
-		world:SetComponent(matchId, "NetConnection", "IpAddress", ipAddress);
-		world:SetComponent(matchId, "NetConnection", "Port", port);
-		world:SetComponent(matchId, "NetConnection", "Active", setActive);
-		world:KillEntity(entityId);
-		
-	else
-	
-		local setActive = true;
-		world:SetComponent(entityId, "NetConnection", "Active", setActive);
-
 	end
-	
-	
-	
 end
 
-ServerConnectSystem.OnEntityRemoved = function(self, entityId)
+ServerConnectSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
 
 	if GameRunning then
 		return

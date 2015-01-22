@@ -49,10 +49,10 @@ int SlaveThread::ThreadLoop()
 		{
 			workItem->Work(workItem->Data);
 			WorkDoneStatus workDoneStatus = m_taskPool->WorkDone(workItem);
-			//if (!workDoneStatus.OpenListEmpty && workDoneStatus.TaskCompleted)
-			//	WakeThreads();
+			if (!workDoneStatus.OpenListEmpty && workDoneStatus.TaskCompleted)
+				WakeThreads();
 		}
-		else if (fetchWorkStatus == EMPTY_WORK_LIST)
+		else //if (fetchWorkStatus == EMPTY_WORK_LIST)
 			Sleep();		
 	}
 	return 0;
@@ -68,6 +68,7 @@ void SlaveThread::Sleep()
 void SlaveThread::WakeThreads()
 {
 	for (auto slaveThread : *m_slaves)
-		if (slaveThread->IsSleeping())
-			slaveThread->WakeUp();
+		if (slaveThread != this)
+			if (slaveThread->IsSleeping())
+				slaveThread->WakeUp();
 }
