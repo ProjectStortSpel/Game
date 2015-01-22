@@ -13,7 +13,6 @@ NewCameraSystem.TouchScreen = nil
 NewCameraSystem.Pressed = false
 NewCameraSystem.Moved = false
 
-
 NewCameraSystem.Update = function(self, dt)
 	if world:EntityHasComponent(self.TouchScreen, "OnPickBoxHit") then
 		local move = false
@@ -38,23 +37,23 @@ NewCameraSystem.Update = function(self, dt)
 			local dZ = mY - self.mouseY
 			local x, y, z = self.Camera:GetPosition()
 			if dX > 0.02 * aspectX then
-				self.CameraLookAtX = self.CameraLookAtX - dt * 5 * self.CameraUpZ
-				self.CameraLookAtZ = self.CameraLookAtZ + dt * 5 * self.CameraUpX
+				self.CameraLookAtX = self.CameraLookAtX - dt * dX * 25 * self.CameraUpZ
+				self.CameraLookAtZ = self.CameraLookAtZ + dt * dX * 25 * self.CameraUpX
 				move = true                                    
 			end                                                
 			if dX < -0.02 * aspectX then                       
-				self.CameraLookAtX = self.CameraLookAtX + dt * 5 * self.CameraUpZ
-				self.CameraLookAtZ = self.CameraLookAtZ - dt * 5 * self.CameraUpX
+				self.CameraLookAtX = self.CameraLookAtX - dt * dX * 25 * self.CameraUpZ
+				self.CameraLookAtZ = self.CameraLookAtZ + dt * dX * 25 * self.CameraUpX
 				move = true                                    
 			end                                                
 			if dZ > 0.02 then                                  
-				self.CameraLookAtX = self.CameraLookAtX + dt * 5 * self.CameraUpX
-				self.CameraLookAtZ = self.CameraLookAtZ + dt * 5 * self.CameraUpZ
+				self.CameraLookAtX = self.CameraLookAtX + dt * dZ * 25 * self.CameraUpX
+				self.CameraLookAtZ = self.CameraLookAtZ + dt * dZ * 25 * self.CameraUpZ
 				move = true                                    
 			end                                                
 			if dZ < -0.02 then                                 
-				self.CameraLookAtX = self.CameraLookAtX - dt * 5 * self.CameraUpX
-				self.CameraLookAtZ = self.CameraLookAtZ - dt * 5 * self.CameraUpZ
+				self.CameraLookAtX = self.CameraLookAtX + dt * dZ * 25 * self.CameraUpX
+				self.CameraLookAtZ = self.CameraLookAtZ + dt * dZ * 25 * self.CameraUpZ
 				move = true
 			end
 
