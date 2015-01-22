@@ -126,6 +126,9 @@
     <Filter Include="Game\Systems\Map">
       <UniqueIdentifier>{6e376179-3445-48ae-a79e-a3865a17fdf9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Logger">
+      <UniqueIdentifier>{1638b47f-ddec-4aa8-b5ca-22cc9327d878}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\LuaBridge.cpp">
@@ -236,6 +239,9 @@
     <ClCompile Include="MapIslandCreatorSystem.cpp">
       <Filter>Game\Systems\Map</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Logger\Logger.cpp">
+      <Filter>Game\Logger</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h">
@@ -342,6 +348,9 @@
     </ClInclude>
     <ClInclude Include="MapIslandCreatorSystem.h">
       <Filter>Game\Systems\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Logger\Logger.h">
+      <Filter>Game\Logger</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
