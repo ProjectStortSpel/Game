@@ -2,6 +2,10 @@ ClientLobbySystem = System()
 
 ClientLobbySystem.Initialize = function(self)
 	self:SetName("ClientLobbySystem System")
+	
+	self:SetUpdateTaskCount(1)
+	self:SetEntitiesAddedTaskCount(1)
+	self:SetEntitiesRemovedTaskCount(1)
 
 	Net.Receive("NewGame", ClientLobbySystem.NewGame);
 	
@@ -11,7 +15,7 @@ ClientLobbySystem.Initialize = function(self)
 	print("ClientLobbySystem initialized!")
 end
 
-ClientLobbySystem.Update = function(self, dt)
+ClientLobbySystem.Update = function(self, dt, taskIndex, taskCount)
 	
 	if GameRunning then
 		return
@@ -27,14 +31,14 @@ ClientLobbySystem.Update = function(self, dt)
 
 end
 
-ClientLobbySystem.OnEntityAdded = function(self, entityId)
+ClientLobbySystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 
 	if GameRunning then
 		return
 	end
 
 end
-ClientLobbySystem.OnEntityRemoved = function(self, entityId)
+ClientLobbySystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
 
 	if GameRunning then
 		return

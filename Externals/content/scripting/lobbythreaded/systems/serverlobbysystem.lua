@@ -5,6 +5,9 @@ ServerLobbySystem.m_maxConnections = 3;
 
 ServerLobbySystem.Initialize = function(self)
 	self:SetName("ServerLobbySystem System");
+	self:SetUpdateTaskCount(1)
+	self:SetEntitiesAddedTaskCount(1)
+	self:SetEntitiesRemovedTaskCount(1)
 
 	self:AddComponentTypeToFilter("Username", FilterType.Mandatory);
 	self:AddComponentTypeToFilter("NetConnection", FilterType.Mandatory);
@@ -14,7 +17,7 @@ ServerLobbySystem.Initialize = function(self)
 	print("ServerLobbySystem initialized!");
 end
 
-ServerLobbySystem.Update = function(self, dt)
+ServerLobbySystem.Update = function(self, dt, taskIndex, taskCount)
 	
 	if GameRunning then
 		return
@@ -51,19 +54,21 @@ ServerLobbySystem.UpdateServerOnline = function(self)
 	
 end
 
-ServerLobbySystem.OnEntityAdded = function(self, entityId)
-	
-	if GameRunning then
-		return
-	end
+ServerLobbySystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+	for i = 1, #entities do
+		if GameRunning then
+			return
+		end
 
-	ServerLobbySystem.m_noConnections = ServerLobbySystem.m_noConnections + 1;
+		ServerLobbySystem.m_noConnections = ServerLobbySystem.m_noConnections + 1;
+	end
 end
-ServerLobbySystem.OnEntityRemoved = function(self, entityId)
+ServerLobbySystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
+	for i = 1, #entities do
+		if GameRunning then
+			return
+		end
 
-	if GameRunning then
-		return
+		ServerLobbySystem.m_noConnections = ServerLobbySystem.m_noConnections - 1;
 	end
-
-	ServerLobbySystem.m_noConnections = ServerLobbySystem.m_noConnections - 1;
 end

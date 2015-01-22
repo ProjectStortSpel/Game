@@ -1,6 +1,15 @@
 ButtonPressedSystem = System()
 
-ButtonPressedSystem.Update = function(self, dt)
+ButtonPressedSystem.Initialize = function(self)
+	self:SetName("ButtonPressedSystem")
+	self:SetUpdateTaskCount(1)
+	self:AddComponentTypeToFilter("OnPickBoxHit", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("ButtonCommand", FilterType.RequiresOneOf)
+	
+	print("ButtonPressedSystem initialized!")
+end
+
+ButtonPressedSystem.Update = function(self, dt, taskIndex, taskCount)
 
 	if Input.GetTouchState(0) == InputState.Released then
 	
@@ -34,14 +43,6 @@ ButtonPressedSystem.Update = function(self, dt)
 	
 	end
 		
-end
-
-ButtonPressedSystem.Initialize = function(self)
-	self:SetName("ButtonPressedSystem")
-	self:AddComponentTypeToFilter("OnPickBoxHit", FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter("ButtonCommand", FilterType.RequiresOneOf)
-	
-	print("ButtonPressedSystem initialized!")
 end
 
 ButtonPressedSystem.CreateButton = function(self, object, folder, posx, posy)

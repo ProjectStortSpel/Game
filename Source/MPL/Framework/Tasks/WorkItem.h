@@ -2,6 +2,7 @@
 #define WORKITEM_H
 
 #include <SDL/SDL.h>
+#include <string>
 
 namespace MPL
 {
@@ -9,8 +10,11 @@ namespace MPL
 
 	struct DECLSPEC WorkItem
 	{
+		~WorkItem() { delete(Name); }
+
 		FunctionPointer Work;
 		void* Data;
+		std::string* Name;
 	};
 };
 

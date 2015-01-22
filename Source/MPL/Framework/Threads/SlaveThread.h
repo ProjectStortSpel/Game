@@ -9,6 +9,11 @@
 #include "MPL/Framework/Tasks/Task.h"
 #include "MPL/Framework/Tasks/TaskPool.h"
 
+/* THREADPROFILING must be defined to be able to get thread profiling information */
+#ifdef _DEBUG
+#define THREADPROFILING
+#endif
+
 namespace MPL
 {
 	class SlaveThread
@@ -37,8 +42,6 @@ namespace MPL
 		int ThreadLoop();
 		void Sleep();
 		void WakeThreads();
-
-
 	};
 };
 
