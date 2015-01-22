@@ -13,6 +13,8 @@ void ResetChangedSystem::Initialize()
 	SetSystemName("ResetChangedSystem");
 
 	SetUpdateTaskCount(1);
+	SetEntitiesAddedTaskCount(0);
+	SetEntitiesRemovedTaskCount(0);
 
 	/*	Rendersystem wants Network	*/
 	//AddComponentTypeToFilter("ChangedComponents", ECSL::FilterType::Mandatory);

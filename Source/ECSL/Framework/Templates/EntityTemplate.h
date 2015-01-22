@@ -10,7 +10,7 @@ namespace ECSL
 	{
 		TemplateEntry(int _data);
 		TemplateEntry(float _data);
-		TemplateEntry(std::string& _data);
+		TemplateEntry(const std::string& _data);
 		TemplateEntry(bool _data);
 
 		~TemplateEntry();

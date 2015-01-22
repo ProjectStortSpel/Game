@@ -24,7 +24,7 @@ TemplateEntry::TemplateEntry(float _data)
 	m_dataType = ComponentDataType::FLOAT; 
 }
 
-TemplateEntry::TemplateEntry(std::string& _data)
+TemplateEntry::TemplateEntry(const std::string& _data)
 {
 	m_textData = _data;
 	m_dataType = ComponentDataType::TEXT; 
