@@ -73,6 +73,7 @@
 #include <assert.h>
 #include <string>
 #include <vector>
+#include <map>
 #include <iostream>
 
 #if defined(WIN32)
@@ -89,8 +90,11 @@
 
 namespace LuaEmbedder
 {
-  EXPORT lua_State*  CreateState();
-  EXPORT lua_State*  CopyState(lua_State* L);
+  extern std::map<lua_State*, std::vector<lua_State*>> LuaStates;
+  extern std::map<lua_State*, lua_State*> LuaThreads;
+  
+  EXPORT lua_State* CreateState();
+  EXPORT lua_State* CopyState(lua_State* L);
   void EXPORT Quit();
   
   bool EXPORT Load(lua_State* L, const std::string& filepath);
@@ -156,27 +160,45 @@ namespace LuaEmbedder
   {
     Luna<T>::RegisterProperty(L, className.c_str(), propertyName.c_str(), getFunctionPointer, setFunctionPointer);
   }
+  #define ADD_OBJECT(luaState) \
+    if (library.empty()) \
+    { \
+      Luna<T>::push(L, className.c_str(), object); \
+      lua_setglobal(L, name.c_str()); \
+    } \
+    else \
+    { \
+      lua_getglobal(L, library.c_str()); \
+      if (lua_isnil(L, -1)) \
+      { \
+	lua_pop(L, 1); \
+	luaL_newmetatable(L, library.c_str()); \
+      } \
+      lua_pushstring(L, name.c_str()); \
+      Luna<T>::push(L, className.c_str(), object); \
+      lua_settable(L, -3); \
+      lua_setglobal(L, library.c_str()); \
+    }
   template<typename T>
   void EXPORT AddObject(lua_State* L, const std::string& className, T* object, const std::string& name, const std::string& library = std::string())
   {
-    if (library.empty())
-    {
-      Luna<T>::push(L, className.c_str(), object);
-      lua_setglobal(L, name.c_str());
-    }
+    std::map<lua_State*, lua_State*>::iterator it0 = LuaThreads.find(L);
+    std::map<lua_State*, std::vector<lua_State*>>::iterator it1;
+    if (it0 != LuaThreads.end())
+      it1 = LuaStates.find(it0->second);
     else
     {
-      lua_getglobal(L, library.c_str());
-      if (lua_isnil(L, -1))
+      it1 = LuaStates.find(L);
+      if (it1 == LuaStates.end())
       {
-	lua_pop(L, 1);
-	luaL_newmetatable(L, library.c_str());
+	ADD_OBJECT(L);
+	return;
       }
-      lua_pushstring(L, name.c_str());
-      Luna<T>::push(L, className.c_str(), object);
-      lua_settable(L, -3);
-      lua_setglobal(L, library.c_str());
     }
+    assert(it1 != LuaStates.end());
+    for (std::vector<lua_State*>::iterator it2 = it1->second.begin(); it2 != it1->second.end(); it2++)
+      ADD_OBJECT((*it2));
+    ADD_OBJECT(it1->first);
   }
   template<typename T>
   int EXPORT CallMethod(lua_State* L, const std::string& className, const std::string& methodName, T* object, int argumentCount = 0)
