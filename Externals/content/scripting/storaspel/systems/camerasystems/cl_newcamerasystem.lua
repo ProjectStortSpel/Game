@@ -10,85 +10,70 @@ NewCameraSystem.mouseY = 0
 
 
 NewCameraSystem.Update = function(self, dt)
-
-	--local button = self:GetEntities()
-	--for i = 1, #button do
-	--	if world:EntityHasComponent(button[i], "OnPickBoxHit") and Input.GetTouchState(0) == InputState.Released then
-	--	
-	--		if world:EntityHasComponent(button[i], "CameraRightButton") then
-	--			local temp = self.CameraUpX
-	--			self.CameraUpX = self.CameraUpZ
-	--			self.CameraUpZ = -1*temp
-	--		end
-	--		if world:EntityHasComponent(button[i], "CameraLeftButton") then
-	--			local temp = self.CameraUpX
-	--			self.CameraUpX = self.CameraUpZ*-1
-	--			self.CameraUpZ = temp
-	--		end
-    --
-	--		self.Camera:MoveToAndLookAt(	self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
-	--										self.CameraUpX,0,self.CameraUpZ,
-	--										self.CameraLookAtX,-4.5,self.CameraLookAtZ,
-	--										1)
-	--	end
-	--end
+	--VERSION2
+	local aspectX, aspectY = graphics:GetAspectRatio()
+	aspectX = aspectY / aspectX
 	
 	if Input.GetTouchState(0) == InputState.Pressed then
 		self.mouseX, self.mouseY = graphics:GetTouchPosition()
 	end
+	
+	local move = false
+	
 	if Input.GetTouchState(0) == InputState.Down then
-		local mX, mY = graphics:GetTouchPosition()
+		local offsetMouseX, offsetMouseY = graphics:GetTouchPosition()
+		local dX = offsetMouseX - self.mouseX
+		local dZ = offsetMouseY - self.mouseY
 		local x, y, z = self.Camera:GetPosition()
-		local move = false
-		if mX > 0.45 then
+		
+		if dX > 0.05 * aspectX then
 			self.CameraLookAtX = self.CameraLookAtX - dt * 5 * self.CameraUpZ
 			self.CameraLookAtZ = self.CameraLookAtZ + dt * 5 * self.CameraUpX
-			move = true
-		end
-		if mX < -0.45 then
+			move = true                                    
+		end                                                
+		if dX < -0.05 * aspectX then                       
 			self.CameraLookAtX = self.CameraLookAtX + dt * 5 * self.CameraUpZ
 			self.CameraLookAtZ = self.CameraLookAtZ - dt * 5 * self.CameraUpX
-			move = true
-		end
-		if mY > 0.45 then
+			move = true                                    
+		end                                                
+		if dZ > 0.05 then                                  
 			self.CameraLookAtX = self.CameraLookAtX + dt * 5 * self.CameraUpX
 			self.CameraLookAtZ = self.CameraLookAtZ + dt * 5 * self.CameraUpZ
-			move = true
-		end
-		if mY < -0.45 then
+			move = true                                    
+		end                                                
+		if dZ < -0.05 then                                 
 			self.CameraLookAtX = self.CameraLookAtX - dt * 5 * self.CameraUpX
 			self.CameraLookAtZ = self.CameraLookAtZ - dt * 5 * self.CameraUpZ
 			move = true
 		end
-		
+
 		if move == true then
-			print (self.CameraLookAtX.." "..self.CameraLookAtZ)
+			print (dX.." "..dZ)
 			self.Camera:SetPosition(self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5, y, self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5)
 		end
 	end
+	
 	if Input.GetTouchState(0) == InputState.Released then
-		local offsetMouseX, offsetMouseY = graphics:GetTouchPosition()
-		local dX = offsetMouseX - self.mouseX
-		local dZ = offsetMouseY - self.mouseY
-		local move = false
-
-		if dX > 0.2 then
+		local mX, mY = graphics:GetTouchPosition()
+		local x, y, z = self.Camera:GetPosition()
+		
+		if mX > 0.5 - 0.1 * aspectX then
 			local temp = self.CameraUpX
 			self.CameraUpX = self.CameraUpZ
 			self.CameraUpZ = -1*temp
 			move = true
 		end
-		if dX < -0.2 then
+		if mX < -0.5 + 0.1 * aspectX then
 			local temp = self.CameraUpX
 			self.CameraUpX = self.CameraUpZ*-1
 			self.CameraUpZ = temp
 			move = true
 		end
-		if dZ > 0.2 then
+		if mY > 0.5 - 0.1 then
 			self.CameraDistance = self.CameraDistance - 0.2
 			move = true
 		end
-		if dZ < -0.2 then
+		if mY < -0.5 + 0.1 then
 			self.CameraDistance = self.CameraDistance + 0.2
 			move = true
 		end
@@ -101,16 +86,84 @@ NewCameraSystem.Update = function(self, dt)
 		end						
 	end
 	
-end
-
-NewCameraSystem.OnEntityAdded = function(self, entityId)
+	
+	--VERSION1
+	--local aspectX, aspectY = graphics:GetAspectRatio()
+	--aspectX = aspectY / aspectX
+	--
+	--if Input.GetTouchState(0) == InputState.Pressed then
+	--	self.mouseX, self.mouseY = graphics:GetTouchPosition()
+	--end
+	--if Input.GetTouchState(0) == InputState.Down then
+	--	local mX, mY = graphics:GetTouchPosition()
+	--	local x, y, z = self.Camera:GetPosition()
+	--	local move = false
+	--	if mX > 0.5 - 0.1 * aspectX then
+	--		self.CameraLookAtX = self.CameraLookAtX - dt * 5 * self.CameraUpZ
+	--		self.CameraLookAtZ = self.CameraLookAtZ + dt * 5 * self.CameraUpX
+	--		move = true
+	--	end
+	--	if mX < -0.5 + 0.1 * aspectX then
+	--		self.CameraLookAtX = self.CameraLookAtX + dt * 5 * self.CameraUpZ
+	--		self.CameraLookAtZ = self.CameraLookAtZ - dt * 5 * self.CameraUpX
+	--		move = true
+	--	end
+	--	if mY > 0.5 - 0.1 then
+	--		self.CameraLookAtX = self.CameraLookAtX + dt * 5 * self.CameraUpX
+	--		self.CameraLookAtZ = self.CameraLookAtZ + dt * 5 * self.CameraUpZ
+	--		move = true
+	--	end
+	--	if mY < -0.5 + 0.1 then
+	--		self.CameraLookAtX = self.CameraLookAtX - dt * 5 * self.CameraUpX
+	--		self.CameraLookAtZ = self.CameraLookAtZ - dt * 5 * self.CameraUpZ
+	--		move = true
+	--	end
+	--	
+	--	if move == true then
+	--		print (self.CameraLookAtX.." "..self.CameraLookAtZ)
+	--		self.Camera:SetPosition(self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5, y, self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5)
+	--	end
+	--end
+	--if Input.GetTouchState(0) == InputState.Released then
+	--	local offsetMouseX, offsetMouseY = graphics:GetTouchPosition()
+	--	local dX = offsetMouseX - self.mouseX
+	--	local dZ = offsetMouseY - self.mouseY
+	--	local move = false
+    --
+	--	if dX > 0.2 then
+	--		local temp = self.CameraUpX
+	--		self.CameraUpX = self.CameraUpZ
+	--		self.CameraUpZ = -1*temp
+	--		move = true
+	--	end
+	--	if dX < -0.2 then
+	--		local temp = self.CameraUpX
+	--		self.CameraUpX = self.CameraUpZ*-1
+	--		self.CameraUpZ = temp
+	--		move = true
+	--	end
+	--	if dZ > 0.2 then
+	--		self.CameraDistance = self.CameraDistance - 0.2
+	--		move = true
+	--	end
+	--	if dZ < -0.2 then
+	--		self.CameraDistance = self.CameraDistance + 0.2
+	--		move = true
+	--	end
+	--	
+	--	if move == true then
+	--		self.Camera:MoveToAndLookAt(	self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
+	--										self.CameraUpX,0,self.CameraUpZ,
+	--										self.CameraLookAtX,-4.5,self.CameraLookAtZ,
+	--										1)
+	--	end						
+	--end
 	
 end
 
 NewCameraSystem.Initialize = function(self)
 	self:SetName("Camera Update System")
-	self:AddComponentTypeToFilter("CameraLeftButton", FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter("CameraRightButton", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("CameraSystemComponent", FilterType.Mandatory)
 	print("Camera Update System initialized!")
 end
 
