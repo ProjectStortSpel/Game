@@ -8,7 +8,7 @@ namespace LuaEmbedder
 {
   std::map<lua_State*, std::vector<lua_State*>> LuaStates = std::map<lua_State*, std::vector<lua_State*>>();
   std::map<lua_State*, lua_State*> LuaThreads = std::map<lua_State*, lua_State*>();
-  std::vector<int (*)(lua_State*)> Functions = std::vector<int (*)(lua_State*)>();
+  std::vector<int(*)(lua_State*)> Functions = std::vector<int (*)(lua_State*)>();
   
   lua_State* CreateState()
   {

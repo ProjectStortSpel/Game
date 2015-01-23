@@ -29,7 +29,6 @@ void RotationSystem::Update(const ECSL::RuntimeInfo& _runtime)
 {
 	auto entities = *GetEntities();
 
-	/*	TODO: Some logic to not update matrix every frame	*/
 	for (auto entity : entities)
 	{
 		float*	Spin;

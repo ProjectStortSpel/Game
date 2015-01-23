@@ -37,8 +37,10 @@ worldCreator:AddSystemToCurrentGroup(ButtonPressedSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ButtonHoverSystem)
 
+
 --if Server then
 	worldCreator:AddSystemGroup()
+	--worldCreator:AddSystemToCurrentGroup(ButtonHoverSystem)
 	worldCreator:AddSystemToCurrentGroup(ServerLobbySystem)
 	worldCreator:AddSystemGroup()
 	worldCreator:AddSystemToCurrentGroup(ServerConnectSystem)

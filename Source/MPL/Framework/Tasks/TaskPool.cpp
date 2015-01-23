@@ -136,10 +136,12 @@ WorkItem* TaskPool::FetchWork(FetchWorkStatus& _out)
 	WorkItem* workItem = 0;
 
 	SDL_LockMutex(m_taskMutex);
-	if (m_queue->size() == 0)
-		_out = EMPTY_WORK_LIST;
+
+	if (m_openList->size() == 0)
+		_out = EMPTY_OPEN_LIST;
+
 	/* Fetch work to do from the queue */
-	if (m_queue->size() > 0)
+	if (m_queue->size() != 0)
 	{
 		WorkItem* front = m_queue->front();
 		TaskId dependency = (*m_workTaskConnection)[front]->Dependency;
@@ -150,18 +152,9 @@ WorkItem* TaskPool::FetchWork(FetchWorkStatus& _out)
 			_out = OK;
 		}
 	}
-	//for (auto it = m_queue->begin(); it != m_queue->end(); ++it)
-	//{
-	//	TaskId dependency = (*m_workTaskConnection)[*it]->Dependency;
-	//	/* Accept the task if the dependency task is already done or if task doesn't have dependency */
-	//	if (dependency == -1 || m_openList->find(dependency) == m_openList->end())
-	//	{
-	//		workItem = *it;
-	//		m_queue->erase(it);
-	//		_out = OK;
-	//		break;
-	//	}
-	//}
+	else
+		_out = EMPTY_WORK_LIST;
+
 	SDL_UnlockMutex(m_taskMutex);
 
 	return workItem;

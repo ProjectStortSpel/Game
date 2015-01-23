@@ -305,8 +305,11 @@ void GameCreator::StartGame(int argc, char** argv)
 		m_inputCounter.Tick();
 
 		m_worldCounter.Reset();
+		MPL::Profiler::GetInstance().CreateNewSession();
 		/*	Update world (systems, entities etc)	*/
 		m_world->Update(dt);
+		MPL::Profiler::GetInstance().PullSession();
+		MPL::Profiler::GetInstance().DeleteSession();
 		m_worldCounter.Tick();
 
 

@@ -5,7 +5,8 @@ include $(CLEAR_VARS)
 # Sources
 LOCAL_MODULE    := MySDLMainActivitiy
 
-LOCAL_CPPFLAGS := -std=c++0x
+LOCAL_CFLAGS := -std=gnu++0x -D__STDC_INT64__
+LOCAL_CPPFLAGS := -std=gnu++0x -D__STDC_INT64__
 
 ifeq ($(HOST_OS), windows)
 

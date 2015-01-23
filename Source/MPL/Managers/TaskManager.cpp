@@ -37,8 +37,8 @@ TaskManager& TaskManager::GetInstance()
 
 void TaskManager::CreateSlaves()
 {
-	int availableThreadCount = SDL_GetCPUCount() - 4;//ThreadHelper::GetAvailableThreadCount();
-	for (unsigned int i = 0; i < (unsigned int)availableThreadCount; ++i)
+	m_slaveCount = SDL_GetCPUCount() - 4;
+	for (unsigned int i = 0; i < m_slaveCount; ++i)
 	{
 		SlaveThread* slave = new SlaveThread(m_taskPool, m_slaves);
 		if (!slave->StartThread("Slave " + i, i))
@@ -87,16 +87,25 @@ void TaskManager::FinishAdd(TaskId _id)
 
 void TaskManager::WaitFor(TaskId _id)
 {
+	Profiler* profiler = &Profiler::GetInstance();
+	unsigned int threadId = GetThreadCount() - 1;
+
 	while (!m_taskPool->IsTaskDone(_id))
 	{
 		FetchWorkStatus fetchWorkStatus;
 		WorkItem* workItem = m_taskPool->FetchWork(fetchWorkStatus);
 		if (fetchWorkStatus == OK)
 		{
+			profiler->LogBeginWork(threadId);
 			workItem->Work(workItem->Data);
-			m_taskPool->WorkDone(workItem);
+			profiler->LogWorkDone(threadId, workItem);
+			WorkDoneStatus workDoneStatus = m_taskPool->WorkDone(workItem);
+			if (!workDoneStatus.OpenListEmpty && workDoneStatus.TaskCompleted)
+				WakeThreads();
 		}
 	}
+
+	profiler->LogBeginHibernate(threadId);
 }
 
 void TaskManager::WakeThreads()

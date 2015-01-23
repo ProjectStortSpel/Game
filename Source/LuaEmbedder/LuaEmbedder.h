@@ -90,8 +90,8 @@
 
 namespace LuaEmbedder
 {
-  extern std::map<lua_State*, std::vector<lua_State*>> LuaStates;
-  extern std::map<lua_State*, lua_State*> LuaThreads;
+  extern std::map<lua_State*, std::vector<lua_State*>> IMPORT LuaStates;
+  extern std::map<lua_State*, lua_State*> IMPORT LuaThreads;
   
   EXPORT lua_State* CreateState();
   EXPORT lua_State* CopyState(lua_State* L);

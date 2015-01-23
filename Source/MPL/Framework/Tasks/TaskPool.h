@@ -14,7 +14,8 @@ namespace MPL
 	{
 		OK,
 		WAITING_FOR_TASK,
-		EMPTY_WORK_LIST
+		EMPTY_WORK_LIST,
+		EMPTY_OPEN_LIST
 	};
 
 	struct WorkDoneStatus

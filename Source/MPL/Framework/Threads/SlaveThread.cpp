@@ -8,7 +8,7 @@ using namespace MPL;
 SlaveThread::SlaveThread(TaskPool* _taskPool, std::vector<SlaveThread*>* _slaves)
 : m_taskPool(_taskPool), m_slaves(_slaves)
 {
-	
+
 }
 
 SlaveThread::~SlaveThread()
@@ -27,6 +27,7 @@ bool SlaveThread::StartThread(const std::string& _name, unsigned int _threadId)
 	m_alive = true;
 	m_sleeping = false;
 	m_sleepSem = SDL_CreateSemaphore(0);
+	m_profiler = &Profiler::GetInstance();
 	m_thread = SDL_CreateThread(BeginThreadLoop, _name.c_str(), this);
 	return (m_thread != 0);
 }
@@ -49,13 +50,19 @@ int SlaveThread::ThreadLoop()
 		WorkItem* workItem = m_taskPool->FetchWork(fetchWorkStatus);
 		if (fetchWorkStatus == OK)
 		{
+			m_profiler->LogBeginWork(m_threadId);
 			workItem->Work(workItem->Data);
+			m_profiler->LogWorkDone(m_threadId, workItem);
 			WorkDoneStatus workDoneStatus = m_taskPool->WorkDone(workItem);
 			if (!workDoneStatus.OpenListEmpty && workDoneStatus.TaskCompleted)
 				WakeThreads();
 		}
 		else
+		{
+			if (fetchWorkStatus == EMPTY_OPEN_LIST) 
+				m_profiler->LogBeginHibernate(m_threadId);
 			Sleep();		
+		}
 	}
 	return 0;
 }

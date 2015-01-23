@@ -19,15 +19,11 @@ end
 
 ServerLobbySystem.Update = function(self, dt, taskIndex, taskCount)
 	
-	if GameRunning then
-		return
-	end
-	
-	if Net.IsRunning() then
-		ServerLobbySystem:UpdateServerOnline();
-	else
+	--if Net.IsRunning() then
+		--ServerLobbySystem:UpdateServerOnline();
+	--else
 		--ServerLobbySystem:UpdateServerOffline();
-	end
+	--end
 
 end
 

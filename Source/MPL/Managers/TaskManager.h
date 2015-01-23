@@ -26,14 +26,15 @@ namespace MPL
 		void WaitFor(TaskId _id);
 
 		/* Number of created slave threads */
-		unsigned int GetSlaveCount() { return (unsigned int)m_slaves->size(); }
+		unsigned int GetSlaveCount() { return m_slaveCount; }
 
-		/* Number of created slaves plus main threads */
-		unsigned int GetThreadCount() { return (unsigned int)m_slaves->size() + 1; }
+		/* Number of created slaves plus main thread */
+		unsigned int GetThreadCount() { return m_slaveCount + 1; }
 
 	private:
 		TaskManager();
 
+		unsigned int m_slaveCount;
 		std::vector<SlaveThread*>* m_slaves;
 		TaskPool* m_taskPool;
 

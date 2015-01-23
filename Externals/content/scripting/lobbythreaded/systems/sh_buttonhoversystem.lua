@@ -3,12 +3,20 @@ ButtonHoverSystem.Scale = 1.1
 
 ButtonHoverSystem.Initialize = function(self)
 	self:SetName("ButtonHoverSystem")
+	self:SetUpdateTaskCount(1)
 	self:SetEntitiesAddedTaskCount(1)
 	self:SetEntitiesRemovedTaskCount(1)
 	self:AddComponentTypeToFilter("Scale", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("OnPickBoxHit", FilterType.Mandatory)
 	
 	print("ButtonHoverSystem initialized!")
+end
+
+ButtonHoverSystem.Update = function(self, dt, taskIndex, taskCount)
+	--local bla = { }
+	--for i = 1, 1000 do
+	--	bla[i] = i
+	--end
 end
 
 ButtonHoverSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
