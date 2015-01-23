@@ -29,7 +29,7 @@ namespace LuaBridge
 
 	  LuaEmbedder::AddFunction("RemoveCommand", &RemoveCommand, "Console");
 	  LuaEmbedder::AddFunction("ClearCommands", &ClearCommands, "Console");
-	  LuaEmbedder::AddFunction("ClearHistory", &ClearHistory, "Console");
+	  LuaEmbedder::AddFunction("ClearHistory", &ClearHistory, "Console"); 
 
     }
     

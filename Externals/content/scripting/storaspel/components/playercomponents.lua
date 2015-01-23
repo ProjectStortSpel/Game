@@ -11,6 +11,12 @@ UnitComponent.Name = "Unit"
 UnitComponent.TableType = TableType.Map
 worldCreator:AddComponentType(UnitComponent)
 
+-- AI Component
+local AIComponent = ComponentType()
+AIComponent.Name = "AI"
+AIComponent.TableType = TableType.Map
+worldCreator:AddComponentType(AIComponent)
+
 --	PlayerNumber Component
 local PlayerNumberComponent = ComponentType()
 PlayerNumberComponent.Name = "PlayerNumber"
@@ -134,3 +140,24 @@ local HasSelectedCardsComponent = ComponentType()
 HasSelectedCardsComponent.Name = "HasSelectedCards"
 HasSelectedCardsComponent.TableType = TableType.Map
 worldCreator:AddComponentType(HasSelectedCardsComponent)
+
+---- IncreasePlayerCounter Component
+--local IncreasePlayerCounterComponent = ComponentType()
+--IncreasePlayerCounterComponent.Name = "IncreasePlayerCounter"
+--IncreasePlayerCounterComponent.TableType = TableType.Map
+--worldCreator:AddComponentType(IncreasePlayerCounterComponent)
+--
+---- DecreasePlayerCounter Component
+--local DecreasePlayerCounterComponent = ComponentType()
+--DecreasePlayerCounterComponent.Name = "DecreasePlayerCounter"
+--DecreasePlayerCounterComponent.TableType = TableType.Map
+--worldCreator:AddComponentType(DecreasePlayerCounterComponent)
+
+-- PlayerCounter Component
+local PlayerCounterComponent = ComponentType()
+PlayerCounterComponent.Name = "PlayerCounter"
+PlayerCounterComponent.TableType = TableType.Map
+PlayerCounterComponent:AddVariable("MaxPlayers", ByteSize.Int)
+PlayerCounterComponent:AddVariable("Players", ByteSize.Int)
+PlayerCounterComponent:AddVariable("Spectators", ByteSize.Int)
+worldCreator:AddComponentType(PlayerCounterComponent)

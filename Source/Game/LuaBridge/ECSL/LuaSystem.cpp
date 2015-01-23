@@ -66,7 +66,7 @@ namespace LuaBridge
 		}
 	}
 
-	int LuaSystem::GetComponent()
+	int LuaSystem::GetComponent() 
 	{
 		ECSL::DataLocation dataLocation;
 		unsigned int entityId = (unsigned int)LuaEmbedder::PullInt(1);
