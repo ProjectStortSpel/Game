@@ -30,7 +30,7 @@ NewCameraSystem.Update = function(self, dt)
 			local rposition = self:GetComponent(self.TouchSprite1, "Position", 0)
 			rposition:SetFloat3(rX, rY, -1)	
 			local rposition = self:GetComponent(self.TouchScreen, "Position", 0)
-			rposition:SetFloat3(0, 0, -0.11)					
+			rposition:SetFloat3(0, 0, -0.10001)					
 		end
 		if Input.GetTouchState(0) == InputState.Down and self.Pressed == true then
 			local dX = mX - self.mouseX
@@ -66,10 +66,9 @@ NewCameraSystem.Update = function(self, dt)
 		end
 		if Input.GetTouchState(0) == InputState.Released and self.Pressed == true then
 			self.Pressed = false
+			local rposition = self:GetComponent(self.TouchScreen, "Position", 0)
+			rposition:SetFloat3(0, 0, -100)
 			if self.Moved == false then
-				local rposition = self:GetComponent(self.TouchScreen, "Position", 0)
-				rposition:SetFloat3(0, 0, -100)	
-				
 				local x, y, z = self.Camera:GetPosition()
 				
 				if mX > 0.5 - 0.1 * aspectX then
