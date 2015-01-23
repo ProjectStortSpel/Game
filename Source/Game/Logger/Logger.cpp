@@ -13,7 +13,12 @@ Logger::Logger()
 	m_groupIdCounter = 0;
 	m_messageIndex = 0;
 	m_filterMask = 0;
+	m_longestGroupName = 0;
 	m_filterMask = ~m_filterMask;
+
+	m_logMutex = SDL_CreateMutex();
+
+	m_loggerGroupId = AddGroup("Logger", true);
 }
 
 Logger::~Logger()
@@ -29,6 +34,7 @@ Logger::~Logger()
 
 unsigned int Logger::AddGroup(const std::string& _groupName, bool _addToOutput)
 {
+	SDL_LockMutex(m_logMutex);
 	/*	Create new group id	*/
 	unsigned int newGroupId = m_groupIdCounter++;
 	LogGroup* newGroup = new LogGroup();
@@ -39,23 +45,31 @@ unsigned int Logger::AddGroup(const std::string& _groupName, bool _addToOutput)
 	/*	Add group to map	*/
 	m_logGroups[newGroupId] = newGroup;
 
+	if (_groupName.size() > m_longestGroupName)
+	{
+
+		m_longestGroupName = _groupName.size();
+	}
+
 	/*	Remove the group from output filter	*/
 	if (!_addToOutput)
 		m_filterMask ^= ((unsigned int)1 << newGroupId);
 
 	Log(newGroupId, LogSeverity::Info, "Added to log groups!");
-
+	SDL_UnlockMutex(m_logMutex);
 	return newGroupId;
 }
 
 void Logger::Log(unsigned int _groupIndex, LogSeverity _severity, const std::string& _message)
 {
+	SDL_LockMutex(m_logMutex);
 	/*	Get log group	*/
 	LogGroup* tGroup = m_logGroups[_groupIndex];
 
 	/*	Add group info to message	*/
 	std::stringstream newMessage;
-	newMessage << "[#" << m_messageIndex++ << " " << tGroup->GroupName << "] ";
+	newMessage << "[" << tGroup->GroupName << "]\t";
+	newMessage << SeverityToString(_severity) << ": ";
 	newMessage << _message << "\n";
 
 	/*	Create new log entry	*/
@@ -69,6 +83,8 @@ void Logger::Log(unsigned int _groupIndex, LogSeverity _severity, const std::str
 	/*	If the group is active in filter print the message	*/
 	if (m_filterMask & ((unsigned int)1 << _groupIndex))
 		printf(newMessage.str().c_str());
+
+	SDL_UnlockMutex(m_logMutex);
 }
 
 void Logger::DumpLog()
@@ -78,8 +94,52 @@ void Logger::DumpLog()
 
 void Logger::ChangeFilterFor(unsigned int _groupIndex, bool _printInfo)
 {
+	SDL_LockMutex(m_logMutex);
 	if (_printInfo)
 		m_filterMask |= ((unsigned int)1 << _groupIndex);
 	else
-		m_filterMask &= ~((unsigned int)1 << _groupIndex);
+		m_filterMask &= ~((unsigned int)1 << _groupIndex); 
+	SDL_UnlockMutex(m_logMutex);
+}
+
+std::string Logger::SeverityToString(LogSeverity _severity)
+{
+	switch (_severity)
+	{
+	case LogSeverity::Error:
+		return "Error";
+		break;
+
+	case LogSeverity::Info:
+		return "Info";
+		break;
+
+	case LogSeverity::Warning:
+		return "Warning";
+		break;
+
+	default:
+		std::stringstream newMessage;
+		newMessage << "Undefined severity used! (" << (int)_severity << ")";
+		Log(m_loggerGroupId, LogSeverity::Error, newMessage.str());
+
+		return "???";
+	}
+}
+
+
+
+void Logger::Trim(std::string& _str)
+{
+
+}
+
+void Logger::TrimStart(std::string& _str)
+{
+
+}
+
+void Logger::TrimEnd(std::string& _str)
+{
+
 }

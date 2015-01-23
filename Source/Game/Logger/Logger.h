@@ -1,6 +1,7 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
+#include <SDL/SDL.h>
 #include <sstream> 
 #include <string>
 #include <vector>
@@ -42,9 +43,21 @@ public:
 
 private:
 	Logger();
+
+	std::string SeverityToString(LogSeverity _severity);
+
+	void Trim(std::string& _str);
+	void TrimStart(std::string& _str);
+	void TrimEnd(std::string& _str);
+
 	unsigned int m_filterMask;
 	unsigned int m_groupIdCounter;
 	unsigned int m_messageIndex;
+	unsigned int m_loggerGroupId;
+
+	unsigned short m_longestGroupName;
+
+	SDL_mutex*	m_logMutex;
 
 	std::map<unsigned int, LogGroup*> m_logGroups;
 
