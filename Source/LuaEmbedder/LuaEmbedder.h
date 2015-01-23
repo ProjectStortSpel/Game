@@ -90,14 +90,15 @@
 
 namespace LuaEmbedder
 {
-  extern std::map<lua_State*, std::vector<lua_State*>> LuaStates;
-  extern std::map<lua_State*, lua_State*> LuaThreads;
+  extern std::map<lua_State*, std::vector<lua_State*>> IMPORT LuaStates;
+  extern std::map<lua_State*, lua_State*> IMPORT LuaThreads;
   
   EXPORT lua_State* CreateState();
   EXPORT lua_State* CopyState(lua_State* L);
   void EXPORT Quit();
   
   bool EXPORT Load(lua_State* L, const std::string& filepath);
+  bool EXPORT Preload(lua_State* L, const std::string& filepath);
   bool EXPORT CallFunction(lua_State* L, const std::string& name, int argumentCount = 0, const std::string& library = std::string());
   
   void EXPORT CollectGarbage(lua_State* L);
@@ -242,6 +243,11 @@ namespace LuaEmbedder
   bool EXPORT HasFunction(lua_State* L, T* object, const std::string& functionName)
   {
     return Luna<T>::HasFunction(object, functionName);
+  }
+  template<typename T>
+  void EXPORT CopyObject(lua_State* A, lua_State* B, const std::string& className, T* instance)
+  {
+    Luna<T>::Copy(A, B, className.c_str(), instance);
   }
 }
 

@@ -114,10 +114,6 @@ namespace LuaEmbedder
     // REGISTER CLASS AS A GLOBAL TABLE 
     static void Register(lua_State* L, const char* className, bool gc = true)
     {
-      m_properties.clear();
-      m_methods.clear();
-      m_objectFunctionsMap.clear();
-      
       luaL_newmetatable(L, className);
       int metatable = lua_gettop(L);
       
@@ -464,8 +460,6 @@ namespace LuaEmbedder
 	int members = lua_gettop(L);
 	lua_pushvalue(L, 2);
 	lua_gettable(L, members);
-	if (lua_isnil(L, -1))
-	  lua_pushvalue(L, index);
 	lua_settop(L, -1);
       }
       
@@ -627,6 +621,72 @@ namespace LuaEmbedder
       lua_pushboolean(L, *obj1 == *obj2);
 
       return 1;
+    }
+    
+    static void Copy(lua_State* A, lua_State* B, const char* className, T* instance)
+    {
+      push(B, className, instance);
+      
+      luaL_getmetatable(A, className);
+      int metatableA = lua_gettop(A);
+      lua_pushstring(A, "object_members");
+      lua_gettable(A, -2);
+      if (lua_isnil(A, -1))
+      {
+	SDL_Log("No table 'object_members' in class %s", className);
+	return;
+      }
+      int objectsA = lua_gettop(A);
+      lua_pushlightuserdata(A, instance);
+      lua_gettable(A, -2);
+      if (lua_isnil(A, -1))
+      {
+	SDL_Log("No table '%p' in table 'object_members' in class %s", className);
+	return;
+      }
+      int membersA = lua_gettop(A);
+      
+      luaL_getmetatable(B, className);
+      int metatableB = lua_gettop(B);
+      lua_pushstring(B, "object_members");
+      lua_gettable(B, -2);
+      if (lua_isnil(B, -1))
+      {
+	lua_newtable(B);
+	lua_pushvalue(B, -1);
+	lua_setmetatable(B, -2);
+	lua_pushstring(B, "object_members");
+	lua_pushvalue(B, -2);
+	lua_settable(B, metatableB);
+      }
+      int objectsB = lua_gettop(B);
+      lua_pushlightuserdata(B, instance);
+      lua_gettable(B, -2);
+      if (lua_isnil(B, -1))
+      {
+	lua_newtable(B);
+	lua_pushvalue(B, -1);
+	lua_setmetatable(B, -2);
+	lua_pushlightuserdata(B, instance);
+	lua_pushvalue(B, -2);
+	lua_settable(B, objectsB);
+      }
+      else
+	SDL_Log("Warning! There's already another Lua copy of this class %s", className);
+      int membersB = lua_gettop(B);
+      
+      lua_pushnil(A);
+      while (lua_next(A, membersA) != 0)
+      {
+	lua_pushvalue(A, -2);
+	lua_pushvalue(A, -2);
+	lua_xmove(A, B, 2);
+	lua_settable(B, membersB);
+	lua_pop(A, 1);
+      }
+      
+      lua_settop(A, 0);
+      lua_settop(B, 0);
     }
   };
 

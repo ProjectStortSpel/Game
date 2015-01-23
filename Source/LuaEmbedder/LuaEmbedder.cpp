@@ -26,7 +26,8 @@ namespace LuaEmbedder
   lua_State* CopyState(lua_State* L)
   {
     assert(LuaStates.find(L) != LuaStates.end());
-    lua_State* copy = lua_newthread(L);
+    lua_State* copy = luaL_newstate();
+    luaL_openlibs(copy);
     LuaStates[L].push_back(copy);
     LuaThreads[copy] = L;
     return copy;
@@ -142,6 +143,18 @@ namespace LuaEmbedder
     if (error)
     {
       SDL_Log("LuaEmbedder::Load : %s", (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error"));
+      return false;
+    }
+    lua_gc(L, LUA_GCCOLLECT, 0);
+    return true;
+  }
+  bool Preload(lua_State* L, const std::string& filepath)
+  {
+    std::string source = LoadFile(filepath);
+    bool error = luaL_loadstring(L, source.c_str());
+    if (error)
+    {
+      SDL_Log("LuaEmbedder::Preload : %s", (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error"));
       return false;
     }
     lua_gc(L, LUA_GCCOLLECT, 0);
