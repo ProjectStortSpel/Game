@@ -189,8 +189,6 @@ end
 OnPlayerConnectedSystem.AddConnectedPlayers = function(self, _counterEntity, _maxPlayers)
 	
 	local clients = { Net.ConnectedClients() }
-	--local counterEntities = self:GetEntities("PlayerCounter")
-	--local counterComp = world:GetComponent(counterEntities[1], "PlayerCounter", 0)
 	local maxPlayers = _maxPlayers
 	local noOfPlayers = 0
 
@@ -204,7 +202,6 @@ OnPlayerConnectedSystem.AddConnectedPlayers = function(self, _counterEntity, _ma
 			return
 		end
 		
-		--self:CounterComponentChanged(1, "Players")
 		noOfPlayers = noOfPlayers + 1
 		
 		
