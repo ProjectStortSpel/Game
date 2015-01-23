@@ -157,7 +157,7 @@ worldCreator:AddComponentType(HasSelectedCardsComponent)
 local PlayerCounterComponent = ComponentType()
 PlayerCounterComponent.Name = "PlayerCounter"
 PlayerCounterComponent.TableType = TableType.Map
-PlayerCounterComponent:AddVariable("Players", ByteSize.Int)
 PlayerCounterComponent:AddVariable("MaxPlayers", ByteSize.Int)
+PlayerCounterComponent:AddVariable("Players", ByteSize.Int)
 PlayerCounterComponent:AddVariable("Spectators", ByteSize.Int)
 worldCreator:AddComponentType(PlayerCounterComponent)
