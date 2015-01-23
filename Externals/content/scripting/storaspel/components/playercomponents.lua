@@ -141,18 +141,6 @@ HasSelectedCardsComponent.Name = "HasSelectedCards"
 HasSelectedCardsComponent.TableType = TableType.Map
 worldCreator:AddComponentType(HasSelectedCardsComponent)
 
----- IncreasePlayerCounter Component
---local IncreasePlayerCounterComponent = ComponentType()
---IncreasePlayerCounterComponent.Name = "IncreasePlayerCounter"
---IncreasePlayerCounterComponent.TableType = TableType.Map
---worldCreator:AddComponentType(IncreasePlayerCounterComponent)
---
----- DecreasePlayerCounter Component
---local DecreasePlayerCounterComponent = ComponentType()
---DecreasePlayerCounterComponent.Name = "DecreasePlayerCounter"
---DecreasePlayerCounterComponent.TableType = TableType.Map
---worldCreator:AddComponentType(DecreasePlayerCounterComponent)
-
 -- PlayerCounter Component
 local PlayerCounterComponent = ComponentType()
 PlayerCounterComponent.Name = "PlayerCounter"

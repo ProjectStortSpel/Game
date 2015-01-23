@@ -13,22 +13,20 @@ OnPlayerConnectedSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Player", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("PlayerCounter", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("IsSpectator", FilterType.Excluded)
-	
-	print("OnPlayerConnectedSystem initialized!")
 end
 
 OnPlayerConnectedSystem.PostInitialize = function(self)
 	
 	local playerCounter = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("PlayerCounter", playerCounter)
-	world:SetComponent(playerCounter, "PlayerCounter", "Players", 0)
+	
 	-- TODO: Change MaxPlayers based on the map loaded
-	world:SetComponent(playerCounter, "PlayerCounter", "MaxPlayers", 5)
+	local maxPlayers = 5
+	world:SetComponent(playerCounter, "PlayerCounter", "MaxPlayers", maxPlayers)
+	world:SetComponent(playerCounter, "PlayerCounter", "Players", 0)
 	world:SetComponent(playerCounter, "PlayerCounter", "Spectators", 0)
 
-	self:AddConnectedPlayers()
-
-	print("OnPlayerConnectedSystem post initialized!")
+	self:AddConnectedPlayers(playerCounter, maxPlayers)
 end
 
 OnPlayerConnectedSystem.OnEntityAdded = function(self, entityId)
@@ -46,7 +44,6 @@ OnPlayerConnectedSystem.OnPlayerConnected = function(self, _ip, _port, _message)
 	local counterEntities = self:GetEntities("PlayerCounter")
 	local counterComp = world:GetComponent(counterEntities[1], "PlayerCounter", 0)
 	local maxPlayers, noOfPlayers, noOfSpectators = counterComp:GetInt3()
-	print(maxPlayers, noOfPlayers, noOfSpectators)
 	
 	if #self:GetEntities("GameRunning") > 0 then -- If the game is running
 		
@@ -189,12 +186,11 @@ OnPlayerConnectedSystem.OnPlayerTimedOut = function(self, _ip, _port, _message)
 	
 end
 
-OnPlayerConnectedSystem.AddConnectedPlayers = function(self)
+OnPlayerConnectedSystem.AddConnectedPlayers = function(self, _counterEntity, _maxPlayers)
 	
 	local clients = { Net.ConnectedClients() }
-	local counterEntities = self:GetEntities("PlayerCounter")
-	local counterComp = world:GetComponent(counterEntities[1], "PlayerCounter", 0)
-	local maxPlayers, noOfPlayers = counterComp:GetInt2()
+	local maxPlayers = _maxPlayers
+	local noOfPlayers = 0
 
 	for i = 1, #clients, 2 do
 		
@@ -206,7 +202,9 @@ OnPlayerConnectedSystem.AddConnectedPlayers = function(self)
 			return
 		end
 		
-		self:CounterComponentChanged(1, "Players")
+		noOfPlayers = noOfPlayers + 1
+		
+		
 		--	Hax new ID
 	
 		--	Create the new player
@@ -225,7 +223,7 @@ OnPlayerConnectedSystem.AddConnectedPlayers = function(self)
 		self.PlayerId = self.PlayerId + 1
 
 	end
-
+	world:SetComponent(_counterEntity, "PlayerCounter", "Players", noOfPlayers)
 end
 
 OnPlayerConnectedSystem.CounterComponentChanged = function(self, _change, _component)
