@@ -66,7 +66,7 @@ GameInterfaceSystem.AddEntityCommandToButton = function(self, command, button)
 end
 
 GameInterfaceSystem.PostInitialize = function(self)
-	local menubutton = self:CreateElement("gamemenubutton", "quad", 3, 0, -4, 0.2, 0.2)
+	local menubutton = self:CreateElement("gamemenubutton", "quad", 3, -2, -4, 0.2, 0.2)
 	self:AddEntityCommandToButton("GameMenu", menubutton)
 	print("ButtonPressedSystem post initialized!")
 end

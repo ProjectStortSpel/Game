@@ -33,21 +33,23 @@ GameMenuSystem.OnEntityAdded = function(self, entityId)
 end
 
 GameMenuSystem.SpawnMenu = function(self)
-	print("create game menu")
-	local background = self:CreateElement("gamemenubackground", "quad", 0, 0, -4, 2, 2)
+	local background = self:CreateElement("gamemenubackground", "quad", 0, -0, -3.1, 1.5, 2)
 		
-	local startbutton = self:CreateElement("rconreload", "quad", 0, 0.4, -3, 0.6, 0.3)
-	self:AddConsoleCommandToButton("rcon reload", startbutton)	
+	local button = nil
+	button = self:CreateElement("rconreload", "quad", 0, 0.6, -3, 0.6, 0.3)
+	self:AddConsoleCommandToButton("rcon reload", button)	
 		
-	local startbutton = self:CreateElement("rconstart", "quad", 0, 0, -3, 0.6, 0.3)
-	self:AddConsoleCommandToButton("rcon start", startbutton)
+	button = self:CreateElement("rconstart", "quad", 0, 0.2, -3, 0.6, 0.3)
+	self:AddConsoleCommandToButton("rcon start", button)
+	
+	button = self:CreateElement("lobby", "quad", 0, -0.2, -3, 0.6, 0.3)
+	self:AddConsoleCommandToButton("disconnect;gamemode lobby", button)
 
-	local quitbutton = self:CreateElement("quit", "quad", 0, -0.4, -3, 0.6, 0.3)
-	self:AddConsoleCommandToButton("quit", quitbutton)
+	button = self:CreateElement("quit", "quad", 0, -0.6, -3, 0.6, 0.3)
+	self:AddConsoleCommandToButton("quit", button)
 end
 
 GameMenuSystem.RemoveMenu = function(self)
-	print("removed game menu")
 	local entities = self:GetEntities()
 	for i = 1, #entities do
 		world:KillEntity(entities[i])

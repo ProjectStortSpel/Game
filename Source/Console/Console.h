@@ -64,6 +64,8 @@ namespace Console
 		int m_end;
 		bool m_open;
 
+
+		void ExecuteCommand(const char* _command);
 	public:
 
 		ConsoleManager();
@@ -72,7 +74,6 @@ namespace Console
 
 		void ExecuteCommandQueue();
 		void AddToCommandQueue(const char* _command);
-		void ExecuteCommand(const char* _command);
 		void AddCommand(const char* _name, ConsoleHook _hook);
 		void RemoveCommand(const char* _name);
 		void ClearCommands();

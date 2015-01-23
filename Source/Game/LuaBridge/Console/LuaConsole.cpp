@@ -49,7 +49,7 @@ namespace LuaBridge
 
 	int ExecuteCommand()
 	{
-		Console::ConsoleManager::GetInstance().ExecuteCommand(LuaEmbedder::PullString(1).c_str());
+		Console::ConsoleManager::GetInstance().AddToCommandQueue(LuaEmbedder::PullString(1).c_str());
 		return 0;
 	}
 
