@@ -100,7 +100,9 @@ if Client then
 	
 	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/interfacesystems/?.lua"
 	require "cl_gameinterfacesystem"
+	require "cl_hoversizesystem"
 	require "cl_gamemenusystem"
+	require "cl_optionmenusystem"
 	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
 
 	require "cl_playerindicatorsystem"
@@ -204,5 +206,7 @@ if Client then
 	worldCreator:AddSystemToCurrentGroup(NewCameraSystem)
 	
 	worldCreator:AddSystemToCurrentGroup(GameInterfaceSystem)
+	worldCreator:AddSystemToCurrentGroup(HoverSizeSystem)
 	worldCreator:AddSystemToCurrentGroup(GameMenuSystem)
+	worldCreator:AddSystemToCurrentGroup(OptionMenuSystem)
 end

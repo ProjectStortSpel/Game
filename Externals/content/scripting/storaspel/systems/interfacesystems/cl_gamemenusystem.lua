@@ -38,15 +38,19 @@ GameMenuSystem.SpawnMenu = function(self)
 	local button = nil
 	button = self:CreateElement("rconreload", "quad", 0, 0.6, -3, 0.6, 0.3)
 	self:AddConsoleCommandToButton("rcon reload", button)	
+	self:AddHoverSize(1.1, button)	
 		
 	button = self:CreateElement("rconstart", "quad", 0, 0.2, -3, 0.6, 0.3)
 	self:AddConsoleCommandToButton("rcon start", button)
+	self:AddHoverSize(1.1, button)	
 	
 	button = self:CreateElement("lobby", "quad", 0, -0.2, -3, 0.6, 0.3)
 	self:AddConsoleCommandToButton("disconnect;gamemode lobby", button)
+	self:AddHoverSize(1.1, button)	
 
 	button = self:CreateElement("quit", "quad", 0, -0.6, -3, 0.6, 0.3)
 	self:AddConsoleCommandToButton("quit", button)
+	self:AddHoverSize(1.1, button)	
 end
 
 GameMenuSystem.RemoveMenu = function(self)
@@ -60,7 +64,6 @@ GameMenuSystem.Initialize = function(self)
 	self:SetName("GameMenuSystem")
 	self:AddComponentTypeToFilter("GameMenu", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("GameMenuElement", FilterType.RequiresOneOf)
-	print("GameMenuSystem initialized!")
 end
 
 GameMenuSystem.CreateElement = function(self, object, folder, posx, posy, posz, scalex, scaley)
@@ -70,6 +73,7 @@ GameMenuSystem.CreateElement = function(self, object, folder, posx, posy, posz, 
 	world:CreateComponentAndAddTo("Rotation", id)
 	world:CreateComponentAndAddTo("Scale", id)
 	world:CreateComponentAndAddTo("PickBox", id)
+	
 	world:CreateComponentAndAddTo("GameMenuElement", id)
 	local model = self:GetComponent(id, "Model", 0)
 	model:SetModel(object, folder, 2)
@@ -93,6 +97,15 @@ GameMenuSystem.AddEntityCommandToButton = function(self, command, button)
 	world:CreateComponentAndAddTo("MenuEntityCommand", button)
 	world:GetComponent(button, "MenuEntityCommand", "ComponentName"):SetString(command)
 end
+
+GameMenuSystem.AddHoverSize = function(self, deltascale, button)
+	local scale = self:GetComponent(button, "Scale", 0)
+	local sx, sy, sz = scale:GetFloat3()
+	world:CreateComponentAndAddTo("HoverSize", button)
+	local hoversize = self:GetComponent(button, "HoverSize", 0)
+	hoversize:SetFloat3(sx*deltascale, sy*deltascale, sz*deltascale)
+end
+
 
 GameMenuSystem.PostInitialize = function(self)
 
