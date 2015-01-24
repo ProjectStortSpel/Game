@@ -12,6 +12,15 @@
 		0339F9971A740B5900FA04DD /* libGLEW.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0339F9931A740B5900FA04DD /* libGLEW.dylib */; };
 		0339F9981A740B5900FA04DD /* liblua.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0339F9941A740B5900FA04DD /* liblua.a */; };
 		0339F9991A740B5900FA04DD /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0339F9951A740B5900FA04DD /* libSDL2.a */; };
+		0339F9AE1A7433D800FA04DD /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03F5A8021A73DB9B00D54F14 /* OpenGL.framework */; };
+		035735451A74391600208EC5 /* Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035735311A74391600208EC5 /* Buffer.cpp */; };
+		035735461A74391600208EC5 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035735331A74391600208EC5 /* Camera.cpp */; };
+		035735471A74391600208EC5 /* GLTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035735351A74391600208EC5 /* GLTimer.cpp */; };
+		035735481A74391600208EC5 /* GraphicDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035735371A74391600208EC5 /* GraphicDevice.cpp */; };
+		035735491A74391600208EC5 /* Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0357353B1A74391600208EC5 /* Shader.cpp */; };
+		0357354A1A74391600208EC5 /* ShadowMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0357353D1A74391600208EC5 /* ShadowMap.cpp */; };
+		0357354B1A74391600208EC5 /* SimpleText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0357353F1A74391600208EC5 /* SimpleText.cpp */; };
+		0357354C1A74391600208EC5 /* SkyBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035735411A74391600208EC5 /* SkyBox.cpp */; };
 		035C22CD1A73D68600EE9624 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 035C22CC1A73D68600EE9624 /* Images.xcassets */; };
 		035C22D01A73D68600EE9624 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 035C22CE1A73D68600EE9624 /* Main.storyboard */; };
 		03F5A7AE1A73D94F00D54F14 /* Console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03F5A6E21A73D94F00D54F14 /* Console.cpp */; };
@@ -90,15 +99,6 @@
 		03F5A7F71A73D94F00D54F14 /* ServerNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03F5A7931A73D94F00D54F14 /* ServerNetwork.cpp */; };
 		03F5A7F81A73D94F00D54F14 /* Stdafx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03F5A7951A73D94F00D54F14 /* Stdafx.cpp */; };
 		03F5A7F91A73D94F00D54F14 /* WinSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03F5A7971A73D94F00D54F14 /* WinSocket.cpp */; };
-		03F5A7FA1A73D94F00D54F14 /* Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03F5A79A1A73D94F00D54F14 /* Buffer.cpp */; };
-		03F5A7FB1A73D94F00D54F14 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03F5A79C1A73D94F00D54F14 /* Camera.cpp */; };
-		03F5A7FC1A73D94F00D54F14 /* GLTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03F5A79E1A73D94F00D54F14 /* GLTimer.cpp */; };
-		03F5A7FD1A73D94F00D54F14 /* GraphicDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03F5A7A01A73D94F00D54F14 /* GraphicDevice.cpp */; };
-		03F5A7FE1A73D94F00D54F14 /* Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03F5A7A41A73D94F00D54F14 /* Shader.cpp */; };
-		03F5A7FF1A73D94F00D54F14 /* ShadowMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03F5A7A61A73D94F00D54F14 /* ShadowMap.cpp */; };
-		03F5A8001A73D94F00D54F14 /* SimpleText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03F5A7A81A73D94F00D54F14 /* SimpleText.cpp */; };
-		03F5A8011A73D94F00D54F14 /* SkyBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03F5A7AA1A73D94F00D54F14 /* SkyBox.cpp */; };
-		03F5A8031A73DB9B00D54F14 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03F5A8021A73DB9B00D54F14 /* OpenGL.framework */; };
 		03F5A8FE1A74061600D54F14 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03F5A8FD1A74061600D54F14 /* CoreVideo.framework */; };
 		03F5A8FF1A74062100D54F14 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03F5A8E81A74049000D54F14 /* AudioToolbox.framework */; };
 		03F5A9001A74062100D54F14 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03F5A8FB1A7405AD00D54F14 /* AudioUnit.framework */; };
@@ -112,14 +112,30 @@
 
 /* Begin PBXFileReference section */
 		0339F9881A74082700FA04DD /* content */ = {isa = PBXFileReference; lastKnownFileType = folder; name = content; path = ../../Externals/content; sourceTree = "<group>"; };
-		0339F98A1A740B0000FA04DD /* liblua.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblua.a; path = ../../Externals/lib/iOS/liblua.a; sourceTree = "<group>"; };
-		0339F98B1A740B0000FA04DD /* libluaSim.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libluaSim.a; path = ../../Externals/lib/iOS/libluaSim.a; sourceTree = "<group>"; };
-		0339F98C1A740B0000FA04DD /* libSDL2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2.a; path = ../../Externals/lib/iOS/libSDL2.a; sourceTree = "<group>"; };
-		0339F98D1A740B0000FA04DD /* libSDL2Sim.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2Sim.a; path = ../../Externals/lib/iOS/libSDL2Sim.a; sourceTree = "<group>"; };
 		0339F9921A740B5900FA04DD /* libGLEW.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGLEW.a; path = ../../Externals/lib/OSX/libGLEW.a; sourceTree = "<group>"; };
 		0339F9931A740B5900FA04DD /* libGLEW.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libGLEW.dylib; path = ../../Externals/lib/OSX/libGLEW.dylib; sourceTree = "<group>"; };
 		0339F9941A740B5900FA04DD /* liblua.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblua.a; path = ../../Externals/lib/OSX/liblua.a; sourceTree = "<group>"; };
 		0339F9951A740B5900FA04DD /* libSDL2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2.a; path = ../../Externals/lib/OSX/libSDL2.a; sourceTree = "<group>"; };
+		035735311A74391600208EC5 /* Buffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Buffer.cpp; sourceTree = "<group>"; };
+		035735321A74391600208EC5 /* Buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Buffer.h; sourceTree = "<group>"; };
+		035735331A74391600208EC5 /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Camera.cpp; sourceTree = "<group>"; };
+		035735341A74391600208EC5 /* Camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Camera.h; sourceTree = "<group>"; };
+		035735351A74391600208EC5 /* GLTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GLTimer.cpp; sourceTree = "<group>"; };
+		035735361A74391600208EC5 /* GLTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLTimer.h; sourceTree = "<group>"; };
+		035735371A74391600208EC5 /* GraphicDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicDevice.cpp; sourceTree = "<group>"; };
+		035735381A74391600208EC5 /* GraphicDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicDevice.h; sourceTree = "<group>"; };
+		035735391A74391600208EC5 /* ModelExporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelExporter.h; sourceTree = "<group>"; };
+		0357353A1A74391600208EC5 /* ModelLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelLoader.h; sourceTree = "<group>"; };
+		0357353B1A74391600208EC5 /* Shader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Shader.cpp; sourceTree = "<group>"; };
+		0357353C1A74391600208EC5 /* Shader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shader.h; sourceTree = "<group>"; };
+		0357353D1A74391600208EC5 /* ShadowMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShadowMap.cpp; sourceTree = "<group>"; };
+		0357353E1A74391600208EC5 /* ShadowMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowMap.h; sourceTree = "<group>"; };
+		0357353F1A74391600208EC5 /* SimpleText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleText.cpp; sourceTree = "<group>"; };
+		035735401A74391600208EC5 /* SimpleText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleText.h; sourceTree = "<group>"; };
+		035735411A74391600208EC5 /* SkyBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkyBox.cpp; sourceTree = "<group>"; };
+		035735421A74391600208EC5 /* SkyBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkyBox.h; sourceTree = "<group>"; };
+		035735431A74391600208EC5 /* stdafx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stdafx.h; sourceTree = "<group>"; };
+		035735441A74391600208EC5 /* TextureLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextureLoader.h; sourceTree = "<group>"; };
 		035C22BF1A73D68600EE9624 /* StoraSpel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StoraSpel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		035C22C31A73D68600EE9624 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		035C22CC1A73D68600EE9624 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -280,31 +296,7 @@
 		03F5A7961A73D94F00D54F14 /* Stdafx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Stdafx.h; sourceTree = "<group>"; };
 		03F5A7971A73D94F00D54F14 /* WinSocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WinSocket.cpp; sourceTree = "<group>"; };
 		03F5A7981A73D94F00D54F14 /* WinSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WinSocket.h; sourceTree = "<group>"; };
-		03F5A79A1A73D94F00D54F14 /* Buffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Buffer.cpp; sourceTree = "<group>"; };
-		03F5A79B1A73D94F00D54F14 /* Buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Buffer.h; sourceTree = "<group>"; };
-		03F5A79C1A73D94F00D54F14 /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Camera.cpp; sourceTree = "<group>"; };
-		03F5A79D1A73D94F00D54F14 /* Camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Camera.h; sourceTree = "<group>"; };
-		03F5A79E1A73D94F00D54F14 /* GLTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GLTimer.cpp; sourceTree = "<group>"; };
-		03F5A79F1A73D94F00D54F14 /* GLTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLTimer.h; sourceTree = "<group>"; };
-		03F5A7A01A73D94F00D54F14 /* GraphicDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicDevice.cpp; sourceTree = "<group>"; };
-		03F5A7A11A73D94F00D54F14 /* GraphicDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicDevice.h; sourceTree = "<group>"; };
-		03F5A7A21A73D94F00D54F14 /* ModelExporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelExporter.h; sourceTree = "<group>"; };
-		03F5A7A31A73D94F00D54F14 /* ModelLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelLoader.h; sourceTree = "<group>"; };
-		03F5A7A41A73D94F00D54F14 /* Shader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Shader.cpp; sourceTree = "<group>"; };
-		03F5A7A51A73D94F00D54F14 /* Shader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shader.h; sourceTree = "<group>"; };
-		03F5A7A61A73D94F00D54F14 /* ShadowMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShadowMap.cpp; sourceTree = "<group>"; };
-		03F5A7A71A73D94F00D54F14 /* ShadowMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowMap.h; sourceTree = "<group>"; };
-		03F5A7A81A73D94F00D54F14 /* SimpleText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleText.cpp; sourceTree = "<group>"; };
-		03F5A7A91A73D94F00D54F14 /* SimpleText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleText.h; sourceTree = "<group>"; };
-		03F5A7AA1A73D94F00D54F14 /* SkyBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkyBox.cpp; sourceTree = "<group>"; };
-		03F5A7AB1A73D94F00D54F14 /* SkyBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkyBox.h; sourceTree = "<group>"; };
-		03F5A7AC1A73D94F00D54F14 /* stdafx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stdafx.h; sourceTree = "<group>"; };
-		03F5A7AD1A73D94F00D54F14 /* TextureLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextureLoader.h; sourceTree = "<group>"; };
 		03F5A8021A73DB9B00D54F14 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
-		03F5A81C1A73FDAE00D54F14 /* libGLEW.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGLEW.a; path = ../../Externals/lib/OSX/x64/libGLEW.a; sourceTree = "<group>"; };
-		03F5A81D1A73FDAE00D54F14 /* libGLEW.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libGLEW.dylib; path = ../../Externals/lib/OSX/x64/libGLEW.dylib; sourceTree = "<group>"; };
-		03F5A8E21A7402C700D54F14 /* liblua.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblua.a; path = ../../Externals/lib/OSX/x64/liblua.a; sourceTree = "<group>"; };
-		03F5A8E41A7403E900D54F14 /* libSDL2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2.a; path = ../../Externals/lib/OSX/x64/libSDL2.a; sourceTree = "<group>"; };
 		03F5A8E81A74049000D54F14 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		03F5A8EB1A74049000D54F14 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		03F5A8F21A7404BC00D54F14 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -324,6 +316,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0339F9AE1A7433D800FA04DD /* OpenGL.framework in Frameworks */,
 				0339F9961A740B5900FA04DD /* libGLEW.a in Frameworks */,
 				0339F9971A740B5900FA04DD /* libGLEW.dylib in Frameworks */,
 				0339F9981A740B5900FA04DD /* liblua.a in Frameworks */,
@@ -337,7 +330,6 @@
 				03F5A8FF1A74062100D54F14 /* AudioToolbox.framework in Frameworks */,
 				03F5A9001A74062100D54F14 /* AudioUnit.framework in Frameworks */,
 				03F5A8FE1A74061600D54F14 /* CoreVideo.framework in Frameworks */,
-				03F5A8031A73DB9B00D54F14 /* OpenGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -347,6 +339,10 @@
 		0339F9861A74080300FA04DD /* Framework */ = {
 			isa = PBXGroup;
 			children = (
+				0339F9921A740B5900FA04DD /* libGLEW.a */,
+				0339F9931A740B5900FA04DD /* libGLEW.dylib */,
+				0339F9941A740B5900FA04DD /* liblua.a */,
+				0339F9951A740B5900FA04DD /* libSDL2.a */,
 				03F5A90A1A74064400D54F14 /* ForceFeedback.framework */,
 				03F5A9081A74063F00D54F14 /* Carbon.framework */,
 				03F5A9061A74063A00D54F14 /* CoreFoundation.framework */,
@@ -359,10 +355,6 @@
 				03F5A8F21A7404BC00D54F14 /* Foundation.framework */,
 				03F5A8E81A74049000D54F14 /* AudioToolbox.framework */,
 				03F5A8EB1A74049000D54F14 /* CoreAudio.framework */,
-				03F5A8E41A7403E900D54F14 /* libSDL2.a */,
-				03F5A8E21A7402C700D54F14 /* liblua.a */,
-				03F5A81C1A73FDAE00D54F14 /* libGLEW.a */,
-				03F5A81D1A73FDAE00D54F14 /* libGLEW.dylib */,
 				03F5A8021A73DB9B00D54F14 /* OpenGL.framework */,
 			);
 			name = Framework;
@@ -376,17 +368,37 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
+		035735301A74391600208EC5 /* Renderer */ = {
+			isa = PBXGroup;
+			children = (
+				035735311A74391600208EC5 /* Buffer.cpp */,
+				035735321A74391600208EC5 /* Buffer.h */,
+				035735331A74391600208EC5 /* Camera.cpp */,
+				035735341A74391600208EC5 /* Camera.h */,
+				035735351A74391600208EC5 /* GLTimer.cpp */,
+				035735361A74391600208EC5 /* GLTimer.h */,
+				035735371A74391600208EC5 /* GraphicDevice.cpp */,
+				035735381A74391600208EC5 /* GraphicDevice.h */,
+				035735391A74391600208EC5 /* ModelExporter.h */,
+				0357353A1A74391600208EC5 /* ModelLoader.h */,
+				0357353B1A74391600208EC5 /* Shader.cpp */,
+				0357353C1A74391600208EC5 /* Shader.h */,
+				0357353D1A74391600208EC5 /* ShadowMap.cpp */,
+				0357353E1A74391600208EC5 /* ShadowMap.h */,
+				0357353F1A74391600208EC5 /* SimpleText.cpp */,
+				035735401A74391600208EC5 /* SimpleText.h */,
+				035735411A74391600208EC5 /* SkyBox.cpp */,
+				035735421A74391600208EC5 /* SkyBox.h */,
+				035735431A74391600208EC5 /* stdafx.h */,
+				035735441A74391600208EC5 /* TextureLoader.h */,
+			);
+			name = Renderer;
+			path = ../../Source/Renderer;
+			sourceTree = "<group>";
+		};
 		035C22B61A73D68600EE9624 = {
 			isa = PBXGroup;
 			children = (
-				0339F9921A740B5900FA04DD /* libGLEW.a */,
-				0339F9931A740B5900FA04DD /* libGLEW.dylib */,
-				0339F9941A740B5900FA04DD /* liblua.a */,
-				0339F9951A740B5900FA04DD /* libSDL2.a */,
-				0339F98A1A740B0000FA04DD /* liblua.a */,
-				0339F98B1A740B0000FA04DD /* libluaSim.a */,
-				0339F98C1A740B0000FA04DD /* libSDL2.a */,
-				0339F98D1A740B0000FA04DD /* libSDL2Sim.a */,
 				0339F9871A74081400FA04DD /* Resources */,
 				0339F9861A74080300FA04DD /* Framework */,
 				035C24201A73D7F400EE9624 /* Source */,
@@ -424,13 +436,13 @@
 		035C24201A73D7F400EE9624 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				035735301A74391600208EC5 /* Renderer */,
 				03F5A6E11A73D94F00D54F14 /* Console */,
 				03F5A6E41A73D94F00D54F14 /* ECSL */,
 				03F5A7201A73D94F00D54F14 /* Game */,
 				03F5A7741A73D94F00D54F14 /* Input */,
 				03F5A77F1A73D94F00D54F14 /* LuaEmbedder */,
 				03F5A7851A73D94F00D54F14 /* Network */,
-				03F5A7991A73D94F00D54F14 /* Renderer */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -815,34 +827,6 @@
 			path = ../../Source/Network;
 			sourceTree = "<group>";
 		};
-		03F5A7991A73D94F00D54F14 /* Renderer */ = {
-			isa = PBXGroup;
-			children = (
-				03F5A79A1A73D94F00D54F14 /* Buffer.cpp */,
-				03F5A79B1A73D94F00D54F14 /* Buffer.h */,
-				03F5A79C1A73D94F00D54F14 /* Camera.cpp */,
-				03F5A79D1A73D94F00D54F14 /* Camera.h */,
-				03F5A79E1A73D94F00D54F14 /* GLTimer.cpp */,
-				03F5A79F1A73D94F00D54F14 /* GLTimer.h */,
-				03F5A7A01A73D94F00D54F14 /* GraphicDevice.cpp */,
-				03F5A7A11A73D94F00D54F14 /* GraphicDevice.h */,
-				03F5A7A21A73D94F00D54F14 /* ModelExporter.h */,
-				03F5A7A31A73D94F00D54F14 /* ModelLoader.h */,
-				03F5A7A41A73D94F00D54F14 /* Shader.cpp */,
-				03F5A7A51A73D94F00D54F14 /* Shader.h */,
-				03F5A7A61A73D94F00D54F14 /* ShadowMap.cpp */,
-				03F5A7A71A73D94F00D54F14 /* ShadowMap.h */,
-				03F5A7A81A73D94F00D54F14 /* SimpleText.cpp */,
-				03F5A7A91A73D94F00D54F14 /* SimpleText.h */,
-				03F5A7AA1A73D94F00D54F14 /* SkyBox.cpp */,
-				03F5A7AB1A73D94F00D54F14 /* SkyBox.h */,
-				03F5A7AC1A73D94F00D54F14 /* stdafx.h */,
-				03F5A7AD1A73D94F00D54F14 /* TextureLoader.h */,
-			);
-			name = Renderer;
-			path = ../../Source/Renderer;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -914,7 +898,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				03F5A7D51A73D94F00D54F14 /* LuaInput.cpp in Sources */,
-				03F5A7FF1A73D94F00D54F14 /* ShadowMap.cpp in Sources */,
+				0357354B1A74391600208EC5 /* SimpleText.cpp in Sources */,
 				03F5A7C41A73D94F00D54F14 /* System.cpp in Sources */,
 				03F5A7DB1A73D94F00D54F14 /* NetworkHelper.cpp in Sources */,
 				03F5A7EC1A73D94F00D54F14 /* Mouse.cpp in Sources */,
@@ -924,8 +908,8 @@
 				03F5A7E11A73D94F00D54F14 /* DirectionalLightSystem.cpp in Sources */,
 				03F5A7D11A73D94F00D54F14 /* LuaWorld.cpp in Sources */,
 				03F5A7C81A73D94F00D54F14 /* GameConsole.cpp in Sources */,
-				03F5A7FB1A73D94F00D54F14 /* Camera.cpp in Sources */,
 				03F5A7F31A73D94F00D54F14 /* ISocket.cpp in Sources */,
+				035735471A74391600208EC5 /* GLTimer.cpp in Sources */,
 				03F5A7B91A73D94F00D54F14 /* EntityTable.cpp in Sources */,
 				03F5A7BF1A73D94F00D54F14 /* SystemManager.cpp in Sources */,
 				03F5A7E31A73D94F00D54F14 /* MovementSystem.cpp in Sources */,
@@ -946,9 +930,9 @@
 				03F5A7F41A73D94F00D54F14 /* LinSocket.cpp in Sources */,
 				03F5A7B61A73D94F00D54F14 /* DataArray.cpp in Sources */,
 				03F5A7E41A73D94F00D54F14 /* PointlightSystem.cpp in Sources */,
-				03F5A7FC1A73D94F00D54F14 /* GLTimer.cpp in Sources */,
 				03F5A7F91A73D94F00D54F14 /* WinSocket.cpp in Sources */,
 				03F5A7C71A73D94F00D54F14 /* FrameCounter.cpp in Sources */,
+				0357354C1A74391600208EC5 /* SkyBox.cpp in Sources */,
 				03F5A7B31A73D94F00D54F14 /* ComponentType.cpp in Sources */,
 				03F5A7E81A73D94F00D54F14 /* RotationSystem.cpp in Sources */,
 				03F5A7EA1A73D94F00D54F14 /* TextInput.cpp in Sources */,
@@ -956,38 +940,38 @@
 				03F5A7F71A73D94F00D54F14 /* ServerNetwork.cpp in Sources */,
 				03F5A7BB1A73D94F00D54F14 /* EntityTemplateReader.cpp in Sources */,
 				03F5A7CA1A73D94F00D54F14 /* GameServer.cpp in Sources */,
-				03F5A7FE1A73D94F00D54F14 /* Shader.cpp in Sources */,
 				03F5A7C21A73D94F00D54F14 /* World.cpp in Sources */,
 				03F5A7B51A73D94F00D54F14 /* ComponentTable.cpp in Sources */,
 				03F5A7B81A73D94F00D54F14 /* DataTable.cpp in Sources */,
 				03F5A7B71A73D94F00D54F14 /* DataMap.cpp in Sources */,
 				03F5A7C01A73D94F00D54F14 /* SystemWorkGroup.cpp in Sources */,
+				035735491A74391600208EC5 /* Shader.cpp in Sources */,
 				03F5A7C91A73D94F00D54F14 /* GameCreator.cpp in Sources */,
 				03F5A7D61A73D94F00D54F14 /* LuaBridge.cpp in Sources */,
 				03F5A7C31A73D94F00D54F14 /* WorldCreator.cpp in Sources */,
 				03F5A7BC1A73D94F00D54F14 /* Parser.cpp in Sources */,
-				03F5A7FA1A73D94F00D54F14 /* Buffer.cpp in Sources */,
 				03F5A7ED1A73D94F00D54F14 /* Touch.cpp in Sources */,
 				03F5A7F81A73D94F00D54F14 /* Stdafx.cpp in Sources */,
 				03F5A7E01A73D94F00D54F14 /* CameraSystem.cpp in Sources */,
+				035735461A74391600208EC5 /* Camera.cpp in Sources */,
 				03F5A7CB1A73D94F00D54F14 /* LuaConsole.cpp in Sources */,
+				0357354A1A74391600208EC5 /* ShadowMap.cpp in Sources */,
 				03F5A7E21A73D94F00D54F14 /* ModelSystem.cpp in Sources */,
 				03F5A7E91A73D94F00D54F14 /* SyncEntitiesSystem.cpp in Sources */,
-				03F5A7FD1A73D94F00D54F14 /* GraphicDevice.cpp in Sources */,
 				03F5A7DD1A73D94F00D54F14 /* NewGame.cpp in Sources */,
 				03F5A7CD1A73D94F00D54F14 /* LuaComponentType.cpp in Sources */,
-				03F5A8011A73D94F00D54F14 /* SkyBox.cpp in Sources */,
 				03F5A7D31A73D94F00D54F14 /* LuaFile.cpp in Sources */,
+				035735451A74391600208EC5 /* Buffer.cpp in Sources */,
 				03F5A7D21A73D94F00D54F14 /* LuaWorldCreator.cpp in Sources */,
 				03F5A7CE1A73D94F00D54F14 /* LuaEntityTemplate.cpp in Sources */,
 				03F5A7D41A73D94F00D54F14 /* LuaFileLoader.cpp in Sources */,
+				035735481A74391600208EC5 /* GraphicDevice.cpp in Sources */,
 				03F5A7C11A73D94F00D54F14 /* EntityTemplate.cpp in Sources */,
 				03F5A7E61A73D94F00D54F14 /* RenderSystem.cpp in Sources */,
 				03F5A7CC1A73D94F00D54F14 /* LuaComponent.cpp in Sources */,
 				03F5A7C51A73D94F00D54F14 /* ComponentTypeManager.cpp in Sources */,
 				03F5A7AE1A73D94F00D54F14 /* Console.cpp in Sources */,
 				03F5A7B21A73D94F00D54F14 /* StringConverter.cpp in Sources */,
-				03F5A8001A73D94F00D54F14 /* SimpleText.cpp in Sources */,
 				03F5A7BD1A73D94F00D54F14 /* Simulation.cpp in Sources */,
 				03F5A7E71A73D94F00D54F14 /* ResetChangedSystem.cpp in Sources */,
 				03F5A7EB1A73D94F00D54F14 /* Keyboard.cpp in Sources */,
@@ -1096,6 +1080,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
 				INFOPLIST_FILE = StoraSpel/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
