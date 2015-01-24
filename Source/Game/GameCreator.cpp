@@ -230,7 +230,7 @@ void GameCreator::StartGame(int argc, char** argv)
 	
 	RunStartupCommands(argc, argv);
     
-    Console::ConsoleManager::GetInstance().AddToCommandQueue("connect 192.168.0.198");
+    //Console::ConsoleManager::GetInstance().AddToCommandQueue("connect 192.168.0.198");
 
     
 	float maxDeltaTime = (float)(1.0f / 20.0f);
