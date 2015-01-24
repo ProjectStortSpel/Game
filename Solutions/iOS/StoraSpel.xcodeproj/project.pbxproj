@@ -1078,8 +1078,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/Erik/Desktop/Game/Externals/lib/iOS,
-					/Users/Erik/Desktop/StoraSpel/Game/Externals/lib/iOS,
+					../../Externals/lib/iOS,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1098,8 +1097,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/Erik/Desktop/Game/Externals/lib/iOS,
-					/Users/Erik/Desktop/StoraSpel/Game/Externals/lib/iOS,
+					../../Externals/lib/iOS,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
