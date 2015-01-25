@@ -39,13 +39,14 @@
 #include <iostream>
 #include <map>
 #include <algorithm>
+#include <string>
 
 namespace LuaEmbedder
 {
   template <class T>
   struct PropertyType
   {
-    const char* name;
+    std::string name;
     int (T::*getter)(lua_State*);
     int (T::*setter)(lua_State*);
   };
@@ -53,7 +54,7 @@ namespace LuaEmbedder
   template <class T>
   struct FunctionType
   {
-    const char* name;
+    std::string name;
     int (T::*func)(lua_State*);
   };
 
@@ -168,9 +169,22 @@ namespace LuaEmbedder
     
     static void RegisterProperty(lua_State* L, const char* className, const char* propertyName, int (T::*getter)(lua_State*), int (T::*setter)(lua_State*))
     {
-      int propertyIndex = (int)m_properties.size();
-      PropertyType<T> property = { propertyName, getter, setter };
-      m_properties.push_back(property);
+	  int propertyIndex = -1;
+	  for (int i = 0; i < (int)m_properties.size(); i++)
+	  {
+		  if (m_properties[i].name == std::string(propertyName))
+		  {
+			  propertyIndex = i;
+			  break;
+		  }
+	  }
+
+	  if (propertyIndex < 0)
+	  {
+		  propertyIndex = (int)m_properties.size();
+		  PropertyType<T> property = { std::string(propertyName), getter, setter };
+		  m_properties.push_back(property);
+	  }
       
       luaL_getmetatable(L, className);
       int metatable = lua_gettop(L);
@@ -184,9 +198,22 @@ namespace LuaEmbedder
     
     static void RegisterMethod(lua_State* L, const char* className, const char* methodName, int (T::*func)(lua_State*))
     {
-      int methodIndex = (int)m_methods.size();
-      FunctionType<T> method = { methodName, func };
-      m_methods.push_back(method);
+	  int methodIndex = -1;
+	  for (int i = 0; i < (int)m_methods.size(); i++)
+	  {
+		if (m_methods[i].name == std::string(methodName))
+		{
+		  methodIndex = i;
+		  break;
+		}
+	  }
+      
+	  if (methodIndex < 0)
+	  {
+		methodIndex = (int)m_methods.size();
+		FunctionType<T> method = { std::string(methodName), func };
+		m_methods.push_back(method);
+	  }
       
       luaL_getmetatable(L, className);
       int metatable = lua_gettop(L);
@@ -358,8 +385,11 @@ namespace LuaEmbedder
 	return -1;
       }
       lua_insert(L, base);
+	  SDL_Log("Call %s", methodName);
       int status = lua_pcall(L, 1 + argumentCount, LUA_MULTRET, 0);
+	  SDL_Log("Called %s", methodName);
       lua_gc(L, LUA_GCCOLLECT, 0);
+	  SDL_Log("Collecting garbage");
       if (status != 0)
       {
 	SDL_Log("Luna::CallMethod : %s", (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error"));
@@ -619,9 +649,166 @@ namespace LuaEmbedder
       T** obj2 = static_cast<T**>(lua_touserdata(L, 1));
 
       lua_pushboolean(L, *obj1 == *obj2);
-
+	  
       return 1;
     }
+
+	static int WriteFunction(lua_State* L, const char* p, size_t sz, luaL_Buffer* ud)
+	{
+		luaL_addlstring(ud, p, sz);
+		return 0;
+	}
+
+	static bool DumpFunction(lua_State* L, luaL_Buffer* buffer)
+	{
+		int error = lua_dump(L, (lua_Writer)WriteFunction, buffer, 0);
+		luaL_pushresult(buffer);
+		if (error != 0)
+		{
+			SDL_Log("Luna::DumpFunction : Error");
+			return false;
+		}
+		return true;
+	}
+
+	static bool LoadFunction(lua_State* L, luaL_Buffer* buffer)
+	{
+		int error = luaL_loadbuffer(L, buffer->b, buffer->size, NULL);
+		if (error != 0)
+		{
+			SDL_Log("Luna::LoadFunction : Error");
+			return false;
+		}
+		return true;
+	}
+
+	static void CopyTable(lua_State* A, lua_State* B, int tableA, int tableB)
+	{
+		lua_pushnil(A);
+		while (lua_next(A, tableA) != 0)
+		{
+			// Key
+			if (lua_isboolean(A, -2))
+			{
+				bool value = lua_toboolean(A, -2);
+				lua_pushboolean(B, value);
+			}
+			else if (lua_iscfunction(A, -2))
+			{
+				lua_CFunction value = lua_tocfunction(A, -2);
+				lua_pushcfunction(B, value);
+			}
+			else if (lua_isfunction(A, -2))
+			{
+				lua_pushvalue(A, -2);
+				luaL_Buffer buffer;
+				int top = lua_gettop(A);
+				luaL_buffinit(A, &buffer);
+				DumpFunction(A, &buffer);
+				lua_settop(A, top);
+				lua_pop(A, 1);
+				LoadFunction(B, &buffer);
+			}
+			else if (lua_isinteger(A, -2))
+			{
+				int value = lua_tointeger(A, -2);
+				lua_pushinteger(B, value);
+			}
+			else if (lua_islightuserdata(A, -2))
+			{
+				void* value = lua_touserdata(A, -2);
+				lua_pushlightuserdata(B, value);
+			}
+			else if (lua_isnil(A, -2))
+			{
+				lua_pushnil(B);
+			}
+			else if (lua_isnumber(A, -2))
+			{
+				lua_Number value = lua_tonumber(A, -2);
+				lua_pushnumber(B, value);
+			}
+			else if (lua_isstring(A, -2))
+			{
+				const char* value = lua_tostring(A, -2);
+				lua_pushstring(B, value);
+			}
+			else if (lua_istable(A, -2))
+			{
+				int a = lua_gettop(A) - 1;
+				lua_newtable(B);
+				int b = lua_gettop(B);
+				CopyTable(A, B, a, b);
+			}
+			else if (lua_isuserdata(A, -2))
+			{
+				SDL_Log("Luna::CopyTable : Possible unsafe use of userdata");
+			}
+
+			// Value
+			if (lua_isboolean(A, -1))
+			{
+				bool value = lua_toboolean(A, -1);
+				lua_pushboolean(B, value);
+			}
+			else if (lua_iscfunction(A, -1))
+			{
+				lua_CFunction value = lua_tocfunction(A, -1);
+				lua_pushcfunction(B, value);
+			}
+			else if (lua_isfunction(A, -1))
+			{
+				lua_pushvalue(A, -1);
+				luaL_Buffer buffer;
+				int top = lua_gettop(A);
+				luaL_buffinit(A, &buffer);
+				DumpFunction(A, &buffer);
+				lua_settop(A, top);
+				lua_pop(A, 1);
+				LoadFunction(B, &buffer);
+			}
+			else if (lua_isinteger(A, -1))
+			{
+				int value = lua_tointeger(A, -1);
+				lua_pushinteger(B, value);
+			}
+			else if (lua_islightuserdata(A, -1))
+			{
+				void* value = lua_touserdata(A, -1);
+				lua_pushlightuserdata(B, value);
+			}
+			else if (lua_isnil(A, -1))
+			{
+				lua_pushnil(B);
+			}
+			else if (lua_isnumber(A, -1))
+			{
+				lua_Number value = lua_tonumber(A, -1);
+				lua_pushnumber(B, value);
+			}
+			else if (lua_isstring(A, -1))
+			{
+				const char* value = lua_tostring(A, -1);
+				lua_pushstring(B, value);
+			}
+			else if (lua_istable(A, -1))
+			{
+				int a = lua_gettop(A);
+				lua_newtable(B);
+				int b = lua_gettop(B);
+				CopyTable(A, B, a, b);
+			}
+			else if (lua_isuserdata(A, -1))
+			{
+				SDL_Log("Luna::CopyTable : Possible unsafe use of userdata");
+			}
+
+			// Set key/value in table B
+			lua_settable(B, tableB);
+
+			lua_pop(A, 1);
+		}
+	}
     
     static void Copy(lua_State* A, lua_State* B, const char* className, T* instance)
     {
@@ -675,15 +862,7 @@ namespace LuaEmbedder
 	SDL_Log("Warning! There's already another Lua copy of this class %s", className);
       int membersB = lua_gettop(B);
       
-      lua_pushnil(A);
-      while (lua_next(A, membersA) != 0)
-      {
-	lua_pushvalue(A, -2);
-	lua_pushvalue(A, -2);
-	lua_xmove(A, B, 2);
-	lua_settable(B, membersB);
-	lua_pop(A, 1);
-      }
+	  CopyTable(A, B, membersA, membersB);
       
       lua_settop(A, 0);
       lua_settop(B, 0);

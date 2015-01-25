@@ -3,6 +3,7 @@
 
 #include <SDL/SDL.h>
 #include <sstream>
+#include <algorithm>
 
 namespace LuaEmbedder
 {
@@ -28,6 +29,11 @@ namespace LuaEmbedder
     assert(LuaStates.find(L) != LuaStates.end());
     lua_State* copy = luaL_newstate();
     luaL_openlibs(copy);
+
+	LuaNumberArray<float>::Embed(copy, "FloatArray");
+	LuaNumberArray<int>::Embed(copy, "IntArray");
+	LuaNumberArray<unsigned int>::Embed(copy, "UnsignedIntArray");
+
     LuaStates[L].push_back(copy);
     LuaThreads[copy] = L;
     return copy;
@@ -36,8 +42,11 @@ namespace LuaEmbedder
   {
     for (std::map<lua_State*, std::vector<lua_State*>>::iterator it0 = LuaStates.begin(); it0 != LuaStates.end(); it0++)
     {
-      for (std::vector<lua_State*>::iterator it1 = it0->second.begin(); it1 != it0->second.end(); it1++)
-	lua_gc((*it1), LUA_GCCOLLECT, 0);
+	  for (std::vector<lua_State*>::iterator it1 = it0->second.begin(); it1 != it0->second.end(); it1++)
+	  {
+		lua_gc((*it1), LUA_GCCOLLECT, 0);
+		lua_close((*it1));
+	  }
       lua_gc((it0->first), LUA_GCCOLLECT, 0);
       lua_close((it0->first));
     }
@@ -319,30 +328,54 @@ namespace LuaEmbedder
     int functionIndex = (int)lua_tonumber(L, lua_upvalueindex(1));
     return (*(Functions[functionIndex]))(L);
   }
-  #define ADD_FUNCTION(luaState) \
+#define ADD_FUNCTION(luaState) \
     if (library.empty()) \
-    { \
-      int functionIndex = (int)Functions.size(); \
-      Functions.push_back(functionPointer); \
-      lua_pushinteger(L, functionIndex); \
-      lua_pushcclosure(L, FunctionDispatch, 1); \
-      lua_setglobal(L, name.c_str()); \
+	{ \
+      int functionIndex = -1; \
+	  for (int i = 0; i < (int)Functions.size(); i++) \
+	  { \
+		if (Functions[i] == functionPointer) \
+		{ \
+		  functionIndex = i; \
+		  break; \
+		} \
+	  } \
+	  if (functionIndex < 0) \
+	  { \
+		functionIndex = (int)Functions.size(); \
+		Functions.push_back(functionPointer); \
+	  } \
+      lua_pushinteger(luaState, functionIndex); \
+      lua_pushcclosure(luaState, FunctionDispatch, 1); \
+      lua_setglobal(luaState, name.c_str()); \
     } \
     else \
     { \
-      lua_getglobal(L, library.c_str()); \
-      if (lua_isnil(L, -1)) \
+      lua_getglobal(luaState, library.c_str()); \
+      if (lua_isnil(luaState, -1)) \
       { \
-	lua_pop(L, 1); \
-	luaL_newmetatable(L, library.c_str()); \
+	lua_pop(luaState, 1); \
+	luaL_newmetatable(luaState, library.c_str()); \
       } \
-      int functionIndex = (int)Functions.size(); \
-      Functions.push_back(functionPointer); \
-      lua_pushstring(L, name.c_str());  \
-      lua_pushinteger(L, functionIndex); \
-      lua_pushcclosure(L, FunctionDispatch, 1); \
-      lua_settable(L, -3); \
-      lua_setglobal(L, library.c_str()); \
+      int functionIndex = -1; \
+	  for (int i = 0; i < (int)Functions.size(); i++) \
+	  { \
+		if (Functions[i] == functionPointer) \
+		{ \
+		  functionIndex = i; \
+		  break; \
+		} \
+	  } \
+	  if (functionIndex < 0) \
+	  { \
+		functionIndex = (int)Functions.size(); \
+		Functions.push_back(functionPointer); \
+	  } \
+      lua_pushstring(luaState, name.c_str());  \
+      lua_pushinteger(luaState, functionIndex); \
+      lua_pushcclosure(luaState, FunctionDispatch, 1); \
+      lua_settable(luaState, -3); \
+      lua_setglobal(luaState, library.c_str()); \
     }
   void AddFunction(lua_State* L, const std::string& name, int (*functionPointer)(lua_State*), const std::string& library)
   {

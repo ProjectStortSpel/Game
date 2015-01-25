@@ -30,6 +30,7 @@ require "templates"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(PickBoxSystem)
+worldCreator:AddSystemToCurrentGroup(ServerLobbySystem)
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ButtonPressedSystem)
@@ -38,8 +39,6 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ButtonHoverSystem)
 
 --if Server then
-	worldCreator:AddSystemGroup()
-	worldCreator:AddSystemToCurrentGroup(ServerLobbySystem)
 	worldCreator:AddSystemGroup()
 	worldCreator:AddSystemToCurrentGroup(ServerConnectSystem)
 --end

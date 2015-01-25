@@ -57,7 +57,7 @@ void GameCreator::InitializeGraphics()
 {
 	m_graphics = new Renderer::GraphicDevice();
 	m_graphics->Init();
-	LuaEmbedder::AddObject<Renderer::GraphicDevice>(m_clientLuaState, "GraphicDevice", m_graphics, "graphics");
+	//LuaEmbedder::AddObject<Renderer::GraphicDevice>(m_clientLuaState, "GraphicDevice", m_graphics, "graphics");
 }
 
 void GameCreator::InitializeConsole()
@@ -122,10 +122,11 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	{
 	  lua_State* clientLuaStateCopy = LuaEmbedder::CopyState(m_clientLuaState);
 	  LuaBridge::Embed(clientLuaStateCopy);
-	  //LuaEmbedder::Preload(clientLuaStateCopy, gameMode.str());
 	  LuaEmbedder::CopyObject<LuaBridge::LuaSystem>(m_clientLuaState, clientLuaStateCopy, "System", (*it));
 	  (*it)->SetLuaState(clientLuaStateCopy);
 	}
+
+	LuaEmbedder::AddObject<Renderer::GraphicDevice>(m_clientLuaState, "GraphicDevice", m_graphics, "graphics");
 
 	m_gameMode = _gameMode;
 
