@@ -4,8 +4,6 @@ PostMoveSystem.Initialize = function(self)
 	self:SetName("PostMoveSystem System")
 
 	self:AddComponentTypeToFilter("PostMove", FilterType.Mandatory)
-
-	print("PostMoveSystem initialized!")
 end
 
 PostMoveSystem.OnEntityAdded = function(self, entity)

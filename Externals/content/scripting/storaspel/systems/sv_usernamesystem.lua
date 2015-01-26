@@ -21,8 +21,6 @@ ServerUsernameSystem.Initialize = function(self)
 	table.insert(self.Names, "Player13")
 	table.insert(self.Names, "Player14")
 	table.insert(self.Names, "Player15")
-	
-	print("ServerUsername System initialized!")
 end
 
 ServerUsernameSystem.Update = function(self, dt)

@@ -6,8 +6,6 @@ RiverSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Unit", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("MoveRiver", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("River", FilterType.RequiresOneOf)
-
-	print("RiverSystem initialized!")
 end
 
 RiverSystem.OnEntityAdded = function(self, entity)
@@ -75,8 +73,6 @@ TestMoveRiverSystem.Initialize = function(self)
 
 	self:AddComponentTypeToFilter("TestRiver", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("NotWalkable", FilterType.RequiresOneOf)
-
-	print("TestMoveRiverSystem initialized!")
 end
 
 TestMoveRiverSystem.OnEntityAdded = function(self, entity)

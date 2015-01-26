@@ -24,8 +24,6 @@ ServerLobbySystem.Initialize = function(self)
 
 		end 
 	)
-
-	print("ServerLobbySystem initialized!");
 end
 
 ServerLobbySystem.Update = function(self, dt)
@@ -55,9 +53,6 @@ LogStartSystem.Initialize = function(self)
 
 	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf);
 	self:AddComponentTypeToFilter("Unit", FilterType.RequiresOneOf);
-	
-
-	print("LogStartSystem initialized!");
 end
 
 LogStartSystem.OnEntityAdded = function(self, entity)

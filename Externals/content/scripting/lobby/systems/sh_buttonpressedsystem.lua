@@ -40,8 +40,6 @@ ButtonPressedSystem.Initialize = function(self)
 	self:SetName("ButtonPressedSystem")
 	self:AddComponentTypeToFilter("OnPickBoxHit", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("ButtonCommand", FilterType.RequiresOneOf)
-	
-	print("ButtonPressedSystem initialized!")
 end
 
 ButtonPressedSystem.CreateButton = function(self, object, folder, posx, posy)
@@ -132,6 +130,4 @@ ButtonPressedSystem.PostInitialize = function(self)
 	--connect anders
 	button = self:CreateButton("anders", "quad", 2, -1)
 	self:AddCommandToButton("connect 194.47.150.100", button)
-
-	print("ButtonPressedSystem post initialized!")
 end

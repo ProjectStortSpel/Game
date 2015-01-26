@@ -19,8 +19,6 @@ void ModelSystem::Initialize()
 
 	AddComponentTypeToFilter("Render", ECSL::FilterType::Excluded);
 
-
-	printf("ModelSystem initialized!\n");
 }
 
 void ModelSystem::Update(float _dt)

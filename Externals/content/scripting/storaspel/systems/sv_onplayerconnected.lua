@@ -1,5 +1,4 @@
 OnPlayerConnectedSystem = System()
-OnPlayerConnectedSystem.PlayerId = 1
 
 OnPlayerConnectedSystem.Update = function(self, dt)
 	
@@ -94,12 +93,10 @@ OnPlayerConnectedSystem.OnPlayerConnected = function(self, _ip, _port, _message)
 		print("Spectator_: " .. newPlayer .. " connected")
 	else
 	
-		local newName = "Player_" .. tostring(self.PlayerId)
+		local newName = "Player_" .. tostring(noOfPlayers + 1)
 		world:SetComponent(newPlayer, "PlayerName", "Name", newName);
 		
 		self:CounterComponentChanged(1, "Players")
-		
-		self.PlayerId = self.PlayerId + 1
 		
 		print("Player_: " .. newPlayer .. " connected")
 	end
@@ -203,12 +200,9 @@ OnPlayerConnectedSystem.AddConnectedPlayers = function(self, _counterEntity, _ma
 		end
 		
 		noOfPlayers = noOfPlayers + 1
-		
-		
-		--	Hax new ID
 	
 		--	Create the new player
-		local newName = "Player_" .. tostring(self.PlayerId)
+		local newName = "Player_" .. tostring(noOfPlayers + 1)
 	
 		local newEntityId = world:CreateNewEntity("Player")
 	
@@ -219,8 +213,6 @@ OnPlayerConnectedSystem.AddConnectedPlayers = function(self, _counterEntity, _ma
 		world:CreateComponentAndAddTo("ActiveNetConnection", newEntityId)
 	
 		--world:SetComponent(newEntityId, "PlayerNumber", "Number", self.ConnectedPlayers);
-
-		self.PlayerId = self.PlayerId + 1
 
 	end
 	world:SetComponent(_counterEntity, "PlayerCounter", "Players", noOfPlayers)
