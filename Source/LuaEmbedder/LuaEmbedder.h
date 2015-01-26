@@ -90,11 +90,11 @@
 
 namespace LuaEmbedder
 {
-  extern std::map<lua_State*, std::vector<lua_State*>> IMPORT LuaStates;
-  extern std::map<lua_State*, lua_State*> IMPORT LuaThreads;
+  extern std::map<lua_State*, std::vector<lua_State*>> IMPORT LuaParentChildrensMap;
+  extern std::map<lua_State*, lua_State*> IMPORT LuaChildrenParentMap;
   
   EXPORT lua_State* CreateState();
-  EXPORT lua_State* CopyState(lua_State* L);
+  EXPORT lua_State* CreateChildState(lua_State* L);
   void EXPORT Quit();
   
   bool EXPORT Load(lua_State* L, const std::string& filepath);
@@ -183,20 +183,20 @@ namespace LuaEmbedder
   template<typename T>
   void EXPORT AddObject(lua_State* L, const std::string& className, T* object, const std::string& name, const std::string& library = std::string())
   {
-    std::map<lua_State*, lua_State*>::iterator it0 = LuaThreads.find(L);
+    std::map<lua_State*, lua_State*>::iterator it0 = LuaChildrenParentMap.find(L);
     std::map<lua_State*, std::vector<lua_State*>>::iterator it1;
-    if (it0 != LuaThreads.end())
-      it1 = LuaStates.find(it0->second);
+    if (it0 != LuaChildrenParentMap.end())
+      it1 = LuaParentChildrensMap.find(it0->second);
     else
     {
-      it1 = LuaStates.find(L);
-      if (it1 == LuaStates.end())
+      it1 = LuaParentChildrensMap.find(L);
+      if (it1 == LuaParentChildrensMap.end())
       {
 	ADD_OBJECT(L);
 	return;
       }
     }
-    assert(it1 != LuaStates.end());
+    assert(it1 != LuaParentChildrensMap.end());
     for (std::vector<lua_State*>::iterator it2 = it1->second.begin(); it2 != it1->second.end(); it2++)
       ADD_OBJECT((*it2));
     ADD_OBJECT(it1->first);

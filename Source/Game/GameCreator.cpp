@@ -120,7 +120,7 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	std::vector<LuaBridge::LuaSystem*>* systemsAdded = worldCreator.GetSystemsAdded();
 	for (std::vector<LuaBridge::LuaSystem*>::iterator it = systemsAdded->begin(); it != systemsAdded->end(); it++)
 	{
-	  lua_State* clientLuaStateCopy = LuaEmbedder::CopyState(m_clientLuaState);
+	  lua_State* clientLuaStateCopy = LuaEmbedder::CreateChildState(m_clientLuaState);
 	  LuaBridge::Embed(clientLuaStateCopy);
 	  LuaEmbedder::CopyObject<LuaBridge::LuaSystem>(m_clientLuaState, clientLuaStateCopy, "System", (*it));
 	  (*it)->SetLuaState(clientLuaStateCopy);
