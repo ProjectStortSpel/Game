@@ -166,10 +166,8 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 
 	m_world = worldCreator.CreateWorld(1000);
 
-	m_world->PostInitializeSystems();
 	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
-
-	LuaEmbedder::CallMethods<LuaBridge::LuaSystem>("System", "PostInitialize");
+	m_world->PostInitializeSystems();
 }
 
 void GameCreator::RunStartupCommands(int argc, char** argv)

@@ -21,7 +21,7 @@ GiveSpawnLocation.OnEntityAdded = function(self, entityId)
 
 
 	if world:EntityHasComponent(entityId, "NeedSpawnLocation") then
-		print("LAOSDAKOFAOSFKAOFKOFK")
+
 		local availableSpawns = self:GetEntities("AvailableSpawnpoint")
 		local plyNum = self:GetComponent(entityId, "PlayerNumber", "Number").GetInt()
 		
