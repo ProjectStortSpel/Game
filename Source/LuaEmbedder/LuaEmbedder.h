@@ -90,14 +90,15 @@
 
 namespace LuaEmbedder
 {
-  extern std::map<lua_State*, std::vector<lua_State*>> IMPORT LuaStates;
-  extern std::map<lua_State*, lua_State*> IMPORT LuaThreads;
+  extern std::map<lua_State*, std::vector<lua_State*>> IMPORT LuaParentChildrensMap;
+  extern std::map<lua_State*, lua_State*> IMPORT LuaChildrenParentMap;
   
   EXPORT lua_State* CreateState();
-  EXPORT lua_State* CopyState(lua_State* L);
+  EXPORT lua_State* CreateChildState(lua_State* L);
   void EXPORT Quit();
   
   bool EXPORT Load(lua_State* L, const std::string& filepath);
+  bool EXPORT Preload(lua_State* L, const std::string& filepath);
   bool EXPORT CallFunction(lua_State* L, const std::string& name, int argumentCount = 0, const std::string& library = std::string());
   
   void EXPORT CollectGarbage(lua_State* L);
@@ -163,39 +164,39 @@ namespace LuaEmbedder
   #define ADD_OBJECT(luaState) \
     if (library.empty()) \
     { \
-      Luna<T>::push(L, className.c_str(), object); \
-      lua_setglobal(L, name.c_str()); \
+      Luna<T>::push(luaState, className.c_str(), object); \
+      lua_setglobal(luaState, name.c_str()); \
     } \
     else \
     { \
-      lua_getglobal(L, library.c_str()); \
-      if (lua_isnil(L, -1)) \
+      lua_getglobal(luaState, library.c_str()); \
+      if (lua_isnil(luaState, -1)) \
       { \
-	lua_pop(L, 1); \
-	luaL_newmetatable(L, library.c_str()); \
+	lua_pop(luaState, 1); \
+	luaL_newmetatable(luaState, library.c_str()); \
       } \
-      lua_pushstring(L, name.c_str()); \
-      Luna<T>::push(L, className.c_str(), object); \
-      lua_settable(L, -3); \
-      lua_setglobal(L, library.c_str()); \
+      lua_pushstring(luaState, name.c_str()); \
+      Luna<T>::push(luaState, className.c_str(), object); \
+      lua_settable(luaState, -3); \
+      lua_setglobal(luaState, library.c_str()); \
     }
   template<typename T>
   void EXPORT AddObject(lua_State* L, const std::string& className, T* object, const std::string& name, const std::string& library = std::string())
   {
-    std::map<lua_State*, lua_State*>::iterator it0 = LuaThreads.find(L);
+    std::map<lua_State*, lua_State*>::iterator it0 = LuaChildrenParentMap.find(L);
     std::map<lua_State*, std::vector<lua_State*>>::iterator it1;
-    if (it0 != LuaThreads.end())
-      it1 = LuaStates.find(it0->second);
+    if (it0 != LuaChildrenParentMap.end())
+      it1 = LuaParentChildrensMap.find(it0->second);
     else
     {
-      it1 = LuaStates.find(L);
-      if (it1 == LuaStates.end())
+      it1 = LuaParentChildrensMap.find(L);
+      if (it1 == LuaParentChildrensMap.end())
       {
 	ADD_OBJECT(L);
 	return;
       }
     }
-    assert(it1 != LuaStates.end());
+    assert(it1 != LuaParentChildrensMap.end());
     for (std::vector<lua_State*>::iterator it2 = it1->second.begin(); it2 != it1->second.end(); it2++)
       ADD_OBJECT((*it2));
     ADD_OBJECT(it1->first);
@@ -242,6 +243,11 @@ namespace LuaEmbedder
   bool EXPORT HasFunction(lua_State* L, T* object, const std::string& functionName)
   {
     return Luna<T>::HasFunction(object, functionName);
+  }
+  template<typename T>
+  void EXPORT CopyObject(lua_State* A, lua_State* B, const std::string& className, T* instance)
+  {
+    Luna<T>::Copy(A, B, className.c_str(), instance);
   }
 }
 
