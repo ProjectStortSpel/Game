@@ -21,6 +21,8 @@ public:
 
 	void OnEntityAdded(unsigned int _entityId);
 	void OnEntityRemoved(unsigned int _entityId);
+private:
+	unsigned int m_rotationId;
 };
 
 #endif

@@ -49,7 +49,7 @@ void RenderSystem::Initialize()
 void RenderSystem::Update(float _dt)
 {
 	auto entities = *GetEntities();
-
+	
 	for (auto entity : entities)
 	{
 		ECSL::BitSet::DataType* eBitMask = (ECSL::BitSet::DataType*)GetComponent(entity, m_componentId, 0);

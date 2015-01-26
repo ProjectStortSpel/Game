@@ -16,12 +16,18 @@ TurnAroundSystem.OnEntityAdded = function(self, entity)
 	x = x * -1
 	z = z * -1
 	dir:SetInt2(x, z)
-
+	local rot = world:GetComponent(entity, "Rotation", 0)
 	
+	local rot_x, rot_y, rot_z = rot:GetFloat3()
+
+	world:CreateComponentAndAddTo("SlerpRotation", entity)
+
+	world:GetComponent(entity, "SlerpRotation", "fromX"):SetFloat3( 0, 1, 0 )
+	world:GetComponent(entity, "SlerpRotation", "fromW"):SetFloat( 0 )
 
 	--rotate model
 	local rotY = world:GetComponent(entity, "Rotation", "Y"):GetFloat()
-
+	
 	if	x == 0 and z == 1 then
 		rotY = 0
 	elseif  x == 0 and z == -1 then
@@ -32,7 +38,10 @@ TurnAroundSystem.OnEntityAdded = function(self, entity)
 		rotY = -math.pi / 2 
 	end
 
-	world:GetComponent(entity, "Rotation", "Y"):SetFloat(rotY)
+	world:GetComponent(entity, "SlerpRotation", "toX"):SetFloat3( 0, 1, 0 )
+	world:GetComponent(entity, "SlerpRotation", "toW"):SetFloat( 3.14 )
+	
+	--world:GetComponent(entity, "Rotation", "Y"):SetFloat(rotY)
 
 	world:RemoveComponentFrom("UnitTurnAround", entity)
 end
