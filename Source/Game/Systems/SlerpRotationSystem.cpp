@@ -23,7 +23,7 @@ void SlerpRotationSystem::Update(float _dt)
 	
 	for (int i = 0; i < entities.size(); i++)
 	{
-		if (NetworkInstance::GetServer()->IsRunning())
+		if (!NetworkInstance::GetServer()->IsRunning())
 		{
 			float* from_data = (float*)GetComponent(entities[i], "SlerpRotation", "fromW");
 			float* to_data = (float*)GetComponent(entities[i], "SlerpRotation", "toW");
