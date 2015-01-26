@@ -21,8 +21,6 @@ void ResetChangedSystem::Initialize()
 
 	m_componentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("ChangedComponents");
 	m_componentByteSize = ECSL::ComponentTypeManager::GetInstance().GetComponentType(m_componentId)->GetByteSize();
-
-	printf("ResetChangedSystem initialized!\n");
 }
 
 void ResetChangedSystem::Update(const ECSL::RuntimeInfo& _runtime)

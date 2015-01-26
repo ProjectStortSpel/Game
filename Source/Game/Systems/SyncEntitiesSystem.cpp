@@ -31,8 +31,6 @@ void SyncEntitiesSystem::Initialize()
 
 	m_numberOfBitSets = ECSL::BitSet::GetDataTypeCount(ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount());
 	m_componentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("ChangedComponentsNetwork");
-
-	printf("SyncEntitiesSystem initialized!\n");
 }
 
 void SyncEntitiesSystem::Update(const ECSL::RuntimeInfo& _runtime)

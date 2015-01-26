@@ -19,10 +19,6 @@ void RenderRemoveSystem::Initialize()
 	/*	Rendersystem wants Position, Scale, Rotation and Render	*/
 	AddComponentTypeToFilter("Render", ECSL::FilterType::Mandatory);
 
-
-	
-
-	printf("RenderRemoveSystem initialized!\n");
 }
 
 void RenderRemoveSystem::EntitiesRemoved(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities)

@@ -7,8 +7,6 @@ ClientLobbySystem.Initialize = function(self)
 	
 	self:AddComponentTypeToFilter("Username", FilterType.Mandatory);
 	self:AddComponentTypeToFilter("NetConnection", FilterType.Mandatory);
-	
-	print("ClientLobbySystem initialized!")
 end
 
 ClientLobbySystem.Update = function(self, dt)

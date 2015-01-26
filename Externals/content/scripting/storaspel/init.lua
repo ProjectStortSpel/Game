@@ -10,27 +10,26 @@ require "gamestatecomponents"
 require "lightcomponents"
 
 require "interfacecomponents"
+require "buttoncomponents"
+require "menucomponents"
 require "cameracomponents"
 
 -- Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
-require "sh_movementsystem"
-require "sh_networkmessagessystem"
-
-
--- PICKBOX SYSTEMS
-package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/pickboxsystems/?.lua"
-require "sh_pickboxsystem"
-package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
-
+package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/shared/?.lua"
 require "sh_lerpsystem"
 require "sh_moveplayersystem"
+require "sh_movementsystem"
+require "sh_networkmessagessystem"
+package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/pickboxsystems/?.lua"
+require "sh_pickboxsystem"
 
 if Server then
+	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/server/?.lua"
 	require "sv_mapsystem"
 	--require "sv_moveplayersystem"
 	require "sv_onplayerconnected"
 	require "sv_playerssystem"
+    require "sv_aisystem"
 	require "sv_givespawnlocation"
 	--require "sv_createspawnpointsystem"
 	require "sv_spawnsystem"
@@ -62,20 +61,20 @@ if Server then
 	require "sv_takecardstepsfromunitsystem"
 	
 	require "sv_directionallightsystem"
-	
 end
 
 
 
 if Client then
+	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/client/?.lua"
 	require "cl_lobbysystem"
 	--require "cl_selectcardsystem"
 	require "cl_playerdonevisualizersystem"
 	--require "cl_givecardindexsystem"
-
+	require "cl_playerindicatorsystem"
 
 	-- CARD SYSTEMS
-	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/cardsystems/?.lua"
+	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/client/cardsystems/?.lua"
 	require "cl_givecardindexsystem"
 	require "cl_sortcardindexsystem"
 	require "cl_sortselectedcardssystem"
@@ -87,15 +86,19 @@ if Client then
 	require "cl_cardpositionsystem2"
 	require "cl_cardselectsystem"
 	require "cl_cardprintselectionsystem" -- Debug systems for cards
-	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
 	
 	-- CAMERA SYSTEMS
-	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/camerasystems/?.lua"
-	--require "cl_cameracreationsystem"
+	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/client/camerasystems/?.lua"
 	require "cl_newcamerasystem"
+	
+	-- Interface SYSTEMS
+	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/client/interfacesystems/?.lua"
+	require "cl_gameinterfacesystem"
+	require "cl_hoversizesystem"
+	require "cl_gamemenusystem"
+	require "cl_optionmenusystem"
+	require "cl_rconmenusystem" -- ONLY FOR TESTING
 	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
-
-	require "cl_playerindicatorsystem"
 
 end
 	
@@ -108,9 +111,6 @@ require "playertemplates"
 
 require "box"
 require "lights"
-
-
-
 
 
 
@@ -133,6 +133,7 @@ if Server then
 
 	worldCreator:AddSystemToCurrentGroup(OnPlayerConnectedSystem)
 	worldCreator:AddSystemToCurrentGroup(PlayersSystem)
+    worldCreator:AddSystemToCurrentGroup(AISystem)
 	worldCreator:AddSystemToCurrentGroup(GiveSpawnLocation)
 	--worldCreator:AddSystemToCurrentGroup(CreateSpawnpointSystem)
 	worldCreator:AddSystemToCurrentGroup(SpawnSystem)
@@ -179,9 +180,6 @@ if Server then
 end
 
 if Client then
-
-	
-
 	worldCreator:AddSystemToCurrentGroup(ClientLobbySystem)
 	worldCreator:AddSystemToCurrentGroup(GiveCardIndexSystem)
 	--worldCreator:AddSystemToCurrentGroup(SelectCardSystem)
@@ -199,4 +197,10 @@ if Client then
 --worldCreator:AddSystemToCurrentGroup(ClientSendCardSystem)
 
 	worldCreator:AddSystemToCurrentGroup(NewCameraSystem)
+	
+	worldCreator:AddSystemToCurrentGroup(GameInterfaceSystem)
+	worldCreator:AddSystemToCurrentGroup(HoverSizeSystem)
+	worldCreator:AddSystemToCurrentGroup(GameMenuSystem)
+	worldCreator:AddSystemToCurrentGroup(RconMenuSystem)
+	worldCreator:AddSystemToCurrentGroup(OptionMenuSystem)
 end

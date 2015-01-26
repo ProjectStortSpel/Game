@@ -19,8 +19,6 @@ void ModelSystem::Initialize()
 	AddComponentTypeToFilter("Model", ECSL::FilterType::Mandatory);
 	AddComponentTypeToFilter("Render", ECSL::FilterType::Excluded);
 
-
-	printf("ModelSystem initialized!\n");
 }
 
 void ModelSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities)

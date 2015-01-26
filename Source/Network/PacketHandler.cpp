@@ -223,7 +223,7 @@ void PacketHandler::WriteInt64(uint64_t _id, const uint64_t _int)
 	{
 		if (!IsOutOfBounds(psi->Data, psi->Position + sizeof(uint64_t), MAX_PACKET_SIZE))
 		{
-			uint64_t i = Network::htonll(_int);
+			uint64_t i = Network::hton_ll(_int);
 			memcpy(psi->Position, &i, sizeof(i));
 			psi->Position += sizeof(i);
 		}
@@ -304,7 +304,7 @@ uint64_t PacketHandler::ReadInt64(uint64_t _id)
 		if (!IsOutOfBounds(pri->PacketData->Data, pri->Position + sizeof(uint64_t), *pri->PacketData->Length))
 		{
 			memcpy(&var, pri->Position, sizeof(uint64_t));
-			var = Network::ntohll(var);
+			var = Network::ntoh_ll(var);
 			pri->Position += sizeof(uint64_t);
 		}
 	}

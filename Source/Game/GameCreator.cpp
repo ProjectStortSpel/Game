@@ -9,6 +9,7 @@
 #include "Systems/RenderRemoveSystem.h"
 #include "Systems/ResetChangedSystem.h"
 #include "Systems/PointlightSystem.h"
+#include "Systems/DirectionalLightSystem.h"
 
 #include "NetworkInstance.h"
 #include "ECSL/ECSL.h"
@@ -16,6 +17,8 @@
 
 #include "LuaBridge/ECSL/LuaSystem.h"
 #include "LuaBridge/ECSL/LuaWorldCreator.h"
+
+#include "Logger/Logger.h"
 
 #include <iomanip>
 
@@ -211,6 +214,7 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	//position[1] = 0.5f;
 	//position[2] = 1.0f;
 
+	LuaEmbedder::CallMethods<LuaBridge::LuaSystem>("System", "PostInitialize");
 }
 
 void GameCreator::RunStartupCommands(int argc, char** argv)
@@ -255,7 +259,7 @@ void GameCreator::RunStartupCommands(int argc, char** argv)
 			}
 
 			command[size - 1] = '\0';
-			Console::ConsoleManager::GetInstance().ExecuteCommand(command);
+			Console::ConsoleManager::GetInstance().AddToCommandQueue(command);
 		}
 	}
 }
@@ -268,7 +272,7 @@ void GameCreator::StartGame(int argc, char** argv)
 
 	m_console = new GameConsole(m_graphics, m_world);
 
-	m_consoleInput.SetTextHook(std::bind(&Console::ConsoleManager::ExecuteCommand, &m_consoleManager, std::placeholders::_1));
+	m_consoleInput.SetTextHook(std::bind(&Console::ConsoleManager::AddToCommandQueue, &m_consoleManager, std::placeholders::_1));
 #ifdef __ANDROID__
 	m_consoleInput.SetActive(true);
 	m_input->GetKeyboard()->StartTextInput();
@@ -285,7 +289,10 @@ void GameCreator::StartGame(int argc, char** argv)
 	m_consoleManager.AddCommand("Start", std::bind(&GameCreator::ConsoleStartTemp, this, std::placeholders::_1, std::placeholders::_2));
 	
 	RunStartupCommands(argc, argv);
+    
+    //Console::ConsoleManager::GetInstance().AddToCommandQueue("connect 192.168.0.198");
 
+    
 	float maxDeltaTime = (float)(1.0f / 20.0f);
 	float bytesToMegaBytes = 1.f / (1024.f*1024.f);
 	bool showDebugInfo = false;
@@ -300,7 +307,8 @@ void GameCreator::StartGame(int argc, char** argv)
 		m_consoleInput.Update();
 		Console::ConsoleManager::GetInstance().ExecuteCommandQueue();
 		UpdateConsole();
-		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
+		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED ||
+		    m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_AC_BACK) == Input::InputState::PRESSED)
 			break;
 		m_inputCounter.Tick();
 

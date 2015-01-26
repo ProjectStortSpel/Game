@@ -203,6 +203,7 @@ bool LinSocket::SetTimeoutDelay(int _value)
 
 	if (setsockopt(*m_socket, SOL_SOCKET, SO_SNDTIMEO, (const char*)&timeout, sizeof(timeout)) != 0)
 		return false;
+    return true;
 }
 
 bool LinSocket::CloseSocket()

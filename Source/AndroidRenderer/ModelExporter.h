@@ -20,6 +20,7 @@ public:
 
 	bool OpenFileForWrite(const char* fileDir)
 	{
+        return false;
 	}
 	void CloseFile()
 	{
