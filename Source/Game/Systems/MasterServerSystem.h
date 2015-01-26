@@ -21,8 +21,10 @@ public:
 private:
 	ClientDatabase* m_clientDatabase;
 	std::map<int, bool> m_playerIds;
+
 	int m_gameRunningId;
 	int m_oldGameRunningId;
+	float m_requestServerListTimer;
 };
 
 #endif
