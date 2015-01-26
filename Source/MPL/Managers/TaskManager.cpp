@@ -104,8 +104,6 @@ void TaskManager::WaitFor(TaskId _id)
 				WakeThreads();
 		}
 	}
-
-	profiler->LogBeginHibernate(threadId);
 }
 
 void TaskManager::WakeThreads()

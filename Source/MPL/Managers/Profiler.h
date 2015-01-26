@@ -3,13 +3,12 @@
 
 #include <SDL/SDL.h>
 #include <vector>
-#include <chrono>
 
 #include "MPL/Framework/Tasks/WorkItem.h"
 
-typedef std::chrono::high_resolution_clock Clock;
-typedef Clock::time_point Time;
-typedef std::chrono::duration<int, std::nano> Nanoseconds;
+//typedef std::chrono::high_resolution_clock Clock;
+//typedef Clock::time_point Time;
+//typedef std::chrono::duration<int, std::micro> Nanoseconds;
 
 #define ACTIVE
 #define LOG_MAX_SIZE 1024
@@ -25,28 +24,28 @@ namespace MPL
 
 	struct DECLSPEC LoggedAction
 	{
-		ActionType Type;
-		Time CreationTime;
-		int Duration;
-		const WorkItem* WorkItem;
+		ActionType type;
+		Uint64 creationTime;
+		float duration;
+		const WorkItem* workItem;
 	};
 
 	struct DECLSPEC LoggedSession
 	{
-		Time SessionStartTime;
-		Time SessionEndTime;
-		int SessionDuration;
-		std::vector<std::vector<LoggedAction*>*>* ThreadLogs;
+		Uint64 sessionStartTime;
+		Uint64 sessionEndTime;
+		float sessionDuration;
+		std::vector<std::vector<LoggedAction*>*>* threadLogs;
 
 		~LoggedSession()
 		{
-			for (auto threadLog : *ThreadLogs)
+			for (auto threadLog : *threadLogs)
 			{
 				for (auto action : *threadLog)
 					delete(action);
 				delete(threadLog);
 			}
-			delete(ThreadLogs);
+			delete(threadLogs);
 		}
 	};
 
@@ -58,21 +57,20 @@ namespace MPL
 
 		void LogBeginWork(unsigned int _threadId);
 		void LogWorkDone(unsigned int _threadId, const WorkItem* _workItem);
-		void LogBeginHibernate(unsigned int _threadId);
 		void CreateNewSession();
-		void PullSession();
-		void DeleteSession();
+		LoggedSession* PullSession();
 
 	private:
 		Profiler();
 
-		std::vector<bool>* m_hibernating;
-		std::vector<unsigned int>* m_logIndices;
+		Uint64 m_frequency;
 		LoggedSession* m_currentSession;
 		void Initialize();
+		void DeleteSession();
 		void AddNewAction(unsigned int _threadId, LoggedAction* _loggedAction);
 
-		inline int Duration(Time _end, Time _start) { return std::chrono::duration_cast<Nanoseconds>(_end - _start).count(); }
+		float Duration(Uint64 _end, Uint64 _start);
+		Uint64 Now();
 	};
 };
 
