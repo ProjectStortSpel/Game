@@ -14,15 +14,11 @@ CardDeckSystem.Initialize = function ( self )
 	self:SetName("SpawnSystem")
 	
 	self:AddComponentTypeToFilter("Unit", FilterType.Mandatory)
-
-	print("Card Deck System Initialized")
 end
 
 CardDeckSystem.PostInitialize = function ( self )
 
 	--self:CreateDeck()
-	
-	print("Card Deck System Post Initialized")
 end
 
 CardDeckSystem.CreateDeck = function (self)

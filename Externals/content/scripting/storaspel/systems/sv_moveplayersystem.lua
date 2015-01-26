@@ -5,8 +5,6 @@ TurnAroundSystem.Initialize = function(self)
 	
 	self:AddComponentTypeToFilter("Unit",FilterType.Mandatory)
 	self:AddComponentTypeToFilter("UnitTurnAround",FilterType.Mandatory)
-		
-	print("TurnAroundSystem initialized!")
 end
 
 TurnAroundSystem.OnEntityAdded = function(self, entity)
@@ -54,8 +52,6 @@ TurnLeftSystem.Initialize = function(self)
 	
 	self:AddComponentTypeToFilter("Unit",FilterType.Mandatory)
 	self:AddComponentTypeToFilter("UnitTurnLeft",FilterType.Mandatory)
-		
-	print("TurnLeftSystem initialized!")
 end
 
 TurnLeftSystem.OnEntityAdded = function(self, entity)
@@ -108,8 +104,6 @@ TurnRightSystem.Initialize = function(self)
 	
 	self:AddComponentTypeToFilter("Unit",FilterType.Mandatory)
 	self:AddComponentTypeToFilter("UnitTurnRight",FilterType.Mandatory)
-		
-	print("TurnRightSystem initialized!")
 end
 
 TurnRightSystem.OnEntityAdded = function(self, entity)
@@ -151,8 +145,6 @@ TestMoveSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Unit",FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("NotWalkable",FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("TestMove",FilterType.RequiresOneOf)
-		
-	print("TestMoveSystem initialized!")
 
 end
 
@@ -253,8 +245,6 @@ MoveForwardSystem.Initialize = function(self)
 	
 	self:AddComponentTypeToFilter("Unit",FilterType.Mandatory)
 	self:AddComponentTypeToFilter("UnitForward",FilterType.Mandatory)
-		
-	print("MoveForwardSystem initialized!")
 end
 
 MoveForwardSystem.OnEntityAdded = function(self, entity)
@@ -289,8 +279,6 @@ MoveBackwardSystem.Initialize = function(self)
 	
 	self:AddComponentTypeToFilter("Unit",FilterType.Mandatory)
 	self:AddComponentTypeToFilter("UnitBackward",FilterType.Mandatory)
-		
-	print("MoveBackwardSystem initialized!")
 end
 
 MoveBackwardSystem.OnEntityAdded = function(self, entity)

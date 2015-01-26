@@ -21,7 +21,7 @@ MapSystem.PostInitialize = function(self)
 			local tiletype = map[(y - 1) * self.mapX + x]			
             local entity = self:AddTile(x, y, tiletype)
 
-			if tiletype >= 49 and tiletype <= 57 then -- 49 = 1 = first checkpoint, 47 = 9 = 9th checkpoint
+			if tiletype >= 49 and tiletype <= 57 then -- 49 = 1 = first checkpoint, 57 = 9 = 9th checkpoint
 
 				highestCP = math.max(highestCP, tiletype - 48)
 
@@ -107,8 +107,6 @@ MapSystem.PostInitialize = function(self)
 		end
 
 	end
-
-    print("Init map done!")
 end
 
 MapSystem.AddTile = function(self, posX, posZ, tiletype)
@@ -273,7 +271,6 @@ end
 
 MapSystem.TileIsVoid = function(self, posX, posY)
 
-	print ("Void", posX, posY)
 	return self:TileHasComponent("Void", posX, posY)
 end
 

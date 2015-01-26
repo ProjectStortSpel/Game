@@ -4,7 +4,6 @@ PlayCardSystem.Initialize = function(self)
 	self:SetName("PlayCardSystem System")
 	self:AddComponentTypeToFilter("PlayCard", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("CardStep", FilterType.RequiresOneOf)
-	print("PlayCardSystem initialized!")
 end
 
 

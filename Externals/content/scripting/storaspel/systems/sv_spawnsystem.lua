@@ -8,8 +8,6 @@ SpawnSystem.Initialize = function(self)
 	self:SetName("SpawnSystem")
 	self:AddComponentTypeToFilter("Spawn", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Spawnpoint", FilterType.Mandatory)
-
-	print("SpawnSystem initialized!")
 end
 
 

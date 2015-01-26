@@ -1,6 +1,6 @@
 #include "Network/Stdafx.h"
 
-unsigned long long Network::htonll(unsigned long long src)
+unsigned long long Network::hton_ll(unsigned long long src)
 {
 	static int typ = TYP_INIT;
 	unsigned char c;
@@ -24,7 +24,7 @@ unsigned long long Network::htonll(unsigned long long src)
 	return x.ull;
 }
 
-unsigned long long Network::ntohll(unsigned long long src)
+unsigned long long Network::ntoh_ll(unsigned long long src)
 {
-	return Network::htonll(src);
+	return Network::hton_ll(src);
 }

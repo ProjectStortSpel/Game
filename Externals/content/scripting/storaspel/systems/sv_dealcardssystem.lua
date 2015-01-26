@@ -11,8 +11,6 @@ DealCardsSystem.Initialize = function ( self )
 	self:AddComponentTypeToFilter("CardStep", FilterType.Excluded)
 	self:AddComponentTypeToFilter("DealtCard", FilterType.Excluded)
 	self:AddComponentTypeToFilter("IsSpectator", FilterType.Excluded)
-
-	print("DealCardsSystem Initialized")
 end
 
 DealCardsSystem.OnEntityAdded = function(self, entityId)

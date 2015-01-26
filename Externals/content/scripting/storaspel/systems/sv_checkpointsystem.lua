@@ -7,8 +7,6 @@ CheckpointSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Unit", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("Checkpoint", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("CheckCheckpoint", FilterType.RequiresOneOf)
-
-	print("CheckpointSystem initialized!")
 end
 
 CheckpointSystem.Update = function(self, dt)

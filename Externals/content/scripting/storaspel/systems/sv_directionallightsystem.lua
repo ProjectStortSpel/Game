@@ -5,8 +5,6 @@ DirectionalLightSystem.Initialize = function(self)
 	self:SetName("DirectionalLightSystem System")
 
 	self:AddComponentTypeToFilter("DirectionalLight", FilterType.Mandatory)
-
-	print("DirectionalLightSystem initialized!")
 end
 
 DirectionalLightSystem.PostInitialize = function(self)

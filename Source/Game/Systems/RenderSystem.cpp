@@ -40,8 +40,6 @@ void RenderSystem::Initialize()
 	m_renderId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Render");
 	m_renderOffset = ECSL::ComponentTypeManager::GetInstance().GetComponentType(m_renderId)->GetVariables()->at("Mat").GetOffset();
 
-
-	printf("RenderSystem initialized!\n");
 }
 
 

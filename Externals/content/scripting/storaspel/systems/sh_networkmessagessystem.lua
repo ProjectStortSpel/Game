@@ -18,7 +18,6 @@ networkMessagesSystem.Initialize = function(self)
 	self:InitializeNetworkEvents()
 	
 	self:AddComponentTypeToFilter("SyncNetwork", FilterType.Mandatory)
-	print("NetworkMessagesSystem initialized!")
 end
 networkMessagesSystem.OnEntityAdded = function(self, entityId)
 	--print("OnEntityAdded (LUA)")

@@ -5,7 +5,6 @@ NewStepSystem.Initialize = function(self)
 	self:SetName("NewStepSystem System")
 	self:AddComponentTypeToFilter("NewRound", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("NewStep", FilterType.RequiresOneOf)
-	print("NewStepSystem initialized!")
 end
 
 NewStepSystem.OnEntityAdded = function(self, entity)

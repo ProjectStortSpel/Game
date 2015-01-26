@@ -24,8 +24,6 @@ MovementSystem.Initialize = function(self)
 	self:SetName("Movement System")
 	self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Velocity", FilterType.Mandatory)
-	
-	print("MovementSystem initialized!")
 end
 
 MovementSystem.PostInitialize = function(self)

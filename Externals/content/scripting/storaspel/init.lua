@@ -10,6 +10,8 @@ require "gamestatecomponents"
 require "lightcomponents"
 
 require "interfacecomponents"
+require "buttoncomponents"
+require "menucomponents"
 require "cameracomponents"
 
 -- Systems
@@ -31,6 +33,7 @@ if Server then
 	--require "sv_moveplayersystem"
 	require "sv_onplayerconnected"
 	require "sv_playerssystem"
+    require "sv_aisystem"
 	require "sv_givespawnlocation"
 	--require "sv_createspawnpointsystem"
 	require "sv_spawnsystem"
@@ -94,6 +97,13 @@ if Client then
 	--require "cl_cameracreationsystem"
 	require "cl_newcamerasystem"
 	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
+	
+	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/interfacesystems/?.lua"
+	require "cl_gameinterfacesystem"
+	require "cl_hoversizesystem"
+	require "cl_gamemenusystem"
+	require "cl_optionmenusystem"
+	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/?.lua"
 
 	require "cl_playerindicatorsystem"
 
@@ -108,9 +118,6 @@ require "playertemplates"
 
 require "box"
 require "lights"
-
-
-
 
 
 
@@ -133,6 +140,7 @@ if Server then
 
 	worldCreator:AddSystemToCurrentGroup(OnPlayerConnectedSystem)
 	worldCreator:AddSystemToCurrentGroup(PlayersSystem)
+    worldCreator:AddSystemToCurrentGroup(AISystem)
 	worldCreator:AddSystemToCurrentGroup(GiveSpawnLocation)
 	--worldCreator:AddSystemToCurrentGroup(CreateSpawnpointSystem)
 	worldCreator:AddSystemToCurrentGroup(SpawnSystem)
@@ -179,9 +187,6 @@ if Server then
 end
 
 if Client then
-
-	
-
 	worldCreator:AddSystemToCurrentGroup(ClientLobbySystem)
 	worldCreator:AddSystemToCurrentGroup(GiveCardIndexSystem)
 	--worldCreator:AddSystemToCurrentGroup(SelectCardSystem)
@@ -199,4 +204,9 @@ if Client then
 --worldCreator:AddSystemToCurrentGroup(ClientSendCardSystem)
 
 	worldCreator:AddSystemToCurrentGroup(NewCameraSystem)
+	
+	worldCreator:AddSystemToCurrentGroup(GameInterfaceSystem)
+	worldCreator:AddSystemToCurrentGroup(HoverSizeSystem)
+	worldCreator:AddSystemToCurrentGroup(GameMenuSystem)
+	worldCreator:AddSystemToCurrentGroup(OptionMenuSystem)
 end

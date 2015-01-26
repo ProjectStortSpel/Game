@@ -5,8 +5,6 @@ ButtonHoverSystem.Initialize = function(self)
 	self:SetName("ButtonHoverSystem")
 	self:AddComponentTypeToFilter("Scale", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("OnPickBoxHit", FilterType.Mandatory)
-	
-	print("ButtonHoverSystem initialized!")
 end
 
 ButtonHoverSystem.OnEntityAdded = function(self, entityId)

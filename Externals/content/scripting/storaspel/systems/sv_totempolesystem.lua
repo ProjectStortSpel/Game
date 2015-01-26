@@ -7,8 +7,6 @@ TotemPoleSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("TotemPole", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("Finishpoint", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("Checkpoint", FilterType.RequiresOneOf)
-
-	print("TotemPoleSystem initialized!")
 end
 
 TotemPoleSystem.Update = function(self, dt)

@@ -7,8 +7,6 @@ AddCardPickTimer.Initialize = function(self)
 
 	self:AddComponentTypeToFilter("PickingPhaseTimer", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("AddToPickingPhaseTimer", FilterType.RequiresOneOf)
-
-	print("AddCardPickTimer initialized!")
 end
 
 AddCardPickTimer.OnEntityAdded = function(self, entity)
@@ -40,8 +38,6 @@ SetCardPickTimer.Initialize = function(self)
 
 	self:AddComponentTypeToFilter("PickingPhaseTimer", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("SetPickingPhaseTimer", FilterType.RequiresOneOf)
-
-	print("SetCardPickTimer initialized!")
 end
 
 SetCardPickTimer.OnEntityAdded = function(self, entity)
@@ -71,8 +67,6 @@ UpdateCardPickTimer.Initialize = function(self)
 
 	self:AddComponentTypeToFilter("PickingPhaseTimer", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("OnPickingPhase", FilterType.RequiresOneOf)
-
-	print("UpdateCardPickTimer initialized!")
 end
 
 UpdateCardPickTimer.Update = function(self, dt)
@@ -117,8 +111,6 @@ CreateCardPickTimer.Initialize = function(self)
 	self:SetName("CreateCardPickTimer")
 
 	self:AddComponentTypeToFilter("OnPickingPhase", FilterType.Mandatory)
-
-	print("CreateCardPickTimer initialized!")
 end
 
 CreateCardPickTimer.OnEntityAdded = function(self, entity)

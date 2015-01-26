@@ -212,3 +212,5 @@ Externals/android/sdk/
 Solutions/Android/app/libs/
 Solutions/Android/app/assets/
 Solutions/Android/local.properties
+
+.DS_Store

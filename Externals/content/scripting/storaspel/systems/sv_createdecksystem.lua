@@ -5,8 +5,6 @@ CreateDeckSystem.Initialize = function ( self )
 	
 	self:AddComponentTypeToFilter("Unit", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("CreateDeck", FilterType.RequiresOneOf)
-
-	print("CreateDeckSystem Initialized")
 end
 
 
