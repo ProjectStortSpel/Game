@@ -2,7 +2,7 @@ ButtonPressedSystem = System()
 
 ButtonPressedSystem.Initialize = function(self)
 	self:SetName("ButtonPressedSystem")
-	self:SetUpdateTaskCount(1)
+	self:UsingUpdate()
 	self:AddComponentTypeToFilter("OnPickBoxHit", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("ButtonCommand", FilterType.RequiresOneOf)
 	

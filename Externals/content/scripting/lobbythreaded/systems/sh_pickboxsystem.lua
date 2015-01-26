@@ -2,7 +2,7 @@ PickBoxSystem = System()
 
 PickBoxSystem.Initialize = function(self)
 	self:SetName("PickBox System")
-	self:SetUpdateTaskCount(1)
+	self:UsingUpdate()
 	self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Scale", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("PickBox", FilterType.Mandatory)
