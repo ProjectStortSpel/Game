@@ -37,6 +37,7 @@ public:
 
 	unsigned int AddGroup(const std::string& _groupName, bool _addToOutput = true);
 	void Log(unsigned int _groupIndex, LogSeverity _severity, const std::string& _message);
+	void Log(const std::string& _groupName, LogSeverity _severity, const std::string& _message);
 	void ChangeFilterFor(unsigned int _groupIndex, bool _printInfo);
 
 private:
@@ -63,6 +64,7 @@ private:
 	SDL_mutex*	m_logMutex;
 
 	std::map<unsigned int, LogGroup*> m_logGroups;
+	std::map<std::string, unsigned int> m_groupNameIndex;
 	std::vector<LogEntry>* m_dumpLogs;
 
 };

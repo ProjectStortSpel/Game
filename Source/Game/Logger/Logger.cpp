@@ -51,6 +51,7 @@ unsigned int Logger::AddGroup(const std::string& _groupName, bool _addToOutput)
 
 	/*	Add group to map	*/
 	m_logGroups[newGroupId] = newGroup;
+	m_groupNameIndex[_groupName] = newGroupId;
 
 	if (_groupName.size() > m_longestGroupName)
 		m_longestGroupName = _groupName.size();
@@ -96,6 +97,42 @@ void Logger::Log(unsigned int _groupIndex, LogSeverity _severity, const std::str
 
 	/*	If the group is active in filter print the message	*/
 	if (m_filterMask & ((unsigned int)1 << _groupIndex))
+		SDL_Log(newMessage.str().c_str());
+
+	SDL_UnlockMutex(m_logMutex);
+}
+
+void Logger::Log(const std::string& _groupName, LogSeverity _severity, const std::string& _message)
+{
+	SDL_LockMutex(m_logMutex);
+	/*	Get log group	*/
+	if (m_groupNameIndex.find(_groupName) == m_groupNameIndex.end())
+	{
+		SDL_UnlockMutex(m_logMutex);
+		std::stringstream newMessage;
+		newMessage << "Undefined group used! (" << _groupName << ")";
+		Log(0, LogSeverity::Error, newMessage.str());
+		return;
+	}
+	LogGroup* tGroup = m_logGroups[m_groupNameIndex[_groupName]];
+
+	/*	Add group info to message	*/
+	std::stringstream newMessage;
+	newMessage << "[" << tGroup->GroupName << "]" << GetTabs(tGroup->GroupName);
+	newMessage << SeverityToString(_severity) << ": ";
+	newMessage << _message << "\r\n";
+
+	/*	Create new log entry	*/
+	LogEntry newEntry = LogEntry();
+	newEntry.Severity = _severity;
+	newEntry.Message = newMessage.str();
+
+	/*	Add entry	*/
+	tGroup->Messages->push_back(newEntry);
+	AppendFile(newEntry);
+
+	/*	If the group is active in filter print the message	*/
+	if (m_filterMask & ((unsigned int)1 << m_groupNameIndex[_groupName]))
 		SDL_Log(newMessage.str().c_str());
 
 	SDL_UnlockMutex(m_logMutex);
