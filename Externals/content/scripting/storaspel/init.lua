@@ -34,6 +34,7 @@ if Server then
 	require "sv_onplayerconnected"
 	require "sv_playerssystem"
     require "sv_aisystem"
+	require "sv_unitsystem"
 	require "sv_givespawnlocation"
 	--require "sv_createspawnpointsystem"
 	require "sv_spawnsystem"
@@ -141,6 +142,7 @@ if Server then
 	worldCreator:AddSystemToCurrentGroup(OnPlayerConnectedSystem)
 	worldCreator:AddSystemToCurrentGroup(PlayersSystem)
     worldCreator:AddSystemToCurrentGroup(AISystem)
+	worldCreator:AddSystemToCurrentGroup(UnitSystem)
 	worldCreator:AddSystemToCurrentGroup(GiveSpawnLocation)
 	--worldCreator:AddSystemToCurrentGroup(CreateSpawnpointSystem)
 	worldCreator:AddSystemToCurrentGroup(SpawnSystem)
