@@ -40,7 +40,7 @@ namespace Network
 {
 	unsigned long long htonll(unsigned long long src);
 	unsigned long long ntohll(unsigned long long src);
-	static int NET_DEBUG = 1;
+	static int NET_DEBUG = 0;
 }
 
 

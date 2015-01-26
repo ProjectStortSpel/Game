@@ -242,6 +242,9 @@
     <ClCompile Include="..\..\..\Source\Game\Network\ClientDatabase.cpp">
       <Filter>MasterServer</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\MasterServerSystem.cpp">
+      <Filter>Game\Systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h">
@@ -351,6 +354,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Network\ClientDatabase.h">
       <Filter>MasterServer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\MasterServerSystem.h">
+      <Filter>Game\Systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

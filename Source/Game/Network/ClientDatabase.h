@@ -7,19 +7,26 @@ class ClientDatabase
 {
 public:
 	~ClientDatabase();
-	static ClientDatabase& GetInstance();
+	ClientDatabase();
 
 	bool Connect();
 	bool Disconnect();
 
 	void Update(float dt);
 
-private:
-	ClientDatabase();
+	void SetGameStarted(bool _started);
+	void SetPasswordProtected(bool _protected);
+	void SetServerPort(int _port);
 
-	void OnPlayerConnected(Network::NetConnection& _nc, const char* _msg);
-	void OnPlayerDisconnected(Network::NetConnection& _nc, const char* _msg);
-	void OnPlayerTimedOut(Network::NetConnection& _nc, const char* _msg);
+	void IncreaseNoPlayers();
+	void DecreaseNoPlayers();
+	void IncreaseNoSpectators();
+	void DecreaseNoSpectators();
+
+	void IncreaseMaxNoPlayers();
+
+private:
+	
 
 	Network::ClientNetwork m_client;
 
@@ -27,6 +34,7 @@ private:
 	std::string m_password;
 	int m_remotePort;
 	int m_localPort;
+
 };
 
 

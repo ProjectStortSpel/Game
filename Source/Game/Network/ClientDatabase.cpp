@@ -1,40 +1,21 @@
 #include "ClientDatabase.h"
 #include "Game/NetworkInstance.h"
 
-ClientDatabase& ClientDatabase::GetInstance()
-{
-	static ClientDatabase* instance = new ClientDatabase();
-	return *instance;
-}
-
-
 ClientDatabase::ClientDatabase()
 	:m_ipAddress("194.47.150.128"), m_password("DefaultMasterPassword"), m_remotePort(5509), m_localPort(0)
 {
-
-	Network::NetEvent  hook;
-	hook = std::bind(&ClientDatabase::OnPlayerConnected, this, std::placeholders::_1, std::placeholders::_2);
-	NetworkInstance::GetServer()->SetOnPlayerConnected(hook);
-
-	hook = std::bind(&ClientDatabase::OnPlayerDisconnected, this, std::placeholders::_1, std::placeholders::_2);
-	NetworkInstance::GetServer()->SetOnPlayerDisconnected(hook);
-
-	hook = std::bind(&ClientDatabase::OnPlayerTimedOut, this, std::placeholders::_1, std::placeholders::_2);
-	NetworkInstance::GetServer()->SetOnPlayerTimedOut(hook);
-
-
-
-	m_client.SetMaxTimeOutIntervall(500);
+	m_client.SetMaxTimeOutIntervall(5);
 	m_client.SetMaxTimeOutCounter(2);
 }
 ClientDatabase::~ClientDatabase()
 {
+	Disconnect();
 }
 
 bool ClientDatabase::Connect()
 {
-	m_client.Connect(m_ipAddress.c_str(), m_password.c_str(), m_remotePort, m_localPort);
-	return true;
+	bool result = m_client.Connect(m_ipAddress.c_str(), m_password.c_str(), m_remotePort, m_localPort);
+	return result;
 }
 bool ClientDatabase::Disconnect()
 {
@@ -51,36 +32,129 @@ void ClientDatabase::Update(float dt)
 	while (m_client.PopAndExecutePacket() > 0) {}
 }
 
-
-void ClientDatabase::OnPlayerConnected(Network::NetConnection& _nc, const char* _msg)
+void ClientDatabase::SetGameStarted(bool _started)
 {
-	SDL_Log("ClientDatabase::OnPlayerConnected\n");
+	if (!m_client.IsConnected())
+	{
+		SDL_LogWarn(SDL_LOG_CATEGORY_SYSTEM, "Tried to send \"GAME_STARTED\", but is not connected to MasterServer");
+		return;
+	}
+
+	auto ph = m_client.GetPacketHandler();
+	auto id = ph->StartPack("GAME_STARTED");
+	ph->WriteByte(id, _started);
+	auto packet = ph->EndPack(id);
+
+	m_client.Send(packet);
+
+}
+void ClientDatabase::SetPasswordProtected(bool _protected)
+{
+	if (!m_client.IsConnected())
+	{
+		SDL_LogWarn(SDL_LOG_CATEGORY_SYSTEM, "Tried to send \"IS_PASSWORD_PROTECTED\", but is not connected to MasterServer");
+		return;
+	}
+
+	auto ph = m_client.GetPacketHandler();
+	auto id = ph->StartPack("IS_PASSWORD_PROTECTED");
+	ph->WriteByte(id, _protected);
+	auto packet = ph->EndPack(id);
+
+	m_client.Send(packet);
+}
+void ClientDatabase::SetServerPort(int _port)
+{
+	if (!m_client.IsConnected())
+	{
+		SDL_LogWarn(SDL_LOG_CATEGORY_SYSTEM, "Tried to send \"SET_SERVER_PORT\", but is not connected to MasterServer");
+		return;
+	}
+
+	auto ph = m_client.GetPacketHandler();
+	auto id = ph->StartPack("SET_SERVER_PORT");
+	ph->WriteInt(id, _port);
+	auto packet = ph->EndPack(id);
+
+	m_client.Send(packet);
+}
+
+void ClientDatabase::IncreaseMaxNoPlayers()
+{
+	if (!m_client.IsConnected())
+	{
+		SDL_LogWarn(SDL_LOG_CATEGORY_SYSTEM, "Tried to send \"MAX_PLAYER_COUNT_INCREASED\", but is not connected to MasterServer");
+		return;
+	}
+
+	auto ph = m_client.GetPacketHandler();
+	auto id = ph->StartPack("MAX_PLAYER_COUNT_INCREASED");
+	auto packet = ph->EndPack(id);
+
+	m_client.Send(packet);
+
+}
+
+void ClientDatabase::IncreaseNoPlayers()
+{
+	if (!m_client.IsConnected())
+	{
+		SDL_LogWarn(SDL_LOG_CATEGORY_SYSTEM, "Tried to send \"PLAYER_COUNT_INCREASED\", but is not connected to MasterServer");
+		return;
+	}
 
 	auto ph = m_client.GetPacketHandler();
 	auto id = ph->StartPack("PLAYER_COUNT_INCREASED");
 	auto packet = ph->EndPack(id);
 
 	m_client.Send(packet);
+
 }
 
-void ClientDatabase::OnPlayerDisconnected(Network::NetConnection& _nc, const char* _msg)
+void ClientDatabase::DecreaseNoPlayers()
 {
-	SDL_Log("ClientDatabase::OnPlayerConnected\n");
+	if (!m_client.IsConnected())
+	{
+		SDL_LogWarn(SDL_LOG_CATEGORY_SYSTEM, "Tried to send \"PLAYER_COUNT_DECREASED\", but is not connected to MasterServer");
+		return;
+	}
 
 	auto ph = m_client.GetPacketHandler();
 	auto id = ph->StartPack("PLAYER_COUNT_DECREASED");
 	auto packet = ph->EndPack(id);
 
 	m_client.Send(packet);
+
 }
 
-void ClientDatabase::OnPlayerTimedOut(Network::NetConnection& _nc, const char* _msg)
+void ClientDatabase::IncreaseNoSpectators()
 {
-	SDL_Log("ClientDatabase::OnPlayerConnected\n");
+	if (!m_client.IsConnected())
+	{
+		SDL_LogWarn(SDL_LOG_CATEGORY_SYSTEM, "Tried to send \"SPECTATOR_COUNT_INCREASED\", but is not connected to MasterServer");
+		return;
+	}
 
 	auto ph = m_client.GetPacketHandler();
-	auto id = ph->StartPack("PLAYER_COUNT_DECREASED");
+	auto id = ph->StartPack("SPECTATOR_COUNT_INCREASED");
 	auto packet = ph->EndPack(id);
 
 	m_client.Send(packet);
+
+}
+
+void ClientDatabase::DecreaseNoSpectators()
+{
+	if (!m_client.IsConnected())
+	{
+		SDL_LogWarn(SDL_LOG_CATEGORY_SYSTEM, "Tried to send \"SPECTATOR_COUNT_DECREASED\", but is not connected to MasterServer");
+		return;
+	}
+
+	auto ph = m_client.GetPacketHandler();
+	auto id = ph->StartPack("SPECTATOR_COUNT_DECREASED");
+	auto packet = ph->EndPack(id);
+
+	m_client.Send(packet);
+
 }

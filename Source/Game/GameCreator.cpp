@@ -11,6 +11,7 @@
 #include "Systems/PointlightSystem.h"
 #include "Systems/DirectionalLightSystem.h"
 
+
 #include "Network/ClientDatabase.h"
 #include "NetworkInstance.h"
 #include "ECSL/ECSL.h"
@@ -149,6 +150,8 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	worldCreator.AddLuaSystemToCurrentGroup(new CameraSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new ModelSystem(m_graphics));
 
+	worldCreator.AddLuaSystemToCurrentGroup(new MasterServerSystem());
+
 	worldCreator.AddLuaSystemToCurrentGroup(new SyncEntitiesSystem());
 	//worldCreator.AddLuaSystemToCurrentGroup(new ReceivePacketSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new RenderSystem(m_graphics));
@@ -158,6 +161,8 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	worldCreator.AddLuaSystemToCurrentGroup(new ResetChangedSystem());
 
 	m_world = worldCreator.CreateWorld(1000);
+
+	m_world->PostInitializeSystems();
 	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
 
 	LuaEmbedder::CallMethods<LuaBridge::LuaSystem>("System", "PostInitialize");
@@ -314,8 +319,6 @@ void GameCreator::UpdateNetwork(float _dt)
 		client->Update(_dt);
 		while (client->PopAndExecutePacket() > 0) {}
 	}
-
-	ClientDatabase::GetInstance().Update(_dt);
 }
 
 void GameCreator::GameMode(std::string _gamemode)
