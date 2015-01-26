@@ -385,11 +385,8 @@ namespace LuaEmbedder
 	return -1;
       }
       lua_insert(L, base);
-	  SDL_Log("Call %s", methodName);
       int status = lua_pcall(L, 1 + argumentCount, LUA_MULTRET, 0);
-	  SDL_Log("Called %s", methodName);
       lua_gc(L, LUA_GCCOLLECT, 0);
-	  SDL_Log("Collecting garbage");
       if (status != 0)
       {
 	SDL_Log("Luna::CallMethod : %s", (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error"));

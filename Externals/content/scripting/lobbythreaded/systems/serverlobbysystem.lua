@@ -5,7 +5,7 @@ ServerLobbySystem.m_maxConnections = 3;
 
 ServerLobbySystem.Initialize = function(self)
 	self:SetName("ServerLobbySystem System");
-	self:SetUpdateTaskCount(2)
+	self:SetUpdateTaskCount(1)
 	self:SetEntitiesAddedTaskCount(1)
 	self:SetEntitiesRemovedTaskCount(1)
 
@@ -18,7 +18,6 @@ ServerLobbySystem.Initialize = function(self)
 end
 
 ServerLobbySystem.Update = function(self, dt, taskIndex, taskCount)
-	--[[
 	if GameRunning then
 		return
 	end
@@ -28,7 +27,6 @@ ServerLobbySystem.Update = function(self, dt, taskIndex, taskCount)
 	else
 		--self:UpdateServerOffline();
 	end
-	--]]
 end
 
 ServerLobbySystem.UpdateServerOnline = function(self)
