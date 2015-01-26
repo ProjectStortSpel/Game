@@ -239,8 +239,13 @@
     <ClCompile Include="MapIslandCreatorSystem.cpp">
       <Filter>Game\Systems\Map</Filter>
     </ClCompile>
+<<<<<<< HEAD
+    <ClCompile Include="..\..\..\Source\Game\Systems\SlerpRotationSystem.cpp">
+      <Filter>Game\Systems\Rotation</Filter>
+=======
     <ClCompile Include="..\..\..\Source\Game\Logger\Logger.cpp">
       <Filter>Game\Logger</Filter>
+>>>>>>> cd355fd3959bd7e6a2e4e50f4b2b7e76acdadafe
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -349,8 +354,13 @@
     <ClInclude Include="MapIslandCreatorSystem.h">
       <Filter>Game\Systems\Map</Filter>
     </ClInclude>
+<<<<<<< HEAD
+    <ClInclude Include="..\..\..\Source\Game\Systems\SlerpRotationSystem.h">
+      <Filter>Game\Systems\Rotation</Filter>
+=======
     <ClInclude Include="..\..\..\Source\Game\Logger\Logger.h">
       <Filter>Game\Logger</Filter>
+>>>>>>> cd355fd3959bd7e6a2e4e50f4b2b7e76acdadafe
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -550,6 +560,9 @@
       <Filter>Scripting\Storaspel\Systems\Client Systems\Round Systems</Filter>
     </None>
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_aisystem.lua">
+      <Filter>Scripting\Storaspel\Systems\Server Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_unitsystem.lua">
       <Filter>Scripting\Storaspel\Systems\Server Systems</Filter>
     </None>
   </ItemGroup>

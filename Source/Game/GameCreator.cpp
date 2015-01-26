@@ -10,7 +10,7 @@
 #include "Systems/ResetChangedSystem.h"
 #include "Systems/PointlightSystem.h"
 #include "Systems/DirectionalLightSystem.h"
-
+#include "Systems/SlerpRotationSystem.h"
 #include "NetworkInstance.h"
 #include "ECSL/ECSL.h"
 #include "ECSL/Managers/EntityTemplateManager.h"
@@ -147,6 +147,7 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	worldCreator.AddLuaSystemToCurrentGroup(new PointlightSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new DirectionalLightSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new RotationSystem());
+	worldCreator.AddLuaSystemToCurrentGroup(new SlerpRotationSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new CameraSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new ModelSystem(m_graphics));
 
