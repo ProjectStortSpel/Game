@@ -151,7 +151,7 @@ void Logger::CreateFile()
 	localtime_s(&timeInfo, &tTime);
 	_localtime64_s(&timeInfo, &tTime);
 #else
-	struct tm	timeInfo = *(localtime(&tTime));
+	timeInfo = *(localtime(&tTime));
 #endif
 
 	std::ostringstream ss;
