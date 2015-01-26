@@ -42,6 +42,8 @@ public:
 	*/
 	void SlerpQuaternion(Quaternion &result, Quaternion *target, float t);
 
+	glm::vec3 QuaternionToEuler();
+
 	~Quaternion();
 
 	float m_w;

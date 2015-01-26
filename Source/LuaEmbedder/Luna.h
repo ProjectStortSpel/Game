@@ -265,7 +265,7 @@ namespace LuaEmbedder
       lua_settop(L, -1);
       return 1;
     }
-
+    
     /*
       @ createNew
       Arguments:
@@ -581,15 +581,19 @@ namespace LuaEmbedder
     */
     static int gc_obj(lua_State* L)
     {
+      T** obj = static_cast<T**>(lua_touserdata(L, 1));
+      
       if (luaL_getmetafield(L, 1, "no_gc"))
       {
 	lua_pushvalue(L, 1);
 	lua_gettable(L, -2);
 	if (!lua_isnil(L, -1))
+	{
+	  *obj = nullptr;
+	  obj = nullptr;
 	  return 0;
+	}
       }
-      
-      T** obj = static_cast<T**>(lua_touserdata(L, 1));
       
       if(obj && *obj)
       {

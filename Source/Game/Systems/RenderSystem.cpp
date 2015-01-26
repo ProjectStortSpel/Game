@@ -40,8 +40,6 @@ void RenderSystem::Initialize()
 	m_renderId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Render");
 	m_renderOffset = ECSL::ComponentTypeManager::GetInstance().GetComponentType(m_renderId)->GetVariables()->at("Mat").GetOffset();
 
-
-	printf("RenderSystem initialized!\n");
 }
 
 
@@ -49,7 +47,7 @@ void RenderSystem::Initialize()
 void RenderSystem::Update(float _dt)
 {
 	auto entities = *GetEntities();
-
+	
 	for (auto entity : entities)
 	{
 		ECSL::BitSet::DataType* eBitMask = (ECSL::BitSet::DataType*)GetComponent(entity, m_componentId, 0);
@@ -105,7 +103,9 @@ void RenderSystem::UpdateMatrix(unsigned int _entityId)
 
 	/*Convert to quaternions*/
 	Quaternion q_rotation;
+
 	q_rotation.EulerToQuaternion(Rotation[0], Rotation[1], Rotation[2]);
+
 	*Matrix *= q_rotation.QuaternionToMatrix();
 
 	*Matrix *= glm::scale(glm::vec3(Scale[0], Scale[1], Scale[2]));

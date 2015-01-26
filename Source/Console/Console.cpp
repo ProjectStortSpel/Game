@@ -137,7 +137,19 @@ void ConsoleManager::ExecuteCommandQueue()
 {
 	while (!m_commandQueue.empty())
 	{
-		ExecuteCommand(m_commandQueue.front().c_str());
+		// split commands if it contains ;
+		std::string s = m_commandQueue.front();
+		std::string delimiter = ";";
+
+		size_t pos = 0;
+		std::string token;
+		while ((pos = s.find(delimiter)) != std::string::npos) {
+			token = s.substr(0, pos);
+			ExecuteCommand(token.c_str());
+			s.erase(0, pos + delimiter.length());
+		}
+		ExecuteCommand(s.c_str());
+
 		m_commandQueue.pop();
 	}
 }

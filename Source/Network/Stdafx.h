@@ -38,8 +38,8 @@
 
 namespace Network
 {
-	unsigned long long htonll(unsigned long long src);
-	unsigned long long ntohll(unsigned long long src);
+	unsigned long long hton_ll(unsigned long long src);
+	unsigned long long ntoh_ll(unsigned long long src);
 	static int NET_DEBUG = 0;
 }
 

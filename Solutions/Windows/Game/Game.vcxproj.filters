@@ -126,6 +126,9 @@
     <Filter Include="Game\Systems\Map">
       <UniqueIdentifier>{6e376179-3445-48ae-a79e-a3865a17fdf9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Logger">
+      <UniqueIdentifier>{1638b47f-ddec-4aa8-b5ca-22cc9327d878}</UniqueIdentifier>
+    </Filter>
     <Filter Include="MasterServer">
       <UniqueIdentifier>{faf54e3c-6b64-4e66-941c-fcf5139d9437}</UniqueIdentifier>
     </Filter>
@@ -239,6 +242,14 @@
     <ClCompile Include="MapIslandCreatorSystem.cpp">
       <Filter>Game\Systems\Map</Filter>
     </ClCompile>
+
+    <ClCompile Include="..\..\..\Source\Game\Systems\SlerpRotationSystem.cpp">
+      <Filter>Game\Systems\Rotation</Filter>
+
+    <ClCompile Include="..\..\..\Source\Game\Logger\Logger.cpp">
+      <Filter>Game\Logger</Filter>
+
+    </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Network\ClientDatabase.cpp">
       <Filter>MasterServer</Filter>
     </ClCompile>
@@ -351,6 +362,12 @@
     </ClInclude>
     <ClInclude Include="MapIslandCreatorSystem.h">
       <Filter>Game\Systems\Map</Filter>
+    </ClInclude>
+
+    <ClInclude Include="..\..\..\Source\Game\Systems\SlerpRotationSystem.h">
+      <Filter>Game\Systems\Rotation</Filter>
+    <ClInclude Include="..\..\..\Source\Game\Logger\Logger.h">
+      <Filter>Game\Logger</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Network\ClientDatabase.h">
       <Filter>MasterServer</Filter>
@@ -554,6 +571,12 @@
     </None>
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_moveplayersystem.lua">
       <Filter>Scripting\Storaspel\Systems\Client Systems\Round Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_aisystem.lua">
+      <Filter>Scripting\Storaspel\Systems\Server Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_unitsystem.lua">
+      <Filter>Scripting\Storaspel\Systems\Server Systems</Filter>
     </None>
   </ItemGroup>
 </Project>

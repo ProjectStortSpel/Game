@@ -7,8 +7,6 @@ end
 
 StartUpSystem.Initialize = function(self)
 	self:SetName("Start Up System")
-	
-	print("Start Up System initialized!")
 end
 
 StartUpSystem.PostInitialize = function(self)

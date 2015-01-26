@@ -12,8 +12,6 @@ void MapIslandCreatorSystem::Initialize()
 
 	/*	Rendersystem wants Position, Scale, Rotation and Render	*/
 	AddComponentTypeToFilter("TileComp", ECSL::FilterType::Mandatory);
-
-	printf("MapIslandCreatorSystem initialized!\n");
 }
 
 void MapIslandCreatorSystem::Update(float dt)
