@@ -23,24 +23,26 @@ void SlerpRotationSystem::Update(float _dt)
 	
 	for (int i = 0; i < entities.size(); i++)
 	{
-		if (!NetworkInstance::GetServer()->IsRunning())
+		if (NetworkInstance::GetServer()->IsRunning())
 		{
+			float* time_data = (float*)GetComponent(entities[i], "SlerpRotation", "time");
 			float* from_data = (float*)GetComponent(entities[i], "SlerpRotation", "fromW");
 			float* to_data = (float*)GetComponent(entities[i], "SlerpRotation", "toW");
 
 			Quaternion q_from, q_to;
 
-			q_from.Rotate(glm::vec3(0, 1, 0), *from_data);
 			q_to.Rotate(glm::vec3(0, 1, 0), *to_data);
-		
+
+			q_from.Rotate(glm::vec3(0, 1, 0), *from_data);
+
 			q_to = q_from*q_to;
 
 			Quaternion current_rotation;
 
-			float* time_data = (float*)GetComponent(entities[i], "SlerpRotation", "time");
+			
 			glm::vec3 euler;
 
-			(*time_data) += _dt; 
+			(*time_data) += _dt;
 
 			if ((*time_data) > 1)
 			{
@@ -56,7 +58,7 @@ void SlerpRotationSystem::Update(float _dt)
 
 
 			float* temp = (float*)GetComponent(entities[i], "Rotation", "X");
-		
+
 			temp[0] = euler.x;
 			temp[1] = euler.y;
 			temp[2] = euler.z;
