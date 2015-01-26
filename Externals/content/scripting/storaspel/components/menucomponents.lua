@@ -20,6 +20,17 @@ OptionMenuElement.Name = "OptionMenuElement"
 OptionMenuElement.TableType = TableType.Map
 worldCreator:AddComponentType(OptionMenuElement)
 
+--	OptionMenu Component
+local RconMenu = ComponentType()
+RconMenu.Name = "RconMenu"
+RconMenu.TableType = TableType.Map
+worldCreator:AddComponentType(RconMenu)
+--	OptionMenuElement Component
+local RconMenuElement = ComponentType()
+RconMenuElement.Name = "RconMenuElement"
+RconMenuElement.TableType = TableType.Map
+worldCreator:AddComponentType(RconMenuElement)
+
 -- Menu ConsoleCommand
 local MenuConsoleCommand = ComponentType()
 MenuConsoleCommand.Name = "MenuConsoleCommand"

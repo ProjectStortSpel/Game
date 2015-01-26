@@ -20,7 +20,6 @@ void RotationSystem::Initialize()
 	m_rotationId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Rotation");
 	m_spinId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Spin");
 
-	printf("RenderSystem initialized!\n");
 }
 
 void RotationSystem::Update(float _dt)
