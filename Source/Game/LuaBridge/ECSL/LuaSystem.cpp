@@ -20,9 +20,9 @@ namespace LuaBridge
 		LuaEmbedder::EmbedClassFunction<LuaSystem>(L, "System", "EntityHasComponent", &LuaSystem::EntityHasComponent);
 		LuaEmbedder::EmbedClassFunction<LuaSystem>(L, "System", "InitializeNetworkEvents", &LuaSystem::InitializeNetworkEvents);
 
-		LuaEmbedder::EmbedClassFunction<LuaSystem>(L, "System", "SetUpdateTaskCount", &LuaSystem::SetUpdateTaskCount);
-		LuaEmbedder::EmbedClassFunction<LuaSystem>(L, "System", "SetEntitiesAddedTaskCount", &LuaSystem::SetEntitiesAddedTaskCount);
-		LuaEmbedder::EmbedClassFunction<LuaSystem>(L, "System", "SetEntitiesRemovedTaskCount", &LuaSystem::SetEntitiesRemovedTaskCount);
+		LuaEmbedder::EmbedClassFunction<LuaSystem>(L, "System", "UsingUpdate", &LuaSystem::UsingUpdate);
+		LuaEmbedder::EmbedClassFunction<LuaSystem>(L, "System", "UsingEntitiesAdded", &LuaSystem::UsingEntitiesAdded);
+		LuaEmbedder::EmbedClassFunction<LuaSystem>(L, "System", "UsingEntitiesRemoved", &LuaSystem::UsingEntitiesRemoved);
 
 		LuaEmbedder::EmbedClassFunction<LuaSystem>(L, "System", "SetName", &LuaSystem::SetName);
 
@@ -213,22 +213,19 @@ namespace LuaBridge
 		return 0;
 	}
 
-	int LuaSystem::SetUpdateTaskCount(lua_State* L)
+	int LuaSystem::UsingUpdate(lua_State* L)
 	{
-		int updateTaskCount = LuaEmbedder::PullInt(L, 1);
-		System::SetUpdateTaskCount(updateTaskCount);
+		System::SetUpdateTaskCount(1);
 		return 0;
 	}
-	int LuaSystem::SetEntitiesAddedTaskCount(lua_State* L)
+	int LuaSystem::UsingEntitiesAdded(lua_State* L)
 	{
-		int entitiesAddedTaskCount = LuaEmbedder::PullInt(L, 1);
-		System::SetEntitiesAddedTaskCount(entitiesAddedTaskCount);
+		System::SetEntitiesAddedTaskCount(1);
 		return 0;
 	}
-	int LuaSystem::SetEntitiesRemovedTaskCount(lua_State* L)
+	int LuaSystem::UsingEntitiesRemoved(lua_State* L)
 	{
-		int entitiesRemovedTaskCount = LuaEmbedder::PullInt(L, 1);
-		System::SetEntitiesRemovedTaskCount(entitiesRemovedTaskCount);
+		System::SetEntitiesRemovedTaskCount(1);
 		return 0;
 	}
 

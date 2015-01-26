@@ -2,9 +2,9 @@ ServerConnectSystem = System()
 
 ServerConnectSystem.Initialize = function(self)
 	self:SetName("ServerConnectSystem System");
-	self:SetUpdateTaskCount(1)
-	self:SetEntitiesAddedTaskCount(1)
-	self:SetEntitiesRemovedTaskCount(1)
+	self:UsingUpdate()
+	self:UsingEntitiesAdded()
+	self:UsingEntitiesRemoved()
 	
 	self:InitializeNetworkEvents();
 	

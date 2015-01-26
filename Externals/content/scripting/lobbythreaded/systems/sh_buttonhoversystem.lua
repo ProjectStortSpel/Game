@@ -3,9 +3,9 @@ ButtonHoverSystem.Scale = 1.1
 
 ButtonHoverSystem.Initialize = function(self)
 	self:SetName("ButtonHoverSystem")
-	self:SetUpdateTaskCount(1)
-	self:SetEntitiesAddedTaskCount(1)
-	self:SetEntitiesRemovedTaskCount(1)
+	self:UsingUpdate()
+	self:UsingEntitiesAdded()
+	self:UsingEntitiesRemoved()
 	self:AddComponentTypeToFilter("Scale", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("OnPickBoxHit", FilterType.Mandatory)
 	

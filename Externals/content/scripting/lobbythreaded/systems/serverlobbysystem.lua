@@ -5,9 +5,9 @@ ServerLobbySystem.m_maxConnections = 3;
 
 ServerLobbySystem.Initialize = function(self)
 	self:SetName("ServerLobbySystem System");
-	self:SetUpdateTaskCount(1)
-	self:SetEntitiesAddedTaskCount(1)
-	self:SetEntitiesRemovedTaskCount(1)
+	self:UsingUpdate()
+	self:UsingEntitiesAdded()
+	self:UsingEntitiesRemoved()
 
 	self:AddComponentTypeToFilter("Username", FilterType.Mandatory);
 	self:AddComponentTypeToFilter("NetConnection", FilterType.Mandatory);

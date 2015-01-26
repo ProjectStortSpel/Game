@@ -38,9 +38,9 @@ namespace LuaBridge
 
 	int InitializeNetworkEvents(lua_State* L);
 
-	int SetUpdateTaskCount(lua_State* L);
-	int SetEntitiesAddedTaskCount(lua_State* L);
-	int SetEntitiesRemovedTaskCount(lua_State* L);
+	int UsingUpdate(lua_State* L);
+	int UsingEntitiesAdded(lua_State* L);
+	int UsingEntitiesRemoved(lua_State* L);
 
 	void OnBannedFromServer(Network::NetConnection _nc, const char* _message);
 	void OnConnectedToServer(Network::NetConnection _nc, const char* _message);

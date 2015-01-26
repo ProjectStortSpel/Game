@@ -3,9 +3,9 @@ ClientLobbySystem = System()
 ClientLobbySystem.Initialize = function(self)
 	self:SetName("ClientLobbySystem System")
 	
-	self:SetUpdateTaskCount(1)
-	self:SetEntitiesAddedTaskCount(1)
-	self:SetEntitiesRemovedTaskCount(1)
+	self:UsingUpdate()
+	self:UsingEntitiesAdded()
+	self:UsingEntitiesRemoved()
 
 	Net.Receive("NewGame", self.NewGame);
 	
