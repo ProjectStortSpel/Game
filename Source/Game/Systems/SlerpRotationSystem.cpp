@@ -1,5 +1,5 @@
 #include "SlerpRotationSystem.h"
-
+#include "Game/NetworkInstance.h"
 
 SlerpRotationSystem::SlerpRotationSystem()
 {
@@ -20,46 +20,49 @@ void SlerpRotationSystem::Initialize()
 void SlerpRotationSystem::Update(float _dt)
 {
 	std::vector<unsigned int> entities = *GetEntities();
-
+	
 	for (int i = 0; i < entities.size(); i++)
 	{
-		float* from_data = (float*)GetComponent(entities[i], "SlerpRotation", "fromW");
-		float* to_data = (float*)GetComponent(entities[i], "SlerpRotation", "toW");
+		if (NetworkInstance::GetServer()->IsRunning())
+		{
+			float* from_data = (float*)GetComponent(entities[i], "SlerpRotation", "fromW");
+			float* to_data = (float*)GetComponent(entities[i], "SlerpRotation", "toW");
 
-		Quaternion q_from, q_to;
+			Quaternion q_from, q_to;
 
-		q_from.Rotate(glm::vec3(0, 1, 0), *from_data);
-		q_to.Rotate(glm::vec3(0, 1, 0), *to_data);
+			q_from.Rotate(glm::vec3(0, 1, 0), *from_data);
+			q_to.Rotate(glm::vec3(0, 1, 0), *to_data);
 		
-		q_to = q_from*q_to;
+			q_to = q_from*q_to;
 
-		Quaternion current_rotation;
+			Quaternion current_rotation;
 
-		float* time_data = (float*)GetComponent(entities[i], "SlerpRotation", "time");
-		glm::vec3 euler;
+			float* time_data = (float*)GetComponent(entities[i], "SlerpRotation", "time");
+			glm::vec3 euler;
 
-		(*time_data) += _dt; 
+			(*time_data) += _dt; 
 
-		if ((*time_data) > 1)
-		{
-			(*time_data) = 0;
-			RemoveComponentFrom("SlerpRotation", entities[i]);
-			euler = q_to.QuaternionToEuler();
+			if ((*time_data) > 1)
+			{
+				(*time_data) = 0;
+				RemoveComponentFrom("SlerpRotation", entities[i]);
+				euler = q_to.QuaternionToEuler();
+			}
+			else
+			{
+				q_from.SlerpQuaternion(current_rotation, &q_to, (*time_data));
+				euler = current_rotation.QuaternionToEuler();
+			}
+
+
+			float* temp = (float*)GetComponent(entities[i], "Rotation", "X");
+		
+			temp[0] = euler.x;
+			temp[1] = euler.y;
+			temp[2] = euler.z;
+
+			ComponentHasChanged(entities[i], m_rotationId);
 		}
-		else
-		{
-			q_from.SlerpQuaternion(current_rotation, &q_to, (*time_data));
-			euler = current_rotation.QuaternionToEuler();
-		}
-
-
-		float* temp = (float*)GetComponent(entities[i], "Rotation", "X");
-
-		temp[0] = euler.x;
-		temp[1] = euler.y;
-		temp[2] = euler.z;
-
-		ComponentHasChanged(entities[i], m_rotationId);
 	}
 }
 
