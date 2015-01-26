@@ -7,7 +7,7 @@ ClientLobbySystem.Initialize = function(self)
 	self:SetEntitiesAddedTaskCount(1)
 	self:SetEntitiesRemovedTaskCount(1)
 
-	Net.Receive("NewGame", ClientLobbySystem.NewGame);
+	Net.Receive("NewGame", self.NewGame);
 	
 	self:AddComponentTypeToFilter("Username", FilterType.Mandatory);
 	self:AddComponentTypeToFilter("NetConnection", FilterType.Mandatory);

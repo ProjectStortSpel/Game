@@ -98,6 +98,7 @@ namespace LuaEmbedder
   void EXPORT Quit();
   
   bool EXPORT Load(lua_State* L, const std::string& filepath);
+  bool EXPORT Preload(lua_State* L, const std::string& filepath);
   bool EXPORT CallFunction(lua_State* L, const std::string& name, int argumentCount = 0, const std::string& library = std::string());
   
   void EXPORT CollectGarbage(lua_State* L);
@@ -163,21 +164,21 @@ namespace LuaEmbedder
   #define ADD_OBJECT(luaState) \
     if (library.empty()) \
     { \
-      Luna<T>::push(L, className.c_str(), object); \
-      lua_setglobal(L, name.c_str()); \
+      Luna<T>::push(luaState, className.c_str(), object); \
+      lua_setglobal(luaState, name.c_str()); \
     } \
     else \
     { \
-      lua_getglobal(L, library.c_str()); \
-      if (lua_isnil(L, -1)) \
+      lua_getglobal(luaState, library.c_str()); \
+      if (lua_isnil(luaState, -1)) \
       { \
-	lua_pop(L, 1); \
-	luaL_newmetatable(L, library.c_str()); \
+	lua_pop(luaState, 1); \
+	luaL_newmetatable(luaState, library.c_str()); \
       } \
-      lua_pushstring(L, name.c_str()); \
-      Luna<T>::push(L, className.c_str(), object); \
-      lua_settable(L, -3); \
-      lua_setglobal(L, library.c_str()); \
+      lua_pushstring(luaState, name.c_str()); \
+      Luna<T>::push(luaState, className.c_str(), object); \
+      lua_settable(luaState, -3); \
+      lua_setglobal(luaState, library.c_str()); \
     }
   template<typename T>
   void EXPORT AddObject(lua_State* L, const std::string& className, T* object, const std::string& name, const std::string& library = std::string())
@@ -242,6 +243,11 @@ namespace LuaEmbedder
   bool EXPORT HasFunction(lua_State* L, T* object, const std::string& functionName)
   {
     return Luna<T>::HasFunction(object, functionName);
+  }
+  template<typename T>
+  void EXPORT CopyObject(lua_State* A, lua_State* B, const std::string& className, T* instance)
+  {
+    Luna<T>::Copy(A, B, className.c_str(), instance);
   }
 }
 
