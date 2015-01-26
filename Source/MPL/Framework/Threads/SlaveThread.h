@@ -8,7 +8,7 @@
 #include <string>
 #include "MPL/Framework/Tasks/Task.h"
 #include "MPL/Framework/Tasks/TaskPool.h"
-#include "MPL/Managers/Profiler.h"
+#include "MPL/Managers/ThreadLogger.h"
 
 /* THREADPROFILING must be defined to be able to get thread profiling information */
 #ifdef _DEBUG
@@ -38,7 +38,7 @@ namespace MPL
 		SDL_sem* m_sleepSem;
 		bool m_sleeping;
 		bool m_alive;
-		Profiler* m_profiler;
+		ThreadLogger* m_logger;
 		std::vector<SlaveThread*>* m_slaves;
 
 		static int BeginThreadLoop(void* _thread);

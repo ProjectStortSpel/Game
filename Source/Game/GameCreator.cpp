@@ -9,6 +9,7 @@
 #include "Systems/RenderRemoveSystem.h"
 #include "Systems/ResetChangedSystem.h"
 #include "Systems/PointlightSystem.h"
+#include "Profilers/ECSLProfiler.h"
 
 #include "NetworkInstance.h"
 #include "ECSL/ECSL.h"
@@ -305,11 +306,8 @@ void GameCreator::StartGame(int argc, char** argv)
 		m_inputCounter.Tick();
 
 		m_worldCounter.Reset();
-		//MPL::Profiler::GetInstance().CreateNewSession();
 		/*	Update world (systems, entities etc)	*/
 		m_world->Update(dt);
-		//MPL::LoggedSession* loggedSession = MPL::Profiler::GetInstance().PullSession();
-		//delete(loggedSession);
 		m_worldCounter.Tick();
 
 

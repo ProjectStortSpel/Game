@@ -1,46 +1,51 @@
-#include "Profiler.h"
+#include "ThreadLogger.h"
 
 #include "TaskManager.h"
 
 using namespace MPL;
 
-Profiler::Profiler()
+ThreadLogger::ThreadLogger()
 {
 	Initialize();
 }
 
-Profiler::~Profiler()
+ThreadLogger::~ThreadLogger()
 {
 	DeleteSession();
 }
 
-Profiler& Profiler::GetInstance()
+ThreadLogger& ThreadLogger::GetInstance()
 {
-	static Profiler* instance = new Profiler();
+	static ThreadLogger* instance = new ThreadLogger();
 	return *instance;
 }
 
-void Profiler::Initialize()
+void ThreadLogger::Initialize()
 {
 	m_frequency = SDL_GetPerformanceFrequency();
 	unsigned int threadCount = TaskManager::GetInstance().GetThreadCount();
 	m_currentSession = 0;
 }
 
-void Profiler::CreateNewSession()
+void ThreadLogger::CreateNewSession()
 {
-	unsigned int threadCount = TaskManager::GetInstance().GetThreadCount();
+	DeleteSession();
+
 	m_currentSession = new LoggedSession();
-	m_currentSession->threadLogs = new std::vector<std::vector<LoggedAction*>*>(threadCount);
-	for (unsigned int i = 0; i < threadCount; ++i)
+	m_currentSession->threadCount = TaskManager::GetInstance().GetThreadCount();
+	m_currentSession->threadLogs = new std::vector<std::vector<LoggedAction*>*>(m_currentSession->threadCount);
+	for (unsigned int i = 0; i < m_currentSession->threadCount; ++i)
 	{
 		(*m_currentSession->threadLogs)[i] = new std::vector<LoggedAction*>();
 	}
 	m_currentSession->sessionStartTime = Now();
 }
 
-LoggedSession* Profiler::PullSession()
+LoggedSession* ThreadLogger::PullSession()
 {
+	if (!m_currentSession)
+		return 0;
+
 	m_currentSession->sessionEndTime = Now();
 	m_currentSession->sessionDuration = Duration(m_currentSession->sessionEndTime, m_currentSession->sessionStartTime);
 	LoggedSession* currentSession = m_currentSession;
@@ -48,20 +53,19 @@ LoggedSession* Profiler::PullSession()
 	return currentSession;
 }
 
-void Profiler::AddNewAction(unsigned int _threadId, LoggedAction* _loggedAction)
+void ThreadLogger::AddNewAction(unsigned int _threadId, LoggedAction* _loggedAction)
 {
 	std::vector<LoggedAction*>* actions = (*m_currentSession->threadLogs)[_threadId];
-	/* Destroy the log if the max size is reached */
+	/* Ignore the action if the log is full */
 	if (actions->size() == LOG_MAX_SIZE)
 	{
-		DeleteSession();
-		CreateNewSession();
+		delete(_loggedAction);
+		return;
 	}
-	//actions->push_back(_loggedAction);
-	(*m_currentSession->threadLogs)[_threadId]->push_back(_loggedAction);
+	actions->push_back(_loggedAction);
 }
 
-void Profiler::DeleteSession()
+void ThreadLogger::DeleteSession()
 {
 	if (m_currentSession)
 	{
@@ -70,7 +74,7 @@ void Profiler::DeleteSession()
 	}
 }
 
-void Profiler::LogBeginWork(unsigned int _threadId)
+void ThreadLogger::LogBeginWork(unsigned int _threadId)
 {
 	if (!m_currentSession)
 		return;
@@ -87,7 +91,7 @@ void Profiler::LogBeginWork(unsigned int _threadId)
 	AddNewAction(_threadId, loggedAction);
 }
 
-void Profiler::LogWorkDone(unsigned int _threadId, const WorkItem* _workItem)
+void ThreadLogger::LogWorkDone(unsigned int _threadId, const WorkItem* _workItem)
 {
 	if (!m_currentSession)
 		return;
@@ -103,14 +107,14 @@ void Profiler::LogWorkDone(unsigned int _threadId, const WorkItem* _workItem)
 	AddNewAction(_threadId, loggedAction);
 }
 
-float Profiler::Duration(Uint64 _end, Uint64 _start)
+float ThreadLogger::Duration(Uint64 _end, Uint64 _start)
 {
 	Uint64 elapsedTime = _end - _start;
 	elapsedTime *= 1000000;
 	return (float)elapsedTime / m_frequency;
 }
 
-Uint64 Profiler::Now()
+Uint64 ThreadLogger::Now()
 {
 	return SDL_GetPerformanceCounter();
 }

@@ -87,7 +87,7 @@ void TaskManager::FinishAdd(TaskId _id)
 
 void TaskManager::WaitFor(TaskId _id)
 {
-	Profiler* profiler = &Profiler::GetInstance();
+	ThreadLogger* logger = &ThreadLogger::GetInstance();
 	unsigned int threadId = GetThreadCount() - 1;
 
 	while (!m_taskPool->IsTaskDone(_id))
@@ -96,9 +96,9 @@ void TaskManager::WaitFor(TaskId _id)
 		WorkItem* workItem = m_taskPool->FetchWork(fetchWorkStatus);
 		if (fetchWorkStatus == OK)
 		{
-			profiler->LogBeginWork(threadId);
+			logger->LogBeginWork(threadId);
 			workItem->Work(workItem->Data);
-			profiler->LogWorkDone(threadId, workItem);
+			logger->LogWorkDone(threadId, workItem);
 			WorkDoneStatus workDoneStatus = m_taskPool->WorkDone(workItem);
 			if (!workDoneStatus.OpenListEmpty && workDoneStatus.TaskCompleted)
 				WakeThreads();
