@@ -1,12 +1,8 @@
 OnPlayerConnectedSystem = System()
-OnPlayerConnectedSystem.NumPlayers = 0
-OnPlayerConnectedSystem.NumSpectators = 0
-OnPlayerConnectedSystem.MaxPlayers = 5
 OnPlayerConnectedSystem.PlayerId = 1
 
-
 OnPlayerConnectedSystem.Update = function(self, dt)
-
+	
 end
 
 OnPlayerConnectedSystem.Initialize = function(self)
@@ -15,16 +11,22 @@ OnPlayerConnectedSystem.Initialize = function(self)
 	
 	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("Player", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("PlayerCounter", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("IsSpectator", FilterType.Excluded)
-	
-	print("OnPlayerConnectedSystem initialized!")
 end
 
 OnPlayerConnectedSystem.PostInitialize = function(self)
+	
+	local playerCounter = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("PlayerCounter", playerCounter)
+	
+	-- TODO: Change MaxPlayers based on the map loaded
+	local maxPlayers = 5
+	world:SetComponent(playerCounter, "PlayerCounter", "MaxPlayers", maxPlayers)
+	world:SetComponent(playerCounter, "PlayerCounter", "Players", 0)
+	world:SetComponent(playerCounter, "PlayerCounter", "Spectators", 0)
 
-	self:AddConnectedPlayers()
-
-	print("OnPlayerConnectedSystem post initialized!")
+	self:AddConnectedPlayers(playerCounter, maxPlayers)
 end
 
 OnPlayerConnectedSystem.OnEntityAdded = function(self, entityId)
@@ -39,9 +41,12 @@ end
 OnPlayerConnectedSystem.OnPlayerConnected = function(self, _ip, _port, _message)
 
 	local addSpectator = false
-
-	if #self:GetEntities("GameRunning") > 0 then -- If the game is running
+	local counterEntities = self:GetEntities("PlayerCounter")
+	local counterComp = world:GetComponent(counterEntities[1], "PlayerCounter", 0)
+	local maxPlayers, noOfPlayers, noOfSpectators = counterComp:GetInt3()
 	
+	if #self:GetEntities("GameRunning") > 0 then -- If the game is running
+		
 		local playerFound = false
 		local entities = self:GetEntities()
 		
@@ -53,7 +58,7 @@ OnPlayerConnectedSystem.OnPlayerConnected = function(self, _ip, _port, _message)
 			if _ip == ip and _port == port then
 				world:CreateComponentAndAddTo("ActiveNetConnection", entities[i])
 				playerFound = true
-				print("Player recnnected")
+				print("Player reconnected")
 				return
 			end
 			
@@ -61,11 +66,11 @@ OnPlayerConnectedSystem.OnPlayerConnected = function(self, _ip, _port, _message)
 	
 		if not playerFound then
 			addSpectator = true
+			print("player not found")
 		end
 	
 	else -- If the game is not running yet
-	
-		if self.NumPlayers >= self.MaxPlayers then
+		if noOfPlayers >= maxPlayers then
 			addSpectator = true
 		end
 	
@@ -79,20 +84,21 @@ OnPlayerConnectedSystem.OnPlayerConnected = function(self, _ip, _port, _message)
 	
 	if addSpectator then
 	
-		local newName = "Spectator_" .. tostring(self.NumSpectators + 1)
+		local newName = "Spectator_" .. tostring(noOfSpectators + 1)
 		world:SetComponent(newPlayer, "PlayerName", "Name", newName);
 	
 	
 		world:CreateComponentAndAddTo("IsSpectator", newPlayer)
-		self.NumSpectators = self.NumSpectators + 1
+		self:CounterComponentChanged(1, "Spectators")
 		
 		print("Spectator_: " .. newPlayer .. " connected")
 	else
 	
 		local newName = "Player_" .. tostring(self.PlayerId)
 		world:SetComponent(newPlayer, "PlayerName", "Name", newName);
-	
-		self.NumPlayers = self.NumPlayers + 1
+		
+		self:CounterComponentChanged(1, "Players")
+		
 		self.PlayerId = self.PlayerId + 1
 		
 		print("Player_: " .. newPlayer .. " connected")
@@ -132,10 +138,10 @@ OnPlayerConnectedSystem.OnPlayerDisconnected = function(self, _ip, _port, _messa
 		
 		if isSpectator then
 			print("Spectator disconnected")
-			self.NumSpectators = self.NumSpectators - 1
+			self:CounterComponentChanged(-1, "Spectators")
 		else
 			print("Player disconnected")
-			self.NumPlayers = self.NumPlayers - 1
+			self:CounterComponentChanged(-1, "Players")
 		end
 	end
 	
@@ -171,30 +177,34 @@ OnPlayerConnectedSystem.OnPlayerTimedOut = function(self, _ip, _port, _message)
 		
 		if isSpectator then
 			print("Spectator timed out")
-			self.NumSpectators = self.NumSpectators - 1
+			self:CounterComponentChanged(-1, "Spectators")
 		else
 			print("Player timed out")
-			self.NumPlayers = self.NumPlayers - 1
+			self:CounterComponentChanged(-1, "Players")
 		end
 	end
 	
 end
 
-OnPlayerConnectedSystem.AddConnectedPlayers = function(self)
+OnPlayerConnectedSystem.AddConnectedPlayers = function(self, _counterEntity, _maxPlayers)
 	
 	local clients = { Net.ConnectedClients() }
-	
+	local maxPlayers = _maxPlayers
+	local noOfPlayers = 0
 
 	for i = 1, #clients, 2 do
 		
 		local ip = clients[i]
 		local port = clients[i+1]
 
-		if self.NumPlayers >= self.MaxPlayers then
+		if noOfPlayers >= maxPlayers then
 			Net.Kick(ip, port, "Server is full.")
 			return
 		end
-		self.NumPlayers = self.NumPlayers + 1
+		
+		noOfPlayers = noOfPlayers + 1
+		
+		
 		--	Hax new ID
 	
 		--	Create the new player
@@ -213,32 +223,14 @@ OnPlayerConnectedSystem.AddConnectedPlayers = function(self)
 		self.PlayerId = self.PlayerId + 1
 
 	end
-
+	world:SetComponent(_counterEntity, "PlayerCounter", "Players", noOfPlayers)
 end
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+OnPlayerConnectedSystem.CounterComponentChanged = function(self, _change, _component)
+	
+	local counterEntities = self:GetEntities("PlayerCounter")
+	local counterComp = world:GetComponent(counterEntities[1], "PlayerCounter", _component)
+	local number = counterComp:GetInt()
+	number = number + _change
+	world:SetComponent(counterEntities[1], "PlayerCounter", _component, number)
+end
