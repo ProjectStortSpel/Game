@@ -39,12 +39,14 @@ public:
 	void Log(unsigned int _groupIndex, LogSeverity _severity, const std::string& _message);
 	void ChangeFilterFor(unsigned int _groupIndex, bool _printInfo);
 
-	void DumpLog();
-
 private:
 	Logger();
 
+	std::string FixDateLength(unsigned int _dateValue);
 	std::string SeverityToString(LogSeverity _severity);
+	std::string GetTabs(std::string& _groupName);
+	void CreateFile();
+	void AppendFile(LogEntry& _logEntry);
 
 	void Trim(std::string& _str);
 	void TrimStart(std::string& _str);
@@ -56,10 +58,12 @@ private:
 	unsigned int m_loggerGroupId;
 
 	unsigned short m_longestGroupName;
+	std::string	m_logFileName;
 
 	SDL_mutex*	m_logMutex;
 
 	std::map<unsigned int, LogGroup*> m_logGroups;
+	std::vector<LogEntry>* m_dumpLogs;
 
 };
 #endif
