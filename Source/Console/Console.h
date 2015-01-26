@@ -71,7 +71,7 @@ namespace Console
 		ConsoleManager();
 		~ConsoleManager();
 		static ConsoleManager& GetInstance();
-
+		
 		void ExecuteCommandQueue();
 		void AddToCommandQueue(const char* _command);
 		void AddCommand(const char* _name, ConsoleHook _hook);
