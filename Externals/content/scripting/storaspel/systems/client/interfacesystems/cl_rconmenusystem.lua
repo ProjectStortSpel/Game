@@ -1,6 +1,6 @@
-GameMenuSystem = System()
+RconMenuSystem = System()
 
-GameMenuSystem.Update = function(self, dt)
+RconMenuSystem.Update = function(self, dt)
 	if Input.GetTouchState(0) == InputState.Released then
 
 		local pressedButtons = self:GetEntities("OnPickBoxHit")
@@ -26,47 +26,39 @@ GameMenuSystem.Update = function(self, dt)
 
 end
 
-GameMenuSystem.OnEntityAdded = function(self, entityId)
-	if world:EntityHasComponent(entityId, "GameMenu") then
+RconMenuSystem.OnEntityAdded = function(self, entityId)
+	if world:EntityHasComponent(entityId, "RconMenu") then
 		self:SpawnMenu()
 	end
 end
 
-GameMenuSystem.SpawnMenu = function(self)
-	local background = self:CreateElement("gamemenubackground", "quad", 0, -0, -3.1, 1.5, 2)
+RconMenuSystem.SpawnMenu = function(self)
+	local background = self:CreateElement("gamemenubackground", "quad", 0, -0, -3.1, 1.5, 1.5)
 		
 	local button = nil
-	button = self:CreateElement("rconreload", "quad", 0, 0.6, -3, 0.6, 0.3)
+	button = self:CreateElement("rconreload", "quad", 0, 0.2, -3, 0.6, 0.3)
 	self:AddConsoleCommandToButton("rcon reload", button)	
 	self:AddHoverSize(1.1, button)	
 		
-	button = self:CreateElement("rconstart", "quad", 0, 0.2, -3, 0.6, 0.3)
+	button = self:CreateElement("rconstart", "quad", 0, -0.2, -3, 0.6, 0.3)
 	self:AddConsoleCommandToButton("rcon start", button)
-	self:AddHoverSize(1.1, button)	
-	
-	button = self:CreateElement("lobby", "quad", 0, -0.2, -3, 0.6, 0.3)
-	self:AddConsoleCommandToButton("disconnect;gamemode lobby", button)
-	self:AddHoverSize(1.1, button)	
-
-	button = self:CreateElement("quit", "quad", 0, -0.6, -3, 0.6, 0.3)
-	self:AddConsoleCommandToButton("quit", button)
 	self:AddHoverSize(1.1, button)	
 end
 
-GameMenuSystem.RemoveMenu = function(self)
+RconMenuSystem.RemoveMenu = function(self)
 	local entities = self:GetEntities()
 	for i = 1, #entities do
 		world:KillEntity(entities[i])
 	end
 end
 
-GameMenuSystem.Initialize = function(self)
-	self:SetName("GameMenuSystem")
-	self:AddComponentTypeToFilter("GameMenu", FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter("GameMenuElement", FilterType.RequiresOneOf)
+RconMenuSystem.Initialize = function(self)
+	self:SetName("RconMenuSystem")
+	self:AddComponentTypeToFilter("RconMenu", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("RconMenuElement", FilterType.RequiresOneOf)
 end
 
-GameMenuSystem.CreateElement = function(self, object, folder, posx, posy, posz, scalex, scaley)
+RconMenuSystem.CreateElement = function(self, object, folder, posx, posy, posz, scalex, scaley)
 	local id = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("Model", id)
 	world:CreateComponentAndAddTo("Position", id)
@@ -74,7 +66,7 @@ GameMenuSystem.CreateElement = function(self, object, folder, posx, posy, posz, 
 	world:CreateComponentAndAddTo("Scale", id)
 	world:CreateComponentAndAddTo("PickBox", id)
 	
-	world:CreateComponentAndAddTo("GameMenuElement", id)
+	world:CreateComponentAndAddTo("RconMenuElement", id)
 	local model = self:GetComponent(id, "Model", 0)
 	model:SetModel(object, folder, 2)
 	local position = self:GetComponent(id, "Position", 0)
@@ -88,17 +80,17 @@ GameMenuSystem.CreateElement = function(self, object, folder, posx, posy, posz, 
 	return id	
 end
 
-GameMenuSystem.AddConsoleCommandToButton = function(self, command, button)
+RconMenuSystem.AddConsoleCommandToButton = function(self, command, button)
 	world:CreateComponentAndAddTo("MenuConsoleCommand", button)
 	world:GetComponent(button, "MenuConsoleCommand", "Command"):SetString(command)
 end
 
-GameMenuSystem.AddEntityCommandToButton = function(self, command, button)
+RconMenuSystem.AddEntityCommandToButton = function(self, command, button)
 	world:CreateComponentAndAddTo("MenuEntityCommand", button)
 	world:GetComponent(button, "MenuEntityCommand", "ComponentName"):SetString(command)
 end
 
-GameMenuSystem.AddHoverSize = function(self, deltascale, button)
+RconMenuSystem.AddHoverSize = function(self, deltascale, button)
 	local scale = self:GetComponent(button, "Scale", 0)
 	local sx, sy, sz = scale:GetFloat3()
 	world:CreateComponentAndAddTo("HoverSize", button)
@@ -107,6 +99,6 @@ GameMenuSystem.AddHoverSize = function(self, deltascale, button)
 end
 
 
-GameMenuSystem.PostInitialize = function(self)
+RconMenuSystem.PostInitialize = function(self)
 
 end
