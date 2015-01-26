@@ -129,9 +129,6 @@
     <Filter Include="Game\Logger">
       <UniqueIdentifier>{1638b47f-ddec-4aa8-b5ca-22cc9327d878}</UniqueIdentifier>
     </Filter>
-    <Filter Include="MasterServer">
-      <UniqueIdentifier>{faf54e3c-6b64-4e66-941c-fcf5139d9437}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\LuaBridge.cpp">
@@ -242,16 +239,14 @@
     <ClCompile Include="MapIslandCreatorSystem.cpp">
       <Filter>Game\Systems\Map</Filter>
     </ClCompile>
-
-    <ClCompile Include="..\..\..\Source\Game\Systems\SlerpRotationSystem.cpp">
-      <Filter>Game\Systems\Rotation</Filter>
-
     <ClCompile Include="..\..\..\Source\Game\Logger\Logger.cpp">
       <Filter>Game\Logger</Filter>
-
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Network\ClientDatabase.cpp">
-      <Filter>MasterServer</Filter>
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\SlerpRotationSystem.cpp">
+      <Filter>Game\Systems</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Systems\MasterServerSystem.cpp">
       <Filter>Game\Systems</Filter>
@@ -363,17 +358,17 @@
     <ClInclude Include="MapIslandCreatorSystem.h">
       <Filter>Game\Systems\Map</Filter>
     </ClInclude>
-
-    <ClInclude Include="..\..\..\Source\Game\Systems\SlerpRotationSystem.h">
-      <Filter>Game\Systems\Rotation</Filter>
     <ClInclude Include="..\..\..\Source\Game\Logger\Logger.h">
       <Filter>Game\Logger</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\Game\Network\ClientDatabase.h">
-      <Filter>MasterServer</Filter>
+    <ClInclude Include="..\..\..\Source\Game\Systems\SlerpRotationSystem.h">
+      <Filter>Game\Systems</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\MasterServerSystem.h">
       <Filter>Game\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Network\ClientDatabase.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

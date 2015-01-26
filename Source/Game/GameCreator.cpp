@@ -11,6 +11,7 @@
 #include "Systems/PointlightSystem.h"
 #include "Systems/DirectionalLightSystem.h"
 #include "Systems/SlerpRotationSystem.h"
+#include "Systems/MasterServerSystem.h"
 
 #include "Network/ClientDatabase.h"
 #include "NetworkInstance.h"
