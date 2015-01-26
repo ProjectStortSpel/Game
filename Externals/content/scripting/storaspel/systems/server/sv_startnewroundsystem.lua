@@ -6,7 +6,6 @@ StartNewRoundSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("UnitSelectedCards", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("Unit", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("NotifyStartNewRound", FilterType.RequiresOneOf)
-	print("StartNewRoundSystem initialized!")
 end
 
 StartNewRoundSystem.OnEntityAdded = function(self, entity)

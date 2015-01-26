@@ -6,8 +6,6 @@ VoidSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Unit", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("CheckVoid", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("Void", FilterType.RequiresOneOf)
-
-	print("VoidSystem initialized!")
 end
 
 VoidSystem.OnEntityAdded = function(self, entity)

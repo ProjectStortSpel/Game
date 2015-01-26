@@ -12,12 +12,10 @@ PlayersSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Player", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("ActiveNetConnection", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("IsSpectator", FilterType.Excluded)
-
-	print("Players Connected System initialized!")
 end
 
 PlayersSystem.OnEntityAdded = function(self, entityId)
-	print("Ny spelare!")
+	print("New Player!")
 	
 	local playerNumber
 	if #PlayersSystem.FreeSlots ~= 0 then

@@ -9,8 +9,6 @@ ServerConnectSystem.Initialize = function(self)
 	
 	self:AddComponentTypeToFilter("Username", FilterType.Mandatory);
 	self:AddComponentTypeToFilter("NetConnection", FilterType.Mandatory);
-	
-	print("ServerConnectSystem initialized!");
 end
 
 ServerConnectSystem.Update = function(self, dt)

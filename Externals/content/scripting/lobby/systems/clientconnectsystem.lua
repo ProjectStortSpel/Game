@@ -17,8 +17,6 @@ ClientConnectSystem.Initialize = function(self)
 	
 	self:AddComponentTypeToFilter("Username", FilterType.Mandatory);
 	self:AddComponentTypeToFilter("NetConnection", FilterType.Mandatory);
-	
-	print("ClientConnectSystem initialized!");
 end
 
 ClientConnectSystem.OnEntityAdded = function(self, entityId)

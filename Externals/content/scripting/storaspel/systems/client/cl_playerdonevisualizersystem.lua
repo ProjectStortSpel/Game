@@ -4,8 +4,6 @@ PlayerDoneVisualizer.Initialize = function(self)
 	self:SetName("Card position System")
 	self:AddComponentTypeToFilter("PickingDone", FilterType.Mandatory)	
 	self:AddComponentTypeToFilter("IsSpectator", FilterType.Excluded)	
-	
-	print("Player Done Visualizer initialized!")
 end
 
 PlayerDoneVisualizer.Update = function(self, dt)

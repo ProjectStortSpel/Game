@@ -107,8 +107,6 @@ MapSystem.PostInitialize = function(self)
 		end
 
 	end
-
-    print("Init map done!")
 end
 
 MapSystem.AddTile = function(self, posX, posZ, tiletype)
@@ -273,7 +271,6 @@ end
 
 MapSystem.TileIsVoid = function(self, posX, posY)
 
-	print ("Void", posX, posY)
 	return self:TileHasComponent("Void", posX, posY)
 end
 

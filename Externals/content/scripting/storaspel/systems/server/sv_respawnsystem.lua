@@ -5,8 +5,6 @@ RespawnSystem.Initialize = function(self)
 
 	self:AddComponentTypeToFilter("UnitDead", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("RespawnUnits", FilterType.RequiresOneOf)
-
-	print("RespawnSystem initialized!")
 end
 
 RespawnSystem.OnEntityAdded = function(self, entity)

@@ -10,8 +10,6 @@ ServerLobbySystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("NetConnection", FilterType.Mandatory);
 	
 	ServerLobbySystem.m_maxConnections = Net.MaxConnections();
-	
-	print("ServerLobbySystem initialized!");
 end
 
 ServerLobbySystem.Update = function(self, dt)

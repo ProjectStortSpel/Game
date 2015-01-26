@@ -14,6 +14,7 @@
 #include <map>
 #include <cstring>
 #include <queue>
+#include <string>
 
 
 namespace Console

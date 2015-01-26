@@ -4,8 +4,6 @@ TakeCardStepsFromUnitSystem.Initialize = function ( self )
 	self:SetName("TakeCardStepsFromUnitSystem")
 	self:AddComponentTypeToFilter("TakeCardStepsFromUnit", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("CardStep", FilterType.RequiresOneOf)
-
-	print("TakeCardStepsFromUnitSystem Initialized")
 end
 
 TakeCardStepsFromUnitSystem.OnEntityAdded = function(self, entityId)

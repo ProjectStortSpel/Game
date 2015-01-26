@@ -10,8 +10,6 @@ CreateSpawnpointSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("PlayerNumber", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Spawnpoint", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("IsSpectator", FilterType.Excluded)
-
-	print("CreateSpawnpointSystem initialized!")
 end
 
 CreateSpawnpointSystem.PostInitialize = function(self)

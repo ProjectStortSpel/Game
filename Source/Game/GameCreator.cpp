@@ -17,6 +17,8 @@
 
 #include "LuaBridge/ECSL/LuaSystem.h"
 
+#include "Logger/Logger.h"
+
 #include <iomanip>
 
 GameCreator::GameCreator() :
@@ -229,7 +231,10 @@ void GameCreator::StartGame(int argc, char** argv)
 	m_consoleManager.AddCommand("Start", std::bind(&GameCreator::ConsoleStartTemp, this, std::placeholders::_1, std::placeholders::_2));
 	
 	RunStartupCommands(argc, argv);
+    
+    //Console::ConsoleManager::GetInstance().AddToCommandQueue("connect 192.168.0.198");
 
+    
 	float maxDeltaTime = (float)(1.0f / 20.0f);
 	float bytesToMegaBytes = 1.f / (1024.f*1024.f);
 	bool showDebugInfo = false;

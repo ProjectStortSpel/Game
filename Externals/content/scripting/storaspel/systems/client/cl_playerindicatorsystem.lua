@@ -6,8 +6,6 @@ PlayerIndicatorSystem.Initialize = function ( self )
 	self:SetName("PlayerIndicatorSystem")
 
 	self:AddComponentTypeToFilter("PlayerIndicator", FilterType.Mandatory)
-
-	print("PlayerIndicatorSystem Initialized")
 end
 
 
