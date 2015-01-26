@@ -1,5 +1,6 @@
 #include "Quaternion.h"
 #define DELTA 0.0001f
+#define PI_Q 3.14159265359f
 #include <iostream>
 
 Quaternion::Quaternion()
@@ -16,39 +17,38 @@ Quaternion Quaternion::operator* (Quaternion q)
 	Quaternion q2 = q;
 	Quaternion ret_value;
 
-	ret_value.m_w = 
-			q1.m_w*q2.m_w
-		-	q1.m_x*q2.m_x
-		-	q1.m_y*q2.m_y
-		-	q1.m_z*q2.m_z;
+	ret_value.m_w =
+		q1.m_w*q2.m_w
+		- q1.m_x*q2.m_x
+		- q1.m_y*q2.m_y
+		- q1.m_z*q2.m_z;
 
-	ret_value.m_x = 
-			q1.m_w*q2.m_x
-		+	q1.m_x*q2.m_w
-		+	q1.m_y*q2.m_z
-		-	q1.m_z*q2.m_y;;
+	ret_value.m_x =
+		q1.m_w*q2.m_x
+		+ q1.m_x*q2.m_w
+		+ q1.m_y*q2.m_z
+		- q1.m_z*q2.m_y;;
 
 
-	ret_value.m_y = 
-			q1.m_w*q2.m_y
-		-	q1.m_z*q2.m_z
-		+	q1.m_y*q2.m_w
-		+	q1.m_z*q2.m_z;
+	ret_value.m_y =
+		q1.m_w*q2.m_y
+		- q1.m_z*q2.m_z
+		+ q1.m_y*q2.m_w
+		+ q1.m_z*q2.m_z;
 
-	ret_value.m_z = 
-			q1.m_w*q2.m_z
-		+	q1.m_x*q2.m_y
-		-	q1.m_y*q2.m_x
-		+	q1.m_z*q2.m_w;
+	ret_value.m_z =
+		q1.m_w*q2.m_z
+		+ q1.m_x*q2.m_y
+		- q1.m_y*q2.m_x
+		+ q1.m_z*q2.m_w;
 
 	return ret_value;
 }
 
-
-void Quaternion::Rotate( const glm::vec3 &vector, float w)
+void Quaternion::Rotate(const glm::vec3 &vector, float w)
 {
 	/* Stor the data as a Quaternion */
-	this->m_w = cosf(w/2);
+	this->m_w = cosf(w / 2);
 	this->m_x = vector.x * sinf(w / 2);
 	this->m_y = vector.y * sinf(w / 2);
 	this->m_z = vector.z * sinf(w / 2);
@@ -57,10 +57,10 @@ void Quaternion::Rotate( const glm::vec3 &vector, float w)
 void Quaternion::Normalize()
 {
 	float size = sqrtf(
-			this->m_w*this->m_w 
-		+	this->m_x*this->m_x 
-		+	this->m_y*this->m_y 
-		+	this->m_z*this->m_z);
+		this->m_w*this->m_w
+		+ this->m_x*this->m_x
+		+ this->m_y*this->m_y
+		+ this->m_z*this->m_z);
 
 	this->m_w /= size;
 	this->m_x /= size;
@@ -86,7 +86,7 @@ glm::mat4 Quaternion::QuaternionToMatrix()
 	xx2 = x * x2; xy2 = x * y2; xz2 = x * z2;
 	yy2 = y * y2; yz2 = y * z2; zz2 = z * z2;
 	wx2 = w * x2; wy2 = w * y2; wz2 = w * z2;
-	
+
 	ret_value[0][0] = 1.0f - (yy2 + zz2);	ret_value[0][1] = xy2 + wz2;			ret_value[0][2] = xz2 - wy2;			ret_value[0][3] = 0.0f;
 	ret_value[1][0] = xy2 - wz2;			ret_value[1][1] = 1.0f - (xx2 + zz2);	ret_value[1][2] = yz2 + wx2;			ret_value[1][3] = 0.0f;
 	ret_value[2][0] = xz2 + wy2;			ret_value[2][1] = yz2 - wx2;			ret_value[2][2] = 1.0f - (xx2 + yy2);	ret_value[2][3] = 0.0f;
@@ -97,7 +97,7 @@ glm::mat4 Quaternion::QuaternionToMatrix()
 
 void Quaternion::MatrixToQuaternion(const glm::mat4 &rotation_matrix)
 {
-	
+
 	float tr, s, q[4];
 	int i, j, k;
 	int nxt[3] = { 1, 2, 0 };
@@ -132,8 +132,8 @@ void Quaternion::MatrixToQuaternion(const glm::mat4 &rotation_matrix)
 		q[i] = s *0.5;
 
 		if (s != 0.0)
-		{ 
-			s = 0.5 / s; 
+		{
+			s = 0.5 / s;
 		}
 
 		q[3] = (rotation_matrix[j][k] - rotation_matrix[k][j])*s;
@@ -147,7 +147,7 @@ void Quaternion::MatrixToQuaternion(const glm::mat4 &rotation_matrix)
 	}
 }
 
-void Quaternion::EulerToQuaternion( float roll, float pitch, float yaw )
+void Quaternion::EulerToQuaternion(float roll, float pitch, float yaw)
 {
 
 	float cos_roll, cos_pitch, cos_yaw, sin_roll, sin_pitch, sin_yaw, cos_p_cos_y, sin_p_sin_y;
@@ -162,7 +162,7 @@ void Quaternion::EulerToQuaternion( float roll, float pitch, float yaw )
 
 	cos_p_cos_y = cos_pitch * cos_yaw;
 	sin_p_sin_y = sin_pitch * sin_yaw;
-	
+
 	this->m_w = cos_roll * cos_p_cos_y + sin_roll * sin_p_sin_y;
 	this->m_x = sin_roll * cos_p_cos_y - cos_roll * sin_p_sin_y;
 	this->m_y = cos_roll * sin_pitch * cos_yaw + sin_roll * cos_pitch * sin_yaw;
@@ -186,7 +186,7 @@ void Quaternion::SlerpQuaternion(Quaternion &result, Quaternion *target, float t
 		target1[2] = -target->m_z;
 		target1[3] = -target->m_w;
 	}
-	else  
+	else
 	{
 		target1[0] = target->m_x;
 		target1[1] = target->m_y;
@@ -194,14 +194,14 @@ void Quaternion::SlerpQuaternion(Quaternion &result, Quaternion *target, float t
 		target1[3] = target->m_w;
 	}
 
-	if ((1.0f - cosom) > DELTA) 
+	if ((1.0f - cosom) > DELTA)
 	{
 		omega = acos(cosom);
 		sinom = sin(omega);
 		scale0 = sin((1.0f - t) * omega) / sinom;
 		scale1 = sin(t * omega) / sinom;
 	}
-	else 
+	else
 	{
 		scale0 = 1.0f - t;
 		scale1 = t;
@@ -211,6 +211,22 @@ void Quaternion::SlerpQuaternion(Quaternion &result, Quaternion *target, float t
 	result.m_y = scale0 * from->m_y + scale1 * target1[1];
 	result.m_z = scale0 * from->m_z + scale1 * target1[2];
 	result.m_w = scale0 * from->m_w + scale1 * target1[3];
+}
+
+glm::vec3 Quaternion::QuaternionToEuler()
+{
+	glm::vec3 ret_value;
+
+	float sqw = this->m_w * this->m_w;
+	float sqx = this->m_x * this->m_x;
+	float sqy = this->m_y * this->m_y;
+	float sqz = this->m_z * this->m_z;
+
+	ret_value.z = atan2f(2.0f * (this->m_x*this->m_y + this->m_z*this->m_w), (sqx - sqy - sqz + sqw));
+	ret_value.x = atan2f(2.0f * (this->m_y*this->m_z + this->m_x*this->m_w), (-sqx - sqy + sqz + sqw));
+	ret_value.y = asinf(-2.0f * (this->m_x*this->m_z - this->m_y*this->m_w));
+
+	return ret_value;
 }
 
 Quaternion::~Quaternion()

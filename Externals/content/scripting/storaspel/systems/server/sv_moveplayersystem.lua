@@ -14,23 +14,32 @@ TurnAroundSystem.OnEntityAdded = function(self, entity)
 	x = x * -1
 	z = z * -1
 	dir:SetInt2(x, z)
-
+	local rot = world:GetComponent(entity, "Rotation", 0)
 	
+	local rot_x, rot_y, rot_z = rot:GetFloat3()
 
-	--rotate model
+	world:CreateComponentAndAddTo("SlerpRotation", entity)
+
 	local rotY = world:GetComponent(entity, "Rotation", "Y"):GetFloat()
 
+
+	print(rotY)
+
 	if	x == 0 and z == 1 then
+		world:GetComponent(entity, "SlerpRotation", "fromW"):SetFloat( math.pi )
 		rotY = 0
 	elseif  x == 0 and z == -1 then
+		world:GetComponent(entity, "SlerpRotation", "fromW"):SetFloat( 0 )
 		rotY = math.pi
 	elseif  x == 1 then		
+		world:GetComponent(entity, "SlerpRotation", "fromW"):SetFloat( -math.pi / 2 )
 		rotY = math.pi / 2
 	elseif  x == -1 then
+		world:GetComponent(entity, "SlerpRotation", "fromW"):SetFloat( math.pi / 2 )
 		rotY = -math.pi / 2 
 	end
 
-	world:GetComponent(entity, "Rotation", "Y"):SetFloat(rotY)
+	world:GetComponent(entity, "SlerpRotation", "toW"):SetFloat( math.pi )
 
 	world:RemoveComponentFrom("UnitTurnAround", entity)
 end
@@ -49,29 +58,38 @@ TurnLeftSystem.OnEntityAdded = function(self, entity)
 	
 	local dir = world:GetComponent(entity, "Direction", 0)
 	local rot = world:GetComponent(entity, "Rotation", 0)
+
+	local rot_x, rot_y, rot_z = rot:GetFloat3()
+
+	world:CreateComponentAndAddTo("SlerpRotation", entity)
+
 	local x, z = dir:GetInt2()
 
 	if	x == 0 and z == 1 then
+		world:GetComponent(entity, "SlerpRotation", "fromW"):SetFloat(0)
 		x = 1
 		z = 0
 		rotY = math.pi / 2
 	elseif  x == 0 and z == -1 then
+		world:GetComponent(entity, "SlerpRotation", "fromW"):SetFloat(math.pi)
 		x = -1
 		z = 0
 		rotY = -math.pi / 2
 	elseif  x == 1 then
+		world:GetComponent(entity, "SlerpRotation", "fromW"):SetFloat(math.pi / 2)
 		x = 0
 		z = -1
 		rotY = math.pi
 	elseif  x == -1 then
+		world:GetComponent(entity, "SlerpRotation", "fromW"):SetFloat(-math.pi / 2)
 		x = 0
 		z = 1
 		rotY = 0
 	end
-
-
+	
+	world:GetComponent(entity, "SlerpRotation", "toW"):SetFloat(math.pi/2)
+	
 	dir:SetInt2(x, z)
-	world:GetComponent(entity, "Rotation", "Y"):SetFloat(rotY)
 
 	world:RemoveComponentFrom("UnitTurnLeft", entity)
 
@@ -89,29 +107,33 @@ end
 TurnRightSystem.OnEntityAdded = function(self, entity)
 
 	local dir = world:GetComponent(entity, "Direction", 0)
+	world:CreateComponentAndAddTo("SlerpRotation", entity)
 	local x, z = dir:GetInt2()
 
 	if	x == 0 and z == 1 then
+		world:GetComponent(entity, "SlerpRotation", "fromW"):SetFloat(0)
 		x = -1
 		z = 0
 		rotY = -math.pi / 2
 	elseif  x == 0 and z == -1 then
+		world:GetComponent(entity, "SlerpRotation", "fromW"):SetFloat(math.pi)
 		x = 1
 		z = 0
 		rotY = math.pi / 2
 	elseif  x == 1 then
+		world:GetComponent(entity, "SlerpRotation", "fromW"):SetFloat(math.pi / 2)
 		x = 0
 		z = 1
 		rotY = 0
 	elseif  x == -1 then
+		world:GetComponent(entity, "SlerpRotation", "fromW"):SetFloat(-math.pi / 2)
 		x = 0
 		z = -1
 		rotY = math.pi
 	end
 
-
+	world:GetComponent(entity, "SlerpRotation", "toW"):SetFloat(-math.pi/2)
 	dir:SetInt2(x, z)
-	world:GetComponent(entity, "Rotation", "Y"):SetFloat(rotY)
 
 	world:RemoveComponentFrom("UnitTurnRight", entity)
 end

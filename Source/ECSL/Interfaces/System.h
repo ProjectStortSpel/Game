@@ -14,6 +14,7 @@ namespace ECSL
 		virtual ~System() = 0;
 
 		virtual void Update(float _dt) = 0;
+		virtual void PostInitialize() { };
 		virtual void Initialize() = 0;
 
 		virtual void OnEntityAdded(unsigned int _entityId) = 0;

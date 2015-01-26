@@ -12,19 +12,24 @@ end
 AddCardPickTimer.OnEntityAdded = function(self, entity)
 	
 	if world:EntityHasComponent(entity, "AddToPickingPhaseTimer") then
-	
+
 		local Timers = self:GetEntities("PickingPhaseTimer")
 		
 		if #Timers > 0 then
-			
+
 			local deltaTime = world:GetComponent(entity, "AddToPickingPhaseTimer", "Amount"):GetFloat()
-			local oldTime = world:GetComponent(Timers[1], "PickingPhaseTimer", "Amount"):GetFloat()
+			local oldTime = world:GetComponent(Timers[1], "PickingPhaseTimer", "Timer"):GetFloat()
+			local newTime = oldTime + deltaTime
 			
-			if oldTime - deltaTime > 10 then
-				world:GetComponent(Timers[1], "PickingPhaseTimer", "Timer"):SetFloat(oldTime - deltaTime)
-			elseif oldTime - deltaTime < 10 and oldTime > 10 then
-				world:GetComponent(Timers[1], "PickingPhaseTimer", "Timer"):SetFloat(10.0)
+			if newTime < 10 and oldTime > 10 then
+				newTime = 10
 			end
+			
+			world:GetComponent(Timers[1], "PickingPhaseTimer", "Timer"):SetFloat(newTime)
+			
+			local id = Net.StartPack("Client.SendPickingPhaseTimer")
+			Net.WriteFloat(id, newTime)
+			Net.Broadcast(id)
 		end
 		
 		world:KillEntity(entity)
@@ -47,9 +52,13 @@ SetCardPickTimer.OnEntityAdded = function(self, entity)
 		local Timers = self:GetEntities("PickingPhaseTimer")
 		
 		if #Timers > 0 then
-			
+		
 			local newTime = world:GetComponent(entity, "SetPickingPhaseTimer", "Amount"):GetFloat()
 			world:GetComponent(Timers[1], "PickingPhaseTimer", "Timer"):SetFloat(newTime)
+			
+			local id = Net.StartPack("Client.SendPickingPhaseTimer")
+			Net.WriteFloat(id, newTime)
+			Net.Broadcast(id)
 			
 		end
 		
@@ -62,6 +71,8 @@ end
 
 
 UpdateCardPickTimer = System()
+UpdateCardPickTimer.TimeLimit = 30.0
+
 UpdateCardPickTimer.Initialize = function(self)
 	self:SetName("UpdateCardPickTimer")
 
@@ -97,28 +108,15 @@ UpdateCardPickTimer.OnEntityAdded = function(self, entity)
 		end
 		
 		world:KillEntity(entity)
+		
+		
+		local newId = world:CreateNewEntity()
+		world:CreateComponentAndAddTo("PickingPhaseTimer", newId)
+		world:GetComponent(newId, "PickingPhaseTimer", "Timer"):SetFloat(self.TimeLimit)
+		
+		local id = Net.StartPack("Client.SendPickingPhaseTimer")
+		Net.WriteFloat(id, self.TimeLimit)
+		Net.Broadcast(id)
 	end
-	
-	--	Send time amount in message to all players
-	
-end
 
-
-CreateCardPickTimer = System()
-CreateCardPickTimer.TimeLimit = 300.0
-
-CreateCardPickTimer.Initialize = function(self)
-	self:SetName("CreateCardPickTimer")
-
-	self:AddComponentTypeToFilter("OnPickingPhase", FilterType.Mandatory)
-end
-
-CreateCardPickTimer.OnEntityAdded = function(self, entity)
-	
-	local newId = world:CreateNewEntity()
-	world:CreateComponentAndAddTo("PickingPhaseTimer", newId)
-	world:GetComponent(newId, "PickingPhaseTimer", "Timer"):SetFloat(self.TimeLimit)
-	
-	--	Send time amount in message to all players
-	
 end

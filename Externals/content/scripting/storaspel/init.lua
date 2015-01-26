@@ -30,6 +30,7 @@ if Server then
 	require "sv_onplayerconnected"
 	require "sv_playerssystem"
     require "sv_aisystem"
+	require "sv_unitsystem"
 	require "sv_givespawnlocation"
 	--require "sv_createspawnpointsystem"
 	require "sv_spawnsystem"
@@ -72,6 +73,7 @@ if Client then
 	require "cl_playerdonevisualizersystem"
 	--require "cl_givecardindexsystem"
 	require "cl_playerindicatorsystem"
+	require "cl_pickingtimersystem"
 
 	-- CARD SYSTEMS
 	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/client/cardsystems/?.lua"
@@ -134,6 +136,7 @@ if Server then
 	worldCreator:AddSystemToCurrentGroup(OnPlayerConnectedSystem)
 	worldCreator:AddSystemToCurrentGroup(PlayersSystem)
     worldCreator:AddSystemToCurrentGroup(AISystem)
+	worldCreator:AddSystemToCurrentGroup(UnitSystem)
 	worldCreator:AddSystemToCurrentGroup(GiveSpawnLocation)
 	--worldCreator:AddSystemToCurrentGroup(CreateSpawnpointSystem)
 	worldCreator:AddSystemToCurrentGroup(SpawnSystem)
@@ -171,7 +174,6 @@ if Server then
 	worldCreator:AddSystemToCurrentGroup(DirectionalLightSystem)
 	
 	--	Timer for picking phase
-	worldCreator:AddSystemToCurrentGroup(CreateCardPickTimer)
 	worldCreator:AddSystemToCurrentGroup(SetCardPickTimer)
 	worldCreator:AddSystemToCurrentGroup(AddCardPickTimer)
 	worldCreator:AddSystemToCurrentGroup(UpdateCardPickTimer)
@@ -194,6 +196,7 @@ if Client then
 	worldCreator:AddSystemToCurrentGroup(CardPrintSelectionSystem)
 	worldCreator:AddSystemToCurrentGroup(PlayerDoneVisualizer)
 	worldCreator:AddSystemToCurrentGroup(PlayerIndicatorSystem)
+	worldCreator:AddSystemToCurrentGroup(PickingTimerSystem)
 --worldCreator:AddSystemToCurrentGroup(ClientSendCardSystem)
 
 	worldCreator:AddSystemToCurrentGroup(NewCameraSystem)

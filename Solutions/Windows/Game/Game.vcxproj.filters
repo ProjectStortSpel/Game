@@ -242,6 +242,15 @@
     <ClCompile Include="..\..\..\Source\Game\Logger\Logger.cpp">
       <Filter>Game\Logger</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Network\ClientDatabase.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\SlerpRotationSystem.cpp">
+      <Filter>Game\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\MasterServerSystem.cpp">
+      <Filter>Game\Systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h">
@@ -351,6 +360,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Logger\Logger.h">
       <Filter>Game\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\SlerpRotationSystem.h">
+      <Filter>Game\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\MasterServerSystem.h">
+      <Filter>Game\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Network\ClientDatabase.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -550,6 +568,9 @@
       <Filter>Scripting\Storaspel\Systems\Client Systems\Round Systems</Filter>
     </None>
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_aisystem.lua">
+      <Filter>Scripting\Storaspel\Systems\Server Systems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_unitsystem.lua">
       <Filter>Scripting\Storaspel\Systems\Server Systems</Filter>
     </None>
   </ItemGroup>

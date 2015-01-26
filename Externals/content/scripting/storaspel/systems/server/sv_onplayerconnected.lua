@@ -11,7 +11,7 @@ OnPlayerConnectedSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("Player", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("PlayerCounter", FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter("IsSpectator", FilterType.Excluded)
+
 end
 
 OnPlayerConnectedSystem.PostInitialize = function(self)
@@ -111,6 +111,7 @@ OnPlayerConnectedSystem.OnPlayerDisconnected = function(self, _ip, _port, _messa
 	local foundPlayer = false
 	local isSpectator = false
 	
+	
 	for i = 1, #entities do
 		
 		local ip = self:GetComponent(entities[i], "NetConnection", "IpAddress"):GetString()
@@ -119,8 +120,11 @@ OnPlayerConnectedSystem.OnPlayerDisconnected = function(self, _ip, _port, _messa
 		if _ip == ip and _port == port then
 			foundPlayer = true
 			if #self:GetEntities("GameRunning") > 0 then
-				world:RemoveComponentFrom("ActiveNetConnection", entities[i])
+				--world:RemoveComponentFrom("ActiveNetConnection", entities[i])
+				print("KillEntity")
+				world:KillEntity(entities[i])		
 			else
+				print("KillEntity")
 				world:KillEntity(entities[i])		
 			end
 			

@@ -74,5 +74,6 @@
     <ClInclude Include="..\..\..\Source\Network\Packet.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\Network\Network.h" />
   </ItemGroup>
 </Project>

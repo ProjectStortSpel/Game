@@ -28,6 +28,10 @@ StartNewRoundSystem.OnEntityAdded = function(self, entity)
 			end
 		end
 
+		local newId = world:CreateNewEntity()
+		world:CreateComponentAndAddTo("AddToPickingPhaseTimer", newId)
+		world:GetComponent(newId, "AddToPickingPhaseTimer", "Amount"):SetFloat(-10)
+		
 		world:KillEntity(entity)
 
 	end
