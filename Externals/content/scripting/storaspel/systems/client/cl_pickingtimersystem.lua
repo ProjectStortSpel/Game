@@ -9,7 +9,6 @@ PickingTimerSystem.OnEntityAdded = function(self, entity)
 		
 		local newTime = self:GetComponent(entity, "SetPickingTimer", 0):GetFloat()
 		self.timer = newTime
-		print ("newTime!!!111: "..newTime)
 		world:KillEntity(entity)
 		
 	end
