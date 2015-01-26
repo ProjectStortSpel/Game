@@ -75,6 +75,13 @@ end
 GameInterfaceSystem.PostInitialize = function(self)
 	local menubutton = self:CreateElement("gamemenubutton", "quad", 3, -2, -4, 0.2, 0.2)
 	self:AddEntityCommandToButton("GameMenu", menubutton)
-	self:AddHoverSize(1.1, menubutton)
+	self:AddHoverSize(1.5, menubutton)
+	
+	local rconbutton = self:CreateElement("gamemenubutton", "quad", 3.4, -2, -4, 0.2, 0.2)
+	local rotation = self:GetComponent(rconbutton, "Rotation", 0)
+	rotation:SetFloat3(0, 0, 3.14)
+	self:AddEntityCommandToButton("RconMenu", rconbutton)
+	self:AddHoverSize(1.5, rconbutton)
+	
 	print("ButtonPressedSystem post initialized!")
 end

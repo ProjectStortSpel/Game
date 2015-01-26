@@ -126,6 +126,9 @@
     <Filter Include="Game\Systems\Map">
       <UniqueIdentifier>{6e376179-3445-48ae-a79e-a3865a17fdf9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Logger">
+      <UniqueIdentifier>{1638b47f-ddec-4aa8-b5ca-22cc9327d878}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\LuaBridge.cpp">
@@ -236,8 +239,13 @@
     <ClCompile Include="MapIslandCreatorSystem.cpp">
       <Filter>Game\Systems\Map</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="..\..\..\Source\Game\Systems\SlerpRotationSystem.cpp">
       <Filter>Game\Systems\Rotation</Filter>
+=======
+    <ClCompile Include="..\..\..\Source\Game\Logger\Logger.cpp">
+      <Filter>Game\Logger</Filter>
+>>>>>>> cd355fd3959bd7e6a2e4e50f4b2b7e76acdadafe
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -346,8 +354,13 @@
     <ClInclude Include="MapIslandCreatorSystem.h">
       <Filter>Game\Systems\Map</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="..\..\..\Source\Game\Systems\SlerpRotationSystem.h">
       <Filter>Game\Systems\Rotation</Filter>
+=======
+    <ClInclude Include="..\..\..\Source\Game\Logger\Logger.h">
+      <Filter>Game\Logger</Filter>
+>>>>>>> cd355fd3959bd7e6a2e4e50f4b2b7e76acdadafe
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

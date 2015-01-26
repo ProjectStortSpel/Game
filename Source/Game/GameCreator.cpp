@@ -17,6 +17,8 @@
 
 #include "LuaBridge/ECSL/LuaSystem.h"
 
+#include "Logger/Logger.h"
+
 #include <iomanip>
 
 GameCreator::GameCreator() :

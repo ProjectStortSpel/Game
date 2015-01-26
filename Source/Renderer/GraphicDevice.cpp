@@ -506,7 +506,7 @@ void GraphicDevice::ResizeWindow(int _width, int _height)
 bool GraphicDevice::InitSDLWindow()
 {
 	// WINDOW SETTINGS
-	unsigned int	Flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
+	unsigned int	Flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
 	const char*		Caption = "SDL Window";
 	int				PosX = 2;
 	int				PosY = 2;
