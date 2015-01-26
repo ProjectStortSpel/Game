@@ -280,9 +280,6 @@
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Renderer\LuaGraphicDevice.h">
       <Filter>Lua Bridge\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\Game\TextInput.h">
-      <Filter>Game</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\GameConsole.h">
       <Filter>Game</Filter>
     </ClInclude>
@@ -362,6 +359,9 @@
       <Filter>Game\Systems</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Network\ClientDatabase.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\TextInput.h">
       <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
