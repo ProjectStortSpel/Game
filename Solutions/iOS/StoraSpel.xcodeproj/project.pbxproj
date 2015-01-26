@@ -103,6 +103,7 @@
 		036562911A73168100F5A3BF /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 036562901A73168100F5A3BF /* AudioToolbox.framework */; };
 		036562931A73168900F5A3BF /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 036562921A73168900F5A3BF /* CoreMotion.framework */; };
 		03F45FB21A750E6700F8A27F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 03F45FB11A750E6700F8A27F /* Images.xcassets */; };
+		03F7AF5D1A765FEC00FB8F1D /* Logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03F7AF5B1A765FEC00FB8F1D /* Logger.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -294,6 +295,8 @@
 		036562951A7318DD00F5A3BF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = StoraSpel/Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		036562981A73191A00F5A3BF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = StoraSpel/Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		03F45FB11A750E6700F8A27F /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = StoraSpel/Images.xcassets; sourceTree = "<group>"; };
+		03F7AF5B1A765FEC00FB8F1D /* Logger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Logger.cpp; sourceTree = "<group>"; };
+		03F7AF5C1A765FEC00FB8F1D /* Logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logger.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -505,6 +508,7 @@
 		036561A21A73141B00F5A3BF /* Game */ = {
 			isa = PBXGroup;
 			children = (
+				03F7AF5A1A765FEC00FB8F1D /* Logger */,
 				036561A31A73141B00F5A3BF /* FrameCounter */,
 				036561A61A73141B00F5A3BF /* GameConsole.cpp */,
 				036561A71A73141B00F5A3BF /* GameConsole.h */,
@@ -784,6 +788,15 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
+		03F7AF5A1A765FEC00FB8F1D /* Logger */ = {
+			isa = PBXGroup;
+			children = (
+				03F7AF5B1A765FEC00FB8F1D /* Logger.cpp */,
+				03F7AF5C1A765FEC00FB8F1D /* Logger.h */,
+			);
+			path = Logger;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -902,6 +915,7 @@
 				0365625A1A73141B00F5A3BF /* RotationSystem.cpp in Sources */,
 				0365625C1A73141B00F5A3BF /* TextInput.cpp in Sources */,
 				036562491A73141B00F5A3BF /* LuaMatrix.cpp in Sources */,
+				03F7AF5D1A765FEC00FB8F1D /* Logger.cpp in Sources */,
 				0365622C1A73141B00F5A3BF /* ComponentTypeReader.cpp in Sources */,
 				036562521A73141B00F5A3BF /* CameraSystem.cpp in Sources */,
 				0365624B1A73141B00F5A3BF /* LuaCamera.cpp in Sources */,
@@ -994,7 +1008,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
