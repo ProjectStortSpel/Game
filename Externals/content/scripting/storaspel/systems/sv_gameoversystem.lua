@@ -5,8 +5,6 @@ GameOverSystem.Initialize = function(self)
 	self:SetName("GameOverSystem System")
 
 	self:AddComponentTypeToFilter("Unit", FilterType.Mandatory)
-
-	print("GameOverSystem initialized!")
 end
 
 GameOverSystem.Update = function(self, dt)

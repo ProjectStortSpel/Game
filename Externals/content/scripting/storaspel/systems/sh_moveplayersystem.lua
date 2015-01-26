@@ -7,8 +7,6 @@ TrueTestMoveSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("MapPosition",FilterType.Mandatory)
 	--self:AddComponentTypeToFilter("Unit", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Position",FilterType.Mandatory)
-		
-	print("TrueTestMoveSystem initialized!")
 
 end
 

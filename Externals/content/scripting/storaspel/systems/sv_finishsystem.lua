@@ -6,8 +6,6 @@ FinishSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Unit", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("Finishpoint", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("CheckFinishpoint", FilterType.RequiresOneOf)
-
-	print("FinishSystem initialized!")
 end
 
 FinishSystem.Update = function(self, dt)

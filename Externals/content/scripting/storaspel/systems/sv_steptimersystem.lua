@@ -5,8 +5,6 @@ StepTimerSystem.Initialize = function(self)
 	self:SetName("StepTimerSystem")
 	
 	self:AddComponentTypeToFilter("StepTimer", FilterType.Mandatory)
-		
-	print("StepTimerSystem initialized!")
 end
 
 StepTimerSystem.Update = function(self, dt)

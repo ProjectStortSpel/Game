@@ -4,8 +4,6 @@ TakeCardsFromPlayerSystem.Initialize = function ( self )
 	self:SetName("TakeCardsFromPlayerSystem")
 	self:AddComponentTypeToFilter("TakeCardsFromPlayer", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("DealtCard", FilterType.RequiresOneOf)
-
-	print("TakeCardsFromPlayerSystem Initialized")
 end
 
 TakeCardsFromPlayerSystem.OnEntityAdded = function(self, entityId)

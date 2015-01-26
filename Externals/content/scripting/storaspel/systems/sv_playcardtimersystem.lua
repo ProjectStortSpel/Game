@@ -6,8 +6,6 @@ PlayCardTimerSystem.Initialize = function(self)
 	self:SetName("PlayCardTimerSystem")
 	
 	self:AddComponentTypeToFilter("PlayCardTimer", FilterType.Mandatory)
-		
-	print("PlayCardTimerSystem initialized!")
 end
 
 PlayCardTimerSystem.Update = function(self, dt)

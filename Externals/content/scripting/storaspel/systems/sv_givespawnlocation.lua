@@ -10,8 +10,6 @@ GiveSpawnLocation.Initialize = function(self)
 	self:SetName("GiveSpawnLocation")
 	self:AddComponentTypeToFilter("NeedSpawnLocation", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("AvailableSpawnpoint", FilterType.RequiresOneOf)
-
-	print("GiveSpawnLocation initialized!")
 end
 
 GiveSpawnLocation.PostInitialize = function(self)
