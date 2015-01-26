@@ -40,7 +40,7 @@ CreateDeckSystem.CreateDeck = function (self)
 		
 		cardpriocomp:SetInt(prio)
 		
-		local rand = math.random(80, 89)
+		local rand = math.random(0, 89)
 		
 		if rand < 30 then
 			cardactioncomp:SetString("Forward")
