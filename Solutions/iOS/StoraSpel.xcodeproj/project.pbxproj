@@ -102,7 +102,7 @@
 		0365628F1A73167A00F5A3BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0365628E1A73167A00F5A3BF /* Foundation.framework */; };
 		036562911A73168100F5A3BF /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 036562901A73168100F5A3BF /* AudioToolbox.framework */; };
 		036562931A73168900F5A3BF /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 036562921A73168900F5A3BF /* CoreMotion.framework */; };
-		0365680A1A731A8800F5A3BF /* ResourcePath.mm in Sources */ = {isa = PBXBuildFile; fileRef = 036568091A731A8800F5A3BF /* ResourcePath.mm */; };
+		03F45FB21A750E6700F8A27F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 03F45FB11A750E6700F8A27F /* Images.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -293,8 +293,7 @@
 		036562921A73168900F5A3BF /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 		036562951A7318DD00F5A3BF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = StoraSpel/Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		036562981A73191A00F5A3BF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = StoraSpel/Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		036568091A731A8800F5A3BF /* ResourcePath.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourcePath.mm; sourceTree = "<group>"; };
-		0365680B1A731AA400F5A3BF /* ResourcePath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ResourcePath.h; sourceTree = "<group>"; };
+		03F45FB11A750E6700F8A27F /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = StoraSpel/Images.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -772,8 +771,6 @@
 				036561F61A73141B00F5A3BF /* Input */,
 				036562011A73141B00F5A3BF /* LuaEmbedder */,
 				036562071A73141B00F5A3BF /* Network */,
-				036568091A731A8800F5A3BF /* ResourcePath.mm */,
-				0365680B1A731AA400F5A3BF /* ResourcePath.h */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -781,6 +778,7 @@
 		0365629C1A7319A500F5A3BF /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				03F45FB11A750E6700F8A27F /* Images.xcassets */,
 				03244CCB1A7372C800D4E53B /* content */,
 			);
 			name = Resources;
@@ -844,6 +842,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				03F45FB21A750E6700F8A27F /* Images.xcassets in Resources */,
 				03244CCC1A7372C800D4E53B /* content in Resources */,
 				035C22B11A73B76300EE9624 /* Default-568h@2x.png in Resources */,
 			);
@@ -948,7 +947,6 @@
 				036562451A73141B00F5A3BF /* LuaFile.cpp in Sources */,
 				0365623E1A73141B00F5A3BF /* LuaComponent.cpp in Sources */,
 				0365625F1A73141B00F5A3BF /* Touch.cpp in Sources */,
-				0365680A1A731A8800F5A3BF /* ResourcePath.mm in Sources */,
 				036562651A73141B00F5A3BF /* ISocket.cpp in Sources */,
 				036562571A73141B00F5A3BF /* RenderRemoveSystem.cpp in Sources */,
 				036562251A73141B00F5A3BF /* ComponentType.cpp in Sources */,
@@ -1073,6 +1071,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				INFOPLIST_FILE = StoraSpel/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1081,6 +1080,7 @@
 					../../Externals/lib/iOS,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -1088,6 +1088,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					__ANDROID__,
 					__IOS__,
@@ -1100,6 +1101,7 @@
 					../../Externals/lib/iOS,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
