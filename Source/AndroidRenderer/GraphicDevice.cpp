@@ -152,13 +152,14 @@ void GraphicDevice::Render()
 			if (m_modelsViewspace[i].modelMatrix == NULL)
 				modelMatrix = glm::translate(glm::vec3(1));
 			else
-				modelMatrix = *m_modelsViewspace[i].modelMatrix;
+                modelMatrix = *m_modelsViewspace[i].modelMatrix;
+            
 
 			mat4 modelViewMatrix = modelMatrix;
-			m_forwardShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
+			m_viewspaceShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
 
 			mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-			m_forwardShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
+			m_viewspaceShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
 
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, m_modelsViewspace[i].texID);
@@ -600,6 +601,7 @@ void GraphicDevice::Clear()
   m_modelIDcounter = 0;
   
   m_modelsForward.clear();
+  m_modelsViewspace.clear();
 
   float **tmpPtr = new float*[1];
   BufferPointlights(0, tmpPtr);
