@@ -247,7 +247,7 @@ void GraphicDevice::Render()
 		}
 		
 		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, m_modelsDeferred[i].texID);
+		glBindTexture(GL_TEXTURE_2D, m_shadowMap->GetDepthTexHandle());
 
 		glActiveTexture(GL_TEXTURE2);
 		glBindTexture(GL_TEXTURE_2D, m_modelsDeferred[i].norID);
@@ -808,6 +808,7 @@ void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
 void GraphicDevice::CreateShadowMap()
 {
 	int resolution = 2048*2;
+	m_dirLightDirection = vec3(0.0, -1.0, 1.0);
 	vec3 midMap = vec3(8.0, 0.0, 8.0);
 	vec3 lightPos = midMap - (10.0f*normalize(m_dirLightDirection));
 	m_shadowMap = new ShadowMap(lightPos, lightPos + normalize(m_dirLightDirection), resolution);

@@ -1,4 +1,5 @@
 #include "SkyBox.h"
+#include "ShadowMap.h"
 
 SkyBox::SkyBox()
 { }

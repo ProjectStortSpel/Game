@@ -1,6 +1,8 @@
 #version 100
+#extension OES_fragment_precision_high : enable
+//#extension GL_OES_depth_texture : enable
 
-precision mediump float;
+precision highp float;
 
 varying vec3 Normal;
 varying vec3 Tan;
@@ -10,11 +12,16 @@ varying vec3 ViewPos;
 
 
 //Input textures
+uniform sampler2D ShadowDepthTex;
 uniform sampler2D diffuseTex;
 uniform sampler2D normalTex;
 uniform sampler2D specularTex;
 
+
 uniform mat4 ViewMatrix;
+uniform mat4 InvViewMatrix;
+uniform mat4 BiasMatrix;
+uniform mat4 ShadowViewProj;
 
 struct DirectionalLight {
 	vec3 Direction; // Light position in world coords.
@@ -56,13 +63,39 @@ void phongModelDirLight(out vec3 ambient, out vec3 diffuse, out vec3 spec)
 
 	if(diffuseFactor > 0.0)
 	{
+		// For shadows
+		vec4 worldPos = InvViewMatrix * vec4(ViewPos, 1.0);
+		vec4 shadowCoord = BiasMatrix * ShadowViewProj * worldPos;
+
+		float shadow = 1.0;
+		vec4 shadowCoordinateWdivide = shadowCoord / shadowCoord.w;
+		//shadowCoordinateWdivide.z -= 0.0005;
+		float distanceFromLight = texture2D(ShadowDepthTex, shadowCoordinateWdivide.st).z;
+		
+		if (shadowCoord.w > 0.0)
+	 		shadow = distanceFromLight < shadowCoordinateWdivide.z ? 0.0 : 1.0 ;
+
+		//shadow = float(distanceFromLight < shadowCoordinateWdivide.z);
+		/* Draw main scene - read and compare shadow map. */
+		//vec2 vfDepth = texture2DProj(ShadowDepthTex, shadowCoord).xy;
+		//float fDepth = (vfDepth.x * 10.0 + vfDepth.y);
+		///* Unpack the light distance. See how it is packed in the shadow.frag file. */
+		//float fLDepth = (10.0 - shadowCoord.z) + 0.1 - fDepth ;
+		//float shadow = 1.0;
+		//if(fDepth > 0.0 && fLDepth < 0.0)
+		//{
+		//	shadow = 0.0;
+		//	/* Make sure there is no specular effect on obscured fragments. */
+		//	//intensitySpecular = 0.0;
+		//}
+
 		// diffuse
-		diffuse = diffuseFactor * dirlight.Color * dirlight.Intensity.y;
+		diffuse = diffuseFactor * dirlight.Color * dirlight.Intensity.y * shadow;
 
 		// specular
 		vec3 v = reflect( lightVec, NmNormal );
 		float specFactor = pow( max( dot(v, E), 0.0 ), Material.Shininess );
-		spec = specFactor * dirlight.Color * dirlight.Intensity.z * Material.Ks;        
+		spec = specFactor * dirlight.Color * dirlight.Intensity.z * Material.Ks * shadow;        
 	}
 
 	return;
@@ -156,7 +189,7 @@ void main()
     
     gl_FragColor = vec4(ambient + diffuse, 1.0) * albedo_tex + vec4(spec, 0.0);
 	//gl_FragColor = vec4( (inverse(ViewMatrix) * vec4(Normal, 0.0)).xyz, 1.0);
-	//gl_FragColor = vec4(Normal, 1.0);
+	//gl_FragColor = albedo_tex; //vec4(Normal, 1.0);
     //gl_FragColor = vec4(ambient + diffuse, 1.0) * vec4(0.0, 0.0, 1.0, 1.0) + vec4(spec, 0.0); //albedo_tex;
 }
 

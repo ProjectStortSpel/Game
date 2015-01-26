@@ -46,6 +46,8 @@ bool GraphicDevice::Init()
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	if (!InitSkybox()) { ERRORMSG("INIT SKYBOX FAILED\n"); return false; }
+
+	CreateShadowMap();
 	
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
@@ -82,55 +84,125 @@ void GraphicDevice::Update(float _dt)
   //SDL_Log("FPS: %f", 1.0f/_dt);
 }
 
+void GraphicDevice::WriteShadowMapDepth()
+{
+	//------- Write shadow maps depths ----------
+	glBindFramebuffer(GL_FRAMEBUFFER, m_shadowMap->GetShadowFBOHandle());
+	glClear(GL_DEPTH_BUFFER_BIT);
+	glViewport(0, 0, m_shadowMap->GetResolution(), m_shadowMap->GetResolution());
+
+	m_shadowShader.UseProgram();
+
+	//glDisable(GL_CULL_FACE);
+	//glCullFace(GL_FRONT);
+	//glEnable(GL_POLYGON_OFFSET_FILL);
+	//glPolygonOffset(4.5, 18000.0);
+
+	//glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_2D, 0);
+
+	//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_shadowMap->GetDepthTexHandle(), 0);
+
+	mat4 shadowProjection = *m_shadowMap->GetProjectionMatrix();
+	mat4 shadowViewProj = shadowProjection * (*m_shadowMap->GetViewMatrix());
+
+	//Forward models
+	for (int i = 0; i < m_modelsForward.size(); i++)
+	{
+		if (m_modelsForward[i].active) // IS MODEL ACTIVE?
+		{
+			
+			mat4 modelMatrix;
+			if (m_modelsForward[i].modelMatrix == NULL)
+			{
+				modelMatrix = glm::translate(glm::vec3(1));
+				SDL_Log("model: %d has no model matrix", i);
+			}
+			else
+				modelMatrix = *m_modelsForward[i].modelMatrix;
+
+			mat4 mvp = shadowViewProj * modelMatrix;
+			m_shadowShader.SetUniVariable("MVP", mat4x4, &mvp);
+
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
+
+			m_modelsForward[i].bufferPtr->draw();
+			//glBindTexture(GL_TEXTURE_2D, 0);
+		}
+	}
+	//------------------------------------------------
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	//glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	//glDisable(GL_POLYGON_OFFSET_FILL);
+	//------------------------------
+}
+
 void GraphicDevice::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 
-	glViewport(0, 0, m_clientWidth, m_clientHeight);
-	
 	//--------Uniforms-------------------------------------------------------------------------
 	mat4 projectionMatrix = *m_camera->GetProjMatrix();
 	mat4 viewMatrix = *m_camera->GetViewMatrix();
 
-	//------FORWARD RENDERING--------------------------------------------
-	//glEnable(GL_BLEND);
-
-	m_forwardShader.UseProgram();
-	m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
-	m_forwardShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
-
-	for (int i = 0; i < m_modelsForward.size(); i++)
+	if (m_modelsForward.size() > 0)
 	{
-		if (m_modelsForward[i].active) // IS MODEL ACTIVE?
+		WriteShadowMapDepth();
+
+		glViewport(0, 0, m_clientWidth, m_clientHeight);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		//------FORWARD RENDERING--------------------------------------------
+		//glEnable(GL_BLEND);
+
+		m_forwardShader.UseProgram();
+		m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
+		m_forwardShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
+		glm::mat4 invViewMatrix = glm::inverse(viewMatrix);
+		m_forwardShader.SetUniVariable("InvViewMatrix", mat4x4, &invViewMatrix);
+
+		mat4 shadowVP = (*m_shadowMap->GetProjectionMatrix()) * (*m_shadowMap->GetViewMatrix());
+		m_forwardShader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, m_shadowMap->GetDepthTexHandle());
+
+		for (int i = 0; i < m_modelsForward.size(); i++)
 		{
-			mat4 modelMatrix;
-			if (m_modelsForward[i].modelMatrix == NULL)
-				modelMatrix = glm::translate(glm::vec3(1));
-			else
-				modelMatrix = *m_modelsForward[i].modelMatrix;
+			if (m_modelsForward[i].active) // IS MODEL ACTIVE?
+			{
+				mat4 modelMatrix;
+				if (m_modelsForward[i].modelMatrix == NULL)
+					modelMatrix = glm::translate(glm::vec3(1));
+				else
+					modelMatrix = *m_modelsForward[i].modelMatrix;
 
-			mat4 modelViewMatrix = viewMatrix * modelMatrix;
-			m_forwardShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
+				mat4 modelViewMatrix = viewMatrix * modelMatrix;
+				m_forwardShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
 
-			mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-			m_forwardShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
+				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
+				m_forwardShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
 
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, m_shadowMap->GetDepthTexHandle());
 
-			glActiveTexture(GL_TEXTURE2);
-			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].norID);
+				glActiveTexture(GL_TEXTURE2);
+				glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].norID);
 
-			glActiveTexture(GL_TEXTURE3);
-			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].speID);
+				glActiveTexture(GL_TEXTURE3);
+				glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].speID);
 
-			m_modelsForward[i].bufferPtr->draw();
-			glBindTexture(GL_TEXTURE_2D, 0);
+				m_modelsForward[i].bufferPtr->draw();
+				glBindTexture(GL_TEXTURE_2D, 0);
+			}
 		}
+		//-------------------------------------------------------------------------
 	}
-	//-------------------------------------------------------------------------
-
+	glViewport(0, 0, m_clientWidth, m_clientHeight);
 	glDisable(GL_CULL_FACE);
 	// DRAW SKYBOX
 	m_skyBoxShader.UseProgram();
@@ -155,10 +227,10 @@ void GraphicDevice::Render()
 				modelMatrix = *m_modelsViewspace[i].modelMatrix;
 
 			mat4 modelViewMatrix = modelMatrix;
-			m_forwardShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
+			m_viewspaceShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
 
 			mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-			m_forwardShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
+			m_viewspaceShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
 
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, m_modelsViewspace[i].texID);
@@ -173,7 +245,34 @@ void GraphicDevice::Render()
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 	}
+	if (m_modelsForward.size() > 0)
+	{
+		float positionData[] = {
+			-1.0, -1.0,
+			1.0, -1.0,
+			1.0, 1.0,
+			1.0, 1.0,
+			-1.0, 1.0,
+			-1.0, -1.0
+		};
 
+		m_fullscreen.UseProgram();
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, m_shadowMap->GetDepthTexHandle());
+
+		GLuint buf;
+		glGenBuffers(1, &buf);
+
+		glBindBuffer(GL_ARRAY_BUFFER, buf);
+		glBufferData(GL_ARRAY_BUFFER, 2 * 6 * sizeof(float), positionData, GL_STATIC_DRAW);
+
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
+		glEnableVertexAttribArray(0);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		glDeleteBuffers(1, &buf);
+	}
 	glUseProgram(0);
 	glEnable(GL_DEPTH_TEST);
 
@@ -262,6 +361,18 @@ bool GraphicDevice::InitShaders()
 	m_viewspaceShader.AddShader("content/shaders/AndroidViewspaceShaderFS.glsl", GL_FRAGMENT_SHADER);
 	m_viewspaceShader.FinalizeShaderProgram();
 
+	// ShadowShader geometry
+	m_shadowShader.InitShaderProgram();
+	m_shadowShader.AddShader("content/shaders/AndroidShadowShaderVS.glsl", GL_VERTEX_SHADER);
+	m_shadowShader.AddShader("content/shaders/AndroidShadowShaderFS.glsl", GL_FRAGMENT_SHADER);
+	m_shadowShader.FinalizeShaderProgram();
+
+	//m_fullscreen
+	m_fullscreen.InitShaderProgram();
+	m_fullscreen.AddShader("content/shaders/AndroidFullscreenVS.glsl", GL_VERTEX_SHADER);
+	m_fullscreen.AddShader("content/shaders/AndroidFullscreenFS.glsl", GL_FRAGMENT_SHADER);
+	m_fullscreen.FinalizeShaderProgram();
+
 	return true;
 }
 
@@ -302,6 +413,25 @@ void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
 	m_forwardShader.SetUniVariable("dirlight.Direction", vector3, &m_dirLightDirection);
 	m_forwardShader.SetUniVariable("dirlight.Intensity", vector3, &intens);
 	m_forwardShader.SetUniVariable("dirlight.Color", vector3, &color);
+
+	m_dirLightDirection = vec3(_lightPointer[0], _lightPointer[1], _lightPointer[2]);
+	m_shadowMap->UpdateViewMatrix(vec3(8.0f, 0.0f, 8.0f) - (10.0f*normalize(m_dirLightDirection)), vec3(8.0f, 0.0f, 8.0f));
+}
+
+void GraphicDevice::CreateShadowMap()
+{
+	int resolution = 2048;
+	m_dirLightDirection = vec3(0.0f, -1.0f, 1.0f);
+	vec3 midMap = vec3(8.0f, 0.0f, 8.0f);
+	vec3 lightPos = midMap - (10.0f*normalize(m_dirLightDirection));
+	m_shadowMap = new ShadowMap(lightPos, lightPos + normalize(m_dirLightDirection), resolution);
+	m_shadowMap->CreateShadowMapTexture(GL_TEXTURE0);
+
+	m_forwardShader.UseProgram();
+	m_forwardShader.SetUniVariable("BiasMatrix", mat4x4, m_shadowMap->GetBiasMatrix());
+	m_forwardShader.CheckUniformLocation("ShadowDepthTex", 0);
+	m_shadowShader.CheckUniformLocation("diffuseTex", 1);
+	m_fullscreen.CheckUniformLocation("sampler", 0);
 }
 
 bool GraphicDevice::RenderSimpleText(std::string _text, int _x, int _y)
