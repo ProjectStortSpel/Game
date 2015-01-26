@@ -50,17 +50,15 @@ int SlaveThread::ThreadLoop()
 		WorkItem* workItem = m_taskPool->FetchWork(fetchWorkStatus);
 		if (fetchWorkStatus == OK)
 		{
-			m_profiler->LogBeginWork(m_threadId);
+			//m_profiler->LogBeginWork(m_threadId);
 			workItem->Work(workItem->Data);
-			m_profiler->LogWorkDone(m_threadId, workItem);
+			//m_profiler->LogWorkDone(m_threadId, workItem);
 			WorkDoneStatus workDoneStatus = m_taskPool->WorkDone(workItem);
 			if (!workDoneStatus.OpenListEmpty && workDoneStatus.TaskCompleted)
 				WakeThreads();
 		}
 		else
 		{
-			if (fetchWorkStatus == EMPTY_OPEN_LIST) 
-				m_profiler->LogBeginHibernate(m_threadId);
 			Sleep();		
 		}
 	}
