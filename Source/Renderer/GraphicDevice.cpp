@@ -247,7 +247,7 @@ void GraphicDevice::Render()
 		}
 		
 		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, m_shadowMap->GetDepthTexHandle());
+		glBindTexture(GL_TEXTURE_2D, m_modelsDeferred[i].texID);
 
 		glActiveTexture(GL_TEXTURE2);
 		glBindTexture(GL_TEXTURE_2D, m_modelsDeferred[i].norID);
