@@ -50,12 +50,35 @@ ECSLStatistics::ECSLStatistics(unsigned int _threadCount)
 
 ECSLStatistics::~ECSLStatistics()
 {
+	delete(m_avgThreadEfficiency);
+	delete(m_minThreadEfficiency);
+	delete(m_maxThreadEfficiency);
+	delete(m_diffThreadEfficiency);
 
+	delete(m_avgThreadWorkTime);
+	delete(m_minThreadWorkTime);
+	delete(m_maxThreadWorkTime);
+	delete(m_diffThreadWorkTime);
+
+	delete(m_avgThreadOverheadTime);
+	delete(m_minThreadOverheadTime);
+	delete(m_maxThreadOverheadTime);
+	delete(m_diffThreadOverheadTime);
+
+	for (auto groupWorkItemStats : *m_workItemStats)
+	{
+		delete(groupWorkItemStats);
+	}
+	delete(m_workItemStats);
+
+	for (auto frame : *m_frames)
+		delete(frame);
+	delete(m_frames);
 }
 
 void ECSLStatistics::AddFrame(ECSLFrame* _frame)
 {
-	unsigned int frameCount = m_frames->size();
+	unsigned int frameCount = (unsigned int)m_frames->size();
 
 	float frameTime = _frame->GetFrameTime();
 	m_avgFrameTime = (m_avgFrameTime * frameCount + frameTime) / (frameCount + 1);
@@ -91,6 +114,40 @@ void ECSLStatistics::AddFrame(ECSLFrame* _frame)
 		m_minThreadWorkTime[i] = threadWorkTime < m_minThreadWorkTime[i] ? threadWorkTime : m_minThreadWorkTime[i];
 		m_maxThreadWorkTime[i] = threadWorkTime > m_maxThreadWorkTime[i] ? threadWorkTime : m_maxThreadWorkTime[i];
 		m_diffThreadEfficiency[i] = m_maxThreadWorkTime[i] - m_minThreadWorkTime[i];
+	}
+
+	float totalOverheadTime = _frame->GetTotalOverheadTime();
+	m_avgTotalOverheadTime = (m_avgTotalOverheadTime * frameCount + totalOverheadTime) / (frameCount + 1);
+	m_minTotalOverheadTime = totalOverheadTime < m_minTotalOverheadTime ? totalOverheadTime : m_minTotalOverheadTime;
+	m_maxTotalOverheadTime = totalOverheadTime > m_maxTotalOverheadTime ? totalOverheadTime : m_maxTotalOverheadTime;
+	m_diffTotalOverheadTime = m_maxTotalOverheadTime - m_minTotalOverheadTime;
+
+	for (unsigned int i = 0; i < m_threadCount; ++i)
+	{
+		float threadOverheadTime = _frame->GetThreadOverheadTime()[i];
+		m_avgThreadOverheadTime[i] = (m_avgThreadOverheadTime[i] * frameCount + threadOverheadTime) / (frameCount + 1);
+		m_minThreadOverheadTime[i] = threadOverheadTime < m_minThreadOverheadTime[i] ? threadOverheadTime : m_minThreadOverheadTime[i];
+		m_maxThreadOverheadTime[i] = threadOverheadTime > m_maxThreadOverheadTime[i] ? threadOverheadTime : m_maxThreadOverheadTime[i];
+		m_diffThreadEfficiency[i] = m_maxThreadOverheadTime[i] - m_minThreadOverheadTime[i];
+	}
+	
+	auto workItemStats = _frame->GetWorkItemStats();
+
+	if (!m_workItemStats)
+	{
+		m_workItemStats = new std::vector<std::unordered_map<std::string, ECSLFrame::WorkItemStatistic*>*>();
+	}
+
+	for (auto workItemStat : *workItemStats)
+	{
+		while (m_workItemStats->size() <= workItemStat->groupId)
+			m_workItemStats->push_back(new std::unordered_map<std::string, ECSLFrame::WorkItemStatistic*>());
+		std::unordered_map<std::string, ECSLFrame::WorkItemStatistic*>* groupStats = (*m_workItemStats)[workItemStat->groupId];
+		auto it = groupStats->find(*workItemStat->name);
+		if (it == groupStats->end())
+			(*groupStats)[*workItemStat->name] = workItemStat;
+		else
+			it->second->duration += workItemStat->duration;
 	}
 
 	m_frames->push_back(_frame);

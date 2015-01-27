@@ -4,6 +4,7 @@ using namespace Profilers;
 
 ECSLFrame::ECSLFrame(unsigned int _threadCount, float _frameTime)
 {
+	m_threadCount = _threadCount;
 	m_threadEfficiency = FloatArray(_threadCount);
 	m_threadOverheadTime = FloatArray(_threadCount);
 	m_threadWorkTime = FloatArray(_threadCount);
@@ -11,7 +12,7 @@ ECSLFrame::ECSLFrame(unsigned int _threadCount, float _frameTime)
 	m_totalEfficiency = 0.0f;
 	m_totalOverheadTime = 0.0f;
 	m_totalWorkTime = 0.0f;
-	m_workItemStats = new std::unordered_map<unsigned int, std::vector<WorkItemStatistic*>*>();
+	m_workItemStats = new std::vector<WorkItemStatistic*>();
 }
 
 ECSLFrame::~ECSLFrame()
@@ -19,12 +20,8 @@ ECSLFrame::~ECSLFrame()
 	delete(m_threadEfficiency);
 	delete(m_threadWorkTime);
 	delete(m_threadOverheadTime);
-	for (auto group : *m_workItemStats)
-	{
-		for (auto statistic : *group.second)
-			delete(statistic);
-		delete(group.second);
-	}
+	for (auto workItemStat : *m_workItemStats)
+		delete(workItemStat);
 	delete(m_workItemStats);
 }
 
@@ -45,12 +42,10 @@ void ECSLFrame::AddWorkItemStatistic(MPL::LoggedAction* _action, unsigned int _t
 	WorkItemStatistic* workItemStat = new WorkItemStatistic();
 	workItemStat->name = new std::string(*_action->workItem->ProfilerName);
 	workItemStat->groupId = _action->workItem->ProfilerGroupId;
+	workItemStat->threadId = _threadId;
 	workItemStat->duration = _action->duration;
 
-	auto it = m_workItemStats->find(workItemStat->groupId);
-	if (it == m_workItemStats->end())
-		(*m_workItemStats)[workItemStat->groupId] = new std::vector<WorkItemStatistic*>();
-	(*m_workItemStats)[workItemStat->groupId]->push_back(workItemStat);
+	m_workItemStats->push_back(workItemStat);
 }
 
 void ECSLFrame::CalculateEfficiencyData(unsigned int _threadCount)

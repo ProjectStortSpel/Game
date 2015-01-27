@@ -1,7 +1,7 @@
 ClientLobbySystem = System()
 
 ClientLobbySystem.Initialize = function(self)
-	self:SetName("ClientLobbySystem System")
+	self:SetName("ClientLobbySystem")
 	
 	self:UsingUpdate()
 	self:UsingEntitiesAdded()

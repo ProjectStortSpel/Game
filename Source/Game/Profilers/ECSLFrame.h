@@ -14,7 +14,11 @@ namespace Profilers
 		{
 			std::string* name;
 			unsigned int groupId;
+			unsigned int threadId;
 			float duration;
+
+			WorkItemStatistic() : name(0), groupId(0), duration(0.0f) { }
+			~WorkItemStatistic() { delete(name); }
 		};
 
 		ECSLFrame(unsigned int _threadCount, float _frameTime);
@@ -25,6 +29,7 @@ namespace Profilers
 		void AddWorkItemStatistic(MPL::LoggedAction* _action, unsigned int _threadId);
 		void CalculateEfficiencyData(unsigned int _threadCount);
 
+		unsigned int GetThreadCount() { return m_threadCount; }
 		float GetFrameTime() { return m_frameTime; }
 		float GetTotalEfficiency() { return m_totalEfficiency; }
 		float* GetThreadEfficiency() { return m_threadEfficiency; }
@@ -32,11 +37,12 @@ namespace Profilers
 		float* GetThreadWorkTime() { return m_threadWorkTime; }
 		float GetTotalOverheadTime() { return m_totalOverheadTime; }
 		float* GetThreadOverheadTime() { return m_threadOverheadTime; }
-		const std::unordered_map<unsigned int, std::vector<WorkItemStatistic*>*>* GetWorkItemStats() { return m_workItemStats; }
+		const std::vector<WorkItemStatistic*>* GetWorkItemStats() { return m_workItemStats; }
 
 		void SetFrameTime(float _frameTime) { m_frameTime = _frameTime; }
 
 	private:
+		unsigned int m_threadCount;
 		float m_frameTime;
 		float m_totalEfficiency;
 		float* m_threadEfficiency;
@@ -44,7 +50,7 @@ namespace Profilers
 		float* m_threadWorkTime;
 		float m_totalOverheadTime;
 		float* m_threadOverheadTime;
-		std::unordered_map<unsigned int, std::vector<WorkItemStatistic*>*>* m_workItemStats;
+		std::vector<WorkItemStatistic*>* m_workItemStats;
 	};
 
 	/* Create a float array with all values set to zero */

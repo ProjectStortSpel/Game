@@ -49,6 +49,9 @@ GameCreator::~GameCreator()
 	if (m_remoteConsole)
 		delete m_remoteConsole;
 
+	if (m_worldProfiler)
+		delete m_worldProfiler;
+
 	LuaEmbedder::Quit();
 
 	delete(&ECSL::ComponentTypeManager::GetInstance());
@@ -189,6 +192,8 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	for (std::vector<LuaBridge::LuaSystem*>::iterator it = systemsAdded->begin(); it != systemsAdded->end(); it++)
 	  (*it)->PostInitialize();
 	systemsAdded->clear();
+
+	m_worldProfiler = new Profilers::ECSLProfiler(m_graphics);
 }
 
 void GameCreator::RunStartupCommands(int argc, char** argv)
@@ -289,6 +294,8 @@ void GameCreator::StartGame(int argc, char** argv)
 		m_worldCounter.Reset();
 		/*	Update world (systems, entities etc)	*/
 		m_world->Update(dt);
+		m_worldProfiler->Update(dt);
+		m_worldProfiler->Render();
 		m_worldCounter.Tick();
 
 
@@ -307,6 +314,9 @@ void GameCreator::StartGame(int argc, char** argv)
 		/*	DEBUG PRINT INFO	*/
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_Z) == Input::InputState::PRESSED)
 			showDebugInfo = !showDebugInfo;
+
+		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_X) == Input::InputState::PRESSED)
+			m_worldProfiler->Toggle();
 
 		if (showDebugInfo)
 		{

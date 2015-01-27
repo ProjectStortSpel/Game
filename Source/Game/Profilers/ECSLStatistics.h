@@ -13,6 +13,45 @@ namespace Profilers
 
 		void AddFrame(ECSLFrame* _frame);
 
+		const float GetAvgFrameTime() { return m_avgFrameTime; }
+		const float GetMinFrameTime() { return m_minFrameTime; }
+		const float GetMaxFrameTime() { return m_maxFrameTime; }
+		const float GetDiffFrameTime() { return m_diffFrameTime; }
+
+		const float GetAvgTotalEfficiency() { return m_avgTotalEfficiency; }
+		const float GetMinTotalEfficiency() { return m_minTotalEfficiency; }
+		const float GetMaxTotalEfficiency() { return m_maxTotalEfficiency; }
+		const float GetDiffTotalEfficiency() { return m_diffTotalEfficiency; }
+
+		const float* GetAvgThreadEfficiency() { return m_avgThreadEfficiency; }
+		const float* GetMinThreadEfficiency() { return m_minThreadEfficiency; }
+		const float* GetMaxThreadEfficiency() { return m_maxThreadEfficiency; }
+		const float* GetDiffThreadEfficiency() { return m_diffThreadEfficiency; }
+
+		const float GetAvgTotalWorkTime() { return m_avgTotalWorkTime; }
+		const float GetMinTotalWorkTime() { return m_minTotalWorkTime; }
+		const float GetMaxTotalWorkTime() { return m_maxTotalWorkTime; }
+		const float GetDiffTotalWorkTime() { return m_diffTotalWorkTime; }
+
+		const float* GetAvgThreadWorkTime() { return m_avgThreadWorkTime; }
+		const float* GetMinThreadWorkTime() { return m_minThreadWorkTime; }
+		const float* GetMaxThreadWorkTime() { return m_maxThreadWorkTime; }
+		const float* GetDiffThreadWorkTime() { return m_diffThreadWorkTime; }
+
+		const float GetAvgTotalOverheadTime() { return m_avgTotalOverheadTime; }
+		const float GetMinTotalOverheadTime() { return m_minTotalOverheadTime; }
+		const float GetMaxTotalOverheadTime() { return m_maxTotalOverheadTime; }
+		const float GetDiffTotalOverheadTime() { return m_diffTotalOverheadTime; }
+
+		const float* GetAvgThreadOverheadTime() { return m_avgThreadOverheadTime; }
+		const float* GetMinThreadOverheadTime() { return m_minThreadOverheadTime; }
+		const float* GetMaxThreadOverheadTime() { return m_maxThreadOverheadTime; }
+		const float* GetDiffThreadOverheadTime() { return m_diffThreadOverheadTime; }
+
+		const std::vector<std::unordered_map<std::string, ECSLFrame::WorkItemStatistic*>*>* GetWorkItemStats() { return m_workItemStats; }
+
+		const std::vector<ECSLFrame*>* GetFrames() { return m_frames; }
+
 	private:
 		unsigned int m_threadCount;
 
@@ -51,7 +90,7 @@ namespace Profilers
 		float* m_maxThreadOverheadTime;
 		float* m_diffThreadOverheadTime;
 
-		std::vector<std::vector<ECSLFrame::WorkItemStatistic*>*>* m_workItemStats;
+		std::vector<std::unordered_map<std::string, ECSLFrame::WorkItemStatistic*>*>* m_workItemStats;
 
 		std::vector<ECSLFrame*>* m_frames;
 	};

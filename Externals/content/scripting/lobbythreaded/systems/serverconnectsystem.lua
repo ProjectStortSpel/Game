@@ -1,7 +1,7 @@
 ServerConnectSystem = System()
 
 ServerConnectSystem.Initialize = function(self)
-	self:SetName("ServerConnectSystem System");
+	self:SetName("ServerConnectSystem");
 	self:UsingUpdate()
 	self:UsingEntitiesAdded()
 	self:UsingEntitiesRemoved()
