@@ -122,6 +122,9 @@ bool ClientNetwork::Connect()
 		SDL_Log("Password: \"%s\"\n", m_password->c_str());
 	}
 
+	if (IsConnected())
+		Disconnect();
+
 	m_socket = ISocket::CreateSocket();
 
 	if (!*m_socketBound)

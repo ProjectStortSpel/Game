@@ -48,6 +48,7 @@ namespace LuaBridge
 
 		int Create()
 		{
+#ifndef __ANDROID__
 			std::string filepath = LuaEmbedder::PullString(1);
 
 			std::ostringstream ss;
@@ -57,11 +58,14 @@ namespace LuaBridge
 			SDL_RWops* file = SDL_RWFromFile(ss.str().c_str(), "w");
 			SDL_RWclose(file);
 
+#endif
 			return 0;
+            
 		}
 
 		int Append()
 		{
+#ifndef __ANDROID__
 			std::string filepath = LuaEmbedder::PullString(1);
 
 			std::ostringstream ss1;
@@ -73,12 +77,16 @@ namespace LuaBridge
 			std::ostringstream ss2;
 			ss2 << file;
 			LuaEmbedder::PushString(ss2.str().c_str());
-
+#else
+            LuaEmbedder::PushString("8008135");
+#endif
 			return 1;
+            
 		}
 
 		int Open()
 		{
+#ifndef __ANDROID__
 			std::string filepath = LuaEmbedder::PullString(1);
 
 			std::ostringstream ss1;
@@ -92,6 +100,10 @@ namespace LuaBridge
 			ss2 << file;
 			LuaEmbedder::PushString(ss2.str().c_str());
 
+#else
+            LuaEmbedder::PushString("8008135");
+#endif
+            
 			return 1;
 		}
 
@@ -103,6 +115,7 @@ namespace LuaBridge
 
 		int Close()
 		{
+#ifndef __ANDROID__
 			std::string sId = LuaEmbedder::PullString(1);
 			char* end;
 			//uint64_t id = strtoull(sId.c_str(), &end, 16);
@@ -110,12 +123,14 @@ namespace LuaBridge
 			SDL_RWops* file = (SDL_RWops*)strtoull(sId.c_str(), &end, 16);
 
 			SDL_RWclose(file);
+#endif
 			return 0;
 		}
 
 
 		int Read()
 		{
+#ifndef __ANDROID__
 			std::string sId = LuaEmbedder::PullString(1);
 			char* end;
 			SDL_RWops* file = (SDL_RWops*)strtoull(sId.c_str(), &end, 16);
@@ -135,12 +150,16 @@ namespace LuaBridge
 			delete data;
 
 			LuaEmbedder::PushString(text);
+#else
+            LuaEmbedder::PushString("");
+#endif
 
 			return 1;
 		}
 
 		int ReadLine()
 		{
+#ifndef __ANDROID__
 			std::string sId = LuaEmbedder::PullString(1);
 			char* end;
 			SDL_RWops* file = (SDL_RWops*)strtoull(sId.c_str(), &end, 16);
@@ -179,12 +198,15 @@ namespace LuaBridge
 			delete data;
 
 			LuaEmbedder::PushString(text);
-
+#else
+            LuaEmbedder::PushString("");
+#endif
 			return 1;
 		}
 
 		int Write()
 		{
+#ifndef __ANDROID__
 			std::string sId = LuaEmbedder::PullString(1);
 			char* end;
 			SDL_RWops* file = (SDL_RWops*)strtoull(sId.c_str(), &end, 16);
@@ -192,12 +214,13 @@ namespace LuaBridge
 			std::string text = LuaEmbedder::PullString(2);
 
 			SDL_RWwrite(file, text.c_str(), 1, text.size());
-			
+#endif
 			return 0;
 		}
 
 		int WriteLine()
 		{
+#ifndef __ANDROID__
 			/*std::string sId = LuaEmbedder::PullString(1);
 			char* end;
 			SDL_RWops* file = (SDL_RWops*)strtoull(sId.c_str(), &end, 16);
@@ -212,6 +235,7 @@ namespace LuaBridge
 
 			SDL_RWwrite(file, text.c_str(), 1, text.size());
 			*/
+#endif
 			return 0;
 		}
 

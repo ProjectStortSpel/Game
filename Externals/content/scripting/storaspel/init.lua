@@ -9,10 +9,12 @@ require "gamestatecomponents"
 
 require "lightcomponents"
 
-require "interfacecomponents"
 require "buttoncomponents"
 require "menucomponents"
 require "cameracomponents"
+
+package.path = package.path .. ";../../../Externals/content/scripting/shared/components/?.lua"
+require "interfacecomponents"
 
 -- Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/shared/?.lua"
@@ -20,13 +22,14 @@ require "sh_lerpsystem"
 require "sh_moveplayersystem"
 require "sh_movementsystem"
 require "sh_networkmessagessystem"
-package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/pickboxsystems/?.lua"
-require "sh_pickboxsystem"
+package.path = package.path .. ";../../../Externals/content/scripting/shared/systems/?.lua"
+require "pickboxsystem"
+require "hoversizesystem"
 
 if Server then
 	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/server/?.lua"
 	require "sv_mapsystem"
-	--require "sv_moveplayersystem"
+	require "sv_aicardpickingsystem"
 	require "sv_onplayerconnected"
 	require "sv_playerssystem"
     require "sv_aisystem"
@@ -96,7 +99,6 @@ if Client then
 	-- Interface SYSTEMS
 	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/client/interfacesystems/?.lua"
 	require "cl_gameinterfacesystem"
-	require "cl_hoversizesystem"
 	require "cl_gamemenusystem"
 	require "cl_optionmenusystem"
 	require "cl_rconmenusystem" -- ONLY FOR TESTING
@@ -132,7 +134,7 @@ if Server then
 	worldCreator:AddSystemToCurrentGroup(MapSystem)
 	--worldCreator:AddSystemToCurrentGroup(PlayerMovementSystem)
 
-
+	worldCreator:AddSystemToCurrentGroup(AiCardPickingSystem)
 	worldCreator:AddSystemToCurrentGroup(OnPlayerConnectedSystem)
 	worldCreator:AddSystemToCurrentGroup(PlayersSystem)
     worldCreator:AddSystemToCurrentGroup(AISystem)
