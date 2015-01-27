@@ -205,4 +205,5 @@ if Client then
 	worldCreator:AddSystemToCurrentGroup(GameMenuSystem)
 	worldCreator:AddSystemToCurrentGroup(RconMenuSystem)
 	worldCreator:AddSystemToCurrentGroup(OptionMenuSystem)
+	worldCreator:AddSystemToCurrentGroup(PickBoxSystem)
 end
