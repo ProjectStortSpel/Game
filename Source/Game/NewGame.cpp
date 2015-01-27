@@ -19,7 +19,7 @@ int main(int argc, char** argv)
 	newGame->InitializeGraphics();
 	newGame->InitializeInput();
 	newGame->InitializeNetwork();
-	newGame->InitializeWorld("lobbyNew");
+	newGame->InitializeWorld("lobby");
 
 
 	newGame->StartGame(argc, argv);
