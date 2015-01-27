@@ -140,7 +140,7 @@ void Logger::Log(const std::string& _groupName, LogSeverity _severity, const std
 
 void Logger::CreateFile()
 {
-#if !defined(__ANDROID__) && !defined(__IOS__)
+#if !defined(__ANDROID__) && !defined(__IOS__) && !defined(__OSX__)
 
 	/*	Create the file	*/
 	time_t		tTime = time(0);
@@ -174,7 +174,7 @@ void Logger::CreateFile()
 
 void Logger::AppendFile(LogEntry& _logEntry)
 {
-#if !defined(__ANDROID__) && !defined(__IOS__)
+#if !defined(__ANDROID__) && !defined(__IOS__) && !defined(__OSX__)
 
 	/*	Open the file	*/
 	char* end;

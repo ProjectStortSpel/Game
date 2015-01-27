@@ -117,7 +117,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		030E831E1A77F9880083ABD9 /* libSDL2_ttf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_ttf.a; path = ../../Externals/lib/OSX/libSDL2_ttf.a; sourceTree = "<group>"; };
 		030E83201A77FB060083ABD9 /* SDL2_ttf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_ttf.framework; path = ../../Externals/lib/OSX/SDL2_ttf.framework; sourceTree = "<group>"; };
 		030E83221A77FB7C0083ABD9 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../Externals/lib/OSX/SDL2.framework; sourceTree = "<group>"; };
 		0321DDF41A77E566000EE6A6 /* TextRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextRenderer.cpp; sourceTree = "<group>"; };
@@ -138,7 +137,6 @@
 		03783D121A779C4E00BA78D0 /* MasterServerSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MasterServerSystem.h; sourceTree = "<group>"; };
 		03783D141A779C6100BA78D0 /* SlerpRotationSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SlerpRotationSystem.cpp; sourceTree = "<group>"; };
 		03783D151A779C6100BA78D0 /* SlerpRotationSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlerpRotationSystem.h; sourceTree = "<group>"; };
-		03C1DB161A744FB200C1996E /* libSDL2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2.a; path = ../../Externals/lib/OSX/libSDL2.a; sourceTree = "<group>"; };
 		03C1DB191A74500900C1996E /* Buffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Buffer.cpp; sourceTree = "<group>"; };
 		03C1DB1A1A74500900C1996E /* Buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Buffer.h; sourceTree = "<group>"; };
 		03C1DB1B1A74500900C1996E /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Camera.cpp; sourceTree = "<group>"; };
@@ -359,8 +357,8 @@
 		0339F9861A74080300FA04DD /* Framework */ = {
 			isa = PBXGroup;
 			children = (
-				030E831E1A77F9880083ABD9 /* libSDL2_ttf.a */,
-				03C1DB161A744FB200C1996E /* libSDL2.a */,
+				030E83221A77FB7C0083ABD9 /* SDL2.framework */,
+				030E83201A77FB060083ABD9 /* SDL2_ttf.framework */,
 				0339F9921A740B5900FA04DD /* libGLEW.a */,
 				0339F9931A740B5900FA04DD /* libGLEW.dylib */,
 				0339F9941A740B5900FA04DD /* liblua.a */,
@@ -392,8 +390,6 @@
 		035C22B61A73D68600EE9624 = {
 			isa = PBXGroup;
 			children = (
-				030E83221A77FB7C0083ABD9 /* SDL2.framework */,
-				030E83201A77FB060083ABD9 /* SDL2_ttf.framework */,
 				0339F9871A74081400FA04DD /* Resources */,
 				0339F9861A74080300FA04DD /* Framework */,
 				035C24201A73D7F400EE9624 /* Source */,
