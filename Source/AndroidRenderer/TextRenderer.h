@@ -2,7 +2,9 @@
 #define TEXTRENDERER_H
 
 #include <SDL/SDL_ttf.h>
+#ifndef __IOS__
 #include <GLES2/gl2.h>
+#endif
 #include <SDL/SDL_opengles2.h>
 #include <string>
 #include <vector>
