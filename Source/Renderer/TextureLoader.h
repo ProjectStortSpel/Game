@@ -34,6 +34,18 @@ static unsigned int LoadTexture(const char* file, GLenum textureSlot, int &heigh
 	return texHandle;
 }
 
+static unsigned int LoadTexture(SDL_Surface* surface, GLenum textureSlot)
+{
+	GLuint texHandle;
+	glActiveTexture(textureSlot);
+	glGenTextures(1, &texHandle);
+	glBindTexture(GL_TEXTURE_2D, texHandle);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, GL_BGRA, GL_UNSIGNED_BYTE, surface->pixels);
+	return texHandle;
+}
+
 static unsigned int LoadCubeMap(const char* file, GLenum textureSlot, int &height, int &width)
 {
 	GLuint texHandle;

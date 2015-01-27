@@ -12,6 +12,7 @@ Author: Anders, Christian
 #include "Camera.h"
 #include "SkyBox.h"
 #include "ShadowMap.h"
+#include "TextRenderer.h"
 
 namespace Renderer
 {
@@ -124,7 +125,11 @@ namespace Renderer
 		void Clear();
 
 		int GetVRamUsage(){ return m_vramUsage; }
-
+		
+		int AddFont(const std::string& filepath, int size);
+		void CreateTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, glm::ivec2 size = glm::ivec2(-1, -1));
+		void CreateWrappedTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, unsigned int wrapLength, glm::ivec2 size = glm::ivec2(-1, -1));
+		
 	private:
 		bool InitSDLWindow();
 		bool InitGLEW();
@@ -216,6 +221,8 @@ namespace Renderer
 
 		// Random Vertors
 		GLuint m_randomVectors;
+		
+		TextRenderer m_sdlTextRenderer;
 	};
 }
 

@@ -94,7 +94,7 @@ void GraphicDevice::Render()
 	mat4 viewMatrix = *m_camera->GetViewMatrix();
 
 	//------FORWARD RENDERING--------------------------------------------
-	//glEnable(GL_BLEND);
+	glEnable(GL_BLEND);
 
 	m_forwardShader.UseProgram();
 	m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
