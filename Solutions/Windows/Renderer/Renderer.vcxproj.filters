@@ -60,6 +60,7 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Renderer\ModelExporter.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\TextRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp">
@@ -84,6 +85,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Renderer\ShadowMap.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Renderer\TextRenderer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

@@ -30,6 +30,7 @@
     <ClInclude Include="..\..\..\Source\Renderer\SimpleText.h" />
     <ClInclude Include="..\..\..\Source\Renderer\SkyBox.h" />
     <ClInclude Include="..\..\..\Source\Renderer\stdafx.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\TextRenderer.h" />
     <ClInclude Include="..\..\..\Source\Renderer\TextureLoader.h" />
   </ItemGroup>
   <ItemGroup>
@@ -41,6 +42,7 @@
     <ClCompile Include="..\..\..\Source\Renderer\ShadowMap.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\SimpleText.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\SkyBox.cpp" />
+    <ClCompile Include="..\..\..\Source\Renderer\TextRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\Externals\content\shaders\CSDeferredPass2.glsl" />
