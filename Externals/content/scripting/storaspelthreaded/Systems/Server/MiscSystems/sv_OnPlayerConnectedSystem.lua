@@ -5,7 +5,7 @@ OnPlayerConnectedSystem.Initialize = function(self)
 	--	Set Name
 	self:SetName("OnPlayerConnectedSystem")
 	
-	self:InitializeNetworkEvents()
+	--self:InitializeNetworkEvents()
 	
 	--	Set Filter
 	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf)

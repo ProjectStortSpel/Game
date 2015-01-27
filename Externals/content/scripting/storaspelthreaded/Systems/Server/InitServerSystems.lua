@@ -1,8 +1,8 @@
 
 --	Map Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/MapSystems/?.lua"
-require "sv_CreateMapSystem"
 require "sv_CheckpointSystem"
+require "sv_CreateMapSystem"
 require "sv_RiverSystem"
 require "sv_VoidSystem"
 
