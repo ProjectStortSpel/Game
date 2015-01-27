@@ -5,6 +5,7 @@ AiCardPickingSystem.Initialize = function(self)
 	
 	self:AddComponentTypeToFilter("AI", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("AICard", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("TileComp", FilterType.RequiresOneOf)
 	
 end
 
@@ -12,18 +13,29 @@ AiCardPickingSystem.Update = function(self, dt)
 	
 	local AIs = self:GetEntities("AI")
 	local Cards = self:GetEntities("AICard")
+	local CPtiles = self:GetEntities("Checkpoint")
 	
 	for i = 1, #AIs do
-	
-		local aisCard = {}
 		
+		local unitID = self:GetComponent(AIs[i], "UnitEntityId", 0):GetInt()
+		
+		local cpTargetNr = self:GetComponent(unitID, "TargetCheckpoint", 0):GetInt()
+		
+		-- vart AIn vill
+		local targetPositionX, targetPositionY = self:GetTargetPosition(CPtiles, cpTargetNr)
+		-- vart AIn är
+		local aiPositonX, aiPositonY = self:GetComponent(unitID, "MapPosition", 0):GetInt2()
+		
+		local aisCard = {}
+		local aiNr = self:GetComponent(AIs[i], "PlayerNumber", 0):GetInt()
 		for j = 1, #Cards do
 			local card = self:GetComponent(Cards[j], "DealtCard", 0)
 			local id = card:GetInt()
 			local plyNr = self:GetComponent(id, "PlayerNumber", 0):GetInt()
-			local aiNr = self:GetComponent(AIs[i], "PlayerNumber", 0):GetInt()
+			
 			
 			if plyNr == aiNr then
+				
 				aisCard[#aisCard+1] = Cards[j]
 			end
 		end
@@ -42,6 +54,20 @@ AiCardPickingSystem.Update = function(self, dt)
 	end
 end
 
+AiCardPickingSystem.GetTargetPosition = function(self, checkpointsTiles, cpTargetNr)
+	local targetPositionX, targetPositionY
+	
+	for k = 1, #checkpointsTiles do
+		local target = self:GetComponent(checkpointsTiles[k], "Checkpoint", 0):GetInt()
+		
+		if target == cpTargetNr then
+			targetPositionX, targetPositionY = self:GetComponent(checkpointsTiles[k], "MapPosition", 0):GetInt2()
+
+		end
+	end
+	
+	return targetPositionX, targetPositionY
+end
 AiCardPickingSystem.OnEntityAdded = function(self, entity)
 
 	if world:EntityHasComponent(entity, "DealtCard") then
@@ -50,8 +76,8 @@ AiCardPickingSystem.OnEntityAdded = function(self, entity)
 		local plynum = self:GetComponent(id, "PlayerNumber", 0):GetInt()
 		local card = self:GetComponent(entity, "CardAction", 0):GetString()
 		--print ( plynum .. " gets a " .. card .. " Card" )
-	else
-		--print( "Ai added")
+	elseif world:EntityHasComponent(entity, "TileComp") then
+	
 	end
 
 end
