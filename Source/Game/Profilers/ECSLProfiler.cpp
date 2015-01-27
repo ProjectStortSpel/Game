@@ -9,6 +9,9 @@ ECSLProfiler::ECSLProfiler(Renderer::GraphicDevice* _graphics)
 	ResetSwapTimer();
 	m_threadLogger = &MPL::ThreadLogger::GetInstance();
 	m_threadLogger->CreateNewSession();
+	
+	m_backBufferStatistics = nullptr;
+	m_frontBufferStatistics = nullptr;
 }
 
 ECSLProfiler::~ECSLProfiler()
