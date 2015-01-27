@@ -8,8 +8,8 @@ require "InitTemplates" -- Add more templates into InitTemplates.lua instead of 
 
 --	Client Systems
 if Client then
-	--package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Client/?.lua"
-	--require "InitClientSystems" -- Add more client systems into InitClientSystems.lua instead of here!
+	package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Client/?.lua"
+	require "InitClientSystems" -- Add more client systems into InitClientSystems.lua instead of here!
 end
 
 --	Server Systems
@@ -18,5 +18,5 @@ if Server then
 	require "InitServerSystems" -- Add more client systems into InitServerSystems.lua instead of here!
 end
 --	Shared Systems
---package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Shared/?.lua"
---require "InitSharedSystems" -- Add more client systems into InitSharedSystems.lua instead of here!
+package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Shared/?.lua"
+require "InitSharedSystems" -- Add more client systems into InitSharedSystems.lua instead of here!

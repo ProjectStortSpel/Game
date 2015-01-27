@@ -5,7 +5,7 @@ OnPlayerConnectedSystem.Initialize = function(self)
 	--	Set Name
 	self:SetName("OnPlayerConnectedSystem")
 	
-	
+	self:InitializeNetworkEvents()
 	
 	--	Set Filter
 	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf)
@@ -17,9 +17,7 @@ OnPlayerConnectedSystem.Initialize = function(self)
 end
 
 OnPlayerConnectedSystem.PostInitialize = function(self)
-	
-	--self:InitializeNetworkEvents()
-	
+
 	local playerCounter = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("PlayerCounter", playerCounter)
 	

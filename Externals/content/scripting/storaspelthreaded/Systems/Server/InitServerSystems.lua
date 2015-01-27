@@ -1,13 +1,13 @@
 
 --	Map Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/systems/Server/MapSystems/?.lua"
---require "sv_CreateMapSystem"
+require "sv_CreateMapSystem"
 require "sv_CheckpointSystem"
 require "sv_RiverSystem"
 require "sv_VoidSystem"
 
---worldCreator:AddSystemGroup()
---worldCreator:AddSystemToCurrentGroup(CreateMapSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(CreateMapSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CheckpointSystem)
 worldCreator:AddSystemGroup()
@@ -103,12 +103,17 @@ worldCreator:AddSystemToCurrentGroup(ActionTurnAroundSystem)
 --	Spawn Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/systems/Server/SpawnSystems/?.lua"
 require "sv_SpawnSystem"
+require "sv_GiveSpawnLocationSystem"
 require "sv_RespawnSystem"
 
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(GiveSpawnLocationSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(SpawnSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(RespawnSystem)
+
+
 
 --	Round Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/systems/Server/RoundSystems/?.lua"
@@ -126,11 +131,27 @@ worldCreator:AddSystemToCurrentGroup(NewStepSystem)
 
 --	Misc Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/systems/Server/MiscSystems/?.lua"
+require "sv_TotemPoleSystem"
 require "sv_GameOverSystem"
+require "sv_ServerLobbySystem"
+require "sv_LogStartSystem"
+require "sv_FinishSystem"
 require "sv_OnPlayerConnectedSystem"
 
 worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(TotemPoleSystem)
+
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(GameOverSystem)
+
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(LogStartSystem)
+
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(ServerLobbySystem)
+
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(FinishSystem)
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(OnPlayerConnectedSystem)

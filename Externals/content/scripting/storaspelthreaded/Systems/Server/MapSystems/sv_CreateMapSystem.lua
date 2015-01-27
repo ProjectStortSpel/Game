@@ -1,21 +1,21 @@
 CreateMapSystem = System()
-
+CreateMapSystem.entities = { }
+CreateMapSystem.waterTiles = { }
+CreateMapSystem.mapX = 0
+CreateMapSystem.mapY = 0
 CreateMapSystem.Initialize = function(self)
 
 	self:SetName("CreateMapSystem")
 	
 	self:AddComponentTypeToFilter("OnPickBoxHit", FilterType.Excluded)
 end
-CreateMapSystem.entities = { }
-CreateMapSystem.waterTiles = { }
-CreateMapSystem.mapX = 0
-CreateMapSystem.mapY = 0
+
 
 CreateMapSystem.PostInitialize = function(self)
 	local map
     self.mapX, self.mapY, map = File.LoadMap("content/maps/smallmap.txt")
     local posX, posZ
-		
+	
 	for x = 0, self.mapX+1 do
 		self:AddTile(x, 0, 111) -- 111 = void
 	end
@@ -41,7 +41,7 @@ CreateMapSystem.PostInitialize = function(self)
         end
 		self:AddTile(self.mapX + 1, y, 111) -- 111 = void
     end
-
+	
 	for i = 1, #finishList do
 
 		local comp = self:GetComponent(finishList[i], "Checkpoint", 0)
@@ -52,8 +52,6 @@ CreateMapSystem.PostInitialize = function(self)
 	for x = 0, self.mapX+1 do
 		self:AddTile(x, self.mapY+1, 111) -- 111 = void
 	end
-	
-	print("Water size: " .. #self.waterTiles)
 
 	for waterA = 1, #self.waterTiles do
 		
@@ -112,13 +110,11 @@ end
 CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 	
     local newTile = world:CreateNewEntity("Tile")
-	
     local posComp = self:GetComponent(newTile, "Position", 0)
     posComp:SetFloat3(posX, 0.0, posZ)
 	
     local mapPosComp = self:GetComponent(newTile, "MapPosition", 0)
     mapPosComp:SetInt2(posX, posZ)
-		
     if tiletype == 104 then -- 104 = h = hole
         world:CreateComponentAndAddTo("Void", newTile)
 		world:CreateComponentAndAddTo("Model", newTile)
@@ -177,7 +173,7 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		local comp = self:GetComponent(newTile, "Model", 0)
 		comp:SetModel("riverstraight", "riverstraight", 0)
 		
-		table.insert(self.waterTiles, newTile)
+		self.waterTiles[#self.waterTiles+1]=newTile
 
     elseif tiletype == 100 then -- 100 = d = water down
         world:CreateComponentAndAddTo("River", newTile)
@@ -189,7 +185,7 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		local comp = self:GetComponent(newTile, "Model", 0)
 		comp:SetModel("riverstraight", "riverstraight", 0)
 		
-		table.insert(self.waterTiles, newTile)
+		self.waterTiles[#self.waterTiles+1]=newTile
 
     elseif tiletype == 108 then -- 108 = l = water left
         world:CreateComponentAndAddTo("River", newTile)
@@ -199,7 +195,7 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		local comp = self:GetComponent(newTile, "Model", 0)
 		comp:SetModel("riverstraight", "riverstraight", 0)
 		
-		table.insert(self.waterTiles, newTile)
+		self.waterTiles[#self.waterTiles+1]=newTile
 		
     elseif tiletype == 114 then -- 114 = r = water right
         world:CreateComponentAndAddTo("River", newTile)
@@ -211,7 +207,7 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		local comp = self:GetComponent(newTile, "Model", 0)
 		comp:SetModel("riverstraight", "riverstraight", 0)
 		
-		table.insert(self.waterTiles, newTile)
+		self.waterTiles[#self.waterTiles+1]=newTile
 		
 	elseif tiletype == 115 then -- 115 = s = Available spawn point
 		world:CreateComponentAndAddTo("Model", newTile)
@@ -236,9 +232,8 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		--comp:SetModel("grass", "grass", 0)
 		
     end
-
-    table.insert(self.entities, newTile)
-
+	
+	self.entities[#self.entities+1]=newTile
 	return newTile
 end
 
