@@ -1,6 +1,6 @@
 
 --	Map Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/systems/Server/MapSystems/?.lua"
+package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/MapSystems/?.lua"
 require "sv_CreateMapSystem"
 require "sv_CheckpointSystem"
 require "sv_RiverSystem"
@@ -16,14 +16,14 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(VoidSystem)
 
 --	Light Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/systems/Server/LightSystems/?.lua"
+package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/LightSystems/?.lua"
 require "sv_DirectionalLightSystem"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(DirectionalLightSystem)
 
 --	Move Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/systems/Server/MoveSystems/?.lua"
+package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/MoveSystems/?.lua"
 require "sv_PostMoveSystem"
 require "sv_TestMoveSystem"
 require "sv_TestMoveRiverSystem"
@@ -54,7 +54,7 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(TurnRightSystem)
 
 --	Card Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/systems/Server/CardSystems/?.lua"
+package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/CardSystems/?.lua"
 require "sv_CreateDeckSystem"
 require "sv_AddCardPickTimerSystem"
 require "sv_SetCardPickTimerSystem"
@@ -86,7 +86,7 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(TakeCardsFromPlayerSystem)
 
 --	Card Action Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/systems/Server/CardActionSystems/?.lua"
+package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/CardActionSystems/?.lua"
 require "sv_ActionMoveForwardSystem"
 require "sv_ActionMoveBackwardSystem"
 require "sv_ActionTurnLeftSystem"
@@ -101,7 +101,7 @@ worldCreator:AddSystemToCurrentGroup(ActionTurnRightSystem)
 worldCreator:AddSystemToCurrentGroup(ActionTurnAroundSystem)
 
 --	Spawn Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/systems/Server/SpawnSystems/?.lua"
+package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/SpawnSystems/?.lua"
 require "sv_SpawnSystem"
 require "sv_GiveSpawnLocationSystem"
 require "sv_RespawnSystem"
@@ -116,7 +116,7 @@ worldCreator:AddSystemToCurrentGroup(RespawnSystem)
 
 
 --	Round Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/systems/Server/RoundSystems/?.lua"
+package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/RoundSystems/?.lua"
 require "sv_StepTimerSystem"
 require "sv_NewStepSystem"
 require "sv_StartNewRoundSystem"
@@ -130,7 +130,7 @@ worldCreator:AddSystemToCurrentGroup(NewStepSystem)
 
 
 --	Misc Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/systems/Server/MiscSystems/?.lua"
+package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/MiscSystems/?.lua"
 require "sv_TotemPoleSystem"
 require "sv_GameOverSystem"
 require "sv_ServerLobbySystem"
