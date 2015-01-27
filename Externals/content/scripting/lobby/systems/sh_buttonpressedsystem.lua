@@ -110,8 +110,8 @@ ButtonPressedSystem.PostInitialize = function(self)
 	--connect erik
 	button = self:CreateButton("erik", "quad", -2, 0)
     --self:AddCommandToButton("connect 193.11.184.2", button) -- macbook
-    --	self:AddCommandToButton("connect 194.47.150.5", button) -- skoldator
-	self:AddCommandToButton("connect 193.11.186.9", button) -- iphone 6
+    self:AddCommandToButton("connect 194.47.150.5", button) -- skoldator
+	--self:AddCommandToButton("connect 193.11.186.9", button) -- iphone 6
     --self:AddCommandToButton("connect 192.168.105.3", button) --iphone 4
     --self:AddCommandToButton("connect 95.195.214.238", button) -- test
 	
