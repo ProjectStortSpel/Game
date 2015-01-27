@@ -65,6 +65,8 @@ namespace Network
 		void SetMaxTimeOutCounter(int _max) { *m_maxIntervallCounter = _max; }
 		void SetMaxTimeOutIntervall(float _max) { *m_maxTimeOutIntervall = _max; }
 
+		
+
 	protected:
 		void TriggerEvent(std::vector<NetEvent>* _event, NetConnection& _connection, const char* _message);
 
