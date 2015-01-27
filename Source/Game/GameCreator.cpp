@@ -154,7 +154,7 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	worldCreator.AddLuaSystemToCurrentGroup(new CameraSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new ModelSystem(m_graphics));
 
-	worldCreator.AddLuaSystemToCurrentGroup(new MasterServerSystem());
+	//worldCreator.AddLuaSystemToCurrentGroup(new MasterServerSystem());
 
 	worldCreator.AddLuaSystemToCurrentGroup(new SyncEntitiesSystem());
 	//worldCreator.AddLuaSystemToCurrentGroup(new ReceivePacketSystem());

@@ -200,10 +200,11 @@ if Client then
 
 	worldCreator:AddSystemToCurrentGroup(NewCameraSystem)
 	
-	worldCreator:AddSystemToCurrentGroup(GameInterfaceSystem)
 	worldCreator:AddSystemToCurrentGroup(HoverSizeSystem)
+	worldCreator:AddSystemToCurrentGroup(PickBoxSystem)
+	
+	worldCreator:AddSystemToCurrentGroup(GameInterfaceSystem)
 	worldCreator:AddSystemToCurrentGroup(GameMenuSystem)
 	worldCreator:AddSystemToCurrentGroup(RconMenuSystem)
 	worldCreator:AddSystemToCurrentGroup(OptionMenuSystem)
-	worldCreator:AddSystemToCurrentGroup(PickBoxSystem)
 end
