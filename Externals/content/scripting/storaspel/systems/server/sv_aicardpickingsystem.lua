@@ -28,24 +28,20 @@ AiCardPickingSystem.Update = function(self, dt)
 				aisCard[#aisCard+1] = Cards[j]
 			end
 		end
+		
 		local pickedcards = {}
-		for i = 1, 5 do
+		for i = 1, #aisCard do
+			local cardNr = math.random(1, #aisCard)
 			
-			if #aisCard > 1 then
-				
-				local cardNr = math.random(1, #aisCard)
-				
-				local pickedcard = aisCard[cardNr]
-				
-				pickedcards[#pickedcards + 1] = pickedcard
-				
-				table.remove(aisCard, cardNr)
-			end
+			local pickedcard = aisCard[cardNr]
+			
+			pickedcards[#pickedcards + 1] = pickedcard
+			
+			table.remove(aisCard, cardNr)
 		end
 		
 		for i = 1, #aisCard do
 			local cardName = self:GetComponent(pickedcards[i], "CardAction", 0):GetString()
-			--print(cardName)
 		end
 		
 	end
