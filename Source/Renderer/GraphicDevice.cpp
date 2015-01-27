@@ -16,6 +16,8 @@ GraphicDevice::GraphicDevice()
 	m_vramUsage = 0;
 	m_debugTexFlag = 0;
 	m_nrOfLights = 0;
+	m_pointerToPointlights = 0;
+	m_pointerToDirectionalLights = 0;
 }
 
 GraphicDevice::~GraphicDevice()
@@ -105,6 +107,7 @@ void GraphicDevice::Update(float _dt)
 	m_glTimerValues.clear();
 
 	BufferModels();
+	BufferLightsToGPU();
 }
 
 void GraphicDevice::WriteShadowMapDepth()
@@ -771,7 +774,7 @@ bool GraphicDevice::InitLightBuffers()
 
 void GraphicDevice::BufferPointlights(int _nrOfLights, float **_lightPointers)
 {
-	m_vramUsage -= m_nrOfLights*10*sizeof(float);
+	
 	if (_nrOfLights == 0)
 	{
 		_nrOfLights = 1;
@@ -779,32 +782,52 @@ void GraphicDevice::BufferPointlights(int _nrOfLights, float **_lightPointers)
 	}
 	m_nrOfLights = _nrOfLights;
 
-	float *pointlight_data = new float[_nrOfLights * 10];
 
-	for (int i = 0; i < _nrOfLights; i++)
-	{
-		memcpy(&pointlight_data[10 * i], _lightPointers[i], 10 * sizeof(float));
-	}
-
-	int point_light_data_size = 10 * _nrOfLights * sizeof(float);
-
-	glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer, 0, point_light_data_size);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, point_light_data_size, pointlight_data, GL_STATIC_DRAW);
-	m_vramUsage += m_nrOfLights*10*sizeof(float);
-
-	delete pointlight_data;
 }
 
 void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
 {
 	if (_lightPointer == 0)
-		_lightPointer = &m_lightDefaults[0];
+		m_pointerToDirectionalLights = &m_lightDefaults[0];
+	else
+		m_pointerToDirectionalLights = _lightPointer;
+}
 
-	glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer, 0, 9 * sizeof(float));
-	glBufferData(GL_SHADER_STORAGE_BUFFER, 9 * sizeof(float), _lightPointer, GL_STATIC_DRAW);
+void GraphicDevice::BufferLightsToGPU()
+{
+	if (m_pointerToPointlights)
+	{
+		m_vramUsage -= m_numberOfPointlights * 10 * sizeof(float);
+		m_nrOfLights = m_numberOfPointlights;
+		float *pointlight_data = new float[m_numberOfPointlights * 10];
 
-	m_dirLightDirection = vec3(_lightPointer[0], _lightPointer[1], _lightPointer[2]);
-	m_shadowMap->UpdateViewMatrix(vec3(8.0f, 0.0f, 8.0f) - (10.0f*normalize(m_dirLightDirection)), vec3(8.0f, 0.0f, 8.0f));
+		for (int i = 0; i < m_numberOfPointlights; i++)
+		{
+			memcpy(&pointlight_data[10 * i], m_pointerToPointlights[i], 10 * sizeof(float));
+		}
+
+		int point_light_data_size = 10 * m_numberOfPointlights * sizeof(float);
+
+		glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer, 0, point_light_data_size);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, point_light_data_size, pointlight_data, GL_STATIC_DRAW);
+		m_vramUsage += m_numberOfPointlights * 10 * sizeof(float);
+
+		delete pointlight_data;
+		m_pointerToPointlights = 0;
+	}
+
+
+	if (m_pointerToDirectionalLights)
+	{
+		glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer, 0, 9 * sizeof(float));
+		glBufferData(GL_SHADER_STORAGE_BUFFER, 9 * sizeof(float), m_pointerToDirectionalLights, GL_STATIC_DRAW);
+
+		m_dirLightDirection = vec3(m_pointerToDirectionalLights[0], m_pointerToDirectionalLights[1], m_pointerToDirectionalLights[2]);
+		m_shadowMap->UpdateViewMatrix(vec3(8.0f, 0.0f, 8.0f) - (10.0f*normalize(m_dirLightDirection)), vec3(8.0f, 0.0f, 8.0f));
+
+		m_pointerToDirectionalLights = 0;
+	}
+
 }
 
 void GraphicDevice::CreateShadowMap()
