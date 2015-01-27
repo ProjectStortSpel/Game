@@ -8,6 +8,7 @@ CreateDeckComponent.Name = "CreateDeck"
 CreateDeckComponent.TableType = TableType.Map
 worldCreator:AddComponentType(CreateDeckComponent)
 
+-- Added to exactly one entity to notify start dealing cards to all players.
 local DealCardsComponent = ComponentType()
 DealCardsComponent.Name = "DealCards"
 DealCardsComponent:AddVariable("NumCards", ByteSize.Int)

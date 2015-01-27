@@ -11,7 +11,7 @@ UnitSystem.Initialize = function(self)
 	
 	self:AddComponentTypeToFilter("NeedUnit", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("RemoveUnit", FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter("PlayerCounter", FilterType.RequiresOneOf)
+	--self:AddComponentTypeToFilter("PlayerCounter", FilterType.RequiresOneOf)
 end
 
 UnitSystem.OnEntityAdded = function(self, entityId)
@@ -56,22 +56,15 @@ UnitSystem.OnEntityAdded = function(self, entityId)
 		
 	elseif world:EntityHasComponent(entityId, "RemoveUnit") then
 		
-		world:RemoveComponentFrom("RemoveUnit", entityId)
-		local plyNum = self:GetComponent(entityId, "PlayerNumber", "Number"):GetInt()
+		local plyNum = self:GetComponent(entityId, "RemoveUnit", "PlayerNo"):GetInt()
 		table.insert(self.FreeSlots, plyNum)
-		local unitId = self:GetComponent(entityId, "UnitEntityId", "Id"):GetInt()
+		local unitId = self:GetComponent(entityId, "RemoveUnit", "UnitEntityId"):GetInt()
 		world:KillEntity(unitId)
+		world:KillEntity(entityId)
 	end
 end
 
 UnitSystem.OnEntityRemoved = function(self, entityId)
-	--print("Rip spelare")
-    --
-	--local plyNum = self:GetComponent(entityId, "PlayerNumber", "Number"):GetInt()
-	--table.insert(self.FreeSlots, plyNum)
-    --
-	--local unitId = self:GetComponent(entityId, "UnitEntityId", "Id"):GetInt()
-    --
-	--world:KillEntity(unitId)
-
+	
+	
 end
