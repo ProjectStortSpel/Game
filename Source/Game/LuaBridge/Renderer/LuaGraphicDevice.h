@@ -37,6 +37,10 @@ namespace LuaBridge
     int ChangeModelTexture();
     int ChangeModelNormalMap();
     int ChangeModelSpecularMap();
+    
+    int AddFont();
+    int CreateTextTexture();
+    int CreateWrappedTextTexture();
   };
 }
 

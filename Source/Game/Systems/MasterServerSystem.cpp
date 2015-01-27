@@ -1,6 +1,7 @@
 #include "MasterServerSystem.h"
 #include "ECSL/Managers/ComponentTypeManager.h"
 #include "Game/NetworkInstance.h"
+#include "Game/Logger/Logger.h"
 
 MasterServerSystem::MasterServerSystem()
 	:m_clientDatabase(0), m_requestServerListTimer(0)
@@ -28,6 +29,7 @@ void MasterServerSystem::PostInitialize()
 {
 	m_clientDatabase = &ClientDatabase::GetInstance();
 
+	
 	if (!m_clientDatabase->Connect())
 		return;
 
@@ -41,7 +43,10 @@ void MasterServerSystem::PostInitialize()
 	}
 	else
 	{
-		m_clientDatabase->RequestServerList();
+		Network::NetMessageHook customHook;
+		customHook = std::bind(&MasterServerSystem::OnGetServerList, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+		m_clientDatabase->HookOnGetServerList(customHook);
+		Logger::GetInstance().Log("MasterServer", Info, "Hooking custom hook \"GET_SERVER_LIST\"to \"OnGetServerList\"");
 	}
 }
 
@@ -137,4 +142,67 @@ void MasterServerSystem::OnEntityRemoved(unsigned int _entityId)
 	if (m_gameRunningId == _entityId)
 		m_gameRunningId = -1;
 
+}
+
+void MasterServerSystem::OnGetServerList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
+{
+	for (int i = 0; i < m_serverIds.size(); ++i)
+		KillEntity(m_serverIds[i]);
+
+	int noServers = _ph->ReadInt(_id);
+	ServerInfo si;
+
+	for (int i = 0; i < noServers; ++i)
+	{
+		si.Name = _ph->ReadString(_id);
+		si.IpAddress = _ph->ReadString(_id);
+		si.Port = _ph->ReadInt(_id);
+		si.NoUsers = _ph->ReadShort(_id);
+		si.MaxUsers = _ph->ReadShort(_id);
+		si.NoSpectators = _ph->ReadShort(_id);
+		si.GameStarted = _ph->ReadByte(_id);
+		si.PasswordProtected = _ph->ReadByte(_id);
+
+		unsigned int id = CreateNewEntity();
+		CreateComponentAndAddTo("ServerListEntry", id);
+
+		char* data;
+		int* integer;
+		bool* boolean;
+
+		// Name
+		data = (char*)GetComponent(id, "ServerListEntry", "Name");
+		memcpy(data, si.Name.c_str(), si.Name.size());
+
+		// IpAddress
+		data = (char*)GetComponent(id, "ServerListEntry", "IpAddress");
+		memcpy(data, si.IpAddress.c_str(), si.IpAddress.size());
+
+		// Port
+		integer = (int*)GetComponent(id, "ServerListEntry", "Port");
+		*integer = si.Port;
+
+		// NoUsers
+		integer = (int*)GetComponent(id, "ServerListEntry", "NoUsers");
+		*integer = si.NoUsers;
+
+		// MaxUsers
+		integer = (int*)GetComponent(id, "ServerListEntry", "MaxUsers");
+		*integer = si.MaxUsers;
+
+		// NoSpectators
+		integer = (int*)GetComponent(id, "ServerListEntry", "NoSpectators");
+		*integer = si.NoSpectators;
+
+		// GameStarted
+		boolean = (bool*)GetComponent(id, "ServerListEntry", "GameStarted");
+		*boolean = si.GameStarted;
+
+		// PasswordProtected
+		boolean = (bool*)GetComponent(id, "ServerListEntry", "PasswordProtected");
+		*boolean = si.PasswordProtected;
+
+
+		m_serverIds.push_back(id);
+	}
 }

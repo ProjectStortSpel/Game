@@ -24,6 +24,9 @@ namespace LuaBridge
     LuaEmbedder::EmbedClassFunction<LuaGraphicDevice>("GraphicDevice", "ChangeModelTexture", &LuaGraphicDevice::ChangeModelTexture);
     LuaEmbedder::EmbedClassFunction<LuaGraphicDevice>("GraphicDevice", "ChangeModelNormalMap", &LuaGraphicDevice::ChangeModelNormalMap);
     LuaEmbedder::EmbedClassFunction<LuaGraphicDevice>("GraphicDevice", "ChangeModelSpecularMap", &LuaGraphicDevice::ChangeModelSpecularMap);
+    LuaEmbedder::EmbedClassFunction<LuaGraphicDevice>("GraphicDevice", "AddFont", &LuaGraphicDevice::AddFont);
+    LuaEmbedder::EmbedClassFunction<LuaGraphicDevice>("GraphicDevice", "CreateTextTexture", &LuaGraphicDevice::CreateTextTexture);
+    LuaEmbedder::EmbedClassFunction<LuaGraphicDevice>("GraphicDevice", "CreateWrappedTextTexture", &LuaGraphicDevice::CreateWrappedTextTexture);
     
     LuaEmbedder::EmbedClassProperty<LuaGraphicDevice>("GraphicDevice", "Camera", &LuaGraphicDevice::GetCamera, &LuaGraphicDevice::SetCamera);
   }
@@ -147,4 +150,46 @@ namespace LuaBridge
     LuaEmbedder::PushBool(result);
     return 1;
   }
+  
+	int LuaGraphicDevice::AddFont()
+	{
+		std::string filepath = LuaEmbedder::PullString(1);
+		int size = LuaEmbedder::PullInt(2);
+		int fontIndex = GraphicDevice::AddFont(filepath, size);
+		LuaEmbedder::PushInt(fontIndex);
+		return 1;
+	}
+
+	int LuaGraphicDevice::CreateTextTexture()
+	{
+		std::string textureName = LuaEmbedder::PullString(1);
+		std::string textString = LuaEmbedder::PullString(2);
+		int fontIndex = LuaEmbedder::PullInt(3);
+		Uint8 r = (Uint8)LuaEmbedder::PullInt(4);
+		Uint8 g = (Uint8)LuaEmbedder::PullInt(5);
+		Uint8 b = (Uint8)LuaEmbedder::PullInt(6);
+		SDL_Color color = { 255, 255, 255, 0 };
+		//int w = LuaEmbedder::PullInt(7);
+		//int h = LuaEmbedder::PullInt(8);
+		//glm::ivec2 size = glm::ivec2(w, h);
+		GraphicDevice::CreateTextTexture(textureName, textString, fontIndex, color);
+		return 0;
+	}
+
+	int LuaGraphicDevice::CreateWrappedTextTexture()
+	{
+		std::string textureName = LuaEmbedder::PullString(1);
+		std::string textString = LuaEmbedder::PullString(2);
+		int fontIndex = LuaEmbedder::PullInt(3);
+		Uint8 r = (Uint8)LuaEmbedder::PullInt(4);
+		Uint8 g = (Uint8)LuaEmbedder::PullInt(5);
+		Uint8 b = (Uint8)LuaEmbedder::PullInt(6);
+		SDL_Color color = { r, g, b, 0 };
+		int wrapLength = LuaEmbedder::PullInt(7);
+		//int w = LuaEmbedder::PullInt(8);
+		//int h = LuaEmbedder::PullInt(9);
+		//glm::ivec2 size = glm::ivec2(w, h);
+		GraphicDevice::CreateWrappedTextTexture(textureName, textString, fontIndex, color, wrapLength);
+		return 0;
+	}
 }
