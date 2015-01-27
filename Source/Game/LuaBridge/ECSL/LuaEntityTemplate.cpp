@@ -185,6 +185,41 @@ namespace LuaBridge
   
   ECSL::EntityTemplate* LuaEntityTemplate::CreateEntityTemplate()
   {
-    return new ECSL::EntityTemplate(m_name, m_components);
+	  std::string newName = m_name;
+	  std::map<std::string, std::vector<ECSL::TemplateEntry*>> newComponents = std::map<std::string, std::vector<ECSL::TemplateEntry*>>();
+	  for (auto component : m_components)
+	  {
+		  newComponents[component.first] = std::vector<ECSL::TemplateEntry*>();
+		  for (auto componentData : component.second)
+		  {
+			  switch (componentData->GetDataType())
+			  {
+			  case ECSL::ComponentDataType::BOOL:
+				  newComponents[component.first].push_back(new ECSL::TemplateEntry(componentData->GetBoolData()));
+				  break;
+
+			  case ECSL::ComponentDataType::INT:
+					newComponents[component.first].push_back(new ECSL::TemplateEntry(componentData->GetIntData()));
+					break;
+
+			  case ECSL::ComponentDataType::TEXT:
+				  newComponents[component.first].push_back(new ECSL::TemplateEntry(componentData->GetTextData()));
+				  break;
+
+			  case ECSL::ComponentDataType::FLOAT:
+				  newComponents[component.first].push_back(new ECSL::TemplateEntry(componentData->GetFloatData()));
+				  break;
+
+			  default:
+				  assert(false);
+				  break;
+			  }
+		  }
+
+	  }
+
+	  ECSL::EntityTemplate* newTemplate = new ECSL::EntityTemplate(newName, newComponents);
+
+	  return newTemplate;
   }
 }

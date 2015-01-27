@@ -17,7 +17,7 @@ namespace LuaBridge
     int AddTemplate(lua_State* L)
     {
       LuaEntityTemplate* entityTemplate = LuaEmbedder::PullObject<LuaEntityTemplate>(L, "EntityTemplate", 2);
-      ECSL::EntityTemplateManager::GetInstance().AddTemplate(*entityTemplate->CreateEntityTemplate());
+      ECSL::EntityTemplateManager::GetInstance().AddTemplate(entityTemplate->CreateEntityTemplate());
       return 0;
     }
   }
