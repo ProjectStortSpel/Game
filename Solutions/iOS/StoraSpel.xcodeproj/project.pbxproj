@@ -303,6 +303,9 @@
 		03783D051A7693AD00BA78D0 /* MasterServerSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MasterServerSystem.h; sourceTree = "<group>"; };
 		03783D071A7693FD00BA78D0 /* ClientDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClientDatabase.cpp; sourceTree = "<group>"; };
 		03783D081A7693FD00BA78D0 /* ClientDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClientDatabase.h; sourceTree = "<group>"; };
+		03783D1E1A77B00100BA78D0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		03783D271A77B00100BA78D0 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		03783D2A1A77B00100BA78D0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		03F45FB11A750E6700F8A27F /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = StoraSpel/Images.xcassets; sourceTree = "<group>"; };
 		03F7AF5B1A765FEC00FB8F1D /* Logger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Logger.cpp; sourceTree = "<group>"; };
 		03F7AF5C1A765FEC00FB8F1D /* Logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logger.h; sourceTree = "<group>"; };
@@ -340,6 +343,7 @@
 				0365629A1A73196E00F5A3BF /* Framework */,
 				036562971A73191900F5A3BF /* Main.storyboard */,
 				036562941A7318DD00F5A3BF /* LaunchScreen.xib */,
+				03783D1C1A77B00100BA78D0 /* StoraSpel_OSX */,
 				03655DE11A7312E100F5A3BF /* Products */,
 			);
 			sourceTree = "<group>";
@@ -803,6 +807,24 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
+		03783D1C1A77B00100BA78D0 /* StoraSpel_OSX */ = {
+			isa = PBXGroup;
+			children = (
+				03783D271A77B00100BA78D0 /* Images.xcassets */,
+				03783D291A77B00100BA78D0 /* Main.storyboard */,
+				03783D1D1A77B00100BA78D0 /* Supporting Files */,
+			);
+			path = StoraSpel_OSX;
+			sourceTree = "<group>";
+		};
+		03783D1D1A77B00100BA78D0 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				03783D1E1A77B00100BA78D0 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		03F7AF5A1A765FEC00FB8F1D /* Logger */ = {
 			isa = PBXGroup;
 			children = (
@@ -1006,6 +1028,14 @@
 			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
+		03783D291A77B00100BA78D0 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				03783D2A1A77B00100BA78D0 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
@@ -1045,7 +1075,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = (
@@ -1086,7 +1116,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
