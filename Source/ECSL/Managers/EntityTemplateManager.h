@@ -28,7 +28,7 @@ namespace ECSL
 
 		unsigned int GetTableId(const std::string& _templateName);
 
-		void AddTemplate(EntityTemplate& _template);
+		void AddTemplate(EntityTemplate* _template);
 
 		bool HasTemplate(std::string& _template);
 		

@@ -55,8 +55,13 @@ namespace LuaBridge
 		
 		int GetPointlight(lua_State* L);
 		int SetPointlight(lua_State* L);
+
+		int GetDirectionalLight(lua_State* L);
+		int SetDirectionalLight(lua_State* L);
+
 		
-		void ComponentHasChanged();
+		
+		void ComponentHasChanged(bool _notifyNetwork);
 		
 	private:
 		ECSL::DataLocation m_dataLocation;

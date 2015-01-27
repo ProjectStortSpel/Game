@@ -23,7 +23,6 @@ void CameraSystem::Initialize()
 	AddComponentTypeToFilter("CameraRight", ECSL::FilterType::Mandatory);
 
 	m_input = &Input::InputWrapper::GetInstance();
-	printf("CameraSystem initialized!\n");
 }
 
 void CameraSystem::Update(const ECSL::RuntimeInfo& _runtime)

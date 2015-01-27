@@ -9,6 +9,7 @@
 #include "Systems/RenderRemoveSystem.h"
 #include "Systems/ResetChangedSystem.h"
 #include "Systems/PointlightSystem.h"
+#include "Systems/DirectionalLightSystem.h"
 
 #include "NetworkInstance.h"
 #include "ECSL/ECSL.h"
@@ -16,6 +17,8 @@
 
 #include "LuaBridge/ECSL/LuaSystem.h"
 #include "LuaBridge/ECSL/LuaWorldCreator.h"
+
+#include "Logger/Logger.h"
 
 #include <iomanip>
 
@@ -45,9 +48,6 @@ GameCreator::~GameCreator()
 
 	if (m_remoteConsole)
 		delete m_remoteConsole;
-
-	if (m_worldProfiler)
-		delete(m_worldProfiler);
 
 	LuaEmbedder::Quit();
 
@@ -138,7 +138,7 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	{
 		worldCreator.AddComponentType(it->second->GetName());
 		int id = ECSL::ComponentTypeManager::GetInstance().GetTableId(it->second->GetName());
-		printf("[#%d] %s added\n", id, it->second->GetName().c_str());
+		printf("[#%d] %s\n", id, it->second->GetName().c_str());
 	}
 
 	/*	This component has to be added last!	*/
@@ -165,6 +165,8 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(new PointlightSystem(m_graphics));
 	worldCreator.AddSystemGroup();
+	worldCreator.AddLuaSystemToCurrentGroup(new DirectionalLightSystem(m_graphics));
+	worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(new RotationSystem());
 	worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(new CameraSystem(m_graphics));
@@ -184,12 +186,9 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	m_world = worldCreator.CreateWorld(1000);
 	LuaEmbedder::AddObject<ECSL::World>(m_clientLuaState, "World", m_world, "world");
 
-	//LuaEmbedder::CallMethods<LuaBridge::LuaSystem>("System", "PostInitialize");
 	for (std::vector<LuaBridge::LuaSystem*>::iterator it = systemsAdded->begin(); it != systemsAdded->end(); it++)
 	  (*it)->PostInitialize();
 	systemsAdded->clear();
-
-	m_worldProfiler = new Profilers::ECSLProfiler(m_graphics);
 }
 
 void GameCreator::RunStartupCommands(int argc, char** argv)
@@ -234,7 +233,7 @@ void GameCreator::RunStartupCommands(int argc, char** argv)
 			}
 
 			command[size - 1] = '\0';
-			Console::ConsoleManager::GetInstance().ExecuteCommand(command);
+			Console::ConsoleManager::GetInstance().AddToCommandQueue(command);
 		}
 	}
 }
@@ -247,7 +246,7 @@ void GameCreator::StartGame(int argc, char** argv)
 
 	m_console = new GameConsole(m_graphics, m_world);
 
-	m_consoleInput.SetTextHook(std::bind(&Console::ConsoleManager::ExecuteCommand, &m_consoleManager, std::placeholders::_1));
+	m_consoleInput.SetTextHook(std::bind(&Console::ConsoleManager::AddToCommandQueue, &m_consoleManager, std::placeholders::_1));
 #ifdef __ANDROID__
 	m_consoleInput.SetActive(true);
 	m_input->GetKeyboard()->StartTextInput();
@@ -264,7 +263,10 @@ void GameCreator::StartGame(int argc, char** argv)
 	m_consoleManager.AddCommand("Start", std::bind(&GameCreator::ConsoleStartTemp, this, std::placeholders::_1, std::placeholders::_2));
 	
 	RunStartupCommands(argc, argv);
+    
+    //Console::ConsoleManager::GetInstance().AddToCommandQueue("connect 192.168.0.198");
 
+    
 	float maxDeltaTime = (float)(1.0f / 20.0f);
 	float bytesToMegaBytes = 1.f / (1024.f*1024.f);
 	bool showDebugInfo = false;
@@ -279,15 +281,14 @@ void GameCreator::StartGame(int argc, char** argv)
 		m_consoleInput.Update();
 		Console::ConsoleManager::GetInstance().ExecuteCommandQueue();
 		UpdateConsole();
-		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED)
+		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_ESCAPE) == Input::InputState::PRESSED ||
+		    m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_AC_BACK) == Input::InputState::PRESSED)
 			break;
 		m_inputCounter.Tick();
 
 		m_worldCounter.Reset();
 		/*	Update world (systems, entities etc)	*/
 		m_world->Update(dt);
-		m_worldProfiler->Update(dt);
-		m_worldProfiler->Render();
 		m_worldCounter.Tick();
 
 
@@ -306,9 +307,6 @@ void GameCreator::StartGame(int argc, char** argv)
 		/*	DEBUG PRINT INFO	*/
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_Z) == Input::InputState::PRESSED)
 			showDebugInfo = !showDebugInfo;
-
-		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_X) == Input::InputState::PRESSED)
-			m_worldProfiler->Toggle();
 
 		if (showDebugInfo)
 		{

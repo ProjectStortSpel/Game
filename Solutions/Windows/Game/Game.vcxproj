@@ -314,6 +314,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_sendselectedcardssystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_sortcardindexsystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_sortselectedcardssystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_aisystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_cardlogicsystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_lobbysystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_pickingphasesystem.lua" />

@@ -9,6 +9,11 @@ m_name(new std::string(_name)), m_components(new std::map<std::string, std::vect
 EntityTemplate::~EntityTemplate()
 {
 	delete(m_name);
+
+	for (auto component : *m_components)
+		for (int n = component.second.size() - 1; n >= 0; --n)
+			delete(component.second.at(n));
+
 	delete(m_components);
 }
 

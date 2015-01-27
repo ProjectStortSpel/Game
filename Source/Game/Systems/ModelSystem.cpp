@@ -19,8 +19,6 @@ void ModelSystem::Initialize()
 	AddComponentTypeToFilter("Model", ECSL::FilterType::Mandatory);
 	AddComponentTypeToFilter("Render", ECSL::FilterType::Excluded);
 
-
-	printf("ModelSystem initialized!\n");
 }
 
 void ModelSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities)
@@ -37,7 +35,6 @@ void ModelSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::ve
 		ModelPath.append("/");
 
 		int RenderType = *(int*)GetComponent(entityId, "Model", "RenderType");
-		RenderType = 2;
 
 		CreateComponentAndAddTo("Render", entityId);
 		glm::mat4*	Matrix;

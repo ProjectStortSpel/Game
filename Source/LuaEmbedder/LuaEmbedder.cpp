@@ -52,6 +52,7 @@ namespace LuaEmbedder
     }
     LuaParentChildrensMap.clear();
     LuaChildrenParentMap.clear();
+	Functions.clear();
   }
   
   std::string LoadFile(const std::string& filepath)

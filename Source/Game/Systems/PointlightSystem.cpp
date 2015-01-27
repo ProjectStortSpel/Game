@@ -30,8 +30,6 @@ void PointlightSystem::Initialize()
 	m_numberOfBitSets = ECSL::BitSet::GetDataTypeCount(ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount());
 	m_changedComponentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("ChangedComponents");
 	m_pointLightId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Pointlight");
-
-	printf("Pointlight initialized!\n");
 }
 
 void PointlightSystem::Update(const ECSL::RuntimeInfo& _runtime)

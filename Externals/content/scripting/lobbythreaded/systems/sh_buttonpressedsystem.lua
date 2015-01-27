@@ -95,7 +95,7 @@ ButtonPressedSystem.PostInitialize = function(self)
 	--host
 	local button = self:CreateButton("host", "quad", -2, 1)
 	self:AddCommandToButton("host", button)
-	self:AddCommandToButton("gamemode storaspel", button)
+	self:AddCommandToButton("gamemode storaspelthreaded", button)
 	
 	--connect localhost
 	button = self:CreateButton("localhost", "quad", 0, 1)
@@ -129,7 +129,7 @@ ButtonPressedSystem.PostInitialize = function(self)
 	button = self:CreateButton("anders", "quad", 2, -1)
 	self:AddCommandToButton("connect 194.47.150.100", button)
 	
-	
+
 	
 	
 	print("ButtonPressedSystem post initialized!")

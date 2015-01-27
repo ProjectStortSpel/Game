@@ -153,6 +153,8 @@ namespace Renderer
 		void BufferModels();
 		void BufferModel(int _modelId, ModelToLoad* _modelToLoad);
 
+		void BufferLightsToGPU();
+
 		Camera* m_camera;
 
 		SDL_Window*		m_window;
@@ -210,6 +212,10 @@ namespace Renderer
 
 		// Pointlights buffer
 		GLuint m_pointlightBuffer, m_dirLightBuffer;
+		float**	m_pointerToPointlights;
+		int		m_numberOfPointlights;
+		float*	m_pointerToDirectionalLights;
+		int		m_numberOfDirectionalLights;
 		vec3 m_dirLightDirection;
 
 		// DEBUG variables ----

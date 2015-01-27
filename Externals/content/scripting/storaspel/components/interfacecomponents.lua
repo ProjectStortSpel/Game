@@ -17,3 +17,9 @@ local ReadyButton = ComponentType()
 ReadyButton.Name = "ReadyButton"
 ReadyButton.TableType = TableType.Map
 worldCreator:AddComponentType(ReadyButton)
+
+--	InterfaceElement Component
+local InterfaceElement = ComponentType()
+InterfaceElement.Name = "InterfaceElement"
+InterfaceElement.TableType = TableType.Map
+worldCreator:AddComponentType(InterfaceElement)

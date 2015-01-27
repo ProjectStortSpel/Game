@@ -1,5 +1,7 @@
 #include "ECSLStatistics.h"
 
+#include <float.h>
+
 using namespace Profilers;
 
 ECSLStatistics::ECSLStatistics(unsigned int _threadCount)
@@ -8,7 +10,7 @@ ECSLStatistics::ECSLStatistics(unsigned int _threadCount)
 
 	m_avgFrameTime = 0.0f;
 	m_minFrameTime = FLT_MAX;
-	m_maxFrameTime = -FLT_MAX;;
+	m_maxFrameTime = -FLT_MAX;
 	m_diffFrameTime = 0.0f;
 
 	m_avgTotalEfficiency = 0.0f;

@@ -21,7 +21,10 @@ EntityTemplateManager::~EntityTemplateManager()
 	if (m_entityTemplates)
 	{
 		for (auto it = m_entityTemplates->begin(); it != m_entityTemplates->end(); ++it)
+		{
 			delete it->second;
+		}
+			
 
 		m_entityTemplates->clear();
 		delete m_entityTemplates;
@@ -63,7 +66,7 @@ void EntityTemplateManager::LoadComponentTypesFromFile(const std::string& _fileP
 
 	/* Add all component types that was read from the file */
 	for (unsigned int i = 0; i < templates.size(); ++i)
-		AddTemplate(*templates[i]);
+		AddTemplate(templates[i]);
 }
 
 EntityTemplate* EntityTemplateManager::GetTemplate(std::string _template)
@@ -78,9 +81,9 @@ EntityTemplate* EntityTemplateManager::GetTemplate(unsigned int _templateId)
 	return 0;
 }
 
-void EntityTemplateManager::AddTemplate(EntityTemplate& _template)
+void EntityTemplateManager::AddTemplate(EntityTemplate* _template)
 {
-	m_entityTemplates->insert(std::pair<int, EntityTemplate*>(EntityTemplateManager::GetTableId(_template.GetName()), &_template));
+	m_entityTemplates->insert(std::pair<int, EntityTemplate*>(EntityTemplateManager::GetTableId(_template->GetName()), _template));
 }
 
 unsigned int EntityTemplateManager::GetTableId(const std::string& _templateName)

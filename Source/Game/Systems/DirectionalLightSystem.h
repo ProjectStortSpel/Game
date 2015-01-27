@@ -14,12 +14,12 @@ class DirectionalLightSystem : public ECSL::System
 public:
 	DirectionalLightSystem(Renderer::GraphicDevice* _graphics);
 	~DirectionalLightSystem();
-
-	void Update(float _dt);
 	void Initialize();
 
-	void OnEntityAdded(unsigned int _entityId);
-	void OnEntityRemoved(unsigned int _entityId);
+	void Update(const ECSL::RuntimeInfo& _runtime);
+
+	void EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities);
+	void EntitiesRemoved(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities);
 
 private:
 	void UpdateDirectionalLight();
