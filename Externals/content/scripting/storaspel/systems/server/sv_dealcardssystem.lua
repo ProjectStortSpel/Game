@@ -6,6 +6,7 @@ DealCardsSystem.Initialize = function ( self )
 	self:SetName("DealCardsSystem")
 	self:AddComponentTypeToFilter("DealCards", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("Player", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("AI", FilterType.RequiresOneOf)
 	--self:AddComponentTypeToFilter("Unit", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("CardAction", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("UsedCard", FilterType.Excluded)
@@ -34,6 +35,7 @@ DealCardsSystem.DealCards = function (self, numCards)
 
 	local players = self:GetEntities("Player")
 	--local players = self:GetEntities("Unit")
+	local aiPlayers = self:GetEntities("AI")
 	local cards = self:GetEntities("Card")
 	local cardsLeft = #cards
 	print("DealCards")
@@ -77,6 +79,26 @@ DealCardsSystem.DealCards = function (self, numCards)
 		Net.Send(Net.StartPack("Client.SelectCards"), ip, port)
 	end
 	
+	for i = 1, #aiPlayers do
+		
+		if world:EntityHasComponent(aiPlayers[i], "HasSelectedCards") then
+			world:RemoveComponentFrom("HasSelectedCards", aiPlayers[i])
+		end
+		
+		for j = 1, numCards do
+
+			local cardIndex = math.random(1, cardsLeft)
+			local card = cards[cardIndex]
+			
+			world:CreateComponentAndAddTo("DealtCard", card)
+			world:CreateComponentAndAddTo("AICard", card)
+			world:SetComponent(card, "DealtCard", "PlayerEntityId", aiPlayers[i])
+			
+			table.remove(cards, cardIndex)
+			cardsLeft = cardsLeft - 1
+		end
+	end
+		
 	--	Notify players about timer
 	local newId = world:CreateNewEntity();
 	world:CreateComponentAndAddTo("OnPickingPhase", newId);

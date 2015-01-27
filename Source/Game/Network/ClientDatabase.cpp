@@ -6,6 +6,12 @@ ClientDatabase::ClientDatabase()
 {
 	m_client.SetMaxTimeOutIntervall(5);
 	m_client.SetMaxTimeOutCounter(2);
+
+
+	Network::NetMessageHook customHook;
+	customHook = std::bind(&ClientDatabase::OnGetServerList, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	m_client.AddNetworkHook("GET_SERVER_LIST", customHook);
+
 }
 ClientDatabase::~ClientDatabase()
 {
@@ -25,11 +31,24 @@ bool ClientDatabase::Disconnect()
 
 void ClientDatabase::Update(float dt)
 {
-	if (!m_client.IsConnected())
-		return;
-
 	m_client.Update(dt);
 	while (m_client.PopAndExecutePacket() > 0) {}
+}
+
+void ClientDatabase::AddToDatabase()
+{
+	if (!m_client.IsConnected())
+	{
+		SDL_LogWarn(SDL_LOG_CATEGORY_SYSTEM, "Tried to send \"ADD_TO_DATABASE\", but is not connected to MasterServer");
+		return;
+	}
+
+	auto ph = m_client.GetPacketHandler();
+	auto id = ph->StartPack("ADD_TO_DATABASE");
+	auto packet = ph->EndPack(id);
+
+	m_client.Send(packet);
+
 }
 
 void ClientDatabase::SetGameStarted(bool _started)
@@ -156,5 +175,46 @@ void ClientDatabase::DecreaseNoSpectators()
 	auto packet = ph->EndPack(id);
 
 	m_client.Send(packet);
+
+}
+
+void ClientDatabase::RequestServerList()
+{
+	int hest = 0;
+	auto ph = m_client.GetPacketHandler();
+	auto id = ph->StartPack("GET_SERVER_LIST");
+	auto packet = ph->EndPack(id);
+
+	m_client.Send(packet);
+}
+
+void ClientDatabase::OnGetServerList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
+{
+	int noServers = _ph->ReadInt(_id);
+
+	ServerInfo si;
+	m_serverList.clear();
+
+	for (int i = 0; i < noServers; ++i)
+	{
+		si.Name					= _ph->ReadString(_id);
+		si.IpAddress			= _ph->ReadString(_id);
+		si.Port					= _ph->ReadInt(_id);
+		si.NoUsers				= _ph->ReadShort(_id);
+		si.MaxUsers				= _ph->ReadShort(_id);
+		si.NoSpectators			= _ph->ReadShort(_id);
+		si.GameStarted			= _ph->ReadByte(_id);
+		si.PasswordProtected	= _ph->ReadByte(_id);
+
+		m_serverList.push_back(si);
+	}
+
+	SDL_Log("Server List:");
+	for (int i = 0; i < m_serverList.size(); ++i)
+	{
+//		127.0.0.1:6112 0 / 5 (0) Running PasswordProtected
+			SDL_Log("%s:%i %i/%i (%i)", m_serverList[i].IpAddress.c_str(), m_serverList[i].Port,
+				m_serverList[i].NoUsers, m_serverList[i].MaxUsers, m_serverList[i].NoSpectators);
+	}
 
 }

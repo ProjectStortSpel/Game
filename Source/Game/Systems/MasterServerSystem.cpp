@@ -3,7 +3,7 @@
 #include "Game/NetworkInstance.h"
 
 MasterServerSystem::MasterServerSystem()
-	:m_clientDatabase(0)
+	:m_clientDatabase(0), m_requestServerListTimer(0)
 {
 }
 MasterServerSystem::~MasterServerSystem()
@@ -13,49 +13,76 @@ MasterServerSystem::~MasterServerSystem()
 
 void MasterServerSystem::Initialize()
 {
-	SetSystemName("Master Server System");
+	/*
+	SetSystemName("MasterServerSystem");
 
-	/*	Rendersystem wants Network	*/
 	AddComponentTypeToFilter("AvailableSpawnpoint", ECSL::FilterType::RequiresOneOf);
 	AddComponentTypeToFilter("Player", ECSL::FilterType::RequiresOneOf);
 	AddComponentTypeToFilter("GameRunning", ECSL::FilterType::RequiresOneOf);
 
 	m_gameRunningId = -1;
 	m_oldGameRunningId = -1;
+	*/
 }
 
 void MasterServerSystem::PostInitialize()
 {
+	/*
+	m_clientDatabase = new ClientDatabase();
+	m_clientDatabase->Connect();
+
 	if (NetworkInstance::GetServer()->IsRunning())
 	{
-		m_clientDatabase = new ClientDatabase();
-		if (m_clientDatabase->Connect())
-		{
-			std::string pw = NetworkInstance::GetServer()->GetServerPassword();
-			int port = NetworkInstance::GetServer()->GetIncomingPort();
-			m_clientDatabase->SetServerPort(port);
-			m_clientDatabase->SetPasswordProtected(pw.size() > 0);
-		}
+		std::string pw = NetworkInstance::GetServer()->GetServerPassword();
+		int port = NetworkInstance::GetServer()->GetIncomingPort();
+		m_clientDatabase->AddToDatabase();
+		m_clientDatabase->SetServerPort(port);
+		m_clientDatabase->SetPasswordProtected(pw.size() > 0);
 	}
+	else
+	{
+		m_clientDatabase->RequestServerList();
+	}
+	*/
 }
 
 void MasterServerSystem::Update(float _dt)
-{
-	if (!NetworkInstance::GetServer()->IsRunning())
+{/*
+	// Return if the user is a already connected client
+	if (NetworkInstance::GetClient()->IsConnected())
 		return;
+
 
 	m_clientDatabase->Update(_dt);
 
-	if (m_oldGameRunningId != m_gameRunningId)
+	// Update to the masterserver is the user is a server
+	if (NetworkInstance::GetServer()->IsRunning())
 	{
-		m_oldGameRunningId = m_gameRunningId;
-		m_clientDatabase->SetGameStarted(m_gameRunningId > 0);
+		if (m_oldGameRunningId != m_gameRunningId)
+		{
+			m_oldGameRunningId = m_gameRunningId;
+			m_clientDatabase->SetGameStarted(m_gameRunningId > 0);
+		}
+
+
 	}
-	
+
+	// If the user is neither, we should request a new server list every 10 seconds
+	else
+	{
+		m_requestServerListTimer += _dt;
+		if (m_requestServerListTimer > 10.0)
+		{
+			m_clientDatabase->RequestServerList();
+			m_requestServerListTimer = 0.f;
+		}
+	}
+	*/
 }
 
 void MasterServerSystem::OnEntityAdded(unsigned int _entityId)
 {
+	/*
 	if (!NetworkInstance::GetServer()->IsRunning())
 		return;
 
@@ -81,10 +108,12 @@ void MasterServerSystem::OnEntityAdded(unsigned int _entityId)
 	{
 		m_gameRunningId = _entityId;
 	}
+	*/
 }
 
 void MasterServerSystem::OnEntityRemoved(unsigned int _entityId)
 {
+	/*
 	if (!NetworkInstance::GetServer()->IsRunning())
 		return;
 
@@ -111,5 +140,6 @@ void MasterServerSystem::OnEntityRemoved(unsigned int _entityId)
 
 	if (m_gameRunningId == _entityId)
 		m_gameRunningId = -1;
+	*/
 
 }
