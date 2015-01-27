@@ -60,7 +60,7 @@ void GameCreator::InitializeGraphics()
 {
 	m_graphics = new Renderer::GraphicDevice();
 	m_graphics->Init();
-	LuaEmbedder::AddObject<Renderer::GraphicDevice>(m_clientLuaState, "GraphicDevice", m_graphics, "graphics");
+	//LuaEmbedder::AddObject<Renderer::GraphicDevice>(m_clientLuaState, "GraphicDevice", m_graphics, "graphics");
 }
 
 void GameCreator::InitializeConsole()
@@ -123,9 +123,13 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	std::vector<LuaBridge::LuaSystem*>* systemsAdded = worldCreator.GetSystemsAdded();
 	for (std::vector<LuaBridge::LuaSystem*>::iterator it = systemsAdded->begin(); it != systemsAdded->end(); it++)
 	{
-	  lua_State* clientLuaStateCopy = LuaEmbedder::CopyState(m_clientLuaState);
+	  lua_State* clientLuaStateCopy = LuaEmbedder::CreateChildState(m_clientLuaState);
+	  LuaBridge::Embed(clientLuaStateCopy);
+	  LuaEmbedder::CopyObject<LuaBridge::LuaSystem>(m_clientLuaState, clientLuaStateCopy, "System", (*it));
 	  (*it)->SetLuaState(clientLuaStateCopy);
 	}
+
+	LuaEmbedder::AddObject<Renderer::GraphicDevice>(m_clientLuaState, "GraphicDevice", m_graphics, "graphics");
 
 	m_gameMode = _gameMode;
 
@@ -283,11 +287,8 @@ void GameCreator::StartGame(int argc, char** argv)
 		m_inputCounter.Tick();
 
 		m_worldCounter.Reset();
-		//MPL::Profiler::GetInstance().CreateNewSession();
 		/*	Update world (systems, entities etc)	*/
 		m_world->Update(dt);
-		//MPL::LoggedSession* loggedSession = MPL::Profiler::GetInstance().PullSession();
-		//delete(loggedSession);
 		m_worldCounter.Tick();
 
 

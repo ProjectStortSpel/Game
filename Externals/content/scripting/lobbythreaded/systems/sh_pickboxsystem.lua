@@ -11,7 +11,6 @@ PickBoxSystem.Initialize = function(self)
 end
 
 PickBoxSystem.Update = function(self, dt, taskIndex, taskCount)
-
 	-- Fetch Aspect ratio from graphics:
 	local AspectX, AspectY = graphics:GetAspectRatio()
 

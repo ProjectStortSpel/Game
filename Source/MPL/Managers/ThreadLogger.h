@@ -1,5 +1,5 @@
-#ifndef PROFILER_H
-#define PROFILER_H
+#ifndef THREADLOGGER_H
+#define THREADLOGGER_H
 
 #include <SDL/SDL.h>
 #include <vector>
@@ -18,8 +18,7 @@ namespace MPL
 	enum ActionType
 	{
 		OVERHEAD,
-		WORK,
-		HIBERNATE
+		WORK
 	};
 
 	struct DECLSPEC LoggedAction
@@ -32,6 +31,7 @@ namespace MPL
 
 	struct DECLSPEC LoggedSession
 	{
+		unsigned int threadCount;
 		Uint64 sessionStartTime;
 		Uint64 sessionEndTime;
 		float sessionDuration;
@@ -49,19 +49,24 @@ namespace MPL
 		}
 	};
 
-	class DECLSPEC Profiler
+	class DECLSPEC ThreadLogger
 	{
 	public:
-		~Profiler();
-		static Profiler& GetInstance();
+		~ThreadLogger();
+		static ThreadLogger& GetInstance();
 
 		void LogBeginWork(unsigned int _threadId);
+
 		void LogWorkDone(unsigned int _threadId, const WorkItem* _workItem);
+
+		/* Creates a new memory. Current sessions' memory will be cleared, but not a pulled sessions memory. */
 		void CreateNewSession();
+
+		/* Pulls the current session. Don't forget to free its memory. */
 		LoggedSession* PullSession();
 
 	private:
-		Profiler();
+		ThreadLogger();
 
 		Uint64 m_frequency;
 		LoggedSession* m_currentSession;

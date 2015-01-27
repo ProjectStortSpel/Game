@@ -129,6 +129,12 @@
     <Filter Include="Game\Systems\Camera">
       <UniqueIdentifier>{6f65ecb9-1fad-4717-9948-fc2a318b43a1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Profilers">
+      <UniqueIdentifier>{104bbd51-8dbc-4d3c-8afb-a0b4cd3c3954}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Profilers\ECSLProfiler">
+      <UniqueIdentifier>{74e8bc95-e252-495e-a94c-85b386e24c24}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\LuaBridge.cpp">
@@ -242,6 +248,15 @@
     <ClCompile Include="..\..\..\Source\Game\Logger\Logger.cpp">
       <Filter>Game\Logger</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Profilers\ECSLProfiler.cpp">
+      <Filter>Game\Profilers\ECSLProfiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Profilers\ECSLFrame.cpp">
+      <Filter>Game\Profilers\ECSLProfiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Profilers\ECSLStatistics.cpp">
+      <Filter>Game\Profilers\ECSLProfiler</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h">
@@ -351,6 +366,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Logger\Logger.h">
       <Filter>Game\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Profilers\ECSLProfiler.h">
+      <Filter>Game\Profilers\ECSLProfiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Profilers\ECSLFrame.h">
+      <Filter>Game\Profilers\ECSLProfiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Profilers\ECSLStatistics.h">
+      <Filter>Game\Profilers\ECSLProfiler</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

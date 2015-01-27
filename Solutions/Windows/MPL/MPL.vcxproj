@@ -26,7 +26,7 @@
     <ClInclude Include="..\..\..\Source\MPL\Framework\Tasks\TaskPool.h" />
     <ClInclude Include="..\..\..\Source\MPL\Framework\Tasks\WorkItem.h" />
     <ClInclude Include="..\..\..\Source\MPL\Framework\Threads\SlaveThread.h" />
-    <ClInclude Include="..\..\..\Source\MPL\Managers\Profiler.h" />
+    <ClInclude Include="..\..\..\Source\MPL\Managers\ThreadLogger.h" />
     <ClInclude Include="..\..\..\Source\MPL\Managers\TaskManager.h" />
     <ClInclude Include="..\..\..\Source\MPL\MPL.h" />
   </ItemGroup>
@@ -36,7 +36,7 @@
     <ClCompile Include="..\..\..\Source\MPL\Framework\Tasks\Task.cpp" />
     <ClCompile Include="..\..\..\Source\MPL\Framework\Tasks\TaskPool.cpp" />
     <ClCompile Include="..\..\..\Source\MPL\Framework\Threads\SlaveThread.cpp" />
-    <ClCompile Include="..\..\..\Source\MPL\Managers\Profiler.cpp" />
+    <ClCompile Include="..\..\..\Source\MPL\Managers\ThreadLogger.cpp" />
     <ClCompile Include="..\..\..\Source\MPL\Managers\TaskManager.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

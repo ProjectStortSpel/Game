@@ -35,10 +35,13 @@ namespace LuaBridge
 	{
 		assert(m_L);
 		
-		LuaEmbedder::PushFloat(m_L, _runtime.Dt);
-		LuaEmbedder::PushInt(m_L, _runtime.TaskIndex);
-		LuaEmbedder::PushInt(m_L, _runtime.TaskCount);
-		LuaEmbedder::CallMethod<LuaSystem>(m_L, "System", "Update", this, 3);
+		if (LuaEmbedder::HasFunction<LuaSystem>(m_L, this, "Update"))
+		{
+			LuaEmbedder::PushFloat(m_L, _runtime.Dt);
+			LuaEmbedder::PushInt(m_L, _runtime.TaskIndex);
+			LuaEmbedder::PushInt(m_L, _runtime.TaskCount);
+			LuaEmbedder::CallMethod<LuaSystem>(m_L, "System", "Update", this, 3);
+		}
 	}
 
 	void LuaSystem::Initialize()
