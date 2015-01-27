@@ -35,7 +35,6 @@ void ModelSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::ve
 		ModelPath.append("/");
 
 		int RenderType = *(int*)GetComponent(entityId, "Model", "RenderType");
-		RenderType = 2;
 
 		CreateComponentAndAddTo("Render", entityId);
 		glm::mat4*	Matrix;
