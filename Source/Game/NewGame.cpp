@@ -25,7 +25,8 @@ int main(int argc, char** argv)
 	newGame->StartGame(argc, argv);
 	delete newGame;
 
-	delete(&Logger::GetInstance());
 	delete(&ClientDatabase::GetInstance());
+	delete(&Logger::GetInstance());
+	
 	return 0;
 }
