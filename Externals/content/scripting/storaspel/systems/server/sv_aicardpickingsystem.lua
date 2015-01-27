@@ -25,32 +25,12 @@ AiCardPickingSystem.Update = function(self, dt)
 		local targetPositionX, targetPositionY = self:GetTargetPosition(CPtiles, cpTargetNr)
 		-- vart AIn är
 		local aiPositonX, aiPositonY = self:GetComponent(unitID, "MapPosition", 0):GetInt2()
-		
-		local aisCard = {}
-		local aiNr = self:GetComponent(AIs[i], "PlayerNumber", 0):GetInt()
-		for j = 1, #Cards do
-			local card = self:GetComponent(Cards[j], "DealtCard", 0)
-			local id = card:GetInt()
-			local plyNr = self:GetComponent(id, "PlayerNumber", 0):GetInt()
-			
-			
-			if plyNr == aiNr then
-				
-				aisCard[#aisCard+1] = Cards[j]
-			end
-		end
-		
-		local pickedcards = {}
-		for i = 1, #aisCard do
-			local cardNr = math.random(1, #aisCard)
-			
-			local pickedcard = aisCard[cardNr]
-			
-			pickedcards[#pickedcards + 1] = pickedcard
-			
-			table.remove(aisCard, cardNr)
-		end
-		
+		-- AIs direction
+		local aiDirX, aiDirY = self:GetComponent(unitID, "Direction", 0):GetInt2()
+		--Fetch the cards which is relevant to the current AI
+		local CardSetAI = self:GetAIsCardSet(AIs[i], Cards)
+		--This will catch the best 
+		local PickedCards = self:AIPickCards(CardSetAI)
 	end
 end
 
@@ -68,6 +48,42 @@ AiCardPickingSystem.GetTargetPosition = function(self, checkpointsTiles, cpTarge
 	
 	return targetPositionX, targetPositionY
 end
+
+AiCardPickingSystem.GetAIsCardSet = function(self, AI, Cards)
+
+		local aisCard = {}
+		local aiNr = self:GetComponent(AI, "PlayerNumber", 0):GetInt()
+		for j = 1, #Cards do
+			local card = self:GetComponent(Cards[j], "DealtCard", 0)
+			local id = card:GetInt()
+			local plyNr = self:GetComponent(id, "PlayerNumber", 0):GetInt()
+
+			if plyNr == aiNr then
+				
+				aisCard[#aisCard+1] = Cards[j]
+			end
+		end
+		
+		return aisCard
+end
+
+AiCardPickingSystem.AIPickCards = function( self, CardSetAI )
+	
+	local pickedcards = {}
+	if #CardSetAI >= 5 then
+		for i = 1, 5 do
+			local cardNr = math.random(1, #CardSetAI)
+			
+			local pickedcard = CardSetAI[cardNr]
+			
+			pickedcards[#pickedcards + 1] = pickedcard
+			
+			table.remove(CardSetAI, cardNr)
+		end
+	end
+	return pickedcards
+end
+
 AiCardPickingSystem.OnEntityAdded = function(self, entity)
 
 	if world:EntityHasComponent(entity, "DealtCard") then
