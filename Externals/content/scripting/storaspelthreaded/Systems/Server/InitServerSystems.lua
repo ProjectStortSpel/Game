@@ -1,13 +1,13 @@
 
 --	Map Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/systems/Server/MapSystems/?.lua"
-require "sv_CreateMapSystem"
+--require "sv_CreateMapSystem"
 require "sv_CheckpointSystem"
 require "sv_RiverSystem"
 require "sv_VoidSystem"
 
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(CreateMapSystem)
+--worldCreator:AddSystemGroup()
+--worldCreator:AddSystemToCurrentGroup(CreateMapSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CheckpointSystem)
 worldCreator:AddSystemGroup()
@@ -122,4 +122,18 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(StepTimerSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(NewStepSystem)
+
+
+--	Misc Systems
+package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/systems/Server/MiscSystems/?.lua"
+require "sv_GameOverSystem"
+require "sv_OnPlayerConnectedSystem"
+
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(GameOverSystem)
+
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(OnPlayerConnectedSystem)
+
+
 
