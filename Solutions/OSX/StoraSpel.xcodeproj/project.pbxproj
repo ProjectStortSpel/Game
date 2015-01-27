@@ -1113,7 +1113,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/Erik/Desktop/StoraSpel/Game/Externals/lib/OSX,
+					../../Externals/lib/OSX,
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -1125,7 +1125,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					../../Externals/lib/OSX,
-					/Users/Erik/Desktop/StoraSpel/Game/Externals/lib/OSX,
 				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
@@ -1143,7 +1142,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/Erik/Desktop/StoraSpel/Game/Externals/lib/OSX,
+					../../Externals/lib/OSX,
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = __OSX__;
 				INFOPLIST_FILE = StoraSpel/Info.plist;
@@ -1151,7 +1150,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					../../Externals/lib/OSX,
-					/Users/Erik/Desktop/StoraSpel/Game/Externals/lib/OSX,
 				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
