@@ -102,6 +102,9 @@
 		0365628F1A73167A00F5A3BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0365628E1A73167A00F5A3BF /* Foundation.framework */; };
 		036562911A73168100F5A3BF /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 036562901A73168100F5A3BF /* AudioToolbox.framework */; };
 		036562931A73168900F5A3BF /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 036562921A73168900F5A3BF /* CoreMotion.framework */; };
+		03783D031A7693A000BA78D0 /* SlerpRotationSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03783D011A7693A000BA78D0 /* SlerpRotationSystem.cpp */; };
+		03783D061A7693AD00BA78D0 /* MasterServerSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03783D041A7693AD00BA78D0 /* MasterServerSystem.cpp */; };
+		03783D091A7693FD00BA78D0 /* ClientDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03783D071A7693FD00BA78D0 /* ClientDatabase.cpp */; };
 		03F45FB21A750E6700F8A27F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 03F45FB11A750E6700F8A27F /* Images.xcassets */; };
 		03F7AF5D1A765FEC00FB8F1D /* Logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03F7AF5B1A765FEC00FB8F1D /* Logger.cpp */; };
 /* End PBXBuildFile section */
@@ -294,6 +297,12 @@
 		036562921A73168900F5A3BF /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 		036562951A7318DD00F5A3BF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = StoraSpel/Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		036562981A73191A00F5A3BF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = StoraSpel/Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		03783D011A7693A000BA78D0 /* SlerpRotationSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SlerpRotationSystem.cpp; sourceTree = "<group>"; };
+		03783D021A7693A000BA78D0 /* SlerpRotationSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlerpRotationSystem.h; sourceTree = "<group>"; };
+		03783D041A7693AD00BA78D0 /* MasterServerSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MasterServerSystem.cpp; sourceTree = "<group>"; };
+		03783D051A7693AD00BA78D0 /* MasterServerSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MasterServerSystem.h; sourceTree = "<group>"; };
+		03783D071A7693FD00BA78D0 /* ClientDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClientDatabase.cpp; sourceTree = "<group>"; };
+		03783D081A7693FD00BA78D0 /* ClientDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClientDatabase.h; sourceTree = "<group>"; };
 		03F45FB11A750E6700F8A27F /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = StoraSpel/Images.xcassets; sourceTree = "<group>"; };
 		03F7AF5B1A765FEC00FB8F1D /* Logger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Logger.cpp; sourceTree = "<group>"; };
 		03F7AF5C1A765FEC00FB8F1D /* Logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logger.h; sourceTree = "<group>"; };
@@ -648,6 +657,8 @@
 		036561D51A73141B00F5A3BF /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				03783D071A7693FD00BA78D0 /* ClientDatabase.cpp */,
+				03783D081A7693FD00BA78D0 /* ClientDatabase.h */,
 				036561D61A73141B00F5A3BF /* NetworkHelper.cpp */,
 				036561D71A73141B00F5A3BF /* NetworkHelper.h */,
 			);
@@ -657,6 +668,10 @@
 		036561DF1A73141B00F5A3BF /* Systems */ = {
 			isa = PBXGroup;
 			children = (
+				03783D041A7693AD00BA78D0 /* MasterServerSystem.cpp */,
+				03783D051A7693AD00BA78D0 /* MasterServerSystem.h */,
+				03783D011A7693A000BA78D0 /* SlerpRotationSystem.cpp */,
+				03783D021A7693A000BA78D0 /* SlerpRotationSystem.h */,
 				036561E01A73141B00F5A3BF /* CameraSystem.cpp */,
 				036561E11A73141B00F5A3BF /* CameraSystem.h */,
 				036561E21A73141B00F5A3BF /* DirectionalLightSystem.cpp */,
@@ -923,6 +938,8 @@
 				0365622E1A73141B00F5A3BF /* Parser.cpp in Sources */,
 				0365623A1A73141B00F5A3BF /* GameConsole.cpp in Sources */,
 				036562281A73141B00F5A3BF /* DataArray.cpp in Sources */,
+				03783D031A7693A000BA78D0 /* SlerpRotationSystem.cpp in Sources */,
+				03783D091A7693FD00BA78D0 /* ClientDatabase.cpp in Sources */,
 				0365626A1A73141B00F5A3BF /* Stdafx.cpp in Sources */,
 				0365625B1A73141B00F5A3BF /* SyncEntitiesSystem.cpp in Sources */,
 				036562381A73141B00F5A3BF /* EntityTemplateManager.cpp in Sources */,
@@ -950,6 +967,7 @@
 				036562391A73141B00F5A3BF /* FrameCounter.cpp in Sources */,
 				036562481A73141B00F5A3BF /* LuaBridge.cpp in Sources */,
 				036562501A73141B00F5A3BF /* Quaternion.cpp in Sources */,
+				03783D061A7693AD00BA78D0 /* MasterServerSystem.cpp in Sources */,
 				036562631A73141B00F5A3BF /* BaseNetwork.cpp in Sources */,
 				036562661A73141B00F5A3BF /* LinSocket.cpp in Sources */,
 				0365624D1A73141B00F5A3BF /* NetworkHelper.cpp in Sources */,
