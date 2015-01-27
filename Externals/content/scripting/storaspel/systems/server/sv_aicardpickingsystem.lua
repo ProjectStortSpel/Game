@@ -45,7 +45,7 @@ AiCardPickingSystem.Update = function(self, dt)
 		
 		for i = 1, #aisCard do
 			local cardName = self:GetComponent(pickedcards[i], "CardAction", 0):GetString()
-			print(cardName)
+			--print(cardName)
 		end
 		
 	end
@@ -58,9 +58,9 @@ AiCardPickingSystem.OnEntityAdded = function(self, entity)
 		local id = playerid:GetInt()
 		local plynum = self:GetComponent(id, "PlayerNumber", 0):GetInt()
 		local card = self:GetComponent(entity, "CardAction", 0):GetString()
-		print ( plynum .. " gets a " .. card .. " Card" )
+		--print ( plynum .. " gets a " .. card .. " Card" )
 	else
-		print( "Ai added")
+		--print( "Ai added")
 	end
 
 end
