@@ -27,7 +27,6 @@ TurnAroundSystem.OnEntityAdded = function(self, entity)
 	world:GetComponent(entity, "SlerpRotation", "fromX"):SetFloat( 0 )
 	world:GetComponent(entity, "SlerpRotation", "fromY"):SetFloat( 1 )
 	world:GetComponent(entity, "SlerpRotation", "fromZ"):SetFloat( 0 )
-	print(rotY)
 
 	if	x == 0 and z == 1 then
 		world:GetComponent(entity, "SlerpRotation", "fromW"):SetFloat( math.pi )
