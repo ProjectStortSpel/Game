@@ -17,10 +17,7 @@ ClientDatabase::ClientDatabase()
 	m_client.SetMaxTimeOutCounter(2);
 
 	
-	Network::NetMessageHook customHook;
-	customHook = std::bind(&ClientDatabase::OnGetServerList, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-	m_client.AddNetworkHook("GET_SERVER_LIST", customHook);
-	Logger::GetInstance().Log("MasterServer", Info, "Hooking custom hook \"GET_SERVER_LIST\"to get \"OnGetServerList\"");
+
 
 }
 ClientDatabase::~ClientDatabase()
@@ -30,8 +27,12 @@ ClientDatabase::~ClientDatabase()
 
 bool ClientDatabase::Connect()
 {
+	m_client.SetTimeOutValue(1000);
+
 	if (!m_connected)
 		m_connected = m_client.Connect(m_ipAddress.c_str(), m_password.c_str(), m_remotePort, m_localPort);
+
+	m_client.SetTimeOutValue(0);
 
 	return m_connected;
 }
@@ -192,7 +193,6 @@ void ClientDatabase::DecreaseNoSpectators()
 
 void ClientDatabase::RequestServerList()
 {
-
 	if (!m_client.IsConnected())
 	{
 		Logger::GetInstance().Log("MasterServer", Info, "Tried to send \"GET_SERVER_LIST\", but is not connected to MasterServer");
@@ -207,27 +207,10 @@ void ClientDatabase::RequestServerList()
 	m_client.Send(packet);
 }
 
-void ClientDatabase::OnGetServerList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
+void ClientDatabase::HookOnGetServerList(Network::NetMessageHook& _hook)
 {
-	int noServers = _ph->ReadInt(_id);
-
-	ServerInfo si;
-	m_serverList.clear();
-
-	for (int i = 0; i < noServers; ++i)
-	{
-		si.Name					= _ph->ReadString(_id);
-		si.IpAddress			= _ph->ReadString(_id);
-		si.Port					= _ph->ReadInt(_id);
-		si.NoUsers				= _ph->ReadShort(_id);
-		si.MaxUsers				= _ph->ReadShort(_id);
-		si.NoSpectators			= _ph->ReadShort(_id);
-		si.GameStarted			= _ph->ReadByte(_id);
-		si.PasswordProtected	= _ph->ReadByte(_id);
-
-		m_serverList.push_back(si);
-	}
-
+	m_client.AddNetworkHook("GET_SERVER_LIST", _hook);
+	
 //	SDL_Log("Server List:");
 //	for (int i = 0; i < m_serverList.size(); ++i)
 //	{
