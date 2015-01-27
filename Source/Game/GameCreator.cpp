@@ -9,7 +9,6 @@
 #include "Systems/RenderRemoveSystem.h"
 #include "Systems/ResetChangedSystem.h"
 #include "Systems/PointlightSystem.h"
-#include "Profilers/ECSLProfiler.h"
 
 #include "NetworkInstance.h"
 #include "ECSL/ECSL.h"
@@ -46,6 +45,9 @@ GameCreator::~GameCreator()
 
 	if (m_remoteConsole)
 		delete m_remoteConsole;
+
+	if (m_worldProfiler)
+		delete(m_worldProfiler);
 
 	LuaEmbedder::Quit();
 
@@ -187,35 +189,7 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	  (*it)->PostInitialize();
 	systemsAdded->clear();
 
-	//unsigned int newEntity = m_world->CreateNewEntity();
-	//m_world->CreateComponentAndAddTo("Model", newEntity);
-	//m_world->CreateComponentAndAddTo("Position", newEntity);
-	//m_world->CreateComponentAndAddTo("Rotation", newEntity);
-	//m_world->CreateComponentAndAddTo("Scale", newEntity);
-
-	//char* modelComp = m_world->GetComponent(newEntity, "Model", "ModelPath");
-	//std::string modelPath = "quad";
-	//for (int i = 0; i < modelPath.size(); ++i)
-	//	modelComp[i] = modelPath[i];
-	//modelComp[modelPath.size()] = '\0';
-	//
-	//
-	//modelComp = m_world->GetComponent(newEntity, "Model", "ModelName");
-	//std::string modelName = "host";
-	//for (int i = 0; i < modelName.size(); ++i)
-	//	modelComp[i] = modelName[i];
-	//modelComp[modelName.size()] = '\0';
-
-	//float* position = (float*)m_world->GetComponent(newEntity, "Position", 0);
-	//position[0] = -2.0f;
-	//position[1] = 1.0f;
-	//position[2] = -4.0f;
-
-	//position = (float*)m_world->GetComponent(newEntity, "Scale", 0);
-	//position[0] = 1.0f;
-	//position[1] = 0.5f;
-	//position[2] = 1.0f;
-
+	m_worldProfiler = new Profilers::ECSLProfiler(m_graphics);
 }
 
 void GameCreator::RunStartupCommands(int argc, char** argv)
@@ -312,6 +286,8 @@ void GameCreator::StartGame(int argc, char** argv)
 		m_worldCounter.Reset();
 		/*	Update world (systems, entities etc)	*/
 		m_world->Update(dt);
+		m_worldProfiler->Update(dt);
+		m_worldProfiler->Render();
 		m_worldCounter.Tick();
 
 
@@ -330,6 +306,9 @@ void GameCreator::StartGame(int argc, char** argv)
 		/*	DEBUG PRINT INFO	*/
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_Z) == Input::InputState::PRESSED)
 			showDebugInfo = !showDebugInfo;
+
+		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_X) == Input::InputState::PRESSED)
+			m_worldProfiler->Toggle();
 
 		if (showDebugInfo)
 		{

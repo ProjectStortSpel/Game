@@ -4,7 +4,7 @@ ServerLobbySystem.m_noConnections = 0;
 ServerLobbySystem.m_maxConnections = 3;
 
 ServerLobbySystem.Initialize = function(self)
-	self:SetName("ServerLobbySystem System");
+	self:SetName("ServerLobbySystem");
 	self:UsingUpdate()
 	self:UsingEntitiesAdded()
 	self:UsingEntitiesRemoved()

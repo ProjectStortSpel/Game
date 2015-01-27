@@ -59,7 +59,7 @@ namespace MPL
 
 		void LogWorkDone(unsigned int _threadId, const WorkItem* _workItem);
 
-		/* Creates a new memory. Current sessions' memory will be cleared, but not a pulled sessions memory. */
+		/* Creates a new session. Current sessions' memory will be cleared, but not a pulled sessions memory. */
 		void CreateNewSession();
 
 		/* Pulls the current session. Don't forget to free its memory. */

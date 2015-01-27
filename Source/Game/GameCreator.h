@@ -15,6 +15,7 @@
 #include "GameConsole.h"
 #include "FrameCounter/FrameCounter.h"
 #include "Game/RemoteConsole.h"
+#include "Profilers/ECSLProfiler.h"
 
 class GameCreator
 {
@@ -77,6 +78,8 @@ private:
 	Utility::FrameCounter m_worldCounter;
 	Utility::FrameCounter m_networkCounter;
 	Utility::FrameCounter m_graphicsCounter;
+
+	Profilers::ECSLProfiler* m_worldProfiler;
 	
 	lua_State* m_clientLuaState;
 	lua_State* m_serverLuaState;
