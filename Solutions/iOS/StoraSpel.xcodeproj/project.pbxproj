@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0321DDEF1A77E4D5000EE6A6 /* libSDL2_ttf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0321DDED1A77E4D5000EE6A6 /* libSDL2_ttf.a */; };
+		0321DDF01A77E4D5000EE6A6 /* libSDL2_ttfSim.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0321DDEE1A77E4D5000EE6A6 /* libSDL2_ttfSim.a */; };
 		03244CCC1A7372C800D4E53B /* content in Resources */ = {isa = PBXBuildFile; fileRef = 03244CCB1A7372C800D4E53B /* content */; };
 		035C22B11A73B76300EE9624 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 035C22B01A73B76300EE9624 /* Default-568h@2x.png */; };
 		035C22B21A73C8BA00EE9624 /* liblua.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0365626C1A7315BA00F5A3BF /* liblua.a */; };
@@ -110,6 +112,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0321DDED1A77E4D5000EE6A6 /* libSDL2_ttf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_ttf.a; path = ../../Externals/lib/iOS/libSDL2_ttf.a; sourceTree = "<group>"; };
+		0321DDEE1A77E4D5000EE6A6 /* libSDL2_ttfSim.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_ttfSim.a; path = ../../Externals/lib/iOS/libSDL2_ttfSim.a; sourceTree = "<group>"; };
 		03244CCB1A7372C800D4E53B /* content */ = {isa = PBXFileReference; lastKnownFileType = folder; name = content; path = ../../Externals/content; sourceTree = "<group>"; };
 		035C22B01A73B76300EE9624 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		03655DE01A7312E100F5A3BF /* StoraSpel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StoraSpel.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -316,6 +320,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0321DDEF1A77E4D5000EE6A6 /* libSDL2_ttf.a in Frameworks */,
+				0321DDF01A77E4D5000EE6A6 /* libSDL2_ttfSim.a in Frameworks */,
 				035C22B21A73C8BA00EE9624 /* liblua.a in Frameworks */,
 				035C22B31A73C8BA00EE9624 /* libluaSim.a in Frameworks */,
 				035C22B41A73C8BA00EE9624 /* libSDL2.a in Frameworks */,
@@ -337,6 +343,8 @@
 		03655DD71A7312E100F5A3BF = {
 			isa = PBXGroup;
 			children = (
+				0321DDED1A77E4D5000EE6A6 /* libSDL2_ttf.a */,
+				0321DDEE1A77E4D5000EE6A6 /* libSDL2_ttfSim.a */,
 				035C22B01A73B76300EE9624 /* Default-568h@2x.png */,
 				0365629C1A7319A500F5A3BF /* Resources */,
 				0365629B1A73198200F5A3BF /* Source */,
@@ -1140,6 +1148,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					../../Externals/lib/iOS,
+					/Users/Erik/Desktop/StoraSpel/Game/Externals/lib/iOS,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1161,6 +1170,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					../../Externals/lib/iOS,
+					/Users/Erik/Desktop/StoraSpel/Game/Externals/lib/iOS,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";

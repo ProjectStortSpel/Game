@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0321DDEC1A77E442000EE6A6 /* libSDL2_ttf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0321DDEB1A77E442000EE6A6 /* libSDL2_ttf.a */; };
 		0339F9891A74082700FA04DD /* content in Resources */ = {isa = PBXBuildFile; fileRef = 0339F9881A74082700FA04DD /* content */; };
 		0339F9961A740B5900FA04DD /* libGLEW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0339F9921A740B5900FA04DD /* libGLEW.a */; };
 		0339F9971A740B5900FA04DD /* libGLEW.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0339F9931A740B5900FA04DD /* libGLEW.dylib */; };
@@ -115,6 +116,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0321DDEB1A77E442000EE6A6 /* libSDL2_ttf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_ttf.a; path = ../../Externals/lib/OSX/libSDL2_ttf.a; sourceTree = "<group>"; };
 		0339F9881A74082700FA04DD /* content */ = {isa = PBXFileReference; lastKnownFileType = folder; name = content; path = ../../Externals/content; sourceTree = "<group>"; };
 		0339F9921A740B5900FA04DD /* libGLEW.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGLEW.a; path = ../../Externals/lib/OSX/libGLEW.a; sourceTree = "<group>"; };
 		0339F9931A740B5900FA04DD /* libGLEW.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libGLEW.dylib; path = ../../Externals/lib/OSX/libGLEW.dylib; sourceTree = "<group>"; };
@@ -328,6 +330,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0321DDEC1A77E442000EE6A6 /* libSDL2_ttf.a in Frameworks */,
 				03C1DB171A744FB200C1996E /* libSDL2.a in Frameworks */,
 				0339F9AE1A7433D800FA04DD /* OpenGL.framework in Frameworks */,
 				0339F9961A740B5900FA04DD /* libGLEW.a in Frameworks */,
@@ -383,6 +386,7 @@
 		035C22B61A73D68600EE9624 = {
 			isa = PBXGroup;
 			children = (
+				0321DDEB1A77E442000EE6A6 /* libSDL2_ttf.a */,
 				0339F9871A74081400FA04DD /* Resources */,
 				0339F9861A74080300FA04DD /* Framework */,
 				035C24201A73D7F400EE9624 /* Source */,
@@ -1125,6 +1129,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					../../Externals/lib/OSX,
+					/Users/Erik/Desktop/StoraSpel/Game/Externals/lib/OSX,
 				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
@@ -1150,6 +1155,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					../../Externals/lib/OSX,
+					/Users/Erik/Desktop/StoraSpel/Game/Externals/lib/OSX,
 				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
