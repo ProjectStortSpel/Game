@@ -547,7 +547,7 @@ void GameCreator::ConsoleStopGame(std::string _command, std::vector<Console::Arg
 
 void GameCreator::OnConnectedToServer(Network::NetConnection _nc, const char* _message)
 {
-	GameMode("storaspel");
+	GameMode("storaspelthreaded");
 }
 
 void GameCreator::ConsoleGameMode(std::string _command, std::vector<Console::Argument>* _args)
