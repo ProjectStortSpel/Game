@@ -4,40 +4,41 @@
 #include "Network/ClientNetwork.h"
 #include <ctime>
 
+struct ServerInfo
+{
+	int TimeId;
+	std::string Name;
+	std::string IpAddress;
+	short Port;
+	short NoUsers;
+	short NoSpectators;
+	short MaxUsers;
+	bool GameStarted;
+	bool PasswordProtected;
+
+	ServerInfo()
+	{
+		TimeId = -1;
+		Name = "UntitledServer";
+		IpAddress = "127.0.0.1";
+		Port = -1;
+		NoUsers = -1;
+		NoSpectators = -1;
+		MaxUsers = 0;
+		GameStarted = false;
+		PasswordProtected = false;
+	}
+
+};
+
 class ClientDatabase
 {
 
-	struct ServerInfo
-	{
-		int TimeId;
-		std::string Name;
-		std::string IpAddress;
-		short Port;
-		short NoUsers;
-		short NoSpectators;
-		short MaxUsers;
-		bool GameStarted;
-		bool PasswordProtected;
-
-		ServerInfo()
-		{
-			TimeId = (int)std::time(0);
-			Name = "UntitledServer";
-			IpAddress = "127.0.0.1";
-			Port = 0;
-			NoUsers = 0;
-			NoSpectators = 0;
-			MaxUsers = 0;
-			GameStarted = false;
-			PasswordProtected = false;
-		}
-
-	};
-
 public:
-	~ClientDatabase();
-	ClientDatabase();
 
+	static ClientDatabase& GetInstance();
+	~ClientDatabase();
+	
 	bool Connect();
 	bool Disconnect();
 
@@ -57,9 +58,12 @@ public:
 
 	void RequestServerList();
 	std::vector<ServerInfo>& GetServerList() { return m_serverList; }
+	ServerInfo GetFirstServerAndPop();
 
 private:
 	
+	ClientDatabase();
+
 	void OnGetServerList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
 
 private:
@@ -67,6 +71,7 @@ private:
 
 	Network::ClientNetwork m_client;
 
+	bool m_connected;
 	std::string m_ipAddress;
 	std::string m_password;
 	int m_remotePort;

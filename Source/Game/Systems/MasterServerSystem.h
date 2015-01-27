@@ -7,6 +7,8 @@
 
 class MasterServerSystem : public ECSL::System
 {
+	
+
 public:
 	MasterServerSystem();
 	~MasterServerSystem();
