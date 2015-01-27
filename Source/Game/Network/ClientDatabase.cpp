@@ -238,7 +238,7 @@ void ClientDatabase::OnGetServerList(Network::PacketHandler* _ph, uint64_t& _id,
 
 }
 
-ServerInfo& ClientDatabase::GetFirstServerAndPop()
+ServerInfo ClientDatabase::GetFirstServerAndPop()
 {
 	if (m_serverList.size() > 0)
 	{
@@ -247,6 +247,6 @@ ServerInfo& ClientDatabase::GetFirstServerAndPop()
 
 		return tmp;
 	}
-	 
+
 	return ServerInfo();
 }

@@ -58,7 +58,7 @@ public:
 
 	void RequestServerList();
 	std::vector<ServerInfo>& GetServerList() { return m_serverList; }
-	ServerInfo& GetFirstServerAndPop();
+	ServerInfo GetFirstServerAndPop();
 
 private:
 	
