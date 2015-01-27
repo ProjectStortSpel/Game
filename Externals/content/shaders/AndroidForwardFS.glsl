@@ -1,6 +1,6 @@
 #version 100
-#extension OES_fragment_precision_high : enable
-//#extension GL_OES_depth_texture : enable
+#extension GL_OES_fragment_precision_high : enable
+#extension GL_OES_depth_texture : enable
 
 precision highp float;
 
@@ -69,26 +69,14 @@ void phongModelDirLight(out vec3 ambient, out vec3 diffuse, out vec3 spec)
 
 		float shadow = 1.0;
 		vec4 shadowCoordinateWdivide = shadowCoord / shadowCoord.w;
-		//shadowCoordinateWdivide.z -= 0.0005;
+		shadowCoordinateWdivide.z += 0.0009;
 		float distanceFromLight = texture2D(ShadowDepthTex, shadowCoordinateWdivide.st).z;
 		
 		if (shadowCoord.w > 0.0)
 	 		shadow = distanceFromLight < shadowCoordinateWdivide.z ? 0.0 : 1.0 ;
 
 		//shadow = float(distanceFromLight < shadowCoordinateWdivide.z);
-		/* Draw main scene - read and compare shadow map. */
-		//vec2 vfDepth = texture2DProj(ShadowDepthTex, shadowCoord).xy;
-		//float fDepth = (vfDepth.x * 10.0 + vfDepth.y);
-		///* Unpack the light distance. See how it is packed in the shadow.frag file. */
-		//float fLDepth = (10.0 - shadowCoord.z) + 0.1 - fDepth ;
-		//float shadow = 1.0;
-		//if(fDepth > 0.0 && fLDepth < 0.0)
-		//{
-		//	shadow = 0.0;
-		//	/* Make sure there is no specular effect on obscured fragments. */
-		//	//intensitySpecular = 0.0;
-		//}
-
+		
 		// diffuse
 		diffuse = diffuseFactor * dirlight.Color * dirlight.Intensity.y * shadow;
 
@@ -108,7 +96,7 @@ void phongModel(int index, out vec3 ambient, out vec3 diffuse, out vec3 spec) {
 	spec    = vec3(0.0);
 
 	vec3 thisLightPosition	= pointlights[0].Position;
-	vec3 thisLightColor	= pointlights[0].Color;
+	vec3 thisLightColor		= pointlights[0].Color;
 	vec3 thisLightIntensity = pointlights[0].Intensity;
 
 	vec3 lightVec = (ViewMatrix * vec4(thisLightPosition, 1.0)).xyz - ViewPos;

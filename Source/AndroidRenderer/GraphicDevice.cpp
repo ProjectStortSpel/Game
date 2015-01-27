@@ -81,7 +81,7 @@ void GraphicDevice::Update(float _dt)
 {
 	m_camera->Update(_dt);
 
-  //SDL_Log("FPS: %f", 1.0f/_dt);
+  //SDL_Log("FPS: %f", 1.0f/_dt); 
 }
 
 void GraphicDevice::WriteShadowMapDepth()
@@ -89,22 +89,20 @@ void GraphicDevice::WriteShadowMapDepth()
 	//------- Write shadow maps depths ----------
 	glBindFramebuffer(GL_FRAMEBUFFER, m_shadowMap->GetShadowFBOHandle());
 	glClear(GL_DEPTH_BUFFER_BIT);
-	glViewport(0, 0, m_shadowMap->GetResolution(), m_shadowMap->GetResolution());
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+
+	glViewport(0, 0, m_shadowMap->GetResolution()-2, m_shadowMap->GetResolution()-2);
 
 	m_shadowShader.UseProgram();
 
-	//glDisable(GL_CULL_FACE);
 	//glCullFace(GL_FRONT);
-	//glEnable(GL_POLYGON_OFFSET_FILL);
-	//glPolygonOffset(4.5, 18000.0);
+	glEnable(GL_POLYGON_OFFSET_FILL);
+	glPolygonOffset(4.5, 18000.0);
 
-	//glActiveTexture(GL_TEXTURE0);
-	//glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
-	//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_shadowMap->GetDepthTexHandle(), 0);
-
-	mat4 shadowProjection = *m_shadowMap->GetProjectionMatrix();
-	mat4 shadowViewProj = shadowProjection * (*m_shadowMap->GetViewMatrix());
+	mat4 shadowViewProj = (*m_shadowMap->GetProjectionMatrix()) * (*m_shadowMap->GetViewMatrix());
 
 	//Forward models
 	for (int i = 0; i < m_modelsForward.size(); i++)
@@ -127,16 +125,15 @@ void GraphicDevice::WriteShadowMapDepth()
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
 
-			m_modelsForward[i].bufferPtr->draw();
-			//glBindTexture(GL_TEXTURE_2D, 0);
+			m_modelsForward[i].bufferPtr->draw(m_shadowShader.GetShaderProgram());
+			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 	}
 	//------------------------------------------------
-
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	//glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-	//glDisable(GL_POLYGON_OFFSET_FILL);
+	glDisable(GL_POLYGON_OFFSET_FILL);
 	//------------------------------
 }
 
@@ -188,7 +185,7 @@ void GraphicDevice::Render()
 				m_forwardShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
 
 				glActiveTexture(GL_TEXTURE1);
-				glBindTexture(GL_TEXTURE_2D, m_shadowMap->GetDepthTexHandle());
+				glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
 
 				glActiveTexture(GL_TEXTURE2);
 				glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].norID);
@@ -196,7 +193,7 @@ void GraphicDevice::Render()
 				glActiveTexture(GL_TEXTURE3);
 				glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].speID);
 
-				m_modelsForward[i].bufferPtr->draw();
+				m_modelsForward[i].bufferPtr->draw(m_forwardShader.GetShaderProgram());
 				glBindTexture(GL_TEXTURE_2D, 0);
 			}
 		}
@@ -241,11 +238,11 @@ void GraphicDevice::Render()
 			glActiveTexture(GL_TEXTURE3);
 			glBindTexture(GL_TEXTURE_2D, m_modelsViewspace[i].speID);
 
-			m_modelsViewspace[i].bufferPtr->draw();
+			m_modelsViewspace[i].bufferPtr->draw(m_viewspaceShader.GetShaderProgram());
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 	}
-	if (m_modelsForward.size() > 0)
+	/*if (m_modelsForward.size() > 0)
 	{
 		float positionData[] = {
 			-1.0, -1.0,
@@ -272,7 +269,7 @@ void GraphicDevice::Render()
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 
 		glDeleteBuffers(1, &buf);
-	}
+	}*/
 	glUseProgram(0);
 	glEnable(GL_DEPTH_TEST);
 
@@ -420,7 +417,7 @@ void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
 
 void GraphicDevice::CreateShadowMap()
 {
-	int resolution = 2048;
+	int resolution = 1024;
 	m_dirLightDirection = vec3(0.0f, -1.0f, 1.0f);
 	vec3 midMap = vec3(8.0f, 0.0f, 8.0f);
 	vec3 lightPos = midMap - (10.0f*normalize(m_dirLightDirection));
@@ -430,6 +427,7 @@ void GraphicDevice::CreateShadowMap()
 	m_forwardShader.UseProgram();
 	m_forwardShader.SetUniVariable("BiasMatrix", mat4x4, m_shadowMap->GetBiasMatrix());
 	m_forwardShader.CheckUniformLocation("ShadowDepthTex", 0);
+
 	m_shadowShader.CheckUniformLocation("diffuseTex", 1);
 	m_fullscreen.CheckUniformLocation("sampler", 0);
 }
@@ -677,20 +675,35 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 
 	Buffer* retbuffer = new Buffer();
 
-	GLuint vpLoc	= glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexPosition");
-	GLuint vnLoc	= glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexNormal");
-	GLuint tanLoc	= glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTangent");
-	GLuint bitanLoc = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexBiTangent");
-	GLuint tcLoc	= glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTexCoord");
+	std::map<GLuint, GLuint> vpLocs, vnLocs, tanLocs, bitanLocs, tcLocs;
+	vpLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexPosition");
+	vpLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexPosition");
+	vpLocs[m_shadowShader.GetShaderProgram()]	 = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexPosition");
+
+	vnLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexNormal");
+	vnLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexNormal");
+	vnLocs[m_shadowShader.GetShaderProgram()]	 = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexNormal");
+
+	tanLocs[m_forwardShader.GetShaderProgram()]	  = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTangent");
+	tanLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexTangent");
+	tanLocs[m_shadowShader.GetShaderProgram()]	  = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexTangent");
+
+	bitanLocs[m_forwardShader.GetShaderProgram()]	= glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexBiTangent");
+	bitanLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexBiTangent");
+	bitanLocs[m_shadowShader.GetShaderProgram()]	= glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexBiTangent");
+
+	tcLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTexCoord");
+	tcLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexTexCoord");
+	tcLocs[m_shadowShader.GetShaderProgram()]	 = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexTexCoord");
 
 	_shaderProg->UseProgram();
 	BufferData bufferData[] =
 	{
-		{ vpLoc,	3, GL_FLOAT, (const GLvoid*)positionData.data(), (GLsizeiptr)(positionData.size() * sizeof(float)) },
-		{ vnLoc,	3, GL_FLOAT, (const GLvoid*)normalData.data(), (GLsizeiptr)(normalData.size()   * sizeof(float)) },
-		{ tanLoc,	3, GL_FLOAT, (const GLvoid*)tanData.data(), (GLsizeiptr)(tanData.size()   * sizeof(float)) },
-		{ bitanLoc, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), (GLsizeiptr)(bitanData.size()   * sizeof(float)) },
-		{ tcLoc,	2, GL_FLOAT, (const GLvoid*)texCoordData.data(), (GLsizeiptr)(texCoordData.size() * sizeof(float)) }
+		{ vpLocs,	 3, GL_FLOAT, (const GLvoid*)positionData.data(), (GLsizeiptr)(positionData.size() * sizeof(float)) },
+		{ vnLocs,	 3, GL_FLOAT, (const GLvoid*)normalData.data(), (GLsizeiptr)(normalData.size()   * sizeof(float)) },
+		{ tanLocs,	 3, GL_FLOAT, (const GLvoid*)tanData.data(), (GLsizeiptr)(tanData.size()   * sizeof(float)) },
+		{ bitanLocs, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), (GLsizeiptr)(bitanData.size()   * sizeof(float)) },
+		{ tcLocs,	 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), (GLsizeiptr)(texCoordData.size() * sizeof(float)) }
 	};
 
 	retbuffer->init(bufferData, sizeof(bufferData) / sizeof(bufferData[0]), _shaderProg->GetShaderProgram());
@@ -730,6 +743,7 @@ void GraphicDevice::Clear()
   m_modelIDcounter = 0;
   
   m_modelsForward.clear();
+  m_modelsViewspace.clear();
 
   float **tmpPtr = new float*[1];
   BufferPointlights(0, tmpPtr);

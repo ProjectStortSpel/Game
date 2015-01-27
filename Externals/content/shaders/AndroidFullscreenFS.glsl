@@ -1,5 +1,7 @@
 #version 100
 
+precision highp float;
+
 varying vec2 uvCoord;
 
 uniform sampler2D sampler;

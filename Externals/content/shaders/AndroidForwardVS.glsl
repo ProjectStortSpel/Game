@@ -1,7 +1,5 @@
 #version 100
 
-#extension OES_fragment_precision_high : enable
-
 precision highp float;
 
 attribute vec3 VertexPosition;

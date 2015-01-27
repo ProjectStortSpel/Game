@@ -8,7 +8,7 @@ namespace Renderer
 {
 	struct BufferData
 	{
-		GLuint location;
+		std::map<GLuint, GLuint> locations;
 		GLint componentCount;
 		GLenum type;
 
@@ -27,8 +27,8 @@ namespace Renderer
 		bool init(const BufferData* p_BufferData, GLsizei p_BufferDataSize,
 			const GLuint* p_Indices, GLsizei p_IndexDataSize, GLuint program);
 
-		void draw(void);
-		void draw(GLint base, GLsizei count);
+		void draw(GLuint prog);
+		void draw(GLint base, GLsizei count, GLuint prog);
 
 		void setCount(GLsizei count);
 
