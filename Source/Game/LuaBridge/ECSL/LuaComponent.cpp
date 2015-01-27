@@ -62,6 +62,8 @@ namespace LuaBridge
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetModel", &LuaComponent::SetModel);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetPointlight", &LuaComponent::SetPointlight);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetPointlight", &LuaComponent::GetPointlight);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetDirectionalLight", &LuaComponent::SetDirectionalLight);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetDirectionalLight", &LuaComponent::GetDirectionalLight);
 		
 		LuaEmbedder::EmbedClassProperty<LuaComponent>(L, "Component", "Float", &LuaComponent::GetFloat, &LuaComponent::SetFloat);
 		LuaEmbedder::EmbedClassProperty<LuaComponent>(L, "Component", "Int", &LuaComponent::GetInt, &LuaComponent::SetInt);
@@ -115,11 +117,24 @@ namespace LuaBridge
 	int LuaComponent::SetFloat(lua_State* L)
 	{
 		assert(m_dataLocation);
+		bool notifyNetwork = true;
+
 		if (LuaEmbedder::IsInt(L, 2))
+		{
 			((float*)m_dataLocation)[LuaEmbedder::PullInt(L, 2)] = LuaEmbedder::PullFloat(L, 1);
+
+			if (LuaEmbedder::IsBool(L, 3))
+				notifyNetwork = LuaEmbedder::PullBool(L, 3);
+		}
+
 		else
+		{
 			((float*)m_dataLocation)[0] = LuaEmbedder::PullFloat(L, 1);
-		ComponentHasChanged();
+
+			if (LuaEmbedder::IsBool(L, 2))
+				notifyNetwork = LuaEmbedder::PullBool(L, 2);
+		}
+		ComponentHasChanged(notifyNetwork);
 		return 0;
 	}
 	int LuaComponent::SetFloat2(lua_State* L)
@@ -127,7 +142,11 @@ namespace LuaBridge
 		assert(m_dataLocation);
 		((float*)m_dataLocation)[0] = LuaEmbedder::PullFloat(L, 1);
 		((float*)m_dataLocation)[1] = LuaEmbedder::PullFloat(L, 2);
-		ComponentHasChanged();
+		bool notifyNetwork = true;
+		if (LuaEmbedder::IsBool(L, 3))
+			notifyNetwork = LuaEmbedder::PullBool(L, 3);
+
+		ComponentHasChanged(notifyNetwork);
 		return 0;
 	}
 	int LuaComponent::SetFloat3(lua_State* L)
@@ -136,7 +155,11 @@ namespace LuaBridge
 		((float*)m_dataLocation)[0] = LuaEmbedder::PullFloat(L, 1);
 		((float*)m_dataLocation)[1] = LuaEmbedder::PullFloat(L, 2);
 		((float*)m_dataLocation)[2] = LuaEmbedder::PullFloat(L, 3);
-		ComponentHasChanged();
+		bool notifyNetwork = true;
+		if (LuaEmbedder::IsBool(L, 4))
+			notifyNetwork = LuaEmbedder::PullBool(L, 4);
+
+		ComponentHasChanged(notifyNetwork);
 		return 0;
 	}
 	int LuaComponent::SetFloat4(lua_State* L)
@@ -146,7 +169,11 @@ namespace LuaBridge
 		((float*)m_dataLocation)[1] = LuaEmbedder::PullFloat(L, 2);
 		((float*)m_dataLocation)[2] = LuaEmbedder::PullFloat(L, 3);
 		((float*)m_dataLocation)[3] = LuaEmbedder::PullFloat(L, 4);
-		ComponentHasChanged();
+		bool notifyNetwork = true;
+		if (LuaEmbedder::IsBool(L, 5))
+			notifyNetwork = LuaEmbedder::PullBool(L, 5);
+
+		ComponentHasChanged(notifyNetwork);
 		return 0;
 	}
 	int LuaComponent::SetFloat5(lua_State* L)
@@ -157,7 +184,11 @@ namespace LuaBridge
 		((float*)m_dataLocation)[2] = LuaEmbedder::PullFloat(L, 3);
 		((float*)m_dataLocation)[3] = LuaEmbedder::PullFloat(L, 4);
 		((float*)m_dataLocation)[4] = LuaEmbedder::PullFloat(L, 5);
-		ComponentHasChanged();
+		bool notifyNetwork = true;
+		if (LuaEmbedder::IsBool(L, 6))
+			notifyNetwork = LuaEmbedder::PullBool(L, 6);
+
+		ComponentHasChanged(notifyNetwork);
 		return 0;
 	}
 
@@ -197,11 +228,24 @@ namespace LuaBridge
 	int LuaComponent::SetInt(lua_State* L)
 	{
 		assert(m_dataLocation);
+		bool notifyNetwork = true;
+
 		if (LuaEmbedder::IsInt(L, 2))
+		{
 			((int*)m_dataLocation)[LuaEmbedder::PullInt(L, 2)] = LuaEmbedder::PullInt(L, 1);
+
+			if (LuaEmbedder::IsBool(L, 3))
+				notifyNetwork = LuaEmbedder::PullBool(L, 3);
+		}
 		else
+		{
 			((int*)m_dataLocation)[0] = LuaEmbedder::PullInt(L, 1);
-		ComponentHasChanged();
+
+			if (LuaEmbedder::IsBool(L, 2))
+				notifyNetwork = LuaEmbedder::PullBool(L, 2);
+		}
+
+		ComponentHasChanged(notifyNetwork);
 		return 0;
 	}
 	int LuaComponent::SetInt2(lua_State* L)
@@ -209,7 +253,12 @@ namespace LuaBridge
 		assert(m_dataLocation);
 		((int*)m_dataLocation)[0] = LuaEmbedder::PullInt(L, 1);
 		((int*)m_dataLocation)[1] = LuaEmbedder::PullInt(L, 2);
-		ComponentHasChanged();
+
+		bool notifyNetwork = true;
+		if (LuaEmbedder::IsBool(L, 3))
+			notifyNetwork = LuaEmbedder::PullBool(L, 3);
+
+		ComponentHasChanged(notifyNetwork);
 		return 0;
 	}
 	int LuaComponent::SetInt3(lua_State* L)
@@ -218,7 +267,11 @@ namespace LuaBridge
 		((int*)m_dataLocation)[0] = LuaEmbedder::PullInt(L, 1);
 		((int*)m_dataLocation)[1] = LuaEmbedder::PullInt(L, 2);
 		((int*)m_dataLocation)[2] = LuaEmbedder::PullInt(L, 3);
-		ComponentHasChanged();
+		bool notifyNetwork = true;
+		if (LuaEmbedder::IsBool(L, 4))
+			notifyNetwork = LuaEmbedder::PullBool(L, 4);
+
+		ComponentHasChanged(notifyNetwork);
 		return 0;
 	}
 	int LuaComponent::SetInt4(lua_State* L)
@@ -228,7 +281,11 @@ namespace LuaBridge
 		((int*)m_dataLocation)[1] = LuaEmbedder::PullInt(L, 2);
 		((int*)m_dataLocation)[2] = LuaEmbedder::PullInt(L, 3);
 		((int*)m_dataLocation)[3] = LuaEmbedder::PullInt(L, 4);
-		ComponentHasChanged();
+		bool notifyNetwork = true;
+		if (LuaEmbedder::IsBool(L, 5))
+			notifyNetwork = LuaEmbedder::PullBool(L, 5);
+
+		ComponentHasChanged(notifyNetwork);
 		return 0;
 	}
 
@@ -244,11 +301,24 @@ namespace LuaBridge
 	int LuaComponent::SetBool(lua_State* L)
 	{
 		assert(m_dataLocation);
+		bool notifyNetwork = true;
+
 		if (LuaEmbedder::IsInt(L, 2))
+		{
 			((bool*)m_dataLocation)[LuaEmbedder::PullInt(L, 2)] = LuaEmbedder::PullBool(L, 1);
+
+			if (LuaEmbedder::IsBool(L, 3))
+				notifyNetwork = LuaEmbedder::PullBool(L, 3);
+		}
 		else
+		{
 			((bool*)m_dataLocation)[0] = LuaEmbedder::PullBool(L, 1);
-		ComponentHasChanged();
+			if (LuaEmbedder::IsBool(L, 1))
+				notifyNetwork = LuaEmbedder::PullBool(L, 1);
+		}
+
+
+		ComponentHasChanged(notifyNetwork);
 		return 0;
 	}
 
@@ -265,7 +335,12 @@ namespace LuaBridge
 		for (int i = 0; i < (int)text.size(); i++)
 		  m_dataLocation[i] = text[i];
 		m_dataLocation[(int)text.size()] = '\0';
-		ComponentHasChanged();
+
+		bool notifyNetwork = true;
+		if (LuaEmbedder::IsBool(L, 2))
+			notifyNetwork = LuaEmbedder::PullBool(L, 2);
+
+		ComponentHasChanged(notifyNetwork);
 		return 0;
 	}
 
@@ -291,7 +366,11 @@ namespace LuaBridge
 
 		*(int*)(m_dataLocation + modelRenderTypeOffset) = renderType;
 
-		ComponentHasChanged();
+		bool notifyNetwork = true;
+		if (LuaEmbedder::IsBool(L, 4))
+			notifyNetwork = LuaEmbedder::PullBool(L, 4);
+
+		ComponentHasChanged(notifyNetwork);
 		return 0;
 	}
 	
@@ -308,7 +387,11 @@ namespace LuaBridge
 		((float*)m_dataLocation)[7] = LuaEmbedder::PullFloat(L, 8);
 		((float*)m_dataLocation)[8] = LuaEmbedder::PullFloat(L, 9);
 		((float*)m_dataLocation)[9] = LuaEmbedder::PullFloat(L, 10);
-		ComponentHasChanged();
+		bool notifyNetwork = true;
+		if (LuaEmbedder::IsBool(L, 11))
+			notifyNetwork = LuaEmbedder::PullBool(L, 11);
+
+		ComponentHasChanged(notifyNetwork);
 		return 0;
 	}
 
@@ -327,12 +410,47 @@ namespace LuaBridge
 		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[9]));
 		return 10;
 	}
+
+	int LuaComponent::GetDirectionalLight(lua_State* L)
+	{
+		assert(m_dataLocation);
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[0]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[1]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[2]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[3]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[4]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[5]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[6]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[7]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[8]));
+		return 9;
+	}
+	int LuaComponent::SetDirectionalLight(lua_State* L)
+	{
+		assert(m_dataLocation);
+		((float*)m_dataLocation)[0] = LuaEmbedder::PullFloat(L, 1);
+		((float*)m_dataLocation)[1] = LuaEmbedder::PullFloat(L, 2);
+		((float*)m_dataLocation)[2] = LuaEmbedder::PullFloat(L, 3);
+		((float*)m_dataLocation)[3] = LuaEmbedder::PullFloat(L, 4);
+		((float*)m_dataLocation)[4] = LuaEmbedder::PullFloat(L, 5);
+		((float*)m_dataLocation)[5] = LuaEmbedder::PullFloat(L, 6);
+		((float*)m_dataLocation)[6] = LuaEmbedder::PullFloat(L, 7);
+		((float*)m_dataLocation)[7] = LuaEmbedder::PullFloat(L, 8);
+		((float*)m_dataLocation)[8] = LuaEmbedder::PullFloat(L, 9);
+
+		bool notifyNetwork = true;
+		if (LuaEmbedder::IsBool(L, 10))
+			notifyNetwork = LuaEmbedder::PullBool(L, 10);
+
+		ComponentHasChanged(notifyNetwork);
+		return 0;
+	}
 	
-	void LuaComponent::ComponentHasChanged()
+	void LuaComponent::ComponentHasChanged(bool _notifyNetwork)
 	{
 		if (m_system != nullptr)
-		  m_system->ComponentHasChanged(m_entityId, m_componentName);
+			m_system->ComponentHasChanged(m_entityId, m_componentName, _notifyNetwork);
 		else if (m_world != nullptr)
-		  m_world->ComponentHasChanged(m_entityId, m_componentName);
+			m_world->ComponentHasChanged(m_entityId, m_componentName, _notifyNetwork);
 	}
 }
