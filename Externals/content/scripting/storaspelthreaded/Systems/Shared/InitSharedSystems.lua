@@ -1,5 +1,5 @@
 --	Lerping Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/systems/Shared/LerpSystems/?.lua"
+package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Shared/LerpSystems/?.lua"
 require "sh_MovePlayerSystem"
 require "sh_LerpSystem"
 require "sh_NetworkMessagesSystem"

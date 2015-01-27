@@ -1,5 +1,5 @@
 --	Misc Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/systems/Client/MiscSystems/?.lua"
+package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Client/MiscSystems/?.lua"
 require "cl_PlayerIndicatorSystem"
 
 
@@ -7,7 +7,7 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(PlayerIndicatorSystem)
 
 --	Interface Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/systems/Client/InterfaceSystems/?.lua"
+package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Client/InterfaceSystems/?.lua"
 require "cl_RconMenuSystem"
 require "cl_OptionsMenuSystem"
 require "cl_HoverSizeSystem"
