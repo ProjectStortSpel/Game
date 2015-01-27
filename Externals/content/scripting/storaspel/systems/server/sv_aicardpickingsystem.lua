@@ -24,7 +24,6 @@ AiCardPickingSystem.Update = function(self, dt)
 			local aiNr = self:GetComponent(AIs[i], "PlayerNumber", 0):GetInt()
 			
 			if plyNr == aiNr then
-				
 				aisCard[#aisCard+1] = Cards[j]
 			end
 		end
@@ -38,10 +37,6 @@ AiCardPickingSystem.Update = function(self, dt)
 			pickedcards[#pickedcards + 1] = pickedcard
 			
 			table.remove(aisCard, cardNr)
-		end
-		
-		for i = 1, #aisCard do
-			local cardName = self:GetComponent(pickedcards[i], "CardAction", 0):GetString()
 		end
 		
 	end
