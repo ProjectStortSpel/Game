@@ -8,28 +8,28 @@ MasterServerSystem::MasterServerSystem()
 }
 MasterServerSystem::~MasterServerSystem()
 {
-	SAFE_DELETE(m_clientDatabase);
+	//SAFE_DELETE(m_clientDatabase);
 }
 
 void MasterServerSystem::Initialize()
 {
-	/*
 	SetSystemName("MasterServerSystem");
 
+	/*	Rendersystem wants Network	*/
 	AddComponentTypeToFilter("AvailableSpawnpoint", ECSL::FilterType::RequiresOneOf);
 	AddComponentTypeToFilter("Player", ECSL::FilterType::RequiresOneOf);
 	AddComponentTypeToFilter("GameRunning", ECSL::FilterType::RequiresOneOf);
 
 	m_gameRunningId = -1;
 	m_oldGameRunningId = -1;
-	*/
 }
 
 void MasterServerSystem::PostInitialize()
 {
-	/*
-	m_clientDatabase = new ClientDatabase();
-	m_clientDatabase->Connect();
+	m_clientDatabase = &ClientDatabase::GetInstance();
+
+	if (!m_clientDatabase->Connect())
+		return;
 
 	if (NetworkInstance::GetServer()->IsRunning())
 	{
@@ -43,11 +43,10 @@ void MasterServerSystem::PostInitialize()
 	{
 		m_clientDatabase->RequestServerList();
 	}
-	*/
 }
 
 void MasterServerSystem::Update(float _dt)
-{/*
+{
 	// Return if the user is a already connected client
 	if (NetworkInstance::GetClient()->IsConnected())
 		return;
@@ -77,12 +76,11 @@ void MasterServerSystem::Update(float _dt)
 			m_requestServerListTimer = 0.f;
 		}
 	}
-	*/
+
 }
 
 void MasterServerSystem::OnEntityAdded(unsigned int _entityId)
 {
-	/*
 	if (!NetworkInstance::GetServer()->IsRunning())
 		return;
 
@@ -108,12 +106,10 @@ void MasterServerSystem::OnEntityAdded(unsigned int _entityId)
 	{
 		m_gameRunningId = _entityId;
 	}
-	*/
 }
 
 void MasterServerSystem::OnEntityRemoved(unsigned int _entityId)
 {
-	/*
 	if (!NetworkInstance::GetServer()->IsRunning())
 		return;
 
@@ -140,6 +136,5 @@ void MasterServerSystem::OnEntityRemoved(unsigned int _entityId)
 
 	if (m_gameRunningId == _entityId)
 		m_gameRunningId = -1;
-	*/
 
 }

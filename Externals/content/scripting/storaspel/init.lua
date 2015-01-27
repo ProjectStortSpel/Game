@@ -29,7 +29,7 @@ require "hoversizesystem"
 if Server then
 	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/server/?.lua"
 	require "sv_mapsystem"
-	--require "sv_moveplayersystem"
+	require "sv_aicardpickingsystem"
 	require "sv_onplayerconnected"
 	require "sv_playerssystem"
     require "sv_aisystem"
@@ -134,7 +134,7 @@ if Server then
 	worldCreator:AddSystemToCurrentGroup(MapSystem)
 	--worldCreator:AddSystemToCurrentGroup(PlayerMovementSystem)
 
-
+	worldCreator:AddSystemToCurrentGroup(AiCardPickingSystem)
 	worldCreator:AddSystemToCurrentGroup(OnPlayerConnectedSystem)
 	worldCreator:AddSystemToCurrentGroup(PlayersSystem)
     worldCreator:AddSystemToCurrentGroup(AISystem)

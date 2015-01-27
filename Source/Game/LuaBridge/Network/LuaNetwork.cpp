@@ -1,6 +1,7 @@
 #include "LuaNetwork.h"
 #include "LuaEmbedder/LuaEmbedder.h"
 #include "../../NetworkInstance.h"
+#include "Game/Network/ClientDatabase.h"
 #include <sstream>
 
 namespace LuaBridge
@@ -56,6 +57,9 @@ namespace LuaBridge
 		int BroadcastEntity();
 		int BroadcastEntityKill();
 
+
+
+		int GetServerList();
 
 		void Embed()
 		{
@@ -113,6 +117,9 @@ namespace LuaBridge
 			LuaEmbedder::AddFunction("SendEntityKill", &SendEntityKill, "Net");
 			LuaEmbedder::AddFunction("BroadcastEntity", &BroadcastEntity, "Net");
 			LuaEmbedder::AddFunction("BroadcastEntityKill", &BroadcastEntityKill, "Net");
+
+
+			LuaEmbedder::AddFunction("GetServerList", &GetServerList, "Net");
 		}
 
 		//Shared
@@ -594,6 +601,37 @@ namespace LuaBridge
 			server->Broadcast(p);
 
 			return 0;
+		}
+
+		int GetServerList()
+		{
+			//ClientDatabase::ServerInfo si = ClientDatabase::GetInstance()->GetFirstServerAndPop();
+			//if (si.TimeId == -1)
+			//{
+				LuaEmbedder::PushNull();
+				LuaEmbedder::PushNull();
+				LuaEmbedder::PushNull();
+				LuaEmbedder::PushNull();
+				LuaEmbedder::PushNull();
+				LuaEmbedder::PushNull();
+				LuaEmbedder::PushNull();
+				LuaEmbedder::PushNull();
+
+				return 8;
+		//	}
+
+
+			//LuaEmbedder::PushString(si.Name);
+			//LuaEmbedder::PushString(si.IpAddress);
+			//LuaEmbedder::PushInt(si.Port);
+			//LuaEmbedder::PushInt(si.NoUsers);
+			//LuaEmbedder::PushInt(si.MaxUsers);
+			//LuaEmbedder::PushInt(si.NoSpectators);
+			//LuaEmbedder::PushBool(si.GameStarted);
+			//LuaEmbedder::PushBool(si.PasswordProtected);
+
+			//return 8;
+
 		}
 	}
 

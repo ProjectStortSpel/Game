@@ -29,6 +29,7 @@ AISystem.OnEntityAdded = function(self, entityId)
 		
 		local newName = "Player_" .. tostring(noOfPlayers + 1)
 		world:SetComponent(entityId, "PlayerName", "Name", newName)
+		world:SetComponent(entityId, "PlayerNumber", "Number", noOfPlayers + 1)
 		
 		self:CounterComponentChanged(1, "Players")
 		

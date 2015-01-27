@@ -19,8 +19,12 @@ end
 
 PlayersSystem.OnEntityRemoved = function(self, entityId)
 
+	local entity = world:CreateNewEntity()
 	local plyNum = self:GetComponent(entityId, "PlayerNumber", "Number"):GetInt()
-	world:CreateComponentAndAddTo("RemoveUnit", entityId)
-	world:GetComponent(entityId, "RemoveUnit", 0):SetInt(plyNum)
+	local unitId = self:GetComponent(entityId, "UnitEntityId", "Id"):GetInt()
+	
+	world:CreateComponentAndAddTo("RemoveUnit", entity)
+	world:GetComponent(entity, "RemoveUnit", "PlayerNo"):SetInt(plyNum)
+	world:GetComponent(entity, "RemoveUnit", "UnitEntityId"):SetInt(unitId)
 
 end
