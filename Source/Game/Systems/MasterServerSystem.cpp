@@ -8,7 +8,7 @@ MasterServerSystem::MasterServerSystem()
 }
 MasterServerSystem::~MasterServerSystem()
 {
-	SAFE_DELETE(m_clientDatabase);
+	//SAFE_DELETE(m_clientDatabase);
 }
 
 void MasterServerSystem::Initialize()
@@ -26,8 +26,10 @@ void MasterServerSystem::Initialize()
 
 void MasterServerSystem::PostInitialize()
 {
-	m_clientDatabase = new ClientDatabase();
-	m_clientDatabase->Connect();
+	m_clientDatabase = &ClientDatabase::GetInstance();
+
+	if (!m_clientDatabase->Connect())
+		return;
 
 	if (NetworkInstance::GetServer()->IsRunning())
 	{

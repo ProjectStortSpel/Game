@@ -7,6 +7,7 @@
 #endif
 
 #include "Logger/Logger.h"
+#include "Game/Network/ClientDatabase.h"
 
 int main(int argc, char** argv)
 {
@@ -25,5 +26,6 @@ int main(int argc, char** argv)
 	delete newGame;
 
 	delete(&Logger::GetInstance());
+	delete(&ClientDatabase::GetInstance());
 	return 0;
 }
