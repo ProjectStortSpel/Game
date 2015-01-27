@@ -134,7 +134,7 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	{
 		worldCreator.AddComponentType(it->second->GetName());
 		int id = ECSL::ComponentTypeManager::GetInstance().GetTableId(it->second->GetName());
-		printf("[#%d] %s added\n", id, it->second->GetName().c_str());
+		printf("[#%d] %s\n", id, it->second->GetName().c_str());
 	}
 
 	/*	This component has to be added last!	*/
@@ -161,6 +161,8 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(new PointlightSystem(m_graphics));
 	worldCreator.AddSystemGroup();
+	worldCreator.AddLuaSystemToCurrentGroup(new DirectionalLightSystem(m_graphics));
+	worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(new RotationSystem());
 	worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(new CameraSystem(m_graphics));
@@ -180,41 +182,9 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	m_world = worldCreator.CreateWorld(1000);
 	LuaEmbedder::AddObject<ECSL::World>(m_clientLuaState, "World", m_world, "world");
 
-	//LuaEmbedder::CallMethods<LuaBridge::LuaSystem>("System", "PostInitialize");
 	for (std::vector<LuaBridge::LuaSystem*>::iterator it = systemsAdded->begin(); it != systemsAdded->end(); it++)
 	  (*it)->PostInitialize();
 	systemsAdded->clear();
-
-	//unsigned int newEntity = m_world->CreateNewEntity();
-	//m_world->CreateComponentAndAddTo("Model", newEntity);
-	//m_world->CreateComponentAndAddTo("Position", newEntity);
-	//m_world->CreateComponentAndAddTo("Rotation", newEntity);
-	//m_world->CreateComponentAndAddTo("Scale", newEntity);
-
-	//char* modelComp = m_world->GetComponent(newEntity, "Model", "ModelPath");
-	//std::string modelPath = "quad";
-	//for (int i = 0; i < modelPath.size(); ++i)
-	//	modelComp[i] = modelPath[i];
-	//modelComp[modelPath.size()] = '\0';
-	//
-	//
-	//modelComp = m_world->GetComponent(newEntity, "Model", "ModelName");
-	//std::string modelName = "host";
-	//for (int i = 0; i < modelName.size(); ++i)
-	//	modelComp[i] = modelName[i];
-	//modelComp[modelName.size()] = '\0';
-
-	//float* position = (float*)m_world->GetComponent(newEntity, "Position", 0);
-	//position[0] = -2.0f;
-	//position[1] = 1.0f;
-	//position[2] = -4.0f;
-
-	//position = (float*)m_world->GetComponent(newEntity, "Scale", 0);
-	//position[0] = 1.0f;
-	//position[1] = 0.5f;
-	//position[2] = 1.0f;
-
-	LuaEmbedder::CallMethods<LuaBridge::LuaSystem>("System", "PostInitialize");
 }
 
 void GameCreator::RunStartupCommands(int argc, char** argv)
