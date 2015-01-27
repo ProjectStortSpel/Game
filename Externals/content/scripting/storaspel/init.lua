@@ -22,9 +22,6 @@ require "sh_lerpsystem"
 require "sh_moveplayersystem"
 require "sh_movementsystem"
 require "sh_networkmessagessystem"
-package.path = package.path .. ";../../../Externals/content/scripting/shared/systems/?.lua"
-require "pickboxsystem"
-require "hoversizesystem"
 
 if Server then
 	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/server/?.lua"
@@ -70,6 +67,10 @@ end
 
 
 if Client then
+	package.path = package.path .. ";../../../Externals/content/scripting/shared/systems/?.lua"
+	require "pickboxsystem"
+	require "hoversizesystem"
+
 	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/client/?.lua"
 	require "cl_lobbysystem"
 	--require "cl_selectcardsystem"
@@ -122,11 +123,7 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(MovementSystem)
 worldCreator:AddSystemToCurrentGroup(networkMessagesSystem)
 
-
-worldCreator:AddSystemToCurrentGroup(PickBoxSystem)
-
 worldCreator:AddSystemToCurrentGroup(LerpSystem)
-
 
 worldCreator:AddSystemToCurrentGroup(TrueTestMoveSystem)
 
@@ -208,4 +205,5 @@ if Client then
 	worldCreator:AddSystemToCurrentGroup(GameMenuSystem)
 	worldCreator:AddSystemToCurrentGroup(RconMenuSystem)
 	worldCreator:AddSystemToCurrentGroup(OptionMenuSystem)
+	worldCreator:AddSystemToCurrentGroup(PickBoxSystem)
 end
