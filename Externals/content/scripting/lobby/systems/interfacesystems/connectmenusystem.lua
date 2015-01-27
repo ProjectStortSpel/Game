@@ -2,6 +2,7 @@ ConnectMenuSystem = System()
 ConnectMenuSystem.Name = "ConnectMenu"
 ConnectMenuSystem.ServerStartIndex = 1
 ConnectMenuSystem.ServerEndIndex = 1
+ConnectMenuSystem.doRefresh = true
 
 ConnectMenuSystem.Update = function(self, dt)
 	if Input.GetTouchState(0) == InputState.Released then
@@ -26,34 +27,32 @@ ConnectMenuSystem.Update = function(self, dt)
 		
 	end
 	
+	local menu = self:GetEntities("ConnectMenu")
+	if #menu > 0 and self.doRefresh == true then
+		self.doRefresh = false
+		self:RefreshMenu()
+		local servers = self:GetEntities("ServerListEntry")
+		local button = nil
+		for i = 1, #servers do
+			local server = servers[i]
+			local ip = self:GetComponent(server, "ServerListEntry", "IpAddress"):GetString(0)
+			button = self:CreateElement("shade", "quad", 0, 0.6-i*0.11, -2, 1.8, 0.1)
+			self:AddConsoleCommandToButton("connect "..ip, button)
+		end
+	end
 end
 
 ConnectMenuSystem.OnEntityAdded = function(self, entityId)
 	if world:EntityHasComponent(entityId, self.Name) then
 		self:SpawnMenu()
 	end
+	if world:EntityHasComponent(entityId, "ServerListEntry") then
+		self.doRefresh = true
+	end
 end
 
 ConnectMenuSystem.SpawnMenu = function(self)
 	local background = self:CreateElement("gamemenubackground", "quad", 0, 0, -2.1, 2.07, 1.3)
-	
-	local servers = self:GetEntities("ServerListEntry")
-	
-	if #servers <= 10 then
-		self.ServerStartIndex = 1
-		self.ServerEndIndex = #servers
-	end
-	
-	local button = nil
-	for i = self.ServerStartIndex, self.ServerEndIndex do
-		local server = servers[i]
-		local ip = self:GetComponent(server, "ServerListEntry", "IpAddress"):GetString(0)
-		print(ip)
-	
-		button = self:CreateElement("shade", "quad", 0, 0.6-i*0.11, -2, 1.8, 0.1)
-		self:AddConsoleCommandToButton("connect "..ip, button)
-	
-	end
 	
 	--local button = nil
 	----connect localhost
@@ -96,6 +95,16 @@ ConnectMenuSystem.SpawnMenu = function(self)
 	--self:AddConsoleCommandToButton("connect 194.47.150.100", button)	
 	--self:AddHoverSize(1.5, button)
 	
+end
+
+ConnectMenuSystem.RefreshMenu = function(self)
+	local entities = self:GetEntities()
+	for i = 1, #entities do
+		if world:EntityHasComponent(entities[i], self.Name.."Element") then
+			world:KillEntity(entities[i])
+		end
+	end
+	self:SpawnMenu()
 end
 
 ConnectMenuSystem.RemoveMenu = function(self)
