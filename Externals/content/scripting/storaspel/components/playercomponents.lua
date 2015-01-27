@@ -161,4 +161,5 @@ local RemoveUnitComponent = ComponentType()
 RemoveUnitComponent.Name = "RemoveUnit"
 RemoveUnitComponent.TableType = TableType.Map
 RemoveUnitComponent:AddVariable("PlayerNo", ByteSize.Int)
+RemoveUnitComponent:AddVariable("UnitEntityId", ByteSize.Int)
 worldCreator:AddComponentType(RemoveUnitComponent)
