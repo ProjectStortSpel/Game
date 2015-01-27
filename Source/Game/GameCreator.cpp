@@ -10,12 +10,17 @@
 #include "Systems/ResetChangedSystem.h"
 #include "Systems/PointlightSystem.h"
 #include "Systems/DirectionalLightSystem.h"
+#include "Systems/SlerpRotationSystem.h"
+#include "Systems/MasterServerSystem.h"
 
+#include "Network/ClientDatabase.h"
 #include "NetworkInstance.h"
 #include "ECSL/ECSL.h"
 #include "ECSL/Managers/EntityTemplateManager.h"
 
 #include "LuaBridge/ECSL/LuaSystem.h"
+
+#include "Logger/Logger.h"
 
 #include <iomanip>
 
@@ -145,8 +150,11 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	worldCreator.AddLuaSystemToCurrentGroup(new PointlightSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new DirectionalLightSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new RotationSystem());
+	worldCreator.AddLuaSystemToCurrentGroup(new SlerpRotationSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(new CameraSystem(m_graphics));
 	worldCreator.AddLuaSystemToCurrentGroup(new ModelSystem(m_graphics));
+
+	//worldCreator.AddLuaSystemToCurrentGroup(new MasterServerSystem());
 
 	worldCreator.AddLuaSystemToCurrentGroup(new SyncEntitiesSystem());
 	//worldCreator.AddLuaSystemToCurrentGroup(new ReceivePacketSystem());
@@ -157,9 +165,9 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	worldCreator.AddLuaSystemToCurrentGroup(new ResetChangedSystem());
 
 	m_world = worldCreator.CreateWorld(1000);
-	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
 
-	LuaEmbedder::CallMethods<LuaBridge::LuaSystem>("System", "PostInitialize");
+	LuaEmbedder::AddObject<ECSL::World>("World", m_world, "world");
+	m_world->PostInitializeSystems();
 }
 
 void GameCreator::RunStartupCommands(int argc, char** argv)
@@ -204,7 +212,7 @@ void GameCreator::RunStartupCommands(int argc, char** argv)
 			}
 
 			command[size - 1] = '\0';
-			Console::ConsoleManager::GetInstance().ExecuteCommand(command);
+			Console::ConsoleManager::GetInstance().AddToCommandQueue(command);
 		}
 	}
 }
@@ -217,7 +225,7 @@ void GameCreator::StartGame(int argc, char** argv)
 
 	m_console = new GameConsole(m_graphics, m_world);
 
-	m_consoleInput.SetTextHook(std::bind(&Console::ConsoleManager::ExecuteCommand, &m_consoleManager, std::placeholders::_1));
+	m_consoleInput.SetTextHook(std::bind(&Console::ConsoleManager::AddToCommandQueue, &m_consoleManager, std::placeholders::_1));
 	m_consoleInput.SetActive(false);
 	m_input->GetKeyboard()->StopTextInput();
 
@@ -229,7 +237,10 @@ void GameCreator::StartGame(int argc, char** argv)
 	m_consoleManager.AddCommand("Start", std::bind(&GameCreator::ConsoleStartTemp, this, std::placeholders::_1, std::placeholders::_2));
 	
 	RunStartupCommands(argc, argv);
+    
+    //Console::ConsoleManager::GetInstance().AddToCommandQueue("connect 192.168.0.198");
 
+    
 	float maxDeltaTime = (float)(1.0f / 20.0f);
 	float bytesToMegaBytes = 1.f / (1024.f*1024.f);
 	bool showDebugInfo = false;

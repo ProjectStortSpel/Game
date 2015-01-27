@@ -9,8 +9,6 @@ layout( location = 0 ) out vec4 ColorData;
 
 //Input textures
 uniform sampler2D diffuseTex;
-uniform sampler2D normalTex;
-uniform sampler2D specularTex;
 
 uniform mat4 BiasMatrix;
 

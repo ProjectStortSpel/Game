@@ -6,9 +6,14 @@
 #endif
 #endif
 
+#include "Logger/Logger.h"
+#include "Game/Network/ClientDatabase.h"
+
 int main(int argc, char** argv)
 {
+	Logger::GetInstance().AddGroup("Game");
 	GameCreator* newGame = new GameCreator();
+
 
 	newGame->InitializeLua();
 	newGame->InitializeGraphics();
@@ -18,7 +23,10 @@ int main(int argc, char** argv)
 
 
 	newGame->StartGame(argc, argv);
-
 	delete newGame;
+
+	delete(&ClientDatabase::GetInstance());
+	delete(&Logger::GetInstance());
+	
 	return 0;
 }

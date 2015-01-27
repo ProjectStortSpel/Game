@@ -17,14 +17,14 @@ void SkyBox::BindBuffers(float _far)
 {
 	// cube vertices for vertex buffer object
 	GLfloat cubeVertices[] = {
-	  -1.0*_far,  1.0*_far,  1.0*_far,
-	  -1.0*_far, -1.0*_far,  1.0*_far,
-	   1.0*_far, -1.0*_far,  1.0*_far,
-	   1.0*_far,  1.0*_far,  1.0*_far,
-	  -1.0*_far,  1.0*_far, -1.0*_far,
-	  -1.0*_far, -1.0*_far, -1.0*_far,
-	   1.0*_far, -1.0*_far, -1.0*_far,
-	   1.0*_far,  1.0*_far, -1.0*_far,
+	  static_cast<GLfloat>(-1.0*_far),  static_cast<GLfloat>(1.0*_far),  static_cast<GLfloat>(1.0*_far),
+	  static_cast<GLfloat>(-1.0*_far), static_cast<GLfloat>(-1.0*_far),  static_cast<GLfloat>(1.0*_far),
+	   static_cast<GLfloat>(1.0*_far), static_cast<GLfloat>(-1.0*_far),  static_cast<GLfloat>(1.0*_far),
+	   static_cast<GLfloat>(1.0*_far),  static_cast<GLfloat>(1.0*_far),  static_cast<GLfloat>(1.0*_far),
+	  static_cast<GLfloat>(-1.0*_far),  static_cast<GLfloat>(1.0*_far), static_cast<GLfloat>(-1.0*_far),
+	  static_cast<GLfloat>(-1.0*_far), static_cast<GLfloat>(-1.0*_far), static_cast<GLfloat>(-1.0*_far),
+	   static_cast<GLfloat>(1.0*_far), static_cast<GLfloat>(-1.0*_far), static_cast<GLfloat>(-1.0*_far),
+	   static_cast<GLfloat>(1.0*_far),  static_cast<GLfloat>(1.0*_far), static_cast<GLfloat>(-1.0*_far),
 	};
 
 	// cube indices for index buffer object

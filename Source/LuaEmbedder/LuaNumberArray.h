@@ -134,14 +134,19 @@ namespace LuaEmbedder
     
     static int Remove(lua_State* L)
     {
+      T** pArray = (T**)lua_touserdata(L, 1);
+      m_objectSizeMap.erase((const T*)*pArray);
       if (luaL_getmetafield(L, 1, "no_gc"))
       {
 	lua_pushvalue(L, 1);
 	lua_gettable(L, -2);
 	if (!lua_isnil(L, -1))
+	{
+	  *pArray = nullptr;
+	  pArray = nullptr;
 	  return 0;
+	}
       }
-      T** pArray = (T**)lua_touserdata(L, 1);
       if (pArray && *pArray)
       {
 	delete [] (*pArray);

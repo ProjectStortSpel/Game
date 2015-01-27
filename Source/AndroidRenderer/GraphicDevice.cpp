@@ -221,7 +221,8 @@ void GraphicDevice::Render()
 			if (m_modelsViewspace[i].modelMatrix == NULL)
 				modelMatrix = glm::translate(glm::vec3(1));
 			else
-				modelMatrix = *m_modelsViewspace[i].modelMatrix;
+                modelMatrix = *m_modelsViewspace[i].modelMatrix;
+            
 
 			mat4 modelViewMatrix = modelMatrix;
 			m_viewspaceShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
@@ -365,10 +366,10 @@ bool GraphicDevice::InitShaders()
 	m_shadowShader.FinalizeShaderProgram();
 
 	//m_fullscreen
-	m_fullscreen.InitShaderProgram();
+	/*m_fullscreen.InitShaderProgram();
 	m_fullscreen.AddShader("content/shaders/AndroidFullscreenVS.glsl", GL_VERTEX_SHADER);
 	m_fullscreen.AddShader("content/shaders/AndroidFullscreenFS.glsl", GL_FRAGMENT_SHADER);
-	m_fullscreen.FinalizeShaderProgram();
+	m_fullscreen.FinalizeShaderProgram();*/
 
 	return true;
 }
@@ -377,6 +378,9 @@ bool GraphicDevice::InitBuffers()
 {
 	//Skybox shader
 	m_skyBoxShader.CheckUniformLocation("cubemap", 1);
+
+	//Fullscreen shader
+	//m_fullscreen.CheckUniformLocation("sampler", 0);
 
 	return true;
 }
@@ -417,7 +421,7 @@ void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
 
 void GraphicDevice::CreateShadowMap()
 {
-	int resolution = 1024;
+	int resolution = 1024*2;
 	m_dirLightDirection = vec3(0.0f, -1.0f, 1.0f);
 	vec3 midMap = vec3(8.0f, 0.0f, 8.0f);
 	vec3 lightPos = midMap - (10.0f*normalize(m_dirLightDirection));
@@ -429,7 +433,6 @@ void GraphicDevice::CreateShadowMap()
 	m_forwardShader.CheckUniformLocation("ShadowDepthTex", 0);
 
 	m_shadowShader.CheckUniformLocation("diffuseTex", 1);
-	m_fullscreen.CheckUniformLocation("sampler", 0);
 }
 
 bool GraphicDevice::RenderSimpleText(std::string _text, int _x, int _y)

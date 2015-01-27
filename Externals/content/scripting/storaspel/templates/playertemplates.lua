@@ -1,9 +1,14 @@
---	Player template [TODO: Add shit]
-local AI = EntityTemplate()
-AI.Name = "AI"
-AI:AddComponent("Player")
-AI:AddComponent("SyncNetwork")			--	Sync this entity
-EntityTemplateManager:AddTemplate(AI)	--	Add the template
+--	AI template [TODO: Add shit]
+local AITemplate = EntityTemplate()
+AITemplate.Name = "AI"
+--AITemplate:AddComponent("Player")
+AITemplate:AddComponent("AI")
+AITemplate:AddComponent("PlayerNumber")
+AITemplate:AddComponent("PlayerName")
+AITemplate:AddComponent("UnitEntityId")
+AITemplate:AddComponent("PickingDone")
+AITemplate:AddComponent("SyncNetwork")			--	Sync this entity
+EntityTemplateManager:AddTemplate(AITemplate)	--	Add the template
 
 --	Player template
 local PlayerTemplate = EntityTemplate()

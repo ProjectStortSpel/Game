@@ -14,23 +14,6 @@ uniform sampler2D specularTex;
 
 uniform mat4 BiasMatrix;
 
-struct vector3
-{
-	float x, y, z;
-};
-
-struct Pointlight {
-	vector3 Position; // Light position in world coords.
-	vector3 Intensity; // Diffuse intensity
-	vector3 Color;
-	float Range;
-};
-
-layout (std430, binding = 4) buffer PointLights   
-{
-	Pointlight	pointlights[];
-};
-
 struct MaterialInfo {
 	float Ks;
 	float Shininess;

@@ -15,7 +15,8 @@ void DirectionalLightSystem::Initialize()
 {
 	SetSystemName("DirectionalLight System");
 
-	/*	Rendersystem wants Position, Scale, Rotation and Render	*/
+	/*	Rendersystem wants Position, Scale, 
+	n and Render	*/
 	AddComponentTypeToFilter("DirectionalLight", ECSL::FilterType::Mandatory);
 
 
@@ -26,8 +27,6 @@ void DirectionalLightSystem::Initialize()
 	m_numberOfBitSets = ECSL::BitSet::GetIntCount(ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount());
 	m_changedComponentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("ChangedComponents");
 	m_dirLightId = ECSL::ComponentTypeManager::GetInstance().GetTableId("DirectionalLight");
-
-	printf("DirectionalLight initialized!\n");
 }
 
 void DirectionalLightSystem::Update(float _dt)

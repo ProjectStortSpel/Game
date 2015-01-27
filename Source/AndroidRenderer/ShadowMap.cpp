@@ -7,7 +7,7 @@ ShadowMap::ShadowMap(vec3 lightPos, vec3 target, int res)
 	m_targetDirection = target;
 
 	m_resolution = res;
-	m_projectionMatrix = glm::ortho(-10.0, 10.0, -10.0, 10.0, 2.0, 18.0); 
+	m_projectionMatrix = glm::ortho(-10.0, 10.0, -10.0, 10.0, 3.0, 18.0); 
 	//glm::perspective(45.0f, (float)res / (float)res, 1.0f, 50.0f);
 	m_viewMatrix = glm::lookAt(m_lightPosition, m_targetDirection, vec3(0.0f, 1.0f, 0.0f));
 

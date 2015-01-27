@@ -180,7 +180,7 @@ void BaseNetwork::Update(float _dt)
 			(*m_networkFunctions)[type](m_packetHandler, id, *p->Sender);
 		}
 
-		m_packetHandler->EndUnpack((uint64_t)p);
+		m_packetHandler->EndUnpack(id);
 	}
 }
 

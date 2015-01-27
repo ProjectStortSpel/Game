@@ -40,7 +40,9 @@ public:
 		SlerpQuaternion()
 		slerp from this to target quaternion
 	*/
-	void SlerpQuaternion(Quaternion *from, Quaternion *target, float t);
+	void SlerpQuaternion(Quaternion &result, Quaternion *target, float t);
+
+	glm::vec3 QuaternionToEuler();
 
 	~Quaternion();
 
