@@ -47,6 +47,7 @@ void MasterServerSystem::PostInitialize()
 		customHook = std::bind(&MasterServerSystem::OnGetServerList, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 		m_clientDatabase->HookOnGetServerList(customHook);
 		Logger::GetInstance().Log("MasterServer", Info, "Hooking custom hook \"GET_SERVER_LIST\"to \"OnGetServerList\"");
+		m_clientDatabase->RequestServerList();
 	}
 }
 
@@ -75,7 +76,7 @@ void MasterServerSystem::Update(float _dt)
 	else
 	{
 		m_requestServerListTimer += _dt;
-		if (m_requestServerListTimer > 10.0)
+		if (m_requestServerListTimer > 2.0)
 		{
 			m_clientDatabase->RequestServerList();
 			m_requestServerListTimer = 0.f;
@@ -149,6 +150,8 @@ void MasterServerSystem::OnGetServerList(Network::PacketHandler* _ph, uint64_t& 
 	for (int i = 0; i < m_serverIds.size(); ++i)
 		KillEntity(m_serverIds[i]);
 
+	m_serverIds.clear();
+
 	int noServers = _ph->ReadInt(_id);
 	ServerInfo si;
 
@@ -172,11 +175,11 @@ void MasterServerSystem::OnGetServerList(Network::PacketHandler* _ph, uint64_t& 
 
 		// Name
 		data = (char*)GetComponent(id, "ServerListEntry", "Name");
-		memcpy(data, si.Name.c_str(), si.Name.size());
+		memcpy(data, si.Name.c_str(), si.Name.length() + 1);
 
 		// IpAddress
 		data = (char*)GetComponent(id, "ServerListEntry", "IpAddress");
-		memcpy(data, si.IpAddress.c_str(), si.IpAddress.size());
+		memcpy(data, si.IpAddress.c_str(), si.IpAddress.length() + 1);
 
 		// Port
 		integer = (int*)GetComponent(id, "ServerListEntry", "Port");

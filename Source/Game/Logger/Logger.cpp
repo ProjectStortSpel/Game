@@ -155,7 +155,7 @@ void Logger::CreateFile()
 #endif
 
 	std::ostringstream ss;
-	ss << "content\\data\\";
+	ss << "content/data/";
 	ss << "debuglog_";
 	ss << (1900+timeInfo.tm_year) << "-";
 	ss << FixDateLength(timeInfo.tm_mon + 1) << "-";

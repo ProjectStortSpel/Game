@@ -6,6 +6,7 @@ package.path = package.path .. ";../../../Externals/content/scripting/lobby/comp
 require "components"
 require "buttoncomponents"
 require "menucomponents"
+require "servercomponents"
 
 package.path = package.path .. ";../../../Externals/content/scripting/shared/components/?.lua"
 require "interfacecomponents"
