@@ -369,6 +369,10 @@ void GraphicDevice::Render()
 
 	// RENDER VIEWSPACE STUFF
 	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	m_viewspaceShader.UseProgram();
 	m_viewspaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 
@@ -455,6 +459,8 @@ void GraphicDevice::Render()
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
+	glDisable(GL_BLEND);
+	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
 
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
@@ -1179,6 +1185,58 @@ bool GraphicDevice::ChangeModelTexture(int _id, std::string _fileDir, int _textu
 			if (found) break;
 		}
 	}
+	if (!found)
+	{
+		for (int i = 0; i < m_modelsViewspace.size(); i++)
+		{
+			for (int j = 0; j < m_modelsViewspace[i].instances.size(); j++)
+			{
+				if (m_modelsViewspace[i].instances[j].id == _id)
+				{
+					instance = m_modelsViewspace[i].instances[j];
+					model = Model(
+						m_modelsViewspace[i].bufferPtr,
+						m_modelsViewspace[i].texID,
+						m_modelsViewspace[i].norID,
+						m_modelsViewspace[i].speID
+						);
+					found = true;
+					renderType = RENDER_VIEWSPACE;
+					m_modelsViewspace[i].instances.erase(m_modelsViewspace[i].instances.begin() + j);
+					if (m_modelsViewspace[i].instances.size() == 0)
+						m_modelsViewspace.erase(m_modelsViewspace.begin() + i);
+				}
+				if (found) break;
+			}
+			if (found) break;
+		}
+	}
+	if (!found)
+	{
+		for (int i = 0; i < m_modelsInterface.size(); i++)
+		{
+			for (int j = 0; j < m_modelsInterface[i].instances.size(); j++)
+			{
+				if (m_modelsInterface[i].instances[j].id == _id)
+				{
+					instance = m_modelsInterface[i].instances[j];
+					model = Model(
+						m_modelsInterface[i].bufferPtr,
+						m_modelsInterface[i].texID,
+						m_modelsInterface[i].norID,
+						m_modelsInterface[i].speID
+						);
+					found = true;
+					renderType = RENDER_INTERFACE;
+					m_modelsInterface[i].instances.erase(m_modelsInterface[i].instances.begin() + j);
+					if (m_modelsInterface[i].instances.size() == 0)
+						m_modelsInterface.erase(m_modelsInterface.begin() + i);
+				}
+				if (found) break;
+			}
+			if (found) break;
+		}
+	}
 	// Didn't we find it return false
 	if (!found) return false;
 
@@ -1222,6 +1280,28 @@ bool GraphicDevice::ChangeModelTexture(int _id, std::string _fileDir, int _textu
 			}
 		}
 	}
+	else if (renderType == RENDER_VIEWSPACE)
+	{
+		for (int i = 0; i < m_modelsViewspace.size(); i++)
+		{
+			if (m_modelsViewspace[i] == model)
+			{
+				m_modelsViewspace[i].instances.push_back(instance);
+				return true;
+			}
+		}
+	}
+	else if (renderType == RENDER_INTERFACE)
+	{
+		for (int i = 0; i < m_modelsInterface.size(); i++)
+		{
+			if (m_modelsInterface[i] == model)
+			{
+				m_modelsInterface[i].instances.push_back(instance);
+				return true;
+			}
+		}
+	}
 
 	// Nothing found. Let's make a new Model type
 	model.instances.push_back(instance);
@@ -1230,6 +1310,10 @@ bool GraphicDevice::ChangeModelTexture(int _id, std::string _fileDir, int _textu
 		m_modelsDeferred.push_back(model);
 	else if (renderType == RENDER_FORWARD)
 		m_modelsForward.push_back(model);
+	else if (renderType == RENDER_VIEWSPACE)
+		m_modelsViewspace.push_back(model);
+	else if (renderType == RENDER_INTERFACE)
+		m_modelsInterface.push_back(model);
 
 	return true;
 }
