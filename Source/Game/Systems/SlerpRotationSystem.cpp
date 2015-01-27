@@ -48,9 +48,6 @@ void SlerpRotationSystem::Update(float _dt)
 			q_to.m_y = *to_dataY;
 			q_to.m_z = *to_dataZ;
 
-			
-
-			
 			glm::vec3 euler;
 
 			(*time_data) += _dt * 1.2f;
