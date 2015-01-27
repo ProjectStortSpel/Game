@@ -228,25 +228,12 @@ void ClientDatabase::OnGetServerList(Network::PacketHandler* _ph, uint64_t& _id,
 		m_serverList.push_back(si);
 	}
 
-	SDL_Log("Server List:");
-	for (int i = 0; i < m_serverList.size(); ++i)
-	{
-//		127.0.0.1:6112 0 / 5 (0) Running PasswordProtected
-			SDL_Log("%s:%i %i/%i (%i)", m_serverList[i].IpAddress.c_str(), m_serverList[i].Port,
-				m_serverList[i].NoUsers, m_serverList[i].MaxUsers, m_serverList[i].NoSpectators);
-	}
+//	SDL_Log("Server List:");
+//	for (int i = 0; i < m_serverList.size(); ++i)
+//	{
+////		127.0.0.1:6112 0 / 5 (0) Running PasswordProtected
+//			SDL_Log("%s:%i %i/%i (%i)", m_serverList[i].IpAddress.c_str(), m_serverList[i].Port,
+//				m_serverList[i].NoUsers, m_serverList[i].MaxUsers, m_serverList[i].NoSpectators);
+//	}
 
-}
-
-ServerInfo& ClientDatabase::GetFirstServerAndPop()
-{
-	if (m_serverList.size() > 0)
-	{
-		auto tmp = m_serverList[0];
-		m_serverList.erase(m_serverList.begin());
-
-		return tmp;
-	}
-	 
-	return ServerInfo();
 }
