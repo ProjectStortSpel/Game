@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0321DDEC1A77E442000EE6A6 /* libSDL2_ttf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0321DDEB1A77E442000EE6A6 /* libSDL2_ttf.a */; };
+		0321DDF61A77E566000EE6A6 /* TextRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0321DDF41A77E566000EE6A6 /* TextRenderer.cpp */; };
 		0339F9891A74082700FA04DD /* content in Resources */ = {isa = PBXBuildFile; fileRef = 0339F9881A74082700FA04DD /* content */; };
 		0339F9961A740B5900FA04DD /* libGLEW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0339F9921A740B5900FA04DD /* libGLEW.a */; };
 		0339F9971A740B5900FA04DD /* libGLEW.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0339F9931A740B5900FA04DD /* libGLEW.dylib */; };
@@ -115,6 +117,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0321DDEB1A77E442000EE6A6 /* libSDL2_ttf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_ttf.a; path = ../../Externals/lib/OSX/libSDL2_ttf.a; sourceTree = "<group>"; };
+		0321DDF41A77E566000EE6A6 /* TextRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextRenderer.cpp; sourceTree = "<group>"; };
+		0321DDF51A77E566000EE6A6 /* TextRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextRenderer.h; sourceTree = "<group>"; };
 		0339F9881A74082700FA04DD /* content */ = {isa = PBXFileReference; lastKnownFileType = folder; name = content; path = ../../Externals/content; sourceTree = "<group>"; };
 		0339F9921A740B5900FA04DD /* libGLEW.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGLEW.a; path = ../../Externals/lib/OSX/libGLEW.a; sourceTree = "<group>"; };
 		0339F9931A740B5900FA04DD /* libGLEW.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libGLEW.dylib; path = ../../Externals/lib/OSX/libGLEW.dylib; sourceTree = "<group>"; };
@@ -328,6 +333,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0321DDEC1A77E442000EE6A6 /* libSDL2_ttf.a in Frameworks */,
 				03C1DB171A744FB200C1996E /* libSDL2.a in Frameworks */,
 				0339F9AE1A7433D800FA04DD /* OpenGL.framework in Frameworks */,
 				0339F9961A740B5900FA04DD /* libGLEW.a in Frameworks */,
@@ -383,6 +389,7 @@
 		035C22B61A73D68600EE9624 = {
 			isa = PBXGroup;
 			children = (
+				0321DDEB1A77E442000EE6A6 /* libSDL2_ttf.a */,
 				0339F9871A74081400FA04DD /* Resources */,
 				0339F9861A74080300FA04DD /* Framework */,
 				035C24201A73D7F400EE9624 /* Source */,
@@ -443,6 +450,8 @@
 		03C1DB181A74500900C1996E /* Renderer */ = {
 			isa = PBXGroup;
 			children = (
+				0321DDF41A77E566000EE6A6 /* TextRenderer.cpp */,
+				0321DDF51A77E566000EE6A6 /* TextRenderer.h */,
 				03C1DB191A74500900C1996E /* Buffer.cpp */,
 				03C1DB1A1A74500900C1996E /* Buffer.h */,
 				03C1DB1B1A74500900C1996E /* Camera.cpp */,
@@ -1008,6 +1017,7 @@
 				03F5A7E71A73D94F00D54F14 /* ResetChangedSystem.cpp in Sources */,
 				03F5A7EB1A73D94F00D54F14 /* Keyboard.cpp in Sources */,
 				03F5A7B41A73D94F00D54F14 /* DataManager.cpp in Sources */,
+				0321DDF61A77E566000EE6A6 /* TextRenderer.cpp in Sources */,
 				03F5A7D81A73D94F00D54F14 /* LuaNetwork.cpp in Sources */,
 				03F5A7AF1A73D94F00D54F14 /* BitSet.cpp in Sources */,
 				03F5A7BA1A73D94F00D54F14 /* ComponentTypeReader.cpp in Sources */,
@@ -1125,6 +1135,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					../../Externals/lib/OSX,
+					/Users/Erik/Desktop/StoraSpel/Game/Externals/lib/OSX,
 				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
@@ -1150,6 +1161,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					../../Externals/lib/OSX,
+					/Users/Erik/Desktop/StoraSpel/Game/Externals/lib/OSX,
 				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",

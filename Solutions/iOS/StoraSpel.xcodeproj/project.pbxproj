@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0321DDEF1A77E4D5000EE6A6 /* libSDL2_ttf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0321DDED1A77E4D5000EE6A6 /* libSDL2_ttf.a */; };
+		0321DDF01A77E4D5000EE6A6 /* libSDL2_ttfSim.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0321DDEE1A77E4D5000EE6A6 /* libSDL2_ttfSim.a */; };
+		0321DDF31A77E54C000EE6A6 /* TextRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0321DDF11A77E54C000EE6A6 /* TextRenderer.cpp */; };
 		03244CCC1A7372C800D4E53B /* content in Resources */ = {isa = PBXBuildFile; fileRef = 03244CCB1A7372C800D4E53B /* content */; };
 		035C22B11A73B76300EE9624 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 035C22B01A73B76300EE9624 /* Default-568h@2x.png */; };
 		035C22B21A73C8BA00EE9624 /* liblua.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0365626C1A7315BA00F5A3BF /* liblua.a */; };
@@ -110,6 +113,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0321DDED1A77E4D5000EE6A6 /* libSDL2_ttf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_ttf.a; path = ../../Externals/lib/iOS/libSDL2_ttf.a; sourceTree = "<group>"; };
+		0321DDEE1A77E4D5000EE6A6 /* libSDL2_ttfSim.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_ttfSim.a; path = ../../Externals/lib/iOS/libSDL2_ttfSim.a; sourceTree = "<group>"; };
+		0321DDF11A77E54C000EE6A6 /* TextRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextRenderer.cpp; sourceTree = "<group>"; };
+		0321DDF21A77E54C000EE6A6 /* TextRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextRenderer.h; sourceTree = "<group>"; };
 		03244CCB1A7372C800D4E53B /* content */ = {isa = PBXFileReference; lastKnownFileType = folder; name = content; path = ../../Externals/content; sourceTree = "<group>"; };
 		035C22B01A73B76300EE9624 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		03655DE01A7312E100F5A3BF /* StoraSpel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StoraSpel.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -303,9 +310,6 @@
 		03783D051A7693AD00BA78D0 /* MasterServerSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MasterServerSystem.h; sourceTree = "<group>"; };
 		03783D071A7693FD00BA78D0 /* ClientDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClientDatabase.cpp; sourceTree = "<group>"; };
 		03783D081A7693FD00BA78D0 /* ClientDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClientDatabase.h; sourceTree = "<group>"; };
-		03783D1E1A77B00100BA78D0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		03783D271A77B00100BA78D0 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		03783D2A1A77B00100BA78D0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		03F45FB11A750E6700F8A27F /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = StoraSpel/Images.xcassets; sourceTree = "<group>"; };
 		03F7AF5B1A765FEC00FB8F1D /* Logger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Logger.cpp; sourceTree = "<group>"; };
 		03F7AF5C1A765FEC00FB8F1D /* Logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logger.h; sourceTree = "<group>"; };
@@ -316,6 +320,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0321DDEF1A77E4D5000EE6A6 /* libSDL2_ttf.a in Frameworks */,
+				0321DDF01A77E4D5000EE6A6 /* libSDL2_ttfSim.a in Frameworks */,
 				035C22B21A73C8BA00EE9624 /* liblua.a in Frameworks */,
 				035C22B31A73C8BA00EE9624 /* libluaSim.a in Frameworks */,
 				035C22B41A73C8BA00EE9624 /* libSDL2.a in Frameworks */,
@@ -337,13 +343,14 @@
 		03655DD71A7312E100F5A3BF = {
 			isa = PBXGroup;
 			children = (
+				0321DDED1A77E4D5000EE6A6 /* libSDL2_ttf.a */,
+				0321DDEE1A77E4D5000EE6A6 /* libSDL2_ttfSim.a */,
 				035C22B01A73B76300EE9624 /* Default-568h@2x.png */,
 				0365629C1A7319A500F5A3BF /* Resources */,
 				0365629B1A73198200F5A3BF /* Source */,
 				0365629A1A73196E00F5A3BF /* Framework */,
 				036562971A73191900F5A3BF /* Main.storyboard */,
 				036562941A7318DD00F5A3BF /* LaunchScreen.xib */,
-				03783D1C1A77B00100BA78D0 /* StoraSpel_OSX */,
 				03655DE11A7312E100F5A3BF /* Products */,
 			);
 			sourceTree = "<group>";
@@ -359,6 +366,8 @@
 		036561541A73141B00F5A3BF /* AndroidRenderer */ = {
 			isa = PBXGroup;
 			children = (
+				0321DDF11A77E54C000EE6A6 /* TextRenderer.cpp */,
+				0321DDF21A77E54C000EE6A6 /* TextRenderer.h */,
 				036561551A73141B00F5A3BF /* Buffer.cpp */,
 				036561561A73141B00F5A3BF /* Buffer.h */,
 				036561571A73141B00F5A3BF /* Camera.cpp */,
@@ -807,24 +816,6 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
-		03783D1C1A77B00100BA78D0 /* StoraSpel_OSX */ = {
-			isa = PBXGroup;
-			children = (
-				03783D271A77B00100BA78D0 /* Images.xcassets */,
-				03783D291A77B00100BA78D0 /* Main.storyboard */,
-				03783D1D1A77B00100BA78D0 /* Supporting Files */,
-			);
-			path = StoraSpel_OSX;
-			sourceTree = "<group>";
-		};
-		03783D1D1A77B00100BA78D0 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				03783D1E1A77B00100BA78D0 /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		03F7AF5A1A765FEC00FB8F1D /* Logger */ = {
 			isa = PBXGroup;
 			children = (
@@ -948,6 +939,7 @@
 				036562561A73141B00F5A3BF /* PointlightSystem.cpp in Sources */,
 				0365622D1A73141B00F5A3BF /* EntityTemplateReader.cpp in Sources */,
 				0365623F1A73141B00F5A3BF /* LuaComponentType.cpp in Sources */,
+				0321DDF31A77E54C000EE6A6 /* TextRenderer.cpp in Sources */,
 				0365621D1A73141B00F5A3BF /* GraphicDevice.cpp in Sources */,
 				0365625A1A73141B00F5A3BF /* RotationSystem.cpp in Sources */,
 				0365625C1A73141B00F5A3BF /* TextInput.cpp in Sources */,
@@ -1024,14 +1016,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				036562981A73191A00F5A3BF /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		03783D291A77B00100BA78D0 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				03783D2A1A77B00100BA78D0 /* Base */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -1140,6 +1124,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					../../Externals/lib/iOS,
+					/Users/Erik/Desktop/StoraSpel/Game/Externals/lib/iOS,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1161,6 +1146,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					../../Externals/lib/iOS,
+					/Users/Erik/Desktop/StoraSpel/Game/Externals/lib/iOS,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
