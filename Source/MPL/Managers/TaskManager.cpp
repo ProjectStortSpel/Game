@@ -38,11 +38,16 @@ TaskManager& TaskManager::GetInstance()
 void TaskManager::CreateSlaves()
 {
 	m_slaveCount = SDL_GetCPUCount() - 4;
+	/* Create slaves */
 	for (unsigned int i = 0; i < m_slaveCount; ++i)
 	{
 		SlaveThread* slave = new SlaveThread(m_taskPool, m_slaves);
+		/* Try create a slave and force it into a loop */
 		if (!slave->StartThread("Slave " + i, i))
+		{
 			printf("Creation of slave thread was unsuccessful. Id: %i\n", i);
+			delete(slave);
+		}
 		else
 		{
 			printf("Slave thread successfully created. Id: %i\n", i);

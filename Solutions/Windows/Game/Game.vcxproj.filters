@@ -135,6 +135,9 @@
     <Filter Include="Game\Profilers\ECSLProfiler">
       <UniqueIdentifier>{74e8bc95-e252-495e-a94c-85b386e24c24}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Profilers\ECSLProfiler\Render Views">
+      <UniqueIdentifier>{e772fded-ab7d-4fc8-b348-3786ee79e575}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\LuaBridge.cpp">
@@ -260,8 +263,14 @@
     <ClCompile Include="..\..\..\Source\Game\Profilers\ECSLRenderView.cpp">
       <Filter>Game\Profilers\ECSLProfiler</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Profilers\ECSLGeneralView.cpp">
+      <Filter>Game\Profilers\ECSLProfiler\Render Views</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Profilers\ECSLWorkItemView.cpp">
-      <Filter>Game\Profilers\ECSLProfiler</Filter>
+      <Filter>Game\Profilers\ECSLProfiler\Render Views</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Profilers\ECSLThreadView.cpp">
+      <Filter>Game\Profilers\ECSLProfiler\Render Views</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -385,8 +394,14 @@
     <ClInclude Include="..\..\..\Source\Game\Profilers\ECSLRenderView.h">
       <Filter>Game\Profilers\ECSLProfiler</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Profilers\ECSLGeneralView.h">
+      <Filter>Game\Profilers\ECSLProfiler\Render Views</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Profilers\ECSLWorkItemView.h">
-      <Filter>Game\Profilers\ECSLProfiler</Filter>
+      <Filter>Game\Profilers\ECSLProfiler\Render Views</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Profilers\ECSLThreadView.h">
+      <Filter>Game\Profilers\ECSLProfiler\Render Views</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -302,7 +302,9 @@ void GameCreator::StartGame(int argc, char** argv)
 
 		m_worldCounter.Reset();
 		/*	Update world (systems, entities etc)	*/
+		m_worldProfiler->Begin();
 		m_world->Update(dt);
+		m_worldProfiler->End();
 		m_worldProfiler->Update(dt);
 		m_worldProfiler->Render();
 		m_worldCounter.Tick();
@@ -326,6 +328,15 @@ void GameCreator::StartGame(int argc, char** argv)
 
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_X) == Input::InputState::PRESSED)
 			m_worldProfiler->Toggle();
+
+		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_C) == Input::InputState::PRESSED)
+			m_worldProfiler->PreviousView();
+
+		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_V) == Input::InputState::PRESSED)
+			m_worldProfiler->NextView();
+
+		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F8) == Input::InputState::PRESSED)
+			m_worldProfiler->WriteToLog();
 
 		if (showDebugInfo)
 		{

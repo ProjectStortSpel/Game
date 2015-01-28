@@ -8,10 +8,24 @@ namespace Profilers
 	struct ECSLStatistics
 	{
 	public:
+		struct WorkItemStatistic
+		{
+			std::string* name;
+			float avgDuration;
+			float minDuration;
+			float maxDuration;
+			float diffDuration;
+
+			WorkItemStatistic() : name(0) { }
+			~WorkItemStatistic() { delete(name); }
+		};
+
 		ECSLStatistics(unsigned int _threadCount);
 		~ECSLStatistics();
 
 		void AddFrame(ECSLFrame* _frame);
+
+		unsigned int GetThreadCount() { return m_threadCount; }
 
 		const float GetAvgFrameTime() { return m_avgFrameTime; }
 		const float GetMinFrameTime() { return m_minFrameTime; }
@@ -48,12 +62,11 @@ namespace Profilers
 		const float* GetMaxThreadOverheadTime() { return m_maxThreadOverheadTime; }
 		const float* GetDiffThreadOverheadTime() { return m_diffThreadOverheadTime; }
 
-		const std::vector<std::unordered_map<std::string, ECSLFrame::WorkItemStatistic*>*>* GetWorkItemStats() { return m_workItemStats; }
-
-		const std::vector<ECSLFrame*>* GetFrames() { return m_frames; }
+		const std::vector<std::unordered_map<std::string, WorkItemStatistic*>*>* GetWorkItemStats() { return m_workItemStats; }
 
 	private:
 		unsigned int m_threadCount;
+		unsigned int m_frameCount;
 
 		float m_avgFrameTime;
 		float m_minFrameTime;
@@ -90,9 +103,7 @@ namespace Profilers
 		float* m_maxThreadOverheadTime;
 		float* m_diffThreadOverheadTime;
 
-		std::vector<std::unordered_map<std::string, ECSLFrame::WorkItemStatistic*>*>* m_workItemStats;
-
-		std::vector<ECSLFrame*>* m_frames;
+		std::vector<std::unordered_map<std::string, WorkItemStatistic*>*>* m_workItemStats;
 	};
 }
 
