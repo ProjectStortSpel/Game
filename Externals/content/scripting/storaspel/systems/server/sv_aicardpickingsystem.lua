@@ -1,4 +1,6 @@
 AiCardPickingSystem = System()
+AiCardPickingSystem.NumberOfCardsToPick = 5
+AiCardPickingSystem.CardsPerHand = 8
 
 AiCardPickingSystem.Initialize = function(self)
 	self:SetName("AI card picking System")
@@ -31,6 +33,10 @@ AiCardPickingSystem.Update = function(self, dt)
 		local CardSetAI = self:GetAIsCardSet(AIs[i], Cards)
 		--This will catch the best 
 		local PickedCards = self:AIPickCards(CardSetAI)
+
+		if #PickedCards >= self.NumberOfCardsToPick then	
+			self:SendCards(PickedCards, AIs[i])
+		end
 	end
 end
 
@@ -82,6 +88,25 @@ AiCardPickingSystem.AIPickCards = function( self, CardSetAI )
 		end
 	end
 	return pickedcards
+end
+
+AiCardPickingSystem.SendCards = function(self, pickedcards, player)
+	
+	local unit = world:GetComponent(player, "UnitEntityId", "Id"):GetInt()
+	
+	world:CreateComponentAndAddTo("HasSelectedCards", player)
+	world:CreateComponentAndAddTo("UnitSelectedCards", unit)
+	for i = 1, self.NumberOfCardsToPick do
+		local action = world:GetComponent(pickedcards[i], "CardAction", 0):GetString()
+		local prio = world:GetComponent(pickedcards[i], "CardPrio", 0):GetInt()
+		print("AI Action: " .. action .. " - Prio: " .. prio)
+	
+		world:RemoveComponentFrom("DealtCard", pickedcards[i])
+		world:CreateComponentAndAddTo("CardStep", pickedcards[i])
+		world:SetComponent(pickedcards[i], "CardStep", "Step", i)
+		world:SetComponent(pickedcards[i], "CardStep", "UnitEntityId", unit)
+		
+	end
 end
 
 AiCardPickingSystem.OnEntityAdded = function(self, entity)
