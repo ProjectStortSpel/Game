@@ -123,12 +123,10 @@ namespace LuaEmbedder
       lua_pushvalue(L, metatable);
       lua_settable(L, -3);
       
-      if (gc)
-      {
-	lua_pushstring(L, "__gc");
-	lua_pushcfunction(L, &Luna<T>::gc_obj);
-	lua_settable(L, metatable);
-      }
+	  lua_pushstring(L, "__gc");
+	  lua_pushboolean(L, (int)gc);
+	  lua_pushcclosure(L, &Luna<T>::gc_obj, 1);
+	  lua_settable(L, metatable);
       
       lua_pushstring(L, "__tostring");
       lua_pushstring(L, className);
@@ -603,20 +601,24 @@ namespace LuaEmbedder
     static int gc_obj(lua_State* L)
     {
 		T** obj = static_cast<T**>(lua_touserdata(L, 1));
-		if (m_objectFunctionsMap.find(*obj) != m_objectFunctionsMap.end())
-			m_objectFunctionsMap.erase(*obj);
 
-      if (luaL_getmetafield(L, 1, "no_gc"))
-      {
-		lua_pushvalue(L, 1);
-		lua_gettable(L, -2);
-		if (!lua_isnil(L, -1))
+		bool gc = (bool)lua_toboolean(L, lua_upvalueindex(1));
+
+		bool no_gc = false;
+		if (luaL_getmetafield(L, 1, "no_gc"))
+		{
+			lua_pushvalue(L, 1);
+			lua_gettable(L, -2);
+			if (!lua_isnil(L, -1))
+				no_gc = true;
+		}
+
+		if (!gc || no_gc)
 		{
 			*obj = NULL;
 			obj = NULL;
 			return 0;
 		}
-      }
       
       if(obj && *obj)
       {
@@ -870,6 +872,50 @@ namespace LuaEmbedder
       lua_settop(A, 0);
       lua_settop(B, 0);
     }
+
+	static void NilTable(lua_State* L, int table)
+	{
+		lua_pushnil(L);
+		while (lua_next(L, table) != 0)
+		{
+			if (lua_istable(L, -1))
+				NilTable(L, lua_gettop(L));
+
+			lua_pushvalue(L, -2);
+			lua_pushnil(L);
+			lua_settable(L, table);
+
+			lua_pop(L, 1);
+		}
+	}
+
+	static void Clear(lua_State* L, const char* className, T* instance)
+	{
+		if (m_objectFunctionsMap.find(instance) != m_objectFunctionsMap.end())
+			m_objectFunctionsMap.erase(instance);
+
+		luaL_getmetatable(L, className);
+		int metatable = lua_gettop(L);
+		lua_pushstring(L, "object_members");
+		lua_gettable(L, metatable);
+		if (!lua_isnil(L, -1))
+		{
+			int objects = lua_gettop(L);
+			lua_pushlightuserdata(L, instance);
+			lua_gettable(L, -2);
+			if (!lua_isnil(L, -1))
+			{
+				// Nil table recursivly
+				int members = lua_gettop(L);
+				NilTable(L, members);
+
+				lua_pushlightuserdata(L, instance);
+				lua_pushnil(L);
+				lua_settable(L, objects);
+			}
+		}
+		lua_settop(L, 0);
+	}
   };
 
   template <class T> std::vector<PropertyType<T>> Luna<T>::m_properties = std::vector<PropertyType<T>>();

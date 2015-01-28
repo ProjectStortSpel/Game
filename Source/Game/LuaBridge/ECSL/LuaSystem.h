@@ -14,7 +14,7 @@ namespace LuaBridge
   {
   public:
     LuaSystem(lua_State* L);
-    ~LuaSystem() { }
+	~LuaSystem();
     
     static void Embed(lua_State* L);
     
