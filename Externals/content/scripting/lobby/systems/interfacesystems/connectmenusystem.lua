@@ -66,22 +66,19 @@ ConnectMenuSystem.SpawnMenu = function(self)
 		button = self:CreateElement("shade", "quad", 0, 0.6-i*0.11, -2, 1.8, 0.1)
 		self:AddConsoleCommandToButton("connect "..serverip, button)
 		self:AddHoverSize(1.005, button)
+		
 		text = self:CreateText("center", "text", -0.85, 0.64-i*0.11, -1.99999, 0.08, 0.08)	
 		if servergamestarted == true then
 			self:AddTextToTexture("C0"..i, "X", 0, 1, 0, 0, text)
 		else
 			self:AddTextToTexture("C0"..i, "O", 0, 0, 1, 0, text)
 		end
-		self:AddConsoleCommandToButton("connect "..serverip, text)
 		text = self:CreateText("left", "text", -0.81, 0.64-i*0.11, -1.99999, 1.5, 0.08)	
 		self:AddTextToTexture("C1"..i, servername, 0, 1, 1, 1, text)
-		self:AddConsoleCommandToButton("connect "..serverip, text)
 		--text = self:CreateText("center", "text", 0, 0.64-i*0.11, -1.99999, 1.78, 0.08)
 		--self:AddTextToTexture("C2"..i, serverip, 0, 1, 1, 1, text)												-- SOMETHING WRONG WHEN TRYING TO WRITE AN IP
-		--self:AddConsoleCommandToButton("connect "..serverip, text)
 		text = self:CreateText("right", "text", 0.89, 0.64-i*0.11, -1.99999, 0.2, 0.08)	
 		self:AddTextToTexture("C3"..i, "["..servernousers.."/"..servermaxusers.."]", 0, 1, 1, 1, text)
-		self:AddConsoleCommandToButton("connect "..serverip, text)
 	end
 end
 
