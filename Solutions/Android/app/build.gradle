@@ -36,13 +36,23 @@ android {
     sourceSets.main {
         jni.srcDirs = []
         jniLibs.srcDirs = ['libs']
-        assets.srcDirs = ['assets'] // Change to content folder later on
+        assets.srcDirs = ['assets']
     }
 
     productFlavors {
+        arm {
+            ndk {
+                abiFilter "armeabi"
+            }
+        }
         armv7 {
             ndk {
                 abiFilter "armeabi-v7a"
+            }
+        }
+        x86 {
+            ndk {
+                abiFilter "x86"
             }
         }
         fat
@@ -55,10 +65,15 @@ android {
             commandLine '../../../Externals/android/ndk/ndk-build', '-C', file('jni').absolutePath
         }
     }
-
     tasks.withType(JavaCompile) {
         compileTask -> compileTask.dependsOn ndkBuild
     }
+
+    task copyContent(type: Copy) {
+        from '../../../Externals/content'
+        into 'assets/content'
+    }
+    preBuild.dependsOn copyContent
 }
 
 dependencies {

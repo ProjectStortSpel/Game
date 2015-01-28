@@ -7,14 +7,16 @@ require "cardcomponents"
 require "lerpcomponents"
 require "gamestatecomponents"
 
-require "lightcomponents"
+
 
 require "buttoncomponents"
 require "menucomponents"
-require "cameracomponents"
 
 package.path = package.path .. ";../../../Externals/content/scripting/shared/components/?.lua"
 require "interfacecomponents"
+require "lightcomponents"
+require "cameracomponents"
+require "components"
 
 -- Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/shared/?.lua"

@@ -119,3 +119,8 @@ TakeCardStepsFromUnitComponent.Name = "TakeCardStepsFromUnit"
 TakeCardStepsFromUnitComponent.TableType = TableType.Map
 TakeCardStepsFromUnitComponent:AddVariable("Unit", ByteSize.Reference)
 worldCreator:AddComponentType(TakeCardStepsFromUnitComponent)
+
+local AddTotemPieceComponent = ComponentType()
+AddTotemPieceComponent.Name = "AddTotemPiece"
+AddTotemPieceComponent.TableType = TableType.Map
+worldCreator:AddComponentType(AddTotemPieceComponent)
