@@ -9,6 +9,7 @@ AiCardPickingSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("AICard", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("TileComp", FilterType.RequiresOneOf)
 	
+	
 end
 
 AiCardPickingSystem.Update = function(self, dt)
@@ -32,11 +33,11 @@ AiCardPickingSystem.Update = function(self, dt)
 		--Fetch the cards which is relevant to the current AI
 		local CardSetAI = self:GetAIsCardSet(AIs[i], Cards)
 		--This will catch the best 
-		local PickedCards = self:AIPickCards(AIs[i], CardSetAI)
-		
+		local PickedCards = self:AIPickCards(CardSetAI, aiDirX, aiDirY, aiPositonX, aiPositonY, targetPositionX, targetPositionY)
 		self:SimulatePlayOfCards(PickedCards)
 
 		if #PickedCards >= self.NumberOfCardsToPick then	
+			
 			self:SendCards(PickedCards, AIs[i])
 		end
 	end
@@ -75,33 +76,142 @@ AiCardPickingSystem.GetAIsCardSet = function(self, AI, Cards)
 		return aisCard
 end
 
-AiCardPickingSystem.AIPickCards = function( self, CardSetAI )
+AiCardPickingSystem.AIPickCards = function( self, CardSetAI, dirX, dirY, posX, posY, targetX, targetY )
 	
 	local pickedcards = {}
 	if #CardSetAI >= 5 then
+		local forwards = self:GetAllCardsOf(CardSetAI, "Forward")
+		local backwards = self:GetAllCardsOf(CardSetAI, "Backward")
+		local turnLefts = self:GetAllCardsOf(CardSetAI, "TurnLeft")
+		local turnRights = self:GetAllCardsOf(CardSetAI, "TurnRight")
+		local turnArounds = self:GetAllCardsOf(CardSetAI, "TurnAround")
+
 		for i = 1, 5 do
-			local cardNr = math.random(1, #CardSetAI)
 			
-			local pickedcard = CardSetAI[cardNr]
+			if posY < targetY and dirY == 1 and #forwards > 0 then
+				for j = 1, #CardSetAI do
+					if CardSetAI[j] == forwards[1] and j <= #CardSetAI then
+						posY = posY + dirY
+						table.remove(forwards, 1)
+						pickedcards[#pickedcards + 1] = CardSetAI[j]
+						table.remove(CardSetAI, j)
+						j = 100
+					end
+				end
+			elseif posY < targetY and dirY == -1 and #backwards > 0 then
+				for j = 1, #CardSetAI do
+					if CardSetAI[j] == backwards[1] and j <= #CardSetAI then
+						posY = posY + dirY
+						table.remove(backwards, 1)
+						pickedcards[#pickedcards + 1] = CardSetAI[j]
+						table.remove(CardSetAI, j)
+						j = 100
+					end
+				end
+			elseif posY > targetY and dirY == -1 and #forwards > 0 then
+				for j = 1, #CardSetAI do
+					if CardSetAI[j] == forwards[1] and j <= #CardSetAI then
+						posY = posY + dirY
+						table.remove(forwards, 1)
+						pickedcards[#pickedcards + 1] = CardSetAI[j]
+						table.remove(CardSetAI, j)
+						j = 100
+					end
+				end
+			elseif posY > targetY and dirY == 1 and #backwards > 0 then
+				for j = 1, #CardSetAI do
+					if CardSetAI[j] == backwards[1] and j <= #CardSetAI then
+						posY = posY + dirY
+						table.remove(backwards, 1)
+						pickedcards[#pickedcards + 1] = CardSetAI[j]
+						table.remove(CardSetAI, j)
+						j = 100
+					end
+				end
+			elseif posX < targetX and dirX == 1 and #forwards > 0 then
+				for j = 1, #CardSetAI do
+					if CardSetAI[j] == forwards[1] and j <= #CardSetAI then
+						posX = posX + dirX
+						table.remove(forwards, 1)
+						pickedcards[#pickedcards + 1] = CardSetAI[j]
+						table.remove(CardSetAI, j)
+						j = 100
+					end
+				end
 			
-			pickedcards[#pickedcards + 1] = pickedcard
+			elseif posX < targetX and dirX == -1 and #backwards > 0 then
+				for j = 1, #CardSetAI do
+					if CardSetAI[j] == backwards[1] and j <= #CardSetAI then
+						posX = posX + dirX
+						table.remove(backwards, 1)
+						pickedcards[#pickedcards + 1] = CardSetAI[j]
+						table.remove(CardSetAI, j)
+						j = 100
+					end
+				end
+			elseif posX > targetX and dirX == -1 and #forwards > 0 then
+				for j = 1, #CardSetAI do
+					if CardSetAI[j] == forwards[1] and j <= #CardSetAI then
+						posX = posX + dirX
+						table.remove(forwards, 1)
+						pickedcards[#pickedcards + 1] = CardSetAI[j]
+						table.remove(CardSetAI, j)
+						j = 100
+					end
+				end
+			elseif posX > targetX and dirX == 1 and #backwards > 0 then
+				for j = 1, #CardSetAI do
+					if CardSetAI[j] == backwards[1] and j <= #CardSetAI then
+						posX = posX + dirX
+						table.remove(backwards, 1)
+						pickedcards[#pickedcards + 1] = CardSetAI[j]
+						table.remove(CardSetAI, j)
+						j = 100
+					end
+				end
+			else
+				local cardNr = math.random(1, #CardSetAI)
 			
-			table.remove(CardSetAI, cardNr)
+				local pickedcard = CardSetAI[cardNr]
+			
+				pickedcards[#pickedcards + 1] = pickedcard
+
+				table.remove(CardSetAI, cardNr)
+			end
+
+			
+			
 		end
 	end
 	return pickedcards
 end
 
+AiCardPickingSystem.GetAllCardsOf = function( self, CardSetAI, cardName )
+	
+	local cards = {}
+	for i = 1, #CardSetAI do
+
+		local nameCard = self:GetComponent(CardSetAI[i], "CardAction", 0):GetString()
+
+		if cardName == nameCard then
+			cards[#cards + 1] = CardSetAI[i]
+		end
+	end
+	return cards
+end
+
 AiCardPickingSystem.SendCards = function(self, pickedcards, player)
 	
+	print("DONE")
 	local unit = world:GetComponent(player, "UnitEntityId", "Id"):GetInt()
 	
 	world:CreateComponentAndAddTo("HasSelectedCards", player)
 	world:CreateComponentAndAddTo("UnitSelectedCards", unit)
+
 	for i = 1, self.NumberOfCardsToPick do
 		local action = world:GetComponent(pickedcards[i], "CardAction", 0):GetString()
 		local prio = world:GetComponent(pickedcards[i], "CardPrio", 0):GetInt()
-		print("AI Action: " .. action .. " - Prio: " .. prio)
+		--print("AI Action: " .. action .. " - Prio: " .. prio)
 	
 		world:RemoveComponentFrom("DealtCard", pickedcards[i])
 		world:CreateComponentAndAddTo("CardStep", pickedcards[i])
@@ -139,5 +249,4 @@ AiCardPickingSystem.OnEntityAdded = function(self, entity)
 	elseif world:EntityHasComponent(entity, "TileComp") then
 	
 	end
-
 end

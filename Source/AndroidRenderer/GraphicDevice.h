@@ -10,6 +10,7 @@ Author: Christian
 #include "Buffer.h"
 #include "Camera.h"
 #include "SkyBox.h"
+#include "ShadowMap.h"
 #include "TextRenderer.h"
 
 namespace Renderer
@@ -125,9 +126,17 @@ namespace Renderer
 		// Light info
 		vec3 m_dirLightDirection;
 
+		// Shadow 
+		ShadowMap *m_shadowMap;
+
+		void CreateShadowMap();
+		void WriteShadowMapDepth();
+
 		// Shaders
 		Shader m_skyBoxShader;
 		Shader m_forwardShader, m_viewspaceShader;
+		Shader m_shadowShader;
+		Shader m_fullscreen;
 
 		// Skybox
 		SkyBox *m_skybox;

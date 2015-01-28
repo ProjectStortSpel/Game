@@ -1,6 +1,8 @@
 #version 100
+#extension GL_OES_fragment_precision_high : enable
+#extension GL_OES_depth_texture : enable
 
-precision mediump float;
+precision highp float;
 
 varying vec3 Normal;
 varying vec3 Tan;
@@ -10,11 +12,16 @@ varying vec3 ViewPos;
 
 
 //Input textures
+uniform sampler2D ShadowDepthTex;
 uniform sampler2D diffuseTex;
 uniform sampler2D normalTex;
 uniform sampler2D specularTex;
 
+
 uniform mat4 ViewMatrix;
+uniform mat4 InvViewMatrix;
+uniform mat4 BiasMatrix;
+uniform mat4 ShadowViewProj;
 
 struct DirectionalLight {
 	vec3 Direction; // Light position in world coords.
@@ -56,13 +63,27 @@ void phongModelDirLight(out vec3 ambient, out vec3 diffuse, out vec3 spec)
 
 	if(diffuseFactor > 0.0)
 	{
+		// For shadows
+		vec4 worldPos = InvViewMatrix * vec4(ViewPos, 1.0);
+		vec4 shadowCoord = BiasMatrix * ShadowViewProj * worldPos;
+
+		float shadow = 1.0;
+		vec4 shadowCoordinateWdivide = shadowCoord / shadowCoord.w;
+		shadowCoordinateWdivide.z -= 0.0015;
+		float distanceFromLight = texture2D(ShadowDepthTex, shadowCoordinateWdivide.st).z;
+		
+		if (shadowCoord.w > 0.0)
+	 		shadow = distanceFromLight < shadowCoordinateWdivide.z ? 0.0 : 1.0 ;
+
+		//shadow = float(distanceFromLight < shadowCoordinateWdivide.z);
+		
 		// diffuse
-		diffuse = diffuseFactor * dirlight.Color * dirlight.Intensity.y;
+		diffuse = diffuseFactor * dirlight.Color * dirlight.Intensity.y * shadow;
 
 		// specular
 		vec3 v = reflect( lightVec, NmNormal );
 		float specFactor = pow( max( dot(v, E), 0.0 ), Material.Shininess );
-		spec = specFactor * dirlight.Color * dirlight.Intensity.z * Material.Ks;        
+		spec = specFactor * dirlight.Color * dirlight.Intensity.z * Material.Ks * shadow;        
 	}
 
 	return;
@@ -75,7 +96,7 @@ void phongModel(int index, out vec3 ambient, out vec3 diffuse, out vec3 spec) {
 	spec    = vec3(0.0);
 
 	vec3 thisLightPosition	= pointlights[0].Position;
-	vec3 thisLightColor	= pointlights[0].Color;
+	vec3 thisLightColor		= pointlights[0].Color;
 	vec3 thisLightIntensity = pointlights[0].Intensity;
 
 	vec3 lightVec = (ViewMatrix * vec4(thisLightPosition, 1.0)).xyz - ViewPos;
@@ -156,7 +177,7 @@ void main()
     
     gl_FragColor = vec4(ambient + diffuse, 1.0) * albedo_tex + vec4(spec, 0.0);
 	//gl_FragColor = vec4( (inverse(ViewMatrix) * vec4(Normal, 0.0)).xyz, 1.0);
-	//gl_FragColor = vec4(Normal, 1.0);
+	//gl_FragColor = albedo_tex; //vec4(Normal, 1.0);
     //gl_FragColor = vec4(ambient + diffuse, 1.0) * vec4(0.0, 0.0, 1.0, 1.0) + vec4(spec, 0.0); //albedo_tex;
 }
 
