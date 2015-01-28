@@ -15,8 +15,11 @@ AddTextToTextureSystem.OnEntityAdded = function(self, entityId)
 	local B = self:GetComponent(entityId, "TextTexture", "B"):GetFloat(0)
 	local ratio = graphics:CreateTextTexture(N, Text, FontIndex, R, G, B)
 	local scalex, scaley, scalez = self:GetComponent(entityId, "Scale", 0):GetFloat3(0)
-	self:GetComponent(entityId, "Scale", 0):SetFloat3(scaley*ratio, scaley, scalez)
-	print(ratio)
+	if scaley*ratio > scalex then
+		self:GetComponent(entityId, "Scale", 0):SetFloat3(scalex, scalex/ratio, scalez)
+	else
+		self:GetComponent(entityId, "Scale", 0):SetFloat3(scaley*ratio, scaley, scalez)
+	end
 	graphics:ChangeModelTexture(ModelId, N)
 	world:RemoveComponentFrom("TextTexture", entityId)
 end
