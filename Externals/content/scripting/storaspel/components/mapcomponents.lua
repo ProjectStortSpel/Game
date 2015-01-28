@@ -30,15 +30,22 @@ FinishpointComponent.Name = "Finishpoint"
 FinishpointComponent.TableType = TableType.Map
 worldCreator:AddComponentType(FinishpointComponent)
 
--- Edge?
 -- Hole and Out Component
 local VoidComponent = ComponentType()
 VoidComponent.Name = "Void"
 VoidComponent.TableType = TableType.Map
 worldCreator:AddComponentType(VoidComponent)
 
--- Not Walkable Component
+-- Not Walkable Component, no unit can end up here, for example a stone or tree occupying a tile
 local NotWalkableComponent = ComponentType()
 NotWalkableComponent.Name = "NotWalkable"
 NotWalkableComponent.TableType = TableType.Map
 worldCreator:AddComponentType(NotWalkableComponent)
+
+-- Map Size Component, added to exactly entity to signal how big the map is.
+local MapSizeComponent = ComponentType()
+MapSizeComponent.Name = "MapSize"
+MapSizeComponent.TableType = TableType.Map
+MapSizeComponent:AddVariable("X", ByteSize.Int)
+MapSizeComponent:AddVariable("Y", ByteSize.Int)
+worldCreator:AddComponentType(MapSizeComponent)

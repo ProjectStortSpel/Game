@@ -6,9 +6,12 @@ MapSystem.mapY = 0
 MapSystem.PostInitialize = function(self)
 	local map
     self.mapX, self.mapY, map = File.LoadMap("content/maps/smallmap.txt")
-    local posX, posZ
+
+	--local mapComp = self:GetComponent(entity, "Rotation", 0)
+	--rotComp:SetFloat3(0, math.pi * 0.5 * math.random(0, 4), 0)
+	print("MapSize:", self.mapX, self.mapY)
 		
-	for x = 0, self.mapX+1 do
+	for x = 0, self.mapX + 1 do
 		self:AddTile(x, 0, 111) -- 111 = void
 	end
 	
@@ -41,9 +44,18 @@ MapSystem.PostInitialize = function(self)
 
 	end
 	
-	for x = 0, self.mapX+1 do
+	for x = 0, self.mapX + 1 do
 		self:AddTile(x, self.mapY+1, 111) -- 111 = void
 	end
+	
+	-- Add to the map size as voids have been added around the map.
+	self.mapX = self.mapX + 2
+	self.mapY = self.mapY + 2
+	
+	-- Create an entity that will keep track of the map size.
+	local mapEntity = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("MapSize", mapEntity)
+	self:GetComponent(mapEntity, "MapSize", 0):SetInt2(self.mapX, self.mapY)
 	    
 	local activeEntities = MapSystem.entities
 	local waterTiles = {}
@@ -236,6 +248,10 @@ end
 MapSystem.AddGroundTileBelow = function(self, posX, posZ)
 
 	local groundEntity = world:CreateNewEntity("Tile")
+	
+	-- Remove the tile component, as this tile is visual only.
+	world:RemoveComponentFrom("TileComp", groundEntity)
+	
 	local posComp = self:GetComponent(groundEntity, "Position", 0)
 	posComp:SetFloat3(posX, 0.0, posZ)
 	
@@ -245,39 +261,4 @@ MapSystem.AddGroundTileBelow = function(self, posX, posZ)
 	world:CreateComponentAndAddTo("Model", groundEntity)
 	local comp = self:GetComponent(groundEntity, "Model", 0)
 	comp:SetModel("grass", "grass", 0)
-	
-	--table.insert(self.entities, groundEntity)
-end 
-
-MapSystem.GetCheckPointId = function(self, posX, posY)
-	
-	local index = self.mapX * posY + posX + 1
-	entity = self.entities[index]
-	
-	if self:EntityHasComponent(entity, "Checkpoint") then
-		local comp = self:GetComponent(entity, "Checkpoint", 0)
-		
-		return comp:GetInt()
-	else
-		return -1
-	end
-	
-end
-
-MapSystem.TileIsWalkable = function(self, posX, posY)
-	
-	return not self:TileHasComponent("NotWalkable", posX, posY)
-end
-
-MapSystem.TileIsVoid = function(self, posX, posY)
-
-	return self:TileHasComponent("Void", posX, posY)
-end
-
-MapSystem.TileHasComponent = function(self, component, posX, posY)
-	local index = self.mapX * posY + posX + 1
-	entity = self.entities[index]
-	
-	local returnValue = self:EntityHasComponent(entity, component)
-	return returnValue
 end

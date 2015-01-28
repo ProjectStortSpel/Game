@@ -246,7 +246,7 @@ void GameCreator::StartGame(int argc, char** argv)
 	bool showDebugInfo = false;
 	while (m_running)
 	{
-		float dt = std::min(maxDeltaTime, m_frameCounter->GetDeltaTime());
+		float dt = 5*std::min(maxDeltaTime, m_frameCounter->GetDeltaTime());
 
 		m_inputCounter.Reset();
 		/*	Collect all input	*/

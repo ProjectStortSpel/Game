@@ -11,10 +11,14 @@ require "servercomponents"
 package.path = package.path .. ";../../../Externals/content/scripting/shared/components/?.lua"
 require "interfacecomponents"
 require "textrendercomponents"
+require "lightcomponents"
+require "cameracomponents"
+require "components"
 
 -- Systems
 package.path = package.path .. ";../../../Externals/content/scripting/lobby/systems/?.lua"
 require "systems"
+
 
 --if Server then
 	require "serverlobbysystem"
