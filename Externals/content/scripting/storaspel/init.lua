@@ -11,7 +11,6 @@ require "gamestatecomponents"
 
 require "buttoncomponents"
 require "menucomponents"
-require "cameracomponents"
 
 package.path = package.path .. ";../../../Externals/content/scripting/shared/components/?.lua"
 require "interfacecomponents"
