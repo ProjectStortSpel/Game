@@ -42,7 +42,9 @@ Unit.Name = "Unit"
 	Unit:AddComponent("TargetCheckpoint")
 	Unit:AddComponent("MapPosition")
 	Unit:AddComponent("Spawnpoint")
+	Unit:AddComponent("NoSubSteps")
 	
+	Unit:SetInt("NoSubSteps", 1)
 	
 	--	Misc
 	Unit:AddComponent("PlayerEntityId")			--	Entity ID to the specific player entity that controls this unit

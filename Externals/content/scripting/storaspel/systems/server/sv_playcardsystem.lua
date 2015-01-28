@@ -31,7 +31,9 @@ PlayCardSystem.OnEntityAdded = function(self, entity)
 				File.Close(file)
 
 				local cardAction = "Unit" .. action
+				print(cardAction)
 				world:CreateComponentAndAddTo(cardAction, unit)
+				print("CREATED COMPONENT")
 				time = 1.5
 			end
 

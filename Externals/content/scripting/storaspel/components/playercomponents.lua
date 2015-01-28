@@ -53,6 +53,13 @@ DirectionComponent:AddVariable("X", ByteSize.Int)
 DirectionComponent:AddVariable("Z", ByteSize.Int)
 worldCreator:AddComponentType(DirectionComponent)
 
+-- NoSubSteps Component
+local NoSubStepsComponent = ComponentType()
+NoSubStepsComponent.Name = "NoSubSteps"
+NoSubStepsComponent.TableType = TableType.Map
+NoSubStepsComponent:AddVariable("Counter", ByteSize.Int)
+worldCreator:AddComponentType(NoSubStepsComponent)
+
 -- Spawn Component
 local SpawnComponent = ComponentType()
 SpawnComponent.Name = "Spawn"
