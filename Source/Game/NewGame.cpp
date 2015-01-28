@@ -12,7 +12,6 @@
 int main(int argc, char** argv)
 {
 #if defined(__OSX__) || defined(__IOS__)
-    printf("SIGPIPE\n");
     signal(SIGPIPE, SIG_IGN);
 #endif
     
