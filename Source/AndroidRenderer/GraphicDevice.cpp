@@ -86,6 +86,9 @@ void GraphicDevice::Update(float _dt)
 
 void GraphicDevice::WriteShadowMapDepth()
 {
+    GLint oldFBO;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFBO);
+    
 	//------- Write shadow maps depths ----------
 	glBindFramebuffer(GL_FRAMEBUFFER, m_shadowMap->GetShadowFBOHandle());
 	glClear(GL_DEPTH_BUFFER_BIT);
@@ -133,7 +136,7 @@ void GraphicDevice::WriteShadowMapDepth()
 	}
 	//------------------------------------------------
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, oldFBO);
 	glCullFace(GL_BACK);
 	glDisable(GL_POLYGON_OFFSET_FILL);
 	//------------------------------

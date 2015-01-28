@@ -108,6 +108,7 @@
 		03783D031A7693A000BA78D0 /* SlerpRotationSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03783D011A7693A000BA78D0 /* SlerpRotationSystem.cpp */; };
 		03783D061A7693AD00BA78D0 /* MasterServerSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03783D041A7693AD00BA78D0 /* MasterServerSystem.cpp */; };
 		03783D091A7693FD00BA78D0 /* ClientDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03783D071A7693FD00BA78D0 /* ClientDatabase.cpp */; };
+		03BAF1F21A790D0600DD196D /* ShadowMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03BAF1F01A790D0600DD196D /* ShadowMap.cpp */; };
 		03F45FB21A750E6700F8A27F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 03F45FB11A750E6700F8A27F /* Images.xcassets */; };
 		03F7AF5D1A765FEC00FB8F1D /* Logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03F7AF5B1A765FEC00FB8F1D /* Logger.cpp */; };
 /* End PBXBuildFile section */
@@ -310,6 +311,8 @@
 		03783D051A7693AD00BA78D0 /* MasterServerSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MasterServerSystem.h; sourceTree = "<group>"; };
 		03783D071A7693FD00BA78D0 /* ClientDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClientDatabase.cpp; sourceTree = "<group>"; };
 		03783D081A7693FD00BA78D0 /* ClientDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClientDatabase.h; sourceTree = "<group>"; };
+		03BAF1F01A790D0600DD196D /* ShadowMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShadowMap.cpp; sourceTree = "<group>"; };
+		03BAF1F11A790D0600DD196D /* ShadowMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowMap.h; sourceTree = "<group>"; };
 		03F45FB11A750E6700F8A27F /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = StoraSpel/Images.xcassets; sourceTree = "<group>"; };
 		03F7AF5B1A765FEC00FB8F1D /* Logger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Logger.cpp; sourceTree = "<group>"; };
 		03F7AF5C1A765FEC00FB8F1D /* Logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logger.h; sourceTree = "<group>"; };
@@ -366,6 +369,8 @@
 		036561541A73141B00F5A3BF /* AndroidRenderer */ = {
 			isa = PBXGroup;
 			children = (
+				03BAF1F01A790D0600DD196D /* ShadowMap.cpp */,
+				03BAF1F11A790D0600DD196D /* ShadowMap.h */,
 				0321DDF11A77E54C000EE6A6 /* TextRenderer.cpp */,
 				0321DDF21A77E54C000EE6A6 /* TextRenderer.h */,
 				036561551A73141B00F5A3BF /* Buffer.cpp */,
@@ -973,6 +978,7 @@
 				036562201A73141B00F5A3BF /* Console.cpp in Sources */,
 				0365621F1A73141B00F5A3BF /* SkyBox.cpp in Sources */,
 				0365624C1A73141B00F5A3BF /* LuaGraphicDevice.cpp in Sources */,
+				03BAF1F21A790D0600DD196D /* ShadowMap.cpp in Sources */,
 				036562351A73141B00F5A3BF /* WorldCreator.cpp in Sources */,
 				0365621B1A73141B00F5A3BF /* Buffer.cpp in Sources */,
 				036562511A73141B00F5A3BF /* RemoteConsole.cpp in Sources */,
