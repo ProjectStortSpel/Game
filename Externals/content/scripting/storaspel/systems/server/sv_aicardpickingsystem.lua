@@ -32,7 +32,9 @@ AiCardPickingSystem.Update = function(self, dt)
 		--Fetch the cards which is relevant to the current AI
 		local CardSetAI = self:GetAIsCardSet(AIs[i], Cards)
 		--This will catch the best 
-		local PickedCards = self:AIPickCards(CardSetAI)
+		local PickedCards = self:AIPickCards(AIs[i], CardSetAI)
+		
+		self:SimulatePlayOfCards(PickedCards)
 
 		if #PickedCards >= self.NumberOfCardsToPick then	
 			self:SendCards(PickedCards, AIs[i])
@@ -107,6 +109,23 @@ AiCardPickingSystem.SendCards = function(self, pickedcards, player)
 		world:SetComponent(pickedcards[i], "CardStep", "UnitEntityId", unit)
 		
 	end
+end
+
+AiCardPickingSystem.SimulatePlayOfCards = function(self, pickedcards)
+	
+	--local Tiles = self:GetEntities("TileComp")
+	self:TileHasComponent("hej", 1, 1)
+end
+
+AiCardPickingSystem.TileHasComponent = function(self, component, posX, posY)
+	--local index = self.mapX * posY + posX + 1
+	--entity = self.entities[index]
+	
+	local Tiles = self:GetEntities("TileComp")
+	
+	
+	--local returnValue = self:EntityHasComponent(entity, component)
+	--return returnValue
 end
 
 AiCardPickingSystem.OnEntityAdded = function(self, entity)
