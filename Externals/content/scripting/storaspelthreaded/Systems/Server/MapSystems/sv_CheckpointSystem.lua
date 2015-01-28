@@ -1,5 +1,4 @@
 CheckpointSystem = System()
-CheckpointSystem.TotemCount = {}
 
 CheckpointSystem.Initialize = function(self)
 	--	Set Name
@@ -12,32 +11,6 @@ CheckpointSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Unit", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("Checkpoint", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("CheckCheckpoint", FilterType.RequiresOneOf)
-end
-
-CheckpointSystem.AddTotemPole = function(self, playerId, currentCP, noCP, X, Y, Z)
-
-	-- TODO: FIX THIS SO IT DOESN'T USE ARRAYS FOR TOTEMS. DOESN'T WORK IN DEBUG
-
-	local head = world:CreateNewEntity("Head")
-	local rotation 	= world:GetComponent(head, "Rotation", 0)
-	local position 	= world:GetComponent(head, "Position", 0)
-	local scale		= world:GetComponent(head, "Scale", 0)
-	local axis = math.pi
-	local setScale = 0.25
-	
-	-- Position
-	if self.TotemCount[currentCP] == nil then
-		self.TotemCount[currentCP] = 1
-	end
-
-	rotation:SetFloat3(0, axis, 0)
-	position:SetFloat3(X, 0.4 + self.TotemCount[currentCP] * setScale, Z)
-	scale:SetFloat3(setScale, setScale, setScale)
-	
-	world:SetComponent(head, "Model", "ModelName", "ply" .. playerId);
-	world:SetComponent(head, "Model", "ModelPath", "head");
-	world:SetComponent(head, "Model", "RenderType", 0);
-	self.TotemCount[currentCP] = self.TotemCount[currentCP] + 1
 end
 
 CheckpointSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
@@ -86,18 +59,16 @@ CheckpointSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entiti
 							
 								-- Get the number of the player controlling the unit
 								local playerNum = world:GetComponent(units[i], "PlayerNumber", 0):GetInt()
-							
-								print("Player#" .. playerNum .. " reached checkpoint#" .. cpId)
+
+								
 								
 								local totemPieceId = world:CreateNewEntity()
 								world:CreateComponentAndAddTo("AddTotemPiece", totemPieceId)
 								world:CreateComponentAndAddTo("PlayerNumber", totemPieceId)
 								world:CreateComponentAndAddTo("CheckpointId", totemPieceId)
-								print("CreateComponentAndAddTo done")
 								world:SetComponent(totemPieceId, "PlayerNumber", "Number", playerNum)
-								print("PlayerNumber done")
+
 								world:SetComponent(totemPieceId, "CheckpointId", "Id", cpId)
-								print("CheckpointId done")
 								
 								-- Set the new target checkpoint
 								world:SetComponent(units[i], "TargetCheckpoint", "Id", targetId + 1)

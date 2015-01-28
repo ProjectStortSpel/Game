@@ -1,8 +1,8 @@
 
 --	Map Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/MapSystems/?.lua"
-require "sv_CheckpointSystem"
 require "sv_CreateMapSystem"
+require "sv_CheckpointSystem"
 require "sv_RiverSystem"
 require "sv_VoidSystem"
 
@@ -95,9 +95,13 @@ require "sv_ActionTurnAroundSystem"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ActionMoveForwardSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ActionMoveBackwardSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ActionTurnLeftSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ActionTurnRightSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ActionTurnAroundSystem)
 
 --	Spawn Systems
@@ -136,7 +140,7 @@ require "sv_GameOverSystem"
 require "sv_ServerLobbySystem"
 require "sv_LogStartSystem"
 require "sv_FinishSystem"
-require "sv_OnPlayerConnectedSystem"
+--require "sv_OnPlayerConnectedSystem"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(TotemPoleSystem)
@@ -153,8 +157,8 @@ worldCreator:AddSystemToCurrentGroup(ServerLobbySystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(FinishSystem)
 
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(OnPlayerConnectedSystem)
+--worldCreator:AddSystemGroup()
+--worldCreator:AddSystemToCurrentGroup(OnPlayerConnectedSystem)
 
 
 

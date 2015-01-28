@@ -105,6 +105,9 @@ CreateMapSystem.PostInitialize = function(self)
 		end
 
 	end
+	
+	self.waterTiles = nil
+	self.entities = nil
 end
 
 CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
