@@ -38,10 +38,10 @@ TrueTestMoveSystem.Update = function(self, dt)
 			newPosX = newPosX + dirposX * dt * 1.5
 			newPosZ = newPosZ + dirposZ * dt * 1.5
 
-			if tempX <= 0.05 then
+			if tempX <= 0.1 then
 				newPosX = mapPositionX
 			end
-			if tempZ <= 0.05 then
+			if tempZ <= 0.1  then
 				newPosZ = mapPositionZ
 			end
 
