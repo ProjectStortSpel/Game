@@ -23,10 +23,13 @@ public:
 private:
 	ClientDatabase* m_clientDatabase;
 	std::map<int, bool> m_playerIds;
+	std::vector<int> m_serverIds;
 
 	int m_gameRunningId;
 	int m_oldGameRunningId;
 	float m_requestServerListTimer;
+	
+	void OnGetServerList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
 };
 
 #endif

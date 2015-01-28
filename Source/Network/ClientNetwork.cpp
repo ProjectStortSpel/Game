@@ -125,7 +125,8 @@ bool ClientNetwork::Connect()
 	if (IsConnected())
 		Disconnect();
 
-	m_socket = ISocket::CreateSocket();
+	if(!m_socket)
+		m_socket = ISocket::CreateSocket();
 
 	if (!*m_socketBound)
 	{
@@ -152,7 +153,7 @@ bool ClientNetwork::Connect()
 		return false;
 	}
 
-	//m_socket->SetTimeoutDelay(5000);
+	m_socket->SetTimeoutDelay(5000);
 	m_socket->SetNonBlocking(false);
 	m_socket->SetNoDelay(true);
 
@@ -605,4 +606,13 @@ void ClientNetwork::SetOnRemotePlayerBanned(NetEvent& _function)
 		SDL_Log("Hooking function to OnRemotePlayerBanned.\n");
 
 	m_onRemotePlayerBanned->push_back(_function);
+}
+
+
+void ClientNetwork::SetTimeOutValue(int _value)
+{
+	if (!m_socket)
+		m_socket = ISocket::CreateSocket();
+
+	m_socket->SetTimeoutDelay(_value);
 }

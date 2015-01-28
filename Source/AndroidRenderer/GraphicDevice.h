@@ -11,6 +11,7 @@ Author: Christian
 #include "Camera.h"
 #include "SkyBox.h"
 #include "ShadowMap.h"
+#include "TextRenderer.h"
 
 namespace Renderer
 {
@@ -99,6 +100,10 @@ namespace Renderer
 		int GetVRamUsage(){ return 0; }
 		
 		void Clear();
+		
+		int AddFont(const std::string& filepath, int size);
+		void CreateTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, glm::ivec2 size = glm::ivec2(-1, -1));
+		void CreateWrappedTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, unsigned int wrapLength, glm::ivec2 size = glm::ivec2(-1, -1));
 
 	private:
 		bool InitSDLWindow();
@@ -146,7 +151,8 @@ namespace Renderer
 		// Textures
 		std::map<const std::string, GLuint> m_textures;
 		GLuint AddTexture(std::string _fileDir, GLenum _textureSlot);
-
+		
+		TextRenderer m_sdlTextRenderer;
 	};
 }
 

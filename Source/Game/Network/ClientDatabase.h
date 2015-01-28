@@ -42,6 +42,8 @@ public:
 	bool Connect();
 	bool Disconnect();
 
+	void HookOnGetServerList(Network::NetMessageHook& _hook);
+
 	void Update(float dt);
 
 	void AddToDatabase();
@@ -57,18 +59,14 @@ public:
 	void IncreaseMaxNoPlayers();
 
 	void RequestServerList();
-	std::vector<ServerInfo>& GetServerList() { return m_serverList; }
-	ServerInfo GetFirstServerAndPop();
 
 private:
 	
 	ClientDatabase();
 
-	void OnGetServerList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
+	
 
 private:
-	std::vector<ServerInfo> m_serverList;
-
 	Network::ClientNetwork m_client;
 
 	bool m_connected;

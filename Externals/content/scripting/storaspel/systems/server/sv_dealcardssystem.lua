@@ -91,7 +91,9 @@ DealCardsSystem.DealCards = function (self, numCards)
 			local card = cards[cardIndex]
 			
 			world:CreateComponentAndAddTo("DealtCard", card)
-			world:CreateComponentAndAddTo("AICard", card)
+			if not world:EntityHasComponent(card, "AICard") then
+				world:CreateComponentAndAddTo("AICard", card)
+			end
 			world:SetComponent(card, "DealtCard", "PlayerEntityId", aiPlayers[i])
 			
 			table.remove(cards, cardIndex)

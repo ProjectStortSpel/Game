@@ -51,7 +51,7 @@ bool GraphicDevice::Init()
 	
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glClearColor(0.0f, 0.2f, 0.6f, 1.0f);
 
 	return true;
@@ -94,6 +94,8 @@ void GraphicDevice::WriteShadowMapDepth()
 	glViewport(0, 0, m_shadowMap->GetResolution()-2, m_shadowMap->GetResolution()-2);
 
 	m_shadowShader.UseProgram();
+	//------FORWARD RENDERING--------------------------------------------
+	glEnable(GL_BLEND);
 
 	//glCullFace(GL_FRONT);
 	glEnable(GL_POLYGON_OFFSET_FILL);
@@ -407,13 +409,25 @@ void GraphicDevice::BufferPointlights(int _nrOfLights, float **_lightPointers)
 void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
 {
 	//direction, intensity, color
-	m_dirLightDirection = vec3(_lightPointer[0], _lightPointer[1], _lightPointer[2]);
-	vec3 intens = vec3(_lightPointer[3], _lightPointer[4], _lightPointer[5]);
-	vec3 color = vec3(_lightPointer[6], _lightPointer[7], _lightPointer[8]);
+    
+    if (_lightPointer)
+    {
+        m_dirLightDirection = vec3(_lightPointer[0], _lightPointer[1], _lightPointer[2]);
+        vec3 intens = vec3(_lightPointer[3], _lightPointer[4], _lightPointer[5]);
+        vec3 color = vec3(_lightPointer[6], _lightPointer[7], _lightPointer[8]);
+        
+        m_forwardShader.SetUniVariable("dirlight.Direction", vector3, &m_dirLightDirection);
+        m_forwardShader.SetUniVariable("dirlight.Intensity", vector3, &intens);
+        m_forwardShader.SetUniVariable("dirlight.Color", vector3, &color);
+    }
+    else
+    {
+        vec3 zero = vec3(0.0f);
 
-	m_forwardShader.SetUniVariable("dirlight.Direction", vector3, &m_dirLightDirection);
-	m_forwardShader.SetUniVariable("dirlight.Intensity", vector3, &intens);
-	m_forwardShader.SetUniVariable("dirlight.Color", vector3, &color);
+        m_forwardShader.SetUniVariable("dirlight.Intensity", vector3, &zero);
+        m_forwardShader.SetUniVariable("dirlight.Color", vector3, &zero);
+    }
+	
 
 	m_dirLightDirection = vec3(_lightPointer[0], _lightPointer[1], _lightPointer[2]);
 	m_shadowMap->UpdateViewMatrix(vec3(8.0f, 0.0f, 8.0f) - (10.0f*normalize(m_dirLightDirection)), vec3(8.0f, 0.0f, 8.0f));
@@ -751,4 +765,37 @@ void GraphicDevice::Clear()
   float **tmpPtr = new float*[1];
   BufferPointlights(0, tmpPtr);
   delete tmpPtr;
+}
+
+int GraphicDevice::AddFont(const std::string& filepath, int size)
+{
+	return m_sdlTextRenderer.AddFont(filepath, size);
+}
+
+void GraphicDevice::CreateTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, glm::ivec2 size)
+{
+	assert(m_textures.find(textureName) == m_textures.end());
+	SDL_Surface* surface = m_sdlTextRenderer.CreateTextSurface(textString, fontIndex, color);
+	if (size.x > 0)
+		surface->w = size.x;
+	if (size.y > 0)
+		surface->h = size.y;
+	m_forwardShader.UseProgram();
+	GLuint texture = TextureLoader::LoadTexture(surface, GL_TEXTURE1);
+	m_textures[textureName] = texture;
+	SDL_FreeSurface(surface);
+}
+
+void GraphicDevice::CreateWrappedTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, unsigned int wrapLength, glm::ivec2 size)
+{
+	assert(m_textures.find(textureName) == m_textures.end());
+	SDL_Surface* surface = m_sdlTextRenderer.CreateWrappedTextSurface(textString, fontIndex, color, wrapLength);
+	if (size.x > 0)
+		surface->w = size.x;
+	if (size.y > 0)
+		surface->h = size.y;
+	m_forwardShader.UseProgram();
+	GLuint texture = TextureLoader::LoadTexture(surface, GL_TEXTURE1);
+	m_textures[textureName] = texture;
+	SDL_FreeSurface(surface);
 }
