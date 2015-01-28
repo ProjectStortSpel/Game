@@ -368,11 +368,9 @@ void GraphicDevice::Render()
 	}
 
 	// RENDER VIEWSPACE STUFF
-	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_CULL_FACE);
+	//glDisable(GL_DEPTH_TEST);
+	//glDisable(GL_CULL_FACE);
 	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	m_viewspaceShader.UseProgram();
 	m_viewspaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 
@@ -806,6 +804,7 @@ void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
 void GraphicDevice::CreateShadowMap()
 {
 	int resolution = 2048*2;
+	m_dirLightDirection = vec3(0.0, -1.0, 1.0);
 	vec3 midMap = vec3(8.0, 0.0, 8.0);
 	vec3 lightPos = midMap - (10.0f*normalize(m_dirLightDirection));
 	m_shadowMap = new ShadowMap(lightPos, lightPos + normalize(m_dirLightDirection), resolution);
