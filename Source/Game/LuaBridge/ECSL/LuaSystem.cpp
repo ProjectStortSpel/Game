@@ -8,7 +8,7 @@ namespace LuaBridge
 {
 	LuaSystem::LuaSystem(lua_State* L)
 	{
-	  m_L = nullptr;
+	  m_L = 0;
 	}
 
 	void LuaSystem::Embed(lua_State* L)

@@ -71,6 +71,7 @@ namespace Network
 		// Bind function which will trigger when a client is banned from the server
 		void SetOnRemotePlayerBanned(NetEvent& _function);
 
+		void ResetNetworkEvents();
 
 	private:
 

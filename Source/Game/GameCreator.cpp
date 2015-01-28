@@ -89,10 +89,19 @@ void GameCreator::InitializeNetwork()
 	hook = std::bind(&GameCreator::NetworkGameMode, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 	NetworkInstance::GetClient()->AddNetworkHook("Gamemode", hook);
 
+	m_remoteConsole = new RemoteConsole();
+
+	InitializeNetworkEvents();
+
+}
+
+void GameCreator::InitializeNetworkEvents()
+{
+	NetworkInstance::GetClient()->ResetNetworkEvents();
+	NetworkInstance::GetServer()->ResetNetworkEvents();
+
 	Network::NetEvent netEvent = std::bind(&GameCreator::OnConnectedToServer, this, std::placeholders::_1, std::placeholders::_2);
 	NetworkInstance::GetClient()->SetOnConnectedToServer(netEvent);
-
-	m_remoteConsole = new RemoteConsole();
 }
 
 void GameCreator::InitializeThreads()
@@ -379,6 +388,7 @@ void GameCreator::Reload()
 	}
 		
 	NetworkInstance::GetNetworkHelper()->ResetNetworkMaps();
+	InitializeNetworkEvents();
 	bool server = LuaEmbedder::PullBool(m_clientLuaState, "Server");
 	bool client = LuaEmbedder::PullBool(m_clientLuaState, "Client");
 	LuaEmbedder::Quit();
