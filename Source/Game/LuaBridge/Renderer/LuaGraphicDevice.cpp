@@ -172,8 +172,9 @@ namespace LuaBridge
 		//int w = LuaEmbedder::PullInt(7);
 		//int h = LuaEmbedder::PullInt(8);
 		//glm::ivec2 size = glm::ivec2(w, h);
-		GraphicDevice::CreateTextTexture(textureName, textString, fontIndex, color);
-		return 0;
+		float ratio = GraphicDevice::CreateTextTexture(textureName, textString, fontIndex, color);
+		LuaEmbedder::PushFloat(ratio);
+		return 1;
 	}
 
 	int LuaGraphicDevice::CreateWrappedTextTexture()

@@ -54,6 +54,8 @@ bool GraphicDevice::Init()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glClearColor(0.0f, 0.2f, 0.6f, 1.0f);
 
+    m_sdlTextRenderer.Init();
+    
 	return true;
 }
 
@@ -86,6 +88,9 @@ void GraphicDevice::Update(float _dt)
 
 void GraphicDevice::WriteShadowMapDepth()
 {
+    GLint oldFBO;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFBO);
+    
 	//------- Write shadow maps depths ----------
 	glBindFramebuffer(GL_FRAMEBUFFER, m_shadowMap->GetShadowFBOHandle());
 	glClear(GL_DEPTH_BUFFER_BIT);
@@ -98,8 +103,6 @@ void GraphicDevice::WriteShadowMapDepth()
 	glEnable(GL_BLEND);
 
 	//glCullFace(GL_FRONT);
-	glEnable(GL_POLYGON_OFFSET_FILL);
-	glPolygonOffset(4.5, 18000.0);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -133,9 +136,8 @@ void GraphicDevice::WriteShadowMapDepth()
 	}
 	//------------------------------------------------
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, oldFBO);
 	glCullFace(GL_BACK);
-	glDisable(GL_POLYGON_OFFSET_FILL);
 	//------------------------------
 }
 
@@ -429,13 +431,12 @@ void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
     }
 	
 
-	m_dirLightDirection = vec3(_lightPointer[0], _lightPointer[1], _lightPointer[2]);
 	m_shadowMap->UpdateViewMatrix(vec3(8.0f, 0.0f, 8.0f) - (10.0f*normalize(m_dirLightDirection)), vec3(8.0f, 0.0f, 8.0f));
 }
 
 void GraphicDevice::CreateShadowMap()
 {
-	int resolution = 1024*2;
+	int resolution = 1024;
 	m_dirLightDirection = vec3(0.0f, -1.0f, 1.0f);
 	vec3 midMap = vec3(8.0f, 0.0f, 8.0f);
 	vec3 lightPos = midMap - (10.0f*normalize(m_dirLightDirection));
@@ -732,6 +733,7 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 }
 GLuint GraphicDevice::AddTexture(std::string _fileDir, GLenum _textureSlot)
 {
+    //printf("fileDir: %s\n", _fileDir.c_str());
 	for (std::map<const std::string, GLuint>::iterator it = m_textures.begin(); it != m_textures.end(); it++)
 	{
 		if (it->first == _fileDir)
@@ -772,7 +774,7 @@ int GraphicDevice::AddFont(const std::string& filepath, int size)
 	return m_sdlTextRenderer.AddFont(filepath, size);
 }
 
-void GraphicDevice::CreateTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, glm::ivec2 size)
+float GraphicDevice::CreateTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, glm::ivec2 size)
 {
 	if (m_textures.find(textureName) != m_textures.end())
 		glDeleteTextures(1, &m_textures[textureName]);
@@ -785,6 +787,7 @@ void GraphicDevice::CreateTextTexture(const std::string& textureName, const std:
 	GLuint texture = TextureLoader::LoadTexture(surface, GL_TEXTURE1);
 	m_textures[textureName] = texture;
 	SDL_FreeSurface(surface);
+	return (float)surface->w / (float)surface->h;
 }
 
 void GraphicDevice::CreateWrappedTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, unsigned int wrapLength, glm::ivec2 size)

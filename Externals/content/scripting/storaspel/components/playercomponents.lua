@@ -114,7 +114,6 @@ NeedSpawnLocation.Name = "NeedSpawnLocation"
 NeedSpawnLocation.TableType = TableType.Map
 worldCreator:AddComponentType(NeedSpawnLocation)
 
-
 -- Available Spawnpoint
 local AvailableSpawnpoint = ComponentType()
 AvailableSpawnpoint.Name = "AvailableSpawnpoint"
