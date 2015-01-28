@@ -91,14 +91,6 @@ SpinComponent:AddVariable("Y", ByteSize.Float)
 SpinComponent:AddVariable("Z", ByteSize.Float)
 worldCreator:AddComponentType(SpinComponent)
 
--- Camera Component
-local CameraComponent = ComponentType()
-CameraComponent.Name = "Camera"
-CameraComponent.SyncNetwork = true
-CameraComponent.TableType = TableType.Map
-CameraComponent:AddVariable("EntityId", ByteSize.Reference)
-worldCreator:AddComponentType(CameraComponent)
-
 -- Network Component
 local NetworkComponent = ComponentType()
 NetworkComponent.Name = "Network"
@@ -134,13 +126,6 @@ SyncNetworkComponent.Name = "SyncNetwork"
 SyncNetworkComponent.SyncNetwork = true
 SyncNetworkComponent.TableType = TableType.Array
 worldCreator:AddComponentType(SyncNetworkComponent)
-
--- Null Component
-local NullComponent = ComponentType()
-NullComponent.Name = "Null"
-NullComponent.SyncNetwork = true
-NullComponent.TableType = TableType.Map
-worldCreator:AddComponentType(NullComponent)
 
 
 -- TotemPole Component

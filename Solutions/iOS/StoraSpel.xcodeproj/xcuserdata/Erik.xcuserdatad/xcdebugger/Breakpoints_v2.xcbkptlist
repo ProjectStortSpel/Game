@@ -346,23 +346,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/AndroidRenderer/GraphicDevice.cpp"
-            timestampString = "444146042.021581"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "797"
-            endingLineNumber = "797"
-            landmarkName = "GraphicDevice::CreateWrappedTextTexture(const std::string&amp; textureName, const std::string&amp; textString, int fontIndex, SDL_Color color, unsigned int wrapLength, glm::ivec2 size)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../Source/AndroidRenderer/GraphicDevice.cpp"
-            timestampString = "444146042.021581"
+            timestampString = "444147644.90138"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "798"
@@ -378,11 +362,27 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/AndroidRenderer/GraphicDevice.cpp"
-            timestampString = "444146042.021581"
+            timestampString = "444147644.90138"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "781"
-            endingLineNumber = "781"
+            startingLineNumber = "799"
+            endingLineNumber = "799"
+            landmarkName = "GraphicDevice::CreateWrappedTextTexture(const std::string&amp; textureName, const std::string&amp; textString, int fontIndex, SDL_Color color, unsigned int wrapLength, glm::ivec2 size)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../Source/AndroidRenderer/GraphicDevice.cpp"
+            timestampString = "444147644.90138"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "782"
+            endingLineNumber = "782"
             landmarkName = "GraphicDevice::CreateTextTexture(const std::string&amp; textureName, const std::string&amp; textString, int fontIndex, SDL_Color color, glm::ivec2 size)"
             landmarkType = "5">
          </BreakpointContent>
@@ -394,11 +394,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/AndroidRenderer/GraphicDevice.cpp"
-            timestampString = "444146042.021581"
+            timestampString = "444147644.90138"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "776"
-            endingLineNumber = "776"
+            startingLineNumber = "777"
+            endingLineNumber = "777"
             landmarkName = "GraphicDevice::AddFont(const std::string&amp; filepath, int size)"
             landmarkType = "5">
          </BreakpointContent>
@@ -410,11 +410,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/ECSL/Framework/Systems/SystemManager.cpp"
-            timestampString = "444144499.992059"
+            timestampString = "444148804.307428"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "58"
-            endingLineNumber = "58"
+            startingLineNumber = "59"
+            endingLineNumber = "59"
             landmarkName = "SystemManager::PostInitializeSystems()"
             landmarkType = "5">
          </BreakpointContent>
@@ -474,55 +474,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/ECSL/Framework/Systems/SystemManager.cpp"
-            timestampString = "444146024.451311"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "109"
-            endingLineNumber = "109"
-            landmarkName = "SystemManager::SystemEntitiesUpdate()"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../Source/ECSL/Framework/Systems/SystemManager.cpp"
-            timestampString = "444146024.451311"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "93"
-            endingLineNumber = "93"
-            landmarkName = "SystemManager::SystemEntitiesUpdate()"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../Source/ECSL/Framework/Systems/SystemManager.cpp"
-            timestampString = "444146024.451311"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "106"
-            endingLineNumber = "106"
-            landmarkName = "SystemManager::SystemEntitiesUpdate()"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../../Source/ECSL/Framework/Systems/SystemManager.cpp"
-            timestampString = "444146024.451311"
+            timestampString = "444148804.307428"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "110"
@@ -538,7 +490,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/ECSL/Framework/Systems/SystemManager.cpp"
-            timestampString = "444146024.451311"
+            timestampString = "444148804.307428"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "94"
@@ -554,11 +506,59 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/ECSL/Framework/Systems/SystemManager.cpp"
-            timestampString = "444146024.451311"
+            timestampString = "444148804.307428"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "101"
-            endingLineNumber = "101"
+            startingLineNumber = "107"
+            endingLineNumber = "107"
+            landmarkName = "SystemManager::SystemEntitiesUpdate()"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../Source/ECSL/Framework/Systems/SystemManager.cpp"
+            timestampString = "444148804.307428"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "111"
+            endingLineNumber = "111"
+            landmarkName = "SystemManager::SystemEntitiesUpdate()"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../Source/ECSL/Framework/Systems/SystemManager.cpp"
+            timestampString = "444148804.307428"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "95"
+            endingLineNumber = "95"
+            landmarkName = "SystemManager::SystemEntitiesUpdate()"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../Source/ECSL/Framework/Systems/SystemManager.cpp"
+            timestampString = "444148804.307428"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "102"
+            endingLineNumber = "102"
             landmarkName = "SystemManager::SystemEntitiesUpdate()"
             landmarkType = "5">
          </BreakpointContent>
@@ -666,11 +666,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/ECSL/Framework/Systems/SystemWorkGroup.cpp"
-            timestampString = "444147094.498376"
+            timestampString = "444147964.335116"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "44"
-            endingLineNumber = "44"
+            startingLineNumber = "45"
+            endingLineNumber = "45"
             landmarkName = "SystemWorkGroup::Update(float _dt)"
             landmarkType = "5">
          </BreakpointContent>
@@ -688,6 +688,22 @@
             startingLineNumber = "28"
             endingLineNumber = "28"
             landmarkName = "RotationSystem::Update(float _dt)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../Source/ECSL/Framework/Systems/SystemManager.cpp"
+            timestampString = "444148808.87945"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "146"
+            endingLineNumber = "146"
+            landmarkName = "SystemManager::GenerateComponentFilter(System* _system, FilterType _filterType)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
