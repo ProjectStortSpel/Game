@@ -1,9 +1,9 @@
-SendSelectCardSystem = System()
-SendSelectCardSystem.SelectCardSystem = false
+SendSelectedCardsSystem = System()
+SendSelectedCardsSystem.SelectCardSystem = false
 
-SendSelectCardSystem.Initialize = function ( self )
+SendSelectedCardsSystem.Initialize = function ( self )
 	--	Set Name
-	self:SetName("SendSelectCardSystem")
+	self:SetName("SendSelectCardsSystem")
 	
 	--	Toggle EntitiesAdded
 	self:UsingUpdate()
@@ -13,11 +13,9 @@ SendSelectCardSystem.Initialize = function ( self )
 	--	Set Filter
 	self:AddComponentTypeToFilter("CardSelected", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("ReadyButton", FilterType.RequiresOneOf)
-	
-	print("SendSelectCardSystem initialized!")
 end
 
-SendSelectCardSystem.Update = function(self, dt, taskIndex, taskCount)
+SendSelectedCardsSystem.Update = function(self, dt, taskIndex, taskCount)
 
 	local button = self:GetEntities("ReadyButton")
 
@@ -34,7 +32,7 @@ SendSelectCardSystem.Update = function(self, dt, taskIndex, taskCount)
 	
 end
 
-SendSelectCardSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
+SendSelectedCardsSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
 	local button = self:GetEntities("ReadyButton")
 	for i = 1, #button do
 		
@@ -44,7 +42,7 @@ SendSelectCardSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, 
 end
 
 
-SendSelectCardSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+SendSelectedCardsSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 
 	for n = 1, #entities do
 		local entityId = entities[n]
@@ -81,7 +79,7 @@ SendSelectCardSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, en
 	end
 end
 
-SendSelectCardSystem.SendSelectedCards = function( self )
+SendSelectedCardsSystem.SendSelectedCards = function( self )
 	
 	local id = Net.StartPack("Server.SelectCards")
 	
@@ -107,7 +105,7 @@ SendSelectCardSystem.SendSelectedCards = function( self )
 	Net.SendToServer(id)
 end
 
-SendSelectCardSystem.DeselectAll = function( self )
+SendSelectedCardsSystem.DeselectAll = function( self )
 	
 	local cards = self:GetEntities("CardSelected")
 
