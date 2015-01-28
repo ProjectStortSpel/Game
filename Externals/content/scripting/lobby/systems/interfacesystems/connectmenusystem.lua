@@ -44,7 +44,6 @@ ConnectMenuSystem.OnEntityAdded = function(self, entityId)
 end
 
 ConnectMenuSystem.SpawnMenu = function(self)
-print("CRASH")
 	local background = self:CreateElement("gamemenubackground", "quad", 0, 0, -2.1, 2.07, 1.3)
 	local servers = self:GetEntities("ServerListEntry")
 	local button = nil
@@ -85,7 +84,6 @@ print("CRASH")
 background = nil
 servers = nil
 button = nil
-print("NOCRASH");
 end
 
 ConnectMenuSystem.RefreshMenu = function(self)
