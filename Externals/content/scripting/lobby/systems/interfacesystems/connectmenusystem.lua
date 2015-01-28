@@ -47,17 +47,25 @@ ConnectMenuSystem.SpawnMenu = function(self)
 	local background = self:CreateElement("gamemenubackground", "quad", 0, 0, -2.1, 2.07, 1.3)
 	local servers = self:GetEntities("ServerListEntry")
 	local button = nil
+
+    local server = nil
+    local servername = nil
+    local serverip = nil
+    local servernousers = nil
+    local servermaxusers = nil
+	local servergamestarted = nil
+    local text = nil
+
 	for i = 1, #servers do
-		local server = servers[i]
-		local servername = self:GetComponent(server, "ServerListEntry", "Name"):GetString(0)
-		local serverip = self:GetComponent(server, "ServerListEntry", "IpAddress"):GetString(0)
-		local servernousers = self:GetComponent(server, "ServerListEntry", "NoUsers"):GetInt(0)
-		local servermaxusers = self:GetComponent(server, "ServerListEntry", "MaxUsers"):GetInt(0)
-		local servergamestarted = self:GetComponent(server, "ServerListEntry", "GameStarted"):GetBool(0)
+		server = servers[i]
+		servername = self:GetComponent(server, "ServerListEntry", "Name"):GetString(0)
+		serverip = self:GetComponent(server, "ServerListEntry", "IpAddress"):GetString(0)
+		servernousers = self:GetComponent(server, "ServerListEntry", "NoUsers"):GetInt(0)
+		servermaxusers = self:GetComponent(server, "ServerListEntry", "MaxUsers"):GetInt(0)
+		servergamestarted = self:GetComponent(server, "ServerListEntry", "GameStarted"):GetBool(0)
 		button = self:CreateElement("shade", "quad", 0, 0.6-i*0.11, -2, 1.8, 0.1)
 		self:AddConsoleCommandToButton("connect "..serverip, button)
 		self:AddHoverSize(1.005, button)
-		local text = nil
 		text = self:CreateText("center", "text", -0.85, 0.64-i*0.11, -1.99999, 0.08, 0.08)	
 		if servergamestarted == true then
 			self:AddTextToTexture("C0"..i, "X", 0, 1, 0, 0, text)

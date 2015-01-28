@@ -67,9 +67,6 @@ SetCardPickTimer.OnEntityAdded = function(self, entity)
 end
 
 
-
-
-
 UpdateCardPickTimer = System()
 UpdateCardPickTimer.TimeLimit = 30.0
 
