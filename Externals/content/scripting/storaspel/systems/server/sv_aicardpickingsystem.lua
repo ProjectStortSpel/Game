@@ -100,56 +100,75 @@ AiCardPickingSystem.AIPickCards = function( self, CardSetAI, dirX, dirY, posX, p
 		for i = 1, 5 do
 			
 			if posY < targetY and dirY == 1 and #forwards > 0 then
-
+			
 				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, forwards, posY, dirY)
-
+			
 			elseif posY < targetY and dirY == -1 and #backwards > 0 then
-
+			
 				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, backwards, posY, dirY)
-
+			
 			elseif posY > targetY and dirY == -1 and #forwards > 0 then
-
+			
 				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, forwards, posY, dirY)
-
+			
 			elseif posY > targetY and dirY == 1 and #backwards > 0 then
-
+			
 				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, backwards, posY, dirY)
-
+			
 			elseif posX < targetX and dirX == 1 and #forwards > 0 then
-
+			
 				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, forwards, posX, dirX)
-
+			
 			elseif posX < targetX and dirX == -1 and #backwards > 0 then
 				
 				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, backwards, posX, dirX)
-
+			
 			elseif posX > targetX and dirX == -1 and #forwards > 0 then
-
+			
 				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, forwards, posX, dirX)
-
+			
 			elseif posX > targetX and dirX == 1 and #backwards > 0 then
 				
 				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, backwards, posX, dirX)
-
+			
+			
 			elseif posX > targetX and dirX == 1 and #turnArounds > 0 then
 
 				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnArounds, 0, 0)
-				dirX = - dirX
+				dirX = -dirX
+				dirY = -dirY
 
 			elseif posX < targetX and dirX == -1 and #turnArounds > 0 then
 
 				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnArounds, 0, 0)
-				dirX = - dirX
+				dirX = -dirX
+				dirY = -dirY
 
 			elseif posY < targetY and dirY == -1 and #turnArounds > 0 then
 
 				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnArounds, 0, 0)
-				dirY = - dirY
+				dirX = -dirX
+				dirY = -dirY
 
 			elseif posY > targetY and dirY == 1 and #turnArounds > 0 then
 
 				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnArounds, 0, 0)
-				dirY = - dirY
+				dirX = -dirX
+				dirY = -dirY
+
+			elseif #turnLefts > 0 then
+
+				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnLefts, 0, 0)
+				local temp = dirY
+				dirY = dirX
+				dirX = -temp
+
+			elseif #turnRights > 0 then
+
+				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnRights, 0, 0)
+				local temp = dirY
+				dirY = -dirX
+				dirX = temp
 
 			else
 				local cardNr = math.random(1, #CardSetAI)
@@ -161,12 +180,14 @@ AiCardPickingSystem.AIPickCards = function( self, CardSetAI, dirX, dirY, posX, p
 				if	Cardname ==	"Forward" or Cardname == "Backward"	then
 					posX = posX + dirX
 					posY = posY + dirY
-				elseif	Cardname ==	"TurnLeft"		then
+				elseif	Cardname ==	"TurnLeft"		then				
+					local temp = dirY
 					dirY = dirX
-					dirX = -dirY
+					dirX = -temp
 				elseif	Cardname ==	"TurnRight"		then
+					local temp = dirY
 					dirY = -dirX
-					dirX = dirY
+					dirX = temp
 				elseif	Cardname ==	"TurnAround"	then
 					dirY = -dirX
 					dirX = -dirY
