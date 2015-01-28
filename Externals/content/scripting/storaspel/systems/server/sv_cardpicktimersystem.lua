@@ -68,7 +68,7 @@ end
 
 
 UpdateCardPickTimer = System()
-UpdateCardPickTimer.TimeLimit = 10.0
+UpdateCardPickTimer.TimeLimit = 30.0
 
 UpdateCardPickTimer.Initialize = function(self)
 	self:SetName("UpdateCardPickTimer")
