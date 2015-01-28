@@ -6,7 +6,6 @@ AddTextToTextureSystem.doRefresh = true
 
 AddTextToTextureSystem.OnEntityAdded = function(self, entityId)
 	local ModelId = self:GetComponent(entityId, "Render", "ModelId"):GetInt(0)
-	print(ModelId)
 	local N = self:GetComponent(entityId, "TextTexture", "Name"):GetString(0)
 	local Text = self:GetComponent(entityId, "TextTexture", "Text"):GetString(0)
 	local FontIndex = self:GetComponent(entityId, "TextTexture", "FontIndex"):GetInt(0)
