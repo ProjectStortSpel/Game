@@ -1,14 +1,22 @@
 #include "ECSLProfiler.h"
 
+#include "ECSLGeneralView.h"
+#include "ECSLThreadView.h"
+#include "ECSLWorkItemView.h"
+
 using namespace Profilers;
 
 ECSLProfiler::ECSLProfiler(Renderer::GraphicDevice* _graphics)
 : m_graphics(_graphics)
 {
-	m_active = false;
+	m_state = State::INACTIVE;
+	m_backBufferStatistics = 0;
+	m_frontBufferStatistics = 0;
 	ResetSwapTimer();
 	m_threadLogger = &MPL::ThreadLogger::GetInstance();
 	m_threadLogger->CreateNewSession();
+
+	CreateRenderViews();
 }
 
 ECSLProfiler::~ECSLProfiler()
@@ -17,15 +25,30 @@ ECSLProfiler::~ECSLProfiler()
 		delete(m_backBufferStatistics);
 	if (m_frontBufferStatistics)
 		delete(m_frontBufferStatistics);
+	for (auto renderView : *m_renderViews)
+		delete(renderView);
+	delete(m_renderViews);
+}
+
+void ECSLProfiler::CreateRenderViews()
+{
+	m_renderViews = new std::vector<ECSLRenderView*>();
+
+	m_renderViews->push_back(new ECSLGeneralView(m_graphics));
+	m_renderViews->push_back(new ECSLThreadView(m_graphics));
+	m_renderViews->push_back(new ECSLWorkItemView(m_graphics));
+
+	m_renderViewIndex = 0;
+	m_renderView = (*m_renderViews)[m_renderViewIndex];
 }
 
 void ECSLProfiler::Toggle()
 {
-	if (!m_active)
+	if (m_state == State::INACTIVE)
 	{
-		m_active = true;
+		m_state = State::WAITING_FOR_STATISTICS;
 	}
-	else
+	else if (m_state == State::RENDERING)
 	{
 		if (m_frontBufferStatistics)
 		{
@@ -38,46 +61,107 @@ void ECSLProfiler::Toggle()
 			m_backBufferStatistics = 0;
 		}
 		ResetSwapTimer();
-		m_active = false;
+		m_state = State::INACTIVE;
 	}
+}
+
+void ECSLProfiler::NextView()
+{
+	if (m_state != State::RENDERING)
+		return;
+
+	if (!m_renderView->NextSubview(m_frontBufferStatistics))
+	{
+		if (m_renderViewIndex == m_renderViews->size() - 1)
+		{
+			m_renderViewIndex = 0;
+			m_renderView = m_renderViews->at(m_renderViewIndex);
+			m_renderView->FirstSubview(m_frontBufferStatistics);
+			m_renderView->Update(m_frontBufferStatistics);
+		}
+		else
+		{
+			++m_renderViewIndex;
+			m_renderView = m_renderViews->at(m_renderViewIndex);
+			m_renderView->FirstSubview(m_frontBufferStatistics);
+			m_renderView->Update(m_frontBufferStatistics);
+		}
+	}
+}
+
+void ECSLProfiler::PreviousView()
+{
+	if (m_state != State::RENDERING)
+		return;
+
+	if (!m_renderView->PreviousSubview(m_frontBufferStatistics))
+	{
+		if (m_renderViewIndex == 0)
+		{
+			m_renderViewIndex = m_renderViews->size() - 1;
+			m_renderView = m_renderViews->at(m_renderViewIndex);
+			m_renderView->LastSubview(m_frontBufferStatistics);
+			m_renderView->Update(m_frontBufferStatistics);
+		}
+		else
+		{
+			--m_renderViewIndex;
+			m_renderView = m_renderViews->at(m_renderViewIndex);
+			m_renderView->LastSubview(m_frontBufferStatistics);
+			m_renderView->Update(m_frontBufferStatistics);
+		}
+	}
+}
+
+void ECSLProfiler::WriteToLog()
+{
+	if (m_state != State::RENDERING)
+		return;
+	m_renderView->WriteToLog();
+}
+
+void ECSLProfiler::Begin()
+{
+	if (m_state == State::INACTIVE)
+		return;
+	m_threadLogger->CreateNewSession();
+}
+
+void ECSLProfiler::End()
+{
+	if (m_state == State::INACTIVE)
+		return;
+	m_currentFrame = CreateFrame();
 }
 
 void ECSLProfiler::Update(float _dt)
 {
-	if (!m_active)
-	{
-		m_threadLogger->CreateNewSession();
+	if (m_state == State::INACTIVE)
 		return;
-	}
 
-	ECSLFrame* currentFrame = CreateFrame();
-	
-	if (!currentFrame)
-		return;
-	
+	/* Create back buffer if it doesn't exist */
 	if (!m_backBufferStatistics)
-		m_backBufferStatistics = new ECSLStatistics(currentFrame->GetThreadCount());
-	m_backBufferStatistics->AddFrame(currentFrame);
+		m_backBufferStatistics = new ECSLStatistics(m_currentFrame->GetThreadCount());
+	/* Add the current frame to the back buffer statistics */
+	m_backBufferStatistics->AddFrame(m_currentFrame);
 
 	m_bufferSwapTimer += _dt;
+	/* Swap front and back buffer if the swap timer runs out */
 	if (m_bufferSwapTimer >= DefaultBufferSwapTime)
 	{
 		SwapBuffers();
+		/* Create the text entries for the render view */
+		m_renderView->Update(m_frontBufferStatistics);
 		ResetSwapTimer();
-	}
+	}	
 }
 
 void ECSLProfiler::Render()
 {
-	if (!m_active)
+	if (m_state != State::RENDERING)
 		return;
-	if (!m_frontBufferStatistics)
-	{
-		RenderWaitingForStats(0.0f, 0.0f);
-		return;
-	}
 
-	RenderWorkItemStats(0.0f, 0.0f);
+	m_renderView->Display();
 }
 
 Profilers::ECSLFrame* ECSLProfiler::CreateFrame()
@@ -100,9 +184,8 @@ Profilers::ECSLFrame* ECSLProfiler::CreateFrame()
 	}
 
 	ECSLFrame* frame = GenerateFrameData(session);
-	delete(session);
 
-	m_threadLogger->CreateNewSession();
+	delete(session);
 
 	return frame;
 }
@@ -136,66 +219,12 @@ ECSLFrame* ECSLProfiler::GenerateFrameData(MPL::LoggedSession* _session)
 	return frame;
 }
 
-void ECSLProfiler::RenderWaitingForStats(float _x, float _y)
-{
-	int x = 0, y = 0;
-	GetScreenPosition(x, y, _x, _y);
-
-	m_graphics->RenderSimpleText("Waiting for statistics...", x, y);
-}
-
-void ECSLProfiler::RenderWorkItemStats(float _x, float _y)
-{
-	int x = 0, y = 0; 
-	GetScreenPosition(x, y, _x, _y);
-
-	auto workItemStats = m_frontBufferStatistics->GetWorkItemStats();
-	for (unsigned int groupIndex = 0; groupIndex < workItemStats->size(); ++groupIndex)
-	{
-		auto workItemGroup = workItemStats->at(groupIndex);
-		GetTextBoxPosition(x, y, workItemGroup->size() + 2);
-
-		std::stringstream txtGroup;
-		txtGroup << "Group " << groupIndex;
-		m_graphics->RenderSimpleText(txtGroup.str(), x, y);
-		y += TextHeight;
-
-		for (auto workItemStat : *workItemGroup)
-		{
-			std::stringstream txtWorkItemStat;
-			txtWorkItemStat << *workItemStat.second->name << " " << workItemStat.second->duration;
-			m_graphics->RenderSimpleText(txtWorkItemStat.str(), x, y);
-			y += TextHeight;
-		}
-
-		y += TextHeight;
-	}
-}
-
-void ECSLProfiler::GetTextBoxPosition(int& _outX, int& _outY, int _lines)
-{
-	const int maxY = 44;
-	const int lineWidth = 52;
-	
-	/* Reached max size of the screen */
-	if (_outY + _lines > maxY)
-	{
-		_outX += lineWidth;
-		_outY = 0;
-	}
-}
-
-void ECSLProfiler::GetScreenPosition(int& _outX, int& _outY, float _x, float _y)
-{
-	m_graphics->GetWindowSize(_outX, _outY);
-	_outX = (int)(_x * _outX);
-	_outY = (int)(_y * _outY);
-}
-
 void ECSLProfiler::SwapBuffers()
 {
 	if (m_frontBufferStatistics)
 		delete(m_frontBufferStatistics);
+	else
+		m_state = State::RENDERING;
 	m_frontBufferStatistics = m_backBufferStatistics;
 	m_backBufferStatistics = 0;
 }

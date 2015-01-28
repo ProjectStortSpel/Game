@@ -10,7 +10,6 @@
 //typedef Clock::time_point Time;
 //typedef std::chrono::duration<int, std::micro> Nanoseconds;
 
-#define ACTIVE
 #define LOG_MAX_SIZE 1024
 
 namespace MPL

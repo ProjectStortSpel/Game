@@ -10,15 +10,14 @@ namespace Profilers
 	struct ECSLFrame
 	{
 	public:
-		struct WorkItemStatistic
+		struct WorkItem
 		{
 			std::string* name;
 			unsigned int groupId;
-			unsigned int threadId;
 			float duration;
 
-			WorkItemStatistic() : name(0), groupId(0), duration(0.0f) { }
-			~WorkItemStatistic() { delete(name); }
+			WorkItem() : name(0), groupId(0), duration(0.0f) { }
+			~WorkItem() { delete(name); }
 		};
 
 		ECSLFrame(unsigned int _threadCount, float _frameTime);
@@ -37,7 +36,7 @@ namespace Profilers
 		float* GetThreadWorkTime() { return m_threadWorkTime; }
 		float GetTotalOverheadTime() { return m_totalOverheadTime; }
 		float* GetThreadOverheadTime() { return m_threadOverheadTime; }
-		const std::vector<WorkItemStatistic*>* GetWorkItemStats() { return m_workItemStats; }
+		const std::vector<ECSLFrame::WorkItem*>* GetWorkItems() { return m_workItems; }
 
 		void SetFrameTime(float _frameTime) { m_frameTime = _frameTime; }
 
@@ -50,11 +49,11 @@ namespace Profilers
 		float* m_threadWorkTime;
 		float m_totalOverheadTime;
 		float* m_threadOverheadTime;
-		std::vector<WorkItemStatistic*>* m_workItemStats;
+		std::vector<ECSLFrame::WorkItem*>* m_workItems;
 	};
 
 	/* Create a float array with all values set to zero */
-	float* FloatArray(unsigned int _size);
+	float* FloatArray(unsigned int _size, float _initValue);
 }
 
 #endif

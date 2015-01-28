@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "ECSLStatistics.h"
+#include "Renderer/GraphicDevice.h"
 
 namespace Profilers
 {
@@ -11,22 +12,36 @@ namespace Profilers
 		std::string* text;
 		int x;
 		int y;
+		float height;
+
+		~TextEntry() { delete(text); }
 	};
 
 	class ECSLRenderView
 	{
 	public:
 		ECSLRenderView();
+		ECSLRenderView(Renderer::GraphicDevice* _graphics);
 		virtual ~ECSLRenderView() = 0;
 
-		virtual void CreateView(ECSLStatistics* _frontBufferStatistics) = 0;
+		void Display();
+
+		void ClearTextEntries();
+
+		virtual void Update(ECSLStatistics* _frontBufferStatistics) = 0;
+		virtual bool NextSubview(ECSLStatistics* _frontBufferStatistics);
+		virtual bool PreviousSubview(ECSLStatistics* _frontBufferStatistics);
+		virtual void FirstSubview(ECSLStatistics* _frontBufferStatistics);
+		virtual void LastSubview(ECSLStatistics* _frontBufferStatistics);
 
 		void WriteToLog();
 
-		const std::vector<Profilers::TextEntry>* GetTextEntries() { return m_textEntries; }
-
+		const std::vector<TextEntry*>* GetTextEntries() { return m_textEntries; }
+		
 	protected:
-		std::vector<Profilers::TextEntry>* m_textEntries;
+		Renderer::GraphicDevice* m_graphics;
+
+		std::vector<TextEntry*>* m_textEntries;
 
 	};
 }
