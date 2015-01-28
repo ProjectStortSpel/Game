@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/AndroidRenderer/TextureLoader.h"
-            timestampString = "443752881.598917"
+            timestampString = "444174579.968914"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "89"
-            endingLineNumber = "89"
+            startingLineNumber = "91"
+            endingLineNumber = "91"
             landmarkName = "LoadCubeMap(const char* file, GLenum textureSlot, int &amp;height, int &amp;width)"
             landmarkType = "5">
          </BreakpointContent>
@@ -74,11 +74,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/AndroidRenderer/TextureLoader.h"
-            timestampString = "443752881.598917"
+            timestampString = "444174579.968914"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "85"
-            endingLineNumber = "85"
+            startingLineNumber = "87"
+            endingLineNumber = "87"
             landmarkName = "LoadCubeMap(const char* file, GLenum textureSlot, int &amp;height, int &amp;width)"
             landmarkType = "5">
          </BreakpointContent>
@@ -90,11 +90,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/AndroidRenderer/TextureLoader.h"
-            timestampString = "443752946.569854"
+            timestampString = "444174579.968914"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "88"
-            endingLineNumber = "88"
+            startingLineNumber = "90"
+            endingLineNumber = "90"
             landmarkName = "LoadCubeMap(const char* file, GLenum textureSlot, int &amp;height, int &amp;width)"
             landmarkType = "5">
          </BreakpointContent>
@@ -106,12 +106,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/AndroidRenderer/GraphicDevice.cpp"
-            timestampString = "444146042.021581"
+            timestampString = "444158555.958889"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "291"
             endingLineNumber = "291"
-            landmarkName = "GraphicDevice::ResizeWindow(int _width, int _height)"
+            landmarkName = "GraphicDevice::Render()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -250,7 +250,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/AndroidRenderer/GraphicDevice.cpp"
-            timestampString = "444146042.021581"
+            timestampString = "444158555.958889"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "227"
@@ -314,7 +314,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/AndroidRenderer/GraphicDevice.cpp"
-            timestampString = "444146042.021581"
+            timestampString = "444158555.958889"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "342"
@@ -346,12 +346,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/AndroidRenderer/GraphicDevice.cpp"
-            timestampString = "444147644.90138"
+            timestampString = "444158555.958889"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "798"
             endingLineNumber = "798"
-            landmarkName = "GraphicDevice::CreateWrappedTextTexture(const std::string&amp; textureName, const std::string&amp; textString, int fontIndex, SDL_Color color, unsigned int wrapLength, glm::ivec2 size)"
+            landmarkName = "GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -362,12 +362,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/AndroidRenderer/GraphicDevice.cpp"
-            timestampString = "444147644.90138"
+            timestampString = "444158555.958889"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "799"
             endingLineNumber = "799"
-            landmarkName = "GraphicDevice::CreateWrappedTextTexture(const std::string&amp; textureName, const std::string&amp; textString, int fontIndex, SDL_Color color, unsigned int wrapLength, glm::ivec2 size)"
+            landmarkName = "GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -378,12 +378,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/AndroidRenderer/GraphicDevice.cpp"
-            timestampString = "444147644.90138"
+            timestampString = "444158555.958889"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "782"
             endingLineNumber = "782"
-            landmarkName = "GraphicDevice::CreateTextTexture(const std::string&amp; textureName, const std::string&amp; textString, int fontIndex, SDL_Color color, glm::ivec2 size)"
+            landmarkName = "GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -394,12 +394,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/AndroidRenderer/GraphicDevice.cpp"
-            timestampString = "444147644.90138"
+            timestampString = "444158555.958889"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "777"
             endingLineNumber = "777"
-            landmarkName = "GraphicDevice::CreateTextTexture(const std::string&amp; textureName, const std::string&amp; textString, int fontIndex, SDL_Color color, glm::ivec2 size)"
+            landmarkName = "GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -736,6 +736,118 @@
             startingLineNumber = "14"
             endingLineNumber = "14"
             landmarkName = "SystemWorkGroup::SystemWorkGroup(System* _system)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../Source/AndroidRenderer/TextureLoader.h"
+            timestampString = "444157930.641738"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "58"
+            endingLineNumber = "58"
+            landmarkName = "LoadTexture(SDL_Surface* surface, GLenum textureSlot)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../Source/AndroidRenderer/TextureLoader.h"
+            timestampString = "444157978.121087"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "59"
+            endingLineNumber = "59"
+            landmarkName = "LoadTexture(SDL_Surface* surface, GLenum textureSlot)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../Source/AndroidRenderer/GraphicDevice.cpp"
+            timestampString = "444164326.849509"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "874"
+            endingLineNumber = "874"
+            landmarkName = "GraphicDevice::CreateTextTexture(const std::string&amp; textureName, const std::string&amp; textString, int fontIndex, SDL_Color color, glm::ivec2 size)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../Source/AndroidRenderer/GraphicDevice.cpp"
+            timestampString = "444174692.908358"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "882"
+            endingLineNumber = "882"
+            landmarkName = "GraphicDevice::CreateTextTexture(const std::string&amp; textureName, const std::string&amp; textString, int fontIndex, SDL_Color color, glm::ivec2 size)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../Source/AndroidRenderer/GraphicDevice.cpp"
+            timestampString = "444164616.040497"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "875"
+            endingLineNumber = "875"
+            landmarkName = "GraphicDevice::CreateTextTexture(const std::string&amp; textureName, const std::string&amp; textString, int fontIndex, SDL_Color color, glm::ivec2 size)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../Source/AndroidRenderer/TextRenderer.cpp"
+            timestampString = "444165803.582725"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "45"
+            endingLineNumber = "45"
+            landmarkName = "TextRenderer::CreateTextSurface(const std::string&amp; textString, int fontIndex, SDL_Color color)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../Source/AndroidRenderer/TextureLoader.h"
+            timestampString = "444174264.368605"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "49"
+            endingLineNumber = "49"
+            landmarkName = "LoadTexture(const char* file, GLenum textureSlot, int &amp;height, int &amp;width)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
