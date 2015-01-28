@@ -86,6 +86,9 @@ void GraphicDevice::Update(float _dt)
 
 void GraphicDevice::WriteShadowMapDepth()
 {
+    GLint oldFBO;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFBO);
+    
 	//------- Write shadow maps depths ----------
 	glBindFramebuffer(GL_FRAMEBUFFER, m_shadowMap->GetShadowFBOHandle());
 	glClear(GL_DEPTH_BUFFER_BIT);
@@ -133,7 +136,7 @@ void GraphicDevice::WriteShadowMapDepth()
 	}
 	//------------------------------------------------
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, oldFBO);
 	glCullFace(GL_BACK);
 	glDisable(GL_POLYGON_OFFSET_FILL);
 	//------------------------------
@@ -429,7 +432,6 @@ void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
     }
 	
 
-	m_dirLightDirection = vec3(_lightPointer[0], _lightPointer[1], _lightPointer[2]);
 	m_shadowMap->UpdateViewMatrix(vec3(8.0f, 0.0f, 8.0f) - (10.0f*normalize(m_dirLightDirection)), vec3(8.0f, 0.0f, 8.0f));
 }
 
@@ -772,9 +774,10 @@ int GraphicDevice::AddFont(const std::string& filepath, int size)
 	return m_sdlTextRenderer.AddFont(filepath, size);
 }
 
-void GraphicDevice::CreateTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, glm::ivec2 size)
+float GraphicDevice::CreateTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, glm::ivec2 size)
 {
-	assert(m_textures.find(textureName) == m_textures.end());
+	if (m_textures.find(textureName) != m_textures.end())
+		glDeleteTextures(1, &m_textures[textureName]);
 	SDL_Surface* surface = m_sdlTextRenderer.CreateTextSurface(textString, fontIndex, color);
 	if (size.x > 0)
 		surface->w = size.x;
@@ -784,11 +787,13 @@ void GraphicDevice::CreateTextTexture(const std::string& textureName, const std:
 	GLuint texture = TextureLoader::LoadTexture(surface, GL_TEXTURE1);
 	m_textures[textureName] = texture;
 	SDL_FreeSurface(surface);
+	return (float)surface->w / (float)surface->h;
 }
 
 void GraphicDevice::CreateWrappedTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, unsigned int wrapLength, glm::ivec2 size)
 {
-	assert(m_textures.find(textureName) == m_textures.end());
+	if (m_textures.find(textureName) != m_textures.end())
+		glDeleteTextures(1, &m_textures[textureName]);
 	SDL_Surface* surface = m_sdlTextRenderer.CreateWrappedTextSurface(textString, fontIndex, color, wrapLength);
 	if (size.x > 0)
 		surface->w = size.x;
