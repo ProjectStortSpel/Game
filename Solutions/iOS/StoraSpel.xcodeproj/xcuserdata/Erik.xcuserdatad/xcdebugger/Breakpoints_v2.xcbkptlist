@@ -106,12 +106,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/AndroidRenderer/GraphicDevice.cpp"
-            timestampString = "443978761.695765"
+            timestampString = "444134345.612801"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "286"
-            endingLineNumber = "286"
-            landmarkName = "GraphicDevice::InitSkybox()"
+            startingLineNumber = "289"
+            endingLineNumber = "289"
+            landmarkName = "GraphicDevice::ResizeWindow(int _width, int _height)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -250,12 +250,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/AndroidRenderer/GraphicDevice.cpp"
-            timestampString = "443978761.695765"
+            timestampString = "444134345.612801"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "222"
-            endingLineNumber = "222"
-            landmarkName = "GraphicDevice::InitSDLWindow()"
+            startingLineNumber = "225"
+            endingLineNumber = "225"
+            landmarkName = "GraphicDevice::Render()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -330,12 +330,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/AndroidRenderer/GraphicDevice.cpp"
-            timestampString = "444061051.59257"
+            timestampString = "444134345.612801"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "337"
-            endingLineNumber = "337"
-            landmarkName = "GraphicDevice::PreLoadModel(std::string _dir, std::string _file, int _renderType)"
+            startingLineNumber = "340"
+            endingLineNumber = "340"
+            landmarkName = "GraphicDevice::InitSDLWindow()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
