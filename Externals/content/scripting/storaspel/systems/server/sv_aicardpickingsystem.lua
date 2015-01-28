@@ -8,7 +8,7 @@ AiCardPickingSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("AI", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("AICard", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("TileComp", FilterType.RequiresOneOf)
-	
+	self:AddComponentTypeToFilter("MapSize", FilterType.RequiresOneOf)
 	
 end
 
@@ -23,7 +23,7 @@ AiCardPickingSystem.Update = function(self, dt)
 		local unitID = self:GetComponent(AIs[i], "UnitEntityId", 0):GetInt()
 		
 		local cpTargetNr = self:GetComponent(unitID, "TargetCheckpoint", 0):GetInt()
-		
+				
 		-- vart AIn vill
 		local targetPositionX, targetPositionY = self:GetTargetPosition(CPtiles, cpTargetNr)
 		-- vart AIn är
@@ -34,10 +34,11 @@ AiCardPickingSystem.Update = function(self, dt)
 		local CardSetAI = self:GetAIsCardSet(AIs[i], Cards)
 		--This will catch the best 
 		local PickedCards = self:AIPickCards(CardSetAI, aiDirX, aiDirY, aiPositonX, aiPositonY, targetPositionX, targetPositionY)
+		self:SimulatePlayOfCards(AIs[i], PickedCards)
 
 		if #PickedCards >= self.NumberOfCardsToPick then	
 			
-			self:SendCards(PickedCards, AIs[i])
+			self:SendCards(AIs[i], PickedCards)
 		end
 	end
 end
@@ -233,26 +234,62 @@ AiCardPickingSystem.GetAllCardsOf = function( self, CardSetAI, cardName )
 	return cards
 end
 
-AiCardPickingSystem.SendCards = function(self, pickedcards, player)
+AiCardPickingSystem.SendCards = function(self, _player, _pickedcards)
 	
 	print("DONE")
-	local unit = world:GetComponent(player, "UnitEntityId", "Id"):GetInt()
+	local unit = world:GetComponent(_player, "UnitEntityId", "Id"):GetInt()
 	
-	world:CreateComponentAndAddTo("HasSelectedCards", player)
+	world:CreateComponentAndAddTo("HasSelectedCards", _player)
 	world:CreateComponentAndAddTo("UnitSelectedCards", unit)
 
 	for i = 1, self.NumberOfCardsToPick do
-		local action = world:GetComponent(pickedcards[i], "CardAction", 0):GetString()
-		local prio = world:GetComponent(pickedcards[i], "CardPrio", 0):GetInt()
+		local action = world:GetComponent(_pickedcards[i], "CardAction", 0):GetString()
+		local prio = world:GetComponent(_pickedcards[i], "CardPrio", 0):GetInt()
 		--print("AI Action: " .. action .. " - Prio: " .. prio)
 	
-		world:RemoveComponentFrom("DealtCard", pickedcards[i])
-		world:RemoveComponentFrom("AICard", pickedcards[i])
-		world:CreateComponentAndAddTo("CardStep", pickedcards[i])
-		world:SetComponent(pickedcards[i], "CardStep", "Step", i)
-		world:SetComponent(pickedcards[i], "CardStep", "UnitEntityId", unit)
+		world:RemoveComponentFrom("DealtCard", _pickedcards[i])
+		world:RemoveComponentFrom("AICard", _pickedcards[i])
+		world:CreateComponentAndAddTo("CardStep", _pickedcards[i])
+		world:SetComponent(_pickedcards[i], "CardStep", "Step", i)
+		world:SetComponent(_pickedcards[i], "CardStep", "UnitEntityId", unit)
 		
 	end
+end
+
+AiCardPickingSystem.SimulatePlayOfCards = function(self, _player, _pickedcards)
+	
+	local mapSize = self:GetEntities("MapSize")	
+	local mapX, mapY = self:GetComponent(mapSize[1], "MapSize", 0):GetInt2()
+	local posX, posY = self:GetComponent(_player, "MapPosition", 0):GetInt2()
+	local dirX, dirY = self:GetComponent(_player, "Direction", 0):GetInt2()
+	
+	
+	
+	
+	--print(mapX, mapY)
+	
+	--local no = 0
+	
+	--for y = 0, mapY-1 do
+	--	for x = 0, mapX-1 do
+	--		if self:TileHasComponent("Void", x, y) then
+	--			print(x, y, "Void")
+	--			no = no + 1
+	--		end
+	--	end
+	--end
+	--print(no)
+end
+
+AiCardPickingSystem.TileHasComponent = function(self, component, posX, posY)
+	
+	local mapSize = self:GetEntities("MapSize")
+	local mapSizeComp = self:GetComponent(mapSize[1], "MapSize", 0)
+	local mapX, mapY = mapSizeComp:GetInt2()
+	local tiles = self:GetEntities("TileComp")
+	
+	local returnValue = self:EntityHasComponent(tiles[mapX * posY + posX + 1], component)
+	return returnValue
 end
 
 AiCardPickingSystem.OnEntityAdded = function(self, entity)
