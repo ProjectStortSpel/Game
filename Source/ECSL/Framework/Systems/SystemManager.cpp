@@ -100,7 +100,7 @@ void SystemManager::SystemEntitiesUpdate()
 		{
 			for (auto system : *workGroup->GetSystems())
 			{
-                printf("System: %s\n", system->GetSystemName().c_str());
+                //printf("System: %s\n", system->GetSystemName().c_str());
 				/* Try add entity to system if it passes filters, else try to remove it */
 				if (entityTable->EntityPassFilters(entityId, system->GetMandatoryFilter()->GetBitSet(), system->GetRequiresOneOfFilter()->GetBitSet(), system->GetExcludedFilter()->GetBitSet()))
 					AddEntityToSystem(entityId, system);

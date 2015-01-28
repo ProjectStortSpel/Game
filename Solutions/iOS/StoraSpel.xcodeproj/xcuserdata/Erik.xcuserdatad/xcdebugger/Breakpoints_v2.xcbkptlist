@@ -399,7 +399,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "777"
             endingLineNumber = "777"
-            landmarkName = "GraphicDevice::AddFont(const std::string&amp; filepath, int size)"
+            landmarkName = "GraphicDevice::CreateTextTexture(const std::string&amp; textureName, const std::string&amp; textString, int fontIndex, SDL_Color color, glm::ivec2 size)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

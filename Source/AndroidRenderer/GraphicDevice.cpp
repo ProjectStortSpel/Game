@@ -733,7 +733,7 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 }
 GLuint GraphicDevice::AddTexture(std::string _fileDir, GLenum _textureSlot)
 {
-    printf("fileDir: %s\n", _fileDir.c_str());
+    //printf("fileDir: %s\n", _fileDir.c_str());
 	for (std::map<const std::string, GLuint>::iterator it = m_textures.begin(); it != m_textures.end(); it++)
 	{
 		if (it->first == _fileDir)
