@@ -13,8 +13,7 @@ CardPositionSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Rotation", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("CardIndex", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("CardSelected", FilterType.Excluded)
-	
-	print("Card position System initialized!")
+
 end
 
 CardPositionSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, newEntities)
@@ -44,8 +43,10 @@ CardPositionSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, newE
 		local timer = self:GetComponent(entity, "LerpTime", 0)
 		timer:SetFloat2(0.1, 0)
 		
+		print("Card " .. i .. " positioned " .. px .. ", " .. py .. ", " .. pz)
+		
 	end
-	
+
 end
 
 

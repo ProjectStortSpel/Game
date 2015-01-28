@@ -5,7 +5,7 @@ GiveCardIndexSystem.Initialize = function ( self )
 	self:SetName("GiveCardIndexSystem")
 	
 	--	Toggle EntitiesAdded
-	self:UsingUpdate()
+	self:UsingEntitiesAdded()
 	
 	--	Set Filter
 	self:AddComponentTypeToFilter("Card", FilterType.Mandatory)
@@ -13,6 +13,7 @@ end
 
 
 GiveCardIndexSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, newEntities)
+
 	for n = 1, #newEntities do
 		local entityId = newEntities[n]
 
@@ -39,4 +40,5 @@ GiveCardIndexSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, new
 		world:CreateComponentAndAddTo("CardIndex", entityId)
 		world:SetComponent(entityId, "CardIndex", "Index", index)
 	end
+
 end

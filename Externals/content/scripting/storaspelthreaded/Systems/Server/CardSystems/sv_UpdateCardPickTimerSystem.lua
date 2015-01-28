@@ -10,7 +10,7 @@ UpdateCardPickTimer.Initialize = function(self)
 	
 	--	Set Filter
 	self:AddComponentTypeToFilter("PickingPhaseTimer", 	FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter("OnPickingPhase", 	FilterType.RequiresOneOf)
+	--self:AddComponentTypeToFilter("OnPickingPhase", 	FilterType.RequiresOneOf)
 end
 
 UpdateCardPickTimer.Update = function(self, dt, taskIndex, taskCount)
@@ -33,18 +33,14 @@ end
 
 UpdateCardPickTimer.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 
-	for n = 1, #entities do
-		local entity = entities[n]
-		if world:EntityHasComponent(entity, "OnPickingPhase") then
-			local Timers = self:GetEntities("PickingPhaseTimer")
-			print("DELETE TIMERS!!! -> " .. #Timers)
-			for i = 1, #Timers do
-				world:KillEntity(Timers[i])
+	local newTimer = entities[1]
+	local allTimers = self:GetEntities()
+	
+	if #allTimers > 1 then
+		for n = 1, #allTimers do
+			if not allTimers[n] == newTimer then
+				world:KillEntity(allTimers[n])
 			end
-			
-			world:KillEntity(entity)
 		end
-		
-		--	Send time amount in message to all players
 	end
 end

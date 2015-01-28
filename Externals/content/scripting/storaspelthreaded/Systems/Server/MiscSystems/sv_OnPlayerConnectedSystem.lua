@@ -29,8 +29,6 @@ OnPlayerConnectedSystem.PostInitialize = function(self)
 	world:SetComponent(playerCounter, "PlayerCounter", "Spectators", 0)
 
 	self:AddConnectedPlayers(playerCounter, maxPlayers)
-	
-	print("OnPlayerConnectedSystem PostInitialize")
 end
 
 OnPlayerConnectedSystem.OnPlayerConnected = function(self, _ip, _port, _message)

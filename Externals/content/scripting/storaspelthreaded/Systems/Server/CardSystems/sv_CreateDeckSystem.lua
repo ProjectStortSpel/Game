@@ -25,7 +25,7 @@ CreateDeckSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entiti
 			local id = world:CreateNewEntity()
 			world:CreateComponentAndAddTo("DealCards", id)
 			world:SetComponent(id, "DealCards", "NumCards", 8)
-
+			print("DealCards id = " .. id)
 		end
 	end
 end

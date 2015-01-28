@@ -22,6 +22,13 @@ require "sv_DirectionalLightSystem"
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(DirectionalLightSystem)
 
+--	Player Systems
+package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/PlayerSystems/?.lua"
+require "sv_PlayersSystem"
+
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(PlayersSystem)
+
 --	Move Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/MoveSystems/?.lua"
 require "sv_PostMoveSystem"
@@ -56,34 +63,36 @@ worldCreator:AddSystemToCurrentGroup(TurnRightSystem)
 --	Card Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/CardSystems/?.lua"
 require "sv_CreateDeckSystem"
+require "sv_CreateCardPickTimer"
 require "sv_AddCardPickTimerSystem"
 require "sv_SetCardPickTimerSystem"
 require "sv_UpdateCardPickTimerSystem"
 require "sv_AutoPickCardsSystem"
-
+require "sv_DealCardsSystem"
 require "sv_TakeCardStepFromUnitSystem"
 require "sv_TakeCardsFromPlayerSystem"
+require "sv_PlayCardSystem"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CreateDeckSystem)
-
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(AddCardPickTimer)
-
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(SetCardPickTimer)
-
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(UpdateCardPickTimer)
-
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(CreateCardPickTimer)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(AutoPickCards)
-
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(DealCardsSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(TakeCardStepsFromUnitSystem)
-
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(TakeCardsFromPlayerSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(PlayCardSystem)
 
 --	Card Action Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/CardActionSystems/?.lua"
@@ -140,7 +149,7 @@ require "sv_GameOverSystem"
 require "sv_ServerLobbySystem"
 require "sv_LogStartSystem"
 require "sv_FinishSystem"
---require "sv_OnPlayerConnectedSystem"
+require "sv_OnPlayerConnectedSystem"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(TotemPoleSystem)
@@ -157,8 +166,8 @@ worldCreator:AddSystemToCurrentGroup(ServerLobbySystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(FinishSystem)
 
---worldCreator:AddSystemGroup()
---worldCreator:AddSystemToCurrentGroup(OnPlayerConnectedSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(OnPlayerConnectedSystem)
 
 
 

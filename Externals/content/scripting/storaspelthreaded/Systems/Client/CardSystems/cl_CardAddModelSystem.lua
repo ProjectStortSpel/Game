@@ -16,7 +16,7 @@ CardAddModelSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, enti
 
 	for n = 1, #entities do
 		local entityId = entities[n]
-
+		
 		world:CreateComponentAndAddTo("Model", entityId)
 		world:CreateComponentAndAddTo("Position", entityId)
 		world:CreateComponentAndAddTo("Rotation", entityId)

@@ -27,33 +27,37 @@ worldCreator:AddSystemToCurrentGroup(GameInterfaceSystem)
 --	Card Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Client/CardSystems/?.lua"
 require "cl_CardAddModelSystem"
+require "cl_GiveCardIndexSystem"
 require "cl_CardHoverSystem"
 require "cl_CardPositionSystem"
 require "cl_CardPickedPositionSystem"
 require "cl_CardSelectSystem"
-require "cl_GiveCardIndexSystem"
 require "cl_SortSelectedCardsSystem"
 require "cl_SortCardIndexSystem"
 require "cl_SendSelectedCardsSystem"
 
+
 worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(CardAddModelSystem)
+worldCreator:AddSystemToCurrentGroup(GiveCardIndexSystem)
 worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(CardHoverSystem)
+worldCreator:AddSystemToCurrentGroup(SortCardIndexSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(SortSelectedCardsSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(SendSelectedCardsSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CardPositionSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CardPickedPositionSystem)
 worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(CardAddModelSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(CardHoverSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CardSelectSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(GiveCardIndexSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(SortSelectedCardsSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(SortCardIndexSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(SendSelectedCardsSystem)
+
+
+
 
 
 
