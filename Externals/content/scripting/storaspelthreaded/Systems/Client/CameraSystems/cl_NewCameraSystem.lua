@@ -165,9 +165,9 @@ NewCameraSystem.PostInitialize = function(self)
 	local lscale = self:GetComponent(self.TouchSprite2, "Scale", 0)
 	lscale:SetFloat3(0.05, 0.05, 0.05)	
 			
-	self.Camera:MoveToAndLookAt(	self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
-									self.CameraUpX,0,self.CameraUpZ,
-									self.CameraLookAtX,-4.5,self.CameraLookAtZ,
-									1)
+	--self.Camera:MoveToAndLookAt(	self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
+	--								self.CameraUpX,0,self.CameraUpZ,
+	--								self.CameraLookAtX,-4.5,self.CameraLookAtZ,
+	--								1)
 	
 end

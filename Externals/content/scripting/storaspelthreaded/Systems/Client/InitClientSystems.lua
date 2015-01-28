@@ -32,6 +32,9 @@ require "cl_CardPositionSystem"
 require "cl_CardPickedPositionSystem"
 require "cl_CardSelectSystem"
 require "cl_GiveCardIndexSystem"
+require "cl_SortSelectedCardsSystem"
+require "cl_SortCardIndexSystem"
+require "cl_SendSelectedCardsSystem"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CardAddModelSystem)
@@ -45,6 +48,12 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CardSelectSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(GiveCardIndexSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(SortSelectedCardsSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(SortCardIndexSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(SendSelectedCardsSystem)
 
 
 

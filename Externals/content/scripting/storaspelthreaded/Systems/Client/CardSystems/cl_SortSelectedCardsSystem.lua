@@ -1,6 +1,6 @@
-SortSelectedCardSystem = System()
+SortSelectedCardsSystem = System()
 
-SortSelectedCardSystem.Initialize = function ( self )
+SortSelectedCardsSystem.Initialize = function ( self )
 	--	Set Name
 	self:SetName("SortSelectedCardSystem")
 	
@@ -13,7 +13,7 @@ SortSelectedCardSystem.Initialize = function ( self )
 end
 
 
-SortSelectedCardSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+SortSelectedCardsSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 
 	for n = 1, #entities do
 		local entityId = entities[n]
@@ -37,7 +37,7 @@ SortSelectedCardSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, 
 end
 
 
-SortSelectedCardSystemEntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
+SortSelectedCardsSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
 
 	for n = 1, #entities do
 		local entityId = entities[n]
