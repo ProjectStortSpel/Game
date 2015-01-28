@@ -10,6 +10,7 @@ require "servercomponents"
 
 package.path = package.path .. ";../../../Externals/content/scripting/shared/components/?.lua"
 require "interfacecomponents"
+require "textrendercomponents"
 
 -- Systems
 package.path = package.path .. ";../../../Externals/content/scripting/lobby/systems/?.lua"
@@ -33,6 +34,7 @@ require "connectmenusystem"
 package.path = package.path .. ";../../../Externals/content/scripting/shared/systems/?.lua"
 require "pickboxsystem"
 require "hoversizesystem"
+require "addtexttotexturesystem"
 
 -- Templates
 package.path = package.path .. ";../../../Externals/content/scripting/lobby/templates/?.lua"
@@ -42,6 +44,8 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(StartUpSystem)
 
 worldCreator:AddSystemToCurrentGroup(PickBoxSystem)
+
+worldCreator:AddSystemToCurrentGroup(AddTextToTextureSystem)
 
 --if Server then
 	worldCreator:AddSystemToCurrentGroup(ServerLobbySystem)

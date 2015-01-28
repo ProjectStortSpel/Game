@@ -1413,7 +1413,7 @@ int GraphicDevice::AddFont(const std::string& filepath, int size)
 	return m_sdlTextRenderer.AddFont(filepath, size);
 }
 
-void GraphicDevice::CreateTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, glm::ivec2 size)
+float GraphicDevice::CreateTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, glm::ivec2 size)
 {
 	if (m_textures.find(textureName) != m_textures.end())
 		glDeleteTextures(1, &m_textures[textureName]);
@@ -1427,6 +1427,7 @@ void GraphicDevice::CreateTextTexture(const std::string& textureName, const std:
 	m_textures[textureName] = texture;
 	m_vramUsage += (surface->w * surface->h * 4 * 4);
 	SDL_FreeSurface(surface);
+	return (float)surface->w / (float)surface->h;
 }
 
 void GraphicDevice::CreateWrappedTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, unsigned int wrapLength, glm::ivec2 size)
