@@ -134,7 +134,7 @@ namespace Renderer
 
 		// Shaders
 		Shader m_skyBoxShader;
-		Shader m_forwardShader, m_viewspaceShader;
+		Shader m_forwardShader, m_viewspaceShader, m_interfaceShader;
 		Shader m_shadowShader;
 		Shader m_fullscreen;
 
@@ -143,7 +143,7 @@ namespace Renderer
 
 		// Modelloader
 		int m_modelIDcounter;
-		std::vector<Model> m_modelsForward, m_modelsViewspace;
+		std::vector<Model> m_modelsForward, m_modelsViewspace, m_modelsInterface;
 
 		// Meshs
 		std::map<const std::string, Buffer*> m_meshs;
