@@ -54,6 +54,8 @@ bool GraphicDevice::Init()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glClearColor(0.0f, 0.2f, 0.6f, 1.0f);
 
+    m_sdlTextRenderer.Init();
+    
 	return true;
 }
 
@@ -101,8 +103,6 @@ void GraphicDevice::WriteShadowMapDepth()
 	glEnable(GL_BLEND);
 
 	//glCullFace(GL_FRONT);
-	glEnable(GL_POLYGON_OFFSET_FILL);
-	glPolygonOffset(4.5, 18000.0);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -138,7 +138,6 @@ void GraphicDevice::WriteShadowMapDepth()
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glBindFramebuffer(GL_FRAMEBUFFER, oldFBO);
 	glCullFace(GL_BACK);
-	glDisable(GL_POLYGON_OFFSET_FILL);
 	//------------------------------
 }
 
@@ -437,7 +436,7 @@ void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
 
 void GraphicDevice::CreateShadowMap()
 {
-	int resolution = 1024*2;
+	int resolution = 1024;
 	m_dirLightDirection = vec3(0.0f, -1.0f, 1.0f);
 	vec3 midMap = vec3(8.0f, 0.0f, 8.0f);
 	vec3 lightPos = midMap - (10.0f*normalize(m_dirLightDirection));
