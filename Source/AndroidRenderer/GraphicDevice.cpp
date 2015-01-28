@@ -54,6 +54,8 @@ bool GraphicDevice::Init()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glClearColor(0.0f, 0.2f, 0.6f, 1.0f);
 
+    m_sdlTextRenderer.Init();
+    
 	return true;
 }
 
