@@ -602,21 +602,27 @@ namespace LuaEmbedder
     */
     static int gc_obj(lua_State* L)
     {
+		T** obj = static_cast<T**>(lua_touserdata(L, 1));
+		if (m_objectFunctionsMap.find(*obj) != m_objectFunctionsMap.end())
+			m_objectFunctionsMap.erase(*obj);
+
       if (luaL_getmetafield(L, 1, "no_gc"))
       {
-	lua_pushvalue(L, 1);
-	lua_gettable(L, -2);
-	if (!lua_isnil(L, -1))
-	  return 0;
+		lua_pushvalue(L, 1);
+		lua_gettable(L, -2);
+		if (!lua_isnil(L, -1))
+		{
+			*obj = NULL;
+			obj = NULL;
+			return 0;
+		}
       }
-      
-      T** obj = static_cast<T**>(lua_touserdata(L, 1));
       
       if(obj && *obj)
       {
-	delete(*obj);
-	*obj = nullptr;
-	obj = nullptr;
+		delete(*obj);
+		*obj = NULL;
+		obj = NULL;
       }
       
       return 0;
