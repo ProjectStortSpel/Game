@@ -371,7 +371,13 @@ void GameCreator::GameMode(std::string _gamemode)
 void GameCreator::Reload()
 {
 	if (m_world)
+	{
+		if (m_worldProfiler)
+			delete m_worldProfiler;
+
 		delete m_world;
+	}
+		
 	NetworkInstance::GetNetworkHelper()->ResetNetworkMaps();
 	bool server = LuaEmbedder::PullBool(m_clientLuaState, "Server");
 	bool client = LuaEmbedder::PullBool(m_clientLuaState, "Client");
