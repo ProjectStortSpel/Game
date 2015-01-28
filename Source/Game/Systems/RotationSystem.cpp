@@ -9,7 +9,7 @@ RotationSystem::~RotationSystem()
 
 }
 
-void RotationSystem::Initialize()
+void RotationSystem::Initialize() 
 {
 	SetSystemName("Rotation Remove System");
 

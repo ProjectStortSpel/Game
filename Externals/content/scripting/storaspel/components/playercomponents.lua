@@ -1,4 +1,3 @@
-
 --	Player Component
 local PlayerComponent = ComponentType()
 PlayerComponent.Name = "Player"
@@ -9,6 +8,7 @@ worldCreator:AddComponentType(PlayerComponent)
 local UnitComponent = ComponentType()
 UnitComponent.Name = "Unit"
 UnitComponent.TableType = TableType.Map
+UnitComponent.SyncNetwork = true
 worldCreator:AddComponentType(UnitComponent)
 
 -- AI Component
