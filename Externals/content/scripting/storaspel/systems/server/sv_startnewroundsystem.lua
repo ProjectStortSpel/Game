@@ -26,8 +26,15 @@ StartNewRoundSystem.OnEntityAdded = function(self, entity)
 			for i = 1, #units do
 				world:RemoveComponentFrom("UnitSelectedCards", units[i])
 			end
+			local newId = world:CreateNewEntity()
+			world:CreateComponentAndAddTo("SetPickingPhaseTimer", newId)
+			world:GetComponent(newId, "SetPickingPhaseTimer", "Amount"):SetFloat(0)
+		else
+			local newId = world:CreateNewEntity()
+			world:CreateComponentAndAddTo("AddToPickingPhaseTimer", newId)
+			world:GetComponent(newId, "AddToPickingPhaseTimer", "Amount"):SetFloat(-10)
 		end
-
+		
 		world:KillEntity(entity)
 
 	end

@@ -1,5 +1,7 @@
 #version 100
 
+precision highp float;
+
 attribute vec3 VertexPosition;
 attribute vec3 VertexNormal;
 attribute vec3 VertexTangent;

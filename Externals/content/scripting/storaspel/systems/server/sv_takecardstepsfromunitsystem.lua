@@ -8,7 +8,7 @@ end
 
 TakeCardStepsFromUnitSystem.OnEntityAdded = function(self, entityId)
 		
-if world:EntityHasComponent( entityId, "TakeCardStepsFromUnit") then 
+	if world:EntityHasComponent( entityId, "TakeCardStepsFromUnit") then 
 	
 		print("TakeCardStepsFromUnitSystem")
 	

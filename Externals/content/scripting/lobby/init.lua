@@ -4,16 +4,17 @@ GameRunning = false;
 -- Components
 package.path = package.path .. ";../../../Externals/content/scripting/lobby/components/?.lua"
 require "components"
-require "interfacecomponents"
 require "buttoncomponents"
+require "menucomponents"
+require "servercomponents"
+
+package.path = package.path .. ";../../../Externals/content/scripting/shared/components/?.lua"
+require "interfacecomponents"
+require "textrendercomponents"
 
 -- Systems
 package.path = package.path .. ";../../../Externals/content/scripting/lobby/systems/?.lua"
 require "systems"
-
-require "sh_pickboxsystem"
-require "sh_buttonhoversystem"
-require "sh_buttonpressedsystem"
 
 --if Server then
 	require "serverlobbysystem"
@@ -24,6 +25,16 @@ require "sh_buttonpressedsystem"
 	require "clientlobbysystem"
 	require "clientconnectsystem"
 --end
+package.path = package.path .. ";../../../Externals/content/scripting/lobby/systems/interfacesystems/?.lua"
+require "gameinterfacesystem"
+require "gamemenusystem"
+require "optionmenusystem"
+require "connectmenusystem"
+
+package.path = package.path .. ";../../../Externals/content/scripting/shared/systems/?.lua"
+require "pickboxsystem"
+require "hoversizesystem"
+require "addtexttotexturesystem"
 
 -- Templates
 package.path = package.path .. ";../../../Externals/content/scripting/lobby/templates/?.lua"
@@ -33,8 +44,8 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(StartUpSystem)
 
 worldCreator:AddSystemToCurrentGroup(PickBoxSystem)
-worldCreator:AddSystemToCurrentGroup(ButtonPressedSystem)
-worldCreator:AddSystemToCurrentGroup(ButtonHoverSystem)
+
+worldCreator:AddSystemToCurrentGroup(AddTextToTextureSystem)
 
 --if Server then
 	worldCreator:AddSystemToCurrentGroup(ServerLobbySystem)
@@ -45,3 +56,9 @@ worldCreator:AddSystemToCurrentGroup(ButtonHoverSystem)
 	worldCreator:AddSystemToCurrentGroup(ClientLobbySystem)
 	worldCreator:AddSystemToCurrentGroup(ClientConnectSystem)
 --end
+
+worldCreator:AddSystemToCurrentGroup(GameInterfaceSystem)
+worldCreator:AddSystemToCurrentGroup(HoverSizeSystem)
+worldCreator:AddSystemToCurrentGroup(GameMenuSystem)
+worldCreator:AddSystemToCurrentGroup(OptionMenuSystem)
+worldCreator:AddSystemToCurrentGroup(ConnectMenuSystem)

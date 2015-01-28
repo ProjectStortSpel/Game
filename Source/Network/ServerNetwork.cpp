@@ -29,6 +29,7 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t& 
 
 
 		uint64_t id3 = _packetHandler->StartPack(NetTypeMessageId::ID_REMOTE_CONNECTION_ACCEPTED);
+		_packetHandler->WriteString(id3, _connection.GetIpAddress());
 		Packet* p = _packetHandler->EndPack(id3);
 
 		Broadcast(p, _connection);
@@ -61,6 +62,7 @@ void ServerNetwork::NetConnectionLost(NetConnection& _connection)
 	m_connectedClientsLock->unlock();
 
 	uint64_t id = m_packetHandler->StartPack(NetTypeMessageId::ID_REMOTE_CONNECTION_LOST);
+	m_packetHandler->WriteString(id, _connection.GetIpAddress());
 	Packet* p = m_packetHandler->EndPack(id);
 
 	Broadcast(p, _connection);
@@ -87,6 +89,7 @@ void ServerNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uin
 	m_connectedClientsLock->unlock();
 
 	uint64_t id = _packetHandler->StartPack(NetTypeMessageId::ID_REMOTE_CONNECTION_DISCONNECTED);
+	m_packetHandler->WriteString(id, _connection.GetIpAddress());
 	Packet* p = _packetHandler->EndPack(id);
 
 	Broadcast(p, _connection);
@@ -578,6 +581,7 @@ void ServerNetwork::Kick(NetConnection& _connection, const char* _reason)
 	Packet* p1 = m_packetHandler->EndPack(id);
 
 	uint64_t id2 = m_packetHandler->StartPack(ID_REMOTE_CONNECTION_KICKED);
+	m_packetHandler->WriteString(id2, _reason);
 	Packet* p2 = m_packetHandler->EndPack(id2);
 
 	m_connectedClientsLock->unlock();

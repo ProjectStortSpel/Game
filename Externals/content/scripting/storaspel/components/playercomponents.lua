@@ -1,4 +1,3 @@
-
 --	Player Component
 local PlayerComponent = ComponentType()
 PlayerComponent.Name = "Player"
@@ -9,6 +8,7 @@ worldCreator:AddComponentType(PlayerComponent)
 local UnitComponent = ComponentType()
 UnitComponent.Name = "Unit"
 UnitComponent.TableType = TableType.Map
+UnitComponent.SyncNetwork = true
 worldCreator:AddComponentType(UnitComponent)
 
 -- AI Component
@@ -149,3 +149,17 @@ PlayerCounterComponent:AddVariable("MaxPlayers", ByteSize.Int)
 PlayerCounterComponent:AddVariable("Players", ByteSize.Int)
 PlayerCounterComponent:AddVariable("Spectators", ByteSize.Int)
 worldCreator:AddComponentType(PlayerCounterComponent)
+
+-- NeedUnit Component
+local NeedUnitComponent = ComponentType()
+NeedUnitComponent.Name = "NeedUnit"
+NeedUnitComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NeedUnitComponent)
+
+-- RemoveUnit Component
+local RemoveUnitComponent = ComponentType()
+RemoveUnitComponent.Name = "RemoveUnit"
+RemoveUnitComponent.TableType = TableType.Map
+RemoveUnitComponent:AddVariable("PlayerNo", ByteSize.Int)
+RemoveUnitComponent:AddVariable("UnitEntityId", ByteSize.Int)
+worldCreator:AddComponentType(RemoveUnitComponent)

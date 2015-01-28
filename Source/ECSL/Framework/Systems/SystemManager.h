@@ -17,6 +17,7 @@ namespace ECSL
 		~SystemManager();
 
 		void InitializeSystems();
+		void PostInitializeSystems();
 
 		void UpdateSystemEntityLists(const RuntimeInfo& _runtime,
 			std::vector<std::vector<unsigned int>*>& _entitiesToAddToSystems,

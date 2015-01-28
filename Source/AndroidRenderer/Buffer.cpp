@@ -60,15 +60,15 @@ bool Buffer::init(const BufferData* p_BufferData, GLsizei p_BufferDataSize,
 	return true;
 }
 
-void Buffer::draw(void)
+void Buffer::draw(GLuint prog)
 {
 	if (m_Count > 0)
 	{
-		draw(0, m_Count);
+		draw(0, m_Count, prog);
 	}
 }
 
-void Buffer::draw(GLint base, GLsizei count)
+void Buffer::draw(GLint base, GLsizei count, GLuint prog)
 {
 	// Make sure there's no weird behaviour
 	if (m_Type == None)
@@ -80,8 +80,8 @@ void Buffer::draw(GLint base, GLsizei count)
 		// Allocate and buffer data
 		glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[i]);
 		// Define attribute data (for shaders)
-		glVertexAttribPointer(m_BufferData[i].location, m_BufferData[i].componentCount, m_BufferData[i].type, GL_FALSE, 0, 0);
-		glEnableVertexAttribArray(m_BufferData[i].location);
+		glVertexAttribPointer(m_BufferData[i].locations[prog], m_BufferData[i].componentCount, m_BufferData[i].type, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(m_BufferData[i].locations[prog]);
 	}
 
 	// Draw based on based buffer type

@@ -9,23 +9,24 @@ RotationSystem::~RotationSystem()
 
 }
 
-void RotationSystem::Initialize()
+void RotationSystem::Initialize() 
 {
 	SetSystemName("Rotation Remove System");
 
 	SetUpdateTaskCount(1);
 
 	/*	Rendersystem wants Position, Scale, Rotation and Render	*/
-	AddComponentTypeToFilter("Spin", ECSL::FilterType::Mandatory);
+	//AddComponentTypeToFilter("Spin", ECSL::FilterType::Mandatory);
 	AddComponentTypeToFilter("Rotation", ECSL::FilterType::Mandatory);
 
 	m_rotationId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Rotation");
-	m_spinId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Spin");
+	//m_spinId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Spin");
 
 }
 
 void RotationSystem::Update(const ECSL::RuntimeInfo& _runtime)
 {
+    return;
 	auto entities = *GetEntities();
 
 	for (auto entity : entities)

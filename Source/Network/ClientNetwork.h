@@ -72,6 +72,7 @@ namespace Network
 		void SetOnRemotePlayerBanned(NetEvent& _function);
 
 		void ResetNetworkEvents();
+		void SetTimeOutValue(int _value);
 
 	private:
 

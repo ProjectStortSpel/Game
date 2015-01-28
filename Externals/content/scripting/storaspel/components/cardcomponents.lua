@@ -64,6 +64,12 @@ DealtCardComponent:AddVariable("PlayerEntityId", ByteSize.Reference)
 DealtCardComponent.TableType = TableType.Map
 worldCreator:AddComponentType(DealtCardComponent)
 
+-- AI Card Component
+local AICardComponent = ComponentType()
+AICardComponent.Name = "AICard"
+AICardComponent.TableType = TableType.Map
+worldCreator:AddComponentType(AICardComponent)
+
 -- Card Step Component
 local CardStepComponent = ComponentType()
 CardStepComponent.Name = "CardStep"
