@@ -14,7 +14,7 @@ require "cl_GameMenuSystem"
 require "cl_GameInterfaceSystem"
 
 worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(PlayerIndicatorSystem)
+worldCreator:AddSystemToCurrentGroup(RconMenuSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(OptionMenuSystem)
 worldCreator:AddSystemGroup()
@@ -32,8 +32,6 @@ require "cl_CardPositionSystem"
 require "cl_CardPickedPositionSystem"
 require "cl_CardSelectSystem"
 require "cl_GiveCardIndexSystem"
-require "cl_SendSelectedCardSystem"
-require "cl_SortSelectedCardsSystem"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CardAddModelSystem)
@@ -47,10 +45,8 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CardSelectSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(GiveCardIndexSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(SendSelectedCardSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(SortSelectedCardsSystem)
+
+
 
 --	Camera Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Client/CameraSystems/?.lua"
