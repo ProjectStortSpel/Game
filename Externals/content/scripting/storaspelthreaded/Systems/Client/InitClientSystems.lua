@@ -18,11 +18,11 @@ worldCreator:AddSystemToCurrentGroup(RconMenuSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(OptionMenuSystem)
 worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(HoverSizeSystem)
-worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(GameMenuSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(GameInterfaceSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(HoverSizeSystem)
 
 --	Card Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Client/CardSystems/?.lua"

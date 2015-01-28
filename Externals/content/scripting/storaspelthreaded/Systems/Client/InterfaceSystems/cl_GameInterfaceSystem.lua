@@ -18,8 +18,6 @@ GameInterfaceSystem.PostInitialize = function(self)
 	self:AddHoverSize(1.5, menubutton)
 	
 	local rconbutton = self:CreateElement("gamemenubutton", "quad", 3.4, -2, -4, 0.2, 0.2)
-	local rotation = self:GetComponent(rconbutton, "Rotation", 0)
-	rotation:SetFloat3(0, 0, 3.14)
 	self:AddEntityCommandToButton("RconMenu", rconbutton)
 	self:AddHoverSize(1.5, rconbutton)
 	

@@ -15,11 +15,13 @@ end
 
 OptionMenuSystem.Update = function(self, dt, taskIndex, taskCount)
 	if Input.GetTouchState(0) == InputState.Released then
-
+		
 		local pressedButtons = self:GetEntities("OnPickBoxHit")
 		if #pressedButtons > 0 then
+			print("OPTION CLICKED!")
 			local pressedButton = pressedButtons[1]
 			if world:EntityHasComponent(pressedButton, "MenuConsoleCommand") then
+				print("OPTION CLICKED 2!")
 				local command = self:GetComponent(pressedButton, "MenuConsoleCommand", "Command"):GetString()
 				self:RemoveMenu()
 				Console.AddToCommandQueue(command)
