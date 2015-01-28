@@ -168,7 +168,7 @@ namespace LuaBridge
 		Uint8 r = (Uint8)LuaEmbedder::PullInt(4);
 		Uint8 g = (Uint8)LuaEmbedder::PullInt(5);
 		Uint8 b = (Uint8)LuaEmbedder::PullInt(6);
-		SDL_Color color = { 255, 255, 255, 0 };
+		SDL_Color color = { 255 * r, 255 * g, 255 * b, 0 };
 		//int w = LuaEmbedder::PullInt(7);
 		//int h = LuaEmbedder::PullInt(8);
 		//glm::ivec2 size = glm::ivec2(w, h);

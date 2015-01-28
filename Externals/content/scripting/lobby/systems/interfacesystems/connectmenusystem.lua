@@ -53,17 +53,26 @@ ConnectMenuSystem.SpawnMenu = function(self)
 		local serverip = self:GetComponent(server, "ServerListEntry", "IpAddress"):GetString(0)
 		local servernousers = self:GetComponent(server, "ServerListEntry", "NoUsers"):GetInt(0)
 		local servermaxusers = self:GetComponent(server, "ServerListEntry", "MaxUsers"):GetInt(0)
+		local servergamestarted = self:GetComponent(server, "ServerListEntry", "GameStarted"):GetBool(0)
 		button = self:CreateElement("shade", "quad", 0, 0.6-i*0.11, -2, 1.8, 0.1)
 		self:AddConsoleCommandToButton("connect "..serverip, button)
 		self:AddHoverSize(1.005, button)
-		local text = self:CreateText("left", "text", -0.86, 0.64-i*0.11, -1.99999, 1, 0.08)	
-		self:AddTextToTexture(servername, "C1"..i, text)
+		local text = nil
+		text = self:CreateText("center", "text", -0.85, 0.64-i*0.11, -1.99999, 0.08, 0.08)	
+		if servergamestarted == true then
+			self:AddTextToTexture("C0"..i, "X", 0, 1, 0, 0, text)
+		else
+			self:AddTextToTexture("C0"..i, "O", 0, 0, 1, 0, text)
+		end
 		self:AddConsoleCommandToButton("connect "..serverip, text)
-		--text = self:CreateText("center", "text", 0, 0.64-i*0.11, -1.99999, 1, 0.08)
-		--self:AddTextToTexture(serverip, "C2"..i, text)													-- SOMETHING WRONG WHEN TRYING TO WRITE AN IP
+		text = self:CreateText("left", "text", -0.81, 0.64-i*0.11, -1.99999, 1.5, 0.08)	
+		self:AddTextToTexture("C1"..i, servername, 0, 1, 1, 1, text)
+		self:AddConsoleCommandToButton("connect "..serverip, text)
+		--text = self:CreateText("center", "text", 0, 0.64-i*0.11, -1.99999, 1.78, 0.08)
+		--self:AddTextToTexture("C2"..i, serverip, 0, 1, 1, 1, text)												-- SOMETHING WRONG WHEN TRYING TO WRITE AN IP
 		--self:AddConsoleCommandToButton("connect "..serverip, text)
-		text = self:CreateText("right", "text", 0.86, 0.64-i*0.11, -1.99999, 1, 0.08)	
-		self:AddTextToTexture("["..servernousers.."/"..servermaxusers.."]", "C3"..i, text)
+		text = self:CreateText("right", "text", 0.89, 0.64-i*0.11, -1.99999, 0.2, 0.08)	
+		self:AddTextToTexture("C3"..i, "["..servernousers.."/"..servermaxusers.."]", 0, 1, 1, 1, text)
 		self:AddConsoleCommandToButton("connect "..serverip, text)
 	end
 end
@@ -133,14 +142,14 @@ ConnectMenuSystem.CreateElement = function(self, object, folder, posx, posy, pos
 	return id	
 end
 
-ConnectMenuSystem.AddTextToTexture = function(self, text, n, button)
+ConnectMenuSystem.AddTextToTexture = function(self, n, text, font, r, g, b, button)
 	world:CreateComponentAndAddTo("TextTexture", button)
 	world:GetComponent(button, "TextTexture", "Name"):SetString(n) -- TODO: NAME CANT BE MORE THAN 3 CHARS? WTF?
 	world:GetComponent(button, "TextTexture", "Text"):SetString(text)
-	world:GetComponent(button, "TextTexture", "FontIndex"):SetInt(0)
-	world:GetComponent(button, "TextTexture", "R"):SetFloat(1)
-	world:GetComponent(button, "TextTexture", "G"):SetFloat(1)
-	world:GetComponent(button, "TextTexture", "B"):SetFloat(1)
+	world:GetComponent(button, "TextTexture", "FontIndex"):SetInt(font)
+	world:GetComponent(button, "TextTexture", "R"):SetFloat(r)
+	world:GetComponent(button, "TextTexture", "G"):SetFloat(g)
+	world:GetComponent(button, "TextTexture", "B"):SetFloat(b)
 end
 
 ConnectMenuSystem.AddConsoleCommandToButton = function(self, command, button)
