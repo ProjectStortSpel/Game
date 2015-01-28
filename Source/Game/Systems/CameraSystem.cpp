@@ -14,10 +14,10 @@ void CameraSystem::Initialize()
 {
 	SetSystemName("Camera System");
 	/*	CameraSystem wants a position to place the camera at	*/
-	AddComponentTypeToFilter("CameraPosition", ECSL::FilterType::Mandatory);
-	AddComponentTypeToFilter("CameraLook", ECSL::FilterType::Mandatory);
-	AddComponentTypeToFilter("CameraUp", ECSL::FilterType::Mandatory);
-	AddComponentTypeToFilter("CameraRight", ECSL::FilterType::Mandatory);
+	AddComponentTypeToFilter("Null", ECSL::FilterType::Mandatory);
+	//AddComponentTypeToFilter("CameraLook", ECSL::FilterType::Mandatory);
+	//AddComponentTypeToFilter("CameraUp", ECSL::FilterType::Mandatory);
+	//AddComponentTypeToFilter("CameraRight", ECSL::FilterType::Mandatory);
 
 	m_input = &Input::InputWrapper::GetInstance();
 }
