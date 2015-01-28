@@ -31,14 +31,6 @@ ConnectMenuSystem.Update = function(self, dt)
 	if #menu > 0 and self.doRefresh == true then
 		self.doRefresh = false
 		self:RefreshMenu()
-		local servers = self:GetEntities("ServerListEntry")
-		local button = nil
-		for i = 1, #servers do
-			local server = servers[i]
-			local ip = self:GetComponent(server, "ServerListEntry", "IpAddress"):GetString(0)
-			button = self:CreateElement("shade", "quad", 0, 0.6-i*0.11, -2, 1.8, 0.1)
-			self:AddConsoleCommandToButton("connect "..ip, button)
-		end
 	end
 end
 
@@ -53,48 +45,27 @@ end
 
 ConnectMenuSystem.SpawnMenu = function(self)
 	local background = self:CreateElement("gamemenubackground", "quad", 0, 0, -2.1, 2.07, 1.3)
-	
-	--local button = nil
-	----connect localhost
-	--button = self:CreateElement("localhost", "quad", 0, 0.3, -2, 0.4, 0.2)
-	--self:AddConsoleCommandToButton("connect", button)	
-	--self:AddHoverSize(1.5, button)
-	--
-	----connect server
-	--button = self:CreateElement("server", "quad", 0.6, 0.3, -2, 0.4, 0.2)
-	--self:AddConsoleCommandToButton("connect 194.47.150.44", button)	
-	--self:AddHoverSize(1.5, button)
-	--
-	----connect erik
-	--button = self:CreateElement("erik", "quad", -0.6, 0, -2, 0.4, 0.2)
-	--self:AddConsoleCommandToButton("connect 194.47.150.5", button)	
-	--self:AddHoverSize(1.5, button)
-	--
-	----connect niklas
-	--button = self:CreateElement("niklas", "quad", 0, 0, -2, 0.4, 0.2)
-	--self:AddConsoleCommandToButton("connect 194.47.150.29", button)	
-	--self:AddHoverSize(1.5, button)
-	--
-	----connect marcus
-	--button = self:CreateElement("marcus", "quad", 0.6, 0, -2, 0.4, 0.2)
-	--self:AddConsoleCommandToButton("connect 194.47.150.48", button)	
-	--self:AddHoverSize(1.5, button)
-	--
-	----connect christian
-	--button = self:CreateElement("christian", "quad", -0.6, -0.3, -2, 0.4, 0.2)
-	--self:AddConsoleCommandToButton("connect 194.47.150.57", button)	
-	--self:AddHoverSize(1.5, button)
-	--
-	----connect pontus
-	--button = self:CreateElement("pontus", "quad", 0, -0.3, -2, 0.4, 0.2)
-	--self:AddConsoleCommandToButton("connect 194.47.150.128", button)	
-	--self:AddHoverSize(1.5, button)
-	--
-	----connect anders
-	--button = self:CreateElement("anders", "quad", 0.6, -0.3, -2, 0.4, 0.2)
-	--self:AddConsoleCommandToButton("connect 194.47.150.100", button)	
-	--self:AddHoverSize(1.5, button)
-	
+	local servers = self:GetEntities("ServerListEntry")
+	local button = nil
+	for i = 1, #servers do
+		local server = servers[i]
+		local servername = self:GetComponent(server, "ServerListEntry", "Name"):GetString(0)
+		local serverip = self:GetComponent(server, "ServerListEntry", "IpAddress"):GetString(0)
+		local servernousers = self:GetComponent(server, "ServerListEntry", "NoUsers"):GetInt(0)
+		local servermaxusers = self:GetComponent(server, "ServerListEntry", "MaxUsers"):GetInt(0)
+		button = self:CreateElement("shade", "quad", 0, 0.6-i*0.11, -2, 1.8, 0.1)
+		self:AddConsoleCommandToButton("connect "..serverip, button)
+		self:AddHoverSize(1.005, button)
+		local text = self:CreateText("left", "text", -0.86, 0.64-i*0.11, -1.99999, 1, 0.08)	
+		self:AddTextToTexture(servername, "C1"..i, text)
+		self:AddConsoleCommandToButton("connect "..serverip, text)
+		local text = self:CreateText("center", "text", 0, 0.64-i*0.11, -1.99999, 1, 0.08)	
+		self:AddTextToTexture(serverip, "C2"..i, text)
+		self:AddConsoleCommandToButton("connect "..serverip, text)
+		local text = self:CreateText("right", "text", 0.86, 0.64-i*0.11, -1.99999, 1, 0.08)	
+		self:AddTextToTexture("["..servernousers.."/"..servermaxusers.."]", "C3"..i, text)
+		self:AddConsoleCommandToButton("connect "..serverip, text)
+	end
 end
 
 ConnectMenuSystem.RefreshMenu = function(self)
@@ -123,6 +94,24 @@ ConnectMenuSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("ServerListEntry", FilterType.RequiresOneOf)
 end
 
+ConnectMenuSystem.CreateText = function(self, object, folder, posx, posy, posz, scalex, scaley)
+	local id = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("Model", id)
+	world:CreateComponentAndAddTo("Position", id)
+	world:CreateComponentAndAddTo("Rotation", id)
+	world:CreateComponentAndAddTo("Scale", id)
+	world:CreateComponentAndAddTo(self.Name.."Element", id)
+	local model = self:GetComponent(id, "Model", 0)
+	model:SetModel(object, folder, 2)
+	local position = self:GetComponent(id, "Position", 0)
+	position:SetFloat3(posx, posy, posz)
+	local scale = self:GetComponent(id, "Scale", 0)
+	scale:SetFloat3(scalex, scaley, 1)
+	local rotation = self:GetComponent(id, "Rotation", 0)
+	rotation:SetFloat3(0, 0, 0)
+	return id	
+end
+
 ConnectMenuSystem.CreateElement = function(self, object, folder, posx, posy, posz, scalex, scaley)
 	local id = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("Model", id)
@@ -142,6 +131,16 @@ ConnectMenuSystem.CreateElement = function(self, object, folder, posx, posy, pos
 	local rotation = self:GetComponent(id, "Rotation", 0)
 	rotation:SetFloat3(0, 0, 0)
 	return id	
+end
+
+ConnectMenuSystem.AddTextToTexture = function(self, text, n, button)
+	world:CreateComponentAndAddTo("TextTexture", button)
+	world:GetComponent(button, "TextTexture", "Name"):SetString(n) -- TODO: NAME CANT BE MORE THAN 3 CHARS? WTF?
+	world:GetComponent(button, "TextTexture", "Text"):SetString(text)
+	world:GetComponent(button, "TextTexture", "FontIndex"):SetInt(0)
+	world:GetComponent(button, "TextTexture", "R"):SetFloat(1)
+	world:GetComponent(button, "TextTexture", "G"):SetFloat(1)
+	world:GetComponent(button, "TextTexture", "B"):SetFloat(1)
 end
 
 ConnectMenuSystem.AddConsoleCommandToButton = function(self, command, button)
