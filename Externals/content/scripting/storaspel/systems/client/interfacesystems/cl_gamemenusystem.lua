@@ -34,16 +34,13 @@ end
 
 GameMenuSystem.SpawnMenu = function(self)
 	local background = self:CreateElement("gamemenubackground", "quad", 0, -0, -3.1, 1.5, 2)
-		
 	local button = nil
 	button = self:CreateElement("options", "quad", 0, 0.6, -3, 0.6, 0.3)
 	self:AddEntityCommandToButton("OptionMenu", button)
 	self:AddHoverSize(1.1, button)	
-	
 	button = self:CreateElement("lobby", "quad", 0, 0.2, -3, 0.6, 0.3)
 	self:AddConsoleCommandToButton("disconnect;gamemode lobby", button)
 	self:AddHoverSize(1.1, button)	
-
 	button = self:CreateElement("quit", "quad", 0, -0.6, -3, 0.6, 0.3)
 	self:AddConsoleCommandToButton("quit", button)
 	self:AddHoverSize(1.1, button)	
