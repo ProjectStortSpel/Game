@@ -143,7 +143,7 @@ void SystemManager::GenerateComponentFilter(System* _system, FilterType _filterT
             ss << " is trying to use component \"" << componentTypes->at(i);
             ss << "\" when it doesn't exist!\n";
             
-            printf(ss.str().c_str());
+            printf("%s", ss.str().c_str());
             assert(false);
         }
         
