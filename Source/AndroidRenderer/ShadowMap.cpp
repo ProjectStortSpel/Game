@@ -28,6 +28,9 @@ ShadowMap::~ShadowMap()
 
 void ShadowMap::CreateShadowMapTexture(GLuint _textureUnit)
 {
+    GLint oldFBO;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFBO);
+    
 	//The shadow maptexture  
 	glGenTextures(1, &m_depthTex); 
 	glActiveTexture(_textureUnit);
@@ -50,7 +53,7 @@ void ShadowMap::CreateShadowMapTexture(GLuint _textureUnit)
 	{ SDL_Log("Error: FrameBufferObject is not complete!"); }
 	
 	// Revert to the default framebuffer for now 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0); 
+	glBindFramebuffer(GL_FRAMEBUFFER, oldFBO); 
 }
 
 void ShadowMap::UpdateViewMatrix(vec3 lightPos, vec3 target)
