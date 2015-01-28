@@ -11,6 +11,12 @@ namespace LuaBridge
 	  m_L = 0;
 	}
 
+	LuaSystem::~LuaSystem()
+	{
+		LuaEmbedder::ClearObject<LuaSystem>(m_L, "System", this);
+		m_L = nullptr;
+	}
+
 	void LuaSystem::Embed(lua_State* L)
 	{
 		LuaEmbedder::EmbedClass<LuaSystem>(L, "System", false);

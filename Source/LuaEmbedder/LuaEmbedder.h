@@ -249,6 +249,11 @@ namespace LuaEmbedder
   {
     Luna<T>::Copy(A, B, className.c_str(), instance);
   }
+  template<typename T>
+  void EXPORT ClearObject(lua_State* L, const std::string& className, T* object)
+  {
+	  Luna<T>::Clear(L, className.c_str(), object);
+  }
 }
 
 #endif
