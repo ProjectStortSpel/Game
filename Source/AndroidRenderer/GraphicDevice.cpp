@@ -212,6 +212,9 @@ void GraphicDevice::Render()
 	glEnable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
 
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+
 	// RENDER VIEWSPACE STUFF
 	m_viewspaceShader.UseProgram();
 	m_viewspaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
@@ -300,6 +303,7 @@ void GraphicDevice::Render()
 
 		glDeleteBuffers(1, &buf);
 	}*/
+	glDisable(GL_TEXTURE_2D);
 	glUseProgram(0);
 	glEnable(GL_DEPTH_TEST);
 
