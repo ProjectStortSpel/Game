@@ -75,8 +75,8 @@ ConnectMenuSystem.SpawnMenu = function(self)
 		end
 		text = self:CreateText("left", "text", -0.81, 0.64-i*0.11, -1.99999, 1.5, 0.08)	
 		self:AddTextToTexture("C1"..i, servername, 0, 1, 1, 1, text)
-		--text = self:CreateText("center", "text", 0, 0.64-i*0.11, -1.99999, 1.78, 0.08)
-		--self:AddTextToTexture("C2"..i, serverip, 0, 1, 1, 1, text)												-- SOMETHING WRONG WHEN TRYING TO WRITE AN IP
+		text = self:CreateText("center", "text", 0, 0.64-i*0.11, -1.99999, 1.78, 0.08)
+		self:AddTextToTexture("C2"..i, serverip, 0, 1, 1, 1, text)
 		text = self:CreateText("right", "text", 0.89, 0.64-i*0.11, -1.99999, 0.2, 0.08)	
 		self:AddTextToTexture("C3"..i, "["..servernousers.."/"..servermaxusers.."]", 0, 1, 1, 1, text)
 	end
