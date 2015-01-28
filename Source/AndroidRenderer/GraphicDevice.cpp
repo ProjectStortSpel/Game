@@ -432,7 +432,6 @@ void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
     }
 	
 
-	m_dirLightDirection = vec3(_lightPointer[0], _lightPointer[1], _lightPointer[2]);
 	m_shadowMap->UpdateViewMatrix(vec3(8.0f, 0.0f, 8.0f) - (10.0f*normalize(m_dirLightDirection)), vec3(8.0f, 0.0f, 8.0f));
 }
 
