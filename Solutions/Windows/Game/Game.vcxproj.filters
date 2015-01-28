@@ -621,5 +621,8 @@
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\OLD\sv_usernamesystem.lua">
       <Filter>Scripting\Storaspel\Systems\OLD</Filter>
     </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_aicardpickingsystem.lua">
+      <Filter>Scripting\Storaspel\Systems\Server</Filter>
+    </None>
   </ItemGroup>
 </Project>
