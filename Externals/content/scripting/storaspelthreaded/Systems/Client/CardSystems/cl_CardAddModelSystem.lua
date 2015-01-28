@@ -33,7 +33,7 @@ CardAddModelSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, enti
 		scale:SetFloat3(0.9, 0.9, 0.9)
 		
 		local rotation = self:GetComponent(entityId, "Rotation", 0)
-		rotation:SetFloat3(0, 0, 0)
+		rotation:SetFloat3(0, 3.14159265358979, -0.5*3.14159265358979)
 		--rotation:SetFloat3(0, 90, 0)
 		
 		local model = self:GetComponent(entityId, "Model", 0)
