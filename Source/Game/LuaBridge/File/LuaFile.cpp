@@ -48,7 +48,7 @@ namespace LuaBridge
 
 		int Create()
 		{
-#ifndef __ANDROID__
+#if !defined(__ANDROID__) && !defined(__IOS__) && !defined(__OSX__)
 			std::string filepath = LuaEmbedder::PullString(1);
 
 			std::ostringstream ss;
@@ -65,7 +65,7 @@ namespace LuaBridge
 
 		int Append()
 		{
-#ifndef __ANDROID__
+#if !defined(__ANDROID__) && !defined(__IOS__) && !defined(__OSX__)
 			std::string filepath = LuaEmbedder::PullString(1);
 
 			std::ostringstream ss1;
@@ -86,7 +86,7 @@ namespace LuaBridge
 
 		int Open()
 		{
-#ifndef __ANDROID__
+#if !defined(__ANDROID__) && !defined(__IOS__) && !defined(__OSX__)
 			std::string filepath = LuaEmbedder::PullString(1);
 
 			std::ostringstream ss1;
@@ -115,7 +115,7 @@ namespace LuaBridge
 
 		int Close()
 		{
-#ifndef __ANDROID__
+#if !defined(__ANDROID__) && !defined(__IOS__) && !defined(__OSX__)
 			std::string sId = LuaEmbedder::PullString(1);
 			char* end;
 			//uint64_t id = strtoull(sId.c_str(), &end, 16);
@@ -130,7 +130,7 @@ namespace LuaBridge
 
 		int Read()
 		{
-#ifndef __ANDROID__
+#if !defined(__ANDROID__) && !defined(__IOS__) && !defined(__OSX__)
 			std::string sId = LuaEmbedder::PullString(1);
 			char* end;
 			SDL_RWops* file = (SDL_RWops*)strtoull(sId.c_str(), &end, 16);
@@ -159,7 +159,7 @@ namespace LuaBridge
 
 		int ReadLine()
 		{
-#ifndef __ANDROID__
+#if !defined(__ANDROID__) && !defined(__IOS__) && !defined(__OSX__)
 			std::string sId = LuaEmbedder::PullString(1);
 			char* end;
 			SDL_RWops* file = (SDL_RWops*)strtoull(sId.c_str(), &end, 16);
@@ -206,7 +206,7 @@ namespace LuaBridge
 
 		int Write()
 		{
-#ifndef __ANDROID__
+#if !defined(__ANDROID__) && !defined(__IOS__) && !defined(__OSX__)
 			std::string sId = LuaEmbedder::PullString(1);
 			char* end;
 			SDL_RWops* file = (SDL_RWops*)strtoull(sId.c_str(), &end, 16);
@@ -220,7 +220,7 @@ namespace LuaBridge
 
 		int WriteLine()
 		{
-#ifndef __ANDROID__
+#if !defined(__ANDROID__) && !defined(__IOS__) && !defined(__OSX__)
 			/*std::string sId = LuaEmbedder::PullString(1);
 			char* end;
 			SDL_RWops* file = (SDL_RWops*)strtoull(sId.c_str(), &end, 16);

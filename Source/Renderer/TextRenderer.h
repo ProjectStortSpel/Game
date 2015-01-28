@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-class TextRenderer
+class DECLSPEC TextRenderer
 {
 public:
 	TextRenderer();
