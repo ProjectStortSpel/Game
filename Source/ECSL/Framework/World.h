@@ -27,8 +27,6 @@ namespace ECSL
 		World(unsigned int _entityCount, std::vector<SystemWorkGroup*>* _systemWorkGroups, std::vector<unsigned int>* _componentTypeIds);
 		~World();
 
-		void PostInitializeSystems();
-
 		void Update(float _dt);
 
 		unsigned int CreateNewEntity();

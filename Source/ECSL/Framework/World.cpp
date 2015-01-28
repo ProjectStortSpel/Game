@@ -25,11 +25,6 @@ World::~World()
 	delete(m_systemManager);
 }
 
-void World::PostInitializeSystems()
-{
-	m_systemManager->PostInitializeSystems();
-}
-
 void World::Update(float _dt)
 {
 	m_simulation->Update(_dt);
