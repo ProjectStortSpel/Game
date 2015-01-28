@@ -21,9 +21,12 @@ end
 
 DealCardsSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 
+
 	for n = 1, #entities do
 		local entityId = entities[n]
+
 		if world:EntityHasComponent( entityId, "DealCards") then
+
 			local numCards = world:GetComponent( entityId, "DealCards", "NumCards"):GetInt()
 			self:DealCards(numCards)
 
@@ -50,10 +53,6 @@ DealCardsSystem.DealCards = function (self, numCards)
 		if world:EntityHasComponent(players[i], "HasSelectedCards") then
 			world:RemoveComponentFrom("HasSelectedCards", players[i])
 		end
-		
-		local pickingStartedID = Net.StartPack("Client.RemotePickingStarted")
-		Net.WriteInt(pickingStartedID, players[i])
-		Net.Broadcast(pickingStartedID)
 	
 		local ip = world:GetComponent(players[i], "NetConnection", "IpAddress"):GetString()
 		local port = world:GetComponent(players[i], "NetConnection", "Port"):GetInt()

@@ -8,7 +8,13 @@ namespace LuaBridge
 {
 	LuaSystem::LuaSystem(lua_State* L)
 	{
-	  m_L = nullptr;
+	  m_L = 0;
+	}
+
+	LuaSystem::~LuaSystem()
+	{
+		LuaEmbedder::ClearObject<LuaSystem>(m_L, "System", this);
+		m_L = nullptr;
 	}
 
 	void LuaSystem::Embed(lua_State* L)

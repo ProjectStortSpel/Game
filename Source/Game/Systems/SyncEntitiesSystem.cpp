@@ -20,7 +20,7 @@ SyncEntitiesSystem::~SyncEntitiesSystem()
 
 void SyncEntitiesSystem::Initialize()
 {
-	SetSystemName("Sync Entities System");
+	SetSystemName("SyncEntitiesSystem");
 
 	SetUpdateTaskCount(1);
 	SetEntitiesAddedTaskCount(1);

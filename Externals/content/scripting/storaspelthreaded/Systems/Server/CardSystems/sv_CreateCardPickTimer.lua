@@ -20,6 +20,7 @@ CreateCardPickTimer.EntitiesAdded = function(self, dt, taskIndex, taskCount, ent
 		world:CreateComponentAndAddTo("PickingPhaseTimer", newId)
 		world:GetComponent(newId, "PickingPhaseTimer", "Timer"):SetFloat(self.TimeLimit)
 		
+		print("Creating timer with " .. self.TimeLimit)
 		--	Send time amount in message to all players
 	end
 end

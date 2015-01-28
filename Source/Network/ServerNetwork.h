@@ -41,6 +41,8 @@ namespace Network
 		// Bind function which will trigger when another player disconnects from the server
 		void SetOnPlayerTimedOut(NetEvent& _function);
 
+		void ResetNetworkEvents();
+
 		bool IsRunning() { return *m_running; }
 		unsigned int GetMaxConnections() { return *m_maxConnections; }
 

@@ -18,12 +18,12 @@ PlayersSystem.OnEntityAdded = function(self, entityId)
 	print("New Player!")
 	
 	local playerNumber
-	if #PlayersSystem.FreeSlots ~= 0 then
-		playerNumber = PlayersSystem.FreeSlots[1]
-		table.remove(PlayersSystem.FreeSlots, 1)
+	if #self.FreeSlots ~= 0 then
+		playerNumber = self.FreeSlots[1]
+		table.remove(self.FreeSlots, 1)
 	else
-		playerNumber = PlayersSystem.NextSlot
-		PlayersSystem.NextSlot = PlayersSystem.NextSlot + 1
+		playerNumber = self.NextSlot
+		self.NextSlot = self.NextSlot + 1
 	end
 
 	local newEntityId = world:CreateNewEntity("Unit")
@@ -57,7 +57,7 @@ PlayersSystem.OnEntityRemoved = function(self, entityId)
 	print("Rip spelare")
 
 	local plyNum = self:GetComponent(entityId, "PlayerNumber", "Number"):GetInt()
-	table.insert(PlayersSystem.FreeSlots, plyNum)
+	table.insert(self.FreeSlots, plyNum)
 
 	local unitId = self:GetComponent(entityId, "UnitEntityId", "Id"):GetInt()
 

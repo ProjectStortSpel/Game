@@ -1,16 +1,19 @@
 TotemPoleSystem = System()
 
 TotemPoleSystem.Initialize = function(self)
-	self:SetName("TotemPoleSystem System")
-
+	--	Set Name
+	self:SetName("TotemPoleSystem")
+	
+	--	Toggle EntitiesAdded
+	self:UsingEntitiesAdded()
+	
+	--	Set Filter
 	self:AddComponentTypeToFilter("AddTotemPiece", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("TotemPole", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("Finishpoint", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("Checkpoint", FilterType.RequiresOneOf)
 end
 
-TotemPoleSystem.Update = function(self, dt)
-end
 
 TotemPoleSystem.AddTotemPiece = function(self, playerNumber, height, X, Z)
 
@@ -93,60 +96,63 @@ TotemPoleSystem.CheckFinishPoints = function(self, targetFpId, totemId, playerNu
 	
 end
 
-TotemPoleSystem.OnEntityAdded = function(self, entity)
+TotemPoleSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 
-	print("TotemPoleSystem.OnEntityAdded")
+	for n = 1, #entities do
+		local entity = entities[n]
+		--print("TotemPoleSystem.OnEntityAdded")
 
-	if world:EntityHasComponent(entity, "AddTotemPiece") then
-	
-		print("OnEntityAdded New AddTotemPiece")
-	
-		local playerNum 	= world:GetComponent(entity, "PlayerNumber", 0):GetInt()
+		if world:EntityHasComponent(entity, "AddTotemPiece") then
 		
-		local targetCpId	= world:GetComponent(entity, "CheckpointId", 0):GetInt()
-		local totemPoles 	= self:GetEntities("TotemPole")
-		local totemId		= -1
+			--print("OnEntityAdded New AddTotemPiece")
 		
+			local playerNum 	= world:GetComponent(entity, "PlayerNumber", 0):GetInt()
+			
+			local targetCpId	= world:GetComponent(entity, "CheckpointId", 0):GetInt()
+			local totemPoles 	= self:GetEntities("TotemPole")
+			local totemId		= -1
+			
 
-		
-		for i = 1, #totemPoles do
-		
-			local totemCpId = world:GetComponent(totemPoles[i], "CheckpointId", 0):GetInt()
-			if totemCpId == targetCpId then
-				totemId = totemPoles[i]
-				break
+			
+			for i = 1, #totemPoles do
+			
+				local totemCpId = world:GetComponent(totemPoles[i], "CheckpointId", 0):GetInt()
+				if totemCpId == targetCpId then
+					totemId = totemPoles[i]
+					break
+				end
+			
 			end
-		
-		end
-		
-		
-		if totemId == -1 then
-		
-			print("No totemCpId match targetCpId: " .. targetCpId)
-		
-			local newTotemPole = world:CreateNewEntity()
-			world:CreateComponentAndAddTo("TotemPole", newTotemPole)
-			world:CreateComponentAndAddTo("CheckpointId", newTotemPole)
 			
-			world:SetComponent(newTotemPole, "TotemPole", "Height", 0)
-			world:SetComponent(newTotemPole, "CheckpointId", "Id", targetCpId)
-		
-			totemId = newTotemPole
-		
-		end
+			
+			if totemId == -1 then
+			
+				--print("No totemCpId match targetCpId: " .. targetCpId)
+			
+				local newTotemPole = world:CreateNewEntity()
+				world:CreateComponentAndAddTo("TotemPole", newTotemPole)
+				world:CreateComponentAndAddTo("CheckpointId", newTotemPole)
+				
+				world:SetComponent(newTotemPole, "TotemPole", "Height", 0)
+				world:SetComponent(newTotemPole, "CheckpointId", "Id", targetCpId)
+			
+				totemId = newTotemPole
+			
+			end
 
-		print("targetCpId: " .. targetCpId)
-		--print("totemPoles: " .. totemPoles)
-		print("totemId: " .. totemId)
-		print("playerNum: " .. playerNum)
-		
-		local success = self.CheckCheckPoints(self, targetCpId, totemId, playerNum)
-		if not success then
-			print("No checkpoint found")
+			--print("targetCpId: " .. targetCpId)
+			--print("totemPoles: " .. totemPoles)
+			--print("totemId: " .. totemId)
+			--print("playerNum: " .. playerNum)
 			
-			self.CheckFinishPoints(self, targetCpId, totemId, playerNum)
+			local success = self.CheckCheckPoints(self, targetCpId, totemId, playerNum)
+			if not success then
+				--print("No checkpoint found")
+				
+				self.CheckFinishPoints(self, targetCpId, totemId, playerNum)
+				
+			end
 			
 		end
-		
 	end
 end

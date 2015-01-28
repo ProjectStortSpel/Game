@@ -89,10 +89,19 @@ void GameCreator::InitializeNetwork()
 	hook = std::bind(&GameCreator::NetworkGameMode, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 	NetworkInstance::GetClient()->AddNetworkHook("Gamemode", hook);
 
+	m_remoteConsole = new RemoteConsole();
+
+	InitializeNetworkEvents();
+
+}
+
+void GameCreator::InitializeNetworkEvents()
+{
+	NetworkInstance::GetClient()->ResetNetworkEvents();
+	NetworkInstance::GetServer()->ResetNetworkEvents();
+
 	Network::NetEvent netEvent = std::bind(&GameCreator::OnConnectedToServer, this, std::placeholders::_1, std::placeholders::_2);
 	NetworkInstance::GetClient()->SetOnConnectedToServer(netEvent);
-
-	m_remoteConsole = new RemoteConsole();
 }
 
 void GameCreator::InitializeThreads()
@@ -382,8 +391,15 @@ void GameCreator::GameMode(std::string _gamemode)
 void GameCreator::Reload()
 {
 	if (m_world)
+	{
+		if (m_worldProfiler)
+			delete m_worldProfiler;
+
 		delete m_world;
+	}
+		
 	NetworkInstance::GetNetworkHelper()->ResetNetworkMaps();
+	InitializeNetworkEvents();
 	bool server = LuaEmbedder::PullBool(m_clientLuaState, "Server");
 	bool client = LuaEmbedder::PullBool(m_clientLuaState, "Client");
 	LuaEmbedder::Quit();
@@ -558,7 +574,7 @@ void GameCreator::ConsoleStopGame(std::string _command, std::vector<Console::Arg
 
 void GameCreator::OnConnectedToServer(Network::NetConnection _nc, const char* _message)
 {
-	GameMode("storaspel");
+	GameMode("storaspelthreaded");
 }
 
 void GameCreator::ConsoleGameMode(std::string _command, std::vector<Console::Argument>* _args)

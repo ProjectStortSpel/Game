@@ -603,3 +603,20 @@ void ClientNetwork::SetOnRemotePlayerBanned(NetEvent& _function)
 
 	m_onRemotePlayerBanned->push_back(_function);
 }
+
+void ClientNetwork::ResetNetworkEvents()
+{
+	m_onConnectedToServer->clear();
+	m_onDisconnectedFromServer->clear();
+	m_onTimedOutFromServer->clear();
+	m_onFailedToConnect->clear();
+	m_onPasswordInvalid->clear();
+	m_onKickedFromServer->clear();
+	m_onBannedFromServer->clear();
+	m_onServerFull->clear();
+	m_onRemotePlayerConnected->clear();
+	m_onRemotePlayerDisconnected->clear();
+	m_onRemotePlayerTimedOut->clear();
+	m_onRemotePlayerKicked->clear();
+	m_onRemotePlayerBanned->clear();
+}
