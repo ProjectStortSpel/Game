@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include "ECSL/Managers/ComponentTypeManager.h"
+#include <sstream>
 
 using namespace ECSL;
 
@@ -99,7 +100,7 @@ void SystemManager::SystemEntitiesUpdate()
 		{
 			for (auto system : *workGroup->GetSystems())
 			{
-
+                //printf("System: %s\n", system->GetSystemName().c_str());
 				/* Try add entity to system if it passes filters, else try to remove it */
 				if (entityTable->EntityPassFilters(entityId, system->GetMandatoryFilter()->GetBitSet(), system->GetRequiresOneOfFilter()->GetBitSet(), system->GetExcludedFilter()->GetBitSet()))
 					AddEntityToSystem(entityId, system);
@@ -134,6 +135,18 @@ void SystemManager::GenerateComponentFilter(System* _system, FilterType _filterT
 	for (unsigned int i = 0; i < componentTypes->size(); ++i)
 	{
 		unsigned int componentTypeId = ComponentTypeManager::GetInstance().GetTableId(componentTypes->at(i));
+        
+        if( ComponentTypeManager::GetInstance().GetComponentType(componentTypeId) == 0 )
+        {
+            std::stringstream ss;
+            ss << "System " << _system->GetSystemName().c_str();
+            ss << " is trying to use component \"" << componentTypes->at(i);
+            ss << "\" when it doesn't exist!\n";
+            
+            printf(ss.str().c_str());
+            assert(false);
+        }
+        
 		componentIds.push_back(componentTypeId);
 	}
 	unsigned int componentTypeCount = ComponentTypeManager::GetInstance().GetComponentTypeCount();

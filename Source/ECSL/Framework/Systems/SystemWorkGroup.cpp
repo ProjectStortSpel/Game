@@ -38,6 +38,7 @@ void SystemWorkGroup::Update(float _dt)
 	unsigned int beforeExecution, afterExecution;
 	for (int n = 0; n < m_systems->size(); ++n)
 	{
+        //printf("SystemUpdate: %s\n", m_systems->at(n)->GetSystemName().c_str());
 		beforeExecution = SDL_GetTicks();
 		m_systems->at(n)->Update(_dt);
 		afterExecution = SDL_GetTicks() - beforeExecution;
