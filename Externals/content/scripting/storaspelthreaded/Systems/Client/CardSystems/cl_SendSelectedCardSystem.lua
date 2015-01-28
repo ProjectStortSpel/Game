@@ -13,6 +13,8 @@ SendSelectCardSystem.Initialize = function ( self )
 	--	Set Filter
 	self:AddComponentTypeToFilter("CardSelected", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("ReadyButton", FilterType.RequiresOneOf)
+	
+	print("SendSelectCardSystem initialized!")
 end
 
 SendSelectCardSystem.Update = function(self, dt, taskIndex, taskCount)
@@ -32,7 +34,7 @@ SendSelectCardSystem.Update = function(self, dt, taskIndex, taskCount)
 	
 end
 
-SendSelectCardSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+SendSelectCardSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
 	local button = self:GetEntities("ReadyButton")
 	for i = 1, #button do
 		
