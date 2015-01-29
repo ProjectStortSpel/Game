@@ -38,10 +38,10 @@ DealCardsSystem.DealCards = function (self, numCards)
 	local aiPlayers = self:GetEntities("AI")
 	local cards = self:GetEntities("Card")
 	local cardsLeft = #cards
-	print("DealCards")
-	print("Numplayer: " .. #players)
-	print("NumCards: " .. cardsLeft)
-	print("NumCardsToDeal: " .. numCards)
+	--print("DealCards")
+	--print("Numplayer: " .. #players)
+	--print("NumCards: " .. cardsLeft)
+	--print("NumCardsToDeal: " .. numCards)
 	
 	print("")
 	

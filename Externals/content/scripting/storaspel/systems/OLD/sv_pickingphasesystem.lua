@@ -6,8 +6,8 @@ Net.Receive
 	"PickedCardsFromClient",
 	function(id, ip, port)
 	
-		print("Prio: ", Net.ReadInt(id))
-		print("Card: ", Net.ReadString(id))
+		--print("Prio: ", Net.ReadInt(id))
+		--print("Card: ", Net.ReadString(id))
 	
 	end
 )
@@ -36,7 +36,7 @@ RecievingPickedCards.Update = function(self, dt)
 		end
 	
 	
-		print("TIME IS OUT! RANDOM CARDS! (SERVER)")
+		--print("TIME IS OUT! RANDOM CARDS! (SERVER)")
 		self.PickingTimer = 0.0
 	end
 	
@@ -57,7 +57,7 @@ RecievingPickedCards.OnEntityAdded = function(self, entityId)
 	
 	local pickingPhase = self:GetComponent(entityId, "PickingPhase", 0)
 	self.PickingTimer = pickingPhase:GetFloat()
-	print("Time: ", self.PickingTimer)
+	--print("Time: ", self.PickingTimer)
 end
 
 RecievingPickedCards.OnEntityRemoved = function(self, entityId)

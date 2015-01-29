@@ -46,7 +46,9 @@ CardAddModelSystem.OnEntityAdded = function(self, entityId)
 		model:SetModel("turnaround", "cards", 2)
 	elseif action == "Sprint" then
 		model:SetModel("sprint", "cards", 2)
+	elseif action == "SlingShot" then
+		model:SetModel("slingshot", "cards", 2)
 	else
-		model:SetModel("dodge", "cards", 2)
+		model:SetModel("forward", "cards", 2)
 	end
 end

@@ -8,6 +8,12 @@ TurnAroundSystem.Initialize = function(self)
 end
 
 TurnAroundSystem.OnEntityAdded = function(self, entity)
+
+	if world:EntityHasComponent(entity, "Stunned") then
+		world:SetComponent(entity, "NoSubSteps", "Counter", 1)
+		world:RemoveComponentFrom("UnitTurnAround", entity)
+		return
+	end
 	
 	local dir = world:GetComponent(entity, "Direction", 0)
 	local x, z = dir:GetInt2()
@@ -47,6 +53,7 @@ TurnAroundSystem.OnEntityAdded = function(self, entity)
 	world:GetComponent(entity, "SlerpRotation", "toZ"):SetFloat( 0 )
 	world:GetComponent(entity, "SlerpRotation", "toW"):SetFloat( math.pi )
 
+	world:SetComponent(entity, "NoSubSteps", "Counter", 1)
 	world:RemoveComponentFrom("UnitTurnAround", entity)
 end
 
@@ -61,6 +68,12 @@ TurnLeftSystem.Initialize = function(self)
 end
 
 TurnLeftSystem.OnEntityAdded = function(self, entity)
+
+	if world:EntityHasComponent(entity, "Stunned") then
+		world:SetComponent(entity, "NoSubSteps", "Counter", 1)
+		world:RemoveComponentFrom("UnitTurnLeft", entity)
+		return
+	end
 	
 	local dir = world:GetComponent(entity, "Direction", 0)
 	local rot = world:GetComponent(entity, "Rotation", 0)
@@ -104,7 +117,7 @@ TurnLeftSystem.OnEntityAdded = function(self, entity)
 	world:GetComponent(entity, "SlerpRotation", "toW"):SetFloat(math.pi/2)
 	
 	dir:SetInt2(x, z)
-
+	world:SetComponent(entity, "NoSubSteps", "Counter", 1)
 	world:RemoveComponentFrom("UnitTurnLeft", entity)
 
 end
@@ -119,6 +132,13 @@ TurnRightSystem.Initialize = function(self)
 end
 
 TurnRightSystem.OnEntityAdded = function(self, entity)
+
+	if world:EntityHasComponent(entity, "Stunned") then
+		world:SetComponent(entity, "NoSubSteps", "Counter", 1)
+		world:RemoveComponentFrom("UnitTurnRight", entity)
+		return
+	end
+
 
 	local dir = world:GetComponent(entity, "Direction", 0)
 	local x, z = dir:GetInt2()
@@ -159,6 +179,7 @@ TurnRightSystem.OnEntityAdded = function(self, entity)
 	world:GetComponent(entity, "SlerpRotation", "toW"):SetFloat(-math.pi/2)
 	dir:SetInt2(x, z)
 
+	world:SetComponent(entity, "NoSubSteps", "Counter", 1)
 	world:RemoveComponentFrom("UnitTurnRight", entity)
 end
 
@@ -203,6 +224,15 @@ TestMoveSystem.OnEntityAdded = function(self, entity)
 			
 				tmp = false
 				for i = 1, #units do
+				
+					print("UnitId2: " .. units[i])
+					if world:EntityHasComponent(units[i], "Stunned") then
+						local id = world:CreateNewEntity()
+						world:CreateComponentAndAddTo("PostMove", id)
+						world:KillEntity(entity)
+						return
+					end
+				
 					local X2, Z2 = world:GetComponent(units[i], "MapPosition", 0):GetInt2()
 					
 					if X1 == X2 and Z1 == Z2 then
@@ -232,7 +262,7 @@ TestMoveSystem.OnEntityAdded = function(self, entity)
 			end
 			
 			if isWalkable then
-				print("Push units: " .. #moveUnits)
+			--	print("Push units: " .. #moveUnits)
 				for i = 1, #moveUnits do
 					local mapPos 	= world:GetComponent(moveUnits[i], "MapPosition", 0)
 					local pos		= world:GetComponent(moveUnits[i], "Position", 0)
@@ -276,28 +306,29 @@ end
 
 MoveForwardSystem.OnEntityAdded = function(self, entity)
 	
-		local dirX, dirZ = world:GetComponent(entity, "Direction", 0):GetInt2()
-		local mapPosX, mapPosZ = world:GetComponent(entity, "MapPosition", 0):GetInt2()
-
+	print("MoveForwardSystem.OnEntityAdded")
+	local dirX, dirZ = world:GetComponent(entity, "Direction", 0):GetInt2()
+	local mapPosX, mapPosZ = world:GetComponent(entity, "MapPosition", 0):GetInt2()
+    
 	
-		if dirX ~= 0 then
-			dirX = dirX / math.abs(dirX)
-		end
-
-		if dirZ ~= 0 then
-			dirZ = dirZ / math.abs(dirZ)
-		end
-
-		local id = world:CreateNewEntity()
-		world:CreateComponentAndAddTo("TestMove", id)
-		world:SetComponent(id, "TestMove", "Unit", entity)
-		world:SetComponent(id, "TestMove", "PosX", mapPosX)
-		world:SetComponent(id, "TestMove", "PosZ", mapPosZ)
-		world:SetComponent(id, "TestMove", "DirX", dirX)
-		world:SetComponent(id, "TestMove", "DirZ", dirZ)
-		world:SetComponent(id, "TestMove", "Steps", 1)
-
-		world:RemoveComponentFrom("UnitForward", entity)
+	if dirX ~= 0 then
+		dirX = dirX / math.abs(dirX)
+	end
+    
+	if dirZ ~= 0 then
+		dirZ = dirZ / math.abs(dirZ)
+	end
+    
+	local id = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("TestMove", id)
+	world:SetComponent(id, "TestMove", "Unit", entity)
+	world:SetComponent(id, "TestMove", "PosX", mapPosX)
+	world:SetComponent(id, "TestMove", "PosZ", mapPosZ)
+	world:SetComponent(id, "TestMove", "DirX", dirX)
+	world:SetComponent(id, "TestMove", "DirZ", dirZ)
+	world:SetComponent(id, "TestMove", "Steps", 1)
+    
+	world:RemoveComponentFrom("UnitForward", entity)
 end
 
 MoveBackwardSystem = System()
@@ -311,6 +342,7 @@ end
 
 MoveBackwardSystem.OnEntityAdded = function(self, entity)
 	
+	print("MoveBackwardSystem.OnEntityAdded")
 	local dirX, dirZ = world:GetComponent(entity, "Direction", 0):GetInt2()
 	local mapPosX, mapPosZ = world:GetComponent(entity, "MapPosition", 0):GetInt2()
 
@@ -348,6 +380,7 @@ end
 
 AbilitySprintSystem.OnEntityAdded = function(self, entity)
 	
+	print("AbilitySprintSystem.OnEntityAdded")
 	local dirX, dirZ = world:GetComponent(entity, "Direction", 0):GetInt2()
 	local mapPosX, mapPosZ = world:GetComponent(entity, "MapPosition", 0):GetInt2()
 

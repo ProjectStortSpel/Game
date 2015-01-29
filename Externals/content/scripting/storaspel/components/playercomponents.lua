@@ -60,6 +60,12 @@ NoSubStepsComponent.TableType = TableType.Map
 NoSubStepsComponent:AddVariable("Counter", ByteSize.Int)
 worldCreator:AddComponentType(NoSubStepsComponent)
 
+-- Stunned Component
+local StunnedComponent = ComponentType()
+StunnedComponent.Name = "Stunned"
+StunnedComponent.TableType = TableType.Map
+worldCreator:AddComponentType(StunnedComponent)
+
 -- Spawn Component
 local SpawnComponent = ComponentType()
 SpawnComponent.Name = "Spawn"

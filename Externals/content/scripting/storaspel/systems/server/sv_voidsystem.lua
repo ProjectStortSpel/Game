@@ -33,7 +33,7 @@ VoidSystem.OnEntityAdded = function(self, entity)
 					
 				local tmpX = unitX - (dirX * tmp)
 				local tmpZ = unitZ - (dirZ * tmp)
-
+			
 				for j = 1, #voids do
 					
 					local voidX, voidZ = world:GetComponent(voids[j], "MapPosition", 0):GetInt2() 
@@ -54,6 +54,7 @@ VoidSystem.OnEntityAdded = function(self, entity)
 					end
 
 				end
+				
 			end
 		end
 

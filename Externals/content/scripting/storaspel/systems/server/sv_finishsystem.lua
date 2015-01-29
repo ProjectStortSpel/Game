@@ -59,7 +59,7 @@ FinishSystem.OnEntityAdded = function(self, entity)
 							-- Get the player id and number that is controlling the unit
 							local playerId = world:GetComponent(units[j], "PlayerEntityId", "Id"):GetInt()
 							local playerNum = world:GetComponent(units[j], "PlayerNumber", 0):GetInt()
-							print("Player#" .. playerNum .. " has reached the finishpoint!")
+							--print("Player#" .. playerNum .. " has reached the finishpoint!")
 							
 							-- Add a new piece to the totempole at the finishpoint
 							--self.AddTotemPole(self, playerNum, i, 0, finishPosX, 1, finishPosZ)
@@ -80,17 +80,17 @@ FinishSystem.OnEntityAdded = function(self, entity)
 							world:CreateComponentAndAddTo("IsSpectator", playerId)
 							
 							
-							print("finishPoints[i]: " .. finishPoints[i])
+							--print("finishPoints[i]: " .. finishPoints[i])
 							
 							local totemPieceId = world:CreateNewEntity()
 							world:CreateComponentAndAddTo("AddTotemPiece", totemPieceId)
 							world:CreateComponentAndAddTo("PlayerNumber", totemPieceId)
 							world:CreateComponentAndAddTo("CheckpointId", totemPieceId)
-							print("CreateComponentAndAddTo done")
+							--print("CreateComponentAndAddTo done")
 							world:SetComponent(totemPieceId, "PlayerNumber", "Number", playerNum)
-							print("PlayerNumber done")
+							--print("PlayerNumber done")
 							world:SetComponent(totemPieceId, "CheckpointId", "Id", finishPoints[i])
-							print("CheckpointId done")
+							--print("CheckpointId done")
 							
 							-- Kill the unit entity
 							--world:KillEntity(units[j])

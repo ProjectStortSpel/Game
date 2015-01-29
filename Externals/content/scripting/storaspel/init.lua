@@ -53,6 +53,7 @@ if Server then
 	require "sv_gameoversystem"
 	
 	require "sv_moveplayersystem"
+	require "sv_abilitycardsystem"
 
 	require "sv_steptimersystem"
 	require "sv_playcardtimersystem"
@@ -166,6 +167,8 @@ if Server then
 	worldCreator:AddSystemToCurrentGroup(MoveForwardSystem)
 	worldCreator:AddSystemToCurrentGroup(MoveBackwardSystem)
 	worldCreator:AddSystemToCurrentGroup(AbilitySprintSystem)
+	worldCreator:AddSystemToCurrentGroup(AbilityNudgeSystem)
+	worldCreator:AddSystemToCurrentGroup(AbilitySlingShotSystem)
 	worldCreator:AddSystemToCurrentGroup(TestMoveSystem)
 	
 	worldCreator:AddSystemToCurrentGroup(StepTimerSystem)

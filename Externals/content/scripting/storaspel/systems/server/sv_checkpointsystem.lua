@@ -64,7 +64,7 @@ CheckpointSystem.OnEntityAdded = function(self, entity)
 				world:SetComponent(newId, "UnitEntityId", "Id", units[i])
 			
 			else
-				local noSteps = world:GetComponent(units[i], "NoSubSteps", 0):GetInt()
+				local noSteps	 = world:GetComponent(units[i], "NoSubSteps", 0):GetInt()
 				local dirX, dirZ = world:GetComponent(units[i], "Direction", 0):GetInt2()
 				
 				if dirX ~= 0 then
@@ -77,10 +77,8 @@ CheckpointSystem.OnEntityAdded = function(self, entity)
 				
 				-- Get the unit's MapPosition
 				local unitPosX, unitPosZ = world:GetComponent(units[i], "MapPosition", 0):GetInt2()
-								
+						
 				for tmp = noSteps - 1, 0, -1 do
-					print("TMP: " .. tmp)
-					print("noSteps: " .. noSteps)
 					
 					--if n > 0 then os.execute("ping -n " .. tonumber(1000+1) .. " localhost > NUL") end
 					
@@ -133,7 +131,6 @@ CheckpointSystem.OnEntityAdded = function(self, entity)
 					
 				
 				end
-			
 			end
 		
 		end

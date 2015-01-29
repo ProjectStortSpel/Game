@@ -23,6 +23,11 @@ CheckpointComponent.TableType = TableType.Map
 CheckpointComponent:AddVariable("Number", ByteSize.Int)
 worldCreator:AddComponentType(CheckpointComponent)
 
+-- SlingShotComponent
+local SlingShotComponent = ComponentType()
+SlingShotComponent.Name = "SlingShotComponent"
+SlingShotComponent.TableType = TableType.Map
+worldCreator:AddComponentType(SlingShotComponent)
 
 -- Finishpoint Component
 local FinishpointComponent = ComponentType()
