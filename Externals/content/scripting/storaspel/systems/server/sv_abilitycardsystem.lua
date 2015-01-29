@@ -78,11 +78,15 @@ AbilitySlingShotSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("NotWalkable", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("DealCards", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("SlingShotComponent", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("MapSize", FilterType.RequiresOneOf)
+	
 end
 
 AbilitySlingShotSystem.Update = function(self, dt)
 
 	local entites = self:GetEntities("UnitSlingShot")
+	local mapSize = self:GetEntities("MapSize")
+	local mapSizeX, mapSizeZ = world:GetComponent(mapSize[1], "MapSize", 0):GetInt2()
 	for i = 1, #entites do
 	
 		local hitSomething = false
@@ -104,7 +108,24 @@ AbilitySlingShotSystem.Update = function(self, dt)
 			
 			-- Make sure we are not outside the map
 			-- Get the map size somehow
-			if currentPosX > 0 or currentPosZ > 0 then
+			
+			if currentPosX < 1 or currentPosZ < 1
+			or currentPosX > mapSizeX or currentPosZ > mapSizeZ then
+			
+				print("currentPosX: " .. currentPosX)
+				print("currentPosZ: " .. currentPosZ)
+				print("mapSizeX: " .. mapSizeX)
+				print("mapSizeZ: " .. mapSizeZ)
+			
+				local bullet = world:CreateNewEntity("SlingShot")
+				world:CreateComponentAndAddTo("LerpTargetPosition", bullet)
+				world:CreateComponentAndAddTo("LerpTime", bullet)
+				world:GetComponent(bullet, "Position", 0):SetFloat3(mapPosX, 1, mapPosZ)
+				world:GetComponent(bullet, "LerpTargetPosition", 0):SetFloat3(currentPosX, 1, currentPosZ)
+				self:GetComponent(bullet, "LerpTime", 0):SetFloat2(0.5, 0)
+				break
+				
+			else
 
 				-- loop through all units and not walkable entities
 				local units = self:GetEntities()

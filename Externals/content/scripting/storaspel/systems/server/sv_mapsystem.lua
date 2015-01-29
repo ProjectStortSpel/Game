@@ -204,7 +204,7 @@ MapSystem.PostInitialize = function(self)
 	local mapEntity = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("MapSize", mapEntity)
 	self:GetComponent(mapEntity, "MapSize", 0):SetInt2(self.mapX, self.mapY)
-	    
+    
 	local activeEntities = MapSystem.entities
 	local waterTiles = {}
 	for i = 1, #activeEntities do
