@@ -30,7 +30,7 @@ void ECSLThreadView::Update(ECSLStatistics* _frontBufferStatistics)
 	m_textEntries->push_back(textEntry);
 	y += TextHeight + TextHeight;
 
-	text = std::stringstream();
+	text.str(std::string());
 	text << "Efficiency";
 	textEntry = new TextEntry();
 	textEntry->x = x;
@@ -47,7 +47,7 @@ void ECSLThreadView::Update(ECSLStatistics* _frontBufferStatistics)
 		const float* max = _frontBufferStatistics->GetMaxThreadEfficiency();
 		const float* diff = _frontBufferStatistics->GetDiffThreadEfficiency();
 
-		text = std::stringstream();
+		text.str(std::string());
 		text << i << " | " << avg[i] * 100.0f << "% | " << min[i] * 100.0f << "% | "
 			<< max[i] * 100.0f << "% | " << diff[i] * 100.0f << "%";
 		textEntry = new TextEntry();
@@ -60,7 +60,7 @@ void ECSLThreadView::Update(ECSLStatistics* _frontBufferStatistics)
 	}
 	y += TextHeight;
 
-	text = std::stringstream();
+	text.str(std::string());
 	text << "Work Time";
 	textEntry = new TextEntry();
 	textEntry->x = x;
@@ -77,7 +77,7 @@ void ECSLThreadView::Update(ECSLStatistics* _frontBufferStatistics)
 		const float* max = _frontBufferStatistics->GetMaxThreadWorkTime();
 		const float* diff = _frontBufferStatistics->GetDiffThreadWorkTime();
 
-		text = std::stringstream();
+		text.str(std::string());
 		text << i << " | " << avg[i] << " | " << min[i] << " | "
 			<< max[i] << " | " << diff[i];
 		textEntry = new TextEntry();
@@ -90,7 +90,7 @@ void ECSLThreadView::Update(ECSLStatistics* _frontBufferStatistics)
 	}
 	y += TextHeight;
 
-	text = std::stringstream();
+	text.str(std::string());
 	text << "Overhead Time";
 	textEntry = new TextEntry();
 	textEntry->x = x;
@@ -107,7 +107,7 @@ void ECSLThreadView::Update(ECSLStatistics* _frontBufferStatistics)
 		const float* max = _frontBufferStatistics->GetMaxThreadOverheadTime();
 		const float* diff = _frontBufferStatistics->GetDiffThreadOverheadTime();
 
-		text = std::stringstream();
+		text.str(std::string());
 		text << i << " | " << avg[i] << " | " << min[i] << " | "
 			<< max[i] << " | " << diff[i];
 		textEntry = new TextEntry();
