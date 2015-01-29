@@ -136,6 +136,7 @@ void ECSLProfiler::End()
 {
 	if (m_state == State::INACTIVE)
 		return;
+	m_threadLogger->EndSession();
 	m_currentFrame = CreateFrame();
 }
 

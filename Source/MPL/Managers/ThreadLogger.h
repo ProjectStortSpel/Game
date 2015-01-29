@@ -61,6 +61,8 @@ namespace MPL
 		/* Creates a new session. Current sessions' memory will be cleared, but not a pulled sessions memory. */
 		void CreateNewSession();
 
+		void EndSession();
+
 		/* Pulls the current session. Don't forget to free its memory. */
 		LoggedSession* PullSession();
 

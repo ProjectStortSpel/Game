@@ -175,25 +175,25 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	//nms->SetConsole(&m_consoleManager);
 
 	worldCreator.AddSystemGroup();
-	worldCreator.AddLuaSystemToCurrentGroup(new PointlightSystem(m_graphics));
+	worldCreator.AddSystemToCurrentGroup<PointlightSystem>(m_graphics);
 	worldCreator.AddSystemGroup();
-	worldCreator.AddLuaSystemToCurrentGroup(new DirectionalLightSystem(m_graphics));
+	worldCreator.AddSystemToCurrentGroup<DirectionalLightSystem>(m_graphics);
 	worldCreator.AddSystemGroup();
-	worldCreator.AddLuaSystemToCurrentGroup(new RotationSystem());
+	worldCreator.AddSystemToCurrentGroup<RotationSystem>();
 	worldCreator.AddSystemGroup();
-	worldCreator.AddLuaSystemToCurrentGroup(new CameraSystem(m_graphics));
+	worldCreator.AddSystemToCurrentGroup<CameraSystem>(m_graphics);
 	worldCreator.AddSystemGroup();
-	worldCreator.AddLuaSystemToCurrentGroup(new ModelSystem(m_graphics));
+	worldCreator.AddSystemToCurrentGroup<ModelSystem>(m_graphics);
 	worldCreator.AddSystemGroup();
-	worldCreator.AddLuaSystemToCurrentGroup(new SyncEntitiesSystem());
+	worldCreator.AddSystemToCurrentGroup<SyncEntitiesSystem>();
 	//worldCreator.AddLuaSystemToCurrentGroup(new ReceivePacketSystem());
 	worldCreator.AddSystemGroup();
-	worldCreator.AddLuaSystemToCurrentGroup(new RenderSystem(m_graphics));
+	worldCreator.AddSystemToCurrentGroup<RenderSystem>(m_graphics);
 	//worldCreator.AddLuaSystemToCurrentGroup(new ReconnectSystem());
 	worldCreator.AddSystemGroup();
-	worldCreator.AddLuaSystemToCurrentGroup(new RenderRemoveSystem(m_graphics));
+	worldCreator.AddSystemToCurrentGroup<RenderRemoveSystem>(m_graphics);
 	worldCreator.AddSystemGroup();
-	worldCreator.AddLuaSystemToCurrentGroup(new ResetChangedSystem());
+	worldCreator.AddSystemToCurrentGroup<ResetChangedSystem>();
 
 	m_world = worldCreator.CreateWorld(1000);
 	LuaEmbedder::AddObject<ECSL::World>(m_clientLuaState, "World", m_world, "world");

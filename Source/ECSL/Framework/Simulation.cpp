@@ -72,5 +72,6 @@ void Simulation::Update(float _dt)
 	/* Clear all the used lists in DataManager */
 	MPL::TaskId clearCopiedLists = m_scheduler->ScheduleClearCopiedLists(recycleEntityIds);
 
+	/* Main thread helps with tasks while waiting */
 	MPL::TaskManager::GetInstance().WaitFor(clearCopiedLists);
 }

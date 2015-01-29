@@ -123,5 +123,4 @@ void ECSLGeneralView::Update(ECSLStatistics* _frontBufferStatistics)
 	textEntry->text = new std::string(text.str());
 	textEntry->height = TextHeight;
 	m_textEntries->push_back(textEntry);
-	y += TextHeight + TextHeight;
 }

@@ -41,13 +41,32 @@ void ThreadLogger::CreateNewSession()
 	m_currentSession->sessionStartTime = Now();
 }
 
+void ThreadLogger::EndSession()
+{
+	Uint64 now = Now();
+	m_currentSession->sessionEndTime = now;
+	m_currentSession->sessionDuration = Duration(m_currentSession->sessionEndTime, m_currentSession->sessionStartTime);
+
+	/* Add the last overhead action to each thread (from last work -> end session) */
+	for (unsigned int threadIndex = 0; threadIndex < m_currentSession->threadCount; ++threadIndex)
+	{
+		std::vector<LoggedAction*>* actions = (*m_currentSession->threadLogs)[threadIndex];
+
+		LoggedAction* loggedAction = new LoggedAction();
+		loggedAction->type = ActionType::OVERHEAD;
+		loggedAction->creationTime = now;
+		loggedAction->duration = actions->size() == 0
+			? Duration(now, m_currentSession->sessionStartTime)
+			: Duration(now, (*actions).back()->creationTime);
+		AddNewAction(threadIndex, loggedAction);
+	}
+}
+
 LoggedSession* ThreadLogger::PullSession()
 {
 	if (!m_currentSession)
 		return 0;
 
-	m_currentSession->sessionEndTime = Now();
-	m_currentSession->sessionDuration = Duration(m_currentSession->sessionEndTime, m_currentSession->sessionStartTime);
 	LoggedSession* currentSession = m_currentSession;
 	m_currentSession = 0;
 	return currentSession;

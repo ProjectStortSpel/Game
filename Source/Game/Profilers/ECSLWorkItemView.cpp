@@ -81,8 +81,6 @@ void ECSLWorkItemView::Update(ECSLStatistics* _frontBufferStatistics)
 			textEntry->height = TextHeight;
 			m_textEntries->push_back(textEntry);
 
-			printf("Name:%s\n", workItem->name->c_str());
-
 			y += TextHeight;
 		}
 

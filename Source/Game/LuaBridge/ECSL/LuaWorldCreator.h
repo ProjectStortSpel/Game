@@ -25,10 +25,10 @@ namespace LuaBridge
 
     void AddSystemGroup() { ECSL::WorldCreator::AddSystemGroup(); }
 
-    template<typename SystemType>
-    void AddSystemToNewGroup() { ECSL::WorldCreator::AddSystemToNewGroup<SystemType>(); }
-    template<typename SystemType>
-    void AddSystemToCurrentGroup() { ECSL::WorldCreator::AddSystemToCurrentGroup<SystemType>(); }
+	template<typename SystemType, typename... Args>
+	void AddSystemToNewGroup(Args&&... args) { ECSL::WorldCreator::AddSystemToNewGroup<SystemType>(std::forward<Args>(args)...); }
+	template<typename SystemType, typename... Args>
+	void AddSystemToCurrentGroup(Args&&... args) { ECSL::WorldCreator::AddSystemToCurrentGroup<SystemType>(std::forward<Args>(args)...); }
     void AddLuaSystemToCurrentGroup(ECSL::System* _system) { ECSL::WorldCreator::AddLuaSystemToCurrentGroup(_system); }
 
     ECSL::World* CreateWorld(unsigned int _entityCount) { return ECSL::WorldCreator::CreateWorld(_entityCount); }

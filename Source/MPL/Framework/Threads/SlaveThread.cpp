@@ -58,7 +58,7 @@ int SlaveThread::ThreadLoop()
 				WakeThreads();
 		}
 		else
-			Sleep();		
+			Sleep();
 	}
 	return 0;
 }

@@ -21,8 +21,18 @@ void ECSLThreadView::Update(ECSLStatistics* _frontBufferStatistics)
 	unsigned int y = StartPosY;
 
 	std::stringstream text;
-	text << "Thread ID | Average | Min | Max | Difference (Max - Min)";
+	text << "Last Thread ID is the main thread. The other ones are slaves.";
 	TextEntry* textEntry = new TextEntry();
+	textEntry->x = x;
+	textEntry->y = y;
+	textEntry->text = new std::string(text.str());
+	textEntry->height = TextHeight;
+	m_textEntries->push_back(textEntry);
+	y += TextHeight + TextHeight;
+
+	text.str(std::string());
+	text << "Thread ID | Average | Min | Max | Difference (Max - Min)";
+	textEntry = new TextEntry();
 	textEntry->x = x;
 	textEntry->y = y;
 	textEntry->text = new std::string(text.str());
@@ -118,5 +128,4 @@ void ECSLThreadView::Update(ECSLStatistics* _frontBufferStatistics)
 		m_textEntries->push_back(textEntry);
 		y += TextHeight;
 	}
-	y += TextHeight;
 }
