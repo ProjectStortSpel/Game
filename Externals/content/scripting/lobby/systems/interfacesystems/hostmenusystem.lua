@@ -1,7 +1,10 @@
-GameMenuSystem = System()
-GameMenuSystem.Name = "GameMenu"
+HostMenuSystem = System()
+HostMenuSystem.Name = "HostMenu"
+HostMenuSystem.ServerStartIndex = 1
+HostMenuSystem.ServerEndIndex = 1
+HostMenuSystem.doRefresh = true
 
-GameMenuSystem.Update = function(self, dt)
+HostMenuSystem.Update = function(self, dt)
 	if Input.GetTouchState(0) == InputState.Released then
 
 		local pressedButtons = self:GetEntities("OnPickBoxHit")
@@ -23,49 +26,63 @@ GameMenuSystem.Update = function(self, dt)
 		end
 		
 	end
+	
 
 end
 
-GameMenuSystem.OnEntityAdded = function(self, entityId)
+HostMenuSystem.OnEntityAdded = function(self, entityId)
 	if world:EntityHasComponent(entityId, self.Name) then
 		self:SpawnMenu()
 	end
 end
 
-GameMenuSystem.SpawnMenu = function(self)
-	local background = self:CreateElement("gamemenubackground", "quad", 0, -0, -3.1, 1.5, 2)
-		
+HostMenuSystem.SpawnMenu = function(self)
+	local background = self:CreateElement("gamemenubackground", "quad", 0, 0, -2.5, 2.07, 1.3)
+	
 	local button = nil
-	button = self:CreateElement("options", "quad", 0, 0.6, -3, 0.6, 0.3)
-	self:AddEntityCommandToButton("OptionMenu", button)
-	self:AddHoverSize(1.1, button)	
-
-	button = self:CreateElement("quit", "quad", 0, -0.6, -3, 0.6, 0.3)
-	self:AddConsoleCommandToButton("quit", button)
+	button = self:CreateElement("host", "quad", 0, 0.6, -2, 0.6, 0.3)
+	self:AddConsoleCommandToButton("host;gamemode storaspel", button)
 	self:AddHoverSize(1.1, button)	
 end
 
-GameMenuSystem.RemoveMenu = function(self)
+HostMenuSystem.RemoveMenu = function(self)
 	local entities = self:GetEntities()
 	for i = 1, #entities do
 		world:KillEntity(entities[i])
 	end
 end
 
-GameMenuSystem.Initialize = function(self)
-	self:SetName("GameMenuSystem")
+HostMenuSystem.Initialize = function(self)
+	self:SetName(self.Name.."System")
 	self:AddComponentTypeToFilter(self.Name, FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter(self.Name.."Element", FilterType.RequiresOneOf)
 end
 
-GameMenuSystem.CreateElement = function(self, object, folder, posx, posy, posz, scalex, scaley)
+HostMenuSystem.CreateText = function(self, object, folder, posx, posy, posz, scalex, scaley)
+	local id = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("Model", id)
+	world:CreateComponentAndAddTo("Position", id)
+	world:CreateComponentAndAddTo("Rotation", id)
+	world:CreateComponentAndAddTo("Scale", id)
+	world:CreateComponentAndAddTo(self.Name.."Element", id)
+	local model = self:GetComponent(id, "Model", 0)
+	model:SetModel(object, folder, 2)
+	local position = self:GetComponent(id, "Position", 0)
+	position:SetFloat3(posx, posy, posz)
+	local scale = self:GetComponent(id, "Scale", 0)
+	scale:SetFloat3(scalex, scaley, 1)
+	local rotation = self:GetComponent(id, "Rotation", 0)
+	rotation:SetFloat3(0, 0, 0)
+	return id	
+end
+
+HostMenuSystem.CreateElement = function(self, object, folder, posx, posy, posz, scalex, scaley)
 	local id = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("Model", id)
 	world:CreateComponentAndAddTo("Position", id)
 	world:CreateComponentAndAddTo("Rotation", id)
 	world:CreateComponentAndAddTo("Scale", id)
 	world:CreateComponentAndAddTo("PickBox", id)
-	
 	world:CreateComponentAndAddTo(self.Name.."Element", id)
 	local model = self:GetComponent(id, "Model", 0)
 	model:SetModel(object, folder, 2)
@@ -80,17 +97,27 @@ GameMenuSystem.CreateElement = function(self, object, folder, posx, posy, posz, 
 	return id	
 end
 
-GameMenuSystem.AddConsoleCommandToButton = function(self, command, button)
+HostMenuSystem.AddTextToTexture = function(self, n, text, font, r, g, b, button)
+	world:CreateComponentAndAddTo("TextTexture", button)
+	world:GetComponent(button, "TextTexture", "Name"):SetString(n) -- TODO: NAME CANT BE MORE THAN 3 CHARS? WTF?
+	world:GetComponent(button, "TextTexture", "Text"):SetString(text)
+	world:GetComponent(button, "TextTexture", "FontIndex"):SetInt(font)
+	world:GetComponent(button, "TextTexture", "R"):SetFloat(r)
+	world:GetComponent(button, "TextTexture", "G"):SetFloat(g)
+	world:GetComponent(button, "TextTexture", "B"):SetFloat(b)
+end
+
+HostMenuSystem.AddConsoleCommandToButton = function(self, command, button)
 	world:CreateComponentAndAddTo("MenuConsoleCommand", button)
 	world:GetComponent(button, "MenuConsoleCommand", "Command"):SetString(command)
 end
 
-GameMenuSystem.AddEntityCommandToButton = function(self, command, button)
+HostMenuSystem.AddEntityCommandToButton = function(self, command, button)
 	world:CreateComponentAndAddTo("MenuEntityCommand", button)
 	world:GetComponent(button, "MenuEntityCommand", "ComponentName"):SetString(command)
 end
 
-GameMenuSystem.AddHoverSize = function(self, deltascale, button)
+HostMenuSystem.AddHoverSize = function(self, deltascale, button)
 	local scale = self:GetComponent(button, "Scale", 0)
 	local sx, sy, sz = scale:GetFloat3()
 	world:CreateComponentAndAddTo("HoverSize", button)
@@ -98,7 +125,6 @@ GameMenuSystem.AddHoverSize = function(self, deltascale, button)
 	hoversize:SetFloat3(sx*deltascale, sy*deltascale, sz*deltascale)
 end
 
-
-GameMenuSystem.PostInitialize = function(self)
+HostMenuSystem.PostInitialize = function(self)
 
 end
