@@ -20,6 +20,7 @@ RiverComponent.Name = "River"
 RiverComponent.TableType = TableType.Map
 RiverComponent:AddVariable("DirX", ByteSize.Int)
 RiverComponent:AddVariable("DirZ", ByteSize.Int)
+RiverComponent:AddVariable("Speed", ByteSize.Int)
 worldCreator:AddComponentType(RiverComponent)
 
 -- Checkpoint Component
