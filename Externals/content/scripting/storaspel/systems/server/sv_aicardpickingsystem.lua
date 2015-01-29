@@ -92,7 +92,7 @@ AiCardPickingSystem.TryMove = function(self, CardSetAI, card)
 		end
 	end
 end
-AiCardPickingSystem.AIPickCards = function( self, CardSetAI, dirX, dirY, posX, posY, targetX, targetY )
+AiCardPickingSystem.AIPickCards = function( self, CardSetAI, dirX, dirY, posX, posY, targetX, targetY)
 	
 	local pickedcards = {}
 	if #CardSetAI >= 5 then
@@ -218,8 +218,6 @@ AiCardPickingSystem.AIPickCards = function( self, CardSetAI, dirX, dirY, posX, p
 
 				table.remove(CardSetAI, cardNr)
 			end
-
-			
 			
 		end
 	end
