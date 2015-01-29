@@ -48,13 +48,13 @@ NewCameraSystem.Update = function(self, dt)
 			end
 
 			if move == true then
+				local rposition = self:GetComponent(self.TouchScreen, "Position", 0)
+				rposition:SetFloat3(0, 0, -0.1001)	
 				self.Moved = true
 				self.Camera:SetPosition(self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5, y, self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5)
 			end
 			local rposition = self:GetComponent(self.TouchSprite2, "Position", 0)
-			rposition:SetFloat3(rX, rY, -1)
-			local rposition = self:GetComponent(self.TouchScreen, "Position", 0)
-			rposition:SetFloat3(0, 0, -0.1001)			
+			rposition:SetFloat3(rX, rY, -1)		
 		end
 		if Input.GetTouchState(0) == InputState.Released and self.Pressed == true then
 			self.Pressed = false
