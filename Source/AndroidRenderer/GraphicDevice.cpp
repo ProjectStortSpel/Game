@@ -452,6 +452,10 @@ void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
         m_dirLightDirection = vec3(_lightPointer[0], _lightPointer[1], _lightPointer[2]);
         vec3 intens = vec3(_lightPointer[3], _lightPointer[4], _lightPointer[5]);
         vec3 color = vec3(_lightPointer[6], _lightPointer[7], _lightPointer[8]);
+
+		//SDL_Log("direction: %f, %f, %f", m_dirLightDirection.x, m_dirLightDirection.y, m_dirLightDirection.z);
+		//SDL_Log("Intensity: %f, %f, %f", intens.x, intens.y, intens.z);
+		//SDL_Log("Color: %f, %f, %f", color.x, color.y, color.z);
         
         m_forwardShader.SetUniVariable("dirlight.Direction", vector3, &m_dirLightDirection);
         m_forwardShader.SetUniVariable("dirlight.Intensity", vector3, &intens);
