@@ -104,12 +104,12 @@ void RenderSystem::UpdateMatrix(unsigned int _entityId)
 
 	*Matrix = glm::mat4(1);
 	//CHECK IF IT HAS A PARENT
-	/*if (EntityHasComponent(_entityId, m_parentId))
+	if (EntityHasComponent(_entityId, m_parentId))
 	{
 		int* Parent = (int*)GetComponent(_entityId, m_parentId, 0);
 		//GET PARENT MATRIX
 		*Matrix = *(glm::mat4*)GetComponent(*Parent, m_renderId, m_renderOffset);
-	}*/
+	}
 
 	*Matrix *= glm::translate(glm::vec3(Position[0], Position[1], Position[2]));
 
