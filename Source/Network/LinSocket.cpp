@@ -21,7 +21,12 @@ LinSocket::LinSocket()
 	Initialize();
 
 	*m_socket = socket(AF_INET, SOCK_STREAM, 0);
-
+    
+#if defined(__IOS__) || defined(__OSX__)
+    int set = 1;
+    setsockopt(*m_socket, SOL_SOCKET, SO_NOSIGPIPE, (void *)&set, sizeof(int));
+#endif
+    
 	if (*m_socket != -1)
 	{
 		*m_remoteAddress = "";
@@ -46,7 +51,12 @@ LinSocket::LinSocket(int _socket)
 	Initialize();
 
 	*m_socket = _socket;
-
+    
+#if defined(__IOS__) || defined(__OSX__)
+    int set = 1;
+    setsockopt(*m_socket, SOL_SOCKET, SO_NOSIGPIPE, (void *)&set, sizeof(int));
+#endif
+    
 	if (*m_socket != -1)
 	{
 		*m_remoteAddress = "";
@@ -70,7 +80,12 @@ LinSocket::LinSocket(int _domain, int _type, int _protocol)
 	Initialize();
 
 	*m_socket = socket(_domain, _type, _protocol);
-
+    
+#if defined(__IOS__) || defined(__OSX__)
+    int set = 1;
+    setsockopt(*m_socket, SOL_SOCKET, SO_NOSIGPIPE, (void *)&set, sizeof(int));
+#endif
+    
 	if (*m_socket != -1)
 	{
 		*m_remoteAddress = "";
@@ -325,6 +340,16 @@ int LinSocket::Receive(char* _buffer, int _length, int _flags)
 
 int LinSocket::Send(char* _buffer, int _length, int _flags)
 {
+#if !defined(__IOS__) && !defined(__OSX__)
+    
+    if (_flags == 0)
+    {
+        _flags = MSG_NOSIGNAL;
+    }
+    
+#endif
+    
+    
 	static short len = 0;
 	len = htons(_length);
 	if (send(*m_socket, (void*)&len, 2, _flags) != -1)

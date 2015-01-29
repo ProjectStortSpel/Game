@@ -1,3 +1,9 @@
+-- Create Map Component
+local CreateMapComponent = ComponentType()
+CreateMapComponent.Name = "CreateMap"
+CreateMapComponent.TableType = TableType.Map
+CreateMapComponent:AddVariable("MapName", ByteSize.Text)
+worldCreator:AddComponentType(CreateMapComponent)
 
 -- Map Position Component
 local MapPositionComponent = ComponentType()
@@ -23,7 +29,6 @@ CheckpointComponent.Name = "Checkpoint"
 CheckpointComponent.TableType = TableType.Map
 CheckpointComponent:AddVariable("Number", ByteSize.Int)
 worldCreator:AddComponentType(CheckpointComponent)
-
 
 -- Finishpoint Component
 local FinishpointComponent = ComponentType()

@@ -1055,7 +1055,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
-					__ANDROID__,
 					__IOS__,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
@@ -1142,10 +1141,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					__ANDROID__,
-					__IOS__,
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = __IOS__;
 				INFOPLIST_FILE = StoraSpel/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

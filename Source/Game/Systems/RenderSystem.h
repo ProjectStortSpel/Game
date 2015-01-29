@@ -2,7 +2,7 @@
 #define RENDERSYSTEM_H
 
 #include "ECSL/Interfaces/System.h"
-#ifdef __ANDROID__
+#if defined(__ANDROID__) || defined(__IOS__)
 #include "AndroidRenderer/GraphicDevice.h"
 #else
 #include "Renderer/GraphicDevice.h"
@@ -30,6 +30,9 @@ private:
 	unsigned int m_positionId, m_rotationId;
 	unsigned int m_scaleId;
 	unsigned int m_renderId, m_renderOffset;
+
+	unsigned int m_parentId;
+	unsigned int m_isparentId;
 
 	Renderer::GraphicDevice* m_graphics;
 };
