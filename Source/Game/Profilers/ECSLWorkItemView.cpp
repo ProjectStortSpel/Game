@@ -70,9 +70,9 @@ void ECSLWorkItemView::Update(ECSLStatistics* _frontBufferStatistics)
 		{
 			auto workItem = workItemPair.second;
 			std::stringstream text;
-			text << *workItem->name << " | " << std::to_string(workItem->avgDuration) << " | " << 
-				std::to_string(workItem->minDuration) << " | " << std::to_string(workItem->maxDuration) <<
-				" | " << std::to_string(workItem->diffDuration);
+			text << *workItem->name << " | " << workItem->avgDuration << " | " << 
+				workItem->minDuration << " | " << workItem->maxDuration <<
+				" | " << workItem->diffDuration;
 
 			textEntry = new TextEntry();
 			textEntry->x = x;

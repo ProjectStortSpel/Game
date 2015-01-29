@@ -11,9 +11,6 @@
     <Filter Include="Source Files\Managers">
       <UniqueIdentifier>{0c6892c6-ade2-49a0-8281-45b37839a9bb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Interfaces">
-      <UniqueIdentifier>{2ca457d5-81e9-461c-afa5-8ecebb12bdd9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Framework\Tasks">
       <UniqueIdentifier>{058bff9b-15b7-47c8-8a93-f4061d348761}</UniqueIdentifier>
     </Filter>

@@ -272,6 +272,9 @@
     <ClCompile Include="..\..\..\Source\Game\Profilers\ECSLThreadView.cpp">
       <Filter>Game\Profilers\ECSLProfiler\Render Views</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Profilers\ECSLLoadingView.cpp">
+      <Filter>Game\Profilers\ECSLProfiler\Render Views</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h">
@@ -401,6 +404,9 @@
       <Filter>Game\Profilers\ECSLProfiler\Render Views</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Profilers\ECSLThreadView.h">
+      <Filter>Game\Profilers\ECSLProfiler\Render Views</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Profilers\ECSLLoadingView.h">
       <Filter>Game\Profilers\ECSLProfiler\Render Views</Filter>
     </ClInclude>
   </ItemGroup>
