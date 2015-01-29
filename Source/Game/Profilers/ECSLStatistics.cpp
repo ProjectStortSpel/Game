@@ -66,6 +66,8 @@ ECSLStatistics::~ECSLStatistics()
 
 	for (auto groupWorkItemStats : *m_workItemStats)
 	{
+		for (auto workItemStat : *groupWorkItemStats)
+			delete(workItemStat);
 		delete(groupWorkItemStats);
 	}
 	delete(m_workItemStats);
@@ -123,41 +125,49 @@ void ECSLStatistics::AddFrame(ECSLFrame* _frame)
 		m_maxThreadOverheadTime[i] = threadOverheadTime > m_maxThreadOverheadTime[i] ? threadOverheadTime : m_maxThreadOverheadTime[i];
 		m_diffThreadOverheadTime[i] = m_maxThreadOverheadTime[i] - m_minThreadOverheadTime[i];
 	}
-	
-	auto workItems = _frame->GetWorkItems();
 
+	auto workGroups = _frame->GetWorkItems();
+
+	/* Add work item statistic list */
 	if (!m_workItemStats)
 	{
-		m_workItemStats = new std::vector<std::unordered_map<std::string, WorkItemStatistic*>*>();
+		m_workItemStats = new std::vector<std::vector<WorkItemStatistic*>*>(workGroups->size());
+		int groupIndex = -1;
+		for (auto workGroup : *workGroups)
+		{
+			(*m_workItemStats)[++groupIndex] = new std::vector<WorkItemStatistic*>(workGroup->size());
+
+			for (unsigned int localIndex = 0; localIndex < workGroup->size(); ++localIndex)
+			{
+				auto workItem = workGroup->at(localIndex);
+				WorkItemStatistic* workItemStat = new WorkItemStatistic();
+				workItemStat->name = new std::string(*workItem->name);
+				workItemStat->avgDuration = workItem->duration;
+				workItemStat->maxDuration = -FLT_MAX;
+				workItemStat->minDuration = FLT_MAX;
+				(*(*m_workItemStats)[groupIndex])[localIndex] = workItemStat;
+			}
+		}
+	}
+	/* Update work item data */
+	else
+	{
+		for (unsigned int groupIndex = 0; groupIndex < workGroups->size(); ++groupIndex)
+		{
+			auto workGroup = workGroups->at(groupIndex);
+			for (unsigned int localIndex = 0; localIndex < workGroup->size(); ++localIndex)
+			{
+				auto workItem = workGroup->at(localIndex);
+				WorkItemStatistic* workItemStat = (*(*m_workItemStats)[groupIndex])[localIndex];
+				float duration = workItem->duration;
+				workItemStat->avgDuration = (workItemStat->avgDuration * m_frameCount + duration) / (m_frameCount + 1);
+				workItemStat->minDuration = duration < workItemStat->minDuration ? duration : workItemStat->minDuration;
+				workItemStat->maxDuration = duration > workItemStat->maxDuration ? duration : workItemStat->maxDuration;
+				workItemStat->diffDuration = workItemStat->maxDuration - workItemStat->minDuration;
+			}
+		}
 	}
 
-	/* Add work items to statistics */
-	for (auto workItem : *workItems)
-	{
-		/* Add new work item groups if the current amount isn't enough */
-		while (m_workItemStats->size() <= workItem->groupId)
-			m_workItemStats->push_back(new std::unordered_map<std::string, WorkItemStatistic*>());
-		std::unordered_map<std::string, WorkItemStatistic*>* groupStats = (*m_workItemStats)[workItem->groupId];
-		auto it = groupStats->find(*workItem->name);
-		if (it == groupStats->end())
-		{
-			WorkItemStatistic* workItemStat = new WorkItemStatistic();
-			workItemStat->name = new std::string(*workItem->name);
-			workItemStat->avgDuration = workItem->duration;
-			workItemStat->maxDuration = -FLT_MAX;
-			workItemStat->minDuration = FLT_MAX;
-			(*groupStats)[*workItemStat->name] = workItemStat;
-		}
-		else
-		{
-			WorkItemStatistic* workItemStat = it->second;
-			float duration = workItem->duration;
-			workItemStat->avgDuration = (workItemStat->avgDuration * m_frameCount + duration) / (m_frameCount + 1);
-			workItemStat->minDuration = duration < workItemStat->minDuration ? duration : workItemStat->minDuration;
-			workItemStat->maxDuration = duration > workItemStat->maxDuration ? duration : workItemStat->maxDuration;
-			workItemStat->diffDuration = workItemStat->maxDuration - workItemStat->minDuration;
-		}
-	}
 
 	++m_frameCount;
 

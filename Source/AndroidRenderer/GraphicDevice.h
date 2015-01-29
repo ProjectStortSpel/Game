@@ -110,6 +110,8 @@ namespace Renderer
 		bool InitShaders();
 		bool InitBuffers();
 		bool InitSkybox();
+		
+		void BufferLightsToGPU();
 
 		Camera* m_camera;
 
@@ -125,6 +127,8 @@ namespace Renderer
 
 		// Light info
 		vec3 m_dirLightDirection;
+		float m_defaultLight[10];
+		float* m_directionalLightPtr;
 
 		// Shadow 
 		ShadowMap *m_shadowMap;

@@ -275,6 +275,15 @@
     <ClCompile Include="..\..\..\Source\Game\Profilers\ECSLLoadingView.cpp">
       <Filter>Game\Profilers\ECSLProfiler\Render Views</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\SlerpRotationSystem.cpp">
+      <Filter>Game\Systems\Rotation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\MasterServerSystem.cpp">
+      <Filter>Game\Systems\NetworkMessages</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Network\ClientDatabase.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h">
@@ -409,6 +418,15 @@
     <ClInclude Include="..\..\..\Source\Game\Profilers\ECSLLoadingView.h">
       <Filter>Game\Profilers\ECSLProfiler\Render Views</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\SlerpRotationSystem.h">
+      <Filter>Game\Systems\Rotation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\MasterServerSystem.h">
+      <Filter>Game\Systems\NetworkMessages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Network\ClientDatabase.h">
+      <Filter>Network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\Externals\content\scripting\storaspel\components\components.lua">
@@ -443,120 +461,6 @@
     </None>
     <None Include="..\..\..\Externals\content\scripting\storaspel\components\gamestatecomponents.lua">
       <Filter>Scripting\Storaspel\Components</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_spawnsystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Server Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sh_networkmessagessystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Shared Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sh_movementsystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Shared Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_cardlogicsystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Server Systems\Card Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_createdecksystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Server Systems\Card Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_dealcardssystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Server Systems\Card Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_onplayerconnected.lua">
-      <Filter>Scripting\Storaspel\Systems\Server Systems\Startup Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_playerssystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Server Systems\Startup Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_createspawnpointsystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Server Systems\Startup Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_lobbysystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Server Systems\Startup Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_mapsystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Server Systems\Startup Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_lobbysystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Client Systems\Startup Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_cardpositionsystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Client Systems\Card Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_givecardindexsystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Client Systems\Card Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_selectcardsystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Client Systems\Card Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_sendselectedcardssystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Client Systems\Card Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_sortcardindexsystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Client Systems\Card Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_sortselectedcardssystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Client Systems\Card Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_pickingphasesystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Unused</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\networkconnectsystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Unused</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\maplogicsystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Unused</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\discosystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Unused</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_pickingphasesystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Unused</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_riversystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Server Systems\Round Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_newstepsystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Server Systems\Round Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_startnewroundsystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Server Systems\Round Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_moveplayersystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Server Systems\Round Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_steptimersystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Server Systems\Round Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_playcardsystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Server Systems\Round Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_playcardtimersystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Server Systems\Round Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_voidsystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Server Systems\Round Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_respawnsystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Server Systems\Round Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_postmovesystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Server Systems\Round Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_playerdonevisualizersystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Client Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_playerindicatorsystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Client Systems\Card Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_checkpointsystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Server Systems\Round Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_finishsystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Server Systems\Round Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_takecardsfromplayersystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Server Systems\Card Systems</Filter>
     </None>
     <None Include="..\..\..\Externals\content\scripting\storaspel\init.lua">
       <Filter>Scripting\Storaspel</Filter>
@@ -602,12 +506,6 @@
     </None>
     <None Include="..\..\..\Externals\content\scripting\lobby\components\buttoncomponents.lua">
       <Filter>Scripting\Lobby\Components</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_moveplayersystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Client Systems\Round Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_aisystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Server Systems</Filter>
     </None>
   </ItemGroup>
 </Project>

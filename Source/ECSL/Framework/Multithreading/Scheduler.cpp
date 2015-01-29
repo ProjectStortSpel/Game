@@ -172,6 +172,7 @@ void Scheduler::AddUpdateSystemsTasks()
 {
 	for (auto systemGroup : *m_systemManager->GetSystemWorkGroups())
 	{
+		int localGroupId = -1;
 		std::vector<MPL::WorkItem*>* workItems = new std::vector<MPL::WorkItem*>();
 		for (auto system : *systemGroup->GetSystems())
 		{
@@ -188,6 +189,7 @@ void Scheduler::AddUpdateSystemsTasks()
 				std::stringstream s;
 				s << system->GetSystemName() << "->Update() Task: " << taskIndex;
 				workItem->Name = new std::string(s.str());
+				workItem->LocalGroupId = ++localGroupId;
 				workItem->GroupId = m_currentGroupId;
 				workItems->push_back(workItem);
 				m_workItems->push_back(workItem);
@@ -222,6 +224,7 @@ void Scheduler::AddUpdateSystemEntityListsTasks()
 		std::stringstream s;
 		s << "SystemManager->UpdateSystemEntityList() Task: " << i;
 		workItem->Name = new std::string(s.str());
+		workItem->LocalGroupId = i;
 		workItem->GroupId = m_currentGroupId;
 		m_updateSystemEntityListsWorkItems->push_back(workItem);
 		m_workItems->push_back(workItem);
@@ -235,6 +238,7 @@ void Scheduler::AddEntitiesAddedTasks()
 	for (auto systemGroup : *m_systemManager->GetSystemWorkGroups())
 	{
 		std::vector<MPL::WorkItem*>* workItems = new std::vector<MPL::WorkItem*>();
+		int localGroupId = -1;
 		for (auto system : *systemGroup->GetSystems())
 		{
 			/* Create one work item for each systems' OnEntityAdded task */
@@ -251,6 +255,7 @@ void Scheduler::AddEntitiesAddedTasks()
 				std::stringstream s;
 				s << system->GetSystemName() << "->EntitiesAdded() Task: " << taskIndex;
 				workItem->Name = new std::string(s.str());
+				workItem->LocalGroupId = ++localGroupId;
 				workItem->GroupId = m_currentGroupId;
 				workItems->push_back(workItem);
 				m_workItems->push_back(workItem);
@@ -271,6 +276,7 @@ void Scheduler::AddEntitiesRemovedTasks()
 {
 	for (auto systemGroup : *m_systemManager->GetSystemWorkGroups())
 	{
+		int localGroupId = -1;
 		std::vector<MPL::WorkItem*>* workItems = new std::vector<MPL::WorkItem*>();
 		for (auto system : *systemGroup->GetSystems())
 		{
@@ -288,6 +294,7 @@ void Scheduler::AddEntitiesRemovedTasks()
 				std::stringstream s;
 				s << system->GetSystemName() << "->EntitiesRemoved() Task: " << taskIndex;
 				workItem->Name = new std::string(s.str());
+				workItem->LocalGroupId = ++localGroupId;
 				workItem->GroupId = m_currentGroupId;
 				workItems->push_back(workItem);
 				m_workItems->push_back(workItem);
@@ -320,6 +327,7 @@ void Scheduler::AddSortMessagesTask()
 		std::stringstream s;
 		s << "MessageManager->SortMessages() Task: " << i;
 		workItem->Name = new std::string(s.str());
+		workItem->LocalGroupId = i;
 		workItem->GroupId = m_currentGroupId;
 		m_sortMessagesWorkItems->push_back(workItem);
 		m_workItems->push_back(workItem);
@@ -332,6 +340,7 @@ void Scheduler::AddMessagesRecievedTasks()
 {
 	for (auto systemGroup : *m_systemManager->GetSystemWorkGroups())
 	{
+		int localGroupId = -1;
 		std::vector<MPL::WorkItem*>* workItems = new std::vector<MPL::WorkItem*>();
 		for (auto system : *systemGroup->GetSystems())
 		{
@@ -349,6 +358,7 @@ void Scheduler::AddMessagesRecievedTasks()
 				std::stringstream s;
 				s << system->GetSystemName() << "->MessagesRecieved() Task: " << taskIndex;
 				workItem->Name = new std::string(s.str());
+				workItem->LocalGroupId = ++localGroupId;
 				workItem->GroupId = m_currentGroupId;
 				workItems->push_back(workItem);
 				m_workItems->push_back(workItem);
@@ -381,6 +391,7 @@ void Scheduler::AddDeleteMessagesTask()
 		std::stringstream s;
 		s << "MessageManager->DeleteMessages() Task: " << i;
 		workItem->Name = new std::string(s.str());
+		workItem->LocalGroupId = i;
 		workItem->GroupId = m_currentGroupId;
 		m_deleteMessagesWorkItems->push_back(workItem);
 		m_workItems->push_back(workItem);
@@ -405,6 +416,7 @@ void Scheduler::AddCopyCurrentListsTask()
 		std::stringstream s;
 		s << "DataManager->CopyCurrentLists() Task: " << i;
 		workItem->Name = new std::string(s.str());
+		workItem->LocalGroupId = i;
 		workItem->GroupId = m_currentGroupId;
 		m_copyCurrentListsWorkItems->push_back(workItem);
 		m_workItems->push_back(workItem);
@@ -429,6 +441,7 @@ void Scheduler::AddUpdateEntityTableTask()
 		std::stringstream s;
 		s << "DataManager->UpdateEntityTable() Task: " << i;
 		workItem->Name = new std::string(s.str());
+		workItem->LocalGroupId = i;
 		workItem->GroupId = m_currentGroupId;
 		m_updateEntityTableWorkItems->push_back(workItem);
 		m_workItems->push_back(workItem);
@@ -453,6 +466,7 @@ void Scheduler::AddDeleteComponentDataTask()
 		std::stringstream s;
 		s << "DataManager->DeleteComponentData() Task: " << i;
 		workItem->Name = new std::string(s.str());
+		workItem->LocalGroupId = i;
 		workItem->GroupId = m_currentGroupId;
 		m_deleteComponentDataWorkItems->push_back(workItem);
 		m_workItems->push_back(workItem);
@@ -477,6 +491,7 @@ void Scheduler::AddRecycleEntityIdsTask()
 		std::stringstream s;
 		s << "DataManager->RecycleEntityIds() Task: " << i;
 		workItem->Name = new std::string(s.str());
+		workItem->LocalGroupId = i;
 		workItem->GroupId = m_currentGroupId;
 		m_recycleEntityIdsWorkItems->push_back(workItem);
 		m_workItems->push_back(workItem);
@@ -501,6 +516,7 @@ void Scheduler::AddClearCopiedListsTask()
 		std::stringstream s;
 		s << "DataManager->ClearCopiedLists() Task: " << i;
 		workItem->Name = new std::string(s.str());
+		workItem->LocalGroupId = i;
 		workItem->GroupId = m_currentGroupId;
 		m_clearCopiedListsWorkItems->push_back(workItem);
 		m_workItems->push_back(workItem);
@@ -525,6 +541,7 @@ void Scheduler::AddClearSystemEntityChangeListsTask()
 		std::stringstream s;
 		s << "Scheduler->ClearSystemEntityChangeLists() Task: " << i;
 		workItem->Name = new std::string(s.str());
+		workItem->LocalGroupId = i;
 		workItem->GroupId = m_currentGroupId;
 		m_clearListsWorkItems->push_back(workItem);
 		m_workItems->push_back(workItem);

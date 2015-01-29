@@ -16,7 +16,7 @@ namespace Profilers
 	private:
 		const int StartPosX = 0;
 		const int StartPosY = 0;
-		const int TextHeight = 1.0f;
+		const int TextHeight = 1;
 	};
 }
 

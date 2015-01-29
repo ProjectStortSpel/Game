@@ -66,9 +66,9 @@ void ECSLWorkItemView::Update(ECSLStatistics* _frontBufferStatistics)
 		m_textEntries->push_back(textEntry);
 		y += TextHeight;
 
-		for (auto workItemPair : *workItemGroup)
+		for (unsigned int j = 0; j < workItemGroup->size(); ++j)
 		{
-			auto workItem = workItemPair.second;
+			auto workItem = workItemGroup->at(j);
 			std::stringstream text;
 			text << *workItem->name << " | " << workItem->avgDuration << " | " << 
 				workItem->minDuration << " | " << workItem->maxDuration <<
@@ -80,6 +80,8 @@ void ECSLWorkItemView::Update(ECSLStatistics* _frontBufferStatistics)
 			textEntry->text = new std::string(text.str());
 			textEntry->height = TextHeight;
 			m_textEntries->push_back(textEntry);
+
+			printf("Name:%s\n", workItem->name->c_str());
 
 			y += TextHeight;
 		}

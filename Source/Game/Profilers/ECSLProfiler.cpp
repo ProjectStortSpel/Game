@@ -141,8 +141,16 @@ void ECSLProfiler::End()
 
 void ECSLProfiler::Update(float _dt)
 {
-	if (m_state == State::INACTIVE)
-		return;
+	switch (m_state)
+	{
+		case State::INACTIVE:
+			return;
+		case State::SHOWING_STATISTICS:
+			m_renderView = m_renderViews->at(m_renderViewIndex);
+			break;
+		default:
+			break;
+	}
 
 	/* Create back buffer if it doesn't exist */
 	if (!m_backBufferStatistics)
@@ -213,10 +221,8 @@ void ECSLProfiler::SwapBuffers()
 	if (m_frontBufferStatistics)
 		delete(m_frontBufferStatistics);
 	else
-	{
-		m_renderView = m_renderViews->at(m_renderViewIndex);
 		m_state = State::SHOWING_STATISTICS;
-	}
+
 	m_frontBufferStatistics = m_backBufferStatistics;
 	m_backBufferStatistics = 0;
 }
