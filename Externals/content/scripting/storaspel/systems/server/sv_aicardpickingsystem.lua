@@ -18,6 +18,7 @@ AiCardPickingSystem.Update = function(self, dt)
 	local Cards = self:GetEntities("AICard")
 	local CPtiles = self:GetEntities("Checkpoint")
 	
+	
 	for i = 1, #AIs do
 		
 		local unitID = self:GetComponent(AIs[i], "UnitEntityId", 0):GetInt()
@@ -45,14 +46,18 @@ end
 
 AiCardPickingSystem.GetTargetPosition = function(self, checkpointsTiles, cpTargetNr)
 	local targetPositionX, targetPositionY
-	
+	local asd = false
 	for k = 1, #checkpointsTiles do
 		local target = self:GetComponent(checkpointsTiles[k], "Checkpoint", 0):GetInt()
 		
 		if target == cpTargetNr then
 			targetPositionX, targetPositionY = self:GetComponent(checkpointsTiles[k], "MapPosition", 0):GetInt2()
-
+			asd = true
 		end
+	end
+	if asd == false then
+		targetPositionX = 0
+		targetPositionY = 0
 	end
 	
 	return targetPositionX, targetPositionY
@@ -91,22 +96,23 @@ AiCardPickingSystem.AIPickCards = function( self, CardSetAI, dirX, dirY, posX, p
 	
 	local pickedcards = {}
 	if #CardSetAI >= 5 then
+
 		local forwards = self:GetAllCardsOf(CardSetAI, "Forward")
 		local backwards = self:GetAllCardsOf(CardSetAI, "Backward")
 		local turnLefts = self:GetAllCardsOf(CardSetAI, "TurnLeft")
 		local turnRights = self:GetAllCardsOf(CardSetAI, "TurnRight")
 		local turnArounds = self:GetAllCardsOf(CardSetAI, "TurnAround")
 
-		--print("Position : " .. posX .. ", " .. posY ..  "(x , y)")
-		--print("Target   : " .. targetX .. ", " .. targetY .. "(x , y)")
-		--print("forwards    " .. #forwards)
-		--print("backwards   " .. #backwards)
-		--print("turnLefts   " .. #turnLefts)
-		--print("turnRights  " .. #turnRights)
-		--print("turnArounds " .. #turnArounds)
-
 		for i = 1, 5 do
-			
+			--print("Position : " .. posX .. ", " .. posY ..  "(x , y)")
+			--print("Target   : " .. targetX .. ", " .. targetY .. "(x , y)")
+			--print("Direction: " .. dirX .. ", " .. dirY .. "(x , y)")
+			--print("forwards    " .. #forwards)
+			--print("backwards   " .. #backwards)
+			--print("turnLefts   " .. #turnLefts)
+			--print("turnRights  " .. #turnRights)
+			--print("turnArounds " .. #turnArounds)
+
 			if posY < targetY and dirY == 1 and #forwards > 0 then
 
 				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, forwards)
