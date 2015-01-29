@@ -121,7 +121,7 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	LuaEmbedder::AddObject<LuaBridge::LuaWorldCreator>(m_clientLuaState, "WorldCreator", &worldCreator, "worldCreator");
 
 	std::stringstream gameMode;
-#if defined(_DEBUG) && !defined(__ANDROID__)
+#if defined(_DEBUG) && !defined(__ANDROID__) && !defined(__IOS__)
 	gameMode << "../../../Externals/content/scripting/";
 #else
 	gameMode << "content/scripting/";

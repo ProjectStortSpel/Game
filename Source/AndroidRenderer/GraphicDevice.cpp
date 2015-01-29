@@ -103,7 +103,6 @@ void GraphicDevice::WriteShadowMapDepth()
 	glEnable(GL_BLEND);
 
 	//glCullFace(GL_FRONT);
-
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -213,6 +212,9 @@ void GraphicDevice::Render()
 	glEnable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
 
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+
 	// RENDER VIEWSPACE STUFF
 	m_viewspaceShader.UseProgram();
 	m_viewspaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
@@ -247,6 +249,32 @@ void GraphicDevice::Render()
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 	}
+
+	// RENDER INTERFACE
+	m_interfaceShader.UseProgram();
+	m_interfaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
+
+	for (int i = 0; i < m_modelsInterface.size(); i++)
+	{
+		if (m_modelsInterface[i].active) // IS MODEL ACTIVE?
+		{
+			mat4 modelMatrix;
+			if (m_modelsInterface[i].modelMatrix == NULL)
+				modelMatrix = glm::translate(glm::vec3(1));
+			else
+				modelMatrix = *m_modelsInterface[i].modelMatrix;
+
+			mat4 modelViewMatrix = modelMatrix;
+			m_interfaceShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
+
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, m_modelsInterface[i].texID);
+
+			m_modelsInterface[i].bufferPtr->draw(m_interfaceShader.GetShaderProgram());
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+	}
+
 	/*if (m_modelsForward.size() > 0)
 	{
 		float positionData[] = {
@@ -275,6 +303,7 @@ void GraphicDevice::Render()
 
 		glDeleteBuffers(1, &buf);
 	}*/
+	glDisable(GL_TEXTURE_2D);
 	glUseProgram(0);
 	glEnable(GL_DEPTH_TEST);
 
@@ -363,6 +392,12 @@ bool GraphicDevice::InitShaders()
 	m_viewspaceShader.AddShader("content/shaders/AndroidViewspaceShaderFS.glsl", GL_FRAGMENT_SHADER);
 	m_viewspaceShader.FinalizeShaderProgram();
 
+	// Interface shader
+	m_interfaceShader.InitShaderProgram();
+	m_interfaceShader.AddShader("content/shaders/AndroidInterfaceVS.glsl", GL_VERTEX_SHADER);
+	m_interfaceShader.AddShader("content/shaders/AndroidInterfaceFS.glsl", GL_FRAGMENT_SHADER);
+	m_interfaceShader.FinalizeShaderProgram();
+
 	// ShadowShader geometry
 	m_shadowShader.InitShaderProgram();
 	m_shadowShader.AddShader("content/shaders/AndroidShadowShaderVS.glsl", GL_VERTEX_SHADER);
@@ -417,20 +452,18 @@ void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
         m_dirLightDirection = vec3(_lightPointer[0], _lightPointer[1], _lightPointer[2]);
         vec3 intens = vec3(_lightPointer[3], _lightPointer[4], _lightPointer[5]);
         vec3 color = vec3(_lightPointer[6], _lightPointer[7], _lightPointer[8]);
-        
-        m_forwardShader.SetUniVariable("dirlight.Direction", vector3, &m_dirLightDirection);
-        m_forwardShader.SetUniVariable("dirlight.Intensity", vector3, &intens);
-        m_forwardShader.SetUniVariable("dirlight.Color", vector3, &color);
+
+        m_forwardShader.SetUniVariable("dirlightDirection", vector3, &m_dirLightDirection);
+        m_forwardShader.SetUniVariable("dirlightIntensity", vector3, &intens);
+        m_forwardShader.SetUniVariable("dirlightColor", vector3, &color);
     }
     else
     {
         vec3 zero = vec3(0.0f);
-
-        m_forwardShader.SetUniVariable("dirlight.Intensity", vector3, &zero);
-        m_forwardShader.SetUniVariable("dirlight.Color", vector3, &zero);
+        m_forwardShader.SetUniVariable("dirlightIntensity", vector3, &zero);
+        m_forwardShader.SetUniVariable("dirlightColor", vector3, &zero);
     }
 	
-
 	m_shadowMap->UpdateViewMatrix(vec3(8.0f, 0.0f, 8.0f) - (10.0f*normalize(m_dirLightDirection)), vec3(8.0f, 0.0f, 8.0f));
 }
 
@@ -469,8 +502,29 @@ void GraphicDevice::ToggleSimpleText()
 
 bool GraphicDevice::PreLoadModel(std::string _dir, std::string _file, int _renderType)
 {
-	Shader *shaderPtr = &m_forwardShader;
-	m_forwardShader.UseProgram();
+	Shader *shaderPtr = NULL;
+
+	if (_renderType == RENDER_FORWARD)
+	{
+		shaderPtr = &m_forwardShader;
+		m_forwardShader.UseProgram();
+	}
+	else if (_renderType == RENDER_VIEWSPACE)
+	{
+		shaderPtr = &m_viewspaceShader;
+		m_viewspaceShader.UseProgram();
+	}
+	else if (_renderType == RENDER_INTERFACE)
+	{
+		shaderPtr = &m_interfaceShader;
+		m_interfaceShader.UseProgram();
+	}
+	else
+	{
+		shaderPtr = &m_forwardShader;
+		m_forwardShader.UseProgram();
+		//SDL_Log("Deferred requested. Selecting FORWARD");
+	}
 
 	// Import Object
 	//ObjectData obj = AddObject(_dir, _file);
@@ -510,11 +564,11 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 		shaderPtr = &m_viewspaceShader;
 		m_viewspaceShader.UseProgram();
 	}
-	/*else if (_renderType == RENDER_INTERFACE)
+	else if (_renderType == RENDER_INTERFACE)
 	{
 		shaderPtr = &m_interfaceShader;
 		m_interfaceShader.UseProgram();
-	}*/
+	}
 	else
 	{
 		shaderPtr = &m_forwardShader;
@@ -548,11 +602,11 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 		m_modelsForward.push_back(model);
 	else if (_renderType == RENDER_VIEWSPACE)
 		m_modelsViewspace.push_back(model);
+	else if (_renderType == RENDER_INTERFACE)
+		m_modelsInterface.push_back(model);
 	else
 		m_modelsForward.push_back(model);
 
-	//else if (_renderType == RENDER_INTERFACE)
-	//	m_modelsInterface.push_back(model);
 
 	return modelID;
 }
@@ -593,77 +647,116 @@ bool GraphicDevice::ActiveModel(int _id, bool _active)
 }
 bool GraphicDevice::ChangeModelTexture(int _id, std::string _fileDir, int _textureType)
 {
-	//// Model Instance
-	//Instance instance;
-	//// Temp Model
-	//Model model;
+	// Temp Model
+	Model model;
 
-	//bool found = false;
-	//int renderType;
+	bool found = false;
+	int renderType;
 
-	//// Find model Instance
-	//for (int i = 0; i < m_modelsForward.size(); i++)
-	//{
-	//	for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
-	//	{
-	//		if (m_modelsForward[i].instances[j].id == _id)
-	//		{
-	//			instance = m_modelsForward[i].instances[j];
-	//			model = Model(
-	//				m_modelsForward[i].bufferPtr,
-	//				m_modelsForward[i].texID,
-	//				m_modelsForward[i].norID,
-	//				m_modelsForward[i].speID
-	//				);
-	//			found = true;
-	//			renderType = RENDER_FORWARD;
-	//			m_modelsForward[i].instances.erase(m_modelsForward[i].instances.begin() + j);
-	//			if (m_modelsForward[i].instances.size() == 0)
-	//				m_modelsForward.erase(m_modelsForward.begin() + i);
-	//		}
-	//		if (found) break;
-	//	}
-	//	if (found) break;
-	//}
-	//// Didn't we find it return false
-	//if (!found) return false;
+	// Find model
+	for (int i = 0; i < m_modelsForward.size(); i++)
+	{
+		if (m_modelsForward[i].id == _id)
+		{
+			model = Model(
+				m_modelsForward[i].bufferPtr,
+				m_modelsForward[i].texID,
+				m_modelsForward[i].norID,
+				m_modelsForward[i].speID,
+				m_modelsForward[i].id,
+				m_modelsForward[i].active,
+				m_modelsForward[i].modelMatrix
+				);
+			found = true;
+			renderType = RENDER_FORWARD;
+			m_modelsForward.erase(m_modelsForward.begin() + i);
+		}
+		if (found) break;
+	}
+	if (!found)
+	{
+		for (int i = 0; i < m_modelsViewspace.size(); i++)
+		{
+			if (m_modelsViewspace[i].id == _id)
+			{
+				model = Model(
+					m_modelsViewspace[i].bufferPtr,
+					m_modelsViewspace[i].texID,
+					m_modelsViewspace[i].norID,
+					m_modelsViewspace[i].speID,
+					m_modelsViewspace[i].id,
+					m_modelsViewspace[i].active,
+					m_modelsViewspace[i].modelMatrix
+					);
+				found = true;
+				renderType = RENDER_VIEWSPACE;
+				m_modelsViewspace.erase(m_modelsViewspace.begin() + i);
+			}
+			if (found) break;
+		}
+	}
+	if (!found)
+	{
+		for (int i = 0; i < m_modelsInterface.size(); i++)
+		{
+			if (m_modelsInterface[i].id == _id)
+			{
+				model = Model(
+					m_modelsInterface[i].bufferPtr,
+					m_modelsInterface[i].texID,
+					m_modelsInterface[i].norID,
+					m_modelsInterface[i].speID,
+					m_modelsInterface[i].id,
+					m_modelsInterface[i].active,
+					m_modelsInterface[i].modelMatrix
+					);
+				found = true;
+				renderType = RENDER_INTERFACE;
+				m_modelsInterface.erase(m_modelsInterface.begin() + i);
+			}
+			if (found) break;
+		}
+	}
+	// Didn't we find it return false
+	if (!found) return false;
 
-	//// Set new Texture to TextureType
-	//if (_textureType == TEXTURE_DIFFUSE)
-	//{
-	//	model.texID = AddTexture(_fileDir, GL_TEXTURE1);
-	//	m_forwardShader.CheckUniformLocation("diffuseTex", 1);
-	//}
-	//else if (_textureType == TEXTURE_NORMAL)
-	//{
-	//	model.norID = AddTexture(_fileDir, GL_TEXTURE2);
-	//	m_forwardShader.CheckUniformLocation("normalTex", 2);
-	//}
-	//else if (_textureType == TEXTURE_SPECULAR)
-	//{
-	//	model.speID = AddTexture(_fileDir, GL_TEXTURE3);
-	//	m_forwardShader.CheckUniformLocation("specularTex", 3);
-	//}
+	// Set new Texture to TextureType
+	if (_textureType == TEXTURE_DIFFUSE)
+	{
+		model.texID = AddTexture(_fileDir, GL_TEXTURE1);
+		//m_deferredShader1.CheckUniformLocation("diffuseTex", 1);
+	}
+	else if (_textureType == TEXTURE_NORMAL)
+	{
+		model.norID = AddTexture(_fileDir, GL_TEXTURE2);
+		//m_deferredShader1.CheckUniformLocation("normalTex", 2);
+	}
+	else if (_textureType == TEXTURE_SPECULAR)
+	{
+		model.speID = AddTexture(_fileDir, GL_TEXTURE3);
+		//m_deferredShader1.CheckUniformLocation("specularTex", 3);
+	}
 
-	//// Check if our new Model type already exists and add instance
-	//for (int i = 0; i < m_modelsForward.size(); i++)
-	//{
-	//	if (m_modelsForward[i] == model)
-	//	{
-	//		m_modelsForward[i].instances.push_back(instance);
-	//		return true;
-	//	}
-	//}
+	// Check if our new Model type already exists and add instance
+	if (renderType == RENDER_FORWARD)
+	{
+		m_modelsForward.push_back(model);
+		return true;
+	}
+	else if (renderType == RENDER_VIEWSPACE)
+	{
+		m_modelsViewspace.push_back(model);
+		return true;
+	}
+	else if (renderType == RENDER_INTERFACE)
+	{
+		m_modelsInterface.push_back(model);
+		return true;
+	}
+	else
+		SDL_Log("Change texture to incorrect renderType.");
 
-	//// Nothing found. Let's make a new Model type
-	//model.instances.push_back(instance);
-	//// Push back the model
-	//if (renderType == RENDER_DEFERRED)
-	//	m_modelsDeferred.push_back(model);
-	//else if (renderType == RENDER_FORWARD)
-	//	m_modelsForward.push_back(model);
-
-	return true;
+	return false;
 }
 bool GraphicDevice::ChangeModelNormalMap(int _id, std::string _fileDir)
 {
@@ -696,22 +789,27 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 	std::map<GLuint, GLuint> vpLocs, vnLocs, tanLocs, bitanLocs, tcLocs;
 	vpLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexPosition");
 	vpLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexPosition");
+	vpLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexPosition");
 	vpLocs[m_shadowShader.GetShaderProgram()]	 = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexPosition");
 
 	vnLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexNormal");
 	vnLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexNormal");
+	vnLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexNormal");
 	vnLocs[m_shadowShader.GetShaderProgram()]	 = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexNormal");
 
 	tanLocs[m_forwardShader.GetShaderProgram()]	  = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTangent");
 	tanLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexTangent");
+	tanLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexTangent");
 	tanLocs[m_shadowShader.GetShaderProgram()]	  = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexTangent");
 
 	bitanLocs[m_forwardShader.GetShaderProgram()]	= glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexBiTangent");
 	bitanLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexBiTangent");
+	bitanLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexBiTangent");
 	bitanLocs[m_shadowShader.GetShaderProgram()]	= glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexBiTangent");
 
 	tcLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTexCoord");
 	tcLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexTexCoord");
+	tcLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexTexCoord");
 	tcLocs[m_shadowShader.GetShaderProgram()]	 = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexTexCoord");
 
 	_shaderProg->UseProgram();
@@ -733,13 +831,13 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 }
 GLuint GraphicDevice::AddTexture(std::string _fileDir, GLenum _textureSlot)
 {
+    //printf("fileDir: %s\n", _fileDir.c_str());
 	for (std::map<const std::string, GLuint>::iterator it = m_textures.begin(); it != m_textures.end(); it++)
 	{
 		if (it->first == _fileDir)
 			return it->second;
 	}
 	int texSizeX, texSizeY;
-	//m_deferredShader1.UseProgram();
 	GLuint texture = TextureLoader::LoadTexture(_fileDir.c_str(), _textureSlot, texSizeX, texSizeY);
 	m_textures.insert(std::pair<const std::string, GLenum>(_fileDir, texture));
 	return texture;

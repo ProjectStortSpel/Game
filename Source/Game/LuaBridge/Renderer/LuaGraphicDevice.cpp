@@ -147,4 +147,47 @@ namespace LuaBridge
     LuaEmbedder::PushBool(L, result);
     return 1;
   }
+  
+	int LuaGraphicDevice::AddFont()
+	{
+		std::string filepath = LuaEmbedder::PullString(1);
+		int size = LuaEmbedder::PullInt(2);
+		int fontIndex = GraphicDevice::AddFont(filepath, size);
+		LuaEmbedder::PushInt(fontIndex);
+		return 1;
+	}
+
+	int LuaGraphicDevice::CreateTextTexture()
+	{
+		std::string textureName = LuaEmbedder::PullString(1);
+		std::string textString = LuaEmbedder::PullString(2);
+		int fontIndex = LuaEmbedder::PullInt(3);
+		Uint8 r = (Uint8)LuaEmbedder::PullInt(4);
+		Uint8 g = (Uint8)LuaEmbedder::PullInt(5);
+		Uint8 b = (Uint8)LuaEmbedder::PullInt(6);
+		SDL_Color color = { 255, 255, 255, 0 };
+		//int w = LuaEmbedder::PullInt(7);
+		//int h = LuaEmbedder::PullInt(8);
+		//glm::ivec2 size = glm::ivec2(w, h);
+		float ratio = GraphicDevice::CreateTextTexture(textureName, textString, fontIndex, color);
+		LuaEmbedder::PushFloat(ratio);
+		return 1;
+	}
+
+	int LuaGraphicDevice::CreateWrappedTextTexture()
+	{
+		std::string textureName = LuaEmbedder::PullString(1);
+		std::string textString = LuaEmbedder::PullString(2);
+		int fontIndex = LuaEmbedder::PullInt(3);
+		Uint8 r = (Uint8)LuaEmbedder::PullInt(4);
+		Uint8 g = (Uint8)LuaEmbedder::PullInt(5);
+		Uint8 b = (Uint8)LuaEmbedder::PullInt(6);
+		SDL_Color color = { r, g, b, 0 };
+		int wrapLength = LuaEmbedder::PullInt(7);
+		//int w = LuaEmbedder::PullInt(8);
+		//int h = LuaEmbedder::PullInt(9);
+		//glm::ivec2 size = glm::ivec2(w, h);
+		GraphicDevice::CreateWrappedTextTexture(textureName, textString, fontIndex, color, wrapLength);
+		return 0;
+	}
 }

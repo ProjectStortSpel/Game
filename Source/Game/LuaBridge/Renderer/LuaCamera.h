@@ -1,7 +1,7 @@
 #ifndef LUACAMERA_H
 #define LUACAMERA_H
 
-#ifdef __ANDROID__
+#if defined(__ANDROID__) || defined(__IOS__)
 #include "AndroidRenderer/Camera.h"
 #else
 #include "Renderer/Camera.h"

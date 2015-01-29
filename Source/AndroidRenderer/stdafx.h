@@ -11,10 +11,12 @@
 #include <stdio.h>
 
 #include <SDL/SDL.h>
+
 #ifdef __ANDROID__
-#ifndef __IOS__
 #include <GLES2/gl2.h>
 #endif
+
+#if defined(__ANDROID__) || defined(__IOS__)
 #include <SDL/SDL_opengles2.h>
 #else
 #include <GLEW/glew.h>

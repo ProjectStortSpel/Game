@@ -48,6 +48,8 @@ private:
 	std::string GetTabs(std::string& _groupName);
 	void CreateFile();
 	void AppendFile(LogEntry& _logEntry);
+    
+    std::string GetFolderPath();
 
 	void Trim(std::string& _str);
 	void TrimStart(std::string& _str);
