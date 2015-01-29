@@ -254,6 +254,9 @@ AiCardPickingSystem.SendCards = function(self, _player, _pickedcards)
 		world:SetComponent(_pickedcards[i], "CardStep", "UnitEntityId", unit)
 		
 	end
+
+	local id = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("NotifyStartNewRound", id)
 end
 
 AiCardPickingSystem.SimulatePlayOfCards = function(self, _player, _pickedcards)
