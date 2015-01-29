@@ -75,6 +75,7 @@ if Client then
 	require "pickboxsystem"
 	require "hoversizesystem"
 	require "addtexttotexturesystem"
+	require "parentsystem"
 
 	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/client/?.lua"
 	require "cl_lobbysystem"
@@ -207,9 +208,11 @@ if Client then
 --worldCreator:AddSystemToCurrentGroup(ClientSendCardSystem)
 
 	worldCreator:AddSystemToCurrentGroup(NewCameraSystem)
-	
-	worldCreator:AddSystemToCurrentGroup(HoverSizeSystem)
+
+	worldCreator:AddSystemToCurrentGroup(ParentSystem)
 	worldCreator:AddSystemToCurrentGroup(PickBoxSystem)
+	worldCreator:AddSystemToCurrentGroup(HoverSizeSystem)
+	worldCreator:AddSystemToCurrentGroup(AddTextToTextureSystem)
 	
 	worldCreator:AddSystemToCurrentGroup(GameInterfaceSystem)
 	worldCreator:AddSystemToCurrentGroup(GameMenuSystem)

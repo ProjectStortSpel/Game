@@ -198,7 +198,7 @@ MapSystem.PostInitialize = function(self)
 	
 	-- Add to the map size as voids have been added around the map.
 	self.mapX = self.mapX + 2
-	self.mapY = self.mapY + 2
+	self.mapY = self.mapY + 2 
 	
 	-- Create an entity that will keep track of the map size.
 	local mapEntity = world:CreateNewEntity()
