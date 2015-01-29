@@ -1,6 +1,6 @@
 PlayersSystem = System()
 PlayersSystem.NextSlot = 1
-PlayersSystem.FreeSlots = {}
+
 
 PlayersSystem.Initialize = function(self)
 	self:SetName("PlayersConnectedSystem")
@@ -19,15 +19,7 @@ PlayersSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 	for n = 1, #entities do
 		local entityId = entities[n]
 	
-		local playerNumber
-		if #self.FreeSlots ~= 0 then
-			playerNumber = self.FreeSlots[1]
-			table.remove(self.FreeSlots, 1)
-		else
-			playerNumber = self.NextSlot
-			self.NextSlot = self.NextSlot + 1
-		end
-
+		local playerNumber = 1
 		local newEntityId = world:CreateNewEntity("Unit")
 
 		world:SetComponent(newEntityId, "Model", "ModelName", "ply" .. playerNumber);
@@ -62,7 +54,6 @@ PlayersSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entitie
 		local entityId = entities[n]
 
 		local plyNum = self:GetComponent(entityId, "PlayerNumber", "Number"):GetInt()
-		table.insert(self.FreeSlots, plyNum)
 
 		local unitId = self:GetComponent(entityId, "UnitEntityId", "Id"):GetInt()
 
