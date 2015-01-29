@@ -31,7 +31,7 @@ if Server then
 	require "sv_aicardpickingsystem"
 	require "sv_onplayerconnected"
 	require "sv_playerssystem"
-    require "sv_aisystem"
+    require "sv_addaisystem"
 	require "sv_unitsystem"
 	require "sv_givespawnlocation"
 	--require "sv_createspawnpointsystem"
@@ -133,10 +133,10 @@ if Server then
 	worldCreator:AddSystemToCurrentGroup(MapSystem)
 	--worldCreator:AddSystemToCurrentGroup(PlayerMovementSystem)
 
-	worldCreator:AddSystemToCurrentGroup(AiCardPickingSystem)
+	worldCreator:AddSystemToCurrentGroup(AICardPickingSystem)
 	worldCreator:AddSystemToCurrentGroup(OnPlayerConnectedSystem)
 	worldCreator:AddSystemToCurrentGroup(PlayersSystem)
-    worldCreator:AddSystemToCurrentGroup(AISystem)
+    worldCreator:AddSystemToCurrentGroup(AddAISystem)
 	worldCreator:AddSystemToCurrentGroup(UnitSystem)
 	worldCreator:AddSystemToCurrentGroup(GiveSpawnLocation)
 	--worldCreator:AddSystemToCurrentGroup(CreateSpawnpointSystem)
