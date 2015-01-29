@@ -10,9 +10,13 @@ ECSLWorkItemView::ECSLWorkItemView(Renderer::GraphicDevice* _graphics)
 
 ECSLWorkItemView::~ECSLWorkItemView()
 {
-	for (auto page : *m_pages)
-		delete(page);
-	delete(m_pages);
+	if (m_pages)
+	{
+		for (auto page : *m_pages)
+			delete(page);
+		delete(m_pages);
+		m_pages = 0;
+	}
 }
 
 void ECSLWorkItemView::Update(ECSLStatistics* _frontBufferStatistics)

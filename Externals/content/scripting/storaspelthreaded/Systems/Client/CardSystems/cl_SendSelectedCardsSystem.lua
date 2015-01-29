@@ -8,7 +8,6 @@ SendSelectedCardsSystem.Initialize = function ( self )
 	--	Toggle EntitiesAdded
 	self:UsingUpdate()
 	self:UsingEntitiesAdded()
-	self:UsingEntitiesRemoved()
 	
 	--	Set Filter
 	self:AddComponentTypeToFilter("CardSelected", FilterType.RequiresOneOf)
@@ -21,24 +20,15 @@ SendSelectedCardsSystem.Update = function(self, dt, taskIndex, taskCount)
 
 	if #button > 0 then
 	
-		if world:EntityHasComponent(button[1], "OnPickBoxHit") and Input.GetTouchState(0) == InputState.Released then
+		if world:EntityHasComponent(button[1], "OnPickBoxHit") and Input.GetTouchState(0) == InputState.Pressed then
 		
 			self:SendSelectedCards()
 			self:DeselectAll()
-		
+			world:KillEntity(button[1])
 		end
 	
 	end
 	
-end
-
-SendSelectedCardsSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
-	local button = self:GetEntities("ReadyButton")
-	for i = 1, #button do
-		
-		world:KillEntity(button[i])
-
-	end
 end
 
 
@@ -48,9 +38,7 @@ SendSelectedCardsSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount,
 		local entityId = entities[n]
 		if world:EntityHasComponent(entityId, "CardSelected") then
 			local cards = self:GetEntities("CardSelected")
-
-			print("numselected: " .. #cards)
-
+			
 			if #cards == 5 then
 				--self:SendSelectedCards()
 				--self:DeselectAll()
