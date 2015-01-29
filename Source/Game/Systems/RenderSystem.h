@@ -31,6 +31,9 @@ private:
 	unsigned int m_scaleId;
 	unsigned int m_renderId, m_renderOffset;
 
+	unsigned int m_parentId;
+	unsigned int m_isparentId;
+
 	Renderer::GraphicDevice* m_graphics;
 };
 
