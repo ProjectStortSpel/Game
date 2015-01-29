@@ -19,9 +19,9 @@ NewStepSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 		local entity = entities[n]
 		if world:EntityHasComponent( entity, "NewRound") then
 			print("\n\nNEW ROUND!")
-			local file = File.Append("gamelog.txt")
-			File.WriteLine(file, "NewRound")
-			File.Close(file)
+			--local file = File.Append("gamelog.txt")
+			--File.WriteLine(file, "NewRound")
+			--File.Close(file)
 
 			self.Step = 1
 			local id = world:CreateNewEntity()
@@ -36,9 +36,9 @@ NewStepSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 
 				print("\nNEW STEP: " .. self.Step)
 
-				local file = File.Append("gamelog.txt")
-				File.WriteLine(file, "NewStep " .. self.Step)
-				File.Close(file)
+				--local file = File.Append("gamelog.txt")
+				--File.WriteLine(file, "NewStep " .. self.Step)
+				--File.Close(file)
 
 
 				self.Step = self.Step + 1

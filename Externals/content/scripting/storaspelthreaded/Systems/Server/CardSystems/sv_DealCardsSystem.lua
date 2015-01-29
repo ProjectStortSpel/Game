@@ -141,9 +141,6 @@ Net.Receive("Server.SelectCards",
 			Net.SendEntityKill(selectedCards[i], playerIp, playerPort)
 			
 		end
-		local pickingDoneID = Net.StartPack("Client.RemotePickingDone")
-		Net.WriteInt(pickingDoneID, player)
-		Net.Broadcast(pickingDoneID)
 		
 		world:CreateComponentAndAddTo("UnitSelectedCards", unit)
 

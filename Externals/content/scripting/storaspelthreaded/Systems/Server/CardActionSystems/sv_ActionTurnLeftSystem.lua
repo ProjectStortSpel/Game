@@ -17,7 +17,6 @@ ActionTurnLeftSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, en
 	for n = 1, #entities do
 		local entity = entities[n]
 		local dir = world:GetComponent(entity, "Direction", 0)
-		local rot = world:GetComponent(entity, "Rotation", 0)
 		local x, z = dir:GetInt2()
 
 		if	x == 0 and z == 1 then

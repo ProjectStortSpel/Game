@@ -137,10 +137,10 @@ void DataManager::UpdateEntityTable(const RuntimeInfo& _runtime)
 		}
 	}
 
-	MPL::MathHelper::SplitIterations(startAt, endAt, m_entitiesToBeRemoved->size(), _runtime.TaskIndex, _runtime.TaskCount);
+	MPL::MathHelper::SplitIterations(startAt, endAt, m_entitiesToBeRemovedCopy->size(), _runtime.TaskIndex, _runtime.TaskCount);
 	for (unsigned int i = startAt; i < endAt; ++i)
 	{
-		m_entityTable->ClearEntityData(m_entitiesToBeRemoved->at(i));
+		m_entityTable->ClearEntityData(m_entitiesToBeRemovedCopy->at(i));
 	}
 }
 

@@ -1,5 +1,4 @@
 SendSelectedCardsSystem = System()
-SendSelectedCardsSystem.SelectCardSystem = false
 
 SendSelectedCardsSystem.Initialize = function ( self )
 	--	Set Name
@@ -19,18 +18,21 @@ SendSelectedCardsSystem.Update = function(self, dt, taskIndex, taskCount)
 	local button = self:GetEntities("ReadyButton")
 
 	if #button > 0 then
-	
 		if world:EntityHasComponent(button[1], "OnPickBoxHit") and Input.GetTouchState(0) == InputState.Pressed then
 		
 			self:SendSelectedCards()
 			self:DeselectAll()
-			world:KillEntity(button[1])
 		end
-	
+		
+		local cardsSelected = self:GetEntities("CardSelected")
+		if #cardsSelected < 5 then
+			for n = 1, #button do
+				world:KillEntity(button[n])
+			end
+		end
 	end
 	
 end
-
 
 SendSelectedCardsSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 
@@ -70,8 +72,6 @@ end
 SendSelectedCardsSystem.SendSelectedCards = function( self )
 	
 	local id = Net.StartPack("Server.SelectCards")
-	
-	
 	local cards = self:GetEntities("CardSelected")
 
 	for i = 1, 5 do	
@@ -89,7 +89,6 @@ SendSelectedCardsSystem.SendSelectedCards = function( self )
 
 			
 	end
-
 	Net.SendToServer(id)
 end
 
@@ -98,9 +97,11 @@ SendSelectedCardsSystem.DeselectAll = function( self )
 	local cards = self:GetEntities("CardSelected")
 
 	for i = 1, #cards do
-		
 		world:RemoveComponentFrom("CardSelected", cards[i])
-
 	end
-
+	
+	local buttons = self:GetEntities("ReadyButton")
+	for n = 1, #buttons do
+		world:KillEntity(buttons[n])
+	end
 end
