@@ -13,8 +13,10 @@ namespace ECSL
 	{
 #ifdef __ANDROID__
 		typedef unsigned int DataType;
+		const unsigned int BitSetBitShift = 5;
 #else
 		typedef uint64_t DataType;
+		const unsigned int BitSetBitShift = 6;
 #endif
 
 		const DataType BitSetIndexMask = (std::numeric_limits<DataType>::max)() ^ ((sizeof(DataType)* 8) - 1);
@@ -31,7 +33,7 @@ namespace ECSL
 		}
 		inline DECLSPEC unsigned int GetBitSetIndex(unsigned int _bitIndex)
 		{
-			return (_bitIndex & BitSetIndexMask) >> ((sizeof(DataType) - 2));
+			return (_bitIndex & BitSetIndexMask) >> BitSetBitShift;
 		}
 		inline DECLSPEC unsigned int GetBitIndex(unsigned int _bitIndex)
 		{

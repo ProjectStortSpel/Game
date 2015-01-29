@@ -15,6 +15,7 @@ namespace MPL
 		FunctionPointer Work;
 		void* Data;
 		std::string* Name;
+		unsigned int LocalGroupId;
 		unsigned int GroupId;
 	};
 };

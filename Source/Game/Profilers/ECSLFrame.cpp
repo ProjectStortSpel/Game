@@ -12,7 +12,7 @@ ECSLFrame::ECSLFrame(unsigned int _threadCount, float _frameTime)
 	m_totalEfficiency = 0.0f;
 	m_totalOverheadTime = 0.0f;
 	m_totalWorkTime = 0.0f;
-	m_workItems = new std::vector<ECSLFrame::WorkItem*>();
+	m_workItems = new std::vector<std::vector<ECSLFrame::WorkItem*>*>();
 }
 
 ECSLFrame::~ECSLFrame()
@@ -20,8 +20,12 @@ ECSLFrame::~ECSLFrame()
 	delete(m_threadEfficiency);
 	delete(m_threadWorkTime);
 	delete(m_threadOverheadTime);
-	for (auto workItem : *m_workItems)
-		delete(workItem);
+	for (auto workItemGroup : *m_workItems)
+	{
+		for (auto workItem : *workItemGroup)
+			delete(workItem);
+		delete(workItemGroup);
+	}
 	delete(m_workItems);
 }
 
@@ -41,9 +45,14 @@ void ECSLFrame::AddWorkItemStatistic(MPL::LoggedAction* _action, unsigned int _t
 {
 	ECSLFrame::WorkItem* workItem = new WorkItem();
 	workItem->name = new std::string(*_action->workItem->Name);
+	workItem->localGroupId = _action->workItem->LocalGroupId;
 	workItem->groupId = _action->workItem->GroupId;
 	workItem->duration = _action->duration;
-	m_workItems->push_back(workItem);
+	while (workItem->groupId >= m_workItems->size())
+		m_workItems->push_back(new std::vector<ECSLFrame::WorkItem*>());
+	if (workItem->localGroupId >= (*m_workItems)[workItem->groupId]->size())
+		(*m_workItems)[workItem->groupId]->resize(workItem->localGroupId + 1);
+	(*(*m_workItems)[workItem->groupId])[workItem->localGroupId] = workItem;
 }
 
 void ECSLFrame::CalculateEfficiencyData(unsigned int _threadCount)

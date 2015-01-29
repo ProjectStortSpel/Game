@@ -62,7 +62,7 @@ namespace Profilers
 		const float* GetMaxThreadOverheadTime() { return m_maxThreadOverheadTime; }
 		const float* GetDiffThreadOverheadTime() { return m_diffThreadOverheadTime; }
 
-		const std::vector<std::unordered_map<std::string, WorkItemStatistic*>*>* GetWorkItemStats() { return m_workItemStats; }
+		const std::vector<std::vector<WorkItemStatistic*>*>* GetWorkItemStats() { return m_workItemStats; }
 
 	private:
 		unsigned int m_threadCount;
@@ -103,7 +103,7 @@ namespace Profilers
 		float* m_maxThreadOverheadTime;
 		float* m_diffThreadOverheadTime;
 
-		std::vector<std::unordered_map<std::string, WorkItemStatistic*>*>* m_workItemStats;
+		std::vector<std::vector<WorkItemStatistic*>*>* m_workItemStats;
 	};
 }
 
