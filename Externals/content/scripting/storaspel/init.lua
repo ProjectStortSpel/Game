@@ -14,6 +14,7 @@ require "menucomponents"
 
 package.path = package.path .. ";../../../Externals/content/scripting/shared/components/?.lua"
 require "interfacecomponents"
+require "textrendercomponents"
 require "lightcomponents"
 require "cameracomponents"
 require "components"
@@ -31,7 +32,7 @@ if Server then
 	require "sv_aicardpickingsystem"
 	require "sv_onplayerconnected"
 	require "sv_playerssystem"
-    require "sv_aisystem"
+    require "sv_addaisystem"
 	require "sv_unitsystem"
 	require "sv_givespawnlocation"
 	--require "sv_createspawnpointsystem"
@@ -73,6 +74,7 @@ if Client then
 	package.path = package.path .. ";../../../Externals/content/scripting/shared/systems/?.lua"
 	require "pickboxsystem"
 	require "hoversizesystem"
+	require "addtexttotexturesystem"
 
 	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/client/?.lua"
 	require "cl_lobbysystem"
@@ -134,10 +136,10 @@ if Server then
 	worldCreator:AddSystemToCurrentGroup(MapSystem)
 	--worldCreator:AddSystemToCurrentGroup(PlayerMovementSystem)
 
-	worldCreator:AddSystemToCurrentGroup(AiCardPickingSystem)
+	worldCreator:AddSystemToCurrentGroup(AICardPickingSystem)
 	worldCreator:AddSystemToCurrentGroup(OnPlayerConnectedSystem)
 	worldCreator:AddSystemToCurrentGroup(PlayersSystem)
-    worldCreator:AddSystemToCurrentGroup(AISystem)
+    worldCreator:AddSystemToCurrentGroup(AddAISystem)
 	worldCreator:AddSystemToCurrentGroup(UnitSystem)
 	worldCreator:AddSystemToCurrentGroup(GiveSpawnLocation)
 	--worldCreator:AddSystemToCurrentGroup(CreateSpawnpointSystem)

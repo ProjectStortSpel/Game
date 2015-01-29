@@ -153,7 +153,7 @@ bool Shader::SetUniformBuffer(GLuint shader_binding, GLuint data, int size)
 bool Shader::SetUniVariable(const char* p_Name, VariableTyp p_Typ, void* p_Value)
 {
 	// FIXA PREFETCH MED STD MAP
-
+	glUseProgram(this->m_shaderProg);
 	GLint location = glGetUniformLocation(m_shaderProg, p_Name);
 
 	if (location != -1)

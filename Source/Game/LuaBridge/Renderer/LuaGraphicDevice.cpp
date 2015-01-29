@@ -165,9 +165,9 @@ namespace LuaBridge
 		std::string textureName = LuaEmbedder::PullString(1);
 		std::string textString = LuaEmbedder::PullString(2);
 		int fontIndex = LuaEmbedder::PullInt(3);
-		Uint8 r = (Uint8)LuaEmbedder::PullInt(4);
-		Uint8 g = (Uint8)LuaEmbedder::PullInt(5);
-		Uint8 b = (Uint8)LuaEmbedder::PullInt(6);
+		float r = LuaEmbedder::PullFloat(4);
+		float g = LuaEmbedder::PullFloat(5);
+		float b = LuaEmbedder::PullFloat(6);
 		SDL_Color color = { static_cast<Uint8>(255 * r), static_cast<Uint8>(255 * g), static_cast<Uint8>(255 * b), 0 };
 		//int w = LuaEmbedder::PullInt(7);
 		//int h = LuaEmbedder::PullInt(8);

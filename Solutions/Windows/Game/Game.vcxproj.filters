@@ -516,9 +516,6 @@
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\shared\sh_networkmessagessystem.lua">
       <Filter>Scripting\Storaspel\Systems\Shared</Filter>
     </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_aisystem.lua">
-      <Filter>Scripting\Storaspel\Systems\Server</Filter>
-    </None>
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_autopickcardssystem.lua">
       <Filter>Scripting\Storaspel\Systems\Server</Filter>
     </None>
@@ -622,6 +619,9 @@
       <Filter>Scripting\Storaspel\Systems\OLD</Filter>
     </None>
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_aicardpickingsystem.lua">
+      <Filter>Scripting\Storaspel\Systems\Server</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_addaisystem.lua">
       <Filter>Scripting\Storaspel\Systems\Server</Filter>
     </None>
   </ItemGroup>

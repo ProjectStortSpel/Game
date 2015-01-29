@@ -23,7 +23,6 @@ GameMenuSystem.Update = function(self, dt)
 		end
 		
 	end
-	
 
 end
 

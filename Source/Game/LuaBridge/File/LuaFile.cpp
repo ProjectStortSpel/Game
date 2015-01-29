@@ -26,7 +26,21 @@ namespace LuaBridge
 		int Write();
 
 		int WriteLine();
-
+        
+        std::string GetFolderPath()
+        {
+#if  defined(__IOS__)
+            std::string path = getenv("HOME");
+            path.append("/Library/Caches/");
+            return path;
+#elif defined(__ANDROID__)
+            return "";
+#elif defined(__OSX__)
+            return "";
+#else
+            return "content/data/";
+#endif
+        }
 
 		void Embed()
 		{
@@ -48,11 +62,11 @@ namespace LuaBridge
 
 		int Create()
 		{
-#if !defined(__ANDROID__) && !defined(__IOS__) && !defined(__OSX__)
+#if !defined(__ANDROID__) && !defined(__OSX__)
 			std::string filepath = LuaEmbedder::PullString(1);
 
 			std::ostringstream ss;
-			ss << "content\\data\\";
+			ss << GetFolderPath().c_str();
 			ss << filepath.c_str();
 
 			SDL_RWops* file = SDL_RWFromFile(ss.str().c_str(), "w");
@@ -65,11 +79,11 @@ namespace LuaBridge
 
 		int Append()
 		{
-#if !defined(__ANDROID__) && !defined(__IOS__) && !defined(__OSX__)
+#if !defined(__ANDROID__) && !defined(__OSX__)
 			std::string filepath = LuaEmbedder::PullString(1);
 
 			std::ostringstream ss1;
-			ss1 << "content\\data\\";
+			ss1 << GetFolderPath().c_str();
 			ss1 << filepath.c_str();
 
 			SDL_RWops* file = SDL_RWFromFile(ss1.str().c_str(), "a");
@@ -77,6 +91,7 @@ namespace LuaBridge
 			std::ostringstream ss2;
 			ss2 << file;
 			LuaEmbedder::PushString(ss2.str().c_str());
+
 #else
             LuaEmbedder::PushString("8008135");
 #endif
@@ -86,11 +101,11 @@ namespace LuaBridge
 
 		int Open()
 		{
-#if !defined(__ANDROID__) && !defined(__IOS__) && !defined(__OSX__)
+#if !defined(__ANDROID__) && !defined(__OSX__)
 			std::string filepath = LuaEmbedder::PullString(1);
 
 			std::ostringstream ss1;
-			ss1 << "content\\data\\";
+			ss1 << GetFolderPath().c_str();
 			ss1 << filepath.c_str();
 
 			SDL_RWops* file = SDL_RWFromFile(ss1.str().c_str(), "r");
@@ -115,11 +130,11 @@ namespace LuaBridge
 
 		int Close()
 		{
-#if !defined(__ANDROID__) && !defined(__IOS__) && !defined(__OSX__)
+#if !defined(__ANDROID__) && !defined(__OSX__)
 			std::string sId = LuaEmbedder::PullString(1);
 			char* end;
 			//uint64_t id = strtoull(sId.c_str(), &end, 16);
-
+            
 			SDL_RWops* file = (SDL_RWops*)strtoull(sId.c_str(), &end, 16);
 
 			SDL_RWclose(file);
@@ -130,9 +145,10 @@ namespace LuaBridge
 
 		int Read()
 		{
-#if !defined(__ANDROID__) && !defined(__IOS__) && !defined(__OSX__)
+#if !defined(__ANDROID__) && !defined(__OSX__)
 			std::string sId = LuaEmbedder::PullString(1);
 			char* end;
+
 			SDL_RWops* file = (SDL_RWops*)strtoull(sId.c_str(), &end, 16);
 
 
@@ -159,8 +175,9 @@ namespace LuaBridge
 
 		int ReadLine()
 		{
-#if !defined(__ANDROID__) && !defined(__IOS__) && !defined(__OSX__)
+#if !defined(__ANDROID__) && !defined(__OSX__)
 			std::string sId = LuaEmbedder::PullString(1);
+
 			char* end;
 			SDL_RWops* file = (SDL_RWops*)strtoull(sId.c_str(), &end, 16);
 
@@ -206,8 +223,9 @@ namespace LuaBridge
 
 		int Write()
 		{
-#if !defined(__ANDROID__) && !defined(__IOS__) && !defined(__OSX__)
+#if !defined(__ANDROID__) && !defined(__OSX__)
 			std::string sId = LuaEmbedder::PullString(1);
+
 			char* end;
 			SDL_RWops* file = (SDL_RWops*)strtoull(sId.c_str(), &end, 16);
 
@@ -220,8 +238,9 @@ namespace LuaBridge
 
 		int WriteLine()
 		{
-#if !defined(__ANDROID__) && !defined(__IOS__) && !defined(__OSX__)
-			/*std::string sId = LuaEmbedder::PullString(1);
+#if !defined(__ANDROID__) && !defined(__OSX__)
+			std::string sId = LuaEmbedder::PullString(1);
+
 			char* end;
 			SDL_RWops* file = (SDL_RWops*)strtoull(sId.c_str(), &end, 16);
 
@@ -234,7 +253,7 @@ namespace LuaBridge
 			text = ss.str();
 
 			SDL_RWwrite(file, text.c_str(), 1, text.size());
-			*/
+			
 #endif
 			return 0;
 		}

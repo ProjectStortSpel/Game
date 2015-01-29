@@ -1,3 +1,9 @@
+-- Create Map Component
+local CreateMapComponent = ComponentType()
+CreateMapComponent.Name = "CreateMap"
+CreateMapComponent.TableType = TableType.Map
+CreateMapComponent:AddVariable("MapName", ByteSize.Text)
+worldCreator:AddComponentType(CreateMapComponent)
 
 -- Map Position Component
 local MapPositionComponent = ComponentType()
@@ -14,6 +20,7 @@ RiverComponent.Name = "River"
 RiverComponent.TableType = TableType.Map
 RiverComponent:AddVariable("DirX", ByteSize.Int)
 RiverComponent:AddVariable("DirZ", ByteSize.Int)
+RiverComponent:AddVariable("Speed", ByteSize.Int)
 worldCreator:AddComponentType(RiverComponent)
 
 -- Checkpoint Component

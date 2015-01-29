@@ -47,6 +47,10 @@ bool GraphicDevice::Init()
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	if (!InitSkybox()) { ERRORMSG("INIT SKYBOX FAILED\n"); return false; }
 
+	float **tmpPtr = new float*[1];
+	BufferPointlights(0, tmpPtr);
+	delete tmpPtr;
+
 	CreateShadowMap();
 	
 	glEnable(GL_CULL_FACE);
@@ -440,7 +444,21 @@ bool GraphicDevice::InitSkybox()
 
 void GraphicDevice::BufferPointlights(int _nrOfLights, float **_lightPointers)
 {
-
+	/*if (_nrOfLights == 0)
+	{
+		vec3 zero = vec3(0.0);
+		m_forwardShader.SetUniVariable("pointlights[0].Position", vector3, &zero);
+		m_forwardShader.SetUniVariable("pointlights[0].Intensity", vector3, &zero);
+		m_forwardShader.SetUniVariable("pointlights[0].Color", vector3, &zero);
+		m_forwardShader.SetUniVariable("pointlights[0].Range", glfloat, &zero.x);
+	}
+	else if (_nrOfLights >= 1)
+	{
+		m_forwardShader.SetUniVariable("pointlights[0].Position", vector3, &_lightPointers[0]);
+		m_forwardShader.SetUniVariable("pointlights[0].Intensity", vector3, &_lightPointers[3]);
+		m_forwardShader.SetUniVariable("pointlights[0].Color", vector3, &_lightPointers[6]);
+		m_forwardShader.SetUniVariable("pointlights[0].Range", glfloat, &_lightPointers[9]);
+	}*/
 }
 
 void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
@@ -452,20 +470,18 @@ void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
         m_dirLightDirection = vec3(_lightPointer[0], _lightPointer[1], _lightPointer[2]);
         vec3 intens = vec3(_lightPointer[3], _lightPointer[4], _lightPointer[5]);
         vec3 color = vec3(_lightPointer[6], _lightPointer[7], _lightPointer[8]);
-        
-        m_forwardShader.SetUniVariable("dirlight.Direction", vector3, &m_dirLightDirection);
-        m_forwardShader.SetUniVariable("dirlight.Intensity", vector3, &intens);
-        m_forwardShader.SetUniVariable("dirlight.Color", vector3, &color);
+
+        m_forwardShader.SetUniVariable("dirlightDirection", vector3, &m_dirLightDirection);
+        m_forwardShader.SetUniVariable("dirlightIntensity", vector3, &intens);
+        m_forwardShader.SetUniVariable("dirlightColor", vector3, &color);
     }
     else
     {
         vec3 zero = vec3(0.0f);
-
-        m_forwardShader.SetUniVariable("dirlight.Intensity", vector3, &zero);
-        m_forwardShader.SetUniVariable("dirlight.Color", vector3, &zero);
+        m_forwardShader.SetUniVariable("dirlightIntensity", vector3, &zero);
+        m_forwardShader.SetUniVariable("dirlightColor", vector3, &zero);
     }
 	
-
 	m_shadowMap->UpdateViewMatrix(vec3(8.0f, 0.0f, 8.0f) - (10.0f*normalize(m_dirLightDirection)), vec3(8.0f, 0.0f, 8.0f));
 }
 
@@ -791,22 +807,27 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 	std::map<GLuint, GLuint> vpLocs, vnLocs, tanLocs, bitanLocs, tcLocs;
 	vpLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexPosition");
 	vpLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexPosition");
+	vpLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexPosition");
 	vpLocs[m_shadowShader.GetShaderProgram()]	 = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexPosition");
 
 	vnLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexNormal");
 	vnLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexNormal");
+	vnLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexNormal");
 	vnLocs[m_shadowShader.GetShaderProgram()]	 = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexNormal");
 
 	tanLocs[m_forwardShader.GetShaderProgram()]	  = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTangent");
 	tanLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexTangent");
+	tanLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexTangent");
 	tanLocs[m_shadowShader.GetShaderProgram()]	  = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexTangent");
 
 	bitanLocs[m_forwardShader.GetShaderProgram()]	= glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexBiTangent");
 	bitanLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexBiTangent");
+	bitanLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexBiTangent");
 	bitanLocs[m_shadowShader.GetShaderProgram()]	= glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexBiTangent");
 
 	tcLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTexCoord");
 	tcLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexTexCoord");
+	tcLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexTexCoord");
 	tcLocs[m_shadowShader.GetShaderProgram()]	 = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexTexCoord");
 
 	_shaderProg->UseProgram();
@@ -835,7 +856,6 @@ GLuint GraphicDevice::AddTexture(std::string _fileDir, GLenum _textureSlot)
 			return it->second;
 	}
 	int texSizeX, texSizeY;
-	//m_deferredShader1.UseProgram();
 	GLuint texture = TextureLoader::LoadTexture(_fileDir.c_str(), _textureSlot, texSizeX, texSizeY);
 	m_textures.insert(std::pair<const std::string, GLenum>(_fileDir, texture));
 	return texture;

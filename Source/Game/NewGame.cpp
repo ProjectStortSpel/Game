@@ -12,7 +12,11 @@
 int main(int argc, char** argv)
 {
 #if defined(__OSX__) || defined(__IOS__)
-    signal(SIGPIPE, SIG_IGN);
+    //signal(SIGPIPE, SIG_IGN);
+#endif
+    
+#ifdef __IOS__
+    printf("Home dir: %s\n\n", getenv("HOME"));
 #endif
     
 	Logger::GetInstance().AddGroup("Game");
