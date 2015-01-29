@@ -3,7 +3,7 @@ local CreateMapComponent = ComponentType()
 CreateMapComponent.Name = "CreateMap"
 CreateMapComponent.TableType = TableType.Map
 CreateMapComponent:AddVariable("MapName", ByteSize.Text)
-worldCreator:AddComponentType(MapPositionComponent)
+worldCreator:AddComponentType(CreateMapComponent)
 
 -- Map Position Component
 local MapPositionComponent = ComponentType()

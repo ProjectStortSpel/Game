@@ -41,8 +41,8 @@ HostMenuSystem.SpawnMenu = function(self)
 	
 	local button = nil
 	button = self:CreateElement("host", "quad", 0, 0.6, -2, 0.6, 0.3)
-	self:AddConsoleCommandToButton("host;gamemode storaspel", button)
-	self:AddHoverSize(1.1, button)	
+	self:AddConsoleCommandToButton("host;gamemode storaspel;loadmap", button)
+	self:AddHoverSize(1.1, button)
 end
 
 HostMenuSystem.RemoveMenu = function(self)
