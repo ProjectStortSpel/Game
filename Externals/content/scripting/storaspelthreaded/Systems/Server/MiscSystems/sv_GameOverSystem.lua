@@ -26,8 +26,5 @@ GameOverSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entiti
 		local entity = entities[n]
 		self.PlayerCount = self.PlayerCount - 1
 		
-		if self.PlayerCount <= 0 then
-			Console.AddToCommandQueue("reload")
-		end
 	end
 end

@@ -1,6 +1,4 @@
 PlayersSystem = System()
-PlayersSystem.NextSlot = 1
-
 
 PlayersSystem.Initialize = function(self)
 	self:SetName("PlayersConnectedSystem")
@@ -14,12 +12,43 @@ PlayersSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("IsSpectator", FilterType.Excluded)
 end
 
+PlayersSystem.FindEmptyId = function(self)
+
+	local currentPlayers = self:GetEntities()
+	local newPlayerId = 5
+	
+	local availableIds = {}
+	for n = 1, 5 do
+		availableIds[n] = false
+	end
+	
+	for i = 1, #currentPlayers do
+		local playerId = world:GetComponent(currentPlayers[i], "PlayerNumber", "Number"):GetInt()
+		
+		if playerId ~= -1 then
+			availableIds[playerId] = true
+		end
+	end
+	
+	local newIndex = 1
+	while availableIds[newIndex] do
+		newIndex = newIndex + 1
+	end
+	
+	return newIndex
+end
+
 PlayersSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 
 	for n = 1, #entities do
 		local entityId = entities[n]
-	
-		local playerNumber = 1
+		world:SetComponent(entityId, "PlayerNumber", "Number", -1)
+	end
+
+	for n = 1, #entities do
+		local entityId = entities[n]
+		
+		local playerNumber = self:FindEmptyId()
 		local newEntityId = world:CreateNewEntity("Unit")
 
 		world:SetComponent(newEntityId, "Model", "ModelName", "ply" .. playerNumber);
