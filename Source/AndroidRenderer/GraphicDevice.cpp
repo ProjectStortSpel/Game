@@ -12,6 +12,10 @@ using namespace glm;
 GraphicDevice::GraphicDevice()
 {
 	m_modelIDcounter = 0;
+	
+	m_directionalLightPtr = NULL;
+	for (int i = 0; i < 10; i++)
+		m_defaultLight[i] = 0.0f;
 }
 
 GraphicDevice::~GraphicDevice()
@@ -82,8 +86,8 @@ void GraphicDevice::PollEvent(SDL_Event _event)
 void GraphicDevice::Update(float _dt)
 {
 	m_camera->Update(_dt);
-
-  //SDL_Log("FPS: %f", 1.0f/_dt); 
+	
+	BufferLightsToGPU();
 }
 
 void GraphicDevice::WriteShadowMapDepth()
@@ -410,28 +414,23 @@ void GraphicDevice::BufferPointlights(int _nrOfLights, float **_lightPointers)
 
 void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
 {
-	//direction, intensity, color
-    
-    if (_lightPointer)
-    {
-        m_dirLightDirection = vec3(_lightPointer[0], _lightPointer[1], _lightPointer[2]);
-        vec3 intens = vec3(_lightPointer[3], _lightPointer[4], _lightPointer[5]);
-        vec3 color = vec3(_lightPointer[6], _lightPointer[7], _lightPointer[8]);
-        
-        m_forwardShader.SetUniVariable("dirlight.Direction", vector3, &m_dirLightDirection);
-        m_forwardShader.SetUniVariable("dirlight.Intensity", vector3, &intens);
-        m_forwardShader.SetUniVariable("dirlight.Color", vector3, &color);
-    }
-    else
-    {
-        vec3 zero = vec3(0.0f);
+	m_directionalLightPtr = _lightPointer ? _lightPointer : &m_defaultLight[0];
+}
 
-        m_forwardShader.SetUniVariable("dirlight.Intensity", vector3, &zero);
-        m_forwardShader.SetUniVariable("dirlight.Color", vector3, &zero);
-    }
-	
-
-	m_shadowMap->UpdateViewMatrix(vec3(8.0f, 0.0f, 8.0f) - (10.0f*normalize(m_dirLightDirection)), vec3(8.0f, 0.0f, 8.0f));
+void GraphicDevice::BufferLightsToGPU()
+{
+	if (m_directionalLightPtr)
+	{
+		m_dirLightDirection = vec3(m_directionalLightPtr[0], m_directionalLightPtr[1], m_directionalLightPtr[2]);
+		vec3 intens = vec3(m_directionalLightPtr[3], m_directionalLightPtr[4], m_directionalLightPtr[5]);
+		vec3 color = vec3(m_directionalLightPtr[6], m_directionalLightPtr[7], m_directionalLightPtr[8]);
+		
+		m_forwardShader.SetUniVariable("dirlightDirection", vector3, &m_dirLightDirection);
+		m_forwardShader.SetUniVariable("dirlightIntensity", vector3, &intens);
+		m_forwardShader.SetUniVariable("dirlightColor", vector3, &color);
+		
+		m_shadowMap->UpdateViewMatrix(vec3(8.0f, 0.0f, 8.0f) - (10.0f*normalize(m_dirLightDirection)), vec3(8.0f, 0.0f, 8.0f));
+	}
 }
 
 void GraphicDevice::CreateShadowMap()
@@ -766,6 +765,8 @@ void GraphicDevice::Clear()
   float **tmpPtr = new float*[1];
   BufferPointlights(0, tmpPtr);
   delete tmpPtr;
+  
+  m_directionalLightPtr = NULL;
 }
 
 int GraphicDevice::AddFont(const std::string& filepath, int size)

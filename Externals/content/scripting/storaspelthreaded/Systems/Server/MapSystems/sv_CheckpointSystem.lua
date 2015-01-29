@@ -14,22 +14,22 @@ CheckpointSystem.Initialize = function(self)
 end
 
 CheckpointSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
-
+	print("Checkpoint 1")
 	for n = 1, #entities do
 		local entity = entities[n]
 		-- If the entity has a CheckCheckpoint component
 		if world:EntityHasComponent( entity, "CheckCheckpoint") then
-
+			print("Check Checkpoint 1")
 			-- Get all units currently on the playfield
 			local units = self:GetEntities("Unit")
 			-- Get all checkpoints on the map
 			local checkPoints = self:GetEntities("Checkpoint")
-			
+			print("Check Checkpoint 2")
 			for i = 1, #units do
-			
+				print("Check Checkpoint 3")
 				-- Get the id of the unit's next checkpoint
 				local targetId = world:GetComponent(units[i], "TargetCheckpoint", "Id"):GetInt()
-				
+				print("Check Checkpoint 4")
 				if targetId > #checkPoints then
 				
 					local newId = world:CreateNewEntity()

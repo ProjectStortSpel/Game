@@ -17,7 +17,7 @@ RespawnSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 
 	for n = 1, #entities do
 		local entityId = entities[n]
-		if world:EntityHasComponent( entity, "RespawnUnits") then
+		if world:EntityHasComponent( entityId, "RespawnUnits") then
 			
 			local units = self:GetEntities("UnitDead")
 
@@ -28,7 +28,7 @@ RespawnSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 
 			end
 
-			world:KillEntity( entity )
+			world:KillEntity( entityId )
 		end
 	end
 end

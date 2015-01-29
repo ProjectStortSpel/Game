@@ -1,7 +1,7 @@
 #ifndef LUAGRAPHICDEVICE_H
 #define LUAGRAPHICDEVICE_H
 
-#ifdef __ANDROID__
+#if defined(__ANDROID__) || defined(__IOS__)
 #include "AndroidRenderer/GraphicDevice.h"
 #else
 #include "Renderer/GraphicDevice.h"
@@ -38,6 +38,10 @@ namespace LuaBridge
     int ChangeModelTexture(lua_State* L);
     int ChangeModelNormalMap(lua_State* L);
     int ChangeModelSpecularMap(lua_State* L);
+
+	int AddFont(lua_State* L);
+	int CreateTextTexture(lua_State* L);
+	int CreateWrappedTextTexture(lua_State* L);
   };
 }
 

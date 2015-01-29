@@ -13,7 +13,7 @@ end
 
 CreateMapSystem.PostInitialize = function(self)
 	local map
-    self.mapX, self.mapY, map = File.LoadMap("content/maps/smallmap.txt")
+    self.mapX, self.mapY, map = File.LoadMap("content/maps/map.txt")
     local posX, posZ
 	
 	for x = 0, self.mapX+1 do

@@ -11,10 +11,14 @@ require "servercomponents"
 package.path = package.path .. ";../../../Externals/content/scripting/shared/components/?.lua"
 require "interfacecomponents"
 require "textrendercomponents"
+require "lightcomponents"
+require "cameracomponents"
+require "components"
 
 -- Systems
 package.path = package.path .. ";../../../Externals/content/scripting/lobby/systems/?.lua"
 require "systems"
+
 
 --if Server then
 	require "serverlobbysystem"
@@ -30,6 +34,7 @@ require "gameinterfacesystem"
 require "gamemenusystem"
 require "optionmenusystem"
 require "connectmenusystem"
+require "hostmenusystem"
 
 package.path = package.path .. ";../../../Externals/content/scripting/shared/systems/?.lua"
 require "pickboxsystem"
@@ -62,3 +67,4 @@ worldCreator:AddSystemToCurrentGroup(HoverSizeSystem)
 worldCreator:AddSystemToCurrentGroup(GameMenuSystem)
 worldCreator:AddSystemToCurrentGroup(OptionMenuSystem)
 worldCreator:AddSystemToCurrentGroup(ConnectMenuSystem)
+worldCreator:AddSystemToCurrentGroup(HostMenuSystem)

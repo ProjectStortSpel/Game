@@ -2,7 +2,7 @@
 #define CAMERASYSTEM_H
 
 #include "ECSL/Interfaces/System.h"
-#ifdef __ANDROID__
+#if defined(__ANDROID__) || defined(__IOS__)
 #include "AndroidRenderer/GraphicDevice.h"
 #else
 #include "Renderer/GraphicDevice.h"

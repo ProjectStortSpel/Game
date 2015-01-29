@@ -11,7 +11,7 @@ namespace ECSL
 {
 	namespace BitSet
 	{
-#ifdef __ANDROID__
+#if defined(__ANDROID__) || defined(__IOS__)
 		typedef unsigned int DataType;
 		const unsigned int BitSetBitShift = 5;
 #else

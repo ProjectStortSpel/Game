@@ -444,60 +444,77 @@ namespace LuaEmbedder
     }
   }
   
+  void PrintInfo(lua_State* L)
+  {
+	  lua_Debug debugInfo;
+	  lua_getstack(L, 1, &debugInfo);
+	  lua_getinfo(L, "nSlu", &debugInfo);
+	  std::string source = std::string(debugInfo.source);
+	  int currentLine = 0, targetLine = debugInfo.currentline - 1;
+
+	  std::istringstream iss(source);
+	  std::string line;
+	  std::string info;
+	  while (std::getline(iss, line))
+	  {
+		  if (currentLine == targetLine - 1)
+		  {
+			  std::stringstream ss;
+			  ss << "Line " << currentLine << ": " << line;
+			  SDL_Log("%s", ss.str().c_str());
+		  }
+		  else if (currentLine == targetLine)
+		  {
+			  std::stringstream ss;
+			  ss << "Line " << currentLine << ": " << line << " <-- ERROR HERE";
+			  SDL_Log("%s", ss.str().c_str());
+		  }
+		  else if (currentLine == targetLine + 1)
+		  {
+			  std::stringstream ss;
+			  ss << "Line " << currentLine << ": " << line;
+			  SDL_Log("%s", ss.str().c_str());
+			  break;
+		  }
+		  currentLine++;
+	  }
+  }
+
   float PullFloat(lua_State* L, int index)
   {
-    if (!lua_isnumber(L, index))
-	  SDL_Log("LuaEmbedder::PullFloat : Element at index %d is not a number", index);
-    return (float)lua_tonumber(L, index);
+	  if (!lua_isnumber(L, index))
+	  {
+		  SDL_Log("LuaEmbedder::PullFloat : Element at index %d is not a number", index);
+		  PrintInfo(L);
+	  }
+	  return (float)lua_tonumber(L, index);
   }
   int PullInt(lua_State* L, int index)
   {
-    if (!lua_isnumber(L, index))
-    {
-      SDL_Log("LuaEmbedder::PullInt : Element at index %d is not a number", index);
-      /*lua_Debug debugInfo;
-      lua_getstack(L, 1, &debugInfo);
-      lua_getinfo(L, "nSlu", &debugInfo);
-      std::string source = std::string(debugInfo.source);
-      int currentLine = 0, targetLine = debugInfo.currentline;
-
-      std::istringstream iss(source);
-      std::string line;
-      std::string info;
-      while (std::getline(iss, line))
-      {
-	      if (currentLine == targetLine - 1)
-	      {
-		      info.insert(info.end(), line.begin(), line.end());
-		      info.push_back('\n');
-	      }
-	      else if (currentLine == targetLine)
-	      {
-		      info.insert(info.end(), line.begin(), line.end());
-		      info.push_back('\n');
-	      }
-	      else if (currentLine == targetLine + 1)
-	      {
-		      info.insert(info.end(), line.begin(), line.end());
-		      SDL_Log("%s", info.c_str());
-		      break;
-	      }
-	      currentLine++;
-      }*/
-    }
-    return (int)lua_tointeger(L, index);
+	  if (!lua_isnumber(L, index))
+	  {
+		  SDL_Log("LuaEmbedder::PullInt : Element at index %d is not a number", index);
+		  PrintInfo(L);
+	  }
+	  return (int)lua_tointeger(L, index);
   }
   bool PullBool(lua_State* L, int index)
   {
-    if (!lua_isboolean(L, index))
-	  SDL_Log("LuaEmbedder::PullBool : Element at index %d is not a boolean", index);
-    return (bool)lua_toboolean(L, index);
+	  if (!lua_isboolean(L, index))
+	  {
+		  SDL_Log("LuaEmbedder::PullBool : Element at index %d is not a boolean", index);
+		  PrintInfo(L);
+	  }
+	  return (bool)lua_toboolean(L, index);
   }
   std::string PullString(lua_State* L, int index)
   {
-    if (!lua_isstring(L, index))
-      SDL_Log("LuaEmbedder::PullString : Element at index %d is not a string", index);
-    return std::string(lua_tostring(L, index));
+	  if (!lua_isstring(L, index))
+	  {
+		  SDL_Log("LuaEmbedder::PullString : Element at index %d is not a string", index);
+		  PrintInfo(L);
+	  }
+	  return std::string(lua_tostring(L, index));
   }
   #define PULL_GLOBAL_VARIABLE() \
     if (library.empty()) \

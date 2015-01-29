@@ -147,7 +147,7 @@ namespace LuaBridge
 
 	int GetTouchState(lua_State* L)
 	{
-		#ifdef __ANDROID__
+		#if defined(__ANDROID__) || defined(__IOS__)
 		Input::InputWrapper& inputWrapper = Input::InputWrapper::GetInstance();
 		int fingerState = inputWrapper.GetTouch()->GetFingerState((SDL_FingerID)LuaEmbedder::PullInt(L, 1));
 		LuaEmbedder::PushInt(L, fingerState);

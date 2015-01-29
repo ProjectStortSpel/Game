@@ -31,8 +31,11 @@ StartNewRoundSystem.OnEntityAdded = function(self, entity)
 			world:GetComponent(newId, "SetPickingPhaseTimer", "Amount"):SetFloat(0)
 		else
 			local newId = world:CreateNewEntity()
-			world:CreateComponentAndAddTo("AddToPickingPhaseTimer", newId)
-			world:GetComponent(newId, "AddToPickingPhaseTimer", "Amount"):SetFloat(-10)
+			
+			if not world:GetComponent(entity, "NotifyStartNewRound", "IsAI"):GetBool() then
+				world:CreateComponentAndAddTo("AddToPickingPhaseTimer", newId)
+				world:GetComponent(newId, "AddToPickingPhaseTimer", "Amount"):SetFloat(-10)
+			end
 		end
 		
 		world:KillEntity(entity)

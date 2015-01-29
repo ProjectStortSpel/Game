@@ -40,6 +40,7 @@ PlayCardSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities
 
 					local cardAction = "Unit" .. action
 					world:CreateComponentAndAddTo(cardAction, unit)
+					print("Card <" .. cardAction .. ">!")
 					time = 1.5
 				end
 

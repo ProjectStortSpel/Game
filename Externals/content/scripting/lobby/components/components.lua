@@ -85,3 +85,38 @@ SlerpRotationComponent:AddVariable("toY", ByteSize.Float)
 SlerpRotationComponent:AddVariable("toZ", ByteSize.Float)
 SlerpRotationComponent:AddVariable("toW", ByteSize.Float)
 worldCreator:AddComponentType(SlerpRotationComponent)
+
+
+-- Available Spawnpoint
+local AvailableSpawnpoint = ComponentType()
+AvailableSpawnpoint.Name = "AvailableSpawnpoint"
+AvailableSpawnpoint.TableType = TableType.Map
+AvailableSpawnpoint:AddVariable("X", ByteSize.Int)
+AvailableSpawnpoint:AddVariable("Z", ByteSize.Int)
+worldCreator:AddComponentType(AvailableSpawnpoint)
+
+--	Player Component
+local PlayerComponent = ComponentType()
+PlayerComponent.Name = "Player"
+PlayerComponent.TableType = TableType.Map
+worldCreator:AddComponentType(PlayerComponent)
+
+local GameRunningComponent = ComponentType()
+GameRunningComponent.Name = "GameRunning"
+GameRunningComponent.TableType = TableType.Map
+worldCreator:AddComponentType(GameRunningComponent)
+
+-- Sync Network Component
+local SyncNetworkComponent = ComponentType()
+SyncNetworkComponent.Name = "SyncNetwork"
+SyncNetworkComponent.SyncNetwork = true
+SyncNetworkComponent.TableType = TableType.Array
+worldCreator:AddComponentType(SyncNetworkComponent)
+
+
+-- Hide Component
+local HideComponent = ComponentType()
+HideComponent.Name = "Hide"
+HideComponent.SyncNetwork = true
+HideComponent.TableType = TableType.Map
+worldCreator:AddComponentType(HideComponent)
