@@ -438,8 +438,7 @@ void GraphicDevice::Render()
 				else
 					modelMatrix = *m_modelsInterface[i].instances[j].modelMatrix;
 
-				mat4 modelViewMatrix;
-				modelViewMatrix = modelMatrix;
+				mat4 modelViewMatrix = modelMatrix;
 
 				modelViewVector[nrOfInstances] = modelViewMatrix;
 
@@ -459,7 +458,6 @@ void GraphicDevice::Render()
 
 	glDisable(GL_BLEND);
 	glDisable(GL_TEXTURE_2D);
-	glDisable(GL_BLEND);
 
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	//---------------------------------------------------------------------
