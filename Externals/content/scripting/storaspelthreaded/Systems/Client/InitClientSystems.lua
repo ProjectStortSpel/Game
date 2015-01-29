@@ -9,7 +9,7 @@ worldCreator:AddSystemToCurrentGroup(PlayerIndicatorSystem)
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Client/InterfaceSystems/?.lua"
 require "cl_RconMenuSystem"
 require "cl_OptionsMenuSystem"
-require "cl_HoverSizeSystem"
+--require "cl_HoverSizeSystem"
 require "cl_GameMenuSystem"
 require "cl_GameInterfaceSystem"
 
@@ -18,11 +18,11 @@ worldCreator:AddSystemToCurrentGroup(RconMenuSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(OptionMenuSystem)
 worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(HoverSizeSystem)
-worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(GameMenuSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(GameInterfaceSystem)
+--worldCreator:AddSystemGroup()
+--worldCreator:AddSystemToCurrentGroup(HoverSizeSystem)
 
 --	Card Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Client/CardSystems/?.lua"
@@ -55,11 +55,6 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CardHoverSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CardSelectSystem)
-
-
-
-
-
 
 --	Camera Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Client/CameraSystems/?.lua"

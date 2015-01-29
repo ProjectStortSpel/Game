@@ -46,12 +46,16 @@ bool GraphicDevice::Init()
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	if (!InitSkybox()) { ERRORMSG("INIT SKYBOX FAILED\n"); return false; }
+
+	CreateShadowMap();
 	
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glClearColor(0.0f, 0.2f, 0.6f, 1.0f);
 
+    m_sdlTextRenderer.Init();
+    
 	return true;
 }
 
@@ -79,7 +83,62 @@ void GraphicDevice::Update(float _dt)
 {
 	m_camera->Update(_dt);
 
-  //SDL_Log("FPS: %f", 1.0f/_dt);
+  //SDL_Log("FPS: %f", 1.0f/_dt); 
+}
+
+void GraphicDevice::WriteShadowMapDepth()
+{
+    GLint oldFBO;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFBO);
+    
+	//------- Write shadow maps depths ----------
+	glBindFramebuffer(GL_FRAMEBUFFER, m_shadowMap->GetShadowFBOHandle());
+	glClear(GL_DEPTH_BUFFER_BIT);
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+
+	glViewport(0, 0, m_shadowMap->GetResolution()-2, m_shadowMap->GetResolution()-2);
+
+	m_shadowShader.UseProgram();
+	//------FORWARD RENDERING--------------------------------------------
+	glEnable(GL_BLEND);
+
+	//glCullFace(GL_FRONT);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	mat4 shadowViewProj = (*m_shadowMap->GetProjectionMatrix()) * (*m_shadowMap->GetViewMatrix());
+
+	//Forward models
+	for (int i = 0; i < m_modelsForward.size(); i++)
+	{
+		if (m_modelsForward[i].active) // IS MODEL ACTIVE?
+		{
+			
+			mat4 modelMatrix;
+			if (m_modelsForward[i].modelMatrix == NULL)
+			{
+				modelMatrix = glm::translate(glm::vec3(1));
+				SDL_Log("model: %d has no model matrix", i);
+			}
+			else
+				modelMatrix = *m_modelsForward[i].modelMatrix;
+
+			mat4 mvp = shadowViewProj * modelMatrix;
+			m_shadowShader.SetUniVariable("MVP", mat4x4, &mvp);
+
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
+
+			m_modelsForward[i].bufferPtr->draw(m_shadowShader.GetShaderProgram());
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+	}
+	//------------------------------------------------
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glBindFramebuffer(GL_FRAMEBUFFER, oldFBO);
+	glCullFace(GL_BACK);
+	//------------------------------
 }
 
 void GraphicDevice::Render()
@@ -87,50 +146,64 @@ void GraphicDevice::Render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 
-	glViewport(0, 0, m_clientWidth, m_clientHeight);
-	
 	//--------Uniforms-------------------------------------------------------------------------
 	mat4 projectionMatrix = *m_camera->GetProjMatrix();
 	mat4 viewMatrix = *m_camera->GetViewMatrix();
 
-	//------FORWARD RENDERING--------------------------------------------
-	//glEnable(GL_BLEND);
-
-	m_forwardShader.UseProgram();
-	m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
-	m_forwardShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
-
-	for (int i = 0; i < m_modelsForward.size(); i++)
+	if (m_modelsForward.size() > 0)
 	{
-		if (m_modelsForward[i].active) // IS MODEL ACTIVE?
+		WriteShadowMapDepth();
+
+		glViewport(0, 0, m_clientWidth, m_clientHeight);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		//------FORWARD RENDERING--------------------------------------------
+		//glEnable(GL_BLEND);
+
+		m_forwardShader.UseProgram();
+		m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
+		m_forwardShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
+		glm::mat4 invViewMatrix = glm::inverse(viewMatrix);
+		m_forwardShader.SetUniVariable("InvViewMatrix", mat4x4, &invViewMatrix);
+
+		mat4 shadowVP = (*m_shadowMap->GetProjectionMatrix()) * (*m_shadowMap->GetViewMatrix());
+		m_forwardShader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, m_shadowMap->GetDepthTexHandle());
+
+		for (int i = 0; i < m_modelsForward.size(); i++)
 		{
-			mat4 modelMatrix;
-			if (m_modelsForward[i].modelMatrix == NULL)
-				modelMatrix = glm::translate(glm::vec3(1));
-			else
-				modelMatrix = *m_modelsForward[i].modelMatrix;
+			if (m_modelsForward[i].active) // IS MODEL ACTIVE?
+			{
+				mat4 modelMatrix;
+				if (m_modelsForward[i].modelMatrix == NULL)
+					modelMatrix = glm::translate(glm::vec3(1));
+				else
+					modelMatrix = *m_modelsForward[i].modelMatrix;
 
-			mat4 modelViewMatrix = viewMatrix * modelMatrix;
-			m_forwardShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
+				mat4 modelViewMatrix = viewMatrix * modelMatrix;
+				m_forwardShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
 
-			mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-			m_forwardShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
+				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
+				m_forwardShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
 
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
 
-			glActiveTexture(GL_TEXTURE2);
-			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].norID);
+				glActiveTexture(GL_TEXTURE2);
+				glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].norID);
 
-			glActiveTexture(GL_TEXTURE3);
-			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].speID);
+				glActiveTexture(GL_TEXTURE3);
+				glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].speID);
 
-			m_modelsForward[i].bufferPtr->draw();
-			glBindTexture(GL_TEXTURE_2D, 0);
+				m_modelsForward[i].bufferPtr->draw(m_forwardShader.GetShaderProgram());
+				glBindTexture(GL_TEXTURE_2D, 0);
+			}
 		}
+		//-------------------------------------------------------------------------
 	}
-	//-------------------------------------------------------------------------
-
+	glViewport(0, 0, m_clientWidth, m_clientHeight);
 	glDisable(GL_CULL_FACE);
 	// DRAW SKYBOX
 	m_skyBoxShader.UseProgram();
@@ -152,13 +225,14 @@ void GraphicDevice::Render()
 			if (m_modelsViewspace[i].modelMatrix == NULL)
 				modelMatrix = glm::translate(glm::vec3(1));
 			else
-				modelMatrix = *m_modelsViewspace[i].modelMatrix;
+                modelMatrix = *m_modelsViewspace[i].modelMatrix;
+            
 
 			mat4 modelViewMatrix = modelMatrix;
-			m_forwardShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
+			m_viewspaceShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
 
 			mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-			m_forwardShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
+			m_viewspaceShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
 
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, m_modelsViewspace[i].texID);
@@ -169,11 +243,38 @@ void GraphicDevice::Render()
 			glActiveTexture(GL_TEXTURE3);
 			glBindTexture(GL_TEXTURE_2D, m_modelsViewspace[i].speID);
 
-			m_modelsViewspace[i].bufferPtr->draw();
+			m_modelsViewspace[i].bufferPtr->draw(m_viewspaceShader.GetShaderProgram());
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 	}
+	/*if (m_modelsForward.size() > 0)
+	{
+		float positionData[] = {
+			-1.0, -1.0,
+			1.0, -1.0,
+			1.0, 1.0,
+			1.0, 1.0,
+			-1.0, 1.0,
+			-1.0, -1.0
+		};
 
+		m_fullscreen.UseProgram();
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, m_shadowMap->GetDepthTexHandle());
+
+		GLuint buf;
+		glGenBuffers(1, &buf);
+
+		glBindBuffer(GL_ARRAY_BUFFER, buf);
+		glBufferData(GL_ARRAY_BUFFER, 2 * 6 * sizeof(float), positionData, GL_STATIC_DRAW);
+
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
+		glEnableVertexAttribArray(0);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		glDeleteBuffers(1, &buf);
+	}*/
 	glUseProgram(0);
 	glEnable(GL_DEPTH_TEST);
 
@@ -262,6 +363,18 @@ bool GraphicDevice::InitShaders()
 	m_viewspaceShader.AddShader("content/shaders/AndroidViewspaceShaderFS.glsl", GL_FRAGMENT_SHADER);
 	m_viewspaceShader.FinalizeShaderProgram();
 
+	// ShadowShader geometry
+	m_shadowShader.InitShaderProgram();
+	m_shadowShader.AddShader("content/shaders/AndroidShadowShaderVS.glsl", GL_VERTEX_SHADER);
+	m_shadowShader.AddShader("content/shaders/AndroidShadowShaderFS.glsl", GL_FRAGMENT_SHADER);
+	m_shadowShader.FinalizeShaderProgram();
+
+	//m_fullscreen
+	/*m_fullscreen.InitShaderProgram();
+	m_fullscreen.AddShader("content/shaders/AndroidFullscreenVS.glsl", GL_VERTEX_SHADER);
+	m_fullscreen.AddShader("content/shaders/AndroidFullscreenFS.glsl", GL_FRAGMENT_SHADER);
+	m_fullscreen.FinalizeShaderProgram();*/
+
 	return true;
 }
 
@@ -269,6 +382,9 @@ bool GraphicDevice::InitBuffers()
 {
 	//Skybox shader
 	m_skyBoxShader.CheckUniformLocation("cubemap", 1);
+
+	//Fullscreen shader
+	//m_fullscreen.CheckUniformLocation("sampler", 0);
 
 	return true;
 }
@@ -295,13 +411,43 @@ void GraphicDevice::BufferPointlights(int _nrOfLights, float **_lightPointers)
 void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
 {
 	//direction, intensity, color
-	m_dirLightDirection = vec3(_lightPointer[0], _lightPointer[1], _lightPointer[2]);
-	vec3 intens = vec3(_lightPointer[3], _lightPointer[4], _lightPointer[5]);
-	vec3 color = vec3(_lightPointer[6], _lightPointer[7], _lightPointer[8]);
+    
+    if (_lightPointer)
+    {
+        m_dirLightDirection = vec3(_lightPointer[0], _lightPointer[1], _lightPointer[2]);
+        vec3 intens = vec3(_lightPointer[3], _lightPointer[4], _lightPointer[5]);
+        vec3 color = vec3(_lightPointer[6], _lightPointer[7], _lightPointer[8]);
+        
+        m_forwardShader.SetUniVariable("dirlight.Direction", vector3, &m_dirLightDirection);
+        m_forwardShader.SetUniVariable("dirlight.Intensity", vector3, &intens);
+        m_forwardShader.SetUniVariable("dirlight.Color", vector3, &color);
+    }
+    else
+    {
+        vec3 zero = vec3(0.0f);
 
-	m_forwardShader.SetUniVariable("dirlight.Direction", vector3, &m_dirLightDirection);
-	m_forwardShader.SetUniVariable("dirlight.Intensity", vector3, &intens);
-	m_forwardShader.SetUniVariable("dirlight.Color", vector3, &color);
+        m_forwardShader.SetUniVariable("dirlight.Intensity", vector3, &zero);
+        m_forwardShader.SetUniVariable("dirlight.Color", vector3, &zero);
+    }
+	
+
+	m_shadowMap->UpdateViewMatrix(vec3(8.0f, 0.0f, 8.0f) - (10.0f*normalize(m_dirLightDirection)), vec3(8.0f, 0.0f, 8.0f));
+}
+
+void GraphicDevice::CreateShadowMap()
+{
+	int resolution = 1024;
+	m_dirLightDirection = vec3(0.0f, -1.0f, 1.0f);
+	vec3 midMap = vec3(8.0f, 0.0f, 8.0f);
+	vec3 lightPos = midMap - (10.0f*normalize(m_dirLightDirection));
+	m_shadowMap = new ShadowMap(lightPos, lightPos + normalize(m_dirLightDirection), resolution);
+	m_shadowMap->CreateShadowMapTexture(GL_TEXTURE0);
+
+	m_forwardShader.UseProgram();
+	m_forwardShader.SetUniVariable("BiasMatrix", mat4x4, m_shadowMap->GetBiasMatrix());
+	m_forwardShader.CheckUniformLocation("ShadowDepthTex", 0);
+
+	m_shadowShader.CheckUniformLocation("diffuseTex", 1);
 }
 
 bool GraphicDevice::RenderSimpleText(std::string _text, int _x, int _y)
@@ -547,20 +693,35 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 
 	Buffer* retbuffer = new Buffer();
 
-	GLuint vpLoc	= glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexPosition");
-	GLuint vnLoc	= glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexNormal");
-	GLuint tanLoc	= glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTangent");
-	GLuint bitanLoc = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexBiTangent");
-	GLuint tcLoc	= glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTexCoord");
+	std::map<GLuint, GLuint> vpLocs, vnLocs, tanLocs, bitanLocs, tcLocs;
+	vpLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexPosition");
+	vpLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexPosition");
+	vpLocs[m_shadowShader.GetShaderProgram()]	 = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexPosition");
+
+	vnLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexNormal");
+	vnLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexNormal");
+	vnLocs[m_shadowShader.GetShaderProgram()]	 = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexNormal");
+
+	tanLocs[m_forwardShader.GetShaderProgram()]	  = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTangent");
+	tanLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexTangent");
+	tanLocs[m_shadowShader.GetShaderProgram()]	  = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexTangent");
+
+	bitanLocs[m_forwardShader.GetShaderProgram()]	= glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexBiTangent");
+	bitanLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexBiTangent");
+	bitanLocs[m_shadowShader.GetShaderProgram()]	= glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexBiTangent");
+
+	tcLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTexCoord");
+	tcLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexTexCoord");
+	tcLocs[m_shadowShader.GetShaderProgram()]	 = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexTexCoord");
 
 	_shaderProg->UseProgram();
 	BufferData bufferData[] =
 	{
-		{ vpLoc,	3, GL_FLOAT, (const GLvoid*)positionData.data(), (GLsizeiptr)(positionData.size() * sizeof(float)) },
-		{ vnLoc,	3, GL_FLOAT, (const GLvoid*)normalData.data(), (GLsizeiptr)(normalData.size()   * sizeof(float)) },
-		{ tanLoc,	3, GL_FLOAT, (const GLvoid*)tanData.data(), (GLsizeiptr)(tanData.size()   * sizeof(float)) },
-		{ bitanLoc, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), (GLsizeiptr)(bitanData.size()   * sizeof(float)) },
-		{ tcLoc,	2, GL_FLOAT, (const GLvoid*)texCoordData.data(), (GLsizeiptr)(texCoordData.size() * sizeof(float)) }
+		{ vpLocs,	 3, GL_FLOAT, (const GLvoid*)positionData.data(), (GLsizeiptr)(positionData.size() * sizeof(float)) },
+		{ vnLocs,	 3, GL_FLOAT, (const GLvoid*)normalData.data(), (GLsizeiptr)(normalData.size()   * sizeof(float)) },
+		{ tanLocs,	 3, GL_FLOAT, (const GLvoid*)tanData.data(), (GLsizeiptr)(tanData.size()   * sizeof(float)) },
+		{ bitanLocs, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), (GLsizeiptr)(bitanData.size()   * sizeof(float)) },
+		{ tcLocs,	 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), (GLsizeiptr)(texCoordData.size() * sizeof(float)) }
 	};
 
 	retbuffer->init(bufferData, sizeof(bufferData) / sizeof(bufferData[0]), _shaderProg->GetShaderProgram());
@@ -600,8 +761,45 @@ void GraphicDevice::Clear()
   m_modelIDcounter = 0;
   
   m_modelsForward.clear();
+  m_modelsViewspace.clear();
 
   float **tmpPtr = new float*[1];
   BufferPointlights(0, tmpPtr);
   delete tmpPtr;
+}
+
+int GraphicDevice::AddFont(const std::string& filepath, int size)
+{
+	return m_sdlTextRenderer.AddFont(filepath, size);
+}
+
+float GraphicDevice::CreateTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, glm::ivec2 size)
+{
+	if (m_textures.find(textureName) != m_textures.end())
+		glDeleteTextures(1, &m_textures[textureName]);
+	SDL_Surface* surface = m_sdlTextRenderer.CreateTextSurface(textString, fontIndex, color);
+	if (size.x > 0)
+		surface->w = size.x;
+	if (size.y > 0)
+		surface->h = size.y;
+	m_forwardShader.UseProgram();
+	GLuint texture = TextureLoader::LoadTexture(surface, GL_TEXTURE1);
+	m_textures[textureName] = texture;
+	SDL_FreeSurface(surface);
+	return (float)surface->w / (float)surface->h;
+}
+
+void GraphicDevice::CreateWrappedTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, unsigned int wrapLength, glm::ivec2 size)
+{
+	if (m_textures.find(textureName) != m_textures.end())
+		glDeleteTextures(1, &m_textures[textureName]);
+	SDL_Surface* surface = m_sdlTextRenderer.CreateWrappedTextSurface(textString, fontIndex, color, wrapLength);
+	if (size.x > 0)
+		surface->w = size.x;
+	if (size.y > 0)
+		surface->h = size.y;
+	m_forwardShader.UseProgram();
+	GLuint texture = TextureLoader::LoadTexture(surface, GL_TEXTURE1);
+	m_textures[textureName] = texture;
+	SDL_FreeSurface(surface);
 }

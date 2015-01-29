@@ -8,7 +8,6 @@ GameMenuSystem.Initialize = function(self)
 	--	Toggle EntitiesAdded
 	self:UsingUpdate()
 	self:UsingEntitiesAdded()
-	self:UsingEntitiesRemoved()
 	
 	--	Set Filter
 	self:AddComponentTypeToFilter("GameMenu", FilterType.RequiresOneOf)

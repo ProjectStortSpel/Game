@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		030E83211A77FB060083ABD9 /* SDL2_ttf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 030E83201A77FB060083ABD9 /* SDL2_ttf.framework */; };
+		030E83231A77FB7C0083ABD9 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 030E83221A77FB7C0083ABD9 /* SDL2.framework */; };
+		0321DDF61A77E566000EE6A6 /* TextRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0321DDF41A77E566000EE6A6 /* TextRenderer.cpp */; };
 		0339F9891A74082700FA04DD /* content in Resources */ = {isa = PBXBuildFile; fileRef = 0339F9881A74082700FA04DD /* content */; };
 		0339F9961A740B5900FA04DD /* libGLEW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0339F9921A740B5900FA04DD /* libGLEW.a */; };
 		0339F9971A740B5900FA04DD /* libGLEW.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0339F9931A740B5900FA04DD /* libGLEW.dylib */; };
@@ -14,7 +17,10 @@
 		0339F9AE1A7433D800FA04DD /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03F5A8021A73DB9B00D54F14 /* OpenGL.framework */; };
 		035C22CD1A73D68600EE9624 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 035C22CC1A73D68600EE9624 /* Images.xcassets */; };
 		035C22D01A73D68600EE9624 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 035C22CE1A73D68600EE9624 /* Main.storyboard */; };
-		03C1DB171A744FB200C1996E /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03C1DB161A744FB200C1996E /* libSDL2.a */; };
+		03783D0D1A779C0B00BA78D0 /* Logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03783D0B1A779C0B00BA78D0 /* Logger.cpp */; };
+		03783D101A779C1600BA78D0 /* ClientDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03783D0E1A779C1600BA78D0 /* ClientDatabase.cpp */; };
+		03783D131A779C4E00BA78D0 /* MasterServerSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03783D111A779C4E00BA78D0 /* MasterServerSystem.cpp */; };
+		03783D161A779C6100BA78D0 /* SlerpRotationSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03783D141A779C6100BA78D0 /* SlerpRotationSystem.cpp */; };
 		03C1DB2D1A74500900C1996E /* Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03C1DB191A74500900C1996E /* Buffer.cpp */; };
 		03C1DB2E1A74500900C1996E /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03C1DB1B1A74500900C1996E /* Camera.cpp */; };
 		03C1DB2F1A74500900C1996E /* GLTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03C1DB1D1A74500900C1996E /* GLTimer.cpp */; };
@@ -111,6 +117,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		030E83201A77FB060083ABD9 /* SDL2_ttf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_ttf.framework; path = ../../Externals/lib/OSX/SDL2_ttf.framework; sourceTree = "<group>"; };
+		030E83221A77FB7C0083ABD9 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../Externals/lib/OSX/SDL2.framework; sourceTree = "<group>"; };
+		0321DDF41A77E566000EE6A6 /* TextRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextRenderer.cpp; sourceTree = "<group>"; };
+		0321DDF51A77E566000EE6A6 /* TextRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextRenderer.h; sourceTree = "<group>"; };
 		0339F9881A74082700FA04DD /* content */ = {isa = PBXFileReference; lastKnownFileType = folder; name = content; path = ../../Externals/content; sourceTree = "<group>"; };
 		0339F9921A740B5900FA04DD /* libGLEW.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGLEW.a; path = ../../Externals/lib/OSX/libGLEW.a; sourceTree = "<group>"; };
 		0339F9931A740B5900FA04DD /* libGLEW.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libGLEW.dylib; path = ../../Externals/lib/OSX/libGLEW.dylib; sourceTree = "<group>"; };
@@ -119,7 +129,14 @@
 		035C22C31A73D68600EE9624 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		035C22CC1A73D68600EE9624 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		035C22CF1A73D68600EE9624 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		03C1DB161A744FB200C1996E /* libSDL2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2.a; path = ../../Externals/lib/OSX/libSDL2.a; sourceTree = "<group>"; };
+		03783D0B1A779C0B00BA78D0 /* Logger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Logger.cpp; sourceTree = "<group>"; };
+		03783D0C1A779C0B00BA78D0 /* Logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logger.h; sourceTree = "<group>"; };
+		03783D0E1A779C1600BA78D0 /* ClientDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClientDatabase.cpp; sourceTree = "<group>"; };
+		03783D0F1A779C1600BA78D0 /* ClientDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClientDatabase.h; sourceTree = "<group>"; };
+		03783D111A779C4E00BA78D0 /* MasterServerSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MasterServerSystem.cpp; sourceTree = "<group>"; };
+		03783D121A779C4E00BA78D0 /* MasterServerSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MasterServerSystem.h; sourceTree = "<group>"; };
+		03783D141A779C6100BA78D0 /* SlerpRotationSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SlerpRotationSystem.cpp; sourceTree = "<group>"; };
+		03783D151A779C6100BA78D0 /* SlerpRotationSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlerpRotationSystem.h; sourceTree = "<group>"; };
 		03C1DB191A74500900C1996E /* Buffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Buffer.cpp; sourceTree = "<group>"; };
 		03C1DB1A1A74500900C1996E /* Buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Buffer.h; sourceTree = "<group>"; };
 		03C1DB1B1A74500900C1996E /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Camera.cpp; sourceTree = "<group>"; };
@@ -316,7 +333,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				03C1DB171A744FB200C1996E /* libSDL2.a in Frameworks */,
+				030E83231A77FB7C0083ABD9 /* SDL2.framework in Frameworks */,
+				030E83211A77FB060083ABD9 /* SDL2_ttf.framework in Frameworks */,
 				0339F9AE1A7433D800FA04DD /* OpenGL.framework in Frameworks */,
 				0339F9961A740B5900FA04DD /* libGLEW.a in Frameworks */,
 				0339F9971A740B5900FA04DD /* libGLEW.dylib in Frameworks */,
@@ -339,7 +357,8 @@
 		0339F9861A74080300FA04DD /* Framework */ = {
 			isa = PBXGroup;
 			children = (
-				03C1DB161A744FB200C1996E /* libSDL2.a */,
+				030E83221A77FB7C0083ABD9 /* SDL2.framework */,
+				030E83201A77FB060083ABD9 /* SDL2_ttf.framework */,
 				0339F9921A740B5900FA04DD /* libGLEW.a */,
 				0339F9931A740B5900FA04DD /* libGLEW.dylib */,
 				0339F9941A740B5900FA04DD /* liblua.a */,
@@ -419,9 +438,20 @@
 			name = Source;
 			sourceTree = "<group>";
 		};
+		03783D0A1A779C0B00BA78D0 /* Logger */ = {
+			isa = PBXGroup;
+			children = (
+				03783D0B1A779C0B00BA78D0 /* Logger.cpp */,
+				03783D0C1A779C0B00BA78D0 /* Logger.h */,
+			);
+			path = Logger;
+			sourceTree = "<group>";
+		};
 		03C1DB181A74500900C1996E /* Renderer */ = {
 			isa = PBXGroup;
 			children = (
+				0321DDF41A77E566000EE6A6 /* TextRenderer.cpp */,
+				0321DDF51A77E566000EE6A6 /* TextRenderer.h */,
 				03C1DB191A74500900C1996E /* Buffer.cpp */,
 				03C1DB1A1A74500900C1996E /* Buffer.h */,
 				03C1DB1B1A74500900C1996E /* Camera.cpp */,
@@ -590,6 +620,7 @@
 		03F5A7201A73D94F00D54F14 /* Game */ = {
 			isa = PBXGroup;
 			children = (
+				03783D0A1A779C0B00BA78D0 /* Logger */,
 				03F5A7211A73D94F00D54F14 /* FrameCounter */,
 				03F5A7241A73D94F00D54F14 /* GameConsole.cpp */,
 				03F5A7251A73D94F00D54F14 /* GameConsole.h */,
@@ -729,6 +760,8 @@
 		03F5A7531A73D94F00D54F14 /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				03783D0E1A779C1600BA78D0 /* ClientDatabase.cpp */,
+				03783D0F1A779C1600BA78D0 /* ClientDatabase.h */,
 				03F5A7541A73D94F00D54F14 /* NetworkHelper.cpp */,
 				03F5A7551A73D94F00D54F14 /* NetworkHelper.h */,
 			);
@@ -738,6 +771,10 @@
 		03F5A75D1A73D94F00D54F14 /* Systems */ = {
 			isa = PBXGroup;
 			children = (
+				03783D141A779C6100BA78D0 /* SlerpRotationSystem.cpp */,
+				03783D151A779C6100BA78D0 /* SlerpRotationSystem.h */,
+				03783D111A779C4E00BA78D0 /* MasterServerSystem.cpp */,
+				03783D121A779C4E00BA78D0 /* MasterServerSystem.h */,
 				03F5A75E1A73D94F00D54F14 /* CameraSystem.cpp */,
 				03F5A75F1A73D94F00D54F14 /* CameraSystem.h */,
 				03F5A7601A73D94F00D54F14 /* DirectionalLightSystem.cpp */,
@@ -913,6 +950,7 @@
 				03F5A7B91A73D94F00D54F14 /* EntityTable.cpp in Sources */,
 				03F5A7BF1A73D94F00D54F14 /* SystemManager.cpp in Sources */,
 				03F5A7E31A73D94F00D54F14 /* MovementSystem.cpp in Sources */,
+				03783D0D1A779C0B00BA78D0 /* Logger.cpp in Sources */,
 				03F5A7B11A73D94F00D54F14 /* FileHelper.cpp in Sources */,
 				03F5A7F11A73D94F00D54F14 /* BaseNetwork.cpp in Sources */,
 				03F5A7EE1A73D94F00D54F14 /* InputWrapper.cpp in Sources */,
@@ -927,9 +965,11 @@
 				03F5A7F51A73D94F00D54F14 /* Packet.cpp in Sources */,
 				03F5A7F61A73D94F00D54F14 /* PacketHandler.cpp in Sources */,
 				03F5A7D71A73D94F00D54F14 /* LuaMatrix.cpp in Sources */,
+				03783D131A779C4E00BA78D0 /* MasterServerSystem.cpp in Sources */,
 				03F5A7F41A73D94F00D54F14 /* LinSocket.cpp in Sources */,
 				03F5A7B61A73D94F00D54F14 /* DataArray.cpp in Sources */,
 				03F5A7E41A73D94F00D54F14 /* PointlightSystem.cpp in Sources */,
+				03783D161A779C6100BA78D0 /* SlerpRotationSystem.cpp in Sources */,
 				03F5A7F91A73D94F00D54F14 /* WinSocket.cpp in Sources */,
 				03F5A7C71A73D94F00D54F14 /* FrameCounter.cpp in Sources */,
 				03C1DB341A74500900C1996E /* SkyBox.cpp in Sources */,
@@ -951,6 +991,7 @@
 				03F5A7C31A73D94F00D54F14 /* WorldCreator.cpp in Sources */,
 				03F5A7BC1A73D94F00D54F14 /* Parser.cpp in Sources */,
 				03F5A7ED1A73D94F00D54F14 /* Touch.cpp in Sources */,
+				03783D101A779C1600BA78D0 /* ClientDatabase.cpp in Sources */,
 				03F5A7F81A73D94F00D54F14 /* Stdafx.cpp in Sources */,
 				03F5A7E01A73D94F00D54F14 /* CameraSystem.cpp in Sources */,
 				03C1DB2E1A74500900C1996E /* Camera.cpp in Sources */,
@@ -976,6 +1017,7 @@
 				03F5A7E71A73D94F00D54F14 /* ResetChangedSystem.cpp in Sources */,
 				03F5A7EB1A73D94F00D54F14 /* Keyboard.cpp in Sources */,
 				03F5A7B41A73D94F00D54F14 /* DataManager.cpp in Sources */,
+				0321DDF61A77E566000EE6A6 /* TextRenderer.cpp in Sources */,
 				03F5A7D81A73D94F00D54F14 /* LuaNetwork.cpp in Sources */,
 				03F5A7AF1A73D94F00D54F14 /* BitSet.cpp in Sources */,
 				03F5A7BA1A73D94F00D54F14 /* ComponentTypeReader.cpp in Sources */,
@@ -1081,7 +1123,9 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
+					../../Externals/lib/OSX,
 					/Users/Erik/Desktop/StoraSpel/Game/Externals/lib/OSX,
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -1111,7 +1155,9 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
+					../../Externals/lib/OSX,
 					/Users/Erik/Desktop/StoraSpel/Game/Externals/lib/OSX,
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = __OSX__;
 				INFOPLIST_FILE = StoraSpel/Info.plist;

@@ -7,9 +7,14 @@
 #endif
 
 #include "Logger/Logger.h"
+#include "Game/Network/ClientDatabase.h"
 
 int main(int argc, char** argv)
 {
+#if defined(__OSX__) || defined(__IOS__)
+    signal(SIGPIPE, SIG_IGN);
+#endif
+    
 	Logger::GetInstance().AddGroup("Game");
 	GameCreator* newGame = new GameCreator();
 
@@ -25,6 +30,8 @@ int main(int argc, char** argv)
 	newGame->StartGame(argc, argv);
 	delete newGame;
 
+	delete(&ClientDatabase::GetInstance());
 	delete(&Logger::GetInstance());
+	
 	return 0;
 }

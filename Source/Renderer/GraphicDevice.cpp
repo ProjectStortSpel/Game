@@ -65,6 +65,8 @@ bool GraphicDevice::Init()
 	glCullFace(GL_BACK);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
+	m_sdlTextRenderer.Init();
+	
 	return true;
 }
 
@@ -370,13 +372,12 @@ void GraphicDevice::Render()
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	glDisable(GL_DEPTH_TEST);
-
 	// RENDER VIEWSPACE STUFF
+	glDisable(GL_DEPTH_TEST);
+	//glDisable(GL_CULL_FACE);
+	glEnable(GL_TEXTURE_2D);
 	m_viewspaceShader.UseProgram();
 	m_viewspaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
-
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
 
 	for (int i = 0; i < m_modelsViewspace.size(); i++)
 	{
@@ -421,10 +422,9 @@ void GraphicDevice::Render()
 	}
 
 	// RENDER INTERFACE STUFF
+	glDisable(GL_DEPTH_TEST);
 	m_interfaceShader.UseProgram();
 	m_interfaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
-
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
 
 	for (int i = 0; i < m_modelsInterface.size(); i++)
 	{
@@ -458,16 +458,12 @@ void GraphicDevice::Render()
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, m_modelsInterface[i].texID);
 
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, m_modelsInterface[i].norID);
-
-		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, m_modelsInterface[i].speID);
-
 		m_modelsInterface[i].bufferPtr->drawInstanced(0, m_modelsInterface[i].instances.size(), &modelViewVector, &normalMatVector);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
+	glDisable(GL_BLEND);
+	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
 
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
@@ -833,6 +829,7 @@ void GraphicDevice::BufferLightsToGPU()
 void GraphicDevice::CreateShadowMap()
 {
 	int resolution = 2048*2;
+	m_dirLightDirection = vec3(0.0, -1.0, 1.0);
 	vec3 midMap = vec3(8.0, 0.0, 8.0);
 	vec3 lightPos = midMap - (10.0f*normalize(m_dirLightDirection));
 	m_shadowMap = new ShadowMap(lightPos, lightPos + normalize(m_dirLightDirection), resolution);
@@ -910,13 +907,16 @@ bool GraphicDevice::PreLoadModel(std::string _dir, std::string _file, int _rende
 	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
 	shaderPtr->CheckUniformLocation("diffuseTex", 1);
 
-	// Import Normal map
-	GLuint normal = AddTexture(obj.norm, GL_TEXTURE2);
-	shaderPtr->CheckUniformLocation("normalTex", 2);
+	if (_renderType != RENDER_INTERFACE)
+	{
+		// Import Normal map
+		GLuint normal = AddTexture(obj.norm, GL_TEXTURE2);
+		shaderPtr->CheckUniformLocation("normalTex", 2);
 
-	// Import Specc Glow map
-	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
-	shaderPtr->CheckUniformLocation("specularTex", 3);
+		// Import Specc Glow map
+		GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
+		shaderPtr->CheckUniformLocation("specularTex", 3);
+	}
 
 	// Import Mesh
 	Buffer* mesh = AddMesh(obj.mesh, shaderPtr);
@@ -1230,6 +1230,58 @@ bool GraphicDevice::ChangeModelTexture(int _id, std::string _fileDir, int _textu
 			if (found) break;
 		}
 	}
+	if (!found)
+	{
+		for (int i = 0; i < m_modelsViewspace.size(); i++)
+		{
+			for (int j = 0; j < m_modelsViewspace[i].instances.size(); j++)
+			{
+				if (m_modelsViewspace[i].instances[j].id == _id)
+				{
+					instance = m_modelsViewspace[i].instances[j];
+					model = Model(
+						m_modelsViewspace[i].bufferPtr,
+						m_modelsViewspace[i].texID,
+						m_modelsViewspace[i].norID,
+						m_modelsViewspace[i].speID
+						);
+					found = true;
+					renderType = RENDER_VIEWSPACE;
+					m_modelsViewspace[i].instances.erase(m_modelsViewspace[i].instances.begin() + j);
+					if (m_modelsViewspace[i].instances.size() == 0)
+						m_modelsViewspace.erase(m_modelsViewspace.begin() + i);
+				}
+				if (found) break;
+			}
+			if (found) break;
+		}
+	}
+	if (!found)
+	{
+		for (int i = 0; i < m_modelsInterface.size(); i++)
+		{
+			for (int j = 0; j < m_modelsInterface[i].instances.size(); j++)
+			{
+				if (m_modelsInterface[i].instances[j].id == _id)
+				{
+					instance = m_modelsInterface[i].instances[j];
+					model = Model(
+						m_modelsInterface[i].bufferPtr,
+						m_modelsInterface[i].texID,
+						m_modelsInterface[i].norID,
+						m_modelsInterface[i].speID
+						);
+					found = true;
+					renderType = RENDER_INTERFACE;
+					m_modelsInterface[i].instances.erase(m_modelsInterface[i].instances.begin() + j);
+					if (m_modelsInterface[i].instances.size() == 0)
+						m_modelsInterface.erase(m_modelsInterface.begin() + i);
+				}
+				if (found) break;
+			}
+			if (found) break;
+		}
+	}
 	// Didn't we find it return false
 	if (!found) return false;
 
@@ -1273,6 +1325,28 @@ bool GraphicDevice::ChangeModelTexture(int _id, std::string _fileDir, int _textu
 			}
 		}
 	}
+	else if (renderType == RENDER_VIEWSPACE)
+	{
+		for (int i = 0; i < m_modelsViewspace.size(); i++)
+		{
+			if (m_modelsViewspace[i] == model)
+			{
+				m_modelsViewspace[i].instances.push_back(instance);
+				return true;
+			}
+		}
+	}
+	else if (renderType == RENDER_INTERFACE)
+	{
+		for (int i = 0; i < m_modelsInterface.size(); i++)
+		{
+			if (m_modelsInterface[i] == model)
+			{
+				m_modelsInterface[i].instances.push_back(instance);
+				return true;
+			}
+		}
+	}
 
 	// Nothing found. Let's make a new Model type
 	model.instances.push_back(instance);
@@ -1281,6 +1355,10 @@ bool GraphicDevice::ChangeModelTexture(int _id, std::string _fileDir, int _textu
 		m_modelsDeferred.push_back(model);
 	else if (renderType == RENDER_FORWARD)
 		m_modelsForward.push_back(model);
+	else if (renderType == RENDER_VIEWSPACE)
+		m_modelsViewspace.push_back(model);
+	else if (renderType == RENDER_INTERFACE)
+		m_modelsInterface.push_back(model);
 
 	return true;
 }
@@ -1374,4 +1452,42 @@ void GraphicDevice::Clear()
   float **tmpPtr = new float*[1];
   BufferPointlights(0, tmpPtr);
   delete tmpPtr;
+}
+
+int GraphicDevice::AddFont(const std::string& filepath, int size)
+{
+	return m_sdlTextRenderer.AddFont(filepath, size);
+}
+
+float GraphicDevice::CreateTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, glm::ivec2 size)
+{
+	if (m_textures.find(textureName) != m_textures.end())
+		glDeleteTextures(1, &m_textures[textureName]);
+	SDL_Surface* surface = m_sdlTextRenderer.CreateTextSurface(textString, fontIndex, color);
+	if (size.x > 0)
+		surface->w = size.x;
+	if (size.y > 0)
+		surface->h = size.y;
+	m_deferredShader1.UseProgram();
+	GLuint texture = TextureLoader::LoadTexture(surface, GL_TEXTURE1);
+	m_textures[textureName] = texture;
+	m_vramUsage += (surface->w * surface->h * 4 * 4);
+	SDL_FreeSurface(surface);
+	return (float)surface->w / (float)surface->h;
+}
+
+void GraphicDevice::CreateWrappedTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, unsigned int wrapLength, glm::ivec2 size)
+{
+	if (m_textures.find(textureName) != m_textures.end())
+		glDeleteTextures(1, &m_textures[textureName]);
+	SDL_Surface* surface = m_sdlTextRenderer.CreateWrappedTextSurface(textString, fontIndex, color, wrapLength);
+	if (size.x > 0)
+		surface->w = size.x;
+	if (size.y > 0)
+		surface->h = size.y;
+	m_deferredShader1.UseProgram();
+	GLuint texture = TextureLoader::LoadTexture(surface, GL_TEXTURE1);
+	m_textures[textureName] = texture;
+	m_vramUsage += (surface->w * surface->h * 4 * 4);
+	SDL_FreeSurface(surface);
 }

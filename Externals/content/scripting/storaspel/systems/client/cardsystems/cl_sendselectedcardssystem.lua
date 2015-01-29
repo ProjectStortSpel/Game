@@ -1,7 +1,6 @@
 SelectCards = false
 
 SendSelectCardSystem = System()
-SendSelectCardSystem.SelectCardSystem = false
 
 SendSelectCardSystem.Initialize = function ( self )
 	self:SetName("SendSelectCardSystem")

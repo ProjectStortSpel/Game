@@ -74,11 +74,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../Source/Game/NewGame.cpp"
-            timestampString = "443822691.561881"
+            timestampString = "444142507.417442"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "14"
-            endingLineNumber = "14"
+            startingLineNumber = "19"
+            endingLineNumber = "19"
             landmarkName = "main(int argc, char** argv)"
             landmarkType = "7">
          </BreakpointContent>
@@ -96,6 +96,22 @@
             startingLineNumber = "13"
             endingLineNumber = "13"
             landmarkName = "Shader::InitShaderProgram()"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../Source/Renderer/GraphicDevice.cpp"
+            timestampString = "444143759.393698"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "45"
+            endingLineNumber = "45"
+            landmarkName = "GraphicDevice::Init()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

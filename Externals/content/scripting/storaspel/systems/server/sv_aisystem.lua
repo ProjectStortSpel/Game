@@ -12,23 +12,32 @@ AISystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("PlayerCounter", FilterType.RequiresOneOf)
 	
 	Console.AddCommand("AddAI", self.AddAI)
-	
 end
 
 AISystem.AddAI = function(_command, ...)
-	
-	local counterEntities = self:GetEntities("PlayerCounter")
-	local counterComp = world:GetComponent(counterEntities[1], "PlayerCounter", 0)
-	local maxPlayers, noOfPlayers = counterComp:GetInt2()
+
 	local newAI = world:CreateNewEntity("AI")
+end
+
+AISystem.OnEntityAdded = function(self, entityId)
 	
-	local newName = "Player_" .. tostring(noOfPlayers + 1)
-	world:SetComponent(newAI, "PlayerName", "Name", newName);
+	if world:EntityHasComponent(entityId, "AI") then
+		
+		local counterEntities = self:GetEntities("PlayerCounter")
+		local counterComp = world:GetComponent(counterEntities[1], "PlayerCounter", 0)
+		local maxPlayers, noOfPlayers = counterComp:GetInt2()
+		
+		local newName = "Player_" .. tostring(noOfPlayers + 1)
+		world:SetComponent(entityId, "PlayerName", "Name", newName)
+		world:SetComponent(entityId, "PlayerNumber", "Number", noOfPlayers + 1)
+		
+		self:CounterComponentChanged(1, "Players")
+		
+		world:CreateComponentAndAddTo("NeedUnit", entityId)
+		
+		print("AI Added")
+	end
 	
-	self:CounterComponentChanged(1, "Players")
-	
-	
-	print("AI Added")
 end
 
 AISystem.CounterComponentChanged = function(self, _change, _component)
