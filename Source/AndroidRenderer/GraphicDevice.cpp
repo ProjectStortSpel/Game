@@ -47,6 +47,10 @@ bool GraphicDevice::Init()
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	if (!InitSkybox()) { ERRORMSG("INIT SKYBOX FAILED\n"); return false; }
 
+	float **tmpPtr = new float*[1];
+	BufferPointlights(0, tmpPtr);
+	delete tmpPtr;
+
 	CreateShadowMap();
 	
 	glEnable(GL_CULL_FACE);
@@ -440,7 +444,21 @@ bool GraphicDevice::InitSkybox()
 
 void GraphicDevice::BufferPointlights(int _nrOfLights, float **_lightPointers)
 {
-
+	/*if (_nrOfLights == 0)
+	{
+		vec3 zero = vec3(0.0);
+		m_forwardShader.SetUniVariable("pointlights[0].Position", vector3, &zero);
+		m_forwardShader.SetUniVariable("pointlights[0].Intensity", vector3, &zero);
+		m_forwardShader.SetUniVariable("pointlights[0].Color", vector3, &zero);
+		m_forwardShader.SetUniVariable("pointlights[0].Range", glfloat, &zero.x);
+	}
+	else if (_nrOfLights >= 1)
+	{
+		m_forwardShader.SetUniVariable("pointlights[0].Position", vector3, &_lightPointers[0]);
+		m_forwardShader.SetUniVariable("pointlights[0].Intensity", vector3, &_lightPointers[3]);
+		m_forwardShader.SetUniVariable("pointlights[0].Color", vector3, &_lightPointers[6]);
+		m_forwardShader.SetUniVariable("pointlights[0].Range", glfloat, &_lightPointers[9]);
+	}*/
 }
 
 void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
