@@ -31,6 +31,17 @@ ConnectMenuElement.Name = "ConnectMenuElement"
 ConnectMenuElement.TableType = TableType.Map
 worldCreator:AddComponentType(ConnectMenuElement)
 
+--	HostMenu Component
+local HostMenu = ComponentType()
+HostMenu.Name = "HostMenu"
+HostMenu.TableType = TableType.Map
+worldCreator:AddComponentType(HostMenu)
+--	HostMenuElement Component
+local HostMenuElement = ComponentType()
+HostMenuElement.Name = "HostMenuElement"
+HostMenuElement.TableType = TableType.Map
+worldCreator:AddComponentType(HostMenuElement)
+
 -- Menu ConsoleCommand
 local MenuConsoleCommand = ComponentType()
 MenuConsoleCommand.Name = "MenuConsoleCommand"

@@ -23,27 +23,22 @@ uniform mat4 InvViewMatrix;
 uniform mat4 BiasMatrix;
 uniform mat4 ShadowViewProj;
 
-struct DirectionalLight {
-	vec3 Direction; // Light position in world coords.
-	vec3 Intensity; // Diffuse intensity
-	vec3 Color;
-};
-uniform DirectionalLight dirlight;
-
+//Directional light
+uniform mediump vec3 dirlightDirection; // Light position in world coords.
+uniform mediump vec3 dirlightIntensity; // Diffuse intensity
+uniform mediump vec3 dirlightColor;
 
 struct Pointlight {
 	vec3 Position; // Light position in world coords.
 	vec3 Intensity; // Diffuse intensity
 	vec3 Color;
 	float Range;
-};
-Pointlight pointlights[1];
+}; Pointlight pointlights[1];
 
 struct MaterialInfo {
 	float Ks;
 	float Shininess;
-};
-MaterialInfo Material;
+}; MaterialInfo Material;
 
 vec3 NmNormal;
 
@@ -53,9 +48,9 @@ void phongModelDirLight(out vec3 ambient, out vec3 diffuse, out vec3 spec)
     diffuse = vec3(0.0);
     spec    = vec3(0.0);
 
-    vec3 lightVec = -normalize(( ViewMatrix*vec4(dirlight.Direction, 0.0) ).xyz);
+    vec3 lightVec = -normalize(( ViewMatrix*vec4(dirlightDirection, 0.0) ).xyz);
 
-	ambient = dirlight.Color * dirlight.Intensity.x;
+	ambient = dirlightColor * dirlightIntensity.x;
 
 	vec3 E = normalize(ViewPos);
 
@@ -75,15 +70,13 @@ void phongModelDirLight(out vec3 ambient, out vec3 diffuse, out vec3 spec)
 		if (shadowCoord.w > 0.0)
 	 		shadow = distanceFromLight < shadowCoordinateWdivide.z ? 0.0 : 1.0 ;
 
-		//shadow = float(distanceFromLight < shadowCoordinateWdivide.z);
-		
 		// diffuse
-		diffuse = diffuseFactor * dirlight.Color * dirlight.Intensity.y * shadow;
+		diffuse = diffuseFactor * dirlightColor * dirlightIntensity.y * shadow;
 
 		// specular
 		vec3 v = reflect( lightVec, NmNormal );
 		float specFactor = pow( max( dot(v, E), 0.0 ), Material.Shininess );
-		spec = specFactor * dirlight.Color * dirlight.Intensity.z * Material.Ks * shadow;        
+		spec = specFactor * dirlightColor * dirlightIntensity.z * Material.Ks * shadow;        
 	}
 
 	return;
@@ -154,7 +147,7 @@ void main()
     vec3 diffuse = vec3(0.0);
     vec3 spec 	 = vec3(0.0);
     
-	if(length( dirlight.Intensity ) > 0.0)
+	if(length( dirlightIntensity ) > 0.0)
 	{
 		vec3 a,d,s;
 
@@ -174,8 +167,11 @@ void main()
 	    //ambient += a;
 	    //spec    += s;
     //}
+
+	float glow = spec_map.z;
+	vec4 glowvec = vec4(vec3(glow), 1.0);
     
-    gl_FragColor = vec4(ambient + diffuse, 1.0) * albedo_tex + vec4(spec, 0.0);
+    gl_FragColor = vec4(ambient + diffuse, 1.0) * albedo_tex + vec4(spec, 0.0) + glowvec;
 	//gl_FragColor = vec4( (inverse(ViewMatrix) * vec4(Normal, 0.0)).xyz, 1.0);
 	//gl_FragColor = albedo_tex; //vec4(Normal, 1.0);
     //gl_FragColor = vec4(ambient + diffuse, 1.0) * vec4(0.0, 0.0, 1.0, 1.0) + vec4(spec, 0.0); //albedo_tex;
