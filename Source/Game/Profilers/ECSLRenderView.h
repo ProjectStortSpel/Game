@@ -3,7 +3,11 @@
 
 #include <vector>
 #include "ECSLStatistics.h"
+#ifdef __ANDROID__
+#include "AndroidRenderer/GraphicDevice.h"
+#else
 #include "Renderer/GraphicDevice.h"
+#endif
 
 namespace Profilers
 {

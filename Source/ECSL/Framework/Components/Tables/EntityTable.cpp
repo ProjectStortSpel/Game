@@ -1,5 +1,5 @@
 #include "EntityTable.h"
-
+#include "ECSL/Managers/ComponentTypeManager.h"
 #include <assert.h>
 
 using namespace ECSL;
@@ -41,6 +41,13 @@ void EntityTable::AddComponentTo(unsigned int _entityId, unsigned int _component
 	assert(!(*(unsigned char*)m_dataTable->GetData(_entityId) == 0));
 
 	/* The component is already added to the entity */
+	std::string lol = ComponentTypeManager::GetInstance().GetComponentType(_componentTypeId)->GetName();
+	std::vector<unsigned int> components;
+	std::vector<std::string> componentsS;
+	BitSet::BitSetConverter::BitSetToArray(components, componentBitSet, 2);
+	for (int n = 0; n < components.size(); ++n)
+		if (ComponentTypeManager::GetInstance().GetComponentType(components[n]))
+			componentsS.push_back(ComponentTypeManager::GetInstance().GetComponentType(components[n])->GetName());
 	assert(!(componentBitSet[bitSetIndex] & ((BitSet::DataType)1 << bitIndex)));
 
 	componentBitSet[bitSetIndex] |= (BitSet::DataType)1 << bitIndex;

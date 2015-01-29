@@ -43,8 +43,6 @@ CardPositionSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, newE
 		local timer = self:GetComponent(entity, "LerpTime", 0)
 		timer:SetFloat2(0.1, 0)
 		
-		print("Card " .. i .. " (" .. index .. ") positioned " .. px .. ", " .. py .. ", " .. pz)
-		
 	end
 
 end

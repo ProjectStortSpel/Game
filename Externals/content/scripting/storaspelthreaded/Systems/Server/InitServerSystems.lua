@@ -133,6 +133,7 @@ package.path = package.path .. ";../../../Externals/content/scripting/storaspelt
 require "sv_StepTimerSystem"
 require "sv_NewStepSystem"
 require "sv_StartNewRoundSystem"
+require "sv_PlayCardTimerSystem"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(StartNewRoundSystem)
@@ -140,6 +141,8 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(StepTimerSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(NewStepSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(PlayCardTimerSystem)
 
 
 --	Misc Systems

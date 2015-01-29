@@ -18,8 +18,8 @@ StepTimerSystem.Update = function(self, dt, taskIndex, taskCount)
 	if self.Timer >= 0 then
 		
 		self.Timer = self.Timer - dt
-
 		if self.Timer < 0 then
+			
 			local id = world:CreateNewEntity()
 			world:CreateComponentAndAddTo("NewStep", id)
 		end
@@ -28,7 +28,6 @@ StepTimerSystem.Update = function(self, dt, taskIndex, taskCount)
 end
 
 StepTimerSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
-
 	for n = 1, #entities do
 		local entity = entities[n]
 		self.Timer = world:GetComponent(entity, "StepTimer", "Time"):GetFloat()

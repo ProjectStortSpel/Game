@@ -15,7 +15,7 @@ end
 
 CardSelectSystem.Update = function(self, dt, taskIndex, taskCount)
 
-	if Input.GetTouchState(0) == InputState.Released then
+	if Input.GetTouchState(0) == InputState.Pressed then
 
 		-- TODO gör så att de bara går att selecta i selection phase
 		local entities = self:GetEntities()
@@ -25,7 +25,7 @@ CardSelectSystem.Update = function(self, dt, taskIndex, taskCount)
 			if world:EntityHasComponent(entities[i], "SelectCard") then
 				world:RemoveComponentFrom("SelectCard", entities[i])
 			else
-				world:CreateComponentAndAddTo("SelectCard", entities[i])	
+				world:CreateComponentAndAddTo("SelectCard", entities[i])
 			end
 
 		end

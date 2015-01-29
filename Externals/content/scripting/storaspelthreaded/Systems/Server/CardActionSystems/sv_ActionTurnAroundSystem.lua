@@ -16,7 +16,7 @@ ActionTurnAroundSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, 
 
 	for n = 1, #entities do
 		local entity = entities[n]
-		local dir = woasdasdrld:GetComponent(entity, "Direction", 0)
+		local dir = world:GetComponent(entity, "Direction", 0)
 		local x, z = dir:GetInt2()
 		x = x * -1
 		z = z * -1

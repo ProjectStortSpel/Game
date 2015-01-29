@@ -39,7 +39,7 @@ void ECSLWorkItemView::Update(ECSLStatistics* _frontBufferStatistics)
 	m_textEntries->push_back(textEntry);
 	y += TextHeight;
 
-	text = std::stringstream();
+	text.str(std::string());
 	text << "Work Item Name | Avg Time | Min Time | Max Time | Difference (Max - Min)";
 	textEntry = new TextEntry();
 	textEntry->x = x;
@@ -56,7 +56,7 @@ void ECSLWorkItemView::Update(ECSLStatistics* _frontBufferStatistics)
 	{
 		auto workItemGroup = (*workItemGroups)[i];
 
-		text = std::stringstream();
+		text.str(std::string());
 		text << "Group " << i;
 		textEntry = new TextEntry();
 		textEntry->x = x;
