@@ -75,7 +75,8 @@ end
 GameInterfaceSystem.PostInitialize = function(self)
 
 	local menubutton = self:CreateElement("host", "quad", 0, 0.5, -5, 1, 0.5)
-	self:AddConsoleCommandToButton("host;gamemode storaspel", menubutton)	
+	--self:AddConsoleCommandToButton("host;gamemode storaspel", menubutton)	
+	self:AddEntityCommandToButton("HostMenu", menubutton)
 	self:AddHoverSize(1.5, menubutton)
 
 	local menubutton = self:CreateElement("join", "quad", 0, -0.5, -5, 1, 0.5)

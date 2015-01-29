@@ -34,6 +34,7 @@ require "gameinterfacesystem"
 require "gamemenusystem"
 require "optionmenusystem"
 require "connectmenusystem"
+require "hostmenusystem"
 
 package.path = package.path .. ";../../../Externals/content/scripting/shared/systems/?.lua"
 require "pickboxsystem"
@@ -66,3 +67,4 @@ worldCreator:AddSystemToCurrentGroup(HoverSizeSystem)
 worldCreator:AddSystemToCurrentGroup(GameMenuSystem)
 worldCreator:AddSystemToCurrentGroup(OptionMenuSystem)
 worldCreator:AddSystemToCurrentGroup(ConnectMenuSystem)
+worldCreator:AddSystemToCurrentGroup(HostMenuSystem)
