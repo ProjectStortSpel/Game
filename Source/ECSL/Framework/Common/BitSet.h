@@ -10,7 +10,7 @@ namespace ECSL
 {
 	namespace BitSet
 	{
-#ifdef __ANDROID__
+#if defined(__ANDROID__) || defined(__IOS__)
 		typedef unsigned int DataType;
 #else
 		typedef uint64_t DataType;
