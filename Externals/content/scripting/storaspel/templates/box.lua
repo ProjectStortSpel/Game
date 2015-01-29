@@ -9,6 +9,19 @@ Head:SetFloat3("Scale", 1, 1, 1)
 Head:AddComponent("SyncNetwork")
 EntityTemplateManager:AddTemplate(Head)
 
+local SlingShot = EntityTemplate()
+SlingShot.Name = "SlingShot"
+SlingShot:SetFloat3("Position", 0.0, 0.0, 0.0)
+SlingShot:SetFloat3("Rotation", 0.0, 0.0, 0.0)
+SlingShot:SetFloat3("Scale", 0.25, 0.25, 0.25)
+SlingShot:SetModel("Model", "head", "head" , 0)
+SlingShot:AddComponent("SyncNetwork")
+SlingShot:AddComponent("SlingShotComponent")
+EntityTemplateManager:AddTemplate(SlingShot)
+
+
+
+
 local TotemHead = EntityTemplate()
 TotemHead.Name = "TotemPiece"
 TotemHead:AddComponent("Model")

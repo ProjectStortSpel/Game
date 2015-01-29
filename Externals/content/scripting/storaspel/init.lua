@@ -32,7 +32,7 @@ if Server then
 	require "sv_aicardpickingsystem"
 	require "sv_onplayerconnected"
 	require "sv_playerssystem"
-    require "sv_aisystem"
+    require "sv_addaisystem"
 	require "sv_unitsystem"
 	require "sv_givespawnlocation"
 	--require "sv_createspawnpointsystem"
@@ -54,6 +54,7 @@ if Server then
 	require "sv_gameoversystem"
 	
 	require "sv_moveplayersystem"
+	require "sv_abilitycardsystem"
 
 	require "sv_steptimersystem"
 	require "sv_playcardtimersystem"
@@ -136,10 +137,10 @@ if Server then
 	worldCreator:AddSystemToCurrentGroup(MapSystem)
 	--worldCreator:AddSystemToCurrentGroup(PlayerMovementSystem)
 
-	worldCreator:AddSystemToCurrentGroup(AiCardPickingSystem)
+	worldCreator:AddSystemToCurrentGroup(AICardPickingSystem)
 	worldCreator:AddSystemToCurrentGroup(OnPlayerConnectedSystem)
 	worldCreator:AddSystemToCurrentGroup(PlayersSystem)
-    worldCreator:AddSystemToCurrentGroup(AISystem)
+    worldCreator:AddSystemToCurrentGroup(AddAISystem)
 	worldCreator:AddSystemToCurrentGroup(UnitSystem)
 	worldCreator:AddSystemToCurrentGroup(GiveSpawnLocation)
 	--worldCreator:AddSystemToCurrentGroup(CreateSpawnpointSystem)
@@ -168,6 +169,9 @@ if Server then
 	worldCreator:AddSystemToCurrentGroup(TurnRightSystem)
 	worldCreator:AddSystemToCurrentGroup(MoveForwardSystem)
 	worldCreator:AddSystemToCurrentGroup(MoveBackwardSystem)
+	worldCreator:AddSystemToCurrentGroup(AbilitySprintSystem)
+	worldCreator:AddSystemToCurrentGroup(AbilityNudgeSystem)
+	worldCreator:AddSystemToCurrentGroup(AbilitySlingShotSystem)
 	worldCreator:AddSystemToCurrentGroup(TestMoveSystem)
 	
 	worldCreator:AddSystemToCurrentGroup(StepTimerSystem)
