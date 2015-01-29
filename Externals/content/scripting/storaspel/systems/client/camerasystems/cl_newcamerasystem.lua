@@ -22,16 +22,6 @@ NewCameraSystem.Update = function(self, dt)
 		local rY = mY * aspectY * 2
 		
 		aspectX = aspectY / aspectX
-		
-		if Input.GetTouchState(0) == InputState.Pressed  then
-			self.Pressed = true
-			self.Moved = false
-			self.mouseX, self.mouseY = graphics:GetTouchPosition()	
-			local rposition = self:GetComponent(self.TouchSprite1, "Position", 0)
-			rposition:SetFloat3(rX, rY, -1)	
-			local rposition = self:GetComponent(self.TouchScreen, "Position", 0)
-			rposition:SetFloat3(0, 0, -0.10001)					
-		end
 		if Input.GetTouchState(0) == InputState.Down and self.Pressed == true then
 			local dX = mX - self.mouseX
 			local dZ = mY - self.mouseY
@@ -62,7 +52,9 @@ NewCameraSystem.Update = function(self, dt)
 				self.Camera:SetPosition(self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5, y, self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5)
 			end
 			local rposition = self:GetComponent(self.TouchSprite2, "Position", 0)
-			rposition:SetFloat3(rX, rY, -1)	
+			rposition:SetFloat3(rX, rY, -1)
+			local rposition = self:GetComponent(self.TouchScreen, "Position", 0)
+			rposition:SetFloat3(0, 0, -0.1001)			
 		end
 		if Input.GetTouchState(0) == InputState.Released and self.Pressed == true then
 			self.Pressed = false
@@ -109,6 +101,13 @@ NewCameraSystem.Update = function(self, dt)
 			local rposition = self:GetComponent(self.TouchSprite2, "Position", 0)
 			rposition:SetFloat3(0, 0, 1)
 		end
+		if Input.GetTouchState(0) == InputState.Pressed  then
+			self.Pressed = true
+			self.Moved = false
+			self.mouseX, self.mouseY = graphics:GetTouchPosition()	
+			local rposition = self:GetComponent(self.TouchSprite1, "Position", 0)
+			rposition:SetFloat3(rX, rY, -1)					
+		end
 	end
 end
 
@@ -129,7 +128,7 @@ NewCameraSystem.PostInitialize = function(self)
 	local rposition = self:GetComponent(self.TouchScreen, "Position", 0)
 	rposition:SetFloat3(0, 0, -100)		
 	local rscale = self:GetComponent(self.TouchScreen, "Scale", 0)
-	rscale:SetFloat3(1000, 1000, 1000)	
+	rscale:SetFloat3(200, 200, 200)	
 	local pickbox = self:GetComponent(self.TouchScreen, "PickBox", 0)
 	pickbox:SetFloat2(1.0, 1.0)
 	
