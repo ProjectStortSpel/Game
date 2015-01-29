@@ -3,6 +3,7 @@
 #include "ECSLGeneralView.h"
 #include "ECSLThreadView.h"
 #include "ECSLWorkItemView.h"
+#include "ECSLLoadingView.h"
 
 using namespace Profilers;
 
@@ -28,12 +29,14 @@ ECSLProfiler::~ECSLProfiler()
 	for (auto renderView : *m_renderViews)
 		delete(renderView);
 	delete(m_renderViews);
+	delete(m_loadingView);
 }
 
 void ECSLProfiler::CreateRenderViews()
 {
-	m_renderViews = new std::vector<ECSLRenderView*>();
+	m_loadingView = new ECSLLoadingView(m_graphics);
 
+	m_renderViews = new std::vector<ECSLRenderView*>();
 	m_renderViews->push_back(new ECSLGeneralView(m_graphics));
 	m_renderViews->push_back(new ECSLThreadView(m_graphics));
 	m_renderViews->push_back(new ECSLWorkItemView(m_graphics));
@@ -46,9 +49,11 @@ void ECSLProfiler::Toggle()
 {
 	if (m_state == State::INACTIVE)
 	{
-		m_state = State::WAITING_FOR_STATISTICS;
+		m_renderView = m_loadingView;
+		m_renderView->Update(0);
+		m_state = State::COLLECTING_DATA;
 	}
-	else if (m_state == State::RENDERING)
+	else if (m_state == State::SHOWING_STATISTICS)
 	{
 		if (m_frontBufferStatistics)
 		{
@@ -67,12 +72,12 @@ void ECSLProfiler::Toggle()
 
 void ECSLProfiler::NextView()
 {
-	if (m_state != State::RENDERING)
+	if (m_state != State::SHOWING_STATISTICS)
 		return;
 
 	if (!m_renderView->NextSubview(m_frontBufferStatistics))
 	{
-		if (m_renderViewIndex == m_renderViews->size() - 1)
+		if (m_renderViewIndex == (unsigned int)m_renderViews->size() - 1)
 		{
 			m_renderViewIndex = 0;
 			m_renderView = m_renderViews->at(m_renderViewIndex);
@@ -91,14 +96,14 @@ void ECSLProfiler::NextView()
 
 void ECSLProfiler::PreviousView()
 {
-	if (m_state != State::RENDERING)
+	if (m_state != State::SHOWING_STATISTICS)
 		return;
 
 	if (!m_renderView->PreviousSubview(m_frontBufferStatistics))
 	{
 		if (m_renderViewIndex == 0)
 		{
-			m_renderViewIndex = m_renderViews->size() - 1;
+			m_renderViewIndex = (unsigned int)m_renderViews->size() - 1;
 			m_renderView = m_renderViews->at(m_renderViewIndex);
 			m_renderView->LastSubview(m_frontBufferStatistics);
 			m_renderView->Update(m_frontBufferStatistics);
@@ -115,7 +120,7 @@ void ECSLProfiler::PreviousView()
 
 void ECSLProfiler::WriteToLog()
 {
-	if (m_state != State::RENDERING)
+	if (m_state != State::SHOWING_STATISTICS)
 		return;
 	m_renderView->WriteToLog();
 }
@@ -158,7 +163,7 @@ void ECSLProfiler::Update(float _dt)
 
 void ECSLProfiler::Render()
 {
-	if (m_state != State::RENDERING)
+	if (m_state == State::INACTIVE)
 		return;
 
 	m_renderView->Display();
@@ -169,24 +174,8 @@ Profilers::ECSLFrame* ECSLProfiler::CreateFrame()
 	MPL::LoggedSession* session = m_threadLogger->PullSession();
 	if (!session)
 		return 0;
-
-	// The first element in each thread log will always include the 
-	// sleep period from the end of last update to the beginning 
-	// of this frames' update. TLDR; Erasing unneccessary data.
-	for (unsigned int threadId = 0; threadId < session->threadCount; ++threadId)
-	{
-		auto log = (*session->threadLogs)[threadId];
-		if (log->size() > 0)
-		{
-			delete(log->at(0));
-			log->erase(log->begin());	
-		}
-	}
-
 	ECSLFrame* frame = GenerateFrameData(session);
-
 	delete(session);
-
 	return frame;
 }
 
@@ -224,7 +213,10 @@ void ECSLProfiler::SwapBuffers()
 	if (m_frontBufferStatistics)
 		delete(m_frontBufferStatistics);
 	else
-		m_state = State::RENDERING;
+	{
+		m_renderView = m_renderViews->at(m_renderViewIndex);
+		m_state = State::SHOWING_STATISTICS;
+	}
 	m_frontBufferStatistics = m_backBufferStatistics;
 	m_backBufferStatistics = 0;
 }

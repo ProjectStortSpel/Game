@@ -10,9 +10,13 @@ ECSLWorkItemView::ECSLWorkItemView(Renderer::GraphicDevice* _graphics)
 
 ECSLWorkItemView::~ECSLWorkItemView()
 {
-	for (auto page : *m_pages)
-		delete(page);
-	delete(m_pages);
+	if (m_pages)
+	{
+		for (auto page : *m_pages)
+			delete(page);
+		delete(m_pages);
+		m_pages = 0;
+	}
 }
 
 void ECSLWorkItemView::Update(ECSLStatistics* _frontBufferStatistics)
@@ -66,9 +70,9 @@ void ECSLWorkItemView::Update(ECSLStatistics* _frontBufferStatistics)
 		{
 			auto workItem = workItemPair.second;
 			std::stringstream text;
-			text << *workItem->name << " | " << std::to_string(workItem->avgDuration) << " | " << 
-				std::to_string(workItem->minDuration) << " | " << std::to_string(workItem->maxDuration) <<
-				" | " << std::to_string(workItem->diffDuration);
+			text << *workItem->name << " | " << workItem->avgDuration << " | " << 
+				workItem->minDuration << " | " << workItem->maxDuration <<
+				" | " << workItem->diffDuration;
 
 			textEntry = new TextEntry();
 			textEntry->x = x;

@@ -33,12 +33,11 @@ namespace Profilers
 		enum State
 		{
 			INACTIVE,
-			WAITING_FOR_STATISTICS,
-			RENDERING
+			COLLECTING_DATA,
+			SHOWING_STATISTICS
 		};
 
-		const float DefaultBufferSwapTime = 0.5f;
-		const unsigned int TextHeight = 1;
+		const float DefaultBufferSwapTime = 1.5f;
 
 		State m_state;
 		float m_bufferSwapTimer;
@@ -48,6 +47,7 @@ namespace Profilers
 		ECSLStatistics* m_frontBufferStatistics;
 		ECSLStatistics* m_backBufferStatistics;
 		unsigned int m_renderViewIndex;
+		ECSLRenderView* m_loadingView;
 		ECSLRenderView* m_renderView;
 		std::vector<ECSLRenderView*>* m_renderViews;
 

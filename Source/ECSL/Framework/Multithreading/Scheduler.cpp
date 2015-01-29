@@ -1,5 +1,7 @@
 #include "Scheduler.h"
 
+#include <sstream>
+
 using namespace ECSL;
 
 Scheduler::Scheduler(DataManager* _dataManager, SystemManager* _systemManager, MessageManager* _messageManager)
@@ -183,8 +185,10 @@ void Scheduler::AddUpdateSystemsTasks()
 				MPL::WorkItem* workItem = new MPL::WorkItem();
 				workItem->Work = &SystemUpdate;
 				workItem->Data = data;
-				workItem->ProfilerName = new std::string(system->GetSystemName() + "->Update() Task: " + std::to_string(taskIndex));
-				workItem->ProfilerGroupId = m_currentGroupId;
+				std::stringstream s;
+				s << system->GetSystemName() << "->Update() Task: " << taskIndex;
+				workItem->Name = new std::string(s.str());
+				workItem->GroupId = m_currentGroupId;
 				workItems->push_back(workItem);
 				m_workItems->push_back(workItem);
 			}
@@ -215,8 +219,10 @@ void Scheduler::AddUpdateSystemEntityListsTasks()
 		MPL::WorkItem* workItem = new MPL::WorkItem();
 		workItem->Work = &SystemManagerUpdateSystemEntityLists;
 		workItem->Data = data;
-		workItem->ProfilerName = new std::string("SystemManager->UpdateSystemEntityList() Task: " + i);
-		workItem->ProfilerGroupId = m_currentGroupId;
+		std::stringstream s;
+		s << "SystemManager->UpdateSystemEntityList() Task: " << i;
+		workItem->Name = new std::string(s.str());
+		workItem->GroupId = m_currentGroupId;
 		m_updateSystemEntityListsWorkItems->push_back(workItem);
 		m_workItems->push_back(workItem);
 	}
@@ -242,8 +248,10 @@ void Scheduler::AddEntitiesAddedTasks()
 				MPL::WorkItem* workItem = new MPL::WorkItem();
 				workItem->Work = &SystemEntitiesAdded;
 				workItem->Data = data;
-				workItem->ProfilerName = new std::string(system->GetSystemName() + "->EntitiesAdded() Task: " + std::to_string(taskIndex));
-				workItem->ProfilerGroupId = m_currentGroupId;
+				std::stringstream s;
+				s << system->GetSystemName() << "->EntitiesAdded() Task: " << taskIndex;
+				workItem->Name = new std::string(s.str());
+				workItem->GroupId = m_currentGroupId;
 				workItems->push_back(workItem);
 				m_workItems->push_back(workItem);
 			}
@@ -277,8 +285,10 @@ void Scheduler::AddEntitiesRemovedTasks()
 				MPL::WorkItem* workItem = new MPL::WorkItem();
 				workItem->Work = &SystemEntitiesRemoved;
 				workItem->Data = data;
-				workItem->ProfilerName = new std::string(system->GetSystemName() + "->EntitiesRemoved() Task: " + std::to_string(taskIndex));
-				workItem->ProfilerGroupId = m_currentGroupId;
+				std::stringstream s;
+				s << system->GetSystemName() << "->EntitiesRemoved() Task: " << taskIndex;
+				workItem->Name = new std::string(s.str());
+				workItem->GroupId = m_currentGroupId;
 				workItems->push_back(workItem);
 				m_workItems->push_back(workItem);
 			}
@@ -307,8 +317,10 @@ void Scheduler::AddSortMessagesTask()
 		MPL::WorkItem* workItem = new MPL::WorkItem();
 		workItem->Work = &MessageManagerSortMessages;
 		workItem->Data = data;
-		workItem->ProfilerName = new std::string("MessageManager->SortMessages() Task: " + std::to_string(i));
-		workItem->ProfilerGroupId = m_currentGroupId;
+		std::stringstream s;
+		s << "MessageManager->SortMessages() Task: " << i;
+		workItem->Name = new std::string(s.str());
+		workItem->GroupId = m_currentGroupId;
 		m_sortMessagesWorkItems->push_back(workItem);
 		m_workItems->push_back(workItem);
 	}
@@ -334,8 +346,10 @@ void Scheduler::AddMessagesRecievedTasks()
 				MPL::WorkItem* workItem = new MPL::WorkItem();
 				workItem->Work = &SystemMessagesRecieved;
 				workItem->Data = data;
-				workItem->ProfilerName = new std::string(system->GetSystemName() + "->MessagesRecieved() Task: " + std::to_string(taskIndex));
-				workItem->ProfilerGroupId = m_currentGroupId;
+				std::stringstream s;
+				s << system->GetSystemName() << "->MessagesRecieved() Task: " << taskIndex;
+				workItem->Name = new std::string(s.str());
+				workItem->GroupId = m_currentGroupId;
 				workItems->push_back(workItem);
 				m_workItems->push_back(workItem);
 			}
@@ -364,8 +378,10 @@ void Scheduler::AddDeleteMessagesTask()
 		MPL::WorkItem* workItem = new MPL::WorkItem();
 		workItem->Work = &MessageManagerDeleteMessages;
 		workItem->Data = data;
-		workItem->ProfilerName = new std::string("MessageManager->DeleteMessages() Task: " + std::to_string(i));
-		workItem->ProfilerGroupId = m_currentGroupId;
+		std::stringstream s;
+		s << "MessageManager->DeleteMessages() Task: " << i;
+		workItem->Name = new std::string(s.str());
+		workItem->GroupId = m_currentGroupId;
 		m_deleteMessagesWorkItems->push_back(workItem);
 		m_workItems->push_back(workItem);
 	}
@@ -386,8 +402,10 @@ void Scheduler::AddCopyCurrentListsTask()
 		MPL::WorkItem* workItem = new MPL::WorkItem();
 		workItem->Work = &DataManagerCopyCurrentLists;
 		workItem->Data = data;
-		workItem->ProfilerName = new std::string("DataManager->CopyCurrentLists() Task: " + std::to_string(i));
-		workItem->ProfilerGroupId = m_currentGroupId;
+		std::stringstream s;
+		s << "DataManager->CopyCurrentLists() Task: " << i;
+		workItem->Name = new std::string(s.str());
+		workItem->GroupId = m_currentGroupId;
 		m_copyCurrentListsWorkItems->push_back(workItem);
 		m_workItems->push_back(workItem);
 	}
@@ -408,8 +426,10 @@ void Scheduler::AddUpdateEntityTableTask()
 		MPL::WorkItem* workItem = new MPL::WorkItem();
 		workItem->Work = &DataManagerUpdateEntityTable;
 		workItem->Data = data;
-		workItem->ProfilerName = new std::string("DataManager->UpdateEntityTable() Task: " + std::to_string(i));
-		workItem->ProfilerGroupId = m_currentGroupId;
+		std::stringstream s;
+		s << "DataManager->UpdateEntityTable() Task: " << i;
+		workItem->Name = new std::string(s.str());
+		workItem->GroupId = m_currentGroupId;
 		m_updateEntityTableWorkItems->push_back(workItem);
 		m_workItems->push_back(workItem);
 	}
@@ -430,8 +450,10 @@ void Scheduler::AddDeleteComponentDataTask()
 		MPL::WorkItem* workItem = new MPL::WorkItem();
 		workItem->Work = &DataManagerDeleteComponentData;
 		workItem->Data = data;
-		workItem->ProfilerName = new std::string("DataManager->DeleteComponentData() Task: " + std::to_string(i));
-		workItem->ProfilerGroupId = m_currentGroupId;
+		std::stringstream s;
+		s << "DataManager->DeleteComponentData() Task: " << i;
+		workItem->Name = new std::string(s.str());
+		workItem->GroupId = m_currentGroupId;
 		m_deleteComponentDataWorkItems->push_back(workItem);
 		m_workItems->push_back(workItem);
 	}
@@ -452,8 +474,10 @@ void Scheduler::AddRecycleEntityIdsTask()
 		MPL::WorkItem* workItem = new MPL::WorkItem();
 		workItem->Work = &DataManagerRecycleEntityIds;
 		workItem->Data = data;
-		workItem->ProfilerName = new std::string("DataManager->RecycleEntityIds() Task: " + std::to_string(i));
-		workItem->ProfilerGroupId = m_currentGroupId;
+		std::stringstream s;
+		s << "DataManager->RecycleEntityIds() Task: " << i;
+		workItem->Name = new std::string(s.str());
+		workItem->GroupId = m_currentGroupId;
 		m_recycleEntityIdsWorkItems->push_back(workItem);
 		m_workItems->push_back(workItem);
 	}
@@ -474,8 +498,10 @@ void Scheduler::AddClearCopiedListsTask()
 		MPL::WorkItem* workItem = new MPL::WorkItem();
 		workItem->Work = &DataManagerClearCopiedLists;
 		workItem->Data = data;
-		workItem->ProfilerName = new std::string("DataManager->ClearCopiedLists() Task: " + std::to_string(i));
-		workItem->ProfilerGroupId = m_currentGroupId;
+		std::stringstream s;
+		s << "DataManager->ClearCopiedLists() Task: " << i;
+		workItem->Name = new std::string(s.str());
+		workItem->GroupId = m_currentGroupId;
 		m_clearCopiedListsWorkItems->push_back(workItem);
 		m_workItems->push_back(workItem);
 	}
@@ -496,8 +522,10 @@ void Scheduler::AddClearSystemEntityChangeListsTask()
 		MPL::WorkItem* workItem = new MPL::WorkItem();
 		workItem->Work = &SchedulerClearSystemEntityChangeLists;
 		workItem->Data = data;
-		workItem->ProfilerName = new std::string("Scheduler->ClearSystemEntityChangeLists() Task: " + std::to_string(i));
-		workItem->ProfilerGroupId = m_currentGroupId;
+		std::stringstream s;
+		s << "Scheduler->ClearSystemEntityChangeLists() Task: " << i;
+		workItem->Name = new std::string(s.str());
+		workItem->GroupId = m_currentGroupId;
 		m_clearListsWorkItems->push_back(workItem);
 		m_workItems->push_back(workItem);
 	}

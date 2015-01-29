@@ -223,6 +223,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClCompile Include="..\..\..\Source\Game\NewGame.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Profilers\ECSLFrame.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Profilers\ECSLGeneralView.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\Profilers\ECSLLoadingView.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Profilers\ECSLProfiler.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Profilers\ECSLRenderView.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Profilers\ECSLStatistics.cpp" />
@@ -267,6 +268,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClInclude Include="..\..\..\Source\Game\Network\NetworkHelper.h" />
     <ClInclude Include="..\..\..\Source\Game\Profilers\ECSLFrame.h" />
     <ClInclude Include="..\..\..\Source\Game\Profilers\ECSLGeneralView.h" />
+    <ClInclude Include="..\..\..\Source\Game\Profilers\ECSLLoadingView.h" />
     <ClInclude Include="..\..\..\Source\Game\Profilers\ECSLProfiler.h" />
     <ClInclude Include="..\..\..\Source\Game\Profilers\ECSLRenderView.h" />
     <ClInclude Include="..\..\..\Source\Game\Profilers\ECSLStatistics.h" />
