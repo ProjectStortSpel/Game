@@ -261,13 +261,8 @@ void GameCreator::StartGame(int argc, char** argv)
 	m_console = new GameConsole(m_graphics, m_world);
 
 	m_consoleInput.SetTextHook(std::bind(&Console::ConsoleManager::AddToCommandQueue, &m_consoleManager, std::placeholders::_1));
-#ifdef __ANDROID__
-	m_consoleInput.SetActive(true);
-	m_input->GetKeyboard()->StartTextInput();
-#else
 	m_consoleInput.SetActive(false);
 	m_input->GetKeyboard()->StopTextInput();
-#endif
 
 	/*	Hook console	*/
 	m_console->SetupHooks(&m_consoleManager);

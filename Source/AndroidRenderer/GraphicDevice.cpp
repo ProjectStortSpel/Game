@@ -425,9 +425,9 @@ void GraphicDevice::BufferLightsToGPU()
 		vec3 intens = vec3(m_directionalLightPtr[3], m_directionalLightPtr[4], m_directionalLightPtr[5]);
 		vec3 color = vec3(m_directionalLightPtr[6], m_directionalLightPtr[7], m_directionalLightPtr[8]);
 		
-		m_forwardShader.SetUniVariable("dirlight.Direction", vector3, &m_dirLightDirection);
-		m_forwardShader.SetUniVariable("dirlight.Intensity", vector3, &intens);
-		m_forwardShader.SetUniVariable("dirlight.Color", vector3, &color);
+		m_forwardShader.SetUniVariable("dirlightDirection", vector3, &m_dirLightDirection);
+		m_forwardShader.SetUniVariable("dirlightIntensity", vector3, &intens);
+		m_forwardShader.SetUniVariable("dirlightColor", vector3, &color);
 		
 		m_shadowMap->UpdateViewMatrix(vec3(8.0f, 0.0f, 8.0f) - (10.0f*normalize(m_dirLightDirection)), vec3(8.0f, 0.0f, 8.0f));
 	}
