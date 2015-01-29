@@ -12,7 +12,7 @@
 int main(int argc, char** argv)
 {
 #if defined(__OSX__) || defined(__IOS__)
-    signal(SIGPIPE, SIG_IGN);
+    //signal(SIGPIPE, SIG_IGN);
 #endif
     
 	Logger::GetInstance().AddGroup("Game");
