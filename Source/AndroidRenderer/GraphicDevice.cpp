@@ -453,23 +453,17 @@ void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
         vec3 intens = vec3(_lightPointer[3], _lightPointer[4], _lightPointer[5]);
         vec3 color = vec3(_lightPointer[6], _lightPointer[7], _lightPointer[8]);
 
-		//SDL_Log("direction: %f, %f, %f", m_dirLightDirection.x, m_dirLightDirection.y, m_dirLightDirection.z);
-		//SDL_Log("Intensity: %f, %f, %f", intens.x, intens.y, intens.z);
-		//SDL_Log("Color: %f, %f, %f", color.x, color.y, color.z);
-        
-        m_forwardShader.SetUniVariable("dirlight.Direction", vector3, &m_dirLightDirection);
-        m_forwardShader.SetUniVariable("dirlight.Intensity", vector3, &intens);
-        m_forwardShader.SetUniVariable("dirlight.Color", vector3, &color);
+        m_forwardShader.SetUniVariable("dirlightDirection", vector3, &m_dirLightDirection);
+        m_forwardShader.SetUniVariable("dirlightIntensity", vector3, &intens);
+        m_forwardShader.SetUniVariable("dirlightColor", vector3, &color);
     }
     else
     {
         vec3 zero = vec3(0.0f);
-
-        m_forwardShader.SetUniVariable("dirlight.Intensity", vector3, &zero);
-        m_forwardShader.SetUniVariable("dirlight.Color", vector3, &zero);
+        m_forwardShader.SetUniVariable("dirlightIntensity", vector3, &zero);
+        m_forwardShader.SetUniVariable("dirlightColor", vector3, &zero);
     }
 	
-
 	m_shadowMap->UpdateViewMatrix(vec3(8.0f, 0.0f, 8.0f) - (10.0f*normalize(m_dirLightDirection)), vec3(8.0f, 0.0f, 8.0f));
 }
 
@@ -844,7 +838,6 @@ GLuint GraphicDevice::AddTexture(std::string _fileDir, GLenum _textureSlot)
 			return it->second;
 	}
 	int texSizeX, texSizeY;
-	//m_deferredShader1.UseProgram();
 	GLuint texture = TextureLoader::LoadTexture(_fileDir.c_str(), _textureSlot, texSizeX, texSizeY);
 	m_textures.insert(std::pair<const std::string, GLenum>(_fileDir, texture));
 	return texture;

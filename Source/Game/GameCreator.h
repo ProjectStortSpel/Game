@@ -3,7 +3,7 @@
 #include <SDL/SDL.h>
 #include "Console/Console.h"
 #include "TextInput.h"
-#ifdef __ANDROID__
+#if defined(__ANDROID__) || defined(__IOS__)
 #include "AndroidRenderer/GraphicDevice.h"
 #else
 #include "Renderer/GraphicDevice.h"

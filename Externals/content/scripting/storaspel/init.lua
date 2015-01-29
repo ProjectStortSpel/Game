@@ -14,6 +14,7 @@ require "menucomponents"
 
 package.path = package.path .. ";../../../Externals/content/scripting/shared/components/?.lua"
 require "interfacecomponents"
+require "textrendercomponents"
 require "lightcomponents"
 require "cameracomponents"
 require "components"
@@ -72,6 +73,7 @@ if Client then
 	package.path = package.path .. ";../../../Externals/content/scripting/shared/systems/?.lua"
 	require "pickboxsystem"
 	require "hoversizesystem"
+	require "addtexttotexturesystem"
 
 	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/client/?.lua"
 	require "cl_lobbysystem"

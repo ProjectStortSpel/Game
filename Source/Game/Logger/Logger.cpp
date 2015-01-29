@@ -39,6 +39,21 @@ Logger::~Logger()
 }
 #pragma endregion
 
+std::string Logger::GetFolderPath()
+{
+#if  defined(__IOS__)
+    std::string path = getenv("HOME");
+    path.append("/Library/Caches/");
+    return path;
+#elif defined(__ANDROID__)
+    return "";
+#elif defined(__OSX__)
+    return "";
+#else
+    return "content/data/";
+#endif
+}
+
 unsigned int Logger::AddGroup(const std::string& _groupName, bool _addToOutput)
 {
 	SDL_LockMutex(m_logMutex);
@@ -140,7 +155,7 @@ void Logger::Log(const std::string& _groupName, LogSeverity _severity, const std
 
 void Logger::CreateFile()
 {
-#if !defined(__ANDROID__) && !defined(__IOS__) && !defined(__OSX__)
+#if !defined(__OSX__) && !defined(__ANDROID__)
 
 	/*	Create the file	*/
 	time_t		tTime = time(0);
@@ -155,7 +170,7 @@ void Logger::CreateFile()
 #endif
 
 	std::ostringstream ss;
-	ss << "content/data/";
+	ss << GetFolderPath().c_str();
 	ss << "debuglog_";
 	ss << (1900+timeInfo.tm_year) << "-";
 	ss << FixDateLength(timeInfo.tm_mon + 1) << "-";
@@ -164,17 +179,18 @@ void Logger::CreateFile()
 	ss << FixDateLength(timeInfo.tm_min) << ".";
 	ss << FixDateLength(timeInfo.tm_sec);
 	ss << ".txt";
-
+    
 	m_logFileName = ss.str();
 
 	SDL_RWops* newFile = SDL_RWFromFile(m_logFileName.c_str(), "w");
 	SDL_RWclose(newFile);
+    
 #endif
 }
 
 void Logger::AppendFile(LogEntry& _logEntry)
 {
-#if !defined(__ANDROID__) && !defined(__IOS__) && !defined(__OSX__)
+#if !defined(__OSX__) && !defined(__ANDROID__)
 
 	/*	Open the file	*/
 	char* end;

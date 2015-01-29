@@ -24,7 +24,7 @@ void CameraSystem::Initialize()
 
 void CameraSystem::Update(float _dt)
 {
-#ifdef __ANDROID__
+#if defined(__ANDROID__) || defined(__IOS__)
 	/*static float prevDistance0, prevDistance1;
 	if (m_input->GetTouch()->GetFingerState(0) == Input::InputState::PRESSED ||
 		m_input->GetTouch()->GetFingerState(1) == Input::InputState::PRESSED)
