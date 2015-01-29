@@ -1,7 +1,7 @@
 #ifndef LUAGRAPHICDEVICE_H
 #define LUAGRAPHICDEVICE_H
 
-#ifdef __ANDROID__
+#if defined(__ANDROID__) || defined(__IOS__)
 #include "AndroidRenderer/GraphicDevice.h"
 #else
 #include "Renderer/GraphicDevice.h"

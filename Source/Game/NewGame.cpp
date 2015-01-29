@@ -15,6 +15,10 @@ int main(int argc, char** argv)
     //signal(SIGPIPE, SIG_IGN);
 #endif
     
+#ifdef __IOS__
+    printf("Home dir: %s\n\n", getenv("HOME"));
+#endif
+    
 	Logger::GetInstance().AddGroup("Game");
 	GameCreator* newGame = new GameCreator();
 
