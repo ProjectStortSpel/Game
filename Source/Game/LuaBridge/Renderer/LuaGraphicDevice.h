@@ -38,6 +38,10 @@ namespace LuaBridge
     int ChangeModelTexture(lua_State* L);
     int ChangeModelNormalMap(lua_State* L);
     int ChangeModelSpecularMap(lua_State* L);
+
+	int LuaGraphicDevice::AddFont(lua_State* L);
+	int LuaGraphicDevice::CreateTextTexture(lua_State* L);
+	int LuaGraphicDevice::CreateWrappedTextTexture(lua_State* L);
   };
 }
 

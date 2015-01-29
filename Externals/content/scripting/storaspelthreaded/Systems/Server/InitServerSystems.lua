@@ -37,9 +37,6 @@ require "sv_TestMoveRiverSystem"
 
 require "sv_MoveForwardSystem"
 require "sv_MoveBackwardSystem"
-require "sv_TurnAroundSystem"
-require "sv_TurnLeftSystem"
-require "sv_TurnRightSystem"
 
 
 worldCreator:AddSystemGroup()
@@ -53,12 +50,6 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(MoveForwardSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(MoveBackwardSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(TurnAroundSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(TurnLeftSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(TurnRightSystem)
 
 --	Card Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/CardSystems/?.lua"

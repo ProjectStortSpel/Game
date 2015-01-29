@@ -14,6 +14,7 @@ end
 
 ActionTurnAroundSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 
+	print("TURN AROUND Number of entities: " .. #entities)
 	for n = 1, #entities do
 		local entity = entities[n]
 		local dir = world:GetComponent(entity, "Direction", 0)
