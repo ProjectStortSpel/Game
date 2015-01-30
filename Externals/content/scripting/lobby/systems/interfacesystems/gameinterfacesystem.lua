@@ -84,7 +84,7 @@ GameInterfaceSystem.PostInitialize = function(self)
 	self:AddHoverSize(1.5, menubutton)
 
 	-- GAME MENU BUTTON
-	local menubutton = self:CreateElement("gamemenubutton", "quad", 3, -2, -4, 0.2, 0.2)
+	local menubutton = self:CreateElement("gamemenubutton", "quad", 3.3, -1.4, -4, 0.35, 0.35)
 	self:AddEntityCommandToButton("GameMenu", menubutton)
 	self:AddHoverSize(1.5, menubutton)
 	
