@@ -24,6 +24,10 @@ AddCardPickTimer.OnEntityAdded = function(self, entity)
 			if newTime < 10 and oldTime > 10 then
 				newTime = 10
 			end
+			elseif oldTime < 10 then
+				newTime = oldTime
+			end
+			
 			
 			world:GetComponent(Timers[1], "PickingPhaseTimer", "Timer"):SetFloat(newTime)
 			
