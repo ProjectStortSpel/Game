@@ -19,7 +19,7 @@ namespace LuaBridge
     LuaEmbedder::EmbedClassFunction<LuaWorld>(L, "World", "KillEntity", &LuaWorld::KillEntity);
     LuaEmbedder::EmbedClassFunction<LuaWorld>(L, "World", "SetComponent", &LuaWorld::SetComponent);
     LuaEmbedder::EmbedClassFunction<LuaWorld>(L, "World", "GetComponent", &LuaWorld::GetComponent);
-	LuaEmbedder::EmbedClassFunction<LuaWorld>(L, "World", "EntityHasComponent", &LuaWorld::EntityHasComponent);
+	LuaEmbedder::EmbedClassFunction<LuaWorld>(L, "World", "EntityHasComponent", &LuaWorld::HasComponent);
   }
   
   int LuaWorld::Update(lua_State* L)
@@ -127,10 +127,10 @@ namespace LuaBridge
 	  return 1;
   }
 
-  int LuaWorld::EntityHasComponent(lua_State* L)
+  int LuaWorld::HasComponent(lua_State* L)
   {
 	  std::vector<unsigned int> components;
-	  LuaEmbedder::PushBool(L, World::EntityHasComponent((unsigned int)LuaEmbedder::PullInt(L, 1), LuaEmbedder::PullString(L, 2)));
+	  LuaEmbedder::PushBool(L, World::HasComponent((unsigned int)LuaEmbedder::PullInt(L, 1), LuaEmbedder::PullString(L, 2)));
 	  return 1;
   }
 }

@@ -1,5 +1,36 @@
 #include "BitSet.h"
+
 using namespace ECSL;
+
+bool BitSet::BitSetMatchesMasks(unsigned int _bitSetCount, const BitSet::DataType* _bitSet, const BitSet::DataType* _mandatoryMask, const BitSet::DataType* _oneOfMask, const BitSet::DataType* _exclusionMask)
+{
+	char requiresOneOf = 0;
+
+	/* Checks every component filter (breaks if fails) */
+	for (unsigned int i = 0; i < _bitSetCount; ++i)
+	{
+		/* Entity doesn't have atleast one of the must-have components */
+		if (!((_mandatoryMask[i] & _bitSet[i]) == _mandatoryMask[i]))
+			return false;
+
+		/* Entity has atleast one of the excluded components  */
+		else if (_exclusionMask[i] && (_exclusionMask[i] & _bitSet[i]) != 0)
+			return false;
+
+		/* Entity has none of the atleast-one-of components */
+		else if (_oneOfMask[i] && requiresOneOf < 2)
+		{
+			requiresOneOf = 1;
+			if ((_oneOfMask[i] & _bitSet[i]) != 0)
+				requiresOneOf = 2;
+		}
+	}
+
+	if (requiresOneOf == 1)
+		return false;
+
+	return true;
+}
 
 BitSet::DataType* BitSet::BitSetConverter::ValueToBitSet(unsigned int _numberToConvert, unsigned int _maxNumberOfBits)
 {

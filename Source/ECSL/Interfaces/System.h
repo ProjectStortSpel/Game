@@ -64,6 +64,9 @@ namespace ECSL
 		void SetComponent(unsigned int _entityId, const std::string& _componentType, const std::string& _variableName, void* _data);
 		void SetComponent(unsigned int _entityId, unsigned int _componentTypeId, unsigned int _index, void* _data, unsigned int _byteSize);
 
+		bool HasComponent(unsigned int _entityId, const std::string& _componentType);
+		bool HasComponent(unsigned int _entityId, unsigned int _componentTypeId);
+
 		void CreateComponentAndAddTo(const std::string& _componentType, unsigned int _entityId);
 		void CreateComponentAndAddTo(unsigned int _componentTypeId, unsigned int _entityId);
 		void RemoveComponentFrom(const std::string& _componentType, unsigned int _entityId);
@@ -77,10 +80,9 @@ namespace ECSL
 		void KillEntity(unsigned int _entityId);
 		const std::vector<unsigned int>* const GetEntities() { return m_entities; }
 
+		const unsigned int GetEntityCount() { return m_dataManager->GetEntityCount(); }
 		const unsigned int GetThreadCount() { return MPL::TaskManager::GetInstance().GetThreadCount(); }
-
-		inline unsigned int GetEntityCountLimit(){ return m_dataManager->GetEntityCountLimit(); }
-		inline bool EntityHasComponent(unsigned int _entityId, unsigned int _componentTypeId){ return m_dataManager->EntityHasComponent(_entityId, _componentTypeId); }
+		
 		void AddComponentTypeToFilter(const std::string& _componentType, FilterType _filterType);
 		void SetSystemName(const std::string& _name) { *m_systemName = _name; m_id = m_systemIdManager->CreateSystemId(_name); }
 		void SetUpdateTaskCount(unsigned int _taskCount) { m_updateTaskCount = _taskCount; }

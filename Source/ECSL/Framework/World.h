@@ -50,8 +50,8 @@ namespace ECSL
 		void ComponentHasChanged(unsigned int _entityId, std::string _componentType, bool _notifyNetwork = true);
 		void ComponentHasChanged(unsigned int _entityId, unsigned int _componentTypeId, bool _notifyNetwork = true);
 
-		bool EntityHasComponent(unsigned int _entityId, std::string _componentType);
-		bool EntityHasComponent(unsigned int _entityId, unsigned int _componentTypeId);
+		bool HasComponent(unsigned int _entityId, std::string _componentType);
+		bool HasComponent(unsigned int _entityId, unsigned int _componentTypeId);
 	};
 }
 

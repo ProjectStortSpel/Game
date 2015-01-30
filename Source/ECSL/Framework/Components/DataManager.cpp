@@ -47,7 +47,8 @@ DataManager::~DataManager()
 
 void DataManager::InitializeTables()
 {
-	m_componentTables = new std::vector<ComponentTable*>(ComponentTypeManager::GetInstance().GetComponentTypeCount());
+	m_componentTypeCount = ComponentTypeManager::GetInstance().GetComponentTypeCount();
+	m_componentTables = new std::vector<ComponentTable*>(m_componentTypeCount);
 	m_entityTable = new EntityTable(m_entityCount, (unsigned int)m_componentTypeIds->size());
 
 	for (unsigned int n = 0; n < m_componentTypeIds->size(); ++n)
@@ -108,39 +109,19 @@ void DataManager::RemoveComponentFrom(unsigned int _componentTypeId, unsigned in
 
 void DataManager::UpdateEntityTable(const RuntimeInfo& _runtime)
 {
-	unsigned int startAt, endAt;
-	MPL::MathHelper::SplitIterations(startAt, endAt, m_changedEntitiesCopy->size(), _runtime.TaskIndex, _runtime.TaskCount);
-	for (unsigned int i = startAt; i < endAt; ++i)
+	for (auto entity : *m_componentsToBeAddedCopy)
 	{
-		unsigned int entityId = m_changedEntitiesCopy->at(i);
-
-		auto it = m_componentsToBeAddedCopy->find(entityId);
-		if (it != m_componentsToBeAddedCopy->end())
-		{
-			std::vector<unsigned int>* componentTypeIds = it->second;
-			for (unsigned int componentTypeId : *componentTypeIds)
-			{
-				m_entityTable->AddComponentTo(entityId, componentTypeId);
-			}
-			componentTypeIds->clear();
-		}
-
-		it = m_componentsToBeRemovedCopy->find(entityId);
-		if (it != m_componentsToBeRemovedCopy->end())
-		{
-			std::vector<unsigned int>* componentTypeIds = it->second;
-			for (unsigned int componentTypeId : *componentTypeIds)
-			{
-				m_entityTable->RemoveComponentFrom(entityId, componentTypeId);
-			}
-			componentTypeIds->clear();
-		}
+		m_entityTable->AddComponentsTo(entity.first, *entity.second);
 	}
 
-	MPL::MathHelper::SplitIterations(startAt, endAt, m_entitiesToBeRemovedCopy->size(), _runtime.TaskIndex, _runtime.TaskCount);
-	for (unsigned int i = startAt; i < endAt; ++i)
+	for (auto entity : *m_componentsToBeRemovedCopy)
 	{
-		m_entityTable->ClearEntityData(m_entitiesToBeRemovedCopy->at(i));
+		m_entityTable->RemoveComponentsFrom(entity.first, *entity.second);
+	}
+
+	for (auto entity : *m_entitiesToBeRemovedCopy)
+	{
+		m_entityTable->ClearEntityData(entity);
 	}
 }
 
@@ -193,7 +174,7 @@ void DataManager::DeleteComponentData(const RuntimeInfo& _runtime)
 	{
 		for (auto componentTypeId : *m_componentTypeIds)
 		{
-			if (m_entityTable->EntityHasComponent(entityId, componentTypeId))
+			if (m_entityTable->HasComponent(entityId, componentTypeId))
 				(*m_componentTables)[componentTypeId]->ClearComponent(entityId);
 		}
 	}

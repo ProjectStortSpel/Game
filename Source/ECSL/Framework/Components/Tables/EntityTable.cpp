@@ -41,34 +41,63 @@ void EntityTable::AddComponentTo(unsigned int _entityId, unsigned int _component
 	assert(!(*(unsigned char*)m_dataTable->GetData(_entityId) == 0));
 
 	/* The component is already added to the entity */
-	std::string lol = ComponentTypeManager::GetInstance().GetComponentType(_componentTypeId)->GetName();
-	std::vector<unsigned int> components;
-	std::vector<std::string> componentsS;
-	BitSet::BitSetConverter::BitSetToArray(components, componentBitSet, 2);
-	for (int n = 0; n < components.size(); ++n)
-		if (ComponentTypeManager::GetInstance().GetComponentType(components[n]))
-			componentsS.push_back(ComponentTypeManager::GetInstance().GetComponentType(components[n])->GetName());
 	assert(!(componentBitSet[bitSetIndex] & ((BitSet::DataType)1 << bitIndex)));
 
 	componentBitSet[bitSetIndex] |= (BitSet::DataType)1 << bitIndex;
 }
 
-void EntityTable::RemoveComponentFrom(unsigned int _entityId, unsigned int _componentTypeId)
+void EntityTable::AddComponentsTo(unsigned int _entityId, const std::vector<unsigned int>& _componentTypeIds)
 {
-	BitSet::DataType* componentBitSet = (BitSet::DataType*)(m_dataTable->GetData(_entityId, 1));
-	unsigned int bitSetIndex = BitSet::GetBitSetIndex(_componentTypeId);
-	unsigned int bitIndex = BitSet::GetBitIndex(_componentTypeId);
-
 	/* The entity is dead */
 	assert(!(*(unsigned char*)m_dataTable->GetData(_entityId) == 0));
 
-	/* The entity doesn't have that component */
-	assert(componentBitSet[bitSetIndex] & ((BitSet::DataType)1 << bitIndex));
+	BitSet::DataType* entityComponents = (BitSet::DataType*)(m_dataTable->GetData(_entityId, 1));
+	for (unsigned int componentTypeId : _componentTypeIds)
+	{
+		unsigned int bitSetIndex = BitSet::GetBitSetIndex(componentTypeId);
+		unsigned int bitIndex = BitSet::GetBitIndex(componentTypeId);
+		
+		/* The component is already added to the entity */
+		assert(!(entityComponents[bitSetIndex] & ((BitSet::DataType)1 << bitIndex)));
 
-	componentBitSet[bitSetIndex] &= ~((BitSet::DataType)1 << bitIndex);
+		entityComponents[bitSetIndex] |= (BitSet::DataType)1 << bitIndex;
+	}
 }
 
-bool EntityTable::EntityHasComponent(unsigned int _entityId, unsigned int _componentTypeId)
+void EntityTable::RemoveComponentFrom(unsigned int _entityId, unsigned int _componentTypeId)
+{
+	/* The entity is dead */
+	assert(!(*(unsigned char*)m_dataTable->GetData(_entityId) == 0));
+
+	BitSet::DataType* entityComponents = (BitSet::DataType*)(m_dataTable->GetData(_entityId, 1));
+	unsigned int bitSetIndex = BitSet::GetBitSetIndex(_componentTypeId);
+	unsigned int bitIndex = BitSet::GetBitIndex(_componentTypeId);
+
+	/* The entity doesn't have that component */
+	assert(entityComponents[bitSetIndex] & ((BitSet::DataType)1 << bitIndex));
+
+	entityComponents[bitSetIndex] &= ~((BitSet::DataType)1 << bitIndex);
+}
+
+void EntityTable::RemoveComponentsFrom(unsigned int _entityId, const std::vector<unsigned int>& _componentTypeIds)
+{
+	/* The entity is dead */
+	assert(!(*(unsigned char*)m_dataTable->GetData(_entityId) == 0));
+
+	BitSet::DataType* entityComponents = (BitSet::DataType*)(m_dataTable->GetData(_entityId, 1));
+	for (unsigned int componentTypeId : _componentTypeIds)
+	{
+		unsigned int bitSetIndex = BitSet::GetBitSetIndex(componentTypeId);
+		unsigned int bitIndex = BitSet::GetBitIndex(componentTypeId);
+
+		/* The entity doesn't have that component */
+		assert(entityComponents[bitSetIndex] & ((BitSet::DataType)1 << bitIndex));
+
+		entityComponents[bitSetIndex] &= ~((BitSet::DataType)1 << bitIndex);
+	}
+}
+
+bool EntityTable::HasComponent(unsigned int _entityId, unsigned int _componentTypeId)
 {
 	BitSet::DataType* componentBitSet = (BitSet::DataType*)(m_dataTable->GetData(_entityId, 1));
 	unsigned int bitSetIndex = BitSet::GetBitSetIndex(_componentTypeId);
@@ -101,7 +130,6 @@ bool EntityTable::EntityPassFilters(unsigned int _entityId, const BitSet::DataTy
 			if((_oneOfMask[i] & componentBitSet[i]) != 0)
 				requiresOneOf = 2;
 		}
-
 	}
 
 	if (requiresOneOf == 1)

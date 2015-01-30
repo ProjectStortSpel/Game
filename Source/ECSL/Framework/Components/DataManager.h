@@ -26,7 +26,6 @@ namespace ECSL
 		void RemoveComponentFrom(const std::string& _componentType, unsigned int _entityId);
 		void RemoveComponentFrom(unsigned int _componentTypeId, unsigned int _entityId);
 
-		/* Update the entity table for added and removed components to entities */
 		void UpdateEntityTable(const RuntimeInfo& _runtime);
 		void RecycleEntityIds(const RuntimeInfo& _runtime);
 		void CopyCurrentLists(const RuntimeInfo& _runtime);
@@ -34,13 +33,15 @@ namespace ECSL
 		void DeleteComponentData(const RuntimeInfo& _runtime);
 
 		inline unsigned int GetEntityCount() { return m_entityCount; }
+		inline unsigned int GetComponentTypeCount() { return m_componentTypeCount; }
 		inline EntityTable* GetEntityTable() { return m_entityTable; }
 		inline ComponentTable* GetComponentTable(const std::string& _componentType) { return m_componentTables->at(ComponentTypeManager::GetInstance().GetTableId(_componentType)); }
 		inline ComponentTable* GetComponentTable(unsigned int _componentTypeId) { return m_componentTables->at(_componentTypeId); }
 		inline const std::vector<unsigned int>* GetChangedEntities() { return m_changedEntitiesCopy; }
+		inline const std::map<unsigned int, std::vector<unsigned int>*>* GetComponentsToBeAdded() { return m_componentsToBeAddedCopy; }
+		inline const std::map<unsigned int, std::vector<unsigned int>*>* GetComponentsToBeRemoved() { return m_componentsToBeRemovedCopy; }
 
-		inline bool EntityHasComponent(unsigned int _entityId, unsigned int _componentTypeId){ return m_entityTable->EntityHasComponent(_entityId, _componentTypeId); }
-		inline unsigned int GetEntityCountLimit(){ return m_entityTable->EntityCountLimit(); }
+		inline bool HasComponent(unsigned int _entityId, unsigned int _componentTypeId){ return m_entityTable->HasComponent(_entityId, _componentTypeId); }
 
 		unsigned int GetMemoryAllocated();
 
@@ -51,6 +52,7 @@ namespace ECSL
 		SDL_mutex* m_componentsToBeRemovedMutex;
 		SDL_mutex* m_componentDataToBeClearedMutex;
 		unsigned int m_entityCount;
+		unsigned int m_componentTypeCount;
 		EntityTable* m_entityTable;
 		std::vector<ComponentTable*>* m_componentTables;
 		std::vector<unsigned int>* m_componentTypeIds;

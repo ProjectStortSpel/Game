@@ -22,7 +22,7 @@ namespace LuaBridge
     int KillEntity(lua_State* L);
     int SetComponent(lua_State* L);
     int GetComponent(lua_State* L);
-    int EntityHasComponent(lua_State* L);
+    int HasComponent(lua_State* L);
   };
 }
 

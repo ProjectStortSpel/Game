@@ -23,7 +23,7 @@ namespace LuaBridge
 		LuaEmbedder::EmbedClassFunction<LuaSystem>(L, "System", "AddComponentTypeToFilter", &LuaSystem::AddComponentTypeToFilter);
 		LuaEmbedder::EmbedClassFunction<LuaSystem>(L, "System", "GetEntities", &LuaSystem::GetEntities);
 		LuaEmbedder::EmbedClassFunction<LuaSystem>(L, "System", "GetComponent", &LuaSystem::GetComponent);
-		LuaEmbedder::EmbedClassFunction<LuaSystem>(L, "System", "EntityHasComponent", &LuaSystem::EntityHasComponent);
+		LuaEmbedder::EmbedClassFunction<LuaSystem>(L, "System", "EntityHasComponent", &LuaSystem::HasComponent);
 		LuaEmbedder::EmbedClassFunction<LuaSystem>(L, "System", "InitializeNetworkEvents", &LuaSystem::InitializeNetworkEvents);
 
 		LuaEmbedder::EmbedClassFunction<LuaSystem>(L, "System", "UsingUpdate", &LuaSystem::UsingUpdate);
@@ -141,7 +141,7 @@ namespace LuaBridge
 			int index = 0;
 			for (int i = 0; i < entities->size(); ++i)
 			{
-				if (System::EntityHasComponent(entities->at(i), componentTypeId))
+				if (System::HasComponent(entities->at(i), componentTypeId))
 				{
 					selectedEntities[index] = entities->at(i);
 					++index;
@@ -157,11 +157,11 @@ namespace LuaBridge
 		return 1;
 	}
 	
-	int LuaSystem::EntityHasComponent(lua_State* L)
+	int LuaSystem::HasComponent(lua_State* L)
 	{
 		unsigned int entityId = (unsigned int)LuaEmbedder::PullInt(L, 1);
 		unsigned int componentTypeId = ECSL::ComponentTypeManager::GetInstance().GetTableId(LuaEmbedder::PullString(L, 2));
-		LuaEmbedder::PushBool(L, System::EntityHasComponent(entityId, componentTypeId));
+		LuaEmbedder::PushBool(L, System::HasComponent(entityId, componentTypeId));
 		return 1;
 	}
 

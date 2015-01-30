@@ -57,14 +57,63 @@ void SystemManager::UpdateSystemEntityLists(
 	std::vector<std::vector<unsigned int>*>& _entitiesToRemoveFromSystems)
 {
 	const std::vector<unsigned int>* changedEntities = m_dataManager->GetChangedEntities();
+	const std::map<unsigned int, std::vector<unsigned int>*>* componentsToBeAdded = m_dataManager->GetComponentsToBeAdded();
+	const std::map<unsigned int, std::vector<unsigned int>*>* componentsToBeRemoved = m_dataManager->GetComponentsToBeRemoved();
 	EntityTable* entityTable = m_dataManager->GetEntityTable();
-
+	unsigned int componentTypeCount = m_dataManager->GetComponentTypeCount();
+	//m_dataManager->GetEntityCountLimit()
 	unsigned int startAt, endAt;
 	MPL::MathHelper::SplitIterations(startAt, endAt, (unsigned int)m_systems->size(), _runtime.TaskIndex, _runtime.TaskCount);
 	/* Loop through every system see if changed entities passes the filter */
 	for (unsigned int i = startAt; i < endAt; ++i)
 	{
 		System* system = m_systems->at(i);
+		const BitSet::DataType* mandatoryFilter = system->GetMandatoryFilter()->GetBitSet();
+		const BitSet::DataType* requiresOneOfFilter = system->GetRequiresOneOfFilter()->GetBitSet();
+		const BitSet::DataType* excludedFilter = system->GetExcludedFilter()->GetBitSet();
+		unsigned int entitiesAddedTaskCount = system->GetEntitiesAddedTaskCount();
+		unsigned int entitiesRemovedTaskCount = system->GetEntitiesRemovedTaskCount();
+
+		//for (auto entity : *componentsToBeAdded)
+		//{
+		//	bool hasEntity = system->HasEntity(entity.first);
+		//	if (BitSet::BitSetMatchesMasks(componentTypeCount, entityTable->GetEntityComponents(entity.first), mandatoryFilter, requiresOneOfFilter, excludedFilter))
+		//	{
+		//		if (!hasEntity)
+		//		{
+		//			system->AddEntityToSystem(entity.first);
+		//			if (entitiesAddedTaskCount > 0)
+		//				_entitiesToAddToSystems[i]->push_back(entity.first);
+		//		}
+		//	}
+		//	else if (hasEntity)
+		//	{
+		//		system->RemoveEntityFromSystem(entity.first);
+		//		if (entitiesRemovedTaskCount > 0)
+		//			_entitiesToRemoveFromSystems[i]->push_back(entity.first);
+		//	}
+		//}
+
+		//for (auto entity : *componentsToBeRemoved)
+		//{
+		//	bool hasEntity = system->HasEntity(entity.first);
+		//	if (BitSet::BitSetMatchesMasks(componentTypeCount, entityTable->GetEntityComponents(entity.first), mandatoryFilter, requiresOneOfFilter, excludedFilter))
+		//	{
+		//		if (!hasEntity)
+		//		{
+		//			system->AddEntityToSystem(entity.first);
+		//			if (entitiesAddedTaskCount > 0)
+		//				_entitiesToAddToSystems[i]->push_back(entity.first);
+		//		}
+		//	}
+		//	else if (hasEntity)
+		//	{
+		//		system->RemoveEntityFromSystem(entity.first);
+		//		if (entitiesRemovedTaskCount > 0)
+		//			_entitiesToRemoveFromSystems[i]->push_back(entity.first);
+		//	}
+		//}
+
 		for (unsigned int j = 0; j < changedEntities->size(); ++j)
 		{
 			unsigned int entityId = changedEntities->at(j);

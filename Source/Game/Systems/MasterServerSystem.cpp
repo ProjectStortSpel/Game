@@ -90,13 +90,13 @@ void MasterServerSystem::OnEntityAdded(unsigned int _entityId)
 	if (!NetworkInstance::GetServer()->IsRunning())
 		return;
 
-	if (EntityHasComponent(_entityId, ECSL::ComponentTypeManager::GetInstance().GetTableId("AvailableSpawnpoint")))
+	if (HasComponent(_entityId, ECSL::ComponentTypeManager::GetInstance().GetTableId("AvailableSpawnpoint")))
 	{
 		m_clientDatabase->IncreaseMaxNoPlayers();
 	}
-	else if (EntityHasComponent(_entityId, ECSL::ComponentTypeManager::GetInstance().GetTableId("Player")))
+	else if (HasComponent(_entityId, ECSL::ComponentTypeManager::GetInstance().GetTableId("Player")))
 	{
-		if (EntityHasComponent(_entityId, ECSL::ComponentTypeManager::GetInstance().GetTableId("IsSpectator")))
+		if (HasComponent(_entityId, ECSL::ComponentTypeManager::GetInstance().GetTableId("IsSpectator")))
 		{
 			m_clientDatabase->IncreaseNoSpectators();
 			m_playerIds[_entityId] = true;
@@ -108,7 +108,7 @@ void MasterServerSystem::OnEntityAdded(unsigned int _entityId)
 		}
 		
 	}
-	else if (EntityHasComponent(_entityId, ECSL::ComponentTypeManager::GetInstance().GetTableId("GameRunning")))
+	else if (HasComponent(_entityId, ECSL::ComponentTypeManager::GetInstance().GetTableId("GameRunning")))
 	{
 		m_gameRunningId = _entityId;
 	}

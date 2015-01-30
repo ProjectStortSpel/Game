@@ -153,13 +153,13 @@ void World::ComponentHasChanged(unsigned int _entityId, unsigned int _componentT
 	}	
 }
 
-bool World::EntityHasComponent(unsigned int _entityId, std::string _componentType)
+bool World::HasComponent(unsigned int _entityId, std::string _componentType)
 {
 	unsigned int componentTypeId = ECSL::ComponentTypeManager::GetInstance().GetTableId(_componentType);
-	return EntityHasComponent(_entityId, componentTypeId);
+	return HasComponent(_entityId, componentTypeId);
 }
 
-bool World::EntityHasComponent(unsigned int _entityId, unsigned int _componentTypeId)
+bool World::HasComponent(unsigned int _entityId, unsigned int _componentTypeId)
 {
-	return m_dataManager->EntityHasComponent(_entityId, _componentTypeId);	
+	return m_dataManager->HasComponent(_entityId, _componentTypeId);	
 }

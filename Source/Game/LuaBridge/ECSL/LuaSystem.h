@@ -34,7 +34,7 @@ namespace LuaBridge
     int AddComponentTypeToFilter(lua_State* L);
     int GetEntities(lua_State* L);
     
-    int EntityHasComponent(lua_State* L);
+    int HasComponent(lua_State* L);
 
 	int InitializeNetworkEvents(lua_State* L);
 

@@ -98,6 +98,16 @@ void System::SetComponent(unsigned int _entityId, unsigned int _componentTypeId,
 	m_dataManager->GetComponentTable(_componentTypeId)->SetComponent(_entityId, _index, _data, _byteSize);
 }
 
+bool System::HasComponent(unsigned int _entityId, const std::string& _componentType)
+{
+	return m_dataManager->HasComponent(_entityId, ComponentTypeManager::GetInstance().GetTableId(_componentType));
+}
+
+bool System::HasComponent(unsigned int _entityId, unsigned int _componentTypeId)
+{
+	return m_dataManager->HasComponent(_entityId, _componentTypeId);
+}
+
 void System::CreateComponentAndAddTo(const std::string& _componentType, unsigned int _entityId)
 {
 	m_dataManager->CreateComponentAndAddTo(_componentType, _entityId);

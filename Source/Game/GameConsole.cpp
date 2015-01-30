@@ -33,7 +33,7 @@ void GameConsole::CreateObject(std::string _command, std::vector<Console::Argume
 	unsigned int mId = m_world->CreateNewEntity(_template);
 	m_world->CreateComponentAndAddTo("ChangedComponents", mId);
 
-	if (!m_world->EntityHasComponent(mId, "SyncNetwork"))
+	if (!m_world->HasComponent(mId, "SyncNetwork"))
 		m_world->CreateComponentAndAddTo("SyncNetwork", mId);
 
 	std::stringstream ss;
