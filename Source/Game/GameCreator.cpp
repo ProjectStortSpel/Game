@@ -59,7 +59,7 @@ GameCreator::~GameCreator()
 
 void GameCreator::InitializeGraphics()
 {
-	m_graphics = new Renderer::GraphicDevice();
+	m_graphics = new Renderer::GraphicsLow();
 	m_graphics->Init();
 	LuaEmbedder::AddObject<Renderer::GraphicDevice>("GraphicDevice", m_graphics, "graphics");
 }

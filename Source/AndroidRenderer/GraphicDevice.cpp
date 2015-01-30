@@ -380,38 +380,38 @@ bool GraphicDevice::InitShaders()
 {
 	// Standard forward
 	m_forwardShader.InitShaderProgram();
-	m_forwardShader.AddShader("content/shaders/AndroidForwardVS.glsl", GL_VERTEX_SHADER);
-	m_forwardShader.AddShader("content/shaders/AndroidForwardFS.glsl", GL_FRAGMENT_SHADER);
+	m_forwardShader.AddShader("content/shaders/android/AndroidForwardVS.glsl", GL_VERTEX_SHADER);
+	m_forwardShader.AddShader("content/shaders/android/AndroidForwardFS.glsl", GL_FRAGMENT_SHADER);
 	m_forwardShader.FinalizeShaderProgram();
 
 	// SkyBox
 	m_skyBoxShader.InitShaderProgram();
-	m_skyBoxShader.AddShader("content/shaders/AndroidSkyboxShaderVS.glsl", GL_VERTEX_SHADER);
-	m_skyBoxShader.AddShader("content/shaders/AndroidSkyboxShaderFS.glsl", GL_FRAGMENT_SHADER);
+	m_skyBoxShader.AddShader("content/shaders/android/AndroidSkyboxShaderVS.glsl", GL_VERTEX_SHADER);
+	m_skyBoxShader.AddShader("content/shaders/android/AndroidSkyboxShaderFS.glsl", GL_FRAGMENT_SHADER);
 	m_skyBoxShader.FinalizeShaderProgram();
 
 	// Viewspace shader
 	m_viewspaceShader.InitShaderProgram();
-	m_viewspaceShader.AddShader("content/shaders/AndroidViewspaceShaderVS.glsl", GL_VERTEX_SHADER);
-	m_viewspaceShader.AddShader("content/shaders/AndroidViewspaceShaderFS.glsl", GL_FRAGMENT_SHADER);
+	m_viewspaceShader.AddShader("content/shaders/android/AndroidViewspaceShaderVS.glsl", GL_VERTEX_SHADER);
+	m_viewspaceShader.AddShader("content/shaders/android/AndroidViewspaceShaderFS.glsl", GL_FRAGMENT_SHADER);
 	m_viewspaceShader.FinalizeShaderProgram();
 
 	// Interface shader
 	m_interfaceShader.InitShaderProgram();
-	m_interfaceShader.AddShader("content/shaders/AndroidInterfaceVS.glsl", GL_VERTEX_SHADER);
-	m_interfaceShader.AddShader("content/shaders/AndroidInterfaceFS.glsl", GL_FRAGMENT_SHADER);
+	m_interfaceShader.AddShader("content/shaders/android/AndroidInterfaceVS.glsl", GL_VERTEX_SHADER);
+	m_interfaceShader.AddShader("content/shaders/android/AndroidInterfaceFS.glsl", GL_FRAGMENT_SHADER);
 	m_interfaceShader.FinalizeShaderProgram();
 
 	// ShadowShader geometry
 	m_shadowShader.InitShaderProgram();
-	m_shadowShader.AddShader("content/shaders/AndroidShadowShaderVS.glsl", GL_VERTEX_SHADER);
-	m_shadowShader.AddShader("content/shaders/AndroidShadowShaderFS.glsl", GL_FRAGMENT_SHADER);
+	m_shadowShader.AddShader("content/shaders/android/AndroidShadowShaderVS.glsl", GL_VERTEX_SHADER);
+	m_shadowShader.AddShader("content/shaders/android/AndroidShadowShaderFS.glsl", GL_FRAGMENT_SHADER);
 	m_shadowShader.FinalizeShaderProgram();
 
 	//m_fullscreen
 	/*m_fullscreen.InitShaderProgram();
-	m_fullscreen.AddShader("content/shaders/AndroidFullscreenVS.glsl", GL_VERTEX_SHADER);
-	m_fullscreen.AddShader("content/shaders/AndroidFullscreenFS.glsl", GL_FRAGMENT_SHADER);
+	m_fullscreen.AddShader("content/shaders/android/AndroidFullscreenVS.glsl", GL_VERTEX_SHADER);
+	m_fullscreen.AddShader("content/shaders/android/AndroidFullscreenFS.glsl", GL_FRAGMENT_SHADER);
 	m_fullscreen.FinalizeShaderProgram();*/
 
 	return true;
