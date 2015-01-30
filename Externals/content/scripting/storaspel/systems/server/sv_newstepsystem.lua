@@ -46,6 +46,9 @@ NewStepSystem.OnEntityAdded = function(self, entity)
 			id = world:CreateNewEntity()
 			world:CreateComponentAndAddTo("DealCards", id)
 			world:SetComponent(id, "DealCards", "NumCards", 5)
+			
+			id = world:CreateNewEntity()
+			world:CreateComponentAndAddTo("RemoveEffects", id)
 
 		end
 	end

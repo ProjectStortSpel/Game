@@ -76,7 +76,7 @@ AbilitySlingShotSystem.Initialize = function(self)
 	
 	self:AddComponentTypeToFilter("Unit", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("NotWalkable", FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter("DealCards", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("RemoveEffects", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("SlingShotComponent", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("MapSize", FilterType.RequiresOneOf)
 	
@@ -150,6 +150,7 @@ AbilitySlingShotSystem.Update = function(self, dt)
 							hitSomething = true
 							if not world:EntityHasComponent(units[u], "Stunned") then
 								world:CreateComponentAndAddTo("Stunned", units[u])
+								print("ADDED COMPONENT \"Stunned\" TO UNIT WITH ID: " .. units[u])
 							end
 							break
 							
@@ -188,15 +189,17 @@ end
 
 AbilitySlingShotSystem.OnEntityAdded = function(self, entity)
 
-	if world:EntityHasComponent(entity, "DealCards") then
-		
-		print("world:EntityHasComponent(entity, \"DealCards\")")
+	print("AbilitySlingShotSystem.OnEntityAdded")
+	if world:EntityHasComponent(entity, "RemoveEffects") then
 		local units = self:GetEntities("Unit")
 		for i = 1, #units do
 			if world:EntityHasComponent(units[i], "Stunned") then
+				print("Removed component \"Stunned\"")
 				world:RemoveComponentFrom("Stunned", units[i])
 			end
 		end
+		
+		world:KillEntity(entity)
 	end
 end
 
