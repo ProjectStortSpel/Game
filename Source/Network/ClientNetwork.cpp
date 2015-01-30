@@ -153,7 +153,7 @@ bool ClientNetwork::Connect()
 		return false;
 	}
 
-	m_socket->SetTimeoutDelay(30000);
+	//m_socket->SetTimeoutDelay(5000);
 	m_socket->SetNonBlocking(false);
 	m_socket->SetNoDelay(true);
 
