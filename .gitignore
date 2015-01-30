@@ -216,6 +216,8 @@ Solutions/Android/local.properties
 #Mac stuff
 .DS_Store
 xcuserdata
+Solutions/OSX/StoraSpel.xcodeproj/project.xcworkspace/xcuserdata/
+Solutions/iOS/StoraSpel.xcodeproj/project.xcworkspace/xcuserdata/
 .Trashes
 *.swp
 *.lock
