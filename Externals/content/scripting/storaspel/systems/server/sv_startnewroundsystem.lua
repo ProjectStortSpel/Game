@@ -32,7 +32,7 @@ StartNewRoundSystem.OnEntityAdded = function(self, entity)
 		elseif not world:EntityHasComponent(entity, "IsAI") then
 			local newId = world:CreateNewEntity()
 			world:CreateComponentAndAddTo("AddToPickingPhaseTimer", newId)
-			world:GetComponent(newId, "AddToPickingPhaseTimer", "Amount"):SetFloat(-10)
+			world:GetComponent(newId, "AddToPickingPhaseTimer", "Amount"):SetFloat(-5)
 			print("Removing time")
 		end
 		
