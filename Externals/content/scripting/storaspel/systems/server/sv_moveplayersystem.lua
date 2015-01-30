@@ -305,7 +305,7 @@ MoveForwardSystem.OnEntityAdded = function(self, entity)
 	if world:EntityHasComponent(entity, "Stunned") then
 		world:SetComponent(entity, "NoSubSteps", "Counter", 1)
 		world:RemoveComponentFrom("UnitForward", entity)
-		print("I AM STUNNED AND CAN NOT MOVE FORWARDS")
+		print("I AM A STUNNED UNIT WITH ID: " .. entity)
 		return
 	end
 	

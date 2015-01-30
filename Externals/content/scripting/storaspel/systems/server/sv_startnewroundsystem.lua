@@ -15,8 +15,8 @@ StartNewRoundSystem.OnEntityAdded = function(self, entity)
 		local numReadyUnits = #self:GetEntities("UnitSelectedCards")
 		local units = self:GetEntities("Unit")
 	
-		--print("NumReadyUnits: " .. numReadyUnits)
-		--print("NumUnits: " .. #units)
+		print("NumReadyUnits: " .. numReadyUnits)
+		print("NumUnits: " .. #units)
 
 		if numReadyUnits == #units then
 		
@@ -29,13 +29,11 @@ StartNewRoundSystem.OnEntityAdded = function(self, entity)
 			local newId = world:CreateNewEntity()
 			world:CreateComponentAndAddTo("SetPickingPhaseTimer", newId)
 			world:GetComponent(newId, "SetPickingPhaseTimer", "Amount"):SetFloat(0)
-		else
+		elseif not world:EntityHasComponent(entity, "IsAI") then
 			local newId = world:CreateNewEntity()
-			
-			if not world:GetComponent(entity, "NotifyStartNewRound", "IsAI"):GetBool() then
-				world:CreateComponentAndAddTo("AddToPickingPhaseTimer", newId)
-				world:GetComponent(newId, "AddToPickingPhaseTimer", "Amount"):SetFloat(-10)
-			end
+			world:CreateComponentAndAddTo("AddToPickingPhaseTimer", newId)
+			world:GetComponent(newId, "AddToPickingPhaseTimer", "Amount"):SetFloat(-10)
+			print("Removing time")
 		end
 		
 		world:KillEntity(entity)

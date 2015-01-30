@@ -76,7 +76,7 @@ DealCardsSystem.DealCards = function (self, numCards)
 			table.remove(cards, cardIndex)
 			cardsLeft = cardsLeft - 1
 		end
-		Net.Send(Net.StartPack("Client.SelectCards"), ip, port)
+		--Net.Send(Net.StartPack("Client.SelectCards"), ip, port)
 	end
 	
 	for i = 1, #aiPlayers do
@@ -130,12 +130,12 @@ Net.Receive("Server.SelectCards",
 					table.insert(selectedCards, card)
 
 				else
-					Net.Send(Net.StartPack("Client.SelectCards"), ip, port)
+					--Net.Send(Net.StartPack("Client.SelectCards"), ip, port)
 					return
 				end
 
 			else
-				Net.Send(Net.StartPack("Client.SelectCards"), ip, port)
+				--Net.Send(Net.StartPack("Client.SelectCards"), ip, port)
 				return
 			end
 

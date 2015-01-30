@@ -69,10 +69,14 @@ android {
         compileTask -> compileTask.dependsOn ndkBuild
     }
 
+    task deleteContent(type: Delete) {
+        delete 'assets/content'
+    }
     task copyContent(type: Copy) {
         from '../../../Externals/content'
         into 'assets/content'
     }
+    copyContent.dependsOn deleteContent
     preBuild.dependsOn copyContent
 }
 

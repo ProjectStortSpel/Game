@@ -27,7 +27,7 @@ ClientDatabase::~ClientDatabase()
 
 bool ClientDatabase::Connect()
 {
-	m_client.SetTimeOutValue(1000);
+	m_client.SetTimeOutValue(10000);
 
 	if (!m_connected)
 		m_connected = m_client.Connect(m_ipAddress.c_str(), m_password.c_str(), m_remotePort, m_localPort);
