@@ -42,7 +42,7 @@ AbilityNudgeSystem.Update = function(self, dt)
 				local targetPosX, targetPosZ = world:GetComponent(units[j], "MapPosition", 0):GetInt2()
 				-- If the targeted tile is the same as the units position
 				if aimPosX == targetPosX and aimPosZ == targetPosZ then
-					print("HIT")
+					--print("HIT")
 					local id = world:CreateNewEntity()
 					world:CreateComponentAndAddTo("TestMove", id)
 					world:SetComponent(id, "TestMove", "Unit", units[j])
@@ -52,7 +52,7 @@ AbilityNudgeSystem.Update = function(self, dt)
 					world:SetComponent(id, "TestMove", "DirZ", dirZ)
 					world:SetComponent(id, "TestMove", "Steps", self.Power)
 				else
-					print("MISS")
+					--print("MISS")
 				end
 				
 			
@@ -112,10 +112,10 @@ AbilitySlingShotSystem.Update = function(self, dt)
 			if currentPosX < 1 or currentPosZ < 1
 			or currentPosX > mapSizeX or currentPosZ > mapSizeZ then
 			
-				print("currentPosX: " .. currentPosX)
-				print("currentPosZ: " .. currentPosZ)
-				print("mapSizeX: " .. mapSizeX)
-				print("mapSizeZ: " .. mapSizeZ)
+				--print("currentPosX: " .. currentPosX)
+				--print("currentPosZ: " .. currentPosZ)
+				--print("mapSizeX: " .. mapSizeX)
+				--print("mapSizeZ: " .. mapSizeZ)
 			
 				local bullet = world:CreateNewEntity("SlingShot")
 				world:CreateComponentAndAddTo("LerpTargetPosition", bullet)
@@ -190,7 +190,7 @@ AbilitySlingShotSystem.OnEntityAdded = function(self, entity)
 
 	if world:EntityHasComponent(entity, "DealCards") then
 		
-		print("world:EntityHasComponent(entity, \"DealCards\")")
+		--print("world:EntityHasComponent(entity, \"DealCards\")")
 		local units = self:GetEntities("Unit")
 		for i = 1, #units do
 			if world:EntityHasComponent(units[i], "Stunned") then

@@ -61,17 +61,15 @@ void EntityTable::RemoveComponentFrom(unsigned int _entityId, unsigned int _comp
 
 	componentBitSet[bitSetIndex] &= ~((BitSet::DataType)1 << bitIndex);
 
-	bool isEmpty = true;
-	for (int n = 0; n < 2; ++n)
-	if (componentBitSet[n] != 0)
-		isEmpty = false;
+	//bool isEmpty = true;
+	//for (int n = 0; n < 2; ++n)
+	//if (componentBitSet[n] != 0)
+	//	isEmpty = false;
 
-	if (isEmpty)
-	{
-		printf("empty   entity %i, removed component %i\n", _entityId, _componentTypeId);
-	}
-
-	
+	//if (isEmpty)
+	//{
+	//	printf("empty   entity %i, removed component %i\n", _entityId, _componentTypeId);
+	//}
 }
 
 bool EntityTable::EntityHasComponent(unsigned int _entityId, unsigned int _componentTypeId)
