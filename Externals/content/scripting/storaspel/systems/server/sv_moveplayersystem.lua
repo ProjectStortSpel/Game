@@ -55,6 +55,8 @@ TurnAroundSystem.OnEntityAdded = function(self, entity)
 
 	world:SetComponent(entity, "NoSubSteps", "Counter", 1)
 	world:RemoveComponentFrom("UnitTurnAround", entity)
+	
+	print("playermove")
 end
 
 
