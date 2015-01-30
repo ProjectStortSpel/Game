@@ -12,8 +12,97 @@ NewCameraSystem.TouchSprite2 = nil
 NewCameraSystem.TouchScreen = nil
 NewCameraSystem.Pressed = false
 NewCameraSystem.Moved = false
+NewCameraSystem.FreeCam = false
 
 NewCameraSystem.Update = function(self, dt)
+	if self.FreeCam == true then
+		self:DoFreeCam(dt)
+	else
+	
+	end
+end
+
+NewCameraSystem.OnEntityAdded = function(self, entityId)
+	if world:EntityHasComponent(entityId, "CameraSystemComponent") then
+		self.FreeCam = not self.FreeCam
+	end
+	if world:EntityHasComponent(entityId, "CameraInterestPoint") then
+		if self.FreeCam == false then
+			self:DoCIP(entityId)
+		end
+	end
+	world:KillEntity(entityId)
+end
+
+NewCameraSystem.Initialize = function(self)
+	self:SetName("Camera Update System")
+	self:AddComponentTypeToFilter("CameraSystemComponent", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("CameraInterestPoint", FilterType.RequiresOneOf)
+	print("Camera Update System initialized!")
+end
+
+NewCameraSystem.PostInitialize = function(self)
+	self.Camera = graphics:GetCamera()
+	
+	self.TouchScreen = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("Position", self.TouchScreen)
+	world:CreateComponentAndAddTo("Rotation", self.TouchScreen)
+	world:CreateComponentAndAddTo("Scale", self.TouchScreen)
+	world:CreateComponentAndAddTo("PickBox", self.TouchScreen)
+	local rposition = self:GetComponent(self.TouchScreen, "Position", 0)
+	rposition:SetFloat3(0, 0, -100)		
+	local rscale = self:GetComponent(self.TouchScreen, "Scale", 0)
+	rscale:SetFloat3(200, 200, 200)	
+	local pickbox = self:GetComponent(self.TouchScreen, "PickBox", 0)
+	pickbox:SetFloat2(1.0, 1.0)
+	
+	self.TouchSprite1 = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("Model", self.TouchSprite1)
+	local model = self:GetComponent(self.TouchSprite1, "Model", 0)
+	model:SetModel("touch", "quad", 2)
+	world:CreateComponentAndAddTo("Position", self.TouchSprite1)
+	world:CreateComponentAndAddTo("Rotation", self.TouchSprite1)
+	world:CreateComponentAndAddTo("Scale", self.TouchSprite1)
+	local rposition = self:GetComponent(self.TouchSprite1, "Position", 0)
+	rposition:SetFloat3(0, 0, 1)		
+	local rscale = self:GetComponent(self.TouchSprite1, "Scale", 0)
+	rscale:SetFloat3(0.1, 0.1, 0.1)	
+	
+	
+	self.TouchSprite2 = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("Model", self.TouchSprite2)
+	local model = self:GetComponent(self.TouchSprite2, "Model", 0)
+	model:SetModel("touch", "quad", 2)
+	world:CreateComponentAndAddTo("Position", self.TouchSprite2)
+	world:CreateComponentAndAddTo("Rotation", self.TouchSprite2)
+	world:CreateComponentAndAddTo("Scale", self.TouchSprite2)	
+	local lposition = self:GetComponent(self.TouchSprite2, "Position", 0)
+	lposition:SetFloat3(0, 0, 1)		
+	local lscale = self:GetComponent(self.TouchSprite2, "Scale", 0)
+	lscale:SetFloat3(0.05, 0.05, 0.05)	
+			
+	self.Camera:MoveToAndLookAt(	self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
+									self.CameraUpX,0,self.CameraUpZ,
+									self.CameraLookAtX,-4.5,self.CameraLookAtZ,
+									1)
+	
+end
+
+NewCameraSystem.DoCIP = function(self, entityId)
+
+	self.CameraUpX = self:GetComponent(entityId, "CameraInterestPoint", "UpX"):GetFloat(0)
+	self.CameraUpZ = self:GetComponent(entityId, "CameraInterestPoint", "UpZ"):GetFloat(0)
+	self.CameraLookAtX = self:GetComponent(entityId, "CameraInterestPoint", "AtX"):GetFloat(0)
+	self.CameraLookAtZ = self:GetComponent(entityId, "CameraInterestPoint", "AtZ"):GetFloat(0)
+	self.CameraDistance = self:GetComponent(entityId, "CameraInterestPoint", "Distance"):GetFloat(0)
+
+	self.Camera:MoveToAndLookAt(	self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
+									self.CameraUpX,0,self.CameraUpZ,
+									self.CameraLookAtX,0.5,self.CameraLookAtZ,
+									1)
+end
+
+NewCameraSystem.DoFreeCam = function(self, dt)
 	if world:EntityHasComponent(self.TouchScreen, "OnPickBoxHit") then
 		local move = false
 		local mX, mY = graphics:GetTouchPosition()
@@ -111,55 +200,19 @@ NewCameraSystem.Update = function(self, dt)
 	end
 end
 
-NewCameraSystem.Initialize = function(self)
-	self:SetName("Camera Update System")
-	self:AddComponentTypeToFilter("CameraSystemComponent", FilterType.Mandatory)
-	print("Camera Update System initialized!")
-end
-
-NewCameraSystem.PostInitialize = function(self)
-	self.Camera = graphics:GetCamera()
-	
-	self.TouchScreen = world:CreateNewEntity()
-	world:CreateComponentAndAddTo("Position", self.TouchScreen)
-	world:CreateComponentAndAddTo("Rotation", self.TouchScreen)
-	world:CreateComponentAndAddTo("Scale", self.TouchScreen)
-	world:CreateComponentAndAddTo("PickBox", self.TouchScreen)
-	local rposition = self:GetComponent(self.TouchScreen, "Position", 0)
-	rposition:SetFloat3(0, 0, -100)		
-	local rscale = self:GetComponent(self.TouchScreen, "Scale", 0)
-	rscale:SetFloat3(200, 200, 200)	
-	local pickbox = self:GetComponent(self.TouchScreen, "PickBox", 0)
-	pickbox:SetFloat2(1.0, 1.0)
-	
-	self.TouchSprite1 = world:CreateNewEntity()
-	world:CreateComponentAndAddTo("Model", self.TouchSprite1)
-	local model = self:GetComponent(self.TouchSprite1, "Model", 0)
-	model:SetModel("touch", "quad", 2)
-	world:CreateComponentAndAddTo("Position", self.TouchSprite1)
-	world:CreateComponentAndAddTo("Rotation", self.TouchSprite1)
-	world:CreateComponentAndAddTo("Scale", self.TouchSprite1)
-	local rposition = self:GetComponent(self.TouchSprite1, "Position", 0)
-	rposition:SetFloat3(0, 0, 1)		
-	local rscale = self:GetComponent(self.TouchSprite1, "Scale", 0)
-	rscale:SetFloat3(0.1, 0.1, 0.1)	
-	
-	
-	self.TouchSprite2 = world:CreateNewEntity()
-	world:CreateComponentAndAddTo("Model", self.TouchSprite2)
-	local model = self:GetComponent(self.TouchSprite2, "Model", 0)
-	model:SetModel("touch", "quad", 2)
-	world:CreateComponentAndAddTo("Position", self.TouchSprite2)
-	world:CreateComponentAndAddTo("Rotation", self.TouchSprite2)
-	world:CreateComponentAndAddTo("Scale", self.TouchSprite2)	
-	local lposition = self:GetComponent(self.TouchSprite2, "Position", 0)
-	lposition:SetFloat3(0, 0, 1)		
-	local lscale = self:GetComponent(self.TouchSprite2, "Scale", 0)
-	lscale:SetFloat3(0.05, 0.05, 0.05)	
-			
-	self.Camera:MoveToAndLookAt(	self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
-									self.CameraUpX,0,self.CameraUpZ,
-									self.CameraLookAtX,-4.5,self.CameraLookAtZ,
-									1)
-	
-end
+Net.Receive("Client.SendCIP", 
+	function(id, ip, port)
+		local entity = world:CreateNewEntity()
+		world:CreateComponentAndAddTo("CameraInterestPoint", entity)
+		local AtX = Net.ReadFloat(id)
+		local AtZ = Net.ReadFloat(id)
+		local UpX = Net.ReadFloat(id)
+		local UpZ = Net.ReadFloat(id)
+		local Distance = Net.ReadFloat(id)
+		world:GetComponent(entity, "CameraInterestPoint", "AtX"):SetFloat(AtX)
+		world:GetComponent(entity, "CameraInterestPoint", "AtZ"):SetFloat(AtZ)
+		world:GetComponent(entity, "CameraInterestPoint", "UpX"):SetFloat(UpX)
+		world:GetComponent(entity, "CameraInterestPoint", "UpZ"):SetFloat(UpZ)
+		world:GetComponent(entity, "CameraInterestPoint", "Distance"):SetFloat(Distance)
+	end 
+)

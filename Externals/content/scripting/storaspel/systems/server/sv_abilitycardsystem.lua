@@ -42,7 +42,7 @@ AbilityNudgeSystem.Update = function(self, dt)
 				local targetPosX, targetPosZ = world:GetComponent(units[j], "MapPosition", 0):GetInt2()
 				-- If the targeted tile is the same as the units position
 				if aimPosX == targetPosX and aimPosZ == targetPosZ then
-					--print("HIT")
+					print("HIT")
 					local id = world:CreateNewEntity()
 					world:CreateComponentAndAddTo("TestMove", id)
 					world:SetComponent(id, "TestMove", "Unit", units[j])
@@ -52,7 +52,7 @@ AbilityNudgeSystem.Update = function(self, dt)
 					world:SetComponent(id, "TestMove", "DirZ", dirZ)
 					world:SetComponent(id, "TestMove", "Steps", self.Power)
 				else
-					--print("MISS")
+					print("MISS")
 				end
 				
 			
@@ -76,7 +76,7 @@ AbilitySlingShotSystem.Initialize = function(self)
 	
 	self:AddComponentTypeToFilter("Unit", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("NotWalkable", FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter("DealCards", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("RemoveEffects", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("SlingShotComponent", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("MapSize", FilterType.RequiresOneOf)
 	
@@ -112,10 +112,10 @@ AbilitySlingShotSystem.Update = function(self, dt)
 			if currentPosX < 1 or currentPosZ < 1
 			or currentPosX > mapSizeX or currentPosZ > mapSizeZ then
 			
-				--print("currentPosX: " .. currentPosX)
-				--print("currentPosZ: " .. currentPosZ)
-				--print("mapSizeX: " .. mapSizeX)
-				--print("mapSizeZ: " .. mapSizeZ)
+				print("currentPosX: " .. currentPosX)
+				print("currentPosZ: " .. currentPosZ)
+				print("mapSizeX: " .. mapSizeX)
+				print("mapSizeZ: " .. mapSizeZ)
 			
 				local bullet = world:CreateNewEntity("SlingShot")
 				world:CreateComponentAndAddTo("LerpTargetPosition", bullet)
@@ -150,6 +150,7 @@ AbilitySlingShotSystem.Update = function(self, dt)
 							hitSomething = true
 							if not world:EntityHasComponent(units[u], "Stunned") then
 								world:CreateComponentAndAddTo("Stunned", units[u])
+								print("ADDED COMPONENT \"Stunned\" TO UNIT WITH ID: " .. units[u])
 							end
 							break
 							
@@ -188,17 +189,65 @@ end
 
 AbilitySlingShotSystem.OnEntityAdded = function(self, entity)
 
-	if world:EntityHasComponent(entity, "DealCards") then
-		
-		--print("world:EntityHasComponent(entity, \"DealCards\")")
+	print("AbilitySlingShotSystem.OnEntityAdded")
+	if world:EntityHasComponent(entity, "RemoveEffects") then
 		local units = self:GetEntities("Unit")
 		for i = 1, #units do
 			if world:EntityHasComponent(units[i], "Stunned") then
+				print("Removed component \"Stunned\"")
 				world:RemoveComponentFrom("Stunned", units[i])
 			end
 		end
+		
+		world:KillEntity(entity)
 	end
 end
 
 AbilitySlingShotSystem.OnEntityRemoved = function(self, entity)
+end
+
+
+AbilitySprintSystem = System()
+
+AbilitySprintSystem.Initialize = function(self)
+	self:SetName("AbilitySprintSystem")
+	
+	self:AddComponentTypeToFilter("Unit",FilterType.Mandatory)
+	self:AddComponentTypeToFilter("UnitSprint",FilterType.Mandatory)
+end
+
+AbilitySprintSystem.OnEntityAdded = function(self, entity)
+	
+	if world:EntityHasComponent(entity, "Stunned") then
+		world:SetComponent(entity, "NoSubSteps", "Counter", 1)
+		world:RemoveComponentFrom("UnitSprint", entity)
+		print("I AM A STUNNED UNIT WITH ID: " .. entity)
+		return
+	end
+	
+	
+	print("AbilitySprintSystem.OnEntityAdded")
+	local dirX, dirZ = world:GetComponent(entity, "Direction", 0):GetInt2()
+	local mapPosX, mapPosZ = world:GetComponent(entity, "MapPosition", 0):GetInt2()
+
+	
+	if dirX ~= 0 then
+		dirX = dirX / math.abs(dirX)
+	end
+
+	if dirZ ~= 0 then
+		dirZ = dirZ / math.abs(dirZ)
+	end
+
+	local id = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("TestMove", id)
+	world:SetComponent(id, "TestMove", "Unit", entity)
+	world:SetComponent(id, "TestMove", "PosX", mapPosX)
+	world:SetComponent(id, "TestMove", "PosZ", mapPosZ)
+	world:SetComponent(id, "TestMove", "DirX", dirX)
+	world:SetComponent(id, "TestMove", "DirZ", dirZ)
+	world:SetComponent(id, "TestMove", "Steps", 2)
+
+	world:RemoveComponentFrom("UnitSprint", entity)
+
 end

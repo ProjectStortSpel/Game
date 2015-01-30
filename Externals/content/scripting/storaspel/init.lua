@@ -66,6 +66,8 @@ if Server then
 	require "sv_takecardstepsfromunitsystem"
 	
 	require "sv_directionallightsystem"
+	
+	require "sv_cameraipsystem"
 end
 
 
@@ -187,6 +189,7 @@ if Server then
 	worldCreator:AddSystemToCurrentGroup(UpdateCardPickTimer)
 	worldCreator:AddSystemToCurrentGroup(AutoPickCards)
 	
+	worldCreator:AddSystemToCurrentGroup(CameraInterestPointSystem)
 end
 
 if Client then

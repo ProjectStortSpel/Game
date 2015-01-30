@@ -76,6 +76,7 @@ DealCardsSystem.DealCards = function (self, numCards)
 			table.remove(cards, cardIndex)
 			cardsLeft = cardsLeft - 1
 		end
+		
 		--Net.Send(Net.StartPack("Client.SelectCards"), ip, port)
 	end
 	

@@ -7,6 +7,13 @@ NewStepSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("NewStep", FilterType.RequiresOneOf)
 end
 
+NewStepSystem.OnEntityRemoved = function(self, entity)
+	if self.Step > 5 then
+		local id = world:CreateNewEntity()
+		world:CreateComponentAndAddTo("CameraOnPlayer", id)
+	end
+end
+
 NewStepSystem.OnEntityAdded = function(self, entity)
 	
 	if world:EntityHasComponent( entity, "NewRound") then
@@ -46,7 +53,9 @@ NewStepSystem.OnEntityAdded = function(self, entity)
 			id = world:CreateNewEntity()
 			world:CreateComponentAndAddTo("DealCards", id)
 			world:SetComponent(id, "DealCards", "NumCards", 5)
-
+	
+			id = world:CreateNewEntity()
+			world:CreateComponentAndAddTo("RemoveEffects", id)
 		end
 	end
 
