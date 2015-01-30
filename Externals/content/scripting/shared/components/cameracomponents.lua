@@ -16,6 +16,14 @@ CameraInterestPoint:AddVariable("Distance", ByteSize.Float)
 worldCreator:AddComponentType(CameraInterestPoint)
 
 -- Camera Component
+local CameraOnPlayer = ComponentType()
+CameraOnPlayer.Name = "CameraOnPlayer"
+CameraOnPlayer.TableType = TableType.Map
+worldCreator:AddComponentType(CameraOnPlayer)
+
+
+
+-- Camera Component
 local CameraComponent = ComponentType()
 CameraComponent.Name = "Camera"
 CameraComponent.SyncNetwork = true

@@ -12,7 +12,7 @@ NewCameraSystem.TouchSprite2 = nil
 NewCameraSystem.TouchScreen = nil
 NewCameraSystem.Pressed = false
 NewCameraSystem.Moved = false
-NewCameraSystem.FreeCam = true
+NewCameraSystem.FreeCam = false
 
 NewCameraSystem.Update = function(self, dt)
 	if self.FreeCam == true then
@@ -98,7 +98,7 @@ NewCameraSystem.DoCIP = function(self, entityId)
 
 	self.Camera:MoveToAndLookAt(	self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
 									self.CameraUpX,0,self.CameraUpZ,
-									self.CameraLookAtX,-4.5,self.CameraLookAtZ,
+									self.CameraLookAtX,0.5,self.CameraLookAtZ,
 									1)
 end
 

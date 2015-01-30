@@ -280,7 +280,7 @@ TestMoveSystem.OnEntityAdded = function(self, entity)
 				Net.WriteFloat(cipID, hestPosZ)
 				Net.WriteFloat(cipID, dirX)
 				Net.WriteFloat(cipID, dirZ)
-				Net.WriteFloat(cipID, 1)
+				Net.WriteFloat(cipID, 0.5)
 				Net.Broadcast(cipID)
 
 			end
