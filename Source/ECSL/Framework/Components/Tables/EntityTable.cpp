@@ -68,7 +68,7 @@ void EntityTable::RemoveComponentFrom(unsigned int _entityId, unsigned int _comp
 
 	if (isEmpty)
 	{
-		printf("removed component %i, created a empty entity\n", _componentTypeId);
+		printf("empty   entity %i, removed component %i\n", _entityId, _componentTypeId);
 	}
 
 	

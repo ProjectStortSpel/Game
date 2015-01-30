@@ -77,6 +77,7 @@ void DataManager::RemoveEntity(unsigned int _entityId)
 		RemoveComponentFrom(componentTypeId, _entityId);
 
 	m_entityTable->ClearEntityData(_entityId);
+	printf("removed entity %i\n", _entityId);
 }
 
 void DataManager::CreateComponentAndAddTo(const std::string& _componentType, unsigned int _entityId)

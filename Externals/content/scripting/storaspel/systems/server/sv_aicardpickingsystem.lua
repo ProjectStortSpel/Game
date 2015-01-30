@@ -261,7 +261,7 @@ AICardPickingSystem.SendCards = function(self, _player, _pickedcards)
 		world:CreateComponentAndAddTo("CardStep", _pickedcards[i])
 		world:SetComponent(_pickedcards[i], "CardStep", "Step", i)
 		world:SetComponent(_pickedcards[i], "CardStep", "UnitEntityId", unit)
-		
+				
 	end
 
 	local id = world:CreateNewEntity()
@@ -271,8 +271,8 @@ end
 
 AICardPickingSystem.SimulatePlayOfCards = function(self, _unit, _pickedcards)
 	
-	local mapSize = self:GetEntities("MapSize")	
-	local mapX, mapY = self:GetComponent(mapSize[1], "MapSize", 0):GetInt2()
+	--local mapSize = self:GetEntities("MapSize")	
+	--local mapX, mapY = self:GetComponent(mapSize[1], "MapSize", 0):GetInt2()
 	local posX, posY = self:GetComponent(_unit, "MapPosition", 0):GetInt2()
 	local dirX, dirY = self:GetComponent(_unit, "Direction", 0):GetInt2()
 	
@@ -280,31 +280,31 @@ AICardPickingSystem.SimulatePlayOfCards = function(self, _unit, _pickedcards)
 	
 	for i = 1, #_pickedcards do
 		
-		local nameCard = self:GetComponent(_pickedcards[i], "CardAction", 0):GetString()
+		local cardName = self:GetComponent(_pickedcards[i], "CardAction", 0):GetString()
 		
-		if nameCard == "Forward" then
+		if cardName == "Forward" then
 			
 			fellDown, posX, posY = self:SimulateMoveForward(posX, posY, dirX, dirY, true, 1, false)
 			
-		elseif nameCard == "Backward" then
+		elseif cardName == "Backward" then
 			
 			fellDown, posX, posY = self:SimulateMoveForward(posX, posY, dirX, dirY, false, 1, false)
 			
-		elseif nameCard == "TurnLeft" then
+		elseif cardName == "TurnLeft" then
 			
 			fellDown, posX, posY, dirX, dirY = self:SimulateTurnLeft(posX, posY, dirX, dirY, 1)
 			
-		elseif nameCard == "TurnRight" then
+		elseif cardName == "TurnRight" then
 			
 			fellDown, posX, posY, dirX, dirY = self:SimulateTurnLeft(posX, posY, dirX, dirY, 3)
 			
-		elseif nameCard == "TurnAround" then
+		elseif cardName == "TurnAround" then
 			
 			fellDown, posX, posY, dirX, dirY = self:SimulateTurnLeft(posX, posY, dirX, dirY, 2)
 			
 		else
 		
-			print("ERROR: CARD NOT ADDED IN SIMULATE CARDS", nameCard)
+			print("ERROR: CARD NOT ADDED IN SIMULATE CARDS", cardName)
 		end
 		
 		if fellDown then
@@ -341,7 +341,7 @@ AICardPickingSystem.SimulateMoveForward = function(self, _posX, _posY, _dirX, _d
 			
 		elseif self:TileHasComponent("River", posX, posY) and not _riverMove then
 			
-			local waterDirX, waterDirY, waterSpeed = self:GetRiverVars(posX, posY)
+			local waterDirX, waterDirY, waterSpeed = self:GetRiverVariables(posX, posY)
 			print("I will move in river with X, Y, speed:", waterDirX, waterDirY, waterSpeed)
 			fellDown, posX, posY = self:SimulateMoveForward(posX, posY, waterDirX, waterDirY, true, waterSpeed, true)
 			
@@ -377,7 +377,7 @@ AICardPickingSystem.SimulateTurnLeft = function(self, _posX, _posY, _dirX, _dirY
 	
 	if self:TileHasComponent("River", _posX, _posY) then
 		
-		local waterDirX, waterDirY, waterSpeed = self:GetRiverVars(_posX, _posY)
+		local waterDirX, waterDirY, waterSpeed = self:GetRiverVariables(_posX, _posY)
 		print("I will move in river with X, Y, speed:", waterDirX, waterDirY, waterSpeed)
 		fellDown, posX, posY = self:SimulateMoveForward(_posX, _posY, waterDirX, waterDirY, true, waterSpeed, true)
 		print("Pos", posX, posY, "Dir", dirX, dirY, "with", _iterations)
@@ -388,18 +388,18 @@ AICardPickingSystem.SimulateTurnLeft = function(self, _posX, _posY, _dirX, _dirY
 	return fellDown, posX, posY, dirX, dirY
 end
 
-AICardPickingSystem.TileHasComponent = function(self, component, _posX, _posY)
+AICardPickingSystem.TileHasComponent = function(self, _component, _posX, _posY)
 	
 	local mapSize = self:GetEntities("MapSize")
 	local mapSizeComp = self:GetComponent(mapSize[1], "MapSize", 0)
 	local mapX, mapY = mapSizeComp:GetInt2()
 	local tiles = self:GetEntities("TileComp")
 	
-	local returnValue = self:EntityHasComponent(tiles[mapX * _posY + _posX + 1], component)
+	local returnValue = self:EntityHasComponent(tiles[mapX * _posY + _posX + 1], _component)
 	return returnValue
 end
 
-AICardPickingSystem.GetRiverVars = function(self, _posX, _posY)
+AICardPickingSystem.GetRiverVariables = function(self, _posX, _posY)
 	
 	local mapSize = self:GetEntities("MapSize")
 	local mapX = self:GetComponent(mapSize[1], "MapSize", 0):GetInt()
@@ -417,7 +417,5 @@ AICardPickingSystem.OnEntityAdded = function(self, entity)
 		local plynum = self:GetComponent(id, "PlayerNumber", 0):GetInt()
 		local card = self:GetComponent(entity, "CardAction", 0):GetString()
 		--print ( plynum .. " gets a " .. card .. " Card" )
-	elseif world:EntityHasComponent(entity, "TileComp") then
-	
 	end
 end
