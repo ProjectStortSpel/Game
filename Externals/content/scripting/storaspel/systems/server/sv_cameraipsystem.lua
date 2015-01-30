@@ -27,7 +27,7 @@ CameraInterestPointSystem.OnEntityAdded = function(self, entityId)
 				Net.WriteFloat(cipID, dx)
 				Net.WriteFloat(cipID, dz)
 				Net.WriteFloat(cipID, 1)
-				Net.Broadcast(cipID)
+				Net.Send(cipID, ip, port)
 			end
 		end
 		world:KillEntity( entityId )
