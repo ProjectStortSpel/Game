@@ -8,7 +8,6 @@ TurnAroundSystem.Initialize = function(self)
 end
 
 TurnAroundSystem.OnEntityAdded = function(self, entity)
-
 	if world:EntityHasComponent(entity, "Stunned") then
 		world:SetComponent(entity, "NoSubSteps", "Counter", 1)
 		world:RemoveComponentFrom("UnitTurnAround", entity)
@@ -55,8 +54,6 @@ TurnAroundSystem.OnEntityAdded = function(self, entity)
 
 	world:SetComponent(entity, "NoSubSteps", "Counter", 1)
 	world:RemoveComponentFrom("UnitTurnAround", entity)
-	
-	print("playermove")
 end
 
 
@@ -272,13 +269,19 @@ TestMoveSystem.OnEntityAdded = function(self, entity)
 					local mapPosX, mapPosZ = mapPos:GetInt2()
 					local newPosX, newPosY, newPosZ = pos:GetFloat3();
 					
-					
 					mapPos:SetInt2(mapPosX + dirX, mapPosZ + dirZ)
-					
 				end
 				
 				world:GetComponent(unit, "MapPosition", 0):SetInt2(hestPosX, hestPosZ)
 				
+				-- CAMERA INTEREST POINT
+				local cipID = Net.StartPack("Client.SendCIP")
+				Net.WriteFloat(cipID, hestPosX)
+				Net.WriteFloat(cipID, hestPosZ)
+				Net.WriteFloat(cipID, dirX)
+				Net.WriteFloat(cipID, dirZ)
+				Net.WriteFloat(cipID, 1)
+				Net.Broadcast(cipID)
 
 			end
 		end

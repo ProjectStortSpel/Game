@@ -29,7 +29,6 @@ PlayCardSystem.OnEntityAdded = function(self, entity)
 				local file = File.Append("gamelog.txt")
 				File.WriteLine(file, "PlayCard " .. plyNum .. " " .. action)
 				File.Close(file)
-
 				local cardAction = "Unit" .. action
 				world:CreateComponentAndAddTo(cardAction, unit)
 				time = 1.5
