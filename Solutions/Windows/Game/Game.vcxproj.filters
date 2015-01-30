@@ -624,5 +624,8 @@
     <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_addaisystem.lua">
       <Filter>Scripting\Storaspel\Systems\Server</Filter>
     </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_abilitycardsystem.lua">
+      <Filter>Scripting\Storaspel\Systems\Server</Filter>
+    </None>
   </ItemGroup>
 </Project>

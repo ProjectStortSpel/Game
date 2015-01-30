@@ -12,7 +12,6 @@ end
 AddAISystem.AddAI = function(_command, ...)
 
 	local newAI = world:CreateNewEntity("AI")
-    print("Added AI")
 end
 
 AddAISystem.OnEntityAdded = function(self, entityId)

@@ -1,6 +1,7 @@
 AICardPickingSystem = System()
 AICardPickingSystem.NumberOfCardsToPick = 5
 AICardPickingSystem.CardsPerHand = 8
+AICardPickingSystem.PrintSimulation = 0
 
 AICardPickingSystem.Initialize = function(self)
 	self:SetName("AI card picking System")
@@ -85,7 +86,7 @@ AICardPickingSystem.GetAIsCardSet = function(self, AI, Cards)
 		return aisCard
 end
 AICardPickingSystem.TryMove = function(self, CardSetAI, card)
-	print(#card)
+	--print(#card)
 	local cardpicked
 	for j = 1, #CardSetAI do
 		if CardSetAI[j] == card[1] and j <= #CardSetAI then
@@ -245,7 +246,7 @@ end
 
 AICardPickingSystem.SendCards = function(self, _player, _pickedcards)
 	
-	print("DONE")
+	print("AI DONE")
 	local unit = world:GetComponent(_player, "UnitEntityId", "Id"):GetInt()
 	
 	world:CreateComponentAndAddTo("HasSelectedCards", _player)
@@ -314,7 +315,9 @@ AICardPickingSystem.SimulatePlayOfCards = function(self, _unit, _pickedcards)
 		end
 	end
 	
-	print("I will end up at:", posX, posY, "with dir:", dirX, dirY)
+	if self.PrintSimulation == 1 then
+		print("I will end up at:", posX, posY, "with dir:", dirX, dirY)
+	end
 	
 	return posX, posY, dirX, dirY
 end
@@ -337,12 +340,18 @@ AICardPickingSystem.SimulateMoveForward = function(self, _posX, _posY, _dirX, _d
 		if self:TileHasComponent("Void", posX, posY) then
 			
 			fellDown = true
-			print("I will fall down in", posX, posY)
+			if self.PrintSimulation == 1 then
+				print("I will fall down in", posX, posY)
+			end
 			
 		elseif self:TileHasComponent("River", posX, posY) and not _riverMove then
 			
 			local waterDirX, waterDirY, waterSpeed = self:GetRiverVariables(posX, posY)
-			print("I will move in river with X, Y, speed:", waterDirX, waterDirY, waterSpeed)
+			
+			if self.PrintSimulation == 1 then
+				print("I will move in river with X, Y, speed:", waterDirX, waterDirY, waterSpeed)
+			end
+			
 			fellDown, posX, posY = self:SimulateMoveForward(posX, posY, waterDirX, waterDirY, true, waterSpeed, true)
 			
 		elseif self:TileHasComponent("NotWalkable", posX, posY) then
@@ -352,7 +361,7 @@ AICardPickingSystem.SimulateMoveForward = function(self, _posX, _posY, _dirX, _d
 		end
 	end
 	
-	if not _riverMove then
+	if not _riverMove and self.PrintSimulation == 1 then
 		print("Pos", posX, posY, "Forw:", _forwards)
 	end
 	
@@ -378,10 +387,17 @@ AICardPickingSystem.SimulateTurnLeft = function(self, _posX, _posY, _dirX, _dirY
 	if self:TileHasComponent("River", _posX, _posY) then
 		
 		local waterDirX, waterDirY, waterSpeed = self:GetRiverVariables(_posX, _posY)
-		print("I will move in river with X, Y, speed:", waterDirX, waterDirY, waterSpeed)
+		
+		if self.PrintSimulation == 1 then
+			print("I will move in river with X, Y, speed:", waterDirX, waterDirY, waterSpeed)
+		end
+		
 		fellDown, posX, posY = self:SimulateMoveForward(_posX, _posY, waterDirX, waterDirY, true, waterSpeed, true)
-		print("Pos", posX, posY, "Dir", dirX, dirY, "with", _iterations)
-	else
+		
+		if self.PrintSimulation == 1 then
+			print("Pos", posX, posY, "Dir", dirX, dirY, "with", _iterations)
+		end
+	elseif self.PrintSimulation == 1 then
 		print("Dir", dirX, dirY, "with", _iterations)
 	end
 	
