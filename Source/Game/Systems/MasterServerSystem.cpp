@@ -41,6 +41,10 @@ void MasterServerSystem::PostInitialize()
 		m_clientDatabase->SetServerPort(port);
 		m_clientDatabase->SetPasswordProtected(pw.size() > 0);
 	}
+    else if(NetworkInstance::GetClient()->IsConnected())
+    {
+        m_clientDatabase->Disconnect();
+    }
 	else
 	{
 		Network::NetMessageHook customHook;
