@@ -15,7 +15,7 @@ WinSocket::WinSocket(void)
 
 	Initialize();
 
-	m_socket = socket(AF_INET, SOCK_STREAM, 0);
+	m_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
 
 	if (m_socket != INVALID_SOCKET)
 	{
@@ -127,7 +127,7 @@ bool WinSocket::Connect(const char* _ipAddress, const int _port)
 {
 	addrinfo hints = { 0 };
 	hints.ai_flags = AI_NUMERICHOST;
-	hints.ai_family = AF_INET;
+	hints.ai_family = PF_INET;
 	hints.ai_socktype = SOCK_STREAM;
 
 	addrinfo *addrs = NULL;
@@ -144,7 +144,7 @@ bool WinSocket::Connect(const char* _ipAddress, const int _port)
 	sockaddr_in address;
 	address.sin_addr.S_un.S_addr = ((sockaddr_in*)(addrs->ai_addr))->sin_addr.s_addr;
 	address.sin_port = htons(_port);
-	address.sin_family = AF_INET;
+	address.sin_family = PF_INET;
 
 	freeaddrinfo(addrs);
 
@@ -169,7 +169,7 @@ bool WinSocket::Connect(const char* _ipAddress, const int _port)
 bool WinSocket::Bind(const int _port)
 {
 	sockaddr_in address;
-	address.sin_family = AF_INET;
+	address.sin_family = PF_INET;
 	address.sin_port = htons(_port);
 	address.sin_addr.S_un.S_addr = INADDR_ANY;
 
