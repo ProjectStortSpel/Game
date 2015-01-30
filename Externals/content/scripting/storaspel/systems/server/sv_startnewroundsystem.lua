@@ -15,8 +15,8 @@ StartNewRoundSystem.OnEntityAdded = function(self, entity)
 		local numReadyUnits = #self:GetEntities("UnitSelectedCards")
 		local units = self:GetEntities("Unit")
 	
-		--print("NumReadyUnits: " .. numReadyUnits)
-		--print("NumUnits: " .. #units)
+		print("NumReadyUnits: " .. numReadyUnits)
+		print("NumUnits: " .. #units)
 
 		if numReadyUnits == #units then
 		
