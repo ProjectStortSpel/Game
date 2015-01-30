@@ -15,6 +15,12 @@ DealCardsComponent:AddVariable("NumCards", ByteSize.Int)
 DealCardsComponent.TableType = TableType.Map
 worldCreator:AddComponentType(DealCardsComponent)
 
+-- Added to exactly one entity to notify start dealing cards to all players.
+local RemoveEffectsComponent = ComponentType()
+RemoveEffectsComponent.Name = "RemoveEffects"
+RemoveEffectsComponent.TableType = TableType.Map
+worldCreator:AddComponentType(RemoveEffectsComponent)
+
 local NotifyStartNewRoundComponent = ComponentType()
 NotifyStartNewRoundComponent.Name = "NotifyStartNewRound"
 NotifyStartNewRoundComponent.TableType = TableType.Map

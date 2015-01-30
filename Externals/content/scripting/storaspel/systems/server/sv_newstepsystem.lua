@@ -8,7 +8,6 @@ NewStepSystem.Initialize = function(self)
 end
 
 NewStepSystem.OnEntityRemoved = function(self, entity)
-print("awdwadawdawdawd")
 	if self.Step > 5 then
 		local id = world:CreateNewEntity()
 		world:CreateComponentAndAddTo("CameraOnPlayer", id)
@@ -54,6 +53,9 @@ NewStepSystem.OnEntityAdded = function(self, entity)
 			id = world:CreateNewEntity()
 			world:CreateComponentAndAddTo("DealCards", id)
 			world:SetComponent(id, "DealCards", "NumCards", 5)
+	
+			id = world:CreateNewEntity()
+			world:CreateComponentAndAddTo("RemoveEffects", id)
 		end
 	end
 

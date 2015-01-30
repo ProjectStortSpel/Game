@@ -11,6 +11,7 @@ TurnAroundSystem.OnEntityAdded = function(self, entity)
 	if world:EntityHasComponent(entity, "Stunned") then
 		world:SetComponent(entity, "NoSubSteps", "Counter", 1)
 		world:RemoveComponentFrom("UnitTurnAround", entity)
+		print("I AM A STUNNED UNIT WITH ID: " .. entity)
 		return
 	end
 	
@@ -71,6 +72,7 @@ TurnLeftSystem.OnEntityAdded = function(self, entity)
 	if world:EntityHasComponent(entity, "Stunned") then
 		world:SetComponent(entity, "NoSubSteps", "Counter", 1)
 		world:RemoveComponentFrom("UnitTurnLeft", entity)
+		print("I AM A STUNNED UNIT WITH ID: " .. entity)
 		return
 	end
 	
@@ -135,6 +137,7 @@ TurnRightSystem.OnEntityAdded = function(self, entity)
 	if world:EntityHasComponent(entity, "Stunned") then
 		world:SetComponent(entity, "NoSubSteps", "Counter", 1)
 		world:RemoveComponentFrom("UnitTurnRight", entity)
+		print("I AM A STUNNED UNIT WITH ID: " .. entity)
 		return
 	end
 
@@ -224,14 +227,6 @@ TestMoveSystem.OnEntityAdded = function(self, entity)
 				tmp = false
 				for i = 1, #units do
 				
-					--print("UnitId2: " .. units[i])
-					if world:EntityHasComponent(units[i], "Stunned") then
-						local id = world:CreateNewEntity()
-						world:CreateComponentAndAddTo("PostMove", id)
-						world:KillEntity(entity)
-						return
-					end
-				
 					local X2, Z2 = world:GetComponent(units[i], "MapPosition", 0):GetInt2()
 					
 					if X1 == X2 and Z1 == Z2 then
@@ -311,7 +306,17 @@ end
 
 MoveForwardSystem.OnEntityAdded = function(self, entity)
 	
-	--print("MoveForwardSystem.OnEntityAdded")
+					
+	if world:EntityHasComponent(entity, "Stunned") then
+		world:SetComponent(entity, "NoSubSteps", "Counter", 1)
+		world:RemoveComponentFrom("UnitForward", entity)
+		print("I AM A STUNNED UNIT WITH ID: " .. entity)
+		return
+	end
+	
+	
+	
+	print("MoveForwardSystem.OnEntityAdded")
 	local dirX, dirZ = world:GetComponent(entity, "Direction", 0):GetInt2()
 	local mapPosX, mapPosZ = world:GetComponent(entity, "MapPosition", 0):GetInt2()
     
@@ -346,8 +351,15 @@ MoveBackwardSystem.Initialize = function(self)
 end
 
 MoveBackwardSystem.OnEntityAdded = function(self, entity)
+
+	if world:EntityHasComponent(entity, "Stunned") then
+		world:SetComponent(entity, "NoSubSteps", "Counter", 1)
+		world:RemoveComponentFrom("UnitBackward", entity)
+		print("I AM A STUNNED UNIT WITH ID: " .. entity)
+		return
+	end
 	
-	--print("MoveBackwardSystem.OnEntityAdded")
+	print("MoveBackwardSystem.OnEntityAdded")
 	local dirX, dirZ = world:GetComponent(entity, "Direction", 0):GetInt2()
 	local mapPosX, mapPosZ = world:GetComponent(entity, "MapPosition", 0):GetInt2()
 
@@ -369,44 +381,5 @@ MoveBackwardSystem.OnEntityAdded = function(self, entity)
 	world:SetComponent(id, "TestMove", "Steps", 1)
 	
 	world:RemoveComponentFrom("UnitBackward", entity)
-
-end
-
-
-
-AbilitySprintSystem = System()
-
-AbilitySprintSystem.Initialize = function(self)
-	self:SetName("AbilitySprintSystem")
-	
-	self:AddComponentTypeToFilter("Unit",FilterType.Mandatory)
-	self:AddComponentTypeToFilter("UnitSprint",FilterType.Mandatory)
-end
-
-AbilitySprintSystem.OnEntityAdded = function(self, entity)
-	
-	--print("AbilitySprintSystem.OnEntityAdded")
-	local dirX, dirZ = world:GetComponent(entity, "Direction", 0):GetInt2()
-	local mapPosX, mapPosZ = world:GetComponent(entity, "MapPosition", 0):GetInt2()
-
-	
-	if dirX ~= 0 then
-		dirX = dirX / math.abs(dirX)
-	end
-
-	if dirZ ~= 0 then
-		dirZ = dirZ / math.abs(dirZ)
-	end
-
-	local id = world:CreateNewEntity()
-	world:CreateComponentAndAddTo("TestMove", id)
-	world:SetComponent(id, "TestMove", "Unit", entity)
-	world:SetComponent(id, "TestMove", "PosX", mapPosX)
-	world:SetComponent(id, "TestMove", "PosZ", mapPosZ)
-	world:SetComponent(id, "TestMove", "DirX", dirX)
-	world:SetComponent(id, "TestMove", "DirZ", dirZ)
-	world:SetComponent(id, "TestMove", "Steps", 2)
-
-	world:RemoveComponentFrom("UnitSprint", entity)
 
 end
