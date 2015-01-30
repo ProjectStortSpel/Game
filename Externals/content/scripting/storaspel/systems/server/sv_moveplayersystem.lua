@@ -225,7 +225,7 @@ TestMoveSystem.OnEntityAdded = function(self, entity)
 				tmp = false
 				for i = 1, #units do
 				
-					print("UnitId2: " .. units[i])
+					--print("UnitId2: " .. units[i])
 					if world:EntityHasComponent(units[i], "Stunned") then
 						local id = world:CreateNewEntity()
 						world:CreateComponentAndAddTo("PostMove", id)
@@ -306,7 +306,7 @@ end
 
 MoveForwardSystem.OnEntityAdded = function(self, entity)
 	
-	print("MoveForwardSystem.OnEntityAdded")
+	--print("MoveForwardSystem.OnEntityAdded")
 	local dirX, dirZ = world:GetComponent(entity, "Direction", 0):GetInt2()
 	local mapPosX, mapPosZ = world:GetComponent(entity, "MapPosition", 0):GetInt2()
     
@@ -342,7 +342,7 @@ end
 
 MoveBackwardSystem.OnEntityAdded = function(self, entity)
 	
-	print("MoveBackwardSystem.OnEntityAdded")
+	--print("MoveBackwardSystem.OnEntityAdded")
 	local dirX, dirZ = world:GetComponent(entity, "Direction", 0):GetInt2()
 	local mapPosX, mapPosZ = world:GetComponent(entity, "MapPosition", 0):GetInt2()
 
@@ -380,7 +380,7 @@ end
 
 AbilitySprintSystem.OnEntityAdded = function(self, entity)
 	
-	print("AbilitySprintSystem.OnEntityAdded")
+	--print("AbilitySprintSystem.OnEntityAdded")
 	local dirX, dirZ = world:GetComponent(entity, "Direction", 0):GetInt2()
 	local mapPosX, mapPosZ = world:GetComponent(entity, "MapPosition", 0):GetInt2()
 
