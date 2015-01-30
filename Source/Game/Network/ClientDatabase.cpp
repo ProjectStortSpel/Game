@@ -16,7 +16,11 @@ ClientDatabase::ClientDatabase()
 	m_client.SetMaxTimeOutIntervall(5);
 	m_client.SetMaxTimeOutCounter(2);
 
-	
+
+    Network::NetEvent event = std::bind(&ClientDatabase::OnDisconnected, this, std::placeholders::_1, std::placeholders::_2);
+    
+    m_client.SetOnDisconnectedFromServer(event);
+    m_client.SetOnTimedOutFromServer(event);
 
 
 }
