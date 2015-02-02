@@ -32,8 +32,8 @@ namespace ECSL
 		void AddOldEntityId(unsigned int _entityId);
 		void ClearEntityData(unsigned int _entityId);
 
-		inline const EntityState GetEntityState(unsigned int _entityId);
-		inline const BitSet::DataType* GetEntityComponents(unsigned int _entityId);
+		const EntityState GetEntityState(unsigned int _entityId);
+		const BitSet::DataType* GetEntityComponents(unsigned int _entityId);
 		void GetEntityComponents(std::vector<unsigned int>& _out, unsigned int _entityId);
 
 	private:
