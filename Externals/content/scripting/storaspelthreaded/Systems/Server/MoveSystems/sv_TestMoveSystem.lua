@@ -73,7 +73,7 @@ TestMoveSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities
 			local	stepsTaken = 0;
 			for nStep = 1, tSteps do
 			
-				if self:RecursiveMove(tUnit, tUnits, tNonWalkables, tPosX+tDirX*nStep, tPosZ+tDirZ*nStep, tDirX, tDirZ) then
+				if self:RecursiveMove(tUnit, tUnits, tNonWalkables, tPosX+tDirX*(nStep-1), tPosZ+tDirZ*(nStep-1), tDirX, tDirZ) then
 					stepsTaken = stepsTaken + 1
 				else
 					break
