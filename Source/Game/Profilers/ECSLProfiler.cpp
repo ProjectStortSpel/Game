@@ -49,6 +49,7 @@ void ECSLProfiler::Toggle()
 {
 	if (m_state == State::INACTIVE)
 	{
+		/* Set the render view to be the "loading screen" render view */
 		m_renderView = m_loadingView;
 		m_renderView->Update(0);
 		m_state = State::COLLECTING_DATA;

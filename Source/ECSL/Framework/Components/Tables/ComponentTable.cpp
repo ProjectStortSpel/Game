@@ -40,7 +40,7 @@ void ComponentTable::ClearComponent(unsigned int _entityId)
 	m_dataTable->ClearRow(_entityId);
 }
 
-float ComponentTable::GetMemoryAllocated()
+unsigned int ComponentTable::GetMemoryAllocated()
 {
 	return m_dataTable->GetMemoryAllocated();
 }

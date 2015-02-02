@@ -21,19 +21,14 @@ EntityTable::EntityTable(unsigned int _entityCount, unsigned int _componentTypeC
 
 EntityTable::~EntityTable()
 {
-	if (m_dataTable)
-		delete(m_dataTable);
-
-	if (m_availableEntityIds)
-		delete(m_availableEntityIds);
-
-	if (m_availableEntityMutex)
-		SDL_DestroyMutex(m_availableEntityMutex);
+	delete(m_dataTable);
+	delete(m_availableEntityIds);
+	SDL_DestroyMutex(m_availableEntityMutex);
 }
 
 void EntityTable::AddComponentTo(unsigned int _entityId, unsigned int _componentTypeId)
 {
-	BitSet::DataType* componentBitSet = (BitSet::DataType*)(m_dataTable->GetData(_entityId, 1));
+	BitSet::DataType* entityComponents = (BitSet::DataType*)(m_dataTable->GetData(_entityId, 1));
 	unsigned int bitSetIndex = BitSet::GetBitSetIndex(_componentTypeId);
 	unsigned int bitIndex = BitSet::GetBitIndex(_componentTypeId);
 
@@ -41,9 +36,10 @@ void EntityTable::AddComponentTo(unsigned int _entityId, unsigned int _component
 	assert(!(*(unsigned char*)m_dataTable->GetData(_entityId) == 0));
 
 	/* The component is already added to the entity */
-	assert(!(componentBitSet[bitSetIndex] & ((BitSet::DataType)1 << bitIndex)));
+	assert(!(entityComponents[bitSetIndex] & ((BitSet::DataType)1 << bitIndex)));
 
-	componentBitSet[bitSetIndex] |= (BitSet::DataType)1 << bitIndex;
+	/* Add component to entity */
+	entityComponents[bitSetIndex] |= (BitSet::DataType)1 << bitIndex;
 }
 
 void EntityTable::AddComponentsTo(unsigned int _entityId, const std::vector<unsigned int>& _componentTypeIds)
@@ -52,6 +48,7 @@ void EntityTable::AddComponentsTo(unsigned int _entityId, const std::vector<unsi
 	assert(!(*(unsigned char*)m_dataTable->GetData(_entityId) == 0));
 
 	BitSet::DataType* entityComponents = (BitSet::DataType*)(m_dataTable->GetData(_entityId, 1));
+	/* Adding components to entity */
 	for (unsigned int componentTypeId : _componentTypeIds)
 	{
 		unsigned int bitSetIndex = BitSet::GetBitSetIndex(componentTypeId);
@@ -60,22 +57,24 @@ void EntityTable::AddComponentsTo(unsigned int _entityId, const std::vector<unsi
 		/* The component is already added to the entity */
 		assert(!(entityComponents[bitSetIndex] & ((BitSet::DataType)1 << bitIndex)));
 
+		/* Add component to entity */
 		entityComponents[bitSetIndex] |= (BitSet::DataType)1 << bitIndex;
 	}
 }
 
 void EntityTable::RemoveComponentFrom(unsigned int _entityId, unsigned int _componentTypeId)
 {
-	/* The entity is dead */
-	assert(!(*(unsigned char*)m_dataTable->GetData(_entityId) == 0));
-
 	BitSet::DataType* entityComponents = (BitSet::DataType*)(m_dataTable->GetData(_entityId, 1));
 	unsigned int bitSetIndex = BitSet::GetBitSetIndex(_componentTypeId);
 	unsigned int bitIndex = BitSet::GetBitIndex(_componentTypeId);
 
+	/* The entity is dead */
+	assert(!(*(unsigned char*)m_dataTable->GetData(_entityId) == 0));
+
 	/* The entity doesn't have that component */
 	assert(entityComponents[bitSetIndex] & ((BitSet::DataType)1 << bitIndex));
 
+	/* Remove component from entity */
 	entityComponents[bitSetIndex] &= ~((BitSet::DataType)1 << bitIndex);
 }
 
@@ -85,6 +84,7 @@ void EntityTable::RemoveComponentsFrom(unsigned int _entityId, const std::vector
 	assert(!(*(unsigned char*)m_dataTable->GetData(_entityId) == 0));
 
 	BitSet::DataType* entityComponents = (BitSet::DataType*)(m_dataTable->GetData(_entityId, 1));
+	/* Removing components from entity */
 	for (unsigned int componentTypeId : _componentTypeIds)
 	{
 		unsigned int bitSetIndex = BitSet::GetBitSetIndex(componentTypeId);
@@ -93,6 +93,7 @@ void EntityTable::RemoveComponentsFrom(unsigned int _entityId, const std::vector
 		/* The entity doesn't have that component */
 		assert(entityComponents[bitSetIndex] & ((BitSet::DataType)1 << bitIndex));
 
+		/* Remove component from entity */
 		entityComponents[bitSetIndex] &= ~((BitSet::DataType)1 << bitIndex);
 	}
 }
@@ -105,50 +106,19 @@ bool EntityTable::HasComponent(unsigned int _entityId, unsigned int _componentTy
 	return ((componentBitSet[bitSetIndex]) & ((BitSet::DataType)1 << (bitIndex))) != 0;
 }
 
-bool EntityTable::EntityPassFilters(unsigned int _entityId, const BitSet::DataType* _mandatoryMask, const BitSet::DataType* _oneOfMask, const BitSet::DataType* _exclusionMask)
-{
-	/* Component bit set for the entity */
-	BitSet::DataType* componentBitSet = (BitSet::DataType*)(m_dataTable->GetData(_entityId, 1));
-
-	char requiresOneOf = 0;
-
-	/* Checks every component filter (breaks if fails) */
-	for (unsigned int i = 0; i < m_componentIntCount; ++i)
-	{
-		/* Entity doesn't have atleast one of the must-have components */
-		if (!((_mandatoryMask[i] & componentBitSet[i]) == _mandatoryMask[i]))
-			return false;
-
-		/* Entity has atleast one of the excluded components  */
-		else if (_exclusionMask[i] && (_exclusionMask[i] & componentBitSet[i]) != 0)
-			return false;
-
-		/* Entity has none of the atleast-one-of components */
-		else if (_oneOfMask[i] && requiresOneOf < 2)
-		{
-			requiresOneOf = 1;
-			if((_oneOfMask[i] & componentBitSet[i]) != 0)
-				requiresOneOf = 2;
-		}
-	}
-
-	if (requiresOneOf == 1)
-		return false;
-
-	return true;
-}
-
 unsigned int EntityTable::GenerateNewEntityId()
 {
-	/* Too many entities generated in the world. Increase entity count size! */
+	/* Max entity count reached */
 	assert(m_availableEntityIds->size() != 0);
 
 	SDL_LockMutex(m_availableEntityMutex);
+	/* Fetch entity id from the queue */
 	unsigned int id = m_availableEntityIds->back();
 	m_availableEntityIds->pop_back();
 	SDL_UnlockMutex(m_availableEntityMutex);
 
 	unsigned char alive = ((unsigned char)EntityState::Alive);
+	/* Change the entity state to alive */
 	m_dataTable->SetData(id, &alive, 1);
 
 	return id;
@@ -156,6 +126,7 @@ unsigned int EntityTable::GenerateNewEntityId()
 
 void EntityTable::AddOldEntityId(unsigned int _entityId)
 {
+	/* Entity id is bigger than the entity count */
 	assert(_entityId < m_entityCount);
 
 	m_availableEntityIds->push_back(_entityId);
@@ -168,14 +139,16 @@ void EntityTable::ClearEntityData(unsigned int _entityId)
 
 void EntityTable::GetEntityComponents(std::vector<unsigned int>& _out, unsigned int _entityId)
 {
-	BitSet::DataType* componentBitSet = (BitSet::DataType*)(m_dataTable->GetData(_entityId, 1));
-	unsigned int bitCount = BitSet::GetDataTypeByteSize() * 8;
+	BitSet::DataType* entityComponents = (BitSet::DataType*)(m_dataTable->GetData(_entityId, 1));
+	const unsigned int bitCount = BitSet::GetDataTypeByteSize() * 8;
 	for (unsigned int bitSetIndex = 0; bitSetIndex < m_componentIntCount; ++bitSetIndex)
 	{
+		if (entityComponents[bitSetIndex] == 0)
+			continue;
 		for (unsigned int bitIndex = 0; bitIndex < bitCount; ++bitIndex)
 		{
-			if (componentBitSet[bitSetIndex] & ((BitSet::DataType)1 << (bitIndex)))
-				_out.push_back(bitSetIndex * BitSet::GetDataTypeByteSize() * 8 + bitIndex);
+			if (entityComponents[bitSetIndex] & ((BitSet::DataType)1 << (bitIndex)))
+				_out.push_back(bitSetIndex * bitCount + bitIndex);
 		}
 	}
 }

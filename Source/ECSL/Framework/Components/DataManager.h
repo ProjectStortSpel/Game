@@ -14,6 +14,20 @@ namespace ECSL
 	class DECLSPEC DataManager
 	{
 	public:
+		enum ComponentChange
+		{
+			TO_BE_ADDED,
+			TO_BE_REMOVED
+		};
+
+		struct EntityChange
+		{
+			bool Dead;
+			std::map<unsigned int, ComponentChange> ComponentChanges;
+
+			EntityChange() : Dead(false) { }
+		};
+
 		DataManager(unsigned int _entityCount, std::vector<unsigned int>* _componentTypeIds);
 		~DataManager();
 
@@ -26,10 +40,19 @@ namespace ECSL
 		void RemoveComponentFrom(const std::string& _componentType, unsigned int _entityId);
 		void RemoveComponentFrom(unsigned int _componentTypeId, unsigned int _entityId);
 
+		/* Update all component changes to entities in the entity table */
 		void UpdateEntityTable(const RuntimeInfo& _runtime);
+
+		/* Recycle the ids of dead entities */
 		void RecycleEntityIds(const RuntimeInfo& _runtime);
+
+		/* Copy entity change lists */
 		void CopyCurrentLists(const RuntimeInfo& _runtime);
+
+		/* Clear the copied lists */
 		void ClearCopiedLists(const RuntimeInfo& _runtime);
+
+		/* Clear the data from removed components from entities */
 		void DeleteComponentData(const RuntimeInfo& _runtime);
 
 		inline unsigned int GetEntityCount() { return m_entityCount; }
@@ -37,35 +60,22 @@ namespace ECSL
 		inline EntityTable* GetEntityTable() { return m_entityTable; }
 		inline ComponentTable* GetComponentTable(const std::string& _componentType) { return m_componentTables->at(ComponentTypeManager::GetInstance().GetTableId(_componentType)); }
 		inline ComponentTable* GetComponentTable(unsigned int _componentTypeId) { return m_componentTables->at(_componentTypeId); }
-		inline const std::vector<unsigned int>* GetChangedEntities() { return m_changedEntitiesCopy; }
-		inline const std::map<unsigned int, std::vector<unsigned int>*>* GetComponentsToBeAdded() { return m_componentsToBeAddedCopy; }
-		inline const std::map<unsigned int, std::vector<unsigned int>*>* GetComponentsToBeRemoved() { return m_componentsToBeRemovedCopy; }
+		inline const std::map<unsigned int, EntityChange*>* GetEntityChanges() { return m_entityChangesCopy; }
 
 		inline bool HasComponent(unsigned int _entityId, unsigned int _componentTypeId){ return m_entityTable->HasComponent(_entityId, _componentTypeId); }
 
 		unsigned int GetMemoryAllocated();
 
 	private:
-		SDL_mutex* m_changedEntitiesMutex;
-		SDL_mutex* m_entitiesToBeRemovedMutex;
-		SDL_mutex* m_componentsToBeAddedMutex;
-		SDL_mutex* m_componentsToBeRemovedMutex;
-		SDL_mutex* m_componentDataToBeClearedMutex;
+		SDL_mutex* m_entityChangesMutex;
 		unsigned int m_entityCount;
 		unsigned int m_componentTypeCount;
 		EntityTable* m_entityTable;
 		std::vector<ComponentTable*>* m_componentTables;
 		std::vector<unsigned int>* m_componentTypeIds;
-		std::vector<unsigned int>* m_changedEntities;
-		std::vector<unsigned int>* m_changedEntitiesCopy;
-		std::vector<unsigned int>* m_entitiesToBeRemoved;
-		std::vector<unsigned int>* m_entitiesToBeRemovedCopy;
-		std::map<unsigned int, std::vector<unsigned int>*>* m_componentsToBeAdded;
-		std::map<unsigned int, std::vector<unsigned int>*>* m_componentsToBeAddedCopy;
-		std::map<unsigned int, std::vector<unsigned int>*>* m_componentsToBeRemoved;
-		std::map<unsigned int, std::vector<unsigned int>*>* m_componentsToBeRemovedCopy;
+		std::map<unsigned int, EntityChange*>* m_entityChanges;
+		std::map<unsigned int, EntityChange*>* m_entityChangesCopy;
 
-		void Changed(unsigned int _entityId);
 		void ToBeAdded(unsigned int _entityId, unsigned int _componentTypeId);
 		void ToBeRemoved(unsigned int _entityId);
 		void ToBeRemoved(unsigned int _entityId, unsigned int _componentTypeId);

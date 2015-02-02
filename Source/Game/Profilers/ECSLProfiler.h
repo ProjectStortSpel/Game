@@ -20,13 +20,28 @@ namespace Profilers
 		ECSLProfiler(Renderer::GraphicDevice* _graphics);
 		~ECSLProfiler();
 
+		/* Activate/Deactivate the profiler. Data will not be collected while deactivated. */
 		void Toggle();
+
+		/* Switch to the next render view */
 		void NextView();
+
+		/* Switch to the previous render view */
 		void PreviousView();
+
+		/* Write the currently displayed statistics to log */
 		void WriteToLog();
+
+		/* Begin gathering thread data */
 		void Begin();
+
+		/* Stop gathering thread data */
 		void End();
+
+		/* Use the collected data to create statistics */
 		void Update(float _dt);
+
+		/* Render statistics */
 		void Render();
 
 	private:

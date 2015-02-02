@@ -56,12 +56,10 @@ void SystemManager::UpdateSystemEntityLists(
 	std::vector<std::vector<unsigned int>*>& _entitiesToAddToSystems,
 	std::vector<std::vector<unsigned int>*>& _entitiesToRemoveFromSystems)
 {
-	const std::vector<unsigned int>* changedEntities = m_dataManager->GetChangedEntities();
-	const std::map<unsigned int, std::vector<unsigned int>*>* componentsToBeAdded = m_dataManager->GetComponentsToBeAdded();
-	const std::map<unsigned int, std::vector<unsigned int>*>* componentsToBeRemoved = m_dataManager->GetComponentsToBeRemoved();
+	const std::map<unsigned int, DataManager::EntityChange*>* entityChanges = m_dataManager->GetEntityChanges();
 	EntityTable* entityTable = m_dataManager->GetEntityTable();
-	unsigned int componentTypeCount = m_dataManager->GetComponentTypeCount();
-	//m_dataManager->GetEntityCountLimit()
+	unsigned int dataTypeCount = BitSet::GetDataTypeCount(m_dataManager->GetComponentTypeCount());
+
 	unsigned int startAt, endAt;
 	MPL::MathHelper::SplitIterations(startAt, endAt, (unsigned int)m_systems->size(), _runtime.TaskIndex, _runtime.TaskCount);
 	/* Loop through every system see if changed entities passes the filter */
@@ -74,64 +72,42 @@ void SystemManager::UpdateSystemEntityLists(
 		unsigned int entitiesAddedTaskCount = system->GetEntitiesAddedTaskCount();
 		unsigned int entitiesRemovedTaskCount = system->GetEntitiesRemovedTaskCount();
 
-		//for (auto entity : *componentsToBeAdded)
-		//{
-		//	bool hasEntity = system->HasEntity(entity.first);
-		//	if (BitSet::BitSetMatchesMasks(componentTypeCount, entityTable->GetEntityComponents(entity.first), mandatoryFilter, requiresOneOfFilter, excludedFilter))
-		//	{
-		//		if (!hasEntity)
-		//		{
-		//			system->AddEntityToSystem(entity.first);
-		//			if (entitiesAddedTaskCount > 0)
-		//				_entitiesToAddToSystems[i]->push_back(entity.first);
-		//		}
-		//	}
-		//	else if (hasEntity)
-		//	{
-		//		system->RemoveEntityFromSystem(entity.first);
-		//		if (entitiesRemovedTaskCount > 0)
-		//			_entitiesToRemoveFromSystems[i]->push_back(entity.first);
-		//	}
-		//}
-
-		//for (auto entity : *componentsToBeRemoved)
-		//{
-		//	bool hasEntity = system->HasEntity(entity.first);
-		//	if (BitSet::BitSetMatchesMasks(componentTypeCount, entityTable->GetEntityComponents(entity.first), mandatoryFilter, requiresOneOfFilter, excludedFilter))
-		//	{
-		//		if (!hasEntity)
-		//		{
-		//			system->AddEntityToSystem(entity.first);
-		//			if (entitiesAddedTaskCount > 0)
-		//				_entitiesToAddToSystems[i]->push_back(entity.first);
-		//		}
-		//	}
-		//	else if (hasEntity)
-		//	{
-		//		system->RemoveEntityFromSystem(entity.first);
-		//		if (entitiesRemovedTaskCount > 0)
-		//			_entitiesToRemoveFromSystems[i]->push_back(entity.first);
-		//	}
-		//}
-
-		for (unsigned int j = 0; j < changedEntities->size(); ++j)
+		for (auto entity : *entityChanges)
 		{
-			unsigned int entityId = changedEntities->at(j);
-			/* Try add entity to system if it passes filters, else try to remove it */
-			if (entityTable->EntityPassFilters(entityId, system->GetMandatoryFilter()->GetBitSet(), system->GetRequiresOneOfFilter()->GetBitSet(), system->GetExcludedFilter()->GetBitSet()))
+			unsigned int entityId = entity.first;
+			DataManager::EntityChange* entityChange = entity.second;
+
+			/* If the entity is dead and the system has the entity, then remove it from the system */
+			if (entityChange->Dead)
 			{
-				if (!system->HasEntity(entityId))
+				if (system->HasEntity(entityId))
 				{
-					system->AddEntityToSystem(entityId);
-					if (system->GetEntitiesAddedTaskCount() > 0)
-						_entitiesToAddToSystems[i]->push_back(entityId);
+					system->RemoveEntityFromSystem(entityId);
+					if (entitiesRemovedTaskCount > 0)
+						_entitiesToRemoveFromSystems[i]->push_back(entityId);
 				}
 			}
-			else if (system->HasEntity(entityId))
+			/* Else do a bit set check to see if the entity should be added or removed from the system */
+			else
 			{
-				system->RemoveEntityFromSystem(entityId);
-				if (system->GetEntitiesRemovedTaskCount() > 0)
-					_entitiesToRemoveFromSystems[i]->push_back(entityId);
+				bool entityMatchesSystem = BitSet::BitSetPassFilters(dataTypeCount, entityTable->GetEntityComponents(entityId), mandatoryFilter, requiresOneOfFilter, excludedFilter);
+				/* If system matches entity and entity isn't added to the system, add entity to system */
+				if (entityMatchesSystem)
+				{
+					if (!system->HasEntity(entityId))
+					{
+						system->AddEntityToSystem(entityId);
+						if (system->GetEntitiesAddedTaskCount() > 0)
+							_entitiesToAddToSystems[i]->push_back(entityId);
+					}
+				}
+				/* Else if entity doesn't match system and system has entity, remove entity from system */
+				else if (system->HasEntity(entityId))
+				{
+					system->RemoveEntityFromSystem(entityId);
+					if (system->GetEntitiesRemovedTaskCount() > 0)
+						_entitiesToRemoveFromSystems[i]->push_back(entityId);
+				}
 			}
 		}
 	}

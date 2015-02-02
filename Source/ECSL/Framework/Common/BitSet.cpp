@@ -2,7 +2,7 @@
 
 using namespace ECSL;
 
-bool BitSet::BitSetMatchesMasks(unsigned int _bitSetCount, const BitSet::DataType* _bitSet, const BitSet::DataType* _mandatoryMask, const BitSet::DataType* _oneOfMask, const BitSet::DataType* _exclusionMask)
+bool BitSet::BitSetPassFilters(unsigned int _bitSetCount, const BitSet::DataType* _bitSet, const BitSet::DataType* _mandatoryMask, const BitSet::DataType* _oneOfMask, const BitSet::DataType* _exclusionMask)
 {
 	char requiresOneOf = 0;
 

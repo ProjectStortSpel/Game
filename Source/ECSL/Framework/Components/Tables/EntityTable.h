@@ -28,7 +28,6 @@ namespace ECSL
 		void RemoveComponentFrom(unsigned int _entityId, unsigned int _componentTypeId);
 		void RemoveComponentsFrom(unsigned int _entityId, const std::vector<unsigned int>& _componentTypeIds);
 		bool HasComponent(unsigned int _entityId, unsigned int _componentTypeId);
-		bool EntityPassFilters(unsigned int _entityId, const BitSet::DataType* _mandatoryMask, const BitSet::DataType* _oneOfMask, const BitSet::DataType* _exclusionMask);
 		unsigned int GenerateNewEntityId();
 		void AddOldEntityId(unsigned int _entityId);
 		void ClearEntityData(unsigned int _entityId);
