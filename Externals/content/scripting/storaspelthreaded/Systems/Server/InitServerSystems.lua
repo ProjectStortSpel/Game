@@ -35,21 +35,12 @@ require "sv_PostMoveSystem"
 require "sv_TestMoveSystem"
 require "sv_TestMoveRiverSystem"
 
-require "sv_MoveForwardSystem"
-require "sv_MoveBackwardSystem"
-
-
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(PostMoveSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(TestMoveSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(TestMoveRiverSystem)
-
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(MoveForwardSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(MoveBackwardSystem)
 
 --	Card Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/CardSystems/?.lua"
@@ -103,6 +94,13 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ActionTurnRightSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ActionTurnAroundSystem)
+
+--	Card Ability Systems
+package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/CardAbilitySystems/?.lua"
+require "sv_AbilitySprintSystem"
+
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(AbilitySprintSystem)
 
 --	Spawn Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/SpawnSystems/?.lua"
