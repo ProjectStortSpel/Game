@@ -16,7 +16,7 @@ System::System()
 	m_updateTaskCount = 0;
 	m_entitiesAddedTaskCount = 0;
 	m_entitiesRemovedTaskCount = 0;
-	m_messagesRecievedTaskCount = 0;
+	m_messagesReceivedTaskCount = 0;
 }
 
 System::~System()

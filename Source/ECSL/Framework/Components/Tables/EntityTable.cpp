@@ -1,6 +1,8 @@
 #include "EntityTable.h"
-#include "ECSL/Managers/ComponentTypeManager.h"
+
 #include <assert.h>
+#include "ECSL/Managers/ComponentTypeManager.h"
+#include "ECSL/Framework/Logger/DataLogger.h"
 
 using namespace ECSL;
 
@@ -135,6 +137,16 @@ void EntityTable::AddOldEntityId(unsigned int _entityId)
 void EntityTable::ClearEntityData(unsigned int _entityId)
 {
 	m_dataTable->ClearRow(_entityId);
+}
+
+const EntityState EntityTable::GetEntityState(unsigned int _entityId) 
+{ 
+	return (EntityState)(*(int*)(m_dataTable->GetData(_entityId))); 
+}
+
+const BitSet::DataType* EntityTable::GetEntityComponents(unsigned int _entityId) 
+{ 
+	return (BitSet::DataType*)(m_dataTable->GetData(_entityId) + 1); 
 }
 
 void EntityTable::GetEntityComponents(std::vector<unsigned int>& _out, unsigned int _entityId)

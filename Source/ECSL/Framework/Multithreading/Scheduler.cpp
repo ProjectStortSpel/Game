@@ -13,7 +13,7 @@ Scheduler::Scheduler(DataManager* _dataManager, SystemManager* _systemManager, M
 	m_entitiesAddedWorkItems(new std::vector<std::vector<MPL::WorkItem*>*>()),
 	m_entitiesRemovedWorkItems(new std::vector<std::vector<MPL::WorkItem*>*>()),
 	m_sortMessagesWorkItems(new std::vector<MPL::WorkItem*>()),
-	m_messagesRecievedWorkItems(new std::vector<std::vector<MPL::WorkItem*>*>()),
+	m_messagesReceivedWorkItems(new std::vector<std::vector<MPL::WorkItem*>*>()),
 	m_deleteMessagesWorkItems(new std::vector<MPL::WorkItem*>()),
 	m_updateSystemEntityListsWorkItems(new std::vector<MPL::WorkItem*>()),
 	m_copyCurrentListsWorkItems(new std::vector<MPL::WorkItem*>()),
@@ -44,7 +44,7 @@ Scheduler::~Scheduler()
 	delete(m_entitiesAddedWorkItems);
 	delete(m_entitiesRemovedWorkItems);
 	delete(m_sortMessagesWorkItems);
-	delete(m_messagesRecievedWorkItems);
+	delete(m_messagesReceivedWorkItems);
 	delete(m_deleteMessagesWorkItems);
 	delete(m_updateSystemEntityListsWorkItems);
 	delete(m_updateEntityTableWorkItems);
@@ -119,12 +119,12 @@ MPL::TaskId Scheduler::ScheduleSortMessages(MPL::TaskId _dependency)
 	return m_taskManager->Add(_dependency, *m_sortMessagesWorkItems);
 }
 
-MPL::TaskId Scheduler::ScheduleMessagesRecieved(MPL::TaskId _dependency)
+MPL::TaskId Scheduler::ScheduleMessagesReceived(MPL::TaskId _dependency)
 {
 	MPL::TaskId currentTaskId = _dependency;
 	MPL::TaskId lastTaskId;
 	/* Create tasks of each groups' work items. Each new task will have a dependency to the previous task */
-	for (auto workItems : *m_messagesRecievedWorkItems)
+	for (auto workItems : *m_messagesReceivedWorkItems)
 	{
 		/* Send the work items to the TaskManager and create a task out of it */
 		lastTaskId = currentTaskId;
@@ -336,7 +336,7 @@ void Scheduler::AddSortMessagesTask()
 	++m_currentGroupId;
 }
 
-void Scheduler::AddMessagesRecievedTasks()
+void Scheduler::AddMessagesReceivedTasks()
 {
 	for (auto systemGroup : *m_systemManager->GetSystemWorkGroups())
 	{
@@ -345,18 +345,18 @@ void Scheduler::AddMessagesRecievedTasks()
 		for (auto system : *systemGroup->GetSystems())
 		{
 			/* Create one work item for each system update task */
-			for (unsigned int taskIndex = 0; taskIndex < system->GetMessagesRecievedTaskCount(); ++taskIndex)
+			for (unsigned int taskIndex = 0; taskIndex < system->GetMessagesReceivedTaskCount(); ++taskIndex)
 			{
-				MessagesRecievedData* data = new MessagesRecievedData();
+				MessagesReceivedData* data = new MessagesReceivedData();
 				data->messageManager = m_messageManager;
 				data->system = system;
 				data->runtimeInfo.TaskIndex = taskIndex;
-				data->runtimeInfo.TaskCount = system->GetMessagesRecievedTaskCount();
+				data->runtimeInfo.TaskCount = system->GetMessagesReceivedTaskCount();
 				MPL::WorkItem* workItem = new MPL::WorkItem();
-				workItem->Work = &SystemMessagesRecieved;
+				workItem->Work = &SystemMessagesReceived;
 				workItem->Data = data;
 				std::stringstream s;
-				s << system->GetSystemName() << "->MessagesRecieved() Task: " << taskIndex;
+				s << system->GetSystemName() << "->MessagesReceived() Task: " << taskIndex;
 				workItem->Name = new std::string(s.str());
 				workItem->LocalGroupId = ++localGroupId;
 				workItem->GroupId = m_currentGroupId;
@@ -367,7 +367,7 @@ void Scheduler::AddMessagesRecievedTasks()
 		/* Add the work item list if it isn't empty. Else just delete it */
 		if (workItems->size() > 0)
 		{
-			m_messagesRecievedWorkItems->push_back(workItems);
+			m_messagesReceivedWorkItems->push_back(workItems);
 			++m_currentGroupId;
 		}
 		else
@@ -580,10 +580,10 @@ void ECSL::SystemEntitiesRemoved(void* _data)
 		data->system->EntitiesRemoved(data->runtimeInfo, *entitiesToRemove);
 }
 
-void ECSL::SystemMessagesRecieved(void* _data)
+void ECSL::SystemMessagesReceived(void* _data)
 {
-	MessagesRecievedData* data = (MessagesRecievedData*)_data;
-	data->system->MessagesRecieved(*data->messageManager->GetMessagesToSystem(data->system->GetId()));
+	MessagesReceivedData* data = (MessagesReceivedData*)_data;
+	data->system->MessagesReceived(*data->messageManager->GetMessagesToSystem(data->system->GetId()));
 }
 
 void ECSL::DataManagerCopyCurrentLists(void* _data)

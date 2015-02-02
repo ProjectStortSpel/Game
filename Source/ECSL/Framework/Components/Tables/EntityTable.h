@@ -7,7 +7,7 @@
 #include <string>
 
 #include "DataArray.h"
-#include "../../Common/BitSet.h"
+#include "ECSL/Framework/Common/BitSet.h"
 
 namespace ECSL
 {
@@ -32,8 +32,8 @@ namespace ECSL
 		void AddOldEntityId(unsigned int _entityId);
 		void ClearEntityData(unsigned int _entityId);
 
-		inline const EntityState GetEntityState(unsigned int _entityId) { return (EntityState)(*(int*)(m_dataTable->GetData(_entityId))); }
-		inline const BitSet::DataType* GetEntityComponents(unsigned int _entityId) { return (BitSet::DataType*)(m_dataTable->GetData(_entityId) + 1); }
+		inline const EntityState GetEntityState(unsigned int _entityId);
+		inline const BitSet::DataType* GetEntityComponents(unsigned int _entityId);
 		void GetEntityComponents(std::vector<unsigned int>& _out, unsigned int _entityId);
 
 	private:
