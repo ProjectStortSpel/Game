@@ -376,6 +376,13 @@ bool GraphicsLow::InitSDLWindow()
 
 	// PLATFORM SPECIFIC CODE
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    
+    //Erik Mac
+    //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+    //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    //SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+    //SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
 	m_window = SDL_CreateWindow(Caption, PosX, PosY, SizeX, SizeY, Flags);
 
@@ -393,16 +400,24 @@ bool GraphicsLow::InitGLEW()
 {
 	m_glContext = SDL_GL_CreateContext(m_window);
 
+    glewExperimental = GL_TRUE;
 	if (glewInit() != 0) return false;
-
+    int low, high;
+    
+    glGetIntegerv(GL_MINOR_VERSION, &low);
+    glGetIntegerv(GL_MAJOR_VERSION, &high);
+    
+    char* version = (char*)glGetString(GL_VERSION);
+    
 #ifdef WIN32
-	if (!GLEW_VERSION_4_3) { return false; }
+	if (!GLEW_VERSION_4_0) { return false; }
 #else
-	if (!glewIsSupported("GL_VERSION_4_3")) { return false; }
+	if (!glewIsSupported("GL_VERSION_4_0")) { return false; }
 #endif
 
 	SDL_GL_SetSwapInterval(0);
 	
+    
 	return true;
 }
 
@@ -468,15 +483,6 @@ bool GraphicsLow::InitShaders()
 
 bool GraphicsLow::InitBuffers()
 {
-	// Output ImageBuffer
-	glGenTextures(1, &m_outputImage);
-	glActiveTexture(GL_TEXTURE5);
-	glBindTexture(GL_TEXTURE_2D, m_outputImage);
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, m_clientWidth, m_clientHeight);
-
-	glBindImageTexture(5, m_outputImage, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
-	m_vramUsage += (m_clientWidth * m_clientHeight * sizeof(float) * 4);
-
 	// FULL SCREEN QUAD
 	//m_fullScreenShader.CheckUniformLocation("output_image", 5);
 

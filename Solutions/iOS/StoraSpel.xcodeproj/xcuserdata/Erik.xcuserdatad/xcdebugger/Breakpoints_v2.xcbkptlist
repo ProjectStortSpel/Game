@@ -383,7 +383,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "782"
             endingLineNumber = "782"
-            landmarkName = "GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)"
+            landmarkName = "GraphicDevice::ChangeModelNormalMap(int _id, std::string _fileDir)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -399,7 +399,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "777"
             endingLineNumber = "777"
-            landmarkName = "GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)"
+            landmarkName = "GraphicDevice::ChangeModelTexture(int _id, std::string _fileDir, int _textureType)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -782,9 +782,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "874"
-            endingLineNumber = "874"
-            landmarkName = "GraphicDevice::CreateTextTexture(const std::string&amp; textureName, const std::string&amp; textString, int fontIndex, SDL_Color color, glm::ivec2 size)"
-            landmarkType = "5">
+            endingLineNumber = "874">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -799,7 +797,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "882"
             endingLineNumber = "882"
-            landmarkName = "GraphicDevice::CreateTextTexture(const std::string&amp; textureName, const std::string&amp; textString, int fontIndex, SDL_Color color, glm::ivec2 size)"
+            landmarkName = "GraphicDevice::Clear()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -815,7 +813,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "875"
             endingLineNumber = "875"
-            landmarkName = "GraphicDevice::CreateTextTexture(const std::string&amp; textureName, const std::string&amp; textString, int fontIndex, SDL_Color color, glm::ivec2 size)"
+            landmarkName = "GraphicDevice::Clear()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
