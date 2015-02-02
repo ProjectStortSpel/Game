@@ -44,7 +44,7 @@ bool GraphicsLow::Init()
 
 	m_camera = new Camera(m_clientWidth, m_clientHeight);
 
-	if (!InitGLEW()) { SDL_Log("OGL 4.3 not supported. Switching to 4.0");/*ERRORMSG("GLEW_VERSION_4_3 FAILED\n");*/ }
+	if (!InitGLEW()) { ERRORMSG("GLEW_VERSION_4_0 FAILED\n"); }
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	//if (!InitForward()) { ERRORMSG("INIT FORWARD FAILED\n"); return false; }
