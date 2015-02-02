@@ -16,26 +16,25 @@ SkyBox::SkyBox(GLuint _texHandle, float _camFarPlane)
 void SkyBox::BindBuffers(float _far)
 {
 	// cube vertices for vertex buffer object
-	GLfloat cubeVertices[] = {
-	  static_cast<GLfloat>(-1.0*_far),  static_cast<GLfloat>(1.0*_far),  static_cast<GLfloat>(1.0*_far),
-	  static_cast<GLfloat>(-1.0*_far), static_cast<GLfloat>(-1.0*_far),  static_cast<GLfloat>(1.0*_far),
-	   static_cast<GLfloat>(1.0*_far), static_cast<GLfloat>(-1.0*_far),  static_cast<GLfloat>(1.0*_far),
-	   static_cast<GLfloat>(1.0*_far),  static_cast<GLfloat>(1.0*_far),  static_cast<GLfloat>(1.0*_far),
-	  static_cast<GLfloat>(-1.0*_far),  static_cast<GLfloat>(1.0*_far), static_cast<GLfloat>(-1.0*_far),
-	  static_cast<GLfloat>(-1.0*_far), static_cast<GLfloat>(-1.0*_far), static_cast<GLfloat>(-1.0*_far),
-	   static_cast<GLfloat>(1.0*_far), static_cast<GLfloat>(-1.0*_far), static_cast<GLfloat>(-1.0*_far),
-	   static_cast<GLfloat>(1.0*_far),  static_cast<GLfloat>(1.0*_far), static_cast<GLfloat>(-1.0*_far),
-	};
-
-	// cube indices for index buffer object
-	GLuint cubeIndices[] = {
-	  3, 2, 1, 0,
-	  7, 6, 2, 3,
-	  4, 5, 6, 7,
-	  0, 1, 5, 4,
-	  4, 7, 3, 0,
-	 1, 2, 6, 5,
-	};
+    static const GLfloat cubeVertices[] = {
+        -1.0f*_far, -1.0f*_far,  1.0f*_far,
+        1.0f*_far, -1.0f*_far,  1.0f*_far,
+        -1.0f*_far,  1.0f*_far,  1.0f*_far,
+        1.0f*_far,  1.0f*_far,  1.0f*_far,
+        -1.0f*_far, -1.0f*_far, -1.0f*_far,
+        1.0f*_far, -1.0f*_far, -1.0f*_far,
+        -1.0f*_far,  1.0f*_far, -1.0f*_far,
+        1.0f*_far,  1.0f*_far, -1.0f*_far,
+    };
+    
+    static const GLushort cubeIndices[] = {
+        0, 1, 2, 3,
+        1, 5, 3, 7,
+        5, 4, 7, 6, 
+        7, 6, 3, 2,
+        2, 6, 0, 4,
+        0, 4, 1, 5,
+    };
 
 	glGenVertexArrays(1, &m_VAOHandle);
 	glBindVertexArray(m_VAOHandle);
@@ -64,7 +63,7 @@ void SkyBox::Draw(GLuint _shaderProgHandle, Camera *_cam)
 	glUniformMatrix4fv(location, 1, GL_FALSE, &MVP[0][0]);
 	
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, m_textureHandle);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureHandle);
 	glBindVertexArray(m_VAOHandle);
-	glDrawElements( GL_QUADS, 24, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLE_STRIP, 24, GL_UNSIGNED_SHORT, 0);
 }

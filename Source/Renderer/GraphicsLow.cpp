@@ -173,12 +173,12 @@ void GraphicsLow::Render()
 	//glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_forwardFBO);
 
 	glEnable(GL_DEPTH_TEST);
-
+    glDisable(GL_CULL_FACE);
 	// DRAW SKYBOX
 	m_skyBoxShader.UseProgram();
 	m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera);
 	// -----------
-
+    glEnable(GL_CULL_FACE);
 	//------FORWARD RENDERING--------------------------------------------
 	glEnable(GL_BLEND);
 
