@@ -36,7 +36,7 @@ DataManager::~DataManager()
 void DataManager::InitializeTables()
 {
 	m_componentTypeCount = ComponentTypeManager::GetInstance().GetComponentTypeCount();
-	m_componentTables = new std::vector<ComponentTable*>(m_componentTypeCount);
+	m_componentTables = new std::vector<ComponentTable*>(m_componentTypeCount, nullptr);
 	m_entityTable = new EntityTable(m_entityCount, (unsigned int)m_componentTypeIds->size());
 
 	for (unsigned int n = 0; n < m_componentTypeIds->size(); ++n)
@@ -56,7 +56,7 @@ void DataManager::InitializeTables()
 			m_componentTables->at(componentTypeId) = new ComponentTable(new DataMap(componentType->GetByteSize()), componentTypeId);
 			break;
 		default:
-			printf("ERROR: Invalid Table Type! (ID %d)\n", m_componentTypeIds->at(n));
+			printf("ERROR: Invalid Table Type! (ID %i)\n", m_componentTypeIds->at(n));
 			break;
 		}
 	}

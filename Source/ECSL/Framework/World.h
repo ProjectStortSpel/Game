@@ -11,6 +11,7 @@
 #include "Systems/SystemManager.h"
 #include "Templates/EntityTemplate.h"
 #include "Systems/Messaging/MessageManager.h"
+#include "Logger/DataLogger.h"
 
 namespace ECSL
 {
@@ -20,8 +21,8 @@ namespace ECSL
 		Simulation* m_simulation;
 		MessageManager* m_messageManager;
 		DataManager* m_dataManager;
-
 		SystemManager* m_systemManager;
+		DataLogger* m_dataLogger;
 
 	public:
 		World(unsigned int _entityCount, std::vector<SystemWorkGroup*>* _systemWorkGroups, std::vector<unsigned int>* _componentTypeIds);
@@ -43,14 +44,14 @@ namespace ECSL
 
 		void KillEntity(unsigned int _entityId);
 		
-		void GetEntityComponents(std::vector<unsigned int>& _out, unsigned int _entityId){ m_dataManager->GetEntityTable()->GetEntityComponents(_out, _entityId); }
+		void GetEntityComponents(std::vector<unsigned int>& _out, unsigned int _entityId);
 
 		unsigned int GetMemoryUsage();
 		
 		void ComponentHasChanged(unsigned int _entityId, std::string _componentType, bool _notifyNetwork = true);
 		void ComponentHasChanged(unsigned int _entityId, unsigned int _componentTypeId, bool _notifyNetwork = true);
 
-		bool HasComponent(unsigned int _entityId, std::string _componentType);
+		bool HasComponent(unsigned int _entityId, const std::string& _componentType);
 		bool HasComponent(unsigned int _entityId, unsigned int _componentTypeId);
 	};
 }

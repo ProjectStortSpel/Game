@@ -24,7 +24,7 @@ namespace ECSL
 
 		virtual void EntitiesAdded(const RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities) { }
 		virtual void EntitiesRemoved(const RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities) { }
-		virtual void MessagesRecieved(const std::vector<Message*>& _messages) { }
+		virtual void MessagesReceived(const std::vector<Message*>& _messages) { }
 
 		void InitializeEntityList();
 		void AddEntityToSystem(unsigned int _entityId);
@@ -42,8 +42,9 @@ namespace ECSL
 		unsigned int GetUpdateTaskCount() { return m_updateTaskCount; }
 		unsigned int GetEntitiesAddedTaskCount() { return m_entitiesAddedTaskCount; }
 		unsigned int GetEntitiesRemovedTaskCount() { return m_entitiesRemovedTaskCount; }
-		unsigned int GetMessagesRecievedTaskCount() { return m_messagesRecievedTaskCount; }
+		unsigned int GetMessagesReceivedTaskCount() { return m_messagesReceivedTaskCount; }
 
+		const std::vector<unsigned int>* GetEntities() { return m_entities; }
 		const std::vector<Subscription*>* GetSubscriptions() { return m_subscriptions; }
 		const std::vector<Message*>* GetMessages() { return m_messages; }
 
@@ -78,7 +79,6 @@ namespace ECSL
 
 		unsigned int CreateNewEntity();
 		void KillEntity(unsigned int _entityId);
-		const std::vector<unsigned int>* const GetEntities() { return m_entities; }
 
 		const unsigned int GetEntityCount() { return m_dataManager->GetEntityCount(); }
 		const unsigned int GetThreadCount() { return MPL::TaskManager::GetInstance().GetThreadCount(); }
@@ -88,7 +88,7 @@ namespace ECSL
 		void SetUpdateTaskCount(unsigned int _taskCount) { m_updateTaskCount = _taskCount; }
 		void SetEntitiesAddedTaskCount(unsigned int _taskCount) { m_entitiesAddedTaskCount = _taskCount; }
 		void SetEntitiesRemovedTaskCount(unsigned int _taskCount) { m_entitiesRemovedTaskCount = _taskCount; }
-		void SetMessagesRecievedTaskCount(unsigned int _taskCount) { m_messagesRecievedTaskCount = _taskCount; }
+		void SetMessagesReceivedTaskCount(unsigned int _taskCount) { m_messagesReceivedTaskCount = _taskCount; }
 		void SubscribeTo(const std::string& _systemName, unsigned int _messageType);
 		void SendMessage(Message* _message);
 
@@ -99,7 +99,7 @@ namespace ECSL
 		unsigned int m_updateTaskCount;
 		unsigned int m_entitiesAddedTaskCount;
 		unsigned int m_entitiesRemovedTaskCount;
-		unsigned int m_messagesRecievedTaskCount;
+		unsigned int m_messagesReceivedTaskCount;
 		
 		SDL_mutex* m_messagesMutex;
 		ComponentFilter m_mandatoryComponentTypes;
