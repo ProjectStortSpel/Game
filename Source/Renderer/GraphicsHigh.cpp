@@ -310,8 +310,10 @@ void GraphicsHigh::Render()
 	glEnable(GL_DEPTH_TEST);
 
 	// DRAW SKYBOX
+	glDisable(GL_CULL_FACE);
 	m_skyBoxShader.UseProgram();
 	m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera);
+	glEnable(GL_CULL_FACE);
 	// -----------
 
 
