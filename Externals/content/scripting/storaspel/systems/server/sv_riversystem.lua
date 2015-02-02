@@ -11,7 +11,7 @@ end
 RiverSystem.OnEntityAdded = function(self, entity)
 	
 	if world:EntityHasComponent( entity, "MoveRiver") then
-		print("Move River")
+		--print("Move River")
 
 		local file = File.Append("gamelog.txt")
 		File.WriteLine(file, "MoveRiver")

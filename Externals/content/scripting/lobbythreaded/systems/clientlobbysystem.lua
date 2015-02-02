@@ -17,11 +17,6 @@ end
 
 ClientLobbySystem.Update = function(self, dt, taskIndex, taskCount)
 	
-	if GameRunning then
-		return
-	end
-	
-	
 	if Net.IsConnected() then
 	
 		local text = "Connected to server.";	
@@ -33,16 +28,8 @@ end
 
 ClientLobbySystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 
-	if GameRunning then
-		return
-	end
-
 end
 ClientLobbySystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
-
-	if GameRunning then
-		return
-	end
 
 end
 

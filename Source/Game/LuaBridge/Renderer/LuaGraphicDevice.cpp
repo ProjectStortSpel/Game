@@ -24,7 +24,10 @@ namespace LuaBridge
 		LuaEmbedder::EmbedClassFunction<LuaGraphicDevice>(L, "GraphicDevice", "ChangeModelTexture", &LuaGraphicDevice::ChangeModelTexture);
 		LuaEmbedder::EmbedClassFunction<LuaGraphicDevice>(L, "GraphicDevice", "ChangeModelNormalMap", &LuaGraphicDevice::ChangeModelNormalMap);
 		LuaEmbedder::EmbedClassFunction<LuaGraphicDevice>(L, "GraphicDevice", "ChangeModelSpecularMap", &LuaGraphicDevice::ChangeModelSpecularMap);
-
+		LuaEmbedder::EmbedClassFunction<LuaGraphicDevice>(L, "GraphicDevice", "AddFont", &LuaGraphicDevice::AddFont);
+		LuaEmbedder::EmbedClassFunction<LuaGraphicDevice>(L, "GraphicDevice", "CreateTextTexture", &LuaGraphicDevice::CreateTextTexture);
+		LuaEmbedder::EmbedClassFunction<LuaGraphicDevice>(L, "GraphicDevice", "CreateWrappedTextTexture", &LuaGraphicDevice::CreateWrappedTextTexture);
+		
 		LuaEmbedder::EmbedClassProperty<LuaGraphicDevice>(L, "GraphicDevice", "Camera", &LuaGraphicDevice::GetCamera, &LuaGraphicDevice::SetCamera);
 	}
 
@@ -162,10 +165,10 @@ namespace LuaBridge
 		std::string textureName = LuaEmbedder::PullString(L, 1);
 		std::string textString = LuaEmbedder::PullString(L, 2);
 		int fontIndex = LuaEmbedder::PullInt(L, 3);
-		Uint8 r = (Uint8)LuaEmbedder::PullInt(L, 4);
-		Uint8 g = (Uint8)LuaEmbedder::PullInt(L, 5);
-		Uint8 b = (Uint8)LuaEmbedder::PullInt(L, 6);
-		SDL_Color color = { 255, 255, 255, 0 };
+		float r = LuaEmbedder::PullFloat(L, 4);
+		float g = LuaEmbedder::PullFloat(L, 5);
+		float b = LuaEmbedder::PullFloat(L, 6);
+		SDL_Color color = { static_cast<Uint8>(255 * r), static_cast<Uint8>(255 * g), static_cast<Uint8>(255 * b), 0 };
 		//int w = LuaEmbedder::PullInt(7);
 		//int h = LuaEmbedder::PullInt(8);
 		//glm::ivec2 size = glm::ivec2(w, h);

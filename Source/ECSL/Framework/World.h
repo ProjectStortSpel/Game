@@ -26,6 +26,8 @@ namespace ECSL
 	public:
 		World(unsigned int _entityCount, std::vector<SystemWorkGroup*>* _systemWorkGroups, std::vector<unsigned int>* _componentTypeIds);
 		~World();
+		
+		void PostInitializeSystems();
 
 		void Update(float _dt);
 
@@ -52,6 +54,8 @@ namespace ECSL
 
 		bool HasComponent(unsigned int _entityId, std::string _componentType);
 		bool HasComponent(unsigned int _entityId, unsigned int _componentTypeId);
+		
+		
 	};
 }
 

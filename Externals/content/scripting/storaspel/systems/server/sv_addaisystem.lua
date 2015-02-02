@@ -1,11 +1,6 @@
-AISystem = System()
+AddAISystem = System()
 
-AISystem.PostInitialize = function(self)
-	
-	
-end
-
-AISystem.Initialize = function(self)
+AddAISystem.Initialize = function(self)
 	self:SetName("AI System")
 	
 	self:AddComponentTypeToFilter("AI", FilterType.RequiresOneOf)
@@ -14,12 +9,12 @@ AISystem.Initialize = function(self)
 	Console.AddCommand("AddAI", self.AddAI)
 end
 
-AISystem.AddAI = function(_command, ...)
+AddAISystem.AddAI = function(_command, ...)
 
 	local newAI = world:CreateNewEntity("AI")
 end
 
-AISystem.OnEntityAdded = function(self, entityId)
+AddAISystem.OnEntityAdded = function(self, entityId)
 	
 	if world:EntityHasComponent(entityId, "AI") then
 		
@@ -40,7 +35,7 @@ AISystem.OnEntityAdded = function(self, entityId)
 	
 end
 
-AISystem.CounterComponentChanged = function(self, _change, _component)
+AddAISystem.CounterComponentChanged = function(self, _change, _component)
 	
 	local counterEntities = self:GetEntities("PlayerCounter")
 	local counterComp = world:GetComponent(counterEntities[1], "PlayerCounter", _component)

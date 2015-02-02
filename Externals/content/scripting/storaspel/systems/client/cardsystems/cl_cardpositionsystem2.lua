@@ -26,7 +26,7 @@ CardPositionSystem2.OnEntityAdded = function( self, entityId )
 		end
 		
 		local timer = self:GetComponent(card, "LerpTime", 0)
-		timer:SetFloat(0.5)
+		timer:SetFloat2(0.1, 0)
 	
 	end
 	

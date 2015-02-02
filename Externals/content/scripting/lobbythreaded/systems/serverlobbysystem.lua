@@ -40,7 +40,6 @@ ServerLobbySystem.UpdateServerOnline = function(self)
 	
 	if Input.GetKeyState(Key.Return) == InputState.Pressed and Console.IsOpen() == false then
 		Console.Print("Game started");
-		GameRunning = true;
 		local id = Net.StartPack("NewGame");
 		Net.Broadcast(id);
 		Console.Print("NewGame");
@@ -52,18 +51,12 @@ end
 
 ServerLobbySystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 	for i = 1, #entities do
-		if GameRunning then
-			return
-		end
 
 		self.m_noConnections = self.m_noConnections + 1;
 	end
 end
 ServerLobbySystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
 	for i = 1, #entities do
-		if GameRunning then
-			return
-		end
 
 		self.m_noConnections = self.m_noConnections - 1;
 	end

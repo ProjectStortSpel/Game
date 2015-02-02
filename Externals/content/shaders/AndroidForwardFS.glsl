@@ -33,7 +33,8 @@ struct Pointlight {
 	vec3 Intensity; // Diffuse intensity
 	vec3 Color;
 	float Range;
-}; Pointlight pointlights[1];
+}; 
+uniform Pointlight pointlights[1];
 
 struct MaterialInfo {
 	float Ks;
@@ -82,8 +83,8 @@ void phongModelDirLight(out vec3 ambient, out vec3 diffuse, out vec3 spec)
 	return;
 }
 
-void phongModel(int index, out vec3 ambient, out vec3 diffuse, out vec3 spec) {
-
+void phongModel(int index, out vec3 ambient, out vec3 diffuse, out vec3 spec) 
+{
 	ambient = vec3(0.0);
 	diffuse = vec3(0.0);
 	spec    = vec3(0.0);
@@ -125,11 +126,6 @@ void phongModel(int index, out vec3 ambient, out vec3 diffuse, out vec3 spec) {
 
 void main() 
 {
-    pointlights[0].Position = vec3(8.0, 10.0, 8.0);
-    pointlights[0].Intensity = vec3(0.2, 1.0, 1.0);
-    pointlights[0].Color = vec3(1.0, 1.0, 1.0);
-    pointlights[0].Range = 20.0;
-
 	vec4 albedo_tex = texture2D( diffuseTex, TexCoord );
 
 	// Normal data
@@ -158,15 +154,12 @@ void main()
 	}
 
     //för varje ljus-----------
-    //for(int i = 0; i < 1; i++)
-    //{
-	    //vec3 a,d,s;
-
-	    //phongModel(0, a, d, s);
-	    //diffuse += d;
-	    //ambient += a;
-	    //spec    += s;
-    //}
+	//if( length(pointlights[0].Intensity) > 0.0)
+	//{
+	//	vec3 a,d,s;
+	//	phongModel(0, a, d, s);
+	//	diffuse += d; ambient += a; spec += s;
+	//}
 
 	float glow = spec_map.z;
 	vec4 glowvec = vec4(vec3(glow), 1.0);

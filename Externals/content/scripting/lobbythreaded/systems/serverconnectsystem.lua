@@ -18,18 +18,11 @@ end
 
 ServerConnectSystem.Update = function(self, dt, taskIndex, taskCount)
 
-	if GameRunning then
-		return
-	end
-
 end
 
 ServerConnectSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 	for i = 1, #entities do
 		local entityId = entities[i]
-		if GameRunning then
-			return
-		end
 
 		Console.Print("ServerConnectSystem.OnEntityAdded");
 		local match = false;
@@ -43,11 +36,11 @@ ServerConnectSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, ent
 		for i = 1, #systemEntities do
 		
 			if entityId ~= systemEntities[i] then
-				local uname = self:GetComponent(entities[i], "Username", "Name"):GetString();
+				local uname = self:GetComponent(systemEntities[i], "Username", "Name"):GetString();
 				
 				if username == uname then
 					match = true;
-					matchId = entities[i];
+					matchId = systemEntities[i];
 					break;
 				end
 				
@@ -84,18 +77,10 @@ end
 
 ServerConnectSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
 
-	if GameRunning then
-		return
-	end
-
 	Console.Print("ServerConnectSystem.OnEntityRemoved");
 end
 
 ServerConnectSystem.OnPlayerTimedOut = function(self, _ip, _port)
-
-	if GameRunning then
-		return
-	end
 
 	Console.Print("ServerConnectSystem.OnPlayerTimedOut");
 	self:RemovePlayer(_ip, _port);
@@ -104,20 +89,12 @@ end
 
 ServerConnectSystem.OnPlayerDisconnected = function(self, _ip, _port)
 
-	if GameRunning then
-		return
-	end
-
 	Console.Print("ServerConnectSystem.OnPlayerDisconnected");
 	self:RemovePlayer(_ip, _port);
 
 end
 
 ServerConnectSystem.OnUsername = function(self, _ip, _port)
-
-	if GameRunning then
-		return
-	end
 
 	Console.Print("ServerConnectSystem.OnUsername");
 	
@@ -135,10 +112,6 @@ end
 
 
 ServerConnectSystem.RemovePlayer = function(self, _ip, _port)
-
-	if GameRunning then
-		return
-	end
 
 	Console.Print("ServerConnectSystem.RemovePlayer");
 	

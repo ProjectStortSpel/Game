@@ -64,53 +64,73 @@ CheckpointSystem.OnEntityAdded = function(self, entity)
 				world:SetComponent(newId, "UnitEntityId", "Id", units[i])
 			
 			else
-			
+				local noSteps	 = world:GetComponent(units[i], "NoSubSteps", 0):GetInt()
+				local dirX, dirZ = world:GetComponent(units[i], "Direction", 0):GetInt2()
+				
+				if dirX ~= 0 then
+					dirX = dirX / math.abs(dirX)
+				end
+
+				if dirZ ~= 0 then
+					dirZ = dirZ / math.abs(dirZ)
+				end
+				
 				-- Get the unit's MapPosition
 				local unitPosX, unitPosZ = world:GetComponent(units[i], "MapPosition", 0):GetInt2()
-			
-				-- Go through all checksoints
-				for j = 1, #checkPoints do
-				
-					-- Get the current checkpoints Id
-					local cpId = world:GetComponent(checkPoints[j], "Checkpoint", "Number"):GetInt()
+						
+				for tmp = noSteps - 1, 0, -1 do
 					
-					-- If the id is the same as the unit's target checkpoint
-					if cpId == targetId then
+					--if n > 0 then os.execute("ping -n " .. tonumber(1000+1) .. " localhost > NUL") end
+					
+					
+					local tmpX = unitPosX - (dirX * tmp)
+					local tmpZ = unitPosZ - (dirZ * tmp)
+					
+					-- Go through all checksoints
+					for j = 1, #checkPoints do
+					
+						-- Get the current checkpoints Id
+						local cpId = world:GetComponent(checkPoints[j], "Checkpoint", "Number"):GetInt()
 						
-						-- Get the checkpoint's MapPosition
-						local cpPosX, cpPosZ = world:GetComponent(checkPoints[j], "MapPosition", 0):GetInt2()
-						
-						-- If the unit's position and the checkpoint's position is the same
-						if unitPosX == cpPosX and unitPosZ == cpPosZ then
-						
-							-- Get the number of the player controlling the unit
-							local playerNum = world:GetComponent(units[i], "PlayerNumber", 0):GetInt()
-						
-							print("Player#" .. playerNum .. " reached checkpoint#" .. cpId)
+						-- If the id is the same as the unit's target checkpoint
+						if cpId == targetId then
 							
-							local totemPieceId = world:CreateNewEntity()
-							world:CreateComponentAndAddTo("AddTotemPiece", totemPieceId)
-							world:CreateComponentAndAddTo("PlayerNumber", totemPieceId)
-							world:CreateComponentAndAddTo("CheckpointId", totemPieceId)
-							print("CreateComponentAndAddTo done")
-							world:SetComponent(totemPieceId, "PlayerNumber", "Number", playerNum)
-							print("PlayerNumber done")
-							world:SetComponent(totemPieceId, "CheckpointId", "Id", cpId)
-							print("CheckpointId done")
+							-- Get the checkpoint's MapPosition
+							local cpPosX, cpPosZ = world:GetComponent(checkPoints[j], "MapPosition", 0):GetInt2()
 							
-							-- Set the new target checkpoint
-							world:SetComponent(units[i], "TargetCheckpoint", "Id", targetId + 1)
-							-- Set the units spawnpoint
-							world:GetComponent(units[i], "Spawnpoint", 0):SetInt2(cpPosX, cpPosZ)
-						
-							break
+							-- If the unit's position and the checkpoint's position is the same
+							if tmpX == cpPosX and tmpZ == cpPosZ then
+							
+								-- Get the number of the player controlling the unit
+								local playerNum = world:GetComponent(units[i], "PlayerNumber", 0):GetInt()
+							
+								print("Player#" .. playerNum .. " reached checkpoint#" .. cpId)
+								
+								local totemPieceId = world:CreateNewEntity()
+								world:CreateComponentAndAddTo("AddTotemPiece", totemPieceId)
+								world:CreateComponentAndAddTo("PlayerNumber", totemPieceId)
+								world:CreateComponentAndAddTo("CheckpointId", totemPieceId)
+								print("CreateComponentAndAddTo done")
+								world:SetComponent(totemPieceId, "PlayerNumber", "Number", playerNum)
+								print("PlayerNumber done")
+								world:SetComponent(totemPieceId, "CheckpointId", "Id", cpId)
+								print("CheckpointId done")
+								
+								-- Set the new target checkpoint
+								world:SetComponent(units[i], "TargetCheckpoint", "Id", targetId + 1)
+								-- Set the units spawnpoint
+								world:GetComponent(units[i], "Spawnpoint", 0):SetInt2(cpPosX, cpPosZ)
+							
+								break
+							
+							end
 						
 						end
 					
 					end
+					
 				
 				end
-			
 			end
 		
 		end

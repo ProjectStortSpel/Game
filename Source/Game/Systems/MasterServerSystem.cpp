@@ -15,6 +15,10 @@ MasterServerSystem::~MasterServerSystem()
 void MasterServerSystem::Initialize()
 {
 	SetSystemName("MasterServerSystem");
+	
+	SetUpdateTaskCount(1);
+	SetEntitiesAddedTaskCount(1);
+	SetEntitiesRemovedTaskCount(1);
 
 	/*	Rendersystem wants Network	*/
 	AddComponentTypeToFilter("AvailableSpawnpoint", ECSL::FilterType::RequiresOneOf);
@@ -41,6 +45,10 @@ void MasterServerSystem::PostInitialize()
 		m_clientDatabase->SetServerPort(port);
 		m_clientDatabase->SetPasswordProtected(pw.size() > 0);
 	}
+	else if(NetworkInstance::GetClient()->IsConnected())
+	{
+		m_clientDatabase->Disconnect();
+	}
 	else
 	{
 		Network::NetMessageHook customHook;
@@ -51,14 +59,14 @@ void MasterServerSystem::PostInitialize()
 	}
 }
 
-void MasterServerSystem::Update(float _dt)
+void MasterServerSystem::Update(const ECSL::RuntimeInfo& _runtime)
 {
 	// Return if the user is a already connected client
 	if (NetworkInstance::GetClient()->IsConnected())
 		return;
 
 
-	m_clientDatabase->Update(_dt);
+	m_clientDatabase->Update(_runtime.Dt);
 
 	// Update to the masterserver is the user is a server
 	if (NetworkInstance::GetServer()->IsRunning())
@@ -75,7 +83,7 @@ void MasterServerSystem::Update(float _dt)
 	// If the user is neither, we should request a new server list every 10 seconds
 	else
 	{
-		m_requestServerListTimer += _dt;
+		m_requestServerListTimer += _runtime.Dt;
 		if (m_requestServerListTimer > 2.0)
 		{
 			m_clientDatabase->RequestServerList();
@@ -85,64 +93,69 @@ void MasterServerSystem::Update(float _dt)
 
 }
 
-void MasterServerSystem::OnEntityAdded(unsigned int _entityId)
+void MasterServerSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities)
 {
 	if (!NetworkInstance::GetServer()->IsRunning())
 		return;
 
-	if (HasComponent(_entityId, ECSL::ComponentTypeManager::GetInstance().GetTableId("AvailableSpawnpoint")))
+	for (unsigned int entityId : _entities)
 	{
-		m_clientDatabase->IncreaseMaxNoPlayers();
-	}
-	else if (HasComponent(_entityId, ECSL::ComponentTypeManager::GetInstance().GetTableId("Player")))
-	{
-		if (HasComponent(_entityId, ECSL::ComponentTypeManager::GetInstance().GetTableId("IsSpectator")))
+		if (HasComponent(entityId, ECSL::ComponentTypeManager::GetInstance().GetTableId("AvailableSpawnpoint")))
 		{
-			m_clientDatabase->IncreaseNoSpectators();
-			m_playerIds[_entityId] = true;
+			m_clientDatabase->IncreaseMaxNoPlayers();
 		}
-		else
+		else if (HasComponent(entityId, ECSL::ComponentTypeManager::GetInstance().GetTableId("Player")))
 		{
-			m_clientDatabase->IncreaseNoPlayers(); // <--
-			m_playerIds[_entityId] = false;
+			if (HasComponent(entityId, ECSL::ComponentTypeManager::GetInstance().GetTableId("IsSpectator")))
+			{
+				m_clientDatabase->IncreaseNoSpectators();
+				m_playerIds[entityId] = true;
+			}
+			else
+			{
+				m_clientDatabase->IncreaseNoPlayers(); // <--
+				m_playerIds[entityId] = false;
+			}
+			
 		}
-		
-	}
-	else if (HasComponent(_entityId, ECSL::ComponentTypeManager::GetInstance().GetTableId("GameRunning")))
-	{
-		m_gameRunningId = _entityId;
+		else if (HasComponent(entityId, ECSL::ComponentTypeManager::GetInstance().GetTableId("GameRunning")))
+		{
+			m_gameRunningId = entityId;
+		}
 	}
 }
 
-void MasterServerSystem::OnEntityRemoved(unsigned int _entityId)
+void MasterServerSystem::EntitiesRemoved(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities)
 {
 	if (!NetworkInstance::GetServer()->IsRunning())
 		return;
 
-	// Go through all playerIds and search for an match
-	for (auto it = m_playerIds.begin(); it != m_playerIds.end(); ++it)
+	for (unsigned int entityId : _entities)
 	{
-
-		if (it->first == _entityId)
+		// Go through all playerIds and search for an match
+		for (auto it = m_playerIds.begin(); it != m_playerIds.end(); ++it)
 		{
-			if (it->second) // Spectator
+
+			if (it->first == entityId)
 			{
-				m_clientDatabase->DecreaseNoSpectators();
-				m_playerIds.erase(it);
-				return;
-			}
-			else // Player
-			{
-				m_clientDatabase->DecreaseNoPlayers();
-				m_playerIds.erase(it);
-				return;
+				if (it->second) // Spectator
+				{
+					m_clientDatabase->DecreaseNoSpectators();
+					m_playerIds.erase(it);
+					return;
+				}
+				else // Player
+				{
+					m_clientDatabase->DecreaseNoPlayers();
+					m_playerIds.erase(it);
+					return;
+				}
 			}
 		}
+
+		if (m_gameRunningId == entityId)
+			m_gameRunningId = -1;
 	}
-
-	if (m_gameRunningId == _entityId)
-		m_gameRunningId = -1;
-
 }
 
 void MasterServerSystem::OnGetServerList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)

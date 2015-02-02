@@ -20,6 +20,7 @@ namespace ECSL
 		virtual ~System() = 0;
 
 		virtual void Update(const RuntimeInfo& _runtime) { }
+		virtual void PostInitialize() { };
 		virtual void Initialize() = 0;
 
 		virtual void EntitiesAdded(const RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities) { }

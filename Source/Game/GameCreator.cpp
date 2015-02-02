@@ -10,6 +10,7 @@
 #include "Systems/ResetChangedSystem.h"
 #include "Systems/PointlightSystem.h"
 #include "Systems/DirectionalLightSystem.h"
+#include "Systems/MasterServerSystem.h"
 
 #include "NetworkInstance.h"
 #include "ECSL/ECSL.h"
@@ -140,6 +141,7 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	  LuaEmbedder::CopyObject<LuaBridge::LuaSystem>(m_clientLuaState, clientLuaStateCopy, "System", (*it));
 	  (*it)->SetLuaState(clientLuaStateCopy);
 	}
+	systemsAdded->clear();
 
 	LuaEmbedder::AddObject<Renderer::GraphicDevice>(m_clientLuaState, "GraphicDevice", m_graphics, "graphics");
 
@@ -185,6 +187,8 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	worldCreator.AddSystemGroup();
 	worldCreator.AddSystemToCurrentGroup<ModelSystem>(m_graphics);
 	worldCreator.AddSystemGroup();
+	worldCreator.AddSystemToCurrentGroup<MasterServerSystem>();
+	worldCreator.AddSystemGroup();
 	worldCreator.AddSystemToCurrentGroup<SyncEntitiesSystem>();
 	//worldCreator.AddLuaSystemToCurrentGroup(new ReceivePacketSystem());
 	worldCreator.AddSystemGroup();
@@ -197,10 +201,7 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 
 	m_world = worldCreator.CreateWorld(1000);
 	LuaEmbedder::AddObject<ECSL::World>(m_clientLuaState, "World", m_world, "world");
-
-	for (std::vector<LuaBridge::LuaSystem*>::iterator it = systemsAdded->begin(); it != systemsAdded->end(); it++)
-	  (*it)->PostInitialize();
-	systemsAdded->clear();
+	m_world->PostInitializeSystems();
 
 	m_worldProfiler = new Profilers::ECSLProfiler(m_graphics);
 }

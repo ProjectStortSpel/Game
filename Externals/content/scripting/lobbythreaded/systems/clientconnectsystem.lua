@@ -18,35 +18,19 @@ end
 
 ClientConnectSystem.Update = function(self, dt, taskIndex, taskCount)
 
-	if GameRunning then
-		return
-	end
-
 end
 
 ClientConnectSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
-
-	if GameRunning then
-		return
-	end
 
 	Console.Print("ClientConnectSystem.OnConnectedToServer");
 end
 
 ClientConnectSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
 
-	if GameRunning then
-		return
-	end
-
 	Console.Print("ClientConnectSystem.OnConnectedToServer");
 end
 
 ClientConnectSystem.OnConnectedToServer = function(self, _ip, _port)
-
-	if GameRunning then
-		return
-	end
 
 	Console.Print("ClientConnectSystem.OnConnectedToServer");
 	
@@ -57,27 +41,15 @@ end
 
 ClientConnectSystem.OnDisconnectedFromServer = function(self, _ip, _port)
 
-	if GameRunning then
-		return
-	end
-
 	Console.Print("ClientConnectSystem.OnDisconnectedFromServer");
 end
 
 ClientConnectSystem.OnTimedOutFromServer = function(self, _ip, _port)
 
-	if GameRunning then
-		return
-	end
-
 	Console.Print("ClientConnectSystem.OnTimedOutFromServer");
 end
 
 ClientConnectSystem.OnRemotePlayerConnected = function(self, _ip, _port)
-
-	if GameRunning then
-		return
-	end
 
 	Console.Print("ClientConnectSystem.OnRemotePlayerConnected");
 	
@@ -86,18 +58,10 @@ end
 
 ClientConnectSystem.OnRemotePlayerDisconnected = function(self, _ip, _port)
 
-	if GameRunning then
-		return
-	end
-
 	Console.Print("ClientConnectSystem.OnRemotePlayerDisconnected");
 end
 
 ClientConnectSystem.OnRemotePlayerKicked = function(self, _ip, _port)
-
-	if GameRunning then
-		return
-	end
 
 	Console.Print("ClientConnectSystem.OnRemotePlayerKicked");
 end
@@ -105,10 +69,6 @@ end
 
 
 ServerConnectSystem.RemovePlayer = function(self, _ip, _port)
-
-	if GameRunning then
-		return
-	end
 
 	Console.Print("ServerConnectSystem.RemovePlayer");
 	

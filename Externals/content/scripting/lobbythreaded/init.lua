@@ -1,18 +1,23 @@
-GameRunning = false;
-
-
 -- Components
 package.path = package.path .. ";../../../Externals/content/scripting/lobbythreaded/components/?.lua"
 require "components"
-require "interfacecomponents"
 require "buttoncomponents"
+require "menucomponents"
+require "servercomponents"
+
+package.path = package.path .. ";../../../Externals/content/scripting/shared/components/?.lua"
+require "interfacecomponents"
+require "textrendercomponents"
+require "lightcomponents"
+require "cameracomponents"
+require "components"
 
 -- Systems
 package.path = package.path .. ";../../../Externals/content/scripting/lobbythreaded/systems/?.lua"
 
-require "sh_pickboxsystem"
-require "sh_buttonhoversystem"
-require "sh_buttonpressedsystem"
+--require "sh_pickboxsystem"
+--require "sh_buttonhoversystem"
+--require "sh_buttonpressedsystem"
 
 --if Server then
 	require "serverlobbysystem"
@@ -24,18 +29,40 @@ require "sh_buttonpressedsystem"
 	require "clientconnectsystem"
 --end
 
+package.path = package.path .. ";../../../Externals/content/scripting/lobbythreaded/systems/interfacesystems/?.lua"
+require "gameinterfacesystem"
+require "gamemenusystem"
+require "optionmenusystem"
+require "connectmenusystem"
+require "hostmenusystem"
+
+package.path = package.path .. ";../../../Externals/content/scripting/shared/systems/?.lua"
+require "pickboxsystem"
+require "hoversizesystem"
+require "addtexttotexturesystem"
+require "parentsystem"
+
 -- Templates
 package.path = package.path .. ";../../../Externals/content/scripting/lobbythreaded/templates/?.lua"
 require "templates"
 
+--worldCreator:AddSystemGroup()
+--worldCreator:AddSystemToCurrentGroup(PickBoxSystem)
+
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(ParentSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(PickBoxSystem)
-
 worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(ButtonPressedSystem)
-
+worldCreator:AddSystemToCurrentGroup(HoverSizeSystem)
 worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(ButtonHoverSystem)
+worldCreator:AddSystemToCurrentGroup(AddTextToTextureSystem)
+
+--worldCreator:AddSystemGroup()
+--worldCreator:AddSystemToCurrentGroup(ButtonPressedSystem)
+
+--worldCreator:AddSystemGroup()
+--worldCreator:AddSystemToCurrentGroup(ButtonHoverSystem)
 
 
 --if Server then
@@ -52,3 +79,14 @@ worldCreator:AddSystemToCurrentGroup(ButtonHoverSystem)
 	worldCreator:AddSystemGroup()
 	worldCreator:AddSystemToCurrentGroup(ClientConnectSystem)
 --end
+
+worldCreator:AddSystemGroup()	
+worldCreator:AddSystemToCurrentGroup(GameInterfaceSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(GameMenuSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(OptionMenuSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(ConnectMenuSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(HostMenuSystem)
