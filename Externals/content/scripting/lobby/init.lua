@@ -40,6 +40,7 @@ package.path = package.path .. ";../../../Externals/content/scripting/shared/sys
 require "pickboxsystem"
 require "hoversizesystem"
 require "addtexttotexturesystem"
+require "parentsystem"
 
 -- Templates
 package.path = package.path .. ";../../../Externals/content/scripting/lobby/templates/?.lua"
@@ -48,8 +49,9 @@ require "templates"
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(StartUpSystem)
 
+worldCreator:AddSystemToCurrentGroup(ParentSystem)
 worldCreator:AddSystemToCurrentGroup(PickBoxSystem)
-
+worldCreator:AddSystemToCurrentGroup(HoverSizeSystem)
 worldCreator:AddSystemToCurrentGroup(AddTextToTextureSystem)
 
 --if Server then
@@ -63,7 +65,6 @@ worldCreator:AddSystemToCurrentGroup(AddTextToTextureSystem)
 --end
 
 worldCreator:AddSystemToCurrentGroup(GameInterfaceSystem)
-worldCreator:AddSystemToCurrentGroup(HoverSizeSystem)
 worldCreator:AddSystemToCurrentGroup(GameMenuSystem)
 worldCreator:AddSystemToCurrentGroup(OptionMenuSystem)
 worldCreator:AddSystemToCurrentGroup(ConnectMenuSystem)

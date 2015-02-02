@@ -56,5 +56,8 @@ int main(int argc, char** argv)
 	delete(&ClientDatabase::GetInstance());
 	delete(&Logger::GetInstance());
 	
+#ifdef __IOS__
+    exit(0);
+#endif
 	return 0;
 }

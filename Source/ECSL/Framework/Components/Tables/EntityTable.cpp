@@ -48,6 +48,7 @@ void EntityTable::AddComponentTo(unsigned int _entityId, unsigned int _component
 
 void EntityTable::RemoveComponentFrom(unsigned int _entityId, unsigned int _componentTypeId)
 {
+	
 	BitSet::DataType* componentBitSet = (BitSet::DataType*)(m_dataTable->GetData(_entityId, 1));
 	unsigned int bitSetIndex = BitSet::GetBitSetIndex(_componentTypeId);
 	unsigned int bitIndex = BitSet::GetBitIndex(_componentTypeId);
@@ -59,6 +60,16 @@ void EntityTable::RemoveComponentFrom(unsigned int _entityId, unsigned int _comp
 	assert(componentBitSet[bitSetIndex] & ((BitSet::DataType)1 << bitIndex));
 
 	componentBitSet[bitSetIndex] &= ~((BitSet::DataType)1 << bitIndex);
+
+	//bool isEmpty = true;
+	//for (int n = 0; n < 2; ++n)
+	//if (componentBitSet[n] != 0)
+	//	isEmpty = false;
+
+	//if (isEmpty)
+	//{
+	//	printf("empty   entity %i, removed component %i\n", _entityId, _componentTypeId);
+	//}
 }
 
 bool EntityTable::EntityHasComponent(unsigned int _entityId, unsigned int _componentTypeId)

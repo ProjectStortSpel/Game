@@ -10,7 +10,7 @@ using namespace Network;
 ClientNetwork::ClientNetwork()
 	: BaseNetwork()
 {
-	m_outgoingPort = new int(6112);
+	m_outgoingPort = new int(5939);
 	m_remoteAddress = new std::string("127.0.0.1");
 	m_socketBound = new bool(false);
 
@@ -153,7 +153,7 @@ bool ClientNetwork::Connect()
 		return false;
 	}
 
-	m_socket->SetTimeoutDelay(5000);
+	//m_socket->SetTimeoutDelay(5000);
 	m_socket->SetNonBlocking(false);
 	m_socket->SetNoDelay(true);
 

@@ -107,7 +107,7 @@ end
 
 OnPlayerConnectedSystem.OnPlayerDisconnected = function(self, _ip, _port, _message)
 
-	local entities = self:GetEntities();
+	local entities = self:GetEntities("Player");
 	local foundPlayer = false
 	local isSpectator = false
 	
