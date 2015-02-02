@@ -99,7 +99,7 @@ NewCameraSystem.DoCIP = function(self, entityId)
 	self.Camera:MoveToAndLookAt(	self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
 									self.CameraUpX,0,self.CameraUpZ,
 									self.CameraLookAtX,0.5,self.CameraLookAtZ,
-									1)
+									0.5)
 end
 
 NewCameraSystem.DoFreeCam = function(self, dt)
