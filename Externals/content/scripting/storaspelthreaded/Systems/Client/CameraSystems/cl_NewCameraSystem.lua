@@ -20,107 +20,32 @@ NewCameraSystem.Initialize = function(self)
 	
 	--	Toggle EntitiesAdded
 	self:UsingUpdate()
-	
+	self:UsingEntitiesAdded()
+
 	--	Set Filter
-	self:AddComponentTypeToFilter("CameraSystemComponent", FilterType.Mandatory)
+	self:AddComponentTypeToFilter("CameraSystemComponent", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("CameraInterestPoint", FilterType.RequiresOneOf)
+end
+
+NewCameraSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+	for n = 1, #entities do
+		if world:EntityHasComponent(entities[n], "CameraSystemComponent") then
+			self.FreeCam = not self.FreeCam
+		end
+		if world:EntityHasComponent(entities[n], "CameraInterestPoint") then
+			if self.FreeCam == false then
+				self:DoCIP(entities[n])
+			end
+		end
+		world:KillEntity(entities[n])
+	end
 end
 
 NewCameraSystem.Update = function(self, dt, taskIndex, taskCount)
-	if world:EntityHasComponent(self.TouchScreen, "OnPickBoxHit") then
-		local move = false
-		local mX, mY = graphics:GetTouchPosition()
-		local aspectX, aspectY = graphics:GetAspectRatio()
-		local rX = mX * aspectX * 2
-		local rY = mY * aspectY * 2
-		
-		aspectX = aspectY / aspectX
-		
-		if Input.GetTouchState(0) == InputState.Pressed  then
-			self.Pressed = true
-			self.Moved = false
-			self.mouseX, self.mouseY = graphics:GetTouchPosition()	
-			local rposition = self:GetComponent(self.TouchSprite1, "Position", 0)
-			rposition:SetFloat3(rX, rY, -1)	
-			local rposition = self:GetComponent(self.TouchScreen, "Position", 0)
-			rposition:SetFloat3(0, 0, -0.10001)					
-		end
-		if Input.GetTouchState(0) == InputState.Down and self.Pressed == true then
-			local dX = mX - self.mouseX
-			local dZ = mY - self.mouseY
-			local x, y, z = self.Camera:GetPosition()
-			if dX > 0.02 * aspectX then
-				self.CameraLookAtX = self.CameraLookAtX - dt * dX * 25 * self.CameraUpZ
-				self.CameraLookAtZ = self.CameraLookAtZ + dt * dX * 25 * self.CameraUpX
-				move = true                                    
-			end                                                
-			if dX < -0.02 * aspectX then                       
-				self.CameraLookAtX = self.CameraLookAtX - dt * dX * 25 * self.CameraUpZ
-				self.CameraLookAtZ = self.CameraLookAtZ + dt * dX * 25 * self.CameraUpX
-				move = true                                    
-			end                                                
-			if dZ > 0.02 then                                  
-				self.CameraLookAtX = self.CameraLookAtX + dt * dZ * 25 * self.CameraUpX
-				self.CameraLookAtZ = self.CameraLookAtZ + dt * dZ * 25 * self.CameraUpZ
-				move = true                                    
-			end                                                
-			if dZ < -0.02 then                                 
-				self.CameraLookAtX = self.CameraLookAtX + dt * dZ * 25 * self.CameraUpX
-				self.CameraLookAtZ = self.CameraLookAtZ + dt * dZ * 25 * self.CameraUpZ
-				move = true
-			end
-
-			if move == true then
-				self.Moved = true
-				self.Camera:SetPosition(self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5, y, self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5)
-			end
-			local rposition = self:GetComponent(self.TouchSprite2, "Position", 0)
-			rposition:SetFloat3(rX, rY, -1)	
-		end
-		if Input.GetTouchState(0) == InputState.Released and self.Pressed == true then
-			self.Pressed = false
-			local rposition = self:GetComponent(self.TouchScreen, "Position", 0)
-			rposition:SetFloat3(0, 0, -100)
-			if self.Moved == false then
-				local x, y, z = self.Camera:GetPosition()
-				
-				if mX > 0.5 - 0.1 * aspectX then
-					local temp = self.CameraUpX
-					self.CameraUpX = self.CameraUpZ
-					self.CameraUpZ = -1*temp
-					move = true
-				end
-				if mX < -0.5 + 0.1 * aspectX then
-					local temp = self.CameraUpX
-					self.CameraUpX = self.CameraUpZ*-1
-					self.CameraUpZ = temp
-					move = true
-				end
-				if mY > 0.5 - 0.1 then
-					self.CameraDistance = self.CameraDistance - 0.2
-					if self.CameraDistance < 0.4 then
-						self.CameraDistance = 0.4
-					end
-					move = true
-				end
-				if mY < -0.5 + 0.1 then
-					self.CameraDistance = self.CameraDistance + 0.2
-					if self.CameraDistance > 1.8 then
-						self.CameraDistance = 1.8
-					end
-					move = true
-				end
-				if move == true then
-					self.Camera:MoveToAndLookAt(self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
-												self.CameraUpX,0,self.CameraUpZ,
-												self.CameraLookAtX,-4.5,self.CameraLookAtZ,
-												0.5)
-				end	
-			end
-			local rposition = self:GetComponent(self.TouchSprite1, "Position", 0)
-			rposition:SetFloat3(0, 0, 1)
-			local rposition = self:GetComponent(self.TouchSprite2, "Position", 0)
-			rposition:SetFloat3(0, 0, 1)
-		end
+	if self.FreeCam == true then
+		self:DoFreeCam(dt)
+	else
+	
 	end
 end
 
@@ -136,7 +61,7 @@ NewCameraSystem.PostInitialize = function(self)
 	local rposition = self:GetComponent(self.TouchScreen, "Position", 0)
 	rposition:SetFloat3(0, 0, -100)		
 	local rscale = self:GetComponent(self.TouchScreen, "Scale", 0)
-	rscale:SetFloat3(1000, 1000, 1000)	
+	rscale:SetFloat3(200, 200, 200)	
 	local pickbox = self:GetComponent(self.TouchScreen, "PickBox", 0)
 	pickbox:SetFloat2(1.0, 1.0)
 	
@@ -171,3 +96,132 @@ NewCameraSystem.PostInitialize = function(self)
 									1)
 	
 end
+
+NewCameraSystem.DoCIP = function(self, entityId)
+
+	self.CameraUpX = self:GetComponent(entityId, "CameraInterestPoint", "UpX"):GetFloat(0)
+	self.CameraUpZ = self:GetComponent(entityId, "CameraInterestPoint", "UpZ"):GetFloat(0)
+	self.CameraLookAtX = self:GetComponent(entityId, "CameraInterestPoint", "AtX"):GetFloat(0)
+	self.CameraLookAtZ = self:GetComponent(entityId, "CameraInterestPoint", "AtZ"):GetFloat(0)
+	self.CameraDistance = self:GetComponent(entityId, "CameraInterestPoint", "Distance"):GetFloat(0)
+
+	self.Camera:MoveToAndLookAt(	self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
+									self.CameraUpX,0,self.CameraUpZ,
+									self.CameraLookAtX,0.5,self.CameraLookAtZ,
+									0.5)
+end
+
+NewCameraSystem.DoFreeCam = function(self, dt)
+	if world:EntityHasComponent(self.TouchScreen, "OnPickBoxHit") then
+		local move = false
+		local mX, mY = graphics:GetTouchPosition()
+		local aspectX, aspectY = graphics:GetAspectRatio()
+		local rX = mX * aspectX * 2
+		local rY = mY * aspectY * 2
+		
+		local deltaaspectX = aspectY / aspectX
+		if Input.GetTouchState(0) == InputState.Down and self.Pressed == true then
+			local dX = mX - self.mouseX
+			local dZ = mY - self.mouseY
+			local x, y, z = self.Camera:GetPosition()
+			if dX > 0.02 * deltaaspectX then
+				self.CameraLookAtX = self.CameraLookAtX - dt * dX * 25 * self.CameraUpZ
+				self.CameraLookAtZ = self.CameraLookAtZ + dt * dX * 25 * self.CameraUpX
+				move = true                                    
+			end                                                
+			if dX < -0.02 * deltaaspectX then                       
+				self.CameraLookAtX = self.CameraLookAtX - dt * dX * 25 * self.CameraUpZ
+				self.CameraLookAtZ = self.CameraLookAtZ + dt * dX * 25 * self.CameraUpX
+				move = true                                    
+			end                                                
+			if dZ > 0.02 then                                  
+				self.CameraLookAtX = self.CameraLookAtX + dt * dZ * 25 * self.CameraUpX
+				self.CameraLookAtZ = self.CameraLookAtZ + dt * dZ * 25 * self.CameraUpZ
+				move = true                                    
+			end                                                
+			if dZ < -0.02 then                                 
+				self.CameraLookAtX = self.CameraLookAtX + dt * dZ * 25 * self.CameraUpX
+				self.CameraLookAtZ = self.CameraLookAtZ + dt * dZ * 25 * self.CameraUpZ
+				move = true
+			end
+
+			if move == true then
+				local rposition = self:GetComponent(self.TouchScreen, "Position", 0)
+				rposition:SetFloat3(0, 0, -0.1001)
+				local rposition = self:GetComponent(self.TouchSprite1, "Position", 0)
+				rposition:SetFloat3(self.mouseX * aspectX * 2, self.mouseY * aspectY * 2, -1)			
+				self.Moved = true
+				self.Camera:SetPosition(self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5, y, self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5)
+			end
+			local rposition = self:GetComponent(self.TouchSprite2, "Position", 0)
+			rposition:SetFloat3(rX, rY, -1)		
+		end
+		if Input.GetTouchState(0) == InputState.Released and self.Pressed == true then
+			self.Pressed = false
+			local rposition = self:GetComponent(self.TouchScreen, "Position", 0)
+			rposition:SetFloat3(0, 0, -100)
+			if self.Moved == false then
+				local x, y, z = self.Camera:GetPosition()
+				
+				if mX > 0.5 - 0.1 * deltaaspectX then
+					local temp = self.CameraUpX
+					self.CameraUpX = self.CameraUpZ
+					self.CameraUpZ = -1*temp
+					move = true
+				end
+				if mX < -0.5 + 0.1 * deltaaspectX then
+					local temp = self.CameraUpX
+					self.CameraUpX = self.CameraUpZ*-1
+					self.CameraUpZ = temp
+					move = true
+				end
+				if mY > 0.5 - 0.1 then
+					self.CameraDistance = self.CameraDistance - 0.2
+					if self.CameraDistance < 0.4 then
+						self.CameraDistance = 0.4
+					end
+					move = true
+				end
+				if mY < -0.5 + 0.1 then
+					self.CameraDistance = self.CameraDistance + 0.2
+					if self.CameraDistance > 1.8 then
+						self.CameraDistance = 1.8
+					end
+					move = true
+				end
+				if move == true then
+					self.Camera:MoveToAndLookAt(self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
+												self.CameraUpX,0,self.CameraUpZ,
+												self.CameraLookAtX,-4.5,self.CameraLookAtZ,
+												0.5)
+				end	
+			end
+			local rposition = self:GetComponent(self.TouchSprite1, "Position", 0)
+			rposition:SetFloat3(0, 0, 1)
+			local rposition = self:GetComponent(self.TouchSprite2, "Position", 0)
+			rposition:SetFloat3(0, 0, 1)
+		end
+		if Input.GetTouchState(0) == InputState.Pressed  then
+			self.Pressed = true
+			self.Moved = false
+			self.mouseX, self.mouseY = graphics:GetTouchPosition()			
+		end
+	end
+end
+
+Net.Receive("Client.SendCIP", 
+	function(id, ip, port)
+		local entity = world:CreateNewEntity()
+		world:CreateComponentAndAddTo("CameraInterestPoint", entity)
+		local AtX = Net.ReadFloat(id)
+		local AtZ = Net.ReadFloat(id)
+		local UpX = Net.ReadFloat(id)
+		local UpZ = Net.ReadFloat(id)
+		local Distance = Net.ReadFloat(id)
+		world:GetComponent(entity, "CameraInterestPoint", "AtX"):SetFloat(AtX)
+		world:GetComponent(entity, "CameraInterestPoint", "AtZ"):SetFloat(AtZ)
+		world:GetComponent(entity, "CameraInterestPoint", "UpX"):SetFloat(UpX)
+		world:GetComponent(entity, "CameraInterestPoint", "UpZ"):SetFloat(UpZ)
+		world:GetComponent(entity, "CameraInterestPoint", "Distance"):SetFloat(Distance)
+	end 
+)

@@ -14,7 +14,6 @@ PickBoxSystem.Initialize = function(self)
 end
 
 PickBoxSystem.Update = function(self, dt, taskIndex, taskCount)
-
 	-- Fetch Aspect ratio from graphics:
 	local AspectX, AspectY = graphics:GetAspectRatio()
 
@@ -26,8 +25,8 @@ PickBoxSystem.Update = function(self, dt, taskIndex, taskCount)
 	local rY = tY * AspectY * -2
 	
 	local t = -10000000
-	local hitentity = nil
-	
+	local newhit = nil
+	local hit = false
 	
 	---- intersect section
 	local entities = self:GetEntities()
@@ -55,23 +54,37 @@ PickBoxSystem.Update = function(self, dt, taskIndex, taskCount)
 		local hitY = rY * Z
 		
 		-- check if pickbox is hit
-		local hit = false
 		if Z < 0.1 and Z > t then
 			if hitX > X-halfwidth and hitX < X+halfwidth then
 				if hitY > Y-halfheight and hitY < Y+halfheight then
 						hit = true
-						hitentity = entities[i]
+						newhit = entity
 						t = Z
 				end
 			end
 		end
-		if hit == false and world:EntityHasComponent(entities[i], "OnPickBoxHit") then
-			world:RemoveComponentFrom("OnPickBoxHit", entities[i])
+	end
+	if hit == true then
+		-- ADD OnPickBoxHit to newhit
+		if not world:EntityHasComponent(newhit, "OnPickBoxHit") then
+			world:CreateComponentAndAddTo("OnPickBoxHit", newhit)
 		end
-		
-		if hit == true and not world:EntityHasComponent(entities[i], "OnPickBoxHit") then
-			world:CreateComponentAndAddTo("OnPickBoxHit", entities[i])
+		-- Clear OnPickBoxHit from other entities
+		local entities = self:GetEntities("OnPickBoxHit")
+		for i = 1, #entities do
+			local entity = entities[i]
+			if entity ~= newhit then
+				if world:EntityHasComponent(entity, "OnPickBoxHit") then
+					world:RemoveComponentFrom("OnPickBoxHit", entity)
+				end
+			end
+		end
+	else
+		-- Clear OnPickBoxHit from entities
+		local entities = self:GetEntities("OnPickBoxHit")
+		for i = 1, #entities do
+			local entity = entities[i]
+			world:RemoveComponentFrom("OnPickBoxHit", entity)
 		end
 	end
 end
-
