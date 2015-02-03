@@ -145,7 +145,7 @@ ServerNetwork::ServerNetwork()
 	m_onPlayerDisconnected = new std::vector<NetEvent>();
 	m_onPlayerTimedOut = new std::vector<NetEvent>();
 
-	*m_incomingPort = 5939;
+	*m_incomingPort = 6112;
 
 	m_networkFunctions = new std::map < char, NetMessageHook >();
 
@@ -204,7 +204,7 @@ bool ServerNetwork::Start()
 	m_listenSocket->Bind(*m_incomingPort);
 	m_listenSocket->SetNoDelay(true);
 	//m_listenSocket->SetTimeoutDelay(1000);
-	m_listenSocket->SetNonBlocking(true);
+	//m_listenSocket->SetNonBlocking(true);
 
 	if (NET_DEBUG)
 	{
@@ -247,14 +247,17 @@ bool ServerNetwork::Stop()
 
 	m_receivePacketsThreads->clear();
 
+
 	if (*m_listenForConnectionsAlive)
 	{
 		*m_listenForConnectionsAlive = false;
+
+		if (m_listenSocket)
+			SAFE_DELETE(m_listenSocket);
+
 		m_listenForConnectionsThread->join();
 	}
 
-	if (m_listenSocket)
-		SAFE_DELETE(m_listenSocket);
 
 	for (auto it = m_connectedClients->begin(); it != m_connectedClients->end(); ++it)
 		SAFE_DELETE(it->second);
@@ -418,6 +421,12 @@ void ServerNetwork::ListenForConnections(void)
 	while (*m_listenForConnectionsAlive)
 	{
 		NetSleep(50);
+
+		if (!m_listenSocket)
+		{
+			m_listenForConnectionsAlive = false;
+			break;
+		}
 
 		ISocket* newConnection = m_listenSocket->Accept();
 		if (!newConnection)

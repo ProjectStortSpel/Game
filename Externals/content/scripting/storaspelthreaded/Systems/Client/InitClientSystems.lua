@@ -1,9 +1,12 @@
 --	Misc Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Client/MiscSystems/?.lua"
 require "cl_PlayerIndicatorSystem"
+require "cl_ClientNetworkMessageSystem"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(PlayerIndicatorSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(ClientNetworkMessageSystem)
 
 --	Interface Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Client/InterfaceSystems/?.lua"
@@ -11,6 +14,8 @@ require "cl_RconMenuSystem"
 require "cl_OptionsMenuSystem"
 require "cl_GameMenuSystem"
 require "cl_GameInterfaceSystem"
+require "cl_PickingTimerSystem"
+
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(RconMenuSystem)
@@ -20,6 +25,8 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(GameMenuSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(GameInterfaceSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(PickingTimerSystem)
 
 --	Card Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Client/CardSystems/?.lua"

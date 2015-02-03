@@ -2,18 +2,21 @@
 --	Map Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/MapSystems/?.lua"
 require "sv_CreateMapSystem"
-require "sv_CheckpointSystem"
 require "sv_RiverSystem"
 require "sv_VoidSystem"
+require "sv_CheckpointSystem"
+require "sv_FinishpointSystem"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CreateMapSystem)
 worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(CheckpointSystem)
-worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(RiverSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(VoidSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(CheckpointSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(FinishpointSystem)
 
 --	Light Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/LightSystems/?.lua"
@@ -24,10 +27,23 @@ worldCreator:AddSystemToCurrentGroup(DirectionalLightSystem)
 
 --	Player Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/PlayerSystems/?.lua"
-require "sv_PlayersSystem"
+require "sv_PlayerSystem"
+require "sv_UnitSystem"
 
 worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(PlayersSystem)
+worldCreator:AddSystemToCurrentGroup(PlayerSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(UnitSystem)
+
+-- AI Systems
+package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/AISystems/?.lua"
+require "sv_AICardPickingSystem"
+require "sv_AddAISystem"
+
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(AddAISystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(AICardPickingSystem)
 
 --	Move Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/MoveSystems/?.lua"
@@ -145,8 +161,7 @@ require "sv_TotemPoleSystem"
 require "sv_GameOverSystem"
 require "sv_ServerLobbySystem"
 require "sv_LogStartSystem"
-require "sv_FinishSystem"
-require "sv_OnPlayerConnectedSystem"
+require "sv_ServerNetworkMessageSystem"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(TotemPoleSystem)
@@ -161,10 +176,4 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ServerLobbySystem)
 
 worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(FinishSystem)
-
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(OnPlayerConnectedSystem)
-
-
-
+worldCreator:AddSystemToCurrentGroup(ServerNetworkMessageSystem)

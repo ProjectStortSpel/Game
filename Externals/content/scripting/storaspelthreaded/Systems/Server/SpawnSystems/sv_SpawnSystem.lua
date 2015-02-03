@@ -14,6 +14,8 @@ end
 
 SpawnSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 
+    print("hej")
+
 	for n = 1, #entities do
 		local entityId = entities[n]
 		local posComp = self:GetComponent(entityId, "Position", 0)

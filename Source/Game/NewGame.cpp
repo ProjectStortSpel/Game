@@ -9,8 +9,28 @@
 #include "Logger/Managers/Logger.h"
 #include "Game/Network/ClientDatabase.h"
 
+#ifdef __APPLE__
+#include "CoreFoundation/CoreFoundation.h"
+#endif
+
 int main(int argc, char** argv)
 {
+#ifdef __APPLE__
+    CFBundleRef mainBundle = CFBundleGetMainBundle();
+    CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
+    char path[PATH_MAX];
+    if (!CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)path, PATH_MAX))
+    {
+        // error!
+    }
+    CFRelease(resourcesURL);
+    
+    chdir(path);
+    std::cout << "Current Path: " << path << std::endl;
+#endif
+    
+    
+    
 #if defined(__OSX__) || defined(__IOS__)
     //signal(SIGPIPE, SIG_IGN);
 #endif

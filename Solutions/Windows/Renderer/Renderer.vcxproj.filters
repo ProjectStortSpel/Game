@@ -26,8 +26,11 @@
     <Filter Include="shaders\Skybox">
       <UniqueIdentifier>{48745db1-a16b-4f21-adbb-abc0e20759fb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="shaders\Forward">
+    <Filter Include="shaders\HighForward">
       <UniqueIdentifier>{52b4784c-8fe0-41cb-aa32-f1d8801126d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders\LowForward">
+      <UniqueIdentifier>{457af9ed-78d4-404b-938c-0b7d99941c34}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -61,6 +64,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Renderer\ModelExporter.h" />
     <ClInclude Include="..\..\..\Source\Renderer\TextRenderer.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\GraphicsHigh.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\GraphicsLow.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp">
@@ -88,6 +97,12 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Renderer\TextRenderer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Renderer\GraphicsHigh.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Renderer\GraphicsLow.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -143,14 +158,17 @@
     <None Include="..\..\..\Externals\content\shaders\skyboxShaderVS.glsl">
       <Filter>shaders\Skybox</Filter>
     </None>
-    <None Include="..\..\..\Externals\content\shaders\skyboxvs.glsl">
-      <Filter>shaders\Skybox</Filter>
-    </None>
     <None Include="..\..\..\Externals\content\shaders\VSForwardShader.glsl">
-      <Filter>shaders\Forward</Filter>
+      <Filter>shaders\HighForward</Filter>
     </None>
     <None Include="..\..\..\Externals\content\shaders\FSForwardShader.glsl">
-      <Filter>shaders\Forward</Filter>
+      <Filter>shaders\HighForward</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\lowFSForwardShader.glsl">
+      <Filter>shaders\LowForward</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\lowVSForwardShader.glsl">
+      <Filter>shaders\LowForward</Filter>
     </None>
   </ItemGroup>
 </Project>

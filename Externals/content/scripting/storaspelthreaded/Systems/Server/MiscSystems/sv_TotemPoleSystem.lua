@@ -44,26 +44,24 @@ TotemPoleSystem.CheckCheckPoints = function(self, targetCpId, totemId, playerNum
 	local checkPoints = self:GetEntities("Checkpoint")
 		for i = 1, #checkPoints do
 		
-		local cpId = world:GetComponent(checkPoints[i], "Checkpoint", "Number"):GetInt()
+			local cpId = world:GetComponent(checkPoints[i], "Checkpoint", "Number"):GetInt()
 			
-		-- If we found the correct checkpoint
+			-- Found the correct checkpoint
 			if cpId == targetCpId then
 			
+				-- Get the checkPoints' position
 				local cpPosX, cpPosZ = world:GetComponent(checkPoints[i], "MapPosition", 0):GetInt2()
+				-- Get the height of the current totempole
 				local height = world:GetComponent(totemId, "TotemPole", "Height"):GetInt()
-				print("Height: " .. height)
-				
-				print("Found the correct checkpoint")
+				-- Add a new piece
 				self.AddTotemPiece(self, playerNum, height, cpPosX, cpPosZ)
-				
 				world:SetComponent(totemId, "TotemPole", "Height", height + 1)
-				
 				return true
 			end
 			
 	end
-
-	print("No Check found")
+	
+	-- No checkpoint found
 	return false
 	
 end
@@ -71,27 +69,26 @@ end
 
 TotemPoleSystem.CheckFinishPoints = function(self, targetFpId, totemId, playerNum)
 
+	-- get all finishPoints and go through them
 	local finishPoints = self:GetEntities("Finishpoint")
 		for i = 1, #finishPoints do
 		
-		-- If we found the correct checkpoint
+			-- If we found the correct finishpoint
 			if finishPoints[i] == targetFpId then
 			
+				-- Get the finishpoints' position
 				local cpPosX, cpPosZ = world:GetComponent(finishPoints[i], "MapPosition", 0):GetInt2()
+				-- Get the height of the current totempole
 				local height = world:GetComponent(totemId, "TotemPole", "Height"):GetInt()
-				print("Height: " .. height)
-				
-				print("Found the correct finishPoint")
+				-- Add the new piece
 				self.AddTotemPiece(self, playerNum, height, cpPosX, cpPosZ)
-				
 				world:SetComponent(totemId, "TotemPole", "Height", height + 1)
-				
 				return true
 			end
 			
 	end
 
-	print("No Check found")
+	-- No finishpoint found
 	return false
 	
 end
@@ -100,22 +97,19 @@ TotemPoleSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entitie
 
 	for n = 1, #entities do
 		local entity = entities[n]
-		--print("TotemPoleSystem.OnEntityAdded")
-
+		-- If the entity is a "AddTotemPiece"
 		if world:EntityHasComponent(entity, "AddTotemPiece") then
 		
-			--print("OnEntityAdded New AddTotemPiece")
-		
+			-- Get the playerNumber and what checkpoint the piece should go with
 			local playerNum 	= world:GetComponent(entity, "PlayerNumber", 0):GetInt()
-			
 			local targetCpId	= world:GetComponent(entity, "CheckpointId", 0):GetInt()
+			-- Get all totempoles
 			local totemPoles 	= self:GetEntities("TotemPole")
 			local totemId		= -1
 			
-
-			
+			-- Go through all checkPoints and check if its id match with the totempole
 			for i = 1, #totemPoles do
-			
+				
 				local totemCpId = world:GetComponent(totemPoles[i], "CheckpointId", 0):GetInt()
 				if totemCpId == targetCpId then
 					totemId = totemPoles[i]
@@ -123,11 +117,10 @@ TotemPoleSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entitie
 				end
 			
 			end
-			
-			
+
+			-- If no match was found there does not exist an totempole for that checkpoint yet
+			-- Create it
 			if totemId == -1 then
-			
-				--print("No totemCpId match targetCpId: " .. targetCpId)
 			
 				local newTotemPole = world:CreateNewEntity()
 				world:CreateComponentAndAddTo("TotemPole", newTotemPole)
@@ -140,17 +133,11 @@ TotemPoleSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entitie
 			
 			end
 
-			--print("targetCpId: " .. targetCpId)
-			--print("totemPoles: " .. totemPoles)
-			--print("totemId: " .. totemId)
-			--print("playerNum: " .. playerNum)
-			
-			local success = self.CheckCheckPoints(self, targetCpId, totemId, playerNum)
+			-- Check if the totempole is for a checkpoint
+			local success = self:CheckCheckPoints(targetCpId, totemId, playerNum)
+			-- If not, it's for the finishpoint
 			if not success then
-				--print("No checkpoint found")
-				
-				self.CheckFinishPoints(self, targetCpId, totemId, playerNum)
-				
+				self:CheckFinishPoints(targetCpId, totemId, playerNum)	
 			end
 			
 		end
