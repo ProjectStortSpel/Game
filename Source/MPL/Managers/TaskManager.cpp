@@ -37,7 +37,7 @@ TaskManager& TaskManager::GetInstance()
 
 void TaskManager::CreateSlaves()
 {
-	m_slaveCount = SDL_GetCPUCount() - 4 > SDL_GetCPUCount() ? 0 : SDL_GetCPUCount() - 4;
+	m_slaveCount = (unsigned int)(SDL_GetCPUCount() - 4) > SDL_GetCPUCount() ? 0 : SDL_GetCPUCount() - 4;
 	/* Create slaves */
 	for (unsigned int i = 0; i < m_slaveCount; ++i)
 	{
