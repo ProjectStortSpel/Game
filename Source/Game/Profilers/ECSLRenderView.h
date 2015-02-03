@@ -16,7 +16,7 @@ namespace Profilers
 		std::string* text;
 		int x;
 		int y;
-		float height;
+		int height;
 
 		~TextEntry() { delete(text); }
 	};

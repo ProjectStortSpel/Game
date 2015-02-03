@@ -7,7 +7,7 @@ ButtonPressedSystem.Update = function(self, dt)
 		-- TODO gör så att de bara går att selecta i selection phase
 		local pressedButtons = self:GetEntities("OnPickBoxHit")
 		if #pressedButtons > 0 then
-			
+
 			local pressedButton = pressedButtons[1]
 			local buttonCommands = self:GetEntities("ButtonCommand")
 			
@@ -43,7 +43,7 @@ ButtonPressedSystem.Initialize = function(self)
 end
 
 ButtonPressedSystem.CreateButton = function(self, object, folder, posx, posy)
-	
+	LogWorldData()
 	local id = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("Model", id)
 	world:CreateComponentAndAddTo("Position", id)

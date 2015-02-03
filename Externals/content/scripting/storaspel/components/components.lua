@@ -70,7 +70,6 @@ HideComponent.SyncNetwork = true
 HideComponent.TableType = TableType.Map
 worldCreator:AddComponentType(HideComponent)
 
-
 --	Model Component
 local ModelComponent = ComponentType()
 ModelComponent.Name = "Model"

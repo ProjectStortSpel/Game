@@ -10,7 +10,7 @@ Simulation::Simulation(DataManager* _dataManager, SystemManager* _systemManager,
 	m_scheduler = new Scheduler(_dataManager, _systemManager, _messageManager);
 	m_scheduler->AddUpdateSystemsTasks();
 	m_scheduler->AddSortMessagesTask();
-	m_scheduler->AddMessagesRecievedTasks();
+	m_scheduler->AddMessagesReceivedTasks();
 	m_scheduler->AddDeleteMessagesTask();
 	m_scheduler->AddCopyCurrentListsTask();
 	m_scheduler->AddUpdateEntityTableTask();
@@ -39,11 +39,11 @@ void Simulation::Update(float _dt)
 	/* Sort all messages sent by systems */
 	MPL::TaskId sortMessages = m_scheduler->ScheduleSortMessages(updateSystems);
 
-	/* Call MessagesRecieved() for each system that has atleast one message recieved */
-	MPL::TaskId messagesRecieved = m_scheduler->ScheduleMessagesRecieved(sortMessages);
+	/* Call MessagesReceived() for each system that has atleast one message received */
+	MPL::TaskId messagesReceived = m_scheduler->ScheduleMessagesReceived(sortMessages);
 
 	/* Delete all messages */
-	MPL::TaskId deleteMessages = m_scheduler->ScheduleDeleteMessages(messagesRecieved);
+	MPL::TaskId deleteMessages = m_scheduler->ScheduleDeleteMessages(messagesReceived);
 
 	/* Copy all entity and component changes to new lists */
 	MPL::TaskId copyCurrentLists = m_scheduler->ScheduleCopyCurrentLists(deleteMessages);
@@ -60,7 +60,7 @@ void Simulation::Update(float _dt)
 	/* Call EntitiesRemoved for each system that has atleast one newly removed entity */
 	MPL::TaskId entitiesRemoved = m_scheduler->ScheduleEntitiesRemoved(entitiesAdded);
 
-	/* Clear all the used lists in Scheduler (used for entitiesAdded and entitiesRemoved) */
+	/* Clear all the used lists in Scheduler */
 	MPL::TaskId clearSystemEntityChangeLists = m_scheduler->ScheduleClearSystemEntityChangeLists(entitiesRemoved);
 
 	/* Delete component data */

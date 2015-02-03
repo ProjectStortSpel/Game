@@ -18,21 +18,24 @@ PlayCardSystem.OnEntityAdded = function(self, entity)
 
 		if card then
 			local unit = world:GetComponent( card, "CardStep", "UnitEntityId"):GetInt()
-
+			
 			local time = 0
 			
 			if not world:EntityHasComponent( unit, "UnitDead" ) then
 				
-				local plyNum = world:GetComponent( unit, "PlayerNumber", "Number" ):GetInt()
-				local action = world:GetComponent( card, "CardAction", "Action"):GetString()
+				if world:EntityHasComponent( unit, "Unit" ) then
 
-				local file = File.Append("gamelog.txt")
-				File.WriteLine(file, "PlayCard " .. plyNum .. " " .. action)
-				File.Close(file)
+					local plyNum = world:GetComponent( unit, "PlayerNumber", "Number" ):GetInt()
+					local action = world:GetComponent( card, "CardAction", "Action"):GetString()
+					local file = File.Append("gamelog.txt")
+					File.WriteLine(file, "PlayCard " .. plyNum .. " " .. action)
+					File.Close(file)
 
-				local cardAction = "Unit" .. action
-				world:CreateComponentAndAddTo(cardAction, unit)
-				time = 1.5
+					local cardAction = "Unit" .. action
+					world:CreateComponentAndAddTo(cardAction, unit)
+					time = 1.5
+				
+				end
 			end
 
 			world:RemoveComponentFrom("CardStep", card)

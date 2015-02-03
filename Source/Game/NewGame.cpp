@@ -6,7 +6,7 @@
 #endif
 #endif
 
-#include "Logger/Logger.h"
+#include "Logger/Managers/Logger.h"
 #include "Game/Network/ClientDatabase.h"
 
 int main(int argc, char** argv)
@@ -37,5 +37,8 @@ int main(int argc, char** argv)
 	delete(&ClientDatabase::GetInstance());
 	delete(&Logger::GetInstance());
 	
+#ifdef __IOS__
+    exit(0);
+#endif
 	return 0;
 }

@@ -1,6 +1,6 @@
 #include "ClientDatabase.h"
 #include "Game/NetworkInstance.h"
-#include "Game/Logger/Logger.h"
+#include "Logger/Managers/Logger.h"
 
 ClientDatabase& ClientDatabase::GetInstance()
 {
@@ -14,9 +14,13 @@ ClientDatabase::ClientDatabase()
 	Logger::GetInstance().AddGroup("MasterServer", false);
 
 	m_client.SetMaxTimeOutIntervall(5);
-	m_client.SetMaxTimeOutCounter(2);
+	m_client.SetMaxTimeOutCounter(4);
 
-	
+
+    Network::NetEvent event = std::bind(&ClientDatabase::OnDisconnected, this, std::placeholders::_1, std::placeholders::_2);
+    
+    m_client.SetOnDisconnectedFromServer(event);
+    m_client.SetOnTimedOutFromServer(event);
 
 
 }
@@ -27,12 +31,12 @@ ClientDatabase::~ClientDatabase()
 
 bool ClientDatabase::Connect()
 {
-	m_client.SetTimeOutValue(1000);
+	//m_client.SetTimeOutValue(10000);
 
 	if (!m_connected)
 		m_connected = m_client.Connect(m_ipAddress.c_str(), m_password.c_str(), m_remotePort, m_localPort);
 
-	m_client.SetTimeOutValue(0);
+	//m_client.SetTimeOutValue(0);
 
 	return m_connected;
 }

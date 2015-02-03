@@ -110,7 +110,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProfileGuidedDatabase>$(OutDir)$(TargetName).pgd</ProfileGuidedDatabase>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;glew32s.lib;lua53.lib;Input_$(PlatformTarget)d.lib;Network_$(PlatformTarget)d.lib;MPL_$(PlatformTarget)d.lib;ECSL_$(PlatformTarget)d.lib;Renderer_$(PlatformTarget)d.lib;LuaEmbedder_$(PlatformTarget)d.lib;Console_$(PlatformTarget)d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;glew32s.lib;lua53.lib;Input_$(PlatformTarget)d.lib;Network_$(PlatformTarget)d.lib;MPL_$(PlatformTarget)d.lib;ECSL_$(PlatformTarget)d.lib;Renderer_$(PlatformTarget)d.lib;LuaEmbedder_$(PlatformTarget)d.lib;Console_$(PlatformTarget)d.lib;Logger_$(PlatformTarget)d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
@@ -135,7 +135,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProfileGuidedDatabase>$(OutDir)$(TargetName).pgd</ProfileGuidedDatabase>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;glew32s.lib;lua53.lib;Input_$(PlatformTarget)d.lib;Network_$(PlatformTarget)d.lib;MPL_$(PlatformTarget)d.lib;ECSL_$(PlatformTarget)d.lib;Renderer_$(PlatformTarget)d.lib;LuaEmbedder_$(PlatformTarget)d.lib;Console_$(PlatformTarget)d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;glew32s.lib;lua53.lib;Input_$(PlatformTarget)d.lib;Network_$(PlatformTarget)d.lib;MPL_$(PlatformTarget)d.lib;ECSL_$(PlatformTarget)d.lib;Renderer_$(PlatformTarget)d.lib;LuaEmbedder_$(PlatformTarget)d.lib;Console_$(PlatformTarget)d.lib;Logger_$(PlatformTarget)d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
@@ -162,7 +162,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
       <OptimizeReferences>true</OptimizeReferences>
       <ProfileGuidedDatabase>$(OutDir)$(TargetName).pgd</ProfileGuidedDatabase>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;glew32s.lib;lua53.lib;Input_$(PlatformTarget).lib;Network_$(PlatformTarget).lib;MPL_$(PlatformTarget).lib;ECSL_$(PlatformTarget).lib;Renderer_$(PlatformTarget).lib;LuaEmbedder_$(PlatformTarget).lib;Console_$(PlatformTarget).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;glew32s.lib;lua53.lib;Input_$(PlatformTarget).lib;Network_$(PlatformTarget).lib;MPL_$(PlatformTarget).lib;ECSL_$(PlatformTarget).lib;Renderer_$(PlatformTarget).lib;LuaEmbedder_$(PlatformTarget).lib;Console_$(PlatformTarget).lib;Logger_$(PlatformTarget).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
@@ -189,7 +189,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
       <OptimizeReferences>true</OptimizeReferences>
       <ProfileGuidedDatabase>$(OutDir)$(TargetName).pgd</ProfileGuidedDatabase>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;glew32s.lib;lua53.lib;Input_$(PlatformTarget).lib;Network_$(PlatformTarget).lib;MPL_$(PlatformTarget).lib;ECSL_$(PlatformTarget).lib;Renderer_$(PlatformTarget).lib;LuaEmbedder_$(PlatformTarget).lib;Console_$(PlatformTarget).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;glew32s.lib;lua53.lib;Input_$(PlatformTarget).lib;Network_$(PlatformTarget).lib;MPL_$(PlatformTarget).lib;ECSL_$(PlatformTarget).lib;Renderer_$(PlatformTarget).lib;LuaEmbedder_$(PlatformTarget).lib;Console_$(PlatformTarget).lib;Logger_$(PlatformTarget).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
@@ -201,7 +201,6 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClCompile Include="..\..\..\Source\Game\FrameCounter\FrameCounter.cpp" />
     <ClCompile Include="..\..\..\Source\Game\GameConsole.cpp" />
     <ClCompile Include="..\..\..\Source\Game\GameCreator.cpp" />
-    <ClCompile Include="..\..\..\Source\Game\Logger\Logger.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\Console\LuaConsole.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponent.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponentType.cpp" />
@@ -250,7 +249,6 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClInclude Include="..\..\..\Source\Game\FrameCounter\FrameCounter.h" />
     <ClInclude Include="..\..\..\Source\Game\GameConsole.h" />
     <ClInclude Include="..\..\..\Source\Game\GameCreator.h" />
-    <ClInclude Include="..\..\..\Source\Game\Logger\Logger.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Console\LuaConsole.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponent.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponentType.h" />
@@ -317,6 +315,67 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <None Include="..\..\..\Externals\content\scripting\storaspel\components\phasecomponents.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\components\playercomponents.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\init.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\client\camerasystems\cl_newcamerasystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\client\cardsystems\cl_cardaddmodelsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\client\cardsystems\cl_cardhoversystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\client\cardsystems\cl_cardpositionsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\client\cardsystems\cl_cardpositionsystem2.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\client\cardsystems\cl_cardprintselectionsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\client\cardsystems\cl_cardselectsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\client\cardsystems\cl_givecardindexsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\client\cardsystems\cl_sendselectedcardssystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\client\cardsystems\cl_sortcardindexsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\client\cardsystems\cl_sortselectedcardssystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\client\cl_lobbysystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\client\cl_pickingtimersystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\client\cl_playerdonevisualizersystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\client\cl_playerindicatorsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\client\interfacesystems\cl_gameinterfacesystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\client\interfacesystems\cl_gamemenusystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\client\interfacesystems\cl_hoversizesystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\client\interfacesystems\cl_optionmenusystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\client\interfacesystems\cl_rconmenusystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\OLD\sv_cardlogicsystem(old).lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\OLD\sv_cardlogicsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\OLD\sv_createspawnpointsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\OLD\sv_pickingphasesystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\OLD\sv_usernamesystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\pickboxsystems\sh_pickboxsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_abilitycardsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_addaisystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_aicardpickingsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_autopickcardssystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_cardpicktimersystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_checkpointsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_createdecksystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_dealcardssystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_directionallightsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_finishsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_gameoversystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_givespawnlocation.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_lobbysystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_mapsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_moveplayersystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_newstepsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_onplayerconnected.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_playcardsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_playcardtimersystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_playerssystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_postmovesystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_respawnsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_riversystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_spawnsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_startnewroundsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_steptimersystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_takecardsfromplayersystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_takecardstepsfromunitsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_totempolesystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_unitsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\server\sv_voidsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\shared\sh_lerpsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\shared\sh_movementsystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\shared\sh_moveplayersystem.lua" />
+    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\shared\sh_networkmessagessystem.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\templates\box.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\templates\lights.lua" />
     <None Include="..\..\..\Externals\content\scripting\storaspel\templates\map.lua" />

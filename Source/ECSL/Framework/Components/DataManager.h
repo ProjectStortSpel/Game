@@ -60,6 +60,7 @@ namespace ECSL
 		inline EntityTable* GetEntityTable() { return m_entityTable; }
 		inline ComponentTable* GetComponentTable(const std::string& _componentType) { return m_componentTables->at(ComponentTypeManager::GetInstance().GetTableId(_componentType)); }
 		inline ComponentTable* GetComponentTable(unsigned int _componentTypeId) { return m_componentTables->at(_componentTypeId); }
+		inline const std::vector<ComponentTable*>* GetComponentTables() { return m_componentTables; }
 		inline const std::map<unsigned int, EntityChange*>* GetEntityChanges() { return m_entityChangesCopy; }
 
 		inline bool HasComponent(unsigned int _entityId, unsigned int _componentTypeId){ return m_entityTable->HasComponent(_entityId, _componentTypeId); }
