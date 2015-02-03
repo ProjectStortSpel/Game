@@ -5,13 +5,13 @@ CameraNewRoundSystem.Initialize = function ( self )
 	self:SetName("CameraNewRoundSystem")
 	
 	--	Toggle EntitiesAdded
-	self:UsingEntitiesRemoved()
+	self:UsingEntitiesAdded()
 
 	--	Set Filter
 	self:AddComponentTypeToFilter("NewRound", FilterType.Mandatory)
 end
 
-CameraNewRoundSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
+CameraNewRoundSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 	local id = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("CameraOnPlayer", id)
 end
