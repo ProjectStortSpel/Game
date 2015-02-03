@@ -21,9 +21,6 @@ StartNewRoundSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, ent
 			
 			local numReadyUnits = #self:GetEntities("UnitSelectedCards")
 			local units = self:GetEntities("Unit")
-		
-			print("NumReadyUnits: " .. numReadyUnits)
-			print("NumUnits: " .. #units)
 
 			if numReadyUnits == #units then
 			
@@ -33,6 +30,15 @@ StartNewRoundSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, ent
 				for i = 1, #units do
 					world:RemoveComponentFrom("UnitSelectedCards", units[i])
 				end
+				
+				local newId = world:CreateNewEntity()
+				world:CreateComponentAndAddTo("SetPickingPhaseTimer", newId)
+				world:GetComponent(newId, "SetPickingPhaseTimer", "Amount"):SetFloat(0)
+				
+			elseif not world:EntityHasComponent(entity, "IsAI") then				
+				local newId = world:CreateNewEntity()
+				world:CreateComponentAndAddTo("AddToPickingPhaseTimer", newId)
+				world:GetComponent(newId, "AddToPickingPhaseTimer", "Amount"):SetFloat(-5)
 			end
 
 			world:KillEntity(entity)

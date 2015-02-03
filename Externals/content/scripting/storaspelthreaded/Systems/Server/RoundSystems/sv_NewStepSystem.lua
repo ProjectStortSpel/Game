@@ -18,10 +18,7 @@ NewStepSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 	for n = 1, #entities do
 		local entity = entities[n]
 		if world:EntityHasComponent( entity, "NewRound") then
-			print("\n\nNEW ROUND!")
-			--local file = File.Append("gamelog.txt")
-			--File.WriteLine(file, "NewRound")
-			--File.Close(file)
+			--print("\n\nNEW ROUND!")
 
 			self.Step = 1
 			local id = world:CreateNewEntity()
@@ -34,12 +31,7 @@ NewStepSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 				world:CreateComponentAndAddTo("PlayCard", id)
 				world:SetComponent(id, "PlayCard", "Step", self.Step)
 
-				print("\nNEW STEP: " .. self.Step)
-
-				--local file = File.Append("gamelog.txt")
-				--File.WriteLine(file, "NewStep " .. self.Step)
-				--File.Close(file)
-
+				--print("\nNEW STEP: " .. self.Step)
 
 				self.Step = self.Step + 1
 			else
@@ -55,6 +47,9 @@ NewStepSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 				world:CreateComponentAndAddTo("DealCards", id)
 				world:SetComponent(id, "DealCards", "NumCards", 5)
 
+				id = world:CreateNewEntity()
+				world:CreateComponentAndAddTo("RemoveEffects", id)
+				
 			end
 		end
 
