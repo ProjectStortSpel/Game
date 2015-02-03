@@ -1,6 +1,7 @@
 UnitSystem = System()
 UnitSystem.NextSlot = 1
 UnitSystem.FreeSlots = {}
+UnitSystem.FreeSlots.__mode = "k"
 
 UnitSystem.Initialize = function(self)
 	self:SetName("UnitSystem")
@@ -47,12 +48,11 @@ UnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 			
 			world:RemoveComponentFrom("NeedUnit", entity)
 			
-			local playerNumber
 			if #self.FreeSlots ~= 0 then
-				playerNumber = self.FreeSlots[1]
+				local playerNumber = self.FreeSlots[1]
 				table.remove(self.FreeSlots, 1)
 			else
-				playerNumber = self.NextSlot
+				local playerNumber = self.NextSlot
 				self.NextSlot = self.NextSlot + 1
 			end
 			
