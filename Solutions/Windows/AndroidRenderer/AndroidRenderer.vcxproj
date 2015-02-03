@@ -39,16 +39,18 @@
     <ClInclude Include="..\..\..\Source\AndroidRenderer\TextureLoader.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\Externals\content\shaders\AndroidForwardFS.glsl" />
-    <None Include="..\..\..\Externals\content\shaders\AndroidForwardVS.glsl" />
-    <None Include="..\..\..\Externals\content\shaders\AndroidFullscreenFS.glsl" />
-    <None Include="..\..\..\Externals\content\shaders\AndroidFullscreenVS.glsl" />
-    <None Include="..\..\..\Externals\content\shaders\AndroidShadowShaderFS.glsl" />
-    <None Include="..\..\..\Externals\content\shaders\AndroidShadowShaderVS.glsl" />
-    <None Include="..\..\..\Externals\content\shaders\AndroidSkyboxShaderFS.glsl" />
-    <None Include="..\..\..\Externals\content\shaders\AndroidSkyboxShaderVS.glsl" />
-    <None Include="..\..\..\Externals\content\shaders\AndroidViewspaceShaderFS.glsl" />
-    <None Include="..\..\..\Externals\content\shaders\AndroidViewspaceShaderVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidForwardFS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidForwardVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidFullscreenFS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidFullscreenVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidInterfaceFS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidInterfaceVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidShadowShaderFS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidShadowShaderVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidSkyboxShaderFS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidSkyboxShaderVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidViewspaceShaderFS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidViewspaceShaderVS.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{FB35D84C-BAE5-47E2-8A37-C81AE2184C76}</ProjectGuid>
