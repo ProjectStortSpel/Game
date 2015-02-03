@@ -23,8 +23,8 @@ BaseNetwork::BaseNetwork()
 
 	m_packetHandler = new PacketHandler();
 
-	m_maxTimeOutIntervall = new float(1.0f);
-	m_maxIntervallCounter = new int(5);
+	m_maxTimeOutIntervall = new float(5.0f);
+	m_maxIntervallCounter = new int(4);
 
 	m_totalDataReceived = new float(0);
 	m_totalDataSent = new float(0);

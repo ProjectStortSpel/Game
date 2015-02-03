@@ -27,10 +27,23 @@ worldCreator:AddSystemToCurrentGroup(DirectionalLightSystem)
 
 --	Player Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/PlayerSystems/?.lua"
-require "sv_PlayersSystem"
+require "sv_PlayerSystem"
+require "sv_UnitSystem"
 
 worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(PlayersSystem)
+worldCreator:AddSystemToCurrentGroup(PlayerSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(UnitSystem)
+
+-- AI Systems
+package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/AISystems/?.lua"
+require "sv_AICardPickingSystem"
+require "sv_AddAISystem"
+
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(AddAISystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(AICardPickingSystem)
 
 --	Move Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/MoveSystems/?.lua"

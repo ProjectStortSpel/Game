@@ -25,6 +25,13 @@ CardActionComponent.TableType = TableType.Map
 CardActionComponent:AddVariable("Action", ByteSize.Text)
 worldCreator:AddComponentType(CardActionComponent)
 
+-- Defines that the card is owned by an AI.
+-- AI Card Component
+local AICardComponent = ComponentType()
+AICardComponent.Name = "AICard"
+AICardComponent.TableType = TableType.Map
+worldCreator:AddComponentType(AICardComponent)
+
 -- Used Card Component
 local UsedCardComponent = ComponentType()
 UsedCardComponent.Name = "UsedCard"
