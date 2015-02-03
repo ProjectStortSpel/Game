@@ -31,4 +31,5 @@ HoverSizeSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("HoverSize", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Scale", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("OnPickBoxHit", FilterType.Mandatory)
+	self:LogWorldData()
 end

@@ -6,7 +6,7 @@ PickBoxSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Scale", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("PickBox", FilterType.Mandatory)
-	
+
 	print("PickBox System initialized!")
 end
 

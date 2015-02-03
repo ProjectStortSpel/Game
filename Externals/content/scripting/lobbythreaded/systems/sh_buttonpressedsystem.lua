@@ -5,7 +5,7 @@ ButtonPressedSystem.Initialize = function(self)
 	self:UsingUpdate()
 	self:AddComponentTypeToFilter("OnPickBoxHit", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("ButtonCommand", FilterType.RequiresOneOf)
-	
+
 	print("ButtonPressedSystem initialized!")
 end
 
@@ -46,7 +46,7 @@ ButtonPressedSystem.Update = function(self, dt, taskIndex, taskCount)
 end
 
 ButtonPressedSystem.CreateButton = function(self, object, folder, posx, posy)
-	
+
 	local id = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("Model", id)
 	world:CreateComponentAndAddTo("Position", id)

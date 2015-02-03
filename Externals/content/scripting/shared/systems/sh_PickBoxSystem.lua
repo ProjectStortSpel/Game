@@ -6,7 +6,7 @@ PickBoxSystem.Initialize = function(self)
 	
 	--	Toggle EntitiesAdded
 	self:UsingUpdate()
-	
+
 	--	Set Filter
 	self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("Scale", FilterType.Mandatory)
