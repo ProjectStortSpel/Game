@@ -162,6 +162,7 @@ require "sv_GameOverSystem"
 require "sv_ServerLobbySystem"
 require "sv_LogStartSystem"
 require "sv_ServerNetworkMessageSystem"
+require "sv_CameraInterestpointSystem"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(TotemPoleSystem)
@@ -177,3 +178,6 @@ worldCreator:AddSystemToCurrentGroup(ServerLobbySystem)
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ServerNetworkMessageSystem)
+
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(CameraInterestpointSystem)
