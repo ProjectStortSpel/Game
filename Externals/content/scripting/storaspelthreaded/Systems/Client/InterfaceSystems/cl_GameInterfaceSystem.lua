@@ -1,32 +1,35 @@
 GameInterfaceSystem = System()
+GameInterfaceSystem.Name = "GameInterface"
 
 GameInterfaceSystem.Initialize = function(self)
 	--	Set Name
-	self:SetName("GameInterfaceSystem")
+	self:SetName(self.Name.."System")
 	
 	--	Toggle EntitiesAdded
 	self:UsingUpdate()
 	
 	--	Set Filter
-	self:AddComponentTypeToFilter("InterfaceElement", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter(self.Name.."Element", FilterType.RequiresOneOf)
 end
 
 
 GameInterfaceSystem.PostInitialize = function(self)
-	local menubutton = self:CreateElement("gamemenubutton", "quad", 3, -2, -4, 0.2, 0.2)
+	local menubutton = self:CreateElement("gamemenubutton", "quad", 3.3, -1.4, -4, 0.35, 0.35)
 	self:AddEntityCommandToButton("GameMenu", menubutton)
 	self:AddHoverSize(1.5, menubutton)
-	
-	local rconbutton = self:CreateElement("gamemenubutton", "quad", 3.4, -2, -4, 0.2, 0.2)
+
+	local rconbutton = self:CreateElement("rconmenubutton", "quad", -3.3, -1.4, -4, 0.35, 0.35)
+	local rotation = self:GetComponent(rconbutton, "Rotation", 0)
 	self:AddEntityCommandToButton("RconMenu", rconbutton)
 	self:AddHoverSize(1.5, rconbutton)
 	
-	--print("ButtonPressedSystem post initialized!")
+	local camerabutton = self:CreateElement("camerabutton", "quad", 3.3, 1.4, -4, 0.35, 0.35)
+	self:AddEntityCommandToButton("CameraSystemComponent", camerabutton)
+	self:AddHoverSize(1.5, camerabutton)
 end
 
 GameInterfaceSystem.Update = function(self, dt, taskIndex, taskCount)
 	if Input.GetTouchState(0) == InputState.Released then
-
 		local pressedButtons = self:GetEntities("OnPickBoxHit")
 		if #pressedButtons > 0 then
 			local pressedButton = pressedButtons[1]
@@ -39,13 +42,8 @@ GameInterfaceSystem.Update = function(self, dt, taskIndex, taskCount)
 				local id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo(compname, id)
 			end
-		else
-			--self:RemoveMenu()
 		end
-		
 	end
-	
-
 end
 
 
@@ -56,7 +54,7 @@ GameInterfaceSystem.CreateElement = function(self, object, folder, posx, posy, p
 	world:CreateComponentAndAddTo("Rotation", id)
 	world:CreateComponentAndAddTo("Scale", id)
 	world:CreateComponentAndAddTo("PickBox", id)
-	world:CreateComponentAndAddTo("InterfaceElement", id)
+	world:CreateComponentAndAddTo(self.Name.."Element", id)
 	local model = self:GetComponent(id, "Model", 0)
 	model:SetModel(object, folder, 2)
 	local position = self:GetComponent(id, "Position", 0)
