@@ -26,7 +26,9 @@ void RenderSystem::Initialize()
 	AddComponentTypeToFilter("Scale",		ECSL::FilterType::Mandatory);
 	AddComponentTypeToFilter("Render",		ECSL::FilterType::Mandatory);
 
-	//AddComponentTypeToFilter("Hide",		ECSL::FilterType::Excluded);
+	//AddComponentTypeToFilter("Parent",		ECSL::FilterType::RequiresOneOf);
+
+	AddComponentTypeToFilter("Hide",		ECSL::FilterType::Excluded);
 
 
 	std::vector<unsigned int> bitsetComponents;
@@ -43,7 +45,8 @@ void RenderSystem::Initialize()
 	m_scaleId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Scale");
 	m_renderId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Render");
 	m_renderOffset = ECSL::ComponentTypeManager::GetInstance().GetComponentType(m_renderId)->GetVariables()->at("Mat").GetOffset();
-
+	m_parentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Parent");
+	m_isparentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("IsParent");
 }
 
 void RenderSystem::Update(const ECSL::RuntimeInfo& _runtime)
@@ -110,7 +113,16 @@ void RenderSystem::UpdateMatrix(unsigned int _entityId)
 	Scale		=	(float*)GetComponent(_entityId, m_scaleId, 0);
 	Matrix		=	(glm::mat4*)GetComponent(_entityId, m_renderId, m_renderOffset);
 
-	*Matrix = glm::translate(glm::vec3(Position[0], Position[1], Position[2]));
+	*Matrix = glm::mat4(1);
+	//CHECK IF IT HAS A PARENT
+	if (HasComponent(_entityId, m_parentId))
+	{
+		int* Parent = (int*)GetComponent(_entityId, m_parentId, 0);
+		//GET PARENT MATRIX
+		*Matrix = *(glm::mat4*)GetComponent(*Parent, m_renderId, m_renderOffset);
+	}
+
+	*Matrix *= glm::translate(glm::vec3(Position[0], Position[1], Position[2]));
 
 	Quaternion q_f;
 	Quaternion q_x;
@@ -130,4 +142,11 @@ void RenderSystem::UpdateMatrix(unsigned int _entityId)
 	*Matrix *= glm::scale(glm::vec3(Scale[0], Scale[1], Scale[2]));
 
 	ComponentHasChanged(_entityId, m_renderId);
+
+	// UPDATE CHIDRENS MATRIX
+	/*if (EntityHasComponent(_entityId, m_isparentId))
+	{
+		int* Parent = (int*)GetComponent(_entityId, m_parentId, 0);
+		auto children = *GetEntities(m_isparentId);
+	}*/
 }

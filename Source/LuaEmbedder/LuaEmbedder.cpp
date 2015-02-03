@@ -148,11 +148,18 @@ namespace LuaEmbedder
 
   bool Load(lua_State* L, const std::string& filepath)
   {
+<<<<<<< HEAD
     std::string source = LoadFile(filepath);
 	bool error = luaL_dostring(L, source.c_str());
 	if (error)
 	{
 		luaL_dofile(L, filepath.c_str());
+=======
+    //std::string source = LoadFile(filepath);
+    bool error = luaL_dofile(L, filepath.c_str());//luaL_dostring(L, source.c_str());
+    if (error)
+    {
+>>>>>>> b1f0ed893c06e50ef8ba7d12e57cb315cdec0438
       SDL_Log("LuaEmbedder::Load : %s", (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error"));
       return false;
     }

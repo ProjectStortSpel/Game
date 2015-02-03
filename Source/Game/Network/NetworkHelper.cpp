@@ -141,7 +141,7 @@ void NetworkHelper::WriteComponents(Network::PacketHandler* _ph, uint64_t _id, u
 
 Network::Packet* NetworkHelper::WriteEntityKill(Network::PacketHandler* _ph, unsigned int _e)
 {
-	printf("WriteEntityKill\n");
+	//printf("WriteEntityKill\n");
 
 	uint64_t id = _ph->StartPack("EntityKill");
 	_ph->WriteInt(id, _e);

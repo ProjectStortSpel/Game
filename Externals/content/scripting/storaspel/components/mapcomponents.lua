@@ -20,6 +20,7 @@ RiverComponent.Name = "River"
 RiverComponent.TableType = TableType.Map
 RiverComponent:AddVariable("DirX", ByteSize.Int)
 RiverComponent:AddVariable("DirZ", ByteSize.Int)
+RiverComponent:AddVariable("Speed", ByteSize.Int)
 worldCreator:AddComponentType(RiverComponent)
 
 -- Checkpoint Component
@@ -28,6 +29,12 @@ CheckpointComponent.Name = "Checkpoint"
 CheckpointComponent.TableType = TableType.Map
 CheckpointComponent:AddVariable("Number", ByteSize.Int)
 worldCreator:AddComponentType(CheckpointComponent)
+
+-- SlingShotComponent
+local SlingShotComponent = ComponentType()
+SlingShotComponent.Name = "SlingShotComponent"
+SlingShotComponent.TableType = TableType.Map
+worldCreator:AddComponentType(SlingShotComponent)
 
 -- Finishpoint Component
 local FinishpointComponent = ComponentType()

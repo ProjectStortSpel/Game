@@ -20,11 +20,11 @@ LinSocket::LinSocket()
 
 	Initialize();
 
-	*m_socket = socket(AF_INET, SOCK_STREAM, 0);
+	*m_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
     
 #if defined(__IOS__) || defined(__OSX__)
     int set = 1;
-    setsockopt(*m_socket, SOL_SOCKET, SO_NOSIGPIPE, (void *)&set, sizeof(int));
+    //setsockopt(*m_socket, SOL_SOCKET, SO_NOSIGPIPE, (void *)&set, sizeof(int));
 #endif
     
 	if (*m_socket != -1)
@@ -54,7 +54,7 @@ LinSocket::LinSocket(int _socket)
     
 #if defined(__IOS__) || defined(__OSX__)
     int set = 1;
-    setsockopt(*m_socket, SOL_SOCKET, SO_NOSIGPIPE, (void *)&set, sizeof(int));
+    //setsockopt(*m_socket, SOL_SOCKET, SO_NOSIGPIPE, (void *)&set, sizeof(int));
 #endif
     
 	if (*m_socket != -1)
@@ -83,7 +83,7 @@ LinSocket::LinSocket(int _domain, int _type, int _protocol)
     
 #if defined(__IOS__) || defined(__OSX__)
     int set = 1;
-    setsockopt(*m_socket, SOL_SOCKET, SO_NOSIGPIPE, (void *)&set, sizeof(int));
+    //setsockopt(*m_socket, SOL_SOCKET, SO_NOSIGPIPE, (void *)&set, sizeof(int));
 #endif
     
 	if (*m_socket != -1)
@@ -129,10 +129,10 @@ bool LinSocket::Connect(const char* _ip, const int _port)
 
 	memset(&address, '0', sizeof(address));
 
-	address.sin_family = AF_INET;
+	address.sin_family = PF_INET;
 	address.sin_port = htons(_port);
 
-	if (inet_pton(AF_INET, _ip, &address.sin_addr) <= 0)
+	if (inet_pton(PF_INET, _ip, &address.sin_addr) <= 0)
 	{
 		if (NET_DEBUG)
 			SDL_Log("Failed to get address info. Error: %s.\n", strerror(errno));
@@ -154,7 +154,7 @@ bool LinSocket::Connect(const char* _ip, const int _port)
 bool LinSocket::Bind(const int _port)
 {
 	sockaddr_in address;
-	address.sin_family = AF_INET;
+	address.sin_family = PF_INET;
 	address.sin_port = htons(_port);
 	address.sin_addr.s_addr = INADDR_ANY;
 

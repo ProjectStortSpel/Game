@@ -14,6 +14,7 @@ require "menucomponents"
 
 package.path = package.path .. ";../../../Externals/content/scripting/shared/components/?.lua"
 require "interfacecomponents"
+require "textrendercomponents"
 require "lightcomponents"
 require "cameracomponents"
 require "components"
@@ -31,7 +32,7 @@ if Server then
 	require "sv_aicardpickingsystem"
 	require "sv_onplayerconnected"
 	require "sv_playerssystem"
-    require "sv_aisystem"
+    require "sv_addaisystem"
 	require "sv_unitsystem"
 	require "sv_givespawnlocation"
 	--require "sv_createspawnpointsystem"
@@ -53,6 +54,7 @@ if Server then
 	require "sv_gameoversystem"
 	
 	require "sv_moveplayersystem"
+	require "sv_abilitycardsystem"
 
 	require "sv_steptimersystem"
 	require "sv_playcardtimersystem"
@@ -64,6 +66,8 @@ if Server then
 	require "sv_takecardstepsfromunitsystem"
 	
 	require "sv_directionallightsystem"
+	
+	require "sv_cameraipsystem"
 end
 
 
@@ -72,6 +76,8 @@ if Client then
 	package.path = package.path .. ";../../../Externals/content/scripting/shared/systems/?.lua"
 	require "pickboxsystem"
 	require "hoversizesystem"
+	require "addtexttotexturesystem"
+	require "parentsystem"
 
 	package.path = package.path .. ";../../../Externals/content/scripting/storaspel/systems/client/?.lua"
 	require "cl_lobbysystem"
@@ -133,10 +139,10 @@ if Server then
 	worldCreator:AddSystemToCurrentGroup(MapSystem)
 	--worldCreator:AddSystemToCurrentGroup(PlayerMovementSystem)
 
-	worldCreator:AddSystemToCurrentGroup(AiCardPickingSystem)
+	worldCreator:AddSystemToCurrentGroup(AICardPickingSystem)
 	worldCreator:AddSystemToCurrentGroup(OnPlayerConnectedSystem)
 	worldCreator:AddSystemToCurrentGroup(PlayersSystem)
-    worldCreator:AddSystemToCurrentGroup(AISystem)
+    worldCreator:AddSystemToCurrentGroup(AddAISystem)
 	worldCreator:AddSystemToCurrentGroup(UnitSystem)
 	worldCreator:AddSystemToCurrentGroup(GiveSpawnLocation)
 	--worldCreator:AddSystemToCurrentGroup(CreateSpawnpointSystem)
@@ -165,6 +171,9 @@ if Server then
 	worldCreator:AddSystemToCurrentGroup(TurnRightSystem)
 	worldCreator:AddSystemToCurrentGroup(MoveForwardSystem)
 	worldCreator:AddSystemToCurrentGroup(MoveBackwardSystem)
+	worldCreator:AddSystemToCurrentGroup(AbilitySprintSystem)
+	worldCreator:AddSystemToCurrentGroup(AbilityNudgeSystem)
+	worldCreator:AddSystemToCurrentGroup(AbilitySlingShotSystem)
 	worldCreator:AddSystemToCurrentGroup(TestMoveSystem)
 	
 	worldCreator:AddSystemToCurrentGroup(StepTimerSystem)
@@ -180,6 +189,7 @@ if Server then
 	worldCreator:AddSystemToCurrentGroup(UpdateCardPickTimer)
 	worldCreator:AddSystemToCurrentGroup(AutoPickCards)
 	
+	worldCreator:AddSystemToCurrentGroup(CameraInterestPointSystem)
 end
 
 if Client then
@@ -201,9 +211,11 @@ if Client then
 --worldCreator:AddSystemToCurrentGroup(ClientSendCardSystem)
 
 	worldCreator:AddSystemToCurrentGroup(NewCameraSystem)
-	
-	worldCreator:AddSystemToCurrentGroup(HoverSizeSystem)
+
+	worldCreator:AddSystemToCurrentGroup(ParentSystem)
 	worldCreator:AddSystemToCurrentGroup(PickBoxSystem)
+	worldCreator:AddSystemToCurrentGroup(HoverSizeSystem)
+	worldCreator:AddSystemToCurrentGroup(AddTextToTextureSystem)
 	
 	worldCreator:AddSystemToCurrentGroup(GameInterfaceSystem)
 	worldCreator:AddSystemToCurrentGroup(GameMenuSystem)

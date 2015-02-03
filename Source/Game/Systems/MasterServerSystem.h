@@ -13,12 +13,12 @@ public:
 	MasterServerSystem();
 	~MasterServerSystem();
 
-	void Update(float _dt);
+	void Update(const ECSL::RuntimeInfo& _runtime);
 	void Initialize();
 	void PostInitialize();
 
-	void OnEntityAdded(unsigned int _entityId);
-	void OnEntityRemoved(unsigned int _entityId);
+	void EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities);
+	void EntitiesRemoved(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities);
 
 private:
 	ClientDatabase* m_clientDatabase;

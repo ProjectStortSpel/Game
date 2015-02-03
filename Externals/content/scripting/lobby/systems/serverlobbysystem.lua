@@ -9,7 +9,7 @@ ServerLobbySystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Username", FilterType.Mandatory);
 	self:AddComponentTypeToFilter("NetConnection", FilterType.Mandatory);
 	
-	ServerLobbySystem.m_maxConnections = Net.MaxConnections();
+	self.m_maxConnections = Net.MaxConnections();
 end
 
 ServerLobbySystem.Update = function(self, dt)
@@ -19,16 +19,16 @@ ServerLobbySystem.Update = function(self, dt)
 	end
 	
 	if Net.IsRunning() then
-		ServerLobbySystem:UpdateServerOnline();
+		self:UpdateServerOnline();
 	else
-		--ServerLobbySystem:UpdateServerOffline();
+		--self:UpdateServerOffline();
 	end
 
 end
 
 ServerLobbySystem.UpdateServerOnline = function(self)
 
-	local text = "Server started. " .. tostring(ServerLobbySystem.m_noConnections) .. "/" .. tostring(ServerLobbySystem.m_maxConnections) .. " connected. Connected players are: ";	
+	local text = "Server started. " .. tostring(self.m_noConnections) .. "/" .. tostring(self.m_maxConnections) .. " connected. Connected players are: ";	
 	graphics:RenderSimpleText(text, 55, 5);
 	
 	local entities = self:GetEntities();
@@ -55,7 +55,7 @@ ServerLobbySystem.OnEntityAdded = function(self, entityId)
 		return
 	end
 
-	ServerLobbySystem.m_noConnections = ServerLobbySystem.m_noConnections + 1;
+	self.m_noConnections = self.m_noConnections + 1;
 end
 ServerLobbySystem.OnEntityRemoved = function(self, entityId)
 
@@ -63,5 +63,5 @@ ServerLobbySystem.OnEntityRemoved = function(self, entityId)
 		return
 	end
 
-	ServerLobbySystem.m_noConnections = ServerLobbySystem.m_noConnections - 1;
+	self.m_noConnections = self.m_noConnections - 1;
 end

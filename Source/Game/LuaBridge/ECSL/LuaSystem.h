@@ -42,6 +42,8 @@ namespace LuaBridge
 	int UsingEntitiesAdded(lua_State* L);
 	int UsingEntitiesRemoved(lua_State* L);
 
+	int LogWorldData(lua_State* L);
+
 	void OnBannedFromServer(Network::NetConnection _nc, const char* _message);
 	void OnConnectedToServer(Network::NetConnection _nc, const char* _message);
 	void OnDisconnectedFromServer(Network::NetConnection _nc, const char* _message);
