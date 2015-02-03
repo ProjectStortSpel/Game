@@ -18,6 +18,7 @@
 
 #include "LuaBridge/ECSL/LuaSystem.h"
 #include "LuaBridge/ECSL/LuaWorldCreator.h"
+#include "LuaBridge/Renderer/LuaGraphicDevice.h"
 
 #include "Logger/Managers/Logger.h"
 
@@ -143,7 +144,7 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	}
 	systemsAdded->clear();
 
-	LuaEmbedder::AddObject<Renderer::GraphicDevice>(m_clientLuaState, "GraphicDevice", m_graphics, "graphics");
+	LuaBridge::LuaGraphicDevice::SetGraphicDevice(m_graphics);
 
 	m_gameMode = _gameMode;
 
@@ -411,7 +412,7 @@ void GameCreator::Reload()
 	LuaEmbedder::AddBool("Client", client);
 	m_graphics->Clear();
 
-	LuaEmbedder::AddObject<Renderer::GraphicDevice>(m_clientLuaState, "GraphicDevice", m_graphics, "graphics");
+	LuaBridge::LuaGraphicDevice::SetGraphicDevice(m_graphics);
 
 	InitializeWorld(m_gameMode);
 	m_console->SetWorld(m_world);

@@ -35,7 +35,7 @@ ServerLobbySystem.UpdateServerOnline = function(self)
 	local entities = self:GetEntities();
 	for i = 1, #entities do
 		local username = self:GetComponent(entities[i], "Username", "Name");
-		graphics:RenderSimpleText("Player" .. tostring(i) .. ": " .. username:GetString(), 55, 6 + (i * 2));
+		GraphicDevice.RenderSimpleText("Player" .. tostring(i) .. ": " .. username:GetString(), 55, 6 + (i * 2));
 	end
 	
 	if Input.GetKeyState(Key.Return) == InputState.Pressed and Console.IsOpen() == false then

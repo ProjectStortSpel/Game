@@ -51,7 +51,9 @@ elseif(UNIX)
   else()
     set(UNIX_SYSTEM "i386")
   endif()
-
+  
+  add_definitions(-D_DEBUG)
+  
   # Define external libraries
   file(GLOB EXTERNAL_UNIX_SHARED_LIBRARIES
        "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Linux/${UNIX_SYSTEM}/*.so"
@@ -129,6 +131,9 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Network" Network)
 endif()
 if(NOT TARGET Renderer)
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Renderer" Renderer)
+endif()
+if(NOT TARGET Logger)
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Logger" Logger)
 endif()
 
 if(NOT TARGET Game)

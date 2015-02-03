@@ -20,27 +20,27 @@ package.path = package.path .. ";../../../Externals/content/scripting/lobbythrea
 --require "sh_buttonpressedsystem"
 
 --if Server then
-	require "serverlobbysystem"
-	require "serverconnectsystem"
+	require "ServerLobbySystem"
+	require "ServerConnectSystem"
 --end
 
 --if Client then
-	require "clientlobbysystem"
-	require "clientconnectsystem"
+	require "ClientLobbySystem"
+	require "ClientConnectSystem"
 --end
 
 package.path = package.path .. ";../../../Externals/content/scripting/lobbythreaded/systems/interfacesystems/?.lua"
-require "gameinterfacesystem"
-require "gamemenusystem"
-require "optionmenusystem"
-require "connectmenusystem"
-require "hostmenusystem"
+require "GameInterfaceSystem"
+require "GameMenuSystem"
+require "OptionMenuSystem"
+require "ConnectMenuSystem"
+require "HostMenuSystem"
 
 package.path = package.path .. ";../../../Externals/content/scripting/shared/systems/?.lua"
-require "pickboxsystem"
-require "hoversizesystem"
-require "addtexttotexturesystem"
-require "parentsystem"
+require "sh_PickboxSystem"
+require "sh_HoverSizeSystem"
+require "sh_AddTextToTextureSystem"
+require "sh_ParentSystem"
 
 -- Templates
 package.path = package.path .. ";../../../Externals/content/scripting/lobbythreaded/templates/?.lua"

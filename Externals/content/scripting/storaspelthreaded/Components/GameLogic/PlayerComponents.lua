@@ -68,3 +68,10 @@ PlayerCounterComponent:AddVariable("MaxPlayers", ByteSize.Int)
 PlayerCounterComponent:AddVariable("Players", ByteSize.Int)
 PlayerCounterComponent:AddVariable("Spectators", ByteSize.Int)
 worldCreator:AddComponentType(PlayerCounterComponent)
+
+-- NoSubSteps Component
+local NoSubStepsComponent = ComponentType()
+NoSubStepsComponent.Name = "NoSubSteps"
+NoSubStepsComponent.TableType = TableType.Map
+NoSubStepsComponent:AddVariable("Counter", ByteSize.Int)
+worldCreator:AddComponentType(NoSubStepsComponent)

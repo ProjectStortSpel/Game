@@ -14,20 +14,20 @@ AddTextToTextureSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, 
 		local R = self:GetComponent(entityId, "TextTexture", "R"):GetFloat(0)
 		local G = self:GetComponent(entityId, "TextTexture", "G"):GetFloat(0)
 		local B = self:GetComponent(entityId, "TextTexture", "B"):GetFloat(0)
-		local ratio = graphics:CreateTextTexture(N, Text, FontIndex, R, G, B)
+		local ratio = GraphicDevice.CreateTextTexture(N, Text, FontIndex, R, G, B)
 		local scalex, scaley, scalez = self:GetComponent(entityId, "Scale", 0):GetFloat3(0)
 		if scaley*ratio > scalex then
 			self:GetComponent(entityId, "Scale", 0):SetFloat3(scalex, scalex/ratio, scalez)
 		else
 			self:GetComponent(entityId, "Scale", 0):SetFloat3(scaley*ratio, scaley, scalez)
 		end
-		graphics:ChangeModelTexture(ModelId, N)
+		GraphicDevice.ChangeModelTexture(ModelId, N)
 		world:RemoveComponentFrom("TextTexture", entityId)
 	end
 end
 
 AddTextToTextureSystem.PostInitialize = function(self)
-	graphics:AddFont("content/fonts/verdanab.ttf", 72)
+	GraphicDevice.AddFont("content/fonts/verdanab.ttf", 72)
 end
 
 AddTextToTextureSystem.Initialize = function(self)

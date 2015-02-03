@@ -20,7 +20,7 @@ ClientLobbySystem.Update = function(self, dt, taskIndex, taskCount)
 	if Net.IsConnected() then
 	
 		local text = "Connected to server.";	
-		graphics:RenderSimpleText(text, 55, 5);
+		GraphicDevice.RenderSimpleText(text, 55, 5);
 	
 	end
 

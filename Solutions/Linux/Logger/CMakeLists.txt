@@ -2,13 +2,13 @@
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 # Project name
-project("ECSL")
+project("Logger")
 
 # Create shared library
-file(GLOB_RECURSE ESCL_SRC_FILES
-     ${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/ECSL/*.h
-     ${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/ECSL/*.cpp)
-add_library(ECSL SHARED ${ESCL_SRC_FILES})
+file(GLOB_RECURSE LOGGER_SRC_FILES
+     ${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/Logger/*.h
+     ${CMAKE_CURRENT_SOURCE_DIR}/../../../Source/Logger/*.cpp)
+add_library(Logger SHARED ${LOGGER_SRC_FILES})
 
 # Add subprojects
 #if(NOT TARGET Console)
@@ -20,19 +20,17 @@ add_library(ECSL SHARED ${ESCL_SRC_FILES})
 #if(NOT TARGET LuaEmbedder)
 #add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../LuaEmbedder" LuaEmbedder)
 #endif()
-if(NOT TARGET MPL)
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../MPL" MPL)
-endif()
+#if(NOT TARGET MPL)
+#add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../MPL" MPL)
+#endif()
 #if(NOT TARGET Network)
 #add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Network" Network)
 #endif()
-if(NOT TARGET Logger)
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Logger" Logger)
-endif()
+#if(NOT TARGET Renderer)
+#add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Renderer" Renderer)
+#endif()
 # Link subproject shared libraries
-target_link_libraries(ECSL
-		      MPL
-		      Logger)
+#target_link_libraries(Logger)
 
 if(WIN32)
   # Include directories
@@ -40,7 +38,7 @@ if(WIN32)
 		      "${CMAKE_CURRENT_SOURCE_DIR}/../../../Source")
 		      
   # Link external dynamic libraries
-  target_link_libraries(ECSL
+  target_link_libraries(Logger
 			${EXTERNAL_WINDOWS_DYNAMIC_LIBRARIES})
 elseif(UNIX)
   # Include directories
@@ -48,6 +46,6 @@ elseif(UNIX)
 		      "${CMAKE_CURRENT_SOURCE_DIR}/../../../Source")
 
   # Link external shared libraries
-  target_link_libraries(ECSL
+  target_link_libraries(Logger
 			${EXTERNAL_UNIX_SHARED_LIBRARIES})
 endif()

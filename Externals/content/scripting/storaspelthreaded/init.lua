@@ -28,7 +28,7 @@ require "InitSharedSystems" -- Add more client systems into InitSharedSystems.lu
 --	Shared Systems
 package.path = package.path .. ";../../../Externals/content/scripting/shared/systems/?.lua"
 require "sh_HoverSizeSystem" -- Add more components into InitComponents.lua instead of here!
-require "sh_PickBoxSystem" -- Add more components into InitComponents.lua instead of here!
+require "sh_PickboxSystem" -- Add more components into InitComponents.lua instead of here!
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(HoverSizeSystem)

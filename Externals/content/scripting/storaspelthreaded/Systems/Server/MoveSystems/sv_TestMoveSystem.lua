@@ -15,89 +15,86 @@ TestMoveSystem.Initialize = function(self)
 
 end
 
+TestMoveSystem.RecursiveMove = function(self, unitToMove, allUnits, allNonWalkables, posX, posZ, dirX, dirZ)
+
+	--	Check all obstacles
+	local	obstacleFound	=	false
+	for n = 1, #allNonWalkables do
+		local X, Z = world:GetComponent(allNonWalkables[n], "MapPosition", 0):GetInt2()
+		if X == posX and Z == posZ then
+			obstacleFound = true
+			break
+		end
+	end
+	
+	--	Check if collision occured
+	if obstacleFound then
+		return false
+	end
+	
+	--	Check all units
+	for n = 1, #allUnits do
+		local X, Z = world:GetComponent(allUnits[n], "MapPosition", 0):GetInt2()
+		if X == posX and Z == posZ then
+			if not self:RecursiveMove(allUnits[n], allUnits, allNonWalkables, posX+dirX, posZ+dirZ, dirX, dirZ) then
+				return false
+			end
+			break
+		end
+	end
+	
+	--	Check if recursive method has found obstacle (LUA <3)
+	if obstacleFound then
+		return false
+	end
+	
+	--	Move the unit
+	world:GetComponent(unitToMove, "MapPosition", 0):SetInt2(posX, posZ)	
+	
+	return true
+end
+
 TestMoveSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
-
-	for n = 1, #entities do
-		local entity = entities[n]
-		if world:EntityHasComponent( entity, "TestMove") then
+	
+	for newEntity = 1, #entities do
+		local entity = entities[newEntity]
+		if world:EntityHasComponent(entity, "TestMove") then
+		
+			local 	tUnits 			= 	self:GetEntities("Unit")
+			local 	tNonWalkables 	=	self:GetEntities("NotWalkable")
 			
-			local units = self:GetEntities("Unit")
-			local notWalkable = self:GetEntities("NotWalkable")
-
-			local unit = world:GetComponent(entity, "TestMove", "Unit"):GetInt()
-			local posX = world:GetComponent(entity, "TestMove", "PosX"):GetInt()
-			local posZ = world:GetComponent(entity, "TestMove", "PosZ"):GetInt()
-			local dirX = world:GetComponent(entity, "TestMove", "DirX"):GetInt()
-			local dirZ = world:GetComponent(entity, "TestMove", "DirZ"):GetInt()
-
-			local moveUnits = { }
+			local 	tUnit 	= 	world:GetComponent(entity, "TestMove", "Unit"):GetInt()
+			local 	tPosX 	= 	world:GetComponent(entity, "TestMove", "PosX"):GetInt()
+			local 	tPosZ 	= 	world:GetComponent(entity, "TestMove", "PosZ"):GetInt()
+			local 	tDirX 	= 	world:GetComponent(entity, "TestMove", "DirX"):GetInt()
+			local	tDirZ 	= 	world:GetComponent(entity, "TestMove", "DirZ"):GetInt()
+			local 	tSteps	= 	world:GetComponent(entity, "TestMove", "Steps"):GetInt()
 			
-			local X1, Z1 = posX, posZ
-
-			local bla = true
-
-			while bla do
-				
-				bla = false
-				for i = 1, #units do
-				
-					local X2, Z2 = world:GetComponent(units[i], "MapPosition", 0):GetInt2()
-
-					if X1 == X2 and Z1 == Z2 then
-					
-						moveUnits[#moveUnits + 1] = units[i]
-						X1 = X1 + dirX
-						Z1 = Z1 + dirZ
-						bla = true
-					end
-				end
-
-			end
-
-			local isWalkable = true
-			for i = 1, #notWalkable do
-				
-				local X2, Z2 = world:GetComponent(notWalkable[i], "MapPosition", 0):GetInt2()
-
-				if X1 == X2 and Z1 == Z2 then
-					
-					isWalkable = false
+			local	stepsTaken = 0;
+			for nStep = 1, tSteps do
+			
+				if self:RecursiveMove(tUnit, tUnits, tNonWalkables, tPosX+tDirX*(nStep-1), tPosZ+tDirZ*(nStep-1), tDirX, tDirZ) then
+					stepsTaken = stepsTaken + 1
+				else
 					break
-
 				end
-			end
-
-			if isWalkable then
 				
-				print("Push units: " .. #moveUnits)
-
-				for i = 1, #moveUnits do
-					
-					local mapPos = world:GetComponent(moveUnits[i], "MapPosition", 0)
-					local pos = world:GetComponent(moveUnits[i], "Position", 0)
-
-					local mapPosX, mapPosZ = mapPos:GetInt2()
-					local newPosX, newPosY, newPosZ = pos:GetFloat3()
-
-					mapPos:SetInt2(mapPosX + dirX, mapPosZ + dirZ)
-					--pos:SetFloat3(newPosX + dirX, newPosY, newPosZ + dirZ)
-
-				end
-
-				--local posY = world:GetComponent(unit, "Position", "Y"):GetFloat()
-				world:GetComponent(unit, "MapPosition", 0):SetInt2(posX, posZ)		
-				
-				--world:GetComponent(unit, "Position", 0):SetFloat3(posX, posY, posZ)
-
-
-				local id = world:CreateNewEntity()
-				world:CreateComponentAndAddTo("PostMove", id)
-
 			end
-
-
+			
+			world:SetComponent(tUnit, "NoSubSteps", "Counter", stepsTaken)
+			
+			--local cipID = Net.StartPack("Client.SendCIP")
+			--Net.WriteFloat(cipID, hestPosX)
+			--Net.WriteFloat(cipID, hestPosZ)
+			--Net.WriteFloat(cipID, dirX)
+			--Net.WriteFloat(cipID, dirZ)
+			--Net.WriteFloat(cipID, 0.5)
+			--Net.Broadcast(cipID)
+			local id = world:CreateNewEntity()
+			world:CreateComponentAndAddTo("PostMove", id)
+			
 			world:KillEntity(entity)
-
+			
 		end
 	end
 end
