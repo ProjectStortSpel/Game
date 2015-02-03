@@ -92,6 +92,7 @@ require "sv_ActionMoveBackwardSystem"
 require "sv_ActionTurnLeftSystem"
 require "sv_ActionTurnRightSystem"
 require "sv_ActionTurnAroundSystem"
+require "sv_ActionSlingshotAbilitySystem"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ActionMoveForwardSystem)
@@ -103,6 +104,8 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ActionTurnRightSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ActionTurnAroundSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(ActionSlingshotAbilitySystem)
 
 --	Spawn Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/SpawnSystems/?.lua"
