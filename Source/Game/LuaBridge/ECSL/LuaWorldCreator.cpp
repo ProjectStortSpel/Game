@@ -30,7 +30,7 @@ namespace LuaBridge
       LuaComponentType* componentType = LuaEmbedder::PullObject<LuaComponentType>(L, "ComponentType", 1);
       if (componentType)
       {
-	WorldCreator::AddComponentType(*componentType->CreateComponentType());
+		WorldCreator::AddComponentType(*componentType->CreateComponentType());
       }
     }
     return 0;

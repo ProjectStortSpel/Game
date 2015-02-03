@@ -247,15 +247,17 @@ bool ServerNetwork::Stop()
 
 	m_receivePacketsThreads->clear();
 
+
 	if (*m_listenForConnectionsAlive)
 	{
 		*m_listenForConnectionsAlive = false;
-        
-        if (m_listenSocket)
-            SAFE_DELETE(m_listenSocket);
-        
+
+		if (m_listenSocket)
+			SAFE_DELETE(m_listenSocket);
+
 		m_listenForConnectionsThread->join();
 	}
+
 
 	for (auto it = m_connectedClients->begin(); it != m_connectedClients->end(); ++it)
 		SAFE_DELETE(it->second);
@@ -419,13 +421,13 @@ void ServerNetwork::ListenForConnections(void)
 	while (*m_listenForConnectionsAlive)
 	{
 		NetSleep(50);
-        
-        if (!m_listenSocket)
-        {
-            *m_listenForConnectionsAlive = false;
-            break;
-        }
-        
+
+		if (!m_listenSocket)
+		{
+			m_listenForConnectionsAlive = false;
+			break;
+		}
+
 		ISocket* newConnection = m_listenSocket->Accept();
 		if (!newConnection)
 			continue;

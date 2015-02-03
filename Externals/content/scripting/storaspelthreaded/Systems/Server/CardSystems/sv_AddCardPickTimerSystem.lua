@@ -25,12 +25,20 @@ AddCardPickTimer.EntitiesAdded = function(self, dt, taskIndex, taskCount, entiti
 				
 				local deltaTime = world:GetComponent(entity, "AddToPickingPhaseTimer", "Amount"):GetFloat()
 				local oldTime = world:GetComponent(Timers[1], "PickingPhaseTimer", "Amount"):GetFloat()
+				local newTime = oldTime + deltaTime
 				
-				if oldTime - deltaTime > 10 then
-					world:GetComponent(Timers[1], "PickingPhaseTimer", "Timer"):SetFloat(oldTime - deltaTime)
-				elseif oldTime - deltaTime < 10 and oldTime > 10 then
-					world:GetComponent(Timers[1], "PickingPhaseTimer", "Timer"):SetFloat(10.0)
+				if newTime < 10 and oldTime > 10 then
+					newTime = 10
+				elseif oldTime < 10 then
+					newTime = oldTime
 				end
+				
+				world:GetComponent(Timers[1], "PickingPhaseTimer", "Timer"):SetFloat(newTime)
+				
+				local id = Net.StartPack("Client.SendPickingPhaseTimer")
+				Net.WriteFloat(id, newTime)
+				Net.Broadcast(id)
+				print(newTime)
 			end
 			
 			world:KillEntity(entity)

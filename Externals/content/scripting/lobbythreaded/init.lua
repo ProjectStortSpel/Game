@@ -19,16 +19,6 @@ package.path = package.path .. ";../../../Externals/content/scripting/lobbythrea
 --require "sh_buttonhoversystem"
 --require "sh_buttonpressedsystem"
 
---if Server then
-	require "ServerLobbySystem"
-	require "ServerConnectSystem"
---end
-
---if Client then
-	require "ClientLobbySystem"
-	require "ClientConnectSystem"
---end
-
 package.path = package.path .. ";../../../Externals/content/scripting/lobbythreaded/systems/interfacesystems/?.lua"
 require "GameInterfaceSystem"
 require "GameMenuSystem"
@@ -63,22 +53,6 @@ worldCreator:AddSystemToCurrentGroup(AddTextToTextureSystem)
 
 --worldCreator:AddSystemGroup()
 --worldCreator:AddSystemToCurrentGroup(ButtonHoverSystem)
-
-
---if Server then
-	worldCreator:AddSystemGroup()
-	--worldCreator:AddSystemToCurrentGroup(ButtonHoverSystem)
-	worldCreator:AddSystemToCurrentGroup(ServerLobbySystem)
-	worldCreator:AddSystemGroup()
-	worldCreator:AddSystemToCurrentGroup(ServerConnectSystem)
---end
-
---if Client then
-	worldCreator:AddSystemGroup()
-	worldCreator:AddSystemToCurrentGroup(ClientLobbySystem)
-	worldCreator:AddSystemGroup()
-	worldCreator:AddSystemToCurrentGroup(ClientConnectSystem)
---end
 
 worldCreator:AddSystemGroup()	
 worldCreator:AddSystemToCurrentGroup(GameInterfaceSystem)

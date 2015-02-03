@@ -1,16 +1,16 @@
 UnitSystem = System()
 UnitSystem.NextSlot = 1
 UnitSystem.FreeSlots = {}
+UnitSystem.FreeSlots.__mode = "k"
 
 UnitSystem.Initialize = function(self)
-	self:SetName("Unit System")
+	self:SetName("UnitSystem")
 	
 	--	Toggle EntitiesAdded
 	self:UsingEntitiesAdded()
 	
 	self:AddComponentTypeToFilter("NeedUnit", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("RemoveUnit", FilterType.RequiresOneOf)
-	--self:AddComponentTypeToFilter("PlayerCounter", FilterType.RequiresOneOf)
 end
 
 --UnitSystem.FindEmptyId = function(self)
@@ -41,17 +41,18 @@ end
 
 UnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 	
-	for i = 1, #entities do
-		if world:EntityHasComponent(entities[i], "NeedUnit") then
+	for n = 1, #entities do
+		local entity = entities[n]
+	
+		if world:EntityHasComponent(entity, "NeedUnit") then
 			
-			world:RemoveComponentFrom("NeedUnit", entities[i])
+			world:RemoveComponentFrom("NeedUnit", entity)
 			
-			local playerNumber
 			if #self.FreeSlots ~= 0 then
-				playerNumber = self.FreeSlots[1]
+				local playerNumber = self.FreeSlots[1]
 				table.remove(self.FreeSlots, 1)
 			else
-				playerNumber = self.NextSlot
+				local playerNumber = self.NextSlot
 				self.NextSlot = self.NextSlot + 1
 			end
 			
@@ -62,35 +63,32 @@ UnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 			world:SetComponent(newEntityId, "Model", "RenderType", 0);
 			
 			world:SetComponent(newEntityId, "PlayerNumber", "Number", playerNumber)
-			world:SetComponent(newEntityId, "PlayerEntityId", "Id", entities[i])
+			world:SetComponent(newEntityId, "PlayerEntityId", "Id", entity)
 			world:SetComponent(newEntityId, "TargetCheckpoint", "Id", 1)
 			world:GetComponent(newEntityId, "Direction", 0):SetInt2(0, -1)
 			world:CreateComponentAndAddTo("NeedSpawnLocation", newEntityId)
 			
-			world:SetComponent(entities[i], "PlayerNumber", "Number", playerNumber)
-			world:SetComponent(entities[i], "UnitEntityId", "Id", newEntityId)
+			world:SetComponent(entity, "PlayerNumber", "Number", playerNumber)
+			world:SetComponent(entity, "UnitEntityId", "Id", newEntityId)
 			
-			if world:EntityHasComponent(entities[i], "NetConnection") then
+			if world:EntityHasComponent(entity, "NetConnection") then
 				
-				local ip = world:GetComponent(entities[i], "NetConnection", "IpAddress"):GetString()
-				local port = world:GetComponent(entities[i], "NetConnection", "Port"):GetInt()
-
+				local ip = world:GetComponent(entity, "NetConnection", "IpAddress"):GetString()
+				local port = world:GetComponent(entity, "NetConnection", "Port"):GetInt()
+    
 				local id = Net.StartPack("Client.SendPlayerUnitId")
 				Net.WriteInt(id, playerNumber)
 				Net.Send(id, ip, port)
 			end
-			
-			print("unit add")
-			
-		elseif world:EntityHasComponent(entities[i], "RemoveUnit") then
-			
-			local plyNum = self:GetComponent(entities[i], "RemoveUnit", "PlayerNo"):GetInt()
-			table.insert(self.FreeSlots, plyNum)
-			local unitId = self:GetComponent(entities[i], "RemoveUnit", "UnitEntityId"):GetInt()
+						
+		elseif world:EntityHasComponent(entity, "RemoveUnit") then
+			local plyNum = self:GetComponent(entity, "RemoveUnit", "PlayerNo"):GetInt()
+			self.FreeSlots[#self.FreeSlots + 1] = plyNum
+			--table.insert(self.FreeSlots, plyNum)
+			local unitId = self:GetComponent(entity, "RemoveUnit", "UnitEntityId"):GetInt()
 			world:KillEntity(unitId)
-			world:KillEntity(entities[i])
-			
-			print("unit and player kill")
+			world:KillEntity(entity)
 		end
+		
 	end
 end
