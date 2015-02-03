@@ -119,9 +119,9 @@ namespace Renderer
 		virtual int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED){ return 0; };// = 0;
 		virtual bool RemoveModel(int _id){ return false; };// = 0;
 		virtual bool ActiveModel(int _id, bool _active){ return false; };// = 0;
-		virtual bool ChangeModelTexture(int _id, std::string _fileDir, int _textureType = TEXTURE_DIFFUSE){ return false; };// = 0;
-		virtual bool ChangeModelNormalMap(int _id, std::string _fileDir){ return false; };// = 0;
-		virtual bool ChangeModelSpecularMap(int _id, std::string _fileDir){ return false; };// = 0;
+		virtual bool ChangeModelTexture(int _id, std::string _fileDir, int _textureType = TEXTURE_DIFFUSE){ m_modelTextures.push_back({ _id, _fileDir, _textureType }); return false; };// = 0;
+		virtual bool ChangeModelNormalMap(int _id, std::string _fileDir){ m_modelTextures.push_back({ _id, _fileDir, TEXTURE_NORMAL }); return false; };// = 0;
+		virtual bool ChangeModelSpecularMap(int _id, std::string _fileDir){ m_modelTextures.push_back({ _id, _fileDir, TEXTURE_SPECULAR }); return false; };// = 0;
 
 		void SetDebugTexFlag(int _flag) { m_debugTexFlag = _flag; }
 		virtual void BufferPointlights(int _nrOfLights, float **_lightPointers){};// = 0;
@@ -167,6 +167,19 @@ namespace Renderer
 		std::map<const std::string, GLuint> m_textures;
 
 		TextRenderer m_sdlTextRenderer;
+		
+		std::vector<std::pair<std::string, SDL_Surface*>> m_surfaces;
+		void BufferSurfaces();
+		
+		struct ModelTexture
+		{
+			int id;
+			std::string textureName;
+			int textureType;
+		};
+		std::vector<ModelTexture> m_modelTextures;
+		void BufferModelTextures();
+		virtual bool BufferModelTexture(int _id, std::string _fileDir, int _textureType) = 0;
 	};
 }
 

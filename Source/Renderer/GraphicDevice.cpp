@@ -66,13 +66,12 @@ int GraphicDevice::AddFont(const std::string& filepath, int size)
 
 float GraphicDevice::CreateTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, glm::ivec2 size)
 {
-	if (m_textures.find(textureName) != m_textures.end())
-		glDeleteTextures(1, &m_textures[textureName]);
 	SDL_Surface* surface = m_sdlTextRenderer.CreateTextSurface(textString, fontIndex, color);
 	if (size.x > 0)
 		surface->w = size.x;
 	if (size.y > 0)
 		surface->h = size.y;
+	m_surfaces.push_back(std::pair<std::string, SDL_Surface*>(textureName, surface));
 
 	//int numPix = surface->h * surface->w;
 
@@ -99,27 +98,31 @@ float GraphicDevice::CreateTextTexture(const std::string& textureName, const std
 	//SDL_SaveBMP(surface, ss.str().c_str());
 
 	//m_deferredShader1.UseProgram();
-	GLuint texture = TextureLoader::LoadTexture(surface, GL_TEXTURE1);
-	m_textures[textureName] = texture;
-	m_vramUsage += (surface->w * surface->h * 4 * 4);
-	SDL_FreeSurface(surface);
 	return (float)surface->w / (float)surface->h;
 }
 
 void GraphicDevice::CreateWrappedTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, unsigned int wrapLength, glm::ivec2 size)
 {
-	if (m_textures.find(textureName) != m_textures.end())
-		glDeleteTextures(1, &m_textures[textureName]);
 	SDL_Surface* surface = m_sdlTextRenderer.CreateWrappedTextSurface(textString, fontIndex, color, wrapLength);
 	if (size.x > 0)
 		surface->w = size.x;
 	if (size.y > 0)
 		surface->h = size.y;
-	//m_deferredShader1.UseProgram();
-	GLuint texture = TextureLoader::LoadTexture(surface, GL_TEXTURE1);
-	m_textures[textureName] = texture;
-	m_vramUsage += (surface->w * surface->h * 4 * 4);
-	SDL_FreeSurface(surface);
+	m_surfaces.push_back(std::pair<std::string, SDL_Surface*>(textureName, surface));
+}
+
+void GraphicDevice::BufferSurfaces()
+{
+	for (std::pair<std::string, SDL_Surface*> surface : m_surfaces)
+	{
+		if (m_textures.find(surface.first) != m_textures.end())
+			glDeleteTextures(1, &m_textures[surface.first]);
+		GLuint texture = TextureLoader::LoadTexture(surface.second, GL_TEXTURE1);
+		m_textures[surface.first] = texture;
+		m_vramUsage += (surface.second->w * surface.second->h * 4 * 4);
+		SDL_FreeSurface(surface.second);
+	}
+	m_surfaces.clear();
 }
 
 GLuint GraphicDevice::AddTexture(std::string _fileDir, GLenum _textureSlot)
@@ -134,4 +137,13 @@ GLuint GraphicDevice::AddTexture(std::string _fileDir, GLenum _textureSlot)
 	m_textures.insert(std::pair<const std::string, GLenum>(_fileDir, texture));
 	m_vramUsage += (texSizeX * texSizeY * 4 * 4);
 	return texture;
+}
+
+void GraphicDevice::BufferModelTextures()
+{
+	for (ModelTexture modelTexture : m_modelTextures)
+	{
+		BufferModelTexture(modelTexture.id, modelTexture.textureName, modelTexture.textureType);
+	}
+	m_modelTextures.clear();
 }

@@ -112,6 +112,8 @@ void GraphicsHigh::Update(float _dt)
 
 	BufferModels();
 	BufferLightsToGPU();
+	BufferSurfaces();
+	BufferModelTextures();
 }
 
 void GraphicsHigh::WriteShadowMapDepth()
@@ -377,7 +379,7 @@ void GraphicsHigh::Render()
 	}
 
 	// RENDER VIEWSPACE STUFF
-	glDisable(GL_DEPTH_TEST);
+	//glDisable(GL_DEPTH_TEST);
 	//glDisable(GL_CULL_FACE);
 	glEnable(GL_TEXTURE_2D);
 	m_viewspaceShader.UseProgram();
@@ -1176,7 +1178,116 @@ bool GraphicsHigh::ActiveModel(int _id, bool _active)
 	}
 	return false;
 }
-bool GraphicsHigh::ChangeModelTexture(int _id, std::string _fileDir, int _textureType)
+
+Buffer* GraphicsHigh::AddMesh(std::string _fileDir, Shader *_shaderProg)
+{
+	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
+	{		
+		if (it->first == _fileDir)
+			return it->second;
+	}
+
+	ModelExporter modelExporter;
+	modelExporter.OpenFileForRead(_fileDir.c_str());
+	std::vector<float> positionData = modelExporter.ReadDataFromFile();
+	std::vector<float> normalData = modelExporter.ReadDataFromFile();
+	std::vector<float> tanData = modelExporter.ReadDataFromFile();
+	std::vector<float> bitanData = modelExporter.ReadDataFromFile();
+	std::vector<float> texCoordData = modelExporter.ReadDataFromFile();
+	modelExporter.CloseFile();
+
+	Buffer* retbuffer = new Buffer();
+
+	_shaderProg->UseProgram();
+	BufferData bufferData[] =
+	{
+		{ 0, 3, GL_FLOAT, (const GLvoid*)positionData.data(), static_cast<GLsizeiptr>(positionData.size() * sizeof(float)) },
+		{ 1, 3, GL_FLOAT, (const GLvoid*)normalData.data(), static_cast<GLsizeiptr>(normalData.size()   * sizeof(float)) },
+		{ 2, 3, GL_FLOAT, (const GLvoid*)tanData.data(), static_cast<GLsizeiptr>(tanData.size()   * sizeof(float)) },
+		{ 3, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), static_cast<GLsizeiptr>(bitanData.size()   * sizeof(float)) },
+		{ 4, 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), static_cast<GLsizeiptr>(texCoordData.size() * sizeof(float)) }
+	};
+
+	int test = sizeof(bufferData) / sizeof(bufferData[0]);
+	// Counts the size in bytes of all the buffered data
+	for (int i = 0; i < sizeof(bufferData) / sizeof(bufferData[0]); i++)
+		m_vramUsage += (int)bufferData[i].dataSize;
+
+	retbuffer->init(bufferData, sizeof(bufferData) / sizeof(bufferData[0]));
+	retbuffer->setCount((int)positionData.size() / 3);
+	
+	m_meshs.insert(std::pair<const std::string, Buffer*>(_fileDir, retbuffer));
+
+	return retbuffer;
+}
+//GLuint GraphicsHigh::AddTexture(std::string _fileDir, GLenum _textureSlot)
+//{
+//	for (std::map<const std::string, GLuint>::iterator it = m_textures.begin(); it != m_textures.end(); it++)
+//	{
+//		if (it->first == _fileDir)
+//			return it->second;
+//	}
+//	int texSizeX, texSizeY;
+//	m_deferredShader1.UseProgram();
+//	GLuint texture = TextureLoader::LoadTexture(_fileDir.c_str(), _textureSlot, texSizeX, texSizeY);
+//	m_textures.insert(std::pair<const std::string, GLenum>(_fileDir, texture));
+//	m_vramUsage += (texSizeX * texSizeY * 4 * 4);
+//	return texture;
+//}
+
+void GraphicsHigh::Clear()
+{
+  m_modelIDcounter = 0;
+  
+  m_modelsDeferred.clear();
+  m_modelsForward.clear();
+  m_modelsViewspace.clear();
+  m_modelsInterface.clear();
+
+  float **tmpPtr = new float*[1];
+  BufferPointlights(0, tmpPtr);
+  delete tmpPtr;
+}
+
+//int GraphicsHigh::AddFont(const std::string& filepath, int size)
+//{
+//	return m_sdlTextRenderer.AddFont(filepath, size);
+//}
+//
+//float GraphicsHigh::CreateTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, glm::ivec2 size)
+//{
+//	if (m_textures.find(textureName) != m_textures.end())
+//		glDeleteTextures(1, &m_textures[textureName]);
+//	SDL_Surface* surface = m_sdlTextRenderer.CreateTextSurface(textString, fontIndex, color);
+//	if (size.x > 0)
+//		surface->w = size.x;
+//	if (size.y > 0)
+//		surface->h = size.y;
+//	m_deferredShader1.UseProgram();
+//	GLuint texture = TextureLoader::LoadTexture(surface, GL_TEXTURE1);
+//	m_textures[textureName] = texture;
+//	m_vramUsage += (surface->w * surface->h * 4 * 4);
+//	SDL_FreeSurface(surface);
+//	return (float)surface->w / (float)surface->h;
+//}
+//
+//void GraphicsHigh::CreateWrappedTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, unsigned int wrapLength, glm::ivec2 size)
+//{
+//	if (m_textures.find(textureName) != m_textures.end())
+//		glDeleteTextures(1, &m_textures[textureName]);
+//	SDL_Surface* surface = m_sdlTextRenderer.CreateWrappedTextSurface(textString, fontIndex, color, wrapLength);
+//	if (size.x > 0)
+//		surface->w = size.x;
+//	if (size.y > 0)
+//		surface->h = size.y;
+//	m_deferredShader1.UseProgram();
+//	GLuint texture = TextureLoader::LoadTexture(surface, GL_TEXTURE1);
+//	m_textures[textureName] = texture;
+//	m_vramUsage += (surface->w * surface->h * 4 * 4);
+//	SDL_FreeSurface(surface);
+//}
+
+bool GraphicsHigh::BufferModelTexture(int _id, std::string _fileDir, int _textureType)
 {
 	// TODO: Do this for Interface and Viewspace
 	// Model Instance
@@ -1369,121 +1480,3 @@ bool GraphicsHigh::ChangeModelTexture(int _id, std::string _fileDir, int _textur
 
 	return true;
 }
-bool GraphicsHigh::ChangeModelNormalMap(int _id, std::string _fileDir)
-{
-	// TODO: Do this for Interface and Viewspace
-	return ChangeModelTexture(_id, _fileDir, TEXTURE_NORMAL);
-}
-bool GraphicsHigh::ChangeModelSpecularMap(int _id, std::string _fileDir)
-{
-	// TODO: Do this for Interface and Viewspace
-	return ChangeModelTexture(_id, _fileDir, TEXTURE_SPECULAR);
-}
-
-Buffer* GraphicsHigh::AddMesh(std::string _fileDir, Shader *_shaderProg)
-{
-	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
-	{		
-		if (it->first == _fileDir)
-			return it->second;
-	}
-
-	ModelExporter modelExporter;
-	modelExporter.OpenFileForRead(_fileDir.c_str());
-	std::vector<float> positionData = modelExporter.ReadDataFromFile();
-	std::vector<float> normalData = modelExporter.ReadDataFromFile();
-	std::vector<float> tanData = modelExporter.ReadDataFromFile();
-	std::vector<float> bitanData = modelExporter.ReadDataFromFile();
-	std::vector<float> texCoordData = modelExporter.ReadDataFromFile();
-	modelExporter.CloseFile();
-
-	Buffer* retbuffer = new Buffer();
-
-	_shaderProg->UseProgram();
-	BufferData bufferData[] =
-	{
-		{ 0, 3, GL_FLOAT, (const GLvoid*)positionData.data(), static_cast<GLsizeiptr>(positionData.size() * sizeof(float)) },
-		{ 1, 3, GL_FLOAT, (const GLvoid*)normalData.data(), static_cast<GLsizeiptr>(normalData.size()   * sizeof(float)) },
-		{ 2, 3, GL_FLOAT, (const GLvoid*)tanData.data(), static_cast<GLsizeiptr>(tanData.size()   * sizeof(float)) },
-		{ 3, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), static_cast<GLsizeiptr>(bitanData.size()   * sizeof(float)) },
-		{ 4, 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), static_cast<GLsizeiptr>(texCoordData.size() * sizeof(float)) }
-	};
-
-	int test = sizeof(bufferData) / sizeof(bufferData[0]);
-	// Counts the size in bytes of all the buffered data
-	for (int i = 0; i < sizeof(bufferData) / sizeof(bufferData[0]); i++)
-		m_vramUsage += (int)bufferData[i].dataSize;
-
-	retbuffer->init(bufferData, sizeof(bufferData) / sizeof(bufferData[0]));
-	retbuffer->setCount((int)positionData.size() / 3);
-	
-	m_meshs.insert(std::pair<const std::string, Buffer*>(_fileDir, retbuffer));
-
-	return retbuffer;
-}
-//GLuint GraphicsHigh::AddTexture(std::string _fileDir, GLenum _textureSlot)
-//{
-//	for (std::map<const std::string, GLuint>::iterator it = m_textures.begin(); it != m_textures.end(); it++)
-//	{
-//		if (it->first == _fileDir)
-//			return it->second;
-//	}
-//	int texSizeX, texSizeY;
-//	m_deferredShader1.UseProgram();
-//	GLuint texture = TextureLoader::LoadTexture(_fileDir.c_str(), _textureSlot, texSizeX, texSizeY);
-//	m_textures.insert(std::pair<const std::string, GLenum>(_fileDir, texture));
-//	m_vramUsage += (texSizeX * texSizeY * 4 * 4);
-//	return texture;
-//}
-
-void GraphicsHigh::Clear()
-{
-  m_modelIDcounter = 0;
-  
-  m_modelsDeferred.clear();
-  m_modelsForward.clear();
-  m_modelsViewspace.clear();
-  m_modelsInterface.clear();
-
-  float **tmpPtr = new float*[1];
-  BufferPointlights(0, tmpPtr);
-  delete tmpPtr;
-}
-
-//int GraphicsHigh::AddFont(const std::string& filepath, int size)
-//{
-//	return m_sdlTextRenderer.AddFont(filepath, size);
-//}
-//
-//float GraphicsHigh::CreateTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, glm::ivec2 size)
-//{
-//	if (m_textures.find(textureName) != m_textures.end())
-//		glDeleteTextures(1, &m_textures[textureName]);
-//	SDL_Surface* surface = m_sdlTextRenderer.CreateTextSurface(textString, fontIndex, color);
-//	if (size.x > 0)
-//		surface->w = size.x;
-//	if (size.y > 0)
-//		surface->h = size.y;
-//	m_deferredShader1.UseProgram();
-//	GLuint texture = TextureLoader::LoadTexture(surface, GL_TEXTURE1);
-//	m_textures[textureName] = texture;
-//	m_vramUsage += (surface->w * surface->h * 4 * 4);
-//	SDL_FreeSurface(surface);
-//	return (float)surface->w / (float)surface->h;
-//}
-//
-//void GraphicsHigh::CreateWrappedTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, unsigned int wrapLength, glm::ivec2 size)
-//{
-//	if (m_textures.find(textureName) != m_textures.end())
-//		glDeleteTextures(1, &m_textures[textureName]);
-//	SDL_Surface* surface = m_sdlTextRenderer.CreateWrappedTextSurface(textString, fontIndex, color, wrapLength);
-//	if (size.x > 0)
-//		surface->w = size.x;
-//	if (size.y > 0)
-//		surface->h = size.y;
-//	m_deferredShader1.UseProgram();
-//	GLuint texture = TextureLoader::LoadTexture(surface, GL_TEXTURE1);
-//	m_textures[textureName] = texture;
-//	m_vramUsage += (surface->w * surface->h * 4 * 4);
-//	SDL_FreeSurface(surface);
-//}

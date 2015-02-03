@@ -39,9 +39,6 @@ namespace Renderer
 		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED);
 		bool RemoveModel(int _id);
 		bool ActiveModel(int _id, bool _active);
-		bool ChangeModelTexture(int _id, std::string _fileDir, int _textureType = TEXTURE_DIFFUSE);
-		bool ChangeModelNormalMap(int _id, std::string _fileDir);
-		bool ChangeModelSpecularMap(int _id, std::string _fileDir);
 
 	//	void SetDebugTexFlag(int _flag) { m_debugTexFlag = _flag; }
 		void BufferPointlights(int _nrOfLights, float **_lightPointers);
@@ -128,6 +125,8 @@ namespace Renderer
 		GLuint m_randomVectors;
 		
 		//TextRenderer m_sdlTextRenderer;
+		
+		bool BufferModelTexture(int _id, std::string _fileDir, int _textureType = TEXTURE_DIFFUSE);
 	};
 }
 

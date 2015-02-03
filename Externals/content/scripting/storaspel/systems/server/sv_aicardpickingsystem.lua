@@ -6,6 +6,8 @@ AICardPickingSystem.PrintSimulation = 0
 AICardPickingSystem.Initialize = function(self)
 	self:SetName("AI card picking System")
 	
+	self:UsingEntitiesAdded()
+	
 	self:AddComponentTypeToFilter("AI", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("AICard", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("TileComp", FilterType.RequiresOneOf)
@@ -85,8 +87,9 @@ AICardPickingSystem.GetAIsCardSet = function(self, AI, Cards)
 		
 		return aisCard
 end
-AICardPickingSystem.TryMove = function(self, CardSetAI, card)
+AiCardPickingSystem.TryMove = function(self, CardSetAI, card)
 	--print(#card)
+
 	local cardpicked
 	for j = 1, #CardSetAI do
 		if CardSetAI[j] == card[1] and j <= #CardSetAI then
@@ -98,7 +101,7 @@ AICardPickingSystem.TryMove = function(self, CardSetAI, card)
 	end
 end
 
-AICardPickingSystem.AIPickCards = function( self, CardSetAI, dirX, dirY, posX, posY, targetX, targetY )
+AiCardPickingSystem.AIPickCards = function( self, CardSetAI, dirX, dirY, posX, posY, targetX, targetY )
 	
 	local pickedcards = {}
 	if #CardSetAI >= 5 then
@@ -414,7 +417,20 @@ AICardPickingSystem.TileHasComponent = function(self, _component, _posX, _posY)
 	local returnValue = self:EntityHasComponent(tiles[mapX * _posY + _posX + 1], _component)
 	return returnValue
 end
+AiCardPickingSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 
+	for i = 0, #entities do
+		if world:EntityHasComponent(entities[i], "DealtCard") then
+			local playerid = self:GetComponent(entities[i], "DealtCard", 0)
+			local id = playerid:GetInt()
+			local plynum = self:GetComponent(id, "PlayerNumber", 0):GetInt()
+			local card = self:GetComponent(entities[i], "CardAction", 0):GetString()
+			--print ( plynum .. " gets a " .. card .. " Card" )
+		elseif world:EntityHasComponent(entities[i], "TileComp") then
+		
+		end
+	end
+end
 AICardPickingSystem.GetRiverVariables = function(self, _posX, _posY)
 	
 	local mapSize = self:GetEntities("MapSize")
@@ -423,15 +439,4 @@ AICardPickingSystem.GetRiverVariables = function(self, _posX, _posY)
 	local dirX, dirY, speed = world:GetComponent(tiles[mapX * _posY + _posX + 1], "River", 0):GetInt3()
 	
 	return dirX, dirY, speed
-end
-
-AICardPickingSystem.OnEntityAdded = function(self, entity)
-
-	if world:EntityHasComponent(entity, "DealtCard") then
-		local playerid = self:GetComponent(entity, "DealtCard", 0)
-		local id = playerid:GetInt()
-		local plynum = self:GetComponent(id, "PlayerNumber", 0):GetInt()
-		local card = self:GetComponent(entity, "CardAction", 0):GetString()
-		--print ( plynum .. " gets a " .. card .. " Card" )
-	end
 end
