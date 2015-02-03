@@ -51,7 +51,9 @@ elseif(UNIX)
   else()
     set(UNIX_SYSTEM "i386")
   endif()
-
+  
+  add_definitions(-D_DEBUG)
+  
   # Define external libraries
   file(GLOB EXTERNAL_UNIX_SHARED_LIBRARIES
        "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Linux/${UNIX_SYSTEM}/*.so"

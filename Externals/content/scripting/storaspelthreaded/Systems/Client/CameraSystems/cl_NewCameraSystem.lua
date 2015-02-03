@@ -34,7 +34,7 @@ NewCameraSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entitie
 		if world:EntityHasComponent(entities[n], "CameraSystemComponent") then
 			self.FreeCam = not self.FreeCam
 			if self.FreeCam == true then
-				local aspectX, aspectY = graphics:GetAspectRatio()
+				local aspectX, aspectY = GraphicDevice.GetAspectRatio()
 				local deltaaspectX = aspectY / aspectX
 				self.Help = true
 				local element = nil
@@ -75,7 +75,7 @@ end
 
 
 NewCameraSystem.PostInitialize = function(self)
-	self.Camera = graphics:GetCamera()
+	self.Camera = GraphicDevice.GetCamera()
 	
 	self.TouchScreen = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("Position", self.TouchScreen)
@@ -138,8 +138,8 @@ end
 NewCameraSystem.DoFreeCam = function(self, dt)
 	if world:EntityHasComponent(self.TouchScreen, "OnPickBoxHit") then
 		local move = false
-		local mX, mY = graphics:GetTouchPosition()
-		local aspectX, aspectY = graphics:GetAspectRatio()
+		local mX, mY = GraphicDevice.GetTouchPosition()
+		local aspectX, aspectY = GraphicDevice.GetAspectRatio()
 		local rX = mX * aspectX * 2
 		local rY = mY * aspectY * 2
 		
@@ -229,7 +229,7 @@ NewCameraSystem.DoFreeCam = function(self, dt)
 		if Input.GetTouchState(0) == InputState.Pressed  then
 			self.Pressed = true
 			self.Moved = false
-			self.mouseX, self.mouseY = graphics:GetTouchPosition()
+			self.mouseX, self.mouseY = GraphicDevice.GetTouchPosition()
 		end
 	end
 end

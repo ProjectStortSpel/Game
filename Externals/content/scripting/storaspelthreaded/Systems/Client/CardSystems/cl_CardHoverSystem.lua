@@ -28,8 +28,8 @@ CardHoverSystem.Update = function(self, dt, taskIndex, taskCount)
 		local action = self:GetComponent(entity, "CardAction", 0):GetString()
 		local prio = self:GetComponent(entity, "CardPrio", 0):GetInt()
 		
-		graphics:RenderSimpleText(action, 0,44)
-		graphics:RenderSimpleText(prio, 15,44)
+		GraphicDevice.RenderSimpleText(action, 0,44)
+		GraphicDevice.RenderSimpleText(prio, 15,44)
 		
 	end
 		
@@ -45,8 +45,8 @@ CardHoverSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entitie
 		local scale = self:GetComponent(entityId, "Scale", 0)
 		local prio = self:GetComponent(entityId, "CardPrio", 0):GetInt()
 		
-		graphics:RenderSimpleText(action, 0,44)
-		graphics:RenderSimpleText(prio, 15,44)
+		GraphicDevice.RenderSimpleText(action, 0,44)
+		GraphicDevice.RenderSimpleText(prio, 15,44)
 
 		scale:SetFloat3(self.HoverScale, self.HoverScale, self.HoverScale)
 	end
