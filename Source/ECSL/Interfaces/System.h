@@ -93,6 +93,9 @@ namespace ECSL
 		void SubscribeTo(const std::string& _systemName, unsigned int _messageType);
 		void SendMessage(Message* _message);
 
+		/* Writes all entity, component and system data to log */
+		void LogWorldData();
+
 	private:
 		unsigned int m_id;
 		unsigned int m_groupId;

@@ -30,7 +30,13 @@ void DataLogger::SetCurrentWorld(unsigned int _entityCount, EntityTable* _entity
 	m_systemWorkGroups = _systemWorkGroups;
 }
 
-bool DataLogger::WriteToLog(LogType _whatToLog)
+bool DataLogger::WriteToLogAssert(LogType _whatToLog)
+{
+	WriteToLog(_whatToLog);
+	return false;
+}
+
+void DataLogger::WriteToLog(LogType _whatToLog)
 {
 	std::string message = NewLine;
 	switch (_whatToLog)
@@ -40,7 +46,7 @@ bool DataLogger::WriteToLog(LogType _whatToLog)
 		message += NewLine;
 		CreateComponentTablesMessage(message);
 		message += NewLine;
-		CreateEntityComponents(message);
+		CreateEntityComponentsMessage(message);
 		break;
 	case LogType::SYSTEM_ENTITIES:
 		CreateSystemEntitiesMessage(message);
@@ -49,11 +55,10 @@ bool DataLogger::WriteToLog(LogType _whatToLog)
 		CreateComponentTablesMessage(message);
 		break;
 	case ENTITY_COMPONENTS:
-		CreateEntityComponents(message);
+		CreateEntityComponentsMessage(message);
 		break;
 	}
 	Logger::GetInstance().Log(Logger::GetInstance().AddGroup("Entity Component System - Data", false), LogSeverity::Info, message);
-	return false;
 }
 
 void DataLogger::CreateSystemEntitiesMessage(std::string& _out)
@@ -96,13 +101,13 @@ void DataLogger::CreateComponentTablesMessage(std::string& _out)
 				if (m_entityTable->HasComponent(entityId, i))
 					message << entityId << " ";
 			}
-			message << NewLine << NewLine;
+			message << NewLine;
 		}
 	}
 	_out += message.str();
 }
 
-void DataLogger::CreateEntityComponents(std::string& _out)
+void DataLogger::CreateEntityComponentsMessage(std::string& _out)
 {
 	std::stringstream message;
 	message << "Entities: " << NewLine;

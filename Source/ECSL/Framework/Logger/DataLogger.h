@@ -26,7 +26,9 @@ namespace ECSL
 		void SetCurrentWorld(unsigned int _entityCount, EntityTable* _entityTable, const std::vector<ComponentTable*>* _componentTables, const std::vector<SystemWorkGroup*>* _systemWorkGroups);
 
 		/* Will always return false because the function should work with asserts */
-		bool WriteToLog(LogType _whatToLog = LogType::EVERYTHING);
+		bool WriteToLogAssert(LogType _whatToLog = LogType::EVERYTHING);
+
+		void WriteToLog(LogType _whatToLog = LogType::EVERYTHING);
 
 	private:
 		DataLogger();
@@ -40,7 +42,7 @@ namespace ECSL
 
 		void CreateSystemEntitiesMessage(std::string& _out);
 		void CreateComponentTablesMessage(std::string& _out);
-		void CreateEntityComponents(std::string& _out);
+		void CreateEntityComponentsMessage(std::string& _out);
 	};
 }
 
