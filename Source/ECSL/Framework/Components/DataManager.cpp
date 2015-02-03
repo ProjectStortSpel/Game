@@ -7,6 +7,7 @@
 #include "ECSL/Framework/Common/ContainerHelper.h"
 #include "ECSL/Framework/Multithreading/RuntimeInfo.h"
 #include "ECSL/Managers/ComponentTypeManager.h"
+#include "ECSL/Framework/Logger/DataLogger.h"
 
 using namespace ECSL;
 
@@ -45,7 +46,7 @@ void DataManager::InitializeTables()
 		ComponentType* componentType = ComponentTypeManager::GetInstance().GetComponentType(componentTypeId);
 
 		/* Couldn't find component type. Is the type added and is it spelled correctly? */
-		assert(componentType);
+		assert(componentType || DataLogger::GetInstance().WriteToLog());
 
 		switch (componentType->GetTableType())
 		{

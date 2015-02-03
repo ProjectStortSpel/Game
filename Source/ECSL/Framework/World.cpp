@@ -180,3 +180,8 @@ bool World::HasComponent(unsigned int _entityId, unsigned int _componentTypeId)
 {
 	return m_dataManager->HasComponent(_entityId, _componentTypeId);	
 }
+
+void World::WriteToLog()
+{
+	m_dataLogger->WriteToLog();
+}

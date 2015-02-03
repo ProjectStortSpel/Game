@@ -19,77 +19,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Source\ECSL\ECSL.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Common\BitSet.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Common\ContainerHelper.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Common\FileHelper.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Common\StringConverter.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\ComponentType.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\DataManager.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\ComponentTable.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataArray.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataMap.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataTable.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\EntityTable.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Logger\DataLogger.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Multithreading\RuntimeInfo.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Multithreading\Scheduler.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\ComponentTypeReader.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\EntityTemplateReader.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\Parser.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\Section.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Simulation.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\ComponentFilter.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\Message.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\MessageManager.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\Subscription.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemIdManager.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemWorkGroup.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemManager.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Templates\EntityTemplate.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\World.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\WorldCreator.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Interfaces\System.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Managers\ComponentTypeManager.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Managers\EntityTemplateManager.h" />
+    <ClCompile Include="..\..\..\Source\Logger\Managers\Logger.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Common\BitSet.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Common\ContainerHelper.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Common\FileHelper.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Common\StringConverter.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\ComponentType.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\DataManager.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\ComponentTable.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataArray.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataMap.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataTable.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\EntityTable.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Logger\DataLogger.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Multithreading\Scheduler.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\ComponentTypeReader.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\EntityTemplateReader.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\Parser.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Simulation.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\ComponentFilter.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\Message.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\MessageManager.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\Subscription.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemIdManager.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemWorkGroup.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemManager.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Templates\EntityTemplate.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\World.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\WorldCreator.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Interfaces\System.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Managers\ComponentTypeManager.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Managers\EntityTemplateManager.cpp" />
+    <ClInclude Include="..\..\..\Source\Logger\Managers\Logger.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{C497EBB7-2E55-4F88-AEBD-D2529AC9B8C0}</ProjectGuid>
+    <ProjectGuid>{E15310EA-512E-4A1E-BC27-6915FDC3B665}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>ECSL</RootNamespace>
-    <ProjectName>ECSL</ProjectName>
+    <RootNamespace>Logger</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -172,7 +110,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;SAMPLEDLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LOGGER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\Source\</AdditionalIncludeDirectories>
     </ClCompile>
@@ -180,7 +118,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;MPL_$(PlatformTarget)d.lib;Logger_$(PlatformTarget)d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
     </Link>
@@ -191,7 +129,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;SAMPLEDLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LOGGER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\Source\</AdditionalIncludeDirectories>
     </ClCompile>
@@ -199,7 +137,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;MPL_$(PlatformTarget)d.lib;Logger_$(PlatformTarget)d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
     </Link>
@@ -212,7 +150,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;SAMPLEDLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LOGGER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\Source\</AdditionalIncludeDirectories>
     </ClCompile>
@@ -222,7 +160,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;MPL_$(PlatformTarget).lib;Logger_$(PlatformTarget).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
     </Link>
@@ -235,7 +173,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;SAMPLEDLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LOGGER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\Source\</AdditionalIncludeDirectories>
     </ClCompile>
@@ -245,7 +183,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;MPL_$(PlatformTarget).lib;Logger_$(PlatformTarget).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
     </Link>

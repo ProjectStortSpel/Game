@@ -1,6 +1,7 @@
 #include "DataLogger.h"
 
 #include <sstream>
+#include "Logger/Managers/Logger.h"
 
 using namespace ECSL;
 
@@ -29,42 +30,50 @@ void DataLogger::SetCurrentWorld(unsigned int _entityCount, EntityTable* _entity
 	m_systemWorkGroups = _systemWorkGroups;
 }
 
-void DataLogger::WriteToLog(LogType _whatToLog)
+bool DataLogger::WriteToLog(LogType _whatToLog)
 {
-	std::string message = "";
+	std::string message = NewLine;
 	switch (_whatToLog)
 	{
 	case LogType::EVERYTHING:
 		CreateSystemEntitiesMessage(message);
+		message += NewLine;
 		CreateComponentTablesMessage(message);
+		message += NewLine;
+		CreateEntityComponents(message);
+		break;
+	case LogType::SYSTEM_ENTITIES:
+		CreateSystemEntitiesMessage(message);
+		break;
+	case LogType::COMPONENT_TABLES:
+		CreateComponentTablesMessage(message);
+		break;
+	case ENTITY_COMPONENTS:
 		CreateEntityComponents(message);
 		break;
 	}
+	Logger::GetInstance().Log(Logger::GetInstance().AddGroup("Entity Component System - Data", false), LogSeverity::Info, message);
+	return false;
 }
 
 void DataLogger::CreateSystemEntitiesMessage(std::string& _out)
 {
 	int groupIndex = -1;
 	std::stringstream message;
+	message << "Systems: " << NewLine << NewLine;
 	for (const auto systemGroup : *m_systemWorkGroups)
 	{
 		message << "Group: " << ++groupIndex << NewLine;
 		for (const auto system : *systemGroup->GetSystems())
 		{
-			unsigned int entityIndex = 0;
-			message << system->GetSystemName() << NewLine;
+			message << "(Id: " << system->GetId() << ") " << system->GetSystemName() << ": ";
 			for (const auto entityId : *system->GetEntities())
 			{
-				/* Sometimes, add a new row */
-				if (entityIndex % 30 == 0)
-					message << NewLine << entityId;
-				else
 					message << entityId << " ";
-				++entityIndex;
 			}
-			message << NewLine << NewLine;
+			message << NewLine;
 		}
-		message << NewLine << NewLine << NewLine;
+		message << NewLine << NewLine;
 	}
 	_out += message.str();
 }
@@ -72,6 +81,7 @@ void DataLogger::CreateSystemEntitiesMessage(std::string& _out)
 void DataLogger::CreateComponentTablesMessage(std::string& _out)
 {
 	std::stringstream message;
+	message << "Components: " << NewLine << NewLine;
 	ComponentTypeManager* componentTypeManager = &ComponentTypeManager::GetInstance();
 	for (unsigned int i = 0; i < m_componentTables->size(); ++i)
 	{
@@ -79,18 +89,12 @@ void DataLogger::CreateComponentTablesMessage(std::string& _out)
 		
 		if (componentTable)
 		{
-			message << "(Id: " << i << ") " << componentTypeManager->GetComponentType(i)->GetName() << NewLine;
+			message << "(Id: " << i << ") " << componentTypeManager->GetComponentType(i)->GetName() << ": ";
 			for (unsigned int entityId = 0; entityId < m_entityCount; ++entityId)
 			{
 				std::vector<unsigned int> components;
-				m_entityTable->GetEntityComponents(components, entityId);
-				for (auto componentTypeId : components)
-				{
-					if (entityId % 30 == 0)
-						message << NewLine << componentTypeId;
-					else
-						message << componentTypeId << " ";
-				}
+				if (m_entityTable->HasComponent(entityId, i))
+					message << entityId << " ";
 			}
 			message << NewLine << NewLine;
 		}
@@ -101,18 +105,23 @@ void DataLogger::CreateComponentTablesMessage(std::string& _out)
 void DataLogger::CreateEntityComponents(std::string& _out)
 {
 	std::stringstream message;
+	message << "Entities: " << NewLine;
+	ComponentTypeManager* componentTypeManager = &ComponentTypeManager::GetInstance();
 	for (unsigned int entityId = 0; entityId < m_entityCount; ++entityId)
 	{
 		std::vector<unsigned int> components;
 		m_entityTable->GetEntityComponents(components, entityId);
 		if (components.size() > 0)
 		{
-			message << "Entity: " << entityId << NewLine;
-			for (auto component : components)
+			message << "(Id: " << entityId << ") ";
+			for (unsigned int componentId = 0; componentId < components.size(); ++componentId)
 			{
-				message << component << "";
+				if (componentId != components.size() - 1)
+					message << componentTypeManager->GetComponentType(components[componentId])->GetName() << ", ";
+				else
+					message << componentTypeManager->GetComponentType(components[componentId])->GetName();
 			}
-			message << NewLine << NewLine;
+			message << NewLine;
 		}
 	}
 	_out += message.str();

@@ -19,7 +19,7 @@
 #include "LuaBridge/ECSL/LuaSystem.h"
 #include "LuaBridge/ECSL/LuaWorldCreator.h"
 
-#include "Logger/Logger.h"
+#include "Logger/Managers/Logger.h"
 
 #include <iomanip>
 
@@ -333,6 +333,9 @@ void GameCreator::StartGame(int argc, char** argv)
 
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F8) == Input::InputState::PRESSED)
 			m_worldProfiler->WriteToLog();
+
+		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F1) == Input::InputState::PRESSED)
+			m_world->WriteToLog();
 
 		if (showDebugInfo)
 		{

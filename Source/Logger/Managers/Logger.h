@@ -29,7 +29,7 @@ struct LogGroup
 
 
 
-class Logger
+class DECLSPEC Logger
 {
 public:
 	static Logger& GetInstance();

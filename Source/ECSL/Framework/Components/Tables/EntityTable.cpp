@@ -35,10 +35,10 @@ void EntityTable::AddComponentTo(unsigned int _entityId, unsigned int _component
 	unsigned int bitIndex = BitSet::GetBitIndex(_componentTypeId);
 
 	/* The entity is dead */
-	assert(!(*(unsigned char*)m_dataTable->GetData(_entityId) == 0));
+	assert(!(*(unsigned char*)m_dataTable->GetData(_entityId) == 0) || DataLogger::GetInstance().WriteToLog());
 
 	/* The component is already added to the entity */
-	assert(!(entityComponents[bitSetIndex] & ((BitSet::DataType)1 << bitIndex)));
+	assert(!(entityComponents[bitSetIndex] & ((BitSet::DataType)1 << bitIndex)) || DataLogger::GetInstance().WriteToLog());
 
 	/* Add component to entity */
 	entityComponents[bitSetIndex] |= (BitSet::DataType)1 << bitIndex;
@@ -47,7 +47,7 @@ void EntityTable::AddComponentTo(unsigned int _entityId, unsigned int _component
 void EntityTable::AddComponentsTo(unsigned int _entityId, const std::vector<unsigned int>& _componentTypeIds)
 {
 	/* The entity is dead */
-	assert(!(*(unsigned char*)m_dataTable->GetData(_entityId) == 0));
+	assert(!(*(unsigned char*)m_dataTable->GetData(_entityId) == 0) || DataLogger::GetInstance().WriteToLog());
 
 	BitSet::DataType* entityComponents = (BitSet::DataType*)(m_dataTable->GetData(_entityId, 1));
 	/* Adding components to entity */
@@ -57,7 +57,7 @@ void EntityTable::AddComponentsTo(unsigned int _entityId, const std::vector<unsi
 		unsigned int bitIndex = BitSet::GetBitIndex(componentTypeId);
 		
 		/* The component is already added to the entity */
-		assert(!(entityComponents[bitSetIndex] & ((BitSet::DataType)1 << bitIndex)));
+		assert(!(entityComponents[bitSetIndex] & ((BitSet::DataType)1 << bitIndex)) || DataLogger::GetInstance().WriteToLog());
 
 		/* Add component to entity */
 		entityComponents[bitSetIndex] |= (BitSet::DataType)1 << bitIndex;
@@ -71,10 +71,10 @@ void EntityTable::RemoveComponentFrom(unsigned int _entityId, unsigned int _comp
 	unsigned int bitIndex = BitSet::GetBitIndex(_componentTypeId);
 
 	/* The entity is dead */
-	assert(!(*(unsigned char*)m_dataTable->GetData(_entityId) == 0));
+	assert(!(*(unsigned char*)m_dataTable->GetData(_entityId) == 0) || DataLogger::GetInstance().WriteToLog());
 
 	/* The entity doesn't have that component */
-	assert(entityComponents[bitSetIndex] & ((BitSet::DataType)1 << bitIndex));
+	assert(entityComponents[bitSetIndex] & ((BitSet::DataType)1 << bitIndex) || DataLogger::GetInstance().WriteToLog());
 
 	/* Remove component from entity */
 	entityComponents[bitSetIndex] &= ~((BitSet::DataType)1 << bitIndex);
@@ -83,7 +83,7 @@ void EntityTable::RemoveComponentFrom(unsigned int _entityId, unsigned int _comp
 void EntityTable::RemoveComponentsFrom(unsigned int _entityId, const std::vector<unsigned int>& _componentTypeIds)
 {
 	/* The entity is dead */
-	assert(!(*(unsigned char*)m_dataTable->GetData(_entityId) == 0));
+	assert(!(*(unsigned char*)m_dataTable->GetData(_entityId) == 0) || DataLogger::GetInstance().WriteToLog());
 
 	BitSet::DataType* entityComponents = (BitSet::DataType*)(m_dataTable->GetData(_entityId, 1));
 	/* Removing components from entity */
@@ -93,7 +93,7 @@ void EntityTable::RemoveComponentsFrom(unsigned int _entityId, const std::vector
 		unsigned int bitIndex = BitSet::GetBitIndex(componentTypeId);
 
 		/* The entity doesn't have that component */
-		assert(entityComponents[bitSetIndex] & ((BitSet::DataType)1 << bitIndex));
+		assert(entityComponents[bitSetIndex] & ((BitSet::DataType)1 << bitIndex) || DataLogger::GetInstance().WriteToLog());
 
 		/* Remove component from entity */
 		entityComponents[bitSetIndex] &= ~((BitSet::DataType)1 << bitIndex);
@@ -111,7 +111,7 @@ bool EntityTable::HasComponent(unsigned int _entityId, unsigned int _componentTy
 unsigned int EntityTable::GenerateNewEntityId()
 {
 	/* Max entity count reached */
-	assert(m_availableEntityIds->size() != 0);
+	assert(m_availableEntityIds->size() != 0 || DataLogger::GetInstance().WriteToLog());
 
 	SDL_LockMutex(m_availableEntityMutex);
 	/* Fetch entity id from the queue */
@@ -129,7 +129,7 @@ unsigned int EntityTable::GenerateNewEntityId()
 void EntityTable::AddOldEntityId(unsigned int _entityId)
 {
 	/* Entity id is bigger than the entity count */
-	assert(_entityId < m_entityCount);
+	assert(_entityId < m_entityCount || DataLogger::GetInstance().WriteToLog());
 
 	m_availableEntityIds->push_back(_entityId);
 }

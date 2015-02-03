@@ -6,7 +6,7 @@
 #endif
 #endif
 
-#include "Logger/Logger.h"
+#include "Logger/Managers/Logger.h"
 #include "Game/Network/ClientDatabase.h"
 
 int main(int argc, char** argv)

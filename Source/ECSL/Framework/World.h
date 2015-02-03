@@ -56,7 +56,7 @@ namespace ECSL
 		bool HasComponent(unsigned int _entityId, const std::string& _componentType);
 		bool HasComponent(unsigned int _entityId, unsigned int _componentTypeId);
 		
-		
+		void WriteToLog();
 	};
 }
 

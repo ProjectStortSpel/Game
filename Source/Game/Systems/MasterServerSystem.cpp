@@ -1,7 +1,7 @@
 #include "MasterServerSystem.h"
 #include "ECSL/Managers/ComponentTypeManager.h"
 #include "Game/NetworkInstance.h"
-#include "Game/Logger/Logger.h"
+#include "Logger/Managers/Logger.h"
 
 MasterServerSystem::MasterServerSystem()
 	:m_clientDatabase(0), m_requestServerListTimer(0)

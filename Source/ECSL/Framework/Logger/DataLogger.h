@@ -24,7 +24,9 @@ namespace ECSL
 		~DataLogger();
 
 		void SetCurrentWorld(unsigned int _entityCount, EntityTable* _entityTable, const std::vector<ComponentTable*>* _componentTables, const std::vector<SystemWorkGroup*>* _systemWorkGroups);
-		void WriteToLog(LogType _whatToLog = LogType::EVERYTHING);
+
+		/* Will always return false because the function should work with asserts */
+		bool WriteToLog(LogType _whatToLog = LogType::EVERYTHING);
 
 	private:
 		DataLogger();

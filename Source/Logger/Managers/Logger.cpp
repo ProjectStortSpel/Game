@@ -175,9 +175,9 @@ void Logger::CreateFile()
 	ss << (1900+timeInfo.tm_year) << "-";
 	ss << FixDateLength(timeInfo.tm_mon + 1) << "-";
 	ss << FixDateLength(timeInfo.tm_mday) << "_";
-	ss << FixDateLength(timeInfo.tm_hour) << ".";
-	ss << FixDateLength(timeInfo.tm_min) << ".";
-	ss << FixDateLength(timeInfo.tm_sec);
+	ss << FixDateLength(timeInfo.tm_hour); //<< ".";
+	//ss << FixDateLength(timeInfo.tm_min) << ".";
+	//ss << FixDateLength(timeInfo.tm_sec);
 	ss << ".txt";
     
 	m_logFileName = ss.str();

@@ -1,6 +1,6 @@
 #include "ECSLRenderView.h"
 
-#include "Game/Logger/Logger.h"
+#include "Logger/Managers/Logger.h"
 
 using namespace Profilers;
 

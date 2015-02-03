@@ -1,6 +1,6 @@
 #include "ClientDatabase.h"
 #include "Game/NetworkInstance.h"
-#include "Game/Logger/Logger.h"
+#include "Logger/Managers/Logger.h"
 
 ClientDatabase& ClientDatabase::GetInstance()
 {
