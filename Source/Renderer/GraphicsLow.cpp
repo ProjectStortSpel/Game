@@ -17,6 +17,7 @@ GraphicsLow::GraphicsLow()
 	m_vramUsage = 0;
 	m_debugTexFlag = 0;
 	m_nrOfLights = 0;
+    m_pointerToDirectionalLights = 0;
 }
 
 GraphicsLow::~GraphicsLow()
@@ -59,6 +60,7 @@ bool GraphicsLow::Init()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
 	m_sdlTextRenderer.Init();
+    
 	
 	return true;
 }
