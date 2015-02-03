@@ -77,13 +77,13 @@ GameInterfaceSystem.PostInitialize = function(self)
 	self:AddEntityCommandToButton("GameMenu", menubutton)
 	self:AddHoverSize(1.5, menubutton)
 	
-	local rconbutton = self:CreateElement("gamemenubutton", "quad", -3.3, -1.4, -4, 0.35, 0.35)
+	local rconbutton = self:CreateElement("rconmenubutton", "quad", -3.3, -1.4, -4, 0.35, 0.35)
 	local rotation = self:GetComponent(rconbutton, "Rotation", 0)
 	--rotation:SetFloat3(0, 0, 3.14)
 	self:AddEntityCommandToButton("RconMenu", rconbutton)
 	self:AddHoverSize(1.5, rconbutton)
 	
-	local camerabutton = self:CreateElement("gamemenubutton", "quad", 3.3, 1.4, -4, 0.35, 0.35)
+	local camerabutton = self:CreateElement("camerabutton", "quad", 3.3, 1.4, -4, 0.35, 0.35)
 	self:AddEntityCommandToButton("CameraSystemComponent", camerabutton)
 	self:AddHoverSize(1.5, camerabutton)
 	
