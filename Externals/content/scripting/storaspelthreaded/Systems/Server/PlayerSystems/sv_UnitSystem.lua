@@ -89,6 +89,8 @@ UnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 			local unitId = self:GetComponent(entities[i], "RemoveUnit", "UnitEntityId"):GetInt()
 			world:KillEntity(unitId)
 			world:KillEntity(entities[i])
+			
+			print("unit and player kill")
 		end
 	end
 end
