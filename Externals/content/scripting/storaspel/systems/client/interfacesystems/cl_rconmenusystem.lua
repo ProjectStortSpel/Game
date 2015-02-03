@@ -33,15 +33,19 @@ RconMenuSystem.OnEntityAdded = function(self, entityId)
 end
 
 RconMenuSystem.SpawnMenu = function(self)
-	local background = self:CreateElement("gamemenubackground", "quad", 0, -0, -3.1, 1.5, 1.5)
+	local background = self:CreateElement("gamemenubackground", "quad", 0, -0, -3.1, 1.5, 2)
 		
 	local button = nil
-	button = self:CreateElement("rconreload", "quad", 0, 0.2, -3, 0.6, 0.3)
+	button = self:CreateElement("rconreload", "quad", 0, 0.4, -3, 0.6, 0.3)
 	self:AddConsoleCommandToButton("rcon reload", button)	
 	self:AddHoverSize(1.1, button)	
 		
-	button = self:CreateElement("rconstart", "quad", 0, -0.2, -3, 0.6, 0.3)
+	button = self:CreateElement("rconstart", "quad", 0, 0.0, -3, 0.6, 0.3)
 	self:AddConsoleCommandToButton("rcon start", button)
+	self:AddHoverSize(1.1, button)	
+	
+	button = self:CreateElement("rconaddai", "quad", 0, -0.4, -3, 0.6, 0.3)
+	self:AddConsoleCommandToButton("rcon addai", button)
 	self:AddHoverSize(1.1, button)	
 end
 

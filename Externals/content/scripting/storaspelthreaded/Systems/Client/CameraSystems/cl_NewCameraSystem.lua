@@ -12,6 +12,7 @@ NewCameraSystem.TouchSprite2 = nil
 NewCameraSystem.TouchScreen = nil
 NewCameraSystem.Pressed = false
 NewCameraSystem.Moved = false
+NewCameraSystem.Help = false
 
 
 NewCameraSystem.Initialize = function(self)
@@ -25,19 +26,42 @@ NewCameraSystem.Initialize = function(self)
 	--	Set Filter
 	self:AddComponentTypeToFilter("CameraSystemComponent", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("CameraInterestPoint", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("CameraElement", FilterType.RequiresOneOf)
 end
 
 NewCameraSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 	for n = 1, #entities do
 		if world:EntityHasComponent(entities[n], "CameraSystemComponent") then
 			self.FreeCam = not self.FreeCam
+			if self.FreeCam == true then
+				local aspectX, aspectY = GraphicDevice.GetAspectRatio()
+				local deltaaspectX = aspectY / aspectX
+				self.Help = true
+				local element = nil
+				element = self:CreateElement("touchside", "quad", 0, aspectY*2.2, -2.2, 4*aspectX, 0.5*aspectX)
+				
+				
+				element = self:CreateElement("touchside", "quad", 0, -aspectY*2.2, -2.2, 4*aspectX, 0.5*aspectX)
+				self:GetComponent(element, "Rotation", 0):SetFloat3(3.14159265359, 0, 0)
+				
+				element = self:CreateElement("touchside", "quad", aspectX*2.2, 0, -2.2, 4*aspectY, 0.5*aspectY)
+				self:GetComponent(element, "Rotation", 0):SetFloat3(-3.14159265359/2, 0, 0)
+				
+				element = self:CreateElement("touchside", "quad", -aspectX*2.2, 0, -2.2, 4*aspectY, 0.5*aspectY)
+				self:GetComponent(element, "Rotation", 0):SetFloat3(3.14159265359/2, 0, 0)
+				
+			else
+				self:RemoveElements()
+			end
 		end
 		if world:EntityHasComponent(entities[n], "CameraInterestPoint") then
 			if self.FreeCam == false then
 				self:DoCIP(entities[n])
 			end
 		end
-		world:KillEntity(entities[n])
+		if not world:EntityHasComponent(entities[n], "CameraElement") then
+			world:KillEntity(entities[n])
+		end
 	end
 end
 
@@ -51,7 +75,7 @@ end
 
 
 NewCameraSystem.PostInitialize = function(self)
-	self.Camera = graphics:GetCamera()
+	self.Camera = GraphicDevice.GetCamera()
 	
 	self.TouchScreen = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("Position", self.TouchScreen)
@@ -114,8 +138,8 @@ end
 NewCameraSystem.DoFreeCam = function(self, dt)
 	if world:EntityHasComponent(self.TouchScreen, "OnPickBoxHit") then
 		local move = false
-		local mX, mY = graphics:GetTouchPosition()
-		local aspectX, aspectY = graphics:GetAspectRatio()
+		local mX, mY = GraphicDevice.GetTouchPosition()
+		local aspectX, aspectY = GraphicDevice.GetAspectRatio()
 		local rX = mX * aspectX * 2
 		local rY = mY * aspectY * 2
 		
@@ -190,6 +214,7 @@ NewCameraSystem.DoFreeCam = function(self, dt)
 					move = true
 				end
 				if move == true then
+					self:RemoveElements()
 					self.Camera:MoveToAndLookAt(self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
 												self.CameraUpX,0,self.CameraUpZ,
 												self.CameraLookAtX,-4.5,self.CameraLookAtZ,
@@ -204,7 +229,7 @@ NewCameraSystem.DoFreeCam = function(self, dt)
 		if Input.GetTouchState(0) == InputState.Pressed  then
 			self.Pressed = true
 			self.Moved = false
-			self.mouseX, self.mouseY = graphics:GetTouchPosition()			
+			self.mouseX, self.mouseY = GraphicDevice.GetTouchPosition()
 		end
 	end
 end
@@ -225,3 +250,31 @@ Net.Receive("Client.SendCIP",
 		world:GetComponent(entity, "CameraInterestPoint", "Distance"):SetFloat(Distance)
 	end 
 )
+
+NewCameraSystem.CreateElement = function(self, object, folder, posx, posy, posz, scalex, scaley)
+	local id = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("Model", id)
+	world:CreateComponentAndAddTo("Position", id)
+	world:CreateComponentAndAddTo("Rotation", id)
+	world:CreateComponentAndAddTo("Scale", id)
+	world:CreateComponentAndAddTo("CameraElement", id)
+	local model = self:GetComponent(id, "Model", 0)
+	model:SetModel(object, folder, 2)
+	local position = self:GetComponent(id, "Position", 0)
+	position:SetFloat3(posx, posy, posz)
+	local scale = self:GetComponent(id, "Scale", 0)
+	scale:SetFloat3(scalex, scaley, 1)
+	local rotation = self:GetComponent(id, "Rotation", 0)
+	rotation:SetFloat3(0, 0, 0)
+	return id	
+end
+
+NewCameraSystem.RemoveElements = function(self)
+	if self.Help == true then
+		local e = self:GetEntities("CameraElement")
+		for i = 1, #e do
+			world:KillEntity(e[i])
+		end
+		self.Help = false
+	end
+end

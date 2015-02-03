@@ -2,18 +2,21 @@
 --	Map Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/MapSystems/?.lua"
 require "sv_CreateMapSystem"
-require "sv_CheckpointSystem"
 require "sv_RiverSystem"
 require "sv_VoidSystem"
+require "sv_CheckpointSystem"
+require "sv_FinishpointSystem"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CreateMapSystem)
 worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(CheckpointSystem)
-worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(RiverSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(VoidSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(CheckpointSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(FinishpointSystem)
 
 --	Light Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/LightSystems/?.lua"
@@ -84,6 +87,7 @@ require "sv_ActionTurnLeftSystem"
 require "sv_ActionTurnRightSystem"
 require "sv_ActionTurnAroundSystem"
 
+
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ActionMoveForwardSystem)
 worldCreator:AddSystemGroup()
@@ -95,12 +99,16 @@ worldCreator:AddSystemToCurrentGroup(ActionTurnRightSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ActionTurnAroundSystem)
 
+
 --	Card Ability Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/CardAbilitySystems/?.lua"
 require "sv_AbilitySprintSystem"
+require "sv_AbilitySlingshotSystem"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(AbilitySprintSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(AbilitySlingshotSystem)
 
 --	Spawn Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/SpawnSystems/?.lua"
@@ -140,7 +148,6 @@ require "sv_TotemPoleSystem"
 require "sv_GameOverSystem"
 require "sv_ServerLobbySystem"
 require "sv_LogStartSystem"
-require "sv_FinishSystem"
 require "sv_OnPlayerConnectedSystem"
 
 worldCreator:AddSystemGroup()
@@ -156,10 +163,4 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ServerLobbySystem)
 
 worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(FinishSystem)
-
-worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(OnPlayerConnectedSystem)
-
-
-

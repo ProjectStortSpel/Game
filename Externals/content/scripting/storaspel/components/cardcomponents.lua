@@ -35,6 +35,24 @@ UnitBackwardComponent.Name = "UnitBackward"
 UnitBackwardComponent.TableType = TableType.Map
 worldCreator:AddComponentType(UnitBackwardComponent)
 
+-- Sprint Component
+local UnitSprintComponent = ComponentType()
+UnitSprintComponent.Name = "UnitSprint"
+UnitSprintComponent.TableType = TableType.Map
+worldCreator:AddComponentType(UnitSprintComponent)
+
+-- Nudge Component
+local UnitNudgeComponent = ComponentType()
+UnitNudgeComponent.Name = "UnitNudge"
+UnitNudgeComponent.TableType = TableType.Map
+worldCreator:AddComponentType(UnitNudgeComponent)
+
+-- SlingShot Component
+local UnitSlingShotComponent = ComponentType()
+UnitSlingShotComponent.Name = "UnitSlingShot"
+UnitSlingShotComponent.TableType = TableType.Map
+worldCreator:AddComponentType(UnitSlingShotComponent)
+
 -- Card Prio Component
 local CardPrioComponent = ComponentType()
 CardPrioComponent.Name = "CardPrio"

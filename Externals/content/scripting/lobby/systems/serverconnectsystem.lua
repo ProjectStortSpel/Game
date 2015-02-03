@@ -5,7 +5,7 @@ ServerConnectSystem.Initialize = function(self)
 	
 	self:InitializeNetworkEvents();
 	
-	Net.Receive("Username", ServerConnectSystem.OnUsername);
+	Net.Receive("Username", self.OnUsername);
 	
 	self:AddComponentTypeToFilter("Username", FilterType.Mandatory);
 	self:AddComponentTypeToFilter("NetConnection", FilterType.Mandatory);
@@ -95,7 +95,7 @@ ServerConnectSystem.OnPlayerTimedOut = function(self, _ip, _port)
 	end
 
 	Console.Print("ServerConnectSystem.OnPlayerTimedOut");
-	ServerConnectSystem:RemovePlayer(_ip, _port);
+	self:RemovePlayer(_ip, _port);
 
 end
 
@@ -106,7 +106,7 @@ ServerConnectSystem.OnPlayerDisconnected = function(self, _ip, _port)
 	end
 
 	Console.Print("ServerConnectSystem.OnPlayerDisconnected");
-	ServerConnectSystem:RemovePlayer(_ip, _port);
+	self:RemovePlayer(_ip, _port);
 
 end
 

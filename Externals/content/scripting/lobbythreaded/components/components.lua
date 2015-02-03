@@ -69,3 +69,54 @@ NetConnection:AddVariable("IpAddress", ByteSize.Text)
 NetConnection:AddVariable("Port", ByteSize.Int)
 NetConnection:AddVariable("Active", ByteSize.Bool)
 worldCreator:AddComponentType(NetConnection)
+
+-- Slerp Rotation Component
+local SlerpRotationComponent = ComponentType()
+SlerpRotationComponent.Name = "SlerpRotation"
+SlerpRotationComponent.SyncNetwork = true
+SlerpRotationComponent.TableType = TableType.Map
+SlerpRotationComponent:AddVariable("fromX", ByteSize.Float)
+SlerpRotationComponent:AddVariable("fromY", ByteSize.Float)
+SlerpRotationComponent:AddVariable("fromZ", ByteSize.Float)
+SlerpRotationComponent:AddVariable("fromW", ByteSize.Float)
+SlerpRotationComponent:AddVariable("time", ByteSize.Float)
+SlerpRotationComponent:AddVariable("toX", ByteSize.Float)
+SlerpRotationComponent:AddVariable("toY", ByteSize.Float)
+SlerpRotationComponent:AddVariable("toZ", ByteSize.Float)
+SlerpRotationComponent:AddVariable("toW", ByteSize.Float)
+worldCreator:AddComponentType(SlerpRotationComponent)
+
+
+-- Available Spawnpoint
+local AvailableSpawnpoint = ComponentType()
+AvailableSpawnpoint.Name = "AvailableSpawnpoint"
+AvailableSpawnpoint.TableType = TableType.Map
+AvailableSpawnpoint:AddVariable("X", ByteSize.Int)
+AvailableSpawnpoint:AddVariable("Z", ByteSize.Int)
+worldCreator:AddComponentType(AvailableSpawnpoint)
+
+--	Player Component
+local PlayerComponent = ComponentType()
+PlayerComponent.Name = "Player"
+PlayerComponent.TableType = TableType.Map
+worldCreator:AddComponentType(PlayerComponent)
+
+local GameRunningComponent = ComponentType()
+GameRunningComponent.Name = "GameRunning"
+GameRunningComponent.TableType = TableType.Map
+worldCreator:AddComponentType(GameRunningComponent)
+
+-- Sync Network Component
+local SyncNetworkComponent = ComponentType()
+SyncNetworkComponent.Name = "SyncNetwork"
+SyncNetworkComponent.SyncNetwork = true
+SyncNetworkComponent.TableType = TableType.Array
+worldCreator:AddComponentType(SyncNetworkComponent)
+
+
+-- Hide Component
+local HideComponent = ComponentType()
+HideComponent.Name = "Hide"
+HideComponent.SyncNetwork = true
+HideComponent.TableType = TableType.Map
+worldCreator:AddComponentType(HideComponent)

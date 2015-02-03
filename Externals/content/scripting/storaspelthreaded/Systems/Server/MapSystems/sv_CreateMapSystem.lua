@@ -52,6 +52,15 @@ CreateMapSystem.PostInitialize = function(self)
 	for x = 0, self.mapX+1 do
 		self:AddTile(x, self.mapY+1, 111) -- 111 = void
 	end
+	
+	-- Add to the map size as voids have been added around the map.
+	self.mapX = self.mapX + 2
+	self.mapY = self.mapY + 2
+	
+	-- Create an entity that will keep track of the map size.
+	local mapEntity = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("MapSize", mapEntity)
+	self:GetComponent(mapEntity, "MapSize", 0):SetInt2(self.mapX, self.mapY)
 
 	for waterA = 1, #self.waterTiles do
 		
