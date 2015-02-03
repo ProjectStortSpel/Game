@@ -17,6 +17,7 @@ end
 VoidSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 
 	for n = 1, #entities do
+	
 		local entity = entities[n]
 		if world:EntityHasComponent( entity, "CheckVoid") then
 
@@ -25,30 +26,58 @@ VoidSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 
 			for i = 1, #units do
 				
+				-- Get the MapPosition of the unit
 				local unitX, unitZ = world:GetComponent(units[i], "MapPosition", 0):GetInt2() 
-
-				for j = 1, #voids do
-					
-					local voidX, voidZ = world:GetComponent(voids[j], "MapPosition", 0):GetInt2() 
-
-					if unitX == voidX and unitZ == voidZ then
-						
-						print("Unit walked into a void.", voidX, voidZ)
-
-						if not world:EntityHasComponent(units[i], "UnitDead") then
-							world:CreateComponentAndAddTo("UnitDead", units[i])
-						end
-
-						if not world:EntityHasComponent(units[i], "Hide") then
-							world:CreateComponentAndAddTo("Hide", units[i])
-						end
-						break
-
-					end
-
+				-- Get the number of substeps
+				local noSteps = world:GetComponent(units[i], "NoSubSteps", 0):GetInt()
+				-- Get the direction of the unit
+				local dirX, dirZ = world:GetComponent(units[i], "Direction", 0):GetInt2()
+				
+				-- Normalize the direction
+				if dirX ~= 0 then
+					dirX  = dirX / math.abs(dirX)
+				end
+				if dirZ ~= 0 then
+					dirZ = dirZ / math.abs(dirZ)
 				end
 
+				-- Go through all substeps
+				local hitVoid = false
+				for tmp = noSteps - 1, 0, -1 do 
+				
+					if hitVoid then
+						break
+					end
+				
+					local tmpX = unitX - (dirX * tmp)
+					local tmpZ = unitZ - (dirZ * tmp)
+					
+					-- Go through all voids
+					for j = 1, #voids do
+					
+						-- Get the current voids' MapPosition
+						local voidX, voidZ = world:GetComponent(voids[j], "MapPosition", 0):GetInt2() 
+
+						-- If the voids' position is the same as the unit
+						if tmpX == voidX and tmpZ == voidZ then
+							-- Add Unit dead component
+							if not world:EntityHasComponent(units[i], "UnitDead") then
+								world:CreateComponentAndAddTo("UnitDead", units[i])
+							end
+							-- Hide the unit
+							if not world:EntityHasComponent(units[i], "Hide") then
+								world:CreateComponentAndAddTo("Hide", units[i])
+							end
+							
+							hitVoid = true
+							
+							break
+						end
+
+					end	
+				end
 			end
+			
 			world:KillEntity( entity )
 		end
 	end
