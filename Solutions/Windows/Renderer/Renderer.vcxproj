@@ -23,6 +23,8 @@
     <ClInclude Include="..\..\..\Source\Renderer\Camera.h" />
     <ClInclude Include="..\..\..\Source\Renderer\GLTimer.h" />
     <ClInclude Include="..\..\..\Source\Renderer\GraphicDevice.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\GraphicsHigh.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\GraphicsLow.h" />
     <ClInclude Include="..\..\..\Source\Renderer\ModelExporter.h" />
     <ClInclude Include="..\..\..\Source\Renderer\ModelLoader.h" />
     <ClInclude Include="..\..\..\Source\Renderer\Shader.h" />
@@ -38,6 +40,8 @@
     <ClCompile Include="..\..\..\Source\Renderer\Camera.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\GLTimer.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp" />
+    <ClCompile Include="..\..\..\Source\Renderer\GraphicsHigh.cpp" />
+    <ClCompile Include="..\..\..\Source\Renderer\GraphicsLow.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\Shader.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\ShadowMap.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\SimpleText.cpp" />
@@ -53,6 +57,8 @@
     <None Include="..\..\..\Externals\content\shaders\fullscreen.gs" />
     <None Include="..\..\..\Externals\content\shaders\fullscreen.ps" />
     <None Include="..\..\..\Externals\content\shaders\fullscreen.vs" />
+    <None Include="..\..\..\Externals\content\shaders\lowFSForwardShader.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\lowVSForwardShader.glsl" />
     <None Include="..\..\..\Externals\content\shaders\shadowShaderDeferredFS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\shadowShaderDeferredVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\shadowShaderForwardFS.glsl" />
@@ -60,7 +66,6 @@
     <None Include="..\..\..\Externals\content\shaders\SimpleText.glsl" />
     <None Include="..\..\..\Externals\content\shaders\skyboxShaderFS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\skyboxShaderVS.glsl" />
-    <None Include="..\..\..\Externals\content\shaders\skyboxvs.glsl" />
     <None Include="..\..\..\Externals\content\shaders\VSDeferredPass1.glsl" />
     <None Include="..\..\..\Externals\content\shaders\VSForwardShader.glsl" />
     <None Include="..\..\..\Externals\content\shaders\VSInterfaceShader.glsl" />

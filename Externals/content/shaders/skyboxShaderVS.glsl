@@ -1,4 +1,4 @@
-#version 440
+#version 400
 
 layout (location = 0) in vec3 VertexPoint;
 out vec3 TexCoord;

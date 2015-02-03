@@ -63,9 +63,23 @@ GameCreator::~GameCreator()
 
 void GameCreator::InitializeGraphics()
 {
+#if defined(__IOS__) || defined(__ANDROID__)
 	m_graphics = new Renderer::GraphicDevice();
-	m_graphics->Init();
-	//LuaEmbedder::AddObject<Renderer::GraphicDevice>(m_clientLuaState, "GraphicDevice", m_graphics, "graphics");
+    m_graphics->Init();
+#else
+    m_graphics = new Renderer::GraphicsHigh();
+    if (!m_graphics->Init())
+    {
+        SDL_Log("Switching to OpenGL 4.0");
+        m_graphics = new Renderer::GraphicsLow();
+        m_graphics->Init();
+    }
+#endif
+    
+    
+    
+	
+	//LuaEmbedder::AddObject<Renderer::GraphicDevice>("GraphicDevice", m_graphics, "graphics");
 }
 
 void GameCreator::InitializeConsole()
