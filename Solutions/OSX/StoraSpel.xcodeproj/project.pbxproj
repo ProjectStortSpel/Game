@@ -15,7 +15,6 @@
 		0339F9AE1A7433D800FA04DD /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03F5A8021A73DB9B00D54F14 /* OpenGL.framework */; };
 		035C22CD1A73D68600EE9624 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 035C22CC1A73D68600EE9624 /* Images.xcassets */; };
 		035C22D01A73D68600EE9624 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 035C22CE1A73D68600EE9624 /* Main.storyboard */; };
-		03BCC2961A7CCCCB004E9A5F /* content in Resources */ = {isa = PBXBuildFile; fileRef = 03BCC2951A7CCCCB004E9A5F /* content */; };
 		03C13DFF1A80F2E50027A2FE /* Console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03C13CEA1A80F2E50027A2FE /* Console.cpp */; };
 		03C13E001A80F2E50027A2FE /* BitSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03C13CF01A80F2E50027A2FE /* BitSet.cpp */; };
 		03C13E011A80F2E50027A2FE /* ContainerHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03C13CF21A80F2E50027A2FE /* ContainerHelper.cpp */; };
@@ -128,6 +127,7 @@
 		03C13E6C1A80F2E50027A2FE /* SimpleText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03C13DF71A80F2E50027A2FE /* SimpleText.cpp */; };
 		03C13E6D1A80F2E50027A2FE /* SkyBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03C13DF91A80F2E50027A2FE /* SkyBox.cpp */; };
 		03C13E6E1A80F2E50027A2FE /* TextRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03C13DFC1A80F2E50027A2FE /* TextRenderer.cpp */; };
+		03C1418A1A80F7900027A2FE /* content in Resources */ = {isa = PBXBuildFile; fileRef = 03C141891A80F7900027A2FE /* content */; };
 		03F5A8FE1A74061600D54F14 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03F5A8FD1A74061600D54F14 /* CoreVideo.framework */; };
 		03F5A8FF1A74062100D54F14 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03F5A8E81A74049000D54F14 /* AudioToolbox.framework */; };
 		03F5A9001A74062100D54F14 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03F5A8FB1A7405AD00D54F14 /* AudioUnit.framework */; };
@@ -149,7 +149,6 @@
 		035C22C31A73D68600EE9624 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		035C22CC1A73D68600EE9624 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		035C22CF1A73D68600EE9624 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		03BCC2951A7CCCCB004E9A5F /* content */ = {isa = PBXFileReference; lastKnownFileType = folder; name = content; path = ../../Externals/content; sourceTree = "<group>"; };
 		03C13CEA1A80F2E50027A2FE /* Console.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Console.cpp; sourceTree = "<group>"; };
 		03C13CEB1A80F2E50027A2FE /* Console.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Console.h; sourceTree = "<group>"; };
 		03C13CED1A80F2E50027A2FE /* ECSL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSL.h; sourceTree = "<group>"; };
@@ -387,6 +386,7 @@
 		03C13DFC1A80F2E50027A2FE /* TextRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextRenderer.cpp; sourceTree = "<group>"; };
 		03C13DFD1A80F2E50027A2FE /* TextRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextRenderer.h; sourceTree = "<group>"; };
 		03C13DFE1A80F2E50027A2FE /* TextureLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextureLoader.h; sourceTree = "<group>"; };
+		03C141891A80F7900027A2FE /* content */ = {isa = PBXFileReference; lastKnownFileType = folder; name = content; path = ../../Externals/content; sourceTree = "<group>"; };
 		03F5A8021A73DB9B00D54F14 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		03F5A8E81A74049000D54F14 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		03F5A8EB1A74049000D54F14 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
@@ -456,7 +456,7 @@
 		035C22B61A73D68600EE9624 = {
 			isa = PBXGroup;
 			children = (
-				03BCC2951A7CCCCB004E9A5F /* content */,
+				03C141891A80F7900027A2FE /* content */,
 				0339F9861A74080300FA04DD /* Framework */,
 				035C24201A73D7F400EE9624 /* Source */,
 				035C22C11A73D68600EE9624 /* StoraSpel */,
@@ -1128,7 +1128,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				03BCC2961A7CCCCB004E9A5F /* content in Resources */,
+				03C1418A1A80F7900027A2FE /* content in Resources */,
 				035C22CD1A73D68600EE9624 /* Images.xcassets in Resources */,
 				035C22D01A73D68600EE9624 /* Main.storyboard in Resources */,
 			);
