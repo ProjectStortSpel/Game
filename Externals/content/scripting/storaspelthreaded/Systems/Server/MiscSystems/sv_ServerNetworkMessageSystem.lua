@@ -1,9 +1,9 @@
-OnPlayerConnectedSystem = System()
+ServerNetworkMessageSystem = System()
 
-OnPlayerConnectedSystem.Initialize = function(self)
+ServerNetworkMessageSystem.Initialize = function(self)
 	
 	--	Set Name
-	self:SetName("OnPlayerConnectedSystem")
+	self:SetName("ServerNetworkMessageSystem")
 	
 	self:InitializeNetworkEvents()
 	
@@ -11,13 +11,11 @@ OnPlayerConnectedSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("Player", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("PlayerCounter", FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter("IsSpectator", FilterType.Excluded)
 	
-	
+	self:AddComponentTypeToFilter("SyncNetwork", FilterType.RequiresOneOf)
 end
 
-OnPlayerConnectedSystem.PostInitialize = function(self)
-	
+ServerNetworkMessageSystem.PostInitialize = function(self)
 	
 	local playerCounter = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("PlayerCounter", playerCounter)
@@ -31,7 +29,54 @@ OnPlayerConnectedSystem.PostInitialize = function(self)
 	self:AddConnectedPlayers(playerCounter, maxPlayers)
 end
 
-OnPlayerConnectedSystem.OnPlayerConnected = function(self, _ip, _port, _message)
+ServerNetworkMessageSystem.CounterComponentChanged = function(self, _change, _component)
+	
+	local counterEntities = self:GetEntities("PlayerCounter")
+	local counterComp = world:GetComponent(counterEntities[1], "PlayerCounter", _component)
+	local number = counterComp:GetInt()
+	number = number + _change
+	world:SetComponent(counterEntities[1], "PlayerCounter", _component, number)
+end
+
+ServerNetworkMessageSystem.AddConnectedPlayers = function(self, _counterEntity, _maxPlayers)
+	
+	local clients = { Net.ConnectedClients() }
+	local maxPlayers = _maxPlayers
+	local noOfPlayers = 0
+
+	for i = 1, #clients, 2 do
+		
+		local ip = clients[i]
+		local port = clients[i+1]
+
+		if noOfPlayers >= maxPlayers then
+			Net.Kick(ip, port, "Server is full.")
+			return
+		end
+		
+		noOfPlayers = noOfPlayers + 1
+	
+		--	Create the new player
+		local newName = "Player_" .. tostring(noOfPlayers + 1)
+	
+		local newEntityId = world:CreateNewEntity("Player")
+	
+		world:SetComponent(newEntityId, "PlayerName", "Name", newName);
+		world:SetComponent(newEntityId, "NetConnection", "IpAddress", ip);
+		world:SetComponent(newEntityId, "NetConnection", "Port", port);
+
+		world:CreateComponentAndAddTo("ActiveNetConnection", newEntityId)
+	
+		--world:SetComponent(newEntityId, "PlayerNumber", "Number", self.ConnectedPlayers);
+
+	end
+	world:SetComponent(_counterEntity, "PlayerCounter", "Players", noOfPlayers)
+end
+
+
+
+
+ServerNetworkMessageSystem.OnPlayerConnected = function(self, _ip, _port, _message)
 
 	local addSpectator = false
 	local counterEntities = self:GetEntities("PlayerCounter")
@@ -84,7 +129,7 @@ OnPlayerConnectedSystem.OnPlayerConnected = function(self, _ip, _port, _message)
 		world:CreateComponentAndAddTo("IsSpectator", newPlayer)
 		self:CounterComponentChanged(1, "Spectators")
 		
-		print("Spectator_: " .. newPlayer .. " connected")
+		print("Spectator: " .. newPlayer .. " connected")
 	else
 	
 		local newName = "Player_" .. tostring(noOfPlayers + 1)
@@ -92,16 +137,21 @@ OnPlayerConnectedSystem.OnPlayerConnected = function(self, _ip, _port, _message)
 		
 		self:CounterComponentChanged(1, "Players")
 		
-		print("Player_: " .. newPlayer .. " connected")
+		print("Player: " .. newPlayer .. " connected")
 	end
 	
+	local sync = self:GetEntities("SyncNetwork");
 	
+	for i = 1, #sync do
+		Net.SendEntity(sync[i], _ip, _port)	
+		Console.Print("Send Entity: " .. sync[i])
+	end	
 
 end
 
-OnPlayerConnectedSystem.OnPlayerDisconnected = function(self, _ip, _port, _message)
+ServerNetworkMessageSystem.OnPlayerDisconnected = function(self, _ip, _port, _message)
 
-	local entities = self:GetEntities();
+	local entities = self:GetEntities("Player");
 	local foundPlayer = false
 	local isSpectator = false
 	
@@ -138,9 +188,9 @@ OnPlayerConnectedSystem.OnPlayerDisconnected = function(self, _ip, _port, _messa
 	
 end
 
-OnPlayerConnectedSystem.OnPlayerTimedOut = function(self, _ip, _port, _message)
+ServerNetworkMessageSystem.OnPlayerTimedOut = function(self, _ip, _port, _message)
 
-	local entities = self:GetEntities();
+	local entities = self:GetEntities("Player");
 	local foundPlayer = false
 	local isSpectator = false
 	
@@ -177,46 +227,6 @@ OnPlayerConnectedSystem.OnPlayerTimedOut = function(self, _ip, _port, _message)
 	
 end
 
-OnPlayerConnectedSystem.AddConnectedPlayers = function(self, _counterEntity, _maxPlayers)
-	
-	local clients = { Net.ConnectedClients() }
-	local maxPlayers = _maxPlayers
-	local noOfPlayers = 0
-
-	for i = 1, #clients, 2 do
-		
-		local ip = clients[i]
-		local port = clients[i+1]
-
-		if noOfPlayers >= maxPlayers then
-			Net.Kick(ip, port, "Server is full.")
-			return
-		end
-		
-		noOfPlayers = noOfPlayers + 1
-	
-		--	Create the new player
-		local newName = "Player_" .. tostring(noOfPlayers + 1)
-	
-		local newEntityId = world:CreateNewEntity("Player")
-	
-		world:SetComponent(newEntityId, "PlayerName", "Name", newName);
-		world:SetComponent(newEntityId, "NetConnection", "IpAddress", ip);
-		world:SetComponent(newEntityId, "NetConnection", "Port", port);
-
-		world:CreateComponentAndAddTo("ActiveNetConnection", newEntityId)
-	
-		--world:SetComponent(newEntityId, "PlayerNumber", "Number", self.ConnectedPlayers);
-
-	end
-	world:SetComponent(_counterEntity, "PlayerCounter", "Players", noOfPlayers)
-end
-
-OnPlayerConnectedSystem.CounterComponentChanged = function(self, _change, _component)
-	
-	local counterEntities = self:GetEntities("PlayerCounter")
-	local counterComp = world:GetComponent(counterEntities[1], "PlayerCounter", _component)
-	local number = counterComp:GetInt()
-	number = number + _change
-	world:SetComponent(counterEntities[1], "PlayerCounter", _component, number)
+ServerNetworkMessageSystem.OnPasswordInvalid = function(self, _ip, _port, _message)
+	print("ServerNetworkMessageSystem.OnPasswordInvalid - Not implemented!")
 end

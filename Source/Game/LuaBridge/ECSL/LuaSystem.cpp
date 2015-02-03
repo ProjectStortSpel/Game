@@ -265,6 +265,7 @@ namespace LuaBridge
 		{
 			LuaEmbedder::PushString(m_L, _nc.GetIpAddress());
 			LuaEmbedder::PushInt(m_L, (int)_nc.GetPort());
+			LuaEmbedder::PushString(m_L, "OnConnectedToServer");
 			LuaEmbedder::CallMethod<LuaSystem>(m_L, "System", "OnConnectedToServer", this, 2);
 		}
 	}
@@ -276,6 +277,7 @@ namespace LuaBridge
 		{
 			LuaEmbedder::PushString(m_L, _nc.GetIpAddress());
 			LuaEmbedder::PushInt(m_L, (int)_nc.GetPort());
+			LuaEmbedder::PushString(m_L, "OnDisconnectedFromServer");
 			LuaEmbedder::CallMethod<LuaSystem>(m_L, "System", "OnDisconnectedFromServer", this, 2);
 		}
 	}
@@ -287,6 +289,7 @@ namespace LuaBridge
 		{
 			LuaEmbedder::PushString(m_L, _nc.GetIpAddress());
 			LuaEmbedder::PushInt(m_L, (int)_nc.GetPort());
+			LuaEmbedder::PushString(m_L, "OnFailedToConnect");
 			LuaEmbedder::CallMethod<LuaSystem>(m_L, "System", "OnFailedToConnect", this, 2);
 		}
 	}
@@ -298,7 +301,7 @@ namespace LuaBridge
 		{
 			LuaEmbedder::PushString(m_L, _nc.GetIpAddress());
 			LuaEmbedder::PushInt(m_L, (int)_nc.GetPort());
-			LuaEmbedder::PushString(m_L, _message);
+			LuaEmbedder::PushString(m_L, "OnKickedFromServer");
 			LuaEmbedder::CallMethod<LuaSystem>(m_L, "System", "OnKickedFromServer", this, 3);
 		}
 	}
@@ -310,6 +313,7 @@ namespace LuaBridge
 		{
 			LuaEmbedder::PushString(m_L, _nc.GetIpAddress());
 			LuaEmbedder::PushInt(m_L, (int)_nc.GetPort());
+			LuaEmbedder::PushString(m_L, "OnPasswordInvalid");
 			LuaEmbedder::CallMethod<LuaSystem>(m_L, "System", "OnPasswordInvalid", this, 2);
 		}
 	}
@@ -362,6 +366,7 @@ namespace LuaBridge
 		{
 			LuaEmbedder::PushString(m_L, _nc.GetIpAddress());
 			LuaEmbedder::PushInt(m_L, (int)_nc.GetPort());
+			LuaEmbedder::PushString(m_L, "OnServerFull");
 			LuaEmbedder::CallMethod<LuaSystem>(m_L, "System", "OnServerFull", this, 2);
 		}
 	}
@@ -373,6 +378,7 @@ namespace LuaBridge
 		{
 			LuaEmbedder::PushString(m_L, _nc.GetIpAddress());
 			LuaEmbedder::PushInt(m_L, (int)_nc.GetPort());
+			LuaEmbedder::PushString(m_L, "OnTimedOutFromServer");
 			LuaEmbedder::CallMethod<LuaSystem>(m_L, "System", "OnTimedOutFromServer", this, 2);
 		}
 	}

@@ -161,7 +161,7 @@ require "sv_TotemPoleSystem"
 require "sv_GameOverSystem"
 require "sv_ServerLobbySystem"
 require "sv_LogStartSystem"
-require "sv_OnPlayerConnectedSystem"
+require "sv_ServerNetworkMessageSystem"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(TotemPoleSystem)
@@ -176,4 +176,4 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ServerLobbySystem)
 
 worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(OnPlayerConnectedSystem)
+worldCreator:AddSystemToCurrentGroup(ServerNetworkMessageSystem)
