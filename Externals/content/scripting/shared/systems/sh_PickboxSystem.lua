@@ -1,7 +1,19 @@
 PickBoxSystem = System()
 
-PickBoxSystem.Update = function(self, dt, taskIndex, taskCount)
+PickBoxSystem.Initialize = function(self)
+	--	Set Name
+	self:SetName("PickBoxSystem")
+	
+	--	Toggle EntitiesAdded
+	self:UsingUpdate()
+	
+	--	Set Filter
+	self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
+	self:AddComponentTypeToFilter("Scale", FilterType.Mandatory)
+	self:AddComponentTypeToFilter("PickBox", FilterType.Mandatory)
+end
 
+PickBoxSystem.Update = function(self, dt, taskIndex, taskCount)
 	-- Fetch Aspect ratio from graphics:
 	local AspectX, AspectY = GraphicDevice.GetAspectRatio()
 
@@ -13,7 +25,7 @@ PickBoxSystem.Update = function(self, dt, taskIndex, taskCount)
 	local rY = tY * AspectY * -2
 	
 	local t = -10000000
-	local hitentity = nil
+	local newhit = nil
 	local hit = false
 	
 	---- intersect section
@@ -46,26 +58,33 @@ PickBoxSystem.Update = function(self, dt, taskIndex, taskCount)
 			if hitX > X-halfwidth and hitX < X+halfwidth then
 				if hitY > Y-halfheight and hitY < Y+halfheight then
 						hit = true
-						hitentity = entities[i]
+						newhit = entity
 						t = Z
 				end
 			end
 		end
-		if world:EntityHasComponent(entities[i], "OnPickBoxHit") then
-			world:RemoveComponentFrom("OnPickBoxHit", entities[i])
-		end
 	end
 	if hit == true then
-		if not world:EntityHasComponent(hitentity, "OnPickBoxHit") then
-			world:CreateComponentAndAddTo("OnPickBoxHit", hitentity)
+		-- ADD OnPickBoxHit to newhit
+		if not world:EntityHasComponent(newhit, "OnPickBoxHit") then
+			world:CreateComponentAndAddTo("OnPickBoxHit", newhit)
+		end
+		-- Clear OnPickBoxHit from other entities
+		local entities = self:GetEntities("OnPickBoxHit")
+		for i = 1, #entities do
+			local entity = entities[i]
+			if entity ~= newhit then
+				if world:EntityHasComponent(entity, "OnPickBoxHit") then
+					world:RemoveComponentFrom("OnPickBoxHit", entity)
+				end
+			end
+		end
+	else
+		-- Clear OnPickBoxHit from entities
+		local entities = self:GetEntities("OnPickBoxHit")
+		for i = 1, #entities do
+			local entity = entities[i]
+			world:RemoveComponentFrom("OnPickBoxHit", entity)
 		end
 	end
-end
-
-PickBoxSystem.Initialize = function(self)
-	self:SetName("PickBox System")
-	self:UsingUpdate()
-	self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
-	self:AddComponentTypeToFilter("Scale", FilterType.Mandatory)
-	self:AddComponentTypeToFilter("PickBox", FilterType.Mandatory)
 end

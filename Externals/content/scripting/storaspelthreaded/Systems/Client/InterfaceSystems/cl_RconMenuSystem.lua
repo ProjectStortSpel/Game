@@ -1,21 +1,21 @@
 RconMenuSystem = System()
+RconMenuSystem.Name = "RconMenu"
 
 RconMenuSystem.Initialize = function(self)
 	--	Set Name
-	self:SetName("RconMenuSystem")
+	self:SetName(self.Name.."System")
 	
 	--	Toggle EntitiesAdded
 	self:UsingEntitiesAdded()
 	self:UsingUpdate()
 	
 	--	Set Filter
-	self:AddComponentTypeToFilter("RconMenu", FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter("RconMenuElement", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter(self.Name, FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter(self.Name.."Element", FilterType.RequiresOneOf)
 end
 
 RconMenuSystem.Update = function(self, dt, taskIndex, taskCount)
 	if Input.GetTouchState(0) == InputState.Released then
-
 		local pressedButtons = self:GetEntities("OnPickBoxHit")
 		if #pressedButtons > 0 then
 			local pressedButton = pressedButtons[1]
@@ -33,17 +33,13 @@ RconMenuSystem.Update = function(self, dt, taskIndex, taskCount)
 		else
 			self:RemoveMenu()
 		end
-		
 	end
-	
-
 end
 
 RconMenuSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
-
 	for n = 1, #entities do
 		local entityId = entities[n]
-		if world:EntityHasComponent(entityId, "RconMenu") then
+		if world:EntityHasComponent(entityId, self.Name) then
 			self:SpawnMenu()
 		end
 	end
@@ -77,8 +73,7 @@ RconMenuSystem.CreateElement = function(self, object, folder, posx, posy, posz, 
 	world:CreateComponentAndAddTo("Rotation", id)
 	world:CreateComponentAndAddTo("Scale", id)
 	world:CreateComponentAndAddTo("PickBox", id)
-	
-	world:CreateComponentAndAddTo("RconMenuElement", id)
+	world:CreateComponentAndAddTo(self.Name.."Element", id)
 	local model = self:GetComponent(id, "Model", 0)
 	model:SetModel(object, folder, 2)
 	local position = self:GetComponent(id, "Position", 0)

@@ -35,6 +35,7 @@ ActionMoveForwardSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount,
 		world:SetComponent(id, "TestMove", "PosZ", mapPosZ + dirZ)
 		world:SetComponent(id, "TestMove", "DirX", dirX)
 		world:SetComponent(id, "TestMove", "DirZ", dirZ)
+		world:SetComponent(id, "TestMove", "Steps", 1)
 	
 		world:RemoveComponentFrom("UnitForward", entity)
 	end

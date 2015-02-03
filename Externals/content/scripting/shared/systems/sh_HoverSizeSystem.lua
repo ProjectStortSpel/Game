@@ -1,8 +1,23 @@
 HoverSizeSystem = System()
 
+HoverSizeSystem.Initialize = function(self)
+	--	Set Name
+	self:SetName("HoverSizeSystem")
+	
+	--	Toggle EntitiesAdded
+	self:UsingEntitiesAdded()
+	self:UsingEntitiesRemoved()
+	
+	--	Set Filter
+	self:AddComponentTypeToFilter("HoverSize", FilterType.Mandatory)
+	self:AddComponentTypeToFilter("Scale", FilterType.Mandatory)
+	self:AddComponentTypeToFilter("OnPickBoxHit", FilterType.Mandatory)
+end
+
+
 HoverSizeSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
-	for i = 1, #entities do
-		local entityId = entities[i]
+	for n = 1, #entities do
+		local entityId = entities[n]
 		local scale = self:GetComponent(entityId, "Scale", 0)
 		local hscale = self:GetComponent(entityId, "HoverSize", 0)
 		local sx, sy, sz = scale:GetFloat3()
@@ -13,8 +28,8 @@ HoverSizeSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entitie
 end
 
 HoverSizeSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
-	for i = 1, #entities do
-		local entityId = entities[i]
+	for n = 1, #entities do
+		local entityId = entities[n]
 		local scale = self:GetComponent(entityId, "Scale", 0)
 		local hscale = self:GetComponent(entityId, "HoverSize", 0)
 		local sx, sy, sz = scale:GetFloat3()
@@ -24,11 +39,3 @@ HoverSizeSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entit
 	end
 end
 
-HoverSizeSystem.Initialize = function(self)
-	self:SetName("HoverSizeSystem")
-	self:UsingEntitiesAdded()
-	self:UsingEntitiesRemoved()
-	self:AddComponentTypeToFilter("HoverSize", FilterType.Mandatory)
-	self:AddComponentTypeToFilter("Scale", FilterType.Mandatory)
-	self:AddComponentTypeToFilter("OnPickBoxHit", FilterType.Mandatory)
-end
