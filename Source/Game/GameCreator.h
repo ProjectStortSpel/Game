@@ -6,7 +6,8 @@
 #if defined(__ANDROID__) || defined(__IOS__)
 #include "AndroidRenderer/GraphicDevice.h"
 #else
-#include "Renderer/GraphicDevice.h"
+#include "Renderer/GraphicsLow.h"
+#include "Renderer/GraphicsHigh.h"
 #endif
 #include "Input/InputWrapper.h"
 #include "LuaEmbedder/LuaEmbedder.h"
