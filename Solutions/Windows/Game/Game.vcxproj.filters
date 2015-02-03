@@ -138,6 +138,81 @@
     <Filter Include="Game\Profilers\ECSLProfiler\Render Views">
       <UniqueIdentifier>{e772fded-ab7d-4fc8-b348-3786ee79e575}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scripting\storaspelthreaded">
+      <UniqueIdentifier>{a0a4802b-7b12-43ba-b4a6-29e02a105fa9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripting\storaspelthreaded\Components">
+      <UniqueIdentifier>{830d2e85-206f-4614-b60c-c8a0dcaddfbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripting\storaspelthreaded\Systems">
+      <UniqueIdentifier>{d9745c7b-1c7c-4d8d-8a28-024091278812}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripting\storaspelthreaded\Templates">
+      <UniqueIdentifier>{47ed36f8-b497-45fd-803c-8620c0936578}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripting\storaspelthreaded\Components\GameLogic">
+      <UniqueIdentifier>{12ce9069-4587-443e-b315-ea805c8b83f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripting\storaspelthreaded\Components\General">
+      <UniqueIdentifier>{b2e1edaa-aae4-41cc-b471-fff0c2ae67db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripting\storaspelthreaded\Components\Interface">
+      <UniqueIdentifier>{a951d32d-42be-4f21-a508-2440a67b293a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripting\storaspelthreaded\Systems\Client">
+      <UniqueIdentifier>{c95e5850-6a00-48ea-9ab4-3d51556be93d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripting\storaspelthreaded\Systems\Server">
+      <UniqueIdentifier>{5f01154a-71b7-4888-94a3-fe1dc9f701c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripting\storaspelthreaded\Systems\Shared">
+      <UniqueIdentifier>{f9d6bb85-af65-45e8-a491-638c1b3ef8b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripting\storaspelthreaded\Systems\Client\CameraSystems">
+      <UniqueIdentifier>{9f42f000-63e7-407b-9208-d0d30873dfa5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripting\storaspelthreaded\Systems\Client\CardSystems">
+      <UniqueIdentifier>{b9cb1256-6159-4525-bbab-2c7ec5bfe1fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripting\storaspelthreaded\Systems\Client\InterfaceSystems">
+      <UniqueIdentifier>{597ee73f-553e-4837-9019-c096b0ce38e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripting\storaspelthreaded\Systems\Client\MiscSystems">
+      <UniqueIdentifier>{9838ef83-cbd2-460d-bf04-11ffeda4d792}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripting\storaspelthreaded\Systems\Shared\LerpSystems">
+      <UniqueIdentifier>{690bc3a5-ec36-4d98-b9e4-bc683081a8c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripting\storaspelthreaded\Systems\Server\AISystems">
+      <UniqueIdentifier>{c890b323-604f-4a5b-bb04-d14b565f1760}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripting\storaspelthreaded\Systems\Server\CardActionSystems">
+      <UniqueIdentifier>{5be0cbe2-5d2a-4899-99b6-151c8344659d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripting\storaspelthreaded\Systems\Server\CardSystems">
+      <UniqueIdentifier>{f58681ca-ba3e-4672-8fc7-08c06531e7b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripting\storaspelthreaded\Systems\Server\LightSystems">
+      <UniqueIdentifier>{d5451e0c-ecd5-44a8-8dc7-2575fcefcc55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripting\storaspelthreaded\Systems\Server\MapSystems">
+      <UniqueIdentifier>{5aa7861c-2ca8-4c2b-89f8-0d6c90e72ff1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripting\storaspelthreaded\Systems\Server\MiscSystems">
+      <UniqueIdentifier>{9ca674d5-303b-492f-9af4-a31b1643f4f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripting\storaspelthreaded\Systems\Server\MoveSystems">
+      <UniqueIdentifier>{6cbd9e53-aed5-4ec3-a083-c67b2c1cb1f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripting\storaspelthreaded\Systems\Server\PlayerSystems">
+      <UniqueIdentifier>{312ab29d-9c2c-48eb-b047-b6caa421c994}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripting\storaspelthreaded\Systems\Server\RoundSystems">
+      <UniqueIdentifier>{4436040f-09db-45de-8e02-d7870adf2c3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripting\storaspelthreaded\Systems\Server\SpawnSystems">
+      <UniqueIdentifier>{89f1782a-5e56-473a-983a-e632ac04d1d7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\LuaBridge.cpp">
@@ -506,6 +581,291 @@
     </None>
     <None Include="..\..\..\Externals\content\scripting\lobby\components\buttoncomponents.lua">
       <Filter>Scripting\Lobby\Components</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\init.lua">
+      <Filter>Scripting\storaspelthreaded</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Components\InitComponents.lua">
+      <Filter>Scripting\storaspelthreaded\Components</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Components\GameLogic\AIComponents.lua">
+      <Filter>Scripting\storaspelthreaded\Components\GameLogic</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Components\GameLogic\CardActionComponents.lua">
+      <Filter>Scripting\storaspelthreaded\Components\GameLogic</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Components\GameLogic\CardSettingsComponents.lua">
+      <Filter>Scripting\storaspelthreaded\Components\GameLogic</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Components\GameLogic\GameLogicComponents.lua">
+      <Filter>Scripting\storaspelthreaded\Components\GameLogic</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Components\GameLogic\MapComponents.lua">
+      <Filter>Scripting\storaspelthreaded\Components\GameLogic</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Components\GameLogic\PhaseComponents.lua">
+      <Filter>Scripting\storaspelthreaded\Components\GameLogic</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Components\GameLogic\PlayerComponents.lua">
+      <Filter>Scripting\storaspelthreaded\Components\GameLogic</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Components\GameLogic\TimerComponents.lua">
+      <Filter>Scripting\storaspelthreaded\Components\GameLogic</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Components\GameLogic\TotemComponents.lua">
+      <Filter>Scripting\storaspelthreaded\Components\GameLogic</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Components\GameLogic\TriggerComponents.lua">
+      <Filter>Scripting\storaspelthreaded\Components\GameLogic</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Components\GameLogic\UnitComponents.lua">
+      <Filter>Scripting\storaspelthreaded\Components\GameLogic</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Components\General\GeneralComponents.lua">
+      <Filter>Scripting\storaspelthreaded\Components\General</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Components\General\GraphicalComponents.lua">
+      <Filter>Scripting\storaspelthreaded\Components\General</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Components\General\LerpComponents.lua">
+      <Filter>Scripting\storaspelthreaded\Components\General</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Components\General\LightComponents.lua">
+      <Filter>Scripting\storaspelthreaded\Components\General</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Components\General\MiscComponents.lua">
+      <Filter>Scripting\storaspelthreaded\Components\General</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Components\General\NetworkComponents.lua">
+      <Filter>Scripting\storaspelthreaded\Components\General</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Components\Interface\ButtonComponents.lua">
+      <Filter>Scripting\storaspelthreaded\Components\Interface</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Components\Interface\InterfaceComponents.lua">
+      <Filter>Scripting\storaspelthreaded\Components\Interface</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Components\Interface\MenuComponents.lua">
+      <Filter>Scripting\storaspelthreaded\Components\Interface</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Templates\CardTemplates.lua">
+      <Filter>Scripting\storaspelthreaded\Templates</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Templates\InitTemplates.lua">
+      <Filter>Scripting\storaspelthreaded\Templates</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Templates\LightTemplates.lua">
+      <Filter>Scripting\storaspelthreaded\Templates</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Templates\MapTemplates.lua">
+      <Filter>Scripting\storaspelthreaded\Templates</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Templates\MiscTemplates.lua">
+      <Filter>Scripting\storaspelthreaded\Templates</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Templates\PlayerTemplates.lua">
+      <Filter>Scripting\storaspelthreaded\Templates</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Client\InitClientSystems.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Client</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Client\CameraSystems\cl_NewCameraSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Client\CameraSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Client\CardSystems\cl_CardAddModelSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Client\CardSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Client\CardSystems\cl_CardHoverSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Client\CardSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Client\CardSystems\cl_CardPickedPositionSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Client\CardSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Client\CardSystems\cl_CardPositionSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Client\CardSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Client\CardSystems\cl_CardSelectSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Client\CardSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Client\CardSystems\cl_GiveCardIndexSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Client\CardSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Client\CardSystems\cl_SendSelectedCardsSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Client\CardSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Client\CardSystems\cl_SortCardIndexSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Client\CardSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Client\CardSystems\cl_SortSelectedCardsSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Client\CardSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Client\InterfaceSystems\cl_GameInterfaceSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Client\InterfaceSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Client\InterfaceSystems\cl_GameMenuSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Client\InterfaceSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Client\InterfaceSystems\cl_HoverSizeSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Client\InterfaceSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Client\InterfaceSystems\cl_OptionsMenuSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Client\InterfaceSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Client\InterfaceSystems\cl_RconMenuSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Client\InterfaceSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Client\MiscSystems\cl_PlayerIndicatorSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Client\MiscSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Shared\InitSharedSystems.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Shared</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Shared\LerpSystems\sh_LerpSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Shared\LerpSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Shared\LerpSystems\sh_MovePlayerSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Shared\LerpSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Shared\LerpSystems\sh_NetworkMessagesSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Shared\LerpSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\InitServerSystems.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\AISystems\sv_AddAISystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\AISystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\AISystems\sv_AICardPickingSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\AISystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\CardActionSystems\sv_ActionMoveBackwardSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\CardActionSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\CardActionSystems\sv_ActionMoveForwardSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\CardActionSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\CardActionSystems\sv_ActionTurnAroundSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\CardActionSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\CardActionSystems\sv_ActionTurnLeftSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\CardActionSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\CardActionSystems\sv_ActionTurnRightSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\CardActionSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\CardSystems\sv_AddCardPickTimerSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\CardSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\CardSystems\sv_AutoPickCardsSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\CardSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\CardSystems\sv_CreateCardPickTimer.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\CardSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\CardSystems\sv_CreateDeckSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\CardSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\CardSystems\sv_DealCardsSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\CardSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\CardSystems\sv_PlayCardSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\CardSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\CardSystems\sv_SetCardPickTimerSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\CardSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\CardSystems\sv_TakeCardsFromPlayerSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\CardSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\CardSystems\sv_TakeCardStepFromUnitSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\CardSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\CardSystems\sv_UpdateCardPickTimerSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\CardSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\LightSystems\sv_DirectionalLightSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\LightSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\MapSystems\sv_CheckpointSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\MapSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\MapSystems\sv_CreateMapSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\MapSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\MapSystems\sv_RiverSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\MapSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\MapSystems\sv_VoidSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\MapSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\MiscSystems\sv_FinishSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\MiscSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\MiscSystems\sv_GameOverSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\MiscSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\MiscSystems\sv_LogStartSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\MiscSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\MiscSystems\sv_OnPlayerConnectedSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\MiscSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\MiscSystems\sv_ServerLobbySystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\MiscSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\MiscSystems\sv_TotemPoleSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\MiscSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\MoveSystems\sv_MoveBackwardSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\MoveSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\MoveSystems\sv_MoveForwardSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\MoveSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\MoveSystems\sv_PostMoveSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\MoveSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\MoveSystems\sv_TestMoveRiverSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\MoveSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\MoveSystems\sv_TestMoveSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\MoveSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\MoveSystems\sv_TurnAroundSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\MoveSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\MoveSystems\sv_TurnLeftSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\MoveSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\MoveSystems\sv_TurnRightSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\MoveSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\SpawnSystems\sv_GiveSpawnLocationSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\SpawnSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\SpawnSystems\sv_RespawnSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\SpawnSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\SpawnSystems\sv_SpawnSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\SpawnSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\RoundSystems\sv_NewStepSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\RoundSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\RoundSystems\sv_PlayCardTimerSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\RoundSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\RoundSystems\sv_StartNewRoundSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\RoundSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\RoundSystems\sv_StepTimerSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\RoundSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\PlayerSystems\sv_PlayerSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\PlayerSystems</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\scripting\storaspelthreaded\Systems\Server\PlayerSystems\sv_UnitSystem.lua">
+      <Filter>Scripting\storaspelthreaded\Systems\Server\PlayerSystems</Filter>
     </None>
   </ItemGroup>
 </Project>
