@@ -66,26 +66,6 @@ bool GraphicsHigh::Init()
 	return true;
 }
 
-//void GraphicsHigh::PollEvent(SDL_Event _event)
-//{
-//	switch (_event.type)
-//	{
-//	case SDL_WINDOWEVENT:
-//		switch (_event.window.event)
-//		{
-//		case SDL_WINDOWEVENT_RESIZED:
-//			int w, h;
-//			SDL_GetWindowSize(m_window, &w, &h);
-//			ResizeWindow(w,h);
-//			break;
-//		}
-//		break;
-//
-//	default:
-//		break;
-//	}
-//}
-
 void GraphicsHigh::Update(float _dt)
 {
 	m_dt = _dt; m_fps = 1 / _dt;
@@ -485,22 +465,6 @@ void GraphicsHigh::Render()
 	SDL_GL_SwapWindow(m_window);
 }
 
-//void GraphicsHigh::ResizeWindow(int _width, int _height)
-//{
-//	// GRAPHIC CARD WORK GROUPS OF 16x16
-//	int x, y;
-//	x = _width / 16;
-//	if (x == 0) x = 1;
-//	y = _height / 16;
-//	if (y == 0) y = 1;
-//	m_clientWidth = x * 16;
-//	m_clientHeight = y * 16;
-//
-//	std::cout << m_clientWidth << "x" << m_clientHeight << std::endl;
-//
-//	SDL_SetWindowSize(m_window, m_clientWidth, m_clientHeight);
-//}
-
 bool GraphicsHigh::InitSDLWindow()
 {
 	// WINDOW SETTINGS
@@ -716,20 +680,6 @@ bool GraphicsHigh::InitBuffers()
 
 	return true;
 }
-
-//bool GraphicsHigh::InitSkybox()
-//{
-//	int w, h;
-//	GLuint texHandle = TextureLoader::LoadCubeMap("content/textures/skybox", GL_TEXTURE1, w, h);
-//	if (texHandle < 0)
-//		return false;
-//
-//	m_skyBoxShader.UseProgram();
-//	m_skybox = new SkyBox(texHandle, m_camera->GetFarPlane());
-//	m_vramUsage += (w*h * 6 * 4 * sizeof(float));
-//
-//	return true;
-//}
 
 bool GraphicsHigh::InitRandomVector()
 {
@@ -1213,20 +1163,6 @@ Buffer* GraphicsHigh::AddMesh(std::string _fileDir, Shader *_shaderProg)
 
 	return retbuffer;
 }
-//GLuint GraphicsHigh::AddTexture(std::string _fileDir, GLenum _textureSlot)
-//{
-//	for (std::map<const std::string, GLuint>::iterator it = m_textures.begin(); it != m_textures.end(); it++)
-//	{
-//		if (it->first == _fileDir)
-//			return it->second;
-//	}
-//	int texSizeX, texSizeY;
-//	m_deferredShader1.UseProgram();
-//	GLuint texture = TextureLoader::LoadTexture(_fileDir.c_str(), _textureSlot, texSizeX, texSizeY);
-//	m_textures.insert(std::pair<const std::string, GLenum>(_fileDir, texture));
-//	m_vramUsage += (texSizeX * texSizeY * 4 * 4);
-//	return texture;
-//}
 
 void GraphicsHigh::Clear()
 {
@@ -1241,44 +1177,6 @@ void GraphicsHigh::Clear()
   BufferPointlights(0, tmpPtr);
   delete tmpPtr;
 }
-
-//int GraphicsHigh::AddFont(const std::string& filepath, int size)
-//{
-//	return m_sdlTextRenderer.AddFont(filepath, size);
-//}
-//
-//float GraphicsHigh::CreateTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, glm::ivec2 size)
-//{
-//	if (m_textures.find(textureName) != m_textures.end())
-//		glDeleteTextures(1, &m_textures[textureName]);
-//	SDL_Surface* surface = m_sdlTextRenderer.CreateTextSurface(textString, fontIndex, color);
-//	if (size.x > 0)
-//		surface->w = size.x;
-//	if (size.y > 0)
-//		surface->h = size.y;
-//	m_deferredShader1.UseProgram();
-//	GLuint texture = TextureLoader::LoadTexture(surface, GL_TEXTURE1);
-//	m_textures[textureName] = texture;
-//	m_vramUsage += (surface->w * surface->h * 4 * 4);
-//	SDL_FreeSurface(surface);
-//	return (float)surface->w / (float)surface->h;
-//}
-//
-//void GraphicsHigh::CreateWrappedTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, unsigned int wrapLength, glm::ivec2 size)
-//{
-//	if (m_textures.find(textureName) != m_textures.end())
-//		glDeleteTextures(1, &m_textures[textureName]);
-//	SDL_Surface* surface = m_sdlTextRenderer.CreateWrappedTextSurface(textString, fontIndex, color, wrapLength);
-//	if (size.x > 0)
-//		surface->w = size.x;
-//	if (size.y > 0)
-//		surface->h = size.y;
-//	m_deferredShader1.UseProgram();
-//	GLuint texture = TextureLoader::LoadTexture(surface, GL_TEXTURE1);
-//	m_textures[textureName] = texture;
-//	m_vramUsage += (surface->w * surface->h * 4 * 4);
-//	SDL_FreeSurface(surface);
-//}
 
 bool GraphicsHigh::BufferModelTexture(int _id, std::string _fileDir, int _textureType)
 {

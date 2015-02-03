@@ -25,7 +25,8 @@
 #include <iomanip>
 
 GameCreator::GameCreator() :
-m_graphics(0), m_input(0), m_world(0), m_console(0), m_remoteConsole(0), m_consoleManager(Console::ConsoleManager::GetInstance()), m_frameCounter(new Utility::FrameCounter()), m_running(true)
+m_graphics(0), m_input(0), m_world(0), m_console(0), m_remoteConsole(0), m_consoleManager(Console::ConsoleManager::GetInstance()), m_frameCounter(new Utility::FrameCounter()), m_running(true),
+m_graphicalSystems(std::vector<GraphicalSystem*>())
 {
   
 }
@@ -191,26 +192,47 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	//NetworkMessagesSystem* nms = new NetworkMessagesSystem();
 	//nms->SetConsole(&m_consoleManager);
 
+
+	GraphicalSystem* graphicalSystem = 0;
+
+	graphicalSystem = new PointlightSystem(m_graphics);
+	m_graphicalSystems.push_back(graphicalSystem);
 	worldCreator.AddSystemGroup();
-	worldCreator.AddSystemToCurrentGroup<PointlightSystem>(m_graphics);
+	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
+
+
+	graphicalSystem = new DirectionalLightSystem(m_graphics);
+	m_graphicalSystems.push_back(graphicalSystem); 
 	worldCreator.AddSystemGroup();
-	worldCreator.AddSystemToCurrentGroup<DirectionalLightSystem>(m_graphics);
+	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
+
 	worldCreator.AddSystemGroup();
 	worldCreator.AddSystemToCurrentGroup<RotationSystem>();
+
+	graphicalSystem = new CameraSystem(m_graphics);
+	m_graphicalSystems.push_back(graphicalSystem);
 	worldCreator.AddSystemGroup();
-	worldCreator.AddSystemToCurrentGroup<CameraSystem>(m_graphics);
+	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
+
+	graphicalSystem = new ModelSystem(m_graphics);
+	m_graphicalSystems.push_back(graphicalSystem);
 	worldCreator.AddSystemGroup();
-	worldCreator.AddSystemToCurrentGroup<ModelSystem>(m_graphics);
+	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
+
 	worldCreator.AddSystemGroup();
 	worldCreator.AddSystemToCurrentGroup<MasterServerSystem>();
 	worldCreator.AddSystemGroup();
 	worldCreator.AddSystemToCurrentGroup<SyncEntitiesSystem>();
 	//worldCreator.AddLuaSystemToCurrentGroup(new ReceivePacketSystem());
+	graphicalSystem = new RenderSystem(m_graphics);
+	m_graphicalSystems.push_back(graphicalSystem);
 	worldCreator.AddSystemGroup();
-	worldCreator.AddSystemToCurrentGroup<RenderSystem>(m_graphics);
+	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 	//worldCreator.AddLuaSystemToCurrentGroup(new ReconnectSystem());
+	graphicalSystem = new RenderRemoveSystem(m_graphics);
+	m_graphicalSystems.push_back(graphicalSystem);
 	worldCreator.AddSystemGroup();
-	worldCreator.AddSystemToCurrentGroup<RenderRemoveSystem>(m_graphics);
+	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 	worldCreator.AddSystemGroup();
 	worldCreator.AddSystemToCurrentGroup<ResetChangedSystem>();
 
@@ -286,6 +308,7 @@ void GameCreator::StartGame(int argc, char** argv)
 	m_consoleManager.AddCommand("Quit", std::bind(&GameCreator::ConsoleStopGame, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager.AddCommand("GameMode", std::bind(&GameCreator::ConsoleGameMode, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager.AddCommand("Start", std::bind(&GameCreator::ConsoleStartTemp, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager.AddCommand("ChangeGraphics", std::bind(&GameCreator::ChangeGraphicsSettings, this, std::placeholders::_1, std::placeholders::_2));
 	
 	RunStartupCommands(argc, argv);
     
@@ -624,4 +647,39 @@ void GameCreator::PrintSectionTime(const std::string& sectionName, Utility::Fram
 	  "   Average: " << std::fixed << std::setprecision(3) << average << " ms" <<
 	  "   Anomality: " << std::fixed << std::setprecision(3) << anomality << " ms";
 	m_graphics->RenderSimpleText(ss.str(), x, y);
+}
+
+void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Console::Argument>* _args)
+{
+	if (_args->size() == 0)
+		return;
+
+	if ((*_args)[0].ArgType == Console::ArgumentType::Text)
+	{
+		for (int i = 0; i < 1000; ++i)
+		{
+			if (m_world->HasComponent(i, "Render"))
+				m_world->RemoveComponentFrom("Render", i);
+		}
+
+		if (strcmp((*_args)[0].Text, "high") == 0)
+			m_graphics->SetDebugTexFlag(0);
+
+		else if (strcmp((*_args)[0].Text, "low") == 0)
+		{
+			m_graphics->Clear();
+			delete(m_graphics);
+
+			m_graphics = new Renderer::GraphicsLow();
+			m_graphics->Init();
+		}
+
+		m_console->SetGraphicDevice(m_graphics);
+		LuaBridge::LuaGraphicDevice::SetGraphicDevice(m_graphics);
+		for (int n = 0; n < m_graphicalSystems.size(); ++n)
+		{
+			GraphicalSystem* tSystem = m_graphicalSystems.at(n);
+			tSystem->SetGraphics(m_graphics);
+		}
+	}
 }

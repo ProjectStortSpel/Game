@@ -42,7 +42,6 @@ bool GraphicsLow::Init()
 	if (!InitGLEW()) { ERRORMSG("GLEW_VERSION_4_0 FAILED\n"); }
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
-	//if (!InitForward()) { ERRORMSG("INIT FORWARD FAILED\n"); return false; }
 	if (!InitSkybox()) { ERRORMSG("INIT SKYBOX FAILED\n"); return false; }
 	
 	CreateShadowMap();
@@ -529,7 +528,7 @@ void GraphicsLow::BufferLightsToGPU()
 
 void GraphicsLow::CreateShadowMap()
 {
-	int resolution = 2048;
+	int resolution = 1024;
 	m_dirLightDirection = vec3(0.0, -1.0, 1.0);
 	vec3 midMap = vec3(8.0, 0.0, 8.0);
 	vec3 lightPos = midMap - (10.0f*normalize(m_dirLightDirection));
