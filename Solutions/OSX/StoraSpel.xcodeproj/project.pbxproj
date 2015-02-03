@@ -16,13 +16,13 @@
 		0339F9AE1A7433D800FA04DD /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03F5A8021A73DB9B00D54F14 /* OpenGL.framework */; };
 		035C22CD1A73D68600EE9624 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 035C22CC1A73D68600EE9624 /* Images.xcassets */; };
 		035C22D01A73D68600EE9624 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 035C22CE1A73D68600EE9624 /* Main.storyboard */; };
-		03783D0D1A779C0B00BA78D0 /* Logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03783D0B1A779C0B00BA78D0 /* Logger.cpp */; };
 		03783D101A779C1600BA78D0 /* ClientDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03783D0E1A779C1600BA78D0 /* ClientDatabase.cpp */; };
 		03783D131A779C4E00BA78D0 /* MasterServerSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03783D111A779C4E00BA78D0 /* MasterServerSystem.cpp */; };
 		03783D161A779C6100BA78D0 /* SlerpRotationSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03783D141A779C6100BA78D0 /* SlerpRotationSystem.cpp */; };
 		03BCBF641A7CC52D004E9A5F /* GraphicsHigh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03BCBF601A7CC52D004E9A5F /* GraphicsHigh.cpp */; };
 		03BCBF651A7CC52D004E9A5F /* GraphicsLow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03BCBF621A7CC52D004E9A5F /* GraphicsLow.cpp */; };
 		03BCC2961A7CCCCB004E9A5F /* content in Resources */ = {isa = PBXBuildFile; fileRef = 03BCC2951A7CCCCB004E9A5F /* content */; };
+		03C13CCA1A80F1D10027A2FE /* Logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03C13CC81A80F1D10027A2FE /* Logger.cpp */; };
 		03C1DB2D1A74500900C1996E /* Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03C1DB191A74500900C1996E /* Buffer.cpp */; };
 		03C1DB2E1A74500900C1996E /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03C1DB1B1A74500900C1996E /* Camera.cpp */; };
 		03C1DB2F1A74500900C1996E /* GLTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03C1DB1D1A74500900C1996E /* GLTimer.cpp */; };
@@ -130,8 +130,6 @@
 		035C22C31A73D68600EE9624 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		035C22CC1A73D68600EE9624 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		035C22CF1A73D68600EE9624 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		03783D0B1A779C0B00BA78D0 /* Logger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Logger.cpp; sourceTree = "<group>"; };
-		03783D0C1A779C0B00BA78D0 /* Logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logger.h; sourceTree = "<group>"; };
 		03783D0E1A779C1600BA78D0 /* ClientDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClientDatabase.cpp; sourceTree = "<group>"; };
 		03783D0F1A779C1600BA78D0 /* ClientDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClientDatabase.h; sourceTree = "<group>"; };
 		03783D111A779C4E00BA78D0 /* MasterServerSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MasterServerSystem.cpp; sourceTree = "<group>"; };
@@ -143,6 +141,8 @@
 		03BCBF621A7CC52D004E9A5F /* GraphicsLow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsLow.cpp; sourceTree = "<group>"; };
 		03BCBF631A7CC52D004E9A5F /* GraphicsLow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsLow.h; sourceTree = "<group>"; };
 		03BCC2951A7CCCCB004E9A5F /* content */ = {isa = PBXFileReference; lastKnownFileType = folder; name = content; path = ../../Externals/content; sourceTree = "<group>"; };
+		03C13CC81A80F1D10027A2FE /* Logger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Logger.cpp; sourceTree = "<group>"; };
+		03C13CC91A80F1D10027A2FE /* Logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logger.h; sourceTree = "<group>"; };
 		03C1DB191A74500900C1996E /* Buffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Buffer.cpp; sourceTree = "<group>"; };
 		03C1DB1A1A74500900C1996E /* Buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Buffer.h; sourceTree = "<group>"; };
 		03C1DB1B1A74500900C1996E /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Camera.cpp; sourceTree = "<group>"; };
@@ -425,6 +425,7 @@
 		035C24201A73D7F400EE9624 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				03C13CC61A80F1D10027A2FE /* Logger */,
 				03C1DB181A74500900C1996E /* Renderer */,
 				03F5A6E11A73D94F00D54F14 /* Console */,
 				03F5A6E41A73D94F00D54F14 /* ECSL */,
@@ -436,13 +437,22 @@
 			name = Source;
 			sourceTree = "<group>";
 		};
-		03783D0A1A779C0B00BA78D0 /* Logger */ = {
+		03C13CC61A80F1D10027A2FE /* Logger */ = {
 			isa = PBXGroup;
 			children = (
-				03783D0B1A779C0B00BA78D0 /* Logger.cpp */,
-				03783D0C1A779C0B00BA78D0 /* Logger.h */,
+				03C13CC71A80F1D10027A2FE /* Managers */,
 			);
-			path = Logger;
+			name = Logger;
+			path = ../../Source/Logger;
+			sourceTree = "<group>";
+		};
+		03C13CC71A80F1D10027A2FE /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				03C13CC81A80F1D10027A2FE /* Logger.cpp */,
+				03C13CC91A80F1D10027A2FE /* Logger.h */,
+			);
+			path = Managers;
 			sourceTree = "<group>";
 		};
 		03C1DB181A74500900C1996E /* Renderer */ = {
@@ -622,7 +632,6 @@
 		03F5A7201A73D94F00D54F14 /* Game */ = {
 			isa = PBXGroup;
 			children = (
-				03783D0A1A779C0B00BA78D0 /* Logger */,
 				03F5A7211A73D94F00D54F14 /* FrameCounter */,
 				03F5A7241A73D94F00D54F14 /* GameConsole.cpp */,
 				03F5A7251A73D94F00D54F14 /* GameConsole.h */,
@@ -951,8 +960,8 @@
 				03C1DB2F1A74500900C1996E /* GLTimer.cpp in Sources */,
 				03F5A7B91A73D94F00D54F14 /* EntityTable.cpp in Sources */,
 				03F5A7BF1A73D94F00D54F14 /* SystemManager.cpp in Sources */,
+				03C13CCA1A80F1D10027A2FE /* Logger.cpp in Sources */,
 				03F5A7E31A73D94F00D54F14 /* MovementSystem.cpp in Sources */,
-				03783D0D1A779C0B00BA78D0 /* Logger.cpp in Sources */,
 				03F5A7B11A73D94F00D54F14 /* FileHelper.cpp in Sources */,
 				03F5A7F11A73D94F00D54F14 /* BaseNetwork.cpp in Sources */,
 				03F5A7EE1A73D94F00D54F14 /* InputWrapper.cpp in Sources */,
