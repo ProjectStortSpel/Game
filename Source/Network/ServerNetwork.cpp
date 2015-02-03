@@ -145,7 +145,7 @@ ServerNetwork::ServerNetwork()
 	m_onPlayerDisconnected = new std::vector<NetEvent>();
 	m_onPlayerTimedOut = new std::vector<NetEvent>();
 
-	*m_incomingPort = 5939;
+	*m_incomingPort = 6112;
 
 	m_networkFunctions = new std::map < char, NetMessageHook >();
 
