@@ -1,8 +1,8 @@
-FinishSystem = System()
+FinishpointSystem = System()
 
-FinishSystem.Initialize = function(self)
+FinishpointSystem.Initialize = function(self)
 	--	Set Name
-	self:SetName("FinishSystem")
+	self:SetName("FinishpointSystem")
 	
 	--	Toggle EntitiesAdded
 	self:UsingEntitiesAdded()
@@ -13,7 +13,7 @@ FinishSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("CheckFinishpoint", FilterType.RequiresOneOf)
 end
 
-FinishSystem.CreateTotemPiece = function(self, playerNumber, finishPoint)
+FinishpointSystem.CreateTotemPiece = function(self, playerNumber, finishPoint)
 
 	local totemPieceId = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("AddTotemPiece", totemPieceId)
@@ -26,7 +26,7 @@ FinishSystem.CreateTotemPiece = function(self, playerNumber, finishPoint)
 end
 
 
-FinishSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+FinishpointSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 
 	for n = 1, #entities do
 		local entity = entities[n]
@@ -62,7 +62,7 @@ FinishSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 							dirX = dirX / math.abs(dirX)
 						end
 						if dirZ ~= 0 then
-							dirZ = dirZ / math.ab(dirZ)
+							dirZ = dirZ / math.abs(dirZ)
 						end
 						
 						-- Loop through all substeps

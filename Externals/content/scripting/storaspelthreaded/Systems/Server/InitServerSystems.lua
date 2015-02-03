@@ -5,7 +5,7 @@ require "sv_CreateMapSystem"
 require "sv_RiverSystem"
 require "sv_VoidSystem"
 require "sv_CheckpointSystem"
-require "sv_FinishSystem"
+require "sv_FinishpointSystem"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CreateMapSystem)
@@ -16,7 +16,7 @@ worldCreator:AddSystemToCurrentGroup(VoidSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CheckpointSystem)
 worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(FinishSystem)
+worldCreator:AddSystemToCurrentGroup(FinishpointSystem)
 
 --	Light Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/LightSystems/?.lua"
@@ -164,6 +164,3 @@ worldCreator:AddSystemToCurrentGroup(ServerLobbySystem)
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(OnPlayerConnectedSystem)
-
-
-
