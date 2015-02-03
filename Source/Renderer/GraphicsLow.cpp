@@ -1,10 +1,5 @@
 #include "GraphicsLow.h"
 
-//#ifndef STB_IMAGE_IMPLEMENTATION
-//#define STB_IMAGE_IMPLEMENTATION
-//#endif
-//#include "TextureLoader.h"
-//#include "TextureLoader.h"
 #include "ModelLoader.h"
 #include "ModelExporter.h"
 
@@ -23,7 +18,6 @@ GraphicsLow::GraphicsLow()
 GraphicsLow::~GraphicsLow()
 {
 	delete(m_camera);
-	delete(m_skybox);
 	delete(m_shadowMap);
 	// Delete buffers
 	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
@@ -50,7 +44,6 @@ bool GraphicsLow::Init()
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	//if (!InitForward()) { ERRORMSG("INIT FORWARD FAILED\n"); return false; }
 	if (!InitSkybox()) { ERRORMSG("INIT SKYBOX FAILED\n"); return false; }
-	if (!InitRandomVector()) { ERRORMSG("INIT RANDOMVECTOR FAIELD\n"); return false; }
 	
 	CreateShadowMap();
 	if (!InitLightBuffers()) { ERRORMSG("INIT LIGHTBUFFER FAILED\n"); return false; }
@@ -61,29 +54,9 @@ bool GraphicsLow::Init()
 	
 	m_sdlTextRenderer.Init();
     
-	
 	return true;
 }
 
-//void GraphicsLow::PollEvent(SDL_Event _event)
-//{
-//	switch (_event.type)
-//	{
-//	case SDL_WINDOWEVENT:
-//		switch (_event.window.event)
-//		{
-//		case SDL_WINDOWEVENT_RESIZED:
-//			int w, h;
-//			SDL_GetWindowSize(m_window, &w, &h);
-//			ResizeWindow(w,h);
-//			break;
-//		}
-//		break;
-//
-//	default:
-//		break;
-//	}
-//}
 
 void GraphicsLow::Update(float _dt)
 {
@@ -348,22 +321,6 @@ void GraphicsLow::Render()
 	SDL_GL_SwapWindow(m_window);
 }
 
-//void GraphicsLow::ResizeWindow(int _width, int _height)
-//{
-//	// GRAPHIC CARD WORK GROUPS OF 16x16
-//	int x, y;
-//	x = _width / 16;
-//	if (x == 0) x = 1;
-//	y = _height / 16;
-//	if (y == 0) y = 1;
-//	m_clientWidth = x * 16;
-//	m_clientHeight = y * 16;
-//
-//	std::cout << m_clientWidth << "x" << m_clientHeight << std::endl;
-//
-//	SDL_SetWindowSize(m_window, m_clientWidth, m_clientHeight);
-//}
-
 bool GraphicsLow::InitSDLWindow()
 {
 	// WINDOW SETTINGS
@@ -427,24 +384,6 @@ bool GraphicsLow::InitGLEW()
 	return true;
 }
 
-bool GraphicsLow::InitForward()
-{
-	//m_forwardShader.UseProgram();
-
-	//// Create and bind the FBO
-	//glGenFramebuffers(1, &m_forwardFBO);
-	//glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_forwardFBO);
-
-	//// Attach the images to the framebuffer
-	//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthBuf, 0);
-	//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_outputImage, 0);
-
-	//GLenum drawBufferForward = GL_COLOR_ATTACHMENT0;
-	//glDrawBuffers(1, &drawBufferForward);
-
-	return true;
-}
-
 bool GraphicsLow::InitShaders()
 {
 	// SkyBox
@@ -452,13 +391,6 @@ bool GraphicsLow::InitShaders()
 	m_skyBoxShader.AddShader("content/shaders/skyboxShaderVS.glsl", GL_VERTEX_SHADER);
 	m_skyBoxShader.AddShader("content/shaders/skyboxShaderFS.glsl", GL_FRAGMENT_SHADER);
 	m_skyBoxShader.FinalizeShaderProgram();
-
-	//// Full Screen Quad
-	//m_fullScreenShader.InitShaderProgram();
-	//m_fullScreenShader.AddShader("content/shaders/fullscreen.vs", GL_VERTEX_SHADER);
-	//m_fullScreenShader.AddShader("content/shaders/fullscreen.gs", GL_GEOMETRY_SHADER);
-	//m_fullScreenShader.AddShader("content/shaders/fullscreen.ps", GL_FRAGMENT_SHADER);
-	//m_fullScreenShader.FinalizeShaderProgram();
 
 	// Forward shader
 	m_forwardShader.InitShaderProgram();
@@ -489,9 +421,6 @@ bool GraphicsLow::InitShaders()
 
 bool GraphicsLow::InitBuffers()
 {
-	// FULL SCREEN QUAD
-	//m_fullScreenShader.CheckUniformLocation("output_image", 5);
-
 	//Forward shader
 	m_forwardShader.CheckUniformLocation("diffuseTex", 1);
 
@@ -500,28 +429,6 @@ bool GraphicsLow::InitBuffers()
 
 	//Shadow forward shader
 	m_shadowShaderForward.CheckUniformLocation("diffuseTex", 1);
-
-	return true;
-}
-
-//bool GraphicsLow::InitSkybox()
-//{
-//	int w, h;
-//	GLuint texHandle = TextureLoader::LoadCubeMap("content/textures/skybox", GL_TEXTURE1, w, h);
-//	if (texHandle < 0)
-//		return false;
-//
-//	m_skyBoxShader.UseProgram();
-//	m_skybox = new SkyBox(texHandle, m_camera->GetFarPlane());
-//	m_vramUsage += (w*h * 6 * 4 * sizeof(float));
-//
-//	return true;
-//}
-
-bool GraphicsLow::InitRandomVector()
-{
-	int texSizeX, texSizeY;
-	m_randomVectors = GraphicDevice::AddTexture("content/textures/vectormap.png", GL_TEXTURE21);
 
 	return true;
 }
@@ -596,28 +503,7 @@ void GraphicsLow::BufferDirectionalLight(float *_lightPointer)
 
 void GraphicsLow::BufferLightsToGPU()
 {
-	/*if (m_pointerToPointlights)
-	{
-		m_vramUsage -= m_numberOfPointlights * 10 * sizeof(float);
-		m_nrOfLights = m_numberOfPointlights;
-		float *pointlight_data = new float[m_numberOfPointlights * 10];
-
-		for (int i = 0; i < m_numberOfPointlights; i++)
-		{
-			memcpy(&pointlight_data[10 * i], m_pointerToPointlights[i], 10 * sizeof(float));
-		}
-
-		int point_light_data_size = 10 * m_numberOfPointlights * sizeof(float);
-
-		glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer, 0, point_light_data_size);
-		glBufferData(GL_SHADER_STORAGE_BUFFER, point_light_data_size, pointlight_data, GL_STATIC_DRAW);
-		m_vramUsage += m_numberOfPointlights * 10 * sizeof(float);
-
-		delete pointlight_data;
-		m_pointerToPointlights = 0;
-	}*/
-
-
+	//lägg in pointlights här också
 	if (m_pointerToDirectionalLights)
 	{
 
@@ -684,7 +570,6 @@ bool GraphicsLow::PreLoadModel(std::string _dir, std::string _file, int _renderT
 		ERRORMSG("ERROR: INVALID RENDER SETTING");
 
 	// Import Object
-	//ObjectData obj = AddObject(_dir, _file);
 	ObjectData obj = ModelLoader::importObject(_dir, _file);
 
 	// Import Texture
@@ -826,7 +711,6 @@ void GraphicsLow::BufferModels()
 	m_modelsToLoad.clear();
 }
 
-
 bool GraphicsLow::RemoveModel(int _id)
 {
 	for (int i = 0; i < m_modelsForward.size(); i++)
@@ -955,19 +839,6 @@ Buffer* GraphicsLow::AddMesh(std::string _fileDir, Shader *_shaderProg)
 
 	return retbuffer;
 }
-//GLuint GraphicsLow::AddTexture(std::string _fileDir, GLenum _textureSlot)
-//{
-//	for (std::map<const std::string, GLuint>::iterator it = m_textures.begin(); it != m_textures.end(); it++)
-//	{
-//		if (it->first == _fileDir)
-//			return it->second;
-//	}
-//	int texSizeX, texSizeY;
-//	GLuint texture = TextureLoader::LoadTexture(_fileDir.c_str(), _textureSlot, texSizeX, texSizeY);
-//	m_textures.insert(std::pair<const std::string, GLenum>(_fileDir, texture));
-//	m_vramUsage += (texSizeX * texSizeY * 4 * 4);
-//	return texture;
-//}
 
 void GraphicsLow::Clear()
 {
@@ -981,44 +852,6 @@ void GraphicsLow::Clear()
   BufferPointlights(0, tmpPtr);
   delete tmpPtr;
 }
-
-//int GraphicsLow::AddFont(const std::string& filepath, int size)
-//{
-//	return m_sdlTextRenderer.AddFont(filepath, size);
-//}
-//
-//float GraphicsLow::CreateTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, glm::ivec2 size)
-//{
-//	if (m_textures.find(textureName) != m_textures.end())
-//		glDeleteTextures(1, &m_textures[textureName]);
-//	SDL_Surface* surface = m_sdlTextRenderer.CreateTextSurface(textString, fontIndex, color);
-//	if (size.x > 0)
-//		surface->w = size.x;
-//	if (size.y > 0)
-//		surface->h = size.y;
-//	//m_deferredShader1.UseProgram();
-//	GLuint texture = TextureLoader::LoadTexture(surface, GL_TEXTURE1);
-//	m_textures[textureName] = texture;
-//	m_vramUsage += (surface->w * surface->h * 4 * 4);
-//	SDL_FreeSurface(surface);
-//	return (float)surface->w / (float)surface->h;
-//}
-//
-//void GraphicsLow::CreateWrappedTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, unsigned int wrapLength, glm::ivec2 size)
-//{
-//	if (m_textures.find(textureName) != m_textures.end())
-//		glDeleteTextures(1, &m_textures[textureName]);
-//	SDL_Surface* surface = m_sdlTextRenderer.CreateWrappedTextSurface(textString, fontIndex, color, wrapLength);
-//	if (size.x > 0)
-//		surface->w = size.x;
-//	if (size.y > 0)
-//		surface->h = size.y;
-//	//m_deferredShader1.UseProgram();
-//	GLuint texture = TextureLoader::LoadTexture(surface, GL_TEXTURE1);
-//	m_textures[textureName] = texture;
-//	m_vramUsage += (surface->w * surface->h * 4 * 4);
-//	SDL_FreeSurface(surface);
-//}
 
 bool GraphicsLow::BufferModelTexture(int _id, std::string _fileDir, int _textureType)
 {

@@ -8,6 +8,10 @@
 using namespace Renderer;
 using namespace glm;
 
+GraphicDevice::~GraphicDevice()
+{
+	delete(m_skybox);
+}
 
 void GraphicDevice::PollEvent(SDL_Event _event)
 {

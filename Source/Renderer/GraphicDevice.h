@@ -93,7 +93,7 @@ namespace Renderer
 	{
 	public:
 		GraphicDevice(){}
-		virtual ~GraphicDevice() {}
+		virtual ~GraphicDevice();
 
 		virtual bool Init(){ return false; };// = 0;
 

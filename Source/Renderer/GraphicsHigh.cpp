@@ -1,13 +1,7 @@
 #include "GraphicsHigh.h"
 
-//#ifndef STB_IMAGE_IMPLEMENTATION
-//#define STB_IMAGE_IMPLEMENTATION
-//#endif
-//#include "TextureLoader.h"
-//#include "TextureLoader.h"
 #include "ModelLoader.h"
 #include "ModelExporter.h"
-//#include "SkyBox.h"
 
 using namespace Renderer;
 using namespace glm;
@@ -25,7 +19,6 @@ GraphicsHigh::GraphicsHigh()
 GraphicsHigh::~GraphicsHigh()
 {
 	delete(m_camera);
-	delete(m_skybox);
 	delete(m_shadowMap);
 	// Delete buffers
 	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
