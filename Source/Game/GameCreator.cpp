@@ -10,6 +10,7 @@
 #include "Systems/ResetChangedSystem.h"
 #include "Systems/PointlightSystem.h"
 #include "Systems/DirectionalLightSystem.h"
+#include "Systems/MasterServerSystem.h"
 
 #include "NetworkInstance.h"
 #include "ECSL/ECSL.h"
@@ -17,8 +18,9 @@
 
 #include "LuaBridge/ECSL/LuaSystem.h"
 #include "LuaBridge/ECSL/LuaWorldCreator.h"
+#include "LuaBridge/Renderer/LuaGraphicDevice.h"
 
-#include "Logger/Logger.h"
+#include "Logger/Managers/Logger.h"
 
 #include <iomanip>
 
@@ -140,8 +142,9 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	  LuaEmbedder::CopyObject<LuaBridge::LuaSystem>(m_clientLuaState, clientLuaStateCopy, "System", (*it));
 	  (*it)->SetLuaState(clientLuaStateCopy);
 	}
+	systemsAdded->clear();
 
-	LuaEmbedder::AddObject<Renderer::GraphicDevice>(m_clientLuaState, "GraphicDevice", m_graphics, "graphics");
+	LuaBridge::LuaGraphicDevice::SetGraphicDevice(m_graphics);
 
 	m_gameMode = _gameMode;
 
@@ -185,6 +188,8 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	worldCreator.AddSystemGroup();
 	worldCreator.AddSystemToCurrentGroup<ModelSystem>(m_graphics);
 	worldCreator.AddSystemGroup();
+	worldCreator.AddSystemToCurrentGroup<MasterServerSystem>();
+	worldCreator.AddSystemGroup();
 	worldCreator.AddSystemToCurrentGroup<SyncEntitiesSystem>();
 	//worldCreator.AddLuaSystemToCurrentGroup(new ReceivePacketSystem());
 	worldCreator.AddSystemGroup();
@@ -197,10 +202,7 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 
 	m_world = worldCreator.CreateWorld(1000);
 	LuaEmbedder::AddObject<ECSL::World>(m_clientLuaState, "World", m_world, "world");
-
-	for (std::vector<LuaBridge::LuaSystem*>::iterator it = systemsAdded->begin(); it != systemsAdded->end(); it++)
-	  (*it)->PostInitialize();
-	systemsAdded->clear();
+	m_world->PostInitializeSystems();
 
 	m_worldProfiler = new Profilers::ECSLProfiler(m_graphics);
 }
@@ -333,6 +335,9 @@ void GameCreator::StartGame(int argc, char** argv)
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F8) == Input::InputState::PRESSED)
 			m_worldProfiler->WriteToLog();
 
+		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F1) == Input::InputState::PRESSED)
+			m_world->WriteToLog();
+
 		if (showDebugInfo)
 		{
 			std::stringstream sstm;
@@ -407,7 +412,7 @@ void GameCreator::Reload()
 	LuaEmbedder::AddBool("Client", client);
 	m_graphics->Clear();
 
-	LuaEmbedder::AddObject<Renderer::GraphicDevice>(m_clientLuaState, "GraphicDevice", m_graphics, "graphics");
+	LuaBridge::LuaGraphicDevice::SetGraphicDevice(m_graphics);
 
 	InitializeWorld(m_gameMode);
 	m_console->SetWorld(m_world);

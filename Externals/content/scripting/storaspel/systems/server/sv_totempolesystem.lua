@@ -88,18 +88,13 @@ TotemPoleSystem.CheckFinishPoints = function(self, targetFpId, totemId, playerNu
 			
 	end
 
-	print("No Check found")
 	return false
 	
 end
 
 TotemPoleSystem.OnEntityAdded = function(self, entity)
 
-	print("TotemPoleSystem.OnEntityAdded")
-
 	if world:EntityHasComponent(entity, "AddTotemPiece") then
-	
-		print("OnEntityAdded New AddTotemPiece")
 	
 		local playerNum 	= world:GetComponent(entity, "PlayerNumber", 0):GetInt()
 		
@@ -122,8 +117,6 @@ TotemPoleSystem.OnEntityAdded = function(self, entity)
 		
 		if totemId == -1 then
 		
-			print("No totemCpId match targetCpId: " .. targetCpId)
-		
 			local newTotemPole = world:CreateNewEntity()
 			world:CreateComponentAndAddTo("TotemPole", newTotemPole)
 			world:CreateComponentAndAddTo("CheckpointId", newTotemPole)
@@ -134,15 +127,10 @@ TotemPoleSystem.OnEntityAdded = function(self, entity)
 			totemId = newTotemPole
 		
 		end
-
-		print("targetCpId: " .. targetCpId)
-		--print("totemPoles: " .. totemPoles)
-		print("totemId: " .. totemId)
-		print("playerNum: " .. playerNum)
 		
 		local success = self.CheckCheckPoints(self, targetCpId, totemId, playerNum)
 		if not success then
-			print("No checkpoint found")
+			--print("No checkpoint found")
 			
 			self.CheckFinishPoints(self, targetCpId, totemId, playerNum)
 			

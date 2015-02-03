@@ -51,6 +51,21 @@ void SystemManager::InitializeSystems()
 	}
 }
 
+void SystemManager::PostInitializeSystems()
+{
+	/* PostInitialize all system groups */
+	for (unsigned int groupId = 0; groupId < m_systemWorkGroups->size(); ++groupId)
+	{
+		std::vector<System*>* systems = m_systemWorkGroups->at(groupId)->GetSystems();
+		/* Go through all systems in the group and postinitialize them */
+		for (unsigned int systemId = 0; systemId < systems->size(); ++systemId)
+		{
+			System* system = systems->at(systemId);
+			system->PostInitialize();
+		}
+	}
+}
+
 void SystemManager::UpdateSystemEntityLists(
 	const RuntimeInfo& _runtime,
 	std::vector<std::vector<unsigned int>*>& _entitiesToAddToSystems,

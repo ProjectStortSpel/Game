@@ -15,6 +15,7 @@ World::World(unsigned int _entityCount, std::vector<SystemWorkGroup*>* _systemWo
 	m_messageManager->Initialize();
 
 	m_simulation = new Simulation(m_dataManager, m_systemManager, m_messageManager);
+	m_dataLogger = &DataLogger::GetInstance();
 }
 
 World::~World()
@@ -25,8 +26,17 @@ World::~World()
 	delete(m_systemManager);
 }
 
+void World::PostInitializeSystems()
+{
+	m_systemManager->PostInitializeSystems();
+}
+
 void World::Update(float _dt)
 {
+	/* Set the logger to currently log this world */
+	m_dataLogger->SetCurrentWorld(m_dataManager->GetEntityCount(), m_dataManager->GetEntityTable(), m_dataManager->GetComponentTables(), m_systemManager->GetSystemWorkGroups());
+
+	/* Update systems, etc. */
 	m_simulation->Update(_dt);
 }
 
@@ -49,10 +59,12 @@ DataLocation World::GetComponent(unsigned int _entityId, const std::string& _com
 {
 	return m_dataManager->GetComponentTable(_componentType)->GetComponent(_entityId, _variableName);
 }
+
 DataLocation World::GetComponent(unsigned int _entityId, const std::string& _componentType, const int _index)
 {
 	return m_dataManager->GetComponentTable(_componentType)->GetComponent(_entityId, _index);
 }
+
 DataLocation World::GetComponent(unsigned int _entityId, const unsigned int _componentType, const int _index)
 {
 	return m_dataManager->GetComponentTable(_componentType)->GetComponent(_entityId, _index);
@@ -68,6 +80,11 @@ void World::SetComponent(unsigned int _entityId, const std::string& _componentTy
 void World::KillEntity(unsigned int _entityId)
 {
 	m_dataManager->RemoveEntity(_entityId);
+}
+
+void World::GetEntityComponents(std::vector<unsigned int>& _out, unsigned int _entityId)
+{
+	m_dataManager->GetEntityTable()->GetEntityComponents(_out, _entityId);
 }
 
 unsigned int World::CreateNewEntity(const std::string& _templateName)
@@ -153,7 +170,7 @@ void World::ComponentHasChanged(unsigned int _entityId, unsigned int _componentT
 	}	
 }
 
-bool World::HasComponent(unsigned int _entityId, std::string _componentType)
+bool World::HasComponent(unsigned int _entityId, const std::string& _componentType)
 {
 	unsigned int componentTypeId = ECSL::ComponentTypeManager::GetInstance().GetTableId(_componentType);
 	return HasComponent(_entityId, componentTypeId);
@@ -162,4 +179,9 @@ bool World::HasComponent(unsigned int _entityId, std::string _componentType)
 bool World::HasComponent(unsigned int _entityId, unsigned int _componentTypeId)
 {
 	return m_dataManager->HasComponent(_entityId, _componentTypeId);	
+}
+
+void World::WriteToLog()
+{
+	m_dataLogger->WriteToLog();
 }

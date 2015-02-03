@@ -7,10 +7,17 @@ NewStepSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("NewStep", FilterType.RequiresOneOf)
 end
 
+NewStepSystem.OnEntityRemoved = function(self, entity)
+	if self.Step > 5 then
+		local id = world:CreateNewEntity()
+		world:CreateComponentAndAddTo("CameraOnPlayer", id)
+	end
+end
+
 NewStepSystem.OnEntityAdded = function(self, entity)
 	
 	if world:EntityHasComponent( entity, "NewRound") then
-		print("\n\nNEW ROUND!")
+		--print("\n\nNEW ROUND!")
 		local file = File.Append("gamelog.txt")
 		File.WriteLine(file, "NewRound")
 		File.Close(file)
@@ -26,7 +33,7 @@ NewStepSystem.OnEntityAdded = function(self, entity)
 			world:CreateComponentAndAddTo("PlayCard", id)
 			world:SetComponent(id, "PlayCard", "Step", self.Step)
 
-			print("\nNEW STEP: " .. self.Step)
+			--print("\nNEW STEP: " .. self.Step)
 
 			local file = File.Append("gamelog.txt")
 			File.WriteLine(file, "NewStep " .. self.Step)
@@ -46,7 +53,9 @@ NewStepSystem.OnEntityAdded = function(self, entity)
 			id = world:CreateNewEntity()
 			world:CreateComponentAndAddTo("DealCards", id)
 			world:SetComponent(id, "DealCards", "NumCards", 5)
-
+	
+			id = world:CreateNewEntity()
+			world:CreateComponentAndAddTo("RemoveEffects", id)
 		end
 	end
 

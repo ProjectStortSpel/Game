@@ -1,9 +1,10 @@
 #include "System.h"
 
-#include "ECSL/Framework/Common/ContainerHelper.h"
 #include <assert.h>
 #include <map>
 #include <vector>
+#include "ECSL/Framework/Common/ContainerHelper.h"
+#include "ECSL/Framework/Logger/DataLogger.h"
 
 using namespace ECSL;
 
@@ -16,7 +17,7 @@ System::System()
 	m_updateTaskCount = 0;
 	m_entitiesAddedTaskCount = 0;
 	m_entitiesRemovedTaskCount = 0;
-	m_messagesRecievedTaskCount = 0;
+	m_messagesReceivedTaskCount = 0;
 }
 
 System::~System()
@@ -202,4 +203,9 @@ void System::ComponentHasChanged(unsigned int _entityId, unsigned int _component
 		ECSL::BitSet::DataType* changedComponentsNetwork = (ECSL::BitSet::DataType*)GetComponent(_entityId, "ChangedComponentsNetwork", 0);
 		changedComponentsNetwork[bitSetIndex] |= ((ECSL::BitSet::DataType)1) << bitIndex;
 	}
+}
+
+void System::LogWorldData()
+{
+	DataLogger::GetInstance().WriteToLog();
 }

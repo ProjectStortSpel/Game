@@ -63,6 +63,7 @@ public:
 private:
 	
 	ClientDatabase();
+    void OnDisconnected(Network::NetConnection _nc, const char* _message) { m_connected = false; }
 
 	
 

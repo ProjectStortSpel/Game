@@ -32,6 +32,8 @@ namespace LuaBridge
 
 		LuaEmbedder::EmbedClassFunction<LuaSystem>(L, "System", "SetName", &LuaSystem::SetName);
 
+		LuaEmbedder::EmbedClassFunction<LuaSystem>(L, "System", "LogWorldData", &LuaSystem::LogWorldData);
+
 		LuaEmbedder::AddInt(L, "Mandatory", (int)ECSL::FilterType::Mandatory, "FilterType");
 		LuaEmbedder::AddInt(L, "RequiresOneOf", (int)ECSL::FilterType::RequiresOneOf, "FilterType");
 		LuaEmbedder::AddInt(L, "Excluded", (int)ECSL::FilterType::Excluded, "FilterType");
@@ -224,14 +226,22 @@ namespace LuaBridge
 		System::SetUpdateTaskCount(1);
 		return 0;
 	}
+
 	int LuaSystem::UsingEntitiesAdded(lua_State* L)
 	{
 		System::SetEntitiesAddedTaskCount(1);
 		return 0;
 	}
+
 	int LuaSystem::UsingEntitiesRemoved(lua_State* L)
 	{
 		System::SetEntitiesRemovedTaskCount(1);
+		return 0;
+	}
+
+	int LuaSystem::LogWorldData(lua_State* L)
+	{
+		System::LogWorldData();
 		return 0;
 	}
 

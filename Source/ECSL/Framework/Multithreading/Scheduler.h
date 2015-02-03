@@ -24,7 +24,7 @@ namespace ECSL
 		MPL::TaskId ScheduleEntitiesAdded(MPL::TaskId _dependency);
 		MPL::TaskId ScheduleEntitiesRemoved(MPL::TaskId _dependency);
 		MPL::TaskId ScheduleSortMessages(MPL::TaskId _dependency);
-		MPL::TaskId ScheduleMessagesRecieved(MPL::TaskId _dependency);
+		MPL::TaskId ScheduleMessagesReceived(MPL::TaskId _dependency);
 		MPL::TaskId ScheduleDeleteMessages(MPL::TaskId _dependency);
 		MPL::TaskId ScheduleCopyCurrentLists(MPL::TaskId _dependency);
 		MPL::TaskId ScheduleUpdateEntityTable(MPL::TaskId _dependency);
@@ -38,7 +38,7 @@ namespace ECSL
 		void AddUpdateSystemsTasks();
 		void AddEntitiesAddedTasks();
 		void AddEntitiesRemovedTasks();
-		void AddMessagesRecievedTasks();
+		void AddMessagesReceivedTasks();
 
 		/// DataManager Tasks
 		void AddCopyCurrentListsTask();
@@ -73,7 +73,7 @@ namespace ECSL
 		std::vector<std::vector<MPL::WorkItem*>*>* m_entitiesAddedWorkItems;
 		std::vector<std::vector<MPL::WorkItem*>*>* m_entitiesRemovedWorkItems;
 		std::vector<MPL::WorkItem*>* m_sortMessagesWorkItems;
-		std::vector<std::vector<MPL::WorkItem*>*>* m_messagesRecievedWorkItems;
+		std::vector<std::vector<MPL::WorkItem*>*>* m_messagesReceivedWorkItems;
 		std::vector<MPL::WorkItem*>* m_deleteMessagesWorkItems;
 		std::vector<MPL::WorkItem*>* m_copyCurrentListsWorkItems;
 		std::vector<MPL::WorkItem*>* m_updateEntityTableWorkItems;
@@ -91,7 +91,7 @@ namespace ECSL
 
 	static void SystemEntitiesRemoved(void* _data);
 
-	static void SystemMessagesRecieved(void* _data);
+	static void SystemMessagesReceived(void* _data);
 
 	static void DataManagerCopyCurrentLists(void* _data);
 
@@ -150,7 +150,7 @@ namespace ECSL
 		MessageManager* messageManager;
 	};
 
-	struct MessagesRecievedData
+	struct MessagesReceivedData
 	{
 		RuntimeInfo runtimeInfo;
 		MessageManager* messageManager;

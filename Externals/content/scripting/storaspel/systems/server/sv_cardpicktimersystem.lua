@@ -23,13 +23,17 @@ AddCardPickTimer.OnEntityAdded = function(self, entity)
 			
 			if newTime < 10 and oldTime > 10 then
 				newTime = 10
+			elseif oldTime < 10 then
+				newTime = oldTime
 			end
+			
 			
 			world:GetComponent(Timers[1], "PickingPhaseTimer", "Timer"):SetFloat(newTime)
 			
 			local id = Net.StartPack("Client.SendPickingPhaseTimer")
 			Net.WriteFloat(id, newTime)
 			Net.Broadcast(id)
+			print(newTime)
 		end
 		
 		world:KillEntity(entity)
@@ -68,7 +72,7 @@ end
 
 
 UpdateCardPickTimer = System()
-UpdateCardPickTimer.TimeLimit = 30.0
+UpdateCardPickTimer.TimeLimit = 45.0
 
 UpdateCardPickTimer.Initialize = function(self)
 	self:SetName("UpdateCardPickTimer")
