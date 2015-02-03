@@ -66,7 +66,12 @@ namespace Renderer
 		//bool InitSkybox();
 		bool InitRandomVector();
 
+		
+		void BufferLightsToGPU();
 		void CreateShadowMap();
+
+		void BufferModels();
+		void BufferModel(int _modelId, ModelToLoad* _modelToLoad);
 
 		//SDL_Window*		m_window;
 		//SDL_GLContext	m_glContext;

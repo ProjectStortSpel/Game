@@ -3,6 +3,7 @@ package.path = package.path .. ";../../../Externals/content/scripting/storaspelt
 require "InitComponents" -- Add more components into InitComponents.lua instead of here!
 --	Shared Components
 package.path = package.path .. ";../../../Externals/content/scripting/shared/components/?.lua"
+require "servercomponents" -- Add more components into InitComponents.lua instead of here!
 require "interfacecomponents" -- Add more components into InitComponents.lua instead of here!
 
 

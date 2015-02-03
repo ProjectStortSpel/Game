@@ -137,11 +137,8 @@ namespace Renderer
 		
 	protected:
 		bool InitSkybox();
-		void BufferModels();
-		void BufferModel(int _modelId, ModelToLoad* _modelToLoad);
-
-		void BufferLightsToGPU();
-
+		virtual void BufferModels() { return; } // = 0;
+		virtual void BufferModel(int _modelId, ModelToLoad* _modelToLoad) { return; } // = 0;
 
 		SDL_Window*		m_window;
 		SDL_GLContext	m_glContext;

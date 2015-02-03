@@ -71,7 +71,11 @@ namespace Renderer
 		void CreateGBufTex(GLenum texUnit, GLenum format, GLuint &texid);
 		void CreateDepthTex(GLuint &texid);
 
+		void BufferLightsToGPU();
 		void CreateShadowMap();
+
+		void BufferModels();
+		void BufferModel(int _modelId, ModelToLoad* _modelToLoad);
 
 		//Camera* m_camera;
 

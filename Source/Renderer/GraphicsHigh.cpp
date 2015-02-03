@@ -107,6 +107,9 @@ void GraphicsHigh::Update(float _dt)
 		m_textRenderer.RenderSimpleText(output.str(), x, y + i);
 	}
 	m_glTimerValues.clear();
+
+	BufferModels();
+	BufferLightsToGPU();
 }
 
 void GraphicsHigh::WriteShadowMapDepth()
@@ -765,9 +768,10 @@ bool GraphicsHigh::InitLightBuffers()
 	return true;
 }
 
+
 void GraphicsHigh::BufferPointlights(int _nrOfLights, float **_lightPointers)
 {
-	m_vramUsage -= m_nrOfLights*10*sizeof(float);
+
 	if (_nrOfLights == 0)
 	{
 		_nrOfLights = 1;
@@ -775,32 +779,54 @@ void GraphicsHigh::BufferPointlights(int _nrOfLights, float **_lightPointers)
 	}
 	m_nrOfLights = _nrOfLights;
 
-	float *pointlight_data = new float[_nrOfLights * 10];
 
-	for (int i = 0; i < _nrOfLights; i++)
-	{
-		memcpy(&pointlight_data[10 * i], _lightPointers[i], 10 * sizeof(float));
-	}
-
-	int point_light_data_size = 10 * _nrOfLights * sizeof(float);
-
-	glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer, 0, point_light_data_size);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, point_light_data_size, pointlight_data, GL_STATIC_DRAW);
-	m_vramUsage += m_nrOfLights*10*sizeof(float);
-
-	delete pointlight_data;
 }
+
 
 void GraphicsHigh::BufferDirectionalLight(float *_lightPointer)
 {
 	if (_lightPointer == 0)
-		_lightPointer = &m_lightDefaults[0];
+		m_pointerToDirectionalLights = &m_lightDefaults[0];
+	else
+		m_pointerToDirectionalLights = _lightPointer;
+}
 
-	glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer, 0, 9 * sizeof(float));
-	glBufferData(GL_SHADER_STORAGE_BUFFER, 9 * sizeof(float), _lightPointer, GL_STATIC_DRAW);
 
-	m_dirLightDirection = vec3(_lightPointer[0], _lightPointer[1], _lightPointer[2]);
-	m_shadowMap->UpdateViewMatrix(vec3(8.0f, 0.0f, 8.0f) - (10.0f*normalize(m_dirLightDirection)), vec3(8.0f, 0.0f, 8.0f));
+void GraphicsHigh::BufferLightsToGPU()
+{
+	if (m_pointerToPointlights)
+	{
+		m_vramUsage -= m_numberOfPointlights * 10 * sizeof(float);
+		m_nrOfLights = m_numberOfPointlights;
+		float *pointlight_data = new float[m_numberOfPointlights * 10];
+
+		for (int i = 0; i < m_numberOfPointlights; i++)
+		{
+			memcpy(&pointlight_data[10 * i], m_pointerToPointlights[i], 10 * sizeof(float));
+		}
+
+		int point_light_data_size = 10 * m_numberOfPointlights * sizeof(float);
+
+		glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer, 0, point_light_data_size);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, point_light_data_size, pointlight_data, GL_STATIC_DRAW);
+		m_vramUsage += m_numberOfPointlights * 10 * sizeof(float);
+
+		delete pointlight_data;
+		m_pointerToPointlights = 0;
+	}
+
+
+	if (m_pointerToDirectionalLights)
+	{
+		glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer, 0, 9 * sizeof(float));
+		glBufferData(GL_SHADER_STORAGE_BUFFER, 9 * sizeof(float), m_pointerToDirectionalLights, GL_STATIC_DRAW);
+
+		m_dirLightDirection = vec3(m_pointerToDirectionalLights[0], m_pointerToDirectionalLights[1], m_pointerToDirectionalLights[2]);
+		m_shadowMap->UpdateViewMatrix(vec3(8.0f, 0.0f, 8.0f) - (10.0f*normalize(m_dirLightDirection)), vec3(8.0f, 0.0f, 8.0f));
+
+		m_pointerToDirectionalLights = 0;
+	}
+
 }
 
 void GraphicsHigh::CreateShadowMap()
@@ -905,23 +931,37 @@ int GraphicsHigh::LoadModel(std::string _dir, std::string _file, glm::mat4 *_mat
 	int modelID = m_modelIDcounter;
 	m_modelIDcounter++;
 
+	//	Lägg till i en lista, följande
+	//	std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType
+
+	ModelToLoad* modelToLoad = new ModelToLoad();
+	modelToLoad->Dir = _dir;
+	modelToLoad->File = _file;
+	modelToLoad->MatrixPtr = _matrixPtr;
+	modelToLoad->RenderType = _renderType;
+	m_modelsToLoad[modelID] = modelToLoad;
+
+	return modelID;
+}
+void GraphicsHigh::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
+{
 	Shader *shaderPtr = NULL;
-	if (_renderType == RENDER_DEFERRED)
+	if (_modelToLoad->RenderType == RENDER_DEFERRED)
 	{
 		shaderPtr = &m_deferredShader1;
 		m_deferredShader1.UseProgram();
 	}
-	else if (_renderType == RENDER_FORWARD)
+	else if (_modelToLoad->RenderType == RENDER_FORWARD)
 	{
 		shaderPtr = &m_forwardShader;
 		m_forwardShader.UseProgram();
 	}
-	else if (_renderType == RENDER_VIEWSPACE)
+	else if (_modelToLoad->RenderType == RENDER_VIEWSPACE)
 	{
 		shaderPtr = &m_viewspaceShader;
 		m_viewspaceShader.UseProgram();
 	}
-	else if (_renderType == RENDER_INTERFACE)
+	else if (_modelToLoad->RenderType == RENDER_INTERFACE)
 	{
 		shaderPtr = &m_interfaceShader;
 		m_interfaceShader.UseProgram();
@@ -931,18 +971,18 @@ int GraphicsHigh::LoadModel(std::string _dir, std::string _file, glm::mat4 *_mat
 
 	// Import Object
 	//ObjectData obj = AddObject(_dir, _file);
-	ObjectData obj = ModelLoader::importObject(_dir, _file);
+	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
 
 	// Import Texture
-	GLuint texture = GraphicDevice::AddTexture(obj.text, GL_TEXTURE1);
+	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
 	shaderPtr->CheckUniformLocation("diffuseTex", 1);
 
 	// Import Normal map
-	GLuint normal = GraphicDevice::AddTexture(obj.norm, GL_TEXTURE2);
+	GLuint normal = AddTexture(obj.norm, GL_TEXTURE2);
 	shaderPtr->CheckUniformLocation("normalTex", 2);
 
 	// Import Specc Glow map
-	GLuint specular = GraphicDevice::AddTexture(obj.spec, GL_TEXTURE3);
+	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
 	shaderPtr->CheckUniformLocation("specularTex", 3);
 
 	// Import Mesh
@@ -953,66 +993,75 @@ int GraphicsHigh::LoadModel(std::string _dir, std::string _file, glm::mat4 *_mat
 	//for the matrices (modelView + normal)
 	m_vramUsage += (16 + 9) * sizeof(float);
 
-	if (_renderType == RENDER_DEFERRED)
+	if (_modelToLoad->RenderType == RENDER_DEFERRED)
 	{
 		for (int i = 0; i < m_modelsDeferred.size(); i++)
 		{
 			if (m_modelsDeferred[i] == model)
 			{
-				m_modelsDeferred[i].instances.push_back(Instance(modelID, true, _matrixPtr));
-				return modelID;
+				m_modelsDeferred[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr));
+				return;
 			}
 		}
 	}
-	else if (_renderType == RENDER_FORWARD)
+	else if (_modelToLoad->RenderType == RENDER_FORWARD)
 	{
 		for (int i = 0; i < m_modelsForward.size(); i++)
 		{
 			if (m_modelsForward[i] == model)
 			{
-				m_modelsForward[i].instances.push_back(Instance(modelID, true, _matrixPtr));
-				return modelID;
+				m_modelsForward[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr));
+				return;
 			}
 		}
 	}
-	else if (_renderType == RENDER_VIEWSPACE)
+	else if (_modelToLoad->RenderType == RENDER_VIEWSPACE)
 	{
 		for (int i = 0; i < m_modelsViewspace.size(); i++)
 		{
 			if (m_modelsViewspace[i] == model)
 			{
-				m_modelsViewspace[i].instances.push_back(Instance(modelID, true, _matrixPtr));
-				return modelID;
+				m_modelsViewspace[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr));
+				return;
 			}
 		}
 	}
-	else if (_renderType == RENDER_INTERFACE)
+	else if (_modelToLoad->RenderType == RENDER_INTERFACE)
 	{
 		for (int i = 0; i < m_modelsInterface.size(); i++)
 		{
 			if (m_modelsInterface[i] == model)
 			{
-				m_modelsInterface[i].instances.push_back(Instance(modelID, true, _matrixPtr));
-				return modelID;
+				m_modelsInterface[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr));
+				return;
 			}
 		}
 	}
-	
+
 	// Set model
 	//if model doesnt exist
-	model.instances.push_back(Instance(modelID, true, _matrixPtr));
+	model.instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr));
 	// Push back the model
-	if (_renderType == RENDER_DEFERRED)
+	if (_modelToLoad->RenderType == RENDER_DEFERRED)
 		m_modelsDeferred.push_back(model);
-	else if (_renderType == RENDER_FORWARD)
+	else if (_modelToLoad->RenderType == RENDER_FORWARD)
 		m_modelsForward.push_back(model);
-	else if (_renderType == RENDER_VIEWSPACE)
+	else if (_modelToLoad->RenderType == RENDER_VIEWSPACE)
 		m_modelsViewspace.push_back(model);
-	else if (_renderType == RENDER_INTERFACE)
+	else if (_modelToLoad->RenderType == RENDER_INTERFACE)
 		m_modelsInterface.push_back(model);
-
-	return modelID;
 }
+
+void GraphicsHigh::BufferModels()
+{
+	for (auto pair : m_modelsToLoad)
+	{
+		BufferModel(pair.first, pair.second);
+		delete(pair.second);
+	}
+	m_modelsToLoad.clear();
+}
+
 bool GraphicsHigh::RemoveModel(int _id)
 {
 	for (int i = 0; i < m_modelsDeferred.size(); i++)
