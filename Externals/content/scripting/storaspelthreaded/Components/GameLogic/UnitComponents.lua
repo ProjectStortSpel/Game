@@ -30,6 +30,20 @@ UnitDeadComponent.Name = "UnitDead"
 UnitDeadComponent.TableType = TableType.Map
 worldCreator:AddComponentType(UnitDeadComponent)
 
+-- NeedUnit Component
+local NeedUnitComponent = ComponentType()
+NeedUnitComponent.Name = "NeedUnit"
+NeedUnitComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NeedUnitComponent)
+
+-- RemoveUnit Component
+local RemoveUnitComponent = ComponentType()
+RemoveUnitComponent.Name = "RemoveUnit"
+RemoveUnitComponent.TableType = TableType.Map
+RemoveUnitComponent:AddVariable("PlayerNo", ByteSize.Int)
+RemoveUnitComponent:AddVariable("UnitEntityId", ByteSize.Int)
+worldCreator:AddComponentType(RemoveUnitComponent)
+
 -- Spawn Component
 local SpawnComponent = ComponentType()
 SpawnComponent.Name = "Spawn"
