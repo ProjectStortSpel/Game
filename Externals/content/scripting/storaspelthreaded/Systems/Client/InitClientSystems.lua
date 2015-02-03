@@ -1,9 +1,12 @@
 --	Misc Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Client/MiscSystems/?.lua"
 require "cl_PlayerIndicatorSystem"
+require "cl_ClientNetworkMessageSystem"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(PlayerIndicatorSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(ClientNetworkMessageSystem)
 
 --	Interface Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Client/InterfaceSystems/?.lua"
