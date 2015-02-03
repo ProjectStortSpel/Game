@@ -19,6 +19,7 @@ GraphicsHigh::GraphicsHigh()
 	m_vramUsage = 0;
 	m_debugTexFlag = 0;
 	m_nrOfLights = 0;
+    m_pointerToDirectionalLights = 0;
 }
 
 GraphicsHigh::~GraphicsHigh()
@@ -68,6 +69,7 @@ bool GraphicsHigh::Init()
 	
 	GraphicDevice::m_sdlTextRenderer.Init();
 	
+    
 	return true;
 }
 
