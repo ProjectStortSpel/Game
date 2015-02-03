@@ -313,14 +313,33 @@ void GameCreator::StartGame(int argc, char** argv)
 	RunStartupCommands(argc, argv);
     
     //Console::ConsoleManager::GetInstance().AddToCommandQueue("connect 192.168.0.198");
-
+	/* The GraphicsDevice should probably do this instead. New: int refreshrate = m_graphics->GetRefreshRate() */
+	int refreshRate;
+	SDL_DisplayMode mode;
+	if (SDL_GetDisplayMode(0, 0, &mode) == 0)
+		refreshRate = std::max(mode.refresh_rate, 60);
+	else
+	{
+		refreshRate = 60;
+		std::string message = "Couldn't fetch the refresh rate. Max frame rate is now forced to 60.\n";
+		message += SDL_GetError();
+		Logger::GetInstance().Log("Refresh rate", LogSeverity::Warning, message);
+	}
     
 	float maxDeltaTime = (float)(1.0f / 20.0f);
+	float minDeltaTime = (1.0f / (float)refreshRate);
 	float bytesToMegaBytes = 1.f / (1024.f*1024.f);
 	bool showDebugInfo = false;
 	while (m_running)
 	{
 		float dt = std::min(maxDeltaTime, m_frameCounter->GetDeltaTime());
+
+		/* Enforce max fps by looping until max fps is reached. Alternative solution is worth looking at */
+		while (dt < minDeltaTime)
+		{
+			m_frameCounter->Tick();
+			dt += m_frameCounter->GetDeltaTime();
+		}
 
 		m_inputCounter.Reset();
 		/*	Collect all input	*/
@@ -335,7 +354,7 @@ void GameCreator::StartGame(int argc, char** argv)
 		m_inputCounter.Tick();
 
 		m_worldCounter.Reset();
-		/*	Update world (systems, entities etc)	*/
+		/*	Update world (systems, entities, etc)	*/
 		m_worldProfiler->Begin();
 		m_world->Update(dt);
 		m_worldProfiler->End();
@@ -370,10 +389,10 @@ void GameCreator::StartGame(int argc, char** argv)
 			m_worldProfiler->NextView();
 
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F8) == Input::InputState::PRESSED)
-			m_worldProfiler->WriteToLog();
+			m_worldProfiler->LogDisplayedStatistics();
 
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F1) == Input::InputState::PRESSED)
-			m_world->WriteToLog();
+			m_world->LogWorldData();
 
 		if (showDebugInfo)
 		{
@@ -384,7 +403,7 @@ void GameCreator::StartGame(int argc, char** argv)
 			std::stringstream vram;
 			vram << "VRAM usage: " << (float)(m_graphics->GetVRamUsage()*bytesToMegaBytes) << " Mb ";
 			m_graphics->RenderSimpleText(vram.str(), 20, 0);
-
+			
 			std::stringstream ss;
 			ss << "Lua memory usage: " << LuaEmbedder::GetMemoryUsage() << " bytes";
 			m_graphics->RenderSimpleText(ss.str(), 20, 1);
@@ -396,7 +415,6 @@ void GameCreator::StartGame(int argc, char** argv)
 			PrintSectionTime("Network ", &m_networkCounter, 60, 4);
 			PrintSectionTime("Graphics", &m_graphicsCounter, 60, 5);
 		}
-
 
 		m_frameCounter->Tick();
 	}

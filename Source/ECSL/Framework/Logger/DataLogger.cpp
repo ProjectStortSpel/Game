@@ -30,13 +30,13 @@ void DataLogger::SetCurrentWorld(unsigned int _entityCount, EntityTable* _entity
 	m_systemWorkGroups = _systemWorkGroups;
 }
 
-bool DataLogger::WriteToLogAssert(LogType _whatToLog)
+bool DataLogger::LogWorldDataAssert(LogType _whatToLog)
 {
-	WriteToLog(_whatToLog);
+	LogWorldData(_whatToLog);
 	return false;
 }
 
-void DataLogger::WriteToLog(LogType _whatToLog)
+void DataLogger::LogWorldData(LogType _whatToLog)
 {
 	std::string message = NewLine;
 	switch (_whatToLog)

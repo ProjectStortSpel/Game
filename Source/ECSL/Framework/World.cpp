@@ -45,48 +45,6 @@ unsigned int World::CreateNewEntity()
 	return m_dataManager->CreateNewEntity();
 }
 
-void World::CreateComponentAndAddTo(const std::string& _componentType, unsigned int _entityId)
-{
-	m_dataManager->CreateComponentAndAddTo(_componentType, _entityId);
-}
-
-void World::RemoveComponentFrom(const std::string& _componentType, unsigned int _entityId)
-{
-	m_dataManager->RemoveComponentFrom(_componentType, _entityId);
-}
-
-DataLocation World::GetComponent(unsigned int _entityId, const std::string& _componentType, const std::string& _variableName)
-{
-	return m_dataManager->GetComponentTable(_componentType)->GetComponent(_entityId, _variableName);
-}
-
-DataLocation World::GetComponent(unsigned int _entityId, const std::string& _componentType, const int _index)
-{
-	return m_dataManager->GetComponentTable(_componentType)->GetComponent(_entityId, _index);
-}
-
-DataLocation World::GetComponent(unsigned int _entityId, const unsigned int _componentType, const int _index)
-{
-	return m_dataManager->GetComponentTable(_componentType)->GetComponent(_entityId, _index);
-}
-
-void World::SetComponent(unsigned int _entityId, const std::string& _componentType, const std::string& _variableName, void* _data, bool _notifyNetwork)
-{
-	ComponentTable* componentTable = m_dataManager->GetComponentTable(ComponentTypeManager::GetInstance().GetTableId(_componentType));
-	componentTable->SetComponent(_entityId, _variableName, _data);
-	ComponentHasChanged(_entityId, _componentType, _notifyNetwork);
-}
-
-void World::KillEntity(unsigned int _entityId)
-{
-	m_dataManager->RemoveEntity(_entityId);
-}
-
-void World::GetEntityComponents(std::vector<unsigned int>& _out, unsigned int _entityId)
-{
-	m_dataManager->GetEntityTable()->GetEntityComponents(_out, _entityId);
-}
-
 unsigned int World::CreateNewEntity(const std::string& _templateName)
 {
 	unsigned int newId = CreateNewEntity();
@@ -137,7 +95,7 @@ unsigned int World::CreateNewEntity(const std::string& _templateName)
 					dataLoc[0] = componentData[n]->GetBoolData();
 					byteOffset += sizeof(bool);
 				}
-				
+
 			}
 		}
 	}
@@ -145,9 +103,57 @@ unsigned int World::CreateNewEntity(const std::string& _templateName)
 	return newId;
 }
 
-unsigned int World::GetMemoryUsage()
+void World::KillEntity(unsigned int _entityId)
 {
-	return m_dataManager->GetMemoryAllocated();
+	m_dataManager->RemoveEntity(_entityId);
+}
+
+void World::CreateComponentAndAddTo(const std::string& _componentType, unsigned int _entityId)
+{
+	m_dataManager->CreateComponentAndAddTo(_componentType, _entityId);
+}
+
+void World::RemoveComponentFrom(const std::string& _componentType, unsigned int _entityId)
+{
+	m_dataManager->RemoveComponentFrom(_componentType, _entityId);
+}
+
+DataLocation World::GetComponent(unsigned int _entityId, const std::string& _componentType, const std::string& _variableName)
+{
+	return m_dataManager->GetComponentTable(_componentType)->GetComponent(_entityId, _variableName);
+}
+
+DataLocation World::GetComponent(unsigned int _entityId, const std::string& _componentType, const int _index)
+{
+	return m_dataManager->GetComponentTable(_componentType)->GetComponent(_entityId, _index);
+}
+
+DataLocation World::GetComponent(unsigned int _entityId, const unsigned int _componentType, const int _index)
+{
+	return m_dataManager->GetComponentTable(_componentType)->GetComponent(_entityId, _index);
+}
+
+void World::SetComponent(unsigned int _entityId, const std::string& _componentType, const std::string& _variableName, void* _data, bool _notifyNetwork)
+{
+	ComponentTable* componentTable = m_dataManager->GetComponentTable(ComponentTypeManager::GetInstance().GetTableId(_componentType));
+	componentTable->SetComponent(_entityId, _variableName, _data);
+	ComponentHasChanged(_entityId, _componentType, _notifyNetwork);
+}
+
+bool World::HasComponent(unsigned int _entityId, const std::string& _componentType)
+{
+	unsigned int componentTypeId = ECSL::ComponentTypeManager::GetInstance().GetTableId(_componentType);
+	return HasComponent(_entityId, componentTypeId);
+}
+
+bool World::HasComponent(unsigned int _entityId, unsigned int _componentTypeId)
+{
+	return m_dataManager->HasComponent(_entityId, _componentTypeId);
+}
+
+void World::GetEntityComponents(std::vector<unsigned int>& _out, unsigned int _entityId)
+{
+	m_dataManager->GetEntityTable()->GetEntityComponents(_out, _entityId);
 }
 
 void World::ComponentHasChanged(unsigned int _entityId, std::string _componentType, bool _notifyNetwork)
@@ -167,21 +173,15 @@ void World::ComponentHasChanged(unsigned int _entityId, unsigned int _componentT
 	{
 		ECSL::BitSet::DataType* changedComponentsNetwork = (ECSL::BitSet::DataType*)GetComponent(_entityId, "ChangedComponentsNetwork", 0);
 		changedComponentsNetwork[bitSetIndex] |= ((ECSL::BitSet::DataType)1) << bitIndex;
-	}	
+	}
 }
 
-bool World::HasComponent(unsigned int _entityId, const std::string& _componentType)
+unsigned int World::GetMemoryUsage()
 {
-	unsigned int componentTypeId = ECSL::ComponentTypeManager::GetInstance().GetTableId(_componentType);
-	return HasComponent(_entityId, componentTypeId);
+	return m_dataManager->GetMemoryAllocated();
 }
 
-bool World::HasComponent(unsigned int _entityId, unsigned int _componentTypeId)
+void World::LogWorldData()
 {
-	return m_dataManager->HasComponent(_entityId, _componentTypeId);	
-}
-
-void World::WriteToLog()
-{
-	m_dataLogger->WriteToLog();
+	m_dataLogger->LogWorldData();
 }
