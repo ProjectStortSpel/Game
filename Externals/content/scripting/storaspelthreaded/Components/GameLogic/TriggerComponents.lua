@@ -25,6 +25,7 @@ TestMoveComponent:AddVariable("PosX", ByteSize.Int)
 TestMoveComponent:AddVariable("PosZ", ByteSize.Int)
 TestMoveComponent:AddVariable("DirX", ByteSize.Int)
 TestMoveComponent:AddVariable("DirZ", ByteSize.Int)
+TestMoveComponent:AddVariable("Steps", ByteSize.Int)
 worldCreator:AddComponentType(TestMoveComponent)
 
 --	Test River

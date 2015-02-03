@@ -1,9 +1,9 @@
-ActionSlingshotAbilitySystem = System()
-ActionSlingshotAbilitySystem.Range = 50
+AbilitySlingshotSystem = System()
+AbilitySlingshotSystem.Range = 50
 
-ActionSlingshotAbilitySystem.Initialize = function(self)
+AbilitySlingshotSystem.Initialize = function(self)
 	--	Set Name
-	self:SetName("ActionSlingshotAbilitySystem")
+	self:SetName("AbilitySlingshotSystem")
 	
 	--	Toggle EntitiesAdded
 	self:UsingEntitiesAdded()
@@ -17,7 +17,7 @@ ActionSlingshotAbilitySystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("MapSize", 				FilterType.RequiresOneOf)
 end
 
-ActionSlingshotAbilitySystem.RemoveEffects = function(self)
+AbilitySlingshotSystem.RemoveEffects = function(self)
 
 	-- Go through all units and find those who have an effect on them which should be removed
 	local units = self:GetEntities("Unit")
@@ -34,7 +34,7 @@ ActionSlingshotAbilitySystem.RemoveEffects = function(self)
 	
 
 end
-ActionSlingshotAbilitySystem.CheckUnits = function(self, currentPosX, currentPosZ)
+AbilitySlingshotSystem.CheckUnits = function(self, currentPosX, currentPosZ)
 
 	-- Get all units
 	local units = self:GetEntities("Unit")
@@ -62,7 +62,7 @@ ActionSlingshotAbilitySystem.CheckUnits = function(self, currentPosX, currentPos
 	
 end
 
-ActionSlingshotAbilitySystem.CheckNotWalkable = function(self, currentPosX, currentPosZ)
+AbilitySlingshotSystem.CheckNotWalkable = function(self, currentPosX, currentPosZ)
 
 	local entities = self:GetEntities("NotWalkable")
 	for i = 1, #entities do
@@ -80,7 +80,7 @@ ActionSlingshotAbilitySystem.CheckNotWalkable = function(self, currentPosX, curr
 	
 end
 
-ActionSlingshotAbilitySystem.AddBullet = function(self, posX, posZ, targetPosX, targetPosZ, lerpTime)
+AbilitySlingshotSystem.AddBullet = function(self, posX, posZ, targetPosX, targetPosZ, lerpTime)
 
 	local bullet = world:CreateNewEntity("SlingShotProjectile")
 	world:GetComponent(bullet, "Position", 0):SetFloat3(posX, 1, posZ)
@@ -89,7 +89,7 @@ ActionSlingshotAbilitySystem.AddBullet = function(self, posX, posZ, targetPosX, 
 
 end
 
-ActionSlingshotAbilitySystem.Update = function(self, dt)
+AbilitySlingshotSystem.Update = function(self, dt)
 
 	-- Get all entities which has the "UnitSlingShot" component
 	local entities = self:GetEntities("UnitSlingShot")
@@ -148,7 +148,7 @@ ActionSlingshotAbilitySystem.Update = function(self, dt)
 	
 end
 
-ActionSlingshotAbilitySystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+AbilitySlingshotSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 
 	-- Go through all entities added
 	for n = 1, #entities do
