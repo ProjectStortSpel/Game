@@ -5,6 +5,8 @@ AiCardPickingSystem.CardsPerHand = 8
 AiCardPickingSystem.Initialize = function(self)
 	self:SetName("AI card picking System")
 	
+	self:UsingEntitiesAdded()
+	
 	self:AddComponentTypeToFilter("AI", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("AICard", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("TileComp", FilterType.RequiresOneOf)
@@ -80,6 +82,7 @@ AiCardPickingSystem.GetAIsCardSet = function(self, AI, Cards)
 		
 		return aisCard
 end
+
 AiCardPickingSystem.TryMove = function(self, CardSetAI, card)
 	print(#card)
 	local cardpicked
@@ -92,6 +95,7 @@ AiCardPickingSystem.TryMove = function(self, CardSetAI, card)
 		end
 	end
 end
+
 AiCardPickingSystem.AIPickCards = function( self, CardSetAI, dirX, dirY, posX, posY, targetX, targetY )
 	
 	local pickedcards = {}
@@ -302,15 +306,17 @@ AiCardPickingSystem.TileHasComponent = function(self, component, posX, posY)
 	return returnValue
 end
 
-AiCardPickingSystem.OnEntityAdded = function(self, entity)
+AiCardPickingSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 
-	if world:EntityHasComponent(entity, "DealtCard") then
-		local playerid = self:GetComponent(entity, "DealtCard", 0)
-		local id = playerid:GetInt()
-		local plynum = self:GetComponent(id, "PlayerNumber", 0):GetInt()
-		local card = self:GetComponent(entity, "CardAction", 0):GetString()
-		--print ( plynum .. " gets a " .. card .. " Card" )
-	elseif world:EntityHasComponent(entity, "TileComp") then
-	
+	for i = 0, #entities do
+		if world:EntityHasComponent(entities[i], "DealtCard") then
+			local playerid = self:GetComponent(entities[i], "DealtCard", 0)
+			local id = playerid:GetInt()
+			local plynum = self:GetComponent(id, "PlayerNumber", 0):GetInt()
+			local card = self:GetComponent(entities[i], "CardAction", 0):GetString()
+			--print ( plynum .. " gets a " .. card .. " Card" )
+		elseif world:EntityHasComponent(entities[i], "TileComp") then
+		
+		end
 	end
 end
