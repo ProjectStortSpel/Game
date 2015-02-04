@@ -1,7 +1,7 @@
 #include "LuaSystem.h"
 #include "LuaEmbedder/LuaEmbedder.h"
 #include "LuaComponent.h"
-#include "../../NetworkInstance.h"
+#include "../../Network/NetworkInstance.h"
 #include <assert.h>
 
 namespace LuaBridge

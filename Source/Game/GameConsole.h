@@ -8,7 +8,7 @@
 #include "Renderer/GraphicDevice.h"
 #endif
 #include "ECSL/ECSL.h"
-#include "NetworkInstance.h"
+#include "Network/NetworkInstance.h"
 
 class GameConsole
 {

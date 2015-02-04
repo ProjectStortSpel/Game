@@ -12,7 +12,7 @@
 #include "Systems/DirectionalLightSystem.h"
 #include "Systems/MasterServerSystem.h"
 
-#include "NetworkInstance.h"
+#include "Network/NetworkInstance.h"
 #include "ECSL/ECSL.h"
 #include "ECSL/Managers/EntityTemplateManager.h"
 

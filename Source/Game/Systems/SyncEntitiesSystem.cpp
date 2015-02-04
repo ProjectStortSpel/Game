@@ -1,5 +1,5 @@
 #include "SyncEntitiesSystem.h"
-#include "../NetworkInstance.h"
+#include "../Network/NetworkInstance.h"
 
 SyncEntitiesSystem::SyncEntitiesSystem()
 {
