@@ -7,7 +7,8 @@
 using namespace ECSL;
 
 SystemManager::SystemManager(DataManager* _dataManager, std::vector<SystemWorkGroup*>* _systemWorkGroups) 
-:	m_systemIdManager(new SystemIdManager()),
+:	m_systemActivationManager(new SystemActivationManager()),
+	m_systemIdManager(new SystemIdManager()),
 	m_dataManager(_dataManager), 
 	m_systems(new std::vector<System*>()),
 	m_systemWorkGroups(_systemWorkGroups)
@@ -21,6 +22,7 @@ SystemManager::~SystemManager()
 		delete m_systemWorkGroups->at(n);
 	delete m_systemWorkGroups;
 	delete m_systems;
+	delete m_systemActivationManager;
 	delete m_systemIdManager;
 }
 
@@ -35,6 +37,7 @@ void SystemManager::InitializeSystems()
 		for (unsigned int systemId = 0; systemId < systems->size(); ++systemId)
 		{
 			System* system = systems->at(systemId);
+			system->SetSystemActivationManager(m_systemActivationManager);
 			system->SetSystemIdManager(m_systemIdManager);
 			system->SetDataManager(m_dataManager);
 			system->SetGroupId(groupId);
@@ -43,8 +46,7 @@ void SystemManager::InitializeSystems()
 			GenerateComponentFilter(system, FilterType::Mandatory);
 			GenerateComponentFilter(system, FilterType::RequiresOneOf);
 			GenerateComponentFilter(system, FilterType::Excluded);
-
-			system->InitializeEntityList();
+			system->InitializeBackEnd();
 
 			m_systems->push_back(system);
 		}

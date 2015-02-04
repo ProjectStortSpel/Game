@@ -32,6 +32,7 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataTable.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\EntityTable.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Logger\DataLogger.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Multithreading\ECSLWorkItem.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Multithreading\RuntimeInfo.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Multithreading\Scheduler.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\ComponentTypeReader.h" />
@@ -43,6 +44,7 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\Message.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\MessageManager.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\Subscription.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemActivationManager.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemIdManager.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemWorkGroup.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemManager.h" />
@@ -75,6 +77,7 @@
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\Message.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\MessageManager.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\Subscription.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemActivationManager.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemIdManager.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemWorkGroup.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemManager.cpp" />

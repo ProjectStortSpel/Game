@@ -11,6 +11,7 @@
 #include "Systems/PointlightSystem.h"
 #include "Systems/DirectionalLightSystem.h"
 #include "Systems/MasterServerSystem.h"
+#include "Systems/TestSystems.h"
 
 #include "NetworkInstance.h"
 #include "ECSL/ECSL.h"
@@ -235,6 +236,11 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 	worldCreator.AddSystemGroup();
 	worldCreator.AddSystemToCurrentGroup<ResetChangedSystem>();
+
+	worldCreator.AddSystemGroup();
+	worldCreator.AddSystemToCurrentGroup<TestSystem1>();
+	worldCreator.AddSystemGroup();
+	worldCreator.AddSystemToCurrentGroup<TestSystem2>();
 
 	m_world = worldCreator.CreateWorld(1000);
 	LuaEmbedder::AddObject<ECSL::World>(m_clientLuaState, "World", m_world, "world");

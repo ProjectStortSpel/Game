@@ -142,6 +142,12 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Logger\DataLogger.h">
       <Filter>Source Files\Framework\Logger</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemActivationManager.h">
+      <Filter>Source Files\Framework\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Multithreading\ECSLWorkItem.h">
+      <Filter>Source Files\Framework\Multithreading</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\World.cpp">
@@ -233,6 +239,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Logger\DataLogger.cpp">
       <Filter>Source Files\Framework\Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemActivationManager.cpp">
+      <Filter>Source Files\Framework\Systems</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
