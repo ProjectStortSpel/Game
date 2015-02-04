@@ -12,20 +12,8 @@ SortCardIndexSystem.Initialize = function(self)
 end
 
 SortCardIndexSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
-
-	for n = 1, #entities do
-		local entityId = entities[n]
-		local index = world:GetComponent(entityId, "CardIndex", "Index"):GetInt()
-
-		local cards = self:GetEntities()
-
-		for i = 1, #cards do
-			local index2 = world:GetComponent(cards[i], "CardIndex", "Index"):GetInt()
-			
-			if index2 > index then
-				world:SetComponent(cards[i], "CardIndex", "Index", index2 - 1)
-			end
-
-		end
+	local cards = self:GetEntities()
+	for i = 1, #cards do
+		world:SetComponent(cards[i], "CardIndex", "Index", i)
 	end
 end

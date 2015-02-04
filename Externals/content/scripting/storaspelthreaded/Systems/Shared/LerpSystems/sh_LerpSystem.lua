@@ -1,5 +1,5 @@
 LerpSystem = System()
-LerpSystem.LerpTime = 0.1
+LerpSystem.LerpTime = 0.5
 
 LerpSystem.Initialize = function(self)
 
