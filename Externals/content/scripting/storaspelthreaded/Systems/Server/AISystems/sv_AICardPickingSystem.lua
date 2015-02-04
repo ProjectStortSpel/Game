@@ -8,6 +8,7 @@ AICardPickingSystem.Initialize = function(self)
 	
 	--	Toggle EntitiesAdded
 	self:UsingEntitiesAdded()
+	self:UsingUpdate()
 	
 	self:AddComponentTypeToFilter("AI", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("AICard", FilterType.RequiresOneOf)
@@ -18,10 +19,8 @@ end
 
 AICardPickingSystem.Update = function(self, dt)
 	
-	print("ai before pick")
 	local AIs = self:GetEntities("AI")
 	local Cards = self:GetEntities("AICard")
-	print("ai pick")
 	
 	if #Cards >= #AIs * self.CardsPerHand then
 	
@@ -251,7 +250,7 @@ end
 
 AICardPickingSystem.SendCards = function(self, _player, _pickedcards)
 	
-	print("AI DONE")
+	print("AI Send Cards")
 	local unit = world:GetComponent(_player, "UnitEntityId", "Id"):GetInt()
 	
 	world:CreateComponentAndAddTo("HasSelectedCards", _player)
@@ -336,6 +335,8 @@ AICardPickingSystem.SimulateMoveForward = function(self, _posX, _posY, _dirX, _d
 	
 	local fellDown = false
 	local posX, posY
+	
+	print("SimulateMoveForward", _posY)
 			
 	for i = 1, _iterations do
 		
@@ -389,6 +390,8 @@ AICardPickingSystem.SimulateTurnLeft = function(self, _posX, _posY, _dirX, _dirY
 		dirX = temp
 	end
 	
+	print("SimulateTurnLeft", _posY)
+	
 	if self:TileHasComponent("River", _posX, _posY) then
 		
 		local waterDirX, waterDirY, waterSpeed = self:GetRiverVariables(_posX, _posY)
@@ -416,6 +419,8 @@ AICardPickingSystem.TileHasComponent = function(self, _component, _posX, _posY)
 	local mapX, mapY = mapSizeComp:GetInt2()
 	local tiles = self:GetEntities("TileComp")
 	
+	print("TileHasComponent", _posY)
+	
 	local returnValue = self:EntityHasComponent(tiles[mapX * _posY + _posX + 1], _component)
 	return returnValue
 end
@@ -426,6 +431,8 @@ AICardPickingSystem.GetRiverVariables = function(self, _posX, _posY)
 	local mapX = self:GetComponent(mapSize[1], "MapSize", 0):GetInt()
 	local tiles = self:GetEntities("TileComp")
 	local dirX, dirY, speed = world:GetComponent(tiles[mapX * _posY + _posX + 1], "River", 0):GetInt3()
+	
+	print("GetRiverVariables", _posY)
 	
 	return dirX, dirY, speed
 end

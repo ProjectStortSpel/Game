@@ -43,6 +43,8 @@ UnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 	
 	for n = 1, #entities do
 		local entity = entities[n]
+		
+		print("unit entity added")
 	
 		if world:EntityHasComponent(entity, "NeedUnit") then
 			
