@@ -1,7 +1,7 @@
 --	AI template [TODO: Add shit]
 local AITemplate = EntityTemplate()
 AITemplate.Name = "AI"
-AITemplate:AddComponent("Player")
+--AITemplate:AddComponent("Player")
 AITemplate:AddComponent("AI")
 AITemplate:AddComponent("PlayerNumber")
 AITemplate:AddComponent("PlayerName")
