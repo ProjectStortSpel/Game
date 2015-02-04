@@ -11,6 +11,7 @@ NewStepSystem.Initialize = function(self)
 	--	Set Filter
 	self:AddComponentTypeToFilter("NewRound", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("NewStep", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("Unit", FilterType.RequiresOneOf)
 end
 
 NewStepSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
@@ -23,10 +24,18 @@ NewStepSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 			self.Step = 1
 			local id = world:CreateNewEntity()
 			world:CreateComponentAndAddTo("NewStep", id)
+			world:KillEntity( entity )
 
 		elseif world:EntityHasComponent( entity, "NewStep") then
 			
 			if self.Step <= 5 then
+				
+				local units = self:GetEntities("Unit")
+				for i = 1, #units do
+					world:SetComponent(units[i], "NoSubSteps", "Counter", 1)
+					print("All NoSubSteps set to 1")
+				end
+
 				local id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo("PlayCard", id)
 				world:SetComponent(id, "PlayCard", "Step", self.Step)
@@ -51,8 +60,8 @@ NewStepSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 				world:CreateComponentAndAddTo("RemoveEffects", id)
 				
 			end
+			world:KillEntity( entity )
 		end
 
-		world:KillEntity( entity )
 	end
 end
