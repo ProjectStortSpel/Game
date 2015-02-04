@@ -14,6 +14,7 @@ end
 GiveCardIndexSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, newEntities)
 	local cards = self:GetEntities()
 	local indicies = {}
+	indicies.__mode = "k"
 	for i = 1, #cards do
 		if world:EntityHasComponent(cards[i], "CardIndex") then
 			local index = world:GetComponent(cards[i], "CardIndex", "Index"):GetInt()
