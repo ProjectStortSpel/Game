@@ -36,17 +36,12 @@ SortSelectedCardsSystem.SelectCard = function(self, card)
 	if index > #cards then
 		index = #cards
 	end
-	print("Select: "..index)
-	
 	if #cards <= self.MaxSelectedCards then
 		for i = 1, #cards do
 			if world:EntityHasComponent(cards[i], "CardSelected") then
 				local index2 = world:GetComponent(cards[i], "SelectCard", "Index"):GetInt()
 				if index2 >= index then
 					world:SetComponent(cards[i], "SelectCard", "Index", index2 + 1)
-					print("n: "..index2 + 1)
-				else
-					print("o: "..index2)
 				end
 			end
 		end
