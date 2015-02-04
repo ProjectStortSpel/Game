@@ -669,6 +669,7 @@ void GameCreator::PrintSectionTime(const std::string& sectionName, Utility::Fram
 
 void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Console::Argument>* _args)
 {
+#if !defined(__IOS__) && !defined(__ANDROID__)
 	if (_args->size() == 0)
 		return;
 
@@ -700,4 +701,5 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 			tSystem->SetGraphics(m_graphics);
 		}
 	}
+#endif
 }
