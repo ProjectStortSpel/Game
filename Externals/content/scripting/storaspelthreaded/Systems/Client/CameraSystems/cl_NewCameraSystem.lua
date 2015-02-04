@@ -42,13 +42,13 @@ NewCameraSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entitie
 				
 				
 				element = self:CreateElement("touchside", "quad", 0, -aspectY*2.2, -2.2, 4*aspectX, 0.5*aspectX)
-				self:GetComponent(element, "Rotation", 0):SetFloat3(3.14159265359, 0, 0)
+				self:GetComponent(element, "Rotation", 0):SetFloat3(0, 0, 3.14159265359)
 				
 				element = self:CreateElement("touchside", "quad", aspectX*2.2, 0, -2.2, 4*aspectY, 0.5*aspectY)
-				self:GetComponent(element, "Rotation", 0):SetFloat3(-3.14159265359/2, 0, 0)
+				self:GetComponent(element, "Rotation", 0):SetFloat3(0, 0, -3.14159265359*0.5)
 				
 				element = self:CreateElement("touchside", "quad", -aspectX*2.2, 0, -2.2, 4*aspectY, 0.5*aspectY)
-				self:GetComponent(element, "Rotation", 0):SetFloat3(3.14159265359/2, 0, 0)
+				self:GetComponent(element, "Rotation", 0):SetFloat3(0, 0, 3.14159265359*0.5)
 				
 			else
 				self:RemoveElements()
@@ -248,6 +248,7 @@ Net.Receive("Client.SendCIP",
 		world:GetComponent(entity, "CameraInterestPoint", "UpX"):SetFloat(UpX)
 		world:GetComponent(entity, "CameraInterestPoint", "UpZ"):SetFloat(UpZ)
 		world:GetComponent(entity, "CameraInterestPoint", "Distance"):SetFloat(Distance)
+		print("move camera")
 	end 
 )
 

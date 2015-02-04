@@ -157,6 +157,30 @@ namespace Renderer
 		GLuint AddTexture(std::string _fileDir, GLenum _textureSlot);
 		
 		TextRenderer m_sdlTextRenderer;
+		
+		struct ModelToLoad
+		{
+			std::string Dir;
+			std::string File;
+			glm::mat4* MatrixPtr;
+			int RenderType;
+		};
+		std::map<int, ModelToLoad*> m_modelsToLoad;
+		void BufferModels();
+		void BufferModel(int _modelId, ModelToLoad* _modelToLoad);
+		
+		std::vector<std::pair<std::string, SDL_Surface*>> m_surfaces;
+		void BufferSurfaces();
+		
+		struct ModelTexture
+		{
+			int id;
+			std::string textureName;
+			int textureType;
+		};
+		std::vector<ModelTexture> m_modelTextures;
+		void BufferModelTextures();
+		bool BufferModelTexture(int _id, std::string _fileDir, int _textureType);
 	};
 }
 

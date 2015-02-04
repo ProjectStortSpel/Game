@@ -12,6 +12,7 @@ DealCardsSystem.Initialize = function ( self )
 	--	Set Filter
 	self:AddComponentTypeToFilter("DealCards", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("Player", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("AI", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("CardAction", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("UsedCard", FilterType.Excluded)
 	self:AddComponentTypeToFilter("CardStep", FilterType.Excluded)
@@ -39,20 +40,25 @@ end
 DealCardsSystem.DealCards = function (self, numCards)
 
 	local players = self:GetEntities("Player")
+	local aiPlayers = self:GetEntities("AI")
 	local cards = self:GetEntities("Card")
 	local cardsLeft = #cards
-	print("DealCards")
-	print("Numplayer: " .. #players)
-	print("NumCards: " .. cardsLeft)
-	print("NumCardsToDeal: " .. numCards)
+	--print("DealCards")
+	--print("Numplayer: " .. #players)
+	--print("NumCards: " .. cardsLeft)
+	--print("NumCardsToDeal: " .. numCards)
 
-	print("")
+	--print("")
 	
 	for i = 1, #players do
 		
 		if world:EntityHasComponent(players[i], "HasSelectedCards") then
 			world:RemoveComponentFrom("HasSelectedCards", players[i])
 		end
+	
+		local pickingStartedID = Net.StartPack("Client.RemotePickingStarted")
+		Net.WriteInt(pickingStartedID, players[i])
+		Net.Broadcast(pickingStartedID)
 	
 		local ip = world:GetComponent(players[i], "NetConnection", "IpAddress"):GetString()
 		local port = world:GetComponent(players[i], "NetConnection", "Port"):GetInt()
@@ -76,7 +82,29 @@ DealCardsSystem.DealCards = function (self, numCards)
 			cardsLeft = cardsLeft - 1
 		end
 		
-		Net.Send(Net.StartPack("Client.SelectCards"), ip, port)
+		--Net.Send(Net.StartPack("Client.SelectCards"), ip, port)
+	end
+	
+	for i = 1, #aiPlayers do
+		
+		if world:EntityHasComponent(aiPlayers[i], "HasSelectedCards") then
+			world:RemoveComponentFrom("HasSelectedCards", aiPlayers[i])
+		end
+		
+		for j = 1, numCards do
+
+			local cardIndex = math.random(1, cardsLeft)
+			local card = cards[cardIndex]
+			
+			world:CreateComponentAndAddTo("DealtCard", card)
+			if not world:EntityHasComponent(card, "AICard") then
+				world:CreateComponentAndAddTo("AICard", card)
+			end
+			world:SetComponent(card, "DealtCard", "PlayerEntityId", aiPlayers[i])
+			
+			table.remove(cards, cardIndex)
+			cardsLeft = cardsLeft - 1
+		end
 	end
 	
 	--	Notify players about timer
@@ -108,12 +136,12 @@ Net.Receive("Server.SelectCards",
 					table.insert(selectedCards, card)
 
 				else
-					Net.Send(Net.StartPack("Client.SelectCards"), ip, port)
+					--Net.Send(Net.StartPack("Client.SelectCards"), ip, port)
 					return
 				end
 
 			else
-				Net.Send(Net.StartPack("Client.SelectCards"), ip, port)
+				--Net.Send(Net.StartPack("Client.SelectCards"), ip, port)
 				return
 			end
 

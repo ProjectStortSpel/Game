@@ -12,6 +12,8 @@ using namespace glm;
 GraphicDevice::GraphicDevice()
 {
 	m_modelIDcounter = 0;
+	for (int i = 0; i < 10; i++)
+		m_defaultLight[i] = 0.0f;
 }
 
 GraphicDevice::~GraphicDevice()
@@ -87,7 +89,10 @@ void GraphicDevice::Update(float _dt)
 {
 	m_camera->Update(_dt);
 
-  //SDL_Log("FPS: %f", 1.0f/_dt); 
+	BufferModels();
+	BufferLightsToGPU();
+	BufferSurfaces();
+	BufferModelTextures();
 }
 
 void GraphicDevice::WriteShadowMapDepth()
@@ -463,26 +468,7 @@ void GraphicDevice::BufferPointlights(int _nrOfLights, float **_lightPointers)
 
 void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
 {
-	//direction, intensity, color
-    
-    if (_lightPointer)
-    {
-        m_dirLightDirection = vec3(_lightPointer[0], _lightPointer[1], _lightPointer[2]);
-        vec3 intens = vec3(_lightPointer[3], _lightPointer[4], _lightPointer[5]);
-        vec3 color = vec3(_lightPointer[6], _lightPointer[7], _lightPointer[8]);
-
-        m_forwardShader.SetUniVariable("dirlightDirection", vector3, &m_dirLightDirection);
-        m_forwardShader.SetUniVariable("dirlightIntensity", vector3, &intens);
-        m_forwardShader.SetUniVariable("dirlightColor", vector3, &color);
-    }
-    else
-    {
-        vec3 zero = vec3(0.0f);
-        m_forwardShader.SetUniVariable("dirlightIntensity", vector3, &zero);
-        m_forwardShader.SetUniVariable("dirlightColor", vector3, &zero);
-    }
-	
-	m_shadowMap->UpdateViewMatrix(vec3(8.0f, 0.0f, 8.0f) - (10.0f*normalize(m_dirLightDirection)), vec3(8.0f, 0.0f, 8.0f));
+	m_directionalLightPtr = _lightPointer ? _lightPointer : m_defaultLight;
 }
 
 void GraphicDevice::CreateShadowMap()
@@ -569,20 +555,31 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 {
 	int modelID = m_modelIDcounter;
 	m_modelIDcounter++;
+	
+	ModelToLoad* modelToLoad = new ModelToLoad();
+	modelToLoad->Dir = _dir;
+	modelToLoad->File = _file;
+	modelToLoad->MatrixPtr = _matrixPtr;
+	modelToLoad->RenderType = _renderType;
+	m_modelsToLoad[modelID] = modelToLoad;
 
+	return modelID;
+}
+void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
+{
 	Shader *shaderPtr = NULL;
 
-	if (_renderType == RENDER_FORWARD)
+	if (_modelToLoad->RenderType == RENDER_FORWARD)
 	{
 		shaderPtr = &m_forwardShader;
 		m_forwardShader.UseProgram();
 	}
-	else if (_renderType == RENDER_VIEWSPACE)
+	else if (_modelToLoad->RenderType == RENDER_VIEWSPACE)
 	{
 		shaderPtr = &m_viewspaceShader;
 		m_viewspaceShader.UseProgram();
 	}
-	else if (_renderType == RENDER_INTERFACE)
+	else if (_modelToLoad->RenderType == RENDER_INTERFACE)
 	{
 		shaderPtr = &m_interfaceShader;
 		m_interfaceShader.UseProgram();
@@ -595,7 +592,7 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 	}
 
 	// Import Object
-	ObjectData obj = ModelLoader::importObject(_dir, _file);
+	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
 
 	// Import Texture
 	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
@@ -612,21 +609,27 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 	// Import Mesh
 	Buffer* mesh = AddMesh(obj.mesh, shaderPtr);
 
-	Model model = Model(mesh, texture, normal, specular, modelID, true, _matrixPtr); // plus modelID o matrixPointer, active
+	Model model = Model(mesh, texture, normal, specular, _modelId, true, _modelToLoad->MatrixPtr); // plus modelID o matrixPointer, active
 
 
 	// Push back the model
-	if (_renderType == RENDER_FORWARD)
+	if (_modelToLoad->RenderType == RENDER_FORWARD)
 		m_modelsForward.push_back(model);
-	else if (_renderType == RENDER_VIEWSPACE)
+	else if (_modelToLoad->RenderType == RENDER_VIEWSPACE)
 		m_modelsViewspace.push_back(model);
-	else if (_renderType == RENDER_INTERFACE)
+	else if (_modelToLoad->RenderType == RENDER_INTERFACE)
 		m_modelsInterface.push_back(model);
 	else
 		m_modelsForward.push_back(model);
-
-
-	return modelID;
+}
+void GraphicDevice::BufferModels()
+{
+	for (auto pair : m_modelsToLoad)
+	{
+		BufferModel(pair.first, pair.second);
+		delete(pair.second);
+	}
+	m_modelsToLoad.clear();
 }
 bool GraphicDevice::RemoveModel(int _id)
 {
@@ -665,7 +668,191 @@ bool GraphicDevice::ActiveModel(int _id, bool _active)
 }
 bool GraphicDevice::ChangeModelTexture(int _id, std::string _fileDir, int _textureType)
 {
-	// Temp Model
+	m_modelTextures.push_back({ _id, _fileDir, _textureType });
+}
+bool GraphicDevice::ChangeModelNormalMap(int _id, std::string _fileDir)
+{
+	m_modelTextures.push_back({ _id, _fileDir, TEXTURE_NORMAL });
+}
+bool GraphicDevice::ChangeModelSpecularMap(int _id, std::string _fileDir)
+{
+	m_modelTextures.push_back({ _id, _fileDir, TEXTURE_SPECULAR });
+}
+
+Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
+{
+	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
+	{		
+		if (it->first == _fileDir)
+			return it->second;
+	}
+
+	ModelExporter modelExporter;
+	modelExporter.OpenFileForRead(_fileDir.c_str());
+	std::vector<float> positionData = modelExporter.ReadDataFromFile();
+	std::vector<float> normalData = modelExporter.ReadDataFromFile();
+	std::vector<float> tanData = modelExporter.ReadDataFromFile();
+	std::vector<float> bitanData = modelExporter.ReadDataFromFile();
+	std::vector<float> texCoordData = modelExporter.ReadDataFromFile();
+	modelExporter.CloseFile();
+
+	Buffer* retbuffer = new Buffer();
+
+	std::map<GLuint, GLuint> vpLocs, vnLocs, tanLocs, bitanLocs, tcLocs;
+	vpLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexPosition");
+	vpLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexPosition");
+	vpLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexPosition");
+	vpLocs[m_shadowShader.GetShaderProgram()]	 = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexPosition");
+
+	vnLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexNormal");
+	vnLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexNormal");
+	vnLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexNormal");
+	vnLocs[m_shadowShader.GetShaderProgram()]	 = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexNormal");
+
+	tanLocs[m_forwardShader.GetShaderProgram()]	  = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTangent");
+	tanLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexTangent");
+	tanLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexTangent");
+	tanLocs[m_shadowShader.GetShaderProgram()]	  = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexTangent");
+
+	bitanLocs[m_forwardShader.GetShaderProgram()]	= glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexBiTangent");
+	bitanLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexBiTangent");
+	bitanLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexBiTangent");
+	bitanLocs[m_shadowShader.GetShaderProgram()]	= glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexBiTangent");
+
+	tcLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTexCoord");
+	tcLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexTexCoord");
+	tcLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexTexCoord");
+	tcLocs[m_shadowShader.GetShaderProgram()]	 = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexTexCoord");
+
+	_shaderProg->UseProgram();
+	BufferData bufferData[] =
+	{
+		{ vpLocs,	 3, GL_FLOAT, (const GLvoid*)positionData.data(), (GLsizeiptr)(positionData.size() * sizeof(float)) },
+		{ vnLocs,	 3, GL_FLOAT, (const GLvoid*)normalData.data(), (GLsizeiptr)(normalData.size()   * sizeof(float)) },
+		{ tanLocs,	 3, GL_FLOAT, (const GLvoid*)tanData.data(), (GLsizeiptr)(tanData.size()   * sizeof(float)) },
+		{ bitanLocs, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), (GLsizeiptr)(bitanData.size()   * sizeof(float)) },
+		{ tcLocs,	 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), (GLsizeiptr)(texCoordData.size() * sizeof(float)) }
+	};
+
+	retbuffer->init(bufferData, sizeof(bufferData) / sizeof(bufferData[0]), _shaderProg->GetShaderProgram());
+	retbuffer->setCount((int)positionData.size() / 3);
+	
+	m_meshs.insert(std::pair<const std::string, Buffer*>(_fileDir, retbuffer));
+
+	return retbuffer;
+}
+GLuint GraphicDevice::AddTexture(std::string _fileDir, GLenum _textureSlot)
+{
+    //printf("fileDir: %s\n", _fileDir.c_str());
+	for (std::map<const std::string, GLuint>::iterator it = m_textures.begin(); it != m_textures.end(); it++)
+	{
+		if (it->first == _fileDir)
+			return it->second;
+	}
+	int texSizeX, texSizeY;
+	GLuint texture = TextureLoader::LoadTexture(_fileDir.c_str(), _textureSlot, texSizeX, texSizeY);
+	m_textures.insert(std::pair<const std::string, GLenum>(_fileDir, texture));
+	return texture;
+}
+//ObjectData GraphicDevice::AddObject(std::string _file, std::string _dir)
+//{
+//	std::string fileDir = _dir;
+//	fileDir.append(_file);
+//	for (std::map<const std::string, ObjectData>::iterator it = m_objects.begin(); it != m_objects.end(); it++)
+//	{
+//		if (it->first == fileDir)
+//			return it->second;
+//	}
+//	ObjectData obj = ModelLoader::importObject(_dir, _file);
+//}
+
+void GraphicDevice::Clear()
+{
+  m_modelIDcounter = 0;
+  
+  m_modelsForward.clear();
+  m_modelsViewspace.clear();
+
+  float **tmpPtr = new float*[1];
+  BufferPointlights(0, tmpPtr);
+  delete tmpPtr;
+  
+  m_directionalLightPtr = NULL;
+}
+
+void GraphicDevice::BufferLightsToGPU()
+{
+	if (m_directionalLightPtr)
+	{
+	    m_dirLightDirection = vec3(m_directionalLightPtr[0], m_directionalLightPtr[1], m_directionalLightPtr[2]);
+	    vec3 intens = vec3(m_directionalLightPtr[3], m_directionalLightPtr[4], m_directionalLightPtr[5]);
+	    vec3 color = vec3(m_directionalLightPtr[6], m_directionalLightPtr[7], m_directionalLightPtr[8]);
+
+	    m_forwardShader.SetUniVariable("dirlightDirection", vector3, &m_dirLightDirection);
+	    m_forwardShader.SetUniVariable("dirlightIntensity", vector3, &intens);
+	    m_forwardShader.SetUniVariable("dirlightColor", vector3, &color);
+	}
+	else
+	{
+	    vec3 zero = vec3(0.0f);
+	    m_forwardShader.SetUniVariable("dirlightIntensity", vector3, &zero);
+	    m_forwardShader.SetUniVariable("dirlightColor", vector3, &zero);
+	}
+	
+	m_shadowMap->UpdateViewMatrix(vec3(8.0f, 0.0f, 8.0f) - (10.0f*normalize(m_dirLightDirection)), vec3(8.0f, 0.0f, 8.0f));
+}
+
+int GraphicDevice::AddFont(const std::string& filepath, int size)
+{
+	return m_sdlTextRenderer.AddFont(filepath, size);
+}
+
+float GraphicDevice::CreateTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, glm::ivec2 size)
+{
+	SDL_Surface* surface = m_sdlTextRenderer.CreateTextSurface(textString, fontIndex, color);
+	if (size.x > 0)
+		surface->w = size.x;
+	if (size.y > 0)
+		surface->h = size.y;
+	m_surfaces.push_back(std::pair<std::string, SDL_Surface*>(textureName, surface));
+	return (float)surface->w / (float)surface->h;
+}
+
+void GraphicDevice::CreateWrappedTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, unsigned int wrapLength, glm::ivec2 size)
+{
+	SDL_Surface* surface = m_sdlTextRenderer.CreateWrappedTextSurface(textString, fontIndex, color, wrapLength);
+	if (size.x > 0)
+		surface->w = size.x;
+	if (size.y > 0)
+		surface->h = size.y;
+	m_surfaces.push_back(std::pair<std::string, SDL_Surface*>(textureName, surface));
+}
+
+void GraphicDevice::BufferSurfaces()
+{
+	for (std::pair<std::string, SDL_Surface*> surface : m_surfaces)
+	{
+		if (m_textures.find(surface.first) != m_textures.end())
+			glDeleteTextures(1, &m_textures[surface.first]);
+		GLuint texture = TextureLoader::LoadTexture(surface.second, GL_TEXTURE1);
+		m_textures[surface.first] = texture;
+		SDL_FreeSurface(surface.second);
+	}
+	m_surfaces.clear();
+}
+
+void GraphicDevice::BufferModelTextures()
+{
+	for (ModelTexture modelTexture : m_modelTextures)
+	{
+		BufferModelTexture(modelTexture.id, modelTexture.textureName, modelTexture.textureType);
+	}
+	m_modelTextures.clear();
+}
+
+bool GraphicDevice::BufferModelTexture(int _id, std::string _fileDir, int _textureType)
+{
+  // Temp Model
 	Model model;
 
 	bool found = false;
@@ -775,147 +962,4 @@ bool GraphicDevice::ChangeModelTexture(int _id, std::string _fileDir, int _textu
 		SDL_Log("Change texture to incorrect renderType.");
 
 	return false;
-}
-bool GraphicDevice::ChangeModelNormalMap(int _id, std::string _fileDir)
-{
-	return ChangeModelTexture(_id, _fileDir, TEXTURE_NORMAL);
-}
-bool GraphicDevice::ChangeModelSpecularMap(int _id, std::string _fileDir)
-{
-	return ChangeModelTexture(_id, _fileDir, TEXTURE_SPECULAR);
-}
-
-Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
-{
-	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
-	{		
-		if (it->first == _fileDir)
-			return it->second;
-	}
-
-	ModelExporter modelExporter;
-	modelExporter.OpenFileForRead(_fileDir.c_str());
-	std::vector<float> positionData = modelExporter.ReadDataFromFile();
-	std::vector<float> normalData = modelExporter.ReadDataFromFile();
-	std::vector<float> tanData = modelExporter.ReadDataFromFile();
-	std::vector<float> bitanData = modelExporter.ReadDataFromFile();
-	std::vector<float> texCoordData = modelExporter.ReadDataFromFile();
-	modelExporter.CloseFile();
-
-	Buffer* retbuffer = new Buffer();
-
-	std::map<GLuint, GLuint> vpLocs, vnLocs, tanLocs, bitanLocs, tcLocs;
-	vpLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexPosition");
-	vpLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexPosition");
-	vpLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexPosition");
-	vpLocs[m_shadowShader.GetShaderProgram()]	 = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexPosition");
-
-	vnLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexNormal");
-	vnLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexNormal");
-	vnLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexNormal");
-	vnLocs[m_shadowShader.GetShaderProgram()]	 = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexNormal");
-
-	tanLocs[m_forwardShader.GetShaderProgram()]	  = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTangent");
-	tanLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexTangent");
-	tanLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexTangent");
-	tanLocs[m_shadowShader.GetShaderProgram()]	  = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexTangent");
-
-	bitanLocs[m_forwardShader.GetShaderProgram()]	= glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexBiTangent");
-	bitanLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexBiTangent");
-	bitanLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexBiTangent");
-	bitanLocs[m_shadowShader.GetShaderProgram()]	= glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexBiTangent");
-
-	tcLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTexCoord");
-	tcLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexTexCoord");
-	tcLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexTexCoord");
-	tcLocs[m_shadowShader.GetShaderProgram()]	 = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexTexCoord");
-
-	_shaderProg->UseProgram();
-	BufferData bufferData[] =
-	{
-		{ vpLocs,	 3, GL_FLOAT, (const GLvoid*)positionData.data(), (GLsizeiptr)(positionData.size() * sizeof(float)) },
-		{ vnLocs,	 3, GL_FLOAT, (const GLvoid*)normalData.data(), (GLsizeiptr)(normalData.size()   * sizeof(float)) },
-		{ tanLocs,	 3, GL_FLOAT, (const GLvoid*)tanData.data(), (GLsizeiptr)(tanData.size()   * sizeof(float)) },
-		{ bitanLocs, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), (GLsizeiptr)(bitanData.size()   * sizeof(float)) },
-		{ tcLocs,	 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), (GLsizeiptr)(texCoordData.size() * sizeof(float)) }
-	};
-
-	retbuffer->init(bufferData, sizeof(bufferData) / sizeof(bufferData[0]), _shaderProg->GetShaderProgram());
-	retbuffer->setCount((int)positionData.size() / 3);
-	
-	m_meshs.insert(std::pair<const std::string, Buffer*>(_fileDir, retbuffer));
-
-	return retbuffer;
-}
-GLuint GraphicDevice::AddTexture(std::string _fileDir, GLenum _textureSlot)
-{
-    //printf("fileDir: %s\n", _fileDir.c_str());
-	for (std::map<const std::string, GLuint>::iterator it = m_textures.begin(); it != m_textures.end(); it++)
-	{
-		if (it->first == _fileDir)
-			return it->second;
-	}
-	int texSizeX, texSizeY;
-	GLuint texture = TextureLoader::LoadTexture(_fileDir.c_str(), _textureSlot, texSizeX, texSizeY);
-	m_textures.insert(std::pair<const std::string, GLenum>(_fileDir, texture));
-	return texture;
-}
-//ObjectData GraphicDevice::AddObject(std::string _file, std::string _dir)
-//{
-//	std::string fileDir = _dir;
-//	fileDir.append(_file);
-//	for (std::map<const std::string, ObjectData>::iterator it = m_objects.begin(); it != m_objects.end(); it++)
-//	{
-//		if (it->first == fileDir)
-//			return it->second;
-//	}
-//	ObjectData obj = ModelLoader::importObject(_dir, _file);
-//}
-
-void GraphicDevice::Clear()
-{
-  m_modelIDcounter = 0;
-  
-  m_modelsForward.clear();
-  m_modelsViewspace.clear();
-
-  float **tmpPtr = new float*[1];
-  BufferPointlights(0, tmpPtr);
-  delete tmpPtr;
-}
-
-int GraphicDevice::AddFont(const std::string& filepath, int size)
-{
-	return m_sdlTextRenderer.AddFont(filepath, size);
-}
-
-float GraphicDevice::CreateTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, glm::ivec2 size)
-{
-	if (m_textures.find(textureName) != m_textures.end())
-		glDeleteTextures(1, &m_textures[textureName]);
-	SDL_Surface* surface = m_sdlTextRenderer.CreateTextSurface(textString, fontIndex, color);
-	if (size.x > 0)
-		surface->w = size.x;
-	if (size.y > 0)
-		surface->h = size.y;
-	m_forwardShader.UseProgram();
-	GLuint texture = TextureLoader::LoadTexture(surface, GL_TEXTURE1);
-	m_textures[textureName] = texture;
-	SDL_FreeSurface(surface);
-	return (float)surface->w / (float)surface->h;
-}
-
-void GraphicDevice::CreateWrappedTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, unsigned int wrapLength, glm::ivec2 size)
-{
-	if (m_textures.find(textureName) != m_textures.end())
-		glDeleteTextures(1, &m_textures[textureName]);
-	SDL_Surface* surface = m_sdlTextRenderer.CreateWrappedTextSurface(textString, fontIndex, color, wrapLength);
-	if (size.x > 0)
-		surface->w = size.x;
-	if (size.y > 0)
-		surface->h = size.y;
-	m_forwardShader.UseProgram();
-	GLuint texture = TextureLoader::LoadTexture(surface, GL_TEXTURE1);
-	m_textures[textureName] = texture;
-	SDL_FreeSurface(surface);
 }

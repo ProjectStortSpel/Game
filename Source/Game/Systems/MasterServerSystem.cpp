@@ -27,6 +27,9 @@ void MasterServerSystem::Initialize()
 
 	m_gameRunningId = -1;
 	m_oldGameRunningId = -1;
+
+	m_serverIds.clear();
+	m_serverIds.resize(0);
 }
 
 void MasterServerSystem::PostInitialize()
@@ -55,7 +58,7 @@ void MasterServerSystem::PostInitialize()
 		customHook = std::bind(&MasterServerSystem::OnGetServerList, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 		m_clientDatabase->HookOnGetServerList(customHook);
 		Logger::GetInstance().Log("MasterServer", Info, "Hooking custom hook \"GET_SERVER_LIST\"to \"OnGetServerList\"");
-		m_clientDatabase->RequestServerList();
+		//m_clientDatabase->RequestServerList();
 	}
 }
 
