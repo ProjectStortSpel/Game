@@ -6,35 +6,18 @@ AbilitySlingshotSystem.Initialize = function(self)
 	self:SetName("AbilitySlingshotSystem")
 	
 	--	Toggle EntitiesAdded
-	self:UsingEntitiesAdded()
-	--self:UsingUpdate()
+	--self:UsingEntitiesAdded()
+	self:UsingUpdate()
 	
 	--	Filters
 	self:AddComponentTypeToFilter("Unit",					FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("UnitSlingShot",			FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("SlingShotProjectile",	FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("NotWalkable", 			FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter("RemoveEffects",			FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("MapSize", 				FilterType.RequiresOneOf)
 end
 
-AbilitySlingshotSystem.RemoveEffects = function(self)
-
-	-- Go through all units and find those who have an effect on them which should be removed
-	local units = self:GetEntities("Unit")
-	for i = 1, #units do
-		
-		-- Remove the "Stunned" effect
-		if world:EntityHasComponent(units[i], "Stunned") then
-			world:RemoveComponentFrom("Stunned", units[i])
-		end
-		
-		-- Continue on with other effects here
-	
-	end
-	
-
-end
-AbilitySlingshotSystem.CheckUnits = function(self, currentPosX, currentPosZ)
+AbilitySlingshotSystem.CheckUnits = function(self, mapPosX, mapPosZ, currentPosX, currentPosZ)
 
 	-- Get all units
 	local units = self:GetEntities("Unit")
@@ -42,16 +25,19 @@ AbilitySlingshotSystem.CheckUnits = function(self, currentPosX, currentPosZ)
 		
 		-- Get the position of the unit
 		local targetPosX, targetPosZ = world:GetComponent(units[i], "MapPosition", 0):GetInt2()
-		
 		-- If the position is the same as the projectiles current position
 		-- Add a bullet
 		if targetPosX == currentPosX and targetPosZ == currentPosZ then
-			self:AddBullet(currentPosX, currentPosZ, targetPosX, targetPosZ, 0.5)
+			self:AddBullet(mapPosX, mapPosZ, targetPosX, targetPosZ, 0.5)
 			
-			-- Check if the unit is already stunned, if not stun him
-			if not world:EntityHasComponent(units[i], "Stunned") then
-				world:CreateComponentAndAddTo("Stunned", units[i])
-			end
+			local newId = world:CreateNewEntity()
+			world:CreateComponentAndAddTo("TakeCardStepsFromUnit", newId)
+			world:GetComponent(newId, "TakeCardStepsFromUnit", "Unit"):SetInt(units[i])
+			
+			---- Check if the unit is already stunned, if not stun him
+			--if not world:EntityHasComponent(units[i], "Stunned") then
+			--	world:CreateComponentAndAddTo("Stunned", units[i])
+			--end
 			
 			return true
 		end
@@ -62,15 +48,14 @@ AbilitySlingshotSystem.CheckUnits = function(self, currentPosX, currentPosZ)
 	
 end
 
-AbilitySlingshotSystem.CheckNotWalkable = function(self, currentPosX, currentPosZ)
+AbilitySlingshotSystem.CheckNotWalkable = function(self, mapPosX, mapPosZ, currentPosX, currentPosZ)
 
 	local entities = self:GetEntities("NotWalkable")
 	for i = 1, #entities do
 	
 		local targetPosX, targetPosZ = world:GetComponent(entities[i], "MapPosition", 0):GetInt2()
-		
 		if targetPosX == currentPosX and targetPosZ == currentPosZ then
-			self:AddBullet(currentPosX, currentPosZ, targetPosX, targetPosZ, 0.5)
+			self:AddBullet(mapPosX, mapPosZ, targetPosX, targetPosZ, 0.5)
 			return true
 		end
 	
@@ -96,6 +81,7 @@ AbilitySlingshotSystem.Update = function(self, dt, taskIndex, taskCount)
 	-- Get the size of the map
 	local mapSizeEntity = self:GetEntities("MapSize")
 	local mapSizeX, mapSizeZ = world:GetComponent(mapSizeEntity[1], "MapSize", 0):GetInt2()
+
 	
 	for i = 1, #entities do
 		local hitSomething = false
@@ -123,12 +109,12 @@ AbilitySlingshotSystem.Update = function(self, dt, taskIndex, taskCount)
 				break
 			else
 				-- Go through all units and check if the projectile collide with something
-				if self:CheckUnits(currentPosX, currentPosZ) then
+				if self:CheckUnits(mapPosX, mapPosZ, currentPosX, currentPosZ) then
 					hitSomething = true
 					break
 				end
 				-- Go through all notwalkable tiles and check if the proj collide with something
-				if self:CheckNotWalkable(currentPosX, currentPosZ) then
+				if self:CheckNotWalkable(mapPosX, mapPosZ, currentPosX, currentPosZ) then
 					hitSomething = true
 					break
 				end
@@ -147,21 +133,4 @@ AbilitySlingshotSystem.Update = function(self, dt, taskIndex, taskCount)
 		end
 	end
 	
-end
-
-AbilitySlingshotSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
-
-	-- Go through all entities added
-	for n = 1, #entities do
-		-- Get the current entity
-		local entity = entities[n]
-		
-		-- If the entity has the "RemoveEffects" component
-		if world:EntityHasComponent(entity, "RemoveEffects") then
-			self:RemoveEffects()
-			world:KillEntity(entity)
-		end
-		
-		
-	end
 end

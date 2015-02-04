@@ -67,6 +67,7 @@ LerpSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 
 	for n = 1, #entities do
 		local entityId = entities[n]
+		
 		if not world:EntityHasComponent(entityId, "LerpStartPosition") then
 			world:CreateComponentAndAddTo("LerpStartPosition", entityId)
 		end
@@ -79,9 +80,22 @@ LerpSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 
 		if not world:EntityHasComponent(entityId, "LerpTime") then
 			world:CreateComponentAndAddTo("LerpTime", entityId)
+			local timer = self:GetComponent(entityId, "LerpTime", 0)
+			timer:SetFloat2(self.LerpTime, 0)
 		end
+
+		local target = self:GetComponent(entityId, "LerpTargetPosition", 0)
+		local tX, tY, tZ = target:GetFloat3()
 		
-		local timer = self:GetComponent(entityId, "LerpTime", 0)
-		timer:SetFloat2(self.LerpTime, 0)
+		print("LerpStartPosition")
+		print("X: " .. X)
+		print("Y: " .. Y)
+		print("Z: " .. Z)
+		
+		print("LerpTargetPosition")
+		print("X: " .. tX)
+		print("Y: " .. tY)
+		print("Z: " .. tZ)
+		
 	end
 end

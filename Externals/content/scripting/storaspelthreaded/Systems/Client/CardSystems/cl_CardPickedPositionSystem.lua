@@ -40,7 +40,7 @@ CardPickedPositionSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount
 		end
 		
 		local timer = self:GetComponent(card, "LerpTime", 0)
-		timer:SetFloat(0.5)
+		timer:SetFloat2(0.1, 0)
 	
 	end
 	
