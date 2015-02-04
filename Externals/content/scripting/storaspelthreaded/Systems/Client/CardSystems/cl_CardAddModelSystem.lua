@@ -70,12 +70,12 @@ CardAddModelSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, enti
 		local parent = self:GetComponent(id, "Parent", 0)
 		parent:SetInt(entityId)
 		local position = self:GetComponent(id, "Position", 0)
-		position:SetFloat3(0.24, 0.47, -0.001)
+		position:SetFloat3(0.24, 0.47, 0.01)
 		local scale = self:GetComponent(id, "Scale", 0)
 		scale:SetFloat3(0.30, 0.15, 1)
 		local rotation = self:GetComponent(id, "Rotation", 0)
 		rotation:SetFloat3(0, 0, 0)
-		
+
 		world:CreateComponentAndAddTo("TextTexture", id)
 		world:GetComponent(id, "TextTexture", "Name"):SetString("prio"..prio) -- TODO: NAME CANT BE MORE THAN 3 CHARS? WTF?
 		world:GetComponent(id, "TextTexture", "Text"):SetString(prio)
