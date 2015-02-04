@@ -437,8 +437,6 @@
       <Filter>Network</Filter>
     </ClInclude>
   </ItemGroup>
-<<<<<<< HEAD
-=======
   <ItemGroup>
     <None Include="..\..\..\Externals\content\scripting\storaspel\components\components.lua">
       <Filter>Scripting\Storaspel\Components</Filter>
