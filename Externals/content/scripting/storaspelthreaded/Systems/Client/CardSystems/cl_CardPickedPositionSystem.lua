@@ -7,6 +7,7 @@ CardPickedPositionSystem.Initialize = function(self)
 	
 	--	Toggle EntitiesAdded
 	self:UsingEntitiesAdded()
+	self:UsingEntitiesRemoved()
 	
 	--	Set Filter
 	self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
@@ -16,7 +17,6 @@ CardPickedPositionSystem.Initialize = function(self)
 end
 
 CardPickedPositionSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, newEntities)
-
 	local entities = self:GetEntities()
 	for i = 1, #entities do
 		local card = entities[i]
@@ -28,22 +28,36 @@ CardPickedPositionSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount
 		local py = self.UpOffset
 		local pz = -6
 		
-		if not world:EntityHasComponent(card, "LerpTargetPosition") then
-			world:CreateComponentAndAddTo("LerpTargetPosition", card)
+		if not world:EntityHasComponent(card, "LerpPosition") then
+			world:CreateComponentAndAddTo("LerpPosition", card)
 		end
-		
-		local position = self:GetComponent(card, "LerpTargetPosition", 0)
-		position:SetFloat3(px, py, pz)
-		
-		if not world:EntityHasComponent(card, "LerpTime") then
-			world:CreateComponentAndAddTo("LerpTime", card)
-		end
-		
-		local timer = self:GetComponent(card, "LerpTime", 0)
-		timer:SetFloat(0.5)
-	
+		world:GetComponent(card, "LerpPosition", "X"):SetFloat(px)
+		world:GetComponent(card, "LerpPosition", "Y"):SetFloat(py)
+		world:GetComponent(card, "LerpPosition", "Z"):SetFloat(pz)
+		world:GetComponent(card, "LerpPosition", "Time"):SetFloat(0.2)
+		world:GetComponent(card, "LerpPosition", "Algorithm"):SetString("SmootherLerp")
 	end
-	
 end
 
-
+CardPickedPositionSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, newEntities)
+	local entities = self:GetEntities()
+	for i = 1, #entities do
+		local card = entities[i]
+	
+		local data = self:GetComponent(card, "SelectCard", "Index"):GetInt()
+		
+		local halfentities = #entities/2
+		local px = (-halfentities + data - 0.5) * 0.7
+		local py = self.UpOffset
+		local pz = -6
+		
+		if not world:EntityHasComponent(card, "LerpPosition") then
+			world:CreateComponentAndAddTo("LerpPosition", card)
+		end
+		world:GetComponent(card, "LerpPosition", "X"):SetFloat(px)
+		world:GetComponent(card, "LerpPosition", "Y"):SetFloat(py)
+		world:GetComponent(card, "LerpPosition", "Z"):SetFloat(pz)
+		world:GetComponent(card, "LerpPosition", "Time"):SetFloat(0.1)
+		world:GetComponent(card, "LerpPosition", "Algorithm"):SetString("SmoothLerp")
+	end
+end
