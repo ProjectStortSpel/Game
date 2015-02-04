@@ -12,6 +12,7 @@ NewCameraSystem.TouchSprite2 = nil
 NewCameraSystem.TouchScreen = nil
 NewCameraSystem.Pressed = false
 NewCameraSystem.Moved = false
+NewCameraSystem.FreeCam = false
 NewCameraSystem.Help = false
 
 
