@@ -146,6 +146,10 @@ namespace Renderer
 		Camera* m_camera;
 		int m_vramUsage; //in bytes
 
+		// dt and fps
+		float m_dt;
+		int m_fps;
+
 		//// Window size
 		int	m_clientWidth, m_clientHeight;
 
@@ -165,8 +169,6 @@ namespace Renderer
 
 		GLuint AddTexture(std::string _fileDir, GLenum _textureSlot);
 		std::map<const std::string, GLuint> m_textures;
-
-		TextRenderer m_sdlTextRenderer;
 		
 		std::vector<std::pair<std::string, SDL_Surface*>> m_surfaces;
 		void BufferSurfaces();

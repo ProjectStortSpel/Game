@@ -41,7 +41,10 @@ GameCreator::~GameCreator()
 		delete m_world;
 
 	if (m_graphics)
+	{
+		TextRenderer::Clean();
 		delete m_graphics;
+	}
 
 	if (m_input)
 		delete m_input;

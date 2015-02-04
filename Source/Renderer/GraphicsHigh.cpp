@@ -48,7 +48,7 @@ bool GraphicsHigh::Init()
 	if (!InitDeferred()) { ERRORMSG("INIT DEFERRED FAILED\n"); return false; }	
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	if (!InitForward()) { ERRORMSG("INIT FORWARD FAILED\n"); return false; }
-	if (!GraphicDevice::InitSkybox()) { ERRORMSG("INIT SKYBOX FAILED\n"); return false; }
+	if (!InitSkybox()) { ERRORMSG("INIT SKYBOX FAILED\n"); return false; }
 	if (!InitRandomVector()) { ERRORMSG("INIT RANDOMVECTOR FAIELD\n"); return false; }
 	if (!InitTextRenderer()) { ERRORMSG("INIT TEXTRENDERER FAILED\n"); return false; }
 		m_vramUsage += (m_textRenderer.GetArraySize() * sizeof(int));
@@ -60,7 +60,7 @@ bool GraphicsHigh::Init()
 	glCullFace(GL_BACK);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
-	GraphicDevice::m_sdlTextRenderer.Init();
+	TextRenderer::Init();
 	
     
 	return true;
@@ -715,7 +715,6 @@ bool GraphicsHigh::InitLightBuffers()
 	return true;
 }
 
-
 void GraphicsHigh::BufferPointlights(int _nrOfLights, float **_lightPointers)
 {
 
@@ -729,7 +728,6 @@ void GraphicsHigh::BufferPointlights(int _nrOfLights, float **_lightPointers)
 
 }
 
-
 void GraphicsHigh::BufferDirectionalLight(float *_lightPointer)
 {
 	if (_lightPointer == 0)
@@ -737,7 +735,6 @@ void GraphicsHigh::BufferDirectionalLight(float *_lightPointer)
 	else
 		m_pointerToDirectionalLights = _lightPointer;
 }
-
 
 void GraphicsHigh::BufferLightsToGPU()
 {

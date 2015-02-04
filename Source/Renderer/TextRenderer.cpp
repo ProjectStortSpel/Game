@@ -1,12 +1,10 @@
 #include "TextRenderer.h"
 #include <assert.h>
 
-TextRenderer::TextRenderer()
-{
-	m_initialized = false;
-}
+bool TextRenderer::m_initialized = false;
+std::vector<TTF_Font*> TextRenderer::m_fonts;
 
-TextRenderer::~TextRenderer()
+void TextRenderer::Clean()
 {
 	for (TTF_Font* font : m_fonts)
 		TTF_CloseFont(font);
@@ -17,6 +15,9 @@ TextRenderer::~TextRenderer()
 
 bool TextRenderer::Init()
 {
+	if (m_initialized)
+		return true;
+
 	assert(!m_initialized);
 	
 	if (TTF_Init() < 0)

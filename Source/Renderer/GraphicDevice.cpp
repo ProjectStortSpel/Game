@@ -65,12 +65,12 @@ bool GraphicDevice::InitSkybox()
 
 int GraphicDevice::AddFont(const std::string& filepath, int size)
 {
-	return m_sdlTextRenderer.AddFont(filepath, size);
+	return TextRenderer::AddFont(filepath, size);
 }
 
 float GraphicDevice::CreateTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, glm::ivec2 size)
 {
-	SDL_Surface* surface = m_sdlTextRenderer.CreateTextSurface(textString, fontIndex, color);
+	SDL_Surface* surface = TextRenderer::CreateTextSurface(textString, fontIndex, color);
 	if (size.x > 0)
 		surface->w = size.x;
 	if (size.y > 0)
@@ -107,7 +107,7 @@ float GraphicDevice::CreateTextTexture(const std::string& textureName, const std
 
 void GraphicDevice::CreateWrappedTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, unsigned int wrapLength, glm::ivec2 size)
 {
-	SDL_Surface* surface = m_sdlTextRenderer.CreateWrappedTextSurface(textString, fontIndex, color, wrapLength);
+	SDL_Surface* surface = TextRenderer::CreateWrappedTextSurface(textString, fontIndex, color, wrapLength);
 	if (size.x > 0)
 		surface->w = size.x;
 	if (size.y > 0)

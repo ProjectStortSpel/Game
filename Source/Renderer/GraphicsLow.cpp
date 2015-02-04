@@ -51,7 +51,7 @@ bool GraphicsLow::Init()
 	glCullFace(GL_BACK);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
-	m_sdlTextRenderer.Init();
+	TextRenderer::Init();
     
 	return true;
 }
