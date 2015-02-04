@@ -46,7 +46,8 @@ public:
 
 	void Update(float dt);
 
-	void AddToDatabase();
+	void AddToDatabase(int _port, bool _pwProtected);
+	void RemoveFromDatabase();
 	void SetGameStarted(bool _started);
 	void SetPasswordProtected(bool _protected);
 	void SetServerPort(int _port);
@@ -75,6 +76,7 @@ private:
 	std::string m_password;
 	int m_remotePort;
 	int m_localPort;
+	int m_maxTries;
 
 };
 

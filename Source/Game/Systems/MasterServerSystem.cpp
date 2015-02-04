@@ -1,6 +1,6 @@
 #include "MasterServerSystem.h"
 #include "ECSL/Managers/ComponentTypeManager.h"
-#include "Game/NetworkInstance.h"
+#include "Game/Network/NetworkInstance.h"
 #include "Logger/Managers/Logger.h"
 
 MasterServerSystem::MasterServerSystem()
@@ -27,26 +27,19 @@ void MasterServerSystem::Initialize()
 
 	m_gameRunningId = -1;
 	m_oldGameRunningId = -1;
-
-	m_serverIds.clear();
-	m_serverIds.resize(0);
 }
 
 void MasterServerSystem::PostInitialize()
 {
 	m_clientDatabase = &ClientDatabase::GetInstance();
 
-	
-	if (!m_clientDatabase->Connect())
-		return;
-
 	if (NetworkInstance::GetServer()->IsRunning())
 	{
 		std::string pw = NetworkInstance::GetServer()->GetServerPassword();
 		int port = NetworkInstance::GetServer()->GetIncomingPort();
-		m_clientDatabase->AddToDatabase();
-		m_clientDatabase->SetServerPort(port);
-		m_clientDatabase->SetPasswordProtected(pw.size() > 0);
+
+		m_mServerMessages.push_back(ADD_TO_DATABASE);
+		//m_clientDatabase->AddToDatabase(port, pw.size() > 0);
 	}
 	else if(NetworkInstance::GetClient()->IsConnected())
 	{
@@ -68,32 +61,64 @@ void MasterServerSystem::Update(const ECSL::RuntimeInfo& _runtime)
 	if (NetworkInstance::GetClient()->IsConnected())
 		return;
 
+	if(m_mServerMessages.size() > 0)
+		m_clientDatabase->Connect();
+
+	for (int i = 0; i < m_mServerMessages.size(); ++i)
+	{
+		switch (m_mServerMessages[i])
+		{
+		case ADD_TO_DATABASE:
+			m_clientDatabase->AddToDatabase(0, true);
+			break;
+		case GAME_STARTED:
+			m_clientDatabase->SetGameStarted(true);
+			break;
+		case IS_PASSWORD_PROTECTED:
+			m_clientDatabase->SetPasswordProtected(true);
+			break;
+		case SET_SERVER_PORT:
+			m_clientDatabase->SetServerPort(0);
+			break;
+		case MAX_PLAYER_COUNT_INCREASED:
+			m_clientDatabase->IncreaseMaxNoPlayers();
+			break;
+		case PLAYER_COUNT_INCREASED:
+			m_clientDatabase->IncreaseNoPlayers();
+			break;
+		case PLAYER_COUNT_DECREASED:
+			m_clientDatabase->DecreaseNoPlayers();
+			break;
+		case SPECTATOR_COUNT_INCREASED:
+			m_clientDatabase->IncreaseNoSpectators();
+			break;
+		case SPECTATOR_COUNT_DECREASED:
+			m_clientDatabase->DecreaseNoSpectators();
+			break;
+		case GET_SERVER_LIST:
+			m_clientDatabase->RequestServerList();
+			break;
+		default:
+			break;
+		}
+	}
+
+	m_mServerMessages.clear();
 
 	m_clientDatabase->Update(_runtime.Dt);
+	m_clientDatabase->Disconnect();
 
-	// Update to the masterserver is the user is a server
+	// Update to the masterserver if the user is a server
 	if (NetworkInstance::GetServer()->IsRunning())
 	{
 		if (m_oldGameRunningId != m_gameRunningId)
 		{
 			m_oldGameRunningId = m_gameRunningId;
-			m_clientDatabase->SetGameStarted(m_gameRunningId > 0);
+			//m_clientDatabase->SetGameStarted(m_gameRunningId > 0);
+			m_mServerMessages.push_back(GAME_STARTED);
 		}
 
-
 	}
-
-	// If the user is neither, we should request a new server list every 10 seconds
-	else
-	{
-		m_requestServerListTimer += _runtime.Dt;
-		if (m_requestServerListTimer > 2.0)
-		{
-			m_clientDatabase->RequestServerList();
-			m_requestServerListTimer = 0.f;
-		}
-	}
-
 }
 
 void MasterServerSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities)
@@ -105,18 +130,21 @@ void MasterServerSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const 
 	{
 		if (HasComponent(entityId, ECSL::ComponentTypeManager::GetInstance().GetTableId("AvailableSpawnpoint")))
 		{
-			m_clientDatabase->IncreaseMaxNoPlayers();
+			m_mServerMessages.push_back(MAX_PLAYER_COUNT_INCREASED);
+			//m_clientDatabase->IncreaseMaxNoPlayers();
 		}
 		else if (HasComponent(entityId, ECSL::ComponentTypeManager::GetInstance().GetTableId("Player")))
 		{
 			if (HasComponent(entityId, ECSL::ComponentTypeManager::GetInstance().GetTableId("IsSpectator")))
 			{
-				m_clientDatabase->IncreaseNoSpectators();
+				m_mServerMessages.push_back(SPECTATOR_COUNT_INCREASED);
+				//m_clientDatabase->IncreaseNoSpectators();
 				m_playerIds[entityId] = true;
 			}
 			else
 			{
-				m_clientDatabase->IncreaseNoPlayers(); // <--
+				//m_clientDatabase->IncreaseNoPlayers(); // <--
+				m_mServerMessages.push_back(PLAYER_COUNT_INCREASED);
 				m_playerIds[entityId] = false;
 			}
 			
@@ -143,13 +171,15 @@ void MasterServerSystem::EntitiesRemoved(const ECSL::RuntimeInfo& _runtime, cons
 			{
 				if (it->second) // Spectator
 				{
-					m_clientDatabase->DecreaseNoSpectators();
+					//m_clientDatabase->DecreaseNoSpectators();
+					m_mServerMessages.push_back(SPECTATOR_COUNT_DECREASED);
 					m_playerIds.erase(it);
 					return;
 				}
 				else // Player
 				{
-					m_clientDatabase->DecreaseNoPlayers();
+					//m_clientDatabase->DecreaseNoPlayers();
+					m_mServerMessages.push_back(PLAYER_COUNT_DECREASED);
 					m_playerIds.erase(it);
 					return;
 				}
