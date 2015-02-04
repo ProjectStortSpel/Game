@@ -28,6 +28,7 @@ NewCameraSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("CameraSystemComponent", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("CameraInterestPoint", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("CameraElement", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("MapSize", FilterType.RequiresOneOf)
 end
 
 NewCameraSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
@@ -54,13 +55,12 @@ NewCameraSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entitie
 			else
 				self:RemoveElements()
 			end
+			world:KillEntity(entities[n])
 		end
 		if world:EntityHasComponent(entities[n], "CameraInterestPoint") then
 			if self.FreeCam == false then
 				self:DoCIP(entities[n])
 			end
-		end
-		if not world:EntityHasComponent(entities[n], "CameraElement") then
 			world:KillEntity(entities[n])
 		end
 	end
@@ -176,6 +176,24 @@ NewCameraSystem.DoFreeCam = function(self, dt)
 				local rposition = self:GetComponent(self.TouchSprite1, "Position", 0)
 				rposition:SetFloat3(self.mouseX * aspectX * 2, self.mouseY * aspectY * 2, -1)			
 				self.Moved = true
+				local mapX = 1
+				local mapZ = 1
+				local mapSize = self:GetEntities("MapSize")
+				if #mapSize > 0 then
+					mapX, mapZ = self:GetComponent(mapSize[1], "MapSize", 0):GetInt2(0)
+				end
+				if self.CameraLookAtX < 0 then
+					self.CameraLookAtX = 0
+				end
+				if self.CameraLookAtZ < 0 then
+					self.CameraLookAtZ = 0
+				end
+				if self.CameraLookAtX > mapX then
+					self.CameraLookAtX = mapX
+				end
+				if self.CameraLookAtZ > mapZ then
+					self.CameraLookAtZ = mapZ
+				end
 				self.Camera:SetPosition(self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5, y, self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5)
 			end
 			local rposition = self:GetComponent(self.TouchSprite2, "Position", 0)

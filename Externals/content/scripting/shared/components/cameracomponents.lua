@@ -21,7 +21,11 @@ CameraOnPlayer.Name = "CameraOnPlayer"
 CameraOnPlayer.TableType = TableType.Map
 worldCreator:AddComponentType(CameraOnPlayer)
 
-
+-- Camera Component
+local CameraOnPlayer = ComponentType()
+CameraOnPlayer.Name = "CameraElement"
+CameraOnPlayer.TableType = TableType.Map
+worldCreator:AddComponentType(CameraOnPlayer)
 
 -- Camera Component
 local CameraComponent = ComponentType()

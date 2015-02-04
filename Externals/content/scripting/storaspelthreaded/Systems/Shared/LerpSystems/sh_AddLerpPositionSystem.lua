@@ -1,26 +1,21 @@
-AddLerpSystem = System()
+AddLerpPositionSystem = System()
 
-AddLerpSystem.Initialize = function(self)
+AddLerpPositionSystem.Initialize = function(self)
 	--	Set Name
-	self:SetName("AddLerpSystem")
+	self:SetName("AddLerpPositionSystem")
 	
 	--	Toggle EntitiesAdded
 	self:UsingEntitiesAdded()
 
 	--	Set Filter
+	self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("LerpPosition", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("LerpingPosition", FilterType.Excluded)
 end
 
-AddLerpSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+AddLerpPositionSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 	for n = 1, #entities do
 		local entity = entities[n]
-
-		print(world:GetComponent(entity, "LerpPosition", "X"):GetFloat(0))
-		print(world:GetComponent(entity, "LerpPosition", "Y"):GetFloat(0))
-		print(world:GetComponent(entity, "LerpPosition", "Z"):GetFloat(0))
-		print(world:GetComponent(entity, "LerpPosition", "Time"):GetFloat(0))
-		print(world:GetComponent(entity, "LerpPosition", "Algorithm"):GetString(0))
 
 		-- Get Lerp Position
 		local tX = world:GetComponent(entity, "LerpPosition", "X"):GetFloat(0)

@@ -14,6 +14,7 @@ CardSelectSystem.Initialize = function(self)
 end
 
 CardSelectSystem.Update = function(self, dt, taskIndex, taskCount)
+
 	if Input.GetTouchState(0) == InputState.Released then
 		local entities = self:GetEntities()
 		for i = 1, #entities do
@@ -24,6 +25,7 @@ CardSelectSystem.Update = function(self, dt, taskIndex, taskCount)
 			end
 		end
 	end
+
 end
 
 CardSelectSystem.SelectCard = function(self, card, index)

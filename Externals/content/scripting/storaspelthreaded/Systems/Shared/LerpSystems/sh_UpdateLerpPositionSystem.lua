@@ -1,8 +1,8 @@
-UpdateLerpSystem = System()
+UpdateLerpPositionSystem = System()
 
-UpdateLerpSystem.Initialize = function(self)
+UpdateLerpPositionSystem.Initialize = function(self)
 	--	Set Name
-	self:SetName("UpdateLerpSystem")
+	self:SetName("UpdateLerpPositionSystem")
 	
 	--	Toggle EntitiesAdded
 	self:UsingUpdate()
@@ -13,7 +13,7 @@ UpdateLerpSystem.Initialize = function(self)
 end
 
 
-UpdateLerpSystem.Update = function(self, dt, taskIndex, taskCount)
+UpdateLerpPositionSystem.Update = function(self, dt, taskIndex, taskCount)
 	local entities = self:GetEntities()
 	for i = 1, #entities do
 		local entity = entities[i]
@@ -49,7 +49,7 @@ UpdateLerpSystem.Update = function(self, dt, taskIndex, taskCount)
 	end
 end
 
-UpdateLerpSystem.AlgorithmLerp = function(self, t, algorithm)
+UpdateLerpPositionSystem.AlgorithmLerp = function(self, t, algorithm)
 	if algorithm == "NormalLerp" then
 		return t
 	elseif algorithm == "SmoothLerp" then
