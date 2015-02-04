@@ -233,6 +233,20 @@ bool LinSocket::CloseSocket()
 
 	return true;
 }
+
+bool LinSocket::ShutdownSocket()
+{
+	if (shutdown(*m_socket, SHUT_WR) != 0)
+	{
+		if (NET_DEBUG)
+			SDL_Log("Failed to shutdown linsocket. Error: %s.\n", strerror(errno));
+		return false;
+	}
+
+	return true;
+}
+
+
 ISocket* LinSocket::Accept()
 {
 	sockaddr_in incomingAddress;
@@ -319,7 +333,7 @@ int LinSocket::Receive(char* _buffer, int _length, int _flags)
 		{
 			if (NET_DEBUG)
 				SDL_Log("Error: To large packet received!\n");
-			return 0;
+			return -1;
 		}
 
 		return sizeReceived;
@@ -329,17 +343,28 @@ int LinSocket::Receive(char* _buffer, int _length, int _flags)
 		if (NET_DEBUG)
 			SDL_Log("Error: Failed to receive \"Size packet\". Error: %s.\n", strerror(errno));
 	}
+	else if (len2 == 0)
+	{
+		if (NET_DEBUG)
+			SDL_Log("Server shutdown gracefully.\n");
+
+		return 0;
+	}
 	else
 	{
 		if (NET_DEBUG)
 			SDL_Log("Error: \"Size packet\" corrupt! Length: %d\n", len2);
-		//return 0;
+		return -1;
 	}
 	return 0;
 }
 
 int LinSocket::Send(char* _buffer, int _length, int _flags)
 {
+	if (!m_socket)
+		return -1;
+
+
 #if !defined(__IOS__) && !defined(__OSX__)
     
     if (_flags == 0)
@@ -348,8 +373,9 @@ int LinSocket::Send(char* _buffer, int _length, int _flags)
     }
     
 #endif
+
     
-    
+    ENOTCONN
 	static short len = 0;
 	len = htons(_length);
 	if (send(*m_socket, (void*)&len, 2, _flags) != -1)

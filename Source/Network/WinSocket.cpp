@@ -253,6 +253,17 @@ bool WinSocket::CloseSocket(void)
 
 	return true;
 }
+
+bool WinSocket::ShutdownSocket()
+{
+	if (shutdown(m_socket, SD_SEND) != 0)
+	{
+		if (NET_DEBUG)
+			SDL_Log("Failed to shutdown winsocket. Error Code: %d.\n", WSAGetLastError());
+		return false;
+	}
+}
+
 ISocket* WinSocket::Accept(void)
 {
 	sockaddr_in incomingAddress;
@@ -335,7 +346,14 @@ int WinSocket::Send(char* _buffer, int _length, int _flags)
 	{
 		int errorCode = WSAGetLastError();
 
-		if (errorCode != 10035)
+		if (errorCode == 10057)
+		{
+		}
+		else if (byteSent == 0)
+		{
+			SDL_Log("Server shutdown gracefully.\n");
+		}
+		else if (errorCode != 10035 && byteSent != 0)
 		{
 			if (NET_DEBUG)
 				SDL_Log("Failed to send \"Size packet\" of size '%i'. Error Code: %d.\n", byteSent, errorCode);
@@ -394,7 +412,7 @@ int WinSocket::Receive(char* _buffer, int _length, int _flags)
 		{
 			if (NET_DEBUG)
 				SDL_Log("Error: To large packet received!\n");
-			return 0;
+			return -1;
 		}
 
 		return sizeReceived;
@@ -403,12 +421,21 @@ int WinSocket::Receive(char* _buffer, int _length, int _flags)
 	{
 		if (NET_DEBUG)
 			SDL_Log("Error: Failed to receive \"Size packet\". Error code: %d\n", WSAGetLastError());
+
+		return -1;
+	}
+	else if (len2 == 0)
+	{
+		if (NET_DEBUG)
+			SDL_Log("Server shutdown gracefully.\n");
+
+		return 0;
 	}
 	else
 	{
 		if (NET_DEBUG)
 			SDL_Log("Error: \"Size packet\" corrupt! Length: %d\n", len2);
-		//return 0;
+		return -1;
 	}
 	return 0;
 }

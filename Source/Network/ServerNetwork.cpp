@@ -234,8 +234,8 @@ bool ServerNetwork::Stop()
 	m_connectedClientsLock->lock();
 	for (auto it = m_connectedClients->begin(); it != m_connectedClients->end(); ++it)
 	{
-		it->second->CloseSocket();
-		it->second->SetActive(0);
+		it->second->ShutdownSocket();
+		//it->second->SetActive(0);
 	}
 	m_connectedClientsLock->unlock();
 
@@ -397,6 +397,8 @@ void ServerNetwork::ReceivePackets(ISocket* _socket)
 		}
 		else if (dataReceived == 0)
 		{
+			_socket->SetActive(0);
+			_socket->CloseSocket();
 		}
 		else
 		{
