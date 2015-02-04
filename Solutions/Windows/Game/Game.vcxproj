@@ -201,6 +201,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClCompile Include="..\..\..\Source\Game\FrameCounter\FrameCounter.cpp" />
     <ClCompile Include="..\..\..\Source\Game\GameConsole.cpp" />
     <ClCompile Include="..\..\..\Source\Game\GameCreator.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\AI\LuaPotentialFieldHandler.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\Console\LuaConsole.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponent.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponentType.cpp" />
@@ -249,6 +250,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClInclude Include="..\..\..\Source\Game\FrameCounter\FrameCounter.h" />
     <ClInclude Include="..\..\..\Source\Game\GameConsole.h" />
     <ClInclude Include="..\..\..\Source\Game\GameCreator.h" />
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\AI\LuaPotentialFieldHandler.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Console\LuaConsole.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponent.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\ECSL\LuaComponentType.h" />
