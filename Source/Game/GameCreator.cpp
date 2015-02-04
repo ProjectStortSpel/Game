@@ -11,6 +11,7 @@
 #include "Systems/PointlightSystem.h"
 #include "Systems/DirectionalLightSystem.h"
 #include "Systems/MasterServerSystem.h"
+#include "Systems/SlerpRotationSystem.h"
 
 #include "NetworkInstance.h"
 #include "ECSL/ECSL.h"
@@ -176,7 +177,8 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 
 	//NetworkMessagesSystem* nms = new NetworkMessagesSystem();
 	//nms->SetConsole(&m_consoleManager);
-
+	worldCreator.AddSystemGroup();
+	worldCreator.AddLuaSystemToCurrentGroup(new SlerpRotationSystem());
 	worldCreator.AddSystemGroup();
 	worldCreator.AddSystemToCurrentGroup<PointlightSystem>(m_graphics);
 	worldCreator.AddSystemGroup();

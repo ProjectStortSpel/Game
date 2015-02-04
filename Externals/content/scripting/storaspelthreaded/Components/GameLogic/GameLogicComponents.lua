@@ -7,6 +7,7 @@ package.path = package.path .. ";../../../Externals/content/scripting/storaspelt
 require "AIComponents"
 
 require "CardActionComponents"
+
 require "CardSettingsComponents"
 
 require "TimerComponents"
@@ -20,4 +21,7 @@ require "TotemComponents"
 require "TriggerComponents"
 
 require "PlayerComponents"
+
 require "UnitComponents"
+
+require "SlerpComponent"
