@@ -3,7 +3,9 @@
 #define TEXTURELOADER_H_
 #include "stdafx.h"
 
+#ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
+#endif
 #include <stbimage/stb_image.h>
 
 class TextureLoader{
@@ -37,8 +39,8 @@ static unsigned int LoadTexture(const char* file, GLenum textureSlot, int &heigh
 static unsigned int LoadTexture(SDL_Surface* surface, GLenum textureSlot)
 {
 	GLuint texHandle;
-	glGenTextures(1, &texHandle);
 	glActiveTexture(textureSlot);
+	glGenTextures(1, &texHandle);
 	glBindTexture(GL_TEXTURE_2D, texHandle);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

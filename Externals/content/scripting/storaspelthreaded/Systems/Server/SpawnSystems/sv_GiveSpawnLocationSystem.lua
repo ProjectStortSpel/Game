@@ -17,8 +17,9 @@ GiveSpawnLocationSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount,
 
 	for n = 1, #entities do
 		local entityId = entities[n]
+		
 		if world:EntityHasComponent(entityId, "NeedSpawnLocation") then
-			print("LAOSDAKOFAOSFKAOFKOFK")
+		
 			local availableSpawns = self:GetEntities("AvailableSpawnpoint")
 			local plyNum = self:GetComponent(entityId, "PlayerNumber", "Number").GetInt()
 			
@@ -30,6 +31,7 @@ GiveSpawnLocationSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount,
 			print("Player " .. plyNum .. " wants to spawn at (".. a .. ", " .. b .. ")")
 			
 			world:CreateComponentAndAddTo("Spawn", entityId)
+			
 		end
 	end
 end

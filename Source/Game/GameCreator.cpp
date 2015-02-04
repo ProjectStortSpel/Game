@@ -64,9 +64,23 @@ GameCreator::~GameCreator()
 
 void GameCreator::InitializeGraphics()
 {
+#if defined(__IOS__) || defined(__ANDROID__)
 	m_graphics = new Renderer::GraphicDevice();
-	m_graphics->Init();
-	//LuaEmbedder::AddObject<Renderer::GraphicDevice>(m_clientLuaState, "GraphicDevice", m_graphics, "graphics");
+    m_graphics->Init();
+#else
+    m_graphics = new Renderer::GraphicsHigh();
+    if (!m_graphics->Init())
+    {
+        SDL_Log("Switching to OpenGL 4.0");
+        m_graphics = new Renderer::GraphicsLow();
+        m_graphics->Init();
+    }
+#endif
+    
+    
+    
+	
+	//LuaEmbedder::AddObject<Renderer::GraphicDevice>("GraphicDevice", m_graphics, "graphics");
 }
 
 void GameCreator::InitializeConsole()
@@ -124,7 +138,7 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	LuaEmbedder::AddObject<LuaBridge::LuaWorldCreator>(m_clientLuaState, "WorldCreator", &worldCreator, "worldCreator");
 
 	std::stringstream gameMode;
-#if defined(_DEBUG) && !defined(__ANDROID__) && !defined(__IOS__)
+#if defined(_DEBUG) && !defined(__ANDROID__) && !defined(__APPLE__)
 	gameMode << "../../../Externals/content/scripting/";
 #else
 	gameMode << "content/scripting/";

@@ -5,12 +5,7 @@
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Components/General/?.lua"
 
 require "GraphicalComponents"
-require "LightComponents"
-
-require "CameraComponents"
 
 require "NetworkComponents"
 
 require "LerpComponents"
-
-require "MiscComponents"

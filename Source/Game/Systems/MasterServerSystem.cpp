@@ -27,6 +27,9 @@ void MasterServerSystem::Initialize()
 
 	m_gameRunningId = -1;
 	m_oldGameRunningId = -1;
+
+	m_serverIds.clear();
+	m_serverIds.resize(0);
 }
 
 void MasterServerSystem::PostInitialize()

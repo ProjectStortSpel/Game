@@ -25,14 +25,13 @@ namespace Renderer
 #define TEXTURE_NORMAL		1
 #define TEXTURE_SPECULAR	2
 
-	
 	struct Instance
 	{
 		int id;
 		bool active;
 		bool viewspace;
 		mat4* modelMatrix;
-		
+
 		Instance(){}
 		Instance(int _id, bool _active, mat4* _model)
 		{
@@ -71,8 +70,6 @@ namespace Renderer
 		std::vector<Instance> instances;
 	};
 
-	
-
 	struct GLTimerValue
 	{
 		std::string name;
@@ -95,42 +92,42 @@ namespace Renderer
 	class DECLSPEC GraphicDevice
 	{
 	public:
-		GraphicDevice();
-		~GraphicDevice();
+		GraphicDevice(){}
+		virtual ~GraphicDevice() {}
 
-		bool Init();
+		virtual bool Init(){ return false; };// = 0;
 
 		void PollEvent(SDL_Event _event);
-		void Update(float _dt);
-		void Render();
+		virtual void Update(float _dt){};// = 0;
+		virtual void Render(){};// = 0;
 
 		void ResizeWindow(int _width, int _height);
-		void SetTitle(std::string _title);
+		virtual void SetTitle(std::string _title){};// = 0;
 
 		// SIMPLETEXT FROM GAME
-		bool RenderSimpleText(std::string _text, int x, int y);
-		void SetSimpleTextColor(float _r, float _g, float _b, float _a);
-		void SetDisco();
-		void ToggleSimpleText();
-		void ToggleSimpleText(bool _on);
+		virtual bool RenderSimpleText(std::string _text, int x, int y){ return false; };// = 0;
+		virtual void SetSimpleTextColor(float _r, float _g, float _b, float _a){};// = 0;
+		virtual void SetDisco(){};// = 0;
+		virtual void ToggleSimpleText(){};// = 0;
+		virtual void ToggleSimpleText(bool _on){};// = 0;
 
 		Camera *GetCamera(){ return m_camera; }
 		void GetWindowSize(int &x, int &y){ x = m_clientWidth; y = m_clientHeight; }
 
 		// MODELLOADER
-		bool PreLoadModel(std::string _dir, std::string _file, int _renderType = RENDER_DEFERRED);
-		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED);
-		bool RemoveModel(int _id);
-		bool ActiveModel(int _id, bool _active);
-		bool ChangeModelTexture(int _id, std::string _fileDir, int _textureType = TEXTURE_DIFFUSE);
-		bool ChangeModelNormalMap(int _id, std::string _fileDir);
-		bool ChangeModelSpecularMap(int _id, std::string _fileDir);
+		virtual bool PreLoadModel(std::string _dir, std::string _file, int _renderType = RENDER_DEFERRED){ return false; };// = 0;
+		virtual int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED){ return 0; };// = 0;
+		virtual bool RemoveModel(int _id){ return false; };// = 0;
+		virtual bool ActiveModel(int _id, bool _active){ return false; };// = 0;
+		virtual bool ChangeModelTexture(int _id, std::string _fileDir, int _textureType = TEXTURE_DIFFUSE){ m_modelTextures.push_back({ _id, _fileDir, _textureType }); return false; };// = 0;
+		virtual bool ChangeModelNormalMap(int _id, std::string _fileDir){ m_modelTextures.push_back({ _id, _fileDir, TEXTURE_NORMAL }); return false; };// = 0;
+		virtual bool ChangeModelSpecularMap(int _id, std::string _fileDir){ m_modelTextures.push_back({ _id, _fileDir, TEXTURE_SPECULAR }); return false; };// = 0;
 
 		void SetDebugTexFlag(int _flag) { m_debugTexFlag = _flag; }
-		void BufferPointlights(int _nrOfLights, float **_lightPointers);
-		void BufferDirectionalLight(float *_lightPointer);
+		virtual void BufferPointlights(int _nrOfLights, float **_lightPointers){};// = 0;
+		virtual void BufferDirectionalLight(float *_lightPointer){};// = 0;
 		
-		void Clear();
+		virtual void Clear(){};// = 0;
 
 		int GetVRamUsage(){ return m_vramUsage; }
 		
@@ -138,109 +135,51 @@ namespace Renderer
 		float CreateTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, glm::ivec2 size = glm::ivec2(-1, -1));
 		void CreateWrappedTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, unsigned int wrapLength, glm::ivec2 size = glm::ivec2(-1, -1));
 		
-	private:
-		bool InitSDLWindow();
-		bool InitGLEW();
-		bool InitDeferred();
-		bool InitForward();
-		bool InitShaders();
-		bool InitBuffers();
-		bool InitTextRenderer();
-		bool InitLightBuffers();
+	protected:
 		bool InitSkybox();
-		bool InitRandomVector();
-
-		void CreateGBufTex(GLenum texUnit, GLenum format, GLuint &texid);
-		void CreateDepthTex(GLuint &texid);
-
-		void CreateShadowMap();
-
-		void BufferModels();
-		void BufferModel(int _modelId, ModelToLoad* _modelToLoad);
-
-		void BufferLightsToGPU();
-
-		Camera* m_camera;
+		virtual void BufferModels() { return; } // = 0;
+		virtual void BufferModel(int _modelId, ModelToLoad* _modelToLoad) { return; } // = 0;
 
 		SDL_Window*		m_window;
 		SDL_GLContext	m_glContext;
 
-		// dt and fps
-		float m_dt;
-		int m_fps;
-
+		Camera* m_camera;
 		int m_vramUsage; //in bytes
 
-		//holds the reset values for lights
-		float m_lightDefaults[19];
-
-		//Le shadowmap
-		ShadowMap *m_shadowMap;
-		void WriteShadowMapDepth();
-
-		// Timer for shader run time
-		std::vector<GLTimerValue> m_glTimerValues;
-
-		// Window size
+		//// Window size
 		int	m_clientWidth, m_clientHeight;
 
-		// Image buffers
-		//GLuint m_skyBox;
-		GLuint m_outputImage;
-		GLuint m_debuggText;
-		GLuint m_depthBuf, m_normTex, m_colorTex;
-
-		// Frame buffer object
-		GLuint m_deferredFBO, m_forwardFBO;
-
 		// Shaders
-		Shader m_fullScreenShader;
 		Shader m_skyBoxShader;
-		Shader m_deferredShader1, m_compDeferredPass2Shader;
-		Shader m_forwardShader;
-		Shader m_viewspaceShader;
-		Shader m_interfaceShader;
-
-		Shader m_shadowShaderDeferred, m_shadowShaderForward;
 
 		// Skybox
 		SkyBox *m_skybox;
 
-		// SimpleText
-		bool m_renderSimpleText;
-		SimpleText m_textRenderer;
-
-		// Modelloader
-		int m_modelIDcounter;
-		std::vector<Model> m_modelsDeferred, m_modelsForward, m_modelsViewspace, m_modelsInterface;
+		//// DEBUG variables ----
+		int m_debugTexFlag;
 		std::map<int, ModelToLoad*> m_modelsToLoad;
-
-		// Pointlights buffer
-		GLuint m_pointlightBuffer, m_dirLightBuffer;
 		float**	m_pointerToPointlights;
 		int		m_numberOfPointlights;
 		float*	m_pointerToDirectionalLights;
 		int		m_numberOfDirectionalLights;
-		vec3 m_dirLightDirection;
 
-		// DEBUG variables ----
-		int m_debugTexFlag; // 0=standard, 1=diffuse, 2=normal, 3=specular+shine, 4=glow
-		int m_nrOfLights; // lol
-
-		// Objects
-		//std::map<const std::string, ObjectData> m_objects;
-		//class ObjectData AddObject(std::string _file, std::string _dir);
-		// Meshs
-		std::map<const std::string, Buffer*> m_meshs;
-		Buffer* AddMesh(std::string _fileDir, Shader *_shaderProg);
-		// Textures
-		std::map<const std::string, GLuint> m_textures;
 		GLuint AddTexture(std::string _fileDir, GLenum _textureSlot);
+		std::map<const std::string, GLuint> m_textures;
 
-		// Random Vertors
-		GLuint m_randomVectors;
-		
 		TextRenderer m_sdlTextRenderer;
+		
+		std::vector<std::pair<std::string, SDL_Surface*>> m_surfaces;
+		void BufferSurfaces();
+		
+		struct ModelTexture
+		{
+			int id;
+			std::string textureName;
+			int textureType;
+		};
+		std::vector<ModelTexture> m_modelTextures;
+		void BufferModelTextures();
+		virtual bool BufferModelTexture(int _id, std::string _fileDir, int _textureType) = 0;
 	};
 }
 

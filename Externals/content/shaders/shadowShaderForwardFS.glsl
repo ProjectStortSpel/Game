@@ -1,4 +1,4 @@
-#version 440
+#version 400
 in vec2 TexCoord;
 
 uniform sampler2D diffuseTex;

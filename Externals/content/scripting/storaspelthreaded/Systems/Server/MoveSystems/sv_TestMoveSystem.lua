@@ -71,9 +71,9 @@ TestMoveSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities
 			local 	tSteps	= 	world:GetComponent(entity, "TestMove", "Steps"):GetInt()
 			
 			local	stepsTaken = 0;
-			for nStep = 1, tSteps do
+			for nStep = 0, tSteps-1 do
 			
-				if self:RecursiveMove(tUnit, tUnits, tNonWalkables, tPosX+tDirX*(nStep-1), tPosZ+tDirZ*(nStep-1), tDirX, tDirZ) then
+				if self:RecursiveMove(tUnit, tUnits, tNonWalkables, tPosX+tDirX*nStep, tPosZ+tDirZ*nStep, tDirX, tDirZ) then
 					stepsTaken = stepsTaken + 1
 				else
 					break
