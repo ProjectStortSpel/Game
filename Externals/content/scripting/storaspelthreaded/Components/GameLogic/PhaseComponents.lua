@@ -44,6 +44,7 @@ worldCreator:AddComponentType(DealCardsComponent)
 local NotifyStartNewRoundComponent = ComponentType()
 NotifyStartNewRoundComponent.Name = "NotifyStartNewRound"
 NotifyStartNewRoundComponent.TableType = TableType.Map
+NotifyStartNewRoundComponent:AddVariable("IsAI", ByteSize.Bool)
 worldCreator:AddComponentType(NotifyStartNewRoundComponent)
 
 --	New Round
