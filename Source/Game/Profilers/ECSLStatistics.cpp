@@ -44,6 +44,11 @@ ECSLStatistics::ECSLStatistics(unsigned int _threadCount)
 	m_maxThreadOverheadTime = FloatArray(_threadCount, -FLT_MAX);
 	m_diffThreadOverheadTime = FloatArray(_threadCount, 0.0f);
 
+	m_avgEffectiveThreadCount = 0.0f;
+	m_minEffectiveThreadCount = FLT_MAX;
+	m_maxEffectiveThreadCount = -FLT_MAX;
+	m_diffEffectiveThreadCount = 0.0f;
+
 	m_workItemStats = 0;
 }
 
@@ -126,6 +131,12 @@ void ECSLStatistics::AddFrame(ECSLFrame* _frame)
 		m_diffThreadOverheadTime[i] = m_maxThreadOverheadTime[i] - m_minThreadOverheadTime[i];
 	}
 
+	float effectiveThreadCount = m_threadCount * totalEfficiency;
+	m_avgEffectiveThreadCount = m_threadCount * m_avgTotalEfficiency;
+	m_minEffectiveThreadCount = effectiveThreadCount < m_minEffectiveThreadCount ? effectiveThreadCount : m_minEffectiveThreadCount;
+	m_maxEffectiveThreadCount = effectiveThreadCount > m_maxEffectiveThreadCount ? effectiveThreadCount : m_maxEffectiveThreadCount;
+	m_diffEffectiveThreadCount = m_maxEffectiveThreadCount - m_minEffectiveThreadCount;
+
 	auto workGroups = _frame->GetWorkItems();
 
 	/* Add work item statistic list */
@@ -143,8 +154,8 @@ void ECSLStatistics::AddFrame(ECSLFrame* _frame)
 				WorkItemStatistic* workItemStat = new WorkItemStatistic();
 				workItemStat->name = new std::string(*workItem->name);
 				workItemStat->avgDuration = workItem->duration;
-				workItemStat->maxDuration = -FLT_MAX;
-				workItemStat->minDuration = FLT_MAX;
+				workItemStat->maxDuration = workItem->duration;
+				workItemStat->minDuration = workItem->duration;
 				(*(*m_workItemStats)[groupIndex])[localIndex] = workItemStat;
 			}
 		}

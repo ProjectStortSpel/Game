@@ -1,7 +1,7 @@
 #ifndef DIRECTIONALLIGHTSYTEM_H
 #define DIRECTIONALLIGHTSYTEM_H
 
-#include "ECSL/Interfaces/System.h"
+#include "GraphicalSystem.h"
 #if defined(__ANDROID__) || defined(__IOS__)
 #include "AndroidRenderer/GraphicDevice.h"
 #else
@@ -9,7 +9,7 @@
 #endif
 
 
-class DirectionalLightSystem : public ECSL::System
+class DirectionalLightSystem : public GraphicalSystem
 {
 public:
 	DirectionalLightSystem(Renderer::GraphicDevice* _graphics);
@@ -27,9 +27,7 @@ private:
 	ECSL::BitSet::DataType* m_bitMask;
 	unsigned int m_numberOfBitSets;
 	unsigned int m_changedComponentId;
-	unsigned int m_dirLightId;;
-
-	Renderer::GraphicDevice* m_graphics;
+	unsigned int m_dirLightId;
 };
 
 #endif

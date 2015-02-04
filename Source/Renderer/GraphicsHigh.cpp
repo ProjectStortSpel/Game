@@ -1,13 +1,7 @@
 #include "GraphicsHigh.h"
 
-//#ifndef STB_IMAGE_IMPLEMENTATION
-//#define STB_IMAGE_IMPLEMENTATION
-//#endif
-//#include "TextureLoader.h"
-//#include "TextureLoader.h"
 #include "ModelLoader.h"
 #include "ModelExporter.h"
-//#include "SkyBox.h"
 
 using namespace Renderer;
 using namespace glm;
@@ -25,7 +19,6 @@ GraphicsHigh::GraphicsHigh()
 GraphicsHigh::~GraphicsHigh()
 {
 	delete(m_camera);
-	delete(m_skybox);
 	delete(m_shadowMap);
 	// Delete buffers
 	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
@@ -36,26 +29,21 @@ GraphicsHigh::~GraphicsHigh()
 
 	glDeleteBuffers(1, &m_pointlightBuffer);
 	glDeleteBuffers(1, &m_dirLightBuffer);
-
-	SDL_GL_DeleteContext(m_glContext);
-	// Close and destroy the window
-	SDL_DestroyWindow(m_window);
-	// Clean up
-	SDL_Quit();
 }
 
 bool GraphicsHigh::Init()
 {
 	if (!InitSDLWindow()) { ERRORMSG("INIT SDL WINDOW FAILED\n"); return false; }
 
-	m_camera = new Camera(m_clientWidth, m_clientHeight);
+	if (!m_SDLinitialized)
+		m_camera = new Camera(m_clientWidth, m_clientHeight);
 
 	if (!InitGLEW()) { SDL_Log("GLEW_VERSION_4_3 FAILED"); return false; }
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
 	if (!InitDeferred()) { ERRORMSG("INIT DEFERRED FAILED\n"); return false; }	
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	if (!InitForward()) { ERRORMSG("INIT FORWARD FAILED\n"); return false; }
-	if (!GraphicDevice::InitSkybox()) { ERRORMSG("INIT SKYBOX FAILED\n"); return false; }
+	if (!InitSkybox()) { ERRORMSG("INIT SKYBOX FAILED\n"); return false; }
 	if (!InitRandomVector()) { ERRORMSG("INIT RANDOMVECTOR FAIELD\n"); return false; }
 	if (!InitTextRenderer()) { ERRORMSG("INIT TEXTRENDERER FAILED\n"); return false; }
 		m_vramUsage += (m_textRenderer.GetArraySize() * sizeof(int));
@@ -67,31 +55,11 @@ bool GraphicsHigh::Init()
 	glCullFace(GL_BACK);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
-	GraphicDevice::m_sdlTextRenderer.Init();
+	TextRenderer::Init();
 	
     
 	return true;
 }
-
-//void GraphicsHigh::PollEvent(SDL_Event _event)
-//{
-//	switch (_event.type)
-//	{
-//	case SDL_WINDOWEVENT:
-//		switch (_event.window.event)
-//		{
-//		case SDL_WINDOWEVENT_RESIZED:
-//			int w, h;
-//			SDL_GetWindowSize(m_window, &w, &h);
-//			ResizeWindow(w,h);
-//			break;
-//		}
-//		break;
-//
-//	default:
-//		break;
-//	}
-//}
 
 void GraphicsHigh::Update(float _dt)
 {
@@ -492,22 +460,6 @@ void GraphicsHigh::Render()
 	SDL_GL_SwapWindow(m_window);
 }
 
-//void GraphicsHigh::ResizeWindow(int _width, int _height)
-//{
-//	// GRAPHIC CARD WORK GROUPS OF 16x16
-//	int x, y;
-//	x = _width / 16;
-//	if (x == 0) x = 1;
-//	y = _height / 16;
-//	if (y == 0) y = 1;
-//	m_clientWidth = x * 16;
-//	m_clientHeight = y * 16;
-//
-//	std::cout << m_clientWidth << "x" << m_clientHeight << std::endl;
-//
-//	SDL_SetWindowSize(m_window, m_clientWidth, m_clientHeight);
-//}
-
 bool GraphicsHigh::InitSDLWindow()
 {
 	// WINDOW SETTINGS
@@ -519,13 +471,15 @@ bool GraphicsHigh::InitSDLWindow()
 	int				SizeX = 256 * 5;	//1280
 	int				SizeY = 144 * 5;	//720
 
-	if (SDL_Init(SDL_INIT_EVERYTHING) == -1){
+	if (SDL_Init(SDL_INIT_VIDEO) == -1){
 		std::cout << SDL_GetError() << std::endl;
 		return false;
 	}
 
 	// PLATFORM SPECIFIC CODE
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
 	m_window = SDL_CreateWindow(Caption, PosX, PosY, SizeX, SizeY, Flags);
 
@@ -724,20 +678,6 @@ bool GraphicsHigh::InitBuffers()
 	return true;
 }
 
-//bool GraphicsHigh::InitSkybox()
-//{
-//	int w, h;
-//	GLuint texHandle = TextureLoader::LoadCubeMap("content/textures/skybox", GL_TEXTURE1, w, h);
-//	if (texHandle < 0)
-//		return false;
-//
-//	m_skyBoxShader.UseProgram();
-//	m_skybox = new SkyBox(texHandle, m_camera->GetFarPlane());
-//	m_vramUsage += (w*h * 6 * 4 * sizeof(float));
-//
-//	return true;
-//}
-
 bool GraphicsHigh::InitRandomVector()
 {
 	int texSizeX, texSizeY;
@@ -772,7 +712,6 @@ bool GraphicsHigh::InitLightBuffers()
 	return true;
 }
 
-
 void GraphicsHigh::BufferPointlights(int _nrOfLights, float **_lightPointers)
 {
 
@@ -786,7 +725,6 @@ void GraphicsHigh::BufferPointlights(int _nrOfLights, float **_lightPointers)
 
 }
 
-
 void GraphicsHigh::BufferDirectionalLight(float *_lightPointer)
 {
 	if (_lightPointer == 0)
@@ -794,7 +732,6 @@ void GraphicsHigh::BufferDirectionalLight(float *_lightPointer)
 	else
 		m_pointerToDirectionalLights = _lightPointer;
 }
-
 
 void GraphicsHigh::BufferLightsToGPU()
 {
@@ -1220,20 +1157,6 @@ Buffer* GraphicsHigh::AddMesh(std::string _fileDir, Shader *_shaderProg)
 
 	return retbuffer;
 }
-//GLuint GraphicsHigh::AddTexture(std::string _fileDir, GLenum _textureSlot)
-//{
-//	for (std::map<const std::string, GLuint>::iterator it = m_textures.begin(); it != m_textures.end(); it++)
-//	{
-//		if (it->first == _fileDir)
-//			return it->second;
-//	}
-//	int texSizeX, texSizeY;
-//	m_deferredShader1.UseProgram();
-//	GLuint texture = TextureLoader::LoadTexture(_fileDir.c_str(), _textureSlot, texSizeX, texSizeY);
-//	m_textures.insert(std::pair<const std::string, GLenum>(_fileDir, texture));
-//	m_vramUsage += (texSizeX * texSizeY * 4 * 4);
-//	return texture;
-//}
 
 void GraphicsHigh::Clear()
 {
@@ -1248,44 +1171,6 @@ void GraphicsHigh::Clear()
   BufferPointlights(0, tmpPtr);
   delete tmpPtr;
 }
-
-//int GraphicsHigh::AddFont(const std::string& filepath, int size)
-//{
-//	return m_sdlTextRenderer.AddFont(filepath, size);
-//}
-//
-//float GraphicsHigh::CreateTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, glm::ivec2 size)
-//{
-//	if (m_textures.find(textureName) != m_textures.end())
-//		glDeleteTextures(1, &m_textures[textureName]);
-//	SDL_Surface* surface = m_sdlTextRenderer.CreateTextSurface(textString, fontIndex, color);
-//	if (size.x > 0)
-//		surface->w = size.x;
-//	if (size.y > 0)
-//		surface->h = size.y;
-//	m_deferredShader1.UseProgram();
-//	GLuint texture = TextureLoader::LoadTexture(surface, GL_TEXTURE1);
-//	m_textures[textureName] = texture;
-//	m_vramUsage += (surface->w * surface->h * 4 * 4);
-//	SDL_FreeSurface(surface);
-//	return (float)surface->w / (float)surface->h;
-//}
-//
-//void GraphicsHigh::CreateWrappedTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, unsigned int wrapLength, glm::ivec2 size)
-//{
-//	if (m_textures.find(textureName) != m_textures.end())
-//		glDeleteTextures(1, &m_textures[textureName]);
-//	SDL_Surface* surface = m_sdlTextRenderer.CreateWrappedTextSurface(textString, fontIndex, color, wrapLength);
-//	if (size.x > 0)
-//		surface->w = size.x;
-//	if (size.y > 0)
-//		surface->h = size.y;
-//	m_deferredShader1.UseProgram();
-//	GLuint texture = TextureLoader::LoadTexture(surface, GL_TEXTURE1);
-//	m_textures[textureName] = texture;
-//	m_vramUsage += (surface->w * surface->h * 4 * 4);
-//	SDL_FreeSurface(surface);
-//}
 
 bool GraphicsHigh::BufferModelTexture(int _id, std::string _fileDir, int _textureType)
 {

@@ -100,8 +100,9 @@ LinSocket::LinSocket(int _domain, int _type, int _protocol)
 
 LinSocket::~LinSocket()
 {
-	CloseSocket();
 	Shutdown();
+	//CloseSocket();
+	
 
 	SAFE_DELETE(m_remoteAddress);
 	SAFE_DELETE(m_remotePort);
@@ -118,6 +119,8 @@ bool LinSocket::Initialize()
 
 bool LinSocket::Shutdown()
 {
+	shutdown(*m_socket, SHUT_RDWR);
+	
 	g_initialized = false;
 	return true;
 }

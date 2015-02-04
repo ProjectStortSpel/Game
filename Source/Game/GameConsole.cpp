@@ -406,3 +406,4 @@ void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 
 	m_consoleManager->AddCommand("MemoryUsage", std::bind(&GameConsole::ECSLMemoryUsage, this, std::placeholders::_1, std::placeholders::_2));
 }
+

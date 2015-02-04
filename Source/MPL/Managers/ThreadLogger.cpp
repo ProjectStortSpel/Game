@@ -43,6 +43,9 @@ void ThreadLogger::CreateNewSession()
 
 void ThreadLogger::EndSession()
 {
+	if (!m_currentSession)
+		return;
+
 	Uint64 now = Now();
 	m_currentSession->sessionEndTime = now;
 	m_currentSession->sessionDuration = Duration(m_currentSession->sessionEndTime, m_currentSession->sessionStartTime);

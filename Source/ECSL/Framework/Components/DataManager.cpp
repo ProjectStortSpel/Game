@@ -46,7 +46,7 @@ void DataManager::InitializeTables()
 		ComponentType* componentType = ComponentTypeManager::GetInstance().GetComponentType(componentTypeId);
 
 		/* Couldn't find component type. Is the type added and is it spelled correctly? */
-		assert(componentType || DataLogger::GetInstance().WriteToLogAssert());
+		assert(componentType || DataLogger::GetInstance().LogWorldDataAssert());
 
 		switch (componentType->GetTableType())
 		{

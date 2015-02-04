@@ -50,8 +50,7 @@ UnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 		if world:EntityHasComponent(entity, "NeedUnit") then
 			
 			world:RemoveComponentFrom("NeedUnit", entity)
-			
-			local playerNumber = 0
+			local playerNumber = nil
 			if #self.FreeSlots ~= 0 then
 				playerNumber = self.FreeSlots[1]
 				table.remove(self.FreeSlots, 1)
