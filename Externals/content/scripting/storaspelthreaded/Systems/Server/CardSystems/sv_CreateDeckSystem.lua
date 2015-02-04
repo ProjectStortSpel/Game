@@ -48,18 +48,22 @@ CreateDeckSystem.CreateDeck = function (self)
 		
 		cardpriocomp:SetInt(prio)
 		
-		local rand = math.random(1, 90)
+		local rand = math.random(1, 109)
 		
 		if rand < 30 then
-			cardactioncomp:SetString("Forward")
+			cardactioncomp:SetString("Forward") -- 0-29
 		elseif rand < 50 then
-			cardactioncomp:SetString("Backward")
+			cardactioncomp:SetString("Backward") -- 30-49
 		elseif rand < 65 then
-			cardactioncomp:SetString("TurnRight")
+			cardactioncomp:SetString("TurnRight") -- 50-64
 		elseif rand < 80 then
-			cardactioncomp:SetString("TurnLeft")
+			cardactioncomp:SetString("TurnLeft") -- 65-79
 		elseif rand < 90 then
-			cardactioncomp:SetString("TurnAround")
+			cardactioncomp:SetString("TurnAround") -- 80-89
+		elseif rand < 100 then
+			cardactioncomp:SetString("Sprint")	-- 90-99
+		elseif rand < 110 then
+			cardactioncomp:SetString("SlingShot")	-- 100-109 
 		else
 			cardactioncomp:SetString("Forward")
 			
@@ -69,5 +73,4 @@ CreateDeckSystem.CreateDeck = function (self)
 
 	end
 
-	print("Created " .. test .. " cards!")
 end
