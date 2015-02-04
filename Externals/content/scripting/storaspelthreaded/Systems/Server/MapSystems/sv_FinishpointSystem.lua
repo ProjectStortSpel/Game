@@ -35,9 +35,10 @@ FinishpointSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entit
 			-- Get all units currently on the playfield
 			local units = self:GetEntities("Unit")
 			
+			
+			
 			-- Get all finishpoints on the map
 			local finishPoints = self:GetEntities("Finishpoint")
-			
 			for i = 1, #finishPoints do
 			
 				-- Get the unit's id to check for
@@ -51,20 +52,10 @@ FinishpointSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entit
 					
 					-- If the unitId to check for equals the current unit
 					if unitId == units[j] then
-					
 						-- Get the units MapPosition, Number of steps to check & the units direction
 						local unitPosX, unitPosZ = world:GetComponent(units[j], "MapPosition", 0):GetInt2()
 						local noSteps = world:GetComponent(units[j], "NoSubSteps", 0):GetInt()
 						local dirX, dirZ = world:GetComponent(units[j], "Direction", 0):GetInt2()
-						
-						-- Normalize the direction
-						if dirX ~= 0 then
-							dirX = dirX / math.abs(dirX)
-						end
-						if dirZ ~= 0 then
-							dirZ = dirZ / math.abs(dirZ)
-						end
-						
 						-- Loop through all substeps
 						for tmp = noSteps - 1, 0, -1 do
 							local tmpX = unitPosX - (dirX * tmp)
@@ -79,7 +70,6 @@ FinishpointSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entit
 								
 								-- If the unit is not controlled by a AI
 								if not world:EntityHasComponent(playerId, "AI") then
-								
 									-- Take all cards from the player
 									local newId = world:CreateNewEntity()
 									world:CreateComponentAndAddTo("TakeCardsFromPlayer", newId)
@@ -89,6 +79,9 @@ FinishpointSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entit
 									newId = world:CreateNewEntity()
 									world:CreateComponentAndAddTo("TakeCardStepsFromUnit", newId)
 									world:GetComponent(newId, "TakeCardStepsFromUnit", "Unit"):SetInt(units[j])
+									
+									--	Make the player a spectator
+									world:CreateComponentAndAddTo("IsSpectator", playerId)
 								else
 									-- Else if the player is an AI, remove it when done
 									world:KillEntity(playerId)
@@ -96,7 +89,6 @@ FinishpointSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entit
 								
 								-- Remove the unit
 								world:KillEntity(units[j])
-								
 							end
 							
 						end

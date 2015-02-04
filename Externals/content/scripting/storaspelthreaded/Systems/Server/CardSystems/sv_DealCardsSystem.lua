@@ -120,6 +120,7 @@ Net.Receive("Server.SelectCards",
 		print("")
 
 		local selectedCards = { }
+		selectedCards.__mode = "k"
 		local player
 		for i = 1, 5 do
 

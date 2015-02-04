@@ -75,6 +75,7 @@ end
 AICardPickingSystem.GetAIsCardSet = function(self, AI, Cards)
 
 		local aisCard = {}
+		aisCard.__mode = "k"
 		local aiNr = self:GetComponent(AI, "PlayerNumber", 0):GetInt()
 		for j = 1, #Cards do
 			local card = self:GetComponent(Cards[j], "DealtCard", 0)
@@ -105,6 +106,7 @@ end
 AICardPickingSystem.AIPickCards = function( self, CardSetAI, dirX, dirY, posX, posY, targetX, targetY )
 	
 	local pickedcards = {}
+	pickedcards.__mode = "k"
 	if #CardSetAI >= 5 then
 
 		local forwards = self:GetAllCardsOf(CardSetAI, "Forward")
@@ -237,6 +239,7 @@ end
 AICardPickingSystem.GetAllCardsOf = function( self, CardSetAI, cardName )
 	
 	local cards = {}
+	cards.__mode = "k"
 	for i = 1, #CardSetAI do
 
 		local nameCard = self:GetComponent(CardSetAI[i], "CardAction", 0):GetString()
