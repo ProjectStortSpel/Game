@@ -63,6 +63,7 @@ CreateMapSystem.PostInitialize = function(self)
 	-- Create an entity that will keep track of the map size.
 	local mapEntity = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("MapSize", mapEntity)
+	world:CreateComponentAndAddTo("SyncNetwork", mapEntity)
 	self:GetComponent(mapEntity, "MapSize", 0):SetInt2(self.mapX, self.mapY)
 
 	for waterA = 1, #self.waterTiles do
