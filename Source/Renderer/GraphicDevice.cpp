@@ -8,9 +8,26 @@
 using namespace Renderer;
 using namespace glm;
 
+GraphicDevice::GraphicDevice()
+{
+	m_SDLinitialized = false;
+}
+
+GraphicDevice::GraphicDevice(Camera _camera)
+{
+	m_camera = new Camera(_camera);
+	m_SDLinitialized = true;
+}
+
 GraphicDevice::~GraphicDevice()
 {
 	delete(m_skybox);
+
+	SDL_GL_DeleteContext(m_glContext);
+	// Close and destroy the window
+	SDL_DestroyWindow(m_window);
+	// Clean up
+	//SDL_Quit();
 }
 
 void GraphicDevice::PollEvent(SDL_Event _event)
@@ -65,12 +82,12 @@ bool GraphicDevice::InitSkybox()
 
 int GraphicDevice::AddFont(const std::string& filepath, int size)
 {
-	return m_sdlTextRenderer.AddFont(filepath, size);
+	return TextRenderer::AddFont(filepath, size);
 }
 
 float GraphicDevice::CreateTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, glm::ivec2 size)
 {
-	SDL_Surface* surface = m_sdlTextRenderer.CreateTextSurface(textString, fontIndex, color);
+	SDL_Surface* surface = TextRenderer::CreateTextSurface(textString, fontIndex, color);
 	if (size.x > 0)
 		surface->w = size.x;
 	if (size.y > 0)
@@ -107,7 +124,7 @@ float GraphicDevice::CreateTextTexture(const std::string& textureName, const std
 
 void GraphicDevice::CreateWrappedTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, unsigned int wrapLength, glm::ivec2 size)
 {
-	SDL_Surface* surface = m_sdlTextRenderer.CreateWrappedTextSurface(textString, fontIndex, color, wrapLength);
+	SDL_Surface* surface = TextRenderer::CreateWrappedTextSurface(textString, fontIndex, color, wrapLength);
 	if (size.x > 0)
 		surface->w = size.x;
 	if (size.y > 0)

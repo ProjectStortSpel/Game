@@ -42,7 +42,11 @@ GameCreator::~GameCreator()
 		delete m_world;
 
 	if (m_graphics)
+	{
+		TextRenderer::Clean();
 		delete m_graphics;
+		SDL_Quit();
+	}
 
 	if (m_input)
 		delete m_input;
@@ -688,14 +692,29 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 		}
 
 		if (strcmp((*_args)[0].Text, "high") == 0)
-			m_graphics->SetDebugTexFlag(0);
+		{
+			m_graphics->Clear();
+			/*Camera* tmpCam = m_graphics->GetCamera();
+
+			SDL_Window*	tmpWindow = m_graphics->GetSDL_Window();
+			SDL_GLContext* tmpContext = m_graphics->GetSDL_GLContext();*/
+			delete(m_graphics);
+
+			m_graphics = new Renderer::GraphicsHigh();
+			m_graphics->Init();
+		}
 
 		else if (strcmp((*_args)[0].Text, "low") == 0)
 		{
 			m_graphics->Clear();
+			Camera tmpCam				= *m_graphics->GetCamera();
+			//SDL_Window*	tmpWindow		=  m_graphics->GetSDL_Window();
+			//SDL_GLContext tmpContext	=  m_graphics->GetSDL_GLContext();
+
+
 			delete(m_graphics);
 
-			m_graphics = new Renderer::GraphicsLow();
+			m_graphics = new Renderer::GraphicsLow(tmpCam);
 			m_graphics->Init();
 		}
 

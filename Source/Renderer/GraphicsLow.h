@@ -13,6 +13,7 @@ namespace Renderer
 	{
 	public:
 		GraphicsLow();
+		GraphicsLow(Camera _camera);
 		~GraphicsLow();
 
 		bool Init();
@@ -33,7 +34,6 @@ namespace Renderer
 		bool RemoveModel(int _id);
 		bool ActiveModel(int _id, bool _active);
 
-	//	void SetDebugTexFlag(int _flag) { m_debugTexFlag = _flag; }
 		void BufferPointlights(int _nrOfLights, float **_lightPointers);
 		void BufferDirectionalLight(float *_lightPointer);
 		
@@ -53,10 +53,6 @@ namespace Renderer
 
 		void BufferModels();
 		void BufferModel(int _modelId, ModelToLoad* _modelToLoad);
-
-		// dt and fps
-		float m_dt;
-		int m_fps;
 
 		//holds the reset values for lights
 		float m_lightDefaults[19];
