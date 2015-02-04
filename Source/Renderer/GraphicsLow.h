@@ -13,6 +13,7 @@ namespace Renderer
 	{
 	public:
 		GraphicsLow();
+		GraphicsLow(Camera _camera);
 		~GraphicsLow();
 
 		bool Init();

@@ -15,6 +15,15 @@ GraphicsLow::GraphicsLow()
     m_pointerToDirectionalLights = 0;
 }
 
+GraphicsLow::GraphicsLow(Camera _camera) : GraphicDevice(_camera)
+{
+	m_modelIDcounter = 0;
+	m_vramUsage = 0;
+	m_debugTexFlag = 0;
+	m_nrOfLights = 0;
+	m_pointerToDirectionalLights = 0;
+}
+
 GraphicsLow::~GraphicsLow()
 {
 	delete(m_camera);
@@ -25,19 +34,14 @@ GraphicsLow::~GraphicsLow()
 		delete it->second;
 		it->second = nullptr;
 	}
-
-	SDL_GL_DeleteContext(m_glContext);
-	// Close and destroy the window
-	SDL_DestroyWindow(m_window);
-	// Clean up
-	SDL_Quit();
 }
 
 bool GraphicsLow::Init()
 {
 	if (!InitSDLWindow()) { ERRORMSG("INIT SDL WINDOW FAILED\n"); return false; }
 
-	m_camera = new Camera(m_clientWidth, m_clientHeight);
+	if (!m_SDLinitialized)
+		m_camera = new Camera(m_clientWidth, m_clientHeight);
 
 	if (!InitGLEW()) { ERRORMSG("GLEW_VERSION_4_0 FAILED\n"); }
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }

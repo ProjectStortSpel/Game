@@ -8,9 +8,26 @@
 using namespace Renderer;
 using namespace glm;
 
+GraphicDevice::GraphicDevice()
+{
+	m_SDLinitialized = false;
+}
+
+GraphicDevice::GraphicDevice(Camera _camera)
+{
+	m_camera = new Camera(_camera);
+	m_SDLinitialized = true;
+}
+
 GraphicDevice::~GraphicDevice()
 {
 	delete(m_skybox);
+
+	SDL_GL_DeleteContext(m_glContext);
+	// Close and destroy the window
+	SDL_DestroyWindow(m_window);
+	// Clean up
+	//SDL_Quit();
 }
 
 void GraphicDevice::PollEvent(SDL_Event _event)

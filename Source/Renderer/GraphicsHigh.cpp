@@ -29,19 +29,14 @@ GraphicsHigh::~GraphicsHigh()
 
 	glDeleteBuffers(1, &m_pointlightBuffer);
 	glDeleteBuffers(1, &m_dirLightBuffer);
-
-	SDL_GL_DeleteContext(m_glContext);
-	// Close and destroy the window
-	SDL_DestroyWindow(m_window);
-	// Clean up
-	SDL_Quit();
 }
 
 bool GraphicsHigh::Init()
 {
 	if (!InitSDLWindow()) { ERRORMSG("INIT SDL WINDOW FAILED\n"); return false; }
 
-	m_camera = new Camera(m_clientWidth, m_clientHeight);
+	if (!m_SDLinitialized)
+		m_camera = new Camera(m_clientWidth, m_clientHeight);
 
 	if (!InitGLEW()) { SDL_Log("GLEW_VERSION_4_3 FAILED"); return false; }
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
@@ -476,13 +471,15 @@ bool GraphicsHigh::InitSDLWindow()
 	int				SizeX = 256 * 5;	//1280
 	int				SizeY = 144 * 5;	//720
 
-	if (SDL_Init(SDL_INIT_EVERYTHING) == -1){
+	if (SDL_Init(SDL_INIT_VIDEO) == -1){
 		std::cout << SDL_GetError() << std::endl;
 		return false;
 	}
 
 	// PLATFORM SPECIFIC CODE
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
 	m_window = SDL_CreateWindow(Caption, PosX, PosY, SizeX, SizeY, Flags);
 
