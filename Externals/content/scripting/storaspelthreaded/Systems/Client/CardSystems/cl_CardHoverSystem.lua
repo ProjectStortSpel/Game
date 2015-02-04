@@ -41,28 +41,25 @@ CardHoverSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entitie
 	for n = 1, #entities do
 		local entityId = entities[n]
 		
-		local action = self:GetComponent(entityId, "CardAction", 0):GetString()
 		local scale = self:GetComponent(entityId, "Scale", 0)
 		local rotation = self:GetComponent(entityId, "Rotation", 0)
-		local prio = self:GetComponent(entityId, "CardPrio", 0):GetInt()
-		
-		GraphicDevice.RenderSimpleText(action, 0,44)
-		GraphicDevice.RenderSimpleText(prio, 15,44)
 
-		rotation:SetFloat3(0, 0, 0)
 		scale:SetFloat3(self.HoverScale, self.HoverScale, self.HoverScale)
+		rotation:SetFloat3(0, 0, 0)
+
 	end
 end
 
 CardHoverSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
 	for n = 1, #entities do
 		local entityId = entities[n]
+		
 		local scale = self:GetComponent(entityId, "Scale", 0)
 		local rotation = self:GetComponent(entityId, "Rotation", 0)
 		
 		self.Rot = 0
-		
-		rotation:SetFloat3(0, 0, 0)
+
 		scale:SetFloat3(self.DefaultScale, self.DefaultScale, self.DefaultScale)
+		rotation:SetFloat3(0, 0, 0)
 	end	
 end

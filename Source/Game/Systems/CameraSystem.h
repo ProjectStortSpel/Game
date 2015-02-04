@@ -1,7 +1,7 @@
 #ifndef CAMERASYSTEM_H
 #define CAMERASYSTEM_H
 
-#include "ECSL/Interfaces/System.h"
+#include "GraphicalSystem.h"
 #if defined(__ANDROID__) || defined(__IOS__)
 #include "AndroidRenderer/GraphicDevice.h"
 #else
@@ -10,7 +10,7 @@
 #include "Input/InputWrapper.h"
 
 
-class CameraSystem : public ECSL::System
+class CameraSystem : public GraphicalSystem
 {
 public:
 	CameraSystem(Renderer::GraphicDevice* _graphics);
@@ -18,6 +18,8 @@ public:
 
 	void Initialize();
 	void Update(const ECSL::RuntimeInfo& _runtime);
+
+	void SetGraphics(Renderer::GraphicDevice* _graphics){ m_graphics = _graphics; }
 
 private:
 	Renderer::GraphicDevice* m_graphics;

@@ -18,6 +18,7 @@ end
 --	local newPlayerId = 5
 --	
 --	local availableIds = {}
+--	availableIds.__mode = "k"
 --	for n = 1, 5 do
 --		availableIds[n] = false
 --	end
