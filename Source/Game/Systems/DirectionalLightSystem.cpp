@@ -44,7 +44,7 @@ void DirectionalLightSystem::Update(const ECSL::RuntimeInfo& _runtime)
 		for (unsigned int n = 0; n < m_numberOfBitSets; ++n)
 		{
 
-			if ((m_bitMask[n] & eBitMask[n]) != 0)
+			if (m_bitMask[n] != 0 && (m_bitMask[n] & eBitMask[n]) != 0)
 			{
 				needsUpdate = true;
 				break;
@@ -84,12 +84,6 @@ void DirectionalLightSystem::UpdateDirectionalLight()
 	}
 
 	float* lightPointer = (float*)GetComponent(eDirLights.at(0), m_dirLightId, 0);
-
-	for (int i = 0; i < 9; ++i)
-	{
-		float value = lightPointer[i];
-		int a = 2;
-	}
 
 	m_graphics->BufferDirectionalLight(lightPointer);
 }
