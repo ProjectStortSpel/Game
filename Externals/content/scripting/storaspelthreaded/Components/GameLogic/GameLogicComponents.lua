@@ -9,6 +9,8 @@ require "AIComponents"
 require "CardActionComponents"
 require "CardSettingsComponents"
 
+require "AbilityComponents"
+
 require "TimerComponents"
 
 require "PhaseComponents"
