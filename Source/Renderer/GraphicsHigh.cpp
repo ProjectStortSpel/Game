@@ -16,6 +16,16 @@ GraphicsHigh::GraphicsHigh()
     m_pointerToDirectionalLights = 0;
 }
 
+GraphicsHigh::GraphicsHigh(Camera _camera) : GraphicDevice(_camera)
+{
+	m_renderSimpleText = true;
+	m_modelIDcounter = 0;
+	m_vramUsage = 0;
+	m_debugTexFlag = 0;
+	m_nrOfLights = 0;
+	m_pointerToDirectionalLights = 0;
+}
+
 GraphicsHigh::~GraphicsHigh()
 {
 	delete(m_camera);

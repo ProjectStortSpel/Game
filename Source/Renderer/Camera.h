@@ -33,6 +33,7 @@ private:
 
 public:
 	Camera(int windowWidth, int windowHeight);
+	Camera(const Camera& _cam);
 	Camera();
 	~Camera();
 

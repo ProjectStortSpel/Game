@@ -688,13 +688,13 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 		if (strcmp((*_args)[0].Text, "high") == 0)
 		{
 			m_graphics->Clear();
-			/*Camera* tmpCam = m_graphics->GetCamera();
+			Camera tmpCam = *m_graphics->GetCamera();
 
-			SDL_Window*	tmpWindow = m_graphics->GetSDL_Window();
-			SDL_GLContext* tmpContext = m_graphics->GetSDL_GLContext();*/
+		//	SDL_Window*	tmpWindow = m_graphics->GetSDL_Window();
+		//	SDL_GLContext* tmpContext = m_graphics->GetSDL_GLContext();*/
 			delete(m_graphics);
 
-			m_graphics = new Renderer::GraphicsHigh();
+			m_graphics = new Renderer::GraphicsHigh(tmpCam);
 			m_graphics->Init();
 		}
 
@@ -711,6 +711,13 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 			m_graphics = new Renderer::GraphicsLow(tmpCam);
 			m_graphics->Init();
 		}
+		if (m_input)
+		{
+			delete m_input;
+			InitializeInput();
+		}
+
+			
 
 		m_console->SetGraphicDevice(m_graphics);
 		LuaBridge::LuaGraphicDevice::SetGraphicDevice(m_graphics);
@@ -719,6 +726,7 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 			GraphicalSystem* tSystem = m_graphicalSystems.at(n);
 			tSystem->SetGraphics(m_graphics);
 		}
+
 	}
 #endif
 }
