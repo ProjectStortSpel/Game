@@ -669,14 +669,17 @@ bool GraphicDevice::ActiveModel(int _id, bool _active)
 bool GraphicDevice::ChangeModelTexture(int _id, std::string _fileDir, int _textureType)
 {
 	m_modelTextures.push_back({ _id, _fileDir, _textureType });
+    return false;
 }
 bool GraphicDevice::ChangeModelNormalMap(int _id, std::string _fileDir)
 {
 	m_modelTextures.push_back({ _id, _fileDir, TEXTURE_NORMAL });
+    return false;
 }
 bool GraphicDevice::ChangeModelSpecularMap(int _id, std::string _fileDir)
 {
 	m_modelTextures.push_back({ _id, _fileDir, TEXTURE_SPECULAR });
+    return false;
 }
 
 Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)

@@ -15,7 +15,6 @@ ECSLProfiler::ECSLProfiler(Renderer::GraphicDevice* _graphics)
 	m_frontBufferStatistics = 0;
 	ResetSwapTimer();
 	m_threadLogger = &MPL::ThreadLogger::GetInstance();
-	m_threadLogger->CreateNewSession();
 
 	CreateRenderViews();
 }
@@ -119,7 +118,7 @@ void ECSLProfiler::PreviousView()
 	}
 }
 
-void ECSLProfiler::WriteToLog()
+void ECSLProfiler::LogDisplayedStatistics()
 {
 	if (m_state != State::SHOWING_STATISTICS)
 		return;
@@ -194,9 +193,9 @@ ECSLFrame* ECSLProfiler::GenerateFrameData(MPL::LoggedSession* _session)
 	ECSLFrame* frame = new ECSLFrame(_session->threadCount, _session->sessionDuration);
 	frame->SetFrameTime(_session->sessionDuration);
 
-	for (unsigned int threadId = 0; threadId < _session->threadLogs->size(); ++threadId)
+	for (unsigned int threadId = 0; threadId < (unsigned int)_session->threadLogs->size(); ++threadId)
 	{
-		auto log = _session->threadLogs->at(threadId);
+		const auto log = _session->threadLogs->at(threadId);
 		for (MPL::LoggedAction* action : *log)
 		{
 			switch (action->type) 

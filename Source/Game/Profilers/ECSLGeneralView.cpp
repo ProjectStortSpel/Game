@@ -21,8 +21,18 @@ void ECSLGeneralView::Update(ECSLStatistics* _frontBufferStatistics)
 	unsigned int y = StartPosY;
 
 	std::stringstream text;
-	text << "Benchmark for the Multi-threaded Entity Component System";
+	text << "Benchmark for the Multi-threaded Entity Component System.";
 	TextEntry* textEntry = new TextEntry();
+	textEntry->x = x;
+	textEntry->y = y;
+	textEntry->text = new std::string(text.str());
+	textEntry->height = TextHeight;
+	m_textEntries->push_back(textEntry);
+	y += TextHeight;
+
+	text.str(std::string());
+	text << "Time is measured in microseconds.";
+	textEntry = new TextEntry();
 	textEntry->x = x;
 	textEntry->y = y;
 	textEntry->text = new std::string(text.str());
@@ -115,8 +125,8 @@ void ECSLGeneralView::Update(ECSLStatistics* _frontBufferStatistics)
 	y += TextHeight + TextHeight;
 
 	text.str(std::string());
-	text << "Effective Thread Count | " << _frontBufferStatistics->GetThreadCount() * _frontBufferStatistics->GetAvgTotalEfficiency() << " | " << _frontBufferStatistics->GetThreadCount() * _frontBufferStatistics->GetMinTotalEfficiency() << " | "
-		<< _frontBufferStatistics->GetThreadCount() * _frontBufferStatistics->GetMaxTotalEfficiency() << " | " << _frontBufferStatistics->GetThreadCount() * _frontBufferStatistics->GetDiffTotalEfficiency();
+	text << "Effective Thread Count | " << _frontBufferStatistics->GetAvgEffectiveThreadCount() << " | " << _frontBufferStatistics->GetMinEffectiveThreadCount() << " | "
+		<< _frontBufferStatistics->GetMaxEffectiveThreadCount() << " | " << _frontBufferStatistics->GetDiffEffectiveThreadCount();
 	textEntry = new TextEntry();
 	textEntry->x = x;
 	textEntry->y = y;

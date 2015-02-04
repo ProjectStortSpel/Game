@@ -89,6 +89,21 @@ DataLocation System::GetComponent(unsigned int _entityId, unsigned int _componen
 	return m_dataManager->GetComponentTable(_componentTypeId)->GetComponent(_entityId, _index);
 }
 
+void System::GetComponents(std::vector<DataLocation>& _out, const std::vector<unsigned int>* _entityIds, const std::string& _componentType, const std::string& _variableName)
+{
+	return m_dataManager->GetComponentTable(_componentType)->GetComponents(_out, _entityIds, _variableName);
+}
+
+void System::GetComponents(std::vector<DataLocation>& _out, const std::vector<unsigned int>* _entityIds, const std::string& _componentType, unsigned int _index)
+{
+	return m_dataManager->GetComponentTable(_componentType)->GetComponents(_out, _entityIds, _index);
+}
+
+void System::GetComponents(std::vector<DataLocation>& _out, const std::vector<unsigned int>* _entityIds, unsigned int _componentTypeId, unsigned int _index)
+{
+	return m_dataManager->GetComponentTable(_componentTypeId)->GetComponents(_out, _entityIds, _index);
+}
+
 void System::SetComponent(unsigned int _entityId, const std::string& _componentType, const std::string& _variableName, void* _data)
 {
 	m_dataManager->GetComponentTable(_componentType)->SetComponent(_entityId, _variableName, _data);
@@ -207,5 +222,5 @@ void System::ComponentHasChanged(unsigned int _entityId, unsigned int _component
 
 void System::LogWorldData()
 {
-	DataLogger::GetInstance().WriteToLog();
+	DataLogger::GetInstance().LogWorldData();
 }
