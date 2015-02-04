@@ -21,7 +21,7 @@ CheckpointSystem.AddTotemPiece = function(self, playerNumber, checkpoint)
 	world:CreateComponentAndAddTo("CheckpointId", totemPieceId)
 
 	world:SetComponent(totemPieceId, "PlayerNumber", "Number", playerNumber)
-	world:SetComponent(totemPieceId, "CheckpointId", "Id", cpId)
+	world:SetComponent(totemPieceId, "CheckpointId", "Id", checkpoint)
 	
 end
 
@@ -31,6 +31,8 @@ CheckpointSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entiti
 		local entity = entities[n]
 		-- If the entity has a CheckCheckpoint component
 		if world:EntityHasComponent( entity, "CheckCheckpoint") then
+		
+			
 			-- Get all units currently on the playfield
 			local units = self:GetEntities("Unit")
 			-- Get all checkpoints on the map
@@ -43,7 +45,7 @@ CheckpointSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entiti
 				
 				-- If the target is larger then the number of checkpoints it is a finishpoint
 				if targetId > #checkPoints then
-				
+					print("Check finish!")
 					-- Check finishpoints
 					local newId = world:CreateNewEntity()
 					world:CreateComponentAndAddTo("CheckFinishpoint", newId)
@@ -56,18 +58,9 @@ CheckpointSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entiti
 					local noSteps = world:GetComponent(units[i], "NoSubSteps", 0):GetInt2()
 					local dirX, dirZ = world:GetComponent(units[i], "Direction", 0):GetInt2()
 					
-					-- Normalize the directions
-					if dirX ~= 0 then
-						dirX = dirX / math.abs(dirX)
-					end
-					if dirZ ~= 0 then
-						dirZ = dirZ / math.abs(dirZ)
-					end
-					
 					-- Get the units' MapPosition
 					local unitPosX, unitPosZ = world:GetComponent(units[i], "MapPosition", 0):GetInt2()
 					
-					-- Go through all substeps
 					for tmp = noSteps - 1, 0, -1 do
 						
 						local tmpX = unitPosX - (dirX * tmp)
