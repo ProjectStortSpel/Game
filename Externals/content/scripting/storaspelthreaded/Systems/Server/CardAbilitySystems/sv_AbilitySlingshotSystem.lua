@@ -7,7 +7,7 @@ AbilitySlingshotSystem.Initialize = function(self)
 	
 	--	Toggle EntitiesAdded
 	self:UsingEntitiesAdded()
-	self:UsingUpdate()
+	--self:UsingUpdate()
 	
 	--	Filters
 	self:AddComponentTypeToFilter("Unit",					FilterType.RequiresOneOf)
@@ -89,7 +89,7 @@ AbilitySlingshotSystem.AddBullet = function(self, posX, posZ, targetPosX, target
 
 end
 
-AbilitySlingshotSystem.Update = function(self, dt)
+AbilitySlingshotSystem.Update = function(self, dt, taskIndex, taskCount)
 
 	-- Get all entities which has the "UnitSlingShot" component
 	local entities = self:GetEntities("UnitSlingShot")
@@ -134,6 +134,7 @@ AbilitySlingshotSystem.Update = function(self, dt)
 				end
 			end
 		end
+		world:RemoveComponentFrom("UnitSlingShot", entities[i])
 	end
 
 	local slingshots = self:GetEntities("SlingShotProjectile")
