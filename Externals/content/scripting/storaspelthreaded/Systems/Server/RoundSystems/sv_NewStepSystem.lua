@@ -33,7 +33,6 @@ NewStepSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 				local units = self:GetEntities("Unit")
 				for i = 1, #units do
 					world:SetComponent(units[i], "NoSubSteps", "Counter", 1)
-					print("All NoSubSteps set to 1")
 				end
 
 				local id = world:CreateNewEntity()
