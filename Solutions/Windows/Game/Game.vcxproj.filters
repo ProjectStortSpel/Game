@@ -78,9 +78,6 @@
     <Filter Include="Game\Profilers\ECSLProfiler\Render Views">
       <UniqueIdentifier>{e772fded-ab7d-4fc8-b348-3786ee79e575}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scripting\storaspelthreaded">
-      <UniqueIdentifier>{a0a4802b-7b12-43ba-b4a6-29e02a105fa9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Scripting\storaspelthreaded\Components">
       <UniqueIdentifier>{830d2e85-206f-4614-b60c-c8a0dcaddfbd}</UniqueIdentifier>
     </Filter>
@@ -153,6 +150,9 @@
     <Filter Include="Scripting\storaspelthreaded\Systems\Server\SpawnSystems">
       <UniqueIdentifier>{89f1782a-5e56-473a-983a-e632ac04d1d7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Systems\Movement">
+      <UniqueIdentifier>{85fd8210-0e9a-4ebe-9100-6b283fd97b17}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\LuaBridge.cpp">
@@ -217,9 +217,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\Console\LuaConsole.cpp">
       <Filter>Lua Bridge\Console</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Source\Game\NetworkInstance.cpp">
-      <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Systems\CameraSystem.cpp">
       <Filter>Game\Systems\Camera</Filter>
@@ -294,6 +291,12 @@
       <Filter>Game\Systems\NetworkMessages</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Network\ClientDatabase.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\MovementSystem.cpp">
+      <Filter>Game\Systems\Movement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Network\NetworkInstance.cpp">
       <Filter>Network</Filter>
     </ClCompile>
   </ItemGroup>
@@ -436,85 +439,11 @@
     <ClInclude Include="..\..\..\Source\Game\Network\ClientDatabase.h">
       <Filter>Network</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\components\components.lua">
-      <Filter>Scripting\Storaspel\Components</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\templates\box.lua">
-      <Filter>Scripting\Storaspel\Templates</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\templates\lights.lua">
-      <Filter>Scripting\Storaspel\Templates</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\templates\map.lua">
-      <Filter>Scripting\Storaspel\Templates</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\components\mapcomponents.lua">
-      <Filter>Scripting\Storaspel\Components</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\components\phasecomponents.lua">
-      <Filter>Scripting\Storaspel\Components</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\components\playercomponents.lua">
-      <Filter>Scripting\Storaspel\Components</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\components\cardcomponents.lua">
-      <Filter>Scripting\Storaspel\Components</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\components\lightcomponents.lua">
-      <Filter>Scripting\Storaspel\Components</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\templates\playertemplates.lua">
-      <Filter>Scripting\Storaspel\Templates</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\components\gamestatecomponents.lua">
-      <Filter>Scripting\Storaspel\Components</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\init.lua">
-      <Filter>Scripting\Storaspel</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\lobby\init.lua">
-      <Filter>Scripting\Lobby</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\lobby\templates\templates.lua">
-      <Filter>Scripting\Lobby\Templates</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\lobby\systems\serverconnectsystem.lua">
-      <Filter>Scripting\Lobby\Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\lobby\systems\serverlobbysystem.lua">
-      <Filter>Scripting\Lobby\Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\lobby\systems\sh_buttonhoversystem.lua">
-      <Filter>Scripting\Lobby\Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\lobby\systems\sh_buttonpressedsystem.lua">
-      <Filter>Scripting\Lobby\Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\lobby\systems\sh_pickboxsystem.lua">
-      <Filter>Scripting\Lobby\Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\lobby\systems\systems.lua">
-      <Filter>Scripting\Lobby\Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\lobby\systems\clientconnectsystem.lua">
-      <Filter>Scripting\Lobby\Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\lobby\systems\clientlobbysystem.lua">
-      <Filter>Scripting\Lobby\Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\lobby\components\components.lua">
-      <Filter>Scripting\Lobby\Components</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\lobby\components\interfacecomponents.lua">
-      <Filter>Scripting\Lobby\Components</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\lobby\components\lobby.lua">
-      <Filter>Scripting\Lobby\Components</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\lobby\components\buttoncomponents.lua">
-      <Filter>Scripting\Lobby\Components</Filter>
-    </None>
+    <ClInclude Include="..\..\..\Source\Game\Systems\MovementSystem.h">
+      <Filter>Game\Systems\Movement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Network\NetworkInstance.h">
+      <Filter>Network</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
