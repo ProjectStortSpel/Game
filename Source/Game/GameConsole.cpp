@@ -149,12 +149,12 @@ void GameConsole::HostServer(std::string _command, std::vector<Console::Argument
 	if (NetworkInstance::GetClient()->IsConnected())
 	{
 		NetworkInstance::GetClient()->Disconnect();
-		LuaEmbedder::AddBool("Client", false);
+		//LuaEmbedder::AddBool("Client", false);
 	}
 	if (NetworkInstance::GetServer()->IsRunning())
 	{
 		NetworkInstance::GetServer()->Stop();
-		LuaEmbedder::AddBool("Server", false);
+		//LuaEmbedder::AddBool("Server", false);
 	}
 
 
@@ -190,8 +190,59 @@ void GameConsole::HostServer(std::string _command, std::vector<Console::Argument
 
 	bool hosting = NetworkInstance::GetServer()->Start(port, pw.c_str(), connections);
 
-	LuaEmbedder::AddBool("Server", hosting);
+	//LuaEmbedder::AddBool("Server", hosting);
 	//NetworkInstance::GetClient()->Connect("127.0.0.1", pw.c_str(), port, 0);
+}
+
+void GameConsole::HostListenServer(std::string _command, std::vector<Console::Argument>* _args)
+{
+    if (NetworkInstance::GetClient()->IsConnected())
+    {
+        NetworkInstance::GetClient()->Disconnect();
+        //LuaEmbedder::AddBool("Client", false);
+    }
+    if (NetworkInstance::GetServer()->IsRunning())
+    {
+        NetworkInstance::GetServer()->Stop();
+        //LuaEmbedder::AddBool("Server", false);
+    }
+    
+    
+    std::string pw				= NetworkInstance::GetServer()->GetServerPassword();
+    unsigned int port			= NetworkInstance::GetServer()->GetIncomingPort();
+    unsigned int connections	= NetworkInstance::GetServer()->GetMaxConnections();
+    
+    if (_args->size() == 1)
+    {
+        if ((*_args)[0].ArgType == Console::ArgumentType::Number)
+            port = (*_args)[0].Number;
+    }
+    else if (_args->size() == 2)
+    {
+        if ((*_args)[0].ArgType == Console::ArgumentType::Number &&
+            (*_args)[1].ArgType == Console::ArgumentType::Text)
+        {
+            port = (*_args)[0].Number;
+            pw = (*_args)[1].Text;
+        }
+    }
+    else if (_args->size() == 3)
+    {
+        if ((*_args)[0].ArgType == Console::ArgumentType::Number &&
+            (*_args)[1].ArgType == Console::ArgumentType::Text &&
+            (*_args)[2].ArgType == Console::ArgumentType::Number)
+        {
+            port		= (*_args)[0].Number;
+            pw			= (*_args)[1].Text;
+            connections = (*_args)[2].Number;
+        }
+    }
+    
+    bool hosting = NetworkInstance::GetServer()->Start(port, pw.c_str(), connections);
+    
+    //LuaEmbedder::AddBool("Server", hosting);
+    
+    bool connected = NetworkInstance::GetClient()->Connect("127.0.0.1", pw.c_str(), port, 0);
 }
 
 void GameConsole::StopServer(std::string _command, std::vector<Console::Argument>* _args)
@@ -199,7 +250,7 @@ void GameConsole::StopServer(std::string _command, std::vector<Console::Argument
 	if (NetworkInstance::GetServer()->IsRunning())
 	{
 		NetworkInstance::GetServer()->Stop();
-		LuaEmbedder::AddBool("Server", false);
+		//LuaEmbedder::AddBool("Server", false);
 	}
 }
 
@@ -208,14 +259,14 @@ void GameConsole::ConnectClient(std::string _command, std::vector<Console::Argum
 	if (NetworkInstance::GetClient()->IsConnected())
 	{
 		NetworkInstance::GetClient()->Disconnect();
-		LuaEmbedder::AddBool("Client", false);
+		//LuaEmbedder::AddBool("Client", false);
 	}
 
 	
 	if (NetworkInstance::GetServer()->IsRunning())
 	{
 		NetworkInstance::GetServer()->Stop();
-		LuaEmbedder::AddBool("Server", false);
+		//LuaEmbedder::AddBool("Server", false);
 	}
 	
 
@@ -252,7 +303,7 @@ void GameConsole::ConnectClient(std::string _command, std::vector<Console::Argum
 	}
 
 	bool connected = NetworkInstance::GetClient()->Connect(ip.c_str(), pw.c_str(), port, 0);
-	LuaEmbedder::AddBool("Client", connected);
+	//LuaEmbedder::AddBool("Client", connected);
 }
 
 void GameConsole::DisconnectClient(std::string _command, std::vector<Console::Argument>* _args)
@@ -260,7 +311,7 @@ void GameConsole::DisconnectClient(std::string _command, std::vector<Console::Ar
 	if (NetworkInstance::GetClient()->IsConnected())
 	{
 		NetworkInstance::GetClient()->Disconnect();
-		LuaEmbedder::AddBool("Client", false);
+		//LuaEmbedder::AddBool("Client", false);
 	}
 }
 
@@ -375,6 +426,7 @@ void GameConsole::ListCommands(std::string _command, std::vector<Console::Argume
 	m_consoleManager->AddMessage("ChangeComponent   -   Id, ComponentType, X, Y, Z, ...");
 	m_consoleManager->AddMessage("RemoveComponent   -   Id, ComponentType");
 	m_consoleManager->AddMessage("Host              -   Port, Password, MaxConnections");
+    m_consoleManager->AddMessage("HostListen        -   Port, Password, MaxConnections");
 	m_consoleManager->AddMessage("Connect           -   Ip-address, Port, Password");
 	m_consoleManager->AddMessage("ToggleText        -   ON/OFF");
 	m_consoleManager->AddMessage("TextColor         -   R G B");
@@ -392,6 +444,7 @@ void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 	m_consoleManager->AddCommand("ChangeComponent", std::bind(&GameConsole::ChangeComponent, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager->AddCommand("RemoveComponent", std::bind(&GameConsole::RemoveComponent, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager->AddCommand("Host", std::bind(&GameConsole::HostServer, this, std::placeholders::_1, std::placeholders::_2));
+    m_consoleManager->AddCommand("HostListen", std::bind(&GameConsole::HostListenServer, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager->AddCommand("Stop", std::bind(&GameConsole::StopServer, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager->AddCommand("Connect", std::bind(&GameConsole::ConnectClient, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager->AddCommand("Disconnect", std::bind(&GameConsole::DisconnectClient, this, std::placeholders::_1, std::placeholders::_2));
