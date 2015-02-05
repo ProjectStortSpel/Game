@@ -28,7 +28,7 @@ UpdateLerpPositionSystem.Update = function(self, dt, taskIndex, taskCount)
 		local tZ = world:GetComponent(entity, "LerpingPosition", "tZ"):GetFloat(0)
 		local _time = world:GetComponent(entity, "LerpingPosition", "Time"):GetFloat(0)
 		local _timer = world:GetComponent(entity, "LerpingPosition", "Timer"):GetFloat(0)
-		local algorithm = world:GetComponent(entity, "LerpingPosition", "Algorithm"):SetString(0)
+		local algorithm = world:GetComponent(entity, "LerpingPosition", "Algorithm"):GetString(0)
 
 		_timer = _timer + dt
 		if _time > _timer then
@@ -39,11 +39,11 @@ UpdateLerpPositionSystem.Update = function(self, dt, taskIndex, taskCount)
 			local Y = sY + (tY - sY) * t
 			local Z = sZ + (tZ - sZ) * t
 			
-			position:SetFloat3(X, Y, Z)
+			position:SetFloat3(X, Y, Z, false)
 			
-			world:GetComponent(entity, "LerpingPosition", "Timer"):SetFloat(_timer)
+			world:GetComponent(entity, "LerpingPosition", "Timer"):SetFloat(_timer, false)
 		else
-			position:SetFloat3(tX, tY, tZ)
+			position:SetFloat3(tX, tY, tZ, false)
 			world:RemoveComponentFrom("LerpingPosition", entity)
 		end	
 	end
