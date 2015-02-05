@@ -31,15 +31,22 @@ public:
 	void InitializeNetwork();
 	void InitializeNetworkEvents();
 	void InitializeThreads();
-	void InitializeWorld(std::string _gameMode);
-	void InitializeLua();
+    void InitializeLobby();
+	//void InitializeLua();
 	
 
 	void StartGame(int argc, char** argv);
 
 private:
 
-
+    enum WorldType
+    {
+        Server, Client
+    };
+    
+    void InitializeWorld(std::string _gameMode, WorldType _worldType, bool _isMainWorld);
+    void InitializeLua(WorldType _worldType);
+    
 	void RunStartupCommands(int argc, char** argv);
 
 	void PollSDLEvent();
@@ -49,6 +56,10 @@ private:
 	void RenderConsole();
 	
 	void GameMode(std::string _gamemode);
+    
+    //void ReloadServer();
+    //void ReloadClient();
+    
 	void Reload();
 
 	void ConsoleGameMode(std::string _command, std::vector<Console::Argument>* _args);
@@ -67,7 +78,8 @@ private:
 private:
 	Renderer::GraphicDevice*	m_graphics;
 	Input::InputWrapper*		m_input;
-	ECSL::World*				m_world;
+	ECSL::World*				m_clientWorld;
+    ECSL::World*				m_serverWorld;
 	GameConsole*				m_console;
 	RemoteConsole*				m_remoteConsole;
 

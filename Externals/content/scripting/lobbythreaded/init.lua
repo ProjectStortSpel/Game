@@ -12,6 +12,9 @@ require "lightcomponents"
 require "cameracomponents"
 require "components"
 
+
+if Client then
+
 -- Systems
 package.path = package.path .. ";../../../Externals/content/scripting/lobbythreaded/systems/?.lua"
 
@@ -31,6 +34,7 @@ require "sh_PickboxSystem"
 require "sh_HoverSizeSystem"
 require "sh_AddTextToTextureSystem"
 require "sh_ParentSystem"
+
 
 -- Templates
 package.path = package.path .. ";../../../Externals/content/scripting/lobbythreaded/templates/?.lua"
@@ -64,3 +68,5 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ConnectMenuSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(HostMenuSystem)
+
+end
