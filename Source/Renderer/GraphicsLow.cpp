@@ -15,7 +15,7 @@ GraphicsLow::GraphicsLow()
     m_pointerToDirectionalLights = 0;
 }
 
-GraphicsLow::GraphicsLow(Camera _camera) : GraphicDevice(_camera)
+GraphicsLow::GraphicsLow(Camera _camera, int x, int y) : GraphicDevice(_camera, x, y)
 {
 	m_modelIDcounter = 0;
 	m_vramUsage = 0;
@@ -350,7 +350,7 @@ bool GraphicsLow::InitSDLWindow()
     //SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
     //SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
-	m_window = SDL_CreateWindow(Caption, PosX, PosY, SizeX, SizeY, Flags);
+	m_window = SDL_CreateWindow(Caption, m_windowPosX, m_windowPosY, SizeX, SizeY, Flags);
 
 	if (m_window == NULL){
 		std::cout << SDL_GetError() << std::endl;

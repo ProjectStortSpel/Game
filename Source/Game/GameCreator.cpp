@@ -691,12 +691,14 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 		{
 			m_graphics->Clear();
 			Camera tmpCam = *m_graphics->GetCamera();
+			int windowx, windowy;
+			m_graphics->GetWindowPos(windowx, windowy);
 
 		//	SDL_Window*	tmpWindow = m_graphics->GetSDL_Window();
 		//	SDL_GLContext* tmpContext = m_graphics->GetSDL_GLContext();*/
 			delete(m_graphics);
 
-			m_graphics = new Renderer::GraphicsHigh(tmpCam);
+			m_graphics = new Renderer::GraphicsHigh(tmpCam, windowx, windowy);
 			m_graphics->Init();
 		}
 
@@ -704,13 +706,15 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 		{
 			m_graphics->Clear();
 			Camera tmpCam				= *m_graphics->GetCamera();
+			int windowx, windowy;
+			m_graphics->GetWindowPos(windowx, windowy);
 			//SDL_Window*	tmpWindow		=  m_graphics->GetSDL_Window();
 			//SDL_GLContext tmpContext	=  m_graphics->GetSDL_GLContext();
 
 
 			delete(m_graphics);
 
-			m_graphics = new Renderer::GraphicsLow(tmpCam);
+			m_graphics = new Renderer::GraphicsLow(tmpCam, windowx, windowy);
 			m_graphics->Init();
 		}
 		if (m_input)
