@@ -142,7 +142,7 @@ bool LinSocket::Connect(const char* _ip, const int _port)
 	if (connect(*m_socket, (struct sockaddr *)&address, sizeof(address)) < 0)
 	{
 		if (NET_DEBUG)
-			SDL_Log("Failed to connect to Ip address %s:%i. Error: %s. %d\n", _ip, _port, strerror(errno), errno);
+			SDL_Log("Failed to connect to Ip address %s:%i. Error: %s.\n", _ip, _port, strerror(errno));
 		return false;
 	}
 
