@@ -426,7 +426,7 @@ void ServerNetwork::ListenForConnections(void)
 
 		if (!m_listenSocket)
 		{
-			m_listenForConnectionsAlive = false;
+			*m_listenForConnectionsAlive = false;
 			break;
 		}
 

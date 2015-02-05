@@ -6,6 +6,8 @@
 #include "AndroidRenderer/GraphicDevice.h"
 #else
 #include "Renderer/GraphicDevice.h"
+#include "Renderer/GraphicsHigh.h"
+#include "Renderer/GraphicsLow.h"
 #endif
 #include "ECSL/ECSL.h"
 #include "Network/NetworkInstance.h"
@@ -15,6 +17,8 @@ class GameConsole
 public:
 	GameConsole(Renderer::GraphicDevice* _graphics, ECSL::World* _world);
 	~GameConsole();
+
+	void SetGraphicDevice(Renderer::GraphicDevice* _graphics){ m_graphics = _graphics; }
 
 	void SetupHooks(Console::ConsoleManager* _consoleManager);
 

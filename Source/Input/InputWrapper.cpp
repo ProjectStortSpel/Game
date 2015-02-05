@@ -1,7 +1,7 @@
 #include "InputWrapper.h"
 #include <stdio.h>
 using namespace Input;
-
+InputWrapper* InputWrapper::m_instance = 0;
 #pragma region Constructor/Destructor and GetInstance
 InputWrapper::InputWrapper()
 {
@@ -32,12 +32,14 @@ InputWrapper::~InputWrapper()
 		delete m_touch;
 		m_touch = 0;
 	}
+	m_instance = 0;
 }
 
 InputWrapper& InputWrapper::GetInstance()
 {
-	static InputWrapper* instance = new InputWrapper();
-	return *instance;
+	if (!m_instance)
+		m_instance = new InputWrapper();
+	return *m_instance;
 }
 #pragma endregion
 

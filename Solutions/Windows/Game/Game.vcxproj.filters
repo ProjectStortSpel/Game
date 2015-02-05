@@ -153,6 +153,9 @@
     <Filter Include="Game\Systems\Movement">
       <UniqueIdentifier>{85fd8210-0e9a-4ebe-9100-6b283fd97b17}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lua Bridge\AI">
+      <UniqueIdentifier>{87dad0a5-e0f5-4146-ab10-fcb8c9ba996c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\LuaBridge.cpp">
@@ -299,6 +302,9 @@
     <ClCompile Include="..\..\..\Source\Game\Network\NetworkInstance.cpp">
       <Filter>Network</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\AI\LuaPotentialFieldHandler.cpp">
+      <Filter>Lua Bridge\AI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h">
@@ -444,6 +450,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Network\NetworkInstance.h">
       <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\AI\LuaPotentialFieldHandler.h">
+      <Filter>Lua Bridge\AI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

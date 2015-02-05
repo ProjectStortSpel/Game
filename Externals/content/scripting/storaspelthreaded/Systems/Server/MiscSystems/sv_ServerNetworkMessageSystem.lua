@@ -41,6 +41,7 @@ end
 ServerNetworkMessageSystem.AddConnectedPlayers = function(self, _counterEntity, _maxPlayers)
 	
 	local clients = { Net.ConnectedClients() }
+	clients.__mode = "k"
 	local maxPlayers = _maxPlayers
 	local noOfPlayers = 0
 

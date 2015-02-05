@@ -17,6 +17,7 @@
 #include "FrameCounter/FrameCounter.h"
 #include "Game/RemoteConsole.h"
 #include "Profilers/ECSLProfiler.h"
+#include "Systems/GraphicalSystem.h"
 
 class GameCreator
 {
@@ -61,6 +62,8 @@ private:
 
 	void PrintSectionTime(const std::string& sectionName, Utility::FrameCounter* frameCounter, int x, int y);
 
+	void ChangeGraphicsSettings(std::string _command, std::vector<Console::Argument>* _args);
+
 private:
 	Renderer::GraphicDevice*	m_graphics;
 	Input::InputWrapper*		m_input;
@@ -85,6 +88,8 @@ private:
 	
 	lua_State* m_clientLuaState;
 	lua_State* m_serverLuaState;
+
+	std::vector<GraphicalSystem*> m_graphicalSystems;
 };
 
 #endif

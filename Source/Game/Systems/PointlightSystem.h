@@ -1,7 +1,7 @@
 #ifndef POINTLIGHTSYSTEM_H
 #define POINTLIGHTSYSTEM_H
 
-#include "ECSL/Interfaces/System.h"
+#include "GraphicalSystem.h"
 #if defined(__ANDROID__) || defined(__IOS__)
 #include "AndroidRenderer/GraphicDevice.h"
 #else
@@ -9,7 +9,7 @@
 #endif
 
 
-class PointlightSystem : public ECSL::System
+class PointlightSystem : public GraphicalSystem
 {
 public:
 	PointlightSystem(Renderer::GraphicDevice* _graphics);
@@ -28,8 +28,6 @@ private:
 	unsigned int m_numberOfBitSets;
 	unsigned int m_changedComponentId;
 	unsigned int m_pointLightId;;
-
-	Renderer::GraphicDevice* m_graphics;
 };
 
 #endif

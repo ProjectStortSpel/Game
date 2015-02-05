@@ -741,8 +741,16 @@ namespace LuaEmbedder
 			else if (lua_istable(A, -2))
 			{
 				int a = lua_gettop(A) - 1;
+				lua_pushstring(A, "__mode");
+				lua_pushstring(A, "k");
+				lua_settable(A, a);
+				
 				lua_newtable(B);
 				int b = lua_gettop(B);
+				lua_pushstring(B, "__mode");
+				lua_pushstring(B, "k");
+				lua_settable(B, b);
+				
 				CopyTable(A, B, a, b);
 			}
 			else if (lua_isuserdata(A, -2))
@@ -799,8 +807,16 @@ namespace LuaEmbedder
 			else if (lua_istable(A, -1))
 			{
 				int a = lua_gettop(A);
+				lua_pushstring(A, "__mode");
+				lua_pushstring(A, "k");
+				lua_settable(A, a);
+				
 				lua_newtable(B);
 				int b = lua_gettop(B);
+				lua_pushstring(B, "__mode");
+				lua_pushstring(B, "k");
+				lua_settable(B, b);
+				
 				CopyTable(A, B, a, b);
 			}
 			else if (lua_isuserdata(A, -1))
