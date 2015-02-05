@@ -83,6 +83,7 @@ private:
 	Utility::FrameCounter m_worldCounter;
 	Utility::FrameCounter m_networkCounter;
 	Utility::FrameCounter m_graphicsCounter;
+	Utility::FrameCounter m_luaGarbageCollectionCounter;
 
 	Profilers::ECSLProfiler* m_worldProfiler;
 	

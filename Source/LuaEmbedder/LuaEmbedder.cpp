@@ -11,7 +11,10 @@ namespace LuaEmbedder
   std::map<lua_State*, std::vector<lua_State*>> LuaParentChildrensMap = std::map<lua_State*, std::vector<lua_State*>>();
   std::map<lua_State*, lua_State*> LuaChildrenParentMap = std::map<lua_State*, lua_State*>();
   std::vector<int(*)(lua_State*)> Functions = std::vector<int (*)(lua_State*)>();
-  
+
+  const float SecondsToCount = (float)SDL_GetPerformanceFrequency();
+  const float CountsToSeconds = 1.0f / SecondsToCount;
+
   lua_State* CreateState()
   {
     lua_State* L = luaL_newstate();
@@ -190,7 +193,6 @@ namespace LuaEmbedder
       lua_gettable(L, -2);
     }
     bool error = lua_pcall(L, argumentCount, LUA_MULTRET, 0);
-    lua_gc(L, LUA_GCCOLLECT, 0);
     if (error)
     {
 	  SDL_Log("LuaEmbedder::CallFunction : %s", (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error"));
@@ -199,15 +201,14 @@ namespace LuaEmbedder
     return true;
   }
   
-  void CollectGarbage(lua_State* L)
+  void CollectGarbage(lua_State* L, float durationInMilliseconds)
   {
-    //lua_gc(L, LUA_GCCOLLECT, 0);
-	  lua_gc(L, LUA_GCSTEP, 0);
-  }
-  void CollectGarbage(lua_State* L, int durationInMilliseconds)
-  {
-    lua_gc(L, LUA_GCSETSTEPMUL, durationInMilliseconds);
-    lua_gc(L, LUA_GCSTEP, 0);
+	int result = 0;
+	Uint64 targetTime = (Uint64)(((float)SDL_GetPerformanceCounter() * CountsToSeconds + durationInMilliseconds) * SecondsToCount);
+	do
+	{
+		result = lua_gc(L, LUA_GCSTEP, 0);
+	} while (SDL_GetPerformanceCounter() < targetTime && result != 1);
   }
   int GetMemoryUsage()
   {
@@ -220,14 +221,33 @@ namespace LuaEmbedder
     }
     return memoryUsage;
   }
-  void CollectGarbage()
+  void CollectGarbageStep()
   {
 	for (std::map<lua_State*, std::vector<lua_State*>>::iterator it0 = LuaParentChildrensMap.begin(); it0 != LuaParentChildrensMap.end(); it0++)
 	{
 		for (std::vector<lua_State*>::iterator it1 = it0->second.begin(); it1 != it0->second.end(); it1++)
-			lua_gc( (*it1), LUA_GCSTEP, 0);
-		lua_gc( (it0->first), LUA_GCSTEP, 0);
+			lua_gc((*it1), LUA_GCSTEP, 0);
+		lua_gc((it0->first), LUA_GCSTEP, 0);
 	}
+  }
+  void CollectGarbageFull()
+  {
+	  for (std::map<lua_State*, std::vector<lua_State*>>::iterator it0 = LuaParentChildrensMap.begin(); it0 != LuaParentChildrensMap.end(); it0++)
+	  {
+		  for (std::vector<lua_State*>::iterator it1 = it0->second.begin(); it1 != it0->second.end(); it1++)
+			  lua_gc((*it1), LUA_GCCOLLECT, 0);
+		  lua_gc((it0->first), LUA_GCCOLLECT, 0);
+	  }
+  }
+  void CollectGarbageForDuration(float durationInMilliseconds)
+  {
+	  float durationPerState = durationInMilliseconds / (float)(LuaParentChildrensMap.size() + LuaChildrenParentMap.size());
+	  for (std::map<lua_State*, std::vector<lua_State*>>::iterator it0 = LuaParentChildrensMap.begin(); it0 != LuaParentChildrensMap.end(); it0++)
+	  {
+		  for (std::vector<lua_State*>::iterator it1 = it0->second.begin(); it1 != it0->second.end(); it1++)
+			  CollectGarbage((*it1), durationPerState);
+		  CollectGarbage((it0->first), durationPerState);
+	  }
   }
 
 #define ADD_VARIABLE(luaState, type) \
@@ -693,7 +713,6 @@ namespace LuaEmbedder
     
     lua_insert(L, -(1 + argumentCount));
     bool error = lua_pcall(L, argumentCount, LUA_MULTRET, 0);
-    lua_gc(L, LUA_GCCOLLECT, 0);
     if (error)
     {
       SDL_Log("LuaEmbedder::CallFunction : %s", (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error"));
