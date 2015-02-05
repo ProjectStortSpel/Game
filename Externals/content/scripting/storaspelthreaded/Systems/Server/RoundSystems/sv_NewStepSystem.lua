@@ -54,9 +54,6 @@ NewStepSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 				id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo("DealCards", id)
 				world:SetComponent(id, "DealCards", "NumCards", 5)
-
-				id = world:CreateNewEntity()
-				world:CreateComponentAndAddTo("RemoveEffects", id)
 				
 			end
 			world:KillEntity( entity )

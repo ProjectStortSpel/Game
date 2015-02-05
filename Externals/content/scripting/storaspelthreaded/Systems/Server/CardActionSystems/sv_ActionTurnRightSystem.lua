@@ -17,13 +17,6 @@ ActionTurnRightSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, e
 	for n = 1, #entities do
 		local entity = entities[n]
 		
-		if world:EntityHasComponent(entity, "Stunned") then
-			world:SetComponent(entity, "NoSubSteps", "Counter", 1)
-			world:RemoveComponentFrom("UnitTurnRight", entity)
-			print("I AM A STUNNED UNIT WITH ID: " .. entity)
-			return
-		end
-		
 		local dir = world:GetComponent(entity, "Direction", 0)
 		local x, z = dir:GetInt2()
 		

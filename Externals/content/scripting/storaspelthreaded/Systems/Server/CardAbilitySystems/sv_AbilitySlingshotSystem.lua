@@ -34,11 +34,6 @@ AbilitySlingshotSystem.CheckUnits = function(self, mapPosX, mapPosZ, currentPosX
 			world:CreateComponentAndAddTo("TakeCardStepsFromUnit", newId)
 			world:GetComponent(newId, "TakeCardStepsFromUnit", "Unit"):SetInt(units[i])
 			
-			---- Check if the unit is already stunned, if not stun him
-			--if not world:EntityHasComponent(units[i], "Stunned") then
-			--	world:CreateComponentAndAddTo("Stunned", units[i])
-			--end
-			
 			return true
 		end
 	
@@ -55,7 +50,7 @@ AbilitySlingshotSystem.CheckNotWalkable = function(self, mapPosX, mapPosZ, curre
 	
 		local targetPosX, targetPosZ = world:GetComponent(entities[i], "MapPosition", 0):GetInt2()
 		if targetPosX == currentPosX and targetPosZ == currentPosZ then
-			self:AddBullet(mapPosX, mapPosZ, targetPosX, targetPosZ, 0.5)
+			self:AddBullet(mapPosX, mapPosZ, targetPosX, targetPosZ, 5.5)
 			return true
 		end
 	
@@ -68,9 +63,19 @@ end
 AbilitySlingshotSystem.AddBullet = function(self, posX, posZ, targetPosX, targetPosZ, lerpTime)
 
 	local bullet = world:CreateNewEntity("SlingShotProjectile")
+	
+	print("posX: " .. posX)
+	print("posZ: " .. posZ)
+	print("targetPosX: " .. targetPosX)
+	print("targetPosZ: " .. targetPosZ)
+	print("lerpTime: " .. 0.2)
+	
 	world:GetComponent(bullet, "Position", 0):SetFloat3(posX, 1, posZ)
-	world:GetComponent(bullet, "LerpTargetPosition", 0):SetFloat3(targetPosX, 1, targetPosZ)
-	world:GetComponent(bullet, "LerpTime", 0):SetFloat2(lerpTime, 0)
+	world:GetComponent(entity, "SlerpRotation", "X"):SetFloat(targetPosX)
+	world:GetComponent(entity, "SlerpRotation", "Y"):SetFloat(1)
+	world:GetComponent(entity, "SlerpRotation", "Z"):SetFloat(targetPosZ)
+	world:GetComponent(entity, "SlerpRotation", "Time"):SetFloat(0.2)
+	world:GetComponent(entity, "SlerpRotation", "Algorithm"):SetString("NormalLerp")
 
 end
 
@@ -105,7 +110,7 @@ AbilitySlingshotSystem.Update = function(self, dt, taskIndex, taskCount)
 			if currentPosX < 1 or currentPosZ < 1
 			or currentPosX > mapSizeX or currentPosZ > mapSizeZ then
 				-- Outside the map, create a new bullet
-				self:AddBullet(mapPosX, mapPosZ, currentPosX, currentPosZ, 0.5)
+				self:AddBullet(mapPosX, mapPosZ, currentPosX, currentPosZ, 5.5)
 				break
 			else
 				-- Go through all units and check if the projectile collide with something
@@ -124,13 +129,22 @@ AbilitySlingshotSystem.Update = function(self, dt, taskIndex, taskCount)
 	end
 
 	local slingshots = self:GetEntities("SlingShotProjectile")
-	for i = 1, #slingshots do
-		local posX, _, posZ	 = world:GetComponent(slingshots[i], "Position", 0):GetFloat3()
-		local tarX, _, tarZ = world:GetComponent(slingshots[i], "LerpTargetPosition", 0):GetFloat3()
-		
-		if posX == tarX and posZ == tarZ then
-			world:KillEntity(slingshots[i])
-		end
-	end
+	--for i = 1, #slingshots do
+		--local posX, _, posZ	 = world:GetComponent(slingshots[i], "Position", 0):GetFloat3()
+	--	
+	--	local tX = world:GetComponent(slingshots[i], "LerpingPosition", "tX"):GetFloat(0)
+	--	local tZ = world:GetComponent(slingshots[i], "LerpingPosition", "tZ"):GetFloat(0)
+    --
+	--	print("UPDATE")
+	--	print("posX: " .. posX)
+	--	print("posZ: " .. posZ)
+	--	print("tX: " .. tX)
+	--	print("tZ: " .. tZ)
+	--	
+	--	
+	--	if posX == tarX and posZ == tarZ then
+	--		world:KillEntity(slingshots[i])
+	--	end
+	--end
 	
 end

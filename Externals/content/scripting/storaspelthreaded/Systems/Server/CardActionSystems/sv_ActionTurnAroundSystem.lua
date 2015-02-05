@@ -16,12 +16,6 @@ ActionTurnAroundSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, 
 
 	--print("TURN AROUND Number of entities: " .. #entities)
 	for i = 1, #entities do
-		if world:EntityHasComponent(entities[i], "Stunned") then
-			world:SetComponent(entities[i], "NoSubSteps", "Counter", 1)
-			world:RemoveComponentFrom("UnitTurnAround", entities[i])
-			print("I AM A STUNNED UNIT WITH ID: " .. entities[i])
-			return
-		end
 		
 		local dir = world:GetComponent(entities[i], "Direction", 0)
 		local x, z = dir:GetInt2()

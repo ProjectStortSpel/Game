@@ -10,7 +10,6 @@ AbilitySprintSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Unit",FilterType.Mandatory)
 	self:AddComponentTypeToFilter("UnitSprint",FilterType.Mandatory)
 	
-	--self:AddComponentTypeToFilter("Stunned",FilterType.Excluded)
 end
 
 AbilitySprintSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)

@@ -17,12 +17,7 @@ ActionTurnLeftSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, en
 	print("TURN LEFT Number of entities: " .. #entities)
 	for n = 1, #entities do
 		local entity = entities[n]
-		if world:EntityHasComponent(entity, "Stunned") then
-			world:SetComponent(entity, "NoSubSteps", "Counter", 1)
-			world:RemoveComponentFrom("UnitTurnLeft", entity)
-			print("I AM A STUNNED UNIT WITH ID: " .. entity)
-			return
-		end
+
 		print("ha")
 		local dir = world:GetComponent(entity, "Direction", 0)
 		local rot = world:GetComponent(entity, "Rotation", 0)
