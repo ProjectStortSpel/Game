@@ -8,6 +8,8 @@ namespace LuaBridge
 	namespace LuaNetwork
 	{
 		void Embed(lua_State* L);
+        void SetClientLuaState(lua_State* L);
+        void SetServerLuaState(lua_State* L);
 	}
 
 	namespace LuaClientNetwork

@@ -65,7 +65,7 @@ void MasterServerSystem::PostInitialize()
 void MasterServerSystem::Update(const ECSL::RuntimeInfo& _runtime)
 {
 	// Return if the user is a already connected client
-	if (NetworkInstance::GetClient()->IsConnected())
+	if (NetworkInstance::GetClient()->IsConnected() && !NetworkInstance::GetServer()->IsRunning())
 		return;
 
 

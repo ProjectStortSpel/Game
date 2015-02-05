@@ -10,6 +10,7 @@ namespace LuaEmbedder
 {
   std::map<lua_State*, std::vector<lua_State*>> LuaParentChildrensMap = std::map<lua_State*, std::vector<lua_State*>>();
   std::map<lua_State*, lua_State*> LuaChildrenParentMap = std::map<lua_State*, lua_State*>();
+  std::map<std::string, lua_State*> LuaFunctionStateMap = std::map<std::string, lua_State*>();
   std::vector<int(*)(lua_State*)> Functions = std::vector<int (*)(lua_State*)>();
   
   lua_State* CreateState()
@@ -645,9 +646,22 @@ namespace LuaEmbedder
     return lua_isfunction(L, index);
   }
   
+  lua_State* GetFunctionLuaState(const std::string& key)
+  {
+    if (LuaFunctionStateMap.find(key) == LuaFunctionStateMap.end())
+    {
+        SDL_Log("LuaEmbedder::GetFunctionLuaState : Invalid key %s", key.c_str());
+        return nullptr;
+    }
+    return LuaFunctionStateMap[key];
+  }
+    
   void SaveFunction(lua_State* L, int index, const std::string& key)
   {
 	int top = lua_gettop(L);
+    
+    LuaFunctionStateMap[key] = L;
+      
     if (!lua_isfunction(L, index))
     {
       SDL_Log("LuaEmbedder::SaveFunction : Element at index %d is not a function", index);
@@ -672,8 +686,17 @@ namespace LuaEmbedder
 	lua_settop(L, top);
   }
   
-  bool CallSavedFunction(lua_State* L, const std::string& key, int argumentCount)
+  bool CallSavedFunction(const std::string& key, int argumentCount)
   {
+      
+    if (LuaFunctionStateMap.find(key) == LuaFunctionStateMap.end())
+    {
+        SDL_Log("LuaEmbedder::CallSavedFunction : Invalid key %s", key.c_str());
+        return false;
+    }
+      
+    lua_State* L = LuaFunctionStateMap[key];
+      
     lua_getglobal(L, "saved_functions");
     if (lua_isnil(L, -1))
     {
