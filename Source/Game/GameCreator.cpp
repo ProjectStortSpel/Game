@@ -317,17 +317,19 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
     if (_worldType == WorldType::Client)
     {
         m_clientWorld = worldCreator.CreateWorld(1000);
+		LuaEmbedder::CollectGarbageFull();
         LuaEmbedder::AddObject<ECSL::World>(luaState, "World", m_clientWorld, "world");
         m_clientWorld->PostInitializeSystems();
+		LuaEmbedder::CollectGarbageFull();
     }
     else
     {
         m_serverWorld = worldCreator.CreateWorld(1000);
+		LuaEmbedder::CollectGarbageFull();
         LuaEmbedder::AddObject<ECSL::World>(luaState, "World", m_serverWorld, "world");
         m_serverWorld->PostInitializeSystems();
+		LuaEmbedder::CollectGarbageFull();
     }
-    
-	
 
 	m_worldProfiler = new Profilers::ECSLProfiler(m_graphics);
 }
@@ -464,7 +466,9 @@ void GameCreator::StartGame(int argc, char** argv)
 		m_worldProfiler->Render();
 		m_worldCounter.Tick();
 
-
+		m_luaGarbageCollectionCounter.Reset();
+		LuaEmbedder::CollectGarbageForDuration(0.2f);
+		m_luaGarbageCollectionCounter.Tick();
 
 		m_networkCounter.Reset();
 		UpdateNetwork(dt);
@@ -513,7 +517,7 @@ void GameCreator::StartGame(int argc, char** argv)
 			m_graphics->RenderSimpleText(vram.str(), 20, 0);
 			
 			std::stringstream ss;
-			ss << "Lua memory usage: " << LuaEmbedder::GetMemoryUsage() << " bytes";
+			ss << "Lua memory usage: " << LuaEmbedder::GetMemoryUsage() << " Kb";
 			m_graphics->RenderSimpleText(ss.str(), 20, 1);
 
 			m_graphics->RenderSimpleText("Time Statistics", 60, 0);
@@ -522,6 +526,7 @@ void GameCreator::StartGame(int argc, char** argv)
 			PrintSectionTime("World   ", &m_worldCounter, 60, 3);
 			PrintSectionTime("Network ", &m_networkCounter, 60, 4);
 			PrintSectionTime("Graphics", &m_graphicsCounter, 60, 5);
+			PrintSectionTime("Lua GC  ", &m_luaGarbageCollectionCounter, 60, 6);
 		}
 
 		m_frameCounter->Tick();

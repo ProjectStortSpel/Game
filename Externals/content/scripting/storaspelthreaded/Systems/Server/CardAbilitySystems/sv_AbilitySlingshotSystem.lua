@@ -28,7 +28,7 @@ AbilitySlingshotSystem.CheckUnits = function(self, mapPosX, mapPosZ, currentPosX
 		-- If the position is the same as the projectiles current position
 		-- Add a bullet
 		if targetPosX == currentPosX and targetPosZ == currentPosZ then
-			self:AddBullet(mapPosX, mapPosZ, targetPosX, targetPosZ, 0.5)
+			self:AddBullet(mapPosX, mapPosZ, targetPosX, targetPosZ, 0.1)
 			
 			local newId = world:CreateNewEntity()
 			world:CreateComponentAndAddTo("TakeCardStepsFromUnit", newId)
@@ -50,7 +50,7 @@ AbilitySlingshotSystem.CheckNotWalkable = function(self, mapPosX, mapPosZ, curre
 	
 		local targetPosX, targetPosZ = world:GetComponent(entities[i], "MapPosition", 0):GetInt2()
 		if targetPosX == currentPosX and targetPosZ == currentPosZ then
-			self:AddBullet(mapPosX, mapPosZ, targetPosX, targetPosZ, 5.5)
+			self:AddBullet(mapPosX, mapPosZ, targetPosX, targetPosZ, 0.1)
 			return true
 		end
 	
@@ -74,7 +74,7 @@ AbilitySlingshotSystem.AddBullet = function(self, posX, posZ, targetPosX, target
 	world:GetComponent(bullet, "LerpPosition", "X"):SetFloat(targetPosX)
 	world:GetComponent(bullet, "LerpPosition", "Y"):SetFloat(1)
 	world:GetComponent(bullet, "LerpPosition", "Z"):SetFloat(targetPosZ)
-	world:GetComponent(bullet, "LerpPosition", "Time"):SetFloat(0.2)
+	world:GetComponent(bullet, "LerpPosition", "Time"):SetFloat(lerpTime*math.abs(posX-targetPosX+posZ-targetPosZ))
 	world:GetComponent(bullet, "LerpPosition", "Algorithm"):SetString("NormalLerp")
 
 end
@@ -110,7 +110,7 @@ AbilitySlingshotSystem.Update = function(self, dt, taskIndex, taskCount)
 			if currentPosX < 1 or currentPosZ < 1
 			or currentPosX > mapSizeX or currentPosZ > mapSizeZ then
 				-- Outside the map, create a new bullet
-				self:AddBullet(mapPosX, mapPosZ, currentPosX, currentPosZ, 5.5)
+				self:AddBullet(mapPosX, mapPosZ, currentPosX, currentPosZ, 0.1)
 				break
 			else
 				-- Go through all units and check if the projectile collide with something

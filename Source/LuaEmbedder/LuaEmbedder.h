@@ -100,11 +100,11 @@ namespace LuaEmbedder
   bool EXPORT Load(lua_State* L, const std::string& filepath);
   bool EXPORT Preload(lua_State* L, const std::string& filepath);
   bool EXPORT CallFunction(lua_State* L, const std::string& name, int argumentCount = 0, const std::string& library = std::string());
-  
-  void EXPORT CollectGarbage(lua_State* L);
-  void EXPORT CollectGarbage(lua_State* L, int durationInMilliseconds);
+ 
   int EXPORT GetMemoryUsage();
-  void EXPORT CollectGarbage();
+  void EXPORT CollectGarbageStep();
+  void EXPORT CollectGarbageFull();
+  void EXPORT CollectGarbageForDuration(float durationInMilliseconds);
   
   void EXPORT AddFloat(lua_State* L, const std::string& name, float value, const std::string& library = std::string());
   void EXPORT AddInt(lua_State* L, const std::string& name, int value, const std::string& library = std::string());
