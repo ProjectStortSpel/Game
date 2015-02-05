@@ -9,22 +9,21 @@
 #include <string>
 #include <vector>
 
-class TextRenderer
+class DECLSPEC TextRenderer
 {
 public:
-	TextRenderer();
-	~TextRenderer();
+	static bool Init();
+
+	static void Clean();
 	
-	bool Init();
+	static int AddFont(const std::string& filepath, int size);
 	
-	int AddFont(const std::string& filepath, int size);
-	
-	SDL_Surface* CreateTextSurface(const std::string& textString, int fontIndex, SDL_Color color);
-	SDL_Surface* CreateWrappedTextSurface(const std::string& textString, int fontIndex, SDL_Color color, unsigned int wrapLength);
+	static SDL_Surface* CreateTextSurface(const std::string& textString, int fontIndex, SDL_Color color);
+	static SDL_Surface* CreateWrappedTextSurface(const std::string& textString, int fontIndex, SDL_Color color, unsigned int wrapLength);
 	
 private:
-	bool m_initialized;
-	std::vector<TTF_Font*> m_fonts;
+	static bool m_initialized;
+	static std::vector<TTF_Font*> m_fonts;
 };
 
 #endif
