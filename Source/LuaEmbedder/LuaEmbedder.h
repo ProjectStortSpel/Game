@@ -143,25 +143,34 @@ namespace LuaEmbedder
   bool EXPORT IsString(lua_State* L, int index);
   bool EXPORT IsFunction(lua_State* L, int index);
   
+    
+  EXPORT lua_State* GetFunctionLuaState(const std::string& key);
   void EXPORT SaveFunction(lua_State* L, int index, const std::string& key);
-  bool EXPORT CallSavedFunction(lua_State* L, const std::string& key, int argumentCount = 0);
+  bool EXPORT CallSavedFunction(const std::string& key, int argumentCount = 0);
   
   template<typename T>
   void EXPORT EmbedClass(lua_State* L, const std::string& className, bool gc = true)
   {
+	int top = lua_gettop(L);
     Luna<T>::Register(L, className.c_str(), gc);
+	lua_settop(L, top);
   }
   template<typename T>
   void EXPORT EmbedClassFunction(lua_State* L, const std::string& className, const std::string& methodName, int (T::*functionPointer)(lua_State*))
   {
+	int top = lua_gettop(L);
     Luna<T>::RegisterMethod(L, className.c_str(), methodName.c_str(), functionPointer);
+	lua_settop(L, top);
   }
   template<typename T>
   void EXPORT EmbedClassProperty(lua_State* L, const std::string& className, const std::string& propertyName, int (T::*getFunctionPointer)(lua_State*), int (T::*setFunctionPointer)(lua_State*))
   {
+	int top = lua_gettop(L);
     Luna<T>::RegisterProperty(L, className.c_str(), propertyName.c_str(), getFunctionPointer, setFunctionPointer);
+	lua_settop(L, top);
   }
-  #define ADD_OBJECT(luaState) \
+#define ADD_OBJECT(luaState) \
+	int top = lua_gettop(luaState); \
     if (library.empty()) \
     { \
       Luna<T>::push(luaState, className.c_str(), object); \
@@ -172,14 +181,15 @@ namespace LuaEmbedder
       lua_getglobal(luaState, library.c_str()); \
       if (lua_isnil(luaState, -1)) \
       { \
-	lua_pop(luaState, 1); \
-	luaL_newmetatable(luaState, library.c_str()); \
+		lua_pop(luaState, 1); \
+		luaL_newmetatable(luaState, library.c_str()); \
       } \
       lua_pushstring(luaState, name.c_str()); \
       Luna<T>::push(luaState, className.c_str(), object); \
       lua_settable(luaState, -3); \
       lua_setglobal(luaState, library.c_str()); \
-    }
+    } \
+	lua_settop(luaState, top);
   template<typename T>
   void EXPORT AddObject(lua_State* L, const std::string& className, T* object, const std::string& name, const std::string& library = std::string())
   {
@@ -192,13 +202,15 @@ namespace LuaEmbedder
       it1 = LuaParentChildrensMap.find(L);
       if (it1 == LuaParentChildrensMap.end())
       {
-	ADD_OBJECT(L);
-	return;
+		ADD_OBJECT(L);
+		return;
       }
     }
     assert(it1 != LuaParentChildrensMap.end());
-    for (std::vector<lua_State*>::iterator it2 = it1->second.begin(); it2 != it1->second.end(); it2++)
-      ADD_OBJECT((*it2));
+	for (std::vector<lua_State*>::iterator it2 = it1->second.begin(); it2 != it1->second.end(); it2++)
+	{
+		ADD_OBJECT((*it2));
+	}
     ADD_OBJECT(it1->first);
   }
   template<typename T>

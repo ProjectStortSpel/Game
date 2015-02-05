@@ -666,7 +666,7 @@ namespace LuaEmbedder
 
 	static bool DumpFunction(lua_State* L, luaL_Buffer* buffer)
 	{
-		int error = lua_dump(L, (lua_Writer)WriteFunction, buffer, 0);
+		int error = lua_dump(L, (lua_Writer)WriteFunction, buffer, 1);
 		luaL_pushresult(buffer);
 		if (error != 0)
 		{

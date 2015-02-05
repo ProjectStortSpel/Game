@@ -43,9 +43,18 @@ HostMenuSystem.SpawnMenu = function(self)
 	local background = self:CreateElement("gamemenubackground", "quad", 0, 0, -2.5, 2.07, 1.3)
 	
 	local button = nil
-	button = self:CreateElement("host", "quad", 0, 0.6, -2, 0.6, 0.3)
-	self:AddConsoleCommandToButton("host;gamemode storaspelthreaded", button)
+	button = self:CreateElement("hostdedicated", "quad", 0, 0.25, -2, 0.5, 0.24)
+	print(button)
+	self:AddConsoleCommandToButton("host;gamemode storaspelthreaded", button)	
 	self:AddHoverSize(1.1, button)
+	
+	button = self:CreateElement("hostlisten", "quad", 0, -0.25, -2, 0.5, 0.24)
+	print(button)
+	self:AddConsoleCommandToButton("hostlisten;gamemode", button)	
+	self:AddHoverSize(1.1, button)
+	
+	
+	button = self:CreateElement("host", "quad", 0, 0.67, -2, 0.6, 0.3)
 end
 
 HostMenuSystem.RemoveMenu = function(self)

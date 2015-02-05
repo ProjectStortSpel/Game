@@ -16,6 +16,12 @@ ActionTurnAroundSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, 
 
 	--print("TURN AROUND Number of entities: " .. #entities)
 	for i = 1, #entities do
+		if world:EntityHasComponent(entities[i], "Stunned") then
+			world:SetComponent(entities[i], "NoSubSteps", "Counter", 1)
+			world:RemoveComponentFrom("UnitTurnAround", entities[i])
+			print("I AM A STUNNED UNIT WITH ID: " .. entities[i])
+			return
+		end
 		
 		local dir = world:GetComponent(entities[i], "Direction", 0)
 		local x, z = dir:GetInt2()
@@ -26,32 +32,14 @@ ActionTurnAroundSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, 
 		
 		local rot_x, rot_y, rot_z = rot:GetFloat3()
 		
-		if not world:EntityHasComponent(entities[i], "SlerpRotation") then
-			world:CreateComponentAndAddTo("SlerpRotation", entities[i])
-		end 
-		
-		local rotY = world:GetComponent(entities[i], "Rotation", "Y"):GetFloat()
-		world:GetComponent(entities[i], "SlerpRotation", "fromX"):SetFloat( 0 )
-		world:GetComponent(entities[i], "SlerpRotation", "fromY"):SetFloat( 1 )
-		world:GetComponent(entities[i], "SlerpRotation", "fromZ"):SetFloat( 0 )
-		if	x == 0 and z == 1 then
-			world:GetComponent(entities[i], "SlerpRotation", "fromW"):SetFloat( math.pi )
-			rotY = 0
-		elseif  x == 0 and z == -1 then
-			world:GetComponent(entities[i], "SlerpRotation", "fromW"):SetFloat( 0 )
-			rotY = math.pi
-		elseif  x == 1 then		
-			world:GetComponent(entities[i], "SlerpRotation", "fromW"):SetFloat( -math.pi / 2 )
-			rotY = math.pi / 2
-		elseif  x == -1 then
-			world:GetComponent(entities[i], "SlerpRotation", "fromW"):SetFloat( math.pi / 2 )
-			rotY = -math.pi / 2 
+		if not world:EntityHasComponent(entities[i], "LerpRotation") then
+			world:CreateComponentAndAddTo("LerpRotation", entities[i])
 		end
-		
-		world:GetComponent(entities[i], "SlerpRotation", "toX"):SetFloat( 0 )
-		world:GetComponent(entities[i], "SlerpRotation", "toY"):SetFloat( 1 )
-		world:GetComponent(entities[i], "SlerpRotation", "toZ"):SetFloat( 0 )
-		world:GetComponent(entities[i], "SlerpRotation", "toW"):SetFloat( math.pi )
+		world:GetComponent(entities[i], "LerpRotation", "X"):SetFloat(rot_x)
+		world:GetComponent(entities[i], "LerpRotation", "Y"):SetFloat(rot_y + math.pi)
+		world:GetComponent(entities[i], "LerpRotation", "Z"):SetFloat(rot_z)
+		world:GetComponent(entities[i], "LerpRotation", "Time"):SetFloat(1)
+		world:GetComponent(entities[i], "LerpRotation", "Algorithm"):SetString("SmoothLerp")
 		
 		world:SetComponent(entities[i], "NoSubSteps", "Counter", 1)
 		world:RemoveComponentFrom("UnitTurnAround", entities[i])

@@ -64,10 +64,16 @@ VoidSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 							if not world:EntityHasComponent(units[i], "UnitDead") then
 								world:CreateComponentAndAddTo("UnitDead", units[i])
 							end
-							-- Hide the unit
-							if not world:EntityHasComponent(units[i], "Hide") then
-								world:CreateComponentAndAddTo("Hide", units[i])
+							
+							--	Move the unit
+							if not world:EntityHasComponent(units[i], "LerpPosition") then
+								world:CreateComponentAndAddTo("LerpPosition", units[i])
 							end
+							world:GetComponent(units[i], "LerpPosition", "X"):SetFloat(tmpX)
+							world:GetComponent(units[i], "LerpPosition", "Y"):SetFloat(-10)
+							world:GetComponent(units[i], "LerpPosition", "Z"):SetFloat(voidZ)
+							world:GetComponent(units[i], "LerpPosition", "Time"):SetFloat(1)
+							world:GetComponent(units[i], "LerpPosition", "Algorithm"):SetString("ExponentialLerp")
 							
 							hitVoid = true
 							
