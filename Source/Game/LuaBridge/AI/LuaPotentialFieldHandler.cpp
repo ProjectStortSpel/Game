@@ -7,7 +7,7 @@ namespace LuaBridge
 		std::vector<PF> m_PFs;
 		std::vector<float> m_highestValues;
 		std::map<std::string, ObjectType> m_uniqueObjects;
-		float m_onTheSpotValue = 4.0f; // The value a field receives on the spot of an item.
+		std::vector<float> m_onTheSpotValues; // The value a field receives on the spot of an item.
 		glm::uvec2 m_mapSize;
 
 		void Embed(lua_State* L)
@@ -16,20 +16,24 @@ namespace LuaBridge
 			LuaEmbedder::EmbedClassFunction<PFParam>(L, "PFParam", "AddPosition", &PFParam::AddPosition);
 			LuaEmbedder::EmbedClassFunction<PFParam>(L, "PFParam", "SetObject", &PFParam::SetObject);
 
-			LuaEmbedder::AddFunction(L, "InitPFHandler", &InitPFHandler, "PotentialField");
+			//LuaEmbedder::AddFunction(L, "InitPFHandler", &InitPFHandler, "PotentialField");
 			LuaEmbedder::AddFunction(L, "InitPF", &InitPF, "PotentialField");
 			LuaEmbedder::AddFunction(L, "UpdatePF", &UpdatePF, "PotentialField");
 		}
 
-		int InitPFHandler(lua_State* L)
+		void InitPFHandler(unsigned int _mapSizeX, unsigned int _mapSizeY)
 		{
-			m_mapSize.x = LuaEmbedder::PullFloat(L, 1);
-			m_mapSize.y = LuaEmbedder::PullFloat(L, 2);
-			m_onTheSpotValue = LuaEmbedder::PullFloat(L, 3);
+			m_mapSize.x = _mapSizeX;
+			m_mapSize.y = _mapSizeY;
 
 			m_uniqueObjects.insert(std::pair<std::string, ObjectType>("NotWalkable", ObjectType::NotWalkable));
 			m_uniqueObjects.insert(std::pair<std::string, ObjectType>("Unit", ObjectType::Unit));
 			m_uniqueObjects.insert(std::pair<std::string, ObjectType>("Void", ObjectType::Void));
+
+			for (int i = 0; i < m_uniqueObjects.size(); i++)
+			{
+				m_onTheSpotValues[i] = 4.0f;
+			}
 
 			/* Initialize the size of the vector containing the PFs and initialize the values to 0.0f.*/
 			std::vector<float> tempInner;
@@ -38,8 +42,6 @@ namespace LuaBridge
 			tempOuter.resize(m_mapSize.x, tempInner);
 			m_PFs.resize(ObjectType::Last + 1, tempOuter);
 			m_highestValues.resize(m_PFs.size());
-
-			return 0;
 		}
 
 		int InitPF(lua_State* L)
@@ -49,8 +51,6 @@ namespace LuaBridge
 			int objectType = m_uniqueObjects.at(param->m_object);
 
 			CreatePF(param->m_positions, objectType);
-
-			NormalizePF(objectType);
 
 			return 0;
 		}
@@ -64,8 +64,6 @@ namespace LuaBridge
 			ClearPF(objectType);
 
 			CreatePF(param->m_positions, objectType);
-
-			NormalizePF(objectType);
 
 			return 0;
 		}
@@ -95,7 +93,7 @@ namespace LuaBridge
 			/* Add a value based on the manhattan distance. If we are on the spot, use "m_onTheSpotValue".*/
 			if (_manhattan == 0)
 			{
-				m_PFs[_index][_x][_y] += m_onTheSpotValue;
+				m_PFs[_index][_x][_y] += m_onTheSpotValues[_index];
 			}
 			else
 			{
@@ -110,19 +108,19 @@ namespace LuaBridge
 		}
 
 		/* Normalize the field so that the highest value is 1.*/
-		void NormalizePF(unsigned int _offset)
-		{
-			for (unsigned int i = 0; i < m_PFs.size(); i++)
-			{
-				for (unsigned int x = 0; x < m_mapSize.x; x++)
-				{
-					for (unsigned int y = 0; y < m_mapSize.y; y++)
-					{
-						m_PFs[i][x][y] /= m_highestValues[i];
-					}
-				}
-			}
-		}
+		//void NormalizePF(unsigned int _offset)
+		//{
+		//	for (unsigned int i = 0; i < m_PFs.size(); i++)
+		//	{
+		//		for (unsigned int x = 0; x < m_mapSize.x; x++)
+		//		{
+		//			for (unsigned int y = 0; y < m_mapSize.y; y++)
+		//			{
+		//				m_PFs[i][x][y] /= m_highestValues[i];
+		//			}
+		//		}
+		//	}
+		//}
 
 		void ClearPF(unsigned int _offset)
 		{
@@ -130,7 +128,7 @@ namespace LuaBridge
 			{
 				for (unsigned int y = 0; y < m_mapSize.y; y++)
 				{
-					m_PFs[_offset][x][y] /= 0.0f;
+					m_PFs[_offset][x][y] = 0.0f;
 				}
 			}
 		}

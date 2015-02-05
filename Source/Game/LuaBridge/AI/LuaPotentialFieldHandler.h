@@ -62,18 +62,20 @@ namespace LuaBridge
 		extern std::vector<PF> m_PFs;
 		extern std::vector<float> m_highestValues;
 		extern std::map<std::string, ObjectType> m_uniqueObjects;
-		extern float m_onTheSpotValue; // The value a field receives on the spot of an item.
+		extern std::vector<float> m_onTheSpotValues; // The value a field receives on the spot of an item.
 		extern glm::uvec2 m_mapSize;
 
 		void Embed(lua_State* L);
-		int InitPFHandler(lua_State* L);
+		//int InitPFHandler(lua_State* L);
 		int InitPF(lua_State* L);
 		int UpdatePF(lua_State* L);
 
 		//const PF* GetPF(ObjectType _object);
 		//const PF* GetPF(int _object);
+		const PF* GetPF(std::string _object) { return &m_PFs[m_uniqueObjects.at(_object)]; }
 
-		void NormalizePF(unsigned int _offset);
+		//void NormalizePF(unsigned int _offset);
+		void InitPFHandler(unsigned int _mapSizeX, unsigned int _mapSizeY);
 		void CalcValue(unsigned int _manhattan, unsigned int _x, unsigned int _y, unsigned int _offset);
 		void CreatePF(std::vector<glm::uvec2> m_positions, unsigned int _offset);
 		void ClearPF(unsigned int _offset);
