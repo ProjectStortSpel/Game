@@ -625,7 +625,7 @@ namespace LuaEmbedder
     return lua_isfunction(L, index);
   }
   
-  lua_State* EXPORT GetFunctionLuaState(const std::string& key)
+  lua_State* GetFunctionLuaState(const std::string& key)
   {
     if (LuaFunctionStateMap.find(key) == LuaFunctionStateMap.end())
     {

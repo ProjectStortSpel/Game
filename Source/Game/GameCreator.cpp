@@ -125,6 +125,15 @@ void GameCreator::InitializeNetworkEvents()
 
 	Network::NetEvent netEvent = std::bind(&GameCreator::OnConnectedToServer, this, std::placeholders::_1, std::placeholders::_2);
 	NetworkInstance::GetClient()->SetOnConnectedToServer(netEvent);
+
+	Network::NetMessageHook hook = std::bind(&NetworkHelper::ReceiveEntityAll, NetworkInstance::GetClientNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	NetworkInstance::GetClient()->AddNetworkHook("Entity", hook);
+
+	hook = std::bind(&NetworkHelper::ReceiveEntityDelta, NetworkInstance::GetClientNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	NetworkInstance::GetClient()->AddNetworkHook("EntityDelta", hook);
+
+	hook = std::bind(&NetworkHelper::ReceiveEntityKill, NetworkInstance::GetClientNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	NetworkInstance::GetClient()->AddNetworkHook("EntityKill", hook);
 }
 
 void GameCreator::InitializeThreads()
@@ -531,6 +540,8 @@ void GameCreator::UpdateNetwork(float _dt)
 
 void GameCreator::GameMode(std::string _gamemode)
 {
+	if (_gamemode == "lobby")
+		_gamemode = "lobbythreaded";
 	m_gameMode = _gamemode;
 	Reload();
 }
@@ -645,7 +656,7 @@ void GameCreator::LuaPacket(Network::PacketHandler* _ph, uint64_t& _id, Network:
 
 void GameCreator::NetworkGameMode(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
 {
-    if (!m_serverWorld)
+    if (!NetworkInstance::GetServer()->IsRunning())
         GameMode(_ph->ReadString(_id));
 }
 
@@ -768,7 +779,7 @@ void GameCreator::PollSDLEvent()
 
 void GameCreator::ConsoleReload(std::string _command, std::vector<Console::Argument>* _args)
 {
-    if (m_serverWorld)
+    if (NetworkInstance::GetServer()->IsRunning())
     {
         Reload();
     }
@@ -781,7 +792,7 @@ void GameCreator::ConsoleStopGame(std::string _command, std::vector<Console::Arg
 
 void GameCreator::OnConnectedToServer(Network::NetConnection _nc, const char* _message)
 {
-    if (!m_serverWorld)
+    if (!NetworkInstance::GetServer()->IsRunning())
         GameMode("storaspelthreaded");
 }
 

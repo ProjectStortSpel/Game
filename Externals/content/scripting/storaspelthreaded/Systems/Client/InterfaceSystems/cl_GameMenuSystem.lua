@@ -54,7 +54,7 @@ GameMenuSystem.SpawnMenu = function(self)
 	self:AddHoverSize(1.1, button)	
 	
 	button = self:CreateElement("lobby", "quad", 0, 0.2, -3, 0.6, 0.3)
-	self:AddConsoleCommandToButton("disconnect;gamemode lobby", button)
+	self:AddConsoleCommandToButton("disconnect;stop;gamemode lobby", button)
 	self:AddHoverSize(1.1, button)	
 
 	button = self:CreateElement("quit", "quad", 0, -0.6, -3, 0.6, 0.3)

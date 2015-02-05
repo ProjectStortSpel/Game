@@ -144,7 +144,7 @@ namespace LuaEmbedder
   bool EXPORT IsFunction(lua_State* L, int index);
   
     
-  lua_State* EXPORT GetFunctionLuaState(const std::string& key);
+  EXPORT lua_State* GetFunctionLuaState(const std::string& key);
   void EXPORT SaveFunction(lua_State* L, int index, const std::string& key);
   bool EXPORT CallSavedFunction(const std::string& key, int argumentCount = 0);
   
