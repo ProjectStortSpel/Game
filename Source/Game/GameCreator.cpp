@@ -11,6 +11,7 @@
 #include "Systems/PointlightSystem.h"
 #include "Systems/DirectionalLightSystem.h"
 #include "Systems/MasterServerSystem.h"
+#include "Systems/SlerpRotationSystem.h"
 
 #include "Network/NetworkInstance.h"
 #include "ECSL/ECSL.h"
@@ -195,12 +196,13 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 
 	//NetworkMessagesSystem* nms = new NetworkMessagesSystem();
 	//nms->SetConsole(&m_consoleManager);
-
-
+	
 	GraphicalSystem* graphicalSystem = 0;
-
 	graphicalSystem = new PointlightSystem(m_graphics);
 	m_graphicalSystems.push_back(graphicalSystem);
+	
+	worldCreator.AddSystemGroup();
+	worldCreator.AddLuaSystemToCurrentGroup(new SlerpRotationSystem());
 	worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 
@@ -726,7 +728,6 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 			GraphicalSystem* tSystem = m_graphicalSystems.at(n);
 			tSystem->SetGraphics(m_graphics);
 		}
-
 	}
 #endif
 }

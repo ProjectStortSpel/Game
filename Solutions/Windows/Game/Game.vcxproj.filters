@@ -78,15 +78,6 @@
     <Filter Include="Game\Profilers\ECSLProfiler\Render Views">
       <UniqueIdentifier>{e772fded-ab7d-4fc8-b348-3786ee79e575}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scripting\storaspelthreaded\Components">
-      <UniqueIdentifier>{830d2e85-206f-4614-b60c-c8a0dcaddfbd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scripting\storaspelthreaded\Systems">
-      <UniqueIdentifier>{d9745c7b-1c7c-4d8d-8a28-024091278812}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scripting\storaspelthreaded\Templates">
-      <UniqueIdentifier>{47ed36f8-b497-45fd-803c-8620c0936578}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Scripting\storaspelthreaded\Components\GameLogic">
       <UniqueIdentifier>{12ce9069-4587-443e-b315-ea805c8b83f8}</UniqueIdentifier>
     </Filter>
@@ -305,6 +296,9 @@
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\AI\LuaPotentialFieldHandler.cpp">
       <Filter>Lua Bridge\AI</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Pathfinder.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h">
@@ -453,6 +447,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\AI\LuaPotentialFieldHandler.h">
       <Filter>Lua Bridge\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Pathfinder.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -213,7 +213,7 @@ void GraphicsLow::Render()
 	}
 
 	// RENDER VIEWSPACE STUFF
-	glDisable(GL_DEPTH_TEST);
+	//glDisable(GL_DEPTH_TEST);
 	//glDisable(GL_CULL_FACE);
 	glEnable(GL_TEXTURE_2D);
 	m_viewspaceShader.UseProgram();

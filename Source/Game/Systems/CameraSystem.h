@@ -18,11 +18,7 @@ public:
 
 	void Initialize();
 	void Update(const ECSL::RuntimeInfo& _runtime);
-
-	void SetGraphics(Renderer::GraphicDevice* _graphics){ m_graphics = _graphics; }
-
 private:
-	Renderer::GraphicDevice* m_graphics;
 	Input::InputWrapper* m_input;
 };
 

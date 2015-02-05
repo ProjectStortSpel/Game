@@ -47,6 +47,17 @@ end
 
 OptionMenuSystem.SpawnMenu = function(self)
 	local background = self:CreateElement("gamemenubackground", "quad", 0, -0, -3.1, 3, 3)
+	
+	local button = nil
+	button = self:CreateElement("graphicslow", "quad", 0, 0.4, -3, 0.6, 0.3)
+	print(button)
+	self:AddConsoleCommandToButton("changegraphics low", button)	
+	self:AddHoverSize(1.1, button)
+	
+	button = self:CreateElement("graphicshigh", "quad", 0, -0.4, -3, 0.6, 0.3)
+	print(button)
+	self:AddConsoleCommandToButton("changegraphics high", button)	
+	self:AddHoverSize(1.1, button)
 end
 
 OptionMenuSystem.RemoveMenu = function(self)
@@ -85,4 +96,12 @@ end
 OptionMenuSystem.AddEntityCommandToButton = function(self, command, button)
 	world:CreateComponentAndAddTo("MenuEntityCommand", button)
 	world:GetComponent(button, "MenuEntityCommand", "ComponentName"):SetString(command)
+end
+
+OptionMenuSystem.AddHoverSize = function(self, deltascale, button)
+	local scale = self:GetComponent(button, "Scale", 0)
+	local sx, sy, sz = scale:GetFloat3()
+	world:CreateComponentAndAddTo("HoverSize", button)
+	local hoversize = self:GetComponent(button, "HoverSize", 0)
+	hoversize:SetFloat3(sx*deltascale, sy*deltascale, sz*deltascale)
 end
