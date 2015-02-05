@@ -58,14 +58,9 @@ void MasterServerSystem::PostInitialize()
 	}
 }
 
+float tmpTimer = 0.f;
 void MasterServerSystem::Update(const ECSL::RuntimeInfo& _runtime)
 {
-	if (!NetworkInstance::GetClient()->IsConnected() && !NetworkInstance::GetServer()->IsRunning())
-	{
-		if (Input::InputWrapper::GetInstance().GetKeyboard()->GetKeyState(SDL_SCANCODE_BACKSPACE) == Input::InputState::PRESSED)
-			m_mServerMessages.push_back(GET_SERVER_LIST);
-	}
-
 	// Return if the user is a already connected client
 	if (NetworkInstance::GetClient()->IsConnected() && !NetworkInstance::GetServer()->IsRunning())
 		return;
@@ -138,6 +133,18 @@ void MasterServerSystem::Update(const ECSL::RuntimeInfo& _runtime)
 		}
 
 	}
+
+	if (NetworkInstance::GetClient()->IsConnected() || NetworkInstance::GetServer()->IsRunning())
+		return;
+
+	tmpTimer += _runtime.Dt;
+	if (tmpTimer > 2.f)
+	{
+		
+		m_mServerMessages.push_back(GET_SERVER_LIST);
+		tmpTimer = 0.f;
+	}
+
 }
 
 void MasterServerSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities)
@@ -217,6 +224,9 @@ void MasterServerSystem::OnServerShutdown()
 
 void MasterServerSystem::OnGetServerList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
 {
+	if (NetworkInstance::GetClient()->IsConnected() || NetworkInstance::GetServer()->IsRunning())
+		return;
+
 	for (int i = 0; i < this->m_serverIds.size(); ++i)
 		KillEntity(this->m_serverIds[i]);
 
