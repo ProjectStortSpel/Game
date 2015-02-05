@@ -726,7 +726,6 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 			GraphicalSystem* tSystem = m_graphicalSystems.at(n);
 			tSystem->SetGraphics(m_graphics);
 		}
-
 	}
 #endif
 }
