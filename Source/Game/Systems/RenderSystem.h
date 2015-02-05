@@ -1,7 +1,7 @@
 #ifndef RENDERSYSTEM_H
 #define RENDERSYSTEM_H
 
-#include "ECSL/Interfaces/System.h"
+#include "GraphicalSystem.h"
 #if defined(__ANDROID__) || defined(__IOS__)
 #include "AndroidRenderer/GraphicDevice.h"
 #else
@@ -9,7 +9,7 @@
 #endif
 
 
-class RenderSystem : public ECSL::System
+class RenderSystem : public GraphicalSystem
 {
 public:
 	RenderSystem(Renderer::GraphicDevice* _graphics);
@@ -33,8 +33,6 @@ private:
 
 	unsigned int m_parentId;
 	unsigned int m_isparentId;
-
-	Renderer::GraphicDevice* m_graphics;
 
 	std::map<unsigned int, std::vector<unsigned int>> m_Parents;
 };

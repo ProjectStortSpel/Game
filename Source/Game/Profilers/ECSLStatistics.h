@@ -62,6 +62,11 @@ namespace Profilers
 		const float* GetMaxThreadOverheadTime() { return m_maxThreadOverheadTime; }
 		const float* GetDiffThreadOverheadTime() { return m_diffThreadOverheadTime; }
 
+		const float GetAvgEffectiveThreadCount() { return m_avgEffectiveThreadCount; }
+		const float GetMinEffectiveThreadCount() { return m_minEffectiveThreadCount; }
+		const float GetMaxEffectiveThreadCount() { return m_maxEffectiveThreadCount; }
+		const float GetDiffEffectiveThreadCount() { return m_diffEffectiveThreadCount; }
+
 		const std::vector<std::vector<WorkItemStatistic*>*>* GetWorkItemStats() { return m_workItemStats; }
 
 	private:
@@ -102,6 +107,11 @@ namespace Profilers
 		float* m_minThreadOverheadTime;
 		float* m_maxThreadOverheadTime;
 		float* m_diffThreadOverheadTime;
+
+		float m_avgEffectiveThreadCount;
+		float m_minEffectiveThreadCount;
+		float m_maxEffectiveThreadCount;
+		float m_diffEffectiveThreadCount;
 
 		std::vector<std::vector<WorkItemStatistic*>*>* m_workItemStats;
 	};

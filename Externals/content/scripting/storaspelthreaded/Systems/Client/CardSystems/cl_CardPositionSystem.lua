@@ -29,20 +29,14 @@ CardPositionSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, newE
 		local py = self.UpOffset
 		local pz = -4
 		
-		if not world:EntityHasComponent(entity, "LerpTargetPosition") then
-			world:CreateComponentAndAddTo("LerpTargetPosition", entity)
+		if not world:EntityHasComponent(entity, "LerpPosition") then
+			world:CreateComponentAndAddTo("LerpPosition", entity)
 		end
-		
-		local position = self:GetComponent(entity, "LerpTargetPosition", 0)
-		position:SetFloat3(px, py, pz)
-		
-		if not world:EntityHasComponent(entity, "LerpTime") then
-			world:CreateComponentAndAddTo("LerpTime", entity)
-		end
-		
-		local timer = self:GetComponent(entity, "LerpTime", 0)
-		timer:SetFloat2(0.1, 0)
-		
+		world:GetComponent(entity, "LerpPosition", "X"):SetFloat(px)
+		world:GetComponent(entity, "LerpPosition", "Y"):SetFloat(py)
+		world:GetComponent(entity, "LerpPosition", "Z"):SetFloat(pz)
+		world:GetComponent(entity, "LerpPosition", "Time"):SetFloat(0.2)
+		world:GetComponent(entity, "LerpPosition", "Algorithm"):SetString("SmootherLerp")
 	end
 
 end

@@ -92,8 +92,9 @@ namespace Renderer
 	class DECLSPEC GraphicDevice
 	{
 	public:
-		GraphicDevice(){}
-		virtual ~GraphicDevice() {}
+		GraphicDevice();
+		GraphicDevice(Camera _camera);
+		virtual ~GraphicDevice();
 
 		virtual bool Init(){ return false; };// = 0;
 
@@ -111,7 +112,11 @@ namespace Renderer
 		virtual void ToggleSimpleText(){};// = 0;
 		virtual void ToggleSimpleText(bool _on){};// = 0;
 
-		Camera *GetCamera(){ return m_camera; }
+		Camera* GetCamera(){ return m_camera; }
+
+		SDL_Window*	GetSDL_Window(){ return m_window; }
+		SDL_GLContext GetSDL_GLContext(){ return m_glContext; }
+
 		void GetWindowSize(int &x, int &y){ x = m_clientWidth; y = m_clientHeight; }
 
 		// MODELLOADER
@@ -146,6 +151,12 @@ namespace Renderer
 		Camera* m_camera;
 		int m_vramUsage; //in bytes
 
+		// dt and fps
+		float m_dt;
+		int m_fps;
+
+		bool m_SDLinitialized;
+
 		//// Window size
 		int	m_clientWidth, m_clientHeight;
 
@@ -165,8 +176,6 @@ namespace Renderer
 
 		GLuint AddTexture(std::string _fileDir, GLenum _textureSlot);
 		std::map<const std::string, GLuint> m_textures;
-
-		TextRenderer m_sdlTextRenderer;
 		
 		std::vector<std::pair<std::string, SDL_Surface*>> m_surfaces;
 		void BufferSurfaces();

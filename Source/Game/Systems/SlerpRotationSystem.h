@@ -16,7 +16,7 @@ public:
 	SlerpRotationSystem();
 	~SlerpRotationSystem();
 
-	void Update(float _dt);
+	void Update(const ECSL::RuntimeInfo& _runtime);
 	void Initialize();
 
 	void EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities);

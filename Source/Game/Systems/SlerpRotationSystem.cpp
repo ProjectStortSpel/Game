@@ -20,14 +20,18 @@ void SlerpRotationSystem::Initialize()
 	printf("Slerp Rotation System Initialized!\n");
 }
 
-void SlerpRotationSystem::Update(float _dt)
+void SlerpRotationSystem::Update(const ECSL::RuntimeInfo& _runtime)
 {
+	
 	if (NetworkInstance::GetServer()->IsRunning())
 	{
 		std::vector<unsigned int> entities = *GetEntities();
-		for (int i = 0; i < entities.size(); i++)
+		float _dt = _runtime.Dt; 
+		unsigned int startAt, endAt;
+		MPL::MathHelper::SplitIterations(startAt, endAt, (unsigned int)entities.size(), _runtime.TaskIndex, _runtime.TaskCount);
+		for (int i = startAt; i < endAt; i++)
 		{
-
+			printf("entities %i\n", i);
 			float* time_data = (float*)GetComponent(entities[i], "SlerpRotation", "time");
 			float* from_data = (float*)GetComponent(entities[i], "SlerpRotation", "fromW");
 			float* from_dataX = (float*)GetComponent(entities[i], "SlerpRotation", "fromX");
@@ -83,7 +87,6 @@ void SlerpRotationSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const
 {
 	for (int i = 0; i < _entities.size(); ++i)
 	{
-		printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALUR\n");
 		unsigned int _entityId = _entities[i];
 		//printf("Adding\n");
 		unsigned int entity = _entityId;

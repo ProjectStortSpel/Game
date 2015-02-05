@@ -21,6 +21,25 @@ Camera::Camera(int windowWidth, int windowHeight)
 	doLerp = false;
 }
 
+Camera::Camera(const Camera& _cam)
+{
+	m_pos		= _cam.m_pos;
+	m_up		= _cam.m_up;
+	m_right		= _cam.m_right;
+	m_look		= _cam.m_look;
+
+	m_camPitch = _cam.m_camPitch;
+	m_camYaw = _cam.m_camYaw;
+	m_sensitivity = _cam.m_sensitivity;
+	m_moveSpeed = _cam.m_moveSpeed;
+
+	m_farPlane = _cam.m_farPlane;
+
+	m_projectionMatrix = _cam.m_projectionMatrix;
+
+	doLerp = _cam.doLerp;
+}
+
 Camera::Camera()
 {
 }

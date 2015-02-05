@@ -30,7 +30,7 @@ namespace Profilers
 		void PreviousView();
 
 		/* Write the currently displayed statistics to log */
-		void WriteToLog();
+		void LogDisplayedStatistics();
 
 		/* Begin gathering thread data */
 		void Begin();
@@ -52,7 +52,7 @@ namespace Profilers
 			SHOWING_STATISTICS
 		};
 
-		const float DefaultBufferSwapTime = 1.5f;
+		const float DefaultBufferSwapTime = 1.0f;
 
 		State m_state;
 		float m_bufferSwapTimer;

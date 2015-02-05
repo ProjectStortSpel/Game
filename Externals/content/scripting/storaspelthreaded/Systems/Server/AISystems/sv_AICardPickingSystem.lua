@@ -75,6 +75,7 @@ end
 AICardPickingSystem.GetAIsCardSet = function(self, AI, Cards)
 
 		local aisCard = {}
+		aisCard.__mode = "k"
 		local aiNr = self:GetComponent(AI, "PlayerNumber", 0):GetInt()
 		for j = 1, #Cards do
 			local card = self:GetComponent(Cards[j], "DealtCard", 0)
@@ -105,6 +106,7 @@ end
 AICardPickingSystem.AIPickCards = function( self, CardSetAI, dirX, dirY, posX, posY, targetX, targetY )
 	
 	local pickedcards = {}
+	pickedcards.__mode = "k"
 	if #CardSetAI >= 5 then
 
 		local forwards = self:GetAllCardsOf(CardSetAI, "Forward")
@@ -237,6 +239,7 @@ end
 AICardPickingSystem.GetAllCardsOf = function( self, CardSetAI, cardName )
 	
 	local cards = {}
+	cards.__mode = "k"
 	for i = 1, #CardSetAI do
 
 		local nameCard = self:GetComponent(CardSetAI[i], "CardAction", 0):GetString()
@@ -335,8 +338,6 @@ AICardPickingSystem.SimulateMoveForward = function(self, _posX, _posY, _dirX, _d
 	
 	local fellDown = false
 	local posX, posY
-	
-	print("SimulateMoveForward", _posY)
 			
 	for i = 1, _iterations do
 		
@@ -390,8 +391,6 @@ AICardPickingSystem.SimulateTurnLeft = function(self, _posX, _posY, _dirX, _dirY
 		dirX = temp
 	end
 	
-	print("SimulateTurnLeft", _posY)
-	
 	if self:TileHasComponent("River", _posX, _posY) then
 		
 		local waterDirX, waterDirY, waterSpeed = self:GetRiverVariables(_posX, _posY)
@@ -419,8 +418,6 @@ AICardPickingSystem.TileHasComponent = function(self, _component, _posX, _posY)
 	local mapX, mapY = mapSizeComp:GetInt2()
 	local tiles = self:GetEntities("TileComp")
 	
-	print("TileHasComponent", _posY)
-	
 	local returnValue = self:EntityHasComponent(tiles[mapX * _posY + _posX + 1], _component)
 	return returnValue
 end
@@ -431,8 +428,6 @@ AICardPickingSystem.GetRiverVariables = function(self, _posX, _posY)
 	local mapX = self:GetComponent(mapSize[1], "MapSize", 0):GetInt()
 	local tiles = self:GetEntities("TileComp")
 	local dirX, dirY, speed = world:GetComponent(tiles[mapX * _posY + _posX + 1], "River", 0):GetInt3()
-	
-	print("GetRiverVariables", _posY)
 	
 	return dirX, dirY, speed
 end
@@ -448,4 +443,12 @@ AICardPickingSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, ent
 			--print ( plynum .. " gets a " .. card .. " Card" )
 		end
 	end
+end
+
+AICardPickingSystem.HajhajPFstuff = function(self)
+	
+	param = PFParam()
+	param:SetSize(5, 5)
+	param:AddObject(0, 10.0, 5.0)
+	result = CreatePFs(param)
 end

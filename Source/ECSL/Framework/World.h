@@ -35,28 +35,26 @@ namespace ECSL
 		unsigned int CreateNewEntity();
 		unsigned int CreateNewEntity(const std::string& _templateName);
 
+		void KillEntity(unsigned int _entityId);
+
 		void CreateComponentAndAddTo(const std::string& _componentType, unsigned int _entityId);
 		void RemoveComponentFrom(const std::string& _componentType, unsigned int _entityId);
 
 		DataLocation GetComponent(unsigned int _entityId, const std::string& _componentType, const std::string& _variableName);
 		DataLocation GetComponent(unsigned int _entityId, const std::string& _componentType, const int _index);
 		DataLocation GetComponent(unsigned int _entityId, const unsigned int _componentType, const int _index);
-
 		void SetComponent(unsigned int _entityId, const std::string& _componentType, const std::string& _variableName, void* _data, bool _notifyNetwork = true);
-
-		void KillEntity(unsigned int _entityId);
+		bool HasComponent(unsigned int _entityId, const std::string& _componentType);
+		bool HasComponent(unsigned int _entityId, unsigned int _componentTypeId);
 		
 		void GetEntityComponents(std::vector<unsigned int>& _out, unsigned int _entityId);
-
-		unsigned int GetMemoryUsage();
 		
 		void ComponentHasChanged(unsigned int _entityId, std::string _componentType, bool _notifyNetwork = true);
 		void ComponentHasChanged(unsigned int _entityId, unsigned int _componentTypeId, bool _notifyNetwork = true);
 
-		bool HasComponent(unsigned int _entityId, const std::string& _componentType);
-		bool HasComponent(unsigned int _entityId, unsigned int _componentTypeId);
+		unsigned int GetMemoryUsage();
 		
-		void WriteToLog();
+		void LogWorldData();
 	};
 }
 

@@ -26,7 +26,8 @@
 #include <iomanip>
 
 GameCreator::GameCreator() :
-m_graphics(0), m_input(0), m_world(0), m_console(0), m_remoteConsole(0), m_consoleManager(Console::ConsoleManager::GetInstance()), m_frameCounter(new Utility::FrameCounter()), m_running(true)
+m_graphics(0), m_input(0), m_world(0), m_console(0), m_remoteConsole(0), m_consoleManager(Console::ConsoleManager::GetInstance()), m_frameCounter(new Utility::FrameCounter()), m_running(true),
+m_graphicalSystems(std::vector<GraphicalSystem*>())
 {
   
 }
@@ -41,7 +42,11 @@ GameCreator::~GameCreator()
 		delete m_world;
 
 	if (m_graphics)
+	{
+		TextRenderer::Clean();
 		delete m_graphics;
+		SDL_Quit();
+	}
 
 	if (m_input)
 		delete m_input;
@@ -191,28 +196,49 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 
 	//NetworkMessagesSystem* nms = new NetworkMessagesSystem();
 	//nms->SetConsole(&m_consoleManager);
+	
+	GraphicalSystem* graphicalSystem = 0;
+	graphicalSystem = new PointlightSystem(m_graphics);
+	m_graphicalSystems.push_back(graphicalSystem);
+	
 	worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(new SlerpRotationSystem());
 	worldCreator.AddSystemGroup();
-	worldCreator.AddSystemToCurrentGroup<PointlightSystem>(m_graphics);
+	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
+
+
+	graphicalSystem = new DirectionalLightSystem(m_graphics);
+	m_graphicalSystems.push_back(graphicalSystem); 
 	worldCreator.AddSystemGroup();
-	worldCreator.AddSystemToCurrentGroup<DirectionalLightSystem>(m_graphics);
+	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
+
 	worldCreator.AddSystemGroup();
 	worldCreator.AddSystemToCurrentGroup<RotationSystem>();
+
+	graphicalSystem = new CameraSystem(m_graphics);
+	m_graphicalSystems.push_back(graphicalSystem);
 	worldCreator.AddSystemGroup();
-	worldCreator.AddSystemToCurrentGroup<CameraSystem>(m_graphics);
+	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
+
+	graphicalSystem = new ModelSystem(m_graphics);
+	m_graphicalSystems.push_back(graphicalSystem);
 	worldCreator.AddSystemGroup();
-	worldCreator.AddSystemToCurrentGroup<ModelSystem>(m_graphics);
+	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
+
 	worldCreator.AddSystemGroup();
 	worldCreator.AddSystemToCurrentGroup<MasterServerSystem>();
 	worldCreator.AddSystemGroup();
 	worldCreator.AddSystemToCurrentGroup<SyncEntitiesSystem>();
 	//worldCreator.AddLuaSystemToCurrentGroup(new ReceivePacketSystem());
+	graphicalSystem = new RenderSystem(m_graphics);
+	m_graphicalSystems.push_back(graphicalSystem);
 	worldCreator.AddSystemGroup();
-	worldCreator.AddSystemToCurrentGroup<RenderSystem>(m_graphics);
+	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 	//worldCreator.AddLuaSystemToCurrentGroup(new ReconnectSystem());
+	graphicalSystem = new RenderRemoveSystem(m_graphics);
+	m_graphicalSystems.push_back(graphicalSystem);
 	worldCreator.AddSystemGroup();
-	worldCreator.AddSystemToCurrentGroup<RenderRemoveSystem>(m_graphics);
+	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 	worldCreator.AddSystemGroup();
 	worldCreator.AddSystemToCurrentGroup<ResetChangedSystem>();
 
@@ -288,18 +314,38 @@ void GameCreator::StartGame(int argc, char** argv)
 	m_consoleManager.AddCommand("Quit", std::bind(&GameCreator::ConsoleStopGame, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager.AddCommand("GameMode", std::bind(&GameCreator::ConsoleGameMode, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager.AddCommand("Start", std::bind(&GameCreator::ConsoleStartTemp, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager.AddCommand("ChangeGraphics", std::bind(&GameCreator::ChangeGraphicsSettings, this, std::placeholders::_1, std::placeholders::_2));
 	
 	RunStartupCommands(argc, argv);
     
     //Console::ConsoleManager::GetInstance().AddToCommandQueue("connect 192.168.0.198");
-
+	/* The GraphicsDevice should probably do this instead. New: int refreshrate = m_graphics->GetRefreshRate() */
+	int refreshRate;
+	SDL_DisplayMode mode;
+	if (SDL_GetDisplayMode(0, 0, &mode) == 0)
+		refreshRate = std::max(mode.refresh_rate, 60);
+	else
+	{
+		refreshRate = 60;
+		std::string message = "Couldn't fetch the refresh rate. Max frame rate is now forced to 60.\n";
+		message += SDL_GetError();
+		Logger::GetInstance().Log("Refresh rate", LogSeverity::Warning, message);
+	}
     
 	float maxDeltaTime = (float)(1.0f / 20.0f);
+	float minDeltaTime = (1.0f / (float)refreshRate);
 	float bytesToMegaBytes = 1.f / (1024.f*1024.f);
 	bool showDebugInfo = false;
 	while (m_running)
 	{
 		float dt = std::min(maxDeltaTime, m_frameCounter->GetDeltaTime());
+
+		/* Enforce max fps by looping until max fps is reached. Alternative solution is worth looking at */
+		while (dt < minDeltaTime)
+		{
+			m_frameCounter->Tick();
+			dt += m_frameCounter->GetDeltaTime();
+		}
 
 		m_inputCounter.Reset();
 		/*	Collect all input	*/
@@ -314,7 +360,7 @@ void GameCreator::StartGame(int argc, char** argv)
 		m_inputCounter.Tick();
 
 		m_worldCounter.Reset();
-		/*	Update world (systems, entities etc)	*/
+		/*	Update world (systems, entities, etc)	*/
 		m_worldProfiler->Begin();
 		m_world->Update(dt);
 		m_worldProfiler->End();
@@ -349,10 +395,10 @@ void GameCreator::StartGame(int argc, char** argv)
 			m_worldProfiler->NextView();
 
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F8) == Input::InputState::PRESSED)
-			m_worldProfiler->WriteToLog();
+			m_worldProfiler->LogDisplayedStatistics();
 
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F1) == Input::InputState::PRESSED)
-			m_world->WriteToLog();
+			m_world->LogWorldData();
 
 		if (showDebugInfo)
 		{
@@ -363,7 +409,7 @@ void GameCreator::StartGame(int argc, char** argv)
 			std::stringstream vram;
 			vram << "VRAM usage: " << (float)(m_graphics->GetVRamUsage()*bytesToMegaBytes) << " Mb ";
 			m_graphics->RenderSimpleText(vram.str(), 20, 0);
-
+			
 			std::stringstream ss;
 			ss << "Lua memory usage: " << LuaEmbedder::GetMemoryUsage() << " bytes";
 			m_graphics->RenderSimpleText(ss.str(), 20, 1);
@@ -375,7 +421,6 @@ void GameCreator::StartGame(int argc, char** argv)
 			PrintSectionTime("Network ", &m_networkCounter, 60, 4);
 			PrintSectionTime("Graphics", &m_graphicsCounter, 60, 5);
 		}
-
 
 		m_frameCounter->Tick();
 	}
@@ -626,4 +671,64 @@ void GameCreator::PrintSectionTime(const std::string& sectionName, Utility::Fram
 	  "   Average: " << std::fixed << std::setprecision(3) << average << " ms" <<
 	  "   Anomality: " << std::fixed << std::setprecision(3) << anomality << " ms";
 	m_graphics->RenderSimpleText(ss.str(), x, y);
+}
+
+void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Console::Argument>* _args)
+{
+#if !defined(__IOS__) && !defined(__ANDROID__)
+	if (_args->size() == 0)
+		return;
+
+	if ((*_args)[0].ArgType == Console::ArgumentType::Text)
+	{
+		for (int i = 0; i < 1000; ++i)
+		{
+			if (m_world->HasComponent(i, "Render"))
+				m_world->RemoveComponentFrom("Render", i);
+		}
+
+		if (strcmp((*_args)[0].Text, "high") == 0)
+		{
+			m_graphics->Clear();
+			Camera tmpCam = *m_graphics->GetCamera();
+
+		//	SDL_Window*	tmpWindow = m_graphics->GetSDL_Window();
+		//	SDL_GLContext* tmpContext = m_graphics->GetSDL_GLContext();*/
+			delete(m_graphics);
+
+			m_graphics = new Renderer::GraphicsHigh(tmpCam);
+			m_graphics->Init();
+		}
+
+		else if (strcmp((*_args)[0].Text, "low") == 0)
+		{
+			m_graphics->Clear();
+			Camera tmpCam				= *m_graphics->GetCamera();
+			//SDL_Window*	tmpWindow		=  m_graphics->GetSDL_Window();
+			//SDL_GLContext tmpContext	=  m_graphics->GetSDL_GLContext();
+
+
+			delete(m_graphics);
+
+			m_graphics = new Renderer::GraphicsLow(tmpCam);
+			m_graphics->Init();
+		}
+		if (m_input)
+		{
+			delete m_input;
+			InitializeInput();
+		}
+
+			
+
+		m_console->SetGraphicDevice(m_graphics);
+		LuaBridge::LuaGraphicDevice::SetGraphicDevice(m_graphics);
+		for (int n = 0; n < m_graphicalSystems.size(); ++n)
+		{
+			GraphicalSystem* tSystem = m_graphicalSystems.at(n);
+			tSystem->SetGraphics(m_graphics);
+		}
+
+	}
+#endif
 }
