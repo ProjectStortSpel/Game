@@ -7,7 +7,7 @@ namespace LuaBridge
 {
   namespace LuaConsole
   {
-    std::map<std::string, lua_State*> CommandLuaStateMap = std::map<std::string, lua_State*>();
+    //std::map<std::string, lua_State*> CommandLuaStateMap = std::map<std::string, lua_State*>();
     
     int Print(lua_State* L);
 	int IsOpen(lua_State* L);
@@ -63,8 +63,8 @@ namespace LuaBridge
 
 	void LuaConsoleFunction(std::string _command, std::vector<Console::Argument>* _args)
 	{
-		lua_State* L = CommandLuaStateMap[_command];
-	  
+        lua_State* L = LuaEmbedder::GetFunctionLuaState(_command);
+
 		LuaEmbedder::PushString(L, _command);
 
 		for (int i = 0; i < _args->size(); ++i)
@@ -75,7 +75,7 @@ namespace LuaBridge
 				LuaEmbedder::PushFloat(L, _args->at(i).Number);
 		}
 
-		LuaEmbedder::CallSavedFunction(L, _command, _args->size() + 1);
+		LuaEmbedder::CallSavedFunction(_command, _args->size() + 1);
 	}
 
 	int AddCommand(lua_State* L)
@@ -84,8 +84,6 @@ namespace LuaBridge
 		std::transform(command.begin(), command.end(), command.begin(), ::tolower);
 
 		LuaEmbedder::SaveFunction(L, 2, command);
-		
-		CommandLuaStateMap[command] = L;
 		
 		Console::ConsoleManager::GetInstance().AddCommand(command.c_str(), &LuaConsoleFunction);
 

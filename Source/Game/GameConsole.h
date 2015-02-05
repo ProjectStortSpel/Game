@@ -10,7 +10,7 @@
 #include "Renderer/GraphicsLow.h"
 #endif
 #include "ECSL/ECSL.h"
-#include "NetworkInstance.h"
+#include "Network/NetworkInstance.h"
 
 class GameConsole
 {
@@ -34,6 +34,7 @@ public:
 	void ClearHistory(std::string _command, std::vector<Console::Argument>* _args);
 
 	void HostServer(std::string _command, std::vector<Console::Argument>* _args);
+    void HostListenServer(std::string _command, std::vector<Console::Argument>* _args);
 	void StopServer(std::string _command, std::vector<Console::Argument>* _args);
 
 	void ConnectClient(std::string _command, std::vector<Console::Argument>* _args);

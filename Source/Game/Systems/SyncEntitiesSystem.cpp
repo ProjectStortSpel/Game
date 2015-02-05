@@ -1,18 +1,9 @@
 #include "SyncEntitiesSystem.h"
-#include "../NetworkInstance.h"
+#include "../Network/NetworkInstance.h"
 
 SyncEntitiesSystem::SyncEntitiesSystem()
 {
 	m_timer = 0;
-
-	Network::NetMessageHook hook = std::bind(&NetworkHelper::ReceiveEntityAll, NetworkInstance::GetNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-	NetworkInstance::GetClient()->AddNetworkHook("Entity", hook);
-
-	hook = std::bind(&NetworkHelper::ReceiveEntityDelta, NetworkInstance::GetNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-	NetworkInstance::GetClient()->AddNetworkHook("EntityDelta", hook);
-
-	hook = std::bind(&NetworkHelper::ReceiveEntityKill, NetworkInstance::GetNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-	NetworkInstance::GetClient()->AddNetworkHook("EntityKill", hook);
 }
 SyncEntitiesSystem::~SyncEntitiesSystem()
 {
@@ -65,7 +56,7 @@ void SyncEntitiesSystem::Update(const ECSL::RuntimeInfo& _runtime)
 						(const ECSL::BitSet::DataType*)data,
 						ECSL::BitSet::GetDataTypeCount(ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount())
 						);
-					Network::Packet* p = NetworkInstance::GetNetworkHelper()->WriteEntityDelta(server->GetPacketHandler(), entityId, changedComponents);
+					Network::Packet* p = NetworkInstance::GetServerNetworkHelper()->WriteEntityDelta(server->GetPacketHandler(), entityId, changedComponents);
 					server->Broadcast(p);
 				}
 
@@ -85,7 +76,7 @@ void SyncEntitiesSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const 
 	{
 		for (auto entityId : _entities)
 		{
-			Network::Packet* p = NetworkInstance::GetNetworkHelper()->WriteEntityAll(server->GetPacketHandler(), entityId);
+			Network::Packet* p = NetworkInstance::GetServerNetworkHelper()->WriteEntityAll(server->GetPacketHandler(), entityId);
 			server->Broadcast(p);
 		}
 	}
@@ -98,7 +89,7 @@ void SyncEntitiesSystem::EntitiesRemoved(const ECSL::RuntimeInfo& _runtime, cons
 	{
 		for (auto entityId : _entities)
 		{
-			Network::Packet* p = NetworkInstance::GetNetworkHelper()->WriteEntityKill(server->GetPacketHandler(), entityId);
+			Network::Packet* p = NetworkInstance::GetServerNetworkHelper()->WriteEntityKill(server->GetPacketHandler(), entityId);
 			server->Broadcast(p);
 		}
 	}

@@ -37,6 +37,14 @@ TestMoveRiverSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, ent
 
 			if canMove then
 				world:GetComponent(unit, "MapPosition", 0):SetInt2(posX, posZ)
+				if not world:EntityHasComponent(unit, "LerpPosition") then
+					world:CreateComponentAndAddTo("LerpPosition", unit)
+				end
+				world:GetComponent(unit, "LerpPosition", "X"):SetFloat(posX)
+				world:GetComponent(unit, "LerpPosition", "Y"):SetFloat(0.5)
+				world:GetComponent(unit, "LerpPosition", "Z"):SetFloat(posZ)
+				world:GetComponent(unit, "LerpPosition", "Time"):SetFloat(0.5)
+				world:GetComponent(unit, "LerpPosition", "Algorithm"):SetString("SmoothLerp")
 			end
 
 			world:KillEntity(entity)

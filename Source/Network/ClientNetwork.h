@@ -122,6 +122,7 @@ namespace Network
 		float* m_currentTimeOutIntervall;
 		int* m_currentIntervallCounter;
 
+		
 		std::vector<NetEvent>* m_onConnectedToServer;
 		std::vector<NetEvent>* m_onDisconnectedFromServer;
 		std::vector<NetEvent>* m_onTimedOutFromServer;
