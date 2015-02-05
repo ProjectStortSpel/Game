@@ -56,6 +56,8 @@ UpdateLerpRotationSystem.AlgorithmLerp = function(self, t, algorithm)
 		return t * t * (3 - 2*t)
 	elseif algorithm == "SmootherLerp" then
 		return t * t * t * (t * (6*t - 15) + 10)
+	elseif algorithm == "ExponentialLerp" then
+		return t * t
 	else
 		return t
 	end
