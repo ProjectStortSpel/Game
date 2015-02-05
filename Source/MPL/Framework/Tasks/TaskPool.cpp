@@ -169,7 +169,7 @@ WorkDoneStatus TaskPool::WorkDone(WorkItem* _workItem)
 	/* Get task through the work task connection */
 	Task* task = (*m_workTaskConnection)[_workItem];
 
-	/* Check if task is completed */
+	/* Check if entire task is completed */
 	if (task->OpenWorkItemCount == 1)
 		status.TaskCompleted = true;
 
@@ -179,6 +179,7 @@ WorkDoneStatus TaskPool::WorkDone(WorkItem* _workItem)
 	/* Check if m_openList is empty */
 	if (m_openList->size() == 0)
 		status.OpenListEmpty = true;
+	else status.OpenListEmpty = false;
 
 	SDL_UnlockMutex(m_taskMutex);
 

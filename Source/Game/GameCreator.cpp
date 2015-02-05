@@ -11,7 +11,6 @@
 #include "Systems/PointlightSystem.h"
 #include "Systems/DirectionalLightSystem.h"
 #include "Systems/MasterServerSystem.h"
-#include "Systems/TestSystems.h"
 
 #include "NetworkInstance.h"
 #include "ECSL/ECSL.h"
@@ -241,11 +240,6 @@ void GameCreator::InitializeWorld(std::string _gameMode)
 	worldCreator.AddSystemGroup();
 	worldCreator.AddSystemToCurrentGroup<ResetChangedSystem>();
 
-	worldCreator.AddSystemGroup();
-	worldCreator.AddSystemToCurrentGroup<TestSystem1>();
-	worldCreator.AddSystemGroup();
-	worldCreator.AddSystemToCurrentGroup<TestSystem2>();
-
 	m_world = worldCreator.CreateWorld(1000);
 	LuaEmbedder::AddObject<ECSL::World>(m_clientLuaState, "World", m_world, "world");
 	m_world->PostInitializeSystems();
@@ -340,6 +334,8 @@ void GameCreator::StartGame(int argc, char** argv)
 	float minDeltaTime = (1.0f / (float)refreshRate);
 	float bytesToMegaBytes = 1.f / (1024.f*1024.f);
 	bool showDebugInfo = false;
+	Utility::FrameCounter totalCounter;
+
 	while (m_running)
 	{
 		float dt = std::min(maxDeltaTime, m_frameCounter->GetDeltaTime());
@@ -403,6 +399,13 @@ void GameCreator::StartGame(int argc, char** argv)
 
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F1) == Input::InputState::PRESSED)
 			m_world->LogWorldData();
+
+		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_I) == Input::InputState::PRESSED)
+			minDeltaTime = (1.0f / 60.0f);
+		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_O) == Input::InputState::PRESSED)
+			minDeltaTime = (1.0f / 90.0f);
+		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_P) == Input::InputState::PRESSED)
+			minDeltaTime = (1.0f / 120.0f);
 
 		if (showDebugInfo)
 		{

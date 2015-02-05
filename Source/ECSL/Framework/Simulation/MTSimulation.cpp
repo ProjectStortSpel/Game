@@ -1,34 +1,18 @@
-#include "Simulation.h"
-
-#include <MPL/Managers/TaskManager.h>
+#include "MTSimulation.h"
 
 using namespace ECSL;
 
-Simulation::Simulation(DataManager* _dataManager, SystemManager* _systemManager, MessageManager* _messageManager)
-: m_dataManager(_dataManager), m_systemManager(_systemManager), m_messageManager(_messageManager)
+MTSimulation::MTSimulation()
 {
-	m_scheduler = new Scheduler(_dataManager, _systemManager, _messageManager);
-	m_scheduler->AddUpdateSystemsTasks();
-	m_scheduler->AddSortMessagesTask();
-	m_scheduler->AddMessagesReceivedTasks();
-	m_scheduler->AddDeleteMessagesTask();
-	m_scheduler->AddCopyCurrentListsTask();
-	m_scheduler->AddUpdateEntityTableTask();
-	m_scheduler->AddUpdateSystemEntityListsTasks();
-	m_scheduler->AddEntitiesAddedTasks();
-	m_scheduler->AddEntitiesRemovedTasks();
-	m_scheduler->AddClearSystemEntityChangeListsTask();
-	m_scheduler->AddDeleteComponentDataTask();
-	m_scheduler->AddRecycleEntityIdsTask();
-	m_scheduler->AddClearCopiedListsTask();
+
 }
 
-Simulation::~Simulation()
+MTSimulation::~MTSimulation()
 {
-	delete(m_scheduler);
+
 }
 
-void Simulation::Update(float _dt)
+void MTSimulation::Update(float _dt)
 {
 	/* Update dt for every work item */
 	m_scheduler->UpdateDt(_dt);

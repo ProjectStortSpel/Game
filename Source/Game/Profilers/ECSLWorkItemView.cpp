@@ -23,6 +23,11 @@ void ECSLWorkItemView::Update(ECSLStatistics* _frontBufferStatistics)
 {
 	if (!m_pages)
 		CreatePages(_frontBufferStatistics);
+	else
+	{
+		delete(m_pages);
+		CreatePages(_frontBufferStatistics);
+	}
 
 	ClearTextEntries();
 
@@ -69,17 +74,29 @@ void ECSLWorkItemView::Update(ECSLStatistics* _frontBufferStatistics)
 		for (unsigned int j = 0; j < workItemGroup->size(); ++j)
 		{
 			auto workItem = workItemGroup->at(j);
-			std::stringstream text;
-			text << *workItem->name << " | " << workItem->avgDuration << " | " << 
-				workItem->minDuration << " | " << workItem->maxDuration <<
-				" | " << workItem->diffDuration;
+			if (workItem == nullptr)
+			{
+				textEntry = new TextEntry();
+				textEntry->x = x;
+				textEntry->y = y;
+				textEntry->text = new std::string("");
+				textEntry->height = TextHeight;
+				m_textEntries->push_back(textEntry);
+			}
+			else
+			{
+				std::stringstream text;
+				text << *workItem->name << " | " << workItem->avgDuration << " | " << 
+					workItem->minDuration << " | " << workItem->maxDuration <<
+					" | " << workItem->diffDuration;
 
-			textEntry = new TextEntry();
-			textEntry->x = x;
-			textEntry->y = y;
-			textEntry->text = new std::string(text.str());
-			textEntry->height = TextHeight;
-			m_textEntries->push_back(textEntry);
+				textEntry = new TextEntry();
+				textEntry->x = x;
+				textEntry->y = y;
+				textEntry->text = new std::string(text.str());
+				textEntry->height = TextHeight;
+				m_textEntries->push_back(textEntry);
+			}
 
 			y += TextHeight;
 		}

@@ -76,6 +76,7 @@ void Scheduler::UpdateWorkItemLists()
 	std::vector<unsigned int> systemsToActivate = systemActivationManager->PullSystemsToActivate();
 	std::vector<unsigned int> systemsToDeactivate = systemActivationManager->PullSystemsToDeactivate();
 
+	/* Deactivate systems */
 	for (const auto systemId : systemsToDeactivate)
 	{
 		bool updateErased = EraseSystemWorkItems(systemId, DeactivatedWorkItem::WorkItemType::Update, m_updateWorkItems);
@@ -86,6 +87,7 @@ void Scheduler::UpdateWorkItemLists()
 		assert(updateErased || messagesReceivedErased || entitiesAddedErased || entitiesRemovedErased);
 	}
 
+	/* Activate systems */
 	for (const auto systemId : systemsToActivate)
 	{
 		/* System is already active */
@@ -258,6 +260,96 @@ MPL::TaskId Scheduler::ScheduleClearCopiedLists(MPL::TaskId _dependency)
 MPL::TaskId Scheduler::ScheduleClearSystemEntityChangeLists(MPL::TaskId _dependency)
 {
 	return m_taskManager->Add(_dependency, *(std::vector<MPL::WorkItem*>*)m_clearListsWorkItems);
+}
+
+void Scheduler::PerformUpdateSystems()
+{
+	for (auto workItems : *m_updateWorkItems)
+	{
+		for (auto workItem : *workItems)
+			workItem->Work(workItem->Data);
+	}
+}
+
+void Scheduler::PerformUpdateSystemEntityLists()
+{
+	for (auto workItem : *m_updateSystemEntityListsWorkItems)
+		workItem->Work(workItem->Data);
+}
+
+void Scheduler::PerformEntitiesAdded()
+{
+	for (auto workItems : *m_entitiesAddedWorkItems)
+	{
+		for (auto workItem : *workItems)
+			workItem->Work(workItem->Data);
+	}
+}
+
+void Scheduler::PerformEntitiesRemoved()
+{
+	for (auto workItems : *m_entitiesRemovedWorkItems)
+	{
+		for (auto workItem : *workItems)
+			workItem->Work(workItem->Data);
+	}
+}
+
+void Scheduler::PerformSortMessages()
+{
+	for (auto workItem : *m_sortMessagesWorkItems)
+		workItem->Work(workItem->Data);
+}
+
+void Scheduler::PerformMessagesReceived()
+{
+	for (auto workItems : *m_messagesReceivedWorkItems)
+	{
+		for (auto workItem : *workItems)
+			workItem->Work(workItem->Data);
+	}
+}
+
+void Scheduler::PerformDeleteMessages()
+{
+	for (auto workItem : *m_deleteMessagesWorkItems)
+		workItem->Work(workItem->Data);
+}
+
+void Scheduler::PerformCopyCurrentLists()
+{
+	for (auto workItem : *m_copyCurrentListsWorkItems)
+		workItem->Work(workItem->Data);
+}
+
+void Scheduler::PerformUpdateEntityTable()
+{
+	for (auto workItem : *m_updateEntityTableWorkItems)
+		workItem->Work(workItem->Data);
+}
+
+void Scheduler::PerformDeleteComponentData()
+{
+	for (auto workItem : *m_deleteComponentDataWorkItems)
+		workItem->Work(workItem->Data);
+}
+
+void Scheduler::PerformRecycleEntities()
+{
+	for (auto workItem : *m_recycleEntityIdsWorkItems)
+		workItem->Work(workItem->Data);
+}
+
+void Scheduler::PerformClearCopiedLists()
+{
+	for (auto workItem : *m_clearCopiedListsWorkItems)
+		workItem->Work(workItem->Data);
+}
+
+void Scheduler::PerformClearSystemEntityChangeLists()
+{
+	for (auto workItem : *m_clearListsWorkItems)
+		workItem->Work(workItem->Data);
 }
 
 void Scheduler::AddUpdateSystemsTasks()

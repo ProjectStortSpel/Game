@@ -14,6 +14,8 @@ SystemActivationManager::~SystemActivationManager()
 {
 	delete(m_systemsToActivate);
 	delete(m_systemsToDeactivate);
+	SDL_DestroyMutex(m_systemsToActivateMutex);
+	SDL_DestroyMutex(m_systemsToDeactivateMutex);
 }
 
 void SystemActivationManager::ActivateSystem(unsigned int _systemId)

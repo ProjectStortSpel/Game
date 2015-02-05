@@ -49,7 +49,8 @@ ECSLStatistics::ECSLStatistics(unsigned int _threadCount)
 	m_maxEffectiveThreadCount = -FLT_MAX;
 	m_diffEffectiveThreadCount = 0.0f;
 
-	m_workItemStats = 0;
+	//m_workItemStats = 0;
+	m_workItemStats = new std::vector<std::vector<WorkItemStatistic*>*>();
 }
 
 ECSLStatistics::~ECSLStatistics()
@@ -72,7 +73,8 @@ ECSLStatistics::~ECSLStatistics()
 	for (auto groupWorkItemStats : *m_workItemStats)
 	{
 		for (auto workItemStat : *groupWorkItemStats)
-			delete(workItemStat);
+			if (workItemStat != nullptr)
+				delete(workItemStat);
 		delete(groupWorkItemStats);
 	}
 	delete(m_workItemStats);
@@ -139,48 +141,88 @@ void ECSLStatistics::AddFrame(ECSLFrame* _frame)
 
 	auto workGroups = _frame->GetWorkItems();
 
-	/* Add work item statistic list */
-	if (!m_workItemStats)
+	if (m_workItemStats->size() < workGroups->size())
 	{
-		m_workItemStats = new std::vector<std::vector<WorkItemStatistic*>*>(workGroups->size());
-		int groupIndex = -1;
-		for (auto workGroup : *workGroups)
+		m_workItemStats->resize(workGroups->size(), nullptr);
+		for (unsigned int i = 0; i < (unsigned int)m_workItemStats->size(); ++i)
 		{
-			(*m_workItemStats)[++groupIndex] = new std::vector<WorkItemStatistic*>(workGroup->size());
+			if (m_workItemStats->at(i) == nullptr)
+				(*m_workItemStats)[i] = new std::vector<WorkItemStatistic*>();
+		}
+	}
 
-			for (unsigned int localIndex = 0; localIndex < workGroup->size(); ++localIndex)
-			{
-				auto workItem = workGroup->at(localIndex);
-				WorkItemStatistic* workItemStat = new WorkItemStatistic();
-				workItemStat->name = new std::string(*workItem->name);
-				workItemStat->avgDuration = workItem->duration;
-				workItemStat->maxDuration = workItem->duration;
-				workItemStat->minDuration = workItem->duration;
-				(*(*m_workItemStats)[groupIndex])[localIndex] = workItemStat;
-			}
-		}
-	}
-	/* Update work item data */
-	else
+	for (unsigned int groupIndex = 0; groupIndex < (unsigned int)workGroups->size(); ++groupIndex)
 	{
-		for (unsigned int groupIndex = 0; groupIndex < workGroups->size(); ++groupIndex)
+		std::vector<WorkItemStatistic*>* workItemStatsGroup = (*m_workItemStats)[groupIndex];
+		std::vector<ECSLFrame::WorkItem*>* workItemGroup = (*workGroups)[groupIndex];
+		for (auto workItem : *workItemGroup)
 		{
-			auto workGroup = workGroups->at(groupIndex);
-			for (unsigned int localIndex = 0; localIndex < workGroup->size(); ++localIndex)
-			{
-				auto workItem = workGroup->at(localIndex);
-				WorkItemStatistic* workItemStat = (*(*m_workItemStats)[groupIndex])[localIndex];
-				float duration = workItem->duration;
-				workItemStat->avgDuration = (workItemStat->avgDuration * m_frameCount + duration) / (m_frameCount + 1);
-				workItemStat->minDuration = duration < workItemStat->minDuration ? duration : workItemStat->minDuration;
-				workItemStat->maxDuration = duration > workItemStat->maxDuration ? duration : workItemStat->maxDuration;
-				workItemStat->diffDuration = workItemStat->maxDuration - workItemStat->minDuration;
-			}
+			if (workItem->localGroupId >= workItemStatsGroup->size())
+				workItemStatsGroup->resize(workItem->localGroupId + 1, nullptr);
+			if (workItemStatsGroup->at(workItem->localGroupId) == nullptr)
+				(*workItemStatsGroup)[workItem->localGroupId] = CreateWorkItemStatistic(workItem);
+			else
+				UpdateWorkItemStatistic(workItemStatsGroup->at(workItem->localGroupId), workItem);
 		}
+		int j = 2;
 	}
+
+	///* Add work item statistic list */
+	//if (!m_workItemStats)
+	//{
+	//	m_workItemStats = new std::vector<std::vector<WorkItemStatistic*>*>(workGroups->size());
+	//	int groupIndex = -1;
+	//	for (auto workGroup : *workGroups)
+	//	{
+	//		(*m_workItemStats)[++groupIndex] = new std::vector<WorkItemStatistic*>(workGroup->size());
+
+	//		for (unsigned int localIndex = 0; localIndex < workGroup->size(); ++localIndex)
+	//		{
+	//			auto workItem = workGroup->at(localIndex);
+	//			(*(*m_workItemStats)[groupIndex])[workItem->localGroupId] = CreateWorkItemStatistic(workItem);
+	//		}
+	//	}
+	//}
+	///* Update work item data */
+	//else
+	//{
+	//	for (unsigned int groupIndex = 0; groupIndex < workGroups->size(); ++groupIndex)
+	//	{
+	//		auto workGroup = workGroups->at(groupIndex);
+	//		for (unsigned int localIndex = 0; localIndex < workGroup->size(); ++localIndex)
+	//		{
+	//			auto workItem = workGroup->at(localIndex);
+	//			WorkItemStatistic* workItemStat = (*(*m_workItemStats)[groupIndex])[workItem->localGroupId];
+	//			float duration = workItem->duration;
+	//			workItemStat->avgDuration = (workItemStat->avgDuration * m_frameCount + duration) / (m_frameCount + 1);
+	//			workItemStat->minDuration = duration < workItemStat->minDuration ? duration : workItemStat->minDuration;
+	//			workItemStat->maxDuration = duration > workItemStat->maxDuration ? duration : workItemStat->maxDuration;
+	//			workItemStat->diffDuration = workItemStat->maxDuration - workItemStat->minDuration;
+	//		}
+	//	}
+	//}
 
 
 	++m_frameCount;
 
 	delete(_frame);
+}
+
+ECSLStatistics::WorkItemStatistic* ECSLStatistics::CreateWorkItemStatistic(ECSLFrame::WorkItem* _workItem)
+{
+	WorkItemStatistic* workItemStat = new WorkItemStatistic();
+	workItemStat->name = new std::string(*_workItem->name);
+	workItemStat->avgDuration = _workItem->duration;
+	workItemStat->maxDuration = _workItem->duration;
+	workItemStat->minDuration = _workItem->duration;
+	return workItemStat;
+}
+
+void ECSLStatistics::UpdateWorkItemStatistic(WorkItemStatistic* _workItemStat, ECSLFrame::WorkItem* _workItem)
+{
+	float duration = _workItem->duration;
+	_workItemStat->avgDuration = (_workItemStat->avgDuration * m_frameCount + duration) / (m_frameCount + 1);
+	_workItemStat->minDuration = duration < _workItemStat->minDuration ? duration : _workItemStat->minDuration;
+	_workItemStat->maxDuration = duration > _workItemStat->maxDuration ? duration : _workItemStat->maxDuration;
+	_workItemStat->diffDuration = _workItemStat->maxDuration - _workItemStat->minDuration;
 }

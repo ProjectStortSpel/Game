@@ -39,7 +39,9 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\EntityTemplateReader.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\Parser.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\Section.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Simulation.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Simulation\MTSimulation.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Simulation\Simulation.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Simulation\SQSimulation.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\ComponentFilter.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\Message.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\MessageManager.h" />
@@ -72,7 +74,9 @@
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\ComponentTypeReader.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\EntityTemplateReader.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\Parser.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Simulation.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Simulation\MTSimulation.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Simulation\Simulation.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Simulation\SQSimulation.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\ComponentFilter.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\Message.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\MessageManager.cpp" />

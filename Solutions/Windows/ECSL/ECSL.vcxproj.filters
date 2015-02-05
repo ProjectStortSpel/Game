@@ -41,6 +41,9 @@
     <Filter Include="Source Files\Framework\Logger">
       <UniqueIdentifier>{7960b438-d0ed-423e-8b3e-9582f6f0e335}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Framework\Simulation">
+      <UniqueIdentifier>{b97691f8-8514-4226-a0da-542833901fb2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\ECSL\ECSL.h">
@@ -109,9 +112,6 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Common\ContainerHelper.h">
       <Filter>Source Files\Framework\Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Simulation.h">
-      <Filter>Source Files\Framework</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\Message.h">
       <Filter>Source Files\Framework\Systems\Messaging</Filter>
     </ClInclude>
@@ -147,6 +147,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Multithreading\ECSLWorkItem.h">
       <Filter>Source Files\Framework\Multithreading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Simulation\Simulation.h">
+      <Filter>Source Files\Framework\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Simulation\MTSimulation.h">
+      <Filter>Source Files\Framework\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Simulation\SQSimulation.h">
+      <Filter>Source Files\Framework\Simulation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -210,9 +219,6 @@
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Common\ContainerHelper.cpp">
       <Filter>Source Files\Framework\Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Simulation.cpp">
-      <Filter>Source Files\Framework</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\Message.cpp">
       <Filter>Source Files\Framework\Systems\Messaging</Filter>
     </ClCompile>
@@ -242,6 +248,15 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemActivationManager.cpp">
       <Filter>Source Files\Framework\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Simulation\Simulation.cpp">
+      <Filter>Source Files\Framework\Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Simulation\MTSimulation.cpp">
+      <Filter>Source Files\Framework\Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Simulation\SQSimulation.cpp">
+      <Filter>Source Files\Framework\Simulation</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

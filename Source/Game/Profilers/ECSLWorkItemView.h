@@ -28,7 +28,7 @@ namespace Profilers
 		const int StartPosX = 0;
 		const int StartPosY = 0;
 		const int TextHeight = 1;
-		const int PageMaxHeight = 44;
+		const int PageMaxHeight = 41; //44;
 
 		unsigned int m_pageIndex;
 		std::vector<WorkItemPage*>* m_pages;

@@ -20,6 +20,7 @@ namespace ECSL
 
 		void UpdateDt(float _dt);
 		void UpdateWorkItemLists();
+
 		MPL::TaskId ScheduleUpdateSystems(MPL::TaskId _dependency);
 		MPL::TaskId ScheduleUpdateSystemEntityLists(MPL::TaskId _dependency);
 		MPL::TaskId ScheduleEntitiesAdded(MPL::TaskId _dependency);
@@ -34,6 +35,19 @@ namespace ECSL
 		MPL::TaskId ScheduleClearCopiedLists(MPL::TaskId _dependency);
 		MPL::TaskId ScheduleClearSystemEntityChangeLists(MPL::TaskId _dependency);
 
+		void PerformUpdateSystems();
+		void PerformUpdateSystemEntityLists();
+		void PerformEntitiesAdded();
+		void PerformEntitiesRemoved();
+		void PerformSortMessages();
+		void PerformMessagesReceived();
+		void PerformDeleteMessages();
+		void PerformCopyCurrentLists();
+		void PerformUpdateEntityTable();
+		void PerformDeleteComponentData();
+		void PerformRecycleEntities();
+		void PerformClearCopiedLists();
+		void PerformClearSystemEntityChangeLists();
 
 		/// System Tasks
 		void AddUpdateSystemsTasks();
