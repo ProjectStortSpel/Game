@@ -79,6 +79,7 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 
     elseif tiletype == 102 then -- 102 = f = finish
         world:CreateComponentAndAddTo("Finishpoint", newTile)
+		world:CreateComponentAndAddTo("Checkpoint", entity)
 		world:CreateComponentAndAddTo("Model", newTile)
 		local comp = self:GetComponent(newTile, "Model", 0)
 		comp:SetModel("finish", "finish", 0)
