@@ -234,6 +234,7 @@ CreateMapSystem.CreateMap = function(self, name)
 	if #MapSizeEntities == 0 then
 		MapEntity = world:CreateNewEntity()
 		world:CreateComponentAndAddTo("MapSize", MapEntity)
+		world:CreateComponentAndAddTo("SyncNetwork", MapEntity)
 	else
 		MapEntity = MapSizeEntities[1]
 	end
