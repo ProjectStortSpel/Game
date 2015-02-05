@@ -20,18 +20,6 @@ GameMenuElement.Name = "GameMenuElement"
 GameMenuElement.TableType = TableType.Map
 worldCreator:AddComponentType(GameMenuElement)
 
---	GameMenu Component
-local GameMenu = ComponentType()
-GameMenu.Name = "GameMenu"
-GameMenu.TableType = TableType.Map
-worldCreator:AddComponentType(GameMenu)
-
---	GameMenuElement Component
-local GameMenuElement = ComponentType()
-GameMenuElement.Name = "GameMenuElement"
-GameMenuElement.TableType = TableType.Map
-worldCreator:AddComponentType(GameMenuElement)
-
 --	OptionMenu Component
 local OptionMenu = ComponentType()
 OptionMenu.Name = "OptionMenu"
