@@ -1,7 +1,6 @@
 CreateMapSystem = System()
 CreateMapSystem.entities = nil
---CreateMapSystem.waterTiles = { }
---CreateMapSystem.waterTiles.__mode = "k"
+CreateMapSystem.waterTiles = nil
 CreateMapSystem.mapX = 0
 CreateMapSystem.mapY = 0
 
@@ -80,6 +79,7 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 
     elseif tiletype == 102 then -- 102 = f = finish
         world:CreateComponentAndAddTo("Finishpoint", newTile)
+		world:CreateComponentAndAddTo("Checkpoint", entity)
 		world:CreateComponentAndAddTo("Model", newTile)
 		local comp = self:GetComponent(newTile, "Model", 0)
 		comp:SetModel("finish", "finish", 0)
@@ -95,6 +95,8 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		local comp = self:GetComponent(newTile, "Model", 0)
 		comp:SetModel("riverstraight", "riverstraight", 0)
 
+		self.waterTiles[#self.waterTiles+1]=newTile
+		
     elseif tiletype == 100 then -- 100 = d = water down
         world:CreateComponentAndAddTo("River", newTile)
         local comp = self:GetComponent(newTile, "River", 0)
@@ -105,6 +107,8 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		local comp = self:GetComponent(newTile, "Model", 0)
 		comp:SetModel("riverstraight", "riverstraight", 0)
 
+		self.waterTiles[#self.waterTiles+1]=newTile
+		
     elseif tiletype == 108 then -- 108 = l = water left
         world:CreateComponentAndAddTo("River", newTile)
         local comp = self:GetComponent(newTile, "River", 0)
@@ -113,6 +117,8 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		local comp = self:GetComponent(newTile, "Model", 0)
 		comp:SetModel("riverstraight", "riverstraight", 0)
 
+		self.waterTiles[#self.waterTiles+1]=newTile
+		
     elseif tiletype == 114 then -- 114 = r = water right
         world:CreateComponentAndAddTo("River", newTile)
         local comp = self:GetComponent(newTile, "River", 0)
@@ -123,6 +129,8 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		local comp = self:GetComponent(newTile, "Model", 0)
 		comp:SetModel("riverstraight", "riverstraight", 0)
 
+		self.waterTiles[#self.waterTiles+1]=newTile
+		
 	elseif tiletype == 115 then -- 115 = s = Available spawn point
 		world:CreateComponentAndAddTo("Model", newTile)
 		local comp = self:GetComponent(newTile, "Model", 0)
@@ -170,7 +178,9 @@ end
 CreateMapSystem.CreateMap = function(self, name)
 	self.entities = { }
 	self.entities.__mode = "k"
-
+	self.waterTiles = { }
+	self.waterTiles.__mode = "k"
+	
 	local map
     self.mapX, self.mapY, map = File.LoadMap(name)
 
@@ -228,40 +238,31 @@ CreateMapSystem.CreateMap = function(self, name)
 		MapEntity = MapSizeEntities[1]
 	end
 	self:GetComponent(MapEntity, "MapSize", 0):SetInt2(self.mapX, self.mapY)
-	    
-	local activeEntities = self.entities
-	local waterTiles = {}
-	waterTiles.__mode = "k"
 	
-	for i = 1, #activeEntities do
-		if world:EntityHasComponent(activeEntities[i], "River") then
-			waterTiles[#waterTiles + 1] = activeEntities[i]
-		end
-	end
+	print("MapEntity size: " .. #self.entities)
+	print("Water size: " .. #self.waterTiles)
 
-	print("Water size: " .. #waterTiles)
-
-	for waterA = 1, #waterTiles do
+	for waterA = 1, #self.waterTiles do
 		
-		local waterPosA = world:GetComponent(waterTiles[waterA], "MapPosition", 0)
-		local waterDirA = world:GetComponent(waterTiles[waterA], "River", 0)
+		local waterPosA = world:GetComponent(self.waterTiles[waterA], "MapPosition", 0)
+		local waterDirA = world:GetComponent(self.waterTiles[waterA], "River", 0)
 		local posAX, posAY = waterPosA:GetInt2()
 		local dirAX, dirAY = waterDirA:GetInt2()
 
 		--print("Water[ " .. posAX .. ", " .. posAY .. "] with direction [" .. dirAX .. ", " .. dirAY .. "]")
 
-		for waterB = 1, #waterTiles do
+		for waterB = 1, #self.waterTiles do
 
 			if waterA ~= waterB then
-				local waterPosB = world:GetComponent(waterTiles[waterB], "MapPosition", 0)
-				local waterDirB = world:GetComponent(waterTiles[waterB], "River", 0)
+				local waterPosB = world:GetComponent(self.waterTiles[waterB], "MapPosition", 0)
+				local waterDirB = world:GetComponent(self.waterTiles[waterB], "River", 0)
 				local posBX, posBY = waterPosB:GetInt2()
 				local dirBX, dirBY = waterDirB:GetInt2()
 
 				if posAX + dirAX == posBX and posAY + dirAY == posBY then
 					if dirAX ~= dirBX and dirAY ~= dirBY then
 
-						local comp = self:GetComponent(waterTiles[waterB], "Model", 0)
+						local comp = self:GetComponent(self.waterTiles[waterB], "Model", 0)
 						comp:SetModel("rivercorner", "rivercorner", 0, 0)
 
 						--	LEFT TURN (Correct rotation)
@@ -270,7 +271,7 @@ CreateMapSystem.CreateMap = function(self, name)
 						--elseif dirAY == -1 and dirBX == -1 then
 						--elseif dirAY == 1 and dirBX == 1 then
 
-						local comp = self:GetComponent(waterTiles[waterB], "Rotation", 0)
+						local comp = self:GetComponent(self.waterTiles[waterB], "Rotation", 0)
 						local currentRotation = comp:GetFloat(1)
 
 						--	RIGHT TURN
@@ -291,7 +292,7 @@ CreateMapSystem.CreateMap = function(self, name)
 	end
 
 	finishList = nil
-	waterTiles = nil
+	self.waterTiles = nil
 	self.entities = nil
 	collectgarbage()
 end
