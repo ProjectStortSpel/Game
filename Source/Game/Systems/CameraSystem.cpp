@@ -22,11 +22,12 @@ void CameraSystem::Initialize()
 	//AddComponentTypeToFilter("CameraUp", ECSL::FilterType::Mandatory);
 	//AddComponentTypeToFilter("CameraRight", ECSL::FilterType::Mandatory);
 
-	m_input = &Input::InputWrapper::GetInstance();
+	
 }
 
 void CameraSystem::Update(const ECSL::RuntimeInfo& _runtime)
 {
+	m_input = &Input::InputWrapper::GetInstance();
 #if defined(__ANDROID__) || defined(__IOS__)
 	/*static float prevDistance0, prevDistance1;
 	if (m_input->GetTouch()->GetFingerState(0) == Input::InputState::PRESSED ||

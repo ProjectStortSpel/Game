@@ -1,9 +1,21 @@
 OptionMenuSystem = System()
 OptionMenuSystem.Name = "OptionMenu"
 
+OptionMenuSystem.Initialize = function(self)
+	--	Set Name
+	self:SetName(self.Name.."System")
+	
+	--	Toggle EntitiesAdded
+	self:UsingEntitiesAdded()
+	self:UsingUpdate()
+	
+	--	Set Filter
+	self:AddComponentTypeToFilter(self.Name, FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter(self.Name.."Element", FilterType.RequiresOneOf)
+end
+
 OptionMenuSystem.Update = function(self, dt, taskIndex, taskCount)
 	if Input.GetTouchState(0) == InputState.Released then
-
 		local pressedButtons = self:GetEntities("OnPickBoxHit")
 		if #pressedButtons > 0 then
 			local pressedButton = pressedButtons[1]
@@ -21,15 +33,12 @@ OptionMenuSystem.Update = function(self, dt, taskIndex, taskCount)
 		else
 			self:RemoveMenu()
 		end
-		
 	end
-	
-
 end
 
 OptionMenuSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
-	for i = 1, #entities do
-		local entityId = entities[i]
+	for n = 1, #entities do
+		local entityId = entities[n]
 		if world:EntityHasComponent(entityId, self.Name) then
 			self:SpawnMenu()
 		end
@@ -38,6 +47,17 @@ end
 
 OptionMenuSystem.SpawnMenu = function(self)
 	local background = self:CreateElement("gamemenubackground", "quad", 0, -0, -3.1, 3, 3)
+	
+	local button = nil
+	button = self:CreateElement("graphicslow", "quad", 0, 0.4, -3, 0.6, 0.3)
+	print(button)
+	self:AddConsoleCommandToButton("changegraphics low", button)	
+	self:AddHoverSize(1.1, button)
+	
+	button = self:CreateElement("graphicshigh", "quad", 0, -0.4, -3, 0.6, 0.3)
+	print(button)
+	self:AddConsoleCommandToButton("changegraphics high", button)	
+	self:AddHoverSize(1.1, button)
 end
 
 OptionMenuSystem.RemoveMenu = function(self)
@@ -45,14 +65,6 @@ OptionMenuSystem.RemoveMenu = function(self)
 	for i = 1, #entities do
 		world:KillEntity(entities[i])
 	end
-end
-
-OptionMenuSystem.Initialize = function(self)
-	self:SetName("OptionMenuSystem")
-	self:UsingUpdate()
-	self:UsingEntitiesAdded()
-	self:AddComponentTypeToFilter(self.Name, FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter(self.Name.."Element", FilterType.RequiresOneOf)
 end
 
 OptionMenuSystem.CreateElement = function(self, object, folder, posx, posy, posz, scalex, scaley)
@@ -86,6 +98,10 @@ OptionMenuSystem.AddEntityCommandToButton = function(self, command, button)
 	world:GetComponent(button, "MenuEntityCommand", "ComponentName"):SetString(command)
 end
 
-OptionMenuSystem.PostInitialize = function(self)
-
+OptionMenuSystem.AddHoverSize = function(self, deltascale, button)
+	local scale = self:GetComponent(button, "Scale", 0)
+	local sx, sy, sz = scale:GetFloat3()
+	world:CreateComponentAndAddTo("HoverSize", button)
+	local hoversize = self:GetComponent(button, "HoverSize", 0)
+	hoversize:SetFloat3(sx*deltascale, sy*deltascale, sz*deltascale)
 end
