@@ -28,7 +28,7 @@ UpdateLerpScaleSystem.Update = function(self, dt, taskIndex, taskCount)
 		local tZ = world:GetComponent(entity, "LerpingScale", "tZ"):GetFloat(0)
 		local _time = world:GetComponent(entity, "LerpingScale", "Time"):GetFloat(0)
 		local _timer = world:GetComponent(entity, "LerpingScale", "Timer"):GetFloat(0)
-		local algorithm = world:GetComponent(entity, "LerpingScale", "Algorithm"):SetString(0)
+		local algorithm = world:GetComponent(entity, "LerpingScale", "Algorithm"):GetString(0)
 
 		_timer = _timer + dt
 		if _time > _timer then
@@ -39,11 +39,11 @@ UpdateLerpScaleSystem.Update = function(self, dt, taskIndex, taskCount)
 			local Y = sY + (tY - sY) * t
 			local Z = sZ + (tZ - sZ) * t
 			
-			scale:SetFloat3(X, Y, Z)
+			scale:SetFloat3(X, Y, Z, false)
 			
-			world:GetComponent(entity, "LerpingScale", "Timer"):SetFloat(_timer)
+			world:GetComponent(entity, "LerpingScale", "Timer"):SetFloat(_timer, false)
 		else
-			scale:SetFloat3(tX, tY, tZ)
+			scale:SetFloat3(tX, tY, tZ, false)
 			world:RemoveComponentFrom("LerpingScale", entity)
 		end	
 	end

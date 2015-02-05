@@ -2,6 +2,12 @@
 --	components that are needed
 --	for menus
 
+--  GameInterfaceElement Component
+local GameInterfaceElement = ComponentType()
+GameInterfaceElement.Name = "GameInterfaceElement"
+GameInterfaceElement.TableType = TableType.Map
+worldCreator:AddComponentType(GameInterfaceElement)
+
 --	GameMenu Component
 local GameMenu = ComponentType()
 GameMenu.Name = "GameMenu"

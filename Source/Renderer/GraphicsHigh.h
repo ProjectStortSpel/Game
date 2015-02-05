@@ -14,7 +14,7 @@ namespace Renderer
 	{
 	public:
 		GraphicsHigh();
-		GraphicsHigh(Camera _camera);
+		GraphicsHigh(Camera _camera, int x, int y);
 		~GraphicsHigh();
 
 		bool Init();

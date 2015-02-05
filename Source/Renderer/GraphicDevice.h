@@ -93,7 +93,7 @@ namespace Renderer
 	{
 	public:
 		GraphicDevice();
-		GraphicDevice(Camera _camera);
+		GraphicDevice(Camera _camera, int x, int y);
 		virtual ~GraphicDevice();
 
 		virtual bool Init(){ return false; };// = 0;
@@ -118,6 +118,8 @@ namespace Renderer
 		SDL_GLContext GetSDL_GLContext(){ return m_glContext; }
 
 		void GetWindowSize(int &x, int &y){ x = m_clientWidth; y = m_clientHeight; }
+
+		void GetWindowPos(int &x, int &y);
 
 		// MODELLOADER
 		virtual bool PreLoadModel(std::string _dir, std::string _file, int _renderType = RENDER_DEFERRED){ return false; };// = 0;
@@ -159,6 +161,7 @@ namespace Renderer
 
 		//// Window size
 		int	m_clientWidth, m_clientHeight;
+		int m_windowPosX, m_windowPosY;
 
 		// Shaders
 		Shader m_skyBoxShader;
