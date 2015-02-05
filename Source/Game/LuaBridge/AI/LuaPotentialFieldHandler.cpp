@@ -132,5 +132,10 @@ namespace LuaBridge
 				}
 			}
 		}
+
+		const PF* GetPF(std::string _object) 
+		{ 
+			return &(m_PFs[m_uniqueObjects.at(_object)]); 
+		}
 	}
 }

@@ -72,7 +72,7 @@ namespace LuaBridge
 
 		//const PF* GetPF(ObjectType _object);
 		//const PF* GetPF(int _object);
-		const PF* GetPF(std::string _object) { return &m_PFs[m_uniqueObjects.at(_object)]; }
+		const PF* GetPF(std::string _object);
 
 		//void NormalizePF(unsigned int _offset);
 		void InitPFHandler(unsigned int _mapSizeX, unsigned int _mapSizeY);
