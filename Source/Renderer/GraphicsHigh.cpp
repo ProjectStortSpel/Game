@@ -357,8 +357,7 @@ void GraphicsHigh::Render()
 	}
 
 	// RENDER VIEWSPACE STUFF
-	//glDisable(GL_DEPTH_TEST);
-	//glDisable(GL_CULL_FACE);
+	glClear(GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_TEXTURE_2D);
 	m_viewspaceShader.UseProgram();
 	m_viewspaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
@@ -406,7 +405,7 @@ void GraphicsHigh::Render()
 	}
 
 	// RENDER INTERFACE STUFF
-	glDisable(GL_DEPTH_TEST);
+	//glDisable(GL_DEPTH_TEST);
 	m_interfaceShader.UseProgram();
 	m_interfaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 
@@ -574,7 +573,7 @@ bool GraphicsHigh::InitDeferred()
 
 bool GraphicsHigh::InitForward()
 {
-	m_forwardShader.UseProgram();
+	//m_forwardShader.UseProgram();
 
 	// Create and bind the FBO
 	glGenFramebuffers(1, &m_forwardFBO);
