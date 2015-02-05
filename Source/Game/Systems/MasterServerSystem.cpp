@@ -60,9 +60,11 @@ void MasterServerSystem::PostInitialize()
 
 void MasterServerSystem::Update(const ECSL::RuntimeInfo& _runtime)
 {
-	//if (Input::InputWrapper::GetInstance().GetKeyboard()->GetKeyState(SDL_SCANCODE_BACKSPACE) == Input::InputState::PRESSED)
-	//	m_mServerMessages.push_back(GET_SERVER_LIST);
-
+	if (!NetworkInstance::GetClient()->IsConnected() && !NetworkInstance::GetServer()->IsRunning())
+	{
+		if (Input::InputWrapper::GetInstance().GetKeyboard()->GetKeyState(SDL_SCANCODE_BACKSPACE) == Input::InputState::PRESSED)
+			m_mServerMessages.push_back(GET_SERVER_LIST);
+	}
 
 	// Return if the user is a already connected client
 	if (NetworkInstance::GetClient()->IsConnected() && !NetworkInstance::GetServer()->IsRunning())

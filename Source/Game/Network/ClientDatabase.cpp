@@ -9,7 +9,7 @@ ClientDatabase& ClientDatabase::GetInstance()
 }
 
 ClientDatabase::ClientDatabase()
-	:m_ipAddress("194.47.150.44"), m_password("DefaultMasterPassword"), m_remotePort(5509), m_localPort(0), m_connected(false), m_tryConnect(true)
+	:m_ipAddress("127.0.0.1"), m_password("DefaultMasterPassword"), m_remotePort(5509), m_localPort(0), m_connected(false), m_tryConnect(true)
 {
 	Logger::GetInstance().AddGroup("MasterServer", false);
 
