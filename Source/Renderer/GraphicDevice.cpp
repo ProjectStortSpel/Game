@@ -10,12 +10,16 @@ using namespace glm;
 
 GraphicDevice::GraphicDevice()
 {
+	m_windowPosX = 70;
+	m_windowPosY = 2;
 	m_SDLinitialized = false;
 }
 
-GraphicDevice::GraphicDevice(Camera _camera)
+GraphicDevice::GraphicDevice(Camera _camera, int x, int y)
 {
 	m_camera = new Camera(_camera);
+	m_windowPosX = x;
+	m_windowPosY = y;
 	m_SDLinitialized = true;
 }
 
@@ -64,6 +68,14 @@ void GraphicDevice::ResizeWindow(int _width, int _height)
 	std::cout << m_clientWidth << "x" << m_clientHeight << std::endl;
 
 	SDL_SetWindowSize(m_window, m_clientWidth, m_clientHeight);
+}
+
+void GraphicDevice::GetWindowPos(int &x, int &y)
+{
+	int posx, posy;
+	SDL_GetWindowPosition(m_window, &posx, &posy);
+	x = posx;
+	y = posy;
 }
 
 bool GraphicDevice::InitSkybox()

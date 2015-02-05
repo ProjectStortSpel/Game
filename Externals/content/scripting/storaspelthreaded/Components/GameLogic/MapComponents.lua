@@ -2,6 +2,13 @@
 --	components that are needed
 --	for map components
 
+-- Create Map Component
+local CreateMapComponent = ComponentType()
+CreateMapComponent.Name = "CreateMap"
+CreateMapComponent.TableType = TableType.Map
+CreateMapComponent:AddVariable("MapName", ByteSize.Text)
+worldCreator:AddComponentType(CreateMapComponent)
+
 -- Map Position Component
 local MapPositionComponent = ComponentType()
 MapPositionComponent.Name = "MapPosition"
