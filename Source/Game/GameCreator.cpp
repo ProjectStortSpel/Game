@@ -27,7 +27,7 @@
 #include <iomanip>
 
 GameCreator::GameCreator() :
-m_graphics(0), m_input(0), m_clientWorld(0), m_serverWorld(0), m_console(0), m_remoteConsole(0), m_consoleManager(Console::ConsoleManager::GetInstance()), m_frameCounter(new Utility::FrameCounter()), m_running(true),
+m_graphics(0), m_input(0), m_clientWorld(0), m_serverWorld(0), m_worldProfiler(0), m_console(0), m_remoteConsole(0), m_consoleManager(Console::ConsoleManager::GetInstance()), m_frameCounter(new Utility::FrameCounter()), m_running(true),
 m_graphicalSystems(std::vector<GraphicalSystem*>())
 {
   
