@@ -1,7 +1,7 @@
 #include "Pathfinder.h"
 
 
-Pathfinder* Pathfinder::m_instance = NULL;
+Pathfinder* Pathfinder::m_instance = 0;
 
 Pathfinder* Pathfinder::Instance()
 {
@@ -37,7 +37,7 @@ void Pathfinder::SetNodeData(const struct tile_data*** _data, int _x, int _y)
 			this->m_mapData[i][j].walkable = use[i][j].walkable;
 			this->m_mapData[i][j].position = coord(i,j);
 			this->m_mapData[i][j].walk_cost = use[i][j].walking_cost;
-			this->m_mapData[i][j].parent = NULL;
+			this->m_mapData[i][j].parent = 0;
 		}
 	}
 }

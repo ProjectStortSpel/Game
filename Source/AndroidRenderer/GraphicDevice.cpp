@@ -219,8 +219,8 @@ void GraphicDevice::Render()
 	// -----------
 
 	glEnable(GL_CULL_FACE);
-	glDisable(GL_DEPTH_TEST);
 
+	glClear(GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 
