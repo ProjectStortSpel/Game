@@ -68,21 +68,21 @@ ConnectMenuSystem.SpawnMenu = function(self)
 		servernousers = self:GetComponent(server, "ServerListEntry", "NoUsers"):GetInt(0)
 		servermaxusers = self:GetComponent(server, "ServerListEntry", "MaxUsers"):GetInt(0)
 		servergamestarted = self:GetComponent(server, "ServerListEntry", "GameStarted"):GetBool(0)
-		button = self:CreateElement("shade", "quad", 0, 0.6-i*0.11, -2, 1.8, 0.1)
+		button = self:CreateElement("shade", "quad", 0, 0.6-i*0.11, -2.0, 1.8, 0.1)
 		self:AddConsoleCommandToButton("connect "..serverip .. " " .. serverport, button)
 		self:AddHoverSize(1.005, button)
 		
-		text = self:CreateText("center", "text", -0.85, 0.64-i*0.11, -1.99999, 0.08, 0.08)	
+		text = self:CreateText("center", "text", -0.85, 0.64-i*0.11, -1.999, 0.08, 0.08)	
 		if servergamestarted == true then
 			self:AddTextToTexture("C0"..i, "X", 0, 1, 0, 0, text)
 		else
 			self:AddTextToTexture("C0"..i, "O", 0, 0, 1, 0, text)
 		end
-		text = self:CreateText("left", "text", -0.81, 0.64-i*0.11, -1.99999, 1.5, 0.08)	
+		text = self:CreateText("left", "text", -0.81, 0.64-i*0.11, -1.999, 1.5, 0.08)	
 		self:AddTextToTexture("C1"..i, servername, 0, 1, 1, 1, text)
-		text = self:CreateText("center", "text", 0, 0.64-i*0.11, -1.99999, 1.78, 0.08)
+		text = self:CreateText("center", "text", 0, 0.64-i*0.11, -1.999, 1.78, 0.08)
 self:AddTextToTexture("C2"..i, serverip .. ":" .. serverport, 0, 1, 1, 1, text)
-		text = self:CreateText("right", "text", 0.89, 0.64-i*0.11, -1.99999, 0.2, 0.08)	
+		text = self:CreateText("right", "text", 0.89, 0.64-i*0.11, -1.999, 0.2, 0.08)	
 		self:AddTextToTexture("C3"..i, "["..servernousers.."/"..servermaxusers.."]", 0, 1, 1, 1, text)
 	end
 end
