@@ -16,35 +16,54 @@ ActionTurnRightSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, e
 
 	for n = 1, #entities do
 		local entity = entities[n]
+		
+		if world:EntityHasComponent(entity, "Stunned") then
+			world:SetComponent(entity, "NoSubSteps", "Counter", 1)
+			world:RemoveComponentFrom("UnitTurnRight", entity)
+			print("I AM A STUNNED UNIT WITH ID: " .. entity)
+			return
+		end
+		
 		local dir = world:GetComponent(entity, "Direction", 0)
 		local x, z = dir:GetInt2()
-		print("X Y before (" .. x .. ", " .. z .. ")")
+		
+		if not world:EntityHasComponent(entity, "SlerpRotation") then
+			world:CreateComponentAndAddTo("SlerpRotation", entity)
+		end 
+		print("hi")
+		world:GetComponent(entity, "SlerpRotation", "fromX"):SetFloat( 0 )
+		world:GetComponent(entity, "SlerpRotation", "fromY"):SetFloat( 1 )
+		world:GetComponent(entity, "SlerpRotation", "fromZ"):SetFloat( 0 )
+		print("hi")
 		if	x == 0 and z == 1 then
+			world:GetComponent(entity, "SlerpRotation", "fromW"):SetFloat(0)
 			x = -1
 			z = 0
 			rotY = -math.pi / 2
-			print("Case 1")
 		elseif  x == 0 and z == -1 then
+			world:GetComponent(entity, "SlerpRotation", "fromW"):SetFloat(math.pi)
 			x = 1
 			z = 0
 			rotY = math.pi / 2
-			print("Case 2")
 		elseif  x == 1 then
+			world:GetComponent(entity, "SlerpRotation", "fromW"):SetFloat(math.pi / 2)
 			x = 0
 			z = 1
 			rotY = 0
-			print("Case 3")
 		elseif  x == -1 then
+			world:GetComponent(entity, "SlerpRotation", "fromW"):SetFloat(-math.pi / 2)
 			x = 0
 			z = -1
 			rotY = math.pi
-			print("Case 4")
 		end
-		print("X Y before (" .. x .. ", " .. z .. ")")
-
+		
+		world:GetComponent(entity, "SlerpRotation", "toX"):SetFloat( 0 )
+		world:GetComponent(entity, "SlerpRotation", "toY"):SetFloat( 1 )
+		world:GetComponent(entity, "SlerpRotation", "toZ"):SetFloat( 0 )
+		world:GetComponent(entity, "SlerpRotation", "toW"):SetFloat(-math.pi/2)
 		dir:SetInt2(x, z)
-		world:GetComponent(entity, "Rotation", "Y"):SetFloat(rotY)
-
+		
+		world:SetComponent(entity, "NoSubSteps", "Counter", 1)
 		world:RemoveComponentFrom("UnitTurnRight", entity)
 	end
 end
