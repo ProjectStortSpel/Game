@@ -28,7 +28,6 @@ RotationComponent:AddVariable("Y", ByteSize.Float)
 RotationComponent:AddVariable("Z", ByteSize.Float)
 worldCreator:AddComponentType(RotationComponent)
 
-
 -- Slerp Rotation Component
 local SlerpRotationComponent = ComponentType()
 SlerpRotationComponent.Name = "SlerpRotation"

@@ -40,17 +40,27 @@ NewCameraSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entitie
 				local deltaaspectX = aspectY / aspectX
 				self.Help = true
 				local element = nil
+				local text = nil
 				element = self:CreateElement("touchside", "quad", 0, aspectY*2.2, -2.2, 4*aspectX, 0.5*aspectX)
-				
+				text = self:CreateElement("touchside", "quad", 0, aspectY*2, -2.1, 2, 0.08)
+				self:AddTextToTexture("touchside1", "ZOOM IN", 0, 1, 1, 1, text)
 				
 				element = self:CreateElement("touchside", "quad", 0, -aspectY*2.2, -2.2, 4*aspectX, 0.5*aspectX)
 				self:GetComponent(element, "Rotation", 0):SetFloat3(0, 0, 3.14159265359)
+				text = self:CreateElement("touchside", "quad", 0, -aspectY*2, -2.1, 2, 0.08)
+				self:AddTextToTexture("touchside2", "ZOOM OUT", 0, 1, 1, 1, text)
 				
 				element = self:CreateElement("touchside", "quad", aspectX*2.2, 0, -2.2, 4*aspectY, 0.5*aspectY)
 				self:GetComponent(element, "Rotation", 0):SetFloat3(0, 0, -3.14159265359*0.5)
+				text = self:CreateElement("touchside", "quad", aspectX*2, 0, -2.1, 2, 0.08)
+				self:AddTextToTexture("touchside3", "ROTATE RIGHT", 0, 1, 1, 1, text)
+				self:GetComponent(text, "Rotation", 0):SetFloat3(0, 0, -3.14159265359*0.5)
 				
 				element = self:CreateElement("touchside", "quad", -aspectX*2.2, 0, -2.2, 4*aspectY, 0.5*aspectY)
 				self:GetComponent(element, "Rotation", 0):SetFloat3(0, 0, 3.14159265359*0.5)
+				text = self:CreateElement("touchside", "quad", -aspectX*2, 0, -2.1, 2, 0.08)
+				self:AddTextToTexture("touchside4", "ROTATE LEFT", 0, 1, 1, 1, text)
+				self:GetComponent(text, "Rotation", 0):SetFloat3(0, 0, 3.14159265359*0.5)
 				
 			else
 				self:RemoveElements()
@@ -233,7 +243,6 @@ NewCameraSystem.DoFreeCam = function(self, dt)
 					move = true
 				end
 				if move == true then
-					self:RemoveElements()
 					self.Camera:MoveToAndLookAt(self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
 												self.CameraUpX,0,self.CameraUpZ,
 												self.CameraLookAtX,-4.5,self.CameraLookAtZ,
@@ -287,6 +296,16 @@ NewCameraSystem.CreateElement = function(self, object, folder, posx, posy, posz,
 	local rotation = self:GetComponent(id, "Rotation", 0)
 	rotation:SetFloat3(0, 0, 0)
 	return id	
+end
+
+NewCameraSystem.AddTextToTexture = function(self, n, text, font, r, g, b, button)
+	world:CreateComponentAndAddTo("TextTexture", button)
+	world:GetComponent(button, "TextTexture", "Name"):SetString(n)
+	world:GetComponent(button, "TextTexture", "Text"):SetString(text)
+	world:GetComponent(button, "TextTexture", "FontIndex"):SetInt(font)
+	world:GetComponent(button, "TextTexture", "R"):SetFloat(r)
+	world:GetComponent(button, "TextTexture", "G"):SetFloat(g)
+	world:GetComponent(button, "TextTexture", "B"):SetFloat(b)
 end
 
 NewCameraSystem.RemoveElements = function(self)
