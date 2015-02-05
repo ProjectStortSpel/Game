@@ -100,8 +100,8 @@ LinSocket::LinSocket(int _domain, int _type, int _protocol)
 
 LinSocket::~LinSocket()
 {
+	CloseSocket();
 	Shutdown();
-	//CloseSocket();
 	
 
 	SAFE_DELETE(m_remoteAddress);

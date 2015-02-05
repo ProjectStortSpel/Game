@@ -9,7 +9,7 @@ ClientDatabase& ClientDatabase::GetInstance()
 }
 
 ClientDatabase::ClientDatabase()
-	:m_ipAddress("127.0.0.1"), m_password("DefaultMasterPassword"), m_remotePort(5509), m_localPort(0), m_connected(false), m_maxTries(0)
+	:m_ipAddress("194.47.150.44"), m_password("DefaultMasterPassword"), m_remotePort(5509), m_localPort(0), m_connected(false), m_tryConnect(true)
 {
 	Logger::GetInstance().AddGroup("MasterServer", false);
 
@@ -34,14 +34,12 @@ ClientDatabase::~ClientDatabase()
 
 bool ClientDatabase::Connect()
 {
-	if (m_maxTries > 4)
+	if (!m_tryConnect)
 		return false;
 
 	if (!m_connected)
 		m_connected = m_client.Connect(m_ipAddress.c_str(), m_password.c_str(), m_remotePort, m_localPort);
-
-	if (!m_connected)
-		++m_maxTries;
+		m_tryConnect = m_connected;
 
 	return m_connected;
 }
@@ -61,8 +59,11 @@ void ClientDatabase::Update(float dt)
 
 void ClientDatabase::AddToDatabase(int _port, bool _pwProtected)
 {
-	//m_client.SetIncomingPort(_port + 1);
-	//m_client.Connect();
+	if (!m_connected)
+	{
+		Logger::GetInstance().Log("MasterServer", Info, "Tried to send \"ADD_TO_DATABASE\", but is not connected to MasterServer");
+		return;
+	}
 
 	auto ph = m_client.GetPacketHandler();
 	auto id = ph->StartPack("ADD_TO_DATABASE");
@@ -75,9 +76,27 @@ void ClientDatabase::AddToDatabase(int _port, bool _pwProtected)
 
 }
 
+void ClientDatabase::RemoveFromDatabase()
+{
+	if (!m_connected)
+	{
+		Logger::GetInstance().Log("MasterServer", Info, "Tried to send \"REMOVE_FROM_DATABASE\", but is not connected to MasterServer");
+		return;
+	}
+
+	auto ph = m_client.GetPacketHandler();
+	auto id = ph->StartPack("REMOVE_FROM_DATABASE");
+	auto packet = ph->EndPack(id);
+	m_client.Send(packet);
+}
+
 void ClientDatabase::SetGameStarted(bool _started)
 {
-	//m_client.Connect();
+	if (!m_connected)
+	{
+		Logger::GetInstance().Log("MasterServer", Info, "Tried to send \"GAME_STARTED\", but is not connected to MasterServer");
+		return;
+	}
 
 	auto ph = m_client.GetPacketHandler();
 	auto id = ph->StartPack("GAME_STARTED");
@@ -90,7 +109,11 @@ void ClientDatabase::SetGameStarted(bool _started)
 }
 void ClientDatabase::SetPasswordProtected(bool _protected)
 {
-	//m_client.Connect();
+	if (!m_connected)
+	{
+		Logger::GetInstance().Log("MasterServer", Info, "Tried to send \"IS_PASSWORD_PROTECTED\", but is not connected to MasterServer");
+		return;
+	}
 
 	auto ph = m_client.GetPacketHandler();
 	auto id = ph->StartPack("IS_PASSWORD_PROTECTED");
@@ -102,7 +125,11 @@ void ClientDatabase::SetPasswordProtected(bool _protected)
 }
 void ClientDatabase::SetServerPort(int _port)
 {
-	//m_client.Connect();
+	if (!m_connected)
+	{
+		Logger::GetInstance().Log("MasterServer", Info, "Tried to send \"SET_SERVER_PORT\", but is not connected to MasterServer");
+		return;
+	}
 
 	auto ph = m_client.GetPacketHandler();
 	auto id = ph->StartPack("SET_SERVER_PORT");
@@ -115,7 +142,11 @@ void ClientDatabase::SetServerPort(int _port)
 
 void ClientDatabase::IncreaseMaxNoPlayers()
 {
-	//m_client.Connect();
+	if (!m_connected)
+	{
+		Logger::GetInstance().Log("MasterServer", Info, "Tried to send \"MAX_PLAYER_COUNT_INCREASED\", but is not connected to MasterServer");
+		return;
+	}
 
 	auto ph = m_client.GetPacketHandler();
 	auto id = ph->StartPack("MAX_PLAYER_COUNT_INCREASED");
@@ -128,7 +159,11 @@ void ClientDatabase::IncreaseMaxNoPlayers()
 
 void ClientDatabase::IncreaseNoPlayers()
 {
-	//m_client.Connect();
+	if (!m_connected)
+	{
+		Logger::GetInstance().Log("MasterServer", Info, "Tried to send \"PLAYER_COUNT_INCREASED\", but is not connected to MasterServer");
+		return;
+	}
 
 	auto ph = m_client.GetPacketHandler();
 	auto id = ph->StartPack("PLAYER_COUNT_INCREASED");
@@ -141,7 +176,11 @@ void ClientDatabase::IncreaseNoPlayers()
 
 void ClientDatabase::DecreaseNoPlayers()
 {
-	//m_client.Connect();
+	if (!m_connected)
+	{
+		Logger::GetInstance().Log("MasterServer", Info, "Tried to send \"PLAYER_COUNT_DECREASED\", but is not connected to MasterServer");
+		return;
+	}
 
 	auto ph = m_client.GetPacketHandler();
 	auto id = ph->StartPack("PLAYER_COUNT_DECREASED");
@@ -154,7 +193,11 @@ void ClientDatabase::DecreaseNoPlayers()
 
 void ClientDatabase::IncreaseNoSpectators()
 {
-	//m_client.Connect();
+	if (!m_connected)
+	{
+		Logger::GetInstance().Log("MasterServer", Info, "Tried to send \"SPECTATOR_COUNT_INCREASED\", but is not connected to MasterServer");
+		return;
+	}
 
 	auto ph = m_client.GetPacketHandler();
 	auto id = ph->StartPack("SPECTATOR_COUNT_INCREASED");
@@ -167,7 +210,11 @@ void ClientDatabase::IncreaseNoSpectators()
 
 void ClientDatabase::DecreaseNoSpectators()
 {
-	//m_client.Connect();
+	if (!m_connected)
+	{
+		Logger::GetInstance().Log("MasterServer", Info, "Tried to send \"SPECTATOR_COUNT_DECREASED\", but is not connected to MasterServer");
+		return;
+	}
 
 	auto ph = m_client.GetPacketHandler();
 	auto id = ph->StartPack("SPECTATOR_COUNT_DECREASED");
@@ -180,7 +227,11 @@ void ClientDatabase::DecreaseNoSpectators()
 
 void ClientDatabase::RequestServerList()
 {
-	//m_client.Connect();
+	if (!m_connected)
+	{
+		Logger::GetInstance().Log("MasterServer", Info, "Tried to send \"GET_SERVER_LIST\", but is not connected to MasterServer");
+		return;
+	}
 
 	auto ph = m_client.GetPacketHandler();
 	auto id = ph->StartPack("GET_SERVER_LIST");

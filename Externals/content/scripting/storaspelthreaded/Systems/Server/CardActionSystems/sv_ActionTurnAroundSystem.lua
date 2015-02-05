@@ -31,11 +31,9 @@ ActionTurnAroundSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, 
 		end 
 		
 		local rotY = world:GetComponent(entities[i], "Rotation", "Y"):GetFloat()
-		print("hi")
-		world:GetComponent(entity, "SlerpRotation", "fromX"):SetFloat( 0 )
-		world:GetComponent(entity, "SlerpRotation", "fromY"):SetFloat( 1 )
-		world:GetComponent(entity, "SlerpRotation", "fromZ"):SetFloat( 0 )
-		print("hi")
+		world:GetComponent(entities[i], "SlerpRotation", "fromX"):SetFloat( 0 )
+		world:GetComponent(entities[i], "SlerpRotation", "fromY"):SetFloat( 1 )
+		world:GetComponent(entities[i], "SlerpRotation", "fromZ"):SetFloat( 0 )
 		if	x == 0 and z == 1 then
 			world:GetComponent(entities[i], "SlerpRotation", "fromW"):SetFloat( math.pi )
 			rotY = 0

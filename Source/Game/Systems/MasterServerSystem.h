@@ -10,6 +10,7 @@ class MasterServerSystem : public ECSL::System
 	enum MASTER_SERVER_MESSAGES
 	{
 		ADD_TO_DATABASE,
+		REMOVE_FROM_DATABASE,
 		GAME_STARTED,
 		IS_PASSWORD_PROTECTED,
 		SET_SERVER_PORT,
@@ -41,9 +42,13 @@ private:
 
 	int m_gameRunningId;
 	int m_oldGameRunningId;
-	float m_requestServerListTimer;
 	
+	bool m_pwProtected;
+	bool m_serverStarted;
+	int m_port;
+
 	void OnGetServerList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
+	void OnServerShutdown();
 };
 
 #endif

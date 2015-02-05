@@ -43,7 +43,6 @@ public:
 	bool Disconnect();
 
 	void HookOnGetServerList(Network::NetMessageHook& _hook);
-
 	void Update(float dt);
 
 	void AddToDatabase(int _port, bool _pwProtected);
@@ -76,7 +75,7 @@ private:
 	std::string m_password;
 	int m_remotePort;
 	int m_localPort;
-	int m_maxTries;
+	bool m_tryConnect;
 
 };
 

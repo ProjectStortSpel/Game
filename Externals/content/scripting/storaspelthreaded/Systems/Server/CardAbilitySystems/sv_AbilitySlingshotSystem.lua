@@ -71,11 +71,11 @@ AbilitySlingshotSystem.AddBullet = function(self, posX, posZ, targetPosX, target
 	print("lerpTime: " .. 0.2)
 	
 	world:GetComponent(bullet, "Position", 0):SetFloat3(posX, 1, posZ)
-	world:GetComponent(entity, "SlerpRotation", "X"):SetFloat(targetPosX)
-	world:GetComponent(entity, "SlerpRotation", "Y"):SetFloat(1)
-	world:GetComponent(entity, "SlerpRotation", "Z"):SetFloat(targetPosZ)
-	world:GetComponent(entity, "SlerpRotation", "Time"):SetFloat(0.2)
-	world:GetComponent(entity, "SlerpRotation", "Algorithm"):SetString("NormalLerp")
+	world:GetComponent(bullet, "LerpPosition", "X"):SetFloat(targetPosX)
+	world:GetComponent(bullet, "LerpPosition", "Y"):SetFloat(1)
+	world:GetComponent(bullet, "LerpPosition", "Z"):SetFloat(targetPosZ)
+	world:GetComponent(bullet, "LerpPosition", "Time"):SetFloat(0.2)
+	world:GetComponent(bullet, "LerpPosition", "Algorithm"):SetString("NormalLerp")
 
 end
 
@@ -129,22 +129,22 @@ AbilitySlingshotSystem.Update = function(self, dt, taskIndex, taskCount)
 	end
 
 	local slingshots = self:GetEntities("SlingShotProjectile")
-	--for i = 1, #slingshots do
-		--local posX, _, posZ	 = world:GetComponent(slingshots[i], "Position", 0):GetFloat3()
-	--	
-	--	local tX = world:GetComponent(slingshots[i], "LerpingPosition", "tX"):GetFloat(0)
-	--	local tZ = world:GetComponent(slingshots[i], "LerpingPosition", "tZ"):GetFloat(0)
-    --
-	--	print("UPDATE")
-	--	print("posX: " .. posX)
-	--	print("posZ: " .. posZ)
-	--	print("tX: " .. tX)
-	--	print("tZ: " .. tZ)
-	--	
-	--	
-	--	if posX == tarX and posZ == tarZ then
-	--		world:KillEntity(slingshots[i])
-	--	end
-	--end
+	for i = 1, #slingshots do
+		local posX, _, posZ	 = world:GetComponent(slingshots[i], "Position", 0):GetFloat3()
+		
+		local tX = world:GetComponent(slingshots[i], "LerpingPosition", "tX"):GetFloat(0)
+		local tZ = world:GetComponent(slingshots[i], "LerpingPosition", "tZ"):GetFloat(0)
+    
+		print("UPDATE")
+		print("posX: " .. posX)
+		print("posZ: " .. posZ)
+		print("tX: " .. tX)
+		print("tZ: " .. tZ)
+		
+		
+		if posX == tX and posZ == tZ then
+			world:KillEntity(slingshots[i])
+		end
+	end
 	
 end

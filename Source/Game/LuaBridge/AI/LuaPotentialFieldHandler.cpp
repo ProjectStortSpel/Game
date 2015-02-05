@@ -130,7 +130,7 @@ namespace LuaBridge
 			{
 				for (unsigned int y = 0; y < m_mapSize.y; y++)
 				{
-					m_PFs[_offset][x][y] /= 0.0f;
+					m_PFs[_offset][x][y] = 0.0f;
 				}
 			}
 		}
