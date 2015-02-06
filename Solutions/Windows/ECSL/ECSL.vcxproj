@@ -29,6 +29,7 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\ComponentTable.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataArray.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataMap.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataSlimArray.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataTable.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\EntityTable.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Logger\DataLogger.h" />
@@ -67,6 +68,7 @@
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\ComponentTable.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataArray.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataMap.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataSlimArray.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataTable.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\EntityTable.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Logger\DataLogger.cpp" />
