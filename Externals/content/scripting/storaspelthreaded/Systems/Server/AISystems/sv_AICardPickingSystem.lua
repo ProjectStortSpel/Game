@@ -2,6 +2,7 @@ AICardPickingSystem = System()
 AICardPickingSystem.NumberOfCardsToPick = 5
 AICardPickingSystem.CardsPerHand = 8
 AICardPickingSystem.PrintSimulation = 0
+AICardPickingSystem.AICheat = 1
 
 AICardPickingSystem.Initialize = function(self)
 	self:SetName("AI card picking System")
@@ -109,13 +110,39 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, dirX, dirY, posX, p
 	local pickedcards = {}
 	pickedcards.__mode = "k"
 	if #CardSetAI >= self.CardsPerHand then
+		
+		if self.AICheat == 1 then
+			
+			for j = 1, self.CardsPerHand do
+				
+				local cardactioncomp = self:GetComponent(CardSetAI[j], "CardAction", 0)
+				
+				if j == 1 then
+					cardactioncomp:SetString("Forward")
+				elseif j == 2 then
+					cardactioncomp:SetString("Forward")
+				elseif j == 3 then
+					cardactioncomp:SetString("Backward")
+				elseif j == 4 then
+					cardactioncomp:SetString("Backward")
+				elseif j == 5 then
+					cardactioncomp:SetString("TurnRight")
+				elseif j == 6 then
+					cardactioncomp:SetString("TurnLeft")
+				elseif j == 7 then
+					cardactioncomp:SetString("TurnAround")
+				elseif j == 8 then
+					cardactioncomp:SetString("Forward")
+				end
+			end
+		end
 
 		local forwards = self:GetAllCardsOf(CardSetAI, "Forward")
 		local backwards = self:GetAllCardsOf(CardSetAI, "Backward")
 		local turnLefts = self:GetAllCardsOf(CardSetAI, "TurnLeft")
 		local turnRights = self:GetAllCardsOf(CardSetAI, "TurnRight")
 		local turnArounds = self:GetAllCardsOf(CardSetAI, "TurnAround")
-
+		
 		for i = 1, self.NumberOfCardsToPick do
 			--print("Position : " .. posX .. ", " .. posY ..  "(x , y)")
 			--print("Target   : " .. targetX .. ", " .. targetY .. "(x , y)")
