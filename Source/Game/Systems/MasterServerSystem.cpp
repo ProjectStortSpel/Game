@@ -4,6 +4,9 @@
 #include "Logger/Managers/Logger.h"
 #include "Input/InputWrapper.h"
 
+
+float tmpTimer = 0.f;
+
 MasterServerSystem::MasterServerSystem()
 	:m_clientDatabase(0)
 {
@@ -11,6 +14,11 @@ MasterServerSystem::MasterServerSystem()
 MasterServerSystem::~MasterServerSystem()
 {
 	//SAFE_DELETE(m_clientDatabase);
+	//m_clientDatabase->~ClientDatabase();
+	m_clientDatabase->ResetNetworkEvents();
+	m_mServerMessages.clear();
+	tmpTimer = 0.f;
+	
 }
 
 void MasterServerSystem::Initialize()
@@ -33,6 +41,7 @@ void MasterServerSystem::Initialize()
 void MasterServerSystem::PostInitialize()
 {
 	m_clientDatabase = &ClientDatabase::GetInstance();
+	m_connect = true;
 
 	Network::NetEvent hook = std::bind(&MasterServerSystem::OnConnectionAccepted, this, std::placeholders::_1, std::placeholders::_2);
 	m_clientDatabase->HookOnConnectionAccepted(hook);
@@ -60,17 +69,15 @@ void MasterServerSystem::PostInitialize()
 	}
 }
 
-float tmpTimer = 0.f;
-bool connect2 = true;
 void MasterServerSystem::Update(const ECSL::RuntimeInfo& _runtime)
 {
 	// Return if the user is a already connected client
 	if (NetworkInstance::GetClient()->IsConnected() && !NetworkInstance::GetServer()->IsRunning())
 		return;
 
-	if (m_mServerMessages.size() > 0 && connect2)
+	if (m_mServerMessages.size() > 0 && m_connect)
 	{
-		connect2 = false;
+		m_connect = false;
 		m_clientDatabase->Connect();
 	}
 	
@@ -180,6 +187,7 @@ void MasterServerSystem::EntitiesRemoved(const ECSL::RuntimeInfo& _runtime, cons
 
 void MasterServerSystem::OnConnectionAccepted(Network::NetConnection _nc, const char* _msg)
 {
+
 	for (int i = 0; i < m_mServerMessages.size(); ++i)
 	{
 		switch (m_mServerMessages[i])
@@ -224,7 +232,7 @@ void MasterServerSystem::OnConnectionAccepted(Network::NetConnection _nc, const 
 
 	m_mServerMessages.clear();
 	m_clientDatabase->Disconnect();
-	connect2 = true;
+	m_connect = true;
 }
 
 void MasterServerSystem::OnServerShutdown()

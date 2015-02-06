@@ -47,8 +47,15 @@ bool ClientDatabase::Disconnect()
 {
 	if(m_connected)
 		m_client.Disconnect();
+	
+	m_connected = false;
 
 	return true;
+}
+
+void ClientDatabase::ResetNetworkEvents()
+{
+	m_client.ResetNetworkEvents();
 }
 
 void ClientDatabase::Update(float dt)

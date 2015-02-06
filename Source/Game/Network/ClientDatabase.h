@@ -62,6 +62,9 @@ public:
 
 	void RequestServerList();
 
+
+	void ResetNetworkEvents();
+
 private:
 	
 	ClientDatabase();
