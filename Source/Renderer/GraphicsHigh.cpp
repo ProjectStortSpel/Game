@@ -874,6 +874,24 @@ bool GraphicsHigh::PreLoadModel(std::string _dir, std::string _file, int _render
 
 	return true;
 }
+int GraphicsHigh::LoadAModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType)
+{
+	int modelID = m_modelIDcounter;
+	m_modelIDcounter++;
+	_renderType = 1;
+	//	Lägg till i en lista, följande
+	//	std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType
+
+	ModelToLoad* modelToLoad = new ModelToLoad();
+	modelToLoad->Animated = true;
+	modelToLoad->Dir = _dir;
+	modelToLoad->File = _file;
+	modelToLoad->MatrixPtr = _matrixPtr;
+	modelToLoad->RenderType = _renderType;
+	m_modelsToLoad[modelID] = modelToLoad;
+
+	return modelID;
+}
 int GraphicsHigh::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType)
 {
 	int modelID = m_modelIDcounter;
@@ -883,6 +901,7 @@ int GraphicsHigh::LoadModel(std::string _dir, std::string _file, glm::mat4 *_mat
 	//	std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType
 
 	ModelToLoad* modelToLoad = new ModelToLoad();
+	modelToLoad->Animated = false;
 	modelToLoad->Dir = _dir;
 	modelToLoad->File = _file;
 	modelToLoad->MatrixPtr = _matrixPtr;

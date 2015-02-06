@@ -4,13 +4,17 @@
 
 struct ObjectData
 {
+	bool animated;
 	std::string mesh;
 	std::string text;
 	std::string norm;
 	std::string spec;
+	std::string jonts;
+	std::vector<std::string> anim;
 	ObjectData(std::string dir)
 	{
-		mesh = text = norm = spec = dir;
+		animated = false;
+		mesh = text = norm = spec = jonts = dir;
 	}
 };
 
@@ -86,6 +90,17 @@ public:
 		objectdata.norm.append(temp);
 		getline(fileIn, temp);
 		objectdata.spec.append(temp);
+
+		getline(fileIn, temp);
+		objectdata.jonts.append(temp);
+
+		while (getline(fileIn, temp))
+		{ 
+			std::string animation;
+			animation = fileDir;
+			animation.append(temp);
+			objectdata.anim.push_back(animation);
+		}
 
 		return objectdata;
 	}
