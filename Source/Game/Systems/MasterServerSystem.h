@@ -45,8 +45,10 @@ private:
 	
 	bool m_pwProtected;
 	bool m_serverStarted;
+	bool m_connect;
 	int m_port;
 
+	void OnConnectionAccepted(Network::NetConnection _nc, const char* _msg);
 	void OnGetServerList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
 	void OnServerShutdown();
 };
