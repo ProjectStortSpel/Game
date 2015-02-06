@@ -30,5 +30,7 @@ unsigned int SystemIdManager::CreateSystemId(const std::string& _systemName)
 
 unsigned int SystemIdManager::GetSystemId(const std::string& _systemName)
 {
+	/* System doesn't have an id. Check spelling */
+	assert(m_systemStringIds->find(_systemName) != m_systemStringIds->end());
 	return m_systemStringIds->find(_systemName)->second;
 }

@@ -25,7 +25,10 @@ ECSLRenderView::~ECSLRenderView()
 void ECSLRenderView::Display()
 {
 	for (TextEntry* textEntry : *m_textEntries)
+	{
 		m_graphics->RenderSimpleText(*textEntry->text, textEntry->x, textEntry->y);
+	}
+
 }
 
 void ECSLRenderView::ClearTextEntries()

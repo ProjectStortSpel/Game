@@ -13,6 +13,7 @@ System::System()
 	m_subscriptions(new std::vector<Subscription*>()),
 	m_messages(new std::vector<Message*>())
 {
+	m_initialized = false;
 	m_messagesMutex = SDL_CreateMutex();
 	m_updateTaskCount = 0;
 	m_entitiesAddedTaskCount = 0;
@@ -43,10 +44,11 @@ System::~System()
 	SDL_DestroyMutex(m_messagesMutex);
 }
 
-void System::InitializeEntityList()
+void System::InitializeBackEnd()
 {
 	m_entities = new std::vector<unsigned int>();
 	m_entitiesBitSet = BitSet::GenerateBitSet(m_dataManager->GetEntityCount());
+	m_initialized = true;
 }
 
 void System::AddEntityToSystem(unsigned int _entityId)
@@ -161,11 +163,15 @@ unsigned int System::GetComponentVariableIndex(const std::string& _componentType
 
 unsigned int System::CreateNewEntity()
 {
+	/* Can't be called during the System->Initialize() stage */
+	assert(m_initialized);
 	return m_dataManager->CreateNewEntity();
 }
 
 void System::KillEntity(unsigned int _entityId)
 {
+	/* Can't be called during the System->Initialize() stage */
+	assert(m_initialized);
 	m_dataManager->RemoveEntity(_entityId);
 }
 
@@ -188,16 +194,72 @@ void System::AddComponentTypeToFilter(const std::string& _componentType, FilterT
 	}
 }
 
+void System::SetSystemName(const std::string& _name) 
+{ 
+	/* Can't be changed after System->Initialize() stage */
+	assert(!m_initialized);
+	*m_systemName = _name; 
+	m_id = m_systemIdManager->CreateSystemId(_name); 
+}
+
+void System::SetUpdateTaskCount(unsigned int _taskCount) 
+{ 
+	/* Can't be changed after System->Initialize() stage */
+	assert(!m_initialized);
+	m_updateTaskCount = _taskCount; 
+}
+
+void System::SetEntitiesAddedTaskCount(unsigned int _taskCount) 
+{ 
+	/* Can't be changed after System->Initialize() stage */
+	assert(!m_initialized);
+	m_entitiesAddedTaskCount = _taskCount; 
+}
+
+void System::SetEntitiesRemovedTaskCount(unsigned int _taskCount) 
+{ 
+	/* Can't be changed after System->Initialize() stage */
+	assert(!m_initialized);
+	m_entitiesRemovedTaskCount = _taskCount; 
+}
+
+void System::SetMessagesReceivedTaskCount(unsigned int _taskCount) 
+{ 
+	/* Can't be changed after System->Initialize() stage */
+	assert(!m_initialized);
+	m_messagesReceivedTaskCount = _taskCount; 
+}
+
 void System::SubscribeTo(const std::string& _systemName, unsigned int _messageType)
 {
+	/* Can't be changed after System->Initialize() stage */
+	assert(!m_initialized);
 	m_subscriptions->push_back(new Subscription(*m_systemName, _systemName, _messageType));
 }
 
 void System::SendMessage(Message* _message)
 {
+	/* Can't be called during the System->Initialize() stage */
+	assert(m_initialized);
 	SDL_LockMutex(m_messagesMutex);
 	m_messages->push_back(_message);
 	SDL_UnlockMutex(m_messagesMutex);
+}
+
+void System::ActivateSystem(const std::string& _systemName)
+{
+	/* Can't be called during the System->Initialize() stage */
+	assert(m_initialized);
+	unsigned int systemId = m_systemIdManager->GetSystemId(_systemName);
+	m_systemActivationManager->ActivateSystem(systemId);
+}
+
+void System::DeactivateSystem(const std::string& _systemName)
+{
+	/* Can't be called during the System->Initialize() stage */
+	assert(m_initialized);
+	unsigned int systemId = m_systemIdManager->GetSystemId(_systemName);
+	m_systemActivationManager->DeactivateSystem(systemId);
 }
 
 void System::ComponentHasChanged(unsigned int _entityId, std::string _componentType, bool _notifyNetwork)

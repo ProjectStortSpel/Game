@@ -7,7 +7,8 @@
 using namespace ECSL;
 
 SystemManager::SystemManager(DataManager* _dataManager, std::vector<SystemWorkGroup*>* _systemWorkGroups) 
-:	m_systemIdManager(new SystemIdManager()),
+:	m_systemActivationManager(new SystemActivationManager()),
+	m_systemIdManager(new SystemIdManager()),
 	m_dataManager(_dataManager), 
 	m_systems(new std::vector<System*>()),
 	m_systemWorkGroups(_systemWorkGroups)
@@ -21,6 +22,7 @@ SystemManager::~SystemManager()
 		delete m_systemWorkGroups->at(n);
 	delete m_systemWorkGroups;
 	delete m_systems;
+	delete m_systemActivationManager;
 	delete m_systemIdManager;
 }
 
@@ -35,6 +37,7 @@ void SystemManager::InitializeSystems()
 		for (unsigned int systemId = 0; systemId < systems->size(); ++systemId)
 		{
 			System* system = systems->at(systemId);
+			system->SetSystemActivationManager(m_systemActivationManager);
 			system->SetSystemIdManager(m_systemIdManager);
 			system->SetDataManager(m_dataManager);
 			system->SetGroupId(groupId);
@@ -43,8 +46,7 @@ void SystemManager::InitializeSystems()
 			GenerateComponentFilter(system, FilterType::Mandatory);
 			GenerateComponentFilter(system, FilterType::RequiresOneOf);
 			GenerateComponentFilter(system, FilterType::Excluded);
-
-			system->InitializeEntityList();
+			system->InitializeBackEnd();
 
 			m_systems->push_back(system);
 		}
@@ -71,13 +73,16 @@ void SystemManager::UpdateSystemEntityLists(
 	std::vector<std::vector<unsigned int>*>& _entitiesToAddToSystems,
 	std::vector<std::vector<unsigned int>*>& _entitiesToRemoveFromSystems)
 {
-	const std::map<unsigned int, DataManager::EntityChange*>* entityChanges = m_dataManager->GetEntityChanges();
+	const std::vector<DataManager::EntityChange*>* entityChanges = m_dataManager->GetEntityChanges();
+	const std::vector<unsigned int>* changedEntities = m_dataManager->GetChangedEntities();
 	EntityTable* entityTable = m_dataManager->GetEntityTable();
 	unsigned int dataTypeCount = BitSet::GetDataTypeCount(m_dataManager->GetComponentTypeCount());
 
+	if (changedEntities->size() == 0)
+		return;
+
 	unsigned int startAt, endAt;
 	MPL::MathHelper::SplitIterations(startAt, endAt, (unsigned int)m_systems->size(), _runtime.TaskIndex, _runtime.TaskCount);
-	/* Loop through every system see if changed entities passes the filter */
 	for (unsigned int i = startAt; i < endAt; ++i)
 	{
 		System* system = m_systems->at(i);
@@ -86,11 +91,9 @@ void SystemManager::UpdateSystemEntityLists(
 		const BitSet::DataType* excludedFilter = system->GetExcludedFilter()->GetBitSet();
 		unsigned int entitiesAddedTaskCount = system->GetEntitiesAddedTaskCount();
 		unsigned int entitiesRemovedTaskCount = system->GetEntitiesRemovedTaskCount();
-
-		for (auto entity : *entityChanges)
+		for (unsigned int entityId : *changedEntities)
 		{
-			unsigned int entityId = entity.first;
-			DataManager::EntityChange* entityChange = entity.second;
+			DataManager::EntityChange* entityChange = (*entityChanges)[entityId];
 
 			/* If the entity is dead and the system has the entity, then remove it from the system */
 			if (entityChange->Dead)

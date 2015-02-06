@@ -4,7 +4,7 @@
 #include <SDL/SDL.h>
 #include <string>
 
-#include "Simulation.h"
+#include "Simulation/Simulation.h"
 #include "Components/DataManager.h"
 #include "Multithreading/Scheduler.h"
 #include "Systems/SystemWorkGroup.h"
