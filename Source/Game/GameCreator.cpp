@@ -218,15 +218,6 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 			}
 		}
 	}
-	/*std::vector<LuaBridge::LuaSystem*>* systemsAdded = worldCreator.GetSystemsAdded();
-	for (std::vector<LuaBridge::LuaSystem*>::iterator it = systemsAdded->begin(); it != systemsAdded->end(); it++)
-	{
-	  lua_State* luaStateCopy = LuaEmbedder::CreateChildState(luaState);
-	  LuaBridge::Embed(luaStateCopy);
-	  LuaEmbedder::CopyObject<LuaBridge::LuaSystem>(luaState, luaStateCopy, "System", (*it));
-	  (*it)->SetLuaState(luaStateCopy);
-	}
-	systemsAdded->clear();*/
 
     
     if (_worldType == WorldType::Client)
@@ -497,7 +488,7 @@ void GameCreator::StartGame(int argc, char** argv)
 		m_worldCounter.Tick();
 
 		m_luaGarbageCollectionCounter.Reset();
-		LuaEmbedder::CollectGarbageForDuration(0.2f);
+		LuaEmbedder::CollectGarbageForDuration(0.1f * dt);
 		m_luaGarbageCollectionCounter.Tick();
 
 		m_networkCounter.Reset();
