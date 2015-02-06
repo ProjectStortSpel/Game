@@ -181,7 +181,14 @@ namespace Renderer
 		std::vector<ModelTexture> m_modelTextures;
 		void BufferModelTextures();
 		bool BufferModelTexture(int _id, std::string _fileDir, int _textureType);
-	};
+		
+		std::vector<int> m_modelsToRemove;
+		std::vector<std::pair<int, bool>> m_modelsToMakeActive;
+		void BufferModelsToRemove();
+		bool BufferModelToRemove(int _id);
+		void BufferModelsToMakeActive();
+		bool BufferModelToMakeActive(int _id, bool _active);
+ 	};
 }
 
 
