@@ -10,7 +10,8 @@ CheckpointSystem.Initialize = function(self)
 	--	Set Filter
 	self:AddComponentTypeToFilter("Unit", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("Checkpoint", FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter("CheckCheckpoint", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("CheckCheckpointForEntity", FilterType.RequiresOneOf)
+	
 end
 
 CheckpointSystem.AddTotemPiece = function(self, playerNumber, checkpoint)
@@ -25,84 +26,71 @@ CheckpointSystem.AddTotemPiece = function(self, playerNumber, checkpoint)
 	
 end
 
-CheckpointSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
-
-	for n = 1, #entities do
-		local entity = entities[n]
-		-- If the entity has a CheckCheckpoint component
-		if world:EntityHasComponent( entity, "CheckCheckpoint") then
+CheckpointSystem.HasReachedFinish = function(self, entityId)
+	
+	local	playerId	= 	world:GetComponent(entityId, "PlayerEntityId", "Id"):GetInt()
+	
+	-- If the unit is not controlled by a AI
+	if not world:EntityHasComponent(playerId, "AI") then
+		-- Take all cards from the player
+		local newId = world:CreateNewEntity()
+		world:CreateComponentAndAddTo("TakeCardsFromPlayer", newId)
+		world:GetComponent(newId, "TakeCardsFromPlayer", "Player"):SetInt(playerId)
 		
-			
-			-- Get all units currently on the playfield
-			local units = self:GetEntities("Unit")
-			-- Get all checkpoints on the map
-			local checkPoints = self:GetEntities("Checkpoint")
-			
-			for i = 1, #units do
-			
-				-- Get the id of the unit's next checkpoint
-				local targetId = world:GetComponent(units[i], "TargetCheckpoint", "Id"):GetInt()
+		-- Take all steps from the player
+		newId = world:CreateNewEntity()
+		world:CreateComponentAndAddTo("TakeCardStepsFromUnit", newId)
+		world:GetComponent(newId, "TakeCardStepsFromUnit", "Unit"):SetInt(entityId)
+		
+		--	Make the player a spectator
+		world:CreateComponentAndAddTo("IsSpectator", playerId)
+	else
+		-- Else if the player is an AI, remove it when done
+		world:KillEntity(playerId)
+	end
+end
+
+CheckpointSystem.CheckCheckpoint = function(self, entityId, posX, posZ)
+	
+	local	allCheckpoints		=	self:GetEntities("Checkpoint")
+	local	targetCheckpoint  	= 	world:GetComponent(entityId, "TargetCheckpoint", "Id"):GetInt()
+	
+	for i = 1, #allCheckpoints do
+		
+		local tempCheckpointId = world:GetComponent(allCheckpoints[i], "Checkpoint", "Number"):GetInt()
+		if tempCheckpointId == targetCheckpoint then
+			local	tempX, tempZ  	= 	world:GetComponent(allCheckpoints[i], "MapPosition", "X"):GetInt2()
+			if tempX == posX and tempZ == posZ then
+				world:GetComponent(entityId, "TargetCheckpoint", "Id"):SetInt(targetCheckpoint+1)
 				
-				-- If the target is larger then the number of checkpoints it is a finishpoint
-				if targetId > #checkPoints then
-					print("Check finish!")
-					-- Check finishpoints
-					local newId = world:CreateNewEntity()
-					world:CreateComponentAndAddTo("CheckFinishpoint", newId)
-					world:CreateComponentAndAddTo("UnitEntityId", newId)
-					world:SetComponent(newId, "UnitEntityId", "Id", units[i])
-				
-				else
-				
-					-- Get the number of substeps
-					local noSteps = world:GetComponent(units[i], "NoSubSteps", 0):GetInt2()
-					local dirX, dirZ = world:GetComponent(units[i], "Direction", 0):GetInt2()
-					
-					-- Get the units' MapPosition
-					local unitPosX, unitPosZ = world:GetComponent(units[i], "MapPosition", 0):GetInt2()
-					
-					for tmp = noSteps - 1, 0, -1 do
-						
-						local tmpX = unitPosX - (dirX * tmp)
-						local tmpZ = unitPosZ - (dirZ * tmp)
-						
-						for j = 1, #checkPoints do
-						
-							-- Get the current checkpoints Id
-							local cpId = world:GetComponent(checkPoints[j], "Checkpoint", "Number"):GetInt()
-							
-							-- If the id is the same as the units' target checkpoint
-							if cpId == targetId then
-								
-								-- Get the checkpoints' MapPosition
-								local cpPosX, cpPosZ = world:GetComponent(checkPoints[j], "MapPosition", 0):GetInt2()
-								
-								-- If the units' position and the checkpoints' position is the same
-								if tmpX == cpPosX and tmpZ == cpPosZ then
-									-- Get the number of the player controlling the unit
-									local playerNum = world:GetComponent(units[i], "PlayerNumber", 0):GetInt()
-									-- Add a new totempiece
-									self:AddTotemPiece(playerNum, cpId)
-									
-									-- Change the players target checkpoint to the next one
-									world:SetComponent(units[i], "TargetCheckpoint", "Id", targetId + 1)
-									-- Set the players spawnpoint to this checkpoint
-									world:GetComponent(units[i], "Spawnpoint", 0):SetInt2(cpPosX, cpPosZ)
-									break
-								end
-								
-							end
-						
-						end
-						
-					end
-					
-				
+				local playerNum = world:GetComponent(entityId, "PlayerNumber", 0):GetInt()
+				self:AddTotemPiece(playerNum, targetCheckpoint)
+				if targetCheckpoint+1 > #allCheckpoints then
+					self:HasReachedFinish(entityId)
 				end
+				return
 			end
-			
-			world:KillEntity(entity)
 		end
 	end
+	
+	
+end
 
+CheckpointSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, newEntities)
+
+	for n = 1, #newEntities do
+		local entity = newEntities[n]
+		
+		--	Check if the entity has reached the checkpoint
+		if world:EntityHasComponent(entity, "CheckCheckpointForEntity") then
+			local	tEntityId	=	world:GetComponent(entity, "CheckCheckpointForEntity", "EntityId"):GetInt()
+			local	tPosX		=	world:GetComponent(entity, "CheckCheckpointForEntity", "PosX"):GetInt()
+			local	tPosZ		=	world:GetComponent(entity, "CheckCheckpointForEntity", "PosZ"):GetInt()
+			
+			self:CheckCheckpoint(tEntityId, tPosX, tPosZ)
+			world:KillEntity(entity)
+		end
+		
+	end
+	
 end
