@@ -39,6 +39,8 @@ namespace ECSL
 		World* CreateWorld(unsigned int _entityCount);
 
 		bool IsWorldInitialized() const { return m_worldInitialized; }
+		
+		std::vector<SystemWorkGroup*>* GetSystemWorkGroups() const { return m_systemWorkGroups; }
 
 	private:
 

@@ -195,7 +195,29 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 	if (!LuaEmbedder::Load(luaState, gameMode.str()))
 		return;
 	
-	std::vector<LuaBridge::LuaSystem*>* systemsAdded = worldCreator.GetSystemsAdded();
+	std::vector<ECSL::SystemWorkGroup*>* systemWorkGroups = worldCreator.GetSystemWorkGroups();
+	unsigned int maxNoSystemsInWorkGroup = 0;
+	for (ECSL::SystemWorkGroup* systemWorkGroup : *systemWorkGroups)
+	{
+		unsigned int systemCount = systemWorkGroup->GetSystems()->size();
+		if (systemCount > maxNoSystemsInWorkGroup)
+			maxNoSystemsInWorkGroup = systemCount;
+	}
+	for (unsigned int i = 0; i < maxNoSystemsInWorkGroup; ++i)
+	{
+		lua_State* luaStateCopy = LuaEmbedder::CreateChildState(luaState);
+		LuaBridge::Embed(luaStateCopy);
+		for (ECSL::SystemWorkGroup* systemWorkGroup : *systemWorkGroups)
+		{
+			if (i < systemWorkGroup->GetSystems()->size())
+			{
+				LuaBridge::LuaSystem* system = dynamic_cast<LuaBridge::LuaSystem*>(systemWorkGroup->GetSystems()->at(i));
+				LuaEmbedder::CopyObject<LuaBridge::LuaSystem>(luaState, luaStateCopy, "System", system);
+				system->SetLuaState(luaStateCopy);
+			}
+		}
+	}
+	/*std::vector<LuaBridge::LuaSystem*>* systemsAdded = worldCreator.GetSystemsAdded();
 	for (std::vector<LuaBridge::LuaSystem*>::iterator it = systemsAdded->begin(); it != systemsAdded->end(); it++)
 	{
 	  lua_State* luaStateCopy = LuaEmbedder::CreateChildState(luaState);
@@ -203,7 +225,7 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 	  LuaEmbedder::CopyObject<LuaBridge::LuaSystem>(luaState, luaStateCopy, "System", (*it));
 	  (*it)->SetLuaState(luaStateCopy);
 	}
-	systemsAdded->clear();
+	systemsAdded->clear();*/
 
     
     if (_worldType == WorldType::Client)
