@@ -46,7 +46,9 @@ CheckpointSystem.HasReachedFinish = function(self, entityId)
 		world:CreateComponentAndAddTo("IsSpectator", playerId)
 	else
 		-- Else if the player is an AI, remove it when done
+		print("HARROW")
 		world:KillEntity(playerId)
+		world:KillEntity(entityId)
 	end
 end
 
@@ -62,7 +64,7 @@ CheckpointSystem.CheckCheckpoint = function(self, entityId, posX, posZ)
 			local	tempX, tempZ  	= 	world:GetComponent(allCheckpoints[i], "MapPosition", "X"):GetInt2()
 			if tempX == posX and tempZ == posZ then
 				world:GetComponent(entityId, "TargetCheckpoint", "Id"):SetInt(targetCheckpoint+1)
-				
+				world:GetComponent(entityId, "Spawnpoint", 0):SetInt2(tempX, tempZ)
 				local playerNum = world:GetComponent(entityId, "PlayerNumber", 0):GetInt()
 				self:AddTotemPiece(playerNum, targetCheckpoint)
 				if targetCheckpoint+1 > #allCheckpoints then

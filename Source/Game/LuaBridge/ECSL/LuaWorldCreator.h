@@ -16,8 +16,6 @@ namespace LuaBridge
     
     static void Embed(lua_State* L);
     
-    std::vector<LuaSystem*>* GetSystemsAdded() { return &m_systemsAdded; }
-    
     template<typename ComponentType>
     void AddComponentType() { ECSL::WorldCreator::AddComponentType<ComponentType>(); }
     void AddComponentType(const std::string& _componentType) { ECSL::WorldCreator::AddComponentType(_componentType); }
@@ -35,6 +33,8 @@ namespace LuaBridge
 
     bool IsWorldInitialized() const { return ECSL::WorldCreator::IsWorldInitialized(); }
     
+    std::vector<ECSL::SystemWorkGroup*>* GetSystemWorkGroups() const { return ECSL::WorldCreator::GetSystemWorkGroups(); }
+    
       void SkipComponentTypesAndTemplates(bool _value) { m_skipComponentTypes = _value; }
     
   private:
@@ -45,8 +45,6 @@ namespace LuaBridge
     int IsWorldInitialized(lua_State* L);
     
   private:
-    std::vector<LuaSystem*> m_systemsAdded;
-      
       bool m_skipComponentTypes;
   };
 }
