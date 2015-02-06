@@ -262,6 +262,8 @@ bool WinSocket::ShutdownSocket()
 			SDL_Log("Failed to shutdown winsocket. Error Code: %d.\n", WSAGetLastError());
 		return false;
 	}
+
+	return true;
 }
 
 ISocket* WinSocket::Accept(void)

@@ -43,6 +43,8 @@ public:
 	bool Disconnect();
 
 	void HookOnGetServerList(Network::NetMessageHook& _hook);
+	void HookOnConnectionAccepted(Network::NetEvent _hook);
+
 	void Update(float dt);
 
 	void AddToDatabase(int _port, bool _pwProtected);
@@ -59,6 +61,9 @@ public:
 	void IncreaseMaxNoPlayers();
 
 	void RequestServerList();
+
+
+	void ResetNetworkEvents();
 
 private:
 	

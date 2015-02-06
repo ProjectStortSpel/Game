@@ -4,6 +4,9 @@
 #include "Logger/Managers/Logger.h"
 #include "Input/InputWrapper.h"
 
+
+float tmpTimer = 0.f;
+
 MasterServerSystem::MasterServerSystem()
 	:m_clientDatabase(0)
 {
@@ -11,6 +14,11 @@ MasterServerSystem::MasterServerSystem()
 MasterServerSystem::~MasterServerSystem()
 {
 	//SAFE_DELETE(m_clientDatabase);
+	//m_clientDatabase->~ClientDatabase();
+	m_clientDatabase->ResetNetworkEvents();
+	m_mServerMessages.clear();
+	tmpTimer = 0.f;
+	
 }
 
 void MasterServerSystem::Initialize()
@@ -33,6 +41,10 @@ void MasterServerSystem::Initialize()
 void MasterServerSystem::PostInitialize()
 {
 	m_clientDatabase = &ClientDatabase::GetInstance();
+	m_connect = true;
+
+	Network::NetEvent hook = std::bind(&MasterServerSystem::OnConnectionAccepted, this, std::placeholders::_1, std::placeholders::_2);
+	m_clientDatabase->HookOnConnectionAccepted(hook);
 
 	if (NetworkInstance::GetServer()->IsRunning())
 	{
@@ -43,7 +55,6 @@ void MasterServerSystem::PostInitialize()
 
 		m_mServerMessages.push_back(ADD_TO_DATABASE);
 		//m_clientDatabase->AddToDatabase(port, pw.size() > 0);
-
 	}
 	else if(NetworkInstance::GetClient()->IsConnected())
 	{
@@ -58,64 +69,21 @@ void MasterServerSystem::PostInitialize()
 	}
 }
 
-float tmpTimer = 0.f;
 void MasterServerSystem::Update(const ECSL::RuntimeInfo& _runtime)
 {
 	// Return if the user is a already connected client
 	if (NetworkInstance::GetClient()->IsConnected() && !NetworkInstance::GetServer()->IsRunning())
 		return;
 
-	if (m_mServerMessages.size() > 0)
+	if (m_mServerMessages.size() > 0 && m_connect)
+	{
+		m_connect = false;
 		m_clientDatabase->Connect();
+	}
 	
 	//if (m_timer > 2.f)
 	//{
 	//	m_timer = 0.f;
-
-		for (int i = 0; i < m_mServerMessages.size(); ++i)
-		{
-			switch (m_mServerMessages[i])
-			{
-			case ADD_TO_DATABASE:
-				m_clientDatabase->AddToDatabase(m_port, m_pwProtected);
-				break;
-			case REMOVE_FROM_DATABASE:
-				m_clientDatabase->RemoveFromDatabase();
-				break;
-			case GAME_STARTED:
-				m_clientDatabase->SetGameStarted(m_serverStarted);
-				break;
-			case IS_PASSWORD_PROTECTED:
-				m_clientDatabase->SetPasswordProtected(m_pwProtected);
-				break;
-			case SET_SERVER_PORT:
-				m_clientDatabase->SetServerPort(m_port);
-				break;
-			case MAX_PLAYER_COUNT_INCREASED:
-				m_clientDatabase->IncreaseMaxNoPlayers();
-				break;
-			case PLAYER_COUNT_INCREASED:
-				m_clientDatabase->IncreaseNoPlayers();
-				break;
-			case PLAYER_COUNT_DECREASED:
-				m_clientDatabase->DecreaseNoPlayers();
-				break;
-			case SPECTATOR_COUNT_INCREASED:
-				m_clientDatabase->IncreaseNoSpectators();
-				break;
-			case SPECTATOR_COUNT_DECREASED:
-				m_clientDatabase->DecreaseNoSpectators();
-				break;
-			case GET_SERVER_LIST:
-				m_clientDatabase->RequestServerList();
-				break;
-			default:
-				break;
-			}
-		}
-
-		m_mServerMessages.clear();
-		m_clientDatabase->Disconnect();
 	//}
 
 	
@@ -215,6 +183,56 @@ void MasterServerSystem::EntitiesRemoved(const ECSL::RuntimeInfo& _runtime, cons
 		if (m_gameRunningId == entityId)
 			m_gameRunningId = -1;
 	}
+}
+
+void MasterServerSystem::OnConnectionAccepted(Network::NetConnection _nc, const char* _msg)
+{
+
+	for (int i = 0; i < m_mServerMessages.size(); ++i)
+	{
+		switch (m_mServerMessages[i])
+		{
+		case ADD_TO_DATABASE:
+			m_clientDatabase->AddToDatabase(m_port, m_pwProtected);
+			break;
+		case REMOVE_FROM_DATABASE:
+			m_clientDatabase->RemoveFromDatabase();
+			break;
+		case GAME_STARTED:
+			m_clientDatabase->SetGameStarted(m_serverStarted);
+			break;
+		case IS_PASSWORD_PROTECTED:
+			m_clientDatabase->SetPasswordProtected(m_pwProtected);
+			break;
+		case SET_SERVER_PORT:
+			m_clientDatabase->SetServerPort(m_port);
+			break;
+		case MAX_PLAYER_COUNT_INCREASED:
+			m_clientDatabase->IncreaseMaxNoPlayers();
+			break;
+		case PLAYER_COUNT_INCREASED:
+			m_clientDatabase->IncreaseNoPlayers();
+			break;
+		case PLAYER_COUNT_DECREASED:
+			m_clientDatabase->DecreaseNoPlayers();
+			break;
+		case SPECTATOR_COUNT_INCREASED:
+			m_clientDatabase->IncreaseNoSpectators();
+			break;
+		case SPECTATOR_COUNT_DECREASED:
+			m_clientDatabase->DecreaseNoSpectators();
+			break;
+		case GET_SERVER_LIST:
+			m_clientDatabase->RequestServerList();
+			break;
+		default:
+			break;
+		}
+	}
+
+	m_mServerMessages.clear();
+	m_clientDatabase->Disconnect();
+	m_connect = true;
 }
 
 void MasterServerSystem::OnServerShutdown()

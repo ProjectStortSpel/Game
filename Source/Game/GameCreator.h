@@ -4,7 +4,7 @@
 #include "Console/Console.h"
 #include "TextInput.h"
 #if defined(__ANDROID__) || defined(__IOS__)
-#include "AndroidRenderer/GraphicDevice.h"
+#include "AndroidRenderer/GraphicsHigh.h"
 #else
 #include "Renderer/GraphicsLow.h"
 #include "Renderer/GraphicsHigh.h"

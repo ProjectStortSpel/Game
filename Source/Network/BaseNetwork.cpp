@@ -116,6 +116,7 @@ int BaseNetwork::PopAndExecutePacket(void)
 
 	m_customPacketLock->lock();
 	size_t size = m_customPackets->size();
+	
 	if (size == 0)
 	{
 		m_customPacketLock->unlock();
@@ -129,16 +130,14 @@ int BaseNetwork::PopAndExecutePacket(void)
 
 	if (*p->Length <= 1)
 	{
-		if (NET_DEBUG)
+		//if (NET_DEBUG)
 			SDL_Log("Corrupt packet, wrong size.\n");
 		return (int)size;
 	}
 
 	uint64_t id = m_packetHandler->StartUnpack(p);
-
 	m_packetHandler->ReadByte(id);
 	char* functionName = m_packetHandler->ReadString(id);
-
 	if (m_userFunctions->find(functionName) != m_userFunctions->end())
 	{
 		(*m_userFunctions)[functionName](m_packetHandler, id, *p->Sender);
