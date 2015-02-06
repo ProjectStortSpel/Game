@@ -3,7 +3,7 @@
 #include <assert.h>
 #include "Tables/ComponentTable.h"
 #include "Tables/DataArray.h"
-#include "Tables/DataMap.h"
+#include "Tables/DataSlimArray.h"
 #include "ECSL/Framework/Common/ContainerHelper.h"
 #include "ECSL/Framework/Multithreading/RuntimeInfo.h"
 #include "ECSL/Managers/ComponentTypeManager.h"
@@ -60,7 +60,7 @@ void DataManager::InitializeTables()
 			m_componentTables->at(componentTypeId) = new ComponentTable(new DataArray(m_entityCount, componentType->GetByteSize()), componentTypeId);
 			break;
 		case TableType::Map:
-			m_componentTables->at(componentTypeId) = new ComponentTable(new DataMap(componentType->GetByteSize()), componentTypeId);
+			m_componentTables->at(componentTypeId) = new ComponentTable(new DataSlimArray(m_entityCount, componentType->GetByteSize()), componentTypeId);
 			break;
 		default:
 			printf("ERROR: Invalid Table Type! (ID %i)\n", m_componentTypeIds->at(n));
