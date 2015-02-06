@@ -1,7 +1,7 @@
 DealCardsSystem = System()
 DealCardsSystem.DealCard = false
 DealCardsSystem.FirstDeal = true
-DealCardsSystem.AICheat = 1
+DealCardsSystem.AICheat = 0
 
 DealCardsSystem.Initialize = function ( self )
 	--	Set Name

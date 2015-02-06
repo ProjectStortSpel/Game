@@ -289,6 +289,43 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, dirX, dirY, posX, p
 					dirY = dirX
 					dirX = -temp
 				end
+				
+			elseif from_me > from_backward and #turnArounds > 0 and #forwards == 0 and #backwards ~= 0
+			then
+				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnArounds)
+				dirY = -dirY
+				dirX = -dirX
+			elseif #turnLefts > 0 then
+            
+				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnLefts)
+				local temp = dirY
+				dirY = -dirX
+				dirX = temp
+            
+			elseif #turnRights > 0 then
+            
+				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnRights)
+				local temp = dirY
+				dirY = dirX
+				dirX = -temp
+            
+			elseif #turnArounds > 0 then
+            
+				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnArounds)
+				dirX = -dirX
+				dirY = -dirY
+            
+			elseif #forwards > 0 then
+            
+				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, forwards)
+				posX = posX + dirX
+				posY = posY + dirY
+            
+			elseif #backwards > 0 then
+            
+				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, backwards)
+				posX = posX - dirX
+				posY = posY - dirY
 			else
 				print("RANDOM!")
 				local cardNr = math.random(1, #CardSetAI)
@@ -299,38 +336,8 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, dirX, dirY, posX, p
 
 				table.remove(CardSetAI, cardNr)
 			end
-			--elseif #turnLefts > 0 then
-            --
-			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnLefts)
-			--	local temp = dirY
-			--	dirY = -dirX
-			--	dirX = temp
-            --
-			--elseif #turnRights > 0 then
-            --
-			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnRights)
-			--	local temp = dirY
-			--	dirY = dirX
-			--	dirX = -temp
-            --
-			--elseif #turnArounds > 0 then
-            --
-			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnArounds)
-			--	dirX = -dirX
-			--	dirY = -dirY
-            --
-			--elseif #forwards > 0 then
-            --
-			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, forwards)
-			--	posX = posX + dirX
-			--	posY = posY + dirY
-            --
-			--elseif #backwards > 0 then
-            --
-			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, backwards)
-			--	posX = posX - dirX
-			--	posY = posY - dirY
-			--
+
+			
 		end
 	end
 	return pickedcards
