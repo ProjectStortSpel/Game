@@ -28,7 +28,9 @@ NewCameraSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("CameraSystemComponent", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("CameraInterestPoint", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("CameraElement", FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter("MapSize", FilterType.RequiresOneOf)
+	--self:AddComponentTypeToFilter("MapSize", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("MapSpecs", FilterType.RequiresOneOf)
+	
 end
 
 NewCameraSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
@@ -188,9 +190,9 @@ NewCameraSystem.DoFreeCam = function(self, dt)
 				self.Moved = true
 				local mapX = 0
 				local mapZ = 0
-				local mapSize = self:GetEntities("MapSize")
+				local mapSize = self:GetEntities("MapSpecs")
 				if #mapSize > 0 then
-					mapX, mapZ = self:GetComponent(mapSize[1], "MapSize", 0):GetInt2(0)
+					mapX, mapZ = self:GetComponent(mapSize[1], "MapSpecs", "SizeX"):GetInt2()
 				end
 				if self.CameraLookAtX < 0 then
 					self.CameraLookAtX = 0
