@@ -14,7 +14,7 @@ AbilitySlingshotSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("UnitSlingShot",			FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("SlingShotProjectile",	FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("NotWalkable", 			FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter("MapSize", 				FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("MapSpecs", 				FilterType.RequiresOneOf)
 end
 
 AbilitySlingshotSystem.CheckUnits = function(self, mapPosX, mapPosZ, currentPosX, currentPosZ)
@@ -84,8 +84,8 @@ AbilitySlingshotSystem.Update = function(self, dt, taskIndex, taskCount)
 	-- Get all entities which has the "UnitSlingShot" component
 	local entities = self:GetEntities("UnitSlingShot")
 	-- Get the size of the map
-	local mapSizeEntity = self:GetEntities("MapSize")
-	local mapSizeX, mapSizeZ = world:GetComponent(mapSizeEntity[1], "MapSize", 0):GetInt2()
+	local mapSizeEntity = self:GetEntities("MapSpecs")
+	local mapSizeX, mapSizeZ = world:GetComponent(mapSizeEntity[1], "MapSpecs", "SizeX"):GetInt2()
 
 	
 	for i = 1, #entities do
