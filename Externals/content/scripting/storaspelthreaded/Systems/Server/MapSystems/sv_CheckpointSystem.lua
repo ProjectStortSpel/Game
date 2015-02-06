@@ -30,23 +30,24 @@ CheckpointSystem.HasReachedFinish = function(self, entityId)
 	
 	local	playerId	= 	world:GetComponent(entityId, "PlayerEntityId", "Id"):GetInt()
 	
+	-- Take all cards from the player
+	local newId = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("TakeCardsFromPlayer", newId)
+	world:GetComponent(newId, "TakeCardsFromPlayer", "Player"):SetInt(playerId)
+	
+	-- Take all steps from the player
+	newId = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("TakeCardStepsFromUnit", newId)
+	world:GetComponent(newId, "TakeCardStepsFromUnit", "Unit"):SetInt(entityId)
+	
 	-- If the unit is not controlled by a AI
 	if not world:EntityHasComponent(playerId, "AI") then
-		-- Take all cards from the player
-		local newId = world:CreateNewEntity()
-		world:CreateComponentAndAddTo("TakeCardsFromPlayer", newId)
-		world:GetComponent(newId, "TakeCardsFromPlayer", "Player"):SetInt(playerId)
-		
-		-- Take all steps from the player
-		newId = world:CreateNewEntity()
-		world:CreateComponentAndAddTo("TakeCardStepsFromUnit", newId)
-		world:GetComponent(newId, "TakeCardStepsFromUnit", "Unit"):SetInt(entityId)
-		
 		--	Make the player a spectator
 		world:CreateComponentAndAddTo("IsSpectator", playerId)
 	else
 		-- Else if the player is an AI, remove it when done
 		world:KillEntity(playerId)
+		world:KillEntity(entityId)
 	end
 end
 
@@ -62,7 +63,7 @@ CheckpointSystem.CheckCheckpoint = function(self, entityId, posX, posZ)
 			local	tempX, tempZ  	= 	world:GetComponent(allCheckpoints[i], "MapPosition", "X"):GetInt2()
 			if tempX == posX and tempZ == posZ then
 				world:GetComponent(entityId, "TargetCheckpoint", "Id"):SetInt(targetCheckpoint+1)
-				
+				world:GetComponent(entityId, "Spawnpoint", 0):SetInt2(tempX, tempZ)
 				local playerNum = world:GetComponent(entityId, "PlayerNumber", 0):GetInt()
 				self:AddTotemPiece(playerNum, targetCheckpoint)
 				if targetCheckpoint+1 > #allCheckpoints then

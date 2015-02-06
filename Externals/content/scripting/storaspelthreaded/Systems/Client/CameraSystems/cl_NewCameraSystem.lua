@@ -28,7 +28,9 @@ NewCameraSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("CameraSystemComponent", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("CameraInterestPoint", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("CameraElement", FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter("MapSize", FilterType.RequiresOneOf)
+	--self:AddComponentTypeToFilter("MapSize", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("MapSpecs", FilterType.RequiresOneOf)
+	
 end
 
 NewCameraSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
@@ -103,7 +105,7 @@ NewCameraSystem.PostInitialize = function(self)
 	self.TouchSprite1 = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("Model", self.TouchSprite1)
 	local model = self:GetComponent(self.TouchSprite1, "Model", 0)
-	model:SetModel("touch", "quad", 2)
+	model:SetModel("touch", "quad", 3)
 	world:CreateComponentAndAddTo("Position", self.TouchSprite1)
 	world:CreateComponentAndAddTo("Rotation", self.TouchSprite1)
 	world:CreateComponentAndAddTo("Scale", self.TouchSprite1)
@@ -116,7 +118,7 @@ NewCameraSystem.PostInitialize = function(self)
 	self.TouchSprite2 = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("Model", self.TouchSprite2)
 	local model = self:GetComponent(self.TouchSprite2, "Model", 0)
-	model:SetModel("touch", "quad", 2)
+	model:SetModel("touch", "quad", 3)
 	world:CreateComponentAndAddTo("Position", self.TouchSprite2)
 	world:CreateComponentAndAddTo("Rotation", self.TouchSprite2)
 	world:CreateComponentAndAddTo("Scale", self.TouchSprite2)	
@@ -188,9 +190,9 @@ NewCameraSystem.DoFreeCam = function(self, dt)
 				self.Moved = true
 				local mapX = 0
 				local mapZ = 0
-				local mapSize = self:GetEntities("MapSize")
+				local mapSize = self:GetEntities("MapSpecs")
 				if #mapSize > 0 then
-					mapX, mapZ = self:GetComponent(mapSize[1], "MapSize", 0):GetInt2(0)
+					mapX, mapZ = self:GetComponent(mapSize[1], "MapSpecs", "SizeX"):GetInt2()
 				end
 				if self.CameraLookAtX < 0 then
 					self.CameraLookAtX = 0
@@ -199,10 +201,10 @@ NewCameraSystem.DoFreeCam = function(self, dt)
 					self.CameraLookAtZ = 0
 				end
 				if self.CameraLookAtX > mapX-1 then
-					self.CameraLookAtX = mapX
+					self.CameraLookAtX = mapX-1
 				end
 				if self.CameraLookAtZ > mapZ-1 then
-					self.CameraLookAtZ = mapZ
+					self.CameraLookAtZ = mapZ-1
 				end
 				self.Camera:SetPosition(self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5, y, self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5)
 			end
@@ -288,7 +290,7 @@ NewCameraSystem.CreateElement = function(self, object, folder, posx, posy, posz,
 	world:CreateComponentAndAddTo("Scale", id)
 	world:CreateComponentAndAddTo("CameraElement", id)
 	local model = self:GetComponent(id, "Model", 0)
-	model:SetModel(object, folder, 2)
+	model:SetModel(object, folder, 3)
 	local position = self:GetComponent(id, "Position", 0)
 	position:SetFloat3(posx, posy, posz)
 	local scale = self:GetComponent(id, "Scale", 0)

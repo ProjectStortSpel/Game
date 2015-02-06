@@ -4,7 +4,7 @@
 #include "Console/Console.h"
 #include "TextInput.h"
 #if defined(__ANDROID__) || defined(__IOS__)
-#include "AndroidRenderer/GraphicDevice.h"
+#include "AndroidRenderer/GraphicsHigh.h"
 #else
 #include "Renderer/GraphicsLow.h"
 #include "Renderer/GraphicsHigh.h"
@@ -44,7 +44,7 @@ private:
         Server, Client
     };
     
-    void InitializeWorld(std::string _gameMode, WorldType _worldType, bool _isMainWorld);
+    void InitializeWorld(std::string _gameMode, WorldType _worldType, bool _isMainWorld, bool _includeMasterServer);
     void InitializeLua(WorldType _worldType);
     
 	void RunStartupCommands(int argc, char** argv);

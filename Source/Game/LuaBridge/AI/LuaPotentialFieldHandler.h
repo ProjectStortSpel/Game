@@ -1,7 +1,7 @@
 #ifndef POTENTIALFIELDHANDLER_H
 #define POTENTIALFIELDHANDLER_H
 
-#include "Input/InputWrapper.h"
+
 #include <LuaEmbedder/LuaEmbedder.h>
 #include <glm/glm.hpp>
 #include <vector>

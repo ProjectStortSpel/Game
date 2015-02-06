@@ -32,6 +32,29 @@ ActionTurnAroundSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, 
 		
 		local rot_x, rot_y, rot_z = rot:GetFloat3()
 		
+		--if not world:EntityHasComponent(entities[i], "SlerpRotation") then
+		--	world:CreateComponentAndAddTo("SlerpRotation", entities[i])
+		--end 
+		--
+		--local rotY = world:GetComponent(entities[i], "Rotation", "Y"):GetFloat()
+		--print("hi")
+		--world:GetComponent(entities[i], "SlerpRotation", "fromX"):SetFloat( 0 )
+		--world:GetComponent(entities[i], "SlerpRotation", "fromY"):SetFloat( 1 )
+		--world:GetComponent(entities[i], "SlerpRotation", "fromZ"):SetFloat( 0 )
+		--print("hi")
+		--if	x == 0 and z == 1 then
+		--	world:GetComponent(entities[i], "SlerpRotation", "fromW"):SetFloat( math.pi )
+		--	rotY = 0
+		--elseif  x == 0 and z == -1 then
+		--	world:GetComponent(entities[i], "SlerpRotation", "fromW"):SetFloat( 0 )
+		--	rotY = math.pi
+		--elseif  x == 1 then		
+		--	world:GetComponent(entities[i], "SlerpRotation", "fromW"):SetFloat( -math.pi / 2 )
+		--	rotY = math.pi / 2
+		--elseif  x == -1 then
+		--	world:GetComponent(entities[i], "SlerpRotation", "fromW"):SetFloat( math.pi / 2 )
+		--	rotY = -math.pi / 2 
+		
 		if not world:EntityHasComponent(entities[i], "LerpRotation") then
 			world:CreateComponentAndAddTo("LerpRotation", entities[i])
 		end

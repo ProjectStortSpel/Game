@@ -18,15 +18,19 @@ TotemPoleSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("MapSize", FilterType.RequiresOneOf)
 end
 
-TotemPoleSystem.AddTotemPiece = function(self, currentPlayerNumber, height, X, Z)
+TotemPoleSystem.AddTotemPiece = function(self, currentPlayerNumber, totemPoleId)
 
-	local totemPiece = world:CreateNewEntity("TotemPiece")
-	local rotation 	= world:GetComponent(totemPiece, "Rotation", 0)
-	local position 	= world:GetComponent(totemPiece, "Position", 0)
-	local scale		= world:GetComponent(totemPiece, "Scale", 0)
+	local totemPiece	= world:CreateNewEntity("TotemPiece")
+	local rotation 		= world:GetComponent(totemPiece, "Rotation", 0)
+	local position 		= world:GetComponent(totemPiece, "Position", 0)
+	local scale			= world:GetComponent(totemPiece, "Scale", 0)
+	local tpHeight		=	world:GetComponent(totemPiece, "TotemPiece", "CurrentHeight")
+	local tpPoleId		=	world:GetComponent(totemPiece, "TotemPiece", "TotemPoleId")
+	tpHeight:SetInt(0)
+	tpPoleId:SetInt(totemPoleId)
 	
-	local lookAtX = X
-	local lookAtZ = Z
+	
+	local	X, Y, Z	=	world:GetComponent(totemPoleId, "Position", "X"):GetFloat3()
 	
 	local tempMoveX = self.MapCenterX - X
 	local tempMoveZ = self.MapCenterZ - Z
@@ -60,7 +64,7 @@ TotemPoleSystem.AddTotemPiece = function(self, currentPlayerNumber, height, X, Z
 	
 	
 
-	position:SetFloat3(X + offsetX, 0.95 + height*0.27, Z + offsetZ)
+	position:SetFloat3(X + offsetX, 0.95 -0.27, Z + offsetZ)
 	-- Scale
 	scale:SetFloat3(1,1,1)
 	world:SetComponent(totemPiece, "Model", "ModelName", "totem" .. currentPlayerNumber)
@@ -75,6 +79,7 @@ TotemPoleSystem.CreateTotemPole = function(self, totemCheckpointNumber, tX, tZ)
 	world:CreateComponentAndAddTo("CheckpointId", newTotemPole)
 	
 	world:SetComponent(newTotemPole, "TotemPole", "Height", 0)
+	world:GetComponent(newTotemPole, "Position", "X"):SetFloat3(tX, 1, tZ)
 	world:SetComponent(newTotemPole, "CheckpointId", "Id", totemCheckpointNumber)
 end
 
@@ -93,43 +98,12 @@ TotemPoleSystem.CheckCheckPoints = function(self, targetCpId, totemId, playerNum
 			-- Get the height of the current totempole
 			local height = world:GetComponent(totemId, "TotemPole", "Height"):GetInt()
 			-- Add a new piece
-			self.AddTotemPiece(self, playerNum, height, cpPosX, cpPosZ)
+			self.AddTotemPiece(self, playerNum, totemId)
 			world:SetComponent(totemId, "TotemPole", "Height", height + 1)
-			return true
+			return
 		end
 		
 	end
-	
-	-- No checkpoint found
-	return false
-	
-end
-
-
-TotemPoleSystem.CheckFinishPoints = function(self, targetFpId, totemId, playerNum)
-
-	-- get all finishPoints and go through them
-	local finishPoints = self:GetEntities("Finishpoint")
-	for i = 1, #finishPoints do
-	
-		-- If we found the correct finishpoint
-		if finishPoints[i] == targetFpId then
-		
-			-- Get the finishpoints' position
-			local cpPosX, cpPosZ = world:GetComponent(finishPoints[i], "MapPosition", 0):GetInt2()
-			-- Get the height of the current totempole
-			local height = world:GetComponent(totemId, "TotemPole", "Height"):GetInt()
-			-- Add the new piece
-			self.AddTotemPiece(self, playerNum, height, cpPosX, cpPosZ)
-			world:SetComponent(totemId, "TotemPole", "Height", height + 1)
-			return true
-		end
-		
-	end
-
-	-- No finishpoint found
-	return false
-	
 end
 
 TotemPoleSystem.CheckAddTotemPiece = function(self, entityId)
@@ -151,15 +125,10 @@ TotemPoleSystem.CheckAddTotemPiece = function(self, entityId)
 	end
 	
 	if totemPoleId == -1 then
-		print("LOALSDOASDLASDOASDOL -> " .. targetCheckpointId)
+		return
 	end
 	
-	-- Check if the totempole is for a checkpoint
-	local success = self:CheckCheckPoints(targetCheckpointId, totemPoleId, playerNumber)
-	-- If not, it's for the finishpoint
-	if not success then
-		self:CheckFinishPoints(targetCheckpointId, totemPoleId, playerNumber)	
-	end
+	self:CheckCheckPoints(targetCheckpointId, totemPoleId, playerNumber)
 end
 
 TotemPoleSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, addedEntities)
