@@ -1,7 +1,7 @@
 DealCardsSystem = System()
 DealCardsSystem.DealCard = false
 DealCardsSystem.FirstDeal = true
-DealCardsSystem.AICheat = 1
+--DealCardsSystem.AICheat = 1
 
 DealCardsSystem.Initialize = function ( self )
 	--	Set Name
@@ -97,28 +97,28 @@ DealCardsSystem.DealCards = function (self, numCards)
 			local cardIndex = math.random(1, cardsLeft)
 			local card = cards[cardIndex]
 			
-			if self.AICheat == 1 then
-			
-				local cardactioncomp = self:GetComponent(card, "CardAction", 0)
-				
-				if j == 1 then
-					cardactioncomp:SetString("Forward")
-				elseif j == 2 then
-					cardactioncomp:SetString("Forward")
-				elseif j == 3 then
-					cardactioncomp:SetString("Backward")
-				elseif j == 4 then
-					cardactioncomp:SetString("Backward")
-				elseif j == 5 then
-					cardactioncomp:SetString("TurnRight")
-				elseif j == 6 then
-					cardactioncomp:SetString("TurnLeft")
-				elseif j == 7 then
-					cardactioncomp:SetString("TurnAround")
-				elseif j == 8 then
-					cardactioncomp:SetString("Forward")
-				end
-			end
+			--if self.AICheat == 1 then
+			--
+			--	local cardactioncomp = self:GetComponent(card, "CardAction", 0)
+			--	
+			--	if j == 1 then
+			--		cardactioncomp:SetString("Forward")
+			--	elseif j == 2 then
+			--		cardactioncomp:SetString("Forward")
+			--	elseif j == 3 then
+			--		cardactioncomp:SetString("Backward")
+			--	elseif j == 4 then
+			--		cardactioncomp:SetString("Backward")
+			--	elseif j == 5 then
+			--		cardactioncomp:SetString("TurnRight")
+			--	elseif j == 6 then
+			--		cardactioncomp:SetString("TurnLeft")
+			--	elseif j == 7 then
+			--		cardactioncomp:SetString("TurnAround")
+			--	elseif j == 8 then
+			--		cardactioncomp:SetString("Forward")
+			--	end
+			--end
 			
 			world:CreateComponentAndAddTo("DealtCard", card)
 			if not world:EntityHasComponent(card, "AICard") then
