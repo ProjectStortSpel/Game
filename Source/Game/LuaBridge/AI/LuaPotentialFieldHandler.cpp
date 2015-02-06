@@ -21,6 +21,7 @@ namespace LuaBridge
 			LuaEmbedder::AddFunction(L, "UpdatePF", &UpdatePF, "PotentialField");
 		}
 
+		/* Called by the Pathfinder.*/
 		void InitPFHandler(unsigned int _mapSizeX, unsigned int _mapSizeY)
 		{
 			m_mapSize.x = _mapSizeX;
@@ -44,6 +45,7 @@ namespace LuaBridge
 			m_highestValues.resize(m_PFs.size());
 		}
 
+		/* Called from Lua. Inits a potential field*/
 		int InitPF(lua_State* L)
 		{
 			PFParam* param = LuaEmbedder::PullObject<PFParam>(L, "PFParam", 1);
@@ -107,21 +109,6 @@ namespace LuaBridge
 			}
 		}
 
-		/* Normalize the field so that the highest value is 1.*/
-		//void NormalizePF(unsigned int _offset)
-		//{
-		//	for (unsigned int i = 0; i < m_PFs.size(); i++)
-		//	{
-		//		for (unsigned int x = 0; x < m_mapSize.x; x++)
-		//		{
-		//			for (unsigned int y = 0; y < m_mapSize.y; y++)
-		//			{
-		//				m_PFs[i][x][y] /= m_highestValues[i];
-		//			}
-		//		}
-		//	}
-		//}
-
 		void ClearPF(unsigned int _offset)
 		{
 			for (unsigned int x = 0; x < m_mapSize.x; x++)
@@ -137,5 +124,20 @@ namespace LuaBridge
 		{ 
 			return &(m_PFs[m_uniqueObjects.at(_object)]); 
 		}
+
+		/* Normalize the field so that the highest value is 1.*/
+		//void NormalizePF(unsigned int _offset)
+		//{
+		//	for (unsigned int i = 0; i < m_PFs.size(); i++)
+		//	{
+		//		for (unsigned int x = 0; x < m_mapSize.x; x++)
+		//		{
+		//			for (unsigned int y = 0; y < m_mapSize.y; y++)
+		//			{
+		//				m_PFs[i][x][y] /= m_highestValues[i];
+		//			}
+		//		}
+		//	}
+		//}
 	}
 }

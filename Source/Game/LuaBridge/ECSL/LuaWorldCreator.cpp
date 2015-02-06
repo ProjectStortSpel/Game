@@ -44,7 +44,6 @@ namespace LuaBridge
   {
     LuaSystem* system = LuaEmbedder::PullObject<LuaSystem>(L, "System", 1);
     WorldCreator::AddLuaSystemToCurrentGroup(system);
-    m_systemsAdded.push_back(system);
     return 0;
   }
   
