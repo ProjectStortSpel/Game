@@ -17,9 +17,6 @@ PostMoveSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities
 		local entity = entities[n]
 		local id = world:CreateNewEntity()
 		world:CreateComponentAndAddTo("CheckVoid", id)
-
-		id = world:CreateNewEntity()
-		world:CreateComponentAndAddTo("CheckCheckpoint", id)
 		
 		world:KillEntity( entity )
 	end
