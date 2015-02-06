@@ -28,6 +28,8 @@ void Pathfinder::SetNodeData(const struct tile_data*** _data, int _x, int _y)
 	const struct tile_data **use = (*_data);
 	this->m_mapSize = coord(_x, _y);
 
+	this->DeleteMap();
+
 	// allocationg space
 	this->m_mapData = new struct pathfindingnode*[_x];
 	for (int i = 0; i < _x; ++i)
@@ -268,8 +270,23 @@ std::vector<coord> Pathfinder::GeneratePath( coord start, coord goal )
 
 void Pathfinder::DeleteMap()
 {
+	
+	for (int i = 0; i < this->m_mapSize.x; ++i)
+	{
+		if (this->m_mapData[i])
+		{
+			delete(this->m_mapData[i]);
+			this->m_mapData[i] = NULL;
+		}
+	}
+	if (this->m_mapData)
+	{
+		delete(this->m_mapData);
+		this->m_mapData = NULL;
+	}
 }
 
 Pathfinder::~Pathfinder()
 {
+	this->DeleteMap();
 }
