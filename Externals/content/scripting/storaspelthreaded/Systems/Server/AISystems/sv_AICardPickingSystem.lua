@@ -317,7 +317,12 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, dirX, dirY, posX, p
 					dirX = -temp
 				end
 				
-			elseif from_me > from_backward and #turnArounds > 0 and #forwards == 0 and #backwards ~= 0
+			elseif from_me > from_forward and #turnArounds > 0 and #forwards == 0 and #backwards > 0
+			then
+				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnArounds)
+				dirY = -dirY
+				dirX = -dirX
+			elseif from_me > from_backward and #turnArounds > 0 and #forwards > 0 and #backwards == 0
 			then
 				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnArounds)
 				dirY = -dirY
