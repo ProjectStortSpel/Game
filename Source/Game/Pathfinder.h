@@ -2,7 +2,10 @@
 #define PATHFINDER_H
 
 #include <vector>
-
+/*		name	pf	weight
+map ("void",	*PF, 3)
+("Players", *PF, 0)
+*/
 struct coord
 {
 	int x, y;
@@ -38,8 +41,8 @@ struct pathfindingnode
 class Pathfinder
 {
 public:
-	static Pathfinder* Instance( );
-	~Pathfinder( );
+	static Pathfinder* Instance();
+	~Pathfinder();
 
 	void SetTurningCost(float _turningCost);
 	void SetNodeData(const struct tile_data*** _data, int _x, int _y);
@@ -60,12 +63,12 @@ private:
 	void AddNeighbors(coord _position, std::vector<pathfindingnode>& _set, const std::vector<pathfindingnode>& _notToUse, pathfindingnode* _parent);
 	bool InSet(const std::vector<pathfindingnode>& _set, int _x, int _y);
 
-	Pathfinder(Pathfinder const&)		= delete;
-	void operator=(Pathfinder const&)	= delete;
+	Pathfinder(Pathfinder const&) = delete;
+	void operator=(Pathfinder const&) = delete;
 
 	void DeleteMap();
 
-	Pathfinder( );
+	Pathfinder();
 	static Pathfinder* m_instance;
 };
 

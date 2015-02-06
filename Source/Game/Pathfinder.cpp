@@ -18,6 +18,11 @@ Pathfinder::Pathfinder()
 	this->m_turningCost = 0;
 }
 
+void Pathfinder::SetTurningCost(float _turing_cost)
+{
+	this->m_turningCost = _turing_cost;
+}
+
 void Pathfinder::SetNodeData(const struct tile_data*** _data, int _x, int _y)
 {
 	const struct tile_data **use = (*_data);
@@ -223,7 +228,6 @@ std::vector<coord> Pathfinder::GeneratePath( coord start, coord goal )
 	std::vector<coord> ret_value;
 	std::vector<pathfindingnode> open;
 	std::vector<pathfindingnode> closed;
-
 	this->m_startCoord = start;
 	this->m_goalCoord = goal;
 	if (this->m_mapData[start.x][start.y].walkable && this->InsideWorld(start.x, start.y) && this->m_mapData[goal.x][goal.y].walkable && this->InsideWorld(goal.x, goal.y))

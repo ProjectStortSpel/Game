@@ -512,7 +512,7 @@ bool GraphicsHigh::InitGLEW()
 	if (!glewIsSupported("GL_VERSION_4_3")) { return false; }
 #endif
 
-	SDL_GL_SetSwapInterval(0);
+	SDL_GL_SetSwapInterval(1);
 	
 	return true;
 }

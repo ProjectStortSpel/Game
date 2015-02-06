@@ -97,6 +97,7 @@ AICardPickingSystem.TryMove = function(self, CardSetAI, card)
 		if CardSetAI[j] == card[1] and j <= #CardSetAI then
 			table.remove(card, 1)
 			cardpicked = CardSetAI[j]
+			--print("PLAYING CARD : ", self:GetComponent(cardpicked, "CardAction", 0):GetString()))
 			table.remove(CardSetAI, j)
 			return cardpicked
 		end
@@ -124,104 +125,172 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, dirX, dirY, posX, p
 			--print("turnLefts   " .. #turnLefts)
 			--print("turnRights  " .. #turnRights)
 			--print("turnArounds " .. #turnArounds)
-
-			if posY < targetY and dirY == 1 and #forwards > 0 then
-
+			
+			--if posY < targetY and dirY == 1 and #forwards > 0 then
+            --
+			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, forwards)
+			--	posY = posY + 1
+			--
+			--elseif posY < targetY and dirY == -1 and #backwards > 0 then
+			--
+			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, backwards)
+			--	posY = posY + 1
+			--
+			--elseif posY > targetY and dirY == -1 and #forwards > 0 then
+            --
+			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, forwards)
+			--	posY = posY - 1
+			--
+			--elseif posY > targetY and dirY == 1 and #backwards > 0 then
+			--
+			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, backwards)
+			--	posY = posY - 1
+			--
+			--elseif posX < targetX and dirX == 1 and #forwards > 0 then
+			--
+			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, forwards)
+			--	posX = posX + 1
+			--
+			--elseif posX < targetX and dirX == -1 and #backwards > 0 then
+			--	
+			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, backwards)
+			--	posX = posX + 1
+			--
+			--elseif posX > targetX and dirX == -1 and #forwards > 0 then
+			--
+			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, forwards)
+			--	posX = posX - 1
+			--
+			--elseif posX > targetX and dirX == 1 and #backwards > 0 then
+			--	
+			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, backwards)
+			--	posX = posX - 1
+			--
+			--elseif posX > targetX and dirX == 1 and #turnArounds > 0 then
+            --
+			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnArounds)
+			--	dirX = -dirX
+			--	dirY = -dirY
+            --
+			--elseif posX < targetX and dirX == -1 and #turnArounds > 0 then
+            --
+			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnArounds)
+			--	dirX = -dirX
+			--	dirY = -dirY
+            --
+			--elseif posY < targetY and dirY == -1 and #turnArounds > 0 then
+            --
+			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnArounds)
+			--	dirX = -dirX
+			--	dirY = -dirY
+            --
+			--elseif posY > targetY and dirY == 1 and #turnArounds > 0 then
+            --
+			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnArounds)
+			--	dirX = -dirX
+			--	dirY = -dirY
+            --
+			--elseif #turnLefts > 0 then
+            --
+			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnLefts)
+			--	local temp = dirY
+			--	dirY = -dirX
+			--	dirX = temp
+            --
+			--elseif #turnRights > 0 then
+            --
+			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnRights)
+			--	local temp = dirY
+			--	dirY = dirX
+			--	dirX = -temp
+            --
+			--elseif #turnArounds > 0 then
+            --
+			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnArounds)
+			--	dirX = -dirX
+			--	dirY = -dirY
+            --
+			--elseif #forwards > 0 then
+            --
+			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, forwards)
+			--	posX = posX + dirX
+			--	posY = posY + dirY
+            --
+			--elseif #backwards > 0 then
+            --
+			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, backwards)
+			--	posX = posX - dirX
+			--	posY = posY - dirY
+			local from_me = PathfinderHandler.GeneratePath(posX, posY, targetX, targetY)
+			local form_x, from_y = posX+dirX, posY+dirY;
+			local from_forward = PathfinderHandler.GeneratePath(form_x, from_y, targetX, targetY)
+			form_x, from_y = posX-dirX, posY-dirY;
+			local from_backward = PathfinderHandler.GeneratePath(form_x, from_y, targetX, targetY)
+			form_x, from_y = posX+dirY, posY-dirX;
+			local from_left = PathfinderHandler.GeneratePath(form_x, from_y, targetX, targetY)
+			form_x, from_y = posX-dirY, posY+dirX;
+			local from_right = PathfinderHandler.GeneratePath(form_x, from_y, targetX, targetY)
+			
+			print("Position : " .. posX .. ", " .. posY ..  "(x , y)")
+			print("Direction: " .. dirX .. ", " .. dirY .. "(x , y)")
+			print("distance from current position		: ", from_me)
+			print("distance from position (forward)	: ", from_forward)
+			print("distance from position (backward)	: ", from_backward)
+			print("distance from position (left)		: ", from_left)
+			print("distance from position (right)		: ", from_right)
+			print("forwards    " .. #forwards)
+			print("backwards   " .. #backwards)
+			print("turnLefts   " .. #turnLefts)
+			print("turnRights  " .. #turnRights)
+			print("turnArounds " .. #turnArounds)
+			
+			if from_me > from_forward and #forwards > 0 
+			then 
+				print("FORWARD")
 				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, forwards)
-				posY = posY + 1
-			
-			elseif posY < targetY and dirY == -1 and #backwards > 0 then
-			
+				posX = posX + dirX; 
+				posY = posY + dirY;
+			elseif from_me > from_backward and #backwards > 0 
+			then
+				print("BACKWORD")
 				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, backwards)
-				posY = posY + 1
-			
-			elseif posY > targetY and dirY == -1 and #forwards > 0 then
-
-				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, forwards)
-				posY = posY - 1
-			
-			elseif posY > targetY and dirY == 1 and #backwards > 0 then
-			
-				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, backwards)
-				posY = posY - 1
-			
-			elseif posX < targetX and dirX == 1 and #forwards > 0 then
-			
-				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, forwards)
-				posX = posX + 1
-			
-			elseif posX < targetX and dirX == -1 and #backwards > 0 then
-				
-				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, backwards)
-				posX = posX + 1
-			
-			elseif posX > targetX and dirX == -1 and #forwards > 0 then
-			
-				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, forwards)
-				posX = posX - 1
-			
-			elseif posX > targetX and dirX == 1 and #backwards > 0 then
-				
-				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, backwards)
-				posX = posX - 1
-			
-			elseif posX > targetX and dirX == 1 and #turnArounds > 0 then
-
-				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnArounds)
-				dirX = -dirX
-				dirY = -dirY
-
-			elseif posX < targetX and dirX == -1 and #turnArounds > 0 then
-
-				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnArounds)
-				dirX = -dirX
-				dirY = -dirY
-
-			elseif posY < targetY and dirY == -1 and #turnArounds > 0 then
-
-				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnArounds)
-				dirX = -dirX
-				dirY = -dirY
-
-			elseif posY > targetY and dirY == 1 and #turnArounds > 0 then
-
-				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnArounds)
-				dirX = -dirX
-				dirY = -dirY
-
-			elseif #turnLefts > 0 then
-
-				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnLefts)
-				local temp = dirY
-				dirY = -dirX
-				dirX = temp
-
-			elseif #turnRights > 0 then
-
-				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnRights)
-				local temp = dirY
-				dirY = dirX
-				dirX = -temp
-
-			elseif #turnArounds > 0 then
-
-				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnArounds)
-				dirX = -dirX
-				dirY = -dirY
-
-			elseif #forwards > 0 then
-
-				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, forwards)
-				posX = posX + dirX
-				posY = posY + dirY
-
-			elseif #backwards > 0 then
-
-				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, backwards)
-				posX = posX - dirX
-				posY = posY - dirY
-
+				posX = posX - dirX; 
+				posY = posY - dirY;
+		
+			elseif from_me > from_left and #turnLefts > 0
+			then
+				print("LEFT")
+				if  #backwards > #forwards and #turnRights > 0 
+				then
+					print("FUCK IT LETS GO RIGHT")
+					pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnRights)
+					local temp = dirY
+					dirY = dirX
+					dirX = -temp
+				else
+					pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnLefts)
+					local temp = dirY
+					dirY = -dirX
+					dirX = temp
+				end
+			elseif from_me > from_right and #turnRights > 0
+			then
+				print("RIGHT")
+				if  #backwards > #forwards and #turnLefts > 0 
+				then
+					print("FUCK IT LETS GO LEFT")
+					pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnLefts)
+					local temp = dirY
+					dirY = -dirX
+					dirX = temp
+				else
+					pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnRights)
+					local temp = dirY
+					dirY = dirX
+					dirX = -temp
+				end
 			else
+				print("RANDOM!")
 				local cardNr = math.random(1, #CardSetAI)
 
 				local pickedCard = CardSetAI[cardNr]
@@ -230,7 +299,38 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, dirX, dirY, posX, p
 
 				table.remove(CardSetAI, cardNr)
 			end
-			
+			--elseif #turnLefts > 0 then
+            --
+			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnLefts)
+			--	local temp = dirY
+			--	dirY = -dirX
+			--	dirX = temp
+            --
+			--elseif #turnRights > 0 then
+            --
+			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnRights)
+			--	local temp = dirY
+			--	dirY = dirX
+			--	dirX = -temp
+            --
+			--elseif #turnArounds > 0 then
+            --
+			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnArounds)
+			--	dirX = -dirX
+			--	dirY = -dirY
+            --
+			--elseif #forwards > 0 then
+            --
+			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, forwards)
+			--	posX = posX + dirX
+			--	posY = posY + dirY
+            --
+			--elseif #backwards > 0 then
+            --
+			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, backwards)
+			--	posX = posX - dirX
+			--	posY = posY - dirY
+			--
 		end
 	end
 	return pickedcards

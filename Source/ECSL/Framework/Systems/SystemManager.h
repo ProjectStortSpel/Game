@@ -3,7 +3,6 @@
 
 #include <SDL/SDL.h>
 #include <vector>
-#include "SystemIdManager.h"
 #include "SystemWorkGroup.h"
 #include "ECSL/Framework/Components/DataManager.h"
 #include "ECSL/Framework/Multithreading/RuntimeInfo.h"
@@ -26,8 +25,10 @@ namespace ECSL
 		const std::vector<System*>* GetSystems() { return m_systems; }
 		const std::vector<SystemWorkGroup*>* GetSystemWorkGroups() { return m_systemWorkGroups; }
 		SystemIdManager* GetSystemIdManager() { return m_systemIdManager; }
+		SystemActivationManager* GetSystemActivationManager() { return m_systemActivationManager; }
 
 	private:
+		SystemActivationManager* m_systemActivationManager;
 		SystemIdManager* m_systemIdManager;
 		DataManager* m_dataManager;
 		std::vector<System*>* m_systems;

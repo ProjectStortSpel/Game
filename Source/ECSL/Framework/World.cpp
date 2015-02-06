@@ -1,7 +1,11 @@
 #include "World.h"
 
+#include "MPL/Managers/TaskManager.h"
+#include "Simulation/MTSimulation.h"
+#include "Simulation/SQSimulation.h"
 #include "../Managers/ComponentTypeManager.h"
 #include "../Managers/EntityTemplateManager.h"
+
 using namespace ECSL;
 
 World::World(unsigned int _entityCount, std::vector<SystemWorkGroup*>* _systemWorkGroups, std::vector<unsigned int>* _componentTypeIds)
@@ -14,7 +18,13 @@ World::World(unsigned int _entityCount, std::vector<SystemWorkGroup*>* _systemWo
 	m_systemManager->InitializeSystems();	
 	m_messageManager->Initialize();
 
-	m_simulation = new Simulation(m_dataManager, m_systemManager, m_messageManager);
+	/* If slave count is 0 use sequential simulation, else use multi-threaded simulation */
+	if (MPL::TaskManager::GetInstance().GetSlaveCount() == 0)
+		m_simulation = new SQSimulation();
+	else
+		m_simulation = new MTSimulation();
+	m_simulation->Initialize(m_dataManager, m_systemManager, m_messageManager);
+
 	m_dataLogger = &DataLogger::GetInstance();
 }
 

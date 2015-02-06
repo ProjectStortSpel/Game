@@ -114,6 +114,9 @@ namespace Profilers
 		float m_diffEffectiveThreadCount;
 
 		std::vector<std::vector<WorkItemStatistic*>*>* m_workItemStats;
+
+		WorkItemStatistic* CreateWorkItemStatistic(ECSLFrame::WorkItem* _workItem);
+		void UpdateWorkItemStatistic(WorkItemStatistic* _workItemStat, ECSLFrame::WorkItem* _workItem);
 	};
 }
 
