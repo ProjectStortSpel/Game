@@ -6,7 +6,7 @@ NetworkHelper* NetworkInstance::m_clientNetworkHelper = 0;
 NetworkHelper* NetworkInstance::m_serverNetworkHelper = 0;
 
 void NetworkInstance::InitServer()
-{ 
+{
 	SAFE_DELETE(m_server);
 	m_server = new Network::ServerNetwork();
 }
@@ -19,14 +19,14 @@ void NetworkInstance::InitClient()
 
 void NetworkInstance::InitClientNetworkHelper(ECSL::World** _world)
 {
-    SAFE_DELETE(m_clientNetworkHelper);
-    m_clientNetworkHelper = new NetworkHelper(_world);
+	SAFE_DELETE(m_clientNetworkHelper);
+	m_clientNetworkHelper = new NetworkHelper(_world);
 }
 
 void NetworkInstance::InitServerNetworkHelper(ECSL::World** _world)
 {
-    SAFE_DELETE(m_serverNetworkHelper);
-    m_serverNetworkHelper = new NetworkHelper(_world);
+	SAFE_DELETE(m_serverNetworkHelper);
+	m_serverNetworkHelper = new NetworkHelper(_world);
 }
 
 void NetworkInstance::DestroyServer()
@@ -41,12 +41,12 @@ void NetworkInstance::DestroyClient()
 
 void NetworkInstance::DestroyClientNetworkHelper()
 {
-    SAFE_DELETE(m_clientNetworkHelper);
+	SAFE_DELETE(m_clientNetworkHelper);
 }
 
 void NetworkInstance::DestroyServerNetworkHelper()
 {
-    SAFE_DELETE(m_serverNetworkHelper);
+	SAFE_DELETE(m_serverNetworkHelper);
 }
 
 Network::ClientNetwork* NetworkInstance::GetClient()
@@ -61,12 +61,12 @@ Network::ServerNetwork* NetworkInstance::GetServer()
 
 NetworkHelper* NetworkInstance::GetClientNetworkHelper()
 {
-    return m_clientNetworkHelper;
+	return m_clientNetworkHelper;
 }
 
 NetworkHelper* NetworkInstance::GetServerNetworkHelper()
 {
-    return m_serverNetworkHelper;
+	return m_serverNetworkHelper;
 }
 
 bool NetworkInstance::isServer()

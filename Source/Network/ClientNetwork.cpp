@@ -179,8 +179,8 @@ void ClientNetwork::Disconnect()
 		Send(packet);
 	}
 	NetSleep(10);
-	if(m_socket)
-		m_socket->CloseSocket();
+	if (m_socket)
+		m_socket->ShutdownSocket();
 	//m_socket->SetInvalidSocket();
 	*m_receivePacketsThreadAlive = false;
 
@@ -189,6 +189,7 @@ void ClientNetwork::Disconnect()
 
 	if (m_socket)
 	{
+		
 		NetConnection nc = m_socket->GetNetConnection();
 		TriggerEvent(m_onDisconnectedFromServer, nc, 0);
 
@@ -206,8 +207,7 @@ void ClientNetwork::Disconnect()
 void ClientNetwork::ReceivePackets()
 {
 	// On its on thread
-	unsigned short nextPacketSize;
-	unsigned short dataReceived;
+	short dataReceived;
 	while (*m_receivePacketsThreadAlive)
 	{
 		//nextPacketSize = 2;
@@ -254,6 +254,8 @@ void ClientNetwork::ReceivePackets()
 		}
 		else if (dataReceived == 0)
 		{
+			*m_receivePacketsThreadAlive = false;
+			
 			// server shutdown graceful
 		}
 		else
@@ -282,6 +284,7 @@ void ClientNetwork::Send(Packet* _packet)
 		*m_totalDataSent += bytesSent;
 		*m_currentDataSent += bytesSent;
 	}
+
 	SAFE_DELETE(_packet);
 }
 

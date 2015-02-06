@@ -8,6 +8,7 @@ namespace LuaBridge
   namespace LuaEntityTemplateManager
   {
     void Embed(lua_State* L);
+    void SetLuaState(lua_State* L);
   }
 }
 

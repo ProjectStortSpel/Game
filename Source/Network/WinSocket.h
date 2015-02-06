@@ -27,6 +27,7 @@ namespace Network
 		bool SetNoDelay(bool _value);
 		bool SetTimeoutDelay(int _value);
 		bool CloseSocket(void);
+		bool ShutdownSocket(void);
 		ISocket* Accept(void);
 		int Send(char* _buffer, int _length, int _flags = 0);
 		int Receive(char* _buffer, int _length, int _flags = 0);

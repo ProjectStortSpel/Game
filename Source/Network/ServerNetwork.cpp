@@ -57,7 +57,7 @@ void ServerNetwork::NetConnectionLost(NetConnection& _connection)
 		SDL_Log("Player timed out. IP: %s:%d\n", _connection.GetIpAddress(), _connection.GetPort());
 
 	m_connectedClientsLock->lock();
-	(*m_connectedClients)[_connection]->CloseSocket();
+	(*m_connectedClients)[_connection]->ShutdownSocket();
 	(*m_connectedClients)[_connection]->SetActive(0);
 	m_connectedClientsLock->unlock();
 
@@ -84,8 +84,14 @@ void ServerNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uin
 		SDL_Log("Player disconnected. IP: %s:%d\n", _connection.GetIpAddress(), _connection.GetPort());
 
 	m_connectedClientsLock->lock();
-	(*m_connectedClients)[_connection]->CloseSocket();
-	(*m_connectedClients)[_connection]->SetActive(0);
+
+	auto tmp = m_connectedClients->find(_connection);
+	if (tmp != m_connectedClients->end())
+	{
+		(*m_connectedClients)[_connection]->ShutdownSocket();
+		(*m_connectedClients)[_connection]->SetActive(0);
+		m_connectedClients->erase(tmp);
+	}
 	m_connectedClientsLock->unlock();
 
 	uint64_t id = _packetHandler->StartPack(NetTypeMessageId::ID_REMOTE_CONNECTION_DISCONNECTED);
@@ -161,6 +167,8 @@ ServerNetwork::ServerNetwork()
 	hook = std::bind(&ServerNetwork::NetPong, this, NetworkHookPlaceholders);
 	(*m_networkFunctions)[NetTypeMessageId::ID_PONG] = hook;
 
+	m_onServerShutdown = new std::vector<std::function<void()>>;
+
 	m_running = new bool(false);
 }
 
@@ -182,9 +190,11 @@ ServerNetwork::~ServerNetwork()
 	SAFE_DELETE(m_currentTimeOutIntervall);
 	SAFE_DELETE(m_currentIntervallCounter);
 
+	SAFE_DELETE(m_onServerShutdown);
 	SAFE_DELETE(m_onPlayerConnected);
 	SAFE_DELETE(m_onPlayerDisconnected);
 	SAFE_DELETE(m_onPlayerTimedOut);
+	SAFE_DELETE(m_onServerShutdown);
 }
 
 bool ServerNetwork::Start(unsigned int& _incomingPort, const char* _password, unsigned int& _maxConnections)
@@ -234,8 +244,8 @@ bool ServerNetwork::Stop()
 	m_connectedClientsLock->lock();
 	for (auto it = m_connectedClients->begin(); it != m_connectedClients->end(); ++it)
 	{
-		it->second->CloseSocket();
-		it->second->SetActive(0);
+		it->second->ShutdownSocket();
+		//it->second->SetActive(0);
 	}
 	m_connectedClientsLock->unlock();
 
@@ -267,6 +277,9 @@ bool ServerNetwork::Stop()
 	m_currentTimeOutIntervall->clear();
 
 	*m_running = false;
+
+	OnServerShutdown();
+
 	return *m_running;
 }
 
@@ -339,8 +352,8 @@ void ServerNetwork::Send(Packet* _packet, NetConnection& _receiver)
 void ServerNetwork::ReceivePackets(ISocket* _socket)
 {
 	char* packetData = new char[MAX_PACKET_SIZE];
-	unsigned short nextPacketSize;
-	unsigned short dataReceived;
+	short nextPacketSize;
+	short dataReceived;
 	while (_socket->GetActive() != 0)
 	{
 
@@ -397,6 +410,8 @@ void ServerNetwork::ReceivePackets(ISocket* _socket)
 		}
 		else if (dataReceived == 0)
 		{
+			_socket->SetActive(0);
+			//_socket->CloseSocket();
 		}
 		else
 		{
@@ -568,6 +583,11 @@ void ServerNetwork::SetOnPlayerTimedOut(NetEvent& _function)
 	m_onPlayerTimedOut->push_back(_function);
 }
 
+void ServerNetwork::SetOnServerShutdown(std::function<void()> _function)
+{
+	m_onServerShutdown->push_back(_function);
+}
+
 void ServerNetwork::ResetNetworkEvents()
 {
 	m_onPlayerConnected->clear();
@@ -607,4 +627,10 @@ void ServerNetwork::Kick(NetConnection& _connection, const char* _reason)
 	(*m_connectedClients)[_connection]->SetActive(0);
 	m_connectedClientsLock->unlock();
 
+}
+
+void ServerNetwork::OnServerShutdown()
+{
+	for (int i = 0; i < m_onServerShutdown->size(); ++i)
+		(*m_onServerShutdown)[i]();
 }

@@ -39,6 +39,11 @@ TestMoveSystem.RecursiveMove = function(self, unitToMove, allUnits, allNonWalkab
 			if not self:RecursiveMove(allUnits[n], allUnits, allNonWalkables, posX+dirX, posZ+dirZ, dirX, dirZ) then
 				return false
 			end
+				local newCheck = world:CreateNewEntity()
+				world:CreateComponentAndAddTo("CheckCheckpointForEntity", newCheck)
+				world:GetComponent(newCheck, "CheckCheckpointForEntity", "EntityId"):SetInt(allUnits[n])
+				world:GetComponent(newCheck, "CheckCheckpointForEntity", "PosX"):SetInt(posX+dirX)
+				world:GetComponent(newCheck, "CheckCheckpointForEntity", "PosZ"):SetInt(posZ+dirZ)
 			break
 		end
 	end
@@ -49,8 +54,15 @@ TestMoveSystem.RecursiveMove = function(self, unitToMove, allUnits, allNonWalkab
 	end
 	
 	--	Move the unit
-	world:GetComponent(unitToMove, "MapPosition", 0):SetInt2(posX, posZ)	
-	
+	world:GetComponent(unitToMove, "MapPosition", 0):SetInt2(posX, posZ)
+	if not world:EntityHasComponent(unitToMove, "LerpPosition") then
+		world:CreateComponentAndAddTo("LerpPosition", unitToMove)
+	end
+	world:GetComponent(unitToMove, "LerpPosition", "X"):SetFloat(posX)
+	world:GetComponent(unitToMove, "LerpPosition", "Y"):SetFloat(0.5)
+	world:GetComponent(unitToMove, "LerpPosition", "Z"):SetFloat(posZ)
+	world:GetComponent(unitToMove, "LerpPosition", "Time"):SetFloat(1)
+	world:GetComponent(unitToMove, "LerpPosition", "Algorithm"):SetString("SmoothLerp")
 	return true
 end
 
@@ -75,6 +87,11 @@ TestMoveSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities
 			
 				if self:RecursiveMove(tUnit, tUnits, tNonWalkables, tPosX+tDirX*nStep, tPosZ+tDirZ*nStep, tDirX, tDirZ) then
 					stepsTaken = stepsTaken + 1
+					local newCheck = world:CreateNewEntity()
+					world:CreateComponentAndAddTo("CheckCheckpointForEntity", newCheck)
+					world:GetComponent(newCheck, "CheckCheckpointForEntity", "EntityId"):SetInt(tUnit)
+					world:GetComponent(newCheck, "CheckCheckpointForEntity", "PosX"):SetInt(tPosX+tDirX*nStep)
+					world:GetComponent(newCheck, "CheckCheckpointForEntity", "PosZ"):SetInt(tPosZ+tDirZ*nStep)
 				else
 					break
 				end

@@ -186,8 +186,8 @@ NewCameraSystem.DoFreeCam = function(self, dt)
 				local rposition = self:GetComponent(self.TouchSprite1, "Position", 0)
 				rposition:SetFloat3(self.mouseX * aspectX * 2, self.mouseY * aspectY * 2, -1)			
 				self.Moved = true
-				local mapX = 1
-				local mapZ = 1
+				local mapX = 0
+				local mapZ = 0
 				local mapSize = self:GetEntities("MapSize")
 				if #mapSize > 0 then
 					mapX, mapZ = self:GetComponent(mapSize[1], "MapSize", 0):GetInt2(0)
@@ -198,10 +198,10 @@ NewCameraSystem.DoFreeCam = function(self, dt)
 				if self.CameraLookAtZ < 0 then
 					self.CameraLookAtZ = 0
 				end
-				if self.CameraLookAtX > mapX then
+				if self.CameraLookAtX > mapX-1 then
 					self.CameraLookAtX = mapX
 				end
-				if self.CameraLookAtZ > mapZ then
+				if self.CameraLookAtZ > mapZ-1 then
 					self.CameraLookAtZ = mapZ
 				end
 				self.Camera:SetPosition(self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5, y, self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5)

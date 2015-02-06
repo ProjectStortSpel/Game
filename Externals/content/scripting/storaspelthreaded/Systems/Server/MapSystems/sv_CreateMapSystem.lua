@@ -79,7 +79,7 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 
     elseif tiletype == 102 then -- 102 = f = finish
         world:CreateComponentAndAddTo("Finishpoint", newTile)
-		world:CreateComponentAndAddTo("Checkpoint", entity)
+		world:CreateComponentAndAddTo("Checkpoint", newTile)
 		world:CreateComponentAndAddTo("Model", newTile)
 		local comp = self:GetComponent(newTile, "Model", 0)
 		comp:SetModel("finish", "finish", 0)
@@ -234,6 +234,7 @@ CreateMapSystem.CreateMap = function(self, name)
 	if #MapSizeEntities == 0 then
 		MapEntity = world:CreateNewEntity()
 		world:CreateComponentAndAddTo("MapSize", MapEntity)
+		world:CreateComponentAndAddTo("SyncNetwork", MapEntity)
 	else
 		MapEntity = MapSizeEntities[1]
 	end
