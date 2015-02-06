@@ -25,7 +25,7 @@ AbilityIWin.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 			print("Target: " .. startId)
 			print("Checkpoints: " .. #nCheckpoints)
 			
-			for checkpointId = startId, #nCheckpoints do
+			for checkpointId = 1, #nCheckpoints do
 				
 				local mapX, mapZ = world:GetComponent(nCheckpoints[checkpointId], "MapPosition", "X"):GetInt2()
 				print("Checkpoint #" .. checkpointId .. " at: " .. mapX .. ", " .. mapZ)
