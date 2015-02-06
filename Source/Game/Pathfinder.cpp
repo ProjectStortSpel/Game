@@ -1,5 +1,6 @@
 #include "Pathfinder.h"
 
+#include <cstddef>
 
 Pathfinder* Pathfinder::m_instance = 0;
 
@@ -23,6 +24,7 @@ Pathfinder::Pathfinder()
 {
 	this->m_mapSize = coord(0, 0);
 	this->m_turningCost = 0;
+	this->m_mapData = NULL;
 }
 
 void Pathfinder::SetTurningCost(float _turing_cost)
@@ -277,7 +279,6 @@ std::vector<coord> Pathfinder::GeneratePath( coord start, coord goal )
 
 void Pathfinder::DeleteMap()
 {
-	
 	for (int i = 0; i < this->m_mapSize.x; ++i)
 	{
 		if (this->m_mapData[i])

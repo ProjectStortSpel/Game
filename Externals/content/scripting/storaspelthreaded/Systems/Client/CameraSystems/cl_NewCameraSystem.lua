@@ -201,10 +201,10 @@ NewCameraSystem.DoFreeCam = function(self, dt)
 					self.CameraLookAtZ = 0
 				end
 				if self.CameraLookAtX > mapX-1 then
-					self.CameraLookAtX = mapX
+					self.CameraLookAtX = mapX-1
 				end
 				if self.CameraLookAtZ > mapZ-1 then
-					self.CameraLookAtZ = mapZ
+					self.CameraLookAtZ = mapZ-1
 				end
 				self.Camera:SetPosition(self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5, y, self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5)
 			end

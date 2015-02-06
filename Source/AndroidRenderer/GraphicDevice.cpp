@@ -60,7 +60,7 @@ bool GraphicDevice::Init()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glClearColor(0.0f, 0.2f, 0.6f, 1.0f);
 
-    m_sdlTextRenderer.Init();
+	m_sdlTextRenderer.Init();
     
 	return true;
 }
@@ -89,7 +89,9 @@ void GraphicDevice::Update(float _dt)
 {
 	m_camera->Update(_dt);
 
+	BufferModelsToRemove();
 	BufferModels();
+	BufferModelsToMakeActive();
 	BufferLightsToGPU();
 	BufferSurfaces();
 	BufferModelTextures();
@@ -637,8 +639,43 @@ bool GraphicDevice::RemoveModel(int _id)
 	{
 		if (m_modelsForward[i].id == _id)
 		{
+			m_modelsToRemove.push_back(_id);
+			return true;
+		}
+	}
+	for (int i = 0; i < m_modelsViewspace.size(); i++)
+	{
+		if (m_modelsViewspace[i].id == _id)
+		{
+			m_modelsToRemove.push_back(_id);
+			return true;
+		}
+	}
+	for (int i = 0; i < m_modelsInterface.size(); i++)
+	{
+		if (m_modelsInterface[i].id == _id)
+		{
+			m_modelsToRemove.push_back(_id);
+			return true;
+		}
+	}
+	return false;
+}
+void GraphicDevice::BufferModelsToRemove()
+{
+	for (auto value : m_modelsToRemove)
+	{
+		BufferModelToRemove(value);
+	}
+	m_modelsToRemove.clear();
+}
+bool GraphicDevice::BufferModelToRemove(int _id)
+{
+	for (int i = 0; i < m_modelsForward.size(); i++)
+	{
+		if (m_modelsForward[i].id == _id)
+		{
 			m_modelsForward.erase(m_modelsForward.begin() + i);
-
 			return true;
 		}
 	}
@@ -647,11 +684,17 @@ bool GraphicDevice::RemoveModel(int _id)
 		if (m_modelsViewspace[i].id == _id)
 		{
 			m_modelsViewspace.erase(m_modelsViewspace.begin() + i);
-
 			return true;
 		}
 	}
-
+	for (int i = 0; i < m_modelsInterface.size(); i++)
+	{
+		if (m_modelsInterface[i].id == _id)
+		{
+			m_modelsInterface.erase(m_modelsInterface.begin() + i);
+			return true;
+		}
+	}
 	return false;
 }
 bool GraphicDevice::ActiveModel(int _id, bool _active)
@@ -660,7 +703,61 @@ bool GraphicDevice::ActiveModel(int _id, bool _active)
 	{
 		if (m_modelsForward[i].id == _id)
 		{
+			m_modelsToMakeActive.push_back(std::pair<int, bool>(_id, _active));
+			return true;
+		}
+	}
+	for (int i = 0; i < m_modelsViewspace.size(); i++)
+	{
+		if (m_modelsViewspace[i].id == _id)
+		{
+			m_modelsToMakeActive.push_back(std::pair<int, bool>(_id, _active));
+			return true;
+		}
+	}
+	for (int i = 0; i < m_modelsInterface.size(); i++)
+	{
+		if (m_modelsInterface[i].id == _id)
+		{
+			m_modelsToMakeActive.push_back(std::pair<int, bool>(_id, _active));
+			return true;
+		}
+	}
+	return false;
+}
+void GraphicDevice::BufferModelsToMakeActive()
+{
+	for (auto value : m_modelsToMakeActive)
+	{
+		BufferModelToMakeActive(value.first, value.second);
+	}
+	m_modelsToMakeActive.clear();
+}
+bool GraphicDevice::BufferModelToMakeActive(int _id, bool _active)
+{
+	for (int i = 0; i < m_modelsForward.size(); i++)
+	{
+		if (m_modelsForward[i].id == _id)
+		{
 			m_modelsForward[i].active = _active;
+			return true;
+		}
+	}
+	for (int i = 0; i < m_modelsViewspace.size(); i++)
+	{
+		if (m_modelsViewspace[i].id == _id)
+		{
+			m_modelsViewspace[i].active = _active;
+
+			return true;
+		}
+	}
+	for (int i = 0; i < m_modelsInterface.size(); i++)
+	{
+		if (m_modelsInterface[i].id == _id)
+		{
+			m_modelsInterface[i].active = _active;
+
 			return true;
 		}
 	}
@@ -781,6 +878,12 @@ void GraphicDevice::Clear()
   delete tmpPtr;
   
   m_directionalLightPtr = NULL;
+  
+  m_modelsToLoad.clear();
+  m_surfaces.clear();
+  m_modelTextures.clear();
+  m_modelsToRemove.clear();
+  m_modelsToMakeActive.clear();
 }
 
 void GraphicDevice::BufferLightsToGPU()

@@ -12,6 +12,8 @@ struct coord
 
 	coord()
 	{
+		this->x = 0;
+		this->y = 0;
 	}
 
 	coord(int x, int y)
