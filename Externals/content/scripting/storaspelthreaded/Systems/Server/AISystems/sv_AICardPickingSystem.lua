@@ -14,8 +14,8 @@ AICardPickingSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("AI", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("AICard", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("TileComp", FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter("MapSize", FilterType.RequiresOneOf)
-	
+	--self:AddComponentTypeToFilter("MapSize", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("MapSpecs", FilterType.RequiresOneOf)
 end
 
 AICardPickingSystem.Update = function(self, dt)
@@ -523,8 +523,8 @@ end
 
 AICardPickingSystem.TileHasComponent = function(self, _component, _posX, _posY)
 	
-	local mapSize = self:GetEntities("MapSize")
-	local mapSizeComp = self:GetComponent(mapSize[1], "MapSize", 0)
+	local mapSize = self:GetEntities("MapSpecs")
+	local mapSizeComp = self:GetComponent(mapSize[1], "MapSpecs", "SizeX")
 	local mapX, mapY = mapSizeComp:GetInt2()
 	local tiles = self:GetEntities("TileComp")
 	
@@ -534,8 +534,8 @@ end
 
 AICardPickingSystem.GetRiverVariables = function(self, _posX, _posY)
 	
-	local mapSize = self:GetEntities("MapSize")
-	local mapX = self:GetComponent(mapSize[1], "MapSize", 0):GetInt()
+	local mapSize = self:GetEntities("MapSpecs")
+	local mapX = self:GetComponent(mapSize[1], "MapSpecs", "SizeX"):GetInt()
 	local tiles = self:GetEntities("TileComp")
 	local dirX, dirY, speed = world:GetComponent(tiles[mapX * _posY + _posX + 1], "River", 0):GetInt3()
 	
@@ -553,12 +553,4 @@ AICardPickingSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, ent
 			--print ( plynum .. " gets a " .. card .. " Card" )
 		end
 	end
-end
-
-AICardPickingSystem.HajhajPFstuff = function(self)
-	
-	param = PFParam()
-	param:SetSize(5, 5)
-	param:AddObject(0, 10.0, 5.0)
-	result = CreatePFs(param)
 end

@@ -15,7 +15,7 @@ TotemPoleSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("TotemPole", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("Finishpoint", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("Checkpoint", FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter("MapSize", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("MapSpecs", FilterType.RequiresOneOf)
 end
 
 TotemPoleSystem.AddTotemPiece = function(self, currentPlayerNumber, height, X, Z)
@@ -151,7 +151,7 @@ TotemPoleSystem.CheckAddTotemPiece = function(self, entityId)
 	end
 	
 	if totemPoleId == -1 then
-		print("LOALSDOASDLASDOASDOL -> " .. targetCheckpointId)
+		print("Error: TotemPoleId is -1 in TotemPoleSystem. TargetCheckpointId is: " .. targetCheckpointId)
 	end
 	
 	-- Check if the totempole is for a checkpoint
@@ -183,8 +183,8 @@ TotemPoleSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, addedEn
 		end
 		
 		--	Get Center and also set up all angles on TotemPoles
-		if world:EntityHasComponent(newEntity, "MapSize") then
-			local tX, tZ = world:GetComponent(newEntity, "MapSize", "X"):GetInt2()
+		if world:EntityHasComponent(newEntity, "MapSpecs") then
+			local tX, tZ = world:GetComponent(newEntity, "MapSpecs", "SizeX"):GetInt2()
 			
 			print("Map Size!" .. tX .. ", " .. tZ)
 			

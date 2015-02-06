@@ -665,7 +665,7 @@ namespace LuaEmbedder
 
 	static bool DumpFunction(lua_State* L, luaL_Buffer* buffer)
 	{
-#if defined(__OSX__) || defined(__IOS__)
+#if defined(__OSX__)
         int chunkSetting = 0;
 #else
         int chunkSetting = 1;
