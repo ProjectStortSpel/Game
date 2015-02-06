@@ -335,8 +335,8 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
         m_serverWorld->PostInitializeSystems();
 		LuaEmbedder::CollectGarbageFull();
     }
-
-	m_worldProfiler = new Profilers::ECSLProfiler(m_graphics);
+	if (!m_worldProfiler)
+		m_worldProfiler = new Profilers::ECSLProfiler(m_graphics);
 }
 
 void GameCreator::RunStartupCommands(int argc, char** argv)
