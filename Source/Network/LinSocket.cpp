@@ -24,7 +24,7 @@ LinSocket::LinSocket()
     
 #if defined(__IOS__) || defined(__OSX__)
     int set = 1;
-    //setsockopt(*m_socket, SOL_SOCKET, SO_NOSIGPIPE, (void *)&set, sizeof(int));
+    setsockopt(*m_socket, SOL_SOCKET, SO_NOSIGPIPE, (void *)&set, sizeof(int));
 #endif
     
 	if (*m_socket != -1)
@@ -54,7 +54,7 @@ LinSocket::LinSocket(int _socket)
     
 #if defined(__IOS__) || defined(__OSX__)
     int set = 1;
-    //setsockopt(*m_socket, SOL_SOCKET, SO_NOSIGPIPE, (void *)&set, sizeof(int));
+    setsockopt(*m_socket, SOL_SOCKET, SO_NOSIGPIPE, (void *)&set, sizeof(int));
 #endif
     
 	if (*m_socket != -1)
@@ -83,7 +83,7 @@ LinSocket::LinSocket(int _domain, int _type, int _protocol)
     
 #if defined(__IOS__) || defined(__OSX__)
     int set = 1;
-    //setsockopt(*m_socket, SOL_SOCKET, SO_NOSIGPIPE, (void *)&set, sizeof(int));
+    setsockopt(*m_socket, SOL_SOCKET, SO_NOSIGPIPE, (void *)&set, sizeof(int));
 #endif
     
 	if (*m_socket != -1)

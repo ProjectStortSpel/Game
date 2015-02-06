@@ -8,6 +8,6 @@ APP_PLATFORM := android-19
 APP_ABI := armeabi armeabi-v7a x86
 APP_OPTIM := release
 #APP_OPTIM := debug
-APP_CPPFLAGS := -std=gnu++0x
+APP_CPPFLAGS := -std=gnu++0x -frtti
 APP_STL := gnustl_static
 STLPORT_FORCE_REBUILD := true
