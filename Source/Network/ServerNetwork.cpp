@@ -593,6 +593,7 @@ void ServerNetwork::ResetNetworkEvents()
 	m_onPlayerConnected->clear();
 	m_onPlayerDisconnected->clear();
 	m_onPlayerTimedOut->clear();
+	m_onServerShutdown->clear();
 }
 
 void ServerNetwork::Kick(NetConnection& _connection, const char* _reason)
