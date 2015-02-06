@@ -378,7 +378,7 @@ int LinSocket::Send(char* _buffer, int _length, int _flags)
 #endif
 
     
-    ENOTCONN
+    //ENOTCONN
 	static short len = 0;
 	len = htons(_length);
 	if (send(*m_socket, (void*)&len, 2, _flags) != -1)

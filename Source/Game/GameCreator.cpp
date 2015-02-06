@@ -20,6 +20,7 @@
 #include "LuaBridge/ECSL/LuaSystem.h"
 #include "LuaBridge/ECSL/LuaWorldCreator.h"
 #include "LuaBridge/Renderer/LuaGraphicDevice.h"
+#include "LuaBridge/ECSL/LuaEntityTemplateManager.h"
 #include "LuaBridge/Network/LuaNetwork.h"
 
 #include "Logger/Managers/Logger.h"
@@ -269,7 +270,7 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 
 
 	graphicalSystem = new DirectionalLightSystem(m_graphics);
-	m_graphicalSystems.push_back(graphicalSystem); 
+	m_graphicalSystems.push_back(graphicalSystem);
 	worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 
@@ -288,8 +289,12 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
         worldCreator.AddSystemGroup();
         worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
     }
-	worldCreator.AddSystemGroup();
-	worldCreator.AddSystemToCurrentGroup<MasterServerSystem>();
+    
+    if (_isMainWorld)
+    {
+        worldCreator.AddSystemGroup();
+        worldCreator.AddSystemToCurrentGroup<MasterServerSystem>();
+    }
     
     if (_worldType == WorldType::Server)
     {
@@ -612,9 +617,15 @@ void GameCreator::Reload()
 	LuaBridge::LuaGraphicDevice::SetGraphicDevice(m_graphics);
     
     if (!NetworkInstance::GetClient()->IsConnected() && NetworkInstance::GetServer()->IsRunning())
+    {
         LuaBridge::LuaGraphicDevice::SetLuaState(m_serverLuaState);
+        LuaBridge::LuaEntityTemplateManager::SetLuaState(m_serverLuaState);
+    }
     else
+    {
         LuaBridge::LuaGraphicDevice::SetLuaState(m_clientLuaState);
+        LuaBridge::LuaEntityTemplateManager::SetLuaState(m_clientLuaState);
+    }
 
     
     LuaBridge::LuaNetwork::SetClientLuaState(m_clientLuaState);

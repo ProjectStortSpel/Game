@@ -665,7 +665,13 @@ namespace LuaEmbedder
 
 	static bool DumpFunction(lua_State* L, luaL_Buffer* buffer)
 	{
-		int error = lua_dump(L, (lua_Writer)WriteFunction, buffer, 1);
+#if defined(__OSX__) || defined(__IOS__)
+        int chunkSetting = 0;
+#else
+        int chunkSetting = 1;
+#endif
+        
+		int error = lua_dump(L, (lua_Writer)WriteFunction, buffer, chunkSetting);
 		luaL_pushresult(buffer);
 		if (error != 0)
 		{
