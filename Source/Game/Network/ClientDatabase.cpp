@@ -48,6 +48,8 @@ bool ClientDatabase::Disconnect()
 	if(m_connected)
 		m_client.Disconnect();
 	
+	m_connected = false;
+
 	return true;
 }
 

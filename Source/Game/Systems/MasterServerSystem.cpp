@@ -8,7 +8,7 @@
 float tmpTimer = 0.f;
 
 MasterServerSystem::MasterServerSystem()
-	:m_clientDatabase(0), m_connect(true)
+	:m_clientDatabase(0)
 {
 }
 MasterServerSystem::~MasterServerSystem()
@@ -18,6 +18,7 @@ MasterServerSystem::~MasterServerSystem()
 	m_clientDatabase->ResetNetworkEvents();
 	m_mServerMessages.clear();
 	tmpTimer = 0.f;
+	
 }
 
 void MasterServerSystem::Initialize()
@@ -40,6 +41,7 @@ void MasterServerSystem::Initialize()
 void MasterServerSystem::PostInitialize()
 {
 	m_clientDatabase = &ClientDatabase::GetInstance();
+	m_connect = true;
 
 	Network::NetEvent hook = std::bind(&MasterServerSystem::OnConnectionAccepted, this, std::placeholders::_1, std::placeholders::_2);
 	m_clientDatabase->HookOnConnectionAccepted(hook);
