@@ -78,6 +78,9 @@ void SystemManager::UpdateSystemEntityLists(
 	EntityTable* entityTable = m_dataManager->GetEntityTable();
 	unsigned int dataTypeCount = BitSet::GetDataTypeCount(m_dataManager->GetComponentTypeCount());
 
+	if (changedEntities->size() == 0)
+		return;
+
 	unsigned int startAt, endAt;
 	MPL::MathHelper::SplitIterations(startAt, endAt, (unsigned int)m_systems->size(), _runtime.TaskIndex, _runtime.TaskCount);
 	for (unsigned int i = startAt; i < endAt; ++i)
