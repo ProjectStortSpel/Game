@@ -14,7 +14,7 @@ StartNewRoundSystem.Initialize = function(self)
 end
 
 StartNewRoundSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
-
+	local onlyOnce = true
 	for n = 1, #entities do
 		local entity = entities[n]
 		if world:EntityHasComponent(entity, "NotifyStartNewRound") then
@@ -24,7 +24,7 @@ StartNewRoundSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, ent
 			print("NumReadyUnits: " .. numReadyUnits)
 			print("NumUnits: " .. #units)
 
-			if numReadyUnits == #units then
+			if numReadyUnits == #units and onlyOnce then
 			
 				local id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo("NewRound", id)
@@ -36,8 +36,9 @@ StartNewRoundSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, ent
 				local newId = world:CreateNewEntity()
 				world:CreateComponentAndAddTo("SetPickingPhaseTimer", newId)
 				world:GetComponent(newId, "SetPickingPhaseTimer", "Amount"):SetFloat(0)
-				world:KillEntity(entity)
-				break	-- To make sure this is run only once.
+				--world:KillEntity(entity)
+				onlyOnce = false
+				--break	-- To make sure this is run only once.
 				
 			elseif not world:EntityHasComponent(entity, "IsAI") then
 				print("StartNewRound says hi!")
