@@ -21,7 +21,7 @@ ClientDatabase::ClientDatabase()
 	m_client.SetIncomingPort(m_localPort);
 
     Network::NetEvent event = std::bind(&ClientDatabase::OnDisconnected, this, std::placeholders::_1, std::placeholders::_2);
-    
+
     m_client.SetOnDisconnectedFromServer(event);
     m_client.SetOnTimedOutFromServer(event);
 
@@ -244,4 +244,9 @@ void ClientDatabase::RequestServerList()
 void ClientDatabase::HookOnGetServerList(Network::NetMessageHook& _hook)
 {
 	m_client.AddNetworkHook("GET_SERVER_LIST", _hook);
+}
+
+void ClientDatabase::HookOnConnectionAccepted(Network::NetEvent _hook)
+{
+	m_client.SetOnConnectedToServer(_hook);
 }
