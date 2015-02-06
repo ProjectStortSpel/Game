@@ -1,6 +1,5 @@
 #include "LuaFileLoader.h"
 #include "LuaEmbedder/LuaEmbedder.h"
-
 #include <fstream>
 #include <string>
 #include <SDL/SDL.h>

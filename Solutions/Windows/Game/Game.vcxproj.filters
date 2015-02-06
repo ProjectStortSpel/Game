@@ -293,6 +293,9 @@
     <ClCompile Include="..\..\..\Source\Game\Pathfinder.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\AI\LuaPathfinderHandler.cpp">
+      <Filter>Lua Bridge\AI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h">
@@ -438,6 +441,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Pathfinder.h">
       <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\AI\LuaPathfinderHandler.h">
+      <Filter>Lua Bridge\AI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

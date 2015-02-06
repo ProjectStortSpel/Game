@@ -14,12 +14,16 @@ end
 
 
 CreateMapSystem.PostInitialize = function(self)
+
+	local inputData = InputData()
 	local map
-    self.mapX, self.mapY, map = File.LoadMap("content/maps/map.txt")
+    self.mapX, self.mapY, map = File.LoadMap("content/maps/mapsda.txt")
+	
     local posX, posZ
 	
 	for x = 0, self.mapX+1 do
 		self:AddTile(x, 0, 111) -- 111 = void
+		inputData:AddTile( 1, true )
 	end
 	
 	local highestCP = 0
@@ -28,10 +32,17 @@ CreateMapSystem.PostInitialize = function(self)
 	
 	for y = 1, self.mapY do
 		self:AddTile(0, y, 111) -- 111 = void
+		inputData:AddTile( 1, true )
 		for x = 1, self.mapX do
-			local tiletype = map[(y - 1) * self.mapX + x]			
+			local tiletype = map[(y - 1) * self.mapX + x]
+			
             local entity = self:AddTile(x, y, tiletype)
-
+			if tiletype == 120  
+			then
+				inputData:AddTile( 1, false )
+			else
+				inputData:AddTile( 1, true )
+			end
 			if tiletype >= 49 and tiletype <= 57 then -- 49 = 1 = first checkpoint, 57 = 9 = 9th checkpoint
 
 				highestCP = math.max(highestCP, tiletype - 48)
@@ -43,6 +54,7 @@ CreateMapSystem.PostInitialize = function(self)
 			end
         end
 		self:AddTile(self.mapX + 1, y, 111) -- 111 = void
+		inputData:AddTile( 1, true )
     end
 	
 	for i = 1, #finishList do
@@ -54,11 +66,18 @@ CreateMapSystem.PostInitialize = function(self)
 	
 	for x = 0, self.mapX+1 do
 		self:AddTile(x, self.mapY+1, 111) -- 111 = void
+		inputData:AddTile( 1, true )
 	end
 	
 	-- Add to the map size as voids have been added around the map.
 	self.mapX = self.mapX + 2
 	self.mapY = self.mapY + 2
+	
+	inputData:SetSize(self.mapX, self.mapY)
+	
+	PathfinderHandler.SetData(inputData)
+	
+	PathfinderHandler.GeneratePath(4,4, 4, 5)
 	
 	-- Create an entity that will keep track of the map size.
 	local mapEntity = world:CreateNewEntity()
@@ -138,7 +157,7 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		comp:SetModel("hole", "hole", 0)
 		local rotComp = self:GetComponent(newTile, "Rotation", 0)
 		rotComp:SetFloat3(0, math.pi * 0.5 * math.random(0, 4), 0)
-
+		
     elseif tiletype == 120 then -- 120 = x = stone
 		world:CreateComponentAndAddTo("NotWalkable", newTile)
 		world:CreateComponentAndAddTo("Model", newTile)
@@ -149,7 +168,6 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		local rotComp = self:GetComponent(newTile, "Rotation", 0)
 		rotComp:SetFloat3(math.pi * 0.01 * math.random(0, 25), math.pi * 0.01 * math.random(0, 100), math.pi * 0.01 * math.random(0, 25))
 		self:AddGroundTileBelow(posX, posZ)
-
     elseif tiletype >= 49 and tiletype <= 57 then -- 49 = 1 = first checkpoint, 57 = 9 = 9th checkpoint
 
         world:CreateComponentAndAddTo("Checkpoint", newTile)
