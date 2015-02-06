@@ -327,7 +327,6 @@ bool GraphicsLow::InitSDLWindow()
 {
 	// WINDOW SETTINGS
 	unsigned int	Flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
-	const char*		Caption = "SDL Window";
 	int				PosX = 2;
 	int				PosY = 2;
 
@@ -351,7 +350,7 @@ bool GraphicsLow::InitSDLWindow()
     //SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
     //SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
-	m_window = SDL_CreateWindow(Caption, m_windowPosX, m_windowPosY, SizeX, SizeY, Flags);
+	m_window = SDL_CreateWindow(m_windowCaption, m_windowPosX, m_windowPosY, SizeX, SizeY, Flags);
 
 	if (m_window == NULL){
 		std::cout << SDL_GetError() << std::endl;

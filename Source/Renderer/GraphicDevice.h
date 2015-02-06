@@ -157,6 +157,7 @@ namespace Renderer
 		float m_dt;
 		int m_fps;
 
+		const char*	m_windowCaption;
 		bool m_SDLinitialized;
 
 		//// Window size
