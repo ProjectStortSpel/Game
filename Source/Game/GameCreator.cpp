@@ -175,7 +175,7 @@ void GameCreator::InitializeLua(WorldType _worldType)
     }
 }
 
-void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, bool _isMainWorld)
+void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, bool _isMainWorld, bool _includeMasterServer)
 {
     lua_State* luaState = _worldType == WorldType::Client ? m_clientLuaState : m_serverLuaState;
 
@@ -291,7 +291,7 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
         worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
     }
     
-    if (_isMainWorld)
+    if (_includeMasterServer)
     {
         worldCreator.AddSystemGroup();
         worldCreator.AddSystemToCurrentGroup<MasterServerSystem>();
@@ -636,18 +636,18 @@ void GameCreator::Reload()
 
     if (NetworkInstance::GetClient()->IsConnected() && NetworkInstance::GetServer()->IsRunning())
     {
-        InitializeWorld(m_gameMode, WorldType::Client, true);
-        InitializeWorld(m_gameMode, WorldType::Server, false);
+        InitializeWorld(m_gameMode, WorldType::Client, true, false);
+        InitializeWorld(m_gameMode, WorldType::Server, false, true);
     }
     
     else if (NetworkInstance::GetServer()->IsRunning())
     {
-        InitializeWorld(m_gameMode, WorldType::Server, true);
+        InitializeWorld(m_gameMode, WorldType::Server, true, true);
     }
     
     else
     {
-        InitializeWorld(m_gameMode, WorldType::Client, true);
+        InitializeWorld(m_gameMode, WorldType::Client, true, true);
     }
     
 	m_console->SetWorld(m_serverWorld);
