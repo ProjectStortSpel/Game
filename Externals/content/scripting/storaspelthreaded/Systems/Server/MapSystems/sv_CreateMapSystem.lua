@@ -13,6 +13,125 @@ CreateMapSystem.Initialize = function(self)
 end
 
 CreateMapSystem.PostInitialize = function(self)
+	--local inputData = InputData()
+	--local map
+    --self.mapX, self.mapY, map = File.LoadMap("content/maps/mapsda.txt")
+	--
+    --local posX, posZ
+	--
+	--for x = 0, self.mapX+1 do
+	--	self:AddTile(x, 0, 111) -- 111 = void
+	--	inputData:AddTile( 1, true )
+	--end
+	--
+	--local highestCP = 0
+	--local finishList = { }
+	--finishList.__mode = "k"
+	--
+	--for y = 1, self.mapY do
+	--	self:AddTile(0, y, 111) -- 111 = void
+	--	inputData:AddTile( 1, true )
+	--	for x = 1, self.mapX do
+	--		local tiletype = map[(y - 1) * self.mapX + x]
+	--		
+    --        local entity = self:AddTile(x, y, tiletype)
+	--		if tiletype == 120  
+	--		then
+	--			inputData:AddTile( 1, false )
+	--		else
+	--			inputData:AddTile( 1, true )
+	--		end
+	--		if tiletype >= 49 and tiletype <= 57 then -- 49 = 1 = first checkpoint, 57 = 9 = 9th checkpoint
+    --
+	--			highestCP = math.max(highestCP, tiletype - 48)
+    --
+	--		elseif tiletype == 102 then -- 102 = f = finish
+	--			
+	--			finishList[#finishList + 1] = entity
+    --
+	--		end
+    --    end
+	--	self:AddTile(self.mapX + 1, y, 111) -- 111 = void
+	--	inputData:AddTile( 1, true )
+    --end
+	--
+	--for i = 1, #finishList do
+    --
+	--	local comp = self:GetComponent(finishList[i], "Checkpoint", 0)
+    --    comp:SetInt(highestCP + 1)
+    --
+	--end
+	--
+	--for x = 0, self.mapX+1 do
+	--	self:AddTile(x, self.mapY+1, 111) -- 111 = void
+	--	inputData:AddTile( 1, true )
+	--end
+	--
+	---- Add to the map size as voids have been added around the map.
+	--self.mapX = self.mapX + 2
+	--self.mapY = self.mapY + 2
+	--
+	--inputData:SetSize(self.mapX, self.mapY)
+	--
+	--PathfinderHandler.SetData(inputData)
+	--
+	--PathfinderHandler.GeneratePath(4,4, 4, 5)
+	--
+	---- Create an entity that will keep track of the map size.
+	--local mapEntity = world:CreateNewEntity()
+	--world:CreateComponentAndAddTo("MapSize", mapEntity)
+	--world:CreateComponentAndAddTo("SyncNetwork", mapEntity)
+	--self:GetComponent(mapEntity, "MapSize", 0):SetInt2(self.mapX, self.mapY)
+    --
+	--for waterA = 1, #self.waterTiles do
+	--	
+	--	local waterPosA = world:GetComponent(self.waterTiles[waterA], "MapPosition", 0)
+	--	local waterDirA = world:GetComponent(self.waterTiles[waterA], "River", 0)
+	--	local posAX, posAY = waterPosA:GetInt2()
+	--	local dirAX, dirAY = waterDirA:GetInt2()
+    --
+	--	--print("Water[ " .. posAX .. ", " .. posAY .. "] with direction [" .. dirAX .. ", " .. dirAY .. "]")
+    --
+	--	for waterB = 1, #self.waterTiles do
+    --
+	--		if waterA ~= waterB then
+	--			local waterPosB = world:GetComponent(self.waterTiles[waterB], "MapPosition", 0)
+	--			local waterDirB = world:GetComponent(self.waterTiles[waterB], "River", 0)
+	--			local posBX, posBY = waterPosB:GetInt2()
+	--			local dirBX, dirBY = waterDirB:GetInt2()
+    --
+	--			if posAX + dirAX == posBX and posAY + dirAY == posBY then
+	--				if dirAX ~= dirBX and dirAY ~= dirBY then
+    --
+	--					local comp = self:GetComponent(self.waterTiles[waterB], "Model", 0)
+	--					comp:SetModel("rivercorner", "rivercorner", 0, 0)
+    --
+    --
+	--					--	LEFT TURN (Correct rotation)
+	--					--if dirAX == 1 and dirBY == -1 then
+	--					--elseif dirAX == -1 and dirBY == 1 then
+	--					--elseif dirAY == -1 and dirBX == -1 then
+	--					--elseif dirAY == 1 and dirBX == 1 then
+    --
+	--					local comp = self:GetComponent(self.waterTiles[waterB], "Rotation", 0)
+	--					local currentRotation = comp:GetFloat(1)
+    --
+	--					--	RIGHT TURN
+	--					if dirAX == 1 and dirBY == 1 then
+	--						comp:SetFloat3(0, currentRotation - math.pi/2, 0)
+	--					elseif dirAX == -1 and dirBY == -1 then
+	--						comp:SetFloat3(0, currentRotation - math.pi/2, 0)
+	--					elseif dirAY == 1 and dirBX == -1 then
+	--						comp:SetFloat3(0, currentRotation - math.pi/2, 0)
+	--					elseif dirAY == -1 and dirBX == 1 then
+	--						comp:SetFloat3(0, currentRotation - math.pi/2, 0)
+	--					end
+    --
+	--				end
+	--			end
+	--		end
+	--	end
+	--end
 	self:CreateMap("content/maps/map.txt")
 end
 
@@ -43,7 +162,7 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		comp:SetModel("hole", "hole", 0)
 		local rotComp = self:GetComponent(newTile, "Rotation", 0)
 		rotComp:SetFloat3(0, math.pi * 0.5 * math.random(0, 4), 0)
-
+		
     elseif tiletype == 120 then -- 120 = x = stone
 		world:CreateComponentAndAddTo("NotWalkable", newTile)
 		world:CreateComponentAndAddTo("Model", newTile)
@@ -54,7 +173,6 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		local rotComp = self:GetComponent(newTile, "Rotation", 0)
 		rotComp:SetFloat3(math.pi * 0.01 * math.random(0, 25), math.pi * 0.01 * math.random(0, 100), math.pi * 0.01 * math.random(0, 25))
 		self:AddGroundTileBelow(posX, posZ)
-
     elseif tiletype >= 49 and tiletype <= 57 then -- 49 = 1 = first checkpoint, 57 = 9 = 9th checkpoint
 
         world:CreateComponentAndAddTo("Checkpoint", newTile)
@@ -147,12 +265,13 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		local comp = self:GetComponent(newTile, "Model", 0)
 		comp:SetModel("grass", "grass", 0)
 		
-	else
+	elseif tiletype == 111 then
         world:CreateComponentAndAddTo("Void", newTile)
 		--world:CreateComponentAndAddTo("Model", entity)
 		--local comp = self:GetComponent(entity, "Model", 0)
 		--comp:SetModel("grass", "grass", 0)
-		
+	else
+		print("ERROR: TILETYPE NOT DEFINED IN sv_CreateMapSystem")
     end
 	
 	self.entities[#self.entities+1]=newTile
@@ -181,6 +300,7 @@ CreateMapSystem.CreateMap = function(self, name)
 	self.waterTiles = { }
 	self.waterTiles.__mode = "k"
 	
+	local inputData = InputData()
 	local map
     self.mapX, self.mapY, map = File.LoadMap(name)
 
@@ -188,6 +308,7 @@ CreateMapSystem.CreateMap = function(self, name)
 		
 	for x = 0, self.mapX + 1 do
 		self:AddTile(x, 0, 111) -- 111 = void
+		inputData:AddTile( 1, true )
 	end
 	
 	local highestCP = 0
@@ -196,10 +317,16 @@ CreateMapSystem.CreateMap = function(self, name)
 	
 	for y = 1, self.mapY do
 		self:AddTile(0, y, 111) -- 111 = void
+		inputData:AddTile( 1, true )
 		for x = 1, self.mapX do
 			local tiletype = map[(y - 1) * self.mapX + x]			
             local entity = self:AddTile(x, y, tiletype)
-
+			if tiletype == 120  or tiletype == 104 or tiletype == 111
+			then
+				inputData:AddTile( 1, false )
+			else
+				inputData:AddTile( 1, true )
+			end
 			if tiletype >= 49 and tiletype <= 57 then -- 49 = 1 = first checkpoint, 57 = 9 = 9th checkpoint
 
 				highestCP = math.max(highestCP, tiletype - 48)
@@ -211,6 +338,7 @@ CreateMapSystem.CreateMap = function(self, name)
 			end
         end
 		self:AddTile(self.mapX + 1, y, 111) -- 111 = void
+		inputData:AddTile( 1, true )
     end
 
 	for i = 1, #finishList do
@@ -222,11 +350,16 @@ CreateMapSystem.CreateMap = function(self, name)
 	
 	for x = 0, self.mapX + 1 do
 		self:AddTile(x, self.mapY+1, 111) -- 111 = void
+		inputData:AddTile( 1, true )
 	end
 	
 	-- Add to the map size as voids have been added around the map.
 	self.mapX = self.mapX + 2
 	self.mapY = self.mapY + 2
+	
+	inputData:SetSize(self.mapX, self.mapY)
+	
+	PathfinderHandler.SetData(inputData)
 	
 	-- Create an entity that will keep track of the map size.
 	local MapSizeEntities = self:GetEntities("MapSize")
