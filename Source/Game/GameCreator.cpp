@@ -400,13 +400,6 @@ void GameCreator::StartGame(int argc, char** argv)
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F1) == Input::InputState::PRESSED)
 			m_world->LogWorldData();
 
-		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_I) == Input::InputState::PRESSED)
-			minDeltaTime = (1.0f / 60.0f);
-		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_O) == Input::InputState::PRESSED)
-			minDeltaTime = (1.0f / 90.0f);
-		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_P) == Input::InputState::PRESSED)
-			minDeltaTime = (1.0f / 120.0f);
-
 		if (showDebugInfo)
 		{
 			std::stringstream sstm;

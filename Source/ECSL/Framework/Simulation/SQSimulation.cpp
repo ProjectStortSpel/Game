@@ -55,7 +55,4 @@ void SQSimulation::Update(float _dt)
 
 	/* Recycle all dead ids back to the list of available ids */
 	m_scheduler->PerformRecycleEntities();
-
-	/* Clear all the used lists in DataManager */
-	m_scheduler->PerformClearCopiedLists();
 }

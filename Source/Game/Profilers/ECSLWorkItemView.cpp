@@ -25,6 +25,8 @@ void ECSLWorkItemView::Update(ECSLStatistics* _frontBufferStatistics)
 		CreatePages(_frontBufferStatistics);
 	else
 	{
+		for (auto page : *m_pages)
+			delete(page);
 		delete(m_pages);
 		CreatePages(_frontBufferStatistics);
 	}

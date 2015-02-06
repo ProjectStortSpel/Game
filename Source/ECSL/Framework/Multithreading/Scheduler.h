@@ -32,7 +32,6 @@ namespace ECSL
 		MPL::TaskId ScheduleUpdateEntityTable(MPL::TaskId _dependency);
 		MPL::TaskId ScheduleDeleteComponentData(MPL::TaskId _dependency);
 		MPL::TaskId ScheduleRecycleEntities(MPL::TaskId _dependency);
-		MPL::TaskId ScheduleClearCopiedLists(MPL::TaskId _dependency);
 		MPL::TaskId ScheduleClearSystemEntityChangeLists(MPL::TaskId _dependency);
 
 		void PerformUpdateSystems();
@@ -46,7 +45,6 @@ namespace ECSL
 		void PerformUpdateEntityTable();
 		void PerformDeleteComponentData();
 		void PerformRecycleEntities();
-		void PerformClearCopiedLists();
 		void PerformClearSystemEntityChangeLists();
 
 		/// System Tasks
@@ -60,7 +58,6 @@ namespace ECSL
 		void AddUpdateEntityTableTask();
 		void AddDeleteComponentDataTask();
 		void AddRecycleEntityIdsTask();
-		void AddClearCopiedListsTask();
 
 		/// SystemManager Tasks
 		void AddUpdateSystemEntityListsTasks();
@@ -100,7 +97,6 @@ namespace ECSL
 		std::vector<ECSLWorkItem*>* m_updateEntityTableWorkItems;
 		std::vector<ECSLWorkItem*>* m_deleteComponentDataWorkItems;
 		std::vector<ECSLWorkItem*>* m_recycleEntityIdsWorkItems;
-		std::vector<ECSLWorkItem*>* m_clearCopiedListsWorkItems;
 		std::vector<ECSLWorkItem*>* m_clearListsWorkItems;
 		std::map<unsigned int, std::vector<DeactivatedWorkItem*>>* m_deactivatedWorkItems;
 		std::vector<std::vector<unsigned int>*>* m_entitiesToAddToSystems;
@@ -124,8 +120,6 @@ namespace ECSL
 	static void DataManagerDeleteComponentData(void* _data);
 
 	static void DataManagerRecycleEntityIds(void* _data);
-
-	static void DataManagerClearCopiedLists(void* _data);
 
 	static void SystemManagerUpdateSystemEntityLists(void* _data);
 

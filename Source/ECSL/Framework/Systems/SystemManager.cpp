@@ -73,13 +73,13 @@ void SystemManager::UpdateSystemEntityLists(
 	std::vector<std::vector<unsigned int>*>& _entitiesToAddToSystems,
 	std::vector<std::vector<unsigned int>*>& _entitiesToRemoveFromSystems)
 {
-	const std::map<unsigned int, DataManager::EntityChange*>* entityChanges = m_dataManager->GetEntityChanges();
+	const std::vector<DataManager::EntityChange*>* entityChanges = m_dataManager->GetEntityChanges();
+	const std::vector<unsigned int>* changedEntities = m_dataManager->GetChangedEntities();
 	EntityTable* entityTable = m_dataManager->GetEntityTable();
 	unsigned int dataTypeCount = BitSet::GetDataTypeCount(m_dataManager->GetComponentTypeCount());
 
 	unsigned int startAt, endAt;
 	MPL::MathHelper::SplitIterations(startAt, endAt, (unsigned int)m_systems->size(), _runtime.TaskIndex, _runtime.TaskCount);
-	/* Loop through every system see if changed entities passes the filter */
 	for (unsigned int i = startAt; i < endAt; ++i)
 	{
 		System* system = m_systems->at(i);
@@ -88,11 +88,9 @@ void SystemManager::UpdateSystemEntityLists(
 		const BitSet::DataType* excludedFilter = system->GetExcludedFilter()->GetBitSet();
 		unsigned int entitiesAddedTaskCount = system->GetEntitiesAddedTaskCount();
 		unsigned int entitiesRemovedTaskCount = system->GetEntitiesRemovedTaskCount();
-
-		for (auto entity : *entityChanges)
+		for (unsigned int entityId : *changedEntities)
 		{
-			unsigned int entityId = entity.first;
-			DataManager::EntityChange* entityChange = entity.second;
+			DataManager::EntityChange* entityChange = (*entityChanges)[entityId];
 
 			/* If the entity is dead and the system has the entity, then remove it from the system */
 			if (entityChange->Dead)

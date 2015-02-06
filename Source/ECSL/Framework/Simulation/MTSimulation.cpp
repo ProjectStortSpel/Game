@@ -56,9 +56,6 @@ void MTSimulation::Update(float _dt)
 	/* Recycle all dead ids back to the list of available ids */
 	MPL::TaskId recycleEntityIds = m_scheduler->ScheduleRecycleEntities(deleteComponentData);
 
-	/* Clear all the used lists in DataManager */
-	MPL::TaskId clearCopiedLists = m_scheduler->ScheduleClearCopiedLists(recycleEntityIds);
-
 	/* Main thread helps with tasks while waiting */
-	MPL::TaskManager::GetInstance().WaitFor(clearCopiedLists);
+	MPL::TaskManager::GetInstance().WaitFor(recycleEntityIds);
 }

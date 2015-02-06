@@ -21,7 +21,6 @@ Scheduler::Scheduler(DataManager* _dataManager, SystemManager* _systemManager, M
 	m_updateEntityTableWorkItems(new std::vector<ECSLWorkItem*>()),
 	m_deleteComponentDataWorkItems(new std::vector<ECSLWorkItem*>()),
 	m_recycleEntityIdsWorkItems(new std::vector<ECSLWorkItem*>()),
-	m_clearCopiedListsWorkItems(new std::vector<ECSLWorkItem*>()),
 	m_clearListsWorkItems(new std::vector<ECSLWorkItem*>()),
 	m_deactivatedWorkItems(new std::map<unsigned int, std::vector<DeactivatedWorkItem*>>())
 {
@@ -252,11 +251,6 @@ MPL::TaskId Scheduler::ScheduleRecycleEntities(MPL::TaskId _dependency)
 	return m_taskManager->Add(_dependency, *(std::vector<MPL::WorkItem*>*)m_recycleEntityIdsWorkItems);
 }
 
-MPL::TaskId Scheduler::ScheduleClearCopiedLists(MPL::TaskId _dependency)
-{
-	return m_taskManager->Add(_dependency, *(std::vector<MPL::WorkItem*>*)m_clearCopiedListsWorkItems);
-}
-
 MPL::TaskId Scheduler::ScheduleClearSystemEntityChangeLists(MPL::TaskId _dependency)
 {
 	return m_taskManager->Add(_dependency, *(std::vector<MPL::WorkItem*>*)m_clearListsWorkItems);
@@ -337,12 +331,6 @@ void Scheduler::PerformDeleteComponentData()
 void Scheduler::PerformRecycleEntities()
 {
 	for (auto workItem : *m_recycleEntityIdsWorkItems)
-		workItem->Work(workItem->Data);
-}
-
-void Scheduler::PerformClearCopiedLists()
-{
-	for (auto workItem : *m_clearCopiedListsWorkItems)
 		workItem->Work(workItem->Data);
 }
 
@@ -615,7 +603,7 @@ void Scheduler::AddCopyCurrentListsTask()
 
 void Scheduler::AddUpdateEntityTableTask()
 {
-	const unsigned int updateEntityTableWorkCount = 1;
+	const unsigned int updateEntityTableWorkCount = m_taskManager->GetThreadCount();
 
 	for (unsigned int i = 0; i < updateEntityTableWorkCount; ++i)
 	{
@@ -640,7 +628,7 @@ void Scheduler::AddUpdateEntityTableTask()
 
 void Scheduler::AddDeleteComponentDataTask()
 {
-	const unsigned int deleteComponentDataWorkCount = 1;
+	const unsigned int deleteComponentDataWorkCount = m_taskManager->GetThreadCount();
 
 	for (unsigned int i = 0; i < deleteComponentDataWorkCount; ++i)
 	{
@@ -682,31 +670,6 @@ void Scheduler::AddRecycleEntityIdsTask()
 		workItem->LocalGroupId = i;
 		workItem->GroupId = m_currentGroupId;
 		m_recycleEntityIdsWorkItems->push_back(workItem);
-		m_workItems->push_back(workItem);
-	}
-
-	++m_currentGroupId;
-}
-
-void Scheduler::AddClearCopiedListsTask()
-{
-	const unsigned int clearCopiedListsWorkCount = 1;
-
-	for (unsigned int i = 0; i < clearCopiedListsWorkCount; ++i)
-	{
-		ClearCopiedListsData* data = new ClearCopiedListsData();
-		data->dataManager = m_dataManager;
-		data->runtimeInfo.TaskIndex = i;
-		data->runtimeInfo.TaskCount = clearCopiedListsWorkCount;
-		ECSLWorkItem* workItem = new ECSLWorkItem();
-		workItem->Work = &DataManagerClearCopiedLists;
-		workItem->Data = data;
-		std::stringstream s;
-		s << "DataManager->ClearCopiedLists() Task: " << i;
-		workItem->Name = new std::string(s.str());
-		workItem->LocalGroupId = i;
-		workItem->GroupId = m_currentGroupId;
-		m_clearCopiedListsWorkItems->push_back(workItem);
 		m_workItems->push_back(workItem);
 	}
 
@@ -796,12 +759,6 @@ void ECSL::DataManagerRecycleEntityIds(void* _data)
 {
 	RecycleEntityIdsData* data = (RecycleEntityIdsData*)_data;
 	data->dataManager->RecycleEntityIds(data->runtimeInfo);
-}
-
-void ECSL::DataManagerClearCopiedLists(void* _data)
-{
-	ClearCopiedListsData* data = (ClearCopiedListsData*)_data;
-	data->dataManager->ClearCopiedLists(data->runtimeInfo);
 }
 
 void ECSL::SystemManagerUpdateSystemEntityLists(void* _data)

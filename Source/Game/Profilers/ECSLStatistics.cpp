@@ -164,7 +164,6 @@ void ECSLStatistics::AddFrame(ECSLFrame* _frame)
 			else
 				UpdateWorkItemStatistic(workItemStatsGroup->at(workItem->localGroupId), workItem);
 		}
-		int j = 2;
 	}
 
 	///* Add work item statistic list */

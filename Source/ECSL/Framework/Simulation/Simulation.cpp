@@ -32,5 +32,4 @@ void Simulation::Initialize(DataManager* _dataManager, SystemManager* _systemMan
 	m_scheduler->AddClearSystemEntityChangeListsTask();
 	m_scheduler->AddDeleteComponentDataTask();
 	m_scheduler->AddRecycleEntityIdsTask();
-	m_scheduler->AddClearCopiedListsTask();
 }
