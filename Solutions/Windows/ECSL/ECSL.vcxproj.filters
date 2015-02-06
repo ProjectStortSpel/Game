@@ -157,6 +157,9 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Simulation\SQSimulation.h">
       <Filter>Source Files\Framework\Simulation</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataSlimArray.h">
+      <Filter>Source Files\Framework\Components\Tables</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\World.cpp">
@@ -257,6 +260,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Simulation\SQSimulation.cpp">
       <Filter>Source Files\Framework\Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataSlimArray.cpp">
+      <Filter>Source Files\Framework\Components\Tables</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
