@@ -76,7 +76,7 @@ GameCreator::~GameCreator()
 void GameCreator::InitializeGraphics()
 {
 #if defined(__IOS__) || defined(__ANDROID__)
-	m_graphics = new Renderer::GraphicDevice();
+	m_graphics = new Renderer::GraphicsHigh();
     m_graphics->Init();
 #else
     m_graphics = new Renderer::GraphicsHigh();
