@@ -8,7 +8,7 @@ CreateMapSystem.Initialize = function(self)
 	self:SetName("CreateMapSystem")
 	self:UsingEntitiesAdded()
 	self:AddComponentTypeToFilter("CreateMap", FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter("MapSize", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("MapSpecs", FilterType.RequiresOneOf)
 	Console.AddCommand("loadmap", self.LoadMap)
 end
 
@@ -242,17 +242,17 @@ CreateMapSystem.CreateMap = function(self, name)
 	
 	PathfinderHandler.SetData(inputData)
 	
-	-- Create an entity that will keep track of the map size.
-	local MapSizeEntities = self:GetEntities("MapSize")
+	-- Create an entity that will keep track of the map size. If it already exist from a previous "loadmap", use that one instead.
+	local MapSpecsEntity = self:GetEntities("MapSpecs")
 	local MapEntity = nil
-	if #MapSizeEntities == 0 then
+	if #MapSpecsEntity == 0 then
 		MapEntity = world:CreateNewEntity()
-		world:CreateComponentAndAddTo("MapSize", MapEntity)
+		world:CreateComponentAndAddTo("MapSpecs", MapEntity)
 		world:CreateComponentAndAddTo("SyncNetwork", MapEntity)
 	else
-		MapEntity = MapSizeEntities[1]
+		MapEntity = MapSpecsEntity[1]
 	end
-	self:GetComponent(MapEntity, "MapSize", 0):SetInt2(self.mapX, self.mapY)
+	self:GetComponent(MapEntity, "MapSpecs", "SizeX"):SetInt2(self.mapX, self.mapY)
 	
 	print("MapEntity size: " .. #self.entities)
 	print("Water size: " .. #self.waterTiles)

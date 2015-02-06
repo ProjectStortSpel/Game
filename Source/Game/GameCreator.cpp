@@ -80,7 +80,7 @@ GameCreator::~GameCreator()
 void GameCreator::InitializeGraphics()
 {
 #if defined(__IOS__) || defined(__ANDROID__)
-	m_graphics = new Renderer::GraphicDevice();
+	m_graphics = new Renderer::GraphicsHigh();
     m_graphics->Init();
 #else
     m_graphics = new Renderer::GraphicsHigh();
@@ -887,10 +887,10 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 	{
 		for (int i = 0; i < 1000; ++i)
 		{
-			if (m_clientWorld->HasComponent(i, "Render"))
+			if (m_clientWorld && m_clientWorld->HasComponent(i, "Render"))
 				m_clientWorld->RemoveComponentFrom("Render", i);
             
-            if (m_serverWorld->HasComponent(i, "Render"))
+			if (m_serverWorld && m_serverWorld->HasComponent(i, "Render"))
                 m_serverWorld->RemoveComponentFrom("Render", i);
 		}
 
