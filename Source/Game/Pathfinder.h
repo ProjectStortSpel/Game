@@ -42,6 +42,7 @@ class Pathfinder
 {
 public:
 	static Pathfinder* Instance();
+	static void Destroy();
 	~Pathfinder();
 
 	void SetTurningCost(float _turningCost);
