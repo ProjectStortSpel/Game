@@ -35,6 +35,8 @@ namespace LuaBridge
 
     bool IsWorldInitialized() const { return ECSL::WorldCreator::IsWorldInitialized(); }
     
+      void SkipComponentTypesAndTemplates(bool _value) { m_skipComponentTypes = _value; }
+    
   private:
     int AddComponentType(lua_State* L);
     int AddSystemToCurrentGroup(lua_State* L);
@@ -44,6 +46,8 @@ namespace LuaBridge
     
   private:
     std::vector<LuaSystem*> m_systemsAdded;
+      
+      bool m_skipComponentTypes;
   };
 }
 

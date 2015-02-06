@@ -384,7 +384,6 @@ namespace LuaEmbedder
       }
       lua_insert(L, base);
       int status = lua_pcall(L, 1 + argumentCount, LUA_MULTRET, 0);
-      lua_gc(L, LUA_GCCOLLECT, 0);
       if (status != 0)
       {
 	SDL_Log("Luna::CallMethod : %s", (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error"));
@@ -666,7 +665,7 @@ namespace LuaEmbedder
 
 	static bool DumpFunction(lua_State* L, luaL_Buffer* buffer)
 	{
-		int error = lua_dump(L, (lua_Writer)WriteFunction, buffer, 0);
+		int error = lua_dump(L, (lua_Writer)WriteFunction, buffer, 1);
 		luaL_pushresult(buffer);
 		if (error != 0)
 		{

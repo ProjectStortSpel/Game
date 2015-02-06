@@ -95,6 +95,7 @@ unsigned int ComponentTypeManager::GetTableId(const std::string& _componentType)
 
 void ComponentTypeManager::AddComponentType(ComponentType& _componentType)
 {
+	SDL_Log(_componentType.GetName().c_str());
 	assert(m_componentTypes->find(ComponentTypeManager::GetTableId(_componentType.GetName())) == m_componentTypes->end());
 	m_componentTypes->insert(std::pair<int, ComponentType*>(ComponentTypeManager::GetTableId(_componentType.GetName()), &_componentType));
 }

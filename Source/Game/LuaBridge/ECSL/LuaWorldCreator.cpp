@@ -5,9 +5,9 @@
 
 namespace LuaBridge
 {
-  LuaWorldCreator::LuaWorldCreator() : WorldCreator() { }
+    LuaWorldCreator::LuaWorldCreator() : WorldCreator(), m_skipComponentTypes(false) { }
 
-  LuaWorldCreator::LuaWorldCreator(lua_State* L) { }
+    LuaWorldCreator::LuaWorldCreator(lua_State* L) : m_skipComponentTypes(false) { }
   
   void LuaWorldCreator::Embed(lua_State* L)
   {
@@ -21,19 +21,23 @@ namespace LuaBridge
   
   int LuaWorldCreator::AddComponentType(lua_State* L)
   {
-    if (LuaEmbedder::IsString(L, 1))
-    {
-      WorldCreator::AddComponentType(LuaEmbedder::PullString(L, 1));
-    }
-    else
-    {
-      LuaComponentType* componentType = LuaEmbedder::PullObject<LuaComponentType>(L, "ComponentType", 1);
-      if (componentType)
+      if (!m_skipComponentTypes)
       {
-		WorldCreator::AddComponentType(*componentType->CreateComponentType());
+          if (LuaEmbedder::IsString(L, 1))
+          {
+              WorldCreator::AddComponentType(LuaEmbedder::PullString(L, 1));
+          }
+          else
+          {
+              LuaComponentType* componentType = LuaEmbedder::PullObject<LuaComponentType>(L, "ComponentType", 1);
+              if (componentType)
+              {
+                  WorldCreator::AddComponentType(*componentType->CreateComponentType());
+              }
+          }
+
       }
-    }
-    return 0;
+      return 0;
   }
 
   int LuaWorldCreator::AddSystemToCurrentGroup(lua_State* L)

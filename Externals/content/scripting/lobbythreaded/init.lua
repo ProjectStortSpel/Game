@@ -9,9 +9,12 @@ require "servercomponents"
 package.path = package.path .. ";../../../Externals/content/scripting/shared/components/?.lua"
 require "InitSharedComponents" -- Add more systems into InitSharedSystems.lua instead of here!
 
+if Client then
+
 --	Shared Systems
 package.path = package.path .. ";../../../Externals/content/scripting/shared/systems/?.lua"
 require "InitSharedSystems" -- Add more systems into InitSharedSystems.lua instead of here!
+
 
 -- Systems
 package.path = package.path .. ";../../../Externals/content/scripting/lobbythreaded/systems/?.lua"
@@ -26,6 +29,7 @@ require "GameMenuSystem"
 require "OptionMenuSystem"
 require "ConnectMenuSystem"
 require "HostMenuSystem"
+
 
 -- Templates
 package.path = package.path .. ";../../../Externals/content/scripting/lobbythreaded/templates/?.lua"
@@ -50,3 +54,5 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ConnectMenuSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(HostMenuSystem)
+
+end
