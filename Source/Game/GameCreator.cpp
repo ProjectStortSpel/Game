@@ -335,8 +335,8 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
         m_serverWorld->PostInitializeSystems();
 		LuaEmbedder::CollectGarbageFull();
     }
-
-	m_worldProfiler = new Profilers::ECSLProfiler(m_graphics);
+	if (!m_worldProfiler)
+		m_worldProfiler = new Profilers::ECSLProfiler(m_graphics);
 }
 
 void GameCreator::RunStartupCommands(int argc, char** argv)
@@ -428,6 +428,8 @@ void GameCreator::StartGame(int argc, char** argv)
 	float minDeltaTime = (1.0f / (float)refreshRate);
 	float bytesToMegaBytes = 1.f / (1024.f*1024.f);
 	bool showDebugInfo = false;
+	Utility::FrameCounter totalCounter;
+
 	while (m_running)
 	{
         if (!(m_clientWorld || m_serverWorld) || !m_console)

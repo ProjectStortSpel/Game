@@ -5,6 +5,7 @@
 #include "ECSL/Framework/Components/DataManager.h"
 #include "ECSL/Framework/Multithreading/RuntimeInfo.h"
 #include "ECSL/Framework/Systems/ComponentFilter.h"
+#include "ECSL/Framework/Systems/SystemActivationManager.h"
 #include "ECSL/Framework/Systems/SystemIdManager.h"
 #include "ECSL/Framework/Systems/Messaging/Message.h"
 #include "ECSL/Framework/Systems/Messaging/Subscription.h"
@@ -27,7 +28,7 @@ namespace ECSL
 		virtual void EntitiesRemoved(const RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities) { }
 		virtual void MessagesReceived(const std::vector<Message*>& _messages) { }
 
-		void InitializeEntityList();
+		void InitializeBackEnd();
 		void AddEntityToSystem(unsigned int _entityId);
 		void RemoveEntityFromSystem(unsigned int _entityId);
 		bool HasEntity(unsigned int _entityId);
@@ -51,6 +52,7 @@ namespace ECSL
 
 		void SetGroupId(unsigned int _groupId) { m_groupId = _groupId; }
 		void SetDataManager(DataManager* _dataManager) { m_dataManager = _dataManager; }
+		void SetSystemActivationManager(SystemActivationManager* _systemActivationManager) { m_systemActivationManager = _systemActivationManager; }
 		void SetSystemIdManager(SystemIdManager* _idManager) { m_systemIdManager = _idManager; }
 
 		void ComponentHasChanged(unsigned int _entityId, std::string _componentType, bool _notifyNetwork = true);
@@ -88,18 +90,23 @@ namespace ECSL
 		const unsigned int GetThreadCount() { return MPL::TaskManager::GetInstance().GetThreadCount(); }
 		
 		void AddComponentTypeToFilter(const std::string& _componentType, FilterType _filterType);
-		void SetSystemName(const std::string& _name) { *m_systemName = _name; m_id = m_systemIdManager->CreateSystemId(_name); }
-		void SetUpdateTaskCount(unsigned int _taskCount) { m_updateTaskCount = _taskCount; }
-		void SetEntitiesAddedTaskCount(unsigned int _taskCount) { m_entitiesAddedTaskCount = _taskCount; }
-		void SetEntitiesRemovedTaskCount(unsigned int _taskCount) { m_entitiesRemovedTaskCount = _taskCount; }
-		void SetMessagesReceivedTaskCount(unsigned int _taskCount) { m_messagesReceivedTaskCount = _taskCount; }
+		void SetSystemName(const std::string& _name);
+		void SetUpdateTaskCount(unsigned int _taskCount);
+		void SetEntitiesAddedTaskCount(unsigned int _taskCount);
+		void SetEntitiesRemovedTaskCount(unsigned int _taskCount);
+		void SetMessagesReceivedTaskCount(unsigned int _taskCount);
+
 		void SubscribeTo(const std::string& _systemName, unsigned int _messageType);
 		void SendMessage(Message* _message);
+
+		void ActivateSystem(const std::string& _systemName);
+		void DeactivateSystem(const std::string& _systemName);
 
 		/* Writes all entity, component and system data to log */
 		void LogWorldData();
 
 	private:
+		bool m_initialized;
 		unsigned int m_id;
 		unsigned int m_groupId;
 		std::string* m_systemName;
@@ -117,6 +124,7 @@ namespace ECSL
 		std::vector<Subscription*>* m_subscriptions;
 		std::vector<Message*>* m_messages;
 		DataManager* m_dataManager;
+		SystemActivationManager* m_systemActivationManager;
 		SystemIdManager* m_systemIdManager;
 	};
 }

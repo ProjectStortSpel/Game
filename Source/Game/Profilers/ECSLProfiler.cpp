@@ -4,6 +4,7 @@
 #include "ECSLThreadView.h"
 #include "ECSLWorkItemView.h"
 #include "ECSLLoadingView.h"
+#include "MPL/Managers/TaskManager.h"
 
 using namespace Profilers;
 
@@ -46,6 +47,10 @@ void ECSLProfiler::CreateRenderViews()
 
 void ECSLProfiler::Toggle()
 {
+	/* Can't activate profiler if slave count is zero, ECSL needs to be multi-threaded */
+	if (MPL::TaskManager::GetInstance().GetSlaveCount() == 0)
+		return;
+
 	if (m_state == State::INACTIVE)
 	{
 		/* Set the render view to be the "loading screen" render view */

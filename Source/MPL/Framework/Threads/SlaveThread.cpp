@@ -34,7 +34,8 @@ bool SlaveThread::StartThread(const std::string& _name, unsigned int _threadId)
 
 void SlaveThread::WakeUp()
 {
-	SDL_SemPost(m_sleepSem);
+	if (SDL_SemValue(m_sleepSem) == 0)
+		SDL_SemPost(m_sleepSem);
 }
 
 int SlaveThread::BeginThreadLoop(void* _thread)
@@ -66,14 +67,15 @@ int SlaveThread::ThreadLoop()
 void SlaveThread::Sleep()
 {
 	m_sleeping = true;
-	SDL_SemWait(m_sleepSem);
+	while (SDL_SemWait(m_sleepSem) != 0) { }
 	m_sleeping = false;
 }
 
 void SlaveThread::WakeThreads()
 {
 	for (auto slaveThread : *m_slaves)
-		if (slaveThread != this)
-			if (slaveThread->IsSleeping())
-				slaveThread->WakeUp();
+		if (slaveThread->IsSleeping())
+		{
+			slaveThread->WakeUp();
+		}
 }

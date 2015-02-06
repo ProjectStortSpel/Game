@@ -7,7 +7,7 @@
 #include "ECSL/Framework/Systems/Messaging/MessageManager.h"
 #include "ECSL/Framework/Systems/SystemManager.h"
 #include "ECSL/Framework/Systems/SystemWorkGroup.h"
-#include "MPL/Framework/Tasks/Task.h"
+#include "ECSL/Framework/Multithreading/ECSLWorkItem.h"
 #include "MPL/Managers/TaskManager.h"
 
 namespace ECSL
@@ -19,6 +19,8 @@ namespace ECSL
 		~Scheduler();
 
 		void UpdateDt(float _dt);
+		void UpdateWorkItemLists();
+
 		MPL::TaskId ScheduleUpdateSystems(MPL::TaskId _dependency);
 		MPL::TaskId ScheduleUpdateSystemEntityLists(MPL::TaskId _dependency);
 		MPL::TaskId ScheduleEntitiesAdded(MPL::TaskId _dependency);
@@ -30,9 +32,20 @@ namespace ECSL
 		MPL::TaskId ScheduleUpdateEntityTable(MPL::TaskId _dependency);
 		MPL::TaskId ScheduleDeleteComponentData(MPL::TaskId _dependency);
 		MPL::TaskId ScheduleRecycleEntities(MPL::TaskId _dependency);
-		MPL::TaskId ScheduleClearCopiedLists(MPL::TaskId _dependency);
 		MPL::TaskId ScheduleClearSystemEntityChangeLists(MPL::TaskId _dependency);
 
+		void PerformUpdateSystems();
+		void PerformUpdateSystemEntityLists();
+		void PerformEntitiesAdded();
+		void PerformEntitiesRemoved();
+		void PerformSortMessages();
+		void PerformMessagesReceived();
+		void PerformDeleteMessages();
+		void PerformCopyCurrentLists();
+		void PerformUpdateEntityTable();
+		void PerformDeleteComponentData();
+		void PerformRecycleEntities();
+		void PerformClearSystemEntityChangeLists();
 
 		/// System Tasks
 		void AddUpdateSystemsTasks();
@@ -45,7 +58,6 @@ namespace ECSL
 		void AddUpdateEntityTableTask();
 		void AddDeleteComponentDataTask();
 		void AddRecycleEntityIdsTask();
-		void AddClearCopiedListsTask();
 
 		/// SystemManager Tasks
 		void AddUpdateSystemEntityListsTasks();
@@ -61,28 +73,36 @@ namespace ECSL
 		void ClearSystemEntityChangeLists(const RuntimeInfo& _runtimeInfo);
 
 	private:
+		struct DeactivatedWorkItem
+		{
+			enum WorkItemType { Update, EntitiesAdded, EntitiesRemoved, MessagesReceived };
+			ECSLWorkItem* workItem;
+			WorkItemType type;
+		};
+
 		unsigned int m_currentGroupId;
 		DataManager* m_dataManager;
 		SystemManager* m_systemManager;
 		MessageManager* m_messageManager;
 		MPL::TaskManager* m_taskManager;
-		MPL::TaskId m_onEntityTaskId;
-		std::vector<MPL::WorkItem*>* m_workItems;
-		std::vector<std::vector<MPL::WorkItem*>*>* m_updateWorkItems;
-		std::vector<MPL::WorkItem*>* m_updateSystemEntityListsWorkItems;
-		std::vector<std::vector<MPL::WorkItem*>*>* m_entitiesAddedWorkItems;
-		std::vector<std::vector<MPL::WorkItem*>*>* m_entitiesRemovedWorkItems;
-		std::vector<MPL::WorkItem*>* m_sortMessagesWorkItems;
-		std::vector<std::vector<MPL::WorkItem*>*>* m_messagesReceivedWorkItems;
-		std::vector<MPL::WorkItem*>* m_deleteMessagesWorkItems;
-		std::vector<MPL::WorkItem*>* m_copyCurrentListsWorkItems;
-		std::vector<MPL::WorkItem*>* m_updateEntityTableWorkItems;
-		std::vector<MPL::WorkItem*>* m_deleteComponentDataWorkItems;
-		std::vector<MPL::WorkItem*>* m_recycleEntityIdsWorkItems;
-		std::vector<MPL::WorkItem*>* m_clearCopiedListsWorkItems;
-		std::vector<MPL::WorkItem*>* m_clearListsWorkItems;
+		std::vector<ECSLWorkItem*>* m_workItems;
+		std::vector<std::vector<ECSLWorkItem*>*>* m_updateWorkItems;
+		std::vector<ECSLWorkItem*>* m_updateSystemEntityListsWorkItems;
+		std::vector<std::vector<ECSLWorkItem*>*>* m_entitiesAddedWorkItems;
+		std::vector<std::vector<ECSLWorkItem*>*>* m_entitiesRemovedWorkItems;
+		std::vector<ECSLWorkItem*>* m_sortMessagesWorkItems;
+		std::vector<std::vector<ECSLWorkItem*>*>* m_messagesReceivedWorkItems;
+		std::vector<ECSLWorkItem*>* m_deleteMessagesWorkItems;
+		std::vector<ECSLWorkItem*>* m_copyCurrentListsWorkItems;
+		std::vector<ECSLWorkItem*>* m_updateEntityTableWorkItems;
+		std::vector<ECSLWorkItem*>* m_deleteComponentDataWorkItems;
+		std::vector<ECSLWorkItem*>* m_recycleEntityIdsWorkItems;
+		std::vector<ECSLWorkItem*>* m_clearListsWorkItems;
+		std::map<unsigned int, std::vector<DeactivatedWorkItem*>>* m_deactivatedWorkItems;
 		std::vector<std::vector<unsigned int>*>* m_entitiesToAddToSystems;
 		std::vector<std::vector<unsigned int>*>* m_entitiesToRemoveFromSystems;
+
+		bool EraseSystemWorkItems(unsigned int _systemId, DeactivatedWorkItem::WorkItemType _workItemType, std::vector<std::vector<ECSLWorkItem*>*>* _workItemGroups);
 	};
 
 	static void SystemUpdate(void* _data);
@@ -100,8 +120,6 @@ namespace ECSL
 	static void DataManagerDeleteComponentData(void* _data);
 
 	static void DataManagerRecycleEntityIds(void* _data);
-
-	static void DataManagerClearCopiedLists(void* _data);
 
 	static void SystemManagerUpdateSystemEntityLists(void* _data);
 

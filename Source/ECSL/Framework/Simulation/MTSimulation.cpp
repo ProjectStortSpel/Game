@@ -1,45 +1,32 @@
-#include "Simulation.h"
-
-#include <MPL/Managers/TaskManager.h>
+#include "MTSimulation.h"
 
 using namespace ECSL;
 
-Simulation::Simulation(DataManager* _dataManager, SystemManager* _systemManager, MessageManager* _messageManager)
-: m_dataManager(_dataManager), m_systemManager(_systemManager), m_messageManager(_messageManager)
+MTSimulation::MTSimulation()
 {
-	m_scheduler = new Scheduler(_dataManager, _systemManager, _messageManager);
-	m_scheduler->AddUpdateSystemsTasks();
-	m_scheduler->AddSortMessagesTask();
-	m_scheduler->AddMessagesReceivedTasks();
-	m_scheduler->AddDeleteMessagesTask();
-	m_scheduler->AddCopyCurrentListsTask();
-	m_scheduler->AddUpdateEntityTableTask();
-	m_scheduler->AddUpdateSystemEntityListsTasks();
-	m_scheduler->AddEntitiesAddedTasks();
-	m_scheduler->AddEntitiesRemovedTasks();
-	m_scheduler->AddClearSystemEntityChangeListsTask();
-	m_scheduler->AddDeleteComponentDataTask();
-	m_scheduler->AddRecycleEntityIdsTask();
-	m_scheduler->AddClearCopiedListsTask();
+
 }
 
-Simulation::~Simulation()
+MTSimulation::~MTSimulation()
 {
-	delete(m_scheduler);
+
 }
 
-void Simulation::Update(float _dt)
+void MTSimulation::Update(float _dt)
 {
 	/* Update dt for every work item */
 	m_scheduler->UpdateDt(_dt);
 
-	/* Update systems */
+	/* Update work item lists (Temporary add / remove work items) */
+	m_scheduler->UpdateWorkItemLists();
+
+	/* Call Update() in every system */
 	MPL::TaskId updateSystems = m_scheduler->ScheduleUpdateSystems(MPL::NoDependency);
 
 	/* Sort all messages sent by systems */
 	MPL::TaskId sortMessages = m_scheduler->ScheduleSortMessages(updateSystems);
 
-	/* Call MessagesReceived() for each system that has atleast one message received */
+	/* Call MessagesReceived() in each system that has atleast one message received */
 	MPL::TaskId messagesReceived = m_scheduler->ScheduleMessagesReceived(sortMessages);
 
 	/* Delete all messages */
@@ -54,10 +41,10 @@ void Simulation::Update(float _dt)
 	/* Update every systems' entity list */
 	MPL::TaskId updateSystemEntityLists = m_scheduler->ScheduleUpdateSystemEntityLists(updateEntityTable);
 
-	/* Call EntitiesAdded for each system that has atleast one newly added entity */
+	/* Call EntitiesAdded() in each system that has atleast one newly added entity */
 	MPL::TaskId entitiesAdded = m_scheduler->ScheduleEntitiesAdded(updateSystemEntityLists);
 
-	/* Call EntitiesRemoved for each system that has atleast one newly removed entity */
+	/* Call EntitiesRemoved() in each system that has atleast one newly removed entity */
 	MPL::TaskId entitiesRemoved = m_scheduler->ScheduleEntitiesRemoved(entitiesAdded);
 
 	/* Clear all the used lists in Scheduler */
@@ -69,9 +56,6 @@ void Simulation::Update(float _dt)
 	/* Recycle all dead ids back to the list of available ids */
 	MPL::TaskId recycleEntityIds = m_scheduler->ScheduleRecycleEntities(deleteComponentData);
 
-	/* Clear all the used lists in DataManager */
-	MPL::TaskId clearCopiedLists = m_scheduler->ScheduleClearCopiedLists(recycleEntityIds);
-
 	/* Main thread helps with tasks while waiting */
-	MPL::TaskManager::GetInstance().WaitFor(clearCopiedLists);
+	MPL::TaskManager::GetInstance().WaitFor(recycleEntityIds);
 }

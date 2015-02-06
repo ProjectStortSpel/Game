@@ -1,6 +1,9 @@
 #ifndef CONTAINERHELPER_H
 #define CONTAINERHELPER_H
 
+#include <vector>
+#include <map>
+
 namespace ECSL
 {
 	namespace ContainerHelper
