@@ -1,5 +1,6 @@
 #include "Pathfinder.h"
 
+#include <cstddef>
 
 Pathfinder* Pathfinder::m_instance = 0;
 
@@ -13,16 +14,31 @@ Pathfinder* Pathfinder::Instance()
 	return Pathfinder::m_instance;
 }
 
+void Pathfinder::Destroy()
+{
+	if (Pathfinder::m_instance)
+		delete Pathfinder::m_instance;
+}
+
 Pathfinder::Pathfinder()
 {
+	this->m_mapSize = coord(0, 0);
 	this->m_turningCost = 0;
+	this->m_mapData = NULL;
+}
+
+void Pathfinder::SetTurningCost(float _turing_cost)
+{
+	this->m_turningCost = _turing_cost;
 }
 
 void Pathfinder::SetNodeData(const struct tile_data*** _data, int _x, int _y)
 {
 	const struct tile_data **use = (*_data);
+	this->DeleteMap();
 	this->m_mapSize = coord(_x, _y);
 
+	
 	// allocationg space
 	this->m_mapData = new struct pathfindingnode*[_x];
 	for (int i = 0; i < _x; ++i)
@@ -223,7 +239,6 @@ std::vector<coord> Pathfinder::GeneratePath( coord start, coord goal )
 	std::vector<coord> ret_value;
 	std::vector<pathfindingnode> open;
 	std::vector<pathfindingnode> closed;
-
 	this->m_startCoord = start;
 	this->m_goalCoord = goal;
 	if (this->m_mapData[start.x][start.y].walkable && this->InsideWorld(start.x, start.y) && this->m_mapData[goal.x][goal.y].walkable && this->InsideWorld(goal.x, goal.y))
@@ -264,8 +279,22 @@ std::vector<coord> Pathfinder::GeneratePath( coord start, coord goal )
 
 void Pathfinder::DeleteMap()
 {
+	for (int i = 0; i < this->m_mapSize.x; ++i)
+	{
+		if (this->m_mapData[i])
+		{
+			delete(this->m_mapData[i]);
+			this->m_mapData[i] = NULL;
+		}
+	}
+	if (this->m_mapData)
+	{
+		delete(this->m_mapData);
+		this->m_mapData = NULL;
+	}
 }
 
 Pathfinder::~Pathfinder()
 {
+	this->DeleteMap();
 }

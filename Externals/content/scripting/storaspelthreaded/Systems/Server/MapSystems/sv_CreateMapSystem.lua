@@ -8,7 +8,7 @@ CreateMapSystem.Initialize = function(self)
 	self:SetName("CreateMapSystem")
 	self:UsingEntitiesAdded()
 	self:AddComponentTypeToFilter("CreateMap", FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter("MapSize", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("MapSpecs", FilterType.RequiresOneOf)
 	Console.AddCommand("loadmap", self.LoadMap)
 end
 
@@ -43,7 +43,7 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		comp:SetModel("hole", "hole", 0)
 		local rotComp = self:GetComponent(newTile, "Rotation", 0)
 		rotComp:SetFloat3(0, math.pi * 0.5 * math.random(0, 4), 0)
-
+		
     elseif tiletype == 120 then -- 120 = x = stone
 		world:CreateComponentAndAddTo("NotWalkable", newTile)
 		world:CreateComponentAndAddTo("Model", newTile)
@@ -54,7 +54,6 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		local rotComp = self:GetComponent(newTile, "Rotation", 0)
 		rotComp:SetFloat3(math.pi * 0.01 * math.random(0, 25), math.pi * 0.01 * math.random(0, 100), math.pi * 0.01 * math.random(0, 25))
 		self:AddGroundTileBelow(posX, posZ)
-
     elseif tiletype >= 49 and tiletype <= 57 then -- 49 = 1 = first checkpoint, 57 = 9 = 9th checkpoint
 
         world:CreateComponentAndAddTo("Checkpoint", newTile)
@@ -147,12 +146,13 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		local comp = self:GetComponent(newTile, "Model", 0)
 		comp:SetModel("grass", "grass", 0)
 		
-	else
+	elseif tiletype == 111 then
         world:CreateComponentAndAddTo("Void", newTile)
 		--world:CreateComponentAndAddTo("Model", entity)
 		--local comp = self:GetComponent(entity, "Model", 0)
 		--comp:SetModel("grass", "grass", 0)
-		
+	else
+		print("ERROR: TILETYPE NOT DEFINED IN sv_CreateMapSystem")
     end
 	
 	self.entities[#self.entities+1]=newTile
@@ -181,6 +181,7 @@ CreateMapSystem.CreateMap = function(self, name)
 	self.waterTiles = { }
 	self.waterTiles.__mode = "k"
 	
+	local inputData = InputData()
 	local map
     self.mapX, self.mapY, map = File.LoadMap(name)
 
@@ -188,6 +189,7 @@ CreateMapSystem.CreateMap = function(self, name)
 		
 	for x = 0, self.mapX + 1 do
 		self:AddTile(x, 0, 111) -- 111 = void
+		inputData:AddTile( 1, true )
 	end
 	
 	local highestCP = 0
@@ -196,10 +198,16 @@ CreateMapSystem.CreateMap = function(self, name)
 	
 	for y = 1, self.mapY do
 		self:AddTile(0, y, 111) -- 111 = void
+		inputData:AddTile( 1, true )
 		for x = 1, self.mapX do
 			local tiletype = map[(y - 1) * self.mapX + x]			
             local entity = self:AddTile(x, y, tiletype)
-
+			if tiletype == 120  or tiletype == 104 or tiletype == 111
+			then
+				inputData:AddTile( 1, false )
+			else
+				inputData:AddTile( 1, true )
+			end
 			if tiletype >= 49 and tiletype <= 57 then -- 49 = 1 = first checkpoint, 57 = 9 = 9th checkpoint
 
 				highestCP = math.max(highestCP, tiletype - 48)
@@ -211,6 +219,7 @@ CreateMapSystem.CreateMap = function(self, name)
 			end
         end
 		self:AddTile(self.mapX + 1, y, 111) -- 111 = void
+		inputData:AddTile( 1, true )
     end
 
 	for i = 1, #finishList do
@@ -222,23 +231,28 @@ CreateMapSystem.CreateMap = function(self, name)
 	
 	for x = 0, self.mapX + 1 do
 		self:AddTile(x, self.mapY+1, 111) -- 111 = void
+		inputData:AddTile( 1, true )
 	end
 	
 	-- Add to the map size as voids have been added around the map.
 	self.mapX = self.mapX + 2
 	self.mapY = self.mapY + 2
 	
-	-- Create an entity that will keep track of the map size.
-	local MapSizeEntities = self:GetEntities("MapSize")
+	inputData:SetSize(self.mapX, self.mapY)
+	
+	PathfinderHandler.SetData(inputData)
+	
+	-- Create an entity that will keep track of the map size. If it already exist from a previous "loadmap", use that one instead.
+	local MapSpecsEntity = self:GetEntities("MapSpecs")
 	local MapEntity = nil
-	if #MapSizeEntities == 0 then
+	if #MapSpecsEntity == 0 then
 		MapEntity = world:CreateNewEntity()
-		world:CreateComponentAndAddTo("MapSize", MapEntity)
+		world:CreateComponentAndAddTo("MapSpecs", MapEntity)
 		world:CreateComponentAndAddTo("SyncNetwork", MapEntity)
 	else
-		MapEntity = MapSizeEntities[1]
+		MapEntity = MapSpecsEntity[1]
 	end
-	self:GetComponent(MapEntity, "MapSize", 0):SetInt2(self.mapX, self.mapY)
+	self:GetComponent(MapEntity, "MapSpecs", "SizeX"):SetInt2(self.mapX, self.mapY)
 	
 	print("MapEntity size: " .. #self.entities)
 	print("Water size: " .. #self.waterTiles)
