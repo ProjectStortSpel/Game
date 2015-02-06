@@ -56,7 +56,7 @@ GameInterfaceSystem.CreateElement = function(self, object, folder, posx, posy, p
 	world:CreateComponentAndAddTo("PickBox", id)
 	world:CreateComponentAndAddTo(self.Name.."Element", id)
 	local model = self:GetComponent(id, "Model", 0)
-	model:SetModel(object, folder, 2)
+	model:SetModel(object, folder, 3)
 	local position = self:GetComponent(id, "Position", 0)
 	position:SetFloat3(posx, posy, posz)
 	local scale = self:GetComponent(id, "Scale", 0)

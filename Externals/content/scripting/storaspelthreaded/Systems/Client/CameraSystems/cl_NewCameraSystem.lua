@@ -288,7 +288,7 @@ NewCameraSystem.CreateElement = function(self, object, folder, posx, posy, posz,
 	world:CreateComponentAndAddTo("Scale", id)
 	world:CreateComponentAndAddTo("CameraElement", id)
 	local model = self:GetComponent(id, "Model", 0)
-	model:SetModel(object, folder, 2)
+	model:SetModel(object, folder, 3)
 	local position = self:GetComponent(id, "Position", 0)
 	position:SetFloat3(posx, posy, posz)
 	local scale = self:GetComponent(id, "Scale", 0)
