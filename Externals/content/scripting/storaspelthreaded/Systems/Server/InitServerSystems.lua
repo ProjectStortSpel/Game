@@ -128,6 +128,7 @@ package.path = package.path .. ";../../../Externals/content/scripting/storaspelt
 require "sv_SpawnSystem"
 require "sv_GiveSpawnLocationSystem"
 require "sv_RespawnSystem"
+require "sv_PostSpawnSystem"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(GiveSpawnLocationSystem)
@@ -135,6 +136,8 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(SpawnSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(RespawnSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(PostSpawnSystem)
 
 
 
