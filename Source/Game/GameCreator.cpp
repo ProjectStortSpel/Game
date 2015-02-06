@@ -25,6 +25,8 @@
 
 #include "Logger/Managers/Logger.h"
 
+#include "Pathfinder.h"
+
 #include <iomanip>
 
 GameCreator::GameCreator() :
@@ -40,6 +42,8 @@ GameCreator::~GameCreator()
     NetworkInstance::DestroyServer();
     NetworkInstance::DestroyClientNetworkHelper();
     NetworkInstance::DestroyServerNetworkHelper();
+
+	Pathfinder::Destroy();
 
 	if (m_clientWorld)
 		delete m_clientWorld;
@@ -175,7 +179,7 @@ void GameCreator::InitializeLua(WorldType _worldType)
     }
 }
 
-void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, bool _isMainWorld)
+void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, bool _isMainWorld, bool _includeMasterServer)
 {
     lua_State* luaState = _worldType == WorldType::Client ? m_clientLuaState : m_serverLuaState;
 
@@ -218,15 +222,6 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 			}
 		}
 	}
-	/*std::vector<LuaBridge::LuaSystem*>* systemsAdded = worldCreator.GetSystemsAdded();
-	for (std::vector<LuaBridge::LuaSystem*>::iterator it = systemsAdded->begin(); it != systemsAdded->end(); it++)
-	{
-	  lua_State* luaStateCopy = LuaEmbedder::CreateChildState(luaState);
-	  LuaBridge::Embed(luaStateCopy);
-	  LuaEmbedder::CopyObject<LuaBridge::LuaSystem>(luaState, luaStateCopy, "System", (*it));
-	  (*it)->SetLuaState(luaStateCopy);
-	}
-	systemsAdded->clear();*/
 
     
     if (_worldType == WorldType::Client)
@@ -313,10 +308,10 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
         worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
     }
     
-    if (_isMainWorld)
+    if (_includeMasterServer)
     {
-        worldCreator.AddSystemGroup();
-        worldCreator.AddSystemToCurrentGroup<MasterServerSystem>();
+        //worldCreator.AddSystemGroup();
+        //worldCreator.AddSystemToCurrentGroup<MasterServerSystem>();
     }
     
     if (_worldType == WorldType::Server)
@@ -497,7 +492,7 @@ void GameCreator::StartGame(int argc, char** argv)
 		m_worldCounter.Tick();
 
 		m_luaGarbageCollectionCounter.Reset();
-		LuaEmbedder::CollectGarbageForDuration(0.2f);
+		LuaEmbedder::CollectGarbageForDuration(0.1f * dt);
 		m_luaGarbageCollectionCounter.Tick();
 
 		m_networkCounter.Reset();
@@ -658,18 +653,18 @@ void GameCreator::Reload()
 
     if (NetworkInstance::GetClient()->IsConnected() && NetworkInstance::GetServer()->IsRunning())
     {
-        InitializeWorld(m_gameMode, WorldType::Client, true);
-        InitializeWorld(m_gameMode, WorldType::Server, false);
+        InitializeWorld(m_gameMode, WorldType::Client, true, false);
+        InitializeWorld(m_gameMode, WorldType::Server, false, true);
     }
     
     else if (NetworkInstance::GetServer()->IsRunning())
     {
-        InitializeWorld(m_gameMode, WorldType::Server, true);
+        InitializeWorld(m_gameMode, WorldType::Server, true, true);
     }
     
     else
     {
-        InitializeWorld(m_gameMode, WorldType::Client, true);
+        InitializeWorld(m_gameMode, WorldType::Client, true, true);
     }
     
 	m_console->SetWorld(m_serverWorld);

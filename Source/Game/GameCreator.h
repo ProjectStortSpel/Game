@@ -44,7 +44,7 @@ private:
         Server, Client
     };
     
-    void InitializeWorld(std::string _gameMode, WorldType _worldType, bool _isMainWorld);
+    void InitializeWorld(std::string _gameMode, WorldType _worldType, bool _isMainWorld, bool _includeMasterServer);
     void InitializeLua(WorldType _worldType);
     
 	void RunStartupCommands(int argc, char** argv);

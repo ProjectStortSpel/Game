@@ -12,6 +12,8 @@ struct coord
 
 	coord()
 	{
+		this->x = 0;
+		this->y = 0;
 	}
 
 	coord(int x, int y)
@@ -42,6 +44,7 @@ class Pathfinder
 {
 public:
 	static Pathfinder* Instance();
+	static void Destroy();
 	~Pathfinder();
 
 	void SetTurningCost(float _turningCost);

@@ -46,7 +46,9 @@ CheckpointSystem.HasReachedFinish = function(self, entityId)
 		world:CreateComponentAndAddTo("IsSpectator", playerId)
 	else
 		-- Else if the player is an AI, remove it when done
+		print("HARROW")
 		world:KillEntity(playerId)
+		world:KillEntity(entityId)
 	end
 end
 
