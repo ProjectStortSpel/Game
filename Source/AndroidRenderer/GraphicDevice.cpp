@@ -34,6 +34,7 @@ GraphicDevice::~GraphicDevice()
 	SDL_DestroyWindow(m_window);
 	// Clean up
 	//SDL_Quit();
+	SDL_Log("Graphics D E S T R U C T O R");
 }
 
 void GraphicDevice::PollEvent(SDL_Event _event)
