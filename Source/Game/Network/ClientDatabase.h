@@ -62,7 +62,7 @@ public:
 
 	void RequestServerList();
 
-
+	void SetTryConnect(bool _value) {m_tryConnect = _value;}
 	void ResetNetworkEvents();
 
 private:

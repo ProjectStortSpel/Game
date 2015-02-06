@@ -430,13 +430,11 @@
     <ClInclude Include="..\..\..\Source\Game\Pathfinder.h">
       <Filter>Game</Filter>
     </ClInclude>
-<<<<<<< HEAD
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\AI\LuaPathfinderHandler.h">
       <Filter>Lua Bridge\AI</Filter>
-=======
+	</ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Network\NetworkInstance.h">
       <Filter>Network</Filter>
->>>>>>> 708662d85896dcfc513a7b24930e969d2986acf4
     </ClInclude>
   </ItemGroup>
 </Project>

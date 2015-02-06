@@ -17,7 +17,7 @@ ConnectMenuSystem.Update = function(self, dt, taskIndex, taskCount)
 			end
 			if world:EntityHasComponent(pressedButton, "MenuEntityCommand") then
 				local compname = self:GetComponent(pressedButton, "MenuEntityCommand", "ComponentName"):GetString()
-				self:RemoveMenu()
+				--self:RemoveMenu()
 				local id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo(compname, id)
 			end
@@ -85,6 +85,12 @@ self:AddTextToTexture("C2"..i, serverip .. ":" .. serverport, 0, 1, 1, 1, text)
 		text = self:CreateText("right", "text", 0.89, 0.64-i*0.11, -1.999, 0.2, 0.08)	
 		self:AddTextToTexture("C3"..i, "["..servernousers.."/"..servermaxusers.."]", 0, 1, 1, 1, text)
 	end
+	
+	
+	button = self:CreateElement("refresh", "quad", 0, -0.85, -2, 0.5, 0.20)
+	self:AddEntityCommandToButton("RefreshServerList", button)
+	self:AddHoverSize(1.1, button)	
+	
 end
 
 ConnectMenuSystem.RefreshMenu = function(self)
