@@ -62,7 +62,7 @@ CheckpointSystem.CheckCheckpoint = function(self, entityId, posX, posZ)
 			local	tempX, tempZ  	= 	world:GetComponent(allCheckpoints[i], "MapPosition", "X"):GetInt2()
 			if tempX == posX and tempZ == posZ then
 				world:GetComponent(entityId, "TargetCheckpoint", "Id"):SetInt(targetCheckpoint+1)
-				
+				world:GetComponent(entityId, "Spawnpoint", 0):SetInt2(tempX, tempZ)
 				local playerNum = world:GetComponent(entityId, "PlayerNumber", 0):GetInt()
 				self:AddTotemPiece(playerNum, targetCheckpoint)
 				if targetCheckpoint+1 > #allCheckpoints then
