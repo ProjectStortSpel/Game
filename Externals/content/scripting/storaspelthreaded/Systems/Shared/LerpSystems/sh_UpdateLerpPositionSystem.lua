@@ -58,6 +58,8 @@ UpdateLerpPositionSystem.AlgorithmLerp = function(self, t, algorithm)
 		return t * t * t * (t * (6*t - 15) + 10)
 	elseif algorithm == "ExponentialLerp" then
 		return t * t
+	elseif algorithm == "OvershotLerp" then
+		return t * t * (5 - 4*t)
 	else
 		return t
 	end

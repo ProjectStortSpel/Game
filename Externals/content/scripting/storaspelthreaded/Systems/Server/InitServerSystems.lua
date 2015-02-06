@@ -174,6 +174,7 @@ worldCreator:AddSystemToCurrentGroup(CameraNewRoundSystem)
 --	Misc Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/MiscSystems/?.lua"
 require "sv_TotemPoleSystem"
+require "sv_MoveTotemPieceSystem"
 require "sv_GameOverSystem"
 require "sv_ServerLobbySystem"
 require "sv_LogStartSystem"
@@ -181,6 +182,9 @@ require "sv_ServerNetworkMessageSystem"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(TotemPoleSystem)
+
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(MoveTotemPieceSystem)
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(GameOverSystem)
