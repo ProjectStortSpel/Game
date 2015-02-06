@@ -415,6 +415,7 @@ void ServerNetwork::ReceivePackets(ISocket* _socket)
 		}
 		else
 		{
+			_socket->SetActive(0);
 		}
 
 	}
