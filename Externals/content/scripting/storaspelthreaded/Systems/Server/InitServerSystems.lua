@@ -5,7 +5,6 @@ require "sv_CreateMapSystem"
 require "sv_RiverSystem"
 require "sv_VoidSystem"
 require "sv_CheckpointSystem"
-require "sv_FinishpointSystem"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CreateMapSystem)
@@ -15,8 +14,6 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(VoidSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CheckpointSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(FinishpointSystem)
 
 --	Light Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/LightSystems/?.lua"
@@ -117,11 +114,14 @@ worldCreator:AddSystemToCurrentGroup(ActionTurnAroundSystem)
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/CardAbilitySystems/?.lua"
 require "sv_AbilitySprintSystem"
 require "sv_AbilitySlingshotSystem"
+require "sv_AbilityIWin"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(AbilitySprintSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(AbilitySlingshotSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(AbilityIWin)
 
 --	Spawn Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/SpawnSystems/?.lua"

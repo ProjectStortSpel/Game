@@ -1,5 +1,5 @@
 #include "SlerpRotationSystem.h"
-#include "Game/NetworkInstance.h"
+#include "Game/Network/NetworkInstance.h"
 
 SlerpRotationSystem::SlerpRotationSystem()
 {

@@ -1,6 +1,6 @@
 #include "Game/RemoteConsole.h"
 #include "Console/Console.h"
-#include "NetworkInstance.h"
+#include "Network/NetworkInstance.h"
 #include <sstream>
 
 RemoteConsole::RemoteConsole()

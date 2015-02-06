@@ -4,21 +4,28 @@
 #include <SDL/SDL.h>
 #include <sstream>
 #include <algorithm>
+#include <thread>
 
 namespace LuaEmbedder
 {
   std::map<lua_State*, std::vector<lua_State*>> LuaParentChildrensMap = std::map<lua_State*, std::vector<lua_State*>>();
   std::map<lua_State*, lua_State*> LuaChildrenParentMap = std::map<lua_State*, lua_State*>();
+  std::map<std::string, lua_State*> LuaFunctionStateMap = std::map<std::string, lua_State*>();
   std::vector<int(*)(lua_State*)> Functions = std::vector<int (*)(lua_State*)>();
-  
+
+  const float SecondsToCount = (float)SDL_GetPerformanceFrequency();
+  const float CountsToSeconds = 1.0f / SecondsToCount;
+
   lua_State* CreateState()
   {
     lua_State* L = luaL_newstate();
     luaL_openlibs(L);
     
+	int top = lua_gettop(L);
     LuaNumberArray<float>::Embed(L, "FloatArray");
     LuaNumberArray<int>::Embed(L, "IntArray");
     LuaNumberArray<unsigned int>::Embed(L, "UnsignedIntArray");
+	lua_settop(L, top);
     
     assert(LuaParentChildrensMap.find(L) == LuaParentChildrensMap.end());
     LuaParentChildrensMap[L] = std::vector<lua_State*>();
@@ -30,9 +37,11 @@ namespace LuaEmbedder
     lua_State* copy = luaL_newstate();
     luaL_openlibs(copy);
 
+	int top = lua_gettop(copy);
 	LuaNumberArray<float>::Embed(copy, "FloatArray");
 	LuaNumberArray<int>::Embed(copy, "IntArray");
 	LuaNumberArray<unsigned int>::Embed(copy, "UnsignedIntArray");
+	lua_settop(copy, top);
 
     LuaParentChildrensMap[L].push_back(copy);
     LuaChildrenParentMap[copy] = L;
@@ -185,7 +194,6 @@ namespace LuaEmbedder
       lua_gettable(L, -2);
     }
     bool error = lua_pcall(L, argumentCount, LUA_MULTRET, 0);
-    lua_gc(L, LUA_GCCOLLECT, 0);
     if (error)
     {
 	  SDL_Log("LuaEmbedder::CallFunction : %s", (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error"));
@@ -194,14 +202,14 @@ namespace LuaEmbedder
     return true;
   }
   
-  void CollectGarbage(lua_State* L)
+  void CollectGarbage(lua_State* L, float durationInMilliseconds)
   {
-    lua_gc(L, LUA_GCCOLLECT, 0);
-  }
-  void CollectGarbage(lua_State* L, int durationInMilliseconds)
-  {
-    lua_gc(L, LUA_GCSETSTEPMUL, durationInMilliseconds);
-    lua_gc(L, LUA_GCSTEP, 0);
+	int result = 0;
+	Uint64 targetTime = (Uint64)(((float)SDL_GetPerformanceCounter() * CountsToSeconds + durationInMilliseconds) * SecondsToCount);
+	do
+	{
+		result = lua_gc(L, LUA_GCSTEP, 0);
+	} while (SDL_GetPerformanceCounter() < targetTime && result != 1);
   }
   int GetMemoryUsage()
   {
@@ -214,17 +222,37 @@ namespace LuaEmbedder
     }
     return memoryUsage;
   }
-  void CollectGarbage()
+  void CollectGarbageStep()
   {
-    for (std::map<lua_State*, std::vector<lua_State*>>::iterator it0 = LuaParentChildrensMap.begin(); it0 != LuaParentChildrensMap.end(); it0++)
-    {
-      for (std::vector<lua_State*>::iterator it1 = it0->second.begin(); it1 != it0->second.end(); it1++)
-	lua_gc((*it1), LUA_GCCOLLECT, 0);
-      lua_gc((it0->first), LUA_GCCOLLECT, 0);
-    }
+	for (std::map<lua_State*, std::vector<lua_State*>>::iterator it0 = LuaParentChildrensMap.begin(); it0 != LuaParentChildrensMap.end(); it0++)
+	{
+		for (std::vector<lua_State*>::iterator it1 = it0->second.begin(); it1 != it0->second.end(); it1++)
+			lua_gc((*it1), LUA_GCSTEP, 0);
+		lua_gc((it0->first), LUA_GCSTEP, 0);
+	}
   }
-  
-  #define ADD_VARIABLE(luaState, type) \
+  void CollectGarbageFull()
+  {
+	  for (std::map<lua_State*, std::vector<lua_State*>>::iterator it0 = LuaParentChildrensMap.begin(); it0 != LuaParentChildrensMap.end(); it0++)
+	  {
+		  for (std::vector<lua_State*>::iterator it1 = it0->second.begin(); it1 != it0->second.end(); it1++)
+			  lua_gc((*it1), LUA_GCCOLLECT, 0);
+		  lua_gc((it0->first), LUA_GCCOLLECT, 0);
+	  }
+  }
+  void CollectGarbageForDuration(float durationInMilliseconds)
+  {
+	  float durationPerState = durationInMilliseconds / (float)(LuaParentChildrensMap.size() + LuaChildrenParentMap.size());
+	  for (std::map<lua_State*, std::vector<lua_State*>>::iterator it0 = LuaParentChildrensMap.begin(); it0 != LuaParentChildrensMap.end(); it0++)
+	  {
+		  for (std::vector<lua_State*>::iterator it1 = it0->second.begin(); it1 != it0->second.end(); it1++)
+			  CollectGarbage((*it1), durationPerState);
+		  CollectGarbage((it0->first), durationPerState);
+	  }
+  }
+
+#define ADD_VARIABLE(luaState, type) \
+	int top = lua_gettop(luaState); \
     if (library.empty()) \
     { \
       lua_push##type(luaState, value); \
@@ -235,15 +263,16 @@ namespace LuaEmbedder
       lua_getglobal(luaState, library.c_str()); \
       if (lua_isnil(luaState, -1)) \
       { \
-	lua_pop(luaState, 1); \
-	luaL_newmetatable(luaState, library.c_str()); \
+		lua_pop(luaState, 1); \
+		luaL_newmetatable(luaState, library.c_str()); \
       } \
       \
       lua_pushstring(luaState, name.c_str()); \
       lua_push##type(luaState, value); \
       lua_settable(luaState, -3); \
       lua_setglobal(luaState, library.c_str()); \
-    }
+    } \
+	lua_settop(luaState, top);
   void AddFloat(lua_State* L, const std::string& name, float value, const std::string& library)
   {
     std::map<lua_State*, lua_State*>::iterator it0 = LuaChildrenParentMap.find(L);
@@ -260,8 +289,10 @@ namespace LuaEmbedder
       }
     }
     assert(it1 != LuaParentChildrensMap.end());
-    for (std::vector<lua_State*>::iterator it2 = it1->second.begin(); it2 != it1->second.end(); it2++)
-      ADD_VARIABLE((*it2), number);
+	for (std::vector<lua_State*>::iterator it2 = it1->second.begin(); it2 != it1->second.end(); it2++)
+	{
+		ADD_VARIABLE((*it2), number);
+	}
     ADD_VARIABLE(it1->first, number);
   }
   void AddInt(lua_State* L, const std::string& name, int value, const std::string& library)
@@ -280,8 +311,10 @@ namespace LuaEmbedder
       }
     }
     assert(it1 != LuaParentChildrensMap.end());
-    for (std::vector<lua_State*>::iterator it2 = it1->second.begin(); it2 != it1->second.end(); it2++)
-      ADD_VARIABLE((*it2), integer);
+	for (std::vector<lua_State*>::iterator it2 = it1->second.begin(); it2 != it1->second.end(); it2++)
+	{
+		ADD_VARIABLE((*it2), integer);
+	}
     ADD_VARIABLE(it1->first, integer);
   }
   void AddBool(lua_State* L, const std::string& name, bool value, const std::string& library)
@@ -300,8 +333,10 @@ namespace LuaEmbedder
       }
     }
     assert(it1 != LuaParentChildrensMap.end());
-    for (std::vector<lua_State*>::iterator it2 = it1->second.begin(); it2 != it1->second.end(); it2++)
-      ADD_VARIABLE((*it2), boolean);
+	for (std::vector<lua_State*>::iterator it2 = it1->second.begin(); it2 != it1->second.end(); it2++)
+	{
+		ADD_VARIABLE((*it2), boolean);
+	}
     ADD_VARIABLE(it1->first, boolean);
   }
   void AddString(lua_State* L, const std::string& name, const char* value, const std::string& library)
@@ -320,8 +355,10 @@ namespace LuaEmbedder
       }
     }
     assert(it1 != LuaParentChildrensMap.end());
-    for (std::vector<lua_State*>::iterator it2 = it1->second.begin(); it2 != it1->second.end(); it2++)
-      ADD_VARIABLE((*it2), string);
+	for (std::vector<lua_State*>::iterator it2 = it1->second.begin(); it2 != it1->second.end(); it2++)
+	{
+		ADD_VARIABLE((*it2), string);
+	}
     ADD_VARIABLE(it1->first, string);
   }
   static int FunctionDispatch(lua_State* L)
@@ -331,6 +368,7 @@ namespace LuaEmbedder
     return (*(Functions[functionIndex]))(L);
   }
 #define ADD_FUNCTION(luaState) \
+	int top = lua_gettop(luaState); \
     if (library.empty()) \
 	{ \
       int functionIndex = -1; \
@@ -378,7 +416,8 @@ namespace LuaEmbedder
       lua_pushcclosure(luaState, FunctionDispatch, 1); \
       lua_settable(luaState, -3); \
       lua_setglobal(luaState, library.c_str()); \
-    }
+    } \
+	lua_settop(luaState, top);
   void AddFunction(lua_State* L, const std::string& name, int (*functionPointer)(lua_State*), const std::string& library)
   {
     std::map<lua_State*, lua_State*>::iterator it0 = LuaChildrenParentMap.find(L);
@@ -395,8 +434,10 @@ namespace LuaEmbedder
       }
     }
     assert(it1 != LuaParentChildrensMap.end());
-    for (std::vector<lua_State*>::iterator it2 = it1->second.begin(); it2 != it1->second.end(); it2++)
-      ADD_FUNCTION((*it2));
+	for (std::vector<lua_State*>::iterator it2 = it1->second.begin(); it2 != it1->second.end(); it2++)
+	{
+		ADD_FUNCTION((*it2));
+	}
     ADD_FUNCTION(it1->first);
   }
   void AddFloat(const std::string& name, float value, const std::string& library)
@@ -625,8 +666,22 @@ namespace LuaEmbedder
     return lua_isfunction(L, index);
   }
   
+  lua_State* GetFunctionLuaState(const std::string& key)
+  {
+    if (LuaFunctionStateMap.find(key) == LuaFunctionStateMap.end())
+    {
+        SDL_Log("LuaEmbedder::GetFunctionLuaState : Invalid key %s", key.c_str());
+        return nullptr;
+    }
+    return LuaFunctionStateMap[key];
+  }
+    
   void SaveFunction(lua_State* L, int index, const std::string& key)
   {
+	int top = lua_gettop(L);
+    
+    LuaFunctionStateMap[key] = L;
+      
     if (!lua_isfunction(L, index))
     {
       SDL_Log("LuaEmbedder::SaveFunction : Element at index %d is not a function", index);
@@ -648,10 +703,20 @@ namespace LuaEmbedder
     lua_pushvalue(L, index);
     lua_settable(L, -3);
     lua_pop(L, 1);
+	lua_settop(L, top);
   }
   
-  bool CallSavedFunction(lua_State* L, const std::string& key, int argumentCount)
+  bool CallSavedFunction(const std::string& key, int argumentCount)
   {
+      
+    if (LuaFunctionStateMap.find(key) == LuaFunctionStateMap.end())
+    {
+        SDL_Log("LuaEmbedder::CallSavedFunction : Invalid key %s", key.c_str());
+        return false;
+    }
+      
+    lua_State* L = LuaFunctionStateMap[key];
+      
     lua_getglobal(L, "saved_functions");
     if (lua_isnil(L, -1))
     {
@@ -671,7 +736,6 @@ namespace LuaEmbedder
     
     lua_insert(L, -(1 + argumentCount));
     bool error = lua_pcall(L, argumentCount, LUA_MULTRET, 0);
-    lua_gc(L, LUA_GCCOLLECT, 0);
     if (error)
     {
       SDL_Log("LuaEmbedder::CallFunction : %s", (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error"));

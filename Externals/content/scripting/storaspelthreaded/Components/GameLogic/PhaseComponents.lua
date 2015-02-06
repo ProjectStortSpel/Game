@@ -96,6 +96,15 @@ CheckCheckpointComponent.Name = "CheckCheckpoint"
 CheckCheckpointComponent.TableType = TableType.Map
 worldCreator:AddComponentType(CheckCheckpointComponent)
 
+--	CheckCheckpointForEntity
+local CheckCheckpointForEntity = ComponentType()
+CheckCheckpointForEntity.Name = "CheckCheckpointForEntity"
+CheckCheckpointForEntity.TableType = TableType.Map
+CheckCheckpointForEntity:AddVariable("EntityId", ByteSize.Reference)
+CheckCheckpointForEntity:AddVariable("PosX", ByteSize.Int)
+CheckCheckpointForEntity:AddVariable("PosZ", ByteSize.Int)
+worldCreator:AddComponentType(CheckCheckpointForEntity)
+
 --	Check Finish point
 local CheckFinishpointComponent = ComponentType()
 CheckFinishpointComponent.Name = "CheckFinishpoint"

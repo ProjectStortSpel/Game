@@ -37,8 +37,15 @@ local UnitSlingShotComponent = ComponentType()
 UnitSlingShotComponent.Name = "UnitSlingShot"
 UnitSlingShotComponent.TableType = TableType.Map
 worldCreator:AddComponentType(UnitSlingShotComponent)
+
 -- Sprint Component
 local UnitSprintComponent = ComponentType()
 UnitSprintComponent.Name = "UnitSprint"
 UnitSprintComponent.TableType = TableType.Map
 worldCreator:AddComponentType(UnitSprintComponent)
+
+-- IWin Component
+local UnitIWin = ComponentType()
+UnitIWin.Name = "UnitIWin"
+UnitIWin.TableType = TableType.Map
+worldCreator:AddComponentType(UnitIWin)

@@ -110,9 +110,9 @@ DealCardsSystem.DealCards = function (self, numCards)
 				elseif j == 4 then
 					cardactioncomp:SetString("Backward")
 				elseif j == 5 then
-					cardactioncomp:SetString("Right")
+					cardactioncomp:SetString("TurnRight")
 				elseif j == 6 then
-					cardactioncomp:SetString("Left")
+					cardactioncomp:SetString("TurnLeft")
 				elseif j == 7 then
 					cardactioncomp:SetString("TurnAround")
 				elseif j == 8 then

@@ -108,15 +108,15 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, dirX, dirY, posX, p
 	
 	local pickedcards = {}
 	pickedcards.__mode = "k"
-	if #CardSetAI >= 5 then
+	if #CardSetAI >= self.CardsPerHand then
 
 		local forwards = self:GetAllCardsOf(CardSetAI, "Forward")
 		local backwards = self:GetAllCardsOf(CardSetAI, "Backward")
 		local turnLefts = self:GetAllCardsOf(CardSetAI, "TurnLeft")
 		local turnRights = self:GetAllCardsOf(CardSetAI, "TurnRight")
 		local turnArounds = self:GetAllCardsOf(CardSetAI, "TurnAround")
-		
-		for i = 1, 5 do
+
+		for i = 1, self.NumberOfCardsToPick do
 			--print("Position : " .. posX .. ", " .. posY ..  "(x , y)")
 			--print("Target   : " .. targetX .. ", " .. targetY .. "(x , y)")
 			--print("Direction: " .. dirX .. ", " .. dirY .. "(x , y)")
