@@ -146,12 +146,13 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		local comp = self:GetComponent(newTile, "Model", 0)
 		comp:SetModel("grass", "grass", 0)
 		
-	else
+	elseif tiletype == 111 then
         world:CreateComponentAndAddTo("Void", newTile)
 		--world:CreateComponentAndAddTo("Model", entity)
 		--local comp = self:GetComponent(entity, "Model", 0)
 		--comp:SetModel("grass", "grass", 0)
-		
+	else
+		print("ERROR: TILETYPE NOT DEFINED IN sv_CreateMapSystem")
     end
 	
 	self.entities[#self.entities+1]=newTile
@@ -201,7 +202,7 @@ CreateMapSystem.CreateMap = function(self, name)
 		for x = 1, self.mapX do
 			local tiletype = map[(y - 1) * self.mapX + x]			
             local entity = self:AddTile(x, y, tiletype)
-			if tiletype == 120  
+			if tiletype == 120  or tiletype == 104 or tiletype == 111
 			then
 				inputData:AddTile( 1, false )
 			else

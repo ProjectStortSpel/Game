@@ -603,7 +603,7 @@ void Scheduler::AddCopyCurrentListsTask()
 
 void Scheduler::AddUpdateEntityTableTask()
 {
-	const unsigned int updateEntityTableWorkCount = m_taskManager->GetThreadCount();
+	const unsigned int updateEntityTableWorkCount = 1;// m_taskManager->GetThreadCount();
 
 	for (unsigned int i = 0; i < updateEntityTableWorkCount; ++i)
 	{
@@ -628,7 +628,7 @@ void Scheduler::AddUpdateEntityTableTask()
 
 void Scheduler::AddDeleteComponentDataTask()
 {
-	const unsigned int deleteComponentDataWorkCount = m_taskManager->GetThreadCount();
+	const unsigned int deleteComponentDataWorkCount = 1;// m_taskManager->GetThreadCount();
 
 	for (unsigned int i = 0; i < deleteComponentDataWorkCount; ++i)
 	{
