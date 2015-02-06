@@ -25,6 +25,8 @@
 
 #include "Logger/Managers/Logger.h"
 
+#include "Pathfinder.h"
+
 #include <iomanip>
 
 GameCreator::GameCreator() :
@@ -40,6 +42,8 @@ GameCreator::~GameCreator()
     NetworkInstance::DestroyServer();
     NetworkInstance::DestroyClientNetworkHelper();
     NetworkInstance::DestroyServerNetworkHelper();
+
+	Pathfinder::Destroy();
 
 	if (m_clientWorld)
 		delete m_clientWorld;
