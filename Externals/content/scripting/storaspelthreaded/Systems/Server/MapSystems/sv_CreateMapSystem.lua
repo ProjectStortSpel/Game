@@ -48,7 +48,7 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		world:CreateComponentAndAddTo("NotWalkable", newTile)
 		world:CreateComponentAndAddTo("Model", newTile)
 		local comp = self:GetComponent(newTile, "Model", 0)
-		comp:SetModel("anim_test3", "anim", 0)
+		comp:SetModel("stone", "stone", 0)
 		posComp:SetFloat3(posX, 0.8 + 0.1* math.random(-1, 1), posZ)
 		
 		local rotComp = self:GetComponent(newTile, "Rotation", 0)
