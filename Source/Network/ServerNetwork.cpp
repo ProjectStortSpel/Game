@@ -263,7 +263,10 @@ bool ServerNetwork::Stop()
 		*m_listenForConnectionsAlive = false;
 
 		if (m_listenSocket)
+		{
+			m_listenSocket->ShutdownSocket();
 			SAFE_DELETE(m_listenSocket);
+		}
 
 		m_listenForConnectionsThread->join();
 	}
