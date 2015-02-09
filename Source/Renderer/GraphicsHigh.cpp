@@ -13,7 +13,7 @@ GraphicsHigh::GraphicsHigh()
 	m_vramUsage = 0;
 	m_debugTexFlag = 0;
 	m_nrOfLights = 0;
-    m_pointerToDirectionalLights = 0;
+	m_pointerToDirectionalLights = 0;
 }
 
 GraphicsHigh::GraphicsHigh(Camera _camera, int x, int y) : GraphicDevice(_camera, x, y)
@@ -1185,16 +1185,21 @@ Buffer* GraphicsHigh::AddMesh(std::string _fileDir, Shader *_shaderProg)
 
 void GraphicsHigh::Clear()
 {
-  m_modelIDcounter = 0;
-  
-  m_modelsDeferred.clear();
-  m_modelsForward.clear();
-  m_modelsViewspace.clear();
-  m_modelsInterface.clear();
+	m_modelIDcounter = 0;
+	
+	m_modelsDeferred.clear();
+	m_modelsForward.clear();
+	m_modelsViewspace.clear();
+	m_modelsInterface.clear();
 
-  float **tmpPtr = new float*[1];
-  BufferPointlights(0, tmpPtr);
-  delete tmpPtr;
+	float **tmpPtr = new float*[1];
+	BufferPointlights(0, tmpPtr);
+	delete tmpPtr;
+  
+	m_pointerToPointlights = NULL;
+	m_pointerToDirectionalLights = NULL;
+	m_numberOfPointlights = 0;
+	m_numberOfDirectionalLights = 0;
 }
 
 bool GraphicsHigh::BufferModelTexture(int _id, std::string _fileDir, int _textureType)

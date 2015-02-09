@@ -74,17 +74,6 @@ AvailableSpawnpoint:AddVariable("X", ByteSize.Int)
 AvailableSpawnpoint:AddVariable("Z", ByteSize.Int)
 worldCreator:AddComponentType(AvailableSpawnpoint)
 
-
-
----- Map Size Component, added to exactly entity to signal how big the map is.
---local MapSizeComponent = ComponentType()
---MapSizeComponent.Name = "MapSize"
---MapSizeComponent.SyncNetwork = true
---MapSizeComponent.TableType = TableType.Map
---MapSizeComponent:AddVariable("X", ByteSize.Int)
---MapSizeComponent:AddVariable("Y", ByteSize.Int)
---worldCreator:AddComponentType(MapSizeComponent)
-
 -- Map Size Component, added to exactly entity to signal how big the map is.
 local MapSpecsComponent = ComponentType()
 MapSpecsComponent.Name = "MapSpecs"

@@ -14,9 +14,35 @@ AICardPickingSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("AI", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("AICard", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("TileComp", FilterType.RequiresOneOf)
-	--self:AddComponentTypeToFilter("MapSize", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("MapSpecs", FilterType.RequiresOneOf)
+	
+	--Console.AddCommand("AICheat", self.CheatMode)
 end
+
+--AddAISystem.CheatMode = function(_command, ...)
+--	
+--	local args = { ... }
+--	
+--	if #args == 1 then
+--		if type(args[1]) == "number" then
+--			if -1 < args[1] and args[1] < 2 then
+--				self.AICheat = args[1]
+--			end
+--		end
+--	else
+--		if self.AICheat == 0 then
+--			self.AICheat = 1
+--		else
+--			self.AICheat = 0
+--		end
+--	end
+--	
+--	if self.AICheat == 0 then
+--		print("AICheat off")
+--	else
+--		print("AICheat on")
+--	end
+--end
 
 AICardPickingSystem.Update = function(self, dt)
 	
@@ -337,8 +363,6 @@ end
 
 AICardPickingSystem.SimulatePlayOfCards = function(self, _unit, _pickedcards)
 	
-	--local mapSize = self:GetEntities("MapSize")	
-	--local mapX, mapY = self:GetComponent(mapSize[1], "MapSize", 0):GetInt2()
 	local posX, posY = self:GetComponent(_unit, "MapPosition", 0):GetInt2()
 	local dirX, dirY = self:GetComponent(_unit, "Direction", 0):GetInt2()
 	
@@ -550,7 +574,6 @@ AICardPickingSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, ent
 			local id = playerid:GetInt()
 			local plynum = self:GetComponent(id, "PlayerNumber", 0):GetInt()
 			local card = self:GetComponent(entities[i], "CardAction", 0):GetString()
-			--print ( plynum .. " gets a " .. card .. " Card" )
 		end
 	end
 end
