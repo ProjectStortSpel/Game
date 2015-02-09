@@ -36,7 +36,6 @@ CreateDeckSystem.CreateDeck = function (self)
 	
 	local mySeed = os.time() - 1418742000 -- dont ask
 	
-	local test = 0
 	math.randomseed(mySeed)
 	for i = 1, 100 * #self:GetEntities("Unit") do
 		
@@ -68,8 +67,6 @@ CreateDeckSystem.CreateDeck = function (self)
 			cardactioncomp:SetString("Forward")
 			
 		end
-
-		test = test + 1
 
 	end
 
