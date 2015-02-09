@@ -845,15 +845,20 @@ Buffer* GraphicsLow::AddMesh(std::string _fileDir, Shader *_shaderProg)
 
 void GraphicsLow::Clear()
 {
-  m_modelIDcounter = 0;
-  
-  m_modelsForward.clear();
-  m_modelsViewspace.clear();
-  m_modelsInterface.clear();
+	m_modelIDcounter = 0;
+	
+	m_modelsForward.clear();
+	m_modelsViewspace.clear();
+	m_modelsInterface.clear();
 
-  float **tmpPtr = new float*[1];
-  BufferPointlights(0, tmpPtr);
-  delete tmpPtr;
+	float **tmpPtr = new float*[1];
+	BufferPointlights(0, tmpPtr);
+	delete tmpPtr;
+	
+	m_pointerToPointlights = NULL;
+	m_pointerToDirectionalLights = NULL;
+	m_numberOfPointlights = 0;
+	m_numberOfDirectionalLights = 0;
 }
 
 bool GraphicsLow::BufferModelTexture(int _id, std::string _fileDir, int _textureType)
