@@ -1,4 +1,5 @@
 GameInterfaceSystem = System()
+GameInterfaceSystem.Name = "GameInterface"
 
 GameInterfaceSystem.Update = function(self, dt, taskIndex, taskCount)
 	if Input.GetTouchState(0) == InputState.Released then
@@ -13,6 +14,7 @@ GameInterfaceSystem.Update = function(self, dt, taskIndex, taskCount)
 			if world:EntityHasComponent(pressedButton, "MenuEntityCommand") then
 				local compname = self:GetComponent(pressedButton, "MenuEntityCommand", "ComponentName"):GetString()
 				local id = world:CreateNewEntity()
+				print(compname)
 				world:CreateComponentAndAddTo(compname, id)
 			end
 		else
@@ -27,27 +29,17 @@ end
 GameInterfaceSystem.Initialize = function(self)
 	self:SetName("GameInterfaceSystem")
 	self:UsingUpdate()
-	self:AddComponentTypeToFilter("InterfaceElement", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter(self.Name.."Element", FilterType.RequiresOneOf)
 end
 
 GameInterfaceSystem.CreateElement = function(self, object, folder, posx, posy, posz, scalex, scaley)
-	local id = world:CreateNewEntity()
-	world:CreateComponentAndAddTo("Model", id)
-	world:CreateComponentAndAddTo("Position", id)
-	world:CreateComponentAndAddTo("Rotation", id)
-	world:CreateComponentAndAddTo("Scale", id)
-	world:CreateComponentAndAddTo("PickBox", id)
-	world:CreateComponentAndAddTo("InterfaceElement", id)
-	local model = self:GetComponent(id, "Model", 0)
-	model:SetModel(object, folder, 3)
-	local position = self:GetComponent(id, "Position", 0)
-	position:SetFloat3(posx, posy, posz)
-	local scale = self:GetComponent(id, "Scale", 0)
-	scale:SetFloat3(scalex, scaley, 1)
-	local pickbox = self:GetComponent(id, "PickBox", 0)
-	pickbox:SetFloat2(1, 1)
-	local rotation = self:GetComponent(id, "Rotation", 0)
-	rotation:SetFloat3(0, 0, 0)
+	local id = world:CreateNewEntity("Button")
+	world:CreateComponentAndAddTo(self.Name.."Element", id)
+	self:GetComponent(id, "Model", 0):SetModel(object, folder, 2)
+	self:GetComponent(id, "Position", 0):SetFloat3(posx, posy, posz)
+	self:GetComponent(id, "Scale", 0):SetFloat3(scalex, scaley, 1)
+	self:GetComponent(id, "PickBox", 0):SetFloat2(1, 1)
+	self:GetComponent(id, "Rotation", 0):SetFloat3(0, 0, 0)
 	return id	
 end
 
@@ -73,7 +65,7 @@ GameInterfaceSystem.PostInitialize = function(self)
 
 	local menubutton = self:CreateElement("host", "quad", 0, 0.5, -5, 1, 0.5)
 	--self:AddConsoleCommandToButton("host;gamemode storaspel", menubutton)	
-	self:AddEntityCommandToButton("HostMenu", menubutton)
+	self:AddEntityCommandToButton("HostMenu2", menubutton)
 	self:AddHoverSize(1.5, menubutton)
 
 	local menubutton = self:CreateElement("join", "quad", 0, -0.5, -5, 1, 0.5)

@@ -36,3 +36,10 @@ SetPickingTimer.Name = "SetPickingTimer"
 SetPickingTimer:AddVariable("Time", ByteSize.Float)
 SetPickingTimer.TableType = TableType.Map
 worldCreator:AddComponentType(SetPickingTimer)
+
+-- Checkbox Component
+local CheckboxComponent = ComponentType()
+CheckboxComponent.Name = "Checkbox"
+CheckboxComponent:AddVariable("Checked", ByteSize.Int)
+CheckboxComponent.TableType = TableType.Map
+worldCreator:AddComponentType(CheckboxComponent)
