@@ -2,13 +2,13 @@
 #include "LuaEmbedder/LuaEmbedder.h"
 #include "LuaCamera.h"
 #include "../Math/LuaMatrix.h"
+#include "Game/LuaBridge/LuaBridge.h"
 
 namespace LuaBridge
 {
 	namespace LuaGraphicDevice
 	{
 		Renderer::GraphicDevice* g_graphicDevice = NULL;
-        lua_State* g_luaState;
 		
 		int GetAspectRatio(lua_State* L);
 		int GetTouchPosition(lua_State* L);
@@ -58,15 +58,10 @@ namespace LuaBridge
 			g_graphicDevice = graphicDevice;
 		}
         
-        void SetLuaState(lua_State* L)
-        {
-            g_luaState = L;
-        }
-
 		int GetAspectRatio(lua_State* L)
 		{
             lua_State* parent = LuaEmbedder::LuaChildrenParentMap.find(L) != LuaEmbedder::LuaChildrenParentMap.end() ? LuaEmbedder::LuaChildrenParentMap[L] : L;
-            if (g_luaState != parent)
+			if (LuaBridge::g_IOLuaState != parent)
             {
                 LuaEmbedder::PushFloat(L, 0.5625f);
                 LuaEmbedder::PushFloat(L, 0.5625f);
@@ -88,7 +83,7 @@ namespace LuaBridge
 			LuaEmbedder::PushFloat(-inputWrapper.GetTouch()->GetY(finger)+0.5f);
 			return 2;*/
             lua_State* parent = LuaEmbedder::LuaChildrenParentMap.find(L) != LuaEmbedder::LuaChildrenParentMap.end() ? LuaEmbedder::LuaChildrenParentMap[L] : L;
-            if (g_luaState != parent)
+			if (LuaBridge::g_IOLuaState != parent)
             {
                 LuaEmbedder::PushFloat(L, 0.0f);
                 LuaEmbedder::PushFloat(L, 0.0f);
@@ -109,7 +104,7 @@ namespace LuaBridge
 		int ResizeWindow(lua_State* L)
 		{
             lua_State* parent = LuaEmbedder::LuaChildrenParentMap.find(L) != LuaEmbedder::LuaChildrenParentMap.end() ? LuaEmbedder::LuaChildrenParentMap[L] : L;
-            if (g_luaState != parent)
+			if (LuaBridge::g_IOLuaState != parent)
                 return 0;
 			int width = LuaEmbedder::PullInt(L, 1);
 			int height = LuaEmbedder::PullInt(L, 2);
@@ -120,7 +115,7 @@ namespace LuaBridge
 		int SetTitle(lua_State* L)
 		{
             lua_State* parent = LuaEmbedder::LuaChildrenParentMap.find(L) != LuaEmbedder::LuaChildrenParentMap.end() ? LuaEmbedder::LuaChildrenParentMap[L] : L;
-            if (g_luaState != parent)
+			if (LuaBridge::g_IOLuaState != parent)
                 return 0;
 			std::string title = LuaEmbedder::PullString(L, 1);
 			//GraphicDevice::SetTitle(title);
@@ -130,7 +125,7 @@ namespace LuaBridge
 		int RenderSimpleText(lua_State* L)
 		{
             lua_State* parent = LuaEmbedder::LuaChildrenParentMap.find(L) != LuaEmbedder::LuaChildrenParentMap.end() ? LuaEmbedder::LuaChildrenParentMap[L] : L;
-            if (g_luaState != parent)
+			if (LuaBridge::g_IOLuaState != parent)
                 return 0;
 			std::string text = LuaEmbedder::PullString(L, 1);
 			int x = LuaEmbedder::PullInt(L, 2);
@@ -142,7 +137,7 @@ namespace LuaBridge
 		int SetSimpleTextColor(lua_State* L)
 		{
             lua_State* parent = LuaEmbedder::LuaChildrenParentMap.find(L) != LuaEmbedder::LuaChildrenParentMap.end() ? LuaEmbedder::LuaChildrenParentMap[L] : L;
-            if (g_luaState != parent)
+			if (LuaBridge::g_IOLuaState != parent)
                 return 0;
 			float r = LuaEmbedder::PullFloat(L, 1);
 			float g = LuaEmbedder::PullFloat(L, 2);
@@ -155,7 +150,7 @@ namespace LuaBridge
 		int GetCamera(lua_State* L)
 		{
             lua_State* parent = LuaEmbedder::LuaChildrenParentMap.find(L) != LuaEmbedder::LuaChildrenParentMap.end() ? LuaEmbedder::LuaChildrenParentMap[L] : L;
-            if (g_luaState != parent)
+			if (LuaBridge::g_IOLuaState != parent)
                 return 0;
 			Camera* camera = g_graphicDevice->GetCamera();
 			LuaEmbedder::PushObject<Camera>(L, "Camera", camera);
@@ -165,7 +160,7 @@ namespace LuaBridge
 		int SetCamera(lua_State* L)
 		{
             lua_State* parent = LuaEmbedder::LuaChildrenParentMap.find(L) != LuaEmbedder::LuaChildrenParentMap.end() ? LuaEmbedder::LuaChildrenParentMap[L] : L;
-            if (g_luaState != parent)
+			if (LuaBridge::g_IOLuaState != parent)
                 return 0;
 			return 0;
 		}
@@ -173,7 +168,7 @@ namespace LuaBridge
 		int GetWindowSize(lua_State* L)
 		{
             lua_State* parent = LuaEmbedder::LuaChildrenParentMap.find(L) != LuaEmbedder::LuaChildrenParentMap.end() ? LuaEmbedder::LuaChildrenParentMap[L] : L;
-            if (g_luaState != parent)
+			if (LuaBridge::g_IOLuaState != parent)
             {
                 LuaEmbedder::PushInt(L, 0);
                 LuaEmbedder::PushInt(L, 0);
@@ -189,7 +184,7 @@ namespace LuaBridge
 		int LoadModel(lua_State* L)
 		{
             lua_State* parent = LuaEmbedder::LuaChildrenParentMap.find(L) != LuaEmbedder::LuaChildrenParentMap.end() ? LuaEmbedder::LuaChildrenParentMap[L] : L;
-            if (g_luaState != parent)
+			if (LuaBridge::g_IOLuaState != parent)
             {
                 LuaEmbedder::PushInt(L, -1);
                 return 1;
@@ -205,7 +200,7 @@ namespace LuaBridge
 		int ChangeModelTexture(lua_State* L)
 		{
             lua_State* parent = LuaEmbedder::LuaChildrenParentMap.find(L) != LuaEmbedder::LuaChildrenParentMap.end() ? LuaEmbedder::LuaChildrenParentMap[L] : L;
-            if (g_luaState != parent)
+			if (LuaBridge::g_IOLuaState != parent)
             {
                 LuaEmbedder::PushBool(L, false);
                 return 1;
@@ -220,7 +215,7 @@ namespace LuaBridge
 		int ChangeModelNormalMap(lua_State* L)
 		{
             lua_State* parent = LuaEmbedder::LuaChildrenParentMap.find(L) != LuaEmbedder::LuaChildrenParentMap.end() ? LuaEmbedder::LuaChildrenParentMap[L] : L;
-            if (g_luaState != parent)
+			if (LuaBridge::g_IOLuaState != parent)
             {
                 LuaEmbedder::PushBool(L, false);
                 return 1;
@@ -235,7 +230,7 @@ namespace LuaBridge
 		int ChangeModelSpecularMap(lua_State* L)
 		{
             lua_State* parent = LuaEmbedder::LuaChildrenParentMap.find(L) != LuaEmbedder::LuaChildrenParentMap.end() ? LuaEmbedder::LuaChildrenParentMap[L] : L;
-            if (g_luaState != parent)
+			if (LuaBridge::g_IOLuaState != parent)
             {
                 LuaEmbedder::PushBool(L, false);
                 return 1;
@@ -250,7 +245,7 @@ namespace LuaBridge
 		int AddFont(lua_State* L)
 		{
             lua_State* parent = LuaEmbedder::LuaChildrenParentMap.find(L) != LuaEmbedder::LuaChildrenParentMap.end() ? LuaEmbedder::LuaChildrenParentMap[L] : L;
-            if (g_luaState != parent)
+			if (LuaBridge::g_IOLuaState != parent)
             {
                 LuaEmbedder::PushInt(L, -1);
                 return 1;
@@ -265,7 +260,7 @@ namespace LuaBridge
 		int CreateTextTexture(lua_State* L)
 		{
             lua_State* parent = LuaEmbedder::LuaChildrenParentMap.find(L) != LuaEmbedder::LuaChildrenParentMap.end() ? LuaEmbedder::LuaChildrenParentMap[L] : L;
-            if (g_luaState != parent)
+			if (LuaBridge::g_IOLuaState != parent)
             {
                 LuaEmbedder::PushFloat(L, 0.0f);
                 return 1;
@@ -288,7 +283,7 @@ namespace LuaBridge
 		int CreateWrappedTextTexture(lua_State* L)
 		{
             lua_State* parent = LuaEmbedder::LuaChildrenParentMap.find(L) != LuaEmbedder::LuaChildrenParentMap.end() ? LuaEmbedder::LuaChildrenParentMap[L] : L;
-            if (g_luaState != parent)
+			if (LuaBridge::g_IOLuaState != parent)
                 return 0;
             
 			std::string textureName = LuaEmbedder::PullString(L, 1);

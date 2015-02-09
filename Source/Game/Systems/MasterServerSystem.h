@@ -19,7 +19,8 @@ class MasterServerSystem : public ECSL::System
 		PLAYER_COUNT_DECREASED,
 		SPECTATOR_COUNT_INCREASED,
 		SPECTATOR_COUNT_DECREASED,
-		GET_SERVER_LIST
+		GET_SERVER_LIST,
+		GAME_PING
 	};
 
 public:
@@ -47,6 +48,8 @@ private:
 	bool m_serverStarted;
 	bool m_connect;
 	int m_port;
+
+	float m_timeoutTimer;
 
 	void OnConnectionAccepted(Network::NetConnection _nc, const char* _msg);
 	void OnGetServerList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);

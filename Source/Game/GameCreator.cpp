@@ -237,7 +237,7 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
     }
     
 	LuaBridge::LuaGraphicDevice::SetGraphicDevice(m_graphics);
-    LuaBridge::LuaGraphicDevice::SetLuaState(m_clientLuaState);
+    LuaBridge::SetIOLuaState(m_clientLuaState);
     
     LuaBridge::LuaNetwork::SetClientLuaState(m_clientLuaState);
     LuaBridge::LuaNetwork::SetServerLuaState(m_serverLuaState);
@@ -647,12 +647,12 @@ void GameCreator::Reload()
     
     if (!NetworkInstance::GetClient()->IsConnected() && NetworkInstance::GetServer()->IsRunning())
     {
-        LuaBridge::LuaGraphicDevice::SetLuaState(m_serverLuaState);
+        LuaBridge::SetIOLuaState(m_serverLuaState);
         LuaBridge::LuaEntityTemplateManager::SetLuaState(m_serverLuaState);
     }
     else
     {
-        LuaBridge::LuaGraphicDevice::SetLuaState(m_clientLuaState);
+        LuaBridge::SetIOLuaState(m_clientLuaState);
         LuaBridge::LuaEntityTemplateManager::SetLuaState(m_clientLuaState);
     }
 

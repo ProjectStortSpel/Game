@@ -392,6 +392,12 @@ AICardPickingSystem.SimulatePlayOfCards = function(self, _unit, _pickedcards)
 			
 			fellDown, posX, posY, dirX, dirY = self:SimulateTurnLeft(posX, posY, dirX, dirY, 2)
 			
+		elseif cardName == "SlingShot" then
+		
+			print(posX, posY, dirX, dirY)
+			fellDown, posX, posY, dirX, dirY = self:SimulateTurnLeft(posX, posY, dirX, dirY, 0)
+			print(posX, posY, dirX, dirY)
+			
 		else
 		
 			print("ERROR: CARD NOT ADDED IN SIMULATE CARDS", cardName)

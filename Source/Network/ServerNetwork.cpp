@@ -45,6 +45,7 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t& 
 		auto newPacket = _packetHandler->EndPack(id2);
 		Send(newPacket, _connection);
 		m_connectedClientsLock->lock();
+		(*m_connectedClients)[_connection]->ShutdownSocket();
 		(*m_connectedClients)[_connection]->SetActive(0);
 		m_connectedClientsLock->unlock();
 		(*m_receivePacketsThreads)[_connection].join();
