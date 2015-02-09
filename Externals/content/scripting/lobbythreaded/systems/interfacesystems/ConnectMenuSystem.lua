@@ -46,6 +46,23 @@ ConnectMenuSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entit
 	end
 end
 
+ConnectMenuSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
+
+	--local serversList = 
+
+	for i = 1, #entities do
+		local buttonId = world:GetComponent(entities[i], "ServerListEntry", "ButtonId"):GetInt(0)
+		local textId = world:GetComponent(entities[i], "ServerListEntry", "TextId"):GetInt(0)
+		if buttonId > 0 and textId > 0 then
+			world:KillEntity(buttonId)
+			world:KillEntity(textId)
+		end
+	end
+
+	--self:RefreshMenu()
+	
+end
+
 ConnectMenuSystem.SpawnMenu = function(self)
 	local background = self:CreateElement("gamemenubackground", "quad", 0, 0, -2.1, 2.07, 1.3)
 	local servers = self:GetEntities("ServerListEntry")
@@ -62,6 +79,7 @@ ConnectMenuSystem.SpawnMenu = function(self)
 
 	for i = 1, #servers do
 		server = servers[i]
+		print("\nSERVER ID: " .. server)
 		servername = self:GetComponent(server, "ServerListEntry", "Name"):GetString(0)
 		serverip = self:GetComponent(server, "ServerListEntry", "IpAddress"):GetString(0)
         serverport = self:GetComponent(server, "ServerListEntry", "Port"):GetInt(0)
@@ -69,10 +87,19 @@ ConnectMenuSystem.SpawnMenu = function(self)
 		servermaxusers = self:GetComponent(server, "ServerListEntry", "MaxUsers"):GetInt(0)
 		servergamestarted = self:GetComponent(server, "ServerListEntry", "GameStarted"):GetBool(0)
 		button = self:CreateElement("shade", "quad", 0, 0.6-i*0.11, -2.0, 1.8, 0.1)
+		
+		
+		--self.ServersList[#self.ServersList+1] = server
+		
+		print("BUTTON ID: " .. button .. "\n")
 		self:AddConsoleCommandToButton("connect "..serverip .. " " .. serverport, button)
 		self:AddHoverSize(1.005, button)
 		
-		text = self:CreateText("center", "text", -0.85, 0.64-i*0.11, -1.999, 0.08, 0.08)	
+		text = self:CreateText("center", "text", -0.85, 0.64-i*0.11, -1.999, 0.08, 0.08)
+
+		world:SetComponent(server, "ServerListEntry", "ButtonId", button)
+		world:SetComponent(server, "ServerListEntry", "TextId", text)
+		
 		if servergamestarted == true then
 			self:AddTextToTexture("C0"..i, "X", 0, 1, 0, 0, text)
 		else
@@ -116,6 +143,7 @@ ConnectMenuSystem.Initialize = function(self)
 	self:SetName(self.Name.."System")
 	self:UsingUpdate()
 	self:UsingEntitiesAdded()
+	self:UsingEntitiesRemoved()
 	self:AddComponentTypeToFilter(self.Name, FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter(self.Name.."Element", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("ServerListEntry", FilterType.RequiresOneOf)

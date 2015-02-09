@@ -9,7 +9,7 @@ ClientDatabase& ClientDatabase::GetInstance()
 }
 
 ClientDatabase::ClientDatabase()
-	:m_ipAddress("194.47.150.44"), m_password("DefaultMasterPassword"), m_remotePort(5509), m_localPort(0), m_connected(false), m_tryConnect(true)
+	:m_ipAddress("127.0.0.1"), m_password("DefaultMasterPassword"), m_remotePort(5509), m_localPort(0), m_connected(false), m_tryConnect(true)
 {
 	Logger::GetInstance().AddGroup("MasterServer", false);
 
@@ -246,6 +246,21 @@ void ClientDatabase::RequestServerList()
 	m_client.Send(packet);
 
 	//m_client.Disconnect();
+}
+
+void ClientDatabase::PingServer()
+{
+	if (!m_connected)
+	{
+		Logger::GetInstance().Log("MasterServer", Info, "Tried to send \"PING_SERVER\", but is not connected to MasterServer");
+		return;
+	}
+
+	auto ph = m_client.GetPacketHandler();
+	auto id = ph->StartPack("PING_SERVER");
+	auto packet = ph->EndPack(id);
+	m_client.Send(packet);
+
 }
 
 void ClientDatabase::HookOnGetServerList(Network::NetMessageHook& _hook)

@@ -39,6 +39,7 @@ void MasterServerSystem::PostInitialize()
 {
 	m_clientDatabase = &ClientDatabase::GetInstance();
 	m_connect = true;
+	m_timeoutTimer = 0.f;
 
 	Network::NetEvent hook = std::bind(&MasterServerSystem::OnConnectionAccepted, this, std::placeholders::_1, std::placeholders::_2);
 	m_clientDatabase->HookOnConnectionAccepted(hook);
@@ -99,8 +100,15 @@ void MasterServerSystem::Update(const ECSL::RuntimeInfo& _runtime)
 
 	}
 
-	if (NetworkInstance::GetClient()->IsConnected() || NetworkInstance::GetServer()->IsRunning())
-		return;
+	if (NetworkInstance::GetServer()->IsRunning())
+	{
+		m_timeoutTimer += _runtime.Dt;
+		if (m_timeoutTimer > 10.f)
+		{
+			m_timeoutTimer = 0.f;
+			m_mServerMessages.push_back(GAME_PING);
+		}
+	}
 }
 
 void MasterServerSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities)
@@ -132,36 +140,49 @@ void MasterServerSystem::OnConnectionAccepted(Network::NetConnection _nc, const 
 		{
 		case ADD_TO_DATABASE:
 			m_clientDatabase->AddToDatabase(m_port, m_pwProtected);
+			m_timeoutTimer = 0.f;
 			break;
 		case REMOVE_FROM_DATABASE:
 			m_clientDatabase->RemoveFromDatabase();
+			m_timeoutTimer = 0.f;
 			break;
 		case GAME_STARTED:
 			m_clientDatabase->SetGameStarted(m_serverStarted);
+			m_timeoutTimer = 0.f;
 			break;
 		case IS_PASSWORD_PROTECTED:
 			m_clientDatabase->SetPasswordProtected(m_pwProtected);
+			m_timeoutTimer = 0.f;
 			break;
 		case SET_SERVER_PORT:
 			m_clientDatabase->SetServerPort(m_port);
+			m_timeoutTimer = 0.f;
 			break;
 		case MAX_PLAYER_COUNT_INCREASED:
 			m_clientDatabase->IncreaseMaxNoPlayers();
+			m_timeoutTimer = 0.f;
 			break;
 		case PLAYER_COUNT_INCREASED:
 			m_clientDatabase->IncreaseNoPlayers();
+			m_timeoutTimer = 0.f;
 			break;
 		case PLAYER_COUNT_DECREASED:
 			m_clientDatabase->DecreaseNoPlayers();
+			m_timeoutTimer = 0.f;
 			break;
 		case SPECTATOR_COUNT_INCREASED:
 			m_clientDatabase->IncreaseNoSpectators();
+			m_timeoutTimer = 0.f;
 			break;
 		case SPECTATOR_COUNT_DECREASED:
 			m_clientDatabase->DecreaseNoSpectators();
+			m_timeoutTimer = 0.f;
 			break;
 		case GET_SERVER_LIST:
 			m_clientDatabase->RequestServerList();
+			break;
+		case GAME_PING:
+			m_clientDatabase->PingServer();
 			break;
 		default:
 			break;
@@ -182,6 +203,12 @@ void MasterServerSystem::OnGetServerList(Network::PacketHandler* _ph, uint64_t& 
 {
 	if (NetworkInstance::GetClient()->IsConnected() || NetworkInstance::GetServer()->IsRunning())
 		return;
+
+	for (int i = 0; i < m_serverIds.size(); ++i)
+		KillEntity(m_serverIds[i]);
+
+	m_serverIds.clear();
+
 
 	int noServers = _ph->ReadInt(_id);
 	ServerInfo si;
@@ -287,11 +314,6 @@ void MasterServerSystem::EntitiesAddedNeither(const ECSL::RuntimeInfo& _runtime,
 			m_mServerMessages.push_back(GET_SERVER_LIST);
 			
 			KillEntity(entityId);
-
-			for (int i = 0; i < m_serverIds.size(); ++i)
-				KillEntity(m_serverIds[i]);
-
-			m_serverIds.clear();
 			m_clientDatabase->SetTryConnect(true);
 
 		}
