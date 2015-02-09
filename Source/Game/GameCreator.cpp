@@ -983,7 +983,13 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 			delete(m_graphics);
 
 			m_graphics = new Renderer::GraphicsHigh(tmpCam, windowx, windowy);
-			m_graphics->Init();
+			if (!m_graphics->Init())
+			{
+				SDL_Log("Switching to OpenGL 4.0");
+				delete(m_graphics);
+				m_graphics = new Renderer::GraphicsLow();
+				m_graphics->Init();
+			}
 		}
 
 		else if (strcmp((*_args)[0].Text, "low") == 0)
