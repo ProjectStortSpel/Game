@@ -8,13 +8,40 @@ AddAISystem.Initialize = function(self)
 	
 	self:AddComponentTypeToFilter("AI", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("PlayerCounter", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("MapSpecs", FilterType.RequiresOneOf)
 	
 	Console.AddCommand("AddAI", self.AddAI)
+	Console.AddCommand("AI", self.FillWithAIs)
 end
 
 AddAISystem.AddAI = function(_command, ...)
+	
+	local counterEntities = self:GetEntities("PlayerCounter")
+	local noOfPlayers = self:GetComponent(counterEntities[1], "PlayerCounter", "Players"):GetInt()
+	
+	local mapSpecsEntity = self:GetEntities("MapSpecs")
+	local noOfSpawnPoints = self:GetComponent(mapSpecsEntity, "MapSpecs", "NoOfSpawnPoints"):GetInt()
+	
+	local availableSpawnsLeft = noOfSpawnPoints - noOfPlayers
+	
+	if availableSpawnsLeft > 0 then
+		local newAI = world:CreateNewEntity("AI")
+	end
+end
 
-	local newAI = world:CreateNewEntity("AI")
+AddAISystem.FillWithAIs = function(_command, ...)
+	
+	local counterEntities = self:GetEntities("PlayerCounter")
+	local noOfPlayers = self:GetComponent(counterEntities[1], "PlayerCounter", "Players"):GetInt()
+	
+	local mapSpecsEntity = self:GetEntities("MapSpecs")
+	local noOfSpawnPoints = self:GetComponent(mapSpecsEntity, "MapSpecs", "NoOfSpawnPoints"):GetInt()
+	
+	local availableSpawnsLeft = noOfSpawnPoints - noOfPlayers
+	
+	for i = 1, availableSpawnsLeft do
+		local newAI = world:CreateNewEntity("AI")
+	end
 end
 
 AddAISystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
@@ -23,8 +50,8 @@ AddAISystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 		if world:EntityHasComponent(entities[i], "AI") then
 			
 			local counterEntities = self:GetEntities("PlayerCounter")
-			local counterComp = world:GetComponent(counterEntities[1], "PlayerCounter", 0)
-			local maxPlayers, noOfPlayers = counterComp:GetInt2()
+			local counterComp = world:GetComponent(counterEntities[1], "PlayerCounter", "Players")
+			local noOfPlayers = counterComp:GetInt()
 			
 			local newName = "Player_" .. tostring(noOfPlayers + 1)
 			world:SetComponent(entities[i], "PlayerName", "Name", newName)
