@@ -61,6 +61,7 @@ public:
 	void IncreaseMaxNoPlayers();
 
 	void RequestServerList();
+	void PingServer();
 
 	void SetTryConnect(bool _value) {m_tryConnect = _value;}
 	void ResetNetworkEvents();

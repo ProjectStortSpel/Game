@@ -248,6 +248,21 @@ void ClientDatabase::RequestServerList()
 	//m_client.Disconnect();
 }
 
+void ClientDatabase::PingServer()
+{
+	if (!m_connected)
+	{
+		Logger::GetInstance().Log("MasterServer", Info, "Tried to send \"PING_SERVER\", but is not connected to MasterServer");
+		return;
+	}
+
+	auto ph = m_client.GetPacketHandler();
+	auto id = ph->StartPack("PING_SERVER");
+	auto packet = ph->EndPack(id);
+	m_client.Send(packet);
+
+}
+
 void ClientDatabase::HookOnGetServerList(Network::NetMessageHook& _hook)
 {
 	m_client.AddNetworkHook("GET_SERVER_LIST", _hook);

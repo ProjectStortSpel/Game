@@ -27,7 +27,7 @@ MapGenerator.Initialize = function(self)
 end
 
 MapGenerator.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
-	self:GenerateMap(1337, 4, 4)
+	self:GenerateMap(1651654, 4, 4)
 end
 
 MapGenerator.PostInitialize = function(self)
@@ -63,10 +63,17 @@ MapGenerator.GenerateMap = function(self, randSeed, numberOfPlayers, numberOfChe
 	--	Carve away tiles around the map
 	self:CarveEdges()
 	
-	--	Remove tiles that are floating alone
-	self:DeleteEmptyTiles()
-	
 	self:GenerateRivers()
+	
+	for Z = 1, self.MapSizeZ do
+		for X = 1, self.MapSizeX do
+			if self:GetTileType(X-1, Z-1) == self.Void then
+				self:RemoveTile(X-1, Z-1)
+				local	newTile	=	self:GenerateEmptyTile(X-1, Z-1)
+				world:CreateComponentAndAddTo("Void", newTile)
+			end
+		end
+	end
 	
 	for X = 1, self.MapSizeX do
 		self:RemoveTile(X-1, 0)
@@ -87,6 +94,13 @@ MapGenerator.GenerateMap = function(self, randSeed, numberOfPlayers, numberOfChe
 		newTile	=	self:GenerateEmptyTile(self.MapSizeX-1, Z-1)
 		world:CreateComponentAndAddTo("Void", newTile)
 	end
+	
+
+	
+	--	Remove tiles that are floating alone
+	self:DeleteEmptyTiles()
+	
+	
 	
 	--	Run it multiple times to fill all gaps
 	for n = 1, 5 do
@@ -232,8 +246,7 @@ MapGenerator.CarveEdges = function(self)
 			tempZ	=	self.MapSizeZ - tempZ - 1
 		end
 		
-		local	tileId	=	self:GetEntityId(tempX, tempZ)
-		if tileId ~= -1 then
+		if self:GetTileType(tempX, tempZ) ~= self.Void then
 			self:RemoveTile(tempX, tempZ)
 			maxNumberOfCarves = maxNumberOfCarves - 1
 			carveTries	=	0
@@ -290,7 +303,7 @@ MapGenerator.DeleteEmptyTiles = function(self)
 
 	for X = 0, self.MapSizeX-1 do
 		for Z = 0, self.MapSizeZ-1 do
-			if self:GetEntityId(X, Z) ~= -1 then
+			if self:GetTileType(X, Z) ~= self.Void then
 				if self:NumberOfNeighbours(X, Z) == 0 then
 					self:RemoveTile(X, Z)
 				end
@@ -313,7 +326,7 @@ MapGenerator.GenerateHoles = function(self)
 	
 	for X = 0, self.MapSizeX-1 do
 		for Z = 0, self.MapSizeZ-1 do
-			if self:GetEntityId(X, Z) == -1 then
+			if self:GetTileType(X, Z) == self.Void then
 				if self:NumberOfNeighbours(X, Z) >= 3 then
 					self:GenerateHole(X,Z)
 				end
@@ -635,7 +648,7 @@ MapGenerator.PlaceCheckpoints = function(self)
 	local	tPosX		=	0
 	local	tPosZ		=	0
 	local	minDistance	=	math.ceil(math.sqrt(self.MapSizeX*self.MapSizeZ*self.Checkpoints)/math.max(2, self.Players))
-	
+	local	randomTries	=	0
 	while checkpointsLeft > 0 do
 		
 		tPosX	=	math.random(math.floor(self.MapSizeX/10), math.ceil(self.MapSizeX-math.ceil(self.MapSizeX/10)))
@@ -649,6 +662,12 @@ MapGenerator.PlaceCheckpoints = function(self)
 				
 				checkpointsLeft	=	checkpointsLeft - 1
 				self:CreateCheckPoint(tPosX, tPosZ, self.Checkpoints-checkpointsLeft)
+			else
+				randomTries	=	randomTries + 1
+				
+				if randomTries >= 10 then
+					minDistance	=	math.floor(minDistance*0.8)
+				end
 			end
 		end
 	end
