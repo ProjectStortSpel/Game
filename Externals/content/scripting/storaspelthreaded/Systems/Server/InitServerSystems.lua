@@ -84,14 +84,23 @@ require "sv_ServerNetworkMessageSystem"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(MapGenerator)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(RiverSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(VoidSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CheckpointSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(DirectionalLightSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(PlayerSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(UnitSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(AddAISystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(AICardPickingSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(PostMoveSystem)
 
 worldCreator:AddSystemGroup()
@@ -101,18 +110,24 @@ worldCreator:AddSystemToCurrentGroup(TestMoveRiverSystem)
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CreateDeckSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(AddCardPickTimer)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(SetCardPickTimer)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(UpdateCardPickTimer)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CreateCardPickTimer)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(AutoPickCards)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(DealCardsSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(TakeCardStepsFromUnitSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(TakeCardsFromPlayerSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(PlayCardSystem)
-
-
-
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ActionMoveForwardSystem)
@@ -124,9 +139,6 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ActionTurnRightSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ActionTurnAroundSystem)
-
-
-
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(AbilitySprintSystem)
