@@ -89,8 +89,8 @@ void ServerNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uin
 	if (tmp != m_connectedClients->end())
 	{
 		(*m_connectedClients)[_connection]->ShutdownSocket();
-		(*m_connectedClients)[_connection]->SetActive(0);
-		m_connectedClients->erase(tmp);
+		//(*m_connectedClients)[_connection]->SetActive(0);
+		//m_connectedClients->erase(tmp);
 	}
 	m_connectedClientsLock->unlock();
 
@@ -293,8 +293,6 @@ void ServerNetwork::Broadcast(Packet* _packet, const NetConnection& _exclude)
 		if (it->first == _exclude || it->second->GetActive() != 2)
 			continue;
 
-
-
 		int size = it->second->Send((char*)_packet->Data, *_packet->Length);
 
 		if (NET_DEBUG)
@@ -343,10 +341,12 @@ void ServerNetwork::Send(Packet* _packet, NetConnection& _receiver)
 		*m_totalDataSent += bytesSent;
 		*m_currentDataSent += bytesSent;
 	}
+	else
+	{
+	}
 	m_dataSentLock->unlock();
 
 	SAFE_DELETE(_packet);
-	return;
 }
 
 void ServerNetwork::ReceivePackets(ISocket* _socket)
@@ -415,6 +415,7 @@ void ServerNetwork::ReceivePackets(ISocket* _socket)
 		}
 		else
 		{
+			_socket->SetActive(0);
 		}
 
 	}
@@ -422,10 +423,10 @@ void ServerNetwork::ReceivePackets(ISocket* _socket)
 	m_connectedClientsLock->lock();
 	m_connectedClients->erase(_socket->GetNetConnection());
 	m_connectedClientsNC.erase(std::remove(m_connectedClientsNC.begin(), m_connectedClientsNC.end(), _socket->GetNetConnection()), m_connectedClientsNC.end());
+	SAFE_DELETE(_socket);
 	m_connectedClientsLock->unlock();
 
 	delete packetData;
-	SAFE_DELETE(_socket);
 }
 
 void ServerNetwork::ListenForConnections(void)
@@ -593,6 +594,7 @@ void ServerNetwork::ResetNetworkEvents()
 	m_onPlayerConnected->clear();
 	m_onPlayerDisconnected->clear();
 	m_onPlayerTimedOut->clear();
+	m_onServerShutdown->clear();
 }
 
 void ServerNetwork::Kick(NetConnection& _connection, const char* _reason)

@@ -45,10 +45,21 @@ private:
 	
 	bool m_pwProtected;
 	bool m_serverStarted;
+	bool m_connect;
 	int m_port;
 
+	void OnConnectionAccepted(Network::NetConnection _nc, const char* _msg);
 	void OnGetServerList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
 	void OnServerShutdown();
+
+	void EntitiesAddedServer(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities);
+	void EntitiesAddedClient(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities);
+	void EntitiesAddedNeither(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities);
+
+	void EntitiesRemovedServer(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities);
+	void EntitiesRemovedClient(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities);
+	void EntitiesRemovedNeither(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities);
+
 };
 
 #endif

@@ -83,3 +83,9 @@ MapSpecsComponent:AddVariable("NoOfSpawnpoints", ByteSize.Int)
 MapSpecsComponent:AddVariable("SizeX", ByteSize.Int)
 MapSpecsComponent:AddVariable("SizeY", ByteSize.Int)
 worldCreator:AddComponentType(MapSpecsComponent)
+
+--	GenerateMap
+local GenerateMap = ComponentType()
+GenerateMap.Name = "GenerateMap"
+GenerateMap.TableType = TableType.Map
+worldCreator:AddComponentType(GenerateMap)

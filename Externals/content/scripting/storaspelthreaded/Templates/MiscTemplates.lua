@@ -12,6 +12,7 @@ EntityTemplateManager:AddTemplate(Head)
 local TotemHead = EntityTemplate()
 TotemHead.Name = "TotemPiece"
 TotemHead:AddComponent("Model")
+TotemHead:AddComponent("TotemPiece")
 --	Model data
 TotemHead:SetFloat3("Position", 0.0, 1.0, 0.0)
 TotemHead:SetFloat3("Rotation", 0.0, math.pi, 0.0)

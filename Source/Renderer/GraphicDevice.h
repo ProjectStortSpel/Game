@@ -83,6 +83,7 @@ namespace Renderer
 
 	struct ModelToLoad
 	{
+		bool Animated;
 		std::string Dir;
 		std::string File;
 		glm::mat4* MatrixPtr;
@@ -124,6 +125,7 @@ namespace Renderer
 		// MODELLOADER
 		virtual bool PreLoadModel(std::string _dir, std::string _file, int _renderType = RENDER_DEFERRED){ return false; };// = 0;
 		virtual int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED){ return 0; };// = 0;
+		virtual int LoadAModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED){ return 0; };// = 0;
 		virtual bool RemoveModel(int _id){ return false; };// = 0;
 		virtual bool ActiveModel(int _id, bool _active){ return false; };// = 0;
 		virtual bool ChangeModelTexture(int _id, std::string _fileDir, int _textureType = TEXTURE_DIFFUSE){ m_modelTextures.push_back({ _id, _fileDir, _textureType }); return false; };// = 0;
@@ -157,6 +159,7 @@ namespace Renderer
 		float m_dt;
 		int m_fps;
 
+		const char*	m_windowCaption;
 		bool m_SDLinitialized;
 
 		//// Window size

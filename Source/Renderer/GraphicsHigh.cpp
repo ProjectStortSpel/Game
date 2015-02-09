@@ -473,7 +473,6 @@ bool GraphicsHigh::InitSDLWindow()
 {
 	// WINDOW SETTINGS
 	unsigned int	Flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
-	const char*		Caption = "SDL Window";
 
 	int				SizeX = 256 * 5;	//1280
 	int				SizeY = 144 * 5;	//720
@@ -488,7 +487,7 @@ bool GraphicsHigh::InitSDLWindow()
 
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
-	m_window = SDL_CreateWindow(Caption, m_windowPosX, m_windowPosY, SizeX, SizeY, Flags);
+	m_window = SDL_CreateWindow(m_windowCaption, m_windowPosX, m_windowPosY, SizeX, SizeY, Flags);
 
 	if (m_window == NULL){
 		std::cout << SDL_GetError() << std::endl;
@@ -874,6 +873,24 @@ bool GraphicsHigh::PreLoadModel(std::string _dir, std::string _file, int _render
 
 	return true;
 }
+int GraphicsHigh::LoadAModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType)
+{
+	int modelID = m_modelIDcounter;
+	m_modelIDcounter++;
+	_renderType = 1;
+	//	Lägg till i en lista, följande
+	//	std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType
+
+	ModelToLoad* modelToLoad = new ModelToLoad();
+	modelToLoad->Animated = true;
+	modelToLoad->Dir = _dir;
+	modelToLoad->File = _file;
+	modelToLoad->MatrixPtr = _matrixPtr;
+	modelToLoad->RenderType = _renderType;
+	m_modelsToLoad[modelID] = modelToLoad;
+
+	return modelID;
+}
 int GraphicsHigh::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType)
 {
 	int modelID = m_modelIDcounter;
@@ -883,6 +900,7 @@ int GraphicsHigh::LoadModel(std::string _dir, std::string _file, glm::mat4 *_mat
 	//	std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType
 
 	ModelToLoad* modelToLoad = new ModelToLoad();
+	modelToLoad->Animated = false;
 	modelToLoad->Dir = _dir;
 	modelToLoad->File = _file;
 	modelToLoad->MatrixPtr = _matrixPtr;

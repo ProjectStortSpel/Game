@@ -48,6 +48,16 @@ ModelComponent:AddVariable("ModelPath", ByteSize.Text)
 ModelComponent:AddVariable("RenderType", ByteSize.Int)
 worldCreator:AddComponentType(ModelComponent)
 
+--	AnimationModel Component
+local AModelComponent = ComponentType()
+AModelComponent.Name = "AModel"
+AModelComponent.SyncNetwork = true
+AModelComponent.TableType = TableType.Map
+AModelComponent:AddVariable("ModelName", ByteSize.Text)
+AModelComponent:AddVariable("ModelPath", ByteSize.Text)
+AModelComponent:AddVariable("RenderType", ByteSize.Int)
+worldCreator:AddComponentType(AModelComponent)
+
 -- Hide Component
 local HideComponent = ComponentType()
 HideComponent.Name = "Hide"

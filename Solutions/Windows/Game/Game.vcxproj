@@ -234,6 +234,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClCompile Include="..\..\..\Source\Game\Profilers\ECSLWorkItemView.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Quaternion.cpp" />
     <ClCompile Include="..\..\..\Source\Game\RemoteConsole.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\Systems\AModelSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\CameraSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\DirectionalLightSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\MasterServerSystem.cpp" />
@@ -285,6 +286,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClInclude Include="..\..\..\Source\Game\Profilers\ECSLWorkItemView.h" />
     <ClInclude Include="..\..\..\Source\Game\Quaternion.h" />
     <ClInclude Include="..\..\..\Source\Game\RemoteConsole.h" />
+    <ClInclude Include="..\..\..\Source\Game\Systems\AModelSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\CameraSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\DirectionalLightSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\MasterServerSystem.h" />

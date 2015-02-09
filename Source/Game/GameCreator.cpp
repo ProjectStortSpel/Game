@@ -5,6 +5,7 @@
 #include "Systems/CameraSystem.h"
 #include "Systems/RotationSystem.h"
 #include "Systems/ModelSystem.h"
+#include "Systems/AModelSystem.h"
 #include "Systems/SyncEntitiesSystem.h"
 #include "Systems/RenderRemoveSystem.h"
 #include "Systems/ResetChangedSystem.h"
@@ -80,7 +81,7 @@ GameCreator::~GameCreator()
 void GameCreator::InitializeGraphics()
 {
 #if defined(__IOS__) || defined(__ANDROID__)
-	m_graphics = new Renderer::GraphicDevice();
+	m_graphics = new Renderer::GraphicsHigh();
     m_graphics->Init();
 #else
     m_graphics = new Renderer::GraphicsHigh();
@@ -306,12 +307,17 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
         m_graphicalSystems.push_back(graphicalSystem);
         worldCreator.AddSystemGroup();
         worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
+
+		graphicalSystem = new AModelSystem(m_graphics);
+		m_graphicalSystems.push_back(graphicalSystem);
+		worldCreator.AddSystemGroup();
+		worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
     }
     
     if (_includeMasterServer)
     {
-        //worldCreator.AddSystemGroup();
-        //worldCreator.AddSystemToCurrentGroup<MasterServerSystem>();
+        worldCreator.AddSystemGroup();
+        worldCreator.AddSystemToCurrentGroup<MasterServerSystem>();
     }
     
     if (_worldType == WorldType::Server)
@@ -879,18 +885,68 @@ void GameCreator::PrintSectionTime(const std::string& sectionName, Utility::Fram
 
 void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Console::Argument>* _args)
 {
-#if !defined(__IOS__) && !defined(__ANDROID__)
 	if (_args->size() == 0)
 		return;
+
+#if defined(__IOS__) || defined(__ANDROID__)
+	
+	if ((*_args)[0].ArgType == Console::ArgumentType::Text)
+	{
+		for (int i = 0; i < 1000; ++i)
+		{
+			if (m_clientWorld && m_clientWorld->HasComponent(i, "Render"))
+				m_clientWorld->RemoveComponentFrom("Render", i);
+
+			if (m_serverWorld && m_serverWorld->HasComponent(i, "Render"))
+				m_serverWorld->RemoveComponentFrom("Render", i);
+		}
+
+		if (strcmp((*_args)[0].Text, "high") == 0)
+		{
+			m_graphics->Clear();
+			Camera tmpCam = *m_graphics->GetCamera();
+			delete(m_graphics);
+
+			m_graphics = new Renderer::GraphicsHigh(tmpCam);
+			m_graphics->Init();
+		}
+
+		else if (strcmp((*_args)[0].Text, "low") == 0)
+		{
+			m_graphics->Clear();
+			Camera tmpCam = *m_graphics->GetCamera();
+			delete(m_graphics);
+
+			m_graphics = new Renderer::GraphicsLow(tmpCam);
+			m_graphics->Init();
+		}
+		if (m_input)
+		{
+			delete m_input;
+			InitializeInput();
+		}
+
+
+		m_console->SetGraphicDevice(m_graphics);
+		LuaBridge::LuaGraphicDevice::SetGraphicDevice(m_graphics);
+		for (int n = 0; n < m_graphicalSystems.size(); ++n)
+		{
+			GraphicalSystem* tSystem = m_graphicalSystems.at(n);
+			tSystem->SetGraphics(m_graphics);
+		}
+	}
+#endif
+
+#if !defined(__IOS__) && !defined(__ANDROID__)
 
 	if ((*_args)[0].ArgType == Console::ArgumentType::Text)
 	{
 		for (int i = 0; i < 1000; ++i)
 		{
-			if (m_clientWorld->HasComponent(i, "Render"))
+			if (m_clientWorld && m_clientWorld->HasComponent(i, "Render"))
 				m_clientWorld->RemoveComponentFrom("Render", i);
             
-            if (m_serverWorld->HasComponent(i, "Render"))
+			if (m_serverWorld && m_serverWorld->HasComponent(i, "Render"))
                 m_serverWorld->RemoveComponentFrom("Render", i);
 		}
 
