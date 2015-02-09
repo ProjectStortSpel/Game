@@ -18,6 +18,13 @@
 
 namespace LuaBridge
 {
+	lua_State* g_IOLuaState = nullptr;
+
+	void SetIOLuaState(lua_State* L)
+	{
+		g_IOLuaState = L;
+	}
+
   void Embed(lua_State* L)
   {
     LuaInput::Embed(L);

@@ -110,3 +110,9 @@ local CheckFinishpointComponent = ComponentType()
 CheckFinishpointComponent.Name = "CheckFinishpoint"
 CheckFinishpointComponent.TableType = TableType.Map
 worldCreator:AddComponentType(CheckFinishpointComponent)
+
+--	PostSpawn check
+local PostSpawnComponent = ComponentType()
+PostSpawnComponent.Name = "PostSpawn"
+PostSpawnComponent.TableType = TableType.Map
+worldCreator:AddComponentType(PostSpawnComponent)

@@ -2,7 +2,7 @@ AICardPickingSystem = System()
 AICardPickingSystem.NumberOfCardsToPick = 5
 AICardPickingSystem.CardsPerHand = 8
 AICardPickingSystem.PrintSimulation = 0
-AICardPickingSystem.AICheat = 1
+AICardPickingSystem.AICheat = 0
 
 AICardPickingSystem.Initialize = function(self)
 	self:SetName("AI card picking System")
@@ -14,9 +14,35 @@ AICardPickingSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("AI", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("AICard", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("TileComp", FilterType.RequiresOneOf)
-	--self:AddComponentTypeToFilter("MapSize", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("MapSpecs", FilterType.RequiresOneOf)
+	
+	--Console.AddCommand("AICheat", self.CheatMode)
 end
+
+--AddAISystem.CheatMode = function(_command, ...)
+--	
+--	local args = { ... }
+--	
+--	if #args == 1 then
+--		if type(args[1]) == "number" then
+--			if -1 < args[1] and args[1] < 2 then
+--				self.AICheat = args[1]
+--			end
+--		end
+--	else
+--		if self.AICheat == 0 then
+--			self.AICheat = 1
+--		else
+--			self.AICheat = 0
+--		end
+--	end
+--	
+--	if self.AICheat == 0 then
+--		print("AICheat off")
+--	else
+--		print("AICheat on")
+--	end
+--end
 
 AICardPickingSystem.Update = function(self, dt)
 	
@@ -43,7 +69,7 @@ AICardPickingSystem.Update = function(self, dt)
 			--Fetch the cards which is relevant to the current AI
 			local CardSetAI = self:GetAIsCardSet(AIs[i], Cards)
 			--This will catch the best 
-			local PickedCards = self:AIPickCards(CardSetAI, aiDirX, aiDirY, aiPositonX, aiPositonY, targetPositionX, targetPositionY)
+			local PickedCards = self:AIPickCards(CardSetAI, aiDirX, aiDirY, aiPositonX, aiPositonY, targetPositionX, targetPositionY, unitID)
 			aiPositonX, aiPositonY, aiDirX, aiDirY = self:SimulatePlayOfCards(unitID, PickedCards)
 
 			if #PickedCards >= self.NumberOfCardsToPick then	
@@ -105,7 +131,7 @@ AICardPickingSystem.TryMove = function(self, CardSetAI, card)
 	end
 end
 
-AICardPickingSystem.AIPickCards = function( self, CardSetAI, dirX, dirY, posX, posY, targetX, targetY )
+AICardPickingSystem.AIPickCards = function( self, CardSetAI, dirX, dirY, posX, posY, targetX, targetY, unitID )
 	
 	local pickedcards = {}
 	pickedcards.__mode = "k"
@@ -142,115 +168,23 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, dirX, dirY, posX, p
 		local turnLefts = self:GetAllCardsOf(CardSetAI, "TurnLeft")
 		local turnRights = self:GetAllCardsOf(CardSetAI, "TurnRight")
 		local turnArounds = self:GetAllCardsOf(CardSetAI, "TurnAround")
+		local sprints = self:GetAllCardsOf(CardSetAI, "Sprint")
+		local shots = self:GetAllCardsOf(CardSetAI, "SlingShot")
 		
 		for i = 1, self.NumberOfCardsToPick do
-			--print("Position : " .. posX .. ", " .. posY ..  "(x , y)")
-			--print("Target   : " .. targetX .. ", " .. targetY .. "(x , y)")
-			--print("Direction: " .. dirX .. ", " .. dirY .. "(x , y)")
-			--print("forwards    " .. #forwards)
-			--print("backwards   " .. #backwards)
-			--print("turnLefts   " .. #turnLefts)
-			--print("turnRights  " .. #turnRights)
-			--print("turnArounds " .. #turnArounds)
+			--SimulatePlayOfCards
 			
-			--if posY < targetY and dirY == 1 and #forwards > 0 then
-            --
-			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, forwards)
-			--	posY = posY + 1
-			--
-			--elseif posY < targetY and dirY == -1 and #backwards > 0 then
-			--
-			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, backwards)
-			--	posY = posY + 1
-			--
-			--elseif posY > targetY and dirY == -1 and #forwards > 0 then
-            --
-			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, forwards)
-			--	posY = posY - 1
-			--
-			--elseif posY > targetY and dirY == 1 and #backwards > 0 then
-			--
-			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, backwards)
-			--	posY = posY - 1
-			--
-			--elseif posX < targetX and dirX == 1 and #forwards > 0 then
-			--
-			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, forwards)
-			--	posX = posX + 1
-			--
-			--elseif posX < targetX and dirX == -1 and #backwards > 0 then
-			--	
-			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, backwards)
-			--	posX = posX + 1
-			--
-			--elseif posX > targetX and dirX == -1 and #forwards > 0 then
-			--
-			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, forwards)
-			--	posX = posX - 1
-			--
-			--elseif posX > targetX and dirX == 1 and #backwards > 0 then
-			--	
-			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, backwards)
-			--	posX = posX - 1
-			--
-			--elseif posX > targetX and dirX == 1 and #turnArounds > 0 then
-            --
-			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnArounds)
-			--	dirX = -dirX
-			--	dirY = -dirY
-            --
-			--elseif posX < targetX and dirX == -1 and #turnArounds > 0 then
-            --
-			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnArounds)
-			--	dirX = -dirX
-			--	dirY = -dirY
-            --
-			--elseif posY < targetY and dirY == -1 and #turnArounds > 0 then
-            --
-			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnArounds)
-			--	dirX = -dirX
-			--	dirY = -dirY
-            --
-			--elseif posY > targetY and dirY == 1 and #turnArounds > 0 then
-            --
-			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnArounds)
-			--	dirX = -dirX
-			--	dirY = -dirY
-            --
-			--elseif #turnLefts > 0 then
-            --
-			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnLefts)
-			--	local temp = dirY
-			--	dirY = -dirX
-			--	dirX = temp
-            --
-			--elseif #turnRights > 0 then
-            --
-			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnRights)
-			--	local temp = dirY
-			--	dirY = dirX
-			--	dirX = -temp
-            --
-			--elseif #turnArounds > 0 then
-            --
-			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnArounds)
-			--	dirX = -dirX
-			--	dirY = -dirY
-            --
-			--elseif #forwards > 0 then
-            --
-			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, forwards)
-			--	posX = posX + dirX
-			--	posY = posY + dirY
-            --
-			--elseif #backwards > 0 then
-            --
-			--	pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, backwards)
-			--	posX = posX - dirX
-			--	posY = posY - dirY
+			
+			local cpTargetNr = self:GetComponent(unitID, "TargetCheckpoint", 0):GetInt()
+			local CPtiles = self:GetEntities("Checkpoint")
+			targetPositionX, targetPositionY = self:GetTargetPosition(CPtiles, cpTargetNr)
+			
+			--forward_play = 
 			local from_me = PathfinderHandler.GeneratePath(posX, posY, targetX, targetY)
 			local form_x, from_y = posX+dirX, posY+dirY;
 			local from_forward = PathfinderHandler.GeneratePath(form_x, from_y, targetX, targetY)
+			local form_x, from_y = posX+dirX+dirX, posY+dirY+dirY;
+			local from_sprint = PathfinderHandler.GeneratePath(form_x, from_y, targetX, targetY)
 			form_x, from_y = posX-dirX, posY-dirY;
 			local from_backward = PathfinderHandler.GeneratePath(form_x, from_y, targetX, targetY)
 			form_x, from_y = posX+dirY, posY-dirX;
@@ -258,20 +192,28 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, dirX, dirY, posX, p
 			form_x, from_y = posX-dirY, posY+dirX;
 			local from_right = PathfinderHandler.GeneratePath(form_x, from_y, targetX, targetY)
 			
-			print("Position : " .. posX .. ", " .. posY ..  "(x , y)")
-			print("Direction: " .. dirX .. ", " .. dirY .. "(x , y)")
-			print("distance from current position		: ", from_me)
-			print("distance from position (forward)	: ", from_forward)
-			print("distance from position (backward)	: ", from_backward)
-			print("distance from position (left)		: ", from_left)
-			print("distance from position (right)		: ", from_right)
-			print("forwards    " .. #forwards)
-			print("backwards   " .. #backwards)
-			print("turnLefts   " .. #turnLefts)
-			print("turnRights  " .. #turnRights)
-			print("turnArounds " .. #turnArounds)
+			--print("Position : " .. posX .. ", " .. posY ..  "(x , y)")
+			--print("Direction: " .. dirX .. ", " .. dirY .. "(x , y)")
+			--print("distance from current position		: ", from_me)
+			--print("distance from position (forward)	: ", from_forward)
+			--print("distance from position (backward)	: ", from_backward)
+			--print("distance from position (left)		: ", from_left)
+			--print("distance from position (right)		: ", from_right)
+			--print("forwards    " .. #forwards)
+			--print("backwards   " .. #backwards)
+			--print("turnLefts   " .. #turnLefts)
+			--print("turnRights  " .. #turnRights)
+			--print("turnArounds " .. #turnArounds)
 			
-			if from_me > from_forward and #forwards > 0 
+			
+			if from_me > from_sprint and #sprints > 0 
+			then 
+				print("Sprint")
+				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, sprints)
+				posX = posX + dirX + dirX; 
+				posY = posY + dirY + dirY;
+				
+			elseif from_me > from_forward and #forwards > 0 
 			then 
 				print("FORWARD")
 				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, forwards)
@@ -327,6 +269,9 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, dirX, dirY, posX, p
 				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnArounds)
 				dirY = -dirY
 				dirX = -dirX
+			elseif #shots > 0 then
+				print("FIRE!")
+				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, shots)
 			elseif #turnLefts > 0 then
             
 				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnLefts)
@@ -418,6 +363,62 @@ end
 
 AICardPickingSystem.SimulatePlayOfCards = function(self, _unit, _pickedcards)
 	
+	local posX, posY = self:GetComponent(_unit, "MapPosition", 0):GetInt2()
+	local dirX, dirY = self:GetComponent(_unit, "Direction", 0):GetInt2()
+	
+	local fellDown = false
+	
+	for i = 1, #_pickedcards do
+		
+		local cardName = self:GetComponent(_pickedcards[i], "CardAction", 0):GetString()
+		
+		if cardName == "Forward" then
+			
+			fellDown, posX, posY = self:SimulateMoveForward(posX, posY, dirX, dirY, true, 1, false)
+			
+		elseif cardName == "Backward" then
+			
+			fellDown, posX, posY = self:SimulateMoveForward(posX, posY, dirX, dirY, false, 1, false)
+			
+		elseif cardName == "TurnLeft" then
+			
+			fellDown, posX, posY, dirX, dirY = self:SimulateTurnLeft(posX, posY, dirX, dirY, 1)
+			
+		elseif cardName == "TurnRight" then
+			
+			fellDown, posX, posY, dirX, dirY = self:SimulateTurnLeft(posX, posY, dirX, dirY, 3)
+			
+		elseif cardName == "TurnAround" then
+			
+			fellDown, posX, posY, dirX, dirY = self:SimulateTurnLeft(posX, posY, dirX, dirY, 2)
+			
+		elseif cardName == "SlingShot" then
+		
+			print(posX, posY, dirX, dirY)
+			fellDown, posX, posY, dirX, dirY = self:SimulateTurnLeft(posX, posY, dirX, dirY, 0)
+			print(posX, posY, dirX, dirY)
+			
+		else
+		
+			print("ERROR: CARD NOT ADDED IN SIMULATE CARDS", cardName)
+		end
+		
+		if fellDown then
+			
+			posX, posY = self:GetComponent(_unit, "Spawnpoint", 0):GetInt2()
+			break
+		end
+	end
+	
+	if self.PrintSimulation == 1 then
+		print("I will end up at:", posX, posY, "with dir:", dirX, dirY)
+	end
+	
+	return posX, posY, dirX, dirY
+end
+
+AICardPickingSystem.SimpelSimulatePlayOfCards = function(self, _unit, _pickedcards)
+	
 	--local mapSize = self:GetEntities("MapSize")	
 	--local mapX, mapY = self:GetComponent(mapSize[1], "MapSize", 0):GetInt2()
 	local posX, posY = self:GetComponent(_unit, "MapPosition", 0):GetInt2()
@@ -427,7 +428,7 @@ AICardPickingSystem.SimulatePlayOfCards = function(self, _unit, _pickedcards)
 	
 	for i = 1, #_pickedcards do
 		
-		local cardName = self:GetComponent(_pickedcards[i], "CardAction", 0):GetString()
+		local cardName = _pickedcards[i]
 		
 		if cardName == "Forward" then
 			
@@ -579,7 +580,6 @@ AICardPickingSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, ent
 			local id = playerid:GetInt()
 			local plynum = self:GetComponent(id, "PlayerNumber", 0):GetInt()
 			local card = self:GetComponent(entities[i], "CardAction", 0):GetString()
-			--print ( plynum .. " gets a " .. card .. " Card" )
 		end
 	end
 end

@@ -13,7 +13,7 @@ GraphicsHigh::GraphicsHigh()
 	m_vramUsage = 0;
 	m_debugTexFlag = 0;
 	m_nrOfLights = 0;
-    m_pointerToDirectionalLights = 0;
+	m_pointerToDirectionalLights = 0;
 }
 
 GraphicsHigh::GraphicsHigh(Camera _camera, int x, int y) : GraphicDevice(_camera, x, y)
@@ -473,7 +473,6 @@ bool GraphicsHigh::InitSDLWindow()
 {
 	// WINDOW SETTINGS
 	unsigned int	Flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
-	const char*		Caption = "SDL Window";
 
 	int				SizeX = 256 * 5;	//1280
 	int				SizeY = 144 * 5;	//720
@@ -488,7 +487,7 @@ bool GraphicsHigh::InitSDLWindow()
 
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
-	m_window = SDL_CreateWindow(Caption, m_windowPosX, m_windowPosY, SizeX, SizeY, Flags);
+	m_window = SDL_CreateWindow(m_windowCaption, m_windowPosX, m_windowPosY, SizeX, SizeY, Flags);
 
 	if (m_window == NULL){
 		std::cout << SDL_GetError() << std::endl;
@@ -724,10 +723,12 @@ void GraphicsHigh::BufferPointlights(int _nrOfLights, float **_lightPointers)
 
 	if (_nrOfLights == 0)
 	{
-		_nrOfLights = 1;
-		_lightPointers[0] = &m_lightDefaults[0];
+		m_pointerToPointlights = new float*[1];
+		m_pointerToPointlights[0] = &m_lightDefaults[0];
+		m_numberOfPointlights = 1;
+		return;
 	}
-	m_nrOfLights = _nrOfLights;
+
 
 
 }
@@ -760,6 +761,7 @@ void GraphicsHigh::BufferLightsToGPU()
 		m_vramUsage += m_numberOfPointlights * 10 * sizeof(float);
 
 		delete pointlight_data;
+		delete m_pointerToPointlights;
 		m_pointerToPointlights = 0;
 	}
 
@@ -874,6 +876,24 @@ bool GraphicsHigh::PreLoadModel(std::string _dir, std::string _file, int _render
 
 	return true;
 }
+int GraphicsHigh::LoadAModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType)
+{
+	int modelID = m_modelIDcounter;
+	m_modelIDcounter++;
+	_renderType = 1;
+	//	Lägg till i en lista, följande
+	//	std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType
+
+	ModelToLoad* modelToLoad = new ModelToLoad();
+	modelToLoad->Animated = true;
+	modelToLoad->Dir = _dir;
+	modelToLoad->File = _file;
+	modelToLoad->MatrixPtr = _matrixPtr;
+	modelToLoad->RenderType = _renderType;
+	m_modelsToLoad[modelID] = modelToLoad;
+
+	return modelID;
+}
 int GraphicsHigh::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType)
 {
 	int modelID = m_modelIDcounter;
@@ -883,6 +903,7 @@ int GraphicsHigh::LoadModel(std::string _dir, std::string _file, glm::mat4 *_mat
 	//	std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType
 
 	ModelToLoad* modelToLoad = new ModelToLoad();
+	modelToLoad->Animated = false;
 	modelToLoad->Dir = _dir;
 	modelToLoad->File = _file;
 	modelToLoad->MatrixPtr = _matrixPtr;
@@ -1167,16 +1188,17 @@ Buffer* GraphicsHigh::AddMesh(std::string _fileDir, Shader *_shaderProg)
 
 void GraphicsHigh::Clear()
 {
-  m_modelIDcounter = 0;
-  
-  m_modelsDeferred.clear();
-  m_modelsForward.clear();
-  m_modelsViewspace.clear();
-  m_modelsInterface.clear();
+	m_modelIDcounter = 0;
+	
+	m_modelsDeferred.clear();
+	m_modelsForward.clear();
+	m_modelsViewspace.clear();
+	m_modelsInterface.clear();
 
-  float **tmpPtr = new float*[1];
-  BufferPointlights(0, tmpPtr);
-  delete tmpPtr;
+	float **tmpPtr = new float*[1];
+	BufferPointlights(0, tmpPtr);
+	delete tmpPtr;
+	BufferDirectionalLight(0);
 }
 
 bool GraphicsHigh::BufferModelTexture(int _id, std::string _fileDir, int _textureType)

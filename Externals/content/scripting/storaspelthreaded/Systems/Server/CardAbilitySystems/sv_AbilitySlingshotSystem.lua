@@ -64,12 +64,6 @@ AbilitySlingshotSystem.AddBullet = function(self, posX, posZ, targetPosX, target
 
 	local bullet = world:CreateNewEntity("SlingShotProjectile")
 	
-	print("posX: " .. posX)
-	print("posZ: " .. posZ)
-	print("targetPosX: " .. targetPosX)
-	print("targetPosZ: " .. targetPosZ)
-	print("lerpTime: " .. 0.2)
-	
 	world:GetComponent(bullet, "Position", 0):SetFloat3(posX, 1, posZ)
 	world:GetComponent(bullet, "LerpPosition", "X"):SetFloat(targetPosX)
 	world:GetComponent(bullet, "LerpPosition", "Y"):SetFloat(1)
@@ -85,6 +79,9 @@ AbilitySlingshotSystem.Update = function(self, dt, taskIndex, taskCount)
 	local entities = self:GetEntities("UnitSlingShot")
 	-- Get the size of the map
 	local mapSizeEntity = self:GetEntities("MapSpecs")
+	if #mapSizeEntity == 0 then
+		return
+	end
 	local mapSizeX, mapSizeZ = world:GetComponent(mapSizeEntity[1], "MapSpecs", "SizeX"):GetInt2()
 
 	
@@ -133,14 +130,7 @@ AbilitySlingshotSystem.Update = function(self, dt, taskIndex, taskCount)
 		local posX, _, posZ	 = world:GetComponent(slingshots[i], "Position", 0):GetFloat3()
 		
 		local tX = world:GetComponent(slingshots[i], "LerpingPosition", "tX"):GetFloat(0)
-		local tZ = world:GetComponent(slingshots[i], "LerpingPosition", "tZ"):GetFloat(0)
-    
-		print("UPDATE")
-		print("posX: " .. posX)
-		print("posZ: " .. posZ)
-		print("tX: " .. tX)
-		print("tZ: " .. tZ)
-		
+		local tZ = world:GetComponent(slingshots[i], "LerpingPosition", "tZ"):GetFloat(0)		
 		
 		if posX == tX and posZ == tZ then
 			world:KillEntity(slingshots[i])
