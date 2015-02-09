@@ -241,37 +241,40 @@ std::vector<coord> Pathfinder::GeneratePath( coord start, coord goal )
 	std::vector<pathfindingnode> closed;
 	this->m_startCoord = start;
 	this->m_goalCoord = goal;
-	if (this->m_mapData[start.x][start.y].walkable && this->InsideWorld(start.x, start.y) && this->m_mapData[goal.x][goal.y].walkable && this->InsideWorld(goal.x, goal.y))
+	if (this->InsideWorld(goal.x, goal.y) && this->InsideWorld(start.x, start.y))
 	{
-		this->m_mapData[start.x][start.y].parent = &this->m_mapData[start.x][start.y];
-		this->m_mapData[start.x][start.y].g = 0;
-		this->m_mapData[start.x][start.y].h = this->CalcHeuristicValue(this->m_startCoord);
-
-		open.push_back(this->m_mapData[start.x][start.y]);
-
-		while (open.size() != 0)
+		if (this->m_mapData[start.x][start.y].walkable && this->m_mapData[goal.x][goal.y].walkable)
 		{
-			pathfindingnode current_node = this->BestNode(open);
-			if (current_node.position.x == goal.x && current_node.position.y == goal.y)
-			{
-				coord rdy_to_push(current_node.position.x, current_node.position.y);
-				ret_value.push_back(rdy_to_push);
-				bool check = !(current_node.position.x == current_node.parent->position.x &&
-					current_node.position.y == current_node.parent->position.y);
-				while (check)
-				{
-					current_node = *current_node.parent;
-					check = !(current_node.position.x == this->m_startCoord.x &&
-						current_node.position.y == this->m_startCoord.y);
-					coord push_me_now(current_node.position.x, current_node.position.y);
-					ret_value.push_back(push_me_now);
-				}
-				return ret_value;
-			}
-			closed.push_back(current_node);
-			this->AddNeighbors(current_node.position, open, closed, &m_mapData[current_node.position.x][current_node.position.y]);
-		}
+			this->m_mapData[start.x][start.y].parent = &this->m_mapData[start.x][start.y];
+			this->m_mapData[start.x][start.y].g = 0;
+			this->m_mapData[start.x][start.y].h = this->CalcHeuristicValue(this->m_startCoord);
 
+			open.push_back(this->m_mapData[start.x][start.y]);
+
+			while (open.size() != 0)
+			{
+				pathfindingnode current_node = this->BestNode(open);
+				if (current_node.position.x == goal.x && current_node.position.y == goal.y)
+				{
+					coord rdy_to_push(current_node.position.x, current_node.position.y);
+					ret_value.push_back(rdy_to_push);
+					bool check = !(current_node.position.x == current_node.parent->position.x &&
+						current_node.position.y == current_node.parent->position.y);
+					while (check)
+					{
+						current_node = *current_node.parent;
+						check = !(current_node.position.x == this->m_startCoord.x &&
+							current_node.position.y == this->m_startCoord.y);
+						coord push_me_now(current_node.position.x, current_node.position.y);
+						ret_value.push_back(push_me_now);
+					}
+					return ret_value;
+				}
+				closed.push_back(current_node);
+				this->AddNeighbors(current_node.position, open, closed, &m_mapData[current_node.position.x][current_node.position.y]);
+			}
+
+		}
 	}
 
 	return ret_value;
