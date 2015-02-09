@@ -617,6 +617,52 @@ namespace LuaBridge
 		}
 	}
 
+	namespace LuaNetworkEvents
+	{
+		std::vector<Network::NetEvent> g_onConnectedToServer;
+		std::vector<Network::NetEvent> g_onDisconnectedFromServer;
+		std::vector<Network::NetEvent> g_onTimedOutFromServer;
+		std::vector<Network::NetEvent> g_onFailedToConnect;
+		std::vector<Network::NetEvent> g_onPasswordInvalid;
+		std::vector<Network::NetEvent> g_onKickedFromServer;
+		std::vector<Network::NetEvent> g_onBannedFromServer;
+		std::vector<Network::NetEvent> g_onServerFull;
+
+		std::vector<Network::NetEvent> g_onRemotePlayerConnected;
+		std::vector<Network::NetEvent> g_onRemotePlayerDisconnected;
+		std::vector<Network::NetEvent> g_onRemotePlayerTimedOut;
+		std::vector<Network::NetEvent> g_onRemotePlayerKicked;
+		std::vector<Network::NetEvent> g_onRemotePlayerBanned;
+
+
+		std::vector<Network::NetEvent> g_onPlayerConnected;
+		std::vector<Network::NetEvent> g_onPlayerDisconnected;
+		std::vector<Network::NetEvent> g_onPlayerTimedOut;
+
+		void Clear()
+		{
+			g_onConnectedToServer;
+			g_onDisconnectedFromServer;
+			g_onTimedOutFromServer;
+			g_onFailedToConnect;
+			g_onPasswordInvalid;
+			g_onKickedFromServer;
+			g_onBannedFromServer;
+			g_onServerFull;
+
+			g_onRemotePlayerConnected;
+			g_onRemotePlayerDisconnected;
+			g_onRemotePlayerTimedOut;
+			g_onRemotePlayerKicked;
+			g_onRemotePlayerBanned;
+
+
+			g_onPlayerConnected;
+			g_onPlayerDisconnected;
+			g_onPlayerTimedOut;
+		}
+	}
+
 	namespace LuaClientNetwork
 	{
 		int StartPack(lua_State* L);
