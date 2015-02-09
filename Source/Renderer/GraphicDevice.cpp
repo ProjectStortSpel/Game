@@ -14,6 +14,11 @@ GraphicDevice::GraphicDevice()
 	m_windowPosY = 2;
 	m_windowCaption = "Project MOMS SPAGHETTI";
 	m_SDLinitialized = false;
+	
+	m_pointerToPointlights = NULL;
+	m_pointerToDirectionalLights = NULL;
+	m_numberOfPointlights = 0;
+	m_numberOfDirectionalLights = 0;
 }
 
 GraphicDevice::GraphicDevice(Camera _camera, int x, int y)
@@ -33,6 +38,7 @@ GraphicDevice::GraphicDevice(Camera _camera, int x, int y)
 GraphicDevice::~GraphicDevice()
 {
 	delete(m_skybox);
+	delete m_pointerToPointlights;
 
 	SDL_GL_DeleteContext(m_glContext);
 	// Close and destroy the window

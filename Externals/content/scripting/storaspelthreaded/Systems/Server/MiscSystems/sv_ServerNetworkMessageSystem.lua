@@ -21,6 +21,7 @@ ServerNetworkMessageSystem.PostInitialize = function(self)
 	world:CreateComponentAndAddTo("PlayerCounter", playerCounter)
 	
 	-- TODO: Change MaxPlayers based on the map loaded
+	-- TODO: Note, moved to the Mapspecs-entity
 	local maxPlayers = 5
 	world:SetComponent(playerCounter, "PlayerCounter", "MaxPlayers", maxPlayers)
 	world:SetComponent(playerCounter, "PlayerCounter", "Players", 0)

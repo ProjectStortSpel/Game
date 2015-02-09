@@ -1,4 +1,5 @@
 #include "LuaInput.h"
+#include "Game/LuaBridge/LuaBridge.h"
 
 namespace LuaBridge
 {
@@ -89,6 +90,14 @@ namespace LuaBridge
     
     int GetKeyState(lua_State* L)
     {
+
+		lua_State* parent = LuaEmbedder::LuaChildrenParentMap.find(L) != LuaEmbedder::LuaChildrenParentMap.end() ? LuaEmbedder::LuaChildrenParentMap[L] : L;
+		if (LuaBridge::g_IOLuaState != parent)
+		{
+			LuaEmbedder::PushInt(L, Input::InputState::UP);
+			return 1;
+		}
+
       Input::InputWrapper& inputWrapper = Input::InputWrapper::GetInstance();
       int keyState = inputWrapper.GetKeyboard()->GetKeyState((SDL_Scancode)LuaEmbedder::PullInt(L, 1));
       LuaEmbedder::PushInt(L, keyState);
@@ -97,6 +106,12 @@ namespace LuaBridge
     
     int GetMouseButtonState(lua_State* L)
     {
+		lua_State* parent = LuaEmbedder::LuaChildrenParentMap.find(L) != LuaEmbedder::LuaChildrenParentMap.end() ? LuaEmbedder::LuaChildrenParentMap[L] : L;
+		if (LuaBridge::g_IOLuaState != parent)
+		{
+			LuaEmbedder::PushInt(L, Input::InputState::UP);
+			return 1;
+		}
       Input::InputWrapper& inputWrapper = Input::InputWrapper::GetInstance();
       int buttonState = inputWrapper.GetMouse()->GetButtonState((Input::MouseButton)LuaEmbedder::PullInt(L, 1));
       LuaEmbedder::PushInt(L, buttonState);
@@ -105,6 +120,13 @@ namespace LuaBridge
     
     int GetMousePosition(lua_State* L)
     {
+		lua_State* parent = LuaEmbedder::LuaChildrenParentMap.find(L) != LuaEmbedder::LuaChildrenParentMap.end() ? LuaEmbedder::LuaChildrenParentMap[L] : L;
+		if (LuaBridge::g_IOLuaState != parent)
+		{
+			LuaEmbedder::PushInt(L, -1);
+			LuaEmbedder::PushInt(L, -1);
+			return 2;
+		}
       Input::InputWrapper& inputWrapper = Input::InputWrapper::GetInstance();
       LuaEmbedder::PushInt(L, inputWrapper.GetMouse()->GetX());
       LuaEmbedder::PushInt(L, inputWrapper.GetMouse()->GetY());
@@ -113,6 +135,13 @@ namespace LuaBridge
     
     int GetDeltaMousePosition(lua_State* L)
     {
+		lua_State* parent = LuaEmbedder::LuaChildrenParentMap.find(L) != LuaEmbedder::LuaChildrenParentMap.end() ? LuaEmbedder::LuaChildrenParentMap[L] : L;
+		if (LuaBridge::g_IOLuaState != parent)
+		{
+			LuaEmbedder::PushInt(L, 0);
+			LuaEmbedder::PushInt(L, 0);
+			return 2;
+		}
       Input::InputWrapper& inputWrapper = Input::InputWrapper::GetInstance();
       LuaEmbedder::PushInt(L, inputWrapper.GetMouse()->GetdX());
       LuaEmbedder::PushInt(L, inputWrapper.GetMouse()->GetdY());
@@ -121,6 +150,12 @@ namespace LuaBridge
 
 	int GetFingerState(lua_State* L)
 	{
+		lua_State* parent = LuaEmbedder::LuaChildrenParentMap.find(L) != LuaEmbedder::LuaChildrenParentMap.end() ? LuaEmbedder::LuaChildrenParentMap[L] : L;
+		if (LuaBridge::g_IOLuaState != parent)
+		{
+			LuaEmbedder::PushInt(L, Input::InputState::UP);
+			return 1;
+		}
 		Input::InputWrapper& inputWrapper = Input::InputWrapper::GetInstance();
 		int fingerState = inputWrapper.GetTouch()->GetFingerState((SDL_FingerID)LuaEmbedder::PullInt(L, 1));
 		LuaEmbedder::PushInt(L, fingerState);
@@ -129,6 +164,13 @@ namespace LuaBridge
 
 	int GetFingerPosition(lua_State* L)
 	{
+		lua_State* parent = LuaEmbedder::LuaChildrenParentMap.find(L) != LuaEmbedder::LuaChildrenParentMap.end() ? LuaEmbedder::LuaChildrenParentMap[L] : L;
+		if (LuaBridge::g_IOLuaState != parent)
+		{
+			LuaEmbedder::PushInt(L, -1);
+			LuaEmbedder::PushInt(L, -1);
+			return 2;
+		}
 		Input::InputWrapper& inputWrapper = Input::InputWrapper::GetInstance();
 		SDL_FingerID finger = (SDL_FingerID)LuaEmbedder::PullInt(L, 1);
 		LuaEmbedder::PushFloat(L, inputWrapper.GetTouch()->GetX(finger));
@@ -138,6 +180,13 @@ namespace LuaBridge
 
 	int GetFingerDeltaPosition(lua_State* L)
 	{
+		lua_State* parent = LuaEmbedder::LuaChildrenParentMap.find(L) != LuaEmbedder::LuaChildrenParentMap.end() ? LuaEmbedder::LuaChildrenParentMap[L] : L;
+		if (LuaBridge::g_IOLuaState != parent)
+		{
+			LuaEmbedder::PushInt(L, 0);
+			LuaEmbedder::PushInt(L, 0);
+			return 2;
+		}
 		Input::InputWrapper& inputWrapper = Input::InputWrapper::GetInstance();
 		SDL_FingerID finger = (SDL_FingerID)LuaEmbedder::PullInt(L, 1);
 		LuaEmbedder::PushFloat(L, inputWrapper.GetTouch()->GetdX(finger));
@@ -147,6 +196,12 @@ namespace LuaBridge
 
 	int GetTouchState(lua_State* L)
 	{
+		lua_State* parent = LuaEmbedder::LuaChildrenParentMap.find(L) != LuaEmbedder::LuaChildrenParentMap.end() ? LuaEmbedder::LuaChildrenParentMap[L] : L;
+		if (LuaBridge::g_IOLuaState != parent)
+		{
+			LuaEmbedder::PushInt(L, Input::InputState::UP);
+			return 1;
+		}
 		#if defined(__ANDROID__) || defined(__IOS__)
 		Input::InputWrapper& inputWrapper = Input::InputWrapper::GetInstance();
 		int fingerState = inputWrapper.GetTouch()->GetFingerState((SDL_FingerID)LuaEmbedder::PullInt(L, 1));

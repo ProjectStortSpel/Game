@@ -141,6 +141,32 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		local newSpawn = self:GetComponent(newSpawnId, "AvailableSpawnpoint", 0)
 		newSpawn:SetInt2(posX, posZ)
 		
+		
+		--self:GetComponent(mapEntity, "MapSpecs", "NoOfSpawnpoints"):SetInt(0)
+		--local noOfSpawnpoints = self:GetComponent(mapEntity, "MapSpecs", "NoOfSpawnpoints"):GetInt(0)
+		--print(noOfSpawnpoints)
+		--local mapSpecsEntity = self:GetEntities("MapSpecs")
+		--local mapEntity = nil
+		--if #mapSpecsEntity == 0 then
+		--	mapEntity = world:CreateNewEntity()
+		--	world:CreateComponentAndAddTo("MapSpecs", mapEntity)
+		--	world:CreateComponentAndAddTo("SyncNetwork", mapEntity)
+		--else
+		--	mapEntity = mapSpecsEntity[1]
+		--end		
+		
+		-- Set size of the map.
+		local mapSpecsEntity = self:GetEntities("MapSpecs")
+		print("mapspecentities", #mapSpecsEntity)
+		local noOfSpawnpoints = self:GetComponent(mapSpecsEntity[1], "MapSpecs", "NoOfSpawnpoints"):GetInt(0)
+		local noOfSpawnpoints = self:GetComponent(mapEntity, "MapSpecs", "NoOfSpawnpoints"):GetInt(0)
+		print("haj1", noOfSpawnpoints)
+		noOfSpawnpoints = noOfSpawnpoints + 1
+		print("haj2", noOfSpawnpoints)
+		self:GetComponent(mapSpecsEntity[1], "MapSpecs", "NoOfSpawnpoints"):SetInt(noOfSpawnpoints)
+		
+		print("haj2")
+		
 	elseif tiletype == 46 then -- 46 = . = grass
 		world:CreateComponentAndAddTo("Model", newTile)
 		local comp = self:GetComponent(newTile, "Model", 0)
@@ -184,7 +210,23 @@ CreateMapSystem.CreateMap = function(self, name)
 	local inputData = InputData()
 	local map
     self.mapX, self.mapY, map = File.LoadMap(name)
-
+	
+	-- Create an entity that will keep track of the map size. If it already exist from a previous "loadmap", use that one instead.
+	local mapSpecsEntity = self:GetEntities("MapSpecs")
+	local mapEntity = nil
+	if #mapSpecsEntity == 0 then
+		mapEntity = world:CreateNewEntity()
+		world:CreateComponentAndAddTo("MapSpecs", mapEntity)
+		world:CreateComponentAndAddTo("SyncNetwork", mapEntity)
+	else
+		mapEntity = mapSpecsEntity[1]
+	end
+	
+	-- Init number of spawnpoints.		
+	self:GetComponent(mapEntity, "MapSpecs", "NoOfSpawnpoints"):SetInt(0)
+	local noOfSpawnpoints = self:GetComponent(mapEntity, "MapSpecs", "NoOfSpawnpoints"):GetInt(0)
+	print(noOfSpawnpoints)
+	
 	print("MapSize:", self.mapX, self.mapY)
 		
 	for x = 0, self.mapX + 1 do
@@ -242,17 +284,8 @@ CreateMapSystem.CreateMap = function(self, name)
 	
 	PathfinderHandler.SetData(inputData)
 	
-	-- Create an entity that will keep track of the map size. If it already exist from a previous "loadmap", use that one instead.
-	local MapSpecsEntity = self:GetEntities("MapSpecs")
-	local MapEntity = nil
-	if #MapSpecsEntity == 0 then
-		MapEntity = world:CreateNewEntity()
-		world:CreateComponentAndAddTo("MapSpecs", MapEntity)
-		world:CreateComponentAndAddTo("SyncNetwork", MapEntity)
-	else
-		MapEntity = MapSpecsEntity[1]
-	end
-	self:GetComponent(MapEntity, "MapSpecs", "SizeX"):SetInt2(self.mapX, self.mapY)
+	-- Set size of the map.
+	self:GetComponent(mapEntity, "MapSpecs", "SizeX"):SetInt2(self.mapX, self.mapY)
 	
 	print("MapEntity size: " .. #self.entities)
 	print("Water size: " .. #self.waterTiles)
