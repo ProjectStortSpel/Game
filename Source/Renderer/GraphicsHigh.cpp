@@ -723,6 +723,7 @@ void GraphicsHigh::BufferPointlights(int _nrOfLights, float **_lightPointers)
 
 	if (_nrOfLights == 0)
 	{
+		delete m_pointerToPointlights;
 		m_pointerToPointlights = new float*[1];
 		m_pointerToPointlights[0] = &m_lightDefaults[0];
 		m_numberOfPointlights = 1;
@@ -1199,6 +1200,9 @@ void GraphicsHigh::Clear()
 	BufferPointlights(0, tmpPtr);
 	delete tmpPtr;
 	BufferDirectionalLight(0);
+
+	//if (m_pointerToPointlights)
+		//delete m_pointerToPointlights;
 }
 
 bool GraphicsHigh::BufferModelTexture(int _id, std::string _fileDir, int _textureType)

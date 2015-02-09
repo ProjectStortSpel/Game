@@ -277,7 +277,7 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 	//NetworkMessagesSystem* nms = new NetworkMessagesSystem();
 	//nms->SetConsole(&m_consoleManager);
 	
-	m_graphicalSystems.clear();
+	//m_graphicalSystems.clear();
 	GraphicalSystem* graphicalSystem = 0;
 	graphicalSystem = new PointlightSystem(m_graphics);
 	m_graphicalSystems.push_back(graphicalSystem);
@@ -660,10 +660,13 @@ void GameCreator::Reload()
     LuaBridge::LuaNetwork::SetClientLuaState(m_clientLuaState);
     LuaBridge::LuaNetwork::SetServerLuaState(m_serverLuaState);
 
+
+	m_graphicalSystems.clear();
+
     if (NetworkInstance::GetClient()->IsConnected() && NetworkInstance::GetServer()->IsRunning())
     {
         InitializeWorld(m_gameMode, WorldType::Client, true, false);
-        InitializeWorld(m_gameMode, WorldType::Server, false, true);
+		InitializeWorld(m_gameMode, WorldType::Server, false, true);
     }
     
     else if (NetworkInstance::GetServer()->IsRunning())
