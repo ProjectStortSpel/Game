@@ -91,6 +91,7 @@ AICardPickingSystem.GetAIsCardSet = function(self, AI, Cards)
 		
 		return aisCard
 end
+
 AICardPickingSystem.TryMove = function(self, CardSetAI, card)
 	--print(#card)
 	local cardpicked
@@ -148,57 +149,91 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, dirX, dirY, posX, p
 		for i = 1, self.NumberOfCardsToPick do
 			--SimulatePlayOfCards
 			
-			
 			local cpTargetNr = self:GetComponent(unitID, "TargetCheckpoint", 0):GetInt()
 			local CPtiles = self:GetEntities("Checkpoint")
 			targetPositionX, targetPositionY = self:GetTargetPosition(CPtiles, cpTargetNr)
 			
-			--forward_play = 
-			local from_me = PathfinderHandler.GeneratePath(posX, posY, targetX, targetY)
-			local form_x, from_y = posX+dirX, posY+dirY;
-			local from_forward = PathfinderHandler.GeneratePath(form_x, from_y, targetX, targetY)
-			local form_x, from_y = posX+dirX+dirX, posY+dirY+dirY;
-			local from_sprint = PathfinderHandler.GeneratePath(form_x, from_y, targetX, targetY)
-			form_x, from_y = posX-dirX, posY-dirY;
-			local from_backward = PathfinderHandler.GeneratePath(form_x, from_y, targetX, targetY)
-			form_x, from_y = posX+dirY, posY-dirX;
-			local from_left = PathfinderHandler.GeneratePath(form_x, from_y, targetX, targetY)
-			form_x, from_y = posX-dirY, posY+dirX;
-			local from_right = PathfinderHandler.GeneratePath(form_x, from_y, targetX, targetY)
 			
-			--print("Position : " .. posX .. ", " .. posY ..  "(x , y)")
-			--print("Direction: " .. dirX .. ", " .. dirY .. "(x , y)")
-			--print("distance from current position		: ", from_me)
-			--print("distance from position (forward)	: ", from_forward)
-			--print("distance from position (backward)	: ", from_backward)
-			--print("distance from position (left)		: ", from_left)
-			--print("distance from position (right)		: ", from_right)
-			--print("forwards    " .. #forwards)
-			--print("backwards   " .. #backwards)
-			--print("turnLefts   " .. #turnLefts)
-			--print("turnRights  " .. #turnRights)
-			--print("turnArounds " .. #turnArounds)
+			local cardstosim = {}
+			cardstosim.__mode = "k"
+	
+			table.insert(cardstosim, "Forward")
+			
+			local test_x, test_y, dir_test_x, dir_test_y = self:SimpleSimulatePlayOfCards( unitID, posX, posY, dirX, dirY, cardstosim)
+			local from_forward  = PathfinderHandler.GeneratePath(test_x, test_y, targetX, targetY)
+			
+			local test_x, test_y, dir_test_x, dir_test_y = self:SimpleSimulatePlayOfCards( unitID, posX+dirX, posY+dirY, dirX, dirY, cardstosim)
+			local from_sprint = PathfinderHandler.GeneratePath(test_x, test_y, targetX, targetY)
+			
+			local cardstosim2 = {}
+			cardstosim2.__mode = "k"
+			table.insert(cardstosim2, "Backward")
+			
+			local test_x, test_y, dir_test_x, dir_test_y = self:SimpleSimulatePlayOfCards( unitID, posX, posY, dirX, dirY, cardstosim2)
+			local from_backward  = PathfinderHandler.GeneratePath(test_x, test_y, targetX, targetY)
+			
+			local cardstosim3 = {}
+			cardstosim3.__mode = "k"
+			table.insert(cardstosim3, "TurnLeft")
+			table.insert(cardstosim3, "Forward")
+            
+			local test_x, test_y, dir_test_x, dir_test_y = self:SimpleSimulatePlayOfCards( unitID, posX, posY, dirX, dirY, cardstosim3)
+			local from_left = PathfinderHandler.GeneratePath(test_x, test_y, targetX, targetY)
+			
+			local cardstosim4 = {}
+			cardstosim4.__mode = "k"
+			table.insert(cardstosim4, "TurnRight")
+			table.insert(cardstosim4, "Forward")
+			
+			local test_x, test_y, dir_test_x, dir_test_y = self:SimpleSimulatePlayOfCards( unitID, posX, posY, dirX, dirY, cardstosim4)
+			local from_right = PathfinderHandler.GeneratePath(test_x, test_y, targetX, targetY)
+			local from_right = PathfinderHandler.GeneratePath(test_x, test_y, targetX, targetY)
+			--forward_play = 
+			
+			local from_me = PathfinderHandler.GeneratePath(posX, posY, targetX, targetY)
+			--local form_x, from_y = posX+dirX, posY+dirY;
+			--local from_forward = PathfinderHandler.GeneratePath(form_x, from_y, targetX, targetY)
+			--local form_x, from_y = posX+dirX+dirX, posY+dirY+dirY;
+			--local from_sprint = PathfinderHandler.GeneratePath(form_x, from_y, targetX, targetY)
+			--form_x, from_y = posX-dirX, posY-dirY;
+			--local from_backward = PathfinderHandler.GeneratePath(form_x, from_y, targetX, targetY)
+			--form_x, from_y = posX+dirY, posY-dirX;
+			--local from_left = PathfinderHandler.GeneratePath(form_x, from_y, targetX, targetY)
+			--form_x, from_y = posX-dirY, posY+dirX;
+			--local from_right = PathfinderHandler.GeneratePath(form_x, from_y, targetX, targetY)
+			
+			--print( from_forward_sim, from_forward)
+			print("Position : " .. posX .. ", " .. posY ..  "(x , y)")
+			print("Direction: " .. dirX .. ", " .. dirY .. "(x , y)")
+			print("distance from current position		: ", from_me)
+			print("distance from position (forward)	: ", from_forward)
+			print("distance from position (backward)	: ", from_backward)
+			print("distance from position (left)		: ", from_left)
+			print("distance from position (right)		: ", from_right)
+			print("forwards    " .. #forwards)
+			print("backwards   " .. #backwards)
+			print("turnLefts   " .. #turnLefts)
+			print("turnRights  " .. #turnRights)
+			print("turnArounds " .. #turnArounds)
 			
 			
 			if from_me > from_sprint and #sprints > 0 
 			then 
 				print("Sprint")
 				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, sprints)
-				posX = posX + dirX + dirX; 
-				posY = posY + dirY + dirY;
+				 posX, posY, dirX, dirY = self:SimpleSimulatePlayOfCards( unitID, posX+dirX, posY+dirY, dirX, dirY, cardstosim)
 				
 			elseif from_me > from_forward and #forwards > 0 
 			then 
 				print("FORWARD")
 				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, forwards)
-				posX = posX + dirX; 
-				posY = posY + dirY;
+				posX, posY, dirX, dirY = self:SimpleSimulatePlayOfCards( unitID, posX, posY, dirX, dirY, cardstosim)
+				
 			elseif from_me > from_backward and #backwards > 0 
 			then
 				print("BACKWORD")
 				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, backwards)
-				posX = posX - dirX; 
-				posY = posY - dirY;
+				posX, posY, dirX, dirY = self:SimpleSimulatePlayOfCards( unitID, posX, posY, dirX, dirY, cardstosim2)
 		
 			elseif from_me > from_left and #turnLefts > 0
 			then
@@ -207,14 +242,12 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, dirX, dirY, posX, p
 				then
 					print("FUCK IT LETS GO RIGHT")
 					pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnRights)
-					local temp = dirY
-					dirY = dirX
-					dirX = -temp
+					table.remove(cardstosim4, 2)
+					posX, posY, dirX, dirY = self:SimpleSimulatePlayOfCards( unitID, posX, posY, dirX, dirY, cardstosim4)
 				else
 					pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnLefts)
-					local temp = dirY
-					dirY = -dirX
-					dirX = temp
+					table.remove(cardstosim3, 2)
+					posX, posY, dirX, dirY = self:SimpleSimulatePlayOfCards( unitID, posX, posY, dirX, dirY, cardstosim3)
 				end
 			elseif from_me > from_right and #turnRights > 0
 			then
@@ -223,60 +256,66 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, dirX, dirY, posX, p
 				then
 					print("FUCK IT LETS GO LEFT")
 					pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnLefts)
-					local temp = dirY
-					dirY = -dirX
-					dirX = temp
+					table.remove(cardstosim3, 2)
+					posX, posY, dirX, dirY = self:SimpleSimulatePlayOfCards( unitID, posX, posY, dirX, dirY, cardstosim3)
 				else
 					pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnRights)
-					local temp = dirY
-					dirY = dirX
-					dirX = -temp
+					table.remove(cardstosim4, 2)
+					posX, posY, dirX, dirY = self:SimpleSimulatePlayOfCards( unitID, posX, posY, dirX, dirY, cardstosim4)
 				end
 				
 			elseif from_me > from_forward and #turnArounds > 0 and #forwards == 0 and #backwards > 0
 			then
 				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnArounds)
-				dirY = -dirY
-				dirX = -dirX
+				local cardstosim5 = {}
+				cardstosim5.__mode = "k"
+				table.insert(cardstosim5, "TurnAround")
+				posX, posY, dirX, dirY = self:SimpleSimulatePlayOfCards( unitID, posX, posY, dirX, dirY, cardstosim5)
 			elseif from_me > from_backward and #turnArounds > 0 and #forwards > 0 and #backwards == 0
 			then
 				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnArounds)
-				dirY = -dirY
-				dirX = -dirX
+				local cardstosim5 = {}
+				cardstosim5.__mode = "k"
+				table.insert(cardstosim5, "TurnAround")
+				posX, posY, dirX, dirY = self:SimpleSimulatePlayOfCards( unitID, posX, posY, dirX, dirY, cardstosim5)
 			elseif #shots > 0 then
 				print("FIRE!")
 				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, shots)
+				local cardstosim5 = {}
+				cardstosim5.__mode = "k"
+				table.insert(cardstosim5, "TurnAround")
+				posX, posY, dirX, dirY = self:SimpleSimulatePlayOfCards( unitID, posX, posY, dirX, dirY, cardstosim5)
+				dirX = -dirX
+				dirY = -dirY
 			elseif #turnLefts > 0 then
             
 				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnLefts)
-				local temp = dirY
-				dirY = -dirX
-				dirX = temp
+				table.remove(cardstosim3, 2)
+				posX, posY, dirX, dirY = self:SimpleSimulatePlayOfCards( unitID, posX, posY, dirX, dirY, cardstosim3)
             
 			elseif #turnRights > 0 then
             
 				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnRights)
-				local temp = dirY
-				dirY = dirX
-				dirX = -temp
+				table.remove(cardstosim3, 2)
+				posX, posY, dirX, dirY = self:SimpleSimulatePlayOfCards( unitID, posX, posY, dirX, dirY, cardstosim3)
             
 			elseif #turnArounds > 0 then
             
 				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, turnArounds)
-				dirX = -dirX
-				dirY = -dirY
+				local cardstosim5 = {}
+				cardstosim5.__mode = "k"
+				table.insert(cardstosim5, "TurnAround")
+				posX, posY, dirX, dirY = self:SimpleSimulatePlayOfCards( unitID, posX, posY, dirX, dirY, cardstosim5)
             
 			elseif #forwards > 0 then
             
 				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, forwards)
-				posX = posX + dirX
-				posY = posY + dirY
+				posX, posY, dirX, dirY = self:SimpleSimulatePlayOfCards( unitID, posX, posY, dirX, dirY, cardstosim)
             
 			elseif #backwards > 0 then
             
-				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, backwards)
-				posX = posX - dirX
-				posY = posY - dirY
+				pickedcards[#pickedcards+1] = self:TryMove(CardSetAI, forwards)
+				posX, posY, dirX, dirY = self:SimpleSimulatePlayOfCards( unitID, posX, posY, dirX, dirY, cardstosim2)
 			else
 				print("RANDOM!")
 				local cardNr = math.random(1, #CardSetAI)
@@ -284,6 +323,14 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, dirX, dirY, posX, p
 				local pickedCard = CardSetAI[cardNr]
 
 				pickedcards[#pickedcards+1] = pickedCard
+				
+				local super = {}
+				
+				super.__mode = "k"
+				
+				table.insert(super, pickedCard) 
+				
+				posX, posY, dirX, dirY = self:SimulatePlayOfCards( unitID, super )
 
 				table.remove(CardSetAI, cardNr)
 			end
@@ -387,12 +434,12 @@ AICardPickingSystem.SimulatePlayOfCards = function(self, _unit, _pickedcards)
 	return posX, posY, dirX, dirY
 end
 
-AICardPickingSystem.SimpelSimulatePlayOfCards = function(self, _unit, _pickedcards)
+AICardPickingSystem.SimpleSimulatePlayOfCards = function(self, _unit, posX, posY, dirX, dirY, _pickedcards)
 	
 	--local mapSize = self:GetEntities("MapSize")	
 	--local mapX, mapY = self:GetComponent(mapSize[1], "MapSize", 0):GetInt2()
-	local posX, posY = self:GetComponent(_unit, "MapPosition", 0):GetInt2()
-	local dirX, dirY = self:GetComponent(_unit, "Direction", 0):GetInt2()
+	--local posX, posY = self:GetComponent(_unit, "MapPosition", 0):GetInt2()
+	--local dirX, dirY = self:GetComponent(_unit, "Direction", 0):GetInt2()
 	
 	local fellDown = false
 	
