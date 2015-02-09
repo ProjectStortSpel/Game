@@ -85,6 +85,9 @@ AbilitySlingshotSystem.Update = function(self, dt, taskIndex, taskCount)
 	local entities = self:GetEntities("UnitSlingShot")
 	-- Get the size of the map
 	local mapSizeEntity = self:GetEntities("MapSpecs")
+	if #mapSizeEntity == 0 then
+		return
+	end
 	local mapSizeX, mapSizeZ = world:GetComponent(mapSizeEntity[1], "MapSpecs", "SizeX"):GetInt2()
 
 	

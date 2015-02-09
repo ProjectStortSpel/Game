@@ -1,26 +1,26 @@
 /* ANDROID VERSION */
-#include "GraphicsHigh.h"
+#include "GraphicsLow.h"
 
 #include "ModelExporter.h"
 
 using namespace Renderer;
 using namespace glm;
 
-GraphicsHigh::GraphicsHigh()
+GraphicsLow::GraphicsLow()
 {
 	m_modelIDcounter = 0;
 	for (int i = 0; i < 10; i++)
 		m_defaultLight[i] = 0.0f;
 }
 
-GraphicsHigh::GraphicsHigh(Camera _camera) : GraphicDevice(_camera)
+GraphicsLow::GraphicsLow(Camera _camera) : GraphicDevice(_camera)
 {
 	m_modelIDcounter = 0;
 	for (int i = 0; i < 10; i++)
 		m_defaultLight[i] = 0.0f;
 }
 
-GraphicsHigh::~GraphicsHigh()
+GraphicsLow::~GraphicsLow()
 {
 	// Delete buffers
 	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
@@ -33,15 +33,9 @@ GraphicsHigh::~GraphicsHigh()
 	{
 		glDeleteTextures(1, &it->second);
 	}
-
-	//SDL_GL_DeleteContext(m_glContext);
-	//// Close and destroy the window
-	//SDL_DestroyWindow(m_window);
-	//// Clean up
-	//SDL_Quit();
 }
 
-bool GraphicsHigh::Init()
+bool GraphicsLow::Init()
 {
 	if (!InitSDLWindow()) { ERRORMSG("INIT SDL WINDOW FAILED\n"); return false; }
 
@@ -55,8 +49,6 @@ bool GraphicsHigh::Init()
 	float **tmpPtr = new float*[1];
 	BufferPointlights(0, tmpPtr);
 	delete tmpPtr;
-
-	CreateShadowMap();
 	
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
@@ -68,7 +60,7 @@ bool GraphicsHigh::Init()
 	return true;
 }
 
-void GraphicsHigh::Update(float _dt)
+void GraphicsLow::Update(float _dt)
 {
 	m_camera->Update(_dt);
 
@@ -78,61 +70,7 @@ void GraphicsHigh::Update(float _dt)
 	BufferModelTextures();
 }
 
-void GraphicsHigh::WriteShadowMapDepth()
-{
-    GLint oldFBO;
-    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFBO);
-    
-	//------- Write shadow maps depths ----------
-	glBindFramebuffer(GL_FRAMEBUFFER, m_shadowMap->GetShadowFBOHandle());
-	glClear(GL_DEPTH_BUFFER_BIT);
-	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-
-	glViewport(0, 0, m_shadowMap->GetResolution()-2, m_shadowMap->GetResolution()-2);
-
-	m_shadowShader.UseProgram();
-	//------FORWARD RENDERING--------------------------------------------
-	glEnable(GL_BLEND);
-
-	//glCullFace(GL_FRONT);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	mat4 shadowViewProj = (*m_shadowMap->GetProjectionMatrix()) * (*m_shadowMap->GetViewMatrix());
-
-	//Forward models
-	for (int i = 0; i < m_modelsForward.size(); i++)
-	{
-		if (m_modelsForward[i].active) // IS MODEL ACTIVE?
-		{
-			
-			mat4 modelMatrix;
-			if (m_modelsForward[i].modelMatrix == NULL)
-			{
-				modelMatrix = glm::translate(glm::vec3(1));
-				SDL_Log("model: %d has no model matrix", i);
-			}
-			else
-				modelMatrix = *m_modelsForward[i].modelMatrix;
-
-			mat4 mvp = shadowViewProj * modelMatrix;
-			m_shadowShader.SetUniVariable("MVP", mat4x4, &mvp);
-
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
-
-			m_modelsForward[i].bufferPtr->draw(m_shadowShader.GetShaderProgram());
-			glBindTexture(GL_TEXTURE_2D, 0);
-		}
-	}
-	//------------------------------------------------
-	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	glBindFramebuffer(GL_FRAMEBUFFER, oldFBO);
-	glCullFace(GL_BACK);
-	//------------------------------
-}
-
-void GraphicsHigh::Render()
+void GraphicsLow::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
@@ -143,8 +81,6 @@ void GraphicsHigh::Render()
 
 	if (m_modelsForward.size() > 0)
 	{
-		WriteShadowMapDepth();
-
 		glViewport(0, 0, m_clientWidth, m_clientHeight);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -154,14 +90,6 @@ void GraphicsHigh::Render()
 		m_forwardShader.UseProgram();
 		m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 		m_forwardShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
-		glm::mat4 invViewMatrix = glm::inverse(viewMatrix);
-		m_forwardShader.SetUniVariable("InvViewMatrix", mat4x4, &invViewMatrix);
-
-		mat4 shadowVP = (*m_shadowMap->GetProjectionMatrix()) * (*m_shadowMap->GetViewMatrix());
-		m_forwardShader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, m_shadowMap->GetDepthTexHandle());
 
 		for (int i = 0; i < m_modelsForward.size(); i++)
 		{
@@ -267,34 +195,6 @@ void GraphicsHigh::Render()
 		}
 	}
 
-	/*if (m_modelsForward.size() > 0)
-	{
-		float positionData[] = {
-			-1.0, -1.0,
-			1.0, -1.0,
-			1.0, 1.0,
-			1.0, 1.0,
-			-1.0, 1.0,
-			-1.0, -1.0
-		};
-
-		m_fullscreen.UseProgram();
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, m_shadowMap->GetDepthTexHandle());
-
-		GLuint buf;
-		glGenBuffers(1, &buf);
-
-		glBindBuffer(GL_ARRAY_BUFFER, buf);
-		glBufferData(GL_ARRAY_BUFFER, 2 * 6 * sizeof(float), positionData, GL_STATIC_DRAW);
-
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
-		glEnableVertexAttribArray(0);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-
-		glDeleteBuffers(1, &buf);
-	}*/
 	glDisable(GL_TEXTURE_2D);
 	glUseProgram(0);
 	glEnable(GL_DEPTH_TEST);
@@ -302,7 +202,7 @@ void GraphicsHigh::Render()
 	SDL_GL_SwapWindow(m_window);
 }
 
-bool GraphicsHigh::InitSDLWindow()
+bool GraphicsLow::InitSDLWindow()
 {
 	if (SDL_Init(SDL_INIT_VIDEO) == -1){
 		SDL_Log( SDL_GetError() );
@@ -344,12 +244,12 @@ bool GraphicsHigh::InitSDLWindow()
 	return true;
 }
 
-bool GraphicsHigh::InitShaders()
+bool GraphicsLow::InitShaders()
 {
 	// Standard forward
 	m_forwardShader.InitShaderProgram();
-	m_forwardShader.AddShader("content/shaders/android/AndroidForwardVS.glsl", GL_VERTEX_SHADER);
-	m_forwardShader.AddShader("content/shaders/android/AndroidForwardFS.glsl", GL_FRAGMENT_SHADER);
+	m_forwardShader.AddShader("content/shaders/android/lowAndroidForwardVS.glsl", GL_VERTEX_SHADER);
+	m_forwardShader.AddShader("content/shaders/android/lowAndroidForwardFS.glsl", GL_FRAGMENT_SHADER);
 	m_forwardShader.FinalizeShaderProgram();
 
 	// SkyBox
@@ -370,12 +270,6 @@ bool GraphicsHigh::InitShaders()
 	m_interfaceShader.AddShader("content/shaders/android/AndroidInterfaceFS.glsl", GL_FRAGMENT_SHADER);
 	m_interfaceShader.FinalizeShaderProgram();
 
-	// ShadowShader geometry
-	m_shadowShader.InitShaderProgram();
-	m_shadowShader.AddShader("content/shaders/android/AndroidShadowShaderVS.glsl", GL_VERTEX_SHADER);
-	m_shadowShader.AddShader("content/shaders/android/AndroidShadowShaderFS.glsl", GL_FRAGMENT_SHADER);
-	m_shadowShader.FinalizeShaderProgram();
-
 	//m_fullscreen
 	/*m_fullscreen.InitShaderProgram();
 	m_fullscreen.AddShader("content/shaders/android/AndroidFullscreenVS.glsl", GL_VERTEX_SHADER);
@@ -385,7 +279,7 @@ bool GraphicsHigh::InitShaders()
 	return true;
 }
 
-bool GraphicsHigh::InitBuffers()
+bool GraphicsLow::InitBuffers()
 {
 	//Skybox shader
 	m_skyBoxShader.CheckUniformLocation("cubemap", 1);
@@ -396,7 +290,7 @@ bool GraphicsHigh::InitBuffers()
 	return true;
 }
 
-void GraphicsHigh::BufferPointlights(int _nrOfLights, float **_lightPointers)
+void GraphicsLow::BufferPointlights(int _nrOfLights, float **_lightPointers)
 {
 	/*if (_nrOfLights == 0)
 	{
@@ -415,28 +309,12 @@ void GraphicsHigh::BufferPointlights(int _nrOfLights, float **_lightPointers)
 	}*/
 }
 
-void GraphicsHigh::BufferDirectionalLight(float *_lightPointer)
+void GraphicsLow::BufferDirectionalLight(float *_lightPointer)
 {
 	m_directionalLightPtr = _lightPointer ? _lightPointer : m_defaultLight;
 }
 
-void GraphicsHigh::CreateShadowMap()
-{
-	int resolution = 1024;
-	m_dirLightDirection = vec3(0.0f, -1.0f, 1.0f);
-	vec3 midMap = vec3(8.0f, 0.0f, 8.0f);
-	vec3 lightPos = midMap - (10.0f*normalize(m_dirLightDirection));
-	m_shadowMap = new ShadowMap(lightPos, lightPos + normalize(m_dirLightDirection), resolution);
-	m_shadowMap->CreateShadowMapTexture(GL_TEXTURE0);
-
-	m_forwardShader.UseProgram();
-	m_forwardShader.SetUniVariable("BiasMatrix", mat4x4, m_shadowMap->GetBiasMatrix());
-	m_forwardShader.CheckUniformLocation("ShadowDepthTex", 0);
-
-	m_shadowShader.CheckUniformLocation("diffuseTex", 1);
-}
-
-bool GraphicsHigh::PreLoadModel(std::string _dir, std::string _file, int _renderType)
+bool GraphicsLow::PreLoadModel(std::string _dir, std::string _file, int _renderType)
 {
 	Shader *shaderPtr = NULL;
 
@@ -483,7 +361,7 @@ bool GraphicsHigh::PreLoadModel(std::string _dir, std::string _file, int _render
 
 	return true;
 }
-int GraphicsHigh::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType)
+int GraphicsLow::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType)
 {
 	int modelID = m_modelIDcounter;
 	m_modelIDcounter++;
@@ -498,7 +376,7 @@ int GraphicsHigh::LoadModel(std::string _dir, std::string _file, glm::mat4 *_mat
 	return modelID;
 }
 
-bool GraphicsHigh::RemoveModel(int _id)
+bool GraphicsLow::RemoveModel(int _id)
 {
 	for (int i = 0; i < m_modelsForward.size(); i++)
 	{
@@ -530,7 +408,7 @@ bool GraphicsHigh::RemoveModel(int _id)
 
 	return false;
 }
-bool GraphicsHigh::ActiveModel(int _id, bool _active)
+bool GraphicsLow::ActiveModel(int _id, bool _active)
 {
 	for (int i = 0; i < m_modelsForward.size(); i++)
 	{
@@ -559,7 +437,7 @@ bool GraphicsHigh::ActiveModel(int _id, bool _active)
 	return false;
 }
 
-Buffer* GraphicsHigh::AddMesh(std::string _fileDir, Shader *_shaderProg)
+Buffer* GraphicsLow::AddMesh(std::string _fileDir, Shader *_shaderProg)
 {
 	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
 	{		
@@ -582,27 +460,22 @@ Buffer* GraphicsHigh::AddMesh(std::string _fileDir, Shader *_shaderProg)
 	vpLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexPosition");
 	vpLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexPosition");
 	vpLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexPosition");
-	vpLocs[m_shadowShader.GetShaderProgram()]	 = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexPosition");
 
 	vnLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexNormal");
 	vnLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexNormal");
 	vnLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexNormal");
-	vnLocs[m_shadowShader.GetShaderProgram()]	 = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexNormal");
 
 	tanLocs[m_forwardShader.GetShaderProgram()]	  = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTangent");
 	tanLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexTangent");
 	tanLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexTangent");
-	tanLocs[m_shadowShader.GetShaderProgram()]	  = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexTangent");
 
 	bitanLocs[m_forwardShader.GetShaderProgram()]	= glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexBiTangent");
 	bitanLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexBiTangent");
 	bitanLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexBiTangent");
-	bitanLocs[m_shadowShader.GetShaderProgram()]	= glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexBiTangent");
 
 	tcLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTexCoord");
 	tcLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexTexCoord");
 	tcLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexTexCoord");
-	tcLocs[m_shadowShader.GetShaderProgram()]	 = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexTexCoord");
 
 	_shaderProg->UseProgram();
 	BufferData bufferData[] =
@@ -622,19 +495,7 @@ Buffer* GraphicsHigh::AddMesh(std::string _fileDir, Shader *_shaderProg)
 	return retbuffer;
 }
 
-//ObjectData GraphicDevice::AddObject(std::string _file, std::string _dir)
-//{
-//	std::string fileDir = _dir;
-//	fileDir.append(_file);
-//	for (std::map<const std::string, ObjectData>::iterator it = m_objects.begin(); it != m_objects.end(); it++)
-//	{
-//		if (it->first == fileDir)
-//			return it->second;
-//	}
-//	ObjectData obj = ModelLoader::importObject(_dir, _file);
-//}
-
-void GraphicsHigh::Clear()
+void GraphicsLow::Clear()
 {
   m_modelIDcounter = 0;
   
@@ -649,7 +510,7 @@ void GraphicsHigh::Clear()
   m_directionalLightPtr = NULL;
 }
 
-void GraphicsHigh::BufferLightsToGPU()
+void GraphicsLow::BufferLightsToGPU()
 {
 	if (m_directionalLightPtr)
 	{
@@ -667,6 +528,4 @@ void GraphicsHigh::BufferLightsToGPU()
 	    m_forwardShader.SetUniVariable("dirlightIntensity", vector3, &zero);
 	    m_forwardShader.SetUniVariable("dirlightColor", vector3, &zero);
 	}
-	
-	m_shadowMap->UpdateViewMatrix(vec3(8.0f, 0.0f, 8.0f) - (10.0f*normalize(m_dirLightDirection)), vec3(8.0f, 0.0f, 8.0f));
 }

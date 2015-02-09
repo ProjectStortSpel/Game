@@ -12,14 +12,8 @@ GraphicDevice::GraphicDevice()
 {
 	m_windowPosX = 70;
 	m_windowPosY = 2;
+	m_windowCaption = "Project MOMS SPAGHETTI";
 	m_SDLinitialized = false;
-	
-	// Linux fix
-	// Please initialize ALL variables!
-	m_pointerToPointlights = NULL;
-	m_pointerToDirectionalLights = NULL;
-	m_numberOfPointlights = 0;
-	m_numberOfDirectionalLights = 0;
 }
 
 GraphicDevice::GraphicDevice(Camera _camera, int x, int y)
@@ -27,7 +21,13 @@ GraphicDevice::GraphicDevice(Camera _camera, int x, int y)
 	m_camera = new Camera(_camera);
 	m_windowPosX = x;
 	m_windowPosY = y;
+	m_windowCaption = "Project MOMS SPAGHETTI";
 	m_SDLinitialized = true;
+
+	m_pointerToPointlights = NULL;
+	m_pointerToDirectionalLights = NULL;
+	m_numberOfPointlights = 0;
+	m_numberOfDirectionalLights = 0;
 }
 
 GraphicDevice::~GraphicDevice()

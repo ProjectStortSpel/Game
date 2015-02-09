@@ -11,3 +11,8 @@ ServerListEntryComponent:AddVariable("NoSpectators", ByteSize.Int)
 ServerListEntryComponent:AddVariable("GameStarted", ByteSize.Int)
 ServerListEntryComponent:AddVariable("PasswordProtected", ByteSize.Int)
 worldCreator:AddComponentType(ServerListEntryComponent)
+
+local RefreshServerListComponent = ComponentType()
+RefreshServerListComponent.Name = "RefreshServerList"
+RefreshServerListComponent.TableType = TableType.Map
+worldCreator:AddComponentType(RefreshServerListComponent)

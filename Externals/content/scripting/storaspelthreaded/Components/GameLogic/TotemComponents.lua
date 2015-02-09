@@ -13,3 +13,11 @@ local AddTotemPieceComponent = ComponentType()
 AddTotemPieceComponent.Name = "AddTotemPiece"
 AddTotemPieceComponent.TableType = TableType.Map
 worldCreator:AddComponentType(AddTotemPieceComponent)
+
+local TotemPieceComponent = ComponentType()
+TotemPieceComponent.Name = "TotemPiece"
+TotemPieceComponent.SyncNetwork = true
+TotemPieceComponent.TableType = TableType.Map
+TotemPieceComponent:AddVariable("TotemPoleId", ByteSize.Int)
+TotemPieceComponent:AddVariable("CurrentHeight", ByteSize.Int)
+worldCreator:AddComponentType(TotemPieceComponent)
