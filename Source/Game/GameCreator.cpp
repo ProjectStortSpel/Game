@@ -32,7 +32,7 @@
 
 GameCreator::GameCreator() :
 m_graphics(0), m_input(0), m_clientWorld(0), m_serverWorld(0), m_worldProfiler(0), m_console(0), m_remoteConsole(0), m_consoleManager(Console::ConsoleManager::GetInstance()), m_frameCounter(new Utility::FrameCounter()), m_running(true),
-m_graphicalSystems(std::vector<GraphicalSystem*>())
+m_graphicalSystems(std::vector<GraphicalSystem*>()), m_timeScale(1.0f)
 {
   
 }
@@ -429,6 +429,7 @@ void GameCreator::StartGame(int argc, char** argv)
 	m_consoleManager.AddCommand("GameMode", std::bind(&GameCreator::ConsoleGameMode, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager.AddCommand("Start", std::bind(&GameCreator::ConsoleStartTemp, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager.AddCommand("ChangeGraphics", std::bind(&GameCreator::ChangeGraphicsSettings, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager.AddCommand("ChangeTimeScale", std::bind(&GameCreator::ChangeTimeScale, this, std::placeholders::_1, std::placeholders::_2));
 	
     InitializeLobby();
     
@@ -469,6 +470,8 @@ void GameCreator::StartGame(int argc, char** argv)
 			m_frameCounter->Tick();
 			dt += m_frameCounter->GetDeltaTime();
 		}
+
+		dt *= m_timeScale;
 
 		m_inputCounter.Reset();
 		/*	Collect all input	*/
@@ -881,6 +884,21 @@ void GameCreator::PrintSectionTime(const std::string& sectionName, Utility::Fram
 	  "   Average: " << std::fixed << std::setprecision(3) << average << " ms" <<
 	  "   Anomality: " << std::fixed << std::setprecision(3) << anomality << " ms";
 	m_graphics->RenderSimpleText(ss.str(), x, y);
+}
+
+void GameCreator::ChangeTimeScale(std::string _command, std::vector<Console::Argument>* _args)
+{
+	if (_args->size() == 0)
+	{
+		m_timeScale = 1.0f;
+		return;
+	}
+
+	if (_args->at(0).ArgType == Console::ArgumentType::Number)
+		m_timeScale = (float)abs((float)_args->at(0).Number);
+
+
+
 }
 
 void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Console::Argument>* _args)
