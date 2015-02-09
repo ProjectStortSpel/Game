@@ -2,6 +2,7 @@
 #include "LuaEmbedder/LuaEmbedder.h"
 #include "LuaComponent.h"
 #include "../../Network/NetworkInstance.h"
+#include "Game/LuaBridge/Network/LuaNetwork.h"
 #include <assert.h>
 
 namespace LuaBridge
@@ -169,51 +170,66 @@ namespace LuaBridge
 		Network::NetEvent  hook;
 
 		hook = std::bind(&LuaSystem::OnBannedFromServer, this, std::placeholders::_1, std::placeholders::_2);
-		NetworkInstance::GetClient()->SetOnBannedFromServer(hook);
+		LuaNetworkEvents::g_onBannedFromServer.push_back(hook);
+		//NetworkInstance::GetClient()->SetOnBannedFromServer(hook);
 
 		hook = std::bind(&LuaSystem::OnConnectedToServer, this, std::placeholders::_1, std::placeholders::_2);
-		NetworkInstance::GetClient()->SetOnConnectedToServer(hook);
+		LuaNetworkEvents::g_onConnectedToServer.push_back(hook);
+		//NetworkInstance::GetClient()->SetOnConnectedToServer(hook);
 
 		hook = std::bind(&LuaSystem::OnDisconnectedFromServer, this, std::placeholders::_1, std::placeholders::_2);
-		NetworkInstance::GetClient()->SetOnDisconnectedFromServer(hook);
+		LuaNetworkEvents::g_onDisconnectedFromServer.push_back(hook);
+		//NetworkInstance::GetClient()->SetOnDisconnectedFromServer(hook);
 
 		hook = std::bind(&LuaSystem::OnFailedToConnect, this, std::placeholders::_1, std::placeholders::_2);
-		NetworkInstance::GetClient()->SetOnFailedToConnect(hook);
+		LuaNetworkEvents::g_onFailedToConnect.push_back(hook);
+		//NetworkInstance::GetClient()->SetOnFailedToConnect(hook);
 
 		hook = std::bind(&LuaSystem::OnKickedFromServer, this, std::placeholders::_1, std::placeholders::_2);
-		NetworkInstance::GetClient()->SetOnKickedFromServer(hook);
+		LuaNetworkEvents::g_onKickedFromServer.push_back(hook);
+		//NetworkInstance::GetClient()->SetOnKickedFromServer(hook);
 
 		hook = std::bind(&LuaSystem::OnPasswordInvalid, this, std::placeholders::_1, std::placeholders::_2);
-		NetworkInstance::GetClient()->SetOnPasswordInvalid(hook);
+		LuaNetworkEvents::g_onPasswordInvalid.push_back(hook);
+		//NetworkInstance::GetClient()->SetOnPasswordInvalid(hook);
 
 		hook = std::bind(&LuaSystem::OnRemotePlayerBanned, this, std::placeholders::_1, std::placeholders::_2);
-		NetworkInstance::GetClient()->SetOnRemotePlayerBanned(hook);
+		LuaNetworkEvents::g_onRemotePlayerBanned.push_back(hook);
+		//NetworkInstance::GetClient()->SetOnRemotePlayerBanned(hook);
 
 		hook = std::bind(&LuaSystem::OnRemotePlayerConnected, this, std::placeholders::_1, std::placeholders::_2);
-		NetworkInstance::GetClient()->SetOnRemotePlayerConnected(hook);
+		LuaNetworkEvents::g_onRemotePlayerConnected.push_back(hook);
+		//NetworkInstance::GetClient()->SetOnRemotePlayerConnected(hook);
 
 		hook = std::bind(&LuaSystem::OnRemotePlayerDisconnected, this, std::placeholders::_1, std::placeholders::_2);
-		NetworkInstance::GetClient()->SetOnRemotePlayerDisconnected(hook);
+		LuaNetworkEvents::g_onRemotePlayerDisconnected.push_back(hook);
+		//NetworkInstance::GetClient()->SetOnRemotePlayerDisconnected(hook);
 
 		hook = std::bind(&LuaSystem::OnRemotePlayerKicked, this, std::placeholders::_1, std::placeholders::_2);
-		NetworkInstance::GetClient()->SetOnRemotePlayerKicked(hook);
+		LuaNetworkEvents::g_onRemotePlayerKicked.push_back(hook);
+		//NetworkInstance::GetClient()->SetOnRemotePlayerKicked(hook);
 
 		hook = std::bind(&LuaSystem::OnServerFull, this, std::placeholders::_1, std::placeholders::_2);
-		NetworkInstance::GetClient()->SetOnServerFull(hook);
+		LuaNetworkEvents::g_onServerFull.push_back(hook);
+		//NetworkInstance::GetClient()->SetOnServerFull(hook);
 
 		hook = std::bind(&LuaSystem::OnTimedOutFromServer, this, std::placeholders::_1, std::placeholders::_2);
-		NetworkInstance::GetClient()->SetOnTimedOutFromServer(hook);
+		LuaNetworkEvents::g_onTimedOutFromServer.push_back(hook);
+		//NetworkInstance::GetClient()->SetOnTimedOutFromServer(hook);
 
 
 
 		hook = std::bind(&LuaSystem::OnPlayerConnected, this, std::placeholders::_1, std::placeholders::_2);
-		NetworkInstance::GetServer()->SetOnPlayerConnected(hook);
+		LuaNetworkEvents::g_onPlayerConnected.push_back(hook);
+		//NetworkInstance::GetServer()->SetOnPlayerConnected(hook);
 
 		hook = std::bind(&LuaSystem::OnPlayerDisconnected, this, std::placeholders::_1, std::placeholders::_2);
-		NetworkInstance::GetServer()->SetOnPlayerDisconnected(hook);
+		LuaNetworkEvents::g_onPlayerDisconnected.push_back(hook);
+		//NetworkInstance::GetServer()->SetOnPlayerDisconnected(hook);
 
 		hook = std::bind(&LuaSystem::OnPlayerTimedOut, this, std::placeholders::_1, std::placeholders::_2);
-		NetworkInstance::GetServer()->SetOnPlayerTimedOut(hook);
+		LuaNetworkEvents::g_onPlayerTimedOut.push_back(hook);
+		//NetworkInstance::GetServer()->SetOnPlayerTimedOut(hook);
 
 		return 0;
 	}
