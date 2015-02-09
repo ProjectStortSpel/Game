@@ -22,7 +22,6 @@ AddTextToTextureSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, 
 			self:GetComponent(entityId, "Scale", 0):SetFloat3(scaley*ratio, scaley, scalez)
 		end
 		GraphicDevice.ChangeModelTexture(ModelId, N)
-		world:RemoveComponentFrom("TextTexture", entityId)
 	end
 end
 
