@@ -241,7 +241,7 @@ std::vector<coord> Pathfinder::GeneratePath( coord start, coord goal )
 	std::vector<pathfindingnode> closed;
 	this->m_startCoord = start;
 	this->m_goalCoord = goal;
-	if (this->m_mapData[start.x][start.y].walkable && this->InsideWorld(start.x, start.y) && this->m_mapData[goal.x][goal.y].walkable && this->InsideWorld(goal.x, goal.y))
+	if (this->InsideWorld(start.x, start.y) && this->InsideWorld(goal.x, goal.y) && this->m_mapData[start.x][start.y].walkable && this->m_mapData[goal.x][goal.y].walkable)
 	{
 		this->m_mapData[start.x][start.y].parent = &this->m_mapData[start.x][start.y];
 		this->m_mapData[start.x][start.y].g = 0;
