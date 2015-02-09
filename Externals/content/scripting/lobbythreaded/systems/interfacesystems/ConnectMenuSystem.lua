@@ -18,6 +18,7 @@ ConnectMenuSystem.Update = function(self, dt, taskIndex, taskCount)
 			if world:EntityHasComponent(pressedButton, "MenuEntityCommand") then
 				local compname = self:GetComponent(pressedButton, "MenuEntityCommand", "ComponentName"):GetString()
 				--self:RemoveMenu()
+				self.doRefresh = true
 				local id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo(compname, id)
 			end
@@ -48,19 +49,8 @@ end
 
 ConnectMenuSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
 
-	--local serversList = 
+	--self.doRefresh = true
 
-	for i = 1, #entities do
-		local buttonId = world:GetComponent(entities[i], "ServerListEntry", "ButtonId"):GetInt(0)
-		local textId = world:GetComponent(entities[i], "ServerListEntry", "TextId"):GetInt(0)
-		if buttonId > 0 and textId > 0 then
-			world:KillEntity(buttonId)
-			world:KillEntity(textId)
-		end
-	end
-
-	--self:RefreshMenu()
-	
 end
 
 ConnectMenuSystem.SpawnMenu = function(self)
