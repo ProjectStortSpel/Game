@@ -32,13 +32,15 @@ namespace Renderer
 		bool active;
 		bool viewspace;
 		mat4* modelMatrix;
+		float* color;
 
 		Instance(){}
-		Instance(int _id, bool _active, mat4* _model)
+		Instance(int _id, bool _active, mat4* _model, float* _color)
 		{
 			id = _id;
 			active = _active;
 			modelMatrix = _model;
+			color = _color;
 		}
 	};
 
@@ -88,6 +90,7 @@ namespace Renderer
 		std::string File;
 		glm::mat4* MatrixPtr;
 		int RenderType;
+		float* Color;
 	};
 
 	class DECLSPEC GraphicDevice
@@ -123,7 +126,7 @@ namespace Renderer
 		void GetWindowPos(int &x, int &y);
 
 		// MODELLOADER
-		virtual int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED){ return 0; };// = 0;
+		virtual int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED, float* _color = nullptr){ return 0; };// = 0;
 		virtual bool RemoveModel(int _id){ return false; };// = 0;
 		virtual bool ActiveModel(int _id, bool _active){ return false; };// = 0;
 		virtual bool ChangeModelTexture(int _id, std::string _fileDir, int _textureType = TEXTURE_DIFFUSE){ m_modelTextures.push_back({ _id, _fileDir, _textureType }); return false; };// = 0;

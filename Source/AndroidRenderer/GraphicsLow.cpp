@@ -116,6 +116,8 @@ void GraphicsLow::Render()
 				glActiveTexture(GL_TEXTURE3);
 				glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].speID);
 
+				m_forwardShader.SetUniVariable("BlendColor", vector3, m_modelsForward[i].color);
+
 				m_modelsForward[i].bufferPtr->draw(m_forwardShader.GetShaderProgram());
 				glBindTexture(GL_TEXTURE_2D, 0);
 			}
@@ -361,7 +363,7 @@ bool GraphicsLow::PreLoadModel(std::string _dir, std::string _file, int _renderT
 
 	return true;
 }
-int GraphicsLow::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType)
+int GraphicsLow::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color)
 {
 	int modelID = m_modelIDcounter;
 	m_modelIDcounter++;
@@ -371,6 +373,7 @@ int GraphicsLow::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matr
 	modelToLoad->File = _file;
 	modelToLoad->MatrixPtr = _matrixPtr;
 	modelToLoad->RenderType = _renderType;
+	modelToLoad->Color = _color;
 	m_modelsToLoad[modelID] = modelToLoad;
 
 	return modelID;

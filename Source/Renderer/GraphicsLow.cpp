@@ -198,6 +198,8 @@ void GraphicsLow::Render()
 				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
 				normalMatVector[nrOfInstances] = normalMatrix;
 
+				m_forwardShader.SetUniVariable("BlendColor", vector3, m_modelsForward[i].instances[j].color);
+
 				nrOfInstances++;
 			}
 		}
@@ -453,25 +455,6 @@ bool GraphicsLow::InitLightBuffers()
 	return true;
 }
 
-//void GraphicsLow::BufferPointlights(int _nrOfLights, float **_lightPointers)
-//{
-//	/*if (_nrOfLights == 0)
-//	{
-//	vec3 zero = vec3(0.0);
-//	m_forwardShader.SetUniVariable("pointlights[0].Position", vector3, &zero);
-//	m_forwardShader.SetUniVariable("pointlights[0].Intensity", vector3, &zero);
-//	m_forwardShader.SetUniVariable("pointlights[0].Color", vector3, &zero);
-//	m_forwardShader.SetUniVariable("pointlights[0].Range", glfloat, &zero.x);
-//	}
-//	else if (_nrOfLights >= 1)
-//	{
-//	m_forwardShader.SetUniVariable("pointlights[0].Position", vector3, &_lightPointers[0]);
-//	m_forwardShader.SetUniVariable("pointlights[0].Intensity", vector3, &_lightPointers[3]);
-//	m_forwardShader.SetUniVariable("pointlights[0].Color", vector3, &_lightPointers[6]);
-//	m_forwardShader.SetUniVariable("pointlights[0].Range", glfloat, &_lightPointers[9]);
-//	}*/
-//}
-
 void GraphicsLow::BufferPointlights(int _nrOfLights, float **_lightPointers)
 {
 	if (m_pointerToPointlights)
@@ -646,7 +629,7 @@ bool GraphicsLow::PreLoadModel(std::string _dir, std::string _file, int _renderT
 	return true;
 }
 
-int GraphicsLow::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType)
+int GraphicsLow::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color)
 {
 	int modelID = m_modelIDcounter;
 	m_modelIDcounter++;
@@ -659,6 +642,7 @@ int GraphicsLow::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matr
 	modelToLoad->File = _file;
 	modelToLoad->MatrixPtr = _matrixPtr;
 	modelToLoad->RenderType = _renderType;
+	modelToLoad->Color = _color;
 	m_modelsToLoad[modelID] = modelToLoad;
 
 	return modelID;
@@ -714,7 +698,7 @@ void GraphicsLow::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 		{
 			if (m_modelsForward[i] == model)
 			{
-				m_modelsForward[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr));
+				m_modelsForward[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
 				return;
 			}
 		}
@@ -725,7 +709,7 @@ void GraphicsLow::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 		{
 			if (m_modelsViewspace[i] == model)
 			{
-				m_modelsViewspace[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr));
+				m_modelsViewspace[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
 				return;
 			}
 		}
@@ -736,7 +720,7 @@ void GraphicsLow::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 		{
 			if (m_modelsInterface[i] == model)
 			{
-				m_modelsInterface[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr));
+				m_modelsInterface[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
 				return;
 			}
 		}
@@ -744,7 +728,7 @@ void GraphicsLow::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 
 	// Set model
 	//if model doesnt exist
-	model.instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr));
+	model.instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
 	// Push back the model
 	if (_modelToLoad->RenderType == RENDER_FORWARD || _modelToLoad->RenderType == RENDER_DEFERRED)
 		m_modelsForward.push_back(model);

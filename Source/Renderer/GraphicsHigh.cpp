@@ -233,6 +233,8 @@ void GraphicsHigh::Render()
 				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
 				normalMatVector[nrOfInstances] = normalMatrix;
 
+				m_deferredShader1.SetUniVariable("BlendColor", vector3, m_modelsDeferred[i].instances[j].color);
+
 				nrOfInstances++;
 			}
 		}
@@ -340,6 +342,8 @@ void GraphicsHigh::Render()
 
 				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
 				normalMatVector[nrOfInstances] = normalMatrix;
+
+				m_forwardShader.SetUniVariable("BlendColor", vector3, m_modelsForward[i].instances[j].color);
 
 				nrOfInstances++;
 			}
@@ -831,7 +835,7 @@ void GraphicsHigh::ToggleSimpleText()
 	m_renderSimpleText = !m_renderSimpleText;
 }
 
-int GraphicsHigh::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType)
+int GraphicsHigh::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color)
 {
 	int modelID = m_modelIDcounter;
 	m_modelIDcounter++;
@@ -844,6 +848,7 @@ int GraphicsHigh::LoadModel(std::string _dir, std::string _file, glm::mat4 *_mat
 	modelToLoad->File = _file;
 	modelToLoad->MatrixPtr = _matrixPtr;
 	modelToLoad->RenderType = _renderType;
+	modelToLoad->Color = _color;
 	m_modelsToLoad[modelID] = modelToLoad;
 
 	return modelID;
@@ -920,13 +925,13 @@ void GraphicsHigh::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	{
 		if ((*modelList)[i] == model)
 		{
-			(*modelList)[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr));
+			(*modelList)[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
 			return;
 		}
 	}
 
 	//if model doesnt exist
-	model.instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr));
+	model.instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
 	// Push back the model
 	modelList->push_back(model);
 }

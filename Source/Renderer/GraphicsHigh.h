@@ -31,7 +31,7 @@ namespace Renderer
 		void ToggleSimpleText(bool _on);
 
 		// MODELLOADER
-		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED);
+		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED, float* _color = nullptr);
 		bool RemoveModel(int _id);
 		bool ActiveModel(int _id, bool _active);
 

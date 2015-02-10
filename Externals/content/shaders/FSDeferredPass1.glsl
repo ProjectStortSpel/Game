@@ -14,6 +14,8 @@ uniform sampler2D diffuseTex;
 uniform sampler2D normalTex;
 uniform sampler2D specularTex;
 
+uniform vec3 BlendColor;
+
 uniform int TexFlag;
 
 layout (location = 0) out vec4 NormalData;
@@ -25,14 +27,19 @@ void main()
 	// Sample maps
 	vec3 color_map = texture( diffuseTex, TexCoord ).rgb;
 	vec3 normal_map = texture( normalTex, TexCoord ).rgb;
-	vec3 specglow_map = texture( specularTex, TexCoord ).rgb;
+	vec4 specTexture = texture( specularTex, TexCoord );
+	vec3 specglow_map = specTexture.rgb;
+	float blendFactor = specTexture.a;
 
-	
 	if(TexFlag == 0) // everything
 	{
 		// -- OUTPUTS --
 		// Set Color output
-		ColorData.xyz = color_map.xyz;								// rgb = color
+		if( BlendColor != vec3(0.0) )
+			ColorData.xyz = (1.0f-blendFactor)*color_map.xyz + blendFactor * BlendColor; 
+		else
+			ColorData.xyz = color_map.xyz;								// rgb = color
+
 		ColorData.w = specglow_map.z;								// a = glow
 		// Set Normal output
 		normal_map = (normal_map * 2.0f) - 1.0f;

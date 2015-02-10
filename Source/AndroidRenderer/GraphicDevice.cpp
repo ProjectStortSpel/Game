@@ -311,7 +311,7 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	// Import Mesh
 	Buffer* mesh = AddMesh(obj.mesh, shaderPtr);
 
-	Model model = Model(mesh, texture, normal, specular, _modelId, true, _modelToLoad->MatrixPtr); // plus modelID o matrixPointer, active
+	Model model = Model(mesh, texture, normal, specular, _modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color); // plus modelID o matrixPointer, active
 
 
 	// Push back the model
