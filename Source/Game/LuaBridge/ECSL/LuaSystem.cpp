@@ -23,8 +23,8 @@ namespace LuaBridge
 		LuaEmbedder::EmbedClass<LuaSystem>(L, "System", false);
 		LuaEmbedder::EmbedClassFunction<LuaSystem>(L, "System", "AddComponentTypeToFilter", &LuaSystem::AddComponentTypeToFilter);
 		LuaEmbedder::EmbedClassFunction<LuaSystem>(L, "System", "GetEntities", &LuaSystem::GetEntities);
-		LuaEmbedder::EmbedClassFunction<LuaSystem>(L, "System", "GetComponent", &LuaSystem::GetComponent);
-		LuaEmbedder::EmbedClassFunction<LuaSystem>(L, "System", "EntityHasComponent", &LuaSystem::HasComponent);
+		//LuaEmbedder::EmbedClassFunction<LuaSystem>(L, "System", "GetComponent", &LuaSystem::GetComponent);
+		//LuaEmbedder::EmbedClassFunction<LuaSystem>(L, "System", "EntityHasComponent", &LuaSystem::HasComponent);
 		LuaEmbedder::EmbedClassFunction<LuaSystem>(L, "System", "InitializeNetworkEvents", &LuaSystem::InitializeNetworkEvents);
 
 		LuaEmbedder::EmbedClassFunction<LuaSystem>(L, "System", "UsingUpdate", &LuaSystem::UsingUpdate);
@@ -92,26 +92,7 @@ namespace LuaBridge
 		}
 	}
 
-	int LuaSystem::GetComponent(lua_State* L)
-	{
-		ECSL::DataLocation dataLocation;
-		unsigned int entityId = (unsigned int)LuaEmbedder::PullInt(L, 1);
-		std::string componentType = LuaEmbedder::PullString(L, 2);
-		if (LuaEmbedder::IsInt(L, 3))
-		{
-			unsigned int index = (unsigned int)LuaEmbedder::PullInt(L, 3);
-			dataLocation = System::GetComponent(entityId, componentType, index);
-		}
-		else
-		{
-			std::string variableName = LuaEmbedder::PullString(L, 3);
-			dataLocation = System::GetComponent(entityId, componentType, variableName);
-		}
-		LuaComponent* component = new LuaComponent(dataLocation, this, entityId, componentType);
-		LuaEmbedder::PushObject<LuaComponent>(L, "Component", component, true);
-		return 1;
-	}
-
+	
 	int LuaSystem::SetName(lua_State* L)
 	{
 		std::string systemName = LuaEmbedder::PullString(L, 1);
@@ -154,14 +135,6 @@ namespace LuaBridge
 			LuaEmbedder::PushUnsignedIntArray(L, entities->data(), entities->size(), false);
 		}
 
-		return 1;
-	}
-	
-	int LuaSystem::HasComponent(lua_State* L)
-	{
-		unsigned int entityId = (unsigned int)LuaEmbedder::PullInt(L, 1);
-		unsigned int componentTypeId = ECSL::ComponentTypeManager::GetInstance().GetTableId(LuaEmbedder::PullString(L, 2));
-		LuaEmbedder::PushBool(L, System::HasComponent(entityId, componentTypeId));
 		return 1;
 	}
 

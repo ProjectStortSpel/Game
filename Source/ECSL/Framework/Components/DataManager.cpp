@@ -19,6 +19,8 @@ DataManager::DataManager(unsigned int _entityCount, std::vector<unsigned int>* _
 	m_changedEntitiesCopy(new std::vector<unsigned int>())
 {
 	m_entityChangesMutex = SDL_CreateMutex();
+	//String?
+	m_stringMutex = SDL_CreateMutex();
 }
 
 DataManager::~DataManager()
@@ -28,7 +30,7 @@ DataManager::~DataManager()
 		delete *it;
 	}
 	m_componentTables->clear();
-		
+	
 	delete(m_componentTables);
 	delete(m_entityTable);
 	delete(m_componentTypeIds);
@@ -38,6 +40,8 @@ DataManager::~DataManager()
 	delete(m_changedEntitiesCopy);
 
 	SDL_DestroyMutex(m_entityChangesMutex);
+	//String?
+	SDL_DestroyMutex(m_stringMutex);
 }
 
 void DataManager::InitializeTables()
@@ -108,7 +112,16 @@ void DataManager::UpdateEntityTable(const RuntimeInfo& _runtime)
 		unsigned int entityId = (*m_changedEntitiesCopy)[i];
 		EntityChange* entityChange = (*m_entityChangesCopy)[entityId];
 		if (entityChange->Dead)
+		{
+			SDL_LockMutex(m_stringMutex);
+			if (m_stringMap.find(entityId) != m_stringMap.end())
+			{
+				m_stringMap.erase(entityId);
+			}
+			SDL_UnlockMutex(m_stringMutex);
+
 			m_entityTable->ClearEntityData(entityId);
+		}
 		else
 		{
 			for (auto componentChange : entityChange->ComponentChanges)
@@ -119,8 +132,21 @@ void DataManager::UpdateEntityTable(const RuntimeInfo& _runtime)
 						m_entityTable->AddComponentTo(entityId, componentChange.first);
 						break;
 					case ComponentChange::TO_BE_REMOVED:
+					{
+						SDL_LockMutex(m_stringMutex);
+						if (m_stringMap.find(entityId) != m_stringMap.end())
+						{
+							std::map<unsigned int, std::map<unsigned int, std::string>>* compToVarMap = &m_stringMap[entityId];
+							if (compToVarMap->find(componentChange.first) != compToVarMap->end())
+							{
+								compToVarMap->erase(componentChange.first);
+							}
+						}
+						SDL_UnlockMutex(m_stringMutex);
+
 						m_entityTable->RemoveComponentFrom(entityId, componentChange.first);
 						break;
+					}						
 				}
 			}
 		}
@@ -243,4 +269,40 @@ void DataManager::ToBeRemoved(unsigned int _entityId, unsigned int _componentTyp
 	else
 		entityChange->ComponentChanges[_componentTypeId] = TO_BE_REMOVED;
 	SDL_UnlockMutex(m_entityChangesMutex);
+}
+
+
+
+//String?
+void DataManager::SetString(unsigned int _eId, unsigned int _componentTypeId, const unsigned int _index, const char* _value)
+{
+	SDL_LockMutex(m_stringMutex);
+
+	m_stringMap[_eId][_componentTypeId][_index] = _value;
+
+	SDL_UnlockMutex(m_stringMutex);
+}
+
+std::string DataManager::GetString(unsigned int _eId, unsigned int _componentTypeId, const unsigned int _index)
+{
+	std::string result = "";
+	SDL_LockMutex(m_stringMutex);
+
+	if (m_stringMap.find(_eId) != m_stringMap.end())
+	{
+		std::map<unsigned int, std::map<unsigned int, std::string>>* compToVarMap = &m_stringMap[_eId];
+		if (compToVarMap->find(_componentTypeId) != compToVarMap->end())
+		{
+			std::map<unsigned int, std::string>* VarToStrMap = &compToVarMap->at(_componentTypeId);
+
+			if (VarToStrMap->find(_index) != VarToStrMap->end())
+			{
+				result = VarToStrMap->at(_index);
+			}
+		}
+	}
+
+	SDL_UnlockMutex(m_stringMutex);
+
+	return result;
 }

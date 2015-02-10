@@ -33,9 +33,9 @@ PickBoxSystem.Update = function(self, dt, taskIndex, taskCount)
 	for i = 1, #entities do
 		local entity = entities[i]
 		
-		local scale = self:GetComponent(entity, "Scale", 0)
-		local position = self:GetComponent(entity, "Position", 0)
-		local pickbox = self:GetComponent(entity, "PickBox", 0)
+		local scale = world:GetComponent(entity, "Scale", 0)
+		local position = world:GetComponent(entity, "Position", 0)
+		local pickbox = world:GetComponent(entity, "PickBox", 0)
 		
 		-- Get the pickbox size
 		local halfwidth = pickbox:GetFloat(0) * 0.5

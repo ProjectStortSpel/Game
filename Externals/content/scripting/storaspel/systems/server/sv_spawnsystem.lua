@@ -13,9 +13,9 @@ end
 
 SpawnSystem.OnEntityAdded = function(self, entityId)
 	
-	local posComp = self:GetComponent(entityId, "Position", 0)
-	local mapPosComp = self:GetComponent(entityId, "MapPosition", 0)
-	local spawnpointComp = self:GetComponent(entityId, "Spawnpoint", 0)
+	local posComp = world:GetComponent(entityId, "Position", 0)
+	local mapPosComp = world:GetComponent(entityId, "MapPosition", 0)
+	local spawnpointComp = world:GetComponent(entityId, "Spawnpoint", 0)
 
 	local X, Z = spawnpointComp:GetInt2()
 

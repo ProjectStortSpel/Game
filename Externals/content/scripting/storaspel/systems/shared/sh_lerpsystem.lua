@@ -6,17 +6,17 @@ LerpSystem.Update = function(self, dt)
 	for i = 1, #entities do
 		local entity = entities[i]
 		
-		local position = self:GetComponent(entity, "Position", 0)
-		local timer = self:GetComponent(entity, "LerpTime", 0)
+		local position = world:GetComponent(entity, "Position", 0)
+		local timer = world:GetComponent(entity, "LerpTime", 0)
 		local _time, _timer = timer:GetFloat2(0)
 				
-		local targetpos = self:GetComponent(entity, "LerpTargetPosition", 0)
+		local targetpos = world:GetComponent(entity, "LerpTargetPosition", 0)
 		local tX, tY, tZ = targetpos:GetFloat3(0)
 		
 		_timer = _timer + dt
 		if _time > _timer then
 
-			local startpos = self:GetComponent(entity, "LerpStartPosition", 0)
+			local startpos = world:GetComponent(entity, "LerpStartPosition", 0)
 			local sX, sY, sZ = startpos:GetFloat3(0)
 
 			local t = _timer / _time
@@ -57,15 +57,15 @@ LerpSystem.OnEntityAdded = function(self, entityId)
 		world:CreateComponentAndAddTo("LerpStartPosition", entityId)
 	end
 	
-	local position = self:GetComponent(entityId, "Position", 0)
+	local position = world:GetComponent(entityId, "Position", 0)
 	local X, Y, Z = position:GetFloat3(0)
 
-	local startposition = self:GetComponent(entityId, "LerpStartPosition", 0)
+	local startposition = world:GetComponent(entityId, "LerpStartPosition", 0)
 	startposition:SetFloat3(X, Y, Z)
 
 	if not world:EntityHasComponent(entityId, "LerpTime") then
 		world:CreateComponentAndAddTo("LerpTime", entityId)
-		local timer = self:GetComponent(entityId, "LerpTime", 0)
+		local timer = world:GetComponent(entityId, "LerpTime", 0)
 		timer:SetFloat2(self.LerpTime, 0)
 	end
 
