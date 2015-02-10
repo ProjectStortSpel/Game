@@ -18,7 +18,11 @@ ConnectMenuSystem.Update = function(self, dt, taskIndex, taskCount)
 			if world:EntityHasComponent(pressedButton, "MenuEntityCommand") then
 				local compname = self:GetComponent(pressedButton, "MenuEntityCommand", "ComponentName"):GetString()
 				--self:RemoveMenu()
-				self.doRefresh = true
+				if compname == "IPConnectEntry" then
+					self:RemoveMenu()
+				elseif compname == "RefreshServerList" then
+					self.doRefresh = true
+				end
 				local id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo(compname, id)
 			end
@@ -104,9 +108,13 @@ self:AddTextToTexture("C2"..i, serverip .. ":" .. serverport, 0, 1, 1, 1, text)
 	end
 	
 	
-	button = self:CreateElement("refresh", "quad", 0, -0.85, -2, 0.5, 0.20)
+	button = self:CreateElement("refresh", "quad", 0.4, -0.85, -2, 0.5, 0.20)
 	self:AddEntityCommandToButton("RefreshServerList", button)
 	self:AddHoverSize(1.1, button)	
+	
+	button = self:CreateElement("connect", "quad", -0.4, -0.85, -2, 0.5, 0.20)
+	self:AddEntityCommandToButton("IPConnectEntry", button)
+	self:AddHoverSize(1.1, button)
 	
 end
 
