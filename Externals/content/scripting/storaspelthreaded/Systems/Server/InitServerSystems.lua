@@ -1,16 +1,16 @@
 
 --	Map Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/MapSystems/?.lua"
-require "sv_MapGenerator"
---require "sv_CreateMapSystem"
+--require "sv_MapGenerator"
+require "sv_CreateMapSystem"
 require "sv_RiverSystem"
 require "sv_VoidSystem"
 require "sv_CheckpointSystem"
 
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(MapGenerator)
 --worldCreator:AddSystemGroup()
---worldCreator:AddSystemToCurrentGroup(CreateMapSystem)
+--worldCreator:AddSystemToCurrentGroup(MapGenerator)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(CreateMapSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(RiverSystem)
 worldCreator:AddSystemGroup()
@@ -128,7 +128,7 @@ worldCreator:AddSystemToCurrentGroup(AbilityIWin)
 
 --	Spawn Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/SpawnSystems/?.lua"
-require "sv_SpawnSystem"
+require "sv_FindSpawnpointSystem"
 require "sv_GiveSpawnLocationSystem"
 require "sv_RespawnSystem"
 require "sv_PostSpawnSystem"
@@ -136,7 +136,7 @@ require "sv_PostSpawnSystem"
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(GiveSpawnLocationSystem)
 worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(SpawnSystem)
+worldCreator:AddSystemToCurrentGroup(FindSpawnpointSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(RespawnSystem)
 worldCreator:AddSystemGroup()

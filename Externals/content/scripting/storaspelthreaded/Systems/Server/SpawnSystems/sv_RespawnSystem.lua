@@ -20,11 +20,15 @@ RespawnSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 		if world:EntityHasComponent( entityId, "RespawnUnits") then
 			
 			local units = self:GetEntities("UnitDead")
-
+				print("OIASOJISAFJOISAFJSAIOFAJIOAFSJIOAFSOJIFJISO")
 			for i = 1, #units do
 				
 				world:RemoveComponentFrom("UnitDead", units[i])
-				world:CreateComponentAndAddTo("Spawn", units[i])
+				
+				
+				local	spawnThisEntity	=	world:CreateNewEntity()
+				world:CreateComponentAndAddTo("Spawn", spawnThisEntity)
+				world:GetComponent(spawnThisEntity, "Spawn", "UnitEntityId"):SetInt(units[i])
 
 			end
 

@@ -3,6 +3,7 @@ CreateMapSystem.entities = nil
 CreateMapSystem.waterTiles = nil
 CreateMapSystem.mapX = 0
 CreateMapSystem.mapY = 0
+CreateMapSystem.noOfSpawnpoints = 0
 
 CreateMapSystem.Initialize = function(self)
 	self:SetName("CreateMapSystem")
@@ -140,32 +141,8 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		world:CreateComponentAndAddTo("AvailableSpawnpoint", newSpawnId)
 		local newSpawn = self:GetComponent(newSpawnId, "AvailableSpawnpoint", 0)
 		newSpawn:SetInt2(posX, posZ)
-		
-		
-		--self:GetComponent(mapEntity, "MapSpecs", "NoOfSpawnpoints"):SetInt(0)
-		--local noOfSpawnpoints = self:GetComponent(mapEntity, "MapSpecs", "NoOfSpawnpoints"):GetInt(0)
-		--print(noOfSpawnpoints)
-		--local mapSpecsEntity = self:GetEntities("MapSpecs")
-		--local mapEntity = nil
-		--if #mapSpecsEntity == 0 then
-		--	mapEntity = world:CreateNewEntity()
-		--	world:CreateComponentAndAddTo("MapSpecs", mapEntity)
-		--	world:CreateComponentAndAddTo("SyncNetwork", mapEntity)
-		--else
-		--	mapEntity = mapSpecsEntity[1]
-		--end		
-		
-		-- Set size of the map.
-		local mapSpecsEntity = self:GetEntities("MapSpecs")
-		print("mapspecentities", #mapSpecsEntity)
-		local noOfSpawnpoints = self:GetComponent(mapSpecsEntity[1], "MapSpecs", "NoOfSpawnpoints"):GetInt(0)
-		local noOfSpawnpoints = self:GetComponent(mapEntity, "MapSpecs", "NoOfSpawnpoints"):GetInt(0)
-		print("haj1", noOfSpawnpoints)
-		noOfSpawnpoints = noOfSpawnpoints + 1
-		print("haj2", noOfSpawnpoints)
-		self:GetComponent(mapSpecsEntity[1], "MapSpecs", "NoOfSpawnpoints"):SetInt(noOfSpawnpoints)
-		
-		print("haj2")
+				
+		self.noOfSpawnpoints = self.noOfSpawnpoints + 1
 		
 	elseif tiletype == 46 then -- 46 = . = grass
 		world:CreateComponentAndAddTo("Model", newTile)
@@ -178,27 +155,30 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		--local comp = self:GetComponent(entity, "Model", 0)
 		--comp:SetModel("grass", "grass", 0)
 	else
-		print("ERROR: TILETYPE NOT DEFINED IN sv_CreateMapSystem")
+		print("ERROR: TILETYPE NOT DEFINED IN sv_CreateMapSystem. Ascii = ", tiletype, "at:", posX, posZ)
     end
 	
 	self.entities[#self.entities+1]=newTile
 	return newTile
 end
 
+-- Does not use the template as this tile is visual only and therefore should not receive the TileComp component. If it does then the array of entities used in the map will be wrong.
 CreateMapSystem.AddGroundTileBelow = function(self, posX, posZ)
 
-	local groundEntity = world:CreateNewEntity("Tile")
-	local posComp = self:GetComponent(groundEntity, "Position", 0)
-	posComp:SetFloat3(posX, 0.0, posZ)
+	local groundEntity = world:CreateNewEntity()
 	
-	local mapPosComp = self:GetComponent(groundEntity, "MapPosition", 0)
-	mapPosComp:SetInt2(posX, posZ)
-	
+	world:CreateComponentAndAddTo("Position", groundEntity)
+	world:CreateComponentAndAddTo("Rotation", groundEntity)
+	world:CreateComponentAndAddTo("Scale", groundEntity)
+	world:CreateComponentAndAddTo("MapPosition", groundEntity)
+	world:CreateComponentAndAddTo("SyncNetwork", groundEntity)
 	world:CreateComponentAndAddTo("Model", groundEntity)
-	local comp = self:GetComponent(groundEntity, "Model", 0)
-	comp:SetModel("grass", "grass", 0)
 	
-	--table.insert(self.entities, groundEntity)
+	self:GetComponent(groundEntity, "Position", 0):SetFloat3(posX, 0.0, posZ)
+	self:GetComponent(groundEntity, "MapPosition", 0):SetInt2(posX, posZ)
+	self:GetComponent(groundEntity, "Rotation", 0):SetFloat3(0.0, 0.0, 0.0)
+	self:GetComponent(groundEntity, "Scale", 0):SetFloat3(1.0, 1.0, 1.0)
+	self:GetComponent(groundEntity, "Model", 0):SetModel("grass", "grass", 0)
 end 
 
 CreateMapSystem.CreateMap = function(self, name)
@@ -222,11 +202,6 @@ CreateMapSystem.CreateMap = function(self, name)
 		mapEntity = mapSpecsEntity[1]
 	end
 	
-	-- Init number of spawnpoints.		
-	self:GetComponent(mapEntity, "MapSpecs", "NoOfSpawnpoints"):SetInt(0)
-	local noOfSpawnpoints = self:GetComponent(mapEntity, "MapSpecs", "NoOfSpawnpoints"):GetInt(0)
-	print(noOfSpawnpoints)
-	
 	print("MapSize:", self.mapX, self.mapY)
 		
 	for x = 0, self.mapX + 1 do
@@ -242,7 +217,7 @@ CreateMapSystem.CreateMap = function(self, name)
 		self:AddTile(0, y, 111) -- 111 = void
 		inputData:AddTile( 1, true )
 		for x = 1, self.mapX do
-			local tiletype = map[(y - 1) * self.mapX + x]			
+			local tiletype = map[(y - 1) * self.mapX + x]		
             local entity = self:AddTile(x, y, tiletype)
 			if tiletype == 120  or tiletype == 104 or tiletype == 111
 			then
@@ -285,11 +260,8 @@ CreateMapSystem.CreateMap = function(self, name)
 	PathfinderHandler.SetData(inputData)
 	
 	-- Set size of the map.
-	self:GetComponent(mapEntity, "MapSpecs", "SizeX"):SetInt2(self.mapX, self.mapY)
+	self:GetComponent(mapEntity, "MapSpecs", 0):SetInt3(self.noOfSpawnpoints, self.mapX, self.mapY)
 	
-	print("MapEntity size: " .. #self.entities)
-	print("Water size: " .. #self.waterTiles)
-
 	for waterA = 1, #self.waterTiles do
 		
 		local waterPosA = world:GetComponent(self.waterTiles[waterA], "MapPosition", 0)
@@ -297,7 +269,6 @@ CreateMapSystem.CreateMap = function(self, name)
 		local posAX, posAY = waterPosA:GetInt2()
 		local dirAX, dirAY = waterDirA:GetInt2()
 
-		--print("Water[ " .. posAX .. ", " .. posAY .. "] with direction [" .. dirAX .. ", " .. dirAY .. "]")
 
 		for waterB = 1, #self.waterTiles do
 
