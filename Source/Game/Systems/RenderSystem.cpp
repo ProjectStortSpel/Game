@@ -24,7 +24,8 @@ void RenderSystem::Initialize()
 	AddComponentTypeToFilter("Position",	ECSL::FilterType::Mandatory);
 	AddComponentTypeToFilter("Rotation",	ECSL::FilterType::Mandatory);
 	AddComponentTypeToFilter("Scale",		ECSL::FilterType::Mandatory);
-	AddComponentTypeToFilter("Render",		ECSL::FilterType::Mandatory);
+	AddComponentTypeToFilter("Render",		ECSL::FilterType::RequiresOneOf);
+	AddComponentTypeToFilter("Model",		ECSL::FilterType::RequiresOneOf);
 
 	//AddComponentTypeToFilter("Parent",		ECSL::FilterType::RequiresOneOf);
 

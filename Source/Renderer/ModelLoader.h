@@ -9,12 +9,12 @@ struct ObjectData
 	std::string text;
 	std::string norm;
 	std::string spec;
-	std::string jonts;
+	std::string joints;
 	std::vector<std::string> anim;
 	ObjectData(std::string dir)
 	{
 		animated = false;
-		mesh = text = norm = spec = jonts = dir;
+		mesh = text = norm = spec = joints = dir;
 	}
 };
 
@@ -92,7 +92,7 @@ public:
 		objectdata.spec.append(temp);
 
 		getline(fileIn, temp);
-		objectdata.jonts.append(temp);
+		objectdata.joints.append(temp);
 
 		while (getline(fileIn, temp))
 		{ 
@@ -101,6 +101,12 @@ public:
 			animation.append(temp);
 			objectdata.anim.push_back(animation);
 		}
+		int isamesh = objectdata.mesh.find(".amesh");
+		if (isamesh > 0 && objectdata.joints != fileDir)
+		{
+			objectdata.animated = true;
+		}
+			
 
 		return objectdata;
 	}

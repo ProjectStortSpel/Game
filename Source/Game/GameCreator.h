@@ -68,7 +68,6 @@ private:
 	void ConsoleStartTemp(std::string _command, std::vector<Console::Argument>* _args);
 	void ConsoleStopGame(std::string _command, std::vector<Console::Argument>* _args);
 
-	void OnConnectedToServer(Network::NetConnection _nc, const char* _message);
 	void LuaPacket(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
 	void NetworkGameMode(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
 
@@ -77,6 +76,24 @@ private:
 	void ChangeGraphicsSettings(std::string _command, std::vector<Console::Argument>* _args);
 
 	void ChangeTimeScale(std::string _command, std::vector<Console::Argument>* _args);
+
+
+	void OnBannedFromServer(Network::NetConnection _nc, const char* _message);
+	void OnConnectedToServer(Network::NetConnection _nc, const char* _message);
+	void OnDisconnectedFromServer(Network::NetConnection _nc, const char* _message);
+	void OnFailedToConnect(Network::NetConnection _nc, const char* _message);
+	void OnKickedFromServer(Network::NetConnection _nc, const char* _message);
+	void OnPasswordInvalid(Network::NetConnection _nc, const char* _message);
+	void OnRemotePlayerBanned(Network::NetConnection _nc, const char* _message);
+	void OnRemotePlayerConnected(Network::NetConnection _nc, const char* _message);
+	void OnRemotePlayerDisconnected(Network::NetConnection _nc, const char* _message);
+	void OnRemotePlayerKicked(Network::NetConnection _nc, const char* _message);
+	void OnServerFull(Network::NetConnection _nc, const char* _message);
+	void OnTimedOutFromServer(Network::NetConnection _nc, const char* _message);
+
+	void OnPlayerConnected(Network::NetConnection _nc, const char* _message);
+	void OnPlayerDisconnected(Network::NetConnection _nc, const char* _message);
+	void OnPlayerTimedOut(Network::NetConnection _nc, const char* _message);
 
 private:
 	Renderer::GraphicDevice*	m_graphics;
