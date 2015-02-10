@@ -476,6 +476,7 @@ void GameCreator::StartGame(int argc, char** argv)
 	m_consoleManager.AddCommand("Reload", std::bind(&GameCreator::ConsoleReload, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager.AddCommand("Quit", std::bind(&GameCreator::ConsoleStopGame, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager.AddCommand("GameMode", std::bind(&GameCreator::ConsoleGameMode, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager.AddCommand("HostSettings", std::bind(&GameCreator::ConsoleHostSettings, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager.AddCommand("Start", std::bind(&GameCreator::ConsoleStartTemp, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager.AddCommand("ChangeGraphics", std::bind(&GameCreator::ChangeGraphicsSettings, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager.AddCommand("ChangeTimeScale", std::bind(&GameCreator::ChangeTimeScale, this, std::placeholders::_1, std::placeholders::_2));
@@ -911,6 +912,53 @@ void GameCreator::ConsoleGameMode(std::string _command, std::vector<Console::Arg
         }
     }
 	return;
+}
+
+void GameCreator::ConsoleHostSettings(std::string _command, std::vector<Console::Argument>* _args)
+{
+
+	std::string name		= _args->at(0).Text;
+	std::string password	= _args->at(1).Text;
+	std::string map			= _args->at(2).Text;
+	std::string gamemode	= _args->at(3).Text;
+	unsigned int port		= (unsigned int)_args->at(4).Number;
+	int fillai				= _args->at(5).Number;
+	int allowspec			= _args->at(6).Number;
+
+	if (NetworkInstance::GetClient()->IsConnected())
+		NetworkInstance::GetClient()->Disconnect();
+	if (NetworkInstance::GetServer()->IsRunning())
+		NetworkInstance::GetServer()->Stop();
+
+	unsigned int maxConnections = NetworkInstance::GetServer()->GetMaxConnections();
+	bool hosting = NetworkInstance::GetServer()->Start(port, password.c_str(), maxConnections);
+	bool connected = NetworkInstance::GetClient()->Connect("127.0.0.1", password.c_str(), port, 0);
+
+	std::vector<Console::Argument> args;
+	args.push_back(Console::Argument(gamemode.c_str()));
+	ConsoleGameMode("gamemode", &args);
+
+	unsigned int id = m_serverWorld->CreateNewEntity();
+	m_serverWorld->CreateComponentAndAddTo("HostSettings", id);
+
+	char* data = new char[name.size() + 1];
+	memcpy(data, name.c_str(), name.size() + 1);
+	m_serverWorld->SetComponent(id, "HostSettings", "Name", data);
+	delete data;
+	
+	data = new char[name.size() + 1];
+	memcpy(data, map.c_str(), map.size() + 1);
+	m_serverWorld->SetComponent(id, "HostSettings", "Map", data);
+	delete data;
+
+	m_serverWorld->SetComponent(id, "HostSettings", "Port", &port);
+	m_serverWorld->SetComponent(id, "HostSettings", "FillAI", &fillai);
+	m_serverWorld->SetComponent(id, "HostSettings", "AllowSpectators", &allowspec);
+
+
+	//gamemode.insert(0, std::string("gamemode "));
+	//m_consoleManager->AddToCommandQueue(gamemode.c_str());
+
 }
 
 void GameCreator::ConsoleStartTemp(std::string _command, std::vector<Console::Argument>* _args)

@@ -4,12 +4,12 @@ HostSettingsComponent.Name = "HostSettings"
 HostSettingsComponent.TableType = TableType.Map
 HostSettingsComponent:AddVariable("Name", ByteSize.Text)
 HostSettingsComponent:AddVariable("Password", ByteSize.Text)
-HostSettingsComponent:AddVariable("Password", ByteSize.Text)
 HostSettingsComponent:AddVariable("Map", ByteSize.Text)
 HostSettingsComponent:AddVariable("GameMode", ByteSize.Text)
 HostSettingsComponent:AddVariable("Port", ByteSize.Int)
-HostSettingsComponent:AddVariable("MaxUsers", ByteSize.Int)
+--HostSettingsComponent:AddVariable("MaxUsers", ByteSize.Int)
 HostSettingsComponent:AddVariable("FillAI", ByteSize.Int)
+HostSettingsComponent:AddVariable("AllowSpectators", ByteSize.Int)
 worldCreator:AddComponentType(HostSettingsComponent)
 
 -- BoolSetting Component
@@ -17,7 +17,7 @@ local BoolSettingComponent = ComponentType()
 BoolSettingComponent.Name = "BoolSetting"
 BoolSettingComponent.TableType = TableType.Map
 BoolSettingComponent:AddVariable("SettingsName", ByteSize.Text)
-BoolSettingComponent:AddVariable("Value", ByteSize.Bool)
+BoolSettingComponent:AddVariable("Value", ByteSize.Int)
 worldCreator:AddComponentType(BoolSettingComponent)
 
 -- IntSetting Component

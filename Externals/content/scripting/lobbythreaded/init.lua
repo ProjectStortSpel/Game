@@ -29,7 +29,6 @@ require "GameMenuSystem"
 require "OptionMenuSystem"
 require "ConnectMenuSystem"
 require "HostMenuSystem"
-require "HostMenu2System"
 
 
 -- Templates
@@ -54,6 +53,6 @@ worldCreator:AddSystemToCurrentGroup(OptionMenuSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ConnectMenuSystem)
 worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(HostMenu2System)
+worldCreator:AddSystemToCurrentGroup(HostMenuSystem)
 
 end

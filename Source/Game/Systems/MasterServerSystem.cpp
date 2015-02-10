@@ -103,7 +103,7 @@ void MasterServerSystem::Update(const ECSL::RuntimeInfo& _runtime)
 	if (NetworkInstance::GetServer()->IsRunning())
 	{
 		m_timeoutTimer += _runtime.Dt;
-		if (m_timeoutTimer > 2.5f)
+		if (m_timeoutTimer > 10.f)
 		{
 			m_timeoutTimer = 0.f;
 			m_mServerMessages.push_back(GAME_PING);
