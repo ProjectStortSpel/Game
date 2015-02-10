@@ -162,20 +162,23 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 	return newTile
 end
 
+-- Does not use the template as this tile is visual only and therefore should not receive the TileComp component. If it does then the array of entities used in the map will be wrong.
 CreateMapSystem.AddGroundTileBelow = function(self, posX, posZ)
 
-	local groundEntity = world:CreateNewEntity("Tile")
-	local posComp = self:GetComponent(groundEntity, "Position", 0)
-	posComp:SetFloat3(posX, 0.0, posZ)
+	local groundEntity = world:CreateNewEntity()
 	
-	local mapPosComp = self:GetComponent(groundEntity, "MapPosition", 0)
-	mapPosComp:SetInt2(posX, posZ)
-	
+	world:CreateComponentAndAddTo("Position", groundEntity)
+	world:CreateComponentAndAddTo("Rotation", groundEntity)
+	world:CreateComponentAndAddTo("Scale", groundEntity)
+	world:CreateComponentAndAddTo("MapPosition", groundEntity)
+	world:CreateComponentAndAddTo("SyncNetwork", groundEntity)
 	world:CreateComponentAndAddTo("Model", groundEntity)
-	local comp = self:GetComponent(groundEntity, "Model", 0)
-	comp:SetModel("grass", "grass", 0)
 	
-	--table.insert(self.entities, groundEntity)
+	self:GetComponent(groundEntity, "Position", 0):SetFloat3(posX, 0.0, posZ)
+	self:GetComponent(groundEntity, "MapPosition", 0):SetInt2(posX, posZ)
+	self:GetComponent(groundEntity, "Rotation", 0):SetFloat3(0.0, 0.0, 0.0)
+	self:GetComponent(groundEntity, "Scale", 0):SetFloat3(1.0, 1.0, 1.0)
+	self:GetComponent(groundEntity, "Model", 0):SetModel("grass", "grass", 0)
 end 
 
 CreateMapSystem.CreateMap = function(self, name)
