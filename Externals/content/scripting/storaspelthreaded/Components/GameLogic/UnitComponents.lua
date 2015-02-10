@@ -47,16 +47,17 @@ worldCreator:AddComponentType(RemoveUnitComponent)
 -- Spawn Component
 local SpawnComponent = ComponentType()
 SpawnComponent.Name = "Spawn"
-SpawnComponent.TableType = TableType.Array
+SpawnComponent.TableType = TableType.Map
+SpawnComponent:AddVariable("UnitEntityId", ByteSize.Reference)
 worldCreator:AddComponentType(SpawnComponent)
 
 -- Spawnpoint Component
-local SpawnComponent = ComponentType()
-SpawnComponent.Name = "Spawnpoint"
-SpawnComponent.TableType = TableType.Map
-SpawnComponent:AddVariable("X", ByteSize.Int)
-SpawnComponent:AddVariable("Z", ByteSize.Int)
-worldCreator:AddComponentType(SpawnComponent)
+local SpawnpointComponent = ComponentType()
+SpawnpointComponent.Name = "Spawnpoint"
+SpawnpointComponent.TableType = TableType.Map
+SpawnpointComponent:AddVariable("X", ByteSize.Int)
+SpawnpointComponent:AddVariable("Z", ByteSize.Int)
+worldCreator:AddComponentType(SpawnpointComponent)
 
 --	NeedSpawnLocation Component
 local NeedSpawnLocation = ComponentType()
