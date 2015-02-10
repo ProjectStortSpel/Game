@@ -125,34 +125,81 @@ bool LinSocket::Shutdown()
 	return true;
 }
 
-
+#include <netdb.h>
 bool LinSocket::Connect(const char* _ip, const int _port)
 {
-	sockaddr_in address;
-
-	memset(&address, '0', sizeof(address));
-
-	address.sin_family = PF_INET;
-	address.sin_port = htons(_port);
-
-	if (inet_pton(PF_INET, _ip, &address.sin_addr) <= 0)
-	{
-		if (NET_DEBUG)
-			SDL_Log("Failed to get address info. Error: %s.\n", strerror(errno));
-		return false;
-	}
-
-	if (connect(*m_socket, (struct sockaddr *)&address, sizeof(address)) < 0)
-	{
-		if (NET_DEBUG)
-			SDL_Log("Failed to connect to Ip address %s:%i. Error: %s.\n", _ip, _port, strerror(errno));
-		return false;
-	}
-
-	*m_remoteAddress = _ip;
-	*m_remotePort = _port;
-
-	return true;
+    addrinfo hints = { 0 };
+    
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_flags = 0;
+    hints.ai_protocol = 0;
+    
+    addrinfo* addrs = NULL;
+    
+    if (getaddrinfo(_ip, std::to_string(_port).c_str(), &hints, &addrs) != 0)
+    {
+        if (NET_DEBUG)
+            SDL_Log("Failed to get address info. Error: %s.\n", strerror(errno));
+        
+        freeaddrinfo(addrs);
+        return false;
+    }
+    
+    addrinfo* rp;
+    
+    for (rp = addrs; rp != NULL; rp = rp->ai_next)
+    {
+        *m_socket = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
+        
+        if (*m_socket == -1)
+            continue;
+        
+        if (connect(*m_socket, rp->ai_addr, rp->ai_addrlen) != -1)
+            break;
+        
+        close(*m_socket);
+    }
+    
+    freeaddrinfo(addrs);
+    
+    if (rp == NULL)
+    {
+        if (NET_DEBUG)
+            SDL_Log("Failed to connect to Ip address %s:%i.", _ip, _port);
+        return false;
+    }
+    
+    *m_remoteAddress = _ip;
+    *m_remotePort = _port;
+    
+    return true;
+    
+//	sockaddr_in address;
+//
+//	memset(&address, '0', sizeof(address));
+//
+//	address.sin_family = PF_INET;
+//	address.sin_port = htons(_port);
+//
+//	if (inet_pton(PF_INET, _ip, &address.sin_addr) <= 0)
+//	{
+//		if (NET_DEBUG)
+//			SDL_Log("Failed to get address info. Error: %s.\n", strerror(errno));
+//		return false;
+//	}
+//
+//	if (connect(*m_socket, (struct sockaddr *)&address, sizeof(address)) < 0)
+//	{
+//		if (NET_DEBUG)
+//			SDL_Log("Failed to connect to Ip address %s:%i. Error: %s.\n", _ip, _port, strerror(errno));
+//		return false;
+//	}
+//
+//	*m_remoteAddress = _ip;
+//	*m_remotePort = _port;
+//
+//	return true;
 }
 bool LinSocket::Bind(const int _port)
 {

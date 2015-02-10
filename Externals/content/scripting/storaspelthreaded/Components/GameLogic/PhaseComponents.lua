@@ -11,6 +11,7 @@ worldCreator:AddComponentType(PickingPhaseComponent)
 
 -- OnPickingPhase Component
 local OnPickingPhaseComponent = ComponentType()
+OnPickingPhaseComponent.SyncNetwork = true
 OnPickingPhaseComponent.Name = "OnPickingPhase"
 OnPickingPhaseComponent.TableType = TableType.Map
 worldCreator:AddComponentType(OnPickingPhaseComponent)

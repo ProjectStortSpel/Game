@@ -282,7 +282,7 @@
       <Filter>Game\Systems\Model</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Systems\AddTextToTextureSystem.cpp">
-      <Filter>Game\Systems</Filter>
+      <Filter>Game\Systems\Render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -437,7 +437,7 @@
       <Filter>Game\Systems\Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\AddTextToTextureSystem.h">
-      <Filter>Game\Systems</Filter>
+      <Filter>Game\Systems\Render</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
