@@ -780,6 +780,7 @@ MapGenerator.GeneratePathfindingData = function(self)
 	
 	inputData:SetSize(self.MapSizeX, self.MapSizeZ)
 	PathfinderHandler.SetData(inputData)
+	--PathfinderHandler.SetTileWalkable( 4, 7, true );
 end
 
 

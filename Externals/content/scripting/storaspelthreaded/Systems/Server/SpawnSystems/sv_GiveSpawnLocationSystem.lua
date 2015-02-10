@@ -30,7 +30,10 @@ GiveSpawnLocationSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount,
 			local a, b = unitSpawnpoint:GetInt2()
 			print("Player " .. plyNum .. " wants to spawn at (".. a .. ", " .. b .. ")")
 			
-			world:CreateComponentAndAddTo("Spawn", entityId)
+			
+			local	spawnThisEntity	=	world:CreateNewEntity()
+			world:CreateComponentAndAddTo("Spawn", spawnThisEntity)
+			world:GetComponent(spawnThisEntity, "Spawn", "UnitEntityId"):SetInt(entityId)
 			
 		end
 	end

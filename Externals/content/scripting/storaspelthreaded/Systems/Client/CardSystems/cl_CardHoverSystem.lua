@@ -1,6 +1,4 @@
 CardHoverSystem = System()
-CardHoverSystem.HoverScale = 1
-CardHoverSystem.DefaultScale = 0.9
 CardHoverSystem.Rot = 0.0
 
 CardHoverSystem.Initialize = function(self)
@@ -40,26 +38,16 @@ end
 CardHoverSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 	for n = 1, #entities do
 		local entityId = entities[n]
-		
-		local scale = world:GetComponent(entityId, "Scale", 0)
 		local rotation = world:GetComponent(entityId, "Rotation", 0)
-
-		scale:SetFloat3(self.HoverScale, self.HoverScale, self.HoverScale)
 		rotation:SetFloat3(0, 0, 0)
-
 	end
 end
 
 CardHoverSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
 	for n = 1, #entities do
 		local entityId = entities[n]
-		
-		local scale = world:GetComponent(entityId, "Scale", 0)
 		local rotation = world:GetComponent(entityId, "Rotation", 0)
-		
 		self.Rot = 0
-
-		scale:SetFloat3(self.DefaultScale, self.DefaultScale, self.DefaultScale)
 		rotation:SetFloat3(0, 0, 0)
 	end	
 end

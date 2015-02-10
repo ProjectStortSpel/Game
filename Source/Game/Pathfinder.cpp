@@ -58,6 +58,18 @@ void Pathfinder::SetNodeData(const struct tile_data*** _data, int _x, int _y)
 	}
 }
 
+void Pathfinder::ChangeWalkable(int _x, int _y, bool _walkable)
+{
+	//printf("Got data form LuaEmbedder: (%i,%i), %s", _x, _y, _walkable ? "True" : "False");
+	if (this->InsideWorld(_x, _y))
+	{
+		if (this->m_mapData)
+		{
+			this->m_mapData[_x][_y].walkable = _walkable;
+		}
+	}
+}
+
 float Pathfinder::CalcHeuristicValue(coord _fromGoal)
 {
 	float ret_value;
