@@ -19,10 +19,10 @@ World::World(unsigned int _entityCount, std::vector<SystemWorkGroup*>* _systemWo
 	m_messageManager->Initialize();
 
 	/* If slave count is 0 use sequential simulation, else use multi-threaded simulation */
-	//if (MPL::TaskManager::GetInstance().GetSlaveCount() == 0)
+	if (MPL::TaskManager::GetInstance().GetSlaveCount() == 0)
 		m_simulation = new SQSimulation();
-	//else
-	//	m_simulation = new MTSimulation();
+	else
+		m_simulation = new MTSimulation();
 	m_simulation->Initialize(m_dataManager, m_systemManager, m_messageManager);
 
 	m_dataLogger = &DataLogger::GetInstance();

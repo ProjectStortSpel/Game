@@ -284,33 +284,33 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 	
 	worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(new SlerpRotationSystem());
-	worldCreator.AddSystemGroup();
+	//worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 
 
 	graphicalSystem = new DirectionalLightSystem(m_graphics);
 	m_graphicalSystems.push_back(graphicalSystem);
-	worldCreator.AddSystemGroup();
+	//worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 
-	worldCreator.AddSystemGroup();
-	worldCreator.AddSystemToCurrentGroup<RotationSystem>();
+	//worldCreator.AddSystemGroup();
+	//worldCreator.AddSystemToCurrentGroup<RotationSystem>();
     
     if (_worldType == WorldType::Client || _isMainWorld)
     {
         graphicalSystem = new CameraSystem(m_graphics);
         m_graphicalSystems.push_back(graphicalSystem);
-        worldCreator.AddSystemGroup();
+       // worldCreator.AddSystemGroup();
         worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
         
         graphicalSystem = new ModelSystem(m_graphics);
         m_graphicalSystems.push_back(graphicalSystem);
-        worldCreator.AddSystemGroup();
+        //worldCreator.AddSystemGroup();
         worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 
 		graphicalSystem = new AModelSystem(m_graphics);
 		m_graphicalSystems.push_back(graphicalSystem);
-		worldCreator.AddSystemGroup();
+		//worldCreator.AddSystemGroup();
 		worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
     }
     
@@ -487,17 +487,18 @@ void GameCreator::StartGame(int argc, char** argv)
 
 		m_worldCounter.Reset();
 		/*	Update world (systems, entities, etc)	*/
+		
 		m_worldProfiler->Begin();
-        
         if (m_serverWorld)
             m_serverWorld->Update(dt);
+		m_worldProfiler->End();
+		m_worldProfiler->Update(dt);
+		m_worldProfiler->Render();
         
         if (m_clientWorld)
             m_clientWorld->Update(dt);
         
-		m_worldProfiler->End();
-		m_worldProfiler->Update(dt);
-		m_worldProfiler->Render();
+
 		m_worldCounter.Tick();
 
 		m_luaGarbageCollectionCounter.Reset();
