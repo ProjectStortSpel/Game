@@ -33,8 +33,11 @@ HostMenuSystem.Update = function(self, dt, taskIndex, taskCount)
 			if world:EntityHasComponent(pressedButton, "MenuEntityCommand") then
 				self:MenuEntityCommandPressed(pressedButton)
 			end
+		else
 			
+			self:RemoveMenu()
 		end
+
 	end
 
 end
@@ -65,7 +68,7 @@ HostMenuSystem.CheckboxPressed = function(self, entity)
 end
 
 HostMenuSystem.MenuConsoleCommandPressed = function(self, entity)
-	local cmd = world:GetComponent(entity, "MenuConsoleCommand", "Command"):GetString()
+	local cmd = world:GetComponent(entity, "MenuConsoleCommand", "Command"):GetStrong()
 	self:RemoveMenu()
 	Console.AddToCommandQueue(cmd)
 end
@@ -312,7 +315,7 @@ end
 HostMenuSystem.AddConsoleCommandToButton = function(self, command, button)
 
 	world:CreateComponentAndAddTo("MenuConsoleCommand", button)
-	world:GetComponent(button, "MenuConsoleCommand", "Command"):SetString(command)
+	world:GetComponent(button, "MenuConsoleCommand", "Command"):SetStrong(command)
 	
 end
 

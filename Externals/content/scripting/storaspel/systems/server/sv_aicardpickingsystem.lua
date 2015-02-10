@@ -414,7 +414,7 @@ AICardPickingSystem.TileHasComponent = function(self, _component, _posX, _posY)
 	local mapX, mapY = mapSizeComp:GetInt2()
 	local tiles = self:GetEntities("TileComp")
 	
-	local returnValue = self:EntityHasComponent(tiles[mapX * _posY + _posX + 1], _component)
+	local returnValue = world:EntityHasComponent(tiles[mapX * _posY + _posX + 1], _component)
 	return returnValue
 end
 AiCardPickingSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)

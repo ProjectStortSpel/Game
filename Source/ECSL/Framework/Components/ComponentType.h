@@ -21,7 +21,7 @@ namespace ECSL
 	enum ComponentDataType
 	{
 		INT, FLOAT, TEXT, BOOL,
-		MATRIX, REFERENCE, INT64
+		MATRIX, REFERENCE, INT64, STRING
 	};
 
 	static int GetByteSizeFromType(ComponentDataType _type)
@@ -51,6 +51,10 @@ namespace ECSL
 
 		case ComponentDataType::BOOL:
 			return sizeof(bool);
+			break;
+
+		case ComponentDataType::STRING:
+			return 1;
 			break;
 		}
 		return 0;

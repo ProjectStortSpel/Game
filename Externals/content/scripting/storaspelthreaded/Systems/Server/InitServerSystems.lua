@@ -1,3 +1,10 @@
+--	GameLogic Systems
+package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/GameLogicSystems/?.lua"
+require "sv_StageSystem"
+
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(StageSystem)
+
 
 --	Map Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/MapSystems/?.lua"
@@ -182,7 +189,6 @@ package.path = package.path .. ";../../../Externals/content/scripting/storaspelt
 require "sv_TotemPoleSystem"
 require "sv_MoveTotemPieceSystem"
 require "sv_GameOverSystem"
-require "sv_ServerLobbySystem"
 require "sv_LogStartSystem"
 require "sv_ServerNetworkMessageSystem"
 require "sv_HostSettingsSystem"
@@ -201,9 +207,6 @@ worldCreator:AddSystemToCurrentGroup(GameOverSystem)
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(LogStartSystem)
-
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(ServerLobbySystem)
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ServerNetworkMessageSystem)

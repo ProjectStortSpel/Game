@@ -11,14 +11,18 @@ ConnectMenuSystem.Update = function(self, dt, taskIndex, taskCount)
 		if #pressedButtons > 0 then
 			local pressedButton = pressedButtons[1]
 			if world:EntityHasComponent(pressedButton, "MenuConsoleCommand") then
-				local command = world:GetComponent(pressedButton, "MenuConsoleCommand", "Command"):GetString()
+				local command = world:GetComponent(pressedButton, "MenuConsoleCommand", "Command"):GetStrong()
 				self:RemoveMenu()
 				Console.AddToCommandQueue(command)
 			end
 			if world:EntityHasComponent(pressedButton, "MenuEntityCommand") then
 				local compname = world:GetComponent(pressedButton, "MenuEntityCommand", "ComponentName"):GetString()
 				--self:RemoveMenu()
-				self.doRefresh = true
+				if compname == "IPConnectEntry" then
+					self:RemoveMenu()
+				elseif compname == "RefreshServerList" then
+					self.doRefresh = true
+				end
 				local id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo(compname, id)
 			end
@@ -101,9 +105,13 @@ ConnectMenuSystem.SpawnMenu = function(self)
 	end
 	
 	
-	button = self:CreateElement("refresh", "quad", 0, -0.85, -2, 0.5, 0.20)
+	button = self:CreateElement("refresh", "quad", 0.4, -0.85, -2, 0.5, 0.20)
 	self:AddEntityCommandToButton("RefreshServerList", button)
 	self:AddHoverSize(1.1, button)	
+	
+	button = self:CreateElement("connect", "quad", -0.4, -0.85, -2, 0.5, 0.20)
+	self:AddEntityCommandToButton("IPConnectEntry", button)
+	self:AddHoverSize(1.1, button)
 	
 end
 
@@ -169,7 +177,7 @@ end
 
 ConnectMenuSystem.AddConsoleCommandToButton = function(self, command, button)
 	world:CreateComponentAndAddTo("MenuConsoleCommand", button)
-	world:GetComponent(button, "MenuConsoleCommand", "Command"):SetString(command)
+	world:GetComponent(button, "MenuConsoleCommand", "Command"):SetStrong(command)
 end
 
 ConnectMenuSystem.AddEntityCommandToButton = function(self, command, button)

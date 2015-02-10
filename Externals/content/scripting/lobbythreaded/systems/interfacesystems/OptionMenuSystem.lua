@@ -20,7 +20,7 @@ OptionMenuSystem.Update = function(self, dt, taskIndex, taskCount)
 		if #pressedButtons > 0 then
 			local pressedButton = pressedButtons[1]
 			if world:EntityHasComponent(pressedButton, "MenuConsoleCommand") then
-				local command = world:GetComponent(pressedButton, "MenuConsoleCommand", "Command"):GetString()
+				local command = world:GetComponent(pressedButton, "MenuConsoleCommand", "Command"):GetStrong()
 				self:RemoveMenu()
 				Console.AddToCommandQueue(command)
 			end
@@ -80,7 +80,7 @@ end
 
 OptionMenuSystem.AddConsoleCommandToButton = function(self, command, button)
 	world:CreateComponentAndAddTo("MenuConsoleCommand", button)
-	world:GetComponent(button, "MenuConsoleCommand", "Command"):SetString(command)
+	world:GetComponent(button, "MenuConsoleCommand", "Command"):SetStrong(command)
 end
 
 OptionMenuSystem.AddEntityCommandToButton = function(self, command, button)

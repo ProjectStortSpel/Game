@@ -28,14 +28,9 @@ namespace LuaBridge
     
   private:
 	int SetName(lua_State* L);
-
-    int GetComponent(lua_State* L);
-    
     int AddComponentTypeToFilter(lua_State* L);
     int GetEntities(lua_State* L);
     
-    int HasComponent(lua_State* L);
-
 	int InitializeNetworkEvents(lua_State* L);
 
 	int UsingUpdate(lua_State* L);
