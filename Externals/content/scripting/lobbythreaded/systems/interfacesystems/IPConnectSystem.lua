@@ -161,6 +161,7 @@ end
 
 IPConnectSystem.CreateBackground = function(self)
 	local id = world:CreateNewEntity()
+	
 	world:CreateComponentAndAddTo("Model", id)
 	world:CreateComponentAndAddTo("Position", id)
 	world:CreateComponentAndAddTo("Rotation", id)
@@ -238,17 +239,17 @@ IPConnectSystem.CreateConnectButton = function(self)
 	world:CreateComponentAndAddTo("IPConnectEntry", id)
 	
 	world:GetComponent(id, "Model", 0):SetModel("connect", "quad", 2)
-	world:GetComponent(id, "Position", 0):SetFloat3(0.0, -0.35, -2.0)
+	world:GetComponent(id, "Position", 0):SetFloat3(0.0, -0.35, -1.9)
 	world:GetComponent(id, "Scale", 0):SetFloat3(0.5, 0.2, 1.0)
 	world:GetComponent(id, "PickBox", 0):SetFloat2(1.0, 1.0)
 	world:GetComponent(id, "Rotation", 0):SetFloat3(0.0, 0.0, 0.0)
 	
-	local scale = self:GetComponent(id, "Scale", 0)
+	local scale = world:GetComponent(id, "Scale", 0)
 	local sx, sy, sz = scale:GetFloat3()
 	world:CreateComponentAndAddTo("HoverSize", id)
-	local hoversize = self:GetComponent(id, "HoverSize", 0)
+	local hoversize = world:GetComponent(id, "HoverSize", 0)
 	hoversize:SetFloat3(sx * 1.1, sy * 1.1, sz * 1.1)
-	
+
 	self.ConnectEntity = id	
 end
 

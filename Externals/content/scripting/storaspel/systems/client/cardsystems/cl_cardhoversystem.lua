@@ -14,7 +14,7 @@ CardHoverSystem.Update = function(self, dt)
 			self.Rot = self.Rot - 6.2832
 		end
 		
-		local rotation = self:GetComponent(entity, "Rotation", 0)
+		local rotation = world:GetComponent(entity, "Rotation", 0)
 		rotation:SetFloat3(math.cos(self.Rot)*0.05-0.1, math.sin(self.Rot)*0.08, 0)
 	end
 		
@@ -31,10 +31,10 @@ end
 
 CardHoverSystem.OnEntityAdded = function(self, entityId)
 
-	local action = self:GetComponent(entityId, "CardAction", 0):GetString()
-	local scale = self:GetComponent(entityId, "Scale", 0)
-	local rotation = self:GetComponent(entityId, "Rotation", 0)
-	local prio = self:GetComponent(entityId, "CardPrio", 0):GetInt()
+	local action = world:GetComponent(entityId, "CardAction", 0):GetString()
+	local scale = world:GetComponent(entityId, "Scale", 0)
+	local rotation = world:GetComponent(entityId, "Rotation", 0)
+	local prio = world:GetComponent(entityId, "CardPrio", 0):GetInt()
 	
 	graphics:RenderSimpleText(action, 0,44)
 	graphics:RenderSimpleText(prio, 15,44)
@@ -46,8 +46,8 @@ end
 
 CardHoverSystem.OnEntityRemoved = function(self, entityId)
 
-	local scale = self:GetComponent(entityId, "Scale", 0)
-	local rotation = self:GetComponent(entityId, "Rotation", 0)
+	local scale = world:GetComponent(entityId, "Scale", 0)
+	local rotation = world:GetComponent(entityId, "Rotation", 0)
 	
 	self.Rot = 0
 	

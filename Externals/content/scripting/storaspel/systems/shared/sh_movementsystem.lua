@@ -6,8 +6,8 @@ MovementSystem.Update = function(self, dt)
 	for i = 1, #entities do
 		local entity = entities[i]
 
-		local position = self:GetComponent(entity, "Position", 0)
-		local velocity = self:GetComponent(entity, "Velocity", 0)
+		local position = world:GetComponent(entity, "Position", 0)
+		local velocity = world:GetComponent(entity, "Velocity", 0)
 
 		local px, py, pz = position:GetFloat3()
 		local vx, vy, vz = velocity:GetFloat3()

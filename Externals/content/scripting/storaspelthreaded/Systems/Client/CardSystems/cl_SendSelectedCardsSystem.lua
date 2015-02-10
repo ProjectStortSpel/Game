@@ -52,16 +52,16 @@ SendSelectedCardsSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount,
 				world:CreateComponentAndAddTo("PickBox", id)
 				world:CreateComponentAndAddTo("ReadyButton", id)
 				
-				local model = self:GetComponent(id, "Model", 0)
+				local model = world:GetComponent(id, "Model", 0)
 				model:SetModel("readybutton", "quad", 2)
 				
-				local position = self:GetComponent(id, "Position", 0)
+				local position = world:GetComponent(id, "Position", 0)
 				position:SetFloat3(3, 0, -4)
 				
-				local scale = self:GetComponent(id, "Scale", 0)
+				local scale = world:GetComponent(id, "Scale", 0)
 				scale:SetFloat3(1, 0.5, 1)
 				
-				local pickbox = self:GetComponent(id, "PickBox", 0)
+				local pickbox = world:GetComponent(id, "PickBox", 0)
 				pickbox:SetFloat2(1, 1)
 
 			end
@@ -78,10 +78,9 @@ SendSelectedCardsSystem.SendSelectedCards = function( self )
 		
 		for j = 1, #cards do
 			
-			local index = world:GetComponent(cards[i], "SelectCard", "Index"):GetInt()
-
+			local index = world:GetComponent(cards[j], "SelectCard", "Index"):GetInt()
 			if index == i then			
-				Net.WriteInt(id, Net.ToServerID(cards[i]))
+				Net.WriteInt(id, Net.ToServerID(cards[j]))
 				break
 			end
 

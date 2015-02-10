@@ -73,6 +73,13 @@ CardSelectedComponent.Name = "CardSelected"
 CardSelectedComponent.TableType = TableType.Map
 worldCreator:AddComponentType(CardSelectedComponent)
 
+-- Card Holding Component
+local CardHoldingComponent = ComponentType()
+CardHoldingComponent.Name = "CardHolding"
+CardHoldingComponent.TableType = TableType.Map
+worldCreator:AddComponentType(CardHoldingComponent)
+
+
 -- Play Card Timer
 local PlayCardTimerComponent = ComponentType()
 PlayCardTimerComponent.Name = "PlayCardTimer"

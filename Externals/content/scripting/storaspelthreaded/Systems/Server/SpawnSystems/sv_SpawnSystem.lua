@@ -15,8 +15,8 @@ end
 SpawnSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 	for n = 1, #entities do
 		local entityId = entities[n]
-		local mapPosComp = self:GetComponent(entityId, "MapPosition", 0)
-		local spawnpointComp = self:GetComponent(entityId, "Spawnpoint", 0)
+		local mapPosComp = world:GetComponent(entityId, "MapPosition", 0)
+		local spawnpointComp = world:GetComponent(entityId, "Spawnpoint", 0)
 
 		local X, Z = spawnpointComp:GetInt2()
 

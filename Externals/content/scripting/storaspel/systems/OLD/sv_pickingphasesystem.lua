@@ -55,7 +55,7 @@ end
 
 RecievingPickedCards.OnEntityAdded = function(self, entityId)
 	
-	local pickingPhase = self:GetComponent(entityId, "PickingPhase", 0)
+	local pickingPhase = world:GetComponent(entityId, "PickingPhase", 0)
 	self.PickingTimer = pickingPhase:GetFloat()
 	--print("Time: ", self.PickingTimer)
 end

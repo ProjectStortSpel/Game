@@ -85,10 +85,10 @@ UnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 			end
 						
 		elseif world:EntityHasComponent(entity, "RemoveUnit") then
-			local plyNum = self:GetComponent(entity, "RemoveUnit", "PlayerNo"):GetInt()
+			local plyNum = world:GetComponent(entity, "RemoveUnit", "PlayerNo"):GetInt()
 			self.FreeSlots[#self.FreeSlots + 1] = plyNum
 			--table.insert(self.FreeSlots, plyNum)
-			local unitId = self:GetComponent(entity, "RemoveUnit", "UnitEntityId"):GetInt()
+			local unitId = world:GetComponent(entity, "RemoveUnit", "UnitEntityId"):GetInt()
 			world:KillEntity(unitId)
 			world:KillEntity(entity)
 		end

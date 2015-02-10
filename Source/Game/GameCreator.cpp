@@ -95,9 +95,6 @@ void GameCreator::InitializeGraphics()
     }
 #endif
     
-    
-    
-	
 	//LuaEmbedder::AddObject<Renderer::GraphicDevice>("GraphicDevice", m_graphics, "graphics");
 }
 
