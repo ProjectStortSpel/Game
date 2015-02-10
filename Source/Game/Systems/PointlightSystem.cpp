@@ -91,6 +91,4 @@ void PointlightSystem::UpdatePointLights()
 		lightPointers[n] = (float*)GetComponent(ePointlights.at(n), m_pointLightId, 0);
 
 	m_graphics->BufferPointlights(ePointlights.size(), lightPointers);
-
-	delete lightPointers;
 }
