@@ -66,13 +66,14 @@ AICardPickingSystem.Update = function(self, dt)
 			local aiPositonX, aiPositonY = self:GetComponent(unitID, "MapPosition", 0):GetInt2()
 			-- AIs direction
 			local aiDirX, aiDirY = self:GetComponent(unitID, "Direction", 0):GetInt2()
+			local fellDown
 			--Fetch the cards which is relevant to the current AI
 			local CardSetAI = self:GetAIsCardSet(AIs[i], Cards)
 			
 			if #CardSetAI == self.CardsPerHand then
 				--This will catch the best 
 				local PickedCards = self:AIPickCards(CardSetAI, aiDirX, aiDirY, aiPositonX, aiPositonY, targetPositionX, targetPositionY, unitID)
-				aiPositonX, aiPositonY, aiDirX, aiDirY = self:SimulatePlayOfCards(unitID, PickedCards)
+				fellDown, aiPositonX, aiPositonY, aiDirX, aiDirY = self:SimulatePlayOfCards(unitID, PickedCards)
 
 				if #PickedCards == self.NumberOfCardsToPick then	
 					
@@ -433,7 +434,7 @@ AICardPickingSystem.SimulatePlayOfCards = function(self, _unit, _pickedcards)
 	local posX, posY = self:GetComponent(_unit, "MapPosition", 0):GetInt2()
 	local dirX, dirY = self:GetComponent(_unit, "Direction", 0):GetInt2()
 		
-	self:SimulateCardsFromPos(_unit, posX, posY, dirX, dirY, _pickedcards)
+	return self:SimulateCardsFromPos(_unit, posX, posY, dirX, dirY, _pickedcards)
 end
 
 AICardPickingSystem.SimulateCardsFromPos = function(self, _unit, _posX, _posY, _dirX, _dirY, _pickedcards)
@@ -511,7 +512,7 @@ AICardPickingSystem.SimulateCardsFromPos = function(self, _unit, _posX, _posY, _
 		print("I will end up at:", posX, posY, "with dir:", dirX, dirY)
 	end
 	
-	return posX, posY, dirX, dirY
+	return fellDown, posX, posY, dirX, dirY
 end
 
 --AICardPickingSystem.SimpleSimulatePlayOfCards = function(self, _unit, posX, posY, dirX, dirY, _pickedcards)
