@@ -21,9 +21,12 @@ worldCreator:AddSystemToCurrentGroup(CheckpointSystem)
 --	Light Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/LightSystems/?.lua"
 require "sv_DirectionalLightSystem"
+require "sv_PointlightSystem"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(DirectionalLightSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(PointlightSystem)
 
 --	Player Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/PlayerSystems/?.lua"
