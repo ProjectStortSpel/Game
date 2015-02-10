@@ -57,6 +57,9 @@ CardAddModelSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, enti
 			model:SetModel("forward", "cards", 2)
 		end
 		
+		-- HOVERSCALE
+		self:AddHoverSize(1.1, entityId)
+		
 		
 		-- PRIO TEXT WOOOOOT?!?!?!?
 		local prio = world:GetComponent(entityId, "CardPrio", 0):GetInt()
@@ -86,4 +89,12 @@ CardAddModelSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, enti
 		world:GetComponent(id, "TextTexture", "G"):SetFloat(0)
 		world:GetComponent(id, "TextTexture", "B"):SetFloat(0)
 	end
+end
+
+CardAddModelSystem.AddHoverSize = function(self, deltascale, button)
+	local scale = self:GetComponent(button, "Scale", 0)
+	local sx, sy, sz = scale:GetFloat3()
+	world:CreateComponentAndAddTo("HoverSize", button)
+	local hoversize = self:GetComponent(button, "HoverSize", 0)
+	hoversize:SetFloat3(sx*deltascale, sy*deltascale, sz*deltascale)
 end
