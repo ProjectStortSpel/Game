@@ -51,7 +51,7 @@ require "sv_ActionTurnAroundSystem"
 --	Card Ability Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/CardAbilitySystems/?.lua"
 require "sv_AbilitySprintSystem"
-require "sv_AbilitySlingshotSystem"
+--require "sv_AbilitySlingshotSystem"
 require "sv_AbilityIWin"
 
 --	Spawn Systems
@@ -111,7 +111,7 @@ worldCreator:AddSystemToCurrentGroup(TakeCardStepsFromUnitSystem)
 worldCreator:AddSystemToCurrentGroup(TakeCardsFromPlayerSystem)
 worldCreator:AddSystemToCurrentGroup(PlayCardSystem)
 
-worldCreator:AddSystemGroup()
+--worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ActionMoveForwardSystem)
 worldCreator:AddSystemToCurrentGroup(ActionMoveBackwardSystem)
 worldCreator:AddSystemToCurrentGroup(ActionTurnLeftSystem)
@@ -119,10 +119,10 @@ worldCreator:AddSystemToCurrentGroup(ActionTurnRightSystem)
 worldCreator:AddSystemToCurrentGroup(ActionTurnAroundSystem)
 
 worldCreator:AddSystemToCurrentGroup(AbilitySprintSystem)
-worldCreator:AddSystemToCurrentGroup(AbilitySlingshotSystem)
+--worldCreator:AddSystemToCurrentGroup(AbilitySlingshotSystem)
 worldCreator:AddSystemToCurrentGroup(AbilityIWin)
 
-
+worldCreator:AddSystemGroup()
 
 worldCreator:AddSystemToCurrentGroup(GiveSpawnLocationSystem)
 worldCreator:AddSystemToCurrentGroup(SpawnSystem)

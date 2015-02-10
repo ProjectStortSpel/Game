@@ -62,7 +62,7 @@ CreateDeckSystem.CreateDeck = function (self)
 		elseif rand < 100 then
 			cardactioncomp:SetString("Sprint")	-- 90-99
 		elseif rand < 110 then
-			cardactioncomp:SetString("SlingShot")	-- 100-109 
+			cardactioncomp:SetString("Sprint")	-- 100-109 
 		else
 			cardactioncomp:SetString("Forward")
 			
