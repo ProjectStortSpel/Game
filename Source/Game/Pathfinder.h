@@ -50,6 +50,7 @@ public:
 	void SetTurningCost(float _turningCost);
 	void SetNodeData(const struct tile_data*** _data, int _x, int _y);
 	std::vector<coord> GeneratePath(coord _start, coord _goal);
+	void ChangeWalkable(int _x, int _y, bool _walkable);
 
 private:
 
