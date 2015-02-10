@@ -140,6 +140,7 @@
 		0372EED41A8A4A3100802321 /* ServerNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0372EE5C1A8A4A3100802321 /* ServerNetwork.cpp */; };
 		0372EED51A8A4A3100802321 /* Stdafx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0372EE5E1A8A4A3100802321 /* Stdafx.cpp */; };
 		0372EED61A8A4A3100802321 /* WinSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0372EE601A8A4A3100802321 /* WinSocket.cpp */; };
+		0372EEDC1A8A5E2B00802321 /* AddTextToTextureSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0372EEDA1A8A5E2B00802321 /* AddTextToTextureSystem.cpp */; };
 		03F45FB21A750E6700F8A27F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 03F45FB11A750E6700F8A27F /* Images.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -412,6 +413,8 @@
 		0372EE5F1A8A4A3100802321 /* Stdafx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Stdafx.h; sourceTree = "<group>"; };
 		0372EE601A8A4A3100802321 /* WinSocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WinSocket.cpp; sourceTree = "<group>"; };
 		0372EE611A8A4A3100802321 /* WinSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WinSocket.h; sourceTree = "<group>"; };
+		0372EEDA1A8A5E2B00802321 /* AddTextToTextureSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AddTextToTextureSystem.cpp; sourceTree = "<group>"; };
+		0372EEDB1A8A5E2B00802321 /* AddTextToTextureSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddTextToTextureSystem.h; sourceTree = "<group>"; };
 		03F45FB11A750E6700F8A27F /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = StoraSpel/Images.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -920,6 +923,8 @@
 		0372EE031A8A4A3100802321 /* Systems */ = {
 			isa = PBXGroup;
 			children = (
+				0372EEDA1A8A5E2B00802321 /* AddTextToTextureSystem.cpp */,
+				0372EEDB1A8A5E2B00802321 /* AddTextToTextureSystem.h */,
 				0372EE041A8A4A3100802321 /* AModelSystem.cpp */,
 				0372EE051A8A4A3100802321 /* AModelSystem.h */,
 				0372EE061A8A4A3100802321 /* CameraSystem.cpp */,
@@ -1293,6 +1298,7 @@
 				0372EE621A8A4A3100802321 /* Buffer.cpp in Sources */,
 				0372EEAB1A8A4A3100802321 /* ECSLProfiler.cpp in Sources */,
 				0372EEA31A8A4A3100802321 /* ClientDatabase.cpp in Sources */,
+				0372EEDC1A8A5E2B00802321 /* AddTextToTextureSystem.cpp in Sources */,
 				0372EE7F1A8A4A3100802321 /* SQSimulation.cpp in Sources */,
 				0372EEBB1A8A4A3100802321 /* ResetChangedSystem.cpp in Sources */,
 				0372EE921A8A4A3100802321 /* LuaPotentialFieldHandler.cpp in Sources */,
