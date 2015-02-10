@@ -11,14 +11,17 @@
 
 namespace LuaBridge
 {
+
+
 	class LuaComponent
 	{
 	public:
 		LuaComponent(lua_State* L);
-		LuaComponent(ECSL::DataLocation dataLocation, ECSL::System* system,
-			unsigned int entityId, const std::string& componentName);
+
 		LuaComponent(ECSL::DataLocation dataLocation, ECSL::World* world,
-			unsigned int entityId, const std::string& componentName);
+			unsigned int entityId, const std::string& componentName, const std::string& variableName);
+		LuaComponent(ECSL::DataLocation dataLocation, ECSL::World* world,
+			unsigned int entityId, const std::string& componentName, unsigned int index);
 		~LuaComponent();
 
 		static void Embed(lua_State* L);
@@ -51,6 +54,10 @@ namespace LuaBridge
 		int GetString(lua_State* L);
 		int SetString(lua_State* L);
 
+		int GetStrong(lua_State* L);
+		int SetStrong(lua_State* L);
+
+
 		int SetModel(lua_State* L);
 		
 		int GetPointlight(lua_State* L);
@@ -65,10 +72,10 @@ namespace LuaBridge
 		
 	private:
 		ECSL::DataLocation m_dataLocation;
-		ECSL::System* m_system;
 		ECSL::World* m_world;
 		unsigned int m_entityId;
 		std::string m_componentName;
+		unsigned int m_offset;
 	};
 }
 
