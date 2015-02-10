@@ -84,8 +84,8 @@ void GameCreator::InitializeGraphics()
 	m_graphics = new Renderer::GraphicsHigh();
     m_graphics->Init();
 #else
-    m_graphics = new Renderer::GraphicsHigh();
-    if (!m_graphics->Init())
+   // m_graphics = new Renderer::GraphicsHigh();
+   // if (!m_graphics->Init())
     {
         SDL_Log("Switching to OpenGL 4.0");
         delete(m_graphics);
