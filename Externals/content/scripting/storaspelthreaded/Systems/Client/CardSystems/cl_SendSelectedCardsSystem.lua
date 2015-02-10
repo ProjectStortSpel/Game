@@ -78,10 +78,9 @@ SendSelectedCardsSystem.SendSelectedCards = function( self )
 		
 		for j = 1, #cards do
 			
-			local index = world:GetComponent(cards[i], "SelectCard", "Index"):GetInt()
-
+			local index = world:GetComponent(cards[j], "SelectCard", "Index"):GetInt()
 			if index == i then			
-				Net.WriteInt(id, Net.ToServerID(cards[i]))
+				Net.WriteInt(id, Net.ToServerID(cards[j]))
 				break
 			end
 
