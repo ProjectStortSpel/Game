@@ -78,24 +78,6 @@
     <Filter Include="Game\Profilers\ECSLProfiler\Render Views">
       <UniqueIdentifier>{e772fded-ab7d-4fc8-b348-3786ee79e575}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scripting\storaspelthreaded\Components\GameLogic">
-      <UniqueIdentifier>{12ce9069-4587-443e-b315-ea805c8b83f8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scripting\storaspelthreaded\Components\General">
-      <UniqueIdentifier>{b2e1edaa-aae4-41cc-b471-fff0c2ae67db}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scripting\storaspelthreaded\Components\Interface">
-      <UniqueIdentifier>{a951d32d-42be-4f21-a508-2440a67b293a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scripting\storaspelthreaded\Systems\Client">
-      <UniqueIdentifier>{c95e5850-6a00-48ea-9ab4-3d51556be93d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scripting\storaspelthreaded\Systems\Server">
-      <UniqueIdentifier>{5f01154a-71b7-4888-94a3-fe1dc9f701c8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scripting\storaspelthreaded\Systems\Shared">
-      <UniqueIdentifier>{f9d6bb85-af65-45e8-a491-638c1b3ef8b8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Scripting\storaspelthreaded\Systems\Client\CameraSystems">
       <UniqueIdentifier>{9f42f000-63e7-407b-9208-d0d30873dfa5}</UniqueIdentifier>
     </Filter>
@@ -299,6 +281,9 @@
     <ClCompile Include="..\..\..\Source\Game\Systems\AModelSystem.cpp">
       <Filter>Game\Systems\Model</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\AddTextToTextureSystem.cpp">
+      <Filter>Game\Systems\Render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h">
@@ -450,6 +435,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\AModelSystem.h">
       <Filter>Game\Systems\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\AddTextToTextureSystem.h">
+      <Filter>Game\Systems\Render</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

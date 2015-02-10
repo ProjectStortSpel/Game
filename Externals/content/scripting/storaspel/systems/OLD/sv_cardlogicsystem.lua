@@ -38,7 +38,7 @@ DealCards = false
 	--
 	--for i = 1, noOfCards do
 		--
-		--local cardactioncomp = self:GetComponent( self.DealtCards[i], "CardAction", 0)
+		--local cardactioncomp = world:GetComponent( self.DealtCards[i], "CardAction", 0)
 		--local cardaction = cardactioncomp:GetString()
 		--print(i, cardaction, self.DealtCards[i])
 	--end
@@ -74,7 +74,7 @@ DealCards = false
 		--self:Reshuffle()
 	--end
 	--
-	--local comp = self:GetComponent(self.CardDeck[1], "CardAction", 0)
+	--local comp = world:GetComponent(self.CardDeck[1], "CardAction", 0)
 	--local stringData = comp:GetString()
 	--
 	--print(self.CardDeck[1], "Get New Card, ", stringData,". Cards left: ", #self.CardDeck)
@@ -105,7 +105,7 @@ DealCards = false
 ----	-- forward
 ----	for i = 1, 10*NROFPLAYERS do
 ----		prio = prio + 1
-----		self:GetComponent(entity, "Position", 0)
+----		world:GetComponent(entity, "Position", 0)
 ----		local entity = world:CreateNewEntity()
 ----		local entity = world:CreateNewEntity("Player")
 ----		world:CreateComponentAndAddTo("Spawn", entity)
@@ -113,7 +113,7 @@ DealCards = false
 ----		local mapPos = {i,12}
 ----		--local mapPos = {i, 6}
 ----		self:SetPosition(entity, mapPos[1], 1.0, mapPos[2])
-----		local comp = self:GetComponent(entity, "Spawn", 0)
+----		local comp = world:GetComponent(entity, "Spawn", 0)
 ----		comp:SetInt2(mapPos[1], mapPos[2])
 ----		
 ----	end
@@ -145,8 +145,8 @@ DealCards = false
 --end
 --
 --ForwardSystem.OnEntityAdded = function(self, entity)
-	--local dir = self:GetComponent(entity, "Direction", 0)
-	--local mapPos = self:GetComponent(entity, "MapPosition", 0)
+	--local dir = world:GetComponent(entity, "Direction", 0)
+	--local mapPos = world:GetComponent(entity, "MapPosition", 0)
 	--
 	--local x, y = mapPos:GetInt2()
 	--local dirX, dirY = dir:GetInt2()
@@ -175,8 +175,8 @@ DealCards = false
 --end
 --
 --BackwardSystem.OnEntityAdded = function(self, entity)
-	--local dir = self:GetComponent(entity, "Direction", 0)
-	--local mapPos = self:GetComponent(entity, "MapPosition", 0)
+	--local dir = world:GetComponent(entity, "Direction", 0)
+	--local mapPos = world:GetComponent(entity, "MapPosition", 0)
 	--
 	--local x, y = mapPos:GetInt2()
 	--local dirX, dirY = dir:GetInt2()
@@ -202,8 +202,8 @@ DealCards = false
 --end
 --
 --RightTurnSystem.OnEntityAdded = function(self, entity)
-	--local dir = self:GetComponent(entity, "Direction", 0)
-	--local rot = self:GetComponent(entity, "Rotation", 4)
+	--local dir = world:GetComponent(entity, "Direction", 0)
+	--local rot = world:GetComponent(entity, "Rotation", 4)
 	--local dx, dy = dir:GetInt2()
 	--local roty = rot:GetFloat()
 	--
@@ -231,8 +231,8 @@ DealCards = false
 --end
 --
 --LeftTurnSystem.OnEntityAdded = function(self, entity)
-	--local dir = self:GetComponent(entity, "Direction", 0)
-	--local rot = self:GetComponent(entity, "Rotation", 4)
+	--local dir = world:GetComponent(entity, "Direction", 0)
+	--local rot = world:GetComponent(entity, "Rotation", 4)
 	--local dx, dy = dir:GetInt2()
 	--local roty = rot:GetFloat()
 	--local tempdy = dx
@@ -259,8 +259,8 @@ DealCards = false
 --end
 --
 --TurnAroundSystem.OnEntityAdded = function(self, entity)
-	--local dir = self:GetComponent(entity, "Direction", 0)
-	--local rot = self:GetComponent(entity, "Rotation", 4)
+	--local dir = world:GetComponent(entity, "Direction", 0)
+	--local rot = world:GetComponent(entity, "Rotation", 4)
 	--local dx, dy = dir:GetInt2()
 	--local roty = rot:GetFloat()
 	--

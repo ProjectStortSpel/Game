@@ -7,7 +7,7 @@ CardPositionSystem2.OnEntityAdded = function( self, entityId )
 	for i = 1, #entities do
 		local card = entities[i]
 	
-		local data = self:GetComponent(card, "SelectCard", "Index"):GetInt()
+		local data = world:GetComponent(card, "SelectCard", "Index"):GetInt()
 		
 		local halfentities = #entities/2
 		local px = (-halfentities + data - 0.5) * 0.7
@@ -18,14 +18,14 @@ CardPositionSystem2.OnEntityAdded = function( self, entityId )
 			world:CreateComponentAndAddTo("LerpTargetPosition", card)
 		end
 		
-		local position = self:GetComponent(card, "LerpTargetPosition", 0)
+		local position = world:GetComponent(card, "LerpTargetPosition", 0)
 		position:SetFloat3(px, py, pz)
 		
 		if not world:EntityHasComponent(card, "LerpTime") then
 			world:CreateComponentAndAddTo("LerpTime", card)
 		end
 		
-		local timer = self:GetComponent(card, "LerpTime", 0)
+		local timer = world:GetComponent(card, "LerpTime", 0)
 		timer:SetFloat2(0.1, 0)
 	
 	end

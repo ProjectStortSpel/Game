@@ -14,6 +14,7 @@ GraphicsHigh::GraphicsHigh()
 	m_debugTexFlag = 0;
 	m_nrOfLights = 0;
 	m_pointerToDirectionalLights = 0;
+	m_pointerToPointlights = 0;
 }
 
 GraphicsHigh::GraphicsHigh(Camera _camera, int x, int y) : GraphicDevice(_camera, x, y)
@@ -24,6 +25,7 @@ GraphicsHigh::GraphicsHigh(Camera _camera, int x, int y) : GraphicDevice(_camera
 	m_debugTexFlag = 0;
 	m_nrOfLights = 0;
 	m_pointerToDirectionalLights = 0;
+	m_pointerToPointlights = 0;
 }
 
 GraphicsHigh::~GraphicsHigh()
@@ -705,7 +707,7 @@ bool GraphicsHigh::InitLightBuffers()
 	float ** tmparray = new float*[1];
 	tmparray[0] = &m_lightDefaults[0];
 
-	BufferPointlights(1, tmparray);
+	BufferPointlights(0, tmparray);
 
 	delete(tmparray);
 	
@@ -720,17 +722,19 @@ bool GraphicsHigh::InitLightBuffers()
 
 void GraphicsHigh::BufferPointlights(int _nrOfLights, float **_lightPointers)
 {
+	if (m_pointerToPointlights)
+		delete m_pointerToPointlights;
 
 	if (_nrOfLights == 0)
 	{
-		delete m_pointerToPointlights;
 		m_pointerToPointlights = new float*[1];
 		m_pointerToPointlights[0] = &m_lightDefaults[0];
 		m_numberOfPointlights = 1;
 		return;
 	}
 
-
+	m_pointerToPointlights = _lightPointers;
+	m_numberOfPointlights = _nrOfLights;
 
 }
 

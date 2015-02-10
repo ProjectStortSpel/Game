@@ -74,7 +74,7 @@ end
 FindSpawnpointSystem.FindValidSpawnpointNear = function(self, X, Z, unitToSpawn)
 	
 	if self:IsEmpty(X, Z) then
-		self:GetComponent(unitToSpawn, "Spawnpoint", "X"):SetInt2(X, Z)
+		world:GetComponent(unitToSpawn, "Spawnpoint", "X"):SetInt2(X, Z)
 		return
 	end
 	

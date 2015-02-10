@@ -33,6 +33,7 @@ namespace LuaBridge
 	LuaEmbedder::AddInt(L, "Reference", ECSL::ComponentDataType::REFERENCE, "ByteSize");
 	LuaEmbedder::AddInt(L, "Text", ECSL::ComponentDataType::TEXT, "ByteSize");
 	LuaEmbedder::AddInt(L, "Bool", ECSL::ComponentDataType::BOOL, "ByteSize");
+	LuaEmbedder::AddInt(L, "String", ECSL::ComponentDataType::STRING, "ByteSize");
   }
   
   int LuaComponentType::GetName(lua_State* L)
