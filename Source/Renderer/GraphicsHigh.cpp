@@ -723,6 +723,7 @@ void GraphicsHigh::BufferPointlights(int _nrOfLights, float **_lightPointers)
 
 	if (_nrOfLights == 0)
 	{
+		delete m_pointerToPointlights;
 		m_pointerToPointlights = new float*[1];
 		m_pointerToPointlights[0] = &m_lightDefaults[0];
 		m_numberOfPointlights = 1;
@@ -826,74 +827,6 @@ void GraphicsHigh::ToggleSimpleText()
 	m_renderSimpleText = !m_renderSimpleText;
 }
 
-bool GraphicsHigh::PreLoadModel(std::string _dir, std::string _file, int _renderType)
-{
-	Shader *shaderPtr = NULL;
-	if (_renderType == RENDER_DEFERRED)
-	{
-		shaderPtr = &m_deferredShader1;
-		m_deferredShader1.UseProgram();
-	}
-	else if (_renderType == RENDER_FORWARD)
-	{
-		shaderPtr = &m_forwardShader;
-		m_forwardShader.UseProgram();
-	}
-	else if (_renderType == RENDER_VIEWSPACE)
-	{
-		shaderPtr = &m_viewspaceShader;
-		m_viewspaceShader.UseProgram();
-	}
-	else if (_renderType == RENDER_INTERFACE)
-	{
-		shaderPtr = &m_viewspaceShader;
-		m_interfaceShader.UseProgram();
-	}
-	else
-		ERRORMSG("ERROR: INVALID RENDER SETTING");
-
-	// Import Object
-	//ObjectData obj = AddObject(_dir, _file);
-	ObjectData obj = ModelLoader::importObject(_dir, _file);
-
-	// Import Texture
-	GLuint texture = GraphicDevice::AddTexture(obj.text, GL_TEXTURE1);
-	shaderPtr->CheckUniformLocation("diffuseTex", 1);
-
-	if (_renderType != RENDER_INTERFACE)
-	{
-		// Import Normal map
-		GLuint normal = GraphicDevice::AddTexture(obj.norm, GL_TEXTURE2);
-		shaderPtr->CheckUniformLocation("normalTex", 2);
-
-		// Import Specc Glow map
-		GLuint specular = GraphicDevice::AddTexture(obj.spec, GL_TEXTURE3);
-		shaderPtr->CheckUniformLocation("specularTex", 3);
-	}
-
-	// Import Mesh
-	Buffer* mesh = AddMesh(obj.mesh, shaderPtr);
-
-	return true;
-}
-int GraphicsHigh::LoadAModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType)
-{
-	int modelID = m_modelIDcounter;
-	m_modelIDcounter++;
-	_renderType = 1;
-	//	Lägg till i en lista, följande
-	//	std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType
-
-	ModelToLoad* modelToLoad = new ModelToLoad();
-	modelToLoad->Animated = true;
-	modelToLoad->Dir = _dir;
-	modelToLoad->File = _file;
-	modelToLoad->MatrixPtr = _matrixPtr;
-	modelToLoad->RenderType = _renderType;
-	m_modelsToLoad[modelID] = modelToLoad;
-
-	return modelID;
-}
 int GraphicsHigh::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType)
 {
 	int modelID = m_modelIDcounter;
@@ -903,7 +836,6 @@ int GraphicsHigh::LoadModel(std::string _dir, std::string _file, glm::mat4 *_mat
 	//	std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType
 
 	ModelToLoad* modelToLoad = new ModelToLoad();
-	modelToLoad->Animated = false;
 	modelToLoad->Dir = _dir;
 	modelToLoad->File = _file;
 	modelToLoad->MatrixPtr = _matrixPtr;
@@ -914,33 +846,53 @@ int GraphicsHigh::LoadModel(std::string _dir, std::string _file, glm::mat4 *_mat
 }
 void GraphicsHigh::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 {
+	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
+	bool isanimated = false;
+
 	Shader *shaderPtr = NULL;
+	std::vector<Model> *modelList = NULL;
 	if (_modelToLoad->RenderType == RENDER_DEFERRED)
 	{
-		shaderPtr = &m_deferredShader1;
-		m_deferredShader1.UseProgram();
+		if (obj.animated)
+		{
+			isanimated = true;
+			shaderPtr = &m_deferredShader1;
+			modelList = &m_modelsDeferred;
+			m_deferredShader1.UseProgram();
+		}
+		else
+		{
+			shaderPtr = &m_deferredShader1;
+			modelList = &m_modelsDeferred;
+			m_deferredShader1.UseProgram();
+		}
 	}
 	else if (_modelToLoad->RenderType == RENDER_FORWARD)
 	{
 		shaderPtr = &m_forwardShader;
+		modelList = &m_modelsForward;
 		m_forwardShader.UseProgram();
 	}
 	else if (_modelToLoad->RenderType == RENDER_VIEWSPACE)
 	{
 		shaderPtr = &m_viewspaceShader;
+		modelList = &m_modelsViewspace;
 		m_viewspaceShader.UseProgram();
 	}
 	else if (_modelToLoad->RenderType == RENDER_INTERFACE)
 	{
 		shaderPtr = &m_interfaceShader;
+		modelList = &m_modelsInterface;
 		m_interfaceShader.UseProgram();
 	}
 	else
+	{
 		ERRORMSG("ERROR: INVALID RENDER SETTING");
+		return;
+	}
 
-	// Import Object
-	//ObjectData obj = AddObject(_dir, _file);
-	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
+	// Import Mesh
+	Buffer* mesh = AddMesh(obj.mesh, shaderPtr, isanimated);
 
 	// Import Texture
 	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
@@ -954,71 +906,25 @@ void GraphicsHigh::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
 	shaderPtr->CheckUniformLocation("specularTex", 3);
 
-	// Import Mesh
-	Buffer* mesh = AddMesh(obj.mesh, shaderPtr);
-
 	Model model = Model(mesh, texture, normal, specular);
 
 	//for the matrices (modelView + normal)
 	m_vramUsage += (16 + 9) * sizeof(float);
 
-	if (_modelToLoad->RenderType == RENDER_DEFERRED)
+
+	for (int i = 0; i < modelList->size(); i++)
 	{
-		for (int i = 0; i < m_modelsDeferred.size(); i++)
+		if ((*modelList)[i] == model)
 		{
-			if (m_modelsDeferred[i] == model)
-			{
-				m_modelsDeferred[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr));
-				return;
-			}
-		}
-	}
-	else if (_modelToLoad->RenderType == RENDER_FORWARD)
-	{
-		for (int i = 0; i < m_modelsForward.size(); i++)
-		{
-			if (m_modelsForward[i] == model)
-			{
-				m_modelsForward[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr));
-				return;
-			}
-		}
-	}
-	else if (_modelToLoad->RenderType == RENDER_VIEWSPACE)
-	{
-		for (int i = 0; i < m_modelsViewspace.size(); i++)
-		{
-			if (m_modelsViewspace[i] == model)
-			{
-				m_modelsViewspace[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr));
-				return;
-			}
-		}
-	}
-	else if (_modelToLoad->RenderType == RENDER_INTERFACE)
-	{
-		for (int i = 0; i < m_modelsInterface.size(); i++)
-		{
-			if (m_modelsInterface[i] == model)
-			{
-				m_modelsInterface[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr));
-				return;
-			}
+			(*modelList)[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr));
+			return;
 		}
 	}
 
-	// Set model
 	//if model doesnt exist
 	model.instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr));
 	// Push back the model
-	if (_modelToLoad->RenderType == RENDER_DEFERRED)
-		m_modelsDeferred.push_back(model);
-	else if (_modelToLoad->RenderType == RENDER_FORWARD)
-		m_modelsForward.push_back(model);
-	else if (_modelToLoad->RenderType == RENDER_VIEWSPACE)
-		m_modelsViewspace.push_back(model);
-	else if (_modelToLoad->RenderType == RENDER_INTERFACE)
-		m_modelsInterface.push_back(model);
+	modelList->push_back(model);
 }
 
 void GraphicsHigh::BufferModels()
@@ -1144,7 +1050,7 @@ bool GraphicsHigh::ActiveModel(int _id, bool _active)
 	return false;
 }
 
-Buffer* GraphicsHigh::AddMesh(std::string _fileDir, Shader *_shaderProg)
+Buffer* GraphicsHigh::AddMesh(std::string _fileDir, Shader *_shaderProg, bool animated)
 {
 	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
 	{		
@@ -1159,6 +1065,8 @@ Buffer* GraphicsHigh::AddMesh(std::string _fileDir, Shader *_shaderProg)
 	std::vector<float> tanData = modelExporter.ReadDataFromFile();
 	std::vector<float> bitanData = modelExporter.ReadDataFromFile();
 	std::vector<float> texCoordData = modelExporter.ReadDataFromFile();
+	std::vector<float> jointIndexData = modelExporter.ReadDataFromFile();
+	std::vector<float> jointWeightData = modelExporter.ReadDataFromFile();
 	modelExporter.CloseFile();
 
 	Buffer* retbuffer = new Buffer();
@@ -1170,7 +1078,9 @@ Buffer* GraphicsHigh::AddMesh(std::string _fileDir, Shader *_shaderProg)
 		{ 1, 3, GL_FLOAT, (const GLvoid*)normalData.data(), static_cast<GLsizeiptr>(normalData.size()   * sizeof(float)) },
 		{ 2, 3, GL_FLOAT, (const GLvoid*)tanData.data(), static_cast<GLsizeiptr>(tanData.size()   * sizeof(float)) },
 		{ 3, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), static_cast<GLsizeiptr>(bitanData.size()   * sizeof(float)) },
-		{ 4, 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), static_cast<GLsizeiptr>(texCoordData.size() * sizeof(float)) }
+		{ 4, 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), static_cast<GLsizeiptr>(texCoordData.size() * sizeof(float)) },
+		{ 5, 5, GL_FLOAT, (const GLvoid*)jointIndexData.data(), static_cast<GLsizeiptr>(jointIndexData.size()   * sizeof(float)) },
+		{ 6, 5, GL_FLOAT, (const GLvoid*)jointWeightData.data(), static_cast<GLsizeiptr>(jointWeightData.size() * sizeof(float)) }
 	};
 
 	int test = sizeof(bufferData) / sizeof(bufferData[0]);
@@ -1178,7 +1088,10 @@ Buffer* GraphicsHigh::AddMesh(std::string _fileDir, Shader *_shaderProg)
 	for (int i = 0; i < sizeof(bufferData) / sizeof(bufferData[0]); i++)
 		m_vramUsage += (int)bufferData[i].dataSize;
 
-	retbuffer->init(bufferData, sizeof(bufferData) / sizeof(bufferData[0]));
+	int bufferDatas = sizeof(bufferData) / sizeof(bufferData[0]);
+	if (animated == false)
+		bufferDatas -= 2;
+	retbuffer->init(bufferData, bufferDatas);
 	retbuffer->setCount((int)positionData.size() / 3);
 	
 	m_meshs.insert(std::pair<const std::string, Buffer*>(_fileDir, retbuffer));
@@ -1199,6 +1112,9 @@ void GraphicsHigh::Clear()
 	BufferPointlights(0, tmpPtr);
 	delete tmpPtr;
 	BufferDirectionalLight(0);
+
+	//if (m_pointerToPointlights)
+		//delete m_pointerToPointlights;
 }
 
 bool GraphicsHigh::BufferModelTexture(int _id, std::string _fileDir, int _textureType)

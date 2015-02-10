@@ -135,9 +135,58 @@ void GameCreator::InitializeNetworkEvents()
 	NetworkInstance::GetClient()->ResetNetworkEvents();
 	NetworkInstance::GetServer()->ResetNetworkEvents();
 
-	Network::NetEvent netEvent = std::bind(&GameCreator::OnConnectedToServer, this, std::placeholders::_1, std::placeholders::_2);
+	LuaBridge::LuaNetworkEvents::Clear();
+
+	//Client NetEvents
+	Network::NetEvent netEvent;
+	netEvent = std::bind(&GameCreator::OnBannedFromServer, this, std::placeholders::_1, std::placeholders::_2);
+	NetworkInstance::GetClient()->SetOnBannedFromServer(netEvent);
+
+	netEvent = std::bind(&GameCreator::OnConnectedToServer, this, std::placeholders::_1, std::placeholders::_2);
 	NetworkInstance::GetClient()->SetOnConnectedToServer(netEvent);
 
+	netEvent = std::bind(&GameCreator::OnDisconnectedFromServer, this, std::placeholders::_1, std::placeholders::_2);
+	NetworkInstance::GetClient()->SetOnDisconnectedFromServer(netEvent);
+
+	netEvent = std::bind(&GameCreator::OnFailedToConnect, this, std::placeholders::_1, std::placeholders::_2);
+	NetworkInstance::GetClient()->SetOnFailedToConnect(netEvent);
+
+	netEvent = std::bind(&GameCreator::OnKickedFromServer, this, std::placeholders::_1, std::placeholders::_2);
+	NetworkInstance::GetClient()->SetOnKickedFromServer(netEvent);
+
+	netEvent = std::bind(&GameCreator::OnPasswordInvalid, this, std::placeholders::_1, std::placeholders::_2);
+	NetworkInstance::GetClient()->SetOnPasswordInvalid(netEvent);
+
+	netEvent = std::bind(&GameCreator::OnRemotePlayerBanned, this, std::placeholders::_1, std::placeholders::_2);
+	NetworkInstance::GetClient()->SetOnRemotePlayerBanned(netEvent);
+
+	netEvent = std::bind(&GameCreator::OnRemotePlayerConnected, this, std::placeholders::_1, std::placeholders::_2);
+	NetworkInstance::GetClient()->SetOnRemotePlayerConnected(netEvent);
+
+	netEvent = std::bind(&GameCreator::OnRemotePlayerDisconnected, this, std::placeholders::_1, std::placeholders::_2);
+	NetworkInstance::GetClient()->SetOnRemotePlayerDisconnected(netEvent);
+
+	netEvent = std::bind(&GameCreator::OnRemotePlayerKicked, this, std::placeholders::_1, std::placeholders::_2);
+	NetworkInstance::GetClient()->SetOnRemotePlayerKicked(netEvent);
+
+	netEvent = std::bind(&GameCreator::OnServerFull, this, std::placeholders::_1, std::placeholders::_2);
+	NetworkInstance::GetClient()->SetOnServerFull(netEvent);
+
+	netEvent = std::bind(&GameCreator::OnTimedOutFromServer, this, std::placeholders::_1, std::placeholders::_2);
+	NetworkInstance::GetClient()->SetOnTimedOutFromServer(netEvent);
+
+	//Server NetEvents
+	netEvent = std::bind(&GameCreator::OnPlayerConnected, this, std::placeholders::_1, std::placeholders::_2);
+	NetworkInstance::GetServer()->SetOnPlayerConnected(netEvent);
+
+	netEvent = std::bind(&GameCreator::OnPlayerDisconnected, this, std::placeholders::_1, std::placeholders::_2);
+	NetworkInstance::GetServer()->SetOnPlayerDisconnected(netEvent);
+
+	netEvent = std::bind(&GameCreator::OnPlayerTimedOut, this, std::placeholders::_1, std::placeholders::_2);
+	NetworkInstance::GetServer()->SetOnPlayerTimedOut(netEvent);
+
+
+	//Entity hooks
 	Network::NetMessageHook hook = std::bind(&NetworkHelper::ReceiveEntityAll, NetworkInstance::GetClientNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 	NetworkInstance::GetClient()->AddNetworkHook("Entity", hook);
 
@@ -277,7 +326,7 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 	//NetworkMessagesSystem* nms = new NetworkMessagesSystem();
 	//nms->SetConsole(&m_consoleManager);
 	
-	m_graphicalSystems.clear();
+	//m_graphicalSystems.clear();
 	GraphicalSystem* graphicalSystem = 0;
 	graphicalSystem = new PointlightSystem(m_graphics);
 	m_graphicalSystems.push_back(graphicalSystem);
@@ -661,10 +710,13 @@ void GameCreator::Reload()
     LuaBridge::LuaNetwork::SetClientLuaState(m_clientLuaState);
     LuaBridge::LuaNetwork::SetServerLuaState(m_serverLuaState);
 
+
+	m_graphicalSystems.clear();
+
     if (NetworkInstance::GetClient()->IsConnected() && NetworkInstance::GetServer()->IsRunning())
     {
         InitializeWorld(m_gameMode, WorldType::Client, true, false);
-        InitializeWorld(m_gameMode, WorldType::Server, false, true);
+		InitializeWorld(m_gameMode, WorldType::Server, false, true);
     }
     
     else if (NetworkInstance::GetServer()->IsRunning())
@@ -843,12 +895,6 @@ void GameCreator::ConsoleStopGame(std::string _command, std::vector<Console::Arg
 	m_running = false;
 }
 
-void GameCreator::OnConnectedToServer(Network::NetConnection _nc, const char* _message)
-{
-    if (!NetworkInstance::GetServer()->IsRunning())
-        GameMode("storaspelthreaded");
-}
-
 void GameCreator::ConsoleGameMode(std::string _command, std::vector<Console::Argument>* _args)
 {
     if (NetworkInstance::GetServer()->IsRunning() || !NetworkInstance::GetClient()->IsConnected())
@@ -981,7 +1027,13 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 			delete(m_graphics);
 
 			m_graphics = new Renderer::GraphicsHigh(tmpCam, windowx, windowy);
-			m_graphics->Init();
+			if (!m_graphics->Init())
+			{
+				SDL_Log("Switching to OpenGL 4.0");
+				delete(m_graphics);
+				m_graphics = new Renderer::GraphicsLow();
+				m_graphics->Init();
+			}
 		}
 
 		else if (strcmp((*_args)[0].Text, "low") == 0)
@@ -1016,4 +1068,121 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 		}
 	}
 #endif
+}
+
+void GameCreator::OnBannedFromServer(Network::NetConnection _nc, const char* _message)
+{
+	for (int i = 0; i < LuaBridge::LuaNetworkEvents::g_onBannedFromServer.size(); ++i)
+	{
+		LuaBridge::LuaNetworkEvents::g_onBannedFromServer[i](_nc, _message);
+	}
+}
+
+void GameCreator::OnConnectedToServer(Network::NetConnection _nc, const char* _message)
+{
+	for (int i = 0; i < LuaBridge::LuaNetworkEvents::g_onConnectedToServer.size(); ++i)
+	{
+		LuaBridge::LuaNetworkEvents::g_onConnectedToServer[i](_nc, _message);
+	}
+}
+
+void GameCreator::OnDisconnectedFromServer(Network::NetConnection _nc, const char* _message)
+{
+	for (int i = 0; i < LuaBridge::LuaNetworkEvents::g_onDisconnectedFromServer.size(); ++i)
+	{
+		LuaBridge::LuaNetworkEvents::g_onDisconnectedFromServer[i](_nc, _message);
+	}
+}
+void GameCreator::OnFailedToConnect(Network::NetConnection _nc, const char* _message)
+{
+	for (int i = 0; i < LuaBridge::LuaNetworkEvents::g_onFailedToConnect.size(); ++i)
+	{
+		LuaBridge::LuaNetworkEvents::g_onFailedToConnect[i](_nc, _message);
+	}
+}
+void GameCreator::OnKickedFromServer(Network::NetConnection _nc, const char* _message)
+{
+	for (int i = 0; i < LuaBridge::LuaNetworkEvents::g_onKickedFromServer.size(); ++i)
+	{
+		LuaBridge::LuaNetworkEvents::g_onKickedFromServer[i](_nc, _message);
+	}
+}
+void GameCreator::OnPasswordInvalid(Network::NetConnection _nc, const char* _message)
+{
+	for (int i = 0; i < LuaBridge::LuaNetworkEvents::g_onPasswordInvalid.size(); ++i)
+	{
+		LuaBridge::LuaNetworkEvents::g_onPasswordInvalid[i](_nc, _message);
+	}
+}
+void GameCreator::OnRemotePlayerBanned(Network::NetConnection _nc, const char* _message)
+{
+	for (int i = 0; i < LuaBridge::LuaNetworkEvents::g_onRemotePlayerBanned.size(); ++i)
+	{
+		LuaBridge::LuaNetworkEvents::g_onRemotePlayerBanned[i](_nc, _message);
+	}
+}
+void GameCreator::OnRemotePlayerConnected(Network::NetConnection _nc, const char* _message)
+{
+	for (int i = 0; i < LuaBridge::LuaNetworkEvents::g_onRemotePlayerConnected.size(); ++i)
+	{
+		LuaBridge::LuaNetworkEvents::g_onRemotePlayerConnected[i](_nc, _message);
+	}
+}
+void GameCreator::OnRemotePlayerDisconnected(Network::NetConnection _nc, const char* _message)
+{
+	for (int i = 0; i < LuaBridge::LuaNetworkEvents::g_onRemotePlayerDisconnected.size(); ++i)
+	{
+		LuaBridge::LuaNetworkEvents::g_onRemotePlayerDisconnected[i](_nc, _message);
+	}
+}
+void GameCreator::OnRemotePlayerKicked(Network::NetConnection _nc, const char* _message)
+{
+	for (int i = 0; i < LuaBridge::LuaNetworkEvents::g_onRemotePlayerKicked.size(); ++i)
+	{
+		LuaBridge::LuaNetworkEvents::g_onRemotePlayerKicked[i](_nc, _message);
+	}
+}
+void GameCreator::OnServerFull(Network::NetConnection _nc, const char* _message)
+{
+	for (int i = 0; i < LuaBridge::LuaNetworkEvents::g_onServerFull.size(); ++i)
+	{
+		LuaBridge::LuaNetworkEvents::g_onServerFull[i](_nc, _message);
+	}
+}
+
+void GameCreator::OnTimedOutFromServer(Network::NetConnection _nc, const char* _message)
+{
+	for (int i = 0; i < LuaBridge::LuaNetworkEvents::g_onTimedOutFromServer.size(); ++i)
+	{
+		LuaBridge::LuaNetworkEvents::g_onTimedOutFromServer[i](_nc, _message);
+	}
+}
+
+void GameCreator::OnPlayerConnected(Network::NetConnection _nc, const char* _message)
+{
+
+	Network::ServerNetwork* server = NetworkInstance::GetServer();
+	Network::PacketHandler* ph = server->GetPacketHandler();
+	uint64_t id = ph->StartPack("Gamemode");
+	ph->WriteString(id, m_gameMode.c_str());
+	NetworkInstance::GetServer()->Send(ph->EndPack(id), _nc);
+
+	for (int i = 0; i < LuaBridge::LuaNetworkEvents::g_onPlayerConnected.size(); ++i)
+	{
+		LuaBridge::LuaNetworkEvents::g_onPlayerConnected[i](_nc, _message);
+	}
+}
+void GameCreator::OnPlayerDisconnected(Network::NetConnection _nc, const char* _message)
+{
+	for (int i = 0; i < LuaBridge::LuaNetworkEvents::g_onPlayerDisconnected.size(); ++i)
+	{
+		LuaBridge::LuaNetworkEvents::g_onPlayerDisconnected[i](_nc, _message);
+	}
+}
+void GameCreator::OnPlayerTimedOut(Network::NetConnection _nc, const char* _message)
+{
+	for (int i = 0; i < LuaBridge::LuaNetworkEvents::g_onPlayerTimedOut.size(); ++i)
+	{
+		LuaBridge::LuaNetworkEvents::g_onPlayerTimedOut[i](_nc, _message);
+	}
 }

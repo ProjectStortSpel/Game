@@ -43,7 +43,7 @@ bool GraphicsLow::Init()
 	if (!m_SDLinitialized)
 		m_camera = new Camera(m_clientWidth, m_clientHeight);
 
-	if (!InitGLEW()) { ERRORMSG("GLEW_VERSION_4_0 FAILED\n"); }
+	if (!InitGLEW()) { ERRORMSG("GLEW_VERSION_4_0 FAILED.\n INCOMPATIBLE GRAPHICS DRIVER\n"); }
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	if (!InitSkybox()) { ERRORMSG("INIT SKYBOX FAILED\n"); return false; }

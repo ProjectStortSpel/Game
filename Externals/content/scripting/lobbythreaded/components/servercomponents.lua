@@ -10,6 +10,8 @@ ServerListEntryComponent:AddVariable("MaxUsers", ByteSize.Int)
 ServerListEntryComponent:AddVariable("NoSpectators", ByteSize.Int)
 ServerListEntryComponent:AddVariable("GameStarted", ByteSize.Int)
 ServerListEntryComponent:AddVariable("PasswordProtected", ByteSize.Int)
+ServerListEntryComponent:AddVariable("ButtonId", ByteSize.Int)
+ServerListEntryComponent:AddVariable("TextId", ByteSize.Int)
 worldCreator:AddComponentType(ServerListEntryComponent)
 
 local RefreshServerListComponent = ComponentType()
