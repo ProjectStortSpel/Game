@@ -61,7 +61,7 @@ AICardPickingSystem.Update = function(self, dt)
 					
 			-- vart AIn vill
 			local targetPositionX, targetPositionY = self:GetTargetPosition(CPtiles, cpTargetNr)
-			--local targetPositionX, targetPositionY = 5, 10
+			local targetPositionX, targetPositionY = 7, 11
 			-- vart AIn är
 			local aiPositonX, aiPositonY = self:GetComponent(unitID, "MapPosition", 0):GetInt2()
 			-- AIs direction
@@ -182,9 +182,9 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, dirX, dirY, posX, p
 		for i = 1, self.NumberOfCardsToPick do
 			--SimulatePlayOfCards
 			
-			local cpTargetNr = self:GetComponent(unitID, "TargetCheckpoint", 0):GetInt()
-			local CPtiles = self:GetEntities("Checkpoint")
-			targetPositionX, targetPositionY = self:GetTargetPosition(CPtiles, cpTargetNr)
+			--local cpTargetNr = self:GetComponent(unitID, "TargetCheckpoint", 0):GetInt()
+			--local CPtiles = self:GetEntities("Checkpoint")
+			--targetPositionX, targetPositionY = self:GetTargetPosition(CPtiles, cpTargetNr)
 			
 			
 			local cardstosim = {}
@@ -442,12 +442,6 @@ AICardPickingSystem.SimulateCardsFromPos = function(self, _unit, _posX, _posY, _
 	
 	local fellDown = false
 	
-	--if type(_pickedcards[1]) == "string" then
-	--	print("nemen hej det blev en string")
-	--else
-	--	print("nu fick vi in entitetsidn, jo men det funkar det med")
-	--end
-	
 	if self.PrintSimulation == 1 then
 		print()
 		print("----------------- NEW SIMULATION STARTED --------------------")
@@ -582,9 +576,7 @@ AICardPickingSystem.SimulateMoveForward = function(self, _posX, _posY, _dirX, _d
 	local fellDown = false
 	local posX = _posX
 	local posY = _posY
-	
-	--print("SIMULATE MOVE FORWARD", _iterations)
-			
+				
 	for i = 1, _iterations do
 		
 		posX = posX + _dirX * forward
@@ -601,25 +593,15 @@ AICardPickingSystem.SimulateMoveForward = function(self, _posX, _posY, _dirX, _d
 			if self.PrintSimulation == 1 then
 				print("I will fall down in", posX, posY)
 			end
+			break
 		end
-		
-		--print(_riverMove, _iterations, i, self:TileHasComponent("River", posX, posY))
-		
-		--for y = 0, 11 do
-		--	for x = 0, 11 do
-		--		print(self:TileHasComponent("River", x, y), x, y)
-		--	end
-		--end
-		
+				
 		if not _riverMove and i == _iterations and self:TileHasComponent("River", posX, posY) then
 			
 			local waterDirX, waterDirY, waterSpeed = self:GetRiverVariables(posX, posY)
 			
-			--fellDown, posX, posY = self:SimulateMoveForward(posX, posY, waterDirX, waterDirY, true, false, waterSpeed, true)
-			
-			--print(waterSpeed)
 			for j = 1, waterSpeed do
-				--print("NU BLIR DET RIVER!!!!!!!!!!!!!!!!!!!!!!!!!")
+			
 				if self:TileHasComponent("River", posX + waterDirX, posY + waterDirY) then
 					posX = posX + waterDirX
 					posY = posY + waterDirY
@@ -634,12 +616,6 @@ AICardPickingSystem.SimulateMoveForward = function(self, _posX, _posY, _dirX, _d
 				end
 			end
 		end
-			
-		--if self:TileHasComponent("NotWalkable", posX, posY) then
-		--	
-		--	posX = _posX
-		--	posY = _posY
-		--end
 	end
 	
 	if not _riverMove and self.PrintSimulation == 1 then
@@ -691,12 +667,19 @@ AICardPickingSystem.TileHasComponent = function(self, _component, _posX, _posY)
 	local mapSizeComp = self:GetComponent(mapSize[1], "MapSpecs", "SizeX")
 	local mapX, mapY = mapSizeComp:GetInt2()
 	local tiles = self:GetEntities("TileComp")
+	local returnValue
 	
-	if tiles[mapX * _posY + _posX + 1] > 100000 then
-		print(mapX, _posX, _posY, _component)
+	--if tiles[mapX * _posY + _posX + 1] > 100000 then
+	--	print("map", mapX, mapY, "pos", _posX, _posY, _component)
+	--end
+	
+	if -1 < _posX and _posX < mapX and -1 < _posY and _posY < mapY then
+		returnValue = self:EntityHasComponent(tiles[mapX * _posY + _posX + 1], _component)
+	else
+		print("ERROR, trying to get entity from tile outside the boundaries")
+		returnValue = false
 	end
 	
-	local returnValue = self:EntityHasComponent(tiles[mapX * _posY + _posX + 1], _component)
 	return returnValue
 end
 
