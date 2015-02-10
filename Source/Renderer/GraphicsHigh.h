@@ -59,6 +59,7 @@ namespace Renderer
 
 		void BufferModels();
 		void BufferModel(int _modelId, ModelToLoad* _modelToLoad);
+		void BufferAModel(int _modelId, ModelToLoad* _modelToLoad);
 
 		//holds the reset values for lights
 		float m_lightDefaults[19];
@@ -84,6 +85,7 @@ namespace Renderer
 		Shader m_forwardShader;
 		Shader m_viewspaceShader;
 		Shader m_interfaceShader;
+		Shader m_animationShader;
 
 		Shader m_shadowShaderDeferred, m_shadowShaderForward;
 
@@ -94,6 +96,7 @@ namespace Renderer
 		// Modelloader
 		int m_modelIDcounter;
 		std::vector<Model> m_modelsDeferred, m_modelsForward, m_modelsViewspace, m_modelsInterface;
+		std::vector<AModel> m_modelsAnimated;
 
 		// Pointlights buffer
 		GLuint m_pointlightBuffer, m_dirLightBuffer;

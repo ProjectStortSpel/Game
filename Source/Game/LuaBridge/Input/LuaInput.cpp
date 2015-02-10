@@ -15,6 +15,13 @@ namespace LuaBridge
 
 	// Multi functions (mouse and touch)
 	int GetTouchState(lua_State* L);
+	
+	int GetTextInput(lua_State* L);
+	int SetTextInput(lua_State* L);
+	int ResetTextInput(lua_State* L);
+	int IsTextInputActive(lua_State* L);
+	int StartTextInput(lua_State* L);
+	int StopTextInput(lua_State* L);
     
     void Embed(lua_State* L)
     {
@@ -25,8 +32,15 @@ namespace LuaBridge
 	  LuaEmbedder::AddFunction(L, "GetFingerState", &GetFingerState, "Input");
 	  LuaEmbedder::AddFunction(L, "GetFingerPosition", &GetFingerPosition, "Input");
 	  LuaEmbedder::AddFunction(L, "GetFingerDeltaPosition", &GetFingerDeltaPosition, "Input");
-
+	
 	  LuaEmbedder::AddFunction(L, "GetTouchState", &GetTouchState, "Input");
+	  
+	  LuaEmbedder::AddFunction(L, "GetTextInput", &GetTextInput, "Input");
+	  LuaEmbedder::AddFunction(L, "SetTextInput", &SetTextInput, "Input");
+	  LuaEmbedder::AddFunction(L, "ResetTextInput", &ResetTextInput, "Input");
+	  LuaEmbedder::AddFunction(L, "IsTextInputActive", &IsTextInputActive, "Input");
+	  LuaEmbedder::AddFunction(L, "StartTextInput", &StartTextInput, "Input");
+	  LuaEmbedder::AddFunction(L, "StopTextInput", &StopTextInput, "Input");
       
       LuaEmbedder::AddInt(L, "Up", (int)Input::InputState::UP, "InputState");
       LuaEmbedder::AddInt(L, "Down", (int)Input::InputState::DOWN, "InputState");
@@ -213,6 +227,50 @@ namespace LuaBridge
 		LuaEmbedder::PushInt(L, buttonState);
 		return 1;
 		#endif
+	}
+	
+	int GetTextInput(lua_State* L)
+	{
+		Input::InputWrapper& inputWrapper = Input::InputWrapper::GetInstance();
+		std::string text = std::string(inputWrapper.GetKeyboard()->GetTextInput());
+		LuaEmbedder::PushString(L, text);
+		return 1;
+	}
+	
+	int SetTextInput(lua_State* L)
+	{
+		std::string text = LuaEmbedder::PullString(L, 1);
+		Input::InputWrapper& inputWrapper = Input::InputWrapper::GetInstance();
+		inputWrapper.GetKeyboard()->SetTextInput(text.c_str());
+		return 0;
+	}
+	
+	int ResetTextInput(lua_State* L)
+	{
+		Input::InputWrapper& inputWrapper = Input::InputWrapper::GetInstance();
+		inputWrapper.GetKeyboard()->ResetTextInput();
+		return 0;
+	}
+	
+	int IsTextInputActive(lua_State* L)
+	{
+		Input::InputWrapper& inputWrapper = Input::InputWrapper::GetInstance();
+		LuaEmbedder::PushBool(L, inputWrapper.GetKeyboard()->IsTextInputActive());
+		return 1;
+	}
+	
+	int StartTextInput(lua_State* L)
+	{
+		Input::InputWrapper& inputWrapper = Input::InputWrapper::GetInstance();
+		inputWrapper.GetKeyboard()->StartTextInput();
+		return 0;
+	}
+
+	int StopTextInput(lua_State* L)
+	{
+		Input::InputWrapper& inputWrapper = Input::InputWrapper::GetInstance();
+		inputWrapper.GetKeyboard()->StopTextInput();
+		return 0;
 	}
   }
 }

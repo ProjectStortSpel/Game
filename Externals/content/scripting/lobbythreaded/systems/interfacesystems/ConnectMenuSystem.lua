@@ -18,7 +18,11 @@ ConnectMenuSystem.Update = function(self, dt, taskIndex, taskCount)
 			if world:EntityHasComponent(pressedButton, "MenuEntityCommand") then
 				local compname = world:GetComponent(pressedButton, "MenuEntityCommand", "ComponentName"):GetString()
 				--self:RemoveMenu()
-				self.doRefresh = true
+				if compname == "IPConnectEntry" then
+					self:RemoveMenu()
+				elseif compname == "RefreshServerList" then
+					self.doRefresh = true
+				end
 				local id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo(compname, id)
 			end
@@ -69,7 +73,6 @@ ConnectMenuSystem.SpawnMenu = function(self)
 
 	for i = 1, #servers do
 		server = servers[i]
-		print("\nSERVER ID: " .. server)
 		servername = world:GetComponent(server, "ServerListEntry", "Name"):GetString(0)
 		serverip = world:GetComponent(server, "ServerListEntry", "IpAddress"):GetString(0)
         serverport = world:GetComponent(server, "ServerListEntry", "Port"):GetInt(0)
@@ -80,8 +83,6 @@ ConnectMenuSystem.SpawnMenu = function(self)
 		
 		
 		--self.ServersList[#self.ServersList+1] = server
-		
-		print("BUTTON ID: " .. button .. "\n")
 		self:AddConsoleCommandToButton("connect "..serverip .. " " .. serverport, button)
 		self:AddHoverSize(1.005, button)
 		
@@ -98,15 +99,19 @@ ConnectMenuSystem.SpawnMenu = function(self)
 		text = self:CreateText("left", "text", -0.81, 0.64-i*0.11, -1.999, 1.5, 0.08)	
 		self:AddTextToTexture("C1"..i, servername, 0, 1, 1, 1, text)
 		text = self:CreateText("center", "text", 0, 0.64-i*0.11, -1.999, 1.78, 0.08)
-self:AddTextToTexture("C2"..i, serverip .. ":" .. serverport, 0, 1, 1, 1, text)
+		self:AddTextToTexture("C2"..i, serverip .. ":" .. serverport, 0, 1, 1, 1, text)
 		text = self:CreateText("right", "text", 0.89, 0.64-i*0.11, -1.999, 0.2, 0.08)	
 		self:AddTextToTexture("C3"..i, "["..servernousers.."/"..servermaxusers.."]", 0, 1, 1, 1, text)
 	end
 	
 	
-	button = self:CreateElement("refresh", "quad", 0, -0.85, -2, 0.5, 0.20)
+	button = self:CreateElement("refresh", "quad", 0.4, -0.85, -2, 0.5, 0.20)
 	self:AddEntityCommandToButton("RefreshServerList", button)
 	self:AddHoverSize(1.1, button)	
+	
+	button = self:CreateElement("connect", "quad", -0.4, -0.85, -2, 0.5, 0.20)
+	self:AddEntityCommandToButton("IPConnectEntry", button)
+	self:AddHoverSize(1.1, button)
 	
 end
 
@@ -140,41 +145,23 @@ ConnectMenuSystem.Initialize = function(self)
 end
 
 ConnectMenuSystem.CreateText = function(self, object, folder, posx, posy, posz, scalex, scaley)
-	local id = world:CreateNewEntity()
-	world:CreateComponentAndAddTo("Model", id)
-	world:CreateComponentAndAddTo("Position", id)
-	world:CreateComponentAndAddTo("Rotation", id)
-	world:CreateComponentAndAddTo("Scale", id)
+	local id = world:CreateNewEntity("Text")
 	world:CreateComponentAndAddTo(self.Name.."Element", id)
-	local model = world:GetComponent(id, "Model", 0)
-	model:SetModel(object, folder, 2)
-	local position = world:GetComponent(id, "Position", 0)
-	position:SetFloat3(posx, posy, posz)
-	local scale = world:GetComponent(id, "Scale", 0)
-	scale:SetFloat3(scalex, scaley, 1)
-	local rotation = world:GetComponent(id, "Rotation", 0)
-	rotation:SetFloat3(0, 0, 0)
-	return id	
+	world:GetComponent(id, "Model", 0):SetModel(object, folder, 2)
+	world:GetComponent(id, "Position", 0):SetFloat3(posx, posy, posz)
+	world:GetComponent(id, "Scale", 0):SetFloat3(scalex, scaley, 1)
+	world:GetComponent(id, "Rotation", 0):SetFloat3(0, 0, 0)
+	return id		
 end
 
 ConnectMenuSystem.CreateElement = function(self, object, folder, posx, posy, posz, scalex, scaley)
-	local id = world:CreateNewEntity()
-	world:CreateComponentAndAddTo("Model", id)
-	world:CreateComponentAndAddTo("Position", id)
-	world:CreateComponentAndAddTo("Rotation", id)
-	world:CreateComponentAndAddTo("Scale", id)
-	world:CreateComponentAndAddTo("PickBox", id)
+	local id = world:CreateNewEntity("Button")
 	world:CreateComponentAndAddTo(self.Name.."Element", id)
-	local model = world:GetComponent(id, "Model", 0)
-	model:SetModel(object, folder, 2)
-	local position = world:GetComponent(id, "Position", 0)
-	position:SetFloat3(posx, posy, posz)
-	local scale = world:GetComponent(id, "Scale", 0)
-	scale:SetFloat3(scalex, scaley, 1)
-	local pickbox = world:GetComponent(id, "PickBox", 0)
-	pickbox:SetFloat2(1, 1)
-	local rotation = world:GetComponent(id, "Rotation", 0)
-	rotation:SetFloat3(0, 0, 0)
+	world:GetComponent(id, "Model", 0):SetModel(object, folder, 2)
+	world:GetComponent(id, "Position", 0):SetFloat3(posx, posy, posz)
+	world:GetComponent(id, "Scale", 0):SetFloat3(scalex, scaley, 1)
+	world:GetComponent(id, "PickBox", 0):SetFloat2(1, 1)
+	world:GetComponent(id, "Rotation", 0):SetFloat3(0, 0, 0)
 	return id	
 end
 

@@ -18,6 +18,17 @@ struct ObjectData
 	}
 };
 
+struct JointData
+{
+	int parent;
+	glm::mat4 transform;
+	JointData(int _parent, glm::mat4 _transform)
+	{
+		parent = _parent;
+		transform = _transform;
+	}
+};
+
 struct Vertex
 {
 	glm::vec3 po;
@@ -109,6 +120,41 @@ public:
 			
 
 		return objectdata;
+	}
+
+	static std::vector<JointData> importJoints(std::string fileDir)
+	{
+		std::vector<JointData> jointlist;
+
+		std::ifstream fileIn(fileDir.c_str());
+
+		if (fileIn)
+		{
+			while (fileIn)
+			{
+				int parent;
+				float xx, xy, xz, xw;
+				float yx, yy, yz, yw;
+				float zx, zy, zz, zw;
+				float wx, wy, wz, ww;
+
+				fileIn >> parent;
+				fileIn >> xx >> xy >> xz >> xw;
+				fileIn >> yx >> yy >> yz >> yw;
+				fileIn >> zx >> zy >> zz >> zw;
+				fileIn >> wx >> wy >> wz >> ww;
+
+				jointlist.push_back(JointData(
+					parent,
+					glm::mat4(	xx, xy, xz, xw,
+								yx, yy, yz, yw,
+								zx, zy, zz, zw,
+								wx, wy, wz, ww
+								)
+					));
+			}
+		}
+		return jointlist;
 	}
 };
 

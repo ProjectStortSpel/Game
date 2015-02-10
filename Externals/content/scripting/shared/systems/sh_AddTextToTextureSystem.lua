@@ -1,8 +1,4 @@
 AddTextToTextureSystem = System()
-AddTextToTextureSystem.Name = "ConnectMenu"
-AddTextToTextureSystem.ServerStartIndex = 1
-AddTextToTextureSystem.ServerEndIndex = 1
-AddTextToTextureSystem.doRefresh = true
 
 AddTextToTextureSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 	for i = 1, #entities do

@@ -26,6 +26,18 @@ namespace Renderer
 #define TEXTURE_NORMAL		1
 #define TEXTURE_SPECULAR	2
 
+	struct Joint
+	{
+		int parent;
+		glm::mat4 transform;
+		Joint(int _parent, glm::mat4 _transform)
+		{
+			parent = _parent;
+			transform = _transform;
+		}
+	};
+
+
 	struct Instance
 	{
 		int id;
@@ -72,6 +84,30 @@ namespace Renderer
 
 		std::vector<Instance> instances;
 	};
+	struct AModel
+	{
+		AModel(){}
+		AModel(int _id, bool _active, mat4* _model, Buffer* buffer, GLuint tex, GLuint nor, GLuint spe)
+		{
+			id = _id;
+			active = _active;
+			modelMatrix = _model;
+			bufferPtr = buffer;
+			texID = tex;
+			norID = nor;
+			speID = spe;
+		}
+		int id;
+		bool active;
+		mat4* modelMatrix;
+		Buffer* bufferPtr;
+		GLuint texID;
+		GLuint norID;
+		GLuint speID;
+
+		std::vector<Joint> joints;
+	};
+
 
 	struct GLTimerValue
 	{

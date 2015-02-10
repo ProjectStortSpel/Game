@@ -111,7 +111,6 @@ DealCardsSystem.DealCards = function (self, numCards)
 	--	Notify players about timer
 	local newId = world:CreateNewEntity();
 	world:CreateComponentAndAddTo("OnPickingPhase", newId);
-	
 end
 
 Net.Receive("Server.SelectCards", 

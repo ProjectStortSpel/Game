@@ -10,7 +10,8 @@ SortSelectedCardsSystem.Initialize = function ( self )
 	self:UsingEntitiesRemoved()
 	
 	--	Set Filter
-	self:AddComponentTypeToFilter("SelectCard", FilterType.Mandatory)
+	self:AddComponentTypeToFilter("SelectCard", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("GameRules", FilterType.RequiresOneOf)
 end
 
 

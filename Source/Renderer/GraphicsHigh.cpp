@@ -856,25 +856,20 @@ int GraphicsHigh::LoadModel(std::string _dir, std::string _file, glm::mat4 *_mat
 void GraphicsHigh::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 {
 	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
-	bool isanimated = false;
+
+	if (obj.animated)
+	{
+		BufferAModel(_modelId, _modelToLoad);
+		return;
+	}
 
 	Shader *shaderPtr = NULL;
 	std::vector<Model> *modelList = NULL;
 	if (_modelToLoad->RenderType == RENDER_DEFERRED)
 	{
-		if (obj.animated)
-		{
-			isanimated = true;
-			shaderPtr = &m_deferredShader1;
-			modelList = &m_modelsDeferred;
-			m_deferredShader1.UseProgram();
-		}
-		else
-		{
-			shaderPtr = &m_deferredShader1;
-			modelList = &m_modelsDeferred;
-			m_deferredShader1.UseProgram();
-		}
+		shaderPtr = &m_deferredShader1;
+		modelList = &m_modelsDeferred;
+		m_deferredShader1.UseProgram();
 	}
 	else if (_modelToLoad->RenderType == RENDER_FORWARD)
 	{
@@ -901,7 +896,7 @@ void GraphicsHigh::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	}
 
 	// Import Mesh
-	Buffer* mesh = AddMesh(obj.mesh, shaderPtr, isanimated);
+	Buffer* mesh = AddMesh(obj.mesh, shaderPtr, false);
 
 	// Import Texture
 	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
@@ -935,7 +930,43 @@ void GraphicsHigh::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	// Push back the model
 	modelList->push_back(model);
 }
+void GraphicsHigh::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
+{
+	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
 
+	Shader *shaderPtr = &m_animationShader;
+	std::vector<AModel> *modelList = &m_modelsAnimated;
+
+	// Import Mesh
+	Buffer* mesh = AddMesh(obj.mesh, shaderPtr, true);
+
+	// Import Texture
+	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
+	shaderPtr->CheckUniformLocation("diffuseTex", 1);
+
+	// Import Normal map
+	GLuint normal = AddTexture(obj.norm, GL_TEXTURE2);
+	shaderPtr->CheckUniformLocation("normalTex", 2);
+
+	// Import Specc Glow map
+	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
+	shaderPtr->CheckUniformLocation("specularTex", 3);
+
+	// Import Skeleton
+	std::vector<JointData> joints = ModelLoader::importJoints(obj.joints);
+
+	AModel model = AModel(_modelId, true, _modelToLoad->MatrixPtr, mesh, texture, normal, specular);
+
+	// Add skeleton
+	for (int i = 0; i < joints.size(); i++)
+		model.joints.push_back(Joint(joints[i].parent, joints[i].transform));
+
+	//for the matrices (modelView + normal)
+	m_vramUsage += (16 + 9) * sizeof(float);
+
+	// Push back the model
+	modelList->push_back(model);
+}
 void GraphicsHigh::BufferModels()
 {
 	for (auto pair : m_modelsToLoad)

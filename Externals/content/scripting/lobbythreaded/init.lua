@@ -4,6 +4,7 @@ require "components"
 require "buttoncomponents"
 require "menucomponents"
 require "servercomponents"
+require "ipconnectcomponents"
 
 --	Shared Components
 package.path = package.path .. ";../../../Externals/content/scripting/shared/components/?.lua"
@@ -29,7 +30,7 @@ require "GameMenuSystem"
 require "OptionMenuSystem"
 require "ConnectMenuSystem"
 require "HostMenuSystem"
-
+require "IPConnectSystem"
 
 -- Templates
 package.path = package.path .. ";../../../Externals/content/scripting/lobbythreaded/templates/?.lua"
@@ -54,5 +55,7 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ConnectMenuSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(HostMenuSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(IPConnectSystem)
 
 end
