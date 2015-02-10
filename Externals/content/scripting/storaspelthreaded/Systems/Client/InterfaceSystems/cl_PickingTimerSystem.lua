@@ -22,13 +22,13 @@ PickingTimerSystem.PostInitialize = function(self)
 	world:CreateComponentAndAddTo("Position", id)
 	world:CreateComponentAndAddTo("Rotation", id)
 	world:CreateComponentAndAddTo("Scale", id)
-	local model = self:GetComponent(id, "Model", 0)
+	local model = world:GetComponent(id, "Model", 0)
 	model:SetModel("shade", "quad", 2) 								--fix here
-	local position = self:GetComponent(id, "Position", 0)
+	local position = world:GetComponent(id, "Position", 0)
 	position:SetFloat3(0, 2, -4)
-	local scale = self:GetComponent(id, "Scale", 0)
+	local scale = world:GetComponent(id, "Scale", 0)
 	scale:SetFloat3(10, 0.1, 1)
-	local rotation = self:GetComponent(id, "Rotation", 0)
+	local rotation = world:GetComponent(id, "Rotation", 0)
 	rotation:SetFloat3(0, 0, 0)
 end
 
@@ -42,7 +42,7 @@ PickingTimerSystem.Update = function( self, dt )
 	
 	if #Timers > 0 then
 		local drawTimer = Timers[1]
-		local scale = self:GetComponent(drawTimer, "Scale", 0)
+		local scale = world:GetComponent(drawTimer, "Scale", 0)
 		scale:SetFloat3(self.timer*self.size, 0.1, 1)
 	end
 	
@@ -52,7 +52,7 @@ PickingTimerSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, enti
 	for n = 1, #entities do
 		local entity = entities[n]
 		if world:EntityHasComponent(entity, "SetPickingTimer") then
-			local newTime = self:GetComponent(entity, "SetPickingTimer", 0):GetFloat()
+			local newTime = world:GetComponent(entity, "SetPickingTimer", 0):GetFloat()
 			self.timer = newTime
 			world:KillEntity(entity)
 		end

@@ -11,12 +11,12 @@ ConnectMenuSystem.Update = function(self, dt)
 		if #pressedButtons > 0 then
 			local pressedButton = pressedButtons[1]
 			if world:EntityHasComponent(pressedButton, "MenuConsoleCommand") then
-				local command = self:GetComponent(pressedButton, "MenuConsoleCommand", "Command"):GetString()
+				local command = world:GetComponent(pressedButton, "MenuConsoleCommand", "Command"):GetString()
 				self:RemoveMenu()
 				Console.AddToCommandQueue(command)
 			end
 			if world:EntityHasComponent(pressedButton, "MenuEntityCommand") then
-				local compname = self:GetComponent(pressedButton, "MenuEntityCommand", "ComponentName"):GetString()
+				local compname = world:GetComponent(pressedButton, "MenuEntityCommand", "ComponentName"):GetString()
 				self:RemoveMenu()
 				local id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo(compname, id)
@@ -59,12 +59,12 @@ ConnectMenuSystem.SpawnMenu = function(self)
 
 	for i = 1, #servers do
 		server = servers[i]
-		servername = self:GetComponent(server, "ServerListEntry", "Name"):GetString(0)
-		serverip = self:GetComponent(server, "ServerListEntry", "IpAddress"):GetString(0)
-        serverport = self:GetComponent(server, "ServerListEntry", "Port"):GetInt(0)
-		servernousers = self:GetComponent(server, "ServerListEntry", "NoUsers"):GetInt(0)
-		servermaxusers = self:GetComponent(server, "ServerListEntry", "MaxUsers"):GetInt(0)
-		servergamestarted = self:GetComponent(server, "ServerListEntry", "GameStarted"):GetBool(0)
+		servername = world:GetComponent(server, "ServerListEntry", "Name"):GetString(0)
+		serverip = world:GetComponent(server, "ServerListEntry", "IpAddress"):GetString(0)
+        serverport = world:GetComponent(server, "ServerListEntry", "Port"):GetInt(0)
+		servernousers = world:GetComponent(server, "ServerListEntry", "NoUsers"):GetInt(0)
+		servermaxusers = world:GetComponent(server, "ServerListEntry", "MaxUsers"):GetInt(0)
+		servergamestarted = world:GetComponent(server, "ServerListEntry", "GameStarted"):GetBool(0)
 		button = self:CreateElement("shade", "quad", 0, 0.6-i*0.11, -2, 1.8, 0.1)
 		self:AddConsoleCommandToButton("connect "..serverip .. " " .. serverport, button)
 		self:AddHoverSize(1.005, button)
@@ -117,13 +117,13 @@ ConnectMenuSystem.CreateText = function(self, object, folder, posx, posy, posz, 
 	world:CreateComponentAndAddTo("Rotation", id)
 	world:CreateComponentAndAddTo("Scale", id)
 	world:CreateComponentAndAddTo(self.Name.."Element", id)
-	local model = self:GetComponent(id, "Model", 0)
+	local model = world:GetComponent(id, "Model", 0)
 	model:SetModel(object, folder, 2)
-	local position = self:GetComponent(id, "Position", 0)
+	local position = world:GetComponent(id, "Position", 0)
 	position:SetFloat3(posx, posy, posz)
-	local scale = self:GetComponent(id, "Scale", 0)
+	local scale = world:GetComponent(id, "Scale", 0)
 	scale:SetFloat3(scalex, scaley, 1)
-	local rotation = self:GetComponent(id, "Rotation", 0)
+	local rotation = world:GetComponent(id, "Rotation", 0)
 	rotation:SetFloat3(0, 0, 0)
 	return id	
 end
@@ -136,15 +136,15 @@ ConnectMenuSystem.CreateElement = function(self, object, folder, posx, posy, pos
 	world:CreateComponentAndAddTo("Scale", id)
 	world:CreateComponentAndAddTo("PickBox", id)
 	world:CreateComponentAndAddTo(self.Name.."Element", id)
-	local model = self:GetComponent(id, "Model", 0)
+	local model = world:GetComponent(id, "Model", 0)
 	model:SetModel(object, folder, 2)
-	local position = self:GetComponent(id, "Position", 0)
+	local position = world:GetComponent(id, "Position", 0)
 	position:SetFloat3(posx, posy, posz)
-	local scale = self:GetComponent(id, "Scale", 0)
+	local scale = world:GetComponent(id, "Scale", 0)
 	scale:SetFloat3(scalex, scaley, 1)
-	local pickbox = self:GetComponent(id, "PickBox", 0)
+	local pickbox = world:GetComponent(id, "PickBox", 0)
 	pickbox:SetFloat2(1, 1)
-	local rotation = self:GetComponent(id, "Rotation", 0)
+	local rotation = world:GetComponent(id, "Rotation", 0)
 	rotation:SetFloat3(0, 0, 0)
 	return id	
 end
@@ -170,10 +170,10 @@ ConnectMenuSystem.AddEntityCommandToButton = function(self, command, button)
 end
 
 ConnectMenuSystem.AddHoverSize = function(self, deltascale, button)
-	local scale = self:GetComponent(button, "Scale", 0)
+	local scale = world:GetComponent(button, "Scale", 0)
 	local sx, sy, sz = scale:GetFloat3()
 	world:CreateComponentAndAddTo("HoverSize", button)
-	local hoversize = self:GetComponent(button, "HoverSize", 0)
+	local hoversize = world:GetComponent(button, "HoverSize", 0)
 	hoversize:SetFloat3(sx*deltascale, sy*deltascale, sz*deltascale)
 end
 

@@ -20,12 +20,12 @@ OptionMenuSystem.Update = function(self, dt, taskIndex, taskCount)
 		if #pressedButtons > 0 then
 			local pressedButton = pressedButtons[1]
 			if world:EntityHasComponent(pressedButton, "MenuConsoleCommand") then
-				local command = self:GetComponent(pressedButton, "MenuConsoleCommand", "Command"):GetString()
+				local command = world:GetComponent(pressedButton, "MenuConsoleCommand", "Command"):GetString()
 				self:RemoveMenu()
 				Console.AddToCommandQueue(command)
 			end
 			if world:EntityHasComponent(pressedButton, "MenuEntityCommand") then
-				local compname = self:GetComponent(pressedButton, "MenuEntityCommand", "ComponentName"):GetString()
+				local compname = world:GetComponent(pressedButton, "MenuEntityCommand", "ComponentName"):GetString()
 				self:RemoveMenu()
 				local id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo(compname, id)
@@ -70,11 +70,11 @@ end
 OptionMenuSystem.CreateElement = function(self, object, folder, posx, posy, posz, scalex, scaley)
 	local id = world:CreateNewEntity("Button")
 	world:CreateComponentAndAddTo(self.Name.."Element", id)
-	self:GetComponent(id, "Model", 0):SetModel(object, folder, 2)
-	self:GetComponent(id, "Position", 0):SetFloat3(posx, posy, posz)
-	self:GetComponent(id, "Scale", 0):SetFloat3(scalex, scaley, 1)
-	self:GetComponent(id, "PickBox", 0):SetFloat2(1, 1)
-	self:GetComponent(id, "Rotation", 0):SetFloat3(0, 0, 0)
+	world:GetComponent(id, "Model", 0):SetModel(object, folder, 2)
+	world:GetComponent(id, "Position", 0):SetFloat3(posx, posy, posz)
+	world:GetComponent(id, "Scale", 0):SetFloat3(scalex, scaley, 1)
+	world:GetComponent(id, "PickBox", 0):SetFloat2(1, 1)
+	world:GetComponent(id, "Rotation", 0):SetFloat3(0, 0, 0)
 	return id	
 end
 
@@ -89,9 +89,9 @@ OptionMenuSystem.AddEntityCommandToButton = function(self, command, button)
 end
 
 OptionMenuSystem.AddHoverSize = function(self, deltascale, button)
-	local scale = self:GetComponent(button, "Scale", 0)
+	local scale = world:GetComponent(button, "Scale", 0)
 	local sx, sy, sz = scale:GetFloat3()
 	world:CreateComponentAndAddTo("HoverSize", button)
-	local hoversize = self:GetComponent(button, "HoverSize", 0)
+	local hoversize = world:GetComponent(button, "HoverSize", 0)
 	hoversize:SetFloat3(sx*deltascale, sy*deltascale, sz*deltascale)
 end

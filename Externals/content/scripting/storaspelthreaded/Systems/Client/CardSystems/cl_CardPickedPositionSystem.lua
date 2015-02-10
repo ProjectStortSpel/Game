@@ -21,7 +21,7 @@ CardPickedPositionSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount
 	for i = 1, #entities do
 		local card = entities[i]
 	
-		local data = self:GetComponent(card, "SelectCard", "Index"):GetInt()
+		local data = world:GetComponent(card, "SelectCard", "Index"):GetInt()
 		
 		local halfentities = #entities/2
 		local px = (-halfentities + data - 0.5) * 0.7
@@ -44,7 +44,7 @@ CardPickedPositionSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCou
 	for i = 1, #entities do
 		local card = entities[i]
 	
-		local data = self:GetComponent(card, "SelectCard", "Index"):GetInt()
+		local data = world:GetComponent(card, "SelectCard", "Index"):GetInt()
 		
 		local halfentities = #entities/2
 		local px = (-halfentities + data - 0.5) * 0.7
