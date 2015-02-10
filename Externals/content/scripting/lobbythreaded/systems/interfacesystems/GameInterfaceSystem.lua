@@ -1,4 +1,5 @@
 GameInterfaceSystem = System()
+GameInterfaceSystem.Name = "GameInterface"
 
 GameInterfaceSystem.Update = function(self, dt, taskIndex, taskCount)
 	if Input.GetTouchState(0) == InputState.Released then
@@ -7,12 +8,13 @@ GameInterfaceSystem.Update = function(self, dt, taskIndex, taskCount)
 		if #pressedButtons > 0 then
 			local pressedButton = pressedButtons[1]
 			if world:EntityHasComponent(pressedButton, "MenuConsoleCommand") then
-				local command = self:GetComponent(pressedButton, "MenuConsoleCommand", "Command"):GetString()
+				local command = world:GetComponent(pressedButton, "MenuConsoleCommand", "Command"):GetStrong()
 				Console.AddToCommandQueue(command)
 			end
 			if world:EntityHasComponent(pressedButton, "MenuEntityCommand") then
-				local compname = self:GetComponent(pressedButton, "MenuEntityCommand", "ComponentName"):GetString()
+				local compname = world:GetComponent(pressedButton, "MenuEntityCommand", "ComponentName"):GetString()
 				local id = world:CreateNewEntity()
+				print(compname)
 				world:CreateComponentAndAddTo(compname, id)
 			end
 		else
@@ -27,33 +29,23 @@ end
 GameInterfaceSystem.Initialize = function(self)
 	self:SetName("GameInterfaceSystem")
 	self:UsingUpdate()
-	self:AddComponentTypeToFilter("InterfaceElement", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter(self.Name.."Element", FilterType.RequiresOneOf)
 end
 
 GameInterfaceSystem.CreateElement = function(self, object, folder, posx, posy, posz, scalex, scaley)
-	local id = world:CreateNewEntity()
-	world:CreateComponentAndAddTo("Model", id)
-	world:CreateComponentAndAddTo("Position", id)
-	world:CreateComponentAndAddTo("Rotation", id)
-	world:CreateComponentAndAddTo("Scale", id)
-	world:CreateComponentAndAddTo("PickBox", id)
-	world:CreateComponentAndAddTo("InterfaceElement", id)
-	local model = self:GetComponent(id, "Model", 0)
-	model:SetModel(object, folder, 3)
-	local position = self:GetComponent(id, "Position", 0)
-	position:SetFloat3(posx, posy, posz)
-	local scale = self:GetComponent(id, "Scale", 0)
-	scale:SetFloat3(scalex, scaley, 1)
-	local pickbox = self:GetComponent(id, "PickBox", 0)
-	pickbox:SetFloat2(1, 1)
-	local rotation = self:GetComponent(id, "Rotation", 0)
-	rotation:SetFloat3(0, 0, 0)
+	local id = world:CreateNewEntity("Button")
+	world:CreateComponentAndAddTo(self.Name.."Element", id)
+	world:GetComponent(id, "Model", 0):SetModel(object, folder, 2)
+	world:GetComponent(id, "Position", 0):SetFloat3(posx, posy, posz)
+	world:GetComponent(id, "Scale", 0):SetFloat3(scalex, scaley, 1)
+	world:GetComponent(id, "PickBox", 0):SetFloat2(1, 1)
+	world:GetComponent(id, "Rotation", 0):SetFloat3(0, 0, 0)
 	return id	
 end
 
 GameInterfaceSystem.AddConsoleCommandToButton = function(self, command, button)
 	world:CreateComponentAndAddTo("MenuConsoleCommand", button)
-	world:GetComponent(button, "MenuConsoleCommand", "Command"):SetString(command)
+	world:GetComponent(button, "MenuConsoleCommand", "Command"):SetStrong(command)
 end
 
 GameInterfaceSystem.AddEntityCommandToButton = function(self, command, button)
@@ -62,10 +54,10 @@ GameInterfaceSystem.AddEntityCommandToButton = function(self, command, button)
 end
 
 GameInterfaceSystem.AddHoverSize = function(self, deltascale, button)
-	local scale = self:GetComponent(button, "Scale", 0)
+	local scale = world:GetComponent(button, "Scale", 0)
 	local sx, sy, sz = scale:GetFloat3()
 	world:CreateComponentAndAddTo("HoverSize", button)
-	local hoversize = self:GetComponent(button, "HoverSize", 0)
+	local hoversize = world:GetComponent(button, "HoverSize", 0)
 	hoversize:SetFloat3(sx*deltascale, sy*deltascale, sz*deltascale)
 end
 

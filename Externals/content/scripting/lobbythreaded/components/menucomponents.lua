@@ -46,7 +46,7 @@ worldCreator:AddComponentType(HostMenuElement)
 local MenuConsoleCommand = ComponentType()
 MenuConsoleCommand.Name = "MenuConsoleCommand"
 MenuConsoleCommand.TableType = TableType.Map
-MenuConsoleCommand:AddVariable("Command", ByteSize.Text)
+MenuConsoleCommand:AddVariable("Command", ByteSize.String)
 worldCreator:AddComponentType(MenuConsoleCommand)
 -- Menu EntityCommand
 local MenuEntityCommand = ComponentType()

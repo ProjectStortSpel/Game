@@ -24,6 +24,8 @@ namespace ECSL
 		SystemManager* m_systemManager;
 		DataLogger* m_dataLogger;
 
+		
+
 	public:
 		World(unsigned int _entityCount, std::vector<SystemWorkGroup*>* _systemWorkGroups, std::vector<unsigned int>* _componentTypeIds);
 		~World();
@@ -55,6 +57,15 @@ namespace ECSL
 		unsigned int GetMemoryUsage();
 		
 		void LogWorldData();
+
+		//String?
+		void SetString(unsigned int _eId, const std::string& _componentType, const unsigned int _index, const char* _value);
+		void SetString(unsigned int _eId, unsigned int _componentTypeId, const unsigned int _index, const char* _value);
+
+		std::string GetString(unsigned int _eId, const std::string& _componentType, const unsigned int _index);
+		std::string GetString(unsigned int _eId, unsigned int _componentTypeId, const unsigned int _index);
+
+		
 	};
 }
 

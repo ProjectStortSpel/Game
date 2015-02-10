@@ -4,6 +4,10 @@
 --	and they will be loaded
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Components/GameLogic/?.lua"
 
+require "StageComponents"
+
+require "RulesComponents"
+
 require "AIComponents"
 
 require "CardActionComponents"

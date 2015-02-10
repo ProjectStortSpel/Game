@@ -245,6 +245,8 @@ void GameConsole::HostListenServer(std::string _command, std::vector<Console::Ar
     bool connected = NetworkInstance::GetClient()->Connect("127.0.0.1", pw.c_str(), port, 0);
 }
 
+
+
 void GameConsole::StopServer(std::string _command, std::vector<Console::Argument>* _args)
 {
 	if (NetworkInstance::GetServer()->IsRunning())
