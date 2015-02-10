@@ -23,20 +23,20 @@ CardAddModelSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, enti
 		world:CreateComponentAndAddTo("Scale", entityId)
 		world:CreateComponentAndAddTo("PickBox", entityId)
 		
-		local pickbox = self:GetComponent(entityId, "PickBox", 0)
+		local pickbox = world:GetComponent(entityId, "PickBox", 0)
 		pickbox:SetFloat2(0.6, 1.0)
 		
-		local position = self:GetComponent(entityId, "Position", 0)
+		local position = world:GetComponent(entityId, "Position", 0)
 		position:SetFloat3(0, -3, -4)
 		
-		local scale = self:GetComponent(entityId, "Scale", 0)
+		local scale = world:GetComponent(entityId, "Scale", 0)
 		scale:SetFloat3(0.9, 0.9, 0.9)
 		
-		local rotation = self:GetComponent(entityId, "Rotation", 0)
+		local rotation = world:GetComponent(entityId, "Rotation", 0)
 		rotation:SetFloat3(0, 0, 0)
 		
-		local model = self:GetComponent(entityId, "Model", 0)
-		local action = self:GetComponent(entityId, "CardAction", 0):GetString()
+		local model = world:GetComponent(entityId, "Model", 0)
+		local action = world:GetComponent(entityId, "CardAction", 0):GetString()
 		if action == "Forward" then
 			model:SetModel("forward", "cards", 2)
 		elseif action == "Backward" then
@@ -59,7 +59,7 @@ CardAddModelSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, enti
 		
 		
 		-- PRIO TEXT WOOOOOT?!?!?!?
-		local prio = self:GetComponent(entityId, "CardPrio", 0):GetInt()
+		local prio = world:GetComponent(entityId, "CardPrio", 0):GetInt()
 		
 		local id = world:CreateNewEntity()
 		world:CreateComponentAndAddTo("Model", id)
@@ -67,15 +67,15 @@ CardAddModelSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, enti
 		world:CreateComponentAndAddTo("Position", id)
 		world:CreateComponentAndAddTo("Rotation", id)
 		world:CreateComponentAndAddTo("Scale", id)
-		local model = self:GetComponent(id, "Model", 0)
+		local model = world:GetComponent(id, "Model", 0)
 		model:SetModel("right", "text", 2)
-		local parent = self:GetComponent(id, "Parent", 0)
+		local parent = world:GetComponent(id, "Parent", 0)
 		parent:SetInt(entityId)
-		local position = self:GetComponent(id, "Position", 0)
+		local position = world:GetComponent(id, "Position", 0)
 		position:SetFloat3(0.24, 0.47, 0.01)
-		local scale = self:GetComponent(id, "Scale", 0)
+		local scale = world:GetComponent(id, "Scale", 0)
 		scale:SetFloat3(0.30, 0.15, 1)
-		local rotation = self:GetComponent(id, "Rotation", 0)
+		local rotation = world:GetComponent(id, "Rotation", 0)
 		rotation:SetFloat3(0, 0, 0)
 
 		world:CreateComponentAndAddTo("TextTexture", id)

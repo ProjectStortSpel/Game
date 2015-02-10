@@ -18,7 +18,7 @@ UpdateLerpScaleSystem.Update = function(self, dt, taskIndex, taskCount)
 	for i = 1, #entities do
 		local entity = entities[i]
 		
-		local scale = self:GetComponent(entity, "Scale", 0)
+		local scale = world:GetComponent(entity, "Scale", 0)
 		
 		local sX = world:GetComponent(entity, "LerpingScale", "sX"):GetFloat(0)
 		local sY = world:GetComponent(entity, "LerpingScale", "sY"):GetFloat(0)

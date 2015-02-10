@@ -99,7 +99,7 @@ DealCardsSystem.DealCards = function (self, numCards)
 			
 			--if self.AICheat == 1 then
 			--
-			--	local cardactioncomp = self:GetComponent(card, "CardAction", 0)
+			--	local cardactioncomp = world:GetComponent(card, "CardAction", 0)
 			--	
 			--	if j == 1 then
 			--		cardactioncomp:SetString("Forward")

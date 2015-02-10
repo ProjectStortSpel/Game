@@ -35,8 +35,8 @@ CreateDeckSystem.CreateDeck = function (self)
 		prio = prio + 1
 		local entity = world:CreateNewEntity("Card")
 		
-		local cardpriocomp = self:GetComponent(entity, "CardPrio", 0)
-		local cardactioncomp = self:GetComponent( entity, "CardAction", 0)
+		local cardpriocomp = world:GetComponent(entity, "CardPrio", 0)
+		local cardactioncomp = world:GetComponent( entity, "CardAction", 0)
 		
 		cardpriocomp:SetInt(prio)
 		

@@ -55,17 +55,17 @@ AICardPickingSystem.Update = function(self, dt)
 		
 		for i = 1, #AIs do
 			
-			local unitID = self:GetComponent(AIs[i], "UnitEntityId", 0):GetInt()
+			local unitID = world:GetComponent(AIs[i], "UnitEntityId", 0):GetInt()
 			
-			local cpTargetNr = self:GetComponent(unitID, "TargetCheckpoint", 0):GetInt()
+			local cpTargetNr = world:GetComponent(unitID, "TargetCheckpoint", 0):GetInt()
 					
 			-- vart AIn vill
 			local targetPositionX, targetPositionY = self:GetTargetPosition(CPtiles, cpTargetNr)
 			--local targetPositionX, targetPositionY = 5, 10
 			-- vart AIn är
-			local aiPositonX, aiPositonY = self:GetComponent(unitID, "MapPosition", 0):GetInt2()
+			local aiPositonX, aiPositonY = world:GetComponent(unitID, "MapPosition", 0):GetInt2()
 			-- AIs direction
-			local aiDirX, aiDirY = self:GetComponent(unitID, "Direction", 0):GetInt2()
+			local aiDirX, aiDirY = world:GetComponent(unitID, "Direction", 0):GetInt2()
 			--Fetch the cards which is relevant to the current AI
 			local CardSetAI = self:GetAIsCardSet(AIs[i], Cards)
 			--This will catch the best 
@@ -84,10 +84,10 @@ AICardPickingSystem.GetTargetPosition = function(self, checkpointsTiles, cpTarge
 	local targetPositionX, targetPositionY
 	local asd = false
 	for k = 1, #checkpointsTiles do
-		local target = self:GetComponent(checkpointsTiles[k], "Checkpoint", 0):GetInt()
+		local target = world:GetComponent(checkpointsTiles[k], "Checkpoint", 0):GetInt()
 		
 		if target == cpTargetNr then
-			targetPositionX, targetPositionY = self:GetComponent(checkpointsTiles[k], "MapPosition", 0):GetInt2()
+			targetPositionX, targetPositionY = world:GetComponent(checkpointsTiles[k], "MapPosition", 0):GetInt2()
 			asd = true
 		end
 	end
@@ -103,11 +103,11 @@ AICardPickingSystem.GetAIsCardSet = function(self, AI, Cards)
 
 		local aisCard = {}
 		aisCard.__mode = "k"
-		local aiNr = self:GetComponent(AI, "PlayerNumber", 0):GetInt()
+		local aiNr = world:GetComponent(AI, "PlayerNumber", 0):GetInt()
 		for j = 1, #Cards do
-			local card = self:GetComponent(Cards[j], "DealtCard", 0)
+			local card = world:GetComponent(Cards[j], "DealtCard", 0)
 			local id = card:GetInt()
-			local plyNr = self:GetComponent(id, "PlayerNumber", 0):GetInt()
+			local plyNr = world:GetComponent(id, "PlayerNumber", 0):GetInt()
 
 			if plyNr == aiNr then
 				
@@ -125,7 +125,7 @@ AICardPickingSystem.TryMove = function(self, CardSetAI, card)
 		if CardSetAI[j] == card[1] and j <= #CardSetAI then
 			table.remove(card, 1)
 			cardpicked = CardSetAI[j]
-			--print("PLAYING CARD : ", self:GetComponent(cardpicked, "CardAction", 0):GetString()))
+			--print("PLAYING CARD : ", world:GetComponent(cardpicked, "CardAction", 0):GetString()))
 			table.remove(CardSetAI, j)
 			return cardpicked
 		end
@@ -142,7 +142,7 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, dirX, dirY, posX, p
 			
 			for j = 1, self.CardsPerHand do
 				
-				local cardactioncomp = self:GetComponent(CardSetAI[j], "CardAction", 0)
+				local cardactioncomp = world:GetComponent(CardSetAI[j], "CardAction", 0)
 				
 				if j == 1 then
 					cardactioncomp:SetString("Forward")
@@ -175,7 +175,7 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, dirX, dirY, posX, p
 		for i = 1, self.NumberOfCardsToPick do
 			--SimulatePlayOfCards
 			
-			local cpTargetNr = self:GetComponent(unitID, "TargetCheckpoint", 0):GetInt()
+			local cpTargetNr = world:GetComponent(unitID, "TargetCheckpoint", 0):GetInt()
 			local CPtiles = self:GetEntities("Checkpoint")
 			targetPositionX, targetPositionY = self:GetTargetPosition(CPtiles, cpTargetNr)
 			
@@ -373,7 +373,7 @@ AICardPickingSystem.GetAllCardsOf = function( self, CardSetAI, cardName )
 	cards.__mode = "k"
 	for i = 1, #CardSetAI do
 
-		local nameCard = self:GetComponent(CardSetAI[i], "CardAction", 0):GetString()
+		local nameCard = world:GetComponent(CardSetAI[i], "CardAction", 0):GetString()
 
 		if cardName == nameCard then
 			cards[#cards + 1] = CardSetAI[i]
@@ -410,14 +410,14 @@ end
 
 AICardPickingSystem.SimulatePlayOfCards = function(self, _unit, _pickedcards)
 	
-	local posX, posY = self:GetComponent(_unit, "MapPosition", 0):GetInt2()
-	local dirX, dirY = self:GetComponent(_unit, "Direction", 0):GetInt2()
+	local posX, posY = world:GetComponent(_unit, "MapPosition", 0):GetInt2()
+	local dirX, dirY = world:GetComponent(_unit, "Direction", 0):GetInt2()
 	
 	local fellDown = false
 	
 	for i = 1, #_pickedcards do
 		
-		local cardName = self:GetComponent(_pickedcards[i], "CardAction", 0):GetString()
+		local cardName = world:GetComponent(_pickedcards[i], "CardAction", 0):GetString()
 		
 		if cardName == "Forward" then
 			
@@ -452,7 +452,7 @@ AICardPickingSystem.SimulatePlayOfCards = function(self, _unit, _pickedcards)
 		
 		if fellDown then
 			
-			posX, posY = self:GetComponent(_unit, "Spawnpoint", 0):GetInt2()
+			posX, posY = world:GetComponent(_unit, "Spawnpoint", 0):GetInt2()
 			break
 		end
 	end
@@ -467,9 +467,9 @@ end
 AICardPickingSystem.SimpleSimulatePlayOfCards = function(self, _unit, posX, posY, dirX, dirY, _pickedcards)
 	
 	--local mapSize = self:GetEntities("MapSize")	
-	--local mapX, mapY = self:GetComponent(mapSize[1], "MapSize", 0):GetInt2()
-	--local posX, posY = self:GetComponent(_unit, "MapPosition", 0):GetInt2()
-	--local dirX, dirY = self:GetComponent(_unit, "Direction", 0):GetInt2()
+	--local mapX, mapY = world:GetComponent(mapSize[1], "MapSize", 0):GetInt2()
+	--local posX, posY = world:GetComponent(_unit, "MapPosition", 0):GetInt2()
+	--local dirX, dirY = world:GetComponent(_unit, "Direction", 0):GetInt2()
 	
 	local fellDown = false
 	
@@ -504,7 +504,7 @@ AICardPickingSystem.SimpleSimulatePlayOfCards = function(self, _unit, posX, posY
 		
 		if fellDown then
 			
-			posX, posY = self:GetComponent(_unit, "Spawnpoint", 0):GetInt2()
+			posX, posY = world:GetComponent(_unit, "Spawnpoint", 0):GetInt2()
 			break
 		end
 	end
@@ -601,18 +601,18 @@ end
 AICardPickingSystem.TileHasComponent = function(self, _component, _posX, _posY)
 	
 	local mapSize = self:GetEntities("MapSpecs")
-	local mapSizeComp = self:GetComponent(mapSize[1], "MapSpecs", "SizeX")
+	local mapSizeComp = world:GetComponent(mapSize[1], "MapSpecs", "SizeX")
 	local mapX, mapY = mapSizeComp:GetInt2()
 	local tiles = self:GetEntities("TileComp")
 	
-	local returnValue = self:EntityHasComponent(tiles[mapX * _posY + _posX + 1], _component)
+	local returnValue = world:EntityHasComponent(tiles[mapX * _posY + _posX + 1], _component)
 	return returnValue
 end
 
 AICardPickingSystem.GetRiverVariables = function(self, _posX, _posY)
 	
 	local mapSize = self:GetEntities("MapSpecs")
-	local mapX = self:GetComponent(mapSize[1], "MapSpecs", "SizeX"):GetInt()
+	local mapX = world:GetComponent(mapSize[1], "MapSpecs", "SizeX"):GetInt()
 	local tiles = self:GetEntities("TileComp")
 	local dirX, dirY, speed = world:GetComponent(tiles[mapX * _posY + _posX + 1], "River", 0):GetInt3()
 	
@@ -623,10 +623,10 @@ AICardPickingSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, ent
 
 	for i = 1, #entities do
 		if world:EntityHasComponent(entities[i], "DealtCard") then
-			local playerid = self:GetComponent(entities[i], "DealtCard", 0)
+			local playerid = world:GetComponent(entities[i], "DealtCard", 0)
 			local id = playerid:GetInt()
-			local plynum = self:GetComponent(id, "PlayerNumber", 0):GetInt()
-			local card = self:GetComponent(entities[i], "CardAction", 0):GetString()
+			local plynum = world:GetComponent(id, "PlayerNumber", 0):GetInt()
+			local card = world:GetComponent(entities[i], "CardAction", 0):GetString()
 		end
 	end
 end
