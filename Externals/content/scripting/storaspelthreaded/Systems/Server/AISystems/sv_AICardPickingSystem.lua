@@ -454,7 +454,7 @@ AICardPickingSystem.SimulateCardsFromPos = function(self, _unit, _posX, _posY, _
 		if type(_pickedcards[i]) == "string" then
 			cardName = _pickedcards[i]
 		else
-			cardName = self:GetComponent(_pickedcards[i], "CardAction", 0):GetString()
+			cardName = world:GetComponent(_pickedcards[i], "CardAction", 0):GetString()
 		end
 		
 		if self.PrintSimulation == 1 then
@@ -517,9 +517,9 @@ end
 --AICardPickingSystem.SimpleSimulatePlayOfCards = function(self, _unit, posX, posY, dirX, dirY, _pickedcards)
 --	
 --	--local mapSize = self:GetEntities("MapSize")	
---	--local mapX, mapY = self:GetComponent(mapSize[1], "MapSize", 0):GetInt2()
---	--local posX, posY = self:GetComponent(_unit, "MapPosition", 0):GetInt2()
---	--local dirX, dirY = self:GetComponent(_unit, "Direction", 0):GetInt2()
+--	--local mapX, mapY = world:GetComponent(mapSize[1], "MapSize", 0):GetInt2()
+--	--local posX, posY = world:GetComponent(_unit, "MapPosition", 0):GetInt2()
+--	--local dirX, dirY = world:GetComponent(_unit, "Direction", 0):GetInt2()
 --	
 --	local fellDown = false
 --	
@@ -554,7 +554,7 @@ end
 --		
 --		if fellDown then
 --			
---			posX, posY = self:GetComponent(_unit, "Spawnpoint", 0):GetInt2()
+--			posX, posY = world:GetComponent(_unit, "Spawnpoint", 0):GetInt2()
 --			break
 --		end
 --	end
@@ -674,7 +674,7 @@ AICardPickingSystem.TileHasComponent = function(self, _component, _posX, _posY)
 	--end
 	
 	if -1 < _posX and _posX < mapX and -1 < _posY and _posY < mapY then
-		returnValue = self:EntityHasComponent(tiles[mapX * _posY + _posX + 1], _component)
+		returnValue = world:EntityHasComponent(tiles[mapX * _posY + _posX + 1], _component)
 	else
 		print("ERROR, trying to get entity from tile outside the boundaries")
 		returnValue = false

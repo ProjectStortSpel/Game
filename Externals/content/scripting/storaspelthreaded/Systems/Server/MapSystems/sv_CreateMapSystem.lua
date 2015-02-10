@@ -174,11 +174,11 @@ CreateMapSystem.AddGroundTileBelow = function(self, posX, posZ)
 	world:CreateComponentAndAddTo("SyncNetwork", groundEntity)
 	world:CreateComponentAndAddTo("Model", groundEntity)
 	
-	self:GetComponent(groundEntity, "Position", 0):SetFloat3(posX, 0.0, posZ)
-	self:GetComponent(groundEntity, "MapPosition", 0):SetInt2(posX, posZ)
-	self:GetComponent(groundEntity, "Rotation", 0):SetFloat3(0.0, 0.0, 0.0)
-	self:GetComponent(groundEntity, "Scale", 0):SetFloat3(1.0, 1.0, 1.0)
-	self:GetComponent(groundEntity, "Model", 0):SetModel("grass", "grass", 0)
+	world:GetComponent(groundEntity, "Position", 0):SetFloat3(posX, 0.0, posZ)
+	world:GetComponent(groundEntity, "MapPosition", 0):SetInt2(posX, posZ)
+	world:GetComponent(groundEntity, "Rotation", 0):SetFloat3(0.0, 0.0, 0.0)
+	world:GetComponent(groundEntity, "Scale", 0):SetFloat3(1.0, 1.0, 1.0)
+	world:GetComponent(groundEntity, "Model", 0):SetModel("grass", "grass", 0)
 end 
 
 CreateMapSystem.CreateMap = function(self, name)

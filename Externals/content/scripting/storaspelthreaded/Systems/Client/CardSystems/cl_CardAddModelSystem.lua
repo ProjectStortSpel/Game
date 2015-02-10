@@ -92,9 +92,9 @@ CardAddModelSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, enti
 end
 
 CardAddModelSystem.AddHoverSize = function(self, deltascale, button)
-	local scale = self:GetComponent(button, "Scale", 0)
+	local scale = world:GetComponent(button, "Scale", 0)
 	local sx, sy, sz = scale:GetFloat3()
 	world:CreateComponentAndAddTo("HoverSize", button)
-	local hoversize = self:GetComponent(button, "HoverSize", 0)
+	local hoversize = world:GetComponent(button, "HoverSize", 0)
 	hoversize:SetFloat3(sx*deltascale, sy*deltascale, sz*deltascale)
 end
