@@ -38,6 +38,7 @@ GraphicDevice::GraphicDevice(Camera _camera, int x, int y)
 GraphicDevice::~GraphicDevice()
 {
 	delete(m_skybox);
+	delete m_pointerToPointlights;
 
 	SDL_GL_DeleteContext(m_glContext);
 	// Close and destroy the window
