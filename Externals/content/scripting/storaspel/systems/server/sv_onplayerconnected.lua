@@ -51,8 +51,8 @@ OnPlayerConnectedSystem.OnPlayerConnected = function(self, _ip, _port, _message)
 		
 		for i = 1, #entities do -- Go through all entities
 		
-			local ip = self:GetComponent(entities[i], "NetConnection", "IpAddress"):GetString()
-			local port = self:GetComponent(entities[i], "NetConnection", "Port"):GetInt()	
+			local ip = world:GetComponent(entities[i], "NetConnection", "IpAddress"):GetString()
+			local port = world:GetComponent(entities[i], "NetConnection", "Port"):GetInt()	
 
 			if _ip == ip and _port == port then
 				world:CreateComponentAndAddTo("ActiveNetConnection", entities[i])
@@ -114,8 +114,8 @@ OnPlayerConnectedSystem.OnPlayerDisconnected = function(self, _ip, _port, _messa
 	
 	for i = 1, #entities do
 		
-		local ip = self:GetComponent(entities[i], "NetConnection", "IpAddress"):GetString()
-		local port = self:GetComponent(entities[i], "NetConnection", "Port"):GetInt()
+		local ip = world:GetComponent(entities[i], "NetConnection", "IpAddress"):GetString()
+		local port = world:GetComponent(entities[i], "NetConnection", "Port"):GetInt()
 		
 		if _ip == ip and _port == port then
 			foundPlayer = true
@@ -156,8 +156,8 @@ OnPlayerConnectedSystem.OnPlayerTimedOut = function(self, _ip, _port, _message)
 	
 	for i = 1, #entities do
 		
-		local ip = self:GetComponent(entities[i], "NetConnection", "IpAddress"):GetString()
-		local port = self:GetComponent(entities[i], "NetConnection", "Port"):GetInt()
+		local ip = world:GetComponent(entities[i], "NetConnection", "IpAddress"):GetString()
+		local port = world:GetComponent(entities[i], "NetConnection", "Port"):GetInt()
 		
 		if _ip == ip and _port == port then
 			foundPlayer = true

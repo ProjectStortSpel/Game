@@ -32,36 +32,36 @@ end
 CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 	
     local newTile = world:CreateNewEntity("Tile")
-    local posComp = self:GetComponent(newTile, "Position", 0)
+    local posComp = world:GetComponent(newTile, "Position", 0)
     posComp:SetFloat3(posX, 0.0, posZ)
 	
-    local mapPosComp = self:GetComponent(newTile, "MapPosition", 0)
+    local mapPosComp = world:GetComponent(newTile, "MapPosition", 0)
     mapPosComp:SetInt2(posX, posZ)
     if tiletype == 104 then -- 104 = h = hole
         world:CreateComponentAndAddTo("Void", newTile)
 		world:CreateComponentAndAddTo("Model", newTile)
-		local comp = self:GetComponent(newTile, "Model", 0)
+		local comp = world:GetComponent(newTile, "Model", 0)
 		comp:SetModel("hole", "hole", 0)
-		local rotComp = self:GetComponent(newTile, "Rotation", 0)
+		local rotComp = world:GetComponent(newTile, "Rotation", 0)
 		rotComp:SetFloat3(0, math.pi * 0.5 * math.random(0, 4), 0)
 		
     elseif tiletype == 120 then -- 120 = x = stone
 		world:CreateComponentAndAddTo("NotWalkable", newTile)
 		world:CreateComponentAndAddTo("Model", newTile)
-		local comp = self:GetComponent(newTile, "Model", 0)
+		local comp = world:GetComponent(newTile, "Model", 0)
 		comp:SetModel("stone", "stone", 0)
 		posComp:SetFloat3(posX, 0.8 + 0.1* math.random(-1, 1), posZ)
 		
-		local rotComp = self:GetComponent(newTile, "Rotation", 0)
+		local rotComp = world:GetComponent(newTile, "Rotation", 0)
 		rotComp:SetFloat3(math.pi * 0.01 * math.random(0, 25), math.pi * 0.01 * math.random(0, 100), math.pi * 0.01 * math.random(0, 25))
 		self:AddGroundTileBelow(posX, posZ)
     elseif tiletype >= 49 and tiletype <= 57 then -- 49 = 1 = first checkpoint, 57 = 9 = 9th checkpoint
 
         world:CreateComponentAndAddTo("Checkpoint", newTile)
-        local comp = self:GetComponent(newTile, "Checkpoint", 0)
+        local comp = world:GetComponent(newTile, "Checkpoint", 0)
         comp:SetInt(tiletype - 48)
 		world:CreateComponentAndAddTo("Model", newTile)
-		local comp = self:GetComponent(newTile, "Model", 0)
+		local comp = world:GetComponent(newTile, "Model", 0)
 		
 		if tiletype == 49 then
 			comp:SetModel("checkpoint1", "checkpoint", 0)
@@ -81,78 +81,78 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
         world:CreateComponentAndAddTo("Finishpoint", newTile)
 		world:CreateComponentAndAddTo("Checkpoint", newTile)
 		world:CreateComponentAndAddTo("Model", newTile)
-		local comp = self:GetComponent(newTile, "Model", 0)
+		local comp = world:GetComponent(newTile, "Model", 0)
 		comp:SetModel("finish", "finish", 0)
 		--posComp:SetFloat3(posX, 1.0, posZ)
 
     elseif tiletype == 117 then -- 117 = u = water up
         world:CreateComponentAndAddTo("River", newTile)
-        local comp = self:GetComponent(newTile, "River", 0)
+        local comp = world:GetComponent(newTile, "River", 0)
         comp:SetInt3(0, -1, 1)
-		local comp = self:GetComponent(newTile, "Rotation", 0)
+		local comp = world:GetComponent(newTile, "Rotation", 0)
 		comp:SetFloat3(0, -math.pi/2, 0)
 		world:CreateComponentAndAddTo("Model", newTile)
-		local comp = self:GetComponent(newTile, "Model", 0)
+		local comp = world:GetComponent(newTile, "Model", 0)
 		comp:SetModel("riverstraight", "riverstraight", 0)
 
 		self.waterTiles[#self.waterTiles+1]=newTile
 		
     elseif tiletype == 100 then -- 100 = d = water down
         world:CreateComponentAndAddTo("River", newTile)
-        local comp = self:GetComponent(newTile, "River", 0)
+        local comp = world:GetComponent(newTile, "River", 0)
         comp:SetInt3(0, 1, 1)
-		local comp = self:GetComponent(newTile, "Rotation", 0)
+		local comp = world:GetComponent(newTile, "Rotation", 0)
 		comp:SetFloat3(0, math.pi/2, 0)
 		world:CreateComponentAndAddTo("Model", newTile)
-		local comp = self:GetComponent(newTile, "Model", 0)
+		local comp = world:GetComponent(newTile, "Model", 0)
 		comp:SetModel("riverstraight", "riverstraight", 0)
 
 		self.waterTiles[#self.waterTiles+1]=newTile
 		
     elseif tiletype == 108 then -- 108 = l = water left
         world:CreateComponentAndAddTo("River", newTile)
-        local comp = self:GetComponent(newTile, "River", 0)
+        local comp = world:GetComponent(newTile, "River", 0)
         comp:SetInt3(-1, 0, 1)
 		world:CreateComponentAndAddTo("Model", newTile)
-		local comp = self:GetComponent(newTile, "Model", 0)
+		local comp = world:GetComponent(newTile, "Model", 0)
 		comp:SetModel("riverstraight", "riverstraight", 0)
 
 		self.waterTiles[#self.waterTiles+1]=newTile
 		
     elseif tiletype == 114 then -- 114 = r = water right
         world:CreateComponentAndAddTo("River", newTile)
-        local comp = self:GetComponent(newTile, "River", 0)
+        local comp = world:GetComponent(newTile, "River", 0)
         comp:SetInt3(1, 0, 1)
-		local comp = self:GetComponent(newTile, "Rotation", 0)
+		local comp = world:GetComponent(newTile, "Rotation", 0)
 		comp:SetFloat3(0, math.pi, 0)
 		world:CreateComponentAndAddTo("Model", newTile)
-		local comp = self:GetComponent(newTile, "Model", 0)
+		local comp = world:GetComponent(newTile, "Model", 0)
 		comp:SetModel("riverstraight", "riverstraight", 0)
 
 		self.waterTiles[#self.waterTiles+1]=newTile
 		
 	elseif tiletype == 115 then -- 115 = s = Available spawn point
 		world:CreateComponentAndAddTo("Model", newTile)
-		local comp = self:GetComponent(newTile, "Model", 0)
+		local comp = world:GetComponent(newTile, "Model", 0)
 		comp:SetModel("grass", "grass", 0, 0)
 		
 		
 		local newSpawnId = world:CreateNewEntity()
 		world:CreateComponentAndAddTo("AvailableSpawnpoint", newSpawnId)
-		local newSpawn = self:GetComponent(newSpawnId, "AvailableSpawnpoint", 0)
+		local newSpawn = world:GetComponent(newSpawnId, "AvailableSpawnpoint", 0)
 		newSpawn:SetInt2(posX, posZ)
 				
 		self.noOfSpawnpoints = self.noOfSpawnpoints + 1
 		
 	elseif tiletype == 46 then -- 46 = . = grass
 		world:CreateComponentAndAddTo("Model", newTile)
-		local comp = self:GetComponent(newTile, "Model", 0)
+		local comp = world:GetComponent(newTile, "Model", 0)
 		comp:SetModel("grass", "grass", 0)
 		
 	elseif tiletype == 111 then
         world:CreateComponentAndAddTo("Void", newTile)
 		--world:CreateComponentAndAddTo("Model", entity)
-		--local comp = self:GetComponent(entity, "Model", 0)
+		--local comp = world:GetComponent(entity, "Model", 0)
 		--comp:SetModel("grass", "grass", 0)
 	else
 		print("ERROR: TILETYPE NOT DEFINED IN sv_CreateMapSystem. Ascii = ", tiletype, "at:", posX, posZ)
@@ -174,11 +174,11 @@ CreateMapSystem.AddGroundTileBelow = function(self, posX, posZ)
 	world:CreateComponentAndAddTo("SyncNetwork", groundEntity)
 	world:CreateComponentAndAddTo("Model", groundEntity)
 	
-	self:GetComponent(groundEntity, "Position", 0):SetFloat3(posX, 0.0, posZ)
-	self:GetComponent(groundEntity, "MapPosition", 0):SetInt2(posX, posZ)
-	self:GetComponent(groundEntity, "Rotation", 0):SetFloat3(0.0, 0.0, 0.0)
-	self:GetComponent(groundEntity, "Scale", 0):SetFloat3(1.0, 1.0, 1.0)
-	self:GetComponent(groundEntity, "Model", 0):SetModel("grass", "grass", 0)
+	world:GetComponent(groundEntity, "Position", 0):SetFloat3(posX, 0.0, posZ)
+	world:GetComponent(groundEntity, "MapPosition", 0):SetInt2(posX, posZ)
+	world:GetComponent(groundEntity, "Rotation", 0):SetFloat3(0.0, 0.0, 0.0)
+	world:GetComponent(groundEntity, "Scale", 0):SetFloat3(1.0, 1.0, 1.0)
+	world:GetComponent(groundEntity, "Model", 0):SetModel("grass", "grass", 0)
 end 
 
 CreateMapSystem.CreateMap = function(self, name)
@@ -241,7 +241,7 @@ CreateMapSystem.CreateMap = function(self, name)
 
 	for i = 1, #finishList do
 
-		local comp = self:GetComponent(finishList[i], "Checkpoint", 0)
+		local comp = world:GetComponent(finishList[i], "Checkpoint", 0)
         comp:SetInt(highestCP + 1)
 
 	end
@@ -260,7 +260,7 @@ CreateMapSystem.CreateMap = function(self, name)
 	PathfinderHandler.SetData(inputData)
 	
 	-- Set size of the map.
-	self:GetComponent(mapEntity, "MapSpecs", 0):SetInt3(self.noOfSpawnpoints, self.mapX, self.mapY)
+	world:GetComponent(mapEntity, "MapSpecs", 0):SetInt3(self.noOfSpawnpoints, self.mapX, self.mapY)
 	
 	for waterA = 1, #self.waterTiles do
 		
@@ -281,7 +281,7 @@ CreateMapSystem.CreateMap = function(self, name)
 				if posAX + dirAX == posBX and posAY + dirAY == posBY then
 					if dirAX ~= dirBX and dirAY ~= dirBY then
 
-						local comp = self:GetComponent(self.waterTiles[waterB], "Model", 0)
+						local comp = world:GetComponent(self.waterTiles[waterB], "Model", 0)
 						comp:SetModel("rivercorner", "rivercorner", 0, 0)
 
 						--	LEFT TURN (Correct rotation)
@@ -290,7 +290,7 @@ CreateMapSystem.CreateMap = function(self, name)
 						--elseif dirAY == -1 and dirBX == -1 then
 						--elseif dirAY == 1 and dirBX == 1 then
 
-						local comp = self:GetComponent(self.waterTiles[waterB], "Rotation", 0)
+						local comp = world:GetComponent(self.waterTiles[waterB], "Rotation", 0)
 						local currentRotation = comp:GetFloat(1)
 
 						--	RIGHT TURN

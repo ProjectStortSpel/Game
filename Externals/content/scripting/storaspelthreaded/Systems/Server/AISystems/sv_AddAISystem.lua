@@ -45,8 +45,8 @@ AddAISystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 			
 			local counterEntities = self:GetEntities("PlayerCounter")			
 			local mapSpecsEntities = self:GetEntities("MapSpecs")
-			local noOfPlayers = self:GetComponent(counterEntities[1], "PlayerCounter", "Players"):GetInt()
-			local noOfSpawnpoints = self:GetComponent(mapSpecsEntities[1], "MapSpecs", "NoOfSpawnpoints"):GetInt()
+			local noOfPlayers = world:GetComponent(counterEntities[1], "PlayerCounter", "Players"):GetInt()
+			local noOfSpawnpoints = world:GetComponent(mapSpecsEntities[1], "MapSpecs", "NoOfSpawnpoints"):GetInt()
 			local availableSpawnsLeft = noOfSpawnpoints - noOfPlayers
 			
 			if availableSpawnsLeft > 0 then

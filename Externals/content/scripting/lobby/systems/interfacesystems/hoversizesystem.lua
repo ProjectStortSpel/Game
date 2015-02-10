@@ -1,8 +1,8 @@
 HoverSizeSystem = System()
 
 HoverSizeSystem.OnEntityAdded = function(self, entityId)
-	local scale = self:GetComponent(entityId, "Scale", 0)
-	local hscale = self:GetComponent(entityId, "HoverSize", 0)
+	local scale = world:GetComponent(entityId, "Scale", 0)
+	local hscale = world:GetComponent(entityId, "HoverSize", 0)
 	local sx, sy, sz = scale:GetFloat3()
 	local hx, hy, hz = hscale:GetFloat3()
 	scale:SetFloat3(hx, hy, hz)
@@ -10,8 +10,8 @@ HoverSizeSystem.OnEntityAdded = function(self, entityId)
 end
 
 HoverSizeSystem.OnEntityRemoved = function(self, entityId)
-	local scale = self:GetComponent(entityId, "Scale", 0)
-	local hscale = self:GetComponent(entityId, "HoverSize", 0)
+	local scale = world:GetComponent(entityId, "Scale", 0)
+	local hscale = world:GetComponent(entityId, "HoverSize", 0)
 	local sx, sy, sz = scale:GetFloat3()
 	local hx, hy, hz = hscale:GetFloat3()
 	scale:SetFloat3(hx, hy, hz)

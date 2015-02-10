@@ -40,11 +40,11 @@ CameraInterestpointSystem.EntitiesAdded = function(self, dt, taskIndex, taskCoun
 			world:KillEntity( entityId )
 		end
 		if world:EntityHasComponent( entityId, "CameraInterestPoint") then
-			local x = self:GetComponent(entityId, "CameraInterestPoint", "UpX"):GetFloat(0)
-			local z = self:GetComponent(entityId, "CameraInterestPoint", "UpZ"):GetFloat(0)
-			local dx = self:GetComponent(entityId, "CameraInterestPoint", "AtX"):GetFloat(0)
-			local dz = self:GetComponent(entityId, "CameraInterestPoint", "AtZ"):GetFloat(0)
-			local d = self:GetComponent(entityId, "CameraInterestPoint", "Distance"):GetFloat(0)
+			local x = world:GetComponent(entityId, "CameraInterestPoint", "UpX"):GetFloat(0)
+			local z = world:GetComponent(entityId, "CameraInterestPoint", "UpZ"):GetFloat(0)
+			local dx = world:GetComponent(entityId, "CameraInterestPoint", "AtX"):GetFloat(0)
+			local dz = world:GetComponent(entityId, "CameraInterestPoint", "AtZ"):GetFloat(0)
+			local d = world:GetComponent(entityId, "CameraInterestPoint", "Distance"):GetFloat(0)
 
 			-- CAMERA INTEREST POINT
 			local cipID = Net.StartPack("Client.SendCIP")

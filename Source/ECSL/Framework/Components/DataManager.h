@@ -65,6 +65,10 @@ namespace ECSL
 
 		unsigned int GetMemoryAllocated();
 
+		//String?
+		void SetString(unsigned int _eId, unsigned int _componentTypeId, const unsigned int _index, const char* _value);
+		std::string GetString(unsigned int _eId, unsigned int _componentTypeId, const unsigned int _index);
+
 	private:
 		SDL_mutex* m_entityChangesMutex;
 		unsigned int m_entityCount;
@@ -78,6 +82,11 @@ namespace ECSL
 		std::vector<EntityChange*>* m_entityChangesCopy;
 		std::vector<unsigned int>* m_changedEntities;
 		std::vector<unsigned int>* m_changedEntitiesCopy;
+
+		//STRING?
+		std::map<unsigned int, std::map<unsigned int, std::map<unsigned int, std::string>>> m_stringMap;
+		SDL_mutex* m_stringMutex;
+		//map<eID, map<_componentTypeId, map<string, string>>
 
 		void ToBeAdded(unsigned int _entityId, unsigned int _componentTypeId);
 		void ToBeRemoved(unsigned int _entityId);

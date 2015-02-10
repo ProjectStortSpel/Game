@@ -33,7 +33,7 @@ ServerLobbySystem.UpdateServerOnline = function(self)
 	
 	local entities = self:GetEntities();
 	for i = 1, #entities do
-		local username = self:GetComponent(entities[i], "Username", "Name");
+		local username = world:GetComponent(entities[i], "Username", "Name");
 		graphics:RenderSimpleText("Player" .. tostring(i) .. ": " .. username:GetString(), 55, 6 + (i * 2));
 	end
 	

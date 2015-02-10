@@ -15,11 +15,11 @@ ButtonPressedSystem.Update = function(self, dt)
 			
 			for i = 1, #buttonCommands do
 				
-				local owner = self:GetComponent(buttonCommands[i], "ButtonCommand", "Button"):GetInt()
+				local owner = world:GetComponent(buttonCommands[i], "ButtonCommand", "Button"):GetInt()
 				if (owner == pressedButton) then
 					
-					local command = self:GetComponent(buttonCommands[i], "ButtonCommand", "Command"):GetString()
-					local index = self:GetComponent(buttonCommands[i], "ButtonCommand", "Index"):GetInt()
+					local command = world:GetComponent(buttonCommands[i], "ButtonCommand", "Command"):GetString()
+					local index = world:GetComponent(buttonCommands[i], "ButtonCommand", "Index"):GetInt()
 					commands[index] = command
 					
 				end
@@ -52,23 +52,23 @@ ButtonPressedSystem.CreateButton = function(self, object, folder, posx, posy)
 	world:CreateComponentAndAddTo("PickBox", id)
 	world:CreateComponentAndAddTo("Button", id)
 	
-	local model = self:GetComponent(id, "Model", 0)
+	local model = world:GetComponent(id, "Model", 0)
 	model:SetModel(object, folder, 2)
 	
-	local position = self:GetComponent(id, "Position", 0)
+	local position = world:GetComponent(id, "Position", 0)
 	position:SetFloat3(posx, posy, -4)
 	
-	local scale = self:GetComponent(id, "Scale", 0)
+	local scale = world:GetComponent(id, "Scale", 0)
 	scale:SetFloat3(1, 0.5, 1)
 	
-	local pickbox = self:GetComponent(id, "PickBox", 0)
+	local pickbox = world:GetComponent(id, "PickBox", 0)
 	pickbox:SetFloat2(1, 1)
 	
-	local numcommands = self:GetComponent(id, "Button", "NumCommands")
+	local numcommands = world:GetComponent(id, "Button", "NumCommands")
 	numcommands:SetInt(0)
 	
 	
-	local rotation = self:GetComponent(id, "Rotation", 0)
+	local rotation = world:GetComponent(id, "Rotation", 0)
 	rotation:SetFloat3( 0, 0, 0)
 	
 	
@@ -83,8 +83,8 @@ ButtonPressedSystem.AddCommandToButton = function(self, command, button)
 	local id = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("ButtonCommand", id)
 	
-	local numcommands = self:GetComponent(button, "Button", "NumCommands"):GetInt() + 1
-	self:GetComponent(button, "Button", "NumCommands"):SetInt(numcommands)
+	local numcommands = world:GetComponent(button, "Button", "NumCommands"):GetInt() + 1
+	world:GetComponent(button, "Button", "NumCommands"):SetInt(numcommands)
 	
 	world:GetComponent(id, "ButtonCommand", "Command"):SetString(command)
 	world:GetComponent(id, "ButtonCommand", "Button"):SetInt(button)

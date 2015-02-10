@@ -55,7 +55,7 @@ namespace Renderer
 		void BufferModel(int _modelId, ModelToLoad* _modelToLoad);
 
 		//holds the reset values for lights
-		float m_lightDefaults[19];
+		float m_lightDefaults[10];
 
 		//Le shadowmap
 		ShadowMap *m_shadowMap;
@@ -83,7 +83,7 @@ namespace Renderer
 
 		vec3 m_dirLightDirection;
 
-		int m_nrOfLights; // lol
+		int m_nrOfLightsToBuffer; // lol
 
 		// Meshs
 		std::map<const std::string, Buffer*> m_meshs;

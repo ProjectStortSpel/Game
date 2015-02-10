@@ -22,7 +22,7 @@ uniform mediump vec3 dirlightDirection; // Light position in world coords.
 uniform mediump vec3 dirlightIntensity; // Diffuse intensity
 uniform mediump vec3 dirlightColor;
 
-const int nrOfPointLights = 5;
+const int nrOfPointLights = 3;
 struct Pointlight {
 	vec3 Position; // Light position in world coords.
 	vec3 Intensity; // Diffuse intensity
@@ -147,18 +147,18 @@ void main()
 	}
 
 	//för varje ljus-----------
-	//for(int i = 0; i < pointlights.length(); i++)
-	//{
-	//	vec3 a,d,s;
+	for(int i = 0; i < pointlights.length(); i++)
+	{
+		vec3 a,d,s;
 
-	//	if( length(pointlights[i].Intensity) > 0.0 )
-	//	{
-	//		phongModel(i, a, d, s);
-	//		ambient += a;
-	//		diffuse += d;
-	//		spec    += s;
-	//	}
-	//}
+		if( length(pointlights[i].Intensity) > 0.0 )
+		{
+			phongModel(i, a, d, s);
+			ambient += a;
+			diffuse += d;
+			spec    += s;
+		}
+	}
 
 	vec4 glowvec = vec4(glow*albedo_tex.xyz, 1.0);
 
