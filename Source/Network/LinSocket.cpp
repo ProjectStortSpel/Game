@@ -7,6 +7,7 @@
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include <errno.h>
+#include <sstream>
 
 using namespace Network;
 
@@ -136,8 +137,10 @@ bool LinSocket::Connect(const char* _ip, const int _port)
     hints.ai_protocol = 0;
     
     addrinfo* addrs = NULL;
-    
-    if (getaddrinfo(_ip, std::to_string(_port).c_str(), &hints, &addrs) != 0)
+
+    std::stringstream ss;
+    ss << _port;
+    if (getaddrinfo(_ip, ss.str().c_str(), &hints, &addrs) != 0)
     {
         if (NET_DEBUG)
             SDL_Log("Failed to get address info. Error: %s.\n", strerror(errno));
