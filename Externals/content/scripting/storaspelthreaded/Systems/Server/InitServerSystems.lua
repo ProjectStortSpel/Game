@@ -191,6 +191,10 @@ require "sv_MoveTotemPieceSystem"
 require "sv_GameOverSystem"
 require "sv_LogStartSystem"
 require "sv_ServerNetworkMessageSystem"
+require "sv_HostSettingsSystem"
+
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(HostSettingsSystem)
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(TotemPoleSystem)

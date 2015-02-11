@@ -4,6 +4,7 @@ CreateMapSystem.waterTiles = nil
 CreateMapSystem.mapX = 0
 CreateMapSystem.mapY = 0
 CreateMapSystem.noOfSpawnpoints = 0
+CreateMapSystem.filePath = "content/maps/"
 
 CreateMapSystem.Initialize = function(self)
 	self:SetName("CreateMapSystem")
@@ -14,7 +15,7 @@ CreateMapSystem.Initialize = function(self)
 end
 
 CreateMapSystem.PostInitialize = function(self)
-	self:CreateMap("content/maps/map.txt")
+	--self:CreateMap("content/maps/map.txt")
 end
 
 CreateMapSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
@@ -22,8 +23,7 @@ CreateMapSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entitie
 		local entity = entities[i]
 		if world:EntityHasComponent(entity, "CreateMap") then
 			local name = world:GetComponent(entity, "CreateMap", 0):GetString()
-			print( name )
-			self:CreateMap(name)
+			self:CreateMap(self.filePath .. name .. ".txt")
 			world:KillEntity(entity)
 		end
 	end

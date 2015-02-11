@@ -14,9 +14,10 @@ uniform sampler2D diffuseTex;
 uniform sampler2D normalTex;
 uniform sampler2D specularTex;
 
-
 uniform mat4 ViewMatrix;
 uniform mat4 BiasMatrix;
+
+uniform vec3 BlendColor;
 
 //Directional light
 uniform mediump vec3 dirlightDirection; // Light position in world coords.
@@ -118,7 +119,12 @@ void main()
 	NmNormal = normalize( texSpace * normal_map );
 
 	// Spec data
-	vec3 spec_map = texture2D( specularTex, TexCoord ).rgb;
+	vec4 spec_map = texture( specularTex, TexCoord );
+	float blendFactor = spec_map.w;
+
+	if( BlendColor != vec3(0.0) )
+		albedo_tex.xyz = (1.0f-blendFactor)*albedo_tex.xyz + blendFactor * BlendColor; 
+
 	Material.Ks			= spec_map.x;
 	Material.Shininess  = spec_map.y * 254.0 + 1.0;
     

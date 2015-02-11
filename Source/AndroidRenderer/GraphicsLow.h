@@ -23,7 +23,7 @@ namespace Renderer
 
 		// MODELLOADER
 		bool PreLoadModel(std::string _dir, std::string _file, int _renderType = RENDER_FORWARD);
-		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_FORWARD);
+		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_FORWARD, float* _color = nullptr);
 		bool RemoveModel(int _id);
 		bool ActiveModel(int _id, bool _active);
 

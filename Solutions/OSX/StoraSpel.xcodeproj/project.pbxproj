@@ -15,6 +15,7 @@
 		0339F9AE1A7433D800FA04DD /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03F5A8021A73DB9B00D54F14 /* OpenGL.framework */; };
 		035C22CD1A73D68600EE9624 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 035C22CC1A73D68600EE9624 /* Images.xcassets */; };
 		035C22D01A73D68600EE9624 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 035C22CE1A73D68600EE9624 /* Main.storyboard */; };
+		0372EED91A8A5E1400802321 /* AddTextToTextureSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0372EED71A8A5E1400802321 /* AddTextToTextureSystem.cpp */; };
 		03BE03871A86677A00AA21F4 /* Console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03BE02601A86677A00AA21F4 /* Console.cpp */; };
 		03BE03881A86677A00AA21F4 /* BitSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03BE02661A86677A00AA21F4 /* BitSet.cpp */; };
 		03BE03891A86677A00AA21F4 /* ContainerHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03BE02681A86677A00AA21F4 /* ContainerHelper.cpp */; };
@@ -158,6 +159,8 @@
 		035C22C31A73D68600EE9624 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		035C22CC1A73D68600EE9624 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		035C22CF1A73D68600EE9624 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		0372EED71A8A5E1400802321 /* AddTextToTextureSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AddTextToTextureSystem.cpp; sourceTree = "<group>"; };
+		0372EED81A8A5E1400802321 /* AddTextToTextureSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddTextToTextureSystem.h; sourceTree = "<group>"; };
 		03BE02601A86677A00AA21F4 /* Console.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Console.cpp; sourceTree = "<group>"; };
 		03BE02611A86677A00AA21F4 /* Console.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Console.h; sourceTree = "<group>"; };
 		03BE02631A86677A00AA21F4 /* ECSL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSL.h; sourceTree = "<group>"; };
@@ -914,6 +917,8 @@
 		03BE030D1A86677A00AA21F4 /* Systems */ = {
 			isa = PBXGroup;
 			children = (
+				0372EED71A8A5E1400802321 /* AddTextToTextureSystem.cpp */,
+				0372EED81A8A5E1400802321 /* AddTextToTextureSystem.h */,
 				03BE030E1A86677A00AA21F4 /* AModelSystem.cpp */,
 				03BE030F1A86677A00AA21F4 /* AModelSystem.h */,
 				03BE03101A86677A00AA21F4 /* CameraSystem.cpp */,
@@ -1290,6 +1295,7 @@
 				03BE038E1A86677A00AA21F4 /* ComponentTable.cpp in Sources */,
 				03BE03A31A86677A00AA21F4 /* SystemWorkGroup.cpp in Sources */,
 				03BE03A61A86677A00AA21F4 /* WorldCreator.cpp in Sources */,
+				0372EED91A8A5E1400802321 /* AddTextToTextureSystem.cpp in Sources */,
 				03BE03EF1A86677A00AA21F4 /* PacketHandler.cpp in Sources */,
 				03BE03FA1A86677A00AA21F4 /* ShadowMap.cpp in Sources */,
 				03BE03E91A86677A00AA21F4 /* ThreadLogger.cpp in Sources */,

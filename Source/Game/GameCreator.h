@@ -64,6 +64,7 @@ private:
 	void Reload();
 
 	void ConsoleGameMode(std::string _command, std::vector<Console::Argument>* _args);
+	void ConsoleHostSettings(std::string _command, std::vector<Console::Argument>* _args);
 	void ConsoleReload(std::string _command, std::vector<Console::Argument>* _args);
 	void ConsoleStartTemp(std::string _command, std::vector<Console::Argument>* _args);
 	void ConsoleStopGame(std::string _command, std::vector<Console::Argument>* _args);

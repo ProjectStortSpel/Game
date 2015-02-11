@@ -64,24 +64,13 @@ GameMenuSystem.Initialize = function(self)
 end
 
 GameMenuSystem.CreateElement = function(self, object, folder, posx, posy, posz, scalex, scaley)
-	local id = world:CreateNewEntity()
-	world:CreateComponentAndAddTo("Model", id)
-	world:CreateComponentAndAddTo("Position", id)
-	world:CreateComponentAndAddTo("Rotation", id)
-	world:CreateComponentAndAddTo("Scale", id)
-	world:CreateComponentAndAddTo("PickBox", id)
-	
+	local id = world:CreateNewEntity("Button")
 	world:CreateComponentAndAddTo(self.Name.."Element", id)
-	local model = world:GetComponent(id, "Model", 0)
-	model:SetModel(object, folder, 2)
-	local position = world:GetComponent(id, "Position", 0)
-	position:SetFloat3(posx, posy, posz)
-	local scale = world:GetComponent(id, "Scale", 0)
-	scale:SetFloat3(scalex, scaley, 1)
-	local pickbox = world:GetComponent(id, "PickBox", 0)
-	pickbox:SetFloat2(1, 1)
-	local rotation = world:GetComponent(id, "Rotation", 0)
-	rotation:SetFloat3(0, 0, 0)
+	world:GetComponent(id, "Model", 0):SetModel(object, folder, 2)
+	world:GetComponent(id, "Position", 0):SetFloat3(posx, posy, posz)
+	world:GetComponent(id, "Scale", 0):SetFloat3(scalex, scaley, 1)
+	world:GetComponent(id, "PickBox", 0):SetFloat2(1, 1)
+	world:GetComponent(id, "Rotation", 0):SetFloat3(0, 0, 0)
 	return id	
 end
 

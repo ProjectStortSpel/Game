@@ -1,7 +1,7 @@
-HostMenuSystem = System()
-HostMenuSystem.Name = "HostMenu"
+HostMenu2System = System()
+HostMenu2System.Name = "HostMenu2"
 
-HostMenuSystem.Initialize = function(self)
+HostMenu2System.Initialize = function(self)
 	self:SetName(self.Name.."System")
 	self:UsingUpdate()
 	self:UsingEntitiesAdded()
@@ -15,7 +15,7 @@ HostMenuSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("ApplyHostSettings", FilterType.RequiresOneOf)
 end
 
-HostMenuSystem.Update = function(self, dt, taskIndex, taskCount)
+HostMenu2System.Update = function(self, dt, taskIndex, taskCount)
 
 	if Input.GetTouchState(0) == InputState.Released then
 		local pressedButtons = self:GetEntities("OnPickBoxHit")
@@ -33,29 +33,28 @@ HostMenuSystem.Update = function(self, dt, taskIndex, taskCount)
 			if world:EntityHasComponent(pressedButton, "MenuEntityCommand") then
 				self:MenuEntityCommandPressed(pressedButton)
 			end
-		else
 			
-			self:RemoveMenu()
 		end
-
 	end
 
 end
 
-HostMenuSystem.CheckboxPressed = function(self, entity)
+HostMenu2System.CheckboxPressed = function(self, entity)
 
 	local posX, posY, posZ = world:GetComponent(entity, "Position", 0):GetFloat3()
 	local hoverX, hoverY, _ = world:GetComponent(entity, "HoverSize", 0):GetFloat3()
 	
-	if world:GetComponent(entity, "Checkbox", "Checked"):GetBool() then
+	if world:GetComponent(entity, "Checkbox", "Checked"):GetInt() == 1 then
 		local cb = self:CreateCheckbox("unchecked", "checkbox", posX, posY, posZ, hoverX,hoverY, false)
 		local sname = world:GetComponent(entity, "BoolSetting", "SettingsName"):GetString()
+		print(sname)
 		world:CreateComponentAndAddTo("BoolSetting", cb)
 		world:GetComponent(cb, "BoolSetting", "SettingsName"):SetString(sname)
 		world:GetComponent(cb, "BoolSetting", "Value"):SetInt(0)
 	else
 		local cb = self:CreateCheckbox("checked", "checkbox", posX, posY, posZ, hoverX,hoverY, true)
 		local sname = world:GetComponent(entity, "BoolSetting", "SettingsName"):GetString()
+		print(sname)
 		world:CreateComponentAndAddTo("BoolSetting", cb)
 		world:GetComponent(cb, "BoolSetting", "SettingsName"):SetString(sname)
 		world:GetComponent(cb, "BoolSetting", "Value"):SetInt(1)
@@ -65,21 +64,20 @@ HostMenuSystem.CheckboxPressed = function(self, entity)
 	
 end
 
-HostMenuSystem.MenuConsoleCommandPressed = function(self, entity)
-	local cmd = world:GetComponent(entity, "MenuConsoleCommand", "Command"):GetStrong()
+HostMenu2System.MenuConsoleCommandPressed = function(self, entity)
+	local cmd = world:GetComponent(entity, "MenuConsoleCommand", "Command"):GetString()
 	self:RemoveMenu()
 	Console.AddToCommandQueue(cmd)
 end
 
-HostMenuSystem.MenuEntityCommandPressed = function(self, entity)
+HostMenu2System.MenuEntityCommandPressed = function(self, entity)
 	local cmp = world:GetComponent(entity, "MenuEntityCommand", "ComponentName"):GetString()
 	--self:RemoveMenu()
-	print(cmp)
 	local id = world:CreateNewEntity()
 	world:CreateComponentAndAddTo(cmp, id)
 end
 
-HostMenuSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+HostMenu2System.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 
 	for i = 1, #entities do
 		local entityId = entities[i]
@@ -96,7 +94,7 @@ HostMenuSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities
 
 end
 
-HostMenuSystem.ApplySettings = function(self, entity)
+HostMenu2System.ApplySettings = function(self, entity)
 
 	local entities = self:GetEntities()
 	local e = world:CreateNewEntity()
@@ -123,32 +121,22 @@ HostMenuSystem.ApplySettings = function(self, entity)
 		
 	end
 
-	local name 			= world:GetComponent(e, "HostSettings", "Name"):GetString()
-	local password 		= world:GetComponent(e, "HostSettings", "Password"):GetString()
-	local map 			= world:GetComponent(e, "HostSettings", "Map"):GetString()
-	local gamemode 		= world:GetComponent(e, "HostSettings", "GameMode"):GetString()
-	local port 			= world:GetComponent(e, "HostSettings", "Port"):GetInt()
+	local name 		= world:GetComponent(e, "HostSettings", "Name"):GetString()
+	local password 	= world:GetComponent(e, "HostSettings", "Password"):GetString()
+	local map 		= world:GetComponent(e, "HostSettings", "Map"):GetString()
+	local gamemode 	= world:GetComponent(e, "HostSettings", "GameMode"):GetString()
+	local port 		= world:GetComponent(e, "HostSettings", "Port"):GetInt()
 	--local maxusers 	= world:GetComponent(e, "HostSettings", "MaxUsers"):GetInt()
-	local fillai 		= world:GetComponent(e, "HostSettings", "FillAI"):GetInt()
-	local allowSpec		= world:GetComponent(e, "HostSettings", "AllowSpectators"):GetInt()
-	local serverType	= world:GetComponent(e, "HostSettings", "ServerType"):GetInt()
-	
-	print("name: " .. name)
-	print("password: " .. password)
-	print("map: " .. map)
-	print("gamemode: " .. gamemode)
-	print("port: " .. port)
-	print("fillai: " .. tostring(fillai))
-	print("allowSpec: " .. tostring(allowSpec))
-	print("serverType: " .. tostring(serverType))
-	
+	local fillai 	= world:GetComponent(e, "HostSettings", "FillAI"):GetInt()
+	local allowSpec	= world:GetComponent(e, "HostSettings", "AllowSpectators"):GetInt()
+	print("HEJ")
 	self:RemoveMenu()
-	local cmd = string.format("hostsettings %s %s %s %s %d %d %d %d", name, password, map, gamemode, port, fillai, allowSpec, serverType)
-	Console.AddToCommandQueue(cmd)
+	--local cmd = string.format("hostlisten;gamemode")
+	Console.AddToCommandQueue("hostlisten;gamemode")
 	
 end
 
-HostMenuSystem.SpawnMenu = function(self)
+HostMenu2System.SpawnMenu = function(self)
 
 	self:CreateElement("gamemenubackground", "quad", 0, 0, -2.5, 2.3, 2.8)
 	--self:CreateElement("host", "quad", 0, 0.67, -2, 0.6, 0.3)
@@ -157,8 +145,11 @@ HostMenuSystem.SpawnMenu = function(self)
 	
 	-- BUTTONS
 	
-	button = self:CreateButton("host", "quad", 0.0, -0.84, -2, 0.50, 0.24)
-	self:AddEntityCommandToButton("ApplyHostSettings", button)
+	local button = self:CreateButton("hostdedicated", "quad", -0.5, -0.84, -2, 0.50, 0.24)
+	self:AddConsoleCommandToButton("hostlisten;gamemode", button)
+	
+	button = self:CreateButton("hostlisten", "quad", 0.5, -0.84, -2, 0.50, 0.24)
+	self:AddConsoleCommandToButton("hostlisten;gamemode", button)
 	
 	
 	-- SETTINGS TEXT
@@ -183,9 +174,6 @@ HostMenuSystem.SpawnMenu = function(self)
 	
 	text = self:CreateText("left", "text", -0.87, 0.13, -1.99999, 2.5, 0.08)	
 	self:AddTextToTexture("A"..7, "Allow Spectators: ", 0, 0, 0, 0, text)
-	
-	text = self:CreateText("left", "text", -0.87, 0.02, -1.99999, 2.5, 0.08)	
-	self:AddTextToTexture("A"..8, "Dedicated Server: ", 0, 0, 0, 0, text)
 	
 	
 	-- USER SETTINGS
@@ -220,13 +208,13 @@ HostMenuSystem.SpawnMenu = function(self)
 	
 	-- GameMode TEXT
 	text = self:CreateText("left", "text", 0.16, 0.35, -1.99999, 2.5, 0.08)	
-	self:AddTextToTexture("B"..5, "map", 0, 1, 1, 1, text)
+	self:AddTextToTexture("B"..5, "Smallmap", 0, 1, 1, 1, text)
 	world:CreateComponentAndAddTo("StringSetting", text)
 	world:GetComponent(text, "StringSetting", "SettingsName"):SetString("Map")
-	world:GetComponent(text, "StringSetting", "Value"):SetString("map")
+	world:GetComponent(text, "StringSetting", "Value"):SetString("smallmap")
 	
 	-- FillAI CHECKBOX
-	local cb = self:CreateCheckbox("unchecked", "checkbox", 0.2, 0.2, -1.99999, 0.07, 0.07, false)
+	local cb = self:CreateCheckbox("unchecked", "checkbox", 0.2, 0.200, -1.99999, 0.07, 0.07, false)
 	world:CreateComponentAndAddTo("BoolSetting", cb)
 	world:GetComponent(cb, "BoolSetting", "SettingsName"):SetString("FillAI")
 	world:GetComponent(cb, "BoolSetting", "Value"):SetInt(0)
@@ -237,15 +225,9 @@ HostMenuSystem.SpawnMenu = function(self)
 	world:GetComponent(cb, "BoolSetting", "SettingsName"):SetString("AllowSpectators")
 	world:GetComponent(cb, "BoolSetting", "Value"):SetInt(1)
 	
-	-- ServerType CHECKBOX
-	local cb = self:CreateCheckbox("unchecked", "checkbox", 0.2, -0.04, -1.99999, 0.07, 0.07, false)
-	world:CreateComponentAndAddTo("BoolSetting", cb)
-	world:GetComponent(cb, "BoolSetting", "SettingsName"):SetString("ServerType")
-	world:GetComponent(cb, "BoolSetting", "Value"):SetInt(0)
-	
 end
 
-HostMenuSystem.RemoveMenu = function(self)
+HostMenu2System.RemoveMenu = function(self)
 
 	local entities = self:GetEntities()
 	for i = 1, #entities do
@@ -255,7 +237,7 @@ HostMenuSystem.RemoveMenu = function(self)
 end
 
 
-HostMenuSystem.CreateButton = function(self, object, folder, posX, posY, posZ, scaleX, scaleY)
+HostMenu2System.CreateButton = function(self, object, folder, posX, posY, posZ, scaleX, scaleY)
 
 	local id = world:CreateNewEntity("Button")
 	world:CreateComponentAndAddTo(self.Name.."Element", id)
@@ -269,7 +251,7 @@ HostMenuSystem.CreateButton = function(self, object, folder, posX, posY, posZ, s
 	
 end
 
-HostMenuSystem.CreateElement = function(self, object, folder, posX, posY, posZ, scaleX, scaleY)
+HostMenu2System.CreateElement = function(self, object, folder, posX, posY, posZ, scaleX, scaleY)
 
 	local id = world:CreateNewEntity("Button")
 	world:CreateComponentAndAddTo(self.Name.."Element", id)
@@ -282,7 +264,7 @@ HostMenuSystem.CreateElement = function(self, object, folder, posX, posY, posZ, 
 
 end
 
-HostMenuSystem.CreateCheckbox = function(self, object, folder, posX, posY, posZ, scaleX, scaleY, checked)
+HostMenu2System.CreateCheckbox = function(self, object, folder, posX, posY, posZ, scaleX, scaleY, checked)
 	
 		local id = world:CreateNewEntity("Checkbox")
 		world:CreateComponentAndAddTo(self.Name.."Element", id)
@@ -296,7 +278,7 @@ HostMenuSystem.CreateCheckbox = function(self, object, folder, posX, posY, posZ,
 		return id
 end
 
-HostMenuSystem.CreateText = function(self, object, folder, posx, posy, posz, scalex, scaley)
+HostMenu2System.CreateText = function(self, object, folder, posx, posy, posz, scalex, scaley)
 
 	local id = world:CreateNewEntity("Text")
 	world:CreateComponentAndAddTo(self.Name.."Element", id)
@@ -308,7 +290,7 @@ HostMenuSystem.CreateText = function(self, object, folder, posx, posy, posz, sca
 	return id	
 end
 
-HostMenuSystem.AddTextToTexture = function(self, n, text, font, r, g, b, button)
+HostMenu2System.AddTextToTexture = function(self, n, text, font, r, g, b, button)
 	world:CreateComponentAndAddTo("TextTexture", button)
 	world:GetComponent(button, "TextTexture", "Name"):SetString(n) -- TODO: NAME CANT BE MORE THAN 3 CHARS? WTF?
 	world:GetComponent(button, "TextTexture", "Text"):SetString(text)
@@ -318,20 +300,20 @@ HostMenuSystem.AddTextToTexture = function(self, n, text, font, r, g, b, button)
 	world:GetComponent(button, "TextTexture", "B"):SetFloat(b)
 end
 
-HostMenuSystem.AddConsoleCommandToButton = function(self, command, button)
+HostMenu2System.AddConsoleCommandToButton = function(self, command, button)
 
 	world:CreateComponentAndAddTo("MenuConsoleCommand", button)
-	world:GetComponent(button, "MenuConsoleCommand", "Command"):SetStrong(command)
+	world:GetComponent(button, "MenuConsoleCommand", "Command"):SetString(command)
 	
 end
 
-HostMenuSystem.AddEntityCommandToButton = function(self, command, button)
+HostMenu2System.AddEntityCommandToButton = function(self, command, button)
 	world:CreateComponentAndAddTo("MenuEntityCommand", button)
 	world:GetComponent(button, "MenuEntityCommand", "ComponentName"):SetString(command)
 	
 end
 
-HostMenuSystem.AddHoverSize = function(self, deltascale, button)
+HostMenu2System.AddHoverSize = function(self, deltascale, button)
 
 	local sx, sy, sz = world:GetComponent(button, "Scale", 0):GetFloat3()
 	world:CreateComponentAndAddTo("HoverSize", button)
