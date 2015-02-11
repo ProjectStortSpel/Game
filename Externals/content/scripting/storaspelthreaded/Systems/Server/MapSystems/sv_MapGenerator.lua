@@ -197,8 +197,8 @@ MapGenerator.GenerateEmptyTile = function(self, X, Z)
 	local	newTile	=	world:CreateNewEntity("Tile")
 	
 	--	Set its starting position
-	self:GetComponent(newTile, "Position", "X"):SetFloat3(X, 0.0, Z)
-	self:GetComponent(newTile, "MapPosition", "X"):SetInt2(X, Z)
+	world:GetComponent(newTile, "Position", "X"):SetFloat3(X, 0.0, Z)
+	world:GetComponent(newTile, "MapPosition", "X"):SetInt2(X, Z)
 	
 	self.MapTiles[self:GetListIndex(X,Z)]	=	newTile
 	
@@ -213,7 +213,7 @@ MapGenerator.GeneratePlane = function(self)
 		for Z = 1, self.MapSizeZ do
 			local	tileId	=	self:GenerateEmptyTile(X-1, Z-1)
 			world:CreateComponentAndAddTo("Model", tileId)
-			local comp = self:GetComponent(tileId, "Model", 0)
+			local comp = world:GetComponent(tileId, "Model", 0)
 			comp:SetModel("grass", "grass", 0, 0)
 
 			self.TileTypes[self:GetListIndex(X-1, Z-1)]	=	self.Grass
@@ -318,8 +318,8 @@ MapGenerator.GenerateHole = function(self, X, Z)
 	self.TileTypes[self:GetListIndex(X, Z)]	=	self.Hole
 	world:CreateComponentAndAddTo("Void", newHole)
 	world:CreateComponentAndAddTo("Model", newHole)
-	self:GetComponent(newHole, "Model", 0):SetModel("hole", "hole", 0)
-	self:GetComponent(newHole, "Rotation", 0):SetFloat3(0, math.pi * 0.5 * math.random(0, 4), 0)
+	world:GetComponent(newHole, "Model", 0):SetModel("hole", "hole", 0)
+	world:GetComponent(newHole, "Rotation", 0):SetFloat3(0, math.pi * 0.5 * math.random(0, 4), 0)
 end
 
 MapGenerator.GenerateHoles = function(self)
@@ -383,22 +383,22 @@ MapGenerator.CreateRiverTile = function(self, X, Z, DirectionIndex)
 	if not world:EntityHasComponent(riverId, "River") then
 		world:CreateComponentAndAddTo("River", riverId)
 	end
-	self:GetComponent(riverId, "River", 0):SetInt3(tRiverDirX, tRiverDirZ, 1)
+	world:GetComponent(riverId, "River", 0):SetInt3(tRiverDirX, tRiverDirZ, 1)
 	
 	
 	--	Set the model
 	if not world:EntityHasComponent(riverId, "Model") then
 		world:CreateComponentAndAddTo("Model", riverId)
 	end
-	self:GetComponent(riverId, "Model", 0):SetModel("riverstraight", "riverstraight", 0)
+	world:GetComponent(riverId, "Model", 0):SetModel("riverstraight", "riverstraight", 0)
 	
 	--	Set correct rotation
 	if DirectionIndex == 1 then
-		self:GetComponent(riverId, "Rotation", 0):SetFloat3(0, -math.pi/2, 0)
+		world:GetComponent(riverId, "Rotation", 0):SetFloat3(0, -math.pi/2, 0)
 	elseif DirectionIndex == 2 then
-		self:GetComponent(riverId, "Rotation", 0):SetFloat3(0, math.pi, 0)
+		world:GetComponent(riverId, "Rotation", 0):SetFloat3(0, math.pi, 0)
 	elseif DirectionIndex == 3 then
-		self:GetComponent(riverId, "Rotation", 0):SetFloat3(0, math.pi/2, 0)
+		world:GetComponent(riverId, "Rotation", 0):SetFloat3(0, math.pi/2, 0)
 	elseif DirectionIndex == 4 then
 		--	Nothing
 	end
@@ -415,12 +415,12 @@ MapGenerator.FixRiverCorner = function(self, RiverA, RiverB)
 	end
 	
 	--	Set the model for the corner
-	self:GetComponent(RiverB, "Model", 0):SetModel("rivercorner", "rivercorner", 0, 0)
+	world:GetComponent(RiverB, "Model", 0):SetModel("rivercorner", "rivercorner", 0, 0)
 	
 	local 	dirAX, dirAY 	= 	world:GetComponent(RiverA, "River", 0):GetInt2()
 	local 	dirBX, dirBY 	= 	world:GetComponent(RiverB, "River", 0):GetInt2()
 	
-	local 	rotComp 			= 	self:GetComponent(RiverB, "Rotation", 0)
+	local 	rotComp 			= 	world:GetComponent(RiverB, "Rotation", 0)
 	local 	currentRotation 	= 	rotComp:GetFloat(1)
 	
 	if dirAX == 1 and dirBY == 1 then
@@ -593,9 +593,9 @@ MapGenerator.GenerateStone = function(self, X, Z)
 	self.TileTypes[self:GetListIndex(X, Z)]	=	self.Stone
 	world:CreateComponentAndAddTo("NotWalkable", newStone)
 	world:CreateComponentAndAddTo("Model", newStone)
-	self:GetComponent(newStone, "Model", 0):SetModel("stone", "stone", 0)
-	self:GetComponent(newStone, "Position", 0):SetFloat3(X, 0.8 + 0.1* math.random(-1, 1), Z)
-	self:GetComponent(newStone, "Rotation", 0):SetFloat3
+	world:GetComponent(newStone, "Model", 0):SetModel("stone", "stone", 0)
+	world:GetComponent(newStone, "Position", 0):SetFloat3(X, 0.8 + 0.1* math.random(-1, 1), Z)
+	world:GetComponent(newStone, "Rotation", 0):SetFloat3
 	(
 		math.pi * 0.01 * math.random(0, 25), 
 		math.pi * 0.01 * math.random(0, 100), 
@@ -611,12 +611,12 @@ MapGenerator.PostFixStones = function(self)
 			if self:GetTileType(X-1, Z-1) == self.Stone then
 			
 				local grassTile = world:CreateNewEntity("Tile")
-				self:GetComponent(grassTile, "Position", 0):SetFloat3(X-1, 0.0, Z-1)
+				world:GetComponent(grassTile, "Position", 0):SetFloat3(X-1, 0.0, Z-1)
 				
-				self:GetComponent(grassTile, "MapPosition", 0):SetInt2(X-1, Z-1)
+				world:GetComponent(grassTile, "MapPosition", 0):SetInt2(X-1, Z-1)
 				
 				world:CreateComponentAndAddTo("Model", grassTile)
-				self:GetComponent(grassTile, "Model", 0):SetModel("grass", "grass", 0)
+				world:GetComponent(grassTile, "Model", 0):SetModel("grass", "grass", 0)
 			end
 		end
 	end
@@ -632,9 +632,9 @@ MapGenerator.CreateCheckPoint = function(self, X, Z, Index)
 	self.TileTypes[self:GetListIndex(X, Z)]	=	self.Checkpoint
 	
 	world:CreateComponentAndAddTo("Checkpoint", newCheckpoint)
-	self:GetComponent(newCheckpoint, "Checkpoint", 0):SetInt(Index)
+	world:GetComponent(newCheckpoint, "Checkpoint", 0):SetInt(Index)
 	world:CreateComponentAndAddTo("Model", newCheckpoint)
-	self:GetComponent(newCheckpoint, "Model", 0):SetModel("checkpoint" .. Index, "checkpoint", 0)
+	world:GetComponent(newCheckpoint, "Model", 0):SetModel("checkpoint" .. Index, "checkpoint", 0)
 	
 end
 
@@ -682,11 +682,11 @@ MapGenerator.CreateSpawnpoint = function(self, X, Z)
 	
 	local	newCheckpoint	=	self:GenerateEmptyTile(X, Z)
 	world:CreateComponentAndAddTo("Model", newCheckpoint)
-	self:GetComponent(newCheckpoint, "Model", 0):SetModel("grass", "grass", 0, 0)
+	world:GetComponent(newCheckpoint, "Model", 0):SetModel("grass", "grass", 0, 0)
 	
 	local newSpawnId = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("AvailableSpawnpoint", newSpawnId)
-	self:GetComponent(newSpawnId, "AvailableSpawnpoint", 0):SetInt2(X, Z)
+	world:GetComponent(newSpawnId, "AvailableSpawnpoint", 0):SetInt2(X, Z)
 	
 	self.TileTypes[self:GetListIndex(X, Z)]	=	self.Spawnpoint
 end

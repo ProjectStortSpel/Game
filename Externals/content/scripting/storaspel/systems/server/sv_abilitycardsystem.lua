@@ -122,7 +122,7 @@ AbilitySlingShotSystem.Update = function(self, dt)
 				world:CreateComponentAndAddTo("LerpTime", bullet)
 				world:GetComponent(bullet, "Position", 0):SetFloat3(mapPosX, 1, mapPosZ)
 				world:GetComponent(bullet, "LerpTargetPosition", 0):SetFloat3(currentPosX, 1, currentPosZ)
-				self:GetComponent(bullet, "LerpTime", 0):SetFloat2(0.5, 0)
+				world:GetComponent(bullet, "LerpTime", 0):SetFloat2(0.5, 0)
 				break
 				
 			else
@@ -142,7 +142,7 @@ AbilitySlingShotSystem.Update = function(self, dt)
 						world:CreateComponentAndAddTo("LerpTime", bullet)
 						world:GetComponent(bullet, "Position", 0):SetFloat3(mapPosX, 1, mapPosZ)
 						world:GetComponent(bullet, "LerpTargetPosition", 0):SetFloat3(targetPosX, 1, targetPosZ)
-						self:GetComponent(bullet, "LerpTime", 0):SetFloat2(0.5, 0)
+						world:GetComponent(bullet, "LerpTime", 0):SetFloat2(0.5, 0)
 						
 						-- if the hit entity is a unit
 						if world:EntityHasComponent(units[u], "Unit") then
@@ -179,7 +179,7 @@ AbilitySlingShotSystem.Update = function(self, dt)
 	for i = 1, #slingshots do
 	
 		local posX, _, posZ = world:GetComponent(slingshots[i], "Position", 0):GetFloat3()
-		local tarX, _, tarZ = self:GetComponent(slingshots[i], "LerpTargetPosition", 0):GetFloat3()
+		local tarX, _, tarZ = world:GetComponent(slingshots[i], "LerpTargetPosition", 0):GetFloat3()
 		if posX == tarX and posZ == tarZ then
 			world:KillEntity(slingshots[i])
 		end

@@ -1,3 +1,6 @@
+--  Game Logic Systems
+package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/GameLogicSystems/?.lua"
+require "sv_StageSystem"
 
 --	Map Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/MapSystems/?.lua"
@@ -79,22 +82,33 @@ package.path = package.path .. ";../../../Externals/content/scripting/storaspelt
 require "sv_TotemPoleSystem"
 require "sv_MoveTotemPieceSystem"
 require "sv_GameOverSystem"
-require "sv_ServerLobbySystem"
 require "sv_LogStartSystem"
 require "sv_ServerNetworkMessageSystem"
+require "sv_HostSettingsSystem"
 
 worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(StageSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(MapGenerator)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(RiverSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(VoidSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CheckpointSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(DirectionalLightSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(PlayerSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(UnitSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(AddAISystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(AICardPickingSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(PostMoveSystem)
-
+worldCreator:AddSystemGroup()
 --worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(TestMoveSystem)
 --worldCreator:AddSystemGroup()
@@ -149,11 +163,10 @@ worldCreator:AddSystemToCurrentGroup(CameraNewRoundSystem)
 worldCreator:AddSystemToCurrentGroup(TotemPoleSystem)
 worldCreator:AddSystemToCurrentGroup(MoveTotemPieceSystem)
 
+worldCreator:AddSystemToCurrentGroup(HostSettingsSystem)
+
 
 worldCreator:AddSystemToCurrentGroup(GameOverSystem)
-
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(ServerLobbySystem)
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ServerNetworkMessageSystem)

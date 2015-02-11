@@ -17,12 +17,14 @@ uniform mat4 ViewMatrix;
 uniform mat4 BiasMatrix;
 uniform mat4 ShadowViewProj;
 
+uniform vec3 BlendColor;
+
 //Directional light
 uniform mediump vec3 dirlightDirection; // Light position in world coords.
 uniform mediump vec3 dirlightIntensity; // Diffuse intensity
 uniform mediump vec3 dirlightColor;
 
-const int nrOfPointLights = 5;
+const int nrOfPointLights = 3;
 struct Pointlight {
 	vec3 Position; // Light position in world coords.
 	vec3 Intensity; // Diffuse intensity
@@ -127,7 +129,12 @@ void main()
 	NmNormal = normalize( texSpace * normal_map );
 
 	// Spec data
-	vec3 specglow_map = texture( specularTex, TexCoord ).rgb;
+	vec4 specglow_map = texture( specularTex, TexCoord );
+	float blendFactor = specglow_map.w;
+
+	if( BlendColor != vec3(0.0) )
+		albedo_tex.xyz = (1.0f-blendFactor)*albedo_tex.xyz + blendFactor * BlendColor; 
+
 	Material.Ks			= specglow_map.x;
 	Material.Shininess  = specglow_map.y * 254.0f + 1.0f;
 	float glow			= specglow_map.z;
@@ -147,18 +154,18 @@ void main()
 	}
 
 	//för varje ljus-----------
-	//for(int i = 0; i < pointlights.length(); i++)
-	//{
-	//	vec3 a,d,s;
+	for(int i = 0; i < pointlights.length(); i++)
+	{
+		vec3 a,d,s;
 
-	//	if( length(pointlights[i].Intensity) > 0.0 )
-	//	{
-	//		phongModel(i, a, d, s);
-	//		ambient += a;
-	//		diffuse += d;
-	//		spec    += s;
-	//	}
-	//}
+		if( length(pointlights[i].Intensity) > 0.0 )
+		{
+			phongModel(i, a, d, s);
+			ambient += a;
+			diffuse += d;
+			spec    += s;
+		}
+	}
 
 	vec4 glowvec = vec4(glow*albedo_tex.xyz, 1.0);
 

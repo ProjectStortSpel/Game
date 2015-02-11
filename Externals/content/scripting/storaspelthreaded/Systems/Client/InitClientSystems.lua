@@ -2,6 +2,7 @@
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Client/MiscSystems/?.lua"
 require "cl_PlayerIndicatorSystem"
 require "cl_ClientNetworkMessageSystem"
+require "cl_FlowingWaterSystem"
 
 --	Interface Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Client/InterfaceSystems/?.lua"
@@ -43,18 +44,12 @@ worldCreator:AddSystemToCurrentGroup(GameInterfaceSystem)
 worldCreator:AddSystemToCurrentGroup(PickingTimerSystem)
 
 
-
-worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(FlowingWaterSystem)
 worldCreator:AddSystemToCurrentGroup(GiveCardIndexSystem)
-worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(SortCardIndexSystem)
-worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(SortSelectedCardsSystem)
-worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(SendSelectedCardsSystem)
-worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CardPositionSystem)
-worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CardPickedPositionSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CardAddModelSystem)

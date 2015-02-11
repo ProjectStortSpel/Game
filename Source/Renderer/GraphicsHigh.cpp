@@ -14,6 +14,7 @@ GraphicsHigh::GraphicsHigh()
 	m_debugTexFlag = 0;
 	m_nrOfLights = 0;
 	m_pointerToDirectionalLights = 0;
+	m_pointerToPointlights = 0;
 }
 
 GraphicsHigh::GraphicsHigh(Camera _camera, int x, int y) : GraphicDevice(_camera, x, y)
@@ -24,6 +25,7 @@ GraphicsHigh::GraphicsHigh(Camera _camera, int x, int y) : GraphicDevice(_camera
 	m_debugTexFlag = 0;
 	m_nrOfLights = 0;
 	m_pointerToDirectionalLights = 0;
+	m_pointerToPointlights = 0;
 }
 
 GraphicsHigh::~GraphicsHigh()
@@ -231,6 +233,8 @@ void GraphicsHigh::Render()
 				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
 				normalMatVector[nrOfInstances] = normalMatrix;
 
+				m_deferredShader1.SetUniVariable("BlendColor", vector3, m_modelsDeferred[i].instances[j].color);
+
 				nrOfInstances++;
 			}
 		}
@@ -338,6 +342,8 @@ void GraphicsHigh::Render()
 
 				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
 				normalMatVector[nrOfInstances] = normalMatrix;
+
+				m_forwardShader.SetUniVariable("BlendColor", vector3, m_modelsForward[i].instances[j].color);
 
 				nrOfInstances++;
 			}
@@ -705,7 +711,7 @@ bool GraphicsHigh::InitLightBuffers()
 	float ** tmparray = new float*[1];
 	tmparray[0] = &m_lightDefaults[0];
 
-	BufferPointlights(1, tmparray);
+	BufferPointlights(0, tmparray);
 
 	delete(tmparray);
 	
@@ -720,17 +726,19 @@ bool GraphicsHigh::InitLightBuffers()
 
 void GraphicsHigh::BufferPointlights(int _nrOfLights, float **_lightPointers)
 {
+	if (m_pointerToPointlights)
+		delete m_pointerToPointlights;
 
 	if (_nrOfLights == 0)
 	{
-		delete m_pointerToPointlights;
 		m_pointerToPointlights = new float*[1];
 		m_pointerToPointlights[0] = &m_lightDefaults[0];
 		m_numberOfPointlights = 1;
 		return;
 	}
 
-
+	m_pointerToPointlights = _lightPointers;
+	m_numberOfPointlights = _nrOfLights;
 
 }
 
@@ -827,7 +835,7 @@ void GraphicsHigh::ToggleSimpleText()
 	m_renderSimpleText = !m_renderSimpleText;
 }
 
-int GraphicsHigh::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType)
+int GraphicsHigh::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color)
 {
 	int modelID = m_modelIDcounter;
 	m_modelIDcounter++;
@@ -840,6 +848,7 @@ int GraphicsHigh::LoadModel(std::string _dir, std::string _file, glm::mat4 *_mat
 	modelToLoad->File = _file;
 	modelToLoad->MatrixPtr = _matrixPtr;
 	modelToLoad->RenderType = _renderType;
+	modelToLoad->Color = _color;
 	m_modelsToLoad[modelID] = modelToLoad;
 
 	return modelID;
@@ -847,25 +856,20 @@ int GraphicsHigh::LoadModel(std::string _dir, std::string _file, glm::mat4 *_mat
 void GraphicsHigh::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 {
 	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
-	bool isanimated = false;
+
+	if (obj.animated)
+	{
+		BufferAModel(_modelId, _modelToLoad);
+		return;
+	}
 
 	Shader *shaderPtr = NULL;
 	std::vector<Model> *modelList = NULL;
 	if (_modelToLoad->RenderType == RENDER_DEFERRED)
 	{
-		if (obj.animated)
-		{
-			isanimated = true;
-			shaderPtr = &m_deferredShader1;
-			modelList = &m_modelsDeferred;
-			m_deferredShader1.UseProgram();
-		}
-		else
-		{
-			shaderPtr = &m_deferredShader1;
-			modelList = &m_modelsDeferred;
-			m_deferredShader1.UseProgram();
-		}
+		shaderPtr = &m_deferredShader1;
+		modelList = &m_modelsDeferred;
+		m_deferredShader1.UseProgram();
 	}
 	else if (_modelToLoad->RenderType == RENDER_FORWARD)
 	{
@@ -892,7 +896,7 @@ void GraphicsHigh::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	}
 
 	// Import Mesh
-	Buffer* mesh = AddMesh(obj.mesh, shaderPtr, isanimated);
+	Buffer* mesh = AddMesh(obj.mesh, shaderPtr, false);
 
 	// Import Texture
 	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
@@ -916,17 +920,53 @@ void GraphicsHigh::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	{
 		if ((*modelList)[i] == model)
 		{
-			(*modelList)[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr));
+			(*modelList)[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
 			return;
 		}
 	}
 
 	//if model doesnt exist
-	model.instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr));
+	model.instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
 	// Push back the model
 	modelList->push_back(model);
 }
+void GraphicsHigh::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
+{
+	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
 
+	Shader *shaderPtr = &m_animationShader;
+	std::vector<AModel> *modelList = &m_modelsAnimated;
+
+	// Import Mesh
+	Buffer* mesh = AddMesh(obj.mesh, shaderPtr, true);
+
+	// Import Texture
+	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
+	shaderPtr->CheckUniformLocation("diffuseTex", 1);
+
+	// Import Normal map
+	GLuint normal = AddTexture(obj.norm, GL_TEXTURE2);
+	shaderPtr->CheckUniformLocation("normalTex", 2);
+
+	// Import Specc Glow map
+	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
+	shaderPtr->CheckUniformLocation("specularTex", 3);
+
+	// Import Skeleton
+	std::vector<JointData> joints = ModelLoader::importJoints(obj.joints);
+
+	AModel model = AModel(_modelId, true, _modelToLoad->MatrixPtr, mesh, texture, normal, specular);
+
+	// Add skeleton
+	for (int i = 0; i < joints.size(); i++)
+		model.joints.push_back(Joint(joints[i].parent, joints[i].transform));
+
+	//for the matrices (modelView + normal)
+	m_vramUsage += (16 + 9) * sizeof(float);
+
+	// Push back the model
+	modelList->push_back(model);
+}
 void GraphicsHigh::BufferModels()
 {
 	for (auto pair : m_modelsToLoad)

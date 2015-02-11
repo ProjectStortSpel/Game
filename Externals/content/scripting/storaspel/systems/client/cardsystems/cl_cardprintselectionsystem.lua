@@ -6,8 +6,8 @@ CardPrintSelectionSystem.Update = function(self, dt)
 	--for i = 1, #entities do
 	--	local entity = entities[i]
     --
-	--	local action = self:GetComponent(entity, "CardAction", 0):GetString()
-	--	local prio = self:GetComponent(entity, "CardPrio", 0):GetInt()
+	--	local action = world:GetComponent(entity, "CardAction", 0):GetString()
+	--	local prio = world:GetComponent(entity, "CardPrio", 0):GetInt()
 	--	
 	--	graphics:RenderSimpleText(action, 0,44)
 	--	graphics:RenderSimpleText(prio, 15,44)

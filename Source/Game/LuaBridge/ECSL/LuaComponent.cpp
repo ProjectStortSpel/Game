@@ -1,34 +1,37 @@
 #include "LuaComponent.h"
 #include "LuaEmbedder/LuaEmbedder.h"
 #include "ECSL/Framework/Components/ComponentType.h"
+#include "ECSL/Managers/ComponentTypeManager.h"
 
 namespace LuaBridge
 {
 	LuaComponent::LuaComponent(lua_State* L)
 	{
 		m_dataLocation = nullptr;
-		m_system = nullptr;
 		m_world = nullptr;
 	}
 
-	LuaComponent::LuaComponent(ECSL::DataLocation dataLocation, ECSL::System* system,
-		unsigned int entityId, const std::string& componentName)
-	{
-		m_dataLocation = dataLocation;
-		m_system = system;
-		m_world = nullptr;
-		m_entityId = entityId;
-		m_componentName = componentName;
-	}
 	
 	LuaComponent::LuaComponent(ECSL::DataLocation dataLocation, ECSL::World* world,
-		unsigned int entityId, const std::string& componentName)
+		unsigned int entityId, const std::string& componentName, const std::string& variableName)
 	{
 		m_dataLocation = dataLocation;
-		m_system = nullptr;
 		m_world = world;
 		m_entityId = entityId;
 		m_componentName = componentName;
+
+		unsigned int componentTypeId = ECSL::ComponentTypeManager::GetInstance().GetTableId(componentName);
+		m_offset = ECSL::ComponentTypeManager::GetInstance().GetComponentType(componentTypeId)->GetVariables()->find(variableName)->second.GetOffset();
+	}
+
+	LuaComponent::LuaComponent(ECSL::DataLocation dataLocation, ECSL::World* world,
+		unsigned int entityId, const std::string& componentName, unsigned int index)
+	{
+		m_dataLocation = dataLocation;
+		m_world = world;
+		m_entityId = entityId;
+		m_componentName = componentName;
+		m_offset = index;
 	}
 
 	LuaComponent::~LuaComponent() { }
@@ -59,6 +62,8 @@ namespace LuaBridge
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetBool", &LuaComponent::SetBool);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetString", &LuaComponent::GetString);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetString", &LuaComponent::SetString);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetStrong", &LuaComponent::GetStrong);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetStrong", &LuaComponent::SetStrong);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetModel", &LuaComponent::SetModel);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetPointlight", &LuaComponent::SetPointlight);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetPointlight", &LuaComponent::GetPointlight);
@@ -344,6 +349,26 @@ namespace LuaBridge
 		return 0;
 	}
 
+	int LuaComponent::GetStrong(lua_State* L)
+	{
+		assert(m_dataLocation);
+		LuaEmbedder::PushString(L, m_world->GetString(m_entityId, m_componentName, m_offset));
+		return 1;
+	}
+	int LuaComponent::SetStrong(lua_State* L)
+	{
+		assert(m_dataLocation);
+
+		m_world->SetString(m_entityId, m_componentName, m_offset, LuaEmbedder::PullString(L, 1).c_str());
+
+		bool notifyNetwork = true;
+		if (LuaEmbedder::IsBool(L, 2))
+			notifyNetwork = LuaEmbedder::PullBool(L, 2);
+
+		ComponentHasChanged(notifyNetwork);
+		return 0;
+	}
+
 	int LuaComponent::SetModel(lua_State* L)
 	{
 		assert(m_dataLocation);
@@ -448,9 +473,8 @@ namespace LuaBridge
 	
 	void LuaComponent::ComponentHasChanged(bool _notifyNetwork)
 	{
-		if (m_system != nullptr)
-			m_system->ComponentHasChanged(m_entityId, m_componentName, _notifyNetwork);
-		else if (m_world != nullptr)
+		if (m_world != nullptr)
 			m_world->ComponentHasChanged(m_entityId, m_componentName, _notifyNetwork);
 	}
+
 }

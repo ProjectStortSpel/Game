@@ -88,8 +88,8 @@ PlayerSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities
 	for i = 1, #entities do
 		
 		local entity = world:CreateNewEntity()
-		local plyNum = self:GetComponent(entities[i], "PlayerNumber", "Number"):GetInt()
-		local unitId = self:GetComponent(entities[i], "UnitEntityId", "Id"):GetInt()
+		local plyNum = world:GetComponent(entities[i], "PlayerNumber", "Number"):GetInt()
+		local unitId = world:GetComponent(entities[i], "UnitEntityId", "Id"):GetInt()
 		
 		world:CreateComponentAndAddTo("RemoveUnit", entity)
 		world:GetComponent(entity, "RemoveUnit", "PlayerNo"):SetInt(plyNum)
@@ -99,9 +99,9 @@ PlayerSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities
 	--for n = 1, #entities do
 		--local entityId = entities[n]
         --
-		--local plyNum = self:GetComponent(entityId, "PlayerNumber", "Number"):GetInt()
+		--local plyNum = world:GetComponent(entityId, "PlayerNumber", "Number"):GetInt()
         --
-		--local unitId = self:GetComponent(entityId, "UnitEntityId", "Id"):GetInt()
+		--local unitId = world:GetComponent(entityId, "UnitEntityId", "Id"):GetInt()
         --
 		--world:KillEntity(unitId)
 		

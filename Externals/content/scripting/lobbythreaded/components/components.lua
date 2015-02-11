@@ -42,6 +42,9 @@ RenderComponent.SyncNetwork = false
 RenderComponent.TableType = TableType.Array
 RenderComponent:AddVariable("ModelId", ByteSize.Int)
 RenderComponent:AddVariable("Mat", ByteSize.Matrix)
+RenderComponent:AddVariable("ColorX", ByteSize.Float)
+RenderComponent:AddVariable("ColorY", ByteSize.Float)
+RenderComponent:AddVariable("ColorZ", ByteSize.Float)
 worldCreator:AddComponentType(RenderComponent)
 
 --	Model Component

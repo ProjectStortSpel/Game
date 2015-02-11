@@ -18,9 +18,9 @@ end
 
 CreateSpawnpointSystem.OnEntityAdded = function(self, entityId)
 
-	local plyNum = self:GetComponent(entityId, "PlayerNumber", "Number").GetInt()
+	local plyNum = world:GetComponent(entityId, "PlayerNumber", "Number").GetInt()
 	local mapPos = {2 + plyNum * 2, 12}	
-	local comp = self:GetComponent(entityId, "Spawnpoint", 0)
+	local comp = world:GetComponent(entityId, "Spawnpoint", 0)
 	comp:SetInt2(mapPos[1], mapPos[2])
 
 	

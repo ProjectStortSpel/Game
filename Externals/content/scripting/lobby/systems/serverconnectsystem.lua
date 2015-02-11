@@ -29,15 +29,15 @@ ServerConnectSystem.OnEntityAdded = function(self, entityId)
 	local match = false;
 	local matchId = 0;
 	
-	local username 	= self:GetComponent(entityId, "Username", "Name"):GetString();
-	local ipAddress = self:GetComponent(entityId, "NetConnection", "IpAddress"):GetString();
-	local port 		= self:GetComponent(entityId, "NetConnection", "Port"):GetInt();
+	local username 	= world:GetComponent(entityId, "Username", "Name"):GetString();
+	local ipAddress = world:GetComponent(entityId, "NetConnection", "IpAddress"):GetString();
+	local port 		= world:GetComponent(entityId, "NetConnection", "Port"):GetInt();
 
 	local entities = self:GetEntities();
 	for i = 1, #entities do
 	
 		if entityId ~= entities[i] then
-			local uname = self:GetComponent(entities[i], "Username", "Name"):GetString();
+			local uname = world:GetComponent(entities[i], "Username", "Name"):GetString();
 			
 			if username == uname then
 				match = true;
@@ -53,11 +53,11 @@ ServerConnectSystem.OnEntityAdded = function(self, entityId)
 	if match then
 		
 		local setActive = true;
-		local isActive = self:GetComponent(matchId, "NetConnection", "Active"):GetBool();
+		local isActive = world:GetComponent(matchId, "NetConnection", "Active"):GetBool();
 		
 		if isActive then
-			local oldIp 	= self:GetComponent(matchId, "NetConnection", "IpAddress"):GetString();
-			local oldPort	= self:GetComponent(matchId, "NetConnection", "Port"):GetInt();
+			local oldIp 	= world:GetComponent(matchId, "NetConnection", "IpAddress"):GetString();
+			local oldPort	= world:GetComponent(matchId, "NetConnection", "Port"):GetInt();
 			local reason	= "ServerConnectSystem kicked you.";
 			
 			Net.Kick(oldIp, oldPort, reason);
@@ -141,8 +141,8 @@ ServerConnectSystem.RemovePlayer = function(self, _ip, _port)
 	
 	local entities = self:GetEntities();
 	for i = 1, #entities do
-		local eIp 	= self:GetComponent(entities[i], "NetConnection", "IpAddress"):GetString();
-		local ePort = self:GetComponent(entities[i], "NetConnection", "Port"):GetInt();
+		local eIp 	= world:GetComponent(entities[i], "NetConnection", "IpAddress"):GetString();
+		local ePort = world:GetComponent(entities[i], "NetConnection", "Port"):GetInt();
 
 		if _ip == eIp and _port == ePort then
 			world:KillEntity(entities[i]);

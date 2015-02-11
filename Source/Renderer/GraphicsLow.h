@@ -21,16 +21,9 @@ namespace Renderer
 		void Update(float _dt);
 		void Render();
 
-		// SIMPLETEXT FROM GAME
-		//bool RenderSimpleText(std::string _text, int x, int y){ return false; }
-		//void SetSimpleTextColor(float _r, float _g, float _b, float _a){ return; }
-		//void SetDisco(){ return; }
-		//void ToggleSimpleText(){ return; }
-		//void ToggleSimpleText(bool _on){ return; }
-
 		// MODELLOADER
 		bool PreLoadModel(std::string _dir, std::string _file, int _renderType = RENDER_DEFERRED);
-		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED);
+		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED, float* _color = nullptr);
 		bool RemoveModel(int _id);
 		bool ActiveModel(int _id, bool _active);
 
@@ -55,7 +48,7 @@ namespace Renderer
 		void BufferModel(int _modelId, ModelToLoad* _modelToLoad);
 
 		//holds the reset values for lights
-		float m_lightDefaults[19];
+		float m_lightDefaults[10];
 
 		//Le shadowmap
 		ShadowMap *m_shadowMap;
@@ -83,7 +76,7 @@ namespace Renderer
 
 		vec3 m_dirLightDirection;
 
-		int m_nrOfLights; // lol
+		int m_nrOfLightsToBuffer; // lol
 
 		// Meshs
 		std::map<const std::string, Buffer*> m_meshs;

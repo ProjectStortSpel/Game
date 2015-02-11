@@ -126,21 +126,61 @@ bool WinSocket::Shutdown(void)
 bool WinSocket::Connect(const char* _ipAddress, const int _port)
 {
 	addrinfo hints = { 0 };
-	hints.ai_flags = AI_NUMERICHOST;
-	hints.ai_family = PF_INET;
+	//hints.ai_flags = AI_NUMERICHOST;
+	hints.ai_family = AF_UNSPEC; //PF_INET;
 	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_flags = 0;
+	hints.ai_protocol = 0;
 
 	addrinfo *addrs = NULL;
-	if (getaddrinfo(_ipAddress, NULL, &hints, &addrs) != 0)
+	if (getaddrinfo(_ipAddress, std::to_string(_port).c_str(), &hints, &addrs) != 0)
 	{
 		if (NET_DEBUG)
 		{
 			SDL_Log("Failed to get address info. Error Code: %d.\n", WSAGetLastError());
 		}
-
+		freeaddrinfo(addrs);
 		return false;
 	}
 
+	addrinfo* rp;
+
+	for (rp = addrs; rp != NULL; rp = rp->ai_next)
+	{
+		m_socket = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
+
+		if (m_socket < 0)
+			continue;
+
+		if (connect(m_socket, rp->ai_addr, rp->ai_addrlen) == 0)
+			break;
+
+		else if (connect(m_socket, rp->ai_addr, rp->ai_addrlen) < 0)
+		{
+			if (WSAGetLastError() == 10035)
+				break;			
+		}
+
+		closesocket(m_socket);
+	}
+
+	freeaddrinfo(addrs);
+
+	if (rp == NULL)
+	{
+		if (NET_DEBUG)
+		{
+			SDL_Log("Failed to connect to Ip address %s:%i.", _ipAddress, _port);
+		}
+		return false;
+	}
+
+	*m_remoteAddress = _ipAddress;
+	*m_remotePort = _port;
+
+	return true;
+
+/*
 	sockaddr_in address;
 	address.sin_addr.S_un.S_addr = ((sockaddr_in*)(addrs->ai_addr))->sin_addr.s_addr;
 	address.sin_port = htons(_port);
@@ -164,7 +204,7 @@ bool WinSocket::Connect(const char* _ipAddress, const int _port)
 	*m_remoteAddress = _ipAddress;
 	*m_remotePort = _port;
 
-	return true;
+	return true;*/
 }
 bool WinSocket::Bind(const int _port)
 {
