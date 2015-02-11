@@ -22,7 +22,7 @@ ServerNetworkMessageSystem.PostInitialize = function(self)
 	
 	-- TODO: Change MaxPlayers based on the map loaded
 	-- TODO: Note, moved to the Mapspecs-entity
-	local maxPlayers = 5
+	local maxPlayers = 9
 	world:SetComponent(playerCounter, "PlayerCounter", "MaxPlayers", maxPlayers)
 	world:SetComponent(playerCounter, "PlayerCounter", "Players", 0)
 	world:SetComponent(playerCounter, "PlayerCounter", "Spectators", 0)
