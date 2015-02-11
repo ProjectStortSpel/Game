@@ -9,15 +9,13 @@ using namespace glm;
 GraphicsLow::GraphicsLow()
 {
 	m_modelIDcounter = 0;
-	for (int i = 0; i < 10; i++)
-		m_defaultLight[i] = 0.0f;
 }
 
 GraphicsLow::GraphicsLow(Camera _camera) : GraphicDevice(_camera)
 {
 	m_modelIDcounter = 0;
 	for (int i = 0; i < 10; i++)
-		m_defaultLight[i] = 0.0f;
+		m_lightDefaults[i] = 0.0f;
 }
 
 GraphicsLow::~GraphicsLow()
@@ -45,10 +43,7 @@ bool GraphicsLow::Init()
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	if (!InitSkybox()) { ERRORMSG("INIT SKYBOX FAILED\n"); return false; }
-
-	float **tmpPtr = new float*[1];
-	BufferPointlights(0, tmpPtr);
-	delete tmpPtr;
+	if (!InitLightBuffers()) { ERRORMSG("INIT LIGHTBUFFER FAILED\n"); return false; }
 	
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
@@ -292,28 +287,44 @@ bool GraphicsLow::InitBuffers()
 	return true;
 }
 
+bool GraphicsLow::InitLightBuffers()
+{
+	for (int i = 0; i < 10; i++)
+		m_lightDefaults[i] = 0.0f;		//init 0.0
+
+	float **tmpPtr = new float*[1];
+	BufferPointlights(0, tmpPtr);
+	delete tmpPtr;
+
+	BufferDirectionalLight(&m_lightDefaults[0]);
+
+	return true;
+}
+
 void GraphicsLow::BufferPointlights(int _nrOfLights, float **_lightPointers)
 {
-	/*if (_nrOfLights == 0)
+	if (m_pointlightsPtr)
 	{
-		vec3 zero = vec3(0.0);
-		m_forwardShader.SetUniVariable("pointlights[0].Position", vector3, &zero);
-		m_forwardShader.SetUniVariable("pointlights[0].Intensity", vector3, &zero);
-		m_forwardShader.SetUniVariable("pointlights[0].Color", vector3, &zero);
-		m_forwardShader.SetUniVariable("pointlights[0].Range", glfloat, &zero.x);
+		delete m_pointlightsPtr;
+		m_pointlightsPtr = 0;
+	}
+
+	if (_nrOfLights == 0)
+	{
+		m_pointlightsPtr = new float*[1];
+		m_pointlightsPtr[0] = &m_lightDefaults[0];
+		m_nrOfLightsToBuffer = 0;
 	}
 	else if (_nrOfLights >= 1)
 	{
-		m_forwardShader.SetUniVariable("pointlights[0].Position", vector3, &_lightPointers[0]);
-		m_forwardShader.SetUniVariable("pointlights[0].Intensity", vector3, &_lightPointers[3]);
-		m_forwardShader.SetUniVariable("pointlights[0].Color", vector3, &_lightPointers[6]);
-		m_forwardShader.SetUniVariable("pointlights[0].Range", glfloat, &_lightPointers[9]);
-	}*/
+		m_pointlightsPtr = _lightPointers;
+		m_nrOfLightsToBuffer = std::min(_nrOfLights, 3);
+	}
 }
 
 void GraphicsLow::BufferDirectionalLight(float *_lightPointer)
 {
-	m_directionalLightPtr = _lightPointer ? _lightPointer : m_defaultLight;
+	m_directionalLightPtr = _lightPointer ? _lightPointer : m_lightDefaults;
 }
 
 bool GraphicsLow::PreLoadModel(std::string _dir, std::string _file, int _renderType)
@@ -510,6 +521,10 @@ void GraphicsLow::Clear()
   BufferPointlights(0, tmpPtr);
   delete tmpPtr;
   
+  if (m_pointlightsPtr)
+	  delete m_pointlightsPtr;
+
+  m_pointlightsPtr = NULL;
   m_directionalLightPtr = NULL;
 }
 
@@ -517,18 +532,60 @@ void GraphicsLow::BufferLightsToGPU()
 {
 	if (m_directionalLightPtr)
 	{
-	    m_dirLightDirection = vec3(m_directionalLightPtr[0], m_directionalLightPtr[1], m_directionalLightPtr[2]);
-	    vec3 intens = vec3(m_directionalLightPtr[3], m_directionalLightPtr[4], m_directionalLightPtr[5]);
-	    vec3 color = vec3(m_directionalLightPtr[6], m_directionalLightPtr[7], m_directionalLightPtr[8]);
+		m_dirLightDirection = vec3(m_directionalLightPtr[0], m_directionalLightPtr[1], m_directionalLightPtr[2]);
+		vec3 intens = vec3(m_directionalLightPtr[3], m_directionalLightPtr[4], m_directionalLightPtr[5]);
+		vec3 color = vec3(m_directionalLightPtr[6], m_directionalLightPtr[7], m_directionalLightPtr[8]);
 
-	    m_forwardShader.SetUniVariable("dirlightDirection", vector3, &m_dirLightDirection);
-	    m_forwardShader.SetUniVariable("dirlightIntensity", vector3, &intens);
-	    m_forwardShader.SetUniVariable("dirlightColor", vector3, &color);
+		m_forwardShader.SetUniVariable("dirlightDirection", vector3, &m_dirLightDirection);
+		m_forwardShader.SetUniVariable("dirlightIntensity", vector3, &intens);
+		m_forwardShader.SetUniVariable("dirlightColor", vector3, &color);
 	}
 	else
 	{
-	    vec3 zero = vec3(0.0f);
-	    m_forwardShader.SetUniVariable("dirlightIntensity", vector3, &zero);
-	    m_forwardShader.SetUniVariable("dirlightColor", vector3, &zero);
+		m_forwardShader.SetUniVariable("dirlightIntensity", vector3, &m_lightDefaults[0]);
+		m_forwardShader.SetUniVariable("dirlightColor", vector3, &m_lightDefaults[0]);
+	}
+
+	// ------------Pointlights------------
+	if (m_pointlightsPtr)
+	{
+		if (m_nrOfLightsToBuffer == 0)
+		{
+			for (int i = 0; i < 1; i++)
+			{
+				std::stringstream ss;
+				ss << "pointlights[" << i << "].Position";
+				m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[0]);		ss.str(std::string());
+
+				ss << "pointlights[" << i << "].Intensity";
+				m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[3]);		ss.str(std::string());
+
+				ss << "pointlights[" << i << "].Color";
+				m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[6]);		ss.str(std::string());
+
+				ss << "pointlights[" << i << "].Range";
+				m_forwardShader.SetUniVariable(ss.str().c_str(), glfloat, &m_lightDefaults[9]);		ss.str(std::string());
+			}
+		}
+		else
+		{
+			for (int i = 0; i < 1; i++)
+			{
+				std::stringstream ss;
+				ss << "pointlights[" << i << "].Position";
+				m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][0]);		ss.str(std::string());
+
+				ss << "pointlights[" << i << "].Intensity";
+				m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][3]);		ss.str(std::string());
+
+				ss << "pointlights[" << i << "].Color";
+				m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][6]);		ss.str(std::string());
+
+				ss << "pointlights[" << i << "].Range";
+				m_forwardShader.SetUniVariable(ss.str().c_str(), glfloat, &m_pointlightsPtr[i][9]);		ss.str(std::string());
+			}
+		}
+		delete m_pointlightsPtr;
+		m_pointlightsPtr = 0;
 	}
 }
