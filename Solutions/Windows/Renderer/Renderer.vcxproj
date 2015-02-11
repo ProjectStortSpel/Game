@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\Externals\content\shaders\CSDeferredPass2.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\FSAnimationShader.glsl" />
     <None Include="..\..\..\Externals\content\shaders\FSDeferredPass1.glsl" />
     <None Include="..\..\..\Externals\content\shaders\FSForwardShader.glsl" />
     <None Include="..\..\..\Externals\content\shaders\FSInterfaceShader.glsl" />
@@ -66,6 +67,7 @@
     <None Include="..\..\..\Externals\content\shaders\SimpleText.glsl" />
     <None Include="..\..\..\Externals\content\shaders\skyboxShaderFS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\skyboxShaderVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\VSAnimationShader.glsl" />
     <None Include="..\..\..\Externals\content\shaders\VSDeferredPass1.glsl" />
     <None Include="..\..\..\Externals\content\shaders\VSForwardShader.glsl" />
     <None Include="..\..\..\Externals\content\shaders\VSInterfaceShader.glsl" />

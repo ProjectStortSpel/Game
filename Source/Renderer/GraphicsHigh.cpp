@@ -596,6 +596,12 @@ bool GraphicsHigh::InitForward()
 
 bool GraphicsHigh::InitShaders()
 {
+	// Animation Deferred pass 1
+	m_animationShader.InitShaderProgram();
+	m_animationShader.AddShader("content/shaders/VSAnimationShader.glsl", GL_VERTEX_SHADER);
+	m_animationShader.AddShader("content/shaders/FSAnimationShader.glsl", GL_FRAGMENT_SHADER);
+	m_animationShader.FinalizeShaderProgram();
+
 	// Deferred pass 1
 	m_deferredShader1.InitShaderProgram();
 	m_deferredShader1.AddShader("content/shaders/VSDeferredPass1.glsl", GL_VERTEX_SHADER);
