@@ -518,7 +518,7 @@ void GameCreator::StartGame(int argc, char** argv)
             break;
         }
         
-		float dt = std::min(maxDeltaTime, m_frameCounter->GetDeltaTime());
+		float dt = m_frameCounter->GetDeltaTime();
 
 		/* Enforce max fps by looping until max fps is reached. Alternative solution is worth looking at */
 		while (dt < minDeltaTime)

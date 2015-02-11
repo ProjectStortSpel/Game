@@ -40,6 +40,10 @@ void ModelSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::ve
 		glm::mat4*	Matrix;
 		Matrix = (glm::mat4*)GetComponent(entityId, "Render", "Mat");
 		int* ModelId = (int*)GetComponent(entityId, "Render", "ModelId");
-		*ModelId = m_graphics->LoadModel(ModelPath, ModelName, Matrix, RenderType);
+		float* ColorStart = (float*)GetComponent(entityId, "Render", "ColorX");
+		ColorStart[0] = 0.0f;
+		ColorStart[1] = 0.0f;
+		ColorStart[2] = 0.0f;
+		*ModelId = m_graphics->LoadModel(ModelPath, ModelName, Matrix, RenderType, ColorStart);
 	}
 }
