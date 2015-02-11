@@ -173,7 +173,8 @@ bool GraphicDevice::BufferModelTexture(int _id, std::string _fileDir, int _textu
 				m_modelsForward[i].speID,
 				m_modelsForward[i].id,
 				m_modelsForward[i].active,
-				m_modelsForward[i].modelMatrix
+				m_modelsForward[i].modelMatrix,
+				m_modelsForward[i].color
 				);
 			found = true;
 			renderType = RENDER_FORWARD;
@@ -194,7 +195,8 @@ bool GraphicDevice::BufferModelTexture(int _id, std::string _fileDir, int _textu
 					m_modelsViewspace[i].speID,
 					m_modelsViewspace[i].id,
 					m_modelsViewspace[i].active,
-					m_modelsViewspace[i].modelMatrix
+					m_modelsViewspace[i].modelMatrix,
+					m_modelsViewspace[i].color
 					);
 				found = true;
 				renderType = RENDER_VIEWSPACE;
@@ -216,7 +218,8 @@ bool GraphicDevice::BufferModelTexture(int _id, std::string _fileDir, int _textu
 					m_modelsInterface[i].speID,
 					m_modelsInterface[i].id,
 					m_modelsInterface[i].active,
-					m_modelsInterface[i].modelMatrix
+					m_modelsInterface[i].modelMatrix,
+					m_modelsInterface[i].color
 					);
 				found = true;
 				renderType = RENDER_INTERFACE;

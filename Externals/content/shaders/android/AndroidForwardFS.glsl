@@ -137,7 +137,7 @@ void main()
 	NmNormal = normalize( texSpace * normal_map );
 
 	// Spec data
-	vec4 spec_map = texture( specularTex, TexCoord );
+	vec4 spec_map = texture2D( specularTex, TexCoord );
 	float blendFactor = spec_map.w;
 
 	if( BlendColor != vec3(0.0) )
