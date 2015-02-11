@@ -67,38 +67,34 @@ void phongModelDirLight(out vec3 ambient, out vec3 diffuse, out vec3 spec)
 	return;
 }
 
-void phongModel(int index, out vec3 ambient, out vec3 diffuse, out vec3 spec) 
+void phongModel(Pointlight pointlight, out vec3 ambient, out vec3 diffuse, out vec3 spec) 
 {
 	ambient = vec3(0.0);
 	diffuse = vec3(0.0);
 	spec    = vec3(0.0);
 
-	vec3 thisLightPosition	= pointlights[0].Position;
-	vec3 thisLightColor		= pointlights[0].Color;
-	vec3 thisLightIntensity = pointlights[0].Intensity;
-
-	vec3 lightVec = (ViewMatrix * vec4(thisLightPosition, 1.0)).xyz - ViewPos;
+	vec3 lightVec = (ViewMatrix * vec4(pointlight.Position, 1.0)).xyz - ViewPos;
 	float d = length(lightVec);
 
-	if(d > pointlights[0].Range)
+	if(d > pointlight.Range)
 	  return;
 	lightVec /= d; //normalizing
         
-	ambient = thisLightColor * thisLightIntensity.x;
+	ambient = pointlight.Color * pointlight.Intensity.x;
 	vec3 E = normalize(ViewPos);
 	float diffuseFactor = dot( lightVec, NmNormal );
 
 	if(diffuseFactor > 0.0)
 	{
 		// diffuse
-		diffuse = diffuseFactor * thisLightColor * thisLightIntensity.y;
+		diffuse = diffuseFactor * pointlight.Color * pointlight.Intensity.y;
 		// specular
 		vec3 v = reflect( lightVec, NmNormal );
 		float specFactor = pow( max( dot(v, E), 0.0 ), Material.Shininess );
-		spec = specFactor * thisLightColor * thisLightIntensity.z * Material.Ks;          
+		spec = specFactor * pointlight.Color * pointlight.Intensity.z * Material.Ks;          
 	}
 
-	float att = 1.0 - pow((d/pointlights[0].Range), 1.0);
+	float att = 1.0 - pow((d/pointlight.Range), 1.0);
 
 	ambient *= att;
 	diffuse *= att;
@@ -143,12 +139,12 @@ void main()
 	}
 
     //för varje ljus-----------
-	//if( length(pointlights[0].Intensity) > 0.0)
-	//{
-	//	vec3 a,d,s;
-	//	phongModel(0, a, d, s);
-	//	diffuse += d; ambient += a; spec += s;
-	//}
+	if( length(pointlights[0].Intensity) > 0.0)
+	{
+		vec3 a,d,s;
+		phongModel(pointlights[0], a, d, s);
+		diffuse += d; ambient += a; spec += s;
+	}
 
 	float glow = spec_map.z;
 	vec4 glowvec = vec4(glow*albedo_tex.xyz, 1.0);
