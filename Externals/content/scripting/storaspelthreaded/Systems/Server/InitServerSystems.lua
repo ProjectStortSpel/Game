@@ -56,8 +56,9 @@ require "sv_AbilityIWin"
 
 --	Spawn Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/SpawnSystems/?.lua"
-require "sv_SpawnSystem"
+--require "sv_SpawnSystem"
 require "sv_GiveSpawnLocationSystem"
+require "sv_FindSpawnpointSystem"
 require "sv_RespawnSystem"
 require "sv_PostSpawnSystem"
 
@@ -111,7 +112,7 @@ worldCreator:AddSystemToCurrentGroup(TakeCardStepsFromUnitSystem)
 worldCreator:AddSystemToCurrentGroup(TakeCardsFromPlayerSystem)
 worldCreator:AddSystemToCurrentGroup(PlayCardSystem)
 
---worldCreator:AddSystemGroup()
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ActionMoveForwardSystem)
 worldCreator:AddSystemToCurrentGroup(ActionMoveBackwardSystem)
 worldCreator:AddSystemToCurrentGroup(ActionTurnLeftSystem)
@@ -125,20 +126,23 @@ worldCreator:AddSystemToCurrentGroup(AbilityIWin)
 worldCreator:AddSystemGroup()
 
 worldCreator:AddSystemToCurrentGroup(GiveSpawnLocationSystem)
-worldCreator:AddSystemToCurrentGroup(SpawnSystem)
+worldCreator:AddSystemToCurrentGroup(FindSpawnpointSystem)
 worldCreator:AddSystemToCurrentGroup(RespawnSystem)
 worldCreator:AddSystemToCurrentGroup(PostSpawnSystem)
 
 
-
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(StartNewRoundSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(StepTimerSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(NewStepSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(PlayCardTimerSystem)
 
 
 
-
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CameraInterestpointSystem)
 worldCreator:AddSystemToCurrentGroup(CameraNewRoundSystem)
 

@@ -11,6 +11,7 @@ namespace LuaBridge
 			LuaEmbedder::EmbedClassFunction<InputData>(_l, "InputData", "SetSize", &InputData::SetSize);
 
 			LuaEmbedder::AddFunction(_l, "SetTurningCost", &SetPathfinderTurningCost, "PathfinderHandler");
+			LuaEmbedder::AddFunction(_l, "SetTileWalkable", &SetTileWalkable, "PathfinderHandler");
 			LuaEmbedder::AddFunction(_l, "SetData", &SetPathfinderData, "PathfinderHandler");
 			LuaEmbedder::AddFunction(_l, "GeneratePath", &GeneratePathfinderPath, "PathfinderHandler");
 		}
@@ -88,6 +89,23 @@ namespace LuaBridge
 			}
 			LuaEmbedder::PushInt(_l, ret_value);
 			return 1;
+		}
+
+		int		SetTileWalkable(lua_State* _l)
+		{
+			int ret_value = 1;
+			int x			= LuaEmbedder::PullInt(_l, 1);
+			int y			= LuaEmbedder::PullInt(_l, 2);
+			bool walkable	= LuaEmbedder::PullBool(_l, 3);
+			
+			//printf("sending data to pathfinder: (%i,%i), %s", x, y, walkable ? "True" : "False");
+
+			Pathfinder* pathfinder = Pathfinder::Instance();
+
+			pathfinder->ChangeWalkable(x, y, walkable);
+
+			LuaEmbedder::PushInt(_l, ret_value);
+			return ret_value;
 		}
 	}
 }

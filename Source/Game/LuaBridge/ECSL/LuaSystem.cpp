@@ -126,7 +126,7 @@ namespace LuaBridge
 		System::AddComponentTypeToFilter(componentType, filterType);
 		return 0;
 	}
-
+	SDL_mutex* mut = SDL_CreateMutex();
 	int LuaSystem::GetEntities(lua_State* L)
 	{
 		const std::vector<unsigned int>* entities = System::GetEntities();
@@ -147,11 +147,15 @@ namespace LuaBridge
 					++index;
 				}
 			}
+			SDL_LockMutex(mut);
 			LuaEmbedder::PushUnsignedIntArray(L, selectedEntities, index);
+			SDL_UnlockMutex(mut);
 		}
 		else
 		{
+			SDL_LockMutex(mut);
 			LuaEmbedder::PushUnsignedIntArray(L, entities->data(), entities->size(), false);
+			SDL_UnlockMutex(mut);
 		}
 
 		return 1;

@@ -44,16 +44,25 @@ worldCreator:AddSystemToCurrentGroup(PickingTimerSystem)
 
 
 
-
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(GiveCardIndexSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(SortCardIndexSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(SortSelectedCardsSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(SendSelectedCardsSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CardPositionSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CardPickedPositionSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CardAddModelSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CardHoverSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CardSelectSystem)
+worldCreator:AddSystemGroup()
 
 
 
