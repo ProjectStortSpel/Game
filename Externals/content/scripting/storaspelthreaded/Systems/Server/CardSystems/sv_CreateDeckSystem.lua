@@ -36,9 +36,8 @@ CreateDeckSystem.CreateDeck = function (self)
 	
 	local mySeed = os.time() - 1418742000 -- dont ask
 	
-	local test = 0
 	math.randomseed(mySeed)
-	for i = 1, 100 * #self:GetEntities("Unit") do
+	for i = 1, 16 * #self:GetEntities("Unit") do
 		
 		prio = prio + 1
 		local entity = world:CreateNewEntity("Card")
@@ -48,28 +47,26 @@ CreateDeckSystem.CreateDeck = function (self)
 		
 		cardpriocomp:SetInt(prio)
 		
-		local rand = math.random(1, 109)
-		
-		if rand < 30 then
+		local rand = (i-1) % 16--math.random(1, 16)
+
+		if rand < 4 then
 			cardactioncomp:SetString("Forward") -- 0-29
-		elseif rand < 50 then
+		elseif rand < 8 then
 			cardactioncomp:SetString("Backward") -- 30-49
-		elseif rand < 65 then
+		elseif rand < 10 then
 			cardactioncomp:SetString("TurnRight") -- 50-64
-		elseif rand < 80 then
+		elseif rand < 12 then
 			cardactioncomp:SetString("TurnLeft") -- 65-79
-		elseif rand < 90 then
+		elseif rand < 14 then
 			cardactioncomp:SetString("TurnAround") -- 80-89
-		elseif rand < 100 then
+		elseif rand < 15 then
 			cardactioncomp:SetString("Sprint")	-- 90-99
-		elseif rand < 110 then
+		elseif rand < 16 then
 			cardactioncomp:SetString("SlingShot")	-- 100-109 
 		else
 			cardactioncomp:SetString("Forward")
 			
 		end
-
-		test = test + 1
 
 	end
 
