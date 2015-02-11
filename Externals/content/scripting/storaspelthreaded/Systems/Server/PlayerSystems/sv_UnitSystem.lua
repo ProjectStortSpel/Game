@@ -76,7 +76,7 @@ UnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 			
 			if world:EntityHasComponent(entity, "NetConnection") then
 				
-				local ip = world:GetComponent(entity, "NetConnection", "IpAddress"):GetString()
+				local ip = world:GetComponent(entity, "NetConnection", "IpAddress"):GetText()
 				local port = world:GetComponent(entity, "NetConnection", "Port"):GetInt()
     
 				local id = Net.StartPack("Client.SendPlayerUnitId")

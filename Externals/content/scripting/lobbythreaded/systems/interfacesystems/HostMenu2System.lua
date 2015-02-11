@@ -46,17 +46,17 @@ HostMenu2System.CheckboxPressed = function(self, entity)
 	
 	if world:GetComponent(entity, "Checkbox", "Checked"):GetInt() == 1 then
 		local cb = self:CreateCheckbox("unchecked", "checkbox", posX, posY, posZ, hoverX,hoverY, false)
-		local sname = world:GetComponent(entity, "BoolSetting", "SettingsName"):GetString()
+		local sname = world:GetComponent(entity, "BoolSetting", "SettingsName"):GetText()
 		print(sname)
 		world:CreateComponentAndAddTo("BoolSetting", cb)
-		world:GetComponent(cb, "BoolSetting", "SettingsName"):SetString(sname)
+		world:GetComponent(cb, "BoolSetting", "SettingsName"):SetText(sname)
 		world:GetComponent(cb, "BoolSetting", "Value"):SetInt(0)
 	else
 		local cb = self:CreateCheckbox("checked", "checkbox", posX, posY, posZ, hoverX,hoverY, true)
-		local sname = world:GetComponent(entity, "BoolSetting", "SettingsName"):GetString()
+		local sname = world:GetComponent(entity, "BoolSetting", "SettingsName"):GetText()
 		print(sname)
 		world:CreateComponentAndAddTo("BoolSetting", cb)
-		world:GetComponent(cb, "BoolSetting", "SettingsName"):SetString(sname)
+		world:GetComponent(cb, "BoolSetting", "SettingsName"):SetText(sname)
 		world:GetComponent(cb, "BoolSetting", "Value"):SetInt(1)
 	end
 
@@ -65,13 +65,13 @@ HostMenu2System.CheckboxPressed = function(self, entity)
 end
 
 HostMenu2System.MenuConsoleCommandPressed = function(self, entity)
-	local cmd = world:GetComponent(entity, "MenuConsoleCommand", "Command"):GetString()
+	local cmd = world:GetComponent(entity, "MenuConsoleCommand", "Command"):GetText()
 	self:RemoveMenu()
 	Console.AddToCommandQueue(cmd)
 end
 
 HostMenu2System.MenuEntityCommandPressed = function(self, entity)
-	local cmp = world:GetComponent(entity, "MenuEntityCommand", "ComponentName"):GetString()
+	local cmp = world:GetComponent(entity, "MenuEntityCommand", "ComponentName"):GetText()
 	--self:RemoveMenu()
 	local id = world:CreateNewEntity()
 	world:CreateComponentAndAddTo(cmp, id)
@@ -103,28 +103,28 @@ HostMenu2System.ApplySettings = function(self, entity)
 	for i = 1, #entities do
 		
 		if world:EntityHasComponent(entities[i], "BoolSetting") then
-			local name = world:GetComponent(entities[i], "BoolSetting", "SettingsName"):GetString()
+			local name = world:GetComponent(entities[i], "BoolSetting", "SettingsName"):GetText()
 			local value = world:GetComponent(entities[i], "BoolSetting", "Value"):GetInt()
 			world:GetComponent(e, "HostSettings", name):SetInt(value)
 			
 		elseif world:EntityHasComponent(entities[i], "IntSetting") then
-			local name = world:GetComponent(entities[i], "IntSetting", "SettingsName"):GetString()
+			local name = world:GetComponent(entities[i], "IntSetting", "SettingsName"):GetText()
 			local value = world:GetComponent(entities[i], "IntSetting", "Value"):GetInt()
 			world:GetComponent(e, "HostSettings", name):SetInt(value)
 			
 		elseif world:EntityHasComponent(entities[i], "StringSetting") then
-			local name = world:GetComponent(entities[i], "StringSetting", "SettingsName"):GetString()
-			local value = world:GetComponent(entities[i], "StringSetting", "Value"):GetString()
-			world:GetComponent(e, "HostSettings", name):SetString(value)
+			local name = world:GetComponent(entities[i], "StringSetting", "SettingsName"):GetText()
+			local value = world:GetComponent(entities[i], "StringSetting", "Value"):GetText()
+			world:GetComponent(e, "HostSettings", name):SetText(value)
 			
 		end
 		
 	end
 
-	local name 		= world:GetComponent(e, "HostSettings", "Name"):GetString()
-	local password 	= world:GetComponent(e, "HostSettings", "Password"):GetString()
-	local map 		= world:GetComponent(e, "HostSettings", "Map"):GetString()
-	local gamemode 	= world:GetComponent(e, "HostSettings", "GameMode"):GetString()
+	local name 		= world:GetComponent(e, "HostSettings", "Name"):GetText()
+	local password 	= world:GetComponent(e, "HostSettings", "Password"):GetText()
+	local map 		= world:GetComponent(e, "HostSettings", "Map"):GetText()
+	local gamemode 	= world:GetComponent(e, "HostSettings", "GameMode"):GetText()
 	local port 		= world:GetComponent(e, "HostSettings", "Port"):GetInt()
 	--local maxusers 	= world:GetComponent(e, "HostSettings", "MaxUsers"):GetInt()
 	local fillai 	= world:GetComponent(e, "HostSettings", "FillAI"):GetInt()
@@ -182,47 +182,47 @@ HostMenu2System.SpawnMenu = function(self)
 	text = self:CreateText("left", "text", 0.16, 0.79, -1.99999, 2.5, 0.08)	
 	self:AddTextToTexture("B"..1, "DefaultServerName", 0, 1, 1, 1, text)
 	world:CreateComponentAndAddTo("StringSetting", text)
-	world:GetComponent(text, "StringSetting", "SettingsName"):SetString("Name")
-	world:GetComponent(text, "StringSetting", "Value"):SetString("DefaultServerName")
+	world:GetComponent(text, "StringSetting", "SettingsName"):SetText("Name")
+	world:GetComponent(text, "StringSetting", "Value"):SetText("DefaultServerName")
 	
 	-- Password TEXT
 	text = self:CreateText("left", "text", 0.16, 0.68, -1.99999, 2.5, 0.08)	
 	self:AddTextToTexture("B"..2, "EmptyPassword", 0, 1, 1, 1, text)
 	world:CreateComponentAndAddTo("StringSetting", text)
-	world:GetComponent(text, "StringSetting", "SettingsName"):SetString("Password")
-	world:GetComponent(text, "StringSetting", "Value"):SetString("default")
+	world:GetComponent(text, "StringSetting", "SettingsName"):SetText("Password")
+	world:GetComponent(text, "StringSetting", "Value"):SetText("default")
 	
 	-- GameMode TEXT
 	text = self:CreateText("left", "text", 0.16, 0.57, -1.99999, 2.5, 0.08)	
 	self:AddTextToTexture("B"..3, "storaspelthreaded", 0, 1, 1, 1, text)
 	world:CreateComponentAndAddTo("StringSetting", text)
-	world:GetComponent(text, "StringSetting", "SettingsName"):SetString("GameMode")
-	world:GetComponent(text, "StringSetting", "Value"):SetString("storaspelthreaded")
+	world:GetComponent(text, "StringSetting", "SettingsName"):SetText("GameMode")
+	world:GetComponent(text, "StringSetting", "Value"):SetText("storaspelthreaded")
 	
 	-- Port INT
 	text = self:CreateText("left", "text", 0.16, 0.46, -1.99999, 2.5, 0.08)	
 	self:AddTextToTexture("B"..4, "6112", 0, 1, 1, 1, text)
 	world:CreateComponentAndAddTo("IntSetting", text)
-	world:GetComponent(text, "IntSetting", "SettingsName"):SetString("Port")
+	world:GetComponent(text, "IntSetting", "SettingsName"):SetText("Port")
 	world:GetComponent(text, "IntSetting", "Value"):SetInt(6112)
 	
 	-- GameMode TEXT
 	text = self:CreateText("left", "text", 0.16, 0.35, -1.99999, 2.5, 0.08)	
 	self:AddTextToTexture("B"..5, "Smallmap", 0, 1, 1, 1, text)
 	world:CreateComponentAndAddTo("StringSetting", text)
-	world:GetComponent(text, "StringSetting", "SettingsName"):SetString("Map")
-	world:GetComponent(text, "StringSetting", "Value"):SetString("smallmap")
+	world:GetComponent(text, "StringSetting", "SettingsName"):SetText("Map")
+	world:GetComponent(text, "StringSetting", "Value"):SetText("smallmap")
 	
 	-- FillAI CHECKBOX
 	local cb = self:CreateCheckbox("unchecked", "checkbox", 0.2, 0.200, -1.99999, 0.07, 0.07, false)
 	world:CreateComponentAndAddTo("BoolSetting", cb)
-	world:GetComponent(cb, "BoolSetting", "SettingsName"):SetString("FillAI")
+	world:GetComponent(cb, "BoolSetting", "SettingsName"):SetText("FillAI")
 	world:GetComponent(cb, "BoolSetting", "Value"):SetInt(0)
 	
 	-- AllowSpectators CHECKBOX
 	local cb = self:CreateCheckbox("checked", "checkbox", 0.2, 0.08, -1.99999, 0.07, 0.07, true)
 	world:CreateComponentAndAddTo("BoolSetting", cb)
-	world:GetComponent(cb, "BoolSetting", "SettingsName"):SetString("AllowSpectators")
+	world:GetComponent(cb, "BoolSetting", "SettingsName"):SetText("AllowSpectators")
 	world:GetComponent(cb, "BoolSetting", "Value"):SetInt(1)
 	
 end
@@ -292,8 +292,8 @@ end
 
 HostMenu2System.AddTextToTexture = function(self, n, text, font, r, g, b, button)
 	world:CreateComponentAndAddTo("TextTexture", button)
-	world:GetComponent(button, "TextTexture", "Name"):SetString(n) -- TODO: NAME CANT BE MORE THAN 3 CHARS? WTF?
-	world:GetComponent(button, "TextTexture", "Text"):SetString(text)
+	world:GetComponent(button, "TextTexture", "Name"):SetText(n) -- TODO: NAME CANT BE MORE THAN 3 CHARS? WTF?
+	world:GetComponent(button, "TextTexture", "Text"):SetText(text)
 	world:GetComponent(button, "TextTexture", "FontIndex"):SetInt(font)
 	world:GetComponent(button, "TextTexture", "R"):SetFloat(r)
 	world:GetComponent(button, "TextTexture", "G"):SetFloat(g)
@@ -303,13 +303,13 @@ end
 HostMenu2System.AddConsoleCommandToButton = function(self, command, button)
 
 	world:CreateComponentAndAddTo("MenuConsoleCommand", button)
-	world:GetComponent(button, "MenuConsoleCommand", "Command"):SetString(command)
+	world:GetComponent(button, "MenuConsoleCommand", "Command"):SetText(command)
 	
 end
 
 HostMenu2System.AddEntityCommandToButton = function(self, command, button)
 	world:CreateComponentAndAddTo("MenuEntityCommand", button)
-	world:GetComponent(button, "MenuEntityCommand", "ComponentName"):SetString(command)
+	world:GetComponent(button, "MenuEntityCommand", "ComponentName"):SetText(command)
 	
 end
 

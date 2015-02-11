@@ -36,7 +36,7 @@ CardAddModelSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, enti
 		rotation:SetFloat3(0, 0, 0)
 		
 		local model = world:GetComponent(entityId, "Model", 0)
-		local action = world:GetComponent(entityId, "CardAction", 0):GetString()
+		local action = world:GetComponent(entityId, "CardAction", 0):GetText()
 		if action == "Forward" then
 			model:SetModel("forward", "cards", 2)
 		elseif action == "Backward" then
@@ -82,8 +82,8 @@ CardAddModelSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, enti
 		rotation:SetFloat3(0, 0, 0)
 
 		world:CreateComponentAndAddTo("TextTexture", id)
-		world:GetComponent(id, "TextTexture", "Name"):SetString("prio"..prio) -- TODO: NAME CANT BE MORE THAN 3 CHARS? WTF?
-		world:GetComponent(id, "TextTexture", "Text"):SetString(prio)
+		world:GetComponent(id, "TextTexture", "Name"):SetText("prio"..prio) -- TODO: NAME CANT BE MORE THAN 3 CHARS? WTF?
+		world:GetComponent(id, "TextTexture", "Text"):SetText(prio)
 		world:GetComponent(id, "TextTexture", "FontIndex"):SetInt(0)
 		world:GetComponent(id, "TextTexture", "R"):SetFloat(0)
 		world:GetComponent(id, "TextTexture", "G"):SetFloat(0)

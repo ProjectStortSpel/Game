@@ -20,12 +20,12 @@ OptionMenuSystem.Update = function(self, dt, taskIndex, taskCount)
 		if #pressedButtons > 0 then
 			local pressedButton = pressedButtons[1]
 			if world:EntityHasComponent(pressedButton, "MenuConsoleCommand") then
-				local command = world:GetComponent(pressedButton, "MenuConsoleCommand", "Command"):GetStrong()
+				local command = world:GetComponent(pressedButton, "MenuConsoleCommand", "Command"):GetString()
 				self:RemoveMenu()
 				Console.AddToCommandQueue(command)
 			end
 			if world:EntityHasComponent(pressedButton, "MenuEntityCommand") then
-				local compname = world:GetComponent(pressedButton, "MenuEntityCommand", "ComponentName"):GetString()
+				local compname = world:GetComponent(pressedButton, "MenuEntityCommand", "ComponentName"):GetText()
 				self:RemoveMenu()
 				local id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo(compname, id)
@@ -80,12 +80,12 @@ end
 
 OptionMenuSystem.AddConsoleCommandToButton = function(self, command, button)
 	world:CreateComponentAndAddTo("MenuConsoleCommand", button)
-	world:GetComponent(button, "MenuConsoleCommand", "Command"):SetStrong(command)
+	world:GetComponent(button, "MenuConsoleCommand", "Command"):SetString(command)
 end
 
 OptionMenuSystem.AddEntityCommandToButton = function(self, command, button)
 	world:CreateComponentAndAddTo("MenuEntityCommand", button)
-	world:GetComponent(button, "MenuEntityCommand", "ComponentName"):SetString(command)
+	world:GetComponent(button, "MenuEntityCommand", "ComponentName"):SetText(command)
 end
 
 OptionMenuSystem.AddHoverSize = function(self, deltascale, button)

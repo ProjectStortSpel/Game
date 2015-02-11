@@ -301,8 +301,8 @@ end
 
 NewCameraSystem.AddTextToTexture = function(self, n, text, font, r, g, b, button)
 	world:CreateComponentAndAddTo("TextTexture", button)
-	world:GetComponent(button, "TextTexture", "Name"):SetString(n)
-	world:GetComponent(button, "TextTexture", "Text"):SetString(text)
+	world:GetComponent(button, "TextTexture", "Name"):SetText(n)
+	world:GetComponent(button, "TextTexture", "Text"):SetText(text)
 	world:GetComponent(button, "TextTexture", "FontIndex"):SetInt(font)
 	world:GetComponent(button, "TextTexture", "R"):SetFloat(r)
 	world:GetComponent(button, "TextTexture", "G"):SetFloat(g)

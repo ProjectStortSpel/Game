@@ -25,7 +25,7 @@ MoveTotemPieceSystem.MovePieceUp = function(self, totemPieceId)
 	world:GetComponent(totemPieceId, "LerpPosition", "Y"):SetFloat(newHeight)
 	world:GetComponent(totemPieceId, "LerpPosition", "Z"):SetFloat(Z)
 	world:GetComponent(totemPieceId, "LerpPosition", "Time"):SetFloat(0.4)
-	world:GetComponent(totemPieceId, "LerpPosition", "Algorithm"):SetString("ExponentialLerp")
+	world:GetComponent(totemPieceId, "LerpPosition", "Algorithm"):SetText("ExponentialLerp")
 
 end
 
@@ -54,7 +54,7 @@ MoveTotemPieceSystem.MovePiecesUp = function(self, totemPoleId)
 	
 	if highestPieceId ~= -1 then
 		world:GetComponent(highestPieceId, "LerpPosition", "Time"):SetFloat(0.8)
-		world:GetComponent(highestPieceId, "LerpPosition", "Algorithm"):SetString("OvershotLerp")
+		world:GetComponent(highestPieceId, "LerpPosition", "Algorithm"):SetText("OvershotLerp")
 	end
 
 	

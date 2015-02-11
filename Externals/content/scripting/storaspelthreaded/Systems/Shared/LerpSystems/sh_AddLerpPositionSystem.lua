@@ -22,7 +22,7 @@ AddLerpPositionSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, e
 		local tY = world:GetComponent(entity, "LerpPosition", "Y"):GetFloat(0)
 		local tZ = world:GetComponent(entity, "LerpPosition", "Z"):GetFloat(0)
 		local lerpTime = world:GetComponent(entity, "LerpPosition", "Time"):GetFloat(0)
-		local lerpAlgorithm = world:GetComponent(entity, "LerpPosition", "Algorithm"):GetString(0)
+		local lerpAlgorithm = world:GetComponent(entity, "LerpPosition", "Algorithm"):GetText(0)
 
 		-- Get Current Position
 		local position = world:GetComponent(entity, "Position", 0)
@@ -38,7 +38,7 @@ AddLerpPositionSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, e
 		world:GetComponent(entity, "LerpingPosition", "tZ"):SetFloat(tZ)
 		world:GetComponent(entity, "LerpingPosition", "Time"):SetFloat(lerpTime)
 		world:GetComponent(entity, "LerpingPosition", "Timer"):SetFloat(0)
-		world:GetComponent(entity, "LerpingPosition", "Algorithm"):SetString(lerpAlgorithm)
+		world:GetComponent(entity, "LerpingPosition", "Algorithm"):SetText(lerpAlgorithm)
 		
 		world:RemoveComponentFrom("LerpPosition", entity)
 	end

@@ -37,7 +37,7 @@ CardPositionSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, newE
 		world:GetComponent(entity, "LerpPosition", "Y"):SetFloat(py)
 		world:GetComponent(entity, "LerpPosition", "Z"):SetFloat(pz)
 		world:GetComponent(entity, "LerpPosition", "Time"):SetFloat(0.1)
-		world:GetComponent(entity, "LerpPosition", "Algorithm"):SetString("SmootherLerp")
+		world:GetComponent(entity, "LerpPosition", "Algorithm"):SetText("SmootherLerp")
 	end
 end
 
@@ -60,6 +60,6 @@ CardPositionSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, ne
 		world:GetComponent(entity, "LerpPosition", "Y"):SetFloat(py)
 		world:GetComponent(entity, "LerpPosition", "Z"):SetFloat(pz)
 		world:GetComponent(entity, "LerpPosition", "Time"):SetFloat(0.1)
-		world:GetComponent(entity, "LerpPosition", "Algorithm"):SetString("SmootherLerp")
+		world:GetComponent(entity, "LerpPosition", "Algorithm"):SetText("SmootherLerp")
 	end
 end

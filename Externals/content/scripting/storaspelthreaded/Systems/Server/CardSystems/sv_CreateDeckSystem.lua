@@ -50,21 +50,21 @@ CreateDeckSystem.CreateDeck = function (self)
 		local rand = (i-1) % 16--math.random(1, 16)
 
 		if rand < 4 then
-			cardactioncomp:SetString("Forward") -- 0-29
+			cardactioncomp:SetText("Forward") -- 0-29
 		elseif rand < 8 then
-			cardactioncomp:SetString("Backward") -- 30-49
+			cardactioncomp:SetText("Backward") -- 30-49
 		elseif rand < 10 then
-			cardactioncomp:SetString("TurnRight") -- 50-64
+			cardactioncomp:SetText("TurnRight") -- 50-64
 		elseif rand < 12 then
-			cardactioncomp:SetString("TurnLeft") -- 65-79
+			cardactioncomp:SetText("TurnLeft") -- 65-79
 		elseif rand < 14 then
-			cardactioncomp:SetString("TurnAround") -- 80-89
+			cardactioncomp:SetText("TurnAround") -- 80-89
 		elseif rand < 15 then
-			cardactioncomp:SetString("Sprint")	-- 90-99
+			cardactioncomp:SetText("Sprint")	-- 90-99
 		elseif rand < 16 then
-			cardactioncomp:SetString("SlingShot")	-- 100-109 
+			cardactioncomp:SetText("SlingShot")	-- 100-109 
 		else
-			cardactioncomp:SetString("Forward")
+			cardactioncomp:SetText("Forward")
 			
 		end
 

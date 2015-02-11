@@ -40,7 +40,7 @@ ActionTurnRightSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, e
 		world:GetComponent(entity, "LerpRotation", "Y"):SetFloat(rot_y - math.pi/2)
 		world:GetComponent(entity, "LerpRotation", "Z"):SetFloat(rot_z)
 		world:GetComponent(entity, "LerpRotation", "Time"):SetFloat(1)
-		world:GetComponent(entity, "LerpRotation", "Algorithm"):SetString("SmoothLerp")
+		world:GetComponent(entity, "LerpRotation", "Algorithm"):SetText("SmoothLerp")
 		
 		world:SetComponent(entity, "NoSubSteps", "Counter", 1)
 		world:RemoveComponentFrom("UnitTurnRight", entity)

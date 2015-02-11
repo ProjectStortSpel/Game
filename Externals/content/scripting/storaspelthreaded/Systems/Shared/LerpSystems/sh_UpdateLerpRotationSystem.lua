@@ -28,7 +28,7 @@ UpdateLerpRotationSystem.Update = function(self, dt, taskIndex, taskCount)
 		local tZ = world:GetComponent(entity, "LerpingRotation", "tZ"):GetFloat(0)
 		local _time = world:GetComponent(entity, "LerpingRotation", "Time"):GetFloat(0)
 		local _timer = world:GetComponent(entity, "LerpingRotation", "Timer"):GetFloat(0)
-		local algorithm = world:GetComponent(entity, "LerpingRotation", "Algorithm"):GetString(0)
+		local algorithm = world:GetComponent(entity, "LerpingRotation", "Algorithm"):GetText(0)
 
 		_timer = _timer + dt
 		if _time > _timer then

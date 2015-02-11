@@ -30,7 +30,7 @@ TakeCardsFromPlayerSystem.EntitiesAdded = function(self, dt, taskIndex, taskCoun
 					
 					world:RemoveComponentFrom("DealtCard", cards[i])
 
-					local ip = world:GetComponent(player, "NetConnection", "IpAddress"):GetString()
+					local ip = world:GetComponent(player, "NetConnection", "IpAddress"):GetText()
 					local port = world:GetComponent(player, "NetConnection", "Port"):GetInt()
 
 					Net.SendEntityKill(cards[i], ip, port)

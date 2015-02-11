@@ -34,11 +34,11 @@ GameInterfaceSystem.Update = function(self, dt, taskIndex, taskCount)
 		if #pressedButtons > 0 then
 			local pressedButton = pressedButtons[1]
 			if world:EntityHasComponent(pressedButton, "MenuConsoleCommand") then
-				local command = world:GetComponent(pressedButton, "MenuConsoleCommand", "Command"):GetString()
+				local command = world:GetComponent(pressedButton, "MenuConsoleCommand", "Command"):GetText()
 				Console.AddToCommandQueue(command)
 			end
 			if world:EntityHasComponent(pressedButton, "MenuEntityCommand") then
-				local compname = world:GetComponent(pressedButton, "MenuEntityCommand", "ComponentName"):GetString()
+				local compname = world:GetComponent(pressedButton, "MenuEntityCommand", "ComponentName"):GetText()
 				local id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo(compname, id)
 			end
@@ -70,12 +70,12 @@ end
 
 GameInterfaceSystem.AddConsoleCommandToButton = function(self, command, button)
 	world:CreateComponentAndAddTo("MenuConsoleCommand", button)
-	world:GetComponent(button, "MenuConsoleCommand", "Command"):SetString(command)
+	world:GetComponent(button, "MenuConsoleCommand", "Command"):SetText(command)
 end
 
 GameInterfaceSystem.AddEntityCommandToButton = function(self, command, button)
 	world:CreateComponentAndAddTo("MenuEntityCommand", button)
-	world:GetComponent(button, "MenuEntityCommand", "ComponentName"):SetString(command)
+	world:GetComponent(button, "MenuEntityCommand", "ComponentName"):SetText(command)
 end
 
 GameInterfaceSystem.AddHoverSize = function(self, deltascale, button)

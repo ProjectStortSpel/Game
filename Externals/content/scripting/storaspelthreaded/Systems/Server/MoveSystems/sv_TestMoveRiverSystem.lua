@@ -44,7 +44,7 @@ TestMoveRiverSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, ent
 				world:GetComponent(unit, "LerpPosition", "Y"):SetFloat(0.5)
 				world:GetComponent(unit, "LerpPosition", "Z"):SetFloat(posZ)
 				world:GetComponent(unit, "LerpPosition", "Time"):SetFloat(0.5)
-				world:GetComponent(unit, "LerpPosition", "Algorithm"):SetString("SmoothLerp")
+				world:GetComponent(unit, "LerpPosition", "Algorithm"):SetText("SmoothLerp")
 			end
 
 			world:KillEntity(entity)

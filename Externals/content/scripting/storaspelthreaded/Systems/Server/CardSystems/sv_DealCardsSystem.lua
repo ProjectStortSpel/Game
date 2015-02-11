@@ -61,7 +61,7 @@ DealCardsSystem.DealCards = function (self, numCards)
 		Net.WriteInt(pickingStartedID, players[i])
 		Net.Broadcast(pickingStartedID)
 	
-		local ip = world:GetComponent(players[i], "NetConnection", "IpAddress"):GetString()
+		local ip = world:GetComponent(players[i], "NetConnection", "IpAddress"):GetText()
 		local port = world:GetComponent(players[i], "NetConnection", "Port"):GetInt()
 
 		
@@ -128,7 +128,7 @@ Net.Receive("Server.SelectCards",
 			if  world:EntityHasComponent(card, "DealtCard") then
 			
 				player = world:GetComponent(card, "DealtCard", "PlayerEntityId"):GetInt()
-				local playerIp = world:GetComponent(player, "NetConnection", "IpAddress"):GetString()
+				local playerIp = world:GetComponent(player, "NetConnection", "IpAddress"):GetText()
 				local playerPort = world:GetComponent(player, "NetConnection", "Port"):GetInt()
 
 				
@@ -150,13 +150,13 @@ Net.Receive("Server.SelectCards",
 
 		local unit = world:GetComponent(player, "UnitEntityId", "Id"):GetInt()
 
-		local playerIp = world:GetComponent(player, "NetConnection", "IpAddress"):GetString()
+		local playerIp = world:GetComponent(player, "NetConnection", "IpAddress"):GetText()
 		local playerPort = world:GetComponent(player, "NetConnection", "Port"):GetInt()
 		
 		world:CreateComponentAndAddTo("HasSelectedCards", player)
 		
 		for i = 1, 5 do
-			local action = world:GetComponent(selectedCards[i], "CardAction", "Action"):GetString()
+			local action = world:GetComponent(selectedCards[i], "CardAction", "Action"):GetText()
 			local prio = world:GetComponent(selectedCards[i], "CardPrio", "Prio"):GetInt()
 			print("Action: " .. action .. " - Prio: " .. prio)
 

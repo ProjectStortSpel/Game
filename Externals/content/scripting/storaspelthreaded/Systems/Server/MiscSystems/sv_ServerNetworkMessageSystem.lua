@@ -92,7 +92,7 @@ ServerNetworkMessageSystem.OnPlayerConnected = function(self, _ip, _port, _messa
 		
 		for i = 1, #entities do -- Go through all entities
 		
-			local ip = world:GetComponent(entities[i], "NetConnection", "IpAddress"):GetString()
+			local ip = world:GetComponent(entities[i], "NetConnection", "IpAddress"):GetText()
 			local port = world:GetComponent(entities[i], "NetConnection", "Port"):GetInt()	
 
 			if _ip == ip and _port == port then
@@ -159,7 +159,7 @@ ServerNetworkMessageSystem.OnPlayerDisconnected = function(self, _ip, _port, _me
 	
 	for i = 1, #entities do
 		
-		local ip = world:GetComponent(entities[i], "NetConnection", "IpAddress"):GetString()
+		local ip = world:GetComponent(entities[i], "NetConnection", "IpAddress"):GetText()
 		local port = world:GetComponent(entities[i], "NetConnection", "Port"):GetInt()
 		
 		if _ip == ip and _port == port then
@@ -198,7 +198,7 @@ ServerNetworkMessageSystem.OnPlayerTimedOut = function(self, _ip, _port, _messag
 	
 	for i = 1, #entities do
 		
-		local ip = world:GetComponent(entities[i], "NetConnection", "IpAddress"):GetString()
+		local ip = world:GetComponent(entities[i], "NetConnection", "IpAddress"):GetText()
 		local port = world:GetComponent(entities[i], "NetConnection", "Port"):GetInt()
 		
 		if _ip == ip and _port == port then

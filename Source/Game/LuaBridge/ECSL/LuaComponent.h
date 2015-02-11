@@ -51,11 +51,11 @@ namespace LuaBridge
 		int GetBool(lua_State* L);
 		int SetBool(lua_State* L);
 
+		int GetText(lua_State* L);
+		int SetText(lua_State* L);
+
 		int GetString(lua_State* L);
 		int SetString(lua_State* L);
-
-		int GetStrong(lua_State* L);
-		int SetStrong(lua_State* L);
 
 
 		int SetModel(lua_State* L);
