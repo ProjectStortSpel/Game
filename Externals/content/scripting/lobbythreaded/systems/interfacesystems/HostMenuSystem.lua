@@ -50,14 +50,12 @@ HostMenuSystem.CheckboxPressed = function(self, entity)
 	if world:GetComponent(entity, "Checkbox", "Checked"):GetBool() then
 		local cb = self:CreateCheckbox("unchecked", "checkbox", posX, posY, posZ, hoverX,hoverY, false)
 		local sname = world:GetComponent(entity, "BoolSetting", "SettingsName"):GetString()
-		print(sname)
 		world:CreateComponentAndAddTo("BoolSetting", cb)
 		world:GetComponent(cb, "BoolSetting", "SettingsName"):SetString(sname)
 		world:GetComponent(cb, "BoolSetting", "Value"):SetInt(0)
 	else
 		local cb = self:CreateCheckbox("checked", "checkbox", posX, posY, posZ, hoverX,hoverY, true)
 		local sname = world:GetComponent(entity, "BoolSetting", "SettingsName"):GetString()
-		print(sname)
 		world:CreateComponentAndAddTo("BoolSetting", cb)
 		world:GetComponent(cb, "BoolSetting", "SettingsName"):SetString(sname)
 		world:GetComponent(cb, "BoolSetting", "Value"):SetInt(1)
@@ -125,14 +123,15 @@ HostMenuSystem.ApplySettings = function(self, entity)
 		
 	end
 
-	local name 		= world:GetComponent(e, "HostSettings", "Name"):GetString()
-	local password 	= world:GetComponent(e, "HostSettings", "Password"):GetString()
-	local map 		= world:GetComponent(e, "HostSettings", "Map"):GetString()
-	local gamemode 	= world:GetComponent(e, "HostSettings", "GameMode"):GetString()
-	local port 		= world:GetComponent(e, "HostSettings", "Port"):GetInt()
+	local name 			= world:GetComponent(e, "HostSettings", "Name"):GetString()
+	local password 		= world:GetComponent(e, "HostSettings", "Password"):GetString()
+	local map 			= world:GetComponent(e, "HostSettings", "Map"):GetString()
+	local gamemode 		= world:GetComponent(e, "HostSettings", "GameMode"):GetString()
+	local port 			= world:GetComponent(e, "HostSettings", "Port"):GetInt()
 	--local maxusers 	= world:GetComponent(e, "HostSettings", "MaxUsers"):GetInt()
-	local fillai 	= world:GetComponent(e, "HostSettings", "FillAI"):GetInt()
-	local allowSpec	= world:GetComponent(e, "HostSettings", "AllowSpectators"):GetInt()
+	local fillai 		= world:GetComponent(e, "HostSettings", "FillAI"):GetInt()
+	local allowSpec		= world:GetComponent(e, "HostSettings", "AllowSpectators"):GetInt()
+	local serverType	= world:GetComponent(e, "HostSettings", "ServerType"):GetInt()
 	
 	print("name: " .. name)
 	print("password: " .. password)
@@ -141,9 +140,10 @@ HostMenuSystem.ApplySettings = function(self, entity)
 	print("port: " .. port)
 	print("fillai: " .. tostring(fillai))
 	print("allowSpec: " .. tostring(allowSpec))
+	print("serverType: " .. tostring(serverType))
 	
 	self:RemoveMenu()
-	local cmd = string.format("hostsettings %s %s %s %s %d %d %d", name, password, map, gamemode, port, fillai, allowSpec)
+	local cmd = string.format("hostsettings %s %s %s %s %d %d %d %d", name, password, map, gamemode, port, fillai, allowSpec, serverType)
 	Console.AddToCommandQueue(cmd)
 	
 end
@@ -157,10 +157,7 @@ HostMenuSystem.SpawnMenu = function(self)
 	
 	-- BUTTONS
 	
-	local button = self:CreateButton("hostdedicated", "quad", -0.5, -0.84, -2, 0.50, 0.24)
-	self:AddConsoleCommandToButton("hostlisten;gamemode", button)
-	
-	button = self:CreateButton("hostlisten", "quad", 0.5, -0.84, -2, 0.50, 0.24)
+	button = self:CreateButton("host", "quad", 0.0, -0.84, -2, 0.50, 0.24)
 	self:AddEntityCommandToButton("ApplyHostSettings", button)
 	
 	
@@ -186,6 +183,9 @@ HostMenuSystem.SpawnMenu = function(self)
 	
 	text = self:CreateText("left", "text", -0.87, 0.13, -1.99999, 2.5, 0.08)	
 	self:AddTextToTexture("A"..7, "Allow Spectators: ", 0, 0, 0, 0, text)
+	
+	text = self:CreateText("left", "text", -0.87, 0.02, -1.99999, 2.5, 0.08)	
+	self:AddTextToTexture("A"..8, "Dedicated Server: ", 0, 0, 0, 0, text)
 	
 	
 	-- USER SETTINGS
@@ -226,7 +226,7 @@ HostMenuSystem.SpawnMenu = function(self)
 	world:GetComponent(text, "StringSetting", "Value"):SetString("map")
 	
 	-- FillAI CHECKBOX
-	local cb = self:CreateCheckbox("unchecked", "checkbox", 0.2, 0.200, -1.99999, 0.07, 0.07, false)
+	local cb = self:CreateCheckbox("unchecked", "checkbox", 0.2, 0.2, -1.99999, 0.07, 0.07, false)
 	world:CreateComponentAndAddTo("BoolSetting", cb)
 	world:GetComponent(cb, "BoolSetting", "SettingsName"):SetString("FillAI")
 	world:GetComponent(cb, "BoolSetting", "Value"):SetInt(0)
@@ -236,6 +236,12 @@ HostMenuSystem.SpawnMenu = function(self)
 	world:CreateComponentAndAddTo("BoolSetting", cb)
 	world:GetComponent(cb, "BoolSetting", "SettingsName"):SetString("AllowSpectators")
 	world:GetComponent(cb, "BoolSetting", "Value"):SetInt(1)
+	
+	-- ServerType CHECKBOX
+	local cb = self:CreateCheckbox("unchecked", "checkbox", 0.2, -0.04, -1.99999, 0.07, 0.07, false)
+	world:CreateComponentAndAddTo("BoolSetting", cb)
+	world:GetComponent(cb, "BoolSetting", "SettingsName"):SetString("ServerType")
+	world:GetComponent(cb, "BoolSetting", "Value"):SetInt(0)
 	
 end
 

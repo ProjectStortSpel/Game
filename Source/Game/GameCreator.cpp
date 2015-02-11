@@ -930,6 +930,7 @@ void GameCreator::ConsoleHostSettings(std::string _command, std::vector<Console:
 	unsigned int port		= (unsigned int)_args->at(4).Number;
 	int fillai				= _args->at(5).Number;
 	int allowspec			= _args->at(6).Number;
+	int serverType			= _args->at(7).Number;
 
 	if (NetworkInstance::GetClient()->IsConnected())
 		NetworkInstance::GetClient()->Disconnect();
@@ -938,7 +939,9 @@ void GameCreator::ConsoleHostSettings(std::string _command, std::vector<Console:
 
 	unsigned int maxConnections = NetworkInstance::GetServer()->GetMaxConnections();
 	bool hosting = NetworkInstance::GetServer()->Start(port, password.c_str(), maxConnections);
-	bool connected = NetworkInstance::GetClient()->Connect("127.0.0.1", password.c_str(), port, 0);
+
+	if(serverType == 0) // ListenServer
+		bool connected = NetworkInstance::GetClient()->Connect("127.0.0.1", password.c_str(), port, 0);
 
 	std::vector<Console::Argument> args;
 	args.push_back(Console::Argument(gamemode.c_str()));

@@ -10,6 +10,7 @@ HostSettingsComponent:AddVariable("Port", ByteSize.Int)
 --HostSettingsComponent:AddVariable("MaxUsers", ByteSize.Int)
 HostSettingsComponent:AddVariable("FillAI", ByteSize.Int)
 HostSettingsComponent:AddVariable("AllowSpectators", ByteSize.Int)
+HostSettingsComponent:AddVariable("ServerType", ByteSize.Int)
 worldCreator:AddComponentType(HostSettingsComponent)
 
 -- BoolSetting Component
