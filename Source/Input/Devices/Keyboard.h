@@ -12,8 +12,8 @@ namespace Input
 		Keyboard();
 		~Keyboard();
 
-		void StartTextInput() { SDL_StartTextInput(); }
-		void StopTextInput() { SDL_StopTextInput(); }
+		void StartTextInput();
+		void StopTextInput();
 		SDL_bool IsTextInputActive() { return SDL_IsTextInputActive(); }
 
 		char* GetTextInput() { return (char*)m_textInput->c_str(); }
@@ -28,6 +28,10 @@ namespace Input
 		static const int m_numberOfKeys = SDL_NUM_SCANCODES;
 		bool m_thisState[m_numberOfKeys];
 		bool m_lastState[m_numberOfKeys];
+		SDL_mutex*	m_textInputMutex;
+
+		int	m_startUsingTextInput;
+		int	m_stopUsingTextInput;
 
 		std::string* m_textInput;
 	};
