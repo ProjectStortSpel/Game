@@ -40,7 +40,7 @@ StartNewRoundSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, ent
 				onlyOnce = false
 				--break	-- To make sure this is run only once.
 				
-			elseif not world:EntityHasComponent(entity, "IsAI") then
+			elseif not world:GetComponent(entity, "NotifyStartNewRound", "IsAI"):GetBool(0) then
 				print("StartNewRound says hi!")
 				local newId = world:CreateNewEntity()
 				world:CreateComponentAndAddTo("AddToPickingPhaseTimer", newId)
