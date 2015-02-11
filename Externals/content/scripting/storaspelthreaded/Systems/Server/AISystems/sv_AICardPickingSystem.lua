@@ -201,25 +201,7 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, _dirX, _dirY, _posX
 			local bestCardId, bestDist, bestNextDist
 			local dist, nextDist, prevDist
 						
-			--bestCardId = 1
-			--table.insert(cardsToSim, CardSetAI[1])
-			--
-			---- Simulate playing the first card.
-			--simFellDown, simPosX, simPosY, simDirX, simDirY = self:SimulateCardsFromPos(_unitID, posX, posY, dirX, dirY, cardsToSim)
-			--
-			--dist = PathfinderHandler.GeneratePath(simPosX, simPosY, targetX, targetY)
-			--			
-			--bestDist = dist
-			--
-			---- Get the distance from a cell as if we have walked forward.
-			--nextDist = PathfinderHandler.GeneratePath(simPosX + simDirX, simPosY + simDirY, targetX, targetY)
-			--
-			---- Get the distance from a cell as if we have walked backward and compare it to the previous.
-			--nextDist = math.min(nextDist, PathfinderHandler.GeneratePath(simPosX - simDirX, simPosY - simDirY, targetX, targetY))
-			--
-			--bestNextDist = nextDist
-			--
-			--table.remove(cardsToSim, 1)
+			bestCardId = 0
 			
 			bestNextDist, bestDist = 1000000, 1000000
 			
