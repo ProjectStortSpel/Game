@@ -182,6 +182,8 @@ namespace Renderer
 		std::vector<ModelTexture> m_modelTextures;
 		void BufferModelTextures();
 		virtual bool BufferModelTexture(int _id, std::string _fileDir, int _textureType);
+		
+		void SortModelsBasedOnDepth(std::vector<Model>* models);
 	};
 }
 

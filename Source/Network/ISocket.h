@@ -22,7 +22,7 @@ namespace Network
 		virtual bool SetNoDelay(bool _value) = 0;
 		virtual bool SetTimeoutDelay(int _value) = 0;
 		virtual bool CloseSocket(void) = 0;
-		virtual bool ShutdownSocket(void) = 0;
+		virtual bool ShutdownSocket(int _how = 1) = 0;
 		virtual ISocket* Accept(void) = 0;
 		virtual int Send(char* _buffer, int _length, int _flags = 0) = 0;
 		virtual int Receive(char* _buffer, int _length, int _flags = 0) = 0;

@@ -374,6 +374,10 @@ MapSystem.AddTile = function(self, posX, posZ, tiletype)
 		
 		local newSpawnId = world:CreateNewEntity()
 		world:CreateComponentAndAddTo("AvailableSpawnpoint", newSpawnId)
+		print("MapSystem.AddTile")
+		print("MapSystem.AddTile")
+		print("MapSystem.AddTile")
+		print("MapSystem.AddTile")
 		local newSpawn = world:GetComponent(newSpawnId, "AvailableSpawnpoint", 0)
 		newSpawn:SetInt2(posX, posZ)
 		

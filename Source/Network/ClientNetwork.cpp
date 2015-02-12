@@ -622,6 +622,7 @@ void ClientNetwork::SetTimeOutValue(int _value)
 
 void ClientNetwork::ResetNetworkEvents()
 {
+	Update(0);
 	m_onConnectedToServer->clear();
 	m_onDisconnectedFromServer->clear();
 	m_onTimedOutFromServer->clear();

@@ -10,9 +10,6 @@ namespace LuaEmbedder
 {
   template<class T> class LuaNumberArray
   {
-  private:
-    static std::map<const T*, int> m_objectSizeMap;
-    
   public:
     static void Embed(lua_State* L, const char* name)
     {
@@ -35,7 +32,8 @@ namespace LuaEmbedder
       lua_settable(L, metatable);
       
       lua_pushstring(L, "__gc");
-      lua_pushcfunction(L, &Remove);
+      lua_pushstring(L, name);
+      lua_pushcclosure(L, &Remove, 1);
       lua_settable(L, metatable);
       
       lua_pushstring(L, "__len");
@@ -61,7 +59,26 @@ namespace LuaEmbedder
       luaL_getmetatable(L, name);
       assert(!lua_isnil(L, -1));
       int metatable = lua_gettop(L);
+      
+      // Set size
+      lua_pushstring(L, "size");
+      lua_gettable(L, metatable);
+      if (lua_isnil(L, -1))
+      {
+	      lua_newtable(L);
+	      lua_pushvalue(L, -1);
+	      lua_setmetatable(L, -2);
+	      lua_pushstring(L, "size");
+	      lua_pushvalue(L, -2);
+	      lua_settable(L, metatable);
+      }
+      lua_pushlightuserdata(L, (T*)array);
+      lua_pushinteger(L, (int)size);
+      lua_settable(L, -3);
+      lua_pop(L, 1);
+      
       Subtable(L, metatable, "userdata", "v");
+      int subtable = lua_gettop(L);
       lua_pushlightuserdata(L, (T*)array);
       lua_gettable(L, -2);
       T** pArray = nullptr;
@@ -89,9 +106,9 @@ namespace LuaEmbedder
 	  lua_pop(L, 1);
 	}
       }
+      
       lua_replace(L, metatable);
       lua_settop(L, metatable);
-      m_objectSizeMap[array] = (int)size;
     }
     
   private:
@@ -135,7 +152,21 @@ namespace LuaEmbedder
     static int Remove(lua_State* L)
     {
       T** pArray = (T**)lua_touserdata(L, 1);
-      m_objectSizeMap.erase((const T*)*pArray);
+      
+      // Remove size
+      const char* name = lua_tostring(L, lua_upvalueindex(1));
+      luaL_getmetatable(L, name);
+      int metatable = lua_gettop(L);
+      lua_pushstring(L, "size");
+      lua_gettable(L, -2);
+      if (!lua_isnil(L, -1))
+      {
+	lua_pushlightuserdata(L, (T*)*pArray);
+	lua_pushnil(L);
+	lua_settable(L, -3);
+      }
+      lua_pop(L, 2);
+      
       if (luaL_getmetafield(L, 1, "no_gc"))
       {
 	lua_pushvalue(L, 1);
@@ -144,6 +175,7 @@ namespace LuaEmbedder
 	{
 	  *pArray = nullptr;
 	  pArray = nullptr;
+	  
 	  return 0;
 	}
       }
@@ -153,18 +185,29 @@ namespace LuaEmbedder
 	*pArray = nullptr;
 	pArray = nullptr;
       }
+      
       return 0;
     }
     
     static int Length(lua_State* L)
     {
-      const char* name = lua_tostring(L, lua_upvalueindex(1));
-      T** pArray = (T**)luaL_checkudata(L, 1, name);
-      if (pArray && *pArray && m_objectSizeMap.find(*pArray) != m_objectSizeMap.end())
-	lua_pushinteger(L, m_objectSizeMap[*pArray]);
-      else
-	lua_pushinteger(L, 0);
-      return 1;
+	int startTop = lua_gettop(L);
+	const char* name = lua_tostring(L, lua_upvalueindex(1));
+	T** pArray = (T**)luaL_checkudata(L, 1, name);
+	luaL_getmetatable(L, name);
+	int metatable = lua_gettop(L);
+	lua_pushstring(L, "size");
+	lua_gettable(L, metatable);
+	int length = 0;
+	if (!lua_isnil(L, -1))
+	{
+		lua_pushlightuserdata(L, (T*)*pArray);
+		lua_gettable(L, -2);
+		length = lua_tointeger(L, -1);
+	}
+	lua_settop(L, startTop);
+	lua_pushinteger(L, length);
+	return 1;
     }
     
     static void Subtable(lua_State* L, int table, const char* name, const char* mode)
@@ -192,8 +235,6 @@ namespace LuaEmbedder
       lua_settable(L, -3);
     }
   };
-  
-  template <class T> std::map<const T*, int> LuaNumberArray<T>::m_objectSizeMap = std::map<const T*, int>();
 }
 
 #endif

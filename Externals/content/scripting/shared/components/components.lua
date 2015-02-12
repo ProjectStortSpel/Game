@@ -16,3 +16,10 @@ local IsParentComponent = ComponentType()
 IsParentComponent.Name = "IsParent"
 IsParentComponent.TableType = TableType.Map
 worldCreator:AddComponentType(IsParentComponent)
+
+-- BoundToEntity Component
+local BoundToEntityComponent = ComponentType()
+BoundToEntityComponent.Name = "BoundToEntity"
+BoundToEntityComponent.TableType = TableType.Map
+BoundToEntityComponent:AddVariable("EntityId", ByteSize.Reference)
+worldCreator:AddComponentType(BoundToEntityComponent)

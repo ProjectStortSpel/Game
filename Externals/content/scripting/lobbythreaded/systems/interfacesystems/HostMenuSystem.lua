@@ -1,5 +1,8 @@
 HostMenuSystem = System()
 HostMenuSystem.Name = "HostMenu"
+HostMenuSystem.IsActive = false
+HostMenuSystem.TextInput = ""
+HostMenuSystem.ActiveTextId = -1
 
 HostMenuSystem.Initialize = function(self)
 	self:SetName(self.Name.."System")
@@ -13,6 +16,8 @@ HostMenuSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("StringSetting", FilterType.RequiresOneOf)
 	
 	self:AddComponentTypeToFilter("ApplyHostSettings", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("ActiveTextInput", FilterType.RequiresOneOf)
+	self.ActiveTextId = -1
 end
 
 HostMenuSystem.Update = function(self, dt, taskIndex, taskCount)
@@ -38,6 +43,28 @@ HostMenuSystem.Update = function(self, dt, taskIndex, taskCount)
 			self:RemoveMenu()
 		end
 
+	end
+
+	self:UpdateText()
+	
+	
+end
+
+HostMenuSystem.UpdateText = function(self)
+
+	if not self.IsActive or self.ActiveTextId == -1 then
+		return
+	end
+	--	
+	if Input.GetTextInput() ~= self.TextInput then
+		
+		local textSelf = world:GetComponent(self.ActiveTextId, "TextTexture", "Text"):GetText()
+		local textInput = Input.GetTextInput()
+		
+		
+		
+		self.TextInput = Input.GetTextInput()
+		
 	end
 
 end
@@ -77,6 +104,13 @@ HostMenuSystem.MenuEntityCommandPressed = function(self, entity)
 	print(cmp)
 	local id = world:CreateNewEntity()
 	world:CreateComponentAndAddTo(cmp, id)
+	if world:EntityHasComponent(entity, "BoundToEntity") then
+		
+		local boundTo = world:GetComponent(entity, "BoundToEntity", "EntityId"):GetInt()
+		print("BoundTo: " .. boundTo)
+		world:CreateComponentAndAddTo("BoundToEntity", id)
+		world:SetComponent(id, "BoundToEntity", "EntityId", boundTo)
+	end
 end
 
 HostMenuSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
@@ -91,9 +125,32 @@ HostMenuSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities
 			self:ApplySettings(entityId)
 		end
 		
+		if world:EntityHasComponent(entityId, "ActiveTextInput") then
+			--self:Activate()
+			--print("Self.IsActive: " .. tostring(self.IsActive))
+			
+			--self.ActiveTextId = world:GetComponent(entityId, "BoundToEntity", "EntityId"):GetInt()
+			
+		end
 		
 	end
 
+end
+
+HostMenuSystem.Activate = function(self)
+	Input.StartTextInput()
+	Input.SetTextInput("")
+	
+	self.IsActive = true
+	self.TextInput = ""
+end
+
+HostMenuSystem.Deactivate = function(self)
+	Input.SetTextInput("")
+	Input.StopTextInput()
+
+	self.IsActive = false
+	self.TextInput = ""
 end
 
 HostMenuSystem.ApplySettings = function(self, entity)
@@ -163,82 +220,91 @@ HostMenuSystem.SpawnMenu = function(self)
 	
 	-- SETTINGS TEXT
 	
-	local text = self:CreateText("left", "text", -0.87, 0.79, -1.99999, 2.5, 0.08)	
+	local text = self:CreateText("left", "text", -0.87, 0.790, -1.99999, 2.5, 0.065)	
 	self:AddTextToTexture("A"..1, "Server Name:", 0, 0, 0, 0, text)
-	
-	text = self:CreateText("left", "text", -0.87, 0.68, -1.99999, 2.5, 0.08)	
+	self:AddEntityCommandToButton("ActiveTextInput", text)
+		
+	text = self:CreateText("left", "text", -0.87, 0.685, -1.99999, 2.5, 0.065)	
 	self:AddTextToTexture("A"..2, "Server Password:", 0, 0, 0, 0, text)
+	--self:AddEntityCommandToButton("ActiveTextInput", text)
 	
-	text = self:CreateText("left", "text", -0.87, 0.57, -1.99999, 2.5, 0.08)	
+	text = self:CreateText("left", "text", -0.87, 0.580, -1.99999, 2.5, 0.065)	
 	self:AddTextToTexture("A"..3, "Server Game Mode:", 0, 0, 0, 0, text)
+
 	
-	text = self:CreateText("left", "text", -0.87, 0.46, -1.99999, 2.5, 0.08)	
+	text = self:CreateText("left", "text", -0.87, 0.475, -1.99999, 2.5, 0.065)	
 	self:AddTextToTexture("A"..4, "Server Port:", 0, 0, 0, 0, text)
 	
-	text = self:CreateText("left", "text", -0.87, 0.35, -1.99999, 2.5, 0.08)	
+	text = self:CreateText("left", "text", -0.87, 0.370, -1.99999, 2.5, 0.065)	
 	self:AddTextToTexture("A"..5, "Server Map:", 0, 0, 0, 0, text)
 	
-	text = self:CreateText("left", "text", -0.87, 0.24, -1.99999, 2.5, 0.08)	
+	text = self:CreateText("left", "text", -0.87, 0.265, -1.99999, 2.5, 0.065)	
 	self:AddTextToTexture("A"..6, "Fill empty slots with AIs:", 0, 0, 0, 0, text)
 	
-	text = self:CreateText("left", "text", -0.87, 0.13, -1.99999, 2.5, 0.08)	
+	text = self:CreateText("left", "text", -0.87, 0.160, -1.99999, 2.5, 0.065)	
 	self:AddTextToTexture("A"..7, "Allow Spectators: ", 0, 0, 0, 0, text)
 	
-	text = self:CreateText("left", "text", -0.87, 0.02, -1.99999, 2.5, 0.08)	
+	text = self:CreateText("left", "text", -0.87, 0.055, -1.99999, 2.5, 0.065)	
 	self:AddTextToTexture("A"..8, "Dedicated Server: ", 0, 0, 0, 0, text)
 	
 	
 	-- USER SETTINGS
 	
 	-- Name TEXT
-	text = self:CreateText("left", "text", 0.16, 0.79, -1.99999, 2.5, 0.08)	
-	self:AddTextToTexture("B"..1, "DefaultServerName", 0, 1, 1, 1, text)
+	text = self:CreateText("left", "text", 0.16, 0.790, -1.99999, 5.5, 0.065)	
+	self:AddTextToTexture("B"..1, "DefaultName", 0, 0, 0, 0, text)
 	world:CreateComponentAndAddTo("StringSetting", text)
 	world:GetComponent(text, "StringSetting", "SettingsName"):SetText("Name")
-	world:GetComponent(text, "StringSetting", "Value"):SetText("DefaultServerName")
+	world:GetComponent(text, "StringSetting", "Value"):SetText("DefaultName")
+	local backdrop = self:CreateElement("whiteshade", "quad", 0.52, 0.760, -2, 0.73, 0.09)
+	self:AddEntityCommandToButton("ActiveTextInput", backdrop, text)
 	
 	-- Password TEXT
-	text = self:CreateText("left", "text", 0.16, 0.68, -1.99999, 2.5, 0.08)	
-	self:AddTextToTexture("B"..2, "EmptyPassword", 0, 1, 1, 1, text)
+	text = self:CreateText("left", "text", 0.16, 0.685, -1.99999, 2.5, 0.065)	
+	self:AddTextToTexture("B"..2, "EmptyPassword", 0, 0, 0, 0, text)
 	world:CreateComponentAndAddTo("StringSetting", text)
 	world:GetComponent(text, "StringSetting", "SettingsName"):SetText("Password")
 	world:GetComponent(text, "StringSetting", "Value"):SetText("default")
+	backdrop = self:CreateElement("whiteshade", "quad", 0.52, 0.655, -2, 0.73, 0.09)
 	
 	-- GameMode TEXT
-	text = self:CreateText("left", "text", 0.16, 0.57, -1.99999, 2.5, 0.08)	
-	self:AddTextToTexture("B"..3, "storaspelthreaded", 0, 1, 1, 1, text)
+	text = self:CreateText("left", "text", 0.16, 0.580, -1.99999, 2.5, 0.065)	
+	self:AddTextToTexture("B"..3, "storaspelthreaded", 0, 0, 0, 0, text)
 	world:CreateComponentAndAddTo("StringSetting", text)
 	world:GetComponent(text, "StringSetting", "SettingsName"):SetText("GameMode")
 	world:GetComponent(text, "StringSetting", "Value"):SetText("storaspelthreaded")
+	backdrop = self:CreateElement("whiteshade", "quad", 0.52, 0.550, -2, 0.73, 0.09)
 	
 	-- Port INT
-	text = self:CreateText("left", "text", 0.16, 0.46, -1.99999, 2.5, 0.08)	
-	self:AddTextToTexture("B"..4, "6112", 0, 1, 1, 1, text)
+	text = self:CreateText("left", "text", 0.16, 0.475, -1.99999, 2.5, 0.065)	
+	self:AddTextToTexture("B"..4, "6112", 0, 0, 0, 0, text)
 	world:CreateComponentAndAddTo("IntSetting", text)
 	world:GetComponent(text, "IntSetting", "SettingsName"):SetText("Port")
 	world:GetComponent(text, "IntSetting", "Value"):SetInt(6112)
+	backdrop = self:CreateElement("whiteshade", "quad", 0.52, 0.445, -2, 0.73, 0.09)
 	
 	-- GameMode TEXT
-	text = self:CreateText("left", "text", 0.16, 0.35, -1.99999, 2.5, 0.08)	
-	self:AddTextToTexture("B"..5, "map", 0, 1, 1, 1, text)
+	text = self:CreateText("left", "text", 0.16, 0.370, -1.99999, 2.5, 0.065)	
+	self:AddTextToTexture("B"..5, "map", 0, 0, 0, 0, text)
 	world:CreateComponentAndAddTo("StringSetting", text)
 	world:GetComponent(text, "StringSetting", "SettingsName"):SetText("Map")
 	world:GetComponent(text, "StringSetting", "Value"):SetText("map")
+	backdrop = self:CreateElement("whiteshade", "quad", 0.52, 0.340, -2, 0.73, 0.09)
 	
 	-- FillAI CHECKBOX
-	local cb = self:CreateCheckbox("unchecked", "checkbox", 0.2, 0.2, -1.99999, 0.07, 0.07, false)
+	local cb = self:CreateCheckbox("unchecked", "checkbox", 0.2, 0.225, -1.99999, 0.07, 0.07, false)
 	world:CreateComponentAndAddTo("BoolSetting", cb)
 	world:GetComponent(cb, "BoolSetting", "SettingsName"):SetText("FillAI")
 	world:GetComponent(cb, "BoolSetting", "Value"):SetInt(0)
 	
 	-- AllowSpectators CHECKBOX
-	local cb = self:CreateCheckbox("checked", "checkbox", 0.2, 0.08, -1.99999, 0.07, 0.07, true)
+	local cb = self:CreateCheckbox("checked", "checkbox", 0.2, 0.120, -1.99999, 0.07, 0.07, true)
 	world:CreateComponentAndAddTo("BoolSetting", cb)
 	world:GetComponent(cb, "BoolSetting", "SettingsName"):SetText("AllowSpectators")
 	world:GetComponent(cb, "BoolSetting", "Value"):SetInt(1)
 	
 	-- ServerType CHECKBOX
-	local cb = self:CreateCheckbox("unchecked", "checkbox", 0.2, -0.04, -1.99999, 0.07, 0.07, false)
+	local cb = self:CreateCheckbox("unchecked", "checkbox", 0.2, 0.015, -1.99999, 0.07, 0.07, false)
 	world:CreateComponentAndAddTo("BoolSetting", cb)
 	world:GetComponent(cb, "BoolSetting", "SettingsName"):SetText("ServerType")
 	world:GetComponent(cb, "BoolSetting", "Value"):SetInt(0)
@@ -253,7 +319,6 @@ HostMenuSystem.RemoveMenu = function(self)
 	end
 	
 end
-
 
 HostMenuSystem.CreateButton = function(self, object, folder, posX, posY, posZ, scaleX, scaleY)
 
@@ -325,9 +390,16 @@ HostMenuSystem.AddConsoleCommandToButton = function(self, command, button)
 	
 end
 
-HostMenuSystem.AddEntityCommandToButton = function(self, command, button)
+HostMenuSystem.AddEntityCommandToButton = function(self, command, button, bindedTo)
 	world:CreateComponentAndAddTo("MenuEntityCommand", button)
 	world:GetComponent(button, "MenuEntityCommand", "ComponentName"):SetText(command)
+	
+	if bindedTo ~= nil then
+		print("AddEntityCommandToButton: " .. bindedTo)
+		world:CreateComponentAndAddTo("BoundToEntity", button)
+		world:SetComponent(button, "BoundToEntity", "EntityId", bindedTo)
+	
+	end
 	
 end
 

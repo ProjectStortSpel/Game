@@ -641,25 +641,25 @@ namespace LuaBridge
 
 		void Clear()
 		{
-			g_onConnectedToServer;
-			g_onDisconnectedFromServer;
-			g_onTimedOutFromServer;
-			g_onFailedToConnect;
-			g_onPasswordInvalid;
-			g_onKickedFromServer;
-			g_onBannedFromServer;
-			g_onServerFull;
+			g_onConnectedToServer.clear();
+			g_onDisconnectedFromServer.clear();
+			g_onTimedOutFromServer.clear();
+			g_onFailedToConnect.clear();
+			g_onPasswordInvalid.clear();
+			g_onKickedFromServer.clear();
+			g_onBannedFromServer.clear();
+			g_onServerFull.clear();
 
-			g_onRemotePlayerConnected;
-			g_onRemotePlayerDisconnected;
-			g_onRemotePlayerTimedOut;
-			g_onRemotePlayerKicked;
-			g_onRemotePlayerBanned;
+			g_onRemotePlayerConnected.clear();
+			g_onRemotePlayerDisconnected.clear();
+			g_onRemotePlayerTimedOut.clear();
+			g_onRemotePlayerKicked.clear();
+			g_onRemotePlayerBanned.clear();
 
 
-			g_onPlayerConnected;
-			g_onPlayerDisconnected;
-			g_onPlayerTimedOut;
+			g_onPlayerConnected.clear();
+			g_onPlayerDisconnected.clear();
+			g_onPlayerTimedOut.clear();
 		}
 	}
 
