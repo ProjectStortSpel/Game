@@ -40,14 +40,14 @@ CheckpointSystem.HasReachedFinish = function(self, entityId)
 	world:CreateComponentAndAddTo("TakeCardStepsFromUnit", newId)
 	world:GetComponent(newId, "TakeCardStepsFromUnit", "Unit"):SetInt(entityId)
 	
-	-- If the unit is not controlled by a AI
+	-- If the unit is not controlled by an AI
 	if not world:EntityHasComponent(playerId, "AI") then
 		--	Make the player a spectator
 		world:CreateComponentAndAddTo("IsSpectator", playerId)
 	else
-		-- Else if the player is an AI, remove it when done
-		world:KillEntity(playerId)
+		-- Else if the player is an AI, remove the unit.
 		world:KillEntity(entityId)
+		-- The "ai-player" will be removed in TakeCardsFromPlayerSystem when its cards have been removed.
 	end
 end
 
