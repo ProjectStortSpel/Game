@@ -32,7 +32,7 @@
 #include <iomanip>
 
 GameCreator::GameCreator() :
-m_graphics(0), m_input(0), m_clientWorld(0), m_serverWorld(0), m_worldProfiler(0), m_console(0), m_remoteConsole(0), m_consoleManager(Console::ConsoleManager::GetInstance()), m_frameCounter(new Utility::FrameCounter()), m_running(true),
+m_graphics(0), m_input(0), m_clientWorld(0), m_serverWorld(0), m_clientWorldProfiler(0), m_serverWorldProfiler(0), m_console(0), m_remoteConsole(0), m_consoleManager(Console::ConsoleManager::GetInstance()), m_frameCounter(new Utility::FrameCounter()), m_running(true),
 m_graphicalSystems(std::vector<GraphicalSystem*>()), m_timeScale(1.0f)
 {
   
@@ -69,8 +69,11 @@ GameCreator::~GameCreator()
 	if (m_remoteConsole)
 		delete m_remoteConsole;
 
-	if (m_worldProfiler)
-		delete m_worldProfiler;
+	if (m_clientWorldProfiler)
+		delete m_clientWorldProfiler;
+
+	if (m_serverWorldProfiler)
+		delete m_serverWorldProfiler;
 
 	LuaEmbedder::Quit();
 
@@ -414,8 +417,10 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
         m_serverWorld->PostInitializeSystems();
 		LuaEmbedder::CollectGarbageFull();
     }
-	if (!m_worldProfiler)
-		m_worldProfiler = new Profilers::ECSLProfiler(m_graphics);
+	if (!m_clientWorldProfiler)
+		m_clientWorldProfiler = new Profilers::ECSLProfiler(m_graphics);
+	if (!m_serverWorldProfiler)
+		m_serverWorldProfiler = new Profilers::ECSLProfiler(m_graphics);
 }
 
 void GameCreator::RunStartupCommands(int argc, char** argv)
@@ -485,7 +490,7 @@ void GameCreator::StartGame(int argc, char** argv)
 	m_consoleManager.AddCommand("HostSettings", std::bind(&GameCreator::ConsoleHostSettings, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager.AddCommand("Start", std::bind(&GameCreator::ConsoleStartTemp, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager.AddCommand("ChangeGraphics", std::bind(&GameCreator::ChangeGraphicsSettings, this, std::placeholders::_1, std::placeholders::_2));
-	m_consoleManager.AddCommand("ChangeTimeScale", std::bind(&GameCreator::ChangeTimeScale, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager.AddCommand("timeScale", std::bind(&GameCreator::ChangeTimeScale, this, std::placeholders::_1, std::placeholders::_2));
 	
     InitializeLobby();
     
@@ -544,15 +549,19 @@ void GameCreator::StartGame(int argc, char** argv)
 		m_worldCounter.Reset();
 		/*	Update world (systems, entities, etc)	*/
 		
+		m_serverWorldProfiler->Begin();
         if (m_serverWorld)
             m_serverWorld->Update(dt);
+		m_serverWorldProfiler->End();
+		m_serverWorldProfiler->Update(dt);
+		m_serverWorldProfiler->Render();
         
-		m_worldProfiler->Begin();
+		m_clientWorldProfiler->Begin();
         if (m_clientWorld)
             m_clientWorld->Update(dt);
-		m_worldProfiler->End();
-		m_worldProfiler->Update(dt);
-		m_worldProfiler->Render();
+		m_clientWorldProfiler->End();
+		m_clientWorldProfiler->Update(dt);
+		m_clientWorldProfiler->Render();
         
 
 		m_worldCounter.Tick();
@@ -577,16 +586,43 @@ void GameCreator::StartGame(int argc, char** argv)
 			showDebugInfo = !showDebugInfo;
 
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_X) == Input::InputState::PRESSED)
-			m_worldProfiler->Toggle();
+		{
+			if (!m_serverWorldProfiler->IsActive())
+				m_clientWorldProfiler->Toggle();
+		}
 
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_C) == Input::InputState::PRESSED)
-			m_worldProfiler->PreviousView();
+		{
+			if (!m_clientWorldProfiler->IsActive())
+			{
+				m_serverWorldProfiler->Toggle();
+			}
+		}
 
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_V) == Input::InputState::PRESSED)
-			m_worldProfiler->NextView();
+		{
+			if (m_clientWorldProfiler->IsActive())
+				m_clientWorldProfiler->PreviousView();
+			if (m_serverWorldProfiler->IsActive())
+				m_serverWorldProfiler->PreviousView();
+		}
+
+
+		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_B) == Input::InputState::PRESSED)
+		{
+			if (m_clientWorldProfiler->IsActive())
+				m_clientWorldProfiler->NextView();
+			if (m_serverWorldProfiler->IsActive())
+				m_serverWorldProfiler->NextView();
+		}
 
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F8) == Input::InputState::PRESSED)
-			m_worldProfiler->LogDisplayedStatistics();
+		{
+			if (m_clientWorldProfiler->IsActive())
+				m_clientWorldProfiler->LogDisplayedStatistics();
+			if (m_serverWorldProfiler->IsActive())
+				m_serverWorldProfiler->LogDisplayedStatistics();
+		}
 
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F1) == Input::InputState::PRESSED)
         {
@@ -652,11 +688,17 @@ void GameCreator::GameMode(std::string _gamemode)
 void GameCreator::Reload()
 {
 
-    if (m_worldProfiler)
+    if (m_clientWorldProfiler)
     {
-        delete m_worldProfiler;
-        m_worldProfiler = nullptr;
+		delete m_clientWorldProfiler;
+		m_clientWorldProfiler = nullptr;
     }
+
+	if (m_serverWorldProfiler)
+	{
+		delete m_serverWorldProfiler;
+		m_serverWorldProfiler = nullptr;
+	}
     
     if (m_clientWorld)
     {

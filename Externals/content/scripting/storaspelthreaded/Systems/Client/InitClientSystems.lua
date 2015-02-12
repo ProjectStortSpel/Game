@@ -51,13 +51,9 @@ worldCreator:AddSystemToCurrentGroup(SortSelectedCardsSystem)
 worldCreator:AddSystemToCurrentGroup(SendSelectedCardsSystem)
 worldCreator:AddSystemToCurrentGroup(CardPositionSystem)
 worldCreator:AddSystemToCurrentGroup(CardPickedPositionSystem)
-worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CardAddModelSystem)
-worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CardHoverSystem)
-worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CardSelectSystem)
-worldCreator:AddSystemGroup()
 
 
 

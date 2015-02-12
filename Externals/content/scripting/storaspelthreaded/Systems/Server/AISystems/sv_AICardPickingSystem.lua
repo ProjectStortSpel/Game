@@ -63,7 +63,7 @@ AICardPickingSystem.Update = function(self, dt)
 					
 			-- vart AIn vill
 			local targetPositionX, targetPositionY = self:GetTargetPosition(CPtiles, cpTargetNr)
-			local targetPositionX, targetPositionY = 7, 11
+			
 			-- vart AIn är
 			local aiPositionX, aiPositionY = world:GetComponent(unitID, "MapPosition", 0):GetInt2()
 			-- AIs direction
@@ -201,33 +201,23 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, _dirX, _dirY, _posX
 			local bestCardId, bestDist, bestNextDist
 			local dist, nextDist, prevDist
 						
-			bestCardId = 1
-			table.insert(cardsToSim, CardSetAI[1])
+			bestCardId = 0
 			
-			-- Simulate playing the first card.
-			simFellDown, simPosX, simPosY, simDirX, simDirY = self:SimulateCardsFromPos(_unitID, posX, posY, dirX, dirY, cardsToSim)
+			bestNextDist, bestDist = 1000000, 1000000
 			
-			dist = PathfinderHandler.GeneratePath(simPosX, simPosY, targetX, targetY)
-						
-			bestDist = dist
-			
-			-- Get the distance from a cell as if we have walked forward.
-			nextDist = PathfinderHandler.GeneratePath(simPosX + simDirX, simPosY + simDirY, targetX, targetY)
-			
-			-- Get the distance from a cell as if we have walked backward and compare it to the previous.
-			nextDist = math.min(nextDist, PathfinderHandler.GeneratePath(simPosX - simDirX, simPosY - simDirY, targetX, targetY))
-			
-			bestNextDist = nextDist
-			
-			table.remove(cardsToSim, 1)
-			
-			for i = 2, #CardSetAI do
+			for i = 1, #CardSetAI do
 				table.insert(cardsToSim, CardSetAI[i])
-				
+
 				-- Simulate playing the ith card.
 				simFellDown, simPosX, simPosY, simDirX, simDirY = self:SimulateCardsFromPos(_unitID, posX, posY, dirX, dirY, cardsToSim)
 				
 				dist = PathfinderHandler.GeneratePath(simPosX, simPosY, targetX, targetY)
+				
+				if simFellDown then
+					local playedCards = #pickedCards
+					local extraCost = self.NumberOfCardsToPick - playedCards - 1
+					dist = dist + extraCost
+				end
 				
 				if dist <= bestDist then
 				
@@ -236,7 +226,13 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, _dirX, _dirY, _posX
 					
 					-- Get the distance from a cell as if we have walked backward and compare it to the previous.
 					nextDist = math.min(nextDist, PathfinderHandler.GeneratePath(simPosX - simDirX, simPosY - simDirY, _targetX, _targetY))
-										
+					
+					if simFellDown then
+						local playedCards = #pickedCards
+						local extraCost = self.NumberOfCardsToPick - playedCards - 1
+						nextDist = nextDist + extraCost
+					end
+				
 					if dist == bestDist then
 						
 						if nextDist < bestNextDist then

@@ -58,6 +58,9 @@ SendSelectedCardsSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount,
 				local position = world:GetComponent(id, "Position", 0)
 				position:SetFloat3(3, 0, -4)
 				
+				local rotation = world:GetComponent(id, "Rotation", 0)
+				rotation:SetFloat3(0.0, 0.0, 0.0)
+				
 				local scale = world:GetComponent(id, "Scale", 0)
 				scale:SetFloat3(1, 0.5, 1)
 				

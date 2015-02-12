@@ -1,4 +1,6 @@
-caveman.mesh
-whitePixel.png
-normalPixel.png
-blackPixel.png
+cavemanidle1.amesh
+cavemantex.png
+normalpixel.png
+blackpixel.png
+cavemanidle1.ajoints
+cavemanidle1.anim

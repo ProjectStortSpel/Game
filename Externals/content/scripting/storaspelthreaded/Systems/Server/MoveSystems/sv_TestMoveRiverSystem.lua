@@ -45,7 +45,14 @@ TestMoveRiverSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, ent
 				world:GetComponent(unit, "LerpPosition", "Z"):SetFloat(posZ)
 				world:GetComponent(unit, "LerpPosition", "Time"):SetFloat(0.5)
 				world:GetComponent(unit, "LerpPosition", "Algorithm"):SetText("SmoothLerp")
+				
+				if world:GetComponent(unit, "NoSubSteps", "Counter"):GetInt(0) <= 0 then
+					world:SetComponent(tUnit, "NoSubSteps", "Counter", 1)
+				end
 			end
+			
+			local id = world:CreateNewEntity()
+			world:CreateComponentAndAddTo("PostMove", id)
 
 			world:KillEntity(entity)
 		end

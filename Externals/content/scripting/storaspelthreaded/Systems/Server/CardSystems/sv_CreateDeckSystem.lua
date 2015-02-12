@@ -31,43 +31,78 @@ CreateDeckSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entiti
 end
 
 CreateDeckSystem.CreateDeck = function (self)
-	
-	local prio = 0
-	
+
+	local NrOfPlayers = #self:GetEntities("Unit")
 	local mySeed = os.time() - 1418742000 -- dont ask
 	
-	math.randomseed(mySeed)
-	for i = 1, 16 * #self:GetEntities("Unit") do
-		
-		prio = prio + 1
-		local entity = world:CreateNewEntity("Card")
-		
-		local cardpriocomp = world:GetComponent(entity, "CardPrio", 0)
-		local cardactioncomp = world:GetComponent( entity, "CardAction", 0)
-		
-		cardpriocomp:SetInt(prio)
-		
-		local rand = (i-1) % 16--math.random(1, 16)
+	-- Setup Lists
+	local PrioList = { }
+	PrioList.__mode = "k"
+	local CardAction = { }
+	CardAction.__mode = "k"
+	local NrOfCards = { }
+	NrOfCards.__mode = "k"
+	local CardPrio = { }
+	CardPrio.__mode = "k"
+	
+	----------------------------------------------------------
+	-- ADD NEW CARDS HERE
+	CardAction[#CardAction+1] = "Forward"
+	NrOfCards[#NrOfCards+1] = 4 * NrOfPlayers
+	CardPrio[#CardPrio+1] = true
+	
+	CardAction[#CardAction+1] = "Backward"
+	NrOfCards[#NrOfCards+1] = 4 * NrOfPlayers
+	CardPrio[#CardPrio+1] = true
+	
+	CardAction[#CardAction+1] = "TurnRight"
+	NrOfCards[#NrOfCards+1] = 2 * NrOfPlayers
+	CardPrio[#CardPrio+1] = false
 
-		if rand < 4 then
-			cardactioncomp:SetText("Forward") -- 0-29
-		elseif rand < 8 then
-			cardactioncomp:SetText("Backward") -- 30-49
-		elseif rand < 10 then
-			cardactioncomp:SetText("TurnRight") -- 50-64
-		elseif rand < 12 then
-			cardactioncomp:SetText("TurnLeft") -- 65-79
-		elseif rand < 14 then
-			cardactioncomp:SetText("TurnAround") -- 80-89
-		elseif rand < 15 then
-			cardactioncomp:SetText("Sprint")	-- 90-99
-		elseif rand < 16 then
-			cardactioncomp:SetText("Sprint")	-- 100-109 
-		else
-			cardactioncomp:SetText("Forward")
-			
+	CardAction[#CardAction+1] = "TurnLeft"
+	NrOfCards[#NrOfCards+1] = 2 * NrOfPlayers
+	CardPrio[#CardPrio+1] = false
+
+	CardAction[#CardAction+1] = "TurnAround"
+	NrOfCards[#NrOfCards+1] = 2 * NrOfPlayers
+	CardPrio[#CardPrio+1] = false
+
+	CardAction[#CardAction+1] = "Sprint"
+	NrOfCards[#NrOfCards+1] = 1 * NrOfPlayers
+	CardPrio[#CardPrio+1] = true
+
+	CardAction[#CardAction+1] = "SlingShot"
+	NrOfCards[#NrOfCards+1] = 1 * NrOfPlayers
+	CardPrio[#CardPrio+1] = true
+	----------------------------------------------------------
+
+	-- GENERATE PRIO
+	for i = 1, #NrOfCards do
+		if CardPrio[i] then
+			for j = 1, NrOfCards[i] do
+				PrioList[#PrioList+1] = #PrioList+1
+			end
 		end
-
 	end
-
+	
+	-- CREATE CARDS
+	math.randomseed(mySeed)
+	for i = 1, #CardAction do
+		for j = 1, NrOfCards[i] do
+			local prio = 0
+			if CardPrio[i] then
+				-- GET PRIO
+				local rand = math.random(1, #PrioList)
+				prio = PrioList[rand]
+				table.remove(PrioList, rand)
+			end
+			
+			-- CREATE CARD
+			local entity = world:CreateNewEntity("Card")
+			local cardpriocomp = world:GetComponent(entity, "CardPrio", 0)
+			local cardactioncomp = world:GetComponent( entity, "CardAction", 0)
+			cardpriocomp:SetInt(prio)
+			cardactioncomp:SetText(CardAction[i])
+		end
+	end
 end

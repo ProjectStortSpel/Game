@@ -49,13 +49,9 @@ TaskId TaskPool::BeginCreateTask(TaskId _dependency, WorkItem* _workItem)
 
 void TaskPool::FinishCreateTask(TaskId _id)
 {
-	int test = SDL_LockMutex(m_taskMutex);
-	if (test == -1)
-		int j = 2;
+	SDL_LockMutex(m_taskMutex);
 	DecreaseWorkCount((*m_openList)[_id]);
-	test = SDL_UnlockMutex(m_taskMutex);
-	if (test == -1)
-		int j = 2;
+	SDL_UnlockMutex(m_taskMutex);
 }
 
 void TaskPool::CreateChild(TaskId _parentId, WorkItem* _workItem)
@@ -71,32 +67,22 @@ void TaskPool::CreateChildren(TaskId _parentId, const std::vector<WorkItem*>& _w
 
 TaskId TaskPool::GenerateTaskId()
 {
-	int test = SDL_LockMutex(m_idMutex);
-	if (test == -1)
-		int j = 2;
+	SDL_LockMutex(m_idMutex);
 	TaskId id = ++m_nextId;
-	test = SDL_UnlockMutex(m_idMutex);
-	if (test == -1)
-		int j = 2;
+	SDL_UnlockMutex(m_idMutex);
 	return id;
 }
 
 void TaskPool::AddToOpenList(Task* _task)
 {
-	int test = SDL_LockMutex(m_taskMutex);
-	if (test == -1)
-		int j = 2;
+	SDL_LockMutex(m_taskMutex);
 	(*m_openList)[_task->Id] = _task;
-	test = SDL_UnlockMutex(m_taskMutex);
-	if (test == -1)
-		int j = 2;
+	SDL_UnlockMutex(m_taskMutex);
 }
 
 void TaskPool::AddToQueue(WorkItem* _workItem, TaskId _taskId)
 {
-	int test = SDL_LockMutex(m_taskMutex);
-	if (test == -1)
-		int j = 2;
+	SDL_LockMutex(m_taskMutex);
 
 	Task* task = (*m_openList)[_taskId];
 
@@ -109,16 +95,12 @@ void TaskPool::AddToQueue(WorkItem* _workItem, TaskId _taskId)
 	/* Increase open work item count */
 	IncreaseWorkCount(task);
 
-	test = SDL_UnlockMutex(m_taskMutex);
-	if (test == -1)
-		int j = 2;
+	SDL_UnlockMutex(m_taskMutex);
 }
 
 void TaskPool::AddToQueue(const std::vector<WorkItem*>& _workItems, TaskId _taskId)
 {
-	int test = SDL_LockMutex(m_taskMutex);
-	if (test == -1)
-		int j = 2;
+	SDL_LockMutex(m_taskMutex);
 
 	Task* task = (*m_openList)[_taskId];
 
@@ -134,9 +116,7 @@ void TaskPool::AddToQueue(const std::vector<WorkItem*>& _workItems, TaskId _task
 		IncreaseWorkCount(task);
 	}
 
-	test = SDL_UnlockMutex(m_taskMutex);
-	if (test == -1)
-		int j = 2;
+	SDL_UnlockMutex(m_taskMutex);
 }
 
 void TaskPool::IncreaseWorkCount(Task* _task)
@@ -159,9 +139,7 @@ WorkItem* TaskPool::FetchWork(FetchWorkStatus& _out)
 	_out = WAITING_FOR_TASK;
 	WorkItem* workItem = 0;
 
-	int test = SDL_LockMutex(m_taskMutex);
-	if (test == -1)
-		int j = 2;
+	SDL_LockMutex(m_taskMutex);
 
 	if (m_openList->size() == 0)
 		_out = EMPTY_OPEN_LIST;
@@ -181,9 +159,7 @@ WorkItem* TaskPool::FetchWork(FetchWorkStatus& _out)
 	else
 		_out = EMPTY_WORK_LIST;
 
-	test = SDL_UnlockMutex(m_taskMutex);
-	if (test == -1)
-		int j = 2;
+	SDL_UnlockMutex(m_taskMutex);
 
 	return workItem;
 }
@@ -192,9 +168,7 @@ WorkDoneStatus TaskPool::WorkDone(WorkItem* _workItem)
 {
 	WorkDoneStatus status = WorkDoneStatus();
 
-	int test = SDL_LockMutex(m_taskMutex);
-	if (test == -1)
-		int j = 2;
+	SDL_LockMutex(m_taskMutex);
 
 	/* Get task through the work-task connection */
 	Task* task = (*m_workTaskConnection)[_workItem];
@@ -211,9 +185,7 @@ WorkDoneStatus TaskPool::WorkDone(WorkItem* _workItem)
 		status.OpenListEmpty = true;
 	else status.OpenListEmpty = false;
 
-	test = SDL_UnlockMutex(m_taskMutex);
-	if (test == -1)
-		int j = 2;
+	SDL_UnlockMutex(m_taskMutex);
 
 	return status;
 }

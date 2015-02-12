@@ -189,7 +189,7 @@ void DataManager::DeleteComponentData(const RuntimeInfo& _runtime)
 	{
 		unsigned int entityId = (*m_changedEntitiesCopy)[i];
 		EntityChange* entityChange = (*m_entityChangesCopy)[entityId];
-		/* If entity is dead, remove all components*/
+		/* If entity is dead, remove all components */
 		if (entityChange->Dead)
 		{
 			for (auto componentTypeId : *m_componentTypeIds)

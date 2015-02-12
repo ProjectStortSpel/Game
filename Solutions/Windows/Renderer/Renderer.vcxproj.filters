@@ -32,6 +32,9 @@
     <Filter Include="shaders\LowForward">
       <UniqueIdentifier>{457af9ed-78d4-404b-938c-0b7d99941c34}</UniqueIdentifier>
     </Filter>
+    <Filter Include="shaders\Animation">
+      <UniqueIdentifier>{febeb057-91b1-4665-a3f2-b2a79f54923c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Renderer\GraphicDevice.h">
@@ -169,6 +172,12 @@
     </None>
     <None Include="..\..\..\Externals\content\shaders\lowVSForwardShader.glsl">
       <Filter>shaders\LowForward</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\VSAnimationShader.glsl">
+      <Filter>shaders\Animation</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\FSAnimationShader.glsl">
+      <Filter>shaders\Animation</Filter>
     </None>
   </ItemGroup>
 </Project>

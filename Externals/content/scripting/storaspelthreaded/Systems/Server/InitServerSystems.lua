@@ -54,7 +54,7 @@ require "sv_ActionTurnAroundSystem"
 --	Card Ability Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/CardAbilitySystems/?.lua"
 require "sv_AbilitySprintSystem"
---require "sv_AbilitySlingshotSystem"
+require "sv_AbilitySlingshotSystem"
 require "sv_AbilityIWin"
 
 --	Spawn Systems
@@ -93,33 +93,26 @@ worldCreator:AddSystemToCurrentGroup(RiverSystem)
 worldCreator:AddSystemToCurrentGroup(VoidSystem)
 worldCreator:AddSystemToCurrentGroup(CheckpointSystem)
 worldCreator:AddSystemToCurrentGroup(DirectionalLightSystem)
+worldCreator:AddSystemGroup() -- <-- TEMP
 worldCreator:AddSystemToCurrentGroup(PlayerSystem)
 worldCreator:AddSystemToCurrentGroup(UnitSystem)
 worldCreator:AddSystemToCurrentGroup(AddAISystem)
-worldCreator:AddSystemGroup() -- <-- TEMP
 worldCreator:AddSystemToCurrentGroup(AICardPickingSystem)
 worldCreator:AddSystemToCurrentGroup(PostMoveSystem)
 worldCreator:AddSystemGroup()
---worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(TestMoveSystem)
---worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(TestMoveRiverSystem)
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CreateDeckSystem)
-worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(AddCardPickTimer)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(SetCardPickTimer)
-worldCreator:AddSystemGroup() -- <--- TEMP
 worldCreator:AddSystemToCurrentGroup(UpdateCardPickTimer)
-worldCreator:AddSystemGroup() -- <--- TEMP 2
 worldCreator:AddSystemToCurrentGroup(CreateCardPickTimer)
-worldCreator:AddSystemGroup() -- <--- TEMP 2
 worldCreator:AddSystemToCurrentGroup(AutoPickCards)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(DealCardsSystem)
-worldCreator:AddSystemGroup() -- <--- Temp
 worldCreator:AddSystemToCurrentGroup(TakeCardStepsFromUnitSystem)
 worldCreator:AddSystemToCurrentGroup(TakeCardsFromPlayerSystem)
 worldCreator:AddSystemToCurrentGroup(PlayCardSystem)
@@ -132,7 +125,7 @@ worldCreator:AddSystemToCurrentGroup(ActionTurnRightSystem)
 worldCreator:AddSystemToCurrentGroup(ActionTurnAroundSystem)
 
 worldCreator:AddSystemToCurrentGroup(AbilitySprintSystem)
---worldCreator:AddSystemToCurrentGroup(AbilitySlingshotSystem)
+worldCreator:AddSystemToCurrentGroup(AbilitySlingshotSystem)
 worldCreator:AddSystemToCurrentGroup(AbilityIWin)
 
 worldCreator:AddSystemGroup()
