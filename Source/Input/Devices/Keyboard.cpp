@@ -39,13 +39,13 @@ void Keyboard::Update()
 	for (int i = 0; i < m_numberOfKeys; ++i)
 		m_lastState[i] = m_thisState[i];
 
-	if (m_startUsingTextInput > m_stopUsingTextInput)
+	if (m_startUsingTextInput < m_stopUsingTextInput)
 	{
 		SDL_StartTextInput();
 		if (m_stopUsingTextInput != 0)
 			SDL_StopTextInput();
 	}
-	else if (m_stopUsingTextInput > m_startUsingTextInput)
+	else if (m_stopUsingTextInput < m_startUsingTextInput)
 	{
 		SDL_StopTextInput();
 		if (m_startUsingTextInput != 0)
