@@ -201,13 +201,11 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, _dirX, _dirY, _posX
 			local bestCardId, bestDist, bestNextDist
 			local dist, nextDist, prevDist
 						
-			bestCardId = 1
-
-			bestDist, bestNextDist = 1000000, 1000000
+			bestCardId = 0
 			
-			table.remove(cardsToSim, 1)
+			bestNextDist, bestDist = 1000000, 1000000
 			
-			for i = 2, #CardSetAI do
+			for i = 1, #CardSetAI do
 				table.insert(cardsToSim, CardSetAI[i])
 
 				-- Simulate playing the ith card.
@@ -281,7 +279,7 @@ end
 
 AICardPickingSystem.SendCards = function(self, _player, _pickedcards)
 	
-	print("AI Send Cards")
+	--print("AI Send Cards")
 	local unit = world:GetComponent(_player, "UnitEntityId", "Id"):GetInt()
 	
 	world:CreateComponentAndAddTo("HasSelectedCards", _player)

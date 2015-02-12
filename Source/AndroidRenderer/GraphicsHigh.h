@@ -36,6 +36,7 @@ namespace Renderer
 		bool InitSDLWindow();
 		bool InitShaders();
 		bool InitBuffers();
+		bool InitLightBuffers();
 
 		void BufferLightsToGPU();
 

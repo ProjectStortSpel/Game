@@ -1,5 +1,5 @@
 CreateCardPickTimer = System()
-CreateCardPickTimer.TimeLimit = 30.0
+CreateCardPickTimer.TimeLimit = 60.0
 
 CreateCardPickTimer.Initialize = function(self)
 	--	Set Name
@@ -20,7 +20,7 @@ CreateCardPickTimer.EntitiesAdded = function(self, dt, taskIndex, taskCount, ent
 		world:CreateComponentAndAddTo("PickingPhaseTimer", newId)
 		world:GetComponent(newId, "PickingPhaseTimer", "Timer"):SetFloat(self.TimeLimit)
 		
-		print("Creating timer with " .. self.TimeLimit)
+		--print("Creating timer with " .. self.TimeLimit)
 		
 		local id = Net.StartPack("Client.SendPickingPhaseTimer")
 		Net.WriteFloat(id, self.TimeLimit)
