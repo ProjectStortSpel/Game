@@ -32,6 +32,9 @@ namespace Renderer
 		
 		void Clear();
 		
+	protected:
+		void UpdateTextureIndex(GLuint newTexture, GLuint oldTexture);
+		
 	private:
 		bool InitSDLWindow();
 		bool InitGLEW();

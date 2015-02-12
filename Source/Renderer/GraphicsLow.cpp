@@ -1050,3 +1050,16 @@ bool GraphicsLow::BufferModelTexture(int _id, std::string _fileDir, int _texture
 
 	return true;
 }
+
+void GraphicsLow::UpdateTextureIndex(GLuint newTexture, GLuint oldTexture)
+{
+	for (Model& m : m_modelsForward)
+		if (m.texID == oldTexture)
+			m.texID = newTexture;
+	for (Model& m : m_modelsViewspace)
+		if (m.texID == oldTexture)
+			m.texID = newTexture;
+	for (Model& m : m_modelsInterface)
+		if (m.texID == oldTexture)
+			m.texID = newTexture;
+}
