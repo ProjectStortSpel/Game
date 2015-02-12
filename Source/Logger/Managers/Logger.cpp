@@ -1,7 +1,7 @@
 #include <ctime>
 #include <iostream>
 #include "Logger.h"
-#include "FileSystem/Directory.h"
+//#include "FileSystem/Directory.h"
 
 Logger& Logger::GetInstance()
 {
@@ -183,7 +183,7 @@ void Logger::CreateFile()
     
 	m_logFileName = ss.str();
 
-	bool md = FileSystem::Directory::CreateFolder(GetFolderPath());
+	//FileSystem::Directory::CreateFolder(GetFolderPath());
 
 	SDL_RWops* newFile = SDL_RWFromFile(m_logFileName.c_str(), "w");
 	SDL_RWclose(newFile);
