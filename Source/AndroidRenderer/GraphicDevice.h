@@ -122,6 +122,8 @@ namespace Renderer
 	protected:
 		bool InitSkybox();
 		
+		virtual bool InitLightBuffers() = 0;
+
 		virtual void BufferLightsToGPU() = 0;
 
 		Camera* m_camera;
@@ -140,8 +142,10 @@ namespace Renderer
 
 		// Light info
 		vec3 m_dirLightDirection;
-		float m_defaultLight[10];
+		float m_lightDefaults[10];
 		float* m_directionalLightPtr;
+		float** m_pointlightsPtr;
+		int m_nrOfLightsToBuffer;
 
 		// Shaders
 		Shader m_skyBoxShader;
@@ -178,6 +182,8 @@ namespace Renderer
 		std::vector<ModelTexture> m_modelTextures;
 		void BufferModelTextures();
 		virtual bool BufferModelTexture(int _id, std::string _fileDir, int _textureType);
+		
+		void SortModelsBasedOnDepth(std::vector<Model>* models);
 	};
 }
 

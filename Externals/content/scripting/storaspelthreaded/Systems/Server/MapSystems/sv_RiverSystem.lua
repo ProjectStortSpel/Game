@@ -53,8 +53,8 @@ RiverSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 
 			world:KillEntity( entity )
 
-			local id = world:CreateNewEntity()
-			world:CreateComponentAndAddTo("PostMove", id)
+			--local id = world:CreateNewEntity()
+			--world:CreateComponentAndAddTo("PostMove", id)
 
 			local id = world:CreateNewEntity()
 			world:CreateComponentAndAddTo("StepTimer", id)

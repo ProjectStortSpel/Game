@@ -279,7 +279,7 @@ end
 
 AICardPickingSystem.SendCards = function(self, _player, _pickedcards)
 	
-	print("AI Send Cards")
+	--print("AI Send Cards")
 	local unit = world:GetComponent(_player, "UnitEntityId", "Id"):GetInt()
 	
 	world:CreateComponentAndAddTo("HasSelectedCards", _player)

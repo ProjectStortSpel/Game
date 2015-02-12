@@ -96,7 +96,7 @@ IPConnectSystem.UpdateText = function(self)
 	world:CreateComponentAndAddTo("Scale", id)
 	world:CreateComponentAndAddTo("TextTexture", id)
 	
-	world:GetComponent(id, "Model", 0):SetModel("left", "text", 2)
+	world:GetComponent(id, "Model", 0):SetModel("left", "text", 3)
 	world:GetComponent(id, "Position", 0):SetFloat3(-0.57, 0.21, -2.0)
 	world:GetComponent(id, "Scale", 0):SetFloat3(2.0, 0.095, 1.0)
 	world:GetComponent(id, "Rotation", 0):SetFloat3(0.0, 0.0, 0.0)
@@ -147,6 +147,7 @@ IPConnectSystem.GetValidatedInputString = function(self)
 		byteIndex = byteIndex + 1
 	end
 	
+	print(textInput)
 	textInput = string.sub(textInput, 1, byteIndex - 1)
 	Input.SetTextInput(textInput)
 	return textInput
@@ -184,7 +185,7 @@ IPConnectSystem.CreateBackground = function(self)
 	world:CreateComponentAndAddTo("Scale", id)
 	world:CreateComponentAndAddTo("TextTexture", id)
 	
-	world:GetComponent(id, "Model", 0):SetModel("left", "text", 2)
+	world:GetComponent(id, "Model", 0):SetModel("left", "text", 3)
 	world:GetComponent(id, "Position", 0):SetFloat3(-0.59, 0.45, -2.0)
 	world:GetComponent(id, "Scale", 0):SetFloat3(2.0, 0.15, 1.0)
 	world:GetComponent(id, "Rotation", 0):SetFloat3(0.0, 0.0, 0.0)
@@ -204,7 +205,7 @@ IPConnectSystem.CreateBackground = function(self)
 	world:CreateComponentAndAddTo("Scale", id)
 	world:CreateComponentAndAddTo("TextTexture", id)
 	
-	world:GetComponent(id, "Model", 0):SetModel("left", "text", 2)
+	world:GetComponent(id, "Model", 0):SetModel("left", "text", 3)
 	world:GetComponent(id, "Position", 0):SetFloat3(-0.55, 0.08, -2.0)
 	world:GetComponent(id, "Scale", 0):SetFloat3(5.0, 0.055, 1.0)
 	world:GetComponent(id, "Rotation", 0):SetFloat3(0.0, 0.0, 0.0)

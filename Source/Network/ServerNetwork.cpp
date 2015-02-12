@@ -265,7 +265,7 @@ bool ServerNetwork::Stop()
 
 		if (m_listenSocket)
 		{
-			m_listenSocket->ShutdownSocket();
+			m_listenSocket->ShutdownSocket(2);
 			SAFE_DELETE(m_listenSocket);
 		}
 

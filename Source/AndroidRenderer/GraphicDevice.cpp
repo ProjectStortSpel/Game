@@ -13,21 +13,23 @@ using namespace glm;
 GraphicDevice::GraphicDevice()
 {
 	m_SDLinitialized = false;
-	for (int i = 0; i < 10; i++)
-		m_defaultLight[i] = 0.0f;
+	m_pointlightsPtr = 0;
 }
 
 GraphicDevice::GraphicDevice(Camera _camera)
 {
 	m_camera = new Camera(_camera);
 	m_SDLinitialized = true;
+	m_pointlightsPtr = 0;
 }
-
 
 GraphicDevice::~GraphicDevice()
 {
 	delete(m_camera);
 	delete(m_skybox);
+
+	if (m_pointlightsPtr)
+		delete m_pointlightsPtr;
 
 	SDL_GL_DeleteContext(m_glContext);
 	// Close and destroy the window
@@ -135,11 +137,27 @@ void GraphicDevice::BufferSurfaces()
 {
 	for (std::pair<std::string, SDL_Surface*> surface : m_surfaces)
 	{
+		int oldTexture = -1;
 		if (m_textures.find(surface.first) != m_textures.end())
+		{
+			oldTexture = m_textures[surface.first];
 			glDeleteTextures(1, &m_textures[surface.first]);
+		}
 		GLuint texture = TextureLoader::LoadTexture(surface.second, GL_TEXTURE1);
 		m_textures[surface.first] = texture;
 		SDL_FreeSurface(surface.second);
+		if (oldTexture != -1)
+		{
+			for (Model& m : m_modelsForward)
+				if (m.texID == oldTexture)
+					m.texID = texture;
+			for (Model& m : m_modelsViewspace)
+				if (m.texID == oldTexture)
+					m.texID = texture;
+			for (Model& m : m_modelsInterface)
+				if (m.texID == oldTexture)
+					m.texID = texture;
+		}
 	}
 	m_surfaces.clear();
 }
@@ -336,4 +354,17 @@ void GraphicDevice::BufferModels()
 		delete(pair.second);
 	}
 	m_modelsToLoad.clear();
+}
+
+struct sort_depth
+{
+	inline bool operator() (const Model& a, const Model& b)
+	{
+		return (*a.modelMatrix)[3][2] < (*b.modelMatrix)[3][2];
+	}
+};
+
+void GraphicDevice::SortModelsBasedOnDepth(std::vector<Model>* models)
+{
+	std::sort(models->begin(), models->end(), sort_depth());
 }

@@ -223,6 +223,7 @@ void GraphicsLow::Render()
 	m_viewspaceShader.UseProgram();
 	m_viewspaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 
+	SortModelsBasedOnDepth(&m_modelsViewspace);
 	for (int i = 0; i < m_modelsViewspace.size(); i++)
 	{
 		std::vector<mat4> modelViewVector(m_modelsViewspace[i].instances.size());
@@ -270,6 +271,7 @@ void GraphicsLow::Render()
 	m_interfaceShader.UseProgram();
 	m_interfaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 
+	SortModelsBasedOnDepth(&m_modelsInterface);
 	for (int i = 0; i < m_modelsInterface.size(); i++)
 	{
 		std::vector<mat4> modelViewVector(m_modelsInterface[i].instances.size());
