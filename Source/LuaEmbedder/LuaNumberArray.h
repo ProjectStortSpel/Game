@@ -191,23 +191,22 @@ namespace LuaEmbedder
     
     static int Length(lua_State* L)
     {
+	int startTop = lua_gettop(L);
 	const char* name = lua_tostring(L, lua_upvalueindex(1));
 	T** pArray = (T**)luaL_checkudata(L, 1, name);
 	luaL_getmetatable(L, name);
 	int metatable = lua_gettop(L);
 	lua_pushstring(L, "size");
 	lua_gettable(L, metatable);
+	int length = 0;
 	if (!lua_isnil(L, -1))
 	{
 		lua_pushlightuserdata(L, (T*)*pArray);
 		lua_gettable(L, -2);
+		length = lua_tointeger(L, -1);
 	}
-	else
-	{
-		lua_pushinteger(L, 0);
-	}
-	lua_replace(L, metatable);
-	lua_settop(L, metatable);
+	lua_settop(L, startTop);
+	lua_pushinteger(L, length);
 	return 1;
     }
     
