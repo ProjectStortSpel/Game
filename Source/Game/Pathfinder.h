@@ -2,10 +2,28 @@
 #define PATHFINDER_H
 
 #include <vector>
-/*		name	pf	weight
-map ("void",	*PF, 3)
-("Players", *PF, 0)
-*/
+#include "LuaBridge/AI/LuaPotentialFieldHandler.h"
+
+typedef LuaBridge::PotentialField::PF potential_field;
+
+struct PotentialFieldData
+{
+	float				weight;
+	potential_field*	potentialField;
+
+	PotentialFieldData()
+	{
+		potentialField = NULL;
+		weight = 0;
+	}
+
+	PotentialFieldData(potential_field* pf, int POWER)
+	{
+		potentialField = pf;
+		weight = POWER;
+	}
+};
+
 struct coord
 {
 	int x, y;
@@ -47,19 +65,26 @@ public:
 	static void Destroy();
 	~Pathfinder();
 
-	void SetTurningCost(float _turningCost);
 	void SetNodeData(const struct tile_data*** _data, int _x, int _y);
 	std::vector<coord> GeneratePath(coord _start, coord _goal);
 	void ChangeWalkable(int _x, int _y, bool _walkable);
 
+	bool RemovePotentialField(potential_field* pPF);
+
+	bool SetPotentialFieldWeight(potential_field* pPF, float weight);
+	bool SetPotentialFieldUse(potential_field* pPF);
+
+	void AddPotentialField(potential_field* pPF, float weight);
+
 private:
+	
+	std::vector<PotentialFieldData>		m_pFToBeUsed;
+	std::vector<PotentialFieldData>		m_potentialFields;
+	coord								m_startCoord;
+	coord								m_goalCoord;
+	coord								m_mapSize;
 
-	float m_turningCost;
-	coord m_startCoord;
-	coord m_goalCoord;
-	coord m_mapSize;
-
-	struct pathfindingnode** m_mapData;
+	struct pathfindingnode**			m_mapData;
 
 	bool InsideWorld(int _x, int _y);
 	float CalcHeuristicValue(coord _fromToGoal);

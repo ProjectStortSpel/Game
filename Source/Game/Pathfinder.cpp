@@ -23,13 +23,7 @@ void Pathfinder::Destroy()
 Pathfinder::Pathfinder()
 {
 	this->m_mapSize = coord(0, 0);
-	this->m_turningCost = 0;
 	this->m_mapData = NULL;
-}
-
-void Pathfinder::SetTurningCost(float _turing_cost)
-{
-	this->m_turningCost = _turing_cost;
 }
 
 void Pathfinder::SetNodeData(const struct tile_data*** _data, int _x, int _y)
@@ -46,14 +40,14 @@ void Pathfinder::SetNodeData(const struct tile_data*** _data, int _x, int _y)
 		this->m_mapData[i] = new struct pathfindingnode[_y];
 	}
 
-	for (int i = 0; i < _x; ++i)
+	for (int i = 0; i < _y; ++i)
 	{
-		for (int j = 0; j < _y; ++j)
+		for (int j = 0; j < _x; ++j)
 		{
-			this->m_mapData[i][j].walkable = use[i][j].walkable;
-			this->m_mapData[i][j].position = coord(i,j);
-			this->m_mapData[i][j].walk_cost = use[i][j].walking_cost;
-			this->m_mapData[i][j].parent = 0;
+			this->m_mapData[j][i].walkable = use[j][i].walkable;
+			this->m_mapData[j][i].position = coord(j,i);
+			this->m_mapData[j][i].walk_cost = use[j][i].walking_cost;
+			this->m_mapData[j][i].parent = 0;
 		}
 	}
 }
@@ -68,6 +62,59 @@ void Pathfinder::ChangeWalkable(int _x, int _y, bool _walkable)
 			this->m_mapData[_x][_y].walkable = _walkable;
 		}
 	}
+}
+
+bool Pathfinder::RemovePotentialField(potential_field* pPF)
+{
+	for (int i = 0; i < this->m_potentialFields.size(); ++i)
+	{
+		if (pPF == this->m_potentialFields[i].potentialField)
+		{
+			this->m_potentialFields.erase(this->m_potentialFields.begin() + i);
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Pathfinder::SetPotentialFieldWeight(potential_field* pPF, float weight)
+{
+	for (int i = 0; i < this->m_potentialFields.size(); ++i)
+	{
+		if (pPF == this->m_potentialFields[i].potentialField)
+		{
+			this->m_potentialFields[i].weight = weight;
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Pathfinder::SetPotentialFieldUse(potential_field* pPF)
+{
+	for (int i = 0; i < this->m_pFToBeUsed.size(); ++i)
+	{
+		if (pPF == this->m_pFToBeUsed[i].potentialField)
+		{
+			return false;
+		}
+	}
+	for (int i = 0; i < this->m_potentialFields.size(); ++i)
+	{
+		if (pPF == this->m_potentialFields[i].potentialField)
+		{
+			this->m_pFToBeUsed.push_back(this->m_potentialFields[i]);
+			return true;
+		}
+	}
+	return false;
+}
+
+void Pathfinder::AddPotentialField(potential_field* pPF, float weight)
+{
+	PotentialFieldData to_be_used(pPF, weight);
+
+	this->m_potentialFields.push_back(to_be_used);
 }
 
 float Pathfinder::CalcHeuristicValue(coord _fromGoal)
@@ -89,14 +136,20 @@ void Pathfinder::AddNeighbors(coord _position, std::vector<pathfindingnode>& _se
 
 	if (this->InsideWorld(x, y) && this->m_mapData[x][y].walkable && !this->InSet(_notToUse, x, y))
 	{
+		float cost = this->m_mapData[x][y].walk_cost;
 		if (!this->InSet(_set, x, y))
 		{
+			for (int i = 0; i < this->m_pFToBeUsed.size(); ++i)
+			{
+				float value = (*(this->m_pFToBeUsed[i].potentialField))[x][y];
+				cost += value * this->m_pFToBeUsed[i].weight;
+			}
 			this->m_mapData[x][y].parent = _parent;
-			this->m_mapData[x][y].g = _parent->g + this->m_mapData[x][y].walk_cost;
-
+			this->m_mapData[x][y].g = _parent->g + cost;
+			
 			if (y != _parent->parent->position.y)
 			{
-				this->m_mapData[x][y].g += m_turningCost;
+				this->m_mapData[x][y].g += cost;
 			}
 
 			this->m_mapData[x][y].h = this->CalcHeuristicValue(coord(x, y));
@@ -108,10 +161,10 @@ void Pathfinder::AddNeighbors(coord _position, std::vector<pathfindingnode>& _se
 			this->m_mapData[x][y].g = _parent->g + this->m_mapData[x][y].walk_cost;
 
 		}
-		else if (y != _parent->parent->position.y && this->m_mapData[x][y].g > _parent->g + this->m_mapData[x][y].walk_cost + m_turningCost)
+		else if (y != _parent->parent->position.y && this->m_mapData[x][y].g > _parent->g + this->m_mapData[x][y].walk_cost + cost)
 		{
 			this->m_mapData[x][y].parent = _parent;
-			this->m_mapData[x][y].g = _parent->g + this->m_mapData[x][y].walk_cost + m_turningCost;
+			this->m_mapData[x][y].g = _parent->g + this->m_mapData[x][y].walk_cost + cost;
 		}
 	}
 
@@ -120,14 +173,21 @@ void Pathfinder::AddNeighbors(coord _position, std::vector<pathfindingnode>& _se
 
 	if (this->InsideWorld(x, y) && this->m_mapData[x][y].walkable && !this->InSet(_notToUse, x, y))
 	{
+		float cost = this->m_mapData[x][y].walk_cost;
 		if (!this->InSet(_set, x, y))
 		{
+			
+			for (int i = 0; i < this->m_pFToBeUsed.size(); ++i)
+			{
+				float value = (*(this->m_pFToBeUsed[i].potentialField))[x][y];
+				cost += value * this->m_pFToBeUsed[i].weight;
+			}
 			this->m_mapData[x][y].parent = _parent;
-			this->m_mapData[x][y].g = _parent->g + this->m_mapData[x][y].walk_cost;
+			this->m_mapData[x][y].g = _parent->g + cost;
 
 			if (y != _parent->parent->position.y)
 			{
-				this->m_mapData[x][y].g += m_turningCost;
+				this->m_mapData[x][y].g += cost;
 			}
 
 			this->m_mapData[x][y].h = this->CalcHeuristicValue(coord(x, y));
@@ -139,10 +199,10 @@ void Pathfinder::AddNeighbors(coord _position, std::vector<pathfindingnode>& _se
 			this->m_mapData[x][y].g = _parent->g + this->m_mapData[x][y].walk_cost;
 
 		}
-		else if (y != _parent->parent->position.y && this->m_mapData[x][y].g > _parent->g + this->m_mapData[x][y].walk_cost + m_turningCost)
+		else if (y != _parent->parent->position.y && this->m_mapData[x][y].g > _parent->g + this->m_mapData[x][y].walk_cost + cost)
 		{
 			this->m_mapData[x][y].parent = _parent;
-			this->m_mapData[x][y].g = _parent->g + this->m_mapData[x][y].walk_cost + m_turningCost;
+			this->m_mapData[x][y].g = _parent->g + this->m_mapData[x][y].walk_cost + cost;
 		}
 	}
 	
@@ -151,14 +211,20 @@ void Pathfinder::AddNeighbors(coord _position, std::vector<pathfindingnode>& _se
 
 	if (this->InsideWorld(x, y) && this->m_mapData[x][y].walkable && !this->InSet(_notToUse, x, y))
 	{
+		float cost = this->m_mapData[x][y].walk_cost;
 		if (!this->InSet(_set, x, y))
 		{
+			for (int i = 0; i < this->m_pFToBeUsed.size(); ++i)
+			{
+				float value = (*(this->m_pFToBeUsed[i].potentialField))[x][y];
+				cost += value * this->m_pFToBeUsed[i].weight;
+			}
 			this->m_mapData[x][y].parent = _parent;
-			this->m_mapData[x][y].g = _parent->g + this->m_mapData[x][y].walk_cost;
+			this->m_mapData[x][y].g = _parent->g + cost;
 
 			if (x != _parent->parent->position.x)
 			{
-				this->m_mapData[x][y].g += m_turningCost;
+				this->m_mapData[x][y].g += cost;
 			}
 
 			this->m_mapData[x][y].h = this->CalcHeuristicValue(coord(x, y));
@@ -170,10 +236,10 @@ void Pathfinder::AddNeighbors(coord _position, std::vector<pathfindingnode>& _se
 			this->m_mapData[x][y].g = _parent->g + this->m_mapData[x][y].walk_cost;
 
 		}
-		else if (x != _parent->parent->position.x && this->m_mapData[x][y].g > _parent->g + this->m_mapData[x][y].walk_cost + m_turningCost)
+		else if (x != _parent->parent->position.x && this->m_mapData[x][y].g > _parent->g + this->m_mapData[x][y].walk_cost + cost)
 		{
 			this->m_mapData[x][y].parent = _parent;
-			this->m_mapData[x][y].g = _parent->g + this->m_mapData[x][y].walk_cost + m_turningCost;
+			this->m_mapData[x][y].g = _parent->g + this->m_mapData[x][y].walk_cost + cost;
 		}
 	}
 
@@ -182,14 +248,21 @@ void Pathfinder::AddNeighbors(coord _position, std::vector<pathfindingnode>& _se
 
 	if (this->InsideWorld(x, y) && this->m_mapData[x][y].walkable && !this->InSet(_notToUse, x, y))
 	{
+		float cost = this->m_mapData[x][y].walk_cost;
 		if (!this->InSet(_set, x, y))
 		{
+			
+			for (int i = 0; i < this->m_pFToBeUsed.size(); ++i)
+			{
+				float value = (*(this->m_pFToBeUsed[i].potentialField))[x][y];
+				cost += value * this->m_pFToBeUsed[i].weight;
+			}
 			this->m_mapData[x][y].parent = _parent;
-			this->m_mapData[x][y].g = _parent->g + this->m_mapData[x][y].walk_cost;
+			this->m_mapData[x][y].g = _parent->g + cost;
 
 			if (x != _parent->parent->position.x)
 			{
-				this->m_mapData[x][y].g += m_turningCost;
+				this->m_mapData[x][y].g += cost;
 			}
 
 			this->m_mapData[x][y].h = this->CalcHeuristicValue(coord(x, y));
@@ -201,10 +274,10 @@ void Pathfinder::AddNeighbors(coord _position, std::vector<pathfindingnode>& _se
 			this->m_mapData[x][y].g = _parent->g + this->m_mapData[x][y].walk_cost;
 
 		}
-		else if (x != _parent->parent->position.x && this->m_mapData[x][y].g > _parent->g + this->m_mapData[x][y].walk_cost + m_turningCost)
+		else if (x != _parent->parent->position.x && this->m_mapData[x][y].g > _parent->g + this->m_mapData[x][y].walk_cost + cost)
 		{
 			this->m_mapData[x][y].parent = _parent;
-			this->m_mapData[x][y].g = _parent->g + this->m_mapData[x][y].walk_cost + m_turningCost;
+			this->m_mapData[x][y].g = _parent->g + this->m_mapData[x][y].walk_cost + cost;
 		}
 	}
 }
@@ -288,7 +361,7 @@ std::vector<coord> Pathfinder::GeneratePath( coord start, coord goal )
 
 		}
 	}
-
+	this->m_pFToBeUsed.clear();
 	return ret_value;
 }
 
