@@ -39,7 +39,12 @@ HostMenuSystem.Update = function(self, dt, taskIndex, taskCount)
 				self:MenuEntityCommandPressed(pressedButton)
 			end
 		else
-			
+			Input.SetTextInput("")
+			Input.StopTextInput()
+
+			self.IsActive = false
+			self.TextInput = ""
+			self.ActiveTextId  = -1
 			self:RemoveMenu()
 		end
 
@@ -50,7 +55,6 @@ HostMenuSystem.Update = function(self, dt, taskIndex, taskCount)
 	
 end
 
-HostMenuSystem.tmp = true
 HostMenuSystem.UpdateText = function(self)
 
 	if not self.IsActive or self.ActiveTextId == -1 then
@@ -58,16 +62,8 @@ HostMenuSystem.UpdateText = function(self)
 	end
 	--	
 	if Input.GetTextInput() ~= self.TextInput then
-		
 		local textSelf = world:GetComponent(self.ActiveTextId, "TextTexture", "Text"):GetText()
-		
-		if self.tmp then
-		
-			Input.SetTextInput(textSelf .. Input.GetTextInput())
-			self.tmp = false
-		
-		end
-
+	
 		local textInput 		= Input.GetTextInput()
 		print("textInput: " .. textInput)
 		local posX, posY, posZ 	= world:GetComponent(self.ActiveTextId, "Position", 0):GetFloat3()
@@ -145,8 +141,9 @@ HostMenuSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities
 		
 		if world:EntityHasComponent(entityId, "ActiveTextInput") then
 			self:Deactivate()
-			self:Activate()
 			self.ActiveTextId = world:GetComponent(entityId, "BoundToEntity", "EntityId"):GetInt()
+			self:Activate()
+			
 			
 		end
 		
@@ -155,8 +152,10 @@ HostMenuSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities
 end
 
 HostMenuSystem.Activate = function(self)
+	local text	= world:GetComponent(self.ActiveTextId, "TextTexture", "Text"):GetText()
+
 	Input.StartTextInput()
-	Input.SetTextInput("")
+	Input.SetTextInput(text)
 	
 	self.IsActive = true
 	self.TextInput = ""
@@ -169,8 +168,9 @@ HostMenuSystem.Deactivate = function(self)
 
 	self.IsActive = false
 	self.TextInput = ""
+	self.ActiveTextId  = -1
 	
-	if self.ActiveTextId ~= -1 and self.tmp == false then
+	if self.ActiveTextId ~= -1 then
 	
 		print("textInput: " .. "HEJ")
 		local posX, posY, posZ 	= world:GetComponent(self.ActiveTextId, "Position", 0):GetFloat3()
@@ -364,7 +364,7 @@ HostMenuSystem.RemoveMenu = function(self)
 	for i = 1, #entities do
 		world:KillEntity(entities[i])
 	end
-	
+
 end
 
 HostMenuSystem.CreateButton = function(self, object, folder, posX, posY, posZ, scaleX, scaleY)
