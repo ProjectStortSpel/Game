@@ -20,6 +20,7 @@ RespawnSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 		if world:EntityHasComponent( entityId, "RespawnUnits") then
 			
 			local units = self:GetEntities("UnitDead")
+			
 			for i = 1, #units do
 				
 				world:RemoveComponentFrom("UnitDead", units[i])

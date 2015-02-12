@@ -19,7 +19,6 @@ NewStepSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 	for n = 1, #entities do
 		local entity = entities[n]
 		if world:EntityHasComponent( entity, "NewRound") then
-			--print("\n\nNEW ROUND!")
 
 			self.Step = 1
 			local id = world:CreateNewEntity()
@@ -27,8 +26,11 @@ NewStepSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 			world:KillEntity( entity )
 
 		elseif world:EntityHasComponent( entity, "NewStep") then
+			--print("\n\nNEW STEP!")
 			
 			if self.Step <= 5 then
+			
+				io.write("Step ", self.Step, " ")
 				
 				local units = self:GetEntities("Unit")
 				for i = 1, #units do
@@ -45,6 +47,7 @@ NewStepSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 			else
 				--local id = world:CreateNewEntity()
 				--world:CreateComponentAndAddTo("EndRound", id)
+				io.write("\n")
 				
 				--Respawn
 				local id = world:CreateNewEntity()
