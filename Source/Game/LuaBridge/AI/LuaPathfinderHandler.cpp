@@ -23,8 +23,6 @@ namespace LuaBridge
 
 			Pathfinder* pathfinder = Pathfinder::Instance();
 
-			pathfinder->SetTurningCost(turning_cost);
-
 			return ret_value;
 		}
 
