@@ -21,6 +21,7 @@ GiveSpawnLocationSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount,
 			local availableSpawns = self:GetEntities("AvailableSpawnpoint")
 			local plyNum = world:GetComponent(entityId, "PlayerNumber", "Number").GetInt()
 			local unitSpawnpoint = world:GetComponent(entityId, "Spawnpoint", 0)
+			print("GiveSpawnLocationSystem.EntitiesAdded")
 			local mapSpawnpoint = world:GetComponent(availableSpawns[plyNum], "AvailableSpawnpoint", 0)
 			local posX, posZ = mapSpawnpoint:GetInt2()
 			unitSpawnpoint:SetInt2(posX, posZ)

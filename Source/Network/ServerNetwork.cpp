@@ -108,8 +108,8 @@ void ServerNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uin
 	m_currentTimeOutIntervall->erase(_connection);
 	m_timeOutLock->unlock();
 
-	
-	(*m_receivePacketsThreads)[_connection].join();
+	if (m_receivePacketsThreads->find(_connection) != m_receivePacketsThreads->end())
+		(*m_receivePacketsThreads)[_connection].join();
 }
 
 void ServerNetwork::NetPing(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection)
@@ -595,6 +595,7 @@ void ServerNetwork::SetOnServerShutdown(std::function<void()> _function)
 
 void ServerNetwork::ResetNetworkEvents()
 {
+	Update(0);
 	m_onPlayerConnected->clear();
 	m_onPlayerDisconnected->clear();
 	m_onPlayerTimedOut->clear();

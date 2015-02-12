@@ -686,6 +686,11 @@ MapGenerator.CreateSpawnpoint = function(self, X, Z)
 	
 	local newSpawnId = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("AvailableSpawnpoint", newSpawnId)
+	print("MapGenerator.CreateSpawnpoint")
+	print("MapGenerator.CreateSpawnpoint")
+	print("MapGenerator.CreateSpawnpoint")
+	print("MapGenerator.CreateSpawnpoint")
+	print("MapGenerator.CreateSpawnpoint")
 	world:GetComponent(newSpawnId, "AvailableSpawnpoint", 0):SetInt2(X, Z)
 	
 	self.TileTypes[self:GetListIndex(X, Z)]	=	self.Spawnpoint

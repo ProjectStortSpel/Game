@@ -43,7 +43,10 @@ HostSettingsSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, adde
 			if self.settingsId == -1 then
 				return
 			end
-			
+			print("HEJHEJHEJHEJHEJHEJ")
+			print("HEJHEJHEJHEJHEJHEJ")
+			print("HEJHEJHEJHEJHEJHEJ")
+			print("HEJHEJHEJHEJHEJHEJ")
 			if world:GetComponent(self.settingsId, "HostSettings", "FillAI"):GetInt() == 1 then
 				Console.AddToCommandQueue("AI")
 			end			
