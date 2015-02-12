@@ -95,6 +95,13 @@ StepTimerComponent:AddVariable("Time", ByteSize.Float)
 StepTimerComponent.TableType = TableType.Map
 worldCreator:AddComponentType(StepTimerComponent)
 
+-- Server Selected Card component
+local ServerSelectedCard = ComponentType()
+ServerSelectedCard.Name = "ServerSelectedCard"
+ServerSelectedCard.TableType = TableType.Map
+ServerSelectedCard:AddVariable("Index", ByteSize.Int)
+worldCreator:AddComponentType(ServerSelectedCard)
+
 --	Update Spawn
 local UpdateSpawnpointComponent = ComponentType()
 UpdateSpawnpointComponent.Name = "UpdateSpawnpoint"
