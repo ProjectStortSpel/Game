@@ -37,6 +37,11 @@ StringSettingComponent:AddVariable("SettingsName", ByteSize.Text)
 StringSettingComponent:AddVariable("Value", ByteSize.Text)
 worldCreator:AddComponentType(StringSettingComponent)
 
+-- ActiveTextInput Component
+local ActiveTextInputComponent = ComponentType()
+ActiveTextInputComponent.Name = "ActiveTextInput"
+ActiveTextInputComponent.TableType = TableType.Map
+worldCreator:AddComponentType(ActiveTextInputComponent)
 
 -- ApplyHostSettings Component
 local ApplyHostSettingsComponent = ComponentType()

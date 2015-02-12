@@ -147,6 +147,7 @@ IPConnectSystem.GetValidatedInputString = function(self)
 		byteIndex = byteIndex + 1
 	end
 	
+	print(textInput)
 	textInput = string.sub(textInput, 1, byteIndex - 1)
 	Input.SetTextInput(textInput)
 	return textInput
