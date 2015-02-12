@@ -22,7 +22,7 @@ SetCardPickTimer.EntitiesAdded = function(self, dt, taskIndex, taskCount, entiti
 			local Timers = self:GetEntities("PickingPhaseTimer")
 			
 			if #Timers > 0 then
-				print("SetCardPickTimer says hi!")
+			
 				local newTime = world:GetComponent(entity, "SetPickingPhaseTimer", "Amount"):GetFloat()
 				world:GetComponent(Timers[1], "PickingPhaseTimer", "Timer"):SetFloat(newTime)
 				
