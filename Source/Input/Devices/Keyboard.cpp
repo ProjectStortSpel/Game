@@ -29,8 +29,6 @@ void Keyboard::PollEvent(SDL_Event e)
 	case SDL_KEYDOWN:
 		m_thisState[e.key.keysym.scancode] = true;
 
-		//text
-		SDL_Log("%d", m_textInput->length());
 		if (SDL_IsTextInputActive() && e.key.keysym.sym == SDLK_BACKSPACE && m_textInput->length() > 0)
 		{
 			*m_textInput = m_textInput->substr(0, m_textInput->length() - 1);
