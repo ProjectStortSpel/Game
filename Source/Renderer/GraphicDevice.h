@@ -13,6 +13,7 @@ Author: Anders, Christian
 #include "SkyBox.h"
 #include "ShadowMap.h"
 #include "TextRenderer.h"
+#include "ParticleSystem.h"
 
 namespace Renderer
 {
@@ -205,9 +206,13 @@ namespace Renderer
 
 		// Shaders
 		Shader m_skyBoxShader;
+		Shader m_particleShader;
 
 		// Skybox
 		SkyBox *m_skybox;
+
+		// Particles
+		std::vector<ParticleSystem*> m_particleSystems;
 
 		//// DEBUG variables ----
 		int m_debugTexFlag;

@@ -40,6 +40,12 @@ GraphicDevice::~GraphicDevice()
 	delete(m_skybox);
 	delete m_pointerToPointlights;
 
+	for (int i = 0; i < m_particleSystems.size(); i++)
+	{
+		delete m_particleSystems[i];
+	}
+	m_particleSystems.clear();
+
 	SDL_GL_DeleteContext(m_glContext);
 	// Close and destroy the window
 	SDL_DestroyWindow(m_window);
