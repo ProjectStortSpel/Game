@@ -118,32 +118,6 @@ float GraphicDevice::CreateTextTexture(const std::string& textureName, const std
 	if (size.y > 0)
 		surface->h = size.y;
 	m_surfaces.push_back(std::pair<std::string, SDL_Surface*>(textureName, surface));
-
-	//int numPix = surface->h * surface->w;
-
-	//Uint8* pixels = (Uint8*)surface->pixels;
-	//int index = 0;
-	//for (int i = 0; i < numPix; ++i)
-	//{
-	//	index = i * 4;
-	//	
-	//	if (pixels[index + 3] == 0)
-	//	{
-	//		pixels[index + 0] = 0;
-	//		pixels[index + 1] = 0;
-	//		pixels[index + 2] = 0;
-	//	}
-	//}
-
-	//std::stringstream ss;
-	//ss << "content/";
-	//ss << textureName;
-	//ss << ".bmp";
-
-
-	//SDL_SaveBMP(surface, ss.str().c_str());
-
-	//m_deferredShader1.UseProgram();
 	return (float)surface->w / (float)surface->h;
 }
 
@@ -192,4 +166,17 @@ void GraphicDevice::BufferModelTextures()
 		BufferModelTexture(modelTexture.id, modelTexture.textureName, modelTexture.textureType);
 	}
 	m_modelTextures.clear();
+}
+
+struct sort_depth
+{
+	inline bool operator() (const Model& a, const Model& b)
+	{
+		return (*a.instances[0].modelMatrix)[3][2] < (*b.instances[0].modelMatrix)[3][2];
+	}
+};
+
+void GraphicDevice::SortModelsBasedOnDepth(std::vector<Model>* models)
+{
+	std::sort(models->begin(), models->end(), sort_depth());
 }
