@@ -234,6 +234,8 @@ namespace Renderer
 		virtual bool BufferModelTexture(int _id, std::string _fileDir, int _textureType) = 0;
 		
 		void SortModelsBasedOnDepth(std::vector<Model>* models);
+		
+		virtual void UpdateTextureIndex(GLuint newTexture, GLuint oldTexture) = 0;
 	};
 }
 
