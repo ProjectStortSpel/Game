@@ -32,7 +32,7 @@ PlayCardSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities
 				if not world:EntityHasComponent( unit, "UnitDead" ) then
 					
 					local plyNum = world:GetComponent( unit, "PlayerNumber", "Number" ):GetInt()
-					local action = world:GetComponent( card, "CardAction", "Action"):GetString()
+					local action = world:GetComponent( card, "CardAction", "Action"):GetText()
 
 					--local file = File.Append("gamelog.txt")
 					--File.WriteLine(file, "PlayCard " .. plyNum .. " " .. action)

@@ -8,7 +8,7 @@
 -- world:GetComponent(unitToMove, "LerpPosition", "Y"):SetFloat(0.5)
 -- world:GetComponent(unitToMove, "LerpPosition", "Z"):SetFloat(posZ)
 -- world:GetComponent(unitToMove, "LerpPosition", "Time"):SetFloat(1)
--- world:GetComponent(unitToMove, "LerpPosition", "Algorithm"):SetString("SmoothLerp")
+-- world:GetComponent(unitToMove, "LerpPosition", "Algorithm"):SetText("SmoothLerp")
 --
 --
 --TrueTestMoveSystem = System()

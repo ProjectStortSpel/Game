@@ -60,10 +60,10 @@ namespace LuaBridge
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetInt4", &LuaComponent::SetInt4);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetBool", &LuaComponent::GetBool);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetBool", &LuaComponent::SetBool);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetText", &LuaComponent::GetText);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetText", &LuaComponent::SetText);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetString", &LuaComponent::GetString);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetString", &LuaComponent::SetString);
-		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetStrong", &LuaComponent::GetStrong);
-		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetStrong", &LuaComponent::SetStrong);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetModel", &LuaComponent::SetModel);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetPointlight", &LuaComponent::SetPointlight);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetPointlight", &LuaComponent::GetPointlight);
@@ -73,6 +73,7 @@ namespace LuaBridge
 		LuaEmbedder::EmbedClassProperty<LuaComponent>(L, "Component", "Float", &LuaComponent::GetFloat, &LuaComponent::SetFloat);
 		LuaEmbedder::EmbedClassProperty<LuaComponent>(L, "Component", "Int", &LuaComponent::GetInt, &LuaComponent::SetInt);
 		LuaEmbedder::EmbedClassProperty<LuaComponent>(L, "Component", "Bool", &LuaComponent::GetBool, &LuaComponent::SetBool);
+		LuaEmbedder::EmbedClassProperty<LuaComponent>(L, "Component", "Text", &LuaComponent::GetText, &LuaComponent::SetText);
 		LuaEmbedder::EmbedClassProperty<LuaComponent>(L, "Component", "String", &LuaComponent::GetString, &LuaComponent::SetString);
 	}
 
@@ -327,13 +328,13 @@ namespace LuaBridge
 		return 0;
 	}
 
-	int LuaComponent::GetString(lua_State* L)
+	int LuaComponent::GetText(lua_State* L)
 	{
 		assert(m_dataLocation);
 		LuaEmbedder::PushString(L, std::string((char*)m_dataLocation));
 		return 1;
 	}
-	int LuaComponent::SetString(lua_State* L)
+	int LuaComponent::SetText(lua_State* L)
 	{
 		assert(m_dataLocation);
 		std::string text = LuaEmbedder::PullString(L, 1);
@@ -349,13 +350,13 @@ namespace LuaBridge
 		return 0;
 	}
 
-	int LuaComponent::GetStrong(lua_State* L)
+	int LuaComponent::GetString(lua_State* L)
 	{
 		assert(m_dataLocation);
 		LuaEmbedder::PushString(L, m_world->GetString(m_entityId, m_componentName, m_offset));
 		return 1;
 	}
-	int LuaComponent::SetStrong(lua_State* L)
+	int LuaComponent::SetString(lua_State* L)
 	{
 		assert(m_dataLocation);
 

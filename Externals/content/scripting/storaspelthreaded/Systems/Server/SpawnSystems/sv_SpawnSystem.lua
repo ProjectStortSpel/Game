@@ -27,7 +27,7 @@ SpawnSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 		world:GetComponent(entityId, "LerpPosition", "Y"):SetFloat(0.5)
 		world:GetComponent(entityId, "LerpPosition", "Z"):SetFloat(Z)
 		world:GetComponent(entityId, "LerpPosition", "Time"):SetFloat(0)
-		world:GetComponent(entityId, "LerpPosition", "Algorithm"):SetString("NormalLerp")
+		world:GetComponent(entityId, "LerpPosition", "Algorithm"):SetText("NormalLerp")
 	
 		mapPosComp:SetInt2(X, Z)
 

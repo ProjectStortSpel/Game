@@ -21,7 +21,7 @@ CameraInterestpointSystem.EntitiesAdded = function(self, dt, taskIndex, taskCoun
 			local players = self:GetEntities("Player")
 			for i = 1, #players do
 				if not world:EntityHasComponent( players[i], "IsSpectator") then
-					local ip = world:GetComponent(players[i], "NetConnection", "IpAddress"):GetString()
+					local ip = world:GetComponent(players[i], "NetConnection", "IpAddress"):GetText()
 					local port = world:GetComponent(players[i], "NetConnection", "Port"):GetInt()
 					local unitId = world:GetComponent(players[i], "UnitEntityId", "Id"):GetInt()
 					local x, y, z = world:GetComponent(unitId, "Position", 0):GetFloat3(0)

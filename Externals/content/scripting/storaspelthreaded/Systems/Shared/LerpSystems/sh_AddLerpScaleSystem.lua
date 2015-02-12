@@ -22,7 +22,7 @@ AddLerpScaleSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, enti
 		local tY = world:GetComponent(entity, "LerpScale", "Y"):GetFloat(0)
 		local tZ = world:GetComponent(entity, "LerpScale", "Z"):GetFloat(0)
 		local lerpTime = world:GetComponent(entity, "LerpScale", "Time"):GetFloat(0)
-		local lerpAlgorithm = world:GetComponent(entity, "LerpScale", "Algorithm"):GetString(0)
+		local lerpAlgorithm = world:GetComponent(entity, "LerpScale", "Algorithm"):GetText(0)
 
 		-- Get Current Scale
 		local scale = world:GetComponent(entity, "Scale", 0)
@@ -38,7 +38,7 @@ AddLerpScaleSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, enti
 		world:GetComponent(entity, "LerpingScale", "tZ"):SetFloat(tZ)
 		world:GetComponent(entity, "LerpingScale", "Time"):SetFloat(lerpTime)
 		world:GetComponent(entity, "LerpingScale", "Timer"):SetFloat(0)
-		world:GetComponent(entity, "LerpingScale", "Algorithm"):SetString(lerpAlgorithm)
+		world:GetComponent(entity, "LerpingScale", "Algorithm"):SetText(lerpAlgorithm)
 		
 		world:RemoveComponentFrom("LerpScale", entity)
 	end

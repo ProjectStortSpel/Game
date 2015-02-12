@@ -28,7 +28,7 @@ UpdateLerpScaleSystem.Update = function(self, dt, taskIndex, taskCount)
 		local tZ = world:GetComponent(entity, "LerpingScale", "tZ"):GetFloat(0)
 		local _time = world:GetComponent(entity, "LerpingScale", "Time"):GetFloat(0)
 		local _timer = world:GetComponent(entity, "LerpingScale", "Timer"):GetFloat(0)
-		local algorithm = world:GetComponent(entity, "LerpingScale", "Algorithm"):GetString(0)
+		local algorithm = world:GetComponent(entity, "LerpingScale", "Algorithm"):GetText(0)
 
 		_timer = _timer + dt
 		if _time > _timer then

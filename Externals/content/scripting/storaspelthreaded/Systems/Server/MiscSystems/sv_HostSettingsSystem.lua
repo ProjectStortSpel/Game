@@ -8,7 +8,7 @@ HostSettingsSystem.Initialize = function(self)
 
 	self:AddComponentTypeToFilter("HostSettings", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("MapSpecs", FilterType.RequiresOneOf)
-	
+	self.settingsId = -1
 end
 
 HostSettingsSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, addedEntities)
@@ -18,9 +18,10 @@ HostSettingsSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, adde
 		
 		if world:EntityHasComponent(entity, "HostSettings") then
 			
+			print("HEJHEJHEJHEJHEJHEJ")
 			self.settingsId = entity
-			local name 		= world:GetComponent(entity, "HostSettings", "Name"):GetString()
-			local map 		= world:GetComponent(entity, "HostSettings", "Map"):GetString()
+			local name 		= world:GetComponent(entity, "HostSettings", "Name"):GetText()
+			local map 		= world:GetComponent(entity, "HostSettings", "Map"):GetText()
 			local fillai 	= world:GetComponent(entity, "HostSettings", "FillAI"):GetInt()
 			local allowSpec	= world:GetComponent(entity, "HostSettings", "AllowSpectators"):GetInt()
 		
@@ -38,6 +39,7 @@ HostSettingsSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, adde
 		end
 		
 		if world:EntityHasComponent(entity, "MapSpecs") then
+			print("SettingsId: " .. self.settingsId)
 			if self.settingsId == -1 then
 				return
 			end

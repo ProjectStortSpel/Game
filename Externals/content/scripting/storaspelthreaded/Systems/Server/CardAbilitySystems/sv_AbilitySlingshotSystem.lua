@@ -69,7 +69,7 @@ AbilitySlingshotSystem.AddBullet = function(self, posX, posZ, targetPosX, target
 	world:GetComponent(bullet, "LerpPosition", "Y"):SetFloat(1)
 	world:GetComponent(bullet, "LerpPosition", "Z"):SetFloat(targetPosZ)
 	world:GetComponent(bullet, "LerpPosition", "Time"):SetFloat(lerpTime*math.abs(posX-targetPosX+posZ-targetPosZ))
-	world:GetComponent(bullet, "LerpPosition", "Algorithm"):SetString("NormalLerp")
+	world:GetComponent(bullet, "LerpPosition", "Algorithm"):SetText("NormalLerp")
 
 end
 

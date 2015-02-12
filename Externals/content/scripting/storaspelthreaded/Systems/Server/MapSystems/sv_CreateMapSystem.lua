@@ -22,7 +22,7 @@ CreateMapSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entitie
 	for i = 1, #entities do
 		local entity = entities[i]
 		if world:EntityHasComponent(entity, "CreateMap") then
-			local name = world:GetComponent(entity, "CreateMap", 0):GetString()
+			local name = world:GetComponent(entity, "CreateMap", 0):GetText()
 			self:CreateMap(self.filePath .. name .. ".txt")
 			world:KillEntity(entity)
 		end
@@ -323,11 +323,11 @@ CreateMapSystem.LoadMap = function (_command, ...)
 			print( args[1] )
 			local id = world:CreateNewEntity()
 			world:CreateComponentAndAddTo("CreateMap", id)
-			world:GetComponent(id, "CreateMap", 0):SetString(args[1])
+			world:GetComponent(id, "CreateMap", 0):SetText(args[1])
 		end
 	else
 		local id = world:CreateNewEntity()
 		world:CreateComponentAndAddTo("CreateMap", id)
-		world:GetComponent(id, "CreateMap", 0):SetString("content/maps/smallmap.txt")
+		world:GetComponent(id, "CreateMap", 0):SetText("content/maps/smallmap.txt")
 	end
 end

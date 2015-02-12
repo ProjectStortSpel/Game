@@ -88,25 +88,16 @@ require "sv_HostSettingsSystem"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(StageSystem)
-worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(MapGenerator)
-worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(RiverSystem)
-worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(VoidSystem)
-worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CheckpointSystem)
-worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(DirectionalLightSystem)
-worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(PlayerSystem)
-worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(UnitSystem)
-worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(AddAISystem)
-worldCreator:AddSystemGroup()
+worldCreator:AddSystemGroup() -- <-- TEMP
 worldCreator:AddSystemToCurrentGroup(AICardPickingSystem)
-worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(PostMoveSystem)
 worldCreator:AddSystemGroup()
 --worldCreator:AddSystemGroup()
@@ -116,12 +107,19 @@ worldCreator:AddSystemToCurrentGroup(TestMoveRiverSystem)
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CreateDeckSystem)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(AddCardPickTimer)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(SetCardPickTimer)
+worldCreator:AddSystemGroup() -- <--- TEMP
 worldCreator:AddSystemToCurrentGroup(UpdateCardPickTimer)
+worldCreator:AddSystemGroup() -- <--- TEMP 2
 worldCreator:AddSystemToCurrentGroup(CreateCardPickTimer)
+worldCreator:AddSystemGroup() -- <--- TEMP 2
 worldCreator:AddSystemToCurrentGroup(AutoPickCards)
+worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(DealCardsSystem)
+worldCreator:AddSystemGroup() -- <--- Temp
 worldCreator:AddSystemToCurrentGroup(TakeCardStepsFromUnitSystem)
 worldCreator:AddSystemToCurrentGroup(TakeCardsFromPlayerSystem)
 worldCreator:AddSystemToCurrentGroup(PlayCardSystem)
@@ -147,11 +145,8 @@ worldCreator:AddSystemToCurrentGroup(PostSpawnSystem)
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(StartNewRoundSystem)
-worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(StepTimerSystem)
-worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(NewStepSystem)
-worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(PlayCardTimerSystem)
 
 

@@ -11,12 +11,12 @@ ConnectMenuSystem.Update = function(self, dt, taskIndex, taskCount)
 		if #pressedButtons > 0 then
 			local pressedButton = pressedButtons[1]
 			if world:EntityHasComponent(pressedButton, "MenuConsoleCommand") then
-				local command = world:GetComponent(pressedButton, "MenuConsoleCommand", "Command"):GetStrong()
+				local command = world:GetComponent(pressedButton, "MenuConsoleCommand", "Command"):GetString()
 				self:RemoveMenu()
 				Console.AddToCommandQueue(command)
 			end
 			if world:EntityHasComponent(pressedButton, "MenuEntityCommand") then
-				local compname = world:GetComponent(pressedButton, "MenuEntityCommand", "ComponentName"):GetString()
+				local compname = world:GetComponent(pressedButton, "MenuEntityCommand", "ComponentName"):GetText()
 				--self:RemoveMenu()
 				if compname == "IPConnectEntry" then
 					self:RemoveMenu()
@@ -73,8 +73,8 @@ ConnectMenuSystem.SpawnMenu = function(self)
 
 	for i = 1, #servers do
 		server = servers[i]
-		servername = world:GetComponent(server, "ServerListEntry", "Name"):GetString(0)
-		serverip = world:GetComponent(server, "ServerListEntry", "IpAddress"):GetString(0)
+		servername = world:GetComponent(server, "ServerListEntry", "Name"):GetText(0)
+		serverip = world:GetComponent(server, "ServerListEntry", "IpAddress"):GetText(0)
         serverport = world:GetComponent(server, "ServerListEntry", "Port"):GetInt(0)
 		servernousers = world:GetComponent(server, "ServerListEntry", "NoUsers"):GetInt(0)
 		servermaxusers = world:GetComponent(server, "ServerListEntry", "MaxUsers"):GetInt(0)
@@ -167,8 +167,8 @@ end
 
 ConnectMenuSystem.AddTextToTexture = function(self, n, text, font, r, g, b, button)
 	world:CreateComponentAndAddTo("TextTexture", button)
-	world:GetComponent(button, "TextTexture", "Name"):SetString(n) -- TODO: NAME CANT BE MORE THAN 3 CHARS? WTF?
-	world:GetComponent(button, "TextTexture", "Text"):SetString(text)
+	world:GetComponent(button, "TextTexture", "Name"):SetText(n) -- TODO: NAME CANT BE MORE THAN 3 CHARS? WTF?
+	world:GetComponent(button, "TextTexture", "Text"):SetText(text)
 	world:GetComponent(button, "TextTexture", "FontIndex"):SetInt(font)
 	world:GetComponent(button, "TextTexture", "R"):SetFloat(r)
 	world:GetComponent(button, "TextTexture", "G"):SetFloat(g)
@@ -177,12 +177,12 @@ end
 
 ConnectMenuSystem.AddConsoleCommandToButton = function(self, command, button)
 	world:CreateComponentAndAddTo("MenuConsoleCommand", button)
-	world:GetComponent(button, "MenuConsoleCommand", "Command"):SetStrong(command)
+	world:GetComponent(button, "MenuConsoleCommand", "Command"):SetString(command)
 end
 
 ConnectMenuSystem.AddEntityCommandToButton = function(self, command, button)
 	world:CreateComponentAndAddTo("MenuEntityCommand", button)
-	world:GetComponent(button, "MenuEntityCommand", "ComponentName"):SetString(command)
+	world:GetComponent(button, "MenuEntityCommand", "ComponentName"):SetText(command)
 end
 
 ConnectMenuSystem.AddHoverSize = function(self, deltascale, button)

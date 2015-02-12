@@ -71,7 +71,7 @@ PlayerSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 	--	world:SetComponent(entityId, "PlayerNumber", "Number", playerNumber)
 	--	world:SetComponent(entityId, "UnitEntityId", "Id", newEntityId)
     --
-	--	local ip = world:GetComponent(entityId, "NetConnection", "IpAddress"):GetString()
+	--	local ip = world:GetComponent(entityId, "NetConnection", "IpAddress"):GetText()
 	--	local port = world:GetComponent(entityId, "NetConnection", "Port"):GetInt()
     --
     --

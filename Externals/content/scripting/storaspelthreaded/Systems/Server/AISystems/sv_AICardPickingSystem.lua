@@ -135,7 +135,7 @@ AICardPickingSystem.TryMove = function(self, CardSetAI, card)
 		if CardSetAI[j] == card[1] and j <= #CardSetAI then
 			table.remove(card, 1)
 			cardpicked = CardSetAI[j]
-			--print("PLAYING CARD : ", world:GetComponent(cardpicked, "CardAction", 0):GetString()))
+			--print("PLAYING CARD : ", world:GetComponent(cardpicked, "CardAction", 0):GetText()))
 			table.remove(CardSetAI, j)
 			return cardpicked
 		end
@@ -158,21 +158,21 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, _dirX, _dirY, _posX
 				local cardactioncomp = world:GetComponent(CardSetAI[j], "CardAction", 0)
 				
 				if j == 1 then
-					cardactioncomp:SetString("Forward")
+					cardactioncomp:SetText("Forward")
 				elseif j == 2 then
-					cardactioncomp:SetString("Forward")
+					cardactioncomp:SetText("Forward")
 				elseif j == 3 then
-					cardactioncomp:SetString("Backward")
+					cardactioncomp:SetText("Backward")
 				elseif j == 4 then
-					cardactioncomp:SetString("Backward")
+					cardactioncomp:SetText("Backward")
 				elseif j == 5 then
-					cardactioncomp:SetString("TurnRight")
+					cardactioncomp:SetText("TurnRight")
 				elseif j == 6 then
-					cardactioncomp:SetString("TurnLeft")
+					cardactioncomp:SetText("TurnLeft")
 				elseif j == 7 then
-					cardactioncomp:SetString("TurnAround")
+					cardactioncomp:SetText("TurnAround")
 				elseif j == 8 then
-					cardactioncomp:SetString("Forward")
+					cardactioncomp:SetText("Forward")
 				end
 			end
 		end
@@ -272,7 +272,7 @@ AICardPickingSystem.GetAllCardsOf = function( self, CardSetAI, cardName )
 	cards.__mode = "k"
 	for i = 1, #CardSetAI do
 
-		local nameCard = world:GetComponent(CardSetAI[i], "CardAction", 0):GetString()
+		local nameCard = world:GetComponent(CardSetAI[i], "CardAction", 0):GetText()
 
 		if cardName == nameCard then
 			cards[#cards + 1] = CardSetAI[i]
@@ -290,7 +290,7 @@ AICardPickingSystem.SendCards = function(self, _player, _pickedcards)
 	world:CreateComponentAndAddTo("UnitSelectedCards", unit)
 
 	for i = 1, self.NumberOfCardsToPick do
-		local action = world:GetComponent(_pickedcards[i], "CardAction", 0):GetString()
+		local action = world:GetComponent(_pickedcards[i], "CardAction", 0):GetText()
 		local prio = world:GetComponent(_pickedcards[i], "CardPrio", 0):GetInt()
 		--print("AI Action: " .. action .. " - Prio: " .. prio)
 	
@@ -333,7 +333,7 @@ AICardPickingSystem.SimulateCardsFromPos = function(self, _unit, _posX, _posY, _
 		if type(_pickedcards[i]) == "string" then
 			cardName = _pickedcards[i]
 		else
-			cardName = world:GetComponent(_pickedcards[i], "CardAction", 0):GetString()
+			cardName = world:GetComponent(_pickedcards[i], "CardAction", 0):GetText()
 		end
 		
 		if self.PrintSimulation == 1 then
@@ -523,7 +523,7 @@ AICardPickingSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, ent
 			local playerid = world:GetComponent(entities[i], "DealtCard", 0)
 			local id = playerid:GetInt()
 			local plynum = world:GetComponent(id, "PlayerNumber", 0):GetInt()
-			local card = world:GetComponent(entities[i], "CardAction", 0):GetString()
+			local card = world:GetComponent(entities[i], "CardAction", 0):GetText()
 		end
 	end
 end

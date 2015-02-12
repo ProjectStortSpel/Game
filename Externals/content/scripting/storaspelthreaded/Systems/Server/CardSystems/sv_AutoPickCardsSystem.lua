@@ -33,7 +33,7 @@ AutoPickCards.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 				local Player = Players[i]
 				local unit = world:GetComponent(Player, "UnitEntityId", "Id"):GetInt()
 
-				local playerIp = world:GetComponent(Player, "NetConnection", "IpAddress"):GetString()
+				local playerIp = world:GetComponent(Player, "NetConnection", "IpAddress"):GetText()
 				local playerPort = world:GetComponent(Player, "NetConnection", "Port"):GetInt()
 				
 				for n = 1, #Cards do
@@ -42,7 +42,7 @@ AutoPickCards.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 					
 					if Owner == Player then
 						
-						local action = world:GetComponent(Cards[n], "CardAction", "Action"):GetString()
+						local action = world:GetComponent(Cards[n], "CardAction", "Action"):GetText()
 						local prio = world:GetComponent(Cards[n], "CardPrio", "Prio"):GetInt()
 						print("Action: " .. action .. " - Prio: " .. prio)
 
