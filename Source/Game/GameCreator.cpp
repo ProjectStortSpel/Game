@@ -893,6 +893,26 @@ void GameCreator::ConsoleReload(std::string _command, std::vector<Console::Argum
     if (NetworkInstance::GetServer()->IsRunning())
     {
         Reload();
+
+		unsigned int id = m_serverWorld->CreateNewEntity();
+		m_serverWorld->CreateComponentAndAddTo("HostSettings", id);
+
+		int port = NetworkInstance::GetServer()->GetIncomingPort();
+
+		char* data = new char[m_name.size() + 1];
+		memcpy(data, m_name.c_str(), m_name.size() + 1);
+		m_serverWorld->SetComponent(id, "HostSettings", "Name", data);
+		delete data;
+
+		data = new char[m_map.size() + 1];
+		memcpy(data, m_map.c_str(), m_map.size() + 1);
+		m_serverWorld->SetComponent(id, "HostSettings", "Map", data);
+		delete data;
+
+		m_serverWorld->SetComponent(id, "HostSettings", "Port", &port);
+		m_serverWorld->SetComponent(id, "HostSettings", "FillAI", &m_fillAI);
+		m_serverWorld->SetComponent(id, "HostSettings", "AllowSpectators", &m_allowSpectators);
+
     }
 }
 
@@ -923,13 +943,13 @@ void GameCreator::ConsoleGameMode(std::string _command, std::vector<Console::Arg
 void GameCreator::ConsoleHostSettings(std::string _command, std::vector<Console::Argument>* _args)
 {
 
-	std::string name		= _args->at(0).Text;
+	m_name					= _args->at(0).Text;
 	std::string password	= _args->at(1).Text;
-	std::string map			= _args->at(2).Text;
+	m_map					= _args->at(2).Text;
 	std::string gamemode	= _args->at(3).Text;
 	unsigned int port		= (unsigned int)_args->at(4).Number;
-	int fillai				= _args->at(5).Number;
-	int allowspec			= _args->at(6).Number;
+	m_fillAI				= _args->at(5).Number;
+	m_allowSpectators		= _args->at(6).Number;
 	int serverType			= _args->at(7).Number;
 
 	if (NetworkInstance::GetClient()->IsConnected())
@@ -950,19 +970,19 @@ void GameCreator::ConsoleHostSettings(std::string _command, std::vector<Console:
 	unsigned int id = m_serverWorld->CreateNewEntity();
 	m_serverWorld->CreateComponentAndAddTo("HostSettings", id);
 
-	char* data = new char[name.size() + 1];
-	memcpy(data, name.c_str(), name.size() + 1);
+	char* data = new char[m_name.size() + 1];
+	memcpy(data, m_name.c_str(), m_name.size() + 1);
 	m_serverWorld->SetComponent(id, "HostSettings", "Name", data);
 	delete data;
 	
-	data = new char[name.size() + 1];
-	memcpy(data, map.c_str(), map.size() + 1);
+	data = new char[m_map.size() + 1];
+	memcpy(data, m_map.c_str(), m_map.size() + 1);
 	m_serverWorld->SetComponent(id, "HostSettings", "Map", data);
 	delete data;
 
 	m_serverWorld->SetComponent(id, "HostSettings", "Port", &port);
-	m_serverWorld->SetComponent(id, "HostSettings", "FillAI", &fillai);
-	m_serverWorld->SetComponent(id, "HostSettings", "AllowSpectators", &allowspec);
+	m_serverWorld->SetComponent(id, "HostSettings", "FillAI", &m_fillAI);
+	m_serverWorld->SetComponent(id, "HostSettings", "AllowSpectators", &m_allowSpectators);
 
 
 	//gamemode.insert(0, std::string("gamemode "));

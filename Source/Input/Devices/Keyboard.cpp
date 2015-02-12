@@ -8,18 +8,55 @@ Keyboard::Keyboard()
 		m_thisState[i] = false;
 		m_lastState[i] = false;
 	}
+	m_startUsingTextInput = 0;
+	m_stopUsingTextInput = 0;
 	m_textInput = new std::string();
+
+	m_textInputMutex = SDL_CreateMutex();
 	SDL_StopTextInput();
 }
 Keyboard::~Keyboard()
 {
 	delete m_textInput;
+	SDL_DestroyMutex(m_textInputMutex);
+}
+
+void Keyboard::StartTextInput()
+{
+	SDL_LockMutex(m_textInputMutex);
+	m_startUsingTextInput = m_stopUsingTextInput + 1;
+	SDL_UnlockMutex(m_textInputMutex);
+}
+void Keyboard::StopTextInput()
+{ 
+	SDL_LockMutex(m_textInputMutex);
+	m_stopUsingTextInput = m_startUsingTextInput + 1;
+	SDL_UnlockMutex(m_textInputMutex);
 }
 
 void Keyboard::Update()
 {
 	for (int i = 0; i < m_numberOfKeys; ++i)
 		m_lastState[i] = m_thisState[i];
+
+	if (m_startUsingTextInput < m_stopUsingTextInput)
+	{
+		SDL_StartTextInput();
+		if (m_stopUsingTextInput != 0)
+			SDL_StopTextInput();
+	}
+	else if (m_stopUsingTextInput < m_startUsingTextInput)
+	{
+		SDL_StopTextInput();
+		if (m_startUsingTextInput != 0)
+			SDL_StartTextInput();
+	}
+
+	if (m_startUsingTextInput != 0 || m_stopUsingTextInput != 0)
+	{
+		m_startUsingTextInput = 0;
+		m_stopUsingTextInput = 0;
+	}
 }
 
 void Keyboard::PollEvent(SDL_Event e)
