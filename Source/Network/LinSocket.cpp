@@ -120,8 +120,6 @@ bool LinSocket::Initialize()
 
 bool LinSocket::Shutdown()
 {
-	shutdown(*m_socket, SHUT_RDWR);
-	
 	g_initialized = false;
 	return true;
 }
@@ -287,9 +285,9 @@ bool LinSocket::CloseSocket()
 	return true;
 }
 
-bool LinSocket::ShutdownSocket()
+bool LinSocket::ShutdownSocket(int _how)
 {
-	if (shutdown(*m_socket, SHUT_WR) != 0)
+	if (shutdown(*m_socket, _how) != 0)
 	{
 		if (NET_DEBUG)
 			SDL_Log("Failed to shutdown linsocket. Error: %s.\n", strerror(errno));

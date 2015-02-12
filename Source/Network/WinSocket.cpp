@@ -294,9 +294,9 @@ bool WinSocket::CloseSocket(void)
 	return true;
 }
 
-bool WinSocket::ShutdownSocket()
+bool WinSocket::ShutdownSocket(int _how)
 {
-	if (shutdown(m_socket, SD_SEND) != 0)
+	if (shutdown(m_socket, _how) != 0)
 	{
 		if (NET_DEBUG)
 			SDL_Log("Failed to shutdown winsocket. Error Code: %d.\n", WSAGetLastError());

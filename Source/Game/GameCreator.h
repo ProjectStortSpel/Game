@@ -126,6 +126,15 @@ private:
 	std::vector<GraphicalSystem*> m_graphicalSystems;
 
 	float	m_timeScale;
+
+
+
+	// HOST SETTINGS
+	std::string m_name;
+	std::string m_map;
+	int m_fillAI;
+	int m_allowSpectators;
+
 };
 
 #endif

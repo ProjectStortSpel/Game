@@ -71,7 +71,7 @@ CardAddModelSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, enti
 		world:CreateComponentAndAddTo("Rotation", id)
 		world:CreateComponentAndAddTo("Scale", id)
 		local model = world:GetComponent(id, "Model", 0)
-		model:SetModel("right", "text", 2)
+		model:SetModel("right", "text", 3)
 		local parent = world:GetComponent(id, "Parent", 0)
 		parent:SetInt(entityId)
 		local position = world:GetComponent(id, "Position", 0)

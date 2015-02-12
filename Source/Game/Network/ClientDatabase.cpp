@@ -55,6 +55,7 @@ bool ClientDatabase::Disconnect()
 
 void ClientDatabase::ResetNetworkEvents()
 {
+	m_client.Update(0);
 	m_client.ResetNetworkEvents();
 }
 

@@ -403,6 +403,7 @@ void GraphicsHigh::Render()
 	m_viewspaceShader.UseProgram();
 	m_viewspaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 
+	SortModelsBasedOnDepth(&m_modelsViewspace);
 	for (int i = 0; i < m_modelsViewspace.size(); i++)
 	{
 		std::vector<mat4> modelViewVector(m_modelsViewspace[i].instances.size());
@@ -450,6 +451,7 @@ void GraphicsHigh::Render()
 	m_interfaceShader.UseProgram();
 	m_interfaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 
+	SortModelsBasedOnDepth(&m_modelsInterface);
 	for (int i = 0; i < m_modelsInterface.size(); i++)
 	{
 		std::vector<mat4> modelViewVector(m_modelsInterface[i].instances.size());
@@ -1408,4 +1410,20 @@ bool GraphicsHigh::BufferModelTexture(int _id, std::string _fileDir, int _textur
 		m_modelsInterface.push_back(model);
 
 	return true;
+}
+
+void GraphicsHigh::UpdateTextureIndex(GLuint newTexture, GLuint oldTexture)
+{
+	for (Model& m : m_modelsDeferred)
+		if (m.texID == oldTexture)
+			m.texID = newTexture;
+	for (Model& m : m_modelsForward)
+		if (m.texID == oldTexture)
+			m.texID = newTexture;
+	for (Model& m : m_modelsViewspace)
+		if (m.texID == oldTexture)
+			m.texID = newTexture;
+	for (Model& m : m_modelsInterface)
+		if (m.texID == oldTexture)
+			m.texID = newTexture;
 }
