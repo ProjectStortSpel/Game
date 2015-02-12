@@ -47,6 +47,7 @@ namespace Network
 
 		bool IsRunning() { return *m_running; }
 		unsigned int GetMaxConnections() { return *m_maxConnections; }
+		unsigned int GetIncomingPort() { return *m_incomingPort; }
 
 	private:
 		void ReceivePackets(ISocket* _socket);

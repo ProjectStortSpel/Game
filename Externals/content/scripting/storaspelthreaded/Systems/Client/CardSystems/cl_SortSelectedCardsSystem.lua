@@ -48,9 +48,11 @@ SortSelectedCardsSystem.SelectCard = function(self, card)
 		end
 		world:SetComponent(card, "SelectCard", "Index", index)
 		world:CreateComponentAndAddTo("CardSelected", card)
+		self:SendSelectedCard(card, index)
 	else
 		world:RemoveComponentFrom("SelectCard", card)
 	end
+	
 end
 
 SortSelectedCardsSystem.DeselectCard = function(self, card)
@@ -63,4 +65,22 @@ SortSelectedCardsSystem.DeselectCard = function(self, card)
 		end
 	end
 	world:RemoveComponentFrom("CardSelected", card)
+	self:SendUnselectedCard(card, index)
 end
+
+SortSelectedCardsSystem.SendSelectedCard = function(self, card, index)
+	local pickingStartedID = Net.StartPack("Server.HasSelectedCard")
+	Net.WriteInt(pickingStartedID, Net.ToServerID(card))
+	Net.WriteInt(pickingStartedID, index)
+	Net.SendToServer(pickingStartedID)
+end
+
+SortSelectedCardsSystem.SendUnselectedCard = function(self, card, index)
+	local pickingStartedID = Net.StartPack("Server.HasUnselectedCard")
+	Net.WriteInt(pickingStartedID, Net.ToServerID(card))
+	Net.WriteInt(pickingStartedID, index)
+	Net.SendToServer(pickingStartedID)
+end
+
+
+

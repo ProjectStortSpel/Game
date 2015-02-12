@@ -135,12 +135,18 @@ void GraphicDevice::BufferSurfaces()
 {
 	for (std::pair<std::string, SDL_Surface*> surface : m_surfaces)
 	{
+		int oldTexture = -1;
 		if (m_textures.find(surface.first) != m_textures.end())
+		{
+			oldTexture = m_textures[surface.first];
 			glDeleteTextures(1, &m_textures[surface.first]);
+		}
 		GLuint texture = TextureLoader::LoadTexture(surface.second, GL_TEXTURE1);
 		m_textures[surface.first] = texture;
 		m_vramUsage += (surface.second->w * surface.second->h * 4 * 4);
 		SDL_FreeSurface(surface.second);
+		if (oldTexture != -1)
+			UpdateTextureIndex(texture, oldTexture);
 	}
 	m_surfaces.clear();
 }
