@@ -1,4 +1,5 @@
 StartNewRoundSystem = System()
+StartNewRoundSystem.CurrentRound = 0
 
 StartNewRoundSystem.Initialize = function(self)
 	--	Set Name
@@ -21,8 +22,8 @@ StartNewRoundSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, ent
 			local numReadyUnits = #self:GetEntities("UnitSelectedCards")
 			local units = self:GetEntities("Unit")
 	
-			print("NumReadyUnits: " .. numReadyUnits)
-			print("NumUnits: " .. #units)
+			--print("NumReadyUnits: " .. numReadyUnits)
+			--print("NumUnits: " .. #units)
 
 			if numReadyUnits == #units and onlyOnce then
 			
@@ -32,16 +33,21 @@ StartNewRoundSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, ent
 				for i = 1, #units do
 					world:RemoveComponentFrom("UnitSelectedCards", units[i])
 				end
-				print("StartNewRound Set says hi!")
+				
 				local newId = world:CreateNewEntity()
 				world:CreateComponentAndAddTo("SetPickingPhaseTimer", newId)
 				world:GetComponent(newId, "SetPickingPhaseTimer", "Amount"):SetFloat(0)
-				--world:KillEntity(entity)
+				
 				onlyOnce = false
 				--break	-- To make sure this is run only once.
 				
+				self.CurrentRound = self.CurrentRound + 1
+				--print("------------- Round --------------")
+				--print()
+				io.write("------------- Round ", self.CurrentRound, " --------------\n\n")
+				
 			elseif not world:GetComponent(entity, "NotifyStartNewRound", "IsAI"):GetBool(0) then
-				print("StartNewRound says hi!")
+			
 				local newId = world:CreateNewEntity()
 				world:CreateComponentAndAddTo("AddToPickingPhaseTimer", newId)
 				world:GetComponent(newId, "AddToPickingPhaseTimer", "Amount"):SetFloat(-5)
