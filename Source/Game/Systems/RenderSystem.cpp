@@ -49,6 +49,7 @@ void RenderSystem::Initialize()
 	m_colorId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Color");
 	m_renderId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Render");
 	m_renderOffset = ECSL::ComponentTypeManager::GetInstance().GetComponentType(m_renderId)->GetVariables()->at("Mat").GetOffset();
+	m_colorOffset = ECSL::ComponentTypeManager::GetInstance().GetComponentType(m_renderId)->GetVariables()->at("ColorX").GetOffset();
 	m_parentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Parent");
 	m_isparentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("IsParent");
 }
@@ -111,11 +112,13 @@ void RenderSystem::UpdateMatrix(unsigned int _entityId)
 	float*		Rotation;
 	float*		Scale;
 	glm::mat4*	Matrix;
+	float*		renderColor;
 
-	Position	=	(float*)GetComponent(_entityId, m_positionId , 0);
-	Rotation	=	(float*)GetComponent(_entityId, m_rotationId, 0);
-	Scale		=	(float*)GetComponent(_entityId, m_scaleId, 0);
-	Matrix		=	(glm::mat4*)GetComponent(_entityId, m_renderId, m_renderOffset);
+	Position = (float*)GetComponent(_entityId, m_positionId, 0);
+	Rotation = (float*)GetComponent(_entityId, m_rotationId, 0);
+	Scale = (float*)GetComponent(_entityId, m_scaleId, 0);
+	Matrix = (glm::mat4*)GetComponent(_entityId, m_renderId, m_renderOffset);
+	renderColor = (float*)GetComponent(_entityId, m_renderId, m_colorOffset);
 
 	*Matrix = glm::mat4(1);
 	//CHECK IF IT HAS A PARENT
@@ -136,6 +139,24 @@ void RenderSystem::UpdateMatrix(unsigned int _entityId)
 	*Matrix *= q_rotation.QuaternionToMatrix();
 
 	*Matrix *= glm::scale(glm::vec3(Scale[0], Scale[1], Scale[2]));
+
+
+	if (!HasComponent(_entityId, m_colorId))
+	{ 
+		float* Color = (float*)GetComponent(_entityId, "Color", "X");
+		renderColor[0] = Color[0];
+		renderColor[1] = Color[1];
+		renderColor[2] = Color[2];
+	}
+	else
+	{
+		renderColor[0] = 1;
+		renderColor[1] = 0;
+		renderColor[2] = 0;
+	}
+
+
+
 
 	ComponentHasChanged(_entityId, m_renderId);
 

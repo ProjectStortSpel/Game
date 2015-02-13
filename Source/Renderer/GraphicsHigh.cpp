@@ -121,6 +121,7 @@ void GraphicsHigh::WriteShadowMapDepth()
 	{
 		std::vector<mat4> MVPVector(m_modelsDeferred[i].instances.size());
 		std::vector<mat3> normalMatVector(m_modelsDeferred[i].instances.size());
+		std::vector<vec4> colors(m_modelsDeferred[i].instances.size());
 
 		int nrOfInstances = 0;
 
@@ -141,7 +142,7 @@ void GraphicsHigh::WriteShadowMapDepth()
 			}
 		}
 
-		m_modelsDeferred[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector);
+		m_modelsDeferred[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector, &colors);
 	}
 
 	//------Forward------------------------------------
@@ -214,6 +215,7 @@ void GraphicsHigh::Render()
 	{
 		std::vector<mat4> MVPVector(m_modelsDeferred[i].instances.size());
 		std::vector<mat3> normalMatVector(m_modelsDeferred[i].instances.size());
+		std::vector<vec4> colors(m_modelsDeferred[i].instances.size());
 
 		int nrOfInstances = 0;
 
@@ -236,7 +238,13 @@ void GraphicsHigh::Render()
 				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
 				normalMatVector[nrOfInstances] = normalMatrix;
 
-				m_deferredShader1.SetUniVariable("BlendColor", vector3, m_modelsDeferred[i].instances[j].color);
+				//m_deferredShader1.SetUniVariable("BlendColor", vector3, m_modelsDeferred[i].instances[j].color);
+
+				colors[nrOfInstances] = vec4(	m_modelsDeferred[i].instances[j].color[0],
+												m_modelsDeferred[i].instances[j].color[1],
+												m_modelsDeferred[i].instances[j].color[2],
+												0
+												);
 
 				nrOfInstances++;
 			}
@@ -252,7 +260,7 @@ void GraphicsHigh::Render()
 		glBindTexture(GL_TEXTURE_2D, m_modelsDeferred[i].speID);
 
 		//m_modelsDeferred[i].bufferPtr->draw();
-		m_modelsDeferred[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector);
+		m_modelsDeferred[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector, &colors);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 

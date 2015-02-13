@@ -3,6 +3,7 @@ in vec3 Normal;
 in vec3 Tan;
 in vec3 BiTan;
 in vec2 TexCoord;
+in vec4 addcolor;
 
 //flat in int instanceID;
 
@@ -13,8 +14,6 @@ layout(binding = 1) uniform sampler2D ColorTex;
 uniform sampler2D diffuseTex;
 uniform sampler2D normalTex;
 uniform sampler2D specularTex;
-
-uniform vec3 BlendColor;
 
 uniform int TexFlag;
 
@@ -35,8 +34,8 @@ void main()
 	{
 		// -- OUTPUTS --
 		// Set Color output
-		if( BlendColor != vec3(0.0) )
-			ColorData.xyz = (1.0f-blendFactor)*color_map.xyz + blendFactor * BlendColor; 
+		if( addcolor.xyz != vec3(0.0) )
+			ColorData.xyz = addcolor.xyz;//(1.0f-blendFactor)*color_map.xyz + blendFactor * addcolor.xyz; 
 		else
 			ColorData.xyz = color_map.xyz;								// rgb = color
 
