@@ -781,6 +781,7 @@ void GameCreator::UpdateConsole()
 			m_input->GetKeyboard()->StopTextInput();
 			m_consoleInput.SetActive(false);
 			m_consoleManager.SetOpen(false);
+			
 		}
 		else
 		{

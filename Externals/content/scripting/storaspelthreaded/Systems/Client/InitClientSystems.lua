@@ -3,6 +3,7 @@ package.path = package.path .. ";../../../Externals/content/scripting/storaspelt
 require "cl_PlayerIndicatorSystem"
 require "cl_ClientNetworkMessageSystem"
 require "cl_FlowingWaterSystem"
+require "cl_ChatSystem"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(PlayerIndicatorSystem)
@@ -10,6 +11,8 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ClientNetworkMessageSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(FlowingWaterSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(ChatSystem)
 
 --	Interface Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Client/InterfaceSystems/?.lua"

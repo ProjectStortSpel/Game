@@ -308,6 +308,48 @@ void GameConsole::ConnectClient(std::string _command, std::vector<Console::Argum
 	//LuaEmbedder::AddBool("Client", connected);
 }
 
+void GameConsole::BroadcastChat(std::string _command, std::vector<Console::Argument>* _args)
+{
+	if (!NetworkInstance::GetClient()->IsConnected())
+		return;
+
+	std::stringstream ss;
+	for (int i = 0; i < _args->size(); ++i)
+	{
+		if (i > 0)
+			ss << " ";
+
+		if (_args->at(i).ArgType == Console::ArgumentType::Text)
+		{
+			ss << _args->at(i).Text;
+		}
+		else
+		{
+			ss << _args->at(i).Number;
+		}
+	}
+
+	std::string temp = ss.str();
+	auto ph = NetworkInstance::GetClient()->GetPacketHandler();
+	auto id = ph->StartPack("LuaPacket");
+	ph->WriteString(id, "CLIENT_SEND_CHAT_MESSAGE");
+	ph->WriteString(id, temp.c_str());
+	NetworkInstance::GetClient()->Send(ph->EndPack(id));
+
+//LuaEmbedder::AddBool("Client", connected);
+}
+
+void GameConsole::BroadcastAnnouncement(std::string _command, std::vector<Console::Argument>* _args)
+{
+	if (!NetworkInstance::GetClient()->IsConnected())
+		return;
+
+	std::string temp = _args->at(0).GetString();
+	SDL_Log("%s", temp);
+		//LuaEmbedder::AddBool("Client", connected);
+}
+
+
 void GameConsole::DisconnectClient(std::string _command, std::vector<Console::Argument>* _args)
 {
 	if (NetworkInstance::GetClient()->IsConnected())
@@ -452,6 +494,9 @@ void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 	m_consoleManager->AddCommand("Disconnect", std::bind(&GameConsole::DisconnectClient, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager->AddCommand("List", std::bind(&GameConsole::ListCommands, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager->AddCommand("Clear", std::bind(&GameConsole::ClearHistory, this, std::placeholders::_1, std::placeholders::_2));
+
+	m_consoleManager->AddCommand("Say", std::bind(&GameConsole::BroadcastChat, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager->AddCommand("Announce", std::bind(&GameConsole::BroadcastAnnouncement, this, std::placeholders::_1, std::placeholders::_2));
 
 	m_consoleManager->AddCommand("ToggleText", std::bind(&GameConsole::ToggleText, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager->AddCommand("TextColor", std::bind(&GameConsole::SetTextColor, this, std::placeholders::_1, std::placeholders::_2));
