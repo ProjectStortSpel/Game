@@ -162,6 +162,7 @@ void Logger::Log(const std::string& _groupName, LogSeverity _severity, const std
 	SDL_UnlockMutex(m_logMutex);
 }
 
+#include "FileSystem/MD5.h"
 void Logger::CreateFile()
 {
 #if !defined(__ANDROID__)
@@ -197,9 +198,21 @@ void Logger::CreateFile()
     ss2 << path;
    // ss2 << "data";
     
+
+
 	FileSystem::Directory::CreateFolder(ss2.str());
 
 	SDL_RWops* newFile = SDL_RWFromFile(m_logFileName.c_str(), "w");
+
+	//Test Md5
+	FileSystem::MD5::MD5_CTX ctx;
+	FileSystem::MD5::MD5_Init(&ctx);
+	std::string asd = "asdbjkhasldkhdsflksahfsalhsadfkjnasdflkjasndflkjnsadflkjnsadfsd";
+	FileSystem::MD5::MD5_Update(&ctx, asd.c_str(), asd.size());
+	unsigned char res[16];
+	FileSystem::MD5::MD5_Final(res, &ctx);
+	FileSystem::MD5::MD5_Print(res);
+
 	SDL_RWclose(newFile);
     
 #endif
