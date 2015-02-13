@@ -40,7 +40,7 @@ HostMenuSystem.Update = function(self, dt, taskIndex, taskCount)
 			end
 		else
 			Input.SetTextInput("")
-			Input.StopTextInput()
+			--Input.StopTextInput()
 
 			self.IsActive = false
 			self.TextInput = ""
