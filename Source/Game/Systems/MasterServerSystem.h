@@ -41,6 +41,8 @@ private:
 
 	std::vector<MASTER_SERVER_MESSAGES> m_mServerMessages;
 
+	std::string m_name;
+
 	int m_gameRunningId;
 	int m_oldGameRunningId;
 	
@@ -48,6 +50,7 @@ private:
 	bool m_serverStarted;
 	bool m_connect;
 	int m_port;
+	int m_maxPlayers;
 
 	float m_timeoutTimer;
 

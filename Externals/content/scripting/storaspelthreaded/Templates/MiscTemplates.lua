@@ -57,7 +57,7 @@ SlingShotProjectile.Name = "SlingShotProjectile"
 SlingShotProjectile:SetFloat3("Position", 0.0, 0.0, 0.0)
 SlingShotProjectile:SetFloat3("Rotation", 0.0, 0.0, 0.0)
 SlingShotProjectile:SetFloat3("Scale", 0.25, 0.25, 0.25)
-SlingShotProjectile:SetModel("Model", "head", "head" , 0)
+SlingShotProjectile:SetModel("Model", "pebble", "pebble" , 0)
 SlingShotProjectile:AddComponent("SyncNetwork")
 SlingShotProjectile:AddComponent("SlingShotProjectile")
 SlingShotProjectile:AddComponent("LerpPosition")

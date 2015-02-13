@@ -98,6 +98,7 @@ AutoPickCards.StealCardsFrom = function(self, playerIndex)
 		print("Prio: " .. prio)
 	
 		world:RemoveComponentFrom("DealtCard", pickedCards[cardIndex])
+		
 		if world:EntityHasComponent(pickedCards[cardIndex], "ServerSelectedCard") then
 			world:RemoveComponentFrom("ServerSelectedCard", pickedCards[cardIndex])
 		end
