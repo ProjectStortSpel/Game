@@ -1,5 +1,5 @@
 #include "Directory.h"
-
+#include <cstring>
 
 #if defined(WIN32)
 #include <sys/types.h>
