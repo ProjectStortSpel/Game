@@ -258,6 +258,7 @@ CreateMapSystem.CreateMap = function(self, name)
 	inputData:SetSize(self.mapX, self.mapY)
 	
 	PathfinderHandler.SetData(inputData)
+	PotentialFieldHandler.InitPFHandler(self.mapX, self.mapY, self.noOfSpawnpoints)
 	
 	-- Set size of the map.
 	world:GetComponent(mapEntity, "MapSpecs", 0):SetInt3(self.noOfSpawnpoints, self.mapX, self.mapY)
