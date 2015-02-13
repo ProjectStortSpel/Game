@@ -39,7 +39,7 @@
 #include <string.h>
 #include <iostream>
 
-#include "md5.h"
+#include "FileSystem/MD5.h"
 namespace FileSystem
 {
 	namespace MD5
