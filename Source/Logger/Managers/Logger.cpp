@@ -207,7 +207,7 @@ void Logger::CreateFile()
 
 void Logger::AppendFile(LogEntry& _logEntry)
 {
-#if !defined(__OSX__) && !defined(__ANDROID__)
+#if !defined(__ANDROID__)
 
 	/*	Open the file	*/
 	char* end;
