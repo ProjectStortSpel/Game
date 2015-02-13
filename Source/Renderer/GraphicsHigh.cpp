@@ -983,11 +983,11 @@ void GraphicsHigh::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 {
 	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
 
-	//if (obj.animated)
-	//{
-	//	BufferAModel(_modelId, _modelToLoad);
-	//	return;
-	//}
+	if (obj.animated)
+	{
+		BufferAModel(_modelId, _modelToLoad);
+		return;
+	}
 
 	Shader *shaderPtr = NULL;
 	std::vector<Model> *modelList = NULL;
