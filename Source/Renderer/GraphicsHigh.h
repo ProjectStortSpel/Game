@@ -54,8 +54,6 @@ namespace Renderer
 		bool InitLightBuffers();
 		bool InitRandomVector();
 
-		void CreateParticleSystems();
-
 		void CreateGBufTex(GLenum texUnit, GLenum format, GLuint &texid);
 		void CreateDepthTex(GLuint &texid);
 

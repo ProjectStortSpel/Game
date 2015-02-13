@@ -35,6 +35,9 @@
     <Filter Include="shaders\Animation">
       <UniqueIdentifier>{febeb057-91b1-4665-a3f2-b2a79f54923c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="shaders\ParticleShaders">
+      <UniqueIdentifier>{a07b3b2d-2595-43fe-9eee-cebc6259606d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Renderer\GraphicDevice.h">
@@ -184,6 +187,12 @@
     </None>
     <None Include="..\..\..\Externals\content\shaders\FSAnimationShader.glsl">
       <Filter>shaders\Animation</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\particleShaderFS.glsl">
+      <Filter>shaders\ParticleShaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\particleShaderVS.glsl">
+      <Filter>shaders\ParticleShaders</Filter>
     </None>
   </ItemGroup>
 </Project>
