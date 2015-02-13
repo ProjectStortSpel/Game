@@ -22,6 +22,7 @@ void Pathfinder::Destroy()
 
 Pathfinder::Pathfinder()
 {
+	this->m_potentialField = NULL;
 	this->m_mapSize = coord(0, 0);
 	this->m_mapData = NULL;
 }
@@ -64,57 +65,24 @@ void Pathfinder::ChangeWalkable(int _x, int _y, bool _walkable)
 	}
 }
 
-bool Pathfinder::RemovePotentialField(potential_field* pPF)
+bool Pathfinder::RemovePotentialField()
 {
-	for (int i = 0; i < this->m_potentialFields.size(); ++i)
+	this->m_potentialField = NULL;
+	return false;
+}
+
+bool Pathfinder::UsePotentialField(potential_field* pPF)
+{
+	if (pPF)
 	{
-		if (pPF == this->m_potentialFields[i].potentialField)
-		{
-			this->m_potentialFields.erase(this->m_potentialFields.begin() + i);
-			return true;
-		}
+		this->m_potentialField = pPF;
 	}
 	return false;
 }
 
-bool Pathfinder::SetPotentialFieldWeight(potential_field* pPF, float weight)
+void Pathfinder::ClearPotentialField()
 {
-	for (int i = 0; i < this->m_potentialFields.size(); ++i)
-	{
-		if (pPF == this->m_potentialFields[i].potentialField)
-		{
-			this->m_potentialFields[i].weight = weight;
-			return true;
-		}
-	}
-	return false;
-}
-
-bool Pathfinder::SetPotentialFieldUse(potential_field* pPF)
-{
-	for (int i = 0; i < this->m_pFToBeUsed.size(); ++i)
-	{
-		if (pPF == this->m_pFToBeUsed[i].potentialField)
-		{
-			return false;
-		}
-	}
-	for (int i = 0; i < this->m_potentialFields.size(); ++i)
-	{
-		if (pPF == this->m_potentialFields[i].potentialField)
-		{
-			this->m_pFToBeUsed.push_back(this->m_potentialFields[i]);
-			return true;
-		}
-	}
-	return false;
-}
-
-void Pathfinder::AddPotentialField(potential_field* pPF, float weight)
-{
-	PotentialFieldData to_be_used(pPF, weight);
-
-	this->m_potentialFields.push_back(to_be_used);
+	this->m_potentialField = NULL;
 }
 
 float Pathfinder::CalcHeuristicValue(coord _fromGoal)
@@ -139,10 +107,10 @@ void Pathfinder::AddNeighbors(coord _position, std::vector<pathfindingnode>& _se
 		float cost = this->m_mapData[x][y].walk_cost;
 		if (!this->InSet(_set, x, y))
 		{
-			for (int i = 0; i < this->m_pFToBeUsed.size(); ++i)
+			if (this->m_potentialField)
 			{
-				float value = (*(this->m_pFToBeUsed[i].potentialField))[x][y];
-				cost += value * this->m_pFToBeUsed[i].weight;
+				float value = (*this->m_potentialField)[x][y];
+				cost += value;
 			}
 			this->m_mapData[x][y].parent = _parent;
 			this->m_mapData[x][y].g = _parent->g + cost;
@@ -177,10 +145,10 @@ void Pathfinder::AddNeighbors(coord _position, std::vector<pathfindingnode>& _se
 		if (!this->InSet(_set, x, y))
 		{
 			
-			for (int i = 0; i < this->m_pFToBeUsed.size(); ++i)
+			if (this->m_potentialField)
 			{
-				float value = (*(this->m_pFToBeUsed[i].potentialField))[x][y];
-				cost += value * this->m_pFToBeUsed[i].weight;
+				float value = (*this->m_potentialField)[x][y];
+				cost += value;
 			}
 			this->m_mapData[x][y].parent = _parent;
 			this->m_mapData[x][y].g = _parent->g + cost;
@@ -214,10 +182,10 @@ void Pathfinder::AddNeighbors(coord _position, std::vector<pathfindingnode>& _se
 		float cost = this->m_mapData[x][y].walk_cost;
 		if (!this->InSet(_set, x, y))
 		{
-			for (int i = 0; i < this->m_pFToBeUsed.size(); ++i)
+			if (this->m_potentialField)
 			{
-				float value = (*(this->m_pFToBeUsed[i].potentialField))[x][y];
-				cost += value * this->m_pFToBeUsed[i].weight;
+				float value = (*this->m_potentialField)[x][y];
+				cost += value;
 			}
 			this->m_mapData[x][y].parent = _parent;
 			this->m_mapData[x][y].g = _parent->g + cost;
@@ -252,10 +220,10 @@ void Pathfinder::AddNeighbors(coord _position, std::vector<pathfindingnode>& _se
 		if (!this->InSet(_set, x, y))
 		{
 			
-			for (int i = 0; i < this->m_pFToBeUsed.size(); ++i)
+			if (this->m_potentialField)
 			{
-				float value = (*(this->m_pFToBeUsed[i].potentialField))[x][y];
-				cost += value * this->m_pFToBeUsed[i].weight;
+				float value = (*this->m_potentialField)[x][y];
+				cost += value;
 			}
 			this->m_mapData[x][y].parent = _parent;
 			this->m_mapData[x][y].g = _parent->g + cost;
@@ -324,7 +292,6 @@ std::vector<coord> Pathfinder::GeneratePath( coord start, coord goal )
 	std::vector<coord> ret_value;
 	std::vector<pathfindingnode> open;
 	std::vector<pathfindingnode> closed;
-	this->m_startCoord = start;
 	this->m_goalCoord = goal;
 	if (this->InsideWorld(goal.x, goal.y) && this->InsideWorld(start.x, start.y))
 	{
@@ -332,7 +299,7 @@ std::vector<coord> Pathfinder::GeneratePath( coord start, coord goal )
 		{
 			this->m_mapData[start.x][start.y].parent = &this->m_mapData[start.x][start.y];
 			this->m_mapData[start.x][start.y].g = 0;
-			this->m_mapData[start.x][start.y].h = this->CalcHeuristicValue(this->m_startCoord);
+			this->m_mapData[start.x][start.y].h = this->CalcHeuristicValue(start);
 
 			open.push_back(this->m_mapData[start.x][start.y]);
 
@@ -348,8 +315,8 @@ std::vector<coord> Pathfinder::GeneratePath( coord start, coord goal )
 					while (check)
 					{
 						current_node = *current_node.parent;
-						check = !(current_node.position.x == this->m_startCoord.x &&
-							current_node.position.y == this->m_startCoord.y);
+						check = !(current_node.position.x == start.x &&
+							current_node.position.y == start.y);
 						coord push_me_now(current_node.position.x, current_node.position.y);
 						ret_value.push_back(push_me_now);
 					}
@@ -361,7 +328,6 @@ std::vector<coord> Pathfinder::GeneratePath( coord start, coord goal )
 
 		}
 	}
-	this->m_pFToBeUsed.clear();
 	return ret_value;
 }
 
@@ -371,7 +337,7 @@ void Pathfinder::DeleteMap()
 	{
 		if (this->m_mapData[i])
 		{
-			delete(this->m_mapData[i]);
+			delete[](this->m_mapData[i]);
 			this->m_mapData[i] = NULL;
 		}
 	}

@@ -16,6 +16,8 @@ void ModelSystem::Initialize()
 
 	SetEntitiesAddedTaskCount(1);
 
+	m_colorId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Color");
+
 	AddComponentTypeToFilter("Model", ECSL::FilterType::Mandatory);
 	AddComponentTypeToFilter("Render", ECSL::FilterType::Excluded);
 
@@ -40,10 +42,18 @@ void ModelSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::ve
 		glm::mat4*	Matrix;
 		Matrix = (glm::mat4*)GetComponent(entityId, "Render", "Mat");
 		int* ModelId = (int*)GetComponent(entityId, "Render", "ModelId");
-		float* ColorStart = (float*)GetComponent(entityId, "Render", "ColorX");
-		ColorStart[0] = 0.0f;
-		ColorStart[1] = 0.0f;
-		ColorStart[2] = 0.0f;
-		*ModelId = m_graphics->LoadModel(ModelPath, ModelName, Matrix, RenderType, ColorStart);
+
+		float* Color;
+		if (!HasComponent(entityId, m_colorId))
+		{ 
+			CreateComponentAndAddTo("Color", entityId);
+			Color = (float*)GetComponent(entityId, "Color", "X");
+			Color[0] = 0.0f;
+			Color[1] = 0.0f;
+			Color[2] = 0.0f;
+		}
+		Color = (float*)GetComponent(entityId, "Color", "X");
+
+		*ModelId = m_graphics->LoadModel(ModelPath, ModelName, Matrix, RenderType, Color);
 	}
 }

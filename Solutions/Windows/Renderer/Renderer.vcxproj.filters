@@ -76,7 +76,8 @@
     <ClInclude Include="..\..\..\Source\Renderer\GraphicsLow.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\Renderer\ParticleSystem.h">
+    <ClInclude Include="..\..\..\Source\Renderer\ParticleSystem.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\AModel.h">
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
@@ -115,6 +116,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Renderer\ParticleSystem.cpp">
+	  <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Renderer\AModel.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
