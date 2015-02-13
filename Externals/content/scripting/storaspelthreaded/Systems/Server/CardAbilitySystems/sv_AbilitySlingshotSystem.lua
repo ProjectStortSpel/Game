@@ -124,7 +124,7 @@ AbilitySlingshotSystem.Update = function(self, dt, taskIndex, taskCount)
 		end
 		world:RemoveComponentFrom("UnitSlingShot", entities[i])
 	end
-
+	
 	local slingshots = self:GetEntities("SlingShotProjectile")
 	for i = 1, #slingshots do
 		local posX, _, posZ	 = world:GetComponent(slingshots[i], "Position", 0):GetFloat3()

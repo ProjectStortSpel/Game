@@ -93,7 +93,6 @@ worldCreator:AddSystemToCurrentGroup(RiverSystem)
 worldCreator:AddSystemToCurrentGroup(VoidSystem)
 worldCreator:AddSystemToCurrentGroup(CheckpointSystem)
 worldCreator:AddSystemToCurrentGroup(DirectionalLightSystem)
-worldCreator:AddSystemGroup() -- <-- TEMP
 worldCreator:AddSystemToCurrentGroup(PlayerSystem)
 worldCreator:AddSystemToCurrentGroup(UnitSystem)
 worldCreator:AddSystemToCurrentGroup(AddAISystem)
@@ -103,7 +102,7 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(TestMoveSystem)
 worldCreator:AddSystemToCurrentGroup(TestMoveRiverSystem)
 
-worldCreator:AddSystemGroup()
+
 worldCreator:AddSystemToCurrentGroup(CreateDeckSystem)
 worldCreator:AddSystemToCurrentGroup(AddCardPickTimer)
 worldCreator:AddSystemGroup()
@@ -128,7 +127,7 @@ worldCreator:AddSystemToCurrentGroup(AbilitySprintSystem)
 worldCreator:AddSystemToCurrentGroup(AbilitySlingshotSystem)
 worldCreator:AddSystemToCurrentGroup(AbilityIWin)
 
-worldCreator:AddSystemGroup()
+--worldCreator:AddSystemGroup()
 
 worldCreator:AddSystemToCurrentGroup(GiveSpawnLocationSystem)
 worldCreator:AddSystemToCurrentGroup(FindSpawnpointSystem)
@@ -136,7 +135,7 @@ worldCreator:AddSystemToCurrentGroup(RespawnSystem)
 worldCreator:AddSystemToCurrentGroup(PostSpawnSystem)
 
 
-worldCreator:AddSystemGroup()
+--worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(StartNewRoundSystem)
 worldCreator:AddSystemToCurrentGroup(StepTimerSystem)
 worldCreator:AddSystemToCurrentGroup(NewStepSystem)

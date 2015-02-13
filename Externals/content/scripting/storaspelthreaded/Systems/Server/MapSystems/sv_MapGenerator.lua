@@ -9,6 +9,7 @@ MapGenerator.MapTiles 			= 	{}
 MapGenerator.MapTiles.__mode 	= 	"k"
 MapGenerator.TileTypes 			= 	{}
 MapGenerator.TileTypes.__mode 	= 	"k"
+MapGenerator.abc = 1
 
 --	All types
 MapGenerator.Void		=	0
@@ -121,7 +122,7 @@ MapGenerator.GenerateMap = function(self, randSeed, numberOfPlayers, numberOfChe
 	world:GetComponent(dataEntity, "MapSpecs", "NoOfSpawnpoints"):SetInt(self.Players)
 	world:GetComponent(dataEntity, "MapSpecs", "SizeX"):SetInt2(self.MapSizeX, self.MapSizeZ)
 	
-	--self:PrintMap()
+	self:PrintMap()
 	collectgarbage()
 end
 
@@ -185,6 +186,10 @@ end
 MapGenerator.RemoveTile = function(self, X, Z)
 	local	tIndex 	= 	self:GetListIndex(X, Z)
 	if self.MapTiles[tIndex] ~= -1 then
+		if self:GetTileType(X, Z) == self.River then
+			print("River: " .. self.abc)
+			self.abc = self.abc + 1
+		end
 		world:KillEntity(self.MapTiles[tIndex])
 		self.MapTiles[tIndex] 	= 	-1
 		self.TileTypes[tIndex]	=	self.Void

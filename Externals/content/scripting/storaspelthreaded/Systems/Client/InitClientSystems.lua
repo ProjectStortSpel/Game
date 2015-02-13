@@ -29,20 +29,20 @@ package.path = package.path .. ";../../../Externals/content/scripting/storaspelt
 require "cl_NewCameraSystem"
 
 worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(PlayerIndicatorSystem)
-worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ClientNetworkMessageSystem)
-
-
-
-
 worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(PlayerIndicatorSystem)
+--worldCreator:AddSystemToCurrentGroup(ClientNetworkMessageSystem)
+
+
+
+
+--worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(RconMenuSystem)
 worldCreator:AddSystemToCurrentGroup(OptionMenuSystem)
 worldCreator:AddSystemToCurrentGroup(GameMenuSystem)
 worldCreator:AddSystemToCurrentGroup(GameInterfaceSystem)
 worldCreator:AddSystemToCurrentGroup(PickingTimerSystem)
-
 
 worldCreator:AddSystemToCurrentGroup(FlowingWaterSystem)
 worldCreator:AddSystemToCurrentGroup(GiveCardIndexSystem)

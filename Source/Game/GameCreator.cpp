@@ -366,10 +366,10 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
     
     if (_worldType == WorldType::Client || _isMainWorld)
     {
-	graphicalSystem = new AddTextToTextureSystem(m_graphics);
-	m_graphicalSystems.push_back(graphicalSystem);
-	worldCreator.AddSystemGroup();
-	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
+		graphicalSystem = new AddTextToTextureSystem(m_graphics);
+		m_graphicalSystems.push_back(graphicalSystem);
+		worldCreator.AddSystemGroup();
+		worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
     }
     
     if (_includeMasterServer)
