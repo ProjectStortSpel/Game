@@ -126,9 +126,9 @@ NewCameraSystem.PostInitialize = function(self)
 	local lscale = world:GetComponent(self.TouchSprite2, "Scale", 0)
 	lscale:SetFloat3(0.05, 0.05, 0.05)	
 			
-	GraphicDevice.GetCamera():MoveToAndLookAt(	self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
+	GraphicDevice.GetCamera():MoveToAndLookAt(	self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10-2,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
 									self.CameraUpX,0,self.CameraUpZ,
-									self.CameraLookAtX,-4.5,self.CameraLookAtZ,
+									self.CameraLookAtX,0.5,self.CameraLookAtZ,
 									1)
 	
 end
@@ -141,7 +141,7 @@ NewCameraSystem.DoCIP = function(self, entityId)
 	self.CameraLookAtZ = world:GetComponent(entityId, "CameraInterestPoint", "AtZ"):GetFloat(0)
 	self.CameraDistance = world:GetComponent(entityId, "CameraInterestPoint", "Distance"):GetFloat(0)
 
-	GraphicDevice.GetCamera():MoveToAndLookAt(	self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
+	GraphicDevice.GetCamera():MoveToAndLookAt(	self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10-2,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
 									self.CameraUpX,0,self.CameraUpZ,
 									self.CameraLookAtX,0.5,self.CameraLookAtZ,
 									0.5)
@@ -244,9 +244,9 @@ NewCameraSystem.DoFreeCam = function(self, dt)
 					move = true
 				end
 				if move == true then
-					GraphicDevice.GetCamera():MoveToAndLookAt(self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
+					GraphicDevice.GetCamera():MoveToAndLookAt(self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10-2,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
 												self.CameraUpX,0,self.CameraUpZ,
-												self.CameraLookAtX,-4.5,self.CameraLookAtZ,
+												self.CameraLookAtX,0.5,self.CameraLookAtZ,
 												0.5)
 				end	
 			end
