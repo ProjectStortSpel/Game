@@ -26,6 +26,15 @@ RotationComponent:AddVariable("Y", ByteSize.Float)
 RotationComponent:AddVariable("Z", ByteSize.Float)
 worldCreator:AddComponentType(RotationComponent)
 
+-- Color Component
+local ColorComponent = ComponentType()
+ColorComponent.Name = "Color"
+ColorComponent.TableType = TableType.Array
+ColorComponent:AddVariable("X", ByteSize.Float)
+ColorComponent:AddVariable("Y", ByteSize.Float)
+ColorComponent:AddVariable("Z", ByteSize.Float)
+worldCreator:AddComponentType(ColorComponent)
+
 -- Velocity Component
 local VelocityComponent = ComponentType()
 VelocityComponent.Name = "Velocity"
@@ -42,9 +51,6 @@ RenderComponent.SyncNetwork = false
 RenderComponent.TableType = TableType.Array
 RenderComponent:AddVariable("ModelId", ByteSize.Int)
 RenderComponent:AddVariable("Mat", ByteSize.Matrix)
-RenderComponent:AddVariable("ColorX", ByteSize.Float)
-RenderComponent:AddVariable("ColorY", ByteSize.Float)
-RenderComponent:AddVariable("ColorZ", ByteSize.Float)
 worldCreator:AddComponentType(RenderComponent)
 
 --	Model Component
