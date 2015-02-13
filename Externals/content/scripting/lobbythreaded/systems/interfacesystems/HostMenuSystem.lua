@@ -39,13 +39,18 @@ HostMenuSystem.Update = function(self, dt, taskIndex, taskCount)
 				self:MenuEntityCommandPressed(pressedButton)
 			end
 		else
-			Input.SetTextInput("")
-			--Input.StopTextInput()
-
-			self.IsActive = false
-			self.TextInput = ""
-			self.ActiveTextId  = -1
+		
+			if self.IsActive then 
+				Input.SetTextInput("")
+				--Input.StopTextInput()
+	
+				self.IsActive = false
+				self.TextInput = ""
+				self.ActiveTextId  = -1
+			end
+			
 			self:RemoveMenu()
+			
 		end
 
 	end
