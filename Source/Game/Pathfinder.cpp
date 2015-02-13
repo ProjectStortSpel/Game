@@ -337,7 +337,7 @@ void Pathfinder::DeleteMap()
 	{
 		if (this->m_mapData[i])
 		{
-			delete(this->m_mapData[i]);
+			delete[](this->m_mapData[i]);
 			this->m_mapData[i] = NULL;
 		}
 	}

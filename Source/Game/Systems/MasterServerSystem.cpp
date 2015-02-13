@@ -5,7 +5,7 @@
 #include "Input/InputWrapper.h"
 
 MasterServerSystem::MasterServerSystem()
-	:m_clientDatabase(0)
+	:m_clientDatabase(0), m_name("DefaultName")
 {
 }
 MasterServerSystem::~MasterServerSystem()
@@ -26,10 +26,11 @@ void MasterServerSystem::Initialize()
 	SetEntitiesRemovedTaskCount(1);
 
 	/*	Rendersystem wants Network	*/
-	AddComponentTypeToFilter("AvailableSpawnpoint", ECSL::FilterType::RequiresOneOf);
+	AddComponentTypeToFilter("MapSpecs", ECSL::FilterType::RequiresOneOf);
 	AddComponentTypeToFilter("Player", ECSL::FilterType::RequiresOneOf);
 	AddComponentTypeToFilter("GameRunning", ECSL::FilterType::RequiresOneOf);
 	AddComponentTypeToFilter("RefreshServerList", ECSL::FilterType::RequiresOneOf);
+	AddComponentTypeToFilter("HostSettings", ECSL::FilterType::RequiresOneOf);
 
 	m_gameRunningId = -1;
 	m_oldGameRunningId = -1;
@@ -48,10 +49,6 @@ void MasterServerSystem::PostInitialize()
 	{
 		NetworkInstance::GetServer()->SetOnServerShutdown(std::bind(&MasterServerSystem::OnServerShutdown, this));
 
-		m_pwProtected = strlen(NetworkInstance::GetServer()->GetServerPassword()) > 0;
-		m_port = NetworkInstance::GetServer()->GetIncomingPort();
-
-		m_mServerMessages.push_back(ADD_TO_DATABASE);
 		//m_clientDatabase->AddToDatabase(port, pw.size() > 0);
 	}
 	else if(NetworkInstance::GetClient()->IsConnected())
@@ -139,7 +136,7 @@ void MasterServerSystem::OnConnectionAccepted(Network::NetConnection _nc, const 
 		switch (m_mServerMessages[i])
 		{
 		case ADD_TO_DATABASE:
-			m_clientDatabase->AddToDatabase(m_port, m_pwProtected);
+			m_clientDatabase->AddToDatabase(m_name.c_str(), m_port, m_pwProtected);
 			m_timeoutTimer = 0.f;
 			break;
 		case REMOVE_FROM_DATABASE:
@@ -159,7 +156,7 @@ void MasterServerSystem::OnConnectionAccepted(Network::NetConnection _nc, const 
 			m_timeoutTimer = 0.f;
 			break;
 		case MAX_PLAYER_COUNT_INCREASED:
-			m_clientDatabase->IncreaseMaxNoPlayers();
+			m_clientDatabase->IncreaseMaxNoPlayers(m_maxPlayers);
 			m_timeoutTimer = 0.f;
 			break;
 		case PLAYER_COUNT_INCREASED:
@@ -273,8 +270,9 @@ void MasterServerSystem::EntitiesAddedServer(const ECSL::RuntimeInfo& _runtime, 
 {
 	for (unsigned int entityId : _entities)
 	{
-		if (HasComponent(entityId, ECSL::ComponentTypeManager::GetInstance().GetTableId("AvailableSpawnpoint")))
+		if (HasComponent(entityId, ECSL::ComponentTypeManager::GetInstance().GetTableId("MapSpecs")))
 		{
+			m_maxPlayers = *((int*)GetComponent(entityId, "MapSpecs", "NoOfSpawnpoints"));
 			m_mServerMessages.push_back(MAX_PLAYER_COUNT_INCREASED);
 			//m_clientDatabase->IncreaseMaxNoPlayers();
 		}
@@ -295,7 +293,17 @@ void MasterServerSystem::EntitiesAddedServer(const ECSL::RuntimeInfo& _runtime, 
 
 		}
 		else if (HasComponent(entityId, ECSL::ComponentTypeManager::GetInstance().GetTableId("GameRunning")))
+		{
 			m_gameRunningId = entityId;
+		}
+		else if (HasComponent(entityId, ECSL::ComponentTypeManager::GetInstance().GetTableId("HostSettings")))
+		{
+			m_pwProtected = strlen(NetworkInstance::GetServer()->GetServerPassword()) > 0;
+			m_port = NetworkInstance::GetServer()->GetIncomingPort();
+			m_name = (char*)GetComponent(entityId, "HostSettings", "Name");
+
+			m_mServerMessages.push_back(ADD_TO_DATABASE);
+		}
 
 	}
 }

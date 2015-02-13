@@ -16,6 +16,8 @@
 		035C22CD1A73D68600EE9624 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 035C22CC1A73D68600EE9624 /* Images.xcassets */; };
 		035C22D01A73D68600EE9624 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 035C22CE1A73D68600EE9624 /* Main.storyboard */; };
 		0372EED91A8A5E1400802321 /* AddTextToTextureSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0372EED71A8A5E1400802321 /* AddTextToTextureSystem.cpp */; };
+		0372EEE91A8E10B100802321 /* Directory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0372EEE71A8E10B100802321 /* Directory.cpp */; };
+		0372EEEC1A8E113700802321 /* ParticleSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0372EEEA1A8E113700802321 /* ParticleSystem.cpp */; };
 		03BE03871A86677A00AA21F4 /* Console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03BE02601A86677A00AA21F4 /* Console.cpp */; };
 		03BE03881A86677A00AA21F4 /* BitSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03BE02661A86677A00AA21F4 /* BitSet.cpp */; };
 		03BE03891A86677A00AA21F4 /* ContainerHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03BE02681A86677A00AA21F4 /* ContainerHelper.cpp */; };
@@ -161,6 +163,10 @@
 		035C22CF1A73D68600EE9624 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		0372EED71A8A5E1400802321 /* AddTextToTextureSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AddTextToTextureSystem.cpp; sourceTree = "<group>"; };
 		0372EED81A8A5E1400802321 /* AddTextToTextureSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddTextToTextureSystem.h; sourceTree = "<group>"; };
+		0372EEE71A8E10B100802321 /* Directory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Directory.cpp; sourceTree = "<group>"; };
+		0372EEE81A8E10B100802321 /* Directory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Directory.h; sourceTree = "<group>"; };
+		0372EEEA1A8E113700802321 /* ParticleSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParticleSystem.cpp; sourceTree = "<group>"; };
+		0372EEEB1A8E113700802321 /* ParticleSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParticleSystem.h; sourceTree = "<group>"; };
 		03BE02601A86677A00AA21F4 /* Console.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Console.cpp; sourceTree = "<group>"; };
 		03BE02611A86677A00AA21F4 /* Console.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Console.h; sourceTree = "<group>"; };
 		03BE02631A86677A00AA21F4 /* ECSL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSL.h; sourceTree = "<group>"; };
@@ -521,6 +527,7 @@
 		035C24201A73D7F400EE9624 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				0372EEE61A8E10B100802321 /* FileSystem */,
 				03BE025F1A86677A00AA21F4 /* Console */,
 				03BE02621A86677A00AA21F4 /* ECSL */,
 				03BE02B81A86677A00AA21F4 /* Game */,
@@ -532,6 +539,16 @@
 				03BE036C1A86677A00AA21F4 /* Renderer */,
 			);
 			name = Source;
+			sourceTree = "<group>";
+		};
+		0372EEE61A8E10B100802321 /* FileSystem */ = {
+			isa = PBXGroup;
+			children = (
+				0372EEE71A8E10B100802321 /* Directory.cpp */,
+				0372EEE81A8E10B100802321 /* Directory.h */,
+			);
+			name = FileSystem;
+			path = ../../Source/FileSystem;
 			sourceTree = "<group>";
 		};
 		03BE025F1A86677A00AA21F4 /* Console */ = {
@@ -1102,6 +1119,8 @@
 		03BE036C1A86677A00AA21F4 /* Renderer */ = {
 			isa = PBXGroup;
 			children = (
+				0372EEEA1A8E113700802321 /* ParticleSystem.cpp */,
+				0372EEEB1A8E113700802321 /* ParticleSystem.h */,
 				03BE036D1A86677A00AA21F4 /* Buffer.cpp */,
 				03BE036E1A86677A00AA21F4 /* Buffer.h */,
 				03BE036F1A86677A00AA21F4 /* Camera.cpp */,
@@ -1207,6 +1226,7 @@
 			files = (
 				03BE03961A86677A00AA21F4 /* ComponentTypeReader.cpp in Sources */,
 				03BE03E01A86677A00AA21F4 /* Logger.cpp in Sources */,
+				0372EEEC1A8E113700802321 /* ParticleSystem.cpp in Sources */,
 				03BE03B41A86677A00AA21F4 /* LuaSystem.cpp in Sources */,
 				03BE03F71A86677A00AA21F4 /* GraphicsHigh.cpp in Sources */,
 				03BE03931A86677A00AA21F4 /* EntityTable.cpp in Sources */,
@@ -1298,6 +1318,7 @@
 				0372EED91A8A5E1400802321 /* AddTextToTextureSystem.cpp in Sources */,
 				03BE03EF1A86677A00AA21F4 /* PacketHandler.cpp in Sources */,
 				03BE03FA1A86677A00AA21F4 /* ShadowMap.cpp in Sources */,
+				0372EEE91A8E10B100802321 /* Directory.cpp in Sources */,
 				03BE03E91A86677A00AA21F4 /* ThreadLogger.cpp in Sources */,
 				03BE03D01A86677A00AA21F4 /* DirectionalLightSystem.cpp in Sources */,
 				03BE03901A86677A00AA21F4 /* DataMap.cpp in Sources */,

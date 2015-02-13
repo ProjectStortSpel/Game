@@ -10,9 +10,15 @@
     <ClCompile Include="..\..\..\Source\FileSystem\Directory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\FileSystem\MD5.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\FileSystem\Directory.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\FileSystem\MD5.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
