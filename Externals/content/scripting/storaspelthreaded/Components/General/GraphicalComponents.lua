@@ -30,15 +30,21 @@ RotationComponent:AddVariable("Y", ByteSize.Float)
 RotationComponent:AddVariable("Z", ByteSize.Float)
 worldCreator:AddComponentType(RotationComponent)
 
+local ColorComponent = ComponentType()
+ColorComponent.Name = "Color"
+ColorComponent.SyncNetwork = true
+ColorComponent.TableType = TableType.Array
+ColorComponent:AddVariable("X", ByteSize.Float)
+ColorComponent:AddVariable("Y", ByteSize.Float)
+ColorComponent:AddVariable("Z", ByteSize.Float)
+worldCreator:AddComponentType(ColorComponent)
+
 -- Render Component
 local RenderComponent = ComponentType()
 RenderComponent.Name = "Render"
 RenderComponent.TableType = TableType.Array
 RenderComponent:AddVariable("ModelId", ByteSize.Int)
 RenderComponent:AddVariable("Mat", ByteSize.Matrix)
-RenderComponent:AddVariable("ColorX", ByteSize.Float)
-RenderComponent:AddVariable("ColorY", ByteSize.Float)
-RenderComponent:AddVariable("ColorZ", ByteSize.Float)
 worldCreator:AddComponentType(RenderComponent)
 
 --	Model Component
