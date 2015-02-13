@@ -47,7 +47,7 @@ public:
 
 	void Update(float dt);
 
-	void AddToDatabase(int _port, bool _pwProtected);
+	void AddToDatabase(const char* _name, int _port, bool _pwProtected);
 	void RemoveFromDatabase();
 	void SetGameStarted(bool _started);
 	void SetPasswordProtected(bool _protected);
@@ -58,7 +58,7 @@ public:
 	void IncreaseNoSpectators();
 	void DecreaseNoSpectators();
 
-	void IncreaseMaxNoPlayers();
+	void IncreaseMaxNoPlayers(int _maxPlayers);
 
 	void RequestServerList();
 	void PingServer();
