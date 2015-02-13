@@ -12,31 +12,35 @@ AbilityIWin.Initialize = function(self)
 	self:AddComponentTypeToFilter("Checkpoint", FilterType.RequiresOneOf)
 end
 
+AbilityIWin.VisitCheckpoint = function(self, unit, checkpointNumber)
+
+	local	nCheckpoints = self:GetEntities("Checkpoint")
+	for checkpointId = 1, #nCheckpoints do
+		local tempCheckpoint	=	world:GetComponent(nCheckpoints[checkpointId], "Checkpoint", "Number"):GetInt()
+		
+		if checkpointNumber == tempCheckpoint then
+			local mapX, mapZ = world:GetComponent(nCheckpoints[checkpointId], "MapPosition", "X"):GetInt2()
+			local newCheck = world:CreateNewEntity()
+			world:CreateComponentAndAddTo("CheckCheckpointForEntity", newCheck)
+			world:GetComponent(newCheck, "CheckCheckpointForEntity", "EntityId"):SetInt(unit)
+			world:GetComponent(newCheck, "CheckCheckpointForEntity", "PosX"):SetInt(mapX)
+			world:GetComponent(newCheck, "CheckCheckpointForEntity", "PosZ"):SetInt(mapZ)
+		end
+	end
+end
+
 AbilityIWin.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 
 	for n = 1, #entities do
 		local entity = entities[n]
 		
 		if world:EntityHasComponent(entity, "UnitIWin") then
-			print("UnitIWin played!")
 			local	startId = world:GetComponent(entity, "TargetCheckpoint", "Id"):GetInt()
 			local	nCheckpoints = self:GetEntities("Checkpoint")
 			
-			print("Target: " .. startId)
-			print("Checkpoints: " .. #nCheckpoints)
-			
-			for checkpointId = 1, #nCheckpoints do
-				
-				local mapX, mapZ = world:GetComponent(nCheckpoints[checkpointId], "MapPosition", "X"):GetInt2()
-				print("Checkpoint #" .. checkpointId .. " at: " .. mapX .. ", " .. mapZ)
-				local newCheck = world:CreateNewEntity()
-				world:CreateComponentAndAddTo("CheckCheckpointForEntity", newCheck)
-				world:GetComponent(newCheck, "CheckCheckpointForEntity", "EntityId"):SetInt(entity)
-				world:GetComponent(newCheck, "CheckCheckpointForEntity", "PosX"):SetInt(mapX)
-				world:GetComponent(newCheck, "CheckCheckpointForEntity", "PosZ"):SetInt(mapZ)
-				
+			for n = 1, #nCheckpoints do
+				self:VisitCheckpoint(entity, n)
 			end
-			
 			world:RemoveComponentFrom("UnitIWin", entity)
 		end
 	end

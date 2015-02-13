@@ -137,11 +137,27 @@ void GraphicDevice::BufferSurfaces()
 {
 	for (std::pair<std::string, SDL_Surface*> surface : m_surfaces)
 	{
+		int oldTexture = -1;
 		if (m_textures.find(surface.first) != m_textures.end())
+		{
+			oldTexture = m_textures[surface.first];
 			glDeleteTextures(1, &m_textures[surface.first]);
+		}
 		GLuint texture = TextureLoader::LoadTexture(surface.second, GL_TEXTURE1);
 		m_textures[surface.first] = texture;
 		SDL_FreeSurface(surface.second);
+		if (oldTexture != -1)
+		{
+			for (Model& m : m_modelsForward)
+				if (m.texID == oldTexture)
+					m.texID = texture;
+			for (Model& m : m_modelsViewspace)
+				if (m.texID == oldTexture)
+					m.texID = texture;
+			for (Model& m : m_modelsInterface)
+				if (m.texID == oldTexture)
+					m.texID = texture;
+		}
 	}
 	m_surfaces.clear();
 }
@@ -338,4 +354,17 @@ void GraphicDevice::BufferModels()
 		delete(pair.second);
 	}
 	m_modelsToLoad.clear();
+}
+
+struct sort_depth
+{
+	inline bool operator() (const Model& a, const Model& b)
+	{
+		return (*a.modelMatrix)[3][2] < (*b.modelMatrix)[3][2];
+	}
+};
+
+void GraphicDevice::SortModelsBasedOnDepth(std::vector<Model>* models)
+{
+	std::sort(models->begin(), models->end(), sort_depth());
 }

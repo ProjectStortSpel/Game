@@ -40,6 +40,12 @@ GraphicDevice::~GraphicDevice()
 	delete(m_skybox);
 	delete m_pointerToPointlights;
 
+	for (int i = 0; i < m_particleSystems.size(); i++)
+	{
+		delete m_particleSystems[i];
+	}
+	m_particleSystems.clear();
+
 	SDL_GL_DeleteContext(m_glContext);
 	// Close and destroy the window
 	SDL_DestroyWindow(m_window);
@@ -118,32 +124,6 @@ float GraphicDevice::CreateTextTexture(const std::string& textureName, const std
 	if (size.y > 0)
 		surface->h = size.y;
 	m_surfaces.push_back(std::pair<std::string, SDL_Surface*>(textureName, surface));
-
-	//int numPix = surface->h * surface->w;
-
-	//Uint8* pixels = (Uint8*)surface->pixels;
-	//int index = 0;
-	//for (int i = 0; i < numPix; ++i)
-	//{
-	//	index = i * 4;
-	//	
-	//	if (pixels[index + 3] == 0)
-	//	{
-	//		pixels[index + 0] = 0;
-	//		pixels[index + 1] = 0;
-	//		pixels[index + 2] = 0;
-	//	}
-	//}
-
-	//std::stringstream ss;
-	//ss << "content/";
-	//ss << textureName;
-	//ss << ".bmp";
-
-
-	//SDL_SaveBMP(surface, ss.str().c_str());
-
-	//m_deferredShader1.UseProgram();
 	return (float)surface->w / (float)surface->h;
 }
 
@@ -161,12 +141,18 @@ void GraphicDevice::BufferSurfaces()
 {
 	for (std::pair<std::string, SDL_Surface*> surface : m_surfaces)
 	{
+		int oldTexture = -1;
 		if (m_textures.find(surface.first) != m_textures.end())
+		{
+			oldTexture = m_textures[surface.first];
 			glDeleteTextures(1, &m_textures[surface.first]);
+		}
 		GLuint texture = TextureLoader::LoadTexture(surface.second, GL_TEXTURE1);
 		m_textures[surface.first] = texture;
 		m_vramUsage += (surface.second->w * surface.second->h * 4 * 4);
 		SDL_FreeSurface(surface.second);
+		if (oldTexture != -1)
+			UpdateTextureIndex(texture, oldTexture);
 	}
 	m_surfaces.clear();
 }
@@ -192,4 +178,17 @@ void GraphicDevice::BufferModelTextures()
 		BufferModelTexture(modelTexture.id, modelTexture.textureName, modelTexture.textureType);
 	}
 	m_modelTextures.clear();
+}
+
+struct sort_depth
+{
+	inline bool operator() (const Model& a, const Model& b)
+	{
+		return (*a.instances[0].modelMatrix)[3][2] < (*b.instances[0].modelMatrix)[3][2];
+	}
+};
+
+void GraphicDevice::SortModelsBasedOnDepth(std::vector<Model>* models)
+{
+	std::sort(models->begin(), models->end(), sort_depth());
 }

@@ -62,6 +62,8 @@ bool GraphicsHigh::Init()
 	
 	CreateShadowMap();
 	if (!InitLightBuffers()) { ERRORMSG("INIT LIGHTBUFFER FAILED\n"); return false; }
+
+	CreateParticleSystems();
 	
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
@@ -362,12 +364,46 @@ void GraphicsHigh::Render()
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
+
+	//------PARTICLES---------
+	glEnable(GL_POINT_SPRITE);
+	glDepthMask(GL_FALSE);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+
+	m_particleShader.UseProgram();
+
+	m_particleShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
+	//glUniformMatrix4fv(glGetUniformLocation(particleShaderProgHandle, "ProjectionMatrix"), 1, GL_FALSE, &mCameraProjectionMat[0][0]);
+
+	glActiveTexture(GL_TEXTURE1);
+
+	for (int i = 0; i < m_particleSystems.size(); i++)
+	{
+		glBindTexture(GL_TEXTURE_2D, m_particleSystems[i]->GetTexHandle());
+
+		mat4 Model = glm::translate(m_particleSystems[i]->GetWorldPos());
+		mat4 ModelView = viewMatrix * Model;
+
+		m_particleShader.SetUniVariable("ModelView", mat4x4, &ModelView);
+		//GLuint location = glGetUniformLocation(m_particleSystems, "ModelView");	//gets the UniformLocation
+		//if (location >= 0){ glUniformMatrix4fv(location, 1, GL_FALSE, &ModelView[0][0]); }
+
+		m_particleSystems[i]->Render(m_dt);
+	}
+	glDisable(GL_POINT_SPRITE);
+	glDepthMask(GL_TRUE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//------------------------
+
+
 	// RENDER VIEWSPACE STUFF
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_TEXTURE_2D);
 	m_viewspaceShader.UseProgram();
 	m_viewspaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 
+	SortModelsBasedOnDepth(&m_modelsViewspace);
 	for (int i = 0; i < m_modelsViewspace.size(); i++)
 	{
 		std::vector<mat4> modelViewVector(m_modelsViewspace[i].instances.size());
@@ -415,6 +451,7 @@ void GraphicsHigh::Render()
 	m_interfaceShader.UseProgram();
 	m_interfaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 
+	SortModelsBasedOnDepth(&m_modelsInterface);
 	for (int i = 0; i < m_modelsInterface.size(); i++)
 	{
 		std::vector<mat4> modelViewVector(m_modelsInterface[i].instances.size());
@@ -656,6 +693,14 @@ bool GraphicsHigh::InitShaders()
 	m_shadowShaderForward.AddShader("content/shaders/shadowShaderForwardFS.glsl", GL_FRAGMENT_SHADER);
 	m_shadowShaderForward.FinalizeShaderProgram();
 
+	// Particle shader
+	m_particleShader.InitShaderProgram();
+	m_particleShader.AddShader("content/shaders/particleShaderVS.glsl", GL_VERTEX_SHADER);
+	m_particleShader.AddShader("content/shaders/particleShaderFS.glsl", GL_FRAGMENT_SHADER);
+	const char * outputNames[] = { "Position", "Velocity", "StartTime" };
+	glTransformFeedbackVaryings(m_particleShader.GetShaderProgram(), 3, outputNames, GL_SEPARATE_ATTRIBS);
+	m_particleShader.FinalizeShaderProgram();
+
 	return true;
 }
 
@@ -692,6 +737,9 @@ bool GraphicsHigh::InitBuffers()
 
 	//Shadow forward shader
 	m_shadowShaderForward.CheckUniformLocation("diffuseTex", 1);
+
+	//Particle shader
+	m_particleShader.CheckUniformLocation("ParticleTex", 1);
 
 	return true;
 }
@@ -812,6 +860,13 @@ void GraphicsHigh::CreateShadowMap()
 	m_forwardShader.CheckUniformLocation("ShadowDepthTex", 10);
 
 	m_vramUsage += (resolution*resolution*sizeof(float));
+}
+
+void GraphicsHigh::CreateParticleSystems()
+{
+	//glEnable(GL_POINT_SPRITE);
+	//m_particleSystems.push_back(new ParticleSystem("fire", vec3(1.f, 0.55f, 1.f), 100, 700, 0.6f, AddTexture("content/textures/fire3.png", GL_TEXTURE1), &m_particleShader));
+	m_particleSystems.push_back(new ParticleSystem("smoke", vec3(11.0f, 0.0f, 9.0f), 15, 1800, 1.6f, AddTexture("content/textures/smoke1.png", GL_TEXTURE1), &m_particleShader));
 }
 
 bool GraphicsHigh::InitTextRenderer()
@@ -1355,4 +1410,20 @@ bool GraphicsHigh::BufferModelTexture(int _id, std::string _fileDir, int _textur
 		m_modelsInterface.push_back(model);
 
 	return true;
+}
+
+void GraphicsHigh::UpdateTextureIndex(GLuint newTexture, GLuint oldTexture)
+{
+	for (Model& m : m_modelsDeferred)
+		if (m.texID == oldTexture)
+			m.texID = newTexture;
+	for (Model& m : m_modelsForward)
+		if (m.texID == oldTexture)
+			m.texID = newTexture;
+	for (Model& m : m_modelsViewspace)
+		if (m.texID == oldTexture)
+			m.texID = newTexture;
+	for (Model& m : m_modelsInterface)
+		if (m.texID == oldTexture)
+			m.texID = newTexture;
 }

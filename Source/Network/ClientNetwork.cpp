@@ -137,6 +137,7 @@ bool ClientNetwork::Connect()
 
 
 	bool connected = false;
+	//m_socket->SetNonBlocking(true);
 	//for (int i = 0; i < 5; ++i)
 	//{
 	connected = m_socket->Connect(m_remoteAddress->c_str(), *m_outgoingPort);
@@ -622,6 +623,7 @@ void ClientNetwork::SetTimeOutValue(int _value)
 
 void ClientNetwork::ResetNetworkEvents()
 {
+	Update(0);
 	m_onConnectedToServer->clear();
 	m_onDisconnectedFromServer->clear();
 	m_onTimedOutFromServer->clear();

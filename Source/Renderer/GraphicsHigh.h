@@ -40,6 +40,9 @@ namespace Renderer
 		
 		void Clear();
 		
+	protected:
+		void UpdateTextureIndex(GLuint newTexture, GLuint oldTexture);
+		
 	private:
 		bool InitSDLWindow();
 		bool InitGLEW();
@@ -50,6 +53,8 @@ namespace Renderer
 		bool InitTextRenderer();
 		bool InitLightBuffers();
 		bool InitRandomVector();
+
+		void CreateParticleSystems();
 
 		void CreateGBufTex(GLenum texUnit, GLenum format, GLuint &texid);
 		void CreateDepthTex(GLuint &texid);

@@ -12,10 +12,11 @@ TestMoveSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Unit",FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("NotWalkable",FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("TestMove",FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("Void",FilterType.RequiresOneOf)
 
 end
 
-TestMoveSystem.RecursiveMove = function(self, unitToMove, allUnits, allNonWalkables, posX, posZ, dirX, dirZ)
+TestMoveSystem.RecursiveMove = function(self, unitToMove, allUnits, allNonWalkables, allVoids, posX, posZ, dirX, dirZ)
 
 	--	Check all obstacles
 	local	obstacleFound	=	false
@@ -32,19 +33,30 @@ TestMoveSystem.RecursiveMove = function(self, unitToMove, allUnits, allNonWalkab
 		return false
 	end
 	
-	--	Check all units
-	for n = 1, #allUnits do
-		local X, Z = world:GetComponent(allUnits[n], "MapPosition", 0):GetInt2()
+	local voidFound = false
+	for n = 1, #allVoids do
+		local X, Z = world:GetComponent(allVoids[n], "MapPosition", 0):GetInt2()
 		if X == posX and Z == posZ then
-			if not self:RecursiveMove(allUnits[n], allUnits, allNonWalkables, posX+dirX, posZ+dirZ, dirX, dirZ) then
-				return false
-			end
-				local newCheck = world:CreateNewEntity()
-				world:CreateComponentAndAddTo("CheckCheckpointForEntity", newCheck)
-				world:GetComponent(newCheck, "CheckCheckpointForEntity", "EntityId"):SetInt(allUnits[n])
-				world:GetComponent(newCheck, "CheckCheckpointForEntity", "PosX"):SetInt(posX+dirX)
-				world:GetComponent(newCheck, "CheckCheckpointForEntity", "PosZ"):SetInt(posZ+dirZ)
+			voidFound = true
 			break
+		end
+	end
+	
+	if not voidFound then
+		--	Check all units
+		for n = 1, #allUnits do
+			local X, Z = world:GetComponent(allUnits[n], "MapPosition", 0):GetInt2()
+			if X == posX and Z == posZ then
+				if not self:RecursiveMove(allUnits[n], allUnits, allNonWalkables, allVoids, posX+dirX, posZ+dirZ, dirX, dirZ) then
+					return false
+				end
+					local newCheck = world:CreateNewEntity()
+					world:CreateComponentAndAddTo("CheckCheckpointForEntity", newCheck)
+					world:GetComponent(newCheck, "CheckCheckpointForEntity", "EntityId"):SetInt(allUnits[n])
+					world:GetComponent(newCheck, "CheckCheckpointForEntity", "PosX"):SetInt(posX+dirX)
+					world:GetComponent(newCheck, "CheckCheckpointForEntity", "PosZ"):SetInt(posZ+dirZ)
+				break
+			end
 		end
 	end
 	
@@ -63,6 +75,7 @@ TestMoveSystem.RecursiveMove = function(self, unitToMove, allUnits, allNonWalkab
 	world:GetComponent(unitToMove, "LerpPosition", "Z"):SetFloat(posZ)
 	world:GetComponent(unitToMove, "LerpPosition", "Time"):SetFloat(1)
 	world:GetComponent(unitToMove, "LerpPosition", "Algorithm"):SetText("SmoothLerp")
+	
 	return true
 end
 
@@ -74,6 +87,7 @@ TestMoveSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities
 		
 			local 	tUnits 			= 	self:GetEntities("Unit")
 			local 	tNonWalkables 	=	self:GetEntities("NotWalkable")
+			local tVoids = self:GetEntities("Void")
 			
 			local 	tUnit 	= 	world:GetComponent(entity, "TestMove", "Unit"):GetInt()
 			local 	tPosX 	= 	world:GetComponent(entity, "TestMove", "PosX"):GetInt()
@@ -82,11 +96,12 @@ TestMoveSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities
 			local	tDirZ 	= 	world:GetComponent(entity, "TestMove", "DirZ"):GetInt()
 			local 	tSteps	= 	world:GetComponent(entity, "TestMove", "Steps"):GetInt()
 			
-			local	stepsTaken = 0;
+			local	stepsTaken = 0
 			for nStep = 0, tSteps-1 do
 			
-				if self:RecursiveMove(tUnit, tUnits, tNonWalkables, tPosX+tDirX*nStep, tPosZ+tDirZ*nStep, tDirX, tDirZ) then
+				if self:RecursiveMove(tUnit, tUnits, tNonWalkables, tVoids, tPosX+tDirX*nStep, tPosZ+tDirZ*nStep, tDirX, tDirZ) then
 					stepsTaken = stepsTaken + 1
+					
 					local newCheck = world:CreateNewEntity()
 					world:CreateComponentAndAddTo("CheckCheckpointForEntity", newCheck)
 					world:GetComponent(newCheck, "CheckCheckpointForEntity", "EntityId"):SetInt(tUnit)
