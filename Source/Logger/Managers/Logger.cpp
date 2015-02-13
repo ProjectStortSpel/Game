@@ -1,7 +1,7 @@
 #include <ctime>
 #include <iostream>
 #include "Logger.h"
-//#include "FileSystem/Directory.h"
+#include "FileSystem/Directory.h"
 
 Logger& Logger::GetInstance()
 {
@@ -42,17 +42,25 @@ Logger::~Logger()
 
 std::string Logger::GetFolderPath()
 {
+    static std::string path = "";
+    
+    if (path == "")
+    {
 #if  defined(__IOS__)
-    std::string path = getenv("HOME");
-    path.append("/Library/Caches/");
-    return path;
+        path = getenv("HOME");
+        path.append("/Library/Caches/data/");
 #elif defined(__ANDROID__)
-    return "";
+        path = "";
 #elif defined(__OSX__)
-    return "";
+        path = getenv("HOME");
+        path.append("/Library/Preferences/StoraSpel/data/");
 #else
-    return "content/data/";
+        path = "content/data/";
 #endif
+    }
+    
+    return path;
+
 }
 
 unsigned int Logger::AddGroup(const std::string& _groupName, bool _addToOutput)
@@ -156,7 +164,7 @@ void Logger::Log(const std::string& _groupName, LogSeverity _severity, const std
 
 void Logger::CreateFile()
 {
-#if !defined(__OSX__) && !defined(__ANDROID__)
+#if !defined(__ANDROID__)
 
 	/*	Create the file	*/
 	time_t		tTime = time(0);
@@ -183,7 +191,13 @@ void Logger::CreateFile()
     
 	m_logFileName = ss.str();
 
-	//FileSystem::Directory::CreateFolder(GetFolderPath());
+    std::string path = GetFolderPath();
+    
+    std::stringstream ss2;
+    ss2 << path;
+   // ss2 << "data";
+    
+	FileSystem::Directory::CreateFolder(ss2.str());
 
 	SDL_RWops* newFile = SDL_RWFromFile(m_logFileName.c_str(), "w");
 	SDL_RWclose(newFile);
@@ -193,7 +207,7 @@ void Logger::CreateFile()
 
 void Logger::AppendFile(LogEntry& _logEntry)
 {
-#if !defined(__OSX__) && !defined(__ANDROID__)
+#if !defined(__ANDROID__)
 
 	/*	Open the file	*/
 	char* end;

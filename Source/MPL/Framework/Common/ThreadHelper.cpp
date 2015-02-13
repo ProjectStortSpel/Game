@@ -1,6 +1,6 @@
 #include "ThreadHelper.h"
 
-#ifdef _WIN32
+#ifdef WIN32
 #include <windows.h>
 #include <tlhelp32.h>
 #endif
@@ -9,7 +9,7 @@ using namespace MPL;
 
 int ThreadHelper::GetCurrentThreadCount()
 {
-	#if defined(_WIN32)
+	#if defined(WIN32)
 	// first determine the id of the current process
 	DWORD const  id = GetCurrentProcessId();
 

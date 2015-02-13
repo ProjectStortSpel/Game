@@ -126,9 +126,9 @@ NewCameraSystem.PostInitialize = function(self)
 	local lscale = world:GetComponent(self.TouchSprite2, "Scale", 0)
 	lscale:SetFloat3(0.05, 0.05, 0.05)	
 			
-	GraphicDevice.GetCamera():MoveToAndLookAt(	self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
+	GraphicDevice.GetCamera():MoveToAndLookAt(	self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10-2,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
 									self.CameraUpX,0,self.CameraUpZ,
-									self.CameraLookAtX,-4.5,self.CameraLookAtZ,
+									self.CameraLookAtX,0.5,self.CameraLookAtZ,
 									1)
 	
 end
@@ -141,13 +141,35 @@ NewCameraSystem.DoCIP = function(self, entityId)
 	self.CameraLookAtZ = world:GetComponent(entityId, "CameraInterestPoint", "AtZ"):GetFloat(0)
 	self.CameraDistance = world:GetComponent(entityId, "CameraInterestPoint", "Distance"):GetFloat(0)
 
-	GraphicDevice.GetCamera():MoveToAndLookAt(	self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
+	GraphicDevice.GetCamera():MoveToAndLookAt(	self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10-2,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
 									self.CameraUpX,0,self.CameraUpZ,
 									self.CameraLookAtX,0.5,self.CameraLookAtZ,
 									0.5)
 end
 
 NewCameraSystem.DoFreeCam = function(self, dt)
+
+	if Input.GetMouseButtonState(MouseButton.Mouse4) == InputState.Released then
+		self.CameraDistance = self.CameraDistance + 0.2
+		if self.CameraDistance > 1.8 then
+			self.CameraDistance = 1.8
+		end
+		
+		GraphicDevice.GetCamera():MoveToAndLookAt(self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10-2,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
+												self.CameraUpX,0,self.CameraUpZ,
+												self.CameraLookAtX,0.5,self.CameraLookAtZ,
+												0.5)
+	elseif Input.GetMouseButtonState(MouseButton.Mouse5) == InputState.Released then
+		self.CameraDistance = self.CameraDistance - 0.2
+		if self.CameraDistance < 0.4 then
+			self.CameraDistance = 0.4
+		end
+		GraphicDevice.GetCamera():MoveToAndLookAt(self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10-2,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
+												self.CameraUpX,0,self.CameraUpZ,
+												self.CameraLookAtX,0.5,self.CameraLookAtZ,
+												0.5)
+	end
+
 	if world:EntityHasComponent(self.TouchScreen, "OnPickBoxHit") then
 		local move = false
 		local mX, mY = GraphicDevice.GetTouchPosition()
@@ -244,9 +266,9 @@ NewCameraSystem.DoFreeCam = function(self, dt)
 					move = true
 				end
 				if move == true then
-					GraphicDevice.GetCamera():MoveToAndLookAt(self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
+					GraphicDevice.GetCamera():MoveToAndLookAt(self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10-2,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
 												self.CameraUpX,0,self.CameraUpZ,
-												self.CameraLookAtX,-4.5,self.CameraLookAtZ,
+												self.CameraLookAtX,0.5,self.CameraLookAtZ,
 												0.5)
 				end	
 			end

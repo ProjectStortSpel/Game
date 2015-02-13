@@ -39,13 +39,18 @@ HostMenuSystem.Update = function(self, dt, taskIndex, taskCount)
 				self:MenuEntityCommandPressed(pressedButton)
 			end
 		else
-			Input.SetTextInput("")
-			Input.StopTextInput()
-
-			self.IsActive = false
-			self.TextInput = ""
-			self.ActiveTextId  = -1
+		
+			if self.IsActive then 
+				Input.SetTextInput("")
+				--Input.StopTextInput()
+	
+				self.IsActive = false
+				self.TextInput = ""
+				self.ActiveTextId  = -1
+			end
+			
 			self:RemoveMenu()
+			
 		end
 
 	end
@@ -65,7 +70,6 @@ HostMenuSystem.UpdateText = function(self)
 		local textSelf = world:GetComponent(self.ActiveTextId, "TextTexture", "Text"):GetText()
 	
 		local textInput 		= Input.GetTextInput()
-		print("textInput: " .. textInput)
 		local posX, posY, posZ 	= world:GetComponent(self.ActiveTextId, "Position", 0):GetFloat3()
 		local textName			= world:GetComponent(self.ActiveTextId, "TextTexture", "Name"):GetText()
 		local settingsName		= world:GetComponent(self.ActiveTextId, "StringSetting", "SettingsName"):GetText()
@@ -115,13 +119,11 @@ end
 HostMenuSystem.MenuEntityCommandPressed = function(self, entity)
 	local cmp = world:GetComponent(entity, "MenuEntityCommand", "ComponentName"):GetText()
 	--self:RemoveMenu()
-	print(cmp)
 	local id = world:CreateNewEntity()
 	world:CreateComponentAndAddTo(cmp, id)
 	if world:EntityHasComponent(entity, "BoundToEntity") then
 		
 		local boundTo = world:GetComponent(entity, "BoundToEntity", "EntityId"):GetInt()
-		print("BoundTo: " .. boundTo)
 		world:CreateComponentAndAddTo("BoundToEntity", id)
 		world:SetComponent(id, "BoundToEntity", "EntityId", boundTo)
 	end
@@ -168,17 +170,14 @@ HostMenuSystem.Deactivate = function(self)
 
 	self.IsActive = false
 	self.TextInput = ""
-	self.ActiveTextId  = -1
 	
 	if self.ActiveTextId ~= -1 then
 	
-		print("textInput: " .. "HEJ")
 		local posX, posY, posZ 	= world:GetComponent(self.ActiveTextId, "Position", 0):GetFloat3()
 		local textName			= world:GetComponent(self.ActiveTextId, "TextTexture", "Name"):GetText()
 		local text				= world:GetComponent(self.ActiveTextId, "TextTexture", "Text"):GetText()
 		local settingsName		= world:GetComponent(self.ActiveTextId, "StringSetting", "SettingsName"):GetText()
 		text = string.sub(text, 0, string.len(text)-1)
-		print(text)
 		
 		world:KillEntity(self.ActiveTextId)
 		self.ActiveTextId = self:CreateText("left", "text", posX, posY, posZ, 2.5, 0.065)
