@@ -2,15 +2,17 @@
 
 using namespace Renderer;
 
-ParticleSystem::ParticleSystem(std::string type, const vec3 _pos, int _nParticles, float _lifeTime, float _size, GLuint _texHandle, Shader *_shaderProg)
+ParticleSystem::ParticleSystem(std::string type, const vec3 _pos, int _nParticles, float _lifeTime, float _scale, float _spriteSize, GLuint _texHandle, vec3 _color, Shader *_shaderProg)
 {
 	m_pos = _pos;
 	m_nrParticles = _nParticles;
-	m_size = _size;
+	m_scale = _scale;
+	m_spriteSize = _spriteSize;
 	m_lifeTime = _lifeTime;
 	m_textureHandle = _texHandle;
 	m_shader = _shaderProg;
 	m_drawBuf = 1;
+	m_color = _color;
 
 	if (type == "fire")
 		CreateFire();
@@ -35,7 +37,7 @@ void ParticleSystem::CreateFire()
 {
 	// Create and allocate buffers A and B for m_posBuf, m_velBuf and m_startTime
 	
-	float scale = 0.05f;
+	float scale = m_scale;
 
 	m_accel = vec3(0.0);
 	m_type = 0;
@@ -173,7 +175,7 @@ void ParticleSystem::CreateFire()
 void ParticleSystem::CreateSmoke()
 {
 	// Create and allocate buffers A and B for m_posBuf, m_velBuf and m_startTime
-	float scale = 0.05f;
+	float scale = m_scale;
 	m_accel = vec3(0.0f, 0.0f, 0.0f) * scale;
 	m_type = 1;
 	vec3 v(0.0f);
@@ -299,15 +301,15 @@ void ParticleSystem::CreateSmoke()
 
 void ParticleSystem::Render(float _dt)
 {
-	_dt *= 1000.f;
-	m_elapsedTime += _dt;
+	float dt = 1000.f * (_dt);
+	m_elapsedTime += dt;
 	/////////// Update pass ////////////////
 	glUniformSubroutinesuiv(GL_VERTEX_SHADER, 1, &subRoutineUpdate);
 	// Set the uniforms: H and Time
 	m_shader->SetUniVariable("Time", glfloat, &m_elapsedTime);
-	m_shader->SetUniVariable("DeltaTime", glfloat, &_dt);
+	m_shader->SetUniVariable("DeltaTime", glfloat, &dt);
 	m_shader->SetUniVariable("ParticleLifetime", glfloat, &m_lifeTime);
-	m_shader->SetUniVariable("Size", glfloat, &m_size);
+	m_shader->SetUniVariable("Size", glfloat, &m_spriteSize);
 	m_shader->SetUniVariable("Type", glint, &m_type);
 	m_shader->SetUniVariable("Accel", vector3, &m_accel);
 
