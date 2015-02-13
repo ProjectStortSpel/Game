@@ -46,8 +46,8 @@ Net.Receive("Client.SendPlayerUnitId",
 	local position = world:GetComponent(newEntityId, "Position", 0)
 	rotation:SetFloat3(0, 90, 0)
 	position:SetFloat3(4, 2.8, -7)
-	world:SetComponent(newEntityId, "Model", "ModelName", "ply" .. playerId);
-	world:SetComponent(newEntityId, "Model", "ModelPath", "head");
+	world:SetComponent(newEntityId, "Model", "ModelName", "ply");
+	world:SetComponent(newEntityId, "Model", "ModelPath", "ply");
 	world:SetComponent(newEntityId, "Model", "RenderType", 2);
 
 	end 

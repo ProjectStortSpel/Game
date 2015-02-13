@@ -41,6 +41,7 @@ GraphicsHigh::~GraphicsHigh()
 
 	glDeleteBuffers(1, &m_pointlightBuffer);
 	glDeleteBuffers(1, &m_dirLightBuffer);
+
 }
 
 bool GraphicsHigh::Init()
@@ -253,6 +254,70 @@ void GraphicsHigh::Render()
 		//m_modelsDeferred[i].bufferPtr->draw();
 		m_modelsDeferred[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector);
 		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+
+
+	// ---- ANIMATED DEFERED
+	m_animationShader.UseProgram();
+	
+	m_animationShader.SetUniVariable("TexFlag", glint, &m_debugTexFlag);
+	
+	//------Render scene (for deferred)
+	//-- DRAW MODELS
+	for (int i = 0; i < m_modelsAnimated.size(); i++)
+	{
+		if (m_modelsAnimated[i].active) // IS MODEL ACTIVE?
+		{
+			mat4 modelMatrix;
+			if (m_modelsAnimated[i].modelMatrix == NULL)
+				modelMatrix = glm::translate(glm::vec3(1));
+			else
+				modelMatrix = *m_modelsAnimated[i].modelMatrix;
+	
+			mat4 vp = projectionMatrix * viewMatrix;
+			mat4 modelViewMatrix = modelMatrix;
+			mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
+			m_animationShader.SetUniVariable("BlendColor", vector3, m_modelsAnimated[i].color);
+	
+			m_animationShader.SetUniVariable("M", mat4x4, &modelViewMatrix);
+			m_animationShader.SetUniVariable("VP", mat4x4, &vp);
+			m_animationShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
+	
+	
+	
+	
+			float *joint_data = new float[m_modelsAnimated[i].joints.size() * 16];
+			
+			for (int j = 0; j < m_modelsAnimated[i].joints.size(); j++)
+			{
+				memcpy(&joint_data[16 * j], &m_modelsAnimated[i].joints[j], 16 * sizeof(float));
+			}
+			
+			int joint_data_size = 16 * m_modelsAnimated[i].joints.size() * sizeof(float);
+			
+			glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 1, m_modelsAnimated[i].jointBuffer, 0, joint_data_size);
+			glBufferData(GL_SHADER_STORAGE_BUFFER, joint_data_size, joint_data, GL_STATIC_DRAW);
+			
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_modelsAnimated[i].jointBuffer);
+	
+			delete joint_data;
+	
+	
+
+	
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, m_modelsAnimated[i].texID);
+	
+			glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, m_modelsAnimated[i].norID);
+	
+			glActiveTexture(GL_TEXTURE3);
+			glBindTexture(GL_TEXTURE_2D, m_modelsAnimated[i].speID);
+	
+			m_modelsAnimated[i].bufferPtr->draw();
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
 	}
 
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
@@ -758,7 +823,7 @@ bool GraphicsHigh::InitLightBuffers()
 
 	for (int i = 0; i < 10; i++)
 		m_lightDefaults[i] = 0.0;		//init 0.0
-	
+
 	if (m_pointlightBuffer < 0)
 		return false;
 
@@ -918,11 +983,11 @@ void GraphicsHigh::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 {
 	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
 
-	if (obj.animated)
-	{
-		BufferAModel(_modelId, _modelToLoad);
-		return;
-	}
+	//if (obj.animated)
+	//{
+	//	BufferAModel(_modelId, _modelToLoad);
+	//	return;
+	//}
 
 	Shader *shaderPtr = NULL;
 	std::vector<Model> *modelList = NULL;
@@ -1016,11 +1081,18 @@ void GraphicsHigh::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 	// Import Skeleton
 	std::vector<JointData> joints = ModelLoader::importJoints(obj.joints);
 
-	AModel model = AModel(_modelId, true, _modelToLoad->MatrixPtr, mesh, texture, normal, specular);
+	AModel model = AModel(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color, mesh, texture, normal, specular);
 
 	// Add skeleton
 	for (int i = 0; i < joints.size(); i++)
-		model.joints.push_back(Joint(joints[i].parent, joints[i].transform));
+		model.joints.push_back(Joint(
+		joints[i].x0, joints[i].y0, joints[i].z0, joints[i].w0,
+		joints[i].x1, joints[i].y1, joints[i].z1, joints[i].w1,
+		joints[i].x2, joints[i].y2, joints[i].z2, joints[i].w2,
+		joints[i].x3, joints[i].y3, joints[i].z3, joints[i].parent)
+		);//joints[i].transform));
+
+	glGenBuffers(1, &model.jointBuffer);
 
 	//for the matrices (modelView + normal)
 	m_vramUsage += (16 + 9) * sizeof(float);
@@ -1180,8 +1252,8 @@ Buffer* GraphicsHigh::AddMesh(std::string _fileDir, Shader *_shaderProg, bool an
 		{ 2, 3, GL_FLOAT, (const GLvoid*)tanData.data(), static_cast<GLsizeiptr>(tanData.size()   * sizeof(float)) },
 		{ 3, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), static_cast<GLsizeiptr>(bitanData.size()   * sizeof(float)) },
 		{ 4, 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), static_cast<GLsizeiptr>(texCoordData.size() * sizeof(float)) },
-		{ 5, 5, GL_FLOAT, (const GLvoid*)jointIndexData.data(), static_cast<GLsizeiptr>(jointIndexData.size()   * sizeof(float)) },
-		{ 6, 5, GL_FLOAT, (const GLvoid*)jointWeightData.data(), static_cast<GLsizeiptr>(jointWeightData.size() * sizeof(float)) }
+		{ 5, 4, GL_FLOAT, (const GLvoid*)jointIndexData.data(), static_cast<GLsizeiptr>(jointIndexData.size()   * sizeof(float)) },
+		{ 6, 4, GL_FLOAT, (const GLvoid*)jointWeightData.data(), static_cast<GLsizeiptr>(jointWeightData.size() * sizeof(float)) }
 	};
 
 	int test = sizeof(bufferData) / sizeof(bufferData[0]);
@@ -1192,6 +1264,8 @@ Buffer* GraphicsHigh::AddMesh(std::string _fileDir, Shader *_shaderProg, bool an
 	int bufferDatas = sizeof(bufferData) / sizeof(bufferData[0]);
 	if (animated == false)
 		bufferDatas -= 2;
+	else
+		int hej = 0;
 	retbuffer->init(bufferData, bufferDatas);
 	retbuffer->setCount((int)positionData.size() / 3);
 	

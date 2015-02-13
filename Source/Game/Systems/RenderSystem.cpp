@@ -24,6 +24,7 @@ void RenderSystem::Initialize()
 	AddComponentTypeToFilter("Position",	ECSL::FilterType::Mandatory);
 	AddComponentTypeToFilter("Rotation",	ECSL::FilterType::Mandatory);
 	AddComponentTypeToFilter("Scale",		ECSL::FilterType::Mandatory);
+	//AddComponentTypeToFilter("Color",		ECSL::FilterType::Mandatory);
 	AddComponentTypeToFilter("Render",		ECSL::FilterType::RequiresOneOf);
 	AddComponentTypeToFilter("Model",		ECSL::FilterType::RequiresOneOf);
 
@@ -36,6 +37,7 @@ void RenderSystem::Initialize()
 	bitsetComponents.push_back(ECSL::ComponentTypeManager::GetInstance().GetTableId("Position"));
 	bitsetComponents.push_back(ECSL::ComponentTypeManager::GetInstance().GetTableId("Rotation"));
 	bitsetComponents.push_back(ECSL::ComponentTypeManager::GetInstance().GetTableId("Scale"));
+	//bitsetComponents.push_back(ECSL::ComponentTypeManager::GetInstance().GetTableId("Color"));
 
 	m_bitMask = ECSL::BitSet::BitSetConverter::ArrayToBitSet(bitsetComponents, ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount());
 	m_numberOfBitSets = ECSL::BitSet::GetDataTypeCount(ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount());
@@ -44,6 +46,7 @@ void RenderSystem::Initialize()
 	m_positionId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Position");
 	m_rotationId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Rotation");
 	m_scaleId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Scale");
+	m_colorId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Color");
 	m_renderId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Render");
 	m_renderOffset = ECSL::ComponentTypeManager::GetInstance().GetComponentType(m_renderId)->GetVariables()->at("Mat").GetOffset();
 	m_parentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Parent");
