@@ -1,11 +1,11 @@
 #include "Directory.h"
 
 
-#if defined(_WIN32)
+#if defined(WIN32)
 #include <sys/types.h>
 #include <sys/stat.h>
 #include<windows.h>
-#elif defined(__IOS__)
+#elif defined(__IOS__) || defined(__OSX__)
 #include <sys/types.h>
 #include <sys/stat.h>
 #elif defined(__OSX__)
@@ -16,7 +16,7 @@
 //#include <sys/stat.h>
 #endif
 
-#ifdef _WIN32
+#ifdef WIN32
 std::wstring s2ws(const std::string& s)
 {
 	int len;
@@ -37,13 +37,11 @@ namespace FileSystem
 
 	namespace Directory
 	{
-
-
 		bool CreateFolder2(std::string _path)
 		{
-			#if defined(_WIN32)
+			#if defined(WIN32)
 				return CreateDirectory(s2ws(_path).c_str(), NULL);
-			#elif defined(__IOS__)
+			#elif defined(__IOS__) || defined(__OSX__)
                 return mkdir(_path.c_str(), 0775) == 0;
 			#elif defined(__OSX__)
 
@@ -60,7 +58,7 @@ namespace FileSystem
 			if (_path.size() == 0)
 				return true;
 
-#ifdef _WIN32
+#ifdef WIN32
 			std::replace(_path.begin(), _path.end(), '\\', '/');
 #endif
 			char* path = new char[_path.size() + 1];
@@ -101,7 +99,7 @@ namespace FileSystem
 			if (_path.at(_path.size() - 1) == '/')
 				_path = _path.substr(0, _path.size() - 1);
 
-			#if defined(_WIN32) || defined(__IOS__)
+			#if defined(WIN32) || defined(__IOS__) || defined(__OSX__)
 				struct stat info;
 				if (stat(_path.c_str(), &info) != 0)
 					return false;

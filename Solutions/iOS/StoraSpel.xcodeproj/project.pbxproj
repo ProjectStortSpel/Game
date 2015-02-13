@@ -141,6 +141,7 @@
 		0372EED51A8A4A3100802321 /* Stdafx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0372EE5E1A8A4A3100802321 /* Stdafx.cpp */; };
 		0372EED61A8A4A3100802321 /* WinSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0372EE601A8A4A3100802321 /* WinSocket.cpp */; };
 		0372EEDC1A8A5E2B00802321 /* AddTextToTextureSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0372EEDA1A8A5E2B00802321 /* AddTextToTextureSystem.cpp */; };
+		0372EEE51A8E095A00802321 /* Directory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0372EEE31A8E095A00802321 /* Directory.cpp */; };
 		03F45FB21A750E6700F8A27F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 03F45FB11A750E6700F8A27F /* Images.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -415,6 +416,8 @@
 		0372EE611A8A4A3100802321 /* WinSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WinSocket.h; sourceTree = "<group>"; };
 		0372EEDA1A8A5E2B00802321 /* AddTextToTextureSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AddTextToTextureSystem.cpp; sourceTree = "<group>"; };
 		0372EEDB1A8A5E2B00802321 /* AddTextToTextureSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddTextToTextureSystem.h; sourceTree = "<group>"; };
+		0372EEE31A8E095A00802321 /* Directory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Directory.cpp; sourceTree = "<group>"; };
+		0372EEE41A8E095A00802321 /* Directory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Directory.h; sourceTree = "<group>"; };
 		03F45FB11A750E6700F8A27F /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = StoraSpel/Images.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -488,6 +491,7 @@
 		0365629B1A73198200F5A3BF /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				0372EEE21A8E095A00802321 /* FileSystem */,
 				0372ED3E1A8A4A3100802321 /* AndroidRenderer */,
 				0372ED551A8A4A3100802321 /* Console */,
 				0372ED581A8A4A3100802321 /* ECSL */,
@@ -1105,6 +1109,16 @@
 			path = ../../Source/Network;
 			sourceTree = "<group>";
 		};
+		0372EEE21A8E095A00802321 /* FileSystem */ = {
+			isa = PBXGroup;
+			children = (
+				0372EEE31A8E095A00802321 /* Directory.cpp */,
+				0372EEE41A8E095A00802321 /* Directory.h */,
+			);
+			name = FileSystem;
+			path = ../../Source/FileSystem;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1215,6 +1229,7 @@
 				0372EEB71A8A4A3100802321 /* MovementSystem.cpp in Sources */,
 				0372EEBA1A8A4A3100802321 /* RenderSystem.cpp in Sources */,
 				0372EEC41A8A4A3100802321 /* Logger.cpp in Sources */,
+				0372EEE51A8E095A00802321 /* Directory.cpp in Sources */,
 				0372EEA21A8A4A3100802321 /* LuaGraphicDevice.cpp in Sources */,
 				0372EE781A8A4A3100802321 /* DataLogger.cpp in Sources */,
 				0372EE6F1A8A4A3100802321 /* StringConverter.cpp in Sources */,
