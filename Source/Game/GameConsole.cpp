@@ -345,7 +345,7 @@ void GameConsole::BroadcastAnnouncement(std::string _command, std::vector<Consol
 		return;
 
 	std::string temp = _args->at(0).GetString();
-	SDL_Log("%s", temp);
+	SDL_Log("%s", temp.c_str());
 		//LuaEmbedder::AddBool("Client", connected);
 }
 
