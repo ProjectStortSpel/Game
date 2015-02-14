@@ -99,8 +99,7 @@ void ParticleSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std:
 
 		ID = (int*)GetComponent(entityId, "Particle", "Id");
 
-
-		//m_graphics->AddParticleEffect(Name, glm::vec3(Position[0], Position[1], Position[2]), *Particles, *Lifetime, *Scale, *SpriteSize, Texture, glm::vec3(Color[0], Color[1], Color[2]), *ID);
+		m_graphics->AddParticleEffect(Name, glm::vec3(Position[0], Position[1], Position[2]), *Particles, *Lifetime, *Scale, *SpriteSize, Texture, glm::vec3(Color[0], Color[1], Color[2]), *ID);
 	}
 }
 
@@ -108,7 +107,9 @@ void ParticleSystem::EntitiesRemoved(const ECSL::RuntimeInfo& _runtime, const st
 {
 	for (auto entityId : _entities)
 	{
+		int*	ID	= (int*)GetComponent(entityId, "Particle", "Id");
 
+		m_graphics->RemoveParticleEffect(*ID);
 	}
 }
 

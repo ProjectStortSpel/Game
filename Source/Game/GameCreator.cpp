@@ -341,6 +341,12 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 	worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 
+	graphicalSystem = new ParticleSystem(m_graphics);
+	m_graphicalSystems.push_back(graphicalSystem);
+	worldCreator.AddSystemGroup();
+	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
+
+
 	worldCreator.AddSystemGroup();
 	worldCreator.AddSystemToCurrentGroup<RotationSystem>();
     
@@ -386,10 +392,7 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
     
     if (_worldType == WorldType::Client || _isMainWorld)
     {
-		graphicalSystem = new ParticleSystem(m_graphics);
-		m_graphicalSystems.push_back(graphicalSystem);
-		worldCreator.AddSystemGroup();
-		worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
+
 
         graphicalSystem = new RenderSystem(m_graphics);
         m_graphicalSystems.push_back(graphicalSystem);
