@@ -94,22 +94,4 @@ end
 
 
 GameMenuSystem.PostInitialize = function(self)
-	
-	local	newParticle	=	world:CreateNewEntity()
-	world:CreateComponentAndAddTo("Position", newParticle)
-	world:CreateComponentAndAddTo("Color", newParticle)
-	world:CreateComponentAndAddTo("Particle", newParticle)
-	
-	world:GetComponent(newParticle, "Position", "X"):SetFloat3(10, 1, 7)
-	world:GetComponent(newParticle, "Color", "X"):SetFloat3(1.0, 0.0, 0.0)
-	
-	world:GetComponent(newParticle, "Particle", "Name"):SetText("fire")
-	world:GetComponent(newParticle, "Particle", "Texture"):SetText("content/textures/firewhite.png")
-	world:GetComponent(newParticle, "Particle", "Particles"):SetInt(100)
-	world:GetComponent(newParticle, "Particle", "Lifetime"):SetFloat(700)
-	world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.05)
-	world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(0.6)
-	world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
-	
-	
 end
