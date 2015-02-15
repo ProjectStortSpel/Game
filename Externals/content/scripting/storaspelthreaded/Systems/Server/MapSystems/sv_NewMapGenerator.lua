@@ -795,6 +795,7 @@ MapGenerator.CreateGrassEntity = function(self, X, Z)
 	local	newGrass	=	self:CreateTileEntity(X, Z)
 	world:CreateComponentAndAddTo("Model", newGrass)
 	world:GetComponent(newGrass, "Model", 0):SetModel("grass", "grass", 0, 0)
+	world:GetComponent(newGrass, "Rotation", 0):SetFloat3(0, math.pi * 0.5 * math.random(0, 4), 0)
 	
 	return	newGrass
 end
@@ -872,7 +873,7 @@ MapGenerator.CreateSpawnpointEntity = function(self, X, Z)
 	
 	local	newSpawnpoint	=	self:CreateTileEntity(X, Z)
 	world:CreateComponentAndAddTo("Model", newSpawnpoint)
-	world:GetComponent(newSpawnpoint, "Model", 0):SetModel("spawn", "grass", 0, 0)
+	world:GetComponent(newSpawnpoint, "Model", 0):SetModel("grass", "grass", 0, 0)
 	
 	local newSpawnId = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("AvailableSpawnpoint", newSpawnId)
