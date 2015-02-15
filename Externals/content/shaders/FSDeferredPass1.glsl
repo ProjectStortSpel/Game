@@ -35,7 +35,7 @@ void main()
 		// -- OUTPUTS --
 		// Set Color output
 		if( addcolor.xyz != vec3(0.0) )
-			ColorData.xyz = addcolor.xyz;//(1.0f-blendFactor)*color_map.xyz + blendFactor * addcolor.xyz; 
+			ColorData.xyz = (1.0f-blendFactor)*color_map.xyz + blendFactor * addcolor.xyz; 
 		else
 			ColorData.xyz = color_map.xyz;								// rgb = color
 

@@ -127,7 +127,7 @@ void Buffer::draw(GLint base, GLsizei count)
 	glBindVertexArray(0);
 }
 
-void Buffer::drawInstanced(GLint base, int instances, std::vector<glm::mat4> *inMats, std::vector<glm::mat3> *normalMats, std::vector<glm::vec4> *color)
+void Buffer::drawInstanced(GLint base, int instances, std::vector<glm::mat4> *inMats, std::vector<glm::mat3> *normalMats, std::vector<float> *color)
 {
 	// Make sure there's no weird behaviour
 	if (m_Type == None)
@@ -142,10 +142,14 @@ void Buffer::drawInstanced(GLint base, int instances, std::vector<glm::mat4> *in
 	glBindBuffer(GL_ARRAY_BUFFER, m_normalMatVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat3)*instances, &(*normalMats)[0], GL_DYNAMIC_DRAW);
 
+	int hepp = sizeof(glm::mat4)*instances;
+	int depp = sizeof(glm::mat3)*instances;
+	int sepp = sizeof(glm::vec4)*instances;
+
 	if (color != nullptr)
-	{
+	{ 
 		glBindBuffer(GL_ARRAY_BUFFER, m_colorVBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4)*instances, &(*color)[0], GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float)*instances*4, &(*color)[0], GL_STATIC_DRAW);
 	}
 	// Draw based on based buffer type
 	switch (m_Type)
