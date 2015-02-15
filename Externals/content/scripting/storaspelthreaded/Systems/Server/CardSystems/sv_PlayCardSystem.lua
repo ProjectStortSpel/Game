@@ -41,6 +41,13 @@ PlayCardSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities
 					local cardAction = "Unit" .. action
 					world:CreateComponentAndAddTo(cardAction, unit)
 					--print("Card <" .. cardAction .. ">!")
+					
+					local	playedCard	=	world:CreateNewEntity()
+					world:CreateComponentAndAddTo("PlayedCard", playedCard)
+					world:GetComponent(playedCard, "PlayedCard", "CardAction"):SetText(cardAction)
+					world:GetComponent(playedCard, "PlayedCard", "CardPriority"):SetInt(world:GetComponent(card, "CardPrio", "Prio"):GetInt())
+					world:GetComponent(playedCard, "PlayedCard", "PlayerNumber"):SetInt(plyNum)
+					
 					time = 1.5
 				end
 

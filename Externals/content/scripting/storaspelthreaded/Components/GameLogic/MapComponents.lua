@@ -81,6 +81,7 @@ MapSpecsComponent.Name = "MapSpecs"
 MapSpecsComponent.SyncNetwork = true
 MapSpecsComponent.TableType = TableType.Map
 MapSpecsComponent:AddVariable("NoOfSpawnpoints", ByteSize.Int)
+MapSpecsComponent:AddVariable("NoOfCheckpoints", ByteSize.Int)
 MapSpecsComponent:AddVariable("SizeX", ByteSize.Int)
 MapSpecsComponent:AddVariable("SizeY", ByteSize.Int)
 worldCreator:AddComponentType(MapSpecsComponent)
