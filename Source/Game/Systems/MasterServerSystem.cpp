@@ -156,7 +156,11 @@ void MasterServerSystem::OnConnectionAccepted(Network::NetConnection _nc, const 
 			m_timeoutTimer = 0.f;
 			break;
 		case MAX_PLAYER_COUNT_INCREASED:
-			m_clientDatabase->IncreaseMaxNoPlayers(m_maxPlayers);
+			m_clientDatabase->IncreaseMaxNoPlayers();
+			m_timeoutTimer = 0.f;
+			break;
+		case MAX_PLAYER_COUNT_CHANGED:
+			m_clientDatabase->SetMaxNoPlayers(m_maxPlayers);
 			m_timeoutTimer = 0.f;
 			break;
 		case PLAYER_COUNT_INCREASED:
@@ -273,7 +277,7 @@ void MasterServerSystem::EntitiesAddedServer(const ECSL::RuntimeInfo& _runtime, 
 		if (HasComponent(entityId, ECSL::ComponentTypeManager::GetInstance().GetTableId("MapSpecs")))
 		{
 			m_maxPlayers = *((int*)GetComponent(entityId, "MapSpecs", "NoOfSpawnpoints"));
-			m_mServerMessages.push_back(MAX_PLAYER_COUNT_INCREASED);
+			m_mServerMessages.push_back(MAX_PLAYER_COUNT_CHANGED);
 			//m_clientDatabase->IncreaseMaxNoPlayers();
 		}
 		else if (HasComponent(entityId, ECSL::ComponentTypeManager::GetInstance().GetTableId("Player")))

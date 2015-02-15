@@ -58,7 +58,8 @@ public:
 	void IncreaseNoSpectators();
 	void DecreaseNoSpectators();
 
-	void IncreaseMaxNoPlayers(int _maxPlayers);
+	void IncreaseMaxNoPlayers();
+	void SetMaxNoPlayers(int _maxPlayers);
 
 	void RequestServerList();
 	void PingServer();

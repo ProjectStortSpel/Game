@@ -53,6 +53,8 @@ bool GraphicsLow::Init()
 	
 	CreateShadowMap();
 	if (!InitLightBuffers()) { ERRORMSG("INIT LIGHTBUFFER FAILED\n"); return false; }
+
+	CreateParticleSystems();
 	
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
@@ -74,6 +76,7 @@ void GraphicsLow::Update(float _dt)
 	BufferLightsToGPU();
 	BufferSurfaces();
 	BufferModelTextures();
+	BufferParticleSystems();
 }
 
 void GraphicsLow::WriteShadowMapDepth()
@@ -216,6 +219,37 @@ void GraphicsLow::Render()
 		m_modelsForward[i].bufferPtr->drawInstanced(0, m_modelsForward[i].instances.size(), &modelViewVector, &normalMatVector);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
+
+
+	//------PARTICLES---------
+	glEnable(GL_POINT_SPRITE);
+	glDepthMask(GL_FALSE);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+
+	m_particleShader.UseProgram();
+
+	m_particleShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
+	//glUniformMatrix4fv(glGetUniformLocation(particleShaderProgHandle, "ProjectionMatrix"), 1, GL_FALSE, &mCameraProjectionMat[0][0]);
+
+	glActiveTexture(GL_TEXTURE1);
+
+	for (std::map<int, ParticleSystem*>::iterator it = m_particleSystems.begin(); it != m_particleSystems.end(); ++it)
+	{
+		glBindTexture(GL_TEXTURE_2D, it->second->GetTexHandle());
+
+		mat4 Model = glm::translate(it->second->GetWorldPos());
+		mat4 ModelView = viewMatrix * Model;
+
+		m_particleShader.SetUniVariable("ModelView", mat4x4, &ModelView);
+		m_particleShader.SetUniVariable("BlendColor", vector3, it->second->GetColor());
+
+		it->second->Render(m_dt);
+	}
+	glDisable(GL_POINT_SPRITE);
+	glDepthMask(GL_TRUE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//------------------------
 
 	// RENDER VIEWSPACE STUFF
 	glClear(GL_DEPTH_BUFFER_BIT);
@@ -426,6 +460,14 @@ bool GraphicsLow::InitShaders()
 	m_shadowShaderForward.AddShader("content/shaders/shadowShaderForwardFS.glsl", GL_FRAGMENT_SHADER);
 	m_shadowShaderForward.FinalizeShaderProgram();
 
+	// Particle shader
+	m_particleShader.InitShaderProgram();
+	m_particleShader.AddShader("content/shaders/particleShaderVS.glsl", GL_VERTEX_SHADER);
+	m_particleShader.AddShader("content/shaders/particleShaderFS.glsl", GL_FRAGMENT_SHADER);
+	const char * outputNames[] = { "Position", "Velocity", "StartTime" };
+	glTransformFeedbackVaryings(m_particleShader.GetShaderProgram(), 3, outputNames, GL_SEPARATE_ATTRIBS);
+	m_particleShader.FinalizeShaderProgram();
+
 	return true;
 }
 
@@ -439,6 +481,9 @@ bool GraphicsLow::InitBuffers()
 
 	//Shadow forward shader
 	m_shadowShaderForward.CheckUniformLocation("diffuseTex", 1);
+
+	//Particle shader
+	m_particleShader.CheckUniformLocation("ParticleTex", 1);
 
 	return true;
 }

@@ -11,7 +11,7 @@ namespace Renderer
 	class ParticleSystem
 	{
 	public:
-		ParticleSystem(std::string _type, const vec3 _pos, int _nParticles, float _lifeTime, float _size, GLuint _texHandle, Shader *_shaderProg);
+		ParticleSystem(std::string _type, const vec3 _pos, int _nParticles, float _lifeTime, float _scale, float _spriteSize, GLuint _texHandle, vec3 _color, Shader *_shaderProg);
 		~ParticleSystem();
 
 		GLuint GetTexHandle(){ return m_textureHandle; }
@@ -21,6 +21,7 @@ namespace Renderer
 		vec3 GetWorldPos(){ return m_pos; }
 		vec3 GetAccel(){ return m_accel; }
 		void SetAccel(vec3 _acc){ m_accel = _acc; }
+		vec3* GetColor(){ return &m_color; }
 
 	private:
 		Shader *m_shader;
@@ -41,9 +42,10 @@ namespace Renderer
 
 		int m_nrParticles, m_type;
 		int m_drawBuf;
-		vec3 m_pos, m_accel;
-		float m_size, m_lifeTime;
+		vec3 m_pos, m_accel, m_color;
+		float m_spriteSize, m_lifeTime;
 		float m_elapsedTime;
+		float m_scale;
 
 		void CreateFire();
 		void CreateSmoke();
