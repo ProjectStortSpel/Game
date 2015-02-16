@@ -8,25 +8,25 @@ worldCreator:AddSystemToCurrentGroup(StageSystem)
 
 --	Map Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/MapSystems/?.lua"
-require "sv_NewMapGenerator"
---require "sv_CreateMapSystem"
+--require "sv_NewMapGenerator"
+require "sv_CreateMapSystem"
 require "sv_RiverSystem"
 require "sv_VoidSystem"
 require "sv_CheckpointSystem"
-require "sv_MapRaterSystem"
+--require "sv_MapRaterSystem"
 
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(MapGenerator)
 --worldCreator:AddSystemGroup()
---worldCreator:AddSystemToCurrentGroup(CreateMapSystem)
+--worldCreator:AddSystemToCurrentGroup(MapGenerator)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(CreateMapSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(RiverSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(VoidSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CheckpointSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(MapRater)
+--worldCreator:AddSystemGroup()
+--worldCreator:AddSystemToCurrentGroup(MapRater)
 
 --	Light Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/LightSystems/?.lua"
