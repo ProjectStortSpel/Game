@@ -2,9 +2,8 @@
 #define PATHFINDER_H
 
 #include <vector>
-#include "LuaBridge/AI/LuaPotentialFieldHandler.h"
 
-typedef LuaBridge::PotentialField::PF potential_field;
+typedef std::vector<std::vector<float>> potential_field;
 
 /* Coordinates */
 struct coord
@@ -88,7 +87,7 @@ public:
 		_goal					: Path should be genereted to this position.
 		return					: Returns the vector of coords, of which describes the path.
 	*/
-	std::vector<coord> GeneratePath(coord _start, coord _goal);	
+	std::vector<coord> GeneratePath(coord _start, coord _goal, float &_totalCost);	
 
 	/*
 		RemovePotentialField	: Remove a potential field from the pathfinder

@@ -13,7 +13,7 @@ MapRater.CurrentRound			=	0
 
 
 MapRater.NumberOfCheckpoints				=	0
-MapRater.CheckpointRoundDifferences			=	{}	--	Each player will have their own list ranging from 1 to Checkpoints
+MapRater.CheckpointRoundDifferences			=	{}	--	Each player will have their own list ranging from 1 to Checkpoints [Player][Checkpoint]
 MapRater.CheckpointRoundDifferences.__mode	=	"k"	--	Each entry (CheckpointNumber) will contain which round the player reached that checkpoint on
 
 MapRater.PlayersDeaths			=	{}
@@ -89,7 +89,7 @@ MapRater.SetupMapSpecs = function(self, mapSpecs)
 		self.CheckpointRoundDifferences[#self.CheckpointRoundDifferences].__mode	=	"k"
 		
 		for j = 1, self.NumberOfCheckpoints do
-			self.CheckpointRoundDifferences[self:GetCheckpointListIndex(i, j)]	=	0
+			self.CheckpointRoundDifferences[i][j]	=	0
 		end
 		
 	end
@@ -128,7 +128,7 @@ MapRater.CheckpointReached = function(self, checkpointEntity)
 	local	playerNumber		=	world:GetComponent(checkpointEntity, "CheckpointReached", "PlayerNumber"):GetInt()
 	local 	checkpointNumber	= 	world:GetComponent(checkpointEntity, "CheckpointReached", "CheckpointNumber"):GetInt()
 	
-	self.CheckpointRoundDifferences[self:GetCheckpointListIndex(playerNumber, checkpointNumber)]	=	self.CurrentRound
+	self.CheckpointRoundDifferences[playerNumber][checkpointNumber]	=	self.CurrentRound
 	if checkpointNumber == self.NumberOfCheckpoints then
 		self.PlayersLeftToWin	=	self.PlayersLeftToWin-1
 	end
@@ -164,7 +164,7 @@ MapRater.PrintInfo = function(self)
 		
 		--	Checkpoint data
 		for i = 1, self.NumberOfCheckpoints do
-			dataString	=	dataString .. self.CheckpointRoundDifferences[self:GetCheckpointListIndex(playerIndex, i)] .. self.SEPARATOR
+			dataString	=	dataString .. self.CheckpointRoundDifferences[playerIndex][i] .. self.SEPARATOR
 		end
 		
 		dataString	=	dataString .. "\n"
@@ -217,7 +217,7 @@ MapRater.PrintCheckpointInfo = function(self)
 		
 		for i = 1, self.NumberOfPlayers do
 			
-			local	roundInfo	=	self.CheckpointRoundDifferences[self:GetCheckpointListIndex(i, n)]
+			local	roundInfo	=	self.CheckpointRoundDifferences[i][n]
 			
 			checkpointMessage	=	checkpointMessage .. roundInfo
 			if i < self.NumberOfPlayers then

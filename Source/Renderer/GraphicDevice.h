@@ -15,6 +15,7 @@ Author: Anders, Christian
 #include "TextRenderer.h"
 #include "ParticleSystem.h"
 #include "AModel.h"
+#include "Model.h"
 
 namespace Renderer
 {
@@ -27,54 +28,6 @@ namespace Renderer
 #define TEXTURE_DIFFUSE		0
 #define TEXTURE_NORMAL		1
 #define TEXTURE_SPECULAR	2
-
-
-	struct Instance
-	{
-		int id;
-		bool active;
-		bool viewspace;
-		mat4* modelMatrix;
-		float* color;
-
-		Instance(){}
-		Instance(int _id, bool _active, mat4* _model, float* _color)
-		{
-			id = _id;
-			active = _active;
-			modelMatrix = _model;
-			color = _color;
-		}
-	};
-
-	struct Model
-	{
-		bool operator== (const Model &m) { return Compare(m); }
-		bool operator!= (const Model &m) { return !Compare(m); }
-
-		Model(){}
-		Model(Buffer* buffer, GLuint tex, GLuint nor, GLuint spe)
-		{
-			bufferPtr = buffer;
-			texID = tex;
-			norID = nor;
-			speID = spe;
-		}
-		bool Compare(Model m)
-		{
-			if (texID != m.texID) return false;
-			if (bufferPtr != m.bufferPtr) return false;
-			if (speID != m.speID) return false;
-			if (norID != m.norID) return false;
-			return true;
-		}
-		Buffer* bufferPtr;
-		GLuint texID;
-		GLuint norID;
-		GLuint speID;
-
-		std::vector<Instance> instances;
-	};
 
 	struct GLTimerValue
 	{

@@ -2,7 +2,7 @@ AICardPickingSystem = System()
 AICardPickingSystem.NumberOfCardsToPick = 5
 AICardPickingSystem.CardsPerHand = 8
 AICardPickingSystem.PrintSimulation = 0
-AICardPickingSystem.AICheat = 0
+AICardPickingSystem.AICheat = 1
 
 AICardPickingSystem.Initialize = function(self)
 	self:SetName("AI card picking System")
@@ -56,6 +56,8 @@ AICardPickingSystem.Update = function(self, dt)
 		local CPtiles = self:GetEntities("Checkpoint")
 		
 		for i = 1, #AIs do
+			
+			PotentialFieldHandler.UseMyPF(i)
 			
 			local unitID = world:GetComponent(AIs[i], "UnitEntityId", 0):GetInt()
 			
@@ -162,9 +164,11 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, _dirX, _dirY, _posX
 				elseif j == 2 then
 					cardactioncomp:SetText("Forward")
 				elseif j == 3 then
-					cardactioncomp:SetText("Backward")
+					--cardactioncomp:SetText("Backward")
+					cardactioncomp:SetText("Forward")
 				elseif j == 4 then
-					cardactioncomp:SetText("Backward")
+					--cardactioncomp:SetText("Backward")
+					cardactioncomp:SetText("Forward")
 				elseif j == 5 then
 					cardactioncomp:SetText("TurnRight")
 				elseif j == 6 then

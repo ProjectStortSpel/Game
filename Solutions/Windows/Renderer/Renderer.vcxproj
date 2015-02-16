@@ -26,6 +26,7 @@
     <ClInclude Include="..\..\..\Source\Renderer\GraphicDevice.h" />
     <ClInclude Include="..\..\..\Source\Renderer\GraphicsHigh.h" />
     <ClInclude Include="..\..\..\Source\Renderer\GraphicsLow.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\Model.h" />
     <ClInclude Include="..\..\..\Source\Renderer\ModelExporter.h" />
     <ClInclude Include="..\..\..\Source\Renderer\ModelLoader.h" />
     <ClInclude Include="..\..\..\Source\Renderer\ParticleSystem.h" />
@@ -45,6 +46,7 @@
     <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\GraphicsHigh.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\GraphicsLow.cpp" />
+    <ClCompile Include="..\..\..\Source\Renderer\Model.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\ParticleSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\Shader.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\ShadowMap.cpp" />

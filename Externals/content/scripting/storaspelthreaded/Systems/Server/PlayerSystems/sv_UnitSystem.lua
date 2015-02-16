@@ -79,6 +79,7 @@ UnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 			world:CreateComponentAndAddTo("NeedSpawnLocation", newEntityId)
 			
 			world:SetComponent(entity, "PlayerNumber", "Number", playerNumber)
+			world:CreateComponentAndAddTo("UnitEntityId", entity)
 			world:SetComponent(entity, "UnitEntityId", "Id", newEntityId)
 			
 			if world:EntityHasComponent(entity, "NetConnection") then

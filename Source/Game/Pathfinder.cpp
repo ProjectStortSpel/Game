@@ -70,7 +70,6 @@ bool Pathfinder::RemovePotentialField()
 	this->m_potentialField = NULL;
 	return false;
 }
-
 bool Pathfinder::UsePotentialField(potential_field* pPF)
 {
 	if (pPF)
@@ -111,9 +110,12 @@ void Pathfinder::AddNeighbors(coord _position, std::vector<pathfindingnode>& _se
 			{
 				float value = (*this->m_potentialField)[x][y];
 				cost += value;
+				//printf("%i ", (int)cost);
 			}
 			this->m_mapData[x][y].parent = _parent;
 			this->m_mapData[x][y].g = _parent->g + cost;
+			//printf("%.1f ", (this->m_mapData[x][y].walk_cost));
+			//printf("%.1f ", (this->m_mapData[x][y].walk_cost));
 			
 			if (y != _parent->parent->position.y)
 			{
@@ -287,11 +289,23 @@ pathfindingnode Pathfinder::BestNode(std::vector<pathfindingnode>& _set)
 	return ret_value;
 }
 
-std::vector<coord> Pathfinder::GeneratePath( coord start, coord goal )
+std::vector<coord> Pathfinder::GeneratePath(coord start, coord goal, float &_totalCost)
 {
 	std::vector<coord> ret_value;
 	std::vector<pathfindingnode> open;
 	std::vector<pathfindingnode> closed;
+
+
+	//for (int y = 0; y < this->m_mapSize.y; y++)
+	//{
+	//	for (int x = 0; x < this->m_mapSize.x; x++)
+	//	{
+	//		printf("%.1f ", this->m_mapData[x][y].walk_cost);
+	//	}
+	//	printf("\n");
+	//}
+
+
 	this->m_goalCoord = goal;
 	if (this->InsideWorld(goal.x, goal.y) && this->InsideWorld(start.x, start.y))
 	{
@@ -308,6 +322,10 @@ std::vector<coord> Pathfinder::GeneratePath( coord start, coord goal )
 				pathfindingnode current_node = this->BestNode(open);
 				if (current_node.position.x == goal.x && current_node.position.y == goal.y)
 				{
+					/*----------------------HERE-------------------*//*----------------------HERE-------------------*//*----------------------HERE-------------------*/
+					/*----------------------HERE-------------------*/		_totalCost = current_node.g;			  /*----------------------HERE-------------------*/
+					/*----------------------HERE-------------------*//*----------------------HERE-------------------*//*----------------------HERE-------------------*/
+
 					coord rdy_to_push(current_node.position.x, current_node.position.y);
 					ret_value.push_back(rdy_to_push);
 					bool check = !(current_node.position.x == current_node.parent->position.x &&
@@ -328,11 +346,16 @@ std::vector<coord> Pathfinder::GeneratePath( coord start, coord goal )
 
 		}
 	}
+	
 	return ret_value;
 }
 
 void Pathfinder::DeleteMap()
 {
+	this->m_goalCoord = coord(0, 0);
+	this->m_mapSize = coord(0, 0);
+	this->m_potentialField = NULL;
+
 	for (int i = 0; i < this->m_mapSize.x; ++i)
 	{
 		if (this->m_mapData[i])

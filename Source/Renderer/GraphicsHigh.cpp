@@ -214,58 +214,7 @@ void GraphicsHigh::Render()
 	//------Render scene (for deferred)-----------------------------------------------------------
 	//-- DRAW MODELS
 	for (int i = 0; i < m_modelsDeferred.size(); i++)
-	{
-		std::vector<mat4> MVPVector(m_modelsDeferred[i].instances.size());
-		std::vector<mat3> normalMatVector(m_modelsDeferred[i].instances.size());
-		std::vector<float> colors(m_modelsDeferred[i].instances.size()*4);
-
-		int nrOfInstances = 0;
-
-		for (int j = 0; j < m_modelsDeferred[i].instances.size(); j++)
-		{
-			if (m_modelsDeferred[i].instances[j].active) // IS MODEL ACTIVE?
-			{
-				mat4 modelMatrix;
-				if (m_modelsDeferred[i].instances[j].modelMatrix == NULL)
-					modelMatrix = glm::translate(glm::vec3(1));
-				else
-					modelMatrix = *m_modelsDeferred[i].instances[j].modelMatrix;
-
-				mat4 modelViewMatrix;
-				modelViewMatrix = viewMatrix * modelMatrix;
-
-				mat4 mvp = projectionMatrix * modelViewMatrix;
-				MVPVector[nrOfInstances] = mvp;
-				
-				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-				normalMatVector[nrOfInstances] = normalMatrix;
-
-				//m_deferredShader1.SetUniVariable("BlendColor", vector3, m_modelsDeferred[i].instances[j].color);
-
-				colors[4*nrOfInstances+0] = m_modelsDeferred[i].instances[j].color[0];
-				colors[4*nrOfInstances+1] = m_modelsDeferred[i].instances[j].color[1];
-				colors[4*nrOfInstances+2] = m_modelsDeferred[i].instances[j].color[2];
-				colors[4*nrOfInstances+3] = 0.f;
-
-				nrOfInstances++;
-			}
-		}
-		
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, m_modelsDeferred[i].texID);
-
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, m_modelsDeferred[i].norID);
-
-		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, m_modelsDeferred[i].speID);
-
-		//m_modelsDeferred[i].bufferPtr->draw();
-		m_modelsDeferred[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector, &colors);
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
-
-
+		m_modelsDeferred[i].Draw(viewMatrix, projectionMatrix);
 
 	// ---- ANIMATED DEFERED
 	m_animationShader.UseProgram();
@@ -395,54 +344,7 @@ void GraphicsHigh::Render()
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
 
 	for (int i = 0; i < m_modelsForward.size(); i++)
-	{
-		std::vector<mat4> modelViewVector(m_modelsForward[i].instances.size());
-		std::vector<mat3> normalMatVector(m_modelsForward[i].instances.size());
-		std::vector<float> colors(m_modelsForward[i].instances.size() * 4);
-
-		int nrOfInstances = 0;
-
-		for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
-		{
-			if (m_modelsForward[i].instances[j].active) // IS MODEL ACTIVE?
-			{
-				mat4 modelMatrix;
-				if (m_modelsForward[i].instances[j].modelMatrix == NULL)
-					modelMatrix = glm::translate(glm::vec3(1));
-				else
-					modelMatrix = *m_modelsForward[i].instances[j].modelMatrix;
-
-				mat4 modelViewMatrix;
-				modelViewMatrix = viewMatrix * modelMatrix;
-
-				modelViewVector[nrOfInstances] = modelViewMatrix;
-
-				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-				normalMatVector[nrOfInstances] = normalMatrix;
-
-				//m_forwardShader.SetUniVariable("BlendColor", vector3, m_modelsForward[i].instances[j].color);
-
-				colors[4 * nrOfInstances + 0] = m_modelsForward[i].instances[j].color[0];
-				colors[4 * nrOfInstances + 1] = m_modelsForward[i].instances[j].color[1];
-				colors[4 * nrOfInstances + 2] = m_modelsForward[i].instances[j].color[2];
-				colors[4 * nrOfInstances + 3] = 0.f;
-
-				nrOfInstances++;
-			}
-		}
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
-
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].norID);
-
-		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].speID);
-
-		m_modelsForward[i].bufferPtr->drawInstanced(0, m_modelsForward[i].instances.size(), &modelViewVector, &normalMatVector, &colors);
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
+		m_modelsForward[i].Draw(viewMatrix, mat4(1));
 
 
 	//------PARTICLES---------
@@ -484,52 +386,7 @@ void GraphicsHigh::Render()
 
 	SortModelsBasedOnDepth(&m_modelsViewspace);
 	for (int i = 0; i < m_modelsViewspace.size(); i++)
-	{
-		std::vector<mat4> modelViewVector(m_modelsViewspace[i].instances.size());
-		std::vector<mat3> normalMatVector(m_modelsViewspace[i].instances.size());
-		std::vector<float> colors(m_modelsViewspace[i].instances.size() * 4);
-
-		int nrOfInstances = 0;
-
-		for (int j = 0; j < m_modelsViewspace[i].instances.size(); j++)
-		{
-			if (m_modelsViewspace[i].instances[j].active) // IS MODEL ACTIVE?
-			{
-				mat4 modelMatrix;
-				if (m_modelsViewspace[i].instances[j].modelMatrix == NULL)
-					modelMatrix = glm::translate(glm::vec3(1));
-				else
-					modelMatrix = *m_modelsViewspace[i].instances[j].modelMatrix;
-
-				mat4 modelViewMatrix;
-				modelViewMatrix = modelMatrix;
-
-				modelViewVector[nrOfInstances] = modelViewMatrix;
-
-				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-				normalMatVector[nrOfInstances] = normalMatrix;
-
-				colors[4 * nrOfInstances + 0] = m_modelsViewspace[i].instances[j].color[0];
-				colors[4 * nrOfInstances + 1] = m_modelsViewspace[i].instances[j].color[1];
-				colors[4 * nrOfInstances + 2] = m_modelsViewspace[i].instances[j].color[2];
-				colors[4 * nrOfInstances + 3] = 0.f;
-
-				nrOfInstances++;
-			}
-		}
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, m_modelsViewspace[i].texID);
-
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, m_modelsViewspace[i].norID);
-
-		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, m_modelsViewspace[i].speID);
-
-		m_modelsViewspace[i].bufferPtr->drawInstanced(0, m_modelsViewspace[i].instances.size(), &modelViewVector, &normalMatVector, &colors);
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
+		m_modelsViewspace[i].Draw(mat4(1), mat4(1));
 
 	// RENDER INTERFACE STUFF
 	//glDisable(GL_DEPTH_TEST);
@@ -538,45 +395,7 @@ void GraphicsHigh::Render()
 
 	SortModelsBasedOnDepth(&m_modelsInterface);
 	for (int i = 0; i < m_modelsInterface.size(); i++)
-	{
-		std::vector<mat4> modelViewVector(m_modelsInterface[i].instances.size());
-		std::vector<mat3> normalMatVector(m_modelsInterface[i].instances.size());
-		std::vector<float> colors(m_modelsInterface[i].instances.size() * 4);
-
-		int nrOfInstances = 0;
-
-		for (int j = 0; j < m_modelsInterface[i].instances.size(); j++)
-		{
-			if (m_modelsInterface[i].instances[j].active) // IS MODEL ACTIVE?
-			{
-				mat4 modelMatrix;
-				if (m_modelsInterface[i].instances[j].modelMatrix == NULL)
-					modelMatrix = glm::translate(glm::vec3(1));
-				else
-					modelMatrix = *m_modelsInterface[i].instances[j].modelMatrix;
-
-				mat4 modelViewMatrix = modelMatrix;
-
-				modelViewVector[nrOfInstances] = modelViewMatrix;
-
-				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-				normalMatVector[nrOfInstances] = normalMatrix;
-
-				colors[4 * nrOfInstances + 0] = m_modelsInterface[i].instances[j].color[0];
-				colors[4 * nrOfInstances + 1] = m_modelsInterface[i].instances[j].color[1];
-				colors[4 * nrOfInstances + 2] = m_modelsInterface[i].instances[j].color[2];
-				colors[4 * nrOfInstances + 3] = 0.f;
-
-				nrOfInstances++;
-			}
-		}
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, m_modelsInterface[i].texID);
-
-		m_modelsInterface[i].bufferPtr->drawInstanced(0, m_modelsInterface[i].instances.size(), &modelViewVector, &normalMatVector, &colors);
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
+		m_modelsInterface[i].Draw(mat4(1), mat4(1));
 
 	glDisable(GL_BLEND);
 	glDisable(GL_TEXTURE_2D);
@@ -1055,8 +874,11 @@ void GraphicsHigh::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
 	shaderPtr->CheckUniformLocation("specularTex", 3);
 
-	Model model = Model(mesh, texture, normal, specular);
-
+	Model model;
+	if (_modelToLoad->RenderType != RENDER_INTERFACE)
+		model = Model(mesh, texture, normal, specular);
+	else
+		model = Model(mesh, texture, NULL, NULL);
 	//for the matrices (modelView + normal)
 	m_vramUsage += (16 + 9) * sizeof(float);
 

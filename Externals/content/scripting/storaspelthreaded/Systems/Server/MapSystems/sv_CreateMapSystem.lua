@@ -4,6 +4,7 @@ CreateMapSystem.waterTiles = nil
 CreateMapSystem.mapX = 0
 CreateMapSystem.mapY = 0
 CreateMapSystem.noOfSpawnpoints = 0
+CreateMapSystem.noOfCheckpoints = 0
 CreateMapSystem.filePath = "content/maps/"
 
 CreateMapSystem.Initialize = function(self)
@@ -73,6 +74,8 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		else
 			comp:SetModel("checkpoint", "checkpoint", 0)
 		end
+		
+		self.noOfCheckpoints = self.noOfCheckpoints + 1
 
 		--posComp:SetFloat3(posX, 0.5, posZ)
 
@@ -200,8 +203,6 @@ CreateMapSystem.CreateMap = function(self, name)
 	else
 		mapEntity = mapSpecsEntity[1]
 	end
-	
-	print("MapSize:", self.mapX, self.mapY)
 		
 	for x = 0, self.mapX + 1 do
 		self:AddTile(x, 0, 111) -- 111 = void
@@ -257,9 +258,14 @@ CreateMapSystem.CreateMap = function(self, name)
 	inputData:SetSize(self.mapX, self.mapY)
 	
 	PathfinderHandler.SetData(inputData)
+	PotentialFieldHandler.InitPFHandler(self.mapX, self.mapY, self.noOfSpawnpoints)
 	
 	-- Set size of the map.
-	world:GetComponent(mapEntity, "MapSpecs", 0):SetInt3(self.noOfSpawnpoints, self.mapX, self.mapY)
+	world:GetComponent(mapEntity, "MapSpecs", 0):SetInt4(self.noOfCheckpoints, self.noOfSpawnpoints, self.mapX, self.mapY)
+	
+	print("MapSize:", self.mapX, self.mapY)
+	print("Spawnpoints:", self.noOfSpawnpoints)
+	print("Checkpoints:", self.noOfCheckpoints)
 	
 	for waterA = 1, #self.waterTiles do
 		

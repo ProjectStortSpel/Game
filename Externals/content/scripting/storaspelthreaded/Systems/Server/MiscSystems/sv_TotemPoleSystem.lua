@@ -29,6 +29,10 @@ TotemPoleSystem.AddTotemPiece = function(self, currentPlayerNumber, totemPoleId,
 	tpHeight:SetInt(0)
 	tpPoleId:SetInt(totemPoleId)
 	
+	print("setting color to "..R.." "..G.." "..B)
+	world:CreateComponentAndAddTo("Color", totemPiece)
+	local color			= 	world:GetComponent(totemPiece, "Color", "X")
+	color:SetFloat3(R, G, B)
 	
 	local	X, Y, Z	=	world:GetComponent(totemPoleId, "Position", "X"):GetFloat3()
 	
@@ -70,8 +74,6 @@ TotemPoleSystem.AddTotemPiece = function(self, currentPlayerNumber, totemPoleId,
 	world:SetComponent(totemPiece, "Model", "ModelName", "totem")
 	world:SetComponent(totemPiece, "Model", "ModelPath", "totem")
 	world:SetComponent(totemPiece, "Model", "RenderType", 0)
-
-	world:GetComponent(totemPiece, "Color", "X"):SetFloat3(R, G, B)
 
 end
 

@@ -5,7 +5,7 @@ AITemplate.Name = "AI"
 AITemplate:AddComponent("AI")
 AITemplate:AddComponent("PlayerNumber")
 AITemplate:AddComponent("PlayerName")
-AITemplate:AddComponent("UnitEntityId")
+--AITemplate:AddComponent("UnitEntityId")
 AITemplate:AddComponent("PickingDone")
 AITemplate:AddComponent("SyncNetwork")			--	Sync this entity
 EntityTemplateManager:AddTemplate(AITemplate)	--	Add the template
@@ -16,7 +16,7 @@ PlayerTemplate.Name = "Player"
 PlayerTemplate:AddComponent("Player")
 PlayerTemplate:AddComponent("PlayerNumber")
 PlayerTemplate:AddComponent("PlayerName")
-PlayerTemplate:AddComponent("UnitEntityId")
+--PlayerTemplate:AddComponent("UnitEntityId")
 PlayerTemplate:AddComponent("PickingDone")
 PlayerTemplate:SetString("NetConnection", "0.0.0.0", "IpAddress")
 PlayerTemplate:SetInt("NetConnection", 0, "Port")
