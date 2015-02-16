@@ -30,6 +30,8 @@
 
 #include "Pathfinder.h"
 
+#include "Game/HomePath.h"
+
 #include <iomanip>
 
 GameCreator::GameCreator() :
@@ -678,6 +680,7 @@ void GameCreator::Reload()
         m_serverWorld = nullptr;
     }
 
+	HomePath::SetGameMode(m_gameMode);
 		
 	NetworkInstance::GetClientNetworkHelper()->ResetNetworkMaps();
     NetworkInstance::GetServerNetworkHelper()->ResetNetworkMaps();
