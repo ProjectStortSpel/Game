@@ -33,6 +33,8 @@ namespace Renderer
 		Model();
 		~Model();
 
+		void Draw(glm::mat4 viewMatrix, glm::mat4 projectionMatrix);
+
 		Buffer* bufferPtr;
 		GLuint texID;
 		GLuint norID;
