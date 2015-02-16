@@ -164,11 +164,11 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, _dirX, _dirY, _posX
 				elseif j == 2 then
 					cardactioncomp:SetText("Forward")
 				elseif j == 3 then
-					cardactioncomp:SetText("Backward")
-					--cardactioncomp:SetText("Forward")
+					--cardactioncomp:SetText("Backward")
+					cardactioncomp:SetText("Forward")
 				elseif j == 4 then
-					cardactioncomp:SetText("Backward")
-					--cardactioncomp:SetText("Forward")
+					--cardactioncomp:SetText("Backward")
+					cardactioncomp:SetText("Forward")
 				elseif j == 5 then
 					cardactioncomp:SetText("TurnRight")
 				elseif j == 6 then

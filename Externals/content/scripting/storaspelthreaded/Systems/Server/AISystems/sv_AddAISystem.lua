@@ -44,14 +44,19 @@ AddAISystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 	local voids = self:GetEntities("Void")
 	
 	for	i = 1, #ais do 
+		
+		--print(world:EntityHasComponent(ais[i], "UnitEntityId"))
+		
+		if world:EntityHasComponent(ais[i], "AI") and not world:EntityHasComponent(ais[i], "UnitEntityId") then
 			
-		if world:EntityHasComponent(ais[i], "AI") then
-			
+			--print("nu blir det ai")
 			local counterEntities = self:GetEntities("PlayerCounter")			
 			local mapSpecsEntities = self:GetEntities("MapSpecs")
 			local noOfPlayers = world:GetComponent(counterEntities[1], "PlayerCounter", "Players"):GetInt()
 			local noOfSpawnpoints = world:GetComponent(mapSpecsEntities[1], "MapSpecs", "NoOfSpawnpoints"):GetInt()
 			local availableSpawnsLeft = noOfSpawnpoints - noOfPlayers
+			
+			--print(noOfSpawnpoints, noOfPlayers, availableSpawnsLeft)
 			
 			if availableSpawnsLeft > 0 then
 			
@@ -67,9 +72,9 @@ AddAISystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 				local param = PFParam()
 				local object = "Void"
 				local onTheSpotValue = 0.0
-				local weight = 40
-				local length = 3
-				local power = 1
+				local weight = 30
+				local length = 2
+				local power = 2
 				
 				for j = 1, #voids do
 					
