@@ -8,6 +8,7 @@ AddAISystem.Initialize = function(self)
 	
 	self:AddComponentTypeToFilter("AI", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("PlayerCounter", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("TileComp", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("MapSpecs", FilterType.RequiresOneOf)
 	
 	Console.AddCommand("AddAI", self.AddAI)
@@ -39,9 +40,12 @@ end
 
 AddAISystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 	
-	for	i = 1, #entities do 
+	local ais = self:GetEntities("AI")
+	local voids = self:GetEntities("Void")
+	
+	for	i = 1, #ais do 
 			
-		if world:EntityHasComponent(entities[i], "AI") then
+		if world:EntityHasComponent(ais[i], "AI") then
 			
 			local counterEntities = self:GetEntities("PlayerCounter")			
 			local mapSpecsEntities = self:GetEntities("MapSpecs")
@@ -52,17 +56,36 @@ AddAISystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 			if availableSpawnsLeft > 0 then
 			
 				local newName = "Player_" .. tostring(noOfPlayers + 1)
-				world:SetComponent(entities[i], "PlayerName", "Name", newName)
-				world:SetComponent(entities[i], "PlayerNumber", "Number", noOfPlayers + 1)
+				world:SetComponent(ais[i], "PlayerName", "Name", newName)
+				world:SetComponent(ais[i], "PlayerNumber", "Number", noOfPlayers + 1)
 				
 				self:CounterComponentChanged(1, "Players")
 				availableSpawnsLeft = availableSpawnsLeft - 1
 				
-				world:CreateComponentAndAddTo("NeedUnit", entities[i])
+				world:CreateComponentAndAddTo("NeedUnit", ais[i])
 				
-				print("AI Added")
+				local param = PFParam()
+				local object = "Void"
+				local onTheSpotValue = 0.0
+				local weight = 40
+				local length = 3
+				local power = 1
+				
+				for j = 1, #voids do
+					
+					local x, y = world:GetComponent(voids[j], "MapPosition", 0):GetInt2(0)
+					
+					param:AddPosition(x, y)
+				end
+				
+				PotentialFieldHandler.InitPF(param, i, object, onTheSpotValue, weight, length, power)
+				
+				-- Sum all the pfs.
+				PotentialFieldHandler.SumPFs(i)
+				
+				print("AI Added", i)
 			else
-				world:KillEntity(entities[i])
+				world:KillEntity(ais[i])
 				print("Could not add AI, no spawnpoints left")
 			end
 		end
