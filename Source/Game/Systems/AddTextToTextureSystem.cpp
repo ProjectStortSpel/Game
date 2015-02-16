@@ -12,8 +12,8 @@ void AddTextToTextureSystem::Initialize()
 	SetEntitiesAddedTaskCount(1);
 
 	AddComponentTypeToFilter("TextTexture",	ECSL::FilterType::Mandatory);
-	AddComponentTypeToFilter("Model", ECSL::FilterType::RequiresOneOf);
-	AddComponentTypeToFilter("Render", ECSL::FilterType::RequiresOneOf);
+	AddComponentTypeToFilter("Model", ECSL::FilterType::Mandatory);
+	AddComponentTypeToFilter("Render", ECSL::FilterType::Excluded);
 	AddComponentTypeToFilter("Scale", ECSL::FilterType::Mandatory);
 }
 
