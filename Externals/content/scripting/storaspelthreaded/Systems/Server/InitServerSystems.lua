@@ -87,7 +87,7 @@ require "sv_LogStartSystem"
 require "sv_ServerNetworkMessageSystem"
 require "sv_HostSettingsSystem"
 
-worldCreator:AddSystemGroup()
+--worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(StageSystem)
 worldCreator:AddSystemToCurrentGroup(MapGenerator)
 worldCreator:AddSystemToCurrentGroup(MapRater)
@@ -107,12 +107,12 @@ worldCreator:AddSystemToCurrentGroup(TestMoveRiverSystem)
 
 worldCreator:AddSystemToCurrentGroup(CreateDeckSystem)
 worldCreator:AddSystemToCurrentGroup(AddCardPickTimer)
---worldCreator:AddSystemGroup() << TEMP REMOVE
+--worldCreator:AddSystemGroup() << TEMP REMOVE 1
 worldCreator:AddSystemToCurrentGroup(SetCardPickTimer)
 worldCreator:AddSystemToCurrentGroup(UpdateCardPickTimer)
 worldCreator:AddSystemToCurrentGroup(CreateCardPickTimer)
 worldCreator:AddSystemToCurrentGroup(AutoPickCards)
-worldCreator:AddSystemGroup()
+--worldCreator:AddSystemGroup() << TEMP REMOVE 2
 worldCreator:AddSystemToCurrentGroup(DealCardsSystem)
 worldCreator:AddSystemToCurrentGroup(TakeCardStepsFromUnitSystem)
 worldCreator:AddSystemToCurrentGroup(TakeCardsFromPlayerSystem)
@@ -157,6 +157,4 @@ worldCreator:AddSystemToCurrentGroup(GameOverSystem)
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ServerNetworkMessageSystem)
-
-worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(LogStartSystem)
