@@ -95,7 +95,7 @@ namespace Renderer
 		void GetWindowPos(int &x, int &y);
 
 		// MODELLOADER
-		virtual int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED, float* _color = nullptr){ return 0; };// = 0;
+		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED, float* _color = nullptr);
 		virtual bool RemoveModel(int _id){ return false; };// = 0;
 		virtual bool ActiveModel(int _id, bool _active){ return false; };// = 0;
 		virtual bool ChangeModelTexture(int _id, std::string _fileDir, int _textureType = TEXTURE_DIFFUSE){ m_modelTextures.push_back({ _id, _fileDir, _textureType }); return false; };// = 0;
@@ -118,9 +118,13 @@ namespace Renderer
 		void RemoveParticleEffect(int _id);
 		
 	protected:
+		bool InitSDLWindow(int _width = 1280, int _height = 720);
 		bool InitSkybox();
 		virtual void BufferModels() { return; } // = 0;
 		virtual void BufferModel(int _modelId, ModelToLoad* _modelToLoad) { return; } // = 0;
+
+		//MODEL LOADER
+		int m_modelIDcounter;
 
 		SDL_Window*		m_window;
 		SDL_GLContext	m_glContext;

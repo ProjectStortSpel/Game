@@ -98,7 +98,29 @@ void GraphicDevice::GetWindowPos(int &x, int &y)
 	x = posx;
 	y = posy;
 }
+#pragma region Inits
+bool GraphicDevice::InitSDLWindow(int _width, int _height)
+{
+	// WINDOW SETTINGS
+	unsigned int	Flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
+	int				SizeX = _width;	//1280
+	int				SizeY = _height;	//720
+	if (SDL_Init(SDL_INIT_VIDEO) == -1){
+		std::cout << SDL_GetError() << std::endl;
+		return false;
+	}
 
+	// PLATFORM SPECIFIC CODE
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	m_window = SDL_CreateWindow(m_windowCaption, m_windowPosX, m_windowPosY, SizeX, SizeY, Flags);
+	if (m_window == NULL){
+		std::cout << SDL_GetError() << std::endl;
+		return false;
+	}
+	SDL_GetWindowSize(m_window, &m_clientWidth, &m_clientHeight);
+	return true;
+}
 bool GraphicDevice::InitSkybox()
 {
 	int w, h;
@@ -112,6 +134,8 @@ bool GraphicDevice::InitSkybox()
 
 	return true;
 }
+
+#pragma endregion in the order they are initialized
 
 int GraphicDevice::AddFont(const std::string& filepath, int size)
 {
@@ -251,4 +275,23 @@ void GraphicDevice::BufferParticleSystems()
 			&m_particleShader)));
 	}
 	m_particleSystemsToLoad.clear();
+}
+
+int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color)
+{
+	int modelID = m_modelIDcounter;
+	m_modelIDcounter++;
+
+	//	Lägg till i en lista, följande
+	//	std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType
+
+	ModelToLoad* modelToLoad = new ModelToLoad();
+	modelToLoad->Dir = _dir;
+	modelToLoad->File = _file;
+	modelToLoad->MatrixPtr = _matrixPtr;
+	modelToLoad->RenderType = _renderType;
+	modelToLoad->Color = _color;
+	m_modelsToLoad[modelID] = modelToLoad;
+
+	return modelID;
 }
