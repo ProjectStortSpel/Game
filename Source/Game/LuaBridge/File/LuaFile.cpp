@@ -1,12 +1,12 @@
 #include "LuaFile.h"
 #include "LuaEmbedder/LuaEmbedder.h"
+#include "FileSystem/File.h"
+#include "Game/HomePath.h"
 
 #include <fstream>
 #include <sstream>
 #include <string>
 //#include <SDL/SDL.h>
-#include <FileSystem/File.h>
-
 
 
 namespace LuaBridge
@@ -52,7 +52,7 @@ namespace LuaBridge
 			std::string filepath = LuaEmbedder::PullString(L, 1);
 
 			std::ostringstream ss;
-			ss << "content\\data\\";
+			ss << HomePath::GetSecondaryGameModePath();
 			ss << filepath.c_str();
 
 			FileSystem::File::Create(ss.str());
@@ -65,7 +65,7 @@ namespace LuaBridge
 			std::string filepath = LuaEmbedder::PullString(L, 1);
 
 			std::ostringstream ss1;
-			ss1 << "content\\data\\";
+			ss1 << HomePath::GetSecondaryGameModePath();
 			ss1 << filepath.c_str();
 
 			SDL_RWops* file;
@@ -87,7 +87,7 @@ namespace LuaBridge
 			std::string filepath = LuaEmbedder::PullString(L, 1);
 
 			std::ostringstream ss1;
-			ss1 << "content\\data\\";
+			ss1 << HomePath::GetSecondaryHomePath();
 			ss1 << filepath.c_str();
 
 			SDL_RWops* file;
@@ -109,7 +109,7 @@ namespace LuaBridge
 			std::string filepath = LuaEmbedder::PullString(L, 1);
 
 			std::ostringstream ss1;
-			ss1 << "content\\data\\";
+			ss1 << HomePath::GetSecondaryGameModePath();
 			ss1 << filepath.c_str();
 
 			LuaEmbedder::PushBool(L, FileSystem::File::Delete(ss1.str()));
@@ -142,7 +142,11 @@ namespace LuaBridge
 			if (LuaEmbedder::IsInt(L, 2))
 				length = LuaEmbedder::PullInt(L, 2);
 
-			std::string text = FileSystem::File::Read(file, length);
+			char* data = FileSystem::File::Read(file, length);
+
+			std::string text = data;
+
+			delete data;
 
 			LuaEmbedder::PushString(L, text);
 

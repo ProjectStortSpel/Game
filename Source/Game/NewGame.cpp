@@ -8,6 +8,9 @@
 
 #include "Logger/Managers/Logger.h"
 #include "Game/Network/ClientDatabase.h"
+#include "Game/HomePath.h"
+//#include "FileSystem/MD5.h"
+//#include "FileSystem/File.h"
 
 #ifdef __APPLE__
 #include "CoreFoundation/CoreFoundation.h"
@@ -39,9 +42,29 @@ int main(int argc, char** argv)
     printf("Home dir: %s\n\n", getenv("HOME"));
 #endif
     
+	std::string path = HomePath::GetSecondaryHomePath();
+	path.append("data/");
+	Logger::GetInstance().SetPath(path);
 	Logger::GetInstance().AddGroup("Game");
 	GameCreator* newGame = new GameCreator();
 
+
+	////Test Md5
+	//std::string path2 = HomePath::GetSecondaryHomePath();
+	//path2.append("models/caveman/cavemanwave.amesh");
+	//SDL_RWops* test;
+	//FileSystem::File::Open(path2, &test);
+	//signed __int64 length = FileSystem::File::GetFileSize(test);
+	//char* data = FileSystem::File::Read(test, length);
+
+	//FileSystem::MD5::MD5_CTX ctx;
+	//FileSystem::MD5::MD5_Init(&ctx);
+	//FileSystem::MD5::MD5_Update(&ctx, data, length);
+	//unsigned char res[16];
+	//FileSystem::MD5::MD5_Final(res, &ctx);
+	//FileSystem::MD5::MD5_Print(res);
+
+	//delete data;
 
 	//newGame->InitializeLua();
 	newGame->InitializeGraphics();

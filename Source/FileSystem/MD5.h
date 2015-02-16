@@ -52,6 +52,8 @@ namespace FileSystem
 		void EXPORT MD5_Init(MD5_CTX *ctx);
 		void EXPORT MD5_Update(MD5_CTX *ctx, const void *data, unsigned long size);
 		void EXPORT MD5_Final(unsigned char *result, MD5_CTX *ctx);
+
+		//MD5_File
 	}
 }
 #endif

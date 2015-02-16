@@ -41,16 +41,34 @@ namespace FileSystem
 			SDL_RWclose(_file);
 		}
 
-		std::string Read(SDL_RWops* _file, int _length)
+		signed __int64 GetFileSize(SDL_RWops* _file)
 		{
-			char* data = new char[_length + 1];
+			Sint64 offset = SDL_RWtell(_file);
+			Sint64 length = SDL_RWseek(_file, 0, RW_SEEK_END);
+			SDL_RWseek(_file, offset, RW_SEEK_SET);
+			return length;
+		}
+
+		signed __int64 GetPosition(SDL_RWops* _file)
+		{
+			Sint64 offset = SDL_RWtell(_file);
+			return offset;
+		}
+
+		signed __int64 GetRemainingBytes(SDL_RWops* _file)
+		{
+			Sint64 offset = SDL_RWtell(_file);
+			Sint64 length = SDL_RWseek(_file, offset, RW_SEEK_END);
+			SDL_RWseek(_file, offset, RW_SEEK_SET);
+			return length;
+		}
+
+		char* Read(SDL_RWops* _file, int _length)
+		{
+			char* data = new char[_length];
 			int endpos = SDL_RWread(_file, data, 1, _length);
-			data[endpos] = '\0';
-
-			std::string text = data;
-			delete data;
-
-			return text;
+						
+			return data;
 		}
 
 		std::string ReadLine(SDL_RWops* _file)
