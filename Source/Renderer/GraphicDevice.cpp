@@ -295,3 +295,46 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 
 	return modelID;
 }
+
+bool GraphicDevice::RemoveModel(int _id)
+{
+	for (int k = 0; k < m_modelLists.size(); k++)
+	{
+		std::vector<Model> *modelList = m_modelLists[k];
+		for (int i = 0; i < (*modelList).size(); i++)
+		{
+			for (int j = 0; j < (*modelList)[i].instances.size(); j++)
+			{
+				if ((*modelList)[i].instances[j].id == _id)
+				{
+					(*modelList)[i].instances.erase((*modelList)[i].instances.begin() + j);
+					if ((*modelList)[i].instances.size() == 0)
+						(*modelList).erase((*modelList).begin() + i);
+
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
+bool GraphicDevice::ActiveModel(int _id, bool _active)
+{
+	for (int k = 0; k < m_modelLists.size(); k++)
+	{
+		std::vector<Model> *modelList = m_modelLists[k];
+		for (int i = 0; i < (*modelList).size(); i++)
+		{
+			for (int j = 0; j < (*modelList)[i].instances.size(); j++)
+			{
+				if ((*modelList)[i].instances[j].id == _id)
+				{
+					(*modelList)[i].instances[j].active = _active;
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}

@@ -53,6 +53,7 @@ bool GraphicsHigh::Init()
 
 	if (!InitGLEW()) { SDL_Log("GLEW_VERSION_4_3 FAILED"); return false; }
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
+	InitModelLists();
 	if (!InitDeferred()) { ERRORMSG("INIT DEFERRED FAILED\n"); return false; }	
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	if (!InitForward()) { ERRORMSG("INIT FORWARD FAILED\n"); return false; }
@@ -163,6 +164,13 @@ bool GraphicsHigh::InitShaders()
 	m_particleShader.FinalizeShaderProgram();
 
 	return true;
+}
+void GraphicsHigh::InitModelLists()
+{
+	m_modelLists.push_back(&m_modelsDeferred);
+	m_modelLists.push_back(&m_modelsForward);
+	m_modelLists.push_back(&m_modelsViewspace);
+	m_modelLists.push_back(&m_modelsInterface);
 }
 bool GraphicsHigh::InitDeferred()
 {
@@ -878,119 +886,6 @@ void GraphicsHigh::BufferModels()
 		delete(pair.second);
 	}
 	m_modelsToLoad.clear();
-}
-
-bool GraphicsHigh::RemoveModel(int _id)
-{
-	for (int i = 0; i < m_modelsDeferred.size(); i++)
-	{
-		for (int j = 0; j < m_modelsDeferred[i].instances.size(); j++)
-		{
-			if (m_modelsDeferred[i].instances[j].id == _id)
-			{
-				m_modelsDeferred[i].instances.erase(m_modelsDeferred[i].instances.begin() + j);
-				if (m_modelsDeferred[i].instances.size() == 0)
-					m_modelsDeferred.erase(m_modelsDeferred.begin() + i);
-
-				return true;
-			}
-		}
-	}
-	for (int i = 0; i < m_modelsForward.size(); i++)
-	{
-		for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
-		{
-			if (m_modelsForward[i].instances[j].id == _id)
-			{
-				m_modelsForward[i].instances.erase(m_modelsForward[i].instances.begin() + j);
-				if (m_modelsForward[i].instances.size() == 0)
-					m_modelsForward.erase(m_modelsForward.begin() + i);
-
-				return true;
-			}
-		}
-	}
-	for (int i = 0; i < m_modelsViewspace.size(); i++)
-	{
-		for (int j = 0; j < m_modelsViewspace[i].instances.size(); j++)
-		{
-			if (m_modelsViewspace[i].instances[j].id == _id)
-			{
-				m_modelsViewspace[i].instances.erase(m_modelsViewspace[i].instances.begin() + j);
-				if (m_modelsViewspace[i].instances.size() == 0)
-					m_modelsViewspace.erase(m_modelsViewspace.begin() + i);
-
-				return true;
-			}
-		}
-	}
-	for (int i = 0; i < m_modelsInterface.size(); i++)
-	{
-		for (int j = 0; j < m_modelsInterface[i].instances.size(); j++)
-		{
-			if (m_modelsInterface[i].instances[j].id == _id)
-			{
-				m_modelsInterface[i].instances.erase(m_modelsInterface[i].instances.begin() + j);
-				if (m_modelsInterface[i].instances.size() == 0)
-					m_modelsInterface.erase(m_modelsInterface.begin() + i);
-
-				return true;
-			}
-		}
-	}
-
-	return false;
-}
-bool GraphicsHigh::ActiveModel(int _id, bool _active)
-{
-	for (int i = 0; i < m_modelsDeferred.size(); i++)
-	{
-		for (int j = 0; j < m_modelsDeferred[i].instances.size(); j++)
-		{
-			if (m_modelsDeferred[i].instances[j].id == _id)
-			{
-				m_modelsDeferred[i].instances[j].active = _active;
-				return true;
-			}
-		}
-	}
-
-	for (int i = 0; i < m_modelsForward.size(); i++)
-	{
-		for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
-		{
-			if (m_modelsForward[i].instances[j].id == _id)
-			{
-				m_modelsForward[i].instances[j].active = _active;
-				return true;
-			}
-		}
-	}
-
-	for (int i = 0; i < m_modelsViewspace.size(); i++)
-	{
-		for (int j = 0; j < m_modelsViewspace[i].instances.size(); j++)
-		{
-			if (m_modelsViewspace[i].instances[j].id == _id)
-			{
-				m_modelsViewspace[i].instances[j].active = _active;
-				return true;
-			}
-		}
-	}
-
-	for (int i = 0; i < m_modelsInterface.size(); i++)
-	{
-		for (int j = 0; j < m_modelsInterface[i].instances.size(); j++)
-		{
-			if (m_modelsInterface[i].instances[j].id == _id)
-			{
-				m_modelsInterface[i].instances[j].active = _active;
-				return true;
-			}
-		}
-	}
-	return false;
 }
 
 Buffer* GraphicsHigh::AddMesh(std::string _fileDir, Shader *_shaderProg, bool animated)

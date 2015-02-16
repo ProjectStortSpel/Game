@@ -96,8 +96,8 @@ namespace Renderer
 
 		// MODELLOADER
 		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED, float* _color = nullptr);
-		virtual bool RemoveModel(int _id){ return false; };// = 0;
-		virtual bool ActiveModel(int _id, bool _active){ return false; };// = 0;
+		bool RemoveModel(int _id);// = 0;
+		bool ActiveModel(int _id, bool _active);// = 0;
 		virtual bool ChangeModelTexture(int _id, std::string _fileDir, int _textureType = TEXTURE_DIFFUSE){ m_modelTextures.push_back({ _id, _fileDir, _textureType }); return false; };// = 0;
 		virtual bool ChangeModelNormalMap(int _id, std::string _fileDir){ m_modelTextures.push_back({ _id, _fileDir, TEXTURE_NORMAL }); return false; };// = 0;
 		virtual bool ChangeModelSpecularMap(int _id, std::string _fileDir){ m_modelTextures.push_back({ _id, _fileDir, TEXTURE_SPECULAR }); return false; };// = 0;
@@ -118,10 +118,14 @@ namespace Renderer
 		void RemoveParticleEffect(int _id);
 		
 	protected:
+		virtual void InitModelLists() { return; }
 		bool InitSDLWindow(int _width = 1280, int _height = 720);
 		bool InitSkybox();
 		virtual void BufferModels() { return; } // = 0;
 		virtual void BufferModel(int _modelId, ModelToLoad* _modelToLoad) { return; } // = 0;
+
+		//modellists
+		std::vector<std::vector<Model>*> m_modelLists;
 
 		//MODEL LOADER
 		int m_modelIDcounter;
