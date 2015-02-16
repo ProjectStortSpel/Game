@@ -48,6 +48,7 @@ bool GraphicsLow::Init()
 
 	if (!InitGLEW()) { ERRORMSG("GLEW_VERSION_4_0 FAILED.\n INCOMPATIBLE GRAPHICS DRIVER\n"); }
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
+	InitRenderLists();
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	if (!InitSkybox()) { ERRORMSG("INIT SKYBOX FAILED\n"); return false; }
 	
@@ -64,7 +65,6 @@ bool GraphicsLow::Init()
     
 	return true;
 }
-
 
 void GraphicsLow::Update(float _dt)
 {
@@ -364,45 +364,6 @@ void GraphicsLow::Render()
 	SDL_GL_SwapWindow(m_window);
 }
 
-bool GraphicsLow::InitSDLWindow()
-{
-	// WINDOW SETTINGS
-	unsigned int	Flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
-	int				PosX = 2;
-	int				PosY = 2;
-
-	int				SizeX = 256 * 5;	//1280
-	int				SizeY = 144 * 5;	//720
-
-	if (SDL_Init(SDL_INIT_EVERYTHING) == -1){
-		std::cout << SDL_GetError() << std::endl;
-		return false;
-	}
-
-	// PLATFORM SPECIFIC CODE
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    
-    //Erik Mac
-    //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-    //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-    //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-    //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 16);
-    //SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-    //SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-
-	m_window = SDL_CreateWindow(m_windowCaption, m_windowPosX, m_windowPosY, SizeX, SizeY, Flags);
-
-	if (m_window == NULL){
-		std::cout << SDL_GetError() << std::endl;
-		return false;
-	}
-
-	SDL_GetWindowSize(m_window, &m_clientWidth, &m_clientHeight);
-
-	return true;
-}
-
 bool GraphicsLow::InitGLEW()
 {
 	m_glContext = SDL_GL_CreateContext(m_window);
@@ -470,7 +431,13 @@ bool GraphicsLow::InitShaders()
 
 	return true;
 }
-
+void GraphicsLow::InitRenderLists()
+{
+	m_renderLists.push_back(RenderList(RENDER_DEFERRED, &m_modelsForward, &m_forwardShader));
+	m_renderLists.push_back(RenderList(RENDER_FORWARD, &m_modelsForward, &m_forwardShader));
+	m_renderLists.push_back(RenderList(RENDER_VIEWSPACE, &m_modelsViewspace, &m_viewspaceShader));
+	m_renderLists.push_back(RenderList(RENDER_INTERFACE, &m_modelsInterface, &m_interfaceShader));
+}
 bool GraphicsLow::InitBuffers()
 {
 	//Forward shader
@@ -626,165 +593,71 @@ void GraphicsLow::CreateShadowMap()
 	m_vramUsage += (resolution*resolution*sizeof(float));
 }
 
-bool GraphicsLow::PreLoadModel(std::string _dir, std::string _file, int _renderType)
-{
-	Shader *shaderPtr = NULL;
-	if (_renderType == RENDER_DEFERRED)
-	{
-		shaderPtr = &m_forwardShader;
-		m_forwardShader.UseProgram();
-	}
-	else if (_renderType == RENDER_FORWARD)
-	{
-		shaderPtr = &m_forwardShader;
-		m_forwardShader.UseProgram();
-	}
-	else if (_renderType == RENDER_VIEWSPACE)
-	{
-		shaderPtr = &m_viewspaceShader;
-		m_viewspaceShader.UseProgram();
-	}
-	else if (_renderType == RENDER_INTERFACE)
-	{
-		shaderPtr = &m_viewspaceShader;
-		m_interfaceShader.UseProgram();
-	}
-	else
-		ERRORMSG("ERROR: INVALID RENDER SETTING");
-
-	// Import Object
-	ObjectData obj = ModelLoader::importObject(_dir, _file);
-
-	// Import Texture
-	GLuint texture = GraphicDevice::AddTexture(obj.text, GL_TEXTURE1);
-	shaderPtr->CheckUniformLocation("diffuseTex", 1);
-
-	if (_renderType != RENDER_INTERFACE)
-	{
-		// Import Normal map
-		GLuint normal = GraphicDevice::AddTexture(obj.norm, GL_TEXTURE2);
-		shaderPtr->CheckUniformLocation("normalTex", 2);
-
-		// Import Specc Glow map
-		GLuint specular = GraphicDevice::AddTexture(obj.spec, GL_TEXTURE3);
-		shaderPtr->CheckUniformLocation("specularTex", 3);
-	}
-
-	// Import Mesh
-	Buffer* mesh = AddMesh(obj.mesh, shaderPtr);
-
-	return true;
-}
-
-int GraphicsLow::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color)
-{
-	int modelID = m_modelIDcounter;
-	m_modelIDcounter++;
-
-	//	Lägg till i en lista, följande
-	//	std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType
-
-	ModelToLoad* modelToLoad = new ModelToLoad();
-	modelToLoad->Dir = _dir;
-	modelToLoad->File = _file;
-	modelToLoad->MatrixPtr = _matrixPtr;
-	modelToLoad->RenderType = _renderType;
-	modelToLoad->Color = _color;
-	m_modelsToLoad[modelID] = modelToLoad;
-
-	return modelID;
-}
 void GraphicsLow::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 {
+	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
+
 	Shader *shaderPtr = NULL;
+	std::vector<Model> *modelList = NULL;
+
 	if (_modelToLoad->RenderType == RENDER_FORWARD || _modelToLoad->RenderType == RENDER_DEFERRED)
 	{
 		shaderPtr = &m_forwardShader;
+		modelList = &m_modelsForward;
 		m_forwardShader.UseProgram();
 	}
 	else if (_modelToLoad->RenderType == RENDER_VIEWSPACE)
 	{
 		shaderPtr = &m_viewspaceShader;
+		modelList = &m_modelsViewspace;
 		m_viewspaceShader.UseProgram();
 	}
 	else if (_modelToLoad->RenderType == RENDER_INTERFACE)
 	{
 		shaderPtr = &m_interfaceShader;
+		modelList = &m_modelsInterface;
 		m_interfaceShader.UseProgram();
 	}
 	else
+	{
 		ERRORMSG("ERROR: INVALID RENDER SETTING");
-
-	// Import Object
-	//ObjectData obj = AddObject(_dir, _file);
-	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
-
-	// Import Texture
-	GLuint texture = GraphicDevice::AddTexture(obj.text, GL_TEXTURE1);
-	shaderPtr->CheckUniformLocation("diffuseTex", 1);
-
-	// Import Normal map
-	GLuint normal = GraphicDevice::AddTexture(obj.norm, GL_TEXTURE2);
-	shaderPtr->CheckUniformLocation("normalTex", 2);
-
-	// Import Specc Glow map
-	GLuint specular = GraphicDevice::AddTexture(obj.spec, GL_TEXTURE3);
-	shaderPtr->CheckUniformLocation("specularTex", 3);
+		return;
+	}
 
 	// Import Mesh
 	Buffer* mesh = AddMesh(obj.mesh, shaderPtr);
+
+	// Import Texture
+	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
+	shaderPtr->CheckUniformLocation("diffuseTex", 1);
+
+	// Import Normal map
+	GLuint normal = AddTexture(obj.norm, GL_TEXTURE2);
+	shaderPtr->CheckUniformLocation("normalTex", 2);
+
+	// Import Specc Glow map
+	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
+	shaderPtr->CheckUniformLocation("specularTex", 3);
 
 	Model model = Model(mesh, texture, normal, specular);
 
 	//for the matrices (modelView + normal)
 	m_vramUsage += (16 + 9) * sizeof(float);
 
-	if (_modelToLoad->RenderType == RENDER_FORWARD || _modelToLoad->RenderType == RENDER_DEFERRED)
+	for (int i = 0; i < modelList->size(); i++)
 	{
-		for (int i = 0; i < m_modelsForward.size(); i++)
+		if ((*modelList)[i] == model)
 		{
-			if (m_modelsForward[i] == model)
-			{
-				m_modelsForward[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
-				return;
-			}
-		}
-	}
-	else if (_modelToLoad->RenderType == RENDER_VIEWSPACE)
-	{
-		for (int i = 0; i < m_modelsViewspace.size(); i++)
-		{
-			if (m_modelsViewspace[i] == model)
-			{
-				m_modelsViewspace[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
-				return;
-			}
-		}
-	}
-	else if (_modelToLoad->RenderType == RENDER_INTERFACE)
-	{
-		for (int i = 0; i < m_modelsInterface.size(); i++)
-		{
-			if (m_modelsInterface[i] == model)
-			{
-				m_modelsInterface[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
-				return;
-			}
+			(*modelList)[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
+			return;
 		}
 	}
 
-	// Set model
 	//if model doesnt exist
 	model.instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
 	// Push back the model
-	if (_modelToLoad->RenderType == RENDER_FORWARD || _modelToLoad->RenderType == RENDER_DEFERRED)
-		m_modelsForward.push_back(model);
-	else if (_modelToLoad->RenderType == RENDER_VIEWSPACE)
-		m_modelsViewspace.push_back(model);
-	else if (_modelToLoad->RenderType == RENDER_INTERFACE)
-		m_modelsInterface.push_back(model);
+	modelList->push_back(model);
 }
-
 void GraphicsLow::BufferModels()
 {
 	for (auto pair : m_modelsToLoad)
@@ -793,93 +666,6 @@ void GraphicsLow::BufferModels()
 		delete(pair.second);
 	}
 	m_modelsToLoad.clear();
-}
-
-bool GraphicsLow::RemoveModel(int _id)
-{
-	for (int i = 0; i < m_modelsForward.size(); i++)
-	{
-		for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
-		{
-			if (m_modelsForward[i].instances[j].id == _id)
-			{
-				m_modelsForward[i].instances.erase(m_modelsForward[i].instances.begin() + j);
-				if (m_modelsForward[i].instances.size() == 0)
-					m_modelsForward.erase(m_modelsForward.begin() + i);
-
-				return true;
-			}
-		}
-	}
-	for (int i = 0; i < m_modelsViewspace.size(); i++)
-	{
-		for (int j = 0; j < m_modelsViewspace[i].instances.size(); j++)
-		{
-			if (m_modelsViewspace[i].instances[j].id == _id)
-			{
-				m_modelsViewspace[i].instances.erase(m_modelsViewspace[i].instances.begin() + j);
-				if (m_modelsViewspace[i].instances.size() == 0)
-					m_modelsViewspace.erase(m_modelsViewspace.begin() + i);
-
-				return true;
-			}
-		}
-	}
-	for (int i = 0; i < m_modelsInterface.size(); i++)
-	{
-		for (int j = 0; j < m_modelsInterface[i].instances.size(); j++)
-		{
-			if (m_modelsInterface[i].instances[j].id == _id)
-			{
-				m_modelsInterface[i].instances.erase(m_modelsInterface[i].instances.begin() + j);
-				if (m_modelsInterface[i].instances.size() == 0)
-					m_modelsInterface.erase(m_modelsInterface.begin() + i);
-
-				return true;
-			}
-		}
-	}
-
-	return false;
-}
-bool GraphicsLow::ActiveModel(int _id, bool _active)
-{
-	for (int i = 0; i < m_modelsForward.size(); i++)
-	{
-		for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
-		{
-			if (m_modelsForward[i].instances[j].id == _id)
-			{
-				m_modelsForward[i].instances[j].active = _active;
-				return true;
-			}
-		}
-	}
-
-	for (int i = 0; i < m_modelsViewspace.size(); i++)
-	{
-		for (int j = 0; j < m_modelsViewspace[i].instances.size(); j++)
-		{
-			if (m_modelsViewspace[i].instances[j].id == _id)
-			{
-				m_modelsViewspace[i].instances[j].active = _active;
-				return true;
-			}
-		}
-	}
-
-	for (int i = 0; i < m_modelsInterface.size(); i++)
-	{
-		for (int j = 0; j < m_modelsInterface[i].instances.size(); j++)
-		{
-			if (m_modelsInterface[i].instances[j].id == _id)
-			{
-				m_modelsInterface[i].instances[j].active = _active;
-				return true;
-			}
-		}
-	}
-	return false;
 }
 
 Buffer* GraphicsLow::AddMesh(std::string _fileDir, Shader *_shaderProg)

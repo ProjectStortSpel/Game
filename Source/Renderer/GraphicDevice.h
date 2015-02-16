@@ -23,7 +23,6 @@ namespace Renderer
 #define RENDER_FORWARD  1
 #define RENDER_VIEWSPACE  2
 #define RENDER_INTERFACE  3
-#define RENDER_ANIMATED  4
 
 #define TEXTURE_DIFFUSE		0
 #define TEXTURE_NORMAL		1
@@ -37,6 +36,19 @@ namespace Renderer
 		{
 			name = n;
 			ms = m;
+		}
+	};
+
+	struct RenderList
+	{
+		int RenderType;
+		std::vector<Model>* ModelList;
+		Shader* ShaderPtr;
+		RenderList(int _renderType, std::vector<Model>* _modelList, Shader* _shaderPtr)
+		{
+			RenderType = _renderType;
+			ModelList = _modelList;
+			ShaderPtr = _shaderPtr;
 		}
 	};
 
@@ -95,9 +107,9 @@ namespace Renderer
 		void GetWindowPos(int &x, int &y);
 
 		// MODELLOADER
-		virtual int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED, float* _color = nullptr){ return 0; };// = 0;
-		virtual bool RemoveModel(int _id){ return false; };// = 0;
-		virtual bool ActiveModel(int _id, bool _active){ return false; };// = 0;
+		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED, float* _color = nullptr);
+		bool RemoveModel(int _id);// = 0;
+		bool ActiveModel(int _id, bool _active);// = 0;
 		virtual bool ChangeModelTexture(int _id, std::string _fileDir, int _textureType = TEXTURE_DIFFUSE){ m_modelTextures.push_back({ _id, _fileDir, _textureType }); return false; };// = 0;
 		virtual bool ChangeModelNormalMap(int _id, std::string _fileDir){ m_modelTextures.push_back({ _id, _fileDir, TEXTURE_NORMAL }); return false; };// = 0;
 		virtual bool ChangeModelSpecularMap(int _id, std::string _fileDir){ m_modelTextures.push_back({ _id, _fileDir, TEXTURE_SPECULAR }); return false; };// = 0;
@@ -118,9 +130,17 @@ namespace Renderer
 		void RemoveParticleEffect(int _id);
 		
 	protected:
+		virtual void InitRenderLists() { return; }
+		bool InitSDLWindow(int _width = 1280, int _height = 720);
 		bool InitSkybox();
 		virtual void BufferModels() { return; } // = 0;
 		virtual void BufferModel(int _modelId, ModelToLoad* _modelToLoad) { return; } // = 0;
+
+		//modellists
+		std::vector<RenderList> m_renderLists;
+
+		//MODEL LOADER
+		int m_modelIDcounter;
 
 		SDL_Window*		m_window;
 		SDL_GLContext	m_glContext;

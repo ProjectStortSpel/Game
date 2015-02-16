@@ -22,7 +22,6 @@ namespace Renderer
 		void Update(float _dt);
 		void Render();
 
-
 		// SIMPLETEXT FROM GAME
 		bool RenderSimpleText(std::string _text, int x, int y);
 		void SetSimpleTextColor(float _r, float _g, float _b, float _a);
@@ -31,7 +30,6 @@ namespace Renderer
 		void ToggleSimpleText(bool _on);
 
 		// MODELLOADER
-		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED, float* _color = nullptr);
 		bool RemoveModel(int _id);
 		bool ActiveModel(int _id, bool _active);
 
@@ -44,11 +42,11 @@ namespace Renderer
 		void UpdateTextureIndex(GLuint newTexture, GLuint oldTexture);
 		
 	private:
-		bool InitSDLWindow();
 		bool InitGLEW();
 		bool InitDeferred();
 		bool InitForward();
 		bool InitShaders();
+		void InitRenderLists();
 		bool InitBuffers();
 		bool InitTextRenderer();
 		bool InitLightBuffers();

@@ -53,6 +53,7 @@ bool GraphicsHigh::Init()
 
 	if (!InitGLEW()) { SDL_Log("GLEW_VERSION_4_3 FAILED"); return false; }
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
+	InitRenderLists();
 	if (!InitDeferred()) { ERRORMSG("INIT DEFERRED FAILED\n"); return false; }	
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	if (!InitForward()) { ERRORMSG("INIT FORWARD FAILED\n"); return false; }
@@ -75,6 +76,225 @@ bool GraphicsHigh::Init()
     
 	return true;
 }
+#pragma region Inits
+bool GraphicsHigh::InitGLEW()
+{
+	m_glContext = SDL_GL_CreateContext(m_window);
+
+	if (glewInit() != 0) return false;
+
+#ifdef WIN32
+	if (!GLEW_VERSION_4_3) { return false; }
+#else
+	if (!glewIsSupported("GL_VERSION_4_3")) { return false; }
+#endif
+
+	SDL_GL_SetSwapInterval(1);
+
+	return true;
+}
+bool GraphicsHigh::InitShaders()
+{
+	// Animation Deferred pass 1
+	m_animationShader.InitShaderProgram();
+	m_animationShader.AddShader("content/shaders/VSAnimationShader.glsl", GL_VERTEX_SHADER);
+	m_animationShader.AddShader("content/shaders/FSAnimationShader.glsl", GL_FRAGMENT_SHADER);
+	m_animationShader.FinalizeShaderProgram();
+
+	// Deferred pass 1
+	m_deferredShader1.InitShaderProgram();
+	m_deferredShader1.AddShader("content/shaders/VSDeferredPass1.glsl", GL_VERTEX_SHADER);
+	m_deferredShader1.AddShader("content/shaders/FSDeferredPass1.glsl", GL_FRAGMENT_SHADER);
+	m_deferredShader1.FinalizeShaderProgram();
+
+	// Deferred pass 2 ( compute shader )
+	m_compDeferredPass2Shader.InitShaderProgram();
+	m_compDeferredPass2Shader.AddShader("content/shaders/highCSDeferredPass2.glsl", GL_COMPUTE_SHADER);
+	m_compDeferredPass2Shader.FinalizeShaderProgram();
+
+	// SkyBox
+	m_skyBoxShader.InitShaderProgram();
+	m_skyBoxShader.AddShader("content/shaders/skyboxShaderVS.glsl", GL_VERTEX_SHADER);
+	m_skyBoxShader.AddShader("content/shaders/skyboxShaderFS.glsl", GL_FRAGMENT_SHADER);
+	m_skyBoxShader.FinalizeShaderProgram();
+
+	// Full Screen Quad
+	m_fullScreenShader.InitShaderProgram();
+	m_fullScreenShader.AddShader("content/shaders/fullscreen.vs", GL_VERTEX_SHADER);
+	m_fullScreenShader.AddShader("content/shaders/fullscreen.gs", GL_GEOMETRY_SHADER);
+	m_fullScreenShader.AddShader("content/shaders/fullscreen.ps", GL_FRAGMENT_SHADER);
+	m_fullScreenShader.FinalizeShaderProgram();
+
+	// Forward shader
+	m_forwardShader.InitShaderProgram();
+	m_forwardShader.AddShader("content/shaders/VSForwardShader.glsl", GL_VERTEX_SHADER);
+	m_forwardShader.AddShader("content/shaders/FSForwardShader.glsl", GL_FRAGMENT_SHADER);
+	m_forwardShader.FinalizeShaderProgram();
+
+	// Viewspace shader
+	m_viewspaceShader.InitShaderProgram();
+	m_viewspaceShader.AddShader("content/shaders/VSViewspaceShader.glsl", GL_VERTEX_SHADER);
+	m_viewspaceShader.AddShader("content/shaders/FSViewspaceShader.glsl", GL_FRAGMENT_SHADER);
+	m_viewspaceShader.FinalizeShaderProgram();
+
+	// Interface shader
+	m_interfaceShader.InitShaderProgram();
+	m_interfaceShader.AddShader("content/shaders/VSInterfaceShader.glsl", GL_VERTEX_SHADER);
+	m_interfaceShader.AddShader("content/shaders/FSInterfaceShader.glsl", GL_FRAGMENT_SHADER);
+	m_interfaceShader.FinalizeShaderProgram();
+
+	// ShadowShader deferred geometry
+	m_shadowShaderDeferred.InitShaderProgram();
+	m_shadowShaderDeferred.AddShader("content/shaders/shadowShaderDeferredVS.glsl", GL_VERTEX_SHADER);
+	m_shadowShaderDeferred.AddShader("content/shaders/shadowShaderDeferredFS.glsl", GL_FRAGMENT_SHADER);
+	m_shadowShaderDeferred.FinalizeShaderProgram();
+
+	// ShadowShader forward geometry
+	m_shadowShaderForward.InitShaderProgram();
+	m_shadowShaderForward.AddShader("content/shaders/shadowShaderForwardVS.glsl", GL_VERTEX_SHADER);
+	m_shadowShaderForward.AddShader("content/shaders/shadowShaderForwardFS.glsl", GL_FRAGMENT_SHADER);
+	m_shadowShaderForward.FinalizeShaderProgram();
+
+	// Particle shader
+	m_particleShader.InitShaderProgram();
+	m_particleShader.AddShader("content/shaders/particleShaderVS.glsl", GL_VERTEX_SHADER);
+	m_particleShader.AddShader("content/shaders/particleShaderFS.glsl", GL_FRAGMENT_SHADER);
+	const char * outputNames[] = { "Position", "Velocity", "StartTime" };
+	glTransformFeedbackVaryings(m_particleShader.GetShaderProgram(), 3, outputNames, GL_SEPARATE_ATTRIBS);
+	m_particleShader.FinalizeShaderProgram();
+
+	return true;
+}
+void GraphicsHigh::InitRenderLists()
+{
+	m_renderLists.push_back(RenderList(RENDER_DEFERRED, &m_modelsDeferred, &m_deferredShader1));
+	m_renderLists.push_back(RenderList(RENDER_FORWARD, &m_modelsForward, &m_forwardShader));
+	m_renderLists.push_back(RenderList(RENDER_VIEWSPACE, &m_modelsViewspace, &m_viewspaceShader));
+	m_renderLists.push_back(RenderList(RENDER_INTERFACE, &m_modelsInterface, &m_interfaceShader));
+}
+bool GraphicsHigh::InitDeferred()
+{
+	m_deferredShader1.UseProgram();
+
+	// Create and bind the FBO
+	glGenFramebuffers(1, &m_deferredFBO);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_deferredFBO);
+
+	// The depth buffer
+	CreateDepthTex(m_depthBuf);
+	// The normal and color buffers
+	CreateGBufTex(GL_TEXTURE0, GL_RGBA32F, m_normTex); // Normal
+	CreateGBufTex(GL_TEXTURE1, GL_RGBA8, m_colorTex); // Color 
+
+	// Attach the images to the framebuffer
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthBuf, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_normTex, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_colorTex, 0);
+
+	// Add vramUsage calc if adding a new g-buffer texture
+	m_vramUsage += (m_clientWidth*m_clientHeight*sizeof(float));
+	m_vramUsage += (m_clientWidth*m_clientHeight*sizeof(float) * 4);
+	m_vramUsage += (m_clientWidth*m_clientHeight * 1 * 4);
+
+	GLenum drawBuffersDeferred[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+	glDrawBuffers(2, drawBuffersDeferred);
+	return true;
+}
+bool GraphicsHigh::InitBuffers()
+{
+	m_compDeferredPass2Shader.UseProgram();
+
+	//------ Compute shader input images --------
+	//normal
+	glBindImageTexture(0, m_normTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
+	//color
+	glBindImageTexture(1, m_colorTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
+	//depth
+	m_compDeferredPass2Shader.CheckUniformLocation("DepthTex", 0);
+	//-------------------------------------------
+
+	// Output ImageBuffer
+	glGenTextures(1, &m_outputImage);
+	glActiveTexture(GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, m_outputImage);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, m_clientWidth, m_clientHeight);
+
+	glBindImageTexture(5, m_outputImage, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
+	m_vramUsage += (m_clientWidth * m_clientHeight * sizeof(float) * 4);
+
+	// FULL SCREEN QUAD
+	m_fullScreenShader.CheckUniformLocation("output_image", 5);
+
+	//Forward shader
+	m_forwardShader.CheckUniformLocation("diffuseTex", 1);
+
+	//Skybox shader
+	m_skyBoxShader.CheckUniformLocation("cubemap", 1);
+
+	//Shadow forward shader
+	m_shadowShaderForward.CheckUniformLocation("diffuseTex", 1);
+
+	//Particle shader
+	m_particleShader.CheckUniformLocation("ParticleTex", 1);
+
+	return true;
+}
+bool GraphicsHigh::InitForward()
+{
+	//m_forwardShader.UseProgram();
+
+	// Create and bind the FBO
+	glGenFramebuffers(1, &m_forwardFBO);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_forwardFBO);
+
+	// Attach the images to the framebuffer
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthBuf, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_outputImage, 0);
+
+	GLenum drawBufferForward = GL_COLOR_ATTACHMENT0;
+	glDrawBuffers(1, &drawBufferForward);
+
+	return true;
+}
+bool GraphicsHigh::InitRandomVector()
+{
+	int texSizeX, texSizeY;
+	m_randomVectors = GraphicDevice::AddTexture("content/textures/vectormap.png", GL_TEXTURE21);
+
+	return true;
+}
+bool GraphicsHigh::InitTextRenderer()
+{
+	int texSizeX, texSizeY;
+	GLuint m_textImage = GraphicDevice::AddTexture("content/textures/SimpleText.png", GL_TEXTURE20);
+	return m_textRenderer.Init(m_textImage, m_clientWidth, m_clientHeight);
+}
+bool GraphicsHigh::InitLightBuffers()
+{
+	glGenBuffers(1, &m_pointlightBuffer);
+
+	for (int i = 0; i < 10; i++)
+		m_lightDefaults[i] = 0.0;		//init 0.0
+
+	if (m_pointlightBuffer < 0)
+		return false;
+
+	float ** tmparray = new float*[1];
+	tmparray[0] = &m_lightDefaults[0];
+
+	BufferPointlights(0, tmparray);
+
+	delete(tmparray);
+
+	glGenBuffers(1, &m_dirLightBuffer);
+	if (m_dirLightBuffer < 0)
+		return false;
+
+	BufferDirectionalLight(&m_lightDefaults[0]);
+
+	return true;
+}
+#pragma endregion in the order they are initialized
 
 void GraphicsHigh::Update(float _dt)
 {
@@ -188,41 +408,34 @@ void GraphicsHigh::WriteShadowMapDepth()
 
 void GraphicsHigh::Render()
 {
-		//GLTimer glTimer;
-		//glTimer.Start();
+	// Get Camera matrices
+	mat4 projectionMatrix = *m_camera->GetProjMatrix();
+	mat4 viewMatrix = *m_camera->GetViewMatrix();
+
+	// --
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 
 	WriteShadowMapDepth();
 
-//------Render deferred--------------------------------------------------------------------------
+	//--------DEFERRED RENDERING
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_deferredFBO);
 	glViewport(0, 0, m_clientWidth, m_clientHeight);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	
+	//----Uniforms
 	m_deferredShader1.UseProgram();
-	
-	//--------Uniforms-------------------------------------------------------------------------
-	mat4 projectionMatrix = *m_camera->GetProjMatrix();
-
-	mat4 viewMatrix = *m_camera->GetViewMatrix();
-
 	m_deferredShader1.SetUniVariable("TexFlag", glint, &m_debugTexFlag);
-
-	//------Render scene (for deferred)-----------------------------------------------------------
-	//-- DRAW MODELS
+	//----DRAW MODELS
 	for (int i = 0; i < m_modelsDeferred.size(); i++)
 		m_modelsDeferred[i].Draw(viewMatrix, projectionMatrix);
 
-	// ---- ANIMATED DEFERED
+	//--------ANIMATED DEFERRED RENDERING !!! ATTENTION: WORK IN PROGRESS !!!
+	//----Uniforms
 	m_animationShader.UseProgram();
-	
 	m_animationShader.SetUniVariable("TexFlag", glint, &m_debugTexFlag);
-	
-	//------Render scene (for deferred)
-	//-- DRAW MODELS
+	//----DRAW MODELS
 	for (int i = 0; i < m_modelsAnimated.size(); i++)
 	{
 		if (m_modelsAnimated[i].active) // IS MODEL ACTIVE?
@@ -279,12 +492,8 @@ void GraphicsHigh::Render()
 	}
 
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-//--------------------------End of pass1--------------------------------
+	//--------------------------End of pass1--------------------------------
 
-	//m_glTimerValues.push_back(GLTimerValue("Deferred stage1: ", glTimer.Stop()));
-	//glTimer.Start();	
-
-	
 	glClear(GL_COLOR_BUFFER_BIT);
 	glDisable(GL_DEPTH_TEST);
 
@@ -316,9 +525,6 @@ void GraphicsHigh::Render()
 	glDispatchCompute(m_clientWidth * 0.0625, m_clientHeight * 0.0625, 1); // 1/16 = 0.0625
 	//---------------------------------------------------------------------------
 
-		//m_glTimerValues.push_back(GLTimerValue("Deferred stage2: ", glTimer.Stop()));
-		//glTimer.Start();
-
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_forwardFBO);
 
 	glEnable(GL_DEPTH_TEST);
@@ -330,24 +536,22 @@ void GraphicsHigh::Render()
 	glEnable(GL_CULL_FACE);
 	// -----------
 
-
-	//------FORWARD RENDERING--------------------------------------------
+	//--------FORWARD RENDERING
 	glEnable(GL_BLEND);
-
+	//----Uniforms
 	m_forwardShader.UseProgram();
 	m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 	m_forwardShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
-
 	m_forwardShader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
-
+	//----Lights
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
-
+	//----DRAW MODELS
 	for (int i = 0; i < m_modelsForward.size(); i++)
 		m_modelsForward[i].Draw(viewMatrix, mat4(1));
 
 
-	//------PARTICLES---------
+	//--------PARTICLES---------
 	glEnable(GL_POINT_SPRITE);
 	glDepthMask(GL_FALSE);
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE);
@@ -378,21 +582,22 @@ void GraphicsHigh::Render()
 	//------------------------
 
 
-	// RENDER VIEWSPACE STUFF
+	//--------VIEWSPACE RENDERING
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_TEXTURE_2D);
+	//----Uniforms
 	m_viewspaceShader.UseProgram();
 	m_viewspaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
-
+	//----DRAW MODELS
 	SortModelsBasedOnDepth(&m_modelsViewspace);
 	for (int i = 0; i < m_modelsViewspace.size(); i++)
 		m_modelsViewspace[i].Draw(mat4(1), mat4(1));
 
-	// RENDER INTERFACE STUFF
-	//glDisable(GL_DEPTH_TEST);
+	//--------INTERFACE RENDERING
+	//----Uniforms
 	m_interfaceShader.UseProgram();
 	m_interfaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
-
+	//----DRAW MODELS
 	SortModelsBasedOnDepth(&m_modelsInterface);
 	for (int i = 0; i < m_modelsInterface.size(); i++)
 		m_modelsInterface[i].Draw(mat4(1), mat4(1));
@@ -403,70 +608,20 @@ void GraphicsHigh::Render()
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	//---------------------------------------------------------------------
 	
+	//--------SIMPLETEXT RENDERING
 	if (m_renderSimpleText)
 		m_textRenderer.RenderText(m_dt);
 
-	//	//m_glTimerValues.push_back(GLTimerValue("Text Render: ", glTimer.Stop()));
-	//	//glTimer.Start();
-
-	// FULL SCREEN QUAD
+	//-------- FULL SCREEN QUAD RENDERING
 	m_fullScreenShader.UseProgram();
 	//glActiveTexture(GL_TEXTURE5);
 	//glBindTexture(GL_TEXTURE_2D, m_shadowMap->GetDepthTexHandle());
 	glDrawArrays(GL_POINTS, 0, 1);
 
 	glUseProgram(0);
-		//m_glTimerValues.push_back(GLTimerValue("RENDER: ", glTimer.Stop()));
 
 	// Swap in the new buffer
 	SDL_GL_SwapWindow(m_window);
-}
-
-bool GraphicsHigh::InitSDLWindow()
-{
-	// WINDOW SETTINGS
-	unsigned int	Flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
-
-	int				SizeX = 256 * 5;	//1280
-	int				SizeY = 144 * 5;	//720
-
-	if (SDL_Init(SDL_INIT_VIDEO) == -1){
-		std::cout << SDL_GetError() << std::endl;
-		return false;
-	}
-
-	// PLATFORM SPECIFIC CODE
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-
-	m_window = SDL_CreateWindow(m_windowCaption, m_windowPosX, m_windowPosY, SizeX, SizeY, Flags);
-
-	if (m_window == NULL){
-		std::cout << SDL_GetError() << std::endl;
-		return false;
-	}
-
-	SDL_GetWindowSize(m_window, &m_clientWidth, &m_clientHeight);
-
-	return true;
-}
-
-bool GraphicsHigh::InitGLEW()
-{
-	m_glContext = SDL_GL_CreateContext(m_window);
-
-	if (glewInit() != 0) return false;
-
-#ifdef WIN32
-	if (!GLEW_VERSION_4_3) { return false; }
-#else
-	if (!glewIsSupported("GL_VERSION_4_3")) { return false; }
-#endif
-
-	SDL_GL_SetSwapInterval(1);
-	
-	return true;
 }
 
 void GraphicsHigh::CreateGBufTex(GLenum texUnit, GLenum internalFormat, GLuint &texid) {
@@ -492,200 +647,6 @@ void GraphicsHigh::CreateDepthTex(GLuint &texid) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, m_clientWidth, m_clientHeight, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0);
-}
-
-bool GraphicsHigh::InitDeferred()
-{
-	m_deferredShader1.UseProgram();
-
-	// Create and bind the FBO
-	glGenFramebuffers(1, &m_deferredFBO);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_deferredFBO);
-
-	// The depth buffer
-	CreateDepthTex(m_depthBuf);
-	// The normal and color buffers
-	CreateGBufTex(GL_TEXTURE0, GL_RGBA32F, m_normTex); // Normal
-	CreateGBufTex(GL_TEXTURE1, GL_RGBA8, m_colorTex); // Color 
-
-	// Attach the images to the framebuffer
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthBuf, 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_normTex, 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_colorTex, 0);
-
-	// Add vramUsage calc if adding a new g-buffer texture
-	m_vramUsage += (m_clientWidth*m_clientHeight*sizeof(float));
-	m_vramUsage += (m_clientWidth*m_clientHeight*sizeof(float)* 4);
-	m_vramUsage += (m_clientWidth*m_clientHeight* 1 * 4);
-
-	GLenum drawBuffersDeferred[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
-	glDrawBuffers(2, drawBuffersDeferred);
-	return true;
-}
-
-bool GraphicsHigh::InitForward()
-{
-	//m_forwardShader.UseProgram();
-
-	// Create and bind the FBO
-	glGenFramebuffers(1, &m_forwardFBO);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_forwardFBO);
-
-	// Attach the images to the framebuffer
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthBuf, 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_outputImage, 0);
-
-	GLenum drawBufferForward = GL_COLOR_ATTACHMENT0;
-	glDrawBuffers(1, &drawBufferForward);
-
-	return true;
-}
-
-bool GraphicsHigh::InitShaders()
-{
-	// Animation Deferred pass 1
-	m_animationShader.InitShaderProgram();
-	m_animationShader.AddShader("content/shaders/VSAnimationShader.glsl", GL_VERTEX_SHADER);
-	m_animationShader.AddShader("content/shaders/FSAnimationShader.glsl", GL_FRAGMENT_SHADER);
-	m_animationShader.FinalizeShaderProgram();
-
-	// Deferred pass 1
-	m_deferredShader1.InitShaderProgram();
-	m_deferredShader1.AddShader("content/shaders/VSDeferredPass1.glsl", GL_VERTEX_SHADER);
-	m_deferredShader1.AddShader("content/shaders/FSDeferredPass1.glsl", GL_FRAGMENT_SHADER);
-	m_deferredShader1.FinalizeShaderProgram();
-
-	// Deferred pass 2 ( compute shader )
-	m_compDeferredPass2Shader.InitShaderProgram();
-	m_compDeferredPass2Shader.AddShader("content/shaders/highCSDeferredPass2.glsl", GL_COMPUTE_SHADER);
-	m_compDeferredPass2Shader.FinalizeShaderProgram();
-
-	// SkyBox
-	m_skyBoxShader.InitShaderProgram();
-	m_skyBoxShader.AddShader("content/shaders/skyboxShaderVS.glsl", GL_VERTEX_SHADER);
-	m_skyBoxShader.AddShader("content/shaders/skyboxShaderFS.glsl", GL_FRAGMENT_SHADER);
-	m_skyBoxShader.FinalizeShaderProgram();
-
-	// Full Screen Quad
-	m_fullScreenShader.InitShaderProgram();
-	m_fullScreenShader.AddShader("content/shaders/fullscreen.vs", GL_VERTEX_SHADER);
-	m_fullScreenShader.AddShader("content/shaders/fullscreen.gs", GL_GEOMETRY_SHADER);
-	m_fullScreenShader.AddShader("content/shaders/fullscreen.ps", GL_FRAGMENT_SHADER);
-	m_fullScreenShader.FinalizeShaderProgram();
-
-	// Forward shader
-	m_forwardShader.InitShaderProgram();
-	m_forwardShader.AddShader("content/shaders/VSForwardShader.glsl", GL_VERTEX_SHADER);
-	m_forwardShader.AddShader("content/shaders/FSForwardShader.glsl", GL_FRAGMENT_SHADER);
-	m_forwardShader.FinalizeShaderProgram();
-
-	// Viewspace shader
-	m_viewspaceShader.InitShaderProgram();
-	m_viewspaceShader.AddShader("content/shaders/VSViewspaceShader.glsl", GL_VERTEX_SHADER);
-	m_viewspaceShader.AddShader("content/shaders/FSViewspaceShader.glsl", GL_FRAGMENT_SHADER);
-	m_viewspaceShader.FinalizeShaderProgram();
-
-	// Interface shader
-	m_interfaceShader.InitShaderProgram();
-	m_interfaceShader.AddShader("content/shaders/VSInterfaceShader.glsl", GL_VERTEX_SHADER);
-	m_interfaceShader.AddShader("content/shaders/FSInterfaceShader.glsl", GL_FRAGMENT_SHADER);
-	m_interfaceShader.FinalizeShaderProgram();
-
-	// ShadowShader deferred geometry
-	m_shadowShaderDeferred.InitShaderProgram();
-	m_shadowShaderDeferred.AddShader("content/shaders/shadowShaderDeferredVS.glsl", GL_VERTEX_SHADER);
-	m_shadowShaderDeferred.AddShader("content/shaders/shadowShaderDeferredFS.glsl", GL_FRAGMENT_SHADER);
-	m_shadowShaderDeferred.FinalizeShaderProgram();
-
-	// ShadowShader forward geometry
-	m_shadowShaderForward.InitShaderProgram();
-	m_shadowShaderForward.AddShader("content/shaders/shadowShaderForwardVS.glsl", GL_VERTEX_SHADER);
-	m_shadowShaderForward.AddShader("content/shaders/shadowShaderForwardFS.glsl", GL_FRAGMENT_SHADER);
-	m_shadowShaderForward.FinalizeShaderProgram();
-
-	// Particle shader
-	m_particleShader.InitShaderProgram();
-	m_particleShader.AddShader("content/shaders/particleShaderVS.glsl", GL_VERTEX_SHADER);
-	m_particleShader.AddShader("content/shaders/particleShaderFS.glsl", GL_FRAGMENT_SHADER);
-	const char * outputNames[] = { "Position", "Velocity", "StartTime" };
-	glTransformFeedbackVaryings(m_particleShader.GetShaderProgram(), 3, outputNames, GL_SEPARATE_ATTRIBS);
-	m_particleShader.FinalizeShaderProgram();
-
-	return true;
-}
-
-bool GraphicsHigh::InitBuffers()
-{
-	m_compDeferredPass2Shader.UseProgram();
-
-	//------ Compute shader input images --------
-	//normal
-	glBindImageTexture(0, m_normTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
-	//color
-	glBindImageTexture(1, m_colorTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
-	//depth
-	m_compDeferredPass2Shader.CheckUniformLocation("DepthTex", 0);
-	//-------------------------------------------
-	
-	// Output ImageBuffer
-	glGenTextures(1, &m_outputImage);
-	glActiveTexture(GL_TEXTURE5);
-	glBindTexture(GL_TEXTURE_2D, m_outputImage);
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, m_clientWidth, m_clientHeight);
-
-	glBindImageTexture(5, m_outputImage, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
-	m_vramUsage += (m_clientWidth * m_clientHeight * sizeof(float) * 4);
-
-	// FULL SCREEN QUAD
-	m_fullScreenShader.CheckUniformLocation("output_image", 5);
-
-	//Forward shader
-	m_forwardShader.CheckUniformLocation("diffuseTex", 1);
-
-	//Skybox shader
-	m_skyBoxShader.CheckUniformLocation("cubemap", 1);
-
-	//Shadow forward shader
-	m_shadowShaderForward.CheckUniformLocation("diffuseTex", 1);
-
-	//Particle shader
-	m_particleShader.CheckUniformLocation("ParticleTex", 1);
-
-	return true;
-}
-
-bool GraphicsHigh::InitRandomVector()
-{
-	int texSizeX, texSizeY;
-	m_randomVectors = GraphicDevice::AddTexture("content/textures/vectormap.png", GL_TEXTURE21);
-
-	return true;
-}
-
-bool GraphicsHigh::InitLightBuffers()
-{
-	glGenBuffers(1, &m_pointlightBuffer);
-
-	for (int i = 0; i < 10; i++)
-		m_lightDefaults[i] = 0.0;		//init 0.0
-
-	if (m_pointlightBuffer < 0)
-		return false;
-
-	float ** tmparray = new float*[1];
-	tmparray[0] = &m_lightDefaults[0];
-
-	BufferPointlights(0, tmparray);
-
-	delete(tmparray);
-	
-	glGenBuffers(1, &m_dirLightBuffer);
-	if (m_dirLightBuffer < 0)
-		return false;
-
-	BufferDirectionalLight(&m_lightDefaults[0]);
-	
-	return true;
 }
 
 void GraphicsHigh::BufferPointlights(int _nrOfLights, float **_lightPointers)
@@ -772,12 +733,6 @@ void GraphicsHigh::CreateShadowMap()
 	m_vramUsage += (resolution*resolution*sizeof(float));
 }
 
-bool GraphicsHigh::InitTextRenderer()
-{
-	int texSizeX, texSizeY;
-	GLuint m_textImage = GraphicDevice::AddTexture("content/textures/SimpleText.png", GL_TEXTURE20);
-	return m_textRenderer.Init(m_textImage, m_clientWidth, m_clientHeight);
-}
 bool GraphicsHigh::RenderSimpleText(std::string _text, int _x, int _y)
 {
 	return m_textRenderer.RenderSimpleText(_text, _x, _y);
@@ -799,24 +754,6 @@ void GraphicsHigh::ToggleSimpleText()
 	m_renderSimpleText = !m_renderSimpleText;
 }
 
-int GraphicsHigh::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color)
-{
-	int modelID = m_modelIDcounter;
-	m_modelIDcounter++;
-
-	//	Lägg till i en lista, följande
-	//	std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType
-
-	ModelToLoad* modelToLoad = new ModelToLoad();
-	modelToLoad->Dir = _dir;
-	modelToLoad->File = _file;
-	modelToLoad->MatrixPtr = _matrixPtr;
-	modelToLoad->RenderType = _renderType;
-	modelToLoad->Color = _color;
-	m_modelsToLoad[modelID] = modelToLoad;
-
-	return modelID;
-}
 void GraphicsHigh::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 {
 	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
@@ -949,119 +886,6 @@ void GraphicsHigh::BufferModels()
 		delete(pair.second);
 	}
 	m_modelsToLoad.clear();
-}
-
-bool GraphicsHigh::RemoveModel(int _id)
-{
-	for (int i = 0; i < m_modelsDeferred.size(); i++)
-	{
-		for (int j = 0; j < m_modelsDeferred[i].instances.size(); j++)
-		{
-			if (m_modelsDeferred[i].instances[j].id == _id)
-			{
-				m_modelsDeferred[i].instances.erase(m_modelsDeferred[i].instances.begin() + j);
-				if (m_modelsDeferred[i].instances.size() == 0)
-					m_modelsDeferred.erase(m_modelsDeferred.begin() + i);
-
-				return true;
-			}
-		}
-	}
-	for (int i = 0; i < m_modelsForward.size(); i++)
-	{
-		for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
-		{
-			if (m_modelsForward[i].instances[j].id == _id)
-			{
-				m_modelsForward[i].instances.erase(m_modelsForward[i].instances.begin() + j);
-				if (m_modelsForward[i].instances.size() == 0)
-					m_modelsForward.erase(m_modelsForward.begin() + i);
-
-				return true;
-			}
-		}
-	}
-	for (int i = 0; i < m_modelsViewspace.size(); i++)
-	{
-		for (int j = 0; j < m_modelsViewspace[i].instances.size(); j++)
-		{
-			if (m_modelsViewspace[i].instances[j].id == _id)
-			{
-				m_modelsViewspace[i].instances.erase(m_modelsViewspace[i].instances.begin() + j);
-				if (m_modelsViewspace[i].instances.size() == 0)
-					m_modelsViewspace.erase(m_modelsViewspace.begin() + i);
-
-				return true;
-			}
-		}
-	}
-	for (int i = 0; i < m_modelsInterface.size(); i++)
-	{
-		for (int j = 0; j < m_modelsInterface[i].instances.size(); j++)
-		{
-			if (m_modelsInterface[i].instances[j].id == _id)
-			{
-				m_modelsInterface[i].instances.erase(m_modelsInterface[i].instances.begin() + j);
-				if (m_modelsInterface[i].instances.size() == 0)
-					m_modelsInterface.erase(m_modelsInterface.begin() + i);
-
-				return true;
-			}
-		}
-	}
-
-	return false;
-}
-bool GraphicsHigh::ActiveModel(int _id, bool _active)
-{
-	for (int i = 0; i < m_modelsDeferred.size(); i++)
-	{
-		for (int j = 0; j < m_modelsDeferred[i].instances.size(); j++)
-		{
-			if (m_modelsDeferred[i].instances[j].id == _id)
-			{
-				m_modelsDeferred[i].instances[j].active = _active;
-				return true;
-			}
-		}
-	}
-
-	for (int i = 0; i < m_modelsForward.size(); i++)
-	{
-		for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
-		{
-			if (m_modelsForward[i].instances[j].id == _id)
-			{
-				m_modelsForward[i].instances[j].active = _active;
-				return true;
-			}
-		}
-	}
-
-	for (int i = 0; i < m_modelsViewspace.size(); i++)
-	{
-		for (int j = 0; j < m_modelsViewspace[i].instances.size(); j++)
-		{
-			if (m_modelsViewspace[i].instances[j].id == _id)
-			{
-				m_modelsViewspace[i].instances[j].active = _active;
-				return true;
-			}
-		}
-	}
-
-	for (int i = 0; i < m_modelsInterface.size(); i++)
-	{
-		for (int j = 0; j < m_modelsInterface[i].instances.size(); j++)
-		{
-			if (m_modelsInterface[i].instances[j].id == _id)
-			{
-				m_modelsInterface[i].instances[j].active = _active;
-				return true;
-			}
-		}
-	}
-	return false;
 }
 
 Buffer* GraphicsHigh::AddMesh(std::string _fileDir, Shader *_shaderProg, bool animated)
