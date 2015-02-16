@@ -41,7 +41,7 @@ namespace FileSystem
 			SDL_RWclose(_file);
 		}
 
-		signed __int64 GetFileSize(SDL_RWops* _file)
+		Sint64 GetFileSize(SDL_RWops* _file)
 		{
 			Sint64 offset = SDL_RWtell(_file);
 			Sint64 length = SDL_RWseek(_file, 0, RW_SEEK_END);
@@ -49,13 +49,13 @@ namespace FileSystem
 			return length;
 		}
 
-		signed __int64 GetPosition(SDL_RWops* _file)
+		Sint64 GetPosition(SDL_RWops* _file)
 		{
 			Sint64 offset = SDL_RWtell(_file);
 			return offset;
 		}
 
-		signed __int64 GetRemainingBytes(SDL_RWops* _file)
+		Sint64 GetRemainingBytes(SDL_RWops* _file)
 		{
 			Sint64 offset = SDL_RWtell(_file);
 			Sint64 length = SDL_RWseek(_file, offset, RW_SEEK_END);

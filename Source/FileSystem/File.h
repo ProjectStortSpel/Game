@@ -25,9 +25,9 @@ namespace FileSystem
 
 		void EXPORT Close(SDL_RWops* _file);
 
-		signed __int64 EXPORT GetFileSize(SDL_RWops* _file);
-		signed __int64 EXPORT GetPosition(SDL_RWops* _file);
-		signed __int64 EXPORT GetRemainingBytes(SDL_RWops* _file);
+		Sint64 EXPORT GetFileSize(SDL_RWops* _file);
+		Sint64 EXPORT GetPosition(SDL_RWops* _file);
+		Sint64 EXPORT GetRemainingBytes(SDL_RWops* _file);
 
 		EXPORT char* Read(SDL_RWops* _file, int length = 1);
 		std::string EXPORT ReadLine(SDL_RWops* _file);

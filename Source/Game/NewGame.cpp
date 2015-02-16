@@ -54,7 +54,7 @@ int main(int argc, char** argv)
 	//path2.append("models/caveman/cavemanwave.amesh");
 	//SDL_RWops* test;
 	//FileSystem::File::Open(path2, &test);
-	//signed __int64 length = FileSystem::File::GetFileSize(test);
+	//Sint64 length = FileSystem::File::GetFileSize(test);
 	//char* data = FileSystem::File::Read(test, length);
 
 	//FileSystem::MD5::MD5_CTX ctx;
