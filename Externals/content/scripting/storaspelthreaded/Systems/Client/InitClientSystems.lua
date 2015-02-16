@@ -32,9 +32,6 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ClientNetworkMessageSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(PlayerIndicatorSystem)
---worldCreator:AddSystemToCurrentGroup(ClientNetworkMessageSystem)
-
-
 
 
 --worldCreator:AddSystemGroup()

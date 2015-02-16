@@ -88,7 +88,6 @@ end
 
 
 NewCameraSystem.PostInitialize = function(self)
-
 	self.TouchScreen = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("Position", self.TouchScreen)
 	world:CreateComponentAndAddTo("Rotation", self.TouchScreen)

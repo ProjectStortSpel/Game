@@ -594,9 +594,7 @@ void GameCreator::StartGame(int argc, char** argv)
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_C) == Input::InputState::PRESSED)
 		{
 			if (!m_clientWorldProfiler->IsActive())
-			{
 				m_serverWorldProfiler->Toggle();
-			}
 		}
 
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_V) == Input::InputState::PRESSED)

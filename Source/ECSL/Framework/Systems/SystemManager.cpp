@@ -73,7 +73,7 @@ void SystemManager::UpdateSystemEntityLists(
 	std::vector<std::vector<unsigned int>*>& _entitiesToAddToSystems,
 	std::vector<std::vector<unsigned int>*>& _entitiesToRemoveFromSystems)
 {
-	const std::vector<DataManager::EntityChange*>* entityChanges = m_dataManager->GetEntityChanges();
+	const std::vector<DataManager::EntityUpdate*>* entityUpdates = m_dataManager->GetEntityUpdates();
 	const std::vector<unsigned int>* changedEntities = m_dataManager->GetChangedEntities();
 	EntityTable* entityTable = m_dataManager->GetEntityTable();
 	unsigned int dataTypeCount = BitSet::GetDataTypeCount(m_dataManager->GetComponentTypeCount());
@@ -93,10 +93,10 @@ void SystemManager::UpdateSystemEntityLists(
 		unsigned int entitiesRemovedTaskCount = system->GetEntitiesRemovedTaskCount();
 		for (unsigned int entityId : *changedEntities)
 		{
-			DataManager::EntityChange* entityChange = (*entityChanges)[entityId];
+			DataManager::EntityUpdate* entityUpdate = (*entityUpdates)[entityId];
 
 			/* If the entity is dead and the system has the entity, then remove it from the system */
-			if (entityChange->Dead)
+			if (entityUpdate->Dead)
 			{
 				if (system->HasEntity(entityId))
 				{

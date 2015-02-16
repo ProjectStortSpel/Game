@@ -58,6 +58,10 @@ PickBoxSystem.Update = function(self, dt, taskIndex, taskCount)
 			if hitX > X-halfwidth and hitX < X+halfwidth then
 				if hitY > Y-halfheight and hitY < Y+halfheight then
 						hit = true
+						print("Cursor X: " .. rX .. " Y: " .. rY)
+						print("Hit entity: " .. entity) 
+						print("Position X: " .. X .. " Y: " .. Y .. " Z: " .. Z)
+						print("Scale X: " .. sX .. " Y: " .. sY .. " Z: " .. sZ)
 						newhit = entity
 						t = Z
 				end
@@ -74,9 +78,7 @@ PickBoxSystem.Update = function(self, dt, taskIndex, taskCount)
 		for i = 1, #entities do
 			local entity = entities[i]
 			if entity ~= newhit then
-				if world:EntityHasComponent(entity, "OnPickBoxHit") then
-					world:RemoveComponentFrom("OnPickBoxHit", entity)
-				end
+				world:RemoveComponentFrom("OnPickBoxHit", entity)
 			end
 		end
 	else

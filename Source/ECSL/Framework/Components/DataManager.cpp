@@ -13,12 +13,12 @@ using namespace ECSL;
 
 DataManager::DataManager(unsigned int _entityCount, std::vector<unsigned int>* _componentTypeIds)
 :	m_entityCount(_entityCount), m_componentTypeIds(_componentTypeIds),
-	m_entityChanges(new std::vector<EntityChange*>(_entityCount, nullptr)),
-	m_entityChangesCopy(new std::vector<EntityChange*>(_entityCount, nullptr)),
+	m_entityUpdates(new std::vector<EntityUpdate*>(_entityCount, nullptr)),
+	m_entityUpdatesCopy(new std::vector<EntityUpdate*>(_entityCount, nullptr)),
 	m_changedEntities(new std::vector<unsigned int>()),
 	m_changedEntitiesCopy(new std::vector<unsigned int>())
 {
-	m_entityChangesMutex = SDL_CreateMutex();
+	m_entityUpdatesMutex = SDL_CreateMutex();
 	//String?
 	m_stringMutex = SDL_CreateMutex();
 }
@@ -34,12 +34,12 @@ DataManager::~DataManager()
 	delete(m_componentTables);
 	delete(m_entityTable);
 	delete(m_componentTypeIds);
-	delete(m_entityChanges);
-	delete(m_entityChangesCopy);
+	delete(m_entityUpdates);
+	delete(m_entityUpdatesCopy);
 	delete(m_changedEntities);
 	delete(m_changedEntitiesCopy);
 
-	SDL_DestroyMutex(m_entityChangesMutex);
+	SDL_DestroyMutex(m_entityUpdatesMutex);
 	//String?
 	SDL_DestroyMutex(m_stringMutex);
 }
@@ -110,8 +110,8 @@ void DataManager::UpdateEntityTable(const RuntimeInfo& _runtime)
 	for (unsigned int i = startAt; i < endAt; ++i)
 	{
 		unsigned int entityId = (*m_changedEntitiesCopy)[i];
-		EntityChange* entityChange = (*m_entityChangesCopy)[entityId];
-		if (entityChange->Dead)
+		EntityUpdate* entityUpdate = (*m_entityUpdatesCopy)[entityId];
+		if (entityUpdate->Dead)
 		{
 			SDL_LockMutex(m_stringMutex);
 			if (m_stringMap.find(entityId) != m_stringMap.end())
@@ -124,27 +124,27 @@ void DataManager::UpdateEntityTable(const RuntimeInfo& _runtime)
 		}
 		else
 		{
-			for (auto componentChange : entityChange->ComponentChanges)
+			for (auto componentUpdate : entityUpdate->ComponentUpdates)
 			{
-				switch (componentChange.second)
+				switch (componentUpdate.second)
 				{
-					case ComponentChange::TO_BE_ADDED:
-						m_entityTable->AddComponentTo(entityId, componentChange.first);
+					case ComponentUpdate::TO_BE_ADDED:
+						m_entityTable->AddComponentTo(entityId, componentUpdate.first);
 						break;
-					case ComponentChange::TO_BE_REMOVED:
+					case ComponentUpdate::TO_BE_REMOVED:
 					{
 						SDL_LockMutex(m_stringMutex);
 						if (m_stringMap.find(entityId) != m_stringMap.end())
 						{
 							std::map<unsigned int, std::map<unsigned int, std::string>>* compToVarMap = &m_stringMap[entityId];
-							if (compToVarMap->find(componentChange.first) != compToVarMap->end())
+							if (compToVarMap->find(componentUpdate.first) != compToVarMap->end())
 							{
-								compToVarMap->erase(componentChange.first);
+								compToVarMap->erase(componentUpdate.first);
 							}
 						}
 						SDL_UnlockMutex(m_stringMutex);
 
-						m_entityTable->RemoveComponentFrom(entityId, componentChange.first);
+						m_entityTable->RemoveComponentFrom(entityId, componentUpdate.first);
 						break;
 					}						
 				}
@@ -157,7 +157,7 @@ void DataManager::RecycleEntityIds(const RuntimeInfo& _runtime)
 {
 	for (auto entityId : *m_changedEntitiesCopy)
 	{
-		if ((*m_entityChangesCopy)[entityId]->Dead)
+		if ((*m_entityUpdatesCopy)[entityId]->Dead)
 			m_entityTable->AddOldEntityId(entityId);
 	}
 }
@@ -165,15 +165,15 @@ void DataManager::RecycleEntityIds(const RuntimeInfo& _runtime)
 void DataManager::CopyCurrentLists(const RuntimeInfo& _runtime)
 {
 	/* Swap the lists */
-	std::vector<EntityChange*>* swapPointer = m_entityChangesCopy;
-	m_entityChangesCopy = m_entityChanges;
-	m_entityChanges = swapPointer;
+	std::vector<EntityUpdate*>* swapPointer = m_entityUpdatesCopy;
+	m_entityUpdatesCopy = m_entityUpdates;
+	m_entityUpdates = swapPointer;
 
-	/* Clear the data in entityChanges list */
+	/* Clear the data in entityUpdates list */
 	for (auto entityId : *m_changedEntitiesCopy)
 	{
-		delete((*m_entityChanges)[entityId]);
-		(*m_entityChanges)[entityId] = nullptr;
+		delete((*m_entityUpdates)[entityId]);
+		(*m_entityUpdates)[entityId] = nullptr;
 	}
 
 	delete(m_changedEntitiesCopy);
@@ -188,9 +188,9 @@ void DataManager::DeleteComponentData(const RuntimeInfo& _runtime)
 	for (unsigned int i = startAt; i < endAt; ++i)
 	{
 		unsigned int entityId = (*m_changedEntitiesCopy)[i];
-		EntityChange* entityChange = (*m_entityChangesCopy)[entityId];
+		EntityUpdate* entityUpdate = (*m_entityUpdatesCopy)[entityId];
 		/* If entity is dead, remove all components */
-		if (entityChange->Dead)
+		if (entityUpdate->Dead)
 		{
 			for (auto componentTypeId : *m_componentTypeIds)
 			{
@@ -201,10 +201,10 @@ void DataManager::DeleteComponentData(const RuntimeInfo& _runtime)
 		/* Else remove the specified components */
 		else
 		{
-			for (auto componentChanges : entityChange->ComponentChanges)
+			for (auto componentUpdate : entityUpdate->ComponentUpdates)
 			{
-				if (componentChanges.second == ComponentChange::TO_BE_REMOVED)
-					(*m_componentTables)[componentChanges.first]->ClearComponent(componentChanges.first);
+				if (componentUpdate.second == ComponentUpdate::TO_BE_REMOVED)
+					(*m_componentTables)[componentUpdate.first]->ClearComponent(componentUpdate.first);
 			}
 		}
 	}
@@ -225,50 +225,50 @@ unsigned int DataManager::GetMemoryAllocated()
 
 void DataManager::ToBeAdded(unsigned int _entityId, unsigned int _componentTypeId)
 {
-	SDL_LockMutex(m_entityChangesMutex);
-	EntityChange* entityChange = (*m_entityChanges)[_entityId];
-	if (!entityChange)
+	SDL_LockMutex(m_entityUpdatesMutex);
+	EntityUpdate* entityUpdate = (*m_entityUpdates)[_entityId];
+	if (!entityUpdate)
 	{
-		entityChange = new EntityChange();
-		entityChange->ComponentChanges[_componentTypeId] = TO_BE_ADDED;
-		(*m_entityChanges)[_entityId] = entityChange;
+		entityUpdate = new EntityUpdate();
+		entityUpdate->ComponentUpdates[_componentTypeId] = TO_BE_ADDED;
+		(*m_entityUpdates)[_entityId] = entityUpdate;
 		m_changedEntities->push_back(_entityId);
 	}
 	else
-		entityChange->ComponentChanges[_componentTypeId] = TO_BE_ADDED;
-	SDL_UnlockMutex(m_entityChangesMutex);
+		entityUpdate->ComponentUpdates[_componentTypeId] = TO_BE_ADDED;
+	SDL_UnlockMutex(m_entityUpdatesMutex);
 }
 
 void DataManager::ToBeRemoved(unsigned int _entityId)
 {
-	SDL_LockMutex(m_entityChangesMutex);
-	EntityChange* entityChange = (*m_entityChanges)[_entityId];
-	if (!entityChange)
+	SDL_LockMutex(m_entityUpdatesMutex);
+	EntityUpdate* entityUpdate = (*m_entityUpdates)[_entityId];
+	if (!entityUpdate)
 	{
-		entityChange = new EntityChange();
-		entityChange->Dead = true;
-		(*m_entityChanges)[_entityId] = entityChange;
+		entityUpdate = new EntityUpdate();
+		entityUpdate->Dead = true;
+		(*m_entityUpdates)[_entityId] = entityUpdate;
 		m_changedEntities->push_back(_entityId);
 	}
 	else
-		entityChange->Dead = true;
-	SDL_UnlockMutex(m_entityChangesMutex);
+		entityUpdate->Dead = true;
+	SDL_UnlockMutex(m_entityUpdatesMutex);
 }
 
 void DataManager::ToBeRemoved(unsigned int _entityId, unsigned int _componentTypeId)
 {
-	SDL_LockMutex(m_entityChangesMutex);
-	EntityChange* entityChange = (*m_entityChanges)[_entityId];
-	if (!entityChange)
+	SDL_LockMutex(m_entityUpdatesMutex);
+	EntityUpdate* entityUpdate = (*m_entityUpdates)[_entityId];
+	if (!entityUpdate)
 	{
-		entityChange = new EntityChange();
-		entityChange->ComponentChanges[_componentTypeId] = TO_BE_REMOVED;
-		(*m_entityChanges)[_entityId] = entityChange;
+		entityUpdate = new EntityUpdate();
+		entityUpdate->ComponentUpdates[_componentTypeId] = TO_BE_REMOVED;
+		(*m_entityUpdates)[_entityId] = entityUpdate;
 		m_changedEntities->push_back(_entityId);
 	}
 	else
-		entityChange->ComponentChanges[_componentTypeId] = TO_BE_REMOVED;
-	SDL_UnlockMutex(m_entityChangesMutex);
+		entityUpdate->ComponentUpdates[_componentTypeId] = TO_BE_REMOVED;
+	SDL_UnlockMutex(m_entityUpdatesMutex);
 }
 
 
