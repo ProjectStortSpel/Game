@@ -7,19 +7,39 @@ ActionGuardSystem.Initialize = function(self)
 	--	Toggle EntitiesAdded
 	self:UsingEntitiesAdded()
 	
-	self:AddComponentTypeToFilter("Unit",FilterType.Mandatory)
-	self:AddComponentTypeToFilter("UnitGuard",FilterType.Mandatory)
+	self:AddComponentTypeToFilter("UnitGuard",FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("ActionGuard",FilterType.RequiresOneOf)
+	
+	self:AddComponentTypeToFilter("NewRound", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("NewStep", FilterType.RequiresOneOf)
 	
 end
 
 ActionGuardSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 
+	local uGuard = self:GetEntities("UnitGuard")
+	local aGuard = self:GetEntities("ActionGuard")
+
 	for n = 1, #entities do
 		local entity = entities[n]
 
-		local id = world:CreateNewEntity()
-		world:CreateComponentAndAddTo("AbilityGuard", id)
-		world:RemoveComponentFrom("UnitSprint", entity)
+		if world:EntityHasComponent( entity, "NewRound") or world:EntityHasComponent( entity, "NewStep") then -- If it's a new round or new step
+	
+			for i = 1, #aGuard do
+				world:RemoveComponentFrom("ActionGuard", aGuard[i])
+				print("Removed ActionGuard from unit")
+			end
+	
+		else -- If a guard card was played
+		
+			for i = 1, #uGuard do
+				world:CreateComponentAndAddTo("ActionGuard", entity)
+				world:RemoveComponentFrom("UnitGuard", entity)
+				print("Added ActionGuard to unit")
+			end
+			
+		end	
 		
 	end
+	
 end

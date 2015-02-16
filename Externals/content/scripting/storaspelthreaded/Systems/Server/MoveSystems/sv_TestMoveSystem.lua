@@ -42,20 +42,33 @@ TestMoveSystem.RecursiveMove = function(self, unitToMove, allUnits, allNonWalkab
 		end
 	end
 	
+	for n = 1, #allUnits do
+	end
+	
+	
 	if not voidFound then
 		--	Check all units
 		for n = 1, #allUnits do
 			local X, Z = world:GetComponent(allUnits[n], "MapPosition", 0):GetInt2()
 			if X == posX and Z == posZ then
+				
+				if world:EntityHasComponent(allUnits[n], "ActionGuard") then
+					print("BLOCKED, BITCH!")
+					return false
+				end
+				
 				if not self:RecursiveMove(allUnits[n], allUnits, allNonWalkables, allVoids, posX+dirX, posZ+dirZ, dirX, dirZ) then
 					return false
 				end
-					local newCheck = world:CreateNewEntity()
-					world:CreateComponentAndAddTo("CheckCheckpointForEntity", newCheck)
-					world:GetComponent(newCheck, "CheckCheckpointForEntity", "EntityId"):SetInt(allUnits[n])
-					world:GetComponent(newCheck, "CheckCheckpointForEntity", "PosX"):SetInt(posX+dirX)
-					world:GetComponent(newCheck, "CheckCheckpointForEntity", "PosZ"):SetInt(posZ+dirZ)
+
+				local newCheck = world:CreateNewEntity()
+				world:CreateComponentAndAddTo("CheckCheckpointForEntity", newCheck)
+				world:GetComponent(newCheck, "CheckCheckpointForEntity", "EntityId"):SetInt(allUnits[n])
+				world:GetComponent(newCheck, "CheckCheckpointForEntity", "PosX"):SetInt(posX+dirX)
+				world:GetComponent(newCheck, "CheckCheckpointForEntity", "PosZ"):SetInt(posZ+dirZ)
+				
 				break
+				
 			end
 		end
 	end

@@ -133,6 +133,7 @@ package.path = package.path .. ";../../../Externals/content/scripting/storaspelt
 require "sv_AbilitySprintSystem"
 require "sv_AbilitySlingshotSystem"
 require "sv_AbilityIWin"
+require "sv_AbilityStoneSystem"
 
 
 worldCreator:AddSystemGroup()
@@ -141,6 +142,9 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(AbilitySlingshotSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(AbilityIWin)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(AbilityStoneSystem)
+
 
 
 --	Spawn Systems
