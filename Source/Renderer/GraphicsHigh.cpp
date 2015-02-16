@@ -188,41 +188,34 @@ void GraphicsHigh::WriteShadowMapDepth()
 
 void GraphicsHigh::Render()
 {
-		//GLTimer glTimer;
-		//glTimer.Start();
+	// Get Camera matrices
+	mat4 projectionMatrix = *m_camera->GetProjMatrix();
+	mat4 viewMatrix = *m_camera->GetViewMatrix();
+
+	// --
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 
 	WriteShadowMapDepth();
 
-//------Render deferred--------------------------------------------------------------------------
+	//--------DEFERRED RENDERING
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_deferredFBO);
 	glViewport(0, 0, m_clientWidth, m_clientHeight);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	
+	//----Uniforms
 	m_deferredShader1.UseProgram();
-	
-	//--------Uniforms-------------------------------------------------------------------------
-	mat4 projectionMatrix = *m_camera->GetProjMatrix();
-
-	mat4 viewMatrix = *m_camera->GetViewMatrix();
-
 	m_deferredShader1.SetUniVariable("TexFlag", glint, &m_debugTexFlag);
-
-	//------Render scene (for deferred)-----------------------------------------------------------
-	//-- DRAW MODELS
+	//----DRAW MODELS
 	for (int i = 0; i < m_modelsDeferred.size(); i++)
 		m_modelsDeferred[i].Draw(viewMatrix, projectionMatrix);
 
-	// ---- ANIMATED DEFERED
+	//--------ANIMATED DEFERRED RENDERING !!! ATTENTION: WORK IN PROGRESS !!!
+	//----Uniforms
 	m_animationShader.UseProgram();
-	
 	m_animationShader.SetUniVariable("TexFlag", glint, &m_debugTexFlag);
-	
-	//------Render scene (for deferred)
-	//-- DRAW MODELS
+	//----DRAW MODELS
 	for (int i = 0; i < m_modelsAnimated.size(); i++)
 	{
 		if (m_modelsAnimated[i].active) // IS MODEL ACTIVE?
@@ -279,12 +272,8 @@ void GraphicsHigh::Render()
 	}
 
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-//--------------------------End of pass1--------------------------------
+	//--------------------------End of pass1--------------------------------
 
-	//m_glTimerValues.push_back(GLTimerValue("Deferred stage1: ", glTimer.Stop()));
-	//glTimer.Start();	
-
-	
 	glClear(GL_COLOR_BUFFER_BIT);
 	glDisable(GL_DEPTH_TEST);
 
@@ -331,23 +320,22 @@ void GraphicsHigh::Render()
 	// -----------
 
 
-	//------FORWARD RENDERING--------------------------------------------
+	//--------FORWARD RENDERING
 	glEnable(GL_BLEND);
-
+	//----Uniforms
 	m_forwardShader.UseProgram();
 	m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 	m_forwardShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
-
 	m_forwardShader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
-
+	//----Lights
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
-
+	//----DRAW MODELS
 	for (int i = 0; i < m_modelsForward.size(); i++)
 		m_modelsForward[i].Draw(viewMatrix, mat4(1));
 
 
-	//------PARTICLES---------
+	//--------PARTICLES---------
 	glEnable(GL_POINT_SPRITE);
 	glDepthMask(GL_FALSE);
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE);
@@ -378,21 +366,22 @@ void GraphicsHigh::Render()
 	//------------------------
 
 
-	// RENDER VIEWSPACE STUFF
+	//--------VIEWSPACE RENDERING
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_TEXTURE_2D);
+	//----Uniforms
 	m_viewspaceShader.UseProgram();
 	m_viewspaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
-
+	//----DRAW MODELS
 	SortModelsBasedOnDepth(&m_modelsViewspace);
 	for (int i = 0; i < m_modelsViewspace.size(); i++)
 		m_modelsViewspace[i].Draw(mat4(1), mat4(1));
 
-	// RENDER INTERFACE STUFF
-	//glDisable(GL_DEPTH_TEST);
+	//--------INTERFACE RENDERING
+	//----Uniforms
 	m_interfaceShader.UseProgram();
 	m_interfaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
-
+	//----DRAW MODELS
 	SortModelsBasedOnDepth(&m_modelsInterface);
 	for (int i = 0; i < m_modelsInterface.size(); i++)
 		m_modelsInterface[i].Draw(mat4(1), mat4(1));
@@ -403,20 +392,17 @@ void GraphicsHigh::Render()
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	//---------------------------------------------------------------------
 	
+	//--------SIMPLETEXT RENDERING
 	if (m_renderSimpleText)
 		m_textRenderer.RenderText(m_dt);
 
-	//	//m_glTimerValues.push_back(GLTimerValue("Text Render: ", glTimer.Stop()));
-	//	//glTimer.Start();
-
-	// FULL SCREEN QUAD
+	//-------- FULL SCREEN QUAD RENDERING
 	m_fullScreenShader.UseProgram();
 	//glActiveTexture(GL_TEXTURE5);
 	//glBindTexture(GL_TEXTURE_2D, m_shadowMap->GetDepthTexHandle());
 	glDrawArrays(GL_POINTS, 0, 1);
 
 	glUseProgram(0);
-		//m_glTimerValues.push_back(GLTimerValue("RENDER: ", glTimer.Stop()));
 
 	// Swap in the new buffer
 	SDL_GL_SwapWindow(m_window);
