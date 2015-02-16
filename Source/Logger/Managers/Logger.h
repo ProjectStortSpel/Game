@@ -39,6 +39,7 @@ public:
 	void Log(unsigned int _groupIndex, LogSeverity _severity, const std::string& _message);
 	void Log(const std::string& _groupName, LogSeverity _severity, const std::string& _message);
 	void ChangeFilterFor(unsigned int _groupIndex, bool _printInfo);
+	void SetPath(std::string _path);
 
 private:
 	Logger();
@@ -48,8 +49,6 @@ private:
 	std::string GetTabs(std::string& _groupName);
 	void CreateFile();
 	void AppendFile(LogEntry& _logEntry);
-    
-    std::string GetFolderPath();
 
 	void Trim(std::string& _str);
 	void TrimStart(std::string& _str);
@@ -68,6 +67,8 @@ private:
 	std::map<unsigned int, LogGroup*> m_logGroups;
 	std::map<std::string, unsigned int> m_groupNameIndex;
 	std::vector<LogEntry>* m_dumpLogs;
+
+	std::string* m_path;
 
 };
 #endif

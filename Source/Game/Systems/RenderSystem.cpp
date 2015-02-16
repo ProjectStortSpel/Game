@@ -52,6 +52,7 @@ void RenderSystem::Initialize()
 	m_colorOffset = ECSL::ComponentTypeManager::GetInstance().GetComponentType(m_renderId)->GetVariables()->at("ColorX").GetOffset();
 	m_parentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Parent");
 	m_isparentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("IsParent");
+	m_worldToViewSpaceId = ECSL::ComponentTypeManager::GetInstance().GetTableId("WorldToViewSpace");
 }
 
 void RenderSystem::Update(const ECSL::RuntimeInfo& _runtime)
@@ -139,6 +140,9 @@ void RenderSystem::UpdateMatrix(unsigned int _entityId)
 	*Matrix *= q_rotation.QuaternionToMatrix();
 
 	*Matrix *= glm::scale(glm::vec3(Scale[0], Scale[1], Scale[2]));
+	
+	if (HasComponent(_entityId, m_worldToViewSpaceId))
+		*Matrix = *m_graphics->GetCamera()->GetViewMatrix() * *Matrix;
 
 
 	if (!HasComponent(_entityId, m_colorId))

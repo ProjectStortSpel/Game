@@ -15,9 +15,9 @@ namespace FileSystem
 {
 	namespace Directory
 	{
-		bool EXPORT CreateFolder(std::string _path);
+		bool EXPORT Create(std::string _path);
 
-		bool EXPORT DirectoryExist(std::string _path);
+		bool EXPORT Exist(std::string _path);
 	}
 }
 
