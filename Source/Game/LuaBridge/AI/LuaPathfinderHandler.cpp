@@ -79,13 +79,17 @@ namespace LuaBridge
 			Pathfinder* pathfinder = Pathfinder::Instance();
 
 			coord start = coord(LuaEmbedder::PullInt(_l, 1), LuaEmbedder::PullInt(_l, 2));
-			coord goal = coord(LuaEmbedder::PullInt(_l, 3), LuaEmbedder::PullInt(_l, 4));
-			ret_value = pathfinder->GeneratePath(start, goal).size();
+			coord goal = coord(LuaEmbedder::PullInt(_l, 3), LuaEmbedder::PullInt(_l, 4)); 
+			float total_cost;
+			ret_value = pathfinder->GeneratePath(start, goal, total_cost).size();
+
 			if (ret_value == 0)
 			{
 				ret_value = INT_MAX;
 			}
+
 			LuaEmbedder::PushInt(_l, ret_value);
+
 			return 1;
 		}
 
