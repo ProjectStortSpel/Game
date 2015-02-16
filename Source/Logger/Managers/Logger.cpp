@@ -2,6 +2,7 @@
 #include <iostream>
 #include "Logger.h"
 #include "FileSystem/Directory.h"
+#include "FileSystem/File.h"
 
 Logger& Logger::GetInstance()
 {
@@ -202,18 +203,17 @@ void Logger::CreateFile()
 
 	FileSystem::Directory::CreateFolder(ss2.str());
 
-	SDL_RWops* newFile = SDL_RWFromFile(m_logFileName.c_str(), "w");
+	FileSystem::File::Create(m_logFileName);
 
 	//Test Md5
 	FileSystem::MD5::MD5_CTX ctx;
 	FileSystem::MD5::MD5_Init(&ctx);
-	std::string asd = "asdbjkhasldkhdsflksahfsalhsadfkjnasdflkjasndflkjnsadflkjnsadfsd";
+	std::string asd = "asdbjkhasldkhdsflksahfsalhsadfkjnasdflkjasndflkjnsadflkjnsbdfsd";
 	FileSystem::MD5::MD5_Update(&ctx, asd.c_str(), asd.size());
 	unsigned char res[16];
 	FileSystem::MD5::MD5_Final(res, &ctx);
 	FileSystem::MD5::MD5_Print(res);
 
-	SDL_RWclose(newFile);
     
 #endif
 }
@@ -222,11 +222,16 @@ void Logger::AppendFile(LogEntry& _logEntry)
 {
 #if !defined(__ANDROID__)
 
-	/*	Open the file	*/
-	char* end;
-	SDL_RWops* tFile = SDL_RWFromFile(m_logFileName.c_str(), "a");
-	SDL_RWwrite(tFile, _logEntry.Message.c_str(), 1, _logEntry.Message.size());
-	SDL_RWclose(tFile);
+	SDL_RWops* tFile;
+	FileSystem::File::Append(m_logFileName, &tFile);
+	FileSystem::File::Write(tFile, _logEntry.Message);
+	FileSystem::File::Close(tFile);
+	
+	///*	Open the file	*/
+	//char* end;
+	//SDL_RWops* tFile = SDL_RWFromFile(m_logFileName.c_str(), "a");
+	//SDL_RWwrite(tFile, _logEntry.Message.c_str(), 1, _logEntry.Message.size());
+	//SDL_RWclose(tFile);
 
 #endif
 }
