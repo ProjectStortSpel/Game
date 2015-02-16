@@ -23,7 +23,6 @@ namespace Renderer
 #define RENDER_FORWARD  1
 #define RENDER_VIEWSPACE  2
 #define RENDER_INTERFACE  3
-#define RENDER_ANIMATED  4
 
 #define TEXTURE_DIFFUSE		0
 #define TEXTURE_NORMAL		1
@@ -37,6 +36,19 @@ namespace Renderer
 		{
 			name = n;
 			ms = m;
+		}
+	};
+
+	struct RenderList
+	{
+		int RenderType;
+		std::vector<Model>* ModelList;
+		Shader* ShaderPtr;
+		RenderList(int _renderType, std::vector<Model>* _modelList, Shader* _shaderPtr)
+		{
+			RenderType = _renderType;
+			ModelList = _modelList;
+			ShaderPtr = _shaderPtr;
 		}
 	};
 
@@ -118,14 +130,14 @@ namespace Renderer
 		void RemoveParticleEffect(int _id);
 		
 	protected:
-		virtual void InitModelLists() { return; }
+		virtual void InitRenderLists() { return; }
 		bool InitSDLWindow(int _width = 1280, int _height = 720);
 		bool InitSkybox();
 		virtual void BufferModels() { return; } // = 0;
 		virtual void BufferModel(int _modelId, ModelToLoad* _modelToLoad) { return; } // = 0;
 
 		//modellists
-		std::vector<std::vector<Model>*> m_modelLists;
+		std::vector<RenderList> m_renderLists;
 
 		//MODEL LOADER
 		int m_modelIDcounter;

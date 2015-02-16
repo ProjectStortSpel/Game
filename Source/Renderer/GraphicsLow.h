@@ -38,7 +38,7 @@ namespace Renderer
 		bool InitGLEW();
 		bool InitDeferred();
 		bool InitShaders();
-		void InitModelLists();
+		void InitRenderLists();
 		bool InitBuffers();
 		bool InitLightBuffers();
 

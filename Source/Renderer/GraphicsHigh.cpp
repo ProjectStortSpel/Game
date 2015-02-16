@@ -53,7 +53,7 @@ bool GraphicsHigh::Init()
 
 	if (!InitGLEW()) { SDL_Log("GLEW_VERSION_4_3 FAILED"); return false; }
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
-	InitModelLists();
+	InitRenderLists();
 	if (!InitDeferred()) { ERRORMSG("INIT DEFERRED FAILED\n"); return false; }	
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	if (!InitForward()) { ERRORMSG("INIT FORWARD FAILED\n"); return false; }
@@ -165,12 +165,12 @@ bool GraphicsHigh::InitShaders()
 
 	return true;
 }
-void GraphicsHigh::InitModelLists()
+void GraphicsHigh::InitRenderLists()
 {
-	m_modelLists.push_back(&m_modelsDeferred);
-	m_modelLists.push_back(&m_modelsForward);
-	m_modelLists.push_back(&m_modelsViewspace);
-	m_modelLists.push_back(&m_modelsInterface);
+	m_renderLists.push_back(RenderList(RENDER_DEFERRED, &m_modelsDeferred, &m_deferredShader1));
+	m_renderLists.push_back(RenderList(RENDER_FORWARD, &m_modelsForward, &m_forwardShader));
+	m_renderLists.push_back(RenderList(RENDER_VIEWSPACE, &m_modelsViewspace, &m_viewspaceShader));
+	m_renderLists.push_back(RenderList(RENDER_INTERFACE, &m_modelsInterface, &m_interfaceShader));
 }
 bool GraphicsHigh::InitDeferred()
 {

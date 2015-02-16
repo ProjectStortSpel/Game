@@ -46,7 +46,7 @@ namespace Renderer
 		bool InitDeferred();
 		bool InitForward();
 		bool InitShaders();
-		void InitModelLists();
+		void InitRenderLists();
 		bool InitBuffers();
 		bool InitTextRenderer();
 		bool InitLightBuffers();

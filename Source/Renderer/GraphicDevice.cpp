@@ -134,7 +134,6 @@ bool GraphicDevice::InitSkybox()
 
 	return true;
 }
-
 #pragma endregion in the order they are initialized
 
 int GraphicDevice::AddFont(const std::string& filepath, int size)
@@ -298,9 +297,9 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 
 bool GraphicDevice::RemoveModel(int _id)
 {
-	for (int k = 0; k < m_modelLists.size(); k++)
+	for (int k = 0; k < m_renderLists.size(); k++)
 	{
-		std::vector<Model> *modelList = m_modelLists[k];
+		std::vector<Model> *modelList = m_renderLists[k].ModelList;
 		for (int i = 0; i < (*modelList).size(); i++)
 		{
 			for (int j = 0; j < (*modelList)[i].instances.size(); j++)
@@ -321,9 +320,9 @@ bool GraphicDevice::RemoveModel(int _id)
 
 bool GraphicDevice::ActiveModel(int _id, bool _active)
 {
-	for (int k = 0; k < m_modelLists.size(); k++)
+	for (int k = 0; k < m_renderLists.size(); k++)
 	{
-		std::vector<Model> *modelList = m_modelLists[k];
+		std::vector<Model> *modelList = m_renderLists[k].ModelList;
 		for (int i = 0; i < (*modelList).size(); i++)
 		{
 			for (int j = 0; j < (*modelList)[i].instances.size(); j++)
