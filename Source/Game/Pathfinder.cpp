@@ -352,10 +352,6 @@ std::vector<coord> Pathfinder::GeneratePath(coord start, coord goal, float &_tot
 
 void Pathfinder::DeleteMap()
 {
-	this->m_goalCoord = coord(0, 0);
-	this->m_mapSize = coord(0, 0);
-	this->m_potentialField = NULL;
-
 	for (int i = 0; i < this->m_mapSize.x; ++i)
 	{
 		if (this->m_mapData[i])
@@ -369,6 +365,10 @@ void Pathfinder::DeleteMap()
 		delete(this->m_mapData);
 		this->m_mapData = NULL;
 	}
+
+	this->m_goalCoord = coord(0, 0);
+	this->m_mapSize = coord(0, 0);
+	this->m_potentialField = NULL;
 }
 
 Pathfinder::~Pathfinder()
