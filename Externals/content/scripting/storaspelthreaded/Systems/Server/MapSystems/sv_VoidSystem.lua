@@ -65,6 +65,14 @@ VoidSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 								world:CreateComponentAndAddTo("UnitDead", units[i])
 							end
 							
+							--	Spawn rating entity
+						
+							local	unitDied	=	world:CreateNewEntity()
+							world:CreateComponentAndAddTo("UnitDied", unitDied)
+							world:GetComponent(unitDied, "UnitDied", "PlayerNumber"):SetInt(world:GetComponent(units[i], "PlayerNumber", 0):GetInt())
+							world:GetComponent(unitDied, "UnitDied", "X"):SetInt(voidX)
+							world:GetComponent(unitDied, "UnitDied", "Z"):SetInt(voidZ)
+							
 							--	Move the unit
 							if not world:EntityHasComponent(units[i], "LerpPosition") then
 								world:CreateComponentAndAddTo("LerpPosition", units[i])

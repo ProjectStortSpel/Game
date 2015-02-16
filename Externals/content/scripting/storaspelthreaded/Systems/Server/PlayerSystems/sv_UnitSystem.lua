@@ -42,6 +42,8 @@ end
 
 UnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 	
+	local mySeed = os.time() - 1418742000 -- dont ask
+	math.randomseed(mySeed)
 	for n = 1, #entities do
 		local entity = entities[n]
 		
@@ -61,9 +63,14 @@ UnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 			
 			local newEntityId = world:CreateNewEntity("Unit")
 			
-			world:SetComponent(newEntityId, "Model", "ModelName", "ply" .. playerNumber);
-			world:SetComponent(newEntityId, "Model", "ModelPath", "head");
+			world:SetComponent(newEntityId, "Model", "ModelName", "caveman");
+			world:SetComponent(newEntityId, "Model", "ModelPath", "caveman");
 			world:SetComponent(newEntityId, "Model", "RenderType", 0);
+			
+			local r = math.random()
+			local g = math.random()
+			local b = math.random()
+			world:GetComponent(newEntityId, "Color", "X"):SetFloat3(r, g, b)
 			
 			world:SetComponent(newEntityId, "PlayerNumber", "Number", playerNumber)
 			world:SetComponent(newEntityId, "PlayerEntityId", "Id", entity)

@@ -65,7 +65,7 @@ void ClientDatabase::Update(float dt)
 	m_client.Update(dt);
 }
 
-void ClientDatabase::AddToDatabase(int _port, bool _pwProtected)
+void ClientDatabase::AddToDatabase(const char* _name, int _port, bool _pwProtected)
 {
 	if (!m_connected)
 	{
@@ -77,6 +77,7 @@ void ClientDatabase::AddToDatabase(int _port, bool _pwProtected)
 	auto id = ph->StartPack("ADD_TO_DATABASE");
 	ph->WriteInt(id, _port);
 	ph->WriteByte(id, _pwProtected);
+	ph->WriteString(id, _name);
 	auto packet = ph->EndPack(id);
 	m_client.Send(packet);
 
@@ -164,6 +165,25 @@ void ClientDatabase::IncreaseMaxNoPlayers()
 	//m_client.Disconnect();
 
 }
+
+void ClientDatabase::SetMaxNoPlayers(int _maxPlayers)
+{
+	if (!m_connected)
+	{
+		Logger::GetInstance().Log("MasterServer", Info, "Tried to send \"MAX_PLAYER_COUNT_CHANGED\", but is not connected to MasterServer");
+		return;
+	}
+
+	auto ph = m_client.GetPacketHandler();
+	auto id = ph->StartPack("MAX_PLAYER_COUNT_CHANGED");
+	ph->WriteInt(id, _maxPlayers);
+	auto packet = ph->EndPack(id);
+	m_client.Send(packet);
+
+	//m_client.Disconnect();
+
+}
+
 
 void ClientDatabase::IncreaseNoPlayers()
 {

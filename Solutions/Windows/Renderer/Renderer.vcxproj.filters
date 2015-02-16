@@ -35,6 +35,9 @@
     <Filter Include="shaders\Animation">
       <UniqueIdentifier>{febeb057-91b1-4665-a3f2-b2a79f54923c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="shaders\ParticleShaders">
+      <UniqueIdentifier>{a07b3b2d-2595-43fe-9eee-cebc6259606d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Renderer\GraphicDevice.h">
@@ -73,7 +76,8 @@
     <ClInclude Include="..\..\..\Source\Renderer\GraphicsLow.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\Renderer\ParticleSystem.h">
+    <ClInclude Include="..\..\..\Source\Renderer\ParticleSystem.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\AModel.h">
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
@@ -112,6 +116,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Renderer\ParticleSystem.cpp">
+	  <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Renderer\AModel.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -184,6 +191,12 @@
     </None>
     <None Include="..\..\..\Externals\content\shaders\FSAnimationShader.glsl">
       <Filter>shaders\Animation</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\particleShaderFS.glsl">
+      <Filter>shaders\ParticleShaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\particleShaderVS.glsl">
+      <Filter>shaders\ParticleShaders</Filter>
     </None>
   </ItemGroup>
 </Project>

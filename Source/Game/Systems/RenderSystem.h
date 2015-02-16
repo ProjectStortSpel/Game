@@ -29,7 +29,8 @@ private:
 
 	unsigned int m_positionId, m_rotationId;
 	unsigned int m_scaleId;
-	unsigned int m_renderId, m_renderOffset;
+	unsigned int m_colorId;
+	unsigned int m_renderId, m_renderOffset, m_colorOffset;
 
 	unsigned int m_parentId;
 	unsigned int m_isparentId;

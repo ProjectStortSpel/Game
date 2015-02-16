@@ -19,6 +19,7 @@ GraphicDevice::GraphicDevice()
 	m_pointerToDirectionalLights = NULL;
 	m_numberOfPointlights = 0;
 	m_numberOfDirectionalLights = 0;
+	m_particleID = 0;
 }
 
 GraphicDevice::GraphicDevice(Camera _camera, int x, int y)
@@ -33,6 +34,7 @@ GraphicDevice::GraphicDevice(Camera _camera, int x, int y)
 	m_pointerToDirectionalLights = NULL;
 	m_numberOfPointlights = 0;
 	m_numberOfDirectionalLights = 0;
+	m_particleID = 0;
 }
 
 GraphicDevice::~GraphicDevice()
@@ -40,9 +42,9 @@ GraphicDevice::~GraphicDevice()
 	delete(m_skybox);
 	delete m_pointerToPointlights;
 
-	for (int i = 0; i < m_particleSystems.size(); i++)
+	for (std::map<int, ParticleSystem*>::iterator it = m_particleSystems.begin(); it != m_particleSystems.end(); ++it)
 	{
-		delete m_particleSystems[i];
+		delete(it->second);
 	}
 	m_particleSystems.clear();
 
@@ -191,4 +193,62 @@ struct sort_depth
 void GraphicDevice::SortModelsBasedOnDepth(std::vector<Model>* models)
 {
 	std::sort(models->begin(), models->end(), sort_depth());
+}
+
+void GraphicDevice::CreateParticleSystems()
+{
+	//glEnable(GL_POINT_SPRITE);
+	//m_particleSystems[m_particleID] = (new ParticleSystem("fire", vec3(11.0f, 0.55f, 8.0f), 100, 700, 0.05f, 0.6f, AddTexture("content/textures/firewhite.png", GL_TEXTURE1), vec3(0.8f, 0.f, 0.0f), &m_particleShader));
+	//m_particleID++;
+	//m_particleSystems.push_back(new ParticleSystem("smoke", vec3(11.0f, 0.0f, 9.0f), 15, 1800, 0.05f, 1.6f, AddTexture("content/textures/smoke1.png", GL_TEXTURE1), vec3(0.5f, 0.f, 0.f), &m_particleShader));
+	int tmpID;
+	
+	//AddParticleEffect("fire", vec3(11.0f, 0.55f, 8.0f), 100, 700, 0.05f, 0.6f, "content/textures/fire3.png", vec3(0.0f, 8.f, 0.0f), tmpID);
+
+	//AddParticleEffect("fire", vec3(8.0f, 0.55f, 8.0f), 100, 700, 0.05f, 0.6f, "content/textures/firewhite.png", vec3(0.8f, 0.f, 0.0f), tmpID);
+	//AddParticleEffect("fire", vec3(8.0f, 0.55f, 5.0f), 100, 700, 0.05f, 0.6f, "content/textures/smoke1.png", vec3(0.2f, 0.f, 1.0f), tmpID);
+	//AddParticleEffect("smoke", vec3(11.0f, 0.0f, 9.0f), 15, 1800, 0.05f, 1.6f, "content/textures/smoke1.png", vec3(0.0f, 0.f, 0.f), tmpID);
+}
+
+void GraphicDevice::AddParticleEffect(std::string _name, const vec3 _pos, int _nParticles, float _lifeTime, float _scale, float _spriteSize, std::string _texture, vec3 _color, int &_id)
+{
+	ParticleSystemToLoad tmpSystem;
+	tmpSystem.Name = _name;
+	tmpSystem.Pos = _pos;
+	tmpSystem.NrOfParticles = _nParticles;
+	tmpSystem.LifeTime = _lifeTime;
+	tmpSystem.Scale = _scale;
+	tmpSystem.SpriteSize = _spriteSize;
+	tmpSystem.TextureName = _texture;
+	tmpSystem.Color = _color;
+	tmpSystem.Id = m_particleID;
+
+	m_particleSystemsToLoad.push_back(tmpSystem);
+
+	_id = m_particleID; 
+	m_particleID++;
+}
+
+void GraphicDevice::RemoveParticleEffect(int _id)
+{
+	delete(m_particleSystems[_id]);
+	m_particleSystems.erase(_id);
+}
+
+void GraphicDevice::BufferParticleSystems()
+{
+	for (int i = 0; i < m_particleSystemsToLoad.size(); i++)
+	{
+		m_particleSystems.insert(std::pair<int, ParticleSystem*>(m_particleSystemsToLoad[i].Id,new ParticleSystem(
+			m_particleSystemsToLoad[i].Name,
+			m_particleSystemsToLoad[i].Pos,
+			m_particleSystemsToLoad[i].NrOfParticles,
+			m_particleSystemsToLoad[i].LifeTime,
+			m_particleSystemsToLoad[i].Scale,
+			m_particleSystemsToLoad[i].SpriteSize,
+			AddTexture(m_particleSystemsToLoad[i].TextureName, GL_TEXTURE1),
+			m_particleSystemsToLoad[i].Color,
+			&m_particleShader)));
+	}
+	m_particleSystemsToLoad.clear();
 }

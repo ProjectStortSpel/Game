@@ -16,6 +16,11 @@ void ModelSystem::Initialize()
 
 	SetEntitiesAddedTaskCount(1);
 
+	m_positionId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Position");
+	m_rotationId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Rotation");
+	m_scaleId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Scale");
+	m_colorId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Color");
+
 	AddComponentTypeToFilter("Model", ECSL::FilterType::Mandatory);
 	AddComponentTypeToFilter("Render", ECSL::FilterType::Excluded);
 
@@ -40,10 +45,43 @@ void ModelSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::ve
 		glm::mat4*	Matrix;
 		Matrix = (glm::mat4*)GetComponent(entityId, "Render", "Mat");
 		int* ModelId = (int*)GetComponent(entityId, "Render", "ModelId");
-		float* ColorStart = (float*)GetComponent(entityId, "Render", "ColorX");
-		ColorStart[0] = 0.0f;
-		ColorStart[1] = 0.0f;
-		ColorStart[2] = 0.0f;
-		*ModelId = m_graphics->LoadModel(ModelPath, ModelName, Matrix, RenderType, ColorStart);
+
+		//if (!HasComponent(entityId, m_positionId))
+		//{ 
+		//	CreateComponentAndAddTo("Position", entityId);
+		//	float* Position = (float*)GetComponent(entityId, "Position", "X");
+		//	Position[0] = 0.0f;
+		//	Position[1] = 0.0f;
+		//	Position[2] = 0.0f;
+		//}
+		//if (!HasComponent(entityId, m_rotationId))
+		//{
+		//	CreateComponentAndAddTo("Rotation", entityId);
+		//	float* Rotation = (float*)GetComponent(entityId, "Rotation", "X");
+		//	Rotation[0] = 0.0f;
+		//	Rotation[1] = 0.0f;
+		//	Rotation[2] = 0.0f;
+		//}
+		//if (!HasComponent(entityId, m_scaleId))
+		//{
+		//	CreateComponentAndAddTo("Scale", entityId);
+		//	float* Scale = (float*)GetComponent(entityId, "Scale", "X");
+		//	Scale[0] = 0.0f;
+		//	Scale[1] = 0.0f;
+		//	Scale[2] = 0.0f;
+		//}
+		//float* Color;
+		//if (!HasComponent(entityId, m_colorId))
+		//{ 
+		//	CreateComponentAndAddTo("Color", entityId);
+		//	float* Color = (float*)GetComponent(entityId, "Color", "X");
+		//	Color[0] = 0.0f;
+		//	Color[1] = 0.0f;
+		//	Color[2] = 0.0f;
+		//}
+
+		float* renderColor = (float*)GetComponent(entityId, "Render", "ColorX");
+
+		*ModelId = m_graphics->LoadModel(ModelPath, ModelName, Matrix, RenderType, renderColor);
 	}
 }

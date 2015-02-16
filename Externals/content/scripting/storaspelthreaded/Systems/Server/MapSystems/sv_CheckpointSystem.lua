@@ -14,15 +14,17 @@ CheckpointSystem.Initialize = function(self)
 	
 end
 
-CheckpointSystem.AddTotemPiece = function(self, playerNumber, checkpoint)
+CheckpointSystem.AddTotemPiece = function(self, playerNumber, checkpoint, colorX, colorY, colorZ)
 
 	local totemPieceId = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("AddTotemPiece", totemPieceId)
 	world:CreateComponentAndAddTo("PlayerNumber", totemPieceId)
 	world:CreateComponentAndAddTo("CheckpointId", totemPieceId)
-
+	world:CreateComponentAndAddTo("Color", totemPieceId)
+	
 	world:SetComponent(totemPieceId, "PlayerNumber", "Number", playerNumber)
 	world:SetComponent(totemPieceId, "CheckpointId", "Id", checkpoint)
+	world:GetComponent(totemPieceId, "Color", "X"):SetFloat3(colorX, colorY, colorZ)
 	
 end
 
@@ -65,7 +67,14 @@ CheckpointSystem.CheckCheckpoint = function(self, entityId, posX, posZ)
 				world:GetComponent(entityId, "TargetCheckpoint", "Id"):SetInt(targetCheckpoint+1)
 				world:GetComponent(entityId, "Spawnpoint", 0):SetInt2(tempX, tempZ)
 				local playerNum = world:GetComponent(entityId, "PlayerNumber", 0):GetInt()
-				self:AddTotemPiece(playerNum, targetCheckpoint)
+				local R, G, B = world:GetComponent(entityId, "Color", 0):GetFloat3()
+				self:AddTotemPiece(playerNum, targetCheckpoint, R, G, B)
+				
+				local	checkpointReached	=	world:CreateNewEntity()
+				world:CreateComponentAndAddTo("CheckpointReached", checkpointReached)
+				world:GetComponent(checkpointReached, "CheckpointReached", "CheckpointNumber"):SetInt(tempCheckpointId)
+				world:GetComponent(checkpointReached, "CheckpointReached", "PlayerNumber"):SetInt(playerNum)
+				
 				if targetCheckpoint+1 > #allCheckpoints then
 					self:HasReachedFinish(entityId)
 				end

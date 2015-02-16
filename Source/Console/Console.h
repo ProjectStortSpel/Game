@@ -75,6 +75,7 @@ namespace Console
 		
 		void ExecuteCommandQueue();
 		void AddToCommandQueue(const char* _command);
+		void AddToHistory(const char* _command);
 		void AddCommand(const char* _name, ConsoleHook _hook);
 		void RemoveCommand(const char* _name);
 		void ClearCommands();

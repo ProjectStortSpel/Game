@@ -15,6 +15,7 @@ class MasterServerSystem : public ECSL::System
 		IS_PASSWORD_PROTECTED,
 		SET_SERVER_PORT,
 		MAX_PLAYER_COUNT_INCREASED,
+		MAX_PLAYER_COUNT_CHANGED,
 		PLAYER_COUNT_INCREASED,
 		PLAYER_COUNT_DECREASED,
 		SPECTATOR_COUNT_INCREASED,
@@ -41,6 +42,8 @@ private:
 
 	std::vector<MASTER_SERVER_MESSAGES> m_mServerMessages;
 
+	std::string m_name;
+
 	int m_gameRunningId;
 	int m_oldGameRunningId;
 	
@@ -48,6 +51,7 @@ private:
 	bool m_serverStarted;
 	bool m_connect;
 	int m_port;
+	int m_maxPlayers;
 
 	float m_timeoutTimer;
 

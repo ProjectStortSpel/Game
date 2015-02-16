@@ -14,6 +14,7 @@ Author: Anders, Christian
 #include "ShadowMap.h"
 #include "TextRenderer.h"
 #include "ParticleSystem.h"
+#include "AModel.h"
 
 namespace Renderer
 {
@@ -26,17 +27,6 @@ namespace Renderer
 #define TEXTURE_DIFFUSE		0
 #define TEXTURE_NORMAL		1
 #define TEXTURE_SPECULAR	2
-
-	struct Joint
-	{
-		int parent;
-		glm::mat4 transform;
-		Joint(int _parent, glm::mat4 _transform)
-		{
-			parent = _parent;
-			transform = _transform;
-		}
-	};
 
 
 	struct Instance
@@ -85,30 +75,6 @@ namespace Renderer
 
 		std::vector<Instance> instances;
 	};
-	struct AModel
-	{
-		AModel(){}
-		AModel(int _id, bool _active, mat4* _model, Buffer* buffer, GLuint tex, GLuint nor, GLuint spe)
-		{
-			id = _id;
-			active = _active;
-			modelMatrix = _model;
-			bufferPtr = buffer;
-			texID = tex;
-			norID = nor;
-			speID = spe;
-		}
-		int id;
-		bool active;
-		mat4* modelMatrix;
-		Buffer* bufferPtr;
-		GLuint texID;
-		GLuint norID;
-		GLuint speID;
-
-		std::vector<Joint> joints;
-	};
-
 
 	struct GLTimerValue
 	{
@@ -128,6 +94,19 @@ namespace Renderer
 		glm::mat4* MatrixPtr;
 		int RenderType;
 		float* Color;
+	};
+
+	struct ParticleSystemToLoad
+	{
+		std::string Name;
+		vec3 Pos;
+		int NrOfParticles;
+		float LifeTime;
+		float Scale;
+		float SpriteSize;
+		std::string TextureName;
+		vec3 Color;
+		int Id;
 	};
 
 	class DECLSPEC GraphicDevice
@@ -181,6 +160,9 @@ namespace Renderer
 		int AddFont(const std::string& filepath, int size);
 		float CreateTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, glm::ivec2 size = glm::ivec2(-1, -1));
 		void CreateWrappedTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, unsigned int wrapLength, glm::ivec2 size = glm::ivec2(-1, -1));
+
+		void AddParticleEffect(std::string _name, const vec3 _pos, int _nParticles, float _lifeTime, float _scale, float _spriteSize, std::string _texture, vec3 _color, int &_id);
+		void RemoveParticleEffect(int _id);
 		
 	protected:
 		bool InitSkybox();
@@ -212,7 +194,9 @@ namespace Renderer
 		SkyBox *m_skybox;
 
 		// Particles
-		std::vector<ParticleSystem*> m_particleSystems;
+		std::map<int, ParticleSystem*> m_particleSystems;
+		int m_particleID;
+		std::vector<ParticleSystemToLoad> m_particleSystemsToLoad;
 
 		//// DEBUG variables ----
 		int m_debugTexFlag;
@@ -241,6 +225,11 @@ namespace Renderer
 		void SortModelsBasedOnDepth(std::vector<Model>* models);
 		
 		virtual void UpdateTextureIndex(GLuint newTexture, GLuint oldTexture) = 0;
+
+		void CreateParticleSystems();
+
+		void BufferParticleSystems();
+		
 	};
 }
 

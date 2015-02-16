@@ -40,6 +40,9 @@ public:
 	void ConnectClient(std::string _command, std::vector<Console::Argument>* _args);
 	void DisconnectClient(std::string _command, std::vector<Console::Argument>* _args);
 
+	void BroadcastChat(std::string _command, std::vector<Console::Argument>* _args);
+	void BroadcastAnnouncement(std::string _command, std::vector<Console::Argument>* _args);
+
 	void SetDebugTexture(std::string _command, std::vector<Console::Argument>* _args);
 
 	void SetTextColor(std::string _command, std::vector<Console::Argument>* _args);

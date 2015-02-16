@@ -41,6 +41,7 @@ GraphicsHigh::~GraphicsHigh()
 
 	glDeleteBuffers(1, &m_pointlightBuffer);
 	glDeleteBuffers(1, &m_dirLightBuffer);
+
 }
 
 bool GraphicsHigh::Init()
@@ -96,6 +97,7 @@ void GraphicsHigh::Update(float _dt)
 	BufferLightsToGPU();
 	BufferSurfaces();
 	BufferModelTextures();
+	BufferParticleSystems();
 }
 
 void GraphicsHigh::WriteShadowMapDepth()
@@ -120,6 +122,7 @@ void GraphicsHigh::WriteShadowMapDepth()
 	{
 		std::vector<mat4> MVPVector(m_modelsDeferred[i].instances.size());
 		std::vector<mat3> normalMatVector(m_modelsDeferred[i].instances.size());
+		std::vector<float> colors(m_modelsDeferred[i].instances.size()*4);
 
 		int nrOfInstances = 0;
 
@@ -140,7 +143,7 @@ void GraphicsHigh::WriteShadowMapDepth()
 			}
 		}
 
-		m_modelsDeferred[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector);
+		m_modelsDeferred[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector, &colors);
 	}
 
 	//------Forward------------------------------------
@@ -150,6 +153,7 @@ void GraphicsHigh::WriteShadowMapDepth()
 	{
 		std::vector<mat4> MVPVector(m_modelsForward[i].instances.size());
 		std::vector<mat3> normalMatVector(m_modelsForward[i].instances.size());
+		std::vector<float> colors(m_modelsForward[i].instances.size() * 4);
 
 		int nrOfInstances = 0;
 
@@ -172,7 +176,7 @@ void GraphicsHigh::WriteShadowMapDepth()
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
 
-		m_modelsForward[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector);
+		m_modelsForward[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector, &colors);
 	}
 	//------------------------------------------------
 
@@ -213,6 +217,7 @@ void GraphicsHigh::Render()
 	{
 		std::vector<mat4> MVPVector(m_modelsDeferred[i].instances.size());
 		std::vector<mat3> normalMatVector(m_modelsDeferred[i].instances.size());
+		std::vector<float> colors(m_modelsDeferred[i].instances.size()*4);
 
 		int nrOfInstances = 0;
 
@@ -235,7 +240,12 @@ void GraphicsHigh::Render()
 				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
 				normalMatVector[nrOfInstances] = normalMatrix;
 
-				m_deferredShader1.SetUniVariable("BlendColor", vector3, m_modelsDeferred[i].instances[j].color);
+				//m_deferredShader1.SetUniVariable("BlendColor", vector3, m_modelsDeferred[i].instances[j].color);
+
+				colors[4*nrOfInstances+0] = m_modelsDeferred[i].instances[j].color[0];
+				colors[4*nrOfInstances+1] = m_modelsDeferred[i].instances[j].color[1];
+				colors[4*nrOfInstances+2] = m_modelsDeferred[i].instances[j].color[2];
+				colors[4*nrOfInstances+3] = 0.f;
 
 				nrOfInstances++;
 			}
@@ -251,8 +261,72 @@ void GraphicsHigh::Render()
 		glBindTexture(GL_TEXTURE_2D, m_modelsDeferred[i].speID);
 
 		//m_modelsDeferred[i].bufferPtr->draw();
-		m_modelsDeferred[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector);
+		m_modelsDeferred[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector, &colors);
 		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+
+
+	// ---- ANIMATED DEFERED
+	m_animationShader.UseProgram();
+	
+	m_animationShader.SetUniVariable("TexFlag", glint, &m_debugTexFlag);
+	
+	//------Render scene (for deferred)
+	//-- DRAW MODELS
+	for (int i = 0; i < m_modelsAnimated.size(); i++)
+	{
+		if (m_modelsAnimated[i].active) // IS MODEL ACTIVE?
+		{
+			mat4 modelMatrix;
+			if (m_modelsAnimated[i].modelMatrix == NULL)
+				modelMatrix = glm::translate(glm::vec3(1));
+			else
+				modelMatrix = *m_modelsAnimated[i].modelMatrix;
+	
+			mat4 vp = projectionMatrix * viewMatrix;
+			mat4 modelViewMatrix = modelMatrix;
+			mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
+			//m_animationShader.SetUniVariable("BlendColor", vector3, m_modelsAnimated[i].color);
+	
+			m_animationShader.SetUniVariable("M", mat4x4, &modelViewMatrix);
+			m_animationShader.SetUniVariable("VP", mat4x4, &vp);
+			m_animationShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
+	
+	
+	
+	
+			float *joint_data = new float[m_modelsAnimated[i].joints.size() * 16];
+			
+			for (int j = 0; j < m_modelsAnimated[i].joints.size(); j++)
+			{
+				memcpy(&joint_data[16 * j], &m_modelsAnimated[i].joints[j], 16 * sizeof(float));
+			}
+			
+			int joint_data_size = 16 * m_modelsAnimated[i].joints.size() * sizeof(float);
+			
+			glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 1, m_modelsAnimated[i].jointBuffer, 0, joint_data_size);
+			glBufferData(GL_SHADER_STORAGE_BUFFER, joint_data_size, joint_data, GL_STATIC_DRAW);
+			
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_modelsAnimated[i].jointBuffer);
+	
+			delete joint_data;
+	
+	
+
+	
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, m_modelsAnimated[i].texID);
+	
+			glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, m_modelsAnimated[i].norID);
+	
+			glActiveTexture(GL_TEXTURE3);
+			glBindTexture(GL_TEXTURE_2D, m_modelsAnimated[i].speID);
+	
+			m_modelsAnimated[i].bufferPtr->draw();
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
 	}
 
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
@@ -324,6 +398,7 @@ void GraphicsHigh::Render()
 	{
 		std::vector<mat4> modelViewVector(m_modelsForward[i].instances.size());
 		std::vector<mat3> normalMatVector(m_modelsForward[i].instances.size());
+		std::vector<float> colors(m_modelsForward[i].instances.size() * 4);
 
 		int nrOfInstances = 0;
 
@@ -345,7 +420,12 @@ void GraphicsHigh::Render()
 				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
 				normalMatVector[nrOfInstances] = normalMatrix;
 
-				m_forwardShader.SetUniVariable("BlendColor", vector3, m_modelsForward[i].instances[j].color);
+				//m_forwardShader.SetUniVariable("BlendColor", vector3, m_modelsForward[i].instances[j].color);
+
+				colors[4 * nrOfInstances + 0] = m_modelsForward[i].instances[j].color[0];
+				colors[4 * nrOfInstances + 1] = m_modelsForward[i].instances[j].color[1];
+				colors[4 * nrOfInstances + 2] = m_modelsForward[i].instances[j].color[2];
+				colors[4 * nrOfInstances + 3] = 0.f;
 
 				nrOfInstances++;
 			}
@@ -360,7 +440,7 @@ void GraphicsHigh::Render()
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].speID);
 
-		m_modelsForward[i].bufferPtr->drawInstanced(0, m_modelsForward[i].instances.size(), &modelViewVector, &normalMatVector);
+		m_modelsForward[i].bufferPtr->drawInstanced(0, m_modelsForward[i].instances.size(), &modelViewVector, &normalMatVector, &colors);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
@@ -374,23 +454,22 @@ void GraphicsHigh::Render()
 	m_particleShader.UseProgram();
 
 	m_particleShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
-	//glUniformMatrix4fv(glGetUniformLocation(particleShaderProgHandle, "ProjectionMatrix"), 1, GL_FALSE, &mCameraProjectionMat[0][0]);
 
 	glActiveTexture(GL_TEXTURE1);
 
-	for (int i = 0; i < m_particleSystems.size(); i++)
+	for (std::map<int, ParticleSystem*>::iterator it = m_particleSystems.begin(); it != m_particleSystems.end(); ++it)
 	{
-		glBindTexture(GL_TEXTURE_2D, m_particleSystems[i]->GetTexHandle());
+		glBindTexture(GL_TEXTURE_2D, it->second->GetTexHandle());
 
-		mat4 Model = glm::translate(m_particleSystems[i]->GetWorldPos());
+		mat4 Model = glm::translate(it->second->GetWorldPos());
 		mat4 ModelView = viewMatrix * Model;
 
 		m_particleShader.SetUniVariable("ModelView", mat4x4, &ModelView);
-		//GLuint location = glGetUniformLocation(m_particleSystems, "ModelView");	//gets the UniformLocation
-		//if (location >= 0){ glUniformMatrix4fv(location, 1, GL_FALSE, &ModelView[0][0]); }
+		m_particleShader.SetUniVariable("BlendColor", vector3, it->second->GetColor());
 
-		m_particleSystems[i]->Render(m_dt);
+		it->second->Render(m_dt);
 	}
+
 	glDisable(GL_POINT_SPRITE);
 	glDepthMask(GL_TRUE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -408,6 +487,7 @@ void GraphicsHigh::Render()
 	{
 		std::vector<mat4> modelViewVector(m_modelsViewspace[i].instances.size());
 		std::vector<mat3> normalMatVector(m_modelsViewspace[i].instances.size());
+		std::vector<float> colors(m_modelsViewspace[i].instances.size() * 4);
 
 		int nrOfInstances = 0;
 
@@ -429,6 +509,11 @@ void GraphicsHigh::Render()
 				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
 				normalMatVector[nrOfInstances] = normalMatrix;
 
+				colors[4 * nrOfInstances + 0] = m_modelsViewspace[i].instances[j].color[0];
+				colors[4 * nrOfInstances + 1] = m_modelsViewspace[i].instances[j].color[1];
+				colors[4 * nrOfInstances + 2] = m_modelsViewspace[i].instances[j].color[2];
+				colors[4 * nrOfInstances + 3] = 0.f;
+
 				nrOfInstances++;
 			}
 		}
@@ -442,7 +527,7 @@ void GraphicsHigh::Render()
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_2D, m_modelsViewspace[i].speID);
 
-		m_modelsViewspace[i].bufferPtr->drawInstanced(0, m_modelsViewspace[i].instances.size(), &modelViewVector, &normalMatVector);
+		m_modelsViewspace[i].bufferPtr->drawInstanced(0, m_modelsViewspace[i].instances.size(), &modelViewVector, &normalMatVector, &colors);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
@@ -456,6 +541,7 @@ void GraphicsHigh::Render()
 	{
 		std::vector<mat4> modelViewVector(m_modelsInterface[i].instances.size());
 		std::vector<mat3> normalMatVector(m_modelsInterface[i].instances.size());
+		std::vector<float> colors(m_modelsInterface[i].instances.size() * 4);
 
 		int nrOfInstances = 0;
 
@@ -476,6 +562,11 @@ void GraphicsHigh::Render()
 				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
 				normalMatVector[nrOfInstances] = normalMatrix;
 
+				colors[4 * nrOfInstances + 0] = m_modelsInterface[i].instances[j].color[0];
+				colors[4 * nrOfInstances + 1] = m_modelsInterface[i].instances[j].color[1];
+				colors[4 * nrOfInstances + 2] = m_modelsInterface[i].instances[j].color[2];
+				colors[4 * nrOfInstances + 3] = 0.f;
+
 				nrOfInstances++;
 			}
 		}
@@ -483,7 +574,7 @@ void GraphicsHigh::Render()
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, m_modelsInterface[i].texID);
 
-		m_modelsInterface[i].bufferPtr->drawInstanced(0, m_modelsInterface[i].instances.size(), &modelViewVector, &normalMatVector);
+		m_modelsInterface[i].bufferPtr->drawInstanced(0, m_modelsInterface[i].instances.size(), &modelViewVector, &normalMatVector, &colors);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
@@ -758,7 +849,7 @@ bool GraphicsHigh::InitLightBuffers()
 
 	for (int i = 0; i < 10; i++)
 		m_lightDefaults[i] = 0.0;		//init 0.0
-	
+
 	if (m_pointlightBuffer < 0)
 		return false;
 
@@ -862,13 +953,6 @@ void GraphicsHigh::CreateShadowMap()
 	m_vramUsage += (resolution*resolution*sizeof(float));
 }
 
-void GraphicsHigh::CreateParticleSystems()
-{
-	//glEnable(GL_POINT_SPRITE);
-	//m_particleSystems.push_back(new ParticleSystem("fire", vec3(1.f, 0.55f, 1.f), 100, 700, 0.6f, AddTexture("content/textures/fire3.png", GL_TEXTURE1), &m_particleShader));
-	m_particleSystems.push_back(new ParticleSystem("smoke", vec3(11.0f, 0.0f, 9.0f), 15, 1800, 1.6f, AddTexture("content/textures/smoke1.png", GL_TEXTURE1), &m_particleShader));
-}
-
 bool GraphicsHigh::InitTextRenderer()
 {
 	int texSizeX, texSizeY;
@@ -918,11 +1002,11 @@ void GraphicsHigh::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 {
 	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
 
-	if (obj.animated)
-	{
-		BufferAModel(_modelId, _modelToLoad);
-		return;
-	}
+	//if (obj.animated)
+	//{
+	//	BufferAModel(_modelId, _modelToLoad);
+	//	return;
+	//}
 
 	Shader *shaderPtr = NULL;
 	std::vector<Model> *modelList = NULL;
@@ -1016,11 +1100,18 @@ void GraphicsHigh::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 	// Import Skeleton
 	std::vector<JointData> joints = ModelLoader::importJoints(obj.joints);
 
-	AModel model = AModel(_modelId, true, _modelToLoad->MatrixPtr, mesh, texture, normal, specular);
+	AModel model = AModel(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color, mesh, texture, normal, specular);
 
 	// Add skeleton
 	for (int i = 0; i < joints.size(); i++)
-		model.joints.push_back(Joint(joints[i].parent, joints[i].transform));
+		model.joints.push_back(Joint(
+		joints[i].x0, joints[i].y0, joints[i].z0, joints[i].w0,
+		joints[i].x1, joints[i].y1, joints[i].z1, joints[i].w1,
+		joints[i].x2, joints[i].y2, joints[i].z2, joints[i].w2,
+		joints[i].x3, joints[i].y3, joints[i].z3, joints[i].parent)
+		);//joints[i].transform));
+
+	glGenBuffers(1, &model.jointBuffer);
 
 	//for the matrices (modelView + normal)
 	m_vramUsage += (16 + 9) * sizeof(float);
@@ -1180,8 +1271,8 @@ Buffer* GraphicsHigh::AddMesh(std::string _fileDir, Shader *_shaderProg, bool an
 		{ 2, 3, GL_FLOAT, (const GLvoid*)tanData.data(), static_cast<GLsizeiptr>(tanData.size()   * sizeof(float)) },
 		{ 3, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), static_cast<GLsizeiptr>(bitanData.size()   * sizeof(float)) },
 		{ 4, 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), static_cast<GLsizeiptr>(texCoordData.size() * sizeof(float)) },
-		{ 5, 5, GL_FLOAT, (const GLvoid*)jointIndexData.data(), static_cast<GLsizeiptr>(jointIndexData.size()   * sizeof(float)) },
-		{ 6, 5, GL_FLOAT, (const GLvoid*)jointWeightData.data(), static_cast<GLsizeiptr>(jointWeightData.size() * sizeof(float)) }
+		{ 5, 4, GL_FLOAT, (const GLvoid*)jointIndexData.data(), static_cast<GLsizeiptr>(jointIndexData.size()   * sizeof(float)) },
+		{ 6, 4, GL_FLOAT, (const GLvoid*)jointWeightData.data(), static_cast<GLsizeiptr>(jointWeightData.size() * sizeof(float)) }
 	};
 
 	int test = sizeof(bufferData) / sizeof(bufferData[0]);
@@ -1192,6 +1283,8 @@ Buffer* GraphicsHigh::AddMesh(std::string _fileDir, Shader *_shaderProg, bool an
 	int bufferDatas = sizeof(bufferData) / sizeof(bufferData[0]);
 	if (animated == false)
 		bufferDatas -= 2;
+	else
+		int hej = 0;
 	retbuffer->init(bufferData, bufferDatas);
 	retbuffer->setCount((int)positionData.size() / 3);
 	

@@ -11,6 +11,26 @@ FlowingWaterSystem.Initialize = function ( self )
 	self:AddComponentTypeToFilter("River", FilterType.Mandatory)
 end
 
+FlowingWaterSystem.PostInitialize = function ( self )
+
+	local newEntityId = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("Model", newEntityId)
+	world:CreateComponentAndAddTo("Rotation", newEntityId)
+	world:CreateComponentAndAddTo("Position", newEntityId)
+	world:CreateComponentAndAddTo("Scale", newEntityId)
+	local rotation = world:GetComponent(newEntityId, "Rotation", 0)
+	local position = world:GetComponent(newEntityId, "Position", 0)
+	local scale = world:GetComponent(newEntityId, "Scale", 0)
+	rotation:SetFloat3(0, 0, 0)
+	position:SetFloat3(0, 0, 0)
+	scale:SetFloat3(1, 1, 1)
+	
+	world:SetComponent(newEntityId, "Model", "ModelName", "island");
+	world:SetComponent(newEntityId, "Model", "ModelPath", "island");
+	world:SetComponent(newEntityId, "Model", "RenderType", 0);
+
+end
+
 FlowingWaterSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 	
 	for i = 1, #entities do

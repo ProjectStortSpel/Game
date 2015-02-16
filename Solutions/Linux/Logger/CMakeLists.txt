@@ -11,9 +11,9 @@ file(GLOB_RECURSE LOGGER_SRC_FILES
 add_library(Logger SHARED ${LOGGER_SRC_FILES})
 
 # Add subprojects
-#if(NOT TARGET Console)
-#add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Console" Console)
-#endif()
+if(NOT TARGET FileSystem)
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../FileSystem" FileSystem)
+endif()
 #if(NOT TARGET Input)
 #add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Input" Input)
 #endif()
@@ -30,7 +30,8 @@ add_library(Logger SHARED ${LOGGER_SRC_FILES})
 #add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Renderer" Renderer)
 #endif()
 # Link subproject shared libraries
-#target_link_libraries(Logger)
+target_link_libraries(Logger
+					  FileSystem)
 
 if(WIN32)
   # Include directories

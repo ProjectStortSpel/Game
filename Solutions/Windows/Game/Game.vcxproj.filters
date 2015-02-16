@@ -81,6 +81,9 @@
     <Filter Include="Lua Bridge\AI">
       <UniqueIdentifier>{da0118cc-0c08-431a-bc61-bda3765bbb18}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Systems\ParticleSystem">
+      <UniqueIdentifier>{b9d97fa0-3180-4175-bdbb-35be7ebbf5f7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\LuaBridge.cpp">
@@ -239,6 +242,9 @@
     <ClCompile Include="..\..\..\Source\Game\Systems\AddTextToTextureSystem.cpp">
       <Filter>Game\Systems\Render</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\ParticleSystem.cpp">
+      <Filter>Game\Systems\ParticleSystem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h">
@@ -393,6 +399,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\AddTextToTextureSystem.h">
       <Filter>Game\Systems\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\ParticleSystem.h">
+      <Filter>Game\Systems\ParticleSystem</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
