@@ -42,8 +42,6 @@ StartNewRoundSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, ent
 				--break	-- To make sure this is run only once.
 				
 				self.CurrentRound = self.CurrentRound + 1
-				--print("------------- Round --------------")
-				--print()
 				io.write("\n-------------------------- Round ", self.CurrentRound, " -------------------------\n")
 				
 			elseif not world:GetComponent(entity, "NotifyStartNewRound", "IsAI"):GetBool(0) then

@@ -15,6 +15,7 @@ Author: Anders, Christian
 #include "TextRenderer.h"
 #include "ParticleSystem.h"
 #include "AModel.h"
+#include "Model.h"
 
 namespace Renderer
 {
@@ -27,54 +28,6 @@ namespace Renderer
 #define TEXTURE_DIFFUSE		0
 #define TEXTURE_NORMAL		1
 #define TEXTURE_SPECULAR	2
-
-
-	struct Instance
-	{
-		int id;
-		bool active;
-		bool viewspace;
-		mat4* modelMatrix;
-		float* color;
-
-		Instance(){}
-		Instance(int _id, bool _active, mat4* _model, float* _color)
-		{
-			id = _id;
-			active = _active;
-			modelMatrix = _model;
-			color = _color;
-		}
-	};
-
-	struct Model
-	{
-		bool operator== (const Model &m) { return Compare(m); }
-		bool operator!= (const Model &m) { return !Compare(m); }
-
-		Model(){}
-		Model(Buffer* buffer, GLuint tex, GLuint nor, GLuint spe)
-		{
-			bufferPtr = buffer;
-			texID = tex;
-			norID = nor;
-			speID = spe;
-		}
-		bool Compare(Model m)
-		{
-			if (texID != m.texID) return false;
-			if (bufferPtr != m.bufferPtr) return false;
-			if (speID != m.speID) return false;
-			if (norID != m.norID) return false;
-			return true;
-		}
-		Buffer* bufferPtr;
-		GLuint texID;
-		GLuint norID;
-		GLuint speID;
-
-		std::vector<Instance> instances;
-	};
 
 	struct GLTimerValue
 	{
@@ -142,7 +95,7 @@ namespace Renderer
 		void GetWindowPos(int &x, int &y);
 
 		// MODELLOADER
-		virtual int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED, float* _color = nullptr){ return 0; };// = 0;
+		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED, float* _color = nullptr);
 		virtual bool RemoveModel(int _id){ return false; };// = 0;
 		virtual bool ActiveModel(int _id, bool _active){ return false; };// = 0;
 		virtual bool ChangeModelTexture(int _id, std::string _fileDir, int _textureType = TEXTURE_DIFFUSE){ m_modelTextures.push_back({ _id, _fileDir, _textureType }); return false; };// = 0;
@@ -165,9 +118,13 @@ namespace Renderer
 		void RemoveParticleEffect(int _id);
 		
 	protected:
+		bool InitSDLWindow(int _width = 1280, int _height = 720);
 		bool InitSkybox();
 		virtual void BufferModels() { return; } // = 0;
 		virtual void BufferModel(int _modelId, ModelToLoad* _modelToLoad) { return; } // = 0;
+
+		//MODEL LOADER
+		int m_modelIDcounter;
 
 		SDL_Window*		m_window;
 		SDL_GLContext	m_glContext;
