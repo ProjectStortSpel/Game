@@ -38,9 +38,6 @@ namespace Renderer
 		
 		void Clear();
 		
-	protected:
-		void UpdateTextureIndex(GLuint newTexture, GLuint oldTexture);
-		
 	private:
 		bool InitGLEW();
 		bool InitDeferred();
@@ -58,9 +55,7 @@ namespace Renderer
 		void BufferLightsToGPU();
 		void CreateShadowMap();
 
-		void BufferModels();
-		void BufferModel(int _modelId, ModelToLoad* _modelToLoad);
-		void BufferAModel(int _modelId, ModelToLoad* _modelToLoad);
+		//void BufferAModel(int _modelId, ModelToLoad* _modelToLoad);
 
 		//holds the reset values for lights
 		float m_lightDefaults[19];
@@ -106,14 +101,8 @@ namespace Renderer
 		// DEBUG variables ----
 		int m_nrOfLights; // lol
 
-		// Meshs
-		std::map<const std::string, Buffer*> m_meshs;
-		Buffer* AddMesh(std::string _fileDir, Shader *_shaderProg, bool animated);
-
 		// Random Vertors
 		GLuint m_randomVectors;
-		
-		bool BufferModelTexture(int _id, std::string _fileDir, int _textureType = TEXTURE_DIFFUSE);
 	};
 }
 

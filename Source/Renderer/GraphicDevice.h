@@ -61,6 +61,13 @@ namespace Renderer
 		float* Color;
 	};
 
+	struct ModelTexture
+	{
+		int id;
+		std::string textureName;
+		int textureType;
+	};
+
 	struct ParticleSystemToLoad
 	{
 		std::string Name;
@@ -133,8 +140,17 @@ namespace Renderer
 		virtual void InitRenderLists() { return; }
 		bool InitSDLWindow(int _width = 1280, int _height = 720);
 		bool InitSkybox();
-		virtual void BufferModels() { return; } // = 0;
-		virtual void BufferModel(int _modelId, ModelToLoad* _modelToLoad) { return; } // = 0;
+		void BufferModels();
+		void BufferModel(int _modelId, ModelToLoad* _modelToLoad);
+
+		std::vector<ModelTexture> m_modelTextures;
+		void BufferModelTextures();
+		bool BufferModelTexture(int _id, std::string _fileDir, int _textureType = TEXTURE_DIFFUSE);
+
+		void UpdateTextureIndex(GLuint newTexture, GLuint oldTexture);
+		// Meshs
+		std::map<const std::string, Buffer*> m_meshs;
+		Buffer* AddMesh(std::string _fileDir, Shader *_shaderProg, bool animated);
 
 		//modellists
 		std::vector<RenderList> m_renderLists;
@@ -184,21 +200,9 @@ namespace Renderer
 		
 		std::vector<std::pair<std::string, SDL_Surface*>> m_surfaces;
 		void BufferSurfaces();
-		
-		struct ModelTexture
-		{
-			int id;
-			std::string textureName;
-			int textureType;
-		};
-		std::vector<ModelTexture> m_modelTextures;
-		void BufferModelTextures();
-		virtual bool BufferModelTexture(int _id, std::string _fileDir, int _textureType) = 0;
-		
+
 		void SortModelsBasedOnDepth(std::vector<Model>* models);
 		
-		virtual void UpdateTextureIndex(GLuint newTexture, GLuint oldTexture) = 0;
-
 		void CreateParticleSystems();
 
 		void BufferParticleSystems();
