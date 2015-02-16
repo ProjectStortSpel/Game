@@ -38,6 +38,9 @@
     <Filter Include="shaders\ParticleShaders">
       <UniqueIdentifier>{a07b3b2d-2595-43fe-9eee-cebc6259606d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Model">
+      <UniqueIdentifier>{0cbc476f-92ea-4f30-8040-4dded9929c3c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Renderer\GraphicDevice.h">
@@ -78,7 +81,10 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Renderer\ParticleSystem.h" />
     <ClInclude Include="..\..\..\Source\Renderer\AModel.h">
-      <Filter>Source</Filter>
+      <Filter>Source\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\Model.h">
+      <Filter>Source\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -116,10 +122,13 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Renderer\ParticleSystem.cpp">
-	  <Filter>Source</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Renderer\AModel.cpp">
-      <Filter>Source</Filter>
+      <Filter>Source\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Renderer\Model.cpp">
+      <Filter>Source\Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
