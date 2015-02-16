@@ -72,6 +72,7 @@ TotemPoleSystem.AddTotemPiece = function(self, currentPlayerNumber, totemPoleId,
 	world:SetComponent(totemPiece, "Model", "RenderType", 0)
 
 	world:GetComponent(totemPiece, "Color", "X"):SetFloat3(R, G, B)
+
 end
 
 TotemPoleSystem.CreateTotemPole = function(self, totemCheckpointNumber, tX, tZ)

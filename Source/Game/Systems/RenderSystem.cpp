@@ -150,7 +150,7 @@ void RenderSystem::UpdateMatrix(unsigned int _entityId)
 	}
 	else
 	{
-		renderColor[0] = 1;
+		renderColor[0] = 0;
 		renderColor[1] = 0;
 		renderColor[2] = 0;
 	}
