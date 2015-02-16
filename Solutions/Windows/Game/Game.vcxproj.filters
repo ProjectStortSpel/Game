@@ -245,6 +245,9 @@
     <ClCompile Include="..\..\..\Source\Game\Systems\ParticleSystem.cpp">
       <Filter>Game\Systems\ParticleSystem</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\AI\LuaPermutations.cpp">
+      <Filter>Lua Bridge\AI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h">
@@ -402,6 +405,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\ParticleSystem.h">
       <Filter>Game\Systems\ParticleSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\AI\LuaPermutations.h">
+      <Filter>Lua Bridge\AI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
