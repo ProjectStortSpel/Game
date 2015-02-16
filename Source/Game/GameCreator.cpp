@@ -14,6 +14,7 @@
 #include "Systems/MasterServerSystem.h"
 #include "Systems/SlerpRotationSystem.h"
 #include "Systems/AddTextToTextureSystem.h"
+#include "Systems/ParticleSystem.h"
 
 #include "Network/NetworkInstance.h"
 #include "ECSL/ECSL.h"
@@ -401,6 +402,11 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
         worldCreator.AddSystemToCurrentGroup<ResetChangedSystem>();
     }
 
+	graphicalSystem = new ParticleSystem(m_graphics);
+	m_graphicalSystems.push_back(graphicalSystem);
+	worldCreator.AddSystemGroup();
+	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
+
     if (_worldType == WorldType::Client)
     {
         m_clientWorld = worldCreator.CreateWorld(1000);
@@ -417,6 +423,7 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
         m_serverWorld->PostInitializeSystems();
 		LuaEmbedder::CollectGarbageFull();
     }
+
 	if (!m_clientWorldProfiler)
 		m_clientWorldProfiler = new Profilers::ECSLProfiler(m_graphics);
 	if (!m_serverWorldProfiler)

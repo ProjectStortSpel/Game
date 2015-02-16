@@ -58,10 +58,6 @@ PickBoxSystem.Update = function(self, dt, taskIndex, taskCount)
 			if hitX > X-halfwidth and hitX < X+halfwidth then
 				if hitY > Y-halfheight and hitY < Y+halfheight then
 						hit = true
-						print("Cursor X: " .. rX .. " Y: " .. rY)
-						print("Hit entity: " .. entity) 
-						print("Position X: " .. X .. " Y: " .. Y .. " Z: " .. Z)
-						print("Scale X: " .. sX .. " Y: " .. sY .. " Z: " .. sZ)
 						newhit = entity
 						t = Z
 				end

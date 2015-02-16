@@ -4,7 +4,8 @@ require "sv_StageSystem"
 
 --	Map Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/MapSystems/?.lua"
-require "sv_MapGenerator"
+require "sv_NewMapGenerator"
+require "sv_MapRaterSystem"
 --require "sv_CreateMapSystem"
 require "sv_RiverSystem"
 require "sv_VoidSystem"
@@ -89,6 +90,7 @@ require "sv_HostSettingsSystem"
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(StageSystem)
 worldCreator:AddSystemToCurrentGroup(MapGenerator)
+worldCreator:AddSystemToCurrentGroup(MapRater)
 worldCreator:AddSystemToCurrentGroup(RiverSystem)
 worldCreator:AddSystemToCurrentGroup(VoidSystem)
 worldCreator:AddSystemToCurrentGroup(CheckpointSystem)
@@ -98,14 +100,14 @@ worldCreator:AddSystemToCurrentGroup(UnitSystem)
 worldCreator:AddSystemToCurrentGroup(AddAISystem)
 worldCreator:AddSystemToCurrentGroup(AICardPickingSystem)
 worldCreator:AddSystemToCurrentGroup(PostMoveSystem)
---worldCreator:AddSystemGroup() << TEMP 1
+
 worldCreator:AddSystemToCurrentGroup(TestMoveSystem)
 worldCreator:AddSystemToCurrentGroup(TestMoveRiverSystem)
 
 
 worldCreator:AddSystemToCurrentGroup(CreateDeckSystem)
 worldCreator:AddSystemToCurrentGroup(AddCardPickTimer)
-worldCreator:AddSystemGroup()
+--worldCreator:AddSystemGroup() << TEMP REMOVE
 worldCreator:AddSystemToCurrentGroup(SetCardPickTimer)
 worldCreator:AddSystemToCurrentGroup(UpdateCardPickTimer)
 worldCreator:AddSystemToCurrentGroup(CreateCardPickTimer)
