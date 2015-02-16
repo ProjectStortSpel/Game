@@ -159,6 +159,11 @@ void ConsoleManager::AddToCommandQueue(const char* _command)
 	m_commandQueue.push(_command);
 }
 
+void ConsoleManager::AddToHistory(const char* _command)
+{
+	AddMessage(_command);
+	//m_history.push_back(_command);
+}
 
 void ConsoleManager::ExecuteCommand(const char* _command)
 {

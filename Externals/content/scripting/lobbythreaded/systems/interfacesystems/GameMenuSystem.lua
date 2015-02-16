@@ -94,5 +94,4 @@ end
 
 
 GameMenuSystem.PostInitialize = function(self)
-
 end

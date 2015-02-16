@@ -14,6 +14,7 @@ namespace LuaBridge
 	int ExecuteCommand(lua_State* L);
 	int AddToCommandQueue(lua_State* L);
 	int AddCommand(lua_State* L);
+	int AddToHistory(lua_State* L);
 
 	int RemoveCommand(lua_State* L);
 	int ClearCommands(lua_State* L);
@@ -26,6 +27,7 @@ namespace LuaBridge
 
 	  LuaEmbedder::AddFunction(L, "ExecuteCommand", &ExecuteCommand, "Console");
 	  LuaEmbedder::AddFunction(L, "AddToCommandQueue", &AddToCommandQueue, "Console");
+	  LuaEmbedder::AddFunction(L, "AddToHistory", &AddToHistory, "Console");
 
 	  LuaEmbedder::AddFunction(L, "AddCommand", &AddCommand, "Console");
 
@@ -58,6 +60,12 @@ namespace LuaBridge
 	int AddToCommandQueue(lua_State* L)
 	{
 		Console::ConsoleManager::GetInstance().AddToCommandQueue(LuaEmbedder::PullString(L, 1).c_str());
+		return 0;
+	}
+
+	int AddToHistory(lua_State* L)
+	{
+		Console::ConsoleManager::GetInstance().AddToHistory(LuaEmbedder::PullString(L, 1).c_str());
 		return 0;
 	}
 

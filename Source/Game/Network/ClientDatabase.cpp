@@ -9,7 +9,7 @@ ClientDatabase& ClientDatabase::GetInstance()
 }
 
 ClientDatabase::ClientDatabase()
-	:m_ipAddress("127.0.0.1"), m_password("DefaultMasterPassword"), m_remotePort(5509), m_localPort(0), m_connected(false), m_tryConnect(true)
+	:m_ipAddress("194.47.150.44"), m_password("DefaultMasterPassword"), m_remotePort(5509), m_localPort(0), m_connected(false), m_tryConnect(true)
 {
 	Logger::GetInstance().AddGroup("MasterServer", false);
 
@@ -75,9 +75,9 @@ void ClientDatabase::AddToDatabase(const char* _name, int _port, bool _pwProtect
 
 	auto ph = m_client.GetPacketHandler();
 	auto id = ph->StartPack("ADD_TO_DATABASE");
-	ph->WriteString(id, _name);
 	ph->WriteInt(id, _port);
 	ph->WriteByte(id, _pwProtected);
+	ph->WriteString(id, _name);
 	auto packet = ph->EndPack(id);
 	m_client.Send(packet);
 
@@ -149,7 +149,7 @@ void ClientDatabase::SetServerPort(int _port)
 	//m_client.Disconnect();
 }
 
-void ClientDatabase::IncreaseMaxNoPlayers(int _maxPlayers)
+void ClientDatabase::IncreaseMaxNoPlayers()
 {
 	if (!m_connected)
 	{
@@ -159,6 +159,23 @@ void ClientDatabase::IncreaseMaxNoPlayers(int _maxPlayers)
 
 	auto ph = m_client.GetPacketHandler();
 	auto id = ph->StartPack("MAX_PLAYER_COUNT_INCREASED");
+	auto packet = ph->EndPack(id);
+	m_client.Send(packet);
+
+	//m_client.Disconnect();
+
+}
+
+void ClientDatabase::SetMaxNoPlayers(int _maxPlayers)
+{
+	if (!m_connected)
+	{
+		Logger::GetInstance().Log("MasterServer", Info, "Tried to send \"MAX_PLAYER_COUNT_CHANGED\", but is not connected to MasterServer");
+		return;
+	}
+
+	auto ph = m_client.GetPacketHandler();
+	auto id = ph->StartPack("MAX_PLAYER_COUNT_CHANGED");
 	ph->WriteInt(id, _maxPlayers);
 	auto packet = ph->EndPack(id);
 	m_client.Send(packet);
@@ -166,6 +183,7 @@ void ClientDatabase::IncreaseMaxNoPlayers(int _maxPlayers)
 	//m_client.Disconnect();
 
 }
+
 
 void ClientDatabase::IncreaseNoPlayers()
 {

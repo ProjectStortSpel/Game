@@ -31,3 +31,5 @@ require "PlayerComponents"
 require "UnitComponents"
 
 require "SlerpComponent"
+
+require "MapRaterComponents"

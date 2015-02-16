@@ -70,7 +70,6 @@ UnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 			local r = math.random()
 			local g = math.random()
 			local b = math.random()
-			world:CreateComponentAndAddTo("Color", newEntityId)
 			world:GetComponent(newEntityId, "Color", "X"):SetFloat3(r, g, b)
 			
 			world:SetComponent(newEntityId, "PlayerNumber", "Number", playerNumber)

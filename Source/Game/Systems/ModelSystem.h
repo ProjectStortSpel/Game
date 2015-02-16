@@ -17,6 +17,9 @@ public:
 
 	void Initialize();
 
+	unsigned int m_positionId;
+	unsigned int m_rotationId;
+	unsigned int m_scaleId;
 	unsigned int m_colorId;
 
 	void EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities);

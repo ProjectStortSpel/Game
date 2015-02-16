@@ -13,7 +13,11 @@ end
 
 FlowingWaterSystem.PostInitialize = function ( self )
 
-	local newEntityId = world:CreateNewEntity("Head")
+	local newEntityId = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("Model", newEntityId)
+	world:CreateComponentAndAddTo("Rotation", newEntityId)
+	world:CreateComponentAndAddTo("Position", newEntityId)
+	world:CreateComponentAndAddTo("Scale", newEntityId)
 	local rotation = world:GetComponent(newEntityId, "Rotation", 0)
 	local position = world:GetComponent(newEntityId, "Position", 0)
 	local scale = world:GetComponent(newEntityId, "Scale", 0)

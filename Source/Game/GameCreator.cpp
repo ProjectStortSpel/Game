@@ -13,6 +13,7 @@
 #include "Systems/DirectionalLightSystem.h"
 #include "Systems/MasterServerSystem.h"
 #include "Systems/SlerpRotationSystem.h"
+#include "Systems/ParticleSystem.h"
 #include "Systems/AddTextToTextureSystem.h"
 
 #include "Network/NetworkInstance.h"
@@ -340,6 +341,12 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 	worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 
+	graphicalSystem = new ParticleSystem(m_graphics);
+	m_graphicalSystems.push_back(graphicalSystem);
+	worldCreator.AddSystemGroup();
+	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
+
+
 	worldCreator.AddSystemGroup();
 	worldCreator.AddSystemToCurrentGroup<RotationSystem>();
     
@@ -385,6 +392,8 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
     
     if (_worldType == WorldType::Client || _isMainWorld)
     {
+
+
         graphicalSystem = new RenderSystem(m_graphics);
         m_graphicalSystems.push_back(graphicalSystem);
         worldCreator.AddSystemGroup();
@@ -781,6 +790,7 @@ void GameCreator::UpdateConsole()
 			m_input->GetKeyboard()->StopTextInput();
 			m_consoleInput.SetActive(false);
 			m_consoleManager.SetOpen(false);
+			
 		}
 		else
 		{

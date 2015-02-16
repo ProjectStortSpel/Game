@@ -10,7 +10,8 @@ FrameCounter::FrameCounter()
 	m_currentIndex = 0.0f;
 
 	for (int i = 0; i < m_numberOfSamples; ++i)
-		m_frameTimes[i] = (float)(SDL_GetPerformanceFrequency());
+		Tick();
+
 }
 
 FrameCounter::~FrameCounter()

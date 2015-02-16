@@ -8,22 +8,25 @@ worldCreator:AddSystemToCurrentGroup(StageSystem)
 
 --	Map Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/MapSystems/?.lua"
---require "sv_MapGenerator"
-require "sv_CreateMapSystem"
+require "sv_NewMapGenerator"
+--require "sv_CreateMapSystem"
 require "sv_RiverSystem"
 require "sv_VoidSystem"
 require "sv_CheckpointSystem"
+require "sv_MapRaterSystem"
 
---worldCreator:AddSystemGroup()
---worldCreator:AddSystemToCurrentGroup(MapGenerator)
 worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(CreateMapSystem)
+worldCreator:AddSystemToCurrentGroup(MapGenerator)
+--worldCreator:AddSystemGroup()
+--worldCreator:AddSystemToCurrentGroup(CreateMapSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(RiverSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(VoidSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CheckpointSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(MapRater)
 
 --	Light Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/LightSystems/?.lua"
@@ -192,6 +195,7 @@ require "sv_GameOverSystem"
 require "sv_LogStartSystem"
 require "sv_ServerNetworkMessageSystem"
 require "sv_HostSettingsSystem"
+require "sv_ChatSystem"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(HostSettingsSystem)
@@ -210,3 +214,6 @@ worldCreator:AddSystemToCurrentGroup(LogStartSystem)
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ServerNetworkMessageSystem)
+
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(ChatSystem)
