@@ -204,7 +204,7 @@ namespace FileSystem
 
 		void MD5_Print(unsigned char *md5)
 		{
-			std::cout << "hashedChars: ";
+			std::cout << "MD5: ";
 			for (int i = 0; i < 16; i++) {
 				printf("%x", md5[i]);
 				//std::cout << std::hex << md5[i];
@@ -329,6 +329,7 @@ namespace FileSystem
 			FileSystem::File::Open(_file, &test);
 			Sint64 length = FileSystem::File::GetFileSize(test);
 			char* data = FileSystem::File::Read(test, length);
+            FileSystem::File::Close(test);
 
 			std::string result = MD5(data, length);
 			delete data;

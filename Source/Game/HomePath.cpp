@@ -1,4 +1,9 @@
 #include "Game/HomePath.h"
+#include <cstdlib>
+
+#ifdef __ANDROID__
+#include <SDL/SDL.h>
+#endif
 
 namespace HomePath
 {
@@ -28,7 +33,8 @@ namespace HomePath
 				path = getenv("HOME");
 				path.append("/Library/Caches/");
 			#elif defined(__ANDROID__)
-				path = "";
+                path = SDL_AndroidGetInternalStoragePath();
+				path = "Library/";
 			#elif defined(__OSX__)
 				path = getenv("HOME");
 				path.append("/Library/Preferences/StoraSpel/");
@@ -36,7 +42,6 @@ namespace HomePath
 				path = "content/";
 			#endif
 		}
-
 		return path;
 	}
 
