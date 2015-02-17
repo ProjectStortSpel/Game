@@ -33,11 +33,11 @@ UpdateLerpPositionSystem.Update = function(self, dt, taskIndex, taskCount)
 		_timer = _timer + dt
 		if _time > _timer then
 			local t = _timer / _time
-			t = self:AlgorithmLerp(t, algorithm)
+			local t1, t2, t3 = self:AlgorithmLerp(t, algorithm)
 			
-			local X = sX + (tX - sX) * t
-			local Y = sY + (tY - sY) * t
-			local Z = sZ + (tZ - sZ) * t
+			local X = sX + (tX - sX) * t1
+			local Y = sY + (tY - sY) * t2
+			local Z = sZ + (tZ - sZ) * t3
 			
 			position:SetFloat3(X, Y, Z, false)
 			
@@ -51,16 +51,34 @@ end
 
 UpdateLerpPositionSystem.AlgorithmLerp = function(self, t, algorithm)
 	if algorithm == "NormalLerp" then
-		return t
+		return t, t, t
 	elseif algorithm == "SmoothLerp" then
-		return t * t * (3 - 2*t)
+		local f = t * t * (3 - 2*t)
+		return f, f, f
 	elseif algorithm == "SmootherLerp" then
-		return t * t * t * (t * (6*t - 15) + 10)
+		local f = t * t * t * (t * (6*t - 15) + 10)
+		return f, f, f
 	elseif algorithm == "ExponentialLerp" then
-		return t * t
+		local f = t * t
+		return f, f, f
 	elseif algorithm == "OvershotLerp" then
-		return t * t * (7 - 6*t)
+		local f = t * t * (7 - 6*t)
+		return f, f, f
+	elseif algorithm == "EnterRiver" then
+		local f = t * t * (3 - 2*t)
+		local g = 0
+		if (t > 0.5) then
+			g = 4 * (t-0.5) * (t-0.5) * (3 - 4*(t-0.5))
+		end
+		return f, g, f
+	elseif algorithm == "ExitRiver" then
+		local f = t * t * (3 - 2*t)
+		local g = 1
+		if (t < 0.5) then
+			g = 4 * t * t * (3 - 4*t)
+		end
+		return f, g, f
 	else
-		return t
+		return t, t, t
 	end
 end

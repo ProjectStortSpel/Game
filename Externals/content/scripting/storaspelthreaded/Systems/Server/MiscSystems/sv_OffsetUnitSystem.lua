@@ -34,14 +34,13 @@ OffsetUnitSystem.UpdateUnitLerp = function(self, unitId)
 	local	tX, tZ	=	world:GetComponent(unitId, "MapPosition", "X"):GetInt2()
 	local	oldX, oldZ	=	math.floor(pX), math.floor(pZ)
 	
-	
-	if self:IsTileRiver(tX, tZ) and not self:IsTileRiver(pX, pZ) then
-		world:GetComponent(unitId, "LerpPosition", "Algorithm"):SetText("PlayerJump")
-	elseif  not self:IsTileRiver(tX, tZ) and self:IsTileRiver(pX, pZ) then
-		world:GetComponent(unitId, "LerpPosition", "Algorithm"):SetText("PlayerJump")
-	end
-	
 	local	yOffset	=	world:GetComponent(self:GetEntities("TileOffset")[self:GetListIndex(tX, tZ)], "TileOffset", "Offset"):GetFloat()
+	
+	if yOffset - pY > 0 then
+		world:GetComponent(unitId, "LerpPosition", "Algorithm"):SetText("ExitRiver")
+	elseif yOffset - pY < 0 then
+		world:GetComponent(unitId, "LerpPosition", "Algorithm"):SetText("EnterRiver")
+	end
 	
 	world:GetComponent(unitId, "LerpPosition", "Y"):SetFloat(yOffset)
 	
