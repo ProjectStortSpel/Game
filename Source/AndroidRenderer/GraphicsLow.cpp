@@ -163,6 +163,8 @@ void GraphicsLow::Render()
 			glActiveTexture(GL_TEXTURE3);
 			glBindTexture(GL_TEXTURE_2D, m_modelsViewspace[i].speID);
 
+			m_viewspaceShader.SetUniVariable("BlendColor", vector3, m_modelsViewspace[i].color);
+
 			m_modelsViewspace[i].bufferPtr->draw(m_viewspaceShader.GetShaderProgram());
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
@@ -188,6 +190,8 @@ void GraphicsLow::Render()
 
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, m_modelsInterface[i].texID);
+
+			m_interfaceShader.SetUniVariable("BlendColor", vector3, m_modelsInterface[i].color);
 
 			m_modelsInterface[i].bufferPtr->draw(m_interfaceShader.GetShaderProgram());
 			glBindTexture(GL_TEXTURE_2D, 0);

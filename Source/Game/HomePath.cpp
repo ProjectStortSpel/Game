@@ -34,7 +34,7 @@ namespace HomePath
 				path.append("/Library/Caches/");
 			#elif defined(__ANDROID__)
                 path = SDL_AndroidGetInternalStoragePath();
-				path = "Library/";
+				path.append("/Library/");
 			#elif defined(__OSX__)
 				path = getenv("HOME");
 				path.append("/Library/Preferences/StoraSpel/");
@@ -42,6 +42,7 @@ namespace HomePath
 				path = "content/";
 			#endif
 		}
+
 		return path;
 	}
 
