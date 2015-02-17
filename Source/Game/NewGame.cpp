@@ -49,56 +49,23 @@ int main(int argc, char** argv)
 	Logger::GetInstance().AddGroup("Game");
 	GameCreator* newGame = new GameCreator();
 
-    
-    
-	std::string home2nd = HomePath::GetSecondaryHomePath();
-	std::string file = home2nd;
-	file.append("data/TEST/testfile.txt");
-	
-	if (FileSystem::File::Exist(file))
-		printf("File already exist!\n");
 
-	if (!FileSystem::File::Create(file))
-	{
-		printf("Failed to create file!\n");
-	}
+ //   std::string path2 = HomePath::GetHomePath();
+ //  // path2.append("models/");
+ //   
+	//SDL_Log("Path: %s", path2.c_str());
 
-	if (!FileSystem::File::Exist(file))
-	{
-		printf("File does not exist!\n");
-	}
+ //   std::vector<std::string> temp = FileSystem::Directory::GetAllFiles(path2);
+ //   
+ //   
+ //   for (int i = 0; i < temp.size(); ++i)
+ //   {
+ //       std::string path = path2;
+ //       path.append(temp[i]);
+	//	SDL_Log("File: %s\n", path.c_str());
+ //       FileSystem::MD5::MD5_Print(FileSystem::MD5::MD5_File(path));
+ //   }
 
-	SDL_RWops* F;
-
-	//WRITE
-	FileSystem::File::Append(file, &F);
-
-	FileSystem::File::WriteLine(F, "Hejsan");
-
-	FileSystem::File::Close(F);
-
-	//READ
-	FileSystem::File::Open(file, &F);
-
-	printf("Line: %s\n", FileSystem::File::ReadLine(F).c_str());
-
-	FileSystem::File::Close(F);
-
-
-    //std::string path2 = HomePath::GetHomePath();
-    //path2.append("models/");
-    
- /*   std::vector<std::string> temp = FileSystem::Directory::GetAllFiles(path2);
-    
-    
-    for (int i = 0; i < temp.size(); ++i)
-    {
-        std::string path = path2;
-        path.append(temp[i]);
-        printf("File: %s\n", path.c_str());
-        FileSystem::MD5::MD5_Print(FileSystem::MD5::MD5_File(path));
-    }
-*/
 	//newGame->InitializeLua();
 	newGame->InitializeGraphics();
 	newGame->InitializeInput();
