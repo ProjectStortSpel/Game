@@ -35,7 +35,6 @@ namespace HomePath
 			#elif defined(__ANDROID__)
                 path = SDL_AndroidGetInternalStoragePath();
 				path.append("/Library/");
-				SDL_Log("path: %s", path.c_str());
 			#elif defined(__OSX__)
 				path = getenv("HOME");
 				path.append("/Library/Preferences/StoraSpel/");
