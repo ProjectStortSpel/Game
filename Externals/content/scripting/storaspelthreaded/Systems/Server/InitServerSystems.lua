@@ -63,6 +63,7 @@ package.path = package.path .. ";../../../Externals/content/scripting/storaspelt
 require "sv_PostMoveSystem"
 require "sv_TestMoveSystem"
 require "sv_TestMoveRiverSystem"
+require "sv_SimultaneousMove"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(PostMoveSystem)
@@ -70,6 +71,9 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(TestMoveSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(TestMoveRiverSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(SimultaneousMove)
+
 
 --	Card Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/CardSystems/?.lua"
@@ -167,6 +171,7 @@ require "sv_NewStepSystem"
 require "sv_StartNewRoundSystem"
 require "sv_PlayCardTimerSystem"
 
+
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(StartNewRoundSystem)
 worldCreator:AddSystemGroup()
@@ -176,7 +181,14 @@ worldCreator:AddSystemToCurrentGroup(NewStepSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(PlayCardTimerSystem)
 
+package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/WeatherSystems/?.lua"
+require "sv_WeatherSystem"
+require "sv_WeatherWindSystem"
 
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(WeatherSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(WeatherWindSystem)
 
 --	Camera Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/CameraSystems/?.lua"
