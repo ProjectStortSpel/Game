@@ -94,6 +94,11 @@ FindSpawnpointSystem.SpawnUnitAt = function(self, X, Z, unitToSpawn)
 	world:GetComponent(unitToSpawn, "LerpPosition", "Algorithm"):SetText("NormalLerp")
 
 	world:GetComponent(unitToSpawn, "MapPosition", "X"):SetInt2(X, Z)
+	
+	if world:EntityHasComponent(unitToSpawn, "Hide") then
+		world:RemoveComponentFrom("Hide", unitToSpawn)
+	end
+	
 end
 
 FindSpawnpointSystem.GetSpawnDirection = function(self, nIteration)

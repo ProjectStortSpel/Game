@@ -120,6 +120,13 @@ TestMoveSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities
 					world:GetComponent(newCheck, "CheckCheckpointForEntity", "EntityId"):SetInt(tUnit)
 					world:GetComponent(newCheck, "CheckCheckpointForEntity", "PosX"):SetInt(tPosX+tDirX*nStep)
 					world:GetComponent(newCheck, "CheckCheckpointForEntity", "PosZ"):SetInt(tPosZ+tDirZ*nStep)
+					
+					local testMoveSuccess = world:CreateNewEntity()
+					world:CreateComponentAndAddTo("TestMoveSuccess", testMoveSuccess)
+					world:SetComponent(testMoveSuccess, "TestMoveSuccess", "Unit", tUnit)
+					world:SetComponent(testMoveSuccess, "TestMoveSuccess", "Steps", tSteps)
+					
+					
 				else
 					break
 				end
