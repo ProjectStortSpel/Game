@@ -444,7 +444,7 @@ void GraphicsHigh::Render()
 			mat4 vp = projectionMatrix * viewMatrix;
 			mat4 modelViewMatrix = modelMatrix;
 			mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-			//m_animationShader.SetUniVariable("BlendColor", vector3, m_modelsAnimated[i].color);
+			m_animationShader.SetUniVariable("BlendColor", vector3, m_modelsAnimated[i].color);
 	
 			m_animationShader.SetUniVariable("M", mat4x4, &modelViewMatrix);
 			m_animationShader.SetUniVariable("VP", mat4x4, &vp);

@@ -309,11 +309,11 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	Shader *shaderPtr = NULL;
 	std::vector<Model> *modelList = NULL;
 
-	if (obj.animated)
-	{
-		BufferAModel(_modelId, _modelToLoad);
-		return;
-	}
+	//if (obj.animated)
+	//{
+	//	BufferAModel(_modelId, _modelToLoad);
+	//	return;
+	//}
 
 	bool FoundShaderType = false;
 	for (int i = 0; i < m_renderLists.size(); i++)
@@ -394,13 +394,14 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 
 	// Add skeleton
 	for (int i = 0; i < joints.size(); i++)
+	{
 		model.joints.push_back(Joint(
 		joints[i].x0, joints[i].y0, joints[i].z0, joints[i].w0,
 		joints[i].x1, joints[i].y1, joints[i].z1, joints[i].w1,
 		joints[i].x2, joints[i].y2, joints[i].z2, joints[i].w2,
 		joints[i].x3, joints[i].y3, joints[i].z3, joints[i].parent)
 		);//joints[i].transform));
-
+	}
 	glGenBuffers(1, &model.jointBuffer);
 
 	//for the matrices (modelView + normal)
