@@ -9,6 +9,7 @@ worldCreator:AddComponentType(NullComponent)
 local ParentComponent = ComponentType()
 ParentComponent.Name = "Parent"
 ParentComponent.TableType = TableType.Map
+ParentComponent.SyncNetwork = true
 ParentComponent:AddVariable("EntityId", ByteSize.Reference)
 worldCreator:AddComponentType(ParentComponent)
 -- isParent Component
@@ -23,3 +24,10 @@ BoundToEntityComponent.Name = "BoundToEntity"
 BoundToEntityComponent.TableType = TableType.Map
 BoundToEntityComponent:AddVariable("EntityId", ByteSize.Reference)
 worldCreator:AddComponentType(BoundToEntityComponent)
+
+-- WorldToViewSpace Component
+local WorldToViewSpaceComponent = ComponentType()
+WorldToViewSpaceComponent.Name = "WorldToViewSpace"
+WorldToViewSpaceComponent.SyncNetwork = true
+WorldToViewSpaceComponent.TableType = TableType.Map
+worldCreator:AddComponentType(WorldToViewSpaceComponent)

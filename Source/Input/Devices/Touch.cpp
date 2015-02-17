@@ -77,6 +77,8 @@ void Touch::PollEvent(SDL_Event e)
                 break;
             
             fingers[n].active = SDL_FALSE;
+	    if (m_thisState[n] == true)
+		    m_lastState[n] = true;
             m_thisState[n] = false;
             m_positions[n] = FingerPosition(e.tfinger.x, e.tfinger.y);
             break;

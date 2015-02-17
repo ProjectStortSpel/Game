@@ -83,6 +83,7 @@ require "sv_DealCardsSystem"
 require "sv_TakeCardStepFromUnitSystem"
 require "sv_TakeCardsFromPlayerSystem"
 require "sv_PlayCardSystem"
+require "sv_PlaceCardAboveUnitSystem"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(CreateDeckSystem)
@@ -102,6 +103,8 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(TakeCardStepsFromUnitSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(TakeCardsFromPlayerSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(PlaceCardAboveUnitSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(PlayCardSystem)
 

@@ -50,7 +50,7 @@ namespace FileSystem
 			return false;
 		}
 
-		bool CreateFolder(std::string _path)
+		bool Create(std::string _path)
 		{
 			if (_path.size() == 0)
 				return true;
@@ -71,7 +71,7 @@ namespace FileSystem
 				if (end)
 					*end = '\0';
 
-				if (!DirectoryExist(path))
+				if (!Exist(path))
 				{
 					if (!CreateFolder2(path))
 					{
@@ -91,7 +91,7 @@ namespace FileSystem
 
 		}
 
-		bool DirectoryExist(std::string _path)
+		bool Exist(std::string _path)
 		{
 			if (_path.at(_path.size() - 1) == '/')
 				_path = _path.substr(0, _path.size() - 1);
