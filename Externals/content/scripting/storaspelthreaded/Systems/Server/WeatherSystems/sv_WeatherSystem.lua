@@ -1,5 +1,5 @@
 WeatherSystem = System()
-WeatherSystem.WeatherChance			=	500
+WeatherSystem.WeatherChance			=	1
 WeatherSystem.WeatherList			=	{}
 WeatherSystem.WeatherList.__mode	=	"k"
 
@@ -15,7 +15,7 @@ WeatherSystem.Initialize = function(self)
 end
 
 WeatherSystem.PostInitialize = function(self)
-	self.WeatherList[#self.WeatherList+1]	=	"Wind"
+	--self.WeatherList[#self.WeatherList+1]	=	"Wind"
 end
 
 WeatherSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, newEntities)
@@ -31,7 +31,7 @@ WeatherSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, newEntiti
 			if actualWeatherChance <= self.WeatherChance then
 			
 				self:SpawnWeather()
-				self.WeatherChance	=	100
+				self.WeatherChance	=	0
 			end
 			
 		end
@@ -42,7 +42,10 @@ end
 
 
 WeatherSystem.SpawnWeather = function(self)
-
+	
+	if #self.WeatherList == 0 then
+		return
+	end
 	local	newWeather	=	world:CreateNewEntity()
 	world:CreateComponentAndAddTo("Weather", newWeather)
 	world:CreateComponentAndAddTo("SyncNetwork", newWeather)
