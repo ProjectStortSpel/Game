@@ -49,6 +49,13 @@ TestRiverComponent:AddVariable("PosX", ByteSize.Int)
 TestRiverComponent:AddVariable("PosZ", ByteSize.Int)
 worldCreator:AddComponentType(TestRiverComponent)
 
+local TestMoveSuccessComponent = ComponentType()
+TestMoveSuccessComponent.Name = "TestMoveSuccess"
+TestMoveSuccessComponent.TableType = TableType.Map
+TestMoveSuccessComponent:AddVariable("Unit", ByteSize.Reference)
+TestMoveSuccessComponent:AddVariable("Steps", ByteSize.Int)
+worldCreator:AddComponentType(TestMoveSuccessComponent)
+
 --	End Round
 local EndRoundComponent = ComponentType()
 EndRoundComponent.Name = "EndRound"

@@ -7,6 +7,7 @@ HoverSizeSystem.OnEntityAdded = function(self, entityId)
 	local hx, hy, hz = hscale:GetFloat3()
 	scale:SetFloat3(hx, hy, hz)
 	hscale:SetFloat3(sx, sy, sz)
+	
 end
 
 HoverSizeSystem.OnEntityRemoved = function(self, entityId)

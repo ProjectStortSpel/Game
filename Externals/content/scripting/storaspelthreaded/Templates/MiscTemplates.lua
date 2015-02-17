@@ -32,7 +32,7 @@ local Stone = EntityTemplate()
 Stone.Name = "Stone"
 Stone:SetFloat3("Position", 0.0, 0.0, 0.0)
 Stone:SetFloat3("Rotation", 0.0, 0.0, 0.0)
-Stone:SetFloat3("Scale", 0.6, 0.3, 0.6)
+Stone:SetFloat3("Scale", 1.0, 1.0, 1.0)
 Stone:SetModel("Model", "stone", "stone", 0)
 EntityTemplateManager:AddTemplate(Stone)
 

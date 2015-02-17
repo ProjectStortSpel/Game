@@ -67,6 +67,10 @@ CreateDeckSystem.CreateDeck = function (self)
 	NrOfCards[#NrOfCards+1] = 2 * NrOfPlayers
 	CardPrio[#CardPrio+1] = false
 
+	CardAction[#CardAction+1] = "Guard"
+	NrOfCards[#NrOfCards+1] = 1 * NrOfPlayers
+	CardPrio[#CardPrio+1] = false
+	
 	CardAction[#CardAction+1] = "Sprint"
 	NrOfCards[#NrOfCards+1] = 1 * NrOfPlayers
 	CardPrio[#CardPrio+1] = true
@@ -74,6 +78,11 @@ CreateDeckSystem.CreateDeck = function (self)
 	CardAction[#CardAction+1] = "SlingShot"
 	NrOfCards[#NrOfCards+1] = 1 * NrOfPlayers
 	CardPrio[#CardPrio+1] = true
+	
+	CardAction[#CardAction+1] = "Stone"
+	NrOfCards[#NrOfCards+1] = 10 * NrOfPlayers
+	CardPrio[#CardPrio+1] = true
+	
 	----------------------------------------------------------
 
 	-- GENERATE PRIO

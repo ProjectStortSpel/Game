@@ -119,7 +119,7 @@ require "sv_ActionMoveBackwardSystem"
 require "sv_ActionTurnLeftSystem"
 require "sv_ActionTurnRightSystem"
 require "sv_ActionTurnAroundSystem"
-
+require "sv_ActionGuardSystem"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ActionMoveForwardSystem)
@@ -131,6 +131,8 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ActionTurnRightSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ActionTurnAroundSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(ActionGuardSystem)
 
 
 --	Card Ability Systems
@@ -138,6 +140,8 @@ package.path = package.path .. ";../../../Externals/content/scripting/storaspelt
 require "sv_AbilitySprintSystem"
 require "sv_AbilitySlingshotSystem"
 require "sv_AbilityIWin"
+require "sv_AbilityStoneSystem"
+
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(AbilitySprintSystem)
@@ -145,6 +149,10 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(AbilitySlingshotSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(AbilityIWin)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(AbilityStoneSystem)
+
+
 
 --	Spawn Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/SpawnSystems/?.lua"
@@ -212,6 +220,8 @@ require "sv_ServerNetworkMessageSystem"
 require "sv_HostSettingsSystem"
 require "sv_ChatSystem"
 
+require "sv_OffsetUnitSystem"
+
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(HostSettingsSystem)
 
@@ -232,3 +242,6 @@ worldCreator:AddSystemToCurrentGroup(ServerNetworkMessageSystem)
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ChatSystem)
+
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(OffsetUnitSystem)
