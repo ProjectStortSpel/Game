@@ -339,7 +339,6 @@ void GraphicsHigh::WriteShadowMapDepth()
 	{
 		std::vector<mat4> MVPVector(m_modelsDeferred[i].instances.size());
 		std::vector<mat3> normalMatVector(m_modelsDeferred[i].instances.size());
-		std::vector<float> colors(m_modelsDeferred[i].instances.size()*4);
 
 		int nrOfInstances = 0;
 
@@ -360,7 +359,7 @@ void GraphicsHigh::WriteShadowMapDepth()
 			}
 		}
 
-		m_modelsDeferred[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector, &colors);
+		m_modelsDeferred[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector, 0);
 	}
 
 	//------Forward------------------------------------
@@ -370,7 +369,6 @@ void GraphicsHigh::WriteShadowMapDepth()
 	{
 		std::vector<mat4> MVPVector(m_modelsForward[i].instances.size());
 		std::vector<mat3> normalMatVector(m_modelsForward[i].instances.size());
-		std::vector<float> colors(m_modelsForward[i].instances.size() * 4);
 
 		int nrOfInstances = 0;
 
@@ -393,7 +391,7 @@ void GraphicsHigh::WriteShadowMapDepth()
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
 
-		m_modelsForward[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector, &colors);
+		m_modelsForward[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector, 0);
 	}
 	//------------------------------------------------
 
@@ -471,8 +469,6 @@ void GraphicsHigh::Render()
 	
 			delete joint_data;
 	
-	
-
 	
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, m_modelsAnimated[i].texID);

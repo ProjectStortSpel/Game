@@ -119,7 +119,7 @@ void main()
 	float blendFactor = spec_map.w;
 
 	if( BlendColor != vec3(0.0) )
-		albedo_tex.xyz = (1.0f-blendFactor)*albedo_tex.xyz + blendFactor * BlendColor; 
+		albedo_tex.xyz = (1.0-blendFactor)*albedo_tex.xyz + blendFactor * BlendColor; 
 
 	Material.Ks			= spec_map.x;
 	Material.Shininess  = spec_map.y * 254.0 + 1.0;

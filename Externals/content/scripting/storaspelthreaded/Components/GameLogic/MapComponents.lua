@@ -18,6 +18,14 @@ MapPositionComponent:AddVariable("X", ByteSize.Int)
 MapPositionComponent:AddVariable("Z", ByteSize.Int)
 worldCreator:AddComponentType(MapPositionComponent)
 
+-- Map Position Component
+local TileOffset = ComponentType()
+TileOffset.Name = "TileOffset"
+TileOffset.TableType = TableType.Map
+TileOffset.SyncNetwork = true
+TileOffset:AddVariable("Offset", ByteSize.Float)
+worldCreator:AddComponentType(TileOffset)
+
 -- Water Component
 local RiverComponent = ComponentType()
 RiverComponent.Name = "River"

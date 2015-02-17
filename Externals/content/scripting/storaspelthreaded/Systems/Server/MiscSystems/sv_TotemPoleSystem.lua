@@ -1,7 +1,8 @@
 TotemPoleSystem = System()
 TotemPoleSystem.MapCenterX = 0
 TotemPoleSystem.MapCenterZ = 0
-
+TotemPoleSystem.TotemPoles			=	{}
+TotemPoleSystem.TotemPoles.__mode	=	"k"
 
 TotemPoleSystem.Initialize = function(self)
 	--	Set Name
@@ -16,6 +17,13 @@ TotemPoleSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Finishpoint", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("Checkpoint", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("MapSpecs", FilterType.RequiresOneOf)
+end
+
+TotemPoleSystem.AddTopPiece = function(self, totemPoleId, R, G, B)
+	local	totemId	=	self:AddTotemPiece(0, totemPoleId, R, G, B)
+	world:SetComponent(totemId, "Model", "ModelName", "totemtop")
+	world:SetComponent(totemId, "Model", "ModelPath", "totemtop")
+	world:SetComponent(totemId, "Model", "RenderType", 0)
 end
 
 TotemPoleSystem.AddTotemPiece = function(self, currentPlayerNumber, totemPoleId, R, G, B)
@@ -74,7 +82,8 @@ TotemPoleSystem.AddTotemPiece = function(self, currentPlayerNumber, totemPoleId,
 	world:SetComponent(totemPiece, "Model", "ModelName", "totem")
 	world:SetComponent(totemPiece, "Model", "ModelPath", "totem")
 	world:SetComponent(totemPiece, "Model", "RenderType", 0)
-
+	
+	return totemPiece
 end
 
 TotemPoleSystem.CreateTotemPole = function(self, totemCheckpointNumber, tX, tZ)
@@ -86,6 +95,9 @@ TotemPoleSystem.CreateTotemPole = function(self, totemCheckpointNumber, tX, tZ)
 	world:SetComponent(newTotemPole, "TotemPole", "Height", 0)
 	world:GetComponent(newTotemPole, "Position", "X"):SetFloat3(tX, 1, tZ)
 	world:SetComponent(newTotemPole, "CheckpointId", "Id", totemCheckpointNumber)
+	
+	self.TotemPoles[#self.TotemPoles+1]	=	newTotemPole
+	return newTotemPole
 end
 
 TotemPoleSystem.CheckCheckPoints = function(self, targetCpId, totemId, playerNum, R, G, B)
@@ -152,7 +164,9 @@ TotemPoleSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, addedEn
 		if world:EntityHasComponent(newEntity, "Checkpoint") then
 			local tX, tZ = world:GetComponent(newEntity, "MapPosition", 0):GetInt2()
 			local checkpointId = world:GetComponent(newEntity, "Checkpoint", "Number"):GetInt()
-			self:CreateTotemPole(checkpointId, tX, tZ)
+			local newTotempoleId	=	self:CreateTotemPole(checkpointId, tX, tZ)
+			print("Created totem pole with index: " .. newTotempoleId)
+			
 			
 			--print("Checkpoint added at " .. tX .. ", " .. tZ .. " with number " .. checkpointId)
 		end
@@ -163,6 +177,12 @@ TotemPoleSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, addedEn
 			
 			self.MapCenterX = tX * 0.5
 			self.MapCenterZ = tZ * 0.5
+			
+		
+			print("WHEN THIS?!" , #self.TotemPoles)
+			for i = 1, #self.TotemPoles do
+				self:AddTopPiece(self.TotemPoles[i], 0.0, 0.0, 0.0)
+			end
 		end
 	
 	
