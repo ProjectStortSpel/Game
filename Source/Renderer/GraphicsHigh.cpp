@@ -1,8 +1,5 @@
 #include "GraphicsHigh.h"
 
-#include "ModelLoader.h"
-#include "ModelExporter.h"
-
 using namespace Renderer;
 using namespace glm;
 
@@ -53,6 +50,7 @@ bool GraphicsHigh::Init()
 
 	if (!InitGLEW()) { SDL_Log("GLEW_VERSION_4_3 FAILED"); return false; }
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
+	InitRenderLists();
 	if (!InitDeferred()) { ERRORMSG("INIT DEFERRED FAILED\n"); return false; }	
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	if (!InitForward()) { ERRORMSG("INIT FORWARD FAILED\n"); return false; }
@@ -163,6 +161,13 @@ bool GraphicsHigh::InitShaders()
 	m_particleShader.FinalizeShaderProgram();
 
 	return true;
+}
+void GraphicsHigh::InitRenderLists()
+{
+	m_renderLists.push_back(RenderList(RENDER_DEFERRED, &m_modelsDeferred, &m_deferredShader1));
+	m_renderLists.push_back(RenderList(RENDER_FORWARD, &m_modelsForward, &m_forwardShader));
+	m_renderLists.push_back(RenderList(RENDER_VIEWSPACE, &m_modelsViewspace, &m_viewspaceShader));
+	m_renderLists.push_back(RenderList(RENDER_INTERFACE, &m_modelsInterface, &m_interfaceShader));
 }
 bool GraphicsHigh::InitDeferred()
 {
@@ -746,303 +751,52 @@ void GraphicsHigh::ToggleSimpleText()
 	m_renderSimpleText = !m_renderSimpleText;
 }
 
-void GraphicsHigh::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
-{
-	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
-
-	//if (obj.animated)
-	//{
-	//	BufferAModel(_modelId, _modelToLoad);
-	//	return;
-	//}
-
-	Shader *shaderPtr = NULL;
-	std::vector<Model> *modelList = NULL;
-	if (_modelToLoad->RenderType == RENDER_DEFERRED)
-	{
-		shaderPtr = &m_deferredShader1;
-		modelList = &m_modelsDeferred;
-		m_deferredShader1.UseProgram();
-	}
-	else if (_modelToLoad->RenderType == RENDER_FORWARD)
-	{
-		shaderPtr = &m_forwardShader;
-		modelList = &m_modelsForward;
-		m_forwardShader.UseProgram();
-	}
-	else if (_modelToLoad->RenderType == RENDER_VIEWSPACE)
-	{
-		shaderPtr = &m_viewspaceShader;
-		modelList = &m_modelsViewspace;
-		m_viewspaceShader.UseProgram();
-	}
-	else if (_modelToLoad->RenderType == RENDER_INTERFACE)
-	{
-		shaderPtr = &m_interfaceShader;
-		modelList = &m_modelsInterface;
-		m_interfaceShader.UseProgram();
-	}
-	else
-	{
-		ERRORMSG("ERROR: INVALID RENDER SETTING");
-		return;
-	}
-
-	// Import Mesh
-	Buffer* mesh = AddMesh(obj.mesh, shaderPtr, false);
-
-	// Import Texture
-	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
-	shaderPtr->CheckUniformLocation("diffuseTex", 1);
-
-	// Import Normal map
-	GLuint normal = AddTexture(obj.norm, GL_TEXTURE2);
-	shaderPtr->CheckUniformLocation("normalTex", 2);
-
-	// Import Specc Glow map
-	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
-	shaderPtr->CheckUniformLocation("specularTex", 3);
-
-	Model model;
-	if (_modelToLoad->RenderType != RENDER_INTERFACE)
-		model = Model(mesh, texture, normal, specular);
-	else
-		model = Model(mesh, texture, NULL, NULL);
-	//for the matrices (modelView + normal)
-	m_vramUsage += (16 + 9) * sizeof(float);
+//void GraphicsHigh::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
+//{
+//	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
+//
+//	Shader *shaderPtr = &m_animationShader;
+//	std::vector<AModel> *modelList = &m_modelsAnimated;
+//
+//	// Import Mesh
+//	Buffer* mesh = AddMesh(obj.mesh, shaderPtr, true);
+//
+//	// Import Texture
+//	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
+//	shaderPtr->CheckUniformLocation("diffuseTex", 1);
+//
+//	// Import Normal map
+//	GLuint normal = AddTexture(obj.norm, GL_TEXTURE2);
+//	shaderPtr->CheckUniformLocation("normalTex", 2);
+//
+//	// Import Specc Glow map
+//	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
+//	shaderPtr->CheckUniformLocation("specularTex", 3);
+//
+//	// Import Skeleton
+//	std::vector<JointData> joints = ModelLoader::importJoints(obj.joints);
+//
+//	AModel model = AModel(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color, mesh, texture, normal, specular);
+//
+//	// Add skeleton
+//	for (int i = 0; i < joints.size(); i++)
+//		model.joints.push_back(Joint(
+//		joints[i].x0, joints[i].y0, joints[i].z0, joints[i].w0,
+//		joints[i].x1, joints[i].y1, joints[i].z1, joints[i].w1,
+//		joints[i].x2, joints[i].y2, joints[i].z2, joints[i].w2,
+//		joints[i].x3, joints[i].y3, joints[i].z3, joints[i].parent)
+//		);//joints[i].transform));
+//
+//	glGenBuffers(1, &model.jointBuffer);
+//
+//	//for the matrices (modelView + normal)
+//	m_vramUsage += (16 + 9) * sizeof(float);
+//
+//	// Push back the model
+//	modelList->push_back(model);
+//}
 
 
-	for (int i = 0; i < modelList->size(); i++)
-	{
-		if ((*modelList)[i] == model)
-		{
-			(*modelList)[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
-			return;
-		}
-	}
-
-	//if model doesnt exist
-	model.instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
-	// Push back the model
-	modelList->push_back(model);
-}
-void GraphicsHigh::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
-{
-	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
-
-	Shader *shaderPtr = &m_animationShader;
-	std::vector<AModel> *modelList = &m_modelsAnimated;
-
-	// Import Mesh
-	Buffer* mesh = AddMesh(obj.mesh, shaderPtr, true);
-
-	// Import Texture
-	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
-	shaderPtr->CheckUniformLocation("diffuseTex", 1);
-
-	// Import Normal map
-	GLuint normal = AddTexture(obj.norm, GL_TEXTURE2);
-	shaderPtr->CheckUniformLocation("normalTex", 2);
-
-	// Import Specc Glow map
-	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
-	shaderPtr->CheckUniformLocation("specularTex", 3);
-
-	// Import Skeleton
-	std::vector<JointData> joints = ModelLoader::importJoints(obj.joints);
-
-	AModel model = AModel(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color, mesh, texture, normal, specular);
-
-	// Add skeleton
-	for (int i = 0; i < joints.size(); i++)
-		model.joints.push_back(Joint(
-		joints[i].x0, joints[i].y0, joints[i].z0, joints[i].w0,
-		joints[i].x1, joints[i].y1, joints[i].z1, joints[i].w1,
-		joints[i].x2, joints[i].y2, joints[i].z2, joints[i].w2,
-		joints[i].x3, joints[i].y3, joints[i].z3, joints[i].parent)
-		);//joints[i].transform));
-
-	glGenBuffers(1, &model.jointBuffer);
-
-	//for the matrices (modelView + normal)
-	m_vramUsage += (16 + 9) * sizeof(float);
-
-	// Push back the model
-	modelList->push_back(model);
-}
-void GraphicsHigh::BufferModels()
-{
-	for (auto pair : m_modelsToLoad)
-	{
-		BufferModel(pair.first, pair.second);
-		delete(pair.second);
-	}
-	m_modelsToLoad.clear();
-}
-
-bool GraphicsHigh::RemoveModel(int _id)
-{
-	for (int i = 0; i < m_modelsDeferred.size(); i++)
-	{
-		for (int j = 0; j < m_modelsDeferred[i].instances.size(); j++)
-		{
-			if (m_modelsDeferred[i].instances[j].id == _id)
-			{
-				m_modelsDeferred[i].instances.erase(m_modelsDeferred[i].instances.begin() + j);
-				if (m_modelsDeferred[i].instances.size() == 0)
-					m_modelsDeferred.erase(m_modelsDeferred.begin() + i);
-
-				return true;
-			}
-		}
-	}
-	for (int i = 0; i < m_modelsForward.size(); i++)
-	{
-		for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
-		{
-			if (m_modelsForward[i].instances[j].id == _id)
-			{
-				m_modelsForward[i].instances.erase(m_modelsForward[i].instances.begin() + j);
-				if (m_modelsForward[i].instances.size() == 0)
-					m_modelsForward.erase(m_modelsForward.begin() + i);
-
-				return true;
-			}
-		}
-	}
-	for (int i = 0; i < m_modelsViewspace.size(); i++)
-	{
-		for (int j = 0; j < m_modelsViewspace[i].instances.size(); j++)
-		{
-			if (m_modelsViewspace[i].instances[j].id == _id)
-			{
-				m_modelsViewspace[i].instances.erase(m_modelsViewspace[i].instances.begin() + j);
-				if (m_modelsViewspace[i].instances.size() == 0)
-					m_modelsViewspace.erase(m_modelsViewspace.begin() + i);
-
-				return true;
-			}
-		}
-	}
-	for (int i = 0; i < m_modelsInterface.size(); i++)
-	{
-		for (int j = 0; j < m_modelsInterface[i].instances.size(); j++)
-		{
-			if (m_modelsInterface[i].instances[j].id == _id)
-			{
-				m_modelsInterface[i].instances.erase(m_modelsInterface[i].instances.begin() + j);
-				if (m_modelsInterface[i].instances.size() == 0)
-					m_modelsInterface.erase(m_modelsInterface.begin() + i);
-
-				return true;
-			}
-		}
-	}
-
-	return false;
-}
-bool GraphicsHigh::ActiveModel(int _id, bool _active)
-{
-	for (int i = 0; i < m_modelsDeferred.size(); i++)
-	{
-		for (int j = 0; j < m_modelsDeferred[i].instances.size(); j++)
-		{
-			if (m_modelsDeferred[i].instances[j].id == _id)
-			{
-				m_modelsDeferred[i].instances[j].active = _active;
-				return true;
-			}
-		}
-	}
-
-	for (int i = 0; i < m_modelsForward.size(); i++)
-	{
-		for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
-		{
-			if (m_modelsForward[i].instances[j].id == _id)
-			{
-				m_modelsForward[i].instances[j].active = _active;
-				return true;
-			}
-		}
-	}
-
-	for (int i = 0; i < m_modelsViewspace.size(); i++)
-	{
-		for (int j = 0; j < m_modelsViewspace[i].instances.size(); j++)
-		{
-			if (m_modelsViewspace[i].instances[j].id == _id)
-			{
-				m_modelsViewspace[i].instances[j].active = _active;
-				return true;
-			}
-		}
-	}
-
-	for (int i = 0; i < m_modelsInterface.size(); i++)
-	{
-		for (int j = 0; j < m_modelsInterface[i].instances.size(); j++)
-		{
-			if (m_modelsInterface[i].instances[j].id == _id)
-			{
-				m_modelsInterface[i].instances[j].active = _active;
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
-Buffer* GraphicsHigh::AddMesh(std::string _fileDir, Shader *_shaderProg, bool animated)
-{
-	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
-	{		
-		if (it->first == _fileDir)
-			return it->second;
-	}
-
-	ModelExporter modelExporter;
-	modelExporter.OpenFileForRead(_fileDir.c_str());
-	std::vector<float> positionData = modelExporter.ReadDataFromFile();
-	std::vector<float> normalData = modelExporter.ReadDataFromFile();
-	std::vector<float> tanData = modelExporter.ReadDataFromFile();
-	std::vector<float> bitanData = modelExporter.ReadDataFromFile();
-	std::vector<float> texCoordData = modelExporter.ReadDataFromFile();
-	std::vector<float> jointIndexData = modelExporter.ReadDataFromFile();
-	std::vector<float> jointWeightData = modelExporter.ReadDataFromFile();
-	modelExporter.CloseFile();
-
-	Buffer* retbuffer = new Buffer();
-
-	_shaderProg->UseProgram();
-	BufferData bufferData[] =
-	{
-		{ 0, 3, GL_FLOAT, (const GLvoid*)positionData.data(), static_cast<GLsizeiptr>(positionData.size() * sizeof(float)) },
-		{ 1, 3, GL_FLOAT, (const GLvoid*)normalData.data(), static_cast<GLsizeiptr>(normalData.size()   * sizeof(float)) },
-		{ 2, 3, GL_FLOAT, (const GLvoid*)tanData.data(), static_cast<GLsizeiptr>(tanData.size()   * sizeof(float)) },
-		{ 3, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), static_cast<GLsizeiptr>(bitanData.size()   * sizeof(float)) },
-		{ 4, 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), static_cast<GLsizeiptr>(texCoordData.size() * sizeof(float)) },
-		{ 5, 4, GL_FLOAT, (const GLvoid*)jointIndexData.data(), static_cast<GLsizeiptr>(jointIndexData.size()   * sizeof(float)) },
-		{ 6, 4, GL_FLOAT, (const GLvoid*)jointWeightData.data(), static_cast<GLsizeiptr>(jointWeightData.size() * sizeof(float)) }
-	};
-
-	int test = sizeof(bufferData) / sizeof(bufferData[0]);
-	// Counts the size in bytes of all the buffered data
-	for (int i = 0; i < sizeof(bufferData) / sizeof(bufferData[0]); i++)
-		m_vramUsage += (int)bufferData[i].dataSize;
-
-	int bufferDatas = sizeof(bufferData) / sizeof(bufferData[0]);
-	if (animated == false)
-		bufferDatas -= 2;
-	else
-		int hej = 0;
-	retbuffer->init(bufferData, bufferDatas);
-	retbuffer->setCount((int)positionData.size() / 3);
-	
-	m_meshs.insert(std::pair<const std::string, Buffer*>(_fileDir, retbuffer));
-
-	return retbuffer;
-}
 
 void GraphicsHigh::Clear()
 {
@@ -1060,214 +814,4 @@ void GraphicsHigh::Clear()
 
 	//if (m_pointerToPointlights)
 		//delete m_pointerToPointlights;
-}
-
-bool GraphicsHigh::BufferModelTexture(int _id, std::string _fileDir, int _textureType)
-{
-	// TODO: Do this for Interface and Viewspace
-	// Model Instance
-	Instance instance;
-	// Temp Model
-	Model model;
-
-	bool found = false;
-	int renderType;
-
-	// Find model Instance
-	for (int i = 0; i < m_modelsDeferred.size(); i++)
-	{
-		for (int j = 0; j < m_modelsDeferred[i].instances.size(); j++)
-		{
-			if (m_modelsDeferred[i].instances[j].id == _id)
-			{
-				instance = m_modelsDeferred[i].instances[j];
-				model = Model(
-					m_modelsDeferred[i].bufferPtr,
-					m_modelsDeferred[i].texID,
-					m_modelsDeferred[i].norID,
-					m_modelsDeferred[i].speID
-					);
-				found = true;
-				renderType = RENDER_DEFERRED;
-				m_modelsDeferred[i].instances.erase(m_modelsDeferred[i].instances.begin() + j);
-				if (m_modelsDeferred[i].instances.size() == 0)
-					m_modelsDeferred.erase(m_modelsDeferred.begin() + i);
-			}
-			if (found) break;
-		}
-		if (found) break;
-	}
-	if (!found)
-	{
-		for (int i = 0; i < m_modelsForward.size(); i++)
-		{
-			for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
-			{
-				if (m_modelsForward[i].instances[j].id == _id)
-				{
-					instance = m_modelsForward[i].instances[j];
-					model = Model(
-						m_modelsForward[i].bufferPtr,
-						m_modelsForward[i].texID,
-						m_modelsForward[i].norID,
-						m_modelsForward[i].speID
-						);
-					found = true;
-					renderType = RENDER_FORWARD;
-					m_modelsForward[i].instances.erase(m_modelsForward[i].instances.begin() + j);
-					if (m_modelsForward[i].instances.size() == 0)
-						m_modelsForward.erase(m_modelsForward.begin() + i);
-				}
-				if (found) break;
-			}
-			if (found) break;
-		}
-	}
-	if (!found)
-	{
-		for (int i = 0; i < m_modelsViewspace.size(); i++)
-		{
-			for (int j = 0; j < m_modelsViewspace[i].instances.size(); j++)
-			{
-				if (m_modelsViewspace[i].instances[j].id == _id)
-				{
-					instance = m_modelsViewspace[i].instances[j];
-					model = Model(
-						m_modelsViewspace[i].bufferPtr,
-						m_modelsViewspace[i].texID,
-						m_modelsViewspace[i].norID,
-						m_modelsViewspace[i].speID
-						);
-					found = true;
-					renderType = RENDER_VIEWSPACE;
-					m_modelsViewspace[i].instances.erase(m_modelsViewspace[i].instances.begin() + j);
-					if (m_modelsViewspace[i].instances.size() == 0)
-						m_modelsViewspace.erase(m_modelsViewspace.begin() + i);
-				}
-				if (found) break;
-			}
-			if (found) break;
-		}
-	}
-	if (!found)
-	{
-		for (int i = 0; i < m_modelsInterface.size(); i++)
-		{
-			for (int j = 0; j < m_modelsInterface[i].instances.size(); j++)
-			{
-				if (m_modelsInterface[i].instances[j].id == _id)
-				{
-					instance = m_modelsInterface[i].instances[j];
-					model = Model(
-						m_modelsInterface[i].bufferPtr,
-						m_modelsInterface[i].texID,
-						m_modelsInterface[i].norID,
-						m_modelsInterface[i].speID
-						);
-					found = true;
-					renderType = RENDER_INTERFACE;
-					m_modelsInterface[i].instances.erase(m_modelsInterface[i].instances.begin() + j);
-					if (m_modelsInterface[i].instances.size() == 0)
-						m_modelsInterface.erase(m_modelsInterface.begin() + i);
-				}
-				if (found) break;
-			}
-			if (found) break;
-		}
-	}
-	// Didn't we find it return false
-	if (!found) return false;
-
-	// Set new Texture to TextureType
-	if (_textureType == TEXTURE_DIFFUSE)
-	{
-		model.texID = GraphicDevice::AddTexture(_fileDir, GL_TEXTURE1);
-		m_deferredShader1.CheckUniformLocation("diffuseTex", 1);
-	}
-	else if (_textureType == TEXTURE_NORMAL)
-	{
-		model.norID = GraphicDevice::AddTexture(_fileDir, GL_TEXTURE2);
-		m_deferredShader1.CheckUniformLocation("normalTex", 2);
-	}
-	else if (_textureType == TEXTURE_SPECULAR)
-	{
-		model.speID = GraphicDevice::AddTexture(_fileDir, GL_TEXTURE3);
-		m_deferredShader1.CheckUniformLocation("specularTex", 3);
-	}
-
-	// Check if our new Model type already exists and add instance
-	if (renderType == RENDER_DEFERRED)
-	{
-		for (int i = 0; i < m_modelsDeferred.size(); i++)
-		{
-			if (m_modelsDeferred[i] == model)
-			{
-				m_modelsDeferred[i].instances.push_back(instance);
-				return true;
-			}
-		}
-	}
-	else if (renderType == RENDER_FORWARD)
-	{
-		for (int i = 0; i < m_modelsForward.size(); i++)
-		{
-			if (m_modelsForward[i] == model)
-			{
-				m_modelsForward[i].instances.push_back(instance);
-				return true;
-			}
-		}
-	}
-	else if (renderType == RENDER_VIEWSPACE)
-	{
-		for (int i = 0; i < m_modelsViewspace.size(); i++)
-		{
-			if (m_modelsViewspace[i] == model)
-			{
-				m_modelsViewspace[i].instances.push_back(instance);
-				return true;
-			}
-		}
-	}
-	else if (renderType == RENDER_INTERFACE)
-	{
-		for (int i = 0; i < m_modelsInterface.size(); i++)
-		{
-			if (m_modelsInterface[i] == model)
-			{
-				m_modelsInterface[i].instances.push_back(instance);
-				return true;
-			}
-		}
-	}
-
-	// Nothing found. Let's make a new Model type
-	model.instances.push_back(instance);
-	// Push back the model
-	if (renderType == RENDER_DEFERRED)
-		m_modelsDeferred.push_back(model);
-	else if (renderType == RENDER_FORWARD)
-		m_modelsForward.push_back(model);
-	else if (renderType == RENDER_VIEWSPACE)
-		m_modelsViewspace.push_back(model);
-	else if (renderType == RENDER_INTERFACE)
-		m_modelsInterface.push_back(model);
-
-	return true;
-}
-
-void GraphicsHigh::UpdateTextureIndex(GLuint newTexture, GLuint oldTexture)
-{
-	for (Model& m : m_modelsDeferred)
-		if (m.texID == oldTexture)
-			m.texID = newTexture;
-	for (Model& m : m_modelsForward)
-		if (m.texID == oldTexture)
-			m.texID = newTexture;
-	for (Model& m : m_modelsViewspace)
-		if (m.texID == oldTexture)
-			m.texID = newTexture;
-	for (Model& m : m_modelsInterface)
-		if (m.texID == oldTexture)
-			m.texID = newTexture;
 }

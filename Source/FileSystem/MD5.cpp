@@ -40,6 +40,8 @@
 #include <iostream>
 
 #include "FileSystem/MD5.h"
+#include "FileSystem/File.h"
+
 namespace FileSystem
 {
 	namespace MD5
@@ -210,6 +212,11 @@ namespace FileSystem
 			std::cout << std::endl;
 		}
 
+		void MD5_Print(std::string md5)
+		{
+			MD5_Print((unsigned char*)md5.c_str());
+		}
+
 		void MD5_Init(MD5_CTX *ctx)
 		{
 			ctx->a = 0x67452301;
@@ -304,6 +311,28 @@ namespace FileSystem
 			result[15] = ctx->d >> 24;
 
 			memset(ctx, 0, sizeof(*ctx));
+		}
+
+		std::string MD5(const void *data, unsigned long size)
+		{
+			FileSystem::MD5::MD5_CTX ctx;
+			FileSystem::MD5::MD5_Init(&ctx);
+			FileSystem::MD5::MD5_Update(&ctx, data, size);
+			unsigned char res[16];
+			FileSystem::MD5::MD5_Final(res, &ctx);
+			return std::string((char*)res);
+		}
+
+		std::string MD5_File(std::string _file)
+		{
+			SDL_RWops* test;
+			FileSystem::File::Open(_file, &test);
+			Sint64 length = FileSystem::File::GetFileSize(test);
+			char* data = FileSystem::File::Read(test, length);
+
+			std::string result = MD5(data, length);
+			delete data;
+			return result;
 		}
 
 	}
