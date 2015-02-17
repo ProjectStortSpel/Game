@@ -1,5 +1,6 @@
 PlaceCardAboveUnitSystem = System()
-PlaceCardAboveUnitSystem.CardEntity = -1
+PlaceCardAboveUnitSystem.CardEntities = { }
+PlaceCardAboveUnitSystem.CardEntities.__mode = "k"
 
 PlaceCardAboveUnitSystem.Initialize = function(self)
 	--	Set Name
@@ -18,11 +19,6 @@ PlaceCardAboveUnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount
 	for n = 1, #entities do
 		local entity = entities[n]
 		if world:EntityHasComponent(entity, "PlayCard") then
-			if self.CardEntity ~= -1 then
-				world:KillEntity(self.CardEntity)
-				self.CardEntity = -1
-			end
-		  
 			local step = world:GetComponent( entity, "PlayCard", "Step"):GetInt()
 
 			local cards = self:GetEntities("CardStep")
@@ -35,16 +31,16 @@ PlaceCardAboveUnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount
 				  
 					local action = world:GetComponent( card, "CardAction", "Action"):GetText()
 
-					self.CardEntity = world:CreateNewEntity()
-					world:CreateComponentAndAddTo("Model", self.CardEntity)
-					world:CreateComponentAndAddTo("Position", self.CardEntity)
-					world:CreateComponentAndAddTo("Rotation", self.CardEntity)
-					world:CreateComponentAndAddTo("Scale", self.CardEntity)
-					world:CreateComponentAndAddTo("SyncNetwork", self.CardEntity)
-					world:CreateComponentAndAddTo("Parent", self.CardEntity)
-					world:CreateComponentAndAddTo("WorldToViewSpace", self.CardEntity)
+					local cardEntity = world:CreateNewEntity()
+					world:CreateComponentAndAddTo("Model", cardEntity)
+					world:CreateComponentAndAddTo("Position", cardEntity)
+					world:CreateComponentAndAddTo("Rotation", cardEntity)
+					world:CreateComponentAndAddTo("Scale", cardEntity)
+					world:CreateComponentAndAddTo("SyncNetwork", cardEntity)
+					world:CreateComponentAndAddTo("Parent", cardEntity)
+					world:CreateComponentAndAddTo("WorldToViewSpace", cardEntity)
 					
-					local model = world:GetComponent(self.CardEntity, "Model", 0)
+					local model = world:GetComponent(cardEntity, "Model", 0)
 					if action == "Forward" then
 						model:SetModel("forward", "cards", 2)
 					elseif action == "Backward" then
@@ -64,12 +60,21 @@ PlaceCardAboveUnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount
 					else
 						model:SetModel("forward", "cards", 2)
 					end
-					world:GetComponent(self.CardEntity, "Position", 0):SetFloat3(0.0, 2.0, 0.0)
-					world:GetComponent(self.CardEntity, "Rotation", 0):SetFloat3(1.5 * math.pi, math.pi, 0.0)
-					world:GetComponent(self.CardEntity, "Scale", 0):SetFloat3(1.5, 1.5, 1.5)
-					world:GetComponent(self.CardEntity, "Parent", 0):SetInt(unit)
+					world:GetComponent(cardEntity, "Position", 0):SetFloat3(0.0, 2.0 + #self.CardEntities * 0.001, 0.0)
+					world:GetComponent(cardEntity, "Rotation", 0):SetFloat3(1.5 * math.pi, math.pi, 0.0)
+					world:GetComponent(cardEntity, "Scale", 0):SetFloat3(1.5, 1.5, 1.5)
+					world:GetComponent(cardEntity, "Parent", 0):SetInt(unit)
+					
+					table.insert(self.CardEntities, cardEntity)
 				end
+			else
+				for i = 1, #self.CardEntities do
+					world:KillEntity(self.CardEntities[i])
+				end
+				self.CardEntities = { }
+				self.CardEntities.__mode = "k"
 			end
+			
 		end
 	end
 end
