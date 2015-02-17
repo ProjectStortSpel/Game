@@ -54,7 +54,7 @@ int main(int argc, char** argv)
     std::string path2 = HomePath::GetHomePath();
     //path2.append("models/");
     
-    std::vector<std::string> temp = FileSystem::Directory::GetAllFiles(path2);
+ /*   std::vector<std::string> temp = FileSystem::Directory::GetAllFiles(path2);
     
     
     for (int i = 0; i < temp.size(); ++i)
@@ -64,7 +64,7 @@ int main(int argc, char** argv)
         printf("File: %s\n", path.c_str());
         FileSystem::MD5::MD5_Print(FileSystem::MD5::MD5_File(path));
     }
-
+*/
 	//newGame->InitializeLua();
 	newGame->InitializeGraphics();
 	newGame->InitializeInput();
