@@ -16,6 +16,13 @@ OffsetUnitSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("MapSpecs", FilterType.RequiresOneOf)
 end
 
+OffsetUnitSystem.IsTileRiver = function(self, X, Z)
+	
+	local	tileList	=	self:GetEntities("TileOffset")
+	
+	return world:EntityHasComponent(tileList[self:GetListIndex(X, Z)], "River")
+end
+
 OffsetUnitSystem.UpdateUnitLerp = function(self, unitId)
 
 	print("AOSKDPOASKDPOASKDPOASKDPOK")
@@ -23,7 +30,16 @@ OffsetUnitSystem.UpdateUnitLerp = function(self, unitId)
 		return
 	end
 	
+	local	pX, pY, pZ	=	world:GetComponent(unitId, "Position", "X"):GetFloat3()
 	local	tX, tZ	=	world:GetComponent(unitId, "MapPosition", "X"):GetInt2()
+	local	oldX, oldZ	=	math.floor(pX), math.floor(pZ)
+	
+	
+	if self:IsTileRiver(tX, tZ) and not self:IsTileRiver(pX, pZ) then
+		world:GetComponent(unitId, "LerpPosition", "Algorithm"):SetText("PlayerJump")
+	elseif  not self:IsTileRiver(tX, tZ) and self:IsTileRiver(pX, pZ) then
+		world:GetComponent(unitId, "LerpPosition", "Algorithm"):SetText("PlayerJump")
+	end
 	
 	local	yOffset	=	world:GetComponent(self:GetEntities("TileOffset")[self:GetListIndex(tX, tZ)], "TileOffset", "Offset"):GetFloat()
 	

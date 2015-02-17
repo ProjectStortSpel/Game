@@ -168,8 +168,8 @@ SimultaneousMove.SetLerpFor = function(self, moveToLerp)
 	world:GetComponent(tUnit, "LerpPosition", "Time"):SetFloat(1)
 	world:GetComponent(tUnit, "LerpPosition", "Algorithm"):SetText("PlayerMove")
 	
-	if not world:EntityHasComponent(unitToMove, "UnitWantTileOffset") then
-		world:CreateComponentAndAddTo("UnitWantTileOffset", unitToMove)
+	if not world:EntityHasComponent(tUnit, "UnitWantTileOffset") then
+		world:CreateComponentAndAddTo("UnitWantTileOffset", tUnit)
 	end
 end
 
