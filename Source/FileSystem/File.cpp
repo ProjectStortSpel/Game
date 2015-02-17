@@ -8,6 +8,7 @@ namespace FileSystem
 
 		bool Create(std::string _path)
 		{
+            //Create Directory
 			SDL_RWops* file = SDL_RWFromFile(_path.c_str(), "w");
 			if (!file)
 				return false;
@@ -23,10 +24,14 @@ namespace FileSystem
 
 		bool Open(std::string _path, SDL_RWops** _file)
 		{
+            const char* str = _path.c_str();
 			*_file = SDL_RWFromFile(_path.c_str(), "r");
 
 			if (!*_file)
-				return false;
+            {
+                SDL_Log("Failed to open file. Error: %s", SDL_GetError());
+                return false;
+            }
 			SDL_RWseek(*_file, 0, RW_SEEK_SET);
 			return true;
 		}

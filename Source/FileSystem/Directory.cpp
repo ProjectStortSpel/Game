@@ -3,14 +3,15 @@
 
 #if defined(WIN32)
 
+#include "FileSystem/dirent.h"
 #include <sys/types.h>
 #include <sys/stat.h>
-#include<windows.h>
+#include <windows.h>
 
 #elif defined(__ANDROID__)
 
 #else
-
+#include <dirent.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -107,5 +108,108 @@ namespace FileSystem
 			#endif
 			return false;
 		}
+        
+        std::vector<Entry> GetEntries(std::string _path)
+        {
+            std::vector<Entry> result;
+            DIR *dir;
+            struct dirent *ent;
+            if ((dir = opendir(_path.c_str())) != NULL)
+            {
+                
+                while ((ent = readdir (dir)) != NULL)
+                {
+                    if (strcmp(ent->d_name, ".") && strcmp(ent->d_name, ".."))
+                    {
+                        Entry e;
+                        e.name = ent->d_name;
+                        e.type = ent->d_type == DT_DIR ? _Directory : _File;
+                        result.push_back(e);
+                    }
+                }
+                closedir (dir);
+            }
+            
+            return result;
+        }
+        
+        std::vector<std::string> GetSubDirectories(std::string _path)
+        {
+            std::vector<std::string> result;
+            DIR *dir;
+            struct dirent *ent;
+            if ((dir = opendir(_path.c_str())) != NULL)
+            {
+                while ((ent = readdir (dir)) != NULL)
+                {
+                    if (strcmp(ent->d_name, ".") && strcmp(ent->d_name, ".."))
+                    {
+                        if (ent->d_type == DT_DIR)
+                        {
+                            result.push_back(ent->d_name);
+                        }
+                    }
+                }
+                closedir (dir);
+            }
+            
+            return result;
+        }
+        
+        std::vector<std::string> GetFiles(std::string _path)
+        {
+            std::vector<std::string> result;
+            DIR *dir;
+            struct dirent *ent;
+            if ((dir = opendir(_path.c_str())) != NULL)
+            {
+                while ((ent = readdir (dir)) != NULL)
+                {
+                    if (ent->d_type != DT_DIR)
+                    {
+                        result.push_back(ent->d_name);
+                    }
+                }
+                closedir (dir);
+            }
+            
+            return result;
+        }
+        
+        void GetAllFiles2(std::string _path, std::string _prefix, std::vector<std::string> &_files)
+        {
+            //Add Files
+            std::vector<std::string> files = GetFiles(_path);
+            
+            for (int i = 0; i < files.size(); ++i)
+            {
+                std::string file = _prefix;
+                file.append(files[i]);
+                _files.push_back(file);
+            }
+            
+            //Add Sub dirs
+            std::vector<std::string> dirs = GetSubDirectories(_path);
+            
+            for (int i = 0; i < dirs.size(); ++i)
+            {
+                std::string path = _path;
+                path.append(dirs[i]);
+                path.append("/");
+
+                std::string prefix = _prefix;
+                prefix.append(dirs[i]);
+                prefix.append("/");
+                GetAllFiles2(path, prefix, _files);
+            }
+            
+        }
+        
+        std::vector<std::string> GetAllFiles(std::string _path)
+        {
+            std::vector<std::string> result;
+            GetAllFiles2(_path, "", result);
+            return result;
+        }
 	}
 }
