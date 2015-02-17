@@ -51,7 +51,7 @@ LOCAL_SRC_FILES := $(FILESYSTEM_SRC_FILES) $(LOGGER_SRC_FILES) $(MPL_SRC_FILES) 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../../../Source/ $(LOCAL_PATH)/../../../../Externals/android/include/
 
 # Libs
-LOCAL_SHARED_LIBRARIES := SDL2main_shared SDL2_shared SDL2_ttf_shared
+LOCAL_SHARED_LIBRARIES := SDL2main_shared SDL2_shared SDL2_ttf_shared SDL2_mixer_shared
 LOCAL_STATIC_LIBRARIES := lua
 LOCAL_LDLIBS := -llog -landroid -lGLESv2
 

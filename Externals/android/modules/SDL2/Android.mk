@@ -56,6 +56,10 @@ LOCAL_MODULE := SDL2_ttf_shared
 LOCAL_SRC_FILES := libs/$(TARGET_ARCH_ABI)/libSDL2_ttf.so
 include $(PREBUILT_SHARED_LIBRARY)
 
+LOCAL_MODULE := SDL2_mixer_shared
+LOCAL_SRC_FILES := libs/$(TARGET_ARCH_ABI)/libSDL2_mixer.so
+include $(PREBUILT_SHARED_LIBRARY)
+
 
 ## For the static library
 #include $(CLEAR_VARS)
