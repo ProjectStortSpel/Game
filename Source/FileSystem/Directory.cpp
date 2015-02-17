@@ -7,9 +7,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <windows.h>
-
-#elif defined(__ANDROID__)
-
 #else
 #include <dirent.h>
 #include <sys/types.h>
@@ -43,7 +40,7 @@ namespace FileSystem
 			#if defined(WIN32)
 				return CreateDirectory(s2ws(_path).c_str(), NULL);
 
-			#elif defined(__ANDROID__)
+			// defined(__ANDROID__)
 
 			#else
 				return mkdir(_path.c_str(), 0775) == 0;
@@ -97,15 +94,13 @@ namespace FileSystem
 			if (_path.at(_path.size() - 1) == '/')
 				_path = _path.substr(0, _path.size() - 1);
 
-			#if !defined(__ANDROID__)
+			//#if !defined(__ANDROID__)
 				struct stat info;
 				if (stat(_path.c_str(), &info) != 0)
 					return false;
 				else if (info.st_mode & S_IFDIR)  // S_ISDIR() doesn't exist on my windows 
 					return true;
-				else
-					return false;
-			#endif
+			//#endif
 			return false;
 		}
         
