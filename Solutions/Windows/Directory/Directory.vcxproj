@@ -25,6 +25,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\FileSystem\Directory.h" />
+    <ClInclude Include="..\..\..\Source\FileSystem\dirent.h" />
     <ClInclude Include="..\..\..\Source\FileSystem\File.h" />
     <ClInclude Include="..\..\..\Source\FileSystem\MD5.h" />
   </ItemGroup>

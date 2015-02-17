@@ -8,6 +8,7 @@ namespace FileSystem
 
 		bool Create(std::string _path)
 		{
+            //Create Directory
 			SDL_RWops* file = SDL_RWFromFile(_path.c_str(), "w");
 			if (!file)
 				return false;
@@ -23,10 +24,14 @@ namespace FileSystem
 
 		bool Open(std::string _path, SDL_RWops** _file)
 		{
+            const char* str = _path.c_str();
 			*_file = SDL_RWFromFile(_path.c_str(), "r");
 
 			if (!*_file)
-				return false;
+            {
+                SDL_Log("Failed to open file. Error: %s", SDL_GetError());
+                return false;
+            }
 			SDL_RWseek(*_file, 0, RW_SEEK_SET);
 			return true;
 		}
@@ -38,11 +43,15 @@ namespace FileSystem
 
 		void Close(SDL_RWops* _file)
 		{
+			if (!_file)
+				return;
 			SDL_RWclose(_file);
 		}
 
 		Sint64 GetFileSize(SDL_RWops* _file)
 		{
+			if (!_file)
+				return 0;
 			Sint64 offset = SDL_RWtell(_file);
 			Sint64 length = SDL_RWseek(_file, 0, RW_SEEK_END);
 			SDL_RWseek(_file, offset, RW_SEEK_SET);
@@ -51,12 +60,16 @@ namespace FileSystem
 
 		Sint64 GetPosition(SDL_RWops* _file)
 		{
+			if (!_file)
+				return 0;
 			Sint64 offset = SDL_RWtell(_file);
 			return offset;
 		}
 
 		Sint64 GetRemainingBytes(SDL_RWops* _file)
 		{
+			if (!_file)
+				return 0;
 			Sint64 offset = SDL_RWtell(_file);
 			Sint64 length = SDL_RWseek(_file, offset, RW_SEEK_END);
 			SDL_RWseek(_file, offset, RW_SEEK_SET);
@@ -65,6 +78,9 @@ namespace FileSystem
 
 		char* Read(SDL_RWops* _file, int _length)
 		{
+			if (!_file)
+				return NULL;
+
 			char* data = new char[_length];
 			int endpos = SDL_RWread(_file, data, 1, _length);
 						
@@ -73,6 +89,9 @@ namespace FileSystem
 
 		std::string ReadLine(SDL_RWops* _file)
 		{
+			if (!_file)
+				return NULL;
+
 			std::ostringstream ss;
 
 			char* data = new char[11];
@@ -110,11 +129,15 @@ namespace FileSystem
 
 		void Write(SDL_RWops* _file, std::string _text)
 		{
+			if (!_file)
+				return;
 			SDL_RWwrite(_file, _text.c_str(), 1, _text.size());
 		}
 
 		void WriteLine(SDL_RWops* _file, std::string _text)
 		{
+			if (!_file)
+				return;
 			std::ostringstream ss;
 			ss << _text.c_str();
 			ss << "\r\n";

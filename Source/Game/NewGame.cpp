@@ -9,8 +9,8 @@
 #include "Logger/Managers/Logger.h"
 #include "Game/Network/ClientDatabase.h"
 #include "Game/HomePath.h"
-//#include "FileSystem/MD5.h"
-//#include "FileSystem/File.h"
+#include "FileSystem/MD5.h"
+#include "FileSystem/Directory.h"
 
 #ifdef __APPLE__
 #include "CoreFoundation/CoreFoundation.h"
@@ -21,15 +21,15 @@ int main(int argc, char** argv)
 #ifdef __APPLE__
     CFBundleRef mainBundle = CFBundleGetMainBundle();
     CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
-    char path[PATH_MAX];
-    if (!CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)path, PATH_MAX))
+    char Cpath[PATH_MAX];
+    if (!CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)Cpath, PATH_MAX))
     {
         // error!
     }
     CFRelease(resourcesURL);
     
-    chdir(path);
-    std::cout << "Current Path: " << path << std::endl;
+    chdir(Cpath);
+    std::cout << "Current Path: " << Cpath << std::endl;
 #endif
     
     
@@ -48,24 +48,23 @@ int main(int argc, char** argv)
 	Logger::GetInstance().AddGroup("Game");
 	GameCreator* newGame = new GameCreator();
 
+    
+    
 
-	////Test Md5
-	//std::string path2 = HomePath::GetSecondaryHomePath();
-	//path2.append("models/caveman/cavemanwave.amesh");
-	//SDL_RWops* test;
-	//FileSystem::File::Open(path2, &test);
-	//Sint64 length = FileSystem::File::GetFileSize(test);
-	//char* data = FileSystem::File::Read(test, length);
-
-	//FileSystem::MD5::MD5_CTX ctx;
-	//FileSystem::MD5::MD5_Init(&ctx);
-	//FileSystem::MD5::MD5_Update(&ctx, data, length);
-	//unsigned char res[16];
-	//FileSystem::MD5::MD5_Final(res, &ctx);
-	//FileSystem::MD5::MD5_Print(res);
-
-	//delete data;
-
+    std::string path2 = HomePath::GetHomePath();
+    //path2.append("models/");
+    
+ /*   std::vector<std::string> temp = FileSystem::Directory::GetAllFiles(path2);
+    
+    
+    for (int i = 0; i < temp.size(); ++i)
+    {
+        std::string path = path2;
+        path.append(temp[i]);
+        printf("File: %s\n", path.c_str());
+        FileSystem::MD5::MD5_Print(FileSystem::MD5::MD5_File(path));
+    }
+*/
 	//newGame->InitializeLua();
 	newGame->InitializeGraphics();
 	newGame->InitializeInput();
