@@ -8,7 +8,7 @@ layout( location = 5 ) in mat4 MVP;
 // used locations 5-8
 layout( location = 9 ) in mat3 NormalMatrix;
 // used locations 9-11
-//layout( location = 15 ) in vec4 ColorVec;
+layout( location = 12 ) in vec3 ColorVec;
 
 //flat out int instanceID;
 
@@ -16,7 +16,7 @@ out vec3 Normal;
 out vec3 Tan;
 out vec3 BiTan;
 out vec2 TexCoord;
-out vec4 addcolor;
+out vec3 AddColor;
 
 void main()
 {
@@ -25,6 +25,6 @@ void main()
 	BiTan = normalize( NormalMatrix * VertexBiTangent);
 	TexCoord = VertexTexCoord;
 	gl_Position = MVP * vec4(VertexPosition, 1.0);
-	addcolor = vec4(0);//addcolor = ColorVec;
+	AddColor = ColorVec;
 	//instanceID = gl_InstanceID;
 }
