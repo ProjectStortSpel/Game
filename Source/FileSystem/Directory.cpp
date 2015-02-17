@@ -1,17 +1,15 @@
 #include "Directory.h"
 #include <cstring>
 
+#include <sys/types.h>
+#include <sys/stat.h>
+
 #if defined(WIN32)
 
 #include "FileSystem/dirent.h"
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <windows.h>
 #else
 #include <dirent.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-
 #endif
 
 #ifdef WIN32
@@ -116,10 +114,18 @@ namespace FileSystem
                 {
                     if (strcmp(ent->d_name, ".") && strcmp(ent->d_name, ".."))
                     {
-                        Entry e;
-                        e.name = ent->d_name;
-                        e.type = ent->d_type == DT_DIR ? _Directory : _File;
-                        result.push_back(e);
+						Entry e;
+						e.name = ent->d_name;
+						if (ent->d_type == DT_DIR)
+						{
+							e.type = _Directory;
+							result.push_back(e);
+						}
+						else if (ent->d_type == DT_REG)
+						{
+							e.type = _File;
+							result.push_back(e);
+						}
                     }
                 }
                 closedir (dir);
@@ -160,7 +166,7 @@ namespace FileSystem
             {
                 while ((ent = readdir (dir)) != NULL)
                 {
-                    if (ent->d_type != DT_DIR)
+                    if (ent->d_type == DT_REG)
                     {
                         result.push_back(ent->d_name);
                     }

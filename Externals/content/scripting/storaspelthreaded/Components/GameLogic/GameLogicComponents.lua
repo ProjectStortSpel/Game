@@ -33,3 +33,5 @@ require "UnitComponents"
 require "SlerpComponent"
 
 require "MapRaterComponents"
+
+require "WeatherComponents"
