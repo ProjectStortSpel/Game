@@ -37,6 +37,7 @@
 
 
 #include <string.h>
+#include <SDL/SDL.h>
 #include <iostream>
 
 #include "FileSystem/MD5.h"
@@ -202,14 +203,21 @@ namespace FileSystem
 			return ptr;
 		}
 
+		char const hex_chars[16] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 		void MD5_Print(unsigned char *md5)
 		{
-			std::cout << "MD5: ";
-			for (int i = 0; i < 16; i++) {
-				printf("%x", md5[i]);
+			std::string text = "MD5: ";
+			for (int i = 0; i < 16; i++) 
+			{
+				char const byte = md5[i];
+
+				text += hex_chars[(byte & 0xF0) >> 4];
+				text += hex_chars[(byte & 0x0F) >> 0];
+
+				//text.append("%x", md5[i]);
 				//std::cout << std::hex << md5[i];
 			}
-			std::cout << std::endl;
+			SDL_Log("%s", text.c_str());
 		}
 
 		void MD5_Print(std::string md5)
