@@ -131,6 +131,8 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		world:CreateComponentAndAddTo("Model", newTile)
 		local comp = world:GetComponent(newTile, "Model", 0)
 		comp:SetModel("riverstraight", "riverstraight", 0)
+		
+		world:GetComponent(newTile, "TileOffset", "Offset"):SetFloat(0.2)
 
 		self.waterTiles[#self.waterTiles+1]=newTile
 		

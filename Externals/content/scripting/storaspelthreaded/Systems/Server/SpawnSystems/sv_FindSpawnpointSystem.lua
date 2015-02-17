@@ -91,8 +91,11 @@ FindSpawnpointSystem.SpawnUnitAt = function(self, X, Z, unitToSpawn)
 	world:GetComponent(unitToSpawn, "LerpPosition", "Y"):SetFloat(0.5)
 	world:GetComponent(unitToSpawn, "LerpPosition", "Z"):SetFloat(Z)
 	world:GetComponent(unitToSpawn, "LerpPosition", "Time"):SetFloat(0)
-	world:GetComponent(unitToSpawn, "LerpPosition", "Algorithm"):SetText("NormalLerp")
-
+	world:GetComponent(unitToSpawn, "LerpPosition", "Algorithm"):SetText("PlayerMove")
+	
+	if not world:EntityHasComponent(unitToSpawn, "UnitWantTileOffset") then
+		world:CreateComponentAndAddTo("UnitWantTileOffset", unitToSpawn)
+	end
 	world:GetComponent(unitToSpawn, "MapPosition", "X"):SetInt2(X, Z)
 end
 
