@@ -482,7 +482,7 @@ bool GraphicDevice::BufferModelTexture(int _id, std::string _fileDir, int _textu
 		modelList = m_renderLists[k].ModelList;
 		for (int i = 0; i < (*modelList).size() && !found; i++)
 		{
-			for (int j = 0; j < (*modelList)[i].instances.size() && !found; j++)
+			for (int j = 0; j < (*modelList)[i].instances.size(); j++)
 			{
 				if ((*modelList)[i].instances[j].id == _id)
 				{
@@ -500,8 +500,11 @@ bool GraphicDevice::BufferModelTexture(int _id, std::string _fileDir, int _textu
 					if ((*modelList)[i].instances.size() == 0)
 						(*modelList).erase((*modelList).begin() + i);
 				}
+				if (found) break;
 			}
+			if (found) break;
 		}
+		if (found) break;
 	}
 
 	// Didn't we find it return false
