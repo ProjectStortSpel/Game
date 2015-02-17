@@ -477,10 +477,10 @@ bool GraphicDevice::BufferModelTexture(int _id, std::string _fileDir, int _textu
 	std::vector<Model> *modelList = NULL;
 
 	// Find model Instance
-	for (int k = 0; k < m_renderLists.size() && !found; k++)
+	for (int k = 0; k < m_renderLists.size(); k++)
 	{
 		modelList = m_renderLists[k].ModelList;
-		for (int i = 0; i < (*modelList).size() && !found; i++)
+		for (int i = 0; i < (*modelList).size(); i++)
 		{
 			for (int j = 0; j < (*modelList)[i].instances.size(); j++)
 			{
