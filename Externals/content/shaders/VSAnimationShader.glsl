@@ -49,6 +49,7 @@ void main()
 	Tan = normalize( NormalMatrix * VertexTangent);
 	BiTan = normalize( NormalMatrix * VertexBiTangent);
 	TexCoord = VertexTexCoord;
-	gl_Position = VP * M * vec4(VertexPosition, 1.0);
+	uint jointIndex = uint(VertexJointIndex.x);
+	gl_Position = VP * M * JointToMatrix(joints[0]) * vec4(VertexPosition, 1.0);
 	//instanceID = gl_InstanceID;
 }
