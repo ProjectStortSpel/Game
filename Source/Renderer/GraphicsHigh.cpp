@@ -547,7 +547,10 @@ void GraphicsHigh::Render()
 	//--------PARTICLES---------
 	glEnable(GL_POINT_SPRITE);
 	glDepthMask(GL_FALSE);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
+	glBlendColor(0.95, 0.95, 0.95, 1.0);
+	glBlendFunc(GL_SRC_ALPHA, GL_CONSTANT_COLOR);
+	
 	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 
 	m_particleShader.UseProgram();

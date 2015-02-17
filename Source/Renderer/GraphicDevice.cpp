@@ -228,7 +228,7 @@ void GraphicDevice::CreateParticleSystems()
 	
 	//AddParticleEffect("fire", vec3(11.0f, 0.55f, 8.0f), 100, 700, 0.05f, 0.6f, "content/textures/fire3.png", vec3(0.0f, 8.f, 0.0f), tmpID);
 
-	//AddParticleEffect("fire", vec3(8.0f, 0.55f, 8.0f), 100, 700, 0.05f, 0.6f, "content/textures/firewhite.png", vec3(0.8f, 0.f, 0.0f), tmpID);
+//	AddParticleEffect("fire", vec3(8.0f, 0.55f, 8.0f), 100, 1100, 0.05f, 0.6f, "content/textures/firewhite4.png", vec3(0.9f, 0.f, 0.0f), tmpID);
 	//AddParticleEffect("fire", vec3(8.0f, 0.55f, 5.0f), 100, 700, 0.05f, 0.6f, "content/textures/smoke1.png", vec3(0.2f, 0.f, 1.0f), tmpID);
 	//AddParticleEffect("smoke", vec3(11.0f, 0.0f, 9.0f), 15, 1800, 0.05f, 1.6f, "content/textures/smoke1.png", vec3(0.0f, 0.f, 0.f), tmpID);
 }
@@ -254,8 +254,7 @@ void GraphicDevice::AddParticleEffect(std::string _name, const vec3 _pos, int _n
 
 void GraphicDevice::RemoveParticleEffect(int _id)
 {
-	delete(m_particleSystems[_id]);
-	m_particleSystems.erase(_id);
+	m_particlesIdToRemove.push_back(_id);
 }
 
 void GraphicDevice::BufferParticleSystems()
@@ -274,6 +273,13 @@ void GraphicDevice::BufferParticleSystems()
 			&m_particleShader)));
 	}
 	m_particleSystemsToLoad.clear();
+
+	for (int i = 0; i < m_particlesIdToRemove.size(); i++)
+	{
+		delete(m_particleSystems[m_particlesIdToRemove[i]]);
+		m_particleSystems.erase(m_particlesIdToRemove[i]);
+	}
+	m_particlesIdToRemove.clear();
 }
 
 int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color)
