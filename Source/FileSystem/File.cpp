@@ -1,6 +1,10 @@
 #include "FileSystem/File.h"
 #include <sstream>
 
+#include <sys/stat.h>
+
+#include "FileSystem/Directory.h"
+
 namespace FileSystem
 {
 	namespace File
@@ -9,6 +13,13 @@ namespace FileSystem
 		bool Create(std::string _path)
 		{
             //Create Directory
+			unsigned found = _path.find_last_of("/\\");
+
+			if (found != 0 && found != std::string::npos)
+			{
+				Directory::Create(_path.substr(0, found));
+			}
+
 			SDL_RWops* file = SDL_RWFromFile(_path.c_str(), "w");
 			if (!file)
 				return false;
@@ -34,6 +45,21 @@ namespace FileSystem
             }
 			SDL_RWseek(*_file, 0, RW_SEEK_SET);
 			return true;
+		}
+
+		bool Exist(std::string _path)
+		{
+			if (_path.at(_path.size() - 1) == '/')
+				_path = _path.substr(0, _path.size() - 1);
+
+			//#if !defined(__ANDROID__)
+			struct stat info;
+			if (stat(_path.c_str(), &info) != 0)
+				return false;
+			else if (info.st_mode & S_IFREG)  // S_ISREG() doesn't exist on my windows 
+				return true;
+			//#endif
+			return false;
 		}
 
 		bool Delete(std::string _path)
@@ -90,7 +116,7 @@ namespace FileSystem
 		std::string ReadLine(SDL_RWops* _file)
 		{
 			if (!_file)
-				return NULL;
+				return "";
 
 			std::ostringstream ss;
 
