@@ -196,16 +196,7 @@ CreateMapSystem.CreateMap = function(self, name)
 	local map
     self.mapX, self.mapY, map = File.LoadMap(name)
 	
-	-- Create an entity that will keep track of the map size. If it already exist from a previous "loadmap", use that one instead.
-	local mapSpecsEntity = self:GetEntities("MapSpecs")
-	local mapEntity = nil
-	if #mapSpecsEntity == 0 then
-		mapEntity = world:CreateNewEntity()
-		world:CreateComponentAndAddTo("MapSpecs", mapEntity)
-		world:CreateComponentAndAddTo("SyncNetwork", mapEntity)
-	else
-		mapEntity = mapSpecsEntity[1]
-	end
+
 		
 	for x = 0, self.mapX + 1 do
 		self:AddTile(x, 0, 111) -- 111 = void
@@ -252,6 +243,18 @@ CreateMapSystem.CreateMap = function(self, name)
 	for x = 0, self.mapX + 1 do
 		self:AddTile(x, self.mapY+1, 111) -- 111 = void
 		inputData:AddTile( 1, true )
+	end
+	
+	
+	-- Create an entity that will keep track of the map size. If it already exist from a previous "loadmap", use that one instead.
+	local mapSpecsEntity = self:GetEntities("MapSpecs")
+	local mapEntity = nil
+	if #mapSpecsEntity == 0 then
+		mapEntity = world:CreateNewEntity()
+		world:CreateComponentAndAddTo("MapSpecs", mapEntity)
+		world:CreateComponentAndAddTo("SyncNetwork", mapEntity)
+	else
+		mapEntity = mapSpecsEntity[1]
 	end
 	
 	-- Add to the map size as voids have been added around the map.
