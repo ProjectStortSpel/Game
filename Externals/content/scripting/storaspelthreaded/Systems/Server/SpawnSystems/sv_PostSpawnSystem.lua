@@ -31,7 +31,7 @@ PostSpawnSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, newSpaw
 		
 		if world:EntityHasComponent(entityId, "PostSpawn") then
 		
-			
+			printf("asdasd")
 			
 			
 			world:KillEntity(entityId)

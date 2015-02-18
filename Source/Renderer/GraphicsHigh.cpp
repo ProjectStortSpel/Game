@@ -444,7 +444,7 @@ void GraphicsHigh::Render()
 			mat4 vp = projectionMatrix * viewMatrix;
 			mat4 modelViewMatrix = modelMatrix;
 			mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-			//m_animationShader.SetUniVariable("BlendColor", vector3, m_modelsAnimated[i].color);
+			m_animationShader.SetUniVariable("BlendColor", vector3, m_modelsAnimated[i].color);
 	
 			m_animationShader.SetUniVariable("M", mat4x4, &modelViewMatrix);
 			m_animationShader.SetUniVariable("VP", mat4x4, &vp);
@@ -470,6 +470,7 @@ void GraphicsHigh::Render()
 			delete joint_data;
 	
 	
+
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, m_modelsAnimated[i].texID);
 	
@@ -480,6 +481,7 @@ void GraphicsHigh::Render()
 			glBindTexture(GL_TEXTURE_2D, m_modelsAnimated[i].speID);
 	
 			m_modelsAnimated[i].bufferPtr->draw();
+
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 	}
@@ -616,6 +618,21 @@ void GraphicsHigh::Render()
 
 	glUseProgram(0);
 
+
+	//for (int i = 0; i < m_modelsAnimated.size(); i++)
+	//{
+	//	if (m_modelsAnimated[i].active) // IS MODEL ACTIVE?
+	//	{
+	//		glLineWidth(2.5);
+	//		glColor3f(1.0, 0.0, 0.0);
+	//		glBegin(GL_LINES);
+	//		glVertex3f(0.0, 0.0, 0.0);
+	//		glVertex3f(15, 0, 0);
+	//		glEnd();
+	//	}
+	//}
+
+
 	// Swap in the new buffer
 	SDL_GL_SwapWindow(m_window);
 }
@@ -749,53 +766,6 @@ void GraphicsHigh::ToggleSimpleText()
 {
 	m_renderSimpleText = !m_renderSimpleText;
 }
-
-//void GraphicsHigh::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
-//{
-//	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
-//
-//	Shader *shaderPtr = &m_animationShader;
-//	std::vector<AModel> *modelList = &m_modelsAnimated;
-//
-//	// Import Mesh
-//	Buffer* mesh = AddMesh(obj.mesh, shaderPtr, true);
-//
-//	// Import Texture
-//	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
-//	shaderPtr->CheckUniformLocation("diffuseTex", 1);
-//
-//	// Import Normal map
-//	GLuint normal = AddTexture(obj.norm, GL_TEXTURE2);
-//	shaderPtr->CheckUniformLocation("normalTex", 2);
-//
-//	// Import Specc Glow map
-//	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
-//	shaderPtr->CheckUniformLocation("specularTex", 3);
-//
-//	// Import Skeleton
-//	std::vector<JointData> joints = ModelLoader::importJoints(obj.joints);
-//
-//	AModel model = AModel(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color, mesh, texture, normal, specular);
-//
-//	// Add skeleton
-//	for (int i = 0; i < joints.size(); i++)
-//		model.joints.push_back(Joint(
-//		joints[i].x0, joints[i].y0, joints[i].z0, joints[i].w0,
-//		joints[i].x1, joints[i].y1, joints[i].z1, joints[i].w1,
-//		joints[i].x2, joints[i].y2, joints[i].z2, joints[i].w2,
-//		joints[i].x3, joints[i].y3, joints[i].z3, joints[i].parent)
-//		);//joints[i].transform));
-//
-//	glGenBuffers(1, &model.jointBuffer);
-//
-//	//for the matrices (modelView + normal)
-//	m_vramUsage += (16 + 9) * sizeof(float);
-//
-//	// Push back the model
-//	modelList->push_back(model);
-//}
-
-
 
 void GraphicsHigh::Clear()
 {

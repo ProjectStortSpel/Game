@@ -8,11 +8,11 @@ require "sh_ParentSystem"
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ParentSystem)
 
-worldCreator:AddSystemGroup()
+--worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(PickBoxSystem)
 
-worldCreator:AddSystemGroup()
+--worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(HoverSizeSystem)
 
---worldCreator:AddSystemGroup()
---worldCreator:AddSystemToCurrentGroup(AddTextToTextureSystem)
+--worldCreator:AddSystemGroup() << Helt removed 
+--worldCreator:AddSystemToCurrentGroup(AddTextToTextureSystem) << Helt removed

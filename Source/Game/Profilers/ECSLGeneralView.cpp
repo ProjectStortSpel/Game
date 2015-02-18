@@ -41,7 +41,7 @@ void ECSLGeneralView::Update(ECSLStatistics* _frontBufferStatistics)
 	y += TextHeight;
 
 	text.str(std::string());
-	text << "Press C to change to the previous view. Press V to change to the next view.";
+	text << "Press V to change to the previous view. Press B to change to the next view.";
 	textEntry = new TextEntry();
 	textEntry->x = x;
 	textEntry->y = y;

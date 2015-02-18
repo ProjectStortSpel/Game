@@ -84,6 +84,9 @@
     <Filter Include="Game\Systems\ParticleSystem">
       <UniqueIdentifier>{b9d97fa0-3180-4175-bdbb-35be7ebbf5f7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lua Bridge\Resource">
+      <UniqueIdentifier>{cee8274a-69dd-429b-ba04-7664e20156fc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\LuaBridge.cpp">
@@ -251,6 +254,12 @@
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\AI\LuaCombinationMath.cpp">
       <Filter>Lua Bridge\AI</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\ResourceManager.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\Resource\LuaResource.cpp">
+      <Filter>Lua Bridge\Resource</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\DynamicScripting.cpp">
       <Filter>Game</Filter>
     </ClCompile>
@@ -417,6 +426,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\AI\LuaCombinationMath.h">
       <Filter>Lua Bridge\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\ResourceManager.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\Resource\LuaResource.h">
+      <Filter>Lua Bridge\Resource</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\DynamicScripting.h">
       <Filter>Game</Filter>

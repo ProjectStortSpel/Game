@@ -13,8 +13,8 @@
 #include "Systems/DirectionalLightSystem.h"
 #include "Systems/MasterServerSystem.h"
 #include "Systems/SlerpRotationSystem.h"
-#include "Systems/ParticleSystem.h"
 #include "Systems/AddTextToTextureSystem.h"
+#include "Systems/ParticleSystem.h"
 
 #include "Network/NetworkInstance.h"
 #include "ECSL/ECSL.h"
@@ -25,6 +25,10 @@
 #include "LuaBridge/Renderer/LuaGraphicDevice.h"
 #include "LuaBridge/ECSL/LuaEntityTemplateManager.h"
 #include "LuaBridge/Network/LuaNetwork.h"
+#include "LuaBridge/Resource/LuaResource.h"
+
+#include "Game/ResourceManager.h"
+#include "FileSystem/Directory.h"
 
 #include "Logger/Managers/Logger.h"
 
@@ -35,7 +39,7 @@
 #include <iomanip>
 
 GameCreator::GameCreator() :
-m_graphics(0), m_input(0), m_clientWorld(0), m_serverWorld(0), m_worldProfiler(0), m_console(0), m_remoteConsole(0), m_consoleManager(Console::ConsoleManager::GetInstance()), m_frameCounter(new Utility::FrameCounter()), m_running(true),
+m_graphics(0), m_input(0), m_clientWorld(0), m_serverWorld(0), m_clientWorldProfiler(0), m_serverWorldProfiler(0), m_console(0), m_remoteConsole(0), m_consoleManager(Console::ConsoleManager::GetInstance()), m_frameCounter(new Utility::FrameCounter()), m_running(true),
 m_graphicalSystems(std::vector<GraphicalSystem*>()), m_timeScale(1.0f)
 {
   
@@ -72,8 +76,11 @@ GameCreator::~GameCreator()
 	if (m_remoteConsole)
 		delete m_remoteConsole;
 
-	if (m_worldProfiler)
-		delete m_worldProfiler;
+	if (m_clientWorldProfiler)
+		delete m_clientWorldProfiler;
+
+	if (m_serverWorldProfiler)
+		delete m_serverWorldProfiler;
 
 	LuaEmbedder::Quit();
 
@@ -124,6 +131,9 @@ void GameCreator::InitializeNetwork()
 
 	hook = std::bind(&GameCreator::NetworkGameMode, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 	NetworkInstance::GetClient()->AddNetworkHook("Gamemode", hook);
+
+	hook = std::bind(&GameCreator::NetworkGameModeFiles, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	NetworkInstance::GetClient()->AddNetworkHook("GamemodeFiles", hook);
 
 	m_remoteConsole = new RemoteConsole();
 
@@ -234,6 +244,20 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 {
     lua_State* luaState = _worldType == WorldType::Client ? m_clientLuaState : m_serverLuaState;
 
+	if (_worldType == WorldType::Server)
+	{
+		std::vector<std::string> paths = HomePath::GetGameModePaths();
+
+		for (int i = 0; i < paths.size(); ++i)
+		{
+			std::vector<std::string> files = FileSystem::Directory::GetAllFiles(paths[i]);
+
+			for (int j = 0; j < files.size(); ++j)
+			{
+				ResourceManager::AddGamemodeResource(files[j]);
+			}
+		}
+	}
     
 	LuaBridge::LuaWorldCreator worldCreator = LuaBridge::LuaWorldCreator(luaState);
     worldCreator.SkipComponentTypesAndTemplates(!_isMainWorld);
@@ -327,55 +351,40 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 	//NetworkMessagesSystem* nms = new NetworkMessagesSystem();
 	//nms->SetConsole(&m_consoleManager);
 	
-	//m_graphicalSystems.clear();
 	GraphicalSystem* graphicalSystem = 0;
 	graphicalSystem = new PointlightSystem(m_graphics);
 	m_graphicalSystems.push_back(graphicalSystem);
 	
-	worldCreator.AddSystemGroup();
+	//worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(new SlerpRotationSystem());
-	worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 
 
 	graphicalSystem = new DirectionalLightSystem(m_graphics);
 	m_graphicalSystems.push_back(graphicalSystem);
-	worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
-
-	graphicalSystem = new ParticleSystem(m_graphics);
-	m_graphicalSystems.push_back(graphicalSystem);
-	worldCreator.AddSystemGroup();
-	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
-
-
-	worldCreator.AddSystemGroup();
-	worldCreator.AddSystemToCurrentGroup<RotationSystem>();
     
     if (_worldType == WorldType::Client || _isMainWorld)
     {
         graphicalSystem = new CameraSystem(m_graphics);
         m_graphicalSystems.push_back(graphicalSystem);
-        worldCreator.AddSystemGroup();
         worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
         
         graphicalSystem = new ModelSystem(m_graphics);
         m_graphicalSystems.push_back(graphicalSystem);
-        worldCreator.AddSystemGroup();
         worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 
-	graphicalSystem = new AModelSystem(m_graphics);
-	m_graphicalSystems.push_back(graphicalSystem);
-	worldCreator.AddSystemGroup();
-	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
+		graphicalSystem = new AModelSystem(m_graphics);
+		m_graphicalSystems.push_back(graphicalSystem);
+		worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
     }
     
     if (_worldType == WorldType::Client || _isMainWorld)
     {
-	graphicalSystem = new AddTextToTextureSystem(m_graphics);
-	m_graphicalSystems.push_back(graphicalSystem);
-	worldCreator.AddSystemGroup();
-	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
+		graphicalSystem = new AddTextToTextureSystem(m_graphics);
+		m_graphicalSystems.push_back(graphicalSystem);
+		worldCreator.AddSystemGroup();
+		worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
     }
     
     if (_includeMasterServer)
@@ -394,8 +403,6 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
     
     if (_worldType == WorldType::Client || _isMainWorld)
     {
-
-
         graphicalSystem = new RenderSystem(m_graphics);
         m_graphicalSystems.push_back(graphicalSystem);
         worldCreator.AddSystemGroup();
@@ -405,9 +412,14 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
         m_graphicalSystems.push_back(graphicalSystem);
         worldCreator.AddSystemGroup();
         worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
-        worldCreator.AddSystemGroup();
+        //worldCreator.AddSystemGroup();
         worldCreator.AddSystemToCurrentGroup<ResetChangedSystem>();
     }
+
+	graphicalSystem = new ParticleSystem(m_graphics);
+	m_graphicalSystems.push_back(graphicalSystem);
+	worldCreator.AddSystemGroup();
+	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 
     if (_worldType == WorldType::Client)
     {
@@ -425,8 +437,11 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
         m_serverWorld->PostInitializeSystems();
 		LuaEmbedder::CollectGarbageFull();
     }
-	if (!m_worldProfiler)
-		m_worldProfiler = new Profilers::ECSLProfiler(m_graphics);
+
+	if (!m_clientWorldProfiler)
+		m_clientWorldProfiler = new Profilers::ECSLProfiler(m_graphics);
+	if (!m_serverWorldProfiler)
+		m_serverWorldProfiler = new Profilers::ECSLProfiler(m_graphics);
 }
 
 void GameCreator::RunStartupCommands(int argc, char** argv)
@@ -554,17 +569,22 @@ void GameCreator::StartGame(int argc, char** argv)
 
 		m_worldCounter.Reset();
 		/*	Update world (systems, entities, etc)	*/
-		m_worldProfiler->Begin();
-        
+		
+		m_serverWorldProfiler->Begin();
         if (m_serverWorld)
-            m_serverWorld->Update(dt);
+           m_serverWorld->Update(dt);
+		m_serverWorldProfiler->End();
+		m_serverWorldProfiler->Update(dt);
+		m_serverWorldProfiler->Render();
         
+		m_clientWorldProfiler->Begin();
         if (m_clientWorld)
             m_clientWorld->Update(dt);
+		m_clientWorldProfiler->End();
+		m_clientWorldProfiler->Update(dt);
+		m_clientWorldProfiler->Render();
         
-		m_worldProfiler->End();
-		m_worldProfiler->Update(dt);
-		m_worldProfiler->Render();
+
 		m_worldCounter.Tick();
 
 		m_luaGarbageCollectionCounter.Reset();
@@ -587,16 +607,41 @@ void GameCreator::StartGame(int argc, char** argv)
 			showDebugInfo = !showDebugInfo;
 
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_X) == Input::InputState::PRESSED)
-			m_worldProfiler->Toggle();
+		{
+			if (!m_serverWorldProfiler->IsActive())
+				m_clientWorldProfiler->Toggle();
+		}
 
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_C) == Input::InputState::PRESSED)
-			m_worldProfiler->PreviousView();
+		{
+			if (!m_clientWorldProfiler->IsActive())
+				m_serverWorldProfiler->Toggle();
+		}
 
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_V) == Input::InputState::PRESSED)
-			m_worldProfiler->NextView();
+		{
+			if (m_clientWorldProfiler->IsActive())
+				m_clientWorldProfiler->PreviousView();
+			if (m_serverWorldProfiler->IsActive())
+				m_serverWorldProfiler->PreviousView();
+		}
+
+
+		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_B) == Input::InputState::PRESSED)
+		{
+			if (m_clientWorldProfiler->IsActive())
+				m_clientWorldProfiler->NextView();
+			if (m_serverWorldProfiler->IsActive())
+				m_serverWorldProfiler->NextView();
+		}
 
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F8) == Input::InputState::PRESSED)
-			m_worldProfiler->LogDisplayedStatistics();
+		{
+			if (m_clientWorldProfiler->IsActive())
+				m_clientWorldProfiler->LogDisplayedStatistics();
+			if (m_serverWorldProfiler->IsActive())
+				m_serverWorldProfiler->LogDisplayedStatistics();
+		}
 
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F1) == Input::InputState::PRESSED)
         {
@@ -662,11 +707,17 @@ void GameCreator::GameMode(std::string _gamemode)
 void GameCreator::Reload()
 {
 
-    if (m_worldProfiler)
+    if (m_clientWorldProfiler)
     {
-        delete m_worldProfiler;
-        m_worldProfiler = nullptr;
+		delete m_clientWorldProfiler;
+		m_clientWorldProfiler = nullptr;
     }
+
+	if (m_serverWorldProfiler)
+	{
+		delete m_serverWorldProfiler;
+		m_serverWorldProfiler = nullptr;
+	}
     
     if (m_clientWorld)
     {
@@ -679,6 +730,8 @@ void GameCreator::Reload()
         delete m_serverWorld;
         m_serverWorld = nullptr;
     }
+
+	ResourceManager::Clear();
 
 	HomePath::SetGameMode(m_gameMode);
 		
@@ -728,6 +781,12 @@ void GameCreator::Reload()
     LuaBridge::LuaNetwork::SetClientLuaState(m_clientLuaState);
     LuaBridge::LuaNetwork::SetServerLuaState(m_serverLuaState);
 
+	if (NetworkInstance::GetServer()->IsRunning())
+	{
+		LuaBridge::LuaResource::SetServerState(m_serverLuaState);
+	}
+	else
+		LuaBridge::LuaResource::SetServerState(NULL);
 
 	m_graphicalSystems.clear();
 
@@ -783,6 +842,52 @@ void GameCreator::NetworkGameMode(Network::PacketHandler* _ph, uint64_t& _id, Ne
         GameMode(_ph->ReadString(_id));
 }
 
+void GameCreator::NetworkGameModeFiles(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
+{
+	if (NetworkInstance::GetServer()->IsRunning())
+	{
+		//Listen server does not need to verify files.
+		//Send "Done" to server.
+	}
+	else
+	{
+		std::vector<std::string> files;
+
+		int numFiles = _ph->ReadInt(_id);
+
+		for (int i = 0; i < numFiles; ++i)
+		{
+			std::string filename = _ph->ReadString(_id);
+			
+			int size = _ph->ReadInt(_id);
+			
+			FileSystem::MD5::MD5Data md5;
+			for (int j = 0; j < 16; ++j)
+			{
+				md5.data[j] = _ph->ReadByte(_id);
+			}	
+
+			ResourceManager::Resource r;
+			ResourceManager::CreateResource(filename, r);
+
+			if (md5 != r.MD5)
+			{
+				//SDL_Log("I don't have: %s", filename.c_str());
+				files.push_back(filename);
+			}
+			/*else
+			{
+				SDL_Log("I have: %s", filename.c_str());
+			}*/
+		}
+
+		for (int i = 0; i < files.size(); ++i)
+		{
+			//request files[i] from the server
+		}
+	}
+}
+
 void GameCreator::UpdateConsole()
 {
 	/*	Toggle console	*/
@@ -793,7 +898,6 @@ void GameCreator::UpdateConsole()
 			m_input->GetKeyboard()->StopTextInput();
 			m_consoleInput.SetActive(false);
 			m_consoleManager.SetOpen(false);
-			
 		}
 		else
 		{
@@ -1252,9 +1356,37 @@ void GameCreator::OnPlayerConnected(Network::NetConnection _nc, const char* _mes
 
 	Network::ServerNetwork* server = NetworkInstance::GetServer();
 	Network::PacketHandler* ph = server->GetPacketHandler();
+
+	//Send gamemode
 	uint64_t id = ph->StartPack("Gamemode");
 	ph->WriteString(id, m_gameMode.c_str());
 	NetworkInstance::GetServer()->Send(ph->EndPack(id), _nc);
+
+	
+	//Send filelist
+	std::vector<ResourceManager::Resource>* resources = ResourceManager::GetGamemodeResources();
+	uint64_t filesID = ph->StartPack("GamemodeFiles");
+
+	//number of files
+	ph->WriteInt(filesID, resources->size());
+	for (int i = 0; i < resources->size(); ++i)
+	{
+		ResourceManager::Resource* r = &resources->at(i);
+
+		//Filename
+		ph->WriteString(filesID, r->File.c_str());
+		//Filesize
+		ph->WriteInt(filesID, r->Size);
+		
+		//MD5
+		for (int j = 0; j < 16; ++j)
+		{
+			ph->WriteByte(filesID, r->MD5.data[j]);
+		}
+	}
+	NetworkInstance::GetServer()->Send(ph->EndPack(filesID), _nc);
+
+	
 
 	for (int i = 0; i < LuaBridge::LuaNetworkEvents::g_onPlayerConnected.size(); ++i)
 	{

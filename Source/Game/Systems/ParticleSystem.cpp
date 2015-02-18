@@ -16,7 +16,7 @@ void ParticleSystem::Initialize()
 {
 	SetSystemName("ParticleSystem");
 
-	SetUpdateTaskCount(GetThreadCount());
+	SetUpdateTaskCount(1);
 	SetEntitiesAddedTaskCount(1);
 	SetEntitiesRemovedTaskCount(1);
 

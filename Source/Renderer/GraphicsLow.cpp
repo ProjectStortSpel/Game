@@ -259,46 +259,7 @@ void GraphicsLow::Render()
 
 	SortModelsBasedOnDepth(&m_modelsViewspace);
 	for (int i = 0; i < m_modelsViewspace.size(); i++)
-	{
-		std::vector<mat4> modelViewVector(m_modelsViewspace[i].instances.size());
-		std::vector<mat3> normalMatVector(m_modelsViewspace[i].instances.size());
-
-		int nrOfInstances = 0;
-
-		for (int j = 0; j < m_modelsViewspace[i].instances.size(); j++)
-		{
-			if (m_modelsViewspace[i].instances[j].active) // IS MODEL ACTIVE?
-			{
-				mat4 modelMatrix;
-				if (m_modelsViewspace[i].instances[j].modelMatrix == NULL)
-					modelMatrix = glm::translate(glm::vec3(1));
-				else
-					modelMatrix = *m_modelsViewspace[i].instances[j].modelMatrix;
-
-				mat4 modelViewMatrix;
-				modelViewMatrix = modelMatrix;
-
-				modelViewVector[nrOfInstances] = modelViewMatrix;
-
-				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-				normalMatVector[nrOfInstances] = normalMatrix;
-
-				nrOfInstances++;
-			}
-		}
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, m_modelsViewspace[i].texID);
-
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, m_modelsViewspace[i].norID);
-
-		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, m_modelsViewspace[i].speID);
-
-		m_modelsViewspace[i].bufferPtr->drawInstanced(0, m_modelsViewspace[i].instances.size(), &modelViewVector, &normalMatVector);
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
+		m_modelsViewspace[i].Draw(mat4(1), mat4(1));
 
 	// RENDER INTERFACE STUFF
 	//glDisable(GL_DEPTH_TEST);
@@ -307,39 +268,7 @@ void GraphicsLow::Render()
 
 	SortModelsBasedOnDepth(&m_modelsInterface);
 	for (int i = 0; i < m_modelsInterface.size(); i++)
-	{
-		std::vector<mat4> modelViewVector(m_modelsInterface[i].instances.size());
-		std::vector<mat3> normalMatVector(m_modelsInterface[i].instances.size());
-
-		int nrOfInstances = 0;
-
-		for (int j = 0; j < m_modelsInterface[i].instances.size(); j++)
-		{
-			if (m_modelsInterface[i].instances[j].active) // IS MODEL ACTIVE?
-			{
-				mat4 modelMatrix;
-				if (m_modelsInterface[i].instances[j].modelMatrix == NULL)
-					modelMatrix = glm::translate(glm::vec3(1));
-				else
-					modelMatrix = *m_modelsInterface[i].instances[j].modelMatrix;
-
-				mat4 modelViewMatrix = modelMatrix;
-
-				modelViewVector[nrOfInstances] = modelViewMatrix;
-
-				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-				normalMatVector[nrOfInstances] = normalMatrix;
-
-				nrOfInstances++;
-			}
-		}
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, m_modelsInterface[i].texID);
-
-		m_modelsInterface[i].bufferPtr->drawInstanced(0, m_modelsInterface[i].instances.size(), &modelViewVector, &normalMatVector);
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
+		m_modelsInterface[i].Draw(mat4(1), mat4(1));
 
 	glDisable(GL_BLEND);
 	glDisable(GL_TEXTURE_2D);
