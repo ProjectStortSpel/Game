@@ -68,9 +68,9 @@ AICardPickingSystem.Update = function(self, dt)
 			
 			--print(string.len(charArray))
 			
-			for n = 1, string.len(charArray), self.NumberOfCardsToPick do
+			for n = 1, string.len(charArray), self.CardsToSimulate do
 				
-				for card = 0, self.NumberOfCardsToPick - 1 do
+				for card = 0, self.CardsToSimulate - 1 do
 				
 					local charVar = string.byte(charArray, n + card)
 					--io.write(charVar, " ")
