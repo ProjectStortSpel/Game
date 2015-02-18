@@ -1,6 +1,7 @@
 #include "TaskPool.h"
 
 #include <SDL/SDL_mutex.h>
+#include <assert.h>
 
 using namespace MPL;
 
@@ -9,6 +10,9 @@ TaskPool::TaskPool()
 {
 	m_idMutex = SDL_CreateMutex();
 	m_taskMutex = SDL_CreateMutex();
+
+	/* Mutex couldn't be created */
+	if (!m_idMutex || !m_taskMutex) { printf("MPL Error: %s\n", SDL_GetError()); abort(); }
 }
 
 TaskPool::~TaskPool()
@@ -166,7 +170,7 @@ WorkDoneStatus TaskPool::WorkDone(WorkItem* _workItem)
 
 	SDL_LockMutex(m_taskMutex);
 
-	/* Get task through the work task connection */
+	/* Get task through the work-task connection */
 	Task* task = (*m_workTaskConnection)[_workItem];
 
 	/* Check if entire task is completed */

@@ -35,7 +35,6 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
     local newTile = world:CreateNewEntity("Tile")
     local posComp = world:GetComponent(newTile, "Position", 0)
     posComp:SetFloat3(posX, 0.0, posZ)
-	
     local mapPosComp = world:GetComponent(newTile, "MapPosition", 0)
     mapPosComp:SetInt2(posX, posZ)
     if tiletype == 104 then -- 104 = h = hole
