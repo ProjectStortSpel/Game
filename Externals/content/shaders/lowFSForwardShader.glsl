@@ -4,6 +4,7 @@ in vec3 Tan;
 in vec3 BiTan;
 in vec2 TexCoord;
 in vec3 ViewPos;
+in vec3 AddColor;
 
 out vec4 ColorData;
 
@@ -16,8 +17,6 @@ uniform sampler2D ShadowDepthTex;
 uniform mat4 ViewMatrix;
 uniform mat4 BiasMatrix;
 uniform mat4 ShadowViewProj;
-
-uniform vec3 BlendColor;
 
 //Directional light
 uniform mediump vec3 dirlightDirection; // Light position in world coords.
@@ -132,8 +131,8 @@ void main()
 	vec4 specglow_map = texture( specularTex, TexCoord );
 	float blendFactor = specglow_map.w;
 
-	if( BlendColor != vec3(0.0) )
-		albedo_tex.xyz = (1.0f-blendFactor)*albedo_tex.xyz + blendFactor * BlendColor; 
+	if( AddColor != vec3(0.0) )
+		albedo_tex.xyz = (1.0f-blendFactor)*albedo_tex.xyz + blendFactor * AddColor; 
 
 	Material.Ks			= specglow_map.x;
 	Material.Shininess  = specglow_map.y * 254.0f + 1.0f;
