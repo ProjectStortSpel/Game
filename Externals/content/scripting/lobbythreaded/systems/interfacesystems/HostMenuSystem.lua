@@ -32,7 +32,9 @@ HostMenuSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities
 		elseif world:EntityHasComponent(entity, "ActiveTextInput") then
 			self:Deactivate(entity)
 			self:Activate(entity)
-			world:KillEntity(entity)	
+			world:KillEntity(entity)
+		--elseif world:EntityHasComponent(entity, self.Name .. "Activate") then			
+		--	self.IsMenuActive = true
 		end
 		
 	end
@@ -256,6 +258,12 @@ local entities = self:GetEntities()
 end
 
 HostMenuSystem.SpawnMenu = function(self)
+
+	--local popup = world:CreateNewEntity()
+	--world:CreateComponentAndAddTo("NotificationBox", popup)
+	--world:SetComponent(popup, "NotificationBox", "Text", "TEMP TEMP TEMP TEMP")
+	--world:SetComponent(popup, "NotificationBox", "ParentMenu", self.Name)
+	--self.IsMenuActive = false
 
 	local background = self:CreateElement("gamemenubackground", "quad", 0, 0, -2.5, 2.3, 2.8)
 	

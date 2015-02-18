@@ -42,6 +42,12 @@ HostMenuElement.Name = "HostMenuElement"
 HostMenuElement.TableType = TableType.Map
 worldCreator:AddComponentType(HostMenuElement)
 
+----	HostMenuActive Component
+--local HostMenuActive = ComponentType()
+--HostMenuActive.Name = "HostMenuActive"
+--HostMenuActive.TableType = TableType.Map
+--worldCreator:AddComponentType(HostMenuActive)
+
 -- Menu ConsoleCommand
 local MenuConsoleCommand = ComponentType()
 MenuConsoleCommand.Name = "MenuConsoleCommand"
@@ -54,13 +60,6 @@ MenuEntityCommand.Name = "MenuEntityCommand"
 MenuEntityCommand.TableType = TableType.Map
 MenuEntityCommand:AddVariable("ComponentName", ByteSize.Text)
 worldCreator:AddComponentType(MenuEntityCommand)
-
---	NotificationBox Component
-local NotificationBox = ComponentType()
-NotificationBox.Name = "NotificationBox"
-NotificationBox.TableType = TableType.Map
-NotificationBox:AddVariable("Text", ByteSize.Text)
-worldCreator:AddComponentType(NotificationBox)
 
 -- Hover Size
 local HoverSize = ComponentType()
