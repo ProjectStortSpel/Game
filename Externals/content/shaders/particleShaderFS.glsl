@@ -7,12 +7,18 @@ uniform vec3 BlendColor;
 
 void main()
 {
-	FragColor = texture(ParticleTex, gl_PointCoord);
+	vec4 texColor = texture(ParticleTex, gl_PointCoord);
+	if(texColor.a == 0.0f)
+		discard;
+
+	FragColor = texColor;
 
 	if(BlendColor != vec3(0.0f))
 	{
-		float blendFactor = 0.94f;
+		float blendFactor = 0.74f;
 		FragColor.xyz = (1.0f-blendFactor)*FragColor.xyz + blendFactor * BlendColor; 
 	}
+	vec4 frameBufferColor = gl_Color;
 	FragColor.a *= Transp;
+	//FragColor = frameBufferColor;
 }

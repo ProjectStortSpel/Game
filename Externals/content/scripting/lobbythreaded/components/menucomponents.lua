@@ -55,6 +55,13 @@ MenuEntityCommand.TableType = TableType.Map
 MenuEntityCommand:AddVariable("ComponentName", ByteSize.Text)
 worldCreator:AddComponentType(MenuEntityCommand)
 
+--	NotificationBox Component
+local NotificationBox = ComponentType()
+NotificationBox.Name = "NotificationBox"
+NotificationBox.TableType = TableType.Map
+NotificationBox:AddVariable("Text", ByteSize.Text)
+worldCreator:AddComponentType(NotificationBox)
+
 -- Hover Size
 local HoverSize = ComponentType()
 HoverSize.Name = "HoverSize"

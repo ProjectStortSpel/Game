@@ -1,11 +1,12 @@
 #include "LuaFile.h"
 #include "LuaEmbedder/LuaEmbedder.h"
+#include "FileSystem/File.h"
+#include "Game/HomePath.h"
 
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <SDL/SDL.h>
-
+//#include <SDL/SDL.h>
 
 
 namespace LuaBridge
@@ -51,11 +52,10 @@ namespace LuaBridge
 			std::string filepath = LuaEmbedder::PullString(L, 1);
 
 			std::ostringstream ss;
-			ss << "content\\data\\";
+			ss << HomePath::GetSecondaryGameModePath();
 			ss << filepath.c_str();
 
-			SDL_RWops* file = SDL_RWFromFile(ss.str().c_str(), "w");
-			SDL_RWclose(file);
+			FileSystem::File::Create(ss.str());
 
 			return 0;
 		}
@@ -65,10 +65,15 @@ namespace LuaBridge
 			std::string filepath = LuaEmbedder::PullString(L, 1);
 
 			std::ostringstream ss1;
-			ss1 << "content\\data\\";
+			ss1 << HomePath::GetSecondaryGameModePath();
 			ss1 << filepath.c_str();
 
-			SDL_RWops* file = SDL_RWFromFile(ss1.str().c_str(), "a");
+			SDL_RWops* file;
+			if (!FileSystem::File::Append(ss1.str(), &file))
+			{
+				LuaEmbedder::PushString(L, "0");
+				return 1;
+			}
 
 			std::ostringstream ss2;
 			ss2 << file;
@@ -82,11 +87,15 @@ namespace LuaBridge
 			std::string filepath = LuaEmbedder::PullString(L, 1);
 
 			std::ostringstream ss1;
-			ss1 << "content\\data\\";
+			ss1 << HomePath::GetSecondaryHomePath();
 			ss1 << filepath.c_str();
 
-			SDL_RWops* file = SDL_RWFromFile(ss1.str().c_str(), "r");
-			SDL_RWseek(file, 0, RW_SEEK_SET);
+			SDL_RWops* file;
+			if (!FileSystem::File::Open(ss1.str(), &file))
+			{
+				LuaEmbedder::PushString(L, "0");
+				return 1;
+			}
 
 			std::ostringstream ss2;
 			ss2 << file;
@@ -97,8 +106,14 @@ namespace LuaBridge
 
 		int Delete(lua_State* L)
 		{
+			std::string filepath = LuaEmbedder::PullString(L, 1);
 
-			return 0;
+			std::ostringstream ss1;
+			ss1 << HomePath::GetSecondaryGameModePath();
+			ss1 << filepath.c_str();
+
+			LuaEmbedder::PushBool(L, FileSystem::File::Delete(ss1.str()));
+			return 1;
 		}
 
 		int Close(lua_State* L)
@@ -109,7 +124,8 @@ namespace LuaBridge
 
 			SDL_RWops* file = (SDL_RWops*)strtoull(sId.c_str(), &end, 16);
 
-			SDL_RWclose(file);
+			FileSystem::File::Close(file);
+
 			return 0;
 		}
 
@@ -126,9 +142,7 @@ namespace LuaBridge
 			if (LuaEmbedder::IsInt(L, 2))
 				length = LuaEmbedder::PullInt(L, 2);
 
-			char* data = new char[length + 1];
-			int endpos = SDL_RWread(file, data, 1, length);
-			data[endpos] = '\0';
+			char* data = FileSystem::File::Read(file, length);
 
 			std::string text = data;
 
@@ -146,37 +160,7 @@ namespace LuaBridge
 			SDL_RWops* file = (SDL_RWops*)strtoull(sId.c_str(), &end, 16);
 
 
-			std::ostringstream ss;
-
-			char* data = new char[11];
-
-			while (true)
-			{
-				Sint64 pos = SDL_RWseek(file, 0, RW_SEEK_CUR);
-				int endpos = SDL_RWread(file, data, 1, 10);
-				data[endpos] = '\0';
-
-				if (endpos == 0)
-					break;
-
-				char* first = strchr(data, '\n');
-
-				if (first)
-				{
-					*first = '\0';
-					ss << data;
-					int offset = (first - data) + 1;
-					SDL_RWseek(file, pos + offset, RW_SEEK_SET);
-					break;
-				}
-
-				ss << data;
-			}
-
-
-			std::string text = ss.str();
-
-			delete data;
+			std::string text = FileSystem::File::ReadLine(file);
 
 			LuaEmbedder::PushString(L, text);
 
@@ -191,27 +175,21 @@ namespace LuaBridge
 
 			std::string text = LuaEmbedder::PullString(L, 2);
 
-			SDL_RWwrite(file, text.c_str(), 1, text.size());
+			FileSystem::File::Write(file, text);
 			
 			return 0;
 		}
 
 		int WriteLine(lua_State* L)
 		{
-			/*std::string sId = LuaEmbedder::PullString(1);
+			std::string sId = LuaEmbedder::PullString(L, 1);
 			char* end;
 			SDL_RWops* file = (SDL_RWops*)strtoull(sId.c_str(), &end, 16);
 
-			std::string text = LuaEmbedder::PullString(2);
+			std::string text = LuaEmbedder::PullString(L, 2);
 
-			std::ostringstream ss;
-			ss << text.c_str();
-			ss << "\r\n";
-
-			text = ss.str();
-
-			SDL_RWwrite(file, text.c_str(), 1, text.size());
-			*/
+			FileSystem::File::WriteLine(file, text);
+			
 			return 0;
 		}
 

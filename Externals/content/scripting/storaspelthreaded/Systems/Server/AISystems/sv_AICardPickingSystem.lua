@@ -65,7 +65,7 @@ AICardPickingSystem.Update = function(self, dt)
 			
 			--local charArray = CombinationMath.Permutations(3, 2)
 			
-			--print(string.len(charArray))
+			print(string.len(charArray))
 			
 			for n = 1, string.len(charArray), self.NumberOfCardsToPick do
 				
