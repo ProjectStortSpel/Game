@@ -59,6 +59,33 @@ AICardPickingSystem.Update = function(self, dt)
 			
 			PotentialFieldHandler.UseMyPF(i)
 			
+			--local charArray = CombinationMath.Combinations(self.CardsPerHand, self.NumberOfCardsToPick)
+			
+			local charArray = CombinationMath.Permutations(self.CardsPerHand, self.NumberOfCardsToPick)
+			
+			--local charArray = CombinationMath.Permutations(3, 2)
+			
+			--print(string.len(charArray))
+			
+			for n = 1, string.len(charArray), self.NumberOfCardsToPick do
+				
+				for card = 0, self.NumberOfCardsToPick - 1 do
+				
+					local charVar = string.byte(charArray, n + card)
+					--io.write(charVar, " ")
+				end
+				--io.write("\n")
+			end
+			
+			--for n = 1, string.len(charArray), 2 do
+			--	
+			--	for card = 0, 1 do
+			--	
+			--		local charVar = string.byte(charArray, n + card)
+			--		print(charVar)
+			--	end
+			--end
+			
 			local unitID = world:GetComponent(AIs[i], "UnitEntityId", 0):GetInt()
 			
 			local cpTargetNr = world:GetComponent(unitID, "TargetCheckpoint", 0):GetInt()
