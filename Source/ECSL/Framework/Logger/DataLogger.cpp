@@ -59,7 +59,7 @@ void DataLogger::LogWorldData(LogType _whatToLog)
 		break;
 	}
 	std::stringstream group;
-	group << (int)m_entityTable;
+	group << clock();
 	Logger::GetInstance().Log(Logger::GetInstance().AddGroup(group.str(), false), LogSeverity::Info, message);
 }
 
