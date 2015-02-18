@@ -62,11 +62,11 @@ AICardPickingSystem.Update = function(self, dt)
 			
 			--local charArray = CombinationMath.Combinations(self.CardsPerHand, self.NumberOfCardsToPick)
 			
-			--local charArray = CombinationMath.Permutations(self.CardsPerHand, self.CardsToSimulate)
+			local charArray = CombinationMath.Permutations(self.CardsPerHand, self.CardsToSimulate)
 			
 			local start, endvar, timetaken
 						
-			local charArray = CombinationMath.Permutations(10, 8)
+			--local charArray = CombinationMath.Permutations(10, 8)
 			
 			--print(string.len(charArray))
 			
