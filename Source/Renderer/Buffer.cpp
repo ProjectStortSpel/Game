@@ -59,27 +59,27 @@ bool Buffer::init(const BufferData* p_BufferData, GLsizei p_BufferDataSize,
 	glBindBuffer(GL_ARRAY_BUFFER, m_inMatVBO);
 	for (int i = 0; i < 4; i++)
 	{
-		glVertexAttribPointer(5 + i, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (const GLvoid*)(sizeof(float)* 4 * i));
-		glEnableVertexAttribArray(5 + i);
-		glVertexAttribDivisor(5 + i, 1);
+		glVertexAttribPointer(7 + i, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (const GLvoid*)(sizeof(float)* 4 * i));
+		glEnableVertexAttribArray(7 + i);
+		glVertexAttribDivisor(7 + i, 1);
 	}
 
 	glGenBuffers(1, &m_normalMatVBO); //gen buffer till matrisen
 	glBindBuffer(GL_ARRAY_BUFFER, m_normalMatVBO);
 	for (int i = 0; i < 3; i++)
 	{
-		glVertexAttribPointer(9 + i, 3, GL_FLOAT, GL_FALSE, sizeof(glm::mat3), (const GLvoid*)(sizeof(float)* 3 * i));
-		glEnableVertexAttribArray(9 + i);
-		glVertexAttribDivisor(9 + i, 1);
+		glVertexAttribPointer(11 + i, 3, GL_FLOAT, GL_FALSE, sizeof(glm::mat3), (const GLvoid*)(sizeof(float)* 3 * i));
+		glEnableVertexAttribArray(11 + i);
+		glVertexAttribDivisor(11 + i, 1);
 	}
 
 	//----- Color ----------
 	glGenBuffers(1, &m_colorVBO); //gen buffer till matrisen
 	glBindBuffer(GL_ARRAY_BUFFER, m_colorVBO);
 	
-	glVertexAttribPointer(12, 3, GL_FLOAT, GL_FALSE, sizeof(float)*3, 0);
-	glEnableVertexAttribArray(12);
-	glVertexAttribDivisor(12, 1);
+	glVertexAttribPointer(14, 3, GL_FLOAT, GL_FALSE, sizeof(float)*3, 0);
+	glEnableVertexAttribArray(14);
+	glVertexAttribDivisor(14, 1);
 	//-------------------------------------------------
 
 	// Initialize index buffer if specified
