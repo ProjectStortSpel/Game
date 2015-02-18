@@ -8,7 +8,7 @@ namespace ResourceManager
 	std::vector<Resource> GamemodeResources;
 	std::vector<Resource> ContentResources;
 
-	bool CreateResource(std::string _path, Resource &r)
+	bool CreateResource(std::string _path, Resource &_r)
 	{
 		std::vector<std::string> paths = HomePath::GetPaths();
 		std::string path;
@@ -29,14 +29,14 @@ namespace ResourceManager
 		{
 			return false;
 		}
-		r.File = _path;
-		r.Location = path;
+		_r.File = _path;
+		_r.Location = path;
 
-		r.MD5 = FileSystem::MD5::MD5_File(path);
+		_r.MD5 = FileSystem::MD5::MD5_File(path);
 
 		SDL_RWops* file;
 		FileSystem::File::Open(path, &file);
-		r.Size = (int)FileSystem::File::GetFileSize(file);
+		_r.Size = (int)FileSystem::File::GetFileSize(file);
 		FileSystem::File::Close(file);
 		
 		return true;
