@@ -58,7 +58,9 @@ void DataLogger::LogWorldData(LogType _whatToLog)
 		CreateEntityComponentsMessage(message);
 		break;
 	}
-	Logger::GetInstance().Log(Logger::GetInstance().AddGroup("Entity Component System - Data", false), LogSeverity::Info, message);
+	std::stringstream group;
+	group << clock();
+	Logger::GetInstance().Log(Logger::GetInstance().AddGroup(group.str(), false), LogSeverity::Info, message);
 }
 
 void DataLogger::CreateSystemEntitiesMessage(std::string& _out)

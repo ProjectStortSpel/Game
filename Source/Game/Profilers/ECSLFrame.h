@@ -12,13 +12,13 @@ namespace Profilers
 	public:
 		struct WorkItem
 		{
-			std::string* name;
+			std::string name;
 			unsigned int localGroupId;
 			unsigned int groupId;
 			float duration;
 
-			WorkItem() : name(0), groupId(0), duration(0.0f) { }
-			~WorkItem() { delete(name); }
+			WorkItem() : groupId(0), duration(0.0f) { }
+			~WorkItem() {  }
 		};
 
 		ECSLFrame(unsigned int _threadCount, float _frameTime);

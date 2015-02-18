@@ -44,6 +44,8 @@ namespace Profilers
 		/* Render statistics */
 		void Render();
 
+		bool IsActive() { return !(m_state == INACTIVE); }
+
 	private:
 		enum State
 		{

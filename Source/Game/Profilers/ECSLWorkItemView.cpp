@@ -71,7 +71,8 @@ void ECSLWorkItemView::Update(ECSLStatistics* _frontBufferStatistics)
 		textEntry->text = new std::string(text.str());
 		textEntry->height = TextHeight;
 		m_textEntries->push_back(textEntry);
-		y += TextHeight;
+		//y += TextHeight;
+		NextPosition(x, y);
 
 		for (unsigned int j = 0; j < workItemGroup->size(); ++j)
 		{
@@ -100,10 +101,12 @@ void ECSLWorkItemView::Update(ECSLStatistics* _frontBufferStatistics)
 				m_textEntries->push_back(textEntry);
 			}
 
-			y += TextHeight;
+			//y += TextHeight;
+			NextPosition(x, y);
 		}
 
-		y += TextHeight;
+		//y += TextHeight;
+		NextPosition(x, y);
 	}
 }
 
@@ -183,4 +186,14 @@ void ECSLWorkItemView::CreatePages(ECSLStatistics* _frontBufferStatistics)
 		m_pages->push_back(currentPage);
 	else
 		delete(currentPage);
+}
+
+void ECSLWorkItemView::NextPosition(unsigned int& x, unsigned int& y)
+{
+	y += TextHeight;
+	if (y > PageMaxHeight)
+	{
+		y = StartPosY;
+		x += 80;
+	}
 }
