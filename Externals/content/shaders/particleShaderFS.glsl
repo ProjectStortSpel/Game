@@ -18,7 +18,5 @@ void main()
 		float blendFactor = 0.74f;
 		FragColor.xyz = (1.0f-blendFactor)*FragColor.xyz + blendFactor * BlendColor; 
 	}
-	vec4 frameBufferColor = gl_Color;
 	FragColor.a *= Transp;
-	//FragColor = frameBufferColor;
 }

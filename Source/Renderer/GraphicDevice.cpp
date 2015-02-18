@@ -320,6 +320,7 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	//	BufferAModel(_modelId, _modelToLoad);
 	//	return;
 	//}
+
 	bool FoundShaderType = false;
 	for (int i = 0; i < m_renderLists.size(); i++)
 	{
@@ -367,6 +368,51 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 
 	//if model doesnt exist
 	model.instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
+	// Push back the model
+	modelList->push_back(model);
+}
+void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
+{
+	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
+
+	Shader *shaderPtr = &m_animationShader;
+	std::vector<AModel> *modelList = &m_modelsAnimated;
+
+	// Import Mesh
+	Buffer* mesh = AddMesh(obj.mesh, shaderPtr, true);
+
+	// Import Texture
+	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
+	shaderPtr->CheckUniformLocation("diffuseTex", 1);
+
+	// Import Normal map
+	GLuint normal = AddTexture(obj.norm, GL_TEXTURE2);
+	shaderPtr->CheckUniformLocation("normalTex", 2);
+
+	// Import Specc Glow map
+	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
+	shaderPtr->CheckUniformLocation("specularTex", 3);
+
+	// Import Skeleton
+	std::vector<JointData> joints = ModelLoader::importJoints(obj.joints);
+
+	AModel model = AModel(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color, mesh, texture, normal, specular);
+
+	// Add skeleton
+	for (int i = 0; i < joints.size(); i++)
+	{
+		model.joints.push_back(Joint(
+		joints[i].x0, joints[i].y0, joints[i].z0, joints[i].w0,
+		joints[i].x1, joints[i].y1, joints[i].z1, joints[i].w1,
+		joints[i].x2, joints[i].y2, joints[i].z2, joints[i].w2,
+		joints[i].x3, joints[i].y3, joints[i].z3, joints[i].parent)
+		);//joints[i].transform));
+	}
+	glGenBuffers(1, &model.jointBuffer);
+
+	//for the matrices (modelView + normal)
+	m_vramUsage += (16 + 9) * sizeof(float);
+
 	// Push back the model
 	modelList->push_back(model);
 }
@@ -455,7 +501,16 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg, bool a
 	if (animated == false)
 		bufferDatas -= 2;
 	else
-		int hej = 0;
+	{
+		for (int i = 0; i < jointIndexData.size(); i++)
+		{
+			if (jointIndexData[i] > 35 || jointIndexData[i] < 0)
+			{
+				int hej = 0;
+			}
+		}
+	}
+
 	retbuffer->init(bufferData, bufferDatas);
 	retbuffer->setCount((int)positionData.size() / 3);
 

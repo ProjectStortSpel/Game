@@ -79,9 +79,8 @@ AbilityStoneSystem.PlaceStone = function(self, entity)
 		for i = 1, #tiles do
 		
 			local mapX, mapZ = world:GetComponent(tiles[i], "MapPosition", 0):GetInt2()
-			
-			if mapX == X and mapZ == Z then
-			
+				if mapX == X and mapZ == Z then
+				
 				world:CreateComponentAndAddTo("NotWalkable", tiles[i])
 				
 				local stone = world:CreateNewEntity("Stone")
@@ -90,11 +89,11 @@ AbilityStoneSystem.PlaceStone = function(self, entity)
 				world:CreateComponentAndAddTo("AbilityStone", stone)
 				world:CreateComponentAndAddTo("LerpPosition", stone)
 				
-				PathfinderHandler.SetTileWalkable(x,z, false)
+				PathfinderHandler.SetTileWalkable(X,Z, false)
 				
 				math.randomseed( os.time() )
 				math.random(); math.random(); math.random(); -- pop the not randomized values (blame lua)
-				world:SetComponent(stone, "AbilityStone", "LifeSpan", 50)
+				world:SetComponent(stone, "AbilityStone", "LifeSpan", 5)
 				world:SetComponent(stone, "Parent", "EntityId", tiles[i])
 				world:GetComponent(stone, "Position", 0):SetFloat3( math.random(1, 5), 10.5, math.random(1, 5) )
 				
@@ -116,12 +115,7 @@ AbilityStoneSystem.PlaceStone = function(self, entity)
 			
 			end
 			
-			
 		end
-		
-		
-		
-		
 		world:RemoveComponentFrom("UnitStone", unit)
 	end
 	
