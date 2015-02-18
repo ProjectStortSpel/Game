@@ -481,6 +481,7 @@ void GraphicsHigh::Render()
 			glBindTexture(GL_TEXTURE_2D, m_modelsAnimated[i].speID);
 	
 			m_modelsAnimated[i].bufferPtr->draw();
+
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 	}
@@ -616,6 +617,21 @@ void GraphicsHigh::Render()
 	glDrawArrays(GL_POINTS, 0, 1);
 
 	glUseProgram(0);
+
+
+	//for (int i = 0; i < m_modelsAnimated.size(); i++)
+	//{
+	//	if (m_modelsAnimated[i].active) // IS MODEL ACTIVE?
+	//	{
+	//		glLineWidth(2.5);
+	//		glColor3f(1.0, 0.0, 0.0);
+	//		glBegin(GL_LINES);
+	//		glVertex3f(0.0, 0.0, 0.0);
+	//		glVertex3f(15, 0, 0);
+	//		glEnd();
+	//	}
+	//}
+
 
 	// Swap in the new buffer
 	SDL_GL_SwapWindow(m_window);

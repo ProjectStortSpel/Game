@@ -46,7 +46,7 @@ mat4 GetJointMatrix(int Index)
 	mat4 joint = mat4(1);
 	for (int i = Index; i < joints.length(); i++)
 	{
-		joint *= JointToMatrix(joints[i]);
+		joint = JointToMatrix(joints[i]) * joint;
 		i += int(joints[i].parent);
 	}
 	return joint;	
