@@ -37,7 +37,6 @@ AddCardPickTimer.EntitiesAdded = function(self, dt, taskIndex, taskCount, entiti
 				local id = Net.StartPack("Client.SendPickingPhaseTimer")
 				Net.WriteFloat(id, newTime)
 				Net.Broadcast(id)
-				print(newTime)
 			end
 			
 			world:KillEntity(entity)

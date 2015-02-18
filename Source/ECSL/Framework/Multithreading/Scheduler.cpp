@@ -72,11 +72,11 @@ void Scheduler::UpdateDt(float _dt)
 void Scheduler::UpdateWorkItemLists()
 {
 	SystemActivationManager* systemActivationManager = m_systemManager->GetSystemActivationManager();
-	std::vector<unsigned int> systemsToActivate = systemActivationManager->PullSystemsToActivate();
-	std::vector<unsigned int> systemsToDeactivate = systemActivationManager->PullSystemsToDeactivate();
+	std::vector<unsigned int>* systemsToActivate = systemActivationManager->PullSystemsToActivate();
+	std::vector<unsigned int>* systemsToDeactivate = systemActivationManager->PullSystemsToDeactivate();
 
 	/* Deactivate systems */
-	for (const auto systemId : systemsToDeactivate)
+	for (const auto systemId : *systemsToDeactivate)
 	{
 		bool updateErased = EraseSystemWorkItems(systemId, DeactivatedWorkItem::WorkItemType::Update, m_updateWorkItems);
 		bool messagesReceivedErased = EraseSystemWorkItems(systemId, DeactivatedWorkItem::WorkItemType::MessagesReceived, m_messagesReceivedWorkItems);
@@ -87,7 +87,7 @@ void Scheduler::UpdateWorkItemLists()
 	}
 
 	/* Activate systems */
-	for (const auto systemId : systemsToActivate)
+	for (const auto systemId : *systemsToActivate)
 	{
 		/* System is already active */
 		assert(m_deactivatedWorkItems->find(systemId) != m_deactivatedWorkItems->end());
@@ -115,7 +115,10 @@ void Scheduler::UpdateWorkItemLists()
 			}
 		}
 		it->second.clear();
-	} 
+	}
+
+	delete(systemsToActivate);
+	delete(systemsToDeactivate);
 }
 
 bool Scheduler::EraseSystemWorkItems(unsigned int _systemId, DeactivatedWorkItem::WorkItemType _workItemType, std::vector<std::vector<ECSLWorkItem*>*>* _workItemGroups)
@@ -603,7 +606,7 @@ void Scheduler::AddCopyCurrentListsTask()
 
 void Scheduler::AddUpdateEntityTableTask()
 {
-	const unsigned int updateEntityTableWorkCount = 1;// m_taskManager->GetThreadCount();
+	const unsigned int updateEntityTableWorkCount = m_taskManager->GetThreadCount();
 
 	for (unsigned int i = 0; i < updateEntityTableWorkCount; ++i)
 	{
@@ -628,7 +631,7 @@ void Scheduler::AddUpdateEntityTableTask()
 
 void Scheduler::AddDeleteComponentDataTask()
 {
-	const unsigned int deleteComponentDataWorkCount = 1;// m_taskManager->GetThreadCount();
+	const unsigned int deleteComponentDataWorkCount = m_taskManager->GetThreadCount();
 
 	for (unsigned int i = 0; i < deleteComponentDataWorkCount; ++i)
 	{

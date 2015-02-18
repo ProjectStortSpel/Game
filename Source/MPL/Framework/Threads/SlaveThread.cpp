@@ -1,6 +1,5 @@
 #include "SlaveThread.h"
 
-#include <assert.h>
 #include "MPL/Managers/ThreadLogger.h"
 
 using namespace MPL;
@@ -27,6 +26,8 @@ bool SlaveThread::StartThread(const std::string& _name, unsigned int _threadId)
 	m_alive = true;
 	m_sleeping = false;
 	m_sleepSem = SDL_CreateSemaphore(0);
+	/* Couldn't create semaphore */
+	if (!m_sleepSem) { printf("MPL Error: %s\n", SDL_GetError()); abort(); }
 	m_logger = &ThreadLogger::GetInstance();
 	m_thread = SDL_CreateThread(BeginThreadLoop, _name.c_str(), this);
 	return (m_thread != 0);
