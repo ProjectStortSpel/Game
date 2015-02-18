@@ -62,30 +62,41 @@ AICardPickingSystem.Update = function(self, dt)
 			
 			--local charArray = CombinationMath.Combinations(self.CardsPerHand, self.NumberOfCardsToPick)
 			
-			local charArray = CombinationMath.Permutations(self.CardsPerHand, self.CardsToSimulate)
+			--local charArray = CombinationMath.Permutations(self.CardsPerHand, self.CardsToSimulate)
 			
-			--local charArray = CombinationMath.Permutations(3, 2)
+			local start, endvar, timetaken
+						
+			local charArray = CombinationMath.Permutations(10, 8)
 			
 			--print(string.len(charArray))
 			
-			for n = 1, string.len(charArray), self.CardsToSimulate do
-				
-				for card = 0, self.CardsToSimulate - 1 do
-				
+			local lengthArray = string.len(charArray)
+			local jump = self.CardsToSimulate
+			local cardsToSimMinusOne = self.CardsToSimulate - 1
+			
+			start = os.clock()
+			
+			for n = 1, lengthArray, jump do
+				for card = 0, cardsToSimMinusOne do
 					local charVar = string.byte(charArray, n + card)
-					--io.write(charVar, " ")
 				end
-				--io.write("\n")
 			end
 			
-			--for n = 1, string.len(charArray), 2 do
-			--	
-			--	for card = 0, 1 do
-			--	
-			--		local charVar = string.byte(charArray, n + card)
-			--		print(charVar)
+			endvar = os.clock()
+			timetaken = (endvar - start) * 1000
+			print("Took", timetaken, "milliseconds")
+			
+			--for n = 1, 15, self.CardsToSimulate do
+			--	for card = 0, self.CardsToSimulate - 1 do
+			--		
 			--	end
 			--end
+			
+						
+			
+			
+			
+			
 			
 			local unitID = world:GetComponent(AIs[i], "UnitEntityId", 0):GetInt()
 			
