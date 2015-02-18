@@ -618,19 +618,23 @@ void GraphicsHigh::Render()
 
 	glUseProgram(0);
 
+	vec4 vert1 = vec4(0, 0, 0, 1);
+	vec4 vert2 = vec4(0, 15, 0, 1);
+	for (int i = 0; i < m_modelsAnimated.size(); i++)
+	{
+		if (m_modelsAnimated[i].active) // IS MODEL ACTIVE?
+		{
+			vert1 = projectionMatrix * viewMatrix * vert1;
+			vert2 = projectionMatrix * viewMatrix * vert2;
 
-	//for (int i = 0; i < m_modelsAnimated.size(); i++)
-	//{
-	//	if (m_modelsAnimated[i].active) // IS MODEL ACTIVE?
-	//	{
-	//		glLineWidth(2.5);
-	//		glColor3f(1.0, 0.0, 0.0);
-	//		glBegin(GL_LINES);
-	//		glVertex3f(0.0, 0.0, 0.0);
-	//		glVertex3f(15, 0, 0);
-	//		glEnd();
-	//	}
-	//}
+			glLineWidth(2.5);
+			glColor3f(1.0, 0.0, 0.0);
+			glBegin(GL_LINES);
+			glVertex3f(vert1.x, vert1.y, vert1.z);
+			glVertex3f(vert2.x, vert2.y, vert2.z);
+			glEnd();
+		}
+	}
 
 
 	// Swap in the new buffer
