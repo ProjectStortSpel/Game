@@ -43,6 +43,11 @@ namespace FileSystem
 		/* Any 32-bit or wider unsigned integer data type will do */
 		typedef unsigned int MD5_u32plus;
 
+		struct MD5Data
+		{
+			unsigned char data[16];
+		};
+
 		typedef struct {
 			MD5_u32plus lo, hi;
 			MD5_u32plus a, b, c, d;
@@ -50,14 +55,14 @@ namespace FileSystem
 			MD5_u32plus block[16];
 		} MD5_CTX;
 
-		void EXPORT MD5_Print(unsigned char *md5);
-		void EXPORT MD5_Print(std::string md5);
+		//void EXPORT MD5_Print(unsigned char *md5);
+		void EXPORT MD5_Print(MD5Data md5);
 		void EXPORT MD5_Init(MD5_CTX *ctx);
 		void EXPORT MD5_Update(MD5_CTX *ctx, const void *data, unsigned long size);
 		void EXPORT MD5_Final(unsigned char *result, MD5_CTX *ctx);
 		
-		EXPORT std::string MD5(const void *data, unsigned long size);
-		EXPORT std::string MD5_File(std::string _file);
+		EXPORT MD5Data MD5(const void *data, unsigned long size);
+		EXPORT MD5Data MD5_File(std::string _file);
 
 	}
 }

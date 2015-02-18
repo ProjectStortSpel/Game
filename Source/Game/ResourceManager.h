@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+#include "FileSystem/MD5.h"
 
 namespace ResourceManager
 {
@@ -7,9 +8,11 @@ namespace ResourceManager
 	{
 		std::string File;
 		std::string Location;
-		std::string MD5;
+		FileSystem::MD5::MD5Data MD5;
 		int Size;
 	};
+
+	bool CreateResource(std::string _path, Resource &_r);
 
 	int AddGamemodeResource(std::string _resource);
 	int AddContentResource(std::string _resource);

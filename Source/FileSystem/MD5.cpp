@@ -37,6 +37,7 @@
 
 
 #include <string.h>
+#include <cstring>
 #include <SDL/SDL.h>
 #include <iostream>
 
@@ -209,7 +210,7 @@ namespace FileSystem
 			std::string text = "MD5: ";
 			for (int i = 0; i < 16; i++) 
 			{
-				char const byte = md5[i];
+				unsigned char const byte = md5[i];
 
 				text += hex_chars[(byte & 0xF0) >> 4];
 				text += hex_chars[(byte & 0x0F) >> 0];
@@ -220,9 +221,9 @@ namespace FileSystem
 			SDL_Log("%s", text.c_str());
 		}
 
-		void MD5_Print(std::string md5)
+		void MD5_Print(MD5Data md5)
 		{
-			MD5_Print((unsigned char*)md5.c_str());
+			MD5_Print(md5.data);
 		}
 
 		void MD5_Init(MD5_CTX *ctx)
@@ -321,17 +322,19 @@ namespace FileSystem
 			memset(ctx, 0, sizeof(*ctx));
 		}
 
-		std::string MD5(const void *data, unsigned long size)
+		MD5Data MD5(const void *data, unsigned long size)
 		{
 			FileSystem::MD5::MD5_CTX ctx;
 			FileSystem::MD5::MD5_Init(&ctx);
 			FileSystem::MD5::MD5_Update(&ctx, data, size);
 			unsigned char res[16];
 			FileSystem::MD5::MD5_Final(res, &ctx);
-			return std::string((char*)res);
+			MD5Data result;
+			memcpy(result.data, res, 16);
+			return result;
 		}
 
-		std::string MD5_File(std::string _file)
+		MD5Data MD5_File(std::string _file)
 		{
 			SDL_RWops* test;
 			FileSystem::File::Open(_file, &test);
@@ -339,7 +342,7 @@ namespace FileSystem
 			char* data = FileSystem::File::Read(test, length);
             FileSystem::File::Close(test);
 
-			std::string result = MD5(data, length);
+			MD5Data result = MD5(data, length);
 			delete data;
 			return result;
 		}
