@@ -145,14 +145,6 @@ namespace LuaBridge
 				}
 			}
 
-			//for (unsigned int y = 0; y < m_mapSize.y; y++)
-			//{
-			//	for (unsigned int x = 0; x < m_mapSize.x; x++)
-			//	{
-			//		m_summedPFs[_ai][x][y] += m_PFs[ObjectType::NoOfEnums * _ai + i][x][y];
-			//	}
-			//}
-
 			//for (int y = 0; y < m_mapSize.y; y++)
 			//{
 			//	for (int x = 0; x < m_mapSize.x; x++)

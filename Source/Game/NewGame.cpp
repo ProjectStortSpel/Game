@@ -11,6 +11,7 @@
 #include "Game/HomePath.h"
 #include "FileSystem/MD5.h"
 #include "FileSystem/Directory.h"
+#include "FileSystem/File.h"
 
 #ifdef __APPLE__
 #include "CoreFoundation/CoreFoundation.h"
@@ -48,23 +49,23 @@ int main(int argc, char** argv)
 	Logger::GetInstance().AddGroup("Game");
 	GameCreator* newGame = new GameCreator();
 
-    
-    
 
-    std::string path2 = HomePath::GetHomePath();
-    //path2.append("models/");
-    
- /*   std::vector<std::string> temp = FileSystem::Directory::GetAllFiles(path2);
-    
-    
-    for (int i = 0; i < temp.size(); ++i)
-    {
-        std::string path = path2;
-        path.append(temp[i]);
-        printf("File: %s\n", path.c_str());
-        FileSystem::MD5::MD5_Print(FileSystem::MD5::MD5_File(path));
-    }
-*/
+ //   std::string path2 = HomePath::GetHomePath();
+ //  // path2.append("models/");
+ //   
+	//SDL_Log("Path: %s", path2.c_str());
+
+ //   std::vector<std::string> temp = FileSystem::Directory::GetAllFiles(path2);
+ //   
+ //   
+ //   for (int i = 0; i < temp.size(); ++i)
+ //   {
+ //       std::string path = path2;
+ //       path.append(temp[i]);
+	//	SDL_Log("File: %s\n", path.c_str());
+ //       FileSystem::MD5::MD5_Print(FileSystem::MD5::MD5_File(path));
+ //   }
+
 	//newGame->InitializeLua();
 	newGame->InitializeGraphics();
 	newGame->InitializeInput();

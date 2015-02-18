@@ -47,12 +47,16 @@ CardAddModelSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, enti
 			model:SetModel("turnleft", "cards", 2)
 		elseif action == "TurnAround" then
 			model:SetModel("turnaround", "cards", 2)
+		elseif action == "Guard" then
+			model:SetModel("guard", "cards", 2)
 		elseif action == "Sprint" then
 			model:SetModel("sprint", "cards", 2)
 		elseif action == "SlingShot" then
 			model:SetModel("slingshot", "cards", 2)
 		elseif action == "IWin" then
 			model:SetModel("iwin", "cards", 2)
+		elseif action == "Stone" then
+			model:SetModel("stone", "cards", 2)
 		else
 			model:SetModel("forward", "cards", 2)
 		end

@@ -28,6 +28,18 @@ TestMoveComponent:AddVariable("DirZ", ByteSize.Int)
 TestMoveComponent:AddVariable("Steps", ByteSize.Int)
 worldCreator:AddComponentType(TestMoveComponent)
 
+local SimultaneousMove = ComponentType()
+SimultaneousMove.Name = "SimultaneousMove"
+SimultaneousMove.TableType = TableType.Map
+SimultaneousMove:AddVariable("Unit", ByteSize.Reference)
+SimultaneousMove:AddVariable("PosX", ByteSize.Int)
+SimultaneousMove:AddVariable("PosZ", ByteSize.Int)
+SimultaneousMove:AddVariable("DirX", ByteSize.Int)
+SimultaneousMove:AddVariable("DirZ", ByteSize.Int)
+SimultaneousMove:AddVariable("Steps", ByteSize.Int)
+worldCreator:AddComponentType(SimultaneousMove)
+
+
 --	Test River
 local TestRiverComponent = ComponentType()
 TestRiverComponent.Name = "TestRiver"
@@ -36,6 +48,13 @@ TestRiverComponent:AddVariable("Unit", ByteSize.Reference)
 TestRiverComponent:AddVariable("PosX", ByteSize.Int)
 TestRiverComponent:AddVariable("PosZ", ByteSize.Int)
 worldCreator:AddComponentType(TestRiverComponent)
+
+local TestMoveSuccessComponent = ComponentType()
+TestMoveSuccessComponent.Name = "TestMoveSuccess"
+TestMoveSuccessComponent.TableType = TableType.Map
+TestMoveSuccessComponent:AddVariable("Unit", ByteSize.Reference)
+TestMoveSuccessComponent:AddVariable("Steps", ByteSize.Int)
+worldCreator:AddComponentType(TestMoveSuccessComponent)
 
 --	End Round
 local EndRoundComponent = ComponentType()

@@ -824,6 +824,7 @@ MapGenerator.CreateRiverEntity = function(self, X, Z)
 	local	tRiverDirX, tRiverDirZ	=	self:GetRiverDirection(tRiverType)
 	world:CreateComponentAndAddTo("River", newRiver)
 	world:GetComponent(newRiver, "River", 0):SetInt3(tRiverDirX, tRiverDirZ, 1)
+	world:GetComponent(newRiver, "TileOffset", "Offset"):SetFloat(0.2)
 	
 	--	Set correct rotation
 	if tRiverType == self.RiverUp then

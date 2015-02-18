@@ -21,6 +21,8 @@ namespace FileSystem
 		bool EXPORT Append(std::string _path, SDL_RWops** _file);
 		bool EXPORT Open(std::string _path, SDL_RWops** _file);
 
+		bool EXPORT Exist(std::string _path);
+
 		bool EXPORT Delete(std::string _path);
 
 		void EXPORT Close(SDL_RWops* _file);

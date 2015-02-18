@@ -131,6 +131,8 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		world:CreateComponentAndAddTo("Model", newTile)
 		local comp = world:GetComponent(newTile, "Model", 0)
 		comp:SetModel("riverstraight", "riverstraight", 0)
+		
+		world:GetComponent(newTile, "TileOffset", "Offset"):SetFloat(0.2)
 
 		self.waterTiles[#self.waterTiles+1]=newTile
 		
@@ -151,7 +153,7 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		world:CreateComponentAndAddTo("Model", newTile)
 		local comp = world:GetComponent(newTile, "Model", 0)
 		comp:SetModel("grass", "grass", 0)
-		
+		self:AddTinyStone(posX, posZ)
 	elseif tiletype == 111 then
         world:CreateComponentAndAddTo("Void", newTile)
 		--world:CreateComponentAndAddTo("Model", entity)
@@ -182,6 +184,30 @@ CreateMapSystem.AddGroundTileBelow = function(self, posX, posZ)
 	world:GetComponent(groundEntity, "Rotation", 0):SetFloat3(0.0, 0.0, 0.0)
 	world:GetComponent(groundEntity, "Scale", 0):SetFloat3(1.0, 1.0, 1.0)
 	world:GetComponent(groundEntity, "Model", 0):SetModel("grass", "grass", 0)
+	
+end 
+
+CreateMapSystem.AddTinyStone = function(self, posX, posZ)
+	if (math.random(1, 5) > 2) then
+		return
+	end
+	
+	local tinyStone = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("Position", tinyStone)
+	world:CreateComponentAndAddTo("Rotation", tinyStone)
+	world:CreateComponentAndAddTo("Scale", tinyStone)
+	world:CreateComponentAndAddTo("SyncNetwork", tinyStone)
+	world:CreateComponentAndAddTo("Model", tinyStone)
+	
+	local randX = posX-0.5+math.random()
+	local randZ = posZ-0.5+math.random()
+	world:GetComponent(tinyStone, "Position", 0):SetFloat3(randX, 0.5, randZ)
+	world:GetComponent(tinyStone, "Rotation", 0):SetFloat3(0.0, 0.0, 0.0)
+	local randScale = math.random() + 0.5
+	world:GetComponent(tinyStone, "Scale", 0):SetFloat3(0.2*randScale, 0.2*randScale, 0.2*randScale)
+	world:GetComponent(tinyStone, "Model", 0):SetModel("stone", "stone", 0)
+	
+	--self:AddTinyStone(randX, randZ)
 end 
 
 CreateMapSystem.CreateMap = function(self, name)
@@ -194,16 +220,7 @@ CreateMapSystem.CreateMap = function(self, name)
 	local map
     self.mapX, self.mapY, map = File.LoadMap(name)
 	
-	-- Create an entity that will keep track of the map size. If it already exist from a previous "loadmap", use that one instead.
-	local mapSpecsEntity = self:GetEntities("MapSpecs")
-	local mapEntity = nil
-	if #mapSpecsEntity == 0 then
-		mapEntity = world:CreateNewEntity()
-		world:CreateComponentAndAddTo("MapSpecs", mapEntity)
-		world:CreateComponentAndAddTo("SyncNetwork", mapEntity)
-	else
-		mapEntity = mapSpecsEntity[1]
-	end
+
 		
 	for x = 0, self.mapX + 1 do
 		self:AddTile(x, 0, 111) -- 111 = void
@@ -250,6 +267,18 @@ CreateMapSystem.CreateMap = function(self, name)
 	for x = 0, self.mapX + 1 do
 		self:AddTile(x, self.mapY+1, 111) -- 111 = void
 		inputData:AddTile( 1, true )
+	end
+	
+	
+	-- Create an entity that will keep track of the map size. If it already exist from a previous "loadmap", use that one instead.
+	local mapSpecsEntity = self:GetEntities("MapSpecs")
+	local mapEntity = nil
+	if #mapSpecsEntity == 0 then
+		mapEntity = world:CreateNewEntity()
+		world:CreateComponentAndAddTo("MapSpecs", mapEntity)
+		world:CreateComponentAndAddTo("SyncNetwork", mapEntity)
+	else
+		mapEntity = mapSpecsEntity[1]
 	end
 	
 	-- Add to the map size as voids have been added around the map.

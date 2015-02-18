@@ -9,6 +9,7 @@
 #include "ECSL/LuaEntityTemplateManager.h"
 #include "AI/LuaPotentialFieldHandler.h"
 #include "AI/LuaPathfinderHandler.h"
+#include "AI/LuaCombinationMath.h"
 #include "Renderer/LuaGraphicDevice.h"
 #include "Renderer/LuaCamera.h"
 #include "Math/LuaMatrix.h"
@@ -49,8 +50,8 @@ namespace LuaBridge
     //LuaServerNetwork::Embed();
 
 	PotentialField::Embed(L);
-
 	PathfinderHandler::Embed(L);
+	CombinationMath::Embed(L);
 
     LuaEmbedder::AddFunction(L, "LoadMap", &LoadMap, "File");
   }

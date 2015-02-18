@@ -190,6 +190,7 @@ namespace Renderer
 		std::map<int, ParticleSystem*> m_particleSystems;
 		int m_particleID;
 		std::vector<ParticleSystemToLoad> m_particleSystemsToLoad;
+		std::vector<int> m_particlesIdToRemove;
 
 		//// DEBUG variables ----
 		int m_debugTexFlag;

@@ -32,6 +32,18 @@ UnitBackwardComponent.Name = "UnitBackward"
 UnitBackwardComponent.TableType = TableType.Map
 worldCreator:AddComponentType(UnitBackwardComponent)
 
+-- UnitGuard Component
+local UnitGuardComponent = ComponentType()
+UnitGuardComponent.Name = "UnitGuard"
+UnitGuardComponent.TableType = TableType.Map
+worldCreator:AddComponentType(UnitGuardComponent)
+
+-- UnitStone Component
+local UnitStoneComponent = ComponentType()
+UnitStoneComponent.Name = "UnitStone"
+UnitStoneComponent.TableType = TableType.Map
+worldCreator:AddComponentType(UnitStoneComponent)
+
 -- UnitSlingShot Component
 local UnitSlingShotComponent = ComponentType()
 UnitSlingShotComponent.Name = "UnitSlingShot"
@@ -49,3 +61,9 @@ local UnitIWin = ComponentType()
 UnitIWin.Name = "UnitIWin"
 UnitIWin.TableType = TableType.Map
 worldCreator:AddComponentType(UnitIWin)
+
+-- ActionGuard Component
+local ActionGuard = ComponentType()
+ActionGuard.Name = "ActionGuard"
+ActionGuard.TableType = TableType.Map
+worldCreator:AddComponentType(ActionGuard)
