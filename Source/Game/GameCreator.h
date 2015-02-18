@@ -118,8 +118,10 @@ private:
 	Utility::FrameCounter m_graphicsCounter;
 	Utility::FrameCounter m_luaGarbageCollectionCounter;
 
-	Profilers::ECSLProfiler* m_worldProfiler;
-	
+	Profilers::ECSLProfiler* m_clientWorldProfiler;
+	Profilers::ECSLProfiler* m_serverWorldProfiler;
+	Profilers::ECSLProfiler* m_activeWorldProfiler;
+
 	lua_State* m_clientLuaState;
 	lua_State* m_serverLuaState;
 

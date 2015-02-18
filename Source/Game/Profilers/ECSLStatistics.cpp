@@ -166,42 +166,6 @@ void ECSLStatistics::AddFrame(ECSLFrame* _frame)
 		}
 	}
 
-	///* Add work item statistic list */
-	//if (!m_workItemStats)
-	//{
-	//	m_workItemStats = new std::vector<std::vector<WorkItemStatistic*>*>(workGroups->size());
-	//	int groupIndex = -1;
-	//	for (auto workGroup : *workGroups)
-	//	{
-	//		(*m_workItemStats)[++groupIndex] = new std::vector<WorkItemStatistic*>(workGroup->size());
-
-	//		for (unsigned int localIndex = 0; localIndex < workGroup->size(); ++localIndex)
-	//		{
-	//			auto workItem = workGroup->at(localIndex);
-	//			(*(*m_workItemStats)[groupIndex])[workItem->localGroupId] = CreateWorkItemStatistic(workItem);
-	//		}
-	//	}
-	//}
-	///* Update work item data */
-	//else
-	//{
-	//	for (unsigned int groupIndex = 0; groupIndex < workGroups->size(); ++groupIndex)
-	//	{
-	//		auto workGroup = workGroups->at(groupIndex);
-	//		for (unsigned int localIndex = 0; localIndex < workGroup->size(); ++localIndex)
-	//		{
-	//			auto workItem = workGroup->at(localIndex);
-	//			WorkItemStatistic* workItemStat = (*(*m_workItemStats)[groupIndex])[workItem->localGroupId];
-	//			float duration = workItem->duration;
-	//			workItemStat->avgDuration = (workItemStat->avgDuration * m_frameCount + duration) / (m_frameCount + 1);
-	//			workItemStat->minDuration = duration < workItemStat->minDuration ? duration : workItemStat->minDuration;
-	//			workItemStat->maxDuration = duration > workItemStat->maxDuration ? duration : workItemStat->maxDuration;
-	//			workItemStat->diffDuration = workItemStat->maxDuration - workItemStat->minDuration;
-	//		}
-	//	}
-	//}
-
-
 	++m_frameCount;
 
 	delete(_frame);
@@ -210,7 +174,7 @@ void ECSLStatistics::AddFrame(ECSLFrame* _frame)
 ECSLStatistics::WorkItemStatistic* ECSLStatistics::CreateWorkItemStatistic(ECSLFrame::WorkItem* _workItem)
 {
 	WorkItemStatistic* workItemStat = new WorkItemStatistic();
-	workItemStat->name = new std::string(*_workItem->name);
+	workItemStat->name = new std::string(_workItem->name);
 	workItemStat->avgDuration = _workItem->duration;
 	workItemStat->maxDuration = _workItem->duration;
 	workItemStat->minDuration = _workItem->duration;

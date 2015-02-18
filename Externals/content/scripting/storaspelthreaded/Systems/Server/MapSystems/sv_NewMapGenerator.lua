@@ -776,9 +776,8 @@ MapGenerator.CreateMap = function(self)
 	world:GetComponent(dataEntity, "MapSpecs", "NoOfCheckpoints"):SetInt(self.Checkpoints)
 	world:GetComponent(dataEntity, "MapSpecs", "SizeX"):SetInt2(self.MapSizeX, self.MapSizeZ)
 	
+	-- Initialize potential fields
 	PotentialFieldHandler.InitPFHandler(self.MapSizeX, self.MapSizeZ, self.Players)
-	
-	
 end
 
 --	Creates a new entity with the Tile template

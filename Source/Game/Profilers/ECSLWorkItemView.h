@@ -36,6 +36,7 @@ namespace Profilers
 		void CreatePages(ECSLStatistics* _frontBufferStatistics);
 
 		unsigned int PageCount() { return m_pages->size(); }
+		void NextPosition(unsigned int& x, unsigned int& y);
 	};
 }
 

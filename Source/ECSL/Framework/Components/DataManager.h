@@ -14,18 +14,18 @@ namespace ECSL
 	class DECLSPEC DataManager
 	{
 	public:
-		enum ComponentChange
+		enum ComponentUpdate
 		{
 			TO_BE_ADDED,
 			TO_BE_REMOVED
 		};
 
-		struct EntityChange
+		struct EntityUpdate
 		{
 			bool Dead;
-			std::map<unsigned int, ComponentChange> ComponentChanges;
+			std::map<unsigned int, ComponentUpdate> ComponentUpdates;
 
-			EntityChange() : Dead(false) { }
+			EntityUpdate() : Dead(false) { }
 		};
 
 		DataManager(unsigned int _entityCount, std::vector<unsigned int>* _componentTypeIds);
@@ -58,7 +58,7 @@ namespace ECSL
 		inline ComponentTable* GetComponentTable(const std::string& _componentType) { return m_componentTables->at(ComponentTypeManager::GetInstance().GetTableId(_componentType)); }
 		inline ComponentTable* GetComponentTable(unsigned int _componentTypeId) { return m_componentTables->at(_componentTypeId); }
 		inline const std::vector<ComponentTable*>* GetComponentTables() { return m_componentTables; }
-		inline const std::vector<EntityChange*>* GetEntityChanges() { return m_entityChangesCopy; }
+		inline const std::vector<EntityUpdate*>* GetEntityUpdates() { return m_entityUpdatesCopy; }
 		inline const std::vector<unsigned int>* GetChangedEntities() { return m_changedEntitiesCopy; }
 
 		inline bool HasComponent(unsigned int _entityId, unsigned int _componentTypeId){ return m_entityTable->HasComponent(_entityId, _componentTypeId); }
@@ -70,16 +70,16 @@ namespace ECSL
 		std::string GetString(unsigned int _eId, unsigned int _componentTypeId, const unsigned int _index);
 
 	private:
-		SDL_mutex* m_entityChangesMutex;
+		SDL_mutex* m_entityUpdatesMutex;
 		unsigned int m_entityCount;
 		unsigned int m_componentTypeCount;
 		EntityTable* m_entityTable;
 		std::vector<ComponentTable*>* m_componentTables;
 		std::vector<unsigned int>* m_componentTypeIds;
-		//std::map<unsigned int, EntityChange*>* m_entityChanges;
-		//std::map<unsigned int, EntityChange*>* m_entityChangesCopy;
-		std::vector<EntityChange*>* m_entityChanges;
-		std::vector<EntityChange*>* m_entityChangesCopy;
+		//std::map<unsigned int, EntityChange*>* m_entityUpdates;
+		//std::map<unsigned int, EntityChange*>* m_entityUpdatesCopy;
+		std::vector<EntityUpdate*>* m_entityUpdates;
+		std::vector<EntityUpdate*>* m_entityUpdatesCopy;
 		std::vector<unsigned int>* m_changedEntities;
 		std::vector<unsigned int>* m_changedEntitiesCopy;
 

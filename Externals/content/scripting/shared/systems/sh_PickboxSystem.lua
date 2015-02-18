@@ -74,9 +74,7 @@ PickBoxSystem.Update = function(self, dt, taskIndex, taskCount)
 		for i = 1, #entities do
 			local entity = entities[i]
 			if entity ~= newhit then
-				if world:EntityHasComponent(entity, "OnPickBoxHit") then
-					world:RemoveComponentFrom("OnPickBoxHit", entity)
-				end
+				world:RemoveComponentFrom("OnPickBoxHit", entity)
 			end
 		end
 	else
