@@ -66,7 +66,7 @@ NotificationBoxSystem.SpawnMenu = function(self)
 	self:AddTextToTexture("U1", self.Text, 0, 0, 0, 0, text)
 		
 	local button = self:CreateElement("ok", "quad", 0, -0.10, -1.0, 0.20, 0.085)
-	self:AddEntityCommandToButton("OptionMenu", button)
+	self:AddEntityCommandToButton(self.Parentmenu .. "Activate", button)
 	self:AddHoverSize(1.1, button)	
 
 	self.IsMenuActive = true

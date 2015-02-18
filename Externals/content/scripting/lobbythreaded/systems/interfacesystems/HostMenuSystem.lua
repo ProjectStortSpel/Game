@@ -11,6 +11,7 @@ HostMenuSystem.Initialize = function(self)
 	
 	self:AddComponentTypeToFilter(self.Name, FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter(self.Name.."Element", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter(self.Name.."Activate", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("ActiveTextInput", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("ApplyHostSettings", FilterType.RequiresOneOf)
 	
@@ -33,8 +34,9 @@ HostMenuSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities
 			self:Deactivate(entity)
 			self:Activate(entity)
 			world:KillEntity(entity)
-		--elseif world:EntityHasComponent(entity, self.Name .. "Activate") then			
-		--	self.IsMenuActive = true
+		elseif world:EntityHasComponent(entity, self.Name .. "Activate") then
+			self.IsMenuActive = true
+			world:KillEntity(entity)
 		end
 		
 	end
@@ -259,11 +261,11 @@ end
 
 HostMenuSystem.SpawnMenu = function(self)
 
-	--local popup = world:CreateNewEntity()
-	--world:CreateComponentAndAddTo("NotificationBox", popup)
-	--world:SetComponent(popup, "NotificationBox", "Text", "TEMP TEMP TEMP TEMP")
-	--world:SetComponent(popup, "NotificationBox", "ParentMenu", self.Name)
-	--self.IsMenuActive = false
+	local popup = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("NotificationBox", popup)
+	world:SetComponent(popup, "NotificationBox", "Text", "TEMP TEMP TEMP TEMP")
+	world:SetComponent(popup, "NotificationBox", "ParentMenu", self.Name)
+	self.IsMenuActive = false
 
 	local background = self:CreateElement("gamemenubackground", "quad", 0, 0, -2.5, 2.3, 2.8)
 	
