@@ -25,6 +25,10 @@
 #include "LuaBridge/Renderer/LuaGraphicDevice.h"
 #include "LuaBridge/ECSL/LuaEntityTemplateManager.h"
 #include "LuaBridge/Network/LuaNetwork.h"
+#include "LuaBridge/Resource/LuaResource.h"
+
+#include "Game/ResourceManager.h"
+#include "FileSystem/Directory.h"
 
 #include "Logger/Managers/Logger.h"
 
@@ -234,6 +238,20 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 {
     lua_State* luaState = _worldType == WorldType::Client ? m_clientLuaState : m_serverLuaState;
 
+	if (_worldType == WorldType::Server)
+	{
+		std::vector<std::string> paths = HomePath::GetGameModePaths();
+
+		for (int i = 0; i < paths.size(); ++i)
+		{
+			std::vector<std::string> files = FileSystem::Directory::GetAllFiles(paths[i]);
+
+			for (int j = 0; j < files.size(); ++j)
+			{
+				ResourceManager::AddGamemodeResource(files[j]);
+			}
+		}
+	}
     
 	LuaBridge::LuaWorldCreator worldCreator = LuaBridge::LuaWorldCreator(luaState);
     worldCreator.SkipComponentTypesAndTemplates(!_isMainWorld);
@@ -680,6 +698,8 @@ void GameCreator::Reload()
         m_serverWorld = nullptr;
     }
 
+	ResourceManager::Clear();
+
 	HomePath::SetGameMode(m_gameMode);
 		
 	NetworkInstance::GetClientNetworkHelper()->ResetNetworkMaps();
@@ -728,6 +748,12 @@ void GameCreator::Reload()
     LuaBridge::LuaNetwork::SetClientLuaState(m_clientLuaState);
     LuaBridge::LuaNetwork::SetServerLuaState(m_serverLuaState);
 
+	if (NetworkInstance::GetServer()->IsRunning())
+	{
+		LuaBridge::LuaResource::SetServerState(m_serverLuaState);
+	}
+	else
+		LuaBridge::LuaResource::SetServerState(NULL);
 
 	m_graphicalSystems.clear();
 
