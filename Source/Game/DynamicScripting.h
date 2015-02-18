@@ -8,12 +8,12 @@
 struct Rule
 {
 	float		weight;
-	std::string	script;
+	//std::string	script;
 
-	bool operator == (Rule r)
+	/*bool operator == (Rule r)
 	{
 		return weight == r.weight && script == r.script;
-	}
+	}*/
 };
 
 class DynamicScripting
