@@ -58,7 +58,6 @@ namespace ResourceManager
 		if (!ResourceExist(_path, &GamemodeResources) && CreateResource(_path, r))
 		{
 			GamemodeResources.push_back(r);
-			SDL_Log("Added gamemode resource: %s", r.File.c_str());
 			return 1;
 		}
 		return 0;
