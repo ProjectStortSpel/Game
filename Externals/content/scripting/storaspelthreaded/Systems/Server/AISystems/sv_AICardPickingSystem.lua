@@ -3,6 +3,7 @@ AICardPickingSystem.NumberOfCardsToPick = 5
 AICardPickingSystem.CardsPerHand = 8
 AICardPickingSystem.PrintSimulation = 0
 AICardPickingSystem.AICheat = 1
+AICardPickingSystem.CardsToSimulate = 3
 
 AICardPickingSystem.Initialize = function(self)
 	self:SetName("AI card picking System")
@@ -61,15 +62,15 @@ AICardPickingSystem.Update = function(self, dt)
 			
 			--local charArray = CombinationMath.Combinations(self.CardsPerHand, self.NumberOfCardsToPick)
 			
-			local charArray = CombinationMath.Permutations(self.CardsPerHand, self.NumberOfCardsToPick)
+			local charArray = CombinationMath.Permutations(self.CardsPerHand, self.CardsToSimulate)
 			
 			--local charArray = CombinationMath.Permutations(3, 2)
 			
-			print(string.len(charArray))
+			--print(string.len(charArray))
 			
-			for n = 1, string.len(charArray), self.NumberOfCardsToPick do
+			for n = 1, string.len(charArray), self.CardsToSimulate do
 				
-				for card = 0, self.NumberOfCardsToPick - 1 do
+				for card = 0, self.CardsToSimulate - 1 do
 				
 					local charVar = string.byte(charArray, n + card)
 					--io.write(charVar, " ")

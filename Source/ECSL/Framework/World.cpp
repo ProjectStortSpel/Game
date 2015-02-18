@@ -193,6 +193,7 @@ unsigned int World::GetMemoryUsage()
 
 void World::LogWorldData()
 {
+	m_dataLogger->SetCurrentWorld(m_dataManager->GetEntityCount(), m_dataManager->GetEntityTable(), m_dataManager->GetComponentTables(), m_systemManager->GetSystemWorkGroups());
 	m_dataLogger->LogWorldData();
 }
 

@@ -9,7 +9,6 @@ ParentSystem.Update = function(self, dt, taskIndex, taskCount)
 
 		local x, y, z = world:GetComponent(child, "Position", 0):GetFloat3(0)
 		world:GetComponent(child, "Position", 0):SetFloat3(x, y, z) -- FULHAX FÖR ATT FÅ DEN ATT UPDATERA HELA TIDEN (FUCK EFFEKTIVITET)
-		
 		--local x, y, z = world:GetComponent(parentId, "Scale", 0):GetFloat3(0)
 		--world:GetComponent(child, "Scale", 0):SetFloat3(x, y, z)
 	end

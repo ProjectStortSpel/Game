@@ -44,7 +44,7 @@ void ECSLFrame::AddWorkData(MPL::LoggedAction* _action, unsigned int _threadId)
 void ECSLFrame::AddWorkItemStatistic(MPL::LoggedAction* _action, unsigned int _threadId)
 {
 	ECSLFrame::WorkItem* workItem = new WorkItem();
-	workItem->name = new std::string(*_action->workItem->Name);
+	workItem->name = std::string(*_action->workItem->Name);
 	workItem->localGroupId = _action->workItem->LocalGroupId;
 	workItem->groupId = _action->workItem->GroupId;
 	workItem->duration = _action->duration;
