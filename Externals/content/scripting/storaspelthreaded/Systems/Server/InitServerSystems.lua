@@ -30,6 +30,7 @@ package.path = package.path .. ";../../../Externals/content/scripting/storaspelt
 require "sv_PostMoveSystem"
 require "sv_TestMoveSystem"
 require "sv_TestMoveRiverSystem"
+require "sv_SimultaneousMove"
 
 --	Card Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/CardSystems/?.lua"
@@ -51,12 +52,19 @@ require "sv_ActionMoveBackwardSystem"
 require "sv_ActionTurnLeftSystem"
 require "sv_ActionTurnRightSystem"
 require "sv_ActionTurnAroundSystem"
+require "sv_ActionGuardSystem"
 
 --	Card Ability Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/CardAbilitySystems/?.lua"
 require "sv_AbilitySprintSystem"
 require "sv_AbilitySlingshotSystem"
 require "sv_AbilityIWin"
+require "sv_AbilityStoneSystem"
+
+--	Weather Systems
+package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/WeatherSystems/?.lua"
+require "sv_WeatherSystem"
+require "sv_WeatherWindSystem"
 
 --	Spawn Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/SpawnSystems/?.lua"
@@ -86,6 +94,7 @@ require "sv_GameOverSystem"
 require "sv_LogStartSystem"
 require "sv_ServerNetworkMessageSystem"
 require "sv_HostSettingsSystem"
+require "sv_OffsetUnitSystem"
 
 --worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(StageSystem)
@@ -97,13 +106,14 @@ worldCreator:AddSystemToCurrentGroup(CheckpointSystem)
 worldCreator:AddSystemToCurrentGroup(DirectionalLightSystem)
 worldCreator:AddSystemToCurrentGroup(PlayerSystem)
 worldCreator:AddSystemToCurrentGroup(UnitSystem)
+worldCreator:AddSystemToCurrentGroup(OffsetUnitSystem)
 worldCreator:AddSystemToCurrentGroup(AddAISystem)
 worldCreator:AddSystemToCurrentGroup(AICardPickingSystem)
 worldCreator:AddSystemToCurrentGroup(PostMoveSystem)
 
 worldCreator:AddSystemToCurrentGroup(TestMoveSystem)
 worldCreator:AddSystemToCurrentGroup(TestMoveRiverSystem)
-
+worldCreator:AddSystemToCurrentGroup(SimultaneousMove)
 
 worldCreator:AddSystemToCurrentGroup(CreateDeckSystem)
 worldCreator:AddSystemToCurrentGroup(AddCardPickTimer)
@@ -124,11 +134,15 @@ worldCreator:AddSystemToCurrentGroup(ActionMoveBackwardSystem)
 worldCreator:AddSystemToCurrentGroup(ActionTurnLeftSystem)
 worldCreator:AddSystemToCurrentGroup(ActionTurnRightSystem)
 worldCreator:AddSystemToCurrentGroup(ActionTurnAroundSystem)
+worldCreator:AddSystemToCurrentGroup(ActionGuardSystem)
 
 worldCreator:AddSystemToCurrentGroup(AbilitySprintSystem)
 worldCreator:AddSystemToCurrentGroup(AbilitySlingshotSystem)
 worldCreator:AddSystemToCurrentGroup(AbilityIWin)
+worldCreator:AddSystemToCurrentGroup(AbilityStoneSystem)
 
+worldCreator:AddSystemToCurrentGroup(WeatherSystem)
+worldCreator:AddSystemToCurrentGroup(WeatherWindSystem)
 
 worldCreator:AddSystemToCurrentGroup(GiveSpawnLocationSystem)
 worldCreator:AddSystemToCurrentGroup(FindSpawnpointSystem)
