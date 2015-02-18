@@ -89,7 +89,6 @@ UnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 			world:SetComponent(entity, "UnitEntityId", "Id", newEntityId)
 			
 			if world:EntityHasComponent(entity, "NetConnection") then
-				
 				local ip = world:GetComponent(entity, "NetConnection", "IpAddress"):GetText()
 				local port = world:GetComponent(entity, "NetConnection", "Port"):GetInt()
     

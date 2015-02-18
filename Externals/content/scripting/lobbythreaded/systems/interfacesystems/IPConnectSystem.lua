@@ -75,10 +75,8 @@ end
 IPConnectSystem.Deactivate = function(self)
 	Input.SetTextInput("")
 	Input.StopTextInput()
-
 	self.IsActive = false
 	self.TextInput = ""
-	
 	self:DeleteTextEntity()
 	self:DeleteConnectButton()
 	self:DeleteBackground()

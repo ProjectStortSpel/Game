@@ -16,8 +16,8 @@ namespace ECSL
 		void ActivateSystem(unsigned int _systemId);
 		void DeactivateSystem(unsigned int _systemId);
 
-		std::vector<unsigned int>& PullSystemsToActivate();
-		std::vector<unsigned int>& PullSystemsToDeactivate();
+		std::vector<unsigned int>* PullSystemsToActivate();
+		std::vector<unsigned int>* PullSystemsToDeactivate();
 
 	private:
 		SDL_mutex* m_systemsToActivateMutex;

@@ -13,8 +13,8 @@
 #include "Systems/DirectionalLightSystem.h"
 #include "Systems/MasterServerSystem.h"
 #include "Systems/SlerpRotationSystem.h"
-#include "Systems/ParticleSystem.h"
 #include "Systems/AddTextToTextureSystem.h"
+#include "Systems/ParticleSystem.h"
 
 #include "Network/NetworkInstance.h"
 #include "ECSL/ECSL.h"
@@ -35,7 +35,7 @@
 #include <iomanip>
 
 GameCreator::GameCreator() :
-m_graphics(0), m_input(0), m_clientWorld(0), m_serverWorld(0), m_worldProfiler(0), m_console(0), m_remoteConsole(0), m_consoleManager(Console::ConsoleManager::GetInstance()), m_frameCounter(new Utility::FrameCounter()), m_running(true),
+m_graphics(0), m_input(0), m_clientWorld(0), m_serverWorld(0), m_clientWorldProfiler(0), m_serverWorldProfiler(0), m_console(0), m_remoteConsole(0), m_consoleManager(Console::ConsoleManager::GetInstance()), m_frameCounter(new Utility::FrameCounter()), m_running(true),
 m_graphicalSystems(std::vector<GraphicalSystem*>()), m_timeScale(1.0f)
 {
   
@@ -72,8 +72,11 @@ GameCreator::~GameCreator()
 	if (m_remoteConsole)
 		delete m_remoteConsole;
 
-	if (m_worldProfiler)
-		delete m_worldProfiler;
+	if (m_clientWorldProfiler)
+		delete m_clientWorldProfiler;
+
+	if (m_serverWorldProfiler)
+		delete m_serverWorldProfiler;
 
 	LuaEmbedder::Quit();
 
@@ -327,55 +330,40 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 	//NetworkMessagesSystem* nms = new NetworkMessagesSystem();
 	//nms->SetConsole(&m_consoleManager);
 	
-	//m_graphicalSystems.clear();
 	GraphicalSystem* graphicalSystem = 0;
 	graphicalSystem = new PointlightSystem(m_graphics);
 	m_graphicalSystems.push_back(graphicalSystem);
 	
-	worldCreator.AddSystemGroup();
+	//worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(new SlerpRotationSystem());
-	worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 
 
 	graphicalSystem = new DirectionalLightSystem(m_graphics);
 	m_graphicalSystems.push_back(graphicalSystem);
-	worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
-
-	graphicalSystem = new ParticleSystem(m_graphics);
-	m_graphicalSystems.push_back(graphicalSystem);
-	worldCreator.AddSystemGroup();
-	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
-
-
-	worldCreator.AddSystemGroup();
-	worldCreator.AddSystemToCurrentGroup<RotationSystem>();
     
     if (_worldType == WorldType::Client || _isMainWorld)
     {
         graphicalSystem = new CameraSystem(m_graphics);
         m_graphicalSystems.push_back(graphicalSystem);
-        worldCreator.AddSystemGroup();
         worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
         
         graphicalSystem = new ModelSystem(m_graphics);
         m_graphicalSystems.push_back(graphicalSystem);
-        worldCreator.AddSystemGroup();
         worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 
-	graphicalSystem = new AModelSystem(m_graphics);
-	m_graphicalSystems.push_back(graphicalSystem);
-	worldCreator.AddSystemGroup();
-	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
+		graphicalSystem = new AModelSystem(m_graphics);
+		m_graphicalSystems.push_back(graphicalSystem);
+		worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
     }
     
     if (_worldType == WorldType::Client || _isMainWorld)
     {
-	graphicalSystem = new AddTextToTextureSystem(m_graphics);
-	m_graphicalSystems.push_back(graphicalSystem);
-	worldCreator.AddSystemGroup();
-	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
+		graphicalSystem = new AddTextToTextureSystem(m_graphics);
+		m_graphicalSystems.push_back(graphicalSystem);
+		worldCreator.AddSystemGroup();
+		worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
     }
     
     if (_includeMasterServer)
@@ -394,8 +382,6 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
     
     if (_worldType == WorldType::Client || _isMainWorld)
     {
-
-
         graphicalSystem = new RenderSystem(m_graphics);
         m_graphicalSystems.push_back(graphicalSystem);
         worldCreator.AddSystemGroup();
@@ -405,9 +391,14 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
         m_graphicalSystems.push_back(graphicalSystem);
         worldCreator.AddSystemGroup();
         worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
-        worldCreator.AddSystemGroup();
+        //worldCreator.AddSystemGroup();
         worldCreator.AddSystemToCurrentGroup<ResetChangedSystem>();
     }
+
+	graphicalSystem = new ParticleSystem(m_graphics);
+	m_graphicalSystems.push_back(graphicalSystem);
+	worldCreator.AddSystemGroup();
+	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 
     if (_worldType == WorldType::Client)
     {
@@ -425,8 +416,11 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
         m_serverWorld->PostInitializeSystems();
 		LuaEmbedder::CollectGarbageFull();
     }
-	if (!m_worldProfiler)
-		m_worldProfiler = new Profilers::ECSLProfiler(m_graphics);
+
+	if (!m_clientWorldProfiler)
+		m_clientWorldProfiler = new Profilers::ECSLProfiler(m_graphics);
+	if (!m_serverWorldProfiler)
+		m_serverWorldProfiler = new Profilers::ECSLProfiler(m_graphics);
 }
 
 void GameCreator::RunStartupCommands(int argc, char** argv)
@@ -554,17 +548,22 @@ void GameCreator::StartGame(int argc, char** argv)
 
 		m_worldCounter.Reset();
 		/*	Update world (systems, entities, etc)	*/
-		m_worldProfiler->Begin();
-        
+		
+		m_serverWorldProfiler->Begin();
         if (m_serverWorld)
-            m_serverWorld->Update(dt);
+           m_serverWorld->Update(dt);
+		m_serverWorldProfiler->End();
+		m_serverWorldProfiler->Update(dt);
+		m_serverWorldProfiler->Render();
         
+		m_clientWorldProfiler->Begin();
         if (m_clientWorld)
             m_clientWorld->Update(dt);
+		m_clientWorldProfiler->End();
+		m_clientWorldProfiler->Update(dt);
+		m_clientWorldProfiler->Render();
         
-		m_worldProfiler->End();
-		m_worldProfiler->Update(dt);
-		m_worldProfiler->Render();
+
 		m_worldCounter.Tick();
 
 		m_luaGarbageCollectionCounter.Reset();
@@ -587,16 +586,41 @@ void GameCreator::StartGame(int argc, char** argv)
 			showDebugInfo = !showDebugInfo;
 
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_X) == Input::InputState::PRESSED)
-			m_worldProfiler->Toggle();
+		{
+			if (!m_serverWorldProfiler->IsActive())
+				m_clientWorldProfiler->Toggle();
+		}
 
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_C) == Input::InputState::PRESSED)
-			m_worldProfiler->PreviousView();
+		{
+			if (!m_clientWorldProfiler->IsActive())
+				m_serverWorldProfiler->Toggle();
+		}
 
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_V) == Input::InputState::PRESSED)
-			m_worldProfiler->NextView();
+		{
+			if (m_clientWorldProfiler->IsActive())
+				m_clientWorldProfiler->PreviousView();
+			if (m_serverWorldProfiler->IsActive())
+				m_serverWorldProfiler->PreviousView();
+		}
+
+
+		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_B) == Input::InputState::PRESSED)
+		{
+			if (m_clientWorldProfiler->IsActive())
+				m_clientWorldProfiler->NextView();
+			if (m_serverWorldProfiler->IsActive())
+				m_serverWorldProfiler->NextView();
+		}
 
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F8) == Input::InputState::PRESSED)
-			m_worldProfiler->LogDisplayedStatistics();
+		{
+			if (m_clientWorldProfiler->IsActive())
+				m_clientWorldProfiler->LogDisplayedStatistics();
+			if (m_serverWorldProfiler->IsActive())
+				m_serverWorldProfiler->LogDisplayedStatistics();
+		}
 
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F1) == Input::InputState::PRESSED)
         {
@@ -662,11 +686,17 @@ void GameCreator::GameMode(std::string _gamemode)
 void GameCreator::Reload()
 {
 
-    if (m_worldProfiler)
+    if (m_clientWorldProfiler)
     {
-        delete m_worldProfiler;
-        m_worldProfiler = nullptr;
+		delete m_clientWorldProfiler;
+		m_clientWorldProfiler = nullptr;
     }
+
+	if (m_serverWorldProfiler)
+	{
+		delete m_serverWorldProfiler;
+		m_serverWorldProfiler = nullptr;
+	}
     
     if (m_clientWorld)
     {
@@ -793,7 +823,6 @@ void GameCreator::UpdateConsole()
 			m_input->GetKeyboard()->StopTextInput();
 			m_consoleInput.SetActive(false);
 			m_consoleManager.SetOpen(false);
-			
 		}
 		else
 		{
