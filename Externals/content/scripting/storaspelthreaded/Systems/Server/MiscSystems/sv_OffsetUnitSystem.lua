@@ -25,7 +25,6 @@ end
 
 OffsetUnitSystem.UpdateUnitLerp = function(self, unitId)
 
-	print("AOSKDPOASKDPOASKDPOASKDPOK")
 	if not world:EntityHasComponent(unitId, "LerpPosition") then
 		return
 	end

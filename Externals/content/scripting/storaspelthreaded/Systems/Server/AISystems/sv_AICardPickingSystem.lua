@@ -3,6 +3,7 @@ AICardPickingSystem.NumberOfCardsToPick = 5
 AICardPickingSystem.CardsPerHand = 8
 AICardPickingSystem.PrintSimulation = 0
 AICardPickingSystem.AICheat = 1
+AICardPickingSystem.CardsToSimulate = 3
 
 AICardPickingSystem.Initialize = function(self)
 	self:SetName("AI card picking System")
@@ -58,6 +59,33 @@ AICardPickingSystem.Update = function(self, dt)
 		for i = 1, #AIs do
 			
 			PotentialFieldHandler.UseMyPF(i)
+			
+			--local charArray = CombinationMath.Combinations(self.CardsPerHand, self.NumberOfCardsToPick)
+			
+			local charArray = CombinationMath.Permutations(self.CardsPerHand, self.CardsToSimulate)
+			
+			--local charArray = CombinationMath.Permutations(3, 2)
+			
+			--print(string.len(charArray))
+			
+			for n = 1, string.len(charArray), self.CardsToSimulate do
+				
+				for card = 0, self.CardsToSimulate - 1 do
+				
+					local charVar = string.byte(charArray, n + card)
+					--io.write(charVar, " ")
+				end
+				--io.write("\n")
+			end
+			
+			--for n = 1, string.len(charArray), 2 do
+			--	
+			--	for card = 0, 1 do
+			--	
+			--		local charVar = string.byte(charArray, n + card)
+			--		print(charVar)
+			--	end
+			--end
 			
 			local unitID = world:GetComponent(AIs[i], "UnitEntityId", 0):GetInt()
 			
