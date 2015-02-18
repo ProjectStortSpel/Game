@@ -68,7 +68,7 @@ void ParticleSystem::CreateFire()
 		v.x = sinf(theta) * cosf(phi) * 0.1; 
 		if ((posData[3 * i] < 0 && v.x < 0) || (posData[3 * i] > 0 && v.x > 0))
 			v.x *= -1;
-		v.y = cosf(theta) * 0.3;
+		v.y = cosf(theta) * 0.2;
 		v.z = sinf(theta) * sinf(phi) * 0.1;
 		if ((posData[3 * i + 2] < 0 && v.z < 0) || (posData[3 * i + 2] > 0 && v.z > 0))
 			v.z *= -1;

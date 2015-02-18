@@ -13,6 +13,7 @@ uniform sampler2D diffuseTex;
 uniform sampler2D normalTex;
 uniform sampler2D specularTex;
 
+uniform vec3 BlendColor;
 
 struct Pointlight {
 	vec3 Position; // Light position in world coords.
@@ -42,15 +43,21 @@ void main()
 	NmNormal = normalize( texSpace * normal_map );
 
 	// Spec data
-	vec3 specglow_map = texture2D( specularTex, TexCoord ).rgb;
+	vec4 specglow_map = texture2D( specularTex, TexCoord );
 	Material.Ks			= specglow_map.x;
 	Material.Shininess  = specglow_map.y * 254.0 + 1.0;
 	float glow			= specglow_map.z;
+
+	float blendFactor = specglow_map.w;
+
+	if( BlendColor != vec3(0.0) )
+		albedo_tex.xyz = (1.0-blendFactor)*albedo_tex.xyz + blendFactor * BlendColor; 
+
+	vec4 glowvec = vec4(glow*albedo_tex.xyz, 0.0);
 
 	vec3 ambient = vec3(1.0);
 	vec3 diffuse = vec3(0.0);
 	vec3 spec    = vec3(0.0);
 
-	gl_FragColor = vec4(ambient + diffuse, 1.0) * albedo_tex + vec4(spec, 0.0)
-					+ vec4(specglow_map-specglow_map+normal_map-normal_map, 0.0);
+	gl_FragColor = vec4(ambient + diffuse*(1.0-glow), 1.0) * albedo_tex + vec4(spec, 0.0) + glowvec + vec4(specglow_map.xyz-specglow_map.xyz+normal_map-normal_map, 0.0);
 }

@@ -22,7 +22,6 @@ namespace Renderer
 		void Update(float _dt);
 		void Render();
 
-
 		// SIMPLETEXT FROM GAME
 		bool RenderSimpleText(std::string _text, int x, int y);
 		void SetSimpleTextColor(float _r, float _g, float _b, float _a);
@@ -31,7 +30,6 @@ namespace Renderer
 		void ToggleSimpleText(bool _on);
 
 		// MODELLOADER
-		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED, float* _color = nullptr);
 		bool RemoveModel(int _id);
 		bool ActiveModel(int _id, bool _active);
 
@@ -40,15 +38,12 @@ namespace Renderer
 		
 		void Clear();
 		
-	protected:
-		void UpdateTextureIndex(GLuint newTexture, GLuint oldTexture);
-		
 	private:
-		bool InitSDLWindow();
 		bool InitGLEW();
 		bool InitDeferred();
 		bool InitForward();
 		bool InitShaders();
+		void InitRenderLists();
 		bool InitBuffers();
 		bool InitTextRenderer();
 		bool InitLightBuffers();
@@ -60,9 +55,7 @@ namespace Renderer
 		void BufferLightsToGPU();
 		void CreateShadowMap();
 
-		void BufferModels();
-		void BufferModel(int _modelId, ModelToLoad* _modelToLoad);
-		void BufferAModel(int _modelId, ModelToLoad* _modelToLoad);
+		//void BufferAModel(int _modelId, ModelToLoad* _modelToLoad);
 
 		//holds the reset values for lights
 		float m_lightDefaults[19];
@@ -108,14 +101,8 @@ namespace Renderer
 		// DEBUG variables ----
 		int m_nrOfLights; // lol
 
-		// Meshs
-		std::map<const std::string, Buffer*> m_meshs;
-		Buffer* AddMesh(std::string _fileDir, Shader *_shaderProg, bool animated);
-
 		// Random Vertors
 		GLuint m_randomVectors;
-		
-		bool BufferModelTexture(int _id, std::string _fileDir, int _textureType = TEXTURE_DIFFUSE);
 	};
 }
 

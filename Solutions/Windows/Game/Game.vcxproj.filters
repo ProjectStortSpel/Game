@@ -245,6 +245,12 @@
     <ClCompile Include="..\..\..\Source\Game\Systems\ParticleSystem.cpp">
       <Filter>Game\Systems\ParticleSystem</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\HomePath.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\AI\LuaCombinationMath.cpp">
+      <Filter>Lua Bridge\AI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h">
@@ -402,6 +408,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\ParticleSystem.h">
       <Filter>Game\Systems\ParticleSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\HomePath.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\AI\LuaCombinationMath.h">
+      <Filter>Lua Bridge\AI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

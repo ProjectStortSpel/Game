@@ -7,6 +7,8 @@
     <ClCompile Include="..\..\..\Source\AndroidRenderer\Shader.cpp" />
     <ClCompile Include="..\..\..\Source\AndroidRenderer\ShadowMap.cpp" />
     <ClCompile Include="..\..\..\Source\AndroidRenderer\SkyBox.cpp" />
+    <ClCompile Include="..\..\..\Source\AndroidRenderer\GraphicsLow.cpp" />
+    <ClCompile Include="..\..\..\Source\AndroidRenderer\GraphicsHigh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\AndroidRenderer\Buffer.h" />
@@ -19,6 +21,8 @@
     <ClInclude Include="..\..\..\Source\AndroidRenderer\SkyBox.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\stdafx.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\TextureLoader.h" />
+    <ClInclude Include="..\..\..\Source\AndroidRenderer\GraphicsLow.h" />
+    <ClInclude Include="..\..\..\Source\AndroidRenderer\GraphicsHigh.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
@@ -60,6 +64,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\..\..\Externals\content\shaders\android\AndroidFullscreenVS.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\android\lowAndroidForwardFS.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\android\lowAndroidForwardVS.glsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

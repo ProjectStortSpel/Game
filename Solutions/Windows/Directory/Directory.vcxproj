@@ -20,10 +20,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\FileSystem\Directory.cpp" />
+    <ClCompile Include="..\..\..\Source\FileSystem\File.cpp" />
     <ClCompile Include="..\..\..\Source\FileSystem\MD5.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\FileSystem\Directory.h" />
+    <ClInclude Include="..\..\..\Source\FileSystem\dirent.h" />
+    <ClInclude Include="..\..\..\Source\FileSystem\File.h" />
     <ClInclude Include="..\..\..\Source\FileSystem\MD5.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

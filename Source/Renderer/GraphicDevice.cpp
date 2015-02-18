@@ -4,6 +4,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #endif
 #include "TextureLoader.h"
+#include "ModelLoader.h"
+#include "ModelExporter.h"
 
 using namespace Renderer;
 using namespace glm;
@@ -21,7 +23,6 @@ GraphicDevice::GraphicDevice()
 	m_numberOfDirectionalLights = 0;
 	m_particleID = 0;
 }
-
 GraphicDevice::GraphicDevice(Camera _camera, int x, int y)
 {
 	m_camera = new Camera(_camera);
@@ -36,7 +37,6 @@ GraphicDevice::GraphicDevice(Camera _camera, int x, int y)
 	m_numberOfDirectionalLights = 0;
 	m_particleID = 0;
 }
-
 GraphicDevice::~GraphicDevice()
 {
 	delete(m_skybox);
@@ -98,7 +98,29 @@ void GraphicDevice::GetWindowPos(int &x, int &y)
 	x = posx;
 	y = posy;
 }
+#pragma region Inits
+bool GraphicDevice::InitSDLWindow(int _width, int _height)
+{
+	// WINDOW SETTINGS
+	unsigned int	Flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
+	int				SizeX = _width;	//1280
+	int				SizeY = _height;	//720
+	if (SDL_Init(SDL_INIT_VIDEO) == -1){
+		std::cout << SDL_GetError() << std::endl;
+		return false;
+	}
 
+	// PLATFORM SPECIFIC CODE
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	m_window = SDL_CreateWindow(m_windowCaption, m_windowPosX, m_windowPosY, SizeX, SizeY, Flags);
+	if (m_window == NULL){
+		std::cout << SDL_GetError() << std::endl;
+		return false;
+	}
+	SDL_GetWindowSize(m_window, &m_clientWidth, &m_clientHeight);
+	return true;
+}
 bool GraphicDevice::InitSkybox()
 {
 	int w, h;
@@ -112,6 +134,7 @@ bool GraphicDevice::InitSkybox()
 
 	return true;
 }
+#pragma endregion in the order they are initialized
 
 int GraphicDevice::AddFont(const std::string& filepath, int size)
 {
@@ -205,7 +228,7 @@ void GraphicDevice::CreateParticleSystems()
 	
 	//AddParticleEffect("fire", vec3(11.0f, 0.55f, 8.0f), 100, 700, 0.05f, 0.6f, "content/textures/fire3.png", vec3(0.0f, 8.f, 0.0f), tmpID);
 
-	//AddParticleEffect("fire", vec3(8.0f, 0.55f, 8.0f), 100, 700, 0.05f, 0.6f, "content/textures/firewhite.png", vec3(0.8f, 0.f, 0.0f), tmpID);
+//	AddParticleEffect("fire", vec3(8.0f, 0.55f, 8.0f), 100, 1100, 0.05f, 0.6f, "content/textures/firewhite4.png", vec3(0.9f, 0.f, 0.0f), tmpID);
 	//AddParticleEffect("fire", vec3(8.0f, 0.55f, 5.0f), 100, 700, 0.05f, 0.6f, "content/textures/smoke1.png", vec3(0.2f, 0.f, 1.0f), tmpID);
 	//AddParticleEffect("smoke", vec3(11.0f, 0.0f, 9.0f), 15, 1800, 0.05f, 1.6f, "content/textures/smoke1.png", vec3(0.0f, 0.f, 0.f), tmpID);
 }
@@ -231,8 +254,7 @@ void GraphicDevice::AddParticleEffect(std::string _name, const vec3 _pos, int _n
 
 void GraphicDevice::RemoveParticleEffect(int _id)
 {
-	delete(m_particleSystems[_id]);
-	m_particleSystems.erase(_id);
+	m_particlesIdToRemove.push_back(_id);
 }
 
 void GraphicDevice::BufferParticleSystems()
@@ -251,4 +273,285 @@ void GraphicDevice::BufferParticleSystems()
 			&m_particleShader)));
 	}
 	m_particleSystemsToLoad.clear();
+
+	for (int i = 0; i < m_particlesIdToRemove.size(); i++)
+	{
+		delete(m_particleSystems[m_particlesIdToRemove[i]]);
+		m_particleSystems.erase(m_particlesIdToRemove[i]);
+	}
+	m_particlesIdToRemove.clear();
+}
+
+int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color)
+{
+	int modelID = m_modelIDcounter;
+	m_modelIDcounter++;
+
+	//	Lägg till i en lista, följande
+	//	std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType
+
+	ModelToLoad* modelToLoad = new ModelToLoad();
+	modelToLoad->Dir = _dir;
+	modelToLoad->File = _file;
+	modelToLoad->MatrixPtr = _matrixPtr;
+	modelToLoad->RenderType = _renderType;
+	modelToLoad->Color = _color;
+	m_modelsToLoad[modelID] = modelToLoad;
+
+	return modelID;
+}
+void GraphicDevice::BufferModels()
+{
+	for (auto pair : m_modelsToLoad)
+	{
+		BufferModel(pair.first, pair.second);
+		delete(pair.second);
+	}
+	m_modelsToLoad.clear();
+}
+void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
+{
+	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
+	Shader *shaderPtr = NULL;
+	std::vector<Model> *modelList = NULL;
+
+	//if (obj.animated)
+	//{
+	//	BufferAModel(_modelId, _modelToLoad);
+	//	return;
+	//}
+	bool FoundShaderType = false;
+	for (int i = 0; i < m_renderLists.size(); i++)
+	{
+		if (_modelToLoad->RenderType == m_renderLists[i].RenderType)
+		{
+			shaderPtr = m_renderLists[i].ShaderPtr;
+			modelList = m_renderLists[i].ModelList;
+			shaderPtr->UseProgram();
+			FoundShaderType = true;
+			break;
+		}
+	}
+	if (!FoundShaderType) { ERRORMSG("ERROR: INVALID RENDER SETTING"); return; }
+
+	// Import Mesh
+	Buffer* mesh = AddMesh(obj.mesh, shaderPtr, false);
+	// Import Texture
+	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
+	shaderPtr->CheckUniformLocation("diffuseTex", 1);
+	// Import Normal map
+	GLuint normal = AddTexture(obj.norm, GL_TEXTURE2);
+	shaderPtr->CheckUniformLocation("normalTex", 2);
+	// Import Specc Glow map
+	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
+	shaderPtr->CheckUniformLocation("specularTex", 3);
+
+	// Create model
+	Model model;
+	if (_modelToLoad->RenderType != RENDER_INTERFACE) // TODO: BETTER FIX
+		model = Model(mesh, texture, normal, specular);
+	else
+		model = Model(mesh, texture, NULL, NULL);
+	//for the matrices (modelView + normal)
+	m_vramUsage += (16 + 9) * sizeof(float);
+
+
+	for (int i = 0; i < modelList->size(); i++)
+	{
+		if ((*modelList)[i] == model)
+		{
+			(*modelList)[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
+			return;
+		}
+	}
+
+	//if model doesnt exist
+	model.instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
+	// Push back the model
+	modelList->push_back(model);
+}
+
+bool GraphicDevice::RemoveModel(int _id)
+{
+	for (int k = 0; k < m_renderLists.size(); k++)
+	{
+		std::vector<Model> *modelList = m_renderLists[k].ModelList;
+		for (int i = 0; i < (*modelList).size(); i++)
+		{
+			for (int j = 0; j < (*modelList)[i].instances.size(); j++)
+			{
+				if ((*modelList)[i].instances[j].id == _id)
+				{
+					(*modelList)[i].instances.erase((*modelList)[i].instances.begin() + j);
+					if ((*modelList)[i].instances.size() == 0)
+						(*modelList).erase((*modelList).begin() + i);
+
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+bool GraphicDevice::ActiveModel(int _id, bool _active)
+{
+	for (int k = 0; k < m_renderLists.size(); k++)
+	{
+		std::vector<Model> *modelList = m_renderLists[k].ModelList;
+		for (int i = 0; i < (*modelList).size(); i++)
+		{
+			for (int j = 0; j < (*modelList)[i].instances.size(); j++)
+			{
+				if ((*modelList)[i].instances[j].id == _id)
+				{
+					(*modelList)[i].instances[j].active = _active;
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
+Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg, bool animated)
+{
+	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
+	{
+		if (it->first == _fileDir)
+			return it->second;
+	}
+
+	ModelExporter modelExporter;
+	modelExporter.OpenFileForRead(_fileDir.c_str());
+	std::vector<float> positionData = modelExporter.ReadDataFromFile();
+	std::vector<float> normalData = modelExporter.ReadDataFromFile();
+	std::vector<float> tanData = modelExporter.ReadDataFromFile();
+	std::vector<float> bitanData = modelExporter.ReadDataFromFile();
+	std::vector<float> texCoordData = modelExporter.ReadDataFromFile();
+	std::vector<float> jointIndexData = modelExporter.ReadDataFromFile();
+	std::vector<float> jointWeightData = modelExporter.ReadDataFromFile();
+	modelExporter.CloseFile();
+
+	Buffer* retbuffer = new Buffer();
+
+	_shaderProg->UseProgram();
+	BufferData bufferData[] =
+	{
+		{ 0, 3, GL_FLOAT, (const GLvoid*)positionData.data(), static_cast<GLsizeiptr>(positionData.size() * sizeof(float)) },
+		{ 1, 3, GL_FLOAT, (const GLvoid*)normalData.data(), static_cast<GLsizeiptr>(normalData.size()   * sizeof(float)) },
+		{ 2, 3, GL_FLOAT, (const GLvoid*)tanData.data(), static_cast<GLsizeiptr>(tanData.size()   * sizeof(float)) },
+		{ 3, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), static_cast<GLsizeiptr>(bitanData.size()   * sizeof(float)) },
+		{ 4, 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), static_cast<GLsizeiptr>(texCoordData.size() * sizeof(float)) },
+		{ 5, 4, GL_FLOAT, (const GLvoid*)jointIndexData.data(), static_cast<GLsizeiptr>(jointIndexData.size()   * sizeof(float)) },
+		{ 6, 4, GL_FLOAT, (const GLvoid*)jointWeightData.data(), static_cast<GLsizeiptr>(jointWeightData.size() * sizeof(float)) }
+	};
+
+	int test = sizeof(bufferData) / sizeof(bufferData[0]);
+	// Counts the size in bytes of all the buffered data
+	for (int i = 0; i < sizeof(bufferData) / sizeof(bufferData[0]); i++)
+		m_vramUsage += (int)bufferData[i].dataSize;
+
+	int bufferDatas = sizeof(bufferData) / sizeof(bufferData[0]);
+	if (animated == false)
+		bufferDatas -= 2;
+	else
+		int hej = 0;
+	retbuffer->init(bufferData, bufferDatas);
+	retbuffer->setCount((int)positionData.size() / 3);
+
+	m_meshs.insert(std::pair<const std::string, Buffer*>(_fileDir, retbuffer));
+
+	return retbuffer;
+}
+
+bool GraphicDevice::BufferModelTexture(int _id, std::string _fileDir, int _textureType)
+{
+	// Model Instance
+	Instance instance;
+	// Temp Model
+	Model model;
+
+	bool found = false;
+	int renderType;
+	Shader *shaderPtr = NULL;
+	std::vector<Model> *modelList = NULL;
+
+	// Find model Instance
+	for (int k = 0; k < m_renderLists.size(); k++)
+	{
+		modelList = m_renderLists[k].ModelList;
+		for (int i = 0; i < (*modelList).size(); i++)
+		{
+			for (int j = 0; j < (*modelList)[i].instances.size(); j++)
+			{
+				if ((*modelList)[i].instances[j].id == _id)
+				{
+					instance = (*modelList)[i].instances[j];
+					model = Model(
+						(*modelList)[i].bufferPtr,
+						(*modelList)[i].texID,
+						(*modelList)[i].norID,
+						(*modelList)[i].speID
+						);
+					found = true;
+					renderType = m_renderLists[k].RenderType;
+					shaderPtr = m_renderLists[k].ShaderPtr;
+					(*modelList)[i].instances.erase((*modelList)[i].instances.begin() + j);
+					if ((*modelList)[i].instances.size() == 0)
+						(*modelList).erase((*modelList).begin() + i);
+				}
+				if (found) break;
+			}
+			if (found) break;
+		}
+		if (found) break;
+	}
+
+	// Didn't we find it return false
+	if (!found) return false;
+
+	// Set new Texture to TextureType
+	if (_textureType == TEXTURE_DIFFUSE)
+	{
+		model.texID = GraphicDevice::AddTexture(_fileDir, GL_TEXTURE1);
+		shaderPtr->CheckUniformLocation("diffuseTex", 1);
+	}
+	else if (_textureType == TEXTURE_NORMAL)
+	{
+		model.norID = GraphicDevice::AddTexture(_fileDir, GL_TEXTURE2);
+		shaderPtr->CheckUniformLocation("normalTex", 2);
+	}
+	else if (_textureType == TEXTURE_SPECULAR)
+	{
+		model.speID = GraphicDevice::AddTexture(_fileDir, GL_TEXTURE3);
+		shaderPtr->CheckUniformLocation("specularTex", 3);
+	}
+
+	// Check if our new Model type already exists and add instance
+	for (int i = 0; i < (*modelList).size(); i++)
+	{
+		if ((*modelList)[i] == model)
+		{
+			(*modelList)[i].instances.push_back(instance);
+			return true;
+		}
+	}
+
+	// Nothing found. Let's make a new Model type
+	model.instances.push_back(instance);
+	// Push back the model
+	(*modelList).push_back(model);
+
+	return true;
+}
+
+void GraphicDevice::UpdateTextureIndex(GLuint newTexture, GLuint oldTexture)
+{
+	for (int k = 0; k < m_renderLists.size(); k++)
+	{
+		std::vector<Model> *modelList = m_renderLists[k].ModelList;
+		for (Model& m : (*modelList))
+			if (m.texID == oldTexture)
+				m.texID = newTexture;
+	}
 }

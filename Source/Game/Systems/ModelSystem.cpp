@@ -70,18 +70,17 @@ void ModelSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::ve
 		//	Scale[1] = 0.0f;
 		//	Scale[2] = 0.0f;
 		//}
-		//float* Color;
-		//if (!HasComponent(entityId, m_colorId))
-		//{ 
-		//	CreateComponentAndAddTo("Color", entityId);
-		//	float* Color = (float*)GetComponent(entityId, "Color", "X");
-		//	Color[0] = 0.0f;
-		//	Color[1] = 0.0f;
-		//	Color[2] = 0.0f;
-		//}
+		float* Color;
+		if (!HasComponent(entityId, m_colorId))
+		{ 
+			CreateComponentAndAddTo("Color", entityId);
+			float* Color = (float*)GetComponent(entityId, "Color", "X");
+			Color[0] = 0.0f;
+			Color[1] = 0.0f;
+			Color[2] = 0.0f;
+		}
+		Color = (float*)GetComponent(entityId, "Color", "X");
 
-		float* renderColor = (float*)GetComponent(entityId, "Render", "ColorX");
-
-		*ModelId = m_graphics->LoadModel(ModelPath, ModelName, Matrix, RenderType, renderColor);
+		*ModelId = m_graphics->LoadModel(ModelPath, ModelName, Matrix, RenderType, Color);
 	}
 }

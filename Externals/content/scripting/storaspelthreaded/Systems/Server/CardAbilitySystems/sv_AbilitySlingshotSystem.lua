@@ -30,9 +30,13 @@ AbilitySlingshotSystem.CheckUnits = function(self, mapPosX, mapPosZ, currentPosX
 		if targetPosX == currentPosX and targetPosZ == currentPosZ then
 			self:AddBullet(mapPosX, mapPosZ, targetPosX, targetPosZ, 0.1)
 			
-			--local newId = world:CreateNewEntity()
-			--world:CreateComponentAndAddTo("TakeCardStepsFromUnit", newId)
-			--world:GetComponent(newId, "TakeCardStepsFromUnit", "Unit"):SetInt(units[i])
+			if not world:EntityHasComponent(units[i], "ActionGuard") then
+				local newId = world:CreateNewEntity()
+				world:CreateComponentAndAddTo("TakeCardStepsFromUnit", newId)
+				world:GetComponent(newId, "TakeCardStepsFromUnit", "Unit"):SetInt(units[i])
+			else
+				print("BLOCKED BITCH")
+			end
 			
 			return true
 		end
@@ -124,7 +128,7 @@ AbilitySlingshotSystem.Update = function(self, dt, taskIndex, taskCount)
 		end
 		world:RemoveComponentFrom("UnitSlingShot", entities[i])
 	end
-	
+
 	local slingshots = self:GetEntities("SlingShotProjectile")
 	for i = 1, #slingshots do
 		local posX, _, posZ	 = world:GetComponent(slingshots[i], "Position", 0):GetFloat3()

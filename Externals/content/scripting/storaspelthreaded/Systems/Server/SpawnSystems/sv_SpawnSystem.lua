@@ -27,7 +27,11 @@ SpawnSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 		world:GetComponent(entityId, "LerpPosition", "Y"):SetFloat(0.5)
 		world:GetComponent(entityId, "LerpPosition", "Z"):SetFloat(Z)
 		world:GetComponent(entityId, "LerpPosition", "Time"):SetFloat(0)
-		world:GetComponent(entityId, "LerpPosition", "Algorithm"):SetText("NormalLerp")
+		world:GetComponent(entityId, "LerpPosition", "Algorithm"):SetText("PlayerMove")
+
+		if not world:EntityHasComponent(entityId, "UnitWantTileOffset") then
+			world:CreateComponentAndAddTo("UnitWantTileOffset", entityId)
+		end
 	
 		mapPosComp:SetInt2(X, Z)
 
