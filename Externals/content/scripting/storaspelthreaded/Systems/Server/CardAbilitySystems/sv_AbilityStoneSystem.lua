@@ -79,9 +79,8 @@ AbilityStoneSystem.PlaceStone = function(self, entity)
 		for i = 1, #tiles do
 		
 			local mapX, mapZ = world:GetComponent(tiles[i], "MapPosition", 0):GetInt2()
-			
-			if mapX == X and mapZ == Z then
-			
+				if mapX == X and mapZ == Z then
+				
 				world:CreateComponentAndAddTo("NotWalkable", tiles[i])
 				
 				local stone = world:CreateNewEntity("Stone")
@@ -115,7 +114,6 @@ AbilityStoneSystem.PlaceStone = function(self, entity)
 				break				
 			
 			end
-			
 			
 		end
 		world:RemoveComponentFrom("UnitStone", unit)

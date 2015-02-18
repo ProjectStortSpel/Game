@@ -126,6 +126,8 @@ namespace Renderer
 
 		virtual void BufferLightsToGPU() = 0;
 
+		void InitFBO();
+
 		Camera* m_camera;
 
 		SDL_Window*		m_window;
@@ -147,9 +149,16 @@ namespace Renderer
 		float** m_pointlightsPtr;
 		int m_nrOfLightsToBuffer;
 
+		// The Framebuffer
+		GLuint m_FBO;
+		int m_framebufferWidth, m_framebufferHeight;
+		// Framebuffer textures
+		GLuint m_depthBuf, m_outputImage;
+
 		// Shaders
 		Shader m_skyBoxShader;
 		Shader m_forwardShader, m_viewspaceShader, m_interfaceShader;
+		Shader m_fullscreen;
 
 		// Skybox
 		SkyBox *m_skybox;

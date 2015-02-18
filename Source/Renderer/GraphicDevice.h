@@ -23,6 +23,7 @@ namespace Renderer
 #define RENDER_FORWARD  1
 #define RENDER_VIEWSPACE  2
 #define RENDER_INTERFACE  3
+#define RENDER_ANIMATED  4
 
 #define TEXTURE_DIFFUSE		0
 #define TEXTURE_NORMAL		1
@@ -142,6 +143,7 @@ namespace Renderer
 		bool InitSkybox();
 		void BufferModels();
 		void BufferModel(int _modelId, ModelToLoad* _modelToLoad);
+		void BufferAModel(int _modelId, ModelToLoad* _modelToLoad);
 
 		std::vector<ModelTexture> m_modelTextures;
 		void BufferModelTextures();
@@ -154,6 +156,8 @@ namespace Renderer
 
 		//modellists
 		std::vector<RenderList> m_renderLists;
+		std::vector<AModel> m_modelsAnimated;
+		Shader m_animationShader;
 
 		//MODEL LOADER
 		int m_modelIDcounter;
