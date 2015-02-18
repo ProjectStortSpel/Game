@@ -4,6 +4,24 @@ TotemPoleSystem.MapCenterZ = 0
 TotemPoleSystem.TotemPoles			=	{}
 TotemPoleSystem.TotemPoles.__mode	=	"k"
 
+TotemPoleSystem.ATAN2 = function(self, X, Z)
+	if X > 0 then
+		return math.atan(Z / X)
+	elseif Z >= 0 and X < 0 then
+		return math.atan(Z / X) + math.pi
+	elseif Z < 0 and X < 0 then
+		return math.atan(Z / X) - math.pi
+	elseif Z > 0 and X == 0 then
+		return math.pi / 2
+	elseif Z < 0 and X == 0 then
+		return -math.pi / 2
+	else
+		print("Undefined atan2 value (x == 0 and y == 0)")
+	end
+	
+	return 0
+end
+
 TotemPoleSystem.Initialize = function(self)
 	--	Set Name
 	self:SetName("TotemPoleSystem")
@@ -46,17 +64,19 @@ TotemPoleSystem.AddTotemPiece = function(self, currentPlayerNumber, totemPoleId,
 	
 	local tempMoveX = self.MapCenterX - X
 	local tempMoveZ = self.MapCenterZ - Z
-
 	
-	local totemAngle = math.pi/2
-	if tempMoveX ~= 0 then
-		totemAngle = totemAngle - math.atan(tempMoveZ/tempMoveX)
-	end
+	print("tempMoveX tempMoveZ " .. tempMoveX .. ", " .. tempMoveZ)
+	print("Totem position " .. X .. ", " .. Z)
+	print("Center position " .. self.MapCenterX .. ", " .. self.MapCenterZ)
+
+	local	totemAngle	=	math.pi/2 - self:ATAN2(tempMoveX, tempMoveZ)
+	
+	--local	test	=	math.atan2(tempMoveX, tempMoveZ)
 	
 	
 	-- Rotation
 	rotation:SetFloat3(0, totemAngle, 0)
-	
+	print("Radians: " .. totemAngle)
 	-- Position
 	local offsetX = 0.25;
 	local offsetZ = 0.25;

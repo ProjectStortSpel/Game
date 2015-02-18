@@ -4,6 +4,7 @@ require "cl_PlayerIndicatorSystem"
 require "cl_ClientNetworkMessageSystem"
 require "cl_FlowingWaterSystem"
 require "cl_ChatSystem"
+require "cl_ShowNextCheckpointSystem"
 
 --	Interface Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Client/InterfaceSystems/?.lua"
@@ -39,7 +40,7 @@ worldCreator:AddSystemToCurrentGroup(FlowingWaterSystem)
 worldCreator:AddSystemToCurrentGroup(ChatSystem)
 
 
-
+worldCreator:AddSystemToCurrentGroup(ShowNextCheckpointSystem)
 
 worldCreator:AddSystemToCurrentGroup(RconMenuSystem)
 worldCreator:AddSystemToCurrentGroup(OptionMenuSystem)
