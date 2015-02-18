@@ -72,6 +72,8 @@ private:
 	void LuaPacket(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
 	void NetworkGameMode(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
 
+	void NetworkGameModeFiles(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
+
 	void PrintSectionTime(const std::string& sectionName, Utility::FrameCounter* frameCounter, int x, int y);
 
 	void ChangeGraphicsSettings(std::string _command, std::vector<Console::Argument>* _args);

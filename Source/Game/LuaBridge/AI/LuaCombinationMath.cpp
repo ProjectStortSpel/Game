@@ -87,11 +87,6 @@ namespace LuaBridge
 
 		void Combinations(int _noToChooseFrom, int _noToPick, char* _pickedCards, unsigned int* _pickedCardsSize, char* _combinations, unsigned int* _combinationsSize)
 		{
-			//std::vector<unsigned char> set;
-			//set.resize(_size);
-			//m_combinations.resize();
-			//char* set = new char[*_pickedCardsSize];
-
 			for (int i = _noToChooseFrom; i >= _noToPick; i--)
 			{
 				/* Choose the first element.*/
@@ -107,17 +102,12 @@ namespace LuaBridge
 					/* Save a solution.*/
 					for (int j = 0; j < *_pickedCardsSize; j++)
 					{
-						//set.push_back(_arr[j]);
-						//set[j] = _pickedCards[j];
 						_combinations[*_combinationsSize] = _pickedCards[j];
 						*_combinationsSize = *_combinationsSize + 1;
 					}
-					//m_combinations.push_back(set);
 
 				}
-				//set.clear();
 			}
-			//delete set;
 		}
 
 		void Permutations(char* _combinations, unsigned int* _combinationsSize, char* _permutations, unsigned int* _permutationsSize, unsigned int _cardsToPick)
