@@ -36,15 +36,6 @@ require "IPConnectSystem"
 package.path = package.path .. ";../../../Externals/content/scripting/lobbythreaded/templates/?.lua"
 require "templates"
 
---worldCreator:AddSystemGroup()
---worldCreator:AddSystemToCurrentGroup(PickBoxSystem)
-
---worldCreator:AddSystemGroup()
---worldCreator:AddSystemToCurrentGroup(ButtonPressedSystem)
-
---worldCreator:AddSystemGroup()
---worldCreator:AddSystemToCurrentGroup(ButtonHoverSystem)
-
 worldCreator:AddSystemGroup()	
 worldCreator:AddSystemToCurrentGroup(GameInterfaceSystem)
 worldCreator:AddSystemGroup()

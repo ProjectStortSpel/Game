@@ -41,7 +41,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Logger", "Logger\Logger.vcx
 		{C3BE57B6-FE89-40F0-AA80-1E1515C026BC} = {C3BE57B6-FE89-40F0-AA80-1E1515C026BC}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Directory", "Directory\Directory.vcxproj", "{C3BE57B6-FE89-40F0-AA80-1E1515C026BC}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FileSystem", "Directory\Directory.vcxproj", "{C3BE57B6-FE89-40F0-AA80-1E1515C026BC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -184,5 +184,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

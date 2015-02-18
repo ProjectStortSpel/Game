@@ -118,7 +118,7 @@ worldCreator:AddSystemToCurrentGroup(TakeCardStepsFromUnitSystem)
 worldCreator:AddSystemToCurrentGroup(TakeCardsFromPlayerSystem)
 worldCreator:AddSystemToCurrentGroup(PlayCardSystem)
 
-worldCreator:AddSystemGroup()
+--worldCreator:AddSystemGroup() << TEMP REMOVE 3
 worldCreator:AddSystemToCurrentGroup(ActionMoveForwardSystem)
 worldCreator:AddSystemToCurrentGroup(ActionMoveBackwardSystem)
 worldCreator:AddSystemToCurrentGroup(ActionTurnLeftSystem)

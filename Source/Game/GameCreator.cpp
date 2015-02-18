@@ -328,40 +328,31 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 	//NetworkMessagesSystem* nms = new NetworkMessagesSystem();
 	//nms->SetConsole(&m_consoleManager);
 	
-	//m_graphicalSystems.clear();
 	GraphicalSystem* graphicalSystem = 0;
 	graphicalSystem = new PointlightSystem(m_graphics);
 	m_graphicalSystems.push_back(graphicalSystem);
 	
-	worldCreator.AddSystemGroup();
-	worldCreator.AddLuaSystemToCurrentGroup(new SlerpRotationSystem());
 	//worldCreator.AddSystemGroup();
+	worldCreator.AddLuaSystemToCurrentGroup(new SlerpRotationSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 
 
 	graphicalSystem = new DirectionalLightSystem(m_graphics);
 	m_graphicalSystems.push_back(graphicalSystem);
-	//worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
-
-	//worldCreator.AddSystemGroup();
-	//worldCreator.AddSystemToCurrentGroup<RotationSystem>();
     
     if (_worldType == WorldType::Client || _isMainWorld)
     {
         graphicalSystem = new CameraSystem(m_graphics);
         m_graphicalSystems.push_back(graphicalSystem);
-       // worldCreator.AddSystemGroup();
         worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
         
         graphicalSystem = new ModelSystem(m_graphics);
         m_graphicalSystems.push_back(graphicalSystem);
-        //worldCreator.AddSystemGroup();
         worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 
 		graphicalSystem = new AModelSystem(m_graphics);
 		m_graphicalSystems.push_back(graphicalSystem);
-		//worldCreator.AddSystemGroup();
 		worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
     }
     
@@ -558,7 +549,7 @@ void GameCreator::StartGame(int argc, char** argv)
 		
 		m_serverWorldProfiler->Begin();
         if (m_serverWorld)
-            m_serverWorld->Update(dt);
+           m_serverWorld->Update(dt);
 		m_serverWorldProfiler->End();
 		m_serverWorldProfiler->Update(dt);
 		m_serverWorldProfiler->Render();

@@ -7,7 +7,7 @@ require "sh_UpdateLerpScaleSystem"
 require "sh_AddLerpRotationSystem"
 require "sh_UpdateLerpRotationSystem"
 
-worldCreator:AddSystemGroup()
+--worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(AddLerpPositionSystem)
 worldCreator:AddSystemToCurrentGroup(UpdateLerpPositionSystem)
 worldCreator:AddSystemToCurrentGroup(AddLerpScaleSystem)
