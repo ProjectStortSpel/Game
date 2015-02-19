@@ -52,10 +52,10 @@ ShowNextCheckpointSystem.SpawnSmoke = function(self, oldParticle)
 	
 	world:GetComponent(newParticle, "Particle", "Name"):SetText("smoke")
 	world:GetComponent(newParticle, "Particle", "Texture"):SetText("content/textures/smoke1.png")
-	world:GetComponent(newParticle, "Particle", "Particles"):SetInt(15)
-	world:GetComponent(newParticle, "Particle", "Lifetime"):SetFloat(400)
-	world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.03)
-	world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(1.2)
+	world:GetComponent(newParticle, "Particle", "Particles"):SetInt(10)
+	world:GetComponent(newParticle, "Particle", "Lifetime"):SetFloat(1000)
+	world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.01)
+	world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(0.4)
 	world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
 	
 end
