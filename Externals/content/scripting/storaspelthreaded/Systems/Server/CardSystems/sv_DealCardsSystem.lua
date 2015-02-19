@@ -21,6 +21,16 @@ DealCardsSystem.Initialize = function ( self )
 	self:AddComponentTypeToFilter("IsSpectator", FilterType.Excluded)
 end
 
+DealCardsSystem.ClearSelectedCards = function(self)
+	
+	local	selectedCards	=	self:GetEntities("ServerSelectedCard")
+	for i = 1, #selectedCards do
+		world:GetComponent(selectedCards[i], "ServerSelectedCard", "Index"):SetInt(0)
+		world:RemoveComponentFrom("ServerSelectedCard", selectedCards[i])
+	end
+
+end
+
 DealCardsSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 
 
@@ -28,7 +38,7 @@ DealCardsSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entitie
 		local entityId = entities[n]
 
 		if world:EntityHasComponent( entityId, "DealCards") then
-
+			self:ClearSelectedCards()
 			local numCards = world:GetComponent( entityId, "DealCards", "NumCards"):GetInt()
 			self:DealCards(numCards)
 
@@ -113,68 +123,69 @@ DealCardsSystem.DealCards = function (self, numCards)
 	world:CreateComponentAndAddTo("OnPickingPhase", newId);
 end
 
-Net.Receive("Server.SelectCards", 
-	function( id, ip, port )	
-
-		print("Client selected cards:")
-		print("")
-
-		local selectedCards = { }
-		selectedCards.__mode = "k"
-		local player
-		for i = 1, 5 do
-
-			local card = Net.ReadInt(id)
-			if  world:EntityHasComponent(card, "DealtCard") then
-			
-				player = world:GetComponent(card, "DealtCard", "PlayerEntityId"):GetInt()
-				local playerIp = world:GetComponent(player, "NetConnection", "IpAddress"):GetText()
-				local playerPort = world:GetComponent(player, "NetConnection", "Port"):GetInt()
-
+Net.Receive("Server.SelectCards",
+	function( id, ip, port )
+	
+		--	Selected cards from player
+		local	selectedCards			=	{}
+				selectedCards.__mode	=	"k"
 				
-				if playerIp == ip and playerPort == port then
-					
-					table.insert(selectedCards, card)
-
+		--	Check all cards from the player
+		local	currentPlayer, pIP, pPORT
+		for i = 1, 5 do
+			
+			--	Get the current card
+			local	tempCard	=	Net.ReadInt(id)
+			
+			if world:EntityHasComponent(tempCard, "DealtCard") then
+				currentPlayer	=	world:GetComponent( tempCard, "DealtCard", "PlayerEntityId"):GetInt()
+				pIP 			= 	world:GetComponent( currentPlayer, "NetConnection", "IpAddress"):GetText()
+				pPORT 			= 	world:GetComponent( currentPlayer, "NetConnection", "Port"):GetInt()
+				
+				--	Correct player
+				if pIP == ip and pPORT == port then
+					selectedCards[#selectedCards+1]	=	tempCard
 				else
-					--Net.Send(Net.StartPack("Client.SelectCards"), ip, port)
+					print("TRYING TO PLAY A CARD THAT AINT THEIRS!!")
+					Net.Send(Net.StartPack("Client.SelectCards"), ip, port)
 					return
-				end
-
+				end	
+				
+				
 			else
-				--Net.Send(Net.StartPack("Client.SelectCards"), ip, port)
+				print("TRYING TO PLAY A UNDEALT CARD! CHEATER")
+				Net.Send(Net.StartPack("Client.SelectCards"), ip, port)
 				return
 			end
-
-		end	
-
-		local unit = world:GetComponent(player, "UnitEntityId", "Id"):GetInt()
-
-		local playerIp = world:GetComponent(player, "NetConnection", "IpAddress"):GetText()
-		local playerPort = world:GetComponent(player, "NetConnection", "Port"):GetInt()
 		
-		world:CreateComponentAndAddTo("HasSelectedCards", player)
 		
-		for i = 1, 5 do
-			local action = world:GetComponent(selectedCards[i], "CardAction", "Action"):GetText()
-			local prio = world:GetComponent(selectedCards[i], "CardPrio", "Prio"):GetInt()
-			print("Action: " .. action .. " - Prio: " .. prio)
-
-			world:RemoveComponentFrom("DealtCard", selectedCards[i])
-			world:CreateComponentAndAddTo("CardStep", selectedCards[i])
-			world:SetComponent(selectedCards[i], "CardStep", "Step", i)
-			world:SetComponent(selectedCards[i], "CardStep", "UnitEntityId", unit)
-
-
-
-			Net.SendEntityKill(selectedCards[i], playerIp, playerPort)
-			
 		end
 		
-		world:CreateComponentAndAddTo("UnitSelectedCards", unit)
-
-		local id = world:CreateNewEntity()
+		--	All cards are legit
+		--	start next phase
+		
+		--	Get the players unit
+		local	pUnit	=	world:GetComponent(currentPlayer, "UnitEntityId", "Id"):GetInt()
+		world:CreateComponentAndAddTo("HasSelectedCards", currentPlayer)
+		
+		for n = 1, 5 do
+			local	cAction	=	world:GetComponent(selectedCards[n], "CardAction", "Action"):GetText()
+			local	cPrio	=	world:GetComponent(selectedCards[n], "CardPrio", "Prio"):GetInt()
+			
+			
+			world:RemoveComponentFrom("DealtCard", selectedCards[n])
+			world:CreateComponentAndAddTo("CardStep", selectedCards[n])
+			
+			world:GetComponent(selectedCards[n], "CardStep", "Step"):SetInt(n)
+			world:GetComponent(selectedCards[n], "CardStep", "UnitEntityId"):SetInt(pUnit)
+			
+			Net.SendEntityKill(selectedCards[n], ip, port)
+		end
+		
+		world:CreateComponentAndAddTo("UnitSelectedCards", pUnit)
+		
+		local	id	=	world:CreateNewEntity()
 		world:CreateComponentAndAddTo("NotifyStartNewRound", id)
-
+		
 	end
 )

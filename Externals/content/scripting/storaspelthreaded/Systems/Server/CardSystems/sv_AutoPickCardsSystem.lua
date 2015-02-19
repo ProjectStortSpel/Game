@@ -94,14 +94,8 @@ AutoPickCards.StealCardsFrom = function(self, playerIndex)
 	
 		local action = world:GetComponent(pickedCards[cardIndex], "CardAction", "Action"):GetText()
 		local prio = world:GetComponent(pickedCards[cardIndex], "CardPrio", "Prio"):GetInt()
-		print("CardID: " .. pickedCards[cardIndex])
-		print("Index: " .. cardIndex)
-		print("Action: " .. action)
-		print("Prio: " .. prio)
-	
-		world:RemoveComponentFrom("DealtCard", pickedCards[cardIndex])
 		
-
+		world:RemoveComponentFrom("DealtCard", pickedCards[cardIndex])
 		world:CreateComponentAndAddTo("CardStep", pickedCards[cardIndex])
 		world:GetComponent(pickedCards[cardIndex], "CardStep", "Step"):SetInt(cardIndex)
 		world:GetComponent(pickedCards[cardIndex], "CardStep", "UnitEntityId"):SetInt(playerUnit)
@@ -109,16 +103,11 @@ AutoPickCards.StealCardsFrom = function(self, playerIndex)
 		Net.SendEntityKill(pickedCards[cardIndex], playerIp, playerPort)
 	end
 	
-	local allSelectedCards	=	self:GetEntities("ServerSelectedCard")
-	for nIndex = 1, #allSelectedCards do
-		if world:EntityHasComponent(allSelectedCards[nIndex], "ServerSelectedCard") then
-			world:RemoveComponentFrom("ServerSelectedCard", allSelectedCards[nIndex])
-		end
-	end
-	
 	--	Update unit status
 	world:CreateComponentAndAddTo("UnitSelectedCards", playerUnit)
 end
+
+
 
 AutoPickCards.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 
@@ -133,6 +122,8 @@ AutoPickCards.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 			for tPlayer = 1, #nonReadyPlayers do
 				self:StealCardsFrom(nonReadyPlayers[tPlayer])
 			end
+			
+			
 			
 			local id = world:CreateNewEntity()
 			world:CreateComponentAndAddTo("NotifyStartNewRound", id)
