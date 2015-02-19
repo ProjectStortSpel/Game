@@ -1,7 +1,7 @@
 AICardPickingSystem = System()
 AICardPickingSystem.PrintSimulation = 0
 AICardPickingSystem.AICheat = 0
-AICardPickingSystem.CardsToSimulate = 6
+AICardPickingSystem.CardsToSimulate = 3
 AICardPickingSystem.PermutationsDone = false
 AICardPickingSystem.PermutationsArray = ""
 
