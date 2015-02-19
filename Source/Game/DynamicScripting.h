@@ -3,17 +3,31 @@
 
 #include <vector>
 #include <time.h>
+#include <float.h>
+#include <iostream>
+#include <math.h>
 
 /* Data struct for the pathfinder to store data */
+
+enum RuleType
+{
+	humpa_dumpa_Void,
+	humpa_dumpa_Stone,
+	humpa_dumpa_Players,
+	humpa_dumpa_RiverEnd,
+	humpa_dumpa_Total
+};
+
 struct Rule
 {
+	RuleType	ruleType;
 	float		weight;
 	//std::string	script;
 
-	/*bool operator == (Rule r)
+	bool operator == (Rule r)
 	{
-		return weight == r.weight && script == r.script;
-	}*/
+		return ruleType = r.ruleType;
+	}
 };
 
 class DynamicScripting
