@@ -212,7 +212,7 @@ CreateMapSystem.AddTinyStone = function(self, posX, posZ)
 	world:GetComponent(tinyStone, "Rotation", 0):SetFloat3(0.0, 0.0, 0.0)
 	local randScale = math.random() + 0.5
 	world:GetComponent(tinyStone, "Scale", 0):SetFloat3(0.2*randScale, 0.2*randScale, 0.2*randScale)
-	world:GetComponent(tinyStone, "Model", 0):SetModel("stone", "stone", 0)
+	world:GetComponent(tinyStone, "Model", 0):SetModel("stone", "stone", 8)
 	
 	--self:AddTinyStone(randX, randZ)
 end 
