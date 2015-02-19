@@ -7,7 +7,7 @@ namespace LuaBridge
 		void Embed( lua_State* _l )
 		{
 			LuaEmbedder::EmbedClass<DSData>( _l, "DSData" );
-			LuaEmbedder::EmbedClassFunction<DSData>( _l, "DSData", "AddElement", &(DSData::AddElement) );
+			LuaEmbedder::EmbedClassFunction<DSData>( _l, "DSData", "AddElement", &DSData::AddElement );
 
 			LuaEmbedder::AddFunction( _l, "LoadRuleBook", &LoadRuleBook, "DynamicScript" );
 			LuaEmbedder::AddFunction( _l, "GenerateScript", &GenerateScriptForLua, "DynamicScript" );
