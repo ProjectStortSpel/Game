@@ -6,6 +6,7 @@
 #include <float.h>
 #include <iostream>
 #include <math.h>
+#include <cstdlib>
 
 /* Data struct for the pathfinder to store data */
 
