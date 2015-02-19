@@ -46,6 +46,7 @@ namespace Renderer
 		float m_spriteSize, m_lifeTime;
 		float m_elapsedTime;
 		float m_scale;
+		GLenum m_dstBlendFactor;
 
 		void CreateFire();
 		void CreateSmoke();
