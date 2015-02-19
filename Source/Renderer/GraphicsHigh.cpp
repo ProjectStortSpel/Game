@@ -790,6 +790,10 @@ void GraphicsHigh::Clear()
 	delete tmpPtr;
 	BufferDirectionalLight(0);
 
+	for (std::map<int, ParticleSystem*>::iterator it = m_particleSystems.begin(); it != m_particleSystems.end(); ++it)
+		delete(it->second);
+	m_particleSystems.clear();
+
 	//if (m_pointerToPointlights)
 		//delete m_pointerToPointlights;
 }

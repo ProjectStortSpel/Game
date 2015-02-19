@@ -61,7 +61,7 @@ void render()
 	Transp = 0.0;
 	if(Time >= VertexStartTime)
 	{
-		sizeFactor = 1.0+(age/ParticleLifetime)*0.7;
+		sizeFactor = 1.0+(age/ParticleLifetime)*0.75;
 		if(age < 150)
 			Transp = age/150.0f - age/ParticleLifetime;
 		else
