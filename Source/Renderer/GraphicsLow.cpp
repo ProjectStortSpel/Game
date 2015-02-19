@@ -510,4 +510,8 @@ void GraphicsLow::Clear()
 	m_pointerToDirectionalLights = NULL;
 	m_numberOfPointlights = 0;
 	m_numberOfDirectionalLights = 0;
+
+	for (std::map<int, ParticleSystem*>::iterator it = m_particleSystems.begin(); it != m_particleSystems.end(); ++it)
+		delete(it->second);
+	m_particleSystems.clear();
 }
