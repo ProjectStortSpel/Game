@@ -204,7 +204,7 @@ void ParticleSystem::CreateSmoke()
 		theta = glm::mix(0.0f, (float)M_PI / 6.0f, (float)(rand() % 101) / 100);
 		phi = glm::mix(0.0f, (float)(2 * M_PI), (float)(rand() % 101) / 100);
 		v.x = sinf(theta) * cosf(phi) * 0.1;
-		v.y = cosf(theta) * 0.15;
+		v.y = cosf(theta) * 0.10;
 		v.z = sinf(theta) * sinf(phi) * 0.1;
 		// Scale to set the magnitude of the velocity (speed)
 		velocity = glm::mix(1.25f, 1.5f, (float)(rand() % 101) / 100) * 0.0012f;

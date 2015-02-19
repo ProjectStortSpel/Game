@@ -111,11 +111,7 @@ UnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 				Net.Send(id, ip, port)
 				
 				
-				local id = Net.StartPack("Client.NewTargetCheckpoint")
-				Net.WriteInt(id, checkpointId)
-				Net.WriteInt(id, X)
-				Net.WriteInt(id, Z)
-				Net.Send(id, ip, port)
+
 			end
 						
 		elseif world:EntityHasComponent(entity, "RemoveUnit") then
