@@ -254,18 +254,24 @@ void GraphicDevice::AddParticleEffect(std::string _name, const vec3 _pos, int _n
 
 void GraphicDevice::RemoveParticleEffect(int _id)
 {
+	m_particleSystems[_id]->EnterEndPhase();
 	m_particlesIdToRemove.push_back(_id);
 }
 
 void GraphicDevice::BufferParticleSystems()
 {
-	for (int i = 0; i < m_particlesIdToRemove.size(); i++)
+	// ParticleSystems to remove
+	for (int i = m_particlesIdToRemove.size()-1; i >= 0; i--)
 	{
-		delete(m_particleSystems[m_particlesIdToRemove[i]]);
-		m_particleSystems.erase(m_particlesIdToRemove[i]);
+		if (m_particleSystems[m_particlesIdToRemove[i]]->ReadyToBeDeleted())
+		{
+			delete(m_particleSystems[m_particlesIdToRemove[i]]);
+			m_particleSystems.erase(m_particlesIdToRemove[i]);
+			m_particlesIdToRemove.erase(m_particlesIdToRemove.begin() + i);
+		}
 	}
-	m_particlesIdToRemove.clear();
 
+	// ParticleSystems to add
 	for (int i = 0; i < m_particleSystemsToLoad.size(); i++)
 	{
 		m_particleSystems.insert(std::pair<int, ParticleSystem*>(m_particleSystemsToLoad[i].Id,new ParticleSystem(

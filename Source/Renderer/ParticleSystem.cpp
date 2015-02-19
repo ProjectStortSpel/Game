@@ -13,6 +13,7 @@ ParticleSystem::ParticleSystem(std::string type, const vec3 _pos, int _nParticle
 	m_shader = _shaderProg;
 	m_drawBuf = 1;
 	m_color = _color;
+	m_endPhase = false;
 
 	if (type == "fire")
 		CreateFire();
@@ -22,8 +23,9 @@ ParticleSystem::ParticleSystem(std::string type, const vec3 _pos, int _nParticle
 	//set uniforms?
 	subRoutineUpdate = glGetSubroutineIndex(m_shader->GetShaderProgram(), GL_VERTEX_SHADER, "update");
 	subRoutineRender = glGetSubroutineIndex(m_shader->GetShaderProgram(), GL_VERTEX_SHADER, "render");
-
+	
 	m_elapsedTime = 0.0f;
+	m_removeDelayTime = 0.0f;
 }
 
 ParticleSystem::~ParticleSystem()
@@ -306,6 +308,10 @@ void ParticleSystem::Render(float _dt)
 
 	float dt = 1000.f * (_dt);
 	m_elapsedTime += dt;
+
+	if (m_endPhase)
+		m_removeDelayTime += dt;
+
 	/////////// Update pass ////////////////
 	glUniformSubroutinesuiv(GL_VERTEX_SHADER, 1, &subRoutineUpdate);
 	// Set the uniforms: H and Time
@@ -314,6 +320,7 @@ void ParticleSystem::Render(float _dt)
 	m_shader->SetUniVariable("ParticleLifetime", glfloat, &m_lifeTime);
 	m_shader->SetUniVariable("Size", glfloat, &m_spriteSize);
 	m_shader->SetUniVariable("Accel", vector3, &m_accel);
+	m_shader->SetUniVariable("EndPhase", glint, &m_endPhase);
 
 	// Disable rendering
 	glEnable(GL_RASTERIZER_DISCARD);
@@ -341,4 +348,17 @@ void ParticleSystem::Render(float _dt)
 	glDrawArrays(GL_POINTS, 0, m_nrParticles);
 	// Swap buffers
 	m_drawBuf = 1 - m_drawBuf;
+}
+
+void ParticleSystem::EnterEndPhase()
+{
+	m_endPhase = true;
+}
+
+bool ParticleSystem::ReadyToBeDeleted()
+{
+	if (m_removeDelayTime > m_lifeTime)
+		return true;
+	
+	return false;
 }
