@@ -14,6 +14,11 @@ namespace LuaBridge
 		{
 			std::vector<Rule> rules;
 
+			DSData( lua_State* _l )
+			{
+
+			}
+
 			int AddElement( lua_State* _l )
 			{
 				float		w = LuaEmbedder::PullFloat( _l, 1 );
