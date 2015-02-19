@@ -17,33 +17,7 @@ AICardPickingSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("TileComp", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("MapSpecs", FilterType.RequiresOneOf)
 	
-	--Console.AddCommand("AICheat", self.CheatMode)
 end
-
---AddAISystem.CheatMode = function(_command, ...)
---	
---	local args = { ... }
---	
---	if #args == 1 then
---		if type(args[1]) == "number" then
---			if -1 < args[1] and args[1] < 2 then
---				self.AICheat = args[1]
---			end
---		end
---	else
---		if self.AICheat == 0 then
---			self.AICheat = 1
---		else
---			self.AICheat = 0
---		end
---	end
---	
---	if self.AICheat == 0 then
---		print("AICheat off")
---	else
---		print("AICheat on")
---	end
---end
 
 AICardPickingSystem.Update = function(self, dt)
 	
@@ -65,7 +39,7 @@ AICardPickingSystem.Update = function(self, dt)
 			local charArray = CombinationMath.Permutations(self.CardsPerHand, self.CardsToSimulate)
 			
 			local start, endvar, timetaken
-						
+			
 			--local charArray = CombinationMath.Permutations(10, 8)
 			
 			--print(string.len(charArray))
