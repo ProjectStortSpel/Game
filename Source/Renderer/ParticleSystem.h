@@ -23,6 +23,8 @@ namespace Renderer
 		void SetAccel(vec3 _acc){ m_accel = _acc; }
 		vec3* GetColor(){ return &m_color; }
 		Shader* GetShaderPtr(){ return m_shader; }
+		void EnterEndPhase();
+		bool ReadyToBeDeleted();
 
 	private:
 		Shader *m_shader;
@@ -45,8 +47,9 @@ namespace Renderer
 		int m_drawBuf;
 		vec3 m_pos, m_accel, m_color;
 		float m_spriteSize, m_lifeTime;
-		float m_elapsedTime;
+		float m_elapsedTime, m_removeDelayTime;
 		float m_scale;
+		bool m_endPhase;
 		GLenum m_dstBlendFactor;
 
 		void CreateFire();
