@@ -181,7 +181,8 @@ namespace Renderer
 
 		// Shaders
 		Shader m_skyBoxShader;
-		Shader m_particleShader;
+		std::map<std::string, Shader> m_particleShaders;
+		//Shader m_particleFireShader, m_particleSmokeShader;
 
 		// Skybox
 		SkyBox *m_skybox;

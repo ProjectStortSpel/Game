@@ -17,7 +17,7 @@ uniform float DeltaTime; // Elapsed time between frames dt
 uniform vec3 Accel; // Particle acceleration
 uniform float ParticleLifetime; // Particle lifespan
 
-uniform float Size;
+uniform float Size; // Spritesize factor
 uniform int Type;
 
 uniform mat4 ProjectionMatrix;
@@ -61,14 +61,9 @@ void render()
 	Transp = 0.0;
 	if(Time >= VertexStartTime)
 	{
-		if(Type == 0)
-		{
-			sizeFactor = 1.0-(age/ParticleLifetime)*0.5;
-			if(age/ParticleLifetime > 0.8f)
-				sizeFactor *= 0.6f;
-		}
-		else if(Type == 1)
-			sizeFactor = 1.0+(age/ParticleLifetime)*0.7;
+		sizeFactor = 1.0-(age/ParticleLifetime)*0.5;
+		if(age/ParticleLifetime > 0.8f)
+			sizeFactor *= 0.6f;
 		Transp = 1.0 - age / ParticleLifetime;
 	}
 
