@@ -29,12 +29,8 @@ ShowNextCheckpointSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount
 	
 	local	oldEffects	=	self:GetEntities()
 	for n = 1, #oldEffects do
-		print("AOKSODKASODK")
 		
-		print("oldEffects[n] = " .. oldEffects[n])
-		print("highestCheckpointId = " .. highestCheckpointId)
 		if oldEffects[n] ~= highestCheckpointId then
-			print("SMOKE SPAWNED!?")
 			self:SpawnSmoke(oldEffects[n])
 			world:KillEntity(oldEffects[n])
 		end
