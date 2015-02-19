@@ -43,7 +43,7 @@ void main()
 
 	vec3 ambient = vec3(1.0);
 	vec3 diffuse = vec3(0.0);
-	vec3 spec    = vec3(0.0);
+	vec3 spec    = vec3(0.0)*specglow_map.xyz;
 
 	vec4 coloradded;
 	if( AddColor != vec3(0.0) )
@@ -51,5 +51,5 @@ void main()
 	else
 		coloradded = albedo_tex;
 
-	ColorData = vec4(ambient + diffuse, 1.0) * coloradded + vec4(spec, 0.0f) + vec4(normal_map-normal_map, 0.0);
+	ColorData = vec4(ambient + diffuse, 1.0) * coloradded + vec4(spec, 0.0f) + vec4(normal_map, 0.0f)*0.00000001;
 }
