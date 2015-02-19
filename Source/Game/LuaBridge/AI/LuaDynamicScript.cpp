@@ -51,6 +51,7 @@ namespace LuaBridge
 		int	SetScript( lua_State* _l )
 		{
 			DSData* dsd = LuaEmbedder::PullObject<DSData>( _l, "DSData", 1 );
+			return 0;
 		}
 	}
 }
