@@ -201,8 +201,6 @@ void GraphicsLow::Render()
 				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
 				normalMatVector[nrOfInstances] = normalMatrix;
 
-				m_forwardShader.SetUniVariable("BlendColor", vector3, m_modelsForward[i].instances[j].color);
-
 				nrOfInstances++;
 			}
 		}

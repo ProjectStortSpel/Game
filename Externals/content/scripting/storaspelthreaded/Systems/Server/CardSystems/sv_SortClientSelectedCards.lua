@@ -72,7 +72,7 @@ SortClientSelectedCards.EntitiesRemoved = function(self, dt, taskIndex, taskCoun
 		
 		for i = 1, #ownerCards do
 			local index2 = world:GetComponent(ownerCards[i], "ServerSelectedCard", "Index"):GetInt()
-			if index2 >= index then
+			if index2 > index then
 				world:GetComponent(ownerCards[i], "ServerSelectedCard", "Index"):SetInt(index2-1)
 			end
 			

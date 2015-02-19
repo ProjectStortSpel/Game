@@ -46,6 +46,22 @@ namespace FileSystem
 		struct MD5Data
 		{
 			unsigned char data[16];
+
+			bool operator==(MD5Data a) const
+			{
+				for (int i = 0; i < 16; ++i)
+				{
+					if (data[i] != a.data[i])
+						return false;
+					return true;
+				}
+			}
+
+			bool operator!=(MD5Data a) const
+			{
+				return !(*this == a);
+			}
+
 		};
 
 		typedef struct {
