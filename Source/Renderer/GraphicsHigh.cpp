@@ -469,8 +469,27 @@ void GraphicsHigh::Render()
 	
 			delete joint_data;
 	
-	
 
+
+
+			float *anim_data = new float[m_modelsAnimated[i].animation.size() * 16];
+
+			for (int j = 0; j < m_modelsAnimated[i].animation.size(); j++)
+			{
+				memcpy(&anim_data[16 * j], &m_modelsAnimated[i].animation[j], 16 * sizeof(float));
+			}
+
+			int anim_data_size = 16 * m_modelsAnimated[i].animation.size() * sizeof(float);
+
+			glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 2, m_modelsAnimated[i].animBuffer, 0, anim_data_size);
+			glBufferData(GL_SHADER_STORAGE_BUFFER, anim_data_size, anim_data, GL_STATIC_DRAW);
+
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, m_modelsAnimated[i].animBuffer);
+
+			delete anim_data;
+
+	
+	
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, m_modelsAnimated[i].texID);
 	
@@ -481,7 +500,7 @@ void GraphicsHigh::Render()
 			glBindTexture(GL_TEXTURE_2D, m_modelsAnimated[i].speID);
 	
 			m_modelsAnimated[i].bufferPtr->draw();
-
+	
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 	}
@@ -617,25 +636,6 @@ void GraphicsHigh::Render()
 	glDrawArrays(GL_POINTS, 0, 1);
 
 	glUseProgram(0);
-
-	vec4 vert1 = vec4(0, 0, 0, 1);
-	vec4 vert2 = vec4(0, 15, 0, 1);
-	for (int i = 0; i < m_modelsAnimated.size(); i++)
-	{
-		if (m_modelsAnimated[i].active) // IS MODEL ACTIVE?
-		{
-			vert1 = projectionMatrix * viewMatrix * vert1;
-			vert2 = projectionMatrix * viewMatrix * vert2;
-
-			glLineWidth(2.5);
-			glColor3f(1.0, 0.0, 0.0);
-			glBegin(GL_LINES);
-			glVertex3f(vert1.x, vert1.y, vert1.z);
-			glVertex3f(vert2.x, vert2.y, vert2.z);
-			glEnd();
-		}
-	}
-
 
 	// Swap in the new buffer
 	SDL_GL_SwapWindow(m_window);

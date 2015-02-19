@@ -315,11 +315,11 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	Shader *shaderPtr = NULL;
 	std::vector<Model> *modelList = NULL;
 
-	//if (obj.animated)
-	//{
-	//	BufferAModel(_modelId, _modelToLoad);
-	//	return;
-	//}
+	if (obj.animated)
+	{
+		BufferAModel(_modelId, _modelToLoad);
+		return;
+	}
 
 	bool FoundShaderType = false;
 	for (int i = 0; i < m_renderLists.size(); i++)
@@ -371,6 +371,8 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	// Push back the model
 	modelList->push_back(model);
 }
+mat4 matrixes[100];
+
 void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 {
 	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
@@ -393,28 +395,90 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
 	shaderPtr->CheckUniformLocation("specularTex", 3);
 
+	AModel model = AModel(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color, mesh, texture, normal, specular);
+
 	// Import Skeleton
 	std::vector<JointData> joints = ModelLoader::importJoints(obj.joints);
-
-	AModel model = AModel(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color, mesh, texture, normal, specular);
 
 	// Add skeleton
 	for (int i = 0; i < joints.size(); i++)
 	{
 		model.joints.push_back(Joint(
-		joints[i].x0, joints[i].y0, joints[i].z0, joints[i].w0,
-		joints[i].x1, joints[i].y1, joints[i].z1, joints[i].w1,
-		joints[i].x2, joints[i].y2, joints[i].z2, joints[i].w2,
-		joints[i].x3, joints[i].y3, joints[i].z3, joints[i].parent)
-		);//joints[i].transform));
+			joints[i].mat[0][0], joints[i].mat[0][1], joints[i].mat[0][2], joints[i].mat[0][3],
+			joints[i].mat[1][0], joints[i].mat[1][1], joints[i].mat[1][2], joints[i].mat[1][3],
+			joints[i].mat[2][0], joints[i].mat[2][1], joints[i].mat[2][2], joints[i].mat[2][3],
+			joints[i].mat[3][0], joints[i].mat[3][1], joints[i].mat[3][2], joints[i].parent)
+		);
 	}
+	// Add animation base
+	for (int i = 0; i < joints.size(); i++)
+	{
+		int index = joints.size() - i - 1;
+		model.animation.push_back(Joint(
+			joints[index].mat[0][0], joints[index].mat[0][1], joints[index].mat[0][2], joints[index].mat[0][3],
+			joints[index].mat[1][0], joints[index].mat[1][1], joints[index].mat[1][2], joints[index].mat[1][3],
+			joints[index].mat[2][0], joints[index].mat[2][1], joints[index].mat[2][2], joints[index].mat[2][3],
+			joints[index].mat[3][0], joints[index].mat[3][1], joints[index].mat[3][2], index - joints[index].parent - 1
+			));
+	}
+
+	// Import Animations
+	std::vector<AnimData> anims = ModelLoader::importAnimation(obj.anim[0]);
+
+	for (int i = 0; i < anims.size(); i++)
+	{
+		if (anims[i].frame == 1)
+		{ 
+			int index = model.animation.size() - anims[i].joint - 1;
+			model.animation[index] = Joint(
+				anims[i].mat[0][0], anims[i].mat[0][1], anims[i].mat[0][2], anims[i].mat[0][3],
+				anims[i].mat[1][0], anims[i].mat[1][1], anims[i].mat[1][2], anims[i].mat[1][3],
+				anims[i].mat[2][0], anims[i].mat[2][1], anims[i].mat[2][2], anims[i].mat[2][3],
+				anims[i].mat[3][0], anims[i].mat[3][1], anims[i].mat[3][2], model.animation[index].parent
+				);
+		}
+	}
+
 	glGenBuffers(1, &model.jointBuffer);
+	glGenBuffers(1, &model.animBuffer);
 
 	//for the matrices (modelView + normal)
 	m_vramUsage += (16 + 9) * sizeof(float);
 
 	// Push back the model
 	modelList->push_back(model);
+
+
+
+
+	//for (int j = 0; j < model.animation.size(); j++)
+	//{
+	//	mat4 jmat = scale(vec3(0.1, 0.1, 0.1));
+	//	for (int k = j; k < model.animation.size(); k++)
+	//	{
+	//		Joint joint = model.animation[k];
+	//		jmat = mat4(joint.x0, joint.y0, joint.z0, joint.w0,
+	//			joint.x1, joint.y1, joint.z1, joint.w1,
+	//			joint.x2, joint.y2, joint.z2, joint.w2,
+	//			joint.x3, joint.y3, joint.z3, 1
+	//			) * jmat;
+	//		k += model.animation[k].parent;
+	//	}
+	//	matrixes[j] = mat4(jmat);
+	//	LoadModel("content/models/stone/", "stone.object", &matrixes[j], 0, model.color);
+	//}
+
+	//for (int j = 0; j < model.joints.size(); j++)
+	//{
+	//	Joint joint = model.joints[j];
+	//	mat4 jmat = mat4(joint.x0, joint.y0, joint.z0, joint.w0,
+	//		joint.x1, joint.y1, joint.z1, joint.w1,
+	//		joint.x2, joint.y2, joint.z2, joint.w2,
+	//		joint.x3, joint.y3, joint.z3, 1
+	//		) * scale(vec3(0.1, 0.1, 0.1));
+	//	matrixes[j] = jmat;
+	//	LoadModel("content/models/stone/", "stone.object", &matrixes[j], 0, model.color);
+	//}
 }
 
 bool GraphicDevice::RemoveModel(int _id)

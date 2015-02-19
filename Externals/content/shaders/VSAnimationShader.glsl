@@ -25,6 +25,11 @@ layout (std430, binding = 1) buffer Joints
 	JointMatrix joints[];
 };
 
+layout (std430, binding = 2) buffer Animation   
+{
+	JointMatrix anim[];
+};
+
 
 out vec3 Normal;
 out vec3 Tan;
@@ -44,10 +49,10 @@ mat4 JointToMatrix(JointMatrix joint)
 mat4 GetJointMatrix(int Index)
 {
 	mat4 joint = mat4(1);
-	for (int i = Index; i < joints.length(); i++)
+	for (int i = Index; i < anim.length(); i++)
 	{
-		joint = JointToMatrix(joints[i]) * joint;
-		i += int(joints[i].parent);
+		joint = JointToMatrix(anim[i]) * joint;
+		i += int(anim[i].parent);
 	}
 	return joint;	
 }
@@ -63,13 +68,13 @@ void main()
 	mat4 joint3 = mat4(1);
 	mat4 joint4 = mat4(1);
 	if (VertexJointWeight.x > 0)
-		joint1 = GetJointMatrix(joints.length()-int(VertexJointIndex.x)-1) * VertexJointWeight.x;
+		joint1 = (JointToMatrix(joints[int(VertexJointIndex.x)]) * GetJointMatrix(anim.length()-int(VertexJointIndex.x)-1)) * VertexJointWeight.x;
 	if (VertexJointWeight.y > 0)
-		joint2 = GetJointMatrix(joints.length()-int(VertexJointIndex.y)-1) * VertexJointWeight.y;
+		joint2 = (JointToMatrix(joints[int(VertexJointIndex.y)]) * GetJointMatrix(anim.length()-int(VertexJointIndex.y)-1)) * VertexJointWeight.y;
 	if (VertexJointWeight.z > 0)
-		joint3 = GetJointMatrix(joints.length()-int(VertexJointIndex.z)-1) * VertexJointWeight.z;
+		joint3 = (JointToMatrix(joints[int(VertexJointIndex.z)]) * GetJointMatrix(anim.length()-int(VertexJointIndex.z)-1)) * VertexJointWeight.z;
 	if (VertexJointWeight.w > 0)
-		joint4 = GetJointMatrix(joints.length()-int(VertexJointIndex.w)-1) * VertexJointWeight.w;
+		joint4 = (JointToMatrix(joints[int(VertexJointIndex.w)]) * GetJointMatrix(anim.length()-int(VertexJointIndex.w)-1)) * VertexJointWeight.w;
 	gl_Position = VP * M * joint1 * joint2 * joint3 * joint4 * vec4(VertexPosition, 1.0);
 	//instanceID = gl_InstanceID;
 }

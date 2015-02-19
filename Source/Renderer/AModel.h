@@ -35,6 +35,19 @@ namespace Renderer
 		}
 	};
 
+	struct KeyFrame
+	{
+		int frame;
+		int joint;
+		glm::mat4 mat;
+		KeyFrame(int _frame, int _joint, glm::mat4 _mat)
+		{
+			frame = _frame;
+			joint = _joint;
+			mat = _mat;
+		}
+	};
+
 	class DECLSPEC AModel
 	{
 	public:
@@ -51,7 +64,10 @@ namespace Renderer
 		GLuint norID;
 		GLuint speID;
 		GLuint jointBuffer;
+		GLuint animBuffer;
 		std::vector<Joint> joints;
+		std::vector<Joint> animation;
+		//std::vector<Joint> ;
 	};
 }
 
