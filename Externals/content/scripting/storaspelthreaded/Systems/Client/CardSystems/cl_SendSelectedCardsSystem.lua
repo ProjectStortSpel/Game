@@ -11,6 +11,7 @@ SendSelectedCardsSystem.Initialize = function ( self )
 	--	Set Filter
 	self:AddComponentTypeToFilter("CardSelected", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("ReadyButton", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("DealingSettings", FilterType.RequiresOneOf)
 end
 
 SendSelectedCardsSystem.Update = function(self, dt, taskIndex, taskCount)
@@ -24,8 +25,11 @@ SendSelectedCardsSystem.Update = function(self, dt, taskIndex, taskCount)
 			self:DeselectAll()
 		end
 		
+		local DealingSettings = self:GetEntities("DealingSettings")
+		local cardsPerHand, cardsToPick = world:GetComponent(DealingSettings[1], "DealingSettings", 0):GetInt2(0)
+		
 		local cardsSelected = self:GetEntities("CardSelected")
-		if #cardsSelected < 5 then
+		if #cardsSelected < cardsToPick then
 			for n = 1, #button do
 				world:KillEntity(button[n])
 			end
@@ -41,7 +45,10 @@ SendSelectedCardsSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount,
 		if world:EntityHasComponent(entityId, "CardSelected") then
 			local cards = self:GetEntities("CardSelected")
 			
-			if #cards == 5 then
+			local DealingSettings = self:GetEntities("DealingSettings")
+			local cardsPerHand, cardsToPick = world:GetComponent(DealingSettings[1], "DealingSettings", 0):GetInt2(0)
+			
+			if #cards == cardsToPick then
 				--self:SendSelectedCards()
 				--self:DeselectAll()
 				local id = world:CreateNewEntity()
@@ -76,8 +83,11 @@ SendSelectedCardsSystem.SendSelectedCards = function( self )
 	
 	local id = Net.StartPack("Server.SelectCards")
 	local cards = self:GetEntities("CardSelected")
+	
+	local DealingSettings = self:GetEntities("DealingSettings")
+	local cardsPerHand, cardsToPick = world:GetComponent(DealingSettings[1], "DealingSettings", 0):GetInt2(0)
 
-	for i = 1, 5 do	
+	for i = 1, cardsToPick do	
 		
 		for j = 1, #cards do
 			

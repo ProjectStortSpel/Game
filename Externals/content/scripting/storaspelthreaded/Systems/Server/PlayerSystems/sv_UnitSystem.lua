@@ -52,8 +52,6 @@ UnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 	math.randomseed(mySeed)
 	for n = 1, #entities do
 		local entity = entities[n]
-		
-		print("unit entity added")
 	
 		if world:EntityHasComponent(entity, "NeedUnit") then
 			
@@ -113,11 +111,7 @@ UnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 				Net.Send(id, ip, port)
 				
 				
-				local id = Net.StartPack("Client.NewTargetCheckpoint")
-				Net.WriteInt(id, checkpointId)
-				Net.WriteInt(id, X)
-				Net.WriteInt(id, Z)
-				Net.Send(id, ip, port)
+
 			end
 						
 		elseif world:EntityHasComponent(entity, "RemoveUnit") then

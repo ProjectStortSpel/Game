@@ -23,48 +23,56 @@ struct Rule
 {
 	RuleType	ruleType;
 	float		weight;
-	//std::string	script;
+	std::string	script;
 
-	bool operator == (Rule r)
+	bool operator == ( Rule r )
 	{
-		return ruleType = r.ruleType;
+		return ruleType == r.ruleType && weight == r.weight && script == r.script;
+	}
+	/*
+		returns true if the rules have the same type
+	*/
+	bool operator / ( Rule r )
+	{
+		return ruleType == r.ruleType;
 	}
 };
 
 class DynamicScripting
 {
 public:
-	static DynamicScripting* Instance();
-	static void Destroy();
-	~DynamicScripting();
+	static DynamicScripting*	Instance( );
+	static void					Destroy( );
+								~DynamicScripting( );
 
-	void AddRule(Rule _rule);
-	void Sum();
-	void GenerateScript();
-	void AdjustWeight(float _fitness);
-	float FitnessFunction(float _fitness);
-	void DistributeLeftOvers(float _leftOver);
+	void						AddRule( Rule _rule );
+	void						Sum( );
+	void						GenerateScript( );
+	void						AdjustWeight( float _fitness );
+	float						FitnessFunction( float _fitness );
+	void						DistributeLeftOvers( float _leftOver );
 
-	bool InsertToScript(Rule _rule);
-	std::vector<Rule> GetScript();
-	void SetScript(std::vector<Rule> _script);
-	void SetRuleBook(std::vector<Rule> _rules);
+	bool						InsertToScript( Rule _rule );
+	std::vector<Rule>			GetScript( );
+	void						SetScript( std::vector<Rule> _script );
+	void						SetRuleBook( std::vector<Rule> _rules );
 
-	bool IsInScript(Rule _rule);
-
-	float RandomFloat();
-
-private:
-	DynamicScripting();
-	DynamicScripting(DynamicScripting const&) = delete;
-	void operator=(DynamicScripting const&) = delete;
-	static DynamicScripting* m_instance;
-
+	bool						IsInScript( Rule _rule );
+	bool						IsTypeInScript( Rule _rule );
+	float						RandomFloat( );
 
 private:
-	float				m_totalSum;
-	unsigned int		m_noOfScriptsToUse;
-	std::vector<Rule>	m_ruleBook;
-	std::vector<Rule>	m_script;
+								DynamicScripting( );
+								DynamicScripting( DynamicScripting const& ) = delete;
+	void						operator=( DynamicScripting const& ) = delete;
+	static DynamicScripting*	m_instance;
+
+
+private:
+	float						m_totalSum;
+	unsigned int				m_noOfScriptsToUse;
+	std::vector<Rule>			m_ruleBook;
+	std::vector<Rule>			m_script;
 };
+
 #endif //DYNAMICSCRIPTING_H

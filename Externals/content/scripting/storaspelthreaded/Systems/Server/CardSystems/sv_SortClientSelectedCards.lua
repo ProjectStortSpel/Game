@@ -2,7 +2,7 @@ SortClientSelectedCards = System()
 
 SortClientSelectedCards.Initialize = function(self)
 	--	Set Name
-	self:SetName("AutoPickCards")
+	self:SetName("SortClientSelectedCards")
 	
 	--	Toggle EntitiesAdded
 	self:UsingEntitiesRemoved()
@@ -44,7 +44,6 @@ SortClientSelectedCards.EntitiesAdded = function(self, dt, taskIndex, taskCount,
 
 	for n = 1, #entities do
 		local entity = entities[n]
-		
 		local 	currentOwner	=	world:GetComponent(entity, "DealtCard", "PlayerEntityId"):GetInt()
 		local	currentIndex	=	world:GetComponent(entity, "ServerSelectedCard", "Index"):GetInt()
 		
@@ -59,6 +58,7 @@ SortClientSelectedCards.EntitiesAdded = function(self, dt, taskIndex, taskCount,
 					world:GetComponent(ownerCards[i], "ServerSelectedCard", "Index"):SetInt(tempIndex+1)
 				end
 			end
+			self:PrintCard(ownerCards[i])
 		end
 	end
 end

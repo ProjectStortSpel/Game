@@ -8,7 +8,7 @@ layout( location = 7 ) in mat4 ModelViewMatrix;
 // used locations 7-10
 layout( location = 11 ) in mat3 NormalMatrix;
 // used locations 11-13
-//layout( location = 14 ) in vec3 ColorVec;
+layout( location = 14 ) in vec3 ColorVec;
 
 out vec3 Normal;
 out vec3 Tan;
@@ -28,5 +28,5 @@ void main()
 	ViewPos = (ModelViewMatrix * vec4(VertexPosition, 1.0)).xyz;
 	mat4 MVP = ProjectionMatrix * ModelViewMatrix;
 	gl_Position = MVP * vec4(VertexPosition, 1.0);
-	AddColor = vec3(0.0f); //ColorVec;
+	AddColor = ColorVec;
 }

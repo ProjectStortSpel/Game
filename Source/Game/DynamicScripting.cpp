@@ -97,7 +97,7 @@ float DynamicScripting::RandomFloat()
 
 bool DynamicScripting::InsertToScript(Rule _rule)
 {
-	if (IsInScript(_rule))
+	if (IsTypeInScript(_rule))
 	{
 		return false;
 	}
@@ -180,11 +180,23 @@ void DynamicScripting::SetScript(std::vector<Rule> _script)
 	m_script = _script;
 }
 
-bool DynamicScripting::IsInScript(Rule _rule)
+bool DynamicScripting::IsInScript( Rule _rule )
 {
-	for (unsigned int i = 0; i < m_script.size(); i++)
+	for ( unsigned int i = 0; i < m_script.size( ); i++ )
 	{
-		if (_rule == m_script[i])
+		if ( _rule == m_script [i] )
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+bool DynamicScripting::IsTypeInScript( Rule _rule )
+{
+	for ( unsigned int i = 0; i < m_script.size( ); i++ )
+	{
+		if ( _rule / m_script [i] )
 		{
 			return false;
 		}

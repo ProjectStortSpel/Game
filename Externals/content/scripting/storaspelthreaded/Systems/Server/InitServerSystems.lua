@@ -4,9 +4,9 @@ require "sv_StageSystem"
 
 --	Map Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/MapSystems/?.lua"
-require "sv_NewMapGenerator"
+--require "sv_NewMapGenerator"
 require "sv_MapRaterSystem"
---require "sv_CreateMapSystem"
+require "sv_CreateMapSystem"
 require "sv_RiverSystem"
 require "sv_VoidSystem"
 require "sv_CheckpointSystem"
@@ -46,6 +46,7 @@ require "sv_TakeCardsFromPlayerSystem"
 require "sv_PlayCardSystem"
 require "sv_PlaceCardAboveUnitSystem"
 require "sv_SortClientSelectedCards"
+require "sv_ClearServerSelectedSystem"
 
 --	Card Action Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/CardActionSystems/?.lua"
@@ -87,6 +88,7 @@ require "sv_PlayCardTimerSystem"
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/CameraSystems/?.lua"
 require "sv_CameraInterestpointSystem"
 require "sv_CameraNewRoundSystem"
+require "sv_CameraMovePhaseSystem"
 
 --	Misc Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/MiscSystems/?.lua"
@@ -100,7 +102,8 @@ require "sv_OffsetUnitSystem"
 
 --worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(StageSystem)
-worldCreator:AddSystemToCurrentGroup(MapGenerator)
+--worldCreator:AddSystemToCurrentGroup(MapGenerator)
+worldCreator:AddSystemToCurrentGroup(CreateMapSystem)
 worldCreator:AddSystemToCurrentGroup(MapRater)
 worldCreator:AddSystemToCurrentGroup(RiverSystem)
 worldCreator:AddSystemToCurrentGroup(VoidSystem)
@@ -163,6 +166,7 @@ worldCreator:AddSystemToCurrentGroup(PlayCardTimerSystem)
 --worldCreator:AddSystemGroup() << TEMP 0
 worldCreator:AddSystemToCurrentGroup(CameraInterestpointSystem)
 worldCreator:AddSystemToCurrentGroup(CameraNewRoundSystem)
+worldCreator:AddSystemToCurrentGroup(CameraMovePhaseSystem)
 
 worldCreator:AddSystemToCurrentGroup(TotemPoleSystem)
 worldCreator:AddSystemToCurrentGroup(MoveTotemPieceSystem)
@@ -179,3 +183,6 @@ worldCreator:AddSystemToCurrentGroup(LogStartSystem)
 
 
 worldCreator:AddSystemToCurrentGroup(SortClientSelectedCards)	--	Temp
+worldCreator:AddSystemToCurrentGroup(ClearServerSelectedSystem)	--	Temp
+
+

@@ -254,11 +254,24 @@ void GraphicDevice::AddParticleEffect(std::string _name, const vec3 _pos, int _n
 
 void GraphicDevice::RemoveParticleEffect(int _id)
 {
+	m_particleSystems[_id]->EnterEndPhase();
 	m_particlesIdToRemove.push_back(_id);
 }
 
 void GraphicDevice::BufferParticleSystems()
 {
+	// ParticleSystems to remove
+	for (int i = m_particlesIdToRemove.size()-1; i >= 0; i--)
+	{
+		if (m_particleSystems[m_particlesIdToRemove[i]]->ReadyToBeDeleted())
+		{
+			delete(m_particleSystems[m_particlesIdToRemove[i]]);
+			m_particleSystems.erase(m_particlesIdToRemove[i]);
+			m_particlesIdToRemove.erase(m_particlesIdToRemove.begin() + i);
+		}
+	}
+
+	// ParticleSystems to add
 	for (int i = 0; i < m_particleSystemsToLoad.size(); i++)
 	{
 		m_particleSystems.insert(std::pair<int, ParticleSystem*>(m_particleSystemsToLoad[i].Id,new ParticleSystem(
@@ -270,16 +283,10 @@ void GraphicDevice::BufferParticleSystems()
 			m_particleSystemsToLoad[i].SpriteSize,
 			AddTexture(m_particleSystemsToLoad[i].TextureName, GL_TEXTURE1),
 			m_particleSystemsToLoad[i].Color,
-			&m_particleShader)));
+			&m_particleShaders[m_particleSystemsToLoad[i].Name])));
 	}
 	m_particleSystemsToLoad.clear();
 
-	for (int i = 0; i < m_particlesIdToRemove.size(); i++)
-	{
-		delete(m_particleSystems[m_particlesIdToRemove[i]]);
-		m_particleSystems.erase(m_particlesIdToRemove[i]);
-	}
-	m_particlesIdToRemove.clear();
 }
 
 int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color)
@@ -615,4 +622,9 @@ void GraphicDevice::UpdateTextureIndex(GLuint newTexture, GLuint oldTexture)
 			if (m.texID == oldTexture)
 				m.texID = newTexture;
 	}
+}
+
+void GraphicDevice::SetParticleAcceleration(int _id, float x, float y, float z)
+{
+	m_particleSystems[_id]->SetAccel(vec3(x, y, z));
 }

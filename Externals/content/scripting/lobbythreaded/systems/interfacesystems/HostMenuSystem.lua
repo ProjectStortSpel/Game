@@ -261,11 +261,11 @@ end
 
 HostMenuSystem.SpawnMenu = function(self)
 
-	local popup = world:CreateNewEntity()
-	world:CreateComponentAndAddTo("NotificationBox", popup)
-	world:SetComponent(popup, "NotificationBox", "Text", "TEMP TEMP TEMP TEMP")
-	world:SetComponent(popup, "NotificationBox", "ParentMenu", self.Name)
-	self.IsMenuActive = false
+	--local popup = world:CreateNewEntity()
+	--world:CreateComponentAndAddTo("NotificationBox", popup)
+	--world:SetComponent(popup, "NotificationBox", "Text", "TEMP TEMP TEMP TEMP")
+	--world:SetComponent(popup, "NotificationBox", "ParentMenu", self.Name)
+	self.IsMenuActive = true
 
 	local background = self:CreateElement("gamemenubackground", "quad", 0, 0, -2.5, 2.3, 2.8)
 	
