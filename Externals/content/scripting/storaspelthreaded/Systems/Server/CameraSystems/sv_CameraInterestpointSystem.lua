@@ -29,11 +29,11 @@ CameraInterestpointSystem.EntitiesAdded = function(self, dt, taskIndex, taskCoun
 					
 					-- CAMERA INTEREST POINT
 					local cipID = Net.StartPack("Client.SendCIP")
-					Net.WriteFloat(cipID, 6.5)
-					Net.WriteFloat(cipID, 6.5)
+					Net.WriteFloat(cipID, 6.5-dx*2)
+					Net.WriteFloat(cipID, 6.5-dz*2)
 					Net.WriteFloat(cipID, dx)
 					Net.WriteFloat(cipID, dz)
-					Net.WriteFloat(cipID, 1.2)
+					Net.WriteFloat(cipID, 1.0)
 					Net.Send(cipID, ip, port)
 				end
 			end
