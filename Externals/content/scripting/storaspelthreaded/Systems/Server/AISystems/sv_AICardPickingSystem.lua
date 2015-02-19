@@ -1,6 +1,6 @@
 AICardPickingSystem = System()
 AICardPickingSystem.PrintSimulation = 0
-AICardPickingSystem.AICheat = 1
+AICardPickingSystem.AICheat = 0
 AICardPickingSystem.CardsToSimulate = 3
 
 AICardPickingSystem.Initialize = function(self)
@@ -16,33 +16,7 @@ AICardPickingSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("MapSpecs", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("DealingSettings", FilterType.RequiresOneOf)
 	
-	--Console.AddCommand("AICheat", self.CheatMode)
 end
-
---AddAISystem.CheatMode = function(_command, ...)
---	
---	local args = { ... }
---	
---	if #args == 1 then
---		if type(args[1]) == "number" then
---			if -1 < args[1] and args[1] < 2 then
---				self.AICheat = args[1]
---			end
---		end
---	else
---		if self.AICheat == 0 then
---			self.AICheat = 1
---		else
---			self.AICheat = 0
---		end
---	end
---	
---	if self.AICheat == 0 then
---		print("AICheat off")
---	else
---		print("AICheat on")
---	end
---end
 
 AICardPickingSystem.Update = function(self, dt)
 	
@@ -68,7 +42,7 @@ AICardPickingSystem.Update = function(self, dt)
 			local charArray = CombinationMath.Permutations(cardsPerHand, self.CardsToSimulate)
 			
 			local startTime, endTime, timetaken
-						
+			
 			--local charArray = CombinationMath.Permutations(10, 8)
 			
 			--print(string.len(charArray))
@@ -228,13 +202,13 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, _dirX, _dirY, _posX
 			end
 		end
     
-		local forwards = self:GetAllCardsOf(CardSetAI, "Forward")
-		local backwards = self:GetAllCardsOf(CardSetAI, "Backward")
-		local turnLefts = self:GetAllCardsOf(CardSetAI, "TurnLeft")
-		local turnRights = self:GetAllCardsOf(CardSetAI, "TurnRight")
-		local turnArounds = self:GetAllCardsOf(CardSetAI, "TurnAround")
-		local sprints = self:GetAllCardsOf(CardSetAI, "Sprint")
-		local shots = self:GetAllCardsOf(CardSetAI, "SlingShot")
+		--local forwards = self:GetAllCardsOf(CardSetAI, "Forward")
+		--local backwards = self:GetAllCardsOf(CardSetAI, "Backward")
+		--local turnLefts = self:GetAllCardsOf(CardSetAI, "TurnLeft")
+		--local turnRights = self:GetAllCardsOf(CardSetAI, "TurnRight")
+		--local turnArounds = self:GetAllCardsOf(CardSetAI, "TurnAround")
+		--local sprints = self:GetAllCardsOf(CardSetAI, "Sprint")
+		--local shots = self:GetAllCardsOf(CardSetAI, "SlingShot")
 				
 		local posX, posY, dirX, dirY = _posX, _posY, _dirX, _dirY
 				
@@ -252,13 +226,41 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, _dirX, _dirY, _posX
 			local bestCardId, bestDist, bestNextDist
 			local dist, nextDist, prevDist
 						
-			bestCardId = 0
 			
-			bestNextDist, bestDist = 10000, 10000
+			table.insert(cardsToSim, CardSetAI[1])
 			
-			for i = 1, #CardSetAI do
+			local nameCard = world:GetComponent(CardSetAI[1], "CardAction", 0):GetText()
+			
+			-- Simulate playing the ith card.
+			simFellDown, simPosX, simPosY, simDirX, simDirY = self:SimulateCardsFromPos(_unitID, posX, posY, dirX, dirY, cardsToSim)
+			
+			dist = PathfinderHandler.GeneratePath(simPosX, simPosY, targetX, targetY)
+			
+			if simFellDown then
+				local playedCards = #pickedCards
+				local extraCost = cardsToPick - playedCards + 1
+				dist = dist + extraCost
+			end
+			nextDist = PathfinderHandler.GeneratePath(simPosX + simDirX, simPosY + simDirY, _targetX, _targetY)
+				
+			-- Get the distance from a cell as if we have walked backward and compare it to the previous.
+			nextDist = math.min(nextDist, PathfinderHandler.GeneratePath(simPosX - simDirX, simPosY - simDirY, _targetX, _targetY))
+			
+			if simFellDown then
+				local playedCards = #pickedCards
+				local extraCost = cardsToPick - playedCards - 1
+				nextDist = nextDist + extraCost
+			end
+			
+			table.remove(cardsToSim, 1)
+			bestNextDist = nextDist;
+			bestDist = dist;
+			
+			bestCardId = 1
+			
+			for i = 2, #CardSetAI do
 				table.insert(cardsToSim, CardSetAI[i])
-
+				local nameCard = world:GetComponent(CardSetAI[i], "CardAction", 0):GetText()
 				-- Simulate playing the ith card.
 				simFellDown, simPosX, simPosY, simDirX, simDirY = self:SimulateCardsFromPos(_unitID, posX, posY, dirX, dirY, cardsToSim)
 				
@@ -266,7 +268,7 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, _dirX, _dirY, _posX
 				
 				if simFellDown then
 					local playedCards = #pickedCards
-					local extraCost = cardsToPick - playedCards - 1
+					local extraCost = cardsToPick - playedCards + 1
 					dist = dist + extraCost
 				end
 				
@@ -602,8 +604,6 @@ AICardPickingSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, ent
 			local id = playerid:GetInt()
 			local plynum = world:GetComponent(id, "PlayerNumber", 0):GetInt()
 			local card = world:GetComponent(entities[i], "CardAction", 0):GetText()
-		elseif world:EntityHasComponent(entities[i], "DealingSettings") then
-			print("rsitnristn")
 		end
 	end
 end

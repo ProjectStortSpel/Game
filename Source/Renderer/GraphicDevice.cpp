@@ -259,6 +259,13 @@ void GraphicDevice::RemoveParticleEffect(int _id)
 
 void GraphicDevice::BufferParticleSystems()
 {
+	for (int i = 0; i < m_particlesIdToRemove.size(); i++)
+	{
+		delete(m_particleSystems[m_particlesIdToRemove[i]]);
+		m_particleSystems.erase(m_particlesIdToRemove[i]);
+	}
+	m_particlesIdToRemove.clear();
+
 	for (int i = 0; i < m_particleSystemsToLoad.size(); i++)
 	{
 		m_particleSystems.insert(std::pair<int, ParticleSystem*>(m_particleSystemsToLoad[i].Id,new ParticleSystem(
@@ -270,16 +277,10 @@ void GraphicDevice::BufferParticleSystems()
 			m_particleSystemsToLoad[i].SpriteSize,
 			AddTexture(m_particleSystemsToLoad[i].TextureName, GL_TEXTURE1),
 			m_particleSystemsToLoad[i].Color,
-			&m_particleShader)));
+			&m_particleShaders[m_particleSystemsToLoad[i].Name])));
 	}
 	m_particleSystemsToLoad.clear();
 
-	for (int i = 0; i < m_particlesIdToRemove.size(); i++)
-	{
-		delete(m_particleSystems[m_particlesIdToRemove[i]]);
-		m_particleSystems.erase(m_particlesIdToRemove[i]);
-	}
-	m_particlesIdToRemove.clear();
 }
 
 int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color)
@@ -340,12 +341,18 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	// Import Texture
 	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
 	shaderPtr->CheckUniformLocation("diffuseTex", 1);
-	// Import Normal map
-	GLuint normal = AddTexture(obj.norm, GL_TEXTURE2);
-	shaderPtr->CheckUniformLocation("normalTex", 2);
-	// Import Specc Glow map
-	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
-	shaderPtr->CheckUniformLocation("specularTex", 3);
+
+	GLuint normal, specular;
+
+	if (_modelToLoad->RenderType != RENDER_INTERFACE)
+	{
+		// Import Normal map
+		normal = AddTexture(obj.norm, GL_TEXTURE2);
+		shaderPtr->CheckUniformLocation("normalTex", 2);
+		// Import Specc Glow map
+		specular = AddTexture(obj.spec, GL_TEXTURE3);
+		shaderPtr->CheckUniformLocation("specularTex", 3);
+	}
 
 	// Create model
 	Model model;
@@ -609,4 +616,9 @@ void GraphicDevice::UpdateTextureIndex(GLuint newTexture, GLuint oldTexture)
 			if (m.texID == oldTexture)
 				m.texID = newTexture;
 	}
+}
+
+void GraphicDevice::SetParticleAcceleration(int _id, float x, float y, float z)
+{
+	m_particleSystems[_id]->SetAccel(vec3(x, y, z));
 }

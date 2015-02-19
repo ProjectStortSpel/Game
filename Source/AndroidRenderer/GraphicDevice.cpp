@@ -386,13 +386,18 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
 	shaderPtr->CheckUniformLocation("diffuseTex", 1);
 
-	// Import Normal map
-	GLuint normal = AddTexture(obj.norm, GL_TEXTURE2);
-	shaderPtr->CheckUniformLocation("normalTex", 2);
+	GLuint normal, specular;
 
-	// Import Specc Glow map
-	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
-	shaderPtr->CheckUniformLocation("specularTex", 3);
+	if (_modelToLoad->RenderType != RENDER_INTERFACE)
+	{
+		// Import Normal map
+		normal = AddTexture(obj.norm, GL_TEXTURE2);
+		shaderPtr->CheckUniformLocation("normalTex", 2);
+
+		// Import Specc Glow map
+		specular = AddTexture(obj.spec, GL_TEXTURE3);
+		shaderPtr->CheckUniformLocation("specularTex", 3);
+	}
 
 	// Import Mesh
 	Buffer* mesh = AddMesh(obj.mesh, shaderPtr);

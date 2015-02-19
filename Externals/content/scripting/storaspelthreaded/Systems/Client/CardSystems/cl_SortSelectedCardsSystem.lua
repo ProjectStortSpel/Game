@@ -57,6 +57,7 @@ SortSelectedCardsSystem.SelectCard = function(self, card)
 		self:SendSelectedCard(card, index)
 	else
 		world:RemoveComponentFrom("SelectCard", card)
+		self:SendUnselectedCard(card, index)
 	end
 	
 end

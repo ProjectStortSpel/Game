@@ -37,10 +37,10 @@ void ParticleSystem::CreateFire()
 {
 	// Create and allocate buffers A and B for m_posBuf, m_velBuf and m_startTime
 	
+	m_dstBlendFactor = GL_CONSTANT_COLOR;
 	float scale = m_scale;
 
 	m_accel = vec3(0.0);
-	m_type = 0;
 	vec3 v(0.0f);
 	float velocity, theta, phi;
 	float mtime = 0.0f, rate = (m_lifeTime / (float)m_nrParticles);//0.00075f;
@@ -175,9 +175,9 @@ void ParticleSystem::CreateFire()
 void ParticleSystem::CreateSmoke()
 {
 	// Create and allocate buffers A and B for m_posBuf, m_velBuf and m_startTime
+	m_dstBlendFactor = GL_ONE_MINUS_SRC_ALPHA;
 	float scale = m_scale;
 	m_accel = vec3(0.0f, 0.0f, 0.0f) * scale;
-	m_type = 1;
 	vec3 v(0.0f);
 	float velocity, theta, phi;
 	float mtime = 0.0f, rate = (m_lifeTime / (float)m_nrParticles);//0.00075f;
@@ -201,9 +201,9 @@ void ParticleSystem::CreateSmoke()
 		// Pick the direction of the velocity
 		theta = glm::mix(0.0f, (float)M_PI / 6.0f, (float)(rand() % 101) / 100);
 		phi = glm::mix(0.0f, (float)(2 * M_PI), (float)(rand() % 101) / 100);
-		v.x = sinf(theta) * cosf(phi) * 0.2;
-		v.y = cosf(theta) * 0.4;
-		v.z = sinf(theta) * sinf(phi) * 0.2;
+		v.x = sinf(theta) * cosf(phi) * 0.1;
+		v.y = cosf(theta) * 0.15;
+		v.z = sinf(theta) * sinf(phi) * 0.1;
 		// Scale to set the magnitude of the velocity (speed)
 		velocity = glm::mix(1.25f, 1.5f, (float)(rand() % 101) / 100) * 0.0012f;
 		v = v * velocity;
@@ -301,6 +301,9 @@ void ParticleSystem::CreateSmoke()
 
 void ParticleSystem::Render(float _dt)
 {
+	glBlendColor(0.92, 0.92, 0.92, 1.0);
+	glBlendFunc(GL_SRC_ALPHA, m_dstBlendFactor);
+
 	float dt = 1000.f * (_dt);
 	m_elapsedTime += dt;
 	/////////// Update pass ////////////////
@@ -310,7 +313,6 @@ void ParticleSystem::Render(float _dt)
 	m_shader->SetUniVariable("DeltaTime", glfloat, &dt);
 	m_shader->SetUniVariable("ParticleLifetime", glfloat, &m_lifeTime);
 	m_shader->SetUniVariable("Size", glfloat, &m_spriteSize);
-	m_shader->SetUniVariable("Type", glint, &m_type);
 	m_shader->SetUniVariable("Accel", vector3, &m_accel);
 
 	// Disable rendering
