@@ -2,7 +2,7 @@ SortClientSelectedCards = System()
 
 SortClientSelectedCards.Initialize = function(self)
 	--	Set Name
-	self:SetName("AutoPickCards")
+	self:SetName("SortClientSelectedCards")
 	
 	--	Toggle EntitiesAdded
 	self:UsingEntitiesRemoved()

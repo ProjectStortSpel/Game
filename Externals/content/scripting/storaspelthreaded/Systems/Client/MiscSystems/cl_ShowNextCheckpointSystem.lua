@@ -41,24 +41,24 @@ end
 
 ShowNextCheckpointSystem.SpawnSmoke = function(self, oldParticle)
 	
-	--local	X, Y, Z	=	world:GetComponent(oldParticle, "Position", "X"):GetFloat3()
-	--
-	--local	newParticle	=	world:CreateNewEntity()
-	--world:CreateComponentAndAddTo("Position", newParticle)
-	--world:CreateComponentAndAddTo("Color", newParticle)
-	--world:CreateComponentAndAddTo("Particle", newParticle)
-	--
-	--world:GetComponent(newParticle, "Position", "X"):SetFloat3(X, Y, Z)
-	--world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.0, 0.0, 0.0)
-	--
-	--world:GetComponent(newParticle, "Particle", "Name"):SetText("smoke")
-	--world:GetComponent(newParticle, "Particle", "Texture"):SetText("content/textures/smoke1.png")
-	--world:GetComponent(newParticle, "Particle", "Particles"):SetInt(200)
-	--world:GetComponent(newParticle, "Particle", "Lifetime"):SetFloat(3500)
-	--world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.05)
-	--world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(1.0)
-	--world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
-	--
+	local	X, Y, Z	=	world:GetComponent(oldParticle, "Position", "X"):GetFloat3()
+	
+	local	newParticle	=	world:CreateNewEntity()
+	world:CreateComponentAndAddTo("Position", newParticle)
+	world:CreateComponentAndAddTo("Color", newParticle)
+	world:CreateComponentAndAddTo("Particle", newParticle)
+	
+	world:GetComponent(newParticle, "Position", "X"):SetFloat3(X, Y, Z)
+	world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.0, 0.0, 0.0)
+	
+	world:GetComponent(newParticle, "Particle", "Name"):SetText("smoke")
+	world:GetComponent(newParticle, "Particle", "Texture"):SetText("content/textures/smoke1.png")
+	world:GetComponent(newParticle, "Particle", "Particles"):SetInt(15)
+	world:GetComponent(newParticle, "Particle", "Lifetime"):SetFloat(1800)
+	world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.03)
+	world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(1.2)
+	world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
+	
 end
 
 Net.Receive("Client.NewTargetCheckpoint", 
@@ -86,7 +86,6 @@ Net.Receive("Client.NewTargetCheckpoint",
 	world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.05)
 	world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(0.6)
 	world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
-	
 	
 	end
 )
