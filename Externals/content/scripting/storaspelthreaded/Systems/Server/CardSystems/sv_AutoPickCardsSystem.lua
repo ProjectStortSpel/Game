@@ -11,6 +11,7 @@ AutoPickCards.Initialize = function(self)
 	self:AddComponentTypeToFilter("DealtCard", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("AutoPickCards", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("Player", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("DealingSettings", FilterType.RequiresOneOf)
 	
 	self:AddComponentTypeToFilter("HasSelectedCards", FilterType.Excluded)
 	self:AddComponentTypeToFilter("IsSpectator", FilterType.Excluded)
@@ -61,9 +62,15 @@ AutoPickCards.StealCardsFrom = function(self, playerIndex)
 		end
 	end
 	
+	
+	print("DealingSettings AutoPickCards")
+	local DealingSettings = self:GetEntities("DealingSettings")
+	local cardsPerHand, cardsToPick = world:GetComponent(DealingSettings[1], "DealingSettings", 0):GetInt2(0)
+	print("DealingSettings AutoPickCards done")
+	
 	--	Now pick the remaining cards from the 
 	--	"non-selected" cards
-	if nSelectedCards < 5 then
+	if nSelectedCards < cardsToPick then
 		print("Start to pick from non-selected!")
 		local	remainingCards 	= 	self:GetEntities("DealtCard")
 		for i = 1, #remainingCards do
@@ -77,7 +84,7 @@ AutoPickCards.StealCardsFrom = function(self, playerIndex)
 					--	Update counters
 					nSelectedCards				=	nSelectedCards+1
 					
-					if nSelectedCards == 5 then
+					if nSelectedCards == cardsToPick then
 						break
 					end
 				end

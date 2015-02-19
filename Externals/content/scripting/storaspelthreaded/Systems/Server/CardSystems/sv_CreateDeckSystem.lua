@@ -10,8 +10,17 @@ CreateDeckSystem.Initialize = function ( self )
 	--	Set Filter
 	self:AddComponentTypeToFilter("Unit", 		FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("CreateDeck",	FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("DealingSettings", FilterType.RequiresOneOf)
 end
 
+CreateDeckSystem.PostInitialize = function(self)
+
+	local dealingSettingsEntity = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("DealingSettings", dealingSettingsEntity)
+	world:CreateComponentAndAddTo("SyncNetwork", dealingSettingsEntity)
+	world:GetComponent(dealingSettingsEntity, "DealingSettings", "CardsInHand"):SetInt(7)
+	world:GetComponent(dealingSettingsEntity, "DealingSettings", "CardsToPick"):SetInt(4)
+end
 
 CreateDeckSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 
@@ -21,10 +30,13 @@ CreateDeckSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entiti
 		if world:EntityHasComponent( entityId, "CreateDeck") then
 			self:CreateDeck()
 			world:KillEntity( entityId )
-
+			
+			local DealingSettings = self:GetEntities("DealingSettings")
+			local cardsPerHand, cardsToPick = world:GetComponent(DealingSettings[1], "DealingSettings", 0):GetInt2(0)
+			
 			local id = world:CreateNewEntity()
 			world:CreateComponentAndAddTo("DealCards", id)
-			world:SetComponent(id, "DealCards", "NumCards", 8)
+			world:SetComponent(id, "DealCards", "NumCards", cardsPerHand)
 			print("DealCards id = " .. id)
 		end
 	end
