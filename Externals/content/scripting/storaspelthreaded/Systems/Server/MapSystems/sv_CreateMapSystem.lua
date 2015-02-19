@@ -86,6 +86,8 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		local comp = world:GetComponent(newTile, "Model", 0)
 		comp:SetModel("finish", "finish", 0)
 		--posComp:SetFloat3(posX, 1.0, posZ)
+		
+		self.noOfCheckpoints = self.noOfCheckpoints + 1
 
     elseif tiletype == 117 then -- 117 = u = water up
         world:CreateComponentAndAddTo("River", newTile)
