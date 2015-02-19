@@ -45,6 +45,7 @@ require "sv_TakeCardStepFromUnitSystem"
 require "sv_TakeCardsFromPlayerSystem"
 require "sv_PlayCardSystem"
 require "sv_PlaceCardAboveUnitSystem"
+require "sv_SortClientSelectedCards"
 
 --	Card Action Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/CardActionSystems/?.lua"
@@ -174,3 +175,7 @@ worldCreator:AddSystemToCurrentGroup(GameOverSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ServerNetworkMessageSystem)
 worldCreator:AddSystemToCurrentGroup(LogStartSystem)
+
+
+
+worldCreator:AddSystemToCurrentGroup(SortClientSelectedCards)	--	Temp
