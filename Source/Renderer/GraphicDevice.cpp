@@ -617,3 +617,8 @@ void GraphicDevice::UpdateTextureIndex(GLuint newTexture, GLuint oldTexture)
 				m.texID = newTexture;
 	}
 }
+
+void GraphicDevice::SetParticleAcceleration(int _id, float x, float y, float z)
+{
+	m_particleSystems[_id]->SetAccel(vec3(x, y, z));
+}

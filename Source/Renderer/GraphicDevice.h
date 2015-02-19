@@ -136,6 +136,7 @@ namespace Renderer
 
 		void AddParticleEffect(std::string _name, const vec3 _pos, int _nParticles, float _lifeTime, float _scale, float _spriteSize, std::string _texture, vec3 _color, int &_id);
 		void RemoveParticleEffect(int _id);
+		void SetParticleAcceleration(int _id, float x, float y, float z);
 		
 	protected:
 		virtual void InitRenderLists() { return; }
@@ -182,7 +183,6 @@ namespace Renderer
 		// Shaders
 		Shader m_skyBoxShader;
 		std::map<std::string, Shader> m_particleShaders;
-		//Shader m_particleFireShader, m_particleSmokeShader;
 
 		// Skybox
 		SkyBox *m_skybox;
