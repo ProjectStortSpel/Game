@@ -177,47 +177,7 @@ void GraphicsLow::Render()
 	m_forwardShader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
 
 	for (int i = 0; i < m_modelsForward.size(); i++)
-	{
-		std::vector<mat4> modelViewVector(m_modelsForward[i].instances.size());
-		std::vector<mat3> normalMatVector(m_modelsForward[i].instances.size());
-
-		int nrOfInstances = 0;
-
-		for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
-		{
-			if (m_modelsForward[i].instances[j].active) // IS MODEL ACTIVE?
-			{
-				mat4 modelMatrix;
-				if (m_modelsForward[i].instances[j].modelMatrix == NULL)
-					modelMatrix = glm::translate(glm::vec3(1));
-				else
-					modelMatrix = *m_modelsForward[i].instances[j].modelMatrix;
-
-				mat4 modelViewMatrix;
-				modelViewMatrix = viewMatrix * modelMatrix;
-
-				modelViewVector[nrOfInstances] = modelViewMatrix;
-
-				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-				normalMatVector[nrOfInstances] = normalMatrix;
-
-				nrOfInstances++;
-			}
-		}
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
-
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].norID);
-
-		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].speID);
-
-		m_modelsForward[i].bufferPtr->drawInstanced(0, m_modelsForward[i].instances.size(), &modelViewVector, &normalMatVector);
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
-
+		m_modelsForward[i].Draw(viewMatrix, mat4(1));
 
 	//------PARTICLES---------
 	glEnable(GL_POINT_SPRITE);
