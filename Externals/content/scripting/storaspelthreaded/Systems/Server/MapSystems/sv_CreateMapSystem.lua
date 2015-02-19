@@ -99,6 +99,8 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		local comp = world:GetComponent(newTile, "Model", 0)
 		comp:SetModel("riverstraight", "riverstraight", 0)
 
+		world:GetComponent(newTile, "TileOffset", "Offset"):SetFloat(0.2)
+		
 		self.waterTiles[#self.waterTiles+1]=newTile
 		
     elseif tiletype == 100 then -- 100 = d = water down
@@ -111,6 +113,8 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		local comp = world:GetComponent(newTile, "Model", 0)
 		comp:SetModel("riverstraight", "riverstraight", 0)
 
+		world:GetComponent(newTile, "TileOffset", "Offset"):SetFloat(0.2)
+		
 		self.waterTiles[#self.waterTiles+1]=newTile
 		
     elseif tiletype == 108 then -- 108 = l = water left
@@ -121,6 +125,8 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		local comp = world:GetComponent(newTile, "Model", 0)
 		comp:SetModel("riverstraight", "riverstraight", 0)
 
+		world:GetComponent(newTile, "TileOffset", "Offset"):SetFloat(0.2)
+		
 		self.waterTiles[#self.waterTiles+1]=newTile
 		
     elseif tiletype == 114 then -- 114 = r = water right
