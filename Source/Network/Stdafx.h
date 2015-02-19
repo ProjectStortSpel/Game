@@ -6,8 +6,6 @@
 #include <inttypes.h>
 #include <cstring>
 
-#include "Packet.h"
-
 // Includes
 #ifdef WIN32
 //#ifdef _DEBUG
@@ -24,13 +22,8 @@
 #define NetSleep(x) usleep(30 * 1000);
 #endif
 
-
-#define NetworkHookPlaceholders std::placeholders::_1, std::placeholders::_2, std::placeholders::_3
-
 #define MAX_PACKET_SIZE 65535 // Max value for unsigned short
 #define SAFE_DELETE(x) if(x) { delete x; x = 0; }
-#define SAFE_DELETE_PACKET(x) if(x) { if (x->Data) { delete x->Data; x->Data = 0; } delete x; x = 0; }
-
 
 #define TYP_INIT 0 
 #define TYP_SMLE 1 
@@ -38,9 +31,46 @@
 
 namespace Network
 {
+	enum LogSeverity
+	{
+		Info,
+		Warning,
+		Error
+	};
+
+
 	unsigned long long hton_ll(unsigned long long src);
 	unsigned long long ntoh_ll(unsigned long long src);
 	static int NET_DEBUG = 0;
+
+#pragma warning(push)
+#pragma warning(disable: 4996)
+
+	template<typename T, typename... Args>
+	static void DebugLog(const char* _msg, LogSeverity _severity, T _value, Args... _args)
+	{
+		char buff[100];
+		sprintf(buff, _msg, _value);
+
+		DebugLog(buff, _severity, _args...);
+	}
+
+	template<typename T>
+	static void DebugLog(const char* _msg, LogSeverity _severity, T _value)
+	{
+		char buff[100];
+		sprintf(buff, _msg, _value);
+		
+		SDL_Log(_msg);
+	}
+
+	static void DebugLog(const char* _msg, LogSeverity _severity)
+	{
+		SDL_Log(_msg);
+	}
+
+#pragma warning(pop)
+
 }
 
 

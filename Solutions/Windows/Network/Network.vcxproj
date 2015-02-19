@@ -23,6 +23,7 @@
     <ClCompile Include="..\..\..\Source\Network\ClientNetwork.cpp" />
     <ClCompile Include="..\..\..\Source\Network\ISocket.cpp" />
     <ClCompile Include="..\..\..\Source\Network\LinSocket.cpp" />
+    <ClCompile Include="..\..\..\Source\Network\NetConnection.cpp" />
     <ClCompile Include="..\..\..\Source\Network\Packet.cpp" />
     <ClCompile Include="..\..\..\Source\Network\PacketHandler.cpp" />
     <ClCompile Include="..\..\..\Source\Network\ServerNetwork.cpp" />
@@ -34,6 +35,7 @@
     <ClInclude Include="..\..\..\Source\Network\ClientNetwork.h" />
     <ClInclude Include="..\..\..\Source\Network\ISocket.h" />
     <ClInclude Include="..\..\..\Source\Network\LinSocket.h" />
+    <ClInclude Include="..\..\..\Source\Network\NetConnection.h" />
     <ClInclude Include="..\..\..\Source\Network\NetTypeMessageID.h" />
     <ClInclude Include="..\..\..\Source\Network\Network.h" />
     <ClInclude Include="..\..\..\Source\Network\Packet.h" />
