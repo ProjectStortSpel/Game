@@ -1,7 +1,6 @@
 DealCardsSystem = System()
 DealCardsSystem.DealCard = false
 DealCardsSystem.FirstDeal = true
---DealCardsSystem.AICheat = 1
 
 DealCardsSystem.Initialize = function ( self )
 	--	Set Name
@@ -15,6 +14,7 @@ DealCardsSystem.Initialize = function ( self )
 	self:AddComponentTypeToFilter("Player", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("AI", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("CardAction", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("DealingSettings", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("UsedCard", FilterType.Excluded)
 	self:AddComponentTypeToFilter("CardStep", FilterType.Excluded)
 	self:AddComponentTypeToFilter("DealtCard", FilterType.Excluded)
@@ -132,7 +132,11 @@ Net.Receive("Server.SelectCards",
 				
 		--	Check all cards from the player
 		local	currentPlayer, pIP, pPORT
-		for i = 1, 5 do
+		
+		local DealingSettings = DealCardsSystem:GetEntities("DealingSettings")
+		local cardsPerHand, cardsToPick = world:GetComponent(DealingSettings[1], "DealingSettings", 0):GetInt2(0)
+		
+		for i = 1, cardsToPick do
 			
 			--	Get the current card
 			local	tempCard	=	Net.ReadInt(id)
@@ -168,7 +172,7 @@ Net.Receive("Server.SelectCards",
 		local	pUnit	=	world:GetComponent(currentPlayer, "UnitEntityId", "Id"):GetInt()
 		world:CreateComponentAndAddTo("HasSelectedCards", currentPlayer)
 		
-		for n = 1, 5 do
+		for n = 1, cardsToPick do
 			local	cAction	=	world:GetComponent(selectedCards[n], "CardAction", "Action"):GetText()
 			local	cPrio	=	world:GetComponent(selectedCards[n], "CardPrio", "Prio"):GetInt()
 			

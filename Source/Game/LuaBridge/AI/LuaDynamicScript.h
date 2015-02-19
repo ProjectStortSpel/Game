@@ -30,6 +30,8 @@ namespace LuaBridge
 				to_add.ruleType = ( RuleType )t;
 				to_add.script = s;
 				to_add.weight = w;
+
+				return 0;
 			}
 		};
 

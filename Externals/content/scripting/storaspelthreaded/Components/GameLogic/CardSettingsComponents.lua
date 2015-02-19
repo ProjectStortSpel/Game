@@ -2,6 +2,15 @@
 --	components that are needed
 --	for the cards
 
+-- Dealing Settings Component
+local DealingSettingsComponent = ComponentType()
+DealingSettingsComponent.SyncNetwork = true
+DealingSettingsComponent.Name = "DealingSettings"
+DealingSettingsComponent.TableType = TableType.Map
+DealingSettingsComponent:AddVariable("CardsInHand", ByteSize.Int)
+DealingSettingsComponent:AddVariable("CardsToPick", ByteSize.Int)
+worldCreator:AddComponentType(DealingSettingsComponent)
+
 -- Card Component
 local CardComponent = ComponentType()
 CardComponent.SyncNetwork = true
