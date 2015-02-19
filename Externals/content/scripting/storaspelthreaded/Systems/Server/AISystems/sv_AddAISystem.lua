@@ -72,7 +72,7 @@ AddAISystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 				local param = PFParam()
 				local object = "Void"
 				local onTheSpotValue = 0.0
-				local weight = 30
+				local weight = 1
 				local length = 2
 				local power = 2
 				
