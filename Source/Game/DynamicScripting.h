@@ -67,4 +67,5 @@ private:
 	std::vector<Rule>	m_ruleBook;
 	std::vector<Rule>	m_script;
 };
+
 #endif //DYNAMICSCRIPTING_H
