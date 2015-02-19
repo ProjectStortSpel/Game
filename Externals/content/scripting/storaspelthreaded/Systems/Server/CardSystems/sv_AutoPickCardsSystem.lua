@@ -105,14 +105,8 @@ AutoPickCards.StealCardsFrom = function(self, playerIndex)
 		world:CreateComponentAndAddTo("CardStep", pickedCards[cardIndex])
 		world:GetComponent(pickedCards[cardIndex], "CardStep", "Step"):SetInt(cardIndex)
 		world:GetComponent(pickedCards[cardIndex], "CardStep", "UnitEntityId"):SetInt(playerUnit)
-		
-		Net.SendEntityKill(pickedCards[cardIndex], playerIp, playerPort)
-	end
-	
-	local allSelectedCards	=	self:GetEntities("ServerSelectedCard")
-	for nIndex = 1, #allSelectedCards do
-		if world:EntityHasComponent(allSelectedCards[nIndex], "ServerSelectedCard") then
-			world:RemoveComponentFrom("ServerSelectedCard", allSelectedCards[nIndex])
+		if not world:EntityHasComponent(allSelectedCards[nIndex], "ServerSelectedCard") then
+			Net.SendEntityKill(pickedCards[cardIndex], playerIp, playerPort)
 		end
 	end
 	
@@ -132,6 +126,14 @@ AutoPickCards.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 			
 			for tPlayer = 1, #nonReadyPlayers do
 				self:StealCardsFrom(nonReadyPlayers[tPlayer])
+			end
+			
+			local allSelectedCards	=	self:GetEntities("ServerSelectedCard")
+			for nIndex = 1, #allSelectedCards do
+				if world:EntityHasComponent(allSelectedCards[nIndex], "ServerSelectedCard") then
+					world:RemoveComponentFrom("ServerSelectedCard", allSelectedCards[nIndex])
+					Net.SendEntityKill(allSelectedCards[nIndex], playerIp, playerPort)
+				end
 			end
 			
 			local id = world:CreateNewEntity()
