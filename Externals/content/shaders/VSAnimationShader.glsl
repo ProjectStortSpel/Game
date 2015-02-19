@@ -75,6 +75,6 @@ void main()
 		joint3 = (JointToMatrix(joints[int(VertexJointIndex.z)]) * GetJointMatrix(anim.length()-int(VertexJointIndex.z)-1)) * VertexJointWeight.z;
 	if (VertexJointWeight.w > 0)
 		joint4 = (JointToMatrix(joints[int(VertexJointIndex.w)]) * GetJointMatrix(anim.length()-int(VertexJointIndex.w)-1)) * VertexJointWeight.w;
-	gl_Position = VP * M * joint1 * joint2 * joint3 * joint4 * vec4(VertexPosition, 1.0);
+	gl_Position = VP * M * (joint1 + joint2 + joint3 + joint4) * vec4(VertexPosition, 1.0);
 	//instanceID = gl_InstanceID;
 }

@@ -93,6 +93,7 @@ namespace Renderer
 
 		void PollEvent(SDL_Event _event);
 		virtual void Update(float _dt){};// = 0;
+		void Update2(float _dt, AModel* modelptr = nullptr);// = 0;
 		virtual void Render(){};// = 0;
 
 		void ResizeWindow(int _width, int _height);

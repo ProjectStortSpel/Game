@@ -295,6 +295,9 @@ bool GraphicsHigh::InitLightBuffers()
 
 void GraphicsHigh::Update(float _dt)
 {
+	if (m_modelsAnimated.size() > 0)
+		Update2(_dt, &m_modelsAnimated[0]);
+
 	m_dt = _dt; m_fps = 1 / _dt;
 
 	m_camera->Update(_dt);

@@ -379,6 +379,28 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 }
 mat4 matrixes[100];
 
+void GraphicDevice::Update2(float _dt, AModel* modelptr)
+{
+	if (modelptr != nullptr)
+	{
+		for (int j = 0; j < modelptr->animation.size(); j++)
+		{
+			mat4 jmat = scale(vec3(0.1, 0.1, 0.1));
+			for (int k = j; k < modelptr->animation.size(); k++)
+			{
+				Joint joint = modelptr->animation[k];
+				jmat = mat4(joint.x0, joint.y0, joint.z0, joint.w0,
+					joint.x1, joint.y1, joint.z1, joint.w1,
+					joint.x2, joint.y2, joint.z2, joint.w2,
+					joint.x3, joint.y3, joint.z3, 1
+					) * jmat;
+				k += modelptr->animation[k].parent;
+			}
+			matrixes[j] = mat4(jmat);
+		}
+	}
+}
+
 void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 {
 	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
