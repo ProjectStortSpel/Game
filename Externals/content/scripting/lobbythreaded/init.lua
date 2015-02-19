@@ -31,7 +31,6 @@ require "OptionMenuSystem"
 require "ConnectMenuSystem"
 require "HostMenuSystem"
 require "IPConnectSystem"
-require "NotificationBoxSystem"
 
 -- Templates
 package.path = package.path .. ";../../../Externals/content/scripting/lobbythreaded/templates/?.lua"
@@ -49,7 +48,5 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(HostMenuSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(IPConnectSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(NotificationBoxSystem)
 
 end

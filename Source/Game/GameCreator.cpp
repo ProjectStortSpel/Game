@@ -374,9 +374,9 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
         m_graphicalSystems.push_back(graphicalSystem);
         worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 
-		graphicalSystem = new AModelSystem(m_graphics);
-		m_graphicalSystems.push_back(graphicalSystem);
-		worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
+		//graphicalSystem = new AModelSystem(m_graphics);
+		//m_graphicalSystems.push_back(graphicalSystem);
+		//worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
     }
     
     if (_worldType == WorldType::Client || _isMainWorld)
