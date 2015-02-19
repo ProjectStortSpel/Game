@@ -99,6 +99,8 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		local comp = world:GetComponent(newTile, "Model", 0)
 		comp:SetModel("riverstraight", "riverstraight", 0)
 
+		world:GetComponent(newTile, "TileOffset", "Offset"):SetFloat(0.2)
+		
 		self.waterTiles[#self.waterTiles+1]=newTile
 		
     elseif tiletype == 100 then -- 100 = d = water down
@@ -111,6 +113,8 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		local comp = world:GetComponent(newTile, "Model", 0)
 		comp:SetModel("riverstraight", "riverstraight", 0)
 
+		world:GetComponent(newTile, "TileOffset", "Offset"):SetFloat(0.2)
+		
 		self.waterTiles[#self.waterTiles+1]=newTile
 		
     elseif tiletype == 108 then -- 108 = l = water left
@@ -121,6 +125,8 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		local comp = world:GetComponent(newTile, "Model", 0)
 		comp:SetModel("riverstraight", "riverstraight", 0)
 
+		world:GetComponent(newTile, "TileOffset", "Offset"):SetFloat(0.2)
+		
 		self.waterTiles[#self.waterTiles+1]=newTile
 		
     elseif tiletype == 114 then -- 114 = r = water right
@@ -206,7 +212,7 @@ CreateMapSystem.AddTinyStone = function(self, posX, posZ)
 	world:GetComponent(tinyStone, "Rotation", 0):SetFloat3(0.0, 0.0, 0.0)
 	local randScale = math.random() + 0.5
 	world:GetComponent(tinyStone, "Scale", 0):SetFloat3(0.2*randScale, 0.2*randScale, 0.2*randScale)
-	world:GetComponent(tinyStone, "Model", 0):SetModel("stone", "stone", 0)
+	world:GetComponent(tinyStone, "Model", 0):SetModel("stone", "stone", 8)
 	
 	--self:AddTinyStone(randX, randZ)
 end 
