@@ -152,13 +152,23 @@ bool GraphicsHigh::InitShaders()
 	m_shadowShaderForward.AddShader("content/shaders/shadowShaderForwardFS.glsl", GL_FRAGMENT_SHADER);
 	m_shadowShaderForward.FinalizeShaderProgram();
 
-	// Particle shader
-	m_particleShader.InitShaderProgram();
-	m_particleShader.AddShader("content/shaders/particleShaderVS.glsl", GL_VERTEX_SHADER);
-	m_particleShader.AddShader("content/shaders/particleShaderFS.glsl", GL_FRAGMENT_SHADER);
-	const char * outputNames[] = { "Position", "Velocity", "StartTime" };
-	glTransformFeedbackVaryings(m_particleShader.GetShaderProgram(), 3, outputNames, GL_SEPARATE_ATTRIBS);
-	m_particleShader.FinalizeShaderProgram();
+	// ------Particle shaders---------
+		const char * outputNames[] = { "Position", "Velocity", "StartTime" };
+		Shader particleShader;
+		particleShader.InitShaderProgram();
+		particleShader.AddShader("content/shaders/particles/particleFireVS.glsl", GL_VERTEX_SHADER);
+		particleShader.AddShader("content/shaders/particles/particleFireFS.glsl", GL_FRAGMENT_SHADER);
+		glTransformFeedbackVaryings(particleShader.GetShaderProgram(), 3, outputNames, GL_SEPARATE_ATTRIBS);
+		particleShader.FinalizeShaderProgram();
+		m_particleShaders["fire"] = particleShader;
+
+		particleShader.InitShaderProgram();
+		particleShader.AddShader("content/shaders/particles/particleSmokeVS.glsl", GL_VERTEX_SHADER);
+		particleShader.AddShader("content/shaders/particles/particleSmokeFS.glsl", GL_FRAGMENT_SHADER);
+		glTransformFeedbackVaryings(particleShader.GetShaderProgram(), 3, outputNames, GL_SEPARATE_ATTRIBS);
+		particleShader.FinalizeShaderProgram();
+		m_particleShaders["smoke"] = particleShader;
+	// -------------------------------
 
 	return true;
 }
@@ -231,8 +241,9 @@ bool GraphicsHigh::InitBuffers()
 	//Shadow forward shader
 	m_shadowShaderForward.CheckUniformLocation("diffuseTex", 1);
 
-	//Particle shader
-	m_particleShader.CheckUniformLocation("ParticleTex", 1);
+	//Particle shaders
+	for (std::map<std::string, Shader>::iterator it = m_particleShaders.begin(); it != m_particleShaders.end(); ++it)
+		it->second.CheckUniformLocation("ParticleTex", 1);
 
 	return true;
 }
@@ -552,21 +563,22 @@ void GraphicsHigh::Render()
 
 	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 
-	m_particleShader.UseProgram();
-
-	m_particleShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
-
 	glActiveTexture(GL_TEXTURE1);
 
 	for (std::map<int, ParticleSystem*>::iterator it = m_particleSystems.begin(); it != m_particleSystems.end(); ++it)
 	{
+		Shader* thisShader = it->second->GetShaderPtr();
+		thisShader->UseProgram();
+		
+		thisShader->SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
+
 		glBindTexture(GL_TEXTURE_2D, it->second->GetTexHandle());
 
 		mat4 Model = glm::translate(it->second->GetWorldPos());
 		mat4 ModelView = viewMatrix * Model;
 
-		m_particleShader.SetUniVariable("ModelView", mat4x4, &ModelView);
-		m_particleShader.SetUniVariable("BlendColor", vector3, it->second->GetColor());
+		thisShader->SetUniVariable("ModelView", mat4x4, &ModelView);
+		thisShader->SetUniVariable("BlendColor", vector3, it->second->GetColor());
 
 		it->second->Render(m_dt);
 	}

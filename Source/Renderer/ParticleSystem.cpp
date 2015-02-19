@@ -41,7 +41,6 @@ void ParticleSystem::CreateFire()
 	float scale = m_scale;
 
 	m_accel = vec3(0.0);
-	m_type = 0;
 	vec3 v(0.0f);
 	float velocity, theta, phi;
 	float mtime = 0.0f, rate = (m_lifeTime / (float)m_nrParticles);//0.00075f;
@@ -179,7 +178,6 @@ void ParticleSystem::CreateSmoke()
 	m_dstBlendFactor = GL_ONE_MINUS_SRC_ALPHA;
 	float scale = m_scale;
 	m_accel = vec3(0.0f, 0.0f, 0.0f) * scale;
-	m_type = 1;
 	vec3 v(0.0f);
 	float velocity, theta, phi;
 	float mtime = 0.0f, rate = (m_lifeTime / (float)m_nrParticles);//0.00075f;
@@ -315,7 +313,6 @@ void ParticleSystem::Render(float _dt)
 	m_shader->SetUniVariable("DeltaTime", glfloat, &dt);
 	m_shader->SetUniVariable("ParticleLifetime", glfloat, &m_lifeTime);
 	m_shader->SetUniVariable("Size", glfloat, &m_spriteSize);
-	m_shader->SetUniVariable("Type", glint, &m_type);
 	m_shader->SetUniVariable("Accel", vector3, &m_accel);
 
 	// Disable rendering
