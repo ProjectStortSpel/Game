@@ -315,6 +315,14 @@ void GraphicsHigh::Update(float _dt)
 	BufferSurfaces();
 	BufferModelTextures();
 	BufferParticleSystems();
+
+	for (int i = 0; i < m_modelsAnimated.size(); i++)
+	{
+		if (m_modelsAnimated[i].active) // IS MODEL ACTIVE?
+		{
+			m_modelsAnimated[i].Update(_dt);
+		}
+	}
 }
 
 void GraphicsHigh::WriteShadowMapDepth()

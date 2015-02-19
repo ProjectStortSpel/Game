@@ -5,6 +5,7 @@
 
 namespace Renderer
 {
+
 	struct Joint
 	{
 		float x0, y0, z0, w0;
@@ -12,9 +13,9 @@ namespace Renderer
 		float x2, y2, z2, w2;
 		float x3, y3, z3, parent;
 		Joint(	float _x0, float _y0, float _z0, float _w0,
-					float _x1, float _y1, float _z1, float _w1,
-					float _x2, float _y2, float _z2, float _w2,
-					float _x3, float _y3, float _z3, float _parent)
+				float _x1, float _y1, float _z1, float _w1,
+				float _x2, float _y2, float _z2, float _w2,
+				float _x3, float _y3, float _z3, float _parent)
 		{
 			x0 = _x0;
 			y0 = _y0;
@@ -38,13 +39,32 @@ namespace Renderer
 	struct KeyFrame
 	{
 		int frame;
-		int joint;
 		glm::mat4 mat;
-		KeyFrame(int _frame, int _joint, glm::mat4 _mat)
+		KeyFrame(int _frame, glm::mat4 _mat)
 		{
 			frame = _frame;
-			joint = _joint;
 			mat = _mat;
+		}
+	};
+
+	struct JointAnim
+	{
+		int jointId;
+		std::vector<KeyFrame> keyFrames;
+		JointAnim(int _jointId)
+		{
+			jointId = _jointId;
+		}
+	};
+
+	struct Animation
+	{
+		std::string name;
+		int maxFrame;
+		std::vector<JointAnim> joints;
+		Animation(std::string _name)
+		{
+			name = _name;
 		}
 	};
 
@@ -54,6 +74,10 @@ namespace Renderer
 		AModel(int _id, bool _active, glm::mat4* _model, float* _color, Buffer* buffer, GLuint tex, GLuint nor, GLuint spe);
 		AModel();
 		~AModel();
+
+		void Update(float _dt);
+
+		void AddKeyFrame(std::string _animname, int _frame, int _joint, glm::mat4 _mat);
 
 		int id;
 		bool active;
@@ -67,7 +91,14 @@ namespace Renderer
 		GLuint animBuffer;
 		std::vector<Joint> joints;
 		std::vector<Joint> animation;
-		//std::vector<Joint> ;
+		std::vector<Animation> animations;
+		int animId;
+
+		int currentframe;
+		float clock;
+	private:
+		Animation* GetAnimationPointer(std::string _animname);
+		JointAnim* GetJointAnimPointer(int _jointId, Animation* _animptr);
 	};
 }
 

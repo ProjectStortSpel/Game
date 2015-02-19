@@ -416,6 +416,7 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 			joints[i].mat[3][0], joints[i].mat[3][1], joints[i].mat[3][2], joints[i].parent)
 		);
 	}
+
 	// Add animation base
 	for (int i = 0; i < joints.size(); i++)
 	{
@@ -429,19 +430,12 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 	}
 
 	// Import Animations
-	std::vector<AnimData> anims = ModelLoader::importAnimation(obj.anim[0]);
-
-	for (int i = 0; i < anims.size(); i++)
+	for (int i = 0; i < obj.anim.size(); i++)
 	{
-		if (anims[i].frame == 1)
-		{ 
-			int index = model.animation.size() - anims[i].joint - 1;
-			model.animation[index] = Joint(
-				anims[i].mat[0][0], anims[i].mat[0][1], anims[i].mat[0][2], anims[i].mat[0][3],
-				anims[i].mat[1][0], anims[i].mat[1][1], anims[i].mat[1][2], anims[i].mat[1][3],
-				anims[i].mat[2][0], anims[i].mat[2][1], anims[i].mat[2][2], anims[i].mat[2][3],
-				anims[i].mat[3][0], anims[i].mat[3][1], anims[i].mat[3][2], model.animation[index].parent
-				);
+		std::vector<AnimData> anim = ModelLoader::importAnimation(obj.anim[i]);
+		for (int j = 0; j < anim.size(); j++)
+		{
+			model.AddKeyFrame(obj.anim[i], anim[j].frame, anim[j].joint, anim[j].mat);
 		}
 	}
 
@@ -474,17 +468,17 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 	//	LoadModel("content/models/stone/", "stone.object", &matrixes[j], 0, model.color);
 	//}
 
-	//for (int j = 0; j < model.joints.size(); j++)
-	//{
-	//	Joint joint = model.joints[j];
-	//	mat4 jmat = mat4(joint.x0, joint.y0, joint.z0, joint.w0,
-	//		joint.x1, joint.y1, joint.z1, joint.w1,
-	//		joint.x2, joint.y2, joint.z2, joint.w2,
-	//		joint.x3, joint.y3, joint.z3, 1
-	//		) * scale(vec3(0.1, 0.1, 0.1));
-	//	matrixes[j] = jmat;
-	//	LoadModel("content/models/stone/", "stone.object", &matrixes[j], 0, model.color);
-	//}
+	for (int j = 0; j < model.joints.size(); j++)
+	{
+		Joint joint = model.joints[j];
+		mat4 jmat = glm::inverse(mat4(joint.x0, joint.y0, joint.z0, joint.w0,
+			joint.x1, joint.y1, joint.z1, joint.w1,
+			joint.x2, joint.y2, joint.z2, joint.w2,
+			joint.x3, joint.y3, joint.z3, 1
+			)) * scale(vec3(0.1, 0.1, 0.1));
+		matrixes[j] = jmat;
+		LoadModel("content/models/stone/", "stone.object", &matrixes[j], 0, model.color);
+	}
 }
 
 bool GraphicDevice::RemoveModel(int _id)
