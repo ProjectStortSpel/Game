@@ -378,6 +378,7 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	modelList->push_back(model);
 }
 mat4 matrixes[100];
+float color[300];
 
 void GraphicDevice::Update2(float _dt, AModel* modelptr)
 {
@@ -499,8 +500,18 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 			joint.x3, joint.y3, joint.z3, 1
 			)) * scale(vec3(0.1, 0.1, 0.1));
 		matrixes[j] = jmat;
-		LoadModel("content/models/stone/", "stone.object", &matrixes[j], 0, model.color);
+		float col = 1.00f;
+		if (model.joints[j].parent >= 0)
+			col = color[(int)(model.joints[j].parent) * 3 + 0] - 0.1f;
+
+		color[j * 3 + 0] = col;
+		color[j * 3 + 1] = col;
+		color[j * 3 + 2] = col;
+		LoadModel("content/models/stone/", "stone.object", &matrixes[j], 0, &color[j * 3]);
 	}
+	color[0] = 1;
+	color[1] = 0;
+	color[2] = 0;
 }
 
 bool GraphicDevice::RemoveModel(int _id)
