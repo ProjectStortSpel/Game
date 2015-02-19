@@ -164,10 +164,10 @@ bool GraphicsHigh::InitShaders()
 }
 void GraphicsHigh::InitRenderLists()
 {
-	m_renderLists.push_back(RenderList(RENDER_DEFERRED, &m_modelsDeferred, &m_deferredShader1));
 	m_renderLists.push_back(RenderList(RENDER_FORWARD, &m_modelsForward, &m_forwardShader));
 	m_renderLists.push_back(RenderList(RENDER_VIEWSPACE, &m_modelsViewspace, &m_viewspaceShader));
 	m_renderLists.push_back(RenderList(RENDER_INTERFACE, &m_modelsInterface, &m_interfaceShader));
+	m_renderLists.push_back(RenderList(RENDER_DEFERRED, &m_modelsDeferred, &m_deferredShader1));
 }
 bool GraphicsHigh::InitDeferred()
 {
