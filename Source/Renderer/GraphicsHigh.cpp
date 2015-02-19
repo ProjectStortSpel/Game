@@ -164,10 +164,10 @@ bool GraphicsHigh::InitShaders()
 }
 void GraphicsHigh::InitRenderLists()
 {
-	m_renderLists.push_back(RenderList(RENDER_DEFERRED, &m_modelsDeferred, &m_deferredShader1));
 	m_renderLists.push_back(RenderList(RENDER_FORWARD, &m_modelsForward, &m_forwardShader));
 	m_renderLists.push_back(RenderList(RENDER_VIEWSPACE, &m_modelsViewspace, &m_viewspaceShader));
 	m_renderLists.push_back(RenderList(RENDER_INTERFACE, &m_modelsInterface, &m_interfaceShader));
+	m_renderLists.push_back(RenderList(RENDER_DEFERRED, &m_modelsDeferred, &m_deferredShader1));
 }
 bool GraphicsHigh::InitDeferred()
 {
@@ -569,9 +569,6 @@ void GraphicsHigh::Render()
 	glEnable(GL_POINT_SPRITE);
 	glDepthMask(GL_FALSE);
 
-	glBlendColor(0.95, 0.95, 0.95, 1.0);
-	glBlendFunc(GL_SRC_ALPHA, GL_CONSTANT_COLOR);
-	
 	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 
 	m_particleShader.UseProgram();

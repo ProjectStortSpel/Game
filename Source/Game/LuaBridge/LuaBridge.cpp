@@ -16,6 +16,7 @@
 #include "FileLoader/LuaFileLoader.h"
 #include "Console/LuaConsole.h"
 #include "Network/LuaNetwork.h"
+#include "Resource/LuaResource.h"
 
 namespace LuaBridge
 {
@@ -48,6 +49,8 @@ namespace LuaBridge
     LuaNetwork::Embed(L);
     //LuaClientNetwork::Embed();
     //LuaServerNetwork::Embed();
+
+	LuaResource::Embed(L);
 
 	PotentialField::Embed(L);
 	PathfinderHandler::Embed(L);

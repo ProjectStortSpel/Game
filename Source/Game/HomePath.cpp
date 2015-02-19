@@ -17,7 +17,8 @@ namespace HomePath
 
 	std::string GetGameModePath()
 	{
-		std::string path = "content/gamemodes/";
+		//std::string path = "content/gamemodes/";
+		std::string path = "content/scripting/";
 		path.append(gamemode);
 		path.append("/");
 		return path;
@@ -49,7 +50,25 @@ namespace HomePath
 	std::string GetSecondaryGameModePath()
 	{
 		std::string path = GetSecondaryHomePath();
-		path.append("gamemodes/");
+		//path.append("gamemodes/");
+		path.append("scripting/");
+		path.append(gamemode);
+		path.append("/");
+		return path;
+	}
+
+	std::string GetDownloadHomePath()
+	{
+		std::string path = GetSecondaryHomePath();
+		path.append("downloads/");
+		return path;
+	}
+
+	std::string GetDownloadGameModePath()
+	{
+		std::string path = GetSecondaryHomePath();
+		//path.append("downloads/gamemodes/");
+		path.append("downloads/scripting/");
 		path.append(gamemode);
 		path.append("/");
 		return path;
@@ -60,4 +79,38 @@ namespace HomePath
 		gamemode = _gamemode;
 	}
 
+	std::vector<std::string> GetPaths()
+	{
+		std::vector<std::string> paths;
+		//Gamemode paths
+		paths.push_back(GetGameModePath());
+		paths.push_back(GetSecondaryGameModePath());
+		paths.push_back(GetDownloadGameModePath());
+
+		//Homepaths
+		paths.push_back(GetHomePath());
+		paths.push_back(GetSecondaryHomePath());
+		paths.push_back(GetDownloadHomePath());
+		return paths;
+	}
+
+	std::vector<std::string> GetGameModePaths()
+	{
+		std::vector<std::string> paths;
+		//Gamemode paths
+		paths.push_back(GetGameModePath());
+		paths.push_back(GetSecondaryGameModePath());
+		paths.push_back(GetDownloadGameModePath());
+		return paths;
+	}
+
+	std::vector<std::string> GetHomePaths()
+	{
+		std::vector<std::string> paths;
+		//Homepaths
+		paths.push_back(GetHomePath());
+		paths.push_back(GetSecondaryHomePath());
+		paths.push_back(GetDownloadHomePath());
+		return paths;
+	}
 }

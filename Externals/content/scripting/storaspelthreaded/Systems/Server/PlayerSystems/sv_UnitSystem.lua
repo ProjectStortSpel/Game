@@ -15,6 +15,8 @@ UnitSystem.Initialize = function(self)
 	
 	self:AddComponentTypeToFilter("NeedUnit", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("RemoveUnit", FilterType.RequiresOneOf)
+	
+	self:AddComponentTypeToFilter("Checkpoint", FilterType.RequiresOneOf)
 end
 
 --UnitSystem.FindEmptyId = function(self)
@@ -77,9 +79,23 @@ UnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 			end
 			world:GetComponent(newEntityId, "Color", "X"):SetFloat3(r, g, b)
 			
+			--	Send to start fire on next checkpoint
+			local	targetCheckpoint	=	1
+			local	nCheckpoints		=	self:GetEntities("Checkpoint")
+			local	X, Z, checkpointId	=	0,0,0
+			for n = 1, #nCheckpoints do
+				
+				if world:GetComponent(nCheckpoints[n], "Checkpoint", "Number"):GetInt() == targetCheckpoint then
+					checkpointId	=	nCheckpoints[n]
+					X, Z			=	world:GetComponent(checkpointId, "MapPosition", "X"):GetInt2()
+					break
+				end
+				
+			end
+			
 			world:SetComponent(newEntityId, "PlayerNumber", "Number", playerNumber)
 			world:SetComponent(newEntityId, "PlayerEntityId", "Id", entity)
-			world:SetComponent(newEntityId, "TargetCheckpoint", "Id", 1)
+			world:SetComponent(newEntityId, "TargetCheckpoint", "Id", targetCheckpoint)
 			world:GetComponent(newEntityId, "Direction", 0):SetInt2(0, -1)
 			world:CreateComponentAndAddTo("NeedSpawnLocation", newEntityId)
 			world:CreateComponentAndAddTo("Hide", newEntityId)
@@ -94,6 +110,13 @@ UnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
     
 				local id = Net.StartPack("Client.SendPlayerUnitId")
 				Net.WriteInt(id, playerNumber)
+				Net.Send(id, ip, port)
+				
+				
+				local id = Net.StartPack("Client.NewTargetCheckpoint")
+				Net.WriteInt(id, checkpointId)
+				Net.WriteInt(id, X)
+				Net.WriteInt(id, Z)
 				Net.Send(id, ip, port)
 			end
 						

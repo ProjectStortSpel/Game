@@ -45,7 +45,6 @@ namespace Renderer
 
 		// Shaders
 		Shader m_shadowShader;
-		//Shader m_fullscreen;
 
 		void CreateShadowMap();
 		void WriteShadowMapDepth();

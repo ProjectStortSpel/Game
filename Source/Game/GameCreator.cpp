@@ -25,6 +25,10 @@
 #include "LuaBridge/Renderer/LuaGraphicDevice.h"
 #include "LuaBridge/ECSL/LuaEntityTemplateManager.h"
 #include "LuaBridge/Network/LuaNetwork.h"
+#include "LuaBridge/Resource/LuaResource.h"
+
+#include "Game/ResourceManager.h"
+#include "FileSystem/Directory.h"
 
 #include "Logger/Managers/Logger.h"
 
@@ -127,6 +131,9 @@ void GameCreator::InitializeNetwork()
 
 	hook = std::bind(&GameCreator::NetworkGameMode, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 	NetworkInstance::GetClient()->AddNetworkHook("Gamemode", hook);
+
+	hook = std::bind(&GameCreator::NetworkGameModeFiles, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	NetworkInstance::GetClient()->AddNetworkHook("GamemodeFiles", hook);
 
 	m_remoteConsole = new RemoteConsole();
 
@@ -237,6 +244,20 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 {
     lua_State* luaState = _worldType == WorldType::Client ? m_clientLuaState : m_serverLuaState;
 
+	if (_worldType == WorldType::Server)
+	{
+		std::vector<std::string> paths = HomePath::GetGameModePaths();
+
+		for (int i = 0; i < paths.size(); ++i)
+		{
+			std::vector<std::string> files = FileSystem::Directory::GetAllFiles(paths[i]);
+
+			for (int j = 0; j < files.size(); ++j)
+			{
+				ResourceManager::AddGamemodeResource(files[j]);
+			}
+		}
+	}
     
 	LuaBridge::LuaWorldCreator worldCreator = LuaBridge::LuaWorldCreator(luaState);
     worldCreator.SkipComponentTypesAndTemplates(!_isMainWorld);
@@ -353,9 +374,9 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
         m_graphicalSystems.push_back(graphicalSystem);
         worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 
-		graphicalSystem = new AModelSystem(m_graphics);
-		m_graphicalSystems.push_back(graphicalSystem);
-		worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
+		//graphicalSystem = new AModelSystem(m_graphics);
+		//m_graphicalSystems.push_back(graphicalSystem);
+		//worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
     }
     
     if (_worldType == WorldType::Client || _isMainWorld)
@@ -710,6 +731,8 @@ void GameCreator::Reload()
         m_serverWorld = nullptr;
     }
 
+	ResourceManager::Clear();
+
 	HomePath::SetGameMode(m_gameMode);
 		
 	NetworkInstance::GetClientNetworkHelper()->ResetNetworkMaps();
@@ -758,6 +781,12 @@ void GameCreator::Reload()
     LuaBridge::LuaNetwork::SetClientLuaState(m_clientLuaState);
     LuaBridge::LuaNetwork::SetServerLuaState(m_serverLuaState);
 
+	if (NetworkInstance::GetServer()->IsRunning())
+	{
+		LuaBridge::LuaResource::SetServerState(m_serverLuaState);
+	}
+	else
+		LuaBridge::LuaResource::SetServerState(NULL);
 
 	m_graphicalSystems.clear();
 
@@ -811,6 +840,52 @@ void GameCreator::NetworkGameMode(Network::PacketHandler* _ph, uint64_t& _id, Ne
 {
     if (!NetworkInstance::GetServer()->IsRunning())
         GameMode(_ph->ReadString(_id));
+}
+
+void GameCreator::NetworkGameModeFiles(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
+{
+	if (NetworkInstance::GetServer()->IsRunning())
+	{
+		//Listen server does not need to verify files.
+		//Send "Done" to server.
+	}
+	else
+	{
+		std::vector<std::string> files;
+
+		int numFiles = _ph->ReadInt(_id);
+
+		for (int i = 0; i < numFiles; ++i)
+		{
+			std::string filename = _ph->ReadString(_id);
+			
+			int size = _ph->ReadInt(_id);
+			
+			FileSystem::MD5::MD5Data md5;
+			for (int j = 0; j < 16; ++j)
+			{
+				md5.data[j] = _ph->ReadByte(_id);
+			}	
+
+			ResourceManager::Resource r;
+			ResourceManager::CreateResource(filename, r);
+
+			if (md5 != r.MD5)
+			{
+				//SDL_Log("I don't have: %s", filename.c_str());
+				files.push_back(filename);
+			}
+			/*else
+			{
+				SDL_Log("I have: %s", filename.c_str());
+			}*/
+		}
+
+		for (int i = 0; i < files.size(); ++i)
+		{
+			//request files[i] from the server
+		}
+	}
 }
 
 void GameCreator::UpdateConsole()
@@ -1281,9 +1356,37 @@ void GameCreator::OnPlayerConnected(Network::NetConnection _nc, const char* _mes
 
 	Network::ServerNetwork* server = NetworkInstance::GetServer();
 	Network::PacketHandler* ph = server->GetPacketHandler();
+
+	//Send gamemode
 	uint64_t id = ph->StartPack("Gamemode");
 	ph->WriteString(id, m_gameMode.c_str());
 	NetworkInstance::GetServer()->Send(ph->EndPack(id), _nc);
+
+	
+	//Send filelist
+	std::vector<ResourceManager::Resource>* resources = ResourceManager::GetGamemodeResources();
+	uint64_t filesID = ph->StartPack("GamemodeFiles");
+
+	//number of files
+	ph->WriteInt(filesID, resources->size());
+	for (int i = 0; i < resources->size(); ++i)
+	{
+		ResourceManager::Resource* r = &resources->at(i);
+
+		//Filename
+		ph->WriteString(filesID, r->File.c_str());
+		//Filesize
+		ph->WriteInt(filesID, r->Size);
+		
+		//MD5
+		for (int j = 0; j < 16; ++j)
+		{
+			ph->WriteByte(filesID, r->MD5.data[j]);
+		}
+	}
+	NetworkInstance::GetServer()->Send(ph->EndPack(filesID), _nc);
+
+	
 
 	for (int i = 0; i < LuaBridge::LuaNetworkEvents::g_onPlayerConnected.size(); ++i)
 	{

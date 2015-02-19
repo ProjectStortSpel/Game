@@ -37,6 +37,7 @@ void ParticleSystem::CreateFire()
 {
 	// Create and allocate buffers A and B for m_posBuf, m_velBuf and m_startTime
 	
+	m_dstBlendFactor = GL_CONSTANT_COLOR;
 	float scale = m_scale;
 
 	m_accel = vec3(0.0);
@@ -175,6 +176,7 @@ void ParticleSystem::CreateFire()
 void ParticleSystem::CreateSmoke()
 {
 	// Create and allocate buffers A and B for m_posBuf, m_velBuf and m_startTime
+	m_dstBlendFactor = GL_ONE_MINUS_SRC_ALPHA;
 	float scale = m_scale;
 	m_accel = vec3(0.0f, 0.0f, 0.0f) * scale;
 	m_type = 1;
@@ -301,6 +303,9 @@ void ParticleSystem::CreateSmoke()
 
 void ParticleSystem::Render(float _dt)
 {
+	glBlendColor(0.92, 0.92, 0.92, 1.0);
+	glBlendFunc(GL_SRC_ALPHA, m_dstBlendFactor);
+
 	float dt = 1000.f * (_dt);
 	m_elapsedTime += dt;
 	/////////// Update pass ////////////////

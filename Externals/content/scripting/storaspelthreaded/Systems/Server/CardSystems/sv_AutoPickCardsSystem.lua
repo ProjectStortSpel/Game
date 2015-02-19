@@ -20,7 +20,6 @@ end
 AutoPickCards.StealCardsFrom = function(self, playerIndex)
 	
 	--	Counter for the actual selected cards
-	local	nSelectedCards		=	0
 	local	pickedCards			=	{}
 			pickedCards.__mode	=	"k"
 	
@@ -40,6 +39,7 @@ AutoPickCards.StealCardsFrom = function(self, playerIndex)
 			if cardOwner == playerIndex then
 				local	tempIndex	=	world:GetComponent(playerSelectedCards[cardIndex], "ServerSelectedCard", "Index"):GetInt()
 				
+				print("tempIndex is " .. tempIndex .. " (looking for " .. currentIndexToPick .. ")")
 				--	Check if the current index is equal
 				--	to the index we are currently looking for
 				if currentIndexToPick == tempIndex then
@@ -47,12 +47,16 @@ AutoPickCards.StealCardsFrom = function(self, playerIndex)
 					pickedCards[#pickedCards+1]	=	playerSelectedCards[cardIndex]
 					--	Update counters
 					currentIndexToPick			=	currentIndexToPick+1
-					nSelectedCards				=	nSelectedCards+1
+					
 					--	Set flag
 					indexFound	=	true
 					break
 				end
 			end
+		end
+		
+		if #pickedCards == 5 then
+			break
 		end
 		
 		--	Break if we didn't find the index (not enough selected cards)
@@ -63,7 +67,7 @@ AutoPickCards.StealCardsFrom = function(self, playerIndex)
 	
 	--	Now pick the remaining cards from the 
 	--	"non-selected" cards
-	if nSelectedCards < 5 then
+	if #pickedCards < 5 then
 		print("Start to pick from non-selected!")
 		local	remainingCards 	= 	self:GetEntities("DealtCard")
 		for i = 1, #remainingCards do
@@ -74,10 +78,8 @@ AutoPickCards.StealCardsFrom = function(self, playerIndex)
 				local cardOwner	= 	world:GetComponent(remainingCards[i], "DealtCard", "PlayerEntityId"):GetInt()
 				if cardOwner == playerIndex then
 					pickedCards[#pickedCards+1]	=	remainingCards[i]
-					--	Update counters
-					nSelectedCards				=	nSelectedCards+1
 					
-					if nSelectedCards == 5 then
+					if #pickedCards == 5 then
 						break
 					end
 				end
@@ -99,14 +101,19 @@ AutoPickCards.StealCardsFrom = function(self, playerIndex)
 	
 		world:RemoveComponentFrom("DealtCard", pickedCards[cardIndex])
 		
-		if world:EntityHasComponent(pickedCards[cardIndex], "ServerSelectedCard") then
-			world:RemoveComponentFrom("ServerSelectedCard", pickedCards[cardIndex])
-		end
+
 		world:CreateComponentAndAddTo("CardStep", pickedCards[cardIndex])
 		world:GetComponent(pickedCards[cardIndex], "CardStep", "Step"):SetInt(cardIndex)
 		world:GetComponent(pickedCards[cardIndex], "CardStep", "UnitEntityId"):SetInt(playerUnit)
 		
 		Net.SendEntityKill(pickedCards[cardIndex], playerIp, playerPort)
+	end
+	
+	local allSelectedCards	=	self:GetEntities("ServerSelectedCard")
+	for nIndex = 1, #allSelectedCards do
+		if world:EntityHasComponent(allSelectedCards[nIndex], "ServerSelectedCard") then
+			world:RemoveComponentFrom("ServerSelectedCard", allSelectedCards[nIndex])
+		end
 	end
 	
 	--	Update unit status

@@ -11,7 +11,7 @@ CheckpointSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Unit", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("Checkpoint", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("CheckCheckpointForEntity", FilterType.RequiresOneOf)
-	
+	self:AddComponentTypeToFilter("Player", FilterType.RequiresOneOf)
 end
 
 CheckpointSystem.AddTotemPiece = function(self, playerNumber, checkpoint, colorX, colorY, colorZ)
@@ -74,9 +74,10 @@ CheckpointSystem.CheckCheckpoint = function(self, entityId, posX, posZ)
 				world:CreateComponentAndAddTo("CheckpointReached", checkpointReached)
 				world:GetComponent(checkpointReached, "CheckpointReached", "CheckpointNumber"):SetInt(tempCheckpointId)
 				world:GetComponent(checkpointReached, "CheckpointReached", "PlayerNumber"):SetInt(playerNum)
-				
 				if targetCheckpoint+1 > #allCheckpoints then
 					self:HasReachedFinish(entityId)
+				else
+					self:SendInfoToClient(playerNum, targetCheckpoint+1)
 				end
 				return
 			end
@@ -104,3 +105,48 @@ CheckpointSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, newEnt
 	end
 	
 end
+
+
+CheckpointSystem.SendInfoToClient = function(self, player, nextCheckpoint)
+
+	print("SendInfoToClient player " .. player)
+	--	Check if the player is a player and not AI
+	local	allPlayers	=	self:GetEntities("Player")
+	local	playerId	=	-1
+	for pId = 1, #allPlayers do
+		
+		if player == world:GetComponent(allPlayers[pId], "PlayerNumber", "Number"):GetInt() then
+			playerId	=	allPlayers[pId]
+			break
+		end
+		
+	end
+	if playerId == -1 then
+		return
+	end
+
+	--	Get connection information
+	local	IP		= 	world:GetComponent(playerId, "NetConnection", "IpAddress"):GetText()
+	local	PORT	= 	world:GetComponent(playerId, "NetConnection", "Port"):GetInt()
+	
+    --	Checkpoint information
+	local	X, Z			=	-1, -1
+	local	tCheckpoints	=	self:GetEntities("Checkpoint")
+	for tCheckId = 1, #tCheckpoints do
+		if nextCheckpoint == world:GetComponent(tCheckpoints[tCheckId], "Checkpoint", "Number"):GetInt() then
+			X, Z	=	world:GetComponent(tCheckpoints[tCheckId], "MapPosition", "X"):GetInt2()
+			break
+		end
+	end
+	
+	
+	print("Sending info about checkpoint at " .. X .. ", " .. Z .. " for player " .. player)
+	local id = Net.StartPack("Client.NewTargetCheckpoint")
+	Net.WriteInt(id, nextCheckpoint)
+	Net.WriteInt(id, X)
+	Net.WriteInt(id, Z)
+	Net.Send(id, IP, PORT)
+	
+end
+
+
