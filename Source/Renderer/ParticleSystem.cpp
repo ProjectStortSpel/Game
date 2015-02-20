@@ -13,7 +13,7 @@ ParticleSystem::ParticleSystem(std::string type, const vec3 _pos, int _nParticle
 	m_shader = _shaderProg;
 	m_drawBuf = 1;
 	m_color = _color;
-	m_endPhase = 0;
+	m_endPhase = false;
 
 	if (type == "fire")
 		CreateFire();
@@ -309,7 +309,7 @@ void ParticleSystem::Render(float _dt)
 	float dt = 1000.f * (_dt);
 	m_elapsedTime += dt;
 
-	if (m_endPhase == 1)
+	if (m_endPhase)
 		m_removeDelayTime += dt;
 
 	/////////// Update pass ////////////////
@@ -352,7 +352,7 @@ void ParticleSystem::Render(float _dt)
 
 void ParticleSystem::EnterEndPhase()
 {
-	m_endPhase = 1;
+	m_endPhase = true;
 }
 
 bool ParticleSystem::ReadyToBeDeleted()
