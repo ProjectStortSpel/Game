@@ -160,7 +160,12 @@ void BaseNetwork::Update(float _dt)
 			if (m_systemFunctions->find(type) != m_systemFunctions->end())
 				(*m_systemFunctions)[type](m_packetHandler, id, *p->Sender);
 			else if (NET_DEBUG > 0)
-				DebugLog("System packet not bound to any function", LogSeverity::Warning);
+			{
+				NetTypeMessageId tmp = (NetTypeMessageId)type;
+				DebugLog("System packet \'%s\' not bound to any function", LogSeverity::Warning, m_enumStrings[type]);
+				
+
+			}
 
 			SAFE_DELETE(p);
 		}

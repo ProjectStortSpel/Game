@@ -35,6 +35,19 @@ ServerNetwork::ServerNetwork()
 	m_onServerShutdown = new std::vector<NetEvent>();
 
 	m_listenThread = new std::thread();
+
+	NetMessageHook hook = std::bind(&ServerNetwork::NetPasswordAttempt, this, NetworkHookPlaceholders);
+	(*m_systemFunctions)[NetTypeMessageId::ID_PASSWORD_ATTEMPT] = hook;
+
+	hook = std::bind(&ServerNetwork::NetConnectionDisconnected, this, NetworkHookPlaceholders);
+	(*m_systemFunctions)[NetTypeMessageId::ID_CONNECTION_DISCONNECTED] = hook;
+
+	hook = std::bind(&ServerNetwork::NetPing, this, NetworkHookPlaceholders);
+	(*m_systemFunctions)[NetTypeMessageId::ID_PING] = hook;
+
+	hook = std::bind(&ServerNetwork::NetPong, this, NetworkHookPlaceholders);
+	(*m_systemFunctions)[NetTypeMessageId::ID_PONG] = hook;
+
 }
 
 ServerNetwork::~ServerNetwork()
@@ -201,7 +214,7 @@ void ServerNetwork::Send(Packet* _packet, NetConnection& _receiver)
 
 		auto result = m_connectedClients->find(_receiver);
 
-		if (result == m_connectedClients->end() || result->second->GetActive() > 1) // Could be a problem, check and make sure
+		if (result == m_connectedClients->end() || result->second->GetActive() < 1) // Could be a problem, check and make sure
 		{
 			if (NET_DEBUG > 0)
 				DebugLog("Connection to receiver %s:%d was not found.", LogSeverity::Warning, _receiver.GetIpAddress(), _receiver.GetPort());
@@ -642,11 +655,12 @@ void ServerNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uin
 		DebugLog("Failed to lock timeOut. Error: %s.", LogSeverity::Error, SDL_GetError());
 
 	(*m_receivePacketThreads)[_connection].join();
+	(*m_receivePacketThreads).erase(_connection);
 }
 
 void ServerNetwork::NetPing(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection)
 {
-	if (NET_DEBUG > 0)
+	if (NET_DEBUG == 2)
 		DebugLog("Received ping from: %s:%d", LogSeverity::Info, _connection.GetIpAddress(), _connection.GetPort());
 
 	uint64_t id = _packetHandler->StartPack(ID_PONG);
@@ -656,6 +670,6 @@ void ServerNetwork::NetPing(PacketHandler* _packetHandler, uint64_t& _id, NetCon
 
 void ServerNetwork::NetPong(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection)
 {
-	if (NET_DEBUG > 0)
+	if (NET_DEBUG == 2)
 		DebugLog("Received pong from: %s:%d", LogSeverity::Info, _connection.GetIpAddress(), _connection.GetPort());
 }

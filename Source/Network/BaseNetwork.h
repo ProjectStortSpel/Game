@@ -80,6 +80,8 @@ namespace Network
 		float* m_maxTimeOutIntervall;
 		int* m_maxIntervallCounter;
 
+		std::map<char, std::string> m_enumStrings;
+
 	private:
 		SDL_mutex* m_customPacketLock;
 		SDL_mutex* m_systemPacketLock;
