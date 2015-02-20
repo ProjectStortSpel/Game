@@ -142,7 +142,11 @@ bool WinSocket::ShutdownSocket(int _how)
 {
 	if (shutdown(m_socket, _how) != 0)
 	{
-		if (NET_DEBUG > 0)
+		int errorCode = WSAGetLastError();
+
+		if (errorCode == 10057)
+			return true;
+		else if (NET_DEBUG > 0)
 			DebugLog("Failed to shutdown winsocket. Error code: %d.", LogSeverity::Error, WSAGetLastError());
 
 		return false;
@@ -174,6 +178,7 @@ bool WinSocket::Connect(const char* _ipAddres, const int _port)
 	}
 
 	addrinfo* rp;
+	int errorCode = 0;
 	for (rp = addrs; rp != 0; rp = rp->ai_next)
 	{
 		m_socket = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
@@ -187,7 +192,8 @@ bool WinSocket::Connect(const char* _ipAddres, const int _port)
 			break;
 		else if (cnt < 0)
 		{
-			if (WSAGetLastError() == 10035)
+			errorCode = WSAGetLastError();
+			 if (errorCode == 10035)
 				break;
 		}
 
@@ -199,7 +205,7 @@ bool WinSocket::Connect(const char* _ipAddres, const int _port)
 	if (rp == 0)
 	{
 		if (NET_DEBUG > 0)
-			DebugLog("Failed to connect to %s:%d. Error code: %d.", LogSeverity::Error, _ipAddres, _port, WSAGetLastError());
+			DebugLog("Failed to connect to %s:%d. Error code: %i.", LogSeverity::Error, _ipAddres, _port, errorCode);
 
 		return false;
 	}
@@ -245,7 +251,7 @@ bool WinSocket::Bind(const int _port)
 }
 bool WinSocket::Listen(int _backlog)
 {
-	if (listen(m_socket, _backlog) != 0)
+	if (listen(m_socket, _backlog) < 0)
 	{
 		if (NET_DEBUG > 0)
 			DebugLog("Failed to put socket in listen mode. Error code: %d.", LogSeverity::Error, WSAGetLastError());
@@ -265,6 +271,11 @@ ISocket* WinSocket::Accept(void)
 
 	if (incomingSocket == INVALID_SOCKET)
 	{
+		int errorCode = WSAGetLastError();
+
+		if (errorCode == 10035)
+			return 0;
+
 		if (NET_DEBUG > 0)
 			DebugLog("Accept failed. Error code: %d.", LogSeverity::Error, WSAGetLastError());
 

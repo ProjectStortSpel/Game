@@ -30,10 +30,24 @@ namespace Network
 		bool IsRunning() { return *m_running; }
 		unsigned int GetMaxConnections() { return *m_maxConnections; }
 		unsigned int GetIncomingPort() { return *m_incomingPort; }
+		const std::vector<NetConnection>& GetConnectedClients() { return *m_connectedClientsNC; }
+
+		void ResetNetworkEvents();
 
 	private:
 		void ReceivePackets(ISocket* _socket);
 		void ListenForConnections(void);
+		void Send(Packet* _packet, ISocket* _socket);
+
+		void UpdateNetUsage(float& _dt);
+		void UpdateTimeOut(float& _dt);
+
+		void NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection);
+		void NetConnectionLost(NetConnection& _connection);
+		void NetConnectionDisconnected(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection);
+		void NetPing(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection);
+		void NetPong(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection);
+
 
 	private:
 

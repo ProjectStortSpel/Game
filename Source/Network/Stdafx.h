@@ -41,7 +41,7 @@ namespace Network
 
 	unsigned long long hton_ll(unsigned long long src);
 	unsigned long long ntoh_ll(unsigned long long src);
-	static int NET_DEBUG = 0;
+	static int NET_DEBUG = 1;
 
 #pragma warning(push)
 #pragma warning(disable: 4996)
@@ -61,7 +61,7 @@ namespace Network
 		char buff[100];
 		sprintf(buff, _msg, _value);
 		
-		SDL_Log(_msg);
+		SDL_Log(buff);
 	}
 
 	static void DebugLog(const char* _msg, LogSeverity _severity)

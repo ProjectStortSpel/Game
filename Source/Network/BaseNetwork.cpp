@@ -10,7 +10,7 @@ BaseNetwork::BaseNetwork()
 	m_localAddress = new std::string("");
 	m_password = new std::string("default");
 
-	m_incomingPort = new unsigned int(0);
+	m_incomingPort = new unsigned int(6112);
 
 	m_totalDataReceived = new int(0);
 	m_totalDataSent = new int(0);
@@ -96,7 +96,7 @@ void BaseNetwork::AddNetworkHook(const char* _name, NetMessageHook& _hook)
 {
 	(*m_customFunctions)[_name] = _hook;
 	if (NET_DEBUG > 0)
-		DebugLog("Custom function \'%s\' bound.", LogSeverity::Info);
+		DebugLog("Custom function \'%s\' bound.", LogSeverity::Info, _name);
 }
 
 void BaseNetwork::Clear()

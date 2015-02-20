@@ -35,6 +35,11 @@ ClientNetwork::ClientNetwork()
 	m_onRemotePlayerTimedOut = new std::vector<NetEvent>();
 	m_onRemotePlayerKicked = new std::vector<NetEvent>();
 	m_onRemotePlayerBanned = new std::vector<NetEvent>();
+
+	m_currentTimeOutIntervall = new float(0);
+	m_currentIntervallCounter = new int(0);
+
+	m_receiveThread = new std::thread();
 }
 
 ClientNetwork::~ClientNetwork()
@@ -63,6 +68,11 @@ ClientNetwork::~ClientNetwork()
 	SAFE_DELETE(m_onRemotePlayerTimedOut);
 	SAFE_DELETE(m_onRemotePlayerKicked);
 	SAFE_DELETE(m_onRemotePlayerBanned);
+
+	SAFE_DELETE(m_currentTimeOutIntervall);
+	SAFE_DELETE(m_currentIntervallCounter);
+	
+	SAFE_DELETE(m_receiveThread);
 }
 
 bool ClientNetwork::Connect(const char* _ipAddress, const char* _password, const int& _outgoing, const int& _incomingPort)
@@ -243,6 +253,23 @@ void ClientNetwork::UpdateTimeOut(float& _dt)
 	}
 }
 
+void ClientNetwork::ResetNetworkEvents()
+{
+	Update(0);
+	m_onConnectedToServer->clear();
+	m_onDisconnectedFromServer->clear();
+	m_onTimedOutFromServer->clear();
+	m_onFailedToConnect->clear();
+	m_onPasswordInvalid->clear();
+	m_onKickedFromServer->clear();
+	m_onBannedFromServer->clear();
+	m_onServerFull->clear();
+	m_onRemotePlayerConnected->clear();
+	m_onRemotePlayerDisconnected->clear();
+	m_onRemotePlayerTimedOut->clear();
+	m_onRemotePlayerKicked->clear();
+	m_onRemotePlayerBanned->clear();
+}
 
 void ClientNetwork::NetPasswordInvalid(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection)
 {

@@ -57,7 +57,7 @@ private:
 
 	void OnConnectionAccepted(Network::NetConnection _nc, const char* _msg);
 	void OnGetServerList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
-	void OnServerShutdown();
+	void OnServerShutdown(Network::NetConnection _nc, const char* _msg);
 
 	void EntitiesAddedServer(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities);
 	void EntitiesAddedClient(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities);

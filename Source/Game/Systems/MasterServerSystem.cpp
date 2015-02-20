@@ -47,7 +47,8 @@ void MasterServerSystem::PostInitialize()
 
 	if (NetworkInstance::GetServer()->IsRunning())
 	{
-		NetworkInstance::GetServer()->SetOnServerShutdown(std::bind(&MasterServerSystem::OnServerShutdown, this));
+		hook = std::bind(&MasterServerSystem::OnServerShutdown, this, std::placeholders::_1, std::placeholders::_2);
+		NetworkInstance::GetServer()->SetOnServerShutdown(hook);
 
 		//m_clientDatabase->AddToDatabase(port, pw.size() > 0);
 	}
@@ -195,7 +196,7 @@ void MasterServerSystem::OnConnectionAccepted(Network::NetConnection _nc, const 
 	m_connect = true;
 }
 
-void MasterServerSystem::OnServerShutdown()
+void MasterServerSystem::OnServerShutdown(Network::NetConnection _nc, const char* _msg)
 {
 	m_mServerMessages.push_back(REMOVE_FROM_DATABASE);
 }
