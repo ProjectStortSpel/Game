@@ -303,7 +303,7 @@ void ParticleSystem::CreateSmoke()
 
 void ParticleSystem::Render(float _dt)
 {
-	glBlendColor(0.92, 0.92, 0.92, 1.0);
+	glBlendColor(0.93, 0.93, 0.93, 1.0);
 	glBlendFunc(GL_SRC_ALPHA, m_dstBlendFactor);
 
 	float dt = 1000.f * (_dt);

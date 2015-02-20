@@ -105,13 +105,11 @@ UnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 			if world:EntityHasComponent(entity, "NetConnection") then
 				local ip = world:GetComponent(entity, "NetConnection", "IpAddress"):GetText()
 				local port = world:GetComponent(entity, "NetConnection", "Port"):GetInt()
-    
-				local id = Net.StartPack("Client.SendPlayerUnitId")
-				Net.WriteInt(id, playerNumber)
+				local id = Net.StartPack("Client.SendPlayerUnitColor")
+				Net.WriteFloat(id, r)
+				Net.WriteFloat(id, g)
+				Net.WriteFloat(id, b)
 				Net.Send(id, ip, port)
-				
-				
-
 			end
 						
 		elseif world:EntityHasComponent(entity, "RemoveUnit") then
