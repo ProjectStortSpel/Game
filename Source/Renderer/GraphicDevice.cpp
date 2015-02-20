@@ -330,7 +330,7 @@ void GraphicDevice::BufferModels()
 	}
 	for (auto pair : m_modelsToLoadFromSource)
 	{
-		
+		BufferModel(pair.first, pair.second);
 		delete pair.second;
 	}
 	m_modelsToLoad.clear();

@@ -87,6 +87,9 @@
     <Filter Include="Lua Bridge\Resource">
       <UniqueIdentifier>{cee8274a-69dd-429b-ba04-7664e20156fc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\MeshCreator">
+      <UniqueIdentifier>{077f2f17-8138-4979-8f70-2969a29b419f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\LuaBridge.cpp">
@@ -266,6 +269,12 @@
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\AI\LuaDynamicScript.cpp">
       <Filter>Lua Bridge\AI</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\MeshCreator\MeshCreator.cpp">
+      <Filter>Game\MeshCreator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\MeshCreator\Tile.cpp">
+      <Filter>Game\MeshCreator</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h">
@@ -441,6 +450,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\AI\LuaDynamicScript.h">
       <Filter>Lua Bridge\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\MeshCreator\includes.h">
+      <Filter>Game\MeshCreator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\MeshCreator\MeshCreator.h">
+      <Filter>Game\MeshCreator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\MeshCreator\Tile.h">
+      <Filter>Game\MeshCreator</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

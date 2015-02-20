@@ -12,7 +12,7 @@ FlowingWaterSystem.Initialize = function ( self )
 end
 
 FlowingWaterSystem.PostInitialize = function ( self )
-
+--[[
 	local newEntityId = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("Model", newEntityId)
 	world:CreateComponentAndAddTo("Rotation", newEntityId)
@@ -28,7 +28,7 @@ FlowingWaterSystem.PostInitialize = function ( self )
 	world:SetComponent(newEntityId, "Model", "ModelName", "island");
 	world:SetComponent(newEntityId, "Model", "ModelPath", "island");
 	world:SetComponent(newEntityId, "Model", "RenderType", 0);
-
+--]]
 end
 
 FlowingWaterSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)

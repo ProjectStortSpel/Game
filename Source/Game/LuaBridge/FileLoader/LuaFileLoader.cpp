@@ -3,6 +3,12 @@
 #include <fstream>
 #include <string>
 #include <SDL/SDL.h>
+#include <Game/MeshCreator/MeshCreator.h>
+#include <Game/LuaBridge/Renderer/LuaGraphicDevice.h>
+
+int g_meshCreatorIndex = -1;
+float g_meshCreatorColor[3] = { 0.0f, 0.0f, 0.0f };
+glm::mat4 g_meshCreatorMatrix = glm::translate(glm::vec3(1.0f, 0.5f, 1.0f));
 
 int LoadMap(lua_State* L)  
 {
@@ -63,5 +69,37 @@ int LoadMap(lua_State* L)
 	LuaEmbedder::PushInt(L, x);
 	LuaEmbedder::PushInt(L, y);
 	LuaEmbedder::PushIntArray(L, array, map.size());
+
+	std::vector<std::string> stringMap;
+	for (int i = 0; i < x; i++)
+	{
+		std::string line;
+		for (int j = 0; j < y; j++)
+		{
+			line.push_back((char)map[i * y + j]);
+		}
+		stringMap.push_back(line);
+	}
+
+	if (g_meshCreatorIndex != -1)
+		LuaBridge::LuaGraphicDevice::GetGraphicDevice()->RemoveModel(g_meshCreatorIndex);
+
+	MeshCreator meshcreator;
+	meshcreator.CreateMesh(stringMap);
+	Renderer::ModelToLoadFromSource model;
+	model.key = "meshcreator";
+	model.positions = meshcreator.position;
+	model.normals = meshcreator.normals;
+	model.tangents = meshcreator.tangents;
+	model.bitangents = meshcreator.bitangents;
+	model.texCoords = meshcreator.uvs;
+	model.diffuseTextureFilepath = "content/textures/dirt.png";
+	model.normalTextureFilepath = "content/textures/normalPixel.png";
+	model.specularTextureFilepath = "content/textures/blackPixel.png";
+	model.RenderType = RENDER_DEFERRED;
+	model.Color = g_meshCreatorColor;
+	model.MatrixPtr = &g_meshCreatorMatrix;
+	g_meshCreatorIndex = LuaBridge::LuaGraphicDevice::GetGraphicDevice()->LoadModel(&model);
+
 	return 3;
 }
