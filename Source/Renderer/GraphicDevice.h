@@ -61,6 +61,22 @@ namespace Renderer
 		int RenderType;
 		float* Color;
 	};
+	
+	struct ModelToLoadFromSource
+	{
+		std::string key;
+		std::vector<float> positions;
+		std::vector<float> normals;
+		std::vector<float> tangents;
+		std::vector<float> bitangents;
+		std::vector<float> texCoords;
+		std::string diffuseTextureFilepath;
+		std::string normalTextureFilepath;
+		std::string specularTextureFilepath;
+		glm::mat4* MatrixPtr;
+		int RenderType;
+		float* Color;
+	};
 
 	struct ModelTexture
 	{
@@ -116,6 +132,7 @@ namespace Renderer
 
 		// MODELLOADER
 		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED, float* _color = nullptr);
+		int LoadModel(ModelToLoadFromSource* _modelToLoad);
 		bool RemoveModel(int _id);// = 0;
 		bool ActiveModel(int _id, bool _active);// = 0;
 		virtual bool ChangeModelTexture(int _id, std::string _fileDir, int _textureType = TEXTURE_DIFFUSE){ m_modelTextures.push_back({ _id, _fileDir, _textureType }); return false; };// = 0;
@@ -145,6 +162,7 @@ namespace Renderer
 		void BufferModels();
 		void BufferModel(int _modelId, ModelToLoad* _modelToLoad);
 		void BufferAModel(int _modelId, ModelToLoad* _modelToLoad);
+		void BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoad);
 
 		std::vector<ModelTexture> m_modelTextures;
 		void BufferModelTextures();
@@ -154,6 +172,7 @@ namespace Renderer
 		// Meshs
 		std::map<const std::string, Buffer*> m_meshs;
 		Buffer* AddMesh(std::string _fileDir, Shader *_shaderProg, bool animated);
+		Buffer* AddMesh(ModelToLoadFromSource* _modelToLoad, Shader *_shaderProg);
 
 		//modellists
 		std::vector<RenderList> m_renderLists;
@@ -196,6 +215,7 @@ namespace Renderer
 		//// DEBUG variables ----
 		int m_debugTexFlag;
 		std::map<int, ModelToLoad*> m_modelsToLoad;
+		std::map<int, ModelToLoadFromSource*> m_modelsToLoadFromSource;
 		float**	m_pointerToPointlights;
 		int		m_numberOfPointlights;
 		float*	m_pointerToDirectionalLights;
