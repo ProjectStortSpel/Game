@@ -151,7 +151,7 @@ worldCreator:AddSystemToCurrentGroup(WeatherSystem)
 worldCreator:AddSystemToCurrentGroup(WeatherWindSystem)
 
 worldCreator:AddSystemToCurrentGroup(GiveSpawnLocationSystem)
-worldCreator:AddSystemToCurrentGroup(FindSpawnpointSystem)
+
 worldCreator:AddSystemToCurrentGroup(RespawnSystem)
 worldCreator:AddSystemToCurrentGroup(PostSpawnSystem)
 
@@ -184,5 +184,6 @@ worldCreator:AddSystemToCurrentGroup(LogStartSystem)
 
 worldCreator:AddSystemToCurrentGroup(SortClientSelectedCards)	--	Temp
 worldCreator:AddSystemToCurrentGroup(ClearServerSelectedSystem)	--	Temp
+worldCreator:AddSystemToCurrentGroup(FindSpawnpointSystem)
 
 
