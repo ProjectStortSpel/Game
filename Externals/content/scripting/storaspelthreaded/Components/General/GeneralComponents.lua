@@ -2,7 +2,7 @@
 --	for all General Components.
 --	Use require in this file
 --	and they will be loaded
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Components/General/?.lua"
+package.path = package.path .. ";Components/General/?.lua"
 
 require "GraphicalComponents"
 

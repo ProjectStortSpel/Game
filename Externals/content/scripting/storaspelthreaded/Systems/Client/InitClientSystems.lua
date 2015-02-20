@@ -1,5 +1,5 @@
 --	Misc Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Client/MiscSystems/?.lua"
+package.path = package.path .. ";Systems/Client/MiscSystems/?.lua"
 require "cl_PlayerIndicatorSystem"
 require "cl_ClientNetworkMessageSystem"
 require "cl_FlowingWaterSystem"
@@ -7,7 +7,7 @@ require "cl_ChatSystem"
 require "cl_ShowNextCheckpointSystem"
 
 --	Interface Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Client/InterfaceSystems/?.lua"
+package.path = package.path .. ";Systems/Client/InterfaceSystems/?.lua"
 require "cl_RconMenuSystem"
 require "cl_OptionsMenuSystem"
 require "cl_GameMenuSystem"
@@ -15,7 +15,7 @@ require "cl_GameInterfaceSystem"
 require "cl_PickingTimerSystem"
 
 --	Card Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Client/CardSystems/?.lua"
+package.path = package.path .. ";Systems/Client/CardSystems/?.lua"
 require "cl_CardAddModelSystem"
 require "cl_GiveCardIndexSystem"
 require "cl_CardHoverSystem"
@@ -27,7 +27,7 @@ require "cl_SortCardIndexSystem"
 require "cl_SendSelectedCardsSystem"
 
 --	Camera Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Client/CameraSystems/?.lua"
+package.path = package.path .. ";Systems/Client/CameraSystems/?.lua"
 require "cl_NewCameraSystem"
 
 worldCreator:AddSystemGroup()
