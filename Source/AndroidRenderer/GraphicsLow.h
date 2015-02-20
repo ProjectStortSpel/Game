@@ -45,6 +45,7 @@ namespace Renderer
 
 		// Meshs
 		Buffer* AddMesh(std::string _fileDir, Shader *_shaderProg);
+		Buffer* AddMesh(ModelToLoadFromSource* _modelToLoad, Shader *_shaderProg);
 		
 	};
 }

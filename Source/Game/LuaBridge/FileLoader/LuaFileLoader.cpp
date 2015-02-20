@@ -96,7 +96,7 @@ int LoadMap(lua_State* L)
 	model.diffuseTextureFilepath = "content/textures/dirt.png";
 	model.normalTextureFilepath = "content/textures/normalPixel.png";
 	model.specularTextureFilepath = "content/textures/blackPixel.png";
-	model.RenderType = RENDER_DEFERRED;
+	model.RenderType = 0;
 	model.Color = g_meshCreatorColor;
 	model.MatrixPtr = &g_meshCreatorMatrix;
 	g_meshCreatorIndex = LuaBridge::LuaGraphicDevice::GetGraphicDevice()->LoadModel(&model);

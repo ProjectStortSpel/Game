@@ -71,6 +71,22 @@ namespace Renderer
 		int RenderType;
 		float* Color;
 	};
+	
+	struct ModelToLoadFromSource
+	{
+		std::string key;
+		std::vector<float> positions;
+		std::vector<float> normals;
+		std::vector<float> tangents;
+		std::vector<float> bitangents;
+		std::vector<float> texCoords;
+		std::string diffuseTextureFilepath;
+		std::string normalTextureFilepath;
+		std::string specularTextureFilepath;
+		glm::mat4* MatrixPtr;
+		int RenderType;
+		float* Color;
+	};
 
 	class DECLSPEC GraphicDevice
 	{
@@ -101,6 +117,7 @@ namespace Renderer
 		// MODELLOADER
 		virtual bool PreLoadModel(std::string _dir, std::string _file, int _renderType = RENDER_FORWARD){ return false; };
 		virtual int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_FORWARD, float* _color = nullptr){ return 0; };
+		int LoadModel(ModelToLoadFromSource* _modelToLoad);
 		virtual bool RemoveModel(int _id){ return false; };
 		virtual bool ActiveModel(int _id, bool _active){ return false; };
 		virtual bool ChangeModelTexture(int _id, std::string _fileDir, int _textureType = TEXTURE_DIFFUSE){ m_modelTextures.push_back({ _id, _fileDir, _textureType }); return false; };
@@ -170,14 +187,17 @@ namespace Renderer
 		// Meshs
 		std::map<const std::string, Buffer*> m_meshs;
 		virtual Buffer* AddMesh(std::string _fileDir, Shader *_shaderProg) = 0;
+		virtual Buffer* AddMesh(ModelToLoadFromSource* _modelToLoad, Shader *_shaderProg) = 0;
 		// Textures
 		std::map<const std::string, GLuint> m_textures;
 		GLuint AddTexture(std::string _fileDir, GLenum _textureSlot);
 		
 		
 		std::map<int, ModelToLoad*> m_modelsToLoad;
+		std::map<int, ModelToLoadFromSource*> m_modelsToLoadFromSource;
 		virtual void BufferModels();
 		virtual void BufferModel(int _modelId, ModelToLoad* _modelToLoad);
+		void BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoad);
 		
 		std::vector<std::pair<std::string, SDL_Surface*>> m_surfaces;
 		void BufferSurfaces();

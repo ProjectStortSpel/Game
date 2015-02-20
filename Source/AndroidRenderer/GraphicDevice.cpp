@@ -419,6 +419,70 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 		m_modelsForward.push_back(model);
 }
 
+void GraphicDevice::BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoad)
+{
+	Shader *shaderPtr = NULL;
+
+	if (_modelToLoad->RenderType == RENDER_FORWARD)
+	{
+		shaderPtr = &m_forwardShader;
+		m_forwardShader.UseProgram();
+	}
+	else if (_modelToLoad->RenderType == RENDER_VIEWSPACE)
+	{
+		shaderPtr = &m_viewspaceShader;
+		m_viewspaceShader.UseProgram();
+	}
+	else if (_modelToLoad->RenderType == RENDER_INTERFACE)
+	{
+		shaderPtr = &m_interfaceShader;
+		m_interfaceShader.UseProgram();
+	}
+	else if (_modelToLoad->RenderType == 0)
+	{
+		shaderPtr = &m_forwardShader;
+		m_forwardShader.UseProgram();
+		//SDL_Log("Deferred requested. Selecting FORWARD");
+	}
+	else
+	{
+		return;
+	}
+
+	// Import Texture
+	GLuint texture = AddTexture(_modelToLoad->diffuseTextureFilepath, GL_TEXTURE1);
+	shaderPtr->CheckUniformLocation("diffuseTex", 1);
+
+	GLuint normal, specular;
+
+	if (_modelToLoad->RenderType != RENDER_INTERFACE)
+	{
+		// Import Normal map
+		normal = AddTexture(_modelToLoad->normalTextureFilepath, GL_TEXTURE2);
+		shaderPtr->CheckUniformLocation("normalTex", 2);
+
+		// Import Specc Glow map
+		specular = AddTexture(_modelToLoad->specularTextureFilepath, GL_TEXTURE3);
+		shaderPtr->CheckUniformLocation("specularTex", 3);
+	}
+
+	// Import Mesh
+	Buffer* mesh = AddMesh(_modelToLoad, shaderPtr);
+
+	Model model = Model(mesh, texture, normal, specular, _modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color); // plus modelID o matrixPointer, active
+
+
+	// Push back the model
+	if (_modelToLoad->RenderType == RENDER_FORWARD)
+		m_modelsForward.push_back(model);
+	else if (_modelToLoad->RenderType == RENDER_VIEWSPACE)
+		m_modelsViewspace.push_back(model);
+	else if (_modelToLoad->RenderType == RENDER_INTERFACE)
+		m_modelsInterface.push_back(model);
+	else
+		m_modelsForward.push_back(model);
+}
+
 void GraphicDevice::BufferModels()
 {
 	for (auto pair : m_modelsToLoad)
@@ -426,7 +490,13 @@ void GraphicDevice::BufferModels()
 		BufferModel(pair.first, pair.second);
 		delete(pair.second);
 	}
+	for (auto pair : m_modelsToLoadFromSource)
+	{
+		BufferModel(pair.first, pair.second);
+		delete(pair.second);
+	}
 	m_modelsToLoad.clear();
+	m_modelsToLoadFromSource.clear();
 }
 
 struct sort_depth
@@ -440,4 +510,19 @@ struct sort_depth
 void GraphicDevice::SortModelsBasedOnDepth(std::vector<Model>* models)
 {
 	std::sort(models->begin(), models->end(), sort_depth());
+}
+
+int GraphicDevice::LoadModel(ModelToLoadFromSource* _modelToLoad)
+{
+	int modelID = m_modelIDcounter;
+	m_modelIDcounter++;
+
+	//	Lägg till i en lista, följande
+	//	std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType
+
+	ModelToLoadFromSource* modelToLoad = new ModelToLoadFromSource();
+	*modelToLoad = *_modelToLoad;
+	m_modelsToLoadFromSource[modelID] = modelToLoad;
+
+	return modelID;
 }
