@@ -96,7 +96,7 @@ UnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 			world:SetComponent(newEntityId, "TargetCheckpoint", "Id", targetCheckpoint)
 			world:GetComponent(newEntityId, "Direction", 0):SetInt2(0, -1)
 			world:CreateComponentAndAddTo("NeedSpawnLocation", newEntityId)
-			world:CreateComponentAndAddTo("Hide", newEntityId)
+			--world:CreateComponentAndAddTo("Hide", newEntityId)
 			
 			world:SetComponent(entity, "PlayerNumber", "Number", playerNumber)
 			world:CreateComponentAndAddTo("UnitEntityId", entity)
