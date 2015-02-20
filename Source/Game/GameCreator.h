@@ -30,7 +30,7 @@ public:
 	void InitializeConsole();
 	void InitializeInput();
 	void InitializeNetwork();
-	void InitializeNetworkEvents();
+	void InitializeNetworkEvents(bool _allowEntities);
 	void InitializeThreads();
     void InitializeLobby();
 	//void InitializeLua();
