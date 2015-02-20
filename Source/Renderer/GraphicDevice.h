@@ -25,6 +25,9 @@ namespace Renderer
 #define RENDER_INTERFACE  3
 #define RENDER_ANIMATED  4
 
+#define RENDER_DEFERRED_SCATTER  8
+#define RENDER_FORWARD_SCATTER  9
+
 #define TEXTURE_DIFFUSE		0
 #define TEXTURE_NORMAL		1
 #define TEXTURE_SPECULAR	2

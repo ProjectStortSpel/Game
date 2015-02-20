@@ -88,6 +88,7 @@ require "sv_PlayCardTimerSystem"
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/CameraSystems/?.lua"
 require "sv_CameraInterestpointSystem"
 require "sv_CameraNewRoundSystem"
+require "sv_CameraMovePhaseSystem"
 
 --	Misc Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/MiscSystems/?.lua"
@@ -165,6 +166,7 @@ worldCreator:AddSystemToCurrentGroup(PlayCardTimerSystem)
 --worldCreator:AddSystemGroup() << TEMP 0
 worldCreator:AddSystemToCurrentGroup(CameraInterestpointSystem)
 worldCreator:AddSystemToCurrentGroup(CameraNewRoundSystem)
+worldCreator:AddSystemToCurrentGroup(CameraMovePhaseSystem)
 
 worldCreator:AddSystemToCurrentGroup(TotemPoleSystem)
 worldCreator:AddSystemToCurrentGroup(MoveTotemPieceSystem)

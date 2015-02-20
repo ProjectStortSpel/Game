@@ -360,7 +360,7 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 			break;
 		}
 	}
-	if (!FoundShaderType) { ERRORMSG("ERROR: INVALID RENDER SETTING"); return; }
+	if (!FoundShaderType) { return; } // ERRORMSG("ERROR: INVALID RENDER SETTING"); 
 
 	// Import Mesh
 	Buffer* mesh = AddMesh(obj.mesh, shaderPtr, false);

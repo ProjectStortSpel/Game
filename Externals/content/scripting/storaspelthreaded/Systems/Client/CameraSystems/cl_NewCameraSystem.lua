@@ -298,7 +298,6 @@ Net.Receive("Client.SendCIP",
 		world:GetComponent(entity, "CameraInterestPoint", "UpX"):SetFloat(UpX)
 		world:GetComponent(entity, "CameraInterestPoint", "UpZ"):SetFloat(UpZ)
 		world:GetComponent(entity, "CameraInterestPoint", "Distance"):SetFloat(Distance)
-		print("move camera")
 	end 
 )
 
