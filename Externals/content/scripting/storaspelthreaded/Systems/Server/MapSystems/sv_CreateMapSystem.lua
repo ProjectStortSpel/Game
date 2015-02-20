@@ -49,9 +49,10 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		world:CreateComponentAndAddTo("NotWalkable", newTile)
 		world:CreateComponentAndAddTo("Model", newTile)
 		local comp = world:GetComponent(newTile, "Model", 0)
-		comp:SetModel("stone", "stone", 0)
+		comp:SetModel("smallstone", "smallstone", 0)
 		posComp:SetFloat3(posX, 0.5, posZ) --posComp:SetFloat3(posX, 0.8 + 0.1* math.random(-1, 1), posZ)
-		
+		local scaleComp = world:GetComponent(newTile, "Scale", 0)
+		scaleComp:SetFloat3(0.75,0.75,0.75)
 		local rotComp = world:GetComponent(newTile, "Rotation", 0)
 		rotComp:SetFloat3(math.pi * 0.01 * math.random(0, 25), math.pi * 0.01 * math.random(0, 100), math.pi * 0.01 * math.random(0, 25))
 		self:AddGroundTileBelow(posX, posZ)
@@ -195,7 +196,7 @@ CreateMapSystem.AddGroundTileBelow = function(self, posX, posZ)
 end 
 
 CreateMapSystem.AddTinyStone = function(self, posX, posZ)
-	if (math.random(1, 5) > 2) then
+	if (math.random(1, 5) > 1) then
 		return
 	end
 	
@@ -209,10 +210,10 @@ CreateMapSystem.AddTinyStone = function(self, posX, posZ)
 	local randX = posX-0.5+math.random()
 	local randZ = posZ-0.5+math.random()
 	world:GetComponent(tinyStone, "Position", 0):SetFloat3(randX, 0.5, randZ)
-	world:GetComponent(tinyStone, "Rotation", 0):SetFloat3(0.0, 0.0, 0.0)
+	world:GetComponent(tinyStone, "Rotation", 0):SetFloat3(math.pi * 0.01 * math.random(0, 25), math.pi * 0.01 * math.random(0, 100), math.pi * 0.01 * math.random(0, 25))
 	local randScale = math.random() + 0.5
-	world:GetComponent(tinyStone, "Scale", 0):SetFloat3(0.2*randScale, 0.2*randScale, 0.2*randScale)
-	world:GetComponent(tinyStone, "Model", 0):SetModel("stone", "stone", 8)
+	world:GetComponent(tinyStone, "Scale", 0):SetFloat3(0.15*randScale, 0.15*randScale, 0.15*randScale)
+	world:GetComponent(tinyStone, "Model", 0):SetModel("smallstone", "smallstone", 8)
 	
 	--self:AddTinyStone(randX, randZ)
 end 
