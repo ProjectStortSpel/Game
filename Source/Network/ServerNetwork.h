@@ -41,13 +41,19 @@ namespace Network
 		// Bind function which will trigger when another player disconnects from the server
 		void SetOnPlayerTimedOut(NetEvent& _function);
 
+		void SetOnServerShutdown(std::function<void()> _function);
+
+		void ResetNetworkEvents();
+
 		bool IsRunning() { return *m_running; }
 		unsigned int GetMaxConnections() { return *m_maxConnections; }
+		unsigned int GetIncomingPort() { return *m_incomingPort; }
 
 	private:
 		void ReceivePackets(ISocket* _socket);
 		void ListenForConnections(void);
 
+		void OnServerShutdown();
 		void NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection);
 		void NetConnectionLost(NetConnection& _connection);
 		void NetConnectionDisconnected(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection);
@@ -82,6 +88,7 @@ namespace Network
 
 		//std::map<NetConnection
 
+		std::vector<std::function<void()>>* m_onServerShutdown;
 		std::vector<NetEvent>* m_onPlayerConnected;
 		std::vector<NetEvent>* m_onPlayerDisconnected;
 		std::vector<NetEvent>* m_onPlayerTimedOut;

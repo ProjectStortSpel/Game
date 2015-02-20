@@ -2,7 +2,7 @@
 #define ROTATIONSYSTEM_H
 
 #include "ECSL/Interfaces/System.h"
-#ifdef __ANDROID__
+#if defined(__ANDROID__) || defined(__IOS__)
 #include "AndroidRenderer/GraphicDevice.h"
 #else
 #include "Renderer/GraphicDevice.h"
@@ -16,11 +16,8 @@ public:
 	RotationSystem();
 	~RotationSystem();
 
-	void Update(float _dt);
 	void Initialize();
-
-	void OnEntityAdded(unsigned int _entityId);
-	void OnEntityRemoved(unsigned int _entityId);
+	void Update(const ECSL::RuntimeInfo& _runtime);
 
 private:
 	unsigned int m_rotationId, m_spinId;

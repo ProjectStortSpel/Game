@@ -28,6 +28,22 @@ RotationComponent:AddVariable("Y", ByteSize.Float)
 RotationComponent:AddVariable("Z", ByteSize.Float)
 worldCreator:AddComponentType(RotationComponent)
 
+-- Slerp Rotation Component
+local SlerpRotationComponent = ComponentType()
+SlerpRotationComponent.Name = "SlerpRotation"
+SlerpRotationComponent.SyncNetwork = true
+SlerpRotationComponent.TableType = TableType.Map
+SlerpRotationComponent:AddVariable("fromX", ByteSize.Float)
+SlerpRotationComponent:AddVariable("fromY", ByteSize.Float)
+SlerpRotationComponent:AddVariable("fromZ", ByteSize.Float)
+SlerpRotationComponent:AddVariable("fromW", ByteSize.Float)
+SlerpRotationComponent:AddVariable("time", ByteSize.Float)
+SlerpRotationComponent:AddVariable("toX", ByteSize.Float)
+SlerpRotationComponent:AddVariable("toY", ByteSize.Float)
+SlerpRotationComponent:AddVariable("toZ", ByteSize.Float)
+SlerpRotationComponent:AddVariable("toW", ByteSize.Float)
+worldCreator:AddComponentType(SlerpRotationComponent)
+
 -- Velocity Component
 local VelocityComponent = ComponentType()
 VelocityComponent.Name = "Velocity"
@@ -53,7 +69,6 @@ HideComponent.SyncNetwork = true
 HideComponent.TableType = TableType.Map
 worldCreator:AddComponentType(HideComponent)
 
-
 --	Model Component
 local ModelComponent = ComponentType()
 ModelComponent.Name = "Model"
@@ -73,14 +88,6 @@ SpinComponent:AddVariable("X", ByteSize.Float)
 SpinComponent:AddVariable("Y", ByteSize.Float)
 SpinComponent:AddVariable("Z", ByteSize.Float)
 worldCreator:AddComponentType(SpinComponent)
-
--- Camera Component
-local CameraComponent = ComponentType()
-CameraComponent.Name = "Camera"
-CameraComponent.SyncNetwork = true
-CameraComponent.TableType = TableType.Map
-CameraComponent:AddVariable("EntityId", ByteSize.Reference)
-worldCreator:AddComponentType(CameraComponent)
 
 -- Network Component
 local NetworkComponent = ComponentType()
@@ -118,13 +125,6 @@ SyncNetworkComponent.SyncNetwork = true
 SyncNetworkComponent.TableType = TableType.Array
 worldCreator:AddComponentType(SyncNetworkComponent)
 
--- Null Component
-local NullComponent = ComponentType()
-NullComponent.Name = "Null"
-NullComponent.SyncNetwork = true
-NullComponent.TableType = TableType.Map
-worldCreator:AddComponentType(NullComponent)
-
 
 -- TotemPole Component
 local TotemPoleComponent = ComponentType()
@@ -139,3 +139,9 @@ CheckpointIdComponent.Name = "CheckpointId"
 CheckpointIdComponent.TableType = TableType.Map
 CheckpointIdComponent:AddVariable("Id", ByteSize.Int)
 worldCreator:AddComponentType(CheckpointIdComponent)
+
+-- TILE Component
+local TileComponent = ComponentType()
+TileComponent.Name = "TileComp"
+TileComponent.TableType = TableType.Map
+worldCreator:AddComponentType(TileComponent)

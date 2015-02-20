@@ -1,0 +1,277 @@
+
+DealCards = false
+
+
+
+
+
+
+
+
+
+--CardDeckSystem.GetStartingCards = function (self, nrOfCardsPerPlayer, nrOfPlayers)
+	--
+	--self.NR_OF_CARDS_PER_PLAYER = nrOfCardsPerPlayer
+	--self.NR_OF_PLAYERS = nrOfPlayers
+	--
+	--local noOfCards = self.NR_OF_CARDS_PER_PLAYER * self.NR_OF_PLAYERS
+	--
+	--for i = 1, noOfCards do
+		--table.insert(self.DealtCards, -1)
+	--end
+	--
+	--
+	--local cards = {}
+	--
+	--for i = 1, noOfCards do
+		--local card = self.CardDeck[1]
+		--cards[i] = card
+		----local index = i + (playerNumber - 1) * self.NR_OF_CARDS_PER_PLAYER
+		----print("Inserting in ", index) 
+		----self.DealtCards[index] = card
+		--self.DealtCards[i] = card
+		----table.insert(self.DealtCards, index, card)
+		----print("Success")
+		--table.remove(self.CardDeck, 1)
+		--
+	--end
+	--
+	--for i = 1, noOfCards do
+		--
+		--local cardactioncomp = world:GetComponent( self.DealtCards[i], "CardAction", 0)
+		--local cardaction = cardactioncomp:GetString()
+		--print(i, cardaction, self.DealtCards[i])
+	--end
+	--
+	--return cards
+--end
+
+
+
+--
+--CardDeckSystem.PlayerChoseCards = function(self, cardIds, playerNumber)
+	--
+	--local offset = (playerNumber - 1) * self.NR_OF_CARDS_PER_PLAYER
+	--
+	--for i = 1, #cardIds do
+	--
+		--index = cardIds[i] + offset
+		----print(index, #self.DealtCards)
+		--
+		--table.insert(self.UsedCards, self.DealtCards[index])
+		--table.remove(self.DealtCards, index)
+		--
+		--local newCard = self:GetNewCard()
+		--table.insert(self.DealtCards, newCard)
+		--
+	--end
+		--
+--end
+--
+--CardDeckSystem.GetNewCard = function(self)
+--
+	--if #self.CardDeck < 1 then
+		--self:Reshuffle()
+	--end
+	--
+	--local comp = world:GetComponent(self.CardDeck[1], "CardAction", 0)
+	--local stringData = comp:GetString()
+	--
+	--print(self.CardDeck[1], "Get New Card, ", stringData,". Cards left: ", #self.CardDeck)
+	--
+	--local newCard = self.CardDeck[1]
+	--table.remove(self.CardDeck, 1)
+	----table.insert(self.DealtCards, newCard)
+	--
+	--return newCard
+--end
+--
+--CardDeckSystem.Reshuffle = function (self)
+	--
+	--while #self.UsedCards > 0 do		
+		--local card = self.UsedCards[#self.UsedCards]
+		--table.remove(self.UsedCards, #self.UsedCards)
+		--table.insert(self.CardDeck, card)
+	--end
+--
+	----while #self.DealtCards > 0 do
+		----
+		----table.insert(self.CardDeck, 
+	----end
+--end
+
+----GenCarDeck = function(  )
+----	local prio = 0
+----	-- forward
+----	for i = 1, 10*NROFPLAYERS do
+----		prio = prio + 1
+----		world:GetComponent(entity, "Position", 0)
+----		local entity = world:CreateNewEntity()
+----		local entity = world:CreateNewEntity("Player")
+----		world:CreateComponentAndAddTo("Spawn", entity)
+----		world:CreateComponentAndAddTo("SyncNetwork", entity)
+----		local mapPos = {i,12}
+----		--local mapPos = {i, 6}
+----		self:SetPosition(entity, mapPos[1], 1.0, mapPos[2])
+----		local comp = world:GetComponent(entity, "Spawn", 0)
+----		comp:SetInt2(mapPos[1], mapPos[2])
+----		
+----	end
+----	
+----	--backward
+----	
+----	--turnright
+----	
+----	--turnleft
+----
+----end
+--
+--
+--
+--
+--
+------------------------------ ForwardSystem
+--
+--ForwardSystem = System()
+--
+--ForwardSystem.Initialize = function(self)
+	--self:SetName("Forward System")
+	--self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
+	--self:AddComponentTypeToFilter("Direction",FilterType.Mandatory)
+	--self:AddComponentTypeToFilter("Forward",FilterType.Mandatory)
+	--
+	--self:AddComponentTypeToFilter("TargetPosition",FilterType.Excluded)
+	--print("ForwardSystem initialized!")
+--end
+--
+--ForwardSystem.OnEntityAdded = function(self, entity)
+	--local dir = world:GetComponent(entity, "Direction", 0)
+	--local mapPos = world:GetComponent(entity, "MapPosition", 0)
+	--
+	--local x, y = mapPos:GetInt2()
+	--local dirX, dirY = dir:GetInt2()
+	--
+	--local targetX = x + dirX
+	--local targetY = y + dirY
+	--
+	--local moved = PlayerMovementSystem:MoveTo(entity, targetX, targetY, dirX, dirY)
+	--
+	--world:RemoveComponentFrom("Forward", entity);
+--end
+--
+--
+------------------------------ BackwardSystem
+--
+--BackwardSystem = System()
+--
+--BackwardSystem.Initialize = function(self)
+	--self:SetName("Backward System")
+	--self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
+	--self:AddComponentTypeToFilter("Direction",FilterType.Mandatory)
+	--self:AddComponentTypeToFilter("Backward",FilterType.Mandatory)
+	--
+	--self:AddComponentTypeToFilter("TargetPosition",FilterType.Excluded)
+	--print("BackwardSystem initialized!")
+--end
+--
+--BackwardSystem.OnEntityAdded = function(self, entity)
+	--local dir = world:GetComponent(entity, "Direction", 0)
+	--local mapPos = world:GetComponent(entity, "MapPosition", 0)
+	--
+	--local x, y = mapPos:GetInt2()
+	--local dirX, dirY = dir:GetInt2()
+	--
+	--local targetX = x - dirX
+	--local targetY = y - dirY
+	--
+	--local moved = PlayerMovementSystem:MoveTo(entity, targetX, targetY, -dirX, -dirY)
+	--
+	--world:RemoveComponentFrom("Backward", entity);
+--end
+--
+------------------------------ RightTurnSystem
+--RightTurnSystem = System()
+--
+--RightTurnSystem.Initialize = function(self)
+	--self:SetName("Right Turn System")
+	--self:AddComponentTypeToFilter("Direction",FilterType.Mandatory)
+	--self:AddComponentTypeToFilter("Rotation",FilterType.Mandatory)
+	--self:AddComponentTypeToFilter("TurnRight",FilterType.Mandatory)
+	--
+	--print("RightTurnSystem initialized!")
+--end
+--
+--RightTurnSystem.OnEntityAdded = function(self, entity)
+	--local dir = world:GetComponent(entity, "Direction", 0)
+	--local rot = world:GetComponent(entity, "Rotation", 4)
+	--local dx, dy = dir:GetInt2()
+	--local roty = rot:GetFloat()
+	--
+	--local tempdy = dx
+	--dx = -dy
+	--dy = tempdy
+	--
+	--dir:SetInt2(dx, dy)
+	--rot:SetFloat(roty - math.pi/2)
+	--
+	--world:RemoveComponentFrom("TurnRight", entity);
+--end
+--
+------------------------------ LeftTurnSystem
+--
+--LeftTurnSystem = System()
+--
+--LeftTurnSystem.Initialize = function(self)
+	--self:SetName("Left Turn System")
+	--self:AddComponentTypeToFilter("Direction",FilterType.Mandatory)
+	--self:AddComponentTypeToFilter("Rotation",FilterType.Mandatory)
+	--self:AddComponentTypeToFilter("TurnLeft",FilterType.Mandatory)
+	--
+	--print("LeftTurnSystem initialized!")
+--end
+--
+--LeftTurnSystem.OnEntityAdded = function(self, entity)
+	--local dir = world:GetComponent(entity, "Direction", 0)
+	--local rot = world:GetComponent(entity, "Rotation", 4)
+	--local dx, dy = dir:GetInt2()
+	--local roty = rot:GetFloat()
+	--local tempdy = dx
+	--dx = dy
+	--dy = -tempdy
+	--
+	--dir:SetInt2(dx, dy)
+	--rot:SetFloat(roty + math.pi/2)
+	--
+	--world:RemoveComponentFrom("TurnLeft", entity);
+--end
+--
+------------------------------ TurnAroundSystem
+--
+--TurnAroundSystem = System()
+--
+--TurnAroundSystem.Initialize = function(self)
+	--self:SetName("Turn Around System")
+	--self:AddComponentTypeToFilter("Position", FilterType.Mandatory)
+	--self:AddComponentTypeToFilter("Direction",FilterType.Mandatory)
+	--self:AddComponentTypeToFilter("TurnAround",FilterType.Mandatory)
+	--
+	--print("TurnAroundSystem initialized!")
+--end
+--
+--TurnAroundSystem.OnEntityAdded = function(self, entity)
+	--local dir = world:GetComponent(entity, "Direction", 0)
+	--local rot = world:GetComponent(entity, "Rotation", 4)
+	--local dx, dy = dir:GetInt2()
+	--local roty = rot:GetFloat()
+	--
+	--dx = -dx
+	--dy = -dy
+	--
+	--dir:SetInt2(dx, dy)
+	--rot:SetFloat(roty + math.pi)
+	--
+	--world:RemoveComponentFrom("TurnAround", entity);
+--end
+--
+--
+--

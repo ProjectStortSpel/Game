@@ -1,6 +1,8 @@
 #include "EntityTable.h"
 
 #include <assert.h>
+#include "ECSL/Managers/ComponentTypeManager.h"
+#include "ECSL/Framework/Logger/DataLogger.h"
 
 using namespace ECSL;
 
@@ -10,58 +12,95 @@ EntityTable::EntityTable(unsigned int _entityCount, unsigned int _componentTypeC
 
 	/* Each component state in every entity equals one bit, either it has the component (1) or it doesn't (0) */
 	m_componentByteCount = BitSet::GetByteCount(_componentTypeCount);
-	m_componentIntCount = BitSet::GetIntCount(_componentTypeCount);
-	m_dataTable = new DataArray(_entityCount, 1 + m_componentIntCount * BitSet::GetIntByteSize());
+	m_componentIntCount = BitSet::GetDataTypeCount(_componentTypeCount);
+	m_dataTable = new DataArray(_entityCount, 1 + m_componentIntCount * BitSet::GetDataTypeByteSize());
 
 	/* All entity id slots are available from the beginning */
-	m_availableEntityIds = new std::stack<unsigned int>();
+	m_availableEntityIds = new std::vector<unsigned int>();
 	for (int i = _entityCount - 1; i >= 0; --i)
-		m_availableEntityIds->push(i);
+		m_availableEntityIds->push_back(i);
 }
 
 EntityTable::~EntityTable()
 {
-	if (m_dataTable)
-		delete(m_dataTable);
-
-	if (m_availableEntityIds)
-		delete(m_availableEntityIds);
-
-	if (m_availableEntityMutex)
-		SDL_DestroyMutex(m_availableEntityMutex);
+	delete(m_dataTable);
+	delete(m_availableEntityIds);
+	SDL_DestroyMutex(m_availableEntityMutex);
 }
 
 void EntityTable::AddComponentTo(unsigned int _entityId, unsigned int _componentTypeId)
 {
-	BitSet::DataType* componentBitSet = (BitSet::DataType*)(m_dataTable->GetData(_entityId, 1));
+	BitSet::DataType* entityComponents = (BitSet::DataType*)(m_dataTable->GetData(_entityId, 1));
 	unsigned int bitSetIndex = BitSet::GetBitSetIndex(_componentTypeId);
 	unsigned int bitIndex = BitSet::GetBitIndex(_componentTypeId);
 
 	/* The entity is dead */
-	assert(!(*(unsigned char*)m_dataTable->GetData(_entityId) == 0));
+	assert(!(*(unsigned char*)m_dataTable->GetData(_entityId) == 0) || DataLogger::GetInstance().LogWorldDataAssert());
 
-	/* The component is already added to entity */
-	assert(!(componentBitSet[bitSetIndex] & ((BitSet::DataType)1 << bitIndex)));
+	/* The component is already added to the entity */
+	assert(!(entityComponents[bitSetIndex] & ((BitSet::DataType)1 << bitIndex)) || DataLogger::GetInstance().LogWorldDataAssert());
 
-	componentBitSet[bitSetIndex] |= (BitSet::DataType)1 << bitIndex;
+	/* Add component to entity */
+	entityComponents[bitSetIndex] |= (BitSet::DataType)1 << bitIndex;
+}
+
+void EntityTable::AddComponentsTo(unsigned int _entityId, const std::vector<unsigned int>& _componentTypeIds)
+{
+	/* The entity is dead */
+	assert(!(*(unsigned char*)m_dataTable->GetData(_entityId) == 0) || DataLogger::GetInstance().LogWorldDataAssert());
+
+	BitSet::DataType* entityComponents = (BitSet::DataType*)(m_dataTable->GetData(_entityId, 1));
+	/* Adding components to entity */
+	for (unsigned int componentTypeId : _componentTypeIds)
+	{
+		unsigned int bitSetIndex = BitSet::GetBitSetIndex(componentTypeId);
+		unsigned int bitIndex = BitSet::GetBitIndex(componentTypeId);
+		
+		/* The component is already added to the entity */
+		assert(!(entityComponents[bitSetIndex] & ((BitSet::DataType)1 << bitIndex)) || DataLogger::GetInstance().LogWorldDataAssert());
+
+		/* Add component to entity */
+		entityComponents[bitSetIndex] |= (BitSet::DataType)1 << bitIndex;
+	}
 }
 
 void EntityTable::RemoveComponentFrom(unsigned int _entityId, unsigned int _componentTypeId)
 {
-	BitSet::DataType* componentBitSet = (BitSet::DataType*)(m_dataTable->GetData(_entityId, 1));
+	BitSet::DataType* entityComponents = (BitSet::DataType*)(m_dataTable->GetData(_entityId, 1));
 	unsigned int bitSetIndex = BitSet::GetBitSetIndex(_componentTypeId);
 	unsigned int bitIndex = BitSet::GetBitIndex(_componentTypeId);
 
 	/* The entity is dead */
-	assert(!(*(unsigned char*)m_dataTable->GetData(_entityId) == 0));
+	assert(!(*(unsigned char*)m_dataTable->GetData(_entityId) == 0) || DataLogger::GetInstance().LogWorldDataAssert());
 
 	/* The entity doesn't have that component */
-	assert(componentBitSet[bitSetIndex] & ((BitSet::DataType)1 << bitIndex));
+	assert(entityComponents[bitSetIndex] & ((BitSet::DataType)1 << bitIndex) || DataLogger::GetInstance().LogWorldDataAssert());
 
-	componentBitSet[bitSetIndex] &= ~((BitSet::DataType)1 << bitIndex);
+	/* Remove component from entity */
+	entityComponents[bitSetIndex] &= ~((BitSet::DataType)1 << bitIndex);
 }
 
-bool EntityTable::EntityHasComponent(unsigned int _entityId, unsigned int _componentTypeId)
+void EntityTable::RemoveComponentsFrom(unsigned int _entityId, const std::vector<unsigned int>& _componentTypeIds)
+{
+	/* The entity is dead */
+	assert(!(*(unsigned char*)m_dataTable->GetData(_entityId) == 0) || DataLogger::GetInstance().LogWorldDataAssert());
+
+	BitSet::DataType* entityComponents = (BitSet::DataType*)(m_dataTable->GetData(_entityId, 1));
+	/* Removing components from entity */
+	for (unsigned int componentTypeId : _componentTypeIds)
+	{
+		unsigned int bitSetIndex = BitSet::GetBitSetIndex(componentTypeId);
+		unsigned int bitIndex = BitSet::GetBitIndex(componentTypeId);
+
+		/* The entity doesn't have that component */
+		assert(entityComponents[bitSetIndex] & ((BitSet::DataType)1 << bitIndex) || DataLogger::GetInstance().LogWorldDataAssert());
+
+		/* Remove component from entity */
+		entityComponents[bitSetIndex] &= ~((BitSet::DataType)1 << bitIndex);
+	}
+}
+
+bool EntityTable::HasComponent(unsigned int _entityId, unsigned int _componentTypeId)
 {
 	BitSet::DataType* componentBitSet = (BitSet::DataType*)(m_dataTable->GetData(_entityId, 1));
 	unsigned int bitSetIndex = BitSet::GetBitSetIndex(_componentTypeId);
@@ -69,51 +108,19 @@ bool EntityTable::EntityHasComponent(unsigned int _entityId, unsigned int _compo
 	return ((componentBitSet[bitSetIndex]) & ((BitSet::DataType)1 << (bitIndex))) != 0;
 }
 
-bool EntityTable::EntityPassFilters(unsigned int _entityId, const BitSet::DataType* _mandatoryMask, const BitSet::DataType* _oneOfMask, const BitSet::DataType* _exclusionMask)
-{
-	/* Component bit set for the entity */
-	BitSet::DataType* componentBitSet = (BitSet::DataType*)(m_dataTable->GetData(_entityId, 1));
-
-	char requiresOneOf = 0;
-
-	/* Checks every component filter (breaks if fails) */
-	for (unsigned int i = 0; i < m_componentIntCount; ++i)
-	{
-		/* Entity doesn't have atleast one of the must-have components */
-		if (!((_mandatoryMask[i] & componentBitSet[i]) == _mandatoryMask[i]))
-			return false;
-
-		/* Entity has atleast one of the excluded components  */
-		else if (_exclusionMask[i] && (_exclusionMask[i] & componentBitSet[i]) != 0)
-			return false;
-
-		/* Entity has none of the atleast-one-of components */
-		else if (_oneOfMask[i] && requiresOneOf < 2)
-		{
-			requiresOneOf = 1;
-			if((_oneOfMask[i] & componentBitSet[i]) != 0)
-				requiresOneOf = 2;
-		}
-
-	}
-
-	if (requiresOneOf == 1)
-		return false;
-
-	return true;
-}
-
 unsigned int EntityTable::GenerateNewEntityId()
 {
-	/* Too many entities generated in the world. Increase entity count size! */
-	assert(m_availableEntityIds->size() != 0);
+	/* Max entity count reached */
+	assert(m_availableEntityIds->size() != 0 || DataLogger::GetInstance().LogWorldDataAssert());
 
 	SDL_LockMutex(m_availableEntityMutex);
-	unsigned int id = m_availableEntityIds->top();
-	m_availableEntityIds->pop();
+	/* Fetch entity id from the queue */
+	unsigned int id = m_availableEntityIds->back();
+	m_availableEntityIds->pop_back();
 	SDL_UnlockMutex(m_availableEntityMutex);
 
 	unsigned char alive = ((unsigned char)EntityState::Alive);
+	/* Change the entity state to alive */
 	m_dataTable->SetData(id, &alive, 1);
 
 	return id;
@@ -121,28 +128,42 @@ unsigned int EntityTable::GenerateNewEntityId()
 
 void EntityTable::AddOldEntityId(unsigned int _entityId)
 {
-	assert(_entityId < m_entityCount);
+	/* Entity id is bigger than the entity count */
+	assert(_entityId < m_entityCount || DataLogger::GetInstance().LogWorldDataAssert());
 
-	m_availableEntityIds->push(_entityId);
-
-	m_dataTable->ClearRow(_entityId);
+	m_availableEntityIds->push_back(_entityId);
 }
 
 void EntityTable::ClearEntityData(unsigned int _entityId)
 {
+	/* The entity is dead */
+	assert(!(*(unsigned char*)m_dataTable->GetData(_entityId) == 0) || DataLogger::GetInstance().LogWorldDataAssert());
+
 	m_dataTable->ClearRow(_entityId);
+}
+
+const EntityState EntityTable::GetEntityState(unsigned int _entityId) 
+{ 
+	return (EntityState)(*(int*)(m_dataTable->GetData(_entityId))); 
+}
+
+const BitSet::DataType* EntityTable::GetEntityComponents(unsigned int _entityId) 
+{ 
+	return (BitSet::DataType*)(m_dataTable->GetData(_entityId) + 1); 
 }
 
 void EntityTable::GetEntityComponents(std::vector<unsigned int>& _out, unsigned int _entityId)
 {
-	BitSet::DataType* componentBitSet = (BitSet::DataType*)(m_dataTable->GetData(_entityId, 1));
-	unsigned int bitCount = BitSet::GetIntByteSize() * 8;
+	BitSet::DataType* entityComponents = (BitSet::DataType*)(m_dataTable->GetData(_entityId, 1));
+	const unsigned int bitCount = BitSet::GetDataTypeByteSize() * 8;
 	for (unsigned int bitSetIndex = 0; bitSetIndex < m_componentIntCount; ++bitSetIndex)
 	{
+		if (entityComponents[bitSetIndex] == 0)
+			continue;
 		for (unsigned int bitIndex = 0; bitIndex < bitCount; ++bitIndex)
 		{
-			if (componentBitSet[bitSetIndex] & ((BitSet::DataType)1 << (bitIndex)))
-				_out.push_back(bitSetIndex * BitSet::GetIntByteSize() * 8 + bitIndex);
+			if (entityComponents[bitSetIndex] & ((BitSet::DataType)1 << (bitIndex)))
+				_out.push_back(bitSetIndex * bitCount + bitIndex);
 		}
 	}
 }

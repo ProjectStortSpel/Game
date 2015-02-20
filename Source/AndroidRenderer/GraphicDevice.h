@@ -10,6 +10,10 @@ Author: Christian
 #include "Buffer.h"
 #include "Camera.h"
 #include "SkyBox.h"
+#include "ShadowMap.h"
+#include "TextRenderer.h"
+#include "SkyBox.h"
+#include "ModelLoader.h"
 
 namespace Renderer
 {
@@ -28,7 +32,7 @@ namespace Renderer
 		bool operator!= (const Model &m) { return !Compare(m); }
 
 		Model(){}
-		Model(Buffer* buffer, GLuint tex, GLuint nor, GLuint spe, int id, bool active, mat4* model)
+		Model(Buffer* buffer, GLuint tex, GLuint nor, GLuint spe, int id, bool active, mat4* model, float* col)
 		{
 			bufferPtr = buffer;
 			texID = tex;
@@ -38,6 +42,7 @@ namespace Renderer
 			this->id = id;
 			this->active = active;
 			this->modelMatrix = model;
+			this->color = col;
 		}
 		bool Compare(Model m)
 		{
@@ -55,55 +60,73 @@ namespace Renderer
 		int id;
 		bool active;
 		mat4* modelMatrix;
+		float* color;
+	};
+
+	struct ModelToLoad
+	{
+		std::string Dir;
+		std::string File;
+		glm::mat4* MatrixPtr;
+		int RenderType;
+		float* Color;
 	};
 
 	class DECLSPEC GraphicDevice
 	{
 	public:
 		GraphicDevice();
-		~GraphicDevice();
+		GraphicDevice(Camera _camera);
+		virtual ~GraphicDevice();
 
-		bool Init();
+		virtual bool Init(){ return false; };
 
 		void PollEvent(SDL_Event _event);
-		void Update(float _dt);
-		void Render();
+		virtual void Update(float _dt){};
+		virtual void Render(){};
 
 		void ResizeWindow(int _width, int _height);
-		void SetTitle(std::string _title);
+		virtual void SetTitle(std::string _title){};
 
 		// SIMPLETEXT FROM GAME
-		bool RenderSimpleText(std::string _text, int x, int y);
-		void SetSimpleTextColor(float _r, float _g, float _b, float _a);
-		void SetDisco();
-		void ToggleSimpleText();
-		void ToggleSimpleText(bool _on);
+		virtual bool RenderSimpleText(std::string _text, int x, int y){ return false; }
+		virtual void SetSimpleTextColor(float _r, float _g, float _b, float _a){};
+		virtual void SetDisco(){};
+		virtual void ToggleSimpleText(){};
+		virtual void ToggleSimpleText(bool _on){};
 
 		Camera *GetCamera(){ return m_camera; }
 		void GetWindowSize(int &x, int &y){ x = m_clientWidth; y = m_clientHeight; }
 
 		// MODELLOADER
-		bool PreLoadModel(std::string _dir, std::string _file, int _renderType = RENDER_FORWARD);
-		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_FORWARD);
-		bool RemoveModel(int _id);
-		bool ActiveModel(int _id, bool _active);
-		bool ChangeModelTexture(int _id, std::string _fileDir, int _textureType = TEXTURE_DIFFUSE);
-		bool ChangeModelNormalMap(int _id, std::string _fileDir);
-		bool ChangeModelSpecularMap(int _id, std::string _fileDir);
+		virtual bool PreLoadModel(std::string _dir, std::string _file, int _renderType = RENDER_FORWARD){ return false; };
+		virtual int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_FORWARD, float* _color = nullptr){ return 0; };
+		virtual bool RemoveModel(int _id){ return false; };
+		virtual bool ActiveModel(int _id, bool _active){ return false; };
+		virtual bool ChangeModelTexture(int _id, std::string _fileDir, int _textureType = TEXTURE_DIFFUSE){ m_modelTextures.push_back({ _id, _fileDir, _textureType }); return false; };
+		virtual bool ChangeModelNormalMap(int _id, std::string _fileDir){ m_modelTextures.push_back({ _id, _fileDir, TEXTURE_NORMAL }); return false; };
+		virtual bool ChangeModelSpecularMap(int _id, std::string _fileDir){ m_modelTextures.push_back({ _id, _fileDir, TEXTURE_SPECULAR }); return false; };
 
-		void SetDebugTexFlag(int _flag) {  }
-		void BufferPointlights(int _nrOfLights, float **_lightPointers);
-		void BufferDirectionalLight(float *_lightPointer);
+		void SetDebugTexFlag(int _flag) { return; }
+		virtual void BufferPointlights(int _nrOfLights, float **_lightPointers){};
+		virtual void BufferDirectionalLight(float *_lightPointer){};
 
-		int GetVRamUsage(){ return 0; }
+		int GetVRamUsage(){ return -1; }
 		
-		void Clear();
+		virtual void Clear(){};
+		
+		int AddFont(const std::string& filepath, int size);
+		float CreateTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, glm::ivec2 size = glm::ivec2(-1, -1));
+		void CreateWrappedTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, unsigned int wrapLength, glm::ivec2 size = glm::ivec2(-1, -1));
 
-	private:
-		bool InitSDLWindow();
-		bool InitShaders();
-		bool InitBuffers();
+	protected:
 		bool InitSkybox();
+		
+		virtual bool InitLightBuffers() = 0;
+
+		virtual void BufferLightsToGPU() = 0;
+
+		void InitFBO();
 
 		Camera* m_camera;
 
@@ -114,30 +137,63 @@ namespace Renderer
 		float m_dt;
 		int m_fps;
 
+		bool m_SDLinitialized;
+
 		// Window size
 		int	m_clientWidth, m_clientHeight;
 
+		// Light info
+		vec3 m_dirLightDirection;
+		float m_lightDefaults[10];
+		float* m_directionalLightPtr;
+		float** m_pointlightsPtr;
+		int m_nrOfLightsToBuffer;
+
+		// The Framebuffer
+		GLuint m_FBO;
+		int m_framebufferWidth, m_framebufferHeight;
+		// Framebuffer textures
+		GLuint m_depthBuf, m_outputImage;
+
 		// Shaders
 		Shader m_skyBoxShader;
-		Shader m_forwardShader, m_viewspaceShader;
+		Shader m_forwardShader, m_viewspaceShader, m_interfaceShader;
+		Shader m_fullscreen;
 
 		// Skybox
 		SkyBox *m_skybox;
 
 		// Modelloader
 		int m_modelIDcounter;
-		std::vector<Model> m_modelsForward, m_modelsViewspace;
+		std::vector<Model> m_modelsForward, m_modelsViewspace, m_modelsInterface;
 
 		// Meshs
 		std::map<const std::string, Buffer*> m_meshs;
-		Buffer* AddMesh(std::string _fileDir, Shader *_shaderProg);
+		virtual Buffer* AddMesh(std::string _fileDir, Shader *_shaderProg) = 0;
 		// Textures
 		std::map<const std::string, GLuint> m_textures;
 		GLuint AddTexture(std::string _fileDir, GLenum _textureSlot);
-
+		
+		
+		std::map<int, ModelToLoad*> m_modelsToLoad;
+		virtual void BufferModels();
+		virtual void BufferModel(int _modelId, ModelToLoad* _modelToLoad);
+		
+		std::vector<std::pair<std::string, SDL_Surface*>> m_surfaces;
+		void BufferSurfaces();
+		
+		struct ModelTexture
+		{
+			int id;
+			std::string textureName;
+			int textureType;
+		};
+		std::vector<ModelTexture> m_modelTextures;
+		void BufferModelTextures();
+		virtual bool BufferModelTexture(int _id, std::string _fileDir, int _textureType);
+		
+		void SortModelsBasedOnDepth(std::vector<Model>* models);
 	};
 }
-
-
 
 #endif

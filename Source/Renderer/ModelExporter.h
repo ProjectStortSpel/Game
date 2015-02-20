@@ -41,8 +41,11 @@ public:
 	{
 		int size;
 		ifile.read((char*)&size, sizeof(int));
+		if (size < 0)
+			size = 0;
 		std::vector<float> data(size / sizeof(float));
-		ifile.read((char*)&data[0], size);
+		if (size > 0)
+			ifile.read((char*)&data[0], size);
 
 		return data;
 	}

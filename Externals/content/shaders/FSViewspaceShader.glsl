@@ -1,9 +1,10 @@
-#version 430
+#version 400
 in vec3 Normal;
 in vec3 Tan;
 in vec3 BiTan;
 in vec2 TexCoord;
 in vec3 ViewPos;
+in vec3 AddColor;
 
 layout( location = 0 ) out vec4 ColorData;
 
@@ -13,23 +14,6 @@ uniform sampler2D normalTex;
 uniform sampler2D specularTex;
 
 uniform mat4 BiasMatrix;
-
-struct vector3
-{
-	float x, y, z;
-};
-
-struct Pointlight {
-	vector3 Position; // Light position in world coords.
-	vector3 Intensity; // Diffuse intensity
-	vector3 Color;
-	float Range;
-};
-
-layout (std430, binding = 4) buffer PointLights   
-{
-	Pointlight	pointlights[];
-};
 
 struct MaterialInfo {
 	float Ks;
@@ -51,14 +35,21 @@ void main()
 	NmNormal = normalize( texSpace * normal_map );
 
 	// Spec data
-	vec3 specglow_map = texture( specularTex, TexCoord ).rgb;
+	vec4 specglow_map = texture( specularTex, TexCoord );
 	Material.Ks			= specglow_map.x;
 	Material.Shininess  = specglow_map.y * 254.0f + 1.0f;
 	float glow			= specglow_map.z;
+	float blendFactor	= specglow_map.w;
 
 	vec3 ambient = vec3(1.0);
 	vec3 diffuse = vec3(0.0);
-	vec3 spec    = vec3(0.0);
+	vec3 spec    = vec3(0.0)*specglow_map.xyz;
 
-	ColorData = vec4(ambient + diffuse, 1.0) * albedo_tex + vec4(spec, 0.0f);
+	vec4 coloradded;
+	if( AddColor != vec3(0.0) )
+		coloradded = vec4((1.0f-blendFactor)*albedo_tex.xyz + blendFactor * AddColor, albedo_tex.a);
+	else
+		coloradded = albedo_tex;
+
+	ColorData = vec4(ambient + diffuse, 1.0) * coloradded + vec4(spec, 0.0f) + vec4(normal_map, 0.0f)*0.00000001;
 }

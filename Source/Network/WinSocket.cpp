@@ -15,7 +15,7 @@ WinSocket::WinSocket(void)
 
 	Initialize();
 
-	m_socket = socket(AF_INET, SOCK_STREAM, 0);
+	m_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
 
 	if (m_socket != INVALID_SOCKET)
 	{
@@ -126,25 +126,65 @@ bool WinSocket::Shutdown(void)
 bool WinSocket::Connect(const char* _ipAddress, const int _port)
 {
 	addrinfo hints = { 0 };
-	hints.ai_flags = AI_NUMERICHOST;
-	hints.ai_family = AF_INET;
+	//hints.ai_flags = AI_NUMERICHOST;
+	hints.ai_family = AF_UNSPEC; //PF_INET;
 	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_flags = 0;
+	hints.ai_protocol = 0;
 
 	addrinfo *addrs = NULL;
-	if (getaddrinfo(_ipAddress, NULL, &hints, &addrs) != 0)
+	if (getaddrinfo(_ipAddress, std::to_string(_port).c_str(), &hints, &addrs) != 0)
 	{
 		if (NET_DEBUG)
 		{
 			SDL_Log("Failed to get address info. Error Code: %d.\n", WSAGetLastError());
 		}
-
+		freeaddrinfo(addrs);
 		return false;
 	}
 
+	addrinfo* rp;
+
+	for (rp = addrs; rp != NULL; rp = rp->ai_next)
+	{
+		m_socket = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
+
+		if (m_socket < 0)
+			continue;
+
+		if (connect(m_socket, rp->ai_addr, rp->ai_addrlen) == 0)
+			break;
+
+		else if (connect(m_socket, rp->ai_addr, rp->ai_addrlen) < 0)
+		{
+			if (WSAGetLastError() == 10035)
+				break;			
+		}
+
+		closesocket(m_socket);
+	}
+
+	freeaddrinfo(addrs);
+
+	if (rp == NULL)
+	{
+		if (NET_DEBUG)
+		{
+			SDL_Log("Failed to connect to Ip address %s:%i.", _ipAddress, _port);
+		}
+		return false;
+	}
+
+	*m_remoteAddress = _ipAddress;
+	*m_remotePort = _port;
+
+	return true;
+
+/*
 	sockaddr_in address;
 	address.sin_addr.S_un.S_addr = ((sockaddr_in*)(addrs->ai_addr))->sin_addr.s_addr;
 	address.sin_port = htons(_port);
-	address.sin_family = AF_INET;
+	address.sin_family = PF_INET;
 
 	freeaddrinfo(addrs);
 
@@ -164,12 +204,12 @@ bool WinSocket::Connect(const char* _ipAddress, const int _port)
 	*m_remoteAddress = _ipAddress;
 	*m_remotePort = _port;
 
-	return true;
+	return true;*/
 }
 bool WinSocket::Bind(const int _port)
 {
 	sockaddr_in address;
-	address.sin_family = AF_INET;
+	address.sin_family = PF_INET;
 	address.sin_port = htons(_port);
 	address.sin_addr.S_un.S_addr = INADDR_ANY;
 
@@ -253,6 +293,19 @@ bool WinSocket::CloseSocket(void)
 
 	return true;
 }
+
+bool WinSocket::ShutdownSocket(int _how)
+{
+	if (shutdown(m_socket, _how) != 0)
+	{
+		if (NET_DEBUG)
+			SDL_Log("Failed to shutdown winsocket. Error Code: %d.\n", WSAGetLastError());
+		return false;
+	}
+
+	return true;
+}
+
 ISocket* WinSocket::Accept(void)
 {
 	sockaddr_in incomingAddress;
@@ -335,7 +388,14 @@ int WinSocket::Send(char* _buffer, int _length, int _flags)
 	{
 		int errorCode = WSAGetLastError();
 
-		if (errorCode != 10035)
+		if (errorCode == 10057)
+		{
+		}
+		else if (byteSent == 0)
+		{
+			SDL_Log("Server shutdown gracefully.\n");
+		}
+		else if (errorCode != 10035 && byteSent != 0)
 		{
 			if (NET_DEBUG)
 				SDL_Log("Failed to send \"Size packet\" of size '%i'. Error Code: %d.\n", byteSent, errorCode);
@@ -394,7 +454,7 @@ int WinSocket::Receive(char* _buffer, int _length, int _flags)
 		{
 			if (NET_DEBUG)
 				SDL_Log("Error: To large packet received!\n");
-			return 0;
+			return -1;
 		}
 
 		return sizeReceived;
@@ -403,12 +463,21 @@ int WinSocket::Receive(char* _buffer, int _length, int _flags)
 	{
 		if (NET_DEBUG)
 			SDL_Log("Error: Failed to receive \"Size packet\". Error code: %d\n", WSAGetLastError());
+
+		return -1;
+	}
+	else if (len2 == 0)
+	{
+		if (NET_DEBUG)
+			SDL_Log("Server shutdown gracefully.\n");
+
+		return 0;
 	}
 	else
 	{
 		if (NET_DEBUG)
 			SDL_Log("Error: \"Size packet\" corrupt! Length: %d\n", len2);
-		//return 0;
+		return -1;
 	}
 	return 0;
 }

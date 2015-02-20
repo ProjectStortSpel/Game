@@ -26,52 +26,87 @@
     <Filter Include="shaders\Skybox">
       <UniqueIdentifier>{48745db1-a16b-4f21-adbb-abc0e20759fb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="shaders\Forward">
+    <Filter Include="shaders\HighForward">
       <UniqueIdentifier>{52b4784c-8fe0-41cb-aa32-f1d8801126d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders\LowForward">
+      <UniqueIdentifier>{457af9ed-78d4-404b-938c-0b7d99941c34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders\Animation">
+      <UniqueIdentifier>{febeb057-91b1-4665-a3f2-b2a79f54923c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders\ParticleShaders">
+      <UniqueIdentifier>{a07b3b2d-2595-43fe-9eee-cebc6259606d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Model">
+      <UniqueIdentifier>{0cbc476f-92ea-4f30-8040-4dded9929c3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\GraphicDevices">
+      <UniqueIdentifier>{a952fc80-e956-46c1-b68f-5124183bf33c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Tech">
+      <UniqueIdentifier>{0b071afe-a762-4b55-9938-c8f32a16c3bd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Source\Renderer\GraphicDevice.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Source\Renderer\Shader.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Renderer\stdafx.h" />
-    <ClInclude Include="..\..\..\Source\Renderer\GLTimer.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Source\Renderer\SimpleText.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Source\Renderer\Camera.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\Renderer\Buffer.h" />
-    <ClInclude Include="..\..\..\Source\Renderer\ModelLoader.h" />
     <ClInclude Include="..\..\..\Source\Renderer\Buffer.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\Renderer\TextureLoader.h" />
-    <ClInclude Include="..\..\..\Source\Renderer\SkyBox.h">
-      <Filter>Source</Filter>
+    <ClInclude Include="..\..\..\Source\Renderer\AModel.h">
+      <Filter>Source\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\Model.h">
+      <Filter>Source\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\ModelExporter.h">
+      <Filter>Source\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\ModelLoader.h">
+      <Filter>Source\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\GraphicDevice.h">
+      <Filter>Source\GraphicDevices</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\GraphicsHigh.h">
+      <Filter>Source\GraphicDevices</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\GraphicsLow.h">
+      <Filter>Source\GraphicDevices</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\ParticleSystem.h">
+      <Filter>Source\Tech</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Renderer\ShadowMap.h">
+      <Filter>Source\Tech</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\SimpleText.h">
+      <Filter>Source\Tech</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\SkyBox.h">
+      <Filter>Source\Tech</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\TextRenderer.h">
+      <Filter>Source\Tech</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\Buffer.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\Renderer\ModelExporter.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\GLTimer.h">
+      <Filter>Source\Tech</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Renderer\TextureLoader.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Source\Renderer\Shader.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Source\Renderer\GLTimer.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Source\Renderer\SimpleText.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Renderer\Camera.cpp">
@@ -80,11 +115,38 @@
     <ClCompile Include="..\..\..\Source\Renderer\Buffer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\Renderer\SkyBox.cpp">
-      <Filter>Source</Filter>
+    <ClCompile Include="..\..\..\Source\Renderer\AModel.cpp">
+      <Filter>Source\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Renderer\Model.cpp">
+      <Filter>Source\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp">
+      <Filter>Source\GraphicDevices</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Renderer\GraphicsHigh.cpp">
+      <Filter>Source\GraphicDevices</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Renderer\GraphicsLow.cpp">
+      <Filter>Source\GraphicDevices</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Renderer\ParticleSystem.cpp">
+      <Filter>Source\Tech</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Renderer\ShadowMap.cpp">
-      <Filter>Source</Filter>
+      <Filter>Source\Tech</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Renderer\SimpleText.cpp">
+      <Filter>Source\Tech</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Renderer\SkyBox.cpp">
+      <Filter>Source\Tech</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Renderer\GLTimer.cpp">
+      <Filter>Source\Tech</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Renderer\TextRenderer.cpp">
+      <Filter>Source\Tech</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -139,14 +201,35 @@
     <None Include="..\..\..\Externals\content\shaders\skyboxShaderVS.glsl">
       <Filter>shaders\Skybox</Filter>
     </None>
-    <None Include="..\..\..\Externals\content\shaders\skyboxvs.glsl">
-      <Filter>shaders\Skybox</Filter>
-    </None>
     <None Include="..\..\..\Externals\content\shaders\VSForwardShader.glsl">
-      <Filter>shaders\Forward</Filter>
+      <Filter>shaders\HighForward</Filter>
     </None>
     <None Include="..\..\..\Externals\content\shaders\FSForwardShader.glsl">
-      <Filter>shaders\Forward</Filter>
+      <Filter>shaders\HighForward</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\lowFSForwardShader.glsl">
+      <Filter>shaders\LowForward</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\lowVSForwardShader.glsl">
+      <Filter>shaders\LowForward</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\VSAnimationShader.glsl">
+      <Filter>shaders\Animation</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\FSAnimationShader.glsl">
+      <Filter>shaders\Animation</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\particles\particleFireFS.glsl">
+      <Filter>shaders\ParticleShaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\particles\particleFireVS.glsl">
+      <Filter>shaders\ParticleShaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\particles\particleSmokeFS.glsl">
+      <Filter>shaders\ParticleShaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\particles\particleSmokeVS.glsl">
+      <Filter>shaders\ParticleShaders</Filter>
     </None>
   </ItemGroup>
 </Project>

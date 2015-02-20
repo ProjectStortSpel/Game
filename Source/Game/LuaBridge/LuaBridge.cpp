@@ -7,42 +7,55 @@
 #include "ECSL/LuaComponent.h"
 #include "ECSL/LuaEntityTemplate.h"
 #include "ECSL/LuaEntityTemplateManager.h"
+#include "AI/LuaPotentialFieldHandler.h"
+#include "AI/LuaPathfinderHandler.h"
+#include "AI/LuaCombinationMath.h"
 #include "Renderer/LuaGraphicDevice.h"
 #include "Renderer/LuaCamera.h"
 #include "Math/LuaMatrix.h"
 #include "FileLoader/LuaFileLoader.h"
 #include "Console/LuaConsole.h"
 #include "Network/LuaNetwork.h"
-#include "File/LuaFile.h"
+#include "Resource/LuaResource.h"
 
 namespace LuaBridge
 {
-  void Embed()
+	lua_State* g_IOLuaState = nullptr;
+
+	void SetIOLuaState(lua_State* L)
+	{
+		g_IOLuaState = L;
+	}
+
+  void Embed(lua_State* L)
   {
-    LuaInput::Embed();
+    LuaInput::Embed(L);
     
-    LuaWorldCreator::Embed();
-    LuaWorld::Embed();
-    LuaSystem::Embed();
-    LuaComponentType::Embed();
-    LuaComponent::Embed();
-    LuaEntityTemplate::Embed();
-    LuaEntityTemplateManager::Embed();
+    LuaWorldCreator::Embed(L);
+    LuaWorld::Embed(L);
+    LuaSystem::Embed(L);
+    LuaComponentType::Embed(L);
+    LuaComponent::Embed(L);
+    LuaEntityTemplate::Embed(L);
+    LuaEntityTemplateManager::Embed(L);
     
-    LuaGraphicDevice::Embed();
-    LuaCamera::Embed();
+    LuaGraphicDevice::Embed(L);
+    LuaCamera::Embed(L);
     
-    LuaMatrix::Embed();
+    LuaMatrix::Embed(L);
     
-    LuaConsole::Embed();
+    LuaConsole::Embed(L);
 
-	LuaNetwork::Embed();
+    LuaNetwork::Embed(L);
+    //LuaClientNetwork::Embed();
+    //LuaServerNetwork::Embed();
 
-	LuaFile::Embed();
+	LuaResource::Embed(L);
 
-	//LuaClientNetwork::Embed();
-	//LuaServerNetwork::Embed();
+	PotentialField::Embed(L);
+	PathfinderHandler::Embed(L);
+	CombinationMath::Embed(L);
 
-	LuaEmbedder::AddFunction("LoadMap", &LoadMap, "File");
+    LuaEmbedder::AddFunction(L, "LoadMap", &LoadMap, "File");
   }
 }

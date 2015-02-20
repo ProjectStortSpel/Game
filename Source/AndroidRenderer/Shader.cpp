@@ -2,6 +2,11 @@
 
 using namespace Renderer;
 
+Shader::~Shader()
+{
+	glDeleteProgram(m_shaderProg);
+}
+
 void Shader::InitShaderProgram()
 {
 	/* CREATE THE PROGRAM */
@@ -125,6 +130,7 @@ bool Shader::FinalizeShaderProgram()
 	for (int i = 0; i < m_shaders.size(); i++)
 	{
 		glDetachShader(m_shaderProg, m_shaders[i]);
+		glDeleteShader(m_shaders[i]);
 	}
 	m_shaders.clear();
 	return true;
@@ -147,7 +153,7 @@ bool Shader::SetUniformBuffer(GLuint shader_binding, GLuint data, int size)
 bool Shader::SetUniVariable(const char* p_Name, VariableTyp p_Typ, void* p_Value)
 {
 	// FIXA PREFETCH MED STD MAP
-
+	glUseProgram(this->m_shaderProg);
 	GLint location = glGetUniformLocation(m_shaderProg, p_Name);
 
 	if (location != -1)

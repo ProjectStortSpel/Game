@@ -115,6 +115,9 @@ void NetworkHelper::WriteComponents(Network::PacketHandler* _ph, uint64_t _id, u
 				case ECSL::ComponentDataType::TEXT:
 					_ph->WriteString(_id, data);
 					break;
+				case ECSL::ComponentDataType::STRING:
+					_ph->WriteString(_id, (*m_world)->GetString(_e, componentId, byteOffset).c_str());
+					break;
 				case ECSL::ComponentDataType::INT:
 				case ECSL::ComponentDataType::REFERENCE:
 					_ph->WriteInt(_id, *(int*)data);
@@ -141,7 +144,7 @@ void NetworkHelper::WriteComponents(Network::PacketHandler* _ph, uint64_t _id, u
 
 Network::Packet* NetworkHelper::WriteEntityKill(Network::PacketHandler* _ph, unsigned int _e)
 {
-	printf("WriteEntityKill\n");
+	//printf("WriteEntityKill\n");
 
 	uint64_t id = _ph->StartPack("EntityKill");
 	_ph->WriteInt(id, _e);
@@ -244,6 +247,11 @@ void NetworkHelper::ReceiveComponents(Network::PacketHandler* _ph, uint64_t _id,
 				case ECSL::ComponentDataType::BOOL:
 				{
 					*data = _ph->ReadByte(_id);
+				}
+				case ECSL::ComponentDataType::STRING:
+				{
+					(*m_world)->SetString(_e, compType, offset, _ph->ReadString(_id));
+					break;
 				}
 				case ECSL::ComponentDataType::TEXT:
 				{

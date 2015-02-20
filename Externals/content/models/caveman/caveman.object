@@ -1,4 +1,6 @@
-caveman.mesh
-whitePixel.png
-normalPixel.png
-blackPixel.png
+cavemanwave.amesh
+cavemantex.png
+normalpixel.png
+cavemanspec.png
+cavemanwave.ajoints
+cavemanwave.anim

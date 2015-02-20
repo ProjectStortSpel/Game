@@ -1,6 +1,5 @@
 #include "DataArray.h"
 
-#include <assert.h>
 #include <cstdlib>
 #include <cstring>
 

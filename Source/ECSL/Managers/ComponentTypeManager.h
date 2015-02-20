@@ -52,7 +52,7 @@ namespace ECSL
 
 		auto it = m_componentTypes->find(componentId);
 		if (it == m_componentTypes->end())
-			m_componentTypes->operator[](componentId) = new ComponentType();
+			(*m_componentTypes)[componentId] = new ComponentType();
 	}
 
 	template<typename ComponentType>

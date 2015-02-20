@@ -71,6 +71,8 @@ namespace Network
 		// Bind function which will trigger when a client is banned from the server
 		void SetOnRemotePlayerBanned(NetEvent& _function);
 
+		void ResetNetworkEvents();
+		void SetTimeOutValue(int _value);
 
 	private:
 
@@ -120,6 +122,7 @@ namespace Network
 		float* m_currentTimeOutIntervall;
 		int* m_currentIntervallCounter;
 
+		
 		std::vector<NetEvent>* m_onConnectedToServer;
 		std::vector<NetEvent>* m_onDisconnectedFromServer;
 		std::vector<NetEvent>* m_onTimedOutFromServer;

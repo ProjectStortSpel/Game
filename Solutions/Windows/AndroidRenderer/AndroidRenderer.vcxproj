@@ -22,23 +22,41 @@
     <ClCompile Include="..\..\..\Source\AndroidRenderer\Buffer.cpp" />
     <ClCompile Include="..\..\..\Source\AndroidRenderer\Camera.cpp" />
     <ClCompile Include="..\..\..\Source\AndroidRenderer\GraphicDevice.cpp" />
+    <ClCompile Include="..\..\..\Source\AndroidRenderer\GraphicsHigh.cpp" />
+    <ClCompile Include="..\..\..\Source\AndroidRenderer\GraphicsLow.cpp" />
     <ClCompile Include="..\..\..\Source\AndroidRenderer\Shader.cpp" />
+    <ClCompile Include="..\..\..\Source\AndroidRenderer\ShadowMap.cpp" />
     <ClCompile Include="..\..\..\Source\AndroidRenderer\SkyBox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\AndroidRenderer\Buffer.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\Camera.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\GraphicDevice.h" />
+    <ClInclude Include="..\..\..\Source\AndroidRenderer\GraphicsHigh.h" />
+    <ClInclude Include="..\..\..\Source\AndroidRenderer\GraphicsLow.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\ModelExporter.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\ModelLoader.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\Shader.h" />
+    <ClInclude Include="..\..\..\Source\AndroidRenderer\ShadowMap.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\SkyBox.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\stdafx.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\TextureLoader.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\Android\app\assets\content\shaders\AndroidForwardFS.glsl" />
-    <None Include="..\..\Android\app\assets\content\shaders\AndroidForwardVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidForwardFS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidForwardVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidFullscreenFS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidFullscreenVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidInterfaceFS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidInterfaceVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidShadowShaderFS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidShadowShaderVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidSkyboxShaderFS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidSkyboxShaderVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidViewspaceShaderFS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidViewspaceShaderVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\lowAndroidForwardFS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\lowAndroidForwardVS.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{FB35D84C-BAE5-47E2-8A37-C81AE2184C76}</ProjectGuid>
@@ -137,6 +155,7 @@
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
+      <Profile>true</Profile>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
@@ -161,6 +180,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
+      <Profile>true</Profile>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"

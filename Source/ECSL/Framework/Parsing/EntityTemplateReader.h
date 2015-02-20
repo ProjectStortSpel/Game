@@ -12,8 +12,8 @@ namespace ECSL
 	class DECLSPEC EntityTemplateReader
 	{
 	private:
-		std::string m_name;
-		std::map<std::string, std::vector<TemplateEntry>> m_components;
+		std::string* m_name;
+		std::map<std::string, std::vector<TemplateEntry*>>* m_components;
 
 		bool InterpretSubSection(const Section* _section, unsigned int _depth);
 		bool InterpretTokens(const Section* _section, const unsigned int _depth);

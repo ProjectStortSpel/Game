@@ -1,0 +1,52 @@
+-- Components
+package.path = package.path .. ";../../../Externals/content/scripting/lobbythreaded/components/?.lua"
+require "components"
+require "buttoncomponents"
+require "menucomponents"
+require "servercomponents"
+require "ipconnectcomponents"
+
+--	Shared Components
+package.path = package.path .. ";../../../Externals/content/scripting/shared/components/?.lua"
+require "InitSharedComponents" -- Add more systems into InitSharedSystems.lua instead of here!
+
+if Client then
+
+--	Shared Systems
+package.path = package.path .. ";../../../Externals/content/scripting/shared/systems/?.lua"
+require "InitSharedSystems" -- Add more systems into InitSharedSystems.lua instead of here!
+
+
+-- Systems
+package.path = package.path .. ";../../../Externals/content/scripting/lobbythreaded/systems/?.lua"
+
+--require "sh_pickboxsystem"
+--require "sh_buttonhoversystem"
+--require "sh_buttonpressedsystem"
+
+package.path = package.path .. ";../../../Externals/content/scripting/lobbythreaded/systems/interfacesystems/?.lua"
+require "GameInterfaceSystem"
+require "GameMenuSystem"
+require "OptionMenuSystem"
+require "ConnectMenuSystem"
+require "HostMenuSystem"
+require "IPConnectSystem"
+
+-- Templates
+package.path = package.path .. ";../../../Externals/content/scripting/lobbythreaded/templates/?.lua"
+require "templates"
+
+worldCreator:AddSystemGroup()	
+worldCreator:AddSystemToCurrentGroup(GameInterfaceSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(GameMenuSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(OptionMenuSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(ConnectMenuSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(HostMenuSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(IPConnectSystem)
+
+end

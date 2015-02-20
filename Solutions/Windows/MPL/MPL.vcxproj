@@ -19,11 +19,25 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Source\MPL\Framework\Test.h" />
+    <ClInclude Include="..\..\..\Source\MPL\Framework\Common\MathHelper.h" />
+    <ClInclude Include="..\..\..\Source\MPL\Framework\Common\ThreadHelper.h" />
+    <ClInclude Include="..\..\..\Source\MPL\Framework\Tasks\Task.h" />
+    <ClInclude Include="..\..\..\Source\MPL\Framework\Tasks\TaskId.h" />
+    <ClInclude Include="..\..\..\Source\MPL\Framework\Tasks\TaskPool.h" />
+    <ClInclude Include="..\..\..\Source\MPL\Framework\Tasks\WorkItem.h" />
+    <ClInclude Include="..\..\..\Source\MPL\Framework\Threads\SlaveThread.h" />
+    <ClInclude Include="..\..\..\Source\MPL\Managers\ThreadLogger.h" />
+    <ClInclude Include="..\..\..\Source\MPL\Managers\TaskManager.h" />
     <ClInclude Include="..\..\..\Source\MPL\MPL.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Source\MPL\Framework\Test.cpp" />
+    <ClCompile Include="..\..\..\Source\MPL\Framework\Common\MathHelper.cpp" />
+    <ClCompile Include="..\..\..\Source\MPL\Framework\Common\ThreadHelper.cpp" />
+    <ClCompile Include="..\..\..\Source\MPL\Framework\Tasks\Task.cpp" />
+    <ClCompile Include="..\..\..\Source\MPL\Framework\Tasks\TaskPool.cpp" />
+    <ClCompile Include="..\..\..\Source\MPL\Framework\Threads\SlaveThread.cpp" />
+    <ClCompile Include="..\..\..\Source\MPL\Managers\ThreadLogger.cpp" />
+    <ClCompile Include="..\..\..\Source\MPL\Managers\TaskManager.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{FB02CDEA-3EEC-4BB3-BBD5-43E0F1F9D73B}</ProjectGuid>
@@ -122,6 +136,7 @@
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
+      <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -141,6 +156,7 @@
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
+      <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

@@ -1,69 +1,58 @@
 #include "GraphicDevice.h"
 
+#ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
+#endif
 #include "TextureLoader.h"
 #include "ModelLoader.h"
 #include "ModelExporter.h"
-#include "SkyBox.h"
 
 using namespace Renderer;
 using namespace glm;
 
 GraphicDevice::GraphicDevice()
 {
-	m_renderSimpleText = true;
-	m_modelIDcounter = 0;
-	m_vramUsage = 0;
-	m_debugTexFlag = 0;
-	m_nrOfLights = 0;
+	m_windowPosX = 70;
+	m_windowPosY = 2;
+	m_windowCaption = "Project MOMS SPAGHETTI";
+	m_SDLinitialized = false;
+	
+	m_pointerToPointlights = NULL;
+	m_pointerToDirectionalLights = NULL;
+	m_numberOfPointlights = 0;
+	m_numberOfDirectionalLights = 0;
+	m_particleID = 0;
 }
+GraphicDevice::GraphicDevice(Camera _camera, int x, int y)
+{
+	m_camera = new Camera(_camera);
+	m_windowPosX = x;
+	m_windowPosY = y;
+	m_windowCaption = "Project MOMS SPAGHETTI";
+	m_SDLinitialized = true;
 
+	m_pointerToPointlights = NULL;
+	m_pointerToDirectionalLights = NULL;
+	m_numberOfPointlights = 0;
+	m_numberOfDirectionalLights = 0;
+	m_particleID = 0;
+}
 GraphicDevice::~GraphicDevice()
 {
-	delete(m_camera);
 	delete(m_skybox);
-	delete(m_shadowMap);
-	// Delete buffers
-	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
-	{
-		delete it->second;
-		it->second = nullptr;
-	}
+	delete m_pointerToPointlights;
 
-	glDeleteBuffers(1, &m_pointlightBuffer);
-	glDeleteBuffers(1, &m_dirLightBuffer);
+	for (std::map<int, ParticleSystem*>::iterator it = m_particleSystems.begin(); it != m_particleSystems.end(); ++it)
+	{
+		delete(it->second);
+	}
+	m_particleSystems.clear();
 
 	SDL_GL_DeleteContext(m_glContext);
 	// Close and destroy the window
 	SDL_DestroyWindow(m_window);
 	// Clean up
-	SDL_Quit();
-}
-
-bool GraphicDevice::Init()
-{
-	if (!InitSDLWindow()) { ERRORMSG("INIT SDL WINDOW FAILED\n"); return false; }
-
-	m_camera = new Camera(m_clientWidth, m_clientHeight);
-
-	if (!InitGLEW()) { ERRORMSG("GLEW_VERSION_4_3 FAILED\n"); return false; }
-	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
-	if (!InitDeferred()) { ERRORMSG("INIT DEFERRED FAILED\n"); return false; }	
-	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
-	if (!InitForward()) { ERRORMSG("INIT FORWARD FAILED\n"); return false; }
-	if (!InitSkybox()) { ERRORMSG("INIT SKYBOX FAILED\n"); return false; }
-	if (!InitRandomVector()) { ERRORMSG("INIT RANDOMVECTOR FAIELD\n"); return false; }
-	if (!InitTextRenderer()) { ERRORMSG("INIT TEXTRENDERER FAILED\n"); return false; }
-		m_vramUsage += (m_textRenderer.GetArraySize() * sizeof(int));
-	if (!InitLightBuffers()) { ERRORMSG("INIT LIGHTBUFFER FAILED\n"); return false; }
-
-	CreateShadowMap();
-	
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	
-	return true;
+	//SDL_Quit();
 }
 
 void GraphicDevice::PollEvent(SDL_Event _event)
@@ -86,418 +75,6 @@ void GraphicDevice::PollEvent(SDL_Event _event)
 	}
 }
 
-float lightCounter = 0;
-void GraphicDevice::Update(float _dt)
-{
-	m_dt = _dt; m_fps = 1 / _dt;
-
-
-
-	// PRINT m_glTimerValues
-	for (int i = 0; i < m_glTimerValues.size(); i++)
-	{
-		std::stringstream output;
-		int x = 0;
-		int y = 10;
-		output << m_glTimerValues[i].name << m_glTimerValues[i].ms;
-		m_textRenderer.RenderSimpleText(output.str(), x, y + i);
-	}
-	m_glTimerValues.clear();
-
-
-
-	lightCounter += 0.15*_dt;
-	m_dirLightDirection = vec3(-0.38, -1.0, 2.5*sin(lightCounter));
-
-	m_lightDefaults[0] = m_dirLightDirection.x;	//dir x
-	m_lightDefaults[1] = m_dirLightDirection.y;	//dir y
-	m_lightDefaults[2] = m_dirLightDirection.z;	//dir z
-	BufferDirectionalLight(&m_lightDefaults[0]);
-	m_shadowMap->UpdateViewMatrix(vec3(8, 0, 8) - (10.0f*normalize(m_dirLightDirection)), vec3(8, 0, 8));
-}
-
-void GraphicDevice::WriteShadowMapDepth()
-{
-	//------- Write shadow maps depths ----------
-	glBindFramebuffer(GL_FRAMEBUFFER, m_shadowMap->GetShadowFBOHandle());
-	glClear(GL_DEPTH_BUFFER_BIT);
-	glViewport(0, 0, m_shadowMap->GetResolution(), m_shadowMap->GetResolution());
-
-	m_shadowShaderDeferred.UseProgram();
-
-	//glCullFace(GL_FRONT);
-	glEnable(GL_POLYGON_OFFSET_FILL);
-	glPolygonOffset(4.5, 18000.0);
-
-	glActiveTexture(GL_TEXTURE10);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	mat4 shadowProjection = *m_shadowMap->GetProjectionMatrix();
-	//----Render deferred geometry-----------
-	for (int i = 0; i < m_modelsDeferred.size(); i++)
-	{
-		std::vector<mat4> MVPVector(m_modelsDeferred[i].instances.size());
-		std::vector<mat3> normalMatVector(m_modelsDeferred[i].instances.size());
-
-		int nrOfInstances = 0;
-
-		for (int j = 0; j < m_modelsDeferred[i].instances.size(); j++)
-		{
-			if (m_modelsDeferred[i].instances[j].active) // IS MODEL ACTIVE?
-			{
-				mat4 modelMatrix;
-				if (m_modelsDeferred[i].instances[j].modelMatrix == NULL)
-					modelMatrix = glm::translate(glm::vec3(1));
-				else
-					modelMatrix = *m_modelsDeferred[i].instances[j].modelMatrix;
-
-				mat4 mvp = shadowProjection * (*m_shadowMap->GetViewMatrix()) * modelMatrix;
-				MVPVector[nrOfInstances] = mvp;
-
-				nrOfInstances++;
-			}
-		}
-
-		m_modelsDeferred[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector);
-	}
-
-	//------Forward------------------------------------
-	m_shadowShaderForward.UseProgram();
-	//Forward models
-	for (int i = 0; i < m_modelsForward.size(); i++)
-	{
-		std::vector<mat4> MVPVector(m_modelsForward[i].instances.size());
-		std::vector<mat3> normalMatVector(m_modelsForward[i].instances.size());
-
-		int nrOfInstances = 0;
-
-		for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
-		{
-			if (m_modelsForward[i].instances[j].active) // IS MODEL ACTIVE?
-			{
-				mat4 modelMatrix;
-				if (m_modelsForward[i].instances[j].modelMatrix == NULL)
-					modelMatrix = glm::translate(glm::vec3(1));
-				else
-					modelMatrix = *m_modelsForward[i].instances[j].modelMatrix;
-
-				mat4 mvp = shadowProjection * (*m_shadowMap->GetViewMatrix()) * modelMatrix;
-				MVPVector[nrOfInstances] = mvp;
-
-				nrOfInstances++;
-			}
-		}
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
-
-		m_modelsForward[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector);
-	}
-	//------------------------------------------------
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glCullFace(GL_BACK);
-	glDisable(GL_POLYGON_OFFSET_FILL);
-	//------------------------------
-}
-
-void GraphicDevice::Render()
-{
-		//GLTimer glTimer;
-		//glTimer.Start();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glEnable(GL_DEPTH_TEST);
-
-	WriteShadowMapDepth();
-
-//------Render deferred--------------------------------------------------------------------------
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_deferredFBO);
-	glViewport(0, 0, m_clientWidth, m_clientHeight);
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	
-	m_deferredShader1.UseProgram();
-	
-	//--------Uniforms-------------------------------------------------------------------------
-	mat4 projectionMatrix = *m_camera->GetProjMatrix();
-
-	mat4 viewMatrix = *m_camera->GetViewMatrix();
-
-	m_deferredShader1.SetUniVariable("TexFlag", glint, &m_debugTexFlag);
-
-	//------Render scene (for deferred)-----------------------------------------------------------
-	//-- DRAW MODELS
-	for (int i = 0; i < m_modelsDeferred.size(); i++)
-	{
-		std::vector<mat4> MVPVector(m_modelsDeferred[i].instances.size());
-		std::vector<mat3> normalMatVector(m_modelsDeferred[i].instances.size());
-
-		int nrOfInstances = 0;
-
-		for (int j = 0; j < m_modelsDeferred[i].instances.size(); j++)
-		{
-			if (m_modelsDeferred[i].instances[j].active) // IS MODEL ACTIVE?
-			{
-				mat4 modelMatrix;
-				if (m_modelsDeferred[i].instances[j].modelMatrix == NULL)
-					modelMatrix = glm::translate(glm::vec3(1));
-				else
-					modelMatrix = *m_modelsDeferred[i].instances[j].modelMatrix;
-
-				mat4 modelViewMatrix;
-				modelViewMatrix = viewMatrix * modelMatrix;
-
-				mat4 mvp = projectionMatrix * modelViewMatrix;
-				MVPVector[nrOfInstances] = mvp;
-				
-				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-				normalMatVector[nrOfInstances] = normalMatrix;
-
-				nrOfInstances++;
-			}
-		}
-		
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, m_modelsDeferred[i].texID);
-
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, m_modelsDeferred[i].norID);
-
-		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, m_modelsDeferred[i].speID);
-
-		//m_modelsDeferred[i].bufferPtr->draw();
-		m_modelsDeferred[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector);
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
-
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-//--------------------------End of pass1--------------------------------
-
-	//m_glTimerValues.push_back(GLTimerValue("Deferred stage1: ", glTimer.Stop()));
-	//glTimer.Start();	
-
-	
-	glClear(GL_COLOR_BUFFER_BIT);
-	glDisable(GL_DEPTH_TEST);
-
-	//----Compute shader (pass 2)------------------------------------------------
-	m_compDeferredPass2Shader.UseProgram();
-
-	m_compDeferredPass2Shader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
-	mat4 inverseProjection = glm::inverse(projectionMatrix);
-	m_compDeferredPass2Shader.SetUniVariable("InvProjection", mat4x4, &inverseProjection);
-	
-	mat4 shadowVP = (*m_shadowMap->GetProjectionMatrix()) * (*m_shadowMap->GetViewMatrix());
-	m_compDeferredPass2Shader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_depthBuf);
-
-	glActiveTexture(GL_TEXTURE10);
-	glBindTexture(GL_TEXTURE_2D, m_shadowMap->GetDepthTexHandle());
-
-	glBindImageTexture(1, m_colorTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
-
-	glBindImageTexture(2, m_randomVectors, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
-
-	//---Light buffers----------
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
-	//--------------------------
-	
-	glDispatchCompute(m_clientWidth * 0.0625, m_clientHeight * 0.0625, 1); // 1/16 = 0.0625
-	//---------------------------------------------------------------------------
-
-		//m_glTimerValues.push_back(GLTimerValue("Deferred stage2: ", glTimer.Stop()));
-		//glTimer.Start();
-
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_forwardFBO);
-
-	glEnable(GL_DEPTH_TEST);
-
-	// DRAW SKYBOX
-	m_skyBoxShader.UseProgram();
-	m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera);
-	// -----------
-
-
-	//------FORWARD RENDERING--------------------------------------------
-	glEnable(GL_BLEND);
-
-	m_forwardShader.UseProgram();
-	m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
-	m_forwardShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
-
-	m_forwardShader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
-
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
-
-	for (int i = 0; i < m_modelsForward.size(); i++)
-	{
-		std::vector<mat4> modelViewVector(m_modelsForward[i].instances.size());
-		std::vector<mat3> normalMatVector(m_modelsForward[i].instances.size());
-
-		int nrOfInstances = 0;
-
-		for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
-		{
-			if (m_modelsForward[i].instances[j].active) // IS MODEL ACTIVE?
-			{
-				mat4 modelMatrix;
-				if (m_modelsForward[i].instances[j].modelMatrix == NULL)
-					modelMatrix = glm::translate(glm::vec3(1));
-				else
-					modelMatrix = *m_modelsForward[i].instances[j].modelMatrix;
-
-				mat4 modelViewMatrix;
-				modelViewMatrix = viewMatrix * modelMatrix;
-
-				modelViewVector[nrOfInstances] = modelViewMatrix;
-
-				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-				normalMatVector[nrOfInstances] = normalMatrix;
-
-				nrOfInstances++;
-			}
-		}
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
-
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].norID);
-
-		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].speID);
-
-		m_modelsForward[i].bufferPtr->drawInstanced(0, m_modelsForward[i].instances.size(), &modelViewVector, &normalMatVector);
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
-
-	glDisable(GL_DEPTH_TEST);
-
-	// RENDER VIEWSPACE STUFF
-	m_viewspaceShader.UseProgram();
-	m_viewspaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
-
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
-
-	for (int i = 0; i < m_modelsViewspace.size(); i++)
-	{
-		std::vector<mat4> modelViewVector(m_modelsViewspace[i].instances.size());
-		std::vector<mat3> normalMatVector(m_modelsViewspace[i].instances.size());
-
-		int nrOfInstances = 0;
-
-		for (int j = 0; j < m_modelsViewspace[i].instances.size(); j++)
-		{
-			if (m_modelsViewspace[i].instances[j].active) // IS MODEL ACTIVE?
-			{
-				mat4 modelMatrix;
-				if (m_modelsViewspace[i].instances[j].modelMatrix == NULL)
-					modelMatrix = glm::translate(glm::vec3(1));
-				else
-					modelMatrix = *m_modelsViewspace[i].instances[j].modelMatrix;
-
-				mat4 modelViewMatrix;
-				modelViewMatrix = modelMatrix;
-
-				modelViewVector[nrOfInstances] = modelViewMatrix;
-
-				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-				normalMatVector[nrOfInstances] = normalMatrix;
-
-				nrOfInstances++;
-			}
-		}
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, m_modelsViewspace[i].texID);
-
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, m_modelsViewspace[i].norID);
-
-		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, m_modelsViewspace[i].speID);
-
-		m_modelsViewspace[i].bufferPtr->drawInstanced(0, m_modelsViewspace[i].instances.size(), &modelViewVector, &normalMatVector);
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
-
-	// RENDER INTERFACE STUFF
-	m_interfaceShader.UseProgram();
-	m_interfaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
-
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
-
-	for (int i = 0; i < m_modelsInterface.size(); i++)
-	{
-		std::vector<mat4> modelViewVector(m_modelsInterface[i].instances.size());
-		std::vector<mat3> normalMatVector(m_modelsInterface[i].instances.size());
-
-		int nrOfInstances = 0;
-
-		for (int j = 0; j < m_modelsInterface[i].instances.size(); j++)
-		{
-			if (m_modelsInterface[i].instances[j].active) // IS MODEL ACTIVE?
-			{
-				mat4 modelMatrix;
-				if (m_modelsInterface[i].instances[j].modelMatrix == NULL)
-					modelMatrix = glm::translate(glm::vec3(1));
-				else
-					modelMatrix = *m_modelsInterface[i].instances[j].modelMatrix;
-
-				mat4 modelViewMatrix;
-				modelViewMatrix = modelMatrix;
-
-				modelViewVector[nrOfInstances] = modelViewMatrix;
-
-				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-				normalMatVector[nrOfInstances] = normalMatrix;
-
-				nrOfInstances++;
-			}
-		}
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, m_modelsInterface[i].texID);
-
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, m_modelsInterface[i].norID);
-
-		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, m_modelsInterface[i].speID);
-
-		m_modelsInterface[i].bufferPtr->drawInstanced(0, m_modelsInterface[i].instances.size(), &modelViewVector, &normalMatVector);
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
-
-	glDisable(GL_BLEND);
-
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-	//---------------------------------------------------------------------
-	
-	if (m_renderSimpleText)
-		m_textRenderer.RenderText(m_dt);
-
-	//	//m_glTimerValues.push_back(GLTimerValue("Text Render: ", glTimer.Stop()));
-	//	//glTimer.Start();
-
-	// FULL SCREEN QUAD
-	m_fullScreenShader.UseProgram();
-	//glActiveTexture(GL_TEXTURE5);
-	//glBindTexture(GL_TEXTURE_2D, m_shadowMap->GetDepthTexHandle());
-	glDrawArrays(GL_POINTS, 0, 1);
-
-	glUseProgram(0);
-		//m_glTimerValues.push_back(GLTimerValue("RENDER: ", glTimer.Stop()));
-
-	// Swap in the new buffer
-	SDL_GL_SwapWindow(m_window);
-}
-
 void GraphicDevice::ResizeWindow(int _width, int _height)
 {
 	// GRAPHIC CARD WORK GROUPS OF 16x16
@@ -514,222 +91,36 @@ void GraphicDevice::ResizeWindow(int _width, int _height)
 	SDL_SetWindowSize(m_window, m_clientWidth, m_clientHeight);
 }
 
-bool GraphicDevice::InitSDLWindow()
+void GraphicDevice::GetWindowPos(int &x, int &y)
+{
+	int posx, posy;
+	SDL_GetWindowPosition(m_window, &posx, &posy);
+	x = posx;
+	y = posy;
+}
+#pragma region Inits
+bool GraphicDevice::InitSDLWindow(int _width, int _height)
 {
 	// WINDOW SETTINGS
-	unsigned int	Flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
-	const char*		Caption = "SDL Window";
-	int				PosX = 2;
-	int				PosY = 2;
-
-	int				SizeX = 256 * 5;	//1280
-	int				SizeY = 144 * 5;	//720
-
-	if (SDL_Init(SDL_INIT_EVERYTHING) == -1){
+	unsigned int	Flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP;
+	int				SizeX = _width;	//1280
+	int				SizeY = _height;	//720
+	if (SDL_Init(SDL_INIT_VIDEO) == -1){
 		std::cout << SDL_GetError() << std::endl;
 		return false;
 	}
 
 	// PLATFORM SPECIFIC CODE
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
-	m_window = SDL_CreateWindow(Caption, PosX, PosY, SizeX, SizeY, Flags);
-
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	m_window = SDL_CreateWindow(m_windowCaption, m_windowPosX, m_windowPosY, SizeX, SizeY, Flags);
 	if (m_window == NULL){
 		std::cout << SDL_GetError() << std::endl;
 		return false;
 	}
-
 	SDL_GetWindowSize(m_window, &m_clientWidth, &m_clientHeight);
-
 	return true;
 }
-
-bool GraphicDevice::InitGLEW()
-{
-	m_glContext = SDL_GL_CreateContext(m_window);
-
-	if (glewInit() != 0) return false;
-
-#ifdef WIN32
-	if (!GLEW_VERSION_4_3) { return false; }
-#else
-	if (!glewIsSupported("GL_VERSION_4_3")) { return false; }
-#endif
-
-	SDL_GL_SetSwapInterval(0);
-	
-	return true;
-}
-
-void GraphicDevice::CreateGBufTex(GLenum texUnit, GLenum internalFormat, GLuint &texid) {
-	glActiveTexture(texUnit);
-	glGenTextures(1, &texid);
-	glBindTexture(GL_TEXTURE_2D, texid);
-	//glTexStorage2D(GL_TEXTURE_2D, 1, format, m_clientWidth, m_clientHeight);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_clientWidth, m_clientHeight, 0, GL_RGBA, GL_FLOAT, NULL);
-}
-
-void GraphicDevice::CreateDepthTex(GLuint &texid) {
-	glActiveTexture(GL_TEXTURE2);
-	glGenTextures(1, &texid);
-	glBindTexture(GL_TEXTURE_2D, texid);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, m_clientWidth, m_clientHeight, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0);
-}
-
-bool GraphicDevice::InitDeferred()
-{
-	m_deferredShader1.UseProgram();
-
-	// Create and bind the FBO
-	glGenFramebuffers(1, &m_deferredFBO);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_deferredFBO);
-
-	// The depth buffer
-	CreateDepthTex(m_depthBuf);
-	// The normal and color buffers
-	CreateGBufTex(GL_TEXTURE0, GL_RGBA32F, m_normTex); // Normal
-	CreateGBufTex(GL_TEXTURE1, GL_RGBA8, m_colorTex); // Color 
-
-	// Attach the images to the framebuffer
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthBuf, 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_normTex, 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_colorTex, 0);
-
-	// Add vramUsage calc if adding a new g-buffer texture
-	m_vramUsage += (m_clientWidth*m_clientHeight*sizeof(float));
-	m_vramUsage += (m_clientWidth*m_clientHeight*sizeof(float)* 4);
-	m_vramUsage += (m_clientWidth*m_clientHeight* 1 * 4);
-
-	GLenum drawBuffersDeferred[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
-	glDrawBuffers(2, drawBuffersDeferred);
-	return true;
-}
-
-bool GraphicDevice::InitForward()
-{
-	m_forwardShader.UseProgram();
-
-	// Create and bind the FBO
-	glGenFramebuffers(1, &m_forwardFBO);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_forwardFBO);
-
-	// Attach the images to the framebuffer
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthBuf, 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_outputImage, 0);
-
-	GLenum drawBufferForward = GL_COLOR_ATTACHMENT0;
-	glDrawBuffers(1, &drawBufferForward);
-
-	return true;
-}
-
-bool GraphicDevice::InitShaders()
-{
-	// Deferred pass 1
-	m_deferredShader1.InitShaderProgram();
-	m_deferredShader1.AddShader("content/shaders/VSDeferredPass1.glsl", GL_VERTEX_SHADER);
-	m_deferredShader1.AddShader("content/shaders/FSDeferredPass1.glsl", GL_FRAGMENT_SHADER);
-	m_deferredShader1.FinalizeShaderProgram();
-
-	// Deferred pass 2 ( compute shader )
-	m_compDeferredPass2Shader.InitShaderProgram();
-	m_compDeferredPass2Shader.AddShader("content/shaders/CSDeferredPass2.glsl", GL_COMPUTE_SHADER);
-	m_compDeferredPass2Shader.FinalizeShaderProgram();
-
-	// SkyBox
-	m_skyBoxShader.InitShaderProgram();
-	m_skyBoxShader.AddShader("content/shaders/skyboxShaderVS.glsl", GL_VERTEX_SHADER);
-	m_skyBoxShader.AddShader("content/shaders/skyboxShaderFS.glsl", GL_FRAGMENT_SHADER);
-	m_skyBoxShader.FinalizeShaderProgram();
-
-	// Full Screen Quad
-	m_fullScreenShader.InitShaderProgram();
-	m_fullScreenShader.AddShader("content/shaders/fullscreen.vs", GL_VERTEX_SHADER);
-	m_fullScreenShader.AddShader("content/shaders/fullscreen.gs", GL_GEOMETRY_SHADER);
-	m_fullScreenShader.AddShader("content/shaders/fullscreen.ps", GL_FRAGMENT_SHADER);
-	m_fullScreenShader.FinalizeShaderProgram();
-
-	// Forward shader
-	m_forwardShader.InitShaderProgram();
-	m_forwardShader.AddShader("content/shaders/VSForwardShader.glsl", GL_VERTEX_SHADER);
-	m_forwardShader.AddShader("content/shaders/FSForwardShader.glsl", GL_FRAGMENT_SHADER);
-	m_forwardShader.FinalizeShaderProgram();
-
-	// Viewspace shader
-	m_viewspaceShader.InitShaderProgram();
-	m_viewspaceShader.AddShader("content/shaders/VSViewspaceShader.glsl", GL_VERTEX_SHADER);
-	m_viewspaceShader.AddShader("content/shaders/FSViewspaceShader.glsl", GL_FRAGMENT_SHADER);
-	m_viewspaceShader.FinalizeShaderProgram();
-
-	// Interface shader
-	m_interfaceShader.InitShaderProgram();
-	m_interfaceShader.AddShader("content/shaders/VSInterfaceShader.glsl", GL_VERTEX_SHADER);
-	m_interfaceShader.AddShader("content/shaders/FSInterfaceShader.glsl", GL_FRAGMENT_SHADER);
-	m_interfaceShader.FinalizeShaderProgram();
-
-	// ShadowShader deferred geometry
-	m_shadowShaderDeferred.InitShaderProgram();
-	m_shadowShaderDeferred.AddShader("content/shaders/shadowShaderDeferredVS.glsl", GL_VERTEX_SHADER);
-	m_shadowShaderDeferred.AddShader("content/shaders/shadowShaderDeferredFS.glsl", GL_FRAGMENT_SHADER);
-	m_shadowShaderDeferred.FinalizeShaderProgram();
-
-	// ShadowShader forward geometry
-	m_shadowShaderForward.InitShaderProgram();
-	m_shadowShaderForward.AddShader("content/shaders/shadowShaderForwardVS.glsl", GL_VERTEX_SHADER);
-	m_shadowShaderForward.AddShader("content/shaders/shadowShaderForwardFS.glsl", GL_FRAGMENT_SHADER);
-	m_shadowShaderForward.FinalizeShaderProgram();
-
-	return true;
-}
-
-bool GraphicDevice::InitBuffers()
-{
-	m_compDeferredPass2Shader.UseProgram();
-
-	//------ Compute shader input images --------
-	//normal
-	glBindImageTexture(0, m_normTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
-	//color
-	glBindImageTexture(1, m_colorTex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
-	//depth
-	m_compDeferredPass2Shader.CheckUniformLocation("DepthTex", 0);
-	//-------------------------------------------
-	
-	// Output ImageBuffer
-	glGenTextures(1, &m_outputImage);
-	glActiveTexture(GL_TEXTURE5);
-	glBindTexture(GL_TEXTURE_2D, m_outputImage);
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, m_clientWidth, m_clientHeight);
-
-	glBindImageTexture(5, m_outputImage, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
-	m_vramUsage += (m_clientWidth * m_clientHeight * sizeof(float) * 4);
-
-	// FULL SCREEN QUAD
-	m_fullScreenShader.CheckUniformLocation("output_image", 5);
-
-	//Forward shader
-	m_forwardShader.CheckUniformLocation("diffuseTex", 1);
-
-	//Skybox shader
-	m_skyBoxShader.CheckUniformLocation("cubemap", 1);
-
-	//Shadow forward shader
-	m_shadowShaderForward.CheckUniformLocation("diffuseTex", 1);
-
-	return true;
-}
-
 bool GraphicDevice::InitSkybox()
 {
 	int w, h;
@@ -743,218 +134,352 @@ bool GraphicDevice::InitSkybox()
 
 	return true;
 }
+#pragma endregion in the order they are initialized
 
-bool GraphicDevice::InitRandomVector()
+int GraphicDevice::AddFont(const std::string& filepath, int size)
 {
+	return TextRenderer::AddFont(filepath, size);
+}
+
+float GraphicDevice::CreateTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, glm::ivec2 size)
+{
+	SDL_Surface* surface = TextRenderer::CreateTextSurface(textString, fontIndex, color);
+	if (size.x > 0)
+		surface->w = size.x;
+	if (size.y > 0)
+		surface->h = size.y;
+	m_surfaces.push_back(std::pair<std::string, SDL_Surface*>(textureName, surface));
+	return (float)surface->w / (float)surface->h;
+}
+
+void GraphicDevice::CreateWrappedTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, unsigned int wrapLength, glm::ivec2 size)
+{
+	SDL_Surface* surface = TextRenderer::CreateWrappedTextSurface(textString, fontIndex, color, wrapLength);
+	if (size.x > 0)
+		surface->w = size.x;
+	if (size.y > 0)
+		surface->h = size.y;
+	m_surfaces.push_back(std::pair<std::string, SDL_Surface*>(textureName, surface));
+}
+
+void GraphicDevice::BufferSurfaces()
+{
+	for (std::pair<std::string, SDL_Surface*> surface : m_surfaces)
+	{
+		int oldTexture = -1;
+		if (m_textures.find(surface.first) != m_textures.end())
+		{
+			oldTexture = m_textures[surface.first];
+			glDeleteTextures(1, &m_textures[surface.first]);
+		}
+		GLuint texture = TextureLoader::LoadTexture(surface.second, GL_TEXTURE1);
+		m_textures[surface.first] = texture;
+		m_vramUsage += (surface.second->w * surface.second->h * 4 * 4);
+		SDL_FreeSurface(surface.second);
+		if (oldTexture != -1)
+			UpdateTextureIndex(texture, oldTexture);
+	}
+	m_surfaces.clear();
+}
+
+GLuint GraphicDevice::AddTexture(std::string _fileDir, GLenum _textureSlot)
+{
+	for (std::map<const std::string, GLuint>::iterator it = m_textures.begin(); it != m_textures.end(); it++)
+	{
+		if (it->first == _fileDir)
+			return it->second;
+	}
 	int texSizeX, texSizeY;
-	m_randomVectors = AddTexture("content/textures/vectormap.png", GL_TEXTURE21);
-
-	return true;
+	GLuint texture = TextureLoader::LoadTexture(_fileDir.c_str(), _textureSlot, texSizeX, texSizeY);
+	m_textures.insert(std::pair<const std::string, GLenum>(_fileDir, texture));
+	m_vramUsage += (texSizeX * texSizeY * 4 * 4);
+	return texture;
 }
 
-bool GraphicDevice::InitLightBuffers()
+void GraphicDevice::BufferModelTextures()
 {
-	glGenBuffers(1, &m_pointlightBuffer);
+	for (ModelTexture modelTexture : m_modelTextures)
+	{
+		BufferModelTexture(modelTexture.id, modelTexture.textureName, modelTexture.textureType);
+	}
+	m_modelTextures.clear();
+}
 
-	for (int i = 0; i < 10; i++)
-		m_lightDefaults[9+i] = 0.0;		//init 0.0
+struct sort_depth
+{
+	inline bool operator() (const Model& a, const Model& b)
+	{
+		return (*a.instances[0].modelMatrix)[3][2] < (*b.instances[0].modelMatrix)[3][2];
+	}
+};
+
+void GraphicDevice::SortModelsBasedOnDepth(std::vector<Model>* models)
+{
+	std::sort(models->begin(), models->end(), sort_depth());
+}
+
+void GraphicDevice::CreateParticleSystems()
+{
+	//glEnable(GL_POINT_SPRITE);
+	//m_particleSystems[m_particleID] = (new ParticleSystem("fire", vec3(11.0f, 0.55f, 8.0f), 100, 700, 0.05f, 0.6f, AddTexture("content/textures/firewhite.png", GL_TEXTURE1), vec3(0.8f, 0.f, 0.0f), &m_particleShader));
+	//m_particleID++;
+	//m_particleSystems.push_back(new ParticleSystem("smoke", vec3(11.0f, 0.0f, 9.0f), 15, 1800, 0.05f, 1.6f, AddTexture("content/textures/smoke1.png", GL_TEXTURE1), vec3(0.5f, 0.f, 0.f), &m_particleShader));
+	int tmpID;
 	
-	if (m_pointlightBuffer < 0)
-		return false;
+	//AddParticleEffect("fire", vec3(11.0f, 0.55f, 8.0f), 100, 700, 0.05f, 0.6f, "content/textures/fire3.png", vec3(0.0f, 8.f, 0.0f), tmpID);
 
-	float ** tmparray = new float*[1];
-	tmparray[0] = &m_lightDefaults[0];
-
-	BufferPointlights(1, tmparray);
-	delete(tmparray);
-
-//--------Directional light-------------------------------------------------------------------------
-	m_dirLightDirection = vec3(-0.38, -1.0, 0.7);
-
-	m_lightDefaults[0] = m_dirLightDirection.x;	//dir x
-	m_lightDefaults[1] = m_dirLightDirection.y;	//dir y
-	m_lightDefaults[2] = m_dirLightDirection.z;	//dir z
-	
-	m_lightDefaults[3] = 0.3;		//int x
-	m_lightDefaults[4] = 0.7;		//int y
-	m_lightDefaults[5] = 0.7;		//int z
-	
-	m_lightDefaults[6] = 0.7;		//col x
-	m_lightDefaults[7] = 0.75;		//col y
-	m_lightDefaults[8] = 0.85;	//col z
-
-	glGenBuffers(1, &m_dirLightBuffer);
-
-	if (m_dirLightBuffer < 0)
-		return false;
-
-	BufferDirectionalLight(&m_lightDefaults[0]);
-
-	return true;
+//	AddParticleEffect("fire", vec3(8.0f, 0.55f, 8.0f), 100, 1100, 0.05f, 0.6f, "content/textures/firewhite4.png", vec3(0.9f, 0.f, 0.0f), tmpID);
+	//AddParticleEffect("fire", vec3(8.0f, 0.55f, 5.0f), 100, 700, 0.05f, 0.6f, "content/textures/smoke1.png", vec3(0.2f, 0.f, 1.0f), tmpID);
+	//AddParticleEffect("smoke", vec3(11.0f, 0.0f, 9.0f), 15, 1800, 0.05f, 1.6f, "content/textures/smoke1.png", vec3(0.0f, 0.f, 0.f), tmpID);
 }
 
-void GraphicDevice::BufferPointlights(int _nrOfLights, float **_lightPointers)
+void GraphicDevice::AddParticleEffect(std::string _name, const vec3 _pos, int _nParticles, float _lifeTime, float _scale, float _spriteSize, std::string _texture, vec3 _color, int &_id)
 {
-	m_vramUsage -= m_nrOfLights*10*sizeof(float);
-	if (_nrOfLights == 0)
-	{
-		_nrOfLights = 1;
-		_lightPointers[0] = &m_lightDefaults[0];
-	}
-	m_nrOfLights = _nrOfLights;
+	ParticleSystemToLoad tmpSystem;
+	tmpSystem.Name = _name;
+	tmpSystem.Pos = _pos;
+	tmpSystem.NrOfParticles = _nParticles;
+	tmpSystem.LifeTime = _lifeTime;
+	tmpSystem.Scale = _scale;
+	tmpSystem.SpriteSize = _spriteSize;
+	tmpSystem.TextureName = _texture;
+	tmpSystem.Color = _color;
+	tmpSystem.Id = m_particleID;
 
-	float *pointlight_data = new float[_nrOfLights * 10];
+	m_particleSystemsToLoad.push_back(tmpSystem);
 
-	for (int i = 0; i < _nrOfLights; i++)
+	_id = m_particleID; 
+	m_particleID++;
+}
+
+void GraphicDevice::RemoveParticleEffect(int _id)
+{
+	m_particleSystems[_id]->EnterEndPhase();
+	m_particlesIdToRemove.push_back(_id);
+}
+
+void GraphicDevice::BufferParticleSystems()
+{
+	// ParticleSystems to remove
+	for (int i = m_particlesIdToRemove.size()-1; i >= 0; i--)
 	{
-		memcpy(&pointlight_data[10 * i], _lightPointers[i], 10 * sizeof(float));
+		if (m_particleSystems[m_particlesIdToRemove[i]]->ReadyToBeDeleted())
+		{
+			delete(m_particleSystems[m_particlesIdToRemove[i]]);
+			m_particleSystems.erase(m_particlesIdToRemove[i]);
+			m_particlesIdToRemove.erase(m_particlesIdToRemove.begin() + i);
+		}
 	}
 
-	int point_light_data_size = 10 * _nrOfLights * sizeof(float);
-
-	glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer, 0, point_light_data_size);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, point_light_data_size, pointlight_data, GL_STATIC_DRAW);
-	m_vramUsage += m_nrOfLights*10*sizeof(float);
-
-	delete pointlight_data;
-}
-
-void GraphicDevice::BufferDirectionalLight(float *_lightPointer)
-{
-	float *light_data = new float[9];
-	memcpy(&light_data[0], _lightPointer, 9 * sizeof(float));
-
-	glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer, 0, 9 * sizeof(float));
-	glBufferData(GL_SHADER_STORAGE_BUFFER, 9 * sizeof(float), light_data, GL_STATIC_DRAW);
-
-	delete light_data;
-}
-
-void GraphicDevice::CreateShadowMap()
-{
-	int resolution = 2048*2;
-	vec3 midMap = vec3(8.0, 0.0, 8.0);
-	vec3 lightPos = midMap - (10.0f*normalize(m_dirLightDirection));
-	m_shadowMap = new ShadowMap(lightPos, lightPos + normalize(m_dirLightDirection), resolution);
-	m_shadowMap->CreateShadowMapTexture(GL_TEXTURE10);
-
-	m_compDeferredPass2Shader.UseProgram();
-	m_compDeferredPass2Shader.SetUniVariable("BiasMatrix", mat4x4, m_shadowMap->GetBiasMatrix());
-	m_compDeferredPass2Shader.CheckUniformLocation("ShadowDepthTex", 10);
-
-	m_forwardShader.UseProgram();
-	m_forwardShader.SetUniVariable("BiasMatrix", mat4x4, m_shadowMap->GetBiasMatrix());
-	m_forwardShader.CheckUniformLocation("ShadowDepthTex", 10);
-
-	m_vramUsage += (resolution*resolution*sizeof(float));
-}
-
-bool GraphicDevice::InitTextRenderer()
-{
-	int texSizeX, texSizeY;
-	GLuint m_textImage = AddTexture("content/textures/SimpleText.png", GL_TEXTURE20);
-	return m_textRenderer.Init(m_textImage, m_clientWidth, m_clientHeight);
-}
-bool GraphicDevice::RenderSimpleText(std::string _text, int _x, int _y)
-{
-	return m_textRenderer.RenderSimpleText(_text, _x, _y);
-}
-void GraphicDevice::SetSimpleTextColor(float _r, float _g, float _b, float _a)
-{
-	m_textRenderer.SetSimpleTextColor(vec4(_r,_g,_b,_a));
-}
-void GraphicDevice::SetDisco()
-{
-	m_textRenderer.Disco();
-}
-void GraphicDevice::ToggleSimpleText(bool _render)
-{
-	m_renderSimpleText = _render;
-}
-void GraphicDevice::ToggleSimpleText()
-{
-	m_renderSimpleText = !m_renderSimpleText;
-}
-
-bool GraphicDevice::PreLoadModel(std::string _dir, std::string _file, int _renderType)
-{
-	Shader *shaderPtr = NULL;
-	if (_renderType == RENDER_DEFERRED)
+	// ParticleSystems to add
+	for (int i = 0; i < m_particleSystemsToLoad.size(); i++)
 	{
-		shaderPtr = &m_deferredShader1;
-		m_deferredShader1.UseProgram();
+		m_particleSystems.insert(std::pair<int, ParticleSystem*>(m_particleSystemsToLoad[i].Id,new ParticleSystem(
+			m_particleSystemsToLoad[i].Name,
+			m_particleSystemsToLoad[i].Pos,
+			m_particleSystemsToLoad[i].NrOfParticles,
+			m_particleSystemsToLoad[i].LifeTime,
+			m_particleSystemsToLoad[i].Scale,
+			m_particleSystemsToLoad[i].SpriteSize,
+			AddTexture(m_particleSystemsToLoad[i].TextureName, GL_TEXTURE1),
+			m_particleSystemsToLoad[i].Color,
+			&m_particleShaders[m_particleSystemsToLoad[i].Name])));
 	}
-	else if (_renderType == RENDER_FORWARD)
-	{
-		shaderPtr = &m_forwardShader;
-		m_forwardShader.UseProgram();
-	}
-	else if (_renderType == RENDER_VIEWSPACE)
-	{
-		shaderPtr = &m_viewspaceShader;
-		m_viewspaceShader.UseProgram();
-	}
-	else if (_renderType == RENDER_INTERFACE)
-	{
-		shaderPtr = &m_viewspaceShader;
-		m_interfaceShader.UseProgram();
-	}
-	else
-		ERRORMSG("ERROR: INVALID RENDER SETTING");
+	m_particleSystemsToLoad.clear();
 
-	// Import Object
-	//ObjectData obj = AddObject(_dir, _file);
-	ObjectData obj = ModelLoader::importObject(_dir, _file);
-
-	// Import Texture
-	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
-	shaderPtr->CheckUniformLocation("diffuseTex", 1);
-
-	// Import Normal map
-	GLuint normal = AddTexture(obj.norm, GL_TEXTURE2);
-	shaderPtr->CheckUniformLocation("normalTex", 2);
-
-	// Import Specc Glow map
-	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
-	shaderPtr->CheckUniformLocation("specularTex", 3);
-
-	// Import Mesh
-	Buffer* mesh = AddMesh(obj.mesh, shaderPtr);
-
-	return true;
 }
-int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType)
+
+int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color)
 {
 	int modelID = m_modelIDcounter;
 	m_modelIDcounter++;
 
-	Shader *shaderPtr = NULL;
-	if (_renderType == RENDER_DEFERRED)
-	{
-		shaderPtr = &m_deferredShader1;
-		m_deferredShader1.UseProgram();
-	}
-	else if (_renderType == RENDER_FORWARD)
-	{
-		shaderPtr = &m_forwardShader;
-		m_forwardShader.UseProgram();
-	}
-	else if (_renderType == RENDER_VIEWSPACE)
-	{
-		shaderPtr = &m_viewspaceShader;
-		m_viewspaceShader.UseProgram();
-	}
-	else if (_renderType == RENDER_INTERFACE)
-	{
-		shaderPtr = &m_interfaceShader;
-		m_interfaceShader.UseProgram();
-	}
-	else
-		ERRORMSG("ERROR: INVALID RENDER SETTING");
+	//	Lägg till i en lista, följande
+	//	std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType
 
-	// Import Object
-	//ObjectData obj = AddObject(_dir, _file);
-	ObjectData obj = ModelLoader::importObject(_dir, _file);
+	ModelToLoad* modelToLoad = new ModelToLoad();
+	modelToLoad->Dir = _dir;
+	modelToLoad->File = _file;
+	modelToLoad->MatrixPtr = _matrixPtr;
+	modelToLoad->RenderType = _renderType;
+	modelToLoad->Color = _color;
+	m_modelsToLoad[modelID] = modelToLoad;
+
+	return modelID;
+}
+int GraphicDevice::LoadModel(ModelToLoadFromSource* _modelToLoad)
+{
+	int modelID = m_modelIDcounter;
+	m_modelIDcounter++;
+
+	//	Lägg till i en lista, följande
+	//	std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType
+
+	ModelToLoadFromSource* modelToLoad = new ModelToLoadFromSource();
+	*modelToLoad = *_modelToLoad;
+	m_modelsToLoadFromSource[modelID] = modelToLoad;
+
+	return modelID;
+}
+void GraphicDevice::BufferModels()
+{
+	for (auto pair : m_modelsToLoad)
+	{
+		BufferModel(pair.first, pair.second);
+		delete(pair.second);
+	}
+	for (auto pair : m_modelsToLoadFromSource)
+	{
+		
+		delete pair.second;
+	}
+	m_modelsToLoad.clear();
+	m_modelsToLoadFromSource.clear();
+}
+void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
+{
+	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
+	Shader *shaderPtr = NULL;
+	std::vector<Model> *modelList = NULL;
+
+	//if (obj.animated)
+	//{
+	//	BufferAModel(_modelId, _modelToLoad);
+	//	return;
+	//}
+
+	bool FoundShaderType = false;
+	for (int i = 0; i < m_renderLists.size(); i++)
+	{
+		if (_modelToLoad->RenderType == m_renderLists[i].RenderType)
+		{
+			shaderPtr = m_renderLists[i].ShaderPtr;
+			modelList = m_renderLists[i].ModelList;
+			shaderPtr->UseProgram();
+			FoundShaderType = true;
+			break;
+		}
+	}
+	if (!FoundShaderType) { return; } // ERRORMSG("ERROR: INVALID RENDER SETTING"); 
+
+	// Import Mesh
+	Buffer* mesh = AddMesh(obj.mesh, shaderPtr, false);
+	// Import Texture
+	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
+	shaderPtr->CheckUniformLocation("diffuseTex", 1);
+
+	GLuint normal, specular;
+
+	if (_modelToLoad->RenderType != RENDER_INTERFACE)
+	{
+		// Import Normal map
+		normal = AddTexture(obj.norm, GL_TEXTURE2);
+		shaderPtr->CheckUniformLocation("normalTex", 2);
+		// Import Specc Glow map
+		specular = AddTexture(obj.spec, GL_TEXTURE3);
+		shaderPtr->CheckUniformLocation("specularTex", 3);
+	}
+
+	// Create model
+	Model model;
+	if (_modelToLoad->RenderType != RENDER_INTERFACE) // TODO: BETTER FIX
+		model = Model(mesh, texture, normal, specular);
+	else
+		model = Model(mesh, texture, NULL, NULL);
+	//for the matrices (modelView + normal)
+	m_vramUsage += (16 + 9) * sizeof(float);
+
+
+	for (int i = 0; i < modelList->size(); i++)
+	{
+		if ((*modelList)[i] == model)
+		{
+			(*modelList)[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
+			return;
+		}
+	}
+
+	//if model doesnt exist
+	model.instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
+	// Push back the model
+	modelList->push_back(model);
+}
+void GraphicDevice::BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoad)
+{
+	Shader *shaderPtr = NULL;
+	std::vector<Model> *modelList = NULL;
+
+	//if (obj.animated)
+	//{
+	//	BufferAModel(_modelId, _modelToLoad);
+	//	return;
+	//}
+
+	bool FoundShaderType = false;
+	for (int i = 0; i < m_renderLists.size(); i++)
+	{
+		if (_modelToLoad->RenderType == m_renderLists[i].RenderType)
+		{
+			shaderPtr = m_renderLists[i].ShaderPtr;
+			modelList = m_renderLists[i].ModelList;
+			shaderPtr->UseProgram();
+			FoundShaderType = true;
+			break;
+		}
+	}
+	if (!FoundShaderType) { ERRORMSG("ERROR: INVALID RENDER SETTING"); return; }
+
+	// Import Mesh
+	Buffer* mesh = AddMesh(_modelToLoad, shaderPtr);
+	// Import Texture
+	GLuint texture = AddTexture(_modelToLoad->diffuseTextureFilepath, GL_TEXTURE1);
+	shaderPtr->CheckUniformLocation("diffuseTex", 1);
+
+	GLuint normal, specular;
+
+	if (_modelToLoad->RenderType != RENDER_INTERFACE)
+	{
+		// Import Normal map
+		normal = AddTexture(_modelToLoad->normalTextureFilepath, GL_TEXTURE2);
+		shaderPtr->CheckUniformLocation("normalTex", 2);
+		// Import Specc Glow map
+		specular = AddTexture(_modelToLoad->specularTextureFilepath, GL_TEXTURE3);
+		shaderPtr->CheckUniformLocation("specularTex", 3);
+	}
+
+	// Create model
+	Model model;
+	if (_modelToLoad->RenderType != RENDER_INTERFACE) // TODO: BETTER FIX
+		model = Model(mesh, texture, normal, specular);
+	else
+		model = Model(mesh, texture, NULL, NULL);
+	//for the matrices (modelView + normal)
+	m_vramUsage += (16 + 9) * sizeof(float);
+
+
+	for (int i = 0; i < modelList->size(); i++)
+	{
+		if ((*modelList)[i] == model)
+		{
+			(*modelList)[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
+			return;
+		}
+	}
+
+	//if model doesnt exist
+	model.instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
+	// Push back the model
+	modelList->push_back(model);
+}
+void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
+{
+	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
+
+	Shader *shaderPtr = &m_animationShader;
+	std::vector<AModel> *modelList = &m_modelsAnimated;
+
+	// Import Mesh
+	Buffer* mesh = AddMesh(obj.mesh, shaderPtr, true);
 
 	// Import Texture
 	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
@@ -968,316 +493,76 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
 	shaderPtr->CheckUniformLocation("specularTex", 3);
 
-	// Import Mesh
-	Buffer* mesh = AddMesh(obj.mesh, shaderPtr);
+	// Import Skeleton
+	std::vector<JointData> joints = ModelLoader::importJoints(obj.joints);
 
-	Model model = Model(mesh, texture, normal, specular);
+	AModel model = AModel(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color, mesh, texture, normal, specular);
+
+	// Add skeleton
+	for (int i = 0; i < joints.size(); i++)
+	{
+		model.joints.push_back(Joint(
+		joints[i].x0, joints[i].y0, joints[i].z0, joints[i].w0,
+		joints[i].x1, joints[i].y1, joints[i].z1, joints[i].w1,
+		joints[i].x2, joints[i].y2, joints[i].z2, joints[i].w2,
+		joints[i].x3, joints[i].y3, joints[i].z3, joints[i].parent)
+		);//joints[i].transform));
+	}
+	glGenBuffers(1, &model.jointBuffer);
 
 	//for the matrices (modelView + normal)
 	m_vramUsage += (16 + 9) * sizeof(float);
 
-	if (_renderType == RENDER_DEFERRED)
-	{
-		for (int i = 0; i < m_modelsDeferred.size(); i++)
-		{
-			if (m_modelsDeferred[i] == model)
-			{
-				m_modelsDeferred[i].instances.push_back(Instance(modelID, true, _matrixPtr));
-				return modelID;
-			}
-		}
-	}
-	else if (_renderType == RENDER_FORWARD)
-	{
-		for (int i = 0; i < m_modelsForward.size(); i++)
-		{
-			if (m_modelsForward[i] == model)
-			{
-				m_modelsForward[i].instances.push_back(Instance(modelID, true, _matrixPtr));
-				return modelID;
-			}
-		}
-	}
-	else if (_renderType == RENDER_VIEWSPACE)
-	{
-		for (int i = 0; i < m_modelsViewspace.size(); i++)
-		{
-			if (m_modelsViewspace[i] == model)
-			{
-				m_modelsViewspace[i].instances.push_back(Instance(modelID, true, _matrixPtr));
-				return modelID;
-			}
-		}
-	}
-	else if (_renderType == RENDER_INTERFACE)
-	{
-		for (int i = 0; i < m_modelsInterface.size(); i++)
-		{
-			if (m_modelsInterface[i] == model)
-			{
-				m_modelsInterface[i].instances.push_back(Instance(modelID, true, _matrixPtr));
-				return modelID;
-			}
-		}
-	}
-	
-	// Set model
-	//if model doesnt exist
-	model.instances.push_back(Instance(modelID, true, _matrixPtr));
 	// Push back the model
-	if (_renderType == RENDER_DEFERRED)
-		m_modelsDeferred.push_back(model);
-	else if (_renderType == RENDER_FORWARD)
-		m_modelsForward.push_back(model);
-	else if (_renderType == RENDER_VIEWSPACE)
-		m_modelsViewspace.push_back(model);
-	else if (_renderType == RENDER_INTERFACE)
-		m_modelsInterface.push_back(model);
-
-	return modelID;
+	modelList->push_back(model);
 }
+
 bool GraphicDevice::RemoveModel(int _id)
 {
-	for (int i = 0; i < m_modelsDeferred.size(); i++)
+	for (int k = 0; k < m_renderLists.size(); k++)
 	{
-		for (int j = 0; j < m_modelsDeferred[i].instances.size(); j++)
+		std::vector<Model> *modelList = m_renderLists[k].ModelList;
+		for (int i = 0; i < (*modelList).size(); i++)
 		{
-			if (m_modelsDeferred[i].instances[j].id == _id)
+			for (int j = 0; j < (*modelList)[i].instances.size(); j++)
 			{
-				m_modelsDeferred[i].instances.erase(m_modelsDeferred[i].instances.begin() + j);
-				if (m_modelsDeferred[i].instances.size() == 0)
-					m_modelsDeferred.erase(m_modelsDeferred.begin() + i);
+				if ((*modelList)[i].instances[j].id == _id)
+				{
+					(*modelList)[i].instances.erase((*modelList)[i].instances.begin() + j);
+					if ((*modelList)[i].instances.size() == 0)
+						(*modelList).erase((*modelList).begin() + i);
 
-				return true;
+					return true;
+				}
 			}
 		}
 	}
-	for (int i = 0; i < m_modelsForward.size(); i++)
-	{
-		for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
-		{
-			if (m_modelsForward[i].instances[j].id == _id)
-			{
-				m_modelsForward[i].instances.erase(m_modelsForward[i].instances.begin() + j);
-				if (m_modelsForward[i].instances.size() == 0)
-					m_modelsForward.erase(m_modelsForward.begin() + i);
-
-				return true;
-			}
-		}
-	}
-	for (int i = 0; i < m_modelsViewspace.size(); i++)
-	{
-		for (int j = 0; j < m_modelsViewspace[i].instances.size(); j++)
-		{
-			if (m_modelsViewspace[i].instances[j].id == _id)
-			{
-				m_modelsViewspace[i].instances.erase(m_modelsViewspace[i].instances.begin() + j);
-				if (m_modelsViewspace[i].instances.size() == 0)
-					m_modelsViewspace.erase(m_modelsViewspace.begin() + i);
-
-				return true;
-			}
-		}
-	}
-	for (int i = 0; i < m_modelsInterface.size(); i++)
-	{
-		for (int j = 0; j < m_modelsInterface[i].instances.size(); j++)
-		{
-			if (m_modelsInterface[i].instances[j].id == _id)
-			{
-				m_modelsInterface[i].instances.erase(m_modelsInterface[i].instances.begin() + j);
-				if (m_modelsInterface[i].instances.size() == 0)
-					m_modelsInterface.erase(m_modelsInterface.begin() + i);
-
-				return true;
-			}
-		}
-	}
-
 	return false;
 }
 bool GraphicDevice::ActiveModel(int _id, bool _active)
 {
-	for (int i = 0; i < m_modelsDeferred.size(); i++)
+	for (int k = 0; k < m_renderLists.size(); k++)
 	{
-		for (int j = 0; j < m_modelsDeferred[i].instances.size(); j++)
+		std::vector<Model> *modelList = m_renderLists[k].ModelList;
+		for (int i = 0; i < (*modelList).size(); i++)
 		{
-			if (m_modelsDeferred[i].instances[j].id == _id)
+			for (int j = 0; j < (*modelList)[i].instances.size(); j++)
 			{
-				m_modelsDeferred[i].instances[j].active = _active;
-				return true;
-			}
-		}
-	}
-
-	for (int i = 0; i < m_modelsForward.size(); i++)
-	{
-		for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
-		{
-			if (m_modelsForward[i].instances[j].id == _id)
-			{
-				m_modelsForward[i].instances[j].active = _active;
-				return true;
-			}
-		}
-	}
-
-	for (int i = 0; i < m_modelsViewspace.size(); i++)
-	{
-		for (int j = 0; j < m_modelsViewspace[i].instances.size(); j++)
-		{
-			if (m_modelsViewspace[i].instances[j].id == _id)
-			{
-				m_modelsViewspace[i].instances[j].active = _active;
-				return true;
-			}
-		}
-	}
-
-	for (int i = 0; i < m_modelsInterface.size(); i++)
-	{
-		for (int j = 0; j < m_modelsInterface[i].instances.size(); j++)
-		{
-			if (m_modelsInterface[i].instances[j].id == _id)
-			{
-				m_modelsInterface[i].instances[j].active = _active;
-				return true;
+				if ((*modelList)[i].instances[j].id == _id)
+				{
+					(*modelList)[i].instances[j].active = _active;
+					return true;
+				}
 			}
 		}
 	}
 	return false;
 }
-bool GraphicDevice::ChangeModelTexture(int _id, std::string _fileDir, int _textureType)
-{
-	// TODO: Do this for Interface and Viewspace
-	// Model Instance
-	Instance instance;
-	// Temp Model
-	Model model;
 
-	bool found = false;
-	int renderType;
-
-	// Find model Instance
-	for (int i = 0; i < m_modelsDeferred.size(); i++)
-	{
-		for (int j = 0; j < m_modelsDeferred[i].instances.size(); j++)
-		{
-			if (m_modelsDeferred[i].instances[j].id == _id)
-			{
-				instance = m_modelsDeferred[i].instances[j];
-				model = Model(
-					m_modelsDeferred[i].bufferPtr,
-					m_modelsDeferred[i].texID,
-					m_modelsDeferred[i].norID,
-					m_modelsDeferred[i].speID
-					);
-				found = true;
-				renderType = RENDER_DEFERRED;
-				m_modelsDeferred[i].instances.erase(m_modelsDeferred[i].instances.begin() + j);
-				if (m_modelsDeferred[i].instances.size() == 0)
-					m_modelsDeferred.erase(m_modelsDeferred.begin() + i);
-			}
-			if (found) break;
-		}
-		if (found) break;
-	}
-	if (!found)
-	{
-		for (int i = 0; i < m_modelsForward.size(); i++)
-		{
-			for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
-			{
-				if (m_modelsForward[i].instances[j].id == _id)
-				{
-					instance = m_modelsForward[i].instances[j];
-					model = Model(
-						m_modelsForward[i].bufferPtr,
-						m_modelsForward[i].texID,
-						m_modelsForward[i].norID,
-						m_modelsForward[i].speID
-						);
-					found = true;
-					renderType = RENDER_FORWARD;
-					m_modelsForward[i].instances.erase(m_modelsForward[i].instances.begin() + j);
-					if (m_modelsForward[i].instances.size() == 0)
-						m_modelsForward.erase(m_modelsForward.begin() + i);
-				}
-				if (found) break;
-			}
-			if (found) break;
-		}
-	}
-	// Didn't we find it return false
-	if (!found) return false;
-
-	// Set new Texture to TextureType
-	if (_textureType == TEXTURE_DIFFUSE)
-	{
-		model.texID = AddTexture(_fileDir, GL_TEXTURE1);
-		m_deferredShader1.CheckUniformLocation("diffuseTex", 1);
-	}
-	else if (_textureType == TEXTURE_NORMAL)
-	{
-		model.norID = AddTexture(_fileDir, GL_TEXTURE2);
-		m_deferredShader1.CheckUniformLocation("normalTex", 2);
-	}
-	else if (_textureType == TEXTURE_SPECULAR)
-	{
-		model.speID = AddTexture(_fileDir, GL_TEXTURE3);
-		m_deferredShader1.CheckUniformLocation("specularTex", 3);
-	}
-
-	// Check if our new Model type already exists and add instance
-	if (renderType == RENDER_DEFERRED)
-	{
-		for (int i = 0; i < m_modelsDeferred.size(); i++)
-		{
-			if (m_modelsDeferred[i] == model)
-			{
-				m_modelsDeferred[i].instances.push_back(instance);
-				return true;
-			}
-		}
-	}
-	else if (renderType == RENDER_FORWARD)
-	{
-		for (int i = 0; i < m_modelsForward.size(); i++)
-		{
-			if (m_modelsForward[i] == model)
-			{
-				m_modelsForward[i].instances.push_back(instance);
-				return true;
-			}
-		}
-	}
-
-	// Nothing found. Let's make a new Model type
-	model.instances.push_back(instance);
-	// Push back the model
-	if (renderType == RENDER_DEFERRED)
-		m_modelsDeferred.push_back(model);
-	else if (renderType == RENDER_FORWARD)
-		m_modelsForward.push_back(model);
-
-	return true;
-}
-bool GraphicDevice::ChangeModelNormalMap(int _id, std::string _fileDir)
-{
-	// TODO: Do this for Interface and Viewspace
-	return ChangeModelTexture(_id, _fileDir, TEXTURE_NORMAL);
-}
-bool GraphicDevice::ChangeModelSpecularMap(int _id, std::string _fileDir)
-{
-	// TODO: Do this for Interface and Viewspace
-	return ChangeModelTexture(_id, _fileDir, TEXTURE_SPECULAR);
-}
-
-Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
+Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg, bool animated)
 {
 	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
-	{		
+	{
 		if (it->first == _fileDir)
 			return it->second;
 	}
@@ -1289,6 +574,8 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 	std::vector<float> tanData = modelExporter.ReadDataFromFile();
 	std::vector<float> bitanData = modelExporter.ReadDataFromFile();
 	std::vector<float> texCoordData = modelExporter.ReadDataFromFile();
+	std::vector<float> jointIndexData = modelExporter.ReadDataFromFile();
+	std::vector<float> jointWeightData = modelExporter.ReadDataFromFile();
 	modelExporter.CloseFile();
 
 	Buffer* retbuffer = new Buffer();
@@ -1296,11 +583,13 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 	_shaderProg->UseProgram();
 	BufferData bufferData[] =
 	{
-		{ 0, 3, GL_FLOAT, (const GLvoid*)positionData.data(), positionData.size() * sizeof(float) },
-		{ 1, 3, GL_FLOAT, (const GLvoid*)normalData.data(), normalData.size()   * sizeof(float) },
-		{ 2, 3, GL_FLOAT, (const GLvoid*)tanData.data(), tanData.size()   * sizeof(float) },
-		{ 3, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), bitanData.size()   * sizeof(float) },
-		{ 4, 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), texCoordData.size() * sizeof(float) }
+		{ 0, 3, GL_FLOAT, (const GLvoid*)positionData.data(), static_cast<GLsizeiptr>(positionData.size() * sizeof(float)) },
+		{ 1, 3, GL_FLOAT, (const GLvoid*)normalData.data(), static_cast<GLsizeiptr>(normalData.size()   * sizeof(float)) },
+		{ 2, 3, GL_FLOAT, (const GLvoid*)tanData.data(), static_cast<GLsizeiptr>(tanData.size()   * sizeof(float)) },
+		{ 3, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), static_cast<GLsizeiptr>(bitanData.size()   * sizeof(float)) },
+		{ 4, 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), static_cast<GLsizeiptr>(texCoordData.size() * sizeof(float)) },
+		{ 5, 4, GL_FLOAT, (const GLvoid*)jointIndexData.data(), static_cast<GLsizeiptr>(jointIndexData.size()   * sizeof(float)) },
+		{ 6, 4, GL_FLOAT, (const GLvoid*)jointWeightData.data(), static_cast<GLsizeiptr>(jointWeightData.size() * sizeof(float)) }
 	};
 
 	int test = sizeof(bufferData) / sizeof(bufferData[0]);
@@ -1308,49 +597,167 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg)
 	for (int i = 0; i < sizeof(bufferData) / sizeof(bufferData[0]); i++)
 		m_vramUsage += (int)bufferData[i].dataSize;
 
-	retbuffer->init(bufferData, sizeof(bufferData) / sizeof(bufferData[0]));
+	int bufferDatas = sizeof(bufferData) / sizeof(bufferData[0]);
+	if (animated == false)
+		bufferDatas -= 2;
+	else
+	{
+		for (int i = 0; i < jointIndexData.size(); i++)
+		{
+			if (jointIndexData[i] > 35 || jointIndexData[i] < 0)
+			{
+				int hej = 0;
+			}
+		}
+	}
+
+	retbuffer->init(bufferData, bufferDatas);
 	retbuffer->setCount((int)positionData.size() / 3);
-	
+
 	m_meshs.insert(std::pair<const std::string, Buffer*>(_fileDir, retbuffer));
 
 	return retbuffer;
 }
-GLuint GraphicDevice::AddTexture(std::string _fileDir, GLenum _textureSlot)
+
+Buffer* GraphicDevice::AddMesh(ModelToLoadFromSource* _modelToLoad, Shader *_shaderProg)
 {
-	for (std::map<const std::string, GLuint>::iterator it = m_textures.begin(); it != m_textures.end(); it++)
+	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
 	{
-		if (it->first == _fileDir)
+		if (it->first == _modelToLoad->key)
 			return it->second;
 	}
-	int texSizeX, texSizeY;
-	m_deferredShader1.UseProgram();
-	GLuint texture = TextureLoader::LoadTexture(_fileDir.c_str(), _textureSlot, texSizeX, texSizeY);
-	m_textures.insert(std::pair<const std::string, GLenum>(_fileDir, texture));
-	m_vramUsage += (texSizeX * texSizeY * 4 * 4);
-	return texture;
+
+	std::vector<float> positionData = _modelToLoad->positions;
+	std::vector<float> normalData = _modelToLoad->normals;
+	std::vector<float> tanData = _modelToLoad->tangents;
+	std::vector<float> bitanData = _modelToLoad->bitangents;
+	std::vector<float> texCoordData = _modelToLoad->texCoords;
+	std::vector<float> jointIndexData;
+	std::vector<float> jointWeightData;
+
+	Buffer* retbuffer = new Buffer();
+
+	_shaderProg->UseProgram();
+	BufferData bufferData[] =
+	{
+		{ 0, 3, GL_FLOAT, (const GLvoid*)positionData.data(), static_cast<GLsizeiptr>(positionData.size() * sizeof(float)) },
+		{ 1, 3, GL_FLOAT, (const GLvoid*)normalData.data(), static_cast<GLsizeiptr>(normalData.size()   * sizeof(float)) },
+		{ 2, 3, GL_FLOAT, (const GLvoid*)tanData.data(), static_cast<GLsizeiptr>(tanData.size()   * sizeof(float)) },
+		{ 3, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), static_cast<GLsizeiptr>(bitanData.size()   * sizeof(float)) },
+		{ 4, 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), static_cast<GLsizeiptr>(texCoordData.size() * sizeof(float)) },
+		{ 5, 4, GL_FLOAT, (const GLvoid*)jointIndexData.data(), static_cast<GLsizeiptr>(jointIndexData.size()   * sizeof(float)) },
+		{ 6, 4, GL_FLOAT, (const GLvoid*)jointWeightData.data(), static_cast<GLsizeiptr>(jointWeightData.size() * sizeof(float)) }
+	};
+
+	int test = sizeof(bufferData) / sizeof(bufferData[0]);
+	// Counts the size in bytes of all the buffered data
+	for (int i = 0; i < sizeof(bufferData) / sizeof(bufferData[0]); i++)
+		m_vramUsage += (int)bufferData[i].dataSize;
+
+	int bufferDatas = sizeof(bufferData) / sizeof(bufferData[0]);
+	bufferDatas -= 2;
+
+	retbuffer->init(bufferData, bufferDatas);
+	retbuffer->setCount((int)positionData.size() / 3);
+
+	m_meshs.insert(std::pair<const std::string, Buffer*>(_modelToLoad->key, retbuffer));
+
+	return retbuffer;
 }
-//ObjectData GraphicDevice::AddObject(std::string _file, std::string _dir)
-//{
-//	std::string fileDir = _dir;
-//	fileDir.append(_file);
-//	for (std::map<const std::string, ObjectData>::iterator it = m_objects.begin(); it != m_objects.end(); it++)
-//	{
-//		if (it->first == fileDir)
-//			return it->second;
-//	}
-//	ObjectData obj = ModelLoader::importObject(_dir, _file);
-//}
 
-void GraphicDevice::Clear()
+bool GraphicDevice::BufferModelTexture(int _id, std::string _fileDir, int _textureType)
 {
-  m_modelIDcounter = 0;
-  
-  m_modelsDeferred.clear();
-  m_modelsForward.clear();
-  m_modelsViewspace.clear();
-  m_modelsInterface.clear();
+	// Model Instance
+	Instance instance;
+	// Temp Model
+	Model model;
 
-  float **tmpPtr = new float*[1];
-  BufferPointlights(0, tmpPtr);
-  delete tmpPtr;
+	bool found = false;
+	int renderType;
+	Shader *shaderPtr = NULL;
+	std::vector<Model> *modelList = NULL;
+
+	// Find model Instance
+	for (int k = 0; k < m_renderLists.size(); k++)
+	{
+		modelList = m_renderLists[k].ModelList;
+		for (int i = 0; i < (*modelList).size(); i++)
+		{
+			for (int j = 0; j < (*modelList)[i].instances.size(); j++)
+			{
+				if ((*modelList)[i].instances[j].id == _id)
+				{
+					instance = (*modelList)[i].instances[j];
+					model = Model(
+						(*modelList)[i].bufferPtr,
+						(*modelList)[i].texID,
+						(*modelList)[i].norID,
+						(*modelList)[i].speID
+						);
+					found = true;
+					renderType = m_renderLists[k].RenderType;
+					shaderPtr = m_renderLists[k].ShaderPtr;
+					(*modelList)[i].instances.erase((*modelList)[i].instances.begin() + j);
+					if ((*modelList)[i].instances.size() == 0)
+						(*modelList).erase((*modelList).begin() + i);
+				}
+				if (found) break;
+			}
+			if (found) break;
+		}
+		if (found) break;
+	}
+
+	// Didn't we find it return false
+	if (!found) return false;
+
+	// Set new Texture to TextureType
+	if (_textureType == TEXTURE_DIFFUSE)
+	{
+		model.texID = GraphicDevice::AddTexture(_fileDir, GL_TEXTURE1);
+		shaderPtr->CheckUniformLocation("diffuseTex", 1);
+	}
+	else if (_textureType == TEXTURE_NORMAL)
+	{
+		model.norID = GraphicDevice::AddTexture(_fileDir, GL_TEXTURE2);
+		shaderPtr->CheckUniformLocation("normalTex", 2);
+	}
+	else if (_textureType == TEXTURE_SPECULAR)
+	{
+		model.speID = GraphicDevice::AddTexture(_fileDir, GL_TEXTURE3);
+		shaderPtr->CheckUniformLocation("specularTex", 3);
+	}
+
+	// Check if our new Model type already exists and add instance
+	for (int i = 0; i < (*modelList).size(); i++)
+	{
+		if ((*modelList)[i] == model)
+		{
+			(*modelList)[i].instances.push_back(instance);
+			return true;
+		}
+	}
+
+	// Nothing found. Let's make a new Model type
+	model.instances.push_back(instance);
+	// Push back the model
+	(*modelList).push_back(model);
+
+	return true;
+}
+
+void GraphicDevice::UpdateTextureIndex(GLuint newTexture, GLuint oldTexture)
+{
+	for (int k = 0; k < m_renderLists.size(); k++)
+	{
+		std::vector<Model> *modelList = m_renderLists[k].ModelList;
+		for (Model& m : (*modelList))
+			if (m.texID == oldTexture)
+				m.texID = newTexture;
+	}
+}
+
+void GraphicDevice::SetParticleAcceleration(int _id, float x, float y, float z)
+{
+	m_particleSystems[_id]->SetAccel(vec3(x, y, z));
 }

@@ -39,22 +39,23 @@
 #include <iostream>
 #include <map>
 #include <algorithm>
+#include <string>
 
 namespace LuaEmbedder
 {
   template <class T>
   struct PropertyType
   {
-    const char* name;
-    int (T::*getter)();
-    int (T::*setter)();
+    std::string name;
+    int (T::*getter)(lua_State*);
+    int (T::*setter)(lua_State*);
   };
 
   template <class T>
   struct FunctionType
   {
-    const char* name;
-    int (T::*func)();
+    std::string name;
+    int (T::*func)(lua_State*);
   };
 
   template <class T> class Luna
@@ -114,10 +115,6 @@ namespace LuaEmbedder
     // REGISTER CLASS AS A GLOBAL TABLE 
     static void Register(lua_State* L, const char* className, bool gc = true)
     {
-      m_properties.clear();
-      m_methods.clear();
-      m_objectFunctionsMap.clear();
-      
       luaL_newmetatable(L, className);
       int metatable = lua_gettop(L);
       
@@ -126,12 +123,10 @@ namespace LuaEmbedder
       lua_pushvalue(L, metatable);
       lua_settable(L, -3);
       
-      if (gc)
-      {
-	lua_pushstring(L, "__gc");
-	lua_pushcfunction(L, &Luna<T>::gc_obj);
-	lua_settable(L, metatable);
-      }
+	  lua_pushstring(L, "__gc");
+	  lua_pushboolean(L, (int)gc);
+	  lua_pushcclosure(L, &Luna<T>::gc_obj, 1);
+	  lua_settable(L, metatable);
       
       lua_pushstring(L, "__tostring");
       lua_pushstring(L, className);
@@ -170,11 +165,24 @@ namespace LuaEmbedder
       lua_pop(L, 2);
     }
     
-    static void RegisterProperty(lua_State* L, const char* className, const char* propertyName, int (T::*getter)(), int (T::*setter)())
+    static void RegisterProperty(lua_State* L, const char* className, const char* propertyName, int (T::*getter)(lua_State*), int (T::*setter)(lua_State*))
     {
-      int propertyIndex = (int)m_properties.size();
-      PropertyType<T> property = { propertyName, getter, setter };
-      m_properties.push_back(property);
+	  int propertyIndex = -1;
+	  for (int i = 0; i < (int)m_properties.size(); i++)
+	  {
+		  if (m_properties[i].name == std::string(propertyName))
+		  {
+			  propertyIndex = i;
+			  break;
+		  }
+	  }
+
+	  if (propertyIndex < 0)
+	  {
+		  propertyIndex = (int)m_properties.size();
+		  PropertyType<T> property = { std::string(propertyName), getter, setter };
+		  m_properties.push_back(property);
+	  }
       
       luaL_getmetatable(L, className);
       int metatable = lua_gettop(L);
@@ -186,11 +194,24 @@ namespace LuaEmbedder
       lua_pop(L, 1);
     }
     
-    static void RegisterMethod(lua_State* L, const char* className, const char* methodName, int (T::*func)())
+    static void RegisterMethod(lua_State* L, const char* className, const char* methodName, int (T::*func)(lua_State*))
     {
-      int methodIndex = (int)m_methods.size();
-      FunctionType<T> method = { methodName, func };
-      m_methods.push_back(method);
+	  int methodIndex = -1;
+	  for (int i = 0; i < (int)m_methods.size(); i++)
+	  {
+		if (m_methods[i].name == std::string(methodName))
+		{
+		  methodIndex = i;
+		  break;
+		}
+	  }
+      
+	  if (methodIndex < 0)
+	  {
+		methodIndex = (int)m_methods.size();
+		FunctionType<T> method = { std::string(methodName), func };
+		m_methods.push_back(method);
+	  }
       
       luaL_getmetatable(L, className);
       int metatable = lua_gettop(L);
@@ -210,7 +231,7 @@ namespace LuaEmbedder
     static int constructor(lua_State* L)
     {
       lua_remove(L, 1);
-      T* ap = new T();
+      T* ap = new T(L);
       const char* className = lua_tostring(L, lua_upvalueindex(1));
       push(L, className, ap, true);
       return 1;
@@ -219,7 +240,7 @@ namespace LuaEmbedder
     static int Clone(lua_State* L)
     {
       lua_remove(L, 1);
-      T* ap = new T();
+      T* ap = new T(L);
       const char* className = lua_tostring(L, lua_upvalueindex(1));
       push(L, className, ap, true);
       int object = lua_gettop(L);
@@ -363,7 +384,6 @@ namespace LuaEmbedder
       }
       lua_insert(L, base);
       int status = lua_pcall(L, 1 + argumentCount, LUA_MULTRET, 0);
-      lua_gc(L, LUA_GCCOLLECT, 0);
       if (status != 0)
       {
 	SDL_Log("Luna::CallMethod : %s", (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error"));
@@ -436,7 +456,7 @@ namespace LuaEmbedder
 	lua_remove(L, 1); // Remove userdata
 	lua_remove(L, 1); // Remove [key]
 	
-	return ((*obj)->*(m_properties[_index].getter))();
+	return ((*obj)->*(m_properties[_index].getter))(L);
       }
       else
       {
@@ -464,8 +484,6 @@ namespace LuaEmbedder
 	int members = lua_gettop(L);
 	lua_pushvalue(L, 2);
 	lua_gettable(L, members);
-	if (lua_isnil(L, -1))
-	  lua_pushvalue(L, index);
 	lua_settop(L, -1);
       }
       
@@ -505,7 +523,7 @@ namespace LuaEmbedder
 	  lua_remove(L, 1); // Remove userdata
 	  lua_remove(L, 1); // Remove [key]
 	  
-	  return ((*obj)->*(m_properties[_index].setter))();
+	  return ((*obj)->*(m_properties[_index].setter))(L);
 	}
       }
       else
@@ -571,7 +589,7 @@ namespace LuaEmbedder
 	  if (lua_gettop(L) > 0)
 		lua_remove(L, 1);
       
-      return ((*obj)->*(m_methods[i].func))();
+      return ((*obj)->*(m_methods[i].func))(L);
     }
 
     /*
@@ -581,21 +599,31 @@ namespace LuaEmbedder
     */
     static int gc_obj(lua_State* L)
     {
-      if (luaL_getmetafield(L, 1, "no_gc"))
-      {
-	lua_pushvalue(L, 1);
-	lua_gettable(L, -2);
-	if (!lua_isnil(L, -1))
-	  return 0;
-      }
-      
-      T** obj = static_cast<T**>(lua_touserdata(L, 1));
+		T** obj = static_cast<T**>(lua_touserdata(L, 1));
+
+		bool gc = (bool)lua_toboolean(L, lua_upvalueindex(1));
+
+		bool no_gc = false;
+		if (luaL_getmetafield(L, 1, "no_gc"))
+		{
+			lua_pushvalue(L, 1);
+			lua_gettable(L, -2);
+			if (!lua_isnil(L, -1))
+				no_gc = true;
+		}
+
+		if (!gc || no_gc)
+		{
+			*obj = NULL;
+			obj = NULL;
+			return 0;
+		}
       
       if(obj && *obj)
       {
-	delete(*obj);
-	*obj = nullptr;
-	obj = nullptr;
+		delete(*obj);
+		*obj = NULL;
+		obj = NULL;
       }
       
       return 0;
@@ -625,9 +653,290 @@ namespace LuaEmbedder
       T** obj2 = static_cast<T**>(lua_touserdata(L, 1));
 
       lua_pushboolean(L, *obj1 == *obj2);
-
+	  
       return 1;
     }
+
+	static int WriteFunction(lua_State* L, const char* p, size_t sz, luaL_Buffer* ud)
+	{
+		luaL_addlstring(ud, p, sz);
+		return 0;
+	}
+
+	static bool DumpFunction(lua_State* L, luaL_Buffer* buffer)
+	{
+#if defined(__OSX__)
+        int chunkSetting = 0;
+#else
+        int chunkSetting = 1;
+#endif
+        
+		int error = lua_dump(L, (lua_Writer)WriteFunction, buffer, chunkSetting);
+		luaL_pushresult(buffer);
+		if (error != 0)
+		{
+			SDL_Log("Luna::DumpFunction : Error");
+			return false;
+		}
+		return true;
+	}
+
+	static bool LoadFunction(lua_State* L, luaL_Buffer* buffer)
+	{
+		int error = luaL_loadbuffer(L, buffer->b, buffer->size, NULL);
+		if (error != 0)
+		{
+			SDL_Log("Luna::LoadFunction : Error");
+			return false;
+		}
+		return true;
+	}
+
+	static void CopyTable(lua_State* A, lua_State* B, int tableA, int tableB)
+	{
+		lua_pushnil(A);
+		while (lua_next(A, tableA) != 0)
+		{
+			// Key
+			if (lua_isboolean(A, -2))
+			{
+				bool value = lua_toboolean(A, -2);
+				lua_pushboolean(B, value);
+			}
+			else if (lua_iscfunction(A, -2))
+			{
+				lua_CFunction value = lua_tocfunction(A, -2);
+				lua_pushcfunction(B, value);
+			}
+			else if (lua_isfunction(A, -2))
+			{
+				lua_pushvalue(A, -2);
+				luaL_Buffer buffer;
+				int top = lua_gettop(A);
+				luaL_buffinit(A, &buffer);
+				DumpFunction(A, &buffer);
+				lua_settop(A, top);
+				lua_pop(A, 1);
+				LoadFunction(B, &buffer);
+			}
+			else if (lua_isinteger(A, -2))
+			{
+				int value = lua_tointeger(A, -2);
+				lua_pushinteger(B, value);
+			}
+			else if (lua_islightuserdata(A, -2))
+			{
+				void* value = lua_touserdata(A, -2);
+				lua_pushlightuserdata(B, value);
+			}
+			else if (lua_isnil(A, -2))
+			{
+				lua_pushnil(B);
+			}
+			else if (lua_isnumber(A, -2))
+			{
+				lua_Number value = lua_tonumber(A, -2);
+				lua_pushnumber(B, value);
+			}
+			else if (lua_isstring(A, -2))
+			{
+				const char* value = lua_tostring(A, -2);
+				lua_pushstring(B, value);
+			}
+			else if (lua_istable(A, -2))
+			{
+				int a = lua_gettop(A) - 1;
+				lua_pushstring(A, "__mode");
+				lua_pushstring(A, "k");
+				lua_settable(A, a);
+				
+				lua_newtable(B);
+				int b = lua_gettop(B);
+				lua_pushstring(B, "__mode");
+				lua_pushstring(B, "k");
+				lua_settable(B, b);
+				
+				CopyTable(A, B, a, b);
+			}
+			else if (lua_isuserdata(A, -2))
+			{
+				SDL_Log("Luna::CopyTable : Possible unsafe use of userdata");
+			}
+
+			// Value
+			if (lua_isboolean(A, -1))
+			{
+				bool value = lua_toboolean(A, -1);
+				lua_pushboolean(B, value);
+			}
+			else if (lua_iscfunction(A, -1))
+			{
+				lua_CFunction value = lua_tocfunction(A, -1);
+				lua_pushcfunction(B, value);
+			}
+			else if (lua_isfunction(A, -1))
+			{
+				lua_pushvalue(A, -1);
+				luaL_Buffer buffer;
+				int top = lua_gettop(A);
+				luaL_buffinit(A, &buffer);
+				DumpFunction(A, &buffer);
+				lua_settop(A, top);
+				lua_pop(A, 1);
+				LoadFunction(B, &buffer);
+			}
+			else if (lua_isinteger(A, -1))
+			{
+				int value = lua_tointeger(A, -1);
+				lua_pushinteger(B, value);
+			}
+			else if (lua_islightuserdata(A, -1))
+			{
+				void* value = lua_touserdata(A, -1);
+				lua_pushlightuserdata(B, value);
+			}
+			else if (lua_isnil(A, -1))
+			{
+				lua_pushnil(B);
+			}
+			else if (lua_isnumber(A, -1))
+			{
+				lua_Number value = lua_tonumber(A, -1);
+				lua_pushnumber(B, value);
+			}
+			else if (lua_isstring(A, -1))
+			{
+				const char* value = lua_tostring(A, -1);
+				lua_pushstring(B, value);
+			}
+			else if (lua_istable(A, -1))
+			{
+				int a = lua_gettop(A);
+				lua_pushstring(A, "__mode");
+				lua_pushstring(A, "k");
+				lua_settable(A, a);
+				
+				lua_newtable(B);
+				int b = lua_gettop(B);
+				lua_pushstring(B, "__mode");
+				lua_pushstring(B, "k");
+				lua_settable(B, b);
+				
+				CopyTable(A, B, a, b);
+			}
+			else if (lua_isuserdata(A, -1))
+			{
+				SDL_Log("Luna::CopyTable : Possible unsafe use of userdata");
+			}
+
+			// Set key/value in table B
+			lua_settable(B, tableB);
+
+			lua_pop(A, 1);
+		}
+	}
+    
+    static void Copy(lua_State* A, lua_State* B, const char* className, T* instance)
+    {
+      push(B, className, instance);
+      
+      luaL_getmetatable(A, className);
+      int metatableA = lua_gettop(A);
+      lua_pushstring(A, "object_members");
+      lua_gettable(A, -2);
+      if (lua_isnil(A, -1))
+      {
+	SDL_Log("No table 'object_members' in class %s", className);
+	return;
+      }
+      int objectsA = lua_gettop(A);
+      lua_pushlightuserdata(A, instance);
+      lua_gettable(A, -2);
+      if (lua_isnil(A, -1))
+      {
+	SDL_Log("No table '%p' in table 'object_members' in class %s", className);
+	return;
+      }
+      int membersA = lua_gettop(A);
+      
+      luaL_getmetatable(B, className);
+      int metatableB = lua_gettop(B);
+      lua_pushstring(B, "object_members");
+      lua_gettable(B, -2);
+      if (lua_isnil(B, -1))
+      {
+	lua_newtable(B);
+	lua_pushvalue(B, -1);
+	lua_setmetatable(B, -2);
+	lua_pushstring(B, "object_members");
+	lua_pushvalue(B, -2);
+	lua_settable(B, metatableB);
+      }
+      int objectsB = lua_gettop(B);
+      lua_pushlightuserdata(B, instance);
+      lua_gettable(B, -2);
+      if (lua_isnil(B, -1))
+      {
+	lua_newtable(B);
+	lua_pushvalue(B, -1);
+	lua_setmetatable(B, -2);
+	lua_pushlightuserdata(B, instance);
+	lua_pushvalue(B, -2);
+	lua_settable(B, objectsB);
+      }
+      else
+	SDL_Log("Warning! There's already another Lua copy of this class %s", className);
+      int membersB = lua_gettop(B);
+      
+	  CopyTable(A, B, membersA, membersB);
+      
+      lua_settop(A, 0);
+      lua_settop(B, 0);
+    }
+
+	static void NilTable(lua_State* L, int table)
+	{
+		lua_pushnil(L);
+		while (lua_next(L, table) != 0)
+		{
+			if (lua_istable(L, -1))
+				NilTable(L, lua_gettop(L));
+
+			lua_pushvalue(L, -2);
+			lua_pushnil(L);
+			lua_settable(L, table);
+
+			lua_pop(L, 1);
+		}
+	}
+
+	static void Clear(lua_State* L, const char* className, T* instance)
+	{
+		if (m_objectFunctionsMap.find(instance) != m_objectFunctionsMap.end())
+			m_objectFunctionsMap.erase(instance);
+
+		luaL_getmetatable(L, className);
+		int metatable = lua_gettop(L);
+		lua_pushstring(L, "object_members");
+		lua_gettable(L, metatable);
+		if (!lua_isnil(L, -1))
+		{
+			int objects = lua_gettop(L);
+			lua_pushlightuserdata(L, instance);
+			lua_gettable(L, -2);
+			if (!lua_isnil(L, -1))
+			{
+				// Nil table recursivly
+				int members = lua_gettop(L);
+				NilTable(L, members);
+
+				lua_pushlightuserdata(L, instance);
+				lua_pushnil(L);
+				lua_settable(L, objects);
+			}
+		}
+		lua_settop(L, 0);
+	}
   };
 
   template <class T> std::vector<PropertyType<T>> Luna<T>::m_properties = std::vector<PropertyType<T>>();

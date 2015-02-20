@@ -21,7 +21,7 @@ namespace ECSL
 	enum ComponentDataType
 	{
 		INT, FLOAT, TEXT, BOOL,
-		MATRIX, REFERENCE, INT64
+		MATRIX, REFERENCE, INT64, STRING
 	};
 
 	static int GetByteSizeFromType(ComponentDataType _type)
@@ -52,6 +52,10 @@ namespace ECSL
 		case ComponentDataType::BOOL:
 			return sizeof(bool);
 			break;
+
+		case ComponentDataType::STRING:
+			return 1;
+			break;
 		}
 		return 0;
 	}
@@ -77,27 +81,27 @@ namespace ECSL
 	class DECLSPEC ComponentType
 	{
 	private:
-		std::string	m_name;
+		std::string* m_name;
 		bool m_syncWithNetwork;
 		TableType m_tableType;
 		unsigned int m_byteSize;
-		std::map<std::string, ComponentVariable> m_variables;
-		std::map<unsigned int, ComponentDataType> m_offsetToType;
+		std::map<std::string, ComponentVariable>* m_variables;
+		std::map<unsigned int, ComponentDataType>* m_offsetToType;
 	public:
 		ComponentType(
-			std::string	_name,
+			const std::string& _name,
 			TableType _tableType,
 			std::map<std::string, ComponentVariable>& _variables,
 			std::map<unsigned int, ComponentDataType>& _offsetToTypes,
 			bool _syncWithNetwork = true);
 		~ComponentType();
 
-		inline const std::string& GetName() const									{ return m_name; }
+		inline const std::string& GetName() const									{ return *m_name; }
 		inline const bool GetNetworkSyncState() const								{ return m_syncWithNetwork; }
 		inline const TableType GetTableType() const									{ return m_tableType; }
 		inline const int GetByteSize() const										{ return m_byteSize; }
-		inline const std::map<std::string, ComponentVariable>* GetVariables() const	{ return &m_variables; }
-		inline const std::map<unsigned int, ComponentDataType>* GetDataTypes() const { return &m_offsetToType; }
+		inline const std::map<std::string, ComponentVariable>* GetVariables() const	{ return m_variables; }
+		inline const std::map<unsigned int, ComponentDataType>* GetDataTypes() const { return m_offsetToType; }
 	};
 }
 

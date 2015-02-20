@@ -33,7 +33,7 @@ namespace Input
 
 	private:
 		InputWrapper();
-
+		static InputWrapper* m_instance;
 		Keyboard* m_keyboard;
 		Mouse* m_mouse;
 		Touch* m_touch;

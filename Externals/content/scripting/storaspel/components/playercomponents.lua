@@ -1,4 +1,3 @@
-
 --	Player Component
 local PlayerComponent = ComponentType()
 PlayerComponent.Name = "Player"
@@ -9,7 +8,14 @@ worldCreator:AddComponentType(PlayerComponent)
 local UnitComponent = ComponentType()
 UnitComponent.Name = "Unit"
 UnitComponent.TableType = TableType.Map
+UnitComponent.SyncNetwork = true
 worldCreator:AddComponentType(UnitComponent)
+
+-- AI Component
+local AIComponent = ComponentType()
+AIComponent.Name = "AI"
+AIComponent.TableType = TableType.Map
+worldCreator:AddComponentType(AIComponent)
 
 --	PlayerNumber Component
 local PlayerNumberComponent = ComponentType()
@@ -46,6 +52,19 @@ DirectionComponent.TableType = TableType.Map
 DirectionComponent:AddVariable("X", ByteSize.Int)
 DirectionComponent:AddVariable("Z", ByteSize.Int)
 worldCreator:AddComponentType(DirectionComponent)
+
+-- NoSubSteps Component
+local NoSubStepsComponent = ComponentType()
+NoSubStepsComponent.Name = "NoSubSteps"
+NoSubStepsComponent.TableType = TableType.Map
+NoSubStepsComponent:AddVariable("Counter", ByteSize.Int)
+worldCreator:AddComponentType(NoSubStepsComponent)
+
+-- Stunned Component
+local StunnedComponent = ComponentType()
+StunnedComponent.Name = "Stunned"
+StunnedComponent.TableType = TableType.Map
+worldCreator:AddComponentType(StunnedComponent)
 
 -- Spawn Component
 local SpawnComponent = ComponentType()
@@ -108,7 +127,6 @@ NeedSpawnLocation.Name = "NeedSpawnLocation"
 NeedSpawnLocation.TableType = TableType.Map
 worldCreator:AddComponentType(NeedSpawnLocation)
 
-
 -- Available Spawnpoint
 local AvailableSpawnpoint = ComponentType()
 AvailableSpawnpoint.Name = "AvailableSpawnpoint"
@@ -128,3 +146,32 @@ local PlayerIndicator = ComponentType()
 PlayerIndicator.Name = "PlayerIndicator"
 PlayerIndicator.TableType = TableType.Map
 worldCreator:AddComponentType(PlayerIndicator)
+
+-- HasSelectedCards Component
+local HasSelectedCardsComponent = ComponentType()
+HasSelectedCardsComponent.Name = "HasSelectedCards"
+HasSelectedCardsComponent.TableType = TableType.Map
+worldCreator:AddComponentType(HasSelectedCardsComponent)
+
+-- PlayerCounter Component
+local PlayerCounterComponent = ComponentType()
+PlayerCounterComponent.Name = "PlayerCounter"
+PlayerCounterComponent.TableType = TableType.Map
+PlayerCounterComponent:AddVariable("MaxPlayers", ByteSize.Int)
+PlayerCounterComponent:AddVariable("Players", ByteSize.Int)
+PlayerCounterComponent:AddVariable("Spectators", ByteSize.Int)
+worldCreator:AddComponentType(PlayerCounterComponent)
+
+-- NeedUnit Component
+local NeedUnitComponent = ComponentType()
+NeedUnitComponent.Name = "NeedUnit"
+NeedUnitComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NeedUnitComponent)
+
+-- RemoveUnit Component
+local RemoveUnitComponent = ComponentType()
+RemoveUnitComponent.Name = "RemoveUnit"
+RemoveUnitComponent.TableType = TableType.Map
+RemoveUnitComponent:AddVariable("PlayerNo", ByteSize.Int)
+RemoveUnitComponent:AddVariable("UnitEntityId", ByteSize.Int)
+worldCreator:AddComponentType(RemoveUnitComponent)

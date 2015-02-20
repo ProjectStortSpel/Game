@@ -2,6 +2,7 @@
 #include "ECSL/Managers/EntityTemplateManager.h"
 #include <string>
 #include "LuaEmbedder/LuaEmbedder.h"
+#include "Network/ClientDatabase.h"
 
 GameConsole::GameConsole(Renderer::GraphicDevice* _graphics, ECSL::World* _world)
 {
@@ -32,7 +33,7 @@ void GameConsole::CreateObject(std::string _command, std::vector<Console::Argume
 	unsigned int mId = m_world->CreateNewEntity(_template);
 	m_world->CreateComponentAndAddTo("ChangedComponents", mId);
 
-	if (!m_world->EntityHasComponent(mId, "SyncNetwork"))
+	if (!m_world->HasComponent(mId, "SyncNetwork"))
 		m_world->CreateComponentAndAddTo("SyncNetwork", mId);
 
 	std::stringstream ss;
@@ -148,12 +149,12 @@ void GameConsole::HostServer(std::string _command, std::vector<Console::Argument
 	if (NetworkInstance::GetClient()->IsConnected())
 	{
 		NetworkInstance::GetClient()->Disconnect();
-		LuaEmbedder::AddBool("Client", false);
+		//LuaEmbedder::AddBool("Client", false);
 	}
 	if (NetworkInstance::GetServer()->IsRunning())
 	{
 		NetworkInstance::GetServer()->Stop();
-		LuaEmbedder::AddBool("Server", false);
+		//LuaEmbedder::AddBool("Server", false);
 	}
 
 
@@ -188,17 +189,70 @@ void GameConsole::HostServer(std::string _command, std::vector<Console::Argument
 	}
 
 	bool hosting = NetworkInstance::GetServer()->Start(port, pw.c_str(), connections);
-	SDL_Log("Hosting: %d", (int)hosting);
-	LuaEmbedder::AddBool("Server", hosting);
+
+	//LuaEmbedder::AddBool("Server", hosting);
 	//NetworkInstance::GetClient()->Connect("127.0.0.1", pw.c_str(), port, 0);
 }
+
+void GameConsole::HostListenServer(std::string _command, std::vector<Console::Argument>* _args)
+{
+    if (NetworkInstance::GetClient()->IsConnected())
+    {
+        NetworkInstance::GetClient()->Disconnect();
+        //LuaEmbedder::AddBool("Client", false);
+    }
+    if (NetworkInstance::GetServer()->IsRunning())
+    {
+        NetworkInstance::GetServer()->Stop();
+        //LuaEmbedder::AddBool("Server", false);
+    }
+    
+    
+    std::string pw				= NetworkInstance::GetServer()->GetServerPassword();
+    unsigned int port			= NetworkInstance::GetServer()->GetIncomingPort();
+    unsigned int connections	= NetworkInstance::GetServer()->GetMaxConnections();
+    
+    if (_args->size() == 1)
+    {
+        if ((*_args)[0].ArgType == Console::ArgumentType::Number)
+            port = (*_args)[0].Number;
+    }
+    else if (_args->size() == 2)
+    {
+        if ((*_args)[0].ArgType == Console::ArgumentType::Number &&
+            (*_args)[1].ArgType == Console::ArgumentType::Text)
+        {
+            port = (*_args)[0].Number;
+            pw = (*_args)[1].Text;
+        }
+    }
+    else if (_args->size() == 3)
+    {
+        if ((*_args)[0].ArgType == Console::ArgumentType::Number &&
+            (*_args)[1].ArgType == Console::ArgumentType::Text &&
+            (*_args)[2].ArgType == Console::ArgumentType::Number)
+        {
+            port		= (*_args)[0].Number;
+            pw			= (*_args)[1].Text;
+            connections = (*_args)[2].Number;
+        }
+    }
+    
+    bool hosting = NetworkInstance::GetServer()->Start(port, pw.c_str(), connections);
+    
+    //LuaEmbedder::AddBool("Server", hosting);
+    
+    bool connected = NetworkInstance::GetClient()->Connect("127.0.0.1", pw.c_str(), port, 0);
+}
+
+
 
 void GameConsole::StopServer(std::string _command, std::vector<Console::Argument>* _args)
 {
 	if (NetworkInstance::GetServer()->IsRunning())
 	{
 		NetworkInstance::GetServer()->Stop();
-		LuaEmbedder::AddBool("Server", false);
+		//LuaEmbedder::AddBool("Server", false);
 	}
 }
 
@@ -207,14 +261,14 @@ void GameConsole::ConnectClient(std::string _command, std::vector<Console::Argum
 	if (NetworkInstance::GetClient()->IsConnected())
 	{
 		NetworkInstance::GetClient()->Disconnect();
-		LuaEmbedder::AddBool("Client", false);
+		//LuaEmbedder::AddBool("Client", false);
 	}
 
 	
 	if (NetworkInstance::GetServer()->IsRunning())
 	{
 		NetworkInstance::GetServer()->Stop();
-		LuaEmbedder::AddBool("Server", false);
+		//LuaEmbedder::AddBool("Server", false);
 	}
 	
 
@@ -251,15 +305,57 @@ void GameConsole::ConnectClient(std::string _command, std::vector<Console::Argum
 	}
 
 	bool connected = NetworkInstance::GetClient()->Connect(ip.c_str(), pw.c_str(), port, 0);
-	LuaEmbedder::AddBool("Client", connected);
+	//LuaEmbedder::AddBool("Client", connected);
 }
+
+void GameConsole::BroadcastChat(std::string _command, std::vector<Console::Argument>* _args)
+{
+	if (!NetworkInstance::GetClient()->IsConnected())
+		return;
+
+	std::stringstream ss;
+	for (int i = 0; i < _args->size(); ++i)
+	{
+		if (i > 0)
+			ss << " ";
+
+		if (_args->at(i).ArgType == Console::ArgumentType::Text)
+		{
+			ss << _args->at(i).Text;
+		}
+		else
+		{
+			ss << _args->at(i).Number;
+		}
+	}
+
+	std::string temp = ss.str();
+	auto ph = NetworkInstance::GetClient()->GetPacketHandler();
+	auto id = ph->StartPack("LuaPacket");
+	ph->WriteString(id, "CLIENT_SEND_CHAT_MESSAGE");
+	ph->WriteString(id, temp.c_str());
+	NetworkInstance::GetClient()->Send(ph->EndPack(id));
+
+//LuaEmbedder::AddBool("Client", connected);
+}
+
+void GameConsole::BroadcastAnnouncement(std::string _command, std::vector<Console::Argument>* _args)
+{
+	if (!NetworkInstance::GetClient()->IsConnected())
+		return;
+
+	std::string temp = _args->at(0).GetString();
+	SDL_Log("%s", temp.c_str());
+		//LuaEmbedder::AddBool("Client", connected);
+}
+
 
 void GameConsole::DisconnectClient(std::string _command, std::vector<Console::Argument>* _args)
 {
 	if (NetworkInstance::GetClient()->IsConnected())
 	{
 		NetworkInstance::GetClient()->Disconnect();
-		LuaEmbedder::AddBool("Client", false);
+		//LuaEmbedder::AddBool("Client", false);
 	}
 }
 
@@ -374,6 +470,7 @@ void GameConsole::ListCommands(std::string _command, std::vector<Console::Argume
 	m_consoleManager->AddMessage("ChangeComponent   -   Id, ComponentType, X, Y, Z, ...");
 	m_consoleManager->AddMessage("RemoveComponent   -   Id, ComponentType");
 	m_consoleManager->AddMessage("Host              -   Port, Password, MaxConnections");
+    m_consoleManager->AddMessage("HostListen        -   Port, Password, MaxConnections");
 	m_consoleManager->AddMessage("Connect           -   Ip-address, Port, Password");
 	m_consoleManager->AddMessage("ToggleText        -   ON/OFF");
 	m_consoleManager->AddMessage("TextColor         -   R G B");
@@ -391,11 +488,15 @@ void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 	m_consoleManager->AddCommand("ChangeComponent", std::bind(&GameConsole::ChangeComponent, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager->AddCommand("RemoveComponent", std::bind(&GameConsole::RemoveComponent, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager->AddCommand("Host", std::bind(&GameConsole::HostServer, this, std::placeholders::_1, std::placeholders::_2));
+    m_consoleManager->AddCommand("HostListen", std::bind(&GameConsole::HostListenServer, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager->AddCommand("Stop", std::bind(&GameConsole::StopServer, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager->AddCommand("Connect", std::bind(&GameConsole::ConnectClient, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager->AddCommand("Disconnect", std::bind(&GameConsole::DisconnectClient, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager->AddCommand("List", std::bind(&GameConsole::ListCommands, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager->AddCommand("Clear", std::bind(&GameConsole::ClearHistory, this, std::placeholders::_1, std::placeholders::_2));
+
+	m_consoleManager->AddCommand("Say", std::bind(&GameConsole::BroadcastChat, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager->AddCommand("Announce", std::bind(&GameConsole::BroadcastAnnouncement, this, std::placeholders::_1, std::placeholders::_2));
 
 	m_consoleManager->AddCommand("ToggleText", std::bind(&GameConsole::ToggleText, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager->AddCommand("TextColor", std::bind(&GameConsole::SetTextColor, this, std::placeholders::_1, std::placeholders::_2));
@@ -405,3 +506,4 @@ void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 
 	m_consoleManager->AddCommand("MemoryUsage", std::bind(&GameConsole::ECSLMemoryUsage, this, std::placeholders::_1, std::placeholders::_2));
 }
+

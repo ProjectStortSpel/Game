@@ -6,9 +6,9 @@
 #include <vector>
 
 #include "World.h"
-#include "Systems/SystemWorkGroup.h"
 #include "Components/ComponentType.h"
-#include "../Managers/ComponentTypeManager.h"
+#include "Systems/SystemWorkGroup.h"
+#include "ECSL/Managers/ComponentTypeManager.h"
 
 namespace ECSL
 {
@@ -24,21 +24,23 @@ namespace ECSL
 		void AddComponentType(const std::string& _componentType);
 		void AddComponentType(ComponentType& _componentType);
 
-		/// Adds a system to a new group
-		template<typename SystemType>
-		void AddSystemToNewGroup();
-		// Adds a system to the most recently added group
-		template<typename SystemType>
-		void AddSystemToCurrentGroup();
-
-		void AddLuaSystemToCurrentGroup(System* _system);
-
-		// Adds a new system group
+		// Adds a new system group. Every system in the same group will be executed simultaneously
 		void AddSystemGroup();
+
+		/// Adds a system to a new group. Every system in the same group will be executed simultaneously
+		template<typename SystemType, typename... Args>
+		void AddSystemToNewGroup(Args&&... args);
+		// Adds a system to the most recently added group. Every system in the same group will be executed simultaneously
+		template<typename SystemType, typename... Args>
+		void AddSystemToCurrentGroup(Args&&... args);
+		// Adds a Lua system to the most recently added group. Every system in the same group will be executed simultaneously
+		void AddLuaSystemToCurrentGroup(System* _system);
 
 		World* CreateWorld(unsigned int _entityCount);
 
 		bool IsWorldInitialized() const { return m_worldInitialized; }
+		
+		std::vector<SystemWorkGroup*>* GetSystemWorkGroups() const { return m_systemWorkGroups; }
 
 	private:
 
@@ -59,16 +61,16 @@ namespace ECSL
 	//	m_componentTypeIds->push_back(newId);
 	//}
 
-	template<typename SystemType>
-	void WorldCreator::AddSystemToNewGroup()
+	template<typename SystemType, typename... Args>
+	void WorldCreator::AddSystemToNewGroup(Args&&... args)
 	{
-		m_systemWorkGroups->push_back(new SystemWorkGroup(new SystemType()));
+		m_systemWorkGroups->push_back(new SystemWorkGroup(new SystemType{ std::forward<Args>(args)... }));
 	}
 
-	template<typename SystemType>
-	void WorldCreator::AddSystemToCurrentGroup()
+	template<typename SystemType, typename... Args>
+	void WorldCreator::AddSystemToCurrentGroup(Args&&... args)
 	{
-		m_systemWorkGroups->at(m_systemWorkGroups->size() - 1)->AddSystem<SystemType>();
+		m_systemWorkGroups->at(m_systemWorkGroups->size() - 1)->AddSystem(new SystemType{ std::forward<Args>(args)... });
 	}
 }
 #endif

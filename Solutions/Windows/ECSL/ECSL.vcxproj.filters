@@ -29,8 +29,20 @@
     <Filter Include="Source Files\Framework\Components\Tables">
       <UniqueIdentifier>{7f441da5-71c6-4240-b83d-c131c037afd8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Framework\Systems\Messaging">
+      <UniqueIdentifier>{f74390fd-e17c-44c4-a0b6-55bf136b9927}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Framework\Multithreading">
+      <UniqueIdentifier>{f1a91060-8b15-4325-b2e1-9ee760a9080b}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\Framework\Templates">
-      <UniqueIdentifier>{71d7e6f7-a1a6-4d92-ab63-2c53d3d8680d}</UniqueIdentifier>
+      <UniqueIdentifier>{99478cef-1fb8-4d40-92a6-86e4b7cf0bf6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Framework\Logger">
+      <UniqueIdentifier>{7960b438-d0ed-423e-8b3e-9582f6f0e335}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Framework\Simulation">
+      <UniqueIdentifier>{b97691f8-8514-4226-a0da-542833901fb2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -100,8 +112,26 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Common\ContainerHelper.h">
       <Filter>Source Files\Framework\Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Simulation.h">
-      <Filter>Source Files\Framework</Filter>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\Message.h">
+      <Filter>Source Files\Framework\Systems\Messaging</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\MessageManager.h">
+      <Filter>Source Files\Framework\Systems\Messaging</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\Subscription.h">
+      <Filter>Source Files\Framework\Systems\Messaging</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemIdManager.h">
+      <Filter>Source Files\Framework\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Multithreading\Scheduler.h">
+      <Filter>Source Files\Framework\Multithreading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Multithreading\RuntimeInfo.h">
+      <Filter>Source Files\Framework\Multithreading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Managers\EntityTemplateManager.h">
+      <Filter>Source Files\Managers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Templates\EntityTemplate.h">
       <Filter>Source Files\Framework\Templates</Filter>
@@ -109,8 +139,26 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\EntityTemplateReader.h">
       <Filter>Source Files\Framework\Parsing</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\ECSL\Managers\EntityTemplateManager.h">
-      <Filter>Source Files\Managers</Filter>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Logger\DataLogger.h">
+      <Filter>Source Files\Framework\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemActivationManager.h">
+      <Filter>Source Files\Framework\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Multithreading\ECSLWorkItem.h">
+      <Filter>Source Files\Framework\Multithreading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Simulation\Simulation.h">
+      <Filter>Source Files\Framework\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Simulation\MTSimulation.h">
+      <Filter>Source Files\Framework\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Simulation\SQSimulation.h">
+      <Filter>Source Files\Framework\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataSlimArray.h">
+      <Filter>Source Files\Framework\Components\Tables</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -174,17 +222,47 @@
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Common\ContainerHelper.cpp">
       <Filter>Source Files\Framework\Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Simulation.cpp">
-      <Filter>Source Files\Framework</Filter>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\Message.cpp">
+      <Filter>Source Files\Framework\Systems\Messaging</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\EntityTemplateReader.cpp">
-      <Filter>Source Files\Framework\Parsing</Filter>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\MessageManager.cpp">
+      <Filter>Source Files\Framework\Systems\Messaging</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\Subscription.cpp">
+      <Filter>Source Files\Framework\Systems\Messaging</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemIdManager.cpp">
+      <Filter>Source Files\Framework\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Multithreading\Scheduler.cpp">
+      <Filter>Source Files\Framework\Multithreading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Managers\EntityTemplateManager.cpp">
+      <Filter>Source Files\Managers</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Templates\EntityTemplate.cpp">
       <Filter>Source Files\Framework\Templates</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\ECSL\Managers\EntityTemplateManager.cpp">
-      <Filter>Source Files\Managers</Filter>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\EntityTemplateReader.cpp">
+      <Filter>Source Files\Framework\Parsing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Logger\DataLogger.cpp">
+      <Filter>Source Files\Framework\Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemActivationManager.cpp">
+      <Filter>Source Files\Framework\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Simulation\Simulation.cpp">
+      <Filter>Source Files\Framework\Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Simulation\MTSimulation.cpp">
+      <Filter>Source Files\Framework\Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Simulation\SQSimulation.cpp">
+      <Filter>Source Files\Framework\Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataSlimArray.cpp">
+      <Filter>Source Files\Framework\Components\Tables</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

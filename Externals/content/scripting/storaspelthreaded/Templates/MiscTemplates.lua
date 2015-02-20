@@ -1,0 +1,73 @@
+
+local Head = EntityTemplate()
+Head.Name = "Head"
+Head:AddComponent("Model")
+--	Model data
+Head:SetFloat3("Position", 0.0, 1.0, 0.0)
+Head:SetFloat3("Rotation", 0.0, math.pi, 0.0)
+Head:SetFloat3("Scale", 1, 1, 1)
+Head:AddComponent("SyncNetwork")
+EntityTemplateManager:AddTemplate(Head)
+
+local TotemHead = EntityTemplate()
+TotemHead.Name = "TotemPiece"
+TotemHead:AddComponent("Model")
+TotemHead:AddComponent("TotemPiece")
+--	Model data
+TotemHead:SetFloat3("Position", 0.0, 1.0, 0.0)
+TotemHead:SetFloat3("Rotation", 0.0, math.pi, 0.0)
+TotemHead:SetFloat3("Scale", 1, 1, 1)
+TotemHead:AddComponent("SyncNetwork")
+EntityTemplateManager:AddTemplate(TotemHead)
+
+local Hole = EntityTemplate()
+Hole.Name = "Hole"
+Hole:SetFloat3("Position", 0.0, 0.0, 0.0)
+Hole:SetFloat3("Rotation", 0.0, 0.0, 0.0)
+Hole:SetFloat3("Scale", 1.0, 1.0, 1.0)
+Hole:SetModel("Model", "hole_test", "hole" , 0)
+EntityTemplateManager:AddTemplate(Hole)
+
+local Stone = EntityTemplate()
+Stone.Name = "Stone"
+Stone:SetFloat3("Position", 0.0, 0.0, 0.0)
+Stone:SetFloat3("Rotation", 0.0, 0.0, 0.0)
+Stone:SetFloat3("Scale", 1.0, 1.0, 1.0)
+Stone:SetModel("Model", "stone", "stone", 0)
+EntityTemplateManager:AddTemplate(Stone)
+
+local GrassTile = EntityTemplate()
+GrassTile.Name = "Grass"
+GrassTile:SetFloat3("Position", 0.0, 0.0, 0.0)
+GrassTile:SetFloat3("Rotation", 0.0, 0.0, 0.0)
+GrassTile:SetFloat3("Scale", 1.0, 1.0, 1.0)
+GrassTile:SetModel("Model", "grass", "grass", 0)
+EntityTemplateManager:AddTemplate(GrassTile)
+
+local User = EntityTemplate()
+User.Name = "User"
+User:SetString("Username", "DefaultPlayer")
+User:SetString("NetConnection", "0.0.0.0", "IpAddress")
+User:SetInt("NetConnection", 0, "Port")
+User:SetBool("NetConnection", false, "Active")
+EntityTemplateManager:AddTemplate(User)
+
+local SlingShotProjectile = EntityTemplate()
+SlingShotProjectile.Name = "SlingShotProjectile"
+SlingShotProjectile:SetFloat3("Position", 0.0, 0.0, 0.0)
+SlingShotProjectile:SetFloat3("Rotation", 0.0, 0.0, 0.0)
+SlingShotProjectile:SetFloat3("Scale", 0.25, 0.25, 0.25)
+SlingShotProjectile:SetModel("Model", "pebble", "pebble" , 0)
+SlingShotProjectile:AddComponent("SyncNetwork")
+SlingShotProjectile:AddComponent("SlingShotProjectile")
+SlingShotProjectile:AddComponent("LerpPosition")
+EntityTemplateManager:AddTemplate(SlingShotProjectile)
+
+local FlowingWater = EntityTemplate()
+FlowingWater.Name = "FlowingWater"
+FlowingWater:AddComponent("Model")
+--	Model data
+FlowingWater:SetFloat3("Position", 0.0, 1.0, 0.0)
+FlowingWater:SetFloat3("Rotation", 0.0, math.pi, 0.0)
+FlowingWater:SetFloat3("Scale", 1, 1, 1)
+EntityTemplateManager:AddTemplate(FlowingWater)

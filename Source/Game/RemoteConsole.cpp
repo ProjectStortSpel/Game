@@ -1,6 +1,6 @@
 #include "Game/RemoteConsole.h"
 #include "Console/Console.h"
-#include "NetworkInstance.h"
+#include "Network/NetworkInstance.h"
 #include <sstream>
 
 RemoteConsole::RemoteConsole()
@@ -112,7 +112,7 @@ void RemoteConsole::ExecuteCommand(Network::PacketHandler* _ph, uint64_t _id, Ne
 		if (CheckServerPassword(_ph->ReadString(_id)))
 		{
 			std::string command = _ph->ReadString(_id);
-			Console::ConsoleManager::GetInstance().ExecuteCommand(command.c_str());
+			Console::ConsoleManager::GetInstance().AddToCommandQueue(command.c_str());
 		}
 		else
 		{

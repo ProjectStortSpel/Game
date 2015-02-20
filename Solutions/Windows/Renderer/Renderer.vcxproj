@@ -19,31 +19,44 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Source\Renderer\AModel.h" />
     <ClInclude Include="..\..\..\Source\Renderer\Buffer.h" />
     <ClInclude Include="..\..\..\Source\Renderer\Camera.h" />
     <ClInclude Include="..\..\..\Source\Renderer\GLTimer.h" />
     <ClInclude Include="..\..\..\Source\Renderer\GraphicDevice.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\GraphicsHigh.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\GraphicsLow.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\Model.h" />
     <ClInclude Include="..\..\..\Source\Renderer\ModelExporter.h" />
     <ClInclude Include="..\..\..\Source\Renderer\ModelLoader.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\ParticleSystem.h" />
     <ClInclude Include="..\..\..\Source\Renderer\Shader.h" />
     <ClInclude Include="..\..\..\Source\Renderer\ShadowMap.h" />
     <ClInclude Include="..\..\..\Source\Renderer\SimpleText.h" />
     <ClInclude Include="..\..\..\Source\Renderer\SkyBox.h" />
     <ClInclude Include="..\..\..\Source\Renderer\stdafx.h" />
+    <ClInclude Include="..\..\..\Source\Renderer\TextRenderer.h" />
     <ClInclude Include="..\..\..\Source\Renderer\TextureLoader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\Source\Renderer\AModel.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\Buffer.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\Camera.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\GLTimer.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\GraphicDevice.cpp" />
+    <ClCompile Include="..\..\..\Source\Renderer\GraphicsHigh.cpp" />
+    <ClCompile Include="..\..\..\Source\Renderer\GraphicsLow.cpp" />
+    <ClCompile Include="..\..\..\Source\Renderer\Model.cpp" />
+    <ClCompile Include="..\..\..\Source\Renderer\ParticleSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\Shader.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\ShadowMap.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\SimpleText.cpp" />
     <ClCompile Include="..\..\..\Source\Renderer\SkyBox.cpp" />
+    <ClCompile Include="..\..\..\Source\Renderer\TextRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\Externals\content\shaders\CSDeferredPass2.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\FSAnimationShader.glsl" />
     <None Include="..\..\..\Externals\content\shaders\FSDeferredPass1.glsl" />
     <None Include="..\..\..\Externals\content\shaders\FSForwardShader.glsl" />
     <None Include="..\..\..\Externals\content\shaders\FSInterfaceShader.glsl" />
@@ -51,6 +64,12 @@
     <None Include="..\..\..\Externals\content\shaders\fullscreen.gs" />
     <None Include="..\..\..\Externals\content\shaders\fullscreen.ps" />
     <None Include="..\..\..\Externals\content\shaders\fullscreen.vs" />
+    <None Include="..\..\..\Externals\content\shaders\lowFSForwardShader.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\lowVSForwardShader.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\particles\particleFireFS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\particles\particleFireVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\particles\particleSmokeFS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\particles\particleSmokeVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\shadowShaderDeferredFS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\shadowShaderDeferredVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\shadowShaderForwardFS.glsl" />
@@ -58,7 +77,7 @@
     <None Include="..\..\..\Externals\content\shaders\SimpleText.glsl" />
     <None Include="..\..\..\Externals\content\shaders\skyboxShaderFS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\skyboxShaderVS.glsl" />
-    <None Include="..\..\..\Externals\content\shaders\skyboxvs.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\VSAnimationShader.glsl" />
     <None Include="..\..\..\Externals\content\shaders\VSDeferredPass1.glsl" />
     <None Include="..\..\..\Externals\content\shaders\VSForwardShader.glsl" />
     <None Include="..\..\..\Externals\content\shaders\VSInterfaceShader.glsl" />
@@ -158,9 +177,10 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;OpenGL32.lib;glew32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
+      <Profile>true</Profile>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
@@ -182,9 +202,10 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;OpenGL32.lib;glew32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
+      <Profile>true</Profile>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
@@ -210,7 +231,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;OpenGL32.lib;glew32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
     </Link>
@@ -238,7 +259,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;OpenGL32.lib;glew32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
     </Link>

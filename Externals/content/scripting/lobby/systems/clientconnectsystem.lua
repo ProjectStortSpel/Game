@@ -17,8 +17,6 @@ ClientConnectSystem.Initialize = function(self)
 	
 	self:AddComponentTypeToFilter("Username", FilterType.Mandatory);
 	self:AddComponentTypeToFilter("NetConnection", FilterType.Mandatory);
-	
-	print("ClientConnectSystem initialized!");
 end
 
 ClientConnectSystem.OnEntityAdded = function(self, entityId)
@@ -111,8 +109,8 @@ ServerConnectSystem.RemovePlayer = function(self, _ip, _port)
 	
 	local entities = self:GetEntities();
 	for i = 1, #entities do
-		local eIp 	= self:GetComponent(entities[i], "NetConnection", "IpAddress"):GetString();
-		local ePort = self:GetComponent(entities[i], "NetConnection", "Port"):GetInt();
+		local eIp 	= world:GetComponent(entities[i], "NetConnection", "IpAddress"):GetString();
+		local ePort = world:GetComponent(entities[i], "NetConnection", "Port"):GetInt();
 
 		if _ip == eIp and _port == ePort then
 			world:KillEntity(entities[i]);

@@ -2,24 +2,25 @@
 #define LUAMATRIX_H
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
+#include <LuaEmbedder/LuaEmbedder.h>
 
 namespace LuaBridge
 {
   class LuaMatrix
   {
   public:
-    LuaMatrix();
+    LuaMatrix(lua_State* L);
     
-    static void Embed();
+    static void Embed(lua_State* L);
     
     glm::mat4* GetGlmMatrix();
     
   private:
-    int Translate();
-    int RotateX();
-    int RotateY();
-    int RotateZ();
-    int Scale();
+    int Translate(lua_State* L);
+    int RotateX(lua_State* L);
+    int RotateY(lua_State* L);
+    int RotateZ(lua_State* L);
+    int Scale(lua_State* L);
     
   private:
     glm::mat4 m_matrix;

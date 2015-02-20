@@ -15,10 +15,12 @@
 #include "Framework/Components/Tables/DataMap.h"
 #include "Framework/Components/Tables/DataTable.h"
 #include "Framework/Components/Tables/EntityTable.h"
+#include "Framework/Multithreading/Scheduler.h"
 #include "Framework/Parsing/ComponentTypeReader.h"
 #include "Framework/Parsing/Parser.h"
 #include "Framework/Systems/SystemWorkGroup.h"
 #include "Framework/Systems/SystemManager.h"
+#include "Framework/Systems/Messaging/Message.h"
 #include "Framework/World.h"
 #include "Framework/WorldCreator.h"
 

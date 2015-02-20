@@ -13,17 +13,23 @@ CameraSystem::~CameraSystem()
 void CameraSystem::Initialize()
 {
 	SetSystemName("Camera System");
-	/*	CameraSystem wants a position to place the camera at	*/
-	AddComponentTypeToFilter("Camera", ECSL::FilterType::Mandatory);
 
-	m_input = &Input::InputWrapper::GetInstance();
-	printf("CameraSystem initialized!\n");
+	SetUpdateTaskCount(1);
+
+	/*	CameraSystem wants a position to place the camera at	*/
+	AddComponentTypeToFilter("Null", ECSL::FilterType::Mandatory);
+	//AddComponentTypeToFilter("CameraLook", ECSL::FilterType::Mandatory);
+	//AddComponentTypeToFilter("CameraUp", ECSL::FilterType::Mandatory);
+	//AddComponentTypeToFilter("CameraRight", ECSL::FilterType::Mandatory);
+
+	
 }
 
-void CameraSystem::Update(float _dt)
+void CameraSystem::Update(const ECSL::RuntimeInfo& _runtime)
 {
-#ifdef __ANDROID__
-	static float prevDistance0, prevDistance1;
+	m_input = &Input::InputWrapper::GetInstance();
+#if defined(__ANDROID__) || defined(__IOS__)
+	/*static float prevDistance0, prevDistance1;
 	if (m_input->GetTouch()->GetFingerState(0) == Input::InputState::PRESSED ||
 		m_input->GetTouch()->GetFingerState(1) == Input::InputState::PRESSED)
 	{
@@ -42,13 +48,13 @@ void CameraSystem::Update(float _dt)
 		float d = diff0 + diff1;
 		prevDistance0 = currDistance0;
 		prevDistance1 = currDistance1;
-		m_graphics->GetCamera()->MoveForward(-d * _dt * 100.0f);
+		m_graphics->GetCamera()->MoveForward(-d * _runtime.Dt * 100.0f);
 	}
 	else if (m_input->GetTouch()->GetFingerState(0) == Input::InputState::DOWN)
 	{
 		m_graphics->GetCamera()->UpdateTouch(m_input->GetTouch()->GetdX((SDL_FingerID)0) * 1500.0f,
 											 m_input->GetTouch()->GetdY((SDL_FingerID)0) * 1500.0f);
-	}
+	}*/
 
 #else
 	if (m_input->GetKeyboard()->IsTextInputActive())
@@ -56,13 +62,13 @@ void CameraSystem::Update(float _dt)
 	/*	Fulhax just nu, enbart för att slippa ha det i gameloopen (REN OCH FIN)	*/
 
 	if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_W) == Input::InputState::DOWN)
-		m_graphics->GetCamera()->MoveForward(_dt);
+		m_graphics->GetCamera()->MoveForward(_runtime.Dt);
 	if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_S) == Input::InputState::DOWN)
-		m_graphics->GetCamera()->MoveBackward(_dt);
+		m_graphics->GetCamera()->MoveBackward(_runtime.Dt);
 	if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_A) == Input::InputState::DOWN)
-		m_graphics->GetCamera()->MoveLeft(_dt);
+		m_graphics->GetCamera()->MoveLeft(_runtime.Dt);
 	if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_D) == Input::InputState::DOWN)
-		m_graphics->GetCamera()->MoveRight(_dt);
+		m_graphics->GetCamera()->MoveRight(_runtime.Dt);
 
 	// ROTATE CAMERA
 	if (m_input->GetMouse()->GetButtonState(Input::RightButton) == Input::InputState::DOWN)
@@ -77,14 +83,4 @@ void CameraSystem::Update(float _dt)
 	else
 		m_input->GetMouse()->HideCursor(false);
 #endif
-}
-
-void CameraSystem::OnEntityAdded(unsigned int _entityId)
-{
-
-}
-
-void CameraSystem::OnEntityRemoved(unsigned int _entityId)
-{
-
 }

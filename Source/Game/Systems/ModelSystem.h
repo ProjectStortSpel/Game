@@ -1,28 +1,29 @@
 #ifndef MODELSYSTEM_H
 #define MODELSYSTEM_H
 
-#include "ECSL/Interfaces/System.h"
-#ifdef __ANDROID__
+#include "GraphicalSystem.h"
+#if defined(__ANDROID__) || defined(__IOS__)
 #include "AndroidRenderer/GraphicDevice.h"
 #else
 #include "Renderer/GraphicDevice.h"
 #endif
 
 
-class ModelSystem : public ECSL::System
+class ModelSystem : public GraphicalSystem
 {
 public:
 	ModelSystem(Renderer::GraphicDevice* _graphics);
 	~ModelSystem();
 
-	void Update(float _dt);
 	void Initialize();
 
-	void OnEntityAdded(unsigned int _entityId);
-	void OnEntityRemoved(unsigned int _entityId);
+	unsigned int m_positionId;
+	unsigned int m_rotationId;
+	unsigned int m_scaleId;
+	unsigned int m_colorId;
 
-private:
-	Renderer::GraphicDevice* m_graphics;
+	void EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities);
+
 };
 
 #endif

@@ -24,6 +24,29 @@ DataLocation ComponentTable::GetComponent(unsigned int _entityId, unsigned int _
 	return m_dataTable->GetData(_entityId, _index);
 }
 
+void ComponentTable::GetComponents(std::vector<DataLocation>& _out, const std::vector<unsigned int>* _entityIds, const std::string& _variableName)
+{
+	unsigned int index = ComponentTypeManager::GetInstance().GetComponentType(m_componentTypeId)->GetVariables()->find(_variableName)->second.GetOffset();
+	_out.resize(_entityIds->size());
+	unsigned int entityIndex = 0;
+	for (const auto entityId : *_entityIds)
+	{
+		_out[index] = m_dataTable->GetData(entityId, index);
+		++entityIndex;
+	}
+}
+
+void ComponentTable::GetComponents(std::vector<DataLocation>& _out, const std::vector<unsigned int>* _entityIds, unsigned int _index)
+{
+	_out.resize(_entityIds->size());
+	unsigned int index = 0;
+	for (const auto entityId : *_entityIds)
+	{
+		_out[index] = m_dataTable->GetData(entityId, _index);
+		++index;
+	}
+}
+
 void ComponentTable::SetComponent(unsigned int _entityId, const std::string& _variableName, void* _data)
 {
 	ComponentVariable componentVariable = m_componentType->GetVariables()->find(_variableName)->second;
@@ -40,7 +63,7 @@ void ComponentTable::ClearComponent(unsigned int _entityId)
 	m_dataTable->ClearRow(_entityId);
 }
 
-float ComponentTable::GetMemoryAllocated()
+unsigned int ComponentTable::GetMemoryAllocated()
 {
 	return m_dataTable->GetMemoryAllocated();
 }

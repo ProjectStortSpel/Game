@@ -1,0 +1,15 @@
+oooooooooooooo
+o.......x....o
+o...1.x......o
+oxxxxxxxx....o
+o............o
+o...xxxxxxxx.o
+o............o
+o.....x......o
+o.....x......o
+o.....f..xxxxo
+o.....s......o
+o.....s......o
+o............o
+oooooooooooooo
+

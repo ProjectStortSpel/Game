@@ -30,26 +30,11 @@
     <Filter Include="Network">
       <UniqueIdentifier>{eb9abd25-25c8-4d59-9404-43c6943ec52f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scripting">
-      <UniqueIdentifier>{70596d18-5310-46ea-bd29-887a0d6f8f93}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scripting\Components">
-      <UniqueIdentifier>{f278fcb7-b572-44d3-9db0-c76874ea73d6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scripting\Systems">
-      <UniqueIdentifier>{fe53bc13-c394-4b95-9978-28810d4bcb64}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Lua Bridge\FileLoader">
       <UniqueIdentifier>{f75b5f79-7cf0-4857-b059-2797ae8d1deb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scripting\Templates">
-      <UniqueIdentifier>{e0263418-dd0f-437a-ab52-e9016f45bb5b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Lua Bridge\Console">
       <UniqueIdentifier>{bb35f23c-7282-4c2e-9288-5dc348c8fdba}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Systems\Camera">
-      <UniqueIdentifier>{6f65ecb9-1fad-4717-9948-fc2a318b43a1}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game\Systems\Model">
       <UniqueIdentifier>{46bcef37-955e-4797-8b5e-ca8725f1184e}</UniqueIdentifier>
@@ -75,38 +60,32 @@
     <Filter Include="Game\Systems\LightSystems">
       <UniqueIdentifier>{259b47d7-2f14-4b3f-acba-4f122f13e262}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scripting\Systems\Client Systems">
-      <UniqueIdentifier>{20098d2e-006a-49a7-ab47-0090fd6ba8b1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scripting\Systems\Server Systems">
-      <UniqueIdentifier>{b5feb4df-91c4-4b38-90af-fa8a37eca262}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scripting\Systems\Shared Systems">
-      <UniqueIdentifier>{bf5554fc-e998-486c-8acd-c544ab6868e8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scripting\Systems\Server Systems\Card Systems">
-      <UniqueIdentifier>{d7b86d41-30be-4582-9f2b-58c12ad9f31f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scripting\Systems\Client Systems\Startup Systems">
-      <UniqueIdentifier>{48f6c278-3b12-40b5-b9ba-6316a686358c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scripting\Systems\Client Systems\Card Systems">
-      <UniqueIdentifier>{a6e55f22-d870-455d-9754-88eb2a740c35}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scripting\Systems\Server Systems\Startup Systems">
-      <UniqueIdentifier>{272cfeb6-6ec3-4310-96b1-859d1d8017aa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scripting\Systems\Unused">
-      <UniqueIdentifier>{6b90c28e-a68f-45f5-a0da-dbaa083cf644}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scripting\Systems\Server Systems\Round Systems">
-      <UniqueIdentifier>{6a9b274c-f66c-4751-9720-1db180c9c247}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scripting\Systems\Client Systems\Round Systems">
-      <UniqueIdentifier>{93c941f5-4243-495c-b31e-ec351fff0db2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Lua Bridge\File">
       <UniqueIdentifier>{0d7f4191-d683-4560-9d44-8b47e4f9cf27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Systems\Map">
+      <UniqueIdentifier>{6e376179-3445-48ae-a79e-a3865a17fdf9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Systems\Camera">
+      <UniqueIdentifier>{6f65ecb9-1fad-4717-9948-fc2a318b43a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Profilers">
+      <UniqueIdentifier>{104bbd51-8dbc-4d3c-8afb-a0b4cd3c3954}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Profilers\ECSLProfiler">
+      <UniqueIdentifier>{74e8bc95-e252-495e-a94c-85b386e24c24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Profilers\ECSLProfiler\Render Views">
+      <UniqueIdentifier>{e772fded-ab7d-4fc8-b348-3786ee79e575}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lua Bridge\AI">
+      <UniqueIdentifier>{da0118cc-0c08-431a-bc61-bda3765bbb18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Systems\ParticleSystem">
+      <UniqueIdentifier>{b9d97fa0-3180-4175-bdbb-35be7ebbf5f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lua Bridge\Resource">
+      <UniqueIdentifier>{cee8274a-69dd-429b-ba04-7664e20156fc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -173,9 +152,6 @@
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\Console\LuaConsole.cpp">
       <Filter>Lua Bridge\Console</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\Game\NetworkInstance.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Systems\CameraSystem.cpp">
       <Filter>Game\Systems\Camera</Filter>
     </ClCompile>
@@ -211,6 +187,84 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\File\LuaFile.cpp">
       <Filter>Lua Bridge\File</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\DirectionalLightSystem.cpp">
+      <Filter>Game\Systems\LightSystems</Filter>
+    </ClCompile>
+    <ClCompile Include="MapIslandCreatorSystem.cpp">
+      <Filter>Game\Systems\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Profilers\ECSLProfiler.cpp">
+      <Filter>Game\Profilers\ECSLProfiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Profilers\ECSLFrame.cpp">
+      <Filter>Game\Profilers\ECSLProfiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Profilers\ECSLStatistics.cpp">
+      <Filter>Game\Profilers\ECSLProfiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Profilers\ECSLRenderView.cpp">
+      <Filter>Game\Profilers\ECSLProfiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Profilers\ECSLGeneralView.cpp">
+      <Filter>Game\Profilers\ECSLProfiler\Render Views</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Profilers\ECSLWorkItemView.cpp">
+      <Filter>Game\Profilers\ECSLProfiler\Render Views</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Profilers\ECSLThreadView.cpp">
+      <Filter>Game\Profilers\ECSLProfiler\Render Views</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Profilers\ECSLLoadingView.cpp">
+      <Filter>Game\Profilers\ECSLProfiler\Render Views</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\SlerpRotationSystem.cpp">
+      <Filter>Game\Systems\Rotation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\MasterServerSystem.cpp">
+      <Filter>Game\Systems\NetworkMessages</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Network\ClientDatabase.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Network\NetworkInstance.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\AI\LuaPathfinderHandler.cpp">
+      <Filter>Lua Bridge\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\AI\LuaPotentialFieldHandler.cpp">
+      <Filter>Lua Bridge\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Pathfinder.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\AModelSystem.cpp">
+      <Filter>Game\Systems\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\AddTextToTextureSystem.cpp">
+      <Filter>Game\Systems\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\ParticleSystem.cpp">
+      <Filter>Game\Systems\ParticleSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\HomePath.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\AI\LuaCombinationMath.cpp">
+      <Filter>Lua Bridge\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\ResourceManager.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\Resource\LuaResource.cpp">
+      <Filter>Lua Bridge\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\DynamicScripting.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\AI\LuaDynamicScript.cpp">
+      <Filter>Lua Bridge\AI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -271,9 +325,6 @@
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Console\LuaConsole.h">
       <Filter>Lua Bridge\Console</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\Game\NetworkInstance.h">
-      <Filter>Network</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Console\LuaConsole.h">
       <Filter>Lua Bridge\Console</Filter>
     </ClInclude>
@@ -313,160 +364,83 @@
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\File\LuaFile.h">
       <Filter>Lua Bridge\File</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\init.lua">
-      <Filter>Scripting</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\components\components.lua">
-      <Filter>Scripting\Components</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\templates\box.lua">
-      <Filter>Scripting\Templates</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\templates\lights.lua">
-      <Filter>Scripting\Templates</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\templates\map.lua">
-      <Filter>Scripting\Templates</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\components\mapcomponents.lua">
-      <Filter>Scripting\Components</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\components\phasecomponents.lua">
-      <Filter>Scripting\Components</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\components\playercomponents.lua">
-      <Filter>Scripting\Components</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\components\cardcomponents.lua">
-      <Filter>Scripting\Components</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\components\lightcomponents.lua">
-      <Filter>Scripting\Components</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\templates\playertemplates.lua">
-      <Filter>Scripting\Templates</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\components\gamestatecomponents.lua">
-      <Filter>Scripting\Components</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_spawnsystem.lua">
-      <Filter>Scripting\Systems\Server Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sh_networkmessagessystem.lua">
-      <Filter>Scripting\Systems\Shared Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sh_movementsystem.lua">
-      <Filter>Scripting\Systems\Shared Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_cardlogicsystem.lua">
-      <Filter>Scripting\Systems\Server Systems\Card Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_createdecksystem.lua">
-      <Filter>Scripting\Systems\Server Systems\Card Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_dealcardssystem.lua">
-      <Filter>Scripting\Systems\Server Systems\Card Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_onplayerconnected.lua">
-      <Filter>Scripting\Systems\Server Systems\Startup Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_playerssystem.lua">
-      <Filter>Scripting\Systems\Server Systems\Startup Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_createspawnpointsystem.lua">
-      <Filter>Scripting\Systems\Server Systems\Startup Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_lobbysystem.lua">
-      <Filter>Scripting\Systems\Server Systems\Startup Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_mapsystem.lua">
-      <Filter>Scripting\Systems\Server Systems\Startup Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_lobbysystem.lua">
-      <Filter>Scripting\Systems\Client Systems\Startup Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_cardpositionsystem.lua">
-      <Filter>Scripting\Systems\Client Systems\Card Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_givecardindexsystem.lua">
-      <Filter>Scripting\Systems\Client Systems\Card Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_selectcardsystem.lua">
-      <Filter>Scripting\Systems\Client Systems\Card Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_sendselectedcardssystem.lua">
-      <Filter>Scripting\Systems\Client Systems\Card Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_sortcardindexsystem.lua">
-      <Filter>Scripting\Systems\Client Systems\Card Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_sortselectedcardssystem.lua">
-      <Filter>Scripting\Systems\Client Systems\Card Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_pickingphasesystem.lua">
-      <Filter>Scripting\Systems\Unused</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\networkconnectsystem.lua">
-      <Filter>Scripting\Systems\Unused</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\maplogicsystem.lua">
-      <Filter>Scripting\Systems\Unused</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\discosystem.lua">
-      <Filter>Scripting\Systems\Unused</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_pickingphasesystem.lua">
-      <Filter>Scripting\Systems\Unused</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_riversystem.lua">
-      <Filter>Scripting\Systems\Server Systems\Round Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_newstepsystem.lua">
-      <Filter>Scripting\Systems\Server Systems\Round Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_startnewroundsystem.lua">
-      <Filter>Scripting\Systems\Server Systems\Round Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_moveplayersystem.lua">
-      <Filter>Scripting\Systems\Server Systems\Round Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_steptimersystem.lua">
-      <Filter>Scripting\Systems\Server Systems\Round Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_playcardsystem.lua">
-      <Filter>Scripting\Systems\Server Systems\Round Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_playcardtimersystem.lua">
-      <Filter>Scripting\Systems\Server Systems\Round Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_voidsystem.lua">
-      <Filter>Scripting\Systems\Server Systems\Round Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_respawnsystem.lua">
-      <Filter>Scripting\Systems\Server Systems\Round Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_postmovesystem.lua">
-      <Filter>Scripting\Systems\Server Systems\Round Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sh_moveplayersystem.lua">
-      <Filter>Scripting\Systems\Shared Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_playerdonevisualizersystem.lua">
-      <Filter>Scripting\Systems\Client Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\cl_playerindicatorsystem.lua">
-      <Filter>Scripting\Systems\Client Systems\Card Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_checkpointsystem.lua">
-      <Filter>Scripting\Systems\Server Systems\Round Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_finishsystem.lua">
-      <Filter>Scripting\Systems\Server Systems\Round Systems</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\scripting\storaspel\systems\sv_takecardsfromplayersystem.lua">
-      <Filter>Scripting\Systems\Server Systems\Card Systems</Filter>
-    </None>
+    <ClInclude Include="..\..\..\Source\Game\Systems\DirectionalLightSystem.h">
+      <Filter>Game\Systems\LightSystems</Filter>
+    </ClInclude>
+    <ClInclude Include="MapIslandCreatorSystem.h">
+      <Filter>Game\Systems\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Profilers\ECSLProfiler.h">
+      <Filter>Game\Profilers\ECSLProfiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Profilers\ECSLFrame.h">
+      <Filter>Game\Profilers\ECSLProfiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Profilers\ECSLStatistics.h">
+      <Filter>Game\Profilers\ECSLProfiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Profilers\ECSLRenderView.h">
+      <Filter>Game\Profilers\ECSLProfiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Profilers\ECSLGeneralView.h">
+      <Filter>Game\Profilers\ECSLProfiler\Render Views</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Profilers\ECSLWorkItemView.h">
+      <Filter>Game\Profilers\ECSLProfiler\Render Views</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Profilers\ECSLThreadView.h">
+      <Filter>Game\Profilers\ECSLProfiler\Render Views</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Profilers\ECSLLoadingView.h">
+      <Filter>Game\Profilers\ECSLProfiler\Render Views</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\SlerpRotationSystem.h">
+      <Filter>Game\Systems\Rotation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\MasterServerSystem.h">
+      <Filter>Game\Systems\NetworkMessages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Network\ClientDatabase.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Network\NetworkInstance.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\AI\LuaPathfinderHandler.h">
+      <Filter>Lua Bridge\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\AI\LuaPotentialFieldHandler.h">
+      <Filter>Lua Bridge\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Pathfinder.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\AModelSystem.h">
+      <Filter>Game\Systems\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\AddTextToTextureSystem.h">
+      <Filter>Game\Systems\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\ParticleSystem.h">
+      <Filter>Game\Systems\ParticleSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\HomePath.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\AI\LuaCombinationMath.h">
+      <Filter>Lua Bridge\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\ResourceManager.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\Resource\LuaResource.h">
+      <Filter>Lua Bridge\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\DynamicScripting.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\AI\LuaDynamicScript.h">
+      <Filter>Lua Bridge\AI</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

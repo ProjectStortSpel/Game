@@ -1,12 +1,18 @@
 #include "SystemManager.h"
 
 #include <assert.h>
+#include <algorithm>
+#include "ECSL/Framework/Common/ContainerHelper.h"
 #include "ECSL/Managers/ComponentTypeManager.h"
 
 using namespace ECSL;
 
 SystemManager::SystemManager(DataManager* _dataManager, std::vector<SystemWorkGroup*>* _systemWorkGroups) 
-:	m_nextSystemId(-1), m_dataManager(_dataManager), m_systemWorkGroups(_systemWorkGroups)
+:	m_systemActivationManager(new SystemActivationManager()),
+	m_systemIdManager(new SystemIdManager()),
+	m_dataManager(_dataManager), 
+	m_systems(new std::vector<System*>()),
+	m_systemWorkGroups(_systemWorkGroups)
 {
 
 }
@@ -15,86 +21,119 @@ SystemManager::~SystemManager()
 {
 	for (int n = (unsigned int)m_systemWorkGroups->size() - 1; n >= 0; --n)
 		delete m_systemWorkGroups->at(n);
-
 	delete m_systemWorkGroups;
+	delete m_systems;
+	delete m_systemActivationManager;
+	delete m_systemIdManager;
 }
 
 void SystemManager::InitializeSystems()
 {
-	/*	Initialize all system groups	*/
+	/*	Initialize all system groups */
 	for (unsigned int groupId = 0; groupId < m_systemWorkGroups->size(); ++groupId)
 	{
 		std::vector<System*>* systems = m_systemWorkGroups->at(groupId)->GetSystems();
+
+		std::random_shuffle(systems->begin(), systems->end()); // TEMPORARY SHUFFLE - REMOVE IF NOT NEEDED
 
 		/*	Go through all systems in the group and initialize them	*/
 		for (unsigned int systemId = 0; systemId < systems->size(); ++systemId)
 		{
 			System* system = systems->at(systemId);
-			system->Initialize();
+			system->SetSystemActivationManager(m_systemActivationManager);
+			system->SetSystemIdManager(m_systemIdManager);
+			system->SetDataManager(m_dataManager);
+			system->SetGroupId(groupId);
 
+			system->Initialize();
 			GenerateComponentFilter(system, FilterType::Mandatory);
 			GenerateComponentFilter(system, FilterType::RequiresOneOf);
 			GenerateComponentFilter(system, FilterType::Excluded);
+			system->InitializeBackEnd();
 
-			system->SetDataManager(m_dataManager);
-			system->InitializeEntityList();
+			m_systems->push_back(system);
 		}
 	}
 }
 
-void SystemManager::Update(float _dt)
+void SystemManager::PostInitializeSystems()
 {
-	for (auto workGroup : *m_systemWorkGroups)
+	/* PostInitialize all system groups */
+	for (unsigned int groupId = 0; groupId < m_systemWorkGroups->size(); ++groupId)
 	{
-		workGroup->Update(_dt);
+		std::vector<System*>* systems = m_systemWorkGroups->at(groupId)->GetSystems();
+		/* Go through all systems in the group and postinitialize them */
+		for (unsigned int systemId = 0; systemId < systems->size(); ++systemId)
+		{
+			System* system = systems->at(systemId);
+			system->PostInitialize();
+		}
 	}
 }
 
-void SystemManager::AddEntityToSystem(unsigned int _entityId, System* _system)
+void SystemManager::UpdateSystemEntityLists(
+	const RuntimeInfo& _runtime,
+	std::vector<std::vector<unsigned int>*>& _entitiesToAddToSystems,
+	std::vector<std::vector<unsigned int>*>& _entitiesToRemoveFromSystems)
 {
-	if (!_system->HasEntity(_entityId))
-	{
-		_system->AddEntityToSystem(_entityId);
-		_system->OnEntityAdded(_entityId);
-	}
-}
-
-void SystemManager::RemoveEntityFromSystem(unsigned int _entityId, System* _system)
-{
-	if (_system->HasEntity(_entityId))
-	{
-		_system->RemoveEntityFromSystem(_entityId);
-		_system->OnEntityRemoved(_entityId);
-	}
-}
-
-void SystemManager::SystemEntitiesUpdate()
-{
+	const std::vector<DataManager::EntityUpdate*>* entityUpdates = m_dataManager->GetEntityUpdates();
 	const std::vector<unsigned int>* changedEntities = m_dataManager->GetChangedEntities();
 	EntityTable* entityTable = m_dataManager->GetEntityTable();
+	unsigned int dataTypeCount = BitSet::GetDataTypeCount(m_dataManager->GetComponentTypeCount());
 
-	/*	Loop through all entities	*/
-	for (int n = 0; n < changedEntities->size(); ++n)
+	if (changedEntities->size() == 0)
+		return;
+
+	unsigned int startAt, endAt;
+	MPL::MathHelper::SplitIterations(startAt, endAt, (unsigned int)m_systems->size(), _runtime.TaskIndex, _runtime.TaskCount);
+	for (unsigned int i = startAt; i < endAt; ++i)
 	{
-		unsigned int entityId = changedEntities->at(n);
-
-		/* Loop through every system see if changed entities passes the filter */
-		for (auto workGroup : *m_systemWorkGroups)
+		System* system = m_systems->at(i);
+		const BitSet::DataType* mandatoryFilter = system->GetMandatoryFilter()->GetBitSet();
+		const BitSet::DataType* requiresOneOfFilter = system->GetRequiresOneOfFilter()->GetBitSet();
+		const BitSet::DataType* excludedFilter = system->GetExcludedFilter()->GetBitSet();
+		unsigned int entitiesAddedTaskCount = system->GetEntitiesAddedTaskCount();
+		unsigned int entitiesRemovedTaskCount = system->GetEntitiesRemovedTaskCount();
+		for (unsigned int entityId : *changedEntities)
 		{
-			for (auto system : *workGroup->GetSystems())
-			{
+			DataManager::EntityUpdate* entityUpdate = (*entityUpdates)[entityId];
 
-				/* Try add entity to system if it passes filters, else try to remove it */
-				if (entityTable->EntityPassFilters(entityId, system->GetMandatoryFilter()->GetBitSet(), system->GetRequiresOneOfFilter()->GetBitSet(), system->GetExcludedFilter()->GetBitSet()))
-					AddEntityToSystem(entityId, system);
-				else
-					RemoveEntityFromSystem(entityId, system);
+			/* If the entity is dead and the system has the entity, then remove it from the system */
+			if (entityUpdate->Dead)
+			{
+				if (system->HasEntity(entityId))
+				{
+					system->RemoveEntityFromSystem(entityId);
+					if (entitiesRemovedTaskCount > 0)
+						_entitiesToRemoveFromSystems[i]->push_back(entityId);
+				}
+			}
+			/* Else do a bit set check to see if the entity should be added or removed from the system */
+			else
+			{
+				bool entityMatchesSystem = BitSet::BitSetPassFilters(dataTypeCount, entityTable->GetEntityComponents(entityId), mandatoryFilter, requiresOneOfFilter, excludedFilter);
+				/* If system matches entity and entity isn't added to the system, add entity to system */
+				if (entityMatchesSystem)
+				{
+					if (!system->HasEntity(entityId))
+					{
+						system->AddEntityToSystem(entityId);
+						if (system->GetEntitiesAddedTaskCount() > 0)
+							_entitiesToAddToSystems[i]->push_back(entityId);
+					}
+				}
+				/* Else if entity doesn't match system and system has entity, remove entity from system */
+				else if (system->HasEntity(entityId))
+				{
+					system->RemoveEntityFromSystem(entityId);
+					if (system->GetEntitiesRemovedTaskCount() > 0)
+						_entitiesToRemoveFromSystems[i]->push_back(entityId);
+				}
 			}
 		}
 	}
 }
 
-// Calculate the bitset component filter for a system
 void SystemManager::GenerateComponentFilter(System* _system, FilterType _filterType)
 {
 	ComponentFilter* componentFilter = 0;

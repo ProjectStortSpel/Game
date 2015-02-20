@@ -35,6 +35,7 @@
     <ClInclude Include="..\..\..\Source\Network\ISocket.h" />
     <ClInclude Include="..\..\..\Source\Network\LinSocket.h" />
     <ClInclude Include="..\..\..\Source\Network\NetTypeMessageID.h" />
+    <ClInclude Include="..\..\..\Source\Network\Network.h" />
     <ClInclude Include="..\..\..\Source\Network\Packet.h" />
     <ClInclude Include="..\..\..\Source\Network\PacketHandler.h" />
     <ClInclude Include="..\..\..\Source\Network\ServerNetwork.h" />
@@ -139,6 +140,7 @@
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
+      <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -159,6 +161,7 @@
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
+      <Profile>true</Profile>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>

@@ -2,6 +2,7 @@
 #define LUAENTITYTEMPLATE_H
 
 #include "ECSL/Framework/Templates/EntityTemplate.h"
+#include <LuaEmbedder/LuaEmbedder.h>
 
 #include <string>
 #include <map>
@@ -12,41 +13,41 @@ namespace LuaBridge
   class LuaEntityTemplate
   {
   public:
-    LuaEntityTemplate();
+    LuaEntityTemplate(lua_State* L);
     ~LuaEntityTemplate();
     
-    static void Embed();
+    static void Embed(lua_State* L);
     
     ECSL::EntityTemplate* CreateEntityTemplate();
     
   private:
-    int GetName();
-    int SetName();
+    int GetName(lua_State* L);
+    int SetName(lua_State* L);
     
-    int AddComponent();
+    int AddComponent(lua_State* L);
     
-    int SetFloat();
-    int SetFloat2();
-    int SetFloat3();
-	int SetFloat4();
-	int SetFloat5();
+    int SetFloat(lua_State* L);
+    int SetFloat2(lua_State* L);
+    int SetFloat3(lua_State* L);
+	int SetFloat4(lua_State* L);
+	int SetFloat5(lua_State* L);
     
-    int SetInt();
-    int SetInt2();
-    int SetInt3();
-    int SetInt4();
+    int SetInt(lua_State* L);
+    int SetInt2(lua_State* L);
+    int SetInt3(lua_State* L);
+    int SetInt4(lua_State* L);
     
-    int SetString();
+    int SetString(lua_State* L);
 
-	int SetBool();
+	int SetBool(lua_State* L);
     
-    int SetModel();
+    int SetModel(lua_State* L);
     
-    int SetPointlight();
+    int SetPointlight(lua_State* L);
     
   private:
     std::string m_name;
-    std::map<std::string, std::vector<ECSL::TemplateEntry>> m_components;
+    std::map<std::string, std::vector<ECSL::TemplateEntry*>> m_components;
   };
 }
 

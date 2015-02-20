@@ -1,8 +1,9 @@
-#version 430
+#version 440
 in vec3 Normal;
 in vec3 Tan;
 in vec3 BiTan;
 in vec2 TexCoord;
+in vec3 AddColor;
 
 //flat in int instanceID;
 
@@ -25,14 +26,23 @@ void main()
 	// Sample maps
 	vec3 color_map = texture( diffuseTex, TexCoord ).rgb;
 	vec3 normal_map = texture( normalTex, TexCoord ).rgb;
-	vec3 specglow_map = texture( specularTex, TexCoord ).rgb;
+	vec4 specTexture = texture( specularTex, TexCoord );
+	vec3 specglow_map = specTexture.rgb;
+	float blendFactor = mod(int(specTexture.a*99), 50)/50;//(specTexture.a-0.5f)*2;
+	vec3 AddedColor = AddColor;
+	if (specTexture.a < 0.5)
+		AddedColor = vec3(1) - AddColor; // ANTICOLOR? Good or bad? I like
 
-	
+
 	if(TexFlag == 0) // everything
 	{
 		// -- OUTPUTS --
 		// Set Color output
-		ColorData.xyz = color_map.xyz;								// rgb = color
+		if( AddColor != vec3(0.0f) )
+			ColorData.xyz = (1.0f-abs(blendFactor))*color_map.xyz + blendFactor * AddedColor; 
+		else
+			ColorData.xyz = color_map.xyz;								// rgb = color
+
 		ColorData.w = specglow_map.z;								// a = glow
 		// Set Normal output
 		normal_map = (normal_map * 2.0f) - 1.0f;

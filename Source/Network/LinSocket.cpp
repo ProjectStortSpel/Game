@@ -7,6 +7,7 @@
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include <errno.h>
+#include <sstream>
 
 using namespace Network;
 
@@ -20,8 +21,13 @@ LinSocket::LinSocket()
 
 	Initialize();
 
-	*m_socket = socket(AF_INET, SOCK_STREAM, 0);
-
+	*m_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+    
+#if defined(__IOS__) || defined(__OSX__)
+    int set = 1;
+    setsockopt(*m_socket, SOL_SOCKET, SO_NOSIGPIPE, (void *)&set, sizeof(int));
+#endif
+    
 	if (*m_socket != -1)
 	{
 		*m_remoteAddress = "";
@@ -46,7 +52,12 @@ LinSocket::LinSocket(int _socket)
 	Initialize();
 
 	*m_socket = _socket;
-
+    
+#if defined(__IOS__) || defined(__OSX__)
+    int set = 1;
+    setsockopt(*m_socket, SOL_SOCKET, SO_NOSIGPIPE, (void *)&set, sizeof(int));
+#endif
+    
 	if (*m_socket != -1)
 	{
 		*m_remoteAddress = "";
@@ -70,7 +81,12 @@ LinSocket::LinSocket(int _domain, int _type, int _protocol)
 	Initialize();
 
 	*m_socket = socket(_domain, _type, _protocol);
-
+    
+#if defined(__IOS__) || defined(__OSX__)
+    int set = 1;
+    setsockopt(*m_socket, SOL_SOCKET, SO_NOSIGPIPE, (void *)&set, sizeof(int));
+#endif
+    
 	if (*m_socket != -1)
 	{
 		*m_remoteAddress = "";
@@ -87,6 +103,7 @@ LinSocket::~LinSocket()
 {
 	CloseSocket();
 	Shutdown();
+	
 
 	SAFE_DELETE(m_remoteAddress);
 	SAFE_DELETE(m_remotePort);
@@ -107,39 +124,88 @@ bool LinSocket::Shutdown()
 	return true;
 }
 
-
+#include <netdb.h>
 bool LinSocket::Connect(const char* _ip, const int _port)
 {
-	sockaddr_in address;
+    addrinfo hints = { 0 };
+    
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_flags = 0;
+    hints.ai_protocol = 0;
+    
+    addrinfo* addrs = NULL;
 
-	memset(&address, '0', sizeof(address));
-
-	address.sin_family = AF_INET;
-	address.sin_port = htons(_port);
-
-	if (inet_pton(AF_INET, _ip, &address.sin_addr) <= 0)
-	{
-		if (NET_DEBUG)
-			SDL_Log("Failed to get address info. Error: %s.\n", strerror(errno));
-		return false;
-	}
-
-	if (connect(*m_socket, (struct sockaddr *)&address, sizeof(address)) < 0)
-	{
-		if (NET_DEBUG)
-			SDL_Log("Failed to connect to Ip address %s:%i. Error: %s.\n", _ip, _port, strerror(errno));
-		return false;
-	}
-
-	*m_remoteAddress = _ip;
-	*m_remotePort = _port;
-
-	return true;
+    std::stringstream ss;
+    ss << _port;
+    if (getaddrinfo(_ip, ss.str().c_str(), &hints, &addrs) != 0)
+    {
+        if (NET_DEBUG)
+            SDL_Log("Failed to get address info. Error: %s.\n", strerror(errno));
+        
+        freeaddrinfo(addrs);
+        return false;
+    }
+    
+    addrinfo* rp;
+    
+    for (rp = addrs; rp != NULL; rp = rp->ai_next)
+    {
+        *m_socket = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
+        
+        if (*m_socket == -1)
+            continue;
+        
+        if (connect(*m_socket, rp->ai_addr, rp->ai_addrlen) != -1)
+            break;
+        
+        close(*m_socket);
+    }
+    
+    freeaddrinfo(addrs);
+    
+    if (rp == NULL)
+    {
+        if (NET_DEBUG)
+            SDL_Log("Failed to connect to Ip address %s:%i.", _ip, _port);
+        return false;
+    }
+    
+    *m_remoteAddress = _ip;
+    *m_remotePort = _port;
+    
+    return true;
+    
+//	sockaddr_in address;
+//
+//	memset(&address, '0', sizeof(address));
+//
+//	address.sin_family = PF_INET;
+//	address.sin_port = htons(_port);
+//
+//	if (inet_pton(PF_INET, _ip, &address.sin_addr) <= 0)
+//	{
+//		if (NET_DEBUG)
+//			SDL_Log("Failed to get address info. Error: %s.\n", strerror(errno));
+//		return false;
+//	}
+//
+//	if (connect(*m_socket, (struct sockaddr *)&address, sizeof(address)) < 0)
+//	{
+//		if (NET_DEBUG)
+//			SDL_Log("Failed to connect to Ip address %s:%i. Error: %s.\n", _ip, _port, strerror(errno));
+//		return false;
+//	}
+//
+//	*m_remoteAddress = _ip;
+//	*m_remotePort = _port;
+//
+//	return true;
 }
 bool LinSocket::Bind(const int _port)
 {
 	sockaddr_in address;
-	address.sin_family = AF_INET;
+	address.sin_family = PF_INET;
 	address.sin_port = htons(_port);
 	address.sin_addr.s_addr = INADDR_ANY;
 
@@ -203,6 +269,7 @@ bool LinSocket::SetTimeoutDelay(int _value)
 
 	if (setsockopt(*m_socket, SOL_SOCKET, SO_SNDTIMEO, (const char*)&timeout, sizeof(timeout)) != 0)
 		return false;
+    return true;
 }
 
 bool LinSocket::CloseSocket()
@@ -217,6 +284,20 @@ bool LinSocket::CloseSocket()
 
 	return true;
 }
+
+bool LinSocket::ShutdownSocket(int _how)
+{
+	if (shutdown(*m_socket, _how) != 0)
+	{
+		if (NET_DEBUG)
+			SDL_Log("Failed to shutdown linsocket. Error: %s.\n", strerror(errno));
+		return false;
+	}
+
+	return true;
+}
+
+
 ISocket* LinSocket::Accept()
 {
 	sockaddr_in incomingAddress;
@@ -303,7 +384,7 @@ int LinSocket::Receive(char* _buffer, int _length, int _flags)
 		{
 			if (NET_DEBUG)
 				SDL_Log("Error: To large packet received!\n");
-			return 0;
+			return -1;
 		}
 
 		return sizeReceived;
@@ -313,17 +394,39 @@ int LinSocket::Receive(char* _buffer, int _length, int _flags)
 		if (NET_DEBUG)
 			SDL_Log("Error: Failed to receive \"Size packet\". Error: %s.\n", strerror(errno));
 	}
+	else if (len2 == 0)
+	{
+		if (NET_DEBUG)
+			SDL_Log("Server shutdown gracefully.\n");
+
+		return 0;
+	}
 	else
 	{
 		if (NET_DEBUG)
 			SDL_Log("Error: \"Size packet\" corrupt! Length: %d\n", len2);
-		//return 0;
+		return -1;
 	}
 	return 0;
 }
 
 int LinSocket::Send(char* _buffer, int _length, int _flags)
 {
+	if (!m_socket)
+		return -1;
+
+
+#if !defined(__IOS__) && !defined(__OSX__)
+    
+    if (_flags == 0)
+    {
+        _flags = MSG_NOSIGNAL;
+    }
+    
+#endif
+
+    
+    //ENOTCONN
 	static short len = 0;
 	len = htons(_length);
 	if (send(*m_socket, (void*)&len, 2, _flags) != -1)

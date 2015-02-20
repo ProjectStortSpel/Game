@@ -122,7 +122,11 @@ bool ClientNetwork::Connect()
 		SDL_Log("Password: \"%s\"\n", m_password->c_str());
 	}
 
-	m_socket = ISocket::CreateSocket();
+	if (IsConnected())
+		Disconnect();
+
+	if(!m_socket)
+		m_socket = ISocket::CreateSocket();
 
 	if (!*m_socketBound)
 	{
@@ -133,6 +137,7 @@ bool ClientNetwork::Connect()
 
 
 	bool connected = false;
+	//m_socket->SetNonBlocking(true);
 	//for (int i = 0; i < 5; ++i)
 	//{
 	connected = m_socket->Connect(m_remoteAddress->c_str(), *m_outgoingPort);
@@ -174,8 +179,9 @@ void ClientNetwork::Disconnect()
 		Packet* packet = m_packetHandler->EndPack(id);
 		Send(packet);
 	}
-	if(m_socket)
-		m_socket->CloseSocket();
+	NetSleep(10);
+	if (m_socket)
+		m_socket->ShutdownSocket();
 	//m_socket->SetInvalidSocket();
 	*m_receivePacketsThreadAlive = false;
 
@@ -184,6 +190,7 @@ void ClientNetwork::Disconnect()
 
 	if (m_socket)
 	{
+		
 		NetConnection nc = m_socket->GetNetConnection();
 		TriggerEvent(m_onDisconnectedFromServer, nc, 0);
 
@@ -201,8 +208,7 @@ void ClientNetwork::Disconnect()
 void ClientNetwork::ReceivePackets()
 {
 	// On its on thread
-	unsigned short nextPacketSize;
-	unsigned short dataReceived;
+	short dataReceived;
 	while (*m_receivePacketsThreadAlive)
 	{
 		//nextPacketSize = 2;
@@ -249,6 +255,8 @@ void ClientNetwork::ReceivePackets()
 		}
 		else if (dataReceived == 0)
 		{
+			*m_receivePacketsThreadAlive = false;
+			
 			// server shutdown graceful
 		}
 		else
@@ -277,6 +285,7 @@ void ClientNetwork::Send(Packet* _packet)
 		*m_totalDataSent += bytesSent;
 		*m_currentDataSent += bytesSent;
 	}
+
 	SAFE_DELETE(_packet);
 }
 
@@ -601,4 +610,31 @@ void ClientNetwork::SetOnRemotePlayerBanned(NetEvent& _function)
 		SDL_Log("Hooking function to OnRemotePlayerBanned.\n");
 
 	m_onRemotePlayerBanned->push_back(_function);
+}
+
+
+void ClientNetwork::SetTimeOutValue(int _value)
+{
+	if (!m_socket)
+		m_socket = ISocket::CreateSocket();
+
+	m_socket->SetTimeoutDelay(_value);
+}
+
+void ClientNetwork::ResetNetworkEvents()
+{
+	Update(0);
+	m_onConnectedToServer->clear();
+	m_onDisconnectedFromServer->clear();
+	m_onTimedOutFromServer->clear();
+	m_onFailedToConnect->clear();
+	m_onPasswordInvalid->clear();
+	m_onKickedFromServer->clear();
+	m_onBannedFromServer->clear();
+	m_onServerFull->clear();
+	m_onRemotePlayerConnected->clear();
+	m_onRemotePlayerDisconnected->clear();
+	m_onRemotePlayerTimedOut->clear();
+	m_onRemotePlayerKicked->clear();
+	m_onRemotePlayerBanned->clear();
 }

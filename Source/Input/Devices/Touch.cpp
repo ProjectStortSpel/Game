@@ -2,6 +2,41 @@
 #include <stdio.h>
 using namespace Input;
 
+#ifndef MAX_POINTERS
+#   define MAX_POINTERS 10
+#endif
+
+struct fingerdata
+{
+    SDL_FingerID fingerid;
+    SDL_bool active;
+};
+
+fingerdata fingers[MAX_POINTERS];
+
+int get_sdlfinger_index(SDL_FingerID finger)
+{
+    int n=0;
+    
+    // First, try to see if the given ID matches any active one
+    for(n=0; n<MAX_POINTERS; n++) {
+        if(finger == fingers[n].fingerid) {
+            return n;
+        }
+    }
+    
+    // ID not found, try to find a free spot
+    for(n=0; n<MAX_POINTERS; n++) {
+        if(fingers[n].active == SDL_FALSE)
+        {
+            return n;
+        }
+    }
+    
+    // Fail
+    return -1;
+}
+
 Touch::Touch()
 {
 }
@@ -20,23 +55,44 @@ void Touch::Update()
 
 void Touch::PollEvent(SDL_Event e)
 {
-	switch (e.type)
-	{
-	case SDL_FINGERDOWN:
-		m_thisState[e.tfinger.fingerId] = true;
-		m_positions[e.tfinger.fingerId] = FingerPosition(e.tfinger.x, e.tfinger.y);
-		break;
-
-	case SDL_FINGERUP:
-		m_thisState[e.tfinger.fingerId] = false;
-		m_positions[e.tfinger.fingerId] = FingerPosition(e.tfinger.x, e.tfinger.y);
-		break;
-
-	case SDL_FINGERMOTION:
-		m_positions[e.tfinger.fingerId] = FingerPosition(e.tfinger.x, e.tfinger.y);
-		m_deltaPositions[e.tfinger.fingerId] = FingerPosition(e.tfinger.dx, e.tfinger.dy);
-		break;
-	}
+    char n;
+    switch (e.type)
+    {
+        case SDL_FINGERDOWN:
+            n = get_sdlfinger_index(e.tfinger.fingerId);
+            
+            if (n == -1)
+                break;
+            
+            fingers[n].fingerid = e.tfinger.fingerId;
+            fingers[n].active = SDL_TRUE;
+            m_thisState[n] = true;
+            m_positions[n] = FingerPosition(e.tfinger.x, e.tfinger.y);
+            break;
+            
+        case SDL_FINGERUP:
+            n = get_sdlfinger_index(e.tfinger.fingerId);
+            
+            if (n == -1)
+                break;
+            
+            fingers[n].active = SDL_FALSE;
+	    if (m_thisState[n] == true)
+		    m_lastState[n] = true;
+            m_thisState[n] = false;
+            m_positions[n] = FingerPosition(e.tfinger.x, e.tfinger.y);
+            break;
+            
+        case SDL_FINGERMOTION:
+            n = get_sdlfinger_index(e.tfinger.fingerId);
+            
+            if (n == -1)
+                break;
+            
+            m_positions[n] = FingerPosition(e.tfinger.x, e.tfinger.y);
+            m_deltaPositions[n] = FingerPosition(e.tfinger.dx, e.tfinger.dy);
+            break;
+    }
 }
 
 InputState Touch::GetFingerState(SDL_FingerID _finger)

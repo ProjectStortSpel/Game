@@ -2,19 +2,23 @@
 #define GAMECONSOLE_H
 
 #include "Console/Console.h"
-#ifdef __ANDROID__
+#if defined(__ANDROID__) || defined(__IOS__)
 #include "AndroidRenderer/GraphicDevice.h"
 #else
 #include "Renderer/GraphicDevice.h"
+#include "Renderer/GraphicsHigh.h"
+#include "Renderer/GraphicsLow.h"
 #endif
 #include "ECSL/ECSL.h"
-#include "NetworkInstance.h"
+#include "Network/NetworkInstance.h"
 
 class GameConsole
 {
 public:
 	GameConsole(Renderer::GraphicDevice* _graphics, ECSL::World* _world);
 	~GameConsole();
+
+	void SetGraphicDevice(Renderer::GraphicDevice* _graphics){ m_graphics = _graphics; }
 
 	void SetupHooks(Console::ConsoleManager* _consoleManager);
 
@@ -30,10 +34,14 @@ public:
 	void ClearHistory(std::string _command, std::vector<Console::Argument>* _args);
 
 	void HostServer(std::string _command, std::vector<Console::Argument>* _args);
+    void HostListenServer(std::string _command, std::vector<Console::Argument>* _args);
 	void StopServer(std::string _command, std::vector<Console::Argument>* _args);
 
 	void ConnectClient(std::string _command, std::vector<Console::Argument>* _args);
 	void DisconnectClient(std::string _command, std::vector<Console::Argument>* _args);
+
+	void BroadcastChat(std::string _command, std::vector<Console::Argument>* _args);
+	void BroadcastAnnouncement(std::string _command, std::vector<Console::Argument>* _args);
 
 	void SetDebugTexture(std::string _command, std::vector<Console::Argument>* _args);
 

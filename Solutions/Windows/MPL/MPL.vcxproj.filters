@@ -11,21 +11,69 @@
     <Filter Include="Source Files\Managers">
       <UniqueIdentifier>{0c6892c6-ade2-49a0-8281-45b37839a9bb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Interfaces">
-      <UniqueIdentifier>{2ca457d5-81e9-461c-afa5-8ecebb12bdd9}</UniqueIdentifier>
+    <Filter Include="Source Files\Framework\Tasks">
+      <UniqueIdentifier>{058bff9b-15b7-47c8-8a93-f4061d348761}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Framework\Threads">
+      <UniqueIdentifier>{e69a29ae-ad09-4eb9-b21a-522d0c0a7805}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Framework\Common">
+      <UniqueIdentifier>{7aa6bd98-58dd-425e-bd4a-382ddc3e37e0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\MPL\MPL.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\MPL\Framework\Test.h">
-      <Filter>Source Files\Framework</Filter>
+    <ClInclude Include="..\..\..\Source\MPL\Framework\Tasks\Task.h">
+      <Filter>Source Files\Framework\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\MPL\Managers\TaskManager.h">
+      <Filter>Source Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\MPL\Framework\Tasks\TaskPool.h">
+      <Filter>Source Files\Framework\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\MPL\Framework\Threads\SlaveThread.h">
+      <Filter>Source Files\Framework\Threads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\MPL\Framework\Common\ThreadHelper.h">
+      <Filter>Source Files\Framework\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\MPL\Framework\Tasks\WorkItem.h">
+      <Filter>Source Files\Framework\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\MPL\Framework\Tasks\TaskId.h">
+      <Filter>Source Files\Framework\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\MPL\Framework\Common\MathHelper.h">
+      <Filter>Source Files\Framework\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\MPL\Managers\ThreadLogger.h">
+      <Filter>Source Files\Managers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Source\MPL\Framework\Test.cpp">
-      <Filter>Source Files\Framework</Filter>
+    <ClCompile Include="..\..\..\Source\MPL\Framework\Tasks\Task.cpp">
+      <Filter>Source Files\Framework\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\MPL\Managers\TaskManager.cpp">
+      <Filter>Source Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\MPL\Framework\Tasks\TaskPool.cpp">
+      <Filter>Source Files\Framework\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\MPL\Framework\Threads\SlaveThread.cpp">
+      <Filter>Source Files\Framework\Threads</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\MPL\Framework\Common\ThreadHelper.cpp">
+      <Filter>Source Files\Framework\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\MPL\Framework\Common\MathHelper.cpp">
+      <Filter>Source Files\Framework\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\MPL\Managers\ThreadLogger.cpp">
+      <Filter>Source Files\Managers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

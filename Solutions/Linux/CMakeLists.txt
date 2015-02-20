@@ -24,6 +24,7 @@ if(WIN32)
       imm32
       winmm
       "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Windows/${WINDOWS_SYSTEM}/SDL2.lib"
+	  "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Windows/${WINDOWS_SYSTEM}/SDL2_ttf.lib"
 	"${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Windows/${WINDOWS_SYSTEM}/vld.lib"
 	ws2_32)
   set(EXTERNAL_WINDOWS_STATIC_SDL2MAIN_LIBRARY
@@ -50,7 +51,7 @@ elseif(UNIX)
   else()
     set(UNIX_SYSTEM "i386")
   endif()
-
+  
   # Define external libraries
   file(GLOB EXTERNAL_UNIX_SHARED_LIBRARIES
        "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Linux/${UNIX_SYSTEM}/*.so"
@@ -108,6 +109,9 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory
   "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE}/content")
 
 # Add subprojects
+if(NOT TARGET FileSystem)
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/FileSystem" FileSystem)
+endif()
 if(NOT TARGET Console)
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Console" Console)
 endif()
@@ -129,6 +133,10 @@ endif()
 if(NOT TARGET Renderer)
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Renderer" Renderer)
 endif()
+if(NOT TARGET Logger)
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Logger" Logger)
+endif()
+
 
 if(NOT TARGET Game)
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Game" Game)

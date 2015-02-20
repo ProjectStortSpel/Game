@@ -1,43 +1,23 @@
 #ifndef LUAGRAPHICDEVICE_H
 #define LUAGRAPHICDEVICE_H
 
-#ifdef __ANDROID__
+#if defined(__ANDROID__) || defined(__IOS__)
 #include "AndroidRenderer/GraphicDevice.h"
 #else
 #include "Renderer/GraphicDevice.h"
 #endif
 
 #include "Input/InputWrapper.h"
+#include <LuaEmbedder/LuaEmbedder.h>
 
 namespace LuaBridge
 {
-  class LuaGraphicDevice : public Renderer::GraphicDevice
-  {
-  public:
-    LuaGraphicDevice();
-    
-    static void Embed();
-    
-  private:
-	int GetAspectRatio();
-	int GetTouchPosition();
-
-    int ResizeWindow();
-    int SetTitle();
-    
-    int RenderSimpleText();
-    int SetSimpleTextColor();
-    
-    int GetCamera();
-    int SetCamera();
-    
-    int GetWindowSize();
-    
-    int LoadModel();
-    int ChangeModelTexture();
-    int ChangeModelNormalMap();
-    int ChangeModelSpecularMap();
-  };
+	namespace LuaGraphicDevice
+	{
+		void Embed(lua_State* L);
+		void SetGraphicDevice(Renderer::GraphicDevice* graphicDevice);
+        
+	};
 }
 
 #endif

@@ -2,6 +2,7 @@
 #define LUACOMPONENTTYPE_H
 
 #include "ECSL/Framework/Components/ComponentType.h"
+#include <LuaEmbedder/LuaEmbedder.h>
 
 #include <string>
 #include <map>
@@ -11,24 +12,24 @@ namespace LuaBridge
   class LuaComponentType
   {
   public:
-    LuaComponentType();
+    LuaComponentType(lua_State* L);
     ~LuaComponentType();
     
-    static void Embed();
+    static void Embed(lua_State* L);
     
     ECSL::ComponentType* CreateComponentType();
     
   private:
-    int GetName();
-    int SetName();
+    int GetName(lua_State* L);
+    int SetName(lua_State* L);
 
-	int GetSyncWithNetwork();
-	int SetSyncWithNetwork();
+	int GetSyncWithNetwork(lua_State* L);
+	int SetSyncWithNetwork(lua_State* L);
     
-    int GetTableType();
-    int SetTableType();
+    int GetTableType(lua_State* L);
+    int SetTableType(lua_State* L);
     
-    int AddVariable();
+    int AddVariable(lua_State* L);
     
   private:
     std::string m_name;

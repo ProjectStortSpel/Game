@@ -7,7 +7,7 @@ ButtonPressedSystem.Update = function(self, dt)
 		-- TODO gör så att de bara går att selecta i selection phase
 		local pressedButtons = self:GetEntities("OnPickBoxHit")
 		if #pressedButtons > 0 then
-			
+
 			local pressedButton = pressedButtons[1]
 			local buttonCommands = self:GetEntities("ButtonCommand")
 			
@@ -15,11 +15,11 @@ ButtonPressedSystem.Update = function(self, dt)
 			
 			for i = 1, #buttonCommands do
 				
-				local owner = self:GetComponent(buttonCommands[i], "ButtonCommand", "Button"):GetInt()
+				local owner = world:GetComponent(buttonCommands[i], "ButtonCommand", "Button"):GetInt()
 				if (owner == pressedButton) then
 					
-					local command = self:GetComponent(buttonCommands[i], "ButtonCommand", "Command"):GetString()
-					local index = self:GetComponent(buttonCommands[i], "ButtonCommand", "Index"):GetInt()
+					local command = world:GetComponent(buttonCommands[i], "ButtonCommand", "Command"):GetString()
+					local index = world:GetComponent(buttonCommands[i], "ButtonCommand", "Index"):GetInt()
 					commands[index] = command
 					
 				end
@@ -40,12 +40,10 @@ ButtonPressedSystem.Initialize = function(self)
 	self:SetName("ButtonPressedSystem")
 	self:AddComponentTypeToFilter("OnPickBoxHit", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("ButtonCommand", FilterType.RequiresOneOf)
-	
-	print("ButtonPressedSystem initialized!")
 end
 
 ButtonPressedSystem.CreateButton = function(self, object, folder, posx, posy)
-	
+	LogWorldData()
 	local id = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("Model", id)
 	world:CreateComponentAndAddTo("Position", id)
@@ -54,20 +52,25 @@ ButtonPressedSystem.CreateButton = function(self, object, folder, posx, posy)
 	world:CreateComponentAndAddTo("PickBox", id)
 	world:CreateComponentAndAddTo("Button", id)
 	
-	local model = self:GetComponent(id, "Model", 0)
+	local model = world:GetComponent(id, "Model", 0)
 	model:SetModel(object, folder, 2)
 	
-	local position = self:GetComponent(id, "Position", 0)
+	local position = world:GetComponent(id, "Position", 0)
 	position:SetFloat3(posx, posy, -4)
 	
-	local scale = self:GetComponent(id, "Scale", 0)
+	local scale = world:GetComponent(id, "Scale", 0)
 	scale:SetFloat3(1, 0.5, 1)
 	
-	local pickbox = self:GetComponent(id, "PickBox", 0)
+	local pickbox = world:GetComponent(id, "PickBox", 0)
 	pickbox:SetFloat2(1, 1)
 	
-	local numcommands = self:GetComponent(id, "Button", "NumCommands")
+	local numcommands = world:GetComponent(id, "Button", "NumCommands")
 	numcommands:SetInt(0)
+	
+	
+	local rotation = world:GetComponent(id, "Rotation", 0)
+	rotation:SetFloat3( 0, 0, 0)
+	
 	
 	print("ADASDnumcommands: " .. numcommands:GetInt())
 	
@@ -80,8 +83,8 @@ ButtonPressedSystem.AddCommandToButton = function(self, command, button)
 	local id = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("ButtonCommand", id)
 	
-	local numcommands = self:GetComponent(button, "Button", "NumCommands"):GetInt() + 1
-	self:GetComponent(button, "Button", "NumCommands"):SetInt(numcommands)
+	local numcommands = world:GetComponent(button, "Button", "NumCommands"):GetInt() + 1
+	world:GetComponent(button, "Button", "NumCommands"):SetInt(numcommands)
 	
 	world:GetComponent(id, "ButtonCommand", "Command"):SetString(command)
 	world:GetComponent(id, "ButtonCommand", "Button"):SetInt(button)
@@ -106,7 +109,11 @@ ButtonPressedSystem.PostInitialize = function(self)
 	
 	--connect erik
 	button = self:CreateButton("erik", "quad", -2, 0)
-	self:AddCommandToButton("connect 194.47.150.5", button)
+    --self:AddCommandToButton("connect 193.11.184.2", button) -- macbook
+    self:AddCommandToButton("connect 194.47.150.5", button) -- skoldator
+	--self:AddCommandToButton("connect 193.11.186.9", button) -- iphone 6
+    --self:AddCommandToButton("connect 192.168.105.3", button) --iphone 4
+    --self:AddCommandToButton("connect 95.195.214.238", button) -- test
 	
 	--connect niklas
 	button = self:CreateButton("niklas", "quad", 0, 0)
@@ -119,6 +126,7 @@ ButtonPressedSystem.PostInitialize = function(self)
 	--connect christian
 	button = self:CreateButton("christian", "quad", -2, -1)
 	self:AddCommandToButton("connect 194.47.150.57", button)
+    --self:AddCommandToButton("connect 193.11.185.208", button)
 	
 	--connect pontus
 	button = self:CreateButton("pontus", "quad", 0, -1)
@@ -127,7 +135,4 @@ ButtonPressedSystem.PostInitialize = function(self)
 	--connect anders
 	button = self:CreateButton("anders", "quad", 2, -1)
 	self:AddCommandToButton("connect 194.47.150.100", button)
-	
-
-	print("ButtonPressedSystem post initialized!")
 end

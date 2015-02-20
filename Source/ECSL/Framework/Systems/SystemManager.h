@@ -3,8 +3,9 @@
 
 #include <SDL/SDL.h>
 #include <vector>
-#include "ECSL/Framework/Components/DataManager.h"
 #include "SystemWorkGroup.h"
+#include "ECSL/Framework/Components/DataManager.h"
+#include "ECSL/Framework/Multithreading/RuntimeInfo.h"
 
 namespace ECSL
 {
@@ -15,21 +16,25 @@ namespace ECSL
 		~SystemManager();
 
 		void InitializeSystems();
+		void PostInitializeSystems();
 
-		void Update(float _dt);
+		void UpdateSystemEntityLists(const RuntimeInfo& _runtime,
+			std::vector<std::vector<unsigned int>*>& _entitiesToAddToSystems,
+			std::vector<std::vector<unsigned int>*>& _entitiesToRemoveFromSystems);
 
-		void SystemEntitiesUpdate();
+		const std::vector<System*>* GetSystems() { return m_systems; }
+		const std::vector<SystemWorkGroup*>* GetSystemWorkGroups() { return m_systemWorkGroups; }
+		SystemIdManager* GetSystemIdManager() { return m_systemIdManager; }
+		SystemActivationManager* GetSystemActivationManager() { return m_systemActivationManager; }
 
 	private:
-		int m_nextSystemId;
+		SystemActivationManager* m_systemActivationManager;
+		SystemIdManager* m_systemIdManager;
 		DataManager* m_dataManager;
+		std::vector<System*>* m_systems;
 		std::vector<SystemWorkGroup*>* m_systemWorkGroups;
 
-		void AddEntityToSystem(unsigned int _entityId, System* _system);
-		void RemoveEntityFromSystem(unsigned int _entityId, System* _system);
-
 		void GenerateComponentFilter(System* _system, FilterType _filterType);
-		unsigned int GetSystemId(System* _system);
 	};
 }
 

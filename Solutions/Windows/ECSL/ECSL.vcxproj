@@ -29,14 +29,26 @@
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\ComponentTable.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataArray.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataMap.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataSlimArray.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataTable.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Components\Tables\EntityTable.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Logger\DataLogger.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Multithreading\ECSLWorkItem.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Multithreading\RuntimeInfo.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Multithreading\Scheduler.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\ComponentTypeReader.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\EntityTemplateReader.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\Parser.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Parsing\Section.h" />
-    <ClInclude Include="..\..\..\Source\ECSL\Framework\Simulation.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Simulation\MTSimulation.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Simulation\Simulation.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Simulation\SQSimulation.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\ComponentFilter.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\Message.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\MessageManager.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\Subscription.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemActivationManager.h" />
+    <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemIdManager.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemWorkGroup.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Systems\SystemManager.h" />
     <ClInclude Include="..\..\..\Source\ECSL\Framework\Templates\EntityTemplate.h" />
@@ -56,13 +68,23 @@
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\ComponentTable.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataArray.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataMap.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataSlimArray.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\DataTable.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Components\Tables\EntityTable.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Logger\DataLogger.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Multithreading\Scheduler.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\ComponentTypeReader.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\EntityTemplateReader.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Parsing\Parser.cpp" />
-    <ClCompile Include="..\..\..\Source\ECSL\Framework\Simulation.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Simulation\MTSimulation.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Simulation\Simulation.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Simulation\SQSimulation.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\ComponentFilter.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\Message.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\MessageManager.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\Messaging\Subscription.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemActivationManager.cpp" />
+    <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemIdManager.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemWorkGroup.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Systems\SystemManager.cpp" />
     <ClCompile Include="..\..\..\Source\ECSL\Framework\Templates\EntityTemplate.cpp" />
@@ -167,9 +189,10 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;MPL_$(PlatformTarget)d.lib;Logger_$(PlatformTarget)d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
+      <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -186,9 +209,10 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;MPL_$(PlatformTarget)d.lib;Logger_$(PlatformTarget)d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
+      <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -209,7 +233,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;MPL_$(PlatformTarget).lib;Logger_$(PlatformTarget).lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
     </Link>
@@ -232,7 +256,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;MPL_$(PlatformTarget).lib;Logger_$(PlatformTarget).lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
     </Link>

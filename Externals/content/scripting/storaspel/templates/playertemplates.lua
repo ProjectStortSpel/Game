@@ -1,9 +1,14 @@
---	Player template [TODO: Add shit]
-local AI = EntityTemplate()
-AI.Name = "AI"
-AI:AddComponent("Player")
-AI:AddComponent("SyncNetwork")			--	Sync this entity
-EntityTemplateManager:AddTemplate(AI)	--	Add the template
+--	AI template [TODO: Add shit]
+local AITemplate = EntityTemplate()
+AITemplate.Name = "AI"
+--AITemplate:AddComponent("Player")
+AITemplate:AddComponent("AI")
+AITemplate:AddComponent("PlayerNumber")
+AITemplate:AddComponent("PlayerName")
+AITemplate:AddComponent("UnitEntityId")
+AITemplate:AddComponent("PickingDone")
+AITemplate:AddComponent("SyncNetwork")			--	Sync this entity
+EntityTemplateManager:AddTemplate(AITemplate)	--	Add the template
 
 --	Player template
 local PlayerTemplate = EntityTemplate()
@@ -29,7 +34,7 @@ Unit.Name = "Unit"
 	--	Model data
 	Unit:SetFloat3("Position", 0.0, 1.0, 0.0)
 	Unit:SetFloat3("Rotation", 0.0, math.pi, 0.0)
-	Unit:SetFloat3("Scale", 0.5, 0.5, 0.5)
+	Unit:SetFloat3("Scale", 0.8, 0.8, 0.8)
 	
 	--	Game Logic
 	Unit:AddComponent("PlayerNumber")			--	The number of the player [1, Number of players]
@@ -37,7 +42,9 @@ Unit.Name = "Unit"
 	Unit:AddComponent("TargetCheckpoint")
 	Unit:AddComponent("MapPosition")
 	Unit:AddComponent("Spawnpoint")
+	Unit:AddComponent("NoSubSteps")
 	
+	Unit:SetInt("NoSubSteps", 1)
 	
 	--	Misc
 	Unit:AddComponent("PlayerEntityId")			--	Entity ID to the specific player entity that controls this unit

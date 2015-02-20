@@ -8,15 +8,23 @@ CreateDeckComponent.Name = "CreateDeck"
 CreateDeckComponent.TableType = TableType.Map
 worldCreator:AddComponentType(CreateDeckComponent)
 
+-- Added to exactly one entity to notify start dealing cards to all players.
 local DealCardsComponent = ComponentType()
 DealCardsComponent.Name = "DealCards"
 DealCardsComponent:AddVariable("NumCards", ByteSize.Int)
 DealCardsComponent.TableType = TableType.Map
 worldCreator:AddComponentType(DealCardsComponent)
 
+-- Added to exactly one entity to notify start dealing cards to all players.
+local RemoveEffectsComponent = ComponentType()
+RemoveEffectsComponent.Name = "RemoveEffects"
+RemoveEffectsComponent.TableType = TableType.Map
+worldCreator:AddComponentType(RemoveEffectsComponent)
+
 local NotifyStartNewRoundComponent = ComponentType()
 NotifyStartNewRoundComponent.Name = "NotifyStartNewRound"
 NotifyStartNewRoundComponent.TableType = TableType.Map
+NotifyStartNewRoundComponent:AddVariable("IsAI", ByteSize.Bool)
 worldCreator:AddComponentType(NotifyStartNewRoundComponent)
 
 local NewRoundComponent = ComponentType()
@@ -63,6 +71,7 @@ TestMoveComponent:AddVariable("PosX", ByteSize.Int)
 TestMoveComponent:AddVariable("PosZ", ByteSize.Int)
 TestMoveComponent:AddVariable("DirX", ByteSize.Int)
 TestMoveComponent:AddVariable("DirZ", ByteSize.Int)
+TestMoveComponent:AddVariable("Steps", ByteSize.Int)
 worldCreator:AddComponentType(TestMoveComponent)
 
 local CheckCheckpointComponent = ComponentType()
@@ -118,3 +127,8 @@ TakeCardStepsFromUnitComponent.Name = "TakeCardStepsFromUnit"
 TakeCardStepsFromUnitComponent.TableType = TableType.Map
 TakeCardStepsFromUnitComponent:AddVariable("Unit", ByteSize.Reference)
 worldCreator:AddComponentType(TakeCardStepsFromUnitComponent)
+
+local AddTotemPieceComponent = ComponentType()
+AddTotemPieceComponent.Name = "AddTotemPiece"
+AddTotemPieceComponent.TableType = TableType.Map
+worldCreator:AddComponentType(AddTotemPieceComponent)

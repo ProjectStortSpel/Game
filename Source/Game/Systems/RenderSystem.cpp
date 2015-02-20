@@ -14,13 +14,21 @@ RenderSystem::~RenderSystem()
 
 void RenderSystem::Initialize()
 {
-	SetSystemName("Render System");
+	SetSystemName("RenderSystem");
+
+	SetUpdateTaskCount(GetThreadCount());
+	SetEntitiesAddedTaskCount(1);
+	SetEntitiesRemovedTaskCount(1);
 
 	/*	Rendersystem wants Position, Scale, Rotation and Render	*/
 	AddComponentTypeToFilter("Position",	ECSL::FilterType::Mandatory);
 	AddComponentTypeToFilter("Rotation",	ECSL::FilterType::Mandatory);
 	AddComponentTypeToFilter("Scale",		ECSL::FilterType::Mandatory);
-	AddComponentTypeToFilter("Render",		ECSL::FilterType::Mandatory);
+	//AddComponentTypeToFilter("Color",		ECSL::FilterType::Mandatory);
+	AddComponentTypeToFilter("Render",		ECSL::FilterType::RequiresOneOf);
+	AddComponentTypeToFilter("Model",		ECSL::FilterType::RequiresOneOf);
+
+	//AddComponentTypeToFilter("Parent",		ECSL::FilterType::RequiresOneOf);
 
 	AddComponentTypeToFilter("Hide",		ECSL::FilterType::Excluded);
 
@@ -29,27 +37,32 @@ void RenderSystem::Initialize()
 	bitsetComponents.push_back(ECSL::ComponentTypeManager::GetInstance().GetTableId("Position"));
 	bitsetComponents.push_back(ECSL::ComponentTypeManager::GetInstance().GetTableId("Rotation"));
 	bitsetComponents.push_back(ECSL::ComponentTypeManager::GetInstance().GetTableId("Scale"));
+	//bitsetComponents.push_back(ECSL::ComponentTypeManager::GetInstance().GetTableId("Color"));
 
 	m_bitMask = ECSL::BitSet::BitSetConverter::ArrayToBitSet(bitsetComponents, ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount());
-	m_numberOfBitSets = ECSL::BitSet::GetIntCount(ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount());
+	m_numberOfBitSets = ECSL::BitSet::GetDataTypeCount(ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount());
 	m_componentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("ChangedComponents");
 
 	m_positionId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Position");
 	m_rotationId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Rotation");
 	m_scaleId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Scale");
+	m_colorId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Color");
 	m_renderId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Render");
 	m_renderOffset = ECSL::ComponentTypeManager::GetInstance().GetComponentType(m_renderId)->GetVariables()->at("Mat").GetOffset();
-
-
-	printf("RenderSystem initialized!\n");
+	m_colorOffset = ECSL::ComponentTypeManager::GetInstance().GetComponentType(m_renderId)->GetVariables()->at("ColorX").GetOffset();
+	m_parentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Parent");
+	m_isparentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("IsParent");
+	m_worldToViewSpaceId = ECSL::ComponentTypeManager::GetInstance().GetTableId("WorldToViewSpace");
 }
 
-void RenderSystem::Update(float _dt)
+void RenderSystem::Update(const ECSL::RuntimeInfo& _runtime)
 {
 	auto entities = *GetEntities();
-
-	for (auto entity : entities)
+	unsigned int startAt, endAt;
+	MPL::MathHelper::SplitIterations(startAt, endAt, (unsigned int)entities.size(), _runtime.TaskIndex, _runtime.TaskCount);
+	for (unsigned int i = startAt; i < endAt; ++i)
 	{
+		unsigned int entity = entities[i];
 		ECSL::BitSet::DataType* eBitMask = (ECSL::BitSet::DataType*)GetComponent(entity, m_componentId, 0);
 
 		bool needsUpdate = false;
@@ -71,20 +84,26 @@ void RenderSystem::Update(float _dt)
 
 }
 
-void RenderSystem::OnEntityAdded(unsigned int _entityId)
+void RenderSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities)
 {
-	int modelId = *(int*)GetComponent(_entityId, "Render", "ModelId");
-	m_graphics->ActiveModel(modelId, true);
+	for (auto entityId : _entities)
+	{
+		int modelId = *(int*)GetComponent(entityId, "Render", "ModelId");
+		m_graphics->ActiveModel(modelId, true);
 
-	/*	Update the matrix	*/
-	UpdateMatrix(_entityId);
+		/*	Update the matrix	*/
+		UpdateMatrix(entityId);
+	}
 }
 
-void RenderSystem::OnEntityRemoved(unsigned int _entityId)
+void RenderSystem::EntitiesRemoved(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities)
 {
-	/*	Tell Graphics to disable model	*/
-	int modelId = *(int*)GetComponent(_entityId, "Render", "ModelId");
-	m_graphics->ActiveModel(modelId, false);
+	for (auto entityId : _entities)
+	{
+		/*	Tell Graphics to disable model	*/
+		int modelId = *(int*)GetComponent(entityId, "Render", "ModelId");
+		m_graphics->ActiveModel(modelId, false);
+	}
 }
 
 
@@ -94,30 +113,61 @@ void RenderSystem::UpdateMatrix(unsigned int _entityId)
 	float*		Rotation;
 	float*		Scale;
 	glm::mat4*	Matrix;
+	float*		renderColor;
 
-	Position	=	(float*)GetComponent(_entityId, m_positionId , 0);
-	Rotation	=	(float*)GetComponent(_entityId, m_rotationId, 0);
-	Scale		=	(float*)GetComponent(_entityId, m_scaleId, 0);
-	Matrix		=	(glm::mat4*)GetComponent(_entityId, m_renderId, m_renderOffset);
+	Position = (float*)GetComponent(_entityId, m_positionId, 0);
+	Rotation = (float*)GetComponent(_entityId, m_rotationId, 0);
+	Scale = (float*)GetComponent(_entityId, m_scaleId, 0);
+	Matrix = (glm::mat4*)GetComponent(_entityId, m_renderId, m_renderOffset);
+	renderColor = (float*)GetComponent(_entityId, m_renderId, m_colorOffset);
 
-	*Matrix = glm::translate(glm::vec3(Position[0], Position[1], Position[2]));
+	*Matrix = glm::mat4(1);
+	//CHECK IF IT HAS A PARENT
+	if (HasComponent(_entityId, m_parentId))
+	{
+		int* Parent = (int*)GetComponent(_entityId, m_parentId, 0);
+		//GET PARENT MATRIX
+		*Matrix = *(glm::mat4*)GetComponent(*Parent, m_renderId, m_renderOffset);
+	}
 
-	Quaternion q_f;
-	Quaternion q_x;
-	Quaternion q_y;
-	Quaternion q_z;
+	*Matrix *= glm::translate(glm::vec3(Position[0], Position[1], Position[2]));
 
-	q_x.Rotate(glm::vec3(1, 0, 0), Rotation[2]);
-	q_y.Rotate(glm::vec3(0, 1, 0), Rotation[1]);
-	q_z.Rotate(glm::vec3(0, 0, 1), Rotation[0]);
+	/*Convert to quaternions*/
+	Quaternion q_rotation;
 
-	q_f = q_x * q_f;
-	q_f = q_y * q_f;
-	q_f = q_z * q_f;
+	q_rotation.EulerToQuaternion(Rotation[0], Rotation[1], Rotation[2]);
 
-	*Matrix *= q_f.QuaternionToMatrix();
+	*Matrix *= q_rotation.QuaternionToMatrix();
 
 	*Matrix *= glm::scale(glm::vec3(Scale[0], Scale[1], Scale[2]));
+	
+	if (HasComponent(_entityId, m_worldToViewSpaceId))
+		*Matrix = *m_graphics->GetCamera()->GetViewMatrix() * *Matrix;
+
+
+	if (!HasComponent(_entityId, m_colorId))
+	{ 
+		float* Color = (float*)GetComponent(_entityId, "Color", "X");
+		renderColor[0] = Color[0];
+		renderColor[1] = Color[1];
+		renderColor[2] = Color[2];
+	}
+	else
+	{
+		renderColor[0] = 0;
+		renderColor[1] = 0;
+		renderColor[2] = 0;
+	}
+
+
+
 
 	ComponentHasChanged(_entityId, m_renderId);
+
+	// UPDATE CHIDRENS MATRIX
+	/*if (EntityHasComponent(_entityId, m_isparentId))
+	{
+		int* Parent = (int*)GetComponent(_entityId, m_parentId, 0);
+		auto children = *GetEntities(m_isparentId);
+	}*/
 }

@@ -1,9 +1,10 @@
-#version 430
+#version 440
 in vec3 Normal;
 in vec3 Tan;
 in vec3 BiTan;
 in vec2 TexCoord;
 in vec3 ViewPos;
+in vec3 AddColor;
 
 layout( location = 0 ) out vec4 ColorData;
 
@@ -167,7 +168,12 @@ void main()
 	NmNormal = normalize( texSpace * normal_map );
 
 	// Spec data
-	vec3 specglow_map = texture( specularTex, TexCoord ).rgb;
+	vec4 specglow_map = texture( specularTex, TexCoord );
+	float blendFactor = specglow_map.w;
+
+	if( AddColor != vec3(0.0) )
+		albedo_tex.xyz = (1.0f-blendFactor)*albedo_tex.xyz + blendFactor * AddColor; 
+
 	Material.Ks			= specglow_map.x;
 	Material.Shininess  = specglow_map.y * 254.0f + 1.0f;
 	float glow			= specglow_map.z;
@@ -197,5 +203,7 @@ void main()
 		spec    += s;
 	}
 
-	ColorData = vec4(ambient + diffuse, 1.0) * albedo_tex + vec4(spec, 0.0f);
+	vec4 glowvec = vec4(glow*albedo_tex.xyz, 1.0);
+
+	ColorData = vec4(ambient + diffuse*(1.0-glow), 1.0) * albedo_tex + vec4(spec, 0.0f) + glowvec;
 }

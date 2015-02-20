@@ -15,6 +15,10 @@ void PointlightSystem::Initialize()
 {
 	SetSystemName("Pointlight System");
 
+	SetUpdateTaskCount(1);
+	SetEntitiesAddedTaskCount(1);
+	SetEntitiesRemovedTaskCount(1);
+
 	/*	Rendersystem wants Position, Scale, Rotation and Render	*/
 	AddComponentTypeToFilter("Pointlight", ECSL::FilterType::Mandatory);
 
@@ -23,14 +27,12 @@ void PointlightSystem::Initialize()
 	bitsetComponents.push_back(ECSL::ComponentTypeManager::GetInstance().GetTableId("Pointlight"));
 
 	m_bitMask = ECSL::BitSet::BitSetConverter::ArrayToBitSet(bitsetComponents, ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount());
-	m_numberOfBitSets = ECSL::BitSet::GetIntCount(ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount());
+	m_numberOfBitSets = ECSL::BitSet::GetDataTypeCount(ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount());
 	m_changedComponentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("ChangedComponents");
 	m_pointLightId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Pointlight");
-
-	printf("Pointlight initialized!\n");
 }
 
-void PointlightSystem::Update(float _dt)
+void PointlightSystem::Update(const ECSL::RuntimeInfo& _runtime)
 {
 	auto entities = *GetEntities();
 
@@ -61,12 +63,12 @@ void PointlightSystem::Update(float _dt)
 
 }
 
-void PointlightSystem::OnEntityAdded(unsigned int _entityId)
+void PointlightSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities)
 {
 	UpdatePointLights();
 }
 
-void PointlightSystem::OnEntityRemoved(unsigned int _entityId)
+void PointlightSystem::EntitiesRemoved(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities)
 {
 	UpdatePointLights();
 }
@@ -89,6 +91,4 @@ void PointlightSystem::UpdatePointLights()
 		lightPointers[n] = (float*)GetComponent(ePointlights.at(n), m_pointLightId, 0);
 
 	m_graphics->BufferPointlights(ePointlights.size(), lightPointers);
-
-	delete lightPointers;
 }
