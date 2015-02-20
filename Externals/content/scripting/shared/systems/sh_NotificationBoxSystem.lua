@@ -62,7 +62,10 @@ NotificationBoxSystem.SpawnMenu = function(self)
 
 	local background = self:CreateElement("gamemenubackground", "quad", 0, -0, -1.5, 1.0, 0.5)
 		
-	local text = self:CreateText("center", "text", 0.0, 0.13, -1.0, 0.5, 0.065)	
+	local text = self:CreateText("center", "text", 0.0, 0.13, -1.0, 0.5, 0.065)
+	if self.Text == "" then
+		self.Text = " "
+	end
 	self:AddTextToTexture("U1", self.Text, 0, 0, 0, 0, text)
 		
 	local button = self:CreateElement("ok", "quad", 0, -0.10, -1.0, 0.20, 0.085)

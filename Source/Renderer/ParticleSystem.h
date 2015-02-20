@@ -49,7 +49,7 @@ namespace Renderer
 		float m_spriteSize, m_lifeTime;
 		float m_elapsedTime, m_removeDelayTime;
 		float m_scale;
-		bool m_endPhase;
+		int m_endPhase;
 		GLenum m_dstBlendFactor;
 
 		void CreateFire();

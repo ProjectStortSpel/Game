@@ -27,6 +27,10 @@ AICardPickingSystem.Update = function(self, dt)
 	--local PickedCards = {}
 	--PickedCards.__mode = "k"
 	
+	
+	
+	-- TODO: Add some entity that will tell that the ai should work now.
+	
 	if #DealingSettings == 0 or #AIs == 0 then
 		return
 	end
@@ -43,9 +47,6 @@ AICardPickingSystem.Update = function(self, dt)
 			local unitID = world:GetComponent(AIs[i], "UnitEntityId", 0):GetInt()
 			
 			local cpTargetNr = world:GetComponent(unitID, "TargetCheckpoint", 0):GetInt()
-					
-			-- vart AIn vill
-			local targetPositionX, targetPositionY = self:GetTargetPosition(CPtiles, cpTargetNr)
 			
 			-- vart AIn är
 			local aiPositionX, aiPositionY = world:GetComponent(unitID, "MapPosition", 0):GetInt2()
@@ -57,7 +58,7 @@ AICardPickingSystem.Update = function(self, dt)
 			
 			if #CardSetAI == cardsPerHand then
 				--This will catch the best 
-				local PickedCards = self:AIPickCards(CardSetAI, aiDirX, aiDirY, aiPositionX, aiPositionY, targetPositionX, targetPositionY, unitID)
+				local PickedCards = self:AIPickCards(CardSetAI, aiDirX, aiDirY, aiPositionX, aiPositionY, unitID)
 				fellDown, aiPositionX, aiPositionY, aiDirX, aiDirY = self:SimulatePlayOfCards(unitID, PickedCards)
    
 				if #PickedCards == cardsToPick then	
@@ -125,61 +126,20 @@ AICardPickingSystem.TryMove = function(self, CardSetAI, card)
 	end
 end
 
-AICardPickingSystem.AIPickCards = function( self, CardSetAI, _dirX, _dirY, _posX, _posY, _targetX, _targetY, _unitID )
+AICardPickingSystem.AIPickCards = function( self, CardSetAI, _dirX, _dirY, _posX, _posY, _unitID )
 	
 	local pickedCards = {}
 	pickedCards.__mode = "k"
 	
 	local DealingSettings = self:GetEntities("DealingSettings")
 	local cardsPerHand, cardsToPick = world:GetComponent(DealingSettings[1], "DealingSettings", 0):GetInt2(0)
-	
-	--print(#CardSetAI, _dirX, _dirY, _posX, _posY, _targetX, _targetY, _unitID)
-	
+		
 	if #CardSetAI >= cardsPerHand then
 		
 		if self.AICheat == 1 then
-			
-			for j = 1, cardsPerHand do
-				
-				local cardactioncomp = world:GetComponent(CardSetAI[j], "CardAction", 0)
-				
-				    if j == 1 then cardactioncomp:SetText("Forward")
-				elseif j == 2 then cardactioncomp:SetText("Forward")
-				elseif j == 3 then cardactioncomp:SetText("Backward")
-				elseif j == 4 then cardactioncomp:SetText("Backward")
-				elseif j == 5 then cardactioncomp:SetText("TurnRight")
-				elseif j == 6 then cardactioncomp:SetText("TurnLeft")
-				elseif j == 7 then cardactioncomp:SetText("TurnAround")
-				elseif j == 8 then cardactioncomp:SetText("Forward")
-				elseif j == 9 then cardactioncomp:SetText("Forward")
-				elseif j == 10 then cardactioncomp:SetText("Forward")
-				elseif j == 11 then cardactioncomp:SetText("Backward")
-				elseif j == 12 then cardactioncomp:SetText("Backward")
-				elseif j == 13 then cardactioncomp:SetText("TurnRight")
-				elseif j == 14 then cardactioncomp:SetText("TurnLeft")
-				elseif j == 15 then cardactioncomp:SetText("TurnAround")
-				elseif j == 16 then cardactioncomp:SetText("TurnRight")
-				elseif j == 17 then cardactioncomp:SetText("TurnLeft")
-				elseif j == 18 then cardactioncomp:SetText("TurnAround")
-				elseif j == 19 then cardactioncomp:SetText("Backward")
-				elseif j == 20 then cardactioncomp:SetText("TurnLeft")
-				end
-			end
+			self:ChangeTheCards(cardsPerHand, CardSetAI)
 		end
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+				
 		
 		--local startTime, endTime, timetaken
 		--
@@ -206,10 +166,6 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, _dirX, _dirY, _posX
 		
 		
 		
-		
-		
-		
-		
     
 		--local forwards = self:GetAllCardsOf(CardSetAI, "Forward")
 		--local backwards = self:GetAllCardsOf(CardSetAI, "Backward")
@@ -218,47 +174,32 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, _dirX, _dirY, _posX
 		--local turnArounds = self:GetAllCardsOf(CardSetAI, "TurnAround")
 		--local sprints = self:GetAllCardsOf(CardSetAI, "Sprint")
 		--local shots = self:GetAllCardsOf(CardSetAI, "SlingShot")
-				
+					
 		local posX, posY, dirX, dirY = _posX, _posY, _dirX, _dirY
+		local fellDown = false
 				
 		for i = 1, cardsToPick do
 			
-			-- Get target.
+			-- Get target. Needs to be done after every card as we may have reached a checkpoint.
 			local targetCheckpoint = world:GetComponent(_unitID, "TargetCheckpoint", 0):GetInt()
 			local checkpoints = self:GetEntities("Checkpoint")
 			local targetX, targetY = self:GetTargetPosition(checkpoints, targetCheckpoint)
-			
 			local simFellDown, simPosX, simPosY, simDirX, simDirY
 			local cardsToSim = {}
 			cardsToSim.__mode = "k"
-			
 			local bestCardId, bestDist, bestNextDist
-			local dist, nextDist, prevDist
+			local dist, nextDist
+			local cardsLeftToPick = cardsToPick - #pickedCards
+			
+			-- TODO: Add method to vaska cards if we will fall down.
+			--if fellDown then
+			--	Vaska kort!
+			--end
 			
 			table.insert(cardsToSim, CardSetAI[1])
+			dist, simFellDown, simPosX, simPosY, simDirX, simDirY = self:GetSimDist(_unitID, posX, posY, dirX, dirY, targetX, targetY, cardsToSim, cardsLeftToPick)
 			
-			local nameCard = world:GetComponent(CardSetAI[1], "CardAction", 0):GetText()
-			
-			-- Simulate playing the ith card.
-			simFellDown, simPosX, simPosY, simDirX, simDirY = self:SimulateCardsFromPos(_unitID, posX, posY, dirX, dirY, cardsToSim)
-			
-			dist = PathfinderHandler.GeneratePath(simPosX, simPosY, targetX, targetY)
-			
-			if simFellDown then
-				local playedCards = #pickedCards
-				local extraCost = cardsToPick - playedCards + 1
-				dist = dist + extraCost
-			end
-			nextDist = PathfinderHandler.GeneratePath(simPosX + simDirX, simPosY + simDirY, _targetX, _targetY)
-				
-			-- Get the distance from a cell as if we have walked backward and compare it to the previous.
-			nextDist = math.min(nextDist, PathfinderHandler.GeneratePath(simPosX - simDirX, simPosY - simDirY, _targetX, _targetY))
-			
-			if simFellDown then
-				local playedCards = #pickedCards
-				local extraCost = cardsToPick - playedCards - 1
-				nextDist = nextDist + extraCost
-			end
+			nextDist = self:GetSimNextDist(simFellDown, simPosX, simPosY, simDirX, simDirY, targetX, targetY, cardsLeftToPick)
 			
 			table.remove(cardsToSim, 1)
 			bestNextDist = nextDist;
@@ -267,68 +208,23 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, _dirX, _dirY, _posX
 			bestCardId = 1
 			
 			for i = 2, #CardSetAI do
+				
 				table.insert(cardsToSim, CardSetAI[i])
-				local nameCard = world:GetComponent(CardSetAI[i], "CardAction", 0):GetText()
-				-- Simulate playing the ith card.
-				simFellDown, simPosX, simPosY, simDirX, simDirY = self:SimulateCardsFromPos(_unitID, posX, posY, dirX, dirY, cardsToSim)
 				
-				dist = PathfinderHandler.GeneratePath(simPosX, simPosY, targetX, targetY)
-				
-				if simFellDown then
-					local playedCards = #pickedCards
-					local extraCost = cardsToPick - playedCards + 1
-					dist = dist + extraCost
-				end
-				
-				local printAction = world:GetComponent(CardSetAI[i], "CardAction", 0):GetText(0)
-				local printDist = dist
-				local printBestDist = bestDist
-				if dist == 2147483647 then
-					printDist = "inf"
-				end
-				if bestDist == 2147483647 then
-					printBestDist = "inf"
-				end
-				--io.write("Card ", i, "    Dist: ", printDist, "\t\tBestDist: ", printBestDist, "\tAct: ", printAction, "\n")
+				dist, simFellDown, simPosX, simPosY, simDirX, simDirY = self:GetSimDist(_unitID, posX, posY, dirX, dirY, targetX, targetY, cardsToSim, cardsLeftToPick)
 				
 				if dist <= bestDist then
 					
-					
 					-- TODO: Only do nextDist(forward) if have forward cards, only do nextDist(backward) if have backward cards.
-					
 					-- TODO: Don't use walk-cards if we end up at the same spot.
 					
-					-- Get the distance from a cell as if we have walked forward.
-					nextDist = PathfinderHandler.GeneratePath(simPosX + simDirX, simPosY + simDirY, _targetX, _targetY)
+					nextDist = self:GetSimNextDist(simFellDown, simPosX, simPosY, simDirX, simDirY, targetX, targetY, cardsLeftToPick)
 					
-					local printNextDist = nextDist
-					if nextDist == 2147483647 then
-						printNextDist = "inf"
-					end
-					--io.write("NextDist: Forw: ", printNextDist)
+					-- If the distance is the same as the previously best and the "nextDist" is better. If so, a better card has been found.
+					if dist == bestDist and nextDist < bestNextDist then
 					
-					-- Get the distance from a cell as if we have walked backward and compare it to the previous.
-					nextDist = math.min(nextDist, PathfinderHandler.GeneratePath(simPosX - simDirX, simPosY - simDirY, _targetX, _targetY))
-					
-					printNextDist = nextDist
-					if nextDist == 2147483647 then
-						printNextDist = "inf"
-					end
-					--io.write("\tBack: ", printNextDist, "\n\n")
-					
-					if simFellDown then
-						local playedCards = #pickedCards
-						local extraCost = cardsToPick - playedCards - 1
-						nextDist = nextDist + extraCost
-					end
-				
-					if dist == bestDist then
-						
-						if nextDist < bestNextDist then
-							
-							bestCardId = i
-							bestNextDist = nextDist
-						end
+						bestCardId = i
+						bestNextDist = nextDist
 					else
 						
 						bestCardId = i
@@ -340,10 +236,10 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, _dirX, _dirY, _posX
 				table.remove(cardsToSim, 1)
 			end
 			
-			-- Choose card
+			-- Choose card, and simulate the choosen card to use the positions to choose the next card.
 			table.insert(pickedCards, CardSetAI[bestCardId])
 			table.insert(cardsToSim, CardSetAI[bestCardId])
-			simFellDown, posX, posY, dirX, dirY = self:SimulateCardsFromPos(_unitID, posX, posY, dirX, dirY, cardsToSim)
+			fellDown, posX, posY, dirX, dirY = self:SimulateCardsFromPos(_unitID, posX, posY, dirX, dirY, cardsToSim)
 			table.remove(cardsToSim, 1)
 			table.remove(CardSetAI, bestCardId)
 		end
@@ -587,7 +483,7 @@ AICardPickingSystem.TileHasComponent = function(self, _component, _posX, _posY)
 	if -1 < _posX and _posX < mapX and -1 < _posY and _posY < mapY then
 		returnValue = world:EntityHasComponent(tiles[mapX * _posY + _posX + 1], _component)
 	else
-		print("ERROR, trying to get entity from tile outside the boundaries")
+		print("ERROR, trying to get entity from tile outside the boundaries in AICardPickingSystem.TileHasComponent.")
 		returnValue = false
 	end
 	
@@ -604,17 +500,13 @@ AICardPickingSystem.GetRiverVariables = function(self, _posX, _posY)
 	return dirX, dirY, speed
 end
 
-AICardPickingSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
-
-	for i = 1, #entities do
-		if world:EntityHasComponent(entities[i], "DealtCard") then
-			local playerid = world:GetComponent(entities[i], "DealtCard", 0)
-			local id = playerid:GetInt()
-			local plynum = world:GetComponent(id, "PlayerNumber", 0):GetInt()
-			local card = world:GetComponent(entities[i], "CardAction", 0):GetText()
-		elseif world:EntityHasComponent(entities[i], "AI") and not self.PermutationsDone then
-			self:DoPermutations()
-		end
+AICardPickingSystem.AddExtraCostIfFellDown = function(self, _fellDown, _cardsLeftToPick)
+	
+	if _fellDown then
+		local extraCost = _cardsLeftToPick + 1
+		return extraCost
+	else
+		return 0
 	end
 end
 
@@ -649,6 +541,74 @@ AICardPickingSystem.DoPermutations = function(self)
 	--		
 	--	end
 	--end
+end
+
+AICardPickingSystem.ChangeTheCards = function(self, _cardsPerHand, _cardSet)
 	
-	self.PermutationsDone = true
+	for j = 1, _cardsPerHand do
+		
+		local cardactioncomp = world:GetComponent(_cardSet[j], "CardAction", 0)
+		
+			if j == 1 then cardactioncomp:SetText("Forward")
+		elseif j == 2 then cardactioncomp:SetText("Forward")
+		elseif j == 3 then cardactioncomp:SetText("Backward")
+		elseif j == 4 then cardactioncomp:SetText("Backward")
+		elseif j == 5 then cardactioncomp:SetText("TurnRight")
+		elseif j == 6 then cardactioncomp:SetText("TurnLeft")
+		elseif j == 7 then cardactioncomp:SetText("TurnAround")
+		elseif j == 8 then cardactioncomp:SetText("Forward")
+		elseif j == 9 then cardactioncomp:SetText("Forward")
+		elseif j == 10 then cardactioncomp:SetText("Forward")
+		elseif j == 11 then cardactioncomp:SetText("Backward")
+		elseif j == 12 then cardactioncomp:SetText("Backward")
+		elseif j == 13 then cardactioncomp:SetText("TurnRight")
+		elseif j == 14 then cardactioncomp:SetText("TurnLeft")
+		elseif j == 15 then cardactioncomp:SetText("TurnAround")
+		elseif j == 16 then cardactioncomp:SetText("TurnRight")
+		elseif j == 17 then cardactioncomp:SetText("TurnLeft")
+		elseif j == 18 then cardactioncomp:SetText("TurnAround")
+		elseif j == 19 then cardactioncomp:SetText("Backward")
+		elseif j == 20 then cardactioncomp:SetText("TurnLeft")
+		end
+	end
+end
+
+-- Simulate the playing of the nth card and return the pathfinder's value from that position to the target.
+AICardPickingSystem.GetSimDist = function(self, _unitID, _posX, _posY, _dirX, _dirY, _targetX, _targetY, _cardsToSim, _cardsLeftToPick)
+	
+	local simFellDown, simPosX, simPosY, simDirX, simDirY = self:SimulateCardsFromPos(_unitID, _posX, _posY, _dirX, _dirY, _cardsToSim)
+	local dist = PathfinderHandler.GeneratePath(simPosX, simPosY, _targetX, _targetY)
+	
+	-- Add extraCost if the AI will fall down by playing this card.
+	dist = dist + self:AddExtraCostIfFellDown(simFellDown, _cardsLeftToPick)
+	
+	return dist, simFellDown, simPosX, simPosY, simDirX, simDirY
+end
+
+AICardPickingSystem.GetSimNextDist = function(self, _simFellDown, _simPosX, _simPosY, _simDirX, _simDirY, _targetX, _targetY, _cardsLeftToPick)
+	
+	-- Get the distance from a cell as if we have walked forward, then get distance as if we walked forward and compare the two. Save the best.
+	local nextDist = PathfinderHandler.GeneratePath(_simPosX + _simDirX, _simPosY + _simDirY, _targetX, _targetY)
+	nextDist = math.min(nextDist, PathfinderHandler.GeneratePath(_simPosX - _simDirX, _simPosY - _simDirY, _targetX, _targetY))
+	
+	-- Add extraCost if the AI fell down by playing the card.
+	nextDist = nextDist + self:AddExtraCostIfFellDown(_simFellDown, _cardsLeftToPick)
+	
+	return nextDist
+end
+
+AICardPickingSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+
+	for i = 1, #entities do
+		if world:EntityHasComponent(entities[i], "DealtCard") then
+			local playerid = world:GetComponent(entities[i], "DealtCard", 0)
+			local id = playerid:GetInt()
+			local plynum = world:GetComponent(id, "PlayerNumber", 0):GetInt()
+			local card = world:GetComponent(entities[i], "CardAction", 0):GetText()
+		-- If an AI was added, do permutations if it is the first AI.
+		elseif world:EntityHasComponent(entities[i], "AI") and not self.PermutationsDone then
+			self:DoPermutations()
+			self.PermutationsDone = true
+		end
+	end
 end

@@ -15,7 +15,7 @@ void main()
 
 	if(BlendColor != vec3(0.0f))
 	{
-		float blendFactor = 0.74f;
+		float blendFactor = 0.98f;
 		FragColor.xyz = (1.0f-blendFactor)*FragColor.xyz + blendFactor * BlendColor; 
 	}
 	FragColor.a *= Transp;
