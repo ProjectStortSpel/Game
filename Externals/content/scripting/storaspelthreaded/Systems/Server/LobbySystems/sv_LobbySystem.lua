@@ -1,20 +1,16 @@
-CameraInterestpointSystem = System()
+LobbySystem = System()
 
-CameraInterestpointSystem.Initialize = function ( self )
+LobbySystem.Initialize = function ( self )
 	--	Set Name
-	self:SetName("CameraInterestpointSystem")
+	self:SetName("LobbySystem")
 	
 	--	Toggle EntitiesAdded
 	self:UsingEntitiesAdded()
 
 	--	Set Filter
-	self:AddComponentTypeToFilter("CameraInterestPoint", FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter("CameraOnPlayer", FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter("Player", FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter("Unit", FilterType.RequiresOneOf)
 end
 
-CameraInterestpointSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+LobbySystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 	for n = 1, #entities do
 		local entityId = entities[n]
 		if world:EntityHasComponent( entityId, "CameraOnPlayer") then
@@ -58,3 +54,20 @@ CameraInterestpointSystem.EntitiesAdded = function(self, dt, taskIndex, taskCoun
 		end
 	end
 end
+
+Net.Receive("Client.ReadyCheck", 
+	function(id, ip, port)
+		local entity = world:CreateNewEntity()
+		world:CreateComponentAndAddTo("CameraInterestPoint", entity)
+		local AtX = Net.ReadFloat(id)
+		local AtZ = Net.ReadFloat(id)
+		local UpX = Net.ReadFloat(id)
+		local UpZ = Net.ReadFloat(id)
+		local Distance = Net.ReadFloat(id)
+		world:GetComponent(entity, "CameraInterestPoint", "AtX"):SetFloat(AtX)
+		world:GetComponent(entity, "CameraInterestPoint", "AtZ"):SetFloat(AtZ)
+		world:GetComponent(entity, "CameraInterestPoint", "UpX"):SetFloat(UpX)
+		world:GetComponent(entity, "CameraInterestPoint", "UpZ"):SetFloat(UpZ)
+		world:GetComponent(entity, "CameraInterestPoint", "Distance"):SetFloat(Distance)
+	end 
+)

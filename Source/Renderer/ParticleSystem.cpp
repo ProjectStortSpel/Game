@@ -13,7 +13,7 @@ ParticleSystem::ParticleSystem(std::string type, const vec3 _pos, int _nParticle
 	m_shader = _shaderProg;
 	m_drawBuf = 1;
 	m_color = _color;
-	m_endPhase = false;
+	m_endPhase = 0;
 
 	if (type == "fire")
 		CreateFire();
@@ -303,13 +303,13 @@ void ParticleSystem::CreateSmoke()
 
 void ParticleSystem::Render(float _dt)
 {
-	glBlendColor(0.92, 0.92, 0.92, 1.0);
+	glBlendColor(0.93, 0.93, 0.93, 1.0);
 	glBlendFunc(GL_SRC_ALPHA, m_dstBlendFactor);
 
 	float dt = 1000.f * (_dt);
 	m_elapsedTime += dt;
 
-	if (m_endPhase)
+	if (m_endPhase == 1)
 		m_removeDelayTime += dt;
 
 	/////////// Update pass ////////////////
@@ -352,7 +352,7 @@ void ParticleSystem::Render(float _dt)
 
 void ParticleSystem::EnterEndPhase()
 {
-	m_endPhase = true;
+	m_endPhase = 1;
 }
 
 bool ParticleSystem::ReadyToBeDeleted()
