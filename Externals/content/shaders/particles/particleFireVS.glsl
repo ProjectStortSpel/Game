@@ -35,7 +35,7 @@ void update()
 	if( Time >= StartTime ) {
 		float age = Time - StartTime;
 		
-		if( age >ParticleLifetime && !EndPhase) {
+		if( age >ParticleLifetime && EndPhase == 0) {
 			// The particle is past its lifetime, recycle.
 			Position = VertexInitialPosition; //vec3(0.0);
 			Velocity = VertexInitialVelocity;
