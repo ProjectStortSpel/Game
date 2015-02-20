@@ -1,5 +1,4 @@
 SortSelectedCardsSystem = System()
-SortSelectedCardsSystem.MaxSelectedCards = 5
 
 SortSelectedCardsSystem.Initialize = function ( self )
 	--	Set Name
@@ -11,14 +10,16 @@ SortSelectedCardsSystem.Initialize = function ( self )
 	
 	--	Set Filter
 	self:AddComponentTypeToFilter("SelectCard", FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter("GameRules", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("DealingSettings", FilterType.RequiresOneOf)
 end
 
 
 SortSelectedCardsSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 	for n = 1, #entities do
 		local entityId = entities[n]
-		self:SelectCard(entityId)
+		if world:EntityHasComponent(entityId, "SelectCard") then
+			self:SelectCard(entityId)
+		end
 	end
 end
 
@@ -33,11 +34,15 @@ end
 
 SortSelectedCardsSystem.SelectCard = function(self, card)
 	local index = world:GetComponent(card, "SelectCard", "Index"):GetInt()
-	local cards = self:GetEntities()
+	local cards = self:GetEntities("SelectCard")
 	if index > #cards then
 		index = #cards
 	end
-	if #cards <= self.MaxSelectedCards then
+	
+	local DealingSettings = self:GetEntities("DealingSettings")
+	local cardsPerHand, cardsToPick = world:GetComponent(DealingSettings[1], "DealingSettings", 0):GetInt2(0)
+	
+	if #cards <= cardsToPick then
 		for i = 1, #cards do
 			if world:EntityHasComponent(cards[i], "CardSelected") then
 				local index2 = world:GetComponent(cards[i], "SelectCard", "Index"):GetInt()
@@ -46,6 +51,7 @@ SortSelectedCardsSystem.SelectCard = function(self, card)
 				end
 			end
 		end
+		
 		world:SetComponent(card, "SelectCard", "Index", index)
 		world:CreateComponentAndAddTo("CardSelected", card)
 		self:SendSelectedCard(card, index)

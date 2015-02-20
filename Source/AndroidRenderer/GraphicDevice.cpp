@@ -372,13 +372,16 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 		shaderPtr = &m_interfaceShader;
 		m_interfaceShader.UseProgram();
 	}
-	else
+	else if (_modelToLoad->RenderType == 0)
 	{
 		shaderPtr = &m_forwardShader;
 		m_forwardShader.UseProgram();
 		//SDL_Log("Deferred requested. Selecting FORWARD");
 	}
-
+	else
+	{
+		return;
+	}
 	// Import Object
 	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
 

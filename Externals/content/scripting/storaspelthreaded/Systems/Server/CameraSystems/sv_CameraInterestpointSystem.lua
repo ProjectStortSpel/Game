@@ -29,21 +29,21 @@ CameraInterestpointSystem.EntitiesAdded = function(self, dt, taskIndex, taskCoun
 					
 					-- CAMERA INTEREST POINT
 					local cipID = Net.StartPack("Client.SendCIP")
-					Net.WriteFloat(cipID, x)
-					Net.WriteFloat(cipID, z)
+					Net.WriteFloat(cipID, 6.5-dx*2)
+					Net.WriteFloat(cipID, 6.5-dz*2)
 					Net.WriteFloat(cipID, dx)
 					Net.WriteFloat(cipID, dz)
-					Net.WriteFloat(cipID, 1)
+					Net.WriteFloat(cipID, 1.0)
 					Net.Send(cipID, ip, port)
 				end
 			end
 			world:KillEntity( entityId )
 		end
 		if world:EntityHasComponent( entityId, "CameraInterestPoint") then
-			local x = world:GetComponent(entityId, "CameraInterestPoint", "UpX"):GetFloat(0)
-			local z = world:GetComponent(entityId, "CameraInterestPoint", "UpZ"):GetFloat(0)
-			local dx = world:GetComponent(entityId, "CameraInterestPoint", "AtX"):GetFloat(0)
-			local dz = world:GetComponent(entityId, "CameraInterestPoint", "AtZ"):GetFloat(0)
+			local x = world:GetComponent(entityId, "CameraInterestPoint", "AtX"):GetFloat(0)
+			local z = world:GetComponent(entityId, "CameraInterestPoint", "AtZ"):GetFloat(0)
+			local dx = world:GetComponent(entityId, "CameraInterestPoint", "UpX"):GetFloat(0)
+			local dz = world:GetComponent(entityId, "CameraInterestPoint", "UpZ"):GetFloat(0)
 			local d = world:GetComponent(entityId, "CameraInterestPoint", "Distance"):GetFloat(0)
 
 			-- CAMERA INTEREST POINT

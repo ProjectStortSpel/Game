@@ -96,7 +96,7 @@ UnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 			world:SetComponent(newEntityId, "TargetCheckpoint", "Id", targetCheckpoint)
 			world:GetComponent(newEntityId, "Direction", 0):SetInt2(0, -1)
 			world:CreateComponentAndAddTo("NeedSpawnLocation", newEntityId)
-			world:CreateComponentAndAddTo("Hide", newEntityId)
+			--world:CreateComponentAndAddTo("Hide", newEntityId)
 			
 			world:SetComponent(entity, "PlayerNumber", "Number", playerNumber)
 			world:CreateComponentAndAddTo("UnitEntityId", entity)
@@ -111,11 +111,7 @@ UnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 				Net.Send(id, ip, port)
 				
 				
-				local id = Net.StartPack("Client.NewTargetCheckpoint")
-				Net.WriteInt(id, checkpointId)
-				Net.WriteInt(id, X)
-				Net.WriteInt(id, Z)
-				Net.Send(id, ip, port)
+
 			end
 						
 		elseif world:EntityHasComponent(entity, "RemoveUnit") then
