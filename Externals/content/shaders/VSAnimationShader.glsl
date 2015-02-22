@@ -35,6 +35,7 @@ out vec3 Normal;
 out vec3 Tan;
 out vec3 BiTan;
 out vec2 TexCoord;
+out vec3 addColor;
 
 mat4 JointToMatrix(JointMatrix joint)
 {
@@ -63,18 +64,22 @@ void main()
 	Tan = normalize( NormalMatrix * VertexTangent);
 	BiTan = normalize( NormalMatrix * VertexBiTangent);
 	TexCoord = VertexTexCoord;
-	mat4 joint1 = mat4(1);
-	mat4 joint2 = mat4(1);
-	mat4 joint3 = mat4(1);
-	mat4 joint4 = mat4(1);
-	if (VertexJointWeight.x > 0)
-		joint1 = (JointToMatrix(joints[int(VertexJointIndex.x)]) * GetJointMatrix(anim.length()-int(VertexJointIndex.x)-1)) * VertexJointWeight.x;
-	if (VertexJointWeight.y > 0)
-		joint2 = (JointToMatrix(joints[int(VertexJointIndex.y)]) * GetJointMatrix(anim.length()-int(VertexJointIndex.y)-1)) * VertexJointWeight.y;
-	if (VertexJointWeight.z > 0)
-		joint3 = (JointToMatrix(joints[int(VertexJointIndex.z)]) * GetJointMatrix(anim.length()-int(VertexJointIndex.z)-1)) * VertexJointWeight.z;
-	if (VertexJointWeight.w > 0)
-		joint4 = (JointToMatrix(joints[int(VertexJointIndex.w)]) * GetJointMatrix(anim.length()-int(VertexJointIndex.w)-1)) * VertexJointWeight.w;
-	gl_Position = VP * M * (joint1 + joint2 + joint3 + joint4) * vec4(VertexPosition, 1.0);
+
+	vec4 weights = normalize(VertexJointWeight);
+	
+	addColor = vec3(0);
+	addColor += vec3(VertexJointIndex.x/36.f) * weights.x;
+	addColor += vec3(VertexJointIndex.y/36.f) * weights.y;
+	addColor += vec3(VertexJointIndex.z/36.f) * weights.z;
+	addColor += vec3(VertexJointIndex.w/36.f) * weights.w;
+
+	mat4 skin = mat4(0);
+	skin += (JointToMatrix(joints[int(VertexJointIndex.x)]) * GetJointMatrix(anim.length()-int(VertexJointIndex.x)-1)) * weights.x;
+	skin += (JointToMatrix(joints[int(VertexJointIndex.y)]) * GetJointMatrix(anim.length()-int(VertexJointIndex.y)-1)) * weights.y;
+	skin += (JointToMatrix(joints[int(VertexJointIndex.z)]) * GetJointMatrix(anim.length()-int(VertexJointIndex.z)-1)) * weights.z;
+	skin += (JointToMatrix(joints[int(VertexJointIndex.w)]) * GetJointMatrix(anim.length()-int(VertexJointIndex.w)-1)) * weights.w;
+	
+	
+	gl_Position = VP * M * skin * vec4(VertexPosition, 1.0);
 	//instanceID = gl_InstanceID;
 }

@@ -493,6 +493,9 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 
 	for (int j = 0; j < model.joints.size(); j++)
 	{
+		color[j * 3 + 0] = j / 36.f;
+		color[j * 3 + 1] = j / 36.f;
+		color[j * 3 + 2] = j / 36.f;
 		Joint joint = model.joints[j];
 		mat4 jmat = glm::inverse(mat4(joint.x0, joint.y0, joint.z0, joint.w0,
 			joint.x1, joint.y1, joint.z1, joint.w1,
@@ -500,18 +503,18 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 			joint.x3, joint.y3, joint.z3, 1
 			)) * scale(vec3(0.1, 0.1, 0.1));
 		matrixes[j] = jmat;
-		float col = 1.00f;
-		if (model.joints[j].parent >= 0)
-			col = color[(int)(model.joints[j].parent) * 3 + 0] - 0.1f;
-
-		color[j * 3 + 0] = col;
-		color[j * 3 + 1] = col;
-		color[j * 3 + 2] = col;
+	//	float col = 1.00f;
+	//	if (model.joints[j].parent >= 0)
+	//		col = color[(int)(model.joints[j].parent) * 3 + 0] - 0.1f;
+	//
+	//	color[j * 3 + 0] = col;
+	//	color[j * 3 + 1] = col;
+	//	color[j * 3 + 2] = col;
 		LoadModel("content/models/stone/", "stone.object", &matrixes[j], 0, &color[j * 3]);
 	}
-	color[0] = 1;
-	color[1] = 0;
-	color[2] = 0;
+	//color[0] = 1;
+	//color[1] = 0;
+	//color[2] = 0;
 }
 
 bool GraphicDevice::RemoveModel(int _id)
