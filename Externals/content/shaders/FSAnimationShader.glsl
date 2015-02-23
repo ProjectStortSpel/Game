@@ -3,7 +3,6 @@ in vec3 Normal;
 in vec3 Tan;
 in vec3 BiTan;
 in vec2 TexCoord;
-in vec3 addColor;
 
 //flat in int instanceID;
 
@@ -37,7 +36,7 @@ void main()
 		// -- OUTPUTS --
 		// Set Color output
 		if( BlendColor != vec3(0.0) )
-			ColorData.xyz = addColor;//(1.0f-blendFactor)*color_map.xyz + blendFactor * BlendColor; 
+			ColorData.xyz = (1.0f-blendFactor)*color_map.xyz + blendFactor * BlendColor; 
 		else
 			ColorData.xyz = color_map.xyz;								// rgb = color
 

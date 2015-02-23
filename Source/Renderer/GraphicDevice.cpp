@@ -397,7 +397,7 @@ void GraphicDevice::Update2(float _dt, AModel* modelptr)
 					) * jmat;
 				k += modelptr->animation[k].parent;
 			}
-			matrixes[j] = mat4(jmat);
+			matrixes[j] = jmat;
 		}
 	}
 }
@@ -512,9 +512,6 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 	//	color[j * 3 + 2] = col;
 		LoadModel("content/models/stone/", "stone.object", &matrixes[j], 0, &color[j * 3]);
 	}
-	//color[0] = 1;
-	//color[1] = 0;
-	//color[2] = 0;
 }
 
 bool GraphicDevice::RemoveModel(int _id)

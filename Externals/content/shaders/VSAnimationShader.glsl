@@ -35,7 +35,6 @@ out vec3 Normal;
 out vec3 Tan;
 out vec3 BiTan;
 out vec2 TexCoord;
-out vec3 addColor;
 
 mat4 JointToMatrix(JointMatrix joint)
 {
@@ -60,31 +59,19 @@ mat4 GetJointMatrix(int Index)
 
 void main()
 {
-	Normal = normalize( NormalMatrix * VertexNormal );
 	Tan = normalize( NormalMatrix * VertexTangent);
 	BiTan = normalize( NormalMatrix * VertexBiTangent);
 	TexCoord = VertexTexCoord;
 
 	vec4 weights = normalize(VertexJointWeight);
-	
-	addColor = vec3(0);
-	int mark = 35;
-	if (VertexJointIndex.x == mark)
-		addColor += vec3(1) * weights.x;
-	if (VertexJointIndex.y == mark)
-		addColor += vec3(1) * weights.y;
-	if (VertexJointIndex.z == mark)
-		addColor += vec3(1) * weights.z;
-	if (VertexJointIndex.w == mark)
-		addColor += vec3(1) * weights.w;
 
 	mat4 skin = mat4(0);
-	skin += (JointToMatrix(joints[int(VertexJointIndex.x)]) * GetJointMatrix(anim.length()-int(VertexJointIndex.x)-1)) * weights.x;
-	skin += (JointToMatrix(joints[int(VertexJointIndex.y)]) * GetJointMatrix(anim.length()-int(VertexJointIndex.y)-1)) * weights.y;
-	skin += (JointToMatrix(joints[int(VertexJointIndex.z)]) * GetJointMatrix(anim.length()-int(VertexJointIndex.z)-1)) * weights.z;
-	skin += (JointToMatrix(joints[int(VertexJointIndex.w)]) * GetJointMatrix(anim.length()-int(VertexJointIndex.w)-1)) * weights.w;
-	
+	skin += (GetJointMatrix(anim.length()-int(VertexJointIndex.x)-1) * (JointToMatrix(joints[int(VertexJointIndex.x)]))) * weights.x;
+	skin += (GetJointMatrix(anim.length()-int(VertexJointIndex.y)-1) * (JointToMatrix(joints[int(VertexJointIndex.y)]))) * weights.y;
+	skin += (GetJointMatrix(anim.length()-int(VertexJointIndex.z)-1) * (JointToMatrix(joints[int(VertexJointIndex.z)]))) * weights.z;
+	skin += (GetJointMatrix(anim.length()-int(VertexJointIndex.w)-1) * (JointToMatrix(joints[int(VertexJointIndex.w)]))) * weights.w;
 	
 	gl_Position = VP * M * skin * vec4(VertexPosition, 1.0);
+	Normal = normalize( NormalMatrix * (skin * vec4(VertexNormal, 0.0)).xyz );
 	//instanceID = gl_InstanceID;
 }

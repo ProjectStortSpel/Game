@@ -5,6 +5,9 @@ using namespace glm;
 
 GraphicsHigh::GraphicsHigh()
 {
+	mark = 0;
+	timer = 0;
+
 	m_renderSimpleText = true;
 	m_modelIDcounter = 0;
 	m_vramUsage = 0;
@@ -456,7 +459,7 @@ void GraphicsHigh::Render()
 			mat4 modelViewMatrix = modelMatrix;
 			mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
 			m_animationShader.SetUniVariable("BlendColor", vector3, m_modelsAnimated[i].color);
-	
+
 			m_animationShader.SetUniVariable("M", mat4x4, &modelViewMatrix);
 			m_animationShader.SetUniVariable("VP", mat4x4, &vp);
 			m_animationShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
