@@ -47,7 +47,7 @@ LobbySystem.UpdatePlayers = function(self)
 		
 		
 		local text = self:CreateElement("left", "text", -0.81, 0.64-i*0.11, -1.999, 1.5, 0.08)	
-		self:AddTextToTexture("LobbyMenuSystemPlayer"..i, "test", 0, 1, 1, 1, text)
+		self:AddTextToTexture("LMSP"..i, "test", 0, 1, 1, 1, text)
 	end
 	
 end
