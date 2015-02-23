@@ -1279,7 +1279,7 @@ namespace LuaBridge
 			unsigned int id = LuaEmbedder::PullInt(L, 1);
 
 			Network::Packet* p = NetworkInstance::GetServerNetworkHelper()->WriteEntityAll(server->GetPacketHandler(), id);
-			server->Broadcast(p);
+			server->Send(p, ClientManager::GetConnectedClients());
 
 			return 0;
 		}
@@ -1292,7 +1292,7 @@ namespace LuaBridge
 			unsigned int id = LuaEmbedder::PullInt(L, 1);
 
 			Network::Packet* p = NetworkInstance::GetServerNetworkHelper()->WriteEntityKill(server->GetPacketHandler(), id);
-			server->Broadcast(p);
+			server->Send(p, ClientManager::GetConnectedClients());
 
 			return 0;
 		}
