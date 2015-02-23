@@ -140,7 +140,7 @@ bool ServerNetwork::Stop()
 	if (SDL_LockMutex(m_connectedClientsLock) == 0)
 	{
 		for (auto it = m_connectedClients->begin(); it != m_connectedClients->end(); ++it)
-			it->second->ShutdownSocket(1);
+			it->second->ShutdownSocket(2);
 
 		SDL_UnlockMutex(m_connectedClientsLock);
 	}
@@ -151,7 +151,7 @@ bool ServerNetwork::Stop()
 		it->second.join();
 	m_receivePacketThreads->clear();
 
-	m_listenSocket->ShutdownSocket(1);
+	m_listenSocket->ShutdownSocket(2);
 	m_listenSocket->SetActive(0);
 	m_listenThread->join();
 
@@ -315,7 +315,16 @@ void ServerNetwork::ReceivePackets(ISocket* _socket)
 			*p->Sender = _socket->GetNetConnection();
 			memcpy(p->Data, packetData, dataReceived);
 
-			HandlePacket(p);
+			if (_socket->GetActive() == 1 && m_packetHandler->GetNetTypeMessageId(p) == NetTypeMessageId::ID_CUSTOM_PACKET)
+			{
+				if (SDL_LockMutex(m_customPacketLock) == 0)
+				{
+					m_inactivePackets->push(p);
+					SDL_UnlockMutex(m_customPacketLock);
+				}
+			}
+			else
+				HandlePacket(p);
 
 			if (SDL_LockMutex(m_dataReceiveLock) == 0)
 			{
@@ -334,6 +343,8 @@ void ServerNetwork::ReceivePackets(ISocket* _socket)
 		}
 		else
 		{
+			if (NET_DEBUG > 0)
+				DebugLog("Failed to receive message from client.", LogSeverity::Warning);
 		}
 
 	}
@@ -561,6 +572,7 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t& 
 
 		uint64_t id2 = _packetHandler->StartPack(NetTypeMessageId::ID_CONNECTION_ACCEPTED);
 		Packet* newPacket = _packetHandler->EndPack(id2);
+		Send(newPacket, _connection);
 
 		if (SDL_LockMutex(m_connectedClientsLock) == 0)
 		{
@@ -572,6 +584,8 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t& 
 		else if (NET_DEBUG > 0)
 			DebugLog("Failed to lock connectedClients. Error: %s", LogSeverity::Error, SDL_GetError());
 
+
+		HandleInactivePacket();
 
 		uint64_t id3 = _packetHandler->StartPack(NetTypeMessageId::ID_REMOTE_CONNECTION_ACCEPTED);
 		_packetHandler->WriteString(id3, _connection.GetIpAddress());
@@ -594,7 +608,7 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t& 
 
 		if (SDL_LockMutex(m_connectedClientsLock) == 0)
 		{
-			(*m_connectedClients)[_connection]->ShutdownSocket(1);
+			(*m_connectedClients)[_connection]->ShutdownSocket(2);
 			(*m_receivePacketThreads)[_connection].join();
 			SDL_UnlockMutex(m_connectedClientsLock);
 		}
@@ -613,7 +627,7 @@ void ServerNetwork::NetConnectionLost(NetConnection& _connection)
 	if (SDL_LockMutex(m_connectedClientsLock) == 0)
 	{
 		if(m_connectedClients->find(_connection) != m_connectedClients->end())
-			(*m_connectedClients)[_connection]->ShutdownSocket(1);
+			(*m_connectedClients)[_connection]->ShutdownSocket(2);
 		SDL_UnlockMutex(m_connectedClientsLock);
 	}
 	else if (NET_DEBUG > 0)
@@ -647,7 +661,7 @@ void ServerNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uin
 	if (SDL_LockMutex(m_connectedClientsLock) == 0)
 	{
 		if (m_connectedClients->find(_connection) != m_connectedClients->end())
-			(*m_connectedClients)[_connection]->ShutdownSocket(1);
+			(*m_connectedClients)[_connection]->ShutdownSocket(2);
 		SDL_UnlockMutex(m_connectedClientsLock);
 	}
 	else if (NET_DEBUG > 0)
