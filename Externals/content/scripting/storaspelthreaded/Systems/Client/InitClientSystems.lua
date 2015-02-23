@@ -53,8 +53,7 @@ worldCreator:AddSystemToCurrentGroup(SortSelectedCardsSystem)
 worldCreator:AddSystemToCurrentGroup(GameMenuSystem)
 worldCreator:AddSystemToCurrentGroup(CardHoverSystem)
 worldCreator:AddSystemToCurrentGroup(CardAddModelSystem)
-
-
+worldCreator:AddSystemToCurrentGroup(ShowNextCheckpointSystem)
 
 
 
