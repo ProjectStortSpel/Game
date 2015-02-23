@@ -1,5 +1,6 @@
 --  Game Logic Systems
 package.path = package.path .. ";Systems/Server/GameLogicSystems/?.lua"
+require "sv_LobbySystem"
 require "sv_StageSystem"
 
 --	Map Systems
@@ -101,6 +102,7 @@ require "sv_HostSettingsSystem"
 require "sv_OffsetUnitSystem"
 
 --worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(LobbySystem)
 worldCreator:AddSystemToCurrentGroup(StageSystem)
 --worldCreator:AddSystemToCurrentGroup(MapGenerator)
 worldCreator:AddSystemToCurrentGroup(CreateMapSystem)

@@ -8,6 +8,18 @@ GameInterfaceElement.Name = "GameInterfaceElement"
 GameInterfaceElement.TableType = TableType.Map
 worldCreator:AddComponentType(GameInterfaceElement)
 
+--	LobbyMenu Component
+local LobbyMenu = ComponentType()
+LobbyMenu.Name = "LobbyMenu"
+LobbyMenu.TableType = TableType.Map
+worldCreator:AddComponentType(LobbyMenu)
+
+--	LobbyMenuElement Component
+local LobbyMenuElement = ComponentType()
+LobbyMenuElement.Name = "LobbyMenuElement"
+LobbyMenuElement.TableType = TableType.Map
+worldCreator:AddComponentType(LobbyMenuElement)
+
 --	GameMenu Component
 local GameMenu = ComponentType()
 GameMenu.Name = "GameMenu"
