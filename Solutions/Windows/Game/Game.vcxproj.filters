@@ -84,6 +84,9 @@
     <Filter Include="Game\Systems\ParticleSystem">
       <UniqueIdentifier>{b9d97fa0-3180-4175-bdbb-35be7ebbf5f7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lua Bridge\Audio">
+      <UniqueIdentifier>{b515085e-e995-433d-9c82-81c42164e601}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\LuaBridge.cpp">
@@ -248,6 +251,9 @@
     <ClCompile Include="..\..\..\Source\Game\HomePath.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\Audio\LuaAudio.cpp">
+      <Filter>Lua Bridge\Audio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h">
@@ -408,6 +414,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\HomePath.h">
       <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\Audio\LuaAudio.h">
+      <Filter>Lua Bridge\Audio</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
