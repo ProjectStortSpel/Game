@@ -67,24 +67,32 @@ LobbySystem.UpdatePlayers = function(self)
 		local entityId = entities[i]
 		local unitId = world:GetComponent(entityId, "UnitEntityId", "Id"):GetInt()
 		
-		local ip = "AI";
+		local name = "Ugha Buggah"
+		local ip = " ";
+		local readyText = " ";
 		if world:EntityHasComponent(entityId, "NetConnection") then
 			ip = world:GetComponent(entityId, "NetConnection", "IpAddress"):GetText()
-			
+			name = "Player" -- TODO: FETCH PLAYERNAME
 			if world:EntityHasComponent(entityId, "LobbyPlayerReady") then
-				ip = ip.." - Ready"
+				readyText = "Ready"
 				readyplayers = readyplayers + 1
 			end
 		else
-			ip = ip.." - Ready"
+			readyText = "Ready"
 			readyplayers = readyplayers + 1
 		end
 		
 		local r, g, b = world:GetComponent(unitId, "Color", "X"):GetFloat3(0)
 		
-		local text = self:CreateElement("left", "text", -0.4, 0.64-i*0.11, -1.999, 1.5, 0.08)
+		local button = self:CreateElement("shade", "quad", 0, 0.6-i*0.11, -2.0, 1.8, 0.1)
+		
+		local text = self:CreateElement("left", "text", -0.85, 0.64-i*0.11, -1.999, 1.5, 0.08)
 		world:CreateComponentAndAddTo("LobbyMenuPlayer", text)
-		self:AddTextToTexture("LMSP"..i, ip, 0, r, g, b, text)
+		self:AddTextToTexture("LMSPname"..i, name, 0, r, g, b, text)
+		text = self:CreateElement("center", "text", 0, 0.64-i*0.11, -1.999, 1.78, 0.08)
+		self:AddTextToTexture("LMSPip"..i, ip, 0, r, g, b, text)
+		text = self:CreateElement("right", "text", 0.89, 0.64-i*0.11, -1.999, 0.8, 0.08)	
+		self:AddTextToTexture("LMSPready"..i, readyText, 0, r, g, b, text)
 	end
 	
 	if #entities == readyplayers then
@@ -121,7 +129,7 @@ end
 
 
 LobbySystem.SpawnMenu = function(self)
-	local background = self:CreateElement("gamemenubackground", "quad", 0, -0, -3.1, 1.5, 2)
+	local background = self:CreateElement("gamemenubackground", "quad", 0, 0, -2.1, 2.07, 1.3)
 end
 
 LobbySystem.RemoveMenu = function(self)
@@ -154,7 +162,7 @@ LobbySystem.CreateElement = function(self, object, folder, posx, posy, posz, sca
 	world:CreateComponentAndAddTo("PickBox", id)
 	world:CreateComponentAndAddTo(self.Name.."Element", id)
 	local model = world:GetComponent(id, "Model", 0)
-	model:SetModel(object, folder, 2)
+	model:SetModel(object, folder, 3)
 	local position = world:GetComponent(id, "Position", 0)
 	position:SetFloat3(posx, posy, posz)
 	local scale = world:GetComponent(id, "Scale", 0)
