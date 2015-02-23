@@ -143,7 +143,7 @@ public:
 
 	static std::vector<JointData> importJoints(std::string fileDir)
 	{
-		std::vector<JointData> jointlist;
+		std::vector<JointData> jointlistTemp;
 
 		std::ifstream fileIn(fileDir.c_str());
 
@@ -163,7 +163,7 @@ public:
 				fileIn >> zx >> zy >> zz >> zw;
 				fileIn >> wx >> wy >> wz >> ww;
 
-				jointlist.push_back(
+				jointlistTemp.push_back(
 					JointData(	xx, xy, xz, xw,
 								yx, yy, yz, yw,
 								zx, zy, zz, zw,
@@ -172,6 +172,16 @@ public:
 					);
 			}
 		}
+
+		std::vector<JointData> jointlist;
+		for (int i = 0; i < jointlistTemp.size(); i++)
+		{
+			int index = jointlistTemp.size() - i - 1;
+			JointData tempJoint = jointlistTemp[index];
+			tempJoint.parent = index - tempJoint.parent - 1;
+			jointlist.push_back(tempJoint);
+		}
+
 		return jointlist;
 	}
 };

@@ -42,6 +42,12 @@ HostMenuElement.Name = "HostMenuElement"
 HostMenuElement.TableType = TableType.Map
 worldCreator:AddComponentType(HostMenuElement)
 
+--	HostMenuActivate Component
+local HostMenuActivate = ComponentType()
+HostMenuActivate.Name = "HostMenuActivate"
+HostMenuActivate.TableType = TableType.Map
+worldCreator:AddComponentType(HostMenuActivate)
+
 -- Menu ConsoleCommand
 local MenuConsoleCommand = ComponentType()
 MenuConsoleCommand.Name = "MenuConsoleCommand"

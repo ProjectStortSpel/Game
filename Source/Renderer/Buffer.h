@@ -29,7 +29,7 @@ namespace Renderer
 
 		void draw(void);
 		void draw(GLint base, GLsizei count);
-		void drawInstanced(GLint base, int instances, std::vector<glm::mat4> *inMats, std::vector<glm::mat3> *normalMats, std::vector<float> *color = nullptr);
+		void drawInstanced(GLint base, int instances, std::vector<glm::mat4> *inMats, std::vector<glm::mat3> *normalMats, float *color = nullptr);
 
 		void setCount(GLsizei count);
 

@@ -43,3 +43,17 @@ CheckboxComponent.Name = "Checkbox"
 CheckboxComponent:AddVariable("Checked", ByteSize.Bool)
 CheckboxComponent.TableType = TableType.Map
 worldCreator:AddComponentType(CheckboxComponent)
+
+--	NotificationBox Component
+local NotificationBox = ComponentType()
+NotificationBox.Name = "NotificationBox"
+NotificationBox.TableType = TableType.Map
+NotificationBox:AddVariable("Text", ByteSize.Text)
+NotificationBox:AddVariable("ParentMenu", ByteSize.Text)
+worldCreator:AddComponentType(NotificationBox)
+
+--	NotificationBoxElement Component
+local NotificationBoxElement = ComponentType()
+NotificationBoxElement.Name = "NotificationBoxElement"
+NotificationBoxElement.TableType = TableType.Map
+worldCreator:AddComponentType(NotificationBoxElement)

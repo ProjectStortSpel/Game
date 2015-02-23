@@ -35,6 +35,12 @@ UnitBackwardComponent.Name = "UnitBackward"
 UnitBackwardComponent.TableType = TableType.Map
 worldCreator:AddComponentType(UnitBackwardComponent)
 
+-- Guard Component
+local UnitSprintComponent = ComponentType()
+UnitSprintComponent.Name = "UnitGuard"
+UnitSprintComponent.TableType = TableType.Map
+worldCreator:AddComponentType(UnitSprintComponent)
+
 -- Sprint Component
 local UnitSprintComponent = ComponentType()
 UnitSprintComponent.Name = "UnitSprint"

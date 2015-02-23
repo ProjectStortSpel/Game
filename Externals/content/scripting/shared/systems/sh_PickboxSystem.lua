@@ -13,7 +13,7 @@ PickBoxSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("PickBox", FilterType.Mandatory)
 end
 
-PickBoxSystem.Update = function(self, dt, taskIndex, taskCount)
+PickBoxSystem.Update = function(self, dt)
 	-- Fetch Aspect ratio from graphics:
 	local AspectX, AspectY = GraphicDevice.GetAspectRatio()
 
@@ -74,9 +74,7 @@ PickBoxSystem.Update = function(self, dt, taskIndex, taskCount)
 		for i = 1, #entities do
 			local entity = entities[i]
 			if entity ~= newhit then
-				if world:EntityHasComponent(entity, "OnPickBoxHit") then
-					world:RemoveComponentFrom("OnPickBoxHit", entity)
-				end
+				world:RemoveComponentFrom("OnPickBoxHit", entity)
 			end
 		end
 	else

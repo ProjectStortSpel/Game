@@ -23,6 +23,10 @@ namespace Renderer
 #define RENDER_FORWARD  1
 #define RENDER_VIEWSPACE  2
 #define RENDER_INTERFACE  3
+#define RENDER_ANIMATED  4
+
+#define RENDER_DEFERRED_SCATTER  8
+#define RENDER_FORWARD_SCATTER  9
 
 #define TEXTURE_DIFFUSE		0
 #define TEXTURE_NORMAL		1
@@ -56,6 +60,22 @@ namespace Renderer
 	{
 		std::string Dir;
 		std::string File;
+		glm::mat4* MatrixPtr;
+		int RenderType;
+		float* Color;
+	};
+	
+	struct ModelToLoadFromSource
+	{
+		std::string key;
+		std::vector<float> positions;
+		std::vector<float> normals;
+		std::vector<float> tangents;
+		std::vector<float> bitangents;
+		std::vector<float> texCoords;
+		std::string diffuseTextureFilepath;
+		std::string normalTextureFilepath;
+		std::string specularTextureFilepath;
 		glm::mat4* MatrixPtr;
 		int RenderType;
 		float* Color;
@@ -115,6 +135,7 @@ namespace Renderer
 
 		// MODELLOADER
 		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED, float* _color = nullptr);
+		int LoadModel(ModelToLoadFromSource* _modelToLoad);
 		bool RemoveModel(int _id);// = 0;
 		bool ActiveModel(int _id, bool _active);// = 0;
 		virtual bool ChangeModelTexture(int _id, std::string _fileDir, int _textureType = TEXTURE_DIFFUSE){ m_modelTextures.push_back({ _id, _fileDir, _textureType }); return false; };// = 0;
@@ -135,6 +156,7 @@ namespace Renderer
 
 		void AddParticleEffect(std::string _name, const vec3 _pos, int _nParticles, float _lifeTime, float _scale, float _spriteSize, std::string _texture, vec3 _color, int &_id);
 		void RemoveParticleEffect(int _id);
+		void SetParticleAcceleration(int _id, float x, float y, float z);
 		
 	protected:
 		virtual void InitRenderLists() { return; }
@@ -142,6 +164,8 @@ namespace Renderer
 		bool InitSkybox();
 		void BufferModels();
 		void BufferModel(int _modelId, ModelToLoad* _modelToLoad);
+		void BufferAModel(int _modelId, ModelToLoad* _modelToLoad);
+		void BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoad);
 
 		std::vector<ModelTexture> m_modelTextures;
 		void BufferModelTextures();
@@ -151,9 +175,12 @@ namespace Renderer
 		// Meshs
 		std::map<const std::string, Buffer*> m_meshs;
 		Buffer* AddMesh(std::string _fileDir, Shader *_shaderProg, bool animated);
+		Buffer* AddMesh(ModelToLoadFromSource* _modelToLoad, Shader *_shaderProg);
 
 		//modellists
 		std::vector<RenderList> m_renderLists;
+		std::vector<AModel> m_modelsAnimated;
+		Shader m_animationShader;
 
 		//MODEL LOADER
 		int m_modelIDcounter;
@@ -177,7 +204,7 @@ namespace Renderer
 
 		// Shaders
 		Shader m_skyBoxShader;
-		Shader m_particleShader;
+		std::map<std::string, Shader> m_particleShaders;
 
 		// Skybox
 		SkyBox *m_skybox;
@@ -186,10 +213,12 @@ namespace Renderer
 		std::map<int, ParticleSystem*> m_particleSystems;
 		int m_particleID;
 		std::vector<ParticleSystemToLoad> m_particleSystemsToLoad;
+		std::vector<int> m_particlesIdToRemove;
 
 		//// DEBUG variables ----
 		int m_debugTexFlag;
 		std::map<int, ModelToLoad*> m_modelsToLoad;
+		std::map<int, ModelToLoadFromSource*> m_modelsToLoadFromSource;
 		float**	m_pointerToPointlights;
 		int		m_numberOfPointlights;
 		float*	m_pointerToDirectionalLights;

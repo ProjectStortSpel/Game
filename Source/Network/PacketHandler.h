@@ -46,6 +46,9 @@ namespace Network
 		// Write a byte to the packet
 		// StartPack should be called before this is used
 		void WriteByte(uint64_t _id, const unsigned char _byte);
+		// Write raw bytes to the packet
+		// StartPack should be called before this is used
+		void WriteBytes(uint64_t _id, const unsigned char* _bytes, unsigned short size);
 		// Write a short to the packet
 		// StartPack should be called before this is used
 		void WriteShort(uint64_t _id, const short _short);
@@ -66,6 +69,9 @@ namespace Network
 		// Read a byte from a packet
 		// Should always be called from a function bound with Addstd::function<void(PacketHandler*, uint64_t, NetConnection)>
 		char ReadByte(uint64_t _id);
+		// Read raw bytes from a packet
+		// Should always be called from a function bound with Addstd::function<void(PacketHandler*, uint64_t, NetConnection)>
+		unsigned char* ReadBytes(uint64_t _id, int size);
 		// Read an int from a packet
 		// Should always be called from a function bound with Addstd::function<void(PacketHandler*, uint64_t, NetConnection)>
 		short ReadShort(uint64_t _id);

@@ -15,7 +15,7 @@ HoverSizeSystem.Initialize = function(self)
 end
 
 
-HoverSizeSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+HoverSizeSystem.EntitiesAdded = function(self, dt, entities)
 	for n = 1, #entities do
 		local entityId = entities[n]
 		local scale = world:GetComponent(entityId, "Scale", 0)
@@ -27,7 +27,7 @@ HoverSizeSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entitie
 	end
 end
 
-HoverSizeSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
+HoverSizeSystem.EntitiesRemoved = function(self, dt, entities)
 	for n = 1, #entities do
 		local entityId = entities[n]
 		local scale = world:GetComponent(entityId, "Scale", 0)

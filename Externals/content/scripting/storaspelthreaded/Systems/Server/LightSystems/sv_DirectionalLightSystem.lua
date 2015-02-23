@@ -22,7 +22,7 @@ DirectionalLightSystem.PostInitialize = function(self)
 
 end
 
-DirectionalLightSystem.Update = function(self, dt, taskIndex, taskCount)
+DirectionalLightSystem.Update = function(self, dt)
 	
 	self.TotalTime = self.TotalTime + dt
 	local directionalLight = self:GetEntities()

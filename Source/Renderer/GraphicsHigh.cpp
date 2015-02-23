@@ -152,13 +152,23 @@ bool GraphicsHigh::InitShaders()
 	m_shadowShaderForward.AddShader("content/shaders/shadowShaderForwardFS.glsl", GL_FRAGMENT_SHADER);
 	m_shadowShaderForward.FinalizeShaderProgram();
 
-	// Particle shader
-	m_particleShader.InitShaderProgram();
-	m_particleShader.AddShader("content/shaders/particleShaderVS.glsl", GL_VERTEX_SHADER);
-	m_particleShader.AddShader("content/shaders/particleShaderFS.glsl", GL_FRAGMENT_SHADER);
-	const char * outputNames[] = { "Position", "Velocity", "StartTime" };
-	glTransformFeedbackVaryings(m_particleShader.GetShaderProgram(), 3, outputNames, GL_SEPARATE_ATTRIBS);
-	m_particleShader.FinalizeShaderProgram();
+	// ------Particle shaders---------
+		const char * outputNames[] = { "Position", "Velocity", "StartTime" };
+		Shader particleShader;
+		particleShader.InitShaderProgram();
+		particleShader.AddShader("content/shaders/particles/particleFireVS.glsl", GL_VERTEX_SHADER);
+		particleShader.AddShader("content/shaders/particles/particleFireFS.glsl", GL_FRAGMENT_SHADER);
+		glTransformFeedbackVaryings(particleShader.GetShaderProgram(), 3, outputNames, GL_SEPARATE_ATTRIBS);
+		particleShader.FinalizeShaderProgram();
+		m_particleShaders["fire"] = particleShader;
+
+		particleShader.InitShaderProgram();
+		particleShader.AddShader("content/shaders/particles/particleSmokeVS.glsl", GL_VERTEX_SHADER);
+		particleShader.AddShader("content/shaders/particles/particleSmokeFS.glsl", GL_FRAGMENT_SHADER);
+		glTransformFeedbackVaryings(particleShader.GetShaderProgram(), 3, outputNames, GL_SEPARATE_ATTRIBS);
+		particleShader.FinalizeShaderProgram();
+		m_particleShaders["smoke"] = particleShader;
+	// -------------------------------
 
 	return true;
 }
@@ -168,6 +178,8 @@ void GraphicsHigh::InitRenderLists()
 	m_renderLists.push_back(RenderList(RENDER_FORWARD, &m_modelsForward, &m_forwardShader));
 	m_renderLists.push_back(RenderList(RENDER_VIEWSPACE, &m_modelsViewspace, &m_viewspaceShader));
 	m_renderLists.push_back(RenderList(RENDER_INTERFACE, &m_modelsInterface, &m_interfaceShader));
+	m_renderLists.push_back(RenderList(RENDER_DEFERRED_SCATTER, &m_modelsDeferred, &m_deferredShader1));
+	m_renderLists.push_back(RenderList(RENDER_FORWARD_SCATTER, &m_modelsForward, &m_forwardShader));
 }
 bool GraphicsHigh::InitDeferred()
 {
@@ -231,8 +243,9 @@ bool GraphicsHigh::InitBuffers()
 	//Shadow forward shader
 	m_shadowShaderForward.CheckUniformLocation("diffuseTex", 1);
 
-	//Particle shader
-	m_particleShader.CheckUniformLocation("ParticleTex", 1);
+	//Particle shaders
+	for (std::map<std::string, Shader>::iterator it = m_particleShaders.begin(); it != m_particleShaders.end(); ++it)
+		it->second.CheckUniformLocation("ParticleTex", 1);
 
 	return true;
 }
@@ -339,7 +352,6 @@ void GraphicsHigh::WriteShadowMapDepth()
 	{
 		std::vector<mat4> MVPVector(m_modelsDeferred[i].instances.size());
 		std::vector<mat3> normalMatVector(m_modelsDeferred[i].instances.size());
-		std::vector<float> colors(m_modelsDeferred[i].instances.size()*4);
 
 		int nrOfInstances = 0;
 
@@ -360,7 +372,7 @@ void GraphicsHigh::WriteShadowMapDepth()
 			}
 		}
 
-		m_modelsDeferred[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector, &colors);
+		m_modelsDeferred[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector, 0);
 	}
 
 	//------Forward------------------------------------
@@ -370,7 +382,6 @@ void GraphicsHigh::WriteShadowMapDepth()
 	{
 		std::vector<mat4> MVPVector(m_modelsForward[i].instances.size());
 		std::vector<mat3> normalMatVector(m_modelsForward[i].instances.size());
-		std::vector<float> colors(m_modelsForward[i].instances.size() * 4);
 
 		int nrOfInstances = 0;
 
@@ -393,7 +404,7 @@ void GraphicsHigh::WriteShadowMapDepth()
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
 
-		m_modelsForward[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector, &colors);
+		m_modelsForward[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector, 0);
 	}
 	//------------------------------------------------
 
@@ -446,7 +457,7 @@ void GraphicsHigh::Render()
 			mat4 vp = projectionMatrix * viewMatrix;
 			mat4 modelViewMatrix = modelMatrix;
 			mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-			//m_animationShader.SetUniVariable("BlendColor", vector3, m_modelsAnimated[i].color);
+			m_animationShader.SetUniVariable("BlendColor", vector3, m_modelsAnimated[i].color);
 	
 			m_animationShader.SetUniVariable("M", mat4x4, &modelViewMatrix);
 			m_animationShader.SetUniVariable("VP", mat4x4, &vp);
@@ -473,7 +484,6 @@ void GraphicsHigh::Render()
 	
 	
 
-	
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, m_modelsAnimated[i].texID);
 	
@@ -484,6 +494,7 @@ void GraphicsHigh::Render()
 			glBindTexture(GL_TEXTURE_2D, m_modelsAnimated[i].speID);
 	
 			m_modelsAnimated[i].bufferPtr->draw();
+
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 	}
@@ -551,24 +562,25 @@ void GraphicsHigh::Render()
 	//--------PARTICLES---------
 	glEnable(GL_POINT_SPRITE);
 	glDepthMask(GL_FALSE);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
 	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
-
-	m_particleShader.UseProgram();
-
-	m_particleShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 
 	glActiveTexture(GL_TEXTURE1);
 
 	for (std::map<int, ParticleSystem*>::iterator it = m_particleSystems.begin(); it != m_particleSystems.end(); ++it)
 	{
+		Shader* thisShader = it->second->GetShaderPtr();
+		thisShader->UseProgram();
+		
+		thisShader->SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
+
 		glBindTexture(GL_TEXTURE_2D, it->second->GetTexHandle());
 
 		mat4 Model = glm::translate(it->second->GetWorldPos());
 		mat4 ModelView = viewMatrix * Model;
 
-		m_particleShader.SetUniVariable("ModelView", mat4x4, &ModelView);
-		m_particleShader.SetUniVariable("BlendColor", vector3, it->second->GetColor());
+		thisShader->SetUniVariable("ModelView", mat4x4, &ModelView);
+		thisShader->SetUniVariable("BlendColor", vector3, it->second->GetColor());
 
 		it->second->Render(m_dt);
 	}
@@ -616,6 +628,21 @@ void GraphicsHigh::Render()
 	glDrawArrays(GL_POINTS, 0, 1);
 
 	glUseProgram(0);
+
+
+	//for (int i = 0; i < m_modelsAnimated.size(); i++)
+	//{
+	//	if (m_modelsAnimated[i].active) // IS MODEL ACTIVE?
+	//	{
+	//		glLineWidth(2.5);
+	//		glColor3f(1.0, 0.0, 0.0);
+	//		glBegin(GL_LINES);
+	//		glVertex3f(0.0, 0.0, 0.0);
+	//		glVertex3f(15, 0, 0);
+	//		glEnd();
+	//	}
+	//}
+
 
 	// Swap in the new buffer
 	SDL_GL_SwapWindow(m_window);
@@ -751,53 +778,6 @@ void GraphicsHigh::ToggleSimpleText()
 	m_renderSimpleText = !m_renderSimpleText;
 }
 
-//void GraphicsHigh::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
-//{
-//	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
-//
-//	Shader *shaderPtr = &m_animationShader;
-//	std::vector<AModel> *modelList = &m_modelsAnimated;
-//
-//	// Import Mesh
-//	Buffer* mesh = AddMesh(obj.mesh, shaderPtr, true);
-//
-//	// Import Texture
-//	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
-//	shaderPtr->CheckUniformLocation("diffuseTex", 1);
-//
-//	// Import Normal map
-//	GLuint normal = AddTexture(obj.norm, GL_TEXTURE2);
-//	shaderPtr->CheckUniformLocation("normalTex", 2);
-//
-//	// Import Specc Glow map
-//	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
-//	shaderPtr->CheckUniformLocation("specularTex", 3);
-//
-//	// Import Skeleton
-//	std::vector<JointData> joints = ModelLoader::importJoints(obj.joints);
-//
-//	AModel model = AModel(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color, mesh, texture, normal, specular);
-//
-//	// Add skeleton
-//	for (int i = 0; i < joints.size(); i++)
-//		model.joints.push_back(Joint(
-//		joints[i].x0, joints[i].y0, joints[i].z0, joints[i].w0,
-//		joints[i].x1, joints[i].y1, joints[i].z1, joints[i].w1,
-//		joints[i].x2, joints[i].y2, joints[i].z2, joints[i].w2,
-//		joints[i].x3, joints[i].y3, joints[i].z3, joints[i].parent)
-//		);//joints[i].transform));
-//
-//	glGenBuffers(1, &model.jointBuffer);
-//
-//	//for the matrices (modelView + normal)
-//	m_vramUsage += (16 + 9) * sizeof(float);
-//
-//	// Push back the model
-//	modelList->push_back(model);
-//}
-
-
-
 void GraphicsHigh::Clear()
 {
 	m_modelIDcounter = 0;
@@ -811,6 +791,10 @@ void GraphicsHigh::Clear()
 	BufferPointlights(0, tmpPtr);
 	delete tmpPtr;
 	BufferDirectionalLight(0);
+
+	for (std::map<int, ParticleSystem*>::iterator it = m_particleSystems.begin(); it != m_particleSystems.end(); ++it)
+		delete(it->second);
+	m_particleSystems.clear();
 
 	//if (m_pointerToPointlights)
 		//delete m_pointerToPointlights;

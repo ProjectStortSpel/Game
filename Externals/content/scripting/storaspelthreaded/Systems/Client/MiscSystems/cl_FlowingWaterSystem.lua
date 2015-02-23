@@ -31,10 +31,9 @@ FlowingWaterSystem.PostInitialize = function ( self )
 
 end
 
-FlowingWaterSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+FlowingWaterSystem.EntitiesAdded = function(self, dt, entities)
 	
 	for i = 1, #entities do
-	
 		local	X, Z	=	world:GetComponent(entities[i], "MapPosition", "X"):GetInt2()
 		local	newFlowingTile	=	world:CreateNewEntity("FlowingWater")
 		world:SetComponent(newFlowingTile, "Model", "ModelName", "waterplane");

@@ -60,10 +60,10 @@ MapGenerator.Initialize = function(self)
 	self:AddComponentTypeToFilter("GenerateMap", FilterType.RequiresOneOf)
 end
 
-MapGenerator.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+MapGenerator.EntitiesAdded = function(self, dt, entities)
 	--self:GenerateMap(os.time()%29181249, 4, 4)
 	--self:GenerateMap(23246299, 4, 4)
-	self:GenerateMap(23244210, 4, 4)
+	self:GenerateMap(2324130, 1, 2)
 	--self:GenerateMap(23239474, 4, 4)
 	--self:GenerateMap(5747, 4, 4)
 	--self:GenerateMap(1338, 6, 4)
@@ -776,9 +776,8 @@ MapGenerator.CreateMap = function(self)
 	world:GetComponent(dataEntity, "MapSpecs", "NoOfCheckpoints"):SetInt(self.Checkpoints)
 	world:GetComponent(dataEntity, "MapSpecs", "SizeX"):SetInt2(self.MapSizeX, self.MapSizeZ)
 	
+	-- Initialize potential fields
 	PotentialFieldHandler.InitPFHandler(self.MapSizeX, self.MapSizeZ, self.Players)
-	
-	
 end
 
 --	Creates a new entity with the Tile template
@@ -824,6 +823,7 @@ MapGenerator.CreateRiverEntity = function(self, X, Z)
 	local	tRiverDirX, tRiverDirZ	=	self:GetRiverDirection(tRiverType)
 	world:CreateComponentAndAddTo("River", newRiver)
 	world:GetComponent(newRiver, "River", 0):SetInt3(tRiverDirX, tRiverDirZ, 1)
+	world:GetComponent(newRiver, "TileOffset", "Offset"):SetFloat(0.2)
 	
 	--	Set correct rotation
 	if tRiverType == self.RiverUp then

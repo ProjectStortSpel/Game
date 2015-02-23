@@ -4,7 +4,7 @@ ConnectMenuSystem.ServerStartIndex = 1
 ConnectMenuSystem.ServerEndIndex = 1
 ConnectMenuSystem.doRefresh = true
 
-ConnectMenuSystem.Update = function(self, dt, taskIndex, taskCount)
+ConnectMenuSystem.Update = function(self, dt)
 	if Input.GetTouchState(0) == InputState.Released then
 
 		local pressedButtons = self:GetEntities("OnPickBoxHit")
@@ -39,7 +39,7 @@ ConnectMenuSystem.Update = function(self, dt, taskIndex, taskCount)
 	end
 end
 
-ConnectMenuSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+ConnectMenuSystem.EntitiesAdded = function(self, dt, entities)
 	for i = 1, #entities do
 		local entityId = entities[i]
 		if world:EntityHasComponent(entityId, self.Name) then
@@ -51,7 +51,7 @@ ConnectMenuSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entit
 	end
 end
 
-ConnectMenuSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
+ConnectMenuSystem.EntitiesRemoved = function(self, dt, entities)
 
 	--self.doRefresh = true
 

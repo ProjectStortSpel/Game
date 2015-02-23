@@ -13,7 +13,7 @@ UpdateCardPickTimer.Initialize = function(self)
 	--self:AddComponentTypeToFilter("OnPickingPhase", 	FilterType.RequiresOneOf)
 end
 
-UpdateCardPickTimer.Update = function(self, dt, taskIndex, taskCount)
+UpdateCardPickTimer.Update = function(self, dt)
 
 	local Timers = self:GetEntities("PickingPhaseTimer")
 	if #Timers > 0 then
@@ -36,7 +36,7 @@ UpdateCardPickTimer.Update = function(self, dt, taskIndex, taskCount)
 
 end
 
-UpdateCardPickTimer.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+UpdateCardPickTimer.EntitiesAdded = function(self, dt, entities)
 
 	local newTimer = entities[1]
 	local allTimers = self:GetEntities()

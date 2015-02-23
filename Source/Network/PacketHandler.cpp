@@ -177,6 +177,20 @@ void PacketHandler::WriteByte(uint64_t _id, const unsigned char _byte)
 		}
 	}	
 }
+
+void PacketHandler::WriteBytes(uint64_t _id, const unsigned char* _bytes, unsigned short size)
+{
+	PacketSendInfo* psi = GetPacketSendInfo(_id);
+	if (psi)
+	{
+		if (!IsOutOfBounds(psi->Data, psi->Position + size * sizeof(unsigned char), MAX_PACKET_SIZE))
+		{
+			memcpy(psi->Position, _bytes, size * sizeof(unsigned char));
+			psi->Position += size * sizeof(unsigned char);
+		}
+	}
+}
+
 void PacketHandler::WriteFloat(uint64_t _id, const float _float)
 {
 	PacketSendInfo* psi = GetPacketSendInfo(_id);
@@ -255,6 +269,21 @@ char PacketHandler::ReadByte(uint64_t _id)
 		{
 			memcpy(&var, pri->Position, sizeof(char));
 			pri->Position += sizeof(char);
+		}
+	}
+	return var;
+}
+
+unsigned char* PacketHandler::ReadBytes(uint64_t _id, int size)
+{
+	unsigned char* var = NULL;
+	PacketReceiveInfo* pri = GetPacketReceiveInfo(_id);
+	if (pri)
+	{
+		if (!IsOutOfBounds(pri->PacketData->Data, pri->Position + size * sizeof(unsigned char), *pri->PacketData->Length))
+		{
+			var = pri->Position;
+			pri->Position += size * sizeof(unsigned char);
 		}
 	}
 	return var;

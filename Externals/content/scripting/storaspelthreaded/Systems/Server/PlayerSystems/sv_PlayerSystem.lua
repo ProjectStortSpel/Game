@@ -39,7 +39,7 @@ end
 --	return newIndex
 --end
 
-PlayerSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+PlayerSystem.EntitiesAdded = function(self, dt, entities)
 	
 	for i = 1, #entities do
 		
@@ -83,14 +83,13 @@ PlayerSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 	--end
 end
 
-PlayerSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
+PlayerSystem.EntitiesRemoved = function(self, dt, entities)
 
 	for i = 1, #entities do
 		
 		local entity = world:CreateNewEntity()
 		local plyNum = world:GetComponent(entities[i], "PlayerNumber", "Number"):GetInt()
 		local unitId = world:GetComponent(entities[i], "UnitEntityId", "Id"):GetInt()
-		
 		world:CreateComponentAndAddTo("RemoveUnit", entity)
 		world:GetComponent(entity, "RemoveUnit", "PlayerNo"):SetInt(plyNum)
 		world:GetComponent(entity, "RemoveUnit", "UnitEntityId"):SetInt(unitId)

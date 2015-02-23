@@ -51,8 +51,7 @@ bool Buffer::init(const BufferData* p_BufferData, GLsizei p_BufferDataSize,
 			p_BufferData[i].data, GL_STATIC_DRAW);
 		// Define attribute data (for shaders)
 		glEnableVertexAttribArray(p_BufferData[i].location);
-		glVertexAttribPointer(p_BufferData[i].location, p_BufferData[i].componentCount,
-			p_BufferData[i].type, GL_FALSE, 0, 0);
+		glVertexAttribPointer(p_BufferData[i].location, p_BufferData[i].componentCount, p_BufferData[i].type, GL_FALSE, 0, 0);
 	}
 
 	//-------FOR INSTANCING----------------------------
@@ -60,25 +59,27 @@ bool Buffer::init(const BufferData* p_BufferData, GLsizei p_BufferDataSize,
 	glBindBuffer(GL_ARRAY_BUFFER, m_inMatVBO);
 	for (int i = 0; i < 4; i++)
 	{
-		glVertexAttribPointer(5 + i, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (const GLvoid*)(sizeof(float)* 4 * i));
-		glEnableVertexAttribArray(5 + i);
-		glVertexAttribDivisor(5 + i, 1);
+		glVertexAttribPointer(7 + i, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (const GLvoid*)(sizeof(float)* 4 * i));
+		glEnableVertexAttribArray(7 + i);
+		glVertexAttribDivisor(7 + i, 1);
 	}
 
 	glGenBuffers(1, &m_normalMatVBO); //gen buffer till matrisen
 	glBindBuffer(GL_ARRAY_BUFFER, m_normalMatVBO);
 	for (int i = 0; i < 3; i++)
 	{
-		glVertexAttribPointer(9 + i, 3, GL_FLOAT, GL_FALSE, sizeof(glm::mat3), (const GLvoid*)(sizeof(float)* 3 * i));
-		glEnableVertexAttribArray(9 + i);
-		glVertexAttribDivisor(9 + i, 1);
+		glVertexAttribPointer(11 + i, 3, GL_FLOAT, GL_FALSE, sizeof(glm::mat3), (const GLvoid*)(sizeof(float)* 3 * i));
+		glEnableVertexAttribArray(11 + i);
+		glVertexAttribDivisor(11 + i, 1);
 	}
 
-	//glGenBuffers(1, &m_colorVBO); //gen buffer till matrisen
-	//glBindBuffer(GL_ARRAY_BUFFER, m_colorVBO);
-	//glVertexAttribPointer(15, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), (const GLvoid*)(sizeof(float) * 4));
-	//glEnableVertexAttribArray(15);
-	//glVertexAttribDivisor(15, 1);
+	//----- Color ----------
+	glGenBuffers(1, &m_colorVBO); //gen buffer till matrisen
+	glBindBuffer(GL_ARRAY_BUFFER, m_colorVBO);
+	
+	glVertexAttribPointer(14, 3, GL_FLOAT, GL_FALSE, sizeof(float)*3, 0);
+	glEnableVertexAttribArray(14);
+	glVertexAttribDivisor(14, 1);
 	//-------------------------------------------------
 
 	// Initialize index buffer if specified
@@ -127,7 +128,7 @@ void Buffer::draw(GLint base, GLsizei count)
 	glBindVertexArray(0);
 }
 
-void Buffer::drawInstanced(GLint base, int instances, std::vector<glm::mat4> *inMats, std::vector<glm::mat3> *normalMats, std::vector<float> *color)
+void Buffer::drawInstanced(GLint base, int instances, std::vector<glm::mat4> *inMats, std::vector<glm::mat3> *normalMats, float *color)
 {
 	// Make sure there's no weird behaviour
 	if (m_Type == None)
@@ -142,11 +143,11 @@ void Buffer::drawInstanced(GLint base, int instances, std::vector<glm::mat4> *in
 	glBindBuffer(GL_ARRAY_BUFFER, m_normalMatVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat3)*instances, &(*normalMats)[0], GL_DYNAMIC_DRAW);
 
-	//if (color != nullptr)
-	//{ 
-	//	glBindBuffer(GL_ARRAY_BUFFER, m_colorVBO);
-	//	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*instances*4, &(*color)[0], GL_STATIC_DRAW);
-	//}
+	if (color)
+	{ 
+		glBindBuffer(GL_ARRAY_BUFFER, m_colorVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float)* 3 * instances, color, GL_DYNAMIC_DRAW);
+	}
 	// Draw based on based buffer type
 	switch (m_Type)
 	{

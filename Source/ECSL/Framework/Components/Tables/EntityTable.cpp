@@ -136,6 +136,9 @@ void EntityTable::AddOldEntityId(unsigned int _entityId)
 
 void EntityTable::ClearEntityData(unsigned int _entityId)
 {
+	/* The entity is dead */
+	assert(!(*(unsigned char*)m_dataTable->GetData(_entityId) == 0) || DataLogger::GetInstance().LogWorldDataAssert());
+
 	m_dataTable->ClearRow(_entityId);
 }
 

@@ -42,20 +42,33 @@ TestMoveSystem.RecursiveMove = function(self, unitToMove, allUnits, allNonWalkab
 		end
 	end
 	
+	for n = 1, #allUnits do
+	end
+	
+	
 	if not voidFound then
 		--	Check all units
 		for n = 1, #allUnits do
 			local X, Z = world:GetComponent(allUnits[n], "MapPosition", 0):GetInt2()
 			if X == posX and Z == posZ then
+				
+				if world:EntityHasComponent(allUnits[n], "ActionGuard") then
+					print("BLOCKED, BITCH!")
+					return false
+				end
+				
 				if not self:RecursiveMove(allUnits[n], allUnits, allNonWalkables, allVoids, posX+dirX, posZ+dirZ, dirX, dirZ) then
 					return false
 				end
-					local newCheck = world:CreateNewEntity()
-					world:CreateComponentAndAddTo("CheckCheckpointForEntity", newCheck)
-					world:GetComponent(newCheck, "CheckCheckpointForEntity", "EntityId"):SetInt(allUnits[n])
-					world:GetComponent(newCheck, "CheckCheckpointForEntity", "PosX"):SetInt(posX+dirX)
-					world:GetComponent(newCheck, "CheckCheckpointForEntity", "PosZ"):SetInt(posZ+dirZ)
+
+				local newCheck = world:CreateNewEntity()
+				world:CreateComponentAndAddTo("CheckCheckpointForEntity", newCheck)
+				world:GetComponent(newCheck, "CheckCheckpointForEntity", "EntityId"):SetInt(allUnits[n])
+				world:GetComponent(newCheck, "CheckCheckpointForEntity", "PosX"):SetInt(posX+dirX)
+				world:GetComponent(newCheck, "CheckCheckpointForEntity", "PosZ"):SetInt(posZ+dirZ)
+				
 				break
+				
 			end
 		end
 	end
@@ -74,12 +87,16 @@ TestMoveSystem.RecursiveMove = function(self, unitToMove, allUnits, allNonWalkab
 	world:GetComponent(unitToMove, "LerpPosition", "Y"):SetFloat(0.5)
 	world:GetComponent(unitToMove, "LerpPosition", "Z"):SetFloat(posZ)
 	world:GetComponent(unitToMove, "LerpPosition", "Time"):SetFloat(1)
-	world:GetComponent(unitToMove, "LerpPosition", "Algorithm"):SetText("SmoothLerp")
+	world:GetComponent(unitToMove, "LerpPosition", "Algorithm"):SetText("PlayerMove")
+	
+	if not world:EntityHasComponent(unitToMove, "UnitWantTileOffset") then
+		world:CreateComponentAndAddTo("UnitWantTileOffset", unitToMove)
+	end
 	
 	return true
 end
 
-TestMoveSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+TestMoveSystem.EntitiesAdded = function(self, dt, entities)
 	
 	for newEntity = 1, #entities do
 		local entity = entities[newEntity]
@@ -107,6 +124,13 @@ TestMoveSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities
 					world:GetComponent(newCheck, "CheckCheckpointForEntity", "EntityId"):SetInt(tUnit)
 					world:GetComponent(newCheck, "CheckCheckpointForEntity", "PosX"):SetInt(tPosX+tDirX*nStep)
 					world:GetComponent(newCheck, "CheckCheckpointForEntity", "PosZ"):SetInt(tPosZ+tDirZ*nStep)
+					
+					local testMoveSuccess = world:CreateNewEntity()
+					world:CreateComponentAndAddTo("TestMoveSuccess", testMoveSuccess)
+					world:SetComponent(testMoveSuccess, "TestMoveSuccess", "Unit", tUnit)
+					world:SetComponent(testMoveSuccess, "TestMoveSuccess", "Steps", tSteps)
+					
+					
 				else
 					break
 				end

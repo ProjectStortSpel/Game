@@ -10,10 +10,19 @@ CreateDeckSystem.Initialize = function ( self )
 	--	Set Filter
 	self:AddComponentTypeToFilter("Unit", 		FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("CreateDeck",	FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("DealingSettings", FilterType.RequiresOneOf)
 end
 
+CreateDeckSystem.PostInitialize = function(self)
 
-CreateDeckSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+	local dealingSettingsEntity = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("DealingSettings", dealingSettingsEntity)
+	world:CreateComponentAndAddTo("SyncNetwork", dealingSettingsEntity)
+	world:GetComponent(dealingSettingsEntity, "DealingSettings", "CardsInHand"):SetInt(7)
+	world:GetComponent(dealingSettingsEntity, "DealingSettings", "CardsToPick"):SetInt(4)
+end
+
+CreateDeckSystem.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 	
@@ -21,10 +30,13 @@ CreateDeckSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entiti
 		if world:EntityHasComponent( entityId, "CreateDeck") then
 			self:CreateDeck()
 			world:KillEntity( entityId )
-
+			
+			local DealingSettings = self:GetEntities("DealingSettings")
+			local cardsPerHand, cardsToPick = world:GetComponent(DealingSettings[1], "DealingSettings", 0):GetInt2(0)
+			
 			local id = world:CreateNewEntity()
 			world:CreateComponentAndAddTo("DealCards", id)
-			world:SetComponent(id, "DealCards", "NumCards", 8)
+			world:SetComponent(id, "DealCards", "NumCards", cardsPerHand)
 			print("DealCards id = " .. id)
 		end
 	end
@@ -48,32 +60,41 @@ CreateDeckSystem.CreateDeck = function (self)
 	----------------------------------------------------------
 	-- ADD NEW CARDS HERE
 	CardAction[#CardAction+1] = "Forward"
-	NrOfCards[#NrOfCards+1] = 4 * NrOfPlayers
+	NrOfCards[#NrOfCards+1] = 45--4 * NrOfPlayers
 	CardPrio[#CardPrio+1] = true
 	
 	CardAction[#CardAction+1] = "Backward"
-	NrOfCards[#NrOfCards+1] = 4 * NrOfPlayers
+	NrOfCards[#NrOfCards+1] = 40--4 * NrOfPlayers
 	CardPrio[#CardPrio+1] = true
 	
 	CardAction[#CardAction+1] = "TurnRight"
-	NrOfCards[#NrOfCards+1] = 2 * NrOfPlayers
+	NrOfCards[#NrOfCards+1] = 35--4 * NrOfPlayers
 	CardPrio[#CardPrio+1] = false
 
 	CardAction[#CardAction+1] = "TurnLeft"
-	NrOfCards[#NrOfCards+1] = 2 * NrOfPlayers
+	NrOfCards[#NrOfCards+1] = 35--4 * NrOfPlayers
 	CardPrio[#CardPrio+1] = false
 
 	CardAction[#CardAction+1] = "TurnAround"
-	NrOfCards[#NrOfCards+1] = 2 * NrOfPlayers
+	NrOfCards[#NrOfCards+1] = 20--3 * NrOfPlayers
 	CardPrio[#CardPrio+1] = false
 
+	CardAction[#CardAction+1] = "Guard"
+	NrOfCards[#NrOfCards+1] = 5--1 * NrOfPlayers
+	CardPrio[#CardPrio+1] = false
+	
 	CardAction[#CardAction+1] = "Sprint"
-	NrOfCards[#NrOfCards+1] = 1 * NrOfPlayers
+	NrOfCards[#NrOfCards+1] = 5--1 * NrOfPlayers
 	CardPrio[#CardPrio+1] = true
 
 	CardAction[#CardAction+1] = "SlingShot"
-	NrOfCards[#NrOfCards+1] = 1 * NrOfPlayers
+	NrOfCards[#NrOfCards+1] = 5--1 * NrOfPlayers
 	CardPrio[#CardPrio+1] = true
+	
+	CardAction[#CardAction+1] = "Stone"
+	NrOfCards[#NrOfCards+1] = 5--1 * NrOfPlayers
+	CardPrio[#CardPrio+1] = true
+	
 	----------------------------------------------------------
 
 	-- GENERATE PRIO

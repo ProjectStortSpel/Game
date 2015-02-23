@@ -39,6 +39,71 @@ GraphicDevice::~GraphicDevice()
 	SDL_Log("Graphics D E S T R U C T O R");
 }
 
+void GraphicDevice::InitFBO()
+{
+	GLint oldFBO;
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFBO);
+
+	// --------Create the depth texture-------
+	//glActiveTexture(GL_TEXTURE2);
+	glGenTextures(1, &m_depthBuf);
+	glBindTexture(GL_TEXTURE_2D, m_depthBuf);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, m_framebufferWidth, m_framebufferHeight, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0);
+	// ---------------------------------------
+
+	SDL_Log("InitFBO     m_framebufferWidth %d,  m_framebufferHeight: %d ", m_framebufferWidth, m_framebufferHeight);
+
+	// Output Image
+	glGenTextures(1, &m_outputImage);
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, m_outputImage);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_framebufferWidth, m_framebufferHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0); //level = 1?  GL_RGBA32F ?
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	
+	// Create and bind the FBO
+	glGenFramebuffers(1, &m_FBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
+
+	// Attach the images to the framebuffer
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthBuf, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_outputImage, 0);
+
+	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	switch (status)
+	{
+	case GL_FRAMEBUFFER_COMPLETE:
+		SDL_Log("Framebuffer complete.");
+		break;
+
+	case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+		SDL_Log("[ERROR] Framebuffer incomplete: Attachment is NOT complete.");
+		break;
+
+	case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+		SDL_Log("[ERROR] Framebuffer incomplete: No image is attached to FBO.");
+		break;
+
+	case GL_FRAMEBUFFER_UNSUPPORTED:
+		SDL_Log("[ERROR] Unsupported by FBO implementation.");
+		break;
+
+	default:
+		SDL_Log("[ERROR] Unknown error.");
+		break;
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, oldFBO);
+}
+
 void GraphicDevice::PollEvent(SDL_Event _event)
 {
 	switch (_event.type)
@@ -307,13 +372,16 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 		shaderPtr = &m_interfaceShader;
 		m_interfaceShader.UseProgram();
 	}
-	else
+	else if (_modelToLoad->RenderType == 0)
 	{
 		shaderPtr = &m_forwardShader;
 		m_forwardShader.UseProgram();
 		//SDL_Log("Deferred requested. Selecting FORWARD");
 	}
-
+	else
+	{
+		return;
+	}
 	// Import Object
 	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
 
@@ -321,13 +389,18 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
 	shaderPtr->CheckUniformLocation("diffuseTex", 1);
 
-	// Import Normal map
-	GLuint normal = AddTexture(obj.norm, GL_TEXTURE2);
-	shaderPtr->CheckUniformLocation("normalTex", 2);
+	GLuint normal, specular;
 
-	// Import Specc Glow map
-	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
-	shaderPtr->CheckUniformLocation("specularTex", 3);
+	if (_modelToLoad->RenderType != RENDER_INTERFACE)
+	{
+		// Import Normal map
+		normal = AddTexture(obj.norm, GL_TEXTURE2);
+		shaderPtr->CheckUniformLocation("normalTex", 2);
+
+		// Import Specc Glow map
+		specular = AddTexture(obj.spec, GL_TEXTURE3);
+		shaderPtr->CheckUniformLocation("specularTex", 3);
+	}
 
 	// Import Mesh
 	Buffer* mesh = AddMesh(obj.mesh, shaderPtr);

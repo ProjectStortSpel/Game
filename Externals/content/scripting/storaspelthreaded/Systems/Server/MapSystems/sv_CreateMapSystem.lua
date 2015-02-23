@@ -19,7 +19,7 @@ CreateMapSystem.PostInitialize = function(self)
 	--self:CreateMap("content/maps/map.txt")
 end
 
-CreateMapSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+CreateMapSystem.EntitiesAdded = function(self, dt, entities)
 	for i = 1, #entities do
 		local entity = entities[i]
 		if world:EntityHasComponent(entity, "CreateMap") then
@@ -35,7 +35,6 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
     local newTile = world:CreateNewEntity("Tile")
     local posComp = world:GetComponent(newTile, "Position", 0)
     posComp:SetFloat3(posX, 0.0, posZ)
-	
     local mapPosComp = world:GetComponent(newTile, "MapPosition", 0)
     mapPosComp:SetInt2(posX, posZ)
     if tiletype == 104 then -- 104 = h = hole
@@ -50,9 +49,10 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		world:CreateComponentAndAddTo("NotWalkable", newTile)
 		world:CreateComponentAndAddTo("Model", newTile)
 		local comp = world:GetComponent(newTile, "Model", 0)
-		comp:SetModel("stone", "stone", 0)
+		comp:SetModel("smallstone", "smallstone", 0)
 		posComp:SetFloat3(posX, 0.5, posZ) --posComp:SetFloat3(posX, 0.8 + 0.1* math.random(-1, 1), posZ)
-		
+		local scaleComp = world:GetComponent(newTile, "Scale", 0)
+		scaleComp:SetFloat3(0.75,0.75,0.75)
 		local rotComp = world:GetComponent(newTile, "Rotation", 0)
 		rotComp:SetFloat3(math.pi * 0.01 * math.random(0, 25), math.pi * 0.01 * math.random(0, 100), math.pi * 0.01 * math.random(0, 25))
 		self:AddGroundTileBelow(posX, posZ)
@@ -87,6 +87,8 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		local comp = world:GetComponent(newTile, "Model", 0)
 		comp:SetModel("finish", "finish", 0)
 		--posComp:SetFloat3(posX, 1.0, posZ)
+		
+		self.noOfCheckpoints = self.noOfCheckpoints + 1
 
     elseif tiletype == 117 then -- 117 = u = water up
         world:CreateComponentAndAddTo("River", newTile)
@@ -98,6 +100,8 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		local comp = world:GetComponent(newTile, "Model", 0)
 		comp:SetModel("riverstraight", "riverstraight", 0)
 
+		world:GetComponent(newTile, "TileOffset", "Offset"):SetFloat(0.2)
+		
 		self.waterTiles[#self.waterTiles+1]=newTile
 		
     elseif tiletype == 100 then -- 100 = d = water down
@@ -110,6 +114,8 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		local comp = world:GetComponent(newTile, "Model", 0)
 		comp:SetModel("riverstraight", "riverstraight", 0)
 
+		world:GetComponent(newTile, "TileOffset", "Offset"):SetFloat(0.2)
+		
 		self.waterTiles[#self.waterTiles+1]=newTile
 		
     elseif tiletype == 108 then -- 108 = l = water left
@@ -120,6 +126,8 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		local comp = world:GetComponent(newTile, "Model", 0)
 		comp:SetModel("riverstraight", "riverstraight", 0)
 
+		world:GetComponent(newTile, "TileOffset", "Offset"):SetFloat(0.2)
+		
 		self.waterTiles[#self.waterTiles+1]=newTile
 		
     elseif tiletype == 114 then -- 114 = r = water right
@@ -131,6 +139,8 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		world:CreateComponentAndAddTo("Model", newTile)
 		local comp = world:GetComponent(newTile, "Model", 0)
 		comp:SetModel("riverstraight", "riverstraight", 0)
+		
+		world:GetComponent(newTile, "TileOffset", "Offset"):SetFloat(0.2)
 
 		self.waterTiles[#self.waterTiles+1]=newTile
 		
@@ -151,7 +161,7 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		world:CreateComponentAndAddTo("Model", newTile)
 		local comp = world:GetComponent(newTile, "Model", 0)
 		comp:SetModel("grass", "grass", 0)
-		
+		self:AddTinyStone(posX, posZ)
 	elseif tiletype == 111 then
         world:CreateComponentAndAddTo("Void", newTile)
 		--world:CreateComponentAndAddTo("Model", entity)
@@ -182,6 +192,30 @@ CreateMapSystem.AddGroundTileBelow = function(self, posX, posZ)
 	world:GetComponent(groundEntity, "Rotation", 0):SetFloat3(0.0, 0.0, 0.0)
 	world:GetComponent(groundEntity, "Scale", 0):SetFloat3(1.0, 1.0, 1.0)
 	world:GetComponent(groundEntity, "Model", 0):SetModel("grass", "grass", 0)
+	
+end 
+
+CreateMapSystem.AddTinyStone = function(self, posX, posZ)
+	if (math.random(1, 5) > 1) then
+		return
+	end
+	
+	local tinyStone = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("Position", tinyStone)
+	world:CreateComponentAndAddTo("Rotation", tinyStone)
+	world:CreateComponentAndAddTo("Scale", tinyStone)
+	world:CreateComponentAndAddTo("SyncNetwork", tinyStone)
+	world:CreateComponentAndAddTo("Model", tinyStone)
+	
+	local randX = posX-0.5+math.random()
+	local randZ = posZ-0.5+math.random()
+	world:GetComponent(tinyStone, "Position", 0):SetFloat3(randX, 0.5, randZ)
+	world:GetComponent(tinyStone, "Rotation", 0):SetFloat3(math.pi * 0.01 * math.random(0, 25), math.pi * 0.01 * math.random(0, 100), math.pi * 0.01 * math.random(0, 25))
+	local randScale = math.random() + 0.5
+	world:GetComponent(tinyStone, "Scale", 0):SetFloat3(0.15*randScale, 0.15*randScale, 0.15*randScale)
+	world:GetComponent(tinyStone, "Model", 0):SetModel("smallstone", "smallstone", 8)
+	
+	--self:AddTinyStone(randX, randZ)
 end 
 
 CreateMapSystem.CreateMap = function(self, name)
@@ -194,16 +228,7 @@ CreateMapSystem.CreateMap = function(self, name)
 	local map
     self.mapX, self.mapY, map = File.LoadMap(name)
 	
-	-- Create an entity that will keep track of the map size. If it already exist from a previous "loadmap", use that one instead.
-	local mapSpecsEntity = self:GetEntities("MapSpecs")
-	local mapEntity = nil
-	if #mapSpecsEntity == 0 then
-		mapEntity = world:CreateNewEntity()
-		world:CreateComponentAndAddTo("MapSpecs", mapEntity)
-		world:CreateComponentAndAddTo("SyncNetwork", mapEntity)
-	else
-		mapEntity = mapSpecsEntity[1]
-	end
+
 		
 	for x = 0, self.mapX + 1 do
 		self:AddTile(x, 0, 111) -- 111 = void
@@ -250,6 +275,18 @@ CreateMapSystem.CreateMap = function(self, name)
 	for x = 0, self.mapX + 1 do
 		self:AddTile(x, self.mapY+1, 111) -- 111 = void
 		inputData:AddTile( 1, true )
+	end
+	
+	
+	-- Create an entity that will keep track of the map size. If it already exist from a previous "loadmap", use that one instead.
+	local mapSpecsEntity = self:GetEntities("MapSpecs")
+	local mapEntity = nil
+	if #mapSpecsEntity == 0 then
+		mapEntity = world:CreateNewEntity()
+		world:CreateComponentAndAddTo("MapSpecs", mapEntity)
+		world:CreateComponentAndAddTo("SyncNetwork", mapEntity)
+	else
+		mapEntity = mapSpecsEntity[1]
 	end
 	
 	-- Add to the map size as voids have been added around the map.

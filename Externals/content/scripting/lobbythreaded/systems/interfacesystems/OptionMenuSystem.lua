@@ -14,7 +14,7 @@ OptionMenuSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter(self.Name.."Element", FilterType.RequiresOneOf)
 end
 
-OptionMenuSystem.Update = function(self, dt, taskIndex, taskCount)
+OptionMenuSystem.Update = function(self, dt)
 	if Input.GetTouchState(0) == InputState.Released then
 		local pressedButtons = self:GetEntities("OnPickBoxHit")
 		if #pressedButtons > 0 then
@@ -36,7 +36,7 @@ OptionMenuSystem.Update = function(self, dt, taskIndex, taskCount)
 	end
 end
 
-OptionMenuSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+OptionMenuSystem.EntitiesAdded = function(self, dt, entities)
 	for n = 1, #entities do
 		local entityId = entities[n]
 		if world:EntityHasComponent(entityId, self.Name) then
@@ -46,17 +46,19 @@ OptionMenuSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entiti
 end
 
 OptionMenuSystem.SpawnMenu = function(self)
-	local background = self:CreateElement("gamemenubackground", "quad", 0, -0, -3.1, 3, 3)
+	local background = self:CreateElement("gamemenubackground", "quad", 0, -0, -3.1, 1.5, 2.0)
 	
 	local button = nil
 	button = self:CreateElement("graphicslow", "quad", 0, 0.4, -3, 0.6, 0.3)
 	print(button)
-	self:AddConsoleCommandToButton("changegraphics low", button)	
+	self:AddConsoleCommandToButton("changegraphics low", button)
+	self:AddEntityCommandToButton("NotificationBox", button)
 	self:AddHoverSize(1.1, button)
 	
 	button = self:CreateElement("graphicshigh", "quad", 0, -0.4, -3, 0.6, 0.3)
 	print(button)
 	self:AddConsoleCommandToButton("changegraphics high", button)	
+	self:AddEntityCommandToButton("NotificationBox", button)	
 	self:AddHoverSize(1.1, button)
 end
 

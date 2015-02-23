@@ -22,7 +22,7 @@ void Model::Draw(mat4 viewMatrix, mat4 projectionMatrix)
 {
 	std::vector<mat4> MVPVector(instances.size());
 	std::vector<mat3> normalMatVector(instances.size());
-	std::vector<float> colors(instances.size() * 4);
+	float* colors = new float[instances.size() * 3];
 
 	int nrOfInstances = 0;
 
@@ -45,10 +45,9 @@ void Model::Draw(mat4 viewMatrix, mat4 projectionMatrix)
 			mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
 			normalMatVector[nrOfInstances] = normalMatrix;
 
-			colors[4 * nrOfInstances + 0] = instances[j].color[0];
-			colors[4 * nrOfInstances + 1] = instances[j].color[1];
-			colors[4 * nrOfInstances + 2] = instances[j].color[2];
-			colors[4 * nrOfInstances + 3] = 0.f;
+			colors[j * 3 + 0] = instances[j].color[0];
+			colors[j * 3 + 1] = instances[j].color[1];
+			colors[j * 3 + 2] = instances[j].color[2];
 
 			nrOfInstances++;
 		}
@@ -68,8 +67,9 @@ void Model::Draw(mat4 viewMatrix, mat4 projectionMatrix)
 		glBindTexture(GL_TEXTURE_2D, speID);
 	}
 	//m_modelsDeferred[i].bufferPtr->draw();
-	bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector, &colors);
+	bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector, colors);
 	glBindTexture(GL_TEXTURE_2D, 0);
+	delete colors;
 }
 
 bool Model::Compare(Model m)

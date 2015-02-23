@@ -14,7 +14,7 @@ StartNewRoundSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("NotifyStartNewRound", FilterType.RequiresOneOf)
 end
 
-StartNewRoundSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+StartNewRoundSystem.EntitiesAdded = function(self, dt, entities)
 	local onlyOnce = true
 	for n = 1, #entities do
 		local entity = entities[n]

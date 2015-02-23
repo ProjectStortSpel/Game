@@ -14,7 +14,7 @@ PlaceCardAboveUnitSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("CardStep", FilterType.RequiresOneOf)
 end
 
-PlaceCardAboveUnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+PlaceCardAboveUnitSystem.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entity = entities[n]
@@ -51,12 +51,16 @@ PlaceCardAboveUnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount
 						model:SetModel("turnleft", "cards", 2)
 					elseif action == "TurnAround" then
 						model:SetModel("turnaround", "cards", 2)
+					elseif action == "Guard" then
+						model:SetModel("guard", "cards", 2)
 					elseif action == "Sprint" then
 						model:SetModel("sprint", "cards", 2)
 					elseif action == "SlingShot" then
 						model:SetModel("slingshot", "cards", 2)
 					elseif action == "IWin" then
 						model:SetModel("iwin", "cards", 2)
+					elseif action == "Stone" then
+						model:SetModel("stone", "cards", 2)
 					else
 						model:SetModel("forward", "cards", 2)
 					end

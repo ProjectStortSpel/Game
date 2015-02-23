@@ -26,7 +26,7 @@ MapGenerator.Initialize = function(self)
 	self:AddComponentTypeToFilter("GenerateMap", FilterType.RequiresOneOf)
 end
 
-MapGenerator.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+MapGenerator.EntitiesAdded = function(self, dt, entities)
 	self:GenerateMap(1651654, 4, 4)
 end
 

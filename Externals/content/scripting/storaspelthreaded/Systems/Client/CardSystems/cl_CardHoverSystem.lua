@@ -18,7 +18,7 @@ CardHoverSystem.Initialize = function(self)
 	print("Card hover System initialized!")
 end
 
-CardHoverSystem.Update = function(self, dt, taskIndex, taskCount)
+CardHoverSystem.Update = function(self, dt)
 	local entities = self:GetEntities()
 	for i = 1, #entities do
 		local entity = entities[i]
@@ -39,7 +39,7 @@ end
 
 
 
-CardHoverSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+CardHoverSystem.EntitiesAdded = function(self, dt, entities)
 	for n = 1, #entities do
 		local entityId = entities[n]
 		local rotation = world:GetComponent(entityId, "Rotation", 0)
@@ -49,7 +49,7 @@ CardHoverSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entitie
 	end
 end
 
-CardHoverSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
+CardHoverSystem.EntitiesRemoved = function(self, dt, entities)
 	for n = 1, #entities do
 		local entityId = entities[n]
 		local rotation = world:GetComponent(entityId, "Rotation", 0)

@@ -41,6 +41,7 @@ bool GraphicsLow::Init()
 		m_camera = new Camera(m_clientWidth, m_clientHeight);
 
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
+	InitFBO();
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	if (!InitSkybox()) { ERRORMSG("INIT SKYBOX FAILED\n"); return false; }
 	if (!InitLightBuffers()) { ERRORMSG("INIT LIGHTBUFFER FAILED\n"); return false; }
@@ -67,18 +68,22 @@ void GraphicsLow::Update(float _dt)
 
 void GraphicsLow::Render()
 {
+	// Cleara vanliga framebuffern också???
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 
+	//GLint oldFBO;
+	//glGetIntegerv(GL_FRAMEBUFFER, &oldFBO);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glViewport(0, 0, m_framebufferWidth, m_framebufferHeight);
 	//--------Uniforms-------------------------------------------------------------------------
 	mat4 projectionMatrix = *m_camera->GetProjMatrix();
 	mat4 viewMatrix = *m_camera->GetViewMatrix();
-
 	if (m_modelsForward.size() > 0)
 	{
-		glViewport(0, 0, m_clientWidth, m_clientHeight);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 		//------FORWARD RENDERING--------------------------------------------
 		//glEnable(GL_BLEND);
 
@@ -119,7 +124,6 @@ void GraphicsLow::Render()
 		}
 		//-------------------------------------------------------------------------
 	}
-	glViewport(0, 0, m_clientWidth, m_clientHeight);
 	glDisable(GL_CULL_FACE);
 	// DRAW SKYBOX
 	m_skyBoxShader.UseProgram();
@@ -163,6 +167,8 @@ void GraphicsLow::Render()
 			glActiveTexture(GL_TEXTURE3);
 			glBindTexture(GL_TEXTURE_2D, m_modelsViewspace[i].speID);
 
+			m_viewspaceShader.SetUniVariable("BlendColor", vector3, m_modelsViewspace[i].color);
+
 			m_modelsViewspace[i].bufferPtr->draw(m_viewspaceShader.GetShaderProgram());
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
@@ -189,10 +195,44 @@ void GraphicsLow::Render()
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, m_modelsInterface[i].texID);
 
+			m_interfaceShader.SetUniVariable("BlendColor", vector3, m_modelsInterface[i].color);
+
 			m_modelsInterface[i].bufferPtr->draw(m_interfaceShader.GetShaderProgram());
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// DRAW FULLSCREEN
+	glViewport(0, 0, m_clientWidth, m_clientHeight);
+
+	float positionData[] = {
+		-1.0, -1.0,
+		1.0, -1.0,
+		1.0, 1.0,
+		1.0, 1.0,
+		-1.0, 1.0,
+		-1.0, -1.0
+	};
+
+	m_fullscreen.UseProgram();
+
+	// Skicka in outputImage
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, m_outputImage);
+
+	GLuint buf;
+	glGenBuffers(1, &buf);
+
+	glBindBuffer(GL_ARRAY_BUFFER, buf);
+	glBufferData(GL_ARRAY_BUFFER, 2 * 6 * sizeof(float), positionData, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
+	glEnableVertexAttribArray(0);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	glDeleteBuffers(1, &buf);
 
 	glDisable(GL_TEXTURE_2D);
 	glUseProgram(0);
@@ -236,6 +276,15 @@ bool GraphicsLow::InitSDLWindow()
 	SDL_GetWindowSize(m_window, &m_clientWidth, &m_clientHeight);
 	SDL_Log("W: %d H: %d", m_clientWidth, m_clientHeight);
 
+	m_framebufferWidth = m_clientWidth;
+	m_framebufferHeight = m_clientHeight;
+
+	if (m_clientWidth > 1400)
+	{
+		m_framebufferWidth = 1280;
+		m_framebufferHeight = m_framebufferWidth * float(float(m_clientHeight) / float(m_clientWidth));
+	}
+
 	m_glContext = SDL_GL_CreateContext(m_window);
 
 	SDL_GL_SetSwapInterval(0);
@@ -270,10 +319,10 @@ bool GraphicsLow::InitShaders()
 	m_interfaceShader.FinalizeShaderProgram();
 
 	//m_fullscreen
-	/*m_fullscreen.InitShaderProgram();
+	m_fullscreen.InitShaderProgram();
 	m_fullscreen.AddShader("content/shaders/android/AndroidFullscreenVS.glsl", GL_VERTEX_SHADER);
 	m_fullscreen.AddShader("content/shaders/android/AndroidFullscreenFS.glsl", GL_FRAGMENT_SHADER);
-	m_fullscreen.FinalizeShaderProgram();*/
+	m_fullscreen.FinalizeShaderProgram();
 
 	return true;
 }
@@ -284,7 +333,7 @@ bool GraphicsLow::InitBuffers()
 	m_skyBoxShader.CheckUniformLocation("cubemap", 1);
 
 	//Fullscreen shader
-	//m_fullscreen.CheckUniformLocation("sampler", 0);
+	m_fullscreen.CheckUniformLocation("sampler", 4);
 
 	return true;
 }

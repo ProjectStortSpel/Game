@@ -1,5 +1,5 @@
 -- Components
-package.path = package.path .. ";../../../Externals/content/scripting/lobbythreaded/components/?.lua"
+package.path = package.path .. ";components/?.lua"
 require "components"
 require "buttoncomponents"
 require "menucomponents"
@@ -7,24 +7,24 @@ require "servercomponents"
 require "ipconnectcomponents"
 
 --	Shared Components
-package.path = package.path .. ";../../../Externals/content/scripting/shared/components/?.lua"
+package.path = package.path .. ";../shared/components/?.lua"
 require "InitSharedComponents" -- Add more systems into InitSharedSystems.lua instead of here!
 
 if Client then
 
 --	Shared Systems
-package.path = package.path .. ";../../../Externals/content/scripting/shared/systems/?.lua"
+package.path = package.path .. ";../shared/systems/?.lua"
 require "InitSharedSystems" -- Add more systems into InitSharedSystems.lua instead of here!
 
 
 -- Systems
-package.path = package.path .. ";../../../Externals/content/scripting/lobbythreaded/systems/?.lua"
+package.path = package.path .. ";systems/?.lua"
 
 --require "sh_pickboxsystem"
 --require "sh_buttonhoversystem"
 --require "sh_buttonpressedsystem"
 
-package.path = package.path .. ";../../../Externals/content/scripting/lobbythreaded/systems/interfacesystems/?.lua"
+package.path = package.path .. ";systems/interfacesystems/?.lua"
 require "GameInterfaceSystem"
 require "GameMenuSystem"
 require "OptionMenuSystem"
@@ -33,17 +33,8 @@ require "HostMenuSystem"
 require "IPConnectSystem"
 
 -- Templates
-package.path = package.path .. ";../../../Externals/content/scripting/lobbythreaded/templates/?.lua"
+package.path = package.path .. ";templates/?.lua"
 require "templates"
-
---worldCreator:AddSystemGroup()
---worldCreator:AddSystemToCurrentGroup(PickBoxSystem)
-
---worldCreator:AddSystemGroup()
---worldCreator:AddSystemToCurrentGroup(ButtonPressedSystem)
-
---worldCreator:AddSystemGroup()
---worldCreator:AddSystemToCurrentGroup(ButtonHoverSystem)
 
 worldCreator:AddSystemGroup()	
 worldCreator:AddSystemToCurrentGroup(GameInterfaceSystem)

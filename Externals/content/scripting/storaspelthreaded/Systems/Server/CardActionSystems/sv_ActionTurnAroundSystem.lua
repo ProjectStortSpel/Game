@@ -12,7 +12,7 @@ ActionTurnAroundSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("UnitTurnAround",FilterType.Mandatory)
 end
 
-ActionTurnAroundSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+ActionTurnAroundSystem.EntitiesAdded = function(self, dt, entities)
 
 	--print("TURN AROUND Number of entities: " .. #entities)
 	for i = 1, #entities do
@@ -59,7 +59,7 @@ ActionTurnAroundSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, 
 			world:CreateComponentAndAddTo("LerpRotation", entities[i])
 		end
 		world:GetComponent(entities[i], "LerpRotation", "X"):SetFloat(rot_x)
-		world:GetComponent(entities[i], "LerpRotation", "Y"):SetFloat(rot_y + math.pi)
+		world:GetComponent(entities[i], "LerpRotation", "Y"):SetFloat(rot_y - math.pi)
 		world:GetComponent(entities[i], "LerpRotation", "Z"):SetFloat(rot_z)
 		world:GetComponent(entities[i], "LerpRotation", "Time"):SetFloat(1)
 		world:GetComponent(entities[i], "LerpRotation", "Algorithm"):SetText("SmoothLerp")

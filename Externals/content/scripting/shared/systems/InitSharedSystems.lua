@@ -1,18 +1,21 @@
 --	Lerping Systems
-package.path = package.path .. ";../../../Externals/content/scripting/shared/systems/?.lua"
+package.path = package.path .. ";../shared/systems/?.lua"
 require "sh_PickboxSystem"
 require "sh_HoverSizeSystem"
 --require "sh_AddTextToTextureSystem"
 require "sh_ParentSystem"
+require "sh_NotificationBoxSystem"
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ParentSystem)
 
-worldCreator:AddSystemGroup()
+--worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(PickBoxSystem)
 
-worldCreator:AddSystemGroup()
+--worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(HoverSizeSystem)
 
---worldCreator:AddSystemGroup()
---worldCreator:AddSystemToCurrentGroup(AddTextToTextureSystem)
+worldCreator:AddSystemToCurrentGroup(NotificationBoxSystem)
+
+--worldCreator:AddSystemGroup() << Helt removed 
+--worldCreator:AddSystemToCurrentGroup(AddTextToTextureSystem) << Helt removed

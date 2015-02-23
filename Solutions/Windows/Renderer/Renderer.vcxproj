@@ -66,8 +66,10 @@
     <None Include="..\..\..\Externals\content\shaders\fullscreen.vs" />
     <None Include="..\..\..\Externals\content\shaders\lowFSForwardShader.glsl" />
     <None Include="..\..\..\Externals\content\shaders\lowVSForwardShader.glsl" />
-    <None Include="..\..\..\Externals\content\shaders\particleShaderFS.glsl" />
-    <None Include="..\..\..\Externals\content\shaders\particleShaderVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\particles\particleFireFS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\particles\particleFireVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\particles\particleSmokeFS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\particles\particleSmokeVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\shadowShaderDeferredFS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\shadowShaderDeferredVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\shadowShaderForwardFS.glsl" />
@@ -178,6 +180,7 @@
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;OpenGL32.lib;glew32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
+      <Profile>true</Profile>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"
@@ -202,6 +205,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;OpenGL32.lib;glew32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
+      <Profile>true</Profile>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "$(SolutionDir)..\..\Externals\binaries\Windows\$(PlatformTarget)\*.dll" "$(OutDir)"

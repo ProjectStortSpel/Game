@@ -11,14 +11,13 @@ HostSettingsSystem.Initialize = function(self)
 	self.settingsId = -1
 end
 
-HostSettingsSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, addedEntities)
+HostSettingsSystem.EntitiesAdded = function(self, dt, addedEntities)
 
 	for n = 1, #addedEntities do
 		local entity = addedEntities[n]
 		
 		if world:EntityHasComponent(entity, "HostSettings") then
 			
-			print("HEJHEJHEJHEJHEJHEJ")
 			self.settingsId = entity
 			local name 		= world:GetComponent(entity, "HostSettings", "Name"):GetText()
 			local map 		= world:GetComponent(entity, "HostSettings", "Map"):GetText()

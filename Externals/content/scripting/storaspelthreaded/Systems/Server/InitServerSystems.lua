@@ -1,78 +1,39 @@
---	GameLogic Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/GameLogicSystems/?.lua"
+--  Game Logic Systems
+package.path = package.path .. ";Systems/Server/GameLogicSystems/?.lua"
 require "sv_StageSystem"
 
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(StageSystem)
-
-
 --	Map Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/MapSystems/?.lua"
+package.path = package.path .. ";Systems/Server/MapSystems/?.lua"
 --require "sv_NewMapGenerator"
+require "sv_MapRaterSystem"
 require "sv_CreateMapSystem"
 require "sv_RiverSystem"
 require "sv_VoidSystem"
 require "sv_CheckpointSystem"
---require "sv_MapRaterSystem"
-
---worldCreator:AddSystemGroup()
---worldCreator:AddSystemToCurrentGroup(MapGenerator)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(CreateMapSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(RiverSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(VoidSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(CheckpointSystem)
---worldCreator:AddSystemGroup()
---worldCreator:AddSystemToCurrentGroup(MapRater)
 
 --	Light Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/LightSystems/?.lua"
+package.path = package.path .. ";Systems/Server/LightSystems/?.lua"
 require "sv_DirectionalLightSystem"
-require "sv_PointlightSystem"
-
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(DirectionalLightSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(PointlightSystem)
 
 --	Player Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/PlayerSystems/?.lua"
+package.path = package.path .. ";Systems/Server/PlayerSystems/?.lua"
 require "sv_PlayerSystem"
 require "sv_UnitSystem"
 
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(PlayerSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(UnitSystem)
-
 -- AI Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/AISystems/?.lua"
+package.path = package.path .. ";Systems/Server/AISystems/?.lua"
 require "sv_AICardPickingSystem"
 require "sv_AddAISystem"
 
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(AddAISystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(AICardPickingSystem)
-
 --	Move Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/MoveSystems/?.lua"
+package.path = package.path .. ";Systems/Server/MoveSystems/?.lua"
 require "sv_PostMoveSystem"
 require "sv_TestMoveSystem"
 require "sv_TestMoveRiverSystem"
-
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(PostMoveSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(TestMoveSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(TestMoveRiverSystem)
+require "sv_SimultaneousMove"
 
 --	Card Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/CardSystems/?.lua"
+package.path = package.path .. ";Systems/Server/CardSystems/?.lua"
 require "sv_CreateDeckSystem"
 require "sv_CreateCardPickTimer"
 require "sv_AddCardPickTimerSystem"
@@ -84,145 +45,149 @@ require "sv_TakeCardStepFromUnitSystem"
 require "sv_TakeCardsFromPlayerSystem"
 require "sv_PlayCardSystem"
 require "sv_PlaceCardAboveUnitSystem"
-
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(CreateDeckSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(AddCardPickTimer)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(SetCardPickTimer)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(UpdateCardPickTimer)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(CreateCardPickTimer)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(AutoPickCards)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(DealCardsSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(TakeCardStepsFromUnitSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(TakeCardsFromPlayerSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(PlaceCardAboveUnitSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(PlayCardSystem)
+require "sv_SortClientSelectedCards"
+require "sv_ClearServerSelectedSystem"
 
 --	Card Action Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/CardActionSystems/?.lua"
+package.path = package.path .. ";Systems/Server/CardActionSystems/?.lua"
 require "sv_ActionMoveForwardSystem"
 require "sv_ActionMoveBackwardSystem"
 require "sv_ActionTurnLeftSystem"
 require "sv_ActionTurnRightSystem"
 require "sv_ActionTurnAroundSystem"
-
-
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(ActionMoveForwardSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(ActionMoveBackwardSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(ActionTurnLeftSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(ActionTurnRightSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(ActionTurnAroundSystem)
-
+require "sv_ActionGuardSystem"
 
 --	Card Ability Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/CardAbilitySystems/?.lua"
+package.path = package.path .. ";Systems/Server/CardAbilitySystems/?.lua"
 require "sv_AbilitySprintSystem"
 require "sv_AbilitySlingshotSystem"
 require "sv_AbilityIWin"
+require "sv_AbilityStoneSystem"
 
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(AbilitySprintSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(AbilitySlingshotSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(AbilityIWin)
+--	Weather Systems
+package.path = package.path .. ";Systems/Server/WeatherSystems/?.lua"
+require "sv_WeatherSystem"
+require "sv_WeatherWindSystem"
 
 --	Spawn Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/SpawnSystems/?.lua"
-require "sv_FindSpawnpointSystem"
+package.path = package.path .. ";Systems/Server/SpawnSystems/?.lua"
+--require "sv_SpawnSystem"
 require "sv_GiveSpawnLocationSystem"
+require "sv_FindSpawnpointSystem"
 require "sv_RespawnSystem"
 require "sv_PostSpawnSystem"
 
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(GiveSpawnLocationSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(FindSpawnpointSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(RespawnSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(PostSpawnSystem)
-
-
-
 --	Round Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/RoundSystems/?.lua"
+package.path = package.path .. ";Systems/Server/RoundSystems/?.lua"
 require "sv_StepTimerSystem"
 require "sv_NewStepSystem"
 require "sv_StartNewRoundSystem"
 require "sv_PlayCardTimerSystem"
 
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(StartNewRoundSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(StepTimerSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(NewStepSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(PlayCardTimerSystem)
-
-
-
 --	Camera Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/CameraSystems/?.lua"
+package.path = package.path .. ";Systems/Server/CameraSystems/?.lua"
 require "sv_CameraInterestpointSystem"
 require "sv_CameraNewRoundSystem"
-
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(CameraInterestpointSystem)
-
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(CameraNewRoundSystem)
-
+require "sv_CameraMovePhaseSystem"
 
 --	Misc Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/MiscSystems/?.lua"
+package.path = package.path .. ";Systems/Server/MiscSystems/?.lua"
 require "sv_TotemPoleSystem"
 require "sv_MoveTotemPieceSystem"
 require "sv_GameOverSystem"
 require "sv_LogStartSystem"
 require "sv_ServerNetworkMessageSystem"
 require "sv_HostSettingsSystem"
-require "sv_ChatSystem"
+require "sv_OffsetUnitSystem"
 
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(HostSettingsSystem)
+--worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(StageSystem)
+--worldCreator:AddSystemToCurrentGroup(MapGenerator)
+worldCreator:AddSystemToCurrentGroup(CreateMapSystem)
+worldCreator:AddSystemToCurrentGroup(MapRater)
+worldCreator:AddSystemToCurrentGroup(RiverSystem)
+worldCreator:AddSystemToCurrentGroup(VoidSystem)
+worldCreator:AddSystemToCurrentGroup(CheckpointSystem)
+worldCreator:AddSystemToCurrentGroup(DirectionalLightSystem)
+worldCreator:AddSystemToCurrentGroup(PlayerSystem)
+worldCreator:AddSystemToCurrentGroup(UnitSystem)
+worldCreator:AddSystemToCurrentGroup(OffsetUnitSystem)
+worldCreator:AddSystemToCurrentGroup(AddAISystem)
+worldCreator:AddSystemToCurrentGroup(AICardPickingSystem)
+worldCreator:AddSystemToCurrentGroup(PostMoveSystem)
 
-worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(TestMoveSystem)
+worldCreator:AddSystemToCurrentGroup(TestMoveRiverSystem)
+worldCreator:AddSystemToCurrentGroup(SimultaneousMove)
+
+worldCreator:AddSystemToCurrentGroup(CreateDeckSystem)
+worldCreator:AddSystemToCurrentGroup(AddCardPickTimer)
+--worldCreator:AddSystemGroup() << TEMP REMOVE 1
+worldCreator:AddSystemToCurrentGroup(SetCardPickTimer)
+worldCreator:AddSystemToCurrentGroup(UpdateCardPickTimer)
+worldCreator:AddSystemToCurrentGroup(CreateCardPickTimer)
+worldCreator:AddSystemToCurrentGroup(AutoPickCards)
+--worldCreator:AddSystemGroup() << TEMP REMOVE 2
+worldCreator:AddSystemToCurrentGroup(DealCardsSystem)
+worldCreator:AddSystemToCurrentGroup(TakeCardStepsFromUnitSystem)
+worldCreator:AddSystemToCurrentGroup(TakeCardsFromPlayerSystem)
+worldCreator:AddSystemToCurrentGroup(PlayCardSystem)
+worldCreator:AddSystemToCurrentGroup(PlaceCardAboveUnitSystem)
+
+--worldCreator:AddSystemGroup() << TEMP REMOVE 3
+worldCreator:AddSystemToCurrentGroup(ActionMoveForwardSystem)
+worldCreator:AddSystemToCurrentGroup(ActionMoveBackwardSystem)
+worldCreator:AddSystemToCurrentGroup(ActionTurnLeftSystem)
+worldCreator:AddSystemToCurrentGroup(ActionTurnRightSystem)
+worldCreator:AddSystemToCurrentGroup(ActionTurnAroundSystem)
+worldCreator:AddSystemToCurrentGroup(ActionGuardSystem)
+
+worldCreator:AddSystemToCurrentGroup(AbilitySprintSystem)
+worldCreator:AddSystemToCurrentGroup(AbilitySlingshotSystem)
+worldCreator:AddSystemToCurrentGroup(AbilityIWin)
+worldCreator:AddSystemToCurrentGroup(AbilityStoneSystem)
+
+worldCreator:AddSystemToCurrentGroup(WeatherSystem)
+worldCreator:AddSystemToCurrentGroup(WeatherWindSystem)
+
+worldCreator:AddSystemToCurrentGroup(GiveSpawnLocationSystem)
+
+worldCreator:AddSystemToCurrentGroup(RespawnSystem)
+worldCreator:AddSystemToCurrentGroup(PostSpawnSystem)
+
+
+worldCreator:AddSystemToCurrentGroup(StartNewRoundSystem)
+worldCreator:AddSystemToCurrentGroup(StepTimerSystem)
+worldCreator:AddSystemToCurrentGroup(NewStepSystem)
+worldCreator:AddSystemToCurrentGroup(PlayCardTimerSystem)
+
+
+
+--worldCreator:AddSystemGroup() << TEMP 0
+worldCreator:AddSystemToCurrentGroup(CameraInterestpointSystem)
+worldCreator:AddSystemToCurrentGroup(CameraNewRoundSystem)
+worldCreator:AddSystemToCurrentGroup(CameraMovePhaseSystem)
+
 worldCreator:AddSystemToCurrentGroup(TotemPoleSystem)
-
-worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(MoveTotemPieceSystem)
 
-worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(HostSettingsSystem)
+
+
 worldCreator:AddSystemToCurrentGroup(GameOverSystem)
 
 worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(ServerNetworkMessageSystem)
 worldCreator:AddSystemToCurrentGroup(LogStartSystem)
 
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(ServerNetworkMessageSystem)
 
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(ChatSystem)
+
+worldCreator:AddSystemToCurrentGroup(SortClientSelectedCards)	--	Temp
+worldCreator:AddSystemToCurrentGroup(ClearServerSelectedSystem)	--	Temp
+worldCreator:AddSystemToCurrentGroup(FindSpawnpointSystem)
 
 --	Audio Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/AudioSystems/?.lua"
+package.path = package.path .. ";Systems/Server/AudioSystems/?.lua"
 require "sv_AudioUnitDeathSystem"
 
 worldCreator:AddSystemGroup()

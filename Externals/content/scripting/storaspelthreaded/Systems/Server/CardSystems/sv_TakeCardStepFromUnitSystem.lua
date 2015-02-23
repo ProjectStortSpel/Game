@@ -12,7 +12,7 @@ TakeCardStepsFromUnitSystem.Initialize = function ( self )
 	self:AddComponentTypeToFilter("CardStep", FilterType.RequiresOneOf)
 end
 
-TakeCardStepsFromUnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+TakeCardStepsFromUnitSystem.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entityId = entities[n]

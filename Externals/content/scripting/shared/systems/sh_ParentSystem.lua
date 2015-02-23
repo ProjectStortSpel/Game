@@ -1,6 +1,6 @@
 ParentSystem = System()
 
-ParentSystem.Update = function(self, dt, taskIndex, taskCount)
+ParentSystem.Update = function(self, dt)
 
 	local children = self:GetEntities("Parent")
 	for i = 1, #children do
@@ -9,14 +9,13 @@ ParentSystem.Update = function(self, dt, taskIndex, taskCount)
 
 		local x, y, z = world:GetComponent(child, "Position", 0):GetFloat3(0)
 		world:GetComponent(child, "Position", 0):SetFloat3(x, y, z) -- FULHAX FÖR ATT FÅ DEN ATT UPDATERA HELA TIDEN (FUCK EFFEKTIVITET)
-		
 		--local x, y, z = world:GetComponent(parentId, "Scale", 0):GetFloat3(0)
 		--world:GetComponent(child, "Scale", 0):SetFloat3(x, y, z)
 	end
 	
 end
 
-ParentSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+ParentSystem.EntitiesAdded = function(self, dt, entities)
 	for i = 1, #entities do
 		local entityId = entities[i]
 		if world:EntityHasComponent(entityId, "Parent") then
@@ -34,7 +33,7 @@ ParentSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 	end
 end
 
-ParentSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
+ParentSystem.EntitiesRemoved = function(self, dt, entities)
 	for i = 1, #entities do
 		local entityId = entities[i]
 		--if world:EntityHasComponent(entityId, "IsParent") then

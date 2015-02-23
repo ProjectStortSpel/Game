@@ -91,9 +91,17 @@ FindSpawnpointSystem.SpawnUnitAt = function(self, X, Z, unitToSpawn)
 	world:GetComponent(unitToSpawn, "LerpPosition", "Y"):SetFloat(0.5)
 	world:GetComponent(unitToSpawn, "LerpPosition", "Z"):SetFloat(Z)
 	world:GetComponent(unitToSpawn, "LerpPosition", "Time"):SetFloat(0)
-	world:GetComponent(unitToSpawn, "LerpPosition", "Algorithm"):SetText("NormalLerp")
-
+	world:GetComponent(unitToSpawn, "LerpPosition", "Algorithm"):SetText("PlayerMove")
+	
+	if not world:EntityHasComponent(unitToSpawn, "UnitWantTileOffset") then
+		world:CreateComponentAndAddTo("UnitWantTileOffset", unitToSpawn)
+	end
 	world:GetComponent(unitToSpawn, "MapPosition", "X"):SetInt2(X, Z)
+	
+	if world:EntityHasComponent(unitToSpawn, "Hide") then
+		world:RemoveComponentFrom("Hide", unitToSpawn)
+	end
+	
 end
 
 FindSpawnpointSystem.GetSpawnDirection = function(self, nIteration)
@@ -140,7 +148,7 @@ FindSpawnpointSystem.IsInsideWorld = function(self, X, Z)
 	return false
 end
 
-FindSpawnpointSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, newEntities)
+FindSpawnpointSystem.EntitiesAdded = function(self, dt, newEntities)
 
 	for n = 1, #newEntities do
 		

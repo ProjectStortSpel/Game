@@ -45,7 +45,7 @@ end
 --	|  __| | . ` |  | |    | |    | |    | | |  __|  \___ \ 	  / /\ \ | |  | | |  | |  __| | |  | |
 --	| |____| |\  |  | |   _| |_   | |   _| |_| |____ ____) |	 / ____ \| |__| | |__| | |____| |__| |
 --	|______|_| \_|  |_|  |_____|  |_|  |_____|______|_____/ 	/_/    \_\_____/|_____/|______|_____/ 
-MapRater.EntitiesAdded = function(self, dt, taskIndex, taskCount, newEntities)
+MapRater.EntitiesAdded = function(self, dt, newEntities)
 
 	for n = 1, #newEntities do
 		local	newEntity	=	newEntities[n]
@@ -58,6 +58,8 @@ MapRater.EntitiesAdded = function(self, dt, taskIndex, taskCount, newEntities)
 			world:KillEntity(newEntity)
 			
 			--if self.PlayersLeftToWin == 0 then
+				print("MapRater killing Entity " .. newEntity .. " before printing")
+				self:LogWorldData()
 				self:PrintInfo()
 			--end
 		elseif world:EntityHasComponent(newEntity, "UnitDied") then

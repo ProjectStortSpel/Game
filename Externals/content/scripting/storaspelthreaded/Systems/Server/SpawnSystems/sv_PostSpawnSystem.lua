@@ -24,14 +24,14 @@ PostSpawnSystem.CheckAvailableSpawn = function(self, unitToTest, allUnits)
 	end
 end
 
-PostSpawnSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, newSpawns)
+PostSpawnSystem.EntitiesAdded = function(self, dt, newSpawns)
 
 	for n = 1, #newSpawns do
 		local entityId = newSpawns[n]
 		
 		if world:EntityHasComponent(entityId, "PostSpawn") then
 		
-			
+			printf("asdasd")
 			
 			
 			world:KillEntity(entityId)

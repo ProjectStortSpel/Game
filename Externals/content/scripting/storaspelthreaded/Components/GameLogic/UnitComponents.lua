@@ -87,3 +87,8 @@ UnitSelectedCardsComponent.Name = "UnitSelectedCards"
 UnitSelectedCardsComponent.TableType = TableType.Map
 worldCreator:AddComponentType(UnitSelectedCardsComponent)
 
+local UnitWantTileOffset = ComponentType()
+UnitWantTileOffset.Name = "UnitWantTileOffset"
+UnitWantTileOffset.TableType = TableType.Map
+worldCreator:AddComponentType(UnitWantTileOffset)
+
