@@ -15,6 +15,7 @@
 #include "Systems/SlerpRotationSystem.h"
 #include "Systems/AddTextToTextureSystem.h"
 #include "Systems/ParticleSystem.h"
+#include "Systems/SimulateFrameSpikeSystem.h"
 
 #include "Network/NetworkInstance.h"
 #include "ECSL/ECSL.h"
@@ -414,6 +415,7 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
     {
         worldCreator.AddSystemGroup();
         worldCreator.AddSystemToCurrentGroup<SyncEntitiesSystem>();
+		//worldCreator.AddSystemToCurrentGroup<SimulateFrameSpikeSystem>();
     }
     
 	//worldCreator.AddLuaSystemToCurrentGroup(new ReceivePacketSystem());

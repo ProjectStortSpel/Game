@@ -13,7 +13,7 @@ NotificationBoxSystem.Initialize = function(self)
 end
 
 
-NotificationBoxSystem.Update = function(self, dt, taskIndex, taskCount)
+NotificationBoxSystem.Update = function(self, dt)
 
 	if not self.IsMenuActive then
 		return
@@ -36,7 +36,7 @@ NotificationBoxSystem.Update = function(self, dt, taskIndex, taskCount)
 
 end
 
-NotificationBoxSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+NotificationBoxSystem.EntitiesAdded = function(self, dt, entities)
 	for i = 1, #entities do
 		local entityId = entities[i]
 		if world:EntityHasComponent(entityId, self.Name) then

@@ -13,7 +13,7 @@ TakeCardsFromPlayerSystem.Initialize = function ( self )
 	self:AddComponentTypeToFilter("DealtCard", FilterType.RequiresOneOf)
 end
 
-TakeCardsFromPlayerSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+TakeCardsFromPlayerSystem.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entityId = entities[n]

@@ -18,7 +18,7 @@ IPConnectSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("IPConnectEntry", FilterType.Mandatory)
 end
 
-IPConnectSystem.Update = function(self, dt, taskIndex, taskCount)
+IPConnectSystem.Update = function(self, dt)
 	if self.IsActive then
 		if Input.GetTextInput() ~= self.TextInput then
 			self:UpdateText()
@@ -54,7 +54,7 @@ IPConnectSystem.Update = function(self, dt, taskIndex, taskCount)
 	end
 end
 
-IPConnectSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+IPConnectSystem.EntitiesAdded = function(self, dt, entities)
 	if not self.IsActive then
 		self:Activate()
 	end

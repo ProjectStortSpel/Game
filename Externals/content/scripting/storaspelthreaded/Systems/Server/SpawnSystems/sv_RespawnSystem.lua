@@ -13,7 +13,7 @@ RespawnSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("RespawnUnits", FilterType.RequiresOneOf)
 end
 
-RespawnSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+RespawnSystem.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entityId = entities[n]

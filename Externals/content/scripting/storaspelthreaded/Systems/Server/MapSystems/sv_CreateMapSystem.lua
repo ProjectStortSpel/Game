@@ -19,7 +19,7 @@ CreateMapSystem.PostInitialize = function(self)
 	--self:CreateMap("content/maps/map.txt")
 end
 
-CreateMapSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+CreateMapSystem.EntitiesAdded = function(self, dt, entities)
 	for i = 1, #entities do
 		local entity = entities[i]
 		if world:EntityHasComponent(entity, "CreateMap") then

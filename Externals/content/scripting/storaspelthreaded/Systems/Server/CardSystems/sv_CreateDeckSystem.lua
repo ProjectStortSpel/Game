@@ -22,7 +22,7 @@ CreateDeckSystem.PostInitialize = function(self)
 	world:GetComponent(dealingSettingsEntity, "DealingSettings", "CardsToPick"):SetInt(5)
 end
 
-CreateDeckSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+CreateDeckSystem.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 	

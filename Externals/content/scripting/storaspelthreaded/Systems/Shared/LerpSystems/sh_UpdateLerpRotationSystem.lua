@@ -13,7 +13,7 @@ UpdateLerpRotationSystem.Initialize = function(self)
 end
 
 
-UpdateLerpRotationSystem.Update = function(self, dt, taskIndex, taskCount)
+UpdateLerpRotationSystem.Update = function(self, dt)
 	local entities = self:GetEntities()
 	for i = 1, #entities do
 		local entity = entities[i]

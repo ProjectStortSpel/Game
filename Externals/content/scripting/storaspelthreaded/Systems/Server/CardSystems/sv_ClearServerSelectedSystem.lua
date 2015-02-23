@@ -22,7 +22,7 @@ ClearServerSelectedSystem.ClearSelectedCards = function(self)
 
 end
 
-ClearServerSelectedSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+ClearServerSelectedSystem.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entity = entities[n]

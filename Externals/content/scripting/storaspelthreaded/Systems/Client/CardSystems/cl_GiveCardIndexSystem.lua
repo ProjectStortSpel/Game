@@ -11,7 +11,7 @@ GiveCardIndexSystem.Initialize = function ( self )
 	self:AddComponentTypeToFilter("Card", FilterType.Mandatory)
 end
 
-GiveCardIndexSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, newEntities)
+GiveCardIndexSystem.EntitiesAdded = function(self, dt, newEntities)
 	local cards = self:GetEntities()
 	local indicies = {}
 	indicies.__mode = "k"

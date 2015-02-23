@@ -46,7 +46,7 @@ end
 --	return newIndex
 --end
 
-UnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+UnitSystem.EntitiesAdded = function(self, dt, entities)
 	
 	local mySeed = os.time() - 1418742000 -- dont ask
 	math.randomseed(mySeed)

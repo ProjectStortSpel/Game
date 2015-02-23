@@ -33,6 +33,46 @@ require "cl_NewCameraSystem"
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ClientNetworkMessageSystem)
 
+
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(SendSelectedCardsSystem)
+worldCreator:AddSystemToCurrentGroup(OptionMenuSystem)
+worldCreator:AddSystemToCurrentGroup(CardPositionSystem)
+worldCreator:AddSystemToCurrentGroup(GiveCardIndexSystem)
+worldCreator:AddSystemToCurrentGroup(ChatSystem)
+worldCreator:AddSystemToCurrentGroup(SortCardIndexSystem)
+worldCreator:AddSystemToCurrentGroup(PickingTimerSystem)
+worldCreator:AddSystemToCurrentGroup(GameInterfaceSystem)
+worldCreator:AddSystemToCurrentGroup(PlayerIndicatorSystem)
+worldCreator:AddSystemToCurrentGroup(CardSelectSystem)
+worldCreator:AddSystemToCurrentGroup(NewCameraSystem)
+worldCreator:AddSystemToCurrentGroup(CardPickedPositionSystem)
+worldCreator:AddSystemToCurrentGroup(RconMenuSystem)
+worldCreator:AddSystemToCurrentGroup(FlowingWaterSystem)
+worldCreator:AddSystemToCurrentGroup(SortSelectedCardsSystem)
+worldCreator:AddSystemToCurrentGroup(GameMenuSystem)
+worldCreator:AddSystemToCurrentGroup(CardHoverSystem)
+worldCreator:AddSystemToCurrentGroup(CardAddModelSystem)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--[[
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(PlayerIndicatorSystem)
 
@@ -64,3 +104,4 @@ worldCreator:AddSystemToCurrentGroup(CardSelectSystem)
 
 
 worldCreator:AddSystemToCurrentGroup(NewCameraSystem)
+--]]

@@ -31,7 +31,7 @@ LoadingbarSystem.PostInitialize = function(self)
 
 end
 
-LoadingbarSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+LoadingbarSystem.EntitiesAdded = function(self, dt, entities)
 
 	for i = 1, #entities do
 	

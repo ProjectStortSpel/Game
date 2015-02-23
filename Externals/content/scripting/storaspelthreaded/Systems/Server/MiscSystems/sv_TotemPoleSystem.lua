@@ -207,7 +207,7 @@ TotemPoleSystem.CheckAddTotemPiece = function(self, entityId)
 	self:CheckCheckPoints(targetCheckpointId, totemPoleId, playerNumber, R, G, B)
 end
 
-TotemPoleSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, addedEntities)
+TotemPoleSystem.EntitiesAdded = function(self, dt, addedEntities)
 
 	for n = 1, #addedEntities do
 		--	Get entity ID

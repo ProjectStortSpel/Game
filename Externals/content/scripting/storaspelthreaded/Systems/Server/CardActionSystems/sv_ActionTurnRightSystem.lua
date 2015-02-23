@@ -12,7 +12,7 @@ ActionTurnRightSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("UnitTurnRight",	FilterType.Mandatory)
 end
 
-ActionTurnRightSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+ActionTurnRightSystem.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entity = entities[n]

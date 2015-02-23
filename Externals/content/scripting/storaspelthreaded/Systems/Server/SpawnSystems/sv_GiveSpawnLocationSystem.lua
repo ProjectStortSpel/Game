@@ -13,7 +13,7 @@ GiveSpawnLocationSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("AvailableSpawnpoint", FilterType.RequiresOneOf)
 end
 
-GiveSpawnLocationSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+GiveSpawnLocationSystem.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entityId = entities[n]
