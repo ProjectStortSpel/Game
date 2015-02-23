@@ -5,6 +5,7 @@ require "cl_ClientNetworkMessageSystem"
 require "cl_FlowingWaterSystem"
 require "cl_ChatSystem"
 require "cl_ShowNextCheckpointSystem"
+require "cl_LobbySystem"
 require "cl_VisualizeSelectedCards"
 
 --	Interface Systems
@@ -53,6 +54,8 @@ worldCreator:AddSystemToCurrentGroup(FlowingWaterSystem)
 worldCreator:AddSystemToCurrentGroup(SortSelectedCardsSystem)
 worldCreator:AddSystemToCurrentGroup(GameMenuSystem)
 worldCreator:AddSystemToCurrentGroup(CardHoverSystem)
+
+worldCreator:AddSystemToCurrentGroup(LobbySystem)
 worldCreator:AddSystemToCurrentGroup(CardAddModelSystem)
 worldCreator:AddSystemToCurrentGroup(ShowNextCheckpointSystem)
 
