@@ -158,6 +158,7 @@ namespace LuaBridge
 			else if (_n == 0)
 			{
 				printf("Something went wrong in factorial");
+                return 0;
 			}
 			else
 			{

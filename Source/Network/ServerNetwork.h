@@ -2,6 +2,7 @@
 #define SERVERNETWORK_H
 
 #include <thread>
+#include <vector>
 
 #include "BaseNetwork.h"
 

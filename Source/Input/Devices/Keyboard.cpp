@@ -23,15 +23,20 @@ Keyboard::~Keyboard()
 
 void Keyboard::StartTextInput()
 {
+#ifndef __IOS__
 	SDL_LockMutex(m_textInputMutex);
 	m_startUsingTextInput = m_stopUsingTextInput + 1;
 	SDL_UnlockMutex(m_textInputMutex);
+#endif
 }
 void Keyboard::StopTextInput()
-{ 
+{
+    
+#ifndef __IOS__
 	SDL_LockMutex(m_textInputMutex);
 	m_stopUsingTextInput = m_startUsingTextInput + 1;
 	SDL_UnlockMutex(m_textInputMutex);
+#endif
 }
 
 void Keyboard::Update()
