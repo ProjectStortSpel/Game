@@ -63,7 +63,7 @@ end
 MapGenerator.EntitiesAdded = function(self, dt, entities)
 	--self:GenerateMap(os.time()%29181249, 4, 4)
 	--self:GenerateMap(23246299, 4, 4)
-	self:GenerateMap(2324130, 1, 2)
+	self:GenerateMap(2324130, 3, 2)
 	--self:GenerateMap(23239474, 4, 4)
 	--self:GenerateMap(5747, 4, 4)
 	--self:GenerateMap(1338, 6, 4)
@@ -191,7 +191,6 @@ MapGenerator.CreateRivers = function(self)
 	local	centerDistance		=	math.ceil(self:GetDistanceBetween(centerX, centerZ, self.VoidMargin, self.VoidMargin)*0.1)
 	local	riversCarved		=	0
 	
-	print("Distance : " .. centerDistance)
 	while true do
 		
 		tempX, tempZ	=	self:GetPositionXDistanceAwayFrom(centerX, centerZ, centerDistance)
@@ -553,7 +552,6 @@ MapGenerator.PlaceSpawnpoints = function(self)
 	local	centerX, centerZ	=	self:GetCenterOfMap()
 	local	tSpawns	=	math.ceil(self.Players/2)
 	local	tX,	tZ	=	0, 0 --self:GetPositionXDistanceAwayFrom(centerX, centerZ, 2*tSpawns)
-	
 	while true do
 		tX,	tZ	=	self:GetPositionXDistanceAwayFrom(centerX, centerZ, 2*tSpawns)
 		local	canSpawn	=	true
@@ -587,9 +585,8 @@ MapGenerator.PlaceCheckpoints = function(self)
 
 	local	centerX, centerZ	=	self:GetCenterOfMap()
 	local	lastX, lastZ		=	self:GetPositionXDistanceAwayFrom(centerX, centerZ, 0)--self:GetRandomPositionWithinMargin(self.VoidMargin, self.VoidMargin)
-	local	tempDistance		=	self:GetDistanceBetween(self.Void, self.Void, centerX, centerZ)--math.ceil(self:GetDistanceBetween(self.VoidMargin, self.VoidMargin, self.MapSizeX-self.VoidMargin-1, self.MapSizeZ-self.VoidMargin-1)/3)
-	local	nTries				=	0
-	local	nMaxTries			=	50
+	local	tempDistance		=	self:GetDistanceBetween(self.Void, self.Void, centerX, centerZ)*0.85--math.ceil(self:GetDistanceBetween(self.VoidMargin, self.VoidMargin, self.MapSizeX-self.VoidMargin-1, self.MapSizeZ-self.VoidMargin-1)/3)
+	
 	for n = 0, self.Checkpoints-1 do
 	
 		while true do
@@ -600,17 +597,12 @@ MapGenerator.PlaceCheckpoints = function(self)
 				
 				lastX	=	tX
 				lastZ	=	tZ
-				nTries	=	0
 				
 				self:PlaceStonesNear(tX, tZ, 2, 2)
 				
 				break
 			else
-				nTries = nTries + 1
-				if nTries >= nMaxTries then
-					tempDistance	=	math.floor(tempDistance - 1)
-					nTries			=	0
-				end
+				tempDistance	=	math.floor(tempDistance - 1)
 			end
 		end
 	end

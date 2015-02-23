@@ -53,6 +53,7 @@ worldCreator:AddComponentType(CheckpointIdComponent)
 -- Tile Component
 local TileComponent = ComponentType()
 TileComponent.Name = "TileComp"
+TileComponent.SyncNetwork = true
 TileComponent.TableType = TableType.Map
 worldCreator:AddComponentType(TileComponent)
 
