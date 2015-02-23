@@ -92,7 +92,7 @@ GameCreator::~GameCreator()
 	delete(m_frameCounter);
 }
 
-void GameCreator::InitializeGraphics()
+bool GameCreator::InitializeGraphics()
 {
 #if defined(__IOS__) || defined(__ANDROID__)
 	m_graphics = new Renderer::GraphicsHigh();
@@ -104,10 +104,14 @@ void GameCreator::InitializeGraphics()
         SDL_Log("Switching to OpenGL 4.0");
         delete(m_graphics);
         m_graphics = new Renderer::GraphicsLow();
-        m_graphics->Init();
+        if (!m_graphics->Init())
+        {
+            SDL_Log("Failed to initialize graphics.");
+            return false;
+        }
     }
 #endif
-    
+    return true;
 	//LuaEmbedder::AddObject<Renderer::GraphicDevice>("GraphicDevice", m_graphics, "graphics");
 }
 
@@ -749,6 +753,11 @@ void GameCreator::Reload()
         delete m_serverWorld;
         m_serverWorld = nullptr;
     }
+	if (NetworkInstance::GetServer()->IsRunning())
+	{
+		ClientManager::SetAllClientsToConnecting();
+	}
+
 	if (NetworkInstance::GetServer()->IsRunning())
 	{
 		ClientManager::SetAllClientsToConnecting();
