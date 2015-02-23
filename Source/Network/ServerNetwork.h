@@ -2,6 +2,7 @@
 #define SERVERNETWORK_H
 
 #include <thread>
+#include <vector>
 
 #include "BaseNetwork.h"
 
@@ -20,7 +21,9 @@ namespace Network
 		bool Stop(void);
 
 		void Broadcast(Packet* _packet, const NetConnection& _exclude = NetConnection());
-		void Send(Packet* _packet, NetConnection& _connection);
+		void Send(Packet* _packet, NetConnection& _receiver);
+		// Send a message to a list of clients
+		void Send(Packet* _packet, std::vector<NetConnection>& _receivers);
 
 		void SetOnPlayerConnected(NetEvent& _function);
 		void SetOnPlayerDisconnected(NetEvent& _function);
@@ -32,6 +35,9 @@ namespace Network
 		unsigned int GetIncomingPort() { return *m_incomingPort; }
 
 	private:
+
+		void Send(Packet* _packet, NetConnection& _connection, bool _deletePacket);
+
 		void ReceivePackets(ISocket* _socket);
 		void ListenForConnections(void);
 

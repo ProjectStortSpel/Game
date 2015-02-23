@@ -14,7 +14,7 @@ CameraInterestpointSystem.Initialize = function ( self )
 	self:AddComponentTypeToFilter("Unit", FilterType.RequiresOneOf)
 end
 
-CameraInterestpointSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+CameraInterestpointSystem.EntitiesAdded = function(self, dt, entities)
 	for n = 1, #entities do
 		local entityId = entities[n]
 		if world:EntityHasComponent( entityId, "CameraOnPlayer") then

@@ -14,7 +14,7 @@ SendSelectedCardsSystem.Initialize = function ( self )
 	self:AddComponentTypeToFilter("DealingSettings", FilterType.RequiresOneOf)
 end
 
-SendSelectedCardsSystem.Update = function(self, dt, taskIndex, taskCount)
+SendSelectedCardsSystem.Update = function(self, dt)
 
 	local button = self:GetEntities("ReadyButton")
 
@@ -38,7 +38,7 @@ SendSelectedCardsSystem.Update = function(self, dt, taskIndex, taskCount)
 	
 end
 
-SendSelectedCardsSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+SendSelectedCardsSystem.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entityId = entities[n]

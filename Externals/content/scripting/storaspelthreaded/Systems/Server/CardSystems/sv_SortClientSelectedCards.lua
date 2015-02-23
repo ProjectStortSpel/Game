@@ -40,7 +40,7 @@ SortClientSelectedCards.GetPlayerSelectedCards = function(self, playerId)
 	return tempCards;
 end
 
-SortClientSelectedCards.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+SortClientSelectedCards.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entity = entities[n]
@@ -62,7 +62,7 @@ SortClientSelectedCards.EntitiesAdded = function(self, dt, taskIndex, taskCount,
 		end
 	end
 end
-SortClientSelectedCards.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
+SortClientSelectedCards.EntitiesRemoved = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entity = entities[n]

@@ -11,7 +11,7 @@ PostMoveSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("PostMove", FilterType.Mandatory)
 end
 
-PostMoveSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+PostMoveSystem.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entity = entities[n]

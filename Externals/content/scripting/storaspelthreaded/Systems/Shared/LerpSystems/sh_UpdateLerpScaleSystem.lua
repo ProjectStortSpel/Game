@@ -13,7 +13,7 @@ UpdateLerpScaleSystem.Initialize = function(self)
 end
 
 
-UpdateLerpScaleSystem.Update = function(self, dt, taskIndex, taskCount)
+UpdateLerpScaleSystem.Update = function(self, dt)
 	local entities = self:GetEntities()
 	for i = 1, #entities do
 		local entity = entities[i]

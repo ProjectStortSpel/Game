@@ -1,4 +1,4 @@
-package.path = package.path .. ";../../../Externals/content/scripting/shared/components/?.lua"
+package.path = package.path .. ";../shared/components/?.lua"
 require "interfacecomponents"
 require "textrendercomponents"
 require "lightcomponents"

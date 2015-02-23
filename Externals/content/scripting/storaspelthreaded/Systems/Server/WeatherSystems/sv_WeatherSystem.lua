@@ -18,7 +18,7 @@ WeatherSystem.PostInitialize = function(self)
 	--self.WeatherList[#self.WeatherList+1]	=	"Wind"
 end
 
-WeatherSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, newEntities)
+WeatherSystem.EntitiesAdded = function(self, dt, newEntities)
 
 	for n = 1, #newEntities do
 		local	tEntity	=	newEntities[n]

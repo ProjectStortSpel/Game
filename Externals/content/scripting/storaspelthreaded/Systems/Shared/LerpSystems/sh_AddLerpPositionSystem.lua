@@ -13,7 +13,7 @@ AddLerpPositionSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("LerpingPosition", FilterType.Excluded)
 end
 
-AddLerpPositionSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+AddLerpPositionSystem.EntitiesAdded = function(self, dt, entities)
 	for n = 1, #entities do
 		local entity = entities[n]
 

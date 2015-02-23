@@ -18,7 +18,7 @@ CardSelectSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("CardAction", FilterType.Mandatory)
 end
 
-CardSelectSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, newEntities)
+CardSelectSystem.EntitiesRemoved = function(self, dt, newEntities)
 	local cards = self:GetEntities("CardHolding")
 	if #cards > 0 then
 	else
@@ -26,7 +26,7 @@ CardSelectSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, newE
 	end
 end
 
-CardSelectSystem.Update = function(self, dt, taskIndex, taskCount)
+CardSelectSystem.Update = function(self, dt)
 
 	if Input.GetTouchState(0) == InputState.Released then
 		local mX, mY = GraphicDevice.GetTouchPosition()

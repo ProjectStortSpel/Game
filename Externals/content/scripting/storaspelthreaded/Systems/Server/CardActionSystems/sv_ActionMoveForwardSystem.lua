@@ -12,7 +12,7 @@ ActionMoveForwardSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("UnitForward",	FilterType.Mandatory)
 end
 
-ActionMoveForwardSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+ActionMoveForwardSystem.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entity = entities[n]

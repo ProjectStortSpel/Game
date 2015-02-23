@@ -13,7 +13,7 @@ PlayCardSystem.Initialize = function(self)
 end
 
 
-PlayCardSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+PlayCardSystem.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entity = entities[n]

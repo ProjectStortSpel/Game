@@ -33,6 +33,7 @@ OffsetUnitSystem.UpdateUnitLerp = function(self, unitId)
 	local	tX, tZ	=	world:GetComponent(unitId, "MapPosition", "X"):GetInt2()
 	local	oldX, oldZ	=	math.floor(pX), math.floor(pZ)
 	
+	print("OffsetUnitSystem: X: " .. tX .. " Y: " .. tZ .. " MapSizeX: " .. self.MapSizeX)
 	local	yOffset	=	world:GetComponent(self:GetEntities("TileOffset")[self:GetListIndex(tX, tZ)], "TileOffset", "Offset"):GetFloat()
 	
 	if yOffset - pY > 0 then
@@ -46,7 +47,7 @@ OffsetUnitSystem.UpdateUnitLerp = function(self, unitId)
 	world:RemoveComponentFrom("UnitWantTileOffset", unitId)
 end
 
-OffsetUnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, addedEntities)
+OffsetUnitSystem.EntitiesAdded = function(self, dt, addedEntities)
 
 	for n = 1, #addedEntities do
 		local	newEntity	=	addedEntities[n]

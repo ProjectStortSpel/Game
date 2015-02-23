@@ -14,7 +14,7 @@ GameMenuSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter(self.Name.."Element", FilterType.RequiresOneOf)
 end
 
-GameMenuSystem.Update = function(self, dt, taskIndex, taskCount)
+GameMenuSystem.Update = function(self, dt)
 	if Input.GetTouchState(0) == InputState.Released then
 		local pressedButtons = self:GetEntities("OnPickBoxHit")
 		if #pressedButtons > 0 then
@@ -36,7 +36,7 @@ GameMenuSystem.Update = function(self, dt, taskIndex, taskCount)
 	end
 end
 
-GameMenuSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+GameMenuSystem.EntitiesAdded = function(self, dt, entities)
 	for n = 1, #entities do
 		local entityId = entities[n]
 		if world:EntityHasComponent(entityId, self.Name) then

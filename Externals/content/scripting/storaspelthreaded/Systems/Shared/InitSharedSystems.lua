@@ -1,5 +1,5 @@
 --	Lerping Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Shared/LerpSystems/?.lua"
+package.path = package.path .. ";Systems/Shared/LerpSystems/?.lua"
 require "sh_AddLerpPositionSystem"
 require "sh_UpdateLerpPositionSystem"
 require "sh_AddLerpScaleSystem"

@@ -38,7 +38,7 @@ AddAISystem.FillWithAIs = function(_command, ...)
 	end
 end
 
-AddAISystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+AddAISystem.EntitiesAdded = function(self, dt, entities)
 	
 	local ais = self:GetEntities("AI")
 	local voids = self:GetEntities("Void")

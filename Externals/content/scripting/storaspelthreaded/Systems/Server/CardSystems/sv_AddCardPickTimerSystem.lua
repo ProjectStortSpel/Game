@@ -13,7 +13,7 @@ AddCardPickTimer.Initialize = function(self)
 	self:AddComponentTypeToFilter("AddToPickingPhaseTimer",	FilterType.RequiresOneOf)
 end
 
-AddCardPickTimer.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+AddCardPickTimer.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entity = entities[n]

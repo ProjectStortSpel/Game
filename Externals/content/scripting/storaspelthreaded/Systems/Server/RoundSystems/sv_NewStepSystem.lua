@@ -15,7 +15,7 @@ NewStepSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("DealingSettings", FilterType.RequiresOneOf)
 end
 
-NewStepSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+NewStepSystem.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entity = entities[n]

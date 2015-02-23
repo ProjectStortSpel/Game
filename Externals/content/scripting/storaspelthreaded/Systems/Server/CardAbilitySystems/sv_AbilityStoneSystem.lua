@@ -123,7 +123,7 @@ AbilityStoneSystem.PlaceStone = function(self, entity)
 
 end
 
-AbilityStoneSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+AbilityStoneSystem.EntitiesAdded = function(self, dt, entities)
 
 	
 	for n = 1, #entities do

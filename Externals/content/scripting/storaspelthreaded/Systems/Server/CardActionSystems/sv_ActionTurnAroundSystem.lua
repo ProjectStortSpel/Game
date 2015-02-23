@@ -12,7 +12,7 @@ ActionTurnAroundSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("UnitTurnAround",FilterType.Mandatory)
 end
 
-ActionTurnAroundSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+ActionTurnAroundSystem.EntitiesAdded = function(self, dt, entities)
 
 	--print("TURN AROUND Number of entities: " .. #entities)
 	for i = 1, #entities do

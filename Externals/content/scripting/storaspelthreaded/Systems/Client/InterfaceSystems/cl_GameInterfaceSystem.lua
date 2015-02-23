@@ -28,7 +28,7 @@ GameInterfaceSystem.PostInitialize = function(self)
 	self:AddHoverSize(1.5, camerabutton)
 end
 
-GameInterfaceSystem.Update = function(self, dt, taskIndex, taskCount)
+GameInterfaceSystem.Update = function(self, dt)
 	if Input.GetTouchState(0) == InputState.Released then
 		local pressedButtons = self:GetEntities("OnPickBoxHit")
 		if #pressedButtons > 0 then

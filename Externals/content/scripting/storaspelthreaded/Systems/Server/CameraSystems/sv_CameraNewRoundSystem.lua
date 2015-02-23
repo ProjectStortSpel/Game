@@ -11,7 +11,7 @@ CameraNewRoundSystem.Initialize = function ( self )
 	self:AddComponentTypeToFilter("DealCards", FilterType.Mandatory)
 end
 
-CameraNewRoundSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+CameraNewRoundSystem.EntitiesAdded = function(self, dt, entities)
 	local id = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("CameraOnPlayer", id)
 end

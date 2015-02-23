@@ -13,7 +13,7 @@ StepTimerSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("StepTimer", FilterType.Mandatory)
 end
 
-StepTimerSystem.Update = function(self, dt, taskIndex, taskCount)
+StepTimerSystem.Update = function(self, dt)
 	
 	if self.Timer >= 0 then
 		
@@ -27,7 +27,7 @@ StepTimerSystem.Update = function(self, dt, taskIndex, taskCount)
 	end
 end
 
-StepTimerSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+StepTimerSystem.EntitiesAdded = function(self, dt, entities)
 	for n = 1, #entities do
 		local entity = entities[n]
 		self.Timer = world:GetComponent(entity, "StepTimer", "Time"):GetFloat()

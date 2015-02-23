@@ -13,7 +13,7 @@ AddLerpRotationSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("LerpingRotation", FilterType.Excluded)
 end
 
-AddLerpRotationSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+AddLerpRotationSystem.EntitiesAdded = function(self, dt, entities)
 	for n = 1, #entities do
 		local entity = entities[n]
 

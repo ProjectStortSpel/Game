@@ -60,7 +60,7 @@ MapGenerator.Initialize = function(self)
 	self:AddComponentTypeToFilter("GenerateMap", FilterType.RequiresOneOf)
 end
 
-MapGenerator.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+MapGenerator.EntitiesAdded = function(self, dt, entities)
 	--self:GenerateMap(os.time()%29181249, 4, 4)
 	--self:GenerateMap(23246299, 4, 4)
 	self:GenerateMap(2324130, 1, 2)

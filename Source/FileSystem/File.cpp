@@ -160,6 +160,13 @@ namespace FileSystem
 			SDL_RWwrite(_file, _text.c_str(), 1, _text.size());
 		}
 
+		void Write(SDL_RWops* _file, const unsigned char* data, int size)
+		{
+			if (!_file)
+				return;
+			SDL_RWwrite(_file, data, 1, size);
+		}
+
 		void WriteLine(SDL_RWops* _file, std::string _text)
 		{
 			if (!_file)

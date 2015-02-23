@@ -18,7 +18,7 @@ CardPositionSystem.Initialize = function(self)
 	
 end
 
-CardPositionSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, newEntities)
+CardPositionSystem.EntitiesAdded = function(self, dt, newEntities)
 	local entities = self:GetEntities()
 	for i = 1, #entities do
 		local entity = entities[i]
@@ -41,7 +41,7 @@ CardPositionSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, newE
 	end
 end
 
-CardPositionSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, newEntities)
+CardPositionSystem.EntitiesRemoved = function(self, dt, newEntities)
 	local entities = self:GetEntities()
 	for i = 1, #entities do
 		local entity = entities[i]

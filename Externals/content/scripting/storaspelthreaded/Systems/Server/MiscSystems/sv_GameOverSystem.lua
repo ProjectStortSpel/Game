@@ -13,14 +13,14 @@ GameOverSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Unit", FilterType.Mandatory)
 end
 
-GameOverSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+GameOverSystem.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 		self.PlayerCount = self.PlayerCount + 1
 	end
 end
 
-GameOverSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
+GameOverSystem.EntitiesRemoved = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entity = entities[n]

@@ -97,8 +97,8 @@ namespace LuaEmbedder
   EXPORT lua_State* CreateChildState(lua_State* L);
   void EXPORT Quit();
   
-  bool EXPORT Load(lua_State* L, const std::string& filepath);
-  bool EXPORT Preload(lua_State* L, const std::string& filepath);
+  bool EXPORT Load(lua_State* L, const std::vector<std::string>* paths, const std::string& filepath);
+  bool EXPORT Preload(lua_State* L, const std::vector<std::string>* paths, const std::string& filepath);
   bool EXPORT CallFunction(lua_State* L, const std::string& name, int argumentCount = 0, const std::string& library = std::string());
  
   int EXPORT GetMemoryUsage();
