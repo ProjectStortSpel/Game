@@ -6,6 +6,8 @@
 #include <inttypes.h>
 #include <cstring>
 
+#include "Logger/Managers/Logger.h"
+
 // Includes
 #ifdef WIN32
 //#ifdef _DEBUG
@@ -33,13 +35,12 @@
 
 namespace Network
 {
-	enum LogSeverity
-	{
-		Info,
-		Warning,
-		Error
-	};
-
+	//enum LogSeverity
+	//{
+	//	Info,
+	//	Warning,
+	//	Error
+	//};
 
 	unsigned long long hton_ll(unsigned long long src);
 	unsigned long long ntoh_ll(unsigned long long src);
@@ -53,7 +54,6 @@ namespace Network
 	{
 		char buff[100];
 		sprintf(buff, _msg, _value);
-
 		DebugLog(buff, _severity, _args...);
 	}
 
@@ -62,13 +62,19 @@ namespace Network
 	{
 		char buff[100];
 		sprintf(buff, _msg, _value);
-		
-		SDL_Log(buff);
+		Logger::GetInstance().Log("Network", _severity, buff);
 	}
 
 	static void DebugLog(const char* _msg, LogSeverity _severity)
 	{
-		SDL_Log(_msg);
+		Logger::GetInstance().Log("Network", _severity, _msg);
+	}
+
+	static void DebugLog(const char* _msg, LogSeverity _severity, const char* _ip, int _port, int _error)
+	{
+		char buff[100];
+		sprintf(buff, _msg, _ip, _port, _error);
+		Logger::GetInstance().Log("Network", _severity, buff);
 	}
 
 #pragma warning(pop)

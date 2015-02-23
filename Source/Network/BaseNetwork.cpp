@@ -163,11 +163,10 @@ void BaseNetwork::Update(float _dt)
 			{
 				NetTypeMessageId tmp = (NetTypeMessageId)type;
 				DebugLog("System packet \'%s\' not bound to any function", LogSeverity::Warning, m_enumStrings[type]);
-				
-
 			}
 
 			SAFE_DELETE(p);
+			m_packetHandler->EndUnpack(id);
 		}
 
 		SDL_UnlockMutex(m_systemPacketLock);
