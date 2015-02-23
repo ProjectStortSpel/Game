@@ -2,6 +2,7 @@
 #define SERVERNETWORK_H
 
 #include <thread>
+#include <vector>
 
 #include "BaseNetwork.h"
 
@@ -28,7 +29,9 @@ namespace Network
 		// use _exclude to prevent the message to being sent to one client
 		void Broadcast(Packet* _packet, const NetConnection& _exclude = NetConnection());
 		// Send a message to a specific client
-		void Send(Packet* _packet, NetConnection& _connection);
+		void Send(Packet* _packet, NetConnection& _receiver);
+		// Send a message to a list of clients
+		void Send(Packet* _packet, std::vector<NetConnection>& _receivers);
 
 		void Kick(NetConnection& _connection, const char* _reason);
 
@@ -50,6 +53,9 @@ namespace Network
 		unsigned int GetIncomingPort() { return *m_incomingPort; }
 
 	private:
+
+		void Send(Packet* _packet, NetConnection& _connection, bool _deletePacket);
+
 		void ReceivePackets(ISocket* _socket);
 		void ListenForConnections(void);
 

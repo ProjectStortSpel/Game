@@ -11,8 +11,10 @@ namespace ClientManager
 
 	void NewClient(Network::NetConnection _client);
 	void ClientDisconnected(Network::NetConnection _client);
-	void SetAllClientsToConnecting();
 
+	void Update();
+
+	void SetAllClientsToConnecting();
 	std::vector<Network::NetConnection> GetConnectedClients();
 
 

@@ -68,10 +68,43 @@ namespace LuaEmbedder
   {
 	  SDL_RWops* file = NULL;
 
+	  //räkna .. i filepath och ta bort dem
+
+	  int temp = 0;
+
+	  std::string path = filepath;
+
+	  while (true)
+	  {
+		  if (path.size() >= 3)
+		  {
+			  if (path.substr(0, 3) == "../")
+			  {
+				  path = path.substr(3, path.size() - 1);
+				  ++temp;
+			  }
+			  else
+				  break;
+		  }
+		  else
+			  break;
+	  }
+	  
+
+
+
 	  for (int i = 0; i < paths->size(); ++i)
 	  {
+		 
+		  //gå bak i paths[i]
 		  std::string fPath = paths->at(i);
-		  fPath.append(filepath);
+		  for (int j = 0; j < temp; ++j)
+		  {
+			  std::string tfolder = fPath.substr(0, fPath.size() - 1);
+			  fPath = tfolder.substr(0, tfolder.rfind('\\/') + 1);
+		  }
+
+		  fPath.append(path);
 		  file = SDL_RWFromFile(fPath.c_str(), "r");
 		  if (file != NULL)
 			  break;
@@ -79,7 +112,12 @@ namespace LuaEmbedder
 
 	  if (file == NULL)
 	  {
-		  SDL_Log("File %s not found", filepath.c_str());
+		  for (int i = 0; i < paths->size(); ++i)
+		  {
+			  std::string fPath = paths->at(i);
+			  fPath.append(filepath);
+			  SDL_Log("File %s not found", fPath.c_str());
+		  }
 		  return std::string();
 	  }
 	  Sint64 length = SDL_RWseek(file, 0, RW_SEEK_END);
@@ -171,7 +209,6 @@ bool Load(lua_State* L, const std::vector<std::string>* paths, const std::string
     bool error = luaL_dostring(L, source.c_str());
     if (error)
 	{
-		luaL_dofile(L, filepath.c_str());
       SDL_Log("LuaEmbedder::Load : %s", (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error"));
       return false;
     }
