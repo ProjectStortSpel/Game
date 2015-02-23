@@ -50,10 +50,42 @@ namespace Renderer
 	struct JointAnim
 	{
 		int jointId;
+		int* lastFrame;
 		std::vector<KeyFrame> keyFrames;
-		JointAnim(int _jointId)
+		JointAnim(int _jointId, int* _lastFrame)
 		{
 			jointId = _jointId;
+			lastFrame = _lastFrame;
+		}
+		glm::mat4 getFrame(int frame)
+		{
+			if (keyFrames.size() == 1)
+			{
+				return keyFrames[0].mat;
+			}
+			else if (keyFrames.size() > 1)
+			{
+				for (int i = 0; i < keyFrames.size(); i++)
+				{
+					if (frame <= keyFrames[i].frame)
+					{
+						int j = (i - 1) % keyFrames.size();
+						int nextKeyFrame = keyFrames[i].frame;
+						int prevKeyFrame = keyFrames[j].frame;
+						if (nextKeyFrame < prevKeyFrame) nextKeyFrame += *lastFrame;
+						float span = nextKeyFrame - prevKeyFrame;
+						int interframe = frame - prevKeyFrame;
+
+						float proc = interframe / span;
+
+						glm::mat4 mat = keyFrames[i].mat * proc;
+						mat += keyFrames[j].mat * (1.f - proc);
+						
+						return mat;
+					}
+				}
+			}
+			return glm::mat4(1);
 		}
 	};
 
@@ -96,6 +128,8 @@ namespace Renderer
 
 		int currentframe;
 		float clock;
+		float frameTime;
+		int framesPerTick;
 	private:
 		Animation* GetAnimationPointer(std::string _animname);
 		JointAnim* GetJointAnimPointer(int _jointId, Animation* _animptr);

@@ -47,6 +47,9 @@
     <Filter Include="Source\Tech">
       <UniqueIdentifier>{0b071afe-a762-4b55-9938-c8f32a16c3bd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Model\AModel">
+      <UniqueIdentifier>{86f490a8-74e6-4145-80ce-83aea28cc5d9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Renderer\Shader.h">

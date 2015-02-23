@@ -14,6 +14,8 @@ AModel::AModel(int _id, bool _active, mat4* _model, float* _color, Buffer* buffe
 	speID = spe;
 	currentframe = 1;
 	clock = 0;
+	frameTime = 0.04f;
+	framesPerTick = 1;
 }
 
 AModel::AModel()
@@ -28,41 +30,24 @@ AModel::~AModel()
 void AModel::Update(float _dt)
 {
 	clock += _dt;
-	if (clock > 0.04f)
+	if (clock > frameTime * framesPerTick)
 	{
-		clock -= 0.04f;
-		currentframe++;
+		clock -= frameTime * framesPerTick;
+		currentframe += framesPerTick;
 		currentframe = currentframe % animations[0].maxFrame;
-	}
-
-	Animation* animptr = &animations[0];
-	
-	for (int i = 0; i < animptr->joints.size(); i++)
-	{
-		if (animptr->joints[i].keyFrames.size() > 0)
+		if (currentframe == 119)
+			int hej = 0;
+		Animation* animptr = &animations[0];
+		for (int i = 0; i < animptr->joints.size(); i++)
 		{
-			for (int j = 0; j < animptr->joints[i].keyFrames.size(); j++)
-			{
-				if ((currentframe+1) < animptr->joints[i].keyFrames[j].frame)
-				{
-					float span = animptr->joints[i].keyFrames[(j - 1) % animptr->joints[i].keyFrames.size()].frame + animptr->joints[i].keyFrames[j].frame;
-					int interframe = (currentframe+1) - animptr->joints[i].keyFrames[(j - 1) % animptr->joints[i].keyFrames.size()].frame;
-
-					float proc = interframe / span;
-
-					glm::mat4 mat = animptr->joints[i].keyFrames[j].mat * proc;
-					mat += animptr->joints[i].keyFrames[(j - 1) % animptr->joints[i].keyFrames.size()].mat * (1.f - proc);
-					int index = animation.size() - animptr->joints[i].jointId - 1;
-					animation[index] = Joint(
-						(mat)[0][0], (mat)[0][1], (mat)[0][2], (mat)[0][3],
-						(mat)[1][0], (mat)[1][1], (mat)[1][2], (mat)[1][3],
-						(mat)[2][0], (mat)[2][1], (mat)[2][2], (mat)[2][3],
-						(mat)[3][0], (mat)[3][1], (mat)[3][2], animation[index].parent
-						);
-
-					break;
-				}
-			}
+			int index = animation.size() - animptr->joints[i].jointId - 1;
+			glm::mat4 mat = animptr->joints[i].getFrame(currentframe + 1);
+			animation[index] = Joint(
+				mat[0][0], mat[0][1], mat[0][2], mat[0][3],
+				mat[1][0], mat[1][1], mat[1][2], mat[1][3],
+				mat[2][0], mat[2][1], mat[2][2], mat[2][3],
+				mat[3][0], mat[3][1], mat[3][2], animation[index].parent
+				);
 		}
 	}
 }
@@ -104,6 +89,6 @@ JointAnim* AModel::GetJointAnimPointer(int _jointId, Animation* _animptr)
 	}
 
 	// if not found
-	_animptr->joints.push_back(JointAnim(_jointId));
+	_animptr->joints.push_back(JointAnim(_jointId, &_animptr->maxFrame));
 	return &_animptr->joints[_animptr->joints.size() - 1];
 }
