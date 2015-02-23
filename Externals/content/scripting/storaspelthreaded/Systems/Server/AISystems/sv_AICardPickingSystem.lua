@@ -139,34 +139,33 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, _dirX, _dirY, _posX
 		if self.AICheat == 1 then
 			self:ChangeTheCards(cardsPerHand, CardSetAI)
 		end
-				
 		
-		--local startTime, endTime, timetaken
-		--
+		
+		--local startTime, endTime, timetaken, timetaken2		
 		--local lengthArray = string.len(self.PermutationsArray)
 		--local jump = self.CardsToSimulate
 		--local cardsToSimMinusOne = self.CardsToSimulate - 1		
-		--
 		--
 		--startTime = os.clock()
 		--local charArray = self.PermutationsArray
 		---- This is faster than using the global value.
 		--
-		--for n = 1, lengthArray, jump do
-		--	for card = 0, cardsToSimMinusOne do
-		--		local charVar = string.byte(charArray, n + card)
+		--for permutationIndex = 1, lengthArray, jump do
+		--	for cardIndex = 0, cardsToSimMinusOne do
+		--		local charVar = string.byte(charArray, permutationIndex + cardIndex)
 		--	end
 		--end
 		--
 		--endTime = os.clock()
 		--timetaken = (endTime - startTime) * 1000000
+		--
 		--print("Permutations took", timetaken, "microseconds")
+		--print("Permutations took", timetaken2, "microseconds")
 		
 		
 		
 		
 		
-    
 		--local forwards = self:GetAllCardsOf(CardSetAI, "Forward")
 		--local backwards = self:GetAllCardsOf(CardSetAI, "Backward")
 		--local turnLefts = self:GetAllCardsOf(CardSetAI, "TurnLeft")
@@ -175,41 +174,73 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, _dirX, _dirY, _posX
 		--local sprints = self:GetAllCardsOf(CardSetAI, "Sprint")
 		--local shots = self:GetAllCardsOf(CardSetAI, "SlingShot")
 					
+		local simFellDown, simPosX, simPosY, simDirX, simDirY
+		local cardsToSim = {}
+		cardsToSim.__mode = "k"
+		local bestCardId, bestDist, bestNextDist
+		local dist, nextDist
+		
 		local posX, posY, dirX, dirY = _posX, _posY, _dirX, _dirY
 		local fellDown = false
-				
+		
+		local noOfCardsToSim = self.CardsToSimulate
+		
+		-- Init variables to speed up usage of permutations.
+		local jump = self.CardsToSimulate
+		local cardsToSimMinusOne = jump - 1
+		local charArray = self.PermutationsArray
+		
 		for i = 1, cardsToPick do
 			
 			-- Get target. Needs to be done after every card as we may have reached a checkpoint.
-			local targetCheckpoint = world:GetComponent(_unitID, "TargetCheckpoint", 0):GetInt()
-			local checkpoints = self:GetEntities("Checkpoint")
-			local targetX, targetY = self:GetTargetPosition(checkpoints, targetCheckpoint)
-			local simFellDown, simPosX, simPosY, simDirX, simDirY
-			local cardsToSim = {}
-			cardsToSim.__mode = "k"
-			local bestCardId, bestDist, bestNextDist
-			local dist, nextDist
-			local cardsLeftToPick = cardsToPick - #pickedCards
+			local targetX, targetY = self:GetTargetPosition(self:GetEntities("Checkpoint"), world:GetComponent(_unitID, "TargetCheckpoint", 0):GetInt())
+			local cardsPicked = #pickedCards
+			local cardsLeftToPick = cardsToPick - cardsPicked
 			
 			-- TODO: Add method to vaska cards if we will fall down.
 			--if fellDown then
 			--	Vaska kort!
 			--end
 			
-			table.insert(cardsToSim, CardSetAI[1])
+			local cardsLeftInHand = self.CardsPerHand - cardsPicked
+			local noToGet = min(cardsLeftToPick, self.CardsToSimulate)
+			
+			local charArray = CombinationMath.Permutations(cardsLeftInHand, noToGet)
+			
+			local lengthArray = string.len(self.PermutationsArray)
+			
+			
+			
+			
+			
+			
+			for n = 1, noOfCardsToSim do
+				table.insert(cardsToSim, CardSetAI[n])
+			end
 			dist, simFellDown, simPosX, simPosY, simDirX, simDirY = self:GetSimDist(_unitID, posX, posY, dirX, dirY, targetX, targetY, cardsToSim, cardsLeftToPick)
 			
 			nextDist = self:GetSimNextDist(simFellDown, simPosX, simPosY, simDirX, simDirY, targetX, targetY, cardsLeftToPick)
 			
-			table.remove(cardsToSim, 1)
+			for n = 1, noOfCardsToSim do
+				table.remove(cardsToSim, 1)
+			end
 			bestNextDist = nextDist;
 			bestDist = dist;
 			
 			bestCardId = 1
-			
-			for i = 2, #CardSetAI do
+			local firstCardId
+			for permutationIndex = 1, lengthArray, jump do
 				
-				table.insert(cardsToSim, CardSetAI[i])
+				for cardIndex = 0, cardsToSimMinusOne do
+					
+					local charVar = string.byte(charArray, permutationIndex + cardIndex)
+					table.insert(cardsToSim, CardSetAI[charVar])
+					
+					if cardIndex == 0 then
+						firstCardId = charVar
+					end
+				end
+				--for i = 2, #CardSetAI do
 				
 				dist, simFellDown, simPosX, simPosY, simDirX, simDirY = self:GetSimDist(_unitID, posX, posY, dirX, dirY, targetX, targetY, cardsToSim, cardsLeftToPick)
 				
@@ -220,20 +251,22 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, _dirX, _dirY, _posX
 					
 					nextDist = self:GetSimNextDist(simFellDown, simPosX, simPosY, simDirX, simDirY, targetX, targetY, cardsLeftToPick)
 					
-					-- If the distance is the same as the previously best and the "nextDist" is better. If so, a better card has been found.
+					-- If the distance is the same as the previously best and the "nextDist" is better then a better card has been found.
 					if dist == bestDist and nextDist < bestNextDist then
-					
-						bestCardId = i
+						
+						bestCardId = firstCardId
 						bestNextDist = nextDist
 					else
 						
-						bestCardId = i
+						bestCardId = firstCardId
 						bestNextDist = nextDist
 						bestDist = dist
 					end
 				end
-				
-				table.remove(cardsToSim, 1)
+				--end
+				for cardIndex = 0, cardsToSimMinusOne do
+					table.remove(cardsToSim, 1)
+				end
 			end
 			
 			-- Choose card, and simulate the choosen card to use the positions to choose the next card.
@@ -360,7 +393,7 @@ AICardPickingSystem.SimulateCardsFromPos = function(self, _unit, _posX, _posY, _
 			
 		else
 		
-			print("ERROR: CARD NOT ADDED IN SIMULATE CARDS", cardName)
+			--print("ERROR: CARD NOT ADDED IN SIMULATE CARDS", cardName)
 		end
 		
 		if fellDown then
@@ -516,31 +549,25 @@ AICardPickingSystem.DoPermutations = function(self)
 	local cardsPerHand, cardsToPick = world:GetComponent(DealingSettings[1], "DealingSettings", 0):GetInt2(0)
 	local charArray = CombinationMath.Permutations(cardsPerHand, self.CardsToSimulate)
 	
+	--for i = 0, cardsToPick - 2 do
+	--	print(cardsPerHand - i, self.CardsToSimulate - i)
+	--	charArray = CombinationMath.Permutations(cardsPerHand - i, self.CardsToSimulate - i)
+	--end
+	
+	--for i = 0, 5 do
+	--	for n = 1 
+	--	print(string.byte(charArray, i))
+	--end
+	
+	--print(#charArray)
+	
+	--for permutationIndex = 1, #charArray, 5 do
+	--	for cardIndex = 0, 4 do
+	--		print(string.byte(charArray, permutationIndex + cardIndex))
+	--	end
+	--end
+	
 	self.PermutationsArray = charArray
-	
-	--local startTime, endTime, timetaken
-	--
-	--local lengthArray = string.len(charArray)
-	--local jump = self.CardsToSimulate
-	--local cardsToSimMinusOne = self.CardsToSimulate - 1
-	--
-	--startTime = os.clock()
-	--
-	--for n = 1, lengthArray, jump do
-	--	for card = 0, cardsToSimMinusOne do
-	--		local charVar = string.byte(charArray, n + card)
-	--	end
-	--end
-	--
-	--endTime = os.clock()
-	--timetaken = (endTime - startTime) * 1000000
-	--print("Permutations took", timetaken, "microseconds")
-	
-	--for n = 1, 15, self.CardsToSimulate do
-	--	for card = 0, self.CardsToSimulate - 1 do
-	--		
-	--	end
-	--end
 end
 
 AICardPickingSystem.ChangeTheCards = function(self, _cardsPerHand, _cardSet)
