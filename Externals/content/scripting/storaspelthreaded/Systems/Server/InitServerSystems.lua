@@ -113,7 +113,6 @@ worldCreator:AddSystemToCurrentGroup(PlayerSystem)
 worldCreator:AddSystemToCurrentGroup(UnitSystem)
 worldCreator:AddSystemToCurrentGroup(OffsetUnitSystem)
 worldCreator:AddSystemToCurrentGroup(AddAISystem)
-worldCreator:AddSystemToCurrentGroup(AICardPickingSystem)
 worldCreator:AddSystemToCurrentGroup(PostMoveSystem)
 
 worldCreator:AddSystemToCurrentGroup(TestMoveSystem)
@@ -175,6 +174,9 @@ worldCreator:AddSystemToCurrentGroup(HostSettingsSystem)
 
 
 worldCreator:AddSystemToCurrentGroup(GameOverSystem)
+
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(AICardPickingSystem)
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ServerNetworkMessageSystem)

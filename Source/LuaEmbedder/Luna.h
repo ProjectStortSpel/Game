@@ -40,6 +40,7 @@
 #include <map>
 #include <algorithm>
 #include <string>
+#include <sstream>
 
 namespace LuaEmbedder
 {
@@ -364,6 +365,42 @@ namespace LuaEmbedder
       lua_pushstring(L, mode);
       lua_settable(L, -3);
     }
+
+	static void PrintInfo(lua_State* L)
+	{
+		lua_Debug debugInfo;
+		lua_getstack(L, 1, &debugInfo);
+		lua_getinfo(L, "nSlu", &debugInfo);
+		std::string source = std::string(debugInfo.source);
+		int currentLine = 0, targetLine = debugInfo.currentline - 1;
+
+		std::istringstream iss(source);
+		std::string line;
+		std::string info;
+		while (std::getline(iss, line))
+		{
+			if (currentLine == targetLine - 1)
+			{
+				std::stringstream ss;
+				ss << "Line " << currentLine << ": " << line;
+				SDL_Log("%s", ss.str().c_str());
+			}
+			else if (currentLine == targetLine)
+			{
+				std::stringstream ss;
+				ss << "Line " << currentLine << ": " << line << " <-- ERROR HERE";
+				SDL_Log("%s", ss.str().c_str());
+			}
+			else if (currentLine == targetLine + 1)
+			{
+				std::stringstream ss;
+				ss << "Line " << currentLine << ": " << line;
+				SDL_Log("%s", ss.str().c_str());
+				break;
+			}
+			currentLine++;
+		}
+	}
     
     static int CallMethod(lua_State* L, const char* className, const char* methodName, int argumentCount = 0)
     {
@@ -383,7 +420,15 @@ namespace LuaEmbedder
 	return -1;
       }
       lua_insert(L, base);
-      int status = lua_pcall(L, 1 + argumentCount, LUA_MULTRET, 0);
+	  int status = 0;
+	  try
+	  {
+		  status = lua_pcall(L, 1 + argumentCount, LUA_MULTRET, 0);
+	  }
+	  catch (...)
+	  {
+		  PrintInfo(L);
+	  }
       if (status != 0)
       {
 	SDL_Log("Luna::CallMethod : %s", (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error"));
