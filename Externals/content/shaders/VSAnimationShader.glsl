@@ -68,10 +68,15 @@ void main()
 	vec4 weights = normalize(VertexJointWeight);
 	
 	addColor = vec3(0);
-	addColor += vec3(VertexJointIndex.x/36.f) * weights.x;
-	addColor += vec3(VertexJointIndex.y/36.f) * weights.y;
-	addColor += vec3(VertexJointIndex.z/36.f) * weights.z;
-	addColor += vec3(VertexJointIndex.w/36.f) * weights.w;
+	int mark = 35;
+	if (VertexJointIndex.x == mark)
+		addColor += vec3(1) * weights.x;
+	if (VertexJointIndex.y == mark)
+		addColor += vec3(1) * weights.y;
+	if (VertexJointIndex.z == mark)
+		addColor += vec3(1) * weights.z;
+	if (VertexJointIndex.w == mark)
+		addColor += vec3(1) * weights.w;
 
 	mat4 skin = mat4(0);
 	skin += (JointToMatrix(joints[int(VertexJointIndex.x)]) * GetJointMatrix(anim.length()-int(VertexJointIndex.x)-1)) * weights.x;
