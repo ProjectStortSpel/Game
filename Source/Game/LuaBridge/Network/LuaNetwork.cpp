@@ -1,5 +1,6 @@
 #include "LuaNetwork.h"
 #include "LuaEmbedder/LuaEmbedder.h"
+#include "Game/Network/ClientManager.h"
 #include "../../Network/NetworkInstance.h"
 #include <sstream>
 
@@ -483,7 +484,7 @@ namespace LuaBridge
 			Network::ServerNetwork* server = NetworkInstance::GetServer();
 			if (server->IsRunning())
 			{
-				std::vector<Network::NetConnection> nc = server->GetConnectedClients();
+				std::vector<Network::NetConnection> nc = ClientManager::GetConnectedClients(); //server->GetConnectedClients();
 				
 				for (int i = 0; i < nc.size(); ++i)
 				{

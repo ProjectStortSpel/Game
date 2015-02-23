@@ -749,6 +749,10 @@ void GameCreator::Reload()
         delete m_serverWorld;
         m_serverWorld = nullptr;
     }
+	if (NetworkInstance::GetServer()->IsRunning())
+	{
+		ClientManager::SetAllClientsToConnecting();
+	}
 
 	ResourceManager::Clear();
 
@@ -833,8 +837,6 @@ void GameCreator::Reload()
 
 	if (NetworkInstance::GetServer()->IsRunning())
 	{
-		ClientManager::SetAllClientsToConnecting();
-
 		Network::ServerNetwork* server = NetworkInstance::GetServer();
 		Network::PacketHandler* ph = server->GetPacketHandler();
 		uint64_t id = ph->StartPack("Gamemode");
