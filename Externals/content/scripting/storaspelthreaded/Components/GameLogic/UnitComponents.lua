@@ -19,6 +19,7 @@ worldCreator:AddComponentType(PlayerEntityIdComponent)
 -- Direction Component
 local DirectionComponent = ComponentType()
 DirectionComponent.Name = "Direction"
+DirectionComponent.SyncNetwork = true
 DirectionComponent.TableType = TableType.Map
 DirectionComponent:AddVariable("X", ByteSize.Int)
 DirectionComponent:AddVariable("Z", ByteSize.Int)
@@ -91,4 +92,11 @@ local UnitWantTileOffset = ComponentType()
 UnitWantTileOffset.Name = "UnitWantTileOffset"
 UnitWantTileOffset.TableType = TableType.Map
 worldCreator:AddComponentType(UnitWantTileOffset)
+
+-- UnitVisualizer Component
+local UnitGhost = ComponentType()
+UnitGhost.Name = "UnitGhost"
+UnitGhost.TableType = TableType.Map
+UnitGhost:AddVariable("Id", ByteSize.Reference)
+worldCreator:AddComponentType(UnitGhost)
 

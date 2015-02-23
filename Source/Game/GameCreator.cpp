@@ -753,6 +753,10 @@ void GameCreator::Reload()
         delete m_serverWorld;
         m_serverWorld = nullptr;
     }
+	if (NetworkInstance::GetServer()->IsRunning())
+	{
+		ClientManager::SetAllClientsToConnecting();
+	}
 
 	if (NetworkInstance::GetServer()->IsRunning())
 	{
