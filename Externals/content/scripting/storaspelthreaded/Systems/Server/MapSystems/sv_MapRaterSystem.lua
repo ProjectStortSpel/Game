@@ -58,6 +58,8 @@ MapRater.EntitiesAdded = function(self, dt, taskIndex, taskCount, newEntities)
 			world:KillEntity(newEntity)
 			
 			--if self.PlayersLeftToWin == 0 then
+				print("MapRater killing Entity " .. newEntity .. " before printing")
+				self:LogWorldData()
 				self:PrintInfo()
 			--end
 		elseif world:EntityHasComponent(newEntity, "UnitDied") then
