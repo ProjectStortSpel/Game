@@ -20,7 +20,7 @@ WinSocket::WinSocket()
 	if (m_socket != INVALID_SOCKET)
 	{
 		g_noActiveSockets++;
-		if (NET_DEBUG == 1)
+		if (NET_DEBUG > 0)
 			DebugLog("New winsocket created.", LogSeverity::Info);
 	}
 	else if (NET_DEBUG > 0)
@@ -41,7 +41,7 @@ WinSocket::WinSocket(SOCKET _socket)
 	if (m_socket != INVALID_SOCKET)
 	{
 		g_noActiveSockets++;
-		if (NET_DEBUG == 1)
+		if (NET_DEBUG > 0)
 			DebugLog("New winsocket created.", LogSeverity::Info);
 	}
 	else if (NET_DEBUG > 0)
@@ -62,7 +62,7 @@ WinSocket::WinSocket(int _domain, int _type, int _protocol)
 	if (m_socket != INVALID_SOCKET)
 	{
 		g_noActiveSockets++;
-		if (NET_DEBUG == 1)
+		if (NET_DEBUG > 0)
 			DebugLog("New winsocket created.", LogSeverity::Info);
 	}
 	else if (NET_DEBUG > 0)
@@ -313,7 +313,7 @@ ISocket* WinSocket::Accept(void)
 	*newWinSocket->m_remotePort = incomingAddress.sin_port;
 	*newWinSocket->m_active = 1;
 
-	if (NET_DEBUG == 1)
+	if (NET_DEBUG > 0)
 		DebugLog("New winsocket from %s:%d accepted.", LogSeverity::Info, ipAddress, incomingAddress.sin_port);
 
 	return newWinSocket;
@@ -331,7 +331,7 @@ int WinSocket::Send(char* _buffer, int _length, int _flags)
 		if (NET_DEBUG == 2)
 		{
 			if (bytesSent > 0)
-				DebugLog("Sent packet of size %d. Error code: %d.", LogSeverity::Info, bytesSent, WSAGetLastError());
+				DebugLog("Sent packet of size %d.", LogSeverity::Info, bytesSent);
 			else if (bytesSent == 0)
 				DebugLog("Unable to send packet. Socket shutdown gracefully.", LogSeverity::Info);
 			else if (bytesSent < 0)
