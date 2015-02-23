@@ -1,9 +1,7 @@
 AICardPickingSystem = System()
-AICardPickingSystem.PrintSimulation = 1
+AICardPickingSystem.PrintSimulation = 0
 AICardPickingSystem.AICheat = 1
 AICardPickingSystem.CardsToSimulate = 3
---AICardPickingSystem.PermutationsDone = false
---AICardPickingSystem.PermutationsArray = ""
 
 AICardPickingSystem.Initialize = function(self)
 	self:SetName("AI card picking System")
@@ -23,11 +21,7 @@ AICardPickingSystem.Update = function(self, dt)
 	
 	local AIs = self:GetEntities("AI")
 	local Cards = self:GetEntities("AICard")
-	local DealingSettings = self:GetEntities("DealingSettings")
-	--local PickedCards = {}
-	--PickedCards.__mode = "k"
-	
-	
+	local DealingSettings = self:GetEntities("DealingSettings")	
 	
 	-- TODO: Add some entity that will tell that the ai should work now.
 	
@@ -204,24 +198,15 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, _dirX, _dirY, _posX
 			
 			local charArray = ''
 			
-			-- If there is only one card left we don't need to get all permutations.
-			--if noToGet == 1 then
-				
-				-- Use old 
-				
-				--for n = 1, cardsLeftInHand do
-				--	charArray = charArray .. string.char(n)
-				--end
-			--else
-				charArray = CombinationMath.Permutations(cardsLeftInHand, noToGet)
-			--end
+			charArray = CombinationMath.Permutations(cardsLeftInHand, noToGet)
 			
 			-- Init variables to speed up usage of permutations.
 			local lengthArray = string.len(charArray)
 			local cardsToSimMinusOne = noToGet - 1
 			
 			for n = 1, noToGet do
-				table.insert(cardsToSim, CardSetAI[n])
+				cardsToSim[n] = CardSetAI[n]
+				bestCardIds[n] = n
 			end
 			dist, simFellDown, simPosX, simPosY, simDirX, simDirY = self:GetSimDist(_unitID, posX, posY, dirX, dirY, targetX, targetY, cardsToSim, cardsLeftToPick)
 			
@@ -232,7 +217,6 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, _dirX, _dirY, _posX
 			--	print(cardName)
 			--end
 			--print("Set first cards")
-			
 			for n = 1, noToGet do
 				table.remove(cardsToSim, 1)
 			end
@@ -247,31 +231,20 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, _dirX, _dirY, _posX
 			
 			for permutationIndex = 1, lengthArray, noToGet do
 				
-				for k in pairs (cardIds) do
-					cardIds[k] = nil
-				end
+				local cardIds = {}
+				cardIds.__mode = "k"
 				
 				for cardIndex = 0, cardsToSimMinusOne do
 					local charVar = string.byte(charArray, permutationIndex + cardIndex)
-					table.insert(cardsToSim, CardSetAI[charVar])
-					
-					--cardIds = nil
-					--cardIds = {}
-			--print("haj3")
-					table.insert(cardIds, charVar)
-			--print("haj4")
+					cardsToSim[cardIndex + 1] = CardSetAI[charVar]
+					cardIds[cardIndex + 1] = charVar
 					
 					if cardIndex == 0 then
 						firstCardId = charVar
 					end
 				end
 				
-				--print("haj", _unitID, posX, posY, dirX, dirY, targetX, targetY, #cardsToSim, cardsLeftToPick)
-				io.write(_unitID, " ", posX, " ", posY, " ", dirX, " ", dirY, " ", targetX, " ", targetY, " ", #cardsToSim, " ", cardsLeftToPick, "\n")
-				
 				dist, simFellDown, simPosX, simPosY, simDirX, simDirY = self:GetSimDist(_unitID, posX, posY, dirX, dirY, targetX, targetY, cardsToSim, cardsLeftToPick)
-				
-				print("haj", permutationIndex, i)
 				
 				if dist <= bestDist then
 					
@@ -286,7 +259,9 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, _dirX, _dirY, _posX
 						bestCardId = firstCardId
 						bestNextDist = nextDist
 						
-						bestCardIds = cardIds
+						for bi = 1, #cardIds do
+							bestCardIds[bi] = cardIds[bi]
+						end
 						
 						--for n = 1, #cardsToSim do
 						--	cardName = world:GetComponent(cardsToSim[n], "CardAction", 0):GetText()
@@ -303,7 +278,9 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, _dirX, _dirY, _posX
 						bestNextDist = nextDist
 						bestDist = dist
 						
-						bestCardIds = cardIds
+						for bi = 1, #cardIds do
+							bestCardIds[bi] = cardIds[bi]
+						end
 						
 						--for n = 1, #cardsToSim do
 						--	cardName = world:GetComponent(cardsToSim[n], "CardAction", 0):GetText()
@@ -321,23 +298,20 @@ AICardPickingSystem.AIPickCards = function( self, CardSetAI, _dirX, _dirY, _posX
 			
 			if (cardsLeftToPick == noOfCardsToSim) then
 				
-				print("Rest of cards picked", #bestCardIds)
 				for n = 1, #bestCardIds do
-					table.insert(pickedCards, CardSetAI[bestCardIds[n]])
-					--table.remove(CardSetAI, bestCardId)
+					pickedCards[#pickedCards + 1] = CardSetAI[bestCardIds[n]]
+					--print("Rest of cards picked", bestCardIds[n])
 				end
-				print("Rest of cards picked", #bestCardIds)
 				
 				break
 			else
-				print("card picked")
 				-- Choose card, and simulate the choosen card to use the positions to choose the next card.
-				table.insert(pickedCards, CardSetAI[bestCardId])
-				table.insert(cardsToSim, CardSetAI[bestCardId])
+				pickedCards[#pickedCards + 1] = CardSetAI[bestCardId]
+				cardsToSim[#cardsToSim + 1] = CardSetAI[bestCardId]
 				fellDown, posX, posY, dirX, dirY = self:SimulateCardsFromPos(_unitID, posX, posY, dirX, dirY, cardsToSim)
 				table.remove(cardsToSim, 1)
 				table.remove(CardSetAI, bestCardId)
-				print("card picked")
+				--print("card picked", bestCardId, bestCardIds[1])
 			end
 		end		
 	end
@@ -450,6 +424,10 @@ AICardPickingSystem.SimulateCardsFromPos = function(self, _unit, _posX, _posY, _
 		elseif cardName == "Sprint" then
 			
 			fellDown, posX, posY = self:SimulateMoveForward(posX, posY, dirX, dirY, true, false, 2, false)
+			
+		elseif cardName == "Stone" then
+			
+			fellDown, posX, posY = self:SimulateMoveForward(posX, posY, dirX, dirY, true, false, 1, false)
 			
 		--elseif cardName == "Leap" then
 		--	
@@ -608,8 +586,6 @@ AICardPickingSystem.SimulateTurnLeft = function(self, _posX, _posY, _dirX, _dirY
 		dirX = temp
 	end
 	
-	print("ts")
-	
 	if self:TileHasComponent("River", _posX, _posY) then
 		
 		local waterDirX, waterDirY, waterSpeed = self:GetRiverVariables(_posX, _posY)
@@ -661,9 +637,7 @@ end
 AICardPickingSystem.AddExtraCostIfFellDown = function(self, _fellDown, _cardsLeftToPick)
 	
 	if _fellDown then
-		print("adding extraCost")
 		local extraCost = _cardsLeftToPick + 1
-		print("added extraCost", extraCost)
 		return extraCost
 	else
 		return 0
@@ -729,17 +703,13 @@ end
 
 -- Simulate the playing of the nth card and return the pathfinder's value from that position to the target.
 AICardPickingSystem.GetSimDist = function(self, _unitID, _posX, _posY, _dirX, _dirY, _targetX, _targetY, _cardsToSim, _cardsLeftToPick)
-	print("rstine")
+
 	local simFellDown, simPosX, simPosY, simDirX, simDirY = self:SimulateCardsFromPos(_unitID, _posX, _posY, _dirX, _dirY, _cardsToSim)
-	
-	print("rstine1.2")
 	local dist = PathfinderHandler.GeneratePath(simPosX, simPosY, _targetX, _targetY)
 	
-	print("rstine1.5")
 	-- Add extraCost if the AI will fall down by playing this card.
 	dist = dist + self:AddExtraCostIfFellDown(simFellDown, _cardsLeftToPick)
 	
-	print("rstine2")
 	return dist, simFellDown, simPosX, simPosY, simDirX, simDirY
 end
 
