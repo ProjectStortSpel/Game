@@ -20,6 +20,7 @@ require "sv_DirectionalLightSystem"
 package.path = package.path .. ";Systems/Server/PlayerSystems/?.lua"
 require "sv_PlayerSystem"
 require "sv_UnitSystem"
+require "sv_SendPlayerInformation"
 
 -- AI Systems
 package.path = package.path .. ";Systems/Server/AISystems/?.lua"
@@ -184,6 +185,7 @@ worldCreator:AddSystemToCurrentGroup(LogStartSystem)
 
 
 
+worldCreator:AddSystemToCurrentGroup(SendPlayerInformation)	--	ALSO TEMP
 worldCreator:AddSystemToCurrentGroup(SortClientSelectedCards)	--	Temp
 worldCreator:AddSystemToCurrentGroup(ClearServerSelectedSystem)	--	Temp
 worldCreator:AddSystemToCurrentGroup(FindSpawnpointSystem)

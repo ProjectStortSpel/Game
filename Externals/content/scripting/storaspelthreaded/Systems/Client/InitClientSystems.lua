@@ -6,6 +6,7 @@ require "cl_FlowingWaterSystem"
 require "cl_ChatSystem"
 require "cl_ShowNextCheckpointSystem"
 require "cl_LobbySystem"
+require "cl_VisualizeSelectedCards"
 
 --	Interface Systems
 package.path = package.path .. ";Systems/Client/InterfaceSystems/?.lua"
@@ -55,8 +56,11 @@ worldCreator:AddSystemToCurrentGroup(GameMenuSystem)
 worldCreator:AddSystemToCurrentGroup(CardHoverSystem)
 
 worldCreator:AddSystemToCurrentGroup(LobbySystem)
+worldCreator:AddSystemToCurrentGroup(CardAddModelSystem)
+worldCreator:AddSystemToCurrentGroup(ShowNextCheckpointSystem)
 
-
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(VisualizeSelectedCards)
 
 
 
