@@ -1,23 +1,25 @@
 #ifndef WIN32
 
-#include <netdb.h>
+#include "LinSocket.h"
+  
+
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include <errno.h>
 #include <sstream>
-
-#include "LinSocket.h"
+#include <netdb.h>
 
 using namespace Network;
 
 LinSocket::LinSocket()
 {
-	m_remoteAddress = new std::string();
+	m_remoteAddress = new std::string("");
 	m_remotePort = new int(0);
 	m_localPort = new int(0);
-	m_active = new int(0);
+	m_active = new int(1);
+	m_socket = new int(0);
 
 	Initialize();
 
@@ -31,7 +33,7 @@ LinSocket::LinSocket()
 	if (*m_socket != -1)
 	{
 		g_noActiveSockets++;
-		if (NET_DEBUG == 1)
+		if (NET_DEBUG > 0)
 			DebugLog("New linsocket created.", LogSeverity::Info);
 	}
 	else if (NET_DEBUG > 0)
@@ -40,10 +42,10 @@ LinSocket::LinSocket()
 }
 LinSocket::LinSocket(int _socket)
 {
-	m_remoteAddress = new std::string();
+	m_remoteAddress = new std::string("");
 	m_remotePort = new int(0);
 	m_localPort = new int(0);
-	m_active = new int(0);
+	m_active = new int(1);
 
 	Initialize();
 
@@ -57,7 +59,7 @@ LinSocket::LinSocket(int _socket)
 	if (*m_socket != -1)
 	{
 		g_noActiveSockets++;
-		if (NET_DEBUG == 1)
+		if (NET_DEBUG > 0)
 			DebugLog("New linsocket created.", LogSeverity::Info);
 	}
 	else if (NET_DEBUG > 0)
@@ -66,10 +68,10 @@ LinSocket::LinSocket(int _socket)
 }
 LinSocket::LinSocket(int _domain, int _type, int _protocol)
 {
-	m_remoteAddress = new std::string();
+	m_remoteAddress = new std::string("");
 	m_remotePort = new int(0);
 	m_localPort = new int(0);
-	m_active = new int(0);
+	m_active = new int(1);
 
 	Initialize();
 
@@ -83,7 +85,7 @@ LinSocket::LinSocket(int _domain, int _type, int _protocol)
 	if (*m_socket != -1)
 	{
 		g_noActiveSockets++;
-		if (NET_DEBUG == 1)
+		if (NET_DEBUG > 0)
 			DebugLog("New linsocket created.", LogSeverity::Info);
 	}
 	else if (NET_DEBUG > 0)
@@ -186,7 +188,7 @@ bool LinSocket::Connect(const char* _ipAddres, const int _port)
 	{
 		*m_socket = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
 
-		if (*m_socket < 0)
+		if (*m_socket == -1)
 			continue;
 
 		if (connect(*m_socket, rp->ai_addr, rp->ai_addrlen) != -1)
@@ -219,9 +221,9 @@ bool LinSocket::Bind(const int _port)
 	sockaddr_in address;
 	address.sin_family = PF_INET;
 	address.sin_port = htons(_port);
-	address.sin_addr.S_un.S_addr = INADDR_ANY;
+	address.sin_addr.s_addr = INADDR_ANY;
 
-	if (bind(*m_socket, (sockaddr*)&address, sizeof(address)) < 0)
+	if (bind(*m_socket, (sockaddr*)&address, sizeof(address)) == -1	)
 	{
 		if (NET_DEBUG > 0)
 			DebugLog("Failed to bind socket. Error: %s.", LogSeverity::Error, strerror(errno));
@@ -246,7 +248,7 @@ bool LinSocket::Bind(const int _port)
 }
 bool LinSocket::Listen(int _backlog)
 {
-	if (listen(*m_socket, _backlog) < 0)
+	if (listen(*m_socket, _backlog) != 0)
 	{
 		if (NET_DEBUG > 0)
 			DebugLog("Failed to put socket in listen mode. Error: %s.", LogSeverity::Error, strerror(errno));
@@ -260,54 +262,44 @@ bool LinSocket::Listen(int _backlog)
 ISocket* LinSocket::Accept(void)
 {
 	sockaddr_in incomingAddress;
-	int incomingAddressSize = sizeof(incomingAddress);
+	socklen_t incomingAddressSize = sizeof(incomingAddress);
+	int newSocket = -1;
+	newSocket = accept(*m_socket, (sockaddr*)&incomingAddress, &incomingAddressSize);
 
-	int incomingSocket = accept(*m_socket, (sockaddr*)&incomingAddress, &incomingAddressSize);
-
-	if (incomingSocket < 0)
+	if (newSocket == -1)
 	{
-		if (NET_DEBUG > 0)
-			DebugLog("Accept failed. Error: %s.", LogSeverity::Error, strerror(errno));
+		int e = errno;
+		if (NET_DEBUG > 0 && e != 11)
+			DebugLog("Accept failed. Error: %s.", LogSeverity::Error, strerror(e));
 
 		return 0;
 	}
 
-
-	char value = 1;
-	if (setsockopt(*incomingSocket, IPPROTO_TCP, TCP_NODELAY, &value, sizeof(value)) < 0)
-	{
-		if (NET_DEBUG > 0)
-			DebugLog("Failed to set TCP_NODELAY on new socket. Error: %s.", LogSeverity::Error, strerror(errno));
-
-		return 0;
-	}
-
-
-	LinSocket* newLinSocket = new LinSocket(incomingSocket);
+	LinSocket* sock = new LinSocket(newSocket);
 	char ipAddress[INET6_ADDRSTRLEN];
 	inet_ntop(incomingAddress.sin_family, &incomingAddress.sin_addr, ipAddress, sizeof(ipAddress));
 
 	sockaddr_in sin;
 	socklen_t len = sizeof(sin);
 
-	if (getsockname(incomingSocket, (sockaddr*)&sin, &len) == 0)
-		*newLinSocket->m_localPort = ntohs(sin.sin_port);
+	if (getsockname(newSocket, (sockaddr*)&sin, &len) == 0)
+		*sock->m_localPort = ntohs(sin.sin_port);
 	else
 	{
 		if (NET_DEBUG > 0)
-			DebugLog("Failed to get local port from new socket. Socket error: %d.", LogSeverity::Error, strerror(errno));
+			DebugLog("Failed to get local port from new socket. Socket error: %s.", LogSeverity::Error, strerror(errno));
 
-		return false;
+		return 0;
 	}
 
-	*newLinSocket->m_remoteAddress = ipAddress;
-	*newLinSocket->m_remotePort = incomingAddress.sin_port;
-	*newLinSocket->m_active = 1;
+	*sock->m_remoteAddress = ipAddress;
+	*sock->m_remotePort = incomingAddress.sin_port;
+	*sock->m_active = 1;
 
-	if (NET_DEBUG == 1)
+	if (NET_DEBUG > 0)
 		DebugLog("New linsocket from %s:%d accepted.", LogSeverity::Info, ipAddress, incomingAddress.sin_port);
 
-	return newLinSocket;
+	return sock;
 }
 
 int LinSocket::Send(char* _buffer, int _length, int _flags)
@@ -320,15 +312,15 @@ int LinSocket::Send(char* _buffer, int _length, int _flags)
 
 	short len = htons(_length);
 
-	int bytesSent = send(*m_socket, (char*)&len, 2, _flags);
+	int bytesSent = send(*m_socket, (void*)&len, 2, _flags);
 	if (bytesSent == 2)
 	{
-		bytesSent = send(*m_socket, _buffer, _length, _flags);
+		bytesSent = send(*m_socket, (void*)_buffer, _length, _flags);
 
 		if (NET_DEBUG == 2)
 		{
 			if (bytesSent > 0)
-				DebugLog("Sent packet of size %d. Error: %s.", LogSeverity::Info, bytesSent, strerror(errno));
+				DebugLog("Sent packet of size %d.", LogSeverity::Info, bytesSent);
 			else if (bytesSent == 0)
 				DebugLog("Unable to send packet. Socket shutdown gracefully.", LogSeverity::Info);
 			else if (bytesSent < 0)
@@ -347,12 +339,12 @@ int LinSocket::Send(char* _buffer, int _length, int _flags)
 int LinSocket::Receive(char* _buffer, int _length, int _flags)
 {
 	short len;
-	int headerLen = recv(*m_socket, (char*)&len, 2, MSG_WAITALL);
+	int headerLen = recv(*m_socket, (void*)&len, 2, MSG_WAITALL);
 
 	if (headerLen == 2)
 	{
 		len = ntohs(len);
-		int sizeReceived = recv(*m_socket, _buffer, (int)len, MSG_WAITALL);
+		int sizeReceived = recv(*m_socket, (void*)_buffer, (int)len, MSG_WAITALL);
 
 		if (sizeReceived < len)
 		{
@@ -365,7 +357,7 @@ int LinSocket::Receive(char* _buffer, int _length, int _flags)
 		if (len > _length)
 		{
 			if (NET_DEBUG == 2)
-				DebugLog("Received packet of incorrect size. Got %d, expected %d.", LogSeverity::Warning, len, _length);
+				DebugLog("Received packet of incorrect size. Got %d, expected %d.", LogSeverity::Warning, (int)len, _length);
 
 			return -1;
 		}
@@ -395,8 +387,9 @@ int LinSocket::Receive(char* _buffer, int _length, int _flags)
 bool LinSocket::SetNonBlocking(bool _value)
 {
 	int value = _value;
-
-	if (ioctl(*m_socket, FIONBIO, &value) < 0)
+	int result = ioctl(*m_socket, FIONBIO, &value);
+	int error = errno;
+	if (result != 0)
 	{
 		if (NET_DEBUG > 0)
 			DebugLog("Failed to %s non blocking on socket. Error: %s.", LogSeverity::Error, _value ? "enable" : "disable", strerror(errno));
@@ -408,9 +401,8 @@ bool LinSocket::SetNonBlocking(bool _value)
 
 bool LinSocket::SetNoDelay(bool _value)
 {
-	char value = _value;
-
-	if (setsockopt(*m_socket, IPPROTO_TCP, TCP_NODELAY, &value, sizeof(value)) < 0)
+	int value = _value;
+	if (setsockopt(*m_socket, IPPROTO_TCP, TCP_NODELAY, (char*)&value, sizeof(int)) < 0)
 	{
 		if (NET_DEBUG > 0)
 			DebugLog("Failed to %s no delay on socket. Error: %s.", LogSeverity::Error, _value ? "enable" : "disable", strerror(errno));
@@ -430,7 +422,7 @@ bool LinSocket::SetTimeoutDelay(int _value, bool _recv, bool _send)
 		if (setsockopt(*m_socket, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout, sizeof(timeout)) < 0)
 		{
 			if (NET_DEBUG > 0)
-				DebugLog("Failed to set %d timeout delay on receive. Error code: %d", LogSeverity::Error, _value, strerror(errno));
+				DebugLog("Failed to set %d timeout delay on receive. Error: %s", LogSeverity::Error, _value, strerror(errno));
 			success = false;
 		}
 	}
@@ -440,7 +432,7 @@ bool LinSocket::SetTimeoutDelay(int _value, bool _recv, bool _send)
 		if (setsockopt(*m_socket, SOL_SOCKET, SO_SNDTIMEO, (const char*)&timeout, sizeof(timeout)) < 0)
 		{
 			if (NET_DEBUG > 0)
-				DebugLog("Failed to set %d timeout delay on send. Error code: %d", LogSeverity::Error, _value, strerror(errno));
+				DebugLog("Failed to set %d timeout delay on send. Error: %s", LogSeverity::Error, _value, strerror(errno));
 			success = false;
 		}
 	}

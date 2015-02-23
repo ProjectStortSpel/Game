@@ -1,6 +1,11 @@
 #include "BaseNetwork.h"
 #include "NetTypeMessageID.h"
 
+#ifdef WIN32
+#else
+#include <sys/time.h>
+#endif
+
 using namespace Network;
 
 BaseNetwork::BaseNetwork()
@@ -162,7 +167,7 @@ void BaseNetwork::Update(float _dt)
 			else if (NET_DEBUG > 0)
 			{
 				NetTypeMessageId tmp = (NetTypeMessageId)type;
-				DebugLog("System packet \'%s\' not bound to any function", LogSeverity::Warning, m_enumStrings[type]);
+				DebugLog("System packet \'%s\' not bound to any function", LogSeverity::Warning, m_enumStrings[type].c_str());
 			}
 
 			SAFE_DELETE(p);

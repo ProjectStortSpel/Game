@@ -18,13 +18,13 @@ ServerNetwork::ServerNetwork()
 	m_maxConnections = new unsigned int(64);
 	m_listenSocket = 0;
 
-	m_connectedClients			= new std::map<NetConnection, ISocket*>();
+	m_connectedClients		= new std::map<NetConnection, ISocket*>();
 	m_receivePacketThreads		= new std::map < NetConnection, std::thread >();
 	m_currentTimeOutIntervall	= new std::map < NetConnection, float >();
 	m_currentIntervallCounter	= new std::map < NetConnection, int >();
 	m_connectedClientsNC		= new std::vector<NetConnection>();
 
-	m_connectedClientsLock	= SDL_CreateMutex();
+	m_connectedClientsLock		= SDL_CreateMutex();
 	m_dataSentLock			= SDL_CreateMutex();
 	m_dataReceiveLock		= SDL_CreateMutex();
 	m_timeOutLock			= SDL_CreateMutex();
@@ -107,7 +107,7 @@ bool ServerNetwork::Start()
 	m_listenSocket = ISocket::CreateSocket();
 	m_listenSocket->Bind(*m_incomingPort);
 	m_listenSocket->SetNoDelay(true);
-	m_listenSocket->SetNonBlocking(true);
+	//m_listenSocket->SetNonBlocking(true);
 
 	if (NET_DEBUG > 0)
 		DebugLog("Starting server.", LogSeverity::Info);
@@ -161,7 +161,8 @@ bool ServerNetwork::Stop()
 	m_currentIntervallCounter->clear();
 	m_currentTimeOutIntervall->clear();
 
-	TriggerEvent(m_onServerShutdown, NetConnection(), 0);
+	NetConnection nc = NetConnection();
+	TriggerEvent(m_onServerShutdown, nc, 0);
 
 	*m_running = false;
 
@@ -343,20 +344,18 @@ void ServerNetwork::ListenForConnections(void)
 
 	while (m_listenSocket->GetActive() != 0)
 	{
-		NetSleep(10); // 50 ?
+		NetSleep(50); // 50 ?
 		
 		if (!m_listenSocket)
-		{
 			m_listenSocket->SetActive(0);
-		}
 
 		ISocket* newConnection = m_listenSocket->Accept();
 		if (!newConnection)
 			continue;
 
+		newConnection->SetActive(1);
 		newConnection->SetNonBlocking(false);
 		newConnection->SetNoDelay(true);
-		newConnection->SetActive(1);
 
 		NetConnection nc = newConnection->GetNetConnection();
 		unsigned int noConnections = *m_maxConnections + 1;

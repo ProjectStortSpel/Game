@@ -5,6 +5,7 @@
 #include <string>
 #include <inttypes.h>
 #include <cstring>
+#include <stdio.h>
 
 #include "Logger/Managers/Logger.h"
 
@@ -44,39 +45,75 @@ namespace Network
 
 	unsigned long long hton_ll(unsigned long long src);
 	unsigned long long ntoh_ll(unsigned long long src);
-	static int NET_DEBUG = 1;
+	static int NET_DEBUG = 2;
 
 #pragma warning(push)
 #pragma warning(disable: 4996)
-
-	template<typename T, typename... Args>
-	static void DebugLog(const char* _msg, LogSeverity _severity, T _value, Args... _args)
-	{
-		char buff[100];
-		sprintf(buff, _msg, _value);
-		DebugLog(buff, _severity, _args...);
-	}
-
-	template<typename T>
-	static void DebugLog(const char* _msg, LogSeverity _severity, T _value)
-	{
-		char buff[100];
-		sprintf(buff, _msg, _value);
-		Logger::GetInstance().Log("Network", _severity, buff);
-	}
 
 	static void DebugLog(const char* _msg, LogSeverity _severity)
 	{
 		Logger::GetInstance().Log("Network", _severity, _msg);
 	}
+	
+	static void DebugLog(const char* _msg, LogSeverity _severity, int _value)
+	{
+		char buff[100];
+		sprintf(buff, _msg, _value);
+		Logger::GetInstance().Log("Network", _severity, buff);
+	}
+	
+	static void DebugLog(const char* _msg, LogSeverity _severity, const char* _value)
+	{
+		char buff[100];
+		sprintf(buff, _msg, _value);
+		Logger::GetInstance().Log("Network", _severity, buff);
+	}
+	
+	static void DebugLog(const char* _msg, LogSeverity _severity, const char* _value, int _value2)
+	{
+		char buff[100];
+		sprintf(buff, _msg, _value, _value2);
+		Logger::GetInstance().Log("Network", _severity, buff);
+	}
 
+	static void DebugLog(const char* _msg, LogSeverity _severity, int _value, const char* _value2)
+	{
+		char buff[100];
+		sprintf(buff, _msg, _value, _value2);
+		Logger::GetInstance().Log("Network", _severity, buff);
+	}
+	
+	static void DebugLog(const char* _msg, LogSeverity _severity, const char* _value, const char* _value2)
+	{
+		char buff[100];
+		sprintf(buff, _msg, _value, _value2);
+		Logger::GetInstance().Log("Network", _severity, buff);
+	}
+	
+	static void DebugLog(const char* _msg, LogSeverity _severity, int _value, int _value2)
+	{
+		char buff[100];
+		sprintf(buff, _msg, _value, _value2);
+		Logger::GetInstance().Log("Network", _severity, buff);
+	}
+	
 	static void DebugLog(const char* _msg, LogSeverity _severity, const char* _ip, int _port, int _error)
 	{
 		char buff[100];
 		sprintf(buff, _msg, _ip, _port, _error);
 		Logger::GetInstance().Log("Network", _severity, buff);
 	}
+	
+	static void DebugLog(const char* _msg, LogSeverity _severity, const char* _ip, int _port, const char* _error)
+	{
+		char buff[100];
+		sprintf(buff, _msg, _ip, _port, _error);
+		Logger::GetInstance().Log("Network", _severity, buff);
+	}
 
+	
+	
+	
 #pragma warning(pop)
 
 }

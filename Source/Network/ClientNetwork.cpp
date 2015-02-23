@@ -40,8 +40,7 @@ ClientNetwork::ClientNetwork()
 	m_currentIntervallCounter = new int(0);
 
 	m_receiveThread = new std::thread();
-
-
+	m_socket = 0;
 
 	(*m_systemFunctions)[NetTypeMessageId::ID_PASSWORD_INVALID] = std::bind(&ClientNetwork::NetPasswordInvalid, this, NetworkHookPlaceholders);
 	(*m_systemFunctions)[NetTypeMessageId::ID_CONNECTION_ACCEPTED] = std::bind(&ClientNetwork::NetConnectionAccepted, this, NetworkHookPlaceholders);
@@ -129,7 +128,8 @@ bool ClientNetwork::Connect()
 
 	if (!*m_connected)
 	{
-		TriggerEvent(m_onFailedToConnect, NetConnection(m_remoteAddress->c_str(), *m_outgoingPort), 0);
+		NetConnection nc = NetConnection(m_remoteAddress->c_str(), *m_outgoingPort);
+		TriggerEvent(m_onFailedToConnect, nc, 0);
 		return false;
 	}
 
@@ -166,7 +166,8 @@ void ClientNetwork::Disconnect()
 
 	m_receiveThread->join();
 
-	TriggerEvent(m_onDisconnectedFromServer, m_socket->GetNetConnection(), 0);
+	NetConnection nc = m_socket->GetNetConnection();
+	TriggerEvent(m_onDisconnectedFromServer, nc, 0);
 
 	*m_connected = false;
 }
