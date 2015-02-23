@@ -32,6 +32,12 @@ LinSocket::LinSocket()
 
 	if (*m_socket != -1)
 	{
+	  
+	    *m_remoteAddress  = "";
+	    *m_remotePort = 0;
+	    *m_localPort = 0;
+	    *m_active = 0;
+	  
 		g_noActiveSockets++;
 		if (NET_DEBUG > 0)
 			DebugLog("New linsocket created.", LogSeverity::Info);
@@ -46,6 +52,7 @@ LinSocket::LinSocket(int _socket)
 	m_remotePort = new int(0);
 	m_localPort = new int(0);
 	m_active = new int(1);
+	m_socket = new int(0);
 
 	Initialize();
 
@@ -58,6 +65,11 @@ LinSocket::LinSocket(int _socket)
 
 	if (*m_socket != -1)
 	{
+	    *m_remoteAddress = "";
+	    *m_remotePort = 0;
+	    *m_localPort = 0;
+	    *m_active = 0;
+	  
 		g_noActiveSockets++;
 		if (NET_DEBUG > 0)
 			DebugLog("New linsocket created.", LogSeverity::Info);
@@ -72,6 +84,7 @@ LinSocket::LinSocket(int _domain, int _type, int _protocol)
 	m_remotePort = new int(0);
 	m_localPort = new int(0);
 	m_active = new int(1);
+	m_socket = new int(0);
 
 	Initialize();
 
@@ -84,6 +97,12 @@ LinSocket::LinSocket(int _domain, int _type, int _protocol)
 
 	if (*m_socket != -1)
 	{
+	    *m_remoteAddress = "";
+	    *m_remotePort = 0;
+	    *m_localPort = 0;
+	    *m_active = 0;
+	  
+	  
 		g_noActiveSockets++;
 		if (NET_DEBUG > 0)
 			DebugLog("New linsocket created.", LogSeverity::Info);
@@ -282,7 +301,7 @@ ISocket* LinSocket::Accept(void)
 	sockaddr_in sin;
 	socklen_t len = sizeof(sin);
 
-	if (getsockname(newSocket, (sockaddr*)&sin, &len) == 0)
+	if (getsockname(newSocket, (sockaddr *)&sin, &len) == 0)
 		*sock->m_localPort = ntohs(sin.sin_port);
 	else
 	{

@@ -107,7 +107,7 @@ bool ServerNetwork::Start()
 	m_listenSocket = ISocket::CreateSocket();
 	m_listenSocket->Bind(*m_incomingPort);
 	m_listenSocket->SetNoDelay(true);
-	//m_listenSocket->SetNonBlocking(true);
+	m_listenSocket->SetNonBlocking(true);
 
 	if (NET_DEBUG > 0)
 		DebugLog("Starting server.", LogSeverity::Info);
