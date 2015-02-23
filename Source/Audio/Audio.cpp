@@ -82,8 +82,6 @@ namespace Audio
 		Mix_ChannelFinished(ChannelFinished);
 	}
 	
-	std::vector<std::string> mismatch;
-	
 	void Update()
 	{
 		for (int channelToRemove : g_channelsQueue)
