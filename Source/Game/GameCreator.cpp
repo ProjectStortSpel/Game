@@ -618,6 +618,8 @@ void GameCreator::StartGame(int argc, char** argv)
 		UpdateNetwork(dt);
 		m_networkCounter.Tick();
 
+		ClientManager::Update();
+
 		/*	Update graphics	*/
 		m_graphics->Update(dt);
 		RenderConsole();

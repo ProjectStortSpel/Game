@@ -18,8 +18,8 @@ CreateDeckSystem.PostInitialize = function(self)
 	local dealingSettingsEntity = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("DealingSettings", dealingSettingsEntity)
 	world:CreateComponentAndAddTo("SyncNetwork", dealingSettingsEntity)
-	world:GetComponent(dealingSettingsEntity, "DealingSettings", "CardsInHand"):SetInt(7)
-	world:GetComponent(dealingSettingsEntity, "DealingSettings", "CardsToPick"):SetInt(4)
+	world:GetComponent(dealingSettingsEntity, "DealingSettings", "CardsInHand"):SetInt(8)
+	world:GetComponent(dealingSettingsEntity, "DealingSettings", "CardsToPick"):SetInt(5)
 end
 
 CreateDeckSystem.EntitiesAdded = function(self, dt, entities)
