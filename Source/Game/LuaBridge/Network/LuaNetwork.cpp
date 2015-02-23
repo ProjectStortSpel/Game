@@ -484,7 +484,7 @@ namespace LuaBridge
 			Network::ServerNetwork* server = NetworkInstance::GetServer();
 			if (server->IsRunning())
 			{
-				std::vector<Network::NetConnection> nc = server->GetConnectedClients();
+				std::vector<Network::NetConnection> nc = ClientManager::GetConnectedClients();// server->GetConnectedClients();
 				
 				for (int i = 0; i < nc.size(); ++i)
 				{
