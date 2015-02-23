@@ -86,8 +86,6 @@ namespace ClientManager
 			Job job = jobs.front();
 			SDL_UnlockMutex(jobMutex);
 
-			SDL_Log("Sending: %s", job.resource.File);
-
 			SDL_RWops* file;
 			FileSystem::File::Open(job.resource.Location, &file);
 
