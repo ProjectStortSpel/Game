@@ -750,6 +750,11 @@ void GameCreator::Reload()
         m_serverWorld = nullptr;
     }
 
+	if (NetworkInstance::GetServer()->IsRunning())
+	{
+		ClientManager::SetAllClientsToConnecting();
+	}
+
 	ResourceManager::Clear();
 
 	HomePath::SetGameMode(m_gameMode);
@@ -833,8 +838,6 @@ void GameCreator::Reload()
 
 	if (NetworkInstance::GetServer()->IsRunning())
 	{
-		ClientManager::SetAllClientsToConnecting();
-
 		Network::ServerNetwork* server = NetworkInstance::GetServer();
 		Network::PacketHandler* ph = server->GetPacketHandler();
 		uint64_t id = ph->StartPack("Gamemode");
