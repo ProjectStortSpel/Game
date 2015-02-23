@@ -1,6 +1,6 @@
 ParentSystem = System()
 
-ParentSystem.Update = function(self, dt, taskIndex, taskCount)
+ParentSystem.Update = function(self, dt)
 
 	local children = self:GetEntities("Parent")
 	for i = 1, #children do
@@ -15,7 +15,7 @@ ParentSystem.Update = function(self, dt, taskIndex, taskCount)
 	
 end
 
-ParentSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+ParentSystem.EntitiesAdded = function(self, dt, entities)
 	for i = 1, #entities do
 		local entityId = entities[i]
 		if world:EntityHasComponent(entityId, "Parent") then
@@ -33,7 +33,7 @@ ParentSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 	end
 end
 
-ParentSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
+ParentSystem.EntitiesRemoved = function(self, dt, entities)
 	for i = 1, #entities do
 		local entityId = entities[i]
 		--if world:EntityHasComponent(entityId, "IsParent") then

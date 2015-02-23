@@ -1,5 +1,5 @@
 -- Components
-package.path = package.path .. ";../../../Externals/content/scripting/lobbythreaded/components/?.lua"
+package.path = package.path .. ";components/?.lua"
 require "components"
 require "buttoncomponents"
 require "menucomponents"
@@ -7,34 +7,33 @@ require "servercomponents"
 require "ipconnectcomponents"
 
 --	Shared Components
-package.path = package.path .. ";../../../Externals/content/scripting/shared/components/?.lua"
+package.path = package.path .. ";../shared/components/?.lua"
 require "InitSharedComponents" -- Add more systems into InitSharedSystems.lua instead of here!
 
 if Client then
 
 --	Shared Systems
-package.path = package.path .. ";../../../Externals/content/scripting/shared/systems/?.lua"
+package.path = package.path .. ";../shared/systems/?.lua"
 require "InitSharedSystems" -- Add more systems into InitSharedSystems.lua instead of here!
 
 
 -- Systems
-package.path = package.path .. ";../../../Externals/content/scripting/lobbythreaded/systems/?.lua"
+package.path = package.path .. ";systems/?.lua"
 
 --require "sh_pickboxsystem"
 --require "sh_buttonhoversystem"
 --require "sh_buttonpressedsystem"
 
-package.path = package.path .. ";../../../Externals/content/scripting/lobbythreaded/systems/interfacesystems/?.lua"
+package.path = package.path .. ";systems/interfacesystems/?.lua"
 require "GameInterfaceSystem"
 require "GameMenuSystem"
 require "OptionMenuSystem"
 require "ConnectMenuSystem"
 require "HostMenuSystem"
 require "IPConnectSystem"
-require "NotificationBoxSystem"
 
 -- Templates
-package.path = package.path .. ";../../../Externals/content/scripting/lobbythreaded/templates/?.lua"
+package.path = package.path .. ";templates/?.lua"
 require "templates"
 
 worldCreator:AddSystemGroup()	
@@ -49,7 +48,5 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(HostMenuSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(IPConnectSystem)
-worldCreator:AddSystemGroup()
-worldCreator:AddSystemToCurrentGroup(NotificationBoxSystem)
 
 end

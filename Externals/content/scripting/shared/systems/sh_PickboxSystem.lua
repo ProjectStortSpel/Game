@@ -13,7 +13,7 @@ PickBoxSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("PickBox", FilterType.Mandatory)
 end
 
-PickBoxSystem.Update = function(self, dt, taskIndex, taskCount)
+PickBoxSystem.Update = function(self, dt)
 	-- Fetch Aspect ratio from graphics:
 	local AspectX, AspectY = GraphicDevice.GetAspectRatio()
 

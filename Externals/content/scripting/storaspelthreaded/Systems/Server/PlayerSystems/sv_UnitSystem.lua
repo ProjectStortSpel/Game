@@ -15,6 +15,8 @@ UnitSystem.Initialize = function(self)
 	
 	self:AddComponentTypeToFilter("NeedUnit", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("RemoveUnit", FilterType.RequiresOneOf)
+	
+	self:AddComponentTypeToFilter("Checkpoint", FilterType.RequiresOneOf)
 end
 
 --UnitSystem.FindEmptyId = function(self)
@@ -44,14 +46,12 @@ end
 --	return newIndex
 --end
 
-UnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+UnitSystem.EntitiesAdded = function(self, dt, entities)
 	
 	local mySeed = os.time() - 1418742000 -- dont ask
 	math.randomseed(mySeed)
 	for n = 1, #entities do
 		local entity = entities[n]
-		
-		print("unit entity added")
 	
 		if world:EntityHasComponent(entity, "NeedUnit") then
 			
@@ -77,12 +77,26 @@ UnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 			end
 			world:GetComponent(newEntityId, "Color", "X"):SetFloat3(r, g, b)
 			
+			--	Send to start fire on next checkpoint
+			local	targetCheckpoint	=	1
+			local	nCheckpoints		=	self:GetEntities("Checkpoint")
+			local	X, Z, checkpointId	=	0,0,0
+			for n = 1, #nCheckpoints do
+				
+				if world:GetComponent(nCheckpoints[n], "Checkpoint", "Number"):GetInt() == targetCheckpoint then
+					checkpointId	=	nCheckpoints[n]
+					X, Z			=	world:GetComponent(checkpointId, "MapPosition", "X"):GetInt2()
+					break
+				end
+				
+			end
+			
 			world:SetComponent(newEntityId, "PlayerNumber", "Number", playerNumber)
 			world:SetComponent(newEntityId, "PlayerEntityId", "Id", entity)
-			world:SetComponent(newEntityId, "TargetCheckpoint", "Id", 1)
+			world:SetComponent(newEntityId, "TargetCheckpoint", "Id", targetCheckpoint)
 			world:GetComponent(newEntityId, "Direction", 0):SetInt2(0, -1)
 			world:CreateComponentAndAddTo("NeedSpawnLocation", newEntityId)
-			world:CreateComponentAndAddTo("Hide", newEntityId)
+			--world:CreateComponentAndAddTo("Hide", newEntityId)
 			
 			world:SetComponent(entity, "PlayerNumber", "Number", playerNumber)
 			world:CreateComponentAndAddTo("UnitEntityId", entity)
@@ -91,9 +105,10 @@ UnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 			if world:EntityHasComponent(entity, "NetConnection") then
 				local ip = world:GetComponent(entity, "NetConnection", "IpAddress"):GetText()
 				local port = world:GetComponent(entity, "NetConnection", "Port"):GetInt()
-    
-				local id = Net.StartPack("Client.SendPlayerUnitId")
-				Net.WriteInt(id, playerNumber)
+				local id = Net.StartPack("Client.SendPlayerUnitColor")
+				Net.WriteFloat(id, r)
+				Net.WriteFloat(id, g)
+				Net.WriteFloat(id, b)
 				Net.Send(id, ip, port)
 			end
 						

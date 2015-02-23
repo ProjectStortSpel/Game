@@ -1,6 +1,6 @@
 AddTextToTextureSystem = System()
 
-AddTextToTextureSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+AddTextToTextureSystem.EntitiesAdded = function(self, dt, entities)
 	for i = 1, #entities do
 		local entityId = entities[i]
 		local ModelId = world:GetComponent(entityId, "Render", "ModelId"):GetInt(0)

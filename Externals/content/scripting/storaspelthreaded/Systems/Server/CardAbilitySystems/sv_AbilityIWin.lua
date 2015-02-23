@@ -29,7 +29,7 @@ AbilityIWin.VisitCheckpoint = function(self, unit, checkpointNumber)
 	end
 end
 
-AbilityIWin.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+AbilityIWin.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entity = entities[n]

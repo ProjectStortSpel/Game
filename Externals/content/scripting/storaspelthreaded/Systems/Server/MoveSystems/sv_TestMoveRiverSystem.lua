@@ -13,7 +13,7 @@ TestMoveRiverSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("NotWalkable", 	FilterType.RequiresOneOf)
 end
 
-TestMoveRiverSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+TestMoveRiverSystem.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entity = entities[n]

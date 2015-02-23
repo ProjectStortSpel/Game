@@ -124,33 +124,43 @@ private:
 	*/
 	struct pathfindingnode**			m_mapData;
 	/*
+		// TODO : add information to this function
 	*/
 	bool InSet(const std::vector<pathfindingnode>& _set, int _x, int _y);
 	/*
+		// TODO : add information to this function
 	*/
 	bool InsideWorld(int _x, int _y);
 	/*
+		// TODO : add information to this function
 	*/
 	float CalcHeuristicValue(coord _fromToGoal);
 	/*
+		// TODO : add information to this function
 	*/
 	pathfindingnode BestNode(std::vector<pathfindingnode>& _set);
 	/*
+		// TODO : add information to this function
 	*/
 	void AddNeighbors(coord _position, std::vector<pathfindingnode>& _set, const std::vector<pathfindingnode>& _notToUse, pathfindingnode* _parent);
 	/*
+		// TODO : add information to this function
 	*/
 	Pathfinder(Pathfinder const&) = delete;
 	/*
+		// TODO : add information to this function
 	*/
 	void operator=(Pathfinder const&) = delete;
 	/*
+		// TODO : add information to this function
 	*/
 	void DeleteMap();
 	/*
+		// TODO : add information to this function
 	*/
 	Pathfinder();
 	/*
+		// TODO : add information to this function
 	*/
 	static Pathfinder* m_instance;
 };

@@ -11,7 +11,7 @@ SortCardIndexSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("CardIndex", FilterType.Mandatory)
 end
 
-SortCardIndexSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
+SortCardIndexSystem.EntitiesRemoved = function(self, dt, entities)
 	local cards = self:GetEntities()
 	for i = 1, #cards do
 		world:SetComponent(cards[i], "CardIndex", "Index", i)

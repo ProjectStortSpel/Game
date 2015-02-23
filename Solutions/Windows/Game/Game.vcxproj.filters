@@ -84,8 +84,8 @@
     <Filter Include="Game\Systems\ParticleSystem">
       <UniqueIdentifier>{b9d97fa0-3180-4175-bdbb-35be7ebbf5f7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Systems\TestSystems">
-      <UniqueIdentifier>{aef9657b-cb5a-4e3b-bb2b-039bb9c76e22}</UniqueIdentifier>
+    <Filter Include="Lua Bridge\Resource">
+      <UniqueIdentifier>{cee8274a-69dd-429b-ba04-7664e20156fc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -254,8 +254,23 @@
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\AI\LuaCombinationMath.cpp">
       <Filter>Lua Bridge\AI</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\Game\Systems\SimulateFrameSpikeSystem.cpp">
-      <Filter>Game\Systems\TestSystems</Filter>
+    <ClCompile Include="..\..\..\Source\Game\ResourceManager.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\Resource\LuaResource.cpp">
+      <Filter>Lua Bridge\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\DynamicScripting.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\AI\LuaDynamicScript.cpp">
+      <Filter>Lua Bridge\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Network\ConnectHelper.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Network\ClientManager.cpp">
+      <Filter>Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -421,8 +436,23 @@
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\AI\LuaCombinationMath.h">
       <Filter>Lua Bridge\AI</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\Game\Systems\SimulateFrameSpikeSystem.h">
-      <Filter>Game\Systems\TestSystems</Filter>
+    <ClInclude Include="..\..\..\Source\Game\ResourceManager.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\Resource\LuaResource.h">
+      <Filter>Lua Bridge\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\DynamicScripting.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\AI\LuaDynamicScript.h">
+      <Filter>Lua Bridge\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Network\ClientManager.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Network\ConnectHelper.h">
+      <Filter>Network</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

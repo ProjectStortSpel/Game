@@ -28,7 +28,7 @@
 --
 --end
 --
---TrueTestMoveSystem.Update = function(self, dt, taskIndex, taskCount)
+--TrueTestMoveSystem.Update = function(self, dt)
 --	local entities = self:GetEntities()
 --    
 --	for i = 1, #entities do

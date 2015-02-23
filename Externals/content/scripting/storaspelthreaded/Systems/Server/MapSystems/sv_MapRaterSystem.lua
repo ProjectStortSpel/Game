@@ -45,7 +45,7 @@ end
 --	|  __| | . ` |  | |    | |    | |    | | |  __|  \___ \ 	  / /\ \ | |  | | |  | |  __| | |  | |
 --	| |____| |\  |  | |   _| |_   | |   _| |_| |____ ____) |	 / ____ \| |__| | |__| | |____| |__| |
 --	|______|_| \_|  |_|  |_____|  |_|  |_____|______|_____/ 	/_/    \_\_____/|_____/|______|_____/ 
-MapRater.EntitiesAdded = function(self, dt, taskIndex, taskCount, newEntities)
+MapRater.EntitiesAdded = function(self, dt, newEntities)
 
 	for n = 1, #newEntities do
 		local	newEntity	=	newEntities[n]

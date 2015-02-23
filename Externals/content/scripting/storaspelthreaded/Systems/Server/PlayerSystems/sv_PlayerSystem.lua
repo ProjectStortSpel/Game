@@ -39,7 +39,7 @@ end
 --	return newIndex
 --end
 
-PlayerSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+PlayerSystem.EntitiesAdded = function(self, dt, entities)
 	
 	for i = 1, #entities do
 		
@@ -83,7 +83,7 @@ PlayerSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 	--end
 end
 
-PlayerSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
+PlayerSystem.EntitiesRemoved = function(self, dt, entities)
 
 	for i = 1, #entities do
 		

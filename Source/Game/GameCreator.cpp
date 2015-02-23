@@ -26,6 +26,12 @@
 #include "LuaBridge/Renderer/LuaGraphicDevice.h"
 #include "LuaBridge/ECSL/LuaEntityTemplateManager.h"
 #include "LuaBridge/Network/LuaNetwork.h"
+#include "LuaBridge/Resource/LuaResource.h"
+#include "Game/Network/ConnectHelper.h"
+#include "Game/Network/ClientManager.h"
+
+#include "Game/ResourceManager.h"
+#include "FileSystem/Directory.h"
 
 #include "Logger/Managers/Logger.h"
 
@@ -129,13 +135,22 @@ void GameCreator::InitializeNetwork()
 	hook = std::bind(&GameCreator::NetworkGameMode, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 	NetworkInstance::GetClient()->AddNetworkHook("Gamemode", hook);
 
+	//hook = std::bind(&GameCreator::NetworkGameModeFiles, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	//NetworkInstance::GetClient()->AddNetworkHook("GamemodeFiles", hook);
+
 	m_remoteConsole = new RemoteConsole();
 
-	InitializeNetworkEvents();
+	ConnectHelper::Initialize();
+	ConnectHelper::LoadGameModeHook GMhook = std::bind(&GameCreator::GameMode, this, std::placeholders::_1);
+	ConnectHelper::SetLoadGameModeHook(GMhook);
+
+	ClientManager::Initialize();
+
+	InitializeNetworkEvents(false);
 
 }
 
-void GameCreator::InitializeNetworkEvents()
+void GameCreator::InitializeNetworkEvents(bool _allowEntities)
 {
 	NetworkInstance::GetClient()->ResetNetworkEvents();
 	NetworkInstance::GetServer()->ResetNetworkEvents();
@@ -191,15 +206,18 @@ void GameCreator::InitializeNetworkEvents()
 	NetworkInstance::GetServer()->SetOnPlayerTimedOut(netEvent);
 
 
-	//Entity hooks
-	Network::NetMessageHook hook = std::bind(&NetworkHelper::ReceiveEntityAll, NetworkInstance::GetClientNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-	NetworkInstance::GetClient()->AddNetworkHook("Entity", hook);
+	if (_allowEntities)
+	{
+		//Entity hooks
+		Network::NetMessageHook hook = std::bind(&NetworkHelper::ReceiveEntityAll, NetworkInstance::GetClientNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+		NetworkInstance::GetClient()->AddNetworkHook("Entity", hook);
 
-	hook = std::bind(&NetworkHelper::ReceiveEntityDelta, NetworkInstance::GetClientNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-	NetworkInstance::GetClient()->AddNetworkHook("EntityDelta", hook);
+		hook = std::bind(&NetworkHelper::ReceiveEntityDelta, NetworkInstance::GetClientNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+		NetworkInstance::GetClient()->AddNetworkHook("EntityDelta", hook);
 
-	hook = std::bind(&NetworkHelper::ReceiveEntityKill, NetworkInstance::GetClientNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-	NetworkInstance::GetClient()->AddNetworkHook("EntityKill", hook);
+		hook = std::bind(&NetworkHelper::ReceiveEntityKill, NetworkInstance::GetClientNetworkHelper(), std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+		NetworkInstance::GetClient()->AddNetworkHook("EntityKill", hook);
+	}
 }
 
 void GameCreator::InitializeThreads()
@@ -238,21 +256,41 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 {
     lua_State* luaState = _worldType == WorldType::Client ? m_clientLuaState : m_serverLuaState;
 
+	if (_worldType == WorldType::Server)
+	{
+		std::vector<std::string> paths = HomePath::GetGameModePaths(HomePath::Type::Server);
+
+		for (int i = 0; i < paths.size(); ++i)
+		{
+			std::vector<std::string> files = FileSystem::Directory::GetAllFiles(paths[i]);
+
+			for (int j = 0; j < files.size(); ++j)
+			{
+				ResourceManager::AddGamemodeResource(files[j]);
+			}
+		}
+	}
     
 	LuaBridge::LuaWorldCreator worldCreator = LuaBridge::LuaWorldCreator(luaState);
     worldCreator.SkipComponentTypesAndTemplates(!_isMainWorld);
 	LuaEmbedder::AddObject<LuaBridge::LuaWorldCreator>(luaState, "WorldCreator", &worldCreator, "worldCreator");
 
-	std::stringstream gameMode;
-#if defined(_DEBUG) && !defined(__ANDROID__) && !defined(__APPLE__)
-	gameMode << "../../../Externals/content/scripting/";
-#else
-	gameMode << "content/scripting/";
-#endif
-	gameMode << _gameMode;
-	gameMode << "/init.lua";
+//	std::stringstream gameMode;
+//#if defined(_DEBUG) && !defined(__ANDROID__) && !defined(__APPLE__)
+//	gameMode << "../../../Externals/content/scripting/";
+//#else
+//	gameMode << "content/scripting/";
+//#endif
+//	gameMode << _gameMode;
+//	gameMode << "/init.lua";
+//
+	std::vector<std::string> paths;
+	if (NetworkInstance::GetServer()->IsRunning() || _gameMode == "lobbythreaded")
+		paths = HomePath::GetGameModePaths(HomePath::Type::Server);
+	else
+		paths = HomePath::GetGameModePaths(HomePath::Type::Client);
 
-	if (!LuaEmbedder::Load(luaState, gameMode.str()))
+	if (!LuaEmbedder::Load(luaState, &paths, "init.lua"))
 		return;
 	
 	std::vector<ECSL::SystemWorkGroup*>* systemWorkGroups = worldCreator.GetSystemWorkGroups();
@@ -354,9 +392,9 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
         m_graphicalSystems.push_back(graphicalSystem);
         worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 
-		graphicalSystem = new AModelSystem(m_graphics);
-		m_graphicalSystems.push_back(graphicalSystem);
-		worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
+		//graphicalSystem = new AModelSystem(m_graphics);
+		//m_graphicalSystems.push_back(graphicalSystem);
+		//worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
     }
     
     if (_worldType == WorldType::Client || _isMainWorld)
@@ -712,11 +750,17 @@ void GameCreator::Reload()
         m_serverWorld = nullptr;
     }
 
+	ResourceManager::Clear();
+
 	HomePath::SetGameMode(m_gameMode);
 		
 	NetworkInstance::GetClientNetworkHelper()->ResetNetworkMaps();
     NetworkInstance::GetServerNetworkHelper()->ResetNetworkMaps();
-	InitializeNetworkEvents();
+
+	if (m_gameMode != "lobbythreaded" && m_gameMode != "loadingscreen")
+		InitializeNetworkEvents(true);
+	else
+		InitializeNetworkEvents(false);
 	//bool server = LuaEmbedder::PullBool(m_serverLuaState, "Server");
 	//bool client = LuaEmbedder::PullBool(m_clientLuaState, "Client");
 	LuaEmbedder::Quit();
@@ -760,6 +804,12 @@ void GameCreator::Reload()
     LuaBridge::LuaNetwork::SetClientLuaState(m_clientLuaState);
     LuaBridge::LuaNetwork::SetServerLuaState(m_serverLuaState);
 
+	if (NetworkInstance::GetServer()->IsRunning())
+	{
+		LuaBridge::LuaResource::SetServerState(m_serverLuaState);
+	}
+	else
+		LuaBridge::LuaResource::SetServerState(NULL);
 
 	m_graphicalSystems.clear();
 
@@ -783,6 +833,8 @@ void GameCreator::Reload()
 
 	if (NetworkInstance::GetServer()->IsRunning())
 	{
+		ClientManager::SetAllClientsToConnecting();
+
 		Network::ServerNetwork* server = NetworkInstance::GetServer();
 		Network::PacketHandler* ph = server->GetPacketHandler();
 		uint64_t id = ph->StartPack("Gamemode");
@@ -811,9 +863,19 @@ void GameCreator::LuaPacket(Network::PacketHandler* _ph, uint64_t& _id, Network:
 
 void GameCreator::NetworkGameMode(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
 {
-    if (!NetworkInstance::GetServer()->IsRunning())
-        GameMode(_ph->ReadString(_id));
+	if (!NetworkInstance::GetServer()->IsRunning())
+	{
+		GameMode("loadingscreen");
+		ConnectHelper::Connect(_ph->ReadString(_id));
+	}
+	else
+	{
+		Network::PacketHandler* ph = NetworkInstance::GetClient()->GetPacketHandler();
+		uint64_t id = ph->StartPack("GameModeLoaded");
+		NetworkInstance::GetClient()->Send(ph->EndPack(id));
+	}
 }
+
 
 void GameCreator::UpdateConsole()
 {
@@ -1280,20 +1342,21 @@ void GameCreator::OnTimedOutFromServer(Network::NetConnection _nc, const char* _
 
 void GameCreator::OnPlayerConnected(Network::NetConnection _nc, const char* _message)
 {
+	ClientManager::NewClient(_nc);
 
 	Network::ServerNetwork* server = NetworkInstance::GetServer();
 	Network::PacketHandler* ph = server->GetPacketHandler();
+
+
+	//Send gamemode
 	uint64_t id = ph->StartPack("Gamemode");
 	ph->WriteString(id, m_gameMode.c_str());
 	NetworkInstance::GetServer()->Send(ph->EndPack(id), _nc);
 
-	for (int i = 0; i < LuaBridge::LuaNetworkEvents::g_onPlayerConnected.size(); ++i)
-	{
-		LuaBridge::LuaNetworkEvents::g_onPlayerConnected[i](_nc, _message);
-	}
 }
 void GameCreator::OnPlayerDisconnected(Network::NetConnection _nc, const char* _message)
 {
+	ClientManager::ClientDisconnected(_nc);
 	for (int i = 0; i < LuaBridge::LuaNetworkEvents::g_onPlayerDisconnected.size(); ++i)
 	{
 		LuaBridge::LuaNetworkEvents::g_onPlayerDisconnected[i](_nc, _message);
@@ -1301,6 +1364,7 @@ void GameCreator::OnPlayerDisconnected(Network::NetConnection _nc, const char* _
 }
 void GameCreator::OnPlayerTimedOut(Network::NetConnection _nc, const char* _message)
 {
+	ClientManager::ClientDisconnected(_nc);
 	for (int i = 0; i < LuaBridge::LuaNetworkEvents::g_onPlayerTimedOut.size(); ++i)
 	{
 		LuaBridge::LuaNetworkEvents::g_onPlayerTimedOut[i](_nc, _message);

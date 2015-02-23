@@ -66,8 +66,10 @@
     <None Include="..\..\..\Externals\content\shaders\fullscreen.vs" />
     <None Include="..\..\..\Externals\content\shaders\lowFSForwardShader.glsl" />
     <None Include="..\..\..\Externals\content\shaders\lowVSForwardShader.glsl" />
-    <None Include="..\..\..\Externals\content\shaders\particleShaderFS.glsl" />
-    <None Include="..\..\..\Externals\content\shaders\particleShaderVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\particles\particleFireFS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\particles\particleFireVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\particles\particleSmokeFS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\particles\particleSmokeVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\shadowShaderDeferredFS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\shadowShaderDeferredVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\shadowShaderForwardFS.glsl" />

@@ -15,7 +15,7 @@ ActionGuardSystem.Initialize = function(self)
 	
 end
 
-ActionGuardSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+ActionGuardSystem.EntitiesAdded = function(self, dt, entities)
 
 	local uGuard = self:GetEntities("UnitGuard")
 	local aGuard = self:GetEntities("ActionGuard")

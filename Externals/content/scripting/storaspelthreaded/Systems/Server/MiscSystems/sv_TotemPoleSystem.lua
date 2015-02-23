@@ -4,6 +4,24 @@ TotemPoleSystem.MapCenterZ = 0
 TotemPoleSystem.TotemPoles			=	{}
 TotemPoleSystem.TotemPoles.__mode	=	"k"
 
+TotemPoleSystem.ATAN2 = function(self, X, Z)
+	if X > 0 then
+		return math.atan(Z / X)
+	elseif Z >= 0 and X < 0 then
+		return math.atan(Z / X) + math.pi
+	elseif Z < 0 and X < 0 then
+		return math.atan(Z / X) - math.pi
+	elseif Z > 0 and X == 0 then
+		return math.pi / 2
+	elseif Z < 0 and X == 0 then
+		return -math.pi / 2
+	else
+		print("Undefined atan2 value (x == 0 and y == 0)")
+	end
+	
+	return 0
+end
+
 TotemPoleSystem.Initialize = function(self)
 	--	Set Name
 	self:SetName("TotemPoleSystem")
@@ -19,11 +37,55 @@ TotemPoleSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("MapSpecs", FilterType.RequiresOneOf)
 end
 
+TotemPoleSystem.AddFireplace = function(self, totemPoleId)
+	local newFireplace	= 	world:CreateNewEntity()
+	world:CreateComponentAndAddTo("Position", newFireplace)
+	world:CreateComponentAndAddTo("Rotation", newFireplace)
+	world:CreateComponentAndAddTo("Scale", newFireplace)
+	world:CreateComponentAndAddTo("Model", newFireplace)
+	world:CreateComponentAndAddTo("Color", newFireplace)
+	world:CreateComponentAndAddTo("SyncNetwork", newFireplace)
+	
+	
+	
+	local rotation 		= 	world:GetComponent(newFireplace, "Rotation", 0)
+	local position 		= 	world:GetComponent(newFireplace, "Position", 0)
+	local scale			= 	world:GetComponent(newFireplace, "Scale", 0)
+	world:SetComponent(newFireplace, "Model", "ModelName", "checkpointbonfireholder")
+	world:SetComponent(newFireplace, "Model", "ModelPath", "checkpointbonfire")
+	world:SetComponent(newFireplace, "Model", "RenderType", 0)
+	
+	scale:SetFloat3(0.6, 0.6, 0.6)
+	
+	local	X, Y, Z	=	world:GetComponent(totemPoleId, "Position", "X"):GetFloat3()
+	local tempMoveX = self.MapCenterX - X
+	local tempMoveZ = self.MapCenterZ - Z
+	-- Position
+	local offsetX = 0.35;
+	local offsetZ = 0.35;
+	
+	if tempMoveX < 0 then
+		offsetX = offsetX * -1
+	else
+		offsetX = offsetX * 1
+	end
+	
+	if tempMoveZ < 0 then
+		offsetZ = offsetZ * -1
+	else
+		offsetZ = offsetZ * 1
+	end
+	
+	position:SetFloat3(X + offsetX, 0.5, Z + offsetZ)
+end
+
 TotemPoleSystem.AddTopPiece = function(self, totemPoleId, R, G, B)
 	local	totemId	=	self:AddTotemPiece(0, totemPoleId, R, G, B)
 	world:SetComponent(totemId, "Model", "ModelName", "totemtop")
 	world:SetComponent(totemId, "Model", "ModelPath", "totemtop")
 	world:SetComponent(totemId, "Model", "RenderType", 0)
+	
+	self:AddFireplace(totemPoleId)
 end
 
 TotemPoleSystem.AddTotemPiece = function(self, currentPlayerNumber, totemPoleId, R, G, B)
@@ -36,8 +98,7 @@ TotemPoleSystem.AddTotemPiece = function(self, currentPlayerNumber, totemPoleId,
 	local tpPoleId		=	world:GetComponent(totemPiece, "TotemPiece", "TotemPoleId")
 	tpHeight:SetInt(0)
 	tpPoleId:SetInt(totemPoleId)
-	
-	print("setting color to "..R.." "..G.." "..B)
+
 	world:CreateComponentAndAddTo("Color", totemPiece)
 	local color			= 	world:GetComponent(totemPiece, "Color", "X")
 	color:SetFloat3(R, G, B)
@@ -47,19 +108,16 @@ TotemPoleSystem.AddTotemPiece = function(self, currentPlayerNumber, totemPoleId,
 	local tempMoveX = self.MapCenterX - X
 	local tempMoveZ = self.MapCenterZ - Z
 
+	local	totemAngle	=	math.pi/2 - self:ATAN2(tempMoveX, tempMoveZ)
 	
-	local totemAngle = math.pi/2
-	if tempMoveX ~= 0 then
-		totemAngle = totemAngle - math.atan(tempMoveZ/tempMoveX)
-	end
+	--local	test	=	math.atan2(tempMoveX, tempMoveZ)
 	
 	
 	-- Rotation
 	rotation:SetFloat3(0, totemAngle, 0)
-	
 	-- Position
-	local offsetX = 0.25;
-	local offsetZ = 0.25;
+	local offsetX = 0.35;
+	local offsetZ = 0.35;
 	
 	if tempMoveX > 0 then
 		offsetX = offsetX * -1
@@ -149,7 +207,7 @@ TotemPoleSystem.CheckAddTotemPiece = function(self, entityId)
 	self:CheckCheckPoints(targetCheckpointId, totemPoleId, playerNumber, R, G, B)
 end
 
-TotemPoleSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, addedEntities)
+TotemPoleSystem.EntitiesAdded = function(self, dt, addedEntities)
 
 	for n = 1, #addedEntities do
 		--	Get entity ID
@@ -165,10 +223,7 @@ TotemPoleSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, addedEn
 			local tX, tZ = world:GetComponent(newEntity, "MapPosition", 0):GetInt2()
 			local checkpointId = world:GetComponent(newEntity, "Checkpoint", "Number"):GetInt()
 			local newTotempoleId	=	self:CreateTotemPole(checkpointId, tX, tZ)
-			print("Created totem pole with index: " .. newTotempoleId)
 			
-			
-			--print("Checkpoint added at " .. tX .. ", " .. tZ .. " with number " .. checkpointId)
 		end
 		
 		--	Get Center and also set up all angles on TotemPoles
@@ -178,8 +233,6 @@ TotemPoleSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, addedEn
 			self.MapCenterX = tX * 0.5
 			self.MapCenterZ = tZ * 0.5
 			
-		
-			print("WHEN THIS?!" , #self.TotemPoles)
 			for i = 1, #self.TotemPoles do
 				self:AddTopPiece(self.TotemPoles[i], 0.0, 0.0, 0.0)
 			end

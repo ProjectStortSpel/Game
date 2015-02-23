@@ -164,7 +164,7 @@ void main()
 	}
 
 	float glow = spec_map.z;
-	vec4 glowvec = vec4(glow*albedo_tex.xyz, 1.0);
+	vec4 glowvec = vec4(glow*albedo_tex.xyz, 0.0);
     
     gl_FragColor = vec4(ambient + diffuse*(1.0-glow), 1.0) * albedo_tex + vec4(spec, 0.0) + glowvec;
 	//gl_FragColor = vec4( (inverse(ViewMatrix) * vec4(Normal, 0.0)).xyz, 1.0);

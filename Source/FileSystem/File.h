@@ -35,6 +35,7 @@ namespace FileSystem
 		std::string EXPORT ReadLine(SDL_RWops* _file);
 
 		void EXPORT Write(SDL_RWops* _file, std::string _text);
+		void EXPORT Write(SDL_RWops* _file, const unsigned char* data, int size);
 		void EXPORT WriteLine(SDL_RWops* _file, std::string _text);
 
 	}

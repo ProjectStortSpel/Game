@@ -14,7 +14,7 @@ PlaceCardAboveUnitSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("CardStep", FilterType.RequiresOneOf)
 end
 
-PlaceCardAboveUnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+PlaceCardAboveUnitSystem.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entity = entities[n]

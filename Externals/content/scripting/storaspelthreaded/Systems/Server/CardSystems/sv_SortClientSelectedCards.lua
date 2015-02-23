@@ -2,7 +2,7 @@ SortClientSelectedCards = System()
 
 SortClientSelectedCards.Initialize = function(self)
 	--	Set Name
-	self:SetName("AutoPickCards")
+	self:SetName("SortClientSelectedCards")
 	
 	--	Toggle EntitiesAdded
 	self:UsingEntitiesRemoved()
@@ -40,11 +40,10 @@ SortClientSelectedCards.GetPlayerSelectedCards = function(self, playerId)
 	return tempCards;
 end
 
-SortClientSelectedCards.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+SortClientSelectedCards.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entity = entities[n]
-		
 		local 	currentOwner	=	world:GetComponent(entity, "DealtCard", "PlayerEntityId"):GetInt()
 		local	currentIndex	=	world:GetComponent(entity, "ServerSelectedCard", "Index"):GetInt()
 		
@@ -59,10 +58,11 @@ SortClientSelectedCards.EntitiesAdded = function(self, dt, taskIndex, taskCount,
 					world:GetComponent(ownerCards[i], "ServerSelectedCard", "Index"):SetInt(tempIndex+1)
 				end
 			end
+			self:PrintCard(ownerCards[i])
 		end
 	end
 end
-SortClientSelectedCards.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
+SortClientSelectedCards.EntitiesRemoved = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entity = entities[n]
@@ -72,7 +72,7 @@ SortClientSelectedCards.EntitiesRemoved = function(self, dt, taskIndex, taskCoun
 		
 		for i = 1, #ownerCards do
 			local index2 = world:GetComponent(ownerCards[i], "ServerSelectedCard", "Index"):GetInt()
-			if index2 >= index then
+			if index2 > index then
 				world:GetComponent(ownerCards[i], "ServerSelectedCard", "Index"):SetInt(index2-1)
 			end
 			
