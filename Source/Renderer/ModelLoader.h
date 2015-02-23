@@ -166,6 +166,7 @@ public:
 				jointlistTemp.push_back(JointData(matrix, parent));
 			}
 		}
+		jointlistTemp.pop_back();
 
 		for (int i = 0; i < jointlistTemp.size(); i++)
 		{
