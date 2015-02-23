@@ -2,6 +2,7 @@
 local TextTexture = ComponentType()
 TextTexture.Name = "TextTexture"
 TextTexture.TableType = TableType.Map
+TextTexture.SyncNetwork = true
 TextTexture:AddVariable("Name", ByteSize.Text)
 TextTexture:AddVariable("Text", ByteSize.Text)
 TextTexture:AddVariable("FontIndex", ByteSize.Int)

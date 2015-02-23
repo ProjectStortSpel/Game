@@ -20,6 +20,12 @@ LobbyMenuElement.Name = "LobbyMenuElement"
 LobbyMenuElement.TableType = TableType.Map
 worldCreator:AddComponentType(LobbyMenuElement)
 
+--	LobbyMenuPlayer Component
+local LobbyMenuPlayer = ComponentType()
+LobbyMenuPlayer.Name = "LobbyMenuPlayer"
+LobbyMenuPlayer.TableType = TableType.Map
+worldCreator:AddComponentType(LobbyMenuPlayer)
+
 --	GameMenu Component
 local GameMenu = ComponentType()
 GameMenu.Name = "GameMenu"

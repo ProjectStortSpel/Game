@@ -12,6 +12,7 @@ LobbySystem.Initialize = function ( self )
 	self:AddComponentTypeToFilter(self.Name, FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter(self.Name.."Element", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("UnitEntityId", FilterType.RequiresOneOf)
 end
 
 LobbySystem.PostInitialize = function ( self )
@@ -24,11 +25,31 @@ LobbySystem.EntitiesAdded = function(self, dt, entities)
 		if world:EntityHasComponent( entityId, self.Name) then
 			self:SpawnMenu()
 		elseif world:EntityHasComponent( entityId, self.Name.."Element") then
-			
+		
+		elseif world:EntityHasComponent( entityId, "UnitEntityId") then
+			self:UpdatePlayers()	
 		elseif world:EntityHasComponent( entityId, "GameRunning") then
 			self:RemoveMenu()
 		end
 	end
+end
+
+LobbySystem.UpdatePlayers = function(self)
+	
+	local entities = self:GetEntities("LobbyMenuPlayer")
+	for i = 1, #entities do
+		world:KillEntity(entities[i])
+	end
+	
+	local entities = self:GetEntities("UnitEntityId")
+	for i = 1, #entities do
+		local entityId = entities[i]
+		
+		
+		local text = self:CreateElement("left", "text", -0.81, 0.64-i*0.11, -1.999, 1.5, 0.08)	
+		self:AddTextToTexture("LobbyMenuSystemPlayer"..i, "test", 0, 1, 1, 1, text)
+	end
+	
 end
 
 LobbySystem.SpawnMenu = function(self)
@@ -87,6 +108,15 @@ LobbySystem.CreateElement = function(self, object, folder, posx, posy, posz, sca
 	return id	
 end
 
+LobbySystem.AddTextToTexture = function(self, n, text, font, r, g, b, button)
+	world:CreateComponentAndAddTo("TextTexture", button)
+	world:GetComponent(button, "TextTexture", "Name"):SetText(n) -- TODO: NAME CANT BE MORE THAN 3 CHARS? WTF?
+	world:GetComponent(button, "TextTexture", "Text"):SetText(text)
+	world:GetComponent(button, "TextTexture", "FontIndex"):SetInt(font)
+	world:GetComponent(button, "TextTexture", "R"):SetFloat(r)
+	world:GetComponent(button, "TextTexture", "G"):SetFloat(g)
+	world:GetComponent(button, "TextTexture", "B"):SetFloat(b)
+end
 
 --Net.Receive("Client.ReadyCheck", 
 --	function(id, ip, port)
