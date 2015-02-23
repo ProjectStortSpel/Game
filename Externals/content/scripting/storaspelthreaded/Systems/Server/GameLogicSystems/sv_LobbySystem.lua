@@ -1,5 +1,7 @@
 LobbySystem = System()
 LobbySystem.Name = "LobbyMenu"
+LobbySystem.UpdateRequest = false
+LobbySystem.UpdateMe = false
 
 LobbySystem.Initialize = function ( self )
 	--	Set Name
@@ -7,6 +9,7 @@ LobbySystem.Initialize = function ( self )
 	
 	--	Toggle EntitiesAdded
 	self:UsingEntitiesAdded()
+	self:UsingUpdate()
 
 	--	Set Filter
 	self:AddComponentTypeToFilter(self.Name, FilterType.RequiresOneOf)
@@ -20,6 +23,19 @@ LobbySystem.PostInitialize = function ( self )
 	self:SpawnMenu()
 end
 
+LobbySystem.Update = function(self, dt)
+	if self.UpdateMe == true then
+		print("update")
+		self:UpdatePlayers()
+		self.UpdateMe = false
+	end
+	if self.UpdateRequest == true then
+		print("update request")
+		self.UpdateMe = true
+		self.UpdateRequest = false
+	end
+end
+
 LobbySystem.EntitiesAdded = function(self, dt, entities)
 	for n = 1, #entities do
 		local entityId = entities[n]
@@ -28,7 +44,7 @@ LobbySystem.EntitiesAdded = function(self, dt, entities)
 		elseif world:EntityHasComponent( entityId, self.Name.."Element") then
 		
 		elseif world:EntityHasComponent( entityId, "UnitEntityId") then
-			self:UpdatePlayers()	
+			self.UpdateMe = true
 		elseif world:EntityHasComponent( entityId, "GameRunning") then
 			self:RemoveMenu()
 		elseif world:EntityHasComponent( entityId, "LobbyPlayerReadyMSG") then
@@ -59,11 +75,14 @@ LobbySystem.UpdatePlayers = function(self)
 				ip = ip.." - Ready"
 				readyplayers = readyplayers + 1
 			end
+		else
+			ip = ip.." - Ready"
+			readyplayers = readyplayers + 1
 		end
 		
 		local r, g, b = world:GetComponent(unitId, "Color", "X"):GetFloat3(0)
 		
-		local text = self:CreateElement("left", "text", -0.2, 0.64-i*0.11, -1.999, 1.5, 0.08)
+		local text = self:CreateElement("left", "text", -0.4, 0.64-i*0.11, -1.999, 1.5, 0.08)
 		world:CreateComponentAndAddTo("LobbyMenuPlayer", text)
 		self:AddTextToTexture("LMSP"..i, ip, 0, r, g, b, text)
 	end
@@ -95,8 +114,8 @@ LobbySystem.ToggleReady = function(self, player)
 			break
 		end
 	end	
-	
-	self:UpdatePlayers()
+	print("update me")
+	self.UpdateRequest = true
 	world:KillEntity(player)
 end
 
