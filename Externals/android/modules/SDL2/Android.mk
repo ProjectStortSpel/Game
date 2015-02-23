@@ -56,8 +56,22 @@ LOCAL_MODULE := SDL2_ttf_shared
 LOCAL_SRC_FILES := libs/$(TARGET_ARCH_ABI)/libSDL2_ttf.so
 include $(PREBUILT_SHARED_LIBRARY)
 
+include $(CLEAR_VARS)
+
 LOCAL_MODULE := SDL2_mixer_shared
 LOCAL_SRC_FILES := libs/$(TARGET_ARCH_ABI)/libSDL2_mixer.so
+include $(PREBUILT_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := mikmod_shared
+LOCAL_SRC_FILES := libs/$(TARGET_ARCH_ABI)/libmikmod.so
+include $(PREBUILT_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := smpeg2_shared
+LOCAL_SRC_FILES := libs/$(TARGET_ARCH_ABI)/libsmpeg2.so
 include $(PREBUILT_SHARED_LIBRARY)
 
 

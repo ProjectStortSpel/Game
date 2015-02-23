@@ -2,6 +2,7 @@ PickingTimerSystem = System()
 PickingTimerSystem.size = 0.1
 PickingTimerSystem.timer = 0
 
+
 PickingTimerSystem.Initialize = function ( self )
 	--	Set Name
 	self:SetName("PickingTimerSystem")
@@ -33,6 +34,8 @@ PickingTimerSystem.PostInitialize = function(self)
 end
 
 PickingTimerSystem.Update = function( self, dt )
+	
+	local prevTimer = self.timer
 
 	local Timers = self:GetEntities("PickingTimer")
 	self.timer = self.timer - dt
@@ -46,6 +49,22 @@ PickingTimerSystem.Update = function( self, dt )
 		scale:SetFloat3(self.timer*self.size, 0.1, 1)
 	end
 	
+	local ticRate = 1.0
+	if self.timer < 10.0 then
+		ticRate = 2.0
+	end
+	if self.timer > 0.0 then
+		local prevTime = math.floor(prevTimer * ticRate)
+		local currTime = math.floor(self.timer * ticRate)
+		if prevTime ~= currTime then
+			local tic = currTime % 2
+			if tic == 0 then
+				Audio.PlaySound("Tic1", false)
+			else
+				Audio.PlaySound("Tic2", false)
+			end
+		end
+	end
 end
 
 PickingTimerSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)

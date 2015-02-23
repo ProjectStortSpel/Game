@@ -10,6 +10,10 @@ require "InitSharedComponents" -- Add more systems into InitSharedSystems.lua in
 package.path = package.path .. ";../../../Externals/content/scripting/shared/systems/?.lua"
 require "InitSharedSystems" -- Add more systems into InitSharedSystems.lua instead of here!
 
+--	Shared Misc
+package.path = package.path .. ";../../../Externals/content/scripting/shared/misc/?.lua"
+require "InitMisc" -- Add more systems into InitSharedSystems.lua instead of here!
+
 --	Templates
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Templates/?.lua"
 require "InitTemplates" -- Add more templates into InitTemplates.lua instead of here!
@@ -28,3 +32,7 @@ end
 --	Shared Game Systems
 package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Shared/?.lua"
 require "InitSharedSystems" -- Add more client systems into InitSharedSystems.lua instead of here!
+
+--	Misc
+package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Misc/?.lua"
+require "InitMisc" -- Add more client systems into InitSharedSystems.lua instead of here!

@@ -56,6 +56,7 @@ int main(int argc, char** argv)
 
 	//newGame->InitializeLua();
 	newGame->InitializeGraphics();
+	newGame->InitializeAudio();
 	newGame->InitializeInput();
 	newGame->InitializeNetwork();
 	newGame->InitializeThreads();

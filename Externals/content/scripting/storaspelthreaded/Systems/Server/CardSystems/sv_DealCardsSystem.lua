@@ -22,7 +22,8 @@ DealCardsSystem.Initialize = function ( self )
 end
 
 DealCardsSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
-
+	
+	local dealCards = false
 
 	for n = 1, #entities do
 		local entityId = entities[n]
@@ -33,8 +34,18 @@ DealCardsSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entitie
 			self:DealCards(numCards)
 
 			world:KillEntity( entityId )
-
+			
+			dealCards = true
 		end
+	end
+	
+	if dealCards then
+		local audioId = Net.StartPack("Client.FadeInSoundC")
+		Net.WriteString(audioId, "InGame")
+		Net.WriteString(audioId, "PickingMusic")
+		Net.WriteInt(audioId, 200)
+		Net.WriteBool(audioId, false)
+		Net.Broadcast(audioId)
 	end
 end
 

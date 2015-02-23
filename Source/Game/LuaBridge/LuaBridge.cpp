@@ -15,6 +15,7 @@
 #include "FileLoader/LuaFileLoader.h"
 #include "Console/LuaConsole.h"
 #include "Network/LuaNetwork.h"
+#include "Audio/LuaAudio.h"
 
 namespace LuaBridge
 {
@@ -53,5 +54,7 @@ namespace LuaBridge
 	PathfinderHandler::Embed(L);
 
     LuaEmbedder::AddFunction(L, "LoadMap", &LoadMap, "File");
+    
+    LuaAudio::Embed(L);
   }
 }

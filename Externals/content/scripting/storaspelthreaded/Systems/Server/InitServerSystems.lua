@@ -220,3 +220,10 @@ worldCreator:AddSystemToCurrentGroup(ServerNetworkMessageSystem)
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ChatSystem)
+
+--	Audio Systems
+package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/AudioSystems/?.lua"
+require "sv_AudioUnitDeathSystem"
+
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(AudioUnitDeathSystem)

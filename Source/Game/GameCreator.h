@@ -19,6 +19,7 @@
 #include "Game/RemoteConsole.h"
 #include "Profilers/ECSLProfiler.h"
 #include "Systems/GraphicalSystem.h"
+#include "Audio/Audio.h"
 
 class GameCreator
 {
@@ -34,6 +35,7 @@ public:
 	void InitializeThreads();
     void InitializeLobby();
 	//void InitializeLua();
+	void InitializeAudio();
 	
 
 	void StartGame(int argc, char** argv);
