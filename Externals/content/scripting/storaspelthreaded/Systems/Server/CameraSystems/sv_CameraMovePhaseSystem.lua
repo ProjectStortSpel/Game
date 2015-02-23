@@ -11,7 +11,7 @@ CameraMovePhaseSystem.Initialize = function ( self )
 	self:AddComponentTypeToFilter("NewRound", FilterType.Mandatory)
 end
 
-CameraMovePhaseSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+CameraMovePhaseSystem.EntitiesAdded = function(self, dt, entities)
 	local id = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("CameraInterestPoint", id)
 	world:GetComponent(id, "CameraInterestPoint", "UpX"):SetFloat(-0.5)

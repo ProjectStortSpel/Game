@@ -10,7 +10,7 @@ LobbySystem.Initialize = function ( self )
 	--	Set Filter
 end
 
-LobbySystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+LobbySystem.EntitiesAdded = function(self, dt, entities)
 	for n = 1, #entities do
 		local entityId = entities[n]
 		if world:EntityHasComponent( entityId, "CameraOnPlayer") then

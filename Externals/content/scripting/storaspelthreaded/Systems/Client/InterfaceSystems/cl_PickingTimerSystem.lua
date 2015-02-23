@@ -48,7 +48,7 @@ PickingTimerSystem.Update = function( self, dt )
 	
 end
 
-PickingTimerSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+PickingTimerSystem.EntitiesAdded = function(self, dt, entities)
 	for n = 1, #entities do
 		local entity = entities[n]
 		if world:EntityHasComponent(entity, "SetPickingTimer") then

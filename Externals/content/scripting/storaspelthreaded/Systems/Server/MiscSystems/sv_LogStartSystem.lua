@@ -12,7 +12,7 @@ LogStartSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Unit", FilterType.RequiresOneOf);
 end
 
-LogStartSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+LogStartSystem.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entity = entities[n]

@@ -12,7 +12,7 @@ ShowNextCheckpointSystem.Initialize = function ( self )
 	self:AddComponentTypeToFilter("CheckpointReached", FilterType.Mandatory)
 end
 
-ShowNextCheckpointSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+ShowNextCheckpointSystem.EntitiesAdded = function(self, dt, entities)
 	
 	local	highestCheckpoint	=	-1
 	local	highestCheckpointId	=	-1

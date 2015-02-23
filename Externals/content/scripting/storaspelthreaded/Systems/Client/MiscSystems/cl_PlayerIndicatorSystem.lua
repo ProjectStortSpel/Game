@@ -30,7 +30,7 @@ Net.Receive("Client.SendPlayerUnitColor",
 	world:CreateComponentAndAddTo("PlayerNumber", newEntityId)
 
 	rotation:SetFloat3(0, 0, 0)
-	position:SetFloat3(-3, 2, -5)
+	position:SetFloat3(-3.8, 2.2, -5)
 	scale:SetFloat3(1, 0.5, 1)
 	world:SetComponent(newEntityId, "Model", "ModelName", "totem");
 	world:SetComponent(newEntityId, "Model", "ModelPath", "quad");

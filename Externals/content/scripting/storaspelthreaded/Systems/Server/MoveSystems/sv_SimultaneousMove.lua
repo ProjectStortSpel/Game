@@ -15,7 +15,7 @@ SimultaneousMove.Initialize = function(self)
 
 end
 
-SimultaneousMove.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+SimultaneousMove.EntitiesAdded = function(self, dt, entities)
 
 	for newEntity = 1, #entities do
 		local entity = entities[newEntity]

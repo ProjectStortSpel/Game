@@ -266,6 +266,12 @@
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\AI\LuaDynamicScript.cpp">
       <Filter>Lua Bridge\AI</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Network\ConnectHelper.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Network\ClientManager.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h">
@@ -441,6 +447,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\AI\LuaDynamicScript.h">
       <Filter>Lua Bridge\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Network\ClientManager.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Network\ConnectHelper.h">
+      <Filter>Network</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

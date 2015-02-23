@@ -77,7 +77,7 @@ AbilitySlingshotSystem.AddBullet = function(self, posX, posZ, targetPosX, target
 
 end
 
-AbilitySlingshotSystem.Update = function(self, dt, taskIndex, taskCount)
+AbilitySlingshotSystem.Update = function(self, dt)
 
 	-- Get all entities which has the "UnitSlingShot" component
 	local entities = self:GetEntities("UnitSlingShot")

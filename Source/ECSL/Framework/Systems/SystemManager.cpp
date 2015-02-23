@@ -34,7 +34,7 @@ void SystemManager::InitializeSystems()
 	{
 		std::vector<System*>* systems = m_systemWorkGroups->at(groupId)->GetSystems();
 
-		std::random_shuffle(systems->begin(), systems->end()); // TEMPORARY SHUFFLE - REMOVE IF NOT NEEDED
+		//std::random_shuffle(systems->begin(), systems->end()); // TEMPORARY SHUFFLE - REMOVE IF NOT NEEDED
 
 		/*	Go through all systems in the group and initialize them	*/
 		for (unsigned int systemId = 0; systemId < systems->size(); ++systemId)

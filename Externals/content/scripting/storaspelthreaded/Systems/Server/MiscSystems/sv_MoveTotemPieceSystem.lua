@@ -60,7 +60,7 @@ MoveTotemPieceSystem.MovePiecesUp = function(self, totemPoleId)
 	
 end
 
-MoveTotemPieceSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, addedEntities)
+MoveTotemPieceSystem.EntitiesAdded = function(self, dt, addedEntities)
 
 	for n = 1, #addedEntities do
 		local	newEntity	=	addedEntities[n]

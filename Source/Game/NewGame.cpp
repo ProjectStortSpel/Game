@@ -68,12 +68,15 @@ int main(int argc, char** argv)
  //   }
 
 	//newGame->InitializeLua();
-	newGame->InitializeGraphics();
-	newGame->InitializeInput();
-	newGame->InitializeNetwork();
-	newGame->InitializeThreads();
-    
-	newGame->StartGame(argc, argv);
+	if (newGame->InitializeGraphics())
+    {
+        newGame->InitializeInput();
+        newGame->InitializeNetwork();
+        newGame->InitializeThreads();
+        
+        newGame->StartGame(argc, argv);
+    }
+	
 	delete newGame;
 
 	delete(&ClientDatabase::GetInstance());

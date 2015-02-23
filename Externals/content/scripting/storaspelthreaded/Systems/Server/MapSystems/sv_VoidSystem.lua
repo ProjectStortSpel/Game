@@ -14,7 +14,7 @@ VoidSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Void", FilterType.RequiresOneOf)
 end
 
-VoidSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+VoidSystem.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 	

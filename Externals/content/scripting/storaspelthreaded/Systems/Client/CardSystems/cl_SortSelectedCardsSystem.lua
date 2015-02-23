@@ -14,7 +14,7 @@ SortSelectedCardsSystem.Initialize = function ( self )
 end
 
 
-SortSelectedCardsSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+SortSelectedCardsSystem.EntitiesAdded = function(self, dt, entities)
 	for n = 1, #entities do
 		local entityId = entities[n]
 		if world:EntityHasComponent(entityId, "SelectCard") then
@@ -23,7 +23,7 @@ SortSelectedCardsSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount,
 	end
 end
 
-SortSelectedCardsSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
+SortSelectedCardsSystem.EntitiesRemoved = function(self, dt, entities)
 	for n = 1, #entities do
 		local entityId = entities[n]
 		if world:EntityHasComponent(entityId, "CardSelected") then

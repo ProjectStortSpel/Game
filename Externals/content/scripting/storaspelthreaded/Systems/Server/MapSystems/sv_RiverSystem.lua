@@ -13,7 +13,7 @@ RiverSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("River", 		FilterType.RequiresOneOf)
 end
 
-RiverSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+RiverSystem.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entity = entities[n]

@@ -1,7 +1,7 @@
 GameInterfaceSystem = System()
 GameInterfaceSystem.Name = "GameInterface"
 
-GameInterfaceSystem.Update = function(self, dt, taskIndex, taskCount)
+GameInterfaceSystem.Update = function(self, dt)
 	if Input.GetTouchState(0) == InputState.Released then
 
 		local pressedButtons = self:GetEntities("OnPickBoxHit")

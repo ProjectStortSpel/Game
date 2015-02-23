@@ -31,7 +31,7 @@ DealCardsSystem.ClearSelectedCards = function(self)
 
 end
 
-DealCardsSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+DealCardsSystem.EntitiesAdded = function(self, dt, entities)
 
 
 	for n = 1, #entities do

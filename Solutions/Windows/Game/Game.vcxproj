@@ -225,6 +225,8 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\Renderer\LuaGraphicDevice.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\Resource\LuaResource.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Network\ClientDatabase.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\Network\ClientManager.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\Network\ConnectHelper.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Network\NetworkHelper.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Network\NetworkInstance.cpp" />
     <ClCompile Include="..\..\..\Source\Game\NewGame.cpp" />
@@ -252,6 +254,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClCompile Include="..\..\..\Source\Game\Systems\RenderSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\ResetChangedSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\RotationSystem.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\Systems\SimulateFrameSpikeSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\SlerpRotationSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\SyncEntitiesSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\TextInput.cpp" />
@@ -285,6 +288,8 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Renderer\LuaGraphicDevice.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Resource\LuaResource.h" />
     <ClInclude Include="..\..\..\Source\Game\Network\ClientDatabase.h" />
+    <ClInclude Include="..\..\..\Source\Game\Network\ClientManager.h" />
+    <ClInclude Include="..\..\..\Source\Game\Network\ConnectHelper.h" />
     <ClInclude Include="..\..\..\Source\Game\Network\NetworkHelper.h" />
     <ClInclude Include="..\..\..\Source\Game\Network\NetworkInstance.h" />
     <ClInclude Include="..\..\..\Source\Game\Pathfinder.h" />
@@ -311,6 +316,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClInclude Include="..\..\..\Source\Game\Systems\RenderSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\ResetChangedSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\RotationSystem.h" />
+    <ClInclude Include="..\..\..\Source\Game\Systems\SimulateFrameSpikeSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\SlerpRotationSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\SyncEntitiesSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\TextInput.h" />

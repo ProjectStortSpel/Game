@@ -11,7 +11,7 @@ HostSettingsSystem.Initialize = function(self)
 	self.settingsId = -1
 end
 
-HostSettingsSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, addedEntities)
+HostSettingsSystem.EntitiesAdded = function(self, dt, addedEntities)
 
 	for n = 1, #addedEntities do
 		local entity = addedEntities[n]

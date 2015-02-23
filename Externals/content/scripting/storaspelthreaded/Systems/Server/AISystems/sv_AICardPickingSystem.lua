@@ -597,7 +597,7 @@ AICardPickingSystem.GetSimNextDist = function(self, _simFellDown, _simPosX, _sim
 	return nextDist
 end
 
-AICardPickingSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+AICardPickingSystem.EntitiesAdded = function(self, dt, entities)
 
 	for i = 1, #entities do
 		if world:EntityHasComponent(entities[i], "DealtCard") then

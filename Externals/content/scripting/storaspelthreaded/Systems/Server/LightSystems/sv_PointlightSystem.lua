@@ -21,6 +21,6 @@ PointlightSystem.PostInitialize = function(self)
 	newPointlight:SetPointlight(4, 2, 4, 0.3, 0.7, 0.7, 0.7, 0.75, 0.85, 5)
 end
 
-PointlightSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+PointlightSystem.EntitiesAdded = function(self, dt, entities)
 
 end
