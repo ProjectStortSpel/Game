@@ -11,6 +11,9 @@ file(GLOB_RECURSE GAME_SRC_FILES
 add_executable(Game ${GAME_SRC_FILES})
 
 # Add subprojects
+if(NOT TARGET Audio)
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Audio" Audio)
+endif()
 if(NOT TARGET Console)
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Console" Console)
 endif()
@@ -34,6 +37,7 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Renderer" Renderer)
 endif()
 # Link subproject shared libraries
 target_link_libraries(Game
+		      Audio
 		      Console
 		      ECSL
 		      Input

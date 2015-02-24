@@ -33,14 +33,14 @@ VisualizeSelectedCards.EntitiesAdded = function(self, dt, entities)
 		if world:EntityHasComponent(newEntity, "UnitGhost") then
 		
 			self.PlayerEntity	=	world:GetComponent(newEntity, "UnitGhost", "Id"):GetInt()
-			
+			self.GhostEntity	=	newEntity
 			print("ID: " .. self.PlayerEntity)
 			
-			self.GhostEntity	=	world:CreateNewEntity("Ghost")
-			world:CreateComponentAndAddTo("Hide", self.GhostEntity)
-			world:GetComponent(self.GhostEntity, "Model", "ModelName"):SetText("cavemenghost");
-			world:GetComponent(self.GhostEntity, "Model", "ModelPath"):SetText("caveman");
-			world:GetComponent(self.GhostEntity, "Model", "RenderType"):SetInt(1)
+			--self.GhostEntity	=	world:CreateNewEntity("Ghost")
+			--world:CreateComponentAndAddTo("Hide", self.GhostEntity)
+			--world:GetComponent(self.GhostEntity, "Model", "ModelName"):SetText("cavemenghost");
+			--world:GetComponent(self.GhostEntity, "Model", "ModelPath"):SetText("caveman");
+			--world:GetComponent(self.GhostEntity, "Model", "RenderType"):SetInt(1)
 			
 		end
 	end
@@ -171,9 +171,14 @@ Net.Receive("Client.GetPlayerEntityId",
 		
 		print("SERVER: " .. serverId)
 		
-		local	newId	=	world:CreateNewEntity()
+		local	newId	=	world:CreateNewEntity("Ghost")
 		world:CreateComponentAndAddTo("UnitGhost", newId)
 		world:GetComponent(newId, "UnitGhost", "Id"):SetInt(serverId)
+		
+		world:CreateComponentAndAddTo("Hide", newId)
+		world:GetComponent(newId, "Model", "ModelName"):SetText("cavemenghost");
+		world:GetComponent(newId, "Model", "ModelPath"):SetText("caveman");
+		world:GetComponent(newId, "Model", "RenderType"):SetInt(1)
 	end 
 )
 

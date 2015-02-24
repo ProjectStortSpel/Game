@@ -1,0 +1,5 @@
+Audio.LoadSound("Tic1", "content/audio/Tic1.wav")
+Audio.LoadSound("Tic2", "content/audio/Tic2.wav")
+Audio.LoadSound("No", "content/audio/No.wav")
+Audio.LoadSound("TorchFire", "content/audio/TorchFire.wav")
+Audio.LoadSound("InGame", "content/audio/InGame.wav")

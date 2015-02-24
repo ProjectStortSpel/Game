@@ -123,6 +123,18 @@ namespace ClientManager
 			jobs.pop();
 			empty = jobs.empty();
 			SDL_UnlockMutex(jobMutex);
+
+			for (int i = 0; i < 500; ++i)
+			{
+				if (!empty)
+					break;
+
+				SDL_Delay(10);
+
+				SDL_LockMutex(jobMutex);
+				empty = jobs.empty();
+				SDL_UnlockMutex(jobMutex);
+			}
 		}
 		done = true;
 		return 0;
