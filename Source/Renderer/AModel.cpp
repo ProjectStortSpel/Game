@@ -84,7 +84,7 @@ void AModel::Draw(mat4 viewMatrix, mat4 projectionMatrix, Shader* shaderptr)
 
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, animBuffer);
 
-		delete anim_data;
+		delete [] anim_data;
 
 
 
