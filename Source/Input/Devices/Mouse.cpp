@@ -8,6 +8,8 @@ Mouse::Mouse()
 	{
 		m_thisState[i] = false;
 		m_lastState[i] = false;
+		m_pressedStates[i]	=	false;
+		m_releasedStates[i]	=	false;
 	}
 
 	m_x = 0;
@@ -25,7 +27,13 @@ Mouse::~Mouse()
 void Mouse::Update()
 {
 	for (int i = 0; i < m_numberOfButtons; ++i)
+	{
 		m_lastState[i] = m_thisState[i];
+	
+		m_pressedStates[i]	=	false;
+		m_releasedStates[i]	=	false;
+	}
+		
 
 	m_dx = 0;
 	m_dy = 0;
@@ -38,11 +46,13 @@ void Mouse::PollEvent(SDL_Event e)
 	switch (e.type)
 	{
 	case SDL_MOUSEBUTTONDOWN:
-		m_thisState[e.button.button] = true;
+		m_thisState[e.button.button]		=	true;
+		m_pressedStates[e.button.button]	=	true;
 		break;
 
 	case SDL_MOUSEBUTTONUP:
-		m_thisState[e.button.button] = false;
+		m_thisState[e.button.button]		=	false;
+		m_releasedStates[e.button.button]	=	true;
 		break;
 
 	case SDL_MOUSEMOTION:
@@ -62,17 +72,13 @@ void Mouse::PollEvent(SDL_Event e)
 
 InputState Mouse::GetButtonState(MouseButton _button)
 {
-	bool tLast = m_lastState[_button];
-	bool tThis = m_thisState[_button];
 
-	if (tThis && !tLast)
+	if (m_pressedStates[_button])
 		return InputState::PRESSED;
-
-	else if (tThis && tLast)
-		return InputState::DOWN;
-
-	else if (!tThis && tLast)
+	else if (m_releasedStates[_button])
 		return InputState::RELEASED;
+	else if (m_thisState[_button] && m_lastState[_button])
+		return InputState::DOWN;
 
 	return InputState::UP;
 }
