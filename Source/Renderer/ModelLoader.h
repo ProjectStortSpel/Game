@@ -20,31 +20,25 @@ struct ObjectData
 
 struct JointData
 {
-	float x0, y0, z0, w0;
-	float x1, y1, z1, w1;
-	float x2, y2, z2, w2;
-	float x3, y3, z3, parent;
-	JointData(	float _x0, float _y0, float _z0, float _w0, 
-				float _x1, float _y1, float _z1, float _w1, 
-				float _x2, float _y2, float _z2, float _w2, 
-				float _x3, float _y3, float _z3, float _parent)
+	glm::mat4 mat;
+	float parent;
+	JointData(glm::mat4 _mat, float _parent)
 	{
-		x0 = _x0;
-		y0 = _y0;
-		z0 = _z0;
-		w0 = _w0;
-		x1 = _x1;
-		y1 = _y1;
-		z1 = _z1;
-		w1 = _w1;
-		x2 = _x2;
-		y2 = _y2;
-		z2 = _z2;
-		w2 = _w2;
-		x3 = _x3;
-		y3 = _y3;
-		z3 = _z3;
+		mat = _mat;
 		parent = _parent;
+	}
+};
+
+struct AnimData
+{
+	int frame;
+	int joint;
+	glm::mat4 mat;
+	AnimData(int _frame, int _joint, glm::mat4 _mat)
+	{
+		frame = _frame;
+		joint = _joint;
+		mat = _mat;
 	}
 };
 
@@ -112,27 +106,27 @@ public:
 		std::ifstream fileIn(fileDir);
 
 		std::string temp;
-		getline(fileIn, temp);
-		objectdata.mesh.append(temp);
-		getline(fileIn, temp);
-		objectdata.text.append(temp);
-		getline(fileIn, temp);
-		objectdata.norm.append(temp);
-		getline(fileIn, temp);
-		objectdata.spec.append(temp);
+		if (getline(fileIn, temp))
+			objectdata.mesh.append(temp);
+		if (getline(fileIn, temp))
+			objectdata.text.append(temp);
+		if (getline(fileIn, temp))
+			objectdata.norm.append(temp);
+		if (getline(fileIn, temp))
+			objectdata.spec.append(temp);
 
-		getline(fileIn, temp);
-		objectdata.joints.append(temp);
+		if (getline(fileIn, temp))
+			objectdata.joints.append(temp);
 
 		while (getline(fileIn, temp))
 		{ 
 			std::string animation;
-			animation = fileDir;
+			animation = dir;
 			animation.append(temp);
 			objectdata.anim.push_back(animation);
 		}
 		int isamesh = objectdata.mesh.find(".amesh");
-		if (isamesh > 0 && objectdata.joints != fileDir)
+		if (isamesh > 0 && objectdata.joints != fileDir && objectdata.anim.size() > 0)
 		{
 			objectdata.animated = true;
 		}
@@ -140,6 +134,7 @@ public:
 
 		return objectdata;
 	}
+
 
 	static std::vector<JointData> importJoints(std::string fileDir)
 	{
@@ -163,26 +158,66 @@ public:
 				fileIn >> zx >> zy >> zz >> zw;
 				fileIn >> wx >> wy >> wz >> ww;
 
-				jointlistTemp.push_back(
-					JointData(	xx, xy, xz, xw,
-								yx, yy, yz, yw,
-								zx, zy, zz, zw,
-								wx, wy, wz, parent
-								)
-					);
+				glm::mat4 matrix = glm::mat4(xx, xy, xz, xw,
+					yx, yy, yz, yw,
+					zx, zy, zz, zw,
+					wx, wy, wz, ww);
+
+				jointlistTemp.push_back(JointData(matrix, parent));
+			}
+		}
+		jointlistTemp.pop_back();
+
+		for (int i = 0; i < jointlistTemp.size(); i++)
+		{
+			if (jointlistTemp[i].parent >= 0)
+			{
+				jointlistTemp[i].mat = jointlistTemp[int(jointlistTemp[i].parent)].mat * jointlistTemp[i].mat;
 			}
 		}
 
-		std::vector<JointData> jointlist;
 		for (int i = 0; i < jointlistTemp.size(); i++)
 		{
-			int index = jointlistTemp.size() - i - 1;
-			JointData tempJoint = jointlistTemp[index];
-			tempJoint.parent = index - tempJoint.parent - 1;
-			jointlist.push_back(tempJoint);
+			jointlistTemp[i].mat = glm::inverse(jointlistTemp[i].mat);
 		}
 
-		return jointlist;
+		return jointlistTemp;
+	}
+
+	static std::vector<AnimData> importAnimation(std::string fileDir)
+	{
+		std::vector<AnimData> jointlistTemp;
+	
+		std::ifstream fileIn(fileDir.c_str());
+	
+		if (fileIn)
+		{
+			while (fileIn)
+			{
+				int joint;
+				int frame;
+				float xx, xy, xz, xw;
+				float yx, yy, yz, yw;
+				float zx, zy, zz, zw;
+				float wx, wy, wz, ww;
+	
+				fileIn >> joint;
+				fileIn >> frame;
+				fileIn >> xx >> xy >> xz >> xw;
+				fileIn >> yx >> yy >> yz >> yw;
+				fileIn >> zx >> zy >> zz >> zw;
+				fileIn >> wx >> wy >> wz >> ww;
+	
+				glm::mat4 matrix = glm::mat4(xx, xy, xz, xw,
+					yx, yy, yz, yw,
+					zx, zy, zz, zw,
+					wx, wy, wz, ww);
+
+				jointlistTemp.push_back(AnimData(frame, joint, matrix));
+			}
+		}
+
+		return jointlistTemp;
 	}
 };
 
