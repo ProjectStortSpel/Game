@@ -104,7 +104,7 @@ void GameCreator::InitializeAudio()
 bool GameCreator::InitializeGraphics()
 {
 #if defined(__IOS__) || defined(__ANDROID__)
-	m_graphics = new Renderer::GraphicsHigh();
+	m_graphics = new Renderer::GraphicsLow();
     m_graphics->Init();
 #else
     m_graphics = new Renderer::GraphicsHigh();
