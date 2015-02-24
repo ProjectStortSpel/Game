@@ -156,10 +156,12 @@ SimultaneousMove.HasNonMovingUnitAt = function(self, X, Z, unitMoves)
 		end
 		
 		if checkThisUnit then
-			local	tX, tZ	=	world:GetComponent(allUnits[tempUnit], "MapPosition", "X"):GetInt2()
 			
-			if tX == X and tZ == Z then
-				return true
+			if not world:EntityHasComponent(allUnits[tempUnit], "UnitDead") then
+				local	tX, tZ	=	world:GetComponent(allUnits[tempUnit], "MapPosition", "X"):GetInt2()
+				if tX == X and tZ == Z then
+					return true
+				end
 			end
 		end
 		
