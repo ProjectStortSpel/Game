@@ -69,7 +69,7 @@ namespace Renderer
 				{
 					if (frame <= keyFrames[i].frame)
 					{
-						int j = (i - 1) % keyFrames.size();
+						int j = (i - 1 + keyFrames.size()) % keyFrames.size();
 						int nextKeyFrame = keyFrames[i].frame;
 						int prevKeyFrame = keyFrames[j].frame;
 						if (nextKeyFrame < prevKeyFrame) nextKeyFrame += *lastFrame;
@@ -108,6 +108,8 @@ namespace Renderer
 		~AModel();
 
 		void Update(float _dt);
+
+		void SetAnimation(int _animId);
 
 		void AddKeyFrame(std::string _animname, int _frame, int _joint, glm::mat4 _mat);
 

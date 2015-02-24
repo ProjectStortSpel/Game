@@ -16,6 +16,7 @@ AModel::AModel(int _id, bool _active, mat4* _model, float* _color, Buffer* buffe
 	clock = 0;
 	frameTime = 0.04f;
 	framesPerTick = 1;
+	animId = 0;
 }
 
 AModel::AModel()
@@ -34,10 +35,10 @@ void AModel::Update(float _dt)
 	{
 		clock -= frameTime * framesPerTick;
 		currentframe += framesPerTick;
-		currentframe = currentframe % animations[0].maxFrame;
-		if (currentframe == 119)
-			int hej = 0;
-		Animation* animptr = &animations[0];
+		currentframe = currentframe % animations[animId].maxFrame;
+		if (currentframe == 0)
+			SetAnimation((animId + 1) % animations.size());
+		Animation* animptr = &animations[animId];
 		for (int i = 0; i < animptr->joints.size(); i++)
 		{
 			int index = animation.size() - animptr->joints[i].jointId - 1;
@@ -49,6 +50,14 @@ void AModel::Update(float _dt)
 				mat[3][0], mat[3][1], mat[3][2], animation[index].parent
 				);
 		}
+	}
+}
+
+void AModel::SetAnimation(int _animId)
+{
+	if (_animId >= 0 && _animId < animations.size())
+	{
+		animId = _animId;
 	}
 }
 
