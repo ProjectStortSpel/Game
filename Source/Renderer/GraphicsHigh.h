@@ -99,6 +99,9 @@ namespace Renderer
 
 		// Random Vertors
 		GLuint m_randomVectors;
+
+		int mark;
+		float timer;
 	};
 }
 

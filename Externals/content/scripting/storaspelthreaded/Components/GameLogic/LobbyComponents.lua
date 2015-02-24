@@ -27,3 +27,10 @@ local LobbyPlayerReadyMSG = ComponentType()
 LobbyPlayerReadyMSG.Name = "LobbyPlayerReadyMSG"
 LobbyPlayerReadyMSG.TableType = TableType.Map
 worldCreator:AddComponentType(LobbyPlayerReadyMSG)
+
+--	LobbyMenuActive Component
+local LobbyMenuActive = ComponentType()
+LobbyMenuActive.Name = "LobbyMenuActive"
+LobbyMenuActive.SyncNetwork = true
+LobbyMenuActive.TableType = TableType.Map
+worldCreator:AddComponentType(LobbyMenuActive)

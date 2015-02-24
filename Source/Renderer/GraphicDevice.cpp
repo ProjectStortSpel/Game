@@ -22,6 +22,7 @@ GraphicDevice::GraphicDevice()
 	m_numberOfPointlights = 0;
 	m_numberOfDirectionalLights = 0;
 	m_particleID = 0;
+	m_modelIDcounter = 0;
 }
 GraphicDevice::GraphicDevice(Camera _camera, int x, int y)
 {
@@ -36,6 +37,7 @@ GraphicDevice::GraphicDevice(Camera _camera, int x, int y)
 	m_numberOfPointlights = 0;
 	m_numberOfDirectionalLights = 0;
 	m_particleID = 0;
+	m_modelIDcounter = 0;
 }
 GraphicDevice::~GraphicDevice()
 {
@@ -336,6 +338,7 @@ void GraphicDevice::BufferModels()
 	m_modelsToLoad.clear();
 	m_modelsToLoadFromSource.clear();
 }
+
 void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 {
 	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
@@ -404,73 +407,7 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	// Push back the model
 	modelList->push_back(model);
 }
-void GraphicDevice::BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoad)
-{
-	Shader *shaderPtr = NULL;
-	std::vector<Model> *modelList = NULL;
 
-	//if (obj.animated)
-	//{
-	//	BufferAModel(_modelId, _modelToLoad);
-	//	return;
-	//}
-
-	bool FoundShaderType = false;
-	for (int i = 0; i < m_renderLists.size(); i++)
-	{
-		if (_modelToLoad->RenderType == m_renderLists[i].RenderType)
-		{
-			shaderPtr = m_renderLists[i].ShaderPtr;
-			modelList = m_renderLists[i].ModelList;
-			shaderPtr->UseProgram();
-			FoundShaderType = true;
-			break;
-		}
-	}
-	if (!FoundShaderType) { ERRORMSG("ERROR: INVALID RENDER SETTING"); return; }
-
-	// Import Mesh
-	Buffer* mesh = AddMesh(_modelToLoad, shaderPtr);
-	// Import Texture
-	GLuint texture = AddTexture(_modelToLoad->diffuseTextureFilepath, GL_TEXTURE1);
-	shaderPtr->CheckUniformLocation("diffuseTex", 1);
-
-	GLuint normal, specular;
-
-	if (_modelToLoad->RenderType != RENDER_INTERFACE)
-	{
-		// Import Normal map
-		normal = AddTexture(_modelToLoad->normalTextureFilepath, GL_TEXTURE2);
-		shaderPtr->CheckUniformLocation("normalTex", 2);
-		// Import Specc Glow map
-		specular = AddTexture(_modelToLoad->specularTextureFilepath, GL_TEXTURE3);
-		shaderPtr->CheckUniformLocation("specularTex", 3);
-	}
-
-	// Create model
-	Model model;
-	if (_modelToLoad->RenderType != RENDER_INTERFACE) // TODO: BETTER FIX
-		model = Model(mesh, texture, normal, specular);
-	else
-		model = Model(mesh, texture, NULL, NULL);
-	//for the matrices (modelView + normal)
-	m_vramUsage += (16 + 9) * sizeof(float);
-
-
-	for (int i = 0; i < modelList->size(); i++)
-	{
-		if ((*modelList)[i] == model)
-		{
-			(*modelList)[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
-			return;
-		}
-	}
-
-	//if model doesnt exist
-	model.instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
-	// Push back the model
-	modelList->push_back(model);
-}
 void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 {
 	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
@@ -493,22 +430,46 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
 	shaderPtr->CheckUniformLocation("specularTex", 3);
 
+	AModel model = AModel(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color, mesh, texture, normal, specular);
+
 	// Import Skeleton
 	std::vector<JointData> joints = ModelLoader::importJoints(obj.joints);
-
-	AModel model = AModel(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color, mesh, texture, normal, specular);
 
 	// Add skeleton
 	for (int i = 0; i < joints.size(); i++)
 	{
 		model.joints.push_back(Joint(
-		joints[i].x0, joints[i].y0, joints[i].z0, joints[i].w0,
-		joints[i].x1, joints[i].y1, joints[i].z1, joints[i].w1,
-		joints[i].x2, joints[i].y2, joints[i].z2, joints[i].w2,
-		joints[i].x3, joints[i].y3, joints[i].z3, joints[i].parent)
-		);//joints[i].transform));
+			joints[i].mat[0][0], joints[i].mat[0][1], joints[i].mat[0][2], joints[i].mat[0][3],
+			joints[i].mat[1][0], joints[i].mat[1][1], joints[i].mat[1][2], joints[i].mat[1][3],
+			joints[i].mat[2][0], joints[i].mat[2][1], joints[i].mat[2][2], joints[i].mat[2][3],
+			joints[i].mat[3][0], joints[i].mat[3][1], joints[i].mat[3][2], joints[i].parent)
+		);
 	}
+
+	// Add animation base
+	for (int i = 0; i < joints.size(); i++)
+	{
+		int index = joints.size() - i - 1;
+		model.animation.push_back(Joint(
+			joints[index].mat[0][0], joints[index].mat[0][1], joints[index].mat[0][2], joints[index].mat[0][3],
+			joints[index].mat[1][0], joints[index].mat[1][1], joints[index].mat[1][2], joints[index].mat[1][3],
+			joints[index].mat[2][0], joints[index].mat[2][1], joints[index].mat[2][2], joints[index].mat[2][3],
+			joints[index].mat[3][0], joints[index].mat[3][1], joints[index].mat[3][2], index - joints[index].parent - 1
+			));
+	}
+
+	// Import Animations
+	for (int i = 0; i < obj.anim.size(); i++)
+	{
+		std::vector<AnimData> anim = ModelLoader::importAnimation(obj.anim[i]);
+		for (int j = 0; j < anim.size(); j++)
+		{
+			model.AddKeyFrame(obj.anim[i], anim[j].frame, anim[j].joint, anim[j].mat);
+		}
+	}
+
 	glGenBuffers(1, &model.jointBuffer);
+	glGenBuffers(1, &model.animBuffer);
 
 	//for the matrices (modelView + normal)
 	m_vramUsage += (16 + 9) * sizeof(float);

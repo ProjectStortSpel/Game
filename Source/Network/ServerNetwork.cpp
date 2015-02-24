@@ -154,8 +154,6 @@ ServerNetwork::ServerNetwork()
 
 	*m_incomingPort = 6112;
 
-	m_networkFunctions = new std::map < char, NetMessageHook >();
-
 	NetMessageHook hook = std::bind(&ServerNetwork::NetPasswordAttempt, this, NetworkHookPlaceholders);
 	(*m_networkFunctions)[NetTypeMessageId::ID_PASSWORD_ATTEMPT] = hook;
 
@@ -196,6 +194,8 @@ ServerNetwork::~ServerNetwork()
 	SAFE_DELETE(m_onPlayerDisconnected);
 	SAFE_DELETE(m_onPlayerTimedOut);
 	SAFE_DELETE(m_onServerShutdown);
+	
+	SAFE_DELETE(m_running);
 }
 
 bool ServerNetwork::Start(unsigned int& _incomingPort, const char* _password, unsigned int& _maxConnections)

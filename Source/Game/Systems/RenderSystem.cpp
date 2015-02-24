@@ -5,11 +5,13 @@
 RenderSystem::RenderSystem(Renderer::GraphicDevice* _graphics)
 {
 	m_graphics = _graphics;
-
+	
+	m_bitMask = NULL;
 }
 RenderSystem::~RenderSystem()
 {
-
+	if (m_bitMask)
+		free(m_bitMask);
 }
 
 void RenderSystem::Initialize()

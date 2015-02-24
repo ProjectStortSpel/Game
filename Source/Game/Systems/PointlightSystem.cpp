@@ -4,11 +4,13 @@
 PointlightSystem::PointlightSystem(Renderer::GraphicDevice* _graphics)
 {
 	m_graphics = _graphics;
+	m_bitMask = NULL;
 
 }
 PointlightSystem::~PointlightSystem()
 {
-
+	if (m_bitMask)
+		free(m_bitMask);
 }
 
 void PointlightSystem::Initialize()
