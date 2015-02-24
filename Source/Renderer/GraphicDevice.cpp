@@ -343,11 +343,11 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	Shader *shaderPtr = NULL;
 	std::vector<Model> *modelList = NULL;
 
-	if (obj.animated)
-	{
-		BufferAModel(_modelId, _modelToLoad);
-		return;
-	}
+	//if (obj.animated)
+	//{
+	//	BufferAModel(_modelId, _modelToLoad);
+	//	return;
+	//}
 
 	bool FoundShaderType = false;
 	for (int i = 0; i < m_renderLists.size(); i++)
@@ -474,48 +474,6 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 
 	// Push back the model
 	modelList->push_back(model);
-
-
-
-
-	//for (int j = 0; j < model.animation.size(); j++)
-	//{
-	//	mat4 jmat = scale(vec3(0.1, 0.1, 0.1));
-	//	for (int k = j; k < model.animation.size(); k++)
-	//	{
-	//		Joint joint = model.animation[k];
-	//		jmat = mat4(joint.x0, joint.y0, joint.z0, joint.w0,
-	//			joint.x1, joint.y1, joint.z1, joint.w1,
-	//			joint.x2, joint.y2, joint.z2, joint.w2,
-	//			joint.x3, joint.y3, joint.z3, 1
-	//			) * jmat;
-	//		k += model.animation[k].parent;
-	//	}
-	//	matrixes[j] = mat4(jmat);
-	//	LoadModel("content/models/stone/", "stone.object", &matrixes[j], 0, model.color);
-	//}
-
-	//for (int j = 0; j < model.joints.size(); j++)
-	//{
-	//	color[j * 3 + 0] = 1.0f - (float)j / (float)model.joints.size();
-	//	color[j * 3 + 1] = 1.0f - (float)j / (float)model.joints.size();
-	//	color[j * 3 + 2] = 1.0f - (float)j / (float)model.joints.size();
-	//	Joint joint = model.joints[j];
-	//	mat4 jmat = glm::inverse(mat4(joint.x0, joint.y0, joint.z0, joint.w0,
-	//		joint.x1, joint.y1, joint.z1, joint.w1,
-	//		joint.x2, joint.y2, joint.z2, joint.w2,
-	//		joint.x3, joint.y3, joint.z3, 1
-	//		)) * scale(vec3(0.1, 0.1, 0.1));
-	//	matrixes[j] = jmat;
-	//	float col = 1.00f;
-	//	if (model.joints[j].parent >= 0)
-	//		col = color[(int)(model.joints[j].parent) * 3 + 0] - 0.1f;
-	//
-	//	color[j * 3 + 0] = col;
-	//	color[j * 3 + 1] = col;
-	//	color[j * 3 + 2] = col;
-	//	LoadModel("content/models/stone/", "stone.object", &matrixes[j], 0, &color[j * 3]);
-	//}
 }
 
 bool GraphicDevice::RemoveModel(int _id)
