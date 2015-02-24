@@ -34,7 +34,6 @@ World::~World()
 	delete(m_messageManager);
 	delete(m_dataManager);
 	delete(m_systemManager);
-	delete(&DataLogger::GetInstance());
 }
 
 void World::PostInitializeSystems()
