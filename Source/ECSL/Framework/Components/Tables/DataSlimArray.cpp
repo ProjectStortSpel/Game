@@ -25,14 +25,14 @@ namespace ECSL
 		{
 			for (unsigned int i = 0; i < m_rowCount; ++i)
 				if (m_dataTable[i])
-					delete(m_dataTable[i]);
-			delete(m_dataTable);
+					delete [] m_dataTable[i];
+			delete [] m_dataTable;
 		}
 	}
 
 	void DataSlimArray::ClearRow(unsigned const int _row)
 	{
-		delete(m_dataTable[_row]);
+		delete [] m_dataTable[_row];
 		m_dataTable[_row] = nullptr;
 	}
 
@@ -42,7 +42,7 @@ namespace ECSL
 		{
 			if (m_dataTable[i])
 			{
-				delete(m_dataTable[i]);
+				delete [] m_dataTable[i];
 				m_dataTable[i] = nullptr;
 			}
 		}

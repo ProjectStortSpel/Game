@@ -132,7 +132,7 @@ namespace LuaEmbedder
 	  source[length] = '\0';
 	  SDL_RWclose(file);
 	  std::string sourceString = std::string(source);
-	  delete source;
+	  delete [] source;
 
 	  std::string directory = filepath.substr(0, filepath.rfind('\\/') + 1);
 

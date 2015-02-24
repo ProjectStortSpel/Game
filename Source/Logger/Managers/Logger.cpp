@@ -39,6 +39,8 @@ Logger::~Logger()
 
 	delete(m_path);
 	delete(m_dumpLogs);
+	
+	SDL_DestroyMutex(m_logMutex);
 }
 #pragma endregion
 

@@ -52,7 +52,9 @@ BaseNetwork::~BaseNetwork()
 	}
 
 
+	m_userFunctions->clear();
 	SAFE_DELETE(m_userFunctions);
+	m_networkFunctions->clear();
 	SAFE_DELETE(m_networkFunctions);
 
 	SAFE_DELETE(m_systemPackets);

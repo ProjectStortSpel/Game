@@ -289,12 +289,12 @@ bool GraphicsHigh::InitLightBuffers()
 	if (m_pointlightBuffer < 0)
 		return false;
 
-	float ** tmparray = new float*[1];
+	float** tmparray = new float*[1];
 	tmparray[0] = &m_lightDefaults[0];
 
 	BufferPointlights(0, tmparray);
 
-	delete(tmparray);
+	delete [] tmparray;
 
 	glGenBuffers(1, &m_dirLightBuffer);
 	if (m_dirLightBuffer < 0)
@@ -480,7 +480,7 @@ void GraphicsHigh::Render()
 			
 			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_modelsAnimated[i].jointBuffer);
 	
-			delete joint_data;
+			delete [] joint_data;
 	
 	
 
@@ -676,7 +676,7 @@ void GraphicsHigh::CreateDepthTex(GLuint &texid) {
 void GraphicsHigh::BufferPointlights(int _nrOfLights, float **_lightPointers)
 {
 	if (m_pointerToPointlights)
-		delete m_pointerToPointlights;
+		delete [] m_pointerToPointlights;
 
 	if (_nrOfLights == 0)
 	{
@@ -718,8 +718,8 @@ void GraphicsHigh::BufferLightsToGPU()
 		glBufferData(GL_SHADER_STORAGE_BUFFER, point_light_data_size, pointlight_data, GL_STATIC_DRAW);
 		m_vramUsage += m_numberOfPointlights * 10 * sizeof(float);
 
-		delete pointlight_data;
-		delete m_pointerToPointlights;
+		delete [] pointlight_data;
+		delete [] m_pointerToPointlights;
 		m_pointerToPointlights = 0;
 	}
 
@@ -789,7 +789,7 @@ void GraphicsHigh::Clear()
 
 	float **tmpPtr = new float*[1];
 	BufferPointlights(0, tmpPtr);
-	delete tmpPtr;
+	delete [] tmpPtr;
 	BufferDirectionalLight(0);
 
 	for (std::map<int, ParticleSystem*>::iterator it = m_particleSystems.begin(); it != m_particleSystems.end(); ++it)

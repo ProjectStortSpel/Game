@@ -48,7 +48,7 @@ Packet::Packet(unsigned char* _data, unsigned short _length, NetConnection _send
 
 Packet::~Packet()
 {
-	SAFE_DELETE(Data);
+	SAFE_DELETE_ARRAY(Data);
 	SAFE_DELETE(Length);
 	SAFE_DELETE(Sender);
 }

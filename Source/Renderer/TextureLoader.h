@@ -86,7 +86,7 @@ static unsigned int LoadCubeMap(const char* file, GLenum textureSlot, int &heigh
 
 		glTexImage2D(targets[i], 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imgData);
 
-		delete imgData;
+		free(imgData);
 	}
 
 	return texHandle;

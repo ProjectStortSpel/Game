@@ -22,6 +22,7 @@ GraphicDevice::GraphicDevice()
 	m_numberOfPointlights = 0;
 	m_numberOfDirectionalLights = 0;
 	m_particleID = 0;
+	m_modelIDcounter = 0;
 }
 GraphicDevice::GraphicDevice(Camera _camera, int x, int y)
 {
@@ -36,6 +37,7 @@ GraphicDevice::GraphicDevice(Camera _camera, int x, int y)
 	m_numberOfPointlights = 0;
 	m_numberOfDirectionalLights = 0;
 	m_particleID = 0;
+	m_modelIDcounter = 0;
 }
 GraphicDevice::~GraphicDevice()
 {
