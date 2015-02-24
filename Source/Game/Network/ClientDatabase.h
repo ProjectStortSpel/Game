@@ -43,8 +43,9 @@ public:
 	bool Disconnect();
 
 	void HookOnGetServerList(Network::NetMessageHook& _hook);
+	void HookOnGrantDisconnect(Network::NetMessageHook& _hook);
 	void HookOnConnectionAccepted(Network::NetEvent _hook);
-
+	
 	void Update(float dt);
 
 	void AddToDatabase(const char* _name, int _port, bool _pwProtected);
@@ -66,6 +67,8 @@ public:
 
 	void SetTryConnect(bool _value) {m_tryConnect = _value;}
 	void ResetNetworkEvents();
+
+	void RequestDisconnect();
 
 private:
 	

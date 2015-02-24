@@ -96,7 +96,6 @@ BaseNetwork::~BaseNetwork()
 
 		SAFE_DELETE(m_systemPackets);
 		SDL_UnlockMutex(m_systemPacketLock);
-
 	}
 	SDL_DestroyMutex(m_systemPacketLock);
 
@@ -163,33 +162,47 @@ void BaseNetwork::Update(float _dt)
 	UpdateNetUsage(_dt);
 	UpdateTimeOut(_dt);
 
+	
+	size_t noSysPackets = 0;
 	if (SDL_LockMutex(m_systemPacketLock) == 0)
 	{
-		Packet* p;
-		for (unsigned int i = 0; i < m_systemPackets->size(); ++i)
-		{
-			p = m_systemPackets->front();
-			m_systemPackets->pop();
-
-			uint64_t id = m_packetHandler->StartUnpack(p);
-			char type = m_packetHandler->ReadByte(id);
-
-			if (m_systemFunctions->find(type) != m_systemFunctions->end())
-				(*m_systemFunctions)[type](m_packetHandler, id, *p->Sender);
-			else if (NET_DEBUG > 0)
-			{
-				NetTypeMessageId tmp = (NetTypeMessageId)type;
-				DebugLog("System packet \'%s\' not bound to any function", LogSeverity::Warning, m_enumStrings[type].c_str());
-			}
-
-			SAFE_DELETE(p);
-			m_packetHandler->EndUnpack(id);
-		}
-
+		noSysPackets = m_systemPackets->size();
 		SDL_UnlockMutex(m_systemPacketLock);
 	}
 	else if(NET_DEBUG > 0)
 		DebugLog("Failed to lock system packet lock. Error: %s.", LogSeverity::Error, SDL_GetError());
+
+
+	Packet* p = 0;
+	for (unsigned int i = 0; i < noSysPackets; ++i)
+	{
+		if (SDL_LockMutex(m_systemPacketLock) == 0)
+		{
+			p = m_systemPackets->front();
+			m_systemPackets->pop();
+			SDL_UnlockMutex(m_systemPacketLock);
+		}
+		else if (NET_DEBUG > 0)
+			DebugLog("Failed to lock systemPacket. Error: %s", LogSeverity::Error, SDL_GetError());
+
+		uint64_t id = m_packetHandler->StartUnpack(p);
+		char type = m_packetHandler->ReadByte(id);
+
+		if (m_systemFunctions->find(type) != m_systemFunctions->end())
+			(*m_systemFunctions)[type](m_packetHandler, id, *p->Sender);
+		else if (NET_DEBUG > 0)
+		{
+			NetTypeMessageId tmp = (NetTypeMessageId)type;
+			DebugLog("System packet \'%s\' not bound to any function", LogSeverity::Warning, m_enumStrings[type].c_str());
+		}
+
+		SAFE_DELETE(p);
+		m_packetHandler->EndUnpack(id);
+	}
+
+
+
+
 }
 
 void BaseNetwork::HandlePacket(Packet* _packet)

@@ -184,6 +184,19 @@ void ClientDatabase::SetMaxNoPlayers(int _maxPlayers)
 
 }
 
+void ClientDatabase::RequestDisconnect()
+{
+	if (!m_connected)
+	{
+		Logger::GetInstance().Log("MasterServer", Info, "Tried to send \"CLIENT_REQUEST_DISCONNECT\", but is not connected to MasterServer.");
+		return;
+	}
+
+	auto ph = m_client.GetPacketHandler();
+	auto id = ph->StartPack("CLIENT_REQUEST_DISCONNECT");
+	auto packet = ph->EndPack(id);
+	m_client.Send(packet);
+}
 
 void ClientDatabase::IncreaseNoPlayers()
 {
@@ -287,6 +300,11 @@ void ClientDatabase::PingServer()
 void ClientDatabase::HookOnGetServerList(Network::NetMessageHook& _hook)
 {
 	m_client.AddNetworkHook("GET_SERVER_LIST", _hook);
+}
+
+void ClientDatabase::HookOnGrantDisconnect(Network::NetMessageHook& _hook)
+{
+	m_client.AddNetworkHook("SERVER_GRANT_DISCONNECT", _hook);
 }
 
 void ClientDatabase::HookOnConnectionAccepted(Network::NetEvent _hook)

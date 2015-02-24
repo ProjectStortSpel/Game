@@ -322,11 +322,14 @@ ISocket* WinSocket::Accept(void)
 int WinSocket::Send(char* _buffer, int _length, int _flags)
 {
 	short len = htons(_length);
+	short totalDataSent = 0;
+
 
 	int bytesSent = send(m_socket, (char*)&len, 2, _flags);
 	if (bytesSent == 2)
 	{
 		bytesSent = send(m_socket, _buffer, _length, _flags);
+		totalDataSent = bytesSent + 2;
 
 		if (NET_DEBUG == 2)
 		{
@@ -344,18 +347,20 @@ int WinSocket::Send(char* _buffer, int _length, int _flags)
 	else if (bytesSent < 0 && NET_DEBUG == 2)
 		DebugLog("Failed to send header packet of size %d. Error code: %d", LogSeverity::Info, bytesSent, WSAGetLastError());
 
-	return bytesSent;
+	return totalDataSent;
 }
 
 int WinSocket::Receive(char* _buffer, int _length, int _flags)
 {
 	short len;
 	int headerLen = recv(m_socket, (char*)&len, 2, MSG_WAITALL);
+	short totalDataReceived = 0;
 
 	if (headerLen == 2)
 	{
 		len = ntohs(len);
 		int sizeReceived = recv(m_socket, _buffer, (int)len, MSG_WAITALL);
+		totalDataReceived = sizeReceived + 2;
 
 		if (sizeReceived < len)
 		{
@@ -376,7 +381,7 @@ int WinSocket::Receive(char* _buffer, int _length, int _flags)
 		if (NET_DEBUG == 2)
 			DebugLog("Received packet with size %d.", LogSeverity::Info, sizeReceived);
 
-		return sizeReceived;
+		return totalDataReceived;
 
 	}
 	else if (headerLen == 0)
