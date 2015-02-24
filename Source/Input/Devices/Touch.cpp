@@ -108,13 +108,13 @@ InputState Touch::GetFingerState(SDL_FingerID _finger)
 	
 	bool tReleased	=	m_releasedState.find(_finger) != m_releasedState.end() ? m_releasedState[_finger] : false;
 	if (tReleased)
-		return InputState::DOWN;
+		return InputState::RELEASED;
 
 	bool tLast		=	m_lastState.find(_finger) != m_lastState.end() ? m_lastState[_finger] : false;
 	bool tThis		=	m_thisState.find(_finger) != m_thisState.end() ? m_thisState[_finger] : false;
 
 	if (!tThis && tLast)
-		return InputState::RELEASED;
+		return InputState::DOWN;
 
 	return InputState::UP;
 }
