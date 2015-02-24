@@ -102,12 +102,10 @@ void Touch::PollEvent(SDL_Event e)
 
 InputState Touch::GetFingerState(SDL_FingerID _finger)
 {
-	bool tPressed	=	m_pressedState.find(_finger) != m_pressedState.end() ? m_pressedState[_finger] : false;
-	if (tPressed)
+	if (m_pressedState.find(_finger) != m_pressedState.end())
 		return InputState::PRESSED;
-	
-	bool tReleased	=	m_releasedState.find(_finger) != m_releasedState.end() ? m_releasedState[_finger] : false;
-	if (tReleased)
+
+	if (m_releasedState.find(_finger) != m_releasedState.end())
 		return InputState::RELEASED;
 
 	bool tLast		=	m_lastState.find(_finger) != m_lastState.end() ? m_lastState[_finger] : false;
