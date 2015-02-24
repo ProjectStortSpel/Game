@@ -6,10 +6,12 @@ ParticleSystem::ParticleSystem(Renderer::GraphicDevice* _graphics)
 {
 	m_graphics = _graphics;
 
+	m_bitMask = NULL;
 }
 ParticleSystem::~ParticleSystem()
 {
-
+	if (m_bitMask)
+		free(m_bitMask);
 }
 
 void ParticleSystem::Initialize()

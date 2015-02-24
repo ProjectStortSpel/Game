@@ -241,7 +241,7 @@ void ConsoleManager::AddCommand(const char* _name, ConsoleHook _hook)
 
 		m_consoleHooks[name] = _hook;
 
-		delete name;
+		delete [] name;
 	}
 
 }

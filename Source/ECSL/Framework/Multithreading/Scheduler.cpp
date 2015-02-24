@@ -40,18 +40,36 @@ Scheduler::Scheduler(DataManager* _dataManager, SystemManager* _systemManager, M
 Scheduler::~Scheduler()
 {
 	for (auto workItem : *m_workItems)
+	{
+		if (workItem->Data)
+			delete(workItem->Data);
 		delete(workItem);
+	}
+	delete(m_workItems);
+	for (auto workItemVector : *m_updateWorkItems)
+		delete workItemVector;
 	delete(m_updateWorkItems);
+	for (auto workItemVector : *m_entitiesAddedWorkItems)
+		delete workItemVector;
 	delete(m_entitiesAddedWorkItems);
+	for (auto workItemVector : *m_entitiesRemovedWorkItems)
+		delete workItemVector;
 	delete(m_entitiesRemovedWorkItems);
 	delete(m_sortMessagesWorkItems);
+	for (auto workItemVector : *m_messagesReceivedWorkItems)
+		delete workItemVector;
 	delete(m_messagesReceivedWorkItems);
 	delete(m_deleteMessagesWorkItems);
 	delete(m_updateSystemEntityListsWorkItems);
 	delete(m_updateEntityTableWorkItems);
 	delete(m_recycleEntityIdsWorkItems);
 	delete(m_clearListsWorkItems);
+	for (auto deactivatedWorkItemMap : *m_deactivatedWorkItems)
+		for (auto deactivatedWorkItemVector : deactivatedWorkItemMap.second)
+			delete deactivatedWorkItemVector;
 	delete(m_deactivatedWorkItems);
+	delete(m_copyCurrentListsWorkItems);
+	delete(m_deleteComponentDataWorkItems);
 
 	for (auto systemGroup : *m_entitiesToAddToSystems)
 		delete(systemGroup);

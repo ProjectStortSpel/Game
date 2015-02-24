@@ -29,6 +29,7 @@
 
 #define MAX_PACKET_SIZE 65535 // Max value for unsigned short
 #define SAFE_DELETE(x) if(x) { delete x; x = 0; }
+#define SAFE_DELETE_ARRAY(x) if(x) { delete [] x; x = 0; }
 #define SAFE_DELETE_PACKET(x) if(x) { if (x->Data) { delete x->Data; x->Data = 0; } delete x; x = 0; }
 
 

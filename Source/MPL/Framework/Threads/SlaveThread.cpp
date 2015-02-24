@@ -12,11 +12,6 @@ SlaveThread::SlaveThread(TaskPool* _taskPool, std::vector<SlaveThread*>* _slaves
 
 SlaveThread::~SlaveThread()
 {
-	if (m_thread)
-	{
-		SDL_DetachThread(m_thread);
-		m_thread = 0;
-	}
 	SDL_DestroySemaphore(m_sleepSem);
 }
 

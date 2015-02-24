@@ -13,11 +13,18 @@ TaskPool::TaskPool()
 
 	/* Mutex couldn't be created */
 	if (!m_idMutex || !m_taskMutex) { printf("MPL Error: %s\n", SDL_GetError()); abort(); }
+	
+	m_nextId = 0;
 }
 
 TaskPool::~TaskPool()
 {
-
+	delete m_openList;
+	delete m_queue;
+	delete m_workTaskConnection;
+	
+	SDL_DestroyMutex(m_idMutex);
+	SDL_DestroyMutex(m_taskMutex);
 }
 
 TaskId TaskPool::CreateTask(TaskId _dependency, const std::vector<WorkItem*>& _workItems)
