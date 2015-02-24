@@ -20,7 +20,7 @@ WinSocket::WinSocket()
 	if (m_socket != INVALID_SOCKET)
 	{
 		g_noActiveSockets++;
-		if (NET_DEBUG == 1)
+		if (NET_DEBUG > 0)
 			DebugLog("New winsocket created.", LogSeverity::Info);
 	}
 	else if (NET_DEBUG > 0)
@@ -41,7 +41,7 @@ WinSocket::WinSocket(SOCKET _socket)
 	if (m_socket != INVALID_SOCKET)
 	{
 		g_noActiveSockets++;
-		if (NET_DEBUG == 1)
+		if (NET_DEBUG > 0)
 			DebugLog("New winsocket created.", LogSeverity::Info);
 	}
 	else if (NET_DEBUG > 0)
@@ -62,7 +62,7 @@ WinSocket::WinSocket(int _domain, int _type, int _protocol)
 	if (m_socket != INVALID_SOCKET)
 	{
 		g_noActiveSockets++;
-		if (NET_DEBUG == 1)
+		if (NET_DEBUG > 0)
 			DebugLog("New winsocket created.", LogSeverity::Info);
 	}
 	else if (NET_DEBUG > 0)
@@ -142,7 +142,11 @@ bool WinSocket::ShutdownSocket(int _how)
 {
 	if (shutdown(m_socket, _how) != 0)
 	{
-		if (NET_DEBUG > 0)
+		int errorCode = WSAGetLastError();
+
+		if (errorCode == 10057)
+			return true;
+		else if (NET_DEBUG > 0)
 			DebugLog("Failed to shutdown winsocket. Error code: %d.", LogSeverity::Error, WSAGetLastError());
 
 		return false;
@@ -174,6 +178,7 @@ bool WinSocket::Connect(const char* _ipAddres, const int _port)
 	}
 
 	addrinfo* rp;
+	int errorCode = 0;
 	for (rp = addrs; rp != 0; rp = rp->ai_next)
 	{
 		m_socket = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
@@ -187,7 +192,8 @@ bool WinSocket::Connect(const char* _ipAddres, const int _port)
 			break;
 		else if (cnt < 0)
 		{
-			if (WSAGetLastError() == 10035)
+			errorCode = WSAGetLastError();
+			 if (errorCode == 10035)
 				break;
 		}
 
@@ -199,7 +205,7 @@ bool WinSocket::Connect(const char* _ipAddres, const int _port)
 	if (rp == 0)
 	{
 		if (NET_DEBUG > 0)
-			DebugLog("Failed to connect to %s:%d. Error code: %d.", LogSeverity::Error, _ipAddres, _port, WSAGetLastError());
+			DebugLog("Failed to connect to %s:%d. Error code: %i.", LogSeverity::Error, _ipAddres, _port, errorCode);
 
 		return false;
 	}
@@ -245,7 +251,7 @@ bool WinSocket::Bind(const int _port)
 }
 bool WinSocket::Listen(int _backlog)
 {
-	if (listen(m_socket, _backlog) != 0)
+	if (listen(m_socket, _backlog) < 0)
 	{
 		if (NET_DEBUG > 0)
 			DebugLog("Failed to put socket in listen mode. Error code: %d.", LogSeverity::Error, WSAGetLastError());
@@ -265,6 +271,11 @@ ISocket* WinSocket::Accept(void)
 
 	if (incomingSocket == INVALID_SOCKET)
 	{
+		int errorCode = WSAGetLastError();
+
+		if (errorCode == 10035)
+			return 0;
+
 		if (NET_DEBUG > 0)
 			DebugLog("Accept failed. Error code: %d.", LogSeverity::Error, WSAGetLastError());
 
@@ -302,7 +313,7 @@ ISocket* WinSocket::Accept(void)
 	*newWinSocket->m_remotePort = incomingAddress.sin_port;
 	*newWinSocket->m_active = 1;
 
-	if (NET_DEBUG == 1)
+	if (NET_DEBUG > 0)
 		DebugLog("New winsocket from %s:%d accepted.", LogSeverity::Info, ipAddress, incomingAddress.sin_port);
 
 	return newWinSocket;
@@ -311,16 +322,19 @@ ISocket* WinSocket::Accept(void)
 int WinSocket::Send(char* _buffer, int _length, int _flags)
 {
 	short len = htons(_length);
+	short totalDataSent = 0;
+
 
 	int bytesSent = send(m_socket, (char*)&len, 2, _flags);
 	if (bytesSent == 2)
 	{
 		bytesSent = send(m_socket, _buffer, _length, _flags);
+		totalDataSent = bytesSent + 2;
 
 		if (NET_DEBUG == 2)
 		{
 			if (bytesSent > 0)
-				DebugLog("Sent packet of size %d. Error code: %d.", LogSeverity::Info, bytesSent, WSAGetLastError());
+				DebugLog("Sent packet of size %d.", LogSeverity::Info, bytesSent);
 			else if (bytesSent == 0)
 				DebugLog("Unable to send packet. Socket shutdown gracefully.", LogSeverity::Info);
 			else if (bytesSent < 0)
@@ -333,18 +347,20 @@ int WinSocket::Send(char* _buffer, int _length, int _flags)
 	else if (bytesSent < 0 && NET_DEBUG == 2)
 		DebugLog("Failed to send header packet of size %d. Error code: %d", LogSeverity::Info, bytesSent, WSAGetLastError());
 
-	return bytesSent;
+	return totalDataSent;
 }
 
 int WinSocket::Receive(char* _buffer, int _length, int _flags)
 {
 	short len;
 	int headerLen = recv(m_socket, (char*)&len, 2, MSG_WAITALL);
+	short totalDataReceived = 0;
 
 	if (headerLen == 2)
 	{
 		len = ntohs(len);
 		int sizeReceived = recv(m_socket, _buffer, (int)len, MSG_WAITALL);
+		totalDataReceived = sizeReceived + 2;
 
 		if (sizeReceived < len)
 		{
@@ -365,7 +381,7 @@ int WinSocket::Receive(char* _buffer, int _length, int _flags)
 		if (NET_DEBUG == 2)
 			DebugLog("Received packet with size %d.", LogSeverity::Info, sizeReceived);
 
-		return sizeReceived;
+		return totalDataReceived;
 
 	}
 	else if (headerLen == 0)

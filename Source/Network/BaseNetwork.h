@@ -1,4 +1,5 @@
 #ifndef BASENETWORK_H
+#define BASENETWORK_H
 
 #include <vector>
 #include <queue>
@@ -19,7 +20,7 @@ namespace Network
 	typedef std::function<void(PacketHandler*, uint64_t&, NetConnection&)> NetMessageHook;
 	typedef std::function<void(NetConnection&, const char*)> NetEvent;
 
-	class BaseNetwork
+	class DECLSPEC BaseNetwork
 	{
 	public:
 		BaseNetwork();
@@ -50,9 +51,12 @@ namespace Network
 
 		void TriggerEvent(std::vector<NetEvent>* _event, NetConnection& _connection, const char* _message);
 		void HandlePacket(Packet* _packet);
+		void HandleInactivePacket();
+
 
 		virtual void UpdateTimeOut(float& _dt) = 0;
 		virtual void UpdateNetUsage(float& _dt) = 0;
+
 
 		unsigned int GetMillisecondsTime();
 
@@ -79,12 +83,19 @@ namespace Network
 		float* m_maxTimeOutIntervall;
 		int* m_maxIntervallCounter;
 
-	private:
 		SDL_mutex* m_customPacketLock;
+
+		std::map<char, std::string> m_enumStrings;
+		std::queue<Packet*>* m_inactivePackets;
+
+	private:
+		
 		SDL_mutex* m_systemPacketLock;
 
 		std::queue<Packet*>* m_customPackets;
 		std::queue<Packet*>* m_systemPackets;
+
+		
 
 	};
 

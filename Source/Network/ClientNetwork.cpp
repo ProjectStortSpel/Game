@@ -35,6 +35,37 @@ ClientNetwork::ClientNetwork()
 	m_onRemotePlayerTimedOut = new std::vector<NetEvent>();
 	m_onRemotePlayerKicked = new std::vector<NetEvent>();
 	m_onRemotePlayerBanned = new std::vector<NetEvent>();
+
+	m_currentTimeOutIntervall = new float(0);
+	m_currentIntervallCounter = new int(0);
+
+	m_receiveThread = new std::thread();
+	m_socket = 0;
+
+	(*m_systemFunctions)[NetTypeMessageId::ID_PASSWORD_INVALID] = std::bind(&ClientNetwork::NetPasswordInvalid, this, NetworkHookPlaceholders);
+	(*m_systemFunctions)[NetTypeMessageId::ID_CONNECTION_ACCEPTED] = std::bind(&ClientNetwork::NetConnectionAccepted, this, NetworkHookPlaceholders);
+	(*m_systemFunctions)[NetTypeMessageId::ID_SERVER_FULL] = std::bind(&ClientNetwork::NetConnectionServerFull, this, NetworkHookPlaceholders);
+
+	(*m_systemFunctions)[NetTypeMessageId::ID_CONNECTION_DISCONNECTED] = std::bind(&ClientNetwork::NetConnectionDisconnected, this, NetworkHookPlaceholders);
+
+	(*m_systemFunctions)[NetTypeMessageId::ID_CONNECTION_KICKED] = std::bind(&ClientNetwork::NetConnectionKicked, this, NetworkHookPlaceholders);
+	(*m_systemFunctions)[NetTypeMessageId::ID_CONNECTION_BANNED] = std::bind(&ClientNetwork::NetConnectionBanned, this, NetworkHookPlaceholders);
+
+	(*m_systemFunctions)[NetTypeMessageId::ID_PING] = std::bind(&ClientNetwork::NetPing, this, NetworkHookPlaceholders);
+	(*m_systemFunctions)[NetTypeMessageId::ID_PONG] = std::bind(&ClientNetwork::NetPong, this, NetworkHookPlaceholders);
+
+	(*m_systemFunctions)[NetTypeMessageId::ID_REMOTE_CONNECTION_ACCEPTED] = std::bind(&ClientNetwork::NetRemoteConnectionAccepted, this, NetworkHookPlaceholders);
+
+	(*m_systemFunctions)[NetTypeMessageId::ID_REMOTE_CONNECTION_LOST] = std::bind(&ClientNetwork::NetRemoteConnectionLost, this, NetworkHookPlaceholders);
+	(*m_systemFunctions)[NetTypeMessageId::ID_REMOTE_CONNECTION_DISCONNECTED] = std::bind(&ClientNetwork::NetRemoteConnectionDisconnected, this, NetworkHookPlaceholders);
+
+	(*m_systemFunctions)[NetTypeMessageId::ID_REMOTE_CONNECTION_KICKED] = std::bind(&ClientNetwork::NetRemoteConnectionKicked, this, NetworkHookPlaceholders);
+	(*m_systemFunctions)[NetTypeMessageId::ID_REMOTE_CONNECTION_BANNED] = std::bind(&ClientNetwork::NetRemoteConnectionBanned, this, NetworkHookPlaceholders);
+
+	memset(m_packetData, 0, sizeof(m_packetData));
+
+
+
 }
 
 ClientNetwork::~ClientNetwork()
@@ -63,6 +94,11 @@ ClientNetwork::~ClientNetwork()
 	SAFE_DELETE(m_onRemotePlayerTimedOut);
 	SAFE_DELETE(m_onRemotePlayerKicked);
 	SAFE_DELETE(m_onRemotePlayerBanned);
+
+	SAFE_DELETE(m_currentTimeOutIntervall);
+	SAFE_DELETE(m_currentIntervallCounter);
+	
+	SAFE_DELETE(m_receiveThread);
 }
 
 bool ClientNetwork::Connect(const char* _ipAddress, const char* _password, const int& _outgoing, const int& _incomingPort)
@@ -92,7 +128,8 @@ bool ClientNetwork::Connect()
 
 	if (!*m_connected)
 	{
-		TriggerEvent(m_onFailedToConnect, NetConnection(m_remoteAddress->c_str(), *m_outgoingPort), 0);
+		NetConnection nc = NetConnection(m_remoteAddress->c_str(), *m_outgoingPort);
+		TriggerEvent(m_onFailedToConnect, nc, 0);
 		return false;
 	}
 
@@ -129,7 +166,8 @@ void ClientNetwork::Disconnect()
 
 	m_receiveThread->join();
 
-	TriggerEvent(m_onDisconnectedFromServer, m_socket->GetNetConnection(), 0);
+	NetConnection nc = m_socket->GetNetConnection();
+	TriggerEvent(m_onDisconnectedFromServer, nc, 0);
 
 	*m_connected = false;
 }
@@ -185,6 +223,13 @@ void ClientNetwork::Send(Packet* _packet)
 		return;
 	}
 
+	if (m_packetHandler->GetNetTypeMessageId(_packet) == NetTypeMessageId::ID_CUSTOM_PACKET && m_socket->GetActive() != 2)
+	{
+		m_inactivePackets->push(_packet);
+		return;
+	}
+
+
 	float bytesSent = m_socket->Send((char*)_packet->Data, *_packet->Length);
 
 	if (bytesSent > 0)
@@ -200,6 +245,8 @@ void ClientNetwork::Send(Packet* _packet)
 	}
 	else
 	{
+		if (NET_DEBUG > 0)
+			DebugLog("Failed to send message to server.", LogSeverity::Warning);
 	}
 
 	SAFE_DELETE(_packet);
@@ -243,6 +290,25 @@ void ClientNetwork::UpdateTimeOut(float& _dt)
 	}
 }
 
+void ClientNetwork::ResetNetworkEvents()
+{
+	Update(0);
+	m_onConnectedToServer->clear();
+	m_onDisconnectedFromServer->clear();
+	m_onTimedOutFromServer->clear();
+	m_onFailedToConnect->clear();
+	m_onPasswordInvalid->clear();
+	m_onKickedFromServer->clear();
+	m_onBannedFromServer->clear();
+	m_onServerFull->clear();
+	m_onRemotePlayerConnected->clear();
+	m_onRemotePlayerDisconnected->clear();
+	m_onRemotePlayerTimedOut->clear();
+	m_onRemotePlayerKicked->clear();
+	m_onRemotePlayerBanned->clear();
+
+	Clear();
+}
 
 void ClientNetwork::NetPasswordInvalid(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection)
 {
@@ -262,6 +328,12 @@ void ClientNetwork::NetConnectionAccepted(PacketHandler* _packetHandler, uint64_
 		DebugLog("Password accepted. Connected to %s:%d.", LogSeverity::Info, _connection.GetIpAddress(), _connection.GetPort());
 
 	m_socket->SetActive(2);
+
+	for (int i = 0; i < m_inactivePackets->size(); ++i)
+	{
+		Send(m_inactivePackets->front());
+		m_inactivePackets->pop();
+	}
 
 	TriggerEvent(m_onConnectedToServer, _connection, 0);
 

@@ -229,7 +229,6 @@ void PacketHandler::EndUnpack(uint64_t _id)
 		if (SDL_LockMutex(m_receiveLock) == 0)
 		{
 			m_packetReceiveInfoMap->erase(_id);
-			SAFE_DELETE(pri->PacketData);
 			SAFE_DELETE(pri);
 			SDL_UnlockMutex(m_receiveLock);
 		}
