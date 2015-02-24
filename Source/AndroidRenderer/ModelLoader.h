@@ -95,7 +95,7 @@ public:
 		SDL_RWread(fileIn, data, length, 1);
 		data[length] = '\0';
 		std::string dataString = std::string(data);
-		delete data;
+		delete [] data;
 		// Close file
 		SDL_RWclose(fileIn);
 

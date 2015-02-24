@@ -6,15 +6,27 @@
 #include "Game/ResourceManager.h"
 #include "Game/HomePath.h"
 #include "Game/LuaBridge/Network/LuaNetwork.h"
+#include <SDL/SDL_mutex.h>
+#include <SDL/SDL_thread.h>
 
 #include <map>
+#include <queue>
 
 namespace ClientManager
 {
+
+#define FileChunkSize 10240
 	enum State
 	{
 		Connecting,
 		Connected
+	};
+
+	struct Job
+	{
+		ResourceManager::Resource resource;
+		std::string packetType;
+		Network::NetConnection nc;
 	};
 
 	//struct Client
@@ -24,7 +36,12 @@ namespace ClientManager
 	//};
 
 	std::map<Network::NetConnection, State> clients;
-#define FileChunkSize 1024
+	std::queue<Job> jobs;
+	SDL_Thread* jobThread;
+	SDL_mutex* jobMutex;
+
+	bool running = false;
+	bool done = true;
 
 	void NewClient(Network::NetConnection _client)
 	{
@@ -55,6 +72,99 @@ namespace ClientManager
 		return connectedClients;
 	}
 
+	static int Upload(void* ptr)
+	{
+		SDL_LockMutex(jobMutex);
+		bool empty = jobs.empty();
+		SDL_UnlockMutex(jobMutex);
+
+		Network::PacketHandler ph;
+
+		while (!empty)
+		{
+			SDL_LockMutex(jobMutex);
+			Job job = jobs.front();
+			SDL_UnlockMutex(jobMutex);
+
+			SDL_RWops* file;
+			FileSystem::File::Open(job.resource.Location, &file);
+
+			int bytesLeft = job.resource.Size;
+			bool firstPart = true;
+			while (bytesLeft > 0)
+			{
+				uint64_t id = ph.StartPack(job.packetType.c_str());
+				ph.WriteString(id, job.resource.File.c_str());
+
+				if (firstPart)
+				{
+					ph.WriteByte(id, 1);
+					firstPart = false;
+				}
+				else
+					ph.WriteByte(id, 0);
+
+				int size = bytesLeft > FileChunkSize ? FileChunkSize : bytesLeft;
+
+				ph.WriteInt(id, size);
+
+				unsigned char* data = (unsigned char*)FileSystem::File::Read(file, size);
+
+				ph.WriteBytes(id, data, size);
+
+				delete data;
+
+				NetworkInstance::GetServer()->Send(ph.EndPack(id), job.nc);
+
+				bytesLeft -= size;
+			}
+
+			SDL_LockMutex(jobMutex);
+			jobs.pop();
+			empty = jobs.empty();
+			SDL_UnlockMutex(jobMutex);
+
+			for (int i = 0; i < 500; ++i)
+			{
+				if (!empty)
+					break;
+
+				SDL_Delay(10);
+
+				SDL_LockMutex(jobMutex);
+				empty = jobs.empty();
+				SDL_UnlockMutex(jobMutex);
+			}
+		}
+		done = true;
+		return 0;
+	}
+	
+	void Update()
+	{
+		if (!running && !jobs.empty())
+		{
+			running = true;
+			done = false;
+			jobMutex = SDL_CreateMutex();
+
+			jobThread = SDL_CreateThread(Upload, "UploadThread", (void *)NULL);
+
+			if (!jobThread)
+			{
+				SDL_DestroyMutex(jobMutex);
+				running = false;
+			}
+		}
+		else if (running && done)
+		{
+			int returnValue;
+			SDL_WaitThread(jobThread, &returnValue);
+			SDL_DestroyMutex(jobMutex);
+			running = false;
+		}
+		//Upload();
+	}
 
 	void RequestGameModeFileList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
 	void RequestGameModeFile(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
@@ -122,7 +232,21 @@ namespace ClientManager
 			
 			resource = resources->at(filename);
 
-			SDL_RWops* file;
+			Job job;
+			job.resource = resource;
+			job.packetType = "GameModeFile";
+			job.nc = _nc;
+
+			if (running)
+			{
+				SDL_LockMutex(jobMutex);
+				jobs.push(job);
+				SDL_UnlockMutex(jobMutex);
+			}
+			else
+				jobs.push(job);
+
+			/*SDL_RWops* file;
 			FileSystem::File::Open(resource.Location, &file);
 
 			int bytesLeft = resource.Size;
@@ -153,7 +277,7 @@ namespace ClientManager
 				NetworkInstance::GetServer()->Send(_ph->EndPack(id), _nc);
 
 				bytesLeft -= size;
-			}
+			}*/
 		}
 	}
 
@@ -195,7 +319,21 @@ namespace ClientManager
 
 			resource = resources->at(filename);
 
-			SDL_RWops* file;
+			Job job;
+			job.resource = resource;
+			job.packetType = "ContentFile";
+			job.nc = _nc;
+
+			if (running)
+			{
+				SDL_LockMutex(jobMutex);
+				jobs.push(job);
+				SDL_UnlockMutex(jobMutex);
+			}
+			else
+				jobs.push(job);
+
+			/*SDL_RWops* file;
 			FileSystem::File::Open(resource.Location, &file);
 
 			int bytesLeft = resource.Size;
@@ -226,7 +364,7 @@ namespace ClientManager
 				NetworkInstance::GetServer()->Send(_ph->EndPack(id), _nc);
 
 				bytesLeft -= size;
-			}
+			}*/
 		}
 	}
 

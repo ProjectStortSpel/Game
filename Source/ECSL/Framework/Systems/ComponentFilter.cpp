@@ -13,7 +13,7 @@ ComponentFilter::~ComponentFilter()
 		delete(m_addedComponentTypes);
 
 	if (m_bitSet)
-		delete(m_bitSet);
+		free(m_bitSet);
 }
 
 void ComponentFilter::Add(const std::string& _componentType)

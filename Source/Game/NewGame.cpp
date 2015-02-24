@@ -72,6 +72,7 @@ int main(int argc, char** argv)
         newGame->InitializeInput();
         newGame->InitializeNetwork();
         newGame->InitializeThreads();
+	newGame->InitializeAudio();
         
         newGame->StartGame(argc, argv);
     }
