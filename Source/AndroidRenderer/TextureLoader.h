@@ -48,7 +48,7 @@ static unsigned int LoadTexture(const char* file, GLenum textureSlot, int &heigh
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imgData);
 
 	stbi_image_free(imgData);
-	delete data;
+	delete [] data;
 	return texHandle;
 }
 
@@ -146,7 +146,7 @@ static unsigned int LoadCubeMap(const char* file, GLenum textureSlot, int &heigh
 		glTexImage2D(targets[i], 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imgData);
 
 		stbi_image_free(imgData);
-		delete data;
+		delete [] data;
 	}
 
 	return texHandle;

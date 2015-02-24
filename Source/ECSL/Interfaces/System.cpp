@@ -26,7 +26,7 @@ System::~System()
 	if (m_systemName)
 		delete(m_systemName);
 	if (m_entitiesBitSet)
-		delete(m_entitiesBitSet);
+		free(m_entitiesBitSet);
 	if (m_entities)
 		delete(m_entities);
 	if (m_subscriptions)

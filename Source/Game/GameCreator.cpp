@@ -91,6 +91,8 @@ GameCreator::~GameCreator()
 
 	delete(&ECSL::ComponentTypeManager::GetInstance());
 	delete(&ECSL::EntityTemplateManager::GetInstance());
+	delete(&ECSL::DataLogger::GetInstance());
+	delete(&MPL::TaskManager::GetInstance());
 	delete(m_frameCounter);
 }
 
@@ -286,15 +288,6 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
     worldCreator.SkipComponentTypesAndTemplates(!_isMainWorld);
 	LuaEmbedder::AddObject<LuaBridge::LuaWorldCreator>(luaState, "WorldCreator", &worldCreator, "worldCreator");
 
-//	std::stringstream gameMode;
-//#if defined(_DEBUG) && !defined(__ANDROID__) && !defined(__APPLE__)
-//	gameMode << "../../../Externals/content/scripting/";
-//#else
-//	gameMode << "content/scripting/";
-//#endif
-//	gameMode << _gameMode;
-//	gameMode << "/init.lua";
-//
 	std::vector<std::string> paths;
 	if (NetworkInstance::GetServer()->IsRunning() || _gameMode == "lobbythreaded")
 		paths = HomePath::GetGameModePaths(HomePath::Type::Server);
@@ -399,7 +392,7 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
         m_graphicalSystems.push_back(graphicalSystem);
         worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
         
-        graphicalSystem = new ModelSystem(m_graphics);
+		graphicalSystem = new ModelSystem(m_graphics, _worldType == WorldType::Client);
         m_graphicalSystems.push_back(graphicalSystem);
         worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 

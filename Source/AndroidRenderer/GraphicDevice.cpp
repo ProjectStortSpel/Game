@@ -29,7 +29,7 @@ GraphicDevice::~GraphicDevice()
 	delete(m_skybox);
 
 	if (m_pointlightsPtr)
-		delete m_pointlightsPtr;
+		delete [] m_pointlightsPtr;
 
 	SDL_GL_DeleteContext(m_glContext);
 	// Close and destroy the window
