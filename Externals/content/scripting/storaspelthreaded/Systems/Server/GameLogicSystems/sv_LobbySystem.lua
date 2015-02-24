@@ -37,18 +37,21 @@ LobbySystem.Update = function(self, dt)
 end
 
 LobbySystem.EntitiesAdded = function(self, dt, entities)
-	for n = 1, #entities do
-		local entityId = entities[n]
-		if world:EntityHasComponent( entityId, self.Name) then
-			self:SpawnMenu()
-		elseif world:EntityHasComponent( entityId, self.Name.."Element") then
-		
-		elseif world:EntityHasComponent( entityId, "UnitEntityId") then
-			self.UpdateMe = true
-		elseif world:EntityHasComponent( entityId, "GameRunning") then
-			self:RemoveMenu()
-		elseif world:EntityHasComponent( entityId, "LobbyPlayerReadyMSG") then
-			self:ToggleReady(entityId)
+	local GameRunning = self:GetEntities("GameRunning")
+	if #GameRunning > 0 then
+		self:RemoveMenu()
+	else
+		for n = 1, #entities do
+			local entityId = entities[n]
+			if world:EntityHasComponent( entityId, self.Name) then
+				self:SpawnMenu()
+			elseif world:EntityHasComponent( entityId, self.Name.."Element") then
+			
+			elseif world:EntityHasComponent( entityId, "UnitEntityId") then
+				self.UpdateMe = true
+			elseif world:EntityHasComponent( entityId, "LobbyPlayerReadyMSG") then
+				self:ToggleReady(entityId)
+			end
 		end
 	end
 end
