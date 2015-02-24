@@ -27,7 +27,7 @@ public:
 	GameCreator();
 	~GameCreator();
 
-	void InitializeGraphics();
+	bool InitializeGraphics();
 	void InitializeConsole();
 	void InitializeInput();
 	void InitializeNetwork();

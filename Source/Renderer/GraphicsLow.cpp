@@ -46,7 +46,7 @@ bool GraphicsLow::Init()
 	if (!m_SDLinitialized)
 		m_camera = new Camera(m_clientWidth, m_clientHeight);
 
-	if (!InitGLEW()) { ERRORMSG("GLEW_VERSION_4_0 FAILED.\n INCOMPATIBLE GRAPHICS DRIVER\n"); }
+    if (!InitGLEW()) { ERRORMSG("GLEW_VERSION_4_0 FAILED.\n INCOMPATIBLE GRAPHICS DRIVER\n"); return false; }
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
 	InitRenderLists();
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }

@@ -26,6 +26,11 @@ GameInterfaceSystem.PostInitialize = function(self)
 	local camerabutton = self:CreateElement("camerabutton", "quad", 3.3, 1.4, -4, 0.35, 0.35)
 	self:AddEntityCommandToButton("CameraSystemComponent", camerabutton)
 	self:AddHoverSize(1.5, camerabutton)
+	
+		
+	local readybutton = self:CreateElement("readybutton", "quad", -3.3, 1.4, -4, 0.35, 0.35)
+	self:AddEntityCommandToButton("LobbyPlayerReady", readybutton)
+	self:AddHoverSize(1.5, readybutton)
 end
 
 GameInterfaceSystem.Update = function(self, dt)

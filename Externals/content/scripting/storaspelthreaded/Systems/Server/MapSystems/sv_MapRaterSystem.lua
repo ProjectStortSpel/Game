@@ -57,14 +57,12 @@ MapRater.EntitiesAdded = function(self, dt, newEntities)
 			self:CheckpointReached(newEntity)
 			world:KillEntity(newEntity)
 			
-			--if self.PlayersLeftToWin == 0 then
-				print("MapRater killing Entity " .. newEntity .. " before printing")
+			if self.PlayersLeftToWin == 0 then
 				self:LogWorldData()
 				self:PrintInfo()
-			--end
+			end
 		elseif world:EntityHasComponent(newEntity, "UnitDied") then
 			local	playerNumber	=	world:GetComponent(newEntity, "UnitDied", "PlayerNumber"):GetInt()
-			print("Playernumber " .. playerNumber)
 			self.PlayersDeaths[playerNumber]	=	self.PlayersDeaths[playerNumber] + 1
 			world:KillEntity(newEntity)
 		elseif world:EntityHasComponent(newEntity, "NewRound") then

@@ -49,3 +49,20 @@ Unit.Name = "Unit"
 	Unit:AddComponent("SyncNetwork")			--	Sync this entity
 	
 EntityTemplateManager:AddTemplate(Unit)		--	Add the template
+
+--	Unit template
+local Ghost = EntityTemplate()
+Ghost.Name = "Ghost"
+
+	Ghost:AddComponent("Model")
+
+	--	Model data
+	Ghost:SetFloat3("Position", 0.0, 1.0, 0.0)
+	Ghost:SetFloat3("Rotation", 0.0, math.pi, 0.0)
+	Ghost:SetFloat3("Scale", 0.8, 0.8, 0.8)
+	
+	--	Game Logic
+	Ghost:AddComponent("Direction")
+	Ghost:AddComponent("MapPosition")
+	
+EntityTemplateManager:AddTemplate(Ghost)		--	Add the template

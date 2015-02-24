@@ -1,5 +1,6 @@
 #include "SyncEntitiesSystem.h"
 #include "../Network/NetworkInstance.h"
+#include "Game/Network/ClientManager.h"
 
 SyncEntitiesSystem::SyncEntitiesSystem()
 {
@@ -57,7 +58,8 @@ void SyncEntitiesSystem::Update(const ECSL::RuntimeInfo& _runtime)
 						ECSL::BitSet::GetDataTypeCount(ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount())
 						);
 					Network::Packet* p = NetworkInstance::GetServerNetworkHelper()->WriteEntityDelta(server->GetPacketHandler(), entityId, changedComponents);
-					server->Broadcast(p);
+                    std::vector<Network::NetConnection> NCs = ClientManager::GetConnectedClients();
+					server->Send(p, NCs);
 				}
 
 				//data = (ECSL::BitSet::DataType*)GetComponent(entities[i], "ChangedComponentsNetwork", 0);
@@ -77,7 +79,9 @@ void SyncEntitiesSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const 
 		for (auto entityId : _entities)
 		{
 			Network::Packet* p = NetworkInstance::GetServerNetworkHelper()->WriteEntityAll(server->GetPacketHandler(), entityId);
-			server->Broadcast(p);
+            std::vector<Network::NetConnection> NCs = ClientManager::GetConnectedClients();
+
+			server->Send(p, NCs);
 		}
 	}
 }
@@ -90,7 +94,8 @@ void SyncEntitiesSystem::EntitiesRemoved(const ECSL::RuntimeInfo& _runtime, cons
 		for (auto entityId : _entities)
 		{
 			Network::Packet* p = NetworkInstance::GetServerNetworkHelper()->WriteEntityKill(server->GetPacketHandler(), entityId);
-			server->Broadcast(p);
+            std::vector<Network::NetConnection> NCs = ClientManager::GetConnectedClients();
+			server->Send(p, NCs);
 		}
 	}
 }
