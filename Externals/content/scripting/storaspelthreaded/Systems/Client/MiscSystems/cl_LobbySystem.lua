@@ -14,6 +14,7 @@ LobbySystem.Initialize = function ( self )
 	self:AddComponentTypeToFilter(self.Name.."Element", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("LobbyPlayerReady", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("LobbyMenuActive", FilterType.RequiresOneOf)
 end
 
 LobbySystem.Update = function(self, dt)
@@ -52,12 +53,14 @@ LobbySystem.EntitiesAdded = function(self, dt, entities)
 end
 
 LobbySystem.SpawnMenu = function(self)
+	print("spawn")
 	self.ReadyButton = self:CreateElement("readybutton", "quad", -3.3, 1.4, -4, 0.35, 0.35)
 	self:AddEntityCommandToButton("LobbyPlayerReady", self.ReadyButton)
 	self:AddHoverSize(1.5, self.ReadyButton)
 end
 
 LobbySystem.RemoveMenu = function(self)
+	print("remove")
 	local entities = self:GetEntities()
 	for i = 1, #entities do
 		local entityId = entities[i]

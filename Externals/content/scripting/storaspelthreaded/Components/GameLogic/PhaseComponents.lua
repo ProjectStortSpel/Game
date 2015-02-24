@@ -24,6 +24,7 @@ worldCreator:AddComponentType(AutoPickCardsComponent)
 
 --	Game Running
 local GameRunningComponent = ComponentType()
+GameRunningComponent.SyncNetwork = true
 GameRunningComponent.Name = "GameRunning"
 GameRunningComponent.TableType = TableType.Map
 worldCreator:AddComponentType(GameRunningComponent)
