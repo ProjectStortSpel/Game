@@ -12,12 +12,15 @@
 class AModelSystem : public GraphicalSystem
 {
 public:
-	AModelSystem(Renderer::GraphicDevice* _graphics);
+	AModelSystem(Renderer::GraphicDevice* _graphics, bool _isClient);
 	~AModelSystem();
 
 	void Initialize();
 
 	void EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities);
+
+private:
+	bool m_IsClient;
 
 };
 
