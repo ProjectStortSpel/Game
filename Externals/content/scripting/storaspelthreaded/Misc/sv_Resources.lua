@@ -1,1 +1,1 @@
-Resource.Add("models/caveman/*")
+Resource.Add("models/*")
