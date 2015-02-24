@@ -91,6 +91,7 @@ GameCreator::~GameCreator()
 
 	delete(&ECSL::ComponentTypeManager::GetInstance());
 	delete(&ECSL::EntityTemplateManager::GetInstance());
+	delete(&ECSL::DataLogger::GetInstance());
 	delete(&MPL::TaskManager::GetInstance());
 	delete(m_frameCounter);
 }
