@@ -25,6 +25,7 @@ if(WIN32)
       winmm
       "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Windows/${WINDOWS_SYSTEM}/SDL2.lib"
 	  "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Windows/${WINDOWS_SYSTEM}/SDL2_ttf.lib"
+	  "${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Windows/${WINDOWS_SYSTEM}/SDL2_mixer.lib"
 	"${CMAKE_CURRENT_SOURCE_DIR}/../../Externals/lib/Windows/${WINDOWS_SYSTEM}/vld.lib"
 	ws2_32)
   set(EXTERNAL_WINDOWS_STATIC_SDL2MAIN_LIBRARY
@@ -109,6 +110,9 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory
   "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE}/content")
 
 # Add subprojects
+if(NOT TARGET Audio)
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Audio" Audio)
+endif()
 if(NOT TARGET FileSystem)
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/FileSystem" FileSystem)
 endif()
@@ -136,7 +140,6 @@ endif()
 if(NOT TARGET Logger)
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Logger" Logger)
 endif()
-
 
 if(NOT TARGET Game)
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Game" Game)
