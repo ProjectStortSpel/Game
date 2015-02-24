@@ -91,7 +91,7 @@ LobbySystem.UpdatePlayers = function(self)
 		self:AddTextToTexture("LMSPname"..i, name, 0, r, g, b, text)
 		text = self:CreateElement("center", "text", 0, 0.64-i*0.11, -1.999, 1.78, 0.08)
 		self:AddTextToTexture("LMSPip"..i, ip, 0, r, g, b, text)
-		text = self:CreateElement("right", "text", 0.89, 0.64-i*0.11, -1.999, 0.8, 0.08)	
+		text = self:CreateElement("right", "text", 0.85, 0.64-i*0.11, -1.999, 0.8, 0.08)	
 		self:AddTextToTexture("LMSPready"..i, readyText, 0, r, g, b, text)
 	end
 	
@@ -130,6 +130,7 @@ end
 
 LobbySystem.SpawnMenu = function(self)
 	local background = self:CreateElement("gamemenubackground", "quad", 0, 0, -2.1, 2.07, 1.3)
+	world:CreateComponentAndAddTo("LobbyMenuActive", background)
 end
 
 LobbySystem.RemoveMenu = function(self)
