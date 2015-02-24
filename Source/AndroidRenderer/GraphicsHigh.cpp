@@ -425,7 +425,7 @@ bool GraphicsHigh::InitLightBuffers()
 
 	float **tmpPtr = new float*[1];
 	BufferPointlights(0, tmpPtr);
-	delete tmpPtr;
+	delete [] tmpPtr;
 
 	BufferDirectionalLight(&m_lightDefaults[0]);
 
@@ -436,7 +436,7 @@ void GraphicsHigh::BufferPointlights(int _nrOfLights, float **_lightPointers)
 {
 	if (m_pointlightsPtr)
 	{
-		delete m_pointlightsPtr;
+		delete [] m_pointlightsPtr;
 		m_pointlightsPtr = 0;
 	}
 		
@@ -683,10 +683,10 @@ void GraphicsHigh::Clear()
 
   float **tmpPtr = new float*[1];
   BufferPointlights(0, tmpPtr);
-  delete tmpPtr;
+  delete [] tmpPtr;
   
   if (m_pointlightsPtr)
-	  delete m_pointlightsPtr;
+	  delete [] m_pointlightsPtr;
 
   m_pointlightsPtr = NULL;
   m_directionalLightPtr = NULL;
@@ -751,7 +751,7 @@ void GraphicsHigh::BufferLightsToGPU()
 				m_forwardShader.SetUniVariable(ss.str().c_str(), glfloat, &m_pointlightsPtr[i][9]);		ss.str(std::string());
 			}
 		}
-		delete m_pointlightsPtr;
+		delete [] m_pointlightsPtr;
 		m_pointlightsPtr = 0;
 	}
 }

@@ -4,11 +4,14 @@
 DirectionalLightSystem::DirectionalLightSystem(Renderer::GraphicDevice* _graphics)
 {
 	m_graphics = _graphics;
+	
+	m_bitMask = NULL;
 
 }
 DirectionalLightSystem::~DirectionalLightSystem()
 {
-
+	if (m_bitMask)
+		free(m_bitMask);
 }
 
 void DirectionalLightSystem::Initialize()

@@ -39,7 +39,7 @@ public:
 
 	std::vector<float> ReadDataFromFile()
 	{
-		int size;
+		int size = 0;
 		ifile.read((char*)&size, sizeof(int));
 		if (size < 0)
 			size = 0;

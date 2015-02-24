@@ -190,4 +190,9 @@ worldCreator:AddSystemToCurrentGroup(SortClientSelectedCards)	--	Temp
 worldCreator:AddSystemToCurrentGroup(ClearServerSelectedSystem)	--	Temp
 worldCreator:AddSystemToCurrentGroup(FindSpawnpointSystem)
 
+--	Audio Systems
+package.path = package.path .. ";Systems/Server/AudioSystems/?.lua"
+require "sv_AudioUnitDeathSystem"
 
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(AudioUnitDeathSystem)

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "Game\Game.vcxproj", "{B8EFCC27-B82E-4F58-A794-F312D54BDBDD}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -19,9 +19,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Input", "Input\Input.vcxproj", "{9CBEB33A-B752-47FA-8995-C717E1BC509D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Network", "Network\Network.vcxproj", "{76B48B4A-FB1E-417A-87E6-70CB865CCC09}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E15310EA-512E-4A1E-BC27-6915FDC3B665} = {E15310EA-512E-4A1E-BC27-6915FDC3B665}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Renderer", "Renderer\Renderer.vcxproj", "{A71BE4D1-612E-49FE-9B2D-EA067C024F0A}"
 EndProject
@@ -45,6 +42,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Logger", "Logger\Logger.vcx
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FileSystem", "Directory\Directory.vcxproj", "{C3BE57B6-FE89-40F0-AA80-1E1515C026BC}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Audio", "Audio\Audio.vcxproj", "{E8C5DA98-2D2C-4FCA-BE3A-7572EDB0417F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -184,6 +183,18 @@ Global
 		{C3BE57B6-FE89-40F0-AA80-1E1515C026BC}.Release|x64.Build.0 = Release|x64
 		{C3BE57B6-FE89-40F0-AA80-1E1515C026BC}.Release|x86.ActiveCfg = Release|Win32
 		{C3BE57B6-FE89-40F0-AA80-1E1515C026BC}.Release|x86.Build.0 = Release|Win32
+		{E8C5DA98-2D2C-4FCA-BE3A-7572EDB0417F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E8C5DA98-2D2C-4FCA-BE3A-7572EDB0417F}.Debug|Win32.Build.0 = Debug|Win32
+		{E8C5DA98-2D2C-4FCA-BE3A-7572EDB0417F}.Debug|x64.ActiveCfg = Debug|x64
+		{E8C5DA98-2D2C-4FCA-BE3A-7572EDB0417F}.Debug|x64.Build.0 = Debug|x64
+		{E8C5DA98-2D2C-4FCA-BE3A-7572EDB0417F}.Debug|x86.ActiveCfg = Debug|Win32
+		{E8C5DA98-2D2C-4FCA-BE3A-7572EDB0417F}.Debug|x86.Build.0 = Debug|Win32
+		{E8C5DA98-2D2C-4FCA-BE3A-7572EDB0417F}.Release|Win32.ActiveCfg = Release|Win32
+		{E8C5DA98-2D2C-4FCA-BE3A-7572EDB0417F}.Release|Win32.Build.0 = Release|Win32
+		{E8C5DA98-2D2C-4FCA-BE3A-7572EDB0417F}.Release|x64.ActiveCfg = Release|x64
+		{E8C5DA98-2D2C-4FCA-BE3A-7572EDB0417F}.Release|x64.Build.0 = Release|x64
+		{E8C5DA98-2D2C-4FCA-BE3A-7572EDB0417F}.Release|x86.ActiveCfg = Release|Win32
+		{E8C5DA98-2D2C-4FCA-BE3A-7572EDB0417F}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

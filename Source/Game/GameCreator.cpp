@@ -62,6 +62,8 @@ GameCreator::~GameCreator()
     
     if (m_serverWorld)
         delete m_serverWorld;
+    
+	Audio::Quit();
 
 	if (m_graphics)
 	{
@@ -89,7 +91,13 @@ GameCreator::~GameCreator()
 
 	delete(&ECSL::ComponentTypeManager::GetInstance());
 	delete(&ECSL::EntityTemplateManager::GetInstance());
+	delete(&MPL::TaskManager::GetInstance());
 	delete(m_frameCounter);
+}
+
+void GameCreator::InitializeAudio()
+{
+	Audio::Init();
 }
 
 bool GameCreator::InitializeGraphics()
@@ -439,6 +447,7 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
         //worldCreator.AddSystemGroup();
         worldCreator.AddSystemToCurrentGroup<ResetChangedSystem>();
     }
+    
 
 	graphicalSystem = new ParticleSystem(m_graphics);
 	m_graphicalSystems.push_back(graphicalSystem);
@@ -512,6 +521,21 @@ void GameCreator::RunStartupCommands(int argc, char** argv)
 			command[size - 1] = '\0';
 			Console::ConsoleManager::GetInstance().AddToCommandQueue(command);
 		}
+	}
+}
+
+void noEffect(int chan, void *stream, int len, void *udata)
+{
+	float ratio = (22050 + 20000) / 22050.0f;
+	short* samples = (short*)stream;
+	int i = 0;
+	for(float x = 0; x < len/2 - 1; x += ratio) {
+		float p = x - int(x);
+		samples[i++] = (1-p) * samples[int(x)] + p * samples[int(x) + 1];
+	}
+
+	for(; i < len/2; i++) {
+		samples[i] = 0;
 	}
 }
 
@@ -614,10 +638,15 @@ void GameCreator::StartGame(int argc, char** argv)
 		m_luaGarbageCollectionCounter.Reset();
 		LuaEmbedder::CollectGarbageForDuration(0.1f * dt);
 		m_luaGarbageCollectionCounter.Tick();
+		
+		Audio::SetCameraPosition(*m_graphics->GetCamera()->GetPos());
+		Audio::Update();
 
 		m_networkCounter.Reset();
 		UpdateNetwork(dt);
 		m_networkCounter.Tick();
+
+		ClientManager::Update();
 
 		/*	Update graphics	*/
 		m_graphics->Update(dt);
