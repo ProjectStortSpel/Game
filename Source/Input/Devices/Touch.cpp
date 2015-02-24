@@ -49,9 +49,6 @@ void Touch::Update()
 {
 	for (std::map<SDL_FingerID, bool>::iterator it = m_thisState.begin(); it != m_thisState.end(); it++)
 		m_lastState[it->first] = it->second;
-		
-	m_pressedState.clear();
-	m_releasedState.clear();
 
 	m_deltaPositions.clear();
 }
