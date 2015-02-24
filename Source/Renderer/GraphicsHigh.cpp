@@ -5,6 +5,9 @@ using namespace glm;
 
 GraphicsHigh::GraphicsHigh()
 {
+	mark = 0;
+	timer = 0;
+
 	m_renderSimpleText = true;
 	m_modelIDcounter = 0;
 	m_vramUsage = 0;
@@ -328,6 +331,14 @@ void GraphicsHigh::Update(float _dt)
 	BufferSurfaces();
 	BufferModelTextures();
 	BufferParticleSystems();
+
+	for (int i = 0; i < m_modelsAnimated.size(); i++)
+	{
+		if (m_modelsAnimated[i].active) // IS MODEL ACTIVE?
+		{
+			m_modelsAnimated[i].Update(_dt);
+		}
+	}
 }
 
 void GraphicsHigh::WriteShadowMapDepth()
@@ -445,59 +456,7 @@ void GraphicsHigh::Render()
 	m_animationShader.SetUniVariable("TexFlag", glint, &m_debugTexFlag);
 	//----DRAW MODELS
 	for (int i = 0; i < m_modelsAnimated.size(); i++)
-	{
-		if (m_modelsAnimated[i].active) // IS MODEL ACTIVE?
-		{
-			mat4 modelMatrix;
-			if (m_modelsAnimated[i].modelMatrix == NULL)
-				modelMatrix = glm::translate(glm::vec3(1));
-			else
-				modelMatrix = *m_modelsAnimated[i].modelMatrix;
-	
-			mat4 vp = projectionMatrix * viewMatrix;
-			mat4 modelViewMatrix = modelMatrix;
-			mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-			m_animationShader.SetUniVariable("BlendColor", vector3, m_modelsAnimated[i].color);
-	
-			m_animationShader.SetUniVariable("M", mat4x4, &modelViewMatrix);
-			m_animationShader.SetUniVariable("VP", mat4x4, &vp);
-			m_animationShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
-	
-	
-	
-	
-			float *joint_data = new float[m_modelsAnimated[i].joints.size() * 16];
-			
-			for (int j = 0; j < m_modelsAnimated[i].joints.size(); j++)
-			{
-				memcpy(&joint_data[16 * j], &m_modelsAnimated[i].joints[j], 16 * sizeof(float));
-			}
-			
-			int joint_data_size = 16 * m_modelsAnimated[i].joints.size() * sizeof(float);
-			
-			glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 1, m_modelsAnimated[i].jointBuffer, 0, joint_data_size);
-			glBufferData(GL_SHADER_STORAGE_BUFFER, joint_data_size, joint_data, GL_STATIC_DRAW);
-			
-			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_modelsAnimated[i].jointBuffer);
-	
-			delete joint_data;
-	
-	
-
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, m_modelsAnimated[i].texID);
-	
-			glActiveTexture(GL_TEXTURE2);
-			glBindTexture(GL_TEXTURE_2D, m_modelsAnimated[i].norID);
-	
-			glActiveTexture(GL_TEXTURE3);
-			glBindTexture(GL_TEXTURE_2D, m_modelsAnimated[i].speID);
-	
-			m_modelsAnimated[i].bufferPtr->draw();
-
-			glBindTexture(GL_TEXTURE_2D, 0);
-		}
-	}
+		m_modelsAnimated[i].Draw(viewMatrix, projectionMatrix, &m_animationShader);
 
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	//--------------------------End of pass1--------------------------------
@@ -628,21 +587,6 @@ void GraphicsHigh::Render()
 	glDrawArrays(GL_POINTS, 0, 1);
 
 	glUseProgram(0);
-
-
-	//for (int i = 0; i < m_modelsAnimated.size(); i++)
-	//{
-	//	if (m_modelsAnimated[i].active) // IS MODEL ACTIVE?
-	//	{
-	//		glLineWidth(2.5);
-	//		glColor3f(1.0, 0.0, 0.0);
-	//		glBegin(GL_LINES);
-	//		glVertex3f(0.0, 0.0, 0.0);
-	//		glVertex3f(15, 0, 0);
-	//		glEnd();
-	//	}
-	//}
-
 
 	// Swap in the new buffer
 	SDL_GL_SwapWindow(m_window);
