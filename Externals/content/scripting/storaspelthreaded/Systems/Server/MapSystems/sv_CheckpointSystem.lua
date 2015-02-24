@@ -1,5 +1,6 @@
 CheckpointSystem = System()
-
+CheckpointSystem.MapCenterX	=	0
+CheckpointSystem.MapCenterZ	=	0
 CheckpointSystem.Initialize = function(self)
 	--	Set Name
 	self:SetName("CheckpointSystem")
@@ -12,6 +13,8 @@ CheckpointSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Checkpoint", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("CheckCheckpointForEntity", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("Player", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("MapSpecs", FilterType.RequiresOneOf)
 end
 
 CheckpointSystem.AddTotemPiece = function(self, playerNumber, checkpoint, colorX, colorY, colorZ)
@@ -22,8 +25,8 @@ CheckpointSystem.AddTotemPiece = function(self, playerNumber, checkpoint, colorX
 	world:CreateComponentAndAddTo("CheckpointId", totemPieceId)
 	world:CreateComponentAndAddTo("Color", totemPieceId)
 	
-	world:SetComponent(totemPieceId, "PlayerNumber", "Number", playerNumber)
-	world:SetComponent(totemPieceId, "CheckpointId", "Id", checkpoint)
+	world:GetComponent(totemPieceId, "PlayerNumber", "Number"):SetInt(playerNumber)
+	world:GetComponent(totemPieceId, "CheckpointId", "Id"):SetInt(checkpoint)
 	world:GetComponent(totemPieceId, "Color", "X"):SetFloat3(colorX, colorY, colorZ)
 	
 end
@@ -87,7 +90,7 @@ CheckpointSystem.CheckCheckpoint = function(self, entityId, posX, posZ)
 	
 end
 
-CheckpointSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, newEntities)
+CheckpointSystem.EntitiesAdded = function(self, dt, newEntities)
 
 	for n = 1, #newEntities do
 		local entity = newEntities[n]
@@ -101,6 +104,26 @@ CheckpointSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, newEnt
 			self:CheckCheckpoint(tEntityId, tPosX, tPosZ)
 			world:KillEntity(entity)
 		end
+
+		if world:EntityHasComponent(entity, "GameRunning") then
+			
+			local	allPlayers	=	self:GetEntities("Player")
+			for tPlayer = 1, #allPlayers do
+			
+				if world:EntityHasComponent(allPlayers[tPlayer], "PlayerNumber") then
+					local	playerNum	=	world:GetComponent(allPlayers[tPlayer], "PlayerNumber", 0):GetInt()
+					self:SendInfoToClient(playerNum, 1)
+				end
+			end
+		end
+		
+		--	Get Center and also set up all angles on TotemPoles
+		if world:EntityHasComponent(entity, "MapSpecs") then
+			local tX, tZ = world:GetComponent(entity, "MapSpecs", "SizeX"):GetInt2()
+			
+			self.MapCenterX = tX * 0.5
+			self.MapCenterZ = tZ * 0.5
+		end
 		
 	end
 	
@@ -109,17 +132,14 @@ end
 
 CheckpointSystem.SendInfoToClient = function(self, player, nextCheckpoint)
 
-	print("SendInfoToClient player " .. player)
 	--	Check if the player is a player and not AI
 	local	allPlayers	=	self:GetEntities("Player")
 	local	playerId	=	-1
 	for pId = 1, #allPlayers do
-		
 		if player == world:GetComponent(allPlayers[pId], "PlayerNumber", "Number"):GetInt() then
 			playerId	=	allPlayers[pId]
 			break
 		end
-		
 	end
 	if playerId == -1 then
 		return
@@ -140,11 +160,29 @@ CheckpointSystem.SendInfoToClient = function(self, player, nextCheckpoint)
 	end
 	
 	
-	print("Sending info about checkpoint at " .. X .. ", " .. Z .. " for player " .. player)
+	local tempMoveX = self.MapCenterX - X
+	local tempMoveZ = self.MapCenterZ - Z
+	-- Position
+	local offsetX = 0.35;
+	local offsetZ = 0.35;
+	
+	if tempMoveX < 0 then
+		offsetX = offsetX * -1
+	else
+		offsetX = offsetX * 1
+	end
+	
+	if tempMoveZ < 0 then
+		offsetZ = offsetZ * -1
+	else
+		offsetZ = offsetZ * 1
+	end
+	
+	
 	local id = Net.StartPack("Client.NewTargetCheckpoint")
 	Net.WriteInt(id, nextCheckpoint)
-	Net.WriteInt(id, X)
-	Net.WriteInt(id, Z)
+	Net.WriteFloat(id, X+offsetX)
+	Net.WriteFloat(id, Z+offsetZ)
 	Net.Send(id, IP, PORT)
 	
 end

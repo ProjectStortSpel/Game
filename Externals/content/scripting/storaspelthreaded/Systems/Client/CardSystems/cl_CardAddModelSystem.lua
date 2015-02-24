@@ -12,7 +12,7 @@ CardAddModelSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("CardAction", FilterType.Mandatory)
 end
 
-CardAddModelSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+CardAddModelSystem.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entityId = entities[n]

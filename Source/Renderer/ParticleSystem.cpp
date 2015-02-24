@@ -13,6 +13,7 @@ ParticleSystem::ParticleSystem(std::string type, const vec3 _pos, int _nParticle
 	m_shader = _shaderProg;
 	m_drawBuf = 1;
 	m_color = _color;
+	m_endPhase = 0;
 
 	if (type == "fire")
 		CreateFire();
@@ -22,8 +23,9 @@ ParticleSystem::ParticleSystem(std::string type, const vec3 _pos, int _nParticle
 	//set uniforms?
 	subRoutineUpdate = glGetSubroutineIndex(m_shader->GetShaderProgram(), GL_VERTEX_SHADER, "update");
 	subRoutineRender = glGetSubroutineIndex(m_shader->GetShaderProgram(), GL_VERTEX_SHADER, "render");
-
+	
 	m_elapsedTime = 0.0f;
+	m_removeDelayTime = 0.0f;
 }
 
 ParticleSystem::~ParticleSystem()
@@ -41,7 +43,6 @@ void ParticleSystem::CreateFire()
 	float scale = m_scale;
 
 	m_accel = vec3(0.0);
-	m_type = 0;
 	vec3 v(0.0f);
 	float velocity, theta, phi;
 	float mtime = 0.0f, rate = (m_lifeTime / (float)m_nrParticles);//0.00075f;
@@ -179,7 +180,6 @@ void ParticleSystem::CreateSmoke()
 	m_dstBlendFactor = GL_ONE_MINUS_SRC_ALPHA;
 	float scale = m_scale;
 	m_accel = vec3(0.0f, 0.0f, 0.0f) * scale;
-	m_type = 1;
 	vec3 v(0.0f);
 	float velocity, theta, phi;
 	float mtime = 0.0f, rate = (m_lifeTime / (float)m_nrParticles);//0.00075f;
@@ -203,9 +203,9 @@ void ParticleSystem::CreateSmoke()
 		// Pick the direction of the velocity
 		theta = glm::mix(0.0f, (float)M_PI / 6.0f, (float)(rand() % 101) / 100);
 		phi = glm::mix(0.0f, (float)(2 * M_PI), (float)(rand() % 101) / 100);
-		v.x = sinf(theta) * cosf(phi) * 0.2;
-		v.y = cosf(theta) * 0.4;
-		v.z = sinf(theta) * sinf(phi) * 0.2;
+		v.x = sinf(theta) * cosf(phi) * 6 * scale;
+		v.y = cosf(theta) * 0.10;
+		v.z = sinf(theta) * sinf(phi) * 6 * scale;
 		// Scale to set the magnitude of the velocity (speed)
 		velocity = glm::mix(1.25f, 1.5f, (float)(rand() % 101) / 100) * 0.0012f;
 		v = v * velocity;
@@ -303,11 +303,15 @@ void ParticleSystem::CreateSmoke()
 
 void ParticleSystem::Render(float _dt)
 {
-	glBlendColor(0.92, 0.92, 0.92, 1.0);
+	glBlendColor(0.93, 0.93, 0.93, 1.0);
 	glBlendFunc(GL_SRC_ALPHA, m_dstBlendFactor);
 
 	float dt = 1000.f * (_dt);
 	m_elapsedTime += dt;
+
+	if (m_endPhase == 1)
+		m_removeDelayTime += dt;
+
 	/////////// Update pass ////////////////
 	glUniformSubroutinesuiv(GL_VERTEX_SHADER, 1, &subRoutineUpdate);
 	// Set the uniforms: H and Time
@@ -315,8 +319,8 @@ void ParticleSystem::Render(float _dt)
 	m_shader->SetUniVariable("DeltaTime", glfloat, &dt);
 	m_shader->SetUniVariable("ParticleLifetime", glfloat, &m_lifeTime);
 	m_shader->SetUniVariable("Size", glfloat, &m_spriteSize);
-	m_shader->SetUniVariable("Type", glint, &m_type);
 	m_shader->SetUniVariable("Accel", vector3, &m_accel);
+	m_shader->SetUniVariable("EndPhase", glint, &m_endPhase);
 
 	// Disable rendering
 	glEnable(GL_RASTERIZER_DISCARD);
@@ -344,4 +348,17 @@ void ParticleSystem::Render(float _dt)
 	glDrawArrays(GL_POINTS, 0, m_nrParticles);
 	// Swap buffers
 	m_drawBuf = 1 - m_drawBuf;
+}
+
+void ParticleSystem::EnterEndPhase()
+{
+	m_endPhase = 1;
+}
+
+bool ParticleSystem::ReadyToBeDeleted()
+{
+	if (m_removeDelayTime > m_lifeTime)
+		return true;
+	
+	return false;
 }

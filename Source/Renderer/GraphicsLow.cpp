@@ -46,7 +46,7 @@ bool GraphicsLow::Init()
 	if (!m_SDLinitialized)
 		m_camera = new Camera(m_clientWidth, m_clientHeight);
 
-	if (!InitGLEW()) { ERRORMSG("GLEW_VERSION_4_0 FAILED.\n INCOMPATIBLE GRAPHICS DRIVER\n"); }
+    if (!InitGLEW()) { ERRORMSG("GLEW_VERSION_4_0 FAILED.\n INCOMPATIBLE GRAPHICS DRIVER\n"); return false; }
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
 	InitRenderLists();
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
@@ -179,31 +179,32 @@ void GraphicsLow::Render()
 	for (int i = 0; i < m_modelsForward.size(); i++)
 		m_modelsForward[i].Draw(viewMatrix, mat4(1));
 
-	//------PARTICLES---------
+	//--------PARTICLES---------
 	glEnable(GL_POINT_SPRITE);
 	glDepthMask(GL_FALSE);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
 	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
-
-	m_particleShader.UseProgram();
-
-	m_particleShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
-	//glUniformMatrix4fv(glGetUniformLocation(particleShaderProgHandle, "ProjectionMatrix"), 1, GL_FALSE, &mCameraProjectionMat[0][0]);
 
 	glActiveTexture(GL_TEXTURE1);
 
 	for (std::map<int, ParticleSystem*>::iterator it = m_particleSystems.begin(); it != m_particleSystems.end(); ++it)
 	{
+		Shader* thisShader = it->second->GetShaderPtr();
+		thisShader->UseProgram();
+
+		thisShader->SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
+
 		glBindTexture(GL_TEXTURE_2D, it->second->GetTexHandle());
 
 		mat4 Model = glm::translate(it->second->GetWorldPos());
 		mat4 ModelView = viewMatrix * Model;
 
-		m_particleShader.SetUniVariable("ModelView", mat4x4, &ModelView);
-		m_particleShader.SetUniVariable("BlendColor", vector3, it->second->GetColor());
+		thisShader->SetUniVariable("ModelView", mat4x4, &ModelView);
+		thisShader->SetUniVariable("BlendColor", vector3, it->second->GetColor());
 
 		it->second->Render(m_dt);
 	}
+
 	glDisable(GL_POINT_SPRITE);
 	glDepthMask(GL_TRUE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -308,22 +309,32 @@ bool GraphicsLow::InitShaders()
 	m_shadowShaderForward.AddShader("content/shaders/shadowShaderForwardFS.glsl", GL_FRAGMENT_SHADER);
 	m_shadowShaderForward.FinalizeShaderProgram();
 
-	// Particle shader
-	m_particleShader.InitShaderProgram();
-	m_particleShader.AddShader("content/shaders/particleShaderVS.glsl", GL_VERTEX_SHADER);
-	m_particleShader.AddShader("content/shaders/particleShaderFS.glsl", GL_FRAGMENT_SHADER);
-	const char * outputNames[] = { "Position", "Velocity", "StartTime" };
-	glTransformFeedbackVaryings(m_particleShader.GetShaderProgram(), 3, outputNames, GL_SEPARATE_ATTRIBS);
-	m_particleShader.FinalizeShaderProgram();
+	// ------Particle shaders---------
+		const char * outputNames[] = { "Position", "Velocity", "StartTime" };
+		Shader particleShader;
+		particleShader.InitShaderProgram();
+		particleShader.AddShader("content/shaders/particles/particleFireVS.glsl", GL_VERTEX_SHADER);
+		particleShader.AddShader("content/shaders/particles/particleFireFS.glsl", GL_FRAGMENT_SHADER);
+		glTransformFeedbackVaryings(particleShader.GetShaderProgram(), 3, outputNames, GL_SEPARATE_ATTRIBS);
+		particleShader.FinalizeShaderProgram();
+		m_particleShaders["fire"] = particleShader;
+
+		particleShader.InitShaderProgram();
+		particleShader.AddShader("content/shaders/particles/particleSmokeVS.glsl", GL_VERTEX_SHADER);
+		particleShader.AddShader("content/shaders/particles/particleSmokeFS.glsl", GL_FRAGMENT_SHADER);
+		glTransformFeedbackVaryings(particleShader.GetShaderProgram(), 3, outputNames, GL_SEPARATE_ATTRIBS);
+		particleShader.FinalizeShaderProgram();
+		m_particleShaders["smoke"] = particleShader;
+	// -------------------------------
 
 	return true;
 }
 void GraphicsLow::InitRenderLists()
 {
-	m_renderLists.push_back(RenderList(RENDER_DEFERRED, &m_modelsForward, &m_forwardShader)); // TODO: Not really a good solution but works
 	m_renderLists.push_back(RenderList(RENDER_FORWARD, &m_modelsForward, &m_forwardShader));
 	m_renderLists.push_back(RenderList(RENDER_VIEWSPACE, &m_modelsViewspace, &m_viewspaceShader));
 	m_renderLists.push_back(RenderList(RENDER_INTERFACE, &m_modelsInterface, &m_interfaceShader));
+	m_renderLists.push_back(RenderList(RENDER_DEFERRED, &m_modelsForward, &m_forwardShader)); // TODO: Not really a good solution but works
 }
 bool GraphicsLow::InitBuffers()
 {
@@ -336,8 +347,9 @@ bool GraphicsLow::InitBuffers()
 	//Shadow forward shader
 	m_shadowShaderForward.CheckUniformLocation("diffuseTex", 1);
 
-	//Particle shader
-	m_particleShader.CheckUniformLocation("ParticleTex", 1);
+	//Particle shaders
+	for (std::map<std::string, Shader>::iterator it = m_particleShaders.begin(); it != m_particleShaders.end(); ++it)
+		it->second.CheckUniformLocation("ParticleTex", 1);
 
 	return true;
 }
@@ -498,4 +510,8 @@ void GraphicsLow::Clear()
 	m_pointerToDirectionalLights = NULL;
 	m_numberOfPointlights = 0;
 	m_numberOfDirectionalLights = 0;
+
+	for (std::map<int, ParticleSystem*>::iterator it = m_particleSystems.begin(); it != m_particleSystems.end(); ++it)
+		delete(it->second);
+	m_particleSystems.clear();
 }

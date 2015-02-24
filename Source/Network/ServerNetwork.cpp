@@ -318,7 +318,7 @@ void ServerNetwork::Broadcast(Packet* _packet, const NetConnection& _exclude)
 	SAFE_DELETE(_packet);
 }
 
-void ServerNetwork::Send(Packet* _packet, NetConnection& _receiver)
+void ServerNetwork::Send(Packet* _packet, NetConnection& _receiver, bool _deletePacket)
 {
 	float bytesSent = -1;
 
@@ -350,6 +350,21 @@ void ServerNetwork::Send(Packet* _packet, NetConnection& _receiver)
 	}
 	m_dataSentLock->unlock();
 
+	if (_deletePacket)
+		SAFE_DELETE(_packet);
+}
+
+void ServerNetwork::Send(Packet* _packet, NetConnection& _receiver)
+{
+	Send(_packet, _receiver, true);
+}
+
+void ServerNetwork::Send(Packet* _packet, std::vector<NetConnection>& _receivers)
+{
+	for (int i = 0; i < _receivers.size(); ++i)
+	{
+		Send(_packet, _receivers[i], false);
+	}
 	SAFE_DELETE(_packet);
 }
 

@@ -222,10 +222,16 @@
     <None Include="..\..\..\Externals\content\shaders\FSAnimationShader.glsl">
       <Filter>shaders\Animation</Filter>
     </None>
-    <None Include="..\..\..\Externals\content\shaders\particleShaderFS.glsl">
+    <None Include="..\..\..\Externals\content\shaders\particles\particleFireFS.glsl">
       <Filter>shaders\ParticleShaders</Filter>
     </None>
-    <None Include="..\..\..\Externals\content\shaders\particleShaderVS.glsl">
+    <None Include="..\..\..\Externals\content\shaders\particles\particleFireVS.glsl">
+      <Filter>shaders\ParticleShaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\particles\particleSmokeFS.glsl">
+      <Filter>shaders\ParticleShaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\particles\particleSmokeVS.glsl">
       <Filter>shaders\ParticleShaders</Filter>
     </None>
   </ItemGroup>

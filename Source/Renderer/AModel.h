@@ -2,6 +2,7 @@
 #define AMODEL_H
 #include "stdafx.h"
 #include "Buffer.h"
+#include "Shader.h"
 
 namespace Renderer
 {
@@ -107,6 +108,7 @@ namespace Renderer
 		AModel();
 		~AModel();
 
+		void Draw(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, Shader* shaderptr);
 		void Update(float _dt);
 
 		void SetAnimation(int _animId);

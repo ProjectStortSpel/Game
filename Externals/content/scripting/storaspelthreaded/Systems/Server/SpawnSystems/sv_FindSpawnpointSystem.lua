@@ -148,7 +148,7 @@ FindSpawnpointSystem.IsInsideWorld = function(self, X, Z)
 	return false
 end
 
-FindSpawnpointSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, newEntities)
+FindSpawnpointSystem.EntitiesAdded = function(self, dt, newEntities)
 
 	for n = 1, #newEntities do
 		

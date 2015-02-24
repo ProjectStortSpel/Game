@@ -13,7 +13,7 @@ RiverSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("River", 		FilterType.RequiresOneOf)
 end
 
-RiverSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+RiverSystem.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entity = entities[n]
@@ -37,11 +37,20 @@ RiverSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 						local posXs = unitX + riverDirX
 						local posZs = unitZ + riverDirZ
 
+						--local id = world:CreateNewEntity()
+						--world:CreateComponentAndAddTo("TestRiver", id)
+						--world:SetComponent(id, "TestRiver", "Unit", units[i])
+						--world:SetComponent(id, "TestRiver", "PosX", posXs)
+						--world:SetComponent(id, "TestRiver", "PosZ", posZs)
+						
 						local id = world:CreateNewEntity()
-						world:CreateComponentAndAddTo("TestRiver", id)
-						world:SetComponent(id, "TestRiver", "Unit", units[i])
-						world:SetComponent(id, "TestRiver", "PosX", posXs)
-						world:SetComponent(id, "TestRiver", "PosZ", posZs)
+						world:CreateComponentAndAddTo("SimultaneousMove", id)
+						world:SetComponent(id, "SimultaneousMove", "Unit", units[i])
+						world:SetComponent(id, "SimultaneousMove", "PosX", posXs)
+						world:SetComponent(id, "SimultaneousMove", "PosZ", posZs)
+						world:SetComponent(id, "SimultaneousMove", "DirX", riverDirX)
+						world:SetComponent(id, "SimultaneousMove", "DirZ", riverDirZ)
+						world:SetComponent(id, "SimultaneousMove", "Steps", 1)
 
 						break
 

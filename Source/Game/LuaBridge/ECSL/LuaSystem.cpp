@@ -45,9 +45,7 @@ namespace LuaBridge
 		assert(m_L);
 		
 		LuaEmbedder::PushFloat(m_L, _runtime.Dt);
-		LuaEmbedder::PushInt(m_L, _runtime.TaskIndex);
-		LuaEmbedder::PushInt(m_L, _runtime.TaskCount);
-		LuaEmbedder::CallMethod<LuaSystem>(m_L, "System", "Update", this, 3);
+		LuaEmbedder::CallMethod<LuaSystem>(m_L, "System", "Update", this, 1);
 	}
 
 	void LuaSystem::Initialize()
@@ -65,10 +63,8 @@ namespace LuaBridge
 		assert(m_L);
 		
 		LuaEmbedder::PushFloat(m_L, _runtime.Dt);
-		LuaEmbedder::PushInt(m_L, _runtime.TaskIndex);
-		LuaEmbedder::PushInt(m_L, _runtime.TaskCount);
 		LuaEmbedder::PushUnsignedIntArray(m_L, _entities.data(), _entities.size(), false);
-		LuaEmbedder::CallMethod<LuaSystem>(m_L, "System", "EntitiesAdded", this, 4);
+		LuaEmbedder::CallMethod<LuaSystem>(m_L, "System", "EntitiesAdded", this, 2);
 	}
 
 	void LuaSystem::EntitiesRemoved(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities)
@@ -76,10 +72,8 @@ namespace LuaBridge
 		assert(m_L);
 		
 		LuaEmbedder::PushFloat(m_L, _runtime.Dt);
-		LuaEmbedder::PushInt(m_L, _runtime.TaskIndex);
-		LuaEmbedder::PushInt(m_L, _runtime.TaskCount);
 		LuaEmbedder::PushUnsignedIntArray(m_L, _entities.data(), _entities.size(), false);
-		LuaEmbedder::CallMethod<LuaSystem>(m_L, "System", "EntitiesRemoved", this, 4);
+		LuaEmbedder::CallMethod<LuaSystem>(m_L, "System", "EntitiesRemoved", this, 2);
 	}
 
 	void LuaSystem::PostInitialize()

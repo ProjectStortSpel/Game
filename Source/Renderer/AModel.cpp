@@ -1,4 +1,5 @@
 #include "AModel.h"
+
 using namespace Renderer;
 using namespace glm;
 
@@ -26,6 +27,80 @@ AModel::AModel()
 AModel::~AModel()
 {
 	glDeleteBuffers(1, &jointBuffer);
+}
+
+void AModel::Draw(mat4 viewMatrix, mat4 projectionMatrix, Shader* shaderptr)
+{
+	if (active) // IS MODEL ACTIVE?
+	{
+		mat4 M;
+		if (modelMatrix == NULL)
+			M = glm::translate(glm::vec3(1));
+		else
+			M = *modelMatrix;
+
+		mat4 vp = projectionMatrix * viewMatrix;
+		mat4 modelViewMatrix = M;
+		mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
+
+		shaderptr->SetUniVariable("BlendColor", vector3, color);
+		shaderptr->SetUniVariable("M", mat4x4, &modelViewMatrix);
+		shaderptr->SetUniVariable("VP", mat4x4, &vp);
+		shaderptr->SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
+
+
+
+
+		float *joint_data = new float[joints.size() * 16];
+
+		for (int j = 0; j < joints.size(); j++)
+		{
+			memcpy(&joint_data[16 * j], &joints[j], 16 * sizeof(float));
+		}
+
+		int joint_data_size = 16 * joints.size() * sizeof(float);
+
+		glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 1, jointBuffer, 0, joint_data_size);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, joint_data_size, joint_data, GL_STATIC_DRAW);
+
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, jointBuffer);
+
+		delete joint_data;
+
+
+
+
+		float *anim_data = new float[animation.size() * 16];
+
+		for (int j = 0; j < animation.size(); j++)
+		{
+			memcpy(&anim_data[16 * j], &animation[j], 16 * sizeof(float));
+		}
+
+		int anim_data_size = 16 * animation.size() * sizeof(float);
+
+		glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 2, animBuffer, 0, anim_data_size);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, anim_data_size, anim_data, GL_STATIC_DRAW);
+
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, animBuffer);
+
+		delete anim_data;
+
+
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texID);
+
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, norID);
+
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, speID);
+
+		bufferPtr->draw();
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
 }
 
 void AModel::Update(float _dt)

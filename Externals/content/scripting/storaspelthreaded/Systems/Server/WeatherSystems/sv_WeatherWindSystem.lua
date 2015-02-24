@@ -14,7 +14,7 @@ WeatherWindSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Unit", FilterType.RequiresOneOf)
 end
 
-WeatherWindSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, newEntities)
+WeatherWindSystem.EntitiesAdded = function(self, dt, newEntities)
 
 
 

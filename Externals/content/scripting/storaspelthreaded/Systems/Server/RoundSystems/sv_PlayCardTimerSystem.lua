@@ -14,7 +14,7 @@ PlayCardTimerSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("PlayCardTimer", FilterType.Mandatory)
 end
 
-PlayCardTimerSystem.Update = function(self, dt, taskIndex, taskCount)
+PlayCardTimerSystem.Update = function(self, dt)
 	
 	if self.Timer >= 0 then
 		
@@ -30,7 +30,7 @@ PlayCardTimerSystem.Update = function(self, dt, taskIndex, taskCount)
 	end
 end
 
-PlayCardTimerSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+PlayCardTimerSystem.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entity = entities[n]

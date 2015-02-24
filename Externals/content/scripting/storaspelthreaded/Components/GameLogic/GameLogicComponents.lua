@@ -2,7 +2,9 @@
 --	for all Game Logic Components.
 --	Use require in this file
 --	and they will be loaded
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Components/GameLogic/?.lua"
+package.path = package.path .. ";Components/GameLogic/?.lua"
+
+require "LobbyComponents"
 
 require "StageComponents"
 

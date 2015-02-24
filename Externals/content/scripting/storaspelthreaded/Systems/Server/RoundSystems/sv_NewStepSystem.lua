@@ -12,9 +12,10 @@ NewStepSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("NewRound", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("NewStep", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("Unit", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("DealingSettings", FilterType.RequiresOneOf)
 end
 
-NewStepSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+NewStepSystem.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entity = entities[n]
@@ -28,7 +29,10 @@ NewStepSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 		elseif world:EntityHasComponent( entity, "NewStep") then
 			--print("\n\nNEW STEP!")
 			
-			if self.Step <= 5 then
+			local DealingSettings = self:GetEntities("DealingSettings")
+			local cardsPerHand, cardsToPick = world:GetComponent(DealingSettings[1], "DealingSettings", 0):GetInt2(0)
+			
+			if self.Step <= cardsToPick then
 			
 				io.write("Step ", self.Step, " ")
 				
@@ -52,11 +56,11 @@ NewStepSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 				--Respawn
 				local id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo("RespawnUnits", id)
-
+				
 				--Deal cards
 				id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo("DealCards", id)
-				world:SetComponent(id, "DealCards", "NumCards", 5)
+				world:SetComponent(id, "DealCards", "NumCards", cardsToPick)
 				
 			end
 			world:KillEntity( entity )

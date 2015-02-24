@@ -96,7 +96,7 @@ TestMoveSystem.RecursiveMove = function(self, unitToMove, allUnits, allNonWalkab
 	return true
 end
 
-TestMoveSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+TestMoveSystem.EntitiesAdded = function(self, dt, entities)
 	
 	for newEntity = 1, #entities do
 		local entity = entities[newEntity]

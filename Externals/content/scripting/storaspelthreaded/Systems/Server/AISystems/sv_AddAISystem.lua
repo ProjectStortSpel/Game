@@ -38,7 +38,7 @@ AddAISystem.FillWithAIs = function(_command, ...)
 	end
 end
 
-AddAISystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+AddAISystem.EntitiesAdded = function(self, dt, entities)
 	
 	local ais = self:GetEntities("AI")
 	local voids = self:GetEntities("Void")
@@ -72,7 +72,7 @@ AddAISystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 				local param = PFParam()
 				local object = "Void"
 				local onTheSpotValue = 0.0
-				local weight = 2
+				local weight = 1
 				local length = 2
 				local power = 2
 				

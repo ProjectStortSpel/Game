@@ -254,11 +254,24 @@ void GraphicDevice::AddParticleEffect(std::string _name, const vec3 _pos, int _n
 
 void GraphicDevice::RemoveParticleEffect(int _id)
 {
+	m_particleSystems[_id]->EnterEndPhase();
 	m_particlesIdToRemove.push_back(_id);
 }
 
 void GraphicDevice::BufferParticleSystems()
 {
+	// ParticleSystems to remove
+	for (int i = m_particlesIdToRemove.size()-1; i >= 0; i--)
+	{
+		if (m_particleSystems[m_particlesIdToRemove[i]]->ReadyToBeDeleted())
+		{
+			delete(m_particleSystems[m_particlesIdToRemove[i]]);
+			m_particleSystems.erase(m_particlesIdToRemove[i]);
+			m_particlesIdToRemove.erase(m_particlesIdToRemove.begin() + i);
+		}
+	}
+
+	// ParticleSystems to add
 	for (int i = 0; i < m_particleSystemsToLoad.size(); i++)
 	{
 		m_particleSystems.insert(std::pair<int, ParticleSystem*>(m_particleSystemsToLoad[i].Id,new ParticleSystem(
@@ -270,16 +283,10 @@ void GraphicDevice::BufferParticleSystems()
 			m_particleSystemsToLoad[i].SpriteSize,
 			AddTexture(m_particleSystemsToLoad[i].TextureName, GL_TEXTURE1),
 			m_particleSystemsToLoad[i].Color,
-			&m_particleShader)));
+			&m_particleShaders[m_particleSystemsToLoad[i].Name])));
 	}
 	m_particleSystemsToLoad.clear();
 
-	for (int i = 0; i < m_particlesIdToRemove.size(); i++)
-	{
-		delete(m_particleSystems[m_particlesIdToRemove[i]]);
-		m_particleSystems.erase(m_particlesIdToRemove[i]);
-	}
-	m_particlesIdToRemove.clear();
 }
 
 int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color)
@@ -300,6 +307,20 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 
 	return modelID;
 }
+int GraphicDevice::LoadModel(ModelToLoadFromSource* _modelToLoad)
+{
+	int modelID = m_modelIDcounter;
+	m_modelIDcounter++;
+
+	//	Lägg till i en lista, följande
+	//	std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType
+
+	ModelToLoadFromSource* modelToLoad = new ModelToLoadFromSource();
+	*modelToLoad = *_modelToLoad;
+	m_modelsToLoadFromSource[modelID] = modelToLoad;
+
+	return modelID;
+}
 void GraphicDevice::BufferModels()
 {
 	for (auto pair : m_modelsToLoad)
@@ -307,8 +328,15 @@ void GraphicDevice::BufferModels()
 		BufferModel(pair.first, pair.second);
 		delete(pair.second);
 	}
+	for (auto pair : m_modelsToLoadFromSource)
+	{
+		
+		delete pair.second;
+	}
 	m_modelsToLoad.clear();
+	m_modelsToLoadFromSource.clear();
 }
+
 void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 {
 	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
@@ -333,7 +361,7 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 			break;
 		}
 	}
-	if (!FoundShaderType) { ERRORMSG("ERROR: INVALID RENDER SETTING"); return; }
+	if (!FoundShaderType) { return; } // ERRORMSG("ERROR: INVALID RENDER SETTING"); 
 
 	// Import Mesh
 	Buffer* mesh = AddMesh(obj.mesh, shaderPtr, false);
@@ -376,30 +404,6 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	model.instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
 	// Push back the model
 	modelList->push_back(model);
-}
-mat4 matrixes[100];
-float color[300];
-
-void GraphicDevice::Update2(float _dt, AModel* modelptr)
-{
-	if (modelptr != nullptr)
-	{
-		for (int j = 0; j < modelptr->animation.size(); j++)
-		{
-			mat4 jmat = scale(vec3(0.1, 0.1, 0.1));
-			for (int k = j; k < modelptr->animation.size(); k++)
-			{
-				Joint joint = modelptr->animation[k];
-				jmat = mat4(joint.x0, joint.y0, joint.z0, joint.w0,
-					joint.x1, joint.y1, joint.z1, joint.w1,
-					joint.x2, joint.y2, joint.z2, joint.w2,
-					joint.x3, joint.y3, joint.z3, 1
-					) * jmat;
-				k += modelptr->animation[k].parent;
-			}
-			matrixes[j] = jmat;
-		}
-	}
 }
 
 void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
@@ -491,18 +495,18 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 	//	LoadModel("content/models/stone/", "stone.object", &matrixes[j], 0, model.color);
 	//}
 
-	for (int j = 0; j < model.joints.size(); j++)
-	{
-		color[j * 3 + 0] = 1.0f - (float)j / (float)model.joints.size();
-		color[j * 3 + 1] = 1.0f - (float)j / (float)model.joints.size();
-		color[j * 3 + 2] = 1.0f - (float)j / (float)model.joints.size();
-		Joint joint = model.joints[j];
-		mat4 jmat = glm::inverse(mat4(joint.x0, joint.y0, joint.z0, joint.w0,
-			joint.x1, joint.y1, joint.z1, joint.w1,
-			joint.x2, joint.y2, joint.z2, joint.w2,
-			joint.x3, joint.y3, joint.z3, 1
-			)) * scale(vec3(0.1, 0.1, 0.1));
-		matrixes[j] = jmat;
+	//for (int j = 0; j < model.joints.size(); j++)
+	//{
+	//	color[j * 3 + 0] = 1.0f - (float)j / (float)model.joints.size();
+	//	color[j * 3 + 1] = 1.0f - (float)j / (float)model.joints.size();
+	//	color[j * 3 + 2] = 1.0f - (float)j / (float)model.joints.size();
+	//	Joint joint = model.joints[j];
+	//	mat4 jmat = glm::inverse(mat4(joint.x0, joint.y0, joint.z0, joint.w0,
+	//		joint.x1, joint.y1, joint.z1, joint.w1,
+	//		joint.x2, joint.y2, joint.z2, joint.w2,
+	//		joint.x3, joint.y3, joint.z3, 1
+	//		)) * scale(vec3(0.1, 0.1, 0.1));
+	//	matrixes[j] = jmat;
 	//	float col = 1.00f;
 	//	if (model.joints[j].parent >= 0)
 	//		col = color[(int)(model.joints[j].parent) * 3 + 0] - 0.1f;
@@ -510,8 +514,8 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 	//	color[j * 3 + 0] = col;
 	//	color[j * 3 + 1] = col;
 	//	color[j * 3 + 2] = col;
-		LoadModel("content/models/stone/", "stone.object", &matrixes[j], 0, &color[j * 3]);
-	}
+	//	LoadModel("content/models/stone/", "stone.object", &matrixes[j], 0, &color[j * 3]);
+	//}
 }
 
 bool GraphicDevice::RemoveModel(int _id)
@@ -616,6 +620,52 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg, bool a
 	return retbuffer;
 }
 
+Buffer* GraphicDevice::AddMesh(ModelToLoadFromSource* _modelToLoad, Shader *_shaderProg)
+{
+	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
+	{
+		if (it->first == _modelToLoad->key)
+			return it->second;
+	}
+
+	std::vector<float> positionData = _modelToLoad->positions;
+	std::vector<float> normalData = _modelToLoad->normals;
+	std::vector<float> tanData = _modelToLoad->tangents;
+	std::vector<float> bitanData = _modelToLoad->bitangents;
+	std::vector<float> texCoordData = _modelToLoad->texCoords;
+	std::vector<float> jointIndexData;
+	std::vector<float> jointWeightData;
+
+	Buffer* retbuffer = new Buffer();
+
+	_shaderProg->UseProgram();
+	BufferData bufferData[] =
+	{
+		{ 0, 3, GL_FLOAT, (const GLvoid*)positionData.data(), static_cast<GLsizeiptr>(positionData.size() * sizeof(float)) },
+		{ 1, 3, GL_FLOAT, (const GLvoid*)normalData.data(), static_cast<GLsizeiptr>(normalData.size()   * sizeof(float)) },
+		{ 2, 3, GL_FLOAT, (const GLvoid*)tanData.data(), static_cast<GLsizeiptr>(tanData.size()   * sizeof(float)) },
+		{ 3, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), static_cast<GLsizeiptr>(bitanData.size()   * sizeof(float)) },
+		{ 4, 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), static_cast<GLsizeiptr>(texCoordData.size() * sizeof(float)) },
+		{ 5, 4, GL_FLOAT, (const GLvoid*)jointIndexData.data(), static_cast<GLsizeiptr>(jointIndexData.size()   * sizeof(float)) },
+		{ 6, 4, GL_FLOAT, (const GLvoid*)jointWeightData.data(), static_cast<GLsizeiptr>(jointWeightData.size() * sizeof(float)) }
+	};
+
+	int test = sizeof(bufferData) / sizeof(bufferData[0]);
+	// Counts the size in bytes of all the buffered data
+	for (int i = 0; i < sizeof(bufferData) / sizeof(bufferData[0]); i++)
+		m_vramUsage += (int)bufferData[i].dataSize;
+
+	int bufferDatas = sizeof(bufferData) / sizeof(bufferData[0]);
+	bufferDatas -= 2;
+
+	retbuffer->init(bufferData, bufferDatas);
+	retbuffer->setCount((int)positionData.size() / 3);
+
+	m_meshs.insert(std::pair<const std::string, Buffer*>(_modelToLoad->key, retbuffer));
+
+	return retbuffer;
+}
+
 bool GraphicDevice::BufferModelTexture(int _id, std::string _fileDir, int _textureType)
 {
 	// Model Instance
@@ -706,4 +756,9 @@ void GraphicDevice::UpdateTextureIndex(GLuint newTexture, GLuint oldTexture)
 			if (m.texID == oldTexture)
 				m.texID = newTexture;
 	}
+}
+
+void GraphicDevice::SetParticleAcceleration(int _id, float x, float y, float z)
+{
+	m_particleSystems[_id]->SetAccel(vec3(x, y, z));
 }

@@ -12,7 +12,7 @@ AbilitySprintSystem.Initialize = function(self)
 	
 end
 
-AbilitySprintSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+AbilitySprintSystem.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entity = entities[n]

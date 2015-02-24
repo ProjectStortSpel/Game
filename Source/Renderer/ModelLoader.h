@@ -106,17 +106,17 @@ public:
 		std::ifstream fileIn(fileDir);
 
 		std::string temp;
-		getline(fileIn, temp);
-		objectdata.mesh.append(temp);
-		getline(fileIn, temp);
-		objectdata.text.append(temp);
-		getline(fileIn, temp);
-		objectdata.norm.append(temp);
-		getline(fileIn, temp);
-		objectdata.spec.append(temp);
+		if (getline(fileIn, temp))
+			objectdata.mesh.append(temp);
+		if (getline(fileIn, temp))
+			objectdata.text.append(temp);
+		if (getline(fileIn, temp))
+			objectdata.norm.append(temp);
+		if (getline(fileIn, temp))
+			objectdata.spec.append(temp);
 
-		getline(fileIn, temp);
-		objectdata.joints.append(temp);
+		if (getline(fileIn, temp))
+			objectdata.joints.append(temp);
 
 		while (getline(fileIn, temp))
 		{ 
@@ -126,7 +126,7 @@ public:
 			objectdata.anim.push_back(animation);
 		}
 		int isamesh = objectdata.mesh.find(".amesh");
-		if (isamesh > 0 && objectdata.joints != fileDir)
+		if (isamesh > 0 && objectdata.joints != fileDir && objectdata.anim.size() > 0)
 		{
 			objectdata.animated = true;
 		}

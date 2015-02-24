@@ -16,7 +16,7 @@ CardPickedPositionSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("CardSelected", FilterType.Mandatory)
 end
 
-CardPickedPositionSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, newEntities)
+CardPickedPositionSystem.EntitiesAdded = function(self, dt, newEntities)
 	local entities = self:GetEntities()
 	for i = 1, #entities do
 		local card = entities[i]
@@ -39,7 +39,7 @@ CardPickedPositionSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount
 	end
 end
 
-CardPickedPositionSystem.EntitiesRemoved = function(self, dt, taskIndex, taskCount, newEntities)
+CardPickedPositionSystem.EntitiesRemoved = function(self, dt, newEntities)
 	local entities = self:GetEntities()
 	for i = 1, #entities do
 		local card = entities[i]

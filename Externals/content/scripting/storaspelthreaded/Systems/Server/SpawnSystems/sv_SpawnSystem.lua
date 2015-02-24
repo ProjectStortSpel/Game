@@ -12,7 +12,7 @@ SpawnSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Spawnpoint", FilterType.Mandatory)
 end
 
-SpawnSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+SpawnSystem.EntitiesAdded = function(self, dt, entities)
 	for n = 1, #entities do
 		local entityId = entities[n]
 		local mapPosComp = world:GetComponent(entityId, "MapPosition", 0)

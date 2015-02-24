@@ -1,7 +1,7 @@
 GameMenuSystem = System()
 GameMenuSystem.Name = "GameMenu"
 
-GameMenuSystem.Update = function(self, dt, taskIndex, taskCount)
+GameMenuSystem.Update = function(self, dt)
 	if Input.GetTouchState(0) == InputState.Released then
 
 		local pressedButtons = self:GetEntities("OnPickBoxHit")
@@ -26,7 +26,7 @@ GameMenuSystem.Update = function(self, dt, taskIndex, taskCount)
 
 end
 
-GameMenuSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+GameMenuSystem.EntitiesAdded = function(self, dt, entities)
 	for i = 1, #entities do
 		local entityId = entities[i]
 		if world:EntityHasComponent(entityId, self.Name) then

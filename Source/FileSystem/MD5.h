@@ -53,8 +53,8 @@ namespace FileSystem
 				{
 					if (data[i] != a.data[i])
 						return false;
-					return true;
 				}
+                return true;
 			}
 
 			bool operator!=(MD5Data a) const

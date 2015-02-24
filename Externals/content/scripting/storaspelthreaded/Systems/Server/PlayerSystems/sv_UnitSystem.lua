@@ -46,14 +46,12 @@ end
 --	return newIndex
 --end
 
-UnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+UnitSystem.EntitiesAdded = function(self, dt, entities)
 	
 	local mySeed = os.time() - 1418742000 -- dont ask
 	math.randomseed(mySeed)
 	for n = 1, #entities do
 		local entity = entities[n]
-		
-		print("unit entity added")
 	
 		if world:EntityHasComponent(entity, "NeedUnit") then
 			
@@ -98,7 +96,7 @@ UnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 			world:SetComponent(newEntityId, "TargetCheckpoint", "Id", targetCheckpoint)
 			world:GetComponent(newEntityId, "Direction", 0):SetInt2(0, -1)
 			world:CreateComponentAndAddTo("NeedSpawnLocation", newEntityId)
-			world:CreateComponentAndAddTo("Hide", newEntityId)
+			--world:CreateComponentAndAddTo("Hide", newEntityId)
 			
 			world:SetComponent(entity, "PlayerNumber", "Number", playerNumber)
 			world:CreateComponentAndAddTo("UnitEntityId", entity)
@@ -107,16 +105,10 @@ UnitSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
 			if world:EntityHasComponent(entity, "NetConnection") then
 				local ip = world:GetComponent(entity, "NetConnection", "IpAddress"):GetText()
 				local port = world:GetComponent(entity, "NetConnection", "Port"):GetInt()
-    
-				local id = Net.StartPack("Client.SendPlayerUnitId")
-				Net.WriteInt(id, playerNumber)
-				Net.Send(id, ip, port)
-				
-				
-				local id = Net.StartPack("Client.NewTargetCheckpoint")
-				Net.WriteInt(id, checkpointId)
-				Net.WriteInt(id, X)
-				Net.WriteInt(id, Z)
+				local id = Net.StartPack("Client.SendPlayerUnitColor")
+				Net.WriteFloat(id, r)
+				Net.WriteFloat(id, g)
+				Net.WriteFloat(id, b)
 				Net.Send(id, ip, port)
 			end
 						
