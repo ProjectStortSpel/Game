@@ -9,7 +9,7 @@
 
 namespace ECSL
 {
-	class DataLogger
+	class DECLSPEC DataLogger
 	{
 	public:
 		enum LogType

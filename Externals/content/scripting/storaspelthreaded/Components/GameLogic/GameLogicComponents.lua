@@ -4,6 +4,8 @@
 --	and they will be loaded
 package.path = package.path .. ";Components/GameLogic/?.lua"
 
+require "LobbyComponents"
+
 require "StageComponents"
 
 require "RulesComponents"

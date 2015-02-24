@@ -58,7 +58,6 @@ SortClientSelectedCards.EntitiesAdded = function(self, dt, entities)
 					world:GetComponent(ownerCards[i], "ServerSelectedCard", "Index"):SetInt(tempIndex+1)
 				end
 			end
-			self:PrintCard(ownerCards[i])
 		end
 	end
 end
@@ -75,8 +74,6 @@ SortClientSelectedCards.EntitiesRemoved = function(self, dt, entities)
 			if index2 > index then
 				world:GetComponent(ownerCards[i], "ServerSelectedCard", "Index"):SetInt(index2-1)
 			end
-			
-			self:PrintCard(ownerCards[i])
 		end
 		
 	end

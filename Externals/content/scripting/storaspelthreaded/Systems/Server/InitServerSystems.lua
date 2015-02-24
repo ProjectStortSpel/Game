@@ -1,5 +1,6 @@
 --  Game Logic Systems
 package.path = package.path .. ";Systems/Server/GameLogicSystems/?.lua"
+require "sv_LobbySystem"
 require "sv_StageSystem"
 
 --	Map Systems
@@ -19,6 +20,7 @@ require "sv_DirectionalLightSystem"
 package.path = package.path .. ";Systems/Server/PlayerSystems/?.lua"
 require "sv_PlayerSystem"
 require "sv_UnitSystem"
+require "sv_SendPlayerInformation"
 
 -- AI Systems
 package.path = package.path .. ";Systems/Server/AISystems/?.lua"
@@ -101,6 +103,7 @@ require "sv_HostSettingsSystem"
 require "sv_OffsetUnitSystem"
 
 --worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(LobbySystem)
 worldCreator:AddSystemToCurrentGroup(StageSystem)
 --worldCreator:AddSystemToCurrentGroup(MapGenerator)
 worldCreator:AddSystemToCurrentGroup(CreateMapSystem)
@@ -182,8 +185,14 @@ worldCreator:AddSystemToCurrentGroup(LogStartSystem)
 
 
 
+worldCreator:AddSystemToCurrentGroup(SendPlayerInformation)	--	ALSO TEMP
 worldCreator:AddSystemToCurrentGroup(SortClientSelectedCards)	--	Temp
 worldCreator:AddSystemToCurrentGroup(ClearServerSelectedSystem)	--	Temp
 worldCreator:AddSystemToCurrentGroup(FindSpawnpointSystem)
 
+--	Audio Systems
+package.path = package.path .. ";Systems/Server/AudioSystems/?.lua"
+require "sv_AudioUnitDeathSystem"
 
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(AudioUnitDeathSystem)

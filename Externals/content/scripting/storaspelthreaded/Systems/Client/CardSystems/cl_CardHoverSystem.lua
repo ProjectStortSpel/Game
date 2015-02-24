@@ -30,6 +30,10 @@ CardHoverSystem.Update = function(self, dt)
 		
 		local rotation = world:GetComponent(entity, "Rotation", 0)
 		rotation:SetFloat3(math.cos(self.Rot)*0.05-0.1, math.sin(self.Rot)*0.08, 0)
+		
+		if not Audio.ChannelExists("CardHover" .. entity) then
+			Audio.FadeInSound("TorchFire", "CardHover" .. entity, 500, true)
+		end
 	end	
 end
 
@@ -40,6 +44,8 @@ CardHoverSystem.EntitiesAdded = function(self, dt, entities)
 		local entityId = entities[n]
 		local rotation = world:GetComponent(entityId, "Rotation", 0)
 		rotation:SetFloat3(0, 0, 0)
+		
+		Audio.FadeInSound("TorchFire", "CardHover" .. entityId, 500, true)
 	end
 end
 
@@ -49,5 +55,7 @@ CardHoverSystem.EntitiesRemoved = function(self, dt, entities)
 		local rotation = world:GetComponent(entityId, "Rotation", 0)
 		self.Rot = 0
 		rotation:SetFloat3(0, 0, 0)
+		
+		Audio.FadeOutSound("CardHover" .. entityId, 500)
 	end	
 end

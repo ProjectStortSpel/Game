@@ -49,7 +49,7 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		world:CreateComponentAndAddTo("NotWalkable", newTile)
 		world:CreateComponentAndAddTo("Model", newTile)
 		local comp = world:GetComponent(newTile, "Model", 0)
-		comp:SetModel("smallstone", "smallstone", 0)
+		comp:SetModel("bush", "bush", 0)
 		posComp:SetFloat3(posX, 0.5, posZ) --posComp:SetFloat3(posX, 0.8 + 0.1* math.random(-1, 1), posZ)
 		local scaleComp = world:GetComponent(newTile, "Scale", 0)
 		scaleComp:SetFloat3(0.75,0.75,0.75)
@@ -162,6 +162,7 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		local comp = world:GetComponent(newTile, "Model", 0)
 		comp:SetModel("grass", "grass", 0)
 		self:AddTinyStone(posX, posZ)
+		self:AddTree(posX, posZ)
 	elseif tiletype == 111 then
         world:CreateComponentAndAddTo("Void", newTile)
 		--world:CreateComponentAndAddTo("Model", entity)
@@ -195,6 +196,27 @@ CreateMapSystem.AddGroundTileBelow = function(self, posX, posZ)
 	
 end 
 
+CreateMapSystem.AddTree = function(self, posX, posZ)
+	if (math.random(1, 10) > 1) then
+		return
+	end
+	
+	local tinyStone = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("Position", tinyStone)
+	world:CreateComponentAndAddTo("Rotation", tinyStone)
+	world:CreateComponentAndAddTo("Scale", tinyStone)
+	world:CreateComponentAndAddTo("SyncNetwork", tinyStone)
+	world:CreateComponentAndAddTo("Model", tinyStone)
+	
+	local randX = posX+(math.random(0, 1)-0.5)*0.8
+	local randZ = posZ+(math.random(0, 1)-0.5)*0.8
+	world:GetComponent(tinyStone, "Position", 0):SetFloat3(randX, 0.5, randZ)
+	world:GetComponent(tinyStone, "Rotation", 0):SetFloat3(math.pi * 0.01 * math.random(0, 10), math.pi * 0.01 * math.random(0, 100), math.pi * 0.01 * math.random(0, 10))
+	local randScale = math.random() + 0.5
+	world:GetComponent(tinyStone, "Scale", 0):SetFloat3(1, randScale, 1)
+	world:GetComponent(tinyStone, "Model", 0):SetModel("tree", "tree", 8)
+end 
+
 CreateMapSystem.AddTinyStone = function(self, posX, posZ)
 	if (math.random(1, 5) > 1) then
 		return
@@ -214,8 +236,6 @@ CreateMapSystem.AddTinyStone = function(self, posX, posZ)
 	local randScale = math.random() + 0.5
 	world:GetComponent(tinyStone, "Scale", 0):SetFloat3(0.15*randScale, 0.15*randScale, 0.15*randScale)
 	world:GetComponent(tinyStone, "Model", 0):SetModel("smallstone", "smallstone", 8)
-	
-	--self:AddTinyStone(randX, randZ)
 end 
 
 CreateMapSystem.CreateMap = function(self, name)

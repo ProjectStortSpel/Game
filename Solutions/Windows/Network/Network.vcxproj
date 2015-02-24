@@ -23,6 +23,7 @@
     <ClCompile Include="..\..\..\Source\Network\ClientNetwork.cpp" />
     <ClCompile Include="..\..\..\Source\Network\ISocket.cpp" />
     <ClCompile Include="..\..\..\Source\Network\LinSocket.cpp" />
+    <ClCompile Include="..\..\..\Source\Network\NetConnection.cpp" />
     <ClCompile Include="..\..\..\Source\Network\Packet.cpp" />
     <ClCompile Include="..\..\..\Source\Network\PacketHandler.cpp" />
     <ClCompile Include="..\..\..\Source\Network\ServerNetwork.cpp" />
@@ -34,6 +35,7 @@
     <ClInclude Include="..\..\..\Source\Network\ClientNetwork.h" />
     <ClInclude Include="..\..\..\Source\Network\ISocket.h" />
     <ClInclude Include="..\..\..\Source\Network\LinSocket.h" />
+    <ClInclude Include="..\..\..\Source\Network\NetConnection.h" />
     <ClInclude Include="..\..\..\Source\Network\NetTypeMessageID.h" />
     <ClInclude Include="..\..\..\Source\Network\Network.h" />
     <ClInclude Include="..\..\..\Source\Network\Packet.h" />
@@ -137,7 +139,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;ws2_32.lib;Logger_$(PlatformTarget)d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
       <Profile>true</Profile>
@@ -158,7 +160,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;ws2_32.lib;Logger_$(PlatformTarget)d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
       <Profile>true</Profile>
@@ -187,7 +189,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;ws2_32.lib;Logger_$(PlatformTarget).lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
     </Link>
@@ -211,7 +213,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <ImportLibrary>$(SolutionDir)..\..\Externals\lib\Windows\$(PlatformTarget)\GameLibs\$(TargetName).lib</ImportLibrary>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;OpenGL32.lib;glew32.lib;ws2_32.lib;Logger_$(PlatformTarget).lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
     </Link>

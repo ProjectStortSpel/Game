@@ -12,7 +12,7 @@
 class ModelSystem : public GraphicalSystem
 {
 public:
-	ModelSystem(Renderer::GraphicDevice* _graphics);
+	ModelSystem(Renderer::GraphicDevice* _graphics, bool _isClient);
 	~ModelSystem();
 
 	void Initialize();
@@ -24,6 +24,8 @@ public:
 
 	void EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities);
 
+private:
+	bool m_IsClient;
 };
 
 #endif

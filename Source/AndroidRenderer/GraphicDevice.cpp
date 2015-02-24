@@ -31,7 +31,7 @@ GraphicDevice::~GraphicDevice()
 	delete(m_skybox);
 
 	if (m_pointlightsPtr)
-		delete m_pointlightsPtr;
+		delete [] m_pointlightsPtr;
 
 	for (std::map<int, ParticleEffect*>::iterator it = m_particleEffects.begin(); it != m_particleEffects.end(); ++it)
 		delete(it->second);

@@ -132,7 +132,7 @@ namespace LuaEmbedder
 	  source[length] = '\0';
 	  SDL_RWclose(file);
 	  std::string sourceString = std::string(source);
-	  delete source;
+	  delete [] source;
 
 	  std::string directory = filepath.substr(0, filepath.rfind('\\/') + 1);
 
@@ -209,7 +209,6 @@ bool Load(lua_State* L, const std::vector<std::string>* paths, const std::string
     bool error = luaL_dostring(L, source.c_str());
     if (error)
 	{
-		luaL_dofile(L, filepath.c_str());
       SDL_Log("LuaEmbedder::Load : %s", (lua_isstring(L, -1) ? lua_tostring(L, -1) : "Unknown error"));
       return false;
     }
