@@ -1,6 +1,6 @@
 AICardPickingSystem = System()
 AICardPickingSystem.PrintSimulation = 0
-AICardPickingSystem.AICheat = 1
+AICardPickingSystem.AICheat = 0
 AICardPickingSystem.CardsToSimulate = 3
 
 AICardPickingSystem.Initialize = function(self)
