@@ -66,8 +66,6 @@ namespace LuaBridge
 
 			Combinations(noToChooseFrom, noToPick, pickedCards, size, combinations, combinationsSize);
 
-			*combinationsSize = *combinationsSize - 1;
-
 			Permutations(combinations, combinationsSize, permutations, permutationsSize, noToPick);
 
 			permutations[noOfPermutations * noToPick] = '\0';
@@ -153,12 +151,6 @@ namespace LuaBridge
 			if (_n == 1 || _n == 0)
 			{
 				return 1;
-			}
-			// TODO: Remove this else if.
-			else if (_n == 0)
-			{
-				printf("Something went wrong in factorial");
-                return 0;
 			}
 			else
 			{
