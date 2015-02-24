@@ -47,12 +47,16 @@ void Mouse::PollEvent(SDL_Event e)
 	{
 	case SDL_MOUSEBUTTONDOWN:
 		m_thisState[e.button.button]		=	true;
-		m_pressedStates[e.button.button]	=	true;
+
+		if(!m_lastState[e.button.button])
+			m_pressedStates[e.button.button]	=	true;
 		break;
 
 	case SDL_MOUSEBUTTONUP:
 		m_thisState[e.button.button]		=	false;
-		m_releasedStates[e.button.button]	=	true;
+
+		if(m_lastState[e.button.button])
+			m_releasedStates[e.button.button]	=	true;
 		break;
 
 	case SDL_MOUSEMOTION:
