@@ -14,6 +14,7 @@ GraphicDevice::GraphicDevice()
 {
 	m_SDLinitialized = false;
 	m_pointlightsPtr = 0;
+	m_particleID = 0;
 }
 
 GraphicDevice::GraphicDevice(Camera _camera)
@@ -21,6 +22,7 @@ GraphicDevice::GraphicDevice(Camera _camera)
 	m_camera = new Camera(_camera);
 	m_SDLinitialized = true;
 	m_pointlightsPtr = 0;
+	m_particleID = 0;
 }
 
 GraphicDevice::~GraphicDevice()
@@ -31,12 +33,15 @@ GraphicDevice::~GraphicDevice()
 	if (m_pointlightsPtr)
 		delete [] m_pointlightsPtr;
 
+	for (std::map<int, ParticleEffect*>::iterator it = m_particleEffects.begin(); it != m_particleEffects.end(); ++it)
+		delete(it->second);
+
 	SDL_GL_DeleteContext(m_glContext);
 	// Close and destroy the window
 	SDL_DestroyWindow(m_window);
 	// Clean up
 	//SDL_Quit();
-	SDL_Log("Graphics D E S T R U C T O R");
+	//SDL_Log("Graphics D E S T R U C T O R");
 }
 
 void GraphicDevice::InitFBO()
@@ -440,4 +445,80 @@ struct sort_depth
 void GraphicDevice::SortModelsBasedOnDepth(std::vector<Model>* models)
 {
 	std::sort(models->begin(), models->end(), sort_depth());
+}
+
+void GraphicDevice::AddParticleEffect(std::string _name, const vec3 _pos, int _nParticles, float _lifeTime, float _scale, float _spriteSize, std::string _texture, vec3 _color, int &_id)
+{
+	SDL_Log("effect NAME: %s", _name.c_str());
+	ParticleSystemToLoad tmpSystem;
+	tmpSystem.Name = _name;
+	tmpSystem.Pos = _pos;
+	tmpSystem.NrOfParticles = _nParticles;
+	tmpSystem.LifeTime = _lifeTime;
+	tmpSystem.Scale = _scale;
+	tmpSystem.SpriteSize = _spriteSize;
+	tmpSystem.TextureName = _texture;
+	tmpSystem.Color = _color;
+	tmpSystem.Id = m_particleID;
+
+	m_particleSystemsToLoad.push_back(tmpSystem);
+
+	_id = m_particleID;
+	m_particleID++;
+}
+
+void GraphicDevice::RemoveParticleEffect(int _id)
+{
+	m_particleEffects[_id]->EnterEndPhase();
+	m_particlesIdToRemove.push_back(_id);
+}
+
+void GraphicDevice::SetParticleAcceleration(int _id, float x, float y, float z)
+{
+	m_particleEffects[_id]->SetAccel(vec3(x, y, z));
+}
+
+void GraphicDevice::BufferParticleSystems()
+{
+	// ParticleSystems to remove
+	for (int i = m_particlesIdToRemove.size() - 1; i >= 0; i--)
+	{
+		if (m_particleEffects[m_particlesIdToRemove[i]]->ReadyToBeDeleted())
+		{
+			delete(m_particleEffects[m_particlesIdToRemove[i]]);
+			m_particleEffects.erase(m_particlesIdToRemove[i]);
+			m_particlesIdToRemove.erase(m_particlesIdToRemove.begin() + i);
+		}
+	}
+
+	// ParticleSystems to add
+	for (int i = 0; i < m_particleSystemsToLoad.size(); i++)
+	{
+		if (m_particleSystemsToLoad[i].Name == "fire")
+		{
+			m_particleEffects.insert(std::pair<int, ParticleEffect*>(m_particleSystemsToLoad[i].Id, new Fire(
+				m_particleSystemsToLoad[i].Pos,
+				m_particleSystemsToLoad[i].NrOfParticles,
+				m_particleSystemsToLoad[i].LifeTime,
+				m_particleSystemsToLoad[i].Scale,
+				m_particleSystemsToLoad[i].SpriteSize,
+				AddTexture(m_particleSystemsToLoad[i].TextureName, GL_TEXTURE1),
+				m_particleSystemsToLoad[i].Color,
+				&m_particleShaders[m_particleSystemsToLoad[i].Name])));
+		}
+		else if (m_particleSystemsToLoad[i].Name == "smoke")
+		{
+			m_particleEffects.insert(std::pair<int, ParticleEffect*>(m_particleSystemsToLoad[i].Id, new Smoke(
+				m_particleSystemsToLoad[i].Pos,
+				m_particleSystemsToLoad[i].NrOfParticles,
+				m_particleSystemsToLoad[i].LifeTime,
+				m_particleSystemsToLoad[i].Scale,
+				m_particleSystemsToLoad[i].SpriteSize,
+				AddTexture(m_particleSystemsToLoad[i].TextureName, GL_TEXTURE1),
+				m_particleSystemsToLoad[i].Color,
+				&m_particleShaders[m_particleSystemsToLoad[i].Name])));
+		}
+	}
+	m_particleSystemsToLoad.clear();
+
 }

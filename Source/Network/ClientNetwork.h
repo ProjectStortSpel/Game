@@ -18,7 +18,6 @@ namespace Network
 
 		// Connect to server using already predefined settings
 		bool Connect();
-
 		// Connect to server with Ip Address, Password, outgoing port & incoming port
 		// Note that all previously information will be overridden
 		bool Connect(const char* _ipAddress, const char* _password, const int& _outgoing, const int& _incomingPort);
@@ -27,19 +26,6 @@ namespace Network
 		void Disconnect();
 		// Send a packet to the server
 		void Send(Packet* _packet);
-
-		// Returns the remote Ip Address the client connects to
-		const char* GetRemoteAddress(void) { return m_remoteAddress->c_str(); }
-		// Returns the outgoing port the client connects to
-		const int GetOutgoingPort(void) { return *m_outgoingPort; }
-		const float GetPing(void) { return *m_ping; }
-
-		bool IsConnected() { return *m_connected; }
-
-		// Set the remote Ip Address the client will connect to
-		void SetRemoteAddress(const char* _ipAddress) { *m_remoteAddress = _ipAddress; }
-		// Set the outgoing port which the client will connect to
-		void SetOutgoingPort(const int _port) { *m_outgoingPort = _port; }
 
 		// Bind function which will trigger when the client connect to the server
 		void SetOnConnectedToServer(NetEvent& _function);
@@ -58,8 +44,6 @@ namespace Network
 		// Bind function which will trigger when the client tried to connect to a full server.
 		void SetOnServerFull(NetEvent& _function);
 
-
-
 		// Bind function which will trigger when a client connect to the server
 		void SetOnRemotePlayerConnected(NetEvent& _function);
 		// Bind function which will trigger when a client disconnect from the server
@@ -72,14 +56,26 @@ namespace Network
 		void SetOnRemotePlayerBanned(NetEvent& _function);
 
 		void ResetNetworkEvents();
-		void SetTimeOutValue(int _value);
+
+		// Returns the remote Ip Address the client connects to
+		const char* GetRemoteAddress(void) { return m_remoteAddress->c_str(); }
+		// Returns the outgoing port the client connects to
+		const int GetOutgoingPort(void) { return *m_outgoingPort; }
+		const float GetPing(void) { return *m_ping; }
+
+		bool IsConnected() { return *m_connected; }
+
+		// Set the remote Ip Address the client will connect to
+		void SetRemoteAddress(const char* _ipAddress) { *m_remoteAddress = _ipAddress; }
+		// Set the outgoing port which the client will connect to
+		void SetOutgoingPort(const int _port) { *m_outgoingPort = _port; }
 
 	private:
 
-		void ReceivePackets(void);
-
-		void UpdateNetUsage(float& _dt);
 		void UpdateTimeOut(float& _dt);
+		void UpdateNetUsage(float& _dt);
+		
+		void ReceivePackets();
 
 		void NetPasswordInvalid(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection);
 		void NetConnectionAccepted(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection);
@@ -103,26 +99,22 @@ namespace Network
 		void NetRemoteConnectionKicked(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection);
 		void NetRemoteConnectionBanned(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection);
 
-
 	private:
-		ISocket* m_socket;
 
 		std::string* m_remoteAddress;
 		int* m_outgoingPort;
-		bool* m_socketBound;
-
-		std::thread* m_receivePacketsThread;
-		bool* m_receivePacketsThreadAlive;
 		bool* m_connected;
+
+		float* m_currentTimeOutIntervall;
+		int* m_currentIntervallCounter;
+
+		ISocket* m_socket;
+		char m_packetData[MAX_PACKET_SIZE];
 
 		float* m_ping;
 		float* m_sendTime;
 		float* m_receiveTime;
 
-		float* m_currentTimeOutIntervall;
-		int* m_currentIntervallCounter;
-
-		
 		std::vector<NetEvent>* m_onConnectedToServer;
 		std::vector<NetEvent>* m_onDisconnectedFromServer;
 		std::vector<NetEvent>* m_onTimedOutFromServer;
@@ -138,8 +130,7 @@ namespace Network
 		std::vector<NetEvent>* m_onRemotePlayerKicked;
 		std::vector<NetEvent>* m_onRemotePlayerBanned;
 
-
-		char m_packetData[MAX_PACKET_SIZE];
+		std::thread* m_receiveThread;
 	};
 
 }

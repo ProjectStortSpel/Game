@@ -110,6 +110,9 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory
   "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE}/content")
 
 # Add subprojects
+if(NOT TARGET Logger)
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Logger" Logger)
+endif()
 if(NOT TARGET Audio)
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Audio" Audio)
 endif()
@@ -136,9 +139,6 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Network" Network)
 endif()
 if(NOT TARGET Renderer)
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Renderer" Renderer)
-endif()
-if(NOT TARGET Logger)
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Logger" Logger)
 endif()
 
 if(NOT TARGET Game)

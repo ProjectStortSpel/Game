@@ -14,6 +14,9 @@ Author: Christian
 #include "TextRenderer.h"
 #include "SkyBox.h"
 #include "ModelLoader.h"
+#include "ParticleEffect.h"
+#include "Fire.h"
+#include "Smoke.h"
 
 namespace Renderer
 {
@@ -72,6 +75,19 @@ namespace Renderer
 		float* Color;
 	};
 
+	struct ParticleSystemToLoad
+	{
+		std::string Name;
+		vec3 Pos;
+		int NrOfParticles;
+		float LifeTime;
+		float Scale;
+		float SpriteSize;
+		std::string TextureName;
+		vec3 Color;
+		int Id;
+	};
+
 	class DECLSPEC GraphicDevice
 	{
 	public:
@@ -119,6 +135,10 @@ namespace Renderer
 		float CreateTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, glm::ivec2 size = glm::ivec2(-1, -1));
 		void CreateWrappedTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, unsigned int wrapLength, glm::ivec2 size = glm::ivec2(-1, -1));
 
+		void AddParticleEffect(std::string _name, const vec3 _pos, int _nParticles, float _lifeTime, float _scale, float _spriteSize, std::string _texture, vec3 _color, int &_id);
+		void RemoveParticleEffect(int _id);
+		void SetParticleAcceleration(int _id, float x, float y, float z);
+
 	protected:
 		bool InitSkybox();
 		
@@ -149,6 +169,15 @@ namespace Renderer
 		float** m_pointlightsPtr;
 		int m_nrOfLightsToBuffer;
 
+		// Particles stuff
+		std::map<int, ParticleEffect*> m_particleEffects;
+		// For adding and removing on main thread
+		std::vector<ParticleSystemToLoad> m_particleSystemsToLoad;
+		std::vector<int> m_particlesIdToRemove;
+		int m_particleID;
+
+		void BufferParticleSystems();
+
 		// The Framebuffer
 		GLuint m_FBO;
 		int m_framebufferWidth, m_framebufferHeight;
@@ -159,6 +188,7 @@ namespace Renderer
 		Shader m_skyBoxShader;
 		Shader m_forwardShader, m_viewspaceShader, m_interfaceShader;
 		Shader m_fullscreen;
+		std::map<std::string, Shader> m_particleShaders;
 
 		// Skybox
 		SkyBox *m_skybox;
