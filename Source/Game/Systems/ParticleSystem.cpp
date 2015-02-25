@@ -26,6 +26,7 @@ void ParticleSystem::Initialize()
 	AddComponentTypeToFilter("Position", ECSL::FilterType::Mandatory);
 	AddComponentTypeToFilter("Color", ECSL::FilterType::Mandatory);
 	AddComponentTypeToFilter("Particle", ECSL::FilterType::Mandatory);
+	AddComponentTypeToFilter("Hide", ECSL::FilterType::Excluded);
 	std::vector<unsigned int> bitsetComponents;
 	bitsetComponents.push_back(ECSL::ComponentTypeManager::GetInstance().GetTableId("Position"));
 	bitsetComponents.push_back(ECSL::ComponentTypeManager::GetInstance().GetTableId("Color"));
@@ -113,8 +114,12 @@ void ParticleSystem::EntitiesRemoved(const ECSL::RuntimeInfo& _runtime, const st
 		int*	ID	= (int*)GetComponent(entityId, "Particle", "Id");
 
 //#if  !defined(__ANDROID__) && !defined(__IOS__) 
-		m_graphics->RemoveParticleEffect(*ID);
+		if( HasComponent(entityId, "Hide") )
+			RemoveComponentFrom("Hide", entityId);
+		else
+			m_graphics->RemoveParticleEffect(*ID);
 //#endif
+
 	}
 }
 

@@ -1225,6 +1225,9 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 		{
 			if (m_clientWorld && m_clientWorld->HasComponent(i, "Render"))
 				m_clientWorld->RemoveComponentFrom("Render", i);
+
+			if (m_clientWorld && m_clientWorld->HasComponent(i, "Particle"))
+				m_clientWorld->CreateComponentAndAddTo("Hide", i);
             
 			if (m_serverWorld && m_serverWorld->HasComponent(i, "Render"))
                 m_serverWorld->RemoveComponentFrom("Render", i);
