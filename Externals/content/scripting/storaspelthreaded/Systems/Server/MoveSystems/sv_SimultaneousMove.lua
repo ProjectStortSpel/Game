@@ -176,7 +176,7 @@ SimultaneousMove.SetLerpFor = function(self, moveToLerp)
 	local 	tUnit 	= 	world:GetComponent(moveToLerp, "SimultaneousMove", "Unit"):GetInt()
 	local 	tPosX 	= 	world:GetComponent(moveToLerp, "SimultaneousMove", "PosX"):GetInt()
 	local 	tPosZ 	= 	world:GetComponent(moveToLerp, "SimultaneousMove", "PosZ"):GetInt()
-	local 	tTime 	= 	world:GetComponent(moveToLerp, "SimultaneousMove", "LerpTime"):GetFloat()
+	local 	tTime 	= 	world:GetComponent(moveToLerp, "SimultaneousMove", "SlerpTime"):GetFloat()
 	
 	--	Move the unit
 	world:GetComponent(tUnit, "MapPosition", 0):SetInt2(tPosX, tPosZ)

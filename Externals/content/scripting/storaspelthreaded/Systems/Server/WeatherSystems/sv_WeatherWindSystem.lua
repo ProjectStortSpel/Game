@@ -89,7 +89,7 @@ WeatherWindSystem.TickWeather = function(self, weatherEntity)
 				world:GetComponent(id, "SimultaneousMove", "DirX"):SetInt(dirX)
 				world:GetComponent(id, "SimultaneousMove", "DirZ"):SetInt(dirZ)
 				world:GetComponent(id, "SimultaneousMove", "Steps"):SetInt(windForce)
-				world:GetComponent(id, "SimultaneousMove", "LerpTime"):SetFloat(0.8)
+				world:GetComponent(id, "SimultaneousMove", "SlerpTime"):SetFloat(0.8)
 			end
 		end
 		
