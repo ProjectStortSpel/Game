@@ -100,3 +100,12 @@ UnitGhost.TableType = TableType.Map
 UnitGhost:AddVariable("Id", ByteSize.Reference)
 worldCreator:AddComponentType(UnitGhost)
 
+-- UnitVisualizer Component
+local CardAboveHead = ComponentType()
+CardAboveHead.Name = "CardAboveHead"
+CardAboveHead.TableType = TableType.Map
+CardAboveHead:AddVariable("CardOwner", ByteSize.Reference)
+CardAboveHead:AddVariable("CardId", ByteSize.Reference)
+CardAboveHead:AddVariable("CardDenied", ByteSize.Int)
+worldCreator:AddComponentType(CardAboveHead)
+

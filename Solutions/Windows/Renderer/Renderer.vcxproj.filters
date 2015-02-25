@@ -50,6 +50,9 @@
     <Filter Include="Source\Model\AModel">
       <UniqueIdentifier>{86f490a8-74e6-4145-80ce-83aea28cc5d9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="shaders\SpriteAnimation">
+      <UniqueIdentifier>{d2a2eb61-33ba-4d36-adcf-e6d13b296681}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Renderer\Shader.h">
@@ -233,6 +236,12 @@
     </None>
     <None Include="..\..\..\Externals\content\shaders\particles\particleSmokeVS.glsl">
       <Filter>shaders\ParticleShaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\spriteAnimationShaderFS.glsl">
+      <Filter>shaders\SpriteAnimation</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\spriteAnimationShaderVS.glsl">
+      <Filter>shaders\SpriteAnimation</Filter>
     </None>
   </ItemGroup>
 </Project>

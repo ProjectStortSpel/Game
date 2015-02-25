@@ -37,6 +37,7 @@ SimultaneousMove:AddVariable("PosZ", ByteSize.Int)
 SimultaneousMove:AddVariable("DirX", ByteSize.Int)
 SimultaneousMove:AddVariable("DirZ", ByteSize.Int)
 SimultaneousMove:AddVariable("Steps", ByteSize.Int)
+SimultaneousMove:AddVariable("SlerpTime", ByteSize.Float)
 worldCreator:AddComponentType(SimultaneousMove)
 
 

@@ -14,7 +14,7 @@ require "sv_CheckpointSystem"
 
 --	Light Systems
 package.path = package.path .. ";Systems/Server/LightSystems/?.lua"
-require "sv_DirectionalLightSystem"
+--require "sv_DirectionalLightSystem"
 
 --	Player Systems
 package.path = package.path .. ";Systems/Server/PlayerSystems/?.lua"
@@ -46,7 +46,7 @@ require "sv_DealCardsSystem"
 require "sv_TakeCardStepFromUnitSystem"
 require "sv_TakeCardsFromPlayerSystem"
 require "sv_PlayCardSystem"
-require "sv_PlaceCardAboveUnitSystem"
+--require "sv_PlaceCardAboveUnitSystem"
 require "sv_SortClientSelectedCards"
 require "sv_ClearServerSelectedSystem"
 
@@ -111,7 +111,7 @@ worldCreator:AddSystemToCurrentGroup(MapRater)
 worldCreator:AddSystemToCurrentGroup(RiverSystem)
 worldCreator:AddSystemToCurrentGroup(VoidSystem)
 worldCreator:AddSystemToCurrentGroup(CheckpointSystem)
-worldCreator:AddSystemToCurrentGroup(DirectionalLightSystem)
+--worldCreator:AddSystemToCurrentGroup(DirectionalLightSystem)
 worldCreator:AddSystemToCurrentGroup(PlayerSystem)
 worldCreator:AddSystemToCurrentGroup(UnitSystem)
 worldCreator:AddSystemToCurrentGroup(OffsetUnitSystem)
@@ -135,7 +135,7 @@ worldCreator:AddSystemToCurrentGroup(DealCardsSystem)
 worldCreator:AddSystemToCurrentGroup(TakeCardStepsFromUnitSystem)
 worldCreator:AddSystemToCurrentGroup(TakeCardsFromPlayerSystem)
 worldCreator:AddSystemToCurrentGroup(PlayCardSystem)
-worldCreator:AddSystemToCurrentGroup(PlaceCardAboveUnitSystem)
+--worldCreator:AddSystemToCurrentGroup(PlaceCardAboveUnitSystem)
 
 --worldCreator:AddSystemGroup() << TEMP REMOVE 3
 worldCreator:AddSystemToCurrentGroup(ActionMoveForwardSystem)

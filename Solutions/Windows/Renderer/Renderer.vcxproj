@@ -77,6 +77,8 @@
     <None Include="..\..\..\Externals\content\shaders\SimpleText.glsl" />
     <None Include="..\..\..\Externals\content\shaders\skyboxShaderFS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\skyboxShaderVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\spriteAnimationShaderFS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\spriteAnimationShaderVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\VSAnimationShader.glsl" />
     <None Include="..\..\..\Externals\content\shaders\VSDeferredPass1.glsl" />
     <None Include="..\..\..\Externals\content\shaders\VSForwardShader.glsl" />

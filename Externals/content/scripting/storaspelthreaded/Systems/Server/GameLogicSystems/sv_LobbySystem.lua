@@ -15,6 +15,7 @@ LobbySystem.Initialize = function ( self )
 	self:AddComponentTypeToFilter(self.Name, FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter(self.Name.."Element", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("LobbyPlayerReadyMSG", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("LobbyPlayerStartMSG", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("UnitEntityId", FilterType.RequiresOneOf)
 end
@@ -51,6 +52,8 @@ LobbySystem.EntitiesAdded = function(self, dt, entities)
 				self.UpdateMe = true
 			elseif world:EntityHasComponent( entityId, "LobbyPlayerReadyMSG") then
 				self:ToggleReady(entityId)
+			elseif world:EntityHasComponent( entityId, "LobbyPlayerStartMSG") then
+				self:StartRequest(entityId)
 			end
 		end
 	end
@@ -77,31 +80,47 @@ LobbySystem.UpdatePlayers = function(self)
 			ip = world:GetComponent(entityId, "NetConnection", "IpAddress"):GetText()
 			name = "Player" -- TODO: FETCH PLAYERNAME
 			if world:EntityHasComponent(entityId, "LobbyPlayerReady") then
-				readyText = "Ready"
+				readyText = "Ready "
 				readyplayers = readyplayers + 1
 			end
 		else
-			readyText = "Ready"
+			if not world:EntityHasComponent(entityId, "LobbyPlayerReady") then
+				world:CreateComponentAndAddTo("LobbyPlayerReady", entityId)
+			end
+			readyText = "Ready "
 			readyplayers = readyplayers + 1
 		end
 		
 		local r, g, b = world:GetComponent(unitId, "Color", "X"):GetFloat3(0)
 		
-		local button = self:CreateElement("shade", "quad", 0, 0.6-i*0.11, -2.0, 1.8, 0.1)
+		local button = self:CreateElement("shade", "quad", 0, 1.20-i*0.22, -4.0, 3.6, 0.2)
 		
-		local text = self:CreateElement("left", "text", -0.85, 0.64-i*0.11, -1.999, 1.5, 0.08)
+		local text = self:CreateElement("left", "text", -1.70, 1.28-i*0.22, -3.999, 3.0, 0.16)
 		world:CreateComponentAndAddTo("LobbyMenuPlayer", text)
 		self:AddTextToTexture("LMSPname"..i, name, 0, r, g, b, text)
-		text = self:CreateElement("center", "text", 0, 0.64-i*0.11, -1.999, 1.78, 0.08)
+		text = self:CreateElement("center", "text", 0, 1.28-i*0.22, -3.999, 3.56, 0.16)
 		self:AddTextToTexture("LMSPip"..i, ip, 0, r, g, b, text)
-		text = self:CreateElement("right", "text", 0.85, 0.64-i*0.11, -1.999, 0.8, 0.08)	
+		text = self:CreateElement("right", "text", 1.70, 1.28-i*0.22, -3.999, 1.6, 0.16)	
 		self:AddTextToTexture("LMSPready"..i, readyText, 0, r, g, b, text)
 	end
 	
 	if #entities == readyplayers then
+		--Console.AddToCommandQueue("start")
+	end
+	
+end
+
+	
+LobbySystem.StartRequest = function(self, player)
+
+	local Units = self:GetEntities("UnitEntityId")
+	local UnitsReady = self:GetEntities("LobbyPlayerReady")
+	
+	if #Units == #UnitsReady then
 		Console.AddToCommandQueue("start")
 	end
 	
+	world:KillEntity(player)
 end
 
 LobbySystem.ToggleReady = function(self, player)
@@ -132,7 +151,7 @@ end
 
 
 LobbySystem.SpawnMenu = function(self)
-	local background = self:CreateElement("gamemenubackground", "quad", 0, 0, -2.1, 2.07, 1.3)
+	local background = self:CreateElement("gamemenubackground", "quad", 0, 0, -4.1, 4.14, 2.6)
 	world:CreateComponentAndAddTo("LobbyMenuActive", background)
 end
 
@@ -191,6 +210,18 @@ Net.Receive("Server.ReadyCheck",
 	
 		local id = world:CreateNewEntity()
 		world:CreateComponentAndAddTo("LobbyPlayerReadyMSG", id)
+		world:CreateComponentAndAddTo("NetConnection", id)
+		world:GetComponent(id, "NetConnection", "IpAddress"):SetText(ip)
+		world:GetComponent(id, "NetConnection", "Port"):SetInt(port)
+		
+	end 
+)
+
+Net.Receive("Server.StartCheck", 
+	function(id, ip, port)
+	
+		local id = world:CreateNewEntity()
+		world:CreateComponentAndAddTo("LobbyPlayerStartMSG", id)
 		world:CreateComponentAndAddTo("NetConnection", id)
 		world:GetComponent(id, "NetConnection", "IpAddress"):SetText(ip)
 		world:GetComponent(id, "NetConnection", "Port"):SetInt(port)
