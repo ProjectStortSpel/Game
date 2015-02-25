@@ -160,6 +160,8 @@ namespace Renderer
 		
 	protected:
 		virtual void InitRenderLists() { return; }
+		void InitStandardShaders();
+		void InitStandardBuffers();
 		bool InitSDLWindow(int _width = 1280, int _height = 720);
 		bool InitSkybox();
 		void BufferModels();
@@ -204,6 +206,10 @@ namespace Renderer
 
 		// Shaders
 		Shader m_skyBoxShader;
+		Shader m_forwardShader;
+		Shader m_viewspaceShader;
+		Shader m_interfaceShader;
+		Shader m_shadowShaderForward;
 		std::map<std::string, Shader> m_particleShaders;
 
 		// Skybox
