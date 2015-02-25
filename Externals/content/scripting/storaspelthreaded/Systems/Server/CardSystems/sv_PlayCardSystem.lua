@@ -84,7 +84,15 @@ PlayCardSystem.PlayCard = function(self, unitToPlay, cardToPlay)
 		
 		world:GetComponent(cardAbove, "Position", 0):SetFloat3(0.0, 2.0 + #self.CardsAbove*0.001, 0.0)
 		world:GetComponent(cardAbove, "Rotation", 0):SetFloat3(1.5 * math.pi, math.pi, 0.0)
-		world:GetComponent(cardAbove, "Scale", 0):SetFloat3(1.5, 1.5, 1.5)
+		world:GetComponent(cardAbove, "Scale", 0):SetFloat3(0,0,0)
+		if not world:EntityHasComponent(cardAbove, "LerpScale") then
+			world:CreateComponentAndAddTo("LerpScale", cardAbove)
+			world:GetComponent(cardAbove, "LerpScale", "X"):SetFloat(1.5)
+			world:GetComponent(cardAbove, "LerpScale", "Y"):SetFloat(1.5)
+			world:GetComponent(cardAbove, "LerpScale", "Z"):SetFloat(1.5)
+			world:GetComponent(cardAbove, "LerpScale", "Time"):SetFloat(0.15)
+			world:GetComponent(cardAbove, "LerpScale", "Algorithm"):SetText("SmoothLerp")
+		end
 		world:GetComponent(cardAbove, "Model", "ModelName"):SetText(modelName)
 		world:GetComponent(cardAbove, "Model", "ModelPath"):SetText("cards")
 		world:GetComponent(cardAbove, "Model", "RenderType"):SetInt(2)
