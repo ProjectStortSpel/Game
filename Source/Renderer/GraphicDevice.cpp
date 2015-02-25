@@ -23,6 +23,7 @@ GraphicDevice::GraphicDevice()
 	m_numberOfDirectionalLights = 0;
 	m_particleID = 0;
 	m_modelIDcounter = 0;
+	m_elapsedTime = 0.0f;
 }
 GraphicDevice::GraphicDevice(Camera _camera, int x, int y)
 {
@@ -38,6 +39,7 @@ GraphicDevice::GraphicDevice(Camera _camera, int x, int y)
 	m_numberOfDirectionalLights = 0;
 	m_particleID = 0;
 	m_modelIDcounter = 0;
+	m_elapsedTime = 0.0f;
 }
 GraphicDevice::~GraphicDevice()
 {
@@ -149,12 +151,6 @@ void GraphicDevice::InitStandardShaders()
 	m_skyBoxShader.AddShader("content/shaders/skyboxShaderFS.glsl", GL_FRAGMENT_SHADER);
 	m_skyBoxShader.FinalizeShaderProgram();
 
-	// SkyBox
-	m_spriteAnimationShader.InitShaderProgram();
-	m_spriteAnimationShader.AddShader("content/shaders/skyboxShaderVS.glsl", GL_VERTEX_SHADER);
-	m_spriteAnimationShader.AddShader("content/shaders/skyboxShaderFS.glsl", GL_FRAGMENT_SHADER);
-	m_spriteAnimationShader.FinalizeShaderProgram();
-
 	// ------Particle shaders---------
 		const char * outputNames[] = { "Position", "Velocity", "StartTime" };
 		Shader particleShader;
@@ -177,6 +173,9 @@ void GraphicDevice::InitStandardBuffers()
 {
 	//Forward shader
 	m_forwardShader.CheckUniformLocation("diffuseTex", 1);
+
+	//River water shader
+	m_riverShader.CheckUniformLocation("diffuseTex", 1);
 
 	//Skybox shader
 	m_skyBoxShader.CheckUniformLocation("cubemap", 1);

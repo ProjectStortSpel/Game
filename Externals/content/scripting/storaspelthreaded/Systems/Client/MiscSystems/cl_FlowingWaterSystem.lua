@@ -38,7 +38,7 @@ FlowingWaterSystem.EntitiesAdded = function(self, dt, entities)
 		local	newFlowingTile	=	world:CreateNewEntity("FlowingWater")
 		world:SetComponent(newFlowingTile, "Model", "ModelName", "waterplane");
 		world:SetComponent(newFlowingTile, "Model", "ModelPath", "water");
-		world:SetComponent(newFlowingTile, "Model", "RenderType", 1);
+		world:SetComponent(newFlowingTile, "Model", "RenderType", 5);
 		
 		world:GetComponent(newFlowingTile, "Position", "X"):SetFloat3(X, 0.40, Z)
 		

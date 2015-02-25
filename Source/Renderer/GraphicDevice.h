@@ -24,6 +24,7 @@ namespace Renderer
 #define RENDER_VIEWSPACE  2
 #define RENDER_INTERFACE  3
 #define RENDER_ANIMATED  4
+#define RENDER_RIVERWATER 5
 
 #define RENDER_DEFERRED_SCATTER  8
 #define RENDER_FORWARD_SCATTER  9
@@ -181,7 +182,10 @@ namespace Renderer
 
 		//modellists
 		std::vector<RenderList> m_renderLists;
+
+		std::vector<Model> m_modelsForward, m_modelsViewspace, m_modelsInterface, m_modelsWater;
 		std::vector<AModel> m_modelsAnimated;
+
 		Shader m_animationShader;
 
 		//MODEL LOADER
@@ -192,6 +196,9 @@ namespace Renderer
 
 		Camera* m_camera;
 		int m_vramUsage; //in bytes
+
+		// For the river animation
+		float m_elapsedTime;
 
 		// dt and fps
 		float m_dt;
@@ -210,7 +217,7 @@ namespace Renderer
 		Shader m_viewspaceShader;
 		Shader m_interfaceShader;
 		Shader m_shadowShaderForward;
-		Shader m_spriteAnimationShader;
+		Shader m_riverShader;
 		std::map<std::string, Shader> m_particleShaders;
 
 		// Skybox

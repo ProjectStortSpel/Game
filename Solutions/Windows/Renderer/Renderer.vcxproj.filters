@@ -237,10 +237,7 @@
     <None Include="..\..\..\Externals\content\shaders\particles\particleSmokeVS.glsl">
       <Filter>shaders\ParticleShaders</Filter>
     </None>
-    <None Include="..\..\..\Externals\content\shaders\spriteAnimationShaderFS.glsl">
-      <Filter>shaders\SpriteAnimation</Filter>
-    </None>
-    <None Include="..\..\..\Externals\content\shaders\spriteAnimationShaderVS.glsl">
+    <None Include="..\..\..\Externals\content\shaders\riverShaderVS.glsl">
       <Filter>shaders\SpriteAnimation</Filter>
     </None>
   </ItemGroup>
