@@ -149,6 +149,12 @@ void GraphicDevice::InitStandardShaders()
 	m_skyBoxShader.AddShader("content/shaders/skyboxShaderFS.glsl", GL_FRAGMENT_SHADER);
 	m_skyBoxShader.FinalizeShaderProgram();
 
+	// SkyBox
+	m_spriteAnimationShader.InitShaderProgram();
+	m_spriteAnimationShader.AddShader("content/shaders/skyboxShaderVS.glsl", GL_VERTEX_SHADER);
+	m_spriteAnimationShader.AddShader("content/shaders/skyboxShaderFS.glsl", GL_FRAGMENT_SHADER);
+	m_spriteAnimationShader.FinalizeShaderProgram();
+
 	// ------Particle shaders---------
 		const char * outputNames[] = { "Position", "Velocity", "StartTime" };
 		Shader particleShader;
@@ -315,8 +321,11 @@ void GraphicDevice::AddParticleEffect(std::string _name, const vec3 _pos, int _n
 
 void GraphicDevice::RemoveParticleEffect(int _id)
 {
-	m_particleSystems[_id]->EnterEndPhase();
-	m_particlesIdToRemove.push_back(_id);
+	if (m_particleSystems[_id])
+	{
+		m_particleSystems[_id]->EnterEndPhase();
+		m_particlesIdToRemove.push_back(_id);
+	}
 }
 
 void GraphicDevice::BufferParticleSystems()

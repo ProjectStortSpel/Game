@@ -210,6 +210,7 @@ namespace Renderer
 		Shader m_viewspaceShader;
 		Shader m_interfaceShader;
 		Shader m_shadowShaderForward;
+		Shader m_spriteAnimationShader;
 		std::map<std::string, Shader> m_particleShaders;
 
 		// Skybox
