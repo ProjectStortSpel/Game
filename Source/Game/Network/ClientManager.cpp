@@ -93,17 +93,18 @@ namespace ClientManager
 			unsigned char* fileData = (unsigned char*)FileSystem::File::Read(file, job.resource.Size);
 			FileSystem::File::Close(file);
 
-			int bytesLeft = job.resource.Size;
+			int bytesLeft;
 			
 			unsigned char* data;
 			std::string str;
 			if (binary)
 			{
 				data = fileData;
+				bytesLeft = job.resource.Size;
 			}
 			else
 			{
-				str = std::string((char*)fileData);
+				str = std::string((char*)fileData, job.resource.Size);
 
 				//auto first = std::remove(str.begin(), str.end(), '\r');
 				//int numRemoved = str.end() - first;
@@ -117,9 +118,9 @@ namespace ClientManager
 				{
 					str.replace(start_pos, from.length(), to);
 					start_pos += to.length();
-					bytesLeft -= from.length() - to.length();
 				}
 				data = (unsigned char*)str.c_str();
+				bytesLeft = str.size();
 			}
 			
 

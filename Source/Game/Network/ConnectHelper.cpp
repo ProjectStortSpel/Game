@@ -261,7 +261,10 @@ namespace ConnectHelper
 
 				if (md5 != r.MD5)
 				{
-					//SDL_Log("I don't have: %s", filename.c_str());
+					SDL_Log("I don't have: %s", filename.c_str());
+
+					FileSystem::MD5::MD5_Print(md5);
+					FileSystem::MD5::MD5_Print(r.MD5);
 
 					ResourceManager::Resource temp;
 					temp.File = filename;
@@ -340,7 +343,6 @@ namespace ConnectHelper
 			SDL_RWops* file;
 			FileSystem::File::Append(r.Location, &file);
 			FileSystem::File::Write(file, data, size);
-			Sint64 fileSize = FileSystem::File::GetFileSize(file);
 			FileSystem::File::Close(file);
 
 			if (lastPart == 1)

@@ -58,6 +58,7 @@ namespace FileSystem
 					char* data = Read(file, length);
 					bool ascii = strlen(data) >= length;
 					delete data;
+					Close(file);
 					return !ascii;
 				}
 			}

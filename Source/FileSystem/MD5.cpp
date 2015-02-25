@@ -353,11 +353,10 @@ namespace FileSystem
 			}
 			else
 			{
-				std::string str = std::string(data);
+				std::string str = std::string(data, length);
 				/*auto first = std::remove(str.begin(), str.end(), '\r');
 				int numRemoved = str.end() - first;
 				str.erase(first, str.end());*/
-
 				
 				std::string from = "\r\n";
 				std::string to = "\n";
@@ -367,11 +366,9 @@ namespace FileSystem
 				{
 					str.replace(start_pos, from.length(), to);
 					start_pos += to.length();
-					length -= from.length() - to.length();
 				}
 				
-
-				result = MD5(str.c_str(), length);
+				result = MD5(str.c_str(), str.size());
 				//result = MD5(str.c_str(), length - numRemoved);
 			}
 
