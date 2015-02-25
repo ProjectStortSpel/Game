@@ -45,12 +45,13 @@ RiverSystem.EntitiesAdded = function(self, dt, entities)
 						
 						local id = world:CreateNewEntity()
 						world:CreateComponentAndAddTo("SimultaneousMove", id)
-						world:SetComponent(id, "SimultaneousMove", "Unit", units[i])
-						world:SetComponent(id, "SimultaneousMove", "PosX", posXs)
-						world:SetComponent(id, "SimultaneousMove", "PosZ", posZs)
-						world:SetComponent(id, "SimultaneousMove", "DirX", riverDirX)
-						world:SetComponent(id, "SimultaneousMove", "DirZ", riverDirZ)
-						world:SetComponent(id, "SimultaneousMove", "Steps", 1)
+						world:GetComponent(id, "SimultaneousMove", "Unit"):SetInt(units[i])
+						world:GetComponent(id, "SimultaneousMove", "PosX"):SetInt(posXs)
+						world:GetComponent(id, "SimultaneousMove", "PosZ"):SetInt(posZs)
+						world:GetComponent(id, "SimultaneousMove", "DirX"):SetInt(riverDirX)
+						world:GetComponent(id, "SimultaneousMove", "DirZ"):SetInt(riverDirZ)
+						world:GetComponent(id, "SimultaneousMove", "Steps"):SetInt(1)
+						world:GetComponent(id, "SimultaneousMove", "SlerpTime"):SetFloat(0.5)
 
 						break
 

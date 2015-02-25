@@ -144,9 +144,6 @@ void GameCreator::InitializeNetwork()
 	//hook = std::bind(&GameCreator::NetworkGameModeFiles, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 	//NetworkInstance::GetClient()->AddNetworkHook("GamemodeFiles", hook);
 
-	m_remoteConsole = new RemoteConsole();
-
-	ConnectHelper::Initialize();
 	ConnectHelper::LoadGameModeHook GMhook = std::bind(&GameCreator::GameMode, this, std::placeholders::_1);
 	ConnectHelper::SetLoadGameModeHook(GMhook);
 
@@ -217,8 +214,11 @@ void GameCreator::InitializeNetworkEvents(bool _allowEntities)
 	hook = std::bind(&GameCreator::NetworkGameMode, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 	NetworkInstance::GetClient()->AddNetworkHook("Gamemode", hook);
 
-
+	ConnectHelper::Initialize();
 	ClientManager::Initialize();
+
+	SAFE_DELETE(m_remoteConsole);
+	m_remoteConsole = new RemoteConsole();
 
 	if (_allowEntities)
 	{
@@ -1225,6 +1225,9 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 		{
 			if (m_clientWorld && m_clientWorld->HasComponent(i, "Render"))
 				m_clientWorld->RemoveComponentFrom("Render", i);
+
+			if (m_clientWorld && m_clientWorld->HasComponent(i, "Particle"))
+				m_clientWorld->CreateComponentAndAddTo("Hide", i);
             
 			if (m_serverWorld && m_serverWorld->HasComponent(i, "Render"))
                 m_serverWorld->RemoveComponentFrom("Render", i);

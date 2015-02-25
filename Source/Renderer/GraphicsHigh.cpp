@@ -95,6 +95,7 @@ bool GraphicsHigh::InitGLEW()
 }
 bool GraphicsHigh::InitShaders()
 {
+	InitStandardShaders();
 	// Animation Deferred pass 1
 	m_animationShader.InitShaderProgram();
 	m_animationShader.AddShader("content/shaders/VSAnimationShader.glsl", GL_VERTEX_SHADER);
@@ -112,12 +113,6 @@ bool GraphicsHigh::InitShaders()
 	m_compDeferredPass2Shader.AddShader("content/shaders/highCSDeferredPass2.glsl", GL_COMPUTE_SHADER);
 	m_compDeferredPass2Shader.FinalizeShaderProgram();
 
-	// SkyBox
-	m_skyBoxShader.InitShaderProgram();
-	m_skyBoxShader.AddShader("content/shaders/skyboxShaderVS.glsl", GL_VERTEX_SHADER);
-	m_skyBoxShader.AddShader("content/shaders/skyboxShaderFS.glsl", GL_FRAGMENT_SHADER);
-	m_skyBoxShader.FinalizeShaderProgram();
-
 	// Full Screen Quad
 	m_fullScreenShader.InitShaderProgram();
 	m_fullScreenShader.AddShader("content/shaders/fullscreen.vs", GL_VERTEX_SHADER);
@@ -131,47 +126,11 @@ bool GraphicsHigh::InitShaders()
 	m_forwardShader.AddShader("content/shaders/FSForwardShader.glsl", GL_FRAGMENT_SHADER);
 	m_forwardShader.FinalizeShaderProgram();
 
-	// Viewspace shader
-	m_viewspaceShader.InitShaderProgram();
-	m_viewspaceShader.AddShader("content/shaders/VSViewspaceShader.glsl", GL_VERTEX_SHADER);
-	m_viewspaceShader.AddShader("content/shaders/FSViewspaceShader.glsl", GL_FRAGMENT_SHADER);
-	m_viewspaceShader.FinalizeShaderProgram();
-
-	// Interface shader
-	m_interfaceShader.InitShaderProgram();
-	m_interfaceShader.AddShader("content/shaders/VSInterfaceShader.glsl", GL_VERTEX_SHADER);
-	m_interfaceShader.AddShader("content/shaders/FSInterfaceShader.glsl", GL_FRAGMENT_SHADER);
-	m_interfaceShader.FinalizeShaderProgram();
-
 	// ShadowShader deferred geometry
 	m_shadowShaderDeferred.InitShaderProgram();
 	m_shadowShaderDeferred.AddShader("content/shaders/shadowShaderDeferredVS.glsl", GL_VERTEX_SHADER);
 	m_shadowShaderDeferred.AddShader("content/shaders/shadowShaderDeferredFS.glsl", GL_FRAGMENT_SHADER);
 	m_shadowShaderDeferred.FinalizeShaderProgram();
-
-	// ShadowShader forward geometry
-	m_shadowShaderForward.InitShaderProgram();
-	m_shadowShaderForward.AddShader("content/shaders/shadowShaderForwardVS.glsl", GL_VERTEX_SHADER);
-	m_shadowShaderForward.AddShader("content/shaders/shadowShaderForwardFS.glsl", GL_FRAGMENT_SHADER);
-	m_shadowShaderForward.FinalizeShaderProgram();
-
-	// ------Particle shaders---------
-		const char * outputNames[] = { "Position", "Velocity", "StartTime" };
-		Shader particleShader;
-		particleShader.InitShaderProgram();
-		particleShader.AddShader("content/shaders/particles/particleFireVS.glsl", GL_VERTEX_SHADER);
-		particleShader.AddShader("content/shaders/particles/particleFireFS.glsl", GL_FRAGMENT_SHADER);
-		glTransformFeedbackVaryings(particleShader.GetShaderProgram(), 3, outputNames, GL_SEPARATE_ATTRIBS);
-		particleShader.FinalizeShaderProgram();
-		m_particleShaders["fire"] = particleShader;
-
-		particleShader.InitShaderProgram();
-		particleShader.AddShader("content/shaders/particles/particleSmokeVS.glsl", GL_VERTEX_SHADER);
-		particleShader.AddShader("content/shaders/particles/particleSmokeFS.glsl", GL_FRAGMENT_SHADER);
-		glTransformFeedbackVaryings(particleShader.GetShaderProgram(), 3, outputNames, GL_SEPARATE_ATTRIBS);
-		particleShader.FinalizeShaderProgram();
-		m_particleShaders["smoke"] = particleShader;
-	// -------------------------------
 
 	return true;
 }
@@ -214,6 +173,8 @@ bool GraphicsHigh::InitDeferred()
 }
 bool GraphicsHigh::InitBuffers()
 {
+	InitStandardBuffers();
+
 	m_compDeferredPass2Shader.UseProgram();
 
 	//------ Compute shader input images --------
@@ -236,19 +197,6 @@ bool GraphicsHigh::InitBuffers()
 
 	// FULL SCREEN QUAD
 	m_fullScreenShader.CheckUniformLocation("output_image", 5);
-
-	//Forward shader
-	m_forwardShader.CheckUniformLocation("diffuseTex", 1);
-
-	//Skybox shader
-	m_skyBoxShader.CheckUniformLocation("cubemap", 1);
-
-	//Shadow forward shader
-	m_shadowShaderForward.CheckUniformLocation("diffuseTex", 1);
-
-	//Particle shaders
-	for (std::map<std::string, Shader>::iterator it = m_particleShaders.begin(); it != m_particleShaders.end(); ++it)
-		it->second.CheckUniformLocation("ParticleTex", 1);
 
 	return true;
 }
