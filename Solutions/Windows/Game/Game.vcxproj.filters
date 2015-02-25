@@ -90,6 +90,9 @@
     <Filter Include="Lua Bridge\Audio">
       <UniqueIdentifier>{b515085e-e995-433d-9c82-81c42164e601}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\MeshCreator">
+      <UniqueIdentifier>{077f2f17-8138-4979-8f70-2969a29b419f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\LuaBridge.cpp">
@@ -278,6 +281,12 @@
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\Audio\LuaAudio.cpp">
       <Filter>Lua Bridge\Audio</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\MeshCreator\MeshCreator.cpp">
+      <Filter>Game\MeshCreator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\MeshCreator\Tile.cpp">
+      <Filter>Game\MeshCreator</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h">
@@ -462,6 +471,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Audio\LuaAudio.h">
       <Filter>Lua Bridge\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\MeshCreator\includes.h">
+      <Filter>Game\MeshCreator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\MeshCreator\MeshCreator.h">
+      <Filter>Game\MeshCreator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\MeshCreator\Tile.h">
+      <Filter>Game\MeshCreator</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

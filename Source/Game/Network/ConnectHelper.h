@@ -4,6 +4,7 @@
 #include "Network/PacketHandler.h"
 
 #include <string>
+#include <functional>
 
 namespace ConnectHelper
 {

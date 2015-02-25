@@ -332,7 +332,7 @@ void GraphicDevice::BufferModels()
 	}
 	for (auto pair : m_modelsToLoadFromSource)
 	{
-		
+		BufferModel(pair.first, pair.second);
 		delete pair.second;
 	}
 	m_modelsToLoad.clear();
@@ -402,6 +402,61 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 		}
 	}
 
+	//if model doesnt exist
+	model.instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
+	// Push back the model
+	modelList->push_back(model);
+}
+
+void GraphicDevice::BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoad)
+{
+	Shader *shaderPtr = NULL;
+	std::vector<Model> *modelList = NULL;
+	
+	bool FoundShaderType = false;
+	for (int i = 0; i < m_renderLists.size(); i++)
+	{
+		if (_modelToLoad->RenderType == m_renderLists[i].RenderType)
+		{
+			shaderPtr = m_renderLists[i].ShaderPtr;
+			modelList = m_renderLists[i].ModelList;
+			shaderPtr->UseProgram();
+			FoundShaderType = true;
+			break;
+		}
+	}
+	if (!FoundShaderType) { ERRORMSG("ERROR: INVALID RENDER SETTING"); return; }
+	// Import Mesh
+	Buffer* mesh = AddMesh(_modelToLoad, shaderPtr);
+	// Import Texture
+	GLuint texture = AddTexture(_modelToLoad->diffuseTextureFilepath, GL_TEXTURE1);
+	shaderPtr->CheckUniformLocation("diffuseTex", 1);
+	GLuint normal, specular;
+	if (_modelToLoad->RenderType != RENDER_INTERFACE)
+	{
+		// Import Normal map
+		normal = AddTexture(_modelToLoad->normalTextureFilepath, GL_TEXTURE2);
+		shaderPtr->CheckUniformLocation("normalTex", 2);
+		// Import Specc Glow map
+		specular = AddTexture(_modelToLoad->specularTextureFilepath, GL_TEXTURE3);
+		shaderPtr->CheckUniformLocation("specularTex", 3);
+	}
+	// Create model
+	Model model;
+	if (_modelToLoad->RenderType != RENDER_INTERFACE) // TODO: BETTER FIX
+	model = Model(mesh, texture, normal, specular);
+	else
+	model = Model(mesh, texture, NULL, NULL);
+	//for the matrices (modelView + normal)
+	m_vramUsage += (16 + 9) * sizeof(float);
+	for (int i = 0; i < modelList->size(); i++)
+	{
+		if ((*modelList)[i] == model)
+		{
+			(*modelList)[i].instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
+			return;
+		}
+	}
 	//if model doesnt exist
 	model.instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
 	// Push back the model

@@ -16,7 +16,7 @@ namespace LuaBridge
 	{
 		void Embed(lua_State* L);
 		void SetGraphicDevice(Renderer::GraphicDevice* graphicDevice);
-        
+		Renderer::GraphicDevice* GetGraphicDevice();
 	};
 }
 

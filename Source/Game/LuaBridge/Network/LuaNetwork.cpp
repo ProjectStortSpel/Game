@@ -485,7 +485,7 @@ namespace LuaBridge
 					reason = LuaEmbedder::PullString(L, 3);
 
 				Network::NetConnection nc(ip.c_str(), port);
-				NetworkInstance::GetServer()->Kick(nc, reason.c_str());
+				//NetworkInstance::GetServer()->Kick(nc, reason.c_str());
 			}
 			return 0;
 		}
@@ -1176,7 +1176,7 @@ namespace LuaBridge
 				reason = LuaEmbedder::PullString(L, 3);
 
 			Network::NetConnection nc(ip.c_str(), port);
-			NetworkInstance::GetServer()->Kick(nc, reason.c_str());
+			//NetworkInstance::GetServer()->Kick(nc, reason.c_str());
 
 			return 0;
 		}

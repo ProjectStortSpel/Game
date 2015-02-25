@@ -9,6 +9,15 @@
     <ClCompile Include="..\..\..\Source\AndroidRenderer\SkyBox.cpp" />
     <ClCompile Include="..\..\..\Source\AndroidRenderer\GraphicsLow.cpp" />
     <ClCompile Include="..\..\..\Source\AndroidRenderer\GraphicsHigh.cpp" />
+    <ClCompile Include="..\..\..\Source\AndroidRenderer\ParticleEffect.cpp">
+      <Filter>ParticleEffects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\AndroidRenderer\Fire.cpp">
+      <Filter>ParticleEffects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\AndroidRenderer\Smoke.cpp">
+      <Filter>ParticleEffects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\AndroidRenderer\Buffer.h" />
@@ -23,10 +32,22 @@
     <ClInclude Include="..\..\..\Source\AndroidRenderer\TextureLoader.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\GraphicsLow.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\GraphicsHigh.h" />
+    <ClInclude Include="..\..\..\Source\AndroidRenderer\ParticleEffect.h">
+      <Filter>ParticleEffects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\AndroidRenderer\Fire.h">
+      <Filter>ParticleEffects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\AndroidRenderer\Smoke.h">
+      <Filter>ParticleEffects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
       <UniqueIdentifier>{d76c4ccf-6a28-4cd7-8591-058a176a00f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ParticleEffects">
+      <UniqueIdentifier>{ac642a07-7a0e-4cf5-b323-416fda2b3311}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -70,6 +91,18 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\..\..\Externals\content\shaders\android\lowAndroidForwardVS.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidSmokeShaderFS.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidSmokeShaderVS.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidFireShaderFS.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidFireShaderVS.glsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

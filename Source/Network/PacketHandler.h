@@ -1,20 +1,15 @@
 #ifndef PACKETHANDLER_H
 #define PACKETHANDLER_H
 
-
-	
-
 #include <map>
-#include <mutex>
+
 #include "Stdafx.h"
+#include "Packet.h"
 
 namespace Network
 {
-	class BaseNetwork;
-
 	class DECLSPEC PacketHandler
 	{
-		friend class BaseNetwork;
 	public:
 
 		PacketHandler(void);
@@ -92,36 +87,28 @@ namespace Network
 
 		struct PacketSendInfo
 		{
-			unsigned char  Data[MAX_PACKET_SIZE];
+			unsigned char Data[MAX_PACKET_SIZE];
 			unsigned char* Position;
 		};
 
 		struct PacketReceiveInfo
 		{
-			Packet*		   PacketData;
+			Packet* PacketData;
 			unsigned char* Position;
 		};
 
-		PacketSendInfo* GetPacketSendInfo(uint64_t id);
-		PacketReceiveInfo* GetPacketReceiveInfo(uint64_t id);
+		PacketSendInfo* GetPacketSendInfo(uint64_t _id);
+		PacketReceiveInfo* GetPacketReceiveInfo(uint64_t _id);
 
 		bool IsOutOfBounds(unsigned char* _begin, unsigned char* _position, unsigned short _length);
 
 	private:
 
-
 		std::map<uint64_t, PacketSendInfo*>* m_packetSendInfoMap;
 		std::map<uint64_t, PacketReceiveInfo*>* m_packetReceiveInfoMap;
 
-		std::mutex* m_sendMutex;
-		std::mutex* m_receiveMutex;
-
-
-		//unsigned char* m_packetSend;
-		//unsigned char* m_positionSend;
-
-		//Packet*		   m_packetReceive;
-		//unsigned char* m_positionReceive;
+		SDL_mutex* m_sendLock;
+		SDL_mutex* m_receiveLock;
 
 
 	};
