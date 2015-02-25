@@ -447,6 +447,9 @@ namespace LuaBridge
 
 				Network::Packet* p = server->GetPacketHandler()->EndPack(id);
 
+				std::vector<Network::NetConnection> NCs = ClientManager::GetConnectedClients();
+
+				bool exclude = false;
 				Network::NetConnection nc;
 				if (LuaEmbedder::IsString(L, 2) && LuaEmbedder::IsInt(L, 3))
 				{
@@ -457,7 +460,14 @@ namespace LuaBridge
 					// Get Netconnection based on username
 				}
 
-                std::vector<Network::NetConnection> NCs = ClientManager::GetConnectedClients();
+				if (exclude)
+				{
+					for (int i = 0; i < NCs.size(); ++i)
+					{
+						NCs.erase(std::remove(NCs.begin(), NCs.end(), nc), NCs.end());
+					}
+				}
+
 				server->Send(p, NCs);
 			}
 			return 0;
@@ -475,7 +485,7 @@ namespace LuaBridge
 					reason = LuaEmbedder::PullString(L, 3);
 
 				Network::NetConnection nc(ip.c_str(), port);
-				NetworkInstance::GetServer()->Kick(nc, reason.c_str());
+				//NetworkInstance::GetServer()->Kick(nc, reason.c_str());
 			}
 			return 0;
 		}
@@ -601,6 +611,26 @@ namespace LuaBridge
 
 			Network::Packet* p = NetworkInstance::GetServerNetworkHelper()->WriteEntityAll(server->GetPacketHandler(), id);
             std::vector<Network::NetConnection> NCs = ClientManager::GetConnectedClients();
+
+			bool exclude = false;
+			Network::NetConnection nc;
+			if (LuaEmbedder::IsString(L, 2) && LuaEmbedder::IsInt(L, 3))
+			{
+				nc = Network::NetConnection(LuaEmbedder::PullString(L, 2).c_str(), LuaEmbedder::PullInt(L, 3));
+			}
+			else if (LuaEmbedder::IsString(L, 2))
+			{
+				// Get Netconnection based on username
+			}
+
+			if (exclude)
+			{
+				for (int i = 0; i < NCs.size(); ++i)
+				{
+					NCs.erase(std::remove(NCs.begin(), NCs.end(), nc), NCs.end());
+				}
+			}
+
 			server->Send(p, NCs);
 
 			return 0;
@@ -615,6 +645,27 @@ namespace LuaBridge
 
 			Network::Packet* p = NetworkInstance::GetServerNetworkHelper()->WriteEntityKill(server->GetPacketHandler(), id);
             std::vector<Network::NetConnection> NCs = ClientManager::GetConnectedClients();
+
+
+			bool exclude = false;
+			Network::NetConnection nc;
+			if (LuaEmbedder::IsString(L, 2) && LuaEmbedder::IsInt(L, 3))
+			{
+				nc = Network::NetConnection(LuaEmbedder::PullString(L, 2).c_str(), LuaEmbedder::PullInt(L, 3));
+			}
+			else if (LuaEmbedder::IsString(L, 2))
+			{
+				// Get Netconnection based on username
+			}
+
+			if (exclude)
+			{
+				for (int i = 0; i < NCs.size(); ++i)
+				{
+					NCs.erase(std::remove(NCs.begin(), NCs.end(), nc), NCs.end());
+				}
+			}
+
 			server->Send(p, NCs);
 
 			return 0;
@@ -1125,7 +1176,7 @@ namespace LuaBridge
 				reason = LuaEmbedder::PullString(L, 3);
 
 			Network::NetConnection nc(ip.c_str(), port);
-			NetworkInstance::GetServer()->Kick(nc, reason.c_str());
+			//NetworkInstance::GetServer()->Kick(nc, reason.c_str());
 
 			return 0;
 		}
