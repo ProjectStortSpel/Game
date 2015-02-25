@@ -21,14 +21,14 @@ Tile::Tile()
 
 Tile::Tile(int x, int y, bool ground)
 {
-	this->depth = -9;
+	this->depth = -11;
 
 	this->position.x = x;
 	this->position.y = y;
 
 	for (int i = 0; i < directions::total; i++)
 	{
-		this->neighbor[i] = false;		//Sätter alla grannar till false?
+		this->neighbor[i] = false;		//Sätter alla grannar till false
 	}
 
 	this->ground = ground;
@@ -119,18 +119,18 @@ void Tile::ChangeDepth(glm::vec2 centre, float longest_distance)
 		float scale1 = this->depth / 5;
 		float scale2 = this->depth*pow / 8;
 
-		this->vertices[i].z = inversefactor * pow * this->depth ;
+		this->vertices[i].z = (pow*0.8f) * this->depth;
 		
 		if (pow < 0.6f && pow > 0.25f)
 		{
-			this->vertices[i].z += -abs(sinf(length*pow) * (scale2*2));
-			this->vertices[i].z += -abs(cosf(length*pow) * (scale2 * 2));
+			this->vertices[i].z += -abs(cosf(length)*scale2);
+			this->vertices[i].z += -abs(sinf(length)*scale2);
 
-			this->vertices[i].z += -abs(sinf(length) *pow);
-			this->vertices[i].z += -abs(cosf(length)*pow);
+			this->vertices[i].z += -abs(sinf(length/2)*pow);
+			this->vertices[i].z += -abs(cosf(length/2)*pow);
 
-			this->vertices[i].z += -abs(cosf(vertex_position.x))*pow*scale2;
-			this->vertices[i].z += -abs(cosf(vertex_position.y))*pow*scale2;
+			this->vertices[i].z += -abs(cosf(vertex_position.x))*0.5f;
+			this->vertices[i].z += -abs(cosf(vertex_position.y))*0.5f;
 
 			this->vertices[i].z += -abs(sinf(vertex_position.x)*scale1)*pow * scale1;
 			this->vertices[i].z += -abs(sinf(vertex_position.y)*scale1)*pow * scale1;
@@ -152,11 +152,11 @@ void Tile::ChangeDepth(glm::vec2 centre, float longest_distance)
 	if (this->vertices[4].z == 0)			//för allas z-värde
 	{
 		this->vertices[4].z = -0.5f;
-
 	}
 }
 
-void Tile::FixEdges()
+//Ändra här om hela meshen ska börja på 0 eller -0.5f
+void Tile::FixEdges()	
 {
 	if (!this->neighbor[directions::up])
 	{
@@ -204,7 +204,8 @@ void Tile::FixEdges()
 	{
 		this->vertices[8].z = 0;
 	}
-}
+} 
+
 bool Tile::IsGround()
 {
 	return this->ground;
