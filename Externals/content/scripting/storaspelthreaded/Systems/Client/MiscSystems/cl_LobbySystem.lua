@@ -1,6 +1,5 @@
 LobbySystem = System()
 LobbySystem.Name = "LobbyMenu"
-LobbySystem.ReadyButton = -1
 
 LobbySystem.Initialize = function ( self )
 	--	Set Name
@@ -13,6 +12,7 @@ LobbySystem.Initialize = function ( self )
 	--	Set Filter
 	self:AddComponentTypeToFilter(self.Name.."Element", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("LobbyPlayerReady", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("LobbyPlayerStart", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("LobbyMenuActive", FilterType.RequiresOneOf)
 end
@@ -47,20 +47,25 @@ LobbySystem.EntitiesAdded = function(self, dt, entities)
 			elseif world:EntityHasComponent( entityId, "LobbyPlayerReady") then
 				Net.SendToServer(Net.StartPack("Server.ReadyCheck"))
 				world:KillEntity(entityId)
+			elseif world:EntityHasComponent( entityId, "LobbyPlayerStart") then
+				Net.SendToServer(Net.StartPack("Server.StartCheck"))
+				world:KillEntity(entityId)
 			end
 		end
 	end
 end
 
 LobbySystem.SpawnMenu = function(self)
-	print("spawn")
-	self.ReadyButton = self:CreateElement("readybutton", "quad", -3.3, 1.4, -4, 0.35, 0.35)
-	self:AddEntityCommandToButton("LobbyPlayerReady", self.ReadyButton)
-	self:AddHoverSize(1.5, self.ReadyButton)
+	local button = self:CreateElement("readybutton", "quad", -1, -1.3, -4, 0.8, 0.4)
+	self:AddEntityCommandToButton("LobbyPlayerReady", button)
+	self:AddHoverSize(1.1, button)
+	
+	button = self:CreateElement("start", "quad", 1, -1.3, -4, 0.8, 0.4)
+	self:AddEntityCommandToButton("LobbyPlayerStart", button)
+	self:AddHoverSize(1.1, button)
 end
 
 LobbySystem.RemoveMenu = function(self)
-	print("remove")
 	local entities = self:GetEntities()
 	for i = 1, #entities do
 		local entityId = entities[i]
