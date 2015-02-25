@@ -83,12 +83,13 @@ WeatherWindSystem.TickWeather = function(self, weatherEntity)
 				
 				local id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo("SimultaneousMove", id)
-				world:SetComponent(id, "SimultaneousMove", "Unit", tUnit)
-				world:SetComponent(id, "SimultaneousMove", "PosX", posX + dirX)
-				world:SetComponent(id, "SimultaneousMove", "PosZ", posZ + dirZ)
-				world:SetComponent(id, "SimultaneousMove", "DirX", dirX)
-				world:SetComponent(id, "SimultaneousMove", "DirZ", dirZ)
-				world:SetComponent(id, "SimultaneousMove", "Steps", windForce)
+				world:GetComponent(id, "SimultaneousMove", "Unit"):SetInt(tUnit)
+				world:GetComponent(id, "SimultaneousMove", "PosX"):SetInt(posX + dirX)
+				world:GetComponent(id, "SimultaneousMove", "PosZ"):SetInt(posZ + dirZ)
+				world:GetComponent(id, "SimultaneousMove", "DirX"):SetInt(dirX)
+				world:GetComponent(id, "SimultaneousMove", "DirZ"):SetInt(dirZ)
+				world:GetComponent(id, "SimultaneousMove", "Steps"):SetInt(windForce)
+				world:GetComponent(id, "SimultaneousMove", "LerpTime"):SetFloat(0.8)
 			end
 		end
 		

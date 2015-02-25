@@ -107,6 +107,7 @@ SimultaneousMove.StartMoving = function(self, allMovesToDo)
 		local 	tPosX 	= 	world:GetComponent(tempMove, "SimultaneousMove", "PosX"):GetInt()
 		local 	tPosZ 	= 	world:GetComponent(tempMove, "SimultaneousMove", "PosZ"):GetInt()
 		
+		
 		world:GetComponent(tUnit, "NoSubSteps", "Counter"):SetInt(1)
 		world:GetComponent(tUnit, "MapPosition", "X"):SetInt2(tPosX, tPosZ)
 		self:SetLerpFor(tempMove)
@@ -175,6 +176,7 @@ SimultaneousMove.SetLerpFor = function(self, moveToLerp)
 	local 	tUnit 	= 	world:GetComponent(moveToLerp, "SimultaneousMove", "Unit"):GetInt()
 	local 	tPosX 	= 	world:GetComponent(moveToLerp, "SimultaneousMove", "PosX"):GetInt()
 	local 	tPosZ 	= 	world:GetComponent(moveToLerp, "SimultaneousMove", "PosZ"):GetInt()
+	local 	tTime 	= 	world:GetComponent(moveToLerp, "SimultaneousMove", "LerpTime"):GetFloat()
 	
 	--	Move the unit
 	world:GetComponent(tUnit, "MapPosition", 0):SetInt2(tPosX, tPosZ)
@@ -184,7 +186,7 @@ SimultaneousMove.SetLerpFor = function(self, moveToLerp)
 	world:GetComponent(tUnit, "LerpPosition", "X"):SetFloat(tPosX)
 	world:GetComponent(tUnit, "LerpPosition", "Y"):SetFloat(0.5)
 	world:GetComponent(tUnit, "LerpPosition", "Z"):SetFloat(tPosZ)
-	world:GetComponent(tUnit, "LerpPosition", "Time"):SetFloat(1)
+	world:GetComponent(tUnit, "LerpPosition", "Time"):SetFloat(tTime)
 	world:GetComponent(tUnit, "LerpPosition", "Algorithm"):SetText("PlayerMove")
 	
 	if not world:EntityHasComponent(tUnit, "UnitWantTileOffset") then
