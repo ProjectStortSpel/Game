@@ -10,6 +10,60 @@ namespace FileSystem
 	namespace File
 	{
 
+		struct Extension 
+		{
+			static const char* binary[];
+			static const char* ascii[];
+		};
+
+		const int numBinaryExtensions = 4;
+		const int numAsciiExtensions = 7;
+		const char* Extension::binary[] = { "png", "mesh", "amesh", "db" };
+		const char* Extension::ascii[] = { "txt", "meshOLD", "lua", "object", "ajoints", "anim", "aobject" };
+
+		bool IsBinary(std::string _path)
+		{
+			unsigned int found = _path.find_last_of('.');
+
+			if (found == std::string::npos)
+			{
+				return false;
+			}
+
+			std::string extension = _path.substr(found + 1);
+
+			for (int i = 0; i < numBinaryExtensions; ++i)
+			{
+				if (extension == Extension::binary[i])
+				{
+					return true;
+				}
+			}
+
+			for (int i = 0; i < numAsciiExtensions; ++i)
+			{
+				if (extension == Extension::ascii[i])
+				{
+					return false;
+				}
+			}
+
+			if (Exist(_path))
+			{
+				//open file and read data
+				SDL_RWops* file;
+				if (Open(_path, &file))
+				{
+					Sint64 length = GetFileSize(file);
+					char* data = Read(file, length);
+					bool ascii = strlen(data) >= length;
+					delete data;
+					return !ascii;
+				}
+			}
+			return false;
+		}
+
 		bool Create(std::string _path)
 		{
             //Create Directory
@@ -180,7 +234,13 @@ namespace FileSystem
 				return;
 			std::ostringstream ss;
 			ss << _text.c_str();
-			ss << "\r\n";
+
+#ifdef WIN32
+			//ss << "\r\n";
+			ss << "\n";
+#else
+			ss << "\n";
+#endif
 
 			_text = ss.str();
 
