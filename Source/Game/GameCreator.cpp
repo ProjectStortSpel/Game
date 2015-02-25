@@ -104,7 +104,7 @@ void GameCreator::InitializeAudio()
 bool GameCreator::InitializeGraphics()
 {
 #if defined(__IOS__) || defined(__ANDROID__)
-	m_graphics = new Renderer::GraphicsHigh();
+	m_graphics = new Renderer::GraphicsLow();
     m_graphics->Init();
 #else
     m_graphics = new Renderer::GraphicsHigh();
@@ -141,13 +141,6 @@ void GameCreator::InitializeNetwork()
 	NetworkInstance::InitClientNetworkHelper(&m_clientWorld);
     NetworkInstance::InitServerNetworkHelper(&m_serverWorld);
 
-    Network::NetMessageHook hook = std::bind(&GameCreator::LuaPacket, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-	NetworkInstance::GetClient()->AddNetworkHook("LuaPacket", hook);
-	NetworkInstance::GetServer()->AddNetworkHook("LuaPacket", hook);
-
-	hook = std::bind(&GameCreator::NetworkGameMode, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-	NetworkInstance::GetClient()->AddNetworkHook("Gamemode", hook);
-
 	//hook = std::bind(&GameCreator::NetworkGameModeFiles, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 	//NetworkInstance::GetClient()->AddNetworkHook("GamemodeFiles", hook);
 
@@ -156,8 +149,6 @@ void GameCreator::InitializeNetwork()
 	ConnectHelper::Initialize();
 	ConnectHelper::LoadGameModeHook GMhook = std::bind(&GameCreator::GameMode, this, std::placeholders::_1);
 	ConnectHelper::SetLoadGameModeHook(GMhook);
-
-	ClientManager::Initialize();
 
 	InitializeNetworkEvents(false);
 
@@ -218,6 +209,16 @@ void GameCreator::InitializeNetworkEvents(bool _allowEntities)
 	netEvent = std::bind(&GameCreator::OnPlayerTimedOut, this, std::placeholders::_1, std::placeholders::_2);
 	NetworkInstance::GetServer()->SetOnPlayerTimedOut(netEvent);
 
+
+	Network::NetMessageHook hook = std::bind(&GameCreator::LuaPacket, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	NetworkInstance::GetClient()->AddNetworkHook("LuaPacket", hook);
+	NetworkInstance::GetServer()->AddNetworkHook("LuaPacket", hook);
+
+	hook = std::bind(&GameCreator::NetworkGameMode, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	NetworkInstance::GetClient()->AddNetworkHook("Gamemode", hook);
+
+
+	ClientManager::Initialize();
 
 	if (_allowEntities)
 	{

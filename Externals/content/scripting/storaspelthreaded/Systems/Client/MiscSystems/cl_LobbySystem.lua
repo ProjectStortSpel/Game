@@ -13,6 +13,7 @@ LobbySystem.Initialize = function ( self )
 	--	Set Filter
 	self:AddComponentTypeToFilter(self.Name.."Element", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("LobbyPlayerReady", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("LobbyMenuActive", FilterType.RequiresOneOf)
 end
 
@@ -31,15 +32,40 @@ LobbySystem.Update = function(self, dt)
 end
 
 LobbySystem.EntitiesAdded = function(self, dt, entities)
-	for n = 1, #entities do
-		local entityId = entities[n]
-		if world:EntityHasComponent( entityId, "LobbyPlayerReady") then
-			Net.SendToServer(Net.StartPack("Server.ReadyCheck"))
-			world:KillEntity(entityId)
-		elseif world:EntityHasComponent( entityId, "LobbyMenuActive") then
-			self.ReadyButton = self:CreateElement("readybutton", "quad", -3.3, 1.4, -4, 0.35, 0.35)
-			self:AddEntityCommandToButton("LobbyPlayerReady", self.ReadyButton)
-			self:AddHoverSize(1.5, self.ReadyButton)
+	local GameRunning = self:GetEntities("GameRunning")
+	if #GameRunning > 0 then
+		self:RemoveMenu()
+	else
+		for n = 1, #entities do
+			local entityId = entities[n]
+			if world:EntityHasComponent( entityId, "LobbyMenuActive" ) then
+				self:SpawnMenu()
+			elseif world:EntityHasComponent( entityId, self.Name.."Element") then
+
+			elseif world:EntityHasComponent( entityId, "UnitEntityId") then
+				self.UpdateMe = true
+			elseif world:EntityHasComponent( entityId, "LobbyPlayerReady") then
+				Net.SendToServer(Net.StartPack("Server.ReadyCheck"))
+				world:KillEntity(entityId)
+			end
+		end
+	end
+end
+
+LobbySystem.SpawnMenu = function(self)
+	print("spawn")
+	self.ReadyButton = self:CreateElement("readybutton", "quad", -3.3, 1.4, -4, 0.35, 0.35)
+	self:AddEntityCommandToButton("LobbyPlayerReady", self.ReadyButton)
+	self:AddHoverSize(1.5, self.ReadyButton)
+end
+
+LobbySystem.RemoveMenu = function(self)
+	print("remove")
+	local entities = self:GetEntities()
+	for i = 1, #entities do
+		local entityId = entities[i]
+		if world:EntityHasComponent( entityId, self.Name.."Element" ) then
+			world:KillEntity(entities[i])
 		end
 	end
 end

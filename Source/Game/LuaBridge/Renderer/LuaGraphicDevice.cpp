@@ -57,6 +57,11 @@ namespace LuaBridge
 		{
 			g_graphicDevice = graphicDevice;
 		}
+
+		Renderer::GraphicDevice* GetGraphicDevice()
+		{
+			return g_graphicDevice;
+		}
         
 		int GetAspectRatio(lua_State* L)
 		{

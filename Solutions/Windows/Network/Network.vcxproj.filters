@@ -13,22 +13,28 @@
     <Filter Include="Source\Client">
       <UniqueIdentifier>{d330dc4d-9e10-4741-a2d9-93a09abc55a0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Socket\ISocket">
+      <UniqueIdentifier>{55dfa5d7-2a93-4b04-a280-0539b6a9d1ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Socket\WinSocket">
+      <UniqueIdentifier>{83dfd829-2cf1-4c12-b305-d80aabda788f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Socket\LinSocket">
+      <UniqueIdentifier>{a0c3f46a-ce17-4bd5-9841-8689e01887a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\NetConnection">
+      <UniqueIdentifier>{10170a46-07be-4787-8446-b35c1c81eb8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Packet">
+      <UniqueIdentifier>{5c0312f4-5f9d-4407-a4dc-0c56a0675c4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\BaseNetwork">
+      <UniqueIdentifier>{2ddb1c89-e36c-4da6-88f6-317c7e67f62b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Source\Network\BaseNetwork.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Source\Network\PacketHandler.cpp">
       <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Source\Network\ISocket.cpp">
-      <Filter>Source\Socket</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Source\Network\LinSocket.cpp">
-      <Filter>Source\Socket</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Source\Network\WinSocket.cpp">
-      <Filter>Source\Socket</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Network\ClientNetwork.cpp">
       <Filter>Source\Client</Filter>
@@ -36,18 +42,30 @@
     <ClCompile Include="..\..\..\Source\Network\ServerNetwork.cpp">
       <Filter>Source\Server</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\Network\Packet.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Source\Network\Stdafx.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Network\ISocket.cpp">
+      <Filter>Source\Socket\ISocket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Network\LinSocket.cpp">
+      <Filter>Source\Socket\LinSocket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Network\WinSocket.cpp">
+      <Filter>Source\Socket\WinSocket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Network\NetConnection.cpp">
+      <Filter>Source\NetConnection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Network\Packet.cpp">
+      <Filter>Source\Packet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Network\BaseNetwork.cpp">
+      <Filter>Source\BaseNetwork</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Network\Stdafx.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Source\Network\BaseNetwork.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Network\PacketHandler.h">
@@ -56,24 +74,30 @@
     <ClInclude Include="..\..\..\Source\Network\NetTypeMessageID.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\Network\ISocket.h">
-      <Filter>Source\Socket</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Source\Network\LinSocket.h">
-      <Filter>Source\Socket</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Source\Network\WinSocket.h">
-      <Filter>Source\Socket</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Source\Network\ClientNetwork.h">
       <Filter>Source\Client</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Network\ServerNetwork.h">
       <Filter>Source\Server</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\Network\Packet.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Source\Network\Network.h" />
+    <ClInclude Include="..\..\..\Source\Network\ISocket.h">
+      <Filter>Source\Socket\ISocket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Network\LinSocket.h">
+      <Filter>Source\Socket\LinSocket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Network\WinSocket.h">
+      <Filter>Source\Socket\WinSocket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Network\NetConnection.h">
+      <Filter>Source\NetConnection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Network\Packet.h">
+      <Filter>Source\Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Network\BaseNetwork.h">
+      <Filter>Source\BaseNetwork</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
