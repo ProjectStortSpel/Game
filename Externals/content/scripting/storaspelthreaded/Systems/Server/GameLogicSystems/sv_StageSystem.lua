@@ -11,7 +11,7 @@ StageSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("GameStage",	FilterType.RequiresOneOf)
 end
 
-StageSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+StageSystem.EntitiesAdded = function(self, dt, entities)
 	
 end
 

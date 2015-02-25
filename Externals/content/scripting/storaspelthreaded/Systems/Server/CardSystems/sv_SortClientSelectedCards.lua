@@ -40,7 +40,7 @@ SortClientSelectedCards.GetPlayerSelectedCards = function(self, playerId)
 	return tempCards;
 end
 
-SortClientSelectedCards.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+SortClientSelectedCards.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entity = entities[n]
@@ -58,11 +58,10 @@ SortClientSelectedCards.EntitiesAdded = function(self, dt, taskIndex, taskCount,
 					world:GetComponent(ownerCards[i], "ServerSelectedCard", "Index"):SetInt(tempIndex+1)
 				end
 			end
-			self:PrintCard(ownerCards[i])
 		end
 	end
 end
-SortClientSelectedCards.EntitiesRemoved = function(self, dt, taskIndex, taskCount, entities)
+SortClientSelectedCards.EntitiesRemoved = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entity = entities[n]
@@ -75,8 +74,6 @@ SortClientSelectedCards.EntitiesRemoved = function(self, dt, taskIndex, taskCoun
 			if index2 > index then
 				world:GetComponent(ownerCards[i], "ServerSelectedCard", "Index"):SetInt(index2-1)
 			end
-			
-			self:PrintCard(ownerCards[i])
 		end
 		
 	end

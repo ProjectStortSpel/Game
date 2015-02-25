@@ -1,9 +1,10 @@
 --  Game Logic Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/GameLogicSystems/?.lua"
+package.path = package.path .. ";Systems/Server/GameLogicSystems/?.lua"
+require "sv_LobbySystem"
 require "sv_StageSystem"
 
 --	Map Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/MapSystems/?.lua"
+package.path = package.path .. ";Systems/Server/MapSystems/?.lua"
 --require "sv_NewMapGenerator"
 require "sv_MapRaterSystem"
 require "sv_CreateMapSystem"
@@ -12,28 +13,29 @@ require "sv_VoidSystem"
 require "sv_CheckpointSystem"
 
 --	Light Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/LightSystems/?.lua"
+package.path = package.path .. ";Systems/Server/LightSystems/?.lua"
 require "sv_DirectionalLightSystem"
 
 --	Player Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/PlayerSystems/?.lua"
+package.path = package.path .. ";Systems/Server/PlayerSystems/?.lua"
 require "sv_PlayerSystem"
 require "sv_UnitSystem"
+require "sv_SendPlayerInformation"
 
 -- AI Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/AISystems/?.lua"
+package.path = package.path .. ";Systems/Server/AISystems/?.lua"
 require "sv_AICardPickingSystem"
 require "sv_AddAISystem"
 
 --	Move Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/MoveSystems/?.lua"
+package.path = package.path .. ";Systems/Server/MoveSystems/?.lua"
 require "sv_PostMoveSystem"
 require "sv_TestMoveSystem"
 require "sv_TestMoveRiverSystem"
 require "sv_SimultaneousMove"
 
 --	Card Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/CardSystems/?.lua"
+package.path = package.path .. ";Systems/Server/CardSystems/?.lua"
 require "sv_CreateDeckSystem"
 require "sv_CreateCardPickTimer"
 require "sv_AddCardPickTimerSystem"
@@ -49,7 +51,7 @@ require "sv_SortClientSelectedCards"
 require "sv_ClearServerSelectedSystem"
 
 --	Card Action Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/CardActionSystems/?.lua"
+package.path = package.path .. ";Systems/Server/CardActionSystems/?.lua"
 require "sv_ActionMoveForwardSystem"
 require "sv_ActionMoveBackwardSystem"
 require "sv_ActionTurnLeftSystem"
@@ -58,19 +60,19 @@ require "sv_ActionTurnAroundSystem"
 require "sv_ActionGuardSystem"
 
 --	Card Ability Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/CardAbilitySystems/?.lua"
+package.path = package.path .. ";Systems/Server/CardAbilitySystems/?.lua"
 require "sv_AbilitySprintSystem"
 require "sv_AbilitySlingshotSystem"
 require "sv_AbilityIWin"
 require "sv_AbilityStoneSystem"
 
 --	Weather Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/WeatherSystems/?.lua"
+package.path = package.path .. ";Systems/Server/WeatherSystems/?.lua"
 require "sv_WeatherSystem"
 require "sv_WeatherWindSystem"
 
 --	Spawn Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/SpawnSystems/?.lua"
+package.path = package.path .. ";Systems/Server/SpawnSystems/?.lua"
 --require "sv_SpawnSystem"
 require "sv_GiveSpawnLocationSystem"
 require "sv_FindSpawnpointSystem"
@@ -78,20 +80,20 @@ require "sv_RespawnSystem"
 require "sv_PostSpawnSystem"
 
 --	Round Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/RoundSystems/?.lua"
+package.path = package.path .. ";Systems/Server/RoundSystems/?.lua"
 require "sv_StepTimerSystem"
 require "sv_NewStepSystem"
 require "sv_StartNewRoundSystem"
 require "sv_PlayCardTimerSystem"
 
 --	Camera Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/CameraSystems/?.lua"
+package.path = package.path .. ";Systems/Server/CameraSystems/?.lua"
 require "sv_CameraInterestpointSystem"
 require "sv_CameraNewRoundSystem"
 require "sv_CameraMovePhaseSystem"
 
 --	Misc Systems
-package.path = package.path .. ";../../../Externals/content/scripting/storaspelthreaded/Systems/Server/MiscSystems/?.lua"
+package.path = package.path .. ";Systems/Server/MiscSystems/?.lua"
 require "sv_TotemPoleSystem"
 require "sv_MoveTotemPieceSystem"
 require "sv_GameOverSystem"
@@ -101,6 +103,7 @@ require "sv_HostSettingsSystem"
 require "sv_OffsetUnitSystem"
 
 --worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(LobbySystem)
 worldCreator:AddSystemToCurrentGroup(StageSystem)
 --worldCreator:AddSystemToCurrentGroup(MapGenerator)
 worldCreator:AddSystemToCurrentGroup(CreateMapSystem)
@@ -182,8 +185,14 @@ worldCreator:AddSystemToCurrentGroup(LogStartSystem)
 
 
 
+worldCreator:AddSystemToCurrentGroup(SendPlayerInformation)	--	ALSO TEMP
 worldCreator:AddSystemToCurrentGroup(SortClientSelectedCards)	--	Temp
 worldCreator:AddSystemToCurrentGroup(ClearServerSelectedSystem)	--	Temp
 worldCreator:AddSystemToCurrentGroup(FindSpawnpointSystem)
 
+--	Audio Systems
+package.path = package.path .. ";Systems/Server/AudioSystems/?.lua"
+require "sv_AudioUnitDeathSystem"
 
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(AudioUnitDeathSystem)

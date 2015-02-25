@@ -90,7 +90,7 @@ CheckpointSystem.CheckCheckpoint = function(self, entityId, posX, posZ)
 	
 end
 
-CheckpointSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, newEntities)
+CheckpointSystem.EntitiesAdded = function(self, dt, newEntities)
 
 	for n = 1, #newEntities do
 		local entity = newEntities[n]

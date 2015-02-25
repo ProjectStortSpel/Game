@@ -60,10 +60,10 @@ MapGenerator.Initialize = function(self)
 	self:AddComponentTypeToFilter("GenerateMap", FilterType.RequiresOneOf)
 end
 
-MapGenerator.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+MapGenerator.EntitiesAdded = function(self, dt, entities)
 	--self:GenerateMap(os.time()%29181249, 4, 4)
 	--self:GenerateMap(23246299, 4, 4)
-	self:GenerateMap(2324130, 1, 2)
+	self:GenerateMap(2324130, 3, 2)
 	--self:GenerateMap(23239474, 4, 4)
 	--self:GenerateMap(5747, 4, 4)
 	--self:GenerateMap(1338, 6, 4)
@@ -191,7 +191,6 @@ MapGenerator.CreateRivers = function(self)
 	local	centerDistance		=	math.ceil(self:GetDistanceBetween(centerX, centerZ, self.VoidMargin, self.VoidMargin)*0.1)
 	local	riversCarved		=	0
 	
-	print("Distance : " .. centerDistance)
 	while true do
 		
 		tempX, tempZ	=	self:GetPositionXDistanceAwayFrom(centerX, centerZ, centerDistance)
@@ -553,7 +552,6 @@ MapGenerator.PlaceSpawnpoints = function(self)
 	local	centerX, centerZ	=	self:GetCenterOfMap()
 	local	tSpawns	=	math.ceil(self.Players/2)
 	local	tX,	tZ	=	0, 0 --self:GetPositionXDistanceAwayFrom(centerX, centerZ, 2*tSpawns)
-	
 	while true do
 		tX,	tZ	=	self:GetPositionXDistanceAwayFrom(centerX, centerZ, 2*tSpawns)
 		local	canSpawn	=	true
@@ -587,9 +585,8 @@ MapGenerator.PlaceCheckpoints = function(self)
 
 	local	centerX, centerZ	=	self:GetCenterOfMap()
 	local	lastX, lastZ		=	self:GetPositionXDistanceAwayFrom(centerX, centerZ, 0)--self:GetRandomPositionWithinMargin(self.VoidMargin, self.VoidMargin)
-	local	tempDistance		=	self:GetDistanceBetween(self.Void, self.Void, centerX, centerZ)--math.ceil(self:GetDistanceBetween(self.VoidMargin, self.VoidMargin, self.MapSizeX-self.VoidMargin-1, self.MapSizeZ-self.VoidMargin-1)/3)
-	local	nTries				=	0
-	local	nMaxTries			=	50
+	local	tempDistance		=	self:GetDistanceBetween(self.Void, self.Void, centerX, centerZ)*0.85--math.ceil(self:GetDistanceBetween(self.VoidMargin, self.VoidMargin, self.MapSizeX-self.VoidMargin-1, self.MapSizeZ-self.VoidMargin-1)/3)
+	
 	for n = 0, self.Checkpoints-1 do
 	
 		while true do
@@ -600,17 +597,12 @@ MapGenerator.PlaceCheckpoints = function(self)
 				
 				lastX	=	tX
 				lastZ	=	tZ
-				nTries	=	0
 				
 				self:PlaceStonesNear(tX, tZ, 2, 2)
 				
 				break
 			else
-				nTries = nTries + 1
-				if nTries >= nMaxTries then
-					tempDistance	=	math.floor(tempDistance - 1)
-					nTries			=	0
-				end
+				tempDistance	=	math.floor(tempDistance - 1)
 			end
 		end
 	end
@@ -1002,40 +994,48 @@ MapGenerator.FixRiverEffects = function(self, riverTiles)
 		end
 		
 		if isFirstTile then
-			--local	newParticle	=	world:CreateNewEntity()
-			--world:CreateComponentAndAddTo("Position", newParticle)
-			--world:CreateComponentAndAddTo("Color", newParticle)
-			--world:CreateComponentAndAddTo("Particle", newParticle)
-			--
-			--world:GetComponent(newParticle, "Position", "X"):SetFloat3(posAX, 0.33, posAY)
-			--world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.0, 0.0, 0.6)
-			--
-			--world:GetComponent(newParticle, "Particle", "Name"):SetText("smoke")
-			--world:GetComponent(newParticle, "Particle", "Texture"):SetText("content/textures/firewhite.png")
-			--world:GetComponent(newParticle, "Particle", "Particles"):SetInt(1000)
-			--world:GetComponent(newParticle, "Particle", "Lifetime"):SetFloat(400)
-			--world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.15)
-			--world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(0.6)
-			--world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
+
+			world:GetComponent(riverTiles[waterA], "Model", 0):SetModel("riverend", "riverend", 0, 0)
+			
+			local rotComp = world:GetComponent(riverTiles[waterA], "Rotation", 0)
+			local currentRotation = rotComp:GetFloat(1)
+			rotComp:SetFloat(currentRotation + math.pi, 1)
+			
+			
+			local	newParticle	=	world:CreateNewEntity()
+			world:CreateComponentAndAddTo("Position", newParticle)
+			world:CreateComponentAndAddTo("Color", newParticle)
+			world:CreateComponentAndAddTo("Particle", newParticle)
+			
+			world:GetComponent(newParticle, "Position", "X"):SetFloat3(posAX, 0.33, posAY)
+			world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.6, 0.6, 0.6)
+			
+			world:GetComponent(newParticle, "Particle", "Name"):SetText("smoke")
+			world:GetComponent(newParticle, "Particle", "Texture"):SetText("content/textures/smoke1.png")
+			world:GetComponent(newParticle, "Particle", "Particles"):SetInt(40)
+			world:GetComponent(newParticle, "Particle", "Lifetime"):SetFloat(600)
+			world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.15)
+			world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(0.6)
+			world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
 			
 		elseif isLastTile then
 		
-			--local	newParticle	=	world:CreateNewEntity()
-			--world:CreateComponentAndAddTo("Position", newParticle)
-			--world:CreateComponentAndAddTo("Color", newParticle)
-			--world:CreateComponentAndAddTo("Particle", newParticle)
-			--
-			--world:GetComponent(newParticle, "Position", "X"):SetFloat3(posAX + 0.6*dirAX, 0.23, posAY + 0.6*dirAY)
-			--
-			--world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.0, 0.0, 0.6)
-			--
-			--world:GetComponent(newParticle, "Particle", "Name"):SetText("fire")
-			--world:GetComponent(newParticle, "Particle", "Texture"):SetText("content/textures/firewhite.png")
-			--world:GetComponent(newParticle, "Particle", "Particles"):SetInt(1000)
-			--world:GetComponent(newParticle, "Particle", "Lifetime"):SetFloat(400)
-			--world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.05)
-			--world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(0.6)
-			--world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
+			local	newParticle	=	world:CreateNewEntity()
+			world:CreateComponentAndAddTo("Position", newParticle)
+			world:CreateComponentAndAddTo("Color", newParticle)
+			world:CreateComponentAndAddTo("Particle", newParticle)
+			
+			world:GetComponent(newParticle, "Position", "X"):SetFloat3(posAX + 0.6*dirAX, 0.23, posAY + 0.6*dirAY)
+			
+			world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.0, 0.0, 0.6)
+			
+			world:GetComponent(newParticle, "Particle", "Name"):SetText("fire")
+			world:GetComponent(newParticle, "Particle", "Texture"):SetText("content/textures/firewhite.png")
+			world:GetComponent(newParticle, "Particle", "Particles"):SetInt(1000)
+			world:GetComponent(newParticle, "Particle", "Lifetime"):SetFloat(400)
+			world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.05)
+			world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(0.6)
+			world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
 		end
 		
 	end

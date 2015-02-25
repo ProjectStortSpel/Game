@@ -1,20 +1,15 @@
 #ifndef PACKETHANDLER_H
 #define PACKETHANDLER_H
 
-
-	
-
 #include <map>
-#include <mutex>
+
 #include "Stdafx.h"
+#include "Packet.h"
 
 namespace Network
 {
-	class BaseNetwork;
-
 	class DECLSPEC PacketHandler
 	{
-		friend class BaseNetwork;
 	public:
 
 		PacketHandler(void);
@@ -46,6 +41,9 @@ namespace Network
 		// Write a byte to the packet
 		// StartPack should be called before this is used
 		void WriteByte(uint64_t _id, const unsigned char _byte);
+		// Write raw bytes to the packet
+		// StartPack should be called before this is used
+		void WriteBytes(uint64_t _id, const unsigned char* _bytes, unsigned short size);
 		// Write a short to the packet
 		// StartPack should be called before this is used
 		void WriteShort(uint64_t _id, const short _short);
@@ -66,6 +64,9 @@ namespace Network
 		// Read a byte from a packet
 		// Should always be called from a function bound with Addstd::function<void(PacketHandler*, uint64_t, NetConnection)>
 		char ReadByte(uint64_t _id);
+		// Read raw bytes from a packet
+		// Should always be called from a function bound with Addstd::function<void(PacketHandler*, uint64_t, NetConnection)>
+		unsigned char* ReadBytes(uint64_t _id, int size);
 		// Read an int from a packet
 		// Should always be called from a function bound with Addstd::function<void(PacketHandler*, uint64_t, NetConnection)>
 		short ReadShort(uint64_t _id);
@@ -86,36 +87,28 @@ namespace Network
 
 		struct PacketSendInfo
 		{
-			unsigned char  Data[MAX_PACKET_SIZE];
+			unsigned char Data[MAX_PACKET_SIZE];
 			unsigned char* Position;
 		};
 
 		struct PacketReceiveInfo
 		{
-			Packet*		   PacketData;
+			Packet* PacketData;
 			unsigned char* Position;
 		};
 
-		PacketSendInfo* GetPacketSendInfo(uint64_t id);
-		PacketReceiveInfo* GetPacketReceiveInfo(uint64_t id);
+		PacketSendInfo* GetPacketSendInfo(uint64_t _id);
+		PacketReceiveInfo* GetPacketReceiveInfo(uint64_t _id);
 
 		bool IsOutOfBounds(unsigned char* _begin, unsigned char* _position, unsigned short _length);
 
 	private:
 
-
 		std::map<uint64_t, PacketSendInfo*>* m_packetSendInfoMap;
 		std::map<uint64_t, PacketReceiveInfo*>* m_packetReceiveInfoMap;
 
-		std::mutex* m_sendMutex;
-		std::mutex* m_receiveMutex;
-
-
-		//unsigned char* m_packetSend;
-		//unsigned char* m_positionSend;
-
-		//Packet*		   m_packetReceive;
-		//unsigned char* m_positionReceive;
+		SDL_mutex* m_sendLock;
+		SDL_mutex* m_receiveLock;
 
 
 	};

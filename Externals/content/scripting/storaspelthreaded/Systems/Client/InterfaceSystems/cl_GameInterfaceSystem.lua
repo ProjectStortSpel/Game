@@ -26,9 +26,10 @@ GameInterfaceSystem.PostInitialize = function(self)
 	local camerabutton = self:CreateElement("camerabutton", "quad", 3.3, 1.4, -4, 0.35, 0.35)
 	self:AddEntityCommandToButton("CameraSystemComponent", camerabutton)
 	self:AddHoverSize(1.5, camerabutton)
+	
 end
 
-GameInterfaceSystem.Update = function(self, dt, taskIndex, taskCount)
+GameInterfaceSystem.Update = function(self, dt)
 	if Input.GetTouchState(0) == InputState.Released then
 		local pressedButtons = self:GetEntities("OnPickBoxHit")
 		if #pressedButtons > 0 then

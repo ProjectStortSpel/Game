@@ -52,13 +52,20 @@ namespace FileSystem
 			if (_path.at(_path.size() - 1) == '/')
 				_path = _path.substr(0, _path.size() - 1);
 
-			//#if !defined(__ANDROID__)
+			#if !defined(__ANDROID__)
 			struct stat info;
 			if (stat(_path.c_str(), &info) != 0)
 				return false;
 			else if (info.st_mode & S_IFREG)  // S_ISREG() doesn't exist on my windows 
 				return true;
-			//#endif
+			#else
+			SDL_RWops* rw = SDL_RWFromFile(_path.c_str(), "r");
+			if (rw != NULL)
+			{
+				SDL_RWclose(rw);
+				return true;
+			}
+			#endif
 			return false;
 		}
 
@@ -158,6 +165,13 @@ namespace FileSystem
 			if (!_file)
 				return;
 			SDL_RWwrite(_file, _text.c_str(), 1, _text.size());
+		}
+
+		void Write(SDL_RWops* _file, const unsigned char* data, int size)
+		{
+			if (!_file)
+				return;
+			SDL_RWwrite(_file, data, 1, size);
 		}
 
 		void WriteLine(SDL_RWops* _file, std::string _text)

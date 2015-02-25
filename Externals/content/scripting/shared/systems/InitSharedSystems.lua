@@ -1,5 +1,5 @@
 --	Lerping Systems
-package.path = package.path .. ";../../../Externals/content/scripting/shared/systems/?.lua"
+package.path = package.path .. ";../shared/systems/?.lua"
 require "sh_PickboxSystem"
 require "sh_HoverSizeSystem"
 --require "sh_AddTextToTextureSystem"

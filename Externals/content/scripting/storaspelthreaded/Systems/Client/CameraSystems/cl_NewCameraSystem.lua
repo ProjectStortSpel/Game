@@ -33,7 +33,7 @@ NewCameraSystem.Initialize = function(self)
 	
 end
 
-NewCameraSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+NewCameraSystem.EntitiesAdded = function(self, dt, entities)
 	for n = 1, #entities do
 		if world:EntityHasComponent(entities[n], "CameraSystemComponent") then
 			self.FreeCam = not self.FreeCam
@@ -78,7 +78,7 @@ NewCameraSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entitie
 	end
 end
 
-NewCameraSystem.Update = function(self, dt, taskIndex, taskCount)
+NewCameraSystem.Update = function(self, dt)
 	if self.FreeCam == true then
 		self:DoFreeCam(dt)
 	else

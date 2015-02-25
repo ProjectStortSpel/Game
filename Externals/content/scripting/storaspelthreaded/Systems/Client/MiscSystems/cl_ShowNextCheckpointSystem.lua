@@ -12,7 +12,7 @@ ShowNextCheckpointSystem.Initialize = function ( self )
 	self:AddComponentTypeToFilter("CheckpointReached", FilterType.Mandatory)
 end
 
-ShowNextCheckpointSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+ShowNextCheckpointSystem.EntitiesAdded = function(self, dt, entities)
 	
 	local	highestCheckpoint	=	-1
 	local	highestCheckpointId	=	-1
@@ -77,7 +77,7 @@ Net.Receive("Client.NewTargetCheckpoint",
 	world:GetComponent(newParticle, "CheckpointReached", "CheckpointNumber"):SetInt(cpID)
 	
 	world:GetComponent(newParticle, "Position", "X"):SetFloat3(X, 0.58, Z)
-	world:GetComponent(newParticle, "Color", "X"):SetFloat3(1.0, 0.0, 0.0)
+	world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.98, 0.17, 0.08)
 	
 	world:GetComponent(newParticle, "Particle", "Name"):SetText("fire")
 	world:GetComponent(newParticle, "Particle", "Texture"):SetText("content/textures/firewhite.png")

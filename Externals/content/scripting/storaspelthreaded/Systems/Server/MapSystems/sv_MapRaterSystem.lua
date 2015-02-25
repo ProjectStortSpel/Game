@@ -45,7 +45,7 @@ end
 --	|  __| | . ` |  | |    | |    | |    | | |  __|  \___ \ 	  / /\ \ | |  | | |  | |  __| | |  | |
 --	| |____| |\  |  | |   _| |_   | |   _| |_| |____ ____) |	 / ____ \| |__| | |__| | |____| |__| |
 --	|______|_| \_|  |_|  |_____|  |_|  |_____|______|_____/ 	/_/    \_\_____/|_____/|______|_____/ 
-MapRater.EntitiesAdded = function(self, dt, taskIndex, taskCount, newEntities)
+MapRater.EntitiesAdded = function(self, dt, newEntities)
 
 	for n = 1, #newEntities do
 		local	newEntity	=	newEntities[n]
@@ -57,12 +57,12 @@ MapRater.EntitiesAdded = function(self, dt, taskIndex, taskCount, newEntities)
 			self:CheckpointReached(newEntity)
 			world:KillEntity(newEntity)
 			
-			--if self.PlayersLeftToWin == 0 then
+			if self.PlayersLeftToWin == 0 then
+				self:LogWorldData()
 				self:PrintInfo()
-			--end
+			end
 		elseif world:EntityHasComponent(newEntity, "UnitDied") then
 			local	playerNumber	=	world:GetComponent(newEntity, "UnitDied", "PlayerNumber"):GetInt()
-			print("Playernumber " .. playerNumber)
 			self.PlayersDeaths[playerNumber]	=	self.PlayersDeaths[playerNumber] + 1
 			world:KillEntity(newEntity)
 		elseif world:EntityHasComponent(newEntity, "NewRound") then

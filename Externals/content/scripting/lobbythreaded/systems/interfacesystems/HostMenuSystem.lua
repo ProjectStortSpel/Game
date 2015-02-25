@@ -17,7 +17,7 @@ HostMenuSystem.Initialize = function(self)
 	
 end
 
-HostMenuSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+HostMenuSystem.EntitiesAdded = function(self, dt, entities)
 	
 	for i = 1, #entities do
 		local entity = entities[i]
@@ -43,7 +43,7 @@ HostMenuSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities
 		
 end
 
-HostMenuSystem.Update = function(self, dt, taskIndex, taskCount)
+HostMenuSystem.Update = function(self, dt)
 
 	if not self.IsMenuActive then
 		return

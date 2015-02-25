@@ -39,6 +39,8 @@ namespace Input
 		static const int m_numberOfButtons = 6;
 		bool m_thisState[m_numberOfButtons];
 		bool m_lastState[m_numberOfButtons];
+		bool m_pressedStates[m_numberOfButtons];
+		bool m_releasedStates[m_numberOfButtons];
 
 		int m_x, m_y;
 		int m_dx, m_dy;

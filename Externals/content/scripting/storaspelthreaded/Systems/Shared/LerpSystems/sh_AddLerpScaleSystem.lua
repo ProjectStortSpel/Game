@@ -13,7 +13,7 @@ AddLerpScaleSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("LerpingScale", FilterType.Excluded)
 end
 
-AddLerpScaleSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+AddLerpScaleSystem.EntitiesAdded = function(self, dt, entities)
 	for n = 1, #entities do
 		local entity = entities[n]
 

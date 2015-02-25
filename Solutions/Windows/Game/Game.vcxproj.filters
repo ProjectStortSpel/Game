@@ -87,6 +87,9 @@
     <Filter Include="Lua Bridge\Resource">
       <UniqueIdentifier>{cee8274a-69dd-429b-ba04-7664e20156fc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lua Bridge\Audio">
+      <UniqueIdentifier>{b515085e-e995-433d-9c82-81c42164e601}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Game\MeshCreator">
       <UniqueIdentifier>{077f2f17-8138-4979-8f70-2969a29b419f}</UniqueIdentifier>
     </Filter>
@@ -269,6 +272,15 @@
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\AI\LuaDynamicScript.cpp">
       <Filter>Lua Bridge\AI</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Network\ConnectHelper.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Network\ClientManager.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\Audio\LuaAudio.cpp">
+      <Filter>Lua Bridge\Audio</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\MeshCreator\MeshCreator.cpp">
       <Filter>Game\MeshCreator</Filter>
     </ClCompile>
@@ -450,6 +462,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\AI\LuaDynamicScript.h">
       <Filter>Lua Bridge\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Network\ClientManager.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Network\ConnectHelper.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\Audio\LuaAudio.h">
+      <Filter>Lua Bridge\Audio</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\MeshCreator\includes.h">
       <Filter>Game\MeshCreator</Filter>

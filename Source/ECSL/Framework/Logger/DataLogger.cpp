@@ -19,7 +19,7 @@ DataLogger& DataLogger::GetInstance()
 
 DataLogger::~DataLogger()
 {
-
+	
 }
 
 void DataLogger::SetCurrentWorld(unsigned int _entityCount, EntityTable* _entityTable, const std::vector<ComponentTable*>* _componentTables, const std::vector<SystemWorkGroup*>* _systemWorkGroups)

@@ -18,7 +18,7 @@ uniform vec3 Accel; // Particle acceleration
 uniform float ParticleLifetime; // Particle lifespan
 
 uniform float Size; // Spritesize factor
-uniform bool EndPhase;
+uniform int EndPhase;
 
 uniform mat4 ProjectionMatrix;
 uniform mat4 ModelView;
@@ -35,7 +35,7 @@ void update()
 	if( Time >= StartTime ) {
 		float age = Time - StartTime;
 		
-		if( age >ParticleLifetime && !EndPhase) {
+		if( age >ParticleLifetime && EndPhase == 0) {
 			// The particle is past its lifetime, recycle.
 			Position = VertexInitialPosition; //vec3(0.0);
 			Velocity = VertexInitialVelocity;
@@ -62,8 +62,10 @@ void render()
 	if(Time >= VertexStartTime)
 	{
 		sizeFactor = 1.0-(age/ParticleLifetime)*0.5;
-		if(age/ParticleLifetime > 0.8f)
-			sizeFactor *= 0.6f;
+		if(age < 150)
+			Transp = age/150.0f - age/ParticleLifetime;
+		else if(age/ParticleLifetime > 0.8f)
+			sizeFactor *= 0.5f;
 		Transp = 1.0 - age / ParticleLifetime;
 	}
 

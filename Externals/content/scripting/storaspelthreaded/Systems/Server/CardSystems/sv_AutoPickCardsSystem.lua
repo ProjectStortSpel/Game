@@ -120,7 +120,7 @@ AutoPickCards.StealCardsFrom = function(self, playerIndex)
 	world:CreateComponentAndAddTo("UnitSelectedCards", playerUnit)
 end
 
-AutoPickCards.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+AutoPickCards.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entity = entities[n]

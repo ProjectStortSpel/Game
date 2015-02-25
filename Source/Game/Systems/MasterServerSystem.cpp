@@ -47,9 +47,12 @@ void MasterServerSystem::PostInitialize()
 
 	if (NetworkInstance::GetServer()->IsRunning())
 	{
-		NetworkInstance::GetServer()->SetOnServerShutdown(std::bind(&MasterServerSystem::OnServerShutdown, this));
+		hook = std::bind(&MasterServerSystem::OnServerShutdown, this, std::placeholders::_1, std::placeholders::_2);
+		NetworkInstance::GetServer()->SetOnServerShutdown(hook);
 
-		//m_clientDatabase->AddToDatabase(port, pw.size() > 0);
+		Network::NetMessageHook customHook;
+		customHook = std::bind(&MasterServerSystem::OnGrantDisconnect, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+		m_clientDatabase->HookOnGrantDisconnect(customHook);
 	}
 	else if(NetworkInstance::GetClient()->IsConnected())
 	{
@@ -60,6 +63,10 @@ void MasterServerSystem::PostInitialize()
 		Network::NetMessageHook customHook;
 		customHook = std::bind(&MasterServerSystem::OnGetServerList, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 		m_clientDatabase->HookOnGetServerList(customHook);
+
+		customHook = std::bind(&MasterServerSystem::OnGrantDisconnect, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+		m_clientDatabase->HookOnGrantDisconnect(customHook);
+
 		Logger::GetInstance().Log("MasterServer", Info, "Hooking custom hook \"GET_SERVER_LIST\"to \"OnGetServerList\"");
 	}
 }
@@ -190,12 +197,15 @@ void MasterServerSystem::OnConnectionAccepted(Network::NetConnection _nc, const 
 		}
 	}
 
+	if (m_mServerMessages.size() > 0)
+		m_clientDatabase->RequestDisconnect();
+
 	m_mServerMessages.clear();
-	m_clientDatabase->Disconnect();
+	//m_clientDatabase->Disconnect();
 	m_connect = true;
 }
 
-void MasterServerSystem::OnServerShutdown()
+void MasterServerSystem::OnServerShutdown(Network::NetConnection _nc, const char* _msg)
 {
 	m_mServerMessages.push_back(REMOVE_FROM_DATABASE);
 }
@@ -269,6 +279,10 @@ void MasterServerSystem::OnGetServerList(Network::PacketHandler* _ph, uint64_t& 
 	}
 }
 
+void MasterServerSystem::OnGrantDisconnect(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
+{
+	m_clientDatabase->Disconnect();
+}
 
 void MasterServerSystem::EntitiesAddedServer(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities)
 {

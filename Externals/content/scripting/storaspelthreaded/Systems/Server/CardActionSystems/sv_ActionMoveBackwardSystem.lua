@@ -12,7 +12,7 @@ ActionMoveBackwardSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("UnitBackward",	FilterType.Mandatory)
 end
 
-ActionMoveBackwardSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
+ActionMoveBackwardSystem.EntitiesAdded = function(self, dt, entities)
 
 	for n = 1, #entities do
 		local entity = entities[n]
