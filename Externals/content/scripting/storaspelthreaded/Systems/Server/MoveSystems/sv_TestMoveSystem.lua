@@ -88,6 +88,7 @@ TestMoveSystem.RecursiveMove = function(self, unitToMove, allUnits, allNonWalkab
 	world:GetComponent(unitToMove, "LerpPosition", "Z"):SetFloat(posZ)
 	world:GetComponent(unitToMove, "LerpPosition", "Time"):SetFloat(1)
 	world:GetComponent(unitToMove, "LerpPosition", "Algorithm"):SetText("PlayerMove")
+	world:GetComponent(unitToMove, "LerpPosition", "KillWhenFinished"):SetBool(false)
 	
 	if not world:EntityHasComponent(unitToMove, "UnitWantTileOffset") then
 		world:CreateComponentAndAddTo("UnitWantTileOffset", unitToMove)

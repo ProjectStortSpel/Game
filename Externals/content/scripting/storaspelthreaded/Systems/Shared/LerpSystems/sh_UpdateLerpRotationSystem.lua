@@ -44,7 +44,11 @@ UpdateLerpRotationSystem.Update = function(self, dt)
 			world:GetComponent(entity, "LerpingRotation", "Timer"):SetFloat(_timer, false)
 		else
 			rotation:SetFloat3(tX, tY, tZ, false)
-			world:RemoveComponentFrom("LerpingRotation", entity)
+			if world:GetComponent(entity, "LerpingRotation", "KillWhenFinished"):GetBool() then
+				world:KillEntity(entity)
+			else
+				world:RemoveComponentFrom("LerpingRotation", entity)
+			end
 		end	
 	end
 end

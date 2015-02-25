@@ -15,7 +15,7 @@ WeatherSystem.Initialize = function(self)
 end
 
 WeatherSystem.PostInitialize = function(self)
-	--self.WeatherList[#self.WeatherList+1]	=	"Wind"
+	self.WeatherList[#self.WeatherList+1]	=	"Tornado"
 end
 
 WeatherSystem.EntitiesAdded = function(self, dt, newEntities)
@@ -25,14 +25,17 @@ WeatherSystem.EntitiesAdded = function(self, dt, newEntities)
 		
 		if world:EntityHasComponent(tEntity, "NewRound") then
 		
-			local	actualWeatherChance	=	math.random(1, 100)
-			self.WeatherChance	=	(self.WeatherChance+1)*1.08
-			print("Weather forecast, " .. self.WeatherChance .. "% chance of weather")
-			if actualWeatherChance <= self.WeatherChance then
+			self:SpawnWeather()
 			
-				self:SpawnWeather()
-				self.WeatherChance	=	0
-			end
+		
+			--local	actualWeatherChance	=	math.random(1, 100)
+			--self.WeatherChance	=	(self.WeatherChance+1)*1.08
+			--print("Weather forecast, " .. self.WeatherChance .. "% chance of weather")
+			--if actualWeatherChance <= self.WeatherChance then
+			--
+			--	self:SpawnWeather()
+			--	self.WeatherChance	=	0
+			--end
 			
 		end
 		

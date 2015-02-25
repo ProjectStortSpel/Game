@@ -382,7 +382,6 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 	worldCreator.AddLuaSystemToCurrentGroup(new SlerpRotationSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 
-
 	graphicalSystem = new DirectionalLightSystem(m_graphics);
 	m_graphicalSystems.push_back(graphicalSystem);
 	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
@@ -408,6 +407,7 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 		m_graphicalSystems.push_back(graphicalSystem);
 		worldCreator.AddSystemGroup();
 		worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
+		worldCreator.AddSystemToCurrentGroup<SpinSystem>();
     }
     
     if (_includeMasterServer)

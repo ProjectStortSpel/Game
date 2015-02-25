@@ -23,7 +23,8 @@ AddLerpRotationSystem.EntitiesAdded = function(self, dt, entities)
 		local tZ = world:GetComponent(entity, "LerpRotation", "Z"):GetFloat(0)
 		local lerpTime = world:GetComponent(entity, "LerpRotation", "Time"):GetFloat(0)
 		local lerpAlgorithm = world:GetComponent(entity, "LerpRotation", "Algorithm"):GetText(0)
-
+		local killWhenFinished = world:GetComponent(entity, "LerpRotation", "KillWhenFinished"):GetBool()
+		
 		-- Get Current Rotation
 		local rotation = world:GetComponent(entity, "Rotation", 0)
 		local X, Y, Z = rotation:GetFloat3(0)
@@ -39,7 +40,9 @@ AddLerpRotationSystem.EntitiesAdded = function(self, dt, entities)
 		world:GetComponent(entity, "LerpingRotation", "Time"):SetFloat(lerpTime)
 		world:GetComponent(entity, "LerpingRotation", "Timer"):SetFloat(0)
 		world:GetComponent(entity, "LerpingRotation", "Algorithm"):SetText(lerpAlgorithm)
+		world:GetComponent(entity, "LerpingRotation", "KillWhenFinished"):SetBool(killWhenFinished)
 		
 		world:RemoveComponentFrom("LerpRotation", entity)
+		
 	end
 end

@@ -102,6 +102,7 @@ AbilityStoneSystem.PlaceStone = function(self, entity)
 				world:GetComponent(stone, "LerpPosition", "Z"):SetFloat(0)
 				world:GetComponent(stone, "LerpPosition", "Time"):SetFloat(0.7)
 				world:GetComponent(stone, "LerpPosition", "Algorithm"):SetText("NormalLerp")
+				world:GetComponent(stone, "LerpPosition", "KillWhenFinished"):SetBool(false)
 							
 				
 				world:GetComponent(stone, "Rotation", 0):SetFloat3

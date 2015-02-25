@@ -107,6 +107,7 @@ PlayCardSystem.PlayCard = function(self, unitToPlay, cardToPlay)
 					world:GetComponent(self.CardsAbove[n], "LerpScale", "Z"):SetFloat(1.0)
 					world:GetComponent(self.CardsAbove[n], "LerpScale", "Time"):SetFloat(0.2)
 					world:GetComponent(self.CardsAbove[n], "LerpScale", "Algorithm"):SetText("SmoothLerp")
+					world:GetComponent(self.CardsAbove[n], "LerpScale", "KillWhenFinished"):SetBool(false)
 				end
 				world:GetComponent(self.CardsAbove[n], "Color", 0):SetFloat3(0.4, 0.4, 0.4)
 			end

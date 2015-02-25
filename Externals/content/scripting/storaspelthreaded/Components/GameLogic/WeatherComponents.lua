@@ -15,3 +15,10 @@ WeatherWind.SyncNetwork = true
 WeatherWind.TableType = TableType.Map
 WeatherWind:AddVariable("Force", ByteSize.Int)
 worldCreator:AddComponentType(WeatherWind)
+
+--	Tornado
+local WeatherTornado = ComponentType()
+WeatherTornado.Name = "WeatherTornado"
+WeatherTornado.SyncNetwork = true
+WeatherTornado.TableType = TableType.Map
+worldCreator:AddComponentType(WeatherTornado)

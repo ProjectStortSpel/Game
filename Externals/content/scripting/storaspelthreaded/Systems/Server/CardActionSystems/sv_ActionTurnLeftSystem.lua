@@ -41,6 +41,7 @@ ActionTurnLeftSystem.EntitiesAdded = function(self, dt, entities)
 		world:GetComponent(entity, "LerpRotation", "Z"):SetFloat(rot_z)
 		world:GetComponent(entity, "LerpRotation", "Time"):SetFloat(1)
 		world:GetComponent(entity, "LerpRotation", "Algorithm"):SetText("SmoothLerp")
+		world:GetComponent(entity, "LerpRotation", "KillWhenFinished"):SetBool(false)
 		
 		world:SetComponent(entity, "NoSubSteps", "Counter", 1)
 		world:RemoveComponentFrom("UnitTurnLeft", entity)

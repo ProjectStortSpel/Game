@@ -44,7 +44,11 @@ UpdateLerpScaleSystem.Update = function(self, dt)
 			world:GetComponent(entity, "LerpingScale", "Timer"):SetFloat(_timer, false)
 		else
 			scale:SetFloat3(tX, tY, tZ, false)
-			world:RemoveComponentFrom("LerpingScale", entity)
+			if world:GetComponent(entity, "LerpingScale", "KillWhenFinished"):GetBool() then
+				world:KillEntity(entity)
+			else
+				world:RemoveComponentFrom("LerpingScale", entity)
+			end
 		end	
 	end
 end

@@ -63,6 +63,7 @@ ActionTurnAroundSystem.EntitiesAdded = function(self, dt, entities)
 		world:GetComponent(entities[i], "LerpRotation", "Z"):SetFloat(rot_z)
 		world:GetComponent(entities[i], "LerpRotation", "Time"):SetFloat(1)
 		world:GetComponent(entities[i], "LerpRotation", "Algorithm"):SetText("SmoothLerp")
+		world:GetComponent(entities[i], "LerpRotation", "KillWhenFinished"):SetBool(false)
 		
 		world:SetComponent(entities[i], "NoSubSteps", "Counter", 1)
 		world:RemoveComponentFrom("UnitTurnAround", entities[i])

@@ -7,6 +7,7 @@ LerpPosition:AddVariable("Y", ByteSize.Float)
 LerpPosition:AddVariable("Z", ByteSize.Float)
 LerpPosition:AddVariable("Time", ByteSize.Float)
 LerpPosition:AddVariable("Algorithm", ByteSize.Text)
+LerpPosition:AddVariable("KillWhenFinished", ByteSize.Bool)
 worldCreator:AddComponentType(LerpPosition)
 
 -- Lerping Position
@@ -23,8 +24,8 @@ LerpingPosition:AddVariable("tY", ByteSize.Float)
 LerpingPosition:AddVariable("tZ", ByteSize.Float)
 LerpingPosition:AddVariable("Time", ByteSize.Float)
 LerpingPosition:AddVariable("Timer", ByteSize.Float)
+LerpingPosition:AddVariable("KillWhenFinished", ByteSize.Bool)
 worldCreator:AddComponentType(LerpingPosition)
-
 
 -- Lerp Scale
 local LerpScale = ComponentType()
@@ -35,6 +36,7 @@ LerpScale:AddVariable("Y", ByteSize.Float)
 LerpScale:AddVariable("Z", ByteSize.Float)
 LerpScale:AddVariable("Time", ByteSize.Float)
 LerpScale:AddVariable("Algorithm", ByteSize.Text)
+LerpScale:AddVariable("KillWhenFinished", ByteSize.Bool)
 worldCreator:AddComponentType(LerpScale)
 
 -- Lerping Scale
@@ -51,8 +53,8 @@ LerpingScale:AddVariable("tY", ByteSize.Float)
 LerpingScale:AddVariable("tZ", ByteSize.Float)
 LerpingScale:AddVariable("Time", ByteSize.Float)
 LerpingScale:AddVariable("Timer", ByteSize.Float)
+LerpingScale:AddVariable("KillWhenFinished", ByteSize.Bool)
 worldCreator:AddComponentType(LerpingScale)
-
 
 -- Lerp Rotation
 local LerpRotation = ComponentType()
@@ -63,6 +65,7 @@ LerpRotation:AddVariable("Y", ByteSize.Float)
 LerpRotation:AddVariable("Z", ByteSize.Float)
 LerpRotation:AddVariable("Time", ByteSize.Float)
 LerpRotation:AddVariable("Algorithm", ByteSize.Text)
+LerpRotation:AddVariable("KillWhenFinished", ByteSize.Bool)
 worldCreator:AddComponentType(LerpRotation)
 
 -- Lerping Rotation
@@ -79,4 +82,5 @@ LerpingRotation:AddVariable("tY", ByteSize.Float)
 LerpingRotation:AddVariable("tZ", ByteSize.Float)
 LerpingRotation:AddVariable("Time", ByteSize.Float)
 LerpingRotation:AddVariable("Timer", ByteSize.Float)
+LerpingRotation:AddVariable("KillWhenFinished", ByteSize.Bool)
 worldCreator:AddComponentType(LerpingRotation)

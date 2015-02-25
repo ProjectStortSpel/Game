@@ -1,32 +1,32 @@
 #include "RotationSystem.h"
 
-RotationSystem::RotationSystem()
+SpinSystem::SpinSystem()
 {
 
 }
-RotationSystem::~RotationSystem()
+SpinSystem::~SpinSystem()
 {
 
 }
 
-void RotationSystem::Initialize() 
+void SpinSystem::Initialize()
 {
-	SetSystemName("Rotation Remove System");
+	SetSystemName("Spin System");
 
 	SetUpdateTaskCount(1);
 
 	/*	Rendersystem wants Position, Scale, Rotation and Render	*/
-	//AddComponentTypeToFilter("Spin", ECSL::FilterType::Mandatory);
+	AddComponentTypeToFilter("Spin", ECSL::FilterType::Mandatory);
 	AddComponentTypeToFilter("Rotation", ECSL::FilterType::Mandatory);
 
 	m_rotationId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Rotation");
-	//m_spinId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Spin");
+	m_spinId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Spin");
 
 }
 
-void RotationSystem::Update(const ECSL::RuntimeInfo& _runtime)
+void SpinSystem::Update(const ECSL::RuntimeInfo& _runtime)
 {
-    return;
+   // return;
 	auto entities = *GetEntities();
 
 	for (auto entity : entities)

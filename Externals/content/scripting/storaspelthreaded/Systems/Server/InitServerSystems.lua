@@ -70,6 +70,7 @@ require "sv_AbilityStoneSystem"
 package.path = package.path .. ";Systems/Server/WeatherSystems/?.lua"
 require "sv_WeatherSystem"
 require "sv_WeatherWindSystem"
+require "sv_WeatherTornadoSystem"
 
 --	Spawn Systems
 package.path = package.path .. ";Systems/Server/SpawnSystems/?.lua"
@@ -152,6 +153,7 @@ worldCreator:AddSystemToCurrentGroup(AbilityStoneSystem)
 
 worldCreator:AddSystemToCurrentGroup(WeatherSystem)
 worldCreator:AddSystemToCurrentGroup(WeatherWindSystem)
+worldCreator:AddSystemToCurrentGroup(WeatherTornadoSystem)
 
 worldCreator:AddSystemToCurrentGroup(GiveSpawnLocationSystem)
 
