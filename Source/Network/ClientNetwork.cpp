@@ -164,7 +164,8 @@ void ClientNetwork::Disconnect()
 
 	m_socket->ShutdownSocket(1);
 
-	m_receiveThread->join();
+	if(m_receiveThread->joinable())
+		m_receiveThread->join();
 
 	NetConnection nc = m_socket->GetNetConnection();
 	TriggerEvent(m_onDisconnectedFromServer, nc, 0);
