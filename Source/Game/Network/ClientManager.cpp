@@ -87,9 +87,43 @@ namespace ClientManager
 			SDL_UnlockMutex(jobMutex);
 
 			SDL_RWops* file;
+			bool binary = FileSystem::File::IsBinary(job.resource.Location);
+
 			FileSystem::File::Open(job.resource.Location, &file);
+			unsigned char* fileData = (unsigned char*)FileSystem::File::Read(file, job.resource.Size);
+			FileSystem::File::Close(file);
 
 			int bytesLeft = job.resource.Size;
+			
+			unsigned char* data;
+			std::string str;
+			if (binary)
+			{
+				data = fileData;
+			}
+			else
+			{
+				str = std::string((char*)fileData);
+
+				//auto first = std::remove(str.begin(), str.end(), '\r');
+				//int numRemoved = str.end() - first;
+				//str.erase(first, str.end());
+
+				std::string from = "\r\n";
+				std::string to = "\n";
+
+				size_t start_pos = 0;
+				while ((start_pos = str.find(from, start_pos)) != std::string::npos)
+				{
+					str.replace(start_pos, from.length(), to);
+					start_pos += to.length();
+					bytesLeft -= from.length() - to.length();
+				}
+				data = (unsigned char*)str.c_str();
+			}
+			
+
+			int currentPos = 0;
 			bool firstPart = true;
 			while (bytesLeft > 0)
 			{
@@ -106,18 +140,20 @@ namespace ClientManager
 
 				int size = bytesLeft > FileChunkSize ? FileChunkSize : bytesLeft;
 
+				//last part?
+				ph.WriteByte(id, size == bytesLeft);
+			
 				ph.WriteInt(id, size);
-
-				unsigned char* data = (unsigned char*)FileSystem::File::Read(file, size);
-
 				ph.WriteBytes(id, data, size);
 
-				delete data;
+				data += size;
 
 				NetworkInstance::GetServer()->Send(ph.EndPack(id), job.nc);
 
 				bytesLeft -= size;
 			}
+
+			delete fileData;
 
 			SDL_LockMutex(jobMutex);
 			jobs.pop();

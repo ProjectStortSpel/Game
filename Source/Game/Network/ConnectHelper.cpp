@@ -175,6 +175,7 @@ namespace ConnectHelper
 				return;
 
 			char firstPart = _ph->ReadByte(_id);
+			char lastPart = _ph->ReadByte(_id);
 
 			ResourceManager::Resource r = missingFiles[filename];
 
@@ -195,8 +196,9 @@ namespace ConnectHelper
 			Sint64 fileSize = FileSystem::File::GetFileSize(file);
 			FileSystem::File::Close(file);
 
-			if (fileSize == r.Size)
+			if (lastPart == 1)
 			{
+				//md5 check and delete if failed
 				missingFiles.erase(filename);
 				
 				if (missingFiles.empty())
@@ -320,6 +322,7 @@ namespace ConnectHelper
 				return;
 
 			char firstPart = _ph->ReadByte(_id);
+			char lastPart = _ph->ReadByte(_id);
 
 			ResourceManager::Resource r = missingFiles[filename];
 
@@ -340,8 +343,9 @@ namespace ConnectHelper
 			Sint64 fileSize = FileSystem::File::GetFileSize(file);
 			FileSystem::File::Close(file);
 
-			if (fileSize == r.Size)
+			if (lastPart == 1)
 			{
+				//md5 check and delete if failed
 				missingFiles.erase(filename);
 
 				if (missingFiles.empty())
