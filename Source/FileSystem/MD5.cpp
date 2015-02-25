@@ -43,6 +43,7 @@
 
 #include "FileSystem/MD5.h"
 #include "FileSystem/File.h"
+#include <algorithm>
 
 namespace FileSystem
 {
@@ -336,13 +337,41 @@ namespace FileSystem
 
 		MD5Data MD5_File(std::string _file)
 		{
-			SDL_RWops* test;
-			FileSystem::File::Open(_file, &test);
-			Sint64 length = FileSystem::File::GetFileSize(test);
-			char* data = FileSystem::File::Read(test, length);
-            FileSystem::File::Close(test);
+			SDL_RWops* file;
 
-			MD5Data result = MD5(data, length);
+			bool binary = FileSystem::File::IsBinary(_file);
+
+			FileSystem::File::Open(_file, &file);
+			Sint64 length = FileSystem::File::GetFileSize(file);
+			char* data = FileSystem::File::Read(file, length);
+			FileSystem::File::Close(file);
+
+			MD5Data result;
+			if (binary)
+			{
+				result = MD5(data, length);
+			}
+			else
+			{
+				std::string str = std::string(data, length);
+				/*auto first = std::remove(str.begin(), str.end(), '\r');
+				int numRemoved = str.end() - first;
+				str.erase(first, str.end());*/
+				
+				std::string from = "\r\n";
+				std::string to = "\n";
+
+				size_t start_pos = 0;
+				while ((start_pos = str.find(from, start_pos)) != std::string::npos) 
+				{
+					str.replace(start_pos, from.length(), to);
+					start_pos += to.length();
+				}
+				
+				result = MD5(str.c_str(), str.size());
+				//result = MD5(str.c_str(), length - numRemoved);
+			}
+
 			delete data;
 			return result;
 		}
