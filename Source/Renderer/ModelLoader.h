@@ -1,6 +1,7 @@
 #ifndef MODELLOADER_H
 #define MODELLOADER_H
 #include "stdafx.h"
+#include "FileSystem/File.h"
 
 struct ObjectData
 {
@@ -11,6 +12,11 @@ struct ObjectData
 	std::string spec;
 	std::string joints;
 	std::vector<std::string> anim;
+	ObjectData()
+	{
+		animated = false;
+		mesh = text = norm = spec = joints = "";
+	}
 	ObjectData(std::string dir)
 	{
 		animated = false;
@@ -95,43 +101,75 @@ public:
 
 		return vertexlist;
 	}
-
-	static ObjectData importObject(std::string dir, std::string file)
+	static bool GetFilePath(std::vector<std::string>& dirs, std::string& file, std::string* out)
 	{
-		ObjectData objectdata(dir);
-
-		std::string fileDir = dir;
-		fileDir.append(file);
-
-		std::ifstream fileIn(fileDir);
-
-		std::string temp;
-		if (getline(fileIn, temp))
-			objectdata.mesh.append(temp);
-		if (getline(fileIn, temp))
-			objectdata.text.append(temp);
-		if (getline(fileIn, temp))
-			objectdata.norm.append(temp);
-		if (getline(fileIn, temp))
-			objectdata.spec.append(temp);
-
-		if (getline(fileIn, temp))
-			objectdata.joints.append(temp);
-
-		while (getline(fileIn, temp))
-		{ 
-			std::string animation;
-			animation = dir;
-			animation.append(temp);
-			objectdata.anim.push_back(animation);
-		}
-		int isamesh = objectdata.mesh.find(".amesh");
-		if (isamesh > 0 && objectdata.joints != fileDir && objectdata.anim.size() > 0)
+		for (int i = 0; i < dirs.size(); ++i)
 		{
-			objectdata.animated = true;
-		}
-			
+			std::string fileDir = dirs[i];
+			fileDir.append(file);
 
+			if (FileSystem::File::Exist(fileDir))
+			{
+				*out = fileDir;
+				return true;
+			}
+		}
+		*out = "";
+		return false;
+	}
+
+	static ObjectData importObject(std::vector<std::string> dirs, std::string file)
+	{
+		ObjectData objectdata;
+		
+
+		std::string filePath;
+
+		if (GetFilePath(dirs, file, &filePath))
+		{
+			std::ifstream fileIn(filePath);
+
+			std::string temp;
+			if (getline(fileIn, temp))
+			{
+				if (GetFilePath(dirs, temp, &filePath))
+					objectdata.mesh = filePath;
+			}
+			if (getline(fileIn, temp))
+			{
+				if (GetFilePath(dirs, temp, &filePath))
+					objectdata.text = filePath;
+			}
+			if (getline(fileIn, temp))
+			{
+				if (GetFilePath(dirs, temp, &filePath))
+					objectdata.norm = filePath;
+			}
+			if (getline(fileIn, temp))
+			{
+				if (GetFilePath(dirs, temp, &filePath))
+					objectdata.spec = filePath;
+			}
+
+			if (getline(fileIn, temp))
+			{
+				if (GetFilePath(dirs, temp, &filePath))
+					objectdata.joints = filePath;
+			}
+				
+
+			while (getline(fileIn, temp))
+			{
+				std::string animation;
+				if (GetFilePath(dirs, temp, &filePath))
+					objectdata.anim.push_back(filePath);
+			}
+			int isamesh = objectdata.mesh.find(".amesh");
+			if (isamesh > 0 && objectdata.joints != "" && objectdata.anim.size() > 0)
+			{
+				objectdata.animated = true;
+			}
+		}
 		return objectdata;
 	}
 

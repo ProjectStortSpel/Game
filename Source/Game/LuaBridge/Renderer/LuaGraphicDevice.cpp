@@ -3,6 +3,7 @@
 #include "LuaCamera.h"
 #include "../Math/LuaMatrix.h"
 #include "Game/LuaBridge/LuaBridge.h"
+#include "Game/HomePath.h"
 
 namespace LuaBridge
 {
@@ -197,7 +198,24 @@ namespace LuaBridge
 			std::string dir = LuaEmbedder::PullString(L, 1);
 			std::string file = LuaEmbedder::PullString(L, 2);
 			LuaMatrix* matrix = LuaEmbedder::PullObject<LuaMatrix>(L, "Matrix", 3);
-			int model = g_graphicDevice->LoadModel(dir, file, matrix->GetGlmMatrix());
+
+
+			std::vector<std::string> paths;
+
+			if (LuaEmbedder::PullBool(L, "Client"))
+				paths = HomePath::GetPaths(HomePath::Type::Client);
+			else
+				paths = HomePath::GetPaths(HomePath::Type::Server);
+
+			for (int i = 0; i < paths.size(); ++i)
+			{
+				paths[i].append("models/");
+				paths[i].append(dir);
+				paths[i].append("/");
+			}
+
+			int model = g_graphicDevice->LoadModel(paths, file, matrix->GetGlmMatrix());
+
 			LuaEmbedder::PushInt(L, model);
 			return 1;
 		}
