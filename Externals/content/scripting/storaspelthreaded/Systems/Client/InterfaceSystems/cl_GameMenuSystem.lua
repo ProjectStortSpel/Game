@@ -79,7 +79,7 @@ GameMenuSystem.CreateElement = function(self, object, folder, posx, posy, posz, 
 	world:CreateComponentAndAddTo("PickBox", id)
 	world:CreateComponentAndAddTo(self.Name.."Element", id)
 	local model = world:GetComponent(id, "Model", 0)
-	model:SetModel(object, folder, 2)
+	model:SetModel(object, folder, 3)
 	local position = world:GetComponent(id, "Position", 0)
 	position:SetFloat3(posx, posy, posz)
 	local scale = world:GetComponent(id, "Scale", 0)

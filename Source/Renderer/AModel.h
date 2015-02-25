@@ -16,7 +16,7 @@ namespace Renderer
 		Joint(	float _x0, float _y0, float _z0, float _w0,
 				float _x1, float _y1, float _z1, float _w1,
 				float _x2, float _y2, float _z2, float _w2,
-				float _x3, float _y3, float _z3, float _parent)
+				float _x3, float _y3, float _z3, float _parent	)
 		{
 			x0 = _x0;
 			y0 = _y0;

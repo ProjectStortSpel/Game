@@ -391,7 +391,7 @@ HostMenuSystem.CreateButton = function(self, object, folder, posX, posY, posZ, s
 
 	local id = world:CreateNewEntity("Button")
 	world:CreateComponentAndAddTo(self.Name.."Element", id)
-	world:GetComponent(id, "Model", 0):SetModel(object, folder, 2)
+	world:GetComponent(id, "Model", 0):SetModel(object, folder, 3)
 	world:GetComponent(id, "Position", 0):SetFloat3(posX, posY, posZ)
 	world:GetComponent(id, "Scale", 0):SetFloat3(scaleX, scaleY, 1)
 	world:GetComponent(id, "PickBox", 0):SetFloat2(1, 1)
@@ -405,7 +405,7 @@ HostMenuSystem.CreateElement = function(self, object, folder, posX, posY, posZ, 
 
 	local id = world:CreateNewEntity("Button")
 	world:CreateComponentAndAddTo(self.Name.."Element", id)
-	world:GetComponent(id, "Model", 0):SetModel(object, folder, 2)
+	world:GetComponent(id, "Model", 0):SetModel(object, folder, 3)
 	world:GetComponent(id, "Position", 0):SetFloat3(posX, posY, posZ)
 	world:GetComponent(id, "Scale", 0):SetFloat3(scaleX, scaleY, 1)
 	world:GetComponent(id, "PickBox", 0):SetFloat2(1, 1)
@@ -418,7 +418,7 @@ HostMenuSystem.CreateCheckbox = function(self, object, folder, posX, posY, posZ,
 
 		local id = world:CreateNewEntity("Checkbox")
 		world:CreateComponentAndAddTo(self.Name.."Element", id)
-		world:GetComponent(id, "Model", 0):SetModel(object, folder, 2)
+		world:GetComponent(id, "Model", 0):SetModel(object, folder, 3)
 		world:GetComponent(id, "Position", 0):SetFloat3(posX, posY, posZ)
 		world:GetComponent(id, "Scale", 0):SetFloat3(scaleX, scaleY, 1)
 		world:GetComponent(id, "PickBox", 0):SetFloat2(1, 1)
@@ -433,7 +433,7 @@ HostMenuSystem.CreateText = function(self, object, folder, posx, posy, posz, sca
 
 	local id = world:CreateNewEntity("Text")
 	world:CreateComponentAndAddTo(self.Name.."Element", id)
-	world:GetComponent(id, "Model", 0):SetModel(object, folder, 2)
+	world:GetComponent(id, "Model", 0):SetModel(object, folder, 3)
 	world:GetComponent(id, "Position", 0):SetFloat3(posx, posy, posz)
 	world:GetComponent(id, "Scale", 0):SetFloat3(scalex, scaley, 1)
 	world:GetComponent(id, "Rotation", 0):SetFloat3(0, 0, 0)
