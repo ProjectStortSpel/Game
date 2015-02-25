@@ -76,11 +76,7 @@ namespace Renderer
 		// Shaders
 		Shader m_fullScreenShader;
 		Shader m_deferredShader1, m_compDeferredPass2Shader;
-		Shader m_forwardShader;
-		Shader m_viewspaceShader;
-		Shader m_interfaceShader;
-
-		Shader m_shadowShaderDeferred, m_shadowShaderForward;
+		Shader m_shadowShaderDeferred;
 
 		// SimpleText
 		bool m_renderSimpleText;

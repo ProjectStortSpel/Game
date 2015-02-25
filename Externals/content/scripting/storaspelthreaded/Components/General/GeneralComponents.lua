@@ -9,3 +9,5 @@ require "GraphicalComponents"
 require "NetworkComponents"
 
 require "LerpComponents"
+
+require "AnimationComponents"

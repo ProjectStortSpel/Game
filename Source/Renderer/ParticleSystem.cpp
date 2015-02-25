@@ -305,7 +305,7 @@ void ParticleSystem::Render(float _dt)
 {
 	glBlendColor(0.93, 0.93, 0.93, 1.0);
 	glBlendFunc(GL_SRC_ALPHA, m_dstBlendFactor);
-
+	_dt = std::min(1.0f / 20.0f, _dt);
 	float dt = 1000.f * (_dt);
 	m_elapsedTime += dt;
 
