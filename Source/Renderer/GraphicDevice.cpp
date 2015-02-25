@@ -359,7 +359,7 @@ void GraphicDevice::BufferParticleSystems()
 
 }
 
-int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color)
+int GraphicDevice::LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color)
 {
 	int modelID = m_modelIDcounter;
 	m_modelIDcounter++;
@@ -368,7 +368,7 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 	//	std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType
 
 	ModelToLoad* modelToLoad = new ModelToLoad();
-	modelToLoad->Dir = _dir;
+	modelToLoad->Dirs = _dirs;
 	modelToLoad->File = _file;
 	modelToLoad->MatrixPtr = _matrixPtr;
 	modelToLoad->RenderType = _renderType;
@@ -409,7 +409,7 @@ void GraphicDevice::BufferModels()
 
 void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 {
-	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
+	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dirs, _modelToLoad->File);
 	Shader *shaderPtr = NULL;
 	std::vector<Model> *modelList = NULL;
 
@@ -533,7 +533,7 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoa
 
 void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 {
-	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
+	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dirs, _modelToLoad->File);
 
 	Shader *shaderPtr = &m_animationShader;
 	std::vector<AModel> *modelList = &m_modelsAnimated;

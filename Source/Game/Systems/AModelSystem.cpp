@@ -42,33 +42,21 @@ void AModelSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::v
 		else
 			paths = HomePath::GetPaths(HomePath::Type::Server);
 
-		bool foundFile = false;
-		std::string ModelPath;
 		for (int i = 0; i < paths.size(); ++i)
 		{
-			ModelPath = paths[i];
-			ModelPath.append(std::string(ModelData));
-			ModelPath.append("/");
-
-			std::string filePath = ModelPath;
-			filePath.append(ModelName);
-
-			if (FileSystem::File::Exist(filePath))
-			{
-				foundFile = true;
-				break;
-			}
+			paths[i].append("models/");
+			paths[i].append(std::string(ModelData));
+			paths[i].append("/");
 		}
 
-		if (foundFile)
-		{
-			int RenderType = 1;
+		
+		int RenderType = 1;
 
-			CreateComponentAndAddTo("Render", entityId);
-			glm::mat4*	Matrix;
-			Matrix = (glm::mat4*)GetComponent(entityId, "Render", "Mat");
-			int* ModelId = (int*)GetComponent(entityId, "Render", "ModelId");
-			*ModelId = m_graphics->LoadModel(ModelPath, ModelName, Matrix, RenderType);
-		}		
+		CreateComponentAndAddTo("Render", entityId);
+		glm::mat4*	Matrix;
+		Matrix = (glm::mat4*)GetComponent(entityId, "Render", "Mat");
+		int* ModelId = (int*)GetComponent(entityId, "Render", "ModelId");
+		*ModelId = m_graphics->LoadModel(paths, ModelName, Matrix, RenderType);
+			
 	}
 }

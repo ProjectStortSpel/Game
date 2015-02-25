@@ -17,6 +17,8 @@ namespace FileSystem
 	namespace File
 	{
 
+		bool EXPORT IsBinary(std::string _path);
+
 		bool EXPORT Create(std::string _path);
 		bool EXPORT Append(std::string _path, SDL_RWops** _file);
 		bool EXPORT Open(std::string _path, SDL_RWops** _file);

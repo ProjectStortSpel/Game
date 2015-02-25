@@ -58,7 +58,7 @@ namespace Renderer
 
 	struct ModelToLoad
 	{
-		std::string Dir;
+		std::vector<std::string> Dirs;
 		std::string File;
 		glm::mat4* MatrixPtr;
 		int RenderType;
@@ -137,7 +137,7 @@ namespace Renderer
 		bool SetAnimation(int _modelId, int _animId);
 
 		// MODELLOADER
-		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED, float* _color = nullptr);
+		int LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED, float* _color = nullptr);
 		int LoadModel(ModelToLoadFromSource* _modelToLoad);
 		bool RemoveModel(int _id);// = 0;
 		bool ActiveModel(int _id, bool _active);// = 0;
