@@ -24,6 +24,8 @@ namespace LuaBridge
 		
 		int GetWindowSize(lua_State* L);
 		
+		int SetAnimation(lua_State* L);
+
 		int LoadModel(lua_State* L);
 		int ChangeModelTexture(lua_State* L);
 		int ChangeModelNormalMap(lua_State* L);
@@ -44,6 +46,7 @@ namespace LuaBridge
 			LuaEmbedder::AddFunction(L, "SetSimpleTextColor", &SetSimpleTextColor, "GraphicDevice");
 			LuaEmbedder::AddFunction(L, "GetCamera", &GetCamera, "GraphicDevice");
 			LuaEmbedder::AddFunction(L, "GetWindowSize", &GetWindowSize, "GraphicDevice");
+			LuaEmbedder::AddFunction(L, "SetAnimation", &SetAnimation, "GraphicDevice");
 			LuaEmbedder::AddFunction(L, "LoadModel", &LoadModel, "GraphicDevice");
 			LuaEmbedder::AddFunction(L, "ChangeModelTexture", &ChangeModelTexture, "GraphicDevice");
 			LuaEmbedder::AddFunction(L, "ChangeModelNormalMap", &ChangeModelNormalMap, "GraphicDevice");
@@ -184,6 +187,21 @@ namespace LuaBridge
 			LuaEmbedder::PushInt(L, x);
 			LuaEmbedder::PushInt(L, y);
 			return 2;
+		}
+
+		int SetAnimation(lua_State* L)
+		{
+			lua_State* parent = LuaEmbedder::LuaChildrenParentMap.find(L) != LuaEmbedder::LuaChildrenParentMap.end() ? LuaEmbedder::LuaChildrenParentMap[L] : L;
+			if (LuaBridge::g_IOLuaState != parent)
+			{
+				LuaEmbedder::PushBool(L, false);
+				return 1;
+			}
+			int modelId = LuaEmbedder::PullInt(L, 1);
+			int animId = LuaEmbedder::PullInt(L, 2);
+			bool result = g_graphicDevice->SetAnimation(modelId, animId);
+			LuaEmbedder::PushBool(L, result);
+			return 1;
 		}
 
 		int LoadModel(lua_State* L)

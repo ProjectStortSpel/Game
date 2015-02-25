@@ -133,6 +133,9 @@ namespace Renderer
 
 		void GetWindowPos(int &x, int &y);
 
+		// ANIMATIONS
+		bool SetAnimation(int _modelId, int _animId);
+
 		// MODELLOADER
 		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED, float* _color = nullptr);
 		int LoadModel(ModelToLoadFromSource* _modelToLoad);
