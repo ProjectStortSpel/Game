@@ -22,12 +22,12 @@ ServerNetworkMessageSystem.PostInitialize = function(self)
 	
 	-- TODO: Change MaxPlayers based on the map loaded
 	-- TODO: Note, moved to the Mapspecs-entity
-	--local maxPlayers = 9
 	--world:SetComponent(playerCounter, "PlayerCounter", "MaxPlayers", 0)
+	
 	world:SetComponent(playerCounter, "PlayerCounter", "Players", 0)
 	world:SetComponent(playerCounter, "PlayerCounter", "Spectators", 0)
 
-	--self:AddConnectedPlayers(playerCounter, maxPlayers)
+	--self:AddConnectedPlayers(playerCounter, 9)
 end
 
 ServerNetworkMessageSystem.CounterComponentChanged = function(self, _change, _component)
@@ -80,7 +80,9 @@ ServerNetworkMessageSystem.OnPlayerConnected = function(self, _ip, _port, _messa
 	local addSpectator = false
 	local counterEntities = self:GetEntities("PlayerCounter")
 	local counterComp = world:GetComponent(counterEntities[1], "PlayerCounter", 0)
-	local maxPlayers, noOfPlayers, noOfSpectators = counterComp:GetInt3()
+	local noOfPlayers, noOfSpectators = counterComp:GetInt2()
+	
+	local maxPlayers = world:GetComponent(self:GetEntities("MapSpecs")[1], "MapSpecs", "NoOfSpawnpoints"):GetInt(0)
 	
 	if #self:GetEntities("GameRunning") > 0 then -- If the game is running
 		
