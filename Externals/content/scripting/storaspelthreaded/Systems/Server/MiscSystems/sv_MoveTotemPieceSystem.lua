@@ -16,7 +16,7 @@ MoveTotemPieceSystem.MovePieceUp = function(self, totemPieceId)
 	
 	local	currentHeight	=	world:GetComponent(totemPieceId, "TotemPiece", "CurrentHeight"):GetInt()
 	local	X,Y,Z			=	world:GetComponent(totemPieceId, "Position", "X"):GetFloat3()
-	local	newHeight		=	0.95 + (currentHeight)*0.27
+	local	newHeight		=	1.03 + (currentHeight)*0.27
 	
 	if not world:EntityHasComponent(totemPieceId, "LerpPosition") then
 		world:CreateComponentAndAddTo("LerpPosition", totemPieceId)

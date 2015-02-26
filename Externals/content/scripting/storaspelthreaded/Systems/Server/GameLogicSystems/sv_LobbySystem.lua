@@ -44,9 +44,9 @@ LobbySystem.EntitiesAdded = function(self, dt, entities)
 	else
 		for n = 1, #entities do
 			local entityId = entities[n]
-			--if world:EntityHasComponent( entityId, self.Name) then
-			--else
-			if world:EntityHasComponent( entityId, self.Name.."Element") then
+			if world:EntityHasComponent( entityId, self.Name) then
+				self:SpawnMenu()
+			elseif world:EntityHasComponent( entityId, self.Name.."Element") then
 			
 			elseif world:EntityHasComponent( entityId, "UnitEntityId") then
 				self.UpdateMe = true
@@ -151,8 +151,10 @@ end
 
 
 LobbySystem.SpawnMenu = function(self)
-	local background = self:CreateElement("gamemenubackground", "quad", 0, 0, -4.1, 4.14, 2.6)
-	world:CreateComponentAndAddTo("LobbyMenuActive", background)
+	--local background = self:CreateElement("gamemenubackground", "quad", 0, 0, -4.1, 4.14, 2.6)
+	local activate = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("SyncNetwork", activate)
+	world:CreateComponentAndAddTo("LobbyMenuActive", activate)
 end
 
 LobbySystem.RemoveMenu = function(self)
