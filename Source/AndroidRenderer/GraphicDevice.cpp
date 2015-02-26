@@ -163,6 +163,12 @@ bool GraphicDevice::InitSkybox()
 	return true;
 }
 
+
+bool GraphicDevice::SetAnimation(int _modelId, int _animId)
+{
+	return false;
+}
+
 GLuint GraphicDevice::AddTexture(std::string _fileDir, GLenum _textureSlot)
 {
     //printf("fileDir: %s\n", _fileDir.c_str());
@@ -388,7 +394,7 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 		return;
 	}
 	// Import Object
-	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
+	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dirs, _modelToLoad->File);
 
 	// Import Texture
 	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);

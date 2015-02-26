@@ -64,17 +64,7 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		world:CreateComponentAndAddTo("Model", newTile)
 		local comp = world:GetComponent(newTile, "Model", 0)
 		
-		if tiletype == 49 then
-			comp:SetModel("checkpoint1", "checkpoint", 0)
-		elseif tiletype == 50 then
-			comp:SetModel("checkpoint2", "checkpoint", 0)
-		elseif tiletype == 51 then
-			comp:SetModel("checkpoint3", "checkpoint", 0)
-		elseif tiletype == 52 then
-			comp:SetModel("checkpoint4", "checkpoint", 0)
-		else
-			comp:SetModel("checkpoint", "checkpoint", 0)
-		end
+		comp:SetModel("checkpoint", "checkpoint", 0)
 		
 		self.noOfCheckpoints = self.noOfCheckpoints + 1
 

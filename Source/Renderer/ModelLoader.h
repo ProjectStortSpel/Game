@@ -1,7 +1,6 @@
 #ifndef MODELLOADER_H
 #define MODELLOADER_H
 #include "stdafx.h"
-#include "FileSystem/File.h"
 
 struct ObjectData
 {
@@ -108,8 +107,10 @@ public:
 			std::string fileDir = dirs[i];
 			fileDir.append(file);
 
-			if (FileSystem::File::Exist(fileDir))
+			std::ifstream fileIn(fileDir);
+			if (fileIn.is_open())
 			{
+				fileIn.close();
 				*out = fileDir;
 				return true;
 			}
