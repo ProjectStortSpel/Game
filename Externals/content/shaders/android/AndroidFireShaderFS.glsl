@@ -1,4 +1,5 @@
 #version 100
+precision mediump float;
 
 varying float Transp;
 
