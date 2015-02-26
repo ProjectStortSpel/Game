@@ -8,7 +8,7 @@
 
 int g_meshCreatorIndex = -1;
 float g_meshCreatorColor[3] = { 0.0f, 0.0f, 0.0f };
-glm::mat4 g_meshCreatorMatrix = glm::translate(glm::vec3(1.0f, 0.5f, 1.0f));
+glm::mat4 g_meshCreatorMatrix = glm::translate(glm::vec3(0.0f, -0.5f, 0.0f));
 
 int LoadMap(lua_State* L)  
 {
@@ -31,6 +31,7 @@ int LoadMap(lua_State* L)
 	SDL_RWclose(file);
 	
 	std::string source = std::string(data);
+	printf(source.c_str());
 	delete data;
 	std::string line;
 	size_t prevFileIndex = 0, nextFileIndex = std::string::npos;
@@ -86,6 +87,48 @@ int LoadMap(lua_State* L)
 
 	MeshCreator meshcreator;
 	meshcreator.CreateMesh(stringMap);
+	Renderer::ModelToLoadFromSource model;
+	model.key = "meshcreator";
+	model.positions = meshcreator.position;
+	model.normals = meshcreator.normals;
+	model.tangents = meshcreator.tangents;
+	model.bitangents = meshcreator.bitangents;
+	model.texCoords = meshcreator.uvs;
+	model.diffuseTextureFilepath = "content/textures/dirt.png";
+	model.normalTextureFilepath = "content/textures/normalPixel.png";
+	model.specularTextureFilepath = "content/textures/blackPixel.png";
+	model.RenderType = 0;
+	model.Color = g_meshCreatorColor;
+	model.MatrixPtr = &g_meshCreatorMatrix;
+	g_meshCreatorIndex = LuaBridge::LuaGraphicDevice::GetGraphicDevice()->LoadModel(&model);
+
+	return 3;
+}
+
+int GenerateIslandMesh(lua_State* L)  
+{
+	int			sizeX		=	LuaEmbedder::PullInt(L, 1);
+	int			sizeZ		=	LuaEmbedder::PullInt(L, 2);
+	std::string	stringMap	=	LuaEmbedder::PullString(L, 3);
+	SDL_Log(stringMap.c_str());
+	std::vector<std::string>	strVector	=	std::vector<std::string>();
+
+	for( int Z = 0; Z < sizeZ; ++Z)
+	{
+		std::string	line;
+		for( int X = 0; X < sizeX; ++X)
+			line.push_back((char)stringMap[Z*sizeX + X]);	
+					
+		printf(line.c_str());
+		printf("AA\n");
+		strVector.push_back(line);
+	}
+
+	if (g_meshCreatorIndex != -1)
+		LuaBridge::LuaGraphicDevice::GetGraphicDevice()->RemoveModel(g_meshCreatorIndex);
+
+	MeshCreator meshcreator;
+	meshcreator.CreateMesh(strVector);
 	Renderer::ModelToLoadFromSource model;
 	model.key = "meshcreator";
 	model.positions = meshcreator.position;
