@@ -58,13 +58,6 @@ namespace Renderer
 		// Frame buffer object
 		GLuint m_forwardFBO;
 
-		// Shaders
-		Shader m_forwardShader;
-		Shader m_viewspaceShader;
-		Shader m_interfaceShader;
-
-		Shader m_shadowShaderForward;
-
 		// Modelloader
 		int m_modelIDcounter;
 		std::vector<Model> m_modelsForward, m_modelsViewspace, m_modelsInterface;

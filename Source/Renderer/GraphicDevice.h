@@ -24,6 +24,7 @@ namespace Renderer
 #define RENDER_VIEWSPACE  2
 #define RENDER_INTERFACE  3
 #define RENDER_ANIMATED  4
+#define RENDER_RIVERWATER 5
 
 #define RENDER_DEFERRED_SCATTER  8
 #define RENDER_FORWARD_SCATTER  9
@@ -58,7 +59,7 @@ namespace Renderer
 
 	struct ModelToLoad
 	{
-		std::string Dir;
+		std::vector<std::string> Dirs;
 		std::string File;
 		glm::mat4* MatrixPtr;
 		int RenderType;
@@ -133,8 +134,11 @@ namespace Renderer
 
 		void GetWindowPos(int &x, int &y);
 
+		// ANIMATIONS
+		bool SetAnimation(int _modelId, int _animId);
+
 		// MODELLOADER
-		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED, float* _color = nullptr);
+		int LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED, float* _color = nullptr);
 		int LoadModel(ModelToLoadFromSource* _modelToLoad);
 		bool RemoveModel(int _id);// = 0;
 		bool ActiveModel(int _id, bool _active);// = 0;
@@ -160,6 +164,8 @@ namespace Renderer
 		
 	protected:
 		virtual void InitRenderLists() { return; }
+		void InitStandardShaders();
+		void InitStandardBuffers();
 		bool InitSDLWindow(int _width = 1280, int _height = 720);
 		bool InitSkybox();
 		void BufferModels();
@@ -179,7 +185,10 @@ namespace Renderer
 
 		//modellists
 		std::vector<RenderList> m_renderLists;
+
+		std::vector<Model> m_modelsForward, m_modelsViewspace, m_modelsInterface, m_modelsWater;
 		std::vector<AModel> m_modelsAnimated;
+
 		Shader m_animationShader;
 
 		//MODEL LOADER
@@ -190,6 +199,9 @@ namespace Renderer
 
 		Camera* m_camera;
 		int m_vramUsage; //in bytes
+
+		// For the river animation
+		float m_elapsedTime;
 
 		// dt and fps
 		float m_dt;
@@ -204,6 +216,11 @@ namespace Renderer
 
 		// Shaders
 		Shader m_skyBoxShader;
+		Shader m_forwardShader;
+		Shader m_viewspaceShader;
+		Shader m_interfaceShader;
+		Shader m_shadowShaderForward;
+		Shader m_riverShader;
 		std::map<std::string, Shader> m_particleShaders;
 
 		// Skybox

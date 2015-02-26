@@ -23,7 +23,6 @@ WeatherTornadoSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("NotWalkable",FilterType.Excluded)
 	self:AddComponentTypeToFilter("Void",FilterType.Excluded)
 	
-	
 end
 
 WeatherTornadoSystem.EntitiesAdded = function(self, dt, newEntities)
@@ -45,6 +44,7 @@ WeatherTornadoSystem.EntitiesAdded = function(self, dt, newEntities)
 		
 			for i = 1, #self.TornadoIds do
 				self:MoveTornado(self.TornadoIds[i])
+				self:CheckCollision(self.TornadoIds[i])
 			end
 			
 		end
@@ -69,25 +69,25 @@ WeatherTornadoSystem.AddTornado = function(self)
 	print("NO UNITS: " .. #units)
 	local posX, posZ = 0
 	
-	--repeat -- Prevent the tornado to spawn on a player
-	--
-	--	local spawnTile = math.random(1, #tiles)
-	--	posX, posZ = world:GetComponent(tiles[spawnTile], "MapPosition", 0):GetInt2()
-	--	local canPlace = true
-	--
-	--	for i = 1, #units do
-	--	
-	--		local playerX, playerZ = world:GetComponent(units[i], "MapPosition", 0):GetInt2()
-	--		
-	--		if playerX == posX and playerZ == posZ then
-	--			canPlace = false
-	--		end
-	--	
-	--	end
-	--
-	--until canPlace
+	repeat -- Prevent the tornado to spawn on a player
 	
-	posX, posZ = world:GetComponent(units[1], "MapPosition", 0):GetInt2()
+		local spawnTile = math.random(1, #tiles)
+		posX, posZ = world:GetComponent(tiles[spawnTile], "MapPosition", 0):GetInt2()
+		local canPlace = true
+	
+		for i = 1, #units do
+		
+			local playerX, playerZ = world:GetComponent(units[i], "MapPosition", 0):GetInt2()
+			
+			if playerX == posX and playerZ == posZ then
+				canPlace = false
+			end
+		
+		end
+	
+	until canPlace
+	
+	--posX, posZ = world:GetComponent(units[1], "MapPosition", 0):GetInt2()
 	
 	world:GetComponent(id, "Position", 0):SetFloat3(posX, 0.5, posZ)
 	world:GetComponent(id, "MapPosition", 0):SetInt2(posX, posZ)
@@ -107,34 +107,35 @@ WeatherTornadoSystem.AddTornado = function(self)
 end
 
 WeatherTornadoSystem.MoveTornado = function(self, id)
-
+	
 	local canMove = false
-	local posX, posZ = world:GetComponent(id, "MapPosition", 0):GetInt2()
+	local testX, testZ
 	local tiles = self:GetEntities("TileComp")
-	local units = self:GetEntities("Unit")
-
-	local testX = 0
-	local testZ = 0
-    
-	repeat -- Find a tile for the tornado to move toward
-
-		local rng = math.random(4)
+	local testDirections = {1,2,3,4}
+	testDirections.__mode = "k"
+	local posX, posZ = world:GetComponent(id, "MapPosition", 0):GetInt2()
 	
-		if	rng == 1 then
+	repeat
+	
+		local i = math.random(#testDirections)
+		local dir = table.remove(testDirections, i)	
+		
+		if dir == 1 then
 			testX = posX - 1
-			testZ = posZ
-		elseif  rng == 2 then
+			testZ = posZ		
+		elseif dir == 2 then
 			testX = posX + 1
-			testZ = posZ
-		elseif  rng == 3 then
+			testZ = posZ			
+		elseif dir == 3 then
 			testX = posX
-			testZ = posZ - 1
-		elseif 	rng == 4 then
+			testZ = posZ - 1			
+		elseif dir == 4 then
 			testX = posX
-			testZ = posZ + 1
+			testZ = posZ + 1			
 		end
-	
+		
 		for i = 1, #tiles do
+			
 			local tPosX, tPosZ = world:GetComponent(tiles[i], "MapPosition", 0):GetInt2()
 			
 			if tPosX == testX and tPosZ == testZ then
@@ -151,27 +152,32 @@ WeatherTornadoSystem.MoveTornado = function(self, id)
 				
 				canMove = true
 				break
+				
 			end
+			
 			
 		end
 		
-	until canMove == true
+	until canMove
+	
+end
+
+WeatherTornadoSystem.CheckCollision = function(self, id)
+
+	local units = self:GetEntities("Unit")
+	local posX, posZ = world:GetComponent(id, "MapPosition", 0):GetInt2()
 
 	for i = 1, #units do
 		
 		local playerX, playerZ = world:GetComponent(units[i], "MapPosition", 0):GetInt2()
 		
-		if testX == playerX and testZ == playerZ then
+		if posX == playerX and posZ == playerZ then
 			print("COLLISION WITH A PLAYER. YOU SPIN ME RIGHT ROUND, BABY RIGHT ROUND!")
-			
-			world:GetComponent(units[i], "Direction", 0):SetInt2(1, 0)
-			world:GetComponent(units[i], "Rotation", 0):SetFloat3(0,math.pi,0)
-			
+	
 		end
 		
 	end
-	
-	
+
 end
 
 WeatherTornadoSystem.CancelTornado = function(self, id)

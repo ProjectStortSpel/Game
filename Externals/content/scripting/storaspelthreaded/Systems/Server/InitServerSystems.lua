@@ -14,7 +14,7 @@ require "sv_CheckpointSystem"
 
 --	Light Systems
 package.path = package.path .. ";Systems/Server/LightSystems/?.lua"
-require "sv_DirectionalLightSystem"
+--require "sv_DirectionalLightSystem"
 
 --	Player Systems
 package.path = package.path .. ";Systems/Server/PlayerSystems/?.lua"
@@ -112,7 +112,7 @@ worldCreator:AddSystemToCurrentGroup(MapRater)
 worldCreator:AddSystemToCurrentGroup(RiverSystem)
 worldCreator:AddSystemToCurrentGroup(VoidSystem)
 worldCreator:AddSystemToCurrentGroup(CheckpointSystem)
-worldCreator:AddSystemToCurrentGroup(DirectionalLightSystem)
+--worldCreator:AddSystemToCurrentGroup(DirectionalLightSystem)
 worldCreator:AddSystemToCurrentGroup(PlayerSystem)
 worldCreator:AddSystemToCurrentGroup(UnitSystem)
 worldCreator:AddSystemToCurrentGroup(OffsetUnitSystem)

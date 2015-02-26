@@ -39,6 +39,6 @@ void SpinSystem::Update(const ECSL::RuntimeInfo& _runtime)
 		for (int n = 0; n < 3; ++n)
 			Rotation[n] += Spin[n] * _runtime.Dt;
 
-		ComponentHasChanged(entity, m_rotationId);
+		ComponentHasChanged(entity, m_rotationId, false);
 	}
 }

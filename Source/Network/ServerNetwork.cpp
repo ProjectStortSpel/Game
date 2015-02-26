@@ -349,6 +349,8 @@ void ServerNetwork::ReceivePackets(ISocket* _socket)
 		{
 			if (NET_DEBUG > 0)
 				DebugLog("Failed to receive message from client.", LogSeverity::Warning);
+
+			_socket->SetActive(0);
 		}
 
 	}

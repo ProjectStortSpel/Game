@@ -23,6 +23,7 @@ GraphicDevice::GraphicDevice()
 	m_numberOfDirectionalLights = 0;
 	m_particleID = 0;
 	m_modelIDcounter = 0;
+	m_elapsedTime = 0.0f;
 }
 GraphicDevice::GraphicDevice(Camera _camera, int x, int y)
 {
@@ -38,6 +39,7 @@ GraphicDevice::GraphicDevice(Camera _camera, int x, int y)
 	m_numberOfDirectionalLights = 0;
 	m_particleID = 0;
 	m_modelIDcounter = 0;
+	m_elapsedTime = 0.0f;
 }
 GraphicDevice::~GraphicDevice()
 {
@@ -122,6 +124,68 @@ bool GraphicDevice::InitSDLWindow(int _width, int _height)
 	}
 	SDL_GetWindowSize(m_window, &m_clientWidth, &m_clientHeight);
 	return true;
+}
+void GraphicDevice::InitStandardShaders()
+{
+	// Viewspace shader
+	m_viewspaceShader.InitShaderProgram();
+	m_viewspaceShader.AddShader("content/shaders/VSViewspaceShader.glsl", GL_VERTEX_SHADER);
+	m_viewspaceShader.AddShader("content/shaders/FSViewspaceShader.glsl", GL_FRAGMENT_SHADER);
+	m_viewspaceShader.FinalizeShaderProgram();
+
+	// Interface shader
+	m_interfaceShader.InitShaderProgram();
+	m_interfaceShader.AddShader("content/shaders/VSInterfaceShader.glsl", GL_VERTEX_SHADER);
+	m_interfaceShader.AddShader("content/shaders/FSInterfaceShader.glsl", GL_FRAGMENT_SHADER);
+	m_interfaceShader.FinalizeShaderProgram();
+
+	// ShadowShader forward geometry
+	m_shadowShaderForward.InitShaderProgram();
+	m_shadowShaderForward.AddShader("content/shaders/shadowShaderForwardVS.glsl", GL_VERTEX_SHADER);
+	m_shadowShaderForward.AddShader("content/shaders/shadowShaderForwardFS.glsl", GL_FRAGMENT_SHADER);
+	m_shadowShaderForward.FinalizeShaderProgram();
+
+	// SkyBox
+	m_skyBoxShader.InitShaderProgram();
+	m_skyBoxShader.AddShader("content/shaders/skyboxShaderVS.glsl", GL_VERTEX_SHADER);
+	m_skyBoxShader.AddShader("content/shaders/skyboxShaderFS.glsl", GL_FRAGMENT_SHADER);
+	m_skyBoxShader.FinalizeShaderProgram();
+
+	// ------Particle shaders---------
+		const char * outputNames[] = { "Position", "Velocity", "StartTime" };
+		Shader particleShader;
+		particleShader.InitShaderProgram();
+		particleShader.AddShader("content/shaders/particles/particleFireVS.glsl", GL_VERTEX_SHADER);
+		particleShader.AddShader("content/shaders/particles/particleFireFS.glsl", GL_FRAGMENT_SHADER);
+		glTransformFeedbackVaryings(particleShader.GetShaderProgram(), 3, outputNames, GL_SEPARATE_ATTRIBS);
+		particleShader.FinalizeShaderProgram();
+		m_particleShaders["fire"] = particleShader;
+
+		particleShader.InitShaderProgram();
+		particleShader.AddShader("content/shaders/particles/particleSmokeVS.glsl", GL_VERTEX_SHADER);
+		particleShader.AddShader("content/shaders/particles/particleSmokeFS.glsl", GL_FRAGMENT_SHADER);
+		glTransformFeedbackVaryings(particleShader.GetShaderProgram(), 3, outputNames, GL_SEPARATE_ATTRIBS);
+		particleShader.FinalizeShaderProgram();
+		m_particleShaders["smoke"] = particleShader;
+	// -------------------------------
+}
+void GraphicDevice::InitStandardBuffers()
+{
+	//Forward shader
+	m_forwardShader.CheckUniformLocation("diffuseTex", 1);
+
+	//River water shader
+	m_riverShader.CheckUniformLocation("diffuseTex", 1);
+
+	//Skybox shader
+	m_skyBoxShader.CheckUniformLocation("cubemap", 1);
+
+	//Shadow forward shader
+	m_shadowShaderForward.CheckUniformLocation("diffuseTex", 1);
+
+	//Particle shaders
+	for (std::map<std::string, Shader>::iterator it = m_particleShaders.begin(); it != m_particleShaders.end(); ++it)
+		it->second.CheckUniformLocation("ParticleTex", 1);
 }
 bool GraphicDevice::InitSkybox()
 {
@@ -256,8 +320,11 @@ void GraphicDevice::AddParticleEffect(std::string _name, const vec3 _pos, int _n
 
 void GraphicDevice::RemoveParticleEffect(int _id)
 {
-	m_particleSystems[_id]->EnterEndPhase();
-	m_particlesIdToRemove.push_back(_id);
+	if (m_particleSystems[_id])
+	{
+		m_particleSystems[_id]->EnterEndPhase();
+		m_particlesIdToRemove.push_back(_id);
+	}
 }
 
 void GraphicDevice::BufferParticleSystems()
@@ -291,7 +358,7 @@ void GraphicDevice::BufferParticleSystems()
 
 }
 
-int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color)
+int GraphicDevice::LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color)
 {
 	int modelID = m_modelIDcounter;
 	m_modelIDcounter++;
@@ -300,7 +367,7 @@ int GraphicDevice::LoadModel(std::string _dir, std::string _file, glm::mat4 *_ma
 	//	std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType
 
 	ModelToLoad* modelToLoad = new ModelToLoad();
-	modelToLoad->Dir = _dir;
+	modelToLoad->Dirs = _dirs;
 	modelToLoad->File = _file;
 	modelToLoad->MatrixPtr = _matrixPtr;
 	modelToLoad->RenderType = _renderType;
@@ -341,7 +408,7 @@ void GraphicDevice::BufferModels()
 
 void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 {
-	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
+	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dirs, _modelToLoad->File);
 	Shader *shaderPtr = NULL;
 	std::vector<Model> *modelList = NULL;
 
@@ -465,7 +532,7 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoa
 
 void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 {
-	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
+	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dirs, _modelToLoad->File);
 
 	Shader *shaderPtr = &m_animationShader;
 	std::vector<AModel> *modelList = &m_modelsAnimated;
@@ -531,6 +598,19 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 
 	// Push back the model
 	modelList->push_back(model);
+}
+
+bool GraphicDevice::SetAnimation(int _modelId, int _animId)
+{
+	std::vector<AModel> *modelList = &m_modelsAnimated;
+	for (int i = 0; i < (*modelList).size(); i++)
+	{
+		if ((*modelList)[i].id == _modelId)
+		{
+			return (*modelList)[i].SetAnimation(_animId);
+		}
+	}
+	return false;
 }
 
 bool GraphicDevice::RemoveModel(int _id)

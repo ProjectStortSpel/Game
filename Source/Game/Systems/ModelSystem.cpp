@@ -47,71 +47,58 @@ void ModelSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::ve
 		else
 			paths = HomePath::GetPaths(HomePath::Type::Server);
 
-		bool foundFile = false;
-		std::string ModelPath;
 		for (int i = 0; i < paths.size(); ++i)
 		{
-			ModelPath = paths[i];
-			ModelPath.append("models/");
-			ModelPath.append(std::string(ModelData));
-			ModelPath.append("/");
-
-			std::string filePath = ModelPath;
-			filePath.append(ModelName);
-
-			if (FileSystem::File::Exist(filePath))
-			{
-				foundFile = true;
-				break;
-			}
+			paths[i].append("models/");
+			paths[i].append(std::string(ModelData));
+			paths[i].append("/");
 		}
 
-		if (foundFile)
+		
+		int RenderType = *(int*)GetComponent(entityId, "Model", "RenderType");
+
+		CreateComponentAndAddTo("Render", entityId);
+		glm::mat4*	Matrix;
+		Matrix = (glm::mat4*)GetComponent(entityId, "Render", "Mat");
+		int* ModelId = (int*)GetComponent(entityId, "Render", "ModelId");
+
+		//if (!HasComponent(entityId, m_positionId))
+		//{ 
+		//	CreateComponentAndAddTo("Position", entityId);
+		//	float* Position = (float*)GetComponent(entityId, "Position", "X");
+		//	Position[0] = 0.0f;
+		//	Position[1] = 0.0f;
+		//	Position[2] = 0.0f;
+		//}
+		//if (!HasComponent(entityId, m_rotationId))
+		//{
+		//	CreateComponentAndAddTo("Rotation", entityId);
+		//	float* Rotation = (float*)GetComponent(entityId, "Rotation", "X");
+		//	Rotation[0] = 0.0f;
+		//	Rotation[1] = 0.0f;
+		//	Rotation[2] = 0.0f;
+		//}
+		//if (!HasComponent(entityId, m_scaleId))
+		//{
+		//	CreateComponentAndAddTo("Scale", entityId);
+		//	float* Scale = (float*)GetComponent(entityId, "Scale", "X");
+		//	Scale[0] = 0.0f;
+		//	Scale[1] = 0.0f;
+		//	Scale[2] = 0.0f;
+		//}
+
+		if (!HasComponent(entityId, m_colorId))
 		{
-			int RenderType = *(int*)GetComponent(entityId, "Model", "RenderType");
-
-			CreateComponentAndAddTo("Render", entityId);
-			glm::mat4*	Matrix;
-			Matrix = (glm::mat4*)GetComponent(entityId, "Render", "Mat");
-			int* ModelId = (int*)GetComponent(entityId, "Render", "ModelId");
-
-			//if (!HasComponent(entityId, m_positionId))
-			//{ 
-			//	CreateComponentAndAddTo("Position", entityId);
-			//	float* Position = (float*)GetComponent(entityId, "Position", "X");
-			//	Position[0] = 0.0f;
-			//	Position[1] = 0.0f;
-			//	Position[2] = 0.0f;
-			//}
-			//if (!HasComponent(entityId, m_rotationId))
-			//{
-			//	CreateComponentAndAddTo("Rotation", entityId);
-			//	float* Rotation = (float*)GetComponent(entityId, "Rotation", "X");
-			//	Rotation[0] = 0.0f;
-			//	Rotation[1] = 0.0f;
-			//	Rotation[2] = 0.0f;
-			//}
-			//if (!HasComponent(entityId, m_scaleId))
-			//{
-			//	CreateComponentAndAddTo("Scale", entityId);
-			//	float* Scale = (float*)GetComponent(entityId, "Scale", "X");
-			//	Scale[0] = 0.0f;
-			//	Scale[1] = 0.0f;
-			//	Scale[2] = 0.0f;
-			//}
-			float* Color;
-			if (!HasComponent(entityId, m_colorId))
-			{
-				CreateComponentAndAddTo("Color", entityId);
-				float* Color = (float*)GetComponent(entityId, "Color", "X");
-				Color[0] = 0.0f;
-				Color[1] = 0.0f;
-				Color[2] = 0.0f;
-			}
-			Color = (float*)GetComponent(entityId, "Color", "X");
-
-			*ModelId = m_graphics->LoadModel(ModelPath, ModelName, Matrix, RenderType, Color);
+			CreateComponentAndAddTo("Color", entityId);
+			float* _Color = (float*)GetComponent(entityId, "Color", "X");
+			_Color[0] = 0.0f;
+			_Color[1] = 0.0f;
+			_Color[2] = 0.0f;
 		}
+
+		float* Color = (float*)GetComponent(entityId, "Render", "ColorX");
+
+		*ModelId = m_graphics->LoadModel(paths, ModelName, Matrix, RenderType, Color);
 		
 	}
 }
