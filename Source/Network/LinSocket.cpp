@@ -288,7 +288,7 @@ ISocket* LinSocket::Accept(void)
 	if (newSocket == -1)
 	{
 		int e = errno;
-		if (NET_DEBUG > 0 && e != 11)
+		if (NET_DEBUG > 0 && e != 11 && e != 35)
 			DebugLog("Accept failed. Error: %s.", LogSeverity::Error, strerror(e));
 
 		return 0;

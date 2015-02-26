@@ -114,7 +114,7 @@ namespace FileSystem
 			if (_path.at(_path.size() - 1) == '/')
 				_path = _path.substr(0, _path.size() - 1);
 
-			#if !defined(__ANDROID__)
+			#if !defined(__ANDROID__) && !defined(__IOS__)
 			struct stat info;
 			if (stat(_path.c_str(), &info) != 0)
 				return false;

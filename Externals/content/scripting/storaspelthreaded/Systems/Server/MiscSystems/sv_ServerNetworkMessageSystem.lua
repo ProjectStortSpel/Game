@@ -22,12 +22,12 @@ ServerNetworkMessageSystem.PostInitialize = function(self)
 	
 	-- TODO: Change MaxPlayers based on the map loaded
 	-- TODO: Note, moved to the Mapspecs-entity
-	local maxPlayers = 9
-	world:SetComponent(playerCounter, "PlayerCounter", "MaxPlayers", maxPlayers)
+	--world:SetComponent(playerCounter, "PlayerCounter", "MaxPlayers", 0)
+	
 	world:SetComponent(playerCounter, "PlayerCounter", "Players", 0)
 	world:SetComponent(playerCounter, "PlayerCounter", "Spectators", 0)
 
-	self:AddConnectedPlayers(playerCounter, maxPlayers)
+	--self:AddConnectedPlayers(playerCounter, 9)
 end
 
 ServerNetworkMessageSystem.CounterComponentChanged = function(self, _change, _component)
@@ -75,15 +75,14 @@ ServerNetworkMessageSystem.AddConnectedPlayers = function(self, _counterEntity, 
 	world:SetComponent(_counterEntity, "PlayerCounter", "Players", noOfPlayers)
 end
 
-
-
-
 ServerNetworkMessageSystem.OnPlayerConnected = function(self, _ip, _port, _message)
 
 	local addSpectator = false
 	local counterEntities = self:GetEntities("PlayerCounter")
 	local counterComp = world:GetComponent(counterEntities[1], "PlayerCounter", 0)
-	local maxPlayers, noOfPlayers, noOfSpectators = counterComp:GetInt3()
+	local noOfPlayers, noOfSpectators = counterComp:GetInt2()
+	
+	local maxPlayers = world:GetComponent(self:GetEntities("MapSpecs")[1], "MapSpecs", "NoOfSpawnpoints"):GetInt(0)
 	
 	if #self:GetEntities("GameRunning") > 0 then -- If the game is running
 		
@@ -231,4 +230,17 @@ end
 
 ServerNetworkMessageSystem.OnPasswordInvalid = function(self, _ip, _port, _message)
 	print("ServerNetworkMessageSystem.OnPasswordInvalid - Not implemented!")
+end
+
+ServerNetworkMessageSystem.EntitiesAdded = function(self, dt, _entities)
+	
+	for i = 1, #_entities do 
+		if world:EntityHasComponent( _entities[i], "MapSpecs") then
+			
+			local mapSpecsComp = world:GetComponent(self:GetEntities("MapSpecs")[1], "MapSpecs", "NoOfSpawnpoints")
+			local noOfSpawnPoints = mapSpecsComp:GetInt()
+			local counterEntities = self:GetEntities("PlayerCounter")
+			self:AddConnectedPlayers(counterEntities[1], noOfSpawnPoints)
+		end
+	end
 end

@@ -5,20 +5,11 @@
 #include <LuaEmbedder/LuaEmbedder.h>
 #include <algorithm>
 #include <vector>
-#include <time.h>
-
-//#include <glm/glm.hpp>
 
 namespace LuaBridge
 {
 	namespace CombinationMath
 	{
-		//extern std::vector<std::vector<unsigned char>> m_combinations;
-		//extern std::vector<std::vector<unsigned char>> m_permutations;
-
-		//extern char* m_combinations;
-		//extern char* m_permutations;
-
 		void Embed(lua_State* L);
 		int LuaCombinations(lua_State* L);
 		int LuaPermutations(lua_State* L);
