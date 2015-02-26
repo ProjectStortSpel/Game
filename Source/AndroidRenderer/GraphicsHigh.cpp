@@ -43,7 +43,9 @@ bool GraphicsHigh::Init()
 		m_camera = new Camera(m_clientWidth, m_clientHeight);
 
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
+#ifdef __ANDROID__
 	InitFBO();
+#endif
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	if (!InitSkybox()) { ERRORMSG("INIT SKYBOX FAILED\n"); return false; }
 
@@ -132,10 +134,14 @@ void GraphicsHigh::Render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 
-	//GLint oldFBO;
-	//glGetIntegerv(GL_FRAMEBUFFER, &oldFBO);
+#if defined(__ANDROID__)
+    GLint oldFBO = 0;
+    glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
+#elif defined(__IOS__)
+    GLint oldFBO;
+    glGetIntegerv(GL_FRAMEBUFFER, &oldFBO);
+#endif
 
-	glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -310,8 +316,8 @@ void GraphicsHigh::Render()
 		}
 	}
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+	glBindFramebuffer(GL_FRAMEBUFFER, oldFBO);
+#ifdef __ANDROID__
 	// DRAW FULLSCREEN
 	glViewport(0, 0, m_clientWidth, m_clientHeight);
 
@@ -341,7 +347,9 @@ void GraphicsHigh::Render()
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
 	glDeleteBuffers(1, &buf);
-
+    
+#endif
+    
 	glDisable(GL_TEXTURE_2D);
 	glUseProgram(0);
 	glEnable(GL_DEPTH_TEST);
@@ -435,17 +443,17 @@ bool GraphicsHigh::InitShaders()
 	// Particle shaders
 		Shader particleShader;
 
-		particleShader.InitShaderProgram();
-		particleShader.AddShader("content/shaders/android/AndroidFireShaderVS.glsl", GL_VERTEX_SHADER);
-		particleShader.AddShader("content/shaders/android/AndroidFireShaderFS.glsl", GL_FRAGMENT_SHADER);
-		particleShader.FinalizeShaderProgram();
-		m_particleShaders["fire"] = particleShader;
+		//particleShader.InitShaderProgram();
+		//particleShader.AddShader("content/shaders/android/AndroidFireShaderVS.glsl", GL_VERTEX_SHADER);
+		//particleShader.AddShader("content/shaders/android/AndroidFireShaderFS.glsl", GL_FRAGMENT_SHADER);
+		//particleShader.FinalizeShaderProgram();
+		//m_particleShaders["fire"] = particleShader;
 
-		particleShader.InitShaderProgram();
-		particleShader.AddShader("content/shaders/android/AndroidSmokeShaderVS.glsl", GL_VERTEX_SHADER);
-		particleShader.AddShader("content/shaders/android/AndroidSmokeShaderFS.glsl", GL_FRAGMENT_SHADER);
-		particleShader.FinalizeShaderProgram();
-		m_particleShaders["smoke"] = particleShader;
+		//particleShader.InitShaderProgram();
+		//particleShader.AddShader("content/shaders/android/AndroidSmokeShaderVS.glsl", GL_VERTEX_SHADER);
+		//particleShader.AddShader("content/shaders/android/AndroidSmokeShaderFS.glsl", GL_FRAGMENT_SHADER);
+		//particleShader.FinalizeShaderProgram();
+		//m_particleShaders["smoke"] = particleShader;
 
 
 	//m_fullscreen
