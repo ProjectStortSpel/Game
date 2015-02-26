@@ -111,7 +111,7 @@ namespace Renderer
 		void Draw(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, Shader* shaderptr);
 		void Update(float _dt);
 
-		void SetAnimation(int _animId);
+		bool SetAnimation(int _animId);
 
 		void AddKeyFrame(std::string _animname, int _frame, int _joint, glm::mat4 _mat);
 

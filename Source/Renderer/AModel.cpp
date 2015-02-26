@@ -15,8 +15,8 @@ AModel::AModel(int _id, bool _active, mat4* _model, float* _color, Buffer* buffe
 	speID = spe;
 	currentframe = 1;
 	clock = 0;
-	frameTime = 0.04f;
-	framesPerTick = 1;
+	frameTime = 0.01f;
+	framesPerTick = 4;
 	animId = 0;
 }
 
@@ -111,8 +111,7 @@ void AModel::Update(float _dt)
 		clock -= frameTime * framesPerTick;
 		currentframe += framesPerTick;
 		currentframe = currentframe % animations[animId].maxFrame;
-		if (currentframe == 0)
-			SetAnimation((animId + 1) % animations.size());
+
 		Animation* animptr = &animations[animId];
 		for (int i = 0; i < animptr->joints.size(); i++)
 		{
@@ -128,12 +127,15 @@ void AModel::Update(float _dt)
 	}
 }
 
-void AModel::SetAnimation(int _animId)
+bool AModel::SetAnimation(int _animId)
 {
 	if (_animId >= 0 && _animId < animations.size())
 	{
+		currentframe = 1;
 		animId = _animId;
+		return true;
 	}
+	return false;
 }
 
 void AModel::AddKeyFrame(std::string _animname, int _frame, int _joint, glm::mat4 _mat)

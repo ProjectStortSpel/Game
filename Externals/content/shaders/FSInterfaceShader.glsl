@@ -14,7 +14,7 @@ void main()
 	vec4 albedo_tex = texture( diffuseTex, TexCoord );
 
 	vec4 coloradded;
-	float blendFactor = 0.25f;
+	float blendFactor = 0.5f;
 	if( AddColor != vec3(0.0) )
 		coloradded = vec4((1.0f-blendFactor)*albedo_tex.xyz + blendFactor * AddColor, albedo_tex.a);
 	else

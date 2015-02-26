@@ -22,7 +22,7 @@ namespace Renderer
 		void Render();
 
 		// MODELLOADER
-		bool PreLoadModel(std::string _dir, std::string _file, int _renderType = RENDER_DEFERRED);
+		bool PreLoadModel(std::vector<std::string> _dirs, std::string _file, int _renderType = RENDER_DEFERRED);
 		bool RemoveModel(int _id);
 		bool ActiveModel(int _id, bool _active);
 
@@ -57,13 +57,6 @@ namespace Renderer
 
 		// Frame buffer object
 		GLuint m_forwardFBO;
-
-		// Shaders
-		Shader m_forwardShader;
-		Shader m_viewspaceShader;
-		Shader m_interfaceShader;
-
-		Shader m_shadowShaderForward;
 
 		// Modelloader
 		int m_modelIDcounter;

@@ -64,17 +64,7 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		world:CreateComponentAndAddTo("Model", newTile)
 		local comp = world:GetComponent(newTile, "Model", 0)
 		
-		if tiletype == 49 then
-			comp:SetModel("checkpoint1", "checkpoint", 0)
-		elseif tiletype == 50 then
-			comp:SetModel("checkpoint2", "checkpoint", 0)
-		elseif tiletype == 51 then
-			comp:SetModel("checkpoint3", "checkpoint", 0)
-		elseif tiletype == 52 then
-			comp:SetModel("checkpoint4", "checkpoint", 0)
-		else
-			comp:SetModel("checkpoint", "checkpoint", 0)
-		end
+		comp:SetModel("checkpoint", "checkpoint", 0)
 		
 		self.noOfCheckpoints = self.noOfCheckpoints + 1
 
@@ -161,6 +151,7 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
 		world:CreateComponentAndAddTo("Model", newTile)
 		local comp = world:GetComponent(newTile, "Model", 0)
 		comp:SetModel("grass", "grass", 0)
+		self:AddTallGrass(posX, posZ)
 		self:AddTinyStone(posX, posZ)
 		self:AddTree(posX, posZ)
 	elseif tiletype == 111 then
@@ -215,6 +206,27 @@ CreateMapSystem.AddTree = function(self, posX, posZ)
 	local randScale = math.random() + 0.5
 	world:GetComponent(tinyStone, "Scale", 0):SetFloat3(1, randScale, 1)
 	world:GetComponent(tinyStone, "Model", 0):SetModel("tree", "tree", 8)
+end 
+
+CreateMapSystem.AddTallGrass = function(self, posX, posZ)
+	if (math.random(1, 4) > 1) then
+		return
+	end
+	
+	local tallGrass = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("Position", tallGrass)
+	world:CreateComponentAndAddTo("Rotation", tallGrass)
+	world:CreateComponentAndAddTo("Scale", tallGrass)
+	world:CreateComponentAndAddTo("SyncNetwork", tallGrass)
+	world:CreateComponentAndAddTo("Model", tallGrass)
+	
+	local randX = posX-0.5+math.random()
+	local randZ = posZ-0.5+math.random()
+	world:GetComponent(tallGrass, "Position", 0):SetFloat3(randX, 0.5, randZ)
+	world:GetComponent(tallGrass, "Rotation", 0):SetFloat3(0, 0, 0)
+	local randScale = math.random() + 0.5
+	world:GetComponent(tinyStone, "Scale", 0):SetFloat3(0.15*randScale, 0.15*randScale, 0.15*randScale)
+	world:GetComponent(tallGrass, "Model", 0):SetModel("tallgrass", "tallgrass", 9)
 end 
 
 CreateMapSystem.AddTinyStone = function(self, posX, posZ)

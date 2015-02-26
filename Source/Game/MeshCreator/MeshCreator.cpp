@@ -1,4 +1,4 @@
-
+#include <algorithm>
 #include "MeshCreator.h"
 
 
@@ -54,6 +54,8 @@ void MeshCreator::CreateQuad()
 		{
 			float xpos = x - centre.x;
 			float ypos = y - centre.y;
+
+
 
 			float length = sqrt(xpos*xpos + ypos*ypos) + extra_length;
 			if (longest_length < length)
