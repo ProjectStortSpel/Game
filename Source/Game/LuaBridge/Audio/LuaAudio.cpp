@@ -1,5 +1,7 @@
 #include "LuaAudio.h"
 #include "Audio/Audio.h"
+#include "Game/HomePath.h"'
+#include "FileSystem/File.h"
 
 namespace LuaBridge
 {
@@ -113,7 +115,20 @@ namespace LuaBridge
 		{
 			std::string name = LuaEmbedder::PullString(L, 1);
 			std::string filepath = LuaEmbedder::PullString(L, 2);
-			Audio::LoadSound(name, filepath);
+
+			HomePath::Type type = LuaEmbedder::PullBool(L, "Client") ? HomePath::Type::Client : HomePath::Type::Server;
+			std::vector<std::string> paths = HomePath::GetPaths(type);
+
+			for (int i = 0; i < paths.size(); ++i)
+			{
+				paths[i].append(filepath);
+
+				if (FileSystem::File::Exist(paths[i]))
+				{
+					Audio::LoadSound(name, paths[i]);
+					break;
+				}
+			}
 			return 0;
 		}
 		int PlaySound(lua_State* L)
