@@ -47,6 +47,7 @@ int main(int argc, char** argv)
 	path.append("data/");
 	Logger::GetInstance().SetPath(path);
 	Logger::GetInstance().AddGroup("Game");
+	Logger::GetInstance().AddGroup("Network");
 	GameCreator* newGame = new GameCreator();
 
 
@@ -72,6 +73,7 @@ int main(int argc, char** argv)
         newGame->InitializeInput();
         newGame->InitializeNetwork();
         newGame->InitializeThreads();
+	newGame->InitializeAudio();
         
         newGame->StartGame(argc, argv);
     }

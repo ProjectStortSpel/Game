@@ -17,6 +17,7 @@
 #include "Console/LuaConsole.h"
 #include "Network/LuaNetwork.h"
 #include "Resource/LuaResource.h"
+#include "Audio/LuaAudio.h"
 
 namespace LuaBridge
 {
@@ -57,5 +58,8 @@ namespace LuaBridge
 	CombinationMath::Embed(L);
 
     LuaEmbedder::AddFunction(L, "LoadMap", &LoadMap, "File");
+	LuaEmbedder::AddFunction(L, "GenerateIslandMesh", &GenerateIslandMesh, "MapCreation");
+    
+    LuaAudio::Embed(L);
   }
 }

@@ -3,6 +3,7 @@
 #include "LuaCamera.h"
 #include "../Math/LuaMatrix.h"
 #include "Game/LuaBridge/LuaBridge.h"
+#include "Game/HomePath.h"
 
 namespace LuaBridge
 {
@@ -24,6 +25,8 @@ namespace LuaBridge
 		
 		int GetWindowSize(lua_State* L);
 		
+		int SetAnimation(lua_State* L);
+
 		int LoadModel(lua_State* L);
 		int ChangeModelTexture(lua_State* L);
 		int ChangeModelNormalMap(lua_State* L);
@@ -44,6 +47,7 @@ namespace LuaBridge
 			LuaEmbedder::AddFunction(L, "SetSimpleTextColor", &SetSimpleTextColor, "GraphicDevice");
 			LuaEmbedder::AddFunction(L, "GetCamera", &GetCamera, "GraphicDevice");
 			LuaEmbedder::AddFunction(L, "GetWindowSize", &GetWindowSize, "GraphicDevice");
+			LuaEmbedder::AddFunction(L, "SetAnimation", &SetAnimation, "GraphicDevice");
 			LuaEmbedder::AddFunction(L, "LoadModel", &LoadModel, "GraphicDevice");
 			LuaEmbedder::AddFunction(L, "ChangeModelTexture", &ChangeModelTexture, "GraphicDevice");
 			LuaEmbedder::AddFunction(L, "ChangeModelNormalMap", &ChangeModelNormalMap, "GraphicDevice");
@@ -56,6 +60,11 @@ namespace LuaBridge
 		void SetGraphicDevice(Renderer::GraphicDevice* graphicDevice)
 		{
 			g_graphicDevice = graphicDevice;
+		}
+
+		Renderer::GraphicDevice* GetGraphicDevice()
+		{
+			return g_graphicDevice;
 		}
         
 		int GetAspectRatio(lua_State* L)
@@ -181,6 +190,21 @@ namespace LuaBridge
 			return 2;
 		}
 
+		int SetAnimation(lua_State* L)
+		{
+			lua_State* parent = LuaEmbedder::LuaChildrenParentMap.find(L) != LuaEmbedder::LuaChildrenParentMap.end() ? LuaEmbedder::LuaChildrenParentMap[L] : L;
+			if (LuaBridge::g_IOLuaState != parent)
+			{
+				LuaEmbedder::PushBool(L, false);
+				return 1;
+			}
+			int modelId = LuaEmbedder::PullInt(L, 1);
+			int animId = LuaEmbedder::PullInt(L, 2);
+			bool result = g_graphicDevice->SetAnimation(modelId, animId);
+			LuaEmbedder::PushBool(L, result);
+			return 1;
+		}
+
 		int LoadModel(lua_State* L)
 		{
             lua_State* parent = LuaEmbedder::LuaChildrenParentMap.find(L) != LuaEmbedder::LuaChildrenParentMap.end() ? LuaEmbedder::LuaChildrenParentMap[L] : L;
@@ -192,7 +216,24 @@ namespace LuaBridge
 			std::string dir = LuaEmbedder::PullString(L, 1);
 			std::string file = LuaEmbedder::PullString(L, 2);
 			LuaMatrix* matrix = LuaEmbedder::PullObject<LuaMatrix>(L, "Matrix", 3);
-			int model = g_graphicDevice->LoadModel(dir, file, matrix->GetGlmMatrix());
+
+
+			std::vector<std::string> paths;
+
+			if (LuaEmbedder::PullBool(L, "Client"))
+				paths = HomePath::GetPaths(HomePath::Type::Client);
+			else
+				paths = HomePath::GetPaths(HomePath::Type::Server);
+
+			for (int i = 0; i < paths.size(); ++i)
+			{
+				paths[i].append("models/");
+				paths[i].append(dir);
+				paths[i].append("/");
+			}
+
+			int model = g_graphicDevice->LoadModel(paths, file, matrix->GetGlmMatrix());
+
 			LuaEmbedder::PushInt(L, model);
 			return 1;
 		}

@@ -10,6 +10,68 @@ namespace FileSystem
 	namespace File
 	{
 
+		struct Extension 
+		{
+			static const char* binary[];
+			static const char* ascii[];
+		};
+
+		const int numBinaryExtensions = 4;
+		const int numAsciiExtensions = 7;
+		const char* Extension::binary[] = { "png", "mesh", "amesh", "db" };
+		const char* Extension::ascii[] = { "txt", "meshOLD", "lua", "object", "ajoints", "anim", "aobject" };
+
+		bool IsBinary(std::string _path)
+		{
+			unsigned int found = _path.find_last_of('.');
+
+			if (found == std::string::npos)
+			{
+				return false;
+			}
+
+			std::string extension = _path.substr(found + 1);
+
+			for (int i = 0; i < numBinaryExtensions; ++i)
+			{
+				if (extension == Extension::binary[i])
+				{
+					return true;
+				}
+			}
+
+			for (int i = 0; i < numAsciiExtensions; ++i)
+			{
+				if (extension == Extension::ascii[i])
+				{
+					return false;
+				}
+			}
+
+			if (Exist(_path))
+			{
+				//open file and read data
+				SDL_RWops* file;
+				if (Open(_path, &file))
+				{
+					Sint64 length = GetFileSize(file);
+					char* data = Read(file, length);
+					Close(file);
+					for (int i = 0; i < length; ++i)
+					{
+						if (data[i] == '\0')
+						{
+							delete data;
+							return false;
+						}
+					}
+					delete data;
+					return true;
+				}
+			}
+			return false;
+		}
+
 		bool Create(std::string _path)
 		{
             //Create Directory
@@ -52,13 +114,20 @@ namespace FileSystem
 			if (_path.at(_path.size() - 1) == '/')
 				_path = _path.substr(0, _path.size() - 1);
 
-			//#if !defined(__ANDROID__)
+			#if !defined(__ANDROID__)
 			struct stat info;
 			if (stat(_path.c_str(), &info) != 0)
 				return false;
 			else if (info.st_mode & S_IFREG)  // S_ISREG() doesn't exist on my windows 
 				return true;
-			//#endif
+			#else
+			SDL_RWops* rw = SDL_RWFromFile(_path.c_str(), "r");
+			if (rw != NULL)
+			{
+				SDL_RWclose(rw);
+				return true;
+			}
+			#endif
 			return false;
 		}
 
@@ -173,7 +242,13 @@ namespace FileSystem
 				return;
 			std::ostringstream ss;
 			ss << _text.c_str();
-			ss << "\r\n";
+
+#ifdef WIN32
+			//ss << "\r\n";
+			ss << "\n";
+#else
+			ss << "\n";
+#endif
 
 			_text = ss.str();
 

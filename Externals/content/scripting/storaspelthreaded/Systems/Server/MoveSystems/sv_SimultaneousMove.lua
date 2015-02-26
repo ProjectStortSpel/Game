@@ -52,41 +52,32 @@ SimultaneousMove.StartMoving = function(self, allMovesToDo)
 	for n = 1, #allMovesToDo do
 		local	tPosX	=	world:GetComponent(allMovesToDo[n], "SimultaneousMove", "PosX"):GetInt()
 		local	tPosZ	=	world:GetComponent(allMovesToDo[n], "SimultaneousMove", "PosZ"):GetInt()
-		print("BEFORE " .. tPosX .. ", " .. tPosZ)
 		listOfMoves[#listOfMoves+1] = allMovesToDo[n]
 	end
-			
-	print("Moves before: " .. #listOfMoves)
+	
 	while true do 
 		
 		local	sizeBefore	=	#listOfMoves
 		
 		for n = #listOfMoves, 1, -1 do
-			
-			print("1")
+		
 			local	tPosX	=	world:GetComponent(listOfMoves[n], "SimultaneousMove", "PosX"):GetInt()
-			print("2")
 			local	tPosZ	=	world:GetComponent(listOfMoves[n], "SimultaneousMove", "PosZ"):GetInt()
-			print("3")
 			
 			if self:HasObstacleAt(tPosX, tPosZ) then
-				print("AA")
 				failedMoves[#failedMoves+1]	=	listOfMoves[n]
-				print("VV")
-				--listOfMoves[n]	=	nil
 				table.remove(listOfMoves, n)
 				break
-				print("CC")
+			elseif self:HasNonMovingUnitAt(tPosX, tPosZ, listOfMoves) then
+				failedMoves[#failedMoves+1]	=	listOfMoves[n]
+				table.remove(listOfMoves, n)
+				break
 			else
 				local	shouldStop	=	false
 				for i = 1, #failedMoves do
-					print("A")
 					local	tUnit	=	world:GetComponent(failedMoves[i], "SimultaneousMove", "Unit"):GetInt()
-					print("B")
 					local	posX	=	world:GetComponent(tUnit, "MapPosition", "X"):GetInt()
-					print("C")
 					local	posZ	=	world:GetComponent(tUnit, "MapPosition", "Z"):GetInt()
-					print("D")
 					
 					if tPosX == posX and tPosZ == posZ then
 						failedMoves[#failedMoves+1]	=	listOfMoves[n]
@@ -107,7 +98,6 @@ SimultaneousMove.StartMoving = function(self, allMovesToDo)
 			break
 		end
 	end
-	print("Moves after: " .. #listOfMoves)
 	
 	for n = 1, #listOfMoves do
 		
@@ -117,9 +107,9 @@ SimultaneousMove.StartMoving = function(self, allMovesToDo)
 		local 	tPosX 	= 	world:GetComponent(tempMove, "SimultaneousMove", "PosX"):GetInt()
 		local 	tPosZ 	= 	world:GetComponent(tempMove, "SimultaneousMove", "PosZ"):GetInt()
 		
+		
 		world:GetComponent(tUnit, "NoSubSteps", "Counter"):SetInt(1)
 		world:GetComponent(tUnit, "MapPosition", "X"):SetInt2(tPosX, tPosZ)
-		print("Moving unit to " .. tPosX .. ", " .. tPosZ)
 		self:SetLerpFor(tempMove)
 		
 		local newCheck = world:CreateNewEntity()
@@ -150,12 +140,43 @@ SimultaneousMove.HasObstacleAt = function(self, X, Z)
 	return false
 end
 
+SimultaneousMove.HasNonMovingUnitAt = function(self, X, Z, unitMoves)
+
+	local	allUnits	=	self:GetEntities("Unit")
+	for tempUnit = 1, #allUnits do
+		local	checkThisUnit	=	true
+		for tMove = 1, #unitMoves do
+			local	tUnit	=	world:GetComponent(unitMoves[tMove], "SimultaneousMove", "Unit"):GetInt()
+			
+			local	tX, tZ	=	world:GetComponent(tUnit, "MapPosition", "X"):GetInt2()
+				
+			if tX == X and tZ == Z then
+				checkThisUnit	=	false
+				break
+			end
+		end
+		
+		if checkThisUnit then
+			
+			if not world:EntityHasComponent(allUnits[tempUnit], "UnitDead") then
+				local	tX, tZ	=	world:GetComponent(allUnits[tempUnit], "MapPosition", "X"):GetInt2()
+				if tX == X and tZ == Z then
+					return true
+				end
+			end
+		end
+		
+	end
+
+	return false
+end
+
 SimultaneousMove.SetLerpFor = function(self, moveToLerp)
 
 	local 	tUnit 	= 	world:GetComponent(moveToLerp, "SimultaneousMove", "Unit"):GetInt()
 	local 	tPosX 	= 	world:GetComponent(moveToLerp, "SimultaneousMove", "PosX"):GetInt()
 	local 	tPosZ 	= 	world:GetComponent(moveToLerp, "SimultaneousMove", "PosZ"):GetInt()
-	print("Lerping unit to " .. tPosX .. ", " .. tPosZ)
+	local 	tTime 	= 	world:GetComponent(moveToLerp, "SimultaneousMove", "SlerpTime"):GetFloat()
 	
 	--	Move the unit
 	world:GetComponent(tUnit, "MapPosition", 0):SetInt2(tPosX, tPosZ)
@@ -165,7 +186,7 @@ SimultaneousMove.SetLerpFor = function(self, moveToLerp)
 	world:GetComponent(tUnit, "LerpPosition", "X"):SetFloat(tPosX)
 	world:GetComponent(tUnit, "LerpPosition", "Y"):SetFloat(0.5)
 	world:GetComponent(tUnit, "LerpPosition", "Z"):SetFloat(tPosZ)
-	world:GetComponent(tUnit, "LerpPosition", "Time"):SetFloat(1)
+	world:GetComponent(tUnit, "LerpPosition", "Time"):SetFloat(tTime)
 	world:GetComponent(tUnit, "LerpPosition", "Algorithm"):SetText("PlayerMove")
 	
 	if not world:EntityHasComponent(tUnit, "UnitWantTileOffset") then

@@ -1,8 +1,11 @@
 #include "ModelSystem.h"
+#include "Game/HomePath.h"
+#include "FileSystem/File.h"
 
-ModelSystem::ModelSystem(Renderer::GraphicDevice* _graphics)
+ModelSystem::ModelSystem(Renderer::GraphicDevice* _graphics, bool _isClient)
 {
 	m_graphics = _graphics;
+	m_IsClient = _isClient;
 
 }
 ModelSystem::~ModelSystem()
@@ -34,11 +37,24 @@ void ModelSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::ve
 		ModelData = (char*)GetComponent(entityId, "Model", "ModelName");
 		std::string ModelName = std::string(ModelData);
 		ModelName.append(".object");
-		ModelData = (char*)GetComponent(entityId, "Model", "ModelPath");
-		std::string ModelPath = "content/models/";
-		ModelPath.append(std::string(ModelData));
-		ModelPath.append("/");
 
+		ModelData = (char*)GetComponent(entityId, "Model", "ModelPath");
+
+		std::vector<std::string> paths;
+
+		if (m_IsClient)
+			paths = HomePath::GetPaths(HomePath::Type::Client);
+		else
+			paths = HomePath::GetPaths(HomePath::Type::Server);
+
+		for (int i = 0; i < paths.size(); ++i)
+		{
+			paths[i].append("models/");
+			paths[i].append(std::string(ModelData));
+			paths[i].append("/");
+		}
+
+		
 		int RenderType = *(int*)GetComponent(entityId, "Model", "RenderType");
 
 		CreateComponentAndAddTo("Render", entityId);
@@ -70,17 +86,19 @@ void ModelSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::ve
 		//	Scale[1] = 0.0f;
 		//	Scale[2] = 0.0f;
 		//}
-		float* Color;
-		if (!HasComponent(entityId, m_colorId))
-		{ 
-			CreateComponentAndAddTo("Color", entityId);
-			float* Color = (float*)GetComponent(entityId, "Color", "X");
-			Color[0] = 0.0f;
-			Color[1] = 0.0f;
-			Color[2] = 0.0f;
-		}
-		Color = (float*)GetComponent(entityId, "Color", "X");
 
-		*ModelId = m_graphics->LoadModel(ModelPath, ModelName, Matrix, RenderType, Color);
+		if (!HasComponent(entityId, m_colorId))
+		{
+			CreateComponentAndAddTo("Color", entityId);
+			float* _Color = (float*)GetComponent(entityId, "Color", "X");
+			_Color[0] = 0.0f;
+			_Color[1] = 0.0f;
+			_Color[2] = 0.0f;
+		}
+
+		float* Color = (float*)GetComponent(entityId, "Render", "ColorX");
+
+		*ModelId = m_graphics->LoadModel(paths, ModelName, Matrix, RenderType, Color);
+		
 	}
 }

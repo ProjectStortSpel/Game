@@ -6,10 +6,12 @@ ParticleSystem::ParticleSystem(Renderer::GraphicDevice* _graphics)
 {
 	m_graphics = _graphics;
 
+	m_bitMask = NULL;
 }
 ParticleSystem::~ParticleSystem()
 {
-
+	if (m_bitMask)
+		free(m_bitMask);
 }
 
 void ParticleSystem::Initialize()
@@ -24,6 +26,7 @@ void ParticleSystem::Initialize()
 	AddComponentTypeToFilter("Position", ECSL::FilterType::Mandatory);
 	AddComponentTypeToFilter("Color", ECSL::FilterType::Mandatory);
 	AddComponentTypeToFilter("Particle", ECSL::FilterType::Mandatory);
+	AddComponentTypeToFilter("Hide", ECSL::FilterType::Excluded);
 	std::vector<unsigned int> bitsetComponents;
 	bitsetComponents.push_back(ECSL::ComponentTypeManager::GetInstance().GetTableId("Position"));
 	bitsetComponents.push_back(ECSL::ComponentTypeManager::GetInstance().GetTableId("Color"));
@@ -98,9 +101,9 @@ void ParticleSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std:
 
 
 		ID = (int*)GetComponent(entityId, "Particle", "Id");
-#if  !defined(__ANDROID__) && !defined(__IOS__)
+//#if  !defined(__ANDROID__) && !defined(__IOS__)
 		m_graphics->AddParticleEffect(Name, glm::vec3(Position[0], Position[1], Position[2]), *Particles, *Lifetime, *Scale, *SpriteSize, Texture, glm::vec3(Color[0], Color[1], Color[2]), *ID);
-#endif
+//#endif
 	}
 }
 
@@ -110,9 +113,13 @@ void ParticleSystem::EntitiesRemoved(const ECSL::RuntimeInfo& _runtime, const st
 	{
 		int*	ID	= (int*)GetComponent(entityId, "Particle", "Id");
 
-#if  !defined(__ANDROID__) && !defined(__IOS__) 
-		m_graphics->RemoveParticleEffect(*ID);
-#endif
+//#if  !defined(__ANDROID__) && !defined(__IOS__) 
+		if( HasComponent(entityId, "Hide") )
+			RemoveComponentFrom("Hide", entityId);
+		else
+			m_graphics->RemoveParticleEffect(*ID);
+//#endif
+
 	}
 }
 

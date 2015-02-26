@@ -12,7 +12,7 @@ FlowingWaterSystem.Initialize = function ( self )
 end
 
 FlowingWaterSystem.PostInitialize = function ( self )
-
+--[[
 	local newEntityId = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("Model", newEntityId)
 	world:CreateComponentAndAddTo("Rotation", newEntityId)
@@ -28,7 +28,7 @@ FlowingWaterSystem.PostInitialize = function ( self )
 	world:SetComponent(newEntityId, "Model", "ModelName", "island");
 	world:SetComponent(newEntityId, "Model", "ModelPath", "island");
 	world:SetComponent(newEntityId, "Model", "RenderType", 0);
-
+--]]
 end
 
 FlowingWaterSystem.EntitiesAdded = function(self, dt, entities)
@@ -38,7 +38,7 @@ FlowingWaterSystem.EntitiesAdded = function(self, dt, entities)
 		local	newFlowingTile	=	world:CreateNewEntity("FlowingWater")
 		world:SetComponent(newFlowingTile, "Model", "ModelName", "waterplane");
 		world:SetComponent(newFlowingTile, "Model", "ModelPath", "water");
-		world:SetComponent(newFlowingTile, "Model", "RenderType", 1);
+		world:SetComponent(newFlowingTile, "Model", "RenderType", 5);
 		
 		world:GetComponent(newFlowingTile, "Position", "X"):SetFloat3(X, 0.40, Z)
 		

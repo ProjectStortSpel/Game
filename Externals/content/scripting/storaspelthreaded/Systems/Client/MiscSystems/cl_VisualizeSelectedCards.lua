@@ -2,6 +2,8 @@ VisualizeSelectedCards	=	System()
 VisualizeSelectedCards.PlayerEntity	=	-1
 VisualizeSelectedCards.GhostEntity	=	-1
 VisualizeSelectedCards.PrintSimulation	=	0
+VisualizeSelectedCards.MapSizeX	=	0
+VisualizeSelectedCards.MapSizeZ	=	0
 
 VisualizeSelectedCards.Initialize = function ( self )
 	--	Set Name
@@ -33,15 +35,23 @@ VisualizeSelectedCards.EntitiesAdded = function(self, dt, entities)
 		if world:EntityHasComponent(newEntity, "UnitGhost") then
 		
 			self.PlayerEntity	=	world:GetComponent(newEntity, "UnitGhost", "Id"):GetInt()
+			self.GhostEntity	=	newEntity
+			local	R, G, B		=	world:GetComponent(self.PlayerEntity, "Color", 0):GetFloat3()
+			world:GetComponent(self.GhostEntity, "Color", "X"):SetFloat3(R, G, B)
 			
-			print("ID: " .. self.PlayerEntity)
+			--self.GhostEntity	=	world:CreateNewEntity("Ghost")
+			--world:CreateComponentAndAddTo("Hide", self.GhostEntity)
+			--world:GetComponent(self.GhostEntity, "Model", "ModelName"):SetText("cavemenghost");
+			--world:GetComponent(self.GhostEntity, "Model", "ModelPath"):SetText("caveman");
+			--world:GetComponent(self.GhostEntity, "Model", "RenderType"):SetInt(1)
 			
-			self.GhostEntity	=	world:CreateNewEntity("Ghost")
-			world:CreateComponentAndAddTo("Hide", self.GhostEntity)
-			world:GetComponent(self.GhostEntity, "Model", "ModelName"):SetText("cavemenghost");
-			world:GetComponent(self.GhostEntity, "Model", "ModelPath"):SetText("caveman");
-			world:GetComponent(self.GhostEntity, "Model", "RenderType"):SetInt(1)
+		end
+		
+		if world:EntityHasComponent(newEntity, "MapSpecs") then
+			local tX, tZ = world:GetComponent(newEntity, "MapSpecs", "SizeX"):GetInt2()
 			
+			self.MapSizeX = tX
+			self.MapSizeZ = tZ
 		end
 	end
 	
@@ -80,7 +90,6 @@ VisualizeSelectedCards.EntitiesRemoved = function(self, dt, entities)
 	
 
 end
-
 
 VisualizeSelectedCards.ReVisualizePath = function(self)
 
@@ -145,19 +154,37 @@ VisualizeSelectedCards.GetRotation = function(self, dirX, dirZ)
 	return returnRotation
 end
 
+VisualizeSelectedCards.IsInsideWorld = function(self, X, Z)
+	if X < 0 or X >= self.MapSizeX then
+		return	false
+	end
+	
+	if Z < 0 or Z >= self.MapSizeZ then
+		return	false
+	end
+	
+	return 	true
+end
+
 VisualizeSelectedCards.VisualizePath = function(self, cardsToVisualize)
 	
 	local	posX, posZ			=	world:GetComponent(self.PlayerEntity, "MapPosition", "X"):GetInt2()
 	local	dirX, dirZ			=	world:GetComponent(self.PlayerEntity, "Direction", "X"):GetInt2()
 	local	X, Y, Z				=	world:GetComponent(self.PlayerEntity, "Position", "X"):GetFloat3()
 	local	rotX, rotY, rotZ	=	world:GetComponent(self.PlayerEntity, "Rotation", "X"):GetFloat3()
-	
-	print("CARDS: " .. #cardsToVisualize)
-	print("Pos: " .. posX .. ", " .. posZ)
-	print("Dir: " .. dirX .. ", " .. dirZ)
 
 	local	fellDown	=	false
 	fellDown, posX, posZ, dirX, dirZ	=	self:SimulateCardsFromPos(self.PlayerEntity, posX, posZ, dirX, dirZ, cardsToVisualize)
+	
+	if self:IsInsideWorld(posX, posZ) then
+		local	tTile	=	self:GetEntities("TileComp")[posZ * self.MapSizeZ + posX+1]
+		if world:EntityHasComponent(tTile, "TileOffset") then
+			Y	=	world:GetComponent(tTile, "TileOffset", "Offset"):GetFloat()
+		end
+	else
+		Y	=	-50
+	end
+	
 	local	finalRotation	=	self:GetRotation(dirX, dirZ)
 	world:GetComponent(self.GhostEntity, "Position", "X"):SetFloat3(posX, Y, posZ)
 	world:GetComponent(self.GhostEntity, "Direction", "X"):SetInt2(dirX, dirZ)
@@ -171,9 +198,14 @@ Net.Receive("Client.GetPlayerEntityId",
 		
 		print("SERVER: " .. serverId)
 		
-		local	newId	=	world:CreateNewEntity()
+		local	newId	=	world:CreateNewEntity("Ghost")
 		world:CreateComponentAndAddTo("UnitGhost", newId)
 		world:GetComponent(newId, "UnitGhost", "Id"):SetInt(serverId)
+		
+		world:CreateComponentAndAddTo("Hide", newId)
+		world:GetComponent(newId, "Model", "ModelName"):SetText("cavemenghost");
+		world:GetComponent(newId, "Model", "ModelPath"):SetText("caveman");
+		world:GetComponent(newId, "Model", "RenderType"):SetInt(1)
 	end 
 )
 
@@ -213,7 +245,7 @@ VisualizeSelectedCards.SimulateCardsFromPos = function(self, _unit, _posX, _posY
 			print()
 		end
 		
-		if cardName == "Forward" then
+		if cardName == "Forward" or cardName == "Stone" then
 			
 			fellDown, posX, posY = self:SimulateMoveForward(posX, posY, dirX, dirY, true, false, 1, false)
 			

@@ -62,12 +62,14 @@ bool GraphicsHigh::Init()
 
 void GraphicsHigh::Update(float _dt)
 {
+	m_dt = _dt;
 	m_camera->Update(_dt);
 
 	BufferModels();
 	BufferLightsToGPU();
 	BufferSurfaces();
 	BufferModelTextures();
+	BufferParticleSystems();
 }
 
 void GraphicsHigh::WriteShadowMapDepth()
@@ -209,6 +211,38 @@ void GraphicsHigh::Render()
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
+
+
+	//--------PARTICLES---------
+	//glEnable(GL_POINT_SPRITE);
+	glDepthMask(GL_FALSE);
+
+	//glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+
+	glActiveTexture(GL_TEXTURE1);
+
+	for (std::map<int, ParticleEffect*>::iterator it = m_particleEffects.begin(); it != m_particleEffects.end(); ++it)
+	{
+		Shader* thisShader = it->second->GetShaderPtr();
+		thisShader->UseProgram();
+
+		thisShader->SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
+		glBindTexture(GL_TEXTURE_2D, it->second->GetTexHandle());
+
+		mat4 Model = glm::translate(it->second->GetWorldPos());
+		mat4 ModelView = viewMatrix * Model;
+
+		thisShader->SetUniVariable("ModelView", mat4x4, &ModelView);
+		thisShader->SetUniVariable("BlendColor", vector3, it->second->GetColor());
+
+		it->second->Render(m_dt);
+	}
+
+	//glDisable(GL_POINT_SPRITE);
+	glDepthMask(GL_TRUE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//------------------------
+
 
 	// RENDER VIEWSPACE STUFF
 	m_viewspaceShader.UseProgram();
@@ -398,6 +432,22 @@ bool GraphicsHigh::InitShaders()
 	m_shadowShader.AddShader("content/shaders/android/AndroidShadowShaderFS.glsl", GL_FRAGMENT_SHADER);
 	m_shadowShader.FinalizeShaderProgram();
 
+	// Particle shaders
+		Shader particleShader;
+
+		particleShader.InitShaderProgram();
+		particleShader.AddShader("content/shaders/android/AndroidFireShaderVS.glsl", GL_VERTEX_SHADER);
+		particleShader.AddShader("content/shaders/android/AndroidFireShaderFS.glsl", GL_FRAGMENT_SHADER);
+		particleShader.FinalizeShaderProgram();
+		m_particleShaders["fire"] = particleShader;
+
+		particleShader.InitShaderProgram();
+		particleShader.AddShader("content/shaders/android/AndroidSmokeShaderVS.glsl", GL_VERTEX_SHADER);
+		particleShader.AddShader("content/shaders/android/AndroidSmokeShaderFS.glsl", GL_FRAGMENT_SHADER);
+		particleShader.FinalizeShaderProgram();
+		m_particleShaders["smoke"] = particleShader;
+
+
 	//m_fullscreen
 	m_fullscreen.InitShaderProgram();
 	m_fullscreen.AddShader("content/shaders/android/AndroidFullscreenVS.glsl", GL_VERTEX_SHADER);
@@ -412,6 +462,10 @@ bool GraphicsHigh::InitBuffers()
 	//Skybox shader
 	m_skyBoxShader.CheckUniformLocation("cubemap", 1);
 
+	//Particle shaders
+	for (std::map<std::string, Shader>::iterator it = m_particleShaders.begin(); it != m_particleShaders.end(); ++it)
+		it->second.CheckUniformLocation("diffuseTex", 1);
+
 	//Fullscreen shader
 	m_fullscreen.CheckUniformLocation("sampler", 4);
 
@@ -425,7 +479,7 @@ bool GraphicsHigh::InitLightBuffers()
 
 	float **tmpPtr = new float*[1];
 	BufferPointlights(0, tmpPtr);
-	delete tmpPtr;
+	delete [] tmpPtr;
 
 	BufferDirectionalLight(&m_lightDefaults[0]);
 
@@ -436,7 +490,7 @@ void GraphicsHigh::BufferPointlights(int _nrOfLights, float **_lightPointers)
 {
 	if (m_pointlightsPtr)
 	{
-		delete m_pointlightsPtr;
+		delete [] m_pointlightsPtr;
 		m_pointlightsPtr = 0;
 	}
 		
@@ -474,7 +528,7 @@ void GraphicsHigh::CreateShadowMap()
 	m_shadowShader.CheckUniformLocation("diffuseTex", 1);
 }
 
-bool GraphicsHigh::PreLoadModel(std::string _dir, std::string _file, int _renderType)
+bool GraphicsHigh::PreLoadModel(std::vector<std::string> _dirs, std::string _file, int _renderType)
 {
 	Shader *shaderPtr = NULL;
 
@@ -502,7 +556,7 @@ bool GraphicsHigh::PreLoadModel(std::string _dir, std::string _file, int _render
 
 	// Import Object
 	//ObjectData obj = AddObject(_dir, _file);
-	ObjectData obj = ModelLoader::importObject(_dir, _file);
+	ObjectData obj = ModelLoader::importObject(_dirs, _file);
 
 	// Import Texture
 	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
@@ -521,13 +575,13 @@ bool GraphicsHigh::PreLoadModel(std::string _dir, std::string _file, int _render
 
 	return true;
 }
-int GraphicsHigh::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color)
+int GraphicsHigh::LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color)
 {
 	int modelID = m_modelIDcounter;
 	m_modelIDcounter++;
 	
 	ModelToLoad* modelToLoad = new ModelToLoad();
-	modelToLoad->Dir = _dir;
+	modelToLoad->Dirs = _dirs;
 	modelToLoad->File = _file;
 	modelToLoad->MatrixPtr = _matrixPtr;
 	modelToLoad->RenderType = _renderType;
@@ -661,6 +715,66 @@ Buffer* GraphicsHigh::AddMesh(std::string _fileDir, Shader *_shaderProg)
 	return retbuffer;
 }
 
+Buffer* GraphicsHigh::AddMesh(ModelToLoadFromSource* _modelToLoad, Shader *_shaderProg)
+{
+	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
+	{		
+		if (it->first == _modelToLoad->key)
+			return it->second;
+	}
+
+	std::vector<float> positionData = _modelToLoad->positions;
+	std::vector<float> normalData = _modelToLoad->normals;
+	std::vector<float> tanData = _modelToLoad->tangents;
+	std::vector<float> bitanData = _modelToLoad->bitangents;
+	std::vector<float> texCoordData = _modelToLoad->texCoords;
+
+	Buffer* retbuffer = new Buffer();
+
+	std::map<GLuint, GLuint> vpLocs, vnLocs, tanLocs, bitanLocs, tcLocs;
+	vpLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexPosition");
+	vpLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexPosition");
+	vpLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexPosition");
+	vpLocs[m_shadowShader.GetShaderProgram()]	 = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexPosition");
+
+	vnLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexNormal");
+	vnLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexNormal");
+	vnLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexNormal");
+	vnLocs[m_shadowShader.GetShaderProgram()]	 = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexNormal");
+
+	tanLocs[m_forwardShader.GetShaderProgram()]	  = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTangent");
+	tanLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexTangent");
+	tanLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexTangent");
+	tanLocs[m_shadowShader.GetShaderProgram()]	  = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexTangent");
+
+	bitanLocs[m_forwardShader.GetShaderProgram()]	= glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexBiTangent");
+	bitanLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexBiTangent");
+	bitanLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexBiTangent");
+	bitanLocs[m_shadowShader.GetShaderProgram()]	= glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexBiTangent");
+
+	tcLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTexCoord");
+	tcLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexTexCoord");
+	tcLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexTexCoord");
+	tcLocs[m_shadowShader.GetShaderProgram()]	 = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexTexCoord");
+
+	_shaderProg->UseProgram();
+	BufferData bufferData[] =
+	{
+		{ vpLocs,	 3, GL_FLOAT, (const GLvoid*)positionData.data(), (GLsizeiptr)(positionData.size() * sizeof(float)) },
+		{ vnLocs,	 3, GL_FLOAT, (const GLvoid*)normalData.data(), (GLsizeiptr)(normalData.size()   * sizeof(float)) },
+		{ tanLocs,	 3, GL_FLOAT, (const GLvoid*)tanData.data(), (GLsizeiptr)(tanData.size()   * sizeof(float)) },
+		{ bitanLocs, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), (GLsizeiptr)(bitanData.size()   * sizeof(float)) },
+		{ tcLocs,	 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), (GLsizeiptr)(texCoordData.size() * sizeof(float)) }
+	};
+
+	retbuffer->init(bufferData, sizeof(bufferData) / sizeof(bufferData[0]), _shaderProg->GetShaderProgram());
+	retbuffer->setCount((int)positionData.size() / 3);
+	
+	m_meshs.insert(std::pair<const std::string, Buffer*>(_modelToLoad->key, retbuffer));
+
+	return retbuffer;
+}
+
 //ObjectData GraphicDevice::AddObject(std::string _file, std::string _dir)
 //{
 //	std::string fileDir = _dir;
@@ -683,13 +797,17 @@ void GraphicsHigh::Clear()
 
   float **tmpPtr = new float*[1];
   BufferPointlights(0, tmpPtr);
-  delete tmpPtr;
+  delete [] tmpPtr;
   
   if (m_pointlightsPtr)
-	  delete m_pointlightsPtr;
+	  delete [] m_pointlightsPtr;
 
   m_pointlightsPtr = NULL;
   m_directionalLightPtr = NULL;
+
+  for (std::map<int, ParticleEffect*>::iterator it = m_particleEffects.begin(); it != m_particleEffects.end(); ++it)
+	  delete(it->second);
+  m_particleEffects.clear();
 }
 
 void GraphicsHigh::BufferLightsToGPU()
@@ -751,7 +869,7 @@ void GraphicsHigh::BufferLightsToGPU()
 				m_forwardShader.SetUniVariable(ss.str().c_str(), glfloat, &m_pointlightsPtr[i][9]);		ss.str(std::string());
 			}
 		}
-		delete m_pointlightsPtr;
+		delete [] m_pointlightsPtr;
 		m_pointlightsPtr = 0;
 	}
 }

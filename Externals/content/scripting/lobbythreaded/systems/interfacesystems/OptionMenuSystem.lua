@@ -52,13 +52,13 @@ OptionMenuSystem.SpawnMenu = function(self)
 	button = self:CreateElement("graphicslow", "quad", 0, 0.4, -3, 0.6, 0.3)
 	print(button)
 	self:AddConsoleCommandToButton("changegraphics low", button)
-	self:AddEntityCommandToButton("NotificationBox", button)
+	--self:AddEntityCommandToButton("NotificationBox", button)
 	self:AddHoverSize(1.1, button)
 	
 	button = self:CreateElement("graphicshigh", "quad", 0, -0.4, -3, 0.6, 0.3)
 	print(button)
 	self:AddConsoleCommandToButton("changegraphics high", button)	
-	self:AddEntityCommandToButton("NotificationBox", button)	
+	--self:AddEntityCommandToButton("NotificationBox", button)	
 	self:AddHoverSize(1.1, button)
 end
 

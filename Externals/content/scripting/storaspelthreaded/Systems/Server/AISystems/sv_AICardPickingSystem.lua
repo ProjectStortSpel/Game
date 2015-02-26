@@ -1,6 +1,6 @@
 AICardPickingSystem = System()
 AICardPickingSystem.PrintSimulation = 0
-AICardPickingSystem.AICheat = 1
+AICardPickingSystem.AICheat = 0
 AICardPickingSystem.PermutationsDone = false
 AICardPickingSystem.PermutationIndex = 1
 AICardPickingSystem.PermutationsArray = ''
@@ -149,7 +149,7 @@ AICardPickingSystem.GetCheckpointPos = function(self, _targetCheckpointNumber)
 	end
 	
 	if not found then
-		print("Did not find the next checkpoint, will I reach the finish?")
+		print("Did not find the next checkpoint, will AI reach the finish? Please report to Nermansson :)")
 		return 0, 0
 	end
 	
@@ -230,10 +230,10 @@ AICardPickingSystem.PickCards = function( self, _unitID, _playerNumber, _cardSet
 	if 0 < simCPsReached then
 		
 		--print("checkpoint reached in the middle of a round")
-		io.write("target before: ", targetX, ", ", targetY, ". SimCPsReached: ", simCPsReached, "\n")
+		--io.write("target before: ", targetX, ", ", targetY, ". SimCPsReached: ", simCPsReached, "\n")
 		targetNr = targetNr + simCPsReached
 		targetX, targetY = self:GetCheckpointPos(targetNr)
-		io.write("target after: ", targetX, ", ", targetY, "\n")
+		--io.write("target after: ", targetX, ", ", targetY, "\n")
 	end
 	
 	-- TODO: Add method to vaska cards if we will fall down.
@@ -279,9 +279,9 @@ AICardPickingSystem.PickCards = function( self, _unitID, _playerNumber, _cardSet
 				local arrayIndex = (_playerNumber - 1) * cardsToPick + card
 				
 				self.ChosenCardsArray[arrayIndex] = charVar
-				io.write(self.ChosenCardsArray[arrayIndex], ", ")
+				--io.write(self.ChosenCardsArray[arrayIndex], ", ")
 			end
-			io.write("\n")
+			--io.write("\n")
 		end
 	end
 end

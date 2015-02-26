@@ -14,6 +14,9 @@ Author: Christian
 #include "TextRenderer.h"
 #include "SkyBox.h"
 #include "ModelLoader.h"
+#include "ParticleEffect.h"
+#include "Fire.h"
+#include "Smoke.h"
 
 namespace Renderer
 {
@@ -65,11 +68,40 @@ namespace Renderer
 
 	struct ModelToLoad
 	{
-		std::string Dir;
+		std::vector<std::string> Dirs;
 		std::string File;
 		glm::mat4* MatrixPtr;
 		int RenderType;
 		float* Color;
+	};
+	
+	struct ModelToLoadFromSource
+	{
+		std::string key;
+		std::vector<float> positions;
+		std::vector<float> normals;
+		std::vector<float> tangents;
+		std::vector<float> bitangents;
+		std::vector<float> texCoords;
+		std::string diffuseTextureFilepath;
+		std::string normalTextureFilepath;
+		std::string specularTextureFilepath;
+		glm::mat4* MatrixPtr;
+		int RenderType;
+		float* Color;
+	};
+
+	struct ParticleSystemToLoad
+	{
+		std::string Name;
+		vec3 Pos;
+		int NrOfParticles;
+		float LifeTime;
+		float Scale;
+		float SpriteSize;
+		std::string TextureName;
+		vec3 Color;
+		int Id;
 	};
 
 	class DECLSPEC GraphicDevice
@@ -98,9 +130,13 @@ namespace Renderer
 		Camera *GetCamera(){ return m_camera; }
 		void GetWindowSize(int &x, int &y){ x = m_clientWidth; y = m_clientHeight; }
 
+		// ANIMATIONS
+		bool SetAnimation(int _modelId, int _animId);
+
 		// MODELLOADER
-		virtual bool PreLoadModel(std::string _dir, std::string _file, int _renderType = RENDER_FORWARD){ return false; };
-		virtual int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_FORWARD, float* _color = nullptr){ return 0; };
+		virtual bool PreLoadModel(std::vector<std::string> _dirs, std::string _file, int _renderType = RENDER_FORWARD){ return false; };
+		virtual int LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_FORWARD, float* _color = nullptr){ return 0; };
+		int LoadModel(ModelToLoadFromSource* _modelToLoad);
 		virtual bool RemoveModel(int _id){ return false; };
 		virtual bool ActiveModel(int _id, bool _active){ return false; };
 		virtual bool ChangeModelTexture(int _id, std::string _fileDir, int _textureType = TEXTURE_DIFFUSE){ m_modelTextures.push_back({ _id, _fileDir, _textureType }); return false; };
@@ -118,6 +154,10 @@ namespace Renderer
 		int AddFont(const std::string& filepath, int size);
 		float CreateTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, glm::ivec2 size = glm::ivec2(-1, -1));
 		void CreateWrappedTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, unsigned int wrapLength, glm::ivec2 size = glm::ivec2(-1, -1));
+
+		void AddParticleEffect(std::string _name, const vec3 _pos, int _nParticles, float _lifeTime, float _scale, float _spriteSize, std::string _texture, vec3 _color, int &_id);
+		void RemoveParticleEffect(int _id);
+		void SetParticleAcceleration(int _id, float x, float y, float z);
 
 	protected:
 		bool InitSkybox();
@@ -149,6 +189,15 @@ namespace Renderer
 		float** m_pointlightsPtr;
 		int m_nrOfLightsToBuffer;
 
+		// Particles stuff
+		std::map<int, ParticleEffect*> m_particleEffects;
+		// For adding and removing on main thread
+		std::vector<ParticleSystemToLoad> m_particleSystemsToLoad;
+		std::vector<int> m_particlesIdToRemove;
+		int m_particleID;
+
+		void BufferParticleSystems();
+
 		// The Framebuffer
 		GLuint m_FBO;
 		int m_framebufferWidth, m_framebufferHeight;
@@ -159,6 +208,7 @@ namespace Renderer
 		Shader m_skyBoxShader;
 		Shader m_forwardShader, m_viewspaceShader, m_interfaceShader;
 		Shader m_fullscreen;
+		std::map<std::string, Shader> m_particleShaders;
 
 		// Skybox
 		SkyBox *m_skybox;
@@ -170,14 +220,17 @@ namespace Renderer
 		// Meshs
 		std::map<const std::string, Buffer*> m_meshs;
 		virtual Buffer* AddMesh(std::string _fileDir, Shader *_shaderProg) = 0;
+		virtual Buffer* AddMesh(ModelToLoadFromSource* _modelToLoad, Shader *_shaderProg) = 0;
 		// Textures
 		std::map<const std::string, GLuint> m_textures;
 		GLuint AddTexture(std::string _fileDir, GLenum _textureSlot);
 		
 		
 		std::map<int, ModelToLoad*> m_modelsToLoad;
+		std::map<int, ModelToLoadFromSource*> m_modelsToLoadFromSource;
 		virtual void BufferModels();
 		virtual void BufferModel(int _modelId, ModelToLoad* _modelToLoad);
+		void BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoad);
 		
 		std::vector<std::pair<std::string, SDL_Surface*>> m_surfaces;
 		void BufferSurfaces();

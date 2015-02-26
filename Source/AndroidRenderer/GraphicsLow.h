@@ -22,8 +22,8 @@ namespace Renderer
 		void Render();
 
 		// MODELLOADER
-		bool PreLoadModel(std::string _dir, std::string _file, int _renderType = RENDER_FORWARD);
-		int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_FORWARD, float* _color = nullptr);
+		bool PreLoadModel(std::vector<std::string> _dirs, std::string _file, int _renderType = RENDER_FORWARD);
+		int LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_FORWARD, float* _color = nullptr);
 		bool RemoveModel(int _id);
 		bool ActiveModel(int _id, bool _active);
 
@@ -45,6 +45,7 @@ namespace Renderer
 
 		// Meshs
 		Buffer* AddMesh(std::string _fileDir, Shader *_shaderProg);
+		Buffer* AddMesh(ModelToLoadFromSource* _modelToLoad, Shader *_shaderProg);
 		
 	};
 }

@@ -62,6 +62,8 @@ GameCreator::~GameCreator()
     
     if (m_serverWorld)
         delete m_serverWorld;
+    
+	Audio::Quit();
 
 	if (m_graphics)
 	{
@@ -89,13 +91,20 @@ GameCreator::~GameCreator()
 
 	delete(&ECSL::ComponentTypeManager::GetInstance());
 	delete(&ECSL::EntityTemplateManager::GetInstance());
+	delete(&ECSL::DataLogger::GetInstance());
+	delete(&MPL::TaskManager::GetInstance());
 	delete(m_frameCounter);
+}
+
+void GameCreator::InitializeAudio()
+{
+	Audio::Init();
 }
 
 bool GameCreator::InitializeGraphics()
 {
 #if defined(__IOS__) || defined(__ANDROID__)
-	m_graphics = new Renderer::GraphicsHigh();
+	m_graphics = new Renderer::GraphicsLow();
     m_graphics->Init();
 #else
     m_graphics = new Renderer::GraphicsHigh();
@@ -132,23 +141,11 @@ void GameCreator::InitializeNetwork()
 	NetworkInstance::InitClientNetworkHelper(&m_clientWorld);
     NetworkInstance::InitServerNetworkHelper(&m_serverWorld);
 
-    Network::NetMessageHook hook = std::bind(&GameCreator::LuaPacket, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-	NetworkInstance::GetClient()->AddNetworkHook("LuaPacket", hook);
-	NetworkInstance::GetServer()->AddNetworkHook("LuaPacket", hook);
-
-	hook = std::bind(&GameCreator::NetworkGameMode, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-	NetworkInstance::GetClient()->AddNetworkHook("Gamemode", hook);
-
 	//hook = std::bind(&GameCreator::NetworkGameModeFiles, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 	//NetworkInstance::GetClient()->AddNetworkHook("GamemodeFiles", hook);
 
-	m_remoteConsole = new RemoteConsole();
-
-	ConnectHelper::Initialize();
 	ConnectHelper::LoadGameModeHook GMhook = std::bind(&GameCreator::GameMode, this, std::placeholders::_1);
 	ConnectHelper::SetLoadGameModeHook(GMhook);
-
-	ClientManager::Initialize();
 
 	InitializeNetworkEvents(false);
 
@@ -209,6 +206,19 @@ void GameCreator::InitializeNetworkEvents(bool _allowEntities)
 	netEvent = std::bind(&GameCreator::OnPlayerTimedOut, this, std::placeholders::_1, std::placeholders::_2);
 	NetworkInstance::GetServer()->SetOnPlayerTimedOut(netEvent);
 
+
+	Network::NetMessageHook hook = std::bind(&GameCreator::LuaPacket, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	NetworkInstance::GetClient()->AddNetworkHook("LuaPacket", hook);
+	NetworkInstance::GetServer()->AddNetworkHook("LuaPacket", hook);
+
+	hook = std::bind(&GameCreator::NetworkGameMode, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	NetworkInstance::GetClient()->AddNetworkHook("Gamemode", hook);
+
+	ConnectHelper::Initialize();
+	ClientManager::Initialize();
+
+	SAFE_DELETE(m_remoteConsole);
+	m_remoteConsole = new RemoteConsole();
 
 	if (_allowEntities)
 	{
@@ -279,15 +289,6 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
     worldCreator.SkipComponentTypesAndTemplates(!_isMainWorld);
 	LuaEmbedder::AddObject<LuaBridge::LuaWorldCreator>(luaState, "WorldCreator", &worldCreator, "worldCreator");
 
-//	std::stringstream gameMode;
-//#if defined(_DEBUG) && !defined(__ANDROID__) && !defined(__APPLE__)
-//	gameMode << "../../../Externals/content/scripting/";
-//#else
-//	gameMode << "content/scripting/";
-//#endif
-//	gameMode << _gameMode;
-//	gameMode << "/init.lua";
-//
 	std::vector<std::string> paths;
 	if (NetworkInstance::GetServer()->IsRunning() || _gameMode == "lobbythreaded")
 		paths = HomePath::GetGameModePaths(HomePath::Type::Server);
@@ -392,7 +393,7 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
         m_graphicalSystems.push_back(graphicalSystem);
         worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
         
-        graphicalSystem = new ModelSystem(m_graphics);
+		graphicalSystem = new ModelSystem(m_graphics, _worldType == WorldType::Client);
         m_graphicalSystems.push_back(graphicalSystem);
         worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 
@@ -438,6 +439,7 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
         //worldCreator.AddSystemGroup();
         worldCreator.AddSystemToCurrentGroup<ResetChangedSystem>();
     }
+    
 
 	graphicalSystem = new ParticleSystem(m_graphics);
 	m_graphicalSystems.push_back(graphicalSystem);
@@ -511,6 +513,21 @@ void GameCreator::RunStartupCommands(int argc, char** argv)
 			command[size - 1] = '\0';
 			Console::ConsoleManager::GetInstance().AddToCommandQueue(command);
 		}
+	}
+}
+
+void noEffect(int chan, void *stream, int len, void *udata)
+{
+	float ratio = (22050 + 20000) / 22050.0f;
+	short* samples = (short*)stream;
+	int i = 0;
+	for(float x = 0; x < len/2 - 1; x += ratio) {
+		float p = x - int(x);
+		samples[i++] = (1-p) * samples[int(x)] + p * samples[int(x) + 1];
+	}
+
+	for(; i < len/2; i++) {
+		samples[i] = 0;
 	}
 }
 
@@ -613,6 +630,9 @@ void GameCreator::StartGame(int argc, char** argv)
 		m_luaGarbageCollectionCounter.Reset();
 		LuaEmbedder::CollectGarbageForDuration(0.1f * dt);
 		m_luaGarbageCollectionCounter.Tick();
+		
+		Audio::SetCameraPosition(*m_graphics->GetCamera()->GetPos());
+		Audio::Update();
 
 		m_networkCounter.Reset();
 		UpdateNetwork(dt);
@@ -1205,6 +1225,9 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 		{
 			if (m_clientWorld && m_clientWorld->HasComponent(i, "Render"))
 				m_clientWorld->RemoveComponentFrom("Render", i);
+
+			if (m_clientWorld && m_clientWorld->HasComponent(i, "Particle"))
+				m_clientWorld->CreateComponentAndAddTo("Hide", i);
             
 			if (m_serverWorld && m_serverWorld->HasComponent(i, "Render"))
                 m_serverWorld->RemoveComponentFrom("Render", i);

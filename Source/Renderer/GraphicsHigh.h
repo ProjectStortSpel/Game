@@ -76,11 +76,7 @@ namespace Renderer
 		// Shaders
 		Shader m_fullScreenShader;
 		Shader m_deferredShader1, m_compDeferredPass2Shader;
-		Shader m_forwardShader;
-		Shader m_viewspaceShader;
-		Shader m_interfaceShader;
-
-		Shader m_shadowShaderDeferred, m_shadowShaderForward;
+		Shader m_shadowShaderDeferred;
 
 		// SimpleText
 		bool m_renderSimpleText;
@@ -88,7 +84,7 @@ namespace Renderer
 
 		// Modelloader
 		int m_modelIDcounter;
-		std::vector<Model> m_modelsDeferred, m_modelsForward, m_modelsViewspace, m_modelsInterface;
+		std::vector<Model> m_modelsDeferred;
 
 		// Pointlights buffer
 		GLuint m_pointlightBuffer, m_dirLightBuffer;
@@ -99,6 +95,9 @@ namespace Renderer
 
 		// Random Vertors
 		GLuint m_randomVectors;
+
+		int mark;
+		float timer;
 	};
 }
 

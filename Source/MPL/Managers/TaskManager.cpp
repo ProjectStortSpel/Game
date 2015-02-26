@@ -27,6 +27,8 @@ TaskManager::~TaskManager()
 	}
 	delete(m_slaves);
 	delete(m_taskPool);
+	
+	delete &ThreadLogger::GetInstance();
 }
 
 TaskManager& TaskManager::GetInstance()

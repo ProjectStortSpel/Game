@@ -87,9 +87,44 @@ namespace ClientManager
 			SDL_UnlockMutex(jobMutex);
 
 			SDL_RWops* file;
-			FileSystem::File::Open(job.resource.Location, &file);
+			bool binary = FileSystem::File::IsBinary(job.resource.Location);
 
-			int bytesLeft = job.resource.Size;
+			FileSystem::File::Open(job.resource.Location, &file);
+			unsigned char* fileData = (unsigned char*)FileSystem::File::Read(file, job.resource.Size);
+			FileSystem::File::Close(file);
+
+			int bytesLeft;
+			
+			unsigned char* data;
+			std::string str;
+			if (binary)
+			{
+				data = fileData;
+				bytesLeft = job.resource.Size;
+			}
+			else
+			{
+				str = std::string((char*)fileData, job.resource.Size);
+
+				//auto first = std::remove(str.begin(), str.end(), '\r');
+				//int numRemoved = str.end() - first;
+				//str.erase(first, str.end());
+
+				std::string from = "\r\n";
+				std::string to = "\n";
+
+				size_t start_pos = 0;
+				while ((start_pos = str.find(from, start_pos)) != std::string::npos)
+				{
+					str.replace(start_pos, from.length(), to);
+					start_pos += to.length();
+				}
+				data = (unsigned char*)str.c_str();
+				bytesLeft = str.size();
+			}
+			
+
+			int currentPos = 0;
 			bool firstPart = true;
 			while (bytesLeft > 0)
 			{
@@ -106,23 +141,37 @@ namespace ClientManager
 
 				int size = bytesLeft > FileChunkSize ? FileChunkSize : bytesLeft;
 
+				//last part?
+				ph.WriteByte(id, size == bytesLeft);
+			
 				ph.WriteInt(id, size);
-
-				unsigned char* data = (unsigned char*)FileSystem::File::Read(file, size);
-
 				ph.WriteBytes(id, data, size);
 
-				delete data;
+				data += size;
 
 				NetworkInstance::GetServer()->Send(ph.EndPack(id), job.nc);
 
 				bytesLeft -= size;
 			}
 
+			delete fileData;
+
 			SDL_LockMutex(jobMutex);
 			jobs.pop();
 			empty = jobs.empty();
 			SDL_UnlockMutex(jobMutex);
+
+			for (int i = 0; i < 500; ++i)
+			{
+				if (!empty)
+					break;
+
+				SDL_Delay(10);
+
+				SDL_LockMutex(jobMutex);
+				empty = jobs.empty();
+				SDL_UnlockMutex(jobMutex);
+			}
 		}
 		done = true;
 		return 0;

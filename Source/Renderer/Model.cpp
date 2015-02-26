@@ -69,7 +69,7 @@ void Model::Draw(mat4 viewMatrix, mat4 projectionMatrix)
 	//m_modelsDeferred[i].bufferPtr->draw();
 	bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector, colors);
 	glBindTexture(GL_TEXTURE_2D, 0);
-	delete colors;
+	delete [] colors;
 }
 
 bool Model::Compare(Model m)

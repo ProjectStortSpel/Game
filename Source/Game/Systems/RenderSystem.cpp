@@ -5,11 +5,13 @@
 RenderSystem::RenderSystem(Renderer::GraphicDevice* _graphics)
 {
 	m_graphics = _graphics;
-
+	
+	m_bitMask = NULL;
 }
 RenderSystem::~RenderSystem()
 {
-
+	if (m_bitMask)
+		free(m_bitMask);
 }
 
 void RenderSystem::Initialize()
@@ -24,7 +26,7 @@ void RenderSystem::Initialize()
 	AddComponentTypeToFilter("Position",	ECSL::FilterType::Mandatory);
 	AddComponentTypeToFilter("Rotation",	ECSL::FilterType::Mandatory);
 	AddComponentTypeToFilter("Scale",		ECSL::FilterType::Mandatory);
-	//AddComponentTypeToFilter("Color",		ECSL::FilterType::Mandatory);
+	AddComponentTypeToFilter("Color",		ECSL::FilterType::RequiresOneOf);
 	AddComponentTypeToFilter("Render",		ECSL::FilterType::RequiresOneOf);
 	AddComponentTypeToFilter("Model",		ECSL::FilterType::RequiresOneOf);
 
@@ -37,7 +39,7 @@ void RenderSystem::Initialize()
 	bitsetComponents.push_back(ECSL::ComponentTypeManager::GetInstance().GetTableId("Position"));
 	bitsetComponents.push_back(ECSL::ComponentTypeManager::GetInstance().GetTableId("Rotation"));
 	bitsetComponents.push_back(ECSL::ComponentTypeManager::GetInstance().GetTableId("Scale"));
-	//bitsetComponents.push_back(ECSL::ComponentTypeManager::GetInstance().GetTableId("Color"));
+	bitsetComponents.push_back(ECSL::ComponentTypeManager::GetInstance().GetTableId("Color"));
 
 	m_bitMask = ECSL::BitSet::BitSetConverter::ArrayToBitSet(bitsetComponents, ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount());
 	m_numberOfBitSets = ECSL::BitSet::GetDataTypeCount(ECSL::ComponentTypeManager::GetInstance().GetComponentTypeCount());
@@ -112,12 +114,14 @@ void RenderSystem::UpdateMatrix(unsigned int _entityId)
 	float*		Position;
 	float*		Rotation;
 	float*		Scale;
+	float*		Color;
 	glm::mat4*	Matrix;
 	float*		renderColor;
 
 	Position = (float*)GetComponent(_entityId, m_positionId, 0);
 	Rotation = (float*)GetComponent(_entityId, m_rotationId, 0);
 	Scale = (float*)GetComponent(_entityId, m_scaleId, 0);
+	Color = (float*)GetComponent(_entityId, m_colorId, 0);
 	Matrix = (glm::mat4*)GetComponent(_entityId, m_renderId, m_renderOffset);
 	renderColor = (float*)GetComponent(_entityId, m_renderId, m_colorOffset);
 
@@ -144,10 +148,8 @@ void RenderSystem::UpdateMatrix(unsigned int _entityId)
 	if (HasComponent(_entityId, m_worldToViewSpaceId))
 		*Matrix = *m_graphics->GetCamera()->GetViewMatrix() * *Matrix;
 
-
-	if (!HasComponent(_entityId, m_colorId))
-	{ 
-		float* Color = (float*)GetComponent(_entityId, "Color", "X");
+	if (HasComponent(_entityId, m_colorId))
+	{
 		renderColor[0] = Color[0];
 		renderColor[1] = Color[1];
 		renderColor[2] = Color[2];
@@ -158,9 +160,6 @@ void RenderSystem::UpdateMatrix(unsigned int _entityId)
 		renderColor[1] = 0;
 		renderColor[2] = 0;
 	}
-
-
-
 
 	ComponentHasChanged(_entityId, m_renderId);
 

@@ -14,6 +14,7 @@ GraphicDevice::GraphicDevice()
 {
 	m_SDLinitialized = false;
 	m_pointlightsPtr = 0;
+	m_particleID = 0;
 }
 
 GraphicDevice::GraphicDevice(Camera _camera)
@@ -21,6 +22,7 @@ GraphicDevice::GraphicDevice(Camera _camera)
 	m_camera = new Camera(_camera);
 	m_SDLinitialized = true;
 	m_pointlightsPtr = 0;
+	m_particleID = 0;
 }
 
 GraphicDevice::~GraphicDevice()
@@ -29,14 +31,17 @@ GraphicDevice::~GraphicDevice()
 	delete(m_skybox);
 
 	if (m_pointlightsPtr)
-		delete m_pointlightsPtr;
+		delete [] m_pointlightsPtr;
+
+	for (std::map<int, ParticleEffect*>::iterator it = m_particleEffects.begin(); it != m_particleEffects.end(); ++it)
+		delete(it->second);
 
 	SDL_GL_DeleteContext(m_glContext);
 	// Close and destroy the window
 	SDL_DestroyWindow(m_window);
 	// Clean up
 	//SDL_Quit();
-	SDL_Log("Graphics D E S T R U C T O R");
+	//SDL_Log("Graphics D E S T R U C T O R");
 }
 
 void GraphicDevice::InitFBO()
@@ -156,6 +161,12 @@ bool GraphicDevice::InitSkybox()
 	m_skybox = new SkyBox(texHandle, m_camera->GetFarPlane(), loc);
 
 	return true;
+}
+
+
+bool GraphicDevice::SetAnimation(int _modelId, int _animId)
+{
+	return false;
 }
 
 GLuint GraphicDevice::AddTexture(std::string _fileDir, GLenum _textureSlot)
@@ -383,7 +394,7 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 		return;
 	}
 	// Import Object
-	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
+	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dirs, _modelToLoad->File);
 
 	// Import Texture
 	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
@@ -419,6 +430,70 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 		m_modelsForward.push_back(model);
 }
 
+void GraphicDevice::BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoad)
+{
+	Shader *shaderPtr = NULL;
+
+	if (_modelToLoad->RenderType == RENDER_FORWARD)
+	{
+		shaderPtr = &m_forwardShader;
+		m_forwardShader.UseProgram();
+	}
+	else if (_modelToLoad->RenderType == RENDER_VIEWSPACE)
+	{
+		shaderPtr = &m_viewspaceShader;
+		m_viewspaceShader.UseProgram();
+	}
+	else if (_modelToLoad->RenderType == RENDER_INTERFACE)
+	{
+		shaderPtr = &m_interfaceShader;
+		m_interfaceShader.UseProgram();
+	}
+	else if (_modelToLoad->RenderType == 0)
+	{
+		shaderPtr = &m_forwardShader;
+		m_forwardShader.UseProgram();
+		//SDL_Log("Deferred requested. Selecting FORWARD");
+	}
+	else
+	{
+		return;
+	}
+
+	// Import Texture
+	GLuint texture = AddTexture(_modelToLoad->diffuseTextureFilepath, GL_TEXTURE1);
+	shaderPtr->CheckUniformLocation("diffuseTex", 1);
+
+	GLuint normal, specular;
+
+	if (_modelToLoad->RenderType != RENDER_INTERFACE)
+	{
+		// Import Normal map
+		normal = AddTexture(_modelToLoad->normalTextureFilepath, GL_TEXTURE2);
+		shaderPtr->CheckUniformLocation("normalTex", 2);
+
+		// Import Specc Glow map
+		specular = AddTexture(_modelToLoad->specularTextureFilepath, GL_TEXTURE3);
+		shaderPtr->CheckUniformLocation("specularTex", 3);
+	}
+
+	// Import Mesh
+	Buffer* mesh = AddMesh(_modelToLoad, shaderPtr);
+
+	Model model = Model(mesh, texture, normal, specular, _modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color); // plus modelID o matrixPointer, active
+
+
+	// Push back the model
+	if (_modelToLoad->RenderType == RENDER_FORWARD)
+		m_modelsForward.push_back(model);
+	else if (_modelToLoad->RenderType == RENDER_VIEWSPACE)
+		m_modelsViewspace.push_back(model);
+	else if (_modelToLoad->RenderType == RENDER_INTERFACE)
+		m_modelsInterface.push_back(model);
+	else
+		m_modelsForward.push_back(model);
+}
+
 void GraphicDevice::BufferModels()
 {
 	for (auto pair : m_modelsToLoad)
@@ -426,7 +501,13 @@ void GraphicDevice::BufferModels()
 		BufferModel(pair.first, pair.second);
 		delete(pair.second);
 	}
+	for (auto pair : m_modelsToLoadFromSource)
+	{
+		BufferModel(pair.first, pair.second);
+		delete(pair.second);
+	}
 	m_modelsToLoad.clear();
+	m_modelsToLoadFromSource.clear();
 }
 
 struct sort_depth
@@ -440,4 +521,95 @@ struct sort_depth
 void GraphicDevice::SortModelsBasedOnDepth(std::vector<Model>* models)
 {
 	std::sort(models->begin(), models->end(), sort_depth());
+}
+
+void GraphicDevice::AddParticleEffect(std::string _name, const vec3 _pos, int _nParticles, float _lifeTime, float _scale, float _spriteSize, std::string _texture, vec3 _color, int &_id)
+{
+	SDL_Log("effect NAME: %s", _name.c_str());
+	ParticleSystemToLoad tmpSystem;
+	tmpSystem.Name = _name;
+	tmpSystem.Pos = _pos;
+	tmpSystem.NrOfParticles = _nParticles;
+	tmpSystem.LifeTime = _lifeTime;
+	tmpSystem.Scale = _scale;
+	tmpSystem.SpriteSize = _spriteSize;
+	tmpSystem.TextureName = _texture;
+	tmpSystem.Color = _color;
+	tmpSystem.Id = m_particleID;
+
+	m_particleSystemsToLoad.push_back(tmpSystem);
+
+	_id = m_particleID;
+	m_particleID++;
+}
+
+void GraphicDevice::RemoveParticleEffect(int _id)
+{
+	m_particleEffects[_id]->EnterEndPhase();
+	m_particlesIdToRemove.push_back(_id);
+}
+
+void GraphicDevice::SetParticleAcceleration(int _id, float x, float y, float z)
+{
+	m_particleEffects[_id]->SetAccel(vec3(x, y, z));
+}
+
+void GraphicDevice::BufferParticleSystems()
+{
+	// ParticleSystems to remove
+	for (int i = m_particlesIdToRemove.size() - 1; i >= 0; i--)
+	{
+		if (m_particleEffects[m_particlesIdToRemove[i]]->ReadyToBeDeleted())
+		{
+			delete(m_particleEffects[m_particlesIdToRemove[i]]);
+			m_particleEffects.erase(m_particlesIdToRemove[i]);
+			m_particlesIdToRemove.erase(m_particlesIdToRemove.begin() + i);
+		}
+	}
+
+	// ParticleSystems to add
+	for (int i = 0; i < m_particleSystemsToLoad.size(); i++)
+	{
+		if (m_particleSystemsToLoad[i].Name == "fire")
+		{
+			m_particleEffects.insert(std::pair<int, ParticleEffect*>(m_particleSystemsToLoad[i].Id, new Fire(
+				m_particleSystemsToLoad[i].Pos,
+				m_particleSystemsToLoad[i].NrOfParticles,
+				m_particleSystemsToLoad[i].LifeTime,
+				m_particleSystemsToLoad[i].Scale,
+				m_particleSystemsToLoad[i].SpriteSize,
+				AddTexture(m_particleSystemsToLoad[i].TextureName, GL_TEXTURE1),
+				m_particleSystemsToLoad[i].Color,
+				&m_particleShaders[m_particleSystemsToLoad[i].Name])));
+		}
+		else if (m_particleSystemsToLoad[i].Name == "smoke")
+		{
+			m_particleEffects.insert(std::pair<int, ParticleEffect*>(m_particleSystemsToLoad[i].Id, new Smoke(
+				m_particleSystemsToLoad[i].Pos,
+				m_particleSystemsToLoad[i].NrOfParticles,
+				m_particleSystemsToLoad[i].LifeTime,
+				m_particleSystemsToLoad[i].Scale,
+				m_particleSystemsToLoad[i].SpriteSize,
+				AddTexture(m_particleSystemsToLoad[i].TextureName, GL_TEXTURE1),
+				m_particleSystemsToLoad[i].Color,
+				&m_particleShaders[m_particleSystemsToLoad[i].Name])));
+		}
+	}
+	m_particleSystemsToLoad.clear();
+
+}
+
+int GraphicDevice::LoadModel(ModelToLoadFromSource* _modelToLoad)
+{
+	int modelID = m_modelIDcounter;
+	m_modelIDcounter++;
+
+	//	Lägg till i en lista, följande
+	//	std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType
+
+	ModelToLoadFromSource* modelToLoad = new ModelToLoadFromSource();
+	*modelToLoad = *_modelToLoad;
+	m_modelsToLoadFromSource[modelID] = modelToLoad;
+
+	return modelID;
 }

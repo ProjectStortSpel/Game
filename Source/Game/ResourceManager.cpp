@@ -1,6 +1,7 @@
 #include "Game/ResourceManager.h"
 #include "FileSystem/File.h"
 #include "FileSystem/MD5.h"
+#include "FileSystem/Directory.h"
 
 namespace ResourceManager
 {
@@ -98,12 +99,37 @@ namespace ResourceManager
 
 	int AddContentResource(std::string _path)
 	{
-		Resource r;
-		if (!ResourceExist(_path, &ContentResources) && CreateResource(_path, r, HomePath::Type::Server))
+
+		if (!_path.empty() && _path.at(_path.size() - 1) == '*')
 		{
-			ContentResources[_path]= r;
-			return 1;
+			_path = _path.substr(0, _path.size() - 1);
+			std::vector<std::string> paths = HomePath::GetPaths(HomePath::Type::Server);
+			int numFilesAdded = 0;
+			for (int i = 0; i < paths.size(); ++i)
+			{
+				std::string path = paths[i];
+				path.append(_path);
+				std::vector<std::string> files = FileSystem::Directory::GetAllFiles(path);
+
+				for (int j = 0; j < files.size(); ++j)
+				{
+					std::string filepath = _path;
+					filepath.append(files[j]);
+					numFilesAdded += AddContentResource(filepath);
+				}
+			}
+			return numFilesAdded;
 		}
+		else
+		{
+			Resource r;
+			if (!ResourceExist(_path, &ContentResources) && CreateResource(_path, r, HomePath::Type::Server))
+			{
+				ContentResources[_path] = r;
+				return 1;
+			}
+		}
+
 		return 0;
 	}
 
