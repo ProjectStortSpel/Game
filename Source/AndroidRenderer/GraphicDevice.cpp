@@ -582,7 +582,7 @@ void GraphicDevice::BufferParticleSystems()
 				m_particleSystemsToLoad[i].Color,
 				&m_particleShaders[m_particleSystemsToLoad[i].Name])));
 		}
-		else if (m_particleSystemsToLoad[i].Name == "smoke")
+		/*else if (m_particleSystemsToLoad[i].Name == "smoke")
 		{
 			m_particleEffects.insert(std::pair<int, ParticleEffect*>(m_particleSystemsToLoad[i].Id, new Smoke(
 				m_particleSystemsToLoad[i].Pos,
@@ -593,7 +593,7 @@ void GraphicDevice::BufferParticleSystems()
 				AddTexture(m_particleSystemsToLoad[i].TextureName, GL_TEXTURE1),
 				m_particleSystemsToLoad[i].Color,
 				&m_particleShaders[m_particleSystemsToLoad[i].Name])));
-		}
+		}*/
 	}
 	m_particleSystemsToLoad.clear();
 

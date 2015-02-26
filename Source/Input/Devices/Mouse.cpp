@@ -50,6 +50,10 @@ void Mouse::PollEvent(SDL_Event e)
 
 		if(!m_lastState[e.button.button])
 			m_pressedStates[e.button.button]	=	true;
+		
+		m_x = e.motion.x;
+		m_y = e.motion.y;
+		
 		break;
 
 	case SDL_MOUSEBUTTONUP:
@@ -57,6 +61,10 @@ void Mouse::PollEvent(SDL_Event e)
 
 		if(m_lastState[e.button.button])
 			m_releasedStates[e.button.button]	=	true;
+		
+		m_x = e.motion.x;
+		m_y = e.motion.y;
+		
 		break;
 
 	case SDL_MOUSEMOTION:
@@ -77,10 +85,10 @@ void Mouse::PollEvent(SDL_Event e)
 InputState Mouse::GetButtonState(MouseButton _button)
 {
 
-	if (m_pressedStates[_button])
-		return InputState::PRESSED;
-	else if (m_releasedStates[_button])
+	if (m_releasedStates[_button])
 		return InputState::RELEASED;
+	else if (m_pressedStates[_button])
+		return InputState::PRESSED;
 	else if (m_thisState[_button] && m_lastState[_button])
 		return InputState::DOWN;
 

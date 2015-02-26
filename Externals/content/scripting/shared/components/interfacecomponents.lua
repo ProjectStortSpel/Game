@@ -12,6 +12,12 @@ OnPickBoxHit.Name = "OnPickBoxHit"
 OnPickBoxHit.TableType = TableType.Map
 worldCreator:AddComponentType(OnPickBoxHit)
 
+-- OnPickBoxReleased
+local OnPickBoxReleased = ComponentType()
+OnPickBoxReleased.Name = "OnPickBoxReleased"
+OnPickBoxReleased.TableType = TableType.Map
+worldCreator:AddComponentType(OnPickBoxReleased)
+
 -- ReadyButton
 local ReadyButton = ComponentType()
 ReadyButton.Name = "ReadyButton"
