@@ -56,10 +56,17 @@ namespace FileSystem
 				{
 					Sint64 length = GetFileSize(file);
 					char* data = Read(file, length);
-					bool ascii = strlen(data) >= length;
-					delete data;
 					Close(file);
-					return !ascii;
+					for (int i = 0; i < length; ++i)
+					{
+						if (data[i] == '\0')
+						{
+							delete data;
+							return false;
+						}
+					}
+					delete data;
+					return true;
 				}
 			}
 			return false;
