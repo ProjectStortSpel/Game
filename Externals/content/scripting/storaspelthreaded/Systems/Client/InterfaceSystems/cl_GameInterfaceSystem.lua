@@ -1,5 +1,6 @@
 GameInterfaceSystem = System()
 GameInterfaceSystem.Name = "GameInterface"
+GameInterfaceSystem.RequestRelease = false
 
 GameInterfaceSystem.Initialize = function(self)
 	--	Set Name
@@ -30,7 +31,7 @@ GameInterfaceSystem.PostInitialize = function(self)
 end
 
 GameInterfaceSystem.Update = function(self, dt)
-	if Input.GetTouchState(0) == InputState.Released then
+	if self.RequestRelease then
 		local pressedButtons = self:GetEntities("OnPickBoxHit")
 		if #pressedButtons > 0 then
 			local pressedButton = pressedButtons[1]
@@ -44,6 +45,12 @@ GameInterfaceSystem.Update = function(self, dt)
 				world:CreateComponentAndAddTo(compname, id)
 			end
 		end
+	end
+	
+	if Input.GetTouchState(0) == InputState.Released then
+		self.RequestRelease = true
+	else
+		self.RequestRelease = false
 	end
 end
 

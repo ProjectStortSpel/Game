@@ -3,9 +3,10 @@ ConnectMenuSystem.Name = "ConnectMenu"
 ConnectMenuSystem.ServerStartIndex = 1
 ConnectMenuSystem.ServerEndIndex = 1
 ConnectMenuSystem.doRefresh = true
+ConnectMenuSystem.RequestRelease = false
 
 ConnectMenuSystem.Update = function(self, dt)
-	if Input.GetTouchState(0) == InputState.Released then
+	if self.RequestRelease then
 
 		local pressedButtons = self:GetEntities("OnPickBoxHit")
 		if #pressedButtons > 0 then
@@ -36,6 +37,12 @@ ConnectMenuSystem.Update = function(self, dt)
 	if #menu > 0 and self.doRefresh == true then
 		self.doRefresh = false
 		self:RefreshMenu()
+	end
+	
+	if Input.GetTouchState(0) == InputState.Released then
+		self.RequestRelease = true
+	else
+		self.RequestRelease = false
 	end
 end
 

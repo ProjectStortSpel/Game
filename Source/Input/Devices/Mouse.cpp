@@ -33,8 +33,7 @@ void Mouse::Update()
 		m_pressedStates[i]	=	false;
 		m_releasedStates[i]	=	false;
 	}
-		
-
+	
 	m_dx = 0;
 	m_dy = 0;
 	m_xScroll = 0;
@@ -51,8 +50,8 @@ void Mouse::PollEvent(SDL_Event e)
 		if(!m_lastState[e.button.button])
 			m_pressedStates[e.button.button]	=	true;
 		
-		m_x = e.motion.x;
-		m_y = e.motion.y;
+		m_x = e.button.x;
+		m_y = e.button.y;
 		
 		break;
 
@@ -62,8 +61,8 @@ void Mouse::PollEvent(SDL_Event e)
 		if(m_lastState[e.button.button])
 			m_releasedStates[e.button.button]	=	true;
 		
-		m_x = e.motion.x;
-		m_y = e.motion.y;
+		m_x = e.button.x;
+		m_y = e.button.y;
 		
 		break;
 

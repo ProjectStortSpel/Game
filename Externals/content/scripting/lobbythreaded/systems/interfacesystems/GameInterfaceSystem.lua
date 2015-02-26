@@ -1,8 +1,9 @@
 GameInterfaceSystem = System()
 GameInterfaceSystem.Name = "GameInterface"
+GameInterfaceSystem.RequestRelease = false
 
 GameInterfaceSystem.Update = function(self, dt)
-	if Input.GetTouchState(0) == InputState.Released then
+	if self.RequestRelease then
 
 		local pressedButtons = self:GetEntities("OnPickBoxHit")
 		if #pressedButtons > 0 then
@@ -23,7 +24,11 @@ GameInterfaceSystem.Update = function(self, dt)
 		
 	end
 	
-
+	if Input.GetTouchState(0) == InputState.Released then
+		self.RequestRelease = true
+	else
+		self.RequestRelease = false
+	end
 end
 
 GameInterfaceSystem.Initialize = function(self)
