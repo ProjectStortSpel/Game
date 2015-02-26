@@ -388,7 +388,7 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 		return;
 	}
 	// Import Object
-	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dir, _modelToLoad->File);
+	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dirs, _modelToLoad->File);
 
 	// Import Texture
 	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
