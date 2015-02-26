@@ -584,6 +584,7 @@ void GraphicDevice::BufferParticleSystems()
 		}
 		/*else if (m_particleSystemsToLoad[i].Name == "smoke")
 		{
+            return;
 			m_particleEffects.insert(std::pair<int, ParticleEffect*>(m_particleSystemsToLoad[i].Id, new Smoke(
 				m_particleSystemsToLoad[i].Pos,
 				m_particleSystemsToLoad[i].NrOfParticles,
