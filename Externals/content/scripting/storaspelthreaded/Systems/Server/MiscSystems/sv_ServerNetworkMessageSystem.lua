@@ -22,12 +22,12 @@ ServerNetworkMessageSystem.PostInitialize = function(self)
 	
 	-- TODO: Change MaxPlayers based on the map loaded
 	-- TODO: Note, moved to the Mapspecs-entity
-	local maxPlayers = 9
-	world:SetComponent(playerCounter, "PlayerCounter", "MaxPlayers", maxPlayers)
+	--local maxPlayers = 9
+	--world:SetComponent(playerCounter, "PlayerCounter", "MaxPlayers", 0)
 	world:SetComponent(playerCounter, "PlayerCounter", "Players", 0)
 	world:SetComponent(playerCounter, "PlayerCounter", "Spectators", 0)
 
-	self:AddConnectedPlayers(playerCounter, maxPlayers)
+	--self:AddConnectedPlayers(playerCounter, maxPlayers)
 end
 
 ServerNetworkMessageSystem.CounterComponentChanged = function(self, _change, _component)
@@ -74,9 +74,6 @@ ServerNetworkMessageSystem.AddConnectedPlayers = function(self, _counterEntity, 
 	end
 	world:SetComponent(_counterEntity, "PlayerCounter", "Players", noOfPlayers)
 end
-
-
-
 
 ServerNetworkMessageSystem.OnPlayerConnected = function(self, _ip, _port, _message)
 
@@ -231,4 +228,17 @@ end
 
 ServerNetworkMessageSystem.OnPasswordInvalid = function(self, _ip, _port, _message)
 	print("ServerNetworkMessageSystem.OnPasswordInvalid - Not implemented!")
+end
+
+ServerNetworkMessageSystem.EntitiesAdded = function(self, dt, _entities)
+	
+	for i = 1, #_entities do 
+		if world:EntityHasComponent( _entities[i], "MapSpecs") then
+			
+			local mapSpecsComp = world:GetComponent(self:GetEntities("MapSpecs")[1], "MapSpecs", "NoOfSpawnpoints")
+			local noOfSpawnPoints = mapSpecsComp:GetInt()
+			local counterEntities = self:GetEntities("PlayerCounter")
+			self:AddConnectedPlayers(counterEntities[1], noOfSpawnPoints)
+		end
+	end
 end
