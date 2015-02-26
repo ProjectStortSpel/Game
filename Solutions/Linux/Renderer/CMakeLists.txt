@@ -11,9 +11,9 @@ file(GLOB_RECURSE RENDERER_SRC_FILES
 add_library(Renderer SHARED ${RENDERER_SRC_FILES})
 
 # Add subprojects
-if(NOT TARGET FileSystem)
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../FileSystem" FileSystem)
-endif()
+#if(NOT TARGET FileSystem)
+#add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../FileSystem" FileSystem)
+#endif()
 #if(NOT TARGET Console)
 #add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Console" Console)
 #endif()
@@ -33,8 +33,8 @@ endif()
 #add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Network" Network)
 #endif()
 # Link subproject shared libraries
-target_link_libraries(Renderer
-					  FileSystem)
+#target_link_libraries(Renderer
+#					  FileSystem)
 
 if (WIN32)
   # Include directories
