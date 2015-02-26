@@ -18,13 +18,19 @@ out vec3 ViewPos;
 out vec3 AddColor;
 
 uniform mat4 ProjectionMatrix;
+uniform float ElapsedTime;
 
 void main()
 {
 	Normal = normalize( NormalMatrix * VertexNormal);
 	Tan = normalize( NormalMatrix * VertexTangent);
 	BiTan = normalize( NormalMatrix * VertexBiTangent);
-	TexCoord = VertexTexCoord;
+
+	float texCoordX = VertexTexCoord.x + 0.4f*ElapsedTime;
+
+	TexCoord = vec2(texCoordX, VertexTexCoord.y);
+
+
 	ViewPos = (ModelViewMatrix * vec4(VertexPosition, 1.0)).xyz;
 	mat4 MVP = ProjectionMatrix * ModelViewMatrix;
 	gl_Position = MVP * vec4(VertexPosition, 1.0);

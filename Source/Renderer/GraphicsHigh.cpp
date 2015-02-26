@@ -126,6 +126,12 @@ bool GraphicsHigh::InitShaders()
 	m_forwardShader.AddShader("content/shaders/FSForwardShader.glsl", GL_FRAGMENT_SHADER);
 	m_forwardShader.FinalizeShaderProgram();
 
+	// River water shader
+	m_riverShader.InitShaderProgram();
+	m_riverShader.AddShader("content/shaders/riverShaderVS.glsl", GL_VERTEX_SHADER);
+	m_riverShader.AddShader("content/shaders/FSForwardShader.glsl", GL_FRAGMENT_SHADER);
+	m_riverShader.FinalizeShaderProgram();
+
 	// ShadowShader deferred geometry
 	m_shadowShaderDeferred.InitShaderProgram();
 	m_shadowShaderDeferred.AddShader("content/shaders/shadowShaderDeferredVS.glsl", GL_VERTEX_SHADER);
@@ -140,6 +146,7 @@ void GraphicsHigh::InitRenderLists()
 	m_renderLists.push_back(RenderList(RENDER_FORWARD, &m_modelsForward, &m_forwardShader));
 	m_renderLists.push_back(RenderList(RENDER_VIEWSPACE, &m_modelsViewspace, &m_viewspaceShader));
 	m_renderLists.push_back(RenderList(RENDER_INTERFACE, &m_modelsInterface, &m_interfaceShader));
+	m_renderLists.push_back(RenderList(RENDER_RIVERWATER, &m_modelsWater, &m_riverShader));
 	m_renderLists.push_back(RenderList(RENDER_DEFERRED_SCATTER, &m_modelsDeferred, &m_deferredShader1));
 	m_renderLists.push_back(RenderList(RENDER_FORWARD_SCATTER, &m_modelsForward, &m_forwardShader));
 }
@@ -466,6 +473,23 @@ void GraphicsHigh::Render()
 		m_modelsForward[i].Draw(viewMatrix, mat4(1));
 
 
+	//-------Render water-------------
+	m_riverShader.UseProgram();
+	m_riverShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
+	m_riverShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
+	m_riverShader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
+	m_elapsedTime += m_dt;
+	if (m_elapsedTime > 10.0f)
+		m_elapsedTime = 0.0f;
+	m_riverShader.SetUniVariable("ElapsedTime", glfloat, &m_elapsedTime);
+	//----Lights
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
+	//----DRAW MODELS
+	for (int i = 0; i < m_modelsWater.size(); i++)
+		m_modelsWater[i].Draw(viewMatrix, mat4(1));
+
+
 	//--------PARTICLES---------
 	glEnable(GL_POINT_SPRITE);
 	glDepthMask(GL_FALSE);
@@ -645,6 +669,10 @@ void GraphicsHigh::CreateShadowMap()
 	m_forwardShader.UseProgram();
 	m_forwardShader.SetUniVariable("BiasMatrix", mat4x4, m_shadowMap->GetBiasMatrix());
 	m_forwardShader.CheckUniformLocation("ShadowDepthTex", 10);
+
+	m_riverShader.UseProgram();
+	m_riverShader.SetUniVariable("BiasMatrix", mat4x4, m_shadowMap->GetBiasMatrix());
+	m_riverShader.CheckUniformLocation("ShadowDepthTex", 10);
 
 	m_vramUsage += (resolution*resolution*sizeof(float));
 }

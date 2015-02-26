@@ -84,7 +84,7 @@ namespace Renderer
 
 		// Modelloader
 		int m_modelIDcounter;
-		std::vector<Model> m_modelsDeferred, m_modelsForward, m_modelsViewspace, m_modelsInterface;
+		std::vector<Model> m_modelsDeferred;
 
 		// Pointlights buffer
 		GLuint m_pointlightBuffer, m_dirLightBuffer;
