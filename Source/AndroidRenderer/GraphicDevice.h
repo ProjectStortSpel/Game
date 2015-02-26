@@ -68,7 +68,7 @@ namespace Renderer
 
 	struct ModelToLoad
 	{
-		std::string Dir;
+		std::vector<std::string> Dirs;
 		std::string File;
 		glm::mat4* MatrixPtr;
 		int RenderType;
