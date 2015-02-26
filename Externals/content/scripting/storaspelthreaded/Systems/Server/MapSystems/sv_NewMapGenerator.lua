@@ -945,7 +945,7 @@ MapGenerator.CreateCheckpointEntity = function(self, X, Z, Number)
 	world:CreateComponentAndAddTo("Checkpoint", newCheckpoint)
 	world:GetComponent(newCheckpoint, "Checkpoint", 0):SetInt(Number)
 	world:CreateComponentAndAddTo("Model", newCheckpoint)
-	world:GetComponent(newCheckpoint, "Model", 0):SetModel("checkpoint" .. Number, "checkpoint", 0)
+	world:GetComponent(newCheckpoint, "Model", 0):SetModel("checkpoint", "checkpoint", 0)
 	
 	return	newCheckpoint
 end
@@ -1148,9 +1148,9 @@ MapGenerator.CreateEdgePiece = function(self, isCorner)
 	world:GetComponent(newEdge, "Scale", 0):SetFloat3(1.0, 1.0, 1.0)
 	
 	if isCorner then
-		world:GetComponent(newEdge, "Model", 0):SetModel("edgeoutercorner", "edgeoutercorner", 0)
+		world:GetComponent(newEdge, "Model", 0):SetModel("edgeoutercorner", "edgeoutercorner", 1)
 	else
-		world:GetComponent(newEdge, "Model", 0):SetModel("edgeflat", "edgeflat", 0)
+		world:GetComponent(newEdge, "Model", 0):SetModel("edgeflat", "edgeflat", 1)
 	end
 	
 	return	newEdge

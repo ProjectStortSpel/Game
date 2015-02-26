@@ -41,10 +41,13 @@ WeatherTornadoSystem.EntitiesAdded = function(self, dt, newEntities)
 		end
 		
 		if world:EntityHasComponent(tEntity, "NewStep") then
-		
+			print("NewStep")
 			for i = 1, #self.TornadoIds do
+				self:RemoveSpin()
+				self:CheckCollision(self.TornadoIds[i]) -- Check before the tornado has moved
 				self:MoveTornado(self.TornadoIds[i])
-				self:CheckCollision(self.TornadoIds[i])
+				self:CheckCollision(self.TornadoIds[i]) -- Check after the tornado has moved
+
 			end
 			
 		end
@@ -52,12 +55,38 @@ WeatherTornadoSystem.EntitiesAdded = function(self, dt, newEntities)
 			
 			for i = 1, #self.TornadoIds do
 				self:CancelTornado(self.TornadoIds[i])
-				self.TornadoIds[i] = nil
+				--self.TornadoIds[i] = nil
 			end
 		end
 		
 	end
 	
+end
+
+WeatherTornadoSystem.RemoveSpin = function(self)
+	
+	local units = self:GetEntities("Unit")
+	
+	for i = 1, #units do
+	
+		if world:EntityHasComponent(units[i], "Spin") then 
+		
+			world:RemoveComponentFrom("Spin", units[i])
+		
+			posX, posZ = world:GetComponent(units[i], "MapPosition", 0):GetInt2()
+		
+			world:CreateComponentAndAddTo("LerpPosition", units[i])
+			world:GetComponent(units[i], "LerpPosition", "X"):SetFloat(posX)
+			world:GetComponent(units[i], "LerpPosition", "Y"):SetFloat(0.5)
+			world:GetComponent(units[i], "LerpPosition", "Z"):SetFloat(posZ)
+			world:GetComponent(units[i], "LerpPosition", "Time"):SetFloat(0.5)
+			world:GetComponent(units[i], "LerpPosition", "Algorithm"):SetText("NormalLerp")
+			world:GetComponent(units[i], "LerpPosition", "KillWhenFinished"):SetBool(false)
+		end
+		
+	end
+	
+
 end
 
 WeatherTornadoSystem.AddTornado = function(self)
@@ -144,7 +173,7 @@ WeatherTornadoSystem.MoveTornado = function(self, id)
 				world:GetComponent(id, "LerpPosition", "X"):SetFloat(tPosX)
 				world:GetComponent(id, "LerpPosition", "Y"):SetFloat(0.5)
 				world:GetComponent(id, "LerpPosition", "Z"):SetFloat(tPosZ)
-				world:GetComponent(id, "LerpPosition", "Time"):SetFloat(2.0)
+				world:GetComponent(id, "LerpPosition", "Time"):SetFloat(0.5)
 				world:GetComponent(id, "LerpPosition", "Algorithm"):SetText("NormalLerp")
 				world:GetComponent(id, "LerpPosition", "KillWhenFinished"):SetBool(false)
 				
@@ -171,9 +200,30 @@ WeatherTornadoSystem.CheckCollision = function(self, id)
 		
 		local playerX, playerZ = world:GetComponent(units[i], "MapPosition", 0):GetInt2()
 		
+		print("\nplayerX: " .. playerX)
+		print("playerZ: " .. playerZ)
+		print("posX: " .. posX)
+		print("posZ: " .. posZ)
+	
 		if posX == playerX and posZ == playerZ then
 			print("COLLISION WITH A PLAYER. YOU SPIN ME RIGHT ROUND, BABY RIGHT ROUND!")
-	
+			if not world:EntityHasComponent(units[i], "Spin") then
+				world:CreateComponentAndAddTo("Spin", units[i])
+				world:GetComponent(units[i], "Spin", 0):SetFloat3(0, 20, 0)
+				
+				
+				world:CreateComponentAndAddTo("LerpPosition", units[i])
+				world:GetComponent(units[i], "LerpPosition", "X"):SetFloat(posX)
+				world:GetComponent(units[i], "LerpPosition", "Y"):SetFloat(1.5)
+				world:GetComponent(units[i], "LerpPosition", "Z"):SetFloat(posZ)
+				world:GetComponent(units[i], "LerpPosition", "Time"):SetFloat(0.5)
+				world:GetComponent(units[i], "LerpPosition", "Algorithm"):SetText("NormalLerp")
+				world:GetComponent(units[i], "LerpPosition", "KillWhenFinished"):SetBool(false)
+				
+				
+				
+				
+			end
 		end
 		
 	end
@@ -182,12 +232,12 @@ end
 
 WeatherTornadoSystem.CancelTornado = function(self, id)
 
-	world:CreateComponentAndAddTo("LerpScale", id)
-	world:GetComponent(id, "LerpScale", "X"):SetFloat(0.0)
-	world:GetComponent(id, "LerpScale", "Y"):SetFloat(0.0)
-	world:GetComponent(id, "LerpScale", "Z"):SetFloat(0.0)
-	world:GetComponent(id, "LerpScale", "Time"):SetFloat(1.0)
-	world:GetComponent(id, "LerpScale", "Algorithm"):SetText("NormalLerp")
-	world:GetComponent(id, "LerpScale", "KillWhenFinished"):SetBool(true)
+	--world:CreateComponentAndAddTo("LerpScale", id)
+	--world:GetComponent(id, "LerpScale", "X"):SetFloat(0.0)
+	--world:GetComponent(id, "LerpScale", "Y"):SetFloat(0.0)
+	--world:GetComponent(id, "LerpScale", "Z"):SetFloat(0.0)
+	--world:GetComponent(id, "LerpScale", "Time"):SetFloat(1.0)
+	--world:GetComponent(id, "LerpScale", "Algorithm"):SetText("NormalLerp")
+	--world:GetComponent(id, "LerpScale", "KillWhenFinished"):SetBool(true)
 	
 end
