@@ -118,9 +118,7 @@ int GenerateIslandMesh(lua_State* L)
 		std::string	line;
 		for( int X = 0; X < sizeX; ++X)
 			line.push_back((char)stringMap[Z*sizeX + X]);	
-					
-		printf(line.c_str());
-		printf("AA\n");
+
 		strVector.push_back(line);
 	}
 
