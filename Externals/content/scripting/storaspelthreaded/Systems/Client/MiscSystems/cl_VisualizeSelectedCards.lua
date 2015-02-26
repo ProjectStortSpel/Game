@@ -245,7 +245,7 @@ VisualizeSelectedCards.SimulateCardsFromPos = function(self, _unit, _posX, _posY
 			print()
 		end
 		
-		if cardName == "Forward" then
+		if cardName == "Forward" or cardName == "Stone" then
 			
 			fellDown, posX, posY = self:SimulateMoveForward(posX, posY, dirX, dirY, true, false, 1, false)
 			
