@@ -4,11 +4,6 @@ namespace LuaBridge
 {
 	namespace CombinationMath
 	{
-		//std::vector<std::vector<unsigned char>> m_combinations;
-		//std::vector<std::vector<unsigned char>> m_permutations;
-		//char* m_combinations;
-		//char* m_permutations;
-
 		void Embed(lua_State* L)
 		{
 			LuaEmbedder::AddFunction(L, "Combinations", &LuaCombinations, "CombinationMath");
@@ -53,8 +48,6 @@ namespace LuaBridge
 
 			unsigned int noOfCombinations = NoOfCombinations(noToChooseFrom, noToPick);
 			unsigned int noOfPermutations = NoOfPermutations(noToChooseFrom, noToPick);
-
-			printf("permutations %i\n", noOfPermutations);
 
 			char *combinations = new char[noOfCombinations * noToPick];
 			char *permutations = new char[noOfPermutations * noToPick + 1];
@@ -112,10 +105,6 @@ namespace LuaBridge
 		{
 			int loops = 0;
 			
-			clock_t start, end;
-			
-			start = clock();
-			
 			for (unsigned int i = 0; i < *_combinationsSize; i += _cardsToPick)
 			{
 				do
@@ -129,11 +118,6 @@ namespace LuaBridge
 					loops++;
 				} while (std::next_permutation(_combinations + i, _combinations + i + _cardsToPick));
 			}
-			
-			end = clock();
-			
-			// TODO: REMOVE INCLUDE TIME.
-			std::cout << "Found " << loops << " permutations in " << (end - start) * 1000 / CLOCKS_PER_SEC << " milliseconds." << std::endl;
 		}
 
 		unsigned int NoOfCombinations(unsigned int _noToChooseFrom, unsigned int _noToPick)
