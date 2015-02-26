@@ -528,7 +528,7 @@ void GraphicsHigh::CreateShadowMap()
 	m_shadowShader.CheckUniformLocation("diffuseTex", 1);
 }
 
-bool GraphicsHigh::PreLoadModel(std::string _dir, std::string _file, int _renderType)
+bool GraphicsHigh::PreLoadModel(std::vector<std::string> _dirs, std::string _file, int _renderType)
 {
 	Shader *shaderPtr = NULL;
 
@@ -556,7 +556,7 @@ bool GraphicsHigh::PreLoadModel(std::string _dir, std::string _file, int _render
 
 	// Import Object
 	//ObjectData obj = AddObject(_dir, _file);
-	ObjectData obj = ModelLoader::importObject(_dir, _file);
+	ObjectData obj = ModelLoader::importObject(_dirs, _file);
 
 	// Import Texture
 	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
@@ -575,13 +575,13 @@ bool GraphicsHigh::PreLoadModel(std::string _dir, std::string _file, int _render
 
 	return true;
 }
-int GraphicsHigh::LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color)
+int GraphicsHigh::LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color)
 {
 	int modelID = m_modelIDcounter;
 	m_modelIDcounter++;
 	
 	ModelToLoad* modelToLoad = new ModelToLoad();
-	modelToLoad->Dir = _dir;
+	modelToLoad->Dirs = _dirs;
 	modelToLoad->File = _file;
 	modelToLoad->MatrixPtr = _matrixPtr;
 	modelToLoad->RenderType = _renderType;

@@ -8,6 +8,10 @@ struct ObjectData
 	std::string text;
 	std::string norm;
 	std::string spec;
+	ObjectData()
+	{
+		mesh = text = norm = spec = "";
+	}
 	ObjectData(std::string dir)
 	{
 		mesh = text = norm = spec = dir;
@@ -68,61 +72,97 @@ public:
 		return vertexlist;
 	}
 
-	static ObjectData importObject(std::string dir, std::string file)
+	static bool GetFilePath(std::vector<std::string>& dirs, std::string& file, std::string* out)
 	{
-		ObjectData objectdata(dir);
-
-		std::string fileDir = dir;
-		fileDir.append(file);
-
-		// Open file
-		SDL_RWops* fileIn = SDL_RWFromFile(fileDir.c_str(), "r");
-		if (fileIn == NULL)
+		for (int i = 0; i < dirs.size(); ++i)
 		{
-			SDL_Log("File %s not found", fileDir.c_str());
-			return objectdata;
+			std::string fileDir = dirs[i];
+			fileDir.append(file);
+
+			SDL_RWops* fileIn = SDL_RWFromFile(fileDir.c_str(), "r");
+			if (fileIn != NULL)
+			{
+				Sint64 length = SDL_RWseek(fileIn, 0, RW_SEEK_END);
+				SDL_RWclose(fileIn);
+				if (length == 0)
+				{
+					*out = "";
+					SDL_Log("Length of file %s lower than or equal to zero", fileDir.c_str());
+					return false;
+				}
+				*out = fileDir;
+				return true;
+			}
+			SDL_RWclose(fileIn);
 		}
-		// Get file length
-		Sint64 length = SDL_RWseek(fileIn, 0, RW_SEEK_END);
-		if (length <= 0)
+		*out = "";
+		SDL_Log("File %s not found", file.c_str());
+		return false;
+	}
+
+	static ObjectData importObject(std::vector<std::string> _dirs, std::string file)
+	{
+		ObjectData objectdata;
+
+		std::string filePath;
+
+
+		if (GetFilePath(_dirs, file, &filePath))
 		{
-			SDL_Log("Length of file %s lower than or equal to zero", fileDir.c_str());
-			return objectdata;
+			SDL_RWops* fileIn = SDL_RWFromFile(filePath.c_str(), "r");
+			Sint64 length = SDL_RWseek(fileIn, 0, RW_SEEK_END);
+			SDL_RWseek(fileIn, 0, RW_SEEK_SET);
+			// Read data
+			char* data = new char[length];
+			SDL_RWread(fileIn, data, length, 1);
+			std::string dataString = std::string(data, length);
+			delete[] data;
+			// Close file
+			SDL_RWclose(fileIn);
+
+
+			size_t prevFileIndex = 0, nextFileIndex = std::string::npos;
+			std::string temp;
+
+
+			nextFileIndex = dataString.find('\n', prevFileIndex);
+			temp = dataString.substr(prevFileIndex, nextFileIndex - prevFileIndex);
+			temp.erase(std::remove(temp.begin(), temp.end(), 13), temp.end());
+			prevFileIndex = nextFileIndex + 1;
+			if (GetFilePath(_dirs, temp, &filePath))
+			{
+				objectdata.mesh = filePath;
+			}
+
+			nextFileIndex = dataString.find('\n', prevFileIndex);
+			temp = dataString.substr(prevFileIndex, nextFileIndex - prevFileIndex);
+			temp.erase(std::remove(temp.begin(), temp.end(), 13), temp.end());
+			prevFileIndex = nextFileIndex + 1;
+			if (GetFilePath(_dirs, temp, &filePath))
+			{
+				objectdata.text = filePath;
+			}
+
+			nextFileIndex = dataString.find('\n', prevFileIndex);
+			temp = dataString.substr(prevFileIndex, nextFileIndex - prevFileIndex);
+			temp.erase(std::remove(temp.begin(), temp.end(), 13), temp.end());
+			prevFileIndex = nextFileIndex + 1;
+			if (GetFilePath(_dirs, temp, &filePath))
+			{
+				objectdata.norm = filePath;
+			}
+
+			nextFileIndex = dataString.find('\n', prevFileIndex);
+			temp = dataString.substr(prevFileIndex, nextFileIndex - prevFileIndex);
+			temp.erase(std::remove(temp.begin(), temp.end(), 13), temp.end());
+			prevFileIndex = nextFileIndex + 1;
+			if (GetFilePath(_dirs, temp, &filePath))
+			{
+				objectdata.spec = filePath;
+			}
+
 		}
-		SDL_RWseek(fileIn, 0, RW_SEEK_SET);
-		// Read data
-		char* data = new char[length + 1];
-		SDL_RWread(fileIn, data, length, 1);
-		data[length] = '\0';
-		std::string dataString = std::string(data);
-		delete [] data;
-		// Close file
-		SDL_RWclose(fileIn);
-
-		//std::ifstream fileIn(fileDir);
-
-		size_t prevFileIndex = 0, nextFileIndex = std::string::npos;
-		std::string temp;
-		nextFileIndex = dataString.find('\n', prevFileIndex);
-		temp = dataString.substr(prevFileIndex, nextFileIndex - prevFileIndex);
-		temp.erase(std::remove(temp.begin(), temp.end(), 13), temp.end());
-		prevFileIndex = nextFileIndex + 1;
-		objectdata.mesh.append(temp);
-		nextFileIndex = dataString.find('\n', prevFileIndex);
-		temp = dataString.substr(prevFileIndex, nextFileIndex - prevFileIndex);
-		temp.erase(std::remove(temp.begin(), temp.end(), 13), temp.end());
-		prevFileIndex = nextFileIndex + 1;
-		objectdata.text.append(temp);
-		nextFileIndex = dataString.find('\n', prevFileIndex);
-		temp = dataString.substr(prevFileIndex, nextFileIndex - prevFileIndex);
-		temp.erase(std::remove(temp.begin(), temp.end(), 13), temp.end());
-		prevFileIndex = nextFileIndex + 1;
-		objectdata.norm.append(temp);
-		nextFileIndex = dataString.find('\n', prevFileIndex);
-		temp = dataString.substr(prevFileIndex, nextFileIndex - prevFileIndex);
-		temp.erase(std::remove(temp.begin(), temp.end(), 13), temp.end());
-		prevFileIndex = nextFileIndex + 1;
-		objectdata.spec.append(temp);
+		
 
 		return objectdata;
 	}

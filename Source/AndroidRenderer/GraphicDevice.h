@@ -68,7 +68,7 @@ namespace Renderer
 
 	struct ModelToLoad
 	{
-		std::string Dir;
+		std::vector<std::string> Dirs;
 		std::string File;
 		glm::mat4* MatrixPtr;
 		int RenderType;
@@ -130,9 +130,12 @@ namespace Renderer
 		Camera *GetCamera(){ return m_camera; }
 		void GetWindowSize(int &x, int &y){ x = m_clientWidth; y = m_clientHeight; }
 
+		// ANIMATIONS
+		bool SetAnimation(int _modelId, int _animId);
+
 		// MODELLOADER
-		virtual bool PreLoadModel(std::string _dir, std::string _file, int _renderType = RENDER_FORWARD){ return false; };
-		virtual int LoadModel(std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_FORWARD, float* _color = nullptr){ return 0; };
+		virtual bool PreLoadModel(std::vector<std::string> _dirs, std::string _file, int _renderType = RENDER_FORWARD){ return false; };
+		virtual int LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_FORWARD, float* _color = nullptr){ return 0; };
 		int LoadModel(ModelToLoadFromSource* _modelToLoad);
 		virtual bool RemoveModel(int _id){ return false; };
 		virtual bool ActiveModel(int _id, bool _active){ return false; };

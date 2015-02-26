@@ -22,7 +22,7 @@ namespace Renderer
 		void Render();
 
 		// MODELLOADER
-		bool PreLoadModel(std::string _dir, std::string _file, int _renderType = RENDER_DEFERRED);
+		bool PreLoadModel(std::vector<std::string> _dirs, std::string _file, int _renderType = RENDER_DEFERRED);
 		bool RemoveModel(int _id);
 		bool ActiveModel(int _id, bool _active);
 
