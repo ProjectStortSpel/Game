@@ -163,6 +163,12 @@ bool GraphicDevice::InitSkybox()
 	return true;
 }
 
+
+bool GraphicDevice::SetAnimation(int _modelId, int _animId)
+{
+	return false;
+}
+
 GLuint GraphicDevice::AddTexture(std::string _fileDir, GLenum _textureSlot)
 {
     //printf("fileDir: %s\n", _fileDir.c_str());
