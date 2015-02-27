@@ -202,7 +202,6 @@ void MasterServerSystem::OnConnectionAccepted(Network::NetConnection _nc, const 
 
 	m_mServerMessages.clear();
 	//m_clientDatabase->Disconnect();
-	m_connect = true;
 }
 
 void MasterServerSystem::OnServerShutdown(Network::NetConnection _nc, const char* _msg)
@@ -282,6 +281,7 @@ void MasterServerSystem::OnGetServerList(Network::PacketHandler* _ph, uint64_t& 
 void MasterServerSystem::OnGrantDisconnect(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
 {
 	m_clientDatabase->Disconnect();
+	m_connect = true;
 }
 
 void MasterServerSystem::EntitiesAddedServer(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities)
