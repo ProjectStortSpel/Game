@@ -45,6 +45,9 @@ namespace ECSL
 		DataLocation GetComponent(unsigned int _entityId, const std::string& _componentType, const std::string& _variableName);
 		DataLocation GetComponent(unsigned int _entityId, const std::string& _componentType, const int _index);
 		DataLocation GetComponent(unsigned int _entityId, const unsigned int _componentType, const int _index);
+		void GetComponents(std::vector<DataLocation>& _out, const std::vector<unsigned int>* _entityIds, const std::string& _componentType, const std::string& _variableName);
+		void GetComponents(std::vector<DataLocation>& _out, const std::vector<unsigned int>* _entityIds, const std::string& _componentType, unsigned int _index);
+		void GetComponents(std::vector<DataLocation>& _out, const std::vector<unsigned int>* _entityIds, unsigned int _componentTypeId, unsigned int _index);
 		void SetComponent(unsigned int _entityId, const std::string& _componentType, const std::string& _variableName, void* _data, bool _notifyNetwork = true);
 		bool HasComponent(unsigned int _entityId, const std::string& _componentType);
 		bool HasComponent(unsigned int _entityId, unsigned int _componentTypeId);

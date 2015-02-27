@@ -66,14 +66,9 @@ PickBoxSystem.Update = function(self, dt)
 	end
 	
 	if hit == true then
-		local isReleased = Input.GetTouchState(0) == InputState.Released
-	  
 		-- ADD OnPickBoxHit to newhit
 		if not world:EntityHasComponent(newhit, "OnPickBoxHit") then
 			world:CreateComponentAndAddTo("OnPickBoxHit", newhit)
-			if isReleased and not world:EntityHasComponent(newhit, "OnPickBoxReleased") then
-				world:CreateComponentAndAddTo("OnPickBoxReleased", newhit)
-			end
 		end
 		
 		-- Clear OnPickBoxHit from entities
@@ -82,13 +77,6 @@ PickBoxSystem.Update = function(self, dt)
 			local entity = entities[i]
 			if entity ~= newhit then
 				world:RemoveComponentFrom("OnPickBoxHit", entity)
-				if world:EntityHasComponent(entity, "OnPickBoxReleased") then
-					world:RemoveComponentFrom("OnPickBoxReleased", entity)
-				end
-			else
-				if not isReleased and world:EntityHasComponent(entity, "OnPickBoxReleased") then
-					world:RemoveComponentFrom("OnPickBoxReleased", entity)
-				end
 			end
 		end
 	else
@@ -97,9 +85,6 @@ PickBoxSystem.Update = function(self, dt)
 		for i = 1, #entities do
 			local entity = entities[i]
 			world:RemoveComponentFrom("OnPickBoxHit", entity)
-			if world:EntityHasComponent(entity, "OnPickBoxReleased") then
-				world:RemoveComponentFrom("OnPickBoxReleased", entity)
-			end
 		end
 	end
 end

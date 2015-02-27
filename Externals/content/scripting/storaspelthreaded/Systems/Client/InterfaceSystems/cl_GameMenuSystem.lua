@@ -1,5 +1,6 @@
 GameMenuSystem = System()
 GameMenuSystem.Name = "GameMenu"
+GameMenuSystem.RequestRelease = false
 
 GameMenuSystem.Initialize = function(self)
 	--	Set Name
@@ -15,7 +16,7 @@ GameMenuSystem.Initialize = function(self)
 end
 
 GameMenuSystem.Update = function(self, dt)
-	if Input.GetTouchState(0) == InputState.Released then
+	if self.RequestRelease then
 		local pressedButtons = self:GetEntities("OnPickBoxHit")
 		if #pressedButtons > 0 then
 			local pressedButton = pressedButtons[1]
@@ -33,6 +34,12 @@ GameMenuSystem.Update = function(self, dt)
 		else
 			self:RemoveMenu()
 		end
+	end
+	
+	if Input.GetTouchState(0) == InputState.Released then
+		self.RequestRelease = true
+	else
+		self.RequestRelease = false
 	end
 end
 

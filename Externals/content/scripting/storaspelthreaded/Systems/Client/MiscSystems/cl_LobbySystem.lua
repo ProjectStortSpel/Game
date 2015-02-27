@@ -1,5 +1,6 @@
 LobbySystem = System()
 LobbySystem.Name = "LobbyMenu"
+LobbySystem.RequestRelease = false
 
 LobbySystem.Initialize = function ( self )
 	--	Set Name
@@ -18,7 +19,7 @@ LobbySystem.Initialize = function ( self )
 end
 
 LobbySystem.Update = function(self, dt)
-	if Input.GetTouchState(0) == InputState.Released then
+	if self.RequestRelease then
 		local pressedButtons = self:GetEntities("OnPickBoxHit")
 		if #pressedButtons > 0 then
 			local pressedButton = pressedButtons[1]
@@ -28,6 +29,12 @@ LobbySystem.Update = function(self, dt)
 				world:CreateComponentAndAddTo(compname, id)
 			end
 		end
+	end
+	
+	if Input.GetTouchState(0) == InputState.Released then
+		self.RequestRelease = true
+	else
+		self.RequestRelease = false
 	end
 end
 

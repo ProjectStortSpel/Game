@@ -8,6 +8,7 @@ IPConnectSystem.BackgroundEntity = -1
 IPConnectSystem.BackgroundConnectText = -1
 IPConnectSystem.BackgroundExampleText = -1
 IPConnectSystem.ConnectEntity = -1
+IPConnectSystem.RequestRelease = false
 
 IPConnectSystem.Initialize = function(self)
 	self:SetName("IPConnectSystem");
@@ -28,7 +29,7 @@ IPConnectSystem.Update = function(self, dt)
 			self:Deactivate()
 		end
 		
-		if Input.GetTouchState(0) == InputState.Released then
+		if self.RequestRelease then
 			local pressedButtons = self:GetEntities("OnPickBoxHit")
 			if #pressedButtons > 0 then
 				local pressedButton = pressedButtons[1]
@@ -50,6 +51,12 @@ IPConnectSystem.Update = function(self, dt)
 				local id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo("ConnectMenu", id)
 			end
+		end
+		
+		if Input.GetTouchState(0) == InputState.Released then
+			self.RequestRelease = true
+		else
+			self.RequestRelease = false
 		end
 	end
 end

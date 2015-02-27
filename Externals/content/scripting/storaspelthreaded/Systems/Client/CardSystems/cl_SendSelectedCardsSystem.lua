@@ -1,4 +1,5 @@
 SendSelectedCardsSystem = System()
+SendSelectedCardsSystem.RequestRelease = false
 
 SendSelectedCardsSystem.Initialize = function ( self )
 	--	Set Name
@@ -19,7 +20,7 @@ SendSelectedCardsSystem.Update = function(self, dt)
 	local button = self:GetEntities("ReadyButton")
 
 	if #button > 0 then
-		if world:EntityHasComponent(button[1], "OnPickBoxHit") and Input.GetTouchState(0) == InputState.Released then
+		if world:EntityHasComponent(button[1], "OnPickBoxHit") and self.RequestRelease then
 		
 			self:SendSelectedCards()
 			self:DeselectAll()
@@ -33,6 +34,12 @@ SendSelectedCardsSystem.Update = function(self, dt)
 			for n = 1, #button do
 				world:KillEntity(button[n])
 			end
+		end
+		
+		if Input.GetTouchState(0) == InputState.Released then
+			self.RequestRelease = true
+		else
+			self.RequestRelease = false
 		end
 	end
 	
