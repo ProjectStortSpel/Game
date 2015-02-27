@@ -157,19 +157,51 @@ void phongModel(int index, out vec3 ambient, out vec3 diffuse, out vec3 spec) {
 	return;
 }
 
+uniform float ElapsedTime;
+
 void main() 
 {
+	float v = atan(TexCoord.y / TexCoord.x);
+
+	vec2 finalCoord;
+
+	finalCoord.x = TexCoord.x / cos(v);
+	finalCoord.x = finalCoord.x / sqrt(2);
+
+	finalCoord.y = TexCoord.y - 0.1f * ElapsedTime;
+
+	if( finalCoord.y < 0.0f )
+	{
+		finalCoord.y = finalCoord.y - (floor(finalCoord.y)-1);
+	}
+
+	v = atan(finalCoord.y / TexCoord.x);
+	finalCoord.y = sin(v);
+
+	//vec2 modifiedCoord = TexCoord;
+	//vec2 cornerCoord;
+	//if(A < 0.0)
+	//	cornerCoord = vec2(0.0, 0.0);
+	//else if(A > 0.0)
+	//	cornerCoord = vec2(0.0, 1.0);
+
+	//float dY = TexCoord.y - cornerCoord.y;
+
+	//TexCoord.y = cornerCoord.y + TexCoord.x * dY;
+	
+	//----------------------------------------------
+
 	// Diffuse tex
-	vec4 albedo_tex = texture( diffuseTex, TexCoord );
+	vec4 albedo_tex = texture( diffuseTex, finalCoord );
 
 	// Normal data
-	vec3 normal_map	  = texture( normalTex, TexCoord ).rgb;
+	vec3 normal_map	  = texture( normalTex, finalCoord ).rgb;
 	normal_map = (normal_map * 2.0f) - 1.0f;
 	mat3 texSpace = mat3(Tan, BiTan, Normal);
 	NmNormal = normalize( texSpace * normal_map );
 
 	// Spec data
-	vec4 specglow_map = texture( specularTex, TexCoord );
+	vec4 specglow_map = texture( specularTex, finalCoord );
 	float blendFactor = specglow_map.w;
 
 	if( AddColor != vec3(0.0) )
