@@ -31,9 +31,12 @@ void main()
 		sizeFactor = 1.0-(age/ParticleLifetime)*0.5;
 		if(age < 200.0)
 			Transp = age/200.0 - age/ParticleLifetime;
-		else if(age/ParticleLifetime > 0.8)
-			sizeFactor *= 0.5;
-		Transp = 1.0 - age / ParticleLifetime;
+        else
+        {
+            if(age/ParticleLifetime > 0.8)
+                sizeFactor *= 0.5;
+            Transp = 1.0 - age / ParticleLifetime;
+        }
 	}
 
 	gl_PointSize = 200.0 * Size * sizeFactor /-eyep.z;

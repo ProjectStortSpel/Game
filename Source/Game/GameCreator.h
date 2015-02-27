@@ -115,7 +115,8 @@ private:
 	bool						m_running;
 	
 	Utility::FrameCounter m_inputCounter;
-	Utility::FrameCounter m_worldCounter;
+	Utility::FrameCounter m_clientWorldCounter;
+	Utility::FrameCounter m_serverWorldCounter;
 	Utility::FrameCounter m_networkCounter;
 	Utility::FrameCounter m_graphicsCounter;
 	Utility::FrameCounter m_luaGarbageCollectionCounter;

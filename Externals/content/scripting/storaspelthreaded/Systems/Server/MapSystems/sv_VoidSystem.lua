@@ -66,21 +66,15 @@ VoidSystem.EntitiesAdded = function(self, dt, entities)
 							end
 							
 							--	Spawn rating entity
-						
 							local	unitDied	=	world:CreateNewEntity()
 							world:CreateComponentAndAddTo("UnitDied", unitDied)
-							world:GetComponent(unitDied, "UnitDied", "PlayerNumber"):SetInt(world:GetComponent(units[i], "PlayerNumber", 0):GetInt())
-							world:GetComponent(unitDied, "UnitDied", "X"):SetInt(voidX)
-							world:GetComponent(unitDied, "UnitDied", "Z"):SetInt(voidZ)
+							world:GetComponent(unitDied, "UnitDied", "PlayerNumber"):SetInt3(world:GetComponent(units[i], "PlayerNumber", 0):GetInt(), voidX, voidZ)
 							
 							--	Move the unit
 							if not world:EntityHasComponent(units[i], "LerpPosition") then
 								world:CreateComponentAndAddTo("LerpPosition", units[i])
 							end
-							world:GetComponent(units[i], "LerpPosition", "X"):SetFloat(tmpX)
-							world:GetComponent(units[i], "LerpPosition", "Y"):SetFloat(-10)
-							world:GetComponent(units[i], "LerpPosition", "Z"):SetFloat(voidZ)
-							world:GetComponent(units[i], "LerpPosition", "Time"):SetFloat(1)
+							world:GetComponent(units[i], "LerpPosition", "Time"):SetFloat4(1, tmpX, -10, voidZ)
 							world:GetComponent(units[i], "LerpPosition", "Algorithm"):SetText("ExponentialLerp")
 							
 							hitVoid = true

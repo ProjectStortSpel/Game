@@ -8,18 +8,25 @@
 
 class TextureLoader{
 public:
-static unsigned int LoadTexture(const char* file, GLenum textureSlot, int &height, int &width)
+static int LoadTexture(const char* file, GLenum textureSlot, int &height, int &width)
 {
 	std::string fp = std::string(file);
 	fp.erase(std::remove(fp.begin(), fp.end(), 13), fp.end());
 	// Open file
 	SDL_RWops* fileIn = SDL_RWFromFile(fp.c_str(), "rb");
 	if (fileIn == NULL)
-		SDL_Log("File %s not found", fp.c_str());
+    {
+        SDL_Log("File %s not found", fp.c_str());
+        return -1;
+    }
 	// Get file length
 	Sint64 length = SDL_RWseek(fileIn, 0, RW_SEEK_END);
 	if (length <= 0)
-		SDL_Log("Length of file %s lower than or equal to zero", fp.c_str());
+    {
+        SDL_Log("Length of file %s lower than or equal to zero", fp.c_str());
+        SDL_RWclose(fileIn);
+        return -1;
+    }
 	SDL_RWseek(fileIn, 0, RW_SEEK_SET);
 	// Read data
 	char* data = new char[length];
@@ -35,6 +42,7 @@ static unsigned int LoadTexture(const char* file, GLenum textureSlot, int &heigh
 	if (!imgData)
 	{
 		SDL_Log( "Texture '%s' not loaded." , fp.c_str());
+        return -1;
 	}
 
 	GLuint texHandle;

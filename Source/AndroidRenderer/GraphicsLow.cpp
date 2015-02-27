@@ -41,7 +41,9 @@ bool GraphicsLow::Init()
 		m_camera = new Camera(m_clientWidth, m_clientHeight);
 
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
-	InitFBO();
+#ifdef __ANDROID__
+    InitFBO();
+#endif
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	if (!InitSkybox()) { ERRORMSG("INIT SKYBOX FAILED\n"); return false; }
 	if (!InitLightBuffers()) { ERRORMSG("INIT LIGHTBUFFER FAILED\n"); return false; }
@@ -74,10 +76,13 @@ void GraphicsLow::Render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 
-	//GLint oldFBO;
-	//glGetIntegerv(GL_FRAMEBUFFER, &oldFBO);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
+#if defined(__ANDROID__)
+    GLint oldFBO = 0;
+    glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
+#elif defined(__IOS__)
+    GLint oldFBO;
+    glGetIntegerv(GL_FRAMEBUFFER, &oldFBO);
+#endif
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glViewport(0, 0, m_framebufferWidth, m_framebufferHeight);
@@ -230,8 +235,9 @@ void GraphicsLow::Render()
 		}
 	}
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, oldFBO);
 
+#ifdef __ANDROID__
 	// DRAW FULLSCREEN
 	glViewport(0, 0, m_clientWidth, m_clientHeight);
 
@@ -262,6 +268,8 @@ void GraphicsLow::Render()
 
 	glDeleteBuffers(1, &buf);
 
+#endif
+    
 	glDisable(GL_TEXTURE_2D);
 	glUseProgram(0);
 	glEnable(GL_DEPTH_TEST);

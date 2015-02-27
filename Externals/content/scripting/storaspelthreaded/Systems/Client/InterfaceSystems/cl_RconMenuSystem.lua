@@ -1,5 +1,6 @@
 RconMenuSystem = System()
 RconMenuSystem.Name = "RconMenu"
+RconMenuSystem.RequestRelease = false
 
 RconMenuSystem.Initialize = function(self)
 	--	Set Name
@@ -15,7 +16,7 @@ RconMenuSystem.Initialize = function(self)
 end
 
 RconMenuSystem.Update = function(self, dt)
-	if Input.GetTouchState(0) == InputState.Released then
+	if self.RequestRelease then
 		local pressedButtons = self:GetEntities("OnPickBoxHit")
 		if #pressedButtons > 0 then
 			local pressedButton = pressedButtons[1]
@@ -33,6 +34,12 @@ RconMenuSystem.Update = function(self, dt)
 		else
 			self:RemoveMenu()
 		end
+	end
+	
+	if Input.GetTouchState(0) == InputState.Released then
+		self.RequestRelease = true
+	else
+		self.RequestRelease = false
 	end
 end
 
