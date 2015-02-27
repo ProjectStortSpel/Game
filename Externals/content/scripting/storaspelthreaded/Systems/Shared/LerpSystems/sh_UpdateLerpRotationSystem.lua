@@ -18,8 +18,6 @@ UpdateLerpRotationSystem.Update = function(self, dt)
 	for i = 1, #entities do
 		local entity = entities[i]
 		
-		local rotation = world:GetComponent(entity, "Rotation", 0)
-		
 		local _time, _timer, sX, sY, sZ, tX, tY, tZ = world:GetComponent(entity, "LerpingRotation", "Time"):GetFloat8(0)
 		local algorithm = world:GetComponent(entity, "LerpingRotation", "Algorithm"):GetText(0)
 

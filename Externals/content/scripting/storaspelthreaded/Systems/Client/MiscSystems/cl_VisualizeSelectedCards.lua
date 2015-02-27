@@ -57,7 +57,7 @@ VisualizeSelectedCards.EntitiesAdded = function(self, dt, entities)
 	
 	local	nCards	=	self:GetEntities("CardSelected")
 	
-	if #nCards ~= 0 then
+	if #nCards ~= 0 and self.GhostEntity ~= -1 then
 		if world:EntityHasComponent(self.GhostEntity, "Hide") then
 			world:RemoveComponentFrom("Hide", self.GhostEntity)
 		end
@@ -81,7 +81,7 @@ VisualizeSelectedCards.EntitiesRemoved = function(self, dt, entities)
 	
 	local	nCards	=	self:GetEntities("CardSelected")
 	
-	if #nCards == 0 then
+	if #nCards == 0 and self.GhostEntity ~= -1 then
 		if not world:EntityHasComponent(self.GhostEntity, "Hide") then
 			world:CreateComponentAndAddTo("Hide", self.GhostEntity)
 		end
