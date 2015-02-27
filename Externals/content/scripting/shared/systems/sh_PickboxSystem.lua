@@ -38,16 +38,17 @@ PickBoxSystem.Update = function(self, dt)
 		local pickbox = world:GetComponent(entity, "PickBox", 0)
 		
 		-- Get the pickbox size
-		local halfwidth = pickbox:GetFloat(0) * 0.5
-		local halfheight = pickbox:GetFloat(1) * 0.5
+		local halfwidth, halfheight = pickbox:GetFloat2(0)
+		halfwidth = halfwidth * 0.5
+		halfheight = halfheight * 0.5
 		
 		-- Get scale and multiply with halfsize
-		local sX, sY, sZ = scale:GetFloat3()
+		local sX, sY, sZ = world:GetComponent(entity, "Scale", 0):GetFloat3()
 		halfwidth = halfwidth * sX
 		halfheight = halfheight * sY
 		
 		-- Get position of object
-		local X, Y, Z = position:GetFloat3()
+		local X, Y, Z = world:GetComponent(entity, "Position", 0):GetFloat3()
 		
 		-- Calc ray distance from Z
 		local hitX = rX * Z
@@ -83,8 +84,7 @@ PickBoxSystem.Update = function(self, dt)
 		-- Clear OnPickBoxHit from entities
 		local entities = self:GetEntities("OnPickBoxHit")
 		for i = 1, #entities do
-			local entity = entities[i]
-			world:RemoveComponentFrom("OnPickBoxHit", entity)
+			world:RemoveComponentFrom("OnPickBoxHit", entities[i])
 		end
 	end
 end
