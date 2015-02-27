@@ -47,17 +47,17 @@ void main()
 	Material.Ks			= specglow_map.x;
 	Material.Shininess  = specglow_map.y * 254.0 + 1.0;
 	float glow			= specglow_map.z;
-
 	float blendFactor = specglow_map.w;
-
-	if( BlendColor != vec3(0.0) )
-		albedo_tex.xyz = (1.0-blendFactor)*albedo_tex.xyz + blendFactor * BlendColor; 
-
-	vec4 glowvec = vec4(glow*albedo_tex.xyz, 0.0);
 
 	vec3 ambient = vec3(1.0);
 	vec3 diffuse = vec3(0.0);
 	vec3 spec    = vec3(0.0);
+	
+	vec4 coloradded;
+	if( BlendColor != vec3(0.0) )
+		coloradded = vec4((1.0-blendFactor)*albedo_tex.xyz + blendFactor * BlendColor, albedo_tex.a);
+	else
+		coloradded = albedo_tex;
 
-	gl_FragColor = vec4(ambient + diffuse*(1.0-glow), 1.0) * albedo_tex + vec4(spec, 0.0) + glowvec + vec4(specglow_map.xyz-specglow_map.xyz+normal_map-normal_map, 0.0);
+	gl_FragColor = vec4(ambient + diffuse, 1.0) * coloradded + vec4(spec, 0.0) + vec4(normal_map, 0.0)*0.00000001;
 }

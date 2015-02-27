@@ -366,6 +366,10 @@ bool GraphicDevice::BufferModelTexture(int _id, std::string _fileDir, int _textu
 
 void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 {
+	// Temporary fix for water
+	if (_modelToLoad->RenderType == 5)
+		_modelToLoad->RenderType = 0;
+  
 	Shader *shaderPtr = NULL;
 
 	if (_modelToLoad->RenderType == RENDER_FORWARD)
@@ -432,6 +436,10 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 
 void GraphicDevice::BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoad)
 {
+	// Temporary fix for water
+	if (_modelToLoad->RenderType == 5)
+		_modelToLoad->RenderType = 0;
+  
 	Shader *shaderPtr = NULL;
 
 	if (_modelToLoad->RenderType == RENDER_FORWARD)
