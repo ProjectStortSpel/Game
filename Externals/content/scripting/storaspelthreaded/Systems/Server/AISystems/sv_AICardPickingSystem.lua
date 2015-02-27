@@ -1,6 +1,6 @@
 AICardPickingSystem = System()
 AICardPickingSystem.PrintSimulation = 0
-AICardPickingSystem.AICheat = 0
+AICardPickingSystem.AICheat = 1
 AICardPickingSystem.PermutationsDone = false
 AICardPickingSystem.PermutationIndex = 1
 AICardPickingSystem.PermutationsArray = ''
@@ -134,26 +134,18 @@ end
 
 AICardPickingSystem.GetCheckpointPos = function(self, _targetCheckpointNumber)
 	
-	local targetX, targetY
 	local checkpointTiles = self:GetEntities("Checkpoint")
-	local found = false
 	
 	for k = 1, #checkpointTiles do
 		local checkpointNumber = world:GetComponent(checkpointTiles[k], "Checkpoint", 0):GetInt(0)
 		
 		if checkpointNumber == _targetCheckpointNumber then
-			targetX, targetY = world:GetComponent(checkpointTiles[k], "MapPosition", 0):GetInt2(0)
-			found = true
-			break
+			return world:GetComponent(checkpointTiles[k], "MapPosition", 0):GetInt2(0)
 		end
 	end
 	
-	if not found then
-		print("Did not find the next checkpoint, will AI reach the finish? Please report to Nermansson :)")
-		return 0, 0
-	end
-	
-	return targetX, targetY
+	-- Next checkpoint was not found, that means that the AI will probably get to the finish, return the same target so it will stay close to the finish if it is pushed away.
+	return self:GetCheckpointPos(_targetCheckpointNumber - 1)
 end
 
 AICardPickingSystem.ReachedCheckpoint = function(self, _targetCheckpointNumber, _posX, _posY)
@@ -225,8 +217,7 @@ AICardPickingSystem.PickCards = function( self, _unitID, _playerNumber, _cardSet
 	-- Get the distance from where we end up using the cards.
 	local simFellDown, simCPsReached, simPosX, simPosY, simDirX, simDirY = self:SimulateCards(_unitID, targetNr, cardsToSim)
 	
-	local dist = PathfinderHandler.GeneratePath(simPosX, simPosY, targetX, targetY)
-		
+	-- If a checkpoint has been reached, change the target.
 	if 0 < simCPsReached then
 		
 		--print("checkpoint reached in the middle of a round")
@@ -235,6 +226,8 @@ AICardPickingSystem.PickCards = function( self, _unitID, _playerNumber, _cardSet
 		targetX, targetY = self:GetCheckpointPos(targetNr)
 		--io.write("target after: ", targetX, ", ", targetY, "\n")
 	end
+	
+	local dist = PathfinderHandler.GeneratePath(simPosX, simPosY, targetX, targetY)
 	
 	-- TODO: Add method to vaska cards if we will fall down.
 	--if fellDown then
@@ -272,6 +265,7 @@ AICardPickingSystem.PickCards = function( self, _unitID, _playerNumber, _cardSet
 			self.BestDistances[_playerNumber * 3 - 1] = nextDist
 			self.BestDistances[_playerNumber * 3] = simCPsReached
 			
+			--io.write("\n\n")
 			-- Save the cards which where used.
 			for card = 1, cardsToPick do
 				
@@ -281,7 +275,7 @@ AICardPickingSystem.PickCards = function( self, _unitID, _playerNumber, _cardSet
 				self.ChosenCardsArray[arrayIndex] = charVar
 				--io.write(self.ChosenCardsArray[arrayIndex], ", ")
 			end
-			--io.write("\n")
+			--io.write("\n SimCPsReached: ", simCPsReached, ", dist: ", dist, ", nextDist: ", nextDist, "\n")
 		end
 	end
 end
@@ -530,7 +524,7 @@ AICardPickingSystem.SendCards = function(self, _player)
 		
 		local action = world:GetComponent(cardSet[cardIndex], "CardAction", 0):GetText()
 		local prio = world:GetComponent(cardSet[cardIndex], "CardPrio", 0):GetInt()
-		print("AI Action: " .. action .. " - Prio: " .. prio)
+		--print("AI Action: " .. action .. " - Prio: " .. prio)
 		
 		world:RemoveComponentFrom("DealtCard", cardSet[cardIndex])
 		world:RemoveComponentFrom("AICard", cardSet[cardIndex])
@@ -656,6 +650,7 @@ AICardPickingSystem.SimulateMoveForward = function(self, _posX, _posY, _dirX, _d
 		
 		if self:TileHasComponent("NotWalkable", posX, posY) then
 			
+			--print("Stone at", posX, posY)
 			posX = posX - _dirX * forward
 			posY = posY - _dirY * forward
 			
