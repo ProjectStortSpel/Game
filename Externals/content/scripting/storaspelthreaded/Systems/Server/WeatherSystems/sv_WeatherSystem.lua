@@ -31,18 +31,14 @@ WeatherSystem.EntitiesAdded = function(self, dt, newEntities)
 		local	tEntity	=	newEntities[n]
 		
 		if world:EntityHasComponent(tEntity, "NewRound") then
-		
-			self:SpawnWeather()
-			
-		
-			--local	actualWeatherChance	=	math.random(1, 100)
-			--self.WeatherChance	=	(self.WeatherChance+1)*1.08
-			--print("Weather forecast, " .. self.WeatherChance .. "% chance of weather")
-			--if actualWeatherChance <= self.WeatherChance then
-			--
-			--	self:SpawnWeather()
-			--	self.WeatherChance	=	0
-			--end
+				
+			local	actualWeatherChance	=	math.random(1, 100)
+			self.WeatherChance	=	(self.WeatherChance+1)*1.08
+			print("Weather forecast, " .. self.WeatherChance .. "% chance of weather")
+			if actualWeatherChance <= self.WeatherChance then
+				self:SpawnWeather()
+				self.WeatherChance	=	0
+			end
 			
 		end
 		
