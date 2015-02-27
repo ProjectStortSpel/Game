@@ -18,16 +18,7 @@ UpdateLerpScaleSystem.Update = function(self, dt)
 	for i = 1, #entities do
 		local entity = entities[i]
 		
-		local scale = world:GetComponent(entity, "Scale", 0)
-		
-		local sX = world:GetComponent(entity, "LerpingScale", "sX"):GetFloat(0)
-		local sY = world:GetComponent(entity, "LerpingScale", "sY"):GetFloat(0)
-		local sZ = world:GetComponent(entity, "LerpingScale", "sZ"):GetFloat(0)
-		local tX = world:GetComponent(entity, "LerpingScale", "tX"):GetFloat(0)
-		local tY = world:GetComponent(entity, "LerpingScale", "tY"):GetFloat(0)
-		local tZ = world:GetComponent(entity, "LerpingScale", "tZ"):GetFloat(0)
-		local _time = world:GetComponent(entity, "LerpingScale", "Time"):GetFloat(0)
-		local _timer = world:GetComponent(entity, "LerpingScale", "Timer"):GetFloat(0)
+		local _time, _timer, sX, sY, sZ, tX, tY, tZ = world:GetComponent(entity, "LerpingScale", "Time"):GetFloat8(0)
 		local algorithm = world:GetComponent(entity, "LerpingScale", "Algorithm"):GetText(0)
 
 		_timer = _timer + dt
@@ -39,11 +30,10 @@ UpdateLerpScaleSystem.Update = function(self, dt)
 			local Y = sY + (tY - sY) * t
 			local Z = sZ + (tZ - sZ) * t
 			
-			scale:SetFloat3(X, Y, Z, false)
-			
+			world:GetComponent(entity, "Scale", 0):SetFloat3(X, Y, Z, false)
 			world:GetComponent(entity, "LerpingScale", "Timer"):SetFloat(_timer, false)
 		else
-			scale:SetFloat3(tX, tY, tZ, false)
+			world:GetComponent(entity, "Scale", 0):SetFloat3(tX, tY, tZ, false)
 			world:RemoveComponentFrom("LerpingScale", entity)
 		end	
 	end

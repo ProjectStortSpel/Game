@@ -607,7 +607,7 @@ void GameCreator::StartGame(int argc, char** argv)
 			break;
 		m_inputCounter.Tick();
 
-		m_worldCounter.Reset();
+		m_serverWorldCounter.Reset();
 		/*	Update world (systems, entities, etc)	*/
 		
 		m_serverWorldProfiler->Begin();
@@ -616,7 +616,11 @@ void GameCreator::StartGame(int argc, char** argv)
 		m_serverWorldProfiler->End();
 		m_serverWorldProfiler->Update(dt);
 		m_serverWorldProfiler->Render();
+
+		m_serverWorldCounter.Tick();
         
+		m_clientWorldCounter.Reset();
+
 		m_clientWorldProfiler->Begin();
         if (m_clientWorld)
             m_clientWorld->Update(dt);
@@ -624,8 +628,7 @@ void GameCreator::StartGame(int argc, char** argv)
 		m_clientWorldProfiler->Update(dt);
 		m_clientWorldProfiler->Render();
         
-
-		m_worldCounter.Tick();
+		m_clientWorldCounter.Tick();
 
 		m_luaGarbageCollectionCounter.Reset();
 		LuaEmbedder::CollectGarbageForDuration(0.1f * dt);
@@ -711,13 +714,18 @@ void GameCreator::StartGame(int argc, char** argv)
 			ss << "Lua memory usage: " << LuaEmbedder::GetMemoryUsage() << " Kb";
 			m_graphics->RenderSimpleText(ss.str(), 20, 1);
 
+			std::stringstream slaves;
+			slaves << "Slave Threads: " << MPL::TaskManager::GetInstance().GetSlaveCount();
+			m_graphics->RenderSimpleText(slaves.str(), 20, 2);
+
 			m_graphics->RenderSimpleText("Time Statistics", 60, 0);
-			PrintSectionTime("Total   ", m_frameCounter, 60, 1);
-			PrintSectionTime("Input   ", &m_inputCounter, 60, 2);
-			PrintSectionTime("World   ", &m_worldCounter, 60, 3);
-			PrintSectionTime("Network ", &m_networkCounter, 60, 4);
-			PrintSectionTime("Graphics", &m_graphicsCounter, 60, 5);
-			PrintSectionTime("Lua GC  ", &m_luaGarbageCollectionCounter, 60, 6);
+			PrintSectionTime("Total       ", m_frameCounter, 60, 1);
+			PrintSectionTime("Input       ", &m_inputCounter, 60, 2);
+			PrintSectionTime("Server World", &m_serverWorldCounter, 60, 3);
+			PrintSectionTime("Client World", &m_clientWorldCounter, 60, 4);
+			PrintSectionTime("Network     ", &m_networkCounter, 60, 5);
+			PrintSectionTime("Graphics    ", &m_graphicsCounter, 60, 6);
+			PrintSectionTime("Lua GC      ", &m_luaGarbageCollectionCounter, 60, 7);
 		}
 
 		m_frameCounter->Tick();

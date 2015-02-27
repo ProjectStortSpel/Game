@@ -93,7 +93,6 @@ public:
 				*out = fileDir;
 				return true;
 			}
-			SDL_RWclose(fileIn);
 		}
 		*out = "";
 		SDL_Log("File %s not found", file.c_str());
