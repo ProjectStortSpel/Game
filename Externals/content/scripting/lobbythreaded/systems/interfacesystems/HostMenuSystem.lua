@@ -3,6 +3,7 @@ HostMenuSystem.Name = "HostMenu"
 HostMenuSystem.IsMenuActive = false
 HostMenuSystem.IsTextBoxActive = false
 HostMenuSystem.ActiveTextId = -1
+HostMenuSystem.RequestRelease = false
 
 HostMenuSystem.Initialize = function(self)
 	self:SetName(self.Name.."System")
@@ -49,7 +50,7 @@ HostMenuSystem.Update = function(self, dt)
 		return
 	end
 
-	if Input.GetTouchState(0) == InputState.Released then
+	if self.RequestRelease then
 		local pressedButtons = self:GetEntities("OnPickBoxHit")
 		if #pressedButtons > 0 then
 		
@@ -76,6 +77,11 @@ HostMenuSystem.Update = function(self, dt)
 	
 	self:UpdateText()
 	
+	if Input.GetTouchState(0) == InputState.Released then
+		self.RequestRelease = true
+	else
+		self.RequestRelease = false
+	end
 end
 
 HostMenuSystem.UpdateText = function(self)

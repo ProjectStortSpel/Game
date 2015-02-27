@@ -18,27 +18,31 @@ end
 
 AudioUnitDeathSystem.Update = function(self, dt, taskIndex, taskCount)
 	local entities = self:GetEntities("Unit")
-	for i = 1, #entities do
-		local entity = entities[i]
-		local y = world:GetComponent(entity, "Position", "Y"):GetFloat(0)
-		
-		if self.PrevPosYTable[entity] ~= nil then
-			if y <= self.AudioDeathPosY and self.PrevPosYTable[entity] > self.AudioDeathPosY then
-				local audioId = Net.StartPack("Client.PlaySound")
-				Net.WriteString(audioId, "No")
-				Net.WriteBool(audioId, false)
-				Net.Broadcast(audioId)
+	if entities ~= nil then
+		for i = 1, #entities do
+			local entity = entities[i]
+			local y = world:GetComponent(entity, "Position", "Y"):GetFloat(0)
+			
+			if self.PrevPosYTable[entity] ~= nil then
+				if y <= self.AudioDeathPosY and self.PrevPosYTable[entity] > self.AudioDeathPosY then
+					local audioId = Net.StartPack("Client.PlaySound")
+					Net.WriteString(audioId, "No")
+					Net.WriteBool(audioId, false)
+					Net.Broadcast(audioId)
+				end
 			end
+		  
+			self.PrevPosYTable[entity] = y
 		end
-	  
-		self.PrevPosYTable[entity] = y
 	end
 end
 
 AudioUnitDeathSystem.EntitiesAdded = function(self, dt, taskIndex, taskCount, entities)
-	for i = 1, #entities do
-		local entity = entities[i]
-		local y = world:GetComponent(entity, "Position", "Y"):GetFloat(0)
-		self.PrevPosYTable[entity] = y
+	if entities ~= nil then
+		for i = 1, #entities do
+			local entity = entities[i]
+			local y = world:GetComponent(entity, "Position", "Y"):GetFloat(0)
+			self.PrevPosYTable[entity] = y
+		end
 	end
 end

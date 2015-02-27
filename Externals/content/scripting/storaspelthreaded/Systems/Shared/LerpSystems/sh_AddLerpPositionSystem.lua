@@ -18,26 +18,15 @@ AddLerpPositionSystem.EntitiesAdded = function(self, dt, entities)
 		local entity = entities[n]
 
 		-- Get Lerp Position
-		local tX = world:GetComponent(entity, "LerpPosition", "X"):GetFloat(0)
-		local tY = world:GetComponent(entity, "LerpPosition", "Y"):GetFloat(0)
-		local tZ = world:GetComponent(entity, "LerpPosition", "Z"):GetFloat(0)
-		local lerpTime = world:GetComponent(entity, "LerpPosition", "Time"):GetFloat(0)
+		local lerpTime, tX, tY, tZ = world:GetComponent(entity, "LerpPosition", "Time"):GetFloat4(0)
 		local lerpAlgorithm = world:GetComponent(entity, "LerpPosition", "Algorithm"):GetText(0)
 
 		-- Get Current Position
-		local position = world:GetComponent(entity, "Position", 0)
-		local X, Y, Z = position:GetFloat3(0)
+		local X, Y, Z = world:GetComponent(entity, "Position", 0):GetFloat3(0)
 		
 		-- Create Lerping
 		world:CreateComponentAndAddTo("LerpingPosition", entity)
-		world:GetComponent(entity, "LerpingPosition", "sX"):SetFloat(X)
-		world:GetComponent(entity, "LerpingPosition", "sY"):SetFloat(Y)
-		world:GetComponent(entity, "LerpingPosition", "sZ"):SetFloat(Z)
-		world:GetComponent(entity, "LerpingPosition", "tX"):SetFloat(tX)
-		world:GetComponent(entity, "LerpingPosition", "tY"):SetFloat(tY)
-		world:GetComponent(entity, "LerpingPosition", "tZ"):SetFloat(tZ)
-		world:GetComponent(entity, "LerpingPosition", "Time"):SetFloat(lerpTime)
-		world:GetComponent(entity, "LerpingPosition", "Timer"):SetFloat(0)
+		world:GetComponent(entity, "LerpingPosition", "Time"):SetFloat8(lerpTime, 0, X, Y, Z, tX, tY, tZ)
 		world:GetComponent(entity, "LerpingPosition", "Algorithm"):SetText(lerpAlgorithm)
 		
 		world:RemoveComponentFrom("LerpPosition", entity)

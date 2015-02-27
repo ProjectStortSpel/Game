@@ -1297,7 +1297,7 @@ MapGenerator.PlaceTrees = function(self)
 			world:GetComponent(newTree, "Rotation", 0):SetFloat3(math.pi * 0.01 * math.random(0, 10), math.pi * 0.01 * math.random(0, 100), math.pi * 0.01 * math.random(0, 10))
 			local randScale = 1.0 + math.sin(math.random(0, 360)) * 0.3
 			world:GetComponent(newTree, "Scale", 0):SetFloat3(0, 0, 0)
-			world:GetComponent(newTree, "Model", 0):SetModel("tree", "tree", 8)
+			world:GetComponent(newTree, "Model", 0):SetModel("tree", "tree", 0)
 			
 			world:CreateComponentAndAddTo("LerpScale", newTree)
 			world:GetComponent(newTree, "LerpScale", "X"):SetFloat(randScale)

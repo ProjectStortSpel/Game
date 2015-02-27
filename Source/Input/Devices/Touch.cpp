@@ -51,6 +51,9 @@ void Touch::Update()
 		m_lastState[it->first] = it->second;
 
 	m_deltaPositions.clear();
+	
+	m_pressedStates.clear();
+	m_releasedStates.clear();
 }
 
 void Touch::PollEvent(SDL_Event e)
@@ -69,6 +72,8 @@ void Touch::PollEvent(SDL_Event e)
 
             m_thisState[n] = true;
             m_positions[n] = FingerPosition(e.tfinger.x, e.tfinger.y);
+	    //if (m_lastState.find(n) == m_lastState.end() || !m_lastState[n])
+		    m_pressedStates[n] = true;
             break;
             
         case SDL_FINGERUP:
@@ -79,10 +84,10 @@ void Touch::PollEvent(SDL_Event e)
             
             fingers[n].active = SDL_FALSE;
 
-	    if (m_thisState[n] == true)
-		    m_lastState[n] = true;
             m_thisState[n] = false;
             m_positions[n] = FingerPosition(e.tfinger.x, e.tfinger.y);
+	    //if (m_lastState.find(n) == m_lastState.end() || m_lastState[n])
+		    m_releasedStates[n] = true;
             break;
             
         case SDL_FINGERMOTION:
@@ -99,17 +104,16 @@ void Touch::PollEvent(SDL_Event e)
 
 InputState Touch::GetFingerState(SDL_FingerID _finger)
 {
+	bool tLast	= m_lastState.find(_finger) != m_lastState.end() ? m_lastState[_finger] : false;
+	bool tThis	= m_thisState.find(_finger) != m_thisState.end() ? m_thisState[_finger] : false;
+	bool tPressed	= m_pressedStates.find(_finger) != m_pressedStates.end() ? m_pressedStates[_finger] : false;
+	bool tReleased	= m_releasedStates.find(_finger) != m_releasedStates.end() ? m_releasedStates[_finger] : false;
 
-	bool tLast		=	m_lastState.find(_finger) != m_lastState.end() ? m_lastState[_finger] : false;
-	bool tThis		=	m_thisState.find(_finger) != m_thisState.end() ? m_thisState[_finger] : false;
-
-
-	if (tThis && !tLast)
+	if (tReleased)
+		return InputState::RELEASED;
+	else if (tPressed)
 		return InputState::PRESSED;
 	else if (tLast && tThis)
 		return InputState::DOWN;
-	else if (!tThis && tLast)
-		return InputState::RELEASED;
-
 	return InputState::UP;
 }

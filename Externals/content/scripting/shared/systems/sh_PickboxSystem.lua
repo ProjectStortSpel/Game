@@ -64,12 +64,14 @@ PickBoxSystem.Update = function(self, dt)
 			end
 		end
 	end
+	
 	if hit == true then
 		-- ADD OnPickBoxHit to newhit
 		if not world:EntityHasComponent(newhit, "OnPickBoxHit") then
 			world:CreateComponentAndAddTo("OnPickBoxHit", newhit)
 		end
-		-- Clear OnPickBoxHit from other entities
+		
+		-- Clear OnPickBoxHit from entities
 		local entities = self:GetEntities("OnPickBoxHit")
 		for i = 1, #entities do
 			local entity = entities[i]

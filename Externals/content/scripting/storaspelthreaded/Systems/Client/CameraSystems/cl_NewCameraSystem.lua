@@ -275,6 +275,49 @@ NewCameraSystem.DoFreeCam = function(self, dt)
 			rposition:SetFloat3(0, 0, 1)
 			local rposition = world:GetComponent(self.TouchSprite2, "Position", 0)
 			rposition:SetFloat3(0, 0, 1)
+		elseif Input.GetTouchState(0) == InputState.Released and self.Pressed == false then
+			local rposition = world:GetComponent(self.TouchScreen, "Position", 0)
+			rposition:SetFloat3(0, 0, -100)
+			
+			local x, y, z = GraphicDevice.GetCamera():GetPosition()
+			
+			if mX > 0.5 - 0.1 * deltaaspectX then
+				local temp = self.CameraUpX
+				self.CameraUpX = self.CameraUpZ
+				self.CameraUpZ = -1*temp
+				move = true
+			end
+			if mX < -0.5 + 0.1 * deltaaspectX then
+				local temp = self.CameraUpX
+				self.CameraUpX = self.CameraUpZ*-1
+				self.CameraUpZ = temp
+				move = true
+			end
+			if mY > 0.5 - 0.1 then
+				self.CameraDistance = self.CameraDistance - 0.2
+				if self.CameraDistance < 0.4 then
+					self.CameraDistance = 0.4
+				end
+				move = true
+			end
+			if mY < -0.5 + 0.1 then
+				self.CameraDistance = self.CameraDistance + 0.2
+				if self.CameraDistance > 1.8 then
+					self.CameraDistance = 1.8
+				end
+				move = true
+			end
+			if move == true then
+				GraphicDevice.GetCamera():MoveToAndLookAt(self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10-2,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
+											self.CameraUpX,0,self.CameraUpZ,
+											self.CameraLookAtX,0.5,self.CameraLookAtZ,
+											0.5)
+			end	
+			
+			local rposition = world:GetComponent(self.TouchSprite1, "Position", 0)
+			rposition:SetFloat3(0, 0, 1)
+			local rposition = world:GetComponent(self.TouchSprite2, "Position", 0)
+			rposition:SetFloat3(0, 0, 1)
 		end
 		if Input.GetTouchState(0) == InputState.Pressed  then
 			self.Pressed = true

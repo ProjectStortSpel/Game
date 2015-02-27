@@ -173,9 +173,6 @@
     <ClCompile Include="..\..\..\Source\Game\Systems\RenderRemoveSystem.cpp">
       <Filter>Game\Systems\Render</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\Game\Systems\SyncEntitiesSystem.cpp">
-      <Filter>Game\Systems\NetworkMessages</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Systems\ResetChangedSystem.cpp">
       <Filter>Game\Systems\Changed</Filter>
     </ClCompile>
@@ -287,6 +284,12 @@
     <ClCompile Include="..\..\..\Source\Game\MeshCreator\Tile.cpp">
       <Filter>Game\MeshCreator</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\SimulateFrameSpikeSystem.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\SyncEntitiesSystem.cpp">
+      <Filter>Game\Systems\NetworkMessages</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h">
@@ -363,9 +366,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\RenderRemoveSystem.h">
       <Filter>Game\Systems\Render</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Source\Game\Systems\SyncEntitiesSystem.h">
-      <Filter>Game\Systems\NetworkMessages</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\ResetChangedSystem.h">
       <Filter>Game\Systems\Changed</Filter>
@@ -480,6 +480,10 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\MeshCreator\Tile.h">
       <Filter>Game\MeshCreator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\SimulateFrameSpikeSystem.h" />
+    <ClInclude Include="..\..\..\Source\Game\Systems\SyncEntitiesSystem.h">
+      <Filter>Game\Systems\NetworkMessages</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
