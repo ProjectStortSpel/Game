@@ -659,6 +659,7 @@ void ServerNetwork::NetConnectionLost(NetConnection& _connection)
 
 	if((*m_receivePacketThreads)[_connection].joinable())
 		(*m_receivePacketThreads)[_connection].join();
+	(*m_receivePacketThreads).erase(_connection);
 }
 
 void ServerNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection)
