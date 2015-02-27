@@ -86,6 +86,11 @@ DataLocation System::GetComponent(unsigned int _entityId, const std::string& _co
 	return m_dataManager->GetComponentTable(_componentType)->GetComponent(_entityId, _index);
 }
 
+DataLocation System::GetComponent(unsigned int _entityId, unsigned int _componentTypeId, const std::string& _variableName)
+{
+	return m_dataManager->GetComponentTable(_componentTypeId)->GetComponent(_entityId, _variableName);
+}
+
 DataLocation System::GetComponent(unsigned int _entityId, unsigned int _componentTypeId, unsigned int _index)
 {
 	return m_dataManager->GetComponentTable(_componentTypeId)->GetComponent(_entityId, _index);
