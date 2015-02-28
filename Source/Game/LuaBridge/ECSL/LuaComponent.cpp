@@ -45,19 +45,29 @@ namespace LuaBridge
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetFloat3", &LuaComponent::GetFloat3);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetFloat4", &LuaComponent::GetFloat4);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetFloat5", &LuaComponent::GetFloat5);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetFloat6", &LuaComponent::GetFloat6);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetFloat7", &LuaComponent::GetFloat7);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetFloat8", &LuaComponent::GetFloat8);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetFloat", &LuaComponent::SetFloat);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetFloat2", &LuaComponent::SetFloat2);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetFloat3", &LuaComponent::SetFloat3);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetFloat4", &LuaComponent::SetFloat4);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetFloat5", &LuaComponent::SetFloat5);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetFloat6", &LuaComponent::SetFloat6);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetFloat7", &LuaComponent::SetFloat7);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetFloat8", &LuaComponent::SetFloat8);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetInt", &LuaComponent::GetInt);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetInt2", &LuaComponent::GetInt2);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetInt3", &LuaComponent::GetInt3);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetInt4", &LuaComponent::GetInt4);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetInt5", &LuaComponent::GetInt5);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetInt6", &LuaComponent::GetInt6);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetInt", &LuaComponent::SetInt);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetInt2", &LuaComponent::SetInt2);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetInt3", &LuaComponent::SetInt3);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetInt4", &LuaComponent::SetInt4);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetInt5", &LuaComponent::SetInt5);
+		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetInt6", &LuaComponent::SetInt6);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetBool", &LuaComponent::GetBool);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "SetBool", &LuaComponent::SetBool);
 		LuaEmbedder::EmbedClassFunction<LuaComponent>(L, "Component", "GetText", &LuaComponent::GetText);
@@ -119,6 +129,42 @@ namespace LuaBridge
 		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[3]));
 		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[4]));
 		return 5;
+	}
+	int LuaComponent::GetFloat6(lua_State* L)
+	{
+		assert(m_dataLocation);
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[0]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[1]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[2]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[3]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[4]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[5]));
+		return 6;
+	}
+	int LuaComponent::GetFloat7(lua_State* L)
+	{
+		assert(m_dataLocation);
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[0]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[1]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[2]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[3]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[4]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[5]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[6]));
+		return 7;
+	}
+	int LuaComponent::GetFloat8(lua_State* L)
+	{
+		assert(m_dataLocation);
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[0]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[1]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[2]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[3]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[4]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[5]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[6]));
+		LuaEmbedder::PushFloat(L, (float)(((float*)m_dataLocation)[7]));
+		return 8;
 	}
 	int LuaComponent::SetFloat(lua_State* L)
 	{
@@ -197,6 +243,58 @@ namespace LuaBridge
 		ComponentHasChanged(notifyNetwork);
 		return 0;
 	}
+	int LuaComponent::SetFloat6(lua_State* L)
+	{
+		assert(m_dataLocation);
+		((float*)m_dataLocation)[0] = LuaEmbedder::PullFloat(L, 1);
+		((float*)m_dataLocation)[1] = LuaEmbedder::PullFloat(L, 2);
+		((float*)m_dataLocation)[2] = LuaEmbedder::PullFloat(L, 3);
+		((float*)m_dataLocation)[3] = LuaEmbedder::PullFloat(L, 4);
+		((float*)m_dataLocation)[4] = LuaEmbedder::PullFloat(L, 5);
+		((float*)m_dataLocation)[5] = LuaEmbedder::PullFloat(L, 6);
+		bool notifyNetwork = true;
+		if (LuaEmbedder::IsBool(L, 7))
+			notifyNetwork = LuaEmbedder::PullBool(L, 7);
+
+		ComponentHasChanged(notifyNetwork);
+		return 0;
+	}
+	int LuaComponent::SetFloat7(lua_State* L)
+	{
+		assert(m_dataLocation);
+		((float*)m_dataLocation)[0] = LuaEmbedder::PullFloat(L, 1);
+		((float*)m_dataLocation)[1] = LuaEmbedder::PullFloat(L, 2);
+		((float*)m_dataLocation)[2] = LuaEmbedder::PullFloat(L, 3);
+		((float*)m_dataLocation)[3] = LuaEmbedder::PullFloat(L, 4);
+		((float*)m_dataLocation)[4] = LuaEmbedder::PullFloat(L, 5);
+		((float*)m_dataLocation)[5] = LuaEmbedder::PullFloat(L, 6);
+		((float*)m_dataLocation)[6] = LuaEmbedder::PullFloat(L, 7);
+		bool notifyNetwork = true;
+		if (LuaEmbedder::IsBool(L, 8))
+			notifyNetwork = LuaEmbedder::PullBool(L, 8);
+
+		ComponentHasChanged(notifyNetwork);
+		return 0;
+	}
+	int LuaComponent::SetFloat8(lua_State* L)
+	{
+		assert(m_dataLocation);
+		((float*)m_dataLocation)[0] = LuaEmbedder::PullFloat(L, 1);
+		((float*)m_dataLocation)[1] = LuaEmbedder::PullFloat(L, 2);
+		((float*)m_dataLocation)[2] = LuaEmbedder::PullFloat(L, 3);
+		((float*)m_dataLocation)[3] = LuaEmbedder::PullFloat(L, 4);
+		((float*)m_dataLocation)[4] = LuaEmbedder::PullFloat(L, 5);
+		((float*)m_dataLocation)[5] = LuaEmbedder::PullFloat(L, 6);
+		((float*)m_dataLocation)[6] = LuaEmbedder::PullFloat(L, 7);
+		((float*)m_dataLocation)[7] = LuaEmbedder::PullFloat(L, 8);
+
+		bool notifyNetwork = true;
+		if (LuaEmbedder::IsBool(L, 9))
+			notifyNetwork = LuaEmbedder::PullBool(L, 9);
+
+		ComponentHasChanged(notifyNetwork);
+		return 0;
+	}
 
 	int LuaComponent::GetInt(lua_State* L)
 	{
@@ -230,6 +328,27 @@ namespace LuaBridge
 		LuaEmbedder::PushInt(L, (int)(((int*)m_dataLocation)[2]));
 		LuaEmbedder::PushInt(L, (int)(((int*)m_dataLocation)[3]));
 		return 4;
+	}
+	int LuaComponent::GetInt5(lua_State* L)
+	{
+		assert(m_dataLocation);
+		LuaEmbedder::PushInt(L, (int)(((int*)m_dataLocation)[0]));
+		LuaEmbedder::PushInt(L, (int)(((int*)m_dataLocation)[1]));
+		LuaEmbedder::PushInt(L, (int)(((int*)m_dataLocation)[2]));
+		LuaEmbedder::PushInt(L, (int)(((int*)m_dataLocation)[3]));
+		LuaEmbedder::PushInt(L, (int)(((int*)m_dataLocation)[4]));
+		return 5;
+	}
+	int LuaComponent::GetInt6(lua_State* L)
+	{
+		assert(m_dataLocation);
+		LuaEmbedder::PushInt(L, (int)(((int*)m_dataLocation)[0]));
+		LuaEmbedder::PushInt(L, (int)(((int*)m_dataLocation)[1]));
+		LuaEmbedder::PushInt(L, (int)(((int*)m_dataLocation)[2]));
+		LuaEmbedder::PushInt(L, (int)(((int*)m_dataLocation)[3]));
+		LuaEmbedder::PushInt(L, (int)(((int*)m_dataLocation)[4]));
+		LuaEmbedder::PushInt(L, (int)(((int*)m_dataLocation)[5]));
+		return 6;
 	}
 	int LuaComponent::SetInt(lua_State* L)
 	{
@@ -290,6 +409,39 @@ namespace LuaBridge
 		bool notifyNetwork = true;
 		if (LuaEmbedder::IsBool(L, 5))
 			notifyNetwork = LuaEmbedder::PullBool(L, 5);
+
+		ComponentHasChanged(notifyNetwork);
+		return 0;
+	}
+	int LuaComponent::SetInt5(lua_State* L)
+	{
+		assert(m_dataLocation);
+		((int*)m_dataLocation)[0] = LuaEmbedder::PullInt(L, 1);
+		((int*)m_dataLocation)[1] = LuaEmbedder::PullInt(L, 2);
+		((int*)m_dataLocation)[2] = LuaEmbedder::PullInt(L, 3);
+		((int*)m_dataLocation)[3] = LuaEmbedder::PullInt(L, 4);
+		((int*)m_dataLocation)[4] = LuaEmbedder::PullInt(L, 5);
+		bool notifyNetwork = true;
+
+		if (LuaEmbedder::IsBool(L, 6))
+			notifyNetwork = LuaEmbedder::PullBool(L, 6);
+
+		ComponentHasChanged(notifyNetwork);
+		return 0;
+	}
+	int LuaComponent::SetInt6(lua_State* L)
+	{
+		assert(m_dataLocation);
+		((int*)m_dataLocation)[0] = LuaEmbedder::PullInt(L, 1);
+		((int*)m_dataLocation)[1] = LuaEmbedder::PullInt(L, 2);
+		((int*)m_dataLocation)[2] = LuaEmbedder::PullInt(L, 3);
+		((int*)m_dataLocation)[3] = LuaEmbedder::PullInt(L, 4);
+		((int*)m_dataLocation)[4] = LuaEmbedder::PullInt(L, 5);
+		((int*)m_dataLocation)[5] = LuaEmbedder::PullInt(L, 6);
+		bool notifyNetwork = true;
+
+		if (LuaEmbedder::IsBool(L, 7))
+			notifyNetwork = LuaEmbedder::PullBool(L, 7);
 
 		ComponentHasChanged(notifyNetwork);
 		return 0;

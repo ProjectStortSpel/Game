@@ -32,21 +32,31 @@ namespace LuaBridge
 		int GetFloat3(lua_State* L);
 		int GetFloat4(lua_State* L);
 		int GetFloat5(lua_State* L);
+		int GetFloat6(lua_State* L);
+		int GetFloat7(lua_State* L);
+		int GetFloat8(lua_State* L);
 		int SetFloat(lua_State* L);
 		int SetFloat2(lua_State* L);
 		int SetFloat3(lua_State* L);
 		int SetFloat4(lua_State* L);
 		int SetFloat5(lua_State* L);
+		int SetFloat6(lua_State* L);
+		int SetFloat7(lua_State* L);
+		int SetFloat8(lua_State* L);
 
 
 		int GetInt(lua_State* L);
 		int GetInt2(lua_State* L);
 		int GetInt3(lua_State* L);
 		int GetInt4(lua_State* L);
+		int GetInt5(lua_State* L);
+		int GetInt6(lua_State* L);
 		int SetInt(lua_State* L);
 		int SetInt2(lua_State* L);
 		int SetInt3(lua_State* L);
 		int SetInt4(lua_State* L);
+		int SetInt5(lua_State* L);
+		int SetInt6(lua_State* L);
 
 		int GetBool(lua_State* L);
 		int SetBool(lua_State* L);

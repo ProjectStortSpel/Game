@@ -5,6 +5,7 @@ in vec3 BiTan;
 in vec2 TexCoord;
 in vec3 ViewPos;
 in vec3 AddColor;
+in float A;
 
 layout( location = 0 ) out vec4 ColorData;
 

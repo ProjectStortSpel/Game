@@ -6,9 +6,6 @@
 
 class SyncEntitiesSystem : public ECSL::System
 {
-	ECSL::World* m_world;
-	float m_timer;
-
 public:
 	SyncEntitiesSystem();
 	~SyncEntitiesSystem();
@@ -20,7 +17,7 @@ public:
 	void EntitiesRemoved(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities);
 
 private:
-
+	float* m_timer;
 	unsigned int m_componentId;
 	unsigned int m_numberOfBitSets;
 };

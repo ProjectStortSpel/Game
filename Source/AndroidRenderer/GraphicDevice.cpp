@@ -366,6 +366,10 @@ bool GraphicDevice::BufferModelTexture(int _id, std::string _fileDir, int _textu
 
 void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 {
+	// Temporary fix for water
+	if (_modelToLoad->RenderType == 5)
+		_modelToLoad->RenderType = 0;
+  
 	Shader *shaderPtr = NULL;
 
 	if (_modelToLoad->RenderType == RENDER_FORWARD)
@@ -432,6 +436,10 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 
 void GraphicDevice::BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoad)
 {
+	// Temporary fix for water
+	if (_modelToLoad->RenderType == 5)
+		_modelToLoad->RenderType = 0;
+  
 	Shader *shaderPtr = NULL;
 
 	if (_modelToLoad->RenderType == RENDER_FORWARD)
@@ -582,8 +590,9 @@ void GraphicDevice::BufferParticleSystems()
 				m_particleSystemsToLoad[i].Color,
 				&m_particleShaders[m_particleSystemsToLoad[i].Name])));
 		}
-		else if (m_particleSystemsToLoad[i].Name == "smoke")
+		/*else if (m_particleSystemsToLoad[i].Name == "smoke")
 		{
+            return;
 			m_particleEffects.insert(std::pair<int, ParticleEffect*>(m_particleSystemsToLoad[i].Id, new Smoke(
 				m_particleSystemsToLoad[i].Pos,
 				m_particleSystemsToLoad[i].NrOfParticles,
@@ -593,7 +602,7 @@ void GraphicDevice::BufferParticleSystems()
 				AddTexture(m_particleSystemsToLoad[i].TextureName, GL_TEXTURE1),
 				m_particleSystemsToLoad[i].Color,
 				&m_particleShaders[m_particleSystemsToLoad[i].Name])));
-		}
+		}*/
 	}
 	m_particleSystemsToLoad.clear();
 

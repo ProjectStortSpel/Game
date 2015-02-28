@@ -24,14 +24,13 @@ int LoadMap(lua_State* L)
 		SDL_Log("Length of file %s lower than or equal to zero", filepath.c_str());
 	SDL_RWseek(file, 0, RW_SEEK_SET);
 	// Read data
-	char* data = new char[length + 1];
+	char* data = new char[length];
 	SDL_RWread(file, data, length, 1);
-	data[length] = '\0';
 	// Close file
 	SDL_RWclose(file);
 	
-	std::string source = std::string(data);
-	printf(source.c_str());
+	std::string source = std::string(data, length);
+	//printf(source.c_str());
 	delete data;
 	std::string line;
 	size_t prevFileIndex = 0, nextFileIndex = std::string::npos;

@@ -143,6 +143,21 @@ DataLocation World::GetComponent(unsigned int _entityId, const unsigned int _com
 	return m_dataManager->GetComponentTable(_componentType)->GetComponent(_entityId, _index);
 }
 
+void World::GetComponents(std::vector<DataLocation>& _out, const std::vector<unsigned int>* _entityIds, const std::string& _componentType, const std::string& _variableName)
+{
+	return m_dataManager->GetComponentTable(_componentType)->GetComponents(_out, _entityIds, _variableName);
+}
+
+void World::GetComponents(std::vector<DataLocation>& _out, const std::vector<unsigned int>* _entityIds, const std::string& _componentType, unsigned int _index)
+{
+	return m_dataManager->GetComponentTable(_componentType)->GetComponents(_out, _entityIds, _index);
+}
+
+void World::GetComponents(std::vector<DataLocation>& _out, const std::vector<unsigned int>* _entityIds, unsigned int _componentTypeId, unsigned int _index)
+{
+	return m_dataManager->GetComponentTable(_componentTypeId)->GetComponents(_out, _entityIds, _index);
+}
+
 void World::SetComponent(unsigned int _entityId, const std::string& _componentType, const std::string& _variableName, void* _data, bool _notifyNetwork)
 {
 	ComponentTable* componentTable = m_dataManager->GetComponentTable(ComponentTypeManager::GetInstance().GetTableId(_componentType));

@@ -634,7 +634,7 @@ MapGenerator.CreateCheckPoint = function(self, X, Z, Index)
 	world:CreateComponentAndAddTo("Checkpoint", newCheckpoint)
 	world:GetComponent(newCheckpoint, "Checkpoint", 0):SetInt(Index)
 	world:CreateComponentAndAddTo("Model", newCheckpoint)
-	world:GetComponent(newCheckpoint, "Model", 0):SetModel("checkpoint" .. Index, "checkpoint", 0)
+	world:GetComponent(newCheckpoint, "Model", 0):SetModel("checkpoint", "checkpoint", 0)
 	
 end
 

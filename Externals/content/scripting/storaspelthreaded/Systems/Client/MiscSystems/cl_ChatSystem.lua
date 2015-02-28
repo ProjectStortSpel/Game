@@ -4,7 +4,6 @@ ChatSystem.Initialize = function(self)
 	
 	--	Set Name
 	self:SetName("ChatSystem")
-	print("HEJCHATSYSTEM")
 	self:InitializeNetworkEvents()
 	self:AddComponentTypeToFilter("NULL", FilterType.Mandatory)
 end

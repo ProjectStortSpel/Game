@@ -18,16 +18,7 @@ UpdateLerpPositionSystem.Update = function(self, dt)
 	for i = 1, #entities do
 		local entity = entities[i]
 		
-		local position = world:GetComponent(entity, "Position", 0)
-		
-		local sX = world:GetComponent(entity, "LerpingPosition", "sX"):GetFloat(0)
-		local sY = world:GetComponent(entity, "LerpingPosition", "sY"):GetFloat(0)
-		local sZ = world:GetComponent(entity, "LerpingPosition", "sZ"):GetFloat(0)
-		local tX = world:GetComponent(entity, "LerpingPosition", "tX"):GetFloat(0)
-		local tY = world:GetComponent(entity, "LerpingPosition", "tY"):GetFloat(0)
-		local tZ = world:GetComponent(entity, "LerpingPosition", "tZ"):GetFloat(0)
-		local _time = world:GetComponent(entity, "LerpingPosition", "Time"):GetFloat(0)
-		local _timer = world:GetComponent(entity, "LerpingPosition", "Timer"):GetFloat(0)
+		local _time, _timer, sX, sY, sZ, tX, tY, tZ = world:GetComponent(entity, "LerpingPosition", "Time"):GetFloat8(0)
 		local algorithm = world:GetComponent(entity, "LerpingPosition", "Algorithm"):GetText(0)
 
 		_timer = _timer + dt
@@ -39,12 +30,15 @@ UpdateLerpPositionSystem.Update = function(self, dt)
 			local Y = sY + (tY - sY) * t2
 			local Z = sZ + (tZ - sZ) * t3
 			
-			position:SetFloat3(X, Y, Z, false)
-			
+			world:GetComponent(entity, "Position", 0):SetFloat3(X, Y, Z, false)
 			world:GetComponent(entity, "LerpingPosition", "Timer"):SetFloat(_timer, false)
 		else
-			position:SetFloat3(tX, tY, tZ, false)
-			world:RemoveComponentFrom("LerpingPosition", entity)
+			world:GetComponent(entity, "Position", 0):SetFloat3(tX, tY, tZ, false)
+			if world:GetComponent(entity, "LerpingPosition", "KillWhenFinished"):GetBool() then
+				world:KillEntity(entity)
+			else
+				world:RemoveComponentFrom("LerpingPosition", entity)
+			end
 		end	
 	end
 end

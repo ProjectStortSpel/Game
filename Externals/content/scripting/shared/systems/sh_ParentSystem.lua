@@ -5,10 +5,11 @@ ParentSystem.Update = function(self, dt)
 	local children = self:GetEntities("Parent")
 	for i = 1, #children do
 		local child = children[i]
-		local parentId = world:GetComponent(child, "Parent", 0):GetInt(0)
+		--local parentId = world:GetComponent(child, "Parent", 0):GetInt(0)
 
-		local x, y, z = world:GetComponent(child, "Position", 0):GetFloat3(0)
-		world:GetComponent(child, "Position", 0):SetFloat3(x, y, z) -- FULHAX FÖR ATT FÅ DEN ATT UPDATERA HELA TIDEN (FUCK EFFEKTIVITET)
+		local position = world:GetComponent(child, "Position", 0)
+		position:SetFloat3(position:GetFloat3(0)) -- FULHAX FÖR ATT FÅ DEN ATT UPDATERA HELA TIDEN (FUCK EFFEKTIVITET)
+		--position:SetFloat3(x, y, z) 
 		--local x, y, z = world:GetComponent(parentId, "Scale", 0):GetFloat3(0)
 		--world:GetComponent(child, "Scale", 0):SetFloat3(x, y, z)
 	end

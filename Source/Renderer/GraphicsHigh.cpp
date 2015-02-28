@@ -130,6 +130,7 @@ bool GraphicsHigh::InitShaders()
 	m_riverShader.InitShaderProgram();
 	m_riverShader.AddShader("content/shaders/riverShaderVS.glsl", GL_VERTEX_SHADER);
 	m_riverShader.AddShader("content/shaders/FSForwardShader.glsl", GL_FRAGMENT_SHADER);
+	//m_riverShader.AddShader("content/shaders/FSForwardShader.glsl", GL_FRAGMENT_SHADER);
 	m_riverShader.FinalizeShaderProgram();
 
 	// ShadowShader deferred geometry

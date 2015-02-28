@@ -945,7 +945,7 @@ MapGenerator.CreateCheckpointEntity = function(self, X, Z, Number)
 	world:CreateComponentAndAddTo("Checkpoint", newCheckpoint)
 	world:GetComponent(newCheckpoint, "Checkpoint", 0):SetInt(Number)
 	world:CreateComponentAndAddTo("Model", newCheckpoint)
-	world:GetComponent(newCheckpoint, "Model", 0):SetModel("checkpoint" .. Number, "checkpoint", 0)
+	world:GetComponent(newCheckpoint, "Model", 0):SetModel("checkpoint", "checkpoint", 0)
 	
 	return	newCheckpoint
 end
@@ -1058,47 +1058,47 @@ MapGenerator.FixRiverEffects = function(self, riverTiles)
 		
 		if isFirstTile then
 
-			world:GetComponent(riverTiles[waterA], "Model", 0):SetModel("riverend", "riverend", 0, 0)
-			
-			local rotComp = world:GetComponent(riverTiles[waterA], "Rotation", 0)
-			local currentRotation = rotComp:GetFloat(1)
-			rotComp:SetFloat(currentRotation + math.pi, 1)
-			
-			
-			local	newParticle	=	world:CreateNewEntity()
-			world:CreateComponentAndAddTo("Position", newParticle)
-			world:CreateComponentAndAddTo("Color", newParticle)
-			world:CreateComponentAndAddTo("Particle", newParticle)
-			
-			world:GetComponent(newParticle, "Position", "X"):SetFloat3(posAX, 0.33, posAY)
-			world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.6, 0.6, 0.6)
-			
-			world:GetComponent(newParticle, "Particle", "Name"):SetText("smoke")
-			world:GetComponent(newParticle, "Particle", "Texture"):SetText("content/textures/smoke1.png")
-			world:GetComponent(newParticle, "Particle", "Particles"):SetInt(40)
-			world:GetComponent(newParticle, "Particle", "Lifetime"):SetFloat(600)
-			world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.15)
-			world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(0.6)
-			world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
+			--world:GetComponent(riverTiles[waterA], "Model", 0):SetModel("riverend", "riverend", 0, 0)
+			--
+			--local rotComp = world:GetComponent(riverTiles[waterA], "Rotation", 0)
+			--local currentRotation = rotComp:GetFloat(1)
+			--rotComp:SetFloat(currentRotation + math.pi, 1)
+			--
+			--
+			--local	newParticle	=	world:CreateNewEntity()
+			--world:CreateComponentAndAddTo("Position", newParticle)
+			--world:CreateComponentAndAddTo("Color", newParticle)
+			--world:CreateComponentAndAddTo("Particle", newParticle)
+			--
+			--world:GetComponent(newParticle, "Position", "X"):SetFloat3(posAX, 0.33, posAY)
+			--world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.6, 0.6, 0.6)
+			--
+			--world:GetComponent(newParticle, "Particle", "Name"):SetText("smoke")
+			--world:GetComponent(newParticle, "Particle", "Texture"):SetText("content/textures/smoke1.png")
+			--world:GetComponent(newParticle, "Particle", "Particles"):SetInt(40)
+			--world:GetComponent(newParticle, "Particle", "Lifetime"):SetFloat(600)
+			--world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.15)
+			--world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(0.6)
+			--world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
 			
 		elseif isLastTile then
 		
-			local	newParticle	=	world:CreateNewEntity()
-			world:CreateComponentAndAddTo("Position", newParticle)
-			world:CreateComponentAndAddTo("Color", newParticle)
-			world:CreateComponentAndAddTo("Particle", newParticle)
-			
-			world:GetComponent(newParticle, "Position", "X"):SetFloat3(posAX + 0.6*dirAX, 0.23, posAY + 0.6*dirAY)
-			
-			world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.0, 0.0, 0.6)
-			
-			world:GetComponent(newParticle, "Particle", "Name"):SetText("fire")
-			world:GetComponent(newParticle, "Particle", "Texture"):SetText("content/textures/firewhite.png")
-			world:GetComponent(newParticle, "Particle", "Particles"):SetInt(1000)
-			world:GetComponent(newParticle, "Particle", "Lifetime"):SetFloat(400)
-			world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.05)
-			world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(0.6)
-			world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
+			--local	newParticle	=	world:CreateNewEntity()
+			--world:CreateComponentAndAddTo("Position", newParticle)
+			--world:CreateComponentAndAddTo("Color", newParticle)
+			--world:CreateComponentAndAddTo("Particle", newParticle)
+			--
+			--world:GetComponent(newParticle, "Position", "X"):SetFloat3(posAX + 0.6*dirAX, 0.23, posAY + 0.6*dirAY)
+			--
+			--world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.0, 0.0, 0.6)
+			--
+			--world:GetComponent(newParticle, "Particle", "Name"):SetText("fire")
+			--world:GetComponent(newParticle, "Particle", "Texture"):SetText("content/textures/firewhite.png")
+			--world:GetComponent(newParticle, "Particle", "Particles"):SetInt(1000)
+			--world:GetComponent(newParticle, "Particle", "Lifetime"):SetFloat(400)
+			--world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.05)
+			--world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(0.6)
+			--world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
 		end
 		
 	end
@@ -1148,9 +1148,9 @@ MapGenerator.CreateEdgePiece = function(self, isCorner)
 	world:GetComponent(newEdge, "Scale", 0):SetFloat3(1.0, 1.0, 1.0)
 	
 	if isCorner then
-		world:GetComponent(newEdge, "Model", 0):SetModel("edgeoutercorner", "edgeoutercorner", 0)
+		world:GetComponent(newEdge, "Model", 0):SetModel("edgeoutercorner", "edgeoutercorner", 1)
 	else
-		world:GetComponent(newEdge, "Model", 0):SetModel("edgeflat", "edgeflat", 0)
+		world:GetComponent(newEdge, "Model", 0):SetModel("edgeflat", "edgeflat", 1)
 	end
 	
 	return	newEdge
@@ -1297,7 +1297,7 @@ MapGenerator.PlaceTrees = function(self)
 			world:GetComponent(newTree, "Rotation", 0):SetFloat3(math.pi * 0.01 * math.random(0, 10), math.pi * 0.01 * math.random(0, 100), math.pi * 0.01 * math.random(0, 10))
 			local randScale = 1.0 + math.sin(math.random(0, 360)) * 0.3
 			world:GetComponent(newTree, "Scale", 0):SetFloat3(0, 0, 0)
-			world:GetComponent(newTree, "Model", 0):SetModel("tree", "tree", 8)
+			world:GetComponent(newTree, "Model", 0):SetModel("tree", "tree", 0)
 			
 			world:CreateComponentAndAddTo("LerpScale", newTree)
 			world:GetComponent(newTree, "LerpScale", "X"):SetFloat(randScale)

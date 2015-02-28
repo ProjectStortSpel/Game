@@ -56,10 +56,17 @@ namespace FileSystem
 				{
 					Sint64 length = GetFileSize(file);
 					char* data = Read(file, length);
-					bool ascii = strlen(data) >= length;
-					delete data;
 					Close(file);
-					return !ascii;
+					for (int i = 0; i < length; ++i)
+					{
+						if (data[i] == '\0')
+						{
+							delete data;
+							return false;
+						}
+					}
+					delete data;
+					return true;
 				}
 			}
 			return false;
@@ -107,7 +114,7 @@ namespace FileSystem
 			if (_path.at(_path.size() - 1) == '/')
 				_path = _path.substr(0, _path.size() - 1);
 
-			#if !defined(__ANDROID__)
+			#if !defined(__ANDROID__) && !defined(__IOS__)
 			struct stat info;
 			if (stat(_path.c_str(), &info) != 0)
 				return false;

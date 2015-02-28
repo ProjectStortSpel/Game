@@ -19,10 +19,9 @@ void ModelSystem::Initialize()
 
 	SetEntitiesAddedTaskCount(1);
 
-	m_positionId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Position");
-	m_rotationId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Rotation");
-	m_scaleId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Scale");
 	m_colorId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Color");
+	m_modelId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Model");
+	m_renderId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Render");
 
 	AddComponentTypeToFilter("Model", ECSL::FilterType::Mandatory);
 	AddComponentTypeToFilter("Render", ECSL::FilterType::Excluded);
@@ -34,11 +33,11 @@ void ModelSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::ve
 	for (auto entityId : _entities)
 	{
 		char* ModelData;
-		ModelData = (char*)GetComponent(entityId, "Model", "ModelName");
+		ModelData = (char*)GetComponent(entityId, m_modelId, "ModelName");
 		std::string ModelName = std::string(ModelData);
 		ModelName.append(".object");
 
-		ModelData = (char*)GetComponent(entityId, "Model", "ModelPath");
+		ModelData = (char*)GetComponent(entityId, m_modelId, "ModelPath");
 
 		std::vector<std::string> paths;
 
@@ -55,12 +54,12 @@ void ModelSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::ve
 		}
 
 		
-		int RenderType = *(int*)GetComponent(entityId, "Model", "RenderType");
+		int RenderType = *(int*)GetComponent(entityId, m_modelId, "RenderType");
 
 		CreateComponentAndAddTo("Render", entityId);
 		glm::mat4*	Matrix;
-		Matrix = (glm::mat4*)GetComponent(entityId, "Render", "Mat");
-		int* ModelId = (int*)GetComponent(entityId, "Render", "ModelId");
+		Matrix = (glm::mat4*)GetComponent(entityId, m_renderId, "Mat");
+		int* ModelId = (int*)GetComponent(entityId, m_renderId, "ModelId");
 
 		//if (!HasComponent(entityId, m_positionId))
 		//{ 
@@ -90,13 +89,13 @@ void ModelSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::ve
 		if (!HasComponent(entityId, m_colorId))
 		{
 			CreateComponentAndAddTo("Color", entityId);
-			float* _Color = (float*)GetComponent(entityId, "Color", "X");
+			float* _Color = (float*)GetComponent(entityId, m_colorId, "X");
 			_Color[0] = 0.0f;
 			_Color[1] = 0.0f;
 			_Color[2] = 0.0f;
 		}
 
-		float* Color = (float*)GetComponent(entityId, "Render", "ColorX");
+		float* Color = (float*)GetComponent(entityId, m_renderId, "ColorX");
 
 		*ModelId = m_graphics->LoadModel(paths, ModelName, Matrix, RenderType, Color);
 		

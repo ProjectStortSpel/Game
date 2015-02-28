@@ -39,6 +39,8 @@ namespace Input
 	private:
 		std::map<SDL_FingerID, bool> m_thisState;
 		std::map<SDL_FingerID, bool> m_lastState;
+		std::map<SDL_FingerID, bool> m_pressedStates;
+		std::map<SDL_FingerID, bool> m_releasedStates;
 
 		std::map<SDL_FingerID, FingerPosition> m_positions;
 		std::map<SDL_FingerID, FingerPosition> m_deltaPositions;
