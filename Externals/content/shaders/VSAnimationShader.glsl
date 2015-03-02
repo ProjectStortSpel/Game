@@ -46,28 +46,17 @@ mat4 JointToMatrix(JointMatrix joint)
 				);
 }
 
-mat4 GetJointMatrix(int Index)
-{
-	mat4 joint = mat4(1);
-	for (int i = Index; i < anim.length(); i++)
-	{
-		joint = JointToMatrix(anim[i]) * joint;
-		i += int(anim[i].parent);
-	}
-	return joint;	
-}
-
 void main()
 {
 	TexCoord = VertexTexCoord;
 
 	vec4 weights = normalize(VertexJointWeight);
 
-	mat4 skin = mat4(0);
-	skin += (GetJointMatrix(anim.length()-int(VertexJointIndex.x)-1) * (JointToMatrix(joints[int(VertexJointIndex.x)]))) * weights.x;
-	skin += (GetJointMatrix(anim.length()-int(VertexJointIndex.y)-1) * (JointToMatrix(joints[int(VertexJointIndex.y)]))) * weights.y;
-	skin += (GetJointMatrix(anim.length()-int(VertexJointIndex.z)-1) * (JointToMatrix(joints[int(VertexJointIndex.z)]))) * weights.z;
-	skin += (GetJointMatrix(anim.length()-int(VertexJointIndex.w)-1) * (JointToMatrix(joints[int(VertexJointIndex.w)]))) * weights.w;
+	mat4 skin = mat4(1);
+	skin += (JointToMatrix(anim[int(VertexJointIndex.x)]) * (JointToMatrix(joints[int(VertexJointIndex.x)]))) * weights.x;
+	skin += (JointToMatrix(anim[int(VertexJointIndex.y)]) * (JointToMatrix(joints[int(VertexJointIndex.y)]))) * weights.y;
+	skin += (JointToMatrix(anim[int(VertexJointIndex.z)]) * (JointToMatrix(joints[int(VertexJointIndex.z)]))) * weights.z;
+	skin += (JointToMatrix(anim[int(VertexJointIndex.w)]) * (JointToMatrix(joints[int(VertexJointIndex.w)]))) * weights.w;
 	
 	gl_Position = VP * M * skin * vec4(VertexPosition, 1.0);
 
