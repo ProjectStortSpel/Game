@@ -22,7 +22,14 @@ int RuleManager::ReadRulebook( const char* _rulbook_path )
 		while ( std::getline( input_file, this_is_a_line ) )
 		{
 			// type weight_PF weight_DS
-			// "Void 10 450"
+
+			/*
+			Void 
+			10 
+			450 
+			*/
+			//std::stringstream sstream( this_is_a_line );
+
 			std::string this_is_a_string = this_is_a_line;
 			std::getline( input_file, this_is_a_line );
 			this_is_a_string += " ";
@@ -30,7 +37,7 @@ int RuleManager::ReadRulebook( const char* _rulbook_path )
 
 
 			std::getline( input_file, this_is_a_line );
-			int Dynamic_Script_weight = atoi( this_is_a_line.c_str( ) );
+			float Dynamic_Script_weight = atof( this_is_a_line.c_str( ) );
 
 			Rule this_is_a_rule;
 			this_is_a_rule.script = this_is_a_string;
