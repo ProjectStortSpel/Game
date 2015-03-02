@@ -474,6 +474,8 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	//if model doesnt exist
 	model.instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
 	// Push back the model
+	model.name = _modelToLoad->File;
+	model.name.erase(model.name.end() - 7, model.name.end());
 	modelList->push_back(model);
 }
 
@@ -529,6 +531,7 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoa
 	//if model doesnt exist
 	model.instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
 	// Push back the model
+	model.name = "Generated Model";
 	modelList->push_back(model);
 }
 
@@ -602,6 +605,8 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 	model.PreCalculateAnimations();
 
 	// Push back the model
+	model.name = _modelToLoad->File;
+	model.name.erase(model.name.end() - 7, model.name.end());
 	modelList->push_back(model);
 }
 
