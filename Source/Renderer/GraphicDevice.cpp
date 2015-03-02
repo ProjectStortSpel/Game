@@ -271,17 +271,25 @@ void GraphicDevice::BufferModelTextures()
 	m_modelTextures.clear();
 }
 
-struct sort_depth
+struct sort_depth_instance
+{
+	inline bool operator() (const Instance& a, const Instance& b)
+	{
+		return (*a.modelMatrix)[3][2] > (*b.modelMatrix)[3][2];
+	}
+};
+struct sort_depth_model
 {
 	inline bool operator() (const Model& a, const Model& b)
 	{
 		return (*a.instances[0].modelMatrix)[3][2] < (*b.instances[0].modelMatrix)[3][2];
 	}
 };
-
 void GraphicDevice::SortModelsBasedOnDepth(std::vector<Model>* models)
 {
-	std::sort(models->begin(), models->end(), sort_depth());
+	for (std::vector<Model>::iterator it = models->begin(); it != models->end(); it++)
+		std::sort(it->instances.begin(), it->instances.end(), sort_depth_instance());
+	std::sort(models->begin(), models->end(), sort_depth_model());
 }
 
 void GraphicDevice::CreateParticleSystems()
