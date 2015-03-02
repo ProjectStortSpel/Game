@@ -52,7 +52,7 @@ int RuleManager::ReadRulebook( const char* _rulbook_path )
 
 rulebook* RuleManager::GetRulebook( int _index )
 {
-	rulebook* ret_value;
+	rulebook* ret_value = nullptr;
 
 	if ( this->m_ruleBase.find( _index ) != this->m_ruleBase.end( ) )
 	{
