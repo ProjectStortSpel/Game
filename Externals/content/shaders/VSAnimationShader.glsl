@@ -59,8 +59,6 @@ mat4 GetJointMatrix(int Index)
 
 void main()
 {
-	Tan = normalize( NormalMatrix * VertexTangent);
-	BiTan = normalize( NormalMatrix * VertexBiTangent);
 	TexCoord = VertexTexCoord;
 
 	vec4 weights = normalize(VertexJointWeight);
@@ -72,6 +70,9 @@ void main()
 	skin += (GetJointMatrix(anim.length()-int(VertexJointIndex.w)-1) * (JointToMatrix(joints[int(VertexJointIndex.w)]))) * weights.w;
 	
 	gl_Position = VP * M * skin * vec4(VertexPosition, 1.0);
+
 	Normal = normalize( NormalMatrix * (skin * vec4(VertexNormal, 0.0)).xyz );
+	Tan = normalize( NormalMatrix * (skin * vec4(VertexTangent, 0.0)).xyz );
+	BiTan = normalize( NormalMatrix * (skin * vec4(VertexBiTangent, 0.0)).xyz );
 	//instanceID = gl_InstanceID;
 }

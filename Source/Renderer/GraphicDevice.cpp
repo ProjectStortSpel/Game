@@ -12,6 +12,8 @@ using namespace glm;
 
 GraphicDevice::GraphicDevice()
 {
+	m_useAnimations = false;
+
 	m_windowPosX = 70;
 	m_windowPosY = 2;
 	m_windowCaption = "Project SWEET POTATOE PIE";
@@ -420,11 +422,11 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	Shader *shaderPtr = NULL;
 	std::vector<Model> *modelList = NULL;
 
-	//if (obj.animated)
-	//{
-	//	BufferAModel(_modelId, _modelToLoad);
-	//	return;
-	//}
+	if (obj.animated && m_useAnimations)
+	{
+		BufferAModel(_modelId, _modelToLoad);
+		return;
+	}
 
 	bool FoundShaderType = false;
 	for (int i = 0; i < m_renderLists.size(); i++)

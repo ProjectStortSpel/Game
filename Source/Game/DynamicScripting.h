@@ -10,6 +10,7 @@
 
 /* Data struct for the pathfinder to store data */
 
+
 enum RuleType
 {
 	humpa_dumpa_Void,
@@ -37,6 +38,8 @@ struct Rule
 		return ruleType == r.ruleType;
 	}
 };
+
+typedef std::vector<Rule> rulebook;
 
 class DynamicScripting
 {
@@ -71,8 +74,8 @@ private:
 private:
 	float						m_totalSum;
 	unsigned int				m_noOfScriptsToUse;
-	std::vector<Rule>			m_ruleBook;
-	std::vector<Rule>			m_script;
+	rulebook*					m_ruleBook; //pointer?
+	rulebook					m_script;
 };
 
 #endif //DYNAMICSCRIPTING_H
