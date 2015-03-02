@@ -20,7 +20,13 @@ namespace LuaBridge
 		{
 			std::string filePath = LuaEmbedder::PullString( _l, 1 );
 
-			LuaEmbedder::PushBool( _l, true );
+			int index = rm.ReadRulebook( filePath.c_str( ) );
+
+			DynamicScripting* ds = DynamicScripting::Instance( );
+
+			ds->SetRuleBook( rm.GetRulebook( index ) );
+
+			LuaEmbedder::PushInt( _l, index );
 			return 1;
 		}
 

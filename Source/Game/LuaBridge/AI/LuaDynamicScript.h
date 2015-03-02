@@ -3,12 +3,13 @@
 
 #include <LuaEmbedder/LuaEmbedder.h>
 #include "Game/DynamicScripting.h"
-
+#include "Game/RuleManager.h"
 
 namespace LuaBridge
 {
 	namespace DynamicScript
 	{
+		RuleManager rm;
 
 		struct DSData
 		{
