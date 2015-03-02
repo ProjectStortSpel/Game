@@ -5,9 +5,9 @@ require "sv_StageSystem"
 
 --	Map Systems
 package.path = package.path .. ";Systems/Server/MapSystems/?.lua"
-require "sv_NewMapGenerator"
+--require "sv_NewMapGenerator"
 require "sv_MapRaterSystem"
---require "sv_CreateMapSystem"
+require "sv_CreateMapSystem"
 require "sv_RiverSystem"
 require "sv_VoidSystem"
 require "sv_CheckpointSystem"
@@ -106,8 +106,8 @@ require "sv_OffsetUnitSystem"
 --worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(LobbySystem)
 worldCreator:AddSystemToCurrentGroup(StageSystem)
-worldCreator:AddSystemToCurrentGroup(MapGenerator)
---worldCreator:AddSystemToCurrentGroup(CreateMapSystem)
+--worldCreator:AddSystemToCurrentGroup(MapGenerator)
+worldCreator:AddSystemToCurrentGroup(CreateMapSystem)
 worldCreator:AddSystemToCurrentGroup(MapRater)
 worldCreator:AddSystemToCurrentGroup(RiverSystem)
 worldCreator:AddSystemToCurrentGroup(VoidSystem)
