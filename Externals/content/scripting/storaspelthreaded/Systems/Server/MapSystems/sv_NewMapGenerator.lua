@@ -1251,12 +1251,42 @@ MapGenerator.PlaceJibberish = function(self)
 		end
 	end
 	
+	
+	--	Place grass
+	local	grassToSpawn	=	self:GetPlayableTiles()/7.0
+	for n = 1, grassToSpawn do
+	
+		local	tX, tZ	=	self:GetRandomTileOfType(self.Grass)
+		if tX + tZ >= 0 then
+			local 	newGrass 	= 	world:CreateNewEntity()
+			world:CreateComponentAndAddTo("Position", newGrass)
+			world:CreateComponentAndAddTo("Rotation", newGrass)
+			world:CreateComponentAndAddTo("Scale", newGrass)
+			world:CreateComponentAndAddTo("SyncNetwork", newGrass)
+			world:CreateComponentAndAddTo("Model", newGrass)
+			
+			local randX = tX-0.5+math.random()
+			local randZ = tZ-0.5+math.random()
+			world:GetComponent(newGrass, "Position", 0):SetFloat3(randX, 0.5, randZ)
+			world:GetComponent(newGrass, "Rotation", 0):SetFloat3(0, math.pi * 0.01 * math.random(0, 100),0)
+			local randScale = (math.random() + 0.5)*0.5
+			world:GetComponent(newGrass, "Scale", 0):SetFloat3(0, 0, 0)
+			world:GetComponent(newGrass, "Model", 0):SetModel("tallgrass", "tallgrass", 9)
+			
+			
+			world:CreateComponentAndAddTo("LerpScale", newGrass)
+			world:GetComponent(newGrass, "LerpScale", "X"):SetFloat(randScale)
+			world:GetComponent(newGrass, "LerpScale", "Y"):SetFloat(randScale)
+			world:GetComponent(newGrass, "LerpScale", "Z"):SetFloat(randScale)
+			world:GetComponent(newGrass, "LerpScale", "Time"):SetFloat(0.8)
+			world:GetComponent(newGrass, "LerpScale", "Algorithm"):SetText("OvershotLerp")
+			world:GetComponent(newGrass, "LerpScale", "KillWhenFinished"):SetBool(false)
+		end
+	end
+	
+	
+	
 	self:PlaceTrees()
-	
-
-	
-	
-
 end
 
 
@@ -1291,6 +1321,7 @@ MapGenerator.PlaceTrees = function(self)
 			world:CreateComponentAndAddTo("Position", newTree)
 			world:CreateComponentAndAddTo("Rotation", newTree)
 			world:CreateComponentAndAddTo("Scale", newTree)
+			world:CreateComponentAndAddTo("Color", newTree)
 			world:CreateComponentAndAddTo("SyncNetwork", newTree)
 			world:CreateComponentAndAddTo("Model", newTree)
 			
@@ -1300,6 +1331,7 @@ MapGenerator.PlaceTrees = function(self)
 			world:GetComponent(newTree, "Rotation", 0):SetFloat3(math.pi * 0.01 * math.random(0, 10), math.pi * 0.01 * math.random(0, 100), math.pi * 0.01 * math.random(0, 10))
 			local randScale = 1.0 + math.sin(math.random(0, 360)) * 0.3
 			world:GetComponent(newTree, "Scale", 0):SetFloat3(0, 0, 0)
+			world:GetComponent(newTree, "Color", 0):SetFloat3(math.random(), math.random(), math.random())
 			world:GetComponent(newTree, "Model", 0):SetModel("tree", "tree", 0)
 			
 			world:CreateComponentAndAddTo("LerpScale", newTree)
