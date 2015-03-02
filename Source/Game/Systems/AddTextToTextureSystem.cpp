@@ -19,7 +19,10 @@ void AddTextToTextureSystem::Initialize()
 
 void AddTextToTextureSystem::PostInitialize()
 {
+	//m_graphics->AddFont("content/fonts/crayonkids.ttf", 72);
+	m_graphics->AddFont("content/fonts/barthowheel.ttf", 72);
 	m_graphics->AddFont("content/fonts/verdanab.ttf", 72);
+
 }
 
 void AddTextToTextureSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities)
