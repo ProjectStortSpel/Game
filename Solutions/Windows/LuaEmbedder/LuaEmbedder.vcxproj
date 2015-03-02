@@ -25,6 +25,7 @@
     <ClInclude Include="..\..\..\Source\LuaEmbedder\LuaEmbedder.h" />
     <ClInclude Include="..\..\..\Source\LuaEmbedder\LuaNumberArray.h" />
     <ClInclude Include="..\..\..\Source\LuaEmbedder\Luna.h" />
+    <ClInclude Include="..\..\..\Source\LuaEmbedder\LunaArray.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{2E9DCA51-2BDC-4EC9-B23C-00BB73948D21}</ProjectGuid>

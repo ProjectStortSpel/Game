@@ -57,7 +57,7 @@ namespace LuaEmbedder
       lua_pop(L, 2);
     }
     
-    static void Push(lua_State* L, const char* name, const T** array, unsigned int size, bool remove = true)
+    static void Push(lua_State* L, const char* name, T** array, unsigned int size, bool remove = true)
     {
       luaL_getmetatable(L, name);
       assert(!lua_isnil(L, -1));

@@ -47,6 +47,25 @@ void ComponentTable::GetComponents(std::vector<DataLocation>& _out, const std::v
 	}
 }
 
+void ComponentTable::GetComponents(std::vector<DataLocation>& _out, const unsigned int* entities, unsigned int entityCount, const std::string& _variableName)
+{
+	unsigned int index = ComponentTypeManager::GetInstance().GetComponentType(m_componentTypeId)->GetVariables()->find(_variableName)->second.GetOffset();
+	_out.resize(entityCount);
+	for (unsigned int i = 0; i < entityCount; ++i)
+	{
+		_out[i] = m_dataTable->GetData(entities[i], index);
+	}
+}
+
+void ComponentTable::GetComponents(std::vector<DataLocation>& _out, const unsigned int* entities, unsigned int entityCount, unsigned int _index)
+{
+	_out.resize(entityCount);
+	for (unsigned int i = 0; i < entityCount; ++i)
+	{
+		_out[i] = m_dataTable->GetData(entities[i], _index);
+	}
+}
+
 void ComponentTable::SetComponent(unsigned int _entityId, const std::string& _variableName, void* _data)
 {
 	ComponentVariable componentVariable = m_componentType->GetVariables()->find(_variableName)->second;
