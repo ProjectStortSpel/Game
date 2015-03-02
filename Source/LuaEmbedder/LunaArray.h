@@ -165,6 +165,7 @@ namespace LuaEmbedder
     static int Remove(lua_State* L)
     {
       T*** pArray = (T***)lua_touserdata(L, 1);
+      int length = 0;
       
       // Remove size
       const char* name = lua_tostring(L, lua_upvalueindex(1));
@@ -174,6 +175,10 @@ namespace LuaEmbedder
       lua_gettable(L, -2);
       if (!lua_isnil(L, -1))
       {
+	lua_pushlightuserdata(L, (T**)*pArray);
+	lua_gettable(L, -2);
+	length = lua_tointeger(L, -1);
+	lua_pop(L, 1);
 	lua_pushlightuserdata(L, (T**)*pArray);
 	lua_pushnil(L);
 	lua_settable(L, -3);
@@ -194,6 +199,8 @@ namespace LuaEmbedder
       }
       if (pArray && *pArray)
       {
+	for (int i = 0; i < length; i++)
+		delete (*pArray)[i];
 	delete [] (*pArray);
 	*pArray = nullptr;
 	pArray = nullptr;
