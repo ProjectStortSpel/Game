@@ -837,6 +837,11 @@ MapGenerator.CreateTileEntity = function(self, X, Z)
 	world:GetComponent(newTile, "Position", "X"):SetFloat3(X, 0, Z)
 	world:GetComponent(newTile, "MapPosition", "X"):SetInt2(X, Z)
 	
+	local check = ((X + Z) % 2)
+	world:GetComponent(newTile, "Color", "X"):SetFloat(check*0.75)
+	world:GetComponent(newTile, "Color", "Y"):SetFloat(check)
+	world:GetComponent(newTile, "Color", "Z"):SetFloat(check*0.75)
+	
 	return	newTile
 end
 
@@ -890,11 +895,23 @@ end
 
 MapGenerator.CreateStoneEntity = function(self, X, Z)
 
-	local	newStone	=	self:CreateTileEntity(X, Z)
-	world:CreateComponentAndAddTo("NotWalkable", newStone)
+	local	newGrass	=	self:CreateTileEntity(X, Z)
+	world:CreateComponentAndAddTo("NotWalkable", newGrass)
+	world:CreateComponentAndAddTo("Model", newGrass)
+	world:GetComponent(newGrass, "Model", 0):SetModel("grass", "grass", 0, 0)
+	world:GetComponent(newGrass, "Rotation", 0):SetFloat3(0, math.pi * 0.5 * math.random(0, 4), 0)
+
+	local	newStone	=	world:CreateNewEntity()
+	world:CreateComponentAndAddTo("Position", newStone)
+	world:CreateComponentAndAddTo("Rotation", newStone)
+	world:CreateComponentAndAddTo("Scale", newStone)
+	world:CreateComponentAndAddTo("MapPosition", newStone)
+	world:CreateComponentAndAddTo("SyncNetwork", newStone)
 	world:CreateComponentAndAddTo("Model", newStone)
+	
 	world:GetComponent(newStone, "Model", 0):SetModel("smallstone", "smallstone", 0)
 	world:GetComponent(newStone, "Position", 0):SetFloat3(X, 0.5 + 0.1* math.random(-1, 1), Z)
+	world:GetComponent(newStone, "MapPosition", 0):SetInt2(X, Z)
 	world:GetComponent(newStone, "Rotation", 0):SetFloat3
 	(
 		math.pi * 0.005 * math.random(0, 25), 
@@ -907,23 +924,8 @@ MapGenerator.CreateStoneEntity = function(self, X, Z)
 		0.8 + 0.1* math.random(-1, 1), 
 		0.8 + 0.1* math.random(-1, 1)
 	)
-	
-	local groundEntity = world:CreateNewEntity()
-	
-	world:CreateComponentAndAddTo("Position", groundEntity)
-	world:CreateComponentAndAddTo("Rotation", groundEntity)
-	world:CreateComponentAndAddTo("Scale", groundEntity)
-	world:CreateComponentAndAddTo("MapPosition", groundEntity)
-	world:CreateComponentAndAddTo("SyncNetwork", groundEntity)
-	world:CreateComponentAndAddTo("Model", groundEntity)
-	
-	world:GetComponent(groundEntity, "Position", 0):SetFloat3(X, 0.0, Z)
-	world:GetComponent(groundEntity, "MapPosition", 0):SetInt2(X, Z)
-	world:GetComponent(groundEntity, "Rotation", 0):SetFloat3(0.0, 0.0, 0.0)
-	world:GetComponent(groundEntity, "Scale", 0):SetFloat3(1.0, 1.0, 1.0)
-	world:GetComponent(groundEntity, "Model", 0):SetModel("grass", "grass", 0)
-	
-	return	newStone
+
+	return	newGrass
 end
 
 MapGenerator.CreateSpawnpointEntity = function(self, X, Z)
