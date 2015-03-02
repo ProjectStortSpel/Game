@@ -10,13 +10,14 @@ AddAISystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("PlayerCounter", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("TileComp", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("MapSpecs", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf)
 	
 	Console.AddCommand("AddAI", self.AddAI)
 	Console.AddCommand("AI", self.FillWithAIs)
 end
 
 AddAISystem.AddAI = function(_command, ...)
-	
+
 	local noToAdd = 1
 	local args = { ... }
 	
@@ -48,6 +49,14 @@ AddAISystem.EntitiesAdded = function(self, dt, entities)
 		--print(world:EntityHasComponent(ais[i], "UnitEntityId"))
 		
 		if world:EntityHasComponent(ais[i], "AI") and not world:EntityHasComponent(ais[i], "UnitEntityId") then
+			
+			local GameRunning = self:GetEntities("GameRunning")
+			if #GameRunning > 0 then
+				print("Trying to add AI when the game has already started.")
+				world:KillEntity(ais[i])
+				return
+			end
+			
 			
 			--print("nu blir det ai")
 			local counterEntities = self:GetEntities("PlayerCounter")			
