@@ -146,8 +146,6 @@ bool ClientNetwork::Connect()
 	return true;
 }
 
-
-
 void ClientNetwork::Disconnect()
 {
 	if (!*m_connected)

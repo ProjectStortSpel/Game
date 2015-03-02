@@ -76,6 +76,7 @@ VoidSystem.EntitiesAdded = function(self, dt, entities)
 							end
 							world:GetComponent(units[i], "LerpPosition", "Time"):SetFloat4(1, tmpX, -10, voidZ)
 							world:GetComponent(units[i], "LerpPosition", "Algorithm"):SetText("ExponentialLerp")
+							world:GetComponent(units[i], "LerpPosition", "KillWhenFinished"):SetBool(false)
 							
 							hitVoid = true
 							

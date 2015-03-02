@@ -20,6 +20,7 @@ AddLerpScaleSystem.EntitiesAdded = function(self, dt, entities)
 		-- Get Lerp Scale
 		local lerpTime, tX, tY, tZ = world:GetComponent(entity, "LerpScale", "Time"):GetFloat4(0)
 		local lerpAlgorithm = world:GetComponent(entity, "LerpScale", "Algorithm"):GetText(0)
+		local killWhenFinished = world:GetComponent(entity, "LerpScale", "KillWhenFinished"):GetBool()
 
 		-- Get Current Scale
 		local X, Y, Z = world:GetComponent(entity, "Scale", 0):GetFloat3(0)
@@ -28,7 +29,9 @@ AddLerpScaleSystem.EntitiesAdded = function(self, dt, entities)
 		world:CreateComponentAndAddTo("LerpingScale", entity)
 		world:GetComponent(entity, "LerpingScale", "Time"):SetFloat8(lerpTime, 0, X, Y, Z, tX, tY, tZ)
 		world:GetComponent(entity, "LerpingScale", "Algorithm"):SetText(lerpAlgorithm)
+		world:GetComponent(entity, "LerpingScale", "KillWhenFinished"):SetBool(killWhenFinished)
 		
 		world:RemoveComponentFrom("LerpScale", entity)
+
 	end
 end

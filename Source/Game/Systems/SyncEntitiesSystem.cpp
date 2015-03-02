@@ -28,7 +28,7 @@ void SyncEntitiesSystem::Initialize()
 	for (unsigned int i = 0; i < GetUpdateTaskCount(); ++i)
 		m_timer[i] = 0.0f;
 }
-#include <sstream>
+
 void SyncEntitiesSystem::Update(const ECSL::RuntimeInfo& _runtime)
 {
 	Network::ServerNetwork* server = NetworkInstance::GetServer();

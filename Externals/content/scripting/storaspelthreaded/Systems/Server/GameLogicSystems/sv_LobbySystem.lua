@@ -151,8 +151,10 @@ end
 
 
 LobbySystem.SpawnMenu = function(self)
-	local background = self:CreateElement("gamemenubackground", "quad", 0, 0, -4.1, 4.14, 2.6)
-	world:CreateComponentAndAddTo("LobbyMenuActive", background)
+	--local background = self:CreateElement("gamemenubackground", "quad", 0, 0, -4.1, 4.14, 2.6)
+	local activate = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("SyncNetwork", activate)
+	world:CreateComponentAndAddTo("LobbyMenuActive", activate)
 end
 
 LobbySystem.RemoveMenu = function(self)

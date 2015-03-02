@@ -1,26 +1,21 @@
-#ifndef ROTATIONSYSTEM_H
-#define ROTATIONSYSTEM_H
+#ifndef SPINSYSTEM_H
+#define SPINSYSTEM_H
 
 #include "ECSL/Interfaces/System.h"
-#if defined(__ANDROID__) || defined(__IOS__)
-#include "AndroidRenderer/GraphicDevice.h"
-#else
-#include "Renderer/GraphicDevice.h"
-#endif
-#include "Input/InputWrapper.h"
+#include "ECSL/Framework/World.h"
 
-
-class RotationSystem : public ECSL::System
+class SpinSystem : public ECSL::System
 {
 public:
-	RotationSystem();
-	~RotationSystem();
+	SpinSystem();
+	~SpinSystem();
 
 	void Initialize();
 	void Update(const ECSL::RuntimeInfo& _runtime);
 
 private:
-	unsigned int m_rotationId, m_spinId;
+	unsigned int m_spinId;
+	unsigned int m_rotationId;
 };
 
 #endif

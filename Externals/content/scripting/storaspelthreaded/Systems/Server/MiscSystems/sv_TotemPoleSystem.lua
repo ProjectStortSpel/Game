@@ -76,7 +76,7 @@ TotemPoleSystem.AddFireplace = function(self, totemPoleId)
 		offsetZ = offsetZ * 1
 	end
 	
-	position:SetFloat3(X + offsetX, 0.5, Z + offsetZ)
+	position:SetFloat3(X + offsetX, 0.58, Z + offsetZ)
 end
 
 TotemPoleSystem.AddTopPiece = function(self, totemPoleId, R, G, B)
@@ -134,7 +134,7 @@ TotemPoleSystem.AddTotemPiece = function(self, currentPlayerNumber, totemPoleId,
 	
 	
 
-	position:SetFloat3(X + offsetX, 0.95 -0.27, Z + offsetZ)
+	position:SetFloat3(X + offsetX, 0.68, Z + offsetZ)
 	-- Scale
 	scale:SetFloat3(1,1,1)
 	world:SetComponent(totemPiece, "Model", "ModelName", "totem")

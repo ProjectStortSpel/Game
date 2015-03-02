@@ -7,6 +7,7 @@ LerpPosition:AddVariable("Time", ByteSize.Float)
 LerpPosition:AddVariable("X", ByteSize.Float)
 LerpPosition:AddVariable("Y", ByteSize.Float)
 LerpPosition:AddVariable("Z", ByteSize.Float)
+LerpPosition:AddVariable("KillWhenFinished", ByteSize.Bool)
 worldCreator:AddComponentType(LerpPosition)
 
 -- Lerping Position
@@ -23,8 +24,8 @@ LerpingPosition:AddVariable("sZ", ByteSize.Float)
 LerpingPosition:AddVariable("tX", ByteSize.Float)
 LerpingPosition:AddVariable("tY", ByteSize.Float)
 LerpingPosition:AddVariable("tZ", ByteSize.Float)
+LerpingPosition:AddVariable("KillWhenFinished", ByteSize.Bool)
 worldCreator:AddComponentType(LerpingPosition)
-
 
 -- Lerp Scale
 local LerpScale = ComponentType()
@@ -35,6 +36,7 @@ LerpScale:AddVariable("Time", ByteSize.Float)
 LerpScale:AddVariable("X", ByteSize.Float)
 LerpScale:AddVariable("Y", ByteSize.Float)
 LerpScale:AddVariable("Z", ByteSize.Float)
+LerpScale:AddVariable("KillWhenFinished", ByteSize.Bool)
 worldCreator:AddComponentType(LerpScale)
 
 -- Lerping Scale
@@ -51,8 +53,8 @@ LerpingScale:AddVariable("sZ", ByteSize.Float)
 LerpingScale:AddVariable("tX", ByteSize.Float)
 LerpingScale:AddVariable("tY", ByteSize.Float)
 LerpingScale:AddVariable("tZ", ByteSize.Float)
+LerpingScale:AddVariable("KillWhenFinished", ByteSize.Bool)
 worldCreator:AddComponentType(LerpingScale)
-
 
 -- Lerp Rotation
 local LerpRotation = ComponentType()
@@ -63,6 +65,7 @@ LerpRotation:AddVariable("Time", ByteSize.Float)
 LerpRotation:AddVariable("X", ByteSize.Float)
 LerpRotation:AddVariable("Y", ByteSize.Float)
 LerpRotation:AddVariable("Z", ByteSize.Float)
+LerpRotation:AddVariable("KillWhenFinished", ByteSize.Bool)
 worldCreator:AddComponentType(LerpRotation)
 
 -- Lerping Rotation
@@ -79,4 +82,5 @@ LerpingRotation:AddVariable("sZ", ByteSize.Float)
 LerpingRotation:AddVariable("tX", ByteSize.Float)
 LerpingRotation:AddVariable("tY", ByteSize.Float)
 LerpingRotation:AddVariable("tZ", ByteSize.Float)
+LerpingRotation:AddVariable("KillWhenFinished", ByteSize.Bool)
 worldCreator:AddComponentType(LerpingRotation)

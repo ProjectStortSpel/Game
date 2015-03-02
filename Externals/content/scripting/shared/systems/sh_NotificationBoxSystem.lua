@@ -14,7 +14,7 @@ end
 
 
 NotificationBoxSystem.Update = function(self, dt)
-
+	
 	if not self.IsMenuActive then
 		return
 	end
@@ -24,7 +24,6 @@ NotificationBoxSystem.Update = function(self, dt)
 		if #pressedButtons > 0 then
 		
 			local pressedButton = pressedButtons[1]
-		
 			if world:EntityHasComponent(pressedButton, "MenuEntityCommand") then
 				self:MenuEntityCommandPressed(pressedButton)
 				self:RemoveMenu()
