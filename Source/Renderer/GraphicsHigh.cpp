@@ -507,6 +507,7 @@ void GraphicsHigh::Render()
 		
 		thisShader->SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 
+		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, it->second->GetTexHandle());
 
 		mat4 Model = glm::translate(it->second->GetWorldPos());

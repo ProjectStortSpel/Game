@@ -151,23 +151,6 @@ void GraphicDevice::InitStandardShaders()
 	m_skyBoxShader.AddShader("content/shaders/skyboxShaderFS.glsl", GL_FRAGMENT_SHADER);
 	m_skyBoxShader.FinalizeShaderProgram();
 
-	// ------Particle shaders---------
-		const char * outputNames[] = { "Position", "Velocity", "StartTime" };
-		Shader particleShader;
-		particleShader.InitShaderProgram();
-		particleShader.AddShader("content/shaders/particles/particleFireVS.glsl", GL_VERTEX_SHADER);
-		particleShader.AddShader("content/shaders/particles/particleFireFS.glsl", GL_FRAGMENT_SHADER);
-		glTransformFeedbackVaryings(particleShader.GetShaderProgram(), 3, outputNames, GL_SEPARATE_ATTRIBS);
-		particleShader.FinalizeShaderProgram();
-		m_particleShaders["fire"] = particleShader;
-
-		particleShader.InitShaderProgram();
-		particleShader.AddShader("content/shaders/particles/particleSmokeVS.glsl", GL_VERTEX_SHADER);
-		particleShader.AddShader("content/shaders/particles/particleSmokeFS.glsl", GL_FRAGMENT_SHADER);
-		glTransformFeedbackVaryings(particleShader.GetShaderProgram(), 3, outputNames, GL_SEPARATE_ATTRIBS);
-		particleShader.FinalizeShaderProgram();
-		m_particleShaders["smoke"] = particleShader;
-	// -------------------------------
 }
 void GraphicDevice::InitStandardBuffers()
 {
@@ -182,10 +165,6 @@ void GraphicDevice::InitStandardBuffers()
 
 	//Shadow forward shader
 	m_shadowShaderForward.CheckUniformLocation("diffuseTex", 1);
-
-	//Particle shaders
-	for (std::map<std::string, Shader>::iterator it = m_particleShaders.begin(); it != m_particleShaders.end(); ++it)
-		it->second.CheckUniformLocation("ParticleTex", 1);
 }
 bool GraphicDevice::InitSkybox()
 {
@@ -351,8 +330,8 @@ void GraphicDevice::BufferParticleSystems()
 			m_particleSystemsToLoad[i].Scale,
 			m_particleSystemsToLoad[i].SpriteSize,
 			AddTexture(m_particleSystemsToLoad[i].TextureName, GL_TEXTURE1),
-			m_particleSystemsToLoad[i].Color,
-			&m_particleShaders[m_particleSystemsToLoad[i].Name])));
+			m_particleSystemsToLoad[i].Color
+			)));
 	}
 	m_particleSystemsToLoad.clear();
 
