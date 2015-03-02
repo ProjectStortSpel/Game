@@ -44,6 +44,8 @@ namespace LuaBridge
 		int		UpdateScriptWeight( lua_State* _l );
 
 		int		SetScript( lua_State* _l );
+
+		int		GetRuleTypeInt( lua_State* _l );
 	}
 }
 #endif // LUADYNAMICSCRIPT_H
