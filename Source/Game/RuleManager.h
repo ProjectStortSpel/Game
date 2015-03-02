@@ -12,8 +12,8 @@ typedef  std::map<int, rulebook> rulebase;
 class RuleManager
 {
 private:
-	int			count;
-	rulebase	m_ruleBase;
+	int				count;
+	rulebase		m_ruleBase;
 public:
 
 	RuleManager( );

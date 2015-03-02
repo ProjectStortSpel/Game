@@ -58,7 +58,7 @@ public:
 	bool						InsertToScript( Rule _rule );
 	std::vector<Rule>			GetScript( );
 	void						SetScript( std::vector<Rule> _script );
-	void						SetRuleBook( std::vector<Rule> _rules );
+	void						SetRuleBook( std::vector<Rule>* _rules );
 
 	bool						IsInScript( Rule _rule );
 	bool						IsTypeInScript( Rule _rule );
