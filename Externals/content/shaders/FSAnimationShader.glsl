@@ -29,14 +29,18 @@ void main()
 	vec3 normal_map = texture( normalTex, TexCoord ).rgb;
 	vec4 specTexture = texture( specularTex, TexCoord );
 	vec3 specglow_map = specTexture.rgb;
-	float blendFactor = specTexture.a;
+
+	float blendFactor = mod(int(specTexture.a*99), 50)/50;//(specTexture.a-0.5f)*2;
+	vec3 AddedColor = BlendColor;
+	if (specTexture.a < 0.5)
+		AddedColor = vec3(1) - BlendColor; // ANTICOLOR? Good or bad? I like
 
 	if(TexFlag == 0) // everything
 	{
 		// -- OUTPUTS --
 		// Set Color output
 		if( BlendColor != vec3(0.0) )
-			ColorData.xyz = (1.0f-blendFactor)*color_map.xyz + blendFactor * BlendColor; 
+			ColorData.xyz = (1.0f-blendFactor)*color_map.xyz + blendFactor * AddedColor; 
 		else
 			ColorData.xyz = color_map.xyz;								// rgb = color
 
