@@ -75,7 +75,7 @@ namespace Network
 		void UpdateTimeOut(float& _dt);
 		void UpdateNetUsage(float& _dt);
 		
-		void ReceivePackets();
+		void ReceivePackets(const std::string _name);
 
 		void NetPasswordInvalid(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection);
 		void NetConnectionAccepted(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection);

@@ -12,6 +12,7 @@ MasterServerSystem::~MasterServerSystem()
 {
 	//SAFE_DELETE(m_clientDatabase);
 	//m_clientDatabase->~ClientDatabase();
+
 	m_clientDatabase->ResetNetworkEvents();
 	m_mServerMessages.clear();
 	
