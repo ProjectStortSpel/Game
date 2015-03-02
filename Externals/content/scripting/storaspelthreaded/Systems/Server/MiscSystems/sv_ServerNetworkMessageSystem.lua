@@ -4,15 +4,19 @@ ServerNetworkMessageSystem.Initialize = function(self)
 	
 	--	Set Name
 	self:SetName("ServerNetworkMessageSystem")
-	self:UsingEntitiesAdded()
+	
+	--self:UsingEntitiesAdded()
+	
 	self:InitializeNetworkEvents()
 	
-	self:AddComponentTypeToFilter("MapSpecs", FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter("SyncNetwork", FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter("PlayerCounter", FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter("Player", FilterType.RequiresOneOf)
 	
+	--	Set Filter
+	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("Player", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("PlayerCounter", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("MapSpecs", FilterType.RequiresOneOf)
+	
+	self:AddComponentTypeToFilter("SyncNetwork", FilterType.RequiresOneOf)
 end
 
 ServerNetworkMessageSystem.PostInitialize = function(self)
@@ -25,15 +29,6 @@ ServerNetworkMessageSystem.PostInitialize = function(self)
 end
 
 
-ServerNetworkMessageSystem.EntitiesAdded = function(self, dt, _entities)
-
-	for i = 1, #_entities do 
-		local entity = _entities[i]
-		if world:EntityHasComponent(entity, "MapSpecs") then
-		end
-	end
-end
-
 ServerNetworkMessageSystem.CounterComponentChanged = function(self, _change, _component)
 	
 	local counterEntities = self:GetEntities("PlayerCounter")
@@ -43,142 +38,166 @@ ServerNetworkMessageSystem.CounterComponentChanged = function(self, _change, _co
 	world:SetComponent(counterEntities[1], "PlayerCounter", _component, number)
 end
 
-ServerNetworkMessageSystem.AddPlayer = function(self, _ip, _port, _playNo)
+ServerNetworkMessageSystem.AddPlayer = function(self, _ip, _port, _spectator)
+
 	local player = world:CreateNewEntity("Player")
 	world:SetComponent(player, "NetConnection", "IpAddress", _ip)
 	world:SetComponent(player, "NetConnection", "Port", _port)
 	world:CreateComponentAndAddTo("ActiveNetConnection", player)
 	
-	local newName = "Player_" .. tostring(_playNo)
-	world:SetComponent(player, "PlayerName", "Name", newName);
-	self:CounterComponentChanged(1, "Players")
-	
-	print("Player: " .. newName .. " connected.")
+
 
 end
 
-ServerNetworkMessageSystem.AddSpectator = function(self, _ip, _port, _specNo)
 
-	local spectator = world:CreateNewEntity("Player")
-	world:SetComponent(spectator, "NetConnection", "IpAddress", _ip)
-	world:SetComponent(spectator, "NetConnection", "Port", _port)
-	world:CreateComponentAndAddTo("ActiveNetConnection", spectator)
+ServerNetworkMessageSystem.OnPlayerConnected = function(self, _ip, _port, _message)
+
+	local addSpectator = false
+	local counterEntities = self:GetEntities("PlayerCounter")
+	local counterComp = world:GetComponent(counterEntities[1], "PlayerCounter", 0)
+	local noOfPlayers, noOfSpectators = counterComp:GetInt2()
 	
-	local newName = "Spectator_" .. tostring(_specNo)
-	world:SetComponent(spectator, "PlayerName", "Name", newName);
+	print("ServerNetworkMessageSystem.OnPlayerConnected")
 	
-	world:CreateComponentAndAddTo("IsSpectator", spectator)
-	
-	self:CounterComponentChanged(1, "Spectators")
-	
-	print("Spectator: " .. newName .. " connected.")
-
-end
-
-ServerNetworkMessageSystem.ReonnectPlayer = function(self)
-	print("ServerNetworkMessageSystem.ReconnectPlayer is not yet implemented")
-end
-
-ServerNetworkMessageSystem.CheckPlayingState = function(self, _players, _ip, _port)
-
-	local playerCounter = self:GetEntities("PlayerCounter")
-	local noOfPlayers, noOfSpectators = world:GetComponent(playerCounter[1], "PlayerCounter", 0):GetInt2()
-
-	local playerFound = false
-
-	for i = 1, #_players do
-		local ip 	= world:GetComponent(players[i], "NetConnection", "IpAddress"):GetText()
-		local port 	= world:GetComponent(players[i], "NetConnection", "Port"):GetInt()
-		
-		if _ip == ip and _port == port then
-			print("Player reconnected")
-			playerFound = true
-			break
-		end
+	local mapSpecs = self:GetEntities("MapSpecs")
+	print("MapSpecs: " .. #mapSpecs)
+	local maxPlayers = 1
+	if #mapSpecs > 0 then
+		maxPlayers = world:GetComponent(mapSpecs[1], "MapSpecs", "NoOfSpawnpoints"):GetInt(0)
 	end
 	
-	if playerFound then
-		self:ReconnectPlayer()
+	if #self:GetEntities("GameRunning") > 0 then -- If the game is running
+		
+		local playerFound = false
+		local entities = self:GetEntities()
+		
+		for i = 1, #entities do -- Go through all entities
+		
+			local ip = world:GetComponent(entities[i], "NetConnection", "IpAddress"):GetText()
+			local port = world:GetComponent(entities[i], "NetConnection", "Port"):GetInt()	
+
+			if _ip == ip and _port == port then
+				world:CreateComponentAndAddTo("ActiveNetConnection", entities[i])
+				playerFound = true
+				print("Player reconnected")
+				return
+			end
+			
+		end
+	
+		if not playerFound then
+			addSpectator = true
+			print("player not found")
+		end
+	
+	else -- If the game is not running yet
+		if noOfPlayers >= maxPlayers then
+			addSpectator = true
+		end
+	
+	end
+	
+	local newPlayer = world:CreateNewEntity("Player")
+	
+	world:SetComponent(newPlayer, "NetConnection", "IpAddress", _ip);
+	world:SetComponent(newPlayer, "NetConnection", "Port", _port);
+	world:CreateComponentAndAddTo("ActiveNetConnection", newPlayer)
+	
+	if addSpectator then
+	
+		local newName = "Spectator_" .. tostring(noOfSpectators + 1)
+		world:SetComponent(newPlayer, "PlayerName", "Name", newName);
+	
+	
+		world:CreateComponentAndAddTo("IsSpectator", newPlayer)
+		self:CounterComponentChanged(1, "Spectators")
+		
+		print("Spectator: " .. newPlayer .. " connected")
 	else
-		self:AddSpectator(_ip, _port, noOfSpectators+1)
+	
+		local newName = "Player_" .. tostring(noOfPlayers + 1)
+		world:SetComponent(newPlayer, "PlayerName", "Name", newName);
+		
+		self:CounterComponentChanged(1, "Players")
+		
+		print("Player: " .. newPlayer .. " connected")
 	end
 	
 	local sync = self:GetEntities("SyncNetwork");
+	
 	for i = 1, #sync do
 		Net.SendEntity(sync[i], _ip, _port)	
 		Console.Print("Send Entity: " .. sync[i])
 	end	
-	
-	
-end
 
-ServerNetworkMessageSystem.CheckLobbyState = function(self, _players, _ip, _port)
-
-	local playerCounter = self:GetEntities("PlayerCounter")
-	local noOfPlayers, noOfSpectators = world:GetComponent(playerCounter[1], "PlayerCounter", 0):GetInt2()
-	
-	local maxPlayers = 1
-	local mapSpecs = self:GetEntities("MapSpecs")
-	if #mapSpecs > 0 then
-		maxPlayers = world:GetComponent(mapSpecs[1], "MapSpecs", "NoOfSpawnpoints"):GetInt()
-	end
-	
-	if noOfPlayers >= maxPlayers then
-		self:AddSpectator(_ip, _port, noOfPlayers+1)
-	else
-		self:AddPlayer(_ip, _port, noOfSpectators+1)
-	end
-	
-end
-
-ServerNetworkMessageSystem.OnPlayerConnected = function(self, _ip, _port, _message)
-	
-	local players = self:GetEntities("Player")
-    
-	if #self:GetEntities("GameRunning") > 0 then
-		self:CheckPlayingState(players, _ip, _port)
-	else
-		self:CheckLobbyState(players, _ip, _port)
-	end
-    --
-	--
-	--local mapSpecs = self:GetEntities("MapSpecs")
-	--if #mapSpecs > 0 then
-	--	maxPlayers = world:GetComponent(mapSpecs[1], "MapSpecs", "NoOfSpawnpoints"):GetInt()
-	--end
-	--
 end
 
 ServerNetworkMessageSystem.OnPlayerDisconnected = function(self, _ip, _port, _message)
 
-	local players = self:GetEntities("Player")
+local entities = self:GetEntities("Player");
 	local foundPlayer = false
+	local isSpectator = false
 	
-	for i = 1, #players do
-		local ip = world:GetComponent(players[i], "NetConnection", "IpAddress"):GetText()
-		local port = world:GetComponent(players[i], "NetConnection", "Port"):GetInt()
+	for i = 1, #entities do
+		
+		local ip = world:GetComponent(entities[i], "NetConnection", "IpAddress"):GetText()
+		local port = world:GetComponent(entities[i], "NetConnection", "Port"):GetInt()
 		
 		if _ip == ip and _port == port then
 			foundPlayer = true
-			isSpectator = world:EntityHasComponent(players[i], "IsSpectator")
 			if #self:GetEntities("GameRunning") > 0 then
-				--world:RemoveComponentFrom("ActiveNetConnection", players[i])
-				world:KillEntity(players[i])
+				world:KillEntity(entities[i])
 			else
-				world:KillEntity(players[i])
+				world:KillEntity(entities[i])		
 			end
+			
+			isSpectator = world:EntityHasComponent(entities[i], "IsSpectator")
+			
 			break
-		end
-		
-	end
 
-	if foundPlayer then
+		end
+	end	
 	
+	if foundPlayer then
+		
 		if isSpectator then
-			print("Spectator disconnected.")
+			print("Spectator disconnected")
 			self:CounterComponentChanged(-1, "Spectators")
 		else
-			print("Player disconnected.")
+			print("Player disconnected")
+			self:CounterComponentChanged(-1, "Players")
+		end
+	end
+	
+	local isSpectator = false
+	
+	for i = 1, #entities do
+		
+		local ip = world:GetComponent(entities[i], "NetConnection", "IpAddress"):GetText()
+		local port = world:GetComponent(entities[i], "NetConnection", "Port"):GetInt()
+		
+		if _ip == ip and _port == port then
+			foundPlayer = true
+			if #self:GetEntities("GameRunning") > 0 then
+				world:RemoveComponentFrom("ActiveNetConnection", entities[i])
+			else
+				world:KillEntity(entities[i])		
+			end
+			
+			isSpectator = world:EntityHasComponent(entities[i], "IsSpectator")
+			
+			break
+
+		end
+	end	
+	
+	if foundPlayer then
+		
+		if isSpectator then
+			print("Spectator disconnected")
+			self:CounterComponentChanged(-1, "Spectators")
+		else
+			print("Player disconnected")
 			self:CounterComponentChanged(-1, "Players")
 		end
 	end
@@ -187,40 +206,45 @@ end
 
 ServerNetworkMessageSystem.OnPlayerTimedOut = function(self, _ip, _port, _message)
 
-	local players = self:GetEntities("Player")
+	local entities = self:GetEntities("Player");
 	local foundPlayer = false
+	local isSpectator = false
 	
-	for i = 1, #players do
-		local ip = world:GetComponent(players[i], "NetConnection", "IpAddress"):GetText()
-		local port = world:GetComponent(players[i], "NetConnection", "Port"):GetInt()
+	for i = 1, #entities do
+		
+		local ip = world:GetComponent(entities[i], "NetConnection", "IpAddress"):GetText()
+		local port = world:GetComponent(entities[i], "NetConnection", "Port"):GetInt()
 		
 		if _ip == ip and _port == port then
 			foundPlayer = true
-			isSpectator = world:EntityHasComponent(players[i], "IsSpectator")
 			if #self:GetEntities("GameRunning") > 0 then
-				--world:RemoveComponentFrom("ActiveNetConnection", players[i])
-				world:KillEntity(players[i])
+				world:KillEntity(entities[i])
 			else
-				world:KillEntity(players[i])
+				world:KillEntity(entities[i])		
 			end
+			
+			isSpectator = world:EntityHasComponent(entities[i], "IsSpectator")
+			
 			break
-		end
-		
-	end
 
-	if foundPlayer then
+		end
+	end	
 	
+	if foundPlayer then
+		
 		if isSpectator then
-			print("Spectator disconnected.")
+			print("Spectator timed out")
 			self:CounterComponentChanged(-1, "Spectators")
 		else
-			print("Player disconnected.")
+			print("Player timed out")
 			self:CounterComponentChanged(-1, "Players")
 		end
 	end
+	
 	
 end
 
 ServerNetworkMessageSystem.OnPasswordInvalid = function(self, _ip, _port, _message)
 	print("ServerNetworkMessageSystem.OnPasswordInvalid - Not implemented!")
 end
+
