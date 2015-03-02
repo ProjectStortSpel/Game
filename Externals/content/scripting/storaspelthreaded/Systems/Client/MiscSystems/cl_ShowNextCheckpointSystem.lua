@@ -47,7 +47,7 @@ ShowNextCheckpointSystem.SpawnSmoke = function(self, oldParticle)
 	world:CreateComponentAndAddTo("Color", newParticle)
 	world:CreateComponentAndAddTo("Particle", newParticle)
 	
-	world:GetComponent(newParticle, "Position", "X"):SetFloat3(X, Y, Z)
+	world:GetComponent(newParticle, "Position", "X"):SetFloat3(X, Y-0.05, Z)
 	world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.0, 0.0, 0.0)
 	
 	world:GetComponent(newParticle, "Particle", "Name"):SetText("smoke")
@@ -76,14 +76,14 @@ Net.Receive("Client.NewTargetCheckpoint",
 	
 	world:GetComponent(newParticle, "CheckpointReached", "CheckpointNumber"):SetInt(cpID)
 	
-	world:GetComponent(newParticle, "Position", "X"):SetFloat3(X, 0.58, Z)
+	world:GetComponent(newParticle, "Position", "X"):SetFloat3(X, 0.70, Z)
 	world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.98, 0.17, 0.08)
 	
 	world:GetComponent(newParticle, "Particle", "Name"):SetText("fire")
 	world:GetComponent(newParticle, "Particle", "Texture"):SetText("content/textures/firewhite.png")
-	world:GetComponent(newParticle, "Particle", "Particles"):SetInt(100)
-	world:GetComponent(newParticle, "Particle", "Lifetime"):SetFloat(1500)
-	world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.02)
+	world:GetComponent(newParticle, "Particle", "Particles"):SetInt(80)
+	world:GetComponent(newParticle, "Particle", "Lifetime"):SetFloat(1200)
+	world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.016)
 	world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(0.6)
 	world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
 	
