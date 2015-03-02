@@ -85,6 +85,8 @@ namespace LuaBridge
 		LuaEmbedder::EmbedClassProperty<LuaComponent>(L, "Component", "Bool", &LuaComponent::GetBool, &LuaComponent::SetBool);
 		LuaEmbedder::EmbedClassProperty<LuaComponent>(L, "Component", "Text", &LuaComponent::GetText, &LuaComponent::SetText);
 		LuaEmbedder::EmbedClassProperty<LuaComponent>(L, "Component", "String", &LuaComponent::GetString, &LuaComponent::SetString);
+
+		LuaEmbedder::EmbedArray<LuaComponent>(L, "ComponentArray", "Component");
 	}
 
 	int LuaComponent::GetFloat(lua_State* L)

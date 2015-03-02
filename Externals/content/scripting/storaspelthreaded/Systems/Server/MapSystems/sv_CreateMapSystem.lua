@@ -265,7 +265,6 @@ CreateMapSystem.CreateMap = function(self, name)
 	local inputData = InputData()
 	local map
     self.mapX, self.mapY, map = File.LoadMap(name)
-	
 
 		
 	for x = 0, self.mapX + 1 do

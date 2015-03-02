@@ -16,7 +16,7 @@ GraphicDevice::GraphicDevice()
 
 	m_windowPosX = 70;
 	m_windowPosY = 2;
-	m_windowCaption = "Project MOMS SPAGHETTI";
+	m_windowCaption = "Project SWEET POTATOE PIE";
 	m_SDLinitialized = false;
 	
 	m_pointerToPointlights = NULL;

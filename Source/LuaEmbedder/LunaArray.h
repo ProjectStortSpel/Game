@@ -1,17 +1,18 @@
-#ifndef LUANUMBERARRAY_H
-#define LUANUMBERARRAY_H
+#ifndef LUNAARRAY_H
+#define LUNAARRAY_H
+
+#include "Luna.h"
 
 #include <Lua/lua.hpp>
 #include <assert.h>
 #include <string.h>
-#include <map>
 
 namespace LuaEmbedder
 {
-  template<class T> class LuaNumberArray
+  template<class T> class LunaArray
   {
   public:
-    static void Embed(lua_State* L, const char* name)
+    static void Embed(lua_State* L, const char* name, const char* className)
     {
       luaL_newmetatable(L, name);
       int metatable = lua_gettop(L);
@@ -23,12 +24,14 @@ namespace LuaEmbedder
       
       lua_pushstring(L, "__index");
       lua_pushstring(L, name);
-      lua_pushcclosure(L, &Get, 1);
+      lua_pushstring(L, className);
+      lua_pushcclosure(L, &Get, 2);
       lua_settable(L, metatable);
 
       lua_pushstring(L, "__newindex");
       lua_pushstring(L, name);
-      lua_pushcclosure(L, &Set, 1);
+      lua_pushstring(L, className);
+      lua_pushcclosure(L, &Set, 2);
       lua_settable(L, metatable);
       
       lua_pushstring(L, "__gc");
@@ -54,7 +57,7 @@ namespace LuaEmbedder
       lua_pop(L, 2);
     }
     
-    static void Push(lua_State* L, const char* name, const T* array, unsigned int size, bool remove = true)
+    static void Push(lua_State* L, const char* name, T** array, unsigned int size, bool remove = true)
     {
       luaL_getmetatable(L, name);
       assert(!lua_isnil(L, -1));
@@ -72,28 +75,28 @@ namespace LuaEmbedder
 	      lua_pushvalue(L, -2);
 	      lua_settable(L, metatable);
       }
-      lua_pushlightuserdata(L, (T*)array);
+      lua_pushlightuserdata(L, (T**)array);
       lua_pushinteger(L, (int)size);
       lua_settable(L, -3);
       lua_pop(L, 1);
       
       Subtable(L, metatable, "userdata", "v");
       int subtable = lua_gettop(L);
-      lua_pushlightuserdata(L, (T*)array);
+      lua_pushlightuserdata(L, (T**)array);
       lua_gettable(L, -2);
-      T** pArray = nullptr;
+      T*** pArray = nullptr;
       if (lua_isnil(L, -1))
       {
 	lua_pop(L, 1);
 	lua_checkstack(L, 3);
-	pArray = (T**)lua_newuserdata(L, sizeof(T*));
-	lua_pushlightuserdata(L, (T*)array);
+	pArray = (T***)lua_newuserdata(L, sizeof(T**));
+	lua_pushlightuserdata(L, (T**)array);
 	lua_pushvalue(L, -2);
 	lua_settable(L, -4);
       }
       if (pArray)
       {
-	*pArray = (T*)array;
+	*pArray = (T**)array;
 	lua_pushvalue(L, metatable);
 	lua_setmetatable(L, -2);
 	if (!remove)
@@ -111,39 +114,24 @@ namespace LuaEmbedder
       lua_settop(L, metatable);
     }
     
-	static T* Pull(lua_State* L, const char* name, int index, unsigned int* length)
-	{
-		T** pArray = static_cast<T**>(luaL_checkudata(L, index, name));
-		if (!pArray)
-			return nullptr;
-		if (length)
-		{
-			int startTop = lua_gettop(L);
-			luaL_getmetatable(L, name);
-			int metatable = lua_gettop(L);
-			lua_pushstring(L, "size");
-			lua_gettable(L, metatable);
-			*length = 0;
-			if (!lua_isnil(L, -1))
-			{
-				lua_pushlightuserdata(L, (T*)*pArray);
-				lua_gettable(L, -2);
-				*length = lua_tointeger(L, -1);
-			}
-			lua_settop(L, startTop);
-		}
-		return *pArray;
-	}
+    static T** Pull(lua_State* L, const char* name, int index)
+    {
+	    T*** pArray = static_cast<T***>(luaL_checkudata(L, index, name));
+	    if (!pArray)
+		    return nullptr;
+	    return *pArray;
+    }
     
   private:
     static int Get(lua_State* L)
     {
       const char* name = lua_tostring(L, lua_upvalueindex(1));
-      T** pArray = (T**)luaL_checkudata(L, 1, name);
+      const char* className = lua_tostring(L, lua_upvalueindex(2));
+      T*** pArray = (T***)luaL_checkudata(L, 1, name);
       if (lua_isnumber(L, 2))
       {
 	int index = lua_tointeger(L, 2);
-	lua_pushnumber(L, (*pArray)[index - 1]);
+	Luna<T>::push(L, className, (*pArray)[index - 1], true);
       }
       else
 	lua_pushnil(L);
@@ -153,11 +141,12 @@ namespace LuaEmbedder
     static int Set(lua_State* L)
     {
       const char* name = lua_tostring(L, lua_upvalueindex(1));
-      T** pArray = (T**)luaL_checkudata(L, 1, name);
-      if (lua_isnumber(L, 2) && lua_isnumber(L, 3))
+      const char* className = lua_tostring(L, lua_upvalueindex(2));
+      T*** pArray = (T***)luaL_checkudata(L, 1, name);
+      if (lua_isnumber(L, 2) && lua_isuserdata(L, 3))
       {
 	int index = lua_tointeger(L, 2);
-	T value = (T)lua_tonumber(L, 3);
+	T* value = Luna<T>::check(L, className, 3);
 	(*pArray)[index - 1] = value;
       }
       return 0;
@@ -167,7 +156,7 @@ namespace LuaEmbedder
     {
       lua_remove(L, 1);
       int size = lua_tointeger(L, 1);
-      T* array = new T[size];
+      T** array = new T*[size];
       const char* name = lua_tostring(L, lua_upvalueindex(1));
       Push(L, name, array, (unsigned int)size, true);
       return 1;
@@ -175,7 +164,8 @@ namespace LuaEmbedder
     
     static int Remove(lua_State* L)
     {
-      T** pArray = (T**)lua_touserdata(L, 1);
+      T*** pArray = (T***)lua_touserdata(L, 1);
+      int length = 0;
       
       // Remove size
       const char* name = lua_tostring(L, lua_upvalueindex(1));
@@ -185,7 +175,11 @@ namespace LuaEmbedder
       lua_gettable(L, -2);
       if (!lua_isnil(L, -1))
       {
-	lua_pushlightuserdata(L, (T*)*pArray);
+	lua_pushlightuserdata(L, (T**)*pArray);
+	lua_gettable(L, -2);
+	length = lua_tointeger(L, -1);
+	lua_pop(L, 1);
+	lua_pushlightuserdata(L, (T**)*pArray);
 	lua_pushnil(L);
 	lua_settable(L, -3);
       }
@@ -205,6 +199,8 @@ namespace LuaEmbedder
       }
       if (pArray && *pArray)
       {
+	for (int i = 0; i < length; i++)
+		delete (*pArray)[i];
 	delete [] (*pArray);
 	*pArray = nullptr;
 	pArray = nullptr;
@@ -217,7 +213,7 @@ namespace LuaEmbedder
     {
 	int startTop = lua_gettop(L);
 	const char* name = lua_tostring(L, lua_upvalueindex(1));
-	T** pArray = (T**)luaL_checkudata(L, 1, name);
+	T*** pArray = (T***)luaL_checkudata(L, 1, name);
 	luaL_getmetatable(L, name);
 	int metatable = lua_gettop(L);
 	lua_pushstring(L, "size");
@@ -225,7 +221,7 @@ namespace LuaEmbedder
 	int length = 0;
 	if (!lua_isnil(L, -1))
 	{
-		lua_pushlightuserdata(L, (T*)*pArray);
+		lua_pushlightuserdata(L, (T**)*pArray);
 		lua_gettable(L, -2);
 		length = lua_tointeger(L, -1);
 	}
