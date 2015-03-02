@@ -5,7 +5,11 @@ SkyBox::SkyBox()
 { }
 
 SkyBox::~SkyBox()
-{ }
+{ 
+	glDeleteVertexArrays(1, &m_VAOHandle);
+	glDeleteBuffers(1, &m_vboCubeVertices);
+	glDeleteBuffers(1, &m_iboCubeIndices);
+}
 
 SkyBox::SkyBox(GLuint _texHandle, float _camFarPlane)
 {
@@ -39,15 +43,13 @@ void SkyBox::BindBuffers(float _far)
 	glGenVertexArrays(1, &m_VAOHandle);
 	glBindVertexArray(m_VAOHandle);
 
-	GLuint vboCubeVertices;
-	glGenBuffers(1, &vboCubeVertices);
-	glBindBuffer(GL_ARRAY_BUFFER, vboCubeVertices);
+	glGenBuffers(1, &m_vboCubeVertices);
+	glBindBuffer(GL_ARRAY_BUFFER, m_vboCubeVertices);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
 
 
-	GLuint iboCubeIndices;
-	glGenBuffers(1, &iboCubeIndices);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboCubeIndices);
+	glGenBuffers(1, &m_iboCubeIndices);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_iboCubeIndices);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cubeIndices), cubeIndices, GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);

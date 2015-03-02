@@ -43,7 +43,8 @@ GraphicsHigh::~GraphicsHigh()
 
 	glDeleteBuffers(1, &m_pointlightBuffer);
 	glDeleteBuffers(1, &m_dirLightBuffer);
-
+	glDeleteFramebuffers(1, &m_deferredFBO);
+	glDeleteFramebuffers(1, &m_forwardFBO);
 }
 
 bool GraphicsHigh::Init()
@@ -518,6 +519,7 @@ void GraphicsHigh::Render()
 		
 		thisShader->SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 
+		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, it->second->GetTexHandle());
 
 		mat4 Model = glm::translate(it->second->GetWorldPos());

@@ -23,6 +23,7 @@ ShadowMap::ShadowMap()
 
 ShadowMap::~ShadowMap()
 {
+	glDeleteFramebuffers(1, &m_shadowFBO);
 }
 
 void ShadowMap::CreateShadowMapTexture(GLuint _textureUnit)
