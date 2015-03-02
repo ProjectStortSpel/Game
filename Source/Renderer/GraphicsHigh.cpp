@@ -285,7 +285,8 @@ void GraphicsHigh::Update(float _dt)
 	}
 	m_glTimerValues.clear();
 
-	//PrintModelInfo();
+	if (debugModelInfo)
+		PrintModelInfo();
 
 
 	BufferModels();
