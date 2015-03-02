@@ -1083,22 +1083,22 @@ MapGenerator.FixRiverEffects = function(self, riverTiles)
 			
 		elseif isLastTile then
 		
-			--local	newParticle	=	world:CreateNewEntity()
-			--world:CreateComponentAndAddTo("Position", newParticle)
-			--world:CreateComponentAndAddTo("Color", newParticle)
-			--world:CreateComponentAndAddTo("Particle", newParticle)
-			--
-			--world:GetComponent(newParticle, "Position", "X"):SetFloat3(posAX + 0.6*dirAX, 0.23, posAY + 0.6*dirAY)
-			--
-			--world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.0, 0.0, 0.6)
-			--
-			--world:GetComponent(newParticle, "Particle", "Name"):SetText("fire")
-			--world:GetComponent(newParticle, "Particle", "Texture"):SetText("content/textures/firewhite.png")
-			--world:GetComponent(newParticle, "Particle", "Particles"):SetInt(1000)
-			--world:GetComponent(newParticle, "Particle", "Lifetime"):SetFloat(400)
-			--world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.05)
-			--world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(0.6)
-			--world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
+			local	newParticle	=	world:CreateNewEntity()
+			world:CreateComponentAndAddTo("Position", newParticle)
+			world:CreateComponentAndAddTo("Color", newParticle)
+			world:CreateComponentAndAddTo("Particle", newParticle)
+			
+			world:GetComponent(newParticle, "Position", "X"):SetFloat3(posAX + 0.6*dirAX, 0.23, posAY + 0.6*dirAY)
+			
+			world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.0, 0.0, 0.6)
+			
+			world:GetComponent(newParticle, "Particle", "Name"):SetText("fire")
+			world:GetComponent(newParticle, "Particle", "Texture"):SetText("content/textures/firewhite.png")
+			world:GetComponent(newParticle, "Particle", "Particles"):SetInt(1000)
+			world:GetComponent(newParticle, "Particle", "Lifetime"):SetFloat(400)
+			world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.05)
+			world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(0.6)
+			world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
 		end
 		
 	end

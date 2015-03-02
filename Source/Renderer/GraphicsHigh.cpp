@@ -41,7 +41,8 @@ GraphicsHigh::~GraphicsHigh()
 
 	glDeleteBuffers(1, &m_pointlightBuffer);
 	glDeleteBuffers(1, &m_dirLightBuffer);
-
+	glDeleteFramebuffers(1, &m_deferredFBO);
+	glDeleteFramebuffers(1, &m_forwardFBO);
 }
 
 bool GraphicsHigh::Init()

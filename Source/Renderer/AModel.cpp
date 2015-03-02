@@ -27,6 +27,7 @@ AModel::AModel()
 AModel::~AModel()
 {
 	glDeleteBuffers(1, &jointBuffer);
+	glDeleteBuffers(1, &animBuffer);
 }
 
 void AModel::Draw(mat4 viewMatrix, mat4 projectionMatrix, Shader* shaderptr)
