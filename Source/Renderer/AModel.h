@@ -53,6 +53,7 @@ namespace Renderer
 		int jointId;
 		int* lastFrame;
 		std::vector<KeyFrame> keyFrames;
+		std::vector<Joint> frames;
 		JointAnim(int _jointId, int* _lastFrame)
 		{
 			jointId = _jointId;
@@ -110,6 +111,8 @@ namespace Renderer
 
 		void Draw(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, Shader* shaderptr);
 		void Update(float _dt);
+
+		bool PreCalculateAnimations();
 
 		bool SetAnimation(int _animId);
 

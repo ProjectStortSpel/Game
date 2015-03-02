@@ -5,6 +5,8 @@ using namespace glm;
 
 GraphicsHigh::GraphicsHigh()
 {
+	m_useAnimations = true;
+
 	mark = 0;
 	timer = 0;
 
@@ -375,6 +377,13 @@ void GraphicsHigh::WriteShadowMapDepth()
 		m_modelsForward[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector, 0);
 	}
 	//------------------------------------------------
+
+	//----Animated
+	m_animationShader.UseProgram();
+	//----DRAW MODELS
+	for (int i = 0; i < m_modelsAnimated.size(); i++)
+		m_modelsAnimated[i].Draw((*m_shadowMap->GetViewMatrix()), shadowProjection, &m_animationShader);
+
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glCullFace(GL_BACK);

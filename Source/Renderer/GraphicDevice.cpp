@@ -12,6 +12,8 @@ using namespace glm;
 
 GraphicDevice::GraphicDevice()
 {
+	m_useAnimations = false;
+
 	m_windowPosX = 70;
 	m_windowPosY = 2;
 	m_windowCaption = "Project SWEET POTATO PIE";
@@ -391,11 +393,11 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	Shader *shaderPtr = NULL;
 	std::vector<Model> *modelList = NULL;
 
-	//if (obj.animated)
-	//{
-	//	BufferAModel(_modelId, _modelToLoad);
-	//	return;
-	//}
+	if (obj.animated && m_useAnimations)
+	{
+		BufferAModel(_modelId, _modelToLoad);
+		return;
+	}
 
 	bool FoundShaderType = false;
 	for (int i = 0; i < m_renderLists.size(); i++)
@@ -550,12 +552,12 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 	// Add animation base
 	for (int i = 0; i < joints.size(); i++)
 	{
-		int index = joints.size() - i - 1;
+		int index = i;//joints.size() - i - 1;
 		model.animation.push_back(Joint(
 			joints[index].mat[0][0], joints[index].mat[0][1], joints[index].mat[0][2], joints[index].mat[0][3],
 			joints[index].mat[1][0], joints[index].mat[1][1], joints[index].mat[1][2], joints[index].mat[1][3],
 			joints[index].mat[2][0], joints[index].mat[2][1], joints[index].mat[2][2], joints[index].mat[2][3],
-			joints[index].mat[3][0], joints[index].mat[3][1], joints[index].mat[3][2], index - joints[index].parent - 1
+			joints[index].mat[3][0], joints[index].mat[3][1], joints[index].mat[3][2], joints[index].parent//index - joints[index].parent - 1
 			));
 	}
 
@@ -574,6 +576,9 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 
 	//for the matrices (modelView + normal)
 	m_vramUsage += (16 + 9) * sizeof(float);
+
+	// Pre-calc frames
+	model.PreCalculateAnimations();
 
 	// Push back the model
 	modelList->push_back(model);
