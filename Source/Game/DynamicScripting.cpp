@@ -181,6 +181,11 @@ void DynamicScripting::SetScript(std::vector<Rule> _script)
 	m_script = _script;
 }
 
+void DynamicScripting::SetRuleBook( rulebook* _rulebook )
+{
+	this->m_ruleBook = _rulebook;
+}
+
 bool DynamicScripting::IsInScript( Rule _rule )
 {
 	for ( unsigned int i = 0; i < m_script.size( ); i++ )
