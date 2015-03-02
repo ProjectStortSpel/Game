@@ -111,6 +111,14 @@ namespace LuaEmbedder
       lua_settop(L, metatable);
     }
     
+    static T* Pull(lua_State* L, const char* name, int index)
+    {
+	    T** pArray = static_cast<T**>(luaL_checkudata(L, index, name));
+	    if (!pArray)
+		    return nullptr;
+	    return *pArray;
+    }
+    
   private:
     static int Get(lua_State* L)
     {

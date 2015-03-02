@@ -638,6 +638,21 @@ bool Preload(lua_State* L, const std::vector<std::string>* paths, const std::str
     return PullString(L, -1);
   }
   
+	unsigned int* PullUnsignedIntArray(lua_State* L, int index)
+	{
+		return LuaNumberArray<unsigned int>::Pull(L, "UnsignedIntArray", index);
+	}
+	
+	int* PullIntArray(lua_State* L, int index)
+	{
+		return LuaNumberArray<int>::Pull(L, "IntArray", index);
+	}
+
+	float* PullFloatArray(lua_State* L, int index)
+	{
+		return LuaNumberArray<float>::Pull(L, "FloatArray", index);
+	}
+  
   void PushFloat(lua_State* L, float value)
   {
     lua_pushnumber(L, value);

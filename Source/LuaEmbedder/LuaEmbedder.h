@@ -126,6 +126,9 @@ namespace LuaEmbedder
   bool EXPORT PullBool(lua_State* L, const std::string& name, const std::string& library = std::string());
   std::string EXPORT PullString(lua_State* L, int index);
   std::string EXPORT PullString(lua_State* L, const std::string& name, const std::string& library = std::string());
+  unsigned int EXPORT* PullUnsignedIntArray(lua_State* L, int index);
+  int EXPORT* PullIntArray(lua_State* L, int index);
+  float EXPORT* PullFloatArray(lua_State* L, int index);
   
   void EXPORT PushFloat(lua_State* L, float value);
   void EXPORT PushInt(lua_State* L, int value);
