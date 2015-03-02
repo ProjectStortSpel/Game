@@ -290,6 +290,9 @@
     <ClCompile Include="..\..\..\Source\Game\Systems\SyncEntitiesSystem.cpp">
       <Filter>Game\Systems\NetworkMessages</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\RuleManager.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h">
@@ -484,6 +487,9 @@
     <ClInclude Include="..\..\..\Source\Game\Systems\SimulateFrameSpikeSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\SyncEntitiesSystem.h">
       <Filter>Game\Systems\NetworkMessages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\RuleManager.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

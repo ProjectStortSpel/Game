@@ -11,6 +11,7 @@ require "sv_CreateMapSystem"
 require "sv_RiverSystem"
 require "sv_VoidSystem"
 require "sv_CheckpointSystem"
+require "sv_ColorTilesSystem"
 
 --	Light Systems
 package.path = package.path .. ";Systems/Server/LightSystems/?.lua"
@@ -112,6 +113,7 @@ worldCreator:AddSystemToCurrentGroup(MapRater)
 worldCreator:AddSystemToCurrentGroup(RiverSystem)
 worldCreator:AddSystemToCurrentGroup(VoidSystem)
 worldCreator:AddSystemToCurrentGroup(CheckpointSystem)
+worldCreator:AddSystemToCurrentGroup(ColorTilesSystem)
 --worldCreator:AddSystemToCurrentGroup(DirectionalLightSystem)
 worldCreator:AddSystemToCurrentGroup(PlayerSystem)
 worldCreator:AddSystemToCurrentGroup(UnitSystem)

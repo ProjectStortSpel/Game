@@ -9,6 +9,7 @@ using namespace glm;
 
 GraphicsLow::GraphicsLow()
 {
+	m_useAnimations = false;
 	m_modelIDcounter = 0;
 	m_vramUsage = 0;
 	m_debugTexFlag = 0;

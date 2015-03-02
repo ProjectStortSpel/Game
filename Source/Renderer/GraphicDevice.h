@@ -191,6 +191,8 @@ namespace Renderer
 
 		Shader m_animationShader;
 
+		bool m_useAnimations;
+
 		//MODEL LOADER
 		int m_modelIDcounter;
 
