@@ -401,11 +401,11 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	Shader *shaderPtr = NULL;
 	std::vector<Model> *modelList = NULL;
 
-	//if (obj.animated && m_useAnimations)
-	//{
-	//	BufferAModel(_modelId, _modelToLoad);
-	//	return;
-	//}
+	if (obj.animated && m_useAnimations)
+	{
+		BufferAModel(_modelId, _modelToLoad);
+		return;
+	}
 
 	bool FoundShaderType = false;
 	for (int i = 0; i < m_renderLists.size(); i++)
@@ -571,7 +571,7 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 	for (int i = 0; i < obj.anim.size(); i++)
 	{
 		std::vector<AnimData> anim = ModelLoader::importAnimation(obj.anim[i]);
-		for (int j = 0; j < anim.size(); j++)
+		for (iznt j = 0; j < anim.size(); j++)
 		{
 			model.AddKeyFrame(obj.anim[i], anim[j].frame, anim[j].joint, anim[j].mat);
 		}
