@@ -4,6 +4,8 @@ namespace LuaBridge
 {
 	namespace DynamicScript
 	{
+		RuleManager rm;
+		int index;
 		void Embed( lua_State* _l )
 		{
 			index = -1;
@@ -21,12 +23,12 @@ namespace LuaBridge
 		{
 			std::string filePath = LuaEmbedder::PullString( _l, 1 );
 
-			int index = rm.ReadRulebook( filePath.c_str( ) );
+			index = rm.ReadRulebook( filePath.c_str( ) );
 
 			DynamicScripting* ds = DynamicScripting::Instance( );
 
 			ds->SetRuleBook( rm.GetRulebook( index ) );
-
+			
 			LuaEmbedder::PushInt( _l, index );
 			return 1;
 		}
