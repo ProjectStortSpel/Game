@@ -1126,12 +1126,12 @@ void GameCreator::ConsoleHostSettings(std::string _command, std::vector<Console:
 	char* data = new char[m_name.size() + 1];
 	memcpy(data, m_name.c_str(), m_name.size() + 1);
 	m_serverWorld->SetComponent(id, "HostSettings", "Name", data);
-	delete data;
+	delete [] data;
 	
 	data = new char[m_map.size() + 1];
 	memcpy(data, m_map.c_str(), m_map.size() + 1);
 	m_serverWorld->SetComponent(id, "HostSettings", "Map", data);
-	delete data;
+	delete [] data;
 
 	m_serverWorld->SetComponent(id, "HostSettings", "Port", &port);
 	m_serverWorld->SetComponent(id, "HostSettings", "FillAI", &m_fillAI);
