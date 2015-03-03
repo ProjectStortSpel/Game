@@ -119,10 +119,13 @@ bool RuleManager::StoreRulebook( int _index )
 
 				for ( int i = 0; i < rbook.size( ); i++ )
 				{
-					to_file = rbook [i].script;
-					to_file += " " + std::to_string( rbook [i].weight ) + "\n";
+					std::stringstream ss;
 
-					file << to_file.c_str( );
+					ss << rbook [i].script + " ";
+					ss << rbook [i].weight;
+					ss << "\n";
+
+					file << ss.str( );
 				}
 			}
 
