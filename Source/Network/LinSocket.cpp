@@ -324,7 +324,7 @@ ISocket* LinSocket::Accept(void)
 int LinSocket::Send(char* _buffer, int _length, int _flags)
 {
 	if (_flags == 0)
-		_flags == MSG_NOSIGNAL;
+		_flags = MSG_NOSIGNAL;
 
 	short len = htons(_length);
 
