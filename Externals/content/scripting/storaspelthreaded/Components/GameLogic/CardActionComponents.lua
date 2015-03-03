@@ -3,67 +3,67 @@
 --	for the card action
 
 -- Turn Left Component
-local UnitTurnLeftComponent = ComponentType()
-UnitTurnLeftComponent.Name = "UnitTurnLeft"
-UnitTurnLeftComponent.TableType = TableType.Map
-worldCreator:AddComponentType(UnitTurnLeftComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "UnitTurnLeft"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- Turn Right Component
-local UnitTurnRightComponent = ComponentType()
-UnitTurnRightComponent.Name = "UnitTurnRight"
-UnitTurnRightComponent.TableType = TableType.Map
-worldCreator:AddComponentType(UnitTurnRightComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "UnitTurnRight"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- Turn Around Component
-local UnitTurnAroundComponent = ComponentType()
-UnitTurnAroundComponent.Name = "UnitTurnAround"
-UnitTurnAroundComponent.TableType = TableType.Map
-worldCreator:AddComponentType(UnitTurnAroundComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "UnitTurnAround"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- Forward Component
-local UnitForwardComponent = ComponentType()
-UnitForwardComponent.Name = "UnitForward"
-UnitForwardComponent.TableType = TableType.Map
-worldCreator:AddComponentType(UnitForwardComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "UnitForward"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- Backward Component
-local UnitBackwardComponent = ComponentType()
-UnitBackwardComponent.Name = "UnitBackward"
-UnitBackwardComponent.TableType = TableType.Map
-worldCreator:AddComponentType(UnitBackwardComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "UnitBackward"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- UnitGuard Component
-local UnitGuardComponent = ComponentType()
-UnitGuardComponent.Name = "UnitGuard"
-UnitGuardComponent.TableType = TableType.Map
-worldCreator:AddComponentType(UnitGuardComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "UnitGuard"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- UnitStone Component
-local UnitStoneComponent = ComponentType()
-UnitStoneComponent.Name = "UnitStone"
-UnitStoneComponent.TableType = TableType.Map
-worldCreator:AddComponentType(UnitStoneComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "UnitStone"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- UnitSlingShot Component
-local UnitSlingShotComponent = ComponentType()
-UnitSlingShotComponent.Name = "UnitSlingShot"
-UnitSlingShotComponent.TableType = TableType.Map
-worldCreator:AddComponentType(UnitSlingShotComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "UnitSlingShot"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- Sprint Component
-local UnitSprintComponent = ComponentType()
-UnitSprintComponent.Name = "UnitSprint"
-UnitSprintComponent.TableType = TableType.Map
-worldCreator:AddComponentType(UnitSprintComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "UnitSprint"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- IWin Component
-local UnitIWin = ComponentType()
-UnitIWin.Name = "UnitIWin"
-UnitIWin.TableType = TableType.Map
-worldCreator:AddComponentType(UnitIWin)
+NewComponent = ComponentType()
+NewComponent.Name = "UnitIWin"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- ActionGuard Component
-local ActionGuard = ComponentType()
-ActionGuard.Name = "ActionGuard"
-ActionGuard.TableType = TableType.Map
-worldCreator:AddComponentType(ActionGuard)
+NewComponent = ComponentType()
+NewComponent.Name = "ActionGuard"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)

@@ -3,109 +3,109 @@
 --	for unit components
 
 --	Unit Component
-local UnitComponent = ComponentType()
-UnitComponent.Name = "Unit"
-UnitComponent.TableType = TableType.Map
-UnitComponent.SyncNetwork = true
-worldCreator:AddComponentType(UnitComponent)
+local NewComponent = ComponentType()
+NewComponent.Name = "Unit"
+NewComponent.TableType = TableType.Map
+NewComponent.SyncNetwork = true
+worldCreator:AddComponentType(NewComponent)
 
 --	PlayerEntityId Component
-local PlayerEntityIdComponent = ComponentType()
-PlayerEntityIdComponent.Name = "PlayerEntityId"
-PlayerEntityIdComponent.TableType = TableType.Map
-PlayerEntityIdComponent:AddVariable("Id", ByteSize.Reference)
-worldCreator:AddComponentType(PlayerEntityIdComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "PlayerEntityId"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("Id", ByteSize.Reference)
+worldCreator:AddComponentType(NewComponent)
 
 -- Direction Component
-local DirectionComponent = ComponentType()
-DirectionComponent.Name = "Direction"
-DirectionComponent.SyncNetwork = true
-DirectionComponent.TableType = TableType.Map
-DirectionComponent:AddVariable("X", ByteSize.Int)
-DirectionComponent:AddVariable("Z", ByteSize.Int)
-worldCreator:AddComponentType(DirectionComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "Direction"
+NewComponent.SyncNetwork = true
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("X", ByteSize.Int)
+NewComponent:AddVariable("Z", ByteSize.Int)
+worldCreator:AddComponentType(NewComponent)
 
 -- Unit Dead Component
-local UnitDeadComponent = ComponentType()
-UnitDeadComponent.Name = "UnitDead"
-UnitDeadComponent.TableType = TableType.Map
-worldCreator:AddComponentType(UnitDeadComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "UnitDead"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- NeedUnit Component
-local NeedUnitComponent = ComponentType()
-NeedUnitComponent.Name = "NeedUnit"
-NeedUnitComponent.TableType = TableType.Map
-worldCreator:AddComponentType(NeedUnitComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "NeedUnit"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- RemoveUnit Component
-local RemoveUnitComponent = ComponentType()
-RemoveUnitComponent.Name = "RemoveUnit"
-RemoveUnitComponent.TableType = TableType.Map
-RemoveUnitComponent:AddVariable("PlayerNo", ByteSize.Int)
-RemoveUnitComponent:AddVariable("UnitEntityId", ByteSize.Int)
-worldCreator:AddComponentType(RemoveUnitComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "RemoveUnit"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("PlayerNo", ByteSize.Int)
+NewComponent:AddVariable("UnitEntityId", ByteSize.Int)
+worldCreator:AddComponentType(NewComponent)
 
 -- Spawn Component
-local SpawnComponent = ComponentType()
-SpawnComponent.Name = "Spawn"
-SpawnComponent.TableType = TableType.Map
-SpawnComponent:AddVariable("UnitEntityId", ByteSize.Reference)
-worldCreator:AddComponentType(SpawnComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "Spawn"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("UnitEntityId", ByteSize.Reference)
+worldCreator:AddComponentType(NewComponent)
 
 -- Spawnpoint Component
-local SpawnpointComponent = ComponentType()
-SpawnpointComponent.Name = "Spawnpoint"
-SpawnpointComponent.TableType = TableType.Map
-SpawnpointComponent:AddVariable("X", ByteSize.Int)
-SpawnpointComponent:AddVariable("Z", ByteSize.Int)
-worldCreator:AddComponentType(SpawnpointComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "Spawnpoint"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("X", ByteSize.Int)
+NewComponent:AddVariable("Z", ByteSize.Int)
+worldCreator:AddComponentType(NewComponent)
 
 --	NeedSpawnLocation Component
-local NeedSpawnLocation = ComponentType()
-NeedSpawnLocation.Name = "NeedSpawnLocation"
-NeedSpawnLocation.TableType = TableType.Map
-worldCreator:AddComponentType(NeedSpawnLocation)
+NewComponent = ComponentType()
+NewComponent.Name = "NeedSpawnLocation"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- TargetCheckpoint Component
-local TargetCheckpointComponent = ComponentType()
-TargetCheckpointComponent.Name = "TargetCheckpoint"
-TargetCheckpointComponent.TableType = TableType.Map
-TargetCheckpointComponent:AddVariable("Id", ByteSize.Int)
-worldCreator:AddComponentType(TargetCheckpointComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "TargetCheckpoint"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("Id", ByteSize.Int)
+worldCreator:AddComponentType(NewComponent)
 
 -- TargetPosition Component
-local TargetPositionComponent = ComponentType()
-TargetPositionComponent.Name = "TargetPosition"
-TargetPositionComponent.TableType = TableType.Map
-TargetPositionComponent:AddVariable("X", ByteSize.Float)
-TargetPositionComponent:AddVariable("Y", ByteSize.Float)
-TargetPositionComponent:AddVariable("Z", ByteSize.Float)
-worldCreator:AddComponentType(TargetPositionComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "TargetPosition"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("X", ByteSize.Float)
+NewComponent:AddVariable("Y", ByteSize.Float)
+NewComponent:AddVariable("Z", ByteSize.Float)
+worldCreator:AddComponentType(NewComponent)
 
 -- UnitSelectedCards Component
-local UnitSelectedCardsComponent = ComponentType()
-UnitSelectedCardsComponent.Name = "UnitSelectedCards"
-UnitSelectedCardsComponent.TableType = TableType.Map
-worldCreator:AddComponentType(UnitSelectedCardsComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "UnitSelectedCards"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
-local UnitWantTileOffset = ComponentType()
-UnitWantTileOffset.Name = "UnitWantTileOffset"
-UnitWantTileOffset.TableType = TableType.Map
-worldCreator:AddComponentType(UnitWantTileOffset)
-
--- UnitVisualizer Component
-local UnitGhost = ComponentType()
-UnitGhost.Name = "UnitGhost"
-UnitGhost.TableType = TableType.Map
-UnitGhost:AddVariable("Id", ByteSize.Reference)
-worldCreator:AddComponentType(UnitGhost)
+NewComponent = ComponentType()
+NewComponent.Name = "UnitWantTileOffset"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- UnitVisualizer Component
-local CardAboveHead = ComponentType()
-CardAboveHead.Name = "CardAboveHead"
-CardAboveHead.TableType = TableType.Map
-CardAboveHead:AddVariable("CardOwner", ByteSize.Reference)
-CardAboveHead:AddVariable("CardId", ByteSize.Reference)
-CardAboveHead:AddVariable("CardDenied", ByteSize.Int)
-worldCreator:AddComponentType(CardAboveHead)
+NewComponent = ComponentType()
+NewComponent.Name = "UnitGhost"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("Id", ByteSize.Reference)
+worldCreator:AddComponentType(NewComponent)
+
+-- UnitVisualizer Component
+NewComponent = ComponentType()
+NewComponent.Name = "CardAboveHead"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("CardOwner", ByteSize.Reference)
+NewComponent:AddVariable("CardId", ByteSize.Reference)
+NewComponent:AddVariable("CardDenied", ByteSize.Int)
+worldCreator:AddComponentType(NewComponent)
 
