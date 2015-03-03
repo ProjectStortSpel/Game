@@ -393,11 +393,11 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	Shader *shaderPtr = NULL;
 	std::vector<Model> *modelList = NULL;
 
-	if (obj.animated && m_useAnimations)
-	{
-		BufferAModel(_modelId, _modelToLoad);
-		return;
-	}
+	//if (obj.animated && m_useAnimations)
+	//{
+	//	BufferAModel(_modelId, _modelToLoad);
+	//	return;
+	//}
 
 	bool FoundShaderType = false;
 	for (int i = 0; i < m_renderLists.size(); i++)

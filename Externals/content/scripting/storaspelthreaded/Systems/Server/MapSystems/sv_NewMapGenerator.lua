@@ -101,7 +101,7 @@ MapGenerator.GenerateMap = function(self, MapSeed, NumberOfPlayers, NumberOfChec
 	self.MapSizeZ		=	math.random(8+NumberOfPlayers, 10+NumberOfPlayers) + 2*self.VoidMargin
 	self.Players		=	NumberOfPlayers
 	self.Checkpoints	=	NumberOfCheckpoints
-	self.Rivers			=	10 --math.ceil(math.sqrt(self.MapSizeX*self.MapSizeZ)/(self.MapSizeX*self.MapSizeZ))--math.random(NumberOfPlayers, 2*NumberOfPlayers-NumberOfPlayers)
+	self.Rivers			=	math.ceil(math.sqrt(self.MapSizeX*self.MapSizeZ)/10)--math.random(NumberOfPlayers, 2*NumberOfPlayers-NumberOfPlayers)
 	
 	if self.MapSizeX % 2 == 0 then
 		self.MapSizeX	=	self.MapSizeX + (-1)^math.random(1, 10)
@@ -845,6 +845,15 @@ MapGenerator.CreateMap = function(self)
 	
 	--	Generate island
 	self:GenerateIslandBelow()
+	
+	--	Generate directional light
+	local	R,G,B		=	0.6,0.6,0.65
+	local 	newLight 	= 	world:CreateNewEntity()
+	world:CreateComponentAndAddTo("DirectionalLight", newLight)
+	world:CreateComponentAndAddTo("SyncNetwork", newLight)
+    world:GetComponent(newLight, "DirectionalLight", 0):SetDirectionalLight(math.sin(math.random(1, 360)), -1.0, math.sin(math.random(1, 360)), 0.3, 0.7, 0.7, R, G, B)
+	
+	
 end
 
 --	Creates a new entity with the Tile template
