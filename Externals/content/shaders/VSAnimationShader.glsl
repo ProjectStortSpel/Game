@@ -46,10 +46,10 @@ void main()
 	vec4 weights = normalize(VertexJointWeight);
 
 	mat4 skin = mat4(0);
-	skin += mat4(1) * weights.x;
-	skin += mat4(1) * weights.y;
-	skin += mat4(1) * weights.z;
-	skin += mat4(1) * weights.w;
+	skin += (JointToMatrix(anim[int(VertexJointIndex.x)]));// * weights.x;
+	skin += (JointToMatrix(anim[int(VertexJointIndex.y)]));// * weights.y;
+	skin += (JointToMatrix(anim[int(VertexJointIndex.z)]));// * weights.z;
+	skin += (JointToMatrix(anim[int(VertexJointIndex.w)]));// * weights.w;
 	
 	gl_Position = VP * M * skin * vec4(VertexPosition, 1.0);
 
