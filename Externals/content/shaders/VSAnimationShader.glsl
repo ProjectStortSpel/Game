@@ -42,7 +42,7 @@ mat4 JointToMatrix(JointMatrix joint)
 				joint.x0, joint.y0, joint.z0, joint.w0,
 				joint.x1, joint.y1, joint.z1, joint.w1,
 				joint.x2, joint.y2, joint.z2, joint.w2,
-				joint.x3, joint.y3, joint.z3, 1
+				joint.x3, joint.y3, joint.z3, joint.parent/joint.parent
 				);
 }
 
