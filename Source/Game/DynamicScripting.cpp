@@ -24,7 +24,7 @@ void DynamicScripting::Destroy()
 DynamicScripting::DynamicScripting()
 {
 	srand(time(0));
-	m_ruleBook = 0;
+	m_ruleBook = NULL;
 	m_noOfScriptsToUse = 0;
 }
 
