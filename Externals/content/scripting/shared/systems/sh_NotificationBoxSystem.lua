@@ -39,7 +39,7 @@ NotificationBoxSystem.EntitiesAdded = function(self, dt, entities)
 	for i = 1, #entities do
 		local entityId = entities[i]
 		if world:EntityHasComponent(entityId, self.Name) then
-		
+			print("HEJ")
 			self.Text = world:GetComponent(entityId, self.Name, "Text"):GetText()
 			self.Parentmenu = world:GetComponent(entityId, self.Name, "ParentMenu"):GetText()
 
@@ -59,6 +59,7 @@ end
 
 NotificationBoxSystem.SpawnMenu = function(self)
 
+	print("SPAWN MENU")
 	local background = self:CreateElement("gamemenubackground", "quad", 0, -0, -1.5, 1.0, 0.5)
 		
 	local text = self:CreateText("center", "text", 0.0, 0.13, -1.0, 0.5, 0.065)

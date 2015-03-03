@@ -36,7 +36,7 @@ WeatherSystem.EntitiesAdded = function(self, dt, newEntities)
 			self.WeatherChance	=	(self.WeatherChance+1)*1.08
 			print("Weather forecast, " .. self.WeatherChance .. "% chance of weather")
 			if actualWeatherChance <= self.WeatherChance then
-				--self:SpawnWeather()
+				self:SpawnWeather()
 				self.WeatherChance	=	0
 			end
 			

@@ -43,6 +43,12 @@ HostSettingsSystem.EntitiesAdded = function(self, dt, addedEntities)
 				return
 			end
 			
+			local popu = world:CreateNewEntity()
+			world:CreateComponentAndAddTo("NotificationPopup", popu)
+			world:GetComponent(popu, "NotificationPopup", "Text"):SetText("TEEEEEEEEEEEEEMP")
+			world:CreateComponentAndAddTo("SyncNetwork", popu)
+			
+			
 			if world:GetComponent(self.settingsId, "HostSettings", "FillAI"):GetInt() == 1 then
 				Console.AddToCommandQueue("AI")
 			end			
