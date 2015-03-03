@@ -39,6 +39,8 @@ namespace Renderer
 		void Clear();
 		
 	private:
+		void PrintModelInfo();
+
 		bool InitGLEW();
 		bool InitDeferred();
 		bool InitForward();
