@@ -68,6 +68,7 @@
 #define LUAEMBEDDER_H
 
 #include "Luna.h"
+#include "LunaArray.h"
 
 #include <Lua/lua.hpp>
 #include <assert.h>
@@ -125,6 +126,9 @@ namespace LuaEmbedder
   bool EXPORT PullBool(lua_State* L, const std::string& name, const std::string& library = std::string());
   std::string EXPORT PullString(lua_State* L, int index);
   std::string EXPORT PullString(lua_State* L, const std::string& name, const std::string& library = std::string());
+  unsigned int EXPORT* PullUnsignedIntArray(lua_State* L, int index, unsigned int* length);
+  int EXPORT* PullIntArray(lua_State* L, int index, unsigned int* length);
+  float EXPORT* PullFloatArray(lua_State* L, int index, unsigned int* length);
   
   void EXPORT PushFloat(lua_State* L, float value);
   void EXPORT PushInt(lua_State* L, int value);
@@ -265,6 +269,22 @@ namespace LuaEmbedder
   void EXPORT ClearObject(lua_State* L, const std::string& className, T* object)
   {
 	  Luna<T>::Clear(L, className.c_str(), object);
+  }
+  
+  template<typename T>
+  void EXPORT EmbedArray(lua_State* L, const std::string& name, const std::string& className)
+  {
+	  LunaArray<T>::Embed(L, name.c_str(), className.c_str());
+  }
+  template<typename T>
+  void EXPORT PushArray(lua_State* L, const std::string& name, T** array, unsigned int size, bool remove = true)
+  {
+	  LunaArray<T>::Push(L, name.c_str(), array, size, remove);
+  }
+  template<typename T>
+  T EXPORT** PullArray(lua_State* L, const std::string& name, int index)
+  {
+	  return LunaArray<T>::Pull(L, name.c_str(), index);
   }
 }
 

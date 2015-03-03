@@ -51,8 +51,12 @@ namespace Audio
 	Mix_Music* g_music = NULL;
 	std::map<std::string, Mix_Chunk*> g_sounds;
 	
+	
+	
 	float g_near, g_far;
 	glm::vec3 g_cameraPosition;
+	
+	int g_volume = MIX_MAX_VOLUME;
 	
 	std::map<std::string, int> g_channels;
 	
@@ -249,6 +253,8 @@ namespace Audio
 		g_playSoundQueue.clear();
 		g_soundStateQueue.clear();
 		g_soundPositionQueue.clear();
+		
+		Mix_Volume(-1, g_volume);
 	}
 	
 	void Quit()
@@ -260,6 +266,11 @@ namespace Audio
 			Mix_FreeMusic(g_music);
 		
 		Mix_CloseAudio();
+	}
+	
+	void SetVolume(int volume)
+	{
+		g_volume = volume;
 	}
 	
 	void SetDistance(float near, float far)

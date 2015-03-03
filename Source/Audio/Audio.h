@@ -11,6 +11,8 @@ namespace Audio
 	void DECLSPEC Update();
 	void DECLSPEC Quit();
 	
+	void DECLSPEC SetVolume(int volume);
+	
 	void DECLSPEC SetDistance(float near, float far);
 	void DECLSPEC SetCameraPosition(glm::vec3 position);
 	

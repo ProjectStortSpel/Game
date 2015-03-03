@@ -20,7 +20,13 @@ namespace LuaBridge
 		{
 			std::string filePath = LuaEmbedder::PullString( _l, 1 );
 
-			LuaEmbedder::PushBool( _l, true );
+			int index = rm.ReadRulebook( filePath.c_str( ) );
+
+			DynamicScripting* ds = DynamicScripting::Instance( );
+
+			ds->SetRuleBook( rm.GetRulebook( index ) );
+
+			LuaEmbedder::PushInt( _l, index );
 			return 1;
 		}
 
@@ -52,6 +58,33 @@ namespace LuaBridge
 		{
 			DSData* dsd = LuaEmbedder::PullObject<DSData>( _l, "DSData", 1 );
 			return 0;
+		}
+
+		int GetRuleTypeInt( lua_State* _l )
+		{
+			std::string ToInt = LuaEmbedder::PullString( _l, 1 );
+			//const char* TrueToInt = ToInt.c_str( );
+			if ( ToInt == "Void" )
+			{
+				LuaEmbedder::PushInt( _l, (int)humpa_dumpa_Void );
+			}
+			else if ( ToInt == "Stone" )
+			{
+				LuaEmbedder::PushInt( _l, (int)humpa_dumpa_Stone );
+			}
+			else if ( ToInt == "River End" )
+			{
+				LuaEmbedder::PushInt( _l, (int)humpa_dumpa_RiverEnd );
+			}
+			else if ( ToInt == "Players" )
+			{
+				LuaEmbedder::PushInt( _l, (int)humpa_dumpa_Players );
+			}
+			else
+			{
+				LuaEmbedder::PushInt( _l, -1);
+			}
+			return 1;
 		}
 	}
 }

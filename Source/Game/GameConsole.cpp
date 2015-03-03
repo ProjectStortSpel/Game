@@ -249,6 +249,11 @@ void GameConsole::HostListenServer(std::string _command, std::vector<Console::Ar
 
 void GameConsole::StopServer(std::string _command, std::vector<Console::Argument>* _args)
 {
+	if (NetworkInstance::GetClient()->IsConnected())
+	{
+		NetworkInstance::GetClient()->Disconnect();
+	}
+
 	if (NetworkInstance::GetServer()->IsRunning())
 	{
 		NetworkInstance::GetServer()->Stop();

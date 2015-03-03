@@ -245,6 +245,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClCompile Include="..\..\..\Source\Game\Quaternion.cpp" />
     <ClCompile Include="..\..\..\Source\Game\RemoteConsole.cpp" />
     <ClCompile Include="..\..\..\Source\Game\ResourceManager.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\RuleManager.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\AddTextToTextureSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\AModelSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\CameraSystem.cpp" />
@@ -311,6 +312,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClInclude Include="..\..\..\Source\Game\Quaternion.h" />
     <ClInclude Include="..\..\..\Source\Game\RemoteConsole.h" />
     <ClInclude Include="..\..\..\Source\Game\ResourceManager.h" />
+    <ClInclude Include="..\..\..\Source\Game\RuleManager.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\AddTextToTextureSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\AModelSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\CameraSystem.h" />

@@ -3,6 +3,7 @@ Tile.Name = "Tile"
 Tile:SetFloat3("Position", 0.0, 0.0, 0.0)
 Tile:SetFloat3("Rotation", 0.0, 0.0, 0.0)
 Tile:SetFloat3("Scale", 1.0, 1.0, 1.0)
+Tile:SetFloat3("Color", 0.0, 0.0, 0.0)
 Tile:SetFloat("TileOffset", 0.5)
 Tile:AddComponent("MapPosition")
 Tile:AddComponent("TileComp")

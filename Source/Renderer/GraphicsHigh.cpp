@@ -5,6 +5,8 @@ using namespace glm;
 
 GraphicsHigh::GraphicsHigh()
 {
+	m_useAnimations = true;
+
 	mark = 0;
 	timer = 0;
 
@@ -41,7 +43,8 @@ GraphicsHigh::~GraphicsHigh()
 
 	glDeleteBuffers(1, &m_pointlightBuffer);
 	glDeleteBuffers(1, &m_dirLightBuffer);
-
+	glDeleteFramebuffers(1, &m_deferredFBO);
+	glDeleteFramebuffers(1, &m_forwardFBO);
 }
 
 bool GraphicsHigh::Init()
@@ -282,6 +285,10 @@ void GraphicsHigh::Update(float _dt)
 	}
 	m_glTimerValues.clear();
 
+	if (debugModelInfo)
+		PrintModelInfo();
+
+
 	BufferModels();
 	BufferLightsToGPU();
 	BufferSurfaces();
@@ -374,6 +381,13 @@ void GraphicsHigh::WriteShadowMapDepth()
 		m_modelsForward[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector, 0);
 	}
 	//------------------------------------------------
+
+	//----Animated
+	m_animationShader.UseProgram();
+	//----DRAW MODELS
+	for (int i = 0; i < m_modelsAnimated.size(); i++)
+		m_modelsAnimated[i].Draw((*m_shadowMap->GetViewMatrix()), shadowProjection, &m_animationShader);
+
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glCullFace(GL_BACK);
@@ -506,6 +520,7 @@ void GraphicsHigh::Render()
 		
 		thisShader->SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 
+		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, it->second->GetTexHandle());
 
 		mat4 Model = glm::translate(it->second->GetWorldPos());
@@ -719,4 +734,54 @@ void GraphicsHigh::Clear()
 
 	//if (m_pointerToPointlights)
 		//delete m_pointerToPointlights;
+}
+
+void GraphicsHigh::PrintModelInfo()
+{
+	int xoffset;
+
+	xoffset = 2;
+	m_textRenderer.RenderSimpleText("ANIMATED", xoffset, 1);
+	m_textRenderer.RenderSimpleText(std::to_string(m_modelsAnimated.size()), xoffset + 10, 1);
+	for (int i = 0; i < m_modelsAnimated.size(); i++)
+	{
+		m_textRenderer.RenderSimpleText(std::to_string(m_modelsAnimated[i].animations.size()), xoffset, i + 2);
+		m_textRenderer.RenderSimpleText(m_modelsAnimated[i].name, xoffset + 4, i + 2);
+	}
+
+	xoffset = 32;
+	m_textRenderer.RenderSimpleText("DEFERRED", xoffset, 1);
+	m_textRenderer.RenderSimpleText(std::to_string(m_modelsDeferred.size()), xoffset+10, 1);
+	for (int i = 0; i < m_modelsDeferred.size(); i++)
+	{
+		m_textRenderer.RenderSimpleText(std::to_string(m_modelsDeferred[i].instances.size()), xoffset, i + 2);
+		m_textRenderer.RenderSimpleText(m_modelsDeferred[i].name, xoffset+4, i + 2);
+	}
+
+	xoffset = 62;
+	m_textRenderer.RenderSimpleText("FORWARD", xoffset, 1);
+	m_textRenderer.RenderSimpleText(std::to_string(m_modelsForward.size()), xoffset+10, 1);
+	for (int i = 0; i < m_modelsForward.size(); i++)
+	{
+		m_textRenderer.RenderSimpleText(std::to_string(m_modelsForward[i].instances.size()), xoffset, i + 2);
+		m_textRenderer.RenderSimpleText(m_modelsForward[i].name, xoffset+4, i + 2);
+	}
+
+	xoffset = 92;
+	m_textRenderer.RenderSimpleText("VIEWSPACE", xoffset, 1);
+	m_textRenderer.RenderSimpleText(std::to_string(m_modelsViewspace.size()), xoffset+10, 1);
+	for (int i = 0; i < m_modelsViewspace.size(); i++)
+	{
+		m_textRenderer.RenderSimpleText(std::to_string(m_modelsViewspace[i].instances.size()), xoffset, i + 2);
+		m_textRenderer.RenderSimpleText(m_modelsViewspace[i].name, xoffset+4, i + 2);
+	}
+
+	xoffset = 122;
+	m_textRenderer.RenderSimpleText("INTERFACE", xoffset, 1);
+	m_textRenderer.RenderSimpleText(std::to_string(m_modelsInterface.size()), xoffset+10, 1);
+	for (int i = 0; i < m_modelsInterface.size(); i++)
+	{
+		m_textRenderer.RenderSimpleText(std::to_string(m_modelsInterface[i].instances.size()), xoffset, i + 2);
+		m_textRenderer.RenderSimpleText(m_modelsInterface[i].name, xoffset+4, i + 2);
+	}
 }

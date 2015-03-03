@@ -12,9 +12,11 @@ using namespace glm;
 
 GraphicDevice::GraphicDevice()
 {
+	m_useAnimations = false;
+
 	m_windowPosX = 70;
 	m_windowPosY = 2;
-	m_windowCaption = "Project MOMS SPAGHETTI";
+	m_windowCaption = "Project SWEET POTATO PIE";
 	m_SDLinitialized = false;
 	
 	m_pointerToPointlights = NULL;
@@ -30,7 +32,7 @@ GraphicDevice::GraphicDevice(Camera _camera, int x, int y)
 	m_camera = new Camera(_camera);
 	m_windowPosX = x;
 	m_windowPosY = y;
-	m_windowCaption = "Project MOMS SPAGHETTI";
+	m_windowCaption = "Project SWEET POTATO PIE";
 	m_SDLinitialized = true;
 
 	m_pointerToPointlights = NULL;
@@ -151,23 +153,6 @@ void GraphicDevice::InitStandardShaders()
 	m_skyBoxShader.AddShader("content/shaders/skyboxShaderFS.glsl", GL_FRAGMENT_SHADER);
 	m_skyBoxShader.FinalizeShaderProgram();
 
-	// ------Particle shaders---------
-		const char * outputNames[] = { "Position", "Velocity", "StartTime" };
-		Shader particleShader;
-		particleShader.InitShaderProgram();
-		particleShader.AddShader("content/shaders/particles/particleFireVS.glsl", GL_VERTEX_SHADER);
-		particleShader.AddShader("content/shaders/particles/particleFireFS.glsl", GL_FRAGMENT_SHADER);
-		glTransformFeedbackVaryings(particleShader.GetShaderProgram(), 3, outputNames, GL_SEPARATE_ATTRIBS);
-		particleShader.FinalizeShaderProgram();
-		m_particleShaders["fire"] = particleShader;
-
-		particleShader.InitShaderProgram();
-		particleShader.AddShader("content/shaders/particles/particleSmokeVS.glsl", GL_VERTEX_SHADER);
-		particleShader.AddShader("content/shaders/particles/particleSmokeFS.glsl", GL_FRAGMENT_SHADER);
-		glTransformFeedbackVaryings(particleShader.GetShaderProgram(), 3, outputNames, GL_SEPARATE_ATTRIBS);
-		particleShader.FinalizeShaderProgram();
-		m_particleShaders["smoke"] = particleShader;
-	// -------------------------------
 }
 void GraphicDevice::InitStandardBuffers()
 {
@@ -182,10 +167,6 @@ void GraphicDevice::InitStandardBuffers()
 
 	//Shadow forward shader
 	m_shadowShaderForward.CheckUniformLocation("diffuseTex", 1);
-
-	//Particle shaders
-	for (std::map<std::string, Shader>::iterator it = m_particleShaders.begin(); it != m_particleShaders.end(); ++it)
-		it->second.CheckUniformLocation("ParticleTex", 1);
 }
 bool GraphicDevice::InitSkybox()
 {
@@ -351,8 +332,8 @@ void GraphicDevice::BufferParticleSystems()
 			m_particleSystemsToLoad[i].Scale,
 			m_particleSystemsToLoad[i].SpriteSize,
 			AddTexture(m_particleSystemsToLoad[i].TextureName, GL_TEXTURE1),
-			m_particleSystemsToLoad[i].Color,
-			&m_particleShaders[m_particleSystemsToLoad[i].Name])));
+			m_particleSystemsToLoad[i].Color
+			)));
 	}
 	m_particleSystemsToLoad.clear();
 
@@ -412,11 +393,11 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	Shader *shaderPtr = NULL;
 	std::vector<Model> *modelList = NULL;
 
-	//if (obj.animated)
-	//{
-	//	BufferAModel(_modelId, _modelToLoad);
-	//	return;
-	//}
+	if (obj.animated && m_useAnimations)
+	{
+		BufferAModel(_modelId, _modelToLoad);
+		return;
+	}
 
 	bool FoundShaderType = false;
 	for (int i = 0; i < m_renderLists.size(); i++)
@@ -472,6 +453,8 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	//if model doesnt exist
 	model.instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
 	// Push back the model
+	model.name = _modelToLoad->File;
+	model.name.erase(model.name.end() - 7, model.name.end());
 	modelList->push_back(model);
 }
 
@@ -527,6 +510,7 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoa
 	//if model doesnt exist
 	model.instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
 	// Push back the model
+	model.name = "Generated Model";
 	modelList->push_back(model);
 }
 
@@ -571,12 +555,12 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 	// Add animation base
 	for (int i = 0; i < joints.size(); i++)
 	{
-		int index = joints.size() - i - 1;
+		int index = i;//joints.size() - i - 1;
 		model.animation.push_back(Joint(
 			joints[index].mat[0][0], joints[index].mat[0][1], joints[index].mat[0][2], joints[index].mat[0][3],
 			joints[index].mat[1][0], joints[index].mat[1][1], joints[index].mat[1][2], joints[index].mat[1][3],
 			joints[index].mat[2][0], joints[index].mat[2][1], joints[index].mat[2][2], joints[index].mat[2][3],
-			joints[index].mat[3][0], joints[index].mat[3][1], joints[index].mat[3][2], index - joints[index].parent - 1
+			joints[index].mat[3][0], joints[index].mat[3][1], joints[index].mat[3][2], joints[index].parent//index - joints[index].parent - 1
 			));
 	}
 
@@ -596,7 +580,12 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 	//for the matrices (modelView + normal)
 	m_vramUsage += (16 + 9) * sizeof(float);
 
+	// Pre-calc frames
+	model.PreCalculateAnimations();
+
 	// Push back the model
+	model.name = _modelToLoad->File;
+	model.name.erase(model.name.end() - 7, model.name.end());
 	modelList->push_back(model);
 }
 

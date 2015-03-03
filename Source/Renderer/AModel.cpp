@@ -27,6 +27,7 @@ AModel::AModel()
 AModel::~AModel()
 {
 	glDeleteBuffers(1, &jointBuffer);
+	glDeleteBuffers(1, &animBuffer);
 }
 
 void AModel::Draw(mat4 viewMatrix, mat4 projectionMatrix, Shader* shaderptr)
@@ -41,7 +42,7 @@ void AModel::Draw(mat4 viewMatrix, mat4 projectionMatrix, Shader* shaderptr)
 
 		mat4 vp = projectionMatrix * viewMatrix;
 		mat4 modelViewMatrix = M;
-		mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
+		mat3 normalMatrix = glm::transpose(glm::inverse(mat3(viewMatrix * modelViewMatrix)));
 
 		shaderptr->SetUniVariable("BlendColor", vector3, color);
 		shaderptr->SetUniVariable("M", mat4x4, &modelViewMatrix);
@@ -116,15 +117,50 @@ void AModel::Update(float _dt)
 		for (int i = 0; i < animptr->joints.size(); i++)
 		{
 			int index = animation.size() - animptr->joints[i].jointId - 1;
-			glm::mat4 mat = animptr->joints[i].getFrame(currentframe + 1);
-			animation[index] = Joint(
-				mat[0][0], mat[0][1], mat[0][2], mat[0][3],
-				mat[1][0], mat[1][1], mat[1][2], mat[1][3],
-				mat[2][0], mat[2][1], mat[2][2], mat[2][3],
-				mat[3][0], mat[3][1], mat[3][2], animation[index].parent
-				);
+			//glm::mat4 mat = animptr->joints[i].getFrame(currentframe + 1);
+			//animation[index] = Joint(
+			//	mat[0][0], mat[0][1], mat[0][2], mat[0][3],
+			//	mat[1][0], mat[1][1], mat[1][2], mat[1][3],
+			//	mat[2][0], mat[2][1], mat[2][2], mat[2][3],
+			//	mat[3][0], mat[3][1], mat[3][2], animation[index].parent
+			//	);
+			animation[i] = animptr->joints[i].frames[currentframe];
 		}
 	}
+}
+
+bool AModel::PreCalculateAnimations()
+{
+	for (int k = 0; k < animations.size(); k++)
+	{
+		for (int j = 0; j < animations[k].maxFrame; j++)
+		{
+			std::vector<glm::mat4> tempMat4;
+			Animation* animptr = &animations[k];
+			for (int i = 0; i < animptr->joints.size(); i++)
+			{
+				tempMat4.push_back(animptr->joints[i].getFrame(j + 1));
+			}
+			for (int i = 0; i < animptr->joints.size(); i++)
+			{
+				if (animation[i].parent >= 0)
+				{
+					tempMat4[i] = tempMat4[int(animation[i].parent)] * tempMat4[i];
+				}
+			}
+			for (int i = 0; i < animptr->joints.size(); i++)
+			{
+				glm::mat4 mat = tempMat4[i];
+				animptr->joints[i].frames.push_back(Joint(
+					mat[0][0], mat[0][1], mat[0][2], mat[0][3],
+					mat[1][0], mat[1][1], mat[1][2], mat[1][3],
+					mat[2][0], mat[2][1], mat[2][2], mat[2][3],
+					mat[3][0], mat[3][1], mat[3][2], animation[i].parent
+					));
+			}
+		}
+	}
+	return true;
 }
 
 bool AModel::SetAnimation(int _animId)

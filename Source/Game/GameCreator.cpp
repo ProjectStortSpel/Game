@@ -576,6 +576,9 @@ void GameCreator::StartGame(int argc, char** argv)
 	float bytesToMegaBytes = 1.f / (1024.f*1024.f);
 	bool showDebugInfo = false;
 	Utility::FrameCounter totalCounter;
+	
+	// Remove to enable audio
+	Audio::SetVolume(0);
 
 	while (m_running)
 	{
@@ -651,6 +654,9 @@ void GameCreator::StartGame(int argc, char** argv)
 		m_graphicsCounter.Tick();
 
 		/*	DEBUG PRINT INFO	*/
+		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_0) == Input::InputState::PRESSED)
+			m_graphics->debugModelInfo = !m_graphics->debugModelInfo;
+
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_Z) == Input::InputState::PRESSED)
 			showDebugInfo = !showDebugInfo;
 
