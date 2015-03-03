@@ -544,12 +544,7 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 	// Add skeleton
 	for (int i = 0; i < joints.size(); i++)
 	{
-		model.joints.push_back(Joint(
-			joints[i].mat[0][0], joints[i].mat[0][1], joints[i].mat[0][2], joints[i].mat[0][3],
-			joints[i].mat[1][0], joints[i].mat[1][1], joints[i].mat[1][2], joints[i].mat[1][3],
-			joints[i].mat[2][0], joints[i].mat[2][1], joints[i].mat[2][2], joints[i].mat[2][3],
-			joints[i].mat[3][0], joints[i].mat[3][1], joints[i].mat[3][2], joints[i].parent)
-		);
+		model.joints.push_back(joints[i].mat);
 	}
 
 	// Add animation base
@@ -574,7 +569,7 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 		}
 	}
 
-	glGenBuffers(1, &model.jointBuffer);
+	//glGenBuffers(1, &model.jointBuffer);
 	glGenBuffers(1, &model.animBuffer);
 
 	//for the matrices (modelView + normal)
