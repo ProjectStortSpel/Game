@@ -54,8 +54,8 @@ bool Buffer::initNotInstanced(const BufferData* p_BufferData, GLsizei p_BufferDa
 		glBufferData(GL_ARRAY_BUFFER, p_BufferData[i].dataSize,
 			p_BufferData[i].data, GL_STATIC_DRAW);
 		// Define attribute data (for shaders)
-		glEnableVertexAttribArray(p_BufferData[i].location);
 		glVertexAttribPointer(p_BufferData[i].location, p_BufferData[i].componentCount, p_BufferData[i].type, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(p_BufferData[i].location);
 	}
 
 	// Initialize index buffer if specified
