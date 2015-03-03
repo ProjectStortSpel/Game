@@ -19,7 +19,7 @@ struct JointMatrix
 	float x3, y3, z3, w3;
 };
 
-layout (std430, binding = 1) buffer Animation   
+layout (std430, binding = 3) buffer Animation   
 {
 	JointMatrix anim[];
 };
@@ -46,10 +46,10 @@ void main()
 	vec4 weights = normalize(VertexJointWeight);
 
 	mat4 skin = mat4(0);
-	skin += (JointToMatrix(anim[int(VertexJointIndex.x)])) * weights.x;
-	skin += (JointToMatrix(anim[int(VertexJointIndex.y)])) * weights.y;
-	skin += (JointToMatrix(anim[int(VertexJointIndex.z)])) * weights.z;
-	skin += (JointToMatrix(anim[int(VertexJointIndex.w)])) * weights.w;
+	skin += mat4(1) * weights.x;
+	skin += mat4(1) * weights.y;
+	skin += mat4(1) * weights.z;
+	skin += mat4(1) * weights.w;
 	
 	gl_Position = VP * M * skin * vec4(VertexPosition, 1.0);
 

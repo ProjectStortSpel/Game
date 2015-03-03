@@ -98,7 +98,7 @@ namespace LuaBridge
 
 		  World::SetComponent(id, componentType, variableName, tmp);
 
-		  delete tmp;
+		  delete [] tmp;
 	  }
 	  else
 		  return 0;

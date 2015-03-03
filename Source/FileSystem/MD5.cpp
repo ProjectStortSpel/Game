@@ -372,7 +372,7 @@ namespace FileSystem
 				//result = MD5(str.c_str(), length - numRemoved);
 			}
 
-			delete data;
+			delete [] data;
 			return result;
 		}
 
