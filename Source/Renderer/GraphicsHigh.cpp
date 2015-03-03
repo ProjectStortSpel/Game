@@ -718,6 +718,7 @@ void GraphicsHigh::Clear()
 {
 	m_modelIDcounter = 0;
 	
+	m_modelsAnimated.clear();
 	m_modelsDeferred.clear();
 	m_modelsForward.clear();
 	m_modelsViewspace.clear();

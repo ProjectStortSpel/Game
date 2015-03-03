@@ -622,6 +622,14 @@ bool GraphicDevice::RemoveModel(int _id)
 			}
 		}
 	}
+	for (int i = 0; i < m_modelsAnimated.size(); i++)
+	{
+		if (m_modelsAnimated[i].id == _id)
+		{
+			m_modelsAnimated.erase(m_modelsAnimated.begin() + i);
+			return true;
+		}
+	}
 	return false;
 }
 bool GraphicDevice::ActiveModel(int _id, bool _active)
