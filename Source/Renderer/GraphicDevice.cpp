@@ -571,7 +571,7 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 	for (int i = 0; i < obj.anim.size(); i++)
 	{
 		std::vector<AnimData> anim = ModelLoader::importAnimation(obj.anim[i]);
-		for (iznt j = 0; j < anim.size(); j++)
+		for (int j = 0; j < anim.size(); j++)
 		{
 			model.AddKeyFrame(obj.anim[i], anim[j].frame, anim[j].joint, anim[j].mat);
 		}
