@@ -67,7 +67,7 @@ rulebook* RuleManager::GetRulebook( int _index )
 
 	if ( this->m_ruleBase.find( _index ) != this->m_ruleBase.end( ) )
 	{
-		ret_value = ( &this->m_ruleBase [_index] );
+		ret_value = ( &this->m_ruleBase[_index] );
 	}
 	else
 	{
@@ -102,13 +102,13 @@ bool RuleManager::StoreRulebook( int _index )
 	rulebase::iterator itRB = this->m_ruleBase.find( _index );
 	if ( itRB != this->m_ruleBase.end( ) )
 	{
-		rulebook rbook = this->m_ruleBase [_index];
+		rulebook rbook = this->m_ruleBase[_index];
 
 		filelocation::iterator itFL = this->m_fileLocations.find( _index );
 
 		if ( itFL != this->m_fileLocations.end( ) )
 		{
-			std::string path = this->m_fileLocations [_index];
+			std::string path = this->m_fileLocations[_index];
 
 			this_is_a_output_file file;
 			file.open( path );
@@ -121,8 +121,8 @@ bool RuleManager::StoreRulebook( int _index )
 				{
 					std::stringstream ss;
 
-					ss << rbook [i].script + " ";
-					ss << rbook [i].weight;
+					ss << rbook[i].script + " ";
+					ss << rbook[i].weight;
 					ss << "\n";
 
 					file << ss.str( );

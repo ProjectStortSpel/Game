@@ -86,7 +86,7 @@ namespace LuaBridge
 			}
 			else
 			{
-				LuaEmbedder::PushInt( _l, -1);
+				LuaEmbedder::PushInt( _l, -1 );
 			}
 			return 1;
 		}

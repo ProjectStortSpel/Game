@@ -74,7 +74,7 @@ private:
 private:
 	float						m_totalSum;
 	unsigned int				m_noOfScriptsToUse;
-	rulebook*					m_ruleBook; //pointer?
+	rulebook*					m_ruleBook;
 	rulebook					m_script;
 };
 
