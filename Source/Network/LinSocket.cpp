@@ -323,11 +323,8 @@ ISocket* LinSocket::Accept(void)
 
 int LinSocket::Send(char* _buffer, int _length, int _flags)
 {
-
-#if !defined(__IOS__) && !defined(__OSX__)
 	if (_flags == 0)
 		_flags == MSG_NOSIGNAL;
-#endif
 
 	short len = htons(_length);
 
