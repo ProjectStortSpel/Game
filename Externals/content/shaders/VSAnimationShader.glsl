@@ -19,17 +19,10 @@ struct JointMatrix
 	float x3, y3, z3, w3;
 };
 
-//flat out int instanceID;
-//layout (std430, binding = 1) buffer Joints   
-//{
-//	JointMatrix joints[];
-//};
-
-layout (std430, binding = 2) buffer Animation   
+layout (std430, binding = 1) buffer Animation   
 {
 	JointMatrix anim[];
 };
-
 
 out vec3 Normal;
 out vec3 Tan;
@@ -53,15 +46,14 @@ void main()
 	vec4 weights = normalize(VertexJointWeight);
 
 	mat4 skin = mat4(0);
-	skin += (JointToMatrix(anim[int(VertexJointIndex.x)])) * weights.x;// * JointToMatrix(joints[int(VertexJointIndex.x)])) * weights.x;
-	skin += (JointToMatrix(anim[int(VertexJointIndex.y)])) * weights.y;// * JointToMatrix(joints[int(VertexJointIndex.y)])) * weights.y;
-	skin += (JointToMatrix(anim[int(VertexJointIndex.z)])) * weights.z;// * JointToMatrix(joints[int(VertexJointIndex.z)])) * weights.z;
-	skin += (JointToMatrix(anim[int(VertexJointIndex.w)])) * weights.w;// * JointToMatrix(joints[int(VertexJointIndex.w)])) * weights.w;
+	skin += (JointToMatrix(anim[int(VertexJointIndex.x)])) * weights.x;
+	skin += (JointToMatrix(anim[int(VertexJointIndex.y)])) * weights.y;
+	skin += (JointToMatrix(anim[int(VertexJointIndex.z)])) * weights.z;
+	skin += (JointToMatrix(anim[int(VertexJointIndex.w)])) * weights.w;
 	
 	gl_Position = VP * M * skin * vec4(VertexPosition, 1.0);
 
 	Normal = normalize( NormalMatrix * (skin * vec4(VertexNormal, 0.0)).xyz );
 	Tan = normalize( NormalMatrix * (skin * vec4(VertexTangent, 0.0)).xyz );
 	BiTan = normalize( NormalMatrix * (skin * vec4(VertexBiTangent, 0.0)).xyz );
-	//instanceID = gl_InstanceID;
 }

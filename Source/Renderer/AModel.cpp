@@ -80,10 +80,10 @@ void AModel::Draw(mat4 viewMatrix, mat4 projectionMatrix, Shader* shaderptr)
 
 		int anim_data_size = 16 * animation.size() * sizeof(float);
 
-		glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 2, animBuffer, 0, anim_data_size);
+		glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 1, animBuffer, 0, anim_data_size);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, anim_data_size, anim_data, GL_STATIC_DRAW);
 
-		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, animBuffer);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, animBuffer);
 
 		delete [] anim_data;
 
