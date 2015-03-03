@@ -18,6 +18,8 @@ AModel::AModel(int _id, bool _active, mat4* _model, float* _color, Buffer* buffe
 	frameTime = 0.01f;
 	framesPerTick = 4;
 	animId = 0;
+
+	glGenBuffers(1, &animBuffer);
 }
 
 AModel::AModel()

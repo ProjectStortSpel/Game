@@ -578,7 +578,7 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 	}
 
 	//glGenBuffers(1, &model.jointBuffer);
-	glGenBuffers(1, &model.animBuffer);
+	
 
 	//for the matrices (modelView + normal)
 	m_vramUsage += (16 + 9) * sizeof(float);
