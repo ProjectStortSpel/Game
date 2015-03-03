@@ -99,6 +99,7 @@ namespace Renderer
 		Animation(std::string _name)
 		{
 			name = _name;
+			maxFrame = 0;
 		}
 	};
 
