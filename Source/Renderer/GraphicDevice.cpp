@@ -714,8 +714,11 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg, bool a
 			}
 		}
 	}
+	if (animated)
+		retbuffer->initNotInstanced(bufferData, bufferDatas, NULL, 0);
+	else
+		retbuffer->init(bufferData, bufferDatas);
 
-	retbuffer->init(bufferData, bufferDatas);
 	retbuffer->setCount((int)positionData.size() / 3);
 
 	m_meshs.insert(std::pair<const std::string, Buffer*>(_fileDir, retbuffer));
