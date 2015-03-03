@@ -5,6 +5,8 @@ using namespace glm;
 
 GraphicsHigh::GraphicsHigh()
 {
+	debugModelInfo = false;
+
 	m_useAnimations = true;
 
 	mark = 0;
@@ -290,6 +292,10 @@ void GraphicsHigh::Update(float _dt)
 		m_textRenderer.RenderSimpleText(output.str(), x, y + i);
 	}
 	m_glTimerValues.clear();
+
+	if (debugModelInfo)
+		PrintModelInfo();
+
 
 	BufferModels();
 	BufferLightsToGPU();
@@ -739,6 +745,7 @@ void GraphicsHigh::Clear()
 {
 	m_modelIDcounter = 0;
 	
+	m_modelsAnimated.clear();
 	m_modelsDeferred.clear();
 	m_modelsForward.clear();
 	m_modelsViewspace.clear();
@@ -755,4 +762,54 @@ void GraphicsHigh::Clear()
 
 	//if (m_pointerToPointlights)
 		//delete m_pointerToPointlights;
+}
+
+void GraphicsHigh::PrintModelInfo()
+{
+	int xoffset;
+
+	xoffset = 2;
+	m_textRenderer.RenderSimpleText("ANIMATED", xoffset, 1);
+	m_textRenderer.RenderSimpleText(std::to_string(m_modelsAnimated.size()), xoffset + 10, 1);
+	for (int i = 0; i < m_modelsAnimated.size(); i++)
+	{
+		m_textRenderer.RenderSimpleText(std::to_string(m_modelsAnimated[i].animations.size()), xoffset, i + 2);
+		m_textRenderer.RenderSimpleText(m_modelsAnimated[i].name, xoffset + 4, i + 2);
+	}
+
+	xoffset = 32;
+	m_textRenderer.RenderSimpleText("DEFERRED", xoffset, 1);
+	m_textRenderer.RenderSimpleText(std::to_string(m_modelsDeferred.size()), xoffset+10, 1);
+	for (int i = 0; i < m_modelsDeferred.size(); i++)
+	{
+		m_textRenderer.RenderSimpleText(std::to_string(m_modelsDeferred[i].instances.size()), xoffset, i + 2);
+		m_textRenderer.RenderSimpleText(m_modelsDeferred[i].name, xoffset+4, i + 2);
+	}
+
+	xoffset = 62;
+	m_textRenderer.RenderSimpleText("FORWARD", xoffset, 1);
+	m_textRenderer.RenderSimpleText(std::to_string(m_modelsForward.size()), xoffset+10, 1);
+	for (int i = 0; i < m_modelsForward.size(); i++)
+	{
+		m_textRenderer.RenderSimpleText(std::to_string(m_modelsForward[i].instances.size()), xoffset, i + 2);
+		m_textRenderer.RenderSimpleText(m_modelsForward[i].name, xoffset+4, i + 2);
+	}
+
+	xoffset = 92;
+	m_textRenderer.RenderSimpleText("VIEWSPACE", xoffset, 1);
+	m_textRenderer.RenderSimpleText(std::to_string(m_modelsViewspace.size()), xoffset+10, 1);
+	for (int i = 0; i < m_modelsViewspace.size(); i++)
+	{
+		m_textRenderer.RenderSimpleText(std::to_string(m_modelsViewspace[i].instances.size()), xoffset, i + 2);
+		m_textRenderer.RenderSimpleText(m_modelsViewspace[i].name, xoffset+4, i + 2);
+	}
+
+	xoffset = 122;
+	m_textRenderer.RenderSimpleText("INTERFACE", xoffset, 1);
+	m_textRenderer.RenderSimpleText(std::to_string(m_modelsInterface.size()), xoffset+10, 1);
+	for (int i = 0; i < m_modelsInterface.size(); i++)
+	{
+		m_textRenderer.RenderSimpleText(std::to_string(m_modelsInterface[i].instances.size()), xoffset, i + 2);
+		m_textRenderer.RenderSimpleText(m_modelsInterface[i].name, xoffset+4, i + 2);
+	}
 }

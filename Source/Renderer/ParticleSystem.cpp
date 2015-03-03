@@ -186,9 +186,9 @@ void ParticleSystem::CreateFire()
 	glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 1, m_velBuf[1]);
 	glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 2, m_startTime[1]);
 
-	delete posData;
-	delete velData;
-	delete timeData; 
+	delete [] posData;
+	delete [] velData;
+	delete [] timeData; 
 	initVelData = 0;
 	initPosData = 0;
 }
@@ -313,9 +313,9 @@ void ParticleSystem::CreateSmoke()
 	glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 1, m_velBuf[1]);
 	glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 2, m_startTime[1]);
 
-	delete posData;
-	delete velData;
-	delete timeData;
+	delete [] posData;
+	delete [] velData;
+	delete [] timeData;
 	initVelData = 0;
 	initPosData = 0;
 }

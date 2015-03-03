@@ -26,12 +26,11 @@ end
 
 LobbySystem.Update = function(self, dt)
 	if self.UpdateMe == true then
-		print("update")
+		self:RemoveMenu()
 		self:UpdatePlayers()
 		self.UpdateMe = false
 	end
 	if self.UpdateRequest == true then
-		print("update request")
 		self.UpdateMe = true
 		self.UpdateRequest = false
 	end

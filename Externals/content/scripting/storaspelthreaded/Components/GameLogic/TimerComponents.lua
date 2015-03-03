@@ -3,22 +3,22 @@
 --	for timers
 
 -- Picking Timer
-local PickingPhaseTimerComponent = ComponentType()
-PickingPhaseTimerComponent.Name = "PickingPhaseTimer"
-PickingPhaseTimerComponent.TableType = TableType.Map
-PickingPhaseTimerComponent:AddVariable("Timer", ByteSize.Float)
-worldCreator:AddComponentType(PickingPhaseTimerComponent)
+local NewComponent = ComponentType()
+NewComponent.Name = "PickingPhaseTimer"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("Timer", ByteSize.Float)
+worldCreator:AddComponentType(NewComponent)
 
 --	Set Picking Phase Timer
-local SetPickingPhaserComponent = ComponentType()
-SetPickingPhaserComponent.Name = "SetPickingPhaseTimer"
-SetPickingPhaserComponent.TableType = TableType.Map
-SetPickingPhaserComponent:AddVariable("Amount", ByteSize.Float)
-worldCreator:AddComponentType(SetPickingPhaserComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "SetPickingPhaseTimer"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("Amount", ByteSize.Float)
+worldCreator:AddComponentType(NewComponent)
 
 --	Add To Picking Phase Timer
-local AddToPickingPhaseTimerComponent = ComponentType()
-AddToPickingPhaseTimerComponent.Name = "AddToPickingPhaseTimer"
-AddToPickingPhaseTimerComponent.TableType = TableType.Map
-AddToPickingPhaseTimerComponent:AddVariable("Amount", ByteSize.Float)
-worldCreator:AddComponentType(AddToPickingPhaseTimerComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "AddToPickingPhaseTimer"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("Amount", ByteSize.Float)
+worldCreator:AddComponentType(NewComponent)

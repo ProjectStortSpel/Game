@@ -3,104 +3,103 @@
 --	for map components
 
 -- Create Map Component
-local CreateMapComponent = ComponentType()
-CreateMapComponent.Name = "CreateMap"
-CreateMapComponent.TableType = TableType.Map
-CreateMapComponent:AddVariable("MapName", ByteSize.Text)
-worldCreator:AddComponentType(CreateMapComponent)
+local NewComponent = ComponentType()
+NewComponent.Name = "CreateMap"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("MapName", ByteSize.Text)
+worldCreator:AddComponentType(NewComponent)
 
 -- Map Position Component
-local MapPositionComponent = ComponentType()
-MapPositionComponent.Name = "MapPosition"
-MapPositionComponent.TableType = TableType.Map
-MapPositionComponent.SyncNetwork = true
-MapPositionComponent:AddVariable("X", ByteSize.Int)
-MapPositionComponent:AddVariable("Z", ByteSize.Int)
-worldCreator:AddComponentType(MapPositionComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "MapPosition"
+NewComponent.TableType = TableType.Map
+NewComponent.SyncNetwork = true
+NewComponent:AddVariable("X", ByteSize.Int)
+NewComponent:AddVariable("Z", ByteSize.Int)
+worldCreator:AddComponentType(NewComponent)
 
 -- Map Position Component
-local TileOffset = ComponentType()
-TileOffset.Name = "TileOffset"
-TileOffset.TableType = TableType.Map
-TileOffset.SyncNetwork = true
-TileOffset:AddVariable("Offset", ByteSize.Float)
-worldCreator:AddComponentType(TileOffset)
+NewComponent = ComponentType()
+NewComponent.Name = "TileOffset"
+NewComponent.TableType = TableType.Map
+NewComponent.SyncNetwork = true
+NewComponent:AddVariable("Offset", ByteSize.Float)
+worldCreator:AddComponentType(NewComponent)
 
 -- Water Component
-local RiverComponent = ComponentType()
-RiverComponent.Name = "River"
-RiverComponent.TableType = TableType.Map
-RiverComponent.SyncNetwork = true
-RiverComponent:AddVariable("DirX", ByteSize.Int)
-RiverComponent:AddVariable("DirZ", ByteSize.Int)
-RiverComponent:AddVariable("Speed", ByteSize.Int)
-worldCreator:AddComponentType(RiverComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "River"
+NewComponent.TableType = TableType.Map
+NewComponent.SyncNetwork = true
+NewComponent:AddVariable("DirX", ByteSize.Int)
+NewComponent:AddVariable("DirZ", ByteSize.Int)
+NewComponent:AddVariable("Speed", ByteSize.Int)
+worldCreator:AddComponentType(NewComponent)
 
 -- Checkpoint Component
-local CheckpointComponent = ComponentType()
-CheckpointComponent.Name = "Checkpoint"
-CheckpointComponent.TableType = TableType.Map
-CheckpointComponent:AddVariable("Number", ByteSize.Int)
-worldCreator:AddComponentType(CheckpointComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "Checkpoint"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("Number", ByteSize.Int)
+worldCreator:AddComponentType(NewComponent)
 
 -- CheckpointId Component
-local CheckpointIdComponent = ComponentType()
-CheckpointIdComponent.Name = "CheckpointId"
-CheckpointIdComponent.TableType = TableType.Map
-CheckpointIdComponent:AddVariable("Id", ByteSize.Int)
-worldCreator:AddComponentType(CheckpointIdComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "CheckpointId"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("Id", ByteSize.Int)
+worldCreator:AddComponentType(NewComponent)
 
 -- Tile Component
-local TileComponent = ComponentType()
-TileComponent.Name = "TileComp"
-TileComponent.SyncNetwork = true
-TileComponent.TableType = TableType.Map
-worldCreator:AddComponentType(TileComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "TileComp"
+NewComponent.SyncNetwork = true
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- Finishpoint Component
-local FinishpointComponent = ComponentType()
-FinishpointComponent.Name = "Finishpoint"
-FinishpointComponent.TableType = TableType.Map
-worldCreator:AddComponentType(FinishpointComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "Finishpoint"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- Edge?
 -- Hole and Out Component
-local VoidComponent = ComponentType()
-VoidComponent.Name = "Void"
-VoidComponent.TableType = TableType.Map
-worldCreator:AddComponentType(VoidComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "Void"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- Not Walkable Component
-local NotWalkableComponent = ComponentType()
-NotWalkableComponent.Name = "NotWalkable"
-NotWalkableComponent.TableType = TableType.Map
-worldCreator:AddComponentType(NotWalkableComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "NotWalkable"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- Available Spawnpoint
-local AvailableSpawnpoint = ComponentType()
-AvailableSpawnpoint.Name = "AvailableSpawnpoint"
-AvailableSpawnpoint.TableType = TableType.Map
-AvailableSpawnpoint:AddVariable("X", ByteSize.Int)
-AvailableSpawnpoint:AddVariable("Z", ByteSize.Int)
-worldCreator:AddComponentType(AvailableSpawnpoint)
+NewComponent = ComponentType()
+NewComponent.Name = "AvailableSpawnpoint"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("X", ByteSize.Int)
+NewComponent:AddVariable("Z", ByteSize.Int)
+worldCreator:AddComponentType(NewComponent)
 
 -- Map Size Component, added to exactly entity to signal how big the map is.
-local MapSpecsComponent = ComponentType()
-MapSpecsComponent.Name = "MapSpecs"
-MapSpecsComponent.SyncNetwork = true
-MapSpecsComponent.TableType = TableType.Map
-MapSpecsComponent:AddVariable("NoOfCheckpoints", ByteSize.Int)
-MapSpecsComponent:AddVariable("NoOfSpawnpoints", ByteSize.Int)
-MapSpecsComponent:AddVariable("SizeX", ByteSize.Int)
-MapSpecsComponent:AddVariable("SizeY", ByteSize.Int)
-worldCreator:AddComponentType(MapSpecsComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "MapSpecs"
+NewComponent.SyncNetwork = true
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("NoOfCheckpoints", ByteSize.Int)
+NewComponent:AddVariable("NoOfSpawnpoints", ByteSize.Int)
+NewComponent:AddVariable("SizeX", ByteSize.Int)
+NewComponent:AddVariable("SizeY", ByteSize.Int)
+worldCreator:AddComponentType(NewComponent)
 
 --	GenerateMap
-local GenerateMap = ComponentType()
-GenerateMap.Name = "GenerateMap"
-GenerateMap.TableType = TableType.Map
-worldCreator:AddComponentType(GenerateMap)
-
+NewComponent = ComponentType()
+NewComponent.Name = "GenerateMap"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 --	RightCorner
 local RiverCornerDir = ComponentType()
 RiverCornerDir.Name = "RiverCornerDir"

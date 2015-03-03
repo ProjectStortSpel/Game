@@ -255,17 +255,25 @@ void GraphicDevice::BufferModelTextures()
 	m_modelTextures.clear();
 }
 
-struct sort_depth
+struct sort_depth_instance
+{
+	inline bool operator() (const Instance& a, const Instance& b)
+	{
+		return (*a.modelMatrix)[3][2] > (*b.modelMatrix)[3][2];
+	}
+};
+struct sort_depth_model
 {
 	inline bool operator() (const Model& a, const Model& b)
 	{
 		return (*a.instances[0].modelMatrix)[3][2] < (*b.instances[0].modelMatrix)[3][2];
 	}
 };
-
 void GraphicDevice::SortModelsBasedOnDepth(std::vector<Model>* models)
 {
-	std::sort(models->begin(), models->end(), sort_depth());
+	for (std::vector<Model>::iterator it = models->begin(); it != models->end(); it++)
+		std::sort(it->instances.begin(), it->instances.end(), sort_depth_instance());
+	std::sort(models->begin(), models->end(), sort_depth_model());
 }
 
 void GraphicDevice::CreateParticleSystems()
@@ -396,11 +404,11 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	Shader *shaderPtr = NULL;
 	std::vector<Model> *modelList = NULL;
 
-	if (obj.animated && m_useAnimations)
-	{
-		BufferAModel(_modelId, _modelToLoad);
-		return;
-	}
+	//if (obj.animated && m_useAnimations)
+	//{
+	//	BufferAModel(_modelId, _modelToLoad);
+	//	return;
+	//}
 
 	bool FoundShaderType = false;
 	for (int i = 0; i < m_renderLists.size(); i++)
@@ -456,6 +464,8 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	//if model doesnt exist
 	model.instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
 	// Push back the model
+	model.name = _modelToLoad->File;
+	model.name.erase(model.name.end() - 7, model.name.end());
 	modelList->push_back(model);
 }
 
@@ -511,6 +521,7 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoa
 	//if model doesnt exist
 	model.instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
 	// Push back the model
+	model.name = "Generated Model";
 	modelList->push_back(model);
 }
 
@@ -544,12 +555,7 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 	// Add skeleton
 	for (int i = 0; i < joints.size(); i++)
 	{
-		model.joints.push_back(Joint(
-			joints[i].mat[0][0], joints[i].mat[0][1], joints[i].mat[0][2], joints[i].mat[0][3],
-			joints[i].mat[1][0], joints[i].mat[1][1], joints[i].mat[1][2], joints[i].mat[1][3],
-			joints[i].mat[2][0], joints[i].mat[2][1], joints[i].mat[2][2], joints[i].mat[2][3],
-			joints[i].mat[3][0], joints[i].mat[3][1], joints[i].mat[3][2], joints[i].parent)
-		);
+		model.joints.push_back(joints[i].mat);
 	}
 
 	// Add animation base
@@ -574,7 +580,7 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 		}
 	}
 
-	glGenBuffers(1, &model.jointBuffer);
+	//glGenBuffers(1, &model.jointBuffer);
 	glGenBuffers(1, &model.animBuffer);
 
 	//for the matrices (modelView + normal)
@@ -584,6 +590,8 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 	model.PreCalculateAnimations();
 
 	// Push back the model
+	model.name = _modelToLoad->File;
+	model.name.erase(model.name.end() - 7, model.name.end());
 	modelList->push_back(model);
 }
 
@@ -620,6 +628,14 @@ bool GraphicDevice::RemoveModel(int _id)
 			}
 		}
 	}
+	for (int i = 0; i < m_modelsAnimated.size(); i++)
+	{
+		if (m_modelsAnimated[i].id == _id)
+		{
+			m_modelsAnimated.erase(m_modelsAnimated.begin() + i);
+			return true;
+		}
+	}
 	return false;
 }
 bool GraphicDevice::ActiveModel(int _id, bool _active)
@@ -637,6 +653,14 @@ bool GraphicDevice::ActiveModel(int _id, bool _active)
 					return true;
 				}
 			}
+		}
+	}
+	for (int i = 0; i < m_modelsAnimated.size(); i++)
+	{
+		if (m_modelsAnimated[i].id == _id)
+		{
+			m_modelsAnimated[i].active = _active;
+			return true;
 		}
 	}
 	return false;

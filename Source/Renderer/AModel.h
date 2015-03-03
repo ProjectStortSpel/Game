@@ -99,12 +99,15 @@ namespace Renderer
 		Animation(std::string _name)
 		{
 			name = _name;
+			maxFrame = 0;
 		}
 	};
 
 	class DECLSPEC AModel
 	{
 	public:
+		std::string name;
+
 		AModel(int _id, bool _active, glm::mat4* _model, float* _color, Buffer* buffer, GLuint tex, GLuint nor, GLuint spe);
 		AModel();
 		~AModel();
@@ -126,9 +129,9 @@ namespace Renderer
 		GLuint texID;
 		GLuint norID;
 		GLuint speID;
-		GLuint jointBuffer;
+		//GLuint jointBuffer;
 		GLuint animBuffer;
-		std::vector<Joint> joints;
+		std::vector<glm::mat4> joints;
 		std::vector<Joint> animation;
 		std::vector<Animation> animations;
 		int animId;

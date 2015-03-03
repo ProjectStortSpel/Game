@@ -170,6 +170,11 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
     end
 	
 	self.entities[#self.entities+1]=newTile
+	local entity = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("DirectionalLight", entity)
+	world:CreateComponentAndAddTo("SyncNetwork", entity)
+    local directionalLight = world:GetComponent(entity, "DirectionalLight", 0)
+	directionalLight:SetDirectionalLight(-0.38, -1.0, 0.7, 0.3, 0.7, 0.7, 0.7, 0.75, 0.85)
 	return newTile
 end
 

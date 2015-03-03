@@ -66,9 +66,9 @@ namespace LuaBridge
 			//clean memory <3<3
 			for (int i = 0; i < x_size; ++i)
 			{
-				delete(data[i]);
+				delete [] data[i];
 			}
-			delete(data);
+			delete [] data;
 			return ret_value;
 		}
 

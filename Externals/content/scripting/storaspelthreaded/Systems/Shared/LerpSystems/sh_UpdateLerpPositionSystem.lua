@@ -15,31 +15,39 @@ end
 
 UpdateLerpPositionSystem.Update = function(self, dt)
 	local entities = self:GetEntities()
-	for i = 1, #entities do
-		local entity = entities[i]
-		
-		local _time, _timer, sX, sY, sZ, tX, tY, tZ = world:GetComponent(entity, "LerpingPosition", "Time"):GetFloat8(0)
-		local algorithm = world:GetComponent(entity, "LerpingPosition", "Algorithm"):GetText(0)
+	
+	if #entities > 0 then
+		local lerpingPositions = world:GetComponents(entities, "LerpingPosition", "Time")
+		local algorithms = world:GetComponents(entities, "LerpingPosition", "Algorithm")
+		local timers = world:GetComponents(entities, "LerpingPosition", "Timer")
+		local positions = world:GetComponents(entities, "Position", 0)
+		local killWhenFinished = world:GetComponents(entities, "LerpingPosition", "KillWhenFinished")
+	
+		for i = 1, #entities do
+			local entity = entities[i]
+			
+			local _time, _timer, sX, sY, sZ, tX, tY, tZ = lerpingPositions[i]:GetFloat8(0)
 
-		_timer = _timer + dt
-		if _time > _timer then
-			local t = _timer / _time
-			local t1, t2, t3 = self:AlgorithmLerp(t, algorithm)
-			
-			local X = sX + (tX - sX) * t1
-			local Y = sY + (tY - sY) * t2
-			local Z = sZ + (tZ - sZ) * t3
-			
-			world:GetComponent(entity, "Position", 0):SetFloat3(X, Y, Z, false)
-			world:GetComponent(entity, "LerpingPosition", "Timer"):SetFloat(_timer, false)
-		else
-			world:GetComponent(entity, "Position", 0):SetFloat3(tX, tY, tZ, false)
-			if world:GetComponent(entity, "LerpingPosition", "KillWhenFinished"):GetBool() then
-				world:KillEntity(entity)
+			_timer = _timer + dt
+			if _time > _timer then
+				local t = _timer / _time
+				local t1, t2, t3 = self:AlgorithmLerp(t, algorithms[i]:GetText(0))
+				
+				local X = sX + (tX - sX) * t1
+				local Y = sY + (tY - sY) * t2
+				local Z = sZ + (tZ - sZ) * t3
+				
+				positions[i]:SetFloat3(X, Y, Z, false)
+				timers[i]:SetFloat(_timer, false)
 			else
-				world:RemoveComponentFrom("LerpingPosition", entity)
-			end
-		end	
+				positions[i]:SetFloat3(tX, tY, tZ, false)
+				if killWhenFinished[i]:GetBool() then
+					world:KillEntity(entity)
+				else
+					world:RemoveComponentFrom("LerpingPosition", entity)
+				end
+			end	
+		end
 	end
 end
 

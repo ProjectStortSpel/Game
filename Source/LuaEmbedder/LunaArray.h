@@ -199,8 +199,6 @@ namespace LuaEmbedder
       }
       if (pArray && *pArray)
       {
-	for (int i = 0; i < length; i++)
-		delete (*pArray)[i];
 	delete [] (*pArray);
 	*pArray = nullptr;
 	pArray = nullptr;

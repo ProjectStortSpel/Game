@@ -37,3 +37,5 @@ require "SlerpComponent"
 require "MapRaterComponents"
 
 require "WeatherComponents"
+
+require "MiscComponents"

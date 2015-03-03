@@ -1,6 +1,7 @@
 #include "RuleManager.h"
 
 typedef std::ifstream			this_is_a_input_file;
+typedef std::ofstream			this_is_a_output_file;
 typedef std::string::size_type	this_is_what_i_found;
 
 RuleManager::RuleManager( )
@@ -24,27 +25,30 @@ int RuleManager::ReadRulebook( const char* _rulbook_path )
 			// type weight_PF weight_DS
 
 			/*
-			Void 
-			10 
-			450 
+			Void 10 450
 			*/
 			//std::stringstream sstream( this_is_a_line );
+			std::stringstream ss;
 
-			std::string this_is_a_string = this_is_a_line;
-			std::getline( input_file, this_is_a_line );
-			this_is_a_string += " ";
-			this_is_a_string += this_is_a_line;
+			ss << this_is_a_line.c_str( );
 
+			std::string buffer;
+			std::string this_is_a_string;
 
-			std::getline( input_file, this_is_a_line );
-			float Dynamic_Script_weight = atof( this_is_a_line.c_str( ) );
+			std::getline( ss, buffer, ' ' );
+			this_is_a_string = buffer;
+			std::getline( ss, buffer, ' ' );
+			this_is_a_string += " " + buffer;
+			std::getline( ss, buffer );
+			float Dynamic_Script_weight = atof( buffer.c_str( ) );
 
 			Rule this_is_a_rule;
 			this_is_a_rule.script = this_is_a_string;
 			this_is_a_rule.weight = Dynamic_Script_weight;
 			this_is_the_rulebook.push_back( this_is_a_rule );
 		}
-		this->m_ruleBase.insert( std::pair<int, rulebook>( count, this_is_the_rulebook ) );
+		this->m_ruleBase.insert( std::pair<int, rulebook>( this->count, this_is_the_rulebook ) );
+		this->m_fileLocations.insert( std::pair<int, std::string>( this->count, _rulbook_path ) );
 		this->count++;
 
 		input_file.close( );
@@ -63,7 +67,7 @@ rulebook* RuleManager::GetRulebook( int _index )
 
 	if ( this->m_ruleBase.find( _index ) != this->m_ruleBase.end( ) )
 	{
-		ret_value = (&this->m_ruleBase [_index]);
+		ret_value = ( &this->m_ruleBase[_index] );
 	}
 	else
 	{
@@ -76,10 +80,12 @@ rulebook* RuleManager::GetRulebook( int _index )
 bool RuleManager::RemoveRulebook( int _index )
 {
 	rulebase::iterator it = this->m_ruleBase.find( _index );
+	filelocation::iterator itf = this->m_fileLocations.find( _index );
 
 	if ( it != this->m_ruleBase.end( ) )
 	{
 		this->m_ruleBase.erase( it );
+		this->m_fileLocations.erase( itf );
 	}
 	else
 	{
@@ -87,4 +93,47 @@ bool RuleManager::RemoveRulebook( int _index )
 		return false;
 	}
 	return true;
+}
+
+bool RuleManager::StoreRulebook( int _index )
+{
+	bool ret_value = false;
+
+	rulebase::iterator itRB = this->m_ruleBase.find( _index );
+	if ( itRB != this->m_ruleBase.end( ) )
+	{
+		rulebook rbook = this->m_ruleBase[_index];
+
+		filelocation::iterator itFL = this->m_fileLocations.find( _index );
+
+		if ( itFL != this->m_fileLocations.end( ) )
+		{
+			std::string path = this->m_fileLocations[_index];
+
+			this_is_a_output_file file;
+			file.open( path );
+
+			if ( file.is_open( ) )
+			{
+				std::string to_file;
+
+				for ( int i = 0; i < rbook.size( ); i++ )
+				{
+					std::stringstream ss;
+
+					ss << rbook[i].script + " ";
+					ss << rbook[i].weight;
+					ss << "\n";
+
+					file << ss.str( );
+				}
+			}
+
+			file.close( );
+
+		}
+
+	}
+
+	return ret_value;
 }

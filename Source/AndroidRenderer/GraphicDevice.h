@@ -107,6 +107,8 @@ namespace Renderer
 	class DECLSPEC GraphicDevice
 	{
 	public:
+		bool debugModelInfo;
+
 		GraphicDevice();
 		GraphicDevice(Camera _camera);
 		virtual ~GraphicDevice();
