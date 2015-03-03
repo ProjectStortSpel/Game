@@ -5,6 +5,8 @@ using namespace glm;
 
 GraphicsHigh::GraphicsHigh()
 {
+	debugModelInfo = false;
+
 	m_useAnimations = true;
 
 	mark = 0;

@@ -649,6 +649,14 @@ bool GraphicDevice::ActiveModel(int _id, bool _active)
 			}
 		}
 	}
+	for (int i = 0; i < m_modelsAnimated.size(); i++)
+	{
+		if (m_modelsAnimated[i].id == _id)
+		{
+			m_modelsAnimated[i].active = _active;
+			return true;
+		}
+	}
 	return false;
 }
 
