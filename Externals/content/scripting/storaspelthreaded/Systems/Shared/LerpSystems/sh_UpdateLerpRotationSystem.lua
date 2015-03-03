@@ -15,31 +15,39 @@ end
 
 UpdateLerpRotationSystem.Update = function(self, dt)
 	local entities = self:GetEntities()
-	for i = 1, #entities do
-		local entity = entities[i]
-		
-		local _time, _timer, sX, sY, sZ, tX, tY, tZ = world:GetComponent(entity, "LerpingRotation", "Time"):GetFloat8(0)
-		local algorithm = world:GetComponent(entity, "LerpingRotation", "Algorithm"):GetText(0)
+	
+	if #entities > 0 then
+		local lerpingRotations = world:GetComponents(entities, "LerpingRotation", "Time")
+		local algorithms = world:GetComponents(entities, "LerpingRotation", "Algorithm")
+		local timers = world:GetComponents(entities, "LerpingRotation", "Timer")
+		local rotations = world:GetComponents(entities, "Rotation", 0)
+		local killWhenFinished = world:GetComponents(entities, "LerpingRotation", "KillWhenFinished")
+	
+		for i = 1, #entities do
+			local entity = entities[i]
+			
+			local _time, _timer, sX, sY, sZ, tX, tY, tZ = lerpingRotations[i]:GetFloat8(0)
 
-		_timer = _timer + dt
-		if _time > _timer then
-			local t = _timer / _time
-			t = self:AlgorithmLerp(t, algorithm)
-			
-			local X = sX + (tX - sX) * t
-			local Y = sY + (tY - sY) * t
-			local Z = sZ + (tZ - sZ) * t
-			
-			world:GetComponent(entity, "Rotation", 0):SetFloat3(X, Y, Z, false)
-			world:GetComponent(entity, "LerpingRotation", "Timer"):SetFloat(_timer, false)
-		else
-			world:GetComponent(entity, "Rotation", 0):SetFloat3(tX, tY, tZ, false)
-			if world:GetComponent(entity, "LerpingRotation", "KillWhenFinished"):GetBool() then
-				world:KillEntity(entity)
+			_timer = _timer + dt
+			if _time > _timer then
+				local t = _timer / _time
+				t = self:AlgorithmLerp(t, algorithms[i]:GetText(0))
+				
+				local X = sX + (tX - sX) * t
+				local Y = sY + (tY - sY) * t
+				local Z = sZ + (tZ - sZ) * t
+				
+				rotations[i]:SetFloat3(X, Y, Z, false)
+				timers[i]:SetFloat(_timer, false)
 			else
-				world:RemoveComponentFrom("LerpingRotation", entity)
-			end
-		end	
+				rotations[i]:SetFloat3(tX, tY, tZ, false)
+				if killWhenFinished[i]:GetBool() then
+					world:KillEntity(entity)
+				else
+					world:RemoveComponentFrom("LerpingRotation", entity)
+				end
+			end	
+		end
 	end
 end
 
