@@ -13,10 +13,7 @@ uniform mat3 NormalMatrix;
 
 struct JointMatrix
 {
-	float x0, y0, z0, w0;
-	float x1, y1, z1, w1;
-	float x2, y2, z2, w2;
-	float x3, y3, z3, w3;
+	float x0, y0, z0, w0, x1, y1, z1, w1, x2, y2, z2, w2, x3, y3, z3, w3;
 };
 
 layout (std430, binding = 3) buffer Animation   
@@ -41,19 +38,18 @@ mat4 JointToMatrix(JointMatrix joint)
 
 void main()
 {
-	TexCoord = VertexTexCoord;
-
 	vec4 weights = normalize(VertexJointWeight);
 
 	mat4 skin = mat4(0);
-	skin += (JointToMatrix(anim[int(VertexJointIndex.x)]));// * weights.x;
-	skin += (JointToMatrix(anim[int(VertexJointIndex.y)]));// * weights.y;
-	skin += (JointToMatrix(anim[int(VertexJointIndex.z)]));// * weights.z;
-	skin += (JointToMatrix(anim[int(VertexJointIndex.w)]));// * weights.w;
+	skin += JointToMatrix(anim[int(VertexJointIndex.x)]) * weights.x;
+	skin += JointToMatrix(anim[int(VertexJointIndex.y)]) * weights.y;
+	skin += JointToMatrix(anim[int(VertexJointIndex.z)]) * weights.z;
+	skin += JointToMatrix(anim[int(VertexJointIndex.w)]) * weights.w;
 	
 	gl_Position = VP * M * skin * vec4(VertexPosition, 1.0);
 
 	Normal = normalize( NormalMatrix * (skin * vec4(VertexNormal, 0.0)).xyz );
 	Tan = normalize( NormalMatrix * (skin * vec4(VertexTangent, 0.0)).xyz );
 	BiTan = normalize( NormalMatrix * (skin * vec4(VertexBiTangent, 0.0)).xyz );
+	TexCoord = VertexTexCoord;
 }
