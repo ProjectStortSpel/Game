@@ -216,7 +216,7 @@ void ConsoleManager::ExecuteCommand(const char* _command)
 		printf("Command \"%s\" not bound.\n", command);
 	}
 
-	delete command;
+	delete [] command;
 
 }
 

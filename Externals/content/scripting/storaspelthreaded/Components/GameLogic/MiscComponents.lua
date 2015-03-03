@@ -1,12 +1,14 @@
--- SlingShotProjectile Component
+--	Random components
+
+--	IsTree Component
 local NewComponent = ComponentType()
-NewComponent.Name = "SlingShotProjectile"
+NewComponent.Name = "IsTree"
+NewComponent.SyncNetwork = true
 NewComponent.TableType = TableType.Map
 worldCreator:AddComponentType(NewComponent)
 
--- AbilityStone Component
+
 NewComponent = ComponentType()
-NewComponent.Name = "AbilityStone"
+NewComponent.Name = "ToggleTree"
 NewComponent.TableType = TableType.Map
-NewComponent:AddVariable("LifeSpan", ByteSize.Int)
 worldCreator:AddComponentType(NewComponent)
