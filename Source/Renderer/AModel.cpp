@@ -139,6 +139,7 @@ bool AModel::PreCalculateAnimations()
 			Animation* animptr = &animations[k];
 			for (int i = 0; i < animptr->joints.size(); i++)
 			{
+				animptr->joints[i].lastFrame = &animations[k].maxFrame;
 				tempMat4.push_back(animptr->joints[i].getFrame(j + 1));
 			}
 			for (int i = 0; i < animptr->joints.size(); i++)
