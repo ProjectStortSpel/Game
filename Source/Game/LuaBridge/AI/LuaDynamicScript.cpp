@@ -15,7 +15,6 @@ namespace LuaBridge
 			LuaEmbedder::AddFunction( _l, "UseThisScript", &SetScript, "DynamicScript" );
 		}
 
-
 		int	LoadRuleBook( lua_State* _l )
 		{
 			std::string filePath = LuaEmbedder::PullString( _l, 1 );
@@ -57,6 +56,11 @@ namespace LuaBridge
 		int	SetScript( lua_State* _l )
 		{
 			DSData* dsd = LuaEmbedder::PullObject<DSData>( _l, "DSData", 1 );
+
+			DynamicScripting* ds = DynamicScripting::Instance( );
+
+			ds->SetScript( dsd->rules );
+
 			return 0;
 		}
 
