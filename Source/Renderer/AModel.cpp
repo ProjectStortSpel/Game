@@ -51,26 +51,6 @@ void AModel::Draw(mat4 viewMatrix, mat4 projectionMatrix, Shader* shaderptr)
 
 
 
-
-		//float *joint_data = new float[joints.size() * 16];
-		//
-		//for (int j = 0; j < joints.size(); j++)
-		//{
-		//	memcpy(&joint_data[16 * j], &joints[j], 16 * sizeof(float));
-		//}
-		//
-		//int joint_data_size = 16 * joints.size() * sizeof(float);
-		//
-		//glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 1, jointBuffer, 0, joint_data_size);
-		//glBufferData(GL_SHADER_STORAGE_BUFFER, joint_data_size, joint_data, GL_STATIC_DRAW);
-		//
-		//glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, jointBuffer);
-		//
-		//delete [] joint_data;
-
-
-
-
 		float *anim_data = new float[animation.size() * 16];
 
 		for (int j = 0; j < animation.size(); j++)
@@ -80,10 +60,10 @@ void AModel::Draw(mat4 viewMatrix, mat4 projectionMatrix, Shader* shaderptr)
 
 		int anim_data_size = 16 * animation.size() * sizeof(float);
 
-		glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 1, animBuffer, 0, anim_data_size);
+		glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 3, animBuffer, 0, anim_data_size);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, anim_data_size, anim_data, GL_STATIC_DRAW);
 
-		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, animBuffer);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, animBuffer);
 
 		delete [] anim_data;
 
