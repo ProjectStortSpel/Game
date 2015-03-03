@@ -26,14 +26,9 @@ out vec3 Tan;
 out vec3 BiTan;
 out vec2 TexCoord;
 
-mat4 JointToMatrix(JointMatrix joint)
+mat4 JointToMatrix(int i)
 {
-	return mat4(
-				joint.x0, joint.y0, joint.z0, joint.w0,
-				joint.x1, joint.y1, joint.z1, joint.w1,
-				joint.x2, joint.y2, joint.z2, joint.w2,
-				joint.x3, joint.y3, joint.z3, joint.w3
-				);
+	return mat4(anim[i].x0, anim[i].y0, anim[i].z0, anim[i].w0, anim[i].x1, anim[i].y1, anim[i].z1, anim[i].w1, anim[i].x2, anim[i].y2, anim[i].z2, anim[i].w2, anim[i].x3, anim[i].y3, anim[i].z3, anim[i].w3);
 }
 
 void main()
@@ -41,10 +36,12 @@ void main()
 	vec4 weights = normalize(VertexJointWeight);
 
 	mat4 skin = mat4(0);
-	skin += JointToMatrix(anim[int(VertexJointIndex.x)]) * weights.x;
-	skin += JointToMatrix(anim[int(VertexJointIndex.y)]) * weights.y;
-	skin += JointToMatrix(anim[int(VertexJointIndex.z)]) * weights.z;
-	skin += JointToMatrix(anim[int(VertexJointIndex.w)]) * weights.w;
+	skin += JointToMatrix(int(VertexJointIndex.x)) * weights.x;
+	skin += JointToMatrix(int(VertexJointIndex.y)) * weights.y;
+	skin += JointToMatrix(int(VertexJointIndex.z)) * weights.z;
+	skin += JointToMatrix(int(VertexJointIndex.w)) * weights.w;
+    
+	//skin += mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, weights.y, 0, 1);
 	
 	gl_Position = VP * M * skin * vec4(VertexPosition, 1.0);
 
