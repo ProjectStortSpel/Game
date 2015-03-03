@@ -99,6 +99,7 @@ namespace Renderer
 		Animation(std::string _name)
 		{
 			name = _name;
+			maxFrame = 0;
 		}
 	};
 
@@ -128,9 +129,9 @@ namespace Renderer
 		GLuint texID;
 		GLuint norID;
 		GLuint speID;
-		GLuint jointBuffer;
+		//GLuint jointBuffer;
 		GLuint animBuffer;
-		std::vector<Joint> joints;
+		std::vector<glm::mat4> joints;
 		std::vector<Joint> animation;
 		std::vector<Animation> animations;
 		int animId;
