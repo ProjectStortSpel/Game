@@ -17,6 +17,11 @@ local IsParentComponent = ComponentType()
 IsParentComponent.Name = "IsParent"
 IsParentComponent.TableType = TableType.Map
 worldCreator:AddComponentType(IsParentComponent)
+-- KillWhenOrphan Component
+local KillWhenOrphanComponent = ComponentType()
+KillWhenOrphanComponent.Name = "KillWhenOrphan"
+KillWhenOrphanComponent.TableType = TableType.Map
+worldCreator:AddComponentType(KillWhenOrphanComponent)
 
 -- BoundToEntity Component
 local BoundToEntityComponent = ComponentType()
