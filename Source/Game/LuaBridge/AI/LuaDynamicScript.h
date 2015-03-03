@@ -9,7 +9,8 @@ namespace LuaBridge
 {
 	namespace DynamicScript
 	{
-		RuleManager rm;
+		extern RuleManager rm;
+		extern int id;
 
 		struct DSData
 		{

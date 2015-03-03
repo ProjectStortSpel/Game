@@ -32,6 +32,5 @@ AddLerpScaleSystem.EntitiesAdded = function(self, dt, entities)
 		world:GetComponent(entity, "LerpingScale", "KillWhenFinished"):SetBool(killWhenFinished)
 		
 		world:RemoveComponentFrom("LerpScale", entity)
-
 	end
 end

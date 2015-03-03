@@ -4,8 +4,11 @@ namespace LuaBridge
 {
 	namespace DynamicScript
 	{
+		RuleManager rm;
+		int index;
 		void Embed( lua_State* _l )
 		{
+			index = -1;
 			LuaEmbedder::EmbedClass<DSData>( _l, "DSData" );
 			LuaEmbedder::EmbedClassFunction<DSData>( _l, "DSData", "AddElement", &DSData::AddElement );
 
@@ -13,19 +16,19 @@ namespace LuaBridge
 			LuaEmbedder::AddFunction( _l, "GenerateScript", &GenerateScriptForLua, "DynamicScript" );
 			LuaEmbedder::AddFunction( _l, "UpdateWeight", &UpdateScriptWeight, "DynamicScript" );
 			LuaEmbedder::AddFunction( _l, "UseThisScript", &SetScript, "DynamicScript" );
+			LuaEmbedder::AddFunction( _l, "GetRuleTypeInt", &GetRuleTypeInt, "DynamicScript" );
 		}
-
 
 		int	LoadRuleBook( lua_State* _l )
 		{
 			std::string filePath = LuaEmbedder::PullString( _l, 1 );
 
-			int index = rm.ReadRulebook( filePath.c_str( ) );
+			index = rm.ReadRulebook( filePath.c_str( ) );
 
 			DynamicScripting* ds = DynamicScripting::Instance( );
 
 			ds->SetRuleBook( rm.GetRulebook( index ) );
-
+			
 			LuaEmbedder::PushInt( _l, index );
 			return 1;
 		}
@@ -50,13 +53,26 @@ namespace LuaBridge
 
 			ds->AdjustWeight( fitness );
 
+			if ( index >= 0 )
+			{
+				rm.StoreRulebook( index );
+			}
+
 			LuaEmbedder::PushBool( _l, true );
+
 			return 1;
 		}
 
 		int	SetScript( lua_State* _l )
 		{
 			DSData* dsd = LuaEmbedder::PullObject<DSData>( _l, "DSData", 1 );
+
+			index = LuaEmbedder::PullInt( _l, 2 );
+
+			DynamicScripting* ds = DynamicScripting::Instance( );
+
+			ds->SetScript( dsd->rules );
+
 			return 0;
 		}
 
@@ -82,7 +98,7 @@ namespace LuaBridge
 			}
 			else
 			{
-				LuaEmbedder::PushInt( _l, -1);
+				LuaEmbedder::PushInt( _l, -1 );
 			}
 			return 1;
 		}

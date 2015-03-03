@@ -5,6 +5,8 @@ using namespace glm;
 
 GraphicsHigh::GraphicsHigh()
 {
+	debugModelInfo = false;
+
 	m_useAnimations = true;
 
 	mark = 0;
@@ -718,6 +720,7 @@ void GraphicsHigh::Clear()
 {
 	m_modelIDcounter = 0;
 	
+	m_modelsAnimated.clear();
 	m_modelsDeferred.clear();
 	m_modelsForward.clear();
 	m_modelsViewspace.clear();
