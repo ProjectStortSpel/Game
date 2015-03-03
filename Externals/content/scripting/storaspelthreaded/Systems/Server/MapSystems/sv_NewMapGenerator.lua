@@ -62,8 +62,8 @@ end
 
 MapGenerator.EntitiesAdded = function(self, dt, entities)
 	--self:GenerateMap(os.time()%29181249, 4, 4)
-	self:GenerateMap(23246299, 8, 4)
-	--self:GenerateMap(2324130, 2, 2)
+	--self:GenerateMap(23246299, 8, 4)
+	self:GenerateMap(666, 3, 4)
 	--self:GenerateMap(23239474, 4, 4)
 	--self:GenerateMap(5747, 4, 4)
 	--self:GenerateMap(1338, 6, 4)
@@ -155,7 +155,9 @@ MapGenerator.GenerateMap = function(self, MapSeed, NumberOfPlayers, NumberOfChec
 	self:PlaceSpawnpoints()
 	self:FixEmptyTiles()
 	--	Create the actual map
+	print("AA")
 	self:CreateMap()
+	print("LOL")
 end
 
 
@@ -1060,47 +1062,47 @@ MapGenerator.FixRiverEffects = function(self, riverTiles)
 		
 		if isFirstTile then
 
-			--world:GetComponent(riverTiles[waterA], "Model", 0):SetModel("riverend", "riverend", 0, 0)
-			--
-			--local rotComp = world:GetComponent(riverTiles[waterA], "Rotation", 0)
-			--local currentRotation = rotComp:GetFloat(1)
-			--rotComp:SetFloat(currentRotation + math.pi, 1)
-			--
-			--
-			--local	newParticle	=	world:CreateNewEntity()
-			--world:CreateComponentAndAddTo("Position", newParticle)
-			--world:CreateComponentAndAddTo("Color", newParticle)
-			--world:CreateComponentAndAddTo("Particle", newParticle)
-			--
-			--world:GetComponent(newParticle, "Position", "X"):SetFloat3(posAX, 0.33, posAY)
-			--world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.6, 0.6, 0.6)
-			--
-			--world:GetComponent(newParticle, "Particle", "Name"):SetText("smoke")
-			--world:GetComponent(newParticle, "Particle", "Texture"):SetText("content/textures/smoke1.png")
-			--world:GetComponent(newParticle, "Particle", "Particles"):SetInt(40)
-			--world:GetComponent(newParticle, "Particle", "Lifetime"):SetFloat(600)
-			--world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.15)
-			--world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(0.6)
-			--world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
+			world:GetComponent(riverTiles[waterA], "Model", 0):SetModel("riverend", "riverend", 0, 0)
+			
+			local rotComp = world:GetComponent(riverTiles[waterA], "Rotation", 0)
+			local currentRotation = rotComp:GetFloat(1)
+			rotComp:SetFloat(currentRotation + math.pi, 1)
+			
+			
+			local	newParticle	=	world:CreateNewEntity()
+			world:CreateComponentAndAddTo("Position", newParticle)
+			world:CreateComponentAndAddTo("Color", newParticle)
+			world:CreateComponentAndAddTo("Particle", newParticle)
+			
+			world:GetComponent(newParticle, "Position", "X"):SetFloat3(posAX, 0.40, posAY)
+			world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.6, 0.6, 0.6)
+			
+			world:GetComponent(newParticle, "Particle", "Name"):SetText("smoke")
+			world:GetComponent(newParticle, "Particle", "Texture"):SetText("content/textures/smoke1.png")
+			world:GetComponent(newParticle, "Particle", "Particles"):SetInt(40)
+			world:GetComponent(newParticle, "Particle", "Lifetime"):SetFloat(600)
+			world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.15)
+			world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(0.6)
+			world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
 			
 		elseif isLastTile then
 		
-			--local	newParticle	=	world:CreateNewEntity()
-			--world:CreateComponentAndAddTo("Position", newParticle)
-			--world:CreateComponentAndAddTo("Color", newParticle)
-			--world:CreateComponentAndAddTo("Particle", newParticle)
-			--
-			--world:GetComponent(newParticle, "Position", "X"):SetFloat3(posAX + 0.6*dirAX, 0.23, posAY + 0.6*dirAY)
-			--
-			--world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.0, 0.0, 0.6)
-			--
-			--world:GetComponent(newParticle, "Particle", "Name"):SetText("fire")
-			--world:GetComponent(newParticle, "Particle", "Texture"):SetText("content/textures/firewhite.png")
-			--world:GetComponent(newParticle, "Particle", "Particles"):SetInt(1000)
-			--world:GetComponent(newParticle, "Particle", "Lifetime"):SetFloat(400)
-			--world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.05)
-			--world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(0.6)
-			--world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
+			local	newParticle	=	world:CreateNewEntity()
+			world:CreateComponentAndAddTo("Position", newParticle)
+			world:CreateComponentAndAddTo("Color", newParticle)
+			world:CreateComponentAndAddTo("Particle", newParticle)
+			
+			world:GetComponent(newParticle, "Position", "X"):SetFloat3(posAX + 0.6*dirAX, 0.23, posAY + 0.6*dirAY)
+			
+			world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.0, 0.0, 0.4)
+			
+			world:GetComponent(newParticle, "Particle", "Name"):SetText("fire")
+			world:GetComponent(newParticle, "Particle", "Texture"):SetText("content/textures/firewhite.png")
+			world:GetComponent(newParticle, "Particle", "Particles"):SetInt(50)
+			world:GetComponent(newParticle, "Particle", "Lifetime"):SetFloat(800)
+			world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.05)
+			world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(0.6)
+			world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
 		end
 		
 	end
@@ -1309,6 +1311,7 @@ MapGenerator.PlaceTrees = function(self)
 	--	Place trees
 	local	treesToSpawn	=	math.floor(self:GetPlayableTiles()/(2.0*self.Players))
 	local	tX,	tZ			=	0, 0
+	local	nTries			=	0
 	while treesToSpawn >= 0 do
 		
 		--	Randomize a position
@@ -1354,6 +1357,11 @@ MapGenerator.PlaceTrees = function(self)
 			allTiles[self:GetListIndex(tX, tZ)]	=	true
 			
 			treesToSpawn	=	treesToSpawn-1
+		else
+			nTries	=	nTries+1
+			if nTries >= 10 then
+				treesToSpawn	=	treesToSpawn-1
+			end
 		end
 	end
 end

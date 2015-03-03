@@ -43,7 +43,11 @@ ParentSystem.EntitiesRemoved = function(self, dt, entities)
 				local child = children[i]
 				local parentId = world:GetComponent(child, "Parent", 0):GetInt(0)
 				if parentId == entityId then
-					world:KillEntity(child)
+					if world:EntityHasComponent(child, "KillWhenOrphan") then
+						world:KillEntity(child)
+					else
+						world:RemoveComponentFrom("Parent", child)
+					end
 				end
 			end
 		--end

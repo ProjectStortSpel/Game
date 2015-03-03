@@ -105,6 +105,8 @@ namespace Renderer
 	class DECLSPEC AModel
 	{
 	public:
+		std::string name;
+
 		AModel(int _id, bool _active, glm::mat4* _model, float* _color, Buffer* buffer, GLuint tex, GLuint nor, GLuint spe);
 		AModel();
 		~AModel();

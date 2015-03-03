@@ -53,10 +53,10 @@ void main()
 	vec4 weights = normalize(VertexJointWeight);
 
 	mat4 skin = mat4(0);
-	skin += (JointToMatrix(anim[int(VertexJointIndex.x)]) * (JointToMatrix(joints[int(VertexJointIndex.x)]))) * weights.x;
-	skin += (JointToMatrix(anim[int(VertexJointIndex.y)]) * (JointToMatrix(joints[int(VertexJointIndex.y)]))) * weights.y;
-	skin += (JointToMatrix(anim[int(VertexJointIndex.z)]) * (JointToMatrix(joints[int(VertexJointIndex.z)]))) * weights.z;
-	skin += (JointToMatrix(anim[int(VertexJointIndex.w)]) * (JointToMatrix(joints[int(VertexJointIndex.w)]))) * weights.w;
+	skin += (JointToMatrix(anim[int(VertexJointIndex.x)]) * JointToMatrix(joints[int(VertexJointIndex.x)])) * weights.x;
+	skin += (JointToMatrix(anim[int(VertexJointIndex.y)]) * JointToMatrix(joints[int(VertexJointIndex.y)])) * weights.y;
+	skin += (JointToMatrix(anim[int(VertexJointIndex.z)]) * JointToMatrix(joints[int(VertexJointIndex.z)])) * weights.z;
+	skin += (JointToMatrix(anim[int(VertexJointIndex.w)]) * JointToMatrix(joints[int(VertexJointIndex.w)])) * weights.w;
 	
 	gl_Position = VP * M * skin * vec4(VertexPosition, 1.0);
 

@@ -112,7 +112,6 @@ NewCameraSystem.PostInitialize = function(self)
 	local rscale = world:GetComponent(self.TouchSprite1, "Scale", 0)
 	rscale:SetFloat3(0.1, 0.1, 0.1)	
 	
-	
 	self.TouchSprite2 = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("Model", self.TouchSprite2)
 	local model = world:GetComponent(self.TouchSprite2, "Model", 0)
@@ -204,9 +203,9 @@ NewCameraSystem.DoFreeCam = function(self, dt)
 
 			if move == true then
 				local rposition = world:GetComponent(self.TouchScreen, "Position", 0)
-				rposition:SetFloat3(0, 0, -0.1001)
+				rposition:SetFloat3(0, 0, -0.11)
 				local rposition = world:GetComponent(self.TouchSprite1, "Position", 0)
-				rposition:SetFloat3(self.mouseX * aspectX * 2, self.mouseY * aspectY * 2, -1)			
+				rposition:SetFloat3(self.mouseX * aspectX * 2, self.mouseY * aspectY * 2, -1.0001)			
 				self.Moved = true
 				local mapX = 0
 				local mapZ = 0

@@ -14,7 +14,11 @@ Buffer::~Buffer(void)
 	if (m_Type != None)
 	{
 		glDeleteBuffers(m_Buffers.size(), &m_Buffers[0]);
+		glDeleteBuffers(1, &m_inMatVBO);
+		glDeleteBuffers(1, &m_normalMatVBO);
+		glDeleteBuffers(1, &m_colorVBO);
 		glDeleteVertexArrays(1, &m_VAO);
+
 	}
 }
 
