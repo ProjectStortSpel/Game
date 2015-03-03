@@ -3,31 +3,31 @@
 --	for different game stages
 
 -- GameStage Component
-local GameStageComponent = ComponentType()
-GameStageComponent.SyncNetwork = true
-GameStageComponent.Name = "GameStage"
-GameStageComponent.TableType = TableType.Map
-worldCreator:AddComponentType(GameStageComponent)
+local NewComponent = ComponentType()
+NewComponent.SyncNetwork = true
+NewComponent.Name = "GameStage"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- PickingStage Component
-local PickingStageComponent = ComponentType()
-PickingStageComponent.SyncNetwork = true
-PickingStageComponent.Name = "PickingStage"
-PickingStageComponent.TableType = TableType.Map
-worldCreator:AddComponentType(PickingStageComponent)
+NewComponent = ComponentType()
+NewComponent.SyncNetwork = true
+NewComponent.Name = "PickingStage"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- MoveStage Component
-local MoveStageComponent = ComponentType()
-MoveStageComponent.SyncNetwork = true
-MoveStageComponent.Name = "MoveStage"
-MoveStageComponent.TableType = TableType.Map
-worldCreator:AddComponentType(MoveStageComponent)
+NewComponent = ComponentType()
+NewComponent.SyncNetwork = true
+NewComponent.Name = "MoveStage"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- PreStartStage Component
-local JoiningStageComponent = ComponentType()
-JoiningStageComponent.SyncNetwork = true
-JoiningStageComponent.Name = "JoiningStage"
-JoiningStageComponent.TableType = TableType.Map
-worldCreator:AddComponentType(JoiningStageComponent)
+NewComponent = ComponentType()
+NewComponent.SyncNetwork = true
+NewComponent.Name = "JoiningStage"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- Stage Switch

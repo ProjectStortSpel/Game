@@ -1,48 +1,48 @@
 --	LobbyMenu Component
-local LobbyMenu = ComponentType()
-LobbyMenu.Name = "LobbyMenu"
-LobbyMenu.TableType = TableType.Map
-worldCreator:AddComponentType(LobbyMenu)
+local NewComponent = ComponentType()
+NewComponent.Name = "LobbyMenu"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 --	LobbyMenuElement Component
-local LobbyMenuElement = ComponentType()
-LobbyMenuElement.Name = "LobbyMenuElement"
-LobbyMenuElement.TableType = TableType.Map
-worldCreator:AddComponentType(LobbyMenuElement)
+NewComponent = ComponentType()
+NewComponent.Name = "LobbyMenuElement"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 --	LobbyMenuPlayer Component
-local LobbyMenuPlayer = ComponentType()
-LobbyMenuPlayer.Name = "LobbyMenuPlayer"
-LobbyMenuPlayer.TableType = TableType.Map
-worldCreator:AddComponentType(LobbyMenuPlayer)
+NewComponent = ComponentType()
+NewComponent.Name = "LobbyMenuPlayer"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 --	LobbyPlayerReady Component
-local LobbyPlayerReady = ComponentType()
-LobbyPlayerReady.Name = "LobbyPlayerReady"
-LobbyPlayerReady.TableType = TableType.Map
-worldCreator:AddComponentType(LobbyPlayerReady)
+NewComponent = ComponentType()
+NewComponent.Name = "LobbyPlayerReady"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 --	LobbyPlayerStart Component
-local LobbyPlayerStart = ComponentType()
-LobbyPlayerStart.Name = "LobbyPlayerStart"
-LobbyPlayerStart.TableType = TableType.Map
-worldCreator:AddComponentType(LobbyPlayerStart)
+NewComponent = ComponentType()
+NewComponent.Name = "LobbyPlayerStart"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 --	LobbyPlayerReadyMSG Component
-local LobbyPlayerReadyMSG = ComponentType()
-LobbyPlayerReadyMSG.Name = "LobbyPlayerReadyMSG"
-LobbyPlayerReadyMSG.TableType = TableType.Map
-worldCreator:AddComponentType(LobbyPlayerReadyMSG)
+NewComponent = ComponentType()
+NewComponent.Name = "LobbyPlayerReadyMSG"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 --	LobbyPlayerStartMSG Component
-local LobbyPlayerStartMSG = ComponentType()
-LobbyPlayerStartMSG.Name = "LobbyPlayerStartMSG"
-LobbyPlayerStartMSG.TableType = TableType.Map
-worldCreator:AddComponentType(LobbyPlayerStartMSG)
+NewComponent = ComponentType()
+NewComponent.Name = "LobbyPlayerStartMSG"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 --	LobbyMenuActive Component
-local LobbyMenuActive = ComponentType()
-LobbyMenuActive.Name = "LobbyMenuActive"
-LobbyMenuActive.SyncNetwork = true
-LobbyMenuActive.TableType = TableType.Map
-worldCreator:AddComponentType(LobbyMenuActive)
+NewComponent = ComponentType()
+NewComponent.Name = "LobbyMenuActive"
+NewComponent.SyncNetwork = true
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)

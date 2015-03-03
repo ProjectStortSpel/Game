@@ -32,6 +32,5 @@ AddLerpRotationSystem.EntitiesAdded = function(self, dt, entities)
 		world:GetComponent(entity, "LerpingRotation", "KillWhenFinished"):SetBool(killWhenFinished)
 		
 		world:RemoveComponentFrom("LerpRotation", entity)
-		
 	end
 end

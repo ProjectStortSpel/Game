@@ -3,117 +3,117 @@
 --	for the cards
 
 -- Dealing Settings Component
-local DealingSettingsComponent = ComponentType()
-DealingSettingsComponent.SyncNetwork = true
-DealingSettingsComponent.Name = "DealingSettings"
-DealingSettingsComponent.TableType = TableType.Map
-DealingSettingsComponent:AddVariable("CardsInHand", ByteSize.Int)
-DealingSettingsComponent:AddVariable("CardsToPick", ByteSize.Int)
-worldCreator:AddComponentType(DealingSettingsComponent)
+local NewComponent = ComponentType()
+NewComponent.SyncNetwork = true
+NewComponent.Name = "DealingSettings"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("CardsInHand", ByteSize.Int)
+NewComponent:AddVariable("CardsToPick", ByteSize.Int)
+worldCreator:AddComponentType(NewComponent)
 
 -- Card Component
-local CardComponent = ComponentType()
-CardComponent.SyncNetwork = true
-CardComponent.Name = "Card"
-CardComponent.TableType = TableType.Map
-worldCreator:AddComponentType(CardComponent)
+NewComponent = ComponentType()
+NewComponent.SyncNetwork = true
+NewComponent.Name = "Card"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- Card Prio Component
-local CardPrioComponent = ComponentType()
-CardPrioComponent.Name = "CardPrio"
-CardPrioComponent.SyncNetwork = true
-CardPrioComponent.TableType = TableType.Map
-CardPrioComponent:AddVariable("Prio", ByteSize.Int)
-worldCreator:AddComponentType(CardPrioComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "CardPrio"
+NewComponent.SyncNetwork = true
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("Prio", ByteSize.Int)
+worldCreator:AddComponentType(NewComponent)
 
 -- Card Action Component
-local CardActionComponent = ComponentType()
-CardActionComponent.Name = "CardAction"
-CardActionComponent.SyncNetwork = true
-CardActionComponent.TableType = TableType.Map
-CardActionComponent:AddVariable("Action", ByteSize.Text)
-worldCreator:AddComponentType(CardActionComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "CardAction"
+NewComponent.SyncNetwork = true
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("Action", ByteSize.Text)
+worldCreator:AddComponentType(NewComponent)
 
 -- Defines that the card is owned by an AI.
 -- AI Card Component
-local AICardComponent = ComponentType()
-AICardComponent.Name = "AICard"
-AICardComponent.TableType = TableType.Map
-worldCreator:AddComponentType(AICardComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "AICard"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- Used Card Component
-local UsedCardComponent = ComponentType()
-UsedCardComponent.Name = "UsedCard"
-UsedCardComponent.TableType = TableType.Map
-worldCreator:AddComponentType(UsedCardComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "UsedCard"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- Dealt Card Component
-local DealtCardComponent = ComponentType()
-DealtCardComponent.Name = "DealtCard"
-DealtCardComponent:AddVariable("PlayerEntityId", ByteSize.Reference)
-DealtCardComponent.TableType = TableType.Map
-worldCreator:AddComponentType(DealtCardComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "DealtCard"
+NewComponent:AddVariable("PlayerEntityId", ByteSize.Reference)
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- Card Step Component
-local CardStepComponent = ComponentType()
-CardStepComponent.Name = "CardStep"
-CardStepComponent:AddVariable("Step", ByteSize.Int)
-CardStepComponent:AddVariable("UnitEntityId", ByteSize.Reference)
-CardStepComponent.TableType = TableType.Map
-worldCreator:AddComponentType(CardStepComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "CardStep"
+NewComponent:AddVariable("Step", ByteSize.Int)
+NewComponent:AddVariable("UnitEntityId", ByteSize.Reference)
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- Card Index Component
-local CardIndexComponent = ComponentType()
-CardIndexComponent.Name = "CardIndex"
-CardIndexComponent:AddVariable("Index", ByteSize.Int)
-CardIndexComponent.TableType = TableType.Map
-worldCreator:AddComponentType(CardIndexComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "CardIndex"
+NewComponent:AddVariable("Index", ByteSize.Int)
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- Select Card Component
-local SelectCardComponent = ComponentType()
-SelectCardComponent.Name = "SelectCard"
-SelectCardComponent:AddVariable("Index", ByteSize.Int)
-SelectCardComponent.TableType = TableType.Map
-worldCreator:AddComponentType(SelectCardComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "SelectCard"
+NewComponent:AddVariable("Index", ByteSize.Int)
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- Card Selected Component
-local CardSelectedComponent = ComponentType()
-CardSelectedComponent.Name = "CardSelected"
-CardSelectedComponent.TableType = TableType.Map
-worldCreator:AddComponentType(CardSelectedComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "CardSelected"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- Card Holding Component
-local CardHoldingComponent = ComponentType()
-CardHoldingComponent.Name = "CardHolding"
-CardHoldingComponent.TableType = TableType.Map
-worldCreator:AddComponentType(CardHoldingComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "CardHolding"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 
 -- Play Card Timer
-local PlayCardTimerComponent = ComponentType()
-PlayCardTimerComponent.Name = "PlayCardTimer"
-PlayCardTimerComponent:AddVariable("Time", ByteSize.Float)
-PlayCardTimerComponent:AddVariable("Step", ByteSize.Int)
-PlayCardTimerComponent.TableType = TableType.Map
-worldCreator:AddComponentType(PlayCardTimerComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "PlayCardTimer"
+NewComponent:AddVariable("Time", ByteSize.Float)
+NewComponent:AddVariable("Step", ByteSize.Int)
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 --	Step Timer
-local StepTimerComponent = ComponentType()
-StepTimerComponent.Name = "StepTimer"
-StepTimerComponent:AddVariable("Time", ByteSize.Float)
-StepTimerComponent.TableType = TableType.Map
-worldCreator:AddComponentType(StepTimerComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "StepTimer"
+NewComponent:AddVariable("Time", ByteSize.Float)
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- Server Selected Card component
-local ServerSelectedCard = ComponentType()
-ServerSelectedCard.Name = "ServerSelectedCard"
-ServerSelectedCard.TableType = TableType.Map
-ServerSelectedCard:AddVariable("Index", ByteSize.Int)
-worldCreator:AddComponentType(ServerSelectedCard)
+NewComponent = ComponentType()
+NewComponent.Name = "ServerSelectedCard"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("Index", ByteSize.Int)
+worldCreator:AddComponentType(NewComponent)
 
 --	Update Spawn
-local UpdateSpawnpointComponent = ComponentType()
-UpdateSpawnpointComponent.Name = "UpdateSpawnpoint"
-UpdateSpawnpointComponent:AddVariable("Unit", ByteSize.Reference)
-UpdateSpawnpointComponent.TableType = TableType.Map
-worldCreator:AddComponentType(UpdateSpawnpointComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "UpdateSpawnpoint"
+NewComponent:AddVariable("Unit", ByteSize.Reference)
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)

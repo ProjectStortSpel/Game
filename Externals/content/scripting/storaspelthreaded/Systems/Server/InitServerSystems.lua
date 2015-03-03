@@ -103,6 +103,7 @@ require "sv_LogStartSystem"
 require "sv_ServerNetworkMessageSystem"
 require "sv_HostSettingsSystem"
 require "sv_OffsetUnitSystem"
+require "sv_FadeTreeSystem"
 
 --worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(LobbySystem)
@@ -192,6 +193,7 @@ worldCreator:AddSystemToCurrentGroup(LogStartSystem)
 worldCreator:AddSystemToCurrentGroup(SendPlayerInformation)	--	ALSO TEMP
 worldCreator:AddSystemToCurrentGroup(SortClientSelectedCards)	--	Temp
 worldCreator:AddSystemToCurrentGroup(ClearServerSelectedSystem)	--	Temp
+worldCreator:AddSystemToCurrentGroup(FadeTreeSystem) -- TEMP
 worldCreator:AddSystemToCurrentGroup(FindSpawnpointSystem)
 
 --	Audio Systems

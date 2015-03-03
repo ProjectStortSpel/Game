@@ -3,118 +3,118 @@
 --	for different phases
 
 -- PickingPhase Component
-local PickingPhaseComponent = ComponentType()
-PickingPhaseComponent.Name = "PickingPhase"
-PickingPhaseComponent.TableType = TableType.Map
-PickingPhaseComponent:AddVariable("Time", ByteSize.Float)
-worldCreator:AddComponentType(PickingPhaseComponent)
+local NewComponent = ComponentType()
+NewComponent.Name = "PickingPhase"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("Time", ByteSize.Float)
+worldCreator:AddComponentType(NewComponent)
 
 -- OnPickingPhase Component
-local OnPickingPhaseComponent = ComponentType()
-OnPickingPhaseComponent.SyncNetwork = true
-OnPickingPhaseComponent.Name = "OnPickingPhase"
-OnPickingPhaseComponent.TableType = TableType.Map
-worldCreator:AddComponentType(OnPickingPhaseComponent)
+NewComponent = ComponentType()
+NewComponent.SyncNetwork = true
+NewComponent.Name = "OnPickingPhase"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 --	Auto Pick Cards
-local AutoPickCardsComponent = ComponentType()
-AutoPickCardsComponent.Name = "AutoPickCards"
-AutoPickCardsComponent.TableType = TableType.Map
-worldCreator:AddComponentType(AutoPickCardsComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "AutoPickCards"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 --	Game Running
-local GameRunningComponent = ComponentType()
-GameRunningComponent.SyncNetwork = true
-GameRunningComponent.Name = "GameRunning"
-GameRunningComponent.TableType = TableType.Map
-worldCreator:AddComponentType(GameRunningComponent)
+NewComponent = ComponentType()
+NewComponent.SyncNetwork = true
+NewComponent.Name = "GameRunning"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 --	Create Deck
-local CreateDeckComponent = ComponentType()
-CreateDeckComponent.Name = "CreateDeck"
-CreateDeckComponent.TableType = TableType.Map
-worldCreator:AddComponentType(CreateDeckComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "CreateDeck"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 --	Deal Cards
-local DealCardsComponent = ComponentType()
-DealCardsComponent.Name = "DealCards"
-DealCardsComponent:AddVariable("NumCards", ByteSize.Int)
-DealCardsComponent.TableType = TableType.Map
-worldCreator:AddComponentType(DealCardsComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "DealCards"
+NewComponent:AddVariable("NumCards", ByteSize.Int)
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 --	Notify Start New Round
-local NotifyStartNewRoundComponent = ComponentType()
-NotifyStartNewRoundComponent.Name = "NotifyStartNewRound"
-NotifyStartNewRoundComponent.TableType = TableType.Map
-NotifyStartNewRoundComponent:AddVariable("IsAI", ByteSize.Bool)
-worldCreator:AddComponentType(NotifyStartNewRoundComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "NotifyStartNewRound"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("IsAI", ByteSize.Bool)
+worldCreator:AddComponentType(NewComponent)
 
 --	New Round
-local NewRoundComponent = ComponentType()
-NewRoundComponent.Name = "NewRound"
-NewRoundComponent.TableType = TableType.Map
-worldCreator:AddComponentType(NewRoundComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "NewRound"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 --	New Step
-local NewStepComponent = ComponentType()
-NewStepComponent.Name = "NewStep"
-NewStepComponent.TableType = TableType.Map
-worldCreator:AddComponentType(NewStepComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "NewStep"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 --	Play Cards
-local PlayCardsComponent = ComponentType()
-PlayCardsComponent.Name = "PlayCard"
-PlayCardsComponent.TableType = TableType.Map
-PlayCardsComponent:AddVariable("Step", ByteSize.Int)
-worldCreator:AddComponentType(PlayCardsComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "PlayCard"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("Step", ByteSize.Int)
+worldCreator:AddComponentType(NewComponent)
 
 --	Post Move
-local PostMoveComponent = ComponentType()
-PostMoveComponent.Name = "PostMove"
-PostMoveComponent.TableType = TableType.Map
-worldCreator:AddComponentType(PostMoveComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "PostMove"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 --	Move River
-local MoveRiverComponent = ComponentType()
-MoveRiverComponent.Name = "MoveRiver"
-MoveRiverComponent.TableType = TableType.Map
-worldCreator:AddComponentType(MoveRiverComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "MoveRiver"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 --	Respawn Units
-local RespawnUnitsComponent = ComponentType()
-RespawnUnitsComponent.Name = "RespawnUnits"
-RespawnUnitsComponent.TableType = TableType.Map
-worldCreator:AddComponentType(RespawnUnitsComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "RespawnUnits"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 --	Check Void
-local CheckVoidComponent = ComponentType()
-CheckVoidComponent.Name = "CheckVoid"
-CheckVoidComponent.TableType = TableType.Map
-worldCreator:AddComponentType(CheckVoidComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "CheckVoid"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 --	Check Checkpoint
-local CheckCheckpointComponent = ComponentType()
-CheckCheckpointComponent.Name = "CheckCheckpoint"
-CheckCheckpointComponent.TableType = TableType.Map
-worldCreator:AddComponentType(CheckCheckpointComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "CheckCheckpoint"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 --	CheckCheckpointForEntity
-local CheckCheckpointForEntity = ComponentType()
-CheckCheckpointForEntity.Name = "CheckCheckpointForEntity"
-CheckCheckpointForEntity.TableType = TableType.Map
-CheckCheckpointForEntity:AddVariable("EntityId", ByteSize.Reference)
-CheckCheckpointForEntity:AddVariable("PosX", ByteSize.Int)
-CheckCheckpointForEntity:AddVariable("PosZ", ByteSize.Int)
-worldCreator:AddComponentType(CheckCheckpointForEntity)
+NewComponent = ComponentType()
+NewComponent.Name = "CheckCheckpointForEntity"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("EntityId", ByteSize.Reference)
+NewComponent:AddVariable("PosX", ByteSize.Int)
+NewComponent:AddVariable("PosZ", ByteSize.Int)
+worldCreator:AddComponentType(NewComponent)
 
 --	Check Finish point
-local CheckFinishpointComponent = ComponentType()
-CheckFinishpointComponent.Name = "CheckFinishpoint"
-CheckFinishpointComponent.TableType = TableType.Map
-worldCreator:AddComponentType(CheckFinishpointComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "CheckFinishpoint"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 --	PostSpawn check
-local PostSpawnComponent = ComponentType()
-PostSpawnComponent.Name = "PostSpawn"
-PostSpawnComponent.TableType = TableType.Map
-worldCreator:AddComponentType(PostSpawnComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "PostSpawn"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
