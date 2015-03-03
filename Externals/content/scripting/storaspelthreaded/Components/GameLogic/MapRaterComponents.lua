@@ -1,26 +1,26 @@
 
 --	PlayedCard
-local	PlayedCard		=	ComponentType()
-PlayedCard.Name 		= 	"PlayedCard"
-PlayedCard.TableType	= 	TableType.Map
-PlayedCard:AddVariable("CardAction", 	ByteSize.Text)
-PlayedCard:AddVariable("CardPriority", 	ByteSize.Int)
-PlayedCard:AddVariable("PlayerNumber", 	ByteSize.Int)
-worldCreator:AddComponentType(PlayedCard)
+local	NewComponent		=	ComponentType()
+NewComponent.Name 		= 	"PlayedCard"
+NewComponent.TableType	= 	TableType.Map
+NewComponent:AddVariable("CardAction", 	ByteSize.Text)
+NewComponent:AddVariable("CardPriority", 	ByteSize.Int)
+NewComponent:AddVariable("PlayerNumber", 	ByteSize.Int)
+worldCreator:AddComponentType(NewComponent)
 
 --	CheckpointReached
-local	CheckpointReached	=	ComponentType()
-CheckpointReached.Name 		= 	"CheckpointReached"
-CheckpointReached.TableType	= 	TableType.Map
-CheckpointReached:AddVariable("CheckpointNumber", 	ByteSize.Int)
-CheckpointReached:AddVariable("PlayerNumber", 		ByteSize.Int)
-worldCreator:AddComponentType(CheckpointReached)
+NewComponent			=	ComponentType()
+NewComponent.Name 		= 	"CheckpointReached"
+NewComponent.TableType	= 	TableType.Map
+NewComponent:AddVariable("CheckpointNumber", 	ByteSize.Int)
+NewComponent:AddVariable("PlayerNumber", 		ByteSize.Int)
+worldCreator:AddComponentType(NewComponent)
 
 --	UnitDied
-local	UnitDied			=	ComponentType()
-UnitDied.Name 		= 	"UnitDied"
-UnitDied.TableType	= 	TableType.Map
-UnitDied:AddVariable("PlayerNumber", 		ByteSize.Int)
-UnitDied:AddVariable("X", 					ByteSize.Int)
-UnitDied:AddVariable("Z", 					ByteSize.Int)
-worldCreator:AddComponentType(UnitDied)
+NewComponent			=	ComponentType()
+NewComponent.Name 		= 	"UnitDied"
+NewComponent.TableType	= 	TableType.Map
+NewComponent:AddVariable("PlayerNumber", 		ByteSize.Int)
+NewComponent:AddVariable("X", 					ByteSize.Int)
+NewComponent:AddVariable("Z", 					ByteSize.Int)
+worldCreator:AddComponentType(NewComponent)
