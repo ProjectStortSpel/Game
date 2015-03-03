@@ -243,5 +243,11 @@
     <None Include="..\..\..\Externals\content\shaders\riverCornerFS.glsl">
       <Filter>shaders\SpriteAnimation</Filter>
     </None>
+    <None Include="..\..\..\Externals\content\shaders\lowFSAnimationShader.glsl">
+      <Filter>shaders\Animation</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\lowVSAnimationShader.glsl">
+      <Filter>shaders\Animation</Filter>
+    </None>
   </ItemGroup>
 </Project>
