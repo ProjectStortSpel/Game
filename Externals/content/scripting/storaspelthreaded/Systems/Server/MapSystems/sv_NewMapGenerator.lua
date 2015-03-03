@@ -62,8 +62,8 @@ end
 
 MapGenerator.EntitiesAdded = function(self, dt, entities)
 	--self:GenerateMap(os.time()%29181249, 4, 4)
-	self:GenerateMap(23246299, 8, 4)
-	--self:GenerateMap(2324130, 2, 2)
+	--self:GenerateMap(23246299, 8, 4)
+	self:GenerateMap(666, 3, 4)
 	--self:GenerateMap(23239474, 4, 4)
 	--self:GenerateMap(5747, 4, 4)
 	--self:GenerateMap(1338, 6, 4)
@@ -155,7 +155,9 @@ MapGenerator.GenerateMap = function(self, MapSeed, NumberOfPlayers, NumberOfChec
 	self:PlaceSpawnpoints()
 	self:FixEmptyTiles()
 	--	Create the actual map
+	print("AA")
 	self:CreateMap()
+	print("LOL")
 end
 
 
@@ -1309,6 +1311,7 @@ MapGenerator.PlaceTrees = function(self)
 	--	Place trees
 	local	treesToSpawn	=	math.floor(self:GetPlayableTiles()/(2.0*self.Players))
 	local	tX,	tZ			=	0, 0
+	local	nTries			=	0
 	while treesToSpawn >= 0 do
 		
 		--	Randomize a position
@@ -1354,6 +1357,11 @@ MapGenerator.PlaceTrees = function(self)
 			allTiles[self:GetListIndex(tX, tZ)]	=	true
 			
 			treesToSpawn	=	treesToSpawn-1
+		else
+			nTries	=	nTries+1
+			if nTries >= 10 then
+				treesToSpawn	=	treesToSpawn-1
+			end
 		end
 	end
 end
