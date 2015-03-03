@@ -133,8 +133,13 @@ bool GraphicsHigh::InitShaders()
 	m_riverShader.InitShaderProgram();
 	m_riverShader.AddShader("content/shaders/riverShaderVS.glsl", GL_VERTEX_SHADER);
 	m_riverShader.AddShader("content/shaders/FSForwardShader.glsl", GL_FRAGMENT_SHADER);
-	//m_riverShader.AddShader("content/shaders/FSForwardShader.glsl", GL_FRAGMENT_SHADER);
 	m_riverShader.FinalizeShaderProgram();
+
+	// River water corner shader
+	m_riverCornerShader.InitShaderProgram();
+	m_riverCornerShader.AddShader("content/shaders/VSForwardShader.glsl", GL_VERTEX_SHADER);
+	m_riverCornerShader.AddShader("content/shaders/riverCornerFS.glsl", GL_FRAGMENT_SHADER);
+	m_riverCornerShader.FinalizeShaderProgram();
 
 	// ShadowShader deferred geometry
 	m_shadowShaderDeferred.InitShaderProgram();
@@ -151,6 +156,7 @@ void GraphicsHigh::InitRenderLists()
 	m_renderLists.push_back(RenderList(RENDER_VIEWSPACE, &m_modelsViewspace, &m_viewspaceShader));
 	m_renderLists.push_back(RenderList(RENDER_INTERFACE, &m_modelsInterface, &m_interfaceShader));
 	m_renderLists.push_back(RenderList(RENDER_RIVERWATER, &m_modelsWater, &m_riverShader));
+	m_renderLists.push_back(RenderList(RENDER_RIVERWATER_CORNER, &m_modelsWaterCorners, &m_riverCornerShader));
 	m_renderLists.push_back(RenderList(RENDER_DEFERRED_SCATTER, &m_modelsDeferred, &m_deferredShader1));
 	m_renderLists.push_back(RenderList(RENDER_FORWARD_SCATTER, &m_modelsForward, &m_forwardShader));
 }
@@ -468,21 +474,7 @@ void GraphicsHigh::Render()
 	m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera);
 	glEnable(GL_CULL_FACE);
 	// -----------
-
-	//--------FORWARD RENDERING
 	glEnable(GL_BLEND);
-	//----Uniforms
-	m_forwardShader.UseProgram();
-	m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
-	m_forwardShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
-	m_forwardShader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
-	//----Lights
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
-	//----DRAW MODELS
-	for (int i = 0; i < m_modelsForward.size(); i++)
-		m_modelsForward[i].Draw(viewMatrix, mat4(1));
-
 
 	//-------Render water-------------
 	m_riverShader.UseProgram();
@@ -499,6 +491,35 @@ void GraphicsHigh::Render()
 	//----DRAW MODELS
 	for (int i = 0; i < m_modelsWater.size(); i++)
 		m_modelsWater[i].Draw(viewMatrix, mat4(1));
+
+	//-------Render water corners-------------
+	m_riverCornerShader.UseProgram();
+	m_riverCornerShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
+	m_riverCornerShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
+	m_riverCornerShader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
+	m_riverCornerShader.SetUniVariable("ElapsedTime", glfloat, &m_elapsedTime);
+	//----Lights
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
+	//----DRAW MODELS
+	for (int i = 0; i < m_modelsWaterCorners.size(); i++)
+		m_modelsWaterCorners[i].Draw(viewMatrix, mat4(1));
+
+
+	//--------FORWARD RENDERING
+
+	//----Uniforms
+	m_forwardShader.UseProgram();
+	m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
+	m_forwardShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
+	m_forwardShader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
+	//----Lights
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
+	//----DRAW MODELS
+	for (int i = 0; i < m_modelsForward.size(); i++)
+		m_modelsForward[i].Draw(viewMatrix, mat4(1));
+
 
 
 	//--------PARTICLES---------
@@ -685,6 +706,10 @@ void GraphicsHigh::CreateShadowMap()
 	m_riverShader.UseProgram();
 	m_riverShader.SetUniVariable("BiasMatrix", mat4x4, m_shadowMap->GetBiasMatrix());
 	m_riverShader.CheckUniformLocation("ShadowDepthTex", 10);
+
+	m_riverCornerShader.UseProgram();
+	m_riverCornerShader.SetUniVariable("BiasMatrix", mat4x4, m_shadowMap->GetBiasMatrix());
+	m_riverCornerShader.CheckUniformLocation("ShadowDepthTex", 10);
 
 	m_vramUsage += (resolution*resolution*sizeof(float));
 }

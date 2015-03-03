@@ -5,7 +5,6 @@ in vec3 BiTan;
 in vec2 TexCoord;
 in vec3 ViewPos;
 in vec3 AddColor;
-in float A;
 
 layout( location = 0 ) out vec4 ColorData;
 
@@ -159,6 +158,8 @@ void phongModel(int index, out vec3 ambient, out vec3 diffuse, out vec3 spec) {
 
 uniform float ElapsedTime;
 
+#define HalfPI 1.570796327f
+
 void main() 
 {
 	float v = atan(TexCoord.y / TexCoord.x);
@@ -168,27 +169,19 @@ void main()
 	finalCoord.x = TexCoord.x / cos(v);
 	finalCoord.x = finalCoord.x / sqrt(2);
 
-	finalCoord.y = TexCoord.y - 0.1f * ElapsedTime;
+	//float QPI = HalfPI / 2.0f;
+	//v = sin(2.0f*v-HalfPI)*QPI +QPI;
 
-	if( finalCoord.y < 0.0f )
-	{
-		finalCoord.y = finalCoord.y - (floor(finalCoord.y)-1);
-	}
+	//v = v / HalfPI;
 
-	v = atan(finalCoord.y / TexCoord.x);
-	finalCoord.y = sin(v);
+	//v = v * v * ( 3.0f - 2.0f * v);
 
-	//vec2 modifiedCoord = TexCoord;
-	//vec2 cornerCoord;
-	//if(A < 0.0)
-	//	cornerCoord = vec2(0.0, 0.0);
-	//else if(A > 0.0)
-	//	cornerCoord = vec2(0.0, 1.0);
+//	v = v * HalfPI;
 
-	//float dY = TexCoord.y - cornerCoord.y;
+	v = v + ElapsedTime * (HalfPI / 2.5f); // -
 
-	//TexCoord.y = cornerCoord.y + TexCoord.x * dY;
-	
+	v = v - floor(v/HalfPI) * HalfPI;
+	finalCoord.y = v / HalfPI;//1.0f - (v / HalfPI)
 	//----------------------------------------------
 
 	// Diffuse tex

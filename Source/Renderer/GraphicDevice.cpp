@@ -162,6 +162,9 @@ void GraphicDevice::InitStandardBuffers()
 	//River water shader
 	m_riverShader.CheckUniformLocation("diffuseTex", 1);
 
+	//River water corner shader
+	m_riverCornerShader.CheckUniformLocation("diffuseTex", 1);
+
 	//Skybox shader
 	m_skyBoxShader.CheckUniformLocation("cubemap", 1);
 

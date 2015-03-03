@@ -25,6 +25,7 @@ namespace Renderer
 #define RENDER_INTERFACE  3
 #define RENDER_ANIMATED  4
 #define RENDER_RIVERWATER 5
+#define RENDER_RIVERWATER_CORNER 6
 
 #define RENDER_DEFERRED_SCATTER  8
 #define RENDER_FORWARD_SCATTER  9
@@ -186,7 +187,7 @@ namespace Renderer
 		//modellists
 		std::vector<RenderList> m_renderLists;
 
-		std::vector<Model> m_modelsForward, m_modelsViewspace, m_modelsInterface, m_modelsWater;
+		std::vector<Model> m_modelsForward, m_modelsViewspace, m_modelsInterface, m_modelsWater, m_modelsWaterCorners;
 		std::vector<AModel> m_modelsAnimated;
 
 		Shader m_animationShader;
@@ -222,7 +223,7 @@ namespace Renderer
 		Shader m_viewspaceShader;
 		Shader m_interfaceShader;
 		Shader m_shadowShaderForward;
-		Shader m_riverShader;
+		Shader m_riverShader, m_riverCornerShader;
 		std::map<std::string, Shader> m_particleShaders;
 
 		// Skybox
