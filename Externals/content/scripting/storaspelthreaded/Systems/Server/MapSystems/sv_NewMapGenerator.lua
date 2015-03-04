@@ -847,11 +847,11 @@ MapGenerator.CreateMap = function(self)
 	self:GenerateIslandBelow()
 	
 	--	Generate directional light
-	local	R,G,B		=	0.6,0.6,0.65
+	local	R,G,B		=	0.8,0.7,0.6
 	local 	newLight 	= 	world:CreateNewEntity()
 	world:CreateComponentAndAddTo("DirectionalLight", newLight)
 	world:CreateComponentAndAddTo("SyncNetwork", newLight)
-    world:GetComponent(newLight, "DirectionalLight", 0):SetDirectionalLight(math.sin(math.random(1, 360)), -1.0, math.sin(math.random(1, 360)), 0.3, 0.7, 0.7, R, G, B)
+    world:GetComponent(newLight, "DirectionalLight", 0):SetDirectionalLight(math.sin(math.random(1, 360)), -1.0, math.sin(math.random(1, 360)), 0.25, 0.65, 0.65, R, G, B)
 	
 	
 end
