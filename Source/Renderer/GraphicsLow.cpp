@@ -20,6 +20,7 @@ GraphicsLow::GraphicsLow()
 
 GraphicsLow::GraphicsLow(Camera _camera, int x, int y) : GraphicDevice(_camera, x, y)
 {
+	m_useAnimations = false;
 	m_modelIDcounter = 0;
 	m_vramUsage = 0;
 	m_debugTexFlag = 0;
@@ -180,6 +181,21 @@ void GraphicsLow::Render()
 	for (int i = 0; i < m_modelsForward.size(); i++)
 		m_modelsForward[i].Draw(viewMatrix, mat4(1));
 
+	//--------ANIMATED DEFERRED RENDERING !!! ATTENTION: WORK IN PROGRESS !!!
+	m_animationShader.UseProgram();
+	for (int i = 0; i < m_modelsAnimated.size(); i++)
+	{
+		for (int j = 0; j < m_modelsAnimated[i].animation.size(); j++)
+		{
+			std::stringstream ss;
+			ss << "anim[" << j << "]";
+			m_animationShader.SetUniVariable(ss.str().c_str(), mat4x4, &m_modelsAnimated[i].animation[j]);
+			ss.str(std::string());
+		}
+
+		m_modelsAnimated[i].Draw(viewMatrix, projectionMatrix, &m_animationShader);
+	}
+
 	//-------Render water-------------
 	m_riverShader.UseProgram();
 	m_riverShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
@@ -305,6 +321,12 @@ bool GraphicsLow::InitGLEW()
 bool GraphicsLow::InitShaders()
 {
 	InitStandardShaders();
+	// Animation Deferred pass 1
+	m_animationShader.InitShaderProgram();
+	m_animationShader.AddShader("content/shaders/lowVSAnimationShader.glsl", GL_VERTEX_SHADER);
+	m_animationShader.AddShader("content/shaders/lowFSAnimationShader.glsl", GL_FRAGMENT_SHADER);
+	m_animationShader.FinalizeShaderProgram();
+
 	// Forward shader
 	m_forwardShader.InitShaderProgram();
 	m_forwardShader.AddShader("content/shaders/lowVSForwardShader.glsl", GL_VERTEX_SHADER);
@@ -522,6 +544,8 @@ void GraphicsLow::Clear()
 	m_modelsForward.clear();
 	m_modelsViewspace.clear();
 	m_modelsInterface.clear();
+	m_modelsWater.clear();
+	m_modelsWaterCorners.clear();
 
 	BufferPointlights(0, 0);
 	BufferDirectionalLight(0);

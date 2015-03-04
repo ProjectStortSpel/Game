@@ -31,7 +31,7 @@ Unit.Name = "Unit"
 	Unit:AddComponent("Model")
 
 	--	Model data
-	Unit:SetFloat3("Position", 0.0, 1.0, 0.0)
+	Unit:SetFloat3("Position", -1337, -1337, -1337)
 	Unit:SetFloat3("Rotation", 0.0, math.pi, 0.0)
 	Unit:SetFloat3("Scale", 0.8, 0.8, 0.8)
 	
@@ -56,7 +56,7 @@ Ghost.Name = "Ghost"
 	Ghost:AddComponent("Model")
 
 	--	Model data
-	Ghost:SetFloat3("Position", 0.0, 1.0, 0.0)
+	Ghost:SetFloat3("Position", -1337, -1337, -1337)
 	Ghost:SetFloat3("Rotation", 0.0, math.pi, 0.0)
 	Ghost:SetFloat3("Scale", 0.8, 0.8, 0.8)
 	Ghost:SetFloat3("Color", 0.2, 0.2, 0.2)

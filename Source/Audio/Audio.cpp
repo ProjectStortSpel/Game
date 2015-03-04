@@ -72,11 +72,17 @@ namespace Audio
 	std::vector<FadeInParams> g_soundFadeInQueue;
 	std::vector<std::pair<std::string, int>> g_soundFadeOutQueue;
 	
-	std::vector<int> g_channelsQueue;
+	std::vector<int> g_channelRemoveQueue;
+	
+	SDL_mutex* g_channelMutex;
 	
 	void ChannelFinished(int channel)
 	{
-		g_channelsQueue.push_back(channel);
+		SDL_LockMutex(g_channelMutex);
+		
+		g_channelRemoveQueue.push_back(channel);
+		
+		SDL_UnlockMutex(g_channelMutex);
 	}
 	void Init()
 	{
@@ -84,22 +90,28 @@ namespace Audio
 		Mix_OpenAudio(FREQUENCY, FORMAT, CHANNELS, CHUNK_SIZE);
 		Mix_AllocateChannels(128);
 		Mix_ChannelFinished(ChannelFinished);
+		
+		g_channelMutex = SDL_CreateMutex();
 	}
 	
 	void Update()
 	{
-		for (int channelToRemove : g_channelsQueue)
+		SDL_LockMutex(g_channelMutex);
+		
+		for (int channel : g_channelRemoveQueue)
 		{
-			for (std::pair<std::string, int> channel : g_channels)
+			for (std::pair<std::string, int> channelPair : g_channels)
 			{
-				if (channelToRemove == channel.second)
+				if (channel == channelPair.second)
 				{
-					g_channels.erase(channel.first);
+					g_channels.erase(channelPair.first);
 					break;
 				}
 			}
 		}
-		g_channelsQueue.clear();
+		g_channelRemoveQueue.clear();
+		
+		SDL_UnlockMutex(g_channelMutex);
 		
 		for (std::string filepath : g_loadMusicQueue)
 		{
@@ -266,6 +278,8 @@ namespace Audio
 			Mix_FreeMusic(g_music);
 		
 		Mix_CloseAudio();
+		
+		SDL_DestroyMutex(g_channelMutex);
 	}
 	
 	void SetVolume(int volume)

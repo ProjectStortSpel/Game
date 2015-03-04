@@ -2,6 +2,7 @@
 #include <sstream>
 
 #include <sys/stat.h>
+#include <cstdio>
 
 #include "FileSystem/Directory.h"
 
@@ -16,9 +17,9 @@ namespace FileSystem
 			static const char* ascii[];
 		};
 
-		const int numBinaryExtensions = 4;
+		const int numBinaryExtensions = 5;
 		const int numAsciiExtensions = 7;
-		const char* Extension::binary[] = { "png", "mesh", "amesh", "db" };
+		const char* Extension::binary[] = { "png", "mesh", "amesh", "db", "exe" };
 		const char* Extension::ascii[] = { "txt", "meshOLD", "lua", "object", "ajoints", "anim", "aobject" };
 
 		bool IsBinary(std::string _path)
@@ -62,11 +63,11 @@ namespace FileSystem
 						if (data[i] == '\0')
 						{
 							delete [] data;
-							return false;
+							return true;
 						}
 					}
 					delete [] data;
-					return true;
+					return false;
 				}
 			}
 			return false;
@@ -133,7 +134,7 @@ namespace FileSystem
 
 		bool Delete(std::string _path)
 		{
-			return false;
+            return remove(_path.c_str()) == 0;
 		}
 
 		void Close(SDL_RWops* _file)
