@@ -205,6 +205,7 @@ namespace ConnectHelper
                     SDL_Log("Failed to download gamemode file (md5 mismatch): %s", filename.c_str());
 					FileSystem::MD5::MD5_Print(r.MD5);
 					FileSystem::MD5::MD5_Print(MD5);
+					Console::ConsoleManager::GetInstance().AddToCommandQueue("disconnect;stop;gamemode lobby");
                     return;
                 }
                 
@@ -363,6 +364,7 @@ namespace ConnectHelper
 					SDL_Log("Failed to download content file (md5 mismatch): %s", filename.c_str());
 					FileSystem::MD5::MD5_Print(r.MD5);
 					FileSystem::MD5::MD5_Print(MD5);
+					Console::ConsoleManager::GetInstance().AddToCommandQueue("disconnect;stop;gamemode lobby");
 					return;
 				}
                 
