@@ -106,12 +106,12 @@ namespace ConnectHelper
 				}
 
 				ResourceManager::Resource r;
-				ResourceManager::CreateResource(gamemode, filename, r, HomePath::Type::Client);
+				bool hasFile = ResourceManager::CreateResource(gamemode, filename, r, HomePath::Type::Client, false);
 
-				if (md5 != r.MD5)
+				if (!hasFile || md5 != r.MD5)
 				{
-					//SDL_Log("I don't have: %s", filename.c_str());
-
+					SDL_Log("Missing gamemode file: %s", filename.c_str());
+                    
 					ResourceManager::Resource temp;
 					temp.File = filename;
 					temp.Location = HomePath::GetDownloadGameModePath(gamemode);
@@ -199,6 +199,9 @@ namespace ConnectHelper
 			if (lastPart == 1)
 			{
 				//md5 check and delete if failed
+                
+                SDL_Log("Downloaded gamemode file: %s", filename.c_str());
+                
 				missingFiles.erase(filename);
 				
 				if (missingFiles.empty())
@@ -257,14 +260,12 @@ namespace ConnectHelper
 				}
 
 				ResourceManager::Resource r;
-				ResourceManager::CreateResource(gamemode, filename, r, HomePath::Type::Client);
+				bool hasFile = ResourceManager::CreateResource(gamemode, filename, r, HomePath::Type::Client, true);
+                
 
-				if (md5 != r.MD5)
+				if (!hasFile || md5 != r.MD5)
 				{
-					SDL_Log("I don't have: %s", filename.c_str());
-
-					FileSystem::MD5::MD5_Print(md5);
-					FileSystem::MD5::MD5_Print(r.MD5);
+					SDL_Log("Missing content file: %s", filename.c_str());
 
 					ResourceManager::Resource temp;
 					temp.File = filename;
@@ -348,6 +349,11 @@ namespace ConnectHelper
 			if (lastPart == 1)
 			{
 				//md5 check and delete if failed
+                
+                
+                SDL_Log("Downloaded content file: %s", filename.c_str());
+
+                
 				missingFiles.erase(filename);
 
 				if (missingFiles.empty())
