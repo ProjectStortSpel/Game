@@ -917,9 +917,10 @@ void GameCreator::NetworkGameMode(Network::PacketHandler* _ph, uint64_t& _id, Ne
 	}
 	else
 	{
-		Network::PacketHandler* ph = NetworkInstance::GetClient()->GetPacketHandler();
-		uint64_t id = ph->StartPack("GameModeLoaded");
-		NetworkInstance::GetClient()->Send(ph->EndPack(id));
+        ConnectHelper::Connect(_ph->ReadString(_id));
+		//Network::PacketHandler* ph = NetworkInstance::GetClient()->GetPacketHandler();
+		//uint64_t id = ph->StartPack("GameModeLoaded");
+		//NetworkInstance::GetClient()->Send(ph->EndPack(id));
 	}
 }
 
