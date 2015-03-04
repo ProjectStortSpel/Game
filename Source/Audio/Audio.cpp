@@ -211,7 +211,7 @@ namespace Audio
 				continue;
 			}
 			
-			if (Mix_FadeOutChannel(g_channels[soundFadeOutQueueIt->first], soundFadeOutQueueIt->second) == 1)
+			if (Mix_Playing(g_channels[soundFadeOutQueueIt->first]) == 1 && Mix_FadeOutChannel(g_channels[soundFadeOutQueueIt->first], soundFadeOutQueueIt->second) == 1)
 				soundFadeOutQueueIt = g_soundFadeOutQueue.erase(soundFadeOutQueueIt);
 			else
 				soundFadeOutQueueIt++;
