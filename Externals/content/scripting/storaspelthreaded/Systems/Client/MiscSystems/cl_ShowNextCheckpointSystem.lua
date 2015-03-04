@@ -1,7 +1,7 @@
 ShowNextCheckpointSystem = System()
 ShowNextCheckpointSystem.TotalTime	=	0.0
 ShowNextCheckpointSystem.FlameTimer	=	0.0
-ShowNextCheckpointSystem.FlameLimit	=	1/20
+ShowNextCheckpointSystem.FlameLimit	=	1/10
 
 ShowNextCheckpointSystem.Initialize = function ( self )
 	--	Set Name
@@ -117,7 +117,7 @@ Net.Receive("Client.NewTargetCheckpoint",
 	world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(0.6)
 	world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
 	--	X, Y, Z Ambient, Diffuse, Specular, R, G, B, Range
-	world:GetComponent(newParticle, "Pointlight", 0):SetPointlight(X, 0.7, Z, 0.5, 0.8, 0.7, 1.0, 0.5, 0.35, 2)
+	world:GetComponent(newParticle, "Pointlight", 0):SetPointlight(X, 0.7, Z, 0.5, 0.8, 0.7, 0.9, 0.65, 0.40, 2)
 	
 	
 	
