@@ -72,20 +72,15 @@ namespace Audio
 	std::vector<FadeInParams> g_soundFadeInQueue;
 	std::vector<std::pair<std::string, int>> g_soundFadeOutQueue;
 	
+	std::vector<int> g_channelRemoveQueue;
+	
 	SDL_mutex* g_channelMutex;
 	
 	void ChannelFinished(int channel)
 	{
 		SDL_LockMutex(g_channelMutex);
 		
-		for (std::pair<std::string, int> channelPair : g_channels)
-		{
-			if (channel == channelPair.second)
-			{
-				g_channels.erase(channelPair.first);
-				break;
-			}
-		}
+		g_channelRemoveQueue.push_back(channel);
 		
 		SDL_UnlockMutex(g_channelMutex);
 	}
@@ -102,6 +97,21 @@ namespace Audio
 	void Update()
 	{
 		SDL_LockMutex(g_channelMutex);
+		
+		for (int channel : g_channelRemoveQueue)
+		{
+			for (std::pair<std::string, int> channelPair : g_channels)
+			{
+				if (channel == channelPair.second)
+				{
+					g_channels.erase(channelPair.first);
+					break;
+				}
+			}
+		}
+		g_channelRemoveQueue.clear();
+		
+		SDL_UnlockMutex(g_channelMutex);
 		
 		for (std::string filepath : g_loadMusicQueue)
 		{
@@ -211,7 +221,7 @@ namespace Audio
 				continue;
 			}
 			
-			if (Mix_Playing(g_channels[soundFadeOutQueueIt->first]) == 1 && Mix_FadeOutChannel(g_channels[soundFadeOutQueueIt->first], soundFadeOutQueueIt->second) == 1)
+			if (Mix_FadeOutChannel(g_channels[soundFadeOutQueueIt->first], soundFadeOutQueueIt->second) == 1)
 				soundFadeOutQueueIt = g_soundFadeOutQueue.erase(soundFadeOutQueueIt);
 			else
 				soundFadeOutQueueIt++;
@@ -257,8 +267,6 @@ namespace Audio
 		g_soundPositionQueue.clear();
 		
 		Mix_Volume(-1, g_volume);
-		
-		SDL_UnlockMutex(g_channelMutex);
 	}
 	
 	void Quit()
