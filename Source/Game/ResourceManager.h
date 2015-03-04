@@ -13,8 +13,8 @@ namespace ResourceManager
 		int Size;
 	};
 
-	bool CreateResource(std::string _path, Resource &_r, HomePath::Type _type);
-	bool CreateResource(std::string _gamemode, std::string _path, Resource &_r, HomePath::Type _type);
+	bool CreateResource(std::string _path, Resource &_r, HomePath::Type _type, bool _allPaths = true);
+	bool CreateResource(std::string _gamemode, std::string _path, Resource &_r, HomePath::Type _type, bool _allPaths = true);
 
 	int AddGamemodeResource(std::string _resource);
 	int AddContentResource(std::string _resource);
