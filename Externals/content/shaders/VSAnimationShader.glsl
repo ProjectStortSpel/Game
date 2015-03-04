@@ -8,7 +8,8 @@ layout( location = 5 ) in vec4 VertexJointIndex;
 layout( location = 6 ) in vec4 VertexJointWeight;
 
 uniform mat4 M;
-uniform mat4 VP;
+uniform mat4 V;
+uniform mat4 P;
 uniform mat3 NormalMatrix;
 
 struct JointMatrix
@@ -43,7 +44,7 @@ void main()
     
 	//skin += mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, weights.y, 0, 1);
 	
-	gl_Position = VP * M * skin * vec4(VertexPosition, 1.0);
+	gl_Position = P * V * M * skin * vec4(VertexPosition, 1.0);
 
 	Normal = normalize( NormalMatrix * (skin * vec4(VertexNormal, 0.0)).xyz );
 	Tan = normalize( NormalMatrix * (skin * vec4(VertexTangent, 0.0)).xyz );
