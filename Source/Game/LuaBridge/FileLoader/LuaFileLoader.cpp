@@ -8,7 +8,7 @@
 
 int g_meshCreatorIndex = -1;
 float g_meshCreatorColor[3] = { 0.0f, 0.0f, 0.0f };
-glm::mat4 g_meshCreatorMatrix = glm::translate(glm::vec3(0.0f, -0.5f, 0.0f));
+glm::mat4 g_meshCreatorMatrix = glm::translate(glm::vec3(0.0f, 0.15f, 0.0f));
 
 int LoadMap(lua_State* L)  
 {
@@ -109,7 +109,7 @@ int GenerateIslandMesh(lua_State* L)
 	int			sizeX		=	LuaEmbedder::PullInt(L, 1);
 	int			sizeZ		=	LuaEmbedder::PullInt(L, 2);
 	std::string	stringMap	=	LuaEmbedder::PullString(L, 3);
-	SDL_Log(stringMap.c_str());
+
 	std::vector<std::string>	strVector	=	std::vector<std::string>();
 
 	for( int Z = 0; Z < sizeZ; ++Z)

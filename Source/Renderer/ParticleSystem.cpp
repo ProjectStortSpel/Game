@@ -2,7 +2,7 @@
 
 using namespace Renderer;
 
-ParticleSystem::ParticleSystem(std::string type, const vec3 _pos, int _nParticles, float _lifeTime, float _scale, float _spriteSize, GLuint _texHandle, vec3 _color, Shader *_shaderProg)
+ParticleSystem::ParticleSystem(std::string type, const vec3 _pos, int _nParticles, float _lifeTime, float _scale, float _spriteSize, GLuint _texHandle, vec3 _color)
 {
 	m_pos = _pos;
 	m_nrParticles = _nParticles;
@@ -10,19 +10,38 @@ ParticleSystem::ParticleSystem(std::string type, const vec3 _pos, int _nParticle
 	m_spriteSize = _spriteSize;
 	m_lifeTime = _lifeTime;
 	m_textureHandle = _texHandle;
-	m_shader = _shaderProg;
+	
 	m_drawBuf = 1;
 	m_color = _color;
 	m_endPhase = 0;
 
+	const char * outputNames[] = { "Position", "Velocity", "StartTime" };
+
 	if (type == "fire")
+	{
+		m_shader.InitShaderProgram();
+		m_shader.AddShader("content/shaders/particles/particleFireVS.glsl", GL_VERTEX_SHADER);
+		m_shader.AddShader("content/shaders/particles/particleFireFS.glsl", GL_FRAGMENT_SHADER);
+		glTransformFeedbackVaryings(m_shader.GetShaderProgram(), 3, outputNames, GL_SEPARATE_ATTRIBS);
+		m_shader.FinalizeShaderProgram();
+
 		CreateFire();
+	}
 	else if (type == "smoke")
+	{
+		m_shader.InitShaderProgram();
+		m_shader.AddShader("content/shaders/particles/particleSmokeVS.glsl", GL_VERTEX_SHADER);
+		m_shader.AddShader("content/shaders/particles/particleSmokeFS.glsl", GL_FRAGMENT_SHADER);
+		glTransformFeedbackVaryings(m_shader.GetShaderProgram(), 3, outputNames, GL_SEPARATE_ATTRIBS);
+		m_shader.FinalizeShaderProgram();
+
 		CreateSmoke();
+	}
+	m_shader.CheckUniformLocation("ParticleTex", 1);
 
 	//set uniforms?
-	subRoutineUpdate = glGetSubroutineIndex(m_shader->GetShaderProgram(), GL_VERTEX_SHADER, "update");
-	subRoutineRender = glGetSubroutineIndex(m_shader->GetShaderProgram(), GL_VERTEX_SHADER, "render");
+	subRoutineUpdate = glGetSubroutineIndex(m_shader.GetShaderProgram(), GL_VERTEX_SHADER, "update");
+	subRoutineRender = glGetSubroutineIndex(m_shader.GetShaderProgram(), GL_VERTEX_SHADER, "render");
 	
 	m_elapsedTime = 0.0f;
 	m_removeDelayTime = 0.0f;
@@ -137,20 +156,20 @@ void ParticleSystem::CreateFire()
 	for (int i = 0; i < 2; i++)
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, m_posBuf[i]);
-		glBufferData(GL_ARRAY_BUFFER, m_nrParticles * 3 * sizeof(float), posData, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, m_nrParticles * 3 * sizeof(float), posData, GL_DYNAMIC_DRAW);
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_velBuf[i]);
-		glBufferData(GL_ARRAY_BUFFER, m_nrParticles * 3 * sizeof(float), velData, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, m_nrParticles * 3 * sizeof(float), velData, GL_DYNAMIC_DRAW);
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_startTime[i]);
-		glBufferData(GL_ARRAY_BUFFER, m_nrParticles * sizeof(float), timeData, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, m_nrParticles * sizeof(float), timeData, GL_DYNAMIC_DRAW);
 
 	}
 	glBindBuffer(GL_ARRAY_BUFFER, m_initVelBuf);
-	glBufferData(GL_ARRAY_BUFFER, m_nrParticles * 3 * sizeof(float), initVelData, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_nrParticles * 3 * sizeof(float), initVelData, GL_DYNAMIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_initPosBuf);
-	glBufferData(GL_ARRAY_BUFFER, m_nrParticles * 3 * sizeof(float), initPosData, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_nrParticles * 3 * sizeof(float), initPosData, GL_DYNAMIC_DRAW);
 
 	// Setup the feedback objects
 	glGenTransformFeedbacks(2, m_feedback);
@@ -167,9 +186,9 @@ void ParticleSystem::CreateFire()
 	glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 1, m_velBuf[1]);
 	glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 2, m_startTime[1]);
 
-	delete posData;
-	delete velData;
-	delete timeData; 
+	delete [] posData;
+	delete [] velData;
+	delete [] timeData; 
 	initVelData = 0;
 	initPosData = 0;
 }
@@ -264,20 +283,20 @@ void ParticleSystem::CreateSmoke()
 	for (int i = 0; i < 2; i++)
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, m_posBuf[i]);
-		glBufferData(GL_ARRAY_BUFFER, m_nrParticles * 3 * sizeof(float), posData, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, m_nrParticles * 3 * sizeof(float), posData, GL_DYNAMIC_DRAW);
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_velBuf[i]);
-		glBufferData(GL_ARRAY_BUFFER, m_nrParticles * 3 * sizeof(float), velData, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, m_nrParticles * 3 * sizeof(float), velData, GL_DYNAMIC_DRAW);
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_startTime[i]);
-		glBufferData(GL_ARRAY_BUFFER, m_nrParticles * sizeof(float), timeData, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, m_nrParticles * sizeof(float), timeData, GL_DYNAMIC_DRAW);
 
 	}
 	glBindBuffer(GL_ARRAY_BUFFER, m_initVelBuf);
-	glBufferData(GL_ARRAY_BUFFER, m_nrParticles * 3 * sizeof(float), initVelData, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_nrParticles * 3 * sizeof(float), initVelData, GL_DYNAMIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_initPosBuf);
-	glBufferData(GL_ARRAY_BUFFER, m_nrParticles * 3 * sizeof(float), initPosData, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_nrParticles * 3 * sizeof(float), initPosData, GL_DYNAMIC_DRAW);
 
 	// Setup the feedback objects
 	glGenTransformFeedbacks(2, m_feedback);
@@ -294,9 +313,9 @@ void ParticleSystem::CreateSmoke()
 	glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 1, m_velBuf[1]);
 	glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 2, m_startTime[1]);
 
-	delete posData;
-	delete velData;
-	delete timeData;
+	delete [] posData;
+	delete [] velData;
+	delete [] timeData;
 	initVelData = 0;
 	initPosData = 0;
 }
@@ -305,7 +324,8 @@ void ParticleSystem::Render(float _dt)
 {
 	glBlendColor(0.93, 0.93, 0.93, 1.0);
 	glBlendFunc(GL_SRC_ALPHA, m_dstBlendFactor);
-	//_dt = std::min(1.0f / 20.0f, _dt);
+
+	_dt = std::min(1.0f / 20.0f, _dt);
 	float dt = 1000.f * (_dt);
 	m_elapsedTime += dt;
 
@@ -315,19 +335,18 @@ void ParticleSystem::Render(float _dt)
 	/////////// Update pass ////////////////
 	glUniformSubroutinesuiv(GL_VERTEX_SHADER, 1, &subRoutineUpdate);
 	// Set the uniforms: H and Time
-	m_shader->SetUniVariable("Time", glfloat, &m_elapsedTime);
-	m_shader->SetUniVariable("DeltaTime", glfloat, &dt);
-	m_shader->SetUniVariable("ParticleLifetime", glfloat, &m_lifeTime);
-	m_shader->SetUniVariable("Size", glfloat, &m_spriteSize);
-	m_shader->SetUniVariable("Accel", vector3, &m_accel);
-	m_shader->SetUniVariable("EndPhase", glint, &m_endPhase);
+	m_shader.SetUniVariable("Time", glfloat, &m_elapsedTime);
+	m_shader.SetUniVariable("DeltaTime", glfloat, &dt);
+	m_shader.SetUniVariable("ParticleLifetime", glfloat, &m_lifeTime);
+	m_shader.SetUniVariable("Size", glfloat, &m_spriteSize);
+	m_shader.SetUniVariable("Accel", vector3, &m_accel);
+	m_shader.SetUniVariable("EndPhase", glint, &m_endPhase);
 
 	// Disable rendering
 	glEnable(GL_RASTERIZER_DISCARD);
 
 	// Bind the feedback object for the buffers to be drawn next
 	glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, m_feedback[m_drawBuf]);
-
 	// Draw points from input buffer with transform feedback
 	glBeginTransformFeedback(GL_POINTS);
 	glBindVertexArray(m_particleArray[1 - m_drawBuf]);
@@ -338,7 +357,6 @@ void ParticleSystem::Render(float _dt)
 	glDisable(GL_RASTERIZER_DISCARD);
 	//////////// Render pass ///////////////
 	glUniformSubroutinesuiv(GL_VERTEX_SHADER, 1, &subRoutineRender);
-	//glClear(GL_COLOR_BUFFER_BIT);
 	// Initialize uniforms for transformation matrices if needed
 
 	// Un-bind the feedback object.
@@ -346,6 +364,8 @@ void ParticleSystem::Render(float _dt)
 	// Draw the sprites from the feedback buffer
 	glBindVertexArray(m_particleArray[m_drawBuf]);
 	glDrawArrays(GL_POINTS, 0, m_nrParticles);
+
+	glBindVertexArray(0);
 	// Swap buffers
 	m_drawBuf = 1 - m_drawBuf;
 }

@@ -26,6 +26,8 @@ namespace Renderer
 	class DECLSPEC Model
 	{
 	public:
+		std::string name;
+
 		bool operator== (const Model &m) { return Compare(m); }
 		bool operator!= (const Model &m) { return !Compare(m); }
 

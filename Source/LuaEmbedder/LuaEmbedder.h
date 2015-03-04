@@ -277,7 +277,7 @@ namespace LuaEmbedder
 	  LunaArray<T>::Embed(L, name.c_str(), className.c_str());
   }
   template<typename T>
-  void EXPORT PushArray(lua_State* L, const std::string& name, const T* array, unsigned int size, bool remove = true)
+  void EXPORT PushArray(lua_State* L, const std::string& name, T** array, unsigned int size, bool remove = true)
   {
 	  LunaArray<T>::Push(L, name.c_str(), array, size, remove);
   }

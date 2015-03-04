@@ -12,6 +12,7 @@ SimpleText::SimpleText()
 
 SimpleText::~SimpleText()
 {
+	glDeleteBuffers(1, &simpleTextBuffer);
 }
 
 bool SimpleText::Init(GLuint _textimage, int _clientWidth, int _clientHeight)

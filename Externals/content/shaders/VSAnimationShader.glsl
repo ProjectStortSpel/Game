@@ -8,70 +8,46 @@ layout( location = 5 ) in vec4 VertexJointIndex;
 layout( location = 6 ) in vec4 VertexJointWeight;
 
 uniform mat4 M;
-uniform mat4 VP;
+uniform mat4 V;
+uniform mat4 P;
 uniform mat3 NormalMatrix;
 
 struct JointMatrix
 {
-	float x0, y0, z0, w0;
-	float x1, y1, z1, w1;
-	float x2, y2, z2, w2;
-	float x3, y3, z3, parent;
+	float x0, y0, z0, w0, x1, y1, z1, w1, x2, y2, z2, w2, x3, y3, z3, w3;
 };
 
-//flat out int instanceID;
-layout (std430, binding = 1) buffer Joints   
-{
-	JointMatrix joints[];
-};
-
-layout (std430, binding = 2) buffer Animation   
+layout (std430, binding = 6) buffer Animation   
 {
 	JointMatrix anim[];
 };
-
 
 out vec3 Normal;
 out vec3 Tan;
 out vec3 BiTan;
 out vec2 TexCoord;
 
-mat4 JointToMatrix(JointMatrix joint)
+mat4 JointToMatrix(int i)
 {
-	return mat4(
-				joint.x0, joint.y0, joint.z0, joint.w0,
-				joint.x1, joint.y1, joint.z1, joint.w1,
-				joint.x2, joint.y2, joint.z2, joint.w2,
-				joint.x3, joint.y3, joint.z3, 1
-				);
-}
-
-mat4 GetJointMatrix(int Index)
-{
-	mat4 joint = mat4(1);
-	for (int i = Index; i < anim.length(); i++)
-	{
-		joint = JointToMatrix(anim[i]) * joint;
-		i += int(anim[i].parent);
-	}
-	return joint;	
+	return mat4(anim[i].x0, anim[i].y0, anim[i].z0, anim[i].w0, anim[i].x1, anim[i].y1, anim[i].z1, anim[i].w1, anim[i].x2, anim[i].y2, anim[i].z2, anim[i].w2, anim[i].x3, anim[i].y3, anim[i].z3, anim[i].w3);
 }
 
 void main()
 {
-	Tan = normalize( NormalMatrix * VertexTangent);
-	BiTan = normalize( NormalMatrix * VertexBiTangent);
-	TexCoord = VertexTexCoord;
-
 	vec4 weights = normalize(VertexJointWeight);
 
 	mat4 skin = mat4(0);
-	skin += (GetJointMatrix(anim.length()-int(VertexJointIndex.x)-1) * (JointToMatrix(joints[int(VertexJointIndex.x)]))) * weights.x;
-	skin += (GetJointMatrix(anim.length()-int(VertexJointIndex.y)-1) * (JointToMatrix(joints[int(VertexJointIndex.y)]))) * weights.y;
-	skin += (GetJointMatrix(anim.length()-int(VertexJointIndex.z)-1) * (JointToMatrix(joints[int(VertexJointIndex.z)]))) * weights.z;
-	skin += (GetJointMatrix(anim.length()-int(VertexJointIndex.w)-1) * (JointToMatrix(joints[int(VertexJointIndex.w)]))) * weights.w;
+	skin += JointToMatrix(int(VertexJointIndex.x)) * weights.x;
+	skin += JointToMatrix(int(VertexJointIndex.y)) * weights.y;
+	skin += JointToMatrix(int(VertexJointIndex.z)) * weights.z;
+	skin += JointToMatrix(int(VertexJointIndex.w)) * weights.w;
+    
+	//skin += mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, weights.y, 0, 1);
 	
-	gl_Position = VP * M * skin * vec4(VertexPosition, 1.0);
+	gl_Position = P * V * M * skin * vec4(VertexPosition, 1.0);
+
 	Normal = normalize( NormalMatrix * (skin * vec4(VertexNormal, 0.0)).xyz );
-	//instanceID = gl_InstanceID;
+	Tan = normalize( NormalMatrix * (skin * vec4(VertexTangent, 0.0)).xyz );
+	BiTan = normalize( NormalMatrix * (skin * vec4(VertexBiTangent, 0.0)).xyz );
+	TexCoord = VertexTexCoord;
 }

@@ -36,6 +36,12 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
     local posComp = world:GetComponent(newTile, "Position", 0)
     posComp:SetFloat3(posX, 0.0, posZ)
     local mapPosComp = world:GetComponent(newTile, "MapPosition", 0)
+	
+	local check = ((posX + posZ) % 2)
+	world:GetComponent(newTile, "Color", "X"):SetFloat(check*0.75)
+	world:GetComponent(newTile, "Color", "Y"):SetFloat(check)
+	world:GetComponent(newTile, "Color", "Z"):SetFloat(check*0.75)
+	
     mapPosComp:SetInt2(posX, posZ)
     if tiletype == 104 then -- 104 = h = hole
         world:CreateComponentAndAddTo("Void", newTile)
@@ -164,6 +170,11 @@ CreateMapSystem.AddTile = function(self, posX, posZ, tiletype)
     end
 	
 	self.entities[#self.entities+1]=newTile
+	local entity = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("DirectionalLight", entity)
+	world:CreateComponentAndAddTo("SyncNetwork", entity)
+    local directionalLight = world:GetComponent(entity, "DirectionalLight", 0)
+	directionalLight:SetDirectionalLight(-0.38, -1.0, 0.7, 0.3, 0.7, 0.7, 0.7, 0.75, 0.85)
 	return newTile
 end
 
@@ -225,7 +236,7 @@ CreateMapSystem.AddTallGrass = function(self, posX, posZ)
 	world:GetComponent(tallGrass, "Position", 0):SetFloat3(randX, 0.5, randZ)
 	world:GetComponent(tallGrass, "Rotation", 0):SetFloat3(0, 0, 0)
 	local randScale = math.random() + 0.5
-	world:GetComponent(tinyStone, "Scale", 0):SetFloat3(0.15*randScale, 0.15*randScale, 0.15*randScale)
+	world:GetComponent(tallGrass, "Scale", 0):SetFloat3(0.15*randScale, 0.15*randScale, 0.15*randScale)
 	world:GetComponent(tallGrass, "Model", 0):SetModel("tallgrass", "tallgrass", 9)
 end 
 
@@ -259,7 +270,6 @@ CreateMapSystem.CreateMap = function(self, name)
 	local inputData = InputData()
 	local map
     self.mapX, self.mapY, map = File.LoadMap(name)
-	
 
 		
 	for x = 0, self.mapX + 1 do
@@ -367,16 +377,27 @@ CreateMapSystem.CreateMap = function(self, name)
 
 						local comp = world:GetComponent(self.waterTiles[waterB], "Rotation", 0)
 						local currentRotation = comp:GetFloat(1)
-
+						
+						world:CreateComponentAndAddTo("RiverCornerDir", self.waterTiles[waterB])
+						
+						print("RiverCornerDir Created: " .. self.waterTiles[waterB])
+						
 						--	RIGHT TURN
 						if dirAX == 1 and dirBY == 1 then
 							comp:SetFloat3(0, currentRotation - math.pi/2, 0)
+							world:GetComponent(self.waterTiles[waterB], "RiverCornerDir", "Dir"):SetText("Right")
 						elseif dirAX == -1 and dirBY == -1 then
 							comp:SetFloat3(0, currentRotation - math.pi/2, 0)
+							world:GetComponent(self.waterTiles[waterB], "RiverCornerDir", "Dir"):SetText("Right")
 						elseif dirAY == 1 and dirBX == -1 then
 							comp:SetFloat3(0, currentRotation - math.pi/2, 0)
+							world:GetComponent(self.waterTiles[waterB], "RiverCornerDir", "Dir"):SetText("Right")
 						elseif dirAY == -1 and dirBX == 1 then
 							comp:SetFloat3(0, currentRotation - math.pi/2, 0)
+							world:GetComponent(self.waterTiles[waterB], "RiverCornerDir", "Dir"):SetText("Right")
+							--	LEFT TURN
+						else
+							world:GetComponent(self.waterTiles[waterB], "RiverCornerDir", "Dir"):SetText("Left")
 						end
 
 					end

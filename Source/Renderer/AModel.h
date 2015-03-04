@@ -6,7 +6,6 @@
 
 namespace Renderer
 {
-
 	struct Joint
 	{
 		float x0, y0, z0, w0;
@@ -53,6 +52,7 @@ namespace Renderer
 		int jointId;
 		int* lastFrame;
 		std::vector<KeyFrame> keyFrames;
+		std::vector<Joint> frames;
 		JointAnim(int _jointId, int* _lastFrame)
 		{
 			jointId = _jointId;
@@ -98,18 +98,23 @@ namespace Renderer
 		Animation(std::string _name)
 		{
 			name = _name;
+			maxFrame = 0;
 		}
 	};
 
 	class DECLSPEC AModel
 	{
 	public:
+		std::string name;
+
 		AModel(int _id, bool _active, glm::mat4* _model, float* _color, Buffer* buffer, GLuint tex, GLuint nor, GLuint spe);
 		AModel();
 		~AModel();
 
 		void Draw(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, Shader* shaderptr);
 		void Update(float _dt);
+
+		bool PreCalculateAnimations();
 
 		bool SetAnimation(int _animId);
 
@@ -123,9 +128,9 @@ namespace Renderer
 		GLuint texID;
 		GLuint norID;
 		GLuint speID;
-		GLuint jointBuffer;
-		GLuint animBuffer;
-		std::vector<Joint> joints;
+		//GLuint jointBuffer;
+		GLuint* animBuffer;
+		std::vector<glm::mat4> joints;
 		std::vector<Joint> animation;
 		std::vector<Animation> animations;
 		int animId;

@@ -26,6 +26,8 @@ namespace Renderer
 		bool init(const BufferData* p_BufferData, GLsizei p_BufferDataSize);
 		bool init(const BufferData* p_BufferData, GLsizei p_BufferDataSize,
 			const GLuint* p_Indices, GLsizei p_IndexDataSize);
+		bool initNotInstanced(const BufferData* p_BufferData, GLsizei p_BufferDataSize,
+			const GLuint* p_Indices, GLsizei p_IndexDataSize);
 
 		void draw(void);
 		void draw(GLint base, GLsizei count);

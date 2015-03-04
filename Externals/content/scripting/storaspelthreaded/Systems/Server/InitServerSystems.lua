@@ -11,6 +11,7 @@ require "sv_MapRaterSystem"
 require "sv_RiverSystem"
 require "sv_VoidSystem"
 require "sv_CheckpointSystem"
+require "sv_ColorTilesSystem"
 
 --	Light Systems
 package.path = package.path .. ";Systems/Server/LightSystems/?.lua"
@@ -102,6 +103,8 @@ require "sv_LogStartSystem"
 require "sv_ServerNetworkMessageSystem"
 require "sv_HostSettingsSystem"
 require "sv_OffsetUnitSystem"
+require "sv_FadeTreeSystem"
+require "sv_ChatSystem"
 
 --worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(LobbySystem)
@@ -112,6 +115,7 @@ worldCreator:AddSystemToCurrentGroup(MapRater)
 worldCreator:AddSystemToCurrentGroup(RiverSystem)
 worldCreator:AddSystemToCurrentGroup(VoidSystem)
 worldCreator:AddSystemToCurrentGroup(CheckpointSystem)
+worldCreator:AddSystemToCurrentGroup(ColorTilesSystem)
 --worldCreator:AddSystemToCurrentGroup(DirectionalLightSystem)
 worldCreator:AddSystemToCurrentGroup(PlayerSystem)
 worldCreator:AddSystemToCurrentGroup(UnitSystem)
@@ -190,7 +194,9 @@ worldCreator:AddSystemToCurrentGroup(LogStartSystem)
 worldCreator:AddSystemToCurrentGroup(SendPlayerInformation)	--	ALSO TEMP
 worldCreator:AddSystemToCurrentGroup(SortClientSelectedCards)	--	Temp
 worldCreator:AddSystemToCurrentGroup(ClearServerSelectedSystem)	--	Temp
+worldCreator:AddSystemToCurrentGroup(FadeTreeSystem) -- TEMP
 worldCreator:AddSystemToCurrentGroup(FindSpawnpointSystem)
+worldCreator:AddSystemToCurrentGroup(ChatSystem)
 
 --	Audio Systems
 package.path = package.path .. ";Systems/Server/AudioSystems/?.lua"

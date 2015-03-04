@@ -576,6 +576,9 @@ void GameCreator::StartGame(int argc, char** argv)
 	float bytesToMegaBytes = 1.f / (1024.f*1024.f);
 	bool showDebugInfo = false;
 	Utility::FrameCounter totalCounter;
+	
+	// Remove to enable audio
+	Audio::SetVolume(0);
 
 	while (m_running)
 	{
@@ -651,6 +654,9 @@ void GameCreator::StartGame(int argc, char** argv)
 		m_graphicsCounter.Tick();
 
 		/*	DEBUG PRINT INFO	*/
+		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_0) == Input::InputState::PRESSED)
+			m_graphics->debugModelInfo = !m_graphics->debugModelInfo;
+
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_Z) == Input::InputState::PRESSED)
 			showDebugInfo = !showDebugInfo;
 
@@ -911,9 +917,10 @@ void GameCreator::NetworkGameMode(Network::PacketHandler* _ph, uint64_t& _id, Ne
 	}
 	else
 	{
-		Network::PacketHandler* ph = NetworkInstance::GetClient()->GetPacketHandler();
-		uint64_t id = ph->StartPack("GameModeLoaded");
-		NetworkInstance::GetClient()->Send(ph->EndPack(id));
+        ConnectHelper::Connect(_ph->ReadString(_id));
+		//Network::PacketHandler* ph = NetworkInstance::GetClient()->GetPacketHandler();
+		//uint64_t id = ph->StartPack("GameModeLoaded");
+		//NetworkInstance::GetClient()->Send(ph->EndPack(id));
 	}
 }
 
@@ -1049,12 +1056,12 @@ void GameCreator::ConsoleReload(std::string _command, std::vector<Console::Argum
 		char* data = new char[m_name.size() + 1];
 		memcpy(data, m_name.c_str(), m_name.size() + 1);
 		m_serverWorld->SetComponent(id, "HostSettings", "Name", data);
-		delete data;
+		delete [](data);
 
 		data = new char[m_map.size() + 1];
 		memcpy(data, m_map.c_str(), m_map.size() + 1);
 		m_serverWorld->SetComponent(id, "HostSettings", "Map", data);
-		delete data;
+		delete [](data);
 
 		m_serverWorld->SetComponent(id, "HostSettings", "Port", &port);
 		m_serverWorld->SetComponent(id, "HostSettings", "FillAI", &m_fillAI);
@@ -1120,12 +1127,12 @@ void GameCreator::ConsoleHostSettings(std::string _command, std::vector<Console:
 	char* data = new char[m_name.size() + 1];
 	memcpy(data, m_name.c_str(), m_name.size() + 1);
 	m_serverWorld->SetComponent(id, "HostSettings", "Name", data);
-	delete data;
+	delete [] data;
 	
 	data = new char[m_map.size() + 1];
 	memcpy(data, m_map.c_str(), m_map.size() + 1);
 	m_serverWorld->SetComponent(id, "HostSettings", "Map", data);
-	delete data;
+	delete [] data;
 
 	m_serverWorld->SetComponent(id, "HostSettings", "Port", &port);
 	m_serverWorld->SetComponent(id, "HostSettings", "FillAI", &m_fillAI);

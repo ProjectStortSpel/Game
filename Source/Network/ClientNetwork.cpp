@@ -134,6 +134,7 @@ bool ClientNetwork::Connect()
 	}
 
 	*m_connected = true;
+	m_socket->SetActive(1);
 
 	uint64_t id = m_packetHandler->StartPack(NetTypeMessageId::ID_PASSWORD_ATTEMPT);
 	m_packetHandler->WriteString(id, m_password->c_str());
@@ -141,7 +142,7 @@ bool ClientNetwork::Connect()
 
 	Send(p);
 
-	*m_receiveThread = std::thread(&ClientNetwork::ReceivePackets, this);
+	*m_receiveThread = std::thread(&ClientNetwork::ReceivePackets, this, m_remoteAddress->c_str());
 
 	return true;
 }
@@ -158,9 +159,9 @@ void ClientNetwork::Disconnect()
 	Packet* packet = m_packetHandler->EndPack(id);
 	Send(packet);
 
-	NetSleep(10);
-
 	m_socket->ShutdownSocket(1);
+
+	NetSleep(10);
 
 	if(m_receiveThread->joinable())
 		m_receiveThread->join();
@@ -171,12 +172,12 @@ void ClientNetwork::Disconnect()
 	*m_connected = false;
 }
 
-void ClientNetwork::ReceivePackets()
+void ClientNetwork::ReceivePackets(const std::string _name)
 {
 	short dataReceived;
 	bool threadRunning = true;
 
-	while (true)
+	while (m_socket->GetActive() > 0)
 	{
 		dataReceived = m_socket->Receive(m_packetData, MAX_PACKET_SIZE);
 
@@ -199,15 +200,15 @@ void ClientNetwork::ReceivePackets()
 		}
 		else if (dataReceived == 0)
 		{
-			break;
+			m_socket->SetActive(0);
 		}
 		else
 		{
-
+			m_socket->SetActive(0);
 		}
 	}
 
-	m_socket->SetActive(0);
+	
 
 }
 

@@ -11,7 +11,7 @@ namespace Renderer
 	class ParticleSystem
 	{
 	public:
-		ParticleSystem(std::string _type, const vec3 _pos, int _nParticles, float _lifeTime, float _scale, float _spriteSize, GLuint _texHandle, vec3 _color, Shader *_shaderProg);
+		ParticleSystem(std::string _type, const vec3 _pos, int _nParticles, float _lifeTime, float _scale, float _spriteSize, GLuint _texHandle, vec3 _color);
 		~ParticleSystem();
 
 		GLuint GetTexHandle(){ return m_textureHandle; }
@@ -22,12 +22,12 @@ namespace Renderer
 		vec3 GetAccel(){ return m_accel; }
 		void SetAccel(vec3 _acc){ m_accel = _acc; }
 		vec3* GetColor(){ return &m_color; }
-		Shader* GetShaderPtr(){ return m_shader; }
+		Shader* GetShaderPtr(){ return &m_shader; }
 		void EnterEndPhase();
 		bool ReadyToBeDeleted();
 
 	private:
-		Shader *m_shader;
+		Shader m_shader;
 
 		GLuint m_particleArray[2];
 		GLuint m_feedback[2]; // Transform feedback objects

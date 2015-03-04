@@ -41,7 +41,7 @@ namespace Network
 
 		void Send(Packet* _packet, NetConnection& _connection, bool _deletePacket);
 
-		void ReceivePackets(ISocket* _socket);
+		void ReceivePackets(ISocket* _socket, const std::string _name);
 		void ListenForConnections(void);
 		void Send(Packet* _packet, ISocket* _socket);
 

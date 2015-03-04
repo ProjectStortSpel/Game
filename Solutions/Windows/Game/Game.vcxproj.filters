@@ -18,9 +18,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Game\Systems">
-      <UniqueIdentifier>{ed783445-1604-40fc-8516-f5a867be6243}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Lua Bridge\Math">
       <UniqueIdentifier>{9c168d77-87eb-48c0-a75d-ed11b43e08c7}</UniqueIdentifier>
     </Filter>
@@ -36,38 +33,14 @@
     <Filter Include="Lua Bridge\Console">
       <UniqueIdentifier>{bb35f23c-7282-4c2e-9288-5dc348c8fdba}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Systems\Model">
-      <UniqueIdentifier>{46bcef37-955e-4797-8b5e-ca8725f1184e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Systems\Render">
-      <UniqueIdentifier>{0e0f35b1-791a-4d9e-b1a6-178d5df590cb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Systems\Rotation">
-      <UniqueIdentifier>{ea327b7b-e869-40ca-9a6b-c029997c60c2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Systems\NetworkMessages">
-      <UniqueIdentifier>{fe8b6957-8470-4d35-8963-c7f5ea14fbe1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Lua Bridge\Network">
       <UniqueIdentifier>{2ed0fa5c-4b1f-4c9d-aa5a-697978afdb5f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Systems\Changed">
-      <UniqueIdentifier>{dd4dc3ab-744e-425f-a006-98fb871278be}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game\FrameCounter">
       <UniqueIdentifier>{74977182-a2c6-4922-bb9d-16b08dc3b3a7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Systems\LightSystems">
-      <UniqueIdentifier>{259b47d7-2f14-4b3f-acba-4f122f13e262}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Lua Bridge\File">
       <UniqueIdentifier>{0d7f4191-d683-4560-9d44-8b47e4f9cf27}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Systems\Map">
-      <UniqueIdentifier>{6e376179-3445-48ae-a79e-a3865a17fdf9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Systems\Camera">
-      <UniqueIdentifier>{6f65ecb9-1fad-4717-9948-fc2a318b43a1}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game\Profilers">
       <UniqueIdentifier>{104bbd51-8dbc-4d3c-8afb-a0b4cd3c3954}</UniqueIdentifier>
@@ -81,9 +54,6 @@
     <Filter Include="Lua Bridge\AI">
       <UniqueIdentifier>{da0118cc-0c08-431a-bc61-bda3765bbb18}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Systems\ParticleSystem">
-      <UniqueIdentifier>{b9d97fa0-3180-4175-bdbb-35be7ebbf5f7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Lua Bridge\Resource">
       <UniqueIdentifier>{cee8274a-69dd-429b-ba04-7664e20156fc}</UniqueIdentifier>
     </Filter>
@@ -92,6 +62,36 @@
     </Filter>
     <Filter Include="Game\MeshCreator">
       <UniqueIdentifier>{077f2f17-8138-4979-8f70-2969a29b419f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Profilers\Systems">
+      <UniqueIdentifier>{ed783445-1604-40fc-8516-f5a867be6243}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Profilers\Systems\Model">
+      <UniqueIdentifier>{46bcef37-955e-4797-8b5e-ca8725f1184e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Profilers\Systems\Render">
+      <UniqueIdentifier>{0e0f35b1-791a-4d9e-b1a6-178d5df590cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Profilers\Systems\Rotation">
+      <UniqueIdentifier>{ea327b7b-e869-40ca-9a6b-c029997c60c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Profilers\Systems\NetworkMessages">
+      <UniqueIdentifier>{fe8b6957-8470-4d35-8963-c7f5ea14fbe1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Profilers\Systems\Changed">
+      <UniqueIdentifier>{dd4dc3ab-744e-425f-a006-98fb871278be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Profilers\Systems\LightSystems">
+      <UniqueIdentifier>{259b47d7-2f14-4b3f-acba-4f122f13e262}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Profilers\Systems\Map">
+      <UniqueIdentifier>{6e376179-3445-48ae-a79e-a3865a17fdf9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Profilers\Systems\Camera">
+      <UniqueIdentifier>{6f65ecb9-1fad-4717-9948-fc2a318b43a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Profilers\Systems\ParticleSystem">
+      <UniqueIdentifier>{b9d97fa0-3180-4175-bdbb-35be7ebbf5f7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -159,28 +159,28 @@
       <Filter>Lua Bridge\Console</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Systems\CameraSystem.cpp">
-      <Filter>Game\Systems\Camera</Filter>
+      <Filter>Game\Profilers\Systems\Camera</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Systems\ModelSystem.cpp">
-      <Filter>Game\Systems\Model</Filter>
+      <Filter>Game\Profilers\Systems\Model</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Systems\RenderSystem.cpp">
-      <Filter>Game\Systems\Render</Filter>
+      <Filter>Game\Profilers\Systems\Render</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Systems\RotationSystem.cpp">
-      <Filter>Game\Systems\Rotation</Filter>
+      <Filter>Game\Profilers\Systems\Rotation</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Systems\RenderRemoveSystem.cpp">
-      <Filter>Game\Systems\Render</Filter>
+      <Filter>Game\Profilers\Systems\Render</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Systems\ResetChangedSystem.cpp">
-      <Filter>Game\Systems\Changed</Filter>
+      <Filter>Game\Profilers\Systems\Changed</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\FrameCounter\FrameCounter.cpp">
       <Filter>Game\FrameCounter</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Systems\PointlightSystem.cpp">
-      <Filter>Game\Systems\LightSystems</Filter>
+      <Filter>Game\Profilers\Systems\LightSystems</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\Network\LuaNetwork.cpp">
       <Filter>Lua Bridge\Network</Filter>
@@ -192,10 +192,10 @@
       <Filter>Lua Bridge\File</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Systems\DirectionalLightSystem.cpp">
-      <Filter>Game\Systems\LightSystems</Filter>
+      <Filter>Game\Profilers\Systems\LightSystems</Filter>
     </ClCompile>
     <ClCompile Include="MapIslandCreatorSystem.cpp">
-      <Filter>Game\Systems\Map</Filter>
+      <Filter>Game\Profilers\Systems\Map</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Profilers\ECSLProfiler.cpp">
       <Filter>Game\Profilers\ECSLProfiler</Filter>
@@ -222,10 +222,10 @@
       <Filter>Game\Profilers\ECSLProfiler\Render Views</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Systems\SlerpRotationSystem.cpp">
-      <Filter>Game\Systems\Rotation</Filter>
+      <Filter>Game\Profilers\Systems\Rotation</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Systems\MasterServerSystem.cpp">
-      <Filter>Game\Systems\NetworkMessages</Filter>
+      <Filter>Game\Profilers\Systems\NetworkMessages</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Network\ClientDatabase.cpp">
       <Filter>Network</Filter>
@@ -243,13 +243,13 @@
       <Filter>Game</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Systems\AModelSystem.cpp">
-      <Filter>Game\Systems\Model</Filter>
+      <Filter>Game\Profilers\Systems\Model</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Systems\AddTextToTextureSystem.cpp">
-      <Filter>Game\Systems\Render</Filter>
+      <Filter>Game\Profilers\Systems\Render</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Systems\ParticleSystem.cpp">
-      <Filter>Game\Systems\ParticleSystem</Filter>
+      <Filter>Game\Profilers\Systems\ParticleSystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\HomePath.cpp">
       <Filter>Game</Filter>
@@ -288,7 +288,10 @@
       <Filter>Game</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Systems\SyncEntitiesSystem.cpp">
-      <Filter>Game\Systems\NetworkMessages</Filter>
+      <Filter>Game\Profilers\Systems\NetworkMessages</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\RuleManager.cpp">
+      <Filter>Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -353,22 +356,22 @@
       <Filter>Lua Bridge\Console</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\CameraSystem.h">
-      <Filter>Game\Systems\Camera</Filter>
+      <Filter>Game\Profilers\Systems\Camera</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\ModelSystem.h">
-      <Filter>Game\Systems\Model</Filter>
+      <Filter>Game\Profilers\Systems\Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\RenderSystem.h">
-      <Filter>Game\Systems\Render</Filter>
+      <Filter>Game\Profilers\Systems\Render</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\RotationSystem.h">
-      <Filter>Game\Systems\Rotation</Filter>
+      <Filter>Game\Profilers\Systems\Rotation</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\RenderRemoveSystem.h">
-      <Filter>Game\Systems\Render</Filter>
+      <Filter>Game\Profilers\Systems\Render</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\ResetChangedSystem.h">
-      <Filter>Game\Systems\Changed</Filter>
+      <Filter>Game\Profilers\Systems\Changed</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Network\LuaNetwork.h">
       <Filter>Lua Bridge\Network</Filter>
@@ -377,7 +380,7 @@
       <Filter>Game\FrameCounter</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\PointlightSystem.h">
-      <Filter>Game\Systems\LightSystems</Filter>
+      <Filter>Game\Profilers\Systems\LightSystems</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Quaternion.h">
       <Filter>Game</Filter>
@@ -386,10 +389,10 @@
       <Filter>Lua Bridge\File</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\DirectionalLightSystem.h">
-      <Filter>Game\Systems\LightSystems</Filter>
+      <Filter>Game\Profilers\Systems\LightSystems</Filter>
     </ClInclude>
     <ClInclude Include="MapIslandCreatorSystem.h">
-      <Filter>Game\Systems\Map</Filter>
+      <Filter>Game\Profilers\Systems\Map</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Profilers\ECSLProfiler.h">
       <Filter>Game\Profilers\ECSLProfiler</Filter>
@@ -416,10 +419,10 @@
       <Filter>Game\Profilers\ECSLProfiler\Render Views</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\SlerpRotationSystem.h">
-      <Filter>Game\Systems\Rotation</Filter>
+      <Filter>Game\Profilers\Systems\Rotation</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\MasterServerSystem.h">
-      <Filter>Game\Systems\NetworkMessages</Filter>
+      <Filter>Game\Profilers\Systems\NetworkMessages</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Network\ClientDatabase.h">
       <Filter>Network</Filter>
@@ -437,13 +440,13 @@
       <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\AModelSystem.h">
-      <Filter>Game\Systems\Model</Filter>
+      <Filter>Game\Profilers\Systems\Model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\AddTextToTextureSystem.h">
-      <Filter>Game\Systems\Render</Filter>
+      <Filter>Game\Profilers\Systems\Render</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\ParticleSystem.h">
-      <Filter>Game\Systems\ParticleSystem</Filter>
+      <Filter>Game\Profilers\Systems\ParticleSystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\HomePath.h">
       <Filter>Game</Filter>
@@ -483,7 +486,10 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\SimulateFrameSpikeSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\SyncEntitiesSystem.h">
-      <Filter>Game\Systems\NetworkMessages</Filter>
+      <Filter>Game\Profilers\Systems\NetworkMessages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\RuleManager.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
