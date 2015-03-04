@@ -100,6 +100,8 @@ namespace Renderer
 
 		int mark;
 		float timer;
+        
+        bool m_FBOsCreated;
 	};
 }
 
