@@ -14,7 +14,7 @@ Net.Receive("SERVER_BROADCAST_CHAT_MESSAGE",
 	local sender = Net.ReadString(id)
 	local message = Net.ReadString(id)
 	print(sender .. ": " .. message)
-	Console.AddToHistory(sender .. ": " .. message)
+	--Console.AddToHistory(sender .. ": " .. message)
 	
 	end
 )

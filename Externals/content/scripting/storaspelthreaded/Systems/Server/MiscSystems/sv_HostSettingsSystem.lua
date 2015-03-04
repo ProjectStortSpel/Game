@@ -38,10 +38,15 @@ HostSettingsSystem.EntitiesAdded = function(self, dt, addedEntities)
 		end
 		
 		if world:EntityHasComponent(entity, "MapSpecs") then
-			print("SettingsId: " .. self.settingsId)
 			if self.settingsId == -1 then
 				return
 			end
+			
+			local popu = world:CreateNewEntity()
+			world:CreateComponentAndAddTo("NotificationPopup", popu)
+			world:GetComponent(popu, "NotificationPopup", "Text"):SetText("WHY HELLO THERE")
+			world:CreateComponentAndAddTo("SyncNetwork", popu)
+			
 			
 			if world:GetComponent(self.settingsId, "HostSettings", "FillAI"):GetInt() == 1 then
 				Console.AddToCommandQueue("AI")

@@ -104,6 +104,7 @@ require "sv_ServerNetworkMessageSystem"
 require "sv_HostSettingsSystem"
 require "sv_OffsetUnitSystem"
 require "sv_FadeTreeSystem"
+require "sv_ChatSystem"
 
 --worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(LobbySystem)
@@ -195,6 +196,7 @@ worldCreator:AddSystemToCurrentGroup(SortClientSelectedCards)	--	Temp
 worldCreator:AddSystemToCurrentGroup(ClearServerSelectedSystem)	--	Temp
 worldCreator:AddSystemToCurrentGroup(FadeTreeSystem) -- TEMP
 worldCreator:AddSystemToCurrentGroup(FindSpawnpointSystem)
+worldCreator:AddSystemToCurrentGroup(ChatSystem)
 
 --	Audio Systems
 package.path = package.path .. ";Systems/Server/AudioSystems/?.lua"

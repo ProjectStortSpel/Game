@@ -62,8 +62,8 @@ end
 
 MapGenerator.EntitiesAdded = function(self, dt, entities)
 	--self:GenerateMap(os.time()%29181249, 4, 4)
-	self:GenerateMap(23246299, 4, 4)
-	--self:GenerateMap(666, 3, 4)
+	--self:GenerateMap(23246299, 8, 4)
+	self:GenerateMap(9, 4, 4)
 	--self:GenerateMap(23239474, 4, 4)
 	--self:GenerateMap(5747, 4, 4)
 	--self:GenerateMap(1338, 2, 4)
@@ -94,7 +94,7 @@ MapGenerator.GenerateMap = function(self, MapSeed, NumberOfPlayers, NumberOfChec
 
 	--	Seed the random
 	math.randomseed(MapSeed)
-	print("SEEEED " .. MapSeed)
+	--print("SEEEED " .. MapSeed)
 	
 	--	Randomize initial values
 	self.MapSizeX		=	math.random(8+NumberOfPlayers, 10+NumberOfPlayers) + 2*self.VoidMargin
@@ -847,11 +847,11 @@ MapGenerator.CreateMap = function(self)
 	self:GenerateIslandBelow()
 	
 	--	Generate directional light
-	local	R,G,B		=	0.6,0.6,0.65
+	local	R,G,B		=	0.8,0.7,0.6
 	local 	newLight 	= 	world:CreateNewEntity()
 	world:CreateComponentAndAddTo("DirectionalLight", newLight)
 	world:CreateComponentAndAddTo("SyncNetwork", newLight)
-    world:GetComponent(newLight, "DirectionalLight", 0):SetDirectionalLight(math.sin(math.random(1, 360)), -1.0, math.sin(math.random(1, 360)), 0.3, 0.7, 0.7, R, G, B)
+    world:GetComponent(newLight, "DirectionalLight", 0):SetDirectionalLight(math.sin(math.random(1, 360)), -1.0, math.sin(math.random(1, 360)), 0.25, 0.65, 0.65, R, G, B)
 	
 	
 end
