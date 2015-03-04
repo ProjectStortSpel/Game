@@ -1,9 +1,8 @@
-OptionMenuSystem = System()
-OptionMenuSystem.Name = "OptionMenu"
-OptionMenuSystem.RequestRelease = false
-OptionMenuSystem.Active = false
+MainMenuSystem = System()
+MainMenuSystem.Name = "MainMenu"
+MainMenuSystem.RequestRelease = false
 
-OptionMenuSystem.Initialize = function(self)
+MainMenuSystem.Initialize = function(self)
 	--	Set Name
 	self:SetName(self.Name.."System")
 	
@@ -15,23 +14,27 @@ OptionMenuSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter(self.Name, FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter(self.Name.."Element", FilterType.RequiresOneOf)
 end
+MainMenuSystem.PostInitialize = function(self)
 
-OptionMenuSystem.Update = function(self, dt)
+	self:SpawnMenu()
+
+end
+MainMenuSystem.Update = function(self, dt)
 	if self.RequestRelease then
 		local pressedButtons = self:GetEntities("OnPickBoxHit")
 		if #pressedButtons > 0 then
 			local pressedButton = pressedButtons[1]
 			if world:EntityHasComponent(pressedButton, "MenuConsoleCommand") then
 				local command = world:GetComponent(pressedButton, "MenuConsoleCommand", "Command"):GetString()
+				self:RemoveMenu()
 				Console.AddToCommandQueue(command)
 			end
 			if world:EntityHasComponent(pressedButton, "MenuEntityCommand") then
 				local compname = world:GetComponent(pressedButton, "MenuEntityCommand", "ComponentName"):GetText()
+				self:RemoveMenu()
 				local id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo(compname, id)
 			end
-		elseif self.Active then
-			self:RemoveMenuToMain()
 		end
 	end
 	
@@ -42,7 +45,7 @@ OptionMenuSystem.Update = function(self, dt)
 	end
 end
 
-OptionMenuSystem.EntitiesAdded = function(self, dt, entities)
+MainMenuSystem.EntitiesAdded = function(self, dt, entities)
 	for n = 1, #entities do
 		local entityId = entities[n]
 		if world:EntityHasComponent(entityId, self.Name) then
@@ -50,46 +53,38 @@ OptionMenuSystem.EntitiesAdded = function(self, dt, entities)
 		end
 	end
 end
+MainMenuSystem.CreateButtons = function(self)
+	local menubutton = self:CreateElement("play", "quad", -2, 0.6, -5, 1, 0.5)
+	--self:AddConsoleCommandToButton("host;gamemode storaspel", menubutton)	
+	self:AddEntityCommandToButton("ConnectMenu", menubutton)
+	self:AddHoverSize(1.5, menubutton)
 
-OptionMenuSystem.SpawnMenu = function(self)
-	--local background = self:CreateElement("gamemenubackground", "quad", 0, -0, -3.1, 1.5, 2.0)
+	local menubutton = self:CreateElement("howto", "quad", -2, -0.0, -5, 1, 0.5)
+	self:AddEntityCommandToButton("HowToMenu", menubutton)
+	self:AddHoverSize(1.5, menubutton)
+
+	local menubutton = self:CreateElement("options", "quad", -2, -0.6, -5, 1, 0.5)
+	self:AddEntityCommandToButton("OptionMenu", menubutton)
+	self:AddHoverSize(1.5, menubutton)
+
+	local menubutton = self:CreateElement("quit", "quad", -2, -1.2, -5, 1, 0.5)
+	self:AddConsoleCommandToButton("quit", menubutton)
+	self:AddHoverSize(1.5, menubutton)
 	
-	local button = nil
-	button = self:CreateElement("graphicslow", "quad", 0, 0.4, -3, 0.6, 0.3)
-	self:AddConsoleCommandToButton("changegraphics low", button)
-	--self:AddEntityCommandToButton("NotificationBox", button)
-	self:AddHoverSize(1.1, button)
-	
-	button = self:CreateElement("graphicshigh", "quad", 0, -0.4, -3, 0.6, 0.3)
-	self:AddConsoleCommandToButton("changegraphics high", button)	
-	--self:AddEntityCommandToButton("NotificationBox", button)	
-	self:AddHoverSize(1.1, button)
-	
-	self.Active = true
 end
 
-OptionMenuSystem.RemoveMenu = function(self)
+MainMenuSystem.SpawnMenu = function(self)
+	self:CreateButtons()
+end
+
+MainMenuSystem.RemoveMenu = function(self)
 	local entities = self:GetEntities()
 	for i = 1, #entities do
 		world:KillEntity(entities[i])
 	end
-	
-	self.Active = false
 end
 
-OptionMenuSystem.RemoveMenuToMain = function(self)
-	local entities = self:GetEntities()
-	for i = 1, #entities do
-		world:KillEntity(entities[i])
-	end
-	
-	local tomainmenu = world:CreateNewEntity()
-	world:CreateComponentAndAddTo("MainMenu", tomainmenu)
-	
-	self.Active = false
-end
-
-OptionMenuSystem.CreateElement = function(self, object, folder, posx, posy, posz, scalex, scaley)
+MainMenuSystem.CreateElement = function(self, object, folder, posx, posy, posz, scalex, scaley)
 	local id = world:CreateNewEntity("Button")
 	world:CreateComponentAndAddTo(self.Name.."Element", id)
 	world:GetComponent(id, "Model", 0):SetModel(object, folder, 2)
@@ -100,17 +95,17 @@ OptionMenuSystem.CreateElement = function(self, object, folder, posx, posy, posz
 	return id	
 end
 
-OptionMenuSystem.AddConsoleCommandToButton = function(self, command, button)
+MainMenuSystem.AddConsoleCommandToButton = function(self, command, button)
 	world:CreateComponentAndAddTo("MenuConsoleCommand", button)
 	world:GetComponent(button, "MenuConsoleCommand", "Command"):SetString(command)
 end
 
-OptionMenuSystem.AddEntityCommandToButton = function(self, command, button)
+MainMenuSystem.AddEntityCommandToButton = function(self, command, button)
 	world:CreateComponentAndAddTo("MenuEntityCommand", button)
 	world:GetComponent(button, "MenuEntityCommand", "ComponentName"):SetText(command)
 end
 
-OptionMenuSystem.AddHoverSize = function(self, deltascale, button)
+MainMenuSystem.AddHoverSize = function(self, deltascale, button)
 	local scale = world:GetComponent(button, "Scale", 0)
 	local sx, sy, sz = scale:GetFloat3()
 	world:CreateComponentAndAddTo("HoverSize", button)
