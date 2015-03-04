@@ -15,6 +15,7 @@ GraphicDevice::GraphicDevice()
 	m_SDLinitialized = false;
 	m_pointlightsPtr = 0;
 	m_particleID = 0;
+	m_elapsedTime = 0.0f;
 }
 
 GraphicDevice::GraphicDevice(Camera _camera)
@@ -23,6 +24,7 @@ GraphicDevice::GraphicDevice(Camera _camera)
 	m_SDLinitialized = true;
 	m_pointlightsPtr = 0;
 	m_particleID = 0;
+	m_elapsedTime = 0.0f;
 }
 
 GraphicDevice::~GraphicDevice()
@@ -107,6 +109,60 @@ void GraphicDevice::InitFBO()
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, oldFBO);
+}
+
+void GraphicDevice::InitStandardBuffers()
+{
+	//Skybox shader
+	m_skyBoxShader.CheckUniformLocation("cubemap", 1);
+
+	//Particle shaders
+	for (std::map<std::string, Shader>::iterator it = m_particleShaders.begin(); it != m_particleShaders.end(); ++it)
+		it->second.CheckUniformLocation("diffuseTex", 1);
+
+	//Fullscreen shader
+	m_fullscreen.CheckUniformLocation("sampler", 4);
+}
+
+void GraphicDevice::InitStandardShaders()
+{
+	// SkyBox
+	m_skyBoxShader.InitShaderProgram();
+	m_skyBoxShader.AddShader("content/shaders/android/AndroidSkyboxShaderVS.glsl", GL_VERTEX_SHADER);
+	m_skyBoxShader.AddShader("content/shaders/android/AndroidSkyboxShaderFS.glsl", GL_FRAGMENT_SHADER);
+	m_skyBoxShader.FinalizeShaderProgram();
+
+	// Viewspace shader
+	m_viewspaceShader.InitShaderProgram();
+	m_viewspaceShader.AddShader("content/shaders/android/AndroidViewspaceShaderVS.glsl", GL_VERTEX_SHADER);
+	m_viewspaceShader.AddShader("content/shaders/android/AndroidViewspaceShaderFS.glsl", GL_FRAGMENT_SHADER);
+	m_viewspaceShader.FinalizeShaderProgram();
+
+	// Interface shader
+	m_interfaceShader.InitShaderProgram();
+	m_interfaceShader.AddShader("content/shaders/android/AndroidInterfaceVS.glsl", GL_VERTEX_SHADER);
+	m_interfaceShader.AddShader("content/shaders/android/AndroidInterfaceFS.glsl", GL_FRAGMENT_SHADER);
+	m_interfaceShader.FinalizeShaderProgram();
+
+	// Particle shaders
+	Shader particleShader;
+	particleShader.InitShaderProgram();
+	particleShader.AddShader("content/shaders/android/AndroidFireShaderVS.glsl", GL_VERTEX_SHADER);
+	particleShader.AddShader("content/shaders/android/AndroidFireShaderFS.glsl", GL_FRAGMENT_SHADER);
+	particleShader.FinalizeShaderProgram();
+	m_particleShaders["fire"] = particleShader;
+
+	particleShader.InitShaderProgram();
+	particleShader.AddShader("content/shaders/android/AndroidSmokeShaderVS.glsl", GL_VERTEX_SHADER);
+	particleShader.AddShader("content/shaders/android/AndroidSmokeShaderFS.glsl", GL_FRAGMENT_SHADER);
+	particleShader.FinalizeShaderProgram();
+	m_particleShaders["smoke"] = particleShader;
+
+	//m_fullscreen
+	m_fullscreen.InitShaderProgram();
+	m_fullscreen.AddShader("content/shaders/android/AndroidFullscreenVS.glsl", GL_VERTEX_SHADER);
+	m_fullscreen.AddShader("content/shaders/android/AndroidFullscreenFS.glsl", GL_FRAGMENT_SHADER);
+	m_fullscreen.FinalizeShaderProgram();
 }
 
 void GraphicDevice::PollEvent(SDL_Event _event)
@@ -387,6 +443,16 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 		shaderPtr = &m_interfaceShader;
 		m_interfaceShader.UseProgram();
 	}
+	else if (_modelToLoad->RenderType == RENDER_RIVERWATER)
+	{
+		shaderPtr = &m_riverShader;
+		m_riverShader.UseProgram();
+	}
+	else if (_modelToLoad->RenderType == RENDER_RIVERWATER_CORNER)
+	{
+		shaderPtr = &m_riverCornerShader;
+		m_riverCornerShader.UseProgram();
+	}
 	else if (_modelToLoad->RenderType == 0)
 	{
 		shaderPtr = &m_forwardShader;
@@ -430,6 +496,10 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 		m_modelsViewspace.push_back(model);
 	else if (_modelToLoad->RenderType == RENDER_INTERFACE)
 		m_modelsInterface.push_back(model);
+	else if (_modelToLoad->RenderType == RENDER_RIVERWATER)
+		m_modelsWater.push_back(model);
+	else if (_modelToLoad->RenderType == RENDER_RIVERWATER_CORNER)
+		m_modelsWaterCorners.push_back(model);
 	else
 		m_modelsForward.push_back(model);
 }
@@ -516,6 +586,96 @@ void GraphicDevice::BufferModels()
 	}
 	m_modelsToLoad.clear();
 	m_modelsToLoadFromSource.clear();
+}
+
+void GraphicDevice::BufferLightsToGPU_GD()
+{
+	if (m_directionalLightPtr)
+	{
+		m_dirLightDirection = vec3(m_directionalLightPtr[0], m_directionalLightPtr[1], m_directionalLightPtr[2]);
+		vec3 intens = vec3(m_directionalLightPtr[3], m_directionalLightPtr[4], m_directionalLightPtr[5]);
+		vec3 color = vec3(m_directionalLightPtr[6], m_directionalLightPtr[7], m_directionalLightPtr[8]);
+
+		m_forwardShader.SetUniVariable("dirlightDirection", vector3, &m_dirLightDirection);
+		m_forwardShader.SetUniVariable("dirlightIntensity", vector3, &intens);
+		m_forwardShader.SetUniVariable("dirlightColor", vector3, &color);
+
+		m_riverShader.SetUniVariable("dirlightDirection", vector3, &m_dirLightDirection);
+		m_riverShader.SetUniVariable("dirlightIntensity", vector3, &intens);
+		m_riverShader.SetUniVariable("dirlightColor", vector3, &color);
+
+		m_riverCornerShader.SetUniVariable("dirlightDirection", vector3, &m_dirLightDirection);
+		m_riverCornerShader.SetUniVariable("dirlightIntensity", vector3, &intens);
+		m_riverCornerShader.SetUniVariable("dirlightColor", vector3, &color);
+	}
+	else
+	{
+		m_forwardShader.SetUniVariable("dirlightIntensity", vector3, &m_lightDefaults[0]);
+		m_forwardShader.SetUniVariable("dirlightColor", vector3, &m_lightDefaults[0]);
+		m_riverShader.SetUniVariable("dirlightIntensity", vector3, &m_lightDefaults[0]);
+		m_riverShader.SetUniVariable("dirlightColor", vector3, &m_lightDefaults[0]);
+		m_riverCornerShader.SetUniVariable("dirlightIntensity", vector3, &m_lightDefaults[0]);
+		m_riverCornerShader.SetUniVariable("dirlightColor", vector3, &m_lightDefaults[0]);
+	}
+
+	// ------------Pointlights------------
+	if (m_pointlightsPtr)
+	{
+		if (m_nrOfLightsToBuffer == 0)
+		{
+			for (int i = 0; i < 1; i++)
+			{
+				std::stringstream ss;
+				ss << "pointlights[" << i << "].Position";
+				m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[0]);
+				m_riverShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[0]);
+				m_riverCornerShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[0]);		ss.str(std::string());
+
+				ss << "pointlights[" << i << "].Intensity";
+				m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[3]);
+				m_riverShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[3]);
+				m_riverCornerShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[3]);		ss.str(std::string());
+
+				ss << "pointlights[" << i << "].Color";
+				m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[6]);
+				m_riverShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[6]);
+				m_riverCornerShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[6]);		ss.str(std::string());
+
+				ss << "pointlights[" << i << "].Range";
+				m_forwardShader.SetUniVariable(ss.str().c_str(), glfloat, &m_lightDefaults[9]);
+				m_riverShader.SetUniVariable(ss.str().c_str(), glfloat, &m_lightDefaults[9]);
+				m_riverCornerShader.SetUniVariable(ss.str().c_str(), glfloat, &m_lightDefaults[9]);		ss.str(std::string());
+			}
+		}
+		else
+		{
+			for (int i = 0; i < 1; i++)
+			{
+				std::stringstream ss;
+				ss << "pointlights[" << i << "].Position";
+				m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][0]);		ss.str(std::string());
+				m_riverShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][0]);		ss.str(std::string());
+				m_riverCornerShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][0]);		ss.str(std::string());
+
+				ss << "pointlights[" << i << "].Intensity";
+				m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][3]);		ss.str(std::string());
+				m_riverShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][3]);		ss.str(std::string());
+				m_riverCornerShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][3]);		ss.str(std::string());
+
+				ss << "pointlights[" << i << "].Color";
+				m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][6]);		ss.str(std::string());
+				m_riverShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][6]);		ss.str(std::string());
+				m_riverCornerShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][6]);		ss.str(std::string());
+
+				ss << "pointlights[" << i << "].Range";
+				m_forwardShader.SetUniVariable(ss.str().c_str(), glfloat, &m_pointlightsPtr[i][9]);		ss.str(std::string());
+				m_riverShader.SetUniVariable(ss.str().c_str(), glfloat, &m_pointlightsPtr[i][9]);		ss.str(std::string());
+				m_riverCornerShader.SetUniVariable(ss.str().c_str(), glfloat, &m_pointlightsPtr[i][9]);		ss.str(std::string());
+			}
+		}
+		delete[] m_pointlightsPtr;
+		m_pointlightsPtr = 0;
+	}
 }
 
 struct sort_depth

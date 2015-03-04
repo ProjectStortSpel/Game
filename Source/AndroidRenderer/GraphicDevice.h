@@ -23,10 +23,14 @@ namespace Renderer
 #define RENDER_FORWARD  1
 #define RENDER_VIEWSPACE  2
 #define RENDER_INTERFACE  3
+//#define RENDER_ANIMATED  4
+#define RENDER_RIVERWATER 5
+#define RENDER_RIVERWATER_CORNER 6
 
 #define TEXTURE_DIFFUSE		0
 #define TEXTURE_NORMAL		1
 #define TEXTURE_SPECULAR	2
+
 
 
 	struct Model
@@ -169,6 +173,8 @@ namespace Renderer
 		virtual void BufferLightsToGPU() = 0;
 
 		void InitFBO();
+		void InitStandardBuffers();
+		void InitStandardShaders();
 
 		Camera* m_camera;
 
@@ -178,6 +184,9 @@ namespace Renderer
 		// dt and fps
 		float m_dt;
 		int m_fps;
+
+		// For the river animation
+		float m_elapsedTime;
 
 		bool m_SDLinitialized;
 
@@ -209,6 +218,7 @@ namespace Renderer
 		// Shaders
 		Shader m_skyBoxShader;
 		Shader m_forwardShader, m_viewspaceShader, m_interfaceShader;
+		Shader m_riverShader, m_riverCornerShader;
 		Shader m_fullscreen;
 		std::map<std::string, Shader> m_particleShaders;
 
@@ -217,7 +227,7 @@ namespace Renderer
 
 		// Modelloader
 		int m_modelIDcounter;
-		std::vector<Model> m_modelsForward, m_modelsViewspace, m_modelsInterface;
+		std::vector<Model> m_modelsForward, m_modelsViewspace, m_modelsInterface, m_modelsWater, m_modelsWaterCorners;
 
 		// Meshs
 		std::map<const std::string, Buffer*> m_meshs;
@@ -248,6 +258,8 @@ namespace Renderer
 		virtual bool BufferModelTexture(int _id, std::string _fileDir, int _textureType);
 		
 		void SortModelsBasedOnDepth(std::vector<Model>* models);
+
+		void BufferLightsToGPU_GD();
 	};
 }
 
