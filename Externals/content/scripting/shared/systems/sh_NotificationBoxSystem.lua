@@ -14,7 +14,7 @@ end
 
 
 NotificationBoxSystem.Update = function(self, dt)
-
+	
 	if not self.IsMenuActive then
 		return
 	end
@@ -24,7 +24,6 @@ NotificationBoxSystem.Update = function(self, dt)
 		if #pressedButtons > 0 then
 		
 			local pressedButton = pressedButtons[1]
-		
 			if world:EntityHasComponent(pressedButton, "MenuEntityCommand") then
 				self:MenuEntityCommandPressed(pressedButton)
 				self:RemoveMenu()
@@ -40,7 +39,6 @@ NotificationBoxSystem.EntitiesAdded = function(self, dt, entities)
 	for i = 1, #entities do
 		local entityId = entities[i]
 		if world:EntityHasComponent(entityId, self.Name) then
-		
 			self.Text = world:GetComponent(entityId, self.Name, "Text"):GetText()
 			self.Parentmenu = world:GetComponent(entityId, self.Name, "ParentMenu"):GetText()
 

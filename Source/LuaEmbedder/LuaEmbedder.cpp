@@ -61,6 +61,7 @@ namespace LuaEmbedder
     }
     LuaParentChildrensMap.clear();
     LuaChildrenParentMap.clear();
+    LuaFunctionStateMap.clear();
 	Functions.clear();
   }
   
@@ -637,6 +638,21 @@ bool Preload(lua_State* L, const std::vector<std::string>* paths, const std::str
     PULL_GLOBAL_VARIABLE();
     return PullString(L, -1);
   }
+  
+	unsigned int* PullUnsignedIntArray(lua_State* L, int index, unsigned int* length)
+	{
+		return LuaNumberArray<unsigned int>::Pull(L, "UnsignedIntArray", index, length);
+	}
+	
+	int* PullIntArray(lua_State* L, int index, unsigned int* length)
+	{
+		return LuaNumberArray<int>::Pull(L, "IntArray", index, length);
+	}
+
+	float* PullFloatArray(lua_State* L, int index, unsigned int* length)
+	{
+		return LuaNumberArray<float>::Pull(L, "FloatArray", index, length);
+	}
   
   void PushFloat(lua_State* L, float value)
   {

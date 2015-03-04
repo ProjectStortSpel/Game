@@ -15,7 +15,8 @@ end
 
 UpdateCardPickTimer.Update = function(self, dt)
 
-	local Timers = self:GetEntities("PickingPhaseTimer")
+	--local Timers = self:GetEntities("PickingPhaseTimer")
+	local Timers = self:GetEntities()
 	if #Timers > 0 then
 		
 		local Timer = world:GetComponent(Timers[1], "PickingPhaseTimer", "Timer")

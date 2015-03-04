@@ -1,7 +1,8 @@
-cavemanwave.amesh
-cavemantex.png
-normalPixel.png
+cavemanbasepos.amesh
+caveman.png
+cavemannormal.png
 cavemanspec.png
 cavemanwave.ajoints
-cavemanidle1.anim
+cavemanidle2.anim
 cavemanwalkforwardstill.anim
+cavemanwalkbackwards.anim

@@ -30,36 +30,39 @@ PickBoxSystem.Update = function(self, dt)
 	
 	---- intersect section
 	local entities = self:GetEntities()
-	for i = 1, #entities do
-		local entity = entities[i]
+	if #entities > 0 then
+		local scales = world:GetComponents(entities, "Scale", 0)
+		local positions = world:GetComponents(entities, "Position", 0)
+		local pickboxes = world:GetComponents(entities, "PickBox", 0)
 		
-		local scale = world:GetComponent(entity, "Scale", 0)
-		local position = world:GetComponent(entity, "Position", 0)
-		local pickbox = world:GetComponent(entity, "PickBox", 0)
-		
-		-- Get the pickbox size
-		local halfwidth = pickbox:GetFloat(0) * 0.5
-		local halfheight = pickbox:GetFloat(1) * 0.5
-		
-		-- Get scale and multiply with halfsize
-		local sX, sY, sZ = scale:GetFloat3()
-		halfwidth = halfwidth * sX
-		halfheight = halfheight * sY
-		
-		-- Get position of object
-		local X, Y, Z = position:GetFloat3()
-		
-		-- Calc ray distance from Z
-		local hitX = rX * Z
-		local hitY = rY * Z
-		
-		-- check if pickbox is hit
-		if Z < 0.1 and Z > t then
-			if hitX > X-halfwidth and hitX < X+halfwidth then
-				if hitY > Y-halfheight and hitY < Y+halfheight then
-						hit = true
-						newhit = entity
-						t = Z
+		for i = 1, #entities do
+			local entity = entities[i]
+			
+			-- Get the pickbox size
+			local halfwidth, halfheight = pickboxes[i]:GetFloat2(0)
+			halfwidth = halfwidth * 0.5
+			halfheight = halfheight * 0.5
+			
+			-- Get scale and multiply with halfsize
+			local sX, sY, sZ = scales[i]:GetFloat3()
+			halfwidth = halfwidth * sX
+			halfheight = halfheight * sY
+			
+			-- Get position of object
+			local X, Y, Z = positions[i]:GetFloat3()
+			
+			-- Calc ray distance from Z
+			local hitX = rX * Z
+			local hitY = rY * Z
+			
+			-- check if pickbox is hit
+			if Z < 0.1 and Z > t then
+				if hitX > X-halfwidth and hitX < X+halfwidth then
+					if hitY > Y-halfheight and hitY < Y+halfheight then
+							hit = true
+							newhit = entity
+							t = Z
+					end
 				end
 			end
 		end
@@ -83,8 +86,7 @@ PickBoxSystem.Update = function(self, dt)
 		-- Clear OnPickBoxHit from entities
 		local entities = self:GetEntities("OnPickBoxHit")
 		for i = 1, #entities do
-			local entity = entities[i]
-			world:RemoveComponentFrom("OnPickBoxHit", entity)
+			world:RemoveComponentFrom("OnPickBoxHit", entities[i])
 		end
 	end
 end

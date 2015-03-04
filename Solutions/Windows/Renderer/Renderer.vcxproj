@@ -64,12 +64,16 @@
     <None Include="..\..\..\Externals\content\shaders\fullscreen.gs" />
     <None Include="..\..\..\Externals\content\shaders\fullscreen.ps" />
     <None Include="..\..\..\Externals\content\shaders\fullscreen.vs" />
+    <None Include="..\..\..\Externals\content\shaders\lowFSAnimationShader.glsl" />
     <None Include="..\..\..\Externals\content\shaders\lowFSForwardShader.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\lowRiverCornerFS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\lowVSAnimationShader.glsl" />
     <None Include="..\..\..\Externals\content\shaders\lowVSForwardShader.glsl" />
     <None Include="..\..\..\Externals\content\shaders\particles\particleFireFS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\particles\particleFireVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\particles\particleSmokeFS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\particles\particleSmokeVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\riverCornerFS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\riverShaderVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\shadowShaderDeferredFS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\shadowShaderDeferredVS.glsl" />

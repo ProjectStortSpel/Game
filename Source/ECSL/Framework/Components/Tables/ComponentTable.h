@@ -22,6 +22,8 @@ namespace ECSL
 		ReturnType* GetComponent(unsigned int _entityId, unsigned int _index);
 		void GetComponents(std::vector<DataLocation>& _out, const std::vector<unsigned int>* _entityIds, const std::string& _variableName);
 		void GetComponents(std::vector<DataLocation>& _out, const std::vector<unsigned int>* _entityIds, unsigned int _index);
+		void GetComponents(std::vector<DataLocation>& _out, const unsigned int* _entities, unsigned int _entityCount, const std::string& _variableName);
+		void GetComponents(std::vector<DataLocation>& _out, const unsigned int* _entities, unsigned int _entityCount, unsigned int _index);
 
 		void SetComponent(unsigned int _entityId, const std::string& _variableName, void* _data);
 		void SetComponent(unsigned int _entityId, unsigned int _index, void* _data, unsigned int _byteSize);

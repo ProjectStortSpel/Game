@@ -1,12 +1,12 @@
 -- SlingShotProjectile Component
-local SlingShotProjectileComponent = ComponentType()
-SlingShotProjectileComponent.Name = "SlingShotProjectile"
-SlingShotProjectileComponent.TableType = TableType.Map
-worldCreator:AddComponentType(SlingShotProjectileComponent)
+local NewComponent = ComponentType()
+NewComponent.Name = "SlingShotProjectile"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
 
 -- AbilityStone Component
-local AbilityStoneComponent = ComponentType()
-AbilityStoneComponent.Name = "AbilityStone"
-AbilityStoneComponent.TableType = TableType.Map
-AbilityStoneComponent:AddVariable("LifeSpan", ByteSize.Int)
-worldCreator:AddComponentType(AbilityStoneComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "AbilityStone"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("LifeSpan", ByteSize.Int)
+worldCreator:AddComponentType(NewComponent)

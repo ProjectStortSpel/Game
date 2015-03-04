@@ -26,12 +26,11 @@ end
 
 LobbySystem.Update = function(self, dt)
 	if self.UpdateMe == true then
-		print("update")
+		self:RemoveMenu()
 		self:UpdatePlayers()
 		self.UpdateMe = false
 	end
 	if self.UpdateRequest == true then
-		print("update request")
 		self.UpdateMe = true
 		self.UpdateRequest = false
 	end
@@ -151,8 +150,10 @@ end
 
 
 LobbySystem.SpawnMenu = function(self)
-	local background = self:CreateElement("gamemenubackground", "quad", 0, 0, -4.1, 4.14, 2.6)
-	world:CreateComponentAndAddTo("LobbyMenuActive", background)
+	--local background = self:CreateElement("gamemenubackground", "quad", 0, 0, -4.1, 4.14, 2.6)
+	local activate = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("SyncNetwork", activate)
+	world:CreateComponentAndAddTo("LobbyMenuActive", activate)
 end
 
 LobbySystem.RemoveMenu = function(self)

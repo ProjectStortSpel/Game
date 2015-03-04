@@ -10,6 +10,7 @@
 
 /* Data struct for the pathfinder to store data */
 
+
 enum RuleType
 {
 	humpa_dumpa_Void,
@@ -27,7 +28,7 @@ struct Rule
 
 	bool operator == ( Rule r )
 	{
-		return ruleType == r.ruleType && weight == r.weight && script == r.script;
+		return ruleType == r.ruleType && script == r.script;
 	}
 	/*
 		returns true if the rules have the same type
@@ -37,6 +38,8 @@ struct Rule
 		return ruleType == r.ruleType;
 	}
 };
+
+typedef std::vector<Rule> rulebook;
 
 class DynamicScripting
 {
@@ -55,7 +58,7 @@ public:
 	bool						InsertToScript( Rule _rule );
 	std::vector<Rule>			GetScript( );
 	void						SetScript( std::vector<Rule> _script );
-	void						SetRuleBook( std::vector<Rule> _rules );
+	void						SetRuleBook( std::vector<Rule>* _rules );
 
 	bool						IsInScript( Rule _rule );
 	bool						IsTypeInScript( Rule _rule );
@@ -71,8 +74,8 @@ private:
 private:
 	float						m_totalSum;
 	unsigned int				m_noOfScriptsToUse;
-	std::vector<Rule>			m_ruleBook;
-	std::vector<Rule>			m_script;
+	rulebook*					m_ruleBook;
+	rulebook					m_script;
 };
 
 #endif //DYNAMICSCRIPTING_H

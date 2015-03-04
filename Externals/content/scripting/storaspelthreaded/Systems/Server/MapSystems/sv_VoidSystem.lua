@@ -69,9 +69,6 @@ VoidSystem.EntitiesAdded = function(self, dt, entities)
 							local	unitDied	=	world:CreateNewEntity()
 							world:CreateComponentAndAddTo("UnitDied", unitDied)
 							world:GetComponent(unitDied, "UnitDied", "PlayerNumber"):SetInt3(world:GetComponent(units[i], "PlayerNumber", 0):GetInt(), voidX, voidZ)
-							--world:GetComponent(unitDied, "UnitDied", "PlayerNumber"):SetInt(world:GetComponent(units[i], "PlayerNumber", 0):GetInt())
-							--world:GetComponent(unitDied, "UnitDied", "X"):SetInt(voidX)
-							--world:GetComponent(unitDied, "UnitDied", "Z"):SetInt(voidZ)
 							
 							--	Move the unit
 							if not world:EntityHasComponent(units[i], "LerpPosition") then
@@ -79,6 +76,7 @@ VoidSystem.EntitiesAdded = function(self, dt, entities)
 							end
 							world:GetComponent(units[i], "LerpPosition", "Time"):SetFloat4(1, tmpX, -10, voidZ)
 							world:GetComponent(units[i], "LerpPosition", "Algorithm"):SetText("ExponentialLerp")
+							world:GetComponent(units[i], "LerpPosition", "KillWhenFinished"):SetBool(false)
 							
 							hitVoid = true
 							

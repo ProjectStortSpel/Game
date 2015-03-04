@@ -17,6 +17,11 @@ local IsParentComponent = ComponentType()
 IsParentComponent.Name = "IsParent"
 IsParentComponent.TableType = TableType.Map
 worldCreator:AddComponentType(IsParentComponent)
+-- KillWhenOrphan Component
+local KillWhenOrphanComponent = ComponentType()
+KillWhenOrphanComponent.Name = "KillWhenOrphan"
+KillWhenOrphanComponent.TableType = TableType.Map
+worldCreator:AddComponentType(KillWhenOrphanComponent)
 
 -- BoundToEntity Component
 local BoundToEntityComponent = ComponentType()
@@ -31,3 +36,13 @@ WorldToViewSpaceComponent.Name = "WorldToViewSpace"
 WorldToViewSpaceComponent.SyncNetwork = true
 WorldToViewSpaceComponent.TableType = TableType.Map
 worldCreator:AddComponentType(WorldToViewSpaceComponent)
+
+-- Spin Component
+local SpinComponent = ComponentType()
+SpinComponent.Name = "Spin"
+SpinComponent.SyncNetwork = true
+SpinComponent.TableType = TableType.Map
+SpinComponent:AddVariable("X", ByteSize.Float)
+SpinComponent:AddVariable("Y", ByteSize.Float)
+SpinComponent:AddVariable("Z", ByteSize.Float)
+worldCreator:AddComponentType(SpinComponent)

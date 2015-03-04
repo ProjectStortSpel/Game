@@ -9,6 +9,7 @@
 #include "ECSL/LuaEntityTemplateManager.h"
 #include "AI/LuaPotentialFieldHandler.h"
 #include "AI/LuaPathfinderHandler.h"
+#include "AI/LuaDynamicScript.h"
 #include "AI/LuaCombinationMath.h"
 #include "Renderer/LuaGraphicDevice.h"
 #include "Renderer/LuaCamera.h"
@@ -56,6 +57,7 @@ namespace LuaBridge
 	PotentialField::Embed(L);
 	PathfinderHandler::Embed(L);
 	CombinationMath::Embed(L);
+	DynamicScript::Embed( L );
 
     LuaEmbedder::AddFunction(L, "LoadMap", &LoadMap, "File");
 	LuaEmbedder::AddFunction(L, "GenerateIslandMesh", &GenerateIslandMesh, "MapCreation");

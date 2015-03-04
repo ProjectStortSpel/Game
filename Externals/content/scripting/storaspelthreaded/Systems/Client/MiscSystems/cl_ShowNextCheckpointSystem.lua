@@ -1,4 +1,5 @@
 ShowNextCheckpointSystem = System()
+ShowNextCheckpointSystem.TotalTime	=	0.0
 
 ShowNextCheckpointSystem.Initialize = function ( self )
 	--	Set Name
@@ -6,10 +7,30 @@ ShowNextCheckpointSystem.Initialize = function ( self )
 	
 	--	Toggle EntitiesAdded
 	self:UsingEntitiesAdded()
+	self:UsingUpdate()
 	
 	--	Filters
 	self:AddComponentTypeToFilter("Particle", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("CheckpointReached", FilterType.Mandatory)
+end
+
+ShowNextCheckpointSystem.Update = function(self, dt)
+
+	local Pointlights = self:GetEntities("Pointlight")
+	if #Pointlights >= 1 then
+		for n = 1, #Pointlights do
+		
+			local	tPL	=	Pointlights[n]
+			
+			local	X, Y, Z, AMBIENT, DIFFUSE, SPECULAR, R, G, B, RANGE	=	world:GetComponent(tPL, "Pointlight", 0):GetPointlight()
+			--local	newRange	=	3 + math.sin(self.TotalTime)*math.random(1, 10)*dt
+			DIFFUSE		=	0.8 + 0.8*math.sin(dt*(self.TotalTime + math.random(1, 400)))*0.2
+			SPECULAR	=	0.7 + 0.7*math.sin(dt*(self.TotalTime + math.random(1, 400)))*0.2
+			world:GetComponent(tPL, "Pointlight", 0):SetPointlight(X, Y, Z, AMBIENT, DIFFUSE, SPECULAR, R, G, B, 5)
+		end
+		
+		self.TotalTime	=	self.TotalTime + dt
+	end
 end
 
 ShowNextCheckpointSystem.EntitiesAdded = function(self, dt, entities)
@@ -47,7 +68,7 @@ ShowNextCheckpointSystem.SpawnSmoke = function(self, oldParticle)
 	world:CreateComponentAndAddTo("Color", newParticle)
 	world:CreateComponentAndAddTo("Particle", newParticle)
 	
-	world:GetComponent(newParticle, "Position", "X"):SetFloat3(X, Y, Z)
+	world:GetComponent(newParticle, "Position", "X"):SetFloat3(X, Y-0.05, Z)
 	world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.0, 0.0, 0.0)
 	
 	world:GetComponent(newParticle, "Particle", "Name"):SetText("smoke")
@@ -67,25 +88,30 @@ Net.Receive("Client.NewTargetCheckpoint",
 	local	cpID	=	Net.ReadInt(id)
 	local	X		=	Net.ReadFloat(id)
 	local	Z		=	Net.ReadFloat(id)
-	print("INFO " .. cpID .. " at " .. X .. ", " .. Z)
+	
 	local	newParticle	=	world:CreateNewEntity()
 	world:CreateComponentAndAddTo("Position", newParticle)
 	world:CreateComponentAndAddTo("Color", newParticle)
 	world:CreateComponentAndAddTo("Particle", newParticle)
 	world:CreateComponentAndAddTo("CheckpointReached", newParticle)
+	world:CreateComponentAndAddTo("Pointlight", newParticle)
 	
 	world:GetComponent(newParticle, "CheckpointReached", "CheckpointNumber"):SetInt(cpID)
 	
-	world:GetComponent(newParticle, "Position", "X"):SetFloat3(X, 0.58, Z)
+	world:GetComponent(newParticle, "Position", "X"):SetFloat3(X, 0.70, Z)
 	world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.98, 0.17, 0.08)
 	
 	world:GetComponent(newParticle, "Particle", "Name"):SetText("fire")
 	world:GetComponent(newParticle, "Particle", "Texture"):SetText("content/textures/firewhite.png")
-	world:GetComponent(newParticle, "Particle", "Particles"):SetInt(100)
-	world:GetComponent(newParticle, "Particle", "Lifetime"):SetFloat(1500)
-	world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.02)
+	world:GetComponent(newParticle, "Particle", "Particles"):SetInt(80)
+	world:GetComponent(newParticle, "Particle", "Lifetime"):SetFloat(1200)
+	world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.016)
 	world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(0.6)
 	world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
+	--	X, Y, Z Ambient, Diffuse, Specular, R, G, B, Range
+	world:GetComponent(newParticle, "Pointlight", 0):SetPointlight(X, 0.7, Z, 0.5, 0.8, 0.7, 1.0, 0.5, 0.35, 2)
+	
+	
 	
 	end
 )

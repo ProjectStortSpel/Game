@@ -247,6 +247,7 @@ void NetworkHelper::ReceiveComponents(Network::PacketHandler* _ph, uint64_t _id,
 				case ECSL::ComponentDataType::BOOL:
 				{
 					*data = _ph->ReadByte(_id);
+					break;
 				}
 				case ECSL::ComponentDataType::STRING:
 				{

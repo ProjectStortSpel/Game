@@ -20,46 +20,45 @@ end
 
 CardPositionSystem.EntitiesAdded = function(self, dt, newEntities)
 	local entities = self:GetEntities()
-	for i = 1, #entities do
+	local entityCount = #entities
+	for i = 1, entityCount do
 		local entity = entities[i]
 		
-		local index = world:GetComponent(entity, "CardIndex", "Index"):GetInt()
-		
-		local halfentities = #entities/2
+		local halfentities = entityCount * 0.5
 		local px = (-halfentities + i - 0.5) * 0.6
 		local py = self.UpOffset
-		local pz = -4
+		local pz = -4.0
+		
+		if px > 2.2 or px < -2.2 then
+			print("2 : 1 - Very very wrong! px: ", px, i, entityCount)
+		end
 		
 		if not world:EntityHasComponent(entity, "LerpPosition") then
 			world:CreateComponentAndAddTo("LerpPosition", entity)
 		end
-		world:GetComponent(entity, "LerpPosition", "X"):SetFloat(px)
-		world:GetComponent(entity, "LerpPosition", "Y"):SetFloat(py)
-		world:GetComponent(entity, "LerpPosition", "Z"):SetFloat(pz)
-		world:GetComponent(entity, "LerpPosition", "Time"):SetFloat(0.1)
+		
+		world:GetComponent(entity, "LerpPosition", "Time"):SetFloat4(0.1, px, py, pz)
 		world:GetComponent(entity, "LerpPosition", "Algorithm"):SetText("SmootherLerp")
+		world:GetComponent(entity, "LerpPosition", "KillWhenFinished"):SetBool(false)
 	end
 end
 
 CardPositionSystem.EntitiesRemoved = function(self, dt, newEntities)
 	local entities = self:GetEntities()
-	for i = 1, #entities do
+	local entityCount = #entities
+	for i = 1, entityCount do
 		local entity = entities[i]
 		
-		local index = world:GetComponent(entity, "CardIndex", "Index"):GetInt()
-		
-		local halfentities = #entities/2
+		local halfentities = entityCount * 0.5
 		local px = (-halfentities + i - 0.5) * 0.6
 		local py = self.UpOffset
-		local pz = -4
+		local pz = -4.0
 		
 		if not world:EntityHasComponent(entity, "LerpPosition") then
 			world:CreateComponentAndAddTo("LerpPosition", entity)
 		end
-		world:GetComponent(entity, "LerpPosition", "X"):SetFloat(px)
-		world:GetComponent(entity, "LerpPosition", "Y"):SetFloat(py)
-		world:GetComponent(entity, "LerpPosition", "Z"):SetFloat(pz)
-		world:GetComponent(entity, "LerpPosition", "Time"):SetFloat(0.1)
+		world:GetComponent(entity, "LerpPosition", "Time"):SetFloat4(0.1, px, py, pz)
 		world:GetComponent(entity, "LerpPosition", "Algorithm"):SetText("SmootherLerp")
+		world:GetComponent(entity, "LerpPosition", "KillWhenFinished"):SetBool(false)
 	end
 end

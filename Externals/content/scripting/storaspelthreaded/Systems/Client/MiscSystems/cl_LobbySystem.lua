@@ -47,6 +47,7 @@ LobbySystem.EntitiesAdded = function(self, dt, entities)
 			local entityId = entities[n]
 			if world:EntityHasComponent( entityId, "LobbyMenuActive" ) then
 				self:SpawnMenu()
+				world:KillEntity(entityId)
 			elseif world:EntityHasComponent( entityId, self.Name.."Element") then
 
 			elseif world:EntityHasComponent( entityId, "UnitEntityId") then

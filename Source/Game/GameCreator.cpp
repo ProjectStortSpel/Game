@@ -382,7 +382,6 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 	worldCreator.AddLuaSystemToCurrentGroup(new SlerpRotationSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 
-
 	graphicalSystem = new DirectionalLightSystem(m_graphics);
 	m_graphicalSystems.push_back(graphicalSystem);
 	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
@@ -408,8 +407,9 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 		m_graphicalSystems.push_back(graphicalSystem);
 		worldCreator.AddSystemGroup();
 		worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
-    }
-    
+		worldCreator.AddSystemToCurrentGroup<SpinSystem>();
+    }    
+
     if (_includeMasterServer)
     {
         worldCreator.AddSystemGroup();
@@ -576,6 +576,9 @@ void GameCreator::StartGame(int argc, char** argv)
 	float bytesToMegaBytes = 1.f / (1024.f*1024.f);
 	bool showDebugInfo = false;
 	Utility::FrameCounter totalCounter;
+	
+	// Remove to enable audio
+	Audio::SetVolume(0);
 
 	while (m_running)
 	{
@@ -607,7 +610,7 @@ void GameCreator::StartGame(int argc, char** argv)
 			break;
 		m_inputCounter.Tick();
 
-		m_worldCounter.Reset();
+		m_serverWorldCounter.Reset();
 		/*	Update world (systems, entities, etc)	*/
 		
 		m_serverWorldProfiler->Begin();
@@ -616,7 +619,11 @@ void GameCreator::StartGame(int argc, char** argv)
 		m_serverWorldProfiler->End();
 		m_serverWorldProfiler->Update(dt);
 		m_serverWorldProfiler->Render();
+
+		m_serverWorldCounter.Tick();
         
+		m_clientWorldCounter.Reset();
+
 		m_clientWorldProfiler->Begin();
         if (m_clientWorld)
             m_clientWorld->Update(dt);
@@ -624,8 +631,7 @@ void GameCreator::StartGame(int argc, char** argv)
 		m_clientWorldProfiler->Update(dt);
 		m_clientWorldProfiler->Render();
         
-
-		m_worldCounter.Tick();
+		m_clientWorldCounter.Tick();
 
 		m_luaGarbageCollectionCounter.Reset();
 		LuaEmbedder::CollectGarbageForDuration(0.1f * dt);
@@ -648,6 +654,9 @@ void GameCreator::StartGame(int argc, char** argv)
 		m_graphicsCounter.Tick();
 
 		/*	DEBUG PRINT INFO	*/
+		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_0) == Input::InputState::PRESSED)
+			m_graphics->debugModelInfo = !m_graphics->debugModelInfo;
+
 		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_Z) == Input::InputState::PRESSED)
 			showDebugInfo = !showDebugInfo;
 
@@ -711,13 +720,18 @@ void GameCreator::StartGame(int argc, char** argv)
 			ss << "Lua memory usage: " << LuaEmbedder::GetMemoryUsage() << " Kb";
 			m_graphics->RenderSimpleText(ss.str(), 20, 1);
 
+			std::stringstream slaves;
+			slaves << "Slave Threads: " << MPL::TaskManager::GetInstance().GetSlaveCount();
+			m_graphics->RenderSimpleText(slaves.str(), 20, 2);
+
 			m_graphics->RenderSimpleText("Time Statistics", 60, 0);
-			PrintSectionTime("Total   ", m_frameCounter, 60, 1);
-			PrintSectionTime("Input   ", &m_inputCounter, 60, 2);
-			PrintSectionTime("World   ", &m_worldCounter, 60, 3);
-			PrintSectionTime("Network ", &m_networkCounter, 60, 4);
-			PrintSectionTime("Graphics", &m_graphicsCounter, 60, 5);
-			PrintSectionTime("Lua GC  ", &m_luaGarbageCollectionCounter, 60, 6);
+			PrintSectionTime("Total       ", m_frameCounter, 60, 1);
+			PrintSectionTime("Input       ", &m_inputCounter, 60, 2);
+			PrintSectionTime("Server World", &m_serverWorldCounter, 60, 3);
+			PrintSectionTime("Client World", &m_clientWorldCounter, 60, 4);
+			PrintSectionTime("Network     ", &m_networkCounter, 60, 5);
+			PrintSectionTime("Graphics    ", &m_graphicsCounter, 60, 6);
+			PrintSectionTime("Lua GC      ", &m_luaGarbageCollectionCounter, 60, 7);
 		}
 
 		m_frameCounter->Tick();
@@ -1112,12 +1126,12 @@ void GameCreator::ConsoleHostSettings(std::string _command, std::vector<Console:
 	char* data = new char[m_name.size() + 1];
 	memcpy(data, m_name.c_str(), m_name.size() + 1);
 	m_serverWorld->SetComponent(id, "HostSettings", "Name", data);
-	delete data;
+	delete [] data;
 	
 	data = new char[m_map.size() + 1];
 	memcpy(data, m_map.c_str(), m_map.size() + 1);
 	m_serverWorld->SetComponent(id, "HostSettings", "Map", data);
-	delete data;
+	delete [] data;
 
 	m_serverWorld->SetComponent(id, "HostSettings", "Port", &port);
 	m_serverWorld->SetComponent(id, "HostSettings", "FillAI", &m_fillAI);

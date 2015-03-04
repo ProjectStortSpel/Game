@@ -19,6 +19,7 @@ namespace LuaBridge
     LuaEmbedder::EmbedClassFunction<LuaWorld>(L, "World", "KillEntity", &LuaWorld::KillEntity);
     LuaEmbedder::EmbedClassFunction<LuaWorld>(L, "World", "SetComponent", &LuaWorld::SetComponent);
     LuaEmbedder::EmbedClassFunction<LuaWorld>(L, "World", "GetComponent", &LuaWorld::GetComponent);
+	LuaEmbedder::EmbedClassFunction<LuaWorld>(L, "World", "GetComponents", &LuaWorld::GetComponents);
 	LuaEmbedder::EmbedClassFunction<LuaWorld>(L, "World", "EntityHasComponent", &LuaWorld::HasComponent);
   }
   
@@ -97,7 +98,7 @@ namespace LuaBridge
 
 		  World::SetComponent(id, componentType, variableName, tmp);
 
-		  delete tmp;
+		  delete [] tmp;
 	  }
 	  else
 		  return 0;
@@ -126,6 +127,31 @@ namespace LuaBridge
 		  component = new LuaComponent(dataLocation, this, entityId, componentType, variableName);
 	  }
 	  LuaEmbedder::PushObject<LuaComponent>(L, "Component", component, true);
+	  return 1;
+  }
+
+  int LuaWorld::GetComponents(lua_State* L)
+  {
+	  std::vector<ECSL::DataLocation> dataLocations;
+	  unsigned int entityCount;
+	  unsigned int* entities = LuaEmbedder::PullUnsignedIntArray(L, 1, &entityCount);
+	  std::string componentType = LuaEmbedder::PullString(L, 2);
+	  LuaComponent** components = new LuaComponent*[entityCount];
+	  if (LuaEmbedder::IsInt(L, 3))
+	  {
+		  unsigned int index = (unsigned int)LuaEmbedder::PullInt(L, 3);
+		  World::GetComponents(dataLocations, entities, entityCount, componentType, index);
+		  for (unsigned int i = 0; i < entityCount; ++i)
+			  components[i] = new LuaComponent(dataLocations[i], this, entities[i], componentType, index);
+	  }
+	  else
+	  {
+		  std::string variableName = LuaEmbedder::PullString(L, 3);
+		  World::GetComponents(dataLocations, entities, entityCount, componentType, variableName);
+		  for (unsigned int i = 0; i < entityCount; ++i)
+			  components[i] = new LuaComponent(dataLocations[i], this, entities[i], componentType, variableName);
+	  }
+	  LuaEmbedder::PushArray<LuaComponent>(L, "ComponentArray", components, entityCount);
 	  return 1;
   }
 

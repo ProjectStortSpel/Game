@@ -5,6 +5,10 @@ using namespace glm;
 
 GraphicsHigh::GraphicsHigh()
 {
+	debugModelInfo = false;
+
+	m_useAnimations = true;
+
 	mark = 0;
 	timer = 0;
 
@@ -41,7 +45,8 @@ GraphicsHigh::~GraphicsHigh()
 
 	glDeleteBuffers(1, &m_pointlightBuffer);
 	glDeleteBuffers(1, &m_dirLightBuffer);
-
+	glDeleteFramebuffers(1, &m_deferredFBO);
+	glDeleteFramebuffers(1, &m_forwardFBO);
 }
 
 bool GraphicsHigh::Init()
@@ -132,6 +137,12 @@ bool GraphicsHigh::InitShaders()
 	m_riverShader.AddShader("content/shaders/FSForwardShader.glsl", GL_FRAGMENT_SHADER);
 	m_riverShader.FinalizeShaderProgram();
 
+	// River water corner shader
+	m_riverCornerShader.InitShaderProgram();
+	m_riverCornerShader.AddShader("content/shaders/VSForwardShader.glsl", GL_VERTEX_SHADER);
+	m_riverCornerShader.AddShader("content/shaders/riverCornerFS.glsl", GL_FRAGMENT_SHADER);
+	m_riverCornerShader.FinalizeShaderProgram();
+
 	// ShadowShader deferred geometry
 	m_shadowShaderDeferred.InitShaderProgram();
 	m_shadowShaderDeferred.AddShader("content/shaders/shadowShaderDeferredVS.glsl", GL_VERTEX_SHADER);
@@ -147,6 +158,7 @@ void GraphicsHigh::InitRenderLists()
 	m_renderLists.push_back(RenderList(RENDER_VIEWSPACE, &m_modelsViewspace, &m_viewspaceShader));
 	m_renderLists.push_back(RenderList(RENDER_INTERFACE, &m_modelsInterface, &m_interfaceShader));
 	m_renderLists.push_back(RenderList(RENDER_RIVERWATER, &m_modelsWater, &m_riverShader));
+	m_renderLists.push_back(RenderList(RENDER_RIVERWATER_CORNER, &m_modelsWaterCorners, &m_riverCornerShader));
 	m_renderLists.push_back(RenderList(RENDER_DEFERRED_SCATTER, &m_modelsDeferred, &m_deferredShader1));
 	m_renderLists.push_back(RenderList(RENDER_FORWARD_SCATTER, &m_modelsForward, &m_forwardShader));
 }
@@ -281,6 +293,10 @@ void GraphicsHigh::Update(float _dt)
 	}
 	m_glTimerValues.clear();
 
+	if (debugModelInfo)
+		PrintModelInfo();
+
+
 	BufferModels();
 	BufferLightsToGPU();
 	BufferSurfaces();
@@ -374,6 +390,13 @@ void GraphicsHigh::WriteShadowMapDepth()
 	}
 	//------------------------------------------------
 
+	//----Animated
+	m_animationShader.UseProgram();
+	//----DRAW MODELS
+	for (int i = 0; i < m_modelsAnimated.size(); i++)
+		m_modelsAnimated[i].Draw((*m_shadowMap->GetViewMatrix()), shadowProjection, &m_animationShader);
+
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glCullFace(GL_BACK);
 	glDisable(GL_POLYGON_OFFSET_FILL);
@@ -457,21 +480,7 @@ void GraphicsHigh::Render()
 	m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera);
 	glEnable(GL_CULL_FACE);
 	// -----------
-
-	//--------FORWARD RENDERING
 	glEnable(GL_BLEND);
-	//----Uniforms
-	m_forwardShader.UseProgram();
-	m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
-	m_forwardShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
-	m_forwardShader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
-	//----Lights
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
-	//----DRAW MODELS
-	for (int i = 0; i < m_modelsForward.size(); i++)
-		m_modelsForward[i].Draw(viewMatrix, mat4(1));
-
 
 	//-------Render water-------------
 	m_riverShader.UseProgram();
@@ -489,6 +498,35 @@ void GraphicsHigh::Render()
 	for (int i = 0; i < m_modelsWater.size(); i++)
 		m_modelsWater[i].Draw(viewMatrix, mat4(1));
 
+	//-------Render water corners-------------
+	m_riverCornerShader.UseProgram();
+	m_riverCornerShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
+	m_riverCornerShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
+	m_riverCornerShader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
+	m_riverCornerShader.SetUniVariable("ElapsedTime", glfloat, &m_elapsedTime);
+	//----Lights
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
+	//----DRAW MODELS
+	for (int i = 0; i < m_modelsWaterCorners.size(); i++)
+		m_modelsWaterCorners[i].Draw(viewMatrix, mat4(1));
+
+
+	//--------FORWARD RENDERING
+
+	//----Uniforms
+	m_forwardShader.UseProgram();
+	m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
+	m_forwardShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
+	m_forwardShader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
+	//----Lights
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
+	//----DRAW MODELS
+	for (int i = 0; i < m_modelsForward.size(); i++)
+		m_modelsForward[i].Draw(viewMatrix, mat4(1));
+
+
 
 	//--------PARTICLES---------
 	glEnable(GL_POINT_SPRITE);
@@ -505,6 +543,7 @@ void GraphicsHigh::Render()
 		
 		thisShader->SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 
+		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, it->second->GetTexHandle());
 
 		mat4 Model = glm::translate(it->second->GetWorldPos());
@@ -674,6 +713,10 @@ void GraphicsHigh::CreateShadowMap()
 	m_riverShader.SetUniVariable("BiasMatrix", mat4x4, m_shadowMap->GetBiasMatrix());
 	m_riverShader.CheckUniformLocation("ShadowDepthTex", 10);
 
+	m_riverCornerShader.UseProgram();
+	m_riverCornerShader.SetUniVariable("BiasMatrix", mat4x4, m_shadowMap->GetBiasMatrix());
+	m_riverCornerShader.CheckUniformLocation("ShadowDepthTex", 10);
+
 	m_vramUsage += (resolution*resolution*sizeof(float));
 }
 
@@ -702,6 +745,7 @@ void GraphicsHigh::Clear()
 {
 	m_modelIDcounter = 0;
 	
+	m_modelsAnimated.clear();
 	m_modelsDeferred.clear();
 	m_modelsForward.clear();
 	m_modelsViewspace.clear();
@@ -718,4 +762,54 @@ void GraphicsHigh::Clear()
 
 	//if (m_pointerToPointlights)
 		//delete m_pointerToPointlights;
+}
+
+void GraphicsHigh::PrintModelInfo()
+{
+	int xoffset;
+
+	xoffset = 2;
+	m_textRenderer.RenderSimpleText("ANIMATED", xoffset, 1);
+	m_textRenderer.RenderSimpleText(std::to_string(m_modelsAnimated.size()), xoffset + 10, 1);
+	for (int i = 0; i < m_modelsAnimated.size(); i++)
+	{
+		m_textRenderer.RenderSimpleText(std::to_string(m_modelsAnimated[i].animations.size()), xoffset, i + 2);
+		m_textRenderer.RenderSimpleText(m_modelsAnimated[i].name, xoffset + 4, i + 2);
+	}
+
+	xoffset = 32;
+	m_textRenderer.RenderSimpleText("DEFERRED", xoffset, 1);
+	m_textRenderer.RenderSimpleText(std::to_string(m_modelsDeferred.size()), xoffset+10, 1);
+	for (int i = 0; i < m_modelsDeferred.size(); i++)
+	{
+		m_textRenderer.RenderSimpleText(std::to_string(m_modelsDeferred[i].instances.size()), xoffset, i + 2);
+		m_textRenderer.RenderSimpleText(m_modelsDeferred[i].name, xoffset+4, i + 2);
+	}
+
+	xoffset = 62;
+	m_textRenderer.RenderSimpleText("FORWARD", xoffset, 1);
+	m_textRenderer.RenderSimpleText(std::to_string(m_modelsForward.size()), xoffset+10, 1);
+	for (int i = 0; i < m_modelsForward.size(); i++)
+	{
+		m_textRenderer.RenderSimpleText(std::to_string(m_modelsForward[i].instances.size()), xoffset, i + 2);
+		m_textRenderer.RenderSimpleText(m_modelsForward[i].name, xoffset+4, i + 2);
+	}
+
+	xoffset = 92;
+	m_textRenderer.RenderSimpleText("VIEWSPACE", xoffset, 1);
+	m_textRenderer.RenderSimpleText(std::to_string(m_modelsViewspace.size()), xoffset+10, 1);
+	for (int i = 0; i < m_modelsViewspace.size(); i++)
+	{
+		m_textRenderer.RenderSimpleText(std::to_string(m_modelsViewspace[i].instances.size()), xoffset, i + 2);
+		m_textRenderer.RenderSimpleText(m_modelsViewspace[i].name, xoffset+4, i + 2);
+	}
+
+	xoffset = 122;
+	m_textRenderer.RenderSimpleText("INTERFACE", xoffset, 1);
+	m_textRenderer.RenderSimpleText(std::to_string(m_modelsInterface.size()), xoffset+10, 1);
+	for (int i = 0; i < m_modelsInterface.size(); i++)
+	{
+		m_textRenderer.RenderSimpleText(std::to_string(m_modelsInterface[i].instances.size()), xoffset, i + 2);
+		m_textRenderer.RenderSimpleText(m_modelsInterface[i].name, xoffset+4, i + 2);
+	}
 }

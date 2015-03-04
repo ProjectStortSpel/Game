@@ -15,27 +15,39 @@ end
 
 UpdateLerpScaleSystem.Update = function(self, dt)
 	local entities = self:GetEntities()
-	for i = 1, #entities do
-		local entity = entities[i]
-		
-		local _time, _timer, sX, sY, sZ, tX, tY, tZ = world:GetComponent(entity, "LerpingScale", "Time"):GetFloat8(0)
-		local algorithm = world:GetComponent(entity, "LerpingScale", "Algorithm"):GetText(0)
+	
+	if #entities > 0 then
+		local lerpingScales = world:GetComponents(entities, "LerpingScale", "Time")
+		local algorithms = world:GetComponents(entities, "LerpingScale", "Algorithm")
+		local timers = world:GetComponents(entities, "LerpingScale", "Timer")
+		local scales = world:GetComponents(entities, "Scale", 0)
+		local killWhenFinished = world:GetComponents(entities, "LerpingScale", "KillWhenFinished")
+	
+		for i = 1, #entities do
+			local entity = entities[i]
+			
+			local _time, _timer, sX, sY, sZ, tX, tY, tZ = lerpingScales[i]:GetFloat8(0)
 
-		_timer = _timer + dt
-		if _time > _timer then
-			local t = _timer / _time
-			t = self:AlgorithmLerp(t, algorithm)
-			
-			local X = sX + (tX - sX) * t
-			local Y = sY + (tY - sY) * t
-			local Z = sZ + (tZ - sZ) * t
-			
-			world:GetComponent(entity, "Scale", 0):SetFloat3(X, Y, Z, false)
-			world:GetComponent(entity, "LerpingScale", "Timer"):SetFloat(_timer, false)
-		else
-			world:GetComponent(entity, "Scale", 0):SetFloat3(tX, tY, tZ, false)
-			world:RemoveComponentFrom("LerpingScale", entity)
-		end	
+			_timer = _timer + dt
+			if _time > _timer then
+				local t = _timer / _time
+				t = self:AlgorithmLerp(t, algorithms[i]:GetText(0))
+				
+				local X = sX + (tX - sX) * t
+				local Y = sY + (tY - sY) * t
+				local Z = sZ + (tZ - sZ) * t
+				
+				scales[i]:SetFloat3(X, Y, Z, false)
+				timers[i]:SetFloat(_timer, false)
+			else
+				scales[i]:SetFloat3(tX, tY, tZ, false)
+				if killWhenFinished[i]:GetBool() then
+					world:KillEntity(entity)
+				else
+					world:RemoveComponentFrom("LerpingScale", entity)
+				end
+			end	
+		end
 	end
 end
 

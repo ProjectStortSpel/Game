@@ -15,14 +15,10 @@ WeatherSystem.Initialize = function(self)
 end
 
 WeatherSystem.PostInitialize = function(self)
-	--self.WeatherList[#self.WeatherList+1]	=	"Wind"
+	self.WeatherList[#self.WeatherList+1]	=	"Tornado"
 	
 	
-	local entity = world:CreateNewEntity()
-	world:CreateComponentAndAddTo("DirectionalLight", entity)
-	world:CreateComponentAndAddTo("SyncNetwork", entity)
-    local directionalLight = world:GetComponent(entity, "DirectionalLight", 0)
-	directionalLight:SetDirectionalLight(-0.38, -1.0, 0.7, 0.3, 0.7, 0.7, 0.7, 0.75, 0.85)
+
 end
 
 WeatherSystem.EntitiesAdded = function(self, dt, newEntities)
@@ -31,12 +27,11 @@ WeatherSystem.EntitiesAdded = function(self, dt, newEntities)
 		local	tEntity	=	newEntities[n]
 		
 		if world:EntityHasComponent(tEntity, "NewRound") then
-		
+				
 			local	actualWeatherChance	=	math.random(1, 100)
-			self.WeatherChance	=	(self.WeatherChance+1)*1.08
+			self.WeatherChance	=	(self.WeatherChance+1)*1.5
 			print("Weather forecast, " .. self.WeatherChance .. "% chance of weather")
 			if actualWeatherChance <= self.WeatherChance then
-			
 				self:SpawnWeather()
 				self.WeatherChance	=	0
 			end

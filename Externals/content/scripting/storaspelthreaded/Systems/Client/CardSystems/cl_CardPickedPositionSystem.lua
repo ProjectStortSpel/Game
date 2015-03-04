@@ -18,15 +18,16 @@ end
 
 CardPickedPositionSystem.EntitiesAdded = function(self, dt, newEntities)
 	local entities = self:GetEntities()
-	for i = 1, #entities do
+	local entityCount = #entities
+	for i = 1, entityCount do
 		local card = entities[i]
 	
 		local data = world:GetComponent(card, "SelectCard", "Index"):GetInt()
 		
-		local halfentities = #entities/2
+		local halfentities = entityCount * 0.5
 		local px = (-halfentities + data - 0.5) * 0.7
 		local py = self.UpOffset
-		local pz = -6
+		local pz = -6.0
 		
 		if not world:EntityHasComponent(card, "LerpPosition") then
 			world:CreateComponentAndAddTo("LerpPosition", card)
@@ -36,20 +37,22 @@ CardPickedPositionSystem.EntitiesAdded = function(self, dt, newEntities)
 		world:GetComponent(card, "LerpPosition", "Z"):SetFloat(pz)
 		world:GetComponent(card, "LerpPosition", "Time"):SetFloat(0.1)
 		world:GetComponent(card, "LerpPosition", "Algorithm"):SetText("SmoothLerp")
+		world:GetComponent(card, "LerpPosition", "KillWhenFinished"):SetBool(false)
 	end
 end
 
 CardPickedPositionSystem.EntitiesRemoved = function(self, dt, newEntities)
 	local entities = self:GetEntities()
-	for i = 1, #entities do
+	local entityCount = #entities
+	for i = 1, entityCount do
 		local card = entities[i]
 	
 		local data = world:GetComponent(card, "SelectCard", "Index"):GetInt()
 		
-		local halfentities = #entities/2
+		local halfentities = entityCount * 0.5
 		local px = (-halfentities + data - 0.5) * 0.7
 		local py = self.UpOffset
-		local pz = -6
+		local pz = -6.0
 		
 		if not world:EntityHasComponent(card, "LerpPosition") then
 			world:CreateComponentAndAddTo("LerpPosition", card)
@@ -59,5 +62,6 @@ CardPickedPositionSystem.EntitiesRemoved = function(self, dt, newEntities)
 		world:GetComponent(card, "LerpPosition", "Z"):SetFloat(pz)
 		world:GetComponent(card, "LerpPosition", "Time"):SetFloat(0.1)
 		world:GetComponent(card, "LerpPosition", "Algorithm"):SetText("SmoothLerp")
+		world:GetComponent(card, "LerpPosition", "KillWhenFinished"):SetBool(false)
 	end
 end

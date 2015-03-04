@@ -135,17 +135,17 @@ bool ServerNetwork::Stop()
 	//Packet* p = m_packetHandler->EndPack(id);
 	//Broadcast(p);
 
-	NetSleep(10);
-
 	if (SDL_LockMutex(m_connectedClientsLock) == 0)
 	{
 		for (auto it = m_connectedClients->begin(); it != m_connectedClients->end(); ++it)
-			it->second->ShutdownSocket(1);
+			it->second->ShutdownSocket(2);
 
 		SDL_UnlockMutex(m_connectedClientsLock);
 	}
 	else
 		DebugLog("Failed to lock connectedClients. Error: %s.", LogSeverity::Error, SDL_GetError());
+
+	NetSleep(10);
 
 	for (auto it = m_receivePacketThreads->begin(); it != m_receivePacketThreads->end(); ++it)
 	{
@@ -156,6 +156,9 @@ bool ServerNetwork::Stop()
 
 	m_listenSocket->ShutdownSocket(2);
 	m_listenSocket->SetActive(0);
+
+	NetSleep(10);
+
 	if(m_listenThread->joinable())
 		m_listenThread->join();
 
@@ -288,7 +291,7 @@ void ServerNetwork::Send(Packet* _packet, ISocket* _socket)
 	SAFE_DELETE(_packet);
 }
 
-void ServerNetwork::ReceivePackets(ISocket* _socket)
+void ServerNetwork::ReceivePackets(ISocket* _socket, const std::string _name)
 {
 	char* packetData = new char[MAX_PACKET_SIZE];
 	short nextPacketSize;
@@ -349,6 +352,8 @@ void ServerNetwork::ReceivePackets(ISocket* _socket)
 		{
 			if (NET_DEBUG > 0)
 				DebugLog("Failed to receive message from client.", LogSeverity::Warning);
+
+			_socket->SetActive(0);
 		}
 
 	}
@@ -416,7 +421,7 @@ void ServerNetwork::ListenForConnections(void)
 		if (NET_DEBUG > 0)
 			DebugLog("New incoming connection from %s:%d.", LogSeverity::Info, nc.GetIpAddress(), nc.GetPort());
 
-		(*m_receivePacketThreads)[nc] = std::thread(&ServerNetwork::ReceivePackets, this, newConnection);
+		(*m_receivePacketThreads)[nc] = std::thread(&ServerNetwork::ReceivePackets, this, newConnection, nc.GetIpAddress());
 
 		if (SDL_LockMutex(m_timeOutLock) == 0)
 		{
@@ -582,8 +587,18 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t& 
 
 		if (SDL_LockMutex(m_connectedClientsLock) == 0)
 		{
-			(*m_connectedClients)[_connection]->SetActive(2);
-			m_connectedClientsNC->push_back(_connection);
+			if ((*m_connectedClients)[_connection])
+			{
+				(*m_connectedClients)[_connection]->SetActive(2);
+				m_connectedClientsNC->push_back(_connection);
+			}
+			else
+			{
+				m_connectedClients->erase(_connection);
+				if ((*m_receivePacketThreads)[_connection].joinable())
+					(*m_receivePacketThreads)[_connection].join();
+				return;
+			}
 
 			SDL_UnlockMutex(m_connectedClientsLock);
 		}
@@ -659,6 +674,7 @@ void ServerNetwork::NetConnectionLost(NetConnection& _connection)
 
 	if((*m_receivePacketThreads)[_connection].joinable())
 		(*m_receivePacketThreads)[_connection].join();
+	(*m_receivePacketThreads).erase(_connection);
 }
 
 void ServerNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection)

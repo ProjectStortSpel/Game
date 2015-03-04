@@ -36,7 +36,7 @@ void Model::Draw(mat4 viewMatrix, mat4 projectionMatrix)
 			else
 				modelMatrix = *instances[j].modelMatrix;
 
-			mat4 modelViewMatrix;
+			mat4 modelViewMatrix = mat4();
 			modelViewMatrix = viewMatrix * modelMatrix;
 
 			mat4 mvp = projectionMatrix * modelViewMatrix;

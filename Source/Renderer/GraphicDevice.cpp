@@ -12,9 +12,11 @@ using namespace glm;
 
 GraphicDevice::GraphicDevice()
 {
+	m_useAnimations = false;
+
 	m_windowPosX = 70;
 	m_windowPosY = 2;
-	m_windowCaption = "Project MOMS SPAGHETTI";
+	m_windowCaption = "Project SWEET POTATO PIE";
 	m_SDLinitialized = false;
 	
 	m_pointerToPointlights = NULL;
@@ -30,7 +32,7 @@ GraphicDevice::GraphicDevice(Camera _camera, int x, int y)
 	m_camera = new Camera(_camera);
 	m_windowPosX = x;
 	m_windowPosY = y;
-	m_windowCaption = "Project MOMS SPAGHETTI";
+	m_windowCaption = "Project SWEET POTATO PIE";
 	m_SDLinitialized = true;
 
 	m_pointerToPointlights = NULL;
@@ -151,23 +153,6 @@ void GraphicDevice::InitStandardShaders()
 	m_skyBoxShader.AddShader("content/shaders/skyboxShaderFS.glsl", GL_FRAGMENT_SHADER);
 	m_skyBoxShader.FinalizeShaderProgram();
 
-	// ------Particle shaders---------
-		const char * outputNames[] = { "Position", "Velocity", "StartTime" };
-		Shader particleShader;
-		particleShader.InitShaderProgram();
-		particleShader.AddShader("content/shaders/particles/particleFireVS.glsl", GL_VERTEX_SHADER);
-		particleShader.AddShader("content/shaders/particles/particleFireFS.glsl", GL_FRAGMENT_SHADER);
-		glTransformFeedbackVaryings(particleShader.GetShaderProgram(), 3, outputNames, GL_SEPARATE_ATTRIBS);
-		particleShader.FinalizeShaderProgram();
-		m_particleShaders["fire"] = particleShader;
-
-		particleShader.InitShaderProgram();
-		particleShader.AddShader("content/shaders/particles/particleSmokeVS.glsl", GL_VERTEX_SHADER);
-		particleShader.AddShader("content/shaders/particles/particleSmokeFS.glsl", GL_FRAGMENT_SHADER);
-		glTransformFeedbackVaryings(particleShader.GetShaderProgram(), 3, outputNames, GL_SEPARATE_ATTRIBS);
-		particleShader.FinalizeShaderProgram();
-		m_particleShaders["smoke"] = particleShader;
-	// -------------------------------
 }
 void GraphicDevice::InitStandardBuffers()
 {
@@ -177,15 +162,14 @@ void GraphicDevice::InitStandardBuffers()
 	//River water shader
 	m_riverShader.CheckUniformLocation("diffuseTex", 1);
 
+	//River water corner shader
+	m_riverCornerShader.CheckUniformLocation("diffuseTex", 1);
+
 	//Skybox shader
 	m_skyBoxShader.CheckUniformLocation("cubemap", 1);
 
 	//Shadow forward shader
 	m_shadowShaderForward.CheckUniformLocation("diffuseTex", 1);
-
-	//Particle shaders
-	for (std::map<std::string, Shader>::iterator it = m_particleShaders.begin(); it != m_particleShaders.end(); ++it)
-		it->second.CheckUniformLocation("ParticleTex", 1);
 }
 bool GraphicDevice::InitSkybox()
 {
@@ -271,17 +255,25 @@ void GraphicDevice::BufferModelTextures()
 	m_modelTextures.clear();
 }
 
-struct sort_depth
+struct sort_depth_instance
+{
+	inline bool operator() (const Instance& a, const Instance& b)
+	{
+		return (*a.modelMatrix)[3][2] > (*b.modelMatrix)[3][2];
+	}
+};
+struct sort_depth_model
 {
 	inline bool operator() (const Model& a, const Model& b)
 	{
 		return (*a.instances[0].modelMatrix)[3][2] < (*b.instances[0].modelMatrix)[3][2];
 	}
 };
-
 void GraphicDevice::SortModelsBasedOnDepth(std::vector<Model>* models)
 {
-	std::sort(models->begin(), models->end(), sort_depth());
+	for (std::vector<Model>::iterator it = models->begin(); it != models->end(); it++)
+		std::sort(it->instances.begin(), it->instances.end(), sort_depth_instance());
+	std::sort(models->begin(), models->end(), sort_depth_model());
 }
 
 void GraphicDevice::CreateParticleSystems()
@@ -351,8 +343,8 @@ void GraphicDevice::BufferParticleSystems()
 			m_particleSystemsToLoad[i].Scale,
 			m_particleSystemsToLoad[i].SpriteSize,
 			AddTexture(m_particleSystemsToLoad[i].TextureName, GL_TEXTURE1),
-			m_particleSystemsToLoad[i].Color,
-			&m_particleShaders[m_particleSystemsToLoad[i].Name])));
+			m_particleSystemsToLoad[i].Color
+			)));
 	}
 	m_particleSystemsToLoad.clear();
 
@@ -412,7 +404,7 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	Shader *shaderPtr = NULL;
 	std::vector<Model> *modelList = NULL;
 
-	//if (obj.animated)
+	//if (obj.animated && m_useAnimations)
 	//{
 	//	BufferAModel(_modelId, _modelToLoad);
 	//	return;
@@ -472,6 +464,8 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	//if model doesnt exist
 	model.instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
 	// Push back the model
+	model.name = _modelToLoad->File;
+	model.name.erase(model.name.end() - 7, model.name.end());
 	modelList->push_back(model);
 }
 
@@ -527,6 +521,7 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoa
 	//if model doesnt exist
 	model.instances.push_back(Instance(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color));
 	// Push back the model
+	model.name = "Generated Model";
 	modelList->push_back(model);
 }
 
@@ -560,23 +555,18 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 	// Add skeleton
 	for (int i = 0; i < joints.size(); i++)
 	{
-		model.joints.push_back(Joint(
-			joints[i].mat[0][0], joints[i].mat[0][1], joints[i].mat[0][2], joints[i].mat[0][3],
-			joints[i].mat[1][0], joints[i].mat[1][1], joints[i].mat[1][2], joints[i].mat[1][3],
-			joints[i].mat[2][0], joints[i].mat[2][1], joints[i].mat[2][2], joints[i].mat[2][3],
-			joints[i].mat[3][0], joints[i].mat[3][1], joints[i].mat[3][2], joints[i].parent)
-		);
+		model.joints.push_back(joints[i].mat);
 	}
 
 	// Add animation base
 	for (int i = 0; i < joints.size(); i++)
 	{
-		int index = joints.size() - i - 1;
+		int index = i;//joints.size() - i - 1;
 		model.animation.push_back(Joint(
 			joints[index].mat[0][0], joints[index].mat[0][1], joints[index].mat[0][2], joints[index].mat[0][3],
 			joints[index].mat[1][0], joints[index].mat[1][1], joints[index].mat[1][2], joints[index].mat[1][3],
 			joints[index].mat[2][0], joints[index].mat[2][1], joints[index].mat[2][2], joints[index].mat[2][3],
-			joints[index].mat[3][0], joints[index].mat[3][1], joints[index].mat[3][2], index - joints[index].parent - 1
+			joints[index].mat[3][0], joints[index].mat[3][1], joints[index].mat[3][2], joints[index].parent//index - joints[index].parent - 1
 			));
 	}
 
@@ -590,13 +580,18 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 		}
 	}
 
-	glGenBuffers(1, &model.jointBuffer);
+	//glGenBuffers(1, &model.jointBuffer);
 	glGenBuffers(1, &model.animBuffer);
 
 	//for the matrices (modelView + normal)
 	m_vramUsage += (16 + 9) * sizeof(float);
 
+	// Pre-calc frames
+	model.PreCalculateAnimations();
+
 	// Push back the model
+	model.name = _modelToLoad->File;
+	model.name.erase(model.name.end() - 7, model.name.end());
 	modelList->push_back(model);
 }
 
@@ -633,6 +628,14 @@ bool GraphicDevice::RemoveModel(int _id)
 			}
 		}
 	}
+	for (int i = 0; i < m_modelsAnimated.size(); i++)
+	{
+		if (m_modelsAnimated[i].id == _id)
+		{
+			m_modelsAnimated.erase(m_modelsAnimated.begin() + i);
+			return true;
+		}
+	}
 	return false;
 }
 bool GraphicDevice::ActiveModel(int _id, bool _active)
@@ -650,6 +653,14 @@ bool GraphicDevice::ActiveModel(int _id, bool _active)
 					return true;
 				}
 			}
+		}
+	}
+	for (int i = 0; i < m_modelsAnimated.size(); i++)
+	{
+		if (m_modelsAnimated[i].id == _id)
+		{
+			m_modelsAnimated[i].active = _active;
+			return true;
 		}
 	}
 	return false;

@@ -5,6 +5,7 @@ in vec3 BiTan;
 in vec2 TexCoord;
 in vec3 ViewPos;
 in vec3 AddColor;
+in float A;
 
 layout( location = 0 ) out vec4 ColorData;
 
@@ -169,10 +170,14 @@ void main()
 
 	// Spec data
 	vec4 specglow_map = texture( specularTex, TexCoord );
-	float blendFactor = specglow_map.w;
+
+	float blendFactor = mod(int(specglow_map.a*99), 50)/50;//(specTexture.a-0.5f)*2;
+	vec3 AddedColor = AddColor;
+	if (specglow_map.a < 0.5)
+		AddedColor = vec3(1) - AddColor; // ANTICOLOR? Good or bad? I like
 
 	if( AddColor != vec3(0.0) )
-		albedo_tex.xyz = (1.0f-blendFactor)*albedo_tex.xyz + blendFactor * AddColor; 
+		albedo_tex.xyz = (1.0f-blendFactor)*albedo_tex.xyz + blendFactor * AddedColor; 
 
 	Material.Ks			= specglow_map.x;
 	Material.Shininess  = specglow_map.y * 254.0f + 1.0f;
