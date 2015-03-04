@@ -1026,16 +1026,25 @@ MapGenerator.FixRiverCorners = function(self, riverTiles)
 
 						local comp = world:GetComponent(riverTiles[waterB], "Rotation", 0)
 						local currentRotation = comp:GetFloat(1)
-
+						
+						world:CreateComponentAndAddTo("RiverCornerDir", riverTiles[waterB])
+						print("RiverCornerDir Created: " .. riverTiles[waterB])
 						--	RIGHT TURN
 						if dirAX == 1 and dirBY == 1 then
 							comp:SetFloat3(0, currentRotation - math.pi/2, 0)
+							world:GetComponent(riverTiles[waterB], "RiverCornerDir", "Dir"):SetText("Right")
 						elseif dirAX == -1 and dirBY == -1 then
 							comp:SetFloat3(0, currentRotation - math.pi/2, 0)
+							world:GetComponent(riverTiles[waterB], "RiverCornerDir", "Dir"):SetText("Right")
 						elseif dirAY == 1 and dirBX == -1 then
 							comp:SetFloat3(0, currentRotation - math.pi/2, 0)
+							world:GetComponent(riverTiles[waterB], "RiverCornerDir", "Dir"):SetText("Right")
 						elseif dirAY == -1 and dirBX == 1 then
 							comp:SetFloat3(0, currentRotation - math.pi/2, 0)
+							world:GetComponent(riverTiles[waterB], "RiverCornerDir", "Dir"):SetText("Right")
+						--	LEFT TURN
+						else
+							world:GetComponent(riverTiles[waterB], "RiverCornerDir", "Dir"):SetText("Left")
 						end
 						
 					end

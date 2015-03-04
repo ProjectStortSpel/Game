@@ -61,6 +61,7 @@ namespace LuaEmbedder
     }
     LuaParentChildrensMap.clear();
     LuaChildrenParentMap.clear();
+    LuaFunctionStateMap.clear();
 	Functions.clear();
   }
   

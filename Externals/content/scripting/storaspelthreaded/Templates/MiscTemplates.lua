@@ -98,3 +98,11 @@ template:AddComponent("Scale")
 template:AddComponent("PickBox")
 template:AddComponent("Checkbox")
 EntityTemplateManager:AddTemplate(template)
+
+template = EntityTemplate()
+template.Name = "FlowingWater"
+template:AddComponent("Model")
+template:SetFloat3("Position", 0.0, 1.0, 0.0)
+template:SetFloat3("Rotation", 0.0, 0, 0.0)
+template:SetFloat3("Scale", 1, 1, 1)
+EntityTemplateManager:AddTemplate(template)

@@ -56,11 +56,8 @@ ServerNetworkMessageSystem.OnPlayerConnected = function(self, _ip, _port, _messa
 	local counterEntities = self:GetEntities("PlayerCounter")
 	local counterComp = world:GetComponent(counterEntities[1], "PlayerCounter", 0)
 	local noOfPlayers, noOfSpectators = counterComp:GetInt2()
-	
-	print("ServerNetworkMessageSystem.OnPlayerConnected")
-	
+
 	local mapSpecs = self:GetEntities("MapSpecs")
-	print("MapSpecs: " .. #mapSpecs)
 	local maxPlayers = 1
 	if #mapSpecs > 0 then
 		maxPlayers = world:GetComponent(mapSpecs[1], "MapSpecs", "NoOfSpawnpoints"):GetInt(0)

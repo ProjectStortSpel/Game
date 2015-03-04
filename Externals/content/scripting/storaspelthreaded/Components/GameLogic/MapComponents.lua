@@ -100,3 +100,10 @@ NewComponent = ComponentType()
 NewComponent.Name = "GenerateMap"
 NewComponent.TableType = TableType.Map
 worldCreator:AddComponentType(NewComponent)
+--	RightCorner
+local RiverCornerDir = ComponentType()
+RiverCornerDir.Name = "RiverCornerDir"
+RiverCornerDir.SyncNetwork = true
+RiverCornerDir.TableType = TableType.Map
+RiverCornerDir:AddVariable("Dir", ByteSize.Text)
+worldCreator:AddComponentType(RiverCornerDir)
