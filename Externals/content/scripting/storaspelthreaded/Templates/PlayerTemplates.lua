@@ -7,7 +7,6 @@ AITemplate:AddComponent("PlayerNumber")
 AITemplate:AddComponent("PlayerName")
 --AITemplate:AddComponent("UnitEntityId")
 AITemplate:AddComponent("PickingDone")
-AITemplate:AddComponent("SyncNetwork")			--	Sync this entity
 EntityTemplateManager:AddTemplate(AITemplate)	--	Add the template
 
 --	Player template
