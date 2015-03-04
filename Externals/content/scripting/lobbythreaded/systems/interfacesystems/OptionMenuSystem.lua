@@ -1,6 +1,7 @@
 OptionMenuSystem = System()
 OptionMenuSystem.Name = "OptionMenu"
 OptionMenuSystem.RequestRelease = false
+OptionMenuSystem.IsMenuActive = true
 
 OptionMenuSystem.Initialize = function(self)
 	--	Set Name
@@ -13,9 +14,29 @@ OptionMenuSystem.Initialize = function(self)
 	--	Set Filter
 	self:AddComponentTypeToFilter(self.Name, FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter(self.Name.."Element", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter(self.Name.."Activate", FilterType.RequiresOneOf)
+end
+
+
+OptionMenuSystem.EntitiesAdded = function(self, dt, entities)
+	for n = 1, #entities do
+		local entityId = entities[n]
+		if world:EntityHasComponent(entityId, self.Name) then
+			self:SpawnMenu()
+		elseif world:EntityHasComponent(entityId, self.Name .. "Activate") then
+			self.IsMenuActive = true
+			world:KillEntity(entityId)
+		end
+	end
 end
 
 OptionMenuSystem.Update = function(self, dt)
+
+	if not self.IsMenuActive then
+		return
+	end
+
+
 	if self.RequestRelease then
 		local pressedButtons = self:GetEntities("OnPickBoxHit")
 		if #pressedButtons > 0 then
@@ -40,15 +61,6 @@ OptionMenuSystem.Update = function(self, dt)
 		self.RequestRelease = true
 	else
 		self.RequestRelease = false
-	end
-end
-
-OptionMenuSystem.EntitiesAdded = function(self, dt, entities)
-	for n = 1, #entities do
-		local entityId = entities[n]
-		if world:EntityHasComponent(entityId, self.Name) then
-			self:SpawnMenu()
-		end
 	end
 end
 

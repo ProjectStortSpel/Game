@@ -20,6 +20,12 @@ OptionMenuElement.Name = "OptionMenuElement"
 OptionMenuElement.TableType = TableType.Map
 worldCreator:AddComponentType(OptionMenuElement)
 
+--	OptionMenuActivate Component
+local OptionMenuActivate = ComponentType()
+OptionMenuActivate.Name = "OptionMenuActivate"
+OptionMenuActivate.TableType = TableType.Map
+worldCreator:AddComponentType(OptionMenuActivate)
+
 --	ConnectMenu Component
 local ConnectMenu = ComponentType()
 ConnectMenu.Name = "ConnectMenu"
