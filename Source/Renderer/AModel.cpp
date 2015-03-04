@@ -18,8 +18,6 @@ AModel::AModel(int _id, bool _active, mat4* _model, float* _color, Buffer* buffe
 	frameTime = 0.01f;
 	framesPerTick = 4;
 	animId = 0;
-
-	glGenBuffers(1, &animBuffer);
 }
 
 AModel::AModel()
@@ -28,8 +26,6 @@ AModel::AModel()
 
 AModel::~AModel()
 {
-	//glDeleteBuffers(1, &jointBuffer);
-	glDeleteBuffers(1, &animBuffer);
 }
 
 void AModel::Draw(mat4 viewMatrix, mat4 projectionMatrix, Shader* shaderptr)
@@ -50,20 +46,6 @@ void AModel::Draw(mat4 viewMatrix, mat4 projectionMatrix, Shader* shaderptr)
 		shaderptr->SetUniVariable("M", mat4x4, &modelViewMatrix);
 		shaderptr->SetUniVariable("VP", mat4x4, &vp);
 		shaderptr->SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
-
-
-
-		float *anim_data = new float[animation.size() * 16];
-		for (int j = 0; j < animation.size(); j++)
-		{
-			memcpy(&anim_data[16 * j], &animation[j], 16 * sizeof(float));
-		}
-		int anim_data_size = 16 * animation.size() * sizeof(float);
-		glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 6, animBuffer, 0, anim_data_size);
-		glBufferData(GL_SHADER_STORAGE_BUFFER, anim_data_size, anim_data, GL_STATIC_DRAW);
-		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, animBuffer);
-		delete [] anim_data;
-
 
 
 		glActiveTexture(GL_TEXTURE1);

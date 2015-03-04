@@ -89,7 +89,7 @@ namespace Renderer
 		std::vector<Model> m_modelsDeferred;
 
 		// Pointlights buffer
-		GLuint m_pointlightBuffer, m_dirLightBuffer;
+		GLuint m_pointlightBuffer, m_dirLightBuffer, m_animationBuffer;
 		vec3 m_dirLightDirection;
 
 		// DEBUG variables ----
