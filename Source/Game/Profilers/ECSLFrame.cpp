@@ -48,6 +48,7 @@ void ECSLFrame::AddWorkItemStatistic(MPL::LoggedAction* _action, unsigned int _t
 	workItem->localGroupId = _action->workItem->LocalGroupId;
 	workItem->groupId = _action->workItem->GroupId;
 	workItem->duration = _action->duration;
+
 	while (workItem->groupId >= m_workItems->size())
 		m_workItems->push_back(new std::vector<ECSLFrame::WorkItem*>());
 	if (workItem->localGroupId >= (*m_workItems)[workItem->groupId]->size())

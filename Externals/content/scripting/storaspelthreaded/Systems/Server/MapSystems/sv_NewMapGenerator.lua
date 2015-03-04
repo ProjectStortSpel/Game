@@ -62,8 +62,8 @@ end
 
 MapGenerator.EntitiesAdded = function(self, dt, entities)
 	--self:GenerateMap(os.time()%29181249, 4, 4)
-	self:GenerateMap(23246299, 4, 4)
-	--self:GenerateMap(666, 3, 4)
+	--self:GenerateMap(23246299, 8, 4)
+	self:GenerateMap(9, 4, 4)
 	--self:GenerateMap(23239474, 4, 4)
 	--self:GenerateMap(5747, 4, 4)
 	--self:GenerateMap(1338, 2, 4)
@@ -94,7 +94,7 @@ MapGenerator.GenerateMap = function(self, MapSeed, NumberOfPlayers, NumberOfChec
 
 	--	Seed the random
 	math.randomseed(MapSeed)
-	print("SEEEED " .. MapSeed)
+	--print("SEEEED " .. MapSeed)
 	
 	--	Randomize initial values
 	self.MapSizeX		=	math.random(8+NumberOfPlayers, 10+NumberOfPlayers) + 2*self.VoidMargin
@@ -847,11 +847,11 @@ MapGenerator.CreateMap = function(self)
 	self:GenerateIslandBelow()
 	
 	--	Generate directional light
-	local	R,G,B		=	0.6,0.6,0.65
+	local	R,G,B		=	0.8,0.7,0.6
 	local 	newLight 	= 	world:CreateNewEntity()
 	world:CreateComponentAndAddTo("DirectionalLight", newLight)
 	world:CreateComponentAndAddTo("SyncNetwork", newLight)
-    world:GetComponent(newLight, "DirectionalLight", 0):SetDirectionalLight(math.sin(math.random(1, 360)), -1.0, math.sin(math.random(1, 360)), 0.3, 0.7, 0.7, R, G, B)
+    world:GetComponent(newLight, "DirectionalLight", 0):SetDirectionalLight(math.sin(math.random(1, 360)), -1.0, math.sin(math.random(1, 360)), 0.45, 0.65, 0.65, R, G, B)
 	
 	
 end
@@ -975,6 +975,7 @@ MapGenerator.CreateCheckpointEntity = function(self, X, Z, Number)
 	world:GetComponent(newCheckpoint, "Checkpoint", 0):SetInt(Number)
 	world:CreateComponentAndAddTo("Model", newCheckpoint)
 	world:GetComponent(newCheckpoint, "Model", 0):SetModel("checkpoint", "checkpoint", 0)
+	world:GetComponent(newCheckpoint, "TileOffset", "Offset"):SetFloat(0.60)
 	
 	return	newCheckpoint
 end
@@ -1107,6 +1108,7 @@ MapGenerator.FixRiverEffects = function(self, riverTiles)
 			world:CreateComponentAndAddTo("Position", newParticle)
 			world:CreateComponentAndAddTo("Color", newParticle)
 			world:CreateComponentAndAddTo("Particle", newParticle)
+			world:CreateComponentAndAddTo("SyncNetwork", newParticle)
 			
 			world:GetComponent(newParticle, "Position", "X"):SetFloat3(posAX, 0.40, posAY)
 			world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.6, 0.6, 0.6)
@@ -1125,6 +1127,7 @@ MapGenerator.FixRiverEffects = function(self, riverTiles)
 			world:CreateComponentAndAddTo("Position", newParticle)
 			world:CreateComponentAndAddTo("Color", newParticle)
 			world:CreateComponentAndAddTo("Particle", newParticle)
+			world:CreateComponentAndAddTo("SyncNetwork", newParticle)
 			
 			world:GetComponent(newParticle, "Position", "X"):SetFloat3(posAX + 0.6*dirAX, 0.23, posAY + 0.6*dirAY)
 			
@@ -1168,7 +1171,7 @@ MapGenerator.FixEdges = function(self)
 	
 end
 
-MapGenerator.CreateEdgePiece = function(self, X, Z, isCorner)
+MapGenerator.CreateEdgePiece = function(self, X, Z, isCorner, EdgeDirection)
 	local	newEdge	=	world:CreateNewEntity()
 	
 	world:CreateComponentAndAddTo("Position", newEdge)
@@ -1189,7 +1192,15 @@ MapGenerator.CreateEdgePiece = function(self, X, Z, isCorner)
 			local	dirX, dirZ	=	self:GetRiverDirection(self:GetTileType(X, Z))
 			
 			if self:GetTileType(X+dirX, Z+dirZ) == self.Void then
-				world:GetComponent(newEdge, "Model", 0):SetModel("edgeriver", "edgeriver", 1)
+				
+				local	tDirX, tDirZ	=	self:GetRiverDirection(self.RiverUp + EdgeDirection)
+				print("dirX: " .. dirX .. ", " .. dirZ)
+				print("tDir: " .. tDirX .. ", " .. tDirZ)
+				if tDirX == dirX and tDirZ == dirZ then
+					world:GetComponent(newEdge, "Model", 0):SetModel("edgeriver", "edgeriver", 1)
+				else
+					world:GetComponent(newEdge, "Model", 0):SetModel("edgeflat", "edgeflat", 1)
+				end
 			else
 				world:GetComponent(newEdge, "Model", 0):SetModel("edgeflat", "edgeflat", 1)
 			end
@@ -1205,54 +1216,54 @@ MapGenerator.PlaceEdgeAt = function(self, X, Z)
 	
 	local	tUp, tRight, tDown, tLeft	=	self:GetEmptyAdjacentTiles(X, Z)
 	
-	local	newEdge	=	0
-	local	tEdgeOffset		=	0.509
+	local	newEdge		=	0
+	local	tEdgeOffset	=	0.509
 	
 	if tUp then
-		newEdge	=	self:CreateEdgePiece(X, Z, false)
+		newEdge	=	self:CreateEdgePiece(X, Z, false, 0)
 		world:GetComponent(newEdge, "Position", 0):SetFloat3(X, 0.0, Z-tEdgeOffset)
 		world:GetComponent(newEdge, "Rotation", 0):SetFloat3(0.0, math.pi, 0.0)
 		
 	end
 	
 	if tRight then
-		newEdge	=	self:CreateEdgePiece(X, Z, false)
+		newEdge	=	self:CreateEdgePiece(X, Z, false, 1)
 		world:GetComponent(newEdge, "Position", 0):SetFloat3(X+tEdgeOffset, 0.0, Z)
 		world:GetComponent(newEdge, "Rotation", 0):SetFloat3(0.0, math.pi/2, 0.0)
 	end
 	
 	if tDown then
-		newEdge	=	self:CreateEdgePiece(X, Z, false)
+		newEdge	=	self:CreateEdgePiece(X, Z, false, 2)
 		world:GetComponent(newEdge, "Position", 0):SetFloat3(X, 0.0, Z+tEdgeOffset)
 		world:GetComponent(newEdge, "Rotation", 0):SetFloat3(0.0, 0.0, 0.0)
 	end
 	
 	if tLeft then
-		newEdge	=	self:CreateEdgePiece(X, Z, false)
+		newEdge	=	self:CreateEdgePiece(X, Z, false, 3)
 		world:GetComponent(newEdge, "Position", 0):SetFloat3(X-tEdgeOffset, 0.0, Z)
 		world:GetComponent(newEdge, "Rotation", 0):SetFloat3(0.0, -math.pi/2, 0.0)
 	end
 	
 	if tDown and tLeft then
-		newEdge	=	self:CreateEdgePiece(X, Z, true)
+		newEdge	=	self:CreateEdgePiece(X, Z, true, -1)
 		world:GetComponent(newEdge, "Position", 0):SetFloat3(X-0.5014, 0.0, Z+0.5102)
 		world:GetComponent(newEdge, "Rotation", 0):SetFloat3(0.0, -math.pi/2, 0.0)
 	end
 	
 	if tDown and tRight then
-		newEdge	=	self:CreateEdgePiece(X, Z, true)
+		newEdge	=	self:CreateEdgePiece(X, Z, true, -1)
 		world:GetComponent(newEdge, "Position", 0):SetFloat3(X+0.5101, 0.0, Z+0.5018)
 		world:GetComponent(newEdge, "Rotation", 0):SetFloat3(0.0, 0, 0.0)
 	end
 	
 	if tUp and tLeft then
-		newEdge	=	self:CreateEdgePiece(X, Z, true)
+		newEdge	=	self:CreateEdgePiece(X, Z, true, -1)
 		world:GetComponent(newEdge, "Position", 0):SetFloat3(X-0.5101, 0.0, Z-0.5018)
 		world:GetComponent(newEdge, "Rotation", 0):SetFloat3(0.0, math.pi, 0.0)
 	end
 	
 	if tUp and tRight then
-		newEdge	=	self:CreateEdgePiece(X, Z, true)
+		newEdge	=	self:CreateEdgePiece(X, Z, true, -1)
 		world:GetComponent(newEdge, "Position", 0):SetFloat3(X+0.5014, 0.0, Z-0.5102)
 		world:GetComponent(newEdge, "Rotation", 0):SetFloat3(0.0, math.pi-math.pi/2, 0.0)
 	end

@@ -8,6 +8,40 @@ namespace LuaBridge
 		{
 			LuaEmbedder::AddFunction(L, "Combinations", &LuaCombinations, "CombinationMath");
 			LuaEmbedder::AddFunction(L, "Permutations", &LuaPermutations, "CombinationMath");
+			LuaEmbedder::AddFunction(L, "MicroTime", &LuaMicroTime, "CombinationMath");
+			LuaEmbedder::AddFunction(L, "ClockCycles", &LuaClockCycles, "CombinationMath");
+		}
+
+		int LuaMicroTime(lua_State * L)
+		{
+			float time = 0.0f;
+
+			Uint64 counter = SDL_GetPerformanceCounter();
+
+			counter -= initTime;
+
+			time = counter / performanceFreq;
+
+			//printf("Time: %f\n", time);
+			LuaEmbedder::PushFloat(L, time);
+		
+			return 1;
+		}
+
+		int LuaClockCycles(lua_State * L)
+		{
+			//float time = 0.0f;
+
+			Uint64 counter = SDL_GetPerformanceCounter();
+
+			counter -= initTime;
+
+			//time = counter / performanceFreq;
+
+			//printf("Time: %f\n", time);
+			LuaEmbedder::PushInt(L, counter);
+
+			return 1;
 		}
 
 		int LuaCombinations(lua_State* L)

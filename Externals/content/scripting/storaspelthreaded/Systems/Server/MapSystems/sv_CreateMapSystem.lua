@@ -236,7 +236,7 @@ CreateMapSystem.AddTallGrass = function(self, posX, posZ)
 	world:GetComponent(tallGrass, "Position", 0):SetFloat3(randX, 0.5, randZ)
 	world:GetComponent(tallGrass, "Rotation", 0):SetFloat3(0, 0, 0)
 	local randScale = math.random() + 0.5
-	world:GetComponent(tinyStone, "Scale", 0):SetFloat3(0.15*randScale, 0.15*randScale, 0.15*randScale)
+	world:GetComponent(tallGrass, "Scale", 0):SetFloat3(0.15*randScale, 0.15*randScale, 0.15*randScale)
 	world:GetComponent(tallGrass, "Model", 0):SetModel("tallgrass", "tallgrass", 9)
 end 
 

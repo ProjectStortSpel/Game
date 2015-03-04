@@ -82,18 +82,9 @@ DealCardsSystem.DealCards = function (self, numCards)
 			world:RemoveComponentFrom("HasSelectedCards", players[i])
 		end
 	
-		local pickingStartedID = Net.StartPack("Client.RemotePickingStarted")
-		Net.WriteInt(pickingStartedID, players[i])
-		Net.Broadcast(pickingStartedID)
-	
 		local ip = world:GetComponent(players[i], "NetConnection", "IpAddress"):GetText()
 		local port = world:GetComponent(players[i], "NetConnection", "Port"):GetInt()
 
-		
-		print("IP:   " .. ip)
-		print("Port: " .. port)
-		print("NumCards:" .. numCards)
-		print("")
 		for j = 1, numCards do
 
 			local cardIndex = math.random(1, cardsLeft)

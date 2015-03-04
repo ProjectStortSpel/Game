@@ -404,11 +404,11 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	Shader *shaderPtr = NULL;
 	std::vector<Model> *modelList = NULL;
 
-	//if (obj.animated && m_useAnimations)
-	//{
-	//	BufferAModel(_modelId, _modelToLoad);
-	//	return;
-	//}
+	if (obj.animated && m_useAnimations)
+	{
+		BufferAModel(_modelId, _modelToLoad);
+		return;
+	}
 
 	bool FoundShaderType = false;
 	for (int i = 0; i < m_renderLists.size(); i++)
@@ -580,9 +580,6 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 		}
 	}
 
-	//glGenBuffers(1, &model.jointBuffer);
-	glGenBuffers(1, &model.animBuffer);
-
 	//for the matrices (modelView + normal)
 	m_vramUsage += (16 + 9) * sizeof(float);
 
@@ -717,8 +714,11 @@ Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg, bool a
 			}
 		}
 	}
+	if (animated)
+		retbuffer->initNotInstanced(bufferData, bufferDatas, NULL, 0);
+	else
+		retbuffer->init(bufferData, bufferDatas);
 
-	retbuffer->init(bufferData, bufferDatas);
 	retbuffer->setCount((int)positionData.size() / 3);
 
 	m_meshs.insert(std::pair<const std::string, Buffer*>(_fileDir, retbuffer));
