@@ -52,7 +52,7 @@ namespace Renderer
 		int jointId;
 		int* lastFrame;
 		std::vector<KeyFrame> keyFrames;
-		std::vector<Joint> frames;
+		std::vector<glm::mat4> frames;
 		JointAnim(int _jointId, int* _lastFrame)
 		{
 			jointId = _jointId;
@@ -131,6 +131,7 @@ namespace Renderer
 		//GLuint jointBuffer;
 		GLuint* animBuffer;
 		std::vector<glm::mat4> joints;
+		std::vector<glm::mat4> anim;
 		std::vector<Joint> animation;
 		std::vector<Animation> animations;
 		int animId;
