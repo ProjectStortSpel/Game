@@ -89,6 +89,19 @@ void GraphicsLow::Render()
 	//--------Uniforms-------------------------------------------------------------------------
 	mat4 projectionMatrix = *m_camera->GetProjMatrix();
 	mat4 viewMatrix = *m_camera->GetViewMatrix();
+
+	glDisable(GL_CULL_FACE);
+	// DRAW SKYBOX
+	m_skyBoxShader.UseProgram();
+	m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera);
+	// -----------
+
+	glEnable(GL_CULL_FACE);
+
+	glClear(GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+
 	if (m_modelsForward.size() > 0)
 	{
 		//------FORWARD RENDERING--------------------------------------------
@@ -205,18 +218,7 @@ void GraphicsLow::Render()
 		}
 
 	}
-	glDisable(GL_CULL_FACE);
-	// DRAW SKYBOX
-	m_skyBoxShader.UseProgram();
-	m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera);
-	// -----------
-
-	glEnable(GL_CULL_FACE);
-
-	glClear(GL_DEPTH_BUFFER_BIT);
-	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_BLEND);
-
+	
 	//--------PARTICLES---------
 	glDepthMask(GL_FALSE);
 
@@ -242,6 +244,7 @@ void GraphicsLow::Render()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	//------------------------
 
+	glClear(GL_DEPTH_BUFFER_BIT);
 
 	// RENDER VIEWSPACE STUFF
 	m_viewspaceShader.UseProgram();
@@ -411,6 +414,18 @@ bool GraphicsLow::InitShaders()
 	m_forwardShader.AddShader("content/shaders/android/lowAndroidForwardVS.glsl", GL_VERTEX_SHADER);
 	m_forwardShader.AddShader("content/shaders/android/lowAndroidForwardFS.glsl", GL_FRAGMENT_SHADER);
 	m_forwardShader.FinalizeShaderProgram();
+
+	// River water shader
+	m_riverShader.InitShaderProgram();
+	m_riverShader.AddShader("content/shaders/android/AndroidRiverShaderVS.glsl", GL_VERTEX_SHADER);
+	m_riverShader.AddShader("content/shaders/android/lowAndroidForwardFS.glsl", GL_FRAGMENT_SHADER);
+	m_riverShader.FinalizeShaderProgram();
+
+	// River water corner shader
+	m_riverCornerShader.InitShaderProgram();
+	m_riverCornerShader.AddShader("content/shaders/android/lowAndroidForwardVS.glsl", GL_VERTEX_SHADER);
+	m_riverCornerShader.AddShader("content/shaders/android/lowAndroidRiverCornerFS.glsl", GL_FRAGMENT_SHADER);
+	m_riverCornerShader.FinalizeShaderProgram();
 
 	return true;
 }
@@ -707,29 +722,6 @@ Buffer* GraphicsLow::AddMesh(ModelToLoadFromSource* _modelToLoad, Shader *_shade
 	m_meshs.insert(std::pair<const std::string, Buffer*>(_modelToLoad->key, retbuffer));
 
 	return retbuffer;
-}
-
-void GraphicsLow::Clear()
-{
-  m_modelIDcounter = 0;
-  
-  m_modelsForward.clear();
-  m_modelsViewspace.clear();
-  m_modelsInterface.clear();
-
-  float **tmpPtr = new float*[1];
-  BufferPointlights(0, tmpPtr);
-  delete [] tmpPtr;
-  
-  if (m_pointlightsPtr)
-	  delete [] m_pointlightsPtr;
-
-  m_pointlightsPtr = NULL;
-  m_directionalLightPtr = NULL;
-
-  for (std::map<int, ParticleEffect*>::iterator it = m_particleEffects.begin(); it != m_particleEffects.end(); ++it)
-	  delete(it->second);
-  m_particleEffects.clear();
 }
 
 void GraphicsLow::BufferLightsToGPU()

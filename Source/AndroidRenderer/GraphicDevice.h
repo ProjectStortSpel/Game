@@ -155,7 +155,7 @@ namespace Renderer
 
 		int GetVRamUsage(){ return -1; }
 		
-		virtual void Clear(){};
+		void Clear();
 		
 		int AddFont(const std::string& filepath, int size);
 		float CreateTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, glm::ivec2 size = glm::ivec2(-1, -1));

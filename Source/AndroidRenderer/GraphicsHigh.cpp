@@ -144,10 +144,23 @@ void GraphicsHigh::Render()
 
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glViewport(0, 0, m_framebufferWidth, m_framebufferHeight);
 
 	//--------Uniforms-------------------------------------------------------------------------
 	mat4 projectionMatrix = *m_camera->GetProjMatrix();
 	mat4 viewMatrix = *m_camera->GetViewMatrix();
+
+	glDisable(GL_CULL_FACE);
+	// DRAW SKYBOX
+	m_skyBoxShader.UseProgram();
+	m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera);
+	// -----------
+
+	glEnable(GL_CULL_FACE);
+
+	glClear(GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
 
 	if (m_modelsForward.size() > 0)
 	{
@@ -155,7 +168,7 @@ void GraphicsHigh::Render()
 
 		glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 		glViewport(0, 0, m_framebufferWidth, m_framebufferHeight);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		//------FORWARD RENDERING--------------------------------------------
 		//glEnable(GL_BLEND);
@@ -282,24 +295,11 @@ void GraphicsHigh::Render()
 
 	}
 	glViewport(0, 0, m_framebufferWidth, m_framebufferHeight);
-	glDisable(GL_CULL_FACE);
-	// DRAW SKYBOX
-	m_skyBoxShader.UseProgram();
-	m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera);
-	// -----------
-
-	glEnable(GL_CULL_FACE);
-
-	glClear(GL_DEPTH_BUFFER_BIT);
-	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_BLEND);
+	
 
 
 	//--------PARTICLES---------
-	//glEnable(GL_POINT_SPRITE);
 	glDepthMask(GL_FALSE);
-
-	//glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 
 	glActiveTexture(GL_TEXTURE1);
 
@@ -325,6 +325,7 @@ void GraphicsHigh::Render()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	//------------------------
 
+	glClear(GL_DEPTH_BUFFER_BIT);
 
 	// RENDER VIEWSPACE STUFF
 	m_viewspaceShader.UseProgram();
@@ -499,6 +500,18 @@ bool GraphicsHigh::InitShaders()
 	m_shadowShader.AddShader("content/shaders/android/AndroidShadowShaderVS.glsl", GL_VERTEX_SHADER);
 	m_shadowShader.AddShader("content/shaders/android/AndroidShadowShaderFS.glsl", GL_FRAGMENT_SHADER);
 	m_shadowShader.FinalizeShaderProgram();
+
+	// River water shader
+	m_riverShader.InitShaderProgram();
+	m_riverShader.AddShader("content/shaders/android/AndroidRiverShaderVS.glsl", GL_VERTEX_SHADER);
+	m_riverShader.AddShader("content/shaders/android/AndroidForwardFS.glsl", GL_FRAGMENT_SHADER);
+	m_riverShader.FinalizeShaderProgram();
+
+	// River water corner shader
+	m_riverCornerShader.InitShaderProgram();
+	m_riverCornerShader.AddShader("content/shaders/android/AndroidForwardVS.glsl", GL_VERTEX_SHADER);
+	m_riverCornerShader.AddShader("content/shaders/android/highAndroidRiverCornerFS.glsl", GL_FRAGMENT_SHADER);
+	m_riverCornerShader.FinalizeShaderProgram();
 
 	return true;
 }
@@ -829,41 +842,6 @@ Buffer* GraphicsHigh::AddMesh(ModelToLoadFromSource* _modelToLoad, Shader *_shad
 	m_meshs.insert(std::pair<const std::string, Buffer*>(_modelToLoad->key, retbuffer));
 
 	return retbuffer;
-}
-
-//ObjectData GraphicDevice::AddObject(std::string _file, std::string _dir)
-//{
-//	std::string fileDir = _dir;
-//	fileDir.append(_file);
-//	for (std::map<const std::string, ObjectData>::iterator it = m_objects.begin(); it != m_objects.end(); it++)
-//	{
-//		if (it->first == fileDir)
-//			return it->second;
-//	}
-//	ObjectData obj = ModelLoader::importObject(_dir, _file);
-//}
-
-void GraphicsHigh::Clear()
-{
-  m_modelIDcounter = 0;
-  
-  m_modelsForward.clear();
-  m_modelsViewspace.clear();
-  m_modelsInterface.clear();
-
-  float **tmpPtr = new float*[1];
-  BufferPointlights(0, tmpPtr);
-  delete [] tmpPtr;
-  
-  if (m_pointlightsPtr)
-	  delete [] m_pointlightsPtr;
-
-  m_pointlightsPtr = NULL;
-  m_directionalLightPtr = NULL;
-
-  for (std::map<int, ParticleEffect*>::iterator it = m_particleEffects.begin(); it != m_particleEffects.end(); ++it)
-	  delete(it->second);
-  m_particleEffects.clear();
 }
 
 void GraphicsHigh::BufferLightsToGPU()

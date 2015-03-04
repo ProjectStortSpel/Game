@@ -422,10 +422,6 @@ bool GraphicDevice::BufferModelTexture(int _id, std::string _fileDir, int _textu
 
 void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 {
-	// Temporary fix for water
-	if (_modelToLoad->RenderType == 5)
-		_modelToLoad->RenderType = 0;
-  
 	Shader *shaderPtr = NULL;
 
 	if (_modelToLoad->RenderType == RENDER_FORWARD)
@@ -653,23 +649,23 @@ void GraphicDevice::BufferLightsToGPU_GD()
 			{
 				std::stringstream ss;
 				ss << "pointlights[" << i << "].Position";
-				m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][0]);		ss.str(std::string());
-				m_riverShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][0]);		ss.str(std::string());
+				m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][0]);		
+				m_riverShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][0]);		
 				m_riverCornerShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][0]);		ss.str(std::string());
 
 				ss << "pointlights[" << i << "].Intensity";
-				m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][3]);		ss.str(std::string());
-				m_riverShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][3]);		ss.str(std::string());
+				m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][3]);		
+				m_riverShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][3]);		
 				m_riverCornerShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][3]);		ss.str(std::string());
 
 				ss << "pointlights[" << i << "].Color";
-				m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][6]);		ss.str(std::string());
-				m_riverShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][6]);		ss.str(std::string());
+				m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][6]);		
+				m_riverShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][6]);		
 				m_riverCornerShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][6]);		ss.str(std::string());
 
 				ss << "pointlights[" << i << "].Range";
-				m_forwardShader.SetUniVariable(ss.str().c_str(), glfloat, &m_pointlightsPtr[i][9]);		ss.str(std::string());
-				m_riverShader.SetUniVariable(ss.str().c_str(), glfloat, &m_pointlightsPtr[i][9]);		ss.str(std::string());
+				m_forwardShader.SetUniVariable(ss.str().c_str(), glfloat, &m_pointlightsPtr[i][9]);		
+				m_riverShader.SetUniVariable(ss.str().c_str(), glfloat, &m_pointlightsPtr[i][9]);		
 				m_riverCornerShader.SetUniVariable(ss.str().c_str(), glfloat, &m_pointlightsPtr[i][9]);		ss.str(std::string());
 			}
 		}
@@ -781,4 +777,29 @@ int GraphicDevice::LoadModel(ModelToLoadFromSource* _modelToLoad)
 	m_modelsToLoadFromSource[modelID] = modelToLoad;
 
 	return modelID;
+}
+
+void GraphicDevice::Clear()
+{
+	m_modelIDcounter = 0;
+
+	m_modelsForward.clear();
+	m_modelsViewspace.clear();
+	m_modelsInterface.clear();
+	m_modelsWater.clear();
+	m_modelsWaterCorners.clear();
+
+	float **tmpPtr = new float*[1];
+	BufferPointlights(0, tmpPtr);
+	delete[] tmpPtr;
+
+	if (m_pointlightsPtr)
+		delete[] m_pointlightsPtr;
+
+	m_pointlightsPtr = NULL;
+	m_directionalLightPtr = NULL;
+
+	for (std::map<int, ParticleEffect*>::iterator it = m_particleEffects.begin(); it != m_particleEffects.end(); ++it)
+		delete(it->second);
+	m_particleEffects.clear();
 }
