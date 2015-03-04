@@ -38,13 +38,14 @@ void AModel::Draw(mat4 viewMatrix, mat4 projectionMatrix, Shader* shaderptr)
 		else
 			M = *modelMatrix;
 
-		mat4 vp = projectionMatrix * viewMatrix;
-		mat4 modelViewMatrix = M;
-		mat3 normalMatrix = glm::transpose(glm::inverse(mat3(viewMatrix * modelViewMatrix)));
+		mat4 V = viewMatrix;
+		mat4 P = projectionMatrix;
+		mat3 normalMatrix = glm::transpose(glm::inverse(mat3(viewMatrix * M)));
 
 		shaderptr->SetUniVariable("BlendColor", vector3, color);
-		shaderptr->SetUniVariable("M", mat4x4, &modelViewMatrix);
-		shaderptr->SetUniVariable("VP", mat4x4, &vp);
+		shaderptr->SetUniVariable("M", mat4x4, &M);
+		shaderptr->SetUniVariable("V", mat4x4, &V);
+		shaderptr->SetUniVariable("P", mat4x4, &P);
 		shaderptr->SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
 
 

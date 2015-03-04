@@ -3,112 +3,175 @@ in vec3 Normal;
 in vec3 Tan;
 in vec3 BiTan;
 in vec2 TexCoord;
+in vec3 ViewPos;
 
-//flat in int instanceID;
+out vec4 ColorData;
 
-// The g-buffer textures
-layout(binding = 0) uniform sampler2D NormalTex;
-layout(binding = 1) uniform sampler2D ColorTex;
-
+//Input textures
 uniform sampler2D diffuseTex;
 uniform sampler2D normalTex;
 uniform sampler2D specularTex;
+uniform sampler2D ShadowDepthTex;
+
+uniform mat4 ViewMatrix;
+uniform mat4 BiasMatrix;
+uniform mat4 ShadowViewProj;
 
 uniform vec3 BlendColor;
 
-uniform int TexFlag;
+//Directional light
+uniform mediump vec3 dirlightDirection; // Light position in world coords.
+uniform mediump vec3 dirlightIntensity; // Diffuse intensity
+uniform mediump vec3 dirlightColor;
 
-layout (location = 0) out vec4 NormalData;
-layout (location = 1) out vec4 ColorData;
+const int nrOfPointLights = 3;
+struct Pointlight {
+	vec3 Position; // Light position in world coords.
+	vec3 Intensity; // Diffuse intensity
+	vec3 Color;
+	float Range;
+}; 
+uniform Pointlight pointlights[nrOfPointLights];
+
+struct MaterialInfo {
+	float Ks;
+	float Shininess;
+};
+MaterialInfo Material;
+
+vec3 NmNormal;
+
+void phongModelDirLight(out vec3 ambient, out vec3 diffuse, out vec3 spec) 
+{
+    ambient = vec3(0.0);
+    diffuse = vec3(0.0);
+    spec    = vec3(0.0);
+
+    vec3 lightVec = -normalize(( ViewMatrix*vec4(dirlightDirection, 0.0) ).xyz);
+
+	ambient = dirlightColor * dirlightIntensity.x;
+
+	vec3 E = normalize(ViewPos);
+
+	float diffuseFactor = dot( lightVec, NmNormal );
+
+	if(diffuseFactor > 0)
+	{
+		// For shadows
+		vec4 worldPos = inverse(ViewMatrix) * vec4(ViewPos, 1.0);
+		vec4 shadowCoord = BiasMatrix * ShadowViewProj * worldPos;
+		
+		float shadow = 1.0;
+		vec4 shadowCoordinateWdivide = shadowCoord / shadowCoord.w;
+		shadowCoordinateWdivide.z -= 0.0005;
+		float distanceFromLight = texture(ShadowDepthTex, shadowCoordinateWdivide.st).x;
+		
+		if (shadowCoord.w > 0.0)
+	 		shadow = distanceFromLight < shadowCoordinateWdivide.z ? 0.0 : 1.0 ;
+
+		// diffuse
+		diffuse = diffuseFactor * dirlightColor * dirlightIntensity.y * shadow;
+
+		// specular
+		vec3 v = reflect( lightVec, NmNormal );
+		float specFactor = pow( max( dot(v, E), 0.0 ), Material.Shininess );
+		spec = specFactor * dirlightColor * dirlightIntensity.z * Material.Ks * shadow;        
+	}
+
+	return;
+}
+
+void phongModel(int index, out vec3 ambient, out vec3 diffuse, out vec3 spec) {
+
+    ambient = vec3(0.0);
+	diffuse = vec3(0.0);
+	spec    = vec3(0.0);
+
+	vec3 lightVec = (ViewMatrix * vec4(pointlights[index].Position, 1.0)).xyz - ViewPos;
+	float d = length(lightVec);
+
+	if(d > pointlights[index].Range)
+	return;
+	lightVec /= d; //normalizing
+        
+	ambient = pointlights[index].Color * pointlights[index].Intensity.x;
+	vec3 E = normalize(ViewPos);
+	float diffuseFactor = dot( lightVec, NmNormal );
+
+	if(diffuseFactor > 0)
+	{
+		// diffuse
+		diffuse = diffuseFactor * pointlights[index].Color * pointlights[index].Intensity.y;
+		// specular
+		vec3 v = reflect( lightVec, NmNormal );
+		float specFactor = pow( max( dot(v, E), 0.0 ), Material.Shininess );
+		spec = specFactor * pointlights[index].Color * pointlights[index].Intensity.z * Material.Ks;          
+	}
+
+	float att = 1 - pow((d/pointlights[index].Range), 1.0f);
+
+	ambient *= att;
+	diffuse *= att;
+	spec    *= att;
+
+	return;
+}
 
 void main() 
 {
-	// -- INPUTS --
-	// Sample maps
-	vec3 color_map = texture( diffuseTex, TexCoord ).rgb;
-	vec3 normal_map = texture( normalTex, TexCoord ).rgb;
-	vec4 specTexture = texture( specularTex, TexCoord );
-	vec3 specglow_map = specTexture.rgb;
+	// Diffuse tex
+	vec4 albedo_tex = texture( diffuseTex, TexCoord );
 
-	float blendFactor = mod(int(specTexture.a*99), 50)/50;//(specTexture.a-0.5f)*2;
+	// Normal data
+	vec3 normal_map	  = texture( normalTex, TexCoord ).rgb;
+	normal_map = (normal_map * 2.0f) - 1.0f;
+	mat3 texSpace = mat3(Tan, BiTan, Normal);
+	NmNormal = normalize( texSpace * normal_map );
+
+	// Spec data
+	vec4 specglow_map = texture( specularTex, TexCoord );
+
+	float blendFactor = mod(int(specglow_map.a*99), 50)/50;//(specTexture.a-0.5f)*2;
 	vec3 AddedColor = BlendColor;
-	if (specTexture.a < 0.5)
+	if (specglow_map.a < 0.5)
 		AddedColor = vec3(1) - BlendColor; // ANTICOLOR? Good or bad? I like
 
-	if(TexFlag == 0) // everything
-	{
-		// -- OUTPUTS --
-		// Set Color output
-		if( BlendColor != vec3(0.0) )
-			ColorData.xyz = (1.0f-blendFactor)*color_map.xyz + blendFactor * AddedColor; 
-		else
-			ColorData.xyz = color_map.xyz;								// rgb = color
+	if( BlendColor != vec3(0.0) )
+		albedo_tex.xyz = (1.0f-blendFactor)*albedo_tex.xyz + blendFactor * AddedColor; 
 
-		ColorData.w = specglow_map.z;								// a = glow
-		// Set Normal output
-		normal_map = (normal_map * 2.0f) - 1.0f;
-		mat3 texSpace = mat3(Tan, BiTan, Normal);
-		vec3 allNormalData = normalize( texSpace * normal_map );
-		NormalData.xy = allNormalData.xy;	//+allNormalData.xy-allNormalData.xy;							// rg = normal
-		NormalData.z = specglow_map.x;								// b = spec reflec
-		if(allNormalData.z > 0)
-			NormalData.w = specglow_map.y*0.5;						// a = spec shine + normal.z flag
-		else
-			NormalData.w = specglow_map.y*0.5 + 0.5;
-			
-	}
-	else if(TexFlag == 1) //diffuse only
-	{
+	Material.Ks			= specglow_map.x;
+	Material.Shininess  = specglow_map.y * 254.0f + 1.0f;
+	float glow			= specglow_map.z;
 
-		ColorData.xyz = color_map.xyz;					// rgb = color
-		ColorData.w = 0.0;								// a = glow
+	vec3 ambient = vec3(0.0);
+	vec3 diffuse = vec3(0.0);
+	vec3 spec    = vec3(0.0);
 
-		NormalData.xy = Normal.xy;						// rg = normal
-		NormalData.z = 0.0;								// b = spec reflec
-		float shine = 0.0;
-		if(Normal.z > 0)
-			NormalData.w = shine*0.5;						// a = spec shine + normal.z flag
-		else
-			NormalData.w = shine*0.5 + 0.5;
-	}
-	else if(TexFlag == 2) //normal only
+	if(length( dirlightIntensity ) > 0.0)
 	{
-		ColorData.xyz = vec3(0.5, 0.5, 0.8);					// rgb = color
-		ColorData.w = 0.0;										// a = glow
+		vec3 a,d,s;
 
-		normal_map = (normal_map * 2.0f) - 1.0f;
-		mat3 texSpace = mat3(Tan, BiTan, Normal);
-		vec3 allNormalData = normalize( texSpace * normal_map );
-		NormalData.xy = allNormalData.xy;
-		NormalData.z = 0.4;										// b = spec reflec
-		float shine = 0.05;										// a = spec shine
-		if(allNormalData.z > 0)
-			NormalData.w = shine*0.5;						// a = spec shine + normal.z flag
-		else
-			NormalData.w = shine*0.5 + 0.5;
+		phongModelDirLight(a, d, s);
+		ambient += a;
+		diffuse += d;
+		spec    += s;
 	}
-	else if(TexFlag == 3) //specular only
-	{
-		ColorData.xyz = vec3(0.5, 0.5, 0.8);			// rgb = color
-		ColorData.w = 0.0;								// a = glow
 
-		NormalData.xy = Normal.xy;						// rg = normal
-		NormalData.z = specglow_map.x;					// b = spec reflec
-		if(Normal.z > 0)
-			NormalData.w = specglow_map.y*0.5;						// a = spec shine + normal.z flag
-		else
-			NormalData.w = specglow_map.y*0.5 + 0.5;
-	}
-	else if(TexFlag == 4) //glow only
+	//för varje ljus-----------
+	for(int i = 0; i < pointlights.length(); i++)
 	{
-		ColorData.xyz = vec3(0.5, 0.5, 0.8);			// rgb = color
-		ColorData.w = specglow_map.z;					// a = glow
-		NormalData.xy = Normal.xy;						// rg = normal
-		NormalData.z = 0.0;								// b = spec reflec
-		float shine = 0.0;										// a = spec shine
-		if(Normal.z > 0)
-			NormalData.w = shine*0.5;						// a = spec shine + normal.z flag
-		else
-			NormalData.w = shine*0.5 + 0.5;
+		vec3 a,d,s;
+
+		if( length(pointlights[i].Intensity) > 0.0 )
+		{
+			phongModel(i, a, d, s);
+			ambient += a;
+			diffuse += d;
+			spec    += s;
+		}
 	}
+
+	vec4 glowvec = vec4(glow*albedo_tex.xyz, 0.0);
+
+	ColorData = vec4(ambient + diffuse*(1.0-glow), 1.0) * albedo_tex + vec4(spec, 0.0f) + glowvec;
 }
