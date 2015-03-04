@@ -193,7 +193,7 @@ PlayCardSystem.EntitiesAdded = function(self, dt, entities)
 					world:GetComponent(tempCard, "LerpScale", "Algorithm"):SetText("SmoothLerp")
 					world:GetComponent(tempCard, "LerpScale", "KillWhenFinished"):SetBool(true)
 					
-					world:KillEntity(self.CardsAbove[n])
+					--world:KillEntity(self.CardsAbove[n])
 				end
 				self.CardsAbove 		= 	{ }
 				self.CardsAbove.__mode 	= 	"k"
