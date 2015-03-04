@@ -17,9 +17,9 @@ namespace FileSystem
 			static const char* ascii[];
 		};
 
-		const int numBinaryExtensions = 4;
+		const int numBinaryExtensions = 5;
 		const int numAsciiExtensions = 7;
-		const char* Extension::binary[] = { "png", "mesh", "amesh", "db" };
+		const char* Extension::binary[] = { "png", "mesh", "amesh", "db", "exe" };
 		const char* Extension::ascii[] = { "txt", "meshOLD", "lua", "object", "ajoints", "anim", "aobject" };
 
 		bool IsBinary(std::string _path)
