@@ -319,7 +319,7 @@ bool GraphicsLow::InitShaders()
 
 	// River water corner shader
 	m_riverCornerShader.InitShaderProgram();
-	m_riverCornerShader.AddShader("content/shaders/VSForwardShader.glsl", GL_VERTEX_SHADER);
+	m_riverCornerShader.AddShader("content/shaders/lowVSForwardShader.glsl", GL_VERTEX_SHADER);
 	m_riverCornerShader.AddShader("content/shaders/lowRiverCornerFS.glsl", GL_FRAGMENT_SHADER);
 	m_riverCornerShader.FinalizeShaderProgram();
 

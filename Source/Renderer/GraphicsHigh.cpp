@@ -7,11 +7,10 @@ GraphicsHigh::GraphicsHigh()
 {
 	debugModelInfo = false;
 
-	m_useAnimations = true;
-
 	mark = 0;
 	timer = 0;
 
+	m_useAnimations = true;
 	m_renderSimpleText = true;
 	m_modelIDcounter = 0;
 	m_vramUsage = 0;
@@ -19,10 +18,13 @@ GraphicsHigh::GraphicsHigh()
 	m_nrOfLights = 0;
 	m_pointerToDirectionalLights = 0;
 	m_pointerToPointlights = 0;
+    m_FBOsCreated = false;
 }
 
 GraphicsHigh::GraphicsHigh(Camera _camera, int x, int y) : GraphicDevice(_camera, x, y)
 {
+	debugModelInfo = false;
+	m_useAnimations = true;
 	m_renderSimpleText = true;
 	m_modelIDcounter = 0;
 	m_vramUsage = 0;
@@ -30,6 +32,7 @@ GraphicsHigh::GraphicsHigh(Camera _camera, int x, int y) : GraphicDevice(_camera
 	m_nrOfLights = 0;
 	m_pointerToDirectionalLights = 0;
 	m_pointerToPointlights = 0;
+    m_FBOsCreated = false;
 }
 
 GraphicsHigh::~GraphicsHigh()
@@ -46,8 +49,12 @@ GraphicsHigh::~GraphicsHigh()
 	glDeleteBuffers(1, &m_pointlightBuffer);
 	glDeleteBuffers(1, &m_dirLightBuffer);
 	glDeleteBuffers(1, &m_animationBuffer);
-	glDeleteFramebuffers(1, &m_deferredFBO);
-	glDeleteFramebuffers(1, &m_forwardFBO);
+    
+    if (m_FBOsCreated)
+    {
+        glDeleteFramebuffers(1, &m_deferredFBO);
+        glDeleteFramebuffers(1, &m_forwardFBO);
+    }
 }
 
 bool GraphicsHigh::Init()
@@ -63,6 +70,7 @@ bool GraphicsHigh::Init()
 	if (!InitDeferred()) { ERRORMSG("INIT DEFERRED FAILED\n"); return false; }	
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	if (!InitForward()) { ERRORMSG("INIT FORWARD FAILED\n"); return false; }
+    m_FBOsCreated = true;
 	if (!InitSkybox()) { ERRORMSG("INIT SKYBOX FAILED\n"); return false; }
 	if (!InitRandomVector()) { ERRORMSG("INIT RANDOMVECTOR FAIELD\n"); return false; }
 	if (!InitTextRenderer()) { ERRORMSG("INIT TEXTRENDERER FAILED\n"); return false; }
