@@ -975,6 +975,7 @@ MapGenerator.CreateCheckpointEntity = function(self, X, Z, Number)
 	world:GetComponent(newCheckpoint, "Checkpoint", 0):SetInt(Number)
 	world:CreateComponentAndAddTo("Model", newCheckpoint)
 	world:GetComponent(newCheckpoint, "Model", 0):SetModel("checkpoint", "checkpoint", 0)
+	world:GetComponent(newCheckpoint, "TileOffset", "Offset"):SetFloat(0.60)
 	
 	return	newCheckpoint
 end
