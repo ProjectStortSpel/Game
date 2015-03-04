@@ -198,7 +198,12 @@ namespace ConnectHelper
 
 			if (lastPart == 1)
 			{
-				//md5 check and delete if failed
+                if (r.MD5 != FileSystem::MD5::MD5_File(r.Location))
+                {
+                    FileSystem::File::Delete(r.Location);
+                    SDL_Log("Failed to download gamemode file (md5 mismatch): %s", filename.c_str());
+                    return;
+                }
                 
                 SDL_Log("Downloaded gamemode file: %s", filename.c_str());
                 
@@ -348,8 +353,12 @@ namespace ConnectHelper
 
 			if (lastPart == 1)
 			{
-				//md5 check and delete if failed
-                
+                if (r.MD5 != FileSystem::MD5::MD5_File(r.Location))
+                {
+                    FileSystem::File::Delete(r.Location);
+                    SDL_Log("Failed to download content file (md5 mismatch): %s", filename.c_str());
+                    return;
+                }
                 
                 SDL_Log("Downloaded content file: %s", filename.c_str());
 
