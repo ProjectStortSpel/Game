@@ -7,11 +7,10 @@ GraphicsHigh::GraphicsHigh()
 {
 	debugModelInfo = false;
 
-	m_useAnimations = true;
-
 	mark = 0;
 	timer = 0;
 
+	m_useAnimations = true;
 	m_renderSimpleText = true;
 	m_modelIDcounter = 0;
 	m_vramUsage = 0;
@@ -24,6 +23,8 @@ GraphicsHigh::GraphicsHigh()
 
 GraphicsHigh::GraphicsHigh(Camera _camera, int x, int y) : GraphicDevice(_camera, x, y)
 {
+	debugModelInfo = false;
+	m_useAnimations = true;
 	m_renderSimpleText = true;
 	m_modelIDcounter = 0;
 	m_vramUsage = 0;
@@ -47,6 +48,7 @@ GraphicsHigh::~GraphicsHigh()
 
 	glDeleteBuffers(1, &m_pointlightBuffer);
 	glDeleteBuffers(1, &m_dirLightBuffer);
+	glDeleteBuffers(1, &m_animationBuffer);
     
     if (m_FBOsCreated)
     {
@@ -76,6 +78,8 @@ bool GraphicsHigh::Init()
 	
 	CreateShadowMap();
 	if (!InitLightBuffers()) { ERRORMSG("INIT LIGHTBUFFER FAILED\n"); return false; }
+	glGenBuffers(1, &m_animationBuffer);
+
 
 	CreateParticleSystems();
 	
@@ -441,7 +445,23 @@ void GraphicsHigh::Render()
 	m_animationShader.SetUniVariable("TexFlag", glint, &m_debugTexFlag);
 	//----DRAW MODELS
 	for (int i = 0; i < m_modelsAnimated.size(); i++)
+	{
+		// BUFFER JOINT MATRIXES
+		float *anim_data = new float[m_modelsAnimated[i].animation.size() * 16];
+		for (int j = 0; j < m_modelsAnimated[i].animation.size(); j++)
+		{
+			memcpy(&anim_data[16 * j], &m_modelsAnimated[i].animation[j], 16 * sizeof(float));
+		}
+		int anim_data_size = 16 * m_modelsAnimated[i].animation.size() * sizeof(float);
+		glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 6, m_animationBuffer, 0, anim_data_size);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, anim_data_size, anim_data, GL_STATIC_DRAW);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, m_animationBuffer);
+		delete[] anim_data;
+
+		// DRAW MODEL
 		m_modelsAnimated[i].Draw(viewMatrix, projectionMatrix, &m_animationShader);
+	}
+
 
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	//--------------------------End of pass1--------------------------------
