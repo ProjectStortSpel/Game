@@ -522,6 +522,8 @@ void GraphicsLow::Clear()
 	m_modelsForward.clear();
 	m_modelsViewspace.clear();
 	m_modelsInterface.clear();
+	m_modelsWater.clear();
+	m_modelsWaterCorners.clear();
 
 	BufferPointlights(0, 0);
 	BufferDirectionalLight(0);
