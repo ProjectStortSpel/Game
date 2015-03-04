@@ -73,6 +73,9 @@ namespace LuaBridge
 	{
         lua_State* L = LuaEmbedder::GetFunctionLuaState(_command);
 
+		if (!L)
+			return;
+
 		LuaEmbedder::PushString(L, _command);
 
 		for (int i = 0; i < _args->size(); ++i)

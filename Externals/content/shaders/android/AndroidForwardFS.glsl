@@ -134,10 +134,14 @@ void main()
 
 	// Spec data
 	vec4 spec_map = texture2D( specularTex, TexCoord );
-	float blendFactor = spec_map.w;
+
+	float blendFactor = mod(int(spec_map.a*99), 50)/50;//(specTexture.a-0.5f)*2;
+	vec3 AddedColor = BlendColor;
+	if (spec_map.a < 0.5)
+		AddedColor = vec3(1) - BlendColor; // ANTICOLOR? Good or bad? I like
 
 	if( BlendColor != vec3(0.0) )
-		albedo_tex.xyz = (1.0-blendFactor)*albedo_tex.xyz + blendFactor * BlendColor; 
+		albedo_tex.xyz = (1.0-blendFactor)*albedo_tex.xyz + blendFactor * AddedColor; 
 	Material.Ks			= spec_map.x;
 	Material.Shininess  = spec_map.y * 254.0 + 1.0;
     

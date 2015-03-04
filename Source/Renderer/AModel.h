@@ -6,7 +6,6 @@
 
 namespace Renderer
 {
-
 	struct Joint
 	{
 		float x0, y0, z0, w0;
@@ -130,7 +129,7 @@ namespace Renderer
 		GLuint norID;
 		GLuint speID;
 		//GLuint jointBuffer;
-		GLuint animBuffer;
+		GLuint* animBuffer;
 		std::vector<glm::mat4> joints;
 		std::vector<Joint> animation;
 		std::vector<Animation> animations;
