@@ -777,6 +777,8 @@ void GraphicsHigh::Clear()
 	m_modelsForward.clear();
 	m_modelsViewspace.clear();
 	m_modelsInterface.clear();
+	m_modelsWater.clear();
+	m_modelsWaterCorners.clear();
 
 	float **tmpPtr = new float*[1];
 	BufferPointlights(0, tmpPtr);

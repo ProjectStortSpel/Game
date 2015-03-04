@@ -182,6 +182,17 @@ PlayCardSystem.EntitiesAdded = function(self, dt, entities)
 				world:GetComponent(id, "StepTimer", "Time"):SetFloat(1)
 				
 				for n = 1, #self.CardsAbove do
+					local	tempCard	=	self.CardsAbove[n]
+					if not world:EntityHasComponent(tempCard, "LerpScale") then
+						world:CreateComponentAndAddTo("LerpScale", tempCard)
+					end
+					world:GetComponent(tempCard, "LerpScale", "X"):SetFloat(0)
+					world:GetComponent(tempCard, "LerpScale", "Y"):SetFloat(0)
+					world:GetComponent(tempCard, "LerpScale", "Z"):SetFloat(0)
+					world:GetComponent(tempCard, "LerpScale", "Time"):SetFloat(0.15)
+					world:GetComponent(tempCard, "LerpScale", "Algorithm"):SetText("SmoothLerp")
+					world:GetComponent(tempCard, "LerpScale", "KillWhenFinished"):SetBool(true)
+					
 					world:KillEntity(self.CardsAbove[n])
 				end
 				self.CardsAbove 		= 	{ }

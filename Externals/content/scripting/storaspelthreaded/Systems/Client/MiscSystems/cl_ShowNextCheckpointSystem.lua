@@ -16,25 +16,48 @@ ShowNextCheckpointSystem.Initialize = function ( self )
 	self:AddComponentTypeToFilter("CheckpointReached", FilterType.Mandatory)
 end
 
+ShowNextCheckpointSystem.FadeIn = function(self, lightToFade, dt)
+
+	local	fTimer		=	world:GetComponent(lightToFade, "FadeInLight", "CurrentTime"):GetFloat() + dt
+	local	fMaxTime	=	world:GetComponent(lightToFade, "FadeInLight", "FadeTime"):GetFloat()
+	
+	local	X, Y, Z, AMBIENT, DIFFUSE, SPECULAR, R, G, B, RANGE	=	world:GetComponent(lightToFade, "Pointlight", 0):GetPointlight()
+	AMBIENT		=	0.5 * (fTimer/fMaxTime)
+	DIFFUSE		=	0.8 * (fTimer/fMaxTime)
+	SPECULAR	=	0.7 * (fTimer/fMaxTime)
+	world:GetComponent(lightToFade, "Pointlight", 0):SetPointlight(X, Y, Z, AMBIENT, DIFFUSE, SPECULAR, R, G, B, RANGE)
+	
+	if fTimer >= fMaxTime then
+		world:RemoveComponentFrom("FadeInLight", lightToFade)
+	else
+		world:GetComponent(lightToFade, "FadeInLight", "CurrentTime"):SetFloat(fTimer)
+	end
+end
+
 ShowNextCheckpointSystem.Update = function(self, dt)
 
 	local Pointlights = self:GetEntities("Pointlight")
 	if #Pointlights >= 1 then
 		self.TotalTime	=	self.TotalTime + dt
 		self.FlameTimer	=	self.FlameTimer + dt
+		for n = 1, #Pointlights do
+		
+			local	tPL	=	Pointlights[n]
+			
+			if world:EntityHasComponent(tPL, "FadeInLight") then
+				self:FadeIn(tPL, dt)
+			else
+				if self.FlameTimer > self.FlameLimit then
+					local	X, Y, Z, AMBIENT, DIFFUSE, SPECULAR, R, G, B, RANGE	=	world:GetComponent(tPL, "Pointlight", 0):GetPointlight()
+					--local	newRange	=	3 + math.sin(self.TotalTime)*math.random(1, 10)*dt
+					DIFFUSE		=	0.8 + 0.8*math.sin(dt*(self.TotalTime + math.random(1, 400)))*0.2
+					SPECULAR	=	0.7 + 0.7*math.sin(dt*(self.TotalTime + math.random(1, 400)))*0.2
+					world:GetComponent(tPL, "Pointlight", 0):SetPointlight(X, Y, Z, AMBIENT, DIFFUSE, SPECULAR, R, G, B, 5)
+				end
+			end
+		end
 		
 		if self.FlameTimer > self.FlameLimit then
-			for n = 1, #Pointlights do
-			
-				local	tPL	=	Pointlights[n]
-				
-				local	X, Y, Z, AMBIENT, DIFFUSE, SPECULAR, R, G, B, RANGE	=	world:GetComponent(tPL, "Pointlight", 0):GetPointlight()
-				--local	newRange	=	3 + math.sin(self.TotalTime)*math.random(1, 10)*dt
-				DIFFUSE		=	0.8 + 0.8*math.sin(dt*(self.TotalTime + math.random(1, 400)))*0.2
-				SPECULAR	=	0.7 + 0.7*math.sin(dt*(self.TotalTime + math.random(1, 400)))*0.2
-				world:GetComponent(tPL, "Pointlight", 0):SetPointlight(X, Y, Z, AMBIENT, DIFFUSE, SPECULAR, R, G, B, 5)
-			end
-			
 			self.FlameTimer	=	0.0
 		end
 		
@@ -103,6 +126,8 @@ Net.Receive("Client.NewTargetCheckpoint",
 	world:CreateComponentAndAddTo("Particle", newParticle)
 	world:CreateComponentAndAddTo("CheckpointReached", newParticle)
 	world:CreateComponentAndAddTo("Pointlight", newParticle)
+	world:CreateComponentAndAddTo("FadeInLight", newParticle)
+	
 	
 	world:GetComponent(newParticle, "CheckpointReached", "CheckpointNumber"):SetInt(cpID)
 	
@@ -116,8 +141,12 @@ Net.Receive("Client.NewTargetCheckpoint",
 	world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.016)
 	world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(0.6)
 	world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
+	
+	--	Fade in timer
+	world:GetComponent(newParticle, "FadeInLight", "CurrentTime"):SetFloat(0.0)
+	world:GetComponent(newParticle, "FadeInLight", "FadeTime"):SetFloat(1.0)
 	--	X, Y, Z Ambient, Diffuse, Specular, R, G, B, Range
-	world:GetComponent(newParticle, "Pointlight", 0):SetPointlight(X, 0.7, Z, 0.5, 0.8, 0.7, 0.9, 0.65, 0.40, 2)
+	world:GetComponent(newParticle, "Pointlight", 0):SetPointlight(X, 0.7, Z, 0.0, 0.0, 0.0, 0.9, 0.65, 0.40, 5)
 	
 	
 	
