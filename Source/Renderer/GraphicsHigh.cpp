@@ -7,11 +7,10 @@ GraphicsHigh::GraphicsHigh()
 {
 	debugModelInfo = false;
 
-	m_useAnimations = true;
-
 	mark = 0;
 	timer = 0;
 
+	m_useAnimations = true;
 	m_renderSimpleText = true;
 	m_modelIDcounter = 0;
 	m_vramUsage = 0;
@@ -23,6 +22,8 @@ GraphicsHigh::GraphicsHigh()
 
 GraphicsHigh::GraphicsHigh(Camera _camera, int x, int y) : GraphicDevice(_camera, x, y)
 {
+	debugModelInfo = false;
+	m_useAnimations = true;
 	m_renderSimpleText = true;
 	m_modelIDcounter = 0;
 	m_vramUsage = 0;
