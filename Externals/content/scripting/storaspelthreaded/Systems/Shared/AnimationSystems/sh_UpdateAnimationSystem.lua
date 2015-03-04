@@ -20,7 +20,8 @@ UpdateAnimationSystem.EntitiesAdded = function(self, dt, entities)
 
 		-- Get Animation
 		local animId = world:GetComponent(entity, "Animating", "Id"):GetInt(0)
-		self:SetAnimation(entity, animId)
+		local frameTime = world:GetComponent(entity, "Animating", "FrameTime"):GetFloat(0)
+		self:SetAnimation(entity, animId, frameTime)
 	end
 end
 
@@ -29,7 +30,7 @@ UpdateAnimationSystem.EntitiesRemoved = function(self, dt, entities)
 		local entity = entities[n]
 
 		-- Get Animation
-		self:SetAnimation(entity, 0)
+		self:SetAnimation(entity, 0, 0.04)
 	end
 end
 
@@ -50,12 +51,14 @@ UpdateAnimationSystem.Update = function(self, dt)
 	end
 end
 
-UpdateAnimationSystem.SetAnimation = function(self, entity, animId)
+UpdateAnimationSystem.SetAnimation = function(self, entity, animId, frameTime)
 	
 	local modelId = 0
 	if world:EntityHasComponent(entity, "Render") then
 		modelId = world:GetComponent(entity, "Render", "ModelId"):GetInt(0)
+	else
+		return
 	end
 
-	GraphicDevice.SetAnimation(modelId, animId)
+	GraphicDevice.SetAnimation(modelId, animId, frameTime)
 end

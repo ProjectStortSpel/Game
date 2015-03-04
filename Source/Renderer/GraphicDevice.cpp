@@ -593,14 +593,18 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 	modelList->push_back(model);
 }
 
-bool GraphicDevice::SetAnimation(int _modelId, int _animId)
+bool GraphicDevice::SetAnimation(int _modelId, int _animId, float _frameTime)
 {
 	std::vector<AModel> *modelList = &m_modelsAnimated;
 	for (int i = 0; i < (*modelList).size(); i++)
 	{
 		if ((*modelList)[i].id == _modelId)
 		{
-			return (*modelList)[i].SetAnimation(_animId);
+			if ((*modelList)[i].SetAnimation(_animId))
+			{
+				(*modelList)[i].SetFrameTime(_frameTime);
+				return true;
+			}	
 		}
 	}
 	return false;
