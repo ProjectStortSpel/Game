@@ -28,7 +28,7 @@ struct Rule
 
 	bool operator == ( Rule r )
 	{
-		return ruleType == r.ruleType && script == r.script;
+		return ruleType == r.ruleType  && script == r.script;
 	}
 	/*
 		returns true if the rules have the same type
