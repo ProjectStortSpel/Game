@@ -38,13 +38,9 @@ VisualizeSelectedCards.EntitiesAdded = function(self, dt, entities)
 			self.GhostEntity	=	newEntity
 			local	R, G, B		=	world:GetComponent(self.PlayerEntity, "Color", 0):GetFloat3()
 			world:GetComponent(self.GhostEntity, "Color", "X"):SetFloat3(R, G, B)
-			
-			--self.GhostEntity	=	world:CreateNewEntity("Ghost")
-			--world:CreateComponentAndAddTo("Hide", self.GhostEntity)
-			--world:GetComponent(self.GhostEntity, "Model", "ModelName"):SetText("cavemenghost");
-			--world:GetComponent(self.GhostEntity, "Model", "ModelPath"):SetText("caveman");
-			--world:GetComponent(self.GhostEntity, "Model", "RenderType"):SetInt(1)
-			
+			world:GetComponent(self.GhostEntity, "Position", "X"):SetFloat3(world:GetComponent(self.PlayerEntity, "Position", "X"):GetFloat3())
+			world:GetComponent(self.GhostEntity, "MapPosition", "X"):SetInt2(world:GetComponent(self.PlayerEntity, "MapPosition", "X"):GetInt2())
+			world:CreateComponentAndAddTo("Hide", self.GhostEntity)
 		end
 		
 		if world:EntityHasComponent(newEntity, "MapSpecs") then
@@ -177,9 +173,13 @@ VisualizeSelectedCards.VisualizePath = function(self, cardsToVisualize)
 	fellDown, posX, posZ, dirX, dirZ	=	self:SimulateCardsFromPos(self.PlayerEntity, posX, posZ, dirX, dirZ, cardsToVisualize)
 	
 	if self:IsInsideWorld(posX, posZ) then
-		local	tTile	=	self:GetEntities("TileComp")[posZ * self.MapSizeZ + posX+1]
-		if world:EntityHasComponent(tTile, "TileOffset") then
-			Y	=	world:GetComponent(tTile, "TileOffset", "Offset"):GetFloat()
+		local	tIndex	=	posZ * self.MapSizeX + posX + 1
+		
+		if tIndex >= 0 then
+			local	tTile	=	self:GetEntities("TileComp")[tIndex]
+			if world:EntityHasComponent(tTile, "TileOffset") then
+				Y	=	world:GetComponent(tTile, "TileOffset", "Offset"):GetFloat()
+			end
 		end
 	else
 		Y	=	-50
@@ -195,17 +195,11 @@ Net.Receive("Client.GetPlayerEntityId",
 	function( id, ip, port )
 		
 		local	serverId	=	Net.ReadInt(id)
-		
-		print("SERVER: " .. serverId)
-		
 		local	newId	=	world:CreateNewEntity("Ghost")
 		world:CreateComponentAndAddTo("UnitGhost", newId)
 		world:GetComponent(newId, "UnitGhost", "Id"):SetInt(serverId)
 		
-		world:CreateComponentAndAddTo("Hide", newId)
-		world:GetComponent(newId, "Model", "ModelName"):SetText("cavemenghost");
-		world:GetComponent(newId, "Model", "ModelPath"):SetText("caveman");
-		world:GetComponent(newId, "Model", "RenderType"):SetInt(1)
+		world:GetComponent(newId, "Model", 0):SetModel("cavemenghost", "caveman", 1);
 	end 
 )
 

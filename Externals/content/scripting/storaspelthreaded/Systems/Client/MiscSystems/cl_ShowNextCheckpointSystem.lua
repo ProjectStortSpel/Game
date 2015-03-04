@@ -1,4 +1,5 @@
 ShowNextCheckpointSystem = System()
+ShowNextCheckpointSystem.TotalTime	=	0.0
 
 ShowNextCheckpointSystem.Initialize = function ( self )
 	--	Set Name
@@ -6,10 +7,30 @@ ShowNextCheckpointSystem.Initialize = function ( self )
 	
 	--	Toggle EntitiesAdded
 	self:UsingEntitiesAdded()
+	self:UsingUpdate()
 	
 	--	Filters
 	self:AddComponentTypeToFilter("Particle", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("CheckpointReached", FilterType.Mandatory)
+end
+
+ShowNextCheckpointSystem.Update = function(self, dt)
+
+	local Pointlights = self:GetEntities("Pointlight")
+	if #Pointlights >= 1 then
+		for n = 1, #Pointlights do
+		
+			local	tPL	=	Pointlights[n]
+			
+			local	X, Y, Z, AMBIENT, DIFFUSE, SPECULAR, R, G, B, RANGE	=	world:GetComponent(tPL, "Pointlight", 0):GetPointlight()
+			--local	newRange	=	3 + math.sin(self.TotalTime)*math.random(1, 10)*dt
+			DIFFUSE		=	0.8 + 0.8*math.sin(dt*(self.TotalTime + math.random(1, 400)))*0.2
+			SPECULAR	=	0.7 + 0.7*math.sin(dt*(self.TotalTime + math.random(1, 400)))*0.2
+			world:GetComponent(tPL, "Pointlight", 0):SetPointlight(X, Y, Z, AMBIENT, DIFFUSE, SPECULAR, R, G, B, 5)
+		end
+		
+		self.TotalTime	=	self.TotalTime + dt
+	end
 end
 
 ShowNextCheckpointSystem.EntitiesAdded = function(self, dt, entities)
@@ -88,7 +109,7 @@ Net.Receive("Client.NewTargetCheckpoint",
 	world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(0.6)
 	world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
 	--	X, Y, Z Ambient, Diffuse, Specular, R, G, B, Range
-	world:GetComponent(newParticle, "Pointlight", 0):SetPointlight(X, 0.7, Z, 0.7, 0.6, 0.4, 0.8, 0.7, 0.7, 2)
+	world:GetComponent(newParticle, "Pointlight", 0):SetPointlight(X, 0.7, Z, 0.5, 0.8, 0.7, 1.0, 0.5, 0.35, 2)
 	
 	
 	

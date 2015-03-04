@@ -39,7 +39,6 @@ NotificationBoxSystem.EntitiesAdded = function(self, dt, entities)
 	for i = 1, #entities do
 		local entityId = entities[i]
 		if world:EntityHasComponent(entityId, self.Name) then
-		
 			self.Text = world:GetComponent(entityId, self.Name, "Text"):GetText()
 			self.Parentmenu = world:GetComponent(entityId, self.Name, "ParentMenu"):GetText()
 
