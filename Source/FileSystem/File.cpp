@@ -2,6 +2,7 @@
 #include <sstream>
 
 #include <sys/stat.h>
+#include <cstdio>
 
 #include "FileSystem/Directory.h"
 
@@ -133,7 +134,7 @@ namespace FileSystem
 
 		bool Delete(std::string _path)
 		{
-			return false;
+            return remove(_path.c_str()) == 0;
 		}
 
 		void Close(SDL_RWops* _file)
