@@ -64,15 +64,6 @@ template:AddComponent("LerpPosition")
 EntityTemplateManager:AddTemplate(template)
 
 template = EntityTemplate()
-template.Name = "FlowingWater"
-template:AddComponent("Model")
---	Model data
-template:SetFloat3("Position", 0.0, 1.0, 0.0)
-template:SetFloat3("Rotation", 0.0, math.pi, 0.0)
-template:SetFloat3("Scale", 1, 1, 1)
-EntityTemplateManager:AddTemplate(template)
-
-template = EntityTemplate()
 template.Name = "Button"
 template:AddComponent("Model")
 template:AddComponent("Position")
@@ -103,6 +94,6 @@ template = EntityTemplate()
 template.Name = "FlowingWater"
 template:AddComponent("Model")
 template:SetFloat3("Position", 0.0, 1.0, 0.0)
-template:SetFloat3("Rotation", 0.0, 0, 0.0)
+template:SetFloat3("Rotation", 0.0, 0.0, 0.0)
 template:SetFloat3("Scale", 1, 1, 1)
 EntityTemplateManager:AddTemplate(template)
