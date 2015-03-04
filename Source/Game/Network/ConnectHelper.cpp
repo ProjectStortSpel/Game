@@ -110,7 +110,18 @@ namespace ConnectHelper
 
 				if (!hasFile || md5 != r.MD5)
 				{
+
 					SDL_Log("Missing gamemode file: %s", filename.c_str());
+
+#if defined(__IOS__) && !defined(__DevMode__)
+					//Don't download luafiles on IOS.
+
+					//Kolla om sista 4 teknerna i r.File == ".lua"
+					
+					//Console::ConsoleManager::GetInstance().AddToCommandQueue("disconnect;stop;gamemode lobby");
+					//return;
+#endif
+
                     
 					ResourceManager::Resource temp;
 					temp.File = filename;
@@ -275,6 +286,16 @@ namespace ConnectHelper
 				if (!hasFile || md5 != r.MD5)
 				{
 					SDL_Log("Missing content file: %s", filename.c_str());
+
+
+#if defined(__IOS__) && !defined(__DevMode__)
+					//Don't download luafiles on IOS.
+
+					//Kolla om sista 4 teknerna i r.File == ".lua"
+
+					//Console::ConsoleManager::GetInstance().AddToCommandQueue("disconnect;stop;gamemode lobby");
+					//return;
+#endif
 
 					ResourceManager::Resource temp;
 					temp.File = filename;
