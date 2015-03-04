@@ -135,7 +135,7 @@ PlayCardSystem.EntitiesAdded = function(self, dt, entities)
 		local	tEntity	=	entities[n]
 		
 		if world:EntityHasComponent(tEntity, "PlayCard") then
-			world:KillEntity(tEntity)
+			
 			
 			local	tStep	=	world:GetComponent(tEntity, "PlayCard", "Step"):GetInt()
 			
@@ -182,15 +182,27 @@ PlayCardSystem.EntitiesAdded = function(self, dt, entities)
 				world:CreateComponentAndAddTo("StepTimer", id)
 				world:GetComponent(id, "StepTimer", "Time"):SetFloat(1)
 				
-				for n = 1, #self.CardsAbove do
-					world:KillEntity(self.CardsAbove[n])
+				for i = 1, #self.CardsAbove do
+					local	tempCard	=	self.CardsAbove[i]
+					--if not world:EntityHasComponent(tempCard, "LerpScale") then
+					--	world:CreateComponentAndAddTo("LerpScale", tempCard)
+					--end
+					--world:GetComponent(tempCard, "LerpScale", "X"):SetFloat(0)
+					--world:GetComponent(tempCard, "LerpScale", "Y"):SetFloat(0)
+					--world:GetComponent(tempCard, "LerpScale", "Z"):SetFloat(0)
+					--world:GetComponent(tempCard, "LerpScale", "Time"):SetFloat(0.15)
+					--world:GetComponent(tempCard, "LerpScale", "Algorithm"):SetText("SmoothLerp")
+					--world:GetComponent(tempCard, "LerpScale", "KillWhenFinished"):SetBool(false)
+					--
+					world:KillEntity(tempCard)
 				end
 				self.CardsAbove 		= 	{ }
 				self.CardsAbove.__mode 	= 	"k"
 			end
 			
+			world:KillEntity(tEntity)
+			
 		end
-		
 	end
 	
 end

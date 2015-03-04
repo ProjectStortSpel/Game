@@ -26,8 +26,6 @@ AModel::AModel()
 
 AModel::~AModel()
 {
-	//glDeleteBuffers(1, &jointBuffer);
-	glDeleteBuffers(1, &animBuffer);
 }
 
 void AModel::Draw(mat4 viewMatrix, mat4 projectionMatrix, Shader* shaderptr)
@@ -40,33 +38,15 @@ void AModel::Draw(mat4 viewMatrix, mat4 projectionMatrix, Shader* shaderptr)
 		else
 			M = *modelMatrix;
 
-		mat4 vp = projectionMatrix * viewMatrix;
-		mat4 modelViewMatrix = M;
-		mat3 normalMatrix = glm::transpose(glm::inverse(mat3(viewMatrix * modelViewMatrix)));
+		mat4 V = viewMatrix;
+		mat4 P = projectionMatrix;
+		mat3 normalMatrix = glm::transpose(glm::inverse(mat3(viewMatrix * M)));
 
 		shaderptr->SetUniVariable("BlendColor", vector3, color);
-		shaderptr->SetUniVariable("M", mat4x4, &modelViewMatrix);
-		shaderptr->SetUniVariable("VP", mat4x4, &vp);
+		shaderptr->SetUniVariable("M", mat4x4, &M);
+		shaderptr->SetUniVariable("V", mat4x4, &V);
+		shaderptr->SetUniVariable("P", mat4x4, &P);
 		shaderptr->SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
-
-
-
-		float *anim_data = new float[animation.size() * 16];
-
-		for (int j = 0; j < animation.size(); j++)
-		{
-			memcpy(&anim_data[16 * j], &animation[j], 16 * sizeof(float));
-		}
-
-		int anim_data_size = 16 * animation.size() * sizeof(float);
-
-		glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 3, animBuffer, 0, anim_data_size);
-		glBufferData(GL_SHADER_STORAGE_BUFFER, anim_data_size, anim_data, GL_STATIC_DRAW);
-
-		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, animBuffer);
-
-		delete [] anim_data;
-
 
 
 		glActiveTexture(GL_TEXTURE1);
@@ -95,10 +75,7 @@ void AModel::Update(float _dt)
 
 		Animation* animptr = &animations[animId];
 		for (int i = 0; i < animptr->joints.size(); i++)
-		{
-			int index = animation.size() - animptr->joints[i].jointId - 1;
-			animation[i] = animptr->joints[i].frames[currentframe];
-		}
+			anim[i] = animptr->joints[i].frames[currentframe];
 	}
 }
 
@@ -125,12 +102,7 @@ bool AModel::PreCalculateAnimations()
 			for (int i = 0; i < animptr->joints.size(); i++)
 			{
 				glm::mat4 mat = tempMat4[i] * joints[i];
-				animptr->joints[i].frames.push_back(Joint(
-					mat[0][0], mat[0][1], mat[0][2], mat[0][3],
-					mat[1][0], mat[1][1], mat[1][2], mat[1][3],
-					mat[2][0], mat[2][1], mat[2][2], mat[2][3],
-					mat[3][0], mat[3][1], mat[3][2], mat[3][3]
-					));
+				animptr->joints[i].frames.push_back(mat);
 			}
 		}
 	}

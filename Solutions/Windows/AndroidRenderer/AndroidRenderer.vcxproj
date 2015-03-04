@@ -57,6 +57,7 @@
     <None Include="..\..\..\Externals\content\shaders\android\AndroidFullscreenVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\android\AndroidInterfaceFS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\android\AndroidInterfaceVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidRiverShaderVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\android\AndroidShadowShaderFS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\android\AndroidShadowShaderVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\android\AndroidSkyboxShaderFS.glsl" />
@@ -65,8 +66,10 @@
     <None Include="..\..\..\Externals\content\shaders\android\AndroidSmokeShaderVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\android\AndroidViewspaceShaderFS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\android\AndroidViewspaceShaderVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\highAndroidRiverCornerFS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\android\lowAndroidForwardFS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\android\lowAndroidForwardVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\lowAndroidRiverCornerFS.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{FB35D84C-BAE5-47E2-8A37-C81AE2184C76}</ProjectGuid>

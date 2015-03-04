@@ -18,6 +18,14 @@ PointlightComponent:AddVariable("ColorBlue", ByteSize.Float)
 PointlightComponent:AddVariable("Range", ByteSize.Float)
 worldCreator:AddComponentType(PointlightComponent)
 
+FadeInLight = ComponentType()
+FadeInLight.Name = "FadeInLight"
+FadeInLight.SyncNetwork = true
+FadeInLight.TableType = TableType.Array
+FadeInLight:AddVariable("CurrentTime", ByteSize.Float)
+FadeInLight:AddVariable("FadeTime", ByteSize.Float)
+worldCreator:AddComponentType(FadeInLight)
+
 -- DirectionalLight Component
 local DirectionalLightComponent = ComponentType()
 DirectionalLightComponent.Name = "DirectionalLight"
