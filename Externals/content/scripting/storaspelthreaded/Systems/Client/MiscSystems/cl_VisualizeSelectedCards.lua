@@ -41,13 +41,6 @@ VisualizeSelectedCards.EntitiesAdded = function(self, dt, entities)
 			world:GetComponent(self.GhostEntity, "Position", "X"):SetFloat3(world:GetComponent(self.PlayerEntity, "Position", "X"):GetFloat3())
 			world:GetComponent(self.GhostEntity, "MapPosition", "X"):SetInt2(world:GetComponent(self.PlayerEntity, "MapPosition", "X"):GetInt2())
 			world:CreateComponentAndAddTo("Hide", self.GhostEntity)
-			
-			--self.GhostEntity	=	world:CreateNewEntity("Ghost")
-			
-			--world:GetComponent(self.GhostEntity, "Model", "ModelName"):SetText("cavemenghost");
-			--world:GetComponent(self.GhostEntity, "Model", "ModelPath"):SetText("caveman");
-			--world:GetComponent(self.GhostEntity, "Model", "RenderType"):SetInt(1)
-			
 		end
 		
 		if world:EntityHasComponent(newEntity, "MapSpecs") then
@@ -202,17 +195,11 @@ Net.Receive("Client.GetPlayerEntityId",
 	function( id, ip, port )
 		
 		local	serverId	=	Net.ReadInt(id)
-		
-		print("SERVER: " .. serverId)
-		
 		local	newId	=	world:CreateNewEntity("Ghost")
 		world:CreateComponentAndAddTo("UnitGhost", newId)
 		world:GetComponent(newId, "UnitGhost", "Id"):SetInt(serverId)
 		
 		world:GetComponent(newId, "Model", 0):SetModel("cavemenghost", "caveman", 1);
-		--world:GetComponent(newId, "Model", "ModelName"):SetText("cavemenghost");
-		--world:GetComponent(newId, "Model", "ModelPath"):SetText("caveman");
-		--world:GetComponent(newId, "Model", "RenderType"):SetInt(1)
 	end 
 )
 
