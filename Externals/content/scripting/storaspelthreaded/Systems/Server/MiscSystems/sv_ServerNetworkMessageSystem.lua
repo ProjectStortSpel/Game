@@ -66,7 +66,7 @@ ServerNetworkMessageSystem.OnPlayerConnected = function(self, _ip, _port, _messa
 	if #self:GetEntities("GameRunning") > 0 then -- If the game is running
 		
 		local playerFound = false
-		local entities = self:GetEntities()
+		local entities = self:GetEntities("Player")
 		
 		for i = 1, #entities do -- Go through all entities
 		
