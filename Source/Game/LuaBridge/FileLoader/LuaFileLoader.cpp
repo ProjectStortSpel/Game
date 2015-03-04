@@ -8,7 +8,7 @@
 
 int g_meshCreatorIndex = -1;
 float g_meshCreatorColor[3] = { 0.0f, 0.0f, 0.0f };
-glm::mat4 g_meshCreatorMatrix = glm::translate(glm::vec3(0.0f, -0.5f, 0.0f));
+glm::mat4 g_meshCreatorMatrix = glm::translate(glm::vec3(0.0f, 0.15f, 0.0f));
 
 int LoadMap(lua_State* L)  
 {

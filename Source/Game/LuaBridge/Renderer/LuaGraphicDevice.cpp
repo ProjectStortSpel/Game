@@ -4,6 +4,7 @@
 #include "../Math/LuaMatrix.h"
 #include "Game/LuaBridge/LuaBridge.h"
 #include "Game/HomePath.h"
+#include "FileSystem/File.h"
 
 namespace LuaBridge
 {
@@ -248,7 +249,31 @@ namespace LuaBridge
             }
 			int id = LuaEmbedder::PullInt(L, 1);
 			std::string fileDir = LuaEmbedder::PullString(L, 2);
-			bool result = g_graphicDevice->ChangeModelTexture(id, fileDir);
+
+			std::vector<std::string> paths;
+			if (LuaEmbedder::PullBool(L, "Client"))
+			{
+				paths = HomePath::GetPaths(HomePath::Client);
+			}
+			else
+			{
+				paths = HomePath::GetPaths(HomePath::Server);
+			}
+
+			bool	result	=	false;
+			for(int n = 0; n < paths.size(); ++n)
+			{
+				std::string tempPath = paths[n];
+				tempPath.append(fileDir);
+				if(FileSystem::File::Exist(tempPath))
+				{
+					result	=	g_graphicDevice->ChangeModelTexture(id, tempPath);
+					break;
+				}
+			}
+
+			
+			
 			LuaEmbedder::PushBool(L, result);
 			return 1;
 		}
@@ -263,7 +288,31 @@ namespace LuaBridge
             }
 			int id = LuaEmbedder::PullInt(L, 1);
 			std::string fileDir = LuaEmbedder::PullString(L, 2);
-			bool result = g_graphicDevice->ChangeModelNormalMap(id, fileDir);
+
+			std::vector<std::string> paths;
+			if (LuaEmbedder::PullBool(L, "Client"))
+			{
+				paths = HomePath::GetPaths(HomePath::Client);
+			}
+			else
+			{
+				paths = HomePath::GetPaths(HomePath::Server);
+			}
+
+			bool	result	=	false;
+			for(int n = 0; n < paths.size(); ++n)
+			{
+				std::string tempPath = paths[n];
+				tempPath.append(fileDir);
+				if(FileSystem::File::Exist(tempPath))
+				{
+					result	=	g_graphicDevice->ChangeModelNormalMap(id, tempPath);
+					break;
+				}
+			}
+
+			
+			
 			LuaEmbedder::PushBool(L, result);
 			return 1;
 		}
@@ -278,7 +327,31 @@ namespace LuaBridge
             }
 			int id = LuaEmbedder::PullInt(L, 1);
 			std::string fileDir = LuaEmbedder::PullString(L, 2);
-			bool result = g_graphicDevice->ChangeModelSpecularMap(id, fileDir);
+
+			std::vector<std::string> paths;
+			if (LuaEmbedder::PullBool(L, "Client"))
+			{
+				paths = HomePath::GetPaths(HomePath::Client);
+			}
+			else
+			{
+				paths = HomePath::GetPaths(HomePath::Server);
+			}
+
+			bool	result	=	false;
+			for(int n = 0; n < paths.size(); ++n)
+			{
+				std::string tempPath = paths[n];
+				tempPath.append(fileDir);
+				if(FileSystem::File::Exist(tempPath))
+				{
+					result	=	g_graphicDevice->ChangeModelSpecularMap(id, tempPath);
+					break;
+				}
+			}
+
+			
+			
 			LuaEmbedder::PushBool(L, result);
 			return 1;
 		}

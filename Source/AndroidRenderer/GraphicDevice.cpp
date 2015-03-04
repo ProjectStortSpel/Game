@@ -437,7 +437,7 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 void GraphicDevice::BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoad)
 {
 	// Temporary fix for water
-	if (_modelToLoad->RenderType == 5)
+	if (_modelToLoad->RenderType == 5 || _modelToLoad->RenderType == 6)
 		_modelToLoad->RenderType = 0;
   
 	Shader *shaderPtr = NULL;

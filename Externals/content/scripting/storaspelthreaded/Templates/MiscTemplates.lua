@@ -68,6 +68,6 @@ FlowingWater.Name = "FlowingWater"
 FlowingWater:AddComponent("Model")
 --	Model data
 FlowingWater:SetFloat3("Position", 0.0, 1.0, 0.0)
-FlowingWater:SetFloat3("Rotation", 0.0, math.pi, 0.0)
+FlowingWater:SetFloat3("Rotation", 0.0, 0, 0.0)
 FlowingWater:SetFloat3("Scale", 1, 1, 1)
 EntityTemplateManager:AddTemplate(FlowingWater)

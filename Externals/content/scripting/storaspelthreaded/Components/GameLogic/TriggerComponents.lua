@@ -3,62 +3,62 @@
 --	for different triggers
 
 --	Take Cards From Player
-local TakeCardsFromPlayerComponent = ComponentType()
-TakeCardsFromPlayerComponent.Name = "TakeCardsFromPlayer"
-TakeCardsFromPlayerComponent.TableType = TableType.Map
-TakeCardsFromPlayerComponent:AddVariable("Player", ByteSize.Reference)
-worldCreator:AddComponentType(TakeCardsFromPlayerComponent)
+local NewComponent = ComponentType()
+NewComponent.Name = "TakeCardsFromPlayer"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("Player", ByteSize.Reference)
+worldCreator:AddComponentType(NewComponent)
 
 --	Take Cards Steps From Unit
-local TakeCardStepsFromUnitComponent = ComponentType()
-TakeCardStepsFromUnitComponent.Name = "TakeCardStepsFromUnit"
-TakeCardStepsFromUnitComponent.TableType = TableType.Map
-TakeCardStepsFromUnitComponent:AddVariable("Unit", ByteSize.Reference)
-worldCreator:AddComponentType(TakeCardStepsFromUnitComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "TakeCardStepsFromUnit"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("Unit", ByteSize.Reference)
+worldCreator:AddComponentType(NewComponent)
 
 --	Test Move
-local TestMoveComponent = ComponentType()
-TestMoveComponent.Name = "TestMove"
-TestMoveComponent.TableType = TableType.Map
-TestMoveComponent:AddVariable("Unit", ByteSize.Reference)
-TestMoveComponent:AddVariable("PosX", ByteSize.Int)
-TestMoveComponent:AddVariable("PosZ", ByteSize.Int)
-TestMoveComponent:AddVariable("DirX", ByteSize.Int)
-TestMoveComponent:AddVariable("DirZ", ByteSize.Int)
-TestMoveComponent:AddVariable("Steps", ByteSize.Int)
-worldCreator:AddComponentType(TestMoveComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "TestMove"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("Unit", ByteSize.Reference)
+NewComponent:AddVariable("PosX", ByteSize.Int)
+NewComponent:AddVariable("PosZ", ByteSize.Int)
+NewComponent:AddVariable("DirX", ByteSize.Int)
+NewComponent:AddVariable("DirZ", ByteSize.Int)
+NewComponent:AddVariable("Steps", ByteSize.Int)
+worldCreator:AddComponentType(NewComponent)
 
-local SimultaneousMove = ComponentType()
-SimultaneousMove.Name = "SimultaneousMove"
-SimultaneousMove.TableType = TableType.Map
-SimultaneousMove:AddVariable("Unit", ByteSize.Reference)
-SimultaneousMove:AddVariable("PosX", ByteSize.Int)
-SimultaneousMove:AddVariable("PosZ", ByteSize.Int)
-SimultaneousMove:AddVariable("DirX", ByteSize.Int)
-SimultaneousMove:AddVariable("DirZ", ByteSize.Int)
-SimultaneousMove:AddVariable("Steps", ByteSize.Int)
-SimultaneousMove:AddVariable("SlerpTime", ByteSize.Float)
-worldCreator:AddComponentType(SimultaneousMove)
+NewComponent = ComponentType()
+NewComponent.Name = "SimultaneousMove"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("Unit", ByteSize.Reference)
+NewComponent:AddVariable("PosX", ByteSize.Int)
+NewComponent:AddVariable("PosZ", ByteSize.Int)
+NewComponent:AddVariable("DirX", ByteSize.Int)
+NewComponent:AddVariable("DirZ", ByteSize.Int)
+NewComponent:AddVariable("Steps", ByteSize.Int)
+NewComponent:AddVariable("SlerpTime", ByteSize.Float)
+worldCreator:AddComponentType(NewComponent)
 
 
 --	Test River
-local TestRiverComponent = ComponentType()
-TestRiverComponent.Name = "TestRiver"
-TestRiverComponent.TableType = TableType.Map
-TestRiverComponent:AddVariable("Unit", ByteSize.Reference)
-TestRiverComponent:AddVariable("PosX", ByteSize.Int)
-TestRiverComponent:AddVariable("PosZ", ByteSize.Int)
-worldCreator:AddComponentType(TestRiverComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "TestRiver"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("Unit", ByteSize.Reference)
+NewComponent:AddVariable("PosX", ByteSize.Int)
+NewComponent:AddVariable("PosZ", ByteSize.Int)
+worldCreator:AddComponentType(NewComponent)
 
-local TestMoveSuccessComponent = ComponentType()
-TestMoveSuccessComponent.Name = "TestMoveSuccess"
-TestMoveSuccessComponent.TableType = TableType.Map
-TestMoveSuccessComponent:AddVariable("Unit", ByteSize.Reference)
-TestMoveSuccessComponent:AddVariable("Steps", ByteSize.Int)
-worldCreator:AddComponentType(TestMoveSuccessComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "TestMoveSuccess"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("Unit", ByteSize.Reference)
+NewComponent:AddVariable("Steps", ByteSize.Int)
+worldCreator:AddComponentType(NewComponent)
 
 --	End Round
-local EndRoundComponent = ComponentType()
-EndRoundComponent.Name = "EndRound"
-EndRoundComponent.TableType = TableType.Map
-worldCreator:AddComponentType(EndRoundComponent)
+NewComponent = ComponentType()
+NewComponent.Name = "EndRound"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)

@@ -61,11 +61,11 @@ namespace FileSystem
 					{
 						if (data[i] == '\0')
 						{
-							delete data;
+							delete [] data;
 							return false;
 						}
 					}
-					delete data;
+					delete [] data;
 					return true;
 				}
 			}

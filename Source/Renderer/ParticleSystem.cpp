@@ -15,9 +15,10 @@ ParticleSystem::ParticleSystem(std::string type, const vec3 _pos, int _nParticle
 	m_color = _color;
 	m_endPhase = 0;
 
+	const char * outputNames[] = { "Position", "Velocity", "StartTime" };
+
 	if (type == "fire")
 	{
-		const char * outputNames[] = { "Position", "Velocity", "StartTime" };
 		m_shader.InitShaderProgram();
 		m_shader.AddShader("content/shaders/particles/particleFireVS.glsl", GL_VERTEX_SHADER);
 		m_shader.AddShader("content/shaders/particles/particleFireFS.glsl", GL_FRAGMENT_SHADER);
@@ -28,7 +29,6 @@ ParticleSystem::ParticleSystem(std::string type, const vec3 _pos, int _nParticle
 	}
 	else if (type == "smoke")
 	{
-		const char * outputNames[] = { "Position", "Velocity", "StartTime" };
 		m_shader.InitShaderProgram();
 		m_shader.AddShader("content/shaders/particles/particleSmokeVS.glsl", GL_VERTEX_SHADER);
 		m_shader.AddShader("content/shaders/particles/particleSmokeFS.glsl", GL_FRAGMENT_SHADER);
@@ -186,9 +186,9 @@ void ParticleSystem::CreateFire()
 	glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 1, m_velBuf[1]);
 	glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 2, m_startTime[1]);
 
-	delete posData;
-	delete velData;
-	delete timeData; 
+	delete [] posData;
+	delete [] velData;
+	delete [] timeData; 
 	initVelData = 0;
 	initPosData = 0;
 }
@@ -313,9 +313,9 @@ void ParticleSystem::CreateSmoke()
 	glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 1, m_velBuf[1]);
 	glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 2, m_startTime[1]);
 
-	delete posData;
-	delete velData;
-	delete timeData;
+	delete [] posData;
+	delete [] velData;
+	delete [] timeData;
 	initVelData = 0;
 	initPosData = 0;
 }

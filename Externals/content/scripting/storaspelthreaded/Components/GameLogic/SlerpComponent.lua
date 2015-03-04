@@ -1,15 +1,15 @@
 -- Slerp Rotation Component
-local SlerpRotationComponent = ComponentType()
-SlerpRotationComponent.Name = "SlerpRotation"
-SlerpRotationComponent.SyncNetwork = true
-SlerpRotationComponent.TableType = TableType.Map
-SlerpRotationComponent:AddVariable("fromX", ByteSize.Float)
-SlerpRotationComponent:AddVariable("fromY", ByteSize.Float)
-SlerpRotationComponent:AddVariable("fromZ", ByteSize.Float)
-SlerpRotationComponent:AddVariable("fromW", ByteSize.Float)
-SlerpRotationComponent:AddVariable("time", ByteSize.Float)
-SlerpRotationComponent:AddVariable("toX", ByteSize.Float)
-SlerpRotationComponent:AddVariable("toY", ByteSize.Float)
-SlerpRotationComponent:AddVariable("toZ", ByteSize.Float)
-SlerpRotationComponent:AddVariable("toW", ByteSize.Float)
-worldCreator:AddComponentType(SlerpRotationComponent)
+local NewComponent = ComponentType()
+NewComponent.Name = "SlerpRotation"
+NewComponent.SyncNetwork = true
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("fromX", ByteSize.Float)
+NewComponent:AddVariable("fromY", ByteSize.Float)
+NewComponent:AddVariable("fromZ", ByteSize.Float)
+NewComponent:AddVariable("fromW", ByteSize.Float)
+NewComponent:AddVariable("time", ByteSize.Float)
+NewComponent:AddVariable("toX", ByteSize.Float)
+NewComponent:AddVariable("toY", ByteSize.Float)
+NewComponent:AddVariable("toZ", ByteSize.Float)
+NewComponent:AddVariable("toW", ByteSize.Float)
+worldCreator:AddComponentType(NewComponent)
