@@ -63,11 +63,11 @@ namespace FileSystem
 						if (data[i] == '\0')
 						{
 							delete [] data;
-							return false;
+							return true;
 						}
 					}
 					delete [] data;
-					return true;
+					return false;
 				}
 			}
 			return false;
