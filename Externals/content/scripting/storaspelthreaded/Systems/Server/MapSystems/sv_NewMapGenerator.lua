@@ -94,7 +94,7 @@ MapGenerator.GenerateMap = function(self, MapSeed, NumberOfPlayers, NumberOfChec
 
 	--	Seed the random
 	math.randomseed(MapSeed)
-	print("SEEEED " .. MapSeed)
+	--print("SEEEED " .. MapSeed)
 	
 	--	Randomize initial values
 	self.MapSizeX		=	math.random(8+NumberOfPlayers, 10+NumberOfPlayers) + 2*self.VoidMargin

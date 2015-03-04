@@ -38,7 +38,6 @@ HostSettingsSystem.EntitiesAdded = function(self, dt, addedEntities)
 		end
 		
 		if world:EntityHasComponent(entity, "MapSpecs") then
-			print("SettingsId: " .. self.settingsId)
 			if self.settingsId == -1 then
 				return
 			end
