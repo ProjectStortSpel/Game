@@ -3,7 +3,7 @@
 --	for AI Components
 
 -- AI Component
-local AIComponent = ComponentType()
-AIComponent.Name = "AI"
-AIComponent.TableType = TableType.Map
-worldCreator:AddComponentType(AIComponent)
+local NewComponent = ComponentType()
+NewComponent.Name = "AI"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)

@@ -67,12 +67,13 @@ Net.Receive("Client.NewTargetCheckpoint",
 	local	cpID	=	Net.ReadInt(id)
 	local	X		=	Net.ReadFloat(id)
 	local	Z		=	Net.ReadFloat(id)
-	print("INFO " .. cpID .. " at " .. X .. ", " .. Z)
+	
 	local	newParticle	=	world:CreateNewEntity()
 	world:CreateComponentAndAddTo("Position", newParticle)
 	world:CreateComponentAndAddTo("Color", newParticle)
 	world:CreateComponentAndAddTo("Particle", newParticle)
 	world:CreateComponentAndAddTo("CheckpointReached", newParticle)
+	world:CreateComponentAndAddTo("Pointlight", newParticle)
 	
 	world:GetComponent(newParticle, "CheckpointReached", "CheckpointNumber"):SetInt(cpID)
 	
@@ -86,6 +87,10 @@ Net.Receive("Client.NewTargetCheckpoint",
 	world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.016)
 	world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(0.6)
 	world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
+	--	X, Y, Z Ambient, Diffuse, Specular, R, G, B, Range
+	world:GetComponent(newParticle, "Pointlight", 0):SetPointlight(X, 0.7, Z, 0.7, 0.6, 0.4, 0.8, 0.7, 0.7, 2)
+	
+	
 	
 	end
 )

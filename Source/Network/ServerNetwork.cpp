@@ -593,7 +593,12 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t& 
 				m_connectedClientsNC->push_back(_connection);
 			}
 			else
-				(*m_connectedClients)[_connection]->SetActive(0);
+			{
+				m_connectedClients->erase(_connection);
+				if ((*m_receivePacketThreads)[_connection].joinable())
+					(*m_receivePacketThreads)[_connection].join();
+				return;
+			}
 
 			SDL_UnlockMutex(m_connectedClientsLock);
 		}

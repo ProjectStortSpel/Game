@@ -45,7 +45,7 @@ HostSettingsSystem.EntitiesAdded = function(self, dt, addedEntities)
 			
 			local popu = world:CreateNewEntity()
 			world:CreateComponentAndAddTo("NotificationPopup", popu)
-			world:GetComponent(popu, "NotificationPopup", "Text"):SetText("TEEEEEEEEEEEEEMP")
+			world:GetComponent(popu, "NotificationPopup", "Text"):SetText("WHY HELLO THERE")
 			world:CreateComponentAndAddTo("SyncNetwork", popu)
 			
 			

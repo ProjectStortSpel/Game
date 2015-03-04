@@ -7,6 +7,7 @@ require "cl_ChatSystem"
 require "cl_ShowNextCheckpointSystem"
 require "cl_LobbySystem"
 require "cl_VisualizeSelectedCards"
+require "cl_FadeTreeSystem"
 
 --	Interface Systems
 package.path = package.path .. ";Systems/Client/InterfaceSystems/?.lua"
@@ -63,6 +64,7 @@ worldCreator:AddSystemToCurrentGroup(ShowNextCheckpointSystem)
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(VisualizeSelectedCards)
+worldCreator:AddSystemToCurrentGroup(FadeTreeSystem)
 
 
 
