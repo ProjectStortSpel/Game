@@ -27,7 +27,6 @@ ActionGuardSystem.EntitiesAdded = function(self, dt, entities)
 	
 			for i = 1, #aGuard do
 				world:RemoveComponentFrom("ActionGuard", aGuard[i])
-				print("Removed ActionGuard from unit")
 			end
 	
 		else -- If a guard card was played
@@ -35,7 +34,6 @@ ActionGuardSystem.EntitiesAdded = function(self, dt, entities)
 			for i = 1, #uGuard do
 				world:CreateComponentAndAddTo("ActionGuard", entity)
 				world:RemoveComponentFrom("UnitGuard", entity)
-				print("Added ActionGuard to unit")
 			end
 			
 		end	

@@ -481,7 +481,6 @@ HostMenuSystem.AddEntityCommandToButton = function(self, command, button, boundT
 	
 	
 	if boundTo ~= nil then
-		print("Bound backdrop#" .. button .. " to entity: " .. boundTo)
 		world:CreateComponentAndAddTo("BoundToEntity", button)
 		world:SetComponent(button, "BoundToEntity", "EntityId", boundTo)
 	

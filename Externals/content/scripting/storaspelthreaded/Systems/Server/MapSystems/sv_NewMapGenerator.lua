@@ -62,8 +62,8 @@ end
 
 MapGenerator.EntitiesAdded = function(self, dt, entities)
 	--self:GenerateMap(os.time()%29181249, 4, 4)
-	self:GenerateMap(23246299, 4, 4)
-	--self:GenerateMap(666, 3, 4)
+	--self:GenerateMap(23246299, 8, 4)
+	self:GenerateMap(9, 4, 4)
 	--self:GenerateMap(23239474, 4, 4)
 	--self:GenerateMap(5747, 4, 4)
 	--self:GenerateMap(1338, 2, 4)
@@ -94,7 +94,7 @@ MapGenerator.GenerateMap = function(self, MapSeed, NumberOfPlayers, NumberOfChec
 
 	--	Seed the random
 	math.randomseed(MapSeed)
-	print("SEEEED " .. MapSeed)
+	--print("SEEEED " .. MapSeed)
 	
 	--	Randomize initial values
 	self.MapSizeX		=	math.random(8+NumberOfPlayers, 10+NumberOfPlayers) + 2*self.VoidMargin

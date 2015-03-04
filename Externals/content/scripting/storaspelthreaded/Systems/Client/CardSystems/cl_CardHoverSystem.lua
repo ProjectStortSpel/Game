@@ -14,8 +14,7 @@ CardHoverSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("CardPrio", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("CardAction", FilterType.Mandatory)
 	self:AddComponentTypeToFilter("OnPickBoxHit", FilterType.Mandatory)
-	
-	print("Card hover System initialized!")
+
 end
 
 CardHoverSystem.Update = function(self, dt)

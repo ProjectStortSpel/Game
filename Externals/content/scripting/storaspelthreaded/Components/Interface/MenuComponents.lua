@@ -57,3 +57,11 @@ MenuEntityCommand.Name = "MenuEntityCommand"
 MenuEntityCommand.TableType = TableType.Map
 MenuEntityCommand:AddVariable("ComponentName", ByteSize.Text)
 worldCreator:AddComponentType(MenuEntityCommand)
+
+-- NotificationPopup
+local NotificationPopup = ComponentType()
+NotificationPopup.Name = "NotificationPopup"
+NotificationPopup.TableType = TableType.Map
+NotificationPopup.SyncNetwork = true
+NotificationPopup:AddVariable("Text", ByteSize.Text)
+worldCreator:AddComponentType(NotificationPopup)

@@ -57,12 +57,10 @@ OptionMenuSystem.SpawnMenu = function(self)
 	
 	local button = nil
 	button = self:CreateElement("graphicslow", "quad", 0, 0.4, -3, 0.6, 0.3)
-	print(button)
 	self:AddConsoleCommandToButton("changegraphics low", button)	
 	self:AddHoverSize(1.1, button)
 	
 	button = self:CreateElement("graphicshigh", "quad", 0, -0.4, -3, 0.6, 0.3)
-	print(button)
 	self:AddConsoleCommandToButton("changegraphics high", button)	
 	self:AddHoverSize(1.1, button)
 end
