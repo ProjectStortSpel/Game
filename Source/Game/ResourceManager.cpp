@@ -8,9 +8,16 @@ namespace ResourceManager
 	std::map<std::string, Resource> GamemodeResources;
 	std::map<std::string, Resource> ContentResources;
 
-	bool CreateResource(std::string _path, Resource &_r, HomePath::Type _type)
+	bool CreateResource(std::string _path, Resource &_r, HomePath::Type _type, bool _allPaths)
 	{
-		std::vector<std::string> paths = HomePath::GetPaths(_type);
+        
+        std::vector<std::string> paths;
+        
+        if (_allPaths)
+            paths = HomePath::GetPaths(_type);
+        else
+            paths = HomePath::GetGameModePaths(_type);
+        
 		std::string path;
 		bool foundFile = false;
 		int i;
@@ -42,9 +49,17 @@ namespace ResourceManager
 		return true;
 	}
 
-	bool CreateResource(std::string _gamemode, std::string _path, Resource &_r, HomePath::Type _type)
+	bool CreateResource(std::string _gamemode, std::string _path, Resource &_r, HomePath::Type _type, bool _allPaths)
 	{
-		std::vector<std::string> paths = HomePath::GetPaths(_type, _gamemode);
+		
+        
+        std::vector<std::string> paths;
+        
+        if (_allPaths)
+            paths = HomePath::GetPaths(_type, _gamemode);
+        else
+            paths = HomePath::GetGameModePaths(_type, _gamemode);
+        
 		std::string path;
 		bool foundFile = false;
 		int i;
@@ -89,7 +104,7 @@ namespace ResourceManager
 	int AddGamemodeResource(std::string _path)
 	{
 		Resource r;
-		if (!ResourceExist(_path, &GamemodeResources) && CreateResource(_path, r, HomePath::Type::Server))
+		if (!ResourceExist(_path, &GamemodeResources) && CreateResource(_path, r, HomePath::Type::Server, false))
 		{
 			GamemodeResources[_path] = r;
 			return 1;
@@ -123,7 +138,7 @@ namespace ResourceManager
 		else
 		{
 			Resource r;
-			if (!ResourceExist(_path, &ContentResources) && CreateResource(_path, r, HomePath::Type::Server))
+			if (!ResourceExist(_path, &ContentResources) && CreateResource(_path, r, HomePath::Type::Server, true))
 			{
 				ContentResources[_path] = r;
 				return 1;

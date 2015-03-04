@@ -1,7 +1,6 @@
 #ifndef COMBINATIONMATH_H
 #define COMBINATIONMATH_H
 
-
 #include <LuaEmbedder/LuaEmbedder.h>
 #include <algorithm>
 #include <vector>
@@ -10,7 +9,12 @@ namespace LuaBridge
 {
 	namespace CombinationMath
 	{
+		const double performanceFreq = SDL_GetPerformanceFrequency();
+		const Uint64 initTime = SDL_GetPerformanceCounter();
+
 		void Embed(lua_State* L);
+		int LuaMicroTime(lua_State* L);
+		int LuaClockCycles(lua_State* L);
 		int LuaCombinations(lua_State* L);
 		int LuaPermutations(lua_State* L);
 
