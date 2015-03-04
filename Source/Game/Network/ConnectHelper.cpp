@@ -198,10 +198,13 @@ namespace ConnectHelper
 
 			if (lastPart == 1)
 			{
-                if (r.MD5 != FileSystem::MD5::MD5_File(r.Location))
+				FileSystem::MD5::MD5Data MD5 = FileSystem::MD5::MD5_File(r.Location);
+                if (r.MD5 != MD5)
                 {
                     FileSystem::File::Delete(r.Location);
                     SDL_Log("Failed to download gamemode file (md5 mismatch): %s", filename.c_str());
+					FileSystem::MD5::MD5_Print(r.MD5);
+					FileSystem::MD5::MD5_Print(MD5);
                     return;
                 }
                 
@@ -353,12 +356,15 @@ namespace ConnectHelper
 
 			if (lastPart == 1)
 			{
-                if (r.MD5 != FileSystem::MD5::MD5_File(r.Location))
-                {
-                    FileSystem::File::Delete(r.Location);
-                    SDL_Log("Failed to download content file (md5 mismatch): %s", filename.c_str());
-                    return;
-                }
+				FileSystem::MD5::MD5Data MD5 = FileSystem::MD5::MD5_File(r.Location);
+				if (r.MD5 != MD5)
+				{
+					FileSystem::File::Delete(r.Location);
+					SDL_Log("Failed to download content file (md5 mismatch): %s", filename.c_str());
+					FileSystem::MD5::MD5_Print(r.MD5);
+					FileSystem::MD5::MD5_Print(MD5);
+					return;
+				}
                 
                 SDL_Log("Downloaded content file: %s", filename.c_str());
 
