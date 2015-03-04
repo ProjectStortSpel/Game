@@ -131,7 +131,7 @@ namespace LuaEmbedder
       if (lua_isnumber(L, 2))
       {
 	int index = lua_tointeger(L, 2);
-	Luna<T>::push(L, className, (*pArray)[index - 1], true);
+	Luna<T>::push(L, className, (*pArray)[index - 1], false);
       }
       else
 	lua_pushnil(L);
@@ -199,6 +199,8 @@ namespace LuaEmbedder
       }
       if (pArray && *pArray)
       {
+		  for (int i = 0; i < length; i++)
+			  delete (*pArray)[i];
 	delete [] (*pArray);
 	*pArray = nullptr;
 	pArray = nullptr;
