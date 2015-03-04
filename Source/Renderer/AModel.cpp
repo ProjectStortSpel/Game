@@ -54,19 +54,14 @@ void AModel::Draw(mat4 viewMatrix, mat4 projectionMatrix, Shader* shaderptr)
 
 
 		float *anim_data = new float[animation.size() * 16];
-
 		for (int j = 0; j < animation.size(); j++)
 		{
 			memcpy(&anim_data[16 * j], &animation[j], 16 * sizeof(float));
 		}
-
 		int anim_data_size = 16 * animation.size() * sizeof(float);
-
 		glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 6, animBuffer, 0, anim_data_size);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, anim_data_size, anim_data, GL_STATIC_DRAW);
-
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, animBuffer);
-
 		delete [] anim_data;
 
 
@@ -97,10 +92,7 @@ void AModel::Update(float _dt)
 
 		Animation* animptr = &animations[animId];
 		for (int i = 0; i < animptr->joints.size(); i++)
-		{
-			int index = animation.size() - animptr->joints[i].jointId - 1;
 			animation[i] = animptr->joints[i].frames[currentframe];
-		}
 	}
 }
 

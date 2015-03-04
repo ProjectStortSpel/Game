@@ -6,7 +6,6 @@
 
 namespace Renderer
 {
-
 	struct Joint
 	{
 		float x0, y0, z0, w0;
