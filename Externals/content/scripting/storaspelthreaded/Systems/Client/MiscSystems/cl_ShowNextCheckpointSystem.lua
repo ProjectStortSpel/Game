@@ -1,5 +1,7 @@
 ShowNextCheckpointSystem = System()
 ShowNextCheckpointSystem.TotalTime	=	0.0
+ShowNextCheckpointSystem.FlameTimer	=	0.0
+ShowNextCheckpointSystem.FlameLimit	=	1/20
 
 ShowNextCheckpointSystem.Initialize = function ( self )
 	--	Set Name
@@ -18,18 +20,24 @@ ShowNextCheckpointSystem.Update = function(self, dt)
 
 	local Pointlights = self:GetEntities("Pointlight")
 	if #Pointlights >= 1 then
-		for n = 1, #Pointlights do
+		self.TotalTime	=	self.TotalTime + dt
+		self.FlameTimer	=	self.FlameTimer + dt
 		
-			local	tPL	=	Pointlights[n]
+		if self.FlameTimer > self.FlameLimit then
+			for n = 1, #Pointlights do
 			
-			local	X, Y, Z, AMBIENT, DIFFUSE, SPECULAR, R, G, B, RANGE	=	world:GetComponent(tPL, "Pointlight", 0):GetPointlight()
-			--local	newRange	=	3 + math.sin(self.TotalTime)*math.random(1, 10)*dt
-			DIFFUSE		=	0.8 + 0.8*math.sin(dt*(self.TotalTime + math.random(1, 400)))*0.2
-			SPECULAR	=	0.7 + 0.7*math.sin(dt*(self.TotalTime + math.random(1, 400)))*0.2
-			world:GetComponent(tPL, "Pointlight", 0):SetPointlight(X, Y, Z, AMBIENT, DIFFUSE, SPECULAR, R, G, B, 5)
+				local	tPL	=	Pointlights[n]
+				
+				local	X, Y, Z, AMBIENT, DIFFUSE, SPECULAR, R, G, B, RANGE	=	world:GetComponent(tPL, "Pointlight", 0):GetPointlight()
+				--local	newRange	=	3 + math.sin(self.TotalTime)*math.random(1, 10)*dt
+				DIFFUSE		=	0.8 + 0.8*math.sin(dt*(self.TotalTime + math.random(1, 400)))*0.2
+				SPECULAR	=	0.7 + 0.7*math.sin(dt*(self.TotalTime + math.random(1, 400)))*0.2
+				world:GetComponent(tPL, "Pointlight", 0):SetPointlight(X, Y, Z, AMBIENT, DIFFUSE, SPECULAR, R, G, B, 5)
+			end
+			
+			self.FlameTimer	=	0.0
 		end
 		
-		self.TotalTime	=	self.TotalTime + dt
 	end
 end
 
