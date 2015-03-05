@@ -43,7 +43,7 @@ ActionGuardSystem.EntitiesAdded = function(self, dt, entities)
 		end
 		world:GetComponent(entity, "Animation", "Id"):SetInt(6)
 		world:GetComponent(entity, "Animation", "FrameTime"):SetFloat(0.01)
-		world:GetComponent(entity, "Animation", "Time"):SetFloat(1)
+		world:GetComponent(entity, "Animation", "Time"):SetFloat(1.1)
 		
 	end
 end
