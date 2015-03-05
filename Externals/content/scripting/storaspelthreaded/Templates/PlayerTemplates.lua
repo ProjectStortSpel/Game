@@ -1,4 +1,4 @@
---	AI template [TODO: Add shit]
+--	AI template
 local AITemplate = EntityTemplate()
 AITemplate.Name = "AI"
 --AITemplate:AddComponent("Player")
@@ -49,7 +49,7 @@ Unit.Name = "Unit"
 	
 EntityTemplateManager:AddTemplate(Unit)		--	Add the template
 
---	Unit template
+--	Ghost template
 local Ghost = EntityTemplate()
 Ghost.Name = "Ghost"
 
