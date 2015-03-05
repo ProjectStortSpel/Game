@@ -1,5 +1,6 @@
 CardAddModelSystem = System()
 CardAddModelSystem.UpOffset = -0.2
+CardAddModelSystem.Arrow = -1
 
 CardAddModelSystem.Initialize = function(self)
 	--	Set Name
@@ -7,6 +8,7 @@ CardAddModelSystem.Initialize = function(self)
 	
 	--	Toggle EntitiesAdded
 	self:UsingEntitiesAdded()
+	self:UsingEntitiesRemoved()
 	
 	--	Set Filter
 	self:AddComponentTypeToFilter("CardAction", FilterType.Mandatory)
@@ -72,6 +74,41 @@ CardAddModelSystem.EntitiesAdded = function(self, dt, entities)
 		world:GetComponent(id, "TextTexture", "R"):SetFloat(0)
 		world:GetComponent(id, "TextTexture", "G"):SetFloat(0)
 		world:GetComponent(id, "TextTexture", "B"):SetFloat(0)
+	end
+	
+	local unit = world:GetComponent(entities[1], "Card", "Unit"):GetInt()
+	self:CreateArrow(unit)
+end
+
+CardAddModelSystem.EntitiesRemoved = function(self, dt, entities)
+	self:RemoveArrow()
+end
+
+CardAddModelSystem.CreateArrow = function(self, unit)
+	if self.Arrow == -1 then
+		local arrow = world:CreateNewEntity()
+		world:CreateComponentAndAddTo("Parent", arrow)
+		world:CreateComponentAndAddTo("Model", arrow)
+		world:CreateComponentAndAddTo("Position", arrow)
+		world:CreateComponentAndAddTo("Rotation", arrow)
+		world:CreateComponentAndAddTo("Scale", arrow)
+		world:CreateComponentAndAddTo("LerpScale", arrow)
+		world:GetComponent(arrow, "Position", 0):SetFloat3(0.0, 1.5, 0.05)
+		world:GetComponent(arrow, "Rotation", 0):SetFloat3(0.0, 0.0, 0.0)
+		world:GetComponent(arrow, "Scale", 0):SetFloat3(0.0, 0.0, 0.0)
+		world:GetComponent(arrow, "Model", 0):SetModel("arrow", "arrow", 1)
+		world:GetComponent(arrow, "Parent", 0):SetInt(unit)
+		world:GetComponent(arrow, "LerpScale", "Time", 0):SetFloat4(0.2, 0.4, 0.4, 0.4)
+		world:GetComponent(arrow, "LerpScale", "Algorithm", 0):SetText("SmoothLerp")
+		world:GetComponent(arrow, "LerpScale", "KillWhenFinished", 0):SetBool(false)
+		self.Arrow = arrow
+	end
+end
+
+CardAddModelSystem.RemoveArrow = function(self)
+	if self.Arrow ~= -1 then
+		world:KillEntity(self.Arrow)
+		self.Arrow = -1
 	end
 end
 
