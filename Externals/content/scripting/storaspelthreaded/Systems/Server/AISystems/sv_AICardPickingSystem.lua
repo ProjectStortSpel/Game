@@ -11,7 +11,7 @@ AICardPickingSystem.NoOfCheckpoints = 0
 AICardPickingSystem.CardsPerHand = 0
 AICardPickingSystem.CardsToPick = 0
 
-
+-- TODO: Remove this
 AICardPickingSystem.ERROR = false
 
 -- Per AI

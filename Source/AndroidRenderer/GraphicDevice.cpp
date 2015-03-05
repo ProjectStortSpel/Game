@@ -41,6 +41,9 @@ GraphicDevice::~GraphicDevice()
 	for (std::map<std::string, Shader*>::iterator it = m_particleShaders.begin(); it != m_particleShaders.end(); ++it)
 		delete(it->second);
 
+#ifdef __ANDROID__
+	glDeleteBuffers(1, &m_fullscreenQuadBuffer);
+#endif
 	SDL_GL_DeleteContext(m_glContext);
 	// Close and destroy the window
 	SDL_DestroyWindow(m_window);
@@ -122,15 +125,15 @@ void GraphicDevice::InitStandardBuffers()
 	//Particle shaders
 	for (std::map<std::string, Shader*>::iterator it = m_particleShaders.begin(); it != m_particleShaders.end(); ++it)
 	{
-		SDL_Log("program id: %d", it->second->GetShaderProgram());
-
 		it->second->CheckUniformLocation("diffuseTex", 1);
 	}
 
-	SDL_Log("particle textures checked!");
-
 	//Fullscreen shader
 	m_fullscreen.CheckUniformLocation("sampler", 4);
+
+#ifdef __ANDROID__
+	CreateFullscreenQuad();
+#endif
 }
 
 void GraphicDevice::InitStandardShaders()
@@ -154,7 +157,6 @@ void GraphicDevice::InitStandardShaders()
 	m_interfaceShader.FinalizeShaderProgram();
 
 	// Particle shaders
-	
 	m_particleShaders["smoke"] = new Shader();
 	m_particleShaders["smoke"]->InitShaderProgram();
 	m_particleShaders["smoke"]->AddShader("content/shaders/android/AndroidSmokeShaderVS.glsl", GL_VERTEX_SHADER);
@@ -167,7 +169,6 @@ void GraphicDevice::InitStandardShaders()
 	m_particleShaders["fire"]->AddShader("content/shaders/android/AndroidFireShaderFS.glsl", GL_FRAGMENT_SHADER);
 	m_particleShaders["fire"]->FinalizeShaderProgram();
 	
-
 	//m_fullscreen
 	m_fullscreen.InitShaderProgram();
 	m_fullscreen.AddShader("content/shaders/android/AndroidFullscreenVS.glsl", GL_VERTEX_SHADER);
@@ -699,7 +700,6 @@ void GraphicDevice::SortModelsBasedOnDepth(std::vector<Model>* models)
 
 void GraphicDevice::AddParticleEffect(std::string _name, const vec3 _pos, int _nParticles, float _lifeTime, float _scale, float _spriteSize, std::string _texture, vec3 _color, int &_id)
 {
-	SDL_Log("effect NAME: %s", _name.c_str());
 	ParticleSystemToLoad tmpSystem;
 	tmpSystem.Name = _name;
 	tmpSystem.Pos = _pos;
@@ -811,4 +811,26 @@ void GraphicDevice::Clear()
 	for (std::map<int, ParticleEffect*>::iterator it = m_particleEffects.begin(); it != m_particleEffects.end(); ++it)
 		delete(it->second);
 	m_particleEffects.clear();
+}
+
+void GraphicDevice::CreateFullscreenQuad()
+{
+	float positionData[] = {
+		-1.0, -1.0,
+		1.0, -1.0,
+		1.0, 1.0,
+		1.0, 1.0,
+		-1.0, 1.0,
+		-1.0, -1.0
+	};
+
+	//m_fullscreen.UseProgram();
+
+	glGenBuffers(1, &m_fullscreenQuadBuffer);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_fullscreenQuadBuffer);
+	glBufferData(GL_ARRAY_BUFFER, 2 * 6 * sizeof(float), positionData, GL_STATIC_DRAW);
+
+	//glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
+	//glEnableVertexAttribArray(0);
 }
