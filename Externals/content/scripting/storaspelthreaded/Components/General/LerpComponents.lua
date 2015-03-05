@@ -1,3 +1,9 @@
+-- Kill After Lerp
+local KillAfterLerp = ComponentType()
+KillAfterLerp.Name = "KillAfterLerp"
+KillAfterLerp.TableType = TableType.Map
+worldCreator:AddComponentType(KillAfterLerp)
+
 -- Lerp Position
 local LerpPosition = ComponentType()
 LerpPosition.Name = "LerpPosition"
