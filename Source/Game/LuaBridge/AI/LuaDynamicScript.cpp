@@ -12,11 +12,11 @@ namespace LuaBridge
 			LuaEmbedder::EmbedClass<DSData>( _l, "DSData" );
 			LuaEmbedder::EmbedClassFunction<DSData>( _l, "DSData", "AddElement", &DSData::AddElement );
 
-			LuaEmbedder::AddFunction( _l, "LoadRuleBook", &LoadRuleBook, "DynamicScript" );
-			LuaEmbedder::AddFunction( _l, "GenerateScript", &GenerateScriptForLua, "DynamicScript" );
-			LuaEmbedder::AddFunction( _l, "UpdateWeight", &UpdateScriptWeight, "DynamicScript" );
-			LuaEmbedder::AddFunction( _l, "UseThisScript", &SetScript, "DynamicScript" );
-			LuaEmbedder::AddFunction( _l, "GetRuleTypeInt", &GetRuleTypeInt, "DynamicScript" );
+			LuaEmbedder::AddFunction( _l, "LoadRuleBook", &LoadRuleBook, "DynamicScripting" );
+			LuaEmbedder::AddFunction( _l, "GenerateScript", &GenerateScriptForLua, "DynamicScripting" );
+			LuaEmbedder::AddFunction( _l, "UpdateWeight", &UpdateScriptWeight, "DynamicScripting" );
+			LuaEmbedder::AddFunction( _l, "UseThisScript", &SetScript, "DynamicScripting" );
+			LuaEmbedder::AddFunction( _l, "GetRuleTypeInt", &GetRuleTypeInt, "DynamicScripting" );
 		}
 
 		int	LoadRuleBook( lua_State* _l )
@@ -27,7 +27,9 @@ namespace LuaBridge
 
 			DynamicScripting* ds = DynamicScripting::Instance( );
 
-			ds->SetRuleBook( rm.GetRulebook( index ) );
+			rulebook* book = rm.GetRulebook(index);
+
+			ds->SetRuleBook( book );
 			
 			LuaEmbedder::PushInt( _l, index );
 			return 1;
@@ -41,7 +43,7 @@ namespace LuaBridge
 
 			std::vector<Rule> script = ds->GetScript( );
 
-			LuaEmbedder::PullBool( _l, true );
+			LuaEmbedder::PushBool( _l, true );
 			return 1;
 		}
 
@@ -49,7 +51,9 @@ namespace LuaBridge
 		{
 			float fitness = LuaEmbedder::PullFloat( _l, 1 );
 
-			DynamicScripting* ds = DynamicScripting::Instance( );
+			DynamicScripting* ds = DynamicScripting::Instance();
+
+			rulebook* book = rm.GetRulebook(0);
 
 			ds->AdjustWeight( fitness );
 
@@ -72,6 +76,15 @@ namespace LuaBridge
 			DynamicScripting* ds = DynamicScripting::Instance( );
 
 			ds->SetScript( dsd->rules );
+
+			return 0;
+		}
+
+		int	SetNoOfScriptsToUse(lua_State* _l)
+		{
+			DynamicScripting* ds = DynamicScripting::Instance();
+
+			ds->SetNumberOfScripts(LuaEmbedder::PullInt(_l, 1));
 
 			return 0;
 		}

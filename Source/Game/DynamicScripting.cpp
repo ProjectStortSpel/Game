@@ -25,7 +25,7 @@ DynamicScripting::DynamicScripting()
 {
 	srand(time(0));
 	m_ruleBook = NULL;
-	m_noOfScriptsToUse = 0;
+	m_noOfScriptsToUse = 3;
 }
 
 DynamicScripting::~DynamicScripting()
@@ -49,17 +49,18 @@ void DynamicScripting::Sum()
 
 void DynamicScripting::GenerateScript()
 {
+	m_script.clear();
 	unsigned int	noOfTries;
 	bool			ruleAddedToScript;
 
 	Sum();
 
-	for (unsigned int i = 0; i < m_ruleBook->size(); i++)
+	for (unsigned int i = 0; i < m_noOfScriptsToUse; i++)
 	{
 		noOfTries			= 0;
 		ruleAddedToScript	= false;
 
-		unsigned int ruleId, selectedRule;
+		int ruleId, selectedRule;
 		float weightSum = 0;
 		float randomValue;
 
@@ -112,7 +113,7 @@ void DynamicScripting::AdjustWeight(float _fitness)
 	int noOfActiveScripts = m_script.size();
 
 	/* If we have no active scripts or more than we should have, something is wrong.*/
-	if (0 <= noOfActiveScripts || m_ruleBook->size() < noOfActiveScripts)
+	if (noOfActiveScripts <= 0 || m_ruleBook->size() < noOfActiveScripts)
 	{
 		return;
 	}
@@ -204,10 +205,10 @@ bool DynamicScripting::IsTypeInScript( Rule _rule )
 	{
 		if ( _rule / m_script [i] )
 		{
-			return false;
+			return true;
 		}
 	}
-	return true;
+	return false;
 }
 
 void DynamicScripting::DistributeLeftOvers(float _leftOver)
@@ -271,4 +272,9 @@ void DynamicScripting::DistributeLeftOvers(float _leftOver)
 
 	/* If we still have leftOvers, recursively call this method.*/
 	DistributeLeftOvers(leftOver);
+}
+
+void DynamicScripting::SetNumberOfScripts(unsigned int _noOfScriptsToUse)
+{
+	m_noOfScriptsToUse = _noOfScriptsToUse;
 }
