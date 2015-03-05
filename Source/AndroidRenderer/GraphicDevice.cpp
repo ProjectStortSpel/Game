@@ -117,8 +117,8 @@ void GraphicDevice::InitStandardBuffers()
 	m_skyBoxShader.CheckUniformLocation("cubemap", 1);
 
 	//Particle shaders
-	for (std::map<std::string, Shader>::iterator it = m_particleShaders.begin(); it != m_particleShaders.end(); ++it)
-		it->second.CheckUniformLocation("diffuseTex", 1);
+	//for (std::map<std::string, Shader>::iterator it = m_particleShaders.begin(); it != m_particleShaders.end(); ++it)
+	//	it->second.CheckUniformLocation("diffuseTex", 1);
 
 	//Fullscreen shader
 	m_fullscreen.CheckUniformLocation("sampler", 4);
@@ -152,11 +152,12 @@ void GraphicDevice::InitStandardShaders()
 	particleShader.FinalizeShaderProgram();
 	m_particleShaders["fire"] = particleShader;
 
-	particleShader.InitShaderProgram();
-	particleShader.AddShader("content/shaders/android/AndroidSmokeShaderVS.glsl", GL_VERTEX_SHADER);
-	particleShader.AddShader("content/shaders/android/AndroidSmokeShaderFS.glsl", GL_FRAGMENT_SHADER);
-	particleShader.FinalizeShaderProgram();
-	m_particleShaders["smoke"] = particleShader;
+	Shader smokeShader;
+	smokeShader.InitShaderProgram();
+	smokeShader.AddShader("content/shaders/android/AndroidSmokeShaderVS.glsl", GL_VERTEX_SHADER);
+	smokeShader.AddShader("content/shaders/android/AndroidSmokeShaderFS.glsl", GL_FRAGMENT_SHADER);
+	smokeShader.FinalizeShaderProgram();
+	m_particleShaders["smoke"] = smokeShader;
 
 	//m_fullscreen
 	m_fullscreen.InitShaderProgram();
@@ -736,6 +737,7 @@ void GraphicDevice::BufferParticleSystems()
 	{
 		if (m_particleSystemsToLoad[i].Name == "fire")
 		{
+			SDL_Log("m_particleShaders fire Shaderproghandle: %d", m_particleShaders[m_particleSystemsToLoad[i].Name].GetShaderProgram());
 			m_particleEffects.insert(std::pair<int, ParticleEffect*>(m_particleSystemsToLoad[i].Id, new Fire(
 				m_particleSystemsToLoad[i].Pos,
 				m_particleSystemsToLoad[i].NrOfParticles,
@@ -746,9 +748,17 @@ void GraphicDevice::BufferParticleSystems()
 				m_particleSystemsToLoad[i].Color,
 				&m_particleShaders[m_particleSystemsToLoad[i].Name])));
 		}
-		/*else if (m_particleSystemsToLoad[i].Name == "smoke")
+		else if (m_particleSystemsToLoad[i].Name == "smoke")
 		{
-            return;
+			SDL_Log("m_particleSystemsToLoad[i].Pos: %f, %f, %f", m_particleSystemsToLoad[i].Pos.x, m_particleSystemsToLoad[i].Pos.y, m_particleSystemsToLoad[i].Pos.z);
+			SDL_Log("m_particleSystemsToLoad[i].NrOfParticles: %d", m_particleSystemsToLoad[i].NrOfParticles);
+			SDL_Log("m_particleSystemsToLoad[i].LifeTime: %f", m_particleSystemsToLoad[i].LifeTime);
+			SDL_Log("m_particleSystemsToLoad[i].Scale: %f", m_particleSystemsToLoad[i].Scale);
+			SDL_Log("m_particleSystemsToLoad[i].SpriteSize: %f", m_particleSystemsToLoad[i].SpriteSize);
+			SDL_Log("m_particleSystemsToLoad[i].TextureName: %s", m_particleSystemsToLoad[i].TextureName.c_str());
+			SDL_Log("m_particleSystemsToLoad[i].Name: %s", m_particleSystemsToLoad[i].Name.c_str());
+			SDL_Log("m_particleShaders smoke Shaderproghandle: %d", m_particleShaders[m_particleSystemsToLoad[i].Name].GetShaderProgram());
+
 			m_particleEffects.insert(std::pair<int, ParticleEffect*>(m_particleSystemsToLoad[i].Id, new Smoke(
 				m_particleSystemsToLoad[i].Pos,
 				m_particleSystemsToLoad[i].NrOfParticles,
@@ -758,7 +768,7 @@ void GraphicDevice::BufferParticleSystems()
 				AddTexture(m_particleSystemsToLoad[i].TextureName, GL_TEXTURE1),
 				m_particleSystemsToLoad[i].Color,
 				&m_particleShaders[m_particleSystemsToLoad[i].Name])));
-		}*/
+		}
 	}
 	m_particleSystemsToLoad.clear();
 
