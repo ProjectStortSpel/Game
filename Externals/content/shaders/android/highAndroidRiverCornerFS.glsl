@@ -45,7 +45,7 @@ struct MaterialInfo {
 
 uniform float ElapsedTime;
 
-#define HalfPI 1.570796327f
+#define HalfPI 1.570796327
 
 vec3 NmNormal;
 

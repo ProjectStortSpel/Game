@@ -38,6 +38,9 @@ GraphicDevice::~GraphicDevice()
 	for (std::map<int, ParticleEffect*>::iterator it = m_particleEffects.begin(); it != m_particleEffects.end(); ++it)
 		delete(it->second);
 
+	for (std::map<std::string, Shader*>::iterator it = m_particleShaders.begin(); it != m_particleShaders.end(); ++it)
+		delete(it->second);
+
 	SDL_GL_DeleteContext(m_glContext);
 	// Close and destroy the window
 	SDL_DestroyWindow(m_window);
@@ -117,8 +120,14 @@ void GraphicDevice::InitStandardBuffers()
 	m_skyBoxShader.CheckUniformLocation("cubemap", 1);
 
 	//Particle shaders
-	for (std::map<std::string, Shader>::iterator it = m_particleShaders.begin(); it != m_particleShaders.end(); ++it)
-		it->second.CheckUniformLocation("diffuseTex", 1);
+	for (std::map<std::string, Shader*>::iterator it = m_particleShaders.begin(); it != m_particleShaders.end(); ++it)
+	{
+		SDL_Log("program id: %d", it->second->GetShaderProgram());
+
+		it->second->CheckUniformLocation("diffuseTex", 1);
+	}
+
+	SDL_Log("particle textures checked!");
 
 	//Fullscreen shader
 	m_fullscreen.CheckUniformLocation("sampler", 4);
@@ -145,18 +154,19 @@ void GraphicDevice::InitStandardShaders()
 	m_interfaceShader.FinalizeShaderProgram();
 
 	// Particle shaders
-	Shader particleShader;
-	particleShader.InitShaderProgram();
-	particleShader.AddShader("content/shaders/android/AndroidFireShaderVS.glsl", GL_VERTEX_SHADER);
-	particleShader.AddShader("content/shaders/android/AndroidFireShaderFS.glsl", GL_FRAGMENT_SHADER);
-	particleShader.FinalizeShaderProgram();
-	m_particleShaders["fire"] = particleShader;
+	
+	m_particleShaders["smoke"] = new Shader();
+	m_particleShaders["smoke"]->InitShaderProgram();
+	m_particleShaders["smoke"]->AddShader("content/shaders/android/AndroidSmokeShaderVS.glsl", GL_VERTEX_SHADER);
+	m_particleShaders["smoke"]->AddShader("content/shaders/android/AndroidSmokeShaderFS.glsl", GL_FRAGMENT_SHADER);
+	m_particleShaders["smoke"]->FinalizeShaderProgram();
 
-	particleShader.InitShaderProgram();
-	particleShader.AddShader("content/shaders/android/AndroidSmokeShaderVS.glsl", GL_VERTEX_SHADER);
-	particleShader.AddShader("content/shaders/android/AndroidSmokeShaderFS.glsl", GL_FRAGMENT_SHADER);
-	particleShader.FinalizeShaderProgram();
-	m_particleShaders["smoke"] = particleShader;
+	m_particleShaders["fire"] = new Shader();
+	m_particleShaders["fire"]->InitShaderProgram();
+	m_particleShaders["fire"]->AddShader("content/shaders/android/AndroidFireShaderVS.glsl", GL_VERTEX_SHADER);
+	m_particleShaders["fire"]->AddShader("content/shaders/android/AndroidFireShaderFS.glsl", GL_FRAGMENT_SHADER);
+	m_particleShaders["fire"]->FinalizeShaderProgram();
+	
 
 	//m_fullscreen
 	m_fullscreen.InitShaderProgram();
@@ -744,11 +754,10 @@ void GraphicDevice::BufferParticleSystems()
 				m_particleSystemsToLoad[i].SpriteSize,
 				AddTexture(m_particleSystemsToLoad[i].TextureName, GL_TEXTURE1),
 				m_particleSystemsToLoad[i].Color,
-				&m_particleShaders[m_particleSystemsToLoad[i].Name])));
+				m_particleShaders[m_particleSystemsToLoad[i].Name])));
 		}
-		/*else if (m_particleSystemsToLoad[i].Name == "smoke")
+		else if (m_particleSystemsToLoad[i].Name == "smoke")
 		{
-            return;
 			m_particleEffects.insert(std::pair<int, ParticleEffect*>(m_particleSystemsToLoad[i].Id, new Smoke(
 				m_particleSystemsToLoad[i].Pos,
 				m_particleSystemsToLoad[i].NrOfParticles,
@@ -757,8 +766,8 @@ void GraphicDevice::BufferParticleSystems()
 				m_particleSystemsToLoad[i].SpriteSize,
 				AddTexture(m_particleSystemsToLoad[i].TextureName, GL_TEXTURE1),
 				m_particleSystemsToLoad[i].Color,
-				&m_particleShaders[m_particleSystemsToLoad[i].Name])));
-		}*/
+				m_particleShaders[m_particleSystemsToLoad[i].Name])));
+		}
 	}
 	m_particleSystemsToLoad.clear();
 

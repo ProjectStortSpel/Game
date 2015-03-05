@@ -1120,7 +1120,6 @@ MapGenerator.FixRiverEffects = function(self, riverTiles)
 			world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.15)
 			world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(0.6)
 			world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
-			
 		elseif isLastTile then
 		
 			local	newParticle	=	world:CreateNewEntity()
