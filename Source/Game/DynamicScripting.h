@@ -39,6 +39,7 @@ struct Rule
 	}
 };
 
+/* Specific for every map.*/
 typedef std::vector<Rule> rulebook;
 
 class DynamicScripting
@@ -63,6 +64,7 @@ public:
 	bool						IsInScript( Rule _rule );
 	bool						IsTypeInScript( Rule _rule );
 	float						RandomFloat( );
+	void						SetNumberOfScripts(unsigned int _noOfScriptsToUse);
 
 private:
 								DynamicScripting( );
