@@ -37,6 +37,8 @@ struct MaterialInfo {
 	float Shininess;
 }; MaterialInfo Material;
 
+uniform float ElapsedTime;
+
 vec3 NmNormal;
 
 void phongModelDirLight(out vec3 ambient, out vec3 diffuse, out vec3 spec) 
@@ -106,21 +108,33 @@ void phongModel(Pointlight pointlight, out vec3 ambient, out vec3 diffuse, out v
 
 void main() 
 {
-	vec4 albedo_tex = texture2D( diffuseTex, TexCoord );
+	float v = atan(TexCoord.y / TexCoord.x);
+
+	vec2 finalCoord;
+
+	finalCoord.x = TexCoord.x / cos(v);
+	finalCoord.x = finalCoord.x / sqrt(2.0);
+
+	float HalfPI = 1.570796327;
+	v = v + ElapsedTime * (HalfPI / 2.5); // -
+	v = v - floor(v/HalfPI) * HalfPI;
+
+	finalCoord.y = v / HalfPI;
+	//----------------------------------------------
+
+	vec4 albedo_tex = texture2D( diffuseTex, finalCoord );
 
 	// Normal data
-	vec3 normal_map	  = texture2D( normalTex, TexCoord ).rgb;
+	vec3 normal_map	  = texture2D( normalTex, finalCoord ).rgb;
 	normal_map = (normal_map * 2.0) - 1.0;
 	mat3 texSpace = mat3(Tan, BiTan, Normal);
 	NmNormal = normalize( texSpace * normal_map );
 
 	// Spec data
-	vec4 spec_map = texture2D( specularTex, TexCoord );
+	vec4 spec_map = texture2D( specularTex, finalCoord );
 
-	//float blendFactor = mod(int(spec_map.a*99), 50)/50;//(specTexture.a-0.5f)*2;
 	float mMod = spec_map.a*99.0 - 50.0 * floor((spec_map.a*99.0)/50.0);
 	float blendFactor = mMod/50.0;//(specTexture.a-0.5f)*2;
-
 	vec3 AddedColor = BlendColor;
 	if (spec_map.a < 0.5)
 		AddedColor = vec3(1) - BlendColor; // ANTICOLOR? Good or bad? I like

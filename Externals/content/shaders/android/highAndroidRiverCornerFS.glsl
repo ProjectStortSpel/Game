@@ -1,5 +1,6 @@
 #version 100
 #extension GL_OES_fragment_precision_high : enable
+#extension GL_OES_depth_texture : enable
 
 precision highp float;
 
@@ -9,13 +10,18 @@ varying vec3 BiTan;
 varying vec2 TexCoord;
 varying vec3 ViewPos;
 
+
 //Input textures
+uniform sampler2D ShadowDepthTex;
 uniform sampler2D diffuseTex;
 uniform sampler2D normalTex;
 uniform sampler2D specularTex;
 
+
 uniform mat4 ViewMatrix;
+uniform mat4 InvViewMatrix;
 uniform mat4 BiasMatrix;
+uniform mat4 ShadowViewProj;
 
 uniform vec3 BlendColor;
 
@@ -37,6 +43,10 @@ struct MaterialInfo {
 	float Shininess;
 }; MaterialInfo Material;
 
+uniform float ElapsedTime;
+
+#define HalfPI 1.570796327f
+
 vec3 NmNormal;
 
 void phongModelDirLight(out vec3 ambient, out vec3 diffuse, out vec3 spec) 
@@ -55,13 +65,25 @@ void phongModelDirLight(out vec3 ambient, out vec3 diffuse, out vec3 spec)
 
 	if(diffuseFactor > 0.0)
 	{
+		// For shadows
+		vec4 worldPos = InvViewMatrix * vec4(ViewPos, 1.0);
+		vec4 shadowCoord = BiasMatrix * ShadowViewProj * worldPos;
+
+		float shadow = 1.0;
+		vec4 shadowCoordinateWdivide = shadowCoord / shadowCoord.w;
+		shadowCoordinateWdivide.z -= 0.02;
+		float distanceFromLight = texture2D(ShadowDepthTex, shadowCoordinateWdivide.st).z;
+		
+		if (shadowCoord.w > 0.0)
+	 		shadow = distanceFromLight < shadowCoordinateWdivide.z ? 0.0 : 1.0 ;
+
 		// diffuse
-		diffuse = diffuseFactor * dirlightColor * dirlightIntensity.y;
+		diffuse = diffuseFactor * dirlightColor * dirlightIntensity.y * shadow;
 
 		// specular
 		vec3 v = reflect( lightVec, NmNormal );
 		float specFactor = pow( max( dot(v, E), 0.0 ), Material.Shininess );
-		spec = specFactor * dirlightColor * dirlightIntensity.z * Material.Ks;        
+		spec = specFactor * dirlightColor * dirlightIntensity.z * Material.Ks * shadow;        
 	}
 
 	return;
@@ -106,16 +128,29 @@ void phongModel(Pointlight pointlight, out vec3 ambient, out vec3 diffuse, out v
 
 void main() 
 {
-	vec4 albedo_tex = texture2D( diffuseTex, TexCoord );
+	float v = atan(TexCoord.y / TexCoord.x);
+
+	vec2 finalCoord;
+
+	finalCoord.x = TexCoord.x / cos(v);
+	finalCoord.x = finalCoord.x / sqrt(2.0);
+
+	v = v + ElapsedTime * (HalfPI / 2.5); // -
+	v = v - floor(v/HalfPI) * HalfPI;
+
+	finalCoord.y = v / HalfPI;
+	//----------------------------------------------
+
+	vec4 albedo_tex = texture2D( diffuseTex, finalCoord );
 
 	// Normal data
-	vec3 normal_map	  = texture2D( normalTex, TexCoord ).rgb;
+	vec3 normal_map	  = texture2D( normalTex, finalCoord ).rgb;
 	normal_map = (normal_map * 2.0) - 1.0;
 	mat3 texSpace = mat3(Tan, BiTan, Normal);
 	NmNormal = normalize( texSpace * normal_map );
 
 	// Spec data
-	vec4 spec_map = texture2D( specularTex, TexCoord );
+	vec4 spec_map = texture2D( specularTex, finalCoord );
 
 	//float blendFactor = mod(int(spec_map.a*99), 50)/50;//(specTexture.a-0.5f)*2;
 	float mMod = spec_map.a*99.0 - 50.0 * floor((spec_map.a*99.0)/50.0);
@@ -127,7 +162,6 @@ void main()
 
 	if( BlendColor != vec3(0.0) )
 		albedo_tex.xyz = (1.0-blendFactor)*albedo_tex.xyz + blendFactor * AddedColor; 
-
 	Material.Ks			= spec_map.x;
 	Material.Shininess  = spec_map.y * 254.0 + 1.0;
     
