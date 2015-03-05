@@ -58,6 +58,7 @@ worldCreator:AddComponentType(NewComponent)
 --	New Step
 NewComponent = ComponentType()
 NewComponent.Name = "NewStep"
+NewComponent.SyncNetwork = true
 NewComponent.TableType = TableType.Map
 worldCreator:AddComponentType(NewComponent)
 
@@ -77,6 +78,7 @@ worldCreator:AddComponentType(NewComponent)
 --	Move River
 NewComponent = ComponentType()
 NewComponent.Name = "MoveRiver"
+NewComponent.SyncNetwork = true
 NewComponent.TableType = TableType.Map
 worldCreator:AddComponentType(NewComponent)
 

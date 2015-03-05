@@ -176,6 +176,7 @@ PlayCardSystem.EntitiesAdded = function(self, dt, entities)
 			else
 				local id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo("MoveRiver", id)
+				world:CreateComponentAndAddTo("SyncNetwork", id)
 
 				id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo("StepTimer", id)

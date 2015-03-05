@@ -1,8 +1,6 @@
 DealCardsSystem = System()
 DealCardsSystem.DealCard = false
 DealCardsSystem.FirstDeal = true
-DealCardsSystem.Arrows = {}
-DealCardsSystem.Arrows.__mode = "k"
 
 DealCardsSystem.Initialize = function ( self )
 	--	Set Name
@@ -58,8 +56,6 @@ DealCardsSystem.EntitiesAdded = function(self, dt, entities)
 		Net.WriteInt(audioId, 200)
 		Net.WriteBool(audioId, false)
 		Net.Broadcast(audioId)
-	elseif #self.Arrows > 0 then
-		self:RemoveArrows()
 	end
 end
 
@@ -93,13 +89,14 @@ DealCardsSystem.DealCards = function (self, numCards)
 			world:CreateComponentAndAddTo("DealtCard", card)
 			world:SetComponent(card, "DealtCard", "PlayerEntityId", players[i])
 			
+			local unit = world:GetComponent(players[i], "UnitEntityId", "Id"):GetInt(0)
+			world:SetComponent(card, "Card", "Unit", unit)
+			
 			Net.SendEntity(card, ip, port)	
 
 			table.remove(cards, cardIndex)
 			cardsLeft = cardsLeft - 1
 		end
-		
-		self:PlaceArrowAboveUnit(players[i])
 		
 		--Net.Send(Net.StartPack("Client.SelectCards"), ip, port)
 	end
@@ -129,43 +126,6 @@ DealCardsSystem.DealCards = function (self, numCards)
 	--	Notify players about timer
 	local newId = world:CreateNewEntity();
 	world:CreateComponentAndAddTo("OnPickingPhase", newId);
-end
-	  
-DealCardsSystem.PlaceArrowAboveUnit = function(self, player)
-	local unit = world:GetComponent(player, "UnitEntityId", "Id"):GetInt()
-
-	local arrow = world:CreateNewEntity()
-	world:CreateComponentAndAddTo("SyncNetwork", arrow)
-	world:CreateComponentAndAddTo("Parent", arrow)
-	world:CreateComponentAndAddTo("Model", arrow)
-	world:CreateComponentAndAddTo("Position", arrow)
-	world:CreateComponentAndAddTo("Rotation", arrow)
-	world:CreateComponentAndAddTo("Scale", arrow)
-	world:CreateComponentAndAddTo("LerpScale", arrow)
-	world:GetComponent(arrow, "Position", 0):SetFloat3(0.0, 1.8, 0.0)
-	world:GetComponent(arrow, "Rotation", 0):SetFloat3(1.5 * math.pi, math.pi, 0.0)
-	world:GetComponent(arrow, "Scale", 0):SetFloat3(0.0, 0.0, 0.0)
-	world:GetComponent(arrow, "Model", 0):SetModel("directionalarrow", "quad", 1)
-	world:GetComponent(arrow, "Parent", 0):SetInt(unit)
-	world:GetComponent(arrow, "LerpScale", "Time", 0):SetFloat4(0.2, 1.0, 1.0, 1.0)
-	world:GetComponent(arrow, "LerpScale", "Algorithm", 0):SetText("SmoothLerp")
-	world:GetComponent(arrow, "LerpScale", "KillWhenFinished", 0):SetBool(false)
-	table.insert(self.Arrows, arrow)
-end
-
-DealCardsSystem.RemoveArrows = function(self)
-	local arrowCount = #self.Arrows
-	for i = 1, arrowCount do
-		local arrow = self.Arrows[i]
-		if not world:EntityHasComponent(arrow, "LerpScale") then
-			world:CreateComponentAndAddTo("LerpScale", arrow)
-		end
-		world:GetComponent(arrow, "LerpScale", "Time", 0):SetFloat4(0.2, 0.0, 0.0, 0.0)
-		world:GetComponent(arrow, "LerpScale", "Algorithm", 0):SetText("SmoothLerp")
-		world:GetComponent(arrow, "LerpScale", "KillWhenFinished", 0):SetBool(true)
-	end
-	self.Arrows = { }
-	self.Arrows.__mode = "k"
 end
 
 Net.Receive("Server.SelectCards",

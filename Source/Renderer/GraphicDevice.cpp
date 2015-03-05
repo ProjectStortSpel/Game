@@ -568,6 +568,7 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 			joints[index].mat[2][0], joints[index].mat[2][1], joints[index].mat[2][2], joints[index].mat[2][3],
 			joints[index].mat[3][0], joints[index].mat[3][1], joints[index].mat[3][2], joints[index].parent//index - joints[index].parent - 1
 			));
+		model.anim.push_back(joints[index].mat);
 	}
 
 	// Import Animations

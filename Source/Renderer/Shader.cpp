@@ -63,7 +63,7 @@ bool Shader::AddShader(const char* source_file, GLenum shader_type)
 		std::printf("\n");
 
 		/* DO SOME CLEANING :) */
-		delete(errorLog);
+		delete[](errorLog);
 		glDeleteShader(shader);
 
 		return false;
@@ -107,7 +107,7 @@ bool Shader::FinalizeShaderProgram()
 		printf("\n");
 
 		/* DO SOME CLEANING :) */
-		delete(errorLog);
+		delete[](errorLog);
 
 		/* REMOVE PROGRAM */
 		glDeleteProgram(m_shaderProg);

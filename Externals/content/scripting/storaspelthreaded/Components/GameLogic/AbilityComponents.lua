@@ -10,3 +10,17 @@ NewComponent.Name = "AbilityStone"
 NewComponent.TableType = TableType.Map
 NewComponent:AddVariable("LifeSpan", ByteSize.Int)
 worldCreator:AddComponentType(NewComponent)
+
+-- StoneTimer Component
+local StoneTimer = ComponentType()
+StoneTimer.Name = "StoneTimer"
+StoneTimer.TableType = TableType.Map
+StoneTimer.SyncNetwork = true
+StoneTimer:AddVariable("LifeSpan", ByteSize.Int)
+worldCreator:AddComponentType(StoneTimer)
+
+-- TempTimer Component
+local TempTimer = ComponentType()
+TempTimer.Name = "TempTimer"
+TempTimer.TableType = TableType.Map
+worldCreator:AddComponentType(TempTimer)
