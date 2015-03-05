@@ -518,9 +518,6 @@ void GraphicsLow::BufferLightsToGPU()
 
 		}
 
-		for (int i = 0; i < 3; i++)
-			delete m_pointerToPointlights[i];
-
 		delete[] m_pointerToPointlights;
 		m_pointerToPointlights = 0;
 		m_nrOfLightsToBuffer = 0;
@@ -571,8 +568,6 @@ void GraphicsLow::BufferLightsToGPU()
 
 		}
 		
-		for (int i = 0; i < 3; i++)
-			delete m_pointerToPointlights[i];
 
 		delete[] m_pointerToPointlights;
 
