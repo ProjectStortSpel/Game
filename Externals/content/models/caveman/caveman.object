@@ -3,9 +3,9 @@ caveman.png
 cavemannormal.png
 cavemanspec.png
 caveman.ajoints
-cavemanwalkbackward.anim
 cavemanidle2.anim
 cavemanwalkforwardstill.anim
+cavemanwalkbackward.anim
 cavemanstrafeleft.anim
 cavemanstraferight.anim
 cavemathrow.anim

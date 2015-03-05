@@ -28,8 +28,6 @@ AddAnimationSystem.EntitiesAdded = function(self, dt, entities)
 		world:GetComponent(entity, "Animating", "Time"):SetFloat(animationTime)
 		world:GetComponent(entity, "Animating", "Timer"):SetFloat(0)
 
-		print("Play Animation: "..Id)
-		
 		world:RemoveComponentFrom("Animation", entity)
 	end
 end

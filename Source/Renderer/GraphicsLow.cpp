@@ -134,33 +134,18 @@ void GraphicsLow::WriteShadowMapDepth()
 		m_modelsForward[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector);
 	}
 
-	for (int i = 0; i < m_modelsForward.size(); i++)
+	//--------ANIMATED DEFERRED RENDERING !!! ATTENTION: WORK IN PROGRESS !!!
+	m_animationShader.UseProgram();
+	for (int i = 0; i < m_modelsAnimated.size(); i++)
 	{
-		std::vector<mat4> MVPVector(m_modelsForward[i].instances.size());
-		std::vector<mat3> normalMatVector(m_modelsForward[i].instances.size());
-
-		int nrOfInstances = 0;
-
-		for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
+		for (int j = 0; j < m_modelsAnimated[i].anim.size(); j++)
 		{
-			if (m_modelsForward[i].instances[j].active) // IS MODEL ACTIVE?
-			{
-				mat4 modelMatrix;
-				if (m_modelsForward[i].instances[j].modelMatrix == NULL)
-					modelMatrix = glm::translate(glm::vec3(1));
-				else
-					modelMatrix = *m_modelsForward[i].instances[j].modelMatrix;
-
-				mat4 mvp = shadowProjection * (*m_shadowMap->GetViewMatrix()) * modelMatrix;
-				MVPVector[nrOfInstances] = mvp;
-
-				nrOfInstances++;
-			}
+			std::stringstream ss;
+			ss << "anim[" << j << "]";
+			m_animationShader.SetUniVariable(ss.str().c_str(), mat4x4, &m_modelsAnimated[i].anim[j]);
+			ss.str(std::string());
 		}
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
-
-		m_modelsForward[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector);
+		m_modelsAnimated[i].Draw((*m_shadowMap->GetViewMatrix()), shadowProjection, &m_animationShader);
 	}
 	//------------------------------------------------
 
@@ -221,6 +206,7 @@ void GraphicsLow::Render()
 	//--------ANIMATED DEFERRED RENDERING !!! ATTENTION: WORK IN PROGRESS !!!
 	m_animationShader.UseProgram();
 	m_animationShader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
+	m_animationShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
 	for (int i = 0; i < m_modelsAnimated.size(); i++)
 	{
 		for (int j = 0; j < m_modelsAnimated[i].anim.size(); j++)
