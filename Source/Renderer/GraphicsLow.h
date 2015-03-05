@@ -45,6 +45,7 @@ namespace Renderer
 		//holds the reset values for lights
 		float m_lightDefaults[10];
 
+		char *m_stringToInt;
 		//Le shadowmap
 		ShadowMap *m_shadowMap;
 		void WriteShadowMapDepth();
