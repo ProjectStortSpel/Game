@@ -19,6 +19,7 @@ end
 
 KillAfterLerpSystem.EntitiesRemoved = function(self, dt, entities)
 	for i = 1, #entities do
+		print("Kill after lerp!")
 		world:KillEntity(entities[i])
 	end
 end
