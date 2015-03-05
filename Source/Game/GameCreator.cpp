@@ -836,6 +836,7 @@ void GameCreator::Reload()
 
 	m_graphics->Clear();
 
+
 	LuaBridge::LuaGraphicDevice::SetGraphicDevice(m_graphics);
     
     if (!NetworkInstance::GetClient()->IsConnected() && NetworkInstance::GetServer()->IsRunning())
