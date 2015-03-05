@@ -9,7 +9,6 @@ EntityTemplateManager:AddTemplate(Card)
 local CardAboveHead = EntityTemplate()
 CardAboveHead.Name = "CardAboveHead"
 CardAboveHead:AddComponent("SyncNetwork")
-CardAboveHead:AddComponent("WorldToViewSpace")
 CardAboveHead:AddComponent("Parent")
 CardAboveHead:AddComponent("Model")
 CardAboveHead:AddComponent("CardAboveHead")

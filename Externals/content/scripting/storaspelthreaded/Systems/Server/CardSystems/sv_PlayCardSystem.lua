@@ -96,7 +96,7 @@ PlayCardSystem.PlayCard = function(self, unitToPlay, cardToPlay)
 		end
 		world:GetComponent(cardAbove, "Model", "ModelName"):SetText(modelName)
 		world:GetComponent(cardAbove, "Model", "ModelPath"):SetText("cards")
-		world:GetComponent(cardAbove, "Model", "RenderType"):SetInt(2)
+		world:GetComponent(cardAbove, "Model", "RenderType"):SetInt(1)
 		world:GetComponent(cardAbove, "Parent", 0):SetInt(unitToPlay)
 		
 		local	R, G, B	=	world:GetComponent(unitToPlay, "Color", "X"):GetFloat3()
