@@ -220,7 +220,7 @@ namespace Renderer
 		Shader m_forwardShader, m_viewspaceShader, m_interfaceShader;
 		Shader m_riverShader, m_riverCornerShader;
 		Shader m_fullscreen;
-		std::map<std::string, Shader> m_particleShaders;
+		std::map<std::string, Shader*> m_particleShaders;
 
 		// Skybox
 		SkyBox *m_skybox;

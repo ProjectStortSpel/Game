@@ -1104,23 +1104,22 @@ MapGenerator.FixRiverEffects = function(self, riverTiles)
 			rotComp:SetFloat(currentRotation + math.pi, 1)
 			
 			
-			--local	newParticle	=	world:CreateNewEntity()
-			--world:CreateComponentAndAddTo("Position", newParticle)
-			--world:CreateComponentAndAddTo("Color", newParticle)
-			--world:CreateComponentAndAddTo("Particle", newParticle)
-			--world:CreateComponentAndAddTo("SyncNetwork", newParticle)
-			--
-			--world:GetComponent(newParticle, "Position", "X"):SetFloat3(posAX, 0.40, posAY)
-			--world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.6, 0.6, 0.6)
-			--
-			--world:GetComponent(newParticle, "Particle", "Name"):SetText("smoke")
-			--world:GetComponent(newParticle, "Particle", "Texture"):SetText("content/textures/smoke1.png")
-			--world:GetComponent(newParticle, "Particle", "Particles"):SetInt(40)
-			--world:GetComponent(newParticle, "Particle", "Lifetime"):SetFloat(600)
-			--world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.15)
-			--world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(0.6)
-			--world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
+			local	newParticle	=	world:CreateNewEntity()
+			world:CreateComponentAndAddTo("Position", newParticle)
+			world:CreateComponentAndAddTo("Color", newParticle)
+			world:CreateComponentAndAddTo("Particle", newParticle)
+			world:CreateComponentAndAddTo("SyncNetwork", newParticle)
 			
+			world:GetComponent(newParticle, "Position", "X"):SetFloat3(posAX, 0.40, posAY)
+			world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.6, 0.6, 0.6)
+			
+			world:GetComponent(newParticle, "Particle", "Name"):SetText("smoke")
+			world:GetComponent(newParticle, "Particle", "Texture"):SetText("content/textures/smoke1.png")
+			world:GetComponent(newParticle, "Particle", "Particles"):SetInt(40)
+			world:GetComponent(newParticle, "Particle", "Lifetime"):SetFloat(600)
+			world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.15)
+			world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(0.6)
+			world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
 		elseif isLastTile then
 		
 			local	newParticle	=	world:CreateNewEntity()
@@ -1140,7 +1139,6 @@ MapGenerator.FixRiverEffects = function(self, riverTiles)
 			world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.05)
 			world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(0.6)
 			world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
-			break
 		end
 		
 	end

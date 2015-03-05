@@ -22,6 +22,8 @@ Smoke::Smoke(const vec3 _pos, int _nParticles, float _lifeTime, float _scale, fl
 	m_velData = new GLfloat[m_nrParticles * 3];
 	m_timeData = new GLfloat[m_nrParticles];
 
+	m_particles = new Particle[m_nrParticles];
+
 	srand(time(NULL));
 	for (GLuint i = 0; i < m_nrParticles; i++) {
 		vec3 pos;

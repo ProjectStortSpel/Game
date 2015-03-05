@@ -530,7 +530,11 @@ void GraphicsLow::BufferLightsToGPU()
 			m_riverCornerShader.SetUniVariable( s.c_str( ), glfloat, &m_lightDefaults[9] );
 			m_animationShader.SetUniVariable( s.c_str( ), glfloat, &m_lightDefaults[9] );
 		}
-		delete [] m_pointerToPointlights;
+
+		for (int i = 0; i < 3; i++)
+			delete m_pointerToPointlights[i];
+
+		delete[] m_pointerToPointlights;
 		m_pointerToPointlights = 0;
 		m_nrOfLightsToBuffer = 0;
 	}
@@ -580,7 +584,12 @@ void GraphicsLow::BufferLightsToGPU()
 			m_animationShader.SetUniVariable(s.c_str(), glfloat, &m_pointerToPointlights[i][9]);
 
 		}
-		delete [] m_pointerToPointlights;
+		
+		for (int i = 0; i < 3; i++)
+			delete m_pointerToPointlights[i];
+
+		delete[] m_pointerToPointlights;
+
 		m_pointerToPointlights = 0;
 		m_nrOfLightsToBuffer = 0;
 	}
