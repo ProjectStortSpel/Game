@@ -144,10 +144,23 @@ void GraphicsHigh::Render()
 
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glViewport(0, 0, m_framebufferWidth, m_framebufferHeight);
 
 	//--------Uniforms-------------------------------------------------------------------------
 	mat4 projectionMatrix = *m_camera->GetProjMatrix();
 	mat4 viewMatrix = *m_camera->GetViewMatrix();
+
+	glDisable(GL_CULL_FACE);
+	// DRAW SKYBOX
+	m_skyBoxShader.UseProgram();
+	m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera);
+	// -----------
+
+	glEnable(GL_CULL_FACE);
+
+	glClear(GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
 
 	if (m_modelsForward.size() > 0)
 	{
@@ -155,7 +168,7 @@ void GraphicsHigh::Render()
 
 		glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 		glViewport(0, 0, m_framebufferWidth, m_framebufferHeight);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		//------FORWARD RENDERING--------------------------------------------
 		//glEnable(GL_BLEND);
@@ -204,26 +217,89 @@ void GraphicsHigh::Render()
 			}
 		}
 		//-------------------------------------------------------------------------
+
+		//-------Render water-------------
+		m_riverShader.UseProgram();
+		m_riverShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
+		m_riverShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
+		m_riverShader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
+		m_elapsedTime += m_dt;
+		if (m_elapsedTime > 10.0f)
+			m_elapsedTime = 0.0f;
+		m_riverShader.SetUniVariable("ElapsedTime", glfloat, &m_elapsedTime);
+		//----DRAW MODELS
+		for (int i = 0; i < m_modelsWater.size(); i++)
+		{
+			mat4 modelMatrix;
+			if (m_modelsWater[i].modelMatrix == NULL)
+				modelMatrix = glm::translate(glm::vec3(1));
+			else
+				modelMatrix = *m_modelsWater[i].modelMatrix;
+
+			mat4 modelViewMatrix = viewMatrix * modelMatrix;
+			m_riverShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
+
+			mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
+			m_riverShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
+
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, m_modelsWater[i].texID);
+
+			glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, m_modelsWater[i].norID);
+
+			glActiveTexture(GL_TEXTURE3);
+			glBindTexture(GL_TEXTURE_2D, m_modelsWater[i].speID);
+
+			m_riverShader.SetUniVariable("BlendColor", vector3, m_modelsWater[i].color);
+
+			m_modelsWater[i].bufferPtr->draw(m_riverShader.GetShaderProgram());
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+
+		//-------Render water corners-------------
+		m_riverCornerShader.UseProgram();
+		m_riverCornerShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
+		m_riverCornerShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
+		m_riverCornerShader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
+		m_riverCornerShader.SetUniVariable("ElapsedTime", glfloat, &m_elapsedTime);
+		//----DRAW MODELS
+		for (int i = 0; i < m_modelsWaterCorners.size(); i++)
+		{
+			mat4 modelMatrix;
+			if (m_modelsWaterCorners[i].modelMatrix == NULL)
+				modelMatrix = glm::translate(glm::vec3(1));
+			else
+				modelMatrix = *m_modelsWaterCorners[i].modelMatrix;
+
+			mat4 modelViewMatrix = viewMatrix * modelMatrix;
+			m_riverCornerShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
+
+			mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
+			m_riverCornerShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
+
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, m_modelsWaterCorners[i].texID);
+
+			glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, m_modelsWaterCorners[i].norID);
+
+			glActiveTexture(GL_TEXTURE3);
+			glBindTexture(GL_TEXTURE_2D, m_modelsWaterCorners[i].speID);
+
+			m_riverCornerShader.SetUniVariable("BlendColor", vector3, m_modelsWaterCorners[i].color);
+
+			m_modelsWaterCorners[i].bufferPtr->draw(m_riverCornerShader.GetShaderProgram());
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+
 	}
 	glViewport(0, 0, m_framebufferWidth, m_framebufferHeight);
-	glDisable(GL_CULL_FACE);
-	// DRAW SKYBOX
-	m_skyBoxShader.UseProgram();
-	m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera);
-	// -----------
-
-	glEnable(GL_CULL_FACE);
-
-	glClear(GL_DEPTH_BUFFER_BIT);
-	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_BLEND);
+	
 
 
 	//--------PARTICLES---------
-	//glEnable(GL_POINT_SPRITE);
 	glDepthMask(GL_FALSE);
-
-	//glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 
 	glActiveTexture(GL_TEXTURE1);
 
@@ -249,6 +325,7 @@ void GraphicsHigh::Render()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	//------------------------
 
+	glClear(GL_DEPTH_BUFFER_BIT);
 
 	// RENDER VIEWSPACE STUFF
 	m_viewspaceShader.UseProgram();
@@ -410,29 +487,13 @@ bool GraphicsHigh::InitSDLWindow()
 
 bool GraphicsHigh::InitShaders()
 {
+	InitStandardShaders();
+
 	// Standard forward
 	m_forwardShader.InitShaderProgram();
 	m_forwardShader.AddShader("content/shaders/android/AndroidForwardVS.glsl", GL_VERTEX_SHADER);
 	m_forwardShader.AddShader("content/shaders/android/AndroidForwardFS.glsl", GL_FRAGMENT_SHADER);
 	m_forwardShader.FinalizeShaderProgram();
-
-	// SkyBox
-	m_skyBoxShader.InitShaderProgram();
-	m_skyBoxShader.AddShader("content/shaders/android/AndroidSkyboxShaderVS.glsl", GL_VERTEX_SHADER);
-	m_skyBoxShader.AddShader("content/shaders/android/AndroidSkyboxShaderFS.glsl", GL_FRAGMENT_SHADER);
-	m_skyBoxShader.FinalizeShaderProgram();
-
-	// Viewspace shader
-	m_viewspaceShader.InitShaderProgram();
-	m_viewspaceShader.AddShader("content/shaders/android/AndroidViewspaceShaderVS.glsl", GL_VERTEX_SHADER);
-	m_viewspaceShader.AddShader("content/shaders/android/AndroidViewspaceShaderFS.glsl", GL_FRAGMENT_SHADER);
-	m_viewspaceShader.FinalizeShaderProgram();
-
-	// Interface shader
-	m_interfaceShader.InitShaderProgram();
-	m_interfaceShader.AddShader("content/shaders/android/AndroidInterfaceVS.glsl", GL_VERTEX_SHADER);
-	m_interfaceShader.AddShader("content/shaders/android/AndroidInterfaceFS.glsl", GL_FRAGMENT_SHADER);
-	m_interfaceShader.FinalizeShaderProgram();
 
 	// ShadowShader geometry
 	m_shadowShader.InitShaderProgram();
@@ -440,42 +501,24 @@ bool GraphicsHigh::InitShaders()
 	m_shadowShader.AddShader("content/shaders/android/AndroidShadowShaderFS.glsl", GL_FRAGMENT_SHADER);
 	m_shadowShader.FinalizeShaderProgram();
 
-	// Particle shaders
-		Shader particleShader;
+	// River water shader
+	m_riverShader.InitShaderProgram();
+	m_riverShader.AddShader("content/shaders/android/AndroidRiverShaderVS.glsl", GL_VERTEX_SHADER);
+	m_riverShader.AddShader("content/shaders/android/AndroidForwardFS.glsl", GL_FRAGMENT_SHADER);
+	m_riverShader.FinalizeShaderProgram();
 
-		//particleShader.InitShaderProgram();
-		//particleShader.AddShader("content/shaders/android/AndroidFireShaderVS.glsl", GL_VERTEX_SHADER);
-		//particleShader.AddShader("content/shaders/android/AndroidFireShaderFS.glsl", GL_FRAGMENT_SHADER);
-		//particleShader.FinalizeShaderProgram();
-		//m_particleShaders["fire"] = particleShader;
-
-		//particleShader.InitShaderProgram();
-		//particleShader.AddShader("content/shaders/android/AndroidSmokeShaderVS.glsl", GL_VERTEX_SHADER);
-		//particleShader.AddShader("content/shaders/android/AndroidSmokeShaderFS.glsl", GL_FRAGMENT_SHADER);
-		//particleShader.FinalizeShaderProgram();
-		//m_particleShaders["smoke"] = particleShader;
-
-
-	//m_fullscreen
-	m_fullscreen.InitShaderProgram();
-	m_fullscreen.AddShader("content/shaders/android/AndroidFullscreenVS.glsl", GL_VERTEX_SHADER);
-	m_fullscreen.AddShader("content/shaders/android/AndroidFullscreenFS.glsl", GL_FRAGMENT_SHADER);
-	m_fullscreen.FinalizeShaderProgram();
+	// River water corner shader
+	m_riverCornerShader.InitShaderProgram();
+	m_riverCornerShader.AddShader("content/shaders/android/AndroidForwardVS.glsl", GL_VERTEX_SHADER);
+	m_riverCornerShader.AddShader("content/shaders/android/highAndroidRiverCornerFS.glsl", GL_FRAGMENT_SHADER);
+	m_riverCornerShader.FinalizeShaderProgram();
 
 	return true;
 }
 
 bool GraphicsHigh::InitBuffers()
 {
-	//Skybox shader
-	m_skyBoxShader.CheckUniformLocation("cubemap", 1);
-
-	//Particle shaders
-	for (std::map<std::string, Shader>::iterator it = m_particleShaders.begin(); it != m_particleShaders.end(); ++it)
-		it->second.CheckUniformLocation("diffuseTex", 1);
-
-	//Fullscreen shader
-	m_fullscreen.CheckUniformLocation("sampler", 4);
+	InitStandardBuffers();
 
 	return true;
 }
@@ -532,6 +575,14 @@ void GraphicsHigh::CreateShadowMap()
 	m_forwardShader.UseProgram();
 	m_forwardShader.SetUniVariable("BiasMatrix", mat4x4, m_shadowMap->GetBiasMatrix());
 	m_forwardShader.CheckUniformLocation("ShadowDepthTex", 0);
+
+	m_riverShader.UseProgram();
+	m_riverShader.SetUniVariable("BiasMatrix", mat4x4, m_shadowMap->GetBiasMatrix());
+	m_riverShader.CheckUniformLocation("ShadowDepthTex", 0);
+
+	m_riverCornerShader.UseProgram();
+	m_riverCornerShader.SetUniVariable("BiasMatrix", mat4x4, m_shadowMap->GetBiasMatrix());
+	m_riverCornerShader.CheckUniformLocation("ShadowDepthTex", 0);
 
 	m_shadowShader.CheckUniformLocation("diffuseTex", 1);
 }
@@ -684,26 +735,36 @@ Buffer* GraphicsHigh::AddMesh(std::string _fileDir, Shader *_shaderProg)
 	vpLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexPosition");
 	vpLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexPosition");
 	vpLocs[m_shadowShader.GetShaderProgram()]	 = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexPosition");
+	vpLocs[m_riverShader.GetShaderProgram()]	= glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexPosition");
+	vpLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexPosition");
 
 	vnLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexNormal");
 	vnLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexNormal");
 	vnLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexNormal");
 	vnLocs[m_shadowShader.GetShaderProgram()]	 = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexNormal");
+	vnLocs[m_riverShader.GetShaderProgram()]	= glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexNormal");
+	vnLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexNormal");
 
 	tanLocs[m_forwardShader.GetShaderProgram()]	  = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTangent");
 	tanLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexTangent");
 	tanLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexTangent");
 	tanLocs[m_shadowShader.GetShaderProgram()]	  = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexTangent");
+	tanLocs[m_riverShader.GetShaderProgram()]	= glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexTangent");
+	tanLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexTangent");
 
 	bitanLocs[m_forwardShader.GetShaderProgram()]	= glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexBiTangent");
 	bitanLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexBiTangent");
 	bitanLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexBiTangent");
 	bitanLocs[m_shadowShader.GetShaderProgram()]	= glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexBiTangent");
+	bitanLocs[m_riverShader.GetShaderProgram()]		= glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexBiTangent");
+	bitanLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexBiTangent");
 
 	tcLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTexCoord");
 	tcLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexTexCoord");
 	tcLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexTexCoord");
 	tcLocs[m_shadowShader.GetShaderProgram()]	 = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexTexCoord");
+	tcLocs[m_riverShader.GetShaderProgram()]	= glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexTexCoord");
+	tcLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexTexCoord");
 
 	_shaderProg->UseProgram();
 	BufferData bufferData[] =
@@ -783,101 +844,11 @@ Buffer* GraphicsHigh::AddMesh(ModelToLoadFromSource* _modelToLoad, Shader *_shad
 	return retbuffer;
 }
 
-//ObjectData GraphicDevice::AddObject(std::string _file, std::string _dir)
-//{
-//	std::string fileDir = _dir;
-//	fileDir.append(_file);
-//	for (std::map<const std::string, ObjectData>::iterator it = m_objects.begin(); it != m_objects.end(); it++)
-//	{
-//		if (it->first == fileDir)
-//			return it->second;
-//	}
-//	ObjectData obj = ModelLoader::importObject(_dir, _file);
-//}
-
-void GraphicsHigh::Clear()
-{
-  m_modelIDcounter = 0;
-  
-  m_modelsForward.clear();
-  m_modelsViewspace.clear();
-  m_modelsInterface.clear();
-
-  float **tmpPtr = new float*[1];
-  BufferPointlights(0, tmpPtr);
-  delete [] tmpPtr;
-  
-  if (m_pointlightsPtr)
-	  delete [] m_pointlightsPtr;
-
-  m_pointlightsPtr = NULL;
-  m_directionalLightPtr = NULL;
-
-  for (std::map<int, ParticleEffect*>::iterator it = m_particleEffects.begin(); it != m_particleEffects.end(); ++it)
-	  delete(it->second);
-  m_particleEffects.clear();
-}
-
 void GraphicsHigh::BufferLightsToGPU()
 {
 	if (m_directionalLightPtr)
 	{
-	    m_dirLightDirection = vec3(m_directionalLightPtr[0], m_directionalLightPtr[1], m_directionalLightPtr[2]);
-	    vec3 intens = vec3(m_directionalLightPtr[3], m_directionalLightPtr[4], m_directionalLightPtr[5]);
-	    vec3 color = vec3(m_directionalLightPtr[6], m_directionalLightPtr[7], m_directionalLightPtr[8]);
-
-	    m_forwardShader.SetUniVariable("dirlightDirection", vector3, &m_dirLightDirection);
-	    m_forwardShader.SetUniVariable("dirlightIntensity", vector3, &intens);
-	    m_forwardShader.SetUniVariable("dirlightColor", vector3, &color);
-
 		m_shadowMap->UpdateViewMatrix(vec3(8.0f, 0.0f, 8.0f) - (10.0f*normalize(m_dirLightDirection)), vec3(8.0f, 0.0f, 8.0f));
 	}
-	else
-	{
-		m_forwardShader.SetUniVariable("dirlightIntensity", vector3, &m_lightDefaults[0]);
-		m_forwardShader.SetUniVariable("dirlightColor", vector3, &m_lightDefaults[0]);
-	}
-	
-	// ------------Pointlights------------
-	if (m_pointlightsPtr)
-	{
-		if (m_nrOfLightsToBuffer == 0)
-		{
-			for (int i = 0; i < 1; i++)
-			{
-				std::stringstream ss;
-				ss << "pointlights[" << i << "].Position";
-				m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[0]);		ss.str(std::string());
-
-				ss << "pointlights[" << i << "].Intensity";
-				m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[3]);		ss.str(std::string());
-
-				ss << "pointlights[" << i << "].Color";
-				m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[6]);		ss.str(std::string());
-
-				ss << "pointlights[" << i << "].Range";
-				m_forwardShader.SetUniVariable(ss.str().c_str(), glfloat, &m_lightDefaults[9]);		ss.str(std::string());
-			}
-		}
-		else
-		{
-			for (int i = 0; i < 1; i++)
-			{
-				std::stringstream ss;
-				ss << "pointlights[" << i << "].Position";
-				m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][0]);		ss.str(std::string());
-
-				ss << "pointlights[" << i << "].Intensity";
-				m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][3]);		ss.str(std::string());
-
-				ss << "pointlights[" << i << "].Color";
-				m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][6]);		ss.str(std::string());
-
-				ss << "pointlights[" << i << "].Range";
-				m_forwardShader.SetUniVariable(ss.str().c_str(), glfloat, &m_pointlightsPtr[i][9]);		ss.str(std::string());
-			}
-		}
-		delete [] m_pointlightsPtr;
-		m_pointlightsPtr = 0;
-	}
+	BufferLightsToGPU_GD();
 }

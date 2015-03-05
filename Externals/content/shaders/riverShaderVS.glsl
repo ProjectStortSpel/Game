@@ -16,7 +16,6 @@ out vec3 BiTan;
 out vec2 TexCoord;
 out vec3 ViewPos;
 out vec3 AddColor;
-out float A;
 
 uniform mat4 ProjectionMatrix;
 uniform float ElapsedTime;
@@ -27,11 +26,8 @@ void main()
 	Tan = normalize( NormalMatrix * VertexTangent);
 	BiTan = normalize( NormalMatrix * VertexBiTangent);
 
-
 	float texCoordY = VertexTexCoord.y + 0.4f*ElapsedTime;
-
 	TexCoord = vec2(VertexTexCoord.x, texCoordY);
-	//TexCoord = VertexTexCoord;
 
 	ViewPos = (ModelViewMatrix * vec4(VertexPosition, 1.0)).xyz;
 	mat4 MVP = ProjectionMatrix * ModelViewMatrix;
