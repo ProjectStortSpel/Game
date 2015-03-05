@@ -168,7 +168,6 @@ void GraphicsHigh::Render()
 
 		glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 		glViewport(0, 0, m_framebufferWidth, m_framebufferHeight);
-		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		//------FORWARD RENDERING--------------------------------------------
 		//glEnable(GL_BLEND);
