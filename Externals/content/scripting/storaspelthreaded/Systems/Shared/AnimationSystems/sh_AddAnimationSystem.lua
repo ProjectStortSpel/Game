@@ -18,14 +18,16 @@ AddAnimationSystem.EntitiesAdded = function(self, dt, entities)
 
 		-- Get Animation
 		local Id = world:GetComponent(entity, "Animation", "Id"):GetInt(0)
+		local frameTime = world:GetComponent(entity, "Animation", "FrameTime"):GetFloat(0)
 		local animationTime = world:GetComponent(entity, "Animation", "Time"):GetFloat(0)
 
 		-- Create Animating
 		world:CreateComponentAndAddTo("Animating", entity)
 		world:GetComponent(entity, "Animating", "Id"):SetInt(Id)
+		world:GetComponent(entity, "Animating", "FrameTime"):SetFloat(frameTime)
 		world:GetComponent(entity, "Animating", "Time"):SetFloat(animationTime)
 		world:GetComponent(entity, "Animating", "Timer"):SetFloat(0)
-		--print("ADD:"..Id.." "..animationTime)
+
 		world:RemoveComponentFrom("Animation", entity)
 	end
 end

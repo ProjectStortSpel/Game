@@ -15,7 +15,7 @@ AModel::AModel(int _id, bool _active, mat4* _model, float* _color, Buffer* buffe
 	speID = spe;
 	currentframe = 1;
 	clock = 0;
-	frameTime = 0.01f;
+	frameTime = 0.04f;
 	framesPerTick = 4;
 	animId = 0;
 }
@@ -67,10 +67,11 @@ void AModel::Draw(mat4 viewMatrix, mat4 projectionMatrix, Shader* shaderptr)
 void AModel::Update(float _dt)
 {
 	clock += _dt;
-	if (clock > frameTime * framesPerTick)
+	if (clock > frameTime)// * framesPerTick)
 	{
-		clock -= frameTime * framesPerTick;
-		currentframe += framesPerTick;
+		int ticks = clock / frameTime;
+		clock -= frameTime * ticks;// *framesPerTick;
+		currentframe += ticks;//framesPerTick;
 		currentframe = currentframe % animations[animId].maxFrame;
 
 		Animation* animptr = &animations[animId];
@@ -119,6 +120,15 @@ bool AModel::SetAnimation(int _animId)
 	}
 	return false;
 }
+
+void AModel::SetFrameTime(float _frameTime)
+{
+	if (_frameTime > 0)
+		frameTime = _frameTime;
+	else
+		frameTime = 0.01f;
+}
+
 
 void AModel::AddKeyFrame(std::string _animname, int _frame, int _joint, glm::mat4 _mat)
 {

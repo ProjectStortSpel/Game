@@ -117,6 +117,7 @@ namespace Renderer
 		bool PreCalculateAnimations();
 
 		bool SetAnimation(int _animId);
+		void SetFrameTime(float _animId);
 
 		void AddKeyFrame(std::string _animname, int _frame, int _joint, glm::mat4 _mat);
 
