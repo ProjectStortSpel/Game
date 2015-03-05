@@ -90,10 +90,25 @@ TestMoveSystem.RecursiveMove = function(self, unitToMove, allUnits, allNonWalkab
 	world:GetComponent(unitToMove, "LerpPosition", "Algorithm"):SetText("PlayerMove")
 	world:GetComponent(unitToMove, "LerpPosition", "KillWhenFinished"):SetBool(false)
 	
+	local unitDirX, unitDirZ = world:GetComponent(unitToMove, "Direction", "X"):GetInt2(0)
 	if not world:EntityHasComponent(unitToMove, "Animation") then
 		world:CreateComponentAndAddTo("Animation", unitToMove)
 	end
-	world:GetComponent(unitToMove, "Animation", "Id"):SetInt(1)
+	
+	print("UD: "..unitDirX.. " ".. unitDirZ.. "MD: "..dirX.." "..dirZ)
+	
+	if unitDirX == dirX and unitDirZ == dirZ then
+		world:GetComponent(unitToMove, "Animation", "Id"):SetInt(1)
+	elseif unitDirX == dirX or unitDirZ == dirZ then
+		world:GetComponent(unitToMove, "Animation", "Id"):SetInt(2)
+	elseif unitDirX == dirZ then
+		world:GetComponent(unitToMove, "Animation", "Id"):SetInt(3)
+	elseif unitDirZ == dirX then
+		world:GetComponent(unitToMove, "Animation", "Id"):SetInt(4)
+	else
+		world:GetComponent(unitToMove, "Animation", "Id"):SetInt(6)
+	end
+	world:GetComponent(unitToMove, "Animation", "FrameTime"):SetFloat(0.01)
 	world:GetComponent(unitToMove, "Animation", "Time"):SetFloat(1)
 	
 	if not world:EntityHasComponent(unitToMove, "UnitWantTileOffset") then

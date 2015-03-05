@@ -13,7 +13,7 @@ uniform sampler2D normalTex;
 uniform sampler2D specularTex;
 uniform sampler2D ShadowDepthTex;
 
-uniform mat4 V;
+uniform mat4 ViewMatrix;
 uniform mat4 BiasMatrix;
 uniform mat4 ShadowViewProj;
 
@@ -47,7 +47,7 @@ void phongModelDirLight(out vec3 ambient, out vec3 diffuse, out vec3 spec)
     diffuse = vec3(0.0);
     spec    = vec3(0.0);
 
-    vec3 lightVec = -normalize(( V*vec4(dirlightDirection, 0.0) ).xyz);
+    vec3 lightVec = -normalize(( ViewMatrix*vec4(dirlightDirection, 0.0) ).xyz);
 
 	ambient = dirlightColor * dirlightIntensity.x;
 
@@ -58,7 +58,7 @@ void phongModelDirLight(out vec3 ambient, out vec3 diffuse, out vec3 spec)
 	if(diffuseFactor > 0)
 	{
 		// For shadows
-		vec4 worldPos = inverse(V) * vec4(ViewPos, 1.0);
+		vec4 worldPos = inverse(ViewMatrix) * vec4(ViewPos, 1.0);
 		vec4 shadowCoord = BiasMatrix * ShadowViewProj * worldPos;
 		
 		float shadow = 1.0;
@@ -87,7 +87,7 @@ void phongModel(int index, out vec3 ambient, out vec3 diffuse, out vec3 spec) {
 	diffuse = vec3(0.0);
 	spec    = vec3(0.0);
 
-	vec3 lightVec = (V * vec4(pointlights[index].Position, 1.0)).xyz - ViewPos;
+	vec3 lightVec = (ViewMatrix * vec4(pointlights[index].Position, 1.0)).xyz - ViewPos;
 	float d = length(lightVec);
 
 	if(d > pointlights[index].Range)
