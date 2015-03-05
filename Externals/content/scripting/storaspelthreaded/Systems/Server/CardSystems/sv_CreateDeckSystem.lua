@@ -59,35 +59,35 @@ CreateDeckSystem.CreateDeck = function (self)
 	
 	----------------------------------------------------------
 	-- ADD NEW CARDS HERE
-	CardAction[#CardAction+1] = "Stone"
+	CardAction[#CardAction+1] = "Forward"
 	NrOfCards[#NrOfCards+1] = 45--4 * NrOfPlayers
 	CardPrio[#CardPrio+1] = true
 	
-	CardAction[#CardAction+1] = "Stone"
+	CardAction[#CardAction+1] = "Backward"
 	NrOfCards[#NrOfCards+1] = 40--4 * NrOfPlayers
 	CardPrio[#CardPrio+1] = true
 	
-	CardAction[#CardAction+1] = "Stone"
+	CardAction[#CardAction+1] = "TurnRight"
 	NrOfCards[#NrOfCards+1] = 35--4 * NrOfPlayers
 	CardPrio[#CardPrio+1] = false
 
-	CardAction[#CardAction+1] = "Stone"
+	CardAction[#CardAction+1] = "TurnLeft"
 	NrOfCards[#NrOfCards+1] = 35--4 * NrOfPlayers
 	CardPrio[#CardPrio+1] = false
 
-	CardAction[#CardAction+1] = "Stone"
+	CardAction[#CardAction+1] = "TurnAround"
 	NrOfCards[#NrOfCards+1] = 20--3 * NrOfPlayers
 	CardPrio[#CardPrio+1] = false
 
-	CardAction[#CardAction+1] = "Stone"
+	CardAction[#CardAction+1] = "Guard"
 	NrOfCards[#NrOfCards+1] = 5--1 * NrOfPlayers
 	CardPrio[#CardPrio+1] = false
 	
-	CardAction[#CardAction+1] = "Stone"
+	CardAction[#CardAction+1] = "Sprint"
 	NrOfCards[#NrOfCards+1] = 5--1 * NrOfPlayers
 	CardPrio[#CardPrio+1] = true
 
-	CardAction[#CardAction+1] = "Stone"
+	CardAction[#CardAction+1] = "SlingShot"
 	NrOfCards[#NrOfCards+1] = 5--1 * NrOfPlayers
 	CardPrio[#CardPrio+1] = true
 	
