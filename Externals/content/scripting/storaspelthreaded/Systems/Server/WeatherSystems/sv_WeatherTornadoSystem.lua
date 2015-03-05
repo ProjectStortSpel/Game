@@ -85,7 +85,9 @@ WeatherTornadoSystem.RemoveSpin = function(self, unit)
 	
 		posX, posZ = world:GetComponent(unit, "MapPosition", 0):GetInt2()
 	
-		world:CreateComponentAndAddTo("LerpPosition", unit)
+		if not world:EntityHasComponent(unit, "LerpPosition") then
+			world:CreateComponentAndAddTo("LerpPosition", unit)
+		end
 		world:GetComponent(unit, "LerpPosition", "X"):SetFloat(posX)
 		world:GetComponent(unit, "LerpPosition", "Y"):SetFloat(0.5)
 		world:GetComponent(unit, "LerpPosition", "Z"):SetFloat(posZ)
@@ -108,8 +110,9 @@ WeatherTornadoSystem.RemoveSpin = function(self, unit)
 			lRotation = 3 * math.pi / 2
 		end
 		
-		
-		world:CreateComponentAndAddTo("LerpRotation", unit)
+		if not world:EntityHasComponent(unit, "LerpRotation") then
+			world:CreateComponentAndAddTo("LerpRotation", unit)
+		end
 		world:GetComponent(unit, "LerpRotation", "X"):SetFloat(0)
 		world:GetComponent(unit, "LerpRotation", "Y"):SetFloat(lRotation)
 		world:GetComponent(unit, "LerpRotation", "Z"):SetFloat(0)
@@ -235,7 +238,9 @@ WeatherTornadoSystem.CheckCollision = function(self, id, unit)
 			world:CreateComponentAndAddTo("Spin", unit)
 			world:GetComponent(unit, "Spin", 0):SetFloat3(0, 40, 0)
 			
-			world:CreateComponentAndAddTo("LerpPosition", unit)
+			if not world:EntityHasComponent(unit, "LerpPosition") then
+				world:CreateComponentAndAddTo("LerpPosition", unit)
+			end
 			world:GetComponent(unit, "LerpPosition", "X"):SetFloat(posX)
 			world:GetComponent(unit, "LerpPosition", "Y"):SetFloat(1.5)
 			world:GetComponent(unit, "LerpPosition", "Z"):SetFloat(posZ)
