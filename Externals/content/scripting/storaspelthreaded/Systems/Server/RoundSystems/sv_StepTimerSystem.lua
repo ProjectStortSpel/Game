@@ -22,6 +22,7 @@ StepTimerSystem.Update = function(self, dt)
 			
 			local id = world:CreateNewEntity()
 			world:CreateComponentAndAddTo("NewStep", id)
+			world:CreateComponentAndAddTo("SyncNetwork", id)
 		end
 
 	end

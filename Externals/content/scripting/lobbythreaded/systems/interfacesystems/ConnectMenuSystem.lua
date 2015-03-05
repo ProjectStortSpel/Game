@@ -4,6 +4,7 @@ ConnectMenuSystem.ServerStartIndex = 1
 ConnectMenuSystem.ServerEndIndex = 1
 ConnectMenuSystem.doRefresh = true
 ConnectMenuSystem.RequestRelease = false
+ConnectMenuSystem.Active = false
 
 ConnectMenuSystem.Update = function(self, dt)
 	if self.RequestRelease then
@@ -19,7 +20,7 @@ ConnectMenuSystem.Update = function(self, dt)
 			if world:EntityHasComponent(pressedButton, "MenuEntityCommand") then
 				local compname = world:GetComponent(pressedButton, "MenuEntityCommand", "ComponentName"):GetText()
 				--self:RemoveMenu()
-				if compname == "IPConnectEntry" then
+				if compname == "IPConnectEntry" or compname == "HostMenu" then
 					self:RemoveMenu()
 				elseif compname == "RefreshServerList" then
 					self.doRefresh = true
@@ -27,8 +28,8 @@ ConnectMenuSystem.Update = function(self, dt)
 				local id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo(compname, id)
 			end
-		else
-			self:RemoveMenu()
+		elseif self.Active then
+			self:RemoveMenuToMain()
 		end
 		
 	end
@@ -65,7 +66,7 @@ ConnectMenuSystem.EntitiesRemoved = function(self, dt, entities)
 end
 
 ConnectMenuSystem.SpawnMenu = function(self)
-	local background = self:CreateElement("gamemenubackground", "quad", 0, 0, -2.1, 2.07, 1.3)
+	local background = self:CreateElement("joinserver", "quad", 0, 0.6, -2.1, 1.0, 1.0)
 	local servers = self:GetEntities("ServerListEntry")
 	local button = nil
 
@@ -112,14 +113,19 @@ ConnectMenuSystem.SpawnMenu = function(self)
 	end
 	
 	
-	button = self:CreateElement("refresh", "quad", 0.4, -0.85, -2, 0.5, 0.20)
+	button = self:CreateElement("refresh", "quad", 0.6, -0.85, -2, 0.5, 0.20)
 	self:AddEntityCommandToButton("RefreshServerList", button)
 	self:AddHoverSize(1.1, button)	
 	
-	button = self:CreateElement("connect", "quad", -0.4, -0.85, -2, 0.5, 0.20)
+	button = self:CreateElement("connect", "quad", 0.0, -0.85, -2, 0.5, 0.20)
 	self:AddEntityCommandToButton("IPConnectEntry", button)
 	self:AddHoverSize(1.1, button)
 	
+	button = self:CreateElement("host", "quad", -0.6, -0.85, -2, 0.5, 0.20)
+	self:AddEntityCommandToButton("HostMenu", button)
+	self:AddHoverSize(1.1, button)
+	
+	self.Active = true
 end
 
 ConnectMenuSystem.RefreshMenu = function(self)
@@ -139,6 +145,22 @@ ConnectMenuSystem.RemoveMenu = function(self)
 			world:KillEntity(entities[i])
 		end
 	end
+	
+	self.Active = false
+end
+
+ConnectMenuSystem.RemoveMenuToMain = function(self)
+	local entities = self:GetEntities()
+	for i = 1, #entities do
+		if not world:EntityHasComponent(entities[i], "ServerListEntry") then
+			world:KillEntity(entities[i])
+		end
+	end
+	
+	local tomainmenu = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("MainMenu", tomainmenu)
+	
+	self.Active = false
 end
 
 ConnectMenuSystem.Initialize = function(self)
