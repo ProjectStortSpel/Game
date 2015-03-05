@@ -60,8 +60,10 @@ PacketHandler::PacketSendInfo* PacketHandler::GetPacketSendInfo(uint64_t _id)
 	if (SDL_LockMutex(m_sendLock) == 0)
 	{
 
-		if (m_packetSendInfoMap->find(_id) != m_packetSendInfoMap->end())
-			result = m_packetSendInfoMap->at(_id);
+		if ( m_packetSendInfoMap->find( _id ) != m_packetSendInfoMap->end( ) )
+		{
+			result = m_packetSendInfoMap->at( _id );
+		}
 		SDL_UnlockMutex(m_sendLock);
 
 	}
@@ -109,7 +111,7 @@ char PacketHandler::GetNetTypeMessageId(uint64_t _id)
 
 uint64_t PacketHandler::StartPack(const char* _functionName)
 {
-
+	// THIS IS PROBLEM!
 	PacketSendInfo* psi = new PacketSendInfo();
 	if (psi)
 	{
@@ -117,6 +119,7 @@ uint64_t PacketHandler::StartPack(const char* _functionName)
 
 		if (SDL_LockMutex(m_sendLock) == 0)
 		{
+			
 			(*m_packetSendInfoMap)[id] = psi;
 			SDL_UnlockMutex(m_sendLock);
 
@@ -139,7 +142,7 @@ uint64_t PacketHandler::StartPack(const char* _functionName)
 
 uint64_t PacketHandler::StartPack(char _identifier)
 {
-
+	// THIS IS PROBLEM!
 	PacketSendInfo* psi = new PacketSendInfo();
 	if (psi)
 	{
@@ -167,7 +170,7 @@ uint64_t PacketHandler::StartPack(char _identifier)
 Packet* PacketHandler::EndPack(uint64_t _id)
 {
 	PacketSendInfo* psi = GetPacketSendInfo(_id);
-
+	
 	if (psi)
 	{
 		unsigned short length = (unsigned short)(psi->Position - psi->Data);
@@ -177,10 +180,15 @@ Packet* PacketHandler::EndPack(uint64_t _id)
 		memcpy(p->Data, psi->Data, length);
 		*p->Length = length;
 
-
+		// remove psi?
 		if (SDL_LockMutex(m_sendLock) == 0)
 		{
+			// remove but dont deallocate
+			//might work
+			PacketSendInfo* to_be_deleted = m_packetSendInfoMap->at( _id );
 			m_packetSendInfoMap->erase(_id);
+			//might work
+			delete to_be_deleted;
 			SDL_UnlockMutex(m_sendLock);
 		}
 		else if(NET_DEBUG > 0)
