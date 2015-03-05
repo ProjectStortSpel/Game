@@ -94,6 +94,7 @@ TestMoveSystem.RecursiveMove = function(self, unitToMove, allUnits, allNonWalkab
 		world:CreateComponentAndAddTo("Animation", unitToMove)
 	end
 	world:GetComponent(unitToMove, "Animation", "Id"):SetInt(1)
+	world:GetComponent(unitToMove, "Animation", "FrameTime"):SetFloat(0.01)
 	world:GetComponent(unitToMove, "Animation", "Time"):SetFloat(1)
 	
 	if not world:EntityHasComponent(unitToMove, "UnitWantTileOffset") then

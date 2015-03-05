@@ -53,10 +53,10 @@ GameMenuSystem.EntitiesAdded = function(self, dt, entities)
 end
 
 GameMenuSystem.SpawnMenu = function(self)
-	local background = self:CreateElement("gamemenubackground", "quad", 0, -0, -3.1, 1.5, 2)
+	--local background = self:CreateElement("gamemenubackground", "quad", 0, -0, -3.1, 1.5, 2)
 		
 	local button = nil
-	button = self:CreateElement("options", "quad", 0, 0.6, -3, 0.6, 0.3)
+	button = self:CreateElement("options", "quad", 0, 0.5, -3, 0.6, 0.3)
 	self:AddEntityCommandToButton("OptionMenu", button)
 	self:AddHoverSize(1.1, button)	
 	

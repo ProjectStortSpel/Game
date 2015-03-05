@@ -201,7 +201,8 @@ namespace LuaBridge
 			}
 			int modelId = LuaEmbedder::PullInt(L, 1);
 			int animId = LuaEmbedder::PullInt(L, 2);
-			bool result = g_graphicDevice->SetAnimation(modelId, animId);
+			float frameTime = LuaEmbedder::PullFloat(L, 3);
+			bool result = g_graphicDevice->SetAnimation(modelId, animId, frameTime);
 			LuaEmbedder::PushBool(L, result);
 			return 1;
 		}

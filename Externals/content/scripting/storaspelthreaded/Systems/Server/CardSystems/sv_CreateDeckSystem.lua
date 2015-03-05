@@ -79,7 +79,7 @@ CreateDeckSystem.CreateDeck = function (self)
 	NrOfCards[#NrOfCards+1] = 20--3 * NrOfPlayers
 	CardPrio[#CardPrio+1] = false
 
-	CardAction[#CardAction+1] = "Guard"
+	CardAction[#CardAction+1] = "Dodge"
 	NrOfCards[#NrOfCards+1] = 5--1 * NrOfPlayers
 	CardPrio[#CardPrio+1] = false
 	

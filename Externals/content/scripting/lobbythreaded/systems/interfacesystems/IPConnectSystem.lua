@@ -4,7 +4,6 @@ IPConnectSystem.Name = "IPConnect"
 IPConnectSystem.IsActive = false
 IPConnectSystem.TextInput = ""
 IPConnectSystem.TextEntity = -1
-IPConnectSystem.BackgroundEntity = -1
 IPConnectSystem.BackgroundConnectText = -1
 IPConnectSystem.BackgroundExampleText = -1
 IPConnectSystem.ConnectEntity = -1
@@ -166,23 +165,7 @@ IPConnectSystem.DeleteTextEntity = function(self)
 end
 
 IPConnectSystem.CreateBackground = function(self)
-	local id = world:CreateNewEntity()
-	
-	world:CreateComponentAndAddTo("Model", id)
-	world:CreateComponentAndAddTo("Position", id)
-	world:CreateComponentAndAddTo("Rotation", id)
-	world:CreateComponentAndAddTo("Scale", id)
-	world:CreateComponentAndAddTo("PickBox", id)
-	world:CreateComponentAndAddTo("IPConnectEntry", id)
-	
-	world:GetComponent(id, "Model", 0):SetModel("ipconnectbackground", "quad", 2)
-	world:GetComponent(id, "Position", 0):SetFloat3(0.0, 0.0, -2.1)
-	world:GetComponent(id, "Scale", 0):SetFloat3(1.5, 1.5, 1.0)
-	world:GetComponent(id, "PickBox", 0):SetFloat2(1.0, 1.0)
-	world:GetComponent(id, "Rotation", 0):SetFloat3(0.0, 0.0, 0.0)
-	
-	self.BackgroundEntity = id	
-	
+
 	local id = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("Model", id)
 	world:CreateComponentAndAddTo("Position", id)
@@ -225,11 +208,9 @@ IPConnectSystem.CreateBackground = function(self)
 end
 
 IPConnectSystem.DeleteBackground = function(self)
-	if self.BackgroundEntity ~= -1 then
-		world:KillEntity(self.BackgroundEntity)
+	if self.BackgroundConnectText ~= -1 then
 		world:KillEntity(self.BackgroundConnectText)
 		world:KillEntity(self.BackgroundExampleText)
-		self.BackgroundEntity = -1
 		self.BackgroundConnectText = -1
 		self.BackgroundExampleText = -1
 	end
