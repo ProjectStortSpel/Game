@@ -105,8 +105,6 @@ void GraphicsLow::Render()
 	if (m_modelsForward.size() > 0)
 	{
 		//------FORWARD RENDERING--------------------------------------------
-		//glEnable(GL_BLEND);
-
 		m_forwardShader.UseProgram();
 		m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 		m_forwardShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);

@@ -91,7 +91,6 @@ WeatherTornadoSystem.RemoveSpin = function(self, unit)
 		world:GetComponent(unit, "LerpPosition", "Z"):SetFloat(posZ)
 		world:GetComponent(unit, "LerpPosition", "Time"):SetFloat(0.5)
 		world:GetComponent(unit, "LerpPosition", "Algorithm"):SetText("NormalLerp")
-		world:GetComponent(unit, "LerpPosition", "KillWhenFinished"):SetBool(false)
 		
 		local dirX, dirZ = world:GetComponent(unit, "Direction", 0):GetInt2()
 		local lRotation = 0
@@ -116,7 +115,6 @@ WeatherTornadoSystem.RemoveSpin = function(self, unit)
 		world:GetComponent(unit, "LerpRotation", "Z"):SetFloat(0)
 		world:GetComponent(unit, "LerpRotation", "Time"):SetFloat(0.5)
 		world:GetComponent(unit, "LerpRotation", "Algorithm"):SetText("NormalLerp")
-		world:GetComponent(unit, "LerpRotation", "KillWhenFinished"):SetBool(false)
 		
 	end
 
@@ -163,7 +161,6 @@ WeatherTornadoSystem.AddTornado = function(self)
 	world:GetComponent(id, "LerpScale", "Z"):SetFloat(1.0)
 	world:GetComponent(id, "LerpScale", "Time"):SetFloat(2.5)
 	world:GetComponent(id, "LerpScale", "Algorithm"):SetText("NormalLerp")
-	world:GetComponent(id, "LerpScale", "KillWhenFinished"):SetBool(false)
 	
 	return id
 end
@@ -210,7 +207,6 @@ WeatherTornadoSystem.MoveTornado = function(self, id)
 				world:GetComponent(id, "LerpPosition", "Z"):SetFloat(tPosZ)
 				world:GetComponent(id, "LerpPosition", "Time"):SetFloat(1.0)
 				world:GetComponent(id, "LerpPosition", "Algorithm"):SetText("NormalLerp")
-				world:GetComponent(id, "LerpPosition", "KillWhenFinished"):SetBool(false)
 				
 				world:GetComponent(id, "MapPosition", 0):SetInt2(tPosX, tPosZ)
 				
@@ -245,7 +241,6 @@ WeatherTornadoSystem.CheckCollision = function(self, id, unit)
 			world:GetComponent(unit, "LerpPosition", "Z"):SetFloat(posZ)
 			world:GetComponent(unit, "LerpPosition", "Time"):SetFloat(0.5)
 			world:GetComponent(unit, "LerpPosition", "Algorithm"):SetText("NormalLerp")
-			world:GetComponent(unit, "LerpPosition", "KillWhenFinished"):SetBool(false)
 
 			local dirRng = math.random(4)
 			local dirX = 0
@@ -285,6 +280,6 @@ WeatherTornadoSystem.CancelTornado = function(self, id)
 	world:GetComponent(id, "LerpScale", "Z"):SetFloat(0.0)
 	world:GetComponent(id, "LerpScale", "Time"):SetFloat(1.0)
 	world:GetComponent(id, "LerpScale", "Algorithm"):SetText("NormalLerp")
-	world:GetComponent(id, "LerpScale", "KillWhenFinished"):SetBool(true)
+	world:CreateComponentAndAddTo("KillAfterLerp", id)
 	
 end
