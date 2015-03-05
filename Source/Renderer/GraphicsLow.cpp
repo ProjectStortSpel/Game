@@ -479,30 +479,42 @@ void GraphicsLow::BufferLightsToGPU()
 	{
 		for (int i = 0; i < 3; i++)
 		{
-			std::stringstream ss;
-			ss << "pointlights[" << i << "].Position";
-			m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[0]);		
-			m_riverShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[0]);		
-			m_riverCornerShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[0]);
-			m_animationShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[0]); ss.str(std::string());
+			//std::stringstream ss;
+			//ss << "pointlights[" << i << "].Position";
 
-			ss << "pointlights[" << i << "].Intensity";
-			m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[3]);		
-			m_riverShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[3]);		
-			m_riverCornerShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[3]);
-			m_animationShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[3]); ss.str(std::string());
+			std::string s;
+			char si;
+			sprintf( &si, "%d", i );
+			s = si;
+			s = "pointlights[" + s + "].Position";
+			m_forwardShader.SetUniVariable( s.c_str( ), vector3, &m_lightDefaults[0] );
+			m_riverShader.SetUniVariable( s.c_str( ), vector3, &m_lightDefaults[0] );
+			m_riverCornerShader.SetUniVariable( s.c_str( ), vector3, &m_lightDefaults[0] );
+			m_animationShader.SetUniVariable( s.c_str( ), vector3, &m_lightDefaults[0] );
 
-			ss << "pointlights[" << i << "].Color";
-			m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[6]);		
-			m_riverShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[6]);		
-			m_riverCornerShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[6]);
-			m_animationShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[6]); ss.str(std::string());
+			sprintf( &si, "%d", i );
+			s = si;
+			s = "pointlights[" + s + "].Intensity";
+			m_forwardShader.SetUniVariable( s.c_str( ), vector3, &m_lightDefaults[3] );
+			m_riverShader.SetUniVariable( s.c_str( ), vector3, &m_lightDefaults[3] );
+			m_riverCornerShader.SetUniVariable( s.c_str( ), vector3, &m_lightDefaults[3] );
+			m_animationShader.SetUniVariable( s.c_str( ), vector3, &m_lightDefaults[3] );
 
-			ss << "pointlights[" << i << "].Range";
-			m_forwardShader.SetUniVariable(ss.str().c_str(), glfloat, &m_lightDefaults[9]);		
-			m_riverShader.SetUniVariable(ss.str().c_str(), glfloat, &m_lightDefaults[9]);		
-			m_riverCornerShader.SetUniVariable(ss.str().c_str(), glfloat, &m_lightDefaults[9]);
-			m_animationShader.SetUniVariable(ss.str().c_str(), glfloat, &m_lightDefaults[9]); ss.str(std::string());
+			sprintf( &si, "%d", i );
+			s = si;
+			s = "pointlights[" + s + "].Color";
+			m_forwardShader.SetUniVariable(s.c_str(), vector3, &m_lightDefaults[6]);		
+			m_riverShader.SetUniVariable(s.c_str(), vector3, &m_lightDefaults[6]);		
+			m_riverCornerShader.SetUniVariable(s.c_str(), vector3, &m_lightDefaults[6]);
+			m_animationShader.SetUniVariable( s.c_str( ), vector3, &m_lightDefaults[6] );
+
+			sprintf( &si, "%d", i );
+			s = si;
+			s = "pointlights[" + s + "].Range";
+			m_forwardShader.SetUniVariable( s.c_str( ), glfloat, &m_lightDefaults[9] );
+			m_riverShader.SetUniVariable( s.c_str( ), glfloat, &m_lightDefaults[9] );
+			m_riverCornerShader.SetUniVariable( s.c_str( ), glfloat, &m_lightDefaults[9] );
+			m_animationShader.SetUniVariable( s.c_str( ), glfloat, &m_lightDefaults[9] );
 		}
 		delete [] m_pointerToPointlights;
 		m_pointerToPointlights = 0;
@@ -518,30 +530,40 @@ void GraphicsLow::BufferLightsToGPU()
 
 		for (int i = 0; i < nrOfLights; i++)
 		{
-			std::stringstream ss;
-			ss << "pointlights[" << i << "].Position";
-			m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointerToPointlights[i][0]);		
-			m_riverShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointerToPointlights[i][0]);		
-			m_riverCornerShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointerToPointlights[i][0]);
-			m_animationShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointerToPointlights[i][0]); ss.str(std::string());
+			std::string s;
+			char si;
+			sprintf( &si, "%d", i );
+			s = si;
+			s = "pointlights[" + s + "].Position";
+			m_forwardShader.SetUniVariable(s.c_str(), vector3, &m_pointerToPointlights[i][0]);		
+			m_riverShader.SetUniVariable(s.c_str(), vector3, &m_pointerToPointlights[i][0]);		
+			m_riverCornerShader.SetUniVariable(s.c_str(), vector3, &m_pointerToPointlights[i][0]);
+			m_animationShader.SetUniVariable(s.c_str(), vector3, &m_pointerToPointlights[i][0]); 
 
-			ss << "pointlights[" << i << "].Intensity";
-			m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointerToPointlights[i][3]);		
-			m_riverShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointerToPointlights[i][3]);		
-			m_riverCornerShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointerToPointlights[i][3]);
-			m_animationShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointerToPointlights[i][3]); ss.str(std::string());
 
-			ss << "pointlights[" << i << "].Color";
-			m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointerToPointlights[i][6]);		
-			m_riverShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointerToPointlights[i][6]);		
-			m_riverCornerShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointerToPointlights[i][6]);
-			m_animationShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointerToPointlights[i][6]); ss.str(std::string());
+			sprintf( &si, "%d", i );
+			s = si;
+			s = "pointlights[" + s + "].Intensity";
+			m_forwardShader.SetUniVariable(s.c_str(), vector3, &m_pointerToPointlights[i][3]);		
+			m_riverShader.SetUniVariable(s.c_str(), vector3, &m_pointerToPointlights[i][3]);		
+			m_riverCornerShader.SetUniVariable(s.c_str(), vector3, &m_pointerToPointlights[i][3]);
+			m_animationShader.SetUniVariable(s.c_str(), vector3, &m_pointerToPointlights[i][3]); 
 
-			ss << "pointlights[" << i << "].Range";
-			m_forwardShader.SetUniVariable(ss.str().c_str(), glfloat, &m_pointerToPointlights[i][9]);	
-			m_riverShader.SetUniVariable(ss.str().c_str(), glfloat, &m_pointerToPointlights[i][9]);		
-			m_riverCornerShader.SetUniVariable(ss.str().c_str(), glfloat, &m_pointerToPointlights[i][9]);
-			m_animationShader.SetUniVariable(ss.str().c_str(), glfloat, &m_pointerToPointlights[i][9]); ss.str(std::string());
+			sprintf( &si, "%d", i );
+			s = si;
+			s = "pointlights[" + s + "].Color";
+			m_forwardShader.SetUniVariable(s.c_str(), vector3, &m_pointerToPointlights[i][6]);		
+			m_riverShader.SetUniVariable(s.c_str(), vector3, &m_pointerToPointlights[i][6]);		
+			m_riverCornerShader.SetUniVariable(s.c_str(), vector3, &m_pointerToPointlights[i][6]);
+			m_animationShader.SetUniVariable(s.c_str(), vector3, &m_pointerToPointlights[i][6]);
+
+			sprintf( &si, "%d", i );
+			s = si;
+			s = "pointlights[" + s + "].Range";
+			m_forwardShader.SetUniVariable(s.c_str(), glfloat, &m_pointerToPointlights[i][9]);	
+			m_riverShader.SetUniVariable(s.c_str(), glfloat, &m_pointerToPointlights[i][9]);		
+			m_riverCornerShader.SetUniVariable(s.c_str(), glfloat, &m_pointerToPointlights[i][9]);
+			m_animationShader.SetUniVariable(s.c_str(), glfloat, &m_pointerToPointlights[i][9]);
 
 		}
 		delete [] m_pointerToPointlights;
