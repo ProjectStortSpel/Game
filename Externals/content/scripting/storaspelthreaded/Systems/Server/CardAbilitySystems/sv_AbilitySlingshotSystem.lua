@@ -112,21 +112,29 @@ AbilitySlingshotSystem.Update = function(self, dt)
 			if currentPosX < 1 or currentPosZ < 1
 			or currentPosX > mapSizeX or currentPosZ > mapSizeZ then
 				-- Outside the map, create a new bullet
-				self:AddBullet(mapPosX, mapPosZ, currentPosX, currentPosZ, 0.1)
+				self:AddBullet(mapPosX-(dirX+dirZ)*0.4, mapPosZ+(dirX-dirZ)*0.4, currentPosX, currentPosZ, 0.1)
 				break
 			else
 				-- Go through all units and check if the projectile collide with something
-				if self:CheckUnits(mapPosX, mapPosZ, currentPosX, currentPosZ) then
+				if self:CheckUnits(mapPosX-(dirX+dirZ)*0.4, mapPosZ+(dirX-dirZ)*0.4, currentPosX, currentPosZ) then
 					hitSomething = true
 					break
 				end
 				-- Go through all notwalkable tiles and check if the proj collide with something
-				if self:CheckNotWalkable(mapPosX, mapPosZ, currentPosX, currentPosZ) then
+				if self:CheckNotWalkable(mapPosX-(dirX+dirZ)*0.4, mapPosZ+(dirX-dirZ)*0.4, currentPosX, currentPosZ) then
 					hitSomething = true
 					break
 				end
 			end
 		end
+		
+		if not world:EntityHasComponent(entities[i], "Animation") then
+			world:CreateComponentAndAddTo("Animation", entities[i])
+		end
+		world:GetComponent(entities[i], "Animation", "Id"):SetInt(5)
+		world:GetComponent(entities[i], "Animation", "FrameTime"):SetFloat(0.01)
+		world:GetComponent(entities[i], "Animation", "Time"):SetFloat(1)
+		
 		world:RemoveComponentFrom("UnitSlingShot", entities[i])
 	end
 

@@ -137,7 +137,7 @@ namespace Renderer
 		void GetWindowSize(int &x, int &y){ x = m_clientWidth; y = m_clientHeight; }
 
 		// ANIMATIONS
-		bool SetAnimation(int _modelId, int _animId);
+		bool SetAnimation(int _modelId, int _animId, float _frameTime);
 
 		// MODELLOADER
 		virtual bool PreLoadModel(std::vector<std::string> _dirs, std::string _file, int _renderType = RENDER_FORWARD){ return false; };
@@ -220,7 +220,7 @@ namespace Renderer
 		Shader m_forwardShader, m_viewspaceShader, m_interfaceShader;
 		Shader m_riverShader, m_riverCornerShader;
 		Shader m_fullscreen;
-		std::map<std::string, Shader> m_particleShaders;
+		std::map<std::string, Shader*> m_particleShaders;
 
 		// Skybox
 		SkyBox *m_skybox;

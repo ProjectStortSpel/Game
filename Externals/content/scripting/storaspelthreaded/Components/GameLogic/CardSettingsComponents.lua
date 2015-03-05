@@ -16,6 +16,7 @@ NewComponent = ComponentType()
 NewComponent.SyncNetwork = true
 NewComponent.Name = "Card"
 NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("Unit", ByteSize.Reference)
 worldCreator:AddComponentType(NewComponent)
 
 -- Card Prio Component
