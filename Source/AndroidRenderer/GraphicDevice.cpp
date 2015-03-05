@@ -220,7 +220,7 @@ bool GraphicDevice::InitSkybox()
 }
 
 
-bool GraphicDevice::SetAnimation(int _modelId, int _animId)
+bool GraphicDevice::SetAnimation(int _modelId, int _animId, float _frameTime)
 {
 	return false;
 }
