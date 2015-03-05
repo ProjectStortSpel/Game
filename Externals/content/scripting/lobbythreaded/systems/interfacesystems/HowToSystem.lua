@@ -95,28 +95,11 @@ end
 
 HowToSystem.CreateEntites = function(self)
 
-	--local menubutton = self:CreateElement("play", "quad", -2, 0.6, -5, 1, 0.5)
-	--self:AddConsoleCommandToButton("host;gamemode storaspel", menubutton)	
-	--self:AddEntityCommandToButton("ConnectMenu", menubutton)
-	--self:AddHoverSize(1.5, menubutton)
-	--table.insert(self.Entities, menubutton)
-
-	--local menubutton = self:CreateElement("howto", "quad", -2, -0.0, -5, 1, 0.5)
-	--self:AddEntityCommandToButton("ConnectMenu", menubutton)
-	--self:AddHoverSize(1.5, menubutton)
-	--table.insert(self.Entities, menubutton)
-	
-	
-	--local menubutton = self:CreateElement("quit", "quad", -2, -1.2, -5, 1, 0.5)
-	--self:AddEntityCommandToButton("ConnectMenu", menubutton)
-	--self:AddHoverSize(1.5, menubutton)
-	--table.insert(self.Entities, menubutton)
-
 	-- GAME MENU BUTTON
-	local menubutton = self:CreateElement("back", "quad", 4, -1.6, -5, 1, 0.5)
-	self:AddEntityCommandToButton("GameMenu", menubutton)
-	self:AddHoverSize(1.5, menubutton)
-	table.insert(self.Entities, menubutton)
+	--local menubutton = self:CreateElement("back", "quad", 4, -1.6, -5, 1, 0.5)
+	--self:AddEntityCommandToButton("GameMenu", menubutton)
+	--self:AddHoverSize(1.5, menubutton)
+	--table.insert(self.Entities, menubutton)
 	
 	local specials = self:CreateElement("rules", "quad", -1.0, -0.5, -3.0, 1.4, 1.4)
 	table.insert(self.Entities, specials)
