@@ -49,6 +49,12 @@
     <Filter Include="ParticleEffects">
       <UniqueIdentifier>{ac642a07-7a0e-4cf5-b323-416fda2b3311}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\SpriteAnimation">
+      <UniqueIdentifier>{b7939a4b-2ad7-4fad-ab74-f3af2af0403b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\ParticleEffects">
+      <UniqueIdentifier>{ae7933f4-8893-4b3b-877c-c2621447c71b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\Externals\content\shaders\android\AndroidInterfaceFS.glsl">
@@ -94,16 +100,25 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\..\..\Externals\content\shaders\android\AndroidSmokeShaderFS.glsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shaders\ParticleEffects</Filter>
     </None>
     <None Include="..\..\..\Externals\content\shaders\android\AndroidSmokeShaderVS.glsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shaders\ParticleEffects</Filter>
     </None>
     <None Include="..\..\..\Externals\content\shaders\android\AndroidFireShaderFS.glsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shaders\ParticleEffects</Filter>
     </None>
     <None Include="..\..\..\Externals\content\shaders\android\AndroidFireShaderVS.glsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shaders\ParticleEffects</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidRiverShaderVS.glsl">
+      <Filter>Shaders\SpriteAnimation</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\android\highAndroidRiverCornerFS.glsl">
+      <Filter>Shaders\SpriteAnimation</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\android\lowAndroidRiverCornerFS.glsl">
+      <Filter>Shaders\SpriteAnimation</Filter>
     </None>
   </ItemGroup>
 </Project>
