@@ -1300,7 +1300,6 @@ MapGenerator.PlaceJibberish = function(self)
 			world:GetComponent(newStone, "LerpScale", "Z"):SetFloat(randScale)
 			world:GetComponent(newStone, "LerpScale", "Time"):SetFloat(0.8)
 			world:GetComponent(newStone, "LerpScale", "Algorithm"):SetText("OvershotLerp")
-			world:GetComponent(newStone, "LerpScale", "KillWhenFinished"):SetBool(false)
 		end
 	end
 	
@@ -1333,7 +1332,6 @@ MapGenerator.PlaceJibberish = function(self)
 			world:GetComponent(newGrass, "LerpScale", "Z"):SetFloat(randScale)
 			world:GetComponent(newGrass, "LerpScale", "Time"):SetFloat(0.8)
 			world:GetComponent(newGrass, "LerpScale", "Algorithm"):SetText("OvershotLerp")
-			world:GetComponent(newGrass, "LerpScale", "KillWhenFinished"):SetBool(false)
 		end
 	end
 	
@@ -1395,7 +1393,6 @@ MapGenerator.PlaceTrees = function(self)
 			world:GetComponent(newTree, "LerpScale", "Z"):SetFloat(randScale)
 			world:GetComponent(newTree, "LerpScale", "Time"):SetFloat(0.8)
 			world:GetComponent(newTree, "LerpScale", "Algorithm"):SetText("OvershotLerp")
-			world:GetComponent(newTree, "LerpScale", "KillWhenFinished"):SetBool(false)
 			
 			for Z = -1, 1 do
 				for X = -1, 1 do

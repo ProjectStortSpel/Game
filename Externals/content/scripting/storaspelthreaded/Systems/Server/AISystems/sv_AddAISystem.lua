@@ -85,6 +85,12 @@ AddAISystem.EntitiesAdded = function(self, dt, entities)
 				local length = 2
 				local power = 2
 				
+				--local bookIndex = DynamicScripting.LoadRuleBook("content/dynamicscripting/map.txt")
+				--
+				--local fail = DynamicScripting.GenerateScript()
+				--
+				--DynamicScripting.UpdateWeight(math.random() - 0.5)
+				
 				for j = 1, #voids do
 					
 					local x, y = world:GetComponent(voids[j], "MapPosition", 0):GetInt2(0)

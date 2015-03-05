@@ -88,7 +88,6 @@ TestMoveSystem.RecursiveMove = function(self, unitToMove, allUnits, allNonWalkab
 	world:GetComponent(unitToMove, "LerpPosition", "Z"):SetFloat(posZ)
 	world:GetComponent(unitToMove, "LerpPosition", "Time"):SetFloat(1)
 	world:GetComponent(unitToMove, "LerpPosition", "Algorithm"):SetText("PlayerMove")
-	world:GetComponent(unitToMove, "LerpPosition", "KillWhenFinished"):SetBool(false)
 	
 	local unitDirX, unitDirZ = world:GetComponent(unitToMove, "Direction", "X"):GetInt2(0)
 	if not world:EntityHasComponent(unitToMove, "Animation") then

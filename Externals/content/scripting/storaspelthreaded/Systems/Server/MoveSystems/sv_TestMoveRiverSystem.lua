@@ -45,7 +45,6 @@ TestMoveRiverSystem.EntitiesAdded = function(self, dt, entities)
 				world:GetComponent(unit, "LerpPosition", "Z"):SetFloat(posZ)
 				world:GetComponent(unit, "LerpPosition", "Time"):SetFloat(0.5)
 				world:GetComponent(unit, "LerpPosition", "Algorithm"):SetText("PlayerMove")
-				world:GetComponent(unit, "LerpPosition", "KillWhenFinished"):SetBool(false)
 				
 				if not world:EntityHasComponent(unit, "UnitWantTileOffset") then
 					world:CreateComponentAndAddTo("UnitWantTileOffset", unit)

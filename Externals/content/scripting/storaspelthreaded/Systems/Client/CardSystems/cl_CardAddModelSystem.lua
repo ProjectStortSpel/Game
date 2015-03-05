@@ -100,14 +100,18 @@ CardAddModelSystem.CreateArrow = function(self, unit)
 		world:GetComponent(arrow, "Parent", 0):SetInt(unit)
 		world:GetComponent(arrow, "LerpScale", "Time", 0):SetFloat4(0.2, 0.4, 0.4, 0.4)
 		world:GetComponent(arrow, "LerpScale", "Algorithm", 0):SetText("SmoothLerp")
-		world:GetComponent(arrow, "LerpScale", "KillWhenFinished", 0):SetBool(false)
 		self.Arrow = arrow
 	end
 end
 
 CardAddModelSystem.RemoveArrow = function(self)
 	if self.Arrow ~= -1 then
-		world:KillEntity(self.Arrow)
+		if not world:EntityHasComponent(self.Arrow, "LerpScale") then
+			world:CreateComponentAndAddTo("LerpScale", self.Arrow)
+		end
+		world:CreateComponentAndAddTo("KillAfterLerp", self.Arrow)
+		world:GetComponent(self.Arrow, "LerpScale", "Time", 0):SetFloat4(0.2, 0.0, 0.0, 0.0)
+		world:GetComponent(self.Arrow, "LerpScale", "Algorithm", 0):SetText("SmoothLerp")
 		self.Arrow = -1
 	end
 end
