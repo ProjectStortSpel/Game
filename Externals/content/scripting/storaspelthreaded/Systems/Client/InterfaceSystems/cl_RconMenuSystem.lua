@@ -53,7 +53,7 @@ RconMenuSystem.EntitiesAdded = function(self, dt, entities)
 end
 
 RconMenuSystem.SpawnMenu = function(self)
-	local background = self:CreateElement("gamemenubackground", "quad", 0, -0, -3.1, 1.5, 1.5)
+	--local background = self:CreateElement("gamemenubackground", "quad", 0, 0, -3.1, 1.5, 1.5)
 		
 	local button = nil
 	button = self:CreateElement("rconreload", "quad", 0, 0.2, -3, 0.6, 0.3)

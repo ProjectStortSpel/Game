@@ -1,3 +1,14 @@
+--	MainMenu Component
+local MainMenu = ComponentType()
+MainMenu.Name = "MainMenu"
+MainMenu.TableType = TableType.Map
+worldCreator:AddComponentType(MainMenu)
+--	MainMenuElement Component
+local MainMenuElement = ComponentType()
+MainMenuElement.Name = "MainMenuElement"
+MainMenuElement.TableType = TableType.Map
+worldCreator:AddComponentType(MainMenuElement)
+
 --	GameMenu Component
 local GameMenu = ComponentType()
 GameMenu.Name = "GameMenu"
@@ -53,6 +64,16 @@ local HostMenuActivate = ComponentType()
 HostMenuActivate.Name = "HostMenuActivate"
 HostMenuActivate.TableType = TableType.Map
 worldCreator:AddComponentType(HostMenuActivate)
+
+--	HowToMenu Component
+local HowToMenu = ComponentType()
+HowToMenu.Name = "HowToMenu"
+HowToMenu.TableType = TableType.Map
+worldCreator:AddComponentType(HowToMenu)
+local HowToMenuElement = ComponentType()
+HowToMenuElement.Name = "HowToMenuElement"
+HowToMenuElement.TableType = TableType.Map
+worldCreator:AddComponentType(HowToMenuElement)
 
 -- Menu ConsoleCommand
 local MenuConsoleCommand = ComponentType()

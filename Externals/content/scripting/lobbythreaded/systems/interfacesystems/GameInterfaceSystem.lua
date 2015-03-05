@@ -1,40 +1,27 @@
 GameInterfaceSystem = System()
 GameInterfaceSystem.Name = "GameInterface"
 GameInterfaceSystem.RequestRelease = false
+GameInterfaceSystem.Buttons = {}
+GameInterfaceSystem.Buttons.__mode = "k"
+GameInterfaceSystem.Island = -1
+GameInterfaceSystem.Rotation = 0.0
+
 
 GameInterfaceSystem.Update = function(self, dt)
-	if self.RequestRelease then
-
-		local pressedButtons = self:GetEntities("OnPickBoxHit")
-		if #pressedButtons > 0 then
-			local pressedButton = pressedButtons[1]
-			if world:EntityHasComponent(pressedButton, "MenuConsoleCommand") then
-				local command = world:GetComponent(pressedButton, "MenuConsoleCommand", "Command"):GetString()
-				Console.AddToCommandQueue(command)
-			end
-			if world:EntityHasComponent(pressedButton, "MenuEntityCommand") then
-				local compname = world:GetComponent(pressedButton, "MenuEntityCommand", "ComponentName"):GetText()
-				local id = world:CreateNewEntity()
-				print(compname)
-				world:CreateComponentAndAddTo(compname, id)
-			end
-		else
-			--self:RemoveMenu()
-		end
 		
-	end
-	
-	if Input.GetTouchState(0) == InputState.Released then
-		self.RequestRelease = true
-	else
-		self.RequestRelease = false
-	end
+	self.Rotation = self.Rotation + dt
+	world:GetComponent(self.Island, "Rotation", 0):SetFloat3(0.174532925, self.Rotation, 0.0)
 end
 
 GameInterfaceSystem.Initialize = function(self)
 	self:SetName("GameInterfaceSystem")
 	self:UsingUpdate()
+	self:UsingEntitiesAdded()
 	self:AddComponentTypeToFilter(self.Name.."Element", FilterType.RequiresOneOf)
+end
+
+GameInterfaceSystem.EntitiesAdded = function(self, dt, entities)
+	
 end
 
 GameInterfaceSystem.CreateElement = function(self, object, folder, posx, posy, posz, scalex, scaley)
@@ -67,20 +54,20 @@ GameInterfaceSystem.AddHoverSize = function(self, deltascale, button)
 end
 
 GameInterfaceSystem.PostInitialize = function(self)
-
-	local menubutton = self:CreateElement("host", "quad", 0, 0.5, -5, 1, 0.5)
-	--self:AddConsoleCommandToButton("host;gamemode storaspel", menubutton)	
-	self:AddEntityCommandToButton("HostMenu", menubutton)
-	self:AddHoverSize(1.5, menubutton)
-
-	local menubutton = self:CreateElement("join", "quad", 0, -0.5, -5, 1, 0.5)
-	self:AddEntityCommandToButton("ConnectMenu", menubutton)
-	self:AddHoverSize(1.5, menubutton)
-
-	-- GAME MENU BUTTON
-	local menubutton = self:CreateElement("gamemenubutton", "quad", 3.3, -1.4, -4, 0.35, 0.35)
-	self:AddEntityCommandToButton("GameMenu", menubutton)
-	self:AddHoverSize(1.5, menubutton)
 	
-	print("ButtonPressedSystem post initialized!")
+	self:CreateDistantIsland()
 end
+
+GameInterfaceSystem.CreateDistantIsland = function(self)
+	local id = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("Model", id)
+	world:CreateComponentAndAddTo("Position", id)
+	world:CreateComponentAndAddTo("Rotation", id)
+	world:CreateComponentAndAddTo("Scale", id)
+	world:GetComponent(id, "Model", 0):SetModel("miniisland", "distantisland", 2)
+	world:GetComponent(id, "Position", 0):SetFloat3(1.0, -0.5, -5.1)
+	world:GetComponent(id, "Rotation", 0):SetFloat3(0, 0, 0)
+	world:GetComponent(id, "Scale", 0):SetFloat3(2.0, 2.0, 2.0)
+	self.Island = id
+end
+

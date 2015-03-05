@@ -1,7 +1,7 @@
 OptionMenuSystem = System()
 OptionMenuSystem.Name = "OptionMenu"
 OptionMenuSystem.RequestRelease = false
-OptionMenuSystem.IsMenuActive = true
+OptionMenuSystem.Active = false
 
 OptionMenuSystem.Initialize = function(self)
 	--	Set Name
@@ -14,46 +14,24 @@ OptionMenuSystem.Initialize = function(self)
 	--	Set Filter
 	self:AddComponentTypeToFilter(self.Name, FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter(self.Name.."Element", FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter(self.Name.."Activate", FilterType.RequiresOneOf)
-end
-
-
-OptionMenuSystem.EntitiesAdded = function(self, dt, entities)
-	for n = 1, #entities do
-		local entityId = entities[n]
-		if world:EntityHasComponent(entityId, self.Name) then
-			self:SpawnMenu()
-		elseif world:EntityHasComponent(entityId, self.Name .. "Activate") then
-			self.IsMenuActive = true
-			world:KillEntity(entityId)
-		end
-	end
 end
 
 OptionMenuSystem.Update = function(self, dt)
-
-	if not self.IsMenuActive then
-		return
-	end
-
-
 	if self.RequestRelease then
 		local pressedButtons = self:GetEntities("OnPickBoxHit")
 		if #pressedButtons > 0 then
 			local pressedButton = pressedButtons[1]
 			if world:EntityHasComponent(pressedButton, "MenuConsoleCommand") then
 				local command = world:GetComponent(pressedButton, "MenuConsoleCommand", "Command"):GetString()
-				self:RemoveMenu()
 				Console.AddToCommandQueue(command)
 			end
 			if world:EntityHasComponent(pressedButton, "MenuEntityCommand") then
 				local compname = world:GetComponent(pressedButton, "MenuEntityCommand", "ComponentName"):GetText()
-				self:RemoveMenu()
 				local id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo(compname, id)
 			end
-		else
-			self:RemoveMenu()
+		elseif self.Active then
+			self:RemoveMenuToMain()
 		end
 	end
 	
@@ -64,21 +42,30 @@ OptionMenuSystem.Update = function(self, dt)
 	end
 end
 
+OptionMenuSystem.EntitiesAdded = function(self, dt, entities)
+	for n = 1, #entities do
+		local entityId = entities[n]
+		if world:EntityHasComponent(entityId, self.Name) then
+			self:SpawnMenu()
+		end
+	end
+end
+
 OptionMenuSystem.SpawnMenu = function(self)
-	local background = self:CreateElement("gamemenubackground", "quad", 0, -0, -3.1, 1.5, 2.0)
+	--local background = self:CreateElement("gamemenubackground", "quad", 0, -0, -3.1, 1.5, 2.0)
 	
 	local button = nil
 	button = self:CreateElement("graphicslow", "quad", 0, 0.4, -3, 0.6, 0.3)
-	print(button)
 	self:AddConsoleCommandToButton("changegraphics low", button)
 	--self:AddEntityCommandToButton("NotificationBox", button)
 	self:AddHoverSize(1.1, button)
 	
 	button = self:CreateElement("graphicshigh", "quad", 0, -0.4, -3, 0.6, 0.3)
-	print(button)
 	self:AddConsoleCommandToButton("changegraphics high", button)	
 	--self:AddEntityCommandToButton("NotificationBox", button)	
 	self:AddHoverSize(1.1, button)
+	
+	self.Active = true
 end
 
 OptionMenuSystem.RemoveMenu = function(self)
@@ -86,6 +73,20 @@ OptionMenuSystem.RemoveMenu = function(self)
 	for i = 1, #entities do
 		world:KillEntity(entities[i])
 	end
+	
+	self.Active = false
+end
+
+OptionMenuSystem.RemoveMenuToMain = function(self)
+	local entities = self:GetEntities()
+	for i = 1, #entities do
+		world:KillEntity(entities[i])
+	end
+	
+	local tomainmenu = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("MainMenu", tomainmenu)
+	
+	self.Active = false
 end
 
 OptionMenuSystem.CreateElement = function(self, object, folder, posx, posy, posz, scalex, scaley)

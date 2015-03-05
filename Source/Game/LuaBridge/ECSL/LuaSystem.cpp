@@ -111,18 +111,18 @@ namespace LuaBridge
 			std::string comp = LuaEmbedder::PullString(L, 1);
 			unsigned int componentTypeId = ECSL::ComponentTypeManager::GetInstance().GetTableId(comp);
 
-			unsigned int* selectedEntities = new unsigned int[entities->size()];
-
-			int index = 0;
+			
+			std::vector<unsigned int> correctEntities;
 			for (int i = 0; i < entities->size(); ++i)
-			{
 				if (System::HasComponent(entities->at(i), componentTypeId))
-				{
-					selectedEntities[index] = entities->at(i);
-					++index;
-				}
-			}
-			LuaEmbedder::PushUnsignedIntArray(L, selectedEntities, index);
+					correctEntities.push_back(entities->at(i));
+
+			unsigned int* selectedEntities = new unsigned int[correctEntities.size()];
+			for(int i = 0; i < correctEntities.size(); ++i)
+				selectedEntities[i] = correctEntities.at(i);
+
+
+			LuaEmbedder::PushUnsignedIntArray(L, selectedEntities, correctEntities.size());
 		}
 		else
 		{
