@@ -65,6 +65,7 @@ namespace Renderer
 		glm::mat4* MatrixPtr;
 		int RenderType;
 		float* Color;
+		bool CastShadow;
 	};
 	
 	struct ModelToLoadFromSource
@@ -81,6 +82,7 @@ namespace Renderer
 		glm::mat4* MatrixPtr;
 		int RenderType;
 		float* Color;
+		bool CastShadow;
 	};
 
 	struct ModelTexture
@@ -141,7 +143,7 @@ namespace Renderer
 		bool SetAnimation(int _modelId, int _animId, float _frameTime);
 
 		// MODELLOADER
-		int LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED, float* _color = nullptr);
+		int LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED, float* _color = nullptr, bool _castShadow = true);
 		int LoadModel(ModelToLoadFromSource* _modelToLoad);
 		bool RemoveModel(int _id);// = 0;
 		bool ActiveModel(int _id, bool _active);// = 0;
@@ -191,6 +193,7 @@ namespace Renderer
 
 		std::vector<Model> m_modelsForward, m_modelsViewspace, m_modelsInterface, m_modelsWater, m_modelsWaterCorners;
 		std::vector<AModel> m_modelsAnimated;
+		std::vector<Model*> m_shadowModelsForward, m_shadowModelsDeferred;
 
 		Shader m_animationShader;
 
@@ -253,8 +256,6 @@ namespace Renderer
 		void BufferSurfaces();
 
 		void SortModelsBasedOnDepth(std::vector<Model>* models);
-		
-		void CreateParticleSystems();
 
 		void BufferParticleSystems();
 		

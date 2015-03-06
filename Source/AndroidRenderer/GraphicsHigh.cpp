@@ -99,9 +99,8 @@ void GraphicsHigh::WriteShadowMapDepth()
 	//Forward models
 	for (int i = 0; i < m_modelsForward.size(); i++)
 	{
-		if (m_modelsForward[i].active) // IS MODEL ACTIVE?
+		if (m_modelsForward[i].castShadow && m_modelsForward[i].active)
 		{
-			
 			mat4 modelMatrix;
 			if (m_modelsForward[i].modelMatrix == NULL)
 			{
@@ -444,6 +443,11 @@ bool GraphicsHigh::InitSDLWindow()
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
+#ifdef __IOS__
+    Flags |= SDL_WINDOW_BORDERLESS;
+    SDL_SetHint( "SDL_HINT_ORIENTATIONS", "LandscapeLeft LandscapeRight" );
+#endif
+    
 	m_window = SDL_CreateWindow(Caption, PosX, PosY, SizeX, SizeY, Flags);
 
 	if (m_window == NULL){
@@ -619,7 +623,7 @@ bool GraphicsHigh::PreLoadModel(std::vector<std::string> _dirs, std::string _fil
 
 	return true;
 }
-int GraphicsHigh::LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color)
+int GraphicsHigh::LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color, bool _castShadow)
 {
 	int modelID = m_modelIDcounter;
 	m_modelIDcounter++;
@@ -630,6 +634,7 @@ int GraphicsHigh::LoadModel(std::vector<std::string> _dirs, std::string _file, g
 	modelToLoad->MatrixPtr = _matrixPtr;
 	modelToLoad->RenderType = _renderType;
 	modelToLoad->Color = _color;
+	modelToLoad->CastShadow = _castShadow;
 	m_modelsToLoad[modelID] = modelToLoad;
 
 	return modelID;

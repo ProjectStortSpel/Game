@@ -2,13 +2,14 @@
 local ParticleComponent = ComponentType()
 ParticleComponent.Name = "Particle"
 ParticleComponent.TableType = TableType.Map
-ParticleComponent:AddVariable("Name", ByteSize.Text)
-ParticleComponent:AddVariable("Texture", ByteSize.Text)
-ParticleComponent:AddVariable("Particles", ByteSize.Int)
-ParticleComponent:AddVariable("Lifetime", ByteSize.Float)
-ParticleComponent:AddVariable("Scale", ByteSize.Float)
-ParticleComponent:AddVariable("SpriteSize", ByteSize.Float)
-ParticleComponent:AddVariable("Id", ByteSize.Int)
+ParticleComponent.SyncNetwork = true
+ParticleComponent:AddVariable("aName", ByteSize.Text)
+ParticleComponent:AddVariable("bTexture", ByteSize.Text)
+ParticleComponent:AddVariable("cParticles", ByteSize.Int)
+ParticleComponent:AddVariable("dLifetime", ByteSize.Float)
+ParticleComponent:AddVariable("eScale", ByteSize.Float)
+ParticleComponent:AddVariable("fSpriteSize", ByteSize.Float)
+ParticleComponent:AddVariable("gId", ByteSize.Int)
 worldCreator:AddComponentType(ParticleComponent)
 
 --local ParticleComponent = ComponentType()

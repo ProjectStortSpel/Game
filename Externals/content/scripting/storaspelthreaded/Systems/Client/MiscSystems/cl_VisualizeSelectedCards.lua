@@ -168,7 +168,7 @@ VisualizeSelectedCards.VisualizePath = function(self, cardsToVisualize)
 	local	dirX, dirZ			=	world:GetComponent(self.PlayerEntity, "Direction", "X"):GetInt2()
 	local	X, Y, Z				=	world:GetComponent(self.PlayerEntity, "Position", "X"):GetFloat3()
 	local	rotX, rotY, rotZ	=	world:GetComponent(self.PlayerEntity, "Rotation", "X"):GetFloat3()
-
+	
 	local	fellDown	=	false
 	fellDown, posX, posZ, dirX, dirZ	=	self:SimulateCardsFromPos(self.PlayerEntity, posX, posZ, dirX, dirZ, cardsToVisualize)
 	
@@ -194,12 +194,12 @@ end
 Net.Receive("Client.GetPlayerEntityId", 
 	function( id, ip, port )
 		
-		local	serverId	=	Net.ReadInt(id)
+		local	serverId	=	Net.ToClientID(Net.ReadInt(id))
 		local	newId	=	world:CreateNewEntity("Ghost")
 		world:CreateComponentAndAddTo("UnitGhost", newId)
 		world:GetComponent(newId, "UnitGhost", "Id"):SetInt(serverId)
 		
-		world:GetComponent(newId, "Model", 0):SetModel("cavemenghost", "caveman", 1);
+		world:GetComponent(newId, "Model", 0):SetModel("cavemenghost", "caveman", 1, false);
 	end 
 )
 

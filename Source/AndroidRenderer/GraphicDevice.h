@@ -39,7 +39,7 @@ namespace Renderer
 		bool operator!= (const Model &m) { return !Compare(m); }
 
 		Model(){}
-		Model(Buffer* buffer, GLuint tex, GLuint nor, GLuint spe, int id, bool active, mat4* model, float* col)
+		Model(Buffer* buffer, GLuint tex, GLuint nor, GLuint spe, int id, bool active, mat4* model, float* col, bool shadow)
 		{
 			bufferPtr = buffer;
 			texID = tex;
@@ -50,6 +50,7 @@ namespace Renderer
 			this->active = active;
 			this->modelMatrix = model;
 			this->color = col;
+			this->castShadow = shadow;
 		}
 		bool Compare(Model m)
 		{
@@ -68,6 +69,7 @@ namespace Renderer
 		bool active;
 		mat4* modelMatrix;
 		float* color;
+		bool castShadow;
 	};
 
 	struct ModelToLoad
@@ -77,6 +79,7 @@ namespace Renderer
 		glm::mat4* MatrixPtr;
 		int RenderType;
 		float* Color;
+		bool CastShadow;
 	};
 	
 	struct ModelToLoadFromSource
@@ -93,6 +96,7 @@ namespace Renderer
 		glm::mat4* MatrixPtr;
 		int RenderType;
 		float* Color;
+		bool CastShadow;
 	};
 
 	struct ParticleSystemToLoad
@@ -141,7 +145,7 @@ namespace Renderer
 
 		// MODELLOADER
 		virtual bool PreLoadModel(std::vector<std::string> _dirs, std::string _file, int _renderType = RENDER_FORWARD){ return false; };
-		virtual int LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_FORWARD, float* _color = nullptr){ return 0; };
+		virtual int LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_FORWARD, float* _color = nullptr, bool _castShadow = true){ return 0; };
 		int LoadModel(ModelToLoadFromSource* _modelToLoad);
 		virtual bool RemoveModel(int _id){ return false; };
 		virtual bool ActiveModel(int _id, bool _active){ return false; };

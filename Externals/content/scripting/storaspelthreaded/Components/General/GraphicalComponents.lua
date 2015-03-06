@@ -58,6 +58,7 @@ ModelComponent.TableType = TableType.Map
 ModelComponent:AddVariable("ModelName", ByteSize.Text)
 ModelComponent:AddVariable("ModelPath", ByteSize.Text)
 ModelComponent:AddVariable("RenderType", ByteSize.Int)
+ModelComponent:AddVariable("RenderShadow", ByteSize.Int)
 worldCreator:AddComponentType(ModelComponent)
 
 --	AnimationModel Component

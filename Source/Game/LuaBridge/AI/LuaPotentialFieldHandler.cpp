@@ -6,7 +6,6 @@ namespace LuaBridge
 	{
 		std::vector<PF> m_PFs;
 		std::vector<PF> m_summedPFs;
-		//std::vector<float> m_highestValues;
 		std::map<std::string, ObjectType> m_uniqueObjects;
 		std::vector<std::vector<float>> m_onTheSpotValues; // The value a field receives on the spot of an item.
 		std::vector<std::vector<float>> m_weights;
@@ -19,7 +18,6 @@ namespace LuaBridge
 		{
 			LuaEmbedder::EmbedClass<PFParam>(L, "PFParam");
 			LuaEmbedder::EmbedClassFunction<PFParam>(L, "PFParam", "AddPosition", &PFParam::AddPosition);
-			//LuaEmbedder::EmbedClassFunction<PFParam>(L, "PFParam", "SetObject", &PFParam::SetObject);
 
 			LuaEmbedder::AddFunction(L, "InitPFHandler", &LuaInitPFHandler, "PotentialFieldHandler");
 			LuaEmbedder::AddFunction(L, "InitPF", &LuaInitPF, "PotentialFieldHandler");
@@ -40,16 +38,18 @@ namespace LuaBridge
 			m_uniqueObjects.insert(std::pair<std::string, ObjectType>("RiverEnd", ObjectType::Unit));
 			m_uniqueObjects.insert(std::pair<std::string, ObjectType>("Unit", ObjectType::Unit));
 			m_uniqueObjects.insert(std::pair<std::string, ObjectType>("Void", ObjectType::Void));
-			
+
 			/* Initialize the size of the vector containing the PFs and initialize the values to 0.0f.*/
 			std::vector<float> tempInner;
 			PF tempOuter;
 			tempInner.resize(m_mapSize.y, 0.0f);
 			tempOuter.resize(m_mapSize.x, tempInner);
+
 			/* Each available ai should have a pf for every object and a sum of these.*/
+			m_PFs.clear();
 			m_PFs.resize(m_maxNoOfAIs * (ObjectType::NoOfEnums), tempOuter);
+			m_summedPFs.clear();
 			m_summedPFs.resize(m_maxNoOfAIs, tempOuter);
-			//m_highestValues.resize(m_PFs.size());
 
 			/* Initialize the size of the vector containing the "on the spot values".*/
 			tempInner.resize(ObjectType::NoOfEnums, 4.0f);
