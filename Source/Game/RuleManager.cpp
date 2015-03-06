@@ -47,13 +47,28 @@ int RuleManager::ReadRulebook( const char* _rulebook_path )
 			std::getline(ss, buffer, ' ');
 			int rt = atoi(buffer.c_str());
 
+
 			std::getline( ss, buffer, ' ' );
 			this_is_a_string = buffer;
-			std::getline( ss, buffer, ' ' );
-			this_is_a_string += " " + buffer;
-			std::getline( ss, buffer );
-			float Dynamic_Script_weight = atof( buffer.c_str( ) );
 
+			while (std::getline(ss, buffer, ' '))
+			{
+				this_is_a_string += " " + buffer;
+			}
+
+			float Dynamic_Script_weight;
+
+			if (std::getline(ss, buffer))
+			{
+				Dynamic_Script_weight = atof(buffer.c_str());
+			}
+			else
+			{
+				printf("Failed loading file in Dynamic Scripting.\n");
+				input_file.close();
+				return ret_value;
+			}
+			
 			Rule this_is_a_rule;
 			this_is_a_rule.ruleType = (RuleType)rt;
 			this_is_a_rule.script = this_is_a_string;
