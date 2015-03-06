@@ -443,6 +443,11 @@ bool GraphicsHigh::InitSDLWindow()
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
+#ifdef __IOS__
+    Flags |= SDL_WINDOW_BORDERLESS;
+    SDL_SetHint( "SDL_HINT_ORIENTATIONS", "LandscapeLeft LandscapeRight" );
+#endif
+    
 	m_window = SDL_CreateWindow(Caption, PosX, PosY, SizeX, SizeY, Flags);
 
 	if (m_window == NULL){

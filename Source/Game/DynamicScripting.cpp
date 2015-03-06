@@ -193,10 +193,10 @@ bool DynamicScripting::IsInScript( Rule _rule )
 	{
 		if ( _rule == m_script [i] )
 		{
-			return false;
+			return true;
 		}
 	}
-	return true;
+	return false;
 }
 
 bool DynamicScripting::IsTypeInScript( Rule _rule )

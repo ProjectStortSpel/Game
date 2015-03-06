@@ -97,7 +97,7 @@ worldCreator:AddComponentType(NewComponent)
 NewComponent = ComponentType()
 NewComponent.Name = "UnitGhost"
 NewComponent.TableType = TableType.Map
-NewComponent:AddVariable("Id", ByteSize.Reference)
+NewComponent:AddVariable("Id", ByteSize.Int)
 worldCreator:AddComponentType(NewComponent)
 
 -- UnitVisualizer Component
