@@ -7,6 +7,7 @@ namespace LuaBridge
   {
     int GetKeyState(lua_State* L);
     int GetMouseButtonState(lua_State* L);
+	//int GetMouseScroll(lua_State* L);
     int GetMousePosition(lua_State* L);
     int GetDeltaMousePosition(lua_State* L); 
 	int GetFingerState(lua_State* L);
@@ -27,6 +28,7 @@ namespace LuaBridge
     {
       LuaEmbedder::AddFunction(L, "GetKeyState", &GetKeyState, "Input");
       LuaEmbedder::AddFunction(L, "GetMouseButtonState", &GetMouseButtonState, "Input");
+	  //LuaEmbedder::AddFunction(L, "GetMouseScroll", &GetMouseScroll, "Input");
       LuaEmbedder::AddFunction(L, "GetMousePosition", &GetMousePosition, "Input");
       LuaEmbedder::AddFunction(L, "GetDeltaMousePosition", &GetDeltaMousePosition, "Input");
 	  LuaEmbedder::AddFunction(L, "GetFingerState", &GetFingerState, "Input");
