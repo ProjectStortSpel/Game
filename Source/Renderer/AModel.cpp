@@ -66,8 +66,6 @@ void AModel::Draw(mat4 viewMatrix, mat4 projectionMatrix, Shader* shaderptr)
 
 void AModel::Update(float _dt)
 {
-	extra[5] = extra[5] * glm::rotate(0.1f, glm::vec3(0, 1, 0));
-
 	clock += _dt;
 	if (clock > frameTime)// * framesPerTick)
 	{

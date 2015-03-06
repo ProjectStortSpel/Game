@@ -12,6 +12,13 @@ ParentComponent.TableType = TableType.Map
 ParentComponent.SyncNetwork = true
 ParentComponent:AddVariable("EntityId", ByteSize.Reference)
 worldCreator:AddComponentType(ParentComponent)
+-- Parent Component
+local ParentJointComponent = ComponentType()
+ParentJointComponent.Name = "ParentJoint"
+ParentJointComponent.TableType = TableType.Map
+ParentJointComponent.SyncNetwork = true
+ParentJointComponent:AddVariable("JointId", ByteSize.Int)
+worldCreator:AddComponentType(ParentJointComponent)
 -- isParent Component
 local IsParentComponent = ComponentType()
 IsParentComponent.Name = "IsParent"

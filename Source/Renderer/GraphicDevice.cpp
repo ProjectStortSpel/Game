@@ -591,6 +591,22 @@ bool GraphicDevice::SetAnimation(int _modelId, int _animId, float _frameTime)
 	}
 	return false;
 }
+glm::mat4 GraphicDevice::GetJointMatrix(int _modelId, int _jointId)
+{
+	std::vector<AModel> *modelList = &m_modelsAnimated;
+	for (int i = 0; i < (*modelList).size(); i++)
+	{
+		if ((*modelList)[i].id == _modelId)
+		{
+			if ((*modelList)[i].anim.size() > _jointId)
+				return (*modelList)[i].anim[_jointId] * glm::inverse((*modelList)[i].joints[_jointId]);
+			else
+				break;
+		}
+	}
+	return glm::mat4(1);
+}
+
 
 bool GraphicDevice::RemoveModel(int _id)
 {

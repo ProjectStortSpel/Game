@@ -235,6 +235,10 @@ bool GraphicDevice::SetAnimation(int _modelId, int _animId, float _frameTime)
 {
 	return false;
 }
+glm::mat4 GraphicDevice::GetJointMatrix(int _modelId, int _jointId)
+{
+	return glm::mat4(1);
+}
 
 GLuint GraphicDevice::AddTexture(std::string _fileDir, GLenum _textureSlot)
 {
