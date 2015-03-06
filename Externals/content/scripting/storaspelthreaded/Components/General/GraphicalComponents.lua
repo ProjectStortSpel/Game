@@ -77,3 +77,10 @@ HideComponent.Name = "Hide"
 HideComponent.SyncNetwork = true
 HideComponent.TableType = TableType.Map
 worldCreator:AddComponentType(HideComponent)
+
+-- Static Model Component
+local StaticModelComponent = ComponentType()
+StaticModelComponent.Name = "StaticModel"
+StaticModelComponent.SyncNetwork = true
+StaticModelComponent.TableType = TableType.Map
+worldCreator:AddComponentType(StaticModelComponent)

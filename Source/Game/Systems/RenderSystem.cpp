@@ -55,6 +55,7 @@ void RenderSystem::Initialize()
 	m_parentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Parent");
 	m_isparentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("IsParent");
 	m_worldToViewSpaceId = ECSL::ComponentTypeManager::GetInstance().GetTableId("WorldToViewSpace");
+	m_staticModelId = ECSL::ComponentTypeManager::GetInstance().GetTableId("StaticModel");
 }
 
 void RenderSystem::Update(const ECSL::RuntimeInfo& _runtime)
@@ -111,6 +112,11 @@ void RenderSystem::EntitiesRemoved(const ECSL::RuntimeInfo& _runtime, const std:
 
 void RenderSystem::UpdateMatrix(unsigned int _entityId)
 {
+	#if defined(__ANDROID__) || defined(__IOS__)
+	if (HasComponent(_entityId, m_staticModelId))
+		return;
+	#endif
+
 	float*		Position;
 	float*		Rotation;
 	float*		Scale;

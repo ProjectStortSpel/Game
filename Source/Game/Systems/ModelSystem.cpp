@@ -1,6 +1,7 @@
 #include "ModelSystem.h"
 #include "Game/HomePath.h"
 #include "FileSystem/File.h"
+#include "Game/Quaternion.h"
 
 ModelSystem::ModelSystem(Renderer::GraphicDevice* _graphics, bool _isClient)
 {
@@ -22,6 +23,11 @@ void ModelSystem::Initialize()
 	m_colorId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Color");
 	m_modelId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Model");
 	m_renderId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Render");
+
+	m_positionId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Position");
+	m_rotationId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Rotation");
+	m_scaleId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Scale");
+	m_staticModelId = ECSL::ComponentTypeManager::GetInstance().GetTableId("StaticModel");
 
 	AddComponentTypeToFilter("Model", ECSL::FilterType::Mandatory);
 	AddComponentTypeToFilter("Render", ECSL::FilterType::Excluded);
@@ -98,7 +104,31 @@ void ModelSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::ve
 
 		float* Color = (float*)GetComponent(entityId, m_renderId, "ColorX");
 
-		*ModelId = m_graphics->LoadModel(paths, ModelName, Matrix, RenderType, Color, RenderShadow);
+		bool isStatic = false;
+		#if defined(__ANDROID__) || defined(__IOS__)
+		if (HasComponent(entityId, m_staticModelId))
+		{
+			isStatic = true;
+
+			float* position = (float*)GetComponent(entityId, m_positionId, 0);
+			float* rotation = (float*)GetComponent(entityId, m_rotationId, 0);
+			float* scale = (float*)GetComponent(entityId, m_scaleId, 0);
+
+			*Matrix = glm::mat4(1.0f);
+			*Matrix *= glm::translate(glm::vec3(position[0], position[1], position[2]));
+			Quaternion q_rotation;
+			q_rotation.EulerToQuaternion(rotation[0], rotation[1], rotation[2]);
+			*Matrix *= q_rotation.QuaternionToMatrix();
+			*Matrix *= glm::scale(glm::vec3(scale[0], scale[1], scale[2]));
+
+			float* _Color = (float*)GetComponent(entityId, m_colorId, "X");
+			Color[0] = _Color[0];
+			Color[1] = _Color[1];
+			Color[2] = _Color[2];
+		}
+		#endif
+
+		*ModelId = m_graphics->LoadModel(paths, ModelName, Matrix, RenderType, Color, RenderShadow, isStatic);
 		
 	}
 }
