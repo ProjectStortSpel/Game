@@ -40,20 +40,30 @@ int RuleManager::ReadRulebook( const char* _rulebook_path )
 			//std::stringstream sstream( this_is_a_line );
 			std::stringstream ss;
 
-			ss << this_is_a_line.c_str( );
-
 			std::string buffer;
 			std::string this_is_a_string;
+			
+			float Dynamic_Script_weight;
+
+			ss << this_is_a_line.c_str();
+			if (std::getline(ss, buffer, ' '))
+			{
+				std::getline(ss, buffer, ' ');
+				Dynamic_Script_weight = atof(buffer.c_str());
+			}
+			else
+			{
+				printf("Failed loading file in Dynamic Scripting.\n");
+				input_file.close();
+				return ret_value;
+			}
+
 			std::getline(ss, buffer, ' ');
 			int rt = atoi(buffer.c_str());
 
-			std::getline( ss, buffer, ' ' );
-			this_is_a_string = buffer;
-			std::getline( ss, buffer, ' ' );
-			this_is_a_string += " " + buffer;
 			std::getline( ss, buffer );
-			float Dynamic_Script_weight = atof( buffer.c_str( ) );
-
+			this_is_a_string = buffer;
+			
 			Rule this_is_a_rule;
 			this_is_a_rule.ruleType = (RuleType)rt;
 			this_is_a_rule.script = this_is_a_string;
@@ -134,10 +144,11 @@ bool RuleManager::StoreRulebook( int _index )
 				{
 					std::stringstream ss;
 
+					ss << rbook[i].weight;
+					ss << " ";
 					ss << (int)(rbook[i].ruleType);
 					ss << " ";
-					ss << rbook[i].script + " ";
-					ss << rbook[i].weight;
+					ss << rbook[i].script;
 					ss << "\n";
 
 					file << ss.str( );

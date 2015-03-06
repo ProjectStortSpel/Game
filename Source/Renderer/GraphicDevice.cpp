@@ -108,7 +108,7 @@ void GraphicDevice::GetWindowPos(int &x, int &y)
 bool GraphicDevice::InitSDLWindow(int _width, int _height)
 {
 	// WINDOW SETTINGS
-	unsigned int	Flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
+	unsigned int	Flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP;
 	int				SizeX = _width;	//1280
 	int				SizeY = _height;	//720
 	if (SDL_Init(SDL_INIT_VIDEO) == -1){
@@ -259,7 +259,7 @@ struct sort_depth_instance
 {
 	inline bool operator() (const Instance& a, const Instance& b)
 	{
-		return (*a.modelMatrix)[3][2] > (*b.modelMatrix)[3][2];
+		return (*a.modelMatrix)[3][2] < (*b.modelMatrix)[3][2]; // SÄG TILL ANDERS OM DU HADE TÄNKT ÄNDRA DETTA
 	}
 };
 struct sort_depth_model

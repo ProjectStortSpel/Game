@@ -22,7 +22,7 @@
 #ifdef WIN32
 #define NetSleep(x) Sleep(x);
 #else
-#define NetSleep(x) usleep(30 * 1000);
+#define NetSleep(x) usleep(x * 1000);
 #endif
 
 #define NetworkHookPlaceholders std::placeholders::_1, std::placeholders::_2, std::placeholders::_3

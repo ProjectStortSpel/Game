@@ -85,22 +85,22 @@ void ParticleSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std:
 		std::string	Texture;
 
 		char* ParticleData;
-		ParticleData	=	(char*)GetComponent(entityId, "Particle", "Name");
+		ParticleData	=	(char*)GetComponent(entityId, "Particle", "aName");
 		Name			=	std::string(ParticleData);
 
-		ParticleData	=	(char*)GetComponent(entityId, "Particle", "Texture");
+		ParticleData	=	(char*)GetComponent(entityId, "Particle", "bTexture");
 		Texture			=	std::string(ParticleData);
 
 		Position = (float*)GetComponent(entityId, "Position", "X");
 
 		Color = (float*)GetComponent(entityId, "Color", "X");
-		Lifetime = (float*)GetComponent(entityId, "Particle", "Lifetime");
-		SpriteSize = (float*)GetComponent(entityId, "Particle", "SpriteSize");
-		Particles = (int*)GetComponent(entityId, "Particle", "Particles");
-		Scale = (float*)GetComponent(entityId, "Particle", "Scale");
+		Lifetime = (float*)GetComponent(entityId, "Particle", "dLifetime");
+		SpriteSize = (float*)GetComponent(entityId, "Particle", "fSpriteSize");
+		Particles = (int*)GetComponent(entityId, "Particle", "cParticles");
+		Scale = (float*)GetComponent(entityId, "Particle", "eScale");
 
 
-		ID = (int*)GetComponent(entityId, "Particle", "Id");
+		ID = (int*)GetComponent(entityId, "Particle", "gId");
 //#if  !defined(__ANDROID__) && !defined(__IOS__)
 		m_graphics->AddParticleEffect(Name, glm::vec3(Position[0], Position[1], Position[2]), *Particles, *Lifetime, *Scale, *SpriteSize, Texture, glm::vec3(Color[0], Color[1], Color[2]), *ID);
 //#endif
@@ -111,7 +111,7 @@ void ParticleSystem::EntitiesRemoved(const ECSL::RuntimeInfo& _runtime, const st
 {
 	for (auto entityId : _entities)
 	{
-		int*	ID	= (int*)GetComponent(entityId, "Particle", "Id");
+		int*	ID	= (int*)GetComponent(entityId, "Particle", "gId");
 
 //#if  !defined(__ANDROID__) && !defined(__IOS__) 
 		if( HasComponent(entityId, "Hide") )
