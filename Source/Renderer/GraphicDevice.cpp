@@ -108,7 +108,7 @@ void GraphicDevice::GetWindowPos(int &x, int &y)
 bool GraphicDevice::InitSDLWindow(int _width, int _height)
 {
 	// WINDOW SETTINGS
-	unsigned int	Flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
+	unsigned int	Flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP;
 	int				SizeX = _width;	//1280
 	int				SizeY = _height;	//720
 	if (SDL_Init(SDL_INIT_VIDEO) == -1){

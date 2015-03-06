@@ -63,7 +63,7 @@ end
 MapGenerator.EntitiesAdded = function(self, dt, entities)
 	--self:GenerateMap(os.time()%29181249, 4, 4)
 	--self:GenerateMap(23246299, 8, 4)
-	self:GenerateMap(4576, 4, 4)
+	self:GenerateMap(14123, 2, 4)
 	--self:GenerateMap(23239474, 4, 4)
 	--self:GenerateMap(5747, 4, 4)
 	--self:GenerateMap(1338, 2, 4)
@@ -97,11 +97,11 @@ MapGenerator.GenerateMap = function(self, MapSeed, NumberOfPlayers, NumberOfChec
 	--print("SEEEED " .. MapSeed)
 	
 	--	Randomize initial values
-	self.MapSizeX		=	math.random(8+NumberOfPlayers, 10+NumberOfPlayers) + 2*self.VoidMargin
-	self.MapSizeZ		=	math.random(8+NumberOfPlayers, 10+NumberOfPlayers) + 2*self.VoidMargin
+	self.MapSizeX		=	math.random(math.ceil((18+NumberOfPlayers)/2), math.ceil((20+NumberOfPlayers)/2)) + 2*self.VoidMargin
+	self.MapSizeZ		=	math.random(math.ceil((18+NumberOfPlayers)/2), math.ceil((20+NumberOfPlayers)/2)) + 2*self.VoidMargin
 	self.Players		=	NumberOfPlayers
 	self.Checkpoints	=	NumberOfCheckpoints
-	self.Rivers			=	math.ceil(math.sqrt(self.MapSizeX*self.MapSizeZ)/10)--math.random(NumberOfPlayers, 2*NumberOfPlayers-NumberOfPlayers)
+	self.Rivers			=	0--math.ceil(math.sqrt(self.MapSizeX*self.MapSizeZ)/10)--math.random(NumberOfPlayers, 2*NumberOfPlayers-NumberOfPlayers)
 	
 	if self.MapSizeX % 2 == 0 then
 		self.MapSizeX	=	self.MapSizeX + (-1)^math.random(1, 10)
@@ -116,7 +116,6 @@ MapGenerator.GenerateMap = function(self, MapSeed, NumberOfPlayers, NumberOfChec
 		print("Seed: " .. MapSeed)
 		print("Players: " .. self.Players)
 		print("Checkpoints: " .. self.Checkpoints)
-		print("Rivers: " .. self.Rivers)
 		print("Map Size: " .. self.MapSizeX .. "x" .. self.MapSizeZ)
 		print("----- END OF MAP INFO -----")
 	end
@@ -151,10 +150,14 @@ MapGenerator.GenerateMap = function(self, MapSeed, NumberOfPlayers, NumberOfChec
 	
 	
 	--	Create all rivers
-	self:PrintDebugMessage("Carving rivers")
+	local	tNumberOfTiles	=	self:GetPlayableTiles()
+	self.Rivers	=	math.ceil((self.MapSizeX*self.MapSizeZ)/tNumberOfTiles)
+	self:PrintDebugMessage("Carving " .. self.Rivers .. " rivers")
 	self:CreateRivers()
-	self:PrintDebugMessage("Placing stones")
-	self:PlaceStones(math.random(math.floor(self.Players*0.5 + 1), math.ceil(2*self.Players - self.Players + 1)))
+	
+	local	numberOfStones	=	math.floor(self:GetPlayableTiles() / (math.ceil(2*math.sqrt(self.MapSizeX*self.MapSizeZ))))
+	self:PrintDebugMessage("Placing " .. numberOfStones .. " stones")
+	self:PlaceStones(numberOfStones)
 	--	Place spawnpoints
 	self:PrintDebugMessage("Placing checkpoints")
 	self:PlaceCheckpoints()
@@ -442,7 +445,7 @@ MapGenerator.PlaceStones = function(self, nStonesToPlace)
 			tX, tZ		=	self:GetRandomPositionWithinMargin(self.VoidMargin, self.VoidMargin)
 			tileType	=	self:GetTileType(tX, tZ)
 			
-			if tileType ~= self.Void and tileType ~= self.Stone then
+			if tileType ~= self.Void and tileType ~= self.Stone and not self:IsRiver(tX, tZ) then
 				self:SetTileType(tX, tZ, self.Stone)
 				break
 			end
@@ -661,10 +664,10 @@ MapGenerator.PlaceCheckpoints = function(self)
 
 	local	centerX, centerZ	=	self:GetCenterOfMap()
 	local	lastX, lastZ		=	self:GetRandomTileOfType(self.Grass)--self:GetRandomPositionWithinMargin(self.VoidMargin, self.VoidMargin)
-	local	tempDistance		=	math.ceil(self:GetDistanceBetween(self.VoidMargin, self.VoidMargin, centerX, centerZ))
+	local	tempDistance		=	math.ceil(self:GetDistanceBetween(self.VoidMargin, self.VoidMargin, centerX, centerZ))--math.ceil(self:GetDistanceBetween(self.VoidMargin, self.VoidMargin, centerX, centerZ))
 	
 	for n = 0, self.Checkpoints-1 do
-		tempDistance		=	math.ceil(self:GetDistanceBetween(self.VoidMargin, self.VoidMargin, centerX, centerZ))
+		tempDistance		=	math.ceil(self:GetDistanceBetween(lastX, lastZ, centerX, centerZ))
 		while true do
 			
 			local	tX, tZ	=	self:GetPositionXDistanceAwayFrom(lastX, lastZ, tempDistance)
@@ -675,25 +678,17 @@ MapGenerator.PlaceCheckpoints = function(self)
 					lastX	=	tX
 					lastZ	=	tZ
 					
-					if math.random(1, 100) < 10 then
-						self:PlaceStonesNear(tX, tZ, 1, 4)
+					if self:NumberOfAdjacentTiles(tX, tZ) > 3 then
+						if math.random(1, 100) < 10 then
+							self:PlaceStonesNear(tX, tZ, 1, 4)
+						end
 					end
 					break
-				else
-					print("AOPSKDPAOSKDPAOSDK")
-					print("AOPSKDPAOSKDPAOSDK")
-					print("AOPSKDPAOSKDPAOSDK")
-					print("AOPSKDPAOSKDPAOSDK")
-					print("AOPSKDPAOSKDPAOSDK")
 				end
 			else
 				tempDistance	=	tempDistance - 1
 				if tempDistance < 0 then
-					print("WOPS " .. tempDistance)
 					tempDistance		=	math.ceil(self:GetDistanceBetween(self.VoidMargin, self.VoidMargin, centerX, centerZ))
-					
-				else
-					print("ASD: " .. tempDistance)
 				end
 			end
 		end
