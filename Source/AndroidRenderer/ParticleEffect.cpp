@@ -35,6 +35,8 @@ ParticleEffect::~ParticleEffect()
 	//Delete eventuella buffers osv
 	glDeleteBuffers(1, &m_posBuffer);
 	glDeleteBuffers(1, &m_timeBuffer);
+
+	delete m_shader;
 }
 
 void ParticleEffect::EnterEndPhase()

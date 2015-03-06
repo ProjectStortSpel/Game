@@ -26,7 +26,6 @@ MoveTotemPieceSystem.MovePieceUp = function(self, totemPieceId)
 	world:GetComponent(totemPieceId, "LerpPosition", "Z"):SetFloat(Z)
 	world:GetComponent(totemPieceId, "LerpPosition", "Time"):SetFloat(0.4)
 	world:GetComponent(totemPieceId, "LerpPosition", "Algorithm"):SetText("ExponentialLerp")
-	world:GetComponent(totemPieceId, "LerpPosition", "KillWhenFinished"):SetBool(false)
 
 end
 

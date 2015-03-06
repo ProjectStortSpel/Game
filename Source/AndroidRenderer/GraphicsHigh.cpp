@@ -168,7 +168,6 @@ void GraphicsHigh::Render()
 
 		glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 		glViewport(0, 0, m_framebufferWidth, m_framebufferHeight);
-		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		//------FORWARD RENDERING--------------------------------------------
 		//glEnable(GL_BLEND);
@@ -394,18 +393,11 @@ void GraphicsHigh::Render()
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, oldFBO);
+
+	glDisable(GL_BLEND);
 #ifdef __ANDROID__
 	// DRAW FULLSCREEN
 	glViewport(0, 0, m_clientWidth, m_clientHeight);
-
-	float positionData[] = {
-		-1.0, -1.0,
-		1.0, -1.0,
-		1.0, 1.0,
-		1.0, 1.0,
-		-1.0, 1.0,
-		-1.0, -1.0
-	};
 
 	m_fullscreen.UseProgram();
 
@@ -413,17 +405,10 @@ void GraphicsHigh::Render()
 	glActiveTexture(GL_TEXTURE4);
 	glBindTexture(GL_TEXTURE_2D, m_outputImage);
 
-	GLuint buf;
-	glGenBuffers(1, &buf);
-
-	glBindBuffer(GL_ARRAY_BUFFER, buf);
-	glBufferData(GL_ARRAY_BUFFER, 2 * 6 * sizeof(float), positionData, GL_STATIC_DRAW);
-
+	glBindBuffer(GL_ARRAY_BUFFER, m_fullscreenQuadBuffer);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
 	glEnableVertexAttribArray(0);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
-
-	glDeleteBuffers(1, &buf);
     
 #endif
     

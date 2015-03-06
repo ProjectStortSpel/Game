@@ -1,6 +1,6 @@
 AICardPickingSystem = System()
 --AICardPickingSystem.PrintSimulation = 0
-AICardPickingSystem.AICheat = 1
+AICardPickingSystem.AICheat = 0
 AICardPickingSystem.PermutationsDone = false
 AICardPickingSystem.PermutationIndex = 1
 AICardPickingSystem.PermutationsArray = ''
@@ -11,7 +11,7 @@ AICardPickingSystem.NoOfCheckpoints = 0
 AICardPickingSystem.CardsPerHand = 0
 AICardPickingSystem.CardsToPick = 0
 
-
+-- TODO: Remove this
 AICardPickingSystem.ERROR = false
 
 -- Per AI

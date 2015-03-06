@@ -51,7 +51,7 @@ bool GraphicsLow::Init()
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glClearColor(0.0f, 0.2f, 0.6f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.4f, 1.0f);
 
     TextRenderer::Init();
     
@@ -105,8 +105,6 @@ void GraphicsLow::Render()
 	if (m_modelsForward.size() > 0)
 	{
 		//------FORWARD RENDERING--------------------------------------------
-		//glEnable(GL_BLEND);
-
 		m_forwardShader.UseProgram();
 		m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 		m_forwardShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
@@ -314,18 +312,10 @@ void GraphicsLow::Render()
 
 	glBindFramebuffer(GL_FRAMEBUFFER, oldFBO);
 
+	glDisable(GL_BLEND);
 #ifdef __ANDROID__
 	// DRAW FULLSCREEN
 	glViewport(0, 0, m_clientWidth, m_clientHeight);
-
-	float positionData[] = {
-		-1.0, -1.0,
-		1.0, -1.0,
-		1.0, 1.0,
-		1.0, 1.0,
-		-1.0, 1.0,
-		-1.0, -1.0
-	};
 
 	m_fullscreen.UseProgram();
 
@@ -333,17 +323,10 @@ void GraphicsLow::Render()
 	glActiveTexture(GL_TEXTURE4);
 	glBindTexture(GL_TEXTURE_2D, m_outputImage);
 
-	GLuint buf;
-	glGenBuffers(1, &buf);
-
-	glBindBuffer(GL_ARRAY_BUFFER, buf);
-	glBufferData(GL_ARRAY_BUFFER, 2 * 6 * sizeof(float), positionData, GL_STATIC_DRAW);
-
+	glBindBuffer(GL_ARRAY_BUFFER, m_fullscreenQuadBuffer);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
 	glEnableVertexAttribArray(0);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
-
-	glDeleteBuffers(1, &buf);
 
 #endif
     

@@ -92,7 +92,6 @@ PlayCardSystem.PlayCard = function(self, unitToPlay, cardToPlay)
 			world:GetComponent(cardAbove, "LerpScale", "Z"):SetFloat(1.5)
 			world:GetComponent(cardAbove, "LerpScale", "Time"):SetFloat(0.15)
 			world:GetComponent(cardAbove, "LerpScale", "Algorithm"):SetText("SmoothLerp")
-			world:GetComponent(cardAbove, "LerpScale", "KillWhenFinished"):SetBool(false)
 		end
 		world:GetComponent(cardAbove, "Model", "ModelName"):SetText(modelName)
 		world:GetComponent(cardAbove, "Model", "ModelPath"):SetText("cards")
@@ -116,7 +115,6 @@ PlayCardSystem.PlayCard = function(self, unitToPlay, cardToPlay)
 					world:GetComponent(self.CardsAbove[n], "LerpScale", "Z"):SetFloat(1.0)
 					world:GetComponent(self.CardsAbove[n], "LerpScale", "Time"):SetFloat(0.2)
 					world:GetComponent(self.CardsAbove[n], "LerpScale", "Algorithm"):SetText("SmoothLerp")
-					world:GetComponent(self.CardsAbove[n], "LerpScale", "KillWhenFinished"):SetBool(false)
 				end
 				world:GetComponent(self.CardsAbove[n], "Color", 0):SetFloat3(0.4, 0.4, 0.4)
 			end
@@ -192,7 +190,6 @@ PlayCardSystem.EntitiesAdded = function(self, dt, entities)
 					--world:GetComponent(tempCard, "LerpScale", "Z"):SetFloat(0)
 					--world:GetComponent(tempCard, "LerpScale", "Time"):SetFloat(0.15)
 					--world:GetComponent(tempCard, "LerpScale", "Algorithm"):SetText("SmoothLerp")
-					--world:GetComponent(tempCard, "LerpScale", "KillWhenFinished"):SetBool(false)
 					--
 					world:KillEntity(tempCard)
 				end
