@@ -548,13 +548,9 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 	for (int i = 0; i < joints.size(); i++)
 	{
 		int index = i;//joints.size() - i - 1;
-		model.animation.push_back(Joint(
-			joints[index].mat[0][0], joints[index].mat[0][1], joints[index].mat[0][2], joints[index].mat[0][3],
-			joints[index].mat[1][0], joints[index].mat[1][1], joints[index].mat[1][2], joints[index].mat[1][3],
-			joints[index].mat[2][0], joints[index].mat[2][1], joints[index].mat[2][2], joints[index].mat[2][3],
-			joints[index].mat[3][0], joints[index].mat[3][1], joints[index].mat[3][2], joints[index].parent//index - joints[index].parent - 1
-			));
+		model.animation.push_back(Joint(joints[index].parent));
 		model.anim.push_back(joints[index].mat);
+		model.extra.push_back(mat4(1));
 	}
 
 	// Import Animations

@@ -4,6 +4,7 @@ in vec3 Tan;
 in vec3 BiTan;
 in vec2 TexCoord;
 in vec3 ViewPos;
+in vec3 WorldPos;
 
 out vec4 ColorData;
 
@@ -58,8 +59,8 @@ void phongModelDirLight(out vec3 ambient, out vec3 diffuse, out vec3 spec)
 	if(diffuseFactor > 0)
 	{
 		// For shadows
-		vec4 worldPos = inverse(ViewMatrix) * vec4(ViewPos, 1.0);
-		vec4 shadowCoord = BiasMatrix * ShadowViewProj * worldPos;
+		vec4 worldPosition = vec4(WorldPos, 1.0);
+		vec4 shadowCoord = BiasMatrix * ShadowViewProj * worldPosition;
 		
 		float shadow = 1.0;
 		vec4 shadowCoordinateWdivide = shadowCoord / shadowCoord.w;
@@ -174,6 +175,4 @@ void main()
 	vec4 glowvec = vec4(glow*albedo_tex.xyz, 0.0);
 	
 	ColorData = vec4(ambient + diffuse*(1.0-glow), 1.0) * albedo_tex + vec4(spec, 0.0f) + glowvec;
-
-	ColorData = vec4(Normal, 1) + ColorData * 0.000000001f;
 }
