@@ -166,10 +166,12 @@ void ClientNetwork::Disconnect()
 	if(m_receiveThread->joinable())
 		m_receiveThread->join();
 
+	*m_connected = false;
+
 	NetConnection nc = m_socket->GetNetConnection();
 	TriggerEvent(m_onDisconnectedFromServer, nc, 0);
 
-	*m_connected = false;
+	SAFE_DELETE(m_socket);
 }
 
 void ClientNetwork::ReceivePackets(const std::string _name)
@@ -357,9 +359,16 @@ void ClientNetwork::NetConnectionLost(NetConnection& _connection)
 		DebugLog("Connection lost. Disconnect from %s:%d.", LogSeverity::Info, _connection.GetIpAddress(), _connection.GetPort());
 
 	m_socket->ShutdownSocket(1);
-	//m_socket->SetActive(0);
 
+	NetSleep(10);
+
+	if (m_receiveThread->joinable())
+		m_receiveThread->join();
+
+	*m_connected = false;
 	TriggerEvent(m_onTimedOutFromServer, _connection, 0);
+
+	SAFE_DELETE(m_socket);
 }
 
 void ClientNetwork::NetConnectionDisconnected(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection)

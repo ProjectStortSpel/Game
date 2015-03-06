@@ -38,6 +38,12 @@ GraphicDevice::~GraphicDevice()
 	for (std::map<int, ParticleEffect*>::iterator it = m_particleEffects.begin(); it != m_particleEffects.end(); ++it)
 		delete(it->second);
 
+	for (std::map<std::string, Shader*>::iterator it = m_particleShaders.begin(); it != m_particleShaders.end(); ++it)
+		delete(it->second);
+
+#ifdef __ANDROID__
+	glDeleteBuffers(1, &m_fullscreenQuadBuffer);
+#endif
 	SDL_GL_DeleteContext(m_glContext);
 	// Close and destroy the window
 	SDL_DestroyWindow(m_window);
@@ -117,11 +123,17 @@ void GraphicDevice::InitStandardBuffers()
 	m_skyBoxShader.CheckUniformLocation("cubemap", 1);
 
 	//Particle shaders
-	for (std::map<std::string, Shader>::iterator it = m_particleShaders.begin(); it != m_particleShaders.end(); ++it)
-		it->second.CheckUniformLocation("diffuseTex", 1);
+	for (std::map<std::string, Shader*>::iterator it = m_particleShaders.begin(); it != m_particleShaders.end(); ++it)
+	{
+		it->second->CheckUniformLocation("diffuseTex", 1);
+	}
 
 	//Fullscreen shader
 	m_fullscreen.CheckUniformLocation("sampler", 4);
+
+#ifdef __ANDROID__
+	CreateFullscreenQuad();
+#endif
 }
 
 void GraphicDevice::InitStandardShaders()
@@ -145,19 +157,18 @@ void GraphicDevice::InitStandardShaders()
 	m_interfaceShader.FinalizeShaderProgram();
 
 	// Particle shaders
-	Shader particleShader;
-	particleShader.InitShaderProgram();
-	particleShader.AddShader("content/shaders/android/AndroidFireShaderVS.glsl", GL_VERTEX_SHADER);
-	particleShader.AddShader("content/shaders/android/AndroidFireShaderFS.glsl", GL_FRAGMENT_SHADER);
-	particleShader.FinalizeShaderProgram();
-	m_particleShaders["fire"] = particleShader;
+	m_particleShaders["smoke"] = new Shader();
+	m_particleShaders["smoke"]->InitShaderProgram();
+	m_particleShaders["smoke"]->AddShader("content/shaders/android/AndroidSmokeShaderVS.glsl", GL_VERTEX_SHADER);
+	m_particleShaders["smoke"]->AddShader("content/shaders/android/AndroidSmokeShaderFS.glsl", GL_FRAGMENT_SHADER);
+	m_particleShaders["smoke"]->FinalizeShaderProgram();
 
-	particleShader.InitShaderProgram();
-	particleShader.AddShader("content/shaders/android/AndroidSmokeShaderVS.glsl", GL_VERTEX_SHADER);
-	particleShader.AddShader("content/shaders/android/AndroidSmokeShaderFS.glsl", GL_FRAGMENT_SHADER);
-	particleShader.FinalizeShaderProgram();
-	m_particleShaders["smoke"] = particleShader;
-
+	m_particleShaders["fire"] = new Shader();
+	m_particleShaders["fire"]->InitShaderProgram();
+	m_particleShaders["fire"]->AddShader("content/shaders/android/AndroidFireShaderVS.glsl", GL_VERTEX_SHADER);
+	m_particleShaders["fire"]->AddShader("content/shaders/android/AndroidFireShaderFS.glsl", GL_FRAGMENT_SHADER);
+	m_particleShaders["fire"]->FinalizeShaderProgram();
+	
 	//m_fullscreen
 	m_fullscreen.InitShaderProgram();
 	m_fullscreen.AddShader("content/shaders/android/AndroidFullscreenVS.glsl", GL_VERTEX_SHADER);
@@ -220,7 +231,7 @@ bool GraphicDevice::InitSkybox()
 }
 
 
-bool GraphicDevice::SetAnimation(int _modelId, int _animId)
+bool GraphicDevice::SetAnimation(int _modelId, int _animId, float _frameTime)
 {
 	return false;
 }
@@ -689,7 +700,6 @@ void GraphicDevice::SortModelsBasedOnDepth(std::vector<Model>* models)
 
 void GraphicDevice::AddParticleEffect(std::string _name, const vec3 _pos, int _nParticles, float _lifeTime, float _scale, float _spriteSize, std::string _texture, vec3 _color, int &_id)
 {
-	SDL_Log("effect NAME: %s", _name.c_str());
 	ParticleSystemToLoad tmpSystem;
 	tmpSystem.Name = _name;
 	tmpSystem.Pos = _pos;
@@ -744,11 +754,10 @@ void GraphicDevice::BufferParticleSystems()
 				m_particleSystemsToLoad[i].SpriteSize,
 				AddTexture(m_particleSystemsToLoad[i].TextureName, GL_TEXTURE1),
 				m_particleSystemsToLoad[i].Color,
-				&m_particleShaders[m_particleSystemsToLoad[i].Name])));
+				m_particleShaders[m_particleSystemsToLoad[i].Name])));
 		}
-		/*else if (m_particleSystemsToLoad[i].Name == "smoke")
+		else if (m_particleSystemsToLoad[i].Name == "smoke")
 		{
-            return;
 			m_particleEffects.insert(std::pair<int, ParticleEffect*>(m_particleSystemsToLoad[i].Id, new Smoke(
 				m_particleSystemsToLoad[i].Pos,
 				m_particleSystemsToLoad[i].NrOfParticles,
@@ -757,8 +766,8 @@ void GraphicDevice::BufferParticleSystems()
 				m_particleSystemsToLoad[i].SpriteSize,
 				AddTexture(m_particleSystemsToLoad[i].TextureName, GL_TEXTURE1),
 				m_particleSystemsToLoad[i].Color,
-				&m_particleShaders[m_particleSystemsToLoad[i].Name])));
-		}*/
+				m_particleShaders[m_particleSystemsToLoad[i].Name])));
+		}
 	}
 	m_particleSystemsToLoad.clear();
 
@@ -802,4 +811,26 @@ void GraphicDevice::Clear()
 	for (std::map<int, ParticleEffect*>::iterator it = m_particleEffects.begin(); it != m_particleEffects.end(); ++it)
 		delete(it->second);
 	m_particleEffects.clear();
+}
+
+void GraphicDevice::CreateFullscreenQuad()
+{
+	float positionData[] = {
+		-1.0, -1.0,
+		1.0, -1.0,
+		1.0, 1.0,
+		1.0, 1.0,
+		-1.0, 1.0,
+		-1.0, -1.0
+	};
+
+	//m_fullscreen.UseProgram();
+
+	glGenBuffers(1, &m_fullscreenQuadBuffer);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_fullscreenQuadBuffer);
+	glBufferData(GL_ARRAY_BUFFER, 2 * 6 * sizeof(float), positionData, GL_STATIC_DRAW);
+
+	//glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
+	//glEnableVertexAttribArray(0);
 }

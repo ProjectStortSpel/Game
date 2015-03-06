@@ -1,8 +1,6 @@
 DealCardsSystem = System()
 DealCardsSystem.DealCard = false
 DealCardsSystem.FirstDeal = true
-DealCardsSystem.Arrows = {}
-DealCardsSystem.Arrows.__mode = "k"
 
 DealCardsSystem.Initialize = function ( self )
 	--	Set Name
@@ -30,7 +28,7 @@ DealCardsSystem.ClearSelectedCards = function(self)
 		world:GetComponent(selectedCards[i], "ServerSelectedCard", "Index"):SetInt(0)
 		world:RemoveComponentFrom("ServerSelectedCard", selectedCards[i])
 	end
-
+	
 end
 
 DealCardsSystem.EntitiesAdded = function(self, dt, entities)
@@ -58,8 +56,6 @@ DealCardsSystem.EntitiesAdded = function(self, dt, entities)
 		Net.WriteInt(audioId, 200)
 		Net.WriteBool(audioId, false)
 		Net.Broadcast(audioId)
-	elseif #self.Arrows > 0 then
-		self:RemoveArrows()
 	end
 end
 
@@ -73,6 +69,15 @@ DealCardsSystem.DealCards = function (self, numCards)
 	--print("Numplayer: " .. #players)
 	--print("NumCards: " .. cardsLeft)
 	--print("NumCardsToDeal: " .. numCards)
+	
+	local Cards = { }
+	Cards.__mode = "k"
+	Cards.Move = self:GetEntities("CardTypeMove")
+	Cards.Turn = self:GetEntities("CardTypeTurn")
+	Cards.Ability = self:GetEntities("CardTypeAbility")
+	Cards.MoveLeft = #Cards.Move
+	Cards.TurnLeft = #Cards.Turn
+	Cards.AbilityLeft = #Cards.Ability
 
 	--print("")
 	
@@ -84,22 +89,17 @@ DealCardsSystem.DealCards = function (self, numCards)
 	
 		local ip = world:GetComponent(players[i], "NetConnection", "IpAddress"):GetText()
 		local port = world:GetComponent(players[i], "NetConnection", "Port"):GetInt()
-
-		for j = 1, numCards do
-
-			local cardIndex = math.random(1, cardsLeft)
-			local card = cards[cardIndex]
-			
-			world:CreateComponentAndAddTo("DealtCard", card)
-			world:SetComponent(card, "DealtCard", "PlayerEntityId", players[i])
-			
-			Net.SendEntity(card, ip, port)	
-
-			table.remove(cards, cardIndex)
-			cardsLeft = cardsLeft - 1
-		end
 		
-		self:PlaceArrowAboveUnit(players[i])
+		Cards.MoveCount, Cards.TurnCount, Cards.AbilityCount = self:CalculateCardTypeBalance(numCards)
+		for j = 1, Cards.MoveCount do
+			Cards.MoveLeft = self:DealCardToPlayer(Cards.Move, Cards.MoveLeft, players[i], ip, port)
+		end
+		for j = 1, Cards.TurnCount do
+			Cards.TurnLeft = self:DealCardToPlayer(Cards.Turn, Cards.TurnLeft, players[i], ip, port)
+		end
+		for j = 1, Cards.AbilityCount do
+			Cards.AbilityLeft = self:DealCardToPlayer(Cards.Ability, Cards.AbilityLeft, players[i], ip, port)
+		end
 		
 		--Net.Send(Net.StartPack("Client.SelectCards"), ip, port)
 	end
@@ -110,19 +110,15 @@ DealCardsSystem.DealCards = function (self, numCards)
 			world:RemoveComponentFrom("HasSelectedCards", aiPlayers[i])
 		end
 		
-		for j = 1, numCards do
-			
-			local cardIndex = math.random(1, cardsLeft)
-			local card = cards[cardIndex]
-			
-			world:CreateComponentAndAddTo("DealtCard", card)
-			if not world:EntityHasComponent(card, "AICard") then
-				world:CreateComponentAndAddTo("AICard", card)
-			end
-			world:SetComponent(card, "DealtCard", "PlayerEntityId", aiPlayers[i])
-			
-			table.remove(cards, cardIndex)
-			cardsLeft = cardsLeft - 1
+		Cards.MoveCount, Cards.TurnCount, Cards.AbilityCount = self:CalculateCardTypeBalance(numCards)
+		for j = 1, Cards.MoveCount do
+			Cards.MoveLeft = self:DealCardToAI(Cards.Move, Cards.MoveLeft, aiPlayers[i])
+		end
+		for j = 1, Cards.TurnCount do
+			Cards.TurnLeft = self:DealCardToAI(Cards.Turn, Cards.TurnLeft, aiPlayers[i])
+		end
+		for j = 1, Cards.AbilityCount do
+			Cards.AbilityLeft = self:DealCardToAI(Cards.Ability, Cards.AbilityLeft, aiPlayers[i])
 		end
 	end
 	
@@ -130,42 +126,79 @@ DealCardsSystem.DealCards = function (self, numCards)
 	local newId = world:CreateNewEntity();
 	world:CreateComponentAndAddTo("OnPickingPhase", newId);
 end
-	  
-DealCardsSystem.PlaceArrowAboveUnit = function(self, player)
-	local unit = world:GetComponent(player, "UnitEntityId", "Id"):GetInt()
 
-	local arrow = world:CreateNewEntity()
-	world:CreateComponentAndAddTo("SyncNetwork", arrow)
-	world:CreateComponentAndAddTo("Parent", arrow)
-	world:CreateComponentAndAddTo("Model", arrow)
-	world:CreateComponentAndAddTo("Position", arrow)
-	world:CreateComponentAndAddTo("Rotation", arrow)
-	world:CreateComponentAndAddTo("Scale", arrow)
-	world:CreateComponentAndAddTo("LerpScale", arrow)
-	world:GetComponent(arrow, "Position", 0):SetFloat3(0.0, 1.8, 0.0)
-	world:GetComponent(arrow, "Rotation", 0):SetFloat3(1.5 * math.pi, math.pi, 0.0)
-	world:GetComponent(arrow, "Scale", 0):SetFloat3(0.0, 0.0, 0.0)
-	world:GetComponent(arrow, "Model", 0):SetModel("directionalarrow", "quad", 1)
-	world:GetComponent(arrow, "Parent", 0):SetInt(unit)
-	world:GetComponent(arrow, "LerpScale", "Time", 0):SetFloat4(0.2, 1.0, 1.0, 1.0)
-	world:GetComponent(arrow, "LerpScale", "Algorithm", 0):SetText("SmoothLerp")
-	world:GetComponent(arrow, "LerpScale", "KillWhenFinished", 0):SetBool(false)
-	table.insert(self.Arrows, arrow)
+DealCardsSystem.DealCardToPlayer = function(self, cards, cardsLeft, player, ip, port)
+	local cardIndex = math.random(1, cardsLeft)
+	local card = cards[cardIndex]
+	
+	world:CreateComponentAndAddTo("DealtCard", card)
+	world:SetComponent(card, "DealtCard", "PlayerEntityId", player)
+	
+	local unit = world:GetComponent(player, "UnitEntityId", "Id"):GetInt(0)
+	world:SetComponent(card, "Card", "Unit", unit)
+	
+	Net.SendEntity(card, ip, port)
+
+	table.remove(cards, cardIndex)
+	return cardsLeft - 1
 end
 
-DealCardsSystem.RemoveArrows = function(self)
-	local arrowCount = #self.Arrows
-	for i = 1, arrowCount do
-		local arrow = self.Arrows[i]
-		if not world:EntityHasComponent(arrow, "LerpScale") then
-			world:CreateComponentAndAddTo("LerpScale", arrow)
-		end
-		world:GetComponent(arrow, "LerpScale", "Time", 0):SetFloat4(0.2, 0.0, 0.0, 0.0)
-		world:GetComponent(arrow, "LerpScale", "Algorithm", 0):SetText("SmoothLerp")
-		world:GetComponent(arrow, "LerpScale", "KillWhenFinished", 0):SetBool(true)
+DealCardsSystem.DealCardToAI = function(self, cards, cardsLeft, ai)
+	local cardIndex = math.random(1, cardsLeft)
+	local card = cards[cardIndex]
+	
+	world:CreateComponentAndAddTo("DealtCard", card)
+	if not world:EntityHasComponent(card, "AICard") then
+		world:CreateComponentAndAddTo("AICard", card)
 	end
-	self.Arrows = { }
-	self.Arrows.__mode = "k"
+	world:SetComponent(card, "DealtCard", "PlayerEntityId", ai)
+	
+	table.remove(cards, cardIndex)
+	return cardsLeft - 1
+end
+
+DealCardsSystem.CalculateCardTypeBalance = function(self, numCards)
+	local CardCount = { }
+	CardCount.__mode = "k"
+	
+	CardCount.Remaining = numCards
+	
+	----------------------------------------------------------------------------------------------
+	-- The values below are (sort of) percentage-based. Change them to balance the cards dealt! --
+	----------------------------------------------------------------------------------------------
+	CardCount.MoveCardCountMin = math.ceil(0.3 * CardCount.Remaining) -- 3 / 2
+	CardCount.MoveCardCountMax = math.ceil(0.7 * CardCount.Remaining) -- 6 / 4
+	
+	CardCount.TurnCardCountMin = math.ceil(0.2 * CardCount.Remaining) -- 2 / 1
+	CardCount.TurnCardCountMax = math.ceil(0.5 * CardCount.Remaining) -- 4 / 3
+	
+	CardCount.AbilityCardCountMin = math.ceil(0.0 * CardCount.Remaining) -- 0 / 0
+	CardCount.AbilityCardCountMax = math.ceil(0.1 * CardCount.Remaining) -- 1 / 1
+	----------------------------------------------------------------------------------------------
+	
+	CardCount.MoveCardCount = math.random(CardCount.MoveCardCountMin, CardCount.MoveCardCountMax)
+	
+	CardCount.Remaining = CardCount.Remaining - CardCount.MoveCardCount
+	if CardCount.Remaining < CardCount.TurnCardCountMax then
+		CardCount.TurnCardCountMax = CardCount.Remaining
+	end
+	if CardCount.Remaining > CardCount.TurnCardCountMin + CardCount.AbilityCardCountMax then
+		CardCount.TurnCardCountMin = CardCount.Remaining - CardCount.AbilityCardCountMax
+	end
+	
+	CardCount.TurnCardCount = math.random(CardCount.TurnCardCountMin, CardCount.TurnCardCountMax)
+	
+	CardCount.Remaining = CardCount.Remaining - CardCount.TurnCardCount
+	if CardCount.Remaining < CardCount.AbilityCardCountMax then
+		CardCount.AbilityCardCountMax = CardCount.Remaining
+	end
+	if CardCount.Remaining > CardCount.AbilityCardCountMin then
+		CardCount.AbilityCardCountMin = CardCount.Remaining
+	end
+	
+	CardCount.AbilityCardCount = math.random(CardCount.AbilityCardCountMin, CardCount.AbilityCardCountMax)
+	
+	return CardCount.MoveCardCount, CardCount.TurnCardCount, CardCount.AbilityCardCount
 end
 
 Net.Receive("Server.SelectCards",

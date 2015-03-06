@@ -8,6 +8,7 @@ require "cl_ShowNextCheckpointSystem"
 require "cl_LobbySystem"
 require "cl_VisualizeSelectedCards"
 require "cl_FadeTreeSystem"
+--require "cl_AbilityStoneSystem"
 
 --	Interface Systems
 package.path = package.path .. ";Systems/Client/InterfaceSystems/?.lua"
@@ -57,6 +58,7 @@ worldCreator:AddSystemToCurrentGroup(FlowingWaterSystem)
 worldCreator:AddSystemToCurrentGroup(SortSelectedCardsSystem)
 worldCreator:AddSystemToCurrentGroup(GameMenuSystem)
 worldCreator:AddSystemToCurrentGroup(CardHoverSystem)
+--worldCreator:AddSystemToCurrentGroup(ClientAbilityStoneSystem)
 
 worldCreator:AddSystemToCurrentGroup(LobbySystem)
 worldCreator:AddSystemToCurrentGroup(CardAddModelSystem)

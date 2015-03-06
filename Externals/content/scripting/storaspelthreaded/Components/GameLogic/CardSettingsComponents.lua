@@ -16,6 +16,7 @@ NewComponent = ComponentType()
 NewComponent.SyncNetwork = true
 NewComponent.Name = "Card"
 NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("Unit", ByteSize.Reference)
 worldCreator:AddComponentType(NewComponent)
 
 -- Card Prio Component
@@ -115,5 +116,21 @@ worldCreator:AddComponentType(NewComponent)
 NewComponent = ComponentType()
 NewComponent.Name = "UpdateSpawnpoint"
 NewComponent:AddVariable("Unit", ByteSize.Reference)
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
+
+--	Card Types
+NewComponent = ComponentType()
+NewComponent.Name = "CardTypeMove"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
+
+NewComponent = ComponentType()
+NewComponent.Name = "CardTypeTurn"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
+
+NewComponent = ComponentType()
+NewComponent.Name = "CardTypeAbility"
 NewComponent.TableType = TableType.Map
 worldCreator:AddComponentType(NewComponent)

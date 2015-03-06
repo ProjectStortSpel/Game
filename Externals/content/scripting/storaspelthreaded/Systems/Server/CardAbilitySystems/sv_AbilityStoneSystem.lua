@@ -1,28 +1,49 @@
 AbilityStoneSystem = System()
+AbilityStoneSystem.LifeSpan = 5
 
 AbilityStoneSystem.Initialize = function(self)
 
 	self:SetName("AbilityStoneSystem")
-		
+	
 	--	Toggle EntitiesAdded
 	self:UsingEntitiesAdded()
 	
 	self:AddComponentTypeToFilter("UnitStone",FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("AbilityStone",FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter("NewStep", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("StoneTimer",FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("MoveRiver", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("TileComp",FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("TestMoveSuccess",FilterType.RequiresOneOf)
 	
 	self:AddComponentTypeToFilter("NotWalkable",FilterType.Excluded)
 	self:AddComponentTypeToFilter("Void",FilterType.Excluded)
 	
-	
+	self:AddComponentTypeToFilter("StoneTimerText",FilterType.RequiresOneOf)
 	
 end
 
 AbilityStoneSystem.UpdateLifeTime = function(self, entity)
 
 	local stones = self:GetEntities("AbilityStone")
+	local timers = self:GetEntities("StoneTimer")
+	
+	local timertext = self:GetEntities("StoneTimerText")
+	for i = 1, #timertext do
+		world:KillEntity(timertext[i])
+	end
+	
+	for j = 1 , #timers do
+	
+		local lifeSpan = world:GetComponent(timers[j], "StoneTimer", "LifeSpan")
+		local count = lifeSpan:GetInt()
+		lifeSpan:SetInt(count - 1)
+		
+		if lifeSpan:GetInt() <= 0 then
+			world:KillEntity(timers[j])
+		end
+		
+	
+	end
 	
 	for i = 1, #stones do
 	
@@ -30,15 +51,24 @@ AbilityStoneSystem.UpdateLifeTime = function(self, entity)
 		local count = lifeSpan:GetInt()
 		lifeSpan:SetInt(count - 1)
 		
+		local parent = world:GetComponent(stones[i], "Parent", "EntityId"):GetInt()
+		local x, z = world:GetComponent(parent, "MapPosition", 0):GetInt2()
+		
 		if lifeSpan:GetInt() <= 0 then
-			local parent = world:GetComponent(stones[i], "Parent", "EntityId"):GetInt()
-			local x, z = world:GetComponent(parent, "MapPosition", 0):GetInt2()
+
 			
 			PathfinderHandler.SetTileWalkable(x,z, true)
 			world:RemoveComponentFrom("NotWalkable", parent)
 			world:KillEntity(stones[i])
+		else
+			local text = self:CreateElement("quad", "text", x, 1.51, z, 0.5, 0.5)
+			world:CreateComponentAndAddTo("StoneTimerText", text)
+			self:AddTextToTexture("StoneText"..i, lifeSpan:GetInt(), 0, 1, 1, 0, text)
 		end
+	
+		
 
+		
 	end
 
 	local uStone = self:GetEntities("UnitStone")
@@ -61,6 +91,22 @@ AbilityStoneSystem.CheckAddStone = function(self, entity)
 	world:SetComponent(id, "TestMove", "DirX", dirX)
 	world:SetComponent(id, "TestMove", "DirZ", dirZ)
 	world:SetComponent(id, "TestMove", "Steps", 1)
+	
+end
+
+AbilityStoneSystem.AddTimer = function(self, entity, X, Z)
+	
+	local timerAbove = world:CreateNewEntity("StoneTimer")
+	local R, G, B = world:GetComponent(entity, "Color", "X"):GetFloat3()
+	
+	world:GetComponent(timerAbove, "Position", 0):SetFloat3(X, 1.5, Z)
+	world:GetComponent(timerAbove, "Rotation", 0):SetFloat3(1.5 * math.pi, math.pi * 0.25, 0.0)
+	world:GetComponent(timerAbove, "Scale", 0):SetFloat3(0.7,0.7,0.7)
+	world:GetComponent(timerAbove, "Model", "ModelName"):SetText("timer")
+	world:GetComponent(timerAbove, "Model", "ModelPath"):SetText("quad")
+	world:GetComponent(timerAbove, "Model", "RenderType"):SetInt(1)
+	world:GetComponent(timerAbove, "StoneTimer", "LifeSpan"):SetInt(self.LifeSpan)
+	world:GetComponent(timerAbove, "Color", "X"):SetFloat3(R,G,B)	
 	
 end
 
@@ -93,7 +139,7 @@ AbilityStoneSystem.PlaceStone = function(self, entity)
 				
 				math.randomseed( os.time() )
 				math.random(); math.random(); math.random(); -- pop the not randomized values (blame lua)
-				world:SetComponent(stone, "AbilityStone", "LifeSpan", 5)
+				world:SetComponent(stone, "AbilityStone", "LifeSpan", self.LifeSpan)
 				world:SetComponent(stone, "Parent", "EntityId", tiles[i])
 				world:GetComponent(stone, "Position", 0):SetFloat3( math.random(1, 5), 10.5, math.random(1, 5) )
 				
@@ -102,16 +148,9 @@ AbilityStoneSystem.PlaceStone = function(self, entity)
 				world:GetComponent(stone, "LerpPosition", "Z"):SetFloat(0)
 				world:GetComponent(stone, "LerpPosition", "Time"):SetFloat(0.7)
 				world:GetComponent(stone, "LerpPosition", "Algorithm"):SetText("NormalLerp")
-				world:GetComponent(stone, "LerpPosition", "KillWhenFinished"):SetBool(false)
-							
 				
-				world:GetComponent(stone, "Rotation", 0):SetFloat3
-				(
-					math.pi * 0.01 * math.random(0, 25), 
-					math.pi * 0.01 * math.random(0, 100), 
-					math.pi * 0.01 * math.random(0, 25)
-				)
-			
+				self:AddTimer(stone,X,Z)
+				
 				break				
 			
 			end
@@ -125,12 +164,10 @@ AbilityStoneSystem.PlaceStone = function(self, entity)
 end
 
 AbilityStoneSystem.EntitiesAdded = function(self, dt, entities)
-
-	
 	for n = 1, #entities do
 		local entity = entities[n]
 		
-		if world:EntityHasComponent(entity, "NewStep") then
+		if world:EntityHasComponent(entity, "MoveRiver") then
 			self:UpdateLifeTime(entity)
 		elseif world:EntityHasComponent(entity, "UnitStone") then
 			self:CheckAddStone(entity)
@@ -138,4 +175,37 @@ AbilityStoneSystem.EntitiesAdded = function(self, dt, entities)
 			self:PlaceStone(entity)
 		end	
 	end
+end
+
+
+AbilityStoneSystem.CreateElement = function(self, object, folder, posx, posy, posz, scalex, scaley)
+	local id = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("SyncNetwork", id)
+	world:CreateComponentAndAddTo("Model", id)
+	world:CreateComponentAndAddTo("Position", id)
+	world:CreateComponentAndAddTo("Rotation", id)
+	world:CreateComponentAndAddTo("Scale", id)
+	local model = world:GetComponent(id, "Model", 0)
+	model:SetModel(object, folder, 1)
+	local position = world:GetComponent(id, "Position", 0)
+	position:SetFloat3(posx, posy, posz)
+	local scale = world:GetComponent(id, "Scale", 0)
+	scale:SetFloat3(scalex, scaley, 1, false)
+	local rotation = world:GetComponent(id, "Rotation", 0)
+	rotation:SetFloat3(1.5 * math.pi, 0.25 * math.pi, 0)
+	return id	
+end
+
+AbilityStoneSystem.AddTextToTexture = function(self, n, text, font, r, g, b, button)
+	world:CreateComponentAndAddTo("TextTexture", button)
+	world:GetComponent(button, "TextTexture", "Name"):SetText(n) -- TODO: NAME CANT BE MORE THAN 3 CHARS? WTF?
+	world:GetComponent(button, "TextTexture", "Text"):SetText(text)
+	world:GetComponent(button, "TextTexture", "FontIndex"):SetInt(font)
+	world:GetComponent(button, "TextTexture", "R"):SetFloat(1)
+	world:GetComponent(button, "TextTexture", "G"):SetFloat(1)
+	world:GetComponent(button, "TextTexture", "B"):SetFloat(1)
+	world:CreateComponentAndAddTo("Color", button)
+	world:GetComponent(button, "Color", "X"):SetFloat(r)
+	world:GetComponent(button, "Color", "Y"):SetFloat(g)
+	world:GetComponent(button, "Color", "Z"):SetFloat(b)
 end
