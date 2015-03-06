@@ -94,7 +94,7 @@ AddAISystem.EntitiesAdded = function(self, dt, entities)
 				
 				--local found, weight = DynamicScripting.GetWeightFrom(object, playerNumber)
 				
-				--DynamicScripting.UpdateWeight(math.random() - 0.5)
+				--DynamicScripting.UpdateWeight(math.random())
 				
 				for j = 1, #voids do
 					
