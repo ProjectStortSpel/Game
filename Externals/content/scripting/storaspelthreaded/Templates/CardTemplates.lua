@@ -21,7 +21,6 @@ EntityTemplateManager:AddTemplate(CardAboveHead)
 local StoneTimer = EntityTemplate()
 StoneTimer.Name = "StoneTimer"
 StoneTimer:AddComponent("SyncNetwork")
-StoneTimer:AddComponent("Parent")
 StoneTimer:AddComponent("Model")
 StoneTimer:AddComponent("Position")
 StoneTimer:AddComponent("Rotation")

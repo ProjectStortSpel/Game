@@ -259,7 +259,7 @@ struct sort_depth_instance
 {
 	inline bool operator() (const Instance& a, const Instance& b)
 	{
-		return (*a.modelMatrix)[3][2] > (*b.modelMatrix)[3][2];
+		return (*a.modelMatrix)[3][2] < (*b.modelMatrix)[3][2]; // SÄG TILL ANDERS OM DU HADE TÄNKT ÄNDRA DETTA
 	}
 };
 struct sort_depth_model
