@@ -2,12 +2,13 @@
 using namespace Renderer;
 using namespace glm;
 
-Model::Model(Buffer* buffer, GLuint tex, GLuint nor, GLuint spe)
+Model::Model(Buffer* buffer, GLuint tex, GLuint nor, GLuint spe, bool shadow)
 {
 	bufferPtr = buffer;
 	texID = tex;
 	norID = nor;
 	speID = spe;
+	castShadow = shadow;
 }
 
 Model::Model()

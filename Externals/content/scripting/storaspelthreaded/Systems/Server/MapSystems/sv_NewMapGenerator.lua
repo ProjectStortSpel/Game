@@ -893,7 +893,7 @@ MapGenerator.CreateGrassEntity = function(self, X, Z)
 	
 	local	newGrass	=	self:CreateTileEntity(X, Z)
 	world:CreateComponentAndAddTo("Model", newGrass)
-	world:GetComponent(newGrass, "Model", 0):SetModel("grass", "grass", 0, 0)
+	world:GetComponent(newGrass, "Model", 0):SetModel("grass", "grass", 0, false)
 	world:GetComponent(newGrass, "Rotation", 0):SetFloat3(0, math.pi * 0.5 * math.random(0, 4), 0)
 	
 	return	newGrass
@@ -903,7 +903,7 @@ MapGenerator.CreateHoleEntity = function(self, X, Z)
 	
 	local	newHole	=	self:CreateTileEntity(X, Z)
 	world:CreateComponentAndAddTo("Model", newHole)
-	world:GetComponent(newHole, "Model", 0):SetModel("hole", "hole", 0, 0)
+	world:GetComponent(newHole, "Model", 0):SetModel("hole", "hole", 0, false)
 	
 	world:CreateComponentAndAddTo("Void", newHole)
 	world:GetComponent(newHole, "Rotation", 0):SetFloat3(0, math.pi * 0.5 * math.random(0, 4), 0)
@@ -942,7 +942,7 @@ MapGenerator.CreateStoneEntity = function(self, X, Z)
 	local	newGrass	=	self:CreateTileEntity(X, Z)
 	world:CreateComponentAndAddTo("NotWalkable", newGrass)
 	world:CreateComponentAndAddTo("Model", newGrass)
-	world:GetComponent(newGrass, "Model", 0):SetModel("grass", "grass", 0, 0)
+	world:GetComponent(newGrass, "Model", 0):SetModel("grass", "grass", 0, false)
 	world:GetComponent(newGrass, "Rotation", 0):SetFloat3(0, math.pi * 0.5 * math.random(0, 4), 0)
 
 	local	newStone	=	world:CreateNewEntity()
@@ -976,7 +976,7 @@ MapGenerator.CreateSpawnpointEntity = function(self, X, Z)
 	
 	local	newSpawnpoint	=	self:CreateTileEntity(X, Z)
 	world:CreateComponentAndAddTo("Model", newSpawnpoint)
-	world:GetComponent(newSpawnpoint, "Model", 0):SetModel("grass", "grass", 0, 0)
+	world:GetComponent(newSpawnpoint, "Model", 0):SetModel("grass", "grass", 0, false)
 	
 	local newSpawnId = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("AvailableSpawnpoint", newSpawnId)
@@ -1308,7 +1308,7 @@ MapGenerator.PlaceJibberish = function(self)
 			world:GetComponent(newStone, "Rotation", 0):SetFloat3(math.pi * 0.01 * math.random(0, 25), math.pi * 0.01 * math.random(0, 100), math.pi * 0.01 * math.random(0, 25))
 			local randScale = (math.random() + 0.5)*0.15
 			world:GetComponent(newStone, "Scale", 0):SetFloat3(0, 0, 0)
-			world:GetComponent(newStone, "Model", 0):SetModel("smallstone", "smallstone", 8)
+			world:GetComponent(newStone, "Model", 0):SetModel("smallstone", "smallstone", 8, false)
 			
 			
 			world:CreateComponentAndAddTo("LerpScale", newStone)
@@ -1340,7 +1340,7 @@ MapGenerator.PlaceJibberish = function(self)
 			world:GetComponent(newGrass, "Rotation", 0):SetFloat3(0, math.pi * 0.01 * math.random(0, 100),0)
 			local randScale = (math.random() + 0.5)*0.5
 			world:GetComponent(newGrass, "Scale", 0):SetFloat3(0, 0, 0)
-			world:GetComponent(newGrass, "Model", 0):SetModel("tallgrass", "tallgrass", 9)
+			world:GetComponent(newGrass, "Model", 0):SetModel("tallgrass", "tallgrass", 9, false)
 			
 			
 			world:CreateComponentAndAddTo("LerpScale", newGrass)
@@ -1402,7 +1402,7 @@ MapGenerator.PlaceTrees = function(self)
 			local randScale = 0.9 - math.sin(math.random(0, 360)) * 0.2
 			world:GetComponent(newTree, "Scale", 0):SetFloat3(0, 0, 0)
 			world:GetComponent(newTree, "Color", 0):SetFloat3(math.random(), math.random(), math.random())
-			world:GetComponent(newTree, "Model", 0):SetModel("tree", "tree", 1)
+			world:GetComponent(newTree, "Model", 0):SetModel("tree", "tree", 1, true)
 			
 			world:CreateComponentAndAddTo("LerpScale", newTree)
 			world:GetComponent(newTree, "LerpScale", "X"):SetFloat(randScale)

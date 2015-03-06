@@ -162,9 +162,6 @@
     <None Include="..\..\..\Externals\content\shaders\FSDeferredPass1.glsl">
       <Filter>shaders</Filter>
     </None>
-    <None Include="..\..\..\Externals\content\shaders\CSDeferredPass2.glsl">
-      <Filter>shaders</Filter>
-    </None>
     <None Include="..\..\..\Externals\content\shaders\FSInterfaceShader.glsl">
       <Filter>shaders\Interface</Filter>
     </None>
@@ -251,6 +248,9 @@
     </None>
     <None Include="..\..\..\Externals\content\shaders\lowRiverCornerFS.glsl">
       <Filter>shaders\SpriteAnimation</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\CSDeferredPass2.glsl">
+      <Filter>shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

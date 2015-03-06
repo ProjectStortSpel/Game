@@ -55,6 +55,7 @@ void ModelSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::ve
 
 		
 		int RenderType = *(int*)GetComponent(entityId, m_modelId, "RenderType");
+		int RenderShadow = *(int*)GetComponent(entityId, m_modelId, "RenderShadow");
 
 		CreateComponentAndAddTo("Render", entityId);
 		glm::mat4*	Matrix;
@@ -97,7 +98,7 @@ void ModelSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::ve
 
 		float* Color = (float*)GetComponent(entityId, m_renderId, "ColorX");
 
-		*ModelId = m_graphics->LoadModel(paths, ModelName, Matrix, RenderType, Color);
+		*ModelId = m_graphics->LoadModel(paths, ModelName, Matrix, RenderType, Color, RenderShadow);
 		
 	}
 }

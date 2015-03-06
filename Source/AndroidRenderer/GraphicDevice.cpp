@@ -335,7 +335,8 @@ bool GraphicDevice::BufferModelTexture(int _id, std::string _fileDir, int _textu
 				m_modelsForward[i].id,
 				m_modelsForward[i].active,
 				m_modelsForward[i].modelMatrix,
-				m_modelsForward[i].color
+				m_modelsForward[i].color,
+				m_modelsForward[i].castShadow
 				);
 			found = true;
 			renderType = RENDER_FORWARD;
@@ -357,7 +358,8 @@ bool GraphicDevice::BufferModelTexture(int _id, std::string _fileDir, int _textu
 					m_modelsViewspace[i].id,
 					m_modelsViewspace[i].active,
 					m_modelsViewspace[i].modelMatrix,
-					m_modelsViewspace[i].color
+					m_modelsViewspace[i].color,
+					false
 					);
 				found = true;
 				renderType = RENDER_VIEWSPACE;
@@ -380,7 +382,8 @@ bool GraphicDevice::BufferModelTexture(int _id, std::string _fileDir, int _textu
 					m_modelsInterface[i].id,
 					m_modelsInterface[i].active,
 					m_modelsInterface[i].modelMatrix,
-					m_modelsInterface[i].color
+					m_modelsInterface[i].color,
+					false
 					);
 				found = true;
 				renderType = RENDER_INTERFACE;
@@ -493,7 +496,7 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	// Import Mesh
 	Buffer* mesh = AddMesh(obj.mesh, shaderPtr);
 
-	Model model = Model(mesh, texture, normal, specular, _modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color); // plus modelID o matrixPointer, active
+	Model model = Model(mesh, texture, normal, specular, _modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color, _modelToLoad->CastShadow); // plus modelID o matrixPointer, active
 
 
 	// Push back the model
@@ -565,7 +568,7 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoa
 	// Import Mesh
 	Buffer* mesh = AddMesh(_modelToLoad, shaderPtr);
 
-	Model model = Model(mesh, texture, normal, specular, _modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color); // plus modelID o matrixPointer, active
+	Model model = Model(mesh, texture, normal, specular, _modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color, _modelToLoad->CastShadow); // plus modelID o matrixPointer, active
 
 
 	// Push back the model
@@ -792,6 +795,7 @@ void GraphicDevice::Clear()
 {
 	m_modelIDcounter = 0;
 
+	SDL_Log("Clearing lists");
 	m_modelsForward.clear();
 	m_modelsViewspace.clear();
 	m_modelsInterface.clear();
@@ -802,15 +806,22 @@ void GraphicDevice::Clear()
 	BufferPointlights(0, tmpPtr);
 	delete[] tmpPtr;
 
+	SDL_Log("Deleting pointlights");
 	if (m_pointlightsPtr)
 		delete[] m_pointlightsPtr;
 
 	m_pointlightsPtr = NULL;
 	m_directionalLightPtr = NULL;
 
+	SDL_Log("Deleting particle effects");
 	for (std::map<int, ParticleEffect*>::iterator it = m_particleEffects.begin(); it != m_particleEffects.end(); ++it)
+	{
 		delete(it->second);
+		SDL_Log("HEJ!");
+	}
+		
 	m_particleEffects.clear();
+	SDL_Log("Done!");
 }
 
 void GraphicDevice::CreateFullscreenQuad()
