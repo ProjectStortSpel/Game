@@ -167,9 +167,9 @@ DealCardsSystem.CalculateCardTypeBalance = function(self, numCards)
 	-- The values below are (sort of) percentage-based. Change them to balance the cards dealt! --
 	----------------------------------------------------------------------------------------------
 	CardCount.MoveCardCountMin = math.ceil(0.3 * CardCount.Remaining) -- 3 / 2
-	CardCount.MoveCardCountMax = math.ceil(0.7 * CardCount.Remaining) -- 6 / 4
+	CardCount.MoveCardCountMax = math.ceil(0.6 * CardCount.Remaining) -- 5 / 3
 	
-	CardCount.TurnCardCountMin = math.ceil(0.2 * CardCount.Remaining) -- 2 / 1
+	CardCount.TurnCardCountMin = math.ceil(0.3 * CardCount.Remaining) -- 3 / 2
 	CardCount.TurnCardCountMax = math.ceil(0.5 * CardCount.Remaining) -- 4 / 3
 	
 	CardCount.AbilityCardCountMin = math.ceil(0.0 * CardCount.Remaining) -- 0 / 0
