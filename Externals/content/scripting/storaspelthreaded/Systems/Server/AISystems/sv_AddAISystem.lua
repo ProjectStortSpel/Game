@@ -70,8 +70,9 @@ AddAISystem.EntitiesAdded = function(self, dt, entities)
 			if availableSpawnsLeft > 0 then
 			
 				local newName = "Player_" .. tostring(noOfPlayers + 1)
+				local playerNumber = noOfPlayers + 1
 				world:SetComponent(ais[i], "PlayerName", "Name", newName)
-				world:SetComponent(ais[i], "PlayerNumber", "Number", noOfPlayers + 1)
+				world:SetComponent(ais[i], "PlayerNumber", "Number", playerNumber)
 				
 				self:CounterComponentChanged(1, "Players")
 				availableSpawnsLeft = availableSpawnsLeft - 1
@@ -86,10 +87,14 @@ AddAISystem.EntitiesAdded = function(self, dt, entities)
 				local power = 2
 				
 				--local bookIndex = DynamicScripting.LoadRuleBook("content/dynamicscripting/map.txt")
-				--
+				
+				--local fail = DynamicScripting.GenerateScript(playerNumber)
+				
 				--local fail = DynamicScripting.GenerateScript()
-				--
-				--DynamicScripting.UpdateWeight(math.random() - 0.5)
+				
+				--local found, weight = DynamicScripting.GetWeightFrom(object, playerNumber)
+				
+				--DynamicScripting.UpdateWeight(math.random())
 				
 				for j = 1, #voids do
 					
