@@ -93,6 +93,7 @@ CardAddModelSystem.CreateArrow = function(self, unit)
 		world:CreateComponentAndAddTo("Rotation", arrow)
 		world:CreateComponentAndAddTo("Scale", arrow)
 		world:CreateComponentAndAddTo("LerpScale", arrow)
+		world:CreateComponentAndAddTo("Color", arrow)
 		world:GetComponent(arrow, "Position", 0):SetFloat3(0.0, 1.5, 0.05)
 		world:GetComponent(arrow, "Rotation", 0):SetFloat3(0.0, 0.0, 0.0)
 		world:GetComponent(arrow, "Scale", 0):SetFloat3(0.0, 0.0, 0.0)
@@ -100,6 +101,8 @@ CardAddModelSystem.CreateArrow = function(self, unit)
 		world:GetComponent(arrow, "Parent", 0):SetInt(unit)
 		world:GetComponent(arrow, "LerpScale", "Time", 0):SetFloat4(0.2, 0.4, 0.4, 0.4)
 		world:GetComponent(arrow, "LerpScale", "Algorithm", 0):SetText("SmoothLerp")
+		local cx, cy, cz = world:GetComponent(unit, "Color", 0):GetFloat3()
+		world:GetComponent(arrow, "Color", 0):SetFloat3(cx, cy, cz)
 		self.Arrow = arrow
 	end
 end
