@@ -570,9 +570,6 @@ void GraphicsLow::BufferLightsToGPU()
 			m_animationShader.SetUniVariable(s.c_str(), glfloat, &m_pointerToPointlights[i][9]);
 
 		}
-		
-		for (int i = 0; i < 3; i++)
-			delete m_pointerToPointlights[i];
 
 		delete[] m_pointerToPointlights;
 
