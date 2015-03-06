@@ -102,13 +102,13 @@ ShowNextCheckpointSystem.SpawnSmoke = function(self, oldParticle)
 	world:GetComponent(newParticle, "Position", "X"):SetFloat3(X, Y-0.05, Z)
 	world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.0, 0.0, 0.0)
 	
-	world:GetComponent(newParticle, "Particle", "Name"):SetText("smoke")
-	world:GetComponent(newParticle, "Particle", "Texture"):SetText("content/textures/smoke1.png")
-	world:GetComponent(newParticle, "Particle", "Particles"):SetInt(8)
-	world:GetComponent(newParticle, "Particle", "Lifetime"):SetFloat(1700)
-	world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.008)
-	world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(0.4)
-	world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
+	world:GetComponent(newParticle, "Particle", "aName"):SetText("smoke")
+	world:GetComponent(newParticle, "Particle", "bTexture"):SetText("content/textures/smoke1.png")
+	world:GetComponent(newParticle, "Particle", "cParticles"):SetInt(8)
+	world:GetComponent(newParticle, "Particle", "dLifetime"):SetFloat(1700)
+	world:GetComponent(newParticle, "Particle", "eScale"):SetFloat(0.008)
+	world:GetComponent(newParticle, "Particle", "fSpriteSize"):SetFloat(0.4)
+	world:GetComponent(newParticle, "Particle", "gId"):SetInt(-1)
 	
 end
 
@@ -134,13 +134,13 @@ Net.Receive("Client.NewTargetCheckpoint",
 	world:GetComponent(newParticle, "Position", "X"):SetFloat3(X, 0.70, Z)
 	world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.98, 0.17, 0.08)
 	
-	world:GetComponent(newParticle, "Particle", "Name"):SetText("fire")
-	world:GetComponent(newParticle, "Particle", "Texture"):SetText("content/textures/firewhite.png")
-	world:GetComponent(newParticle, "Particle", "Particles"):SetInt(80)
-	world:GetComponent(newParticle, "Particle", "Lifetime"):SetFloat(1200)
-	world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.016)
-	world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(0.6)
-	world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
+	world:GetComponent(newParticle, "Particle", "aName"):SetText("fire")
+	world:GetComponent(newParticle, "Particle", "bTexture"):SetText("content/textures/firewhite.png")
+	world:GetComponent(newParticle, "Particle", "cParticles"):SetInt(80)
+	world:GetComponent(newParticle, "Particle", "dLifetime"):SetFloat(1200)
+	world:GetComponent(newParticle, "Particle", "eScale"):SetFloat(0.016)
+	world:GetComponent(newParticle, "Particle", "fSpriteSize"):SetFloat(0.6)
+	world:GetComponent(newParticle, "Particle", "gId"):SetInt(-1)
 	
 	--	Fade in timer
 	world:GetComponent(newParticle, "FadeInLight", "CurrentTime"):SetFloat(0.0)
