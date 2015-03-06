@@ -141,6 +141,7 @@ namespace Renderer
 
 		// ANIMATIONS
 		bool SetAnimation(int _modelId, int _animId, float _frameTime);
+		glm::mat4 GetJointMatrix(int _modelId, int _jointId);
 
 		// MODELLOADER
 		int LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED, float* _color = nullptr, bool _castShadow = true, bool _isStatic = false);

@@ -50,9 +50,11 @@ void RenderSystem::Initialize()
 	m_scaleId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Scale");
 	m_colorId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Color");
 	m_renderId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Render");
+	m_renderModel = ECSL::ComponentTypeManager::GetInstance().GetComponentType(m_renderId)->GetVariables()->at("ModelId").GetOffset();
 	m_renderOffset = ECSL::ComponentTypeManager::GetInstance().GetComponentType(m_renderId)->GetVariables()->at("Mat").GetOffset();
 	m_colorOffset = ECSL::ComponentTypeManager::GetInstance().GetComponentType(m_renderId)->GetVariables()->at("ColorX").GetOffset();
 	m_parentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Parent");
+	m_parentJointId = ECSL::ComponentTypeManager::GetInstance().GetTableId("ParentJoint");
 	m_isparentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("IsParent");
 	m_worldToViewSpaceId = ECSL::ComponentTypeManager::GetInstance().GetTableId("WorldToViewSpace");
 	m_staticModelId = ECSL::ComponentTypeManager::GetInstance().GetTableId("StaticModel");
@@ -138,6 +140,13 @@ void RenderSystem::UpdateMatrix(unsigned int _entityId)
 		int* Parent = (int*)GetComponent(_entityId, m_parentId, 0);
 		//GET PARENT MATRIX
 		*Matrix = *(glm::mat4*)GetComponent(*Parent, m_renderId, m_renderOffset);
+
+		if (HasComponent(_entityId, m_parentJointId))
+		{
+			int* parentJointID = (int*)GetComponent(_entityId, m_parentJointId, 0);
+			int* parentModelID = (int*)GetComponent(*Parent, m_renderId, m_renderModel);
+			*Matrix = *Matrix * m_graphics->GetJointMatrix(*parentModelID, *parentJointID);
+		}
 	}
 
 	*Matrix *= glm::translate(glm::vec3(Position[0], Position[1], Position[2]));
