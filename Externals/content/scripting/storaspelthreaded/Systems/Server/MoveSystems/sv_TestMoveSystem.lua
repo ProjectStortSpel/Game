@@ -94,8 +94,6 @@ TestMoveSystem.RecursiveMove = function(self, unitToMove, allUnits, allNonWalkab
 		world:CreateComponentAndAddTo("Animation", unitToMove)
 	end
 	
-	print("UD: "..unitDirX.. " ".. unitDirZ.. "MD: "..dirX.." "..dirZ)
-	
 	if unitDirX == dirX and unitDirZ == dirZ then
 		world:GetComponent(unitToMove, "Animation", "Id"):SetInt(1)
 	elseif unitDirX == dirX or unitDirZ == dirZ then
