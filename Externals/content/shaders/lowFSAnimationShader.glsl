@@ -172,6 +172,8 @@ void main()
 	}
 
 	vec4 glowvec = vec4(glow*albedo_tex.xyz, 0.0);
-
+	
 	ColorData = vec4(ambient + diffuse*(1.0-glow), 1.0) * albedo_tex + vec4(spec, 0.0f) + glowvec;
+
+	ColorData = vec4(Normal, 1) + ColorData * 0.000000001f;
 }
