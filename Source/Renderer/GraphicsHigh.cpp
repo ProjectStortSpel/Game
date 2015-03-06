@@ -79,9 +79,6 @@ bool GraphicsHigh::Init()
 	CreateShadowMap();
 	if (!InitLightBuffers()) { ERRORMSG("INIT LIGHTBUFFER FAILED\n"); return false; }
 	glGenBuffers(1, &m_animationBuffer);
-
-
-	CreateParticleSystems();
 	
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
@@ -343,29 +340,32 @@ void GraphicsHigh::WriteShadowMapDepth()
 	//----Render deferred geometry-----------
 	for (int i = 0; i < m_modelsDeferred.size(); i++)
 	{
-		std::vector<mat4> MVPVector(m_modelsDeferred[i].instances.size());
-		std::vector<mat3> normalMatVector(m_modelsDeferred[i].instances.size());
-
-		int nrOfInstances = 0;
-
-		for (int j = 0; j < m_modelsDeferred[i].instances.size(); j++)
+		if (m_modelsDeferred[i].castShadow)
 		{
-			if (m_modelsDeferred[i].instances[j].active) // IS MODEL ACTIVE?
+			std::vector<mat4> MVPVector(m_modelsDeferred[i].instances.size());
+			std::vector<mat3> normalMatVector(m_modelsDeferred[i].instances.size());
+
+			int nrOfInstances = 0;
+
+			for (int j = 0; j < m_modelsDeferred[i].instances.size(); j++)
 			{
-				mat4 modelMatrix;
-				if (m_modelsDeferred[i].instances[j].modelMatrix == NULL)
-					modelMatrix = glm::translate(glm::vec3(1));
-				else
-					modelMatrix = *m_modelsDeferred[i].instances[j].modelMatrix;
+				if (m_modelsDeferred[i].instances[j].active) // IS MODEL ACTIVE?
+				{
+					mat4 modelMatrix;
+					if (m_modelsDeferred[i].instances[j].modelMatrix == NULL)
+						modelMatrix = glm::translate(glm::vec3(1));
+					else
+						modelMatrix = *m_modelsDeferred[i].instances[j].modelMatrix;
 
-				mat4 mvp = shadowProjection * (*m_shadowMap->GetViewMatrix()) * modelMatrix;
-				MVPVector[nrOfInstances] = mvp;
+					mat4 mvp = shadowProjection * (*m_shadowMap->GetViewMatrix()) * modelMatrix;
+					MVPVector[nrOfInstances] = mvp;
 
-				nrOfInstances++;
+					nrOfInstances++;
+				}
 			}
-		}
 
-		m_modelsDeferred[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector, 0);
+			m_modelsDeferred[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector, 0);
+		}
 	}
 
 	//------Forward------------------------------------
@@ -373,31 +373,34 @@ void GraphicsHigh::WriteShadowMapDepth()
 	//Forward models
 	for (int i = 0; i < m_modelsForward.size(); i++)
 	{
-		std::vector<mat4> MVPVector(m_modelsForward[i].instances.size());
-		std::vector<mat3> normalMatVector(m_modelsForward[i].instances.size());
-
-		int nrOfInstances = 0;
-
-		for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
+		if (m_modelsForward[i].castShadow)
 		{
-			if (m_modelsForward[i].instances[j].active) // IS MODEL ACTIVE?
+			std::vector<mat4> MVPVector(m_modelsForward[i].instances.size());
+			std::vector<mat3> normalMatVector(m_modelsForward[i].instances.size());
+
+			int nrOfInstances = 0;
+
+			for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
 			{
-				mat4 modelMatrix;
-				if (m_modelsForward[i].instances[j].modelMatrix == NULL)
-					modelMatrix = glm::translate(glm::vec3(1));
-				else
-					modelMatrix = *m_modelsForward[i].instances[j].modelMatrix;
+				if (m_modelsForward[i].instances[j].active) // IS MODEL ACTIVE?
+				{
+					mat4 modelMatrix;
+					if (m_modelsForward[i].instances[j].modelMatrix == NULL)
+						modelMatrix = glm::translate(glm::vec3(1));
+					else
+						modelMatrix = *m_modelsForward[i].instances[j].modelMatrix;
 
-				mat4 mvp = shadowProjection * (*m_shadowMap->GetViewMatrix()) * modelMatrix;
-				MVPVector[nrOfInstances] = mvp;
+					mat4 mvp = shadowProjection * (*m_shadowMap->GetViewMatrix()) * modelMatrix;
+					MVPVector[nrOfInstances] = mvp;
 
-				nrOfInstances++;
+					nrOfInstances++;
+				}
 			}
-		}
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
 
-		m_modelsForward[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector, 0);
+			m_modelsForward[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector, 0);
+		}
 	}
 	//------------------------------------------------
 

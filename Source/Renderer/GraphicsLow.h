@@ -61,7 +61,6 @@ namespace Renderer
 
 		// Modelloader
 		int m_modelIDcounter;
-		std::vector<Model> m_modelsForward, m_modelsViewspace, m_modelsInterface;
 
 		vec3 m_dirLightDirection;
 

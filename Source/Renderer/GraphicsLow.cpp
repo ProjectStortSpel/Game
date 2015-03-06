@@ -60,8 +60,6 @@ bool GraphicsLow::Init()
 	CreateShadowMap();
 	if (!InitLightBuffers()) { ERRORMSG("INIT LIGHTBUFFER FAILED\n"); return false; }
 
-	CreateParticleSystems();
-	
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -110,31 +108,34 @@ void GraphicsLow::WriteShadowMapDepth()
 	//Forward models
 	for (int i = 0; i < m_modelsForward.size(); i++)
 	{
-		std::vector<mat4> MVPVector(m_modelsForward[i].instances.size());
-		std::vector<mat3> normalMatVector(m_modelsForward[i].instances.size());
-
-		int nrOfInstances = 0;
-
-		for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
+		if (m_modelsForward[i].castShadow)
 		{
-			if (m_modelsForward[i].instances[j].active) // IS MODEL ACTIVE?
+			std::vector<mat4> MVPVector(m_modelsForward[i].instances.size());
+			std::vector<mat3> normalMatVector(m_modelsForward[i].instances.size());
+
+			int nrOfInstances = 0;
+
+			for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
 			{
-				mat4 modelMatrix;
-				if (m_modelsForward[i].instances[j].modelMatrix == NULL)
-					modelMatrix = glm::translate(glm::vec3(1));
-				else
-					modelMatrix = *m_modelsForward[i].instances[j].modelMatrix;
+				if (m_modelsForward[i].instances[j].active) // IS MODEL ACTIVE?
+				{
+					mat4 modelMatrix;
+					if (m_modelsForward[i].instances[j].modelMatrix == NULL)
+						modelMatrix = glm::translate(glm::vec3(1));
+					else
+						modelMatrix = *m_modelsForward[i].instances[j].modelMatrix;
 
-				mat4 mvp = shadowProjection * (*m_shadowMap->GetViewMatrix()) * modelMatrix;
-				MVPVector[nrOfInstances] = mvp;
+					mat4 mvp = shadowProjection * (*m_shadowMap->GetViewMatrix()) * modelMatrix;
+					MVPVector[nrOfInstances] = mvp;
 
-				nrOfInstances++;
+					nrOfInstances++;
+				}
 			}
-		}
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
 
-		m_modelsForward[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector);
+			m_modelsForward[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector);
+		}
 	}
 
 	//--------ANIMATED DEFERRED RENDERING !!! ATTENTION: WORK IN PROGRESS !!!
@@ -518,9 +519,6 @@ void GraphicsLow::BufferLightsToGPU()
 
 		}
 
-		for (int i = 0; i < 3; i++)
-			delete m_pointerToPointlights[i];
-
 		delete[] m_pointerToPointlights;
 		m_pointerToPointlights = 0;
 		m_nrOfLightsToBuffer = 0;
@@ -571,8 +569,6 @@ void GraphicsLow::BufferLightsToGPU()
 
 		}
 		
-		for (int i = 0; i < 3; i++)
-			delete m_pointerToPointlights[i];
 
 		delete[] m_pointerToPointlights;
 

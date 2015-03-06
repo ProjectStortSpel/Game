@@ -259,7 +259,7 @@ struct sort_depth_instance
 {
 	inline bool operator() (const Instance& a, const Instance& b)
 	{
-		return (*a.modelMatrix)[3][2] > (*b.modelMatrix)[3][2];
+		return (*a.modelMatrix)[3][2] < (*b.modelMatrix)[3][2];
 	}
 };
 struct sort_depth_model
@@ -274,21 +274,6 @@ void GraphicDevice::SortModelsBasedOnDepth(std::vector<Model>* models)
 	for (std::vector<Model>::iterator it = models->begin(); it != models->end(); it++)
 		std::sort(it->instances.begin(), it->instances.end(), sort_depth_instance());
 	std::sort(models->begin(), models->end(), sort_depth_model());
-}
-
-void GraphicDevice::CreateParticleSystems()
-{
-	//glEnable(GL_POINT_SPRITE);
-	//m_particleSystems[m_particleID] = (new ParticleSystem("fire", vec3(11.0f, 0.55f, 8.0f), 100, 700, 0.05f, 0.6f, AddTexture("content/textures/firewhite.png", GL_TEXTURE1), vec3(0.8f, 0.f, 0.0f), &m_particleShader));
-	//m_particleID++;
-	//m_particleSystems.push_back(new ParticleSystem("smoke", vec3(11.0f, 0.0f, 9.0f), 15, 1800, 0.05f, 1.6f, AddTexture("content/textures/smoke1.png", GL_TEXTURE1), vec3(0.5f, 0.f, 0.f), &m_particleShader));
-	int tmpID;
-	
-	//AddParticleEffect("fire", vec3(11.0f, 0.55f, 8.0f), 100, 700, 0.05f, 0.6f, "content/textures/fire3.png", vec3(0.0f, 8.f, 0.0f), tmpID);
-
-//	AddParticleEffect("fire", vec3(8.0f, 0.55f, 8.0f), 100, 1100, 0.05f, 0.6f, "content/textures/firewhite4.png", vec3(0.9f, 0.f, 0.0f), tmpID);
-	//AddParticleEffect("fire", vec3(8.0f, 0.55f, 5.0f), 100, 700, 0.05f, 0.6f, "content/textures/smoke1.png", vec3(0.2f, 0.f, 1.0f), tmpID);
-	//AddParticleEffect("smoke", vec3(11.0f, 0.0f, 9.0f), 15, 1800, 0.05f, 1.6f, "content/textures/smoke1.png", vec3(0.0f, 0.f, 0.f), tmpID);
 }
 
 void GraphicDevice::AddParticleEffect(std::string _name, const vec3 _pos, int _nParticles, float _lifeTime, float _scale, float _spriteSize, std::string _texture, vec3 _color, int &_id)
@@ -350,7 +335,7 @@ void GraphicDevice::BufferParticleSystems()
 
 }
 
-int GraphicDevice::LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color)
+int GraphicDevice::LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color, bool _castShadow)
 {
 	int modelID = m_modelIDcounter;
 	m_modelIDcounter++;
@@ -364,6 +349,7 @@ int GraphicDevice::LoadModel(std::vector<std::string> _dirs, std::string _file, 
 	modelToLoad->MatrixPtr = _matrixPtr;
 	modelToLoad->RenderType = _renderType;
 	modelToLoad->Color = _color;
+	modelToLoad->CastShadow = _castShadow;
 	m_modelsToLoad[modelID] = modelToLoad;
 
 	return modelID;
@@ -445,9 +431,9 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	// Create model
 	Model model;
 	if (_modelToLoad->RenderType != RENDER_INTERFACE) // TODO: BETTER FIX
-		model = Model(mesh, texture, normal, specular);
+		model = Model(mesh, texture, normal, specular, _modelToLoad->CastShadow);
 	else
-		model = Model(mesh, texture, NULL, NULL);
+		model = Model(mesh, texture, NULL, NULL, _modelToLoad->CastShadow);
 	//for the matrices (modelView + normal)
 	m_vramUsage += (16 + 9) * sizeof(float);
 
@@ -505,9 +491,9 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoa
 	// Create model
 	Model model;
 	if (_modelToLoad->RenderType != RENDER_INTERFACE) // TODO: BETTER FIX
-	model = Model(mesh, texture, normal, specular);
+		model = Model(mesh, texture, normal, specular, _modelToLoad->CastShadow);
 	else
-	model = Model(mesh, texture, NULL, NULL);
+		model = Model(mesh, texture, NULL, NULL, _modelToLoad->CastShadow);
 	//for the matrices (modelView + normal)
 	m_vramUsage += (16 + 9) * sizeof(float);
 	for (int i = 0; i < modelList->size(); i++)
@@ -804,7 +790,8 @@ bool GraphicDevice::BufferModelTexture(int _id, std::string _fileDir, int _textu
 						(*modelList)[i].bufferPtr,
 						(*modelList)[i].texID,
 						(*modelList)[i].norID,
-						(*modelList)[i].speID
+						(*modelList)[i].speID,
+						(*modelList)[i].castShadow
 						);
 					found = true;
 					renderType = m_renderLists[k].RenderType;

@@ -507,7 +507,7 @@ bool GraphicsLow::PreLoadModel(std::vector<std::string> _dirs, std::string _file
 
 	return true;
 }
-int GraphicsLow::LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color)
+int GraphicsLow::LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color, bool _castShadow)
 {
 	int modelID = m_modelIDcounter;
 	m_modelIDcounter++;
@@ -518,6 +518,7 @@ int GraphicsLow::LoadModel(std::vector<std::string> _dirs, std::string _file, gl
 	modelToLoad->MatrixPtr = _matrixPtr;
 	modelToLoad->RenderType = _renderType;
 	modelToLoad->Color = _color;
+	modelToLoad->CastShadow = _castShadow;
 	m_modelsToLoad[modelID] = modelToLoad;
 
 	return modelID;
