@@ -1130,7 +1130,7 @@ MapGenerator.FixRiverEffects = function(self, riverTiles)
 			
 			world:GetComponent(newParticle, "Position", "X"):SetFloat3(posAX + 0.6*dirAX, 0.23, posAY + 0.6*dirAY)
 			
-			world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.0, 0.0, 0.4)
+			world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.3, 0.3, 0.6)
 			
 			world:GetComponent(newParticle, "Particle", "Name"):SetText("fire")
 			world:GetComponent(newParticle, "Particle", "Texture"):SetText("content/textures/firewhite.png")

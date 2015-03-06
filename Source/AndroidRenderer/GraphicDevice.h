@@ -260,6 +260,9 @@ namespace Renderer
 		void SortModelsBasedOnDepth(std::vector<Model>* models);
 
 		void BufferLightsToGPU_GD();
+
+		GLuint m_fullscreenQuadBuffer;
+		void CreateFullscreenQuad();
 	};
 }
 
