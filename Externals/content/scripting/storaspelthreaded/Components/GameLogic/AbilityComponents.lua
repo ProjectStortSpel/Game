@@ -19,6 +19,12 @@ StoneTimer.SyncNetwork = true
 StoneTimer:AddVariable("LifeSpan", ByteSize.Int)
 worldCreator:AddComponentType(StoneTimer)
 
+-- StoneTimerText Component
+local StoneTimerText = ComponentType()
+StoneTimerText.Name = "StoneTimerText"
+StoneTimerText.TableType = TableType.Map
+worldCreator:AddComponentType(StoneTimerText)
+
 -- TempTimer Component
 local TempTimer = ComponentType()
 TempTimer.Name = "TempTimer"
