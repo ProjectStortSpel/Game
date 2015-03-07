@@ -45,7 +45,7 @@ LoadingbarSystem.EntitiesAdded = function(self, dt, entities)
 		world:CreateComponentAndAddTo("Scale", id)
 		world:CreateComponentAndAddTo("TextTexture", id)
 		
-		world:GetComponent(id, "Model", 0):SetModel("left", "text", 3)
+		world:GetComponent(id, "Model", 0):SetModel("left", "text", 3, false)
 		world:GetComponent(id, "Position", 0):SetFloat3(-0.70, 0.21, -2.0)
 		world:GetComponent(id, "Scale", 0):SetFloat3(2.0, 0.095, 1.0)
 		world:GetComponent(id, "Rotation", 0):SetFloat3(0.0, 0.0, 0.0)
