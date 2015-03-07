@@ -335,13 +335,15 @@ void GraphicDevice::BufferParticleSystems()
 
 }
 
-int GraphicDevice::LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color, bool _castShadow)
+int GraphicDevice::LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color, bool _castShadow, bool _isStatic)
 {
-	int modelID = m_modelIDcounter;
-	m_modelIDcounter++;
+	int modelID;
 
-	//	Lägg till i en lista, följande
-	//	std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType
+	if (!_isStatic)
+	{
+		modelID = m_modelIDcounter;
+		m_modelIDcounter++;
+	}
 
 	ModelToLoad* modelToLoad = new ModelToLoad();
 	modelToLoad->Dirs = _dirs;
@@ -350,7 +352,33 @@ int GraphicDevice::LoadModel(std::vector<std::string> _dirs, std::string _file, 
 	modelToLoad->RenderType = _renderType;
 	modelToLoad->Color = _color;
 	modelToLoad->CastShadow = _castShadow;
-	m_modelsToLoad[modelID] = modelToLoad;
+
+	if (_isStatic)
+	{
+		for (std::map<int, std::vector<ModelToLoad*>>::iterator it = m_staticModelsToLoad.begin(); it != m_staticModelsToLoad.end(); it++)
+		{
+			if (!it->second.empty() &&
+				it->second[0]->Dirs == _dirs &&
+				it->second[0]->File == _file &&
+				it->second[0]->RenderType == _renderType &&
+				it->second[0]->CastShadow == _castShadow &&
+					(it->second[0]->Color == _color ||
+						(it->second[0]->Color[0] == _color[0] &&
+						 it->second[0]->Color[1] == _color[1] &&
+						 it->second[0]->Color[2] == _color[2])))
+			{
+				it->second.push_back(modelToLoad);
+				return it->first;
+			}
+		}
+
+		// If does not already exists
+		modelID = m_modelIDcounter;
+		m_modelIDcounter++;
+		m_staticModelsToLoad[modelID].push_back(modelToLoad);
+	}
+	else
+		m_modelsToLoad[modelID] = modelToLoad;
 
 	return modelID;
 }
@@ -370,6 +398,8 @@ int GraphicDevice::LoadModel(ModelToLoadFromSource* _modelToLoad)
 }
 void GraphicDevice::BufferModels()
 {
+	for (auto pair : m_staticModelsToLoad)
+		BufferStaticModel(pair);
 	for (auto pair : m_modelsToLoad)
 	{
 		BufferModel(pair.first, pair.second);
@@ -382,6 +412,7 @@ void GraphicDevice::BufferModels()
 	}
 	m_modelsToLoad.clear();
 	m_modelsToLoadFromSource.clear();
+	m_staticModelsToLoad.clear();
 }
 
 void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
@@ -871,4 +902,79 @@ void GraphicDevice::UpdateTextureIndex(GLuint newTexture, GLuint oldTexture)
 void GraphicDevice::SetParticleAcceleration(int _id, float x, float y, float z)
 {
 	m_particleSystems[_id]->SetAccel(vec3(x, y, z));
+}
+
+void GraphicDevice::BufferStaticModel(std::pair<int, std::vector<ModelToLoad*>> _staticModel)
+{
+	ObjectData obj = ModelLoader::importObject(_staticModel.second[0]->Dirs, _staticModel.second[0]->File);
+
+	ModelExporter modelExporter;
+	modelExporter.OpenFileForRead(obj.mesh.c_str());
+	std::vector<float> positionData = modelExporter.ReadDataFromFile();
+	std::vector<float> normalData = modelExporter.ReadDataFromFile();
+	std::vector<float> tanData = modelExporter.ReadDataFromFile();
+	std::vector<float> bitanData = modelExporter.ReadDataFromFile();
+	std::vector<float> texCoordData = modelExporter.ReadDataFromFile();
+	modelExporter.CloseFile();
+
+	ModelToLoadFromSource* modelToLoadFromSource = new ModelToLoadFromSource();
+
+	modelToLoadFromSource->positions.resize(_staticModel.second.size() * positionData.size());
+	modelToLoadFromSource->normals.resize(_staticModel.second.size() * normalData.size());
+	modelToLoadFromSource->tangents.resize(_staticModel.second.size() * tanData.size());
+	modelToLoadFromSource->bitangents.resize(_staticModel.second.size() * bitanData.size());
+	modelToLoadFromSource->texCoords.resize(_staticModel.second.size() * texCoordData.size());
+
+	unsigned int vertexCount = (unsigned int)positionData.size() / 3;
+	for (unsigned int i = 0; i < (unsigned int)_staticModel.second.size(); ++i)
+	{
+		glm::mat4 model = *_staticModel.second[i]->MatrixPtr;
+		glm::mat4 transposeInverseModel = glm::transpose(glm::inverse(model));
+
+		for (unsigned int j = 0; j < vertexCount; ++j)
+		{
+			glm::vec4 position = glm::vec4(positionData[j * 3], positionData[j * 3 + 1], positionData[j * 3 + 2], 1.0f);
+			glm::vec4 normal = glm::vec4(normalData[j * 3], normalData[j * 3 + 1], normalData[j * 3 + 2], 0.0f);
+			glm::vec4 tangent = glm::vec4(tanData[j * 3], tanData[j * 3 + 1], tanData[j * 3 + 2], 0.0f);
+			glm::vec4 bitangent = glm::vec4(bitanData[j * 3], bitanData[j * 3 + 1], bitanData[j * 3 + 2], 0.0f);
+			glm::vec2 texCoord = glm::vec2(texCoordData[j * 2], texCoordData[j * 2 + 1]);
+
+			position = model * position;
+			normal = transposeInverseModel * normal;
+			tangent = transposeInverseModel * tangent;
+			bitangent = transposeInverseModel * bitangent;
+
+			modelToLoadFromSource->positions[i * vertexCount * 3 + j * 3 + 0] = position[0];
+			modelToLoadFromSource->positions[i * vertexCount * 3 + j * 3 + 1] = position[1];
+			modelToLoadFromSource->positions[i * vertexCount * 3 + j * 3 + 2] = position[2];
+			modelToLoadFromSource->normals[i * vertexCount * 3 + j * 3 + 0] = normal[0];
+			modelToLoadFromSource->normals[i * vertexCount * 3 + j * 3 + 1] = normal[1];
+			modelToLoadFromSource->normals[i * vertexCount * 3 + j * 3 + 2] = normal[2];
+			modelToLoadFromSource->tangents[i * vertexCount * 3 + j * 3 + 0] = tangent[0];
+			modelToLoadFromSource->tangents[i * vertexCount * 3 + j * 3 + 1] = tangent[1];
+			modelToLoadFromSource->tangents[i * vertexCount * 3 + j * 3 + 2] = tangent[2];
+			modelToLoadFromSource->bitangents[i * vertexCount * 3 + j * 3 + 0] = bitangent[0];
+			modelToLoadFromSource->bitangents[i * vertexCount * 3 + j * 3 + 1] = bitangent[1];
+			modelToLoadFromSource->bitangents[i * vertexCount * 3 + j * 3 + 2] = bitangent[2];
+			modelToLoadFromSource->texCoords[i * vertexCount * 2 + j * 2 + 0] = texCoord[0];
+			modelToLoadFromSource->texCoords[i * vertexCount * 2 + j * 2 + 1] = texCoord[1];
+		}
+	}
+
+	*_staticModel.second[0]->MatrixPtr = glm::mat4(1.0f);
+
+	char nameBuffer[16];
+	sprintf(nameBuffer, "Static%d", _staticModel.first);
+	modelToLoadFromSource->key = std::string(nameBuffer);
+	modelToLoadFromSource->diffuseTextureFilepath = obj.text;
+	modelToLoadFromSource->normalTextureFilepath = obj.norm;
+	modelToLoadFromSource->specularTextureFilepath = obj.spec;
+	modelToLoadFromSource->MatrixPtr = _staticModel.second[0]->MatrixPtr;
+	modelToLoadFromSource->RenderType = _staticModel.second[0]->RenderType;
+	modelToLoadFromSource->Color = _staticModel.second[0]->Color;
+	modelToLoadFromSource->CastShadow = _staticModel.second[0]->CastShadow;
+	m_modelsToLoadFromSource[_staticModel.first] = modelToLoadFromSource;
+
+	for (ModelToLoad* modelToLoad : _staticModel.second)
+		delete modelToLoad;
 }

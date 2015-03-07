@@ -144,7 +144,7 @@ namespace Renderer
 		glm::mat4 GetJointMatrix(int _modelId, int _jointId);
 
 		// MODELLOADER
-		int LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED, float* _color = nullptr, bool _castShadow = true);
+		int LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_DEFERRED, float* _color = nullptr, bool _castShadow = true, bool _isStatic = false);
 		int LoadModel(ModelToLoadFromSource* _modelToLoad);
 		bool RemoveModel(int _id);// = 0;
 		bool ActiveModel(int _id, bool _active);// = 0;
@@ -245,6 +245,7 @@ namespace Renderer
 		int m_debugTexFlag;
 		std::map<int, ModelToLoad*> m_modelsToLoad;
 		std::map<int, ModelToLoadFromSource*> m_modelsToLoadFromSource;
+		std::map<int, std::vector<ModelToLoad*>> m_staticModelsToLoad;
 		float**	m_pointerToPointlights;
 		int		m_numberOfPointlights;
 		float*	m_pointerToDirectionalLights;
@@ -259,7 +260,8 @@ namespace Renderer
 		void SortModelsBasedOnDepth(std::vector<Model>* models);
 
 		void BufferParticleSystems();
-		
+
+		void BufferStaticModel(std::pair<int, std::vector<ModelToLoad*>> _staticModel);
 	};
 }
 

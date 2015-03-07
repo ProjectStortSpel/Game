@@ -146,7 +146,7 @@ namespace Renderer
 
 		// MODELLOADER
 		virtual bool PreLoadModel(std::vector<std::string> _dirs, std::string _file, int _renderType = RENDER_FORWARD){ return false; };
-		virtual int LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_FORWARD, float* _color = nullptr, bool _castShadow = true){ return 0; };
+		virtual int LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_FORWARD, float* _color = nullptr, bool _castShadow = true, bool _isStatic = false){ return 0; };
 		int LoadModel(ModelToLoadFromSource* _modelToLoad);
 		virtual bool RemoveModel(int _id){ return false; };
 		virtual bool ActiveModel(int _id, bool _active){ return false; };
@@ -245,6 +245,7 @@ namespace Renderer
 		
 		std::map<int, ModelToLoad*> m_modelsToLoad;
 		std::map<int, ModelToLoadFromSource*> m_modelsToLoadFromSource;
+		std::map<int, std::vector<ModelToLoad*>> m_staticModelsToLoad;
 		virtual void BufferModels();
 		virtual void BufferModel(int _modelId, ModelToLoad* _modelToLoad);
 		void BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoad);
@@ -268,6 +269,8 @@ namespace Renderer
 
 		GLuint m_fullscreenQuadBuffer;
 		void CreateFullscreenQuad();
+
+		void BufferStaticModel(std::pair<int, std::vector<ModelToLoad*>> _staticModel);
 	};
 }
 
