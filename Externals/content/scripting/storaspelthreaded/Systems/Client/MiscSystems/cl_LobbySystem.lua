@@ -55,6 +55,7 @@ LobbySystem.EntitiesAdded = function(self, dt, entities)
 			elseif world:EntityHasComponent( entityId, "LobbyPlayerReady") then
 				Net.SendToServer(Net.StartPack("Server.ReadyCheck"))
 				world:KillEntity(entityId)
+				Net.SendToServer(Net.StartPack("Server.NextHat"))
 			elseif world:EntityHasComponent( entityId, "LobbyPlayerStart") then
 				Net.SendToServer(Net.StartPack("Server.StartCheck"))
 				world:KillEntity(entityId)
