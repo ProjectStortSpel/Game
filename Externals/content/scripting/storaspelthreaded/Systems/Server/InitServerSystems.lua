@@ -93,6 +93,7 @@ package.path = package.path .. ";Systems/Server/CameraSystems/?.lua"
 require "sv_CameraInterestpointSystem"
 require "sv_CameraNewRoundSystem"
 require "sv_CameraMovePhaseSystem"
+require "sv_CameraFocusPlayerAtStartSystem"
 
 --	Misc Systems
 package.path = package.path .. ";Systems/Server/MiscSystems/?.lua"
@@ -176,6 +177,7 @@ worldCreator:AddSystemToCurrentGroup(PlayCardTimerSystem)
 worldCreator:AddSystemToCurrentGroup(CameraInterestpointSystem)
 worldCreator:AddSystemToCurrentGroup(CameraNewRoundSystem)
 worldCreator:AddSystemToCurrentGroup(CameraMovePhaseSystem)
+worldCreator:AddSystemToCurrentGroup(CameraFocusPlayerAtStartSystem)
 
 worldCreator:AddSystemToCurrentGroup(TotemPoleSystem)
 worldCreator:AddSystemToCurrentGroup(MoveTotemPieceSystem)
