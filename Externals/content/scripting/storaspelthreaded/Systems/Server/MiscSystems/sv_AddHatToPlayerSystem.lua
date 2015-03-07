@@ -40,10 +40,15 @@ AddHatToPlayerSystem.SwitchHatOnUnit = function(self, player, Offset)
 				local hatNr = world:GetComponent(unitId, "Hat", "Id"):GetInt(0)
 				local hatId = world:GetComponent(unitId, "Hat", "hatId"):GetInt(0)
 				world:KillEntity(hatId)
-				hatNr = (hatNr % #self.HatTemplates) + Offset
-				self:SetHatToUnit(hatNr, unitId)
+				hatNr = (hatNr + Offset) % (#self.HatTemplates + 1)
+				world:GetComponent(unitId, "Hat", "Id"):SetInt(hatNr)
+				if hatNr > 0 then
+					self:SetHatToUnit(hatNr, unitId)
+				end
 			else
+				local hatNr = (Offset) % (#self.HatTemplates + 1)
 				world:CreateComponentAndAddTo("Hat", unitId)
+				world:GetComponent(unitId, "Hat", "Id"):SetInt(hatNr)
 				self:SetHatToUnit(1, unitId)
 			end
 		
@@ -53,7 +58,6 @@ AddHatToPlayerSystem.SwitchHatOnUnit = function(self, player, Offset)
 end
 
 AddHatToPlayerSystem.SetHatToUnit = function(self, hatId, unitId)
-	world:GetComponent(unitId, "Hat", "Id"):SetInt(hatId)
 	local hatName = self.HatTemplates[hatId]
 	local hatEntity = world:CreateNewEntity(hatName.."Hat")
 	world:GetComponent(hatEntity, "Model", 0):SetModel(hatName, hatName, 0)
