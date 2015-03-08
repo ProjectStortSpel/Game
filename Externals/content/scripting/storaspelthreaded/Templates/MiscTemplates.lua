@@ -22,6 +22,7 @@ EntityTemplateManager:AddTemplate(template)
 
 template = EntityTemplate()
 template.Name = "Hole"
+template:AddComponent("StaticModel")
 template:SetFloat3("Position", 0.0, 0.0, 0.0)
 template:SetFloat3("Rotation", 0.0, 0.0, 0.0)
 template:SetFloat3("Scale", 1.0, 1.0, 1.0)
@@ -30,6 +31,7 @@ EntityTemplateManager:AddTemplate(template)
 
 template = EntityTemplate()
 template.Name = "Stone"
+template:AddComponent("StaticModel")
 template:SetFloat3("Position", 0.0, 0.0, 0.0)
 template:SetFloat3("Rotation", 0.0, 0.0, 0.0)
 template:SetFloat3("Scale", 1.0, 1.0, 1.0)
@@ -38,6 +40,7 @@ EntityTemplateManager:AddTemplate(template)
 
 template = EntityTemplate()
 template.Name = "Grass"
+template:AddComponent("StaticModel")
 template:SetFloat3("Position", 0.0, 0.0, 0.0)
 template:SetFloat3("Rotation", 0.0, 0.0, 0.0)
 template:SetFloat3("Scale", 1.0, 1.0, 1.0)
