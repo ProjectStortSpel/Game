@@ -49,7 +49,7 @@ AddHatToPlayerSystem.SwitchHatOnUnit = function(self, player, Offset)
 				local hatNr = (Offset) % (#self.HatTemplates + 1)
 				world:CreateComponentAndAddTo("Hat", unitId)
 				world:GetComponent(unitId, "Hat", "Id"):SetInt(hatNr)
-				self:SetHatToUnit(1, unitId)
+				self:SetHatToUnit(hatNr, unitId)
 			end
 		
 			break
@@ -93,7 +93,6 @@ Net.Receive("Server.PrevHat",
 
 Net.Receive("Server.NextHat", 
 	function(id, ip, port)
-		print("new hat request from network")
 		local id = world:CreateNewEntity()
 		world:CreateComponentAndAddTo("NextHat", id)
 		world:CreateComponentAndAddTo("NetConnection", id)
