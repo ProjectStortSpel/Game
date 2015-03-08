@@ -375,10 +375,15 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 	//nms->SetConsole(&m_consoleManager);
 	
 	GraphicalSystem* graphicalSystem = 0;
+	graphicalSystem = new GenerateIslandSystem(m_graphics, _worldType == WorldType::Client);
+	m_graphicalSystems.push_back(graphicalSystem);
+	worldCreator.AddSystemGroup();
+	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
+
 	graphicalSystem = new PointlightSystem(m_graphics);
 	m_graphicalSystems.push_back(graphicalSystem);
 	
-	//worldCreator.AddSystemGroup();
+	worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(new SlerpRotationSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 
@@ -395,10 +400,6 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 		graphicalSystem = new ModelSystem(m_graphics, _worldType == WorldType::Client);
         m_graphicalSystems.push_back(graphicalSystem);
         worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
-
-		graphicalSystem = new GenerateIslandSystem(m_graphics, _worldType == WorldType::Client);
-		m_graphicalSystems.push_back(graphicalSystem);
-		worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 
 		//graphicalSystem = new AModelSystem(m_graphics);
 		//m_graphicalSystems.push_back(graphicalSystem);
@@ -1140,6 +1141,7 @@ void GameCreator::ConsoleHostSettings(std::string _command, std::vector<Console:
 	m_serverWorld->SetComponent(id, "HostSettings", "Port", &port);
 	m_serverWorld->SetComponent(id, "HostSettings", "FillAI", &m_fillAI);
 	m_serverWorld->SetComponent(id, "HostSettings", "AllowSpectators", &m_allowSpectators);
+	m_serverWorld->SetComponent(id, "HostSettings", "ServerType", &serverType);
 
 
 	//gamemode.insert(0, std::string("gamemode "));
