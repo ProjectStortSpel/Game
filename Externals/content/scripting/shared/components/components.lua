@@ -53,3 +53,13 @@ SpinComponent:AddVariable("X", ByteSize.Float)
 SpinComponent:AddVariable("Y", ByteSize.Float)
 SpinComponent:AddVariable("Z", ByteSize.Float)
 worldCreator:AddComponentType(SpinComponent)
+
+-- GenerateIsland Component
+local GenerateIslandComponent = ComponentType()
+GenerateIslandComponent.Name = "GenerateIsland"
+GenerateIslandComponent.SyncNetwork = true
+GenerateIslandComponent.TableType = TableType.Array
+GenerateIslandComponent:AddVariable("Map", ByteSize.String)
+GenerateIslandComponent:AddVariable("SizeX", ByteSize.Int)
+GenerateIslandComponent:AddVariable("SizeZ", ByteSize.Int)
+worldCreator:AddComponentType(GenerateIslandComponent)

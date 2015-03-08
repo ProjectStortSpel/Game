@@ -1462,7 +1462,13 @@ MapGenerator.GenerateIslandBelow = function(self)
 		end
 	end
 	
-	MapCreation.GenerateIslandMesh(self.MapSizeX, self.MapSizeZ, stringMap)
+	--MapCreation.GenerateIslandMesh(self.MapSizeX, self.MapSizeZ, stringMap)
+	local generateIsland = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("SyncNetwork", generateIsland)
+	world:CreateComponentAndAddTo("GenerateIsland", generateIsland)
+	world:GetComponent(generateIsland, "GenerateIsland", "Map"):SetString(stringMap)
+	world:GetComponent(generateIsland, "GenerateIsland", "SizeX"):SetInt(self.MapSizeX)
+	world:GetComponent(generateIsland, "GenerateIsland", "SizeZ"):SetInt(self.MapSizeZ)
 end
 
 

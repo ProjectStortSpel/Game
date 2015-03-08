@@ -15,6 +15,7 @@
 #include "Systems/AddTextToTextureSystem.h"
 #include "Systems/ParticleSystem.h"
 #include "Systems/SimulateFrameSpikeSystem.h"
+#include "Systems/GenerateIslandSystem.h"
 
 #include "Network/NetworkInstance.h"
 #include "ECSL/ECSL.h"
@@ -395,6 +396,10 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
         m_graphicalSystems.push_back(graphicalSystem);
         worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 
+		graphicalSystem = new GenerateIslandSystem(m_graphics, _worldType == WorldType::Client);
+		m_graphicalSystems.push_back(graphicalSystem);
+		worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
+
 		//graphicalSystem = new AModelSystem(m_graphics);
 		//m_graphicalSystems.push_back(graphicalSystem);
 		//worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
@@ -703,7 +708,6 @@ void GameCreator::StartGame(int argc, char** argv)
             if (m_clientWorld)
                 m_clientWorld->LogWorldData();
         }
-        
 
 		if (showDebugInfo)
 		{
