@@ -138,25 +138,30 @@ void ConsoleManager::ExecuteCommandQueue()
 	while (!m_commandQueue.empty())
 	{
 		// split commands if it contains ;
-		std::string s = m_commandQueue.front();
+        Command c = m_commandQueue.front();
+		std::string s = c.command;
 		std::string delimiter = ";";
 
 		size_t pos = 0;
 		std::string token;
-		while ((pos = s.find(delimiter)) != std::string::npos) {
+		while ((pos = s.find(delimiter)) != std::string::npos)
+        {
 			token = s.substr(0, pos);
-			ExecuteCommand(token.c_str());
+			ExecuteCommand(token.c_str(), c.history);
 			s.erase(0, pos + delimiter.length());
 		}
-		ExecuteCommand(s.c_str());
+		ExecuteCommand(s.c_str(), c.history);
 
 		m_commandQueue.pop();
 	}
 }
 
-void ConsoleManager::AddToCommandQueue(const char* _command)
+void ConsoleManager::AddToCommandQueue(const char* _command, bool _history)
 {
-	m_commandQueue.push(_command);
+    Command c;
+    c.command = _command;
+    c.history = _history;
+	m_commandQueue.push(c);
 }
 
 void ConsoleManager::AddToHistory(const char* _command)
@@ -165,7 +170,7 @@ void ConsoleManager::AddToHistory(const char* _command)
 	//m_history.push_back(_command);
 }
 
-void ConsoleManager::ExecuteCommand(const char* _command)
+void ConsoleManager::ExecuteCommand(const char* _command, bool _history)
 {
 	m_historyCounter = -1;
 
@@ -190,18 +195,21 @@ void ConsoleManager::ExecuteCommand(const char* _command)
 	for (int n = 0; n < strlen(command); ++n)
 		command[n] = tolower(command[n]);
 
-	AddMessage(_command);
+    if (_history)
+    {
+        AddMessage(_command);
 	
 
-	//if (m_history.size() > 8)
-	//	m_history.erase(m_history.begin());
-
-	if (m_commandHistory.size() > 8)
-		m_commandHistory.erase(m_commandHistory.begin());
-
-	//m_history.push_back(_command);
-	m_commandHistory.push_back(_command);
-
+        //if (m_history.size() > 8)
+        //	m_history.erase(m_history.begin());
+        
+        if (m_commandHistory.size() > 8)
+            m_commandHistory.erase(m_commandHistory.begin());
+        
+        //m_history.push_back(_command);
+        m_commandHistory.push_back(_command);
+    }
+    
 	if (m_consoleHooks.find(command) != m_consoleHooks.end())
 	{
 		std::vector<Argument> vec;

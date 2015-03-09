@@ -12,6 +12,13 @@ ParentComponent.TableType = TableType.Map
 ParentComponent.SyncNetwork = true
 ParentComponent:AddVariable("EntityId", ByteSize.Reference)
 worldCreator:AddComponentType(ParentComponent)
+-- Parent Component
+local ParentJointComponent = ComponentType()
+ParentJointComponent.Name = "ParentJoint"
+ParentJointComponent.TableType = TableType.Map
+ParentJointComponent.SyncNetwork = true
+ParentJointComponent:AddVariable("JointId", ByteSize.Int)
+worldCreator:AddComponentType(ParentJointComponent)
 -- isParent Component
 local IsParentComponent = ComponentType()
 IsParentComponent.Name = "IsParent"
@@ -46,3 +53,13 @@ SpinComponent:AddVariable("X", ByteSize.Float)
 SpinComponent:AddVariable("Y", ByteSize.Float)
 SpinComponent:AddVariable("Z", ByteSize.Float)
 worldCreator:AddComponentType(SpinComponent)
+
+-- GenerateIsland Component
+local GenerateIslandComponent = ComponentType()
+GenerateIslandComponent.Name = "GenerateIsland"
+GenerateIslandComponent.SyncNetwork = true
+GenerateIslandComponent.TableType = TableType.Array
+GenerateIslandComponent:AddVariable("Map", ByteSize.String)
+GenerateIslandComponent:AddVariable("SizeX", ByteSize.Int)
+GenerateIslandComponent:AddVariable("SizeZ", ByteSize.Int)
+worldCreator:AddComponentType(GenerateIslandComponent)

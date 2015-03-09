@@ -101,7 +101,7 @@ void GraphicsLow::Render()
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
-
+	
 	if (m_modelsForward.size() > 0)
 	{
 		//------FORWARD RENDERING--------------------------------------------
@@ -512,10 +512,15 @@ bool GraphicsLow::PreLoadModel(std::vector<std::string> _dirs, std::string _file
 
 	return true;
 }
-int GraphicsLow::LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color)
+int GraphicsLow::LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color, bool _castShadow, bool _isStatic)
 {
-	int modelID = m_modelIDcounter;
-	m_modelIDcounter++;
+	int modelID;
+
+	if (!_isStatic)
+	{
+		modelID = m_modelIDcounter;
+		m_modelIDcounter++;
+	}
 	
 	ModelToLoad* modelToLoad = new ModelToLoad();
 	modelToLoad->Dirs = _dirs;
@@ -523,7 +528,34 @@ int GraphicsLow::LoadModel(std::vector<std::string> _dirs, std::string _file, gl
 	modelToLoad->MatrixPtr = _matrixPtr;
 	modelToLoad->RenderType = _renderType;
 	modelToLoad->Color = _color;
-	m_modelsToLoad[modelID] = modelToLoad;
+	modelToLoad->CastShadow = _castShadow;
+
+	if (_isStatic)
+	{
+		for (std::map<int, std::vector<ModelToLoad*>>::iterator it = m_staticModelsToLoad.begin(); it != m_staticModelsToLoad.end(); it++)
+		{
+			if (!it->second.empty() &&
+				it->second[0]->Dirs == _dirs &&
+				it->second[0]->File == _file &&
+				it->second[0]->RenderType == _renderType &&
+				it->second[0]->CastShadow == _castShadow &&
+					(it->second[0]->Color == _color ||
+						(it->second[0]->Color[0] == _color[0] &&
+						 it->second[0]->Color[1] == _color[1] &&
+						 it->second[0]->Color[2] == _color[2])))
+			{
+				it->second.push_back(modelToLoad);
+				return it->first;
+			}
+		}
+
+		// If does not already exists
+		modelID = m_modelIDcounter;
+		m_modelIDcounter++;
+		m_staticModelsToLoad[modelID].push_back(modelToLoad);
+	}
+	else
+		m_modelsToLoad[modelID] = modelToLoad;
 
 	return modelID;
 }

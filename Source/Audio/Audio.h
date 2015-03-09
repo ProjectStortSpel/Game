@@ -1,6 +1,9 @@
 #ifndef AUDIO_H
 #define AUDIO_H
 
+#if defined(WIN32) && defined(_DEBUG)
+#include <VLD/vld.h>
+#endif
 #include <SDL/SDL.h>
 #include <string>
 #include <glm/glm.hpp>

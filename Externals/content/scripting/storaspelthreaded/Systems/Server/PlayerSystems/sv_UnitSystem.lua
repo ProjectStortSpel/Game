@@ -110,6 +110,15 @@ UnitSystem.EntitiesAdded = function(self, dt, entities)
 				Net.WriteFloat(id, g)
 				Net.WriteFloat(id, b)
 				Net.Send(id, ip, port)
+			else
+				-- CREATE TOTEM HAT ON AI
+				local totemHat = world:CreateNewEntity("totem".."Hat")
+				world:CreateComponentAndAddTo("Model", totemHat)
+				local model = world:GetComponent(totemHat, "Model", 0)
+				model:SetModel("totem", "totem", 0)
+				world:GetComponent(totemHat, "Color", 0):SetFloat3(r, g, b)
+				world:GetComponent(totemHat, "Parent", 0):SetInt(newEntityId)
+				world:GetComponent(totemHat, "ParentJoint", 0):SetInt(5)
 			end
 						
 		elseif world:EntityHasComponent(entity, "RemoveUnit") then

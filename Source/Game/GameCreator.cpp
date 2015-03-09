@@ -5,7 +5,6 @@
 #include "Systems/CameraSystem.h"
 #include "Systems/RotationSystem.h"
 #include "Systems/ModelSystem.h"
-#include "Systems/AModelSystem.h"
 #include "Systems/SyncEntitiesSystem.h"
 #include "Systems/RenderRemoveSystem.h"
 #include "Systems/ResetChangedSystem.h"
@@ -16,6 +15,7 @@
 #include "Systems/AddTextToTextureSystem.h"
 #include "Systems/ParticleSystem.h"
 #include "Systems/SimulateFrameSpikeSystem.h"
+#include "Systems/GenerateIslandSystem.h"
 
 #include "Network/NetworkInstance.h"
 #include "ECSL/ECSL.h"
@@ -375,10 +375,15 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 	//nms->SetConsole(&m_consoleManager);
 	
 	GraphicalSystem* graphicalSystem = 0;
+	graphicalSystem = new GenerateIslandSystem(m_graphics, _worldType == WorldType::Client);
+	m_graphicalSystems.push_back(graphicalSystem);
+	worldCreator.AddSystemGroup();
+	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
+
 	graphicalSystem = new PointlightSystem(m_graphics);
 	m_graphicalSystems.push_back(graphicalSystem);
 	
-	//worldCreator.AddSystemGroup();
+	worldCreator.AddSystemGroup();
 	worldCreator.AddLuaSystemToCurrentGroup(new SlerpRotationSystem());
 	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 
@@ -511,7 +516,7 @@ void GameCreator::RunStartupCommands(int argc, char** argv)
 			}
 
 			command[size - 1] = '\0';
-			Console::ConsoleManager::GetInstance().AddToCommandQueue(command);
+			Console::ConsoleManager::GetInstance().AddToCommandQueue(command, false);
 		}
 	}
 }
@@ -539,7 +544,7 @@ void GameCreator::StartGame(int argc, char** argv)
 
 	m_console = new GameConsole(m_graphics, m_serverWorld);
 
-	m_consoleInput.SetTextHook(std::bind(&Console::ConsoleManager::AddToCommandQueue, &m_consoleManager, std::placeholders::_1));
+	m_consoleInput.SetTextHook(std::bind(&Console::ConsoleManager::AddToCommandQueue, &m_consoleManager, std::placeholders::_1, std::placeholders::_2));
 	m_consoleInput.SetActive(false);
 	m_input->GetKeyboard()->StopTextInput();
 
@@ -704,7 +709,6 @@ void GameCreator::StartGame(int argc, char** argv)
             if (m_clientWorld)
                 m_clientWorld->LogWorldData();
         }
-        
 
 		if (showDebugInfo)
 		{
@@ -1137,6 +1141,7 @@ void GameCreator::ConsoleHostSettings(std::string _command, std::vector<Console:
 	m_serverWorld->SetComponent(id, "HostSettings", "Port", &port);
 	m_serverWorld->SetComponent(id, "HostSettings", "FillAI", &m_fillAI);
 	m_serverWorld->SetComponent(id, "HostSettings", "AllowSpectators", &m_allowSpectators);
+	m_serverWorld->SetComponent(id, "HostSettings", "ServerType", &serverType);
 
 
 	//gamemode.insert(0, std::string("gamemode "));

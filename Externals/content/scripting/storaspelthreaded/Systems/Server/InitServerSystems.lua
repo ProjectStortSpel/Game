@@ -93,6 +93,7 @@ package.path = package.path .. ";Systems/Server/CameraSystems/?.lua"
 require "sv_CameraInterestpointSystem"
 require "sv_CameraNewRoundSystem"
 require "sv_CameraMovePhaseSystem"
+require "sv_CameraFocusPlayerAtStartSystem"
 
 --	Misc Systems
 package.path = package.path .. ";Systems/Server/MiscSystems/?.lua"
@@ -105,6 +106,7 @@ require "sv_HostSettingsSystem"
 require "sv_OffsetUnitSystem"
 require "sv_FadeTreeSystem"
 require "sv_ChatSystem"
+require "sv_AddHatToPlayerSystem"
 
 --worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(LobbySystem)
@@ -176,6 +178,7 @@ worldCreator:AddSystemToCurrentGroup(PlayCardTimerSystem)
 worldCreator:AddSystemToCurrentGroup(CameraInterestpointSystem)
 worldCreator:AddSystemToCurrentGroup(CameraNewRoundSystem)
 worldCreator:AddSystemToCurrentGroup(CameraMovePhaseSystem)
+worldCreator:AddSystemToCurrentGroup(CameraFocusPlayerAtStartSystem)
 
 worldCreator:AddSystemToCurrentGroup(TotemPoleSystem)
 worldCreator:AddSystemToCurrentGroup(MoveTotemPieceSystem)
@@ -197,6 +200,8 @@ worldCreator:AddSystemToCurrentGroup(ClearServerSelectedSystem)	--	Temp
 worldCreator:AddSystemToCurrentGroup(FadeTreeSystem) -- TEMP
 worldCreator:AddSystemToCurrentGroup(FindSpawnpointSystem)
 worldCreator:AddSystemToCurrentGroup(ChatSystem)
+
+worldCreator:AddSystemToCurrentGroup(AddHatToPlayerSystem)
 
 --	Audio Systems
 package.path = package.path .. ";Systems/Server/AudioSystems/?.lua"

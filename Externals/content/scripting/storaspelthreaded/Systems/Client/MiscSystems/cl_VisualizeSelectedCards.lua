@@ -199,7 +199,7 @@ Net.Receive("Client.GetPlayerEntityId",
 		world:CreateComponentAndAddTo("UnitGhost", newId)
 		world:GetComponent(newId, "UnitGhost", "Id"):SetInt(serverId)
 		
-		world:GetComponent(newId, "Model", 0):SetModel("cavemenghost", "caveman", 1);
+		world:GetComponent(newId, "Model", 0):SetModel("cavemenghost", "caveman", 1, false);
 	end 
 )
 

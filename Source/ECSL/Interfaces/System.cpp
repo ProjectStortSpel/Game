@@ -291,3 +291,22 @@ void System::LogWorldData()
 {
 	DataLogger::GetInstance().LogWorldData();
 }
+
+void System::SetString(unsigned int _eId, const std::string& _componentType, const unsigned int _index, const char* _value)
+{
+	unsigned int componentTypeId = ECSL::ComponentTypeManager::GetInstance().GetTableId(_componentType);
+	SetString(_eId, componentTypeId, _index, _value);
+}
+void System::SetString(unsigned int _eId, unsigned int _componentTypeId, const unsigned int _index, const char* _value)
+{
+	m_dataManager->SetString(_eId, _componentTypeId, _index, _value);
+}
+std::string System::GetString(unsigned int _eId, const std::string& _componentType, const unsigned int _index)
+{
+	unsigned int componentTypeId = ECSL::ComponentTypeManager::GetInstance().GetTableId(_componentType);
+	return GetString(_eId, componentTypeId, _index);
+}
+std::string System::GetString(unsigned int _eId, unsigned int _componentTypeId, const unsigned int _index)
+{
+	return m_dataManager->GetString(_eId, _componentTypeId, _index);
+}

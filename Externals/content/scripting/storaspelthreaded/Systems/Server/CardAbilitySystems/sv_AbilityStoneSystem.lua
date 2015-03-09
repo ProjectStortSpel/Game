@@ -61,9 +61,9 @@ AbilityStoneSystem.UpdateLifeTime = function(self, entity)
 			world:RemoveComponentFrom("NotWalkable", parent)
 			world:KillEntity(stones[i])
 		else
-			local text = self:CreateElement("quad", "text", x, 1.51, z, 0.5, 0.5)
+			local text = self:CreateElement("quad", "text", x, 1.51, z, 0.46, 0.46)
 			world:CreateComponentAndAddTo("StoneTimerText", text)
-			self:AddTextToTexture("StoneText"..i, lifeSpan:GetInt(), 0, 1, 1, 0, text)
+			self:AddTextToTexture("StoneText"..i, lifeSpan:GetInt(), 0, 0.5, 0.5, 0.2, text)
 		end
 	
 		
