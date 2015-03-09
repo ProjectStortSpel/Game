@@ -63,15 +63,15 @@ AutoPickCards.StealCardsFrom = function(self, playerIndex)
 	end
 	
 	
-	print("DealingSettings AutoPickCards")
+	--print("DealingSettings AutoPickCards")
 	local DealingSettings = self:GetEntities("DealingSettings")
 	local cardsPerHand, cardsToPick = world:GetComponent(DealingSettings[1], "DealingSettings", 0):GetInt2(0)
-	print("DealingSettings AutoPickCards done")
+	--print("DealingSettings AutoPickCards done")
 	
 	--	Now pick the remaining cards from the 
 	--	"non-selected" cards
 	if nSelectedCards < cardsToPick then
-		print("Start to pick from non-selected!")
+		--print("Start to pick from non-selected!")
 		local	remainingCards 	= 	self:GetEntities("DealtCard")
 		for i = 1, #remainingCards do
 			
@@ -92,17 +92,17 @@ AutoPickCards.StealCardsFrom = function(self, playerIndex)
 		end
 	end
 	
-	print("Cards to kill: " .. #pickedCards)
+	--print("Cards to kill: " .. #pickedCards)
 	
 	--	Kill all picked cards
 	for	cardIndex = 1, #pickedCards do
 	
 		local action = world:GetComponent(pickedCards[cardIndex], "CardAction", "Action"):GetText()
 		local prio = world:GetComponent(pickedCards[cardIndex], "CardPrio", "Prio"):GetInt()
-		print("CardID: " .. pickedCards[cardIndex])
-		print("Index: " .. cardIndex)
-		print("Action: " .. action)
-		print("Prio: " .. prio)
+		--print("CardID: " .. pickedCards[cardIndex])
+		--print("Index: " .. cardIndex)
+		--print("Action: " .. action)
+		--print("Prio: " .. prio)
 	
 		world:RemoveComponentFrom("DealtCard", pickedCards[cardIndex])
 		
