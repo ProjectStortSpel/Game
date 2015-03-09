@@ -157,6 +157,12 @@ bool GraphicsHigh::InitShaders()
 	m_shadowShaderDeferred.AddShader("content/shaders/shadowShaderDeferredFS.glsl", GL_FRAGMENT_SHADER);
 	m_shadowShaderDeferred.FinalizeShaderProgram();
 
+	// ShadowShader animated deferred geometry
+	m_shadowShaderAnim.InitShaderProgram();
+	m_shadowShaderAnim.AddShader("content/shaders/shadowShaderAnimVS.glsl", GL_VERTEX_SHADER);
+	m_shadowShaderAnim.AddShader("content/shaders/shadowShaderAnimFS.glsl", GL_FRAGMENT_SHADER);
+	m_shadowShaderAnim.FinalizeShaderProgram();
+
 	return true;
 }
 void GraphicsHigh::InitRenderLists()
@@ -333,8 +339,8 @@ void GraphicsHigh::WriteShadowMapDepth()
 	glEnable(GL_POLYGON_OFFSET_FILL);
 	glPolygonOffset(4.5, 18000.0);
 
-	glActiveTexture(GL_TEXTURE10);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	//glActiveTexture(GL_TEXTURE10);
+	//glBindTexture(GL_TEXTURE_2D, 0);
 
 	mat4 shadowProjection = *m_shadowMap->GetProjectionMatrix();
 	//----Render deferred geometry-----------
@@ -405,7 +411,7 @@ void GraphicsHigh::WriteShadowMapDepth()
 	//------------------------------------------------
 
 	//----Animated
-	m_animationShader.UseProgram();
+	m_shadowShaderAnim.UseProgram();
 	//----DRAW MODELS
 	for (int i = 0; i < m_modelsAnimated.size(); i++)
 	{
@@ -422,7 +428,7 @@ void GraphicsHigh::WriteShadowMapDepth()
 		delete[] anim_data;
 
 		// DRAW MODEL
-		m_modelsAnimated[i].Draw((*m_shadowMap->GetViewMatrix()), shadowProjection, &m_animationShader);
+		m_modelsAnimated[i].DrawGeometry((*m_shadowMap->GetViewMatrix()), shadowProjection, &m_shadowShaderAnim);
 	}
 
 
@@ -557,22 +563,6 @@ void GraphicsHigh::Render()
 		m_modelsWaterCorners[i].Draw(viewMatrix, mat4(1));
 
 
-	//--------FORWARD RENDERING
-
-	//----Uniforms
-	m_forwardShader.UseProgram();
-	m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
-	m_forwardShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
-	m_forwardShader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
-	//----Lights
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
-	//----DRAW MODELS
-	for (int i = 0; i < m_modelsForward.size(); i++)
-		m_modelsForward[i].Draw(viewMatrix, mat4(1));
-
-
-
 	//--------PARTICLES---------
 	glEnable(GL_POINT_SPRITE);
 	glDepthMask(GL_FALSE);
@@ -585,7 +575,7 @@ void GraphicsHigh::Render()
 	{
 		Shader* thisShader = it->second->GetShaderPtr();
 		thisShader->UseProgram();
-		
+
 		thisShader->SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 
 		glEnable(GL_TEXTURE_2D);
@@ -604,6 +594,20 @@ void GraphicsHigh::Render()
 	glDepthMask(GL_TRUE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	//------------------------
+
+	//--------FORWARD RENDERING
+
+	//----Uniforms
+	m_forwardShader.UseProgram();
+	m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
+	m_forwardShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
+	m_forwardShader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
+	//----Lights
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
+	//----DRAW MODELS
+	for (int i = 0; i < m_modelsForward.size(); i++)
+		m_modelsForward[i].Draw(viewMatrix, mat4(1));
 
 
 	//--------VIEWSPACE RENDERING

@@ -147,6 +147,12 @@ void GraphicDevice::InitStandardShaders()
 	m_shadowShaderForward.AddShader("content/shaders/shadowShaderForwardFS.glsl", GL_FRAGMENT_SHADER);
 	m_shadowShaderForward.FinalizeShaderProgram();
 
+	// ShadowShader animated forward geometry
+	m_shadowShaderForwardAnim.InitShaderProgram();
+	m_shadowShaderForwardAnim.AddShader("content/shaders/shadowShaderForwardAnimVS.glsl", GL_VERTEX_SHADER);
+	m_shadowShaderForwardAnim.AddShader("content/shaders/shadowShaderForwardFS.glsl", GL_FRAGMENT_SHADER);
+	m_shadowShaderForwardAnim.FinalizeShaderProgram();
+
 	// SkyBox
 	m_skyBoxShader.InitShaderProgram();
 	m_skyBoxShader.AddShader("content/shaders/skyboxShaderVS.glsl", GL_VERTEX_SHADER);
@@ -170,6 +176,9 @@ void GraphicDevice::InitStandardBuffers()
 
 	//Shadow forward shader
 	m_shadowShaderForward.CheckUniformLocation("diffuseTex", 1);
+
+	//Shadow animated forward shader
+	m_shadowShaderForwardAnim.CheckUniformLocation("diffuseTex", 1);
 }
 bool GraphicDevice::InitSkybox()
 {
