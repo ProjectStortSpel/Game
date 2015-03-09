@@ -57,15 +57,12 @@ AddAISystem.EntitiesAdded = function(self, dt, entities)
 				return
 			end
 			
-			
-			--print("nu blir det ai")
 			local counterEntities = self:GetEntities("PlayerCounter")			
 			local mapSpecsEntities = self:GetEntities("MapSpecs")
-			local noOfPlayers = world:GetComponent(counterEntities[1], "PlayerCounter", "Players"):GetInt()
-			local noOfSpawnpoints = world:GetComponent(mapSpecsEntities[1], "MapSpecs", "NoOfSpawnpoints"):GetInt()
+			local noOfAIs = world:GetComponent(counterEntities[1], "PlayerCounter", "AIs"):GetInt(0)
+			local noOfPlayers = world:GetComponent(counterEntities[1], "PlayerCounter", "Players"):GetInt(0)
+			local noOfSpawnpoints = world:GetComponent(mapSpecsEntities[1], "MapSpecs", "NoOfSpawnpoints"):GetInt(0)
 			local availableSpawnsLeft = noOfSpawnpoints - noOfPlayers
-			
-			--print(noOfSpawnpoints, noOfPlayers, availableSpawnsLeft)
 			
 			if availableSpawnsLeft > 0 then
 			
@@ -75,6 +72,7 @@ AddAISystem.EntitiesAdded = function(self, dt, entities)
 				world:SetComponent(ais[i], "PlayerNumber", "Number", playerNumber)
 				
 				self:CounterComponentChanged(1, "Players")
+				self:CounterComponentChanged(1, "AIs")
 				availableSpawnsLeft = availableSpawnsLeft - 1
 				
 				world:CreateComponentAndAddTo("NeedUnit", ais[i])
@@ -103,12 +101,12 @@ AddAISystem.EntitiesAdded = function(self, dt, entities)
 					param:AddPosition(x, y)
 				end
 				
-				PotentialFieldHandler.InitPF(param, i, object, onTheSpotValue, weight, length, power)
+				PotentialFieldHandler.InitPF(param, playerNumber, object, onTheSpotValue, weight, length, power)
 				
 				-- Sum all the pfs.
-				PotentialFieldHandler.SumPFs(i)
+				PotentialFieldHandler.SumPFs(playerNumber)
 				
-				print("AI Added", i)
+				io.write("AI ", i, " Added. Player Nr: ", playerNumber, "\n")
 			else
 				world:KillEntity(ais[i])
 				print("Could not add AI, no spawnpoints left")
@@ -121,7 +119,7 @@ AddAISystem.CounterComponentChanged = function(self, _change, _component)
 	
 	local counterEntities = self:GetEntities("PlayerCounter")
 	local counterComp = world:GetComponent(counterEntities[1], "PlayerCounter", _component)
-	local number = counterComp:GetInt()
+	local number = counterComp:GetInt(0)
 	number = number + _change
 	world:SetComponent(counterEntities[1], "PlayerCounter", _component, number)
 end
