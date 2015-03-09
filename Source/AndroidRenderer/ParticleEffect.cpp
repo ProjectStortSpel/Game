@@ -6,9 +6,10 @@ ParticleEffect::ParticleEffect()
 {
 }
 
-ParticleEffect::ParticleEffect(const vec3 _pos, int _nParticles, float _lifeTime, float _scale, float _spriteSize, GLuint _texHandle, vec3 _color, Shader *_shaderProg)
+ParticleEffect::ParticleEffect(const vec3 _pos, const vec3 _vel, int _nParticles, float _lifeTime, vec3 _scale, float _spriteSize, GLuint _texHandle, vec3 _color, Shader *_shaderProg)
 {
 	m_pos = _pos;
+	m_vel = _vel;
 	m_nrParticles = std::min(_nParticles, 20);
 	m_scale = _scale;
 	m_spriteSize = _spriteSize;
