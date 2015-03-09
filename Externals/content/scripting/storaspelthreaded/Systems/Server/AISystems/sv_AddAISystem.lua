@@ -43,6 +43,7 @@ AddAISystem.EntitiesAdded = function(self, dt, entities)
 	
 	local ais = self:GetEntities("AI")
 	local voids = self:GetEntities("Void")
+	local nonWalkable = self:GetEntities("NonWalkable")
 	
 	for	i = 1, #ais do 
 		
@@ -86,27 +87,44 @@ AddAISystem.EntitiesAdded = function(self, dt, entities)
 				local length = 2
 				local power = 2
 				
-				--local bookIndex = DynamicScripting.LoadRuleBook("content/dynamicscripting/map.txt")
+				local bookIndex = DynamicScripting.LoadRuleBook("content/dynamicscripting/map.txt")
 				
-				--local fail = DynamicScripting.GenerateScript(playerNumber)
+				DynamicScripting.SetRuleBook( bookIndex );
 				
-				--local fail = DynamicScripting.GenerateScript()
+				local fail = DynamicScripting.GenerateScript(playerNumber)
 				
-				--local found, weight = DynamicScripting.GetWeightFrom(object, playerNumber)
+				local found, weight = DynamicScripting.GetWeightFrom("Void", playerNumber)
 				
 				--DynamicScripting.UpdateWeight(math.random())
-				
-				for j = 1, #voids do
+				if found then
+					for j = 1, #voids do
+						
+						local x, y = world:GetComponent(voids[j], "MapPosition", 0):GetInt2(0)
+						
+						param:AddPosition(x, y)
+					end
 					
-					local x, y = world:GetComponent(voids[j], "MapPosition", 0):GetInt2(0)
+					PotentialFieldHandler.InitPF(param, playerNumber, object, onTheSpotValue, weight, length, power)
 					
-					param:AddPosition(x, y)
 				end
 				
-				PotentialFieldHandler.InitPF(param, i, object, onTheSpotValue, weight, length, power)
+				found, weight = DynamicScripting.GetWeightFrom("NonWalkable", playerNumber)
+				
+				if found then
+					for j = 1, #nonWalkable do
+						
+						local x, y = world:GetComponent(nonWalkable[j], "MapPosition", 0):GetInt2(0)
+						
+						param:AddPosition(x, y)
+					end
+					
+					PotentialFieldHandler.InitPF(param, playerNumber, object, onTheSpotValue, weight, length, power)
+					
+					
+				end
 				
 				-- Sum all the pfs.
-				PotentialFieldHandler.SumPFs(i)
+				PotentialFieldHandler.SumPFs(playerNumber)
 				
 				print("AI Added", i)
 			else
