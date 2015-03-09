@@ -13,6 +13,18 @@ NewComponent.Name = "ToggleTree"
 NewComponent.TableType = TableType.Map
 worldCreator:AddComponentType(NewComponent)
 
+NewComponent = ComponentType()
+NewComponent.Name = "GlowCheckpoint"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("Stage", ByteSize.Int)
+worldCreator:AddComponentType(NewComponent)
+
+NewComponent = ComponentType()
+NewComponent.Name = "GlowingCheckpoint"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("Stage", ByteSize.Int)
+worldCreator:AddComponentType(NewComponent)
+
 
 NewComponent = ComponentType()
 NewComponent.Name = "Hat"
