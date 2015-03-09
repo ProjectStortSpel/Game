@@ -77,7 +77,7 @@ WeatherWindSystem.TickWeather = function(self, weatherEntity)
 			
 			local	tUnit	=	allUnits[i]
 			
-			if not world:EntityHasComponent(tUnit, "UnitDead") then
+			if not world:EntityHasComponent(tUnit, "UnitDead") and not world:EntityHasComponent(tUnit, "ActionGuard") then
 			
 				local	posX, posZ	=	world:GetComponent(tUnit, "MapPosition", "X"):GetInt2()
 				

@@ -252,14 +252,12 @@ bool GraphicsHigh::InitForward()
 }
 bool GraphicsHigh::InitRandomVector()
 {
-	int texSizeX, texSizeY;
 	m_randomVectors = GraphicDevice::AddTexture("content/textures/vectormap.png", GL_TEXTURE21);
 
 	return true;
 }
 bool GraphicsHigh::InitTextRenderer()
 {
-	int texSizeX, texSizeY;
 	GLuint m_textImage = GraphicDevice::AddTexture("content/textures/SimpleText.png", GL_TEXTURE20);
 	return m_textRenderer.Init(m_textImage, m_clientWidth, m_clientHeight);
 }

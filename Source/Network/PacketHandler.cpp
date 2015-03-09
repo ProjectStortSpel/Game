@@ -185,10 +185,11 @@ Packet* PacketHandler::EndPack(uint64_t _id)
 		{
 			// remove but dont deallocate
 			//might work
-			PacketSendInfo* to_be_deleted = m_packetSendInfoMap->at( _id );
-			m_packetSendInfoMap->erase(_id);
+			//PacketSendInfo* to_be_deleted = m_packetSendInfoMap->at( _id );
+			
 			//might work
-			delete to_be_deleted;
+			SAFE_DELETE(psi);
+			m_packetSendInfoMap->erase(_id);
 			SDL_UnlockMutex(m_sendLock);
 		}
 		else if(NET_DEBUG > 0)
