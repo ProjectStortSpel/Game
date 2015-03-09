@@ -153,8 +153,8 @@ namespace Renderer
 		virtual bool ActiveModel(int _id, bool _active){ return false; };  // TODO: no virtual
 
 		// ANIMATIONS
-		//glm::mat4 GetJointMatrix(int _modelId, int _jointId); // IN PC GD
-		//bool SetAnimation(int _modelId, int _animId, float _frameTime); // IN PC GD
+		glm::mat4 GetJointMatrix(int _modelId, int _jointId); // IN PC GD
+		bool SetAnimation(int _modelId, int _animId, float _frameTime); // IN PC GD
 
 		// TEXTURES
 		virtual bool ChangeModelTexture(int _id, std::string _fileDir, int _textureType = TEXTURE_DIFFUSE){ m_modelTextures.push_back({ _id, _fileDir, _textureType }); return false; };

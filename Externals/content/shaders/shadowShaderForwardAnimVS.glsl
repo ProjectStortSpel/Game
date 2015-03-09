@@ -10,14 +10,8 @@ layout( location = 6 ) in vec4 VertexJointWeight;
 uniform mat4 M;
 uniform mat4 V;
 uniform mat4 P;
-uniform mat3 NormalMatrix;
 
-out vec3 Normal;
-out vec3 Tan;
-out vec3 BiTan;
 out vec2 TexCoord;
-out vec3 ViewPos;
-out vec3 WorldPos;
 
 const int nrOfJoints = 36;
 uniform mat4 anim[nrOfJoints];
@@ -32,12 +26,7 @@ void main()
 	skin += anim[int(VertexJointIndex.z)] * weights.z;
 	skin += anim[int(VertexJointIndex.w)] * weights.w;
 
-	ViewPos = (V * M * vec4(VertexPosition, 1.0)).xyz;
-	WorldPos = (inverse(V) * vec4(ViewPos, 1.0)).xyz;
 	gl_Position = P * V * M * skin * vec4(VertexPosition, 1.0);
 
-	Normal = normalize( NormalMatrix * (skin * vec4(VertexNormal, 0.0)).xyz );
-	Tan = normalize( NormalMatrix * (skin * vec4(VertexTangent, 0.0)).xyz );
-	BiTan = normalize( NormalMatrix * (skin * vec4(VertexBiTangent, 0.0)).xyz );
 	TexCoord = VertexTexCoord;
 }

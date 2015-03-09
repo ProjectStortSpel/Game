@@ -19,7 +19,7 @@ void TextInput::Update()
 			INPUT->GetKeyboard()->GetKeyState(SDL_SCANCODE_KP_ENTER) == Input::InputState::PRESSED)
 		{
 			if (m_hook)
-				m_hook(m_text.c_str());
+				m_hook(m_text.c_str(), true);
 			INPUT->GetKeyboard()->ResetTextInput();			
 		}
 

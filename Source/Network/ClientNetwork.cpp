@@ -161,7 +161,7 @@ void ClientNetwork::Disconnect()
 
 	m_socket->ShutdownSocket(1);
 
-	NetSleep(10);
+	//NetSleep(10);
 
 	if(m_receiveThread->joinable())
 		m_receiveThread->join();
@@ -232,7 +232,7 @@ void ClientNetwork::Send(Packet* _packet)
 	}
 
 
-	float bytesSent = m_socket->Send((char*)_packet->Data, *_packet->Length);
+	int bytesSent = m_socket->Send((char*)_packet->Data, *_packet->Length);
 
 	if (bytesSent > 0)
 	{
@@ -360,7 +360,7 @@ void ClientNetwork::NetConnectionLost(NetConnection& _connection)
 
 	m_socket->ShutdownSocket(1);
 
-	NetSleep(10);
+	//NetSleep(10);
 
 	if (m_receiveThread->joinable())
 		m_receiveThread->join();

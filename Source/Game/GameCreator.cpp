@@ -516,7 +516,7 @@ void GameCreator::RunStartupCommands(int argc, char** argv)
 			}
 
 			command[size - 1] = '\0';
-			Console::ConsoleManager::GetInstance().AddToCommandQueue(command);
+			Console::ConsoleManager::GetInstance().AddToCommandQueue(command, false);
 		}
 	}
 }
@@ -544,7 +544,7 @@ void GameCreator::StartGame(int argc, char** argv)
 
 	m_console = new GameConsole(m_graphics, m_serverWorld);
 
-	m_consoleInput.SetTextHook(std::bind(&Console::ConsoleManager::AddToCommandQueue, &m_consoleManager, std::placeholders::_1));
+	m_consoleInput.SetTextHook(std::bind(&Console::ConsoleManager::AddToCommandQueue, &m_consoleManager, std::placeholders::_1, std::placeholders::_2));
 	m_consoleInput.SetActive(false);
 	m_input->GetKeyboard()->StopTextInput();
 
