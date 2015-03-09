@@ -561,6 +561,22 @@ void GraphicsHigh::Render()
 		m_modelsWaterCorners[i].Draw(viewMatrix, mat4(1));
 
 
+	
+
+	//--------FORWARD RENDERING
+
+	//----Uniforms
+	m_forwardShader.UseProgram();
+	m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
+	m_forwardShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
+	m_forwardShader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
+	//----Lights
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
+	//----DRAW MODELS
+	for (int i = 0; i < m_modelsForward.size(); i++)
+		m_modelsForward[i].Draw(viewMatrix, mat4(1));
+
 	//--------PARTICLES---------
 	glEnable(GL_POINT_SPRITE);
 	glDepthMask(GL_FALSE);
@@ -592,20 +608,6 @@ void GraphicsHigh::Render()
 	glDepthMask(GL_TRUE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	//------------------------
-
-	//--------FORWARD RENDERING
-
-	//----Uniforms
-	m_forwardShader.UseProgram();
-	m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
-	m_forwardShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
-	m_forwardShader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
-	//----Lights
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, m_dirLightBuffer);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
-	//----DRAW MODELS
-	for (int i = 0; i < m_modelsForward.size(); i++)
-		m_modelsForward[i].Draw(viewMatrix, mat4(1));
 
 
 	//--------VIEWSPACE RENDERING

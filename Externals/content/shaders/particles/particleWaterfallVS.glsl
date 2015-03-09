@@ -62,8 +62,8 @@ void render()
 	if(Time >= VertexStartTime)
 	{
 		sizeFactor = 1.0+(age/ParticleLifetime)*0.75;
-		if(age < 0.150)
-			Transp = age/0.150f - age/ParticleLifetime;
+		if(age < 0.250)
+			Transp = age/0.250f - age/ParticleLifetime;
 		else
 			Transp = 1.0 - age / ParticleLifetime;
 	}
@@ -73,7 +73,6 @@ void render()
 
 void main()
 {
-	//Accel = vec3(0.0); //vec3(0.01,0.0,0.0);
 	MVP = ProjectionMatrix * ModelView;
 	// This will call either render() or update()
 	RenderPass();
