@@ -5,7 +5,7 @@ ServerNetworkMessageSystem.Initialize = function(self)
 	--	Set Name
 	self:SetName("ServerNetworkMessageSystem")
 	
-	--self:UsingEntitiesAdded()
+	self:UsingEntitiesAdded()
 	
 	self:InitializeNetworkEvents()
 	
@@ -15,8 +15,57 @@ ServerNetworkMessageSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Player", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("PlayerCounter", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("MapSpecs", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("PlayerNameChanged", FilterType.RequiresOneOf)
 	
 	self:AddComponentTypeToFilter("SyncNetwork", FilterType.RequiresOneOf)
+end
+
+ServerNetworkMessageSystem.EntitiesAdded = function(self, dt, entities)
+	for n = 1, #entities do
+		local entity = entities[n]
+		
+		if world:EntityHasComponent(entity, "PlayerNameChanged") then
+		
+			local pnName	= world:GetComponent(entity, "PlayerNameChanged", "Name"):GetText()
+			local pnIp 		= world:GetComponent(entity, "PlayerNameChanged", "IpAddress"):GetText()
+			local pnPort 	= world:GetComponent(entity, "PlayerNameChanged", "Port"):GetInt()
+
+			local players = self:GetEntities("Player")
+			for i = 1, #players do
+				local ip 	= world:GetComponent(players[i], "NetConnection", "IpAddress"):GetText()
+				local port 	= world:GetComponent(players[i], "NetConnection", "Port"):GetInt()
+
+				if pnIp == ip and pnPort == pnPort then
+					print("Name: " .. pnName)
+					world:SetComponent(players[i], "PlayerName", "Name", pnName);
+					world:KillEntity(entity)
+				end
+	
+			end
+			
+		elseif world:EntityHasComponent(entity, "Player") then
+			
+			local ip 	= world:GetComponent(entity, "NetConnection", "IpAddress"):GetText()
+			local port 	= world:GetComponent(entity, "NetConnection", "Port"):GetInt()
+			
+			local changedNames = self:GetEntities("PlayerNameChanged")
+			for i = 1, #changedNames do
+				
+				local pnIp 		= world:GetComponent(changedNames[i], "PlayerNameChanged", "IpAddress"):GetText()
+				local pnPort 	= world:GetComponent(changedNames[i], "PlayerNameChanged", "Port"):GetInt()
+				local pnName	= world:GetComponent(changedNames[i], "PlayerNameChanged", "Name"):GetText()
+				
+				if ip == pnIp and port == pnPort then
+					world:SetComponent(entity, "PlayerName", "Name", pnName);
+					world:KillEntity(changedNames[i])
+				end
+				
+				
+			end
+			
+		end
+			
+	end
 end
 
 ServerNetworkMessageSystem.PostInitialize = function(self)
@@ -28,7 +77,6 @@ ServerNetworkMessageSystem.PostInitialize = function(self)
 	world:SetComponent(playerCounter, "PlayerCounter", "Players", 0)
 	world:SetComponent(playerCounter, "PlayerCounter", "Spectators", 0)
 end
-
 
 ServerNetworkMessageSystem.CounterComponentChanged = function(self, _change, _component)
 	
@@ -45,11 +93,8 @@ ServerNetworkMessageSystem.AddPlayer = function(self, _ip, _port, _spectator)
 	world:SetComponent(player, "NetConnection", "IpAddress", _ip)
 	world:SetComponent(player, "NetConnection", "Port", _port)
 	world:CreateComponentAndAddTo("ActiveNetConnection", player)
-	
-
 
 end
-
 
 ServerNetworkMessageSystem.OnPlayerConnected = function(self, _ip, _port, _message)
 
@@ -73,7 +118,7 @@ ServerNetworkMessageSystem.OnPlayerConnected = function(self, _ip, _port, _messa
 		
 			local ip = world:GetComponent(entities[i], "NetConnection", "IpAddress"):GetText()
 			local port = world:GetComponent(entities[i], "NetConnection", "Port"):GetInt()	
-
+			
 			if _ip == ip and _port == port then
 				world:CreateComponentAndAddTo("ActiveNetConnection", entities[i])
 				playerFound = true
@@ -246,3 +291,18 @@ ServerNetworkMessageSystem.OnPasswordInvalid = function(self, _ip, _port, _messa
 	print("ServerNetworkMessageSystem.OnPasswordInvalid - Not implemented!")
 end
 
+Net.Receive("SERVER_RECEIVE_PLAYER_NAME", 
+	function(id, ip, port)
+		
+		print("SERVER_RECEIVE_PLAYER_NAME")
+		
+		local name = Net.ReadString(id)
+
+		local newEntity = world:CreateNewEntity()
+		world:CreateComponentAndAddTo("PlayerNameChanged", newEntity)
+		world:SetComponent(newEntity, "PlayerNameChanged", "Name", name)
+		world:SetComponent(newEntity, "PlayerNameChanged", "IpAddress", ip)
+		world:SetComponent(newEntity, "PlayerNameChanged", "Port", port)
+		
+	end 
+)

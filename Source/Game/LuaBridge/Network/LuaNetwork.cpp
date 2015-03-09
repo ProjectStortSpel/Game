@@ -41,6 +41,7 @@ namespace LuaBridge
 		int Connect(lua_State* L);
 		int Disconnect(lua_State* L);
 		int IsConnected(lua_State* L);	
+		int Name(lua_State* L);
 		int ToClientID(lua_State* L);
 		int ToServerID(lua_State* L);
 
@@ -98,6 +99,7 @@ namespace LuaBridge
 			LuaEmbedder::AddFunction(L, "Connect", &Connect, "Net");
 			LuaEmbedder::AddFunction(L, "Disconnect", &Disconnect, "Net");
 			LuaEmbedder::AddFunction(L, "IsConnected", &IsConnected, "Net");
+			LuaEmbedder::AddFunction(L, "Name", &Name, "Net");
 
 			LuaEmbedder::AddFunction(L, "ToServerID", &ToServerID, "Net");
 			LuaEmbedder::AddFunction(L, "ToClientID", &ToClientID, "Net");
@@ -390,6 +392,20 @@ namespace LuaBridge
 		int IsConnected(lua_State* L)
 		{
 			LuaEmbedder::PushBool(L, NetworkInstance::GetClient()->IsConnected());
+			return 1;
+		}
+		int Name(lua_State* L)
+		{
+			std::string name = LuaEmbedder::PullString(L, 1);
+
+			if (name.length() > 0)
+			{
+				uint64_t id = NetworkInstance::GetClient()->GetPacketHandler()->StartPack("LuaPacket");
+				NetworkInstance::GetClient()->GetPacketHandler()->WriteString(id, name.c_str());
+				Network::Packet* packet = NetworkInstance::GetClient()->GetPacketHandler()->EndPack(id);
+				NetworkInstance::GetClient()->Send(packet);
+			}
+			LuaEmbedder::PushString(L, name);
 			return 1;
 		}
 		int ToServerID(lua_State* L)

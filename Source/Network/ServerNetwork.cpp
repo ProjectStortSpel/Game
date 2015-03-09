@@ -570,7 +570,6 @@ void ServerNetwork::SetOnServerShutdown(NetEvent& _function)
 }
 
 
-
 void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection)
 {
 	char type = _packetHandler->GetNetTypeMessageId(_id);

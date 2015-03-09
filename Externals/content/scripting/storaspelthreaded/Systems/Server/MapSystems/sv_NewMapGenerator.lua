@@ -1223,8 +1223,6 @@ MapGenerator.CreateEdgePiece = function(self, X, Z, isCorner, EdgeDirection)
 			if self:GetTileType(X+dirX, Z+dirZ) == self.Void then
 				
 				local	tDirX, tDirZ	=	self:GetRiverDirection(self.RiverUp + EdgeDirection)
-				print("dirX: " .. dirX .. ", " .. dirZ)
-				print("tDir: " .. tDirX .. ", " .. tDirZ)
 				if tDirX == dirX and tDirZ == dirZ then
 					world:GetComponent(newEdge, "Model", 0):SetModel("edgeriver", "edgeriver", 1)
 				else
