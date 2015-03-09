@@ -7,6 +7,8 @@
 
 #include "TextureLoader.h"
 
+#include "ModelExporter.h"
+
 using namespace Renderer;
 using namespace glm;
 
@@ -235,6 +237,10 @@ bool GraphicDevice::SetAnimation(int _modelId, int _animId, float _frameTime)
 {
 	return false;
 }
+glm::mat4 GraphicDevice::GetJointMatrix(int _modelId, int _jointId)
+{
+	return glm::mat4(1);
+}
 
 GLuint GraphicDevice::AddTexture(std::string _fileDir, GLenum _textureSlot)
 {
@@ -335,7 +341,8 @@ bool GraphicDevice::BufferModelTexture(int _id, std::string _fileDir, int _textu
 				m_modelsForward[i].id,
 				m_modelsForward[i].active,
 				m_modelsForward[i].modelMatrix,
-				m_modelsForward[i].color
+				m_modelsForward[i].color,
+				m_modelsForward[i].castShadow
 				);
 			found = true;
 			renderType = RENDER_FORWARD;
@@ -357,7 +364,8 @@ bool GraphicDevice::BufferModelTexture(int _id, std::string _fileDir, int _textu
 					m_modelsViewspace[i].id,
 					m_modelsViewspace[i].active,
 					m_modelsViewspace[i].modelMatrix,
-					m_modelsViewspace[i].color
+					m_modelsViewspace[i].color,
+					false
 					);
 				found = true;
 				renderType = RENDER_VIEWSPACE;
@@ -380,7 +388,8 @@ bool GraphicDevice::BufferModelTexture(int _id, std::string _fileDir, int _textu
 					m_modelsInterface[i].id,
 					m_modelsInterface[i].active,
 					m_modelsInterface[i].modelMatrix,
-					m_modelsInterface[i].color
+					m_modelsInterface[i].color,
+					false
 					);
 				found = true;
 				renderType = RENDER_INTERFACE;
@@ -493,7 +502,7 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	// Import Mesh
 	Buffer* mesh = AddMesh(obj.mesh, shaderPtr);
 
-	Model model = Model(mesh, texture, normal, specular, _modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color); // plus modelID o matrixPointer, active
+	Model model = Model(mesh, texture, normal, specular, _modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color, _modelToLoad->CastShadow); // plus modelID o matrixPointer, active
 
 
 	// Push back the model
@@ -565,7 +574,7 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoa
 	// Import Mesh
 	Buffer* mesh = AddMesh(_modelToLoad, shaderPtr);
 
-	Model model = Model(mesh, texture, normal, specular, _modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color); // plus modelID o matrixPointer, active
+	Model model = Model(mesh, texture, normal, specular, _modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color, _modelToLoad->CastShadow); // plus modelID o matrixPointer, active
 
 
 	// Push back the model
@@ -581,6 +590,8 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoa
 
 void GraphicDevice::BufferModels()
 {
+	for (auto pair : m_staticModelsToLoad)
+		BufferStaticModel(pair);
 	for (auto pair : m_modelsToLoad)
 	{
 		BufferModel(pair.first, pair.second);
@@ -593,6 +604,7 @@ void GraphicDevice::BufferModels()
 	}
 	m_modelsToLoad.clear();
 	m_modelsToLoadFromSource.clear();
+	m_staticModelsToLoad.clear();
 }
 
 void GraphicDevice::BufferLightsToGPU_GD()
@@ -792,6 +804,7 @@ void GraphicDevice::Clear()
 {
 	m_modelIDcounter = 0;
 
+	SDL_Log("Clearing lists");
 	m_modelsForward.clear();
 	m_modelsViewspace.clear();
 	m_modelsInterface.clear();
@@ -802,15 +815,22 @@ void GraphicDevice::Clear()
 	BufferPointlights(0, tmpPtr);
 	delete[] tmpPtr;
 
+	SDL_Log("Deleting pointlights");
 	if (m_pointlightsPtr)
 		delete[] m_pointlightsPtr;
 
 	m_pointlightsPtr = NULL;
 	m_directionalLightPtr = NULL;
 
+	SDL_Log("Deleting particle effects");
 	for (std::map<int, ParticleEffect*>::iterator it = m_particleEffects.begin(); it != m_particleEffects.end(); ++it)
+	{
 		delete(it->second);
+		SDL_Log("HEJ!");
+	}
+		
 	m_particleEffects.clear();
+	SDL_Log("Done!");
 }
 
 void GraphicDevice::CreateFullscreenQuad()
@@ -833,4 +853,79 @@ void GraphicDevice::CreateFullscreenQuad()
 
 	//glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
 	//glEnableVertexAttribArray(0);
+}
+
+void GraphicDevice::BufferStaticModel(std::pair<int, std::vector<ModelToLoad*>> _staticModel)
+{
+	ObjectData obj = ModelLoader::importObject(_staticModel.second[0]->Dirs, _staticModel.second[0]->File);
+
+	ModelExporter modelExporter;
+	modelExporter.OpenFileForRead(obj.mesh.c_str());
+	std::vector<float> positionData = modelExporter.ReadDataFromFile();
+	std::vector<float> normalData = modelExporter.ReadDataFromFile();
+	std::vector<float> tanData = modelExporter.ReadDataFromFile();
+	std::vector<float> bitanData = modelExporter.ReadDataFromFile();
+	std::vector<float> texCoordData = modelExporter.ReadDataFromFile();
+	modelExporter.CloseFile();
+
+	ModelToLoadFromSource* modelToLoadFromSource = new ModelToLoadFromSource();
+
+	modelToLoadFromSource->positions.resize(_staticModel.second.size() * positionData.size());
+	modelToLoadFromSource->normals.resize(_staticModel.second.size() * normalData.size());
+	modelToLoadFromSource->tangents.resize(_staticModel.second.size() * tanData.size());
+	modelToLoadFromSource->bitangents.resize(_staticModel.second.size() * bitanData.size());
+	modelToLoadFromSource->texCoords.resize(_staticModel.second.size() * texCoordData.size());
+
+	unsigned int vertexCount = (unsigned int)positionData.size() / 3;
+	for (unsigned int i = 0; i < (unsigned int)_staticModel.second.size(); ++i)
+	{
+		glm::mat4 model = *_staticModel.second[i]->MatrixPtr;
+		glm::mat4 transposeInverseModel = glm::transpose(glm::inverse(model));
+
+		for (unsigned int j = 0; j < vertexCount; ++j)
+		{
+			glm::vec4 position = glm::vec4(positionData[j * 3], positionData[j * 3 + 1], positionData[j * 3 + 2], 1.0f);
+			glm::vec4 normal = glm::vec4(normalData[j * 3], normalData[j * 3 + 1], normalData[j * 3 + 2], 0.0f);
+			glm::vec4 tangent = glm::vec4(tanData[j * 3], tanData[j * 3 + 1], tanData[j * 3 + 2], 0.0f);
+			glm::vec4 bitangent = glm::vec4(bitanData[j * 3], bitanData[j * 3 + 1], bitanData[j * 3 + 2], 0.0f);
+			glm::vec2 texCoord = glm::vec2(texCoordData[j * 2], texCoordData[j * 2 + 1]);
+
+			position = model * position;
+			normal = transposeInverseModel * normal;
+			tangent = transposeInverseModel * tangent;
+			bitangent = transposeInverseModel * bitangent;
+
+			modelToLoadFromSource->positions[i * vertexCount * 3 + j * 3 + 0] = position[0];
+			modelToLoadFromSource->positions[i * vertexCount * 3 + j * 3 + 1] = position[1];
+			modelToLoadFromSource->positions[i * vertexCount * 3 + j * 3 + 2] = position[2];
+			modelToLoadFromSource->normals[i * vertexCount * 3 + j * 3 + 0] = normal[0];
+			modelToLoadFromSource->normals[i * vertexCount * 3 + j * 3 + 1] = normal[1];
+			modelToLoadFromSource->normals[i * vertexCount * 3 + j * 3 + 2] = normal[2];
+			modelToLoadFromSource->tangents[i * vertexCount * 3 + j * 3 + 0] = tangent[0];
+			modelToLoadFromSource->tangents[i * vertexCount * 3 + j * 3 + 1] = tangent[1];
+			modelToLoadFromSource->tangents[i * vertexCount * 3 + j * 3 + 2] = tangent[2];
+			modelToLoadFromSource->bitangents[i * vertexCount * 3 + j * 3 + 0] = bitangent[0];
+			modelToLoadFromSource->bitangents[i * vertexCount * 3 + j * 3 + 1] = bitangent[1];
+			modelToLoadFromSource->bitangents[i * vertexCount * 3 + j * 3 + 2] = bitangent[2];
+			modelToLoadFromSource->texCoords[i * vertexCount * 2 + j * 2 + 0] = texCoord[0];
+			modelToLoadFromSource->texCoords[i * vertexCount * 2 + j * 2 + 1] = texCoord[1];
+		}
+	}
+
+	*_staticModel.second[0]->MatrixPtr = glm::mat4(1.0f);
+
+	char nameBuffer[16];
+	sprintf(nameBuffer, "Static%d", _staticModel.first);
+	modelToLoadFromSource->key = std::string(nameBuffer);
+	modelToLoadFromSource->diffuseTextureFilepath = obj.text;
+	modelToLoadFromSource->normalTextureFilepath = obj.norm;
+	modelToLoadFromSource->specularTextureFilepath = obj.spec;
+	modelToLoadFromSource->MatrixPtr = _staticModel.second[0]->MatrixPtr;
+	modelToLoadFromSource->RenderType = _staticModel.second[0]->RenderType;
+	modelToLoadFromSource->Color = _staticModel.second[0]->Color;
+	modelToLoadFromSource->CastShadow = _staticModel.second[0]->CastShadow;
+	m_modelsToLoadFromSource[_staticModel.first] = modelToLoadFromSource;
+
+	for (ModelToLoad* modelToLoad : _staticModel.second)
+		delete modelToLoad;
 }

@@ -99,6 +99,7 @@ int LoadMap(lua_State* L)
 	model.RenderType = 0;
 	model.Color = g_meshCreatorColor;
 	model.MatrixPtr = &g_meshCreatorMatrix;
+	model.CastShadow = false;
 	g_meshCreatorIndex = LuaBridge::LuaGraphicDevice::GetGraphicDevice()->LoadModel(&model);
 
 	return 3;
@@ -139,6 +140,7 @@ int GenerateIslandMesh(lua_State* L)
 	model.RenderType = 0;
 	model.Color = g_meshCreatorColor;
 	model.MatrixPtr = &g_meshCreatorMatrix;
+	model.CastShadow = false;
 	g_meshCreatorIndex = LuaBridge::LuaGraphicDevice::GetGraphicDevice()->LoadModel(&model);
 
 	return 3;

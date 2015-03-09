@@ -76,7 +76,7 @@ void AModel::Update(float _dt)
 
 		Animation* animptr = &animations[animId];
 		for (int i = 0; i < animptr->joints.size(); i++)
-			anim[i] = animptr->joints[i].frames[currentframe];
+			anim[i] = extra[i] * animptr->joints[i].frames[currentframe];
 	}
 }
 

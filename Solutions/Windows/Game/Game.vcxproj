@@ -247,9 +247,9 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClCompile Include="..\..\..\Source\Game\ResourceManager.cpp" />
     <ClCompile Include="..\..\..\Source\Game\RuleManager.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\AddTextToTextureSystem.cpp" />
-    <ClCompile Include="..\..\..\Source\Game\Systems\AModelSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\CameraSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\DirectionalLightSystem.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\Systems\GenerateIslandSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\MasterServerSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\ModelSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\ParticleSystem.cpp" />
@@ -314,9 +314,9 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClInclude Include="..\..\..\Source\Game\ResourceManager.h" />
     <ClInclude Include="..\..\..\Source\Game\RuleManager.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\AddTextToTextureSystem.h" />
-    <ClInclude Include="..\..\..\Source\Game\Systems\AModelSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\CameraSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\DirectionalLightSystem.h" />
+    <ClInclude Include="..\..\..\Source\Game\Systems\GenerateIslandSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\MasterServerSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\ModelSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\ParticleSystem.h" />

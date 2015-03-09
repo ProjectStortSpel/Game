@@ -90,7 +90,7 @@ DealCardsSystem.DealCards = function (self, numCards)
 		local ip = world:GetComponent(players[i], "NetConnection", "IpAddress"):GetText()
 		local port = world:GetComponent(players[i], "NetConnection", "Port"):GetInt()
 		
-		Cards.MoveCount, Cards.TurnCount, Cards.AbilityCount = self:CalculateCardTypeBalance(numCards)
+		Cards.MoveCount, Cards.TurnCount, Cards.AbilityCount = self:CalculateCardTypeBalance(numCards, Cards.MoveLeft, Cards.TurnLeft, Cards.AbilityLeft)
 		for j = 1, Cards.MoveCount do
 			Cards.MoveLeft = self:DealCardToPlayer(Cards.Move, Cards.MoveLeft, players[i], ip, port)
 		end
@@ -110,7 +110,7 @@ DealCardsSystem.DealCards = function (self, numCards)
 			world:RemoveComponentFrom("HasSelectedCards", aiPlayers[i])
 		end
 		
-		Cards.MoveCount, Cards.TurnCount, Cards.AbilityCount = self:CalculateCardTypeBalance(numCards)
+		Cards.MoveCount, Cards.TurnCount, Cards.AbilityCount = self:CalculateCardTypeBalance(numCards, Cards.MoveLeft, Cards.TurnLeft, Cards.AbilityLeft)
 		for j = 1, Cards.MoveCount do
 			Cards.MoveLeft = self:DealCardToAI(Cards.Move, Cards.MoveLeft, aiPlayers[i])
 		end
@@ -157,7 +157,7 @@ DealCardsSystem.DealCardToAI = function(self, cards, cardsLeft, ai)
 	return cardsLeft - 1
 end
 
-DealCardsSystem.CalculateCardTypeBalance = function(self, numCards)
+DealCardsSystem.CalculateCardTypeBalance = function(self, numCards, moveCardsLeft, turnCardsLeft, abilityCardsLeft)
 	local CardCount = { }
 	CardCount.__mode = "k"
 	
@@ -167,9 +167,9 @@ DealCardsSystem.CalculateCardTypeBalance = function(self, numCards)
 	-- The values below are (sort of) percentage-based. Change them to balance the cards dealt! --
 	----------------------------------------------------------------------------------------------
 	CardCount.MoveCardCountMin = math.ceil(0.3 * CardCount.Remaining) -- 3 / 2
-	CardCount.MoveCardCountMax = math.ceil(0.7 * CardCount.Remaining) -- 6 / 4
+	CardCount.MoveCardCountMax = math.ceil(0.6 * CardCount.Remaining) -- 5 / 3
 	
-	CardCount.TurnCardCountMin = math.ceil(0.2 * CardCount.Remaining) -- 2 / 1
+	CardCount.TurnCardCountMin = math.ceil(0.3 * CardCount.Remaining) -- 3 / 2
 	CardCount.TurnCardCountMax = math.ceil(0.5 * CardCount.Remaining) -- 4 / 3
 	
 	CardCount.AbilityCardCountMin = math.ceil(0.0 * CardCount.Remaining) -- 0 / 0
@@ -197,6 +197,18 @@ DealCardsSystem.CalculateCardTypeBalance = function(self, numCards)
 	end
 	
 	CardCount.AbilityCardCount = math.random(CardCount.AbilityCardCountMin, CardCount.AbilityCardCountMax)
+	
+	if CardCount.MoveCardCount > moveCardsLeft then
+		CardCount.TurnCardCount = CardCount.TurnCardCount + CardCount.MoveCardCount - moveCardsLeft
+		CardCount.MoveCardCount = moveCardsLeft
+	end
+	if CardCount.TurnCardCount > turnCardsLeft then
+		CardCount.AbilityCardCount = CardCount.AbilityCardCount + CardCount.TurnCardCount - turnCardsLeft
+		CardCount.TurnCardCount = turnCardsLeft
+	end
+	if CardCount.AbilityCardCount > abilityCardsLeft then
+		CardCount.AbilityCardCount = abilityCardsLeft
+	end
 	
 	return CardCount.MoveCardCount, CardCount.TurnCardCount, CardCount.AbilityCardCount
 end

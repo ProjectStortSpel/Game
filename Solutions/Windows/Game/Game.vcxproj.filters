@@ -93,6 +93,9 @@
     <Filter Include="Game\Profilers\Systems\ParticleSystem">
       <UniqueIdentifier>{b9d97fa0-3180-4175-bdbb-35be7ebbf5f7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Profilers\Systems\Island">
+      <UniqueIdentifier>{b9c90f9b-a195-4eeb-ada8-8dffb2d26158}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\LuaBridge.cpp">
@@ -242,9 +245,6 @@
     <ClCompile Include="..\..\..\Source\Game\Pathfinder.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\Game\Systems\AModelSystem.cpp">
-      <Filter>Game\Profilers\Systems\Model</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\Systems\AddTextToTextureSystem.cpp">
       <Filter>Game\Profilers\Systems\Render</Filter>
     </ClCompile>
@@ -292,6 +292,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Game\RuleManager.cpp">
       <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\Systems\GenerateIslandSystem.cpp">
+      <Filter>Game\Profilers\Systems\Island</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -439,9 +442,6 @@
     <ClInclude Include="..\..\..\Source\Game\Pathfinder.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\Game\Systems\AModelSystem.h">
-      <Filter>Game\Profilers\Systems\Model</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\AddTextToTextureSystem.h">
       <Filter>Game\Profilers\Systems\Render</Filter>
     </ClInclude>
@@ -490,6 +490,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\RuleManager.h">
       <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\Systems\GenerateIslandSystem.h">
+      <Filter>Game\Profilers\Systems\Island</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
