@@ -27,7 +27,7 @@ MapGenerator.Initialize = function(self)
 end
 
 MapGenerator.EntitiesAdded = function(self, dt, entities)
-	self:GenerateMap(1651654, 4, 4)
+	self:GenerateMap(1651654, 10, 10)
 end
 
 MapGenerator.PostInitialize = function(self)
