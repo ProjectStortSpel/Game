@@ -19,6 +19,7 @@ require "cl_GameMenuSystem"
 require "cl_GameInterfaceSystem"
 require "cl_PickingTimerSystem"
 require "cl_NotificationSystem"
+require "cl_ScoreboardSystem"
 
 --	Card Systems
 package.path = package.path .. ";Systems/Client/CardSystems/?.lua"
@@ -60,6 +61,7 @@ worldCreator:AddSystemToCurrentGroup(SortSelectedCardsSystem)
 worldCreator:AddSystemToCurrentGroup(GameMenuSystem)
 worldCreator:AddSystemToCurrentGroup(CardHoverSystem)
 worldCreator:AddSystemToCurrentGroup(PlayerNameSystem)
+worldCreator:AddSystemToCurrentGroup(ScoreboardSystem)
 --worldCreator:AddSystemToCurrentGroup(ClientAbilityStoneSystem)
 
 worldCreator:AddSystemToCurrentGroup(LobbySystem)
