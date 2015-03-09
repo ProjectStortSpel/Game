@@ -710,11 +710,12 @@ void GraphicDevice::SortModelsBasedOnDepth(std::vector<Model>* models)
 	std::sort(models->begin(), models->end(), sort_depth());
 }
 
-void GraphicDevice::AddParticleEffect(std::string _name, const vec3 _pos, int _nParticles, float _lifeTime, float _scale, float _spriteSize, std::string _texture, vec3 _color, int &_id)
+void GraphicDevice::AddParticleEffect(std::string _name, const vec3 _pos, const vec3 _vel, int _nParticles, float _lifeTime, vec3 _scale, float _spriteSize, std::string _texture, vec3 _color, int &_id)
 {
 	ParticleSystemToLoad tmpSystem;
 	tmpSystem.Name = _name;
 	tmpSystem.Pos = _pos;
+	tmpSystem.Vel = _vel;
 	tmpSystem.NrOfParticles = _nParticles;
 	tmpSystem.LifeTime = _lifeTime;
 	tmpSystem.Scale = _scale;
