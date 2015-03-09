@@ -5,7 +5,7 @@
 #include <functional>
 #include "Input/InputWrapper.h"
 
-typedef std::function<void(const char*)> TextHook;
+typedef std::function<void(const char*, bool)> TextHook;
 
 class TextInput
 {

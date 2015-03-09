@@ -50,12 +50,18 @@ namespace Console
 	class DECLSPEC ConsoleManager
 	{
 	private:
-
+        
+        struct Command
+        {
+            std::string command;
+            bool history;
+        };
+        
 		std::map<std::string, ConsoleHook> m_consoleHooks;
 		std::vector<std::string> m_history;
 		std::vector<std::string> m_commandHistory;
 		std::string m_match;
-		std::queue<std::string> m_commandQueue;
+		std::queue<Command> m_commandQueue;
 
 		bool ParseArgs(char* _args, std::vector<Argument>* _vector);
 
@@ -66,7 +72,7 @@ namespace Console
 		bool m_open;
 
 
-		void ExecuteCommand(const char* _command);
+		void ExecuteCommand(const char* _command, bool _history);
 	public:
 
 		ConsoleManager();
@@ -74,7 +80,7 @@ namespace Console
 		static ConsoleManager& GetInstance();
 		
 		void ExecuteCommandQueue();
-		void AddToCommandQueue(const char* _command);
+		void AddToCommandQueue(const char* _command, bool _history);
 		void AddToHistory(const char* _command);
 		void AddCommand(const char* _name, ConsoleHook _hook);
 		void RemoveCommand(const char* _name);
