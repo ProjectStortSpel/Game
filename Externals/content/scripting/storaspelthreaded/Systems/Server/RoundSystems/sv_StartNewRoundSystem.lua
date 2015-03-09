@@ -12,20 +12,38 @@ StartNewRoundSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("UnitSelectedCards", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("Unit", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("NotifyStartNewRound", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("PlayerCounter", FilterType.RequiresOneOf)
 end
 
 StartNewRoundSystem.EntitiesAdded = function(self, dt, entities)
+	
 	local onlyOnce = true
+	local counterEntities = self:GetEntities("PlayerCounter")
+	local counterComp = world:GetComponent(counterEntities[1], "PlayerCounter", 0)
+	local noOfAIs = counterComp:GetInt(0)
+	local noOfPlayers = counterComp:GetInt(1)
+	
+	local onlyAIs = false
+	
+	if noOfAIs == noOfPlayers then
+		onlyAIs = true
+	end
+	
 	for n = 1, #entities do
 		local entity = entities[n]
 		if world:EntityHasComponent(entity, "NotifyStartNewRound") then
 			local numReadyUnits = #self:GetEntities("UnitSelectedCards")
 			local units = self:GetEntities("Unit")
 	
-			--print("NumReadyUnits: " .. numReadyUnits)
-			--print("NumUnits: " .. #units)
+			
+			if not onlyAIs then
+				numReadyUnits = numReadyUnits + noOfAIs
+			end
+			
+			print("NumReadyUnits: " .. numReadyUnits)
+			print("NoOfPlayers: " .. noOfPlayers)
 
-			if numReadyUnits == #units and onlyOnce then
+			if noOfPlayers <= numReadyUnits and onlyOnce then
 			
 				local id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo("NewRound", id)
