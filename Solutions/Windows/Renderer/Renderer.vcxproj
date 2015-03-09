@@ -75,8 +75,11 @@
     <None Include="..\..\..\Externals\content\shaders\particles\particleSmokeVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\riverCornerFS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\riverShaderVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\shadowShaderAnimFS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\shadowShaderAnimVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\shadowShaderDeferredFS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\shadowShaderDeferredVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\shadowShaderForwardAnimVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\shadowShaderForwardFS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\shadowShaderForwardVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\SimpleText.glsl" />

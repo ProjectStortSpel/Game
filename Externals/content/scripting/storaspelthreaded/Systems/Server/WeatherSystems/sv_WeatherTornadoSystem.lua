@@ -11,7 +11,7 @@ WeatherTornadoSystem.Initialize = function(self)
 	self:UsingEntitiesAdded()
 
 	--	Set Filter
-	self:AddComponentTypeToFilter("NewStep", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("MoveRiver", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("DealCards", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("WeatherTornado", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("TestMoveSuccess",FilterType.RequiresOneOf)
@@ -39,7 +39,7 @@ WeatherTornadoSystem.EntitiesAdded = function(self, dt, newEntities)
 			world:KillEntity(tEntity)
 		end
 		
-		if world:EntityHasComponent(tEntity, "NewStep") then
+		if world:EntityHasComponent(tEntity, "MoveRiver") then
 			for i = 1, #self.TornadoIds do
 				self:MoveTornado(self.TornadoIds[i])
 				
@@ -233,6 +233,11 @@ WeatherTornadoSystem.CheckCollision = function(self, id, unit)
 	
 	if posX == playerX and posZ == playerZ then
 		print("COLLISION WITH A PLAYER. YOU SPIN ME RIGHT ROUND, BABY RIGHT ROUND!")
+		
+		if world:EntityHasComponent(unit, "ActionGuard") then
+			return
+		end
+		
 		if not world:EntityHasComponent(unit, "Spin") then
 		
 			world:CreateComponentAndAddTo("Spin", unit)
@@ -264,11 +269,7 @@ WeatherTornadoSystem.CheckCollision = function(self, id, unit)
 				dirX = 0
 				dirZ = -1
 			end
-			
-			print("Collision")
-			print("dirX: " .. dirX)
-			print("dirZ: " .. dirZ)
-			
+
 			world:GetComponent(unit, "Direction", 0):SetInt2(dirX,dirZ)
 
 		end
