@@ -252,5 +252,14 @@
     <None Include="..\..\..\Externals\content\shaders\CSDeferredPass2.glsl">
       <Filter>shaders</Filter>
     </None>
+    <None Include="..\..\..\Externals\content\shaders\shadowShaderAnimFS.glsl">
+      <Filter>shaders\Shadow</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\shadowShaderAnimVS.glsl">
+      <Filter>shaders\Shadow</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\shadowShaderForwardAnimVS.glsl">
+      <Filter>shaders\Shadow</Filter>
+    </None>
   </ItemGroup>
 </Project>
