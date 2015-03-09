@@ -18,6 +18,9 @@
     <ClCompile Include="..\..\..\Source\AndroidRenderer\Smoke.cpp">
       <Filter>ParticleEffects</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\AndroidRenderer\AModel.cpp">
+      <Filter>Source\Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\AndroidRenderer\Buffer.h" />
@@ -41,6 +44,9 @@
     <ClInclude Include="..\..\..\Source\AndroidRenderer\Smoke.h">
       <Filter>ParticleEffects</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\AndroidRenderer\AModel.h">
+      <Filter>Source\Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
@@ -54,6 +60,12 @@
     </Filter>
     <Filter Include="Shaders\ParticleEffects">
       <UniqueIdentifier>{ae7933f4-8893-4b3b-877c-c2621447c71b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{be64ff33-f62e-4971-8c4b-c06f482be2df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Model">
+      <UniqueIdentifier>{6cb8fedb-1eae-47be-8520-45df5158eb8f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -442,46 +442,32 @@ bool GraphicDevice::BufferModelTexture(int _id, std::string _fileDir, int _textu
 
 void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 {
+	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dirs, _modelToLoad->File);
 	Shader *shaderPtr = NULL;
+	std::vector<Model> *modelList = NULL;
 
-	if (_modelToLoad->RenderType == RENDER_FORWARD)
+	if (obj.animated && m_useAnimations)
 	{
-		shaderPtr = &m_forwardShader;
-		m_forwardShader.UseProgram();
-	}
-	else if (_modelToLoad->RenderType == RENDER_VIEWSPACE)
-	{
-		shaderPtr = &m_viewspaceShader;
-		m_viewspaceShader.UseProgram();
-	}
-	else if (_modelToLoad->RenderType == RENDER_INTERFACE)
-	{
-		shaderPtr = &m_interfaceShader;
-		m_interfaceShader.UseProgram();
-	}
-	else if (_modelToLoad->RenderType == RENDER_RIVERWATER)
-	{
-		shaderPtr = &m_riverShader;
-		m_riverShader.UseProgram();
-	}
-	else if (_modelToLoad->RenderType == RENDER_RIVERWATER_CORNER)
-	{
-		shaderPtr = &m_riverCornerShader;
-		m_riverCornerShader.UseProgram();
-	}
-	else if (_modelToLoad->RenderType == 0)
-	{
-		shaderPtr = &m_forwardShader;
-		m_forwardShader.UseProgram();
-		//SDL_Log("Deferred requested. Selecting FORWARD");
-	}
-	else
-	{
+		BufferAModel(_modelId, _modelToLoad);
 		return;
 	}
-	// Import Object
-	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dirs, _modelToLoad->File);
 
+	bool FoundShaderType = false;
+	for (int i = 0; i < m_renderLists.size(); i++)
+	{
+		if (_modelToLoad->RenderType == m_renderLists[i].RenderType)
+		{
+			shaderPtr = m_renderLists[i].ShaderPtr;
+			modelList = m_renderLists[i].ModelList;
+			shaderPtr->UseProgram();
+			FoundShaderType = true;
+			break;
+		}
+	}
+	if (!FoundShaderType) { return; } // ERRORMSG("ERROR: INVALID RENDER SETTING"); 
+
+	// Import Mesh
+	Buffer* mesh = AddMesh(obj.mesh, shaderPtr, false);
 	// Import Texture
 	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
 	shaderPtr->CheckUniformLocation("diffuseTex", 1);
@@ -493,31 +479,22 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 		// Import Normal map
 		normal = AddTexture(obj.norm, GL_TEXTURE2);
 		shaderPtr->CheckUniformLocation("normalTex", 2);
-
 		// Import Specc Glow map
 		specular = AddTexture(obj.spec, GL_TEXTURE3);
 		shaderPtr->CheckUniformLocation("specularTex", 3);
 	}
 
-	// Import Mesh
-	Buffer* mesh = AddMesh(obj.mesh, shaderPtr);
-
-	Model model = Model(mesh, texture, normal, specular, _modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color, _modelToLoad->CastShadow); // plus modelID o matrixPointer, active
-
+	// Create model
+	Model model;
+	if (_modelToLoad->RenderType != RENDER_INTERFACE) // TODO: BETTER FIX
+		model = Model(mesh, texture, normal, specular, _modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color, _modelToLoad->CastShadow);
+	else
+		model = Model(mesh, texture, NULL, NULL, _modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color, _modelToLoad->CastShadow);
+	//for the matrices (modelView + normal)
+	//m_vramUsage += (16 + 9) * sizeof(float);
 
 	// Push back the model
-	if (_modelToLoad->RenderType == RENDER_FORWARD)
-		m_modelsForward.push_back(model);
-	else if (_modelToLoad->RenderType == RENDER_VIEWSPACE)
-		m_modelsViewspace.push_back(model);
-	else if (_modelToLoad->RenderType == RENDER_INTERFACE)
-		m_modelsInterface.push_back(model);
-	else if (_modelToLoad->RenderType == RENDER_RIVERWATER)
-		m_modelsWater.push_back(model);
-	else if (_modelToLoad->RenderType == RENDER_RIVERWATER_CORNER)
-		m_modelsWaterCorners.push_back(model);
-	else
-		m_modelsForward.push_back(model);
+	modelList->push_back(model);
 }
 
 void GraphicDevice::BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoad)
@@ -785,6 +762,53 @@ void GraphicDevice::BufferParticleSystems()
 
 }
 
+int GraphicDevice::LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color, bool _castShadow, bool _isStatic)
+{
+	int modelID;
+
+	if (!_isStatic)
+	{
+		modelID = m_modelIDcounter;
+		m_modelIDcounter++;
+	}
+
+	ModelToLoad* modelToLoad = new ModelToLoad();
+	modelToLoad->Dirs = _dirs;
+	modelToLoad->File = _file;
+	modelToLoad->MatrixPtr = _matrixPtr;
+	modelToLoad->RenderType = _renderType;
+	modelToLoad->Color = _color;
+	modelToLoad->CastShadow = _castShadow;
+
+	if (_isStatic)
+	{
+		for (std::map<int, std::vector<ModelToLoad*>>::iterator it = m_staticModelsToLoad.begin(); it != m_staticModelsToLoad.end(); it++)
+		{
+			if (!it->second.empty() &&
+				it->second[0]->Dirs == _dirs &&
+				it->second[0]->File == _file &&
+				it->second[0]->RenderType == _renderType &&
+				it->second[0]->CastShadow == _castShadow &&
+				(it->second[0]->Color == _color ||
+				(it->second[0]->Color[0] == _color[0] &&
+				it->second[0]->Color[1] == _color[1] &&
+				it->second[0]->Color[2] == _color[2])))
+			{
+				it->second.push_back(modelToLoad);
+				return it->first;
+			}
+		}
+
+		// If does not already exists
+		modelID = m_modelIDcounter;
+		m_modelIDcounter++;
+		m_staticModelsToLoad[modelID].push_back(modelToLoad);
+	}
+	else
+		m_modelsToLoad[modelID] = modelToLoad;
+
+	return modelID;
+}
 int GraphicDevice::LoadModel(ModelToLoadFromSource* _modelToLoad)
 {
 	int modelID = m_modelIDcounter;
@@ -799,6 +823,212 @@ int GraphicDevice::LoadModel(ModelToLoadFromSource* _modelToLoad)
 
 	return modelID;
 }
+bool GraphicDevice::RemoveModel(int _id)
+{
+	for (int k = 0; k < m_renderLists.size(); k++)
+	{
+		std::vector<Model> *modelList = m_renderLists[k].ModelList;
+		for (int i = 0; i < (*modelList).size(); i++)
+		{
+			if ((*modelList)[i].id == _id)
+			{
+				(*modelList).erase((*modelList).begin() + i);
+				return true;
+			}
+		}
+	}
+	for (int i = 0; i < m_modelsAnimated.size(); i++)
+	{
+		if (m_modelsAnimated[i].id == _id)
+		{
+			m_modelsAnimated.erase(m_modelsAnimated.begin() + i);
+			return true;
+		}
+	}
+	return false;
+}
+bool GraphicDevice::ActiveModel(int _id, bool _active)
+{
+	for (int k = 0; k < m_renderLists.size(); k++)
+	{
+		std::vector<Model> *modelList = m_renderLists[k].ModelList;
+		for (int i = 0; i < (*modelList).size(); i++)
+		{
+			if ((*modelList)[i].id == _id)
+			{
+				(*modelList)[i].active = _active;
+				return true;
+			}
+		}
+	}
+	for (int i = 0; i < m_modelsAnimated.size(); i++)
+	{
+		if (m_modelsAnimated[i].id == _id)
+		{
+			m_modelsAnimated[i].active = _active;
+			return true;
+		}
+	}
+	return false;
+}
+
+Buffer* GraphicDevice::AddMesh(std::string _fileDir, Shader *_shaderProg, bool animated)
+{
+	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
+	{
+		if (it->first == _fileDir)
+			return it->second;
+	}
+
+	ModelExporter modelExporter;
+	modelExporter.OpenFileForRead(_fileDir.c_str());
+	std::vector<float> positionData = modelExporter.ReadDataFromFile();
+	std::vector<float> normalData = modelExporter.ReadDataFromFile();
+	std::vector<float> tanData = modelExporter.ReadDataFromFile();
+	std::vector<float> bitanData = modelExporter.ReadDataFromFile();
+	std::vector<float> texCoordData = modelExporter.ReadDataFromFile();
+	std::vector<float> jointIndexData = modelExporter.ReadDataFromFile();
+	std::vector<float> jointWeightData = modelExporter.ReadDataFromFile();
+	modelExporter.CloseFile();
+
+	Buffer* retbuffer = new Buffer();
+
+	std::map<GLuint, GLuint> vpLocs, vnLocs, tanLocs, bitanLocs, tcLocs;
+	vpLocs[m_forwardShader.GetShaderProgram()] = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexPosition");
+	vpLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexPosition");
+	vpLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexPosition");
+	vpLocs[m_shadowShader.GetShaderProgram()] = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexPosition");
+	vpLocs[m_riverShader.GetShaderProgram()] = glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexPosition");
+	vpLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexPosition");
+
+	vnLocs[m_forwardShader.GetShaderProgram()] = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexNormal");
+	vnLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexNormal");
+	vnLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexNormal");
+	vnLocs[m_shadowShader.GetShaderProgram()] = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexNormal");
+	vnLocs[m_riverShader.GetShaderProgram()] = glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexNormal");
+	vnLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexNormal");
+
+	tanLocs[m_forwardShader.GetShaderProgram()] = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTangent");
+	tanLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexTangent");
+	tanLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexTangent");
+	tanLocs[m_shadowShader.GetShaderProgram()] = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexTangent");
+	tanLocs[m_riverShader.GetShaderProgram()] = glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexTangent");
+	tanLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexTangent");
+
+	bitanLocs[m_forwardShader.GetShaderProgram()] = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexBiTangent");
+	bitanLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexBiTangent");
+	bitanLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexBiTangent");
+	bitanLocs[m_shadowShader.GetShaderProgram()] = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexBiTangent");
+	bitanLocs[m_riverShader.GetShaderProgram()] = glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexBiTangent");
+	bitanLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexBiTangent");
+
+	tcLocs[m_forwardShader.GetShaderProgram()] = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTexCoord");
+	tcLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexTexCoord");
+	tcLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexTexCoord");
+	tcLocs[m_shadowShader.GetShaderProgram()] = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexTexCoord");
+	tcLocs[m_riverShader.GetShaderProgram()] = glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexTexCoord");
+	tcLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexTexCoord");
+
+	_shaderProg->UseProgram();
+	BufferData bufferData[] =
+	{
+		{ vpLocs,	 3, GL_FLOAT, (const GLvoid*)positionData.data(), (GLsizeiptr)(positionData.size() * sizeof(float)) },
+		{ vnLocs,	 3, GL_FLOAT, (const GLvoid*)normalData.data(), (GLsizeiptr)(normalData.size()   * sizeof(float)) },
+		{ tanLocs,	 3, GL_FLOAT, (const GLvoid*)tanData.data(), (GLsizeiptr)(tanData.size()   * sizeof(float)) },
+		{ bitanLocs, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), (GLsizeiptr)(bitanData.size()   * sizeof(float)) },
+		{ tcLocs,	 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), (GLsizeiptr)(texCoordData.size() * sizeof(float)) }//,
+		//{ jiLocs,	 4, GL_FLOAT, (const GLvoid*)texCoordData.data(), (GLsizeiptr)(texCoordData.size() * sizeof(float)) },
+		//{ jwLocs,	 4, GL_FLOAT, (const GLvoid*)texCoordData.data(), (GLsizeiptr)(texCoordData.size() * sizeof(float)) }
+	};
+
+	int test = sizeof(bufferData) / sizeof(bufferData[0]);
+	// Counts the size in bytes of all the buffered data
+	//for (int i = 0; i < sizeof(bufferData) / sizeof(bufferData[0]); i++)
+	//	m_vramUsage += (int)bufferData[i].dataSize;
+
+	int bufferDatas = sizeof(bufferData) / sizeof(bufferData[0]);
+	if (animated == false)
+		bufferDatas -= 2;
+	else
+	{
+		for (int i = 0; i < jointIndexData.size(); i++)
+		{
+			if (jointIndexData[i] > 35 || jointIndexData[i] < 0)
+			{
+				int hej = 0;
+			}
+		}
+	}
+
+	retbuffer->init(bufferData, bufferDatas, _shaderProg->GetShaderProgram());
+
+	retbuffer->setCount((int)positionData.size() / 3);
+
+	m_meshs.insert(std::pair<const std::string, Buffer*>(_fileDir, retbuffer));
+
+	return retbuffer;
+}
+
+Buffer* GraphicDevice::AddMesh(ModelToLoadFromSource* _modelToLoad, Shader *_shaderProg)
+{
+	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
+	{
+		if (it->first == _modelToLoad->key)
+			return it->second;
+	}
+
+	std::vector<float> positionData = _modelToLoad->positions;
+	std::vector<float> normalData = _modelToLoad->normals;
+	std::vector<float> tanData = _modelToLoad->tangents;
+	std::vector<float> bitanData = _modelToLoad->bitangents;
+	std::vector<float> texCoordData = _modelToLoad->texCoords;
+
+	Buffer* retbuffer = new Buffer();
+
+	std::map<GLuint, GLuint> vpLocs, vnLocs, tanLocs, bitanLocs, tcLocs;
+	vpLocs[m_forwardShader.GetShaderProgram()] = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexPosition");
+	vpLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexPosition");
+	vpLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexPosition");
+	vpLocs[m_shadowShader.GetShaderProgram()] = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexPosition");
+
+	vnLocs[m_forwardShader.GetShaderProgram()] = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexNormal");
+	vnLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexNormal");
+	vnLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexNormal");
+	vnLocs[m_shadowShader.GetShaderProgram()] = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexNormal");
+
+	tanLocs[m_forwardShader.GetShaderProgram()] = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTangent");
+	tanLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexTangent");
+	tanLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexTangent");
+	tanLocs[m_shadowShader.GetShaderProgram()] = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexTangent");
+
+	bitanLocs[m_forwardShader.GetShaderProgram()] = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexBiTangent");
+	bitanLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexBiTangent");
+	bitanLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexBiTangent");
+	bitanLocs[m_shadowShader.GetShaderProgram()] = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexBiTangent");
+
+	tcLocs[m_forwardShader.GetShaderProgram()] = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTexCoord");
+	tcLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexTexCoord");
+	tcLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexTexCoord");
+	tcLocs[m_shadowShader.GetShaderProgram()] = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexTexCoord");
+
+	_shaderProg->UseProgram();
+	BufferData bufferData[] =
+	{
+		{ vpLocs, 3, GL_FLOAT, (const GLvoid*)positionData.data(), (GLsizeiptr)(positionData.size() * sizeof(float)) },
+		{ vnLocs, 3, GL_FLOAT, (const GLvoid*)normalData.data(), (GLsizeiptr)(normalData.size()   * sizeof(float)) },
+		{ tanLocs, 3, GL_FLOAT, (const GLvoid*)tanData.data(), (GLsizeiptr)(tanData.size()   * sizeof(float)) },
+		{ bitanLocs, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), (GLsizeiptr)(bitanData.size()   * sizeof(float)) },
+		{ tcLocs, 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), (GLsizeiptr)(texCoordData.size() * sizeof(float)) }
+	};
+
+	retbuffer->init(bufferData, sizeof(bufferData) / sizeof(bufferData[0]), _shaderProg->GetShaderProgram());
+	retbuffer->setCount((int)positionData.size() / 3);
+
+	m_meshs.insert(std::pair<const std::string, Buffer*>(_modelToLoad->key, retbuffer));
+
+	return retbuffer;
+}
+
 
 void GraphicDevice::Clear()
 {

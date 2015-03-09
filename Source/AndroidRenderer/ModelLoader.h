@@ -4,17 +4,46 @@
 
 struct ObjectData
 {
+	bool animated;
 	std::string mesh;
 	std::string text;
 	std::string norm;
 	std::string spec;
+	std::string joints;
+	std::vector<std::string> anim;
 	ObjectData()
 	{
-		mesh = text = norm = spec = "";
+		animated = false;
+		mesh = text = norm = spec = joints = "";
 	}
 	ObjectData(std::string dir)
 	{
-		mesh = text = norm = spec = dir;
+		animated = false;
+		mesh = text = norm = spec = joints = dir;
+	}
+};
+
+struct JointData
+{
+	glm::mat4 mat;
+	float parent;
+	JointData(glm::mat4 _mat, float _parent)
+	{
+		mat = _mat;
+		parent = _parent;
+	}
+};
+
+struct AnimData
+{
+	int frame;
+	int joint;
+	glm::mat4 mat;
+	AnimData(int _frame, int _joint, glm::mat4 _mat)
+	{
+		frame = _frame;
+		joint = _joint;
+		mat = _mat;
 	}
 };
 
@@ -60,18 +89,17 @@ public:
 				fileIn >> u >> v;
 
 				vertexlist.push_back(Vertex(
-					glm::vec3(px, py, pz), 
+					glm::vec3(px, py, pz),
 					glm::vec3(nx, ny, nz),
 					glm::vec3(tx, ty, tz),
 					glm::vec3(bx, by, bz),
 					glm::vec2(u, v)
-				));
+					));
 			}
 		}
 
 		return vertexlist;
 	}
-
 	static bool GetFilePath(std::vector<std::string>& dirs, std::string& file, std::string* out)
 	{
 		for (int i = 0; i < dirs.size(); ++i)
@@ -79,91 +107,156 @@ public:
 			std::string fileDir = dirs[i];
 			fileDir.append(file);
 
-			SDL_RWops* fileIn = SDL_RWFromFile(fileDir.c_str(), "r");
-			if (fileIn != NULL)
+			std::ifstream fileIn(fileDir);
+			if (fileIn.is_open())
 			{
-				Sint64 length = SDL_RWseek(fileIn, 0, RW_SEEK_END);
-				SDL_RWclose(fileIn);
-				if (length == 0)
-				{
-					*out = "";
-					SDL_Log("Length of file %s lower than or equal to zero", fileDir.c_str());
-					return false;
-				}
+				fileIn.close();
 				*out = fileDir;
 				return true;
 			}
 		}
 		*out = "";
-		SDL_Log("File %s not found", file.c_str());
 		return false;
 	}
 
-	static ObjectData importObject(std::vector<std::string> _dirs, std::string file)
+	static ObjectData importObject(std::vector<std::string> dirs, std::string file)
 	{
 		ObjectData objectdata;
 
+
 		std::string filePath;
 
-
-		if (GetFilePath(_dirs, file, &filePath))
+		if (GetFilePath(dirs, file, &filePath))
 		{
-			SDL_RWops* fileIn = SDL_RWFromFile(filePath.c_str(), "r");
-			Sint64 length = SDL_RWseek(fileIn, 0, RW_SEEK_END);
-			SDL_RWseek(fileIn, 0, RW_SEEK_SET);
-			// Read data
-			char* data = new char[length];
-			SDL_RWread(fileIn, data, length, 1);
-			std::string dataString = std::string(data, length);
-			delete[] data;
-			// Close file
-			SDL_RWclose(fileIn);
+			std::ifstream fileIn(filePath);
 
-
-			size_t prevFileIndex = 0, nextFileIndex = std::string::npos;
 			std::string temp;
-
-
-			nextFileIndex = dataString.find('\n', prevFileIndex);
-			temp = dataString.substr(prevFileIndex, nextFileIndex - prevFileIndex);
-			temp.erase(std::remove(temp.begin(), temp.end(), 13), temp.end());
-			prevFileIndex = nextFileIndex + 1;
-			if (GetFilePath(_dirs, temp, &filePath))
+			if (getline(fileIn, temp))
 			{
-				objectdata.mesh = filePath;
+				if (GetFilePath(dirs, temp, &filePath))
+					objectdata.mesh = filePath;
+			}
+			if (getline(fileIn, temp))
+			{
+				if (GetFilePath(dirs, temp, &filePath))
+					objectdata.text = filePath;
+			}
+			if (getline(fileIn, temp))
+			{
+				if (GetFilePath(dirs, temp, &filePath))
+					objectdata.norm = filePath;
+			}
+			if (getline(fileIn, temp))
+			{
+				if (GetFilePath(dirs, temp, &filePath))
+					objectdata.spec = filePath;
 			}
 
-			nextFileIndex = dataString.find('\n', prevFileIndex);
-			temp = dataString.substr(prevFileIndex, nextFileIndex - prevFileIndex);
-			temp.erase(std::remove(temp.begin(), temp.end(), 13), temp.end());
-			prevFileIndex = nextFileIndex + 1;
-			if (GetFilePath(_dirs, temp, &filePath))
+			if (getline(fileIn, temp))
 			{
-				objectdata.text = filePath;
+				if (GetFilePath(dirs, temp, &filePath))
+					objectdata.joints = filePath;
 			}
 
-			nextFileIndex = dataString.find('\n', prevFileIndex);
-			temp = dataString.substr(prevFileIndex, nextFileIndex - prevFileIndex);
-			temp.erase(std::remove(temp.begin(), temp.end(), 13), temp.end());
-			prevFileIndex = nextFileIndex + 1;
-			if (GetFilePath(_dirs, temp, &filePath))
-			{
-				objectdata.norm = filePath;
-			}
 
-			nextFileIndex = dataString.find('\n', prevFileIndex);
-			temp = dataString.substr(prevFileIndex, nextFileIndex - prevFileIndex);
-			temp.erase(std::remove(temp.begin(), temp.end(), 13), temp.end());
-			prevFileIndex = nextFileIndex + 1;
-			if (GetFilePath(_dirs, temp, &filePath))
+			while (getline(fileIn, temp))
 			{
-				objectdata.spec = filePath;
+				std::string animation;
+				if (GetFilePath(dirs, temp, &filePath))
+					objectdata.anim.push_back(filePath);
 			}
-
+			int isamesh = objectdata.mesh.find(".amesh");
+			if (isamesh > 0 && objectdata.joints != "" && objectdata.anim.size() > 0)
+			{
+				objectdata.animated = true;
+			}
 		}
-		
-
 		return objectdata;
+	}
+
+
+	static std::vector<JointData> importJoints(std::string fileDir)
+	{
+		std::vector<JointData> jointlistTemp;
+
+		std::ifstream fileIn(fileDir.c_str());
+
+		if (fileIn)
+		{
+			while (fileIn)
+			{
+				int parent;
+				float xx, xy, xz, xw;
+				float yx, yy, yz, yw;
+				float zx, zy, zz, zw;
+				float wx, wy, wz, ww;
+
+				fileIn >> parent;
+				fileIn >> xx >> xy >> xz >> xw;
+				fileIn >> yx >> yy >> yz >> yw;
+				fileIn >> zx >> zy >> zz >> zw;
+				fileIn >> wx >> wy >> wz >> ww;
+
+				glm::mat4 matrix = glm::mat4(xx, xy, xz, xw,
+					yx, yy, yz, yw,
+					zx, zy, zz, zw,
+					wx, wy, wz, ww);
+
+				jointlistTemp.push_back(JointData(matrix, parent));
+			}
+		}
+		jointlistTemp.pop_back();
+
+		for (int i = 0; i < jointlistTemp.size(); i++)
+		{
+			if (jointlistTemp[i].parent >= 0)
+			{
+				jointlistTemp[i].mat = jointlistTemp[int(jointlistTemp[i].parent)].mat * jointlistTemp[i].mat;
+			}
+		}
+
+		for (int i = 0; i < jointlistTemp.size(); i++)
+		{
+			jointlistTemp[i].mat = glm::inverse(jointlistTemp[i].mat);
+		}
+
+		return jointlistTemp;
+	}
+
+	static std::vector<AnimData> importAnimation(std::string fileDir)
+	{
+		std::vector<AnimData> jointlistTemp;
+
+		std::ifstream fileIn(fileDir.c_str());
+
+		if (fileIn)
+		{
+			while (fileIn)
+			{
+				int joint;
+				int frame;
+				float xx, xy, xz, xw;
+				float yx, yy, yz, yw;
+				float zx, zy, zz, zw;
+				float wx, wy, wz, ww;
+
+				fileIn >> joint;
+				fileIn >> frame;
+				fileIn >> xx >> xy >> xz >> xw;
+				fileIn >> yx >> yy >> yz >> yw;
+				fileIn >> zx >> zy >> zz >> zw;
+				fileIn >> wx >> wy >> wz >> ww;
+
+				glm::mat4 matrix = glm::mat4(xx, xy, xz, xw,
+					yx, yy, yz, yw,
+					zx, zy, zz, zw,
+					wx, wy, wz, ww);
+
+				jointlistTemp.push_back(AnimData(frame, joint, matrix));
+			}
+		}
+
+		return jointlistTemp;
 	}
 };
 

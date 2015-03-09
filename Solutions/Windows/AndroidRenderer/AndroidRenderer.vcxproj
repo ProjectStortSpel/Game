@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\Source\AndroidRenderer\AModel.cpp" />
     <ClCompile Include="..\..\..\Source\AndroidRenderer\Buffer.cpp" />
     <ClCompile Include="..\..\..\Source\AndroidRenderer\Camera.cpp" />
     <ClCompile Include="..\..\..\Source\AndroidRenderer\Fire.cpp" />
@@ -32,6 +33,7 @@
     <ClCompile Include="..\..\..\Source\AndroidRenderer\Smoke.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Source\AndroidRenderer\AModel.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\Buffer.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\Camera.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\Fire.h" />

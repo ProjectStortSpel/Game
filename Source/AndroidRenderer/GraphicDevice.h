@@ -17,13 +17,14 @@ Author: Christian
 #include "ParticleEffect.h"
 #include "Fire.h"
 #include "Smoke.h"
+#include "AModel.h"
 
 namespace Renderer
 {
 #define RENDER_FORWARD  1
 #define RENDER_VIEWSPACE  2
 #define RENDER_INTERFACE  3
-//#define RENDER_ANIMATED  4
+#define RENDER_ANIMATED  4
 #define RENDER_RIVERWATER 5
 #define RENDER_RIVERWATER_CORNER 6
 
@@ -32,6 +33,18 @@ namespace Renderer
 #define TEXTURE_SPECULAR	2
 
 
+	struct RenderList
+	{
+		int RenderType;
+		std::vector<Model>* ModelList;
+		Shader* ShaderPtr;
+		RenderList(int _renderType, std::vector<Model>* _modelList, Shader* _shaderPtr)
+		{
+			RenderType = _renderType;
+			ModelList = _modelList;
+			ShaderPtr = _shaderPtr;
+		}
+	};
 
 	struct Model
 	{
@@ -147,10 +160,10 @@ namespace Renderer
 
 		// MODEL
 		virtual bool PreLoadModel(std::vector<std::string> _dirs, std::string _file, int _renderType = RENDER_FORWARD){ return false; }; // TODO: not in GD in PC
-		virtual int LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_FORWARD, float* _color = nullptr, bool _castShadow = true, bool _isStatic = false){ return 0; }; // TODO: no virtual
+		int LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_FORWARD, float* _color = nullptr, bool _castShadow = true, bool _isStatic = false);
 		int LoadModel(ModelToLoadFromSource* _modelToLoad);
-		virtual bool RemoveModel(int _id){ return false; }; // TODO: no virtual
-		virtual bool ActiveModel(int _id, bool _active){ return false; };  // TODO: no virtual
+		bool RemoveModel(int _id);
+		bool ActiveModel(int _id, bool _active);
 
 		// ANIMATIONS
 		glm::mat4 GetJointMatrix(int _modelId, int _jointId); // IN PC GD
@@ -202,10 +215,10 @@ namespace Renderer
 
 		// Models
 		int m_modelIDcounter;
-		//bool m_useAnimations;
-		//std::vector<RenderList> m_renderLists;
+		bool m_useAnimations;
+		std::vector<RenderList> m_renderLists;
 		std::vector<Model> m_modelsForward, m_modelsViewspace, m_modelsInterface, m_modelsWater, m_modelsWaterCorners;
-		//std::vector<AModel> m_modelsAnimated;
+		std::vector<AModel> m_modelsAnimated;
 		std::map<int, ModelToLoad*> m_modelsToLoad;
 		std::map<int, ModelToLoadFromSource*> m_modelsToLoadFromSource;
 		std::map<int, std::vector<ModelToLoad*>> m_staticModelsToLoad;
@@ -231,7 +244,7 @@ namespace Renderer
 		Shader m_forwardShader;
 		Shader m_viewspaceShader;
 		Shader m_interfaceShader;
-		//Shader m_shadowShaderForward;
+		Shader m_shadowShader;
 		Shader m_riverShader, m_riverCornerShader;
 		std::map<std::string, Shader*> m_particleShaders;
 
@@ -255,11 +268,11 @@ namespace Renderer
 		virtual void BufferModels();	// TODO: no virtual
 		virtual void BufferModel(int _modelId, ModelToLoad* _modelToLoad);	// TODO: no virtual
 		void BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoad);
-		//void BufferAModel(int _modelId, ModelToLoad* _modelToLoad);
+		void BufferAModel(int _modelId, ModelToLoad* _modelToLoad);
 
 		// Data
-		virtual Buffer* AddMesh(std::string _fileDir, Shader *_shaderProg) = 0; // TODO: no virtual
-		virtual Buffer* AddMesh(ModelToLoadFromSource* _modelToLoad, Shader *_shaderProg) = 0; // TODO: no virtual
+		Buffer* AddMesh(std::string _fileDir, Shader *_shaderProg, bool animated); // TODO: no virtual
+		Buffer* AddMesh(ModelToLoadFromSource* _modelToLoad, Shader *_shaderProg); // TODO: no virtual
 		void SortModelsBasedOnDepth(std::vector<Model>* models);
 		void BufferStaticModel(std::pair<int, std::vector<ModelToLoad*>> _staticModel);
 
