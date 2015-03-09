@@ -20,6 +20,8 @@ SpawnSystem.EntitiesAdded = function(self, dt, entities)
 
 		local X, Z = spawnpointComp:GetInt2()
 
+		world:RemoveComponentFrom("UnitDead", entityId)
+		
 		if not world:EntityHasComponent(entityId, "LerpPosition") then
 			world:CreateComponentAndAddTo("LerpPosition", entityId)
 		end

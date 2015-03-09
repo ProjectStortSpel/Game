@@ -126,7 +126,11 @@ UnitSystem.EntitiesAdded = function(self, dt, entities)
 			self.FreeSlots[#self.FreeSlots + 1] = plyNum
 			--table.insert(self.FreeSlots, plyNum)
 			local unitId = world:GetComponent(entity, "RemoveUnit", "UnitEntityId"):GetInt()
-			world:KillEntity(unitId)
+			if world:EntityHasComponent(unitId, "LerpPosition") or world:EntityHasComponent(unitId, "LerpingPosition") then
+				world:CreateComponentAndAddTo("KillAfterLerp", unitId)
+			else
+				world:KillEntity(unitId)
+			end
 			world:KillEntity(entity)
 		end
 		
