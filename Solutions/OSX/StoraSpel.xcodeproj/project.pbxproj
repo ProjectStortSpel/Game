@@ -17,6 +17,7 @@
 		035C22D01A73D68600EE9624 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 035C22CE1A73D68600EE9624 /* Main.storyboard */; };
 		0372F5F11A9F44A100802321 /* SDL2_mixer.framework in Resources */ = {isa = PBXBuildFile; fileRef = 0372F5F01A9F44A100802321 /* SDL2_mixer.framework */; };
 		0372F5F21A9F44D500802321 /* SDL2_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0372F5F01A9F44A100802321 /* SDL2_mixer.framework */; };
+		0386E8271AADA01200A90C5E /* GenerateIslandSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0386E8251AADA01200A90C5E /* GenerateIslandSystem.cpp */; };
 		03BE03FE1A8A461500AA21F4 /* SDL2.framework in Resources */ = {isa = PBXBuildFile; fileRef = 030E83221A77FB7C0083ABD9 /* SDL2.framework */; };
 		03BE04001A8A493600AA21F4 /* SDL2_ttf.framework in Resources */ = {isa = PBXBuildFile; fileRef = 030E83201A77FB060083ABD9 /* SDL2_ttf.framework */; };
 		03C07D201AA715550014E76B /* Audio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03C07BC31AA715550014E76B /* Audio.cpp */; };
@@ -107,7 +108,6 @@
 		03C07D751AA715550014E76B /* ResourceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03C07C931AA715550014E76B /* ResourceManager.cpp */; };
 		03C07D761AA715550014E76B /* RuleManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03C07C951AA715550014E76B /* RuleManager.cpp */; };
 		03C07D771AA715550014E76B /* AddTextToTextureSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03C07C981AA715550014E76B /* AddTextToTextureSystem.cpp */; };
-		03C07D781AA715550014E76B /* AModelSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03C07C9A1AA715550014E76B /* AModelSystem.cpp */; };
 		03C07D791AA715550014E76B /* CameraSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03C07C9C1AA715550014E76B /* CameraSystem.cpp */; };
 		03C07D7A1AA715550014E76B /* DirectionalLightSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03C07C9E1AA715550014E76B /* DirectionalLightSystem.cpp */; };
 		03C07D7B1AA715550014E76B /* MasterServerSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03C07CA11AA715550014E76B /* MasterServerSystem.cpp */; };
@@ -184,6 +184,8 @@
 		035C22CC1A73D68600EE9624 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		035C22CF1A73D68600EE9624 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		0372F5F01A9F44A100802321 /* SDL2_mixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_mixer.framework; path = ../../Externals/lib/OSX/SDL2_mixer.framework; sourceTree = "<group>"; };
+		0386E8251AADA01200A90C5E /* GenerateIslandSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GenerateIslandSystem.cpp; sourceTree = "<group>"; };
+		0386E8261AADA01200A90C5E /* GenerateIslandSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenerateIslandSystem.h; sourceTree = "<group>"; };
 		03C07BC31AA715550014E76B /* Audio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Audio.cpp; sourceTree = "<group>"; };
 		03C07BC41AA715550014E76B /* Audio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Audio.h; sourceTree = "<group>"; };
 		03C07BC61AA715550014E76B /* Console.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Console.cpp; sourceTree = "<group>"; };
@@ -365,8 +367,6 @@
 		03C07C961AA715550014E76B /* RuleManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RuleManager.h; sourceTree = "<group>"; };
 		03C07C981AA715550014E76B /* AddTextToTextureSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AddTextToTextureSystem.cpp; sourceTree = "<group>"; };
 		03C07C991AA715550014E76B /* AddTextToTextureSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddTextToTextureSystem.h; sourceTree = "<group>"; };
-		03C07C9A1AA715550014E76B /* AModelSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AModelSystem.cpp; sourceTree = "<group>"; };
-		03C07C9B1AA715550014E76B /* AModelSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AModelSystem.h; sourceTree = "<group>"; };
 		03C07C9C1AA715550014E76B /* CameraSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CameraSystem.cpp; sourceTree = "<group>"; };
 		03C07C9D1AA715550014E76B /* CameraSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraSystem.h; sourceTree = "<group>"; };
 		03C07C9E1AA715550014E76B /* DirectionalLightSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectionalLightSystem.cpp; sourceTree = "<group>"; };
@@ -1067,10 +1067,10 @@
 		03C07C971AA715550014E76B /* Systems */ = {
 			isa = PBXGroup;
 			children = (
+				0386E8251AADA01200A90C5E /* GenerateIslandSystem.cpp */,
+				0386E8261AADA01200A90C5E /* GenerateIslandSystem.h */,
 				03C07C981AA715550014E76B /* AddTextToTextureSystem.cpp */,
 				03C07C991AA715550014E76B /* AddTextToTextureSystem.h */,
-				03C07C9A1AA715550014E76B /* AModelSystem.cpp */,
-				03C07C9B1AA715550014E76B /* AModelSystem.h */,
 				03C07C9C1AA715550014E76B /* CameraSystem.cpp */,
 				03C07C9D1AA715550014E76B /* CameraSystem.h */,
 				03C07C9E1AA715550014E76B /* DirectionalLightSystem.cpp */,
@@ -1461,6 +1461,7 @@
 				03C07D251AA715550014E76B /* StringConverter.cpp in Sources */,
 				03C07D2C1AA715550014E76B /* DataTable.cpp in Sources */,
 				03C07D721AA715550014E76B /* ECSLWorkItemView.cpp in Sources */,
+				0386E8271AADA01200A90C5E /* GenerateIslandSystem.cpp in Sources */,
 				03C07D4B1AA715550014E76B /* HomePath.cpp in Sources */,
 				03C07D961AA715550014E76B /* BaseNetwork.cpp in Sources */,
 				03C07D741AA715550014E76B /* RemoteConsole.cpp in Sources */,
@@ -1495,7 +1496,6 @@
 				03C07D931AA715550014E76B /* SlaveThread.cpp in Sources */,
 				03C07D6D1AA715550014E76B /* ECSLLoadingView.cpp in Sources */,
 				03C07D681AA715550014E76B /* NetworkInstance.cpp in Sources */,
-				03C07D781AA715550014E76B /* AModelSystem.cpp in Sources */,
 				03C07D371AA715550014E76B /* Message.cpp in Sources */,
 				03C07D351AA715550014E76B /* SQSimulation.cpp in Sources */,
 				03C07D8C1AA715550014E76B /* Logger.cpp in Sources */,
