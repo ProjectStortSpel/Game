@@ -40,8 +40,8 @@ StartNewRoundSystem.EntitiesAdded = function(self, dt, entities)
 				numReadyUnits = numReadyUnits + noOfAIs
 			end
 			
-			print("NumReadyUnits: " .. numReadyUnits)
-			print("NoOfPlayers: " .. noOfPlayers)
+			--print("NumReadyUnits: " .. numReadyUnits)
+			--print("NoOfPlayers: " .. noOfPlayers)
 
 			if noOfPlayers <= numReadyUnits and onlyOnce then
 			
