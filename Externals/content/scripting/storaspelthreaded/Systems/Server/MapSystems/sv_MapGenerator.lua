@@ -27,7 +27,7 @@ MapGenerator.Initialize = function(self)
 end
 
 MapGenerator.EntitiesAdded = function(self, dt, entities)
-	self:GenerateMap(1651654, 4, 4)
+	self:GenerateMap(1651654, 10, 10)
 end
 
 MapGenerator.PostInitialize = function(self)
@@ -415,7 +415,7 @@ MapGenerator.FixRiverCorner = function(self, RiverA, RiverB)
 	end
 	
 	--	Set the model for the corner
-	world:GetComponent(RiverB, "Model", 0):SetModel("rivercorner", "rivercorner", 0, 0)
+	world:GetComponent(RiverB, "Model", 0):SetModel("rivercorner", "rivercorner", 0)
 	
 	local 	dirAX, dirAY 	= 	world:GetComponent(RiverA, "River", 0):GetInt2()
 	local 	dirBX, dirBY 	= 	world:GetComponent(RiverB, "River", 0):GetInt2()
@@ -682,7 +682,8 @@ MapGenerator.CreateSpawnpoint = function(self, X, Z)
 	
 	local	newCheckpoint	=	self:GenerateEmptyTile(X, Z)
 	world:CreateComponentAndAddTo("Model", newCheckpoint)
-	world:GetComponent(newCheckpoint, "Model", 0):SetModel("grass", "grass", 0, 0)
+	world:GetComponent(newCheckpoint, "Model", 0):SetModel("grass", "grass", 0)
+	world:CreateComponentAndAddTo("NoShadow", newCheckpoint)
 	
 	local newSpawnId = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("AvailableSpawnpoint", newSpawnId)
@@ -776,11 +777,14 @@ MapGenerator.GeneratePathfindingData = function(self)
 			inputData:AddTile( 1, self:IsWalkable(X-1, Z-1) )
 		end
 	end
-		
 	
 	inputData:SetSize(self.MapSizeX, self.MapSizeZ)
 	PathfinderHandler.SetData(inputData)
 	--PathfinderHandler.SetTileWalkable( 4, 7, true );
+	--local newEntity = world:CreateNewEntity()
+	--world:CreateComponentAndAddTo("TileWalkabilityHasChanged", newEntity)
+	--world:GetComponent(newEntity, "TileWalkabilityHasChanged", 0):SetInt2(X, Z)
+	--world:GetComponent(newEntity, "TileWalkabilityHasChanged", "Walkable"):SetBool(walkable)
 end
 
 

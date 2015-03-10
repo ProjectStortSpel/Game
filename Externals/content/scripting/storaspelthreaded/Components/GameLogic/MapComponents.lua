@@ -39,6 +39,7 @@ worldCreator:AddComponentType(NewComponent)
 -- Checkpoint Component
 NewComponent = ComponentType()
 NewComponent.Name = "Checkpoint"
+NewComponent.SyncNetwork = true
 NewComponent.TableType = TableType.Map
 NewComponent:AddVariable("Number", ByteSize.Int)
 worldCreator:AddComponentType(NewComponent)
@@ -100,10 +101,20 @@ NewComponent = ComponentType()
 NewComponent.Name = "GenerateMap"
 NewComponent.TableType = TableType.Map
 worldCreator:AddComponentType(NewComponent)
+
 --	RightCorner
-local RiverCornerDir = ComponentType()
-RiverCornerDir.Name = "RiverCornerDir"
-RiverCornerDir.SyncNetwork = true
-RiverCornerDir.TableType = TableType.Map
-RiverCornerDir:AddVariable("Dir", ByteSize.Text)
-worldCreator:AddComponentType(RiverCornerDir)
+NewComponent = ComponentType()
+NewComponent.Name = "RiverCornerDir"
+NewComponent.SyncNetwork = true
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("Dir", ByteSize.Text)
+worldCreator:AddComponentType(NewComponent)
+
+-- Tile Walkability Has Changed
+NewComponent = ComponentType()
+NewComponent.Name = "TileWalkabilityHasChanged"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("Walkable", ByteSize.Bool)
+NewComponent:AddVariable("X", ByteSize.Int)
+NewComponent:AddVariable("Y", ByteSize.Int)
+worldCreator:AddComponentType(NewComponent)

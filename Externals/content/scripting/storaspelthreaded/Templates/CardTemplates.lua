@@ -11,11 +11,13 @@ CardAboveHead.Name = "CardAboveHead"
 CardAboveHead:AddComponent("SyncNetwork")
 CardAboveHead:AddComponent("Parent")
 CardAboveHead:AddComponent("Model")
+CardAboveHead:AddComponent("NoShadow")
 CardAboveHead:AddComponent("CardAboveHead")
 CardAboveHead:AddComponent("Position")
 CardAboveHead:AddComponent("Rotation")
 CardAboveHead:AddComponent("Scale")
 CardAboveHead:AddComponent("Color")
+CardAboveHead:AddComponent("KillWhenOrphan")
 EntityTemplateManager:AddTemplate(CardAboveHead)
 
 local StoneTimer = EntityTemplate()

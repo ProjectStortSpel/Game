@@ -43,6 +43,7 @@ AddAISystem.EntitiesAdded = function(self, dt, entities)
 	
 	local ais = self:GetEntities("AI")
 	local voids = self:GetEntities("Void")
+	local nonWalkable = self:GetEntities("NotWalkable")
 	
 	for	i = 1, #ais do 
 		
@@ -57,15 +58,12 @@ AddAISystem.EntitiesAdded = function(self, dt, entities)
 				return
 			end
 			
-			
-			--print("nu blir det ai")
 			local counterEntities = self:GetEntities("PlayerCounter")			
 			local mapSpecsEntities = self:GetEntities("MapSpecs")
-			local noOfPlayers = world:GetComponent(counterEntities[1], "PlayerCounter", "Players"):GetInt()
-			local noOfSpawnpoints = world:GetComponent(mapSpecsEntities[1], "MapSpecs", "NoOfSpawnpoints"):GetInt()
+			local noOfAIs = world:GetComponent(counterEntities[1], "PlayerCounter", "AIs"):GetInt(0)
+			local noOfPlayers = world:GetComponent(counterEntities[1], "PlayerCounter", "Players"):GetInt(0)
+			local noOfSpawnpoints = world:GetComponent(mapSpecsEntities[1], "MapSpecs", "NoOfSpawnpoints"):GetInt(0)
 			local availableSpawnsLeft = noOfSpawnpoints - noOfPlayers
-			
-			--print(noOfSpawnpoints, noOfPlayers, availableSpawnsLeft)
 			
 			if availableSpawnsLeft > 0 then
 			
@@ -75,40 +73,33 @@ AddAISystem.EntitiesAdded = function(self, dt, entities)
 				world:SetComponent(ais[i], "PlayerNumber", "Number", playerNumber)
 				
 				self:CounterComponentChanged(1, "Players")
+				self:CounterComponentChanged(1, "AIs")
 				availableSpawnsLeft = availableSpawnsLeft - 1
 				
 				world:CreateComponentAndAddTo("NeedUnit", ais[i])
 				
-				local param = PFParam()
-				local object = "Void"
 				local onTheSpotValue = 0.0
 				local weight = 1
 				local length = 2
 				local power = 2
 				
-				--local bookIndex = DynamicScripting.LoadRuleBook("content/dynamicscripting/map.txt")
+				local bookIndex = DynamicScripting.LoadRuleBook("content/dynamicscripting/map.txt")
 				
-				--local fail = DynamicScripting.GenerateScript(playerNumber)
+				DynamicScripting.SetRuleBook( bookIndex );
 				
-				--local fail = DynamicScripting.GenerateScript()
-				
-				--local found, weight = DynamicScripting.GetWeightFrom(object, playerNumber)
+				local fail = DynamicScripting.GenerateScript(playerNumber)
 				
 				--DynamicScripting.UpdateWeight(math.random())
 				
-				for j = 1, #voids do
-					
-					local x, y = world:GetComponent(voids[j], "MapPosition", 0):GetInt2(0)
-					
-					param:AddPosition(x, y)
-				end
+				local found, weight = DynamicScripting.GetWeightFrom("Void", playerNumber)
+				self:PFstuff( found, voids, playerNumber, "Void", onTheSpotValue, weight, length, power )
 				
-				PotentialFieldHandler.InitPF(param, i, object, onTheSpotValue, weight, length, power)
+				local found, weight = DynamicScripting.GetWeightFrom("NotWalkable", playerNumber)
+				self:PFstuff( found, nonWalkable, playerNumber, "NotWalkable", onTheSpotValue, weight, length, power )
 				
-				-- Sum all the pfs.
-				PotentialFieldHandler.SumPFs(i)
+				PotentialFieldHandler.SumPFs(playerNumber)
 				
-				print("AI Added", i)
+				io.write("AI ", i, " Added. Player Nr: ", playerNumber, "\n")
 			else
 				world:KillEntity(ais[i])
 				print("Could not add AI, no spawnpoints left")
@@ -117,11 +108,26 @@ AddAISystem.EntitiesAdded = function(self, dt, entities)
 	end
 end
 
+AddAISystem.PFstuff = function(self, found, superstuff, playerNumber, object, onTheSpotValue, weight, length, power)
+	if found then
+		local param = PFParam()
+		for j = 1, #superstuff do
+			
+			local x, y = world:GetComponent(superstuff[j], "MapPosition", 0):GetInt2(0)
+			
+			param:AddPosition(x, y)
+		end
+		
+		PotentialFieldHandler.InitPF(param, playerNumber, object, onTheSpotValue, weight, length, power)
+		
+	end
+end
+
 AddAISystem.CounterComponentChanged = function(self, _change, _component)
 	
 	local counterEntities = self:GetEntities("PlayerCounter")
 	local counterComp = world:GetComponent(counterEntities[1], "PlayerCounter", _component)
-	local number = counterComp:GetInt()
+	local number = counterComp:GetInt(0)
 	number = number + _change
 	world:SetComponent(counterEntities[1], "PlayerCounter", _component, number)
 end

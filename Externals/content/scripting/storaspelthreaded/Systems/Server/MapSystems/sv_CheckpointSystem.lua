@@ -15,6 +15,7 @@ CheckpointSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Player", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("MapSpecs", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("PlayerCounter", FilterType.RequiresOneOf)
 end
 
 CheckpointSystem.AddTotemPiece = function(self, playerNumber, checkpoint, colorX, colorY, colorZ)
@@ -49,6 +50,17 @@ CheckpointSystem.HasReachedFinish = function(self, entityId)
 	if not world:EntityHasComponent(playerId, "AI") then
 		--	Make the player a spectator
 		world:CreateComponentAndAddTo("IsSpectator", playerId)
+		
+		local counterEntities = self:GetEntities("PlayerCounter")
+		local specCounterComp = world:GetComponent(counterEntities[1], "PlayerCounter", "Spectators")
+		local number = specCounterComp:GetInt(0)
+		number = number + 1
+		world:SetComponent(counterEntities[1], "PlayerCounter", "Spectators", number)
+		
+		local playerCounterComp = world:GetComponent(counterEntities[1], "PlayerCounter", "Players")
+		number = playerCounterComp:GetInt(0)
+		number = number - 1
+		world:SetComponent(counterEntities[1], "PlayerCounter", "Players", number)
 	else
 		-- Else if the player is an AI, remove the unit.
 		world:KillEntity(entityId)
@@ -151,10 +163,17 @@ CheckpointSystem.SendInfoToClient = function(self, player, nextCheckpoint)
 	
     --	Checkpoint information
 	local	X, Z			=	-1, -1
+	local	X2, Z2			=	-1, -1
 	local	tCheckpoints	=	self:GetEntities("Checkpoint")
 	for tCheckId = 1, #tCheckpoints do
 		if nextCheckpoint == world:GetComponent(tCheckpoints[tCheckId], "Checkpoint", "Number"):GetInt() then
 			X, Z	=	world:GetComponent(tCheckpoints[tCheckId], "MapPosition", "X"):GetInt2()
+			break
+		end
+	end
+	for tCheckId = 1, #tCheckpoints do
+		if nextCheckpoint+1 == world:GetComponent(tCheckpoints[tCheckId], "Checkpoint", "Number"):GetInt() then
+			X2, Z2	=	world:GetComponent(tCheckpoints[tCheckId], "MapPosition", "X"):GetInt2()
 			break
 		end
 	end
@@ -183,6 +202,19 @@ CheckpointSystem.SendInfoToClient = function(self, player, nextCheckpoint)
 	Net.WriteInt(id, nextCheckpoint)
 	Net.WriteFloat(id, X+offsetX)
 	Net.WriteFloat(id, Z+offsetZ)
+	
+	if X == -1 or Z == -1 then
+		Net.WriteInt(id, -1)
+	else
+		Net.WriteInt(id, nextCheckpoint)
+	end
+	
+	if X2 == -1 or Z2 == -1 then
+		Net.WriteInt(id, -1)
+	else
+		Net.WriteInt(id, nextCheckpoint+1)
+	end
+	
 	Net.Send(id, IP, PORT)
 	
 end

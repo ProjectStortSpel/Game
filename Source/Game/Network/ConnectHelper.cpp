@@ -7,6 +7,7 @@
 #include "Game/HomePath.h"
 
 #include "Console/Console.h"
+#include "Game/LoadingScreen.h"
 
 #include <map>
 #include <sstream>
@@ -155,7 +156,9 @@ namespace ConnectHelper
 			{
 				bytesDownloaded = 0;
 				percent = 0;
-				Console::ConsoleManager::GetInstance().AddToCommandQueue("SetLoadingText \"Downloading Gamemode: 0%\"");
+				Console::ConsoleManager::GetInstance().AddToCommandQueue("SetLoadingText \"Downloading Gamemode: 0%\"", false);
+				LoadingScreen::GetInstance().SetLoadingText("Downloading Gamemode: 0%");
+
 
 				Network::PacketHandler* ph = NetworkInstance::GetClient()->GetPacketHandler();
 				uint64_t id = ph->StartPack("RequestGameModeFile");
@@ -216,7 +219,7 @@ namespace ConnectHelper
                     SDL_Log("Failed to download gamemode file (md5 mismatch): %s", filename.c_str());
 					FileSystem::MD5::MD5_Print(r.MD5);
 					FileSystem::MD5::MD5_Print(MD5);
-					Console::ConsoleManager::GetInstance().AddToCommandQueue("disconnect;stop;gamemode lobby");
+					Console::ConsoleManager::GetInstance().AddToCommandQueue("disconnect;stop;gamemode lobby", false);
                     return;
                 }
                 
@@ -240,7 +243,8 @@ namespace ConnectHelper
 						percent = p;
 						std::stringstream ss;
 						ss << "SetLoadingText \"Downloading Gamemode: " << p << "%\"";
-						Console::ConsoleManager::GetInstance().AddToCommandQueue(ss.str().c_str());
+						Console::ConsoleManager::GetInstance().AddToCommandQueue(ss.str().c_str(), false);
+						LoadingScreen::GetInstance().SetLoadingText(ss.str().c_str());
 					}
 
 					Network::PacketHandler* ph = NetworkInstance::GetClient()->GetPacketHandler();
@@ -254,7 +258,8 @@ namespace ConnectHelper
 				percent = p;
 				std::stringstream ss;
 				ss << "SetLoadingText \"Downloading Gamemode: " << p << "%\"";
-				Console::ConsoleManager::GetInstance().AddToCommandQueue(ss.str().c_str());
+				Console::ConsoleManager::GetInstance().AddToCommandQueue(ss.str().c_str(), false);
+				LoadingScreen::GetInstance().SetLoadingText(ss.str().c_str());
 			}
 		}
 	}
@@ -332,7 +337,8 @@ namespace ConnectHelper
 			{
 				bytesDownloaded = 0;
 				percent = 0;
-				Console::ConsoleManager::GetInstance().AddToCommandQueue("SetLoadingText \"Downloading Content: 0%\"");
+				Console::ConsoleManager::GetInstance().AddToCommandQueue("SetLoadingText \"Downloading Content: 0%\"", false);
+				LoadingScreen::GetInstance().SetLoadingText("Downloading Content: 0%");
 
 				Network::PacketHandler* ph = NetworkInstance::GetClient()->GetPacketHandler();
 				uint64_t id = ph->StartPack("RequestContentFile");
@@ -385,7 +391,7 @@ namespace ConnectHelper
 					SDL_Log("Failed to download content file (md5 mismatch): %s", filename.c_str());
 					FileSystem::MD5::MD5_Print(r.MD5);
 					FileSystem::MD5::MD5_Print(MD5);
-					Console::ConsoleManager::GetInstance().AddToCommandQueue("disconnect;stop;gamemode lobby");
+					Console::ConsoleManager::GetInstance().AddToCommandQueue("disconnect;stop;gamemode lobby", false);
 					return;
 				}
                 
@@ -412,7 +418,8 @@ namespace ConnectHelper
 						percent = p;
 						std::stringstream ss;
 						ss << "SetLoadingText \"Downloading Content: " << p << "%\"";
-						Console::ConsoleManager::GetInstance().AddToCommandQueue(ss.str().c_str());
+						Console::ConsoleManager::GetInstance().AddToCommandQueue(ss.str().c_str(), false);
+						LoadingScreen::GetInstance().SetLoadingText(ss.str().c_str());
 					}
 
 					Network::PacketHandler* ph = NetworkInstance::GetClient()->GetPacketHandler();
@@ -426,7 +433,8 @@ namespace ConnectHelper
 				percent = p;
 				std::stringstream ss;
 				ss << "SetLoadingText \"Downloading Content: " << p << "%\"";
-				Console::ConsoleManager::GetInstance().AddToCommandQueue(ss.str().c_str());
+				Console::ConsoleManager::GetInstance().AddToCommandQueue(ss.str().c_str(), false);
+				LoadingScreen::GetInstance().SetLoadingText(ss.str().c_str());
 			}
 		}
 	}

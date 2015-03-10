@@ -24,6 +24,7 @@ ServerNetworkMessageSystem.PostInitialize = function(self)
 	local playerCounter = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("PlayerCounter", playerCounter)
 
+	world:SetComponent(playerCounter, "PlayerCounter", "AIs", 0)
 	world:SetComponent(playerCounter, "PlayerCounter", "Players", 0)
 	world:SetComponent(playerCounter, "PlayerCounter", "Spectators", 0)
 end
@@ -55,7 +56,7 @@ ServerNetworkMessageSystem.OnPlayerConnected = function(self, _ip, _port, _messa
 	local addSpectator = false
 	local counterEntities = self:GetEntities("PlayerCounter")
 	local counterComp = world:GetComponent(counterEntities[1], "PlayerCounter", 0)
-	local noOfPlayers, noOfSpectators = counterComp:GetInt2()
+	local noOfAIs, noOfPlayers, noOfSpectators = counterComp:GetInt3()
 
 	local mapSpecs = self:GetEntities("MapSpecs")
 	local maxPlayers = 1
@@ -124,7 +125,7 @@ ServerNetworkMessageSystem.OnPlayerConnected = function(self, _ip, _port, _messa
 	
 	for i = 1, #sync do
 		Net.SendEntity(sync[i], _ip, _port)	
-		Console.Print("Send Entity: " .. sync[i])
+		--Console.Print("Send Entity: " .. sync[i])
 	end	
 
 end
