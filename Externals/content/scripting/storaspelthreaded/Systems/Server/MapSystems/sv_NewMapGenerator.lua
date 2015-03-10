@@ -762,7 +762,13 @@ MapGenerator.SetTileType = function(self, X, Z, TileType)
 	self.TileTypes[self:GetListIndex(X, Z)]	=	TileType
 	
 	--	Update the pathfinder
+	local walkable = self:IsWalkable(X, Z)
 	PathfinderHandler.SetTileWalkable(X, Z, self:IsWalkable(X, Z))
+	
+	--local newEntity = world:CreateNewEntity()
+	--world:CreateComponentAndAddTo("TileWalkabilityHasChanged", newEntity)
+	--world:GetComponent(newEntity, "MapSpecs", 0):SetInt2(X, Z)
+	--world:GetComponent(newEntity, "MapSpecs", "Walkable"):SetBool(walkable)
 end
 
 --	Removes the current tile by setting it to Void
