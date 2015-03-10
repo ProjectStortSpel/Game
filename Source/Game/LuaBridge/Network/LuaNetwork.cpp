@@ -55,6 +55,7 @@ namespace LuaBridge
 		int Kick(lua_State* L);
 		int MaxConnections(lua_State* L);
 		int ConnectedClients(lua_State* L);
+		int GetPlayerName(lua_State* L);
 
 		int SendEntity(lua_State* L);
 		int SendEntityKill(lua_State* L);
@@ -113,7 +114,8 @@ namespace LuaBridge
 			LuaEmbedder::AddFunction(L, "IsRunning", &IsRunning, "Net");
 			LuaEmbedder::AddFunction(L, "Kick", &Kick, "Net");
 			LuaEmbedder::AddFunction(L, "MaxConnections", &MaxConnections, "Net");
-			LuaEmbedder::AddFunction(L, "ConnectedClients", &ConnectedClients, "Net");
+			LuaEmbedder::AddFunction(L, "ConnectedClients", &ConnectedClients, "Net"); 
+			LuaEmbedder::AddFunction(L, "GetPlayerName", &GetPlayerName, "Net");
 
 			LuaEmbedder::AddFunction(L, "SendEntity", &SendEntity, "Net");
 			LuaEmbedder::AddFunction(L, "SendEntityKill", &SendEntityKill, "Net");
@@ -521,7 +523,21 @@ namespace LuaBridge
 				return nc.size() * 2;
 			}
 			return 0;
-		}		
+		}	
+
+		int GetPlayerName(lua_State* L)
+		{
+			Network::ServerNetwork* server = NetworkInstance::GetServer();
+			if (server->IsRunning())
+			{
+				Network::NetConnection nc(LuaEmbedder::PullString(L, 1).c_str(), LuaEmbedder::PullInt(L, 2));
+				LuaEmbedder::PushString(L, ClientManager::GetPlayerName(nc));
+
+			}
+			else
+				LuaEmbedder::PushString(L, "");
+			return 1;
+		}
 
 		int MaxConnections(lua_State* L)
 		{

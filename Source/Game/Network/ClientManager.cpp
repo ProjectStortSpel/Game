@@ -15,11 +15,15 @@
 namespace ClientManager
 {
 
+
+
+
 #define FileChunkSize 10240
 	enum State
 	{
-		Connecting,
-		Connected
+		Connecting = 1,
+		Name = 2,
+		Connected = 4
 	};
 
 	struct Job
@@ -29,6 +33,11 @@ namespace ClientManager
 		Network::NetConnection nc;
 	};
 
+	inline State operator|(State a, State b)
+	{
+		return static_cast<State>(static_cast<int>(a) | static_cast<int>(b));
+	}
+
 	//struct Client
 	//{
 	//	State state;
@@ -36,6 +45,7 @@ namespace ClientManager
 	//};
 
 	std::map<Network::NetConnection, State> clients;
+	std::map<Network::NetConnection, std::string> names;
 	std::queue<Job> jobs;
 	SDL_Thread* jobThread;
 	SDL_mutex* jobMutex;
@@ -70,6 +80,15 @@ namespace ClientManager
 				connectedClients.push_back(it->first);
 		}
 		return connectedClients;
+	}
+
+	std::string GetPlayerName(Network::NetConnection _nc)
+	{
+		if (names.find(_nc) != names.end())
+		{
+			return names[_nc];
+		}
+		return "UntitledName";
 	}
 
 	static int Upload(void* ptr)
@@ -203,6 +222,7 @@ namespace ClientManager
 		//Upload();
 	}
 
+	void AcknowledgeName(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
 	void RequestGameModeFileList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
 	void RequestGameModeFile(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
 	void RequestContentFileList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
@@ -214,7 +234,10 @@ namespace ClientManager
 		//Network::NetMessageHook hook = std::bind(&NetworkGameMode, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 		//NetworkInstance::GetClient()->AddNetworkHook("GameMode", hook);
 
-		Network::NetMessageHook hook = std::bind(&RequestGameModeFileList, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+		Network::NetMessageHook hook = std::bind(&AcknowledgeName, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+		NetworkInstance::GetServer()->AddNetworkHook("SEND_PLAYER_NAME", hook);
+
+		hook = std::bind(&RequestGameModeFileList, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 		NetworkInstance::GetServer()->AddNetworkHook("RequestGameModeFileList", hook);
 
 		hook = std::bind(&RequestGameModeFile, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
@@ -228,6 +251,23 @@ namespace ClientManager
 
 		hook = std::bind(&GameModeLoaded, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 		NetworkInstance::GetServer()->AddNetworkHook("GameModeLoaded", hook);
+	}
+	void AcknowledgeName(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
+	{
+		if (clients.find(_nc) != clients.end())
+		{
+			clients[_nc] = clients[_nc] | Name;
+			names[_nc] = _ph->ReadString(_id);
+		}
+		else
+		{
+			names[_nc] = "NotConnectedPlayer";
+			SDL_Log("Tried to set name on a player not connected!?");
+		}
+
+		uint64_t id = _ph->StartPack("SERVER_ACKNOWLEDGE_NAME");
+		NetworkInstance::GetServer()->Send(_ph->EndPack(id), _nc);
+
 	}
 
 	void RequestGameModeFileList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
@@ -409,8 +449,11 @@ namespace ClientManager
 	{
 		if (clients.find(_nc) != clients.end())
 		{
-
-			clients[_nc] = Connected;
+			int hest = clients[_nc];
+			if (clients[_nc] & Name)
+				clients[_nc] = Connected | Name;
+			else
+				SDL_Log("Connecting without setting name.");
 
 			for (int i = 0; i < LuaBridge::LuaNetworkEvents::g_onPlayerConnected.size(); ++i)
 			{

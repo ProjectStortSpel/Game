@@ -17,7 +17,8 @@ namespace ConnectHelper
 	enum State
 	{
 		//Password, 
-		//GameMode, 
+		//GameMode,
+		AcknowledgeName,
 		GameModeFileList,
 		GameModeFiles,
 		ContentFileList,
@@ -38,6 +39,7 @@ namespace ConnectHelper
 	void BindNetworkEvents();
 	void Reset();
 
+	void NetworkAcknowledgeName(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
 	//void NetworkGameMode(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
 	void NetworkGameModeFileList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
 	void NetworkGameModeFile(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
@@ -49,7 +51,10 @@ namespace ConnectHelper
 		//Network::NetMessageHook hook = std::bind(&NetworkGameMode, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 		//NetworkInstance::GetClient()->AddNetworkHook("GameMode", hook);
 
-		Network::NetMessageHook hook = std::bind(&NetworkGameModeFileList, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+		Network::NetMessageHook hook = std::bind(&NetworkAcknowledgeName, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+		NetworkInstance::GetClient()->AddNetworkHook("SERVER_ACKNOWLEDGE_NAME", hook);
+
+		hook = std::bind(&NetworkGameModeFileList, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 		NetworkInstance::GetClient()->AddNetworkHook("GameModeFileList", hook);
 
 		hook = std::bind(&NetworkGameModeFile, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
@@ -62,19 +67,19 @@ namespace ConnectHelper
 		NetworkInstance::GetClient()->AddNetworkHook("ContentFile", hook);
 	}
 
+	std::string name = "Pettson";
+
 	void Connect(std::string _gamemode)
 	{
 		gamemode = _gamemode;
 		missingFiles.clear();
 
-		
-
-		//Request Gamemode File List
 		Network::PacketHandler* ph = NetworkInstance::GetClient()->GetPacketHandler();
-		uint64_t id = ph->StartPack("RequestGameModeFileList");
+		uint64_t id = ph->StartPack("SEND_PLAYER_NAME");
+		ph->WriteString(id, name.c_str());
 		NetworkInstance::GetClient()->Send(ph->EndPack(id));
 
-		state = GameModeFileList;
+		state = AcknowledgeName;
 	}
 
 	void SetLoadGameModeHook(LoadGameModeHook _hook)
@@ -86,6 +91,19 @@ namespace ConnectHelper
 	{
 
 	}*/
+
+	void NetworkAcknowledgeName(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
+	{
+		if (state == AcknowledgeName)
+		{
+			//Request Gamemode File List
+			Network::PacketHandler* ph = NetworkInstance::GetClient()->GetPacketHandler();
+			uint64_t id = ph->StartPack("RequestGameModeFileList");
+			NetworkInstance::GetClient()->Send(ph->EndPack(id));
+
+			state = GameModeFileList;
+		}
+	}
 
 	void NetworkGameModeFileList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
 	{
