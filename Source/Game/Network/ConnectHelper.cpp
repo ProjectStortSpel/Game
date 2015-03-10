@@ -7,6 +7,7 @@
 #include "Game/HomePath.h"
 
 #include "Console/Console.h"
+#include "Game/LoadingScreen.h"
 
 #include <map>
 #include <sstream>
@@ -156,6 +157,8 @@ namespace ConnectHelper
 				bytesDownloaded = 0;
 				percent = 0;
 				Console::ConsoleManager::GetInstance().AddToCommandQueue("SetLoadingText \"Downloading Gamemode: 0%\"", false);
+				LoadingScreen::GetInstance().SetLoadingText("Downloading Gamemode: 0%");
+
 
 				Network::PacketHandler* ph = NetworkInstance::GetClient()->GetPacketHandler();
 				uint64_t id = ph->StartPack("RequestGameModeFile");
@@ -241,6 +244,7 @@ namespace ConnectHelper
 						std::stringstream ss;
 						ss << "SetLoadingText \"Downloading Gamemode: " << p << "%\"";
 						Console::ConsoleManager::GetInstance().AddToCommandQueue(ss.str().c_str(), false);
+						LoadingScreen::GetInstance().SetLoadingText(ss.str().c_str());
 					}
 
 					Network::PacketHandler* ph = NetworkInstance::GetClient()->GetPacketHandler();
@@ -255,6 +259,7 @@ namespace ConnectHelper
 				std::stringstream ss;
 				ss << "SetLoadingText \"Downloading Gamemode: " << p << "%\"";
 				Console::ConsoleManager::GetInstance().AddToCommandQueue(ss.str().c_str(), false);
+				LoadingScreen::GetInstance().SetLoadingText(ss.str().c_str());
 			}
 		}
 	}
@@ -333,6 +338,7 @@ namespace ConnectHelper
 				bytesDownloaded = 0;
 				percent = 0;
 				Console::ConsoleManager::GetInstance().AddToCommandQueue("SetLoadingText \"Downloading Content: 0%\"", false);
+				LoadingScreen::GetInstance().SetLoadingText("Downloading Content: 0%");
 
 				Network::PacketHandler* ph = NetworkInstance::GetClient()->GetPacketHandler();
 				uint64_t id = ph->StartPack("RequestContentFile");
@@ -413,6 +419,7 @@ namespace ConnectHelper
 						std::stringstream ss;
 						ss << "SetLoadingText \"Downloading Content: " << p << "%\"";
 						Console::ConsoleManager::GetInstance().AddToCommandQueue(ss.str().c_str(), false);
+						LoadingScreen::GetInstance().SetLoadingText(ss.str().c_str());
 					}
 
 					Network::PacketHandler* ph = NetworkInstance::GetClient()->GetPacketHandler();
@@ -427,6 +434,7 @@ namespace ConnectHelper
 				std::stringstream ss;
 				ss << "SetLoadingText \"Downloading Content: " << p << "%\"";
 				Console::ConsoleManager::GetInstance().AddToCommandQueue(ss.str().c_str(), false);
+				LoadingScreen::GetInstance().SetLoadingText(ss.str().c_str());
 			}
 		}
 	}

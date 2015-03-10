@@ -6,12 +6,11 @@ Fire::Fire()
 {
 }
 
-Fire::Fire(const vec3 _pos, int _nParticles, float _lifeTime, float _scale, float _spriteSize, GLuint _texHandle, vec3 _color, Shader *_shaderProg) : ParticleEffect(_pos, _nParticles, _lifeTime, _scale, _spriteSize, _texHandle, _color, _shaderProg)
+Fire::Fire(const vec3 _pos, const vec3 _vel, int _nParticles, float _lifeTime, vec3 _scale, float _spriteSize, GLuint _texHandle, vec3 _color, Shader *_shaderProg) : ParticleEffect(_pos, _vel, _nParticles, _lifeTime, _scale, _spriteSize, _texHandle, _color, _shaderProg)
 {
 	//----Init starts here------------------
 	//..-----FIRE-----..
 	m_dstBlendFactor = GL_CONSTANT_COLOR;
-	float scale = m_scale;
 
 	m_accel = vec3(0.0);
 	vec3 v(0.0f);
@@ -29,7 +28,10 @@ Fire::Fire(const vec3 _pos, int _nParticles, float _lifeTime, float _scale, floa
 	for (GLuint i = 0; i < m_nrParticles; i++) {
 		vec3 pos;
 		pos = vec3(((float)(rand() % 9) - 4), 0.0f, ((float)(rand() % 9 - 4)));
-		pos = glm::normalize(pos) * ((float)(rand() % 9 - 4)) * 0.5f * scale;
+		pos = glm::normalize(pos) * ((float)(rand() % 9 - 4)) * 0.5f;
+		pos.x *= m_scale.x;
+		pos.y *= m_scale.y;
+		pos.z *= m_scale.z;
 
 		m_posData[3 * i] = pos.x; //((float)(rand() % 9) - 4) * scale;
 		m_posData[3 * i + 1] = pos.y; // 0.0;
@@ -48,11 +50,11 @@ Fire::Fire(const vec3 _pos, int _nParticles, float _lifeTime, float _scale, floa
 			v.z *= -1;
 
 		// Scale to set the magnitude of the velocity (speed)
-		velocity = glm::mix(1.25f, 1.5f, (float)(rand() % 101) / 100) * 0.0012;
+		velocity = glm::mix(1.25f, 1.5f, (float)(rand() % 101) / 100) * 1.2;
 		v = v * velocity;
-		m_velData[3 * i] = v.x;
-		m_velData[3 * i + 1] = v.y;
-		m_velData[3 * i + 2] = v.z;
+		m_velData[3 * i] = v.x + m_vel.x;
+		m_velData[3 * i + 1] = v.y + m_vel.y;
+		m_velData[3 * i + 2] = v.z + m_vel.z;
 
 		m_timeData[i] = mtime;
 		mtime += rate;
@@ -91,11 +93,10 @@ void Fire::Render(float _dt)
 	glBlendColor(0.93, 0.93, 0.93, 1.0);
 	glBlendFunc(GL_SRC_ALPHA, m_dstBlendFactor);
 
-	float dt = 1000.f * (_dt);
-	m_elapsedTime += dt;
+	m_elapsedTime += _dt;
 
 	if (m_endPhase == 1)
-		m_removeDelayTime += dt;
+		m_removeDelayTime += _dt;
 
 	//DO THE UPDATE CALCULATIONS HERE
 	for (int i = 0; i < m_nrParticles; i++)
@@ -114,8 +115,8 @@ void Fire::Render(float _dt)
 			else 
 			{
 				// The particle is alive, update.
-				m_particles[i].Position += m_particles[i].Velocity * dt;
-				m_particles[i].Velocity += m_accel * dt;
+				m_particles[i].Position += m_particles[i].Velocity * _dt;
+				m_particles[i].Velocity += m_accel * _dt;
 			}
 			m_posData[3 * i + 0] = m_particles[i].Position.x;
 			m_posData[3 * i + 1] = m_particles[i].Position.y;

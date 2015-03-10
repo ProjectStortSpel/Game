@@ -10,7 +10,7 @@ namespace Renderer
 	{
 	public:
 		Smoke();
-		Smoke(const vec3 _pos, int _nParticles, float _lifeTime, float _scale, float _spriteSize, GLuint _texHandle, vec3 _color, Shader *_shaderProg);
+		Smoke(const vec3 _pos, const vec3 _vel, int _nParticles, float _lifeTime, vec3 _scale, float _spriteSize, GLuint _texHandle, vec3 _color, Shader *_shaderProg);
 		~Smoke();
 
 		void Render(float _deltaTimeMillis);

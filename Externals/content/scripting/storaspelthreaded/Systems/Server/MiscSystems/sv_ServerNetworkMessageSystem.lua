@@ -125,7 +125,7 @@ ServerNetworkMessageSystem.OnPlayerConnected = function(self, _ip, _port, _messa
 	
 	for i = 1, #sync do
 		Net.SendEntity(sync[i], _ip, _port)	
-		Console.Print("Send Entity: " .. sync[i])
+		--Console.Print("Send Entity: " .. sync[i])
 	end	
 
 end

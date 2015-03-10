@@ -4,6 +4,7 @@ require "cl_PlayerIndicatorSystem"
 require "cl_ClientNetworkMessageSystem"
 require "cl_FlowingWaterSystem"
 require "cl_ChatSystem"
+require "cl_GlowNextCheckpointSystem"
 require "cl_ShowNextCheckpointSystem"
 require "cl_LobbySystem"
 require "cl_VisualizeSelectedCards"
@@ -63,6 +64,7 @@ worldCreator:AddSystemToCurrentGroup(CardHoverSystem)
 worldCreator:AddSystemToCurrentGroup(LobbySystem)
 worldCreator:AddSystemToCurrentGroup(CardAddModelSystem)
 worldCreator:AddSystemToCurrentGroup(ShowNextCheckpointSystem)
+worldCreator:AddSystemToCurrentGroup(GlowNextCheckpointSystem)
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(VisualizeSelectedCards)
