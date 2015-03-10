@@ -9,13 +9,16 @@
     <ClCompile Include="..\..\..\Source\AndroidRenderer\SkyBox.cpp" />
     <ClCompile Include="..\..\..\Source\AndroidRenderer\GraphicsLow.cpp" />
     <ClCompile Include="..\..\..\Source\AndroidRenderer\GraphicsHigh.cpp" />
-    <ClCompile Include="..\..\..\Source\AndroidRenderer\ParticleEffect.cpp">
+    <ClCompile Include="..\..\..\Source\AndroidRenderer\Particles\Fire.cpp">
       <Filter>ParticleEffects</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\AndroidRenderer\Fire.cpp">
+    <ClCompile Include="..\..\..\Source\AndroidRenderer\Particles\ParticleEffect.cpp">
       <Filter>ParticleEffects</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\AndroidRenderer\Smoke.cpp">
+    <ClCompile Include="..\..\..\Source\AndroidRenderer\Particles\Smoke.cpp">
+      <Filter>ParticleEffects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\AndroidRenderer\Particles\Waterfall.cpp">
       <Filter>ParticleEffects</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\AndroidRenderer\AModel.cpp">
@@ -35,13 +38,16 @@
     <ClInclude Include="..\..\..\Source\AndroidRenderer\TextureLoader.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\GraphicsLow.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\GraphicsHigh.h" />
-    <ClInclude Include="..\..\..\Source\AndroidRenderer\ParticleEffect.h">
+    <ClInclude Include="..\..\..\Source\AndroidRenderer\Particles\Fire.h">
       <Filter>ParticleEffects</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\AndroidRenderer\Fire.h">
+    <ClInclude Include="..\..\..\Source\AndroidRenderer\Particles\ParticleEffect.h">
       <Filter>ParticleEffects</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\AndroidRenderer\Smoke.h">
+    <ClInclude Include="..\..\..\Source\AndroidRenderer\Particles\Smoke.h">
+      <Filter>ParticleEffects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\AndroidRenderer\Particles\Waterfall.h">
       <Filter>ParticleEffects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\AndroidRenderer\AModel.h">
@@ -131,6 +137,12 @@
     </None>
     <None Include="..\..\..\Externals\content\shaders\android\lowAndroidRiverCornerFS.glsl">
       <Filter>Shaders\SpriteAnimation</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidWaterfallShaderFS.glsl">
+      <Filter>Shaders\ParticleEffects</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidWaterfallShaderVS.glsl">
+      <Filter>Shaders\ParticleEffects</Filter>
     </None>
   </ItemGroup>
 </Project>

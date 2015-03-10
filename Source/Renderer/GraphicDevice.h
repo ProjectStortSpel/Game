@@ -96,9 +96,10 @@ namespace Renderer
 	{
 		std::string Name;
 		vec3 Pos;
+		vec3 Vel;
 		int NrOfParticles;
 		float LifeTime;
-		float Scale;
+		vec3 Scale;
 		float SpriteSize;
 		std::string TextureName;
 		vec3 Color;
@@ -156,7 +157,7 @@ namespace Renderer
 		void CreateWrappedTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, unsigned int wrapLength, glm::ivec2 size = glm::ivec2(-1, -1));
 
 		// PARTICLES
-		void AddParticleEffect(std::string _name, const vec3 _pos, int _nParticles, float _lifeTime, float _scale, float _spriteSize, std::string _texture, vec3 _color, int &_id);
+		void AddParticleEffect(std::string _name, const vec3 _pos, const vec3 _vel, int _nParticles, float _lifeTime, vec3 _scale, float _spriteSize, std::string _texture, vec3 _color, int &_id);
 		void RemoveParticleEffect(int _id);
 		void SetParticleAcceleration(int _id, float x, float y, float z);
 		

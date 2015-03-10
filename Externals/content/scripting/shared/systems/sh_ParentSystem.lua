@@ -22,13 +22,13 @@ ParentSystem.EntitiesAdded = function(self, dt, entities)
 		if world:EntityHasComponent(entityId, "Parent") then
 			local parent = world:GetComponent(entityId, "Parent", 0)
 			local parentEntity = parent:GetInt(0)
-			if world:EntityHasComponent(parentEntity, "Render") then
+			if world:EntityHasComponent(parentEntity, "Model") then
 				if not world:EntityHasComponent(parentEntity, "IsParent") then
 					world:CreateComponentAndAddTo("IsParent", parentEntity)
 				end
 			else
 				world:RemoveComponentFrom("Parent", entityId)
-				print("Parent doesn't have RenderComponent")
+				print("Parent doesn't have ModelComponent")
 			end
 		end
 	end
@@ -61,5 +61,5 @@ ParentSystem.Initialize = function(self)
 	self:UsingEntitiesRemoved()
 	self:AddComponentTypeToFilter("Parent", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("IsParent", FilterType.RequiresOneOf)
-	self:AddComponentTypeToFilter("Render", FilterType.Mandatory)
+	self:AddComponentTypeToFilter("Model", FilterType.Mandatory)
 end

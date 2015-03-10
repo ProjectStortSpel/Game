@@ -1,7 +1,4 @@
 PlayCardSystem	=	System()
-PlayCardSystem.CardsAbove 			= 	{}
-PlayCardSystem.CardsAbove.__mode 	= 	"k"
-
 
 PlayCardSystem.Initialize = function(self)
 	--	Set Name
@@ -13,6 +10,7 @@ PlayCardSystem.Initialize = function(self)
 	--	Set Filter
 	self:AddComponentTypeToFilter("PlayCard", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("CardStep", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("CardAboveHead", FilterType.RequiresOneOf)
 end
 
 PlayCardSystem.GetCardsWithPrio = function(self, selectedStep, selectedPrio)
@@ -78,11 +76,12 @@ PlayCardSystem.PlayCard = function(self, unitToPlay, cardToPlay)
 		world:GetComponent(playedCard, "PlayedCard", "CardPriority"):SetInt(world:GetComponent(cardToPlay, "CardPrio", "Prio"):GetInt())
 		world:GetComponent(playedCard, "PlayedCard", "PlayerNumber"):SetInt(playerNumber)
 		
+		local cardsAboveHead = self:GetEntities("CardAboveHead")
 		
 		--	Create CardAboveHead
 		local	cardAbove	=	world:CreateNewEntity("CardAboveHead")
 		
-		world:GetComponent(cardAbove, "Position", 0):SetFloat3(0.0, 2.0 + #self.CardsAbove*0.001, 0.0)
+		world:GetComponent(cardAbove, "Position", 0):SetFloat3(0.0, 2.0 + #cardsAboveHead*0.001, 0.0)
 		world:GetComponent(cardAbove, "Rotation", 0):SetFloat3(1.5 * math.pi, math.pi, 0.0)
 		world:GetComponent(cardAbove, "Scale", 0):SetFloat3(0,0,0)
 		if not world:EntityHasComponent(cardAbove, "LerpScale") then
@@ -108,19 +107,18 @@ PlayCardSystem.PlayCard = function(self, unitToPlay, cardToPlay)
 		
 		
 		if world:GetComponent(cardToPlay, "CardPrio", "Prio"):GetInt() ~= 0 then
-			for n = 1, #self.CardsAbove do
-				if not world:EntityHasComponent(self.CardsAbove[n], "LerpScale") then
-					world:CreateComponentAndAddTo("LerpScale", self.CardsAbove[n])
-					world:GetComponent(self.CardsAbove[n], "LerpScale", "X"):SetFloat(1.0)
-					world:GetComponent(self.CardsAbove[n], "LerpScale", "Y"):SetFloat(1.0)
-					world:GetComponent(self.CardsAbove[n], "LerpScale", "Z"):SetFloat(1.0)
-					world:GetComponent(self.CardsAbove[n], "LerpScale", "Time"):SetFloat(0.2)
-					world:GetComponent(self.CardsAbove[n], "LerpScale", "Algorithm"):SetText("SmoothLerp")
+			for n = 1, #cardsAboveHead do
+				if not world:EntityHasComponent(cardsAboveHead[n], "LerpScale") then
+					world:CreateComponentAndAddTo("LerpScale", cardsAboveHead[n])
+					world:GetComponent(cardsAboveHead[n], "LerpScale", "X"):SetFloat(1.0)
+					world:GetComponent(cardsAboveHead[n], "LerpScale", "Y"):SetFloat(1.0)
+					world:GetComponent(cardsAboveHead[n], "LerpScale", "Z"):SetFloat(1.0)
+					world:GetComponent(cardsAboveHead[n], "LerpScale", "Time"):SetFloat(0.2)
+					world:GetComponent(cardsAboveHead[n], "LerpScale", "Algorithm"):SetText("SmoothLerp")
 				end
-				world:GetComponent(self.CardsAbove[n], "Color", 0):SetFloat3(0.4, 0.4, 0.4)
+				world:GetComponent(cardsAboveHead[n], "Color", 0):SetFloat3(0.4, 0.4, 0.4)
 			end
 		end
-		self.CardsAbove[#self.CardsAbove+1]	=	cardAbove
 	end
 	
 	world:RemoveComponentFrom("CardStep", cardToPlay)
@@ -181,8 +179,8 @@ PlayCardSystem.EntitiesAdded = function(self, dt, entities)
 				world:CreateComponentAndAddTo("StepTimer", id)
 				world:GetComponent(id, "StepTimer", "Time"):SetFloat(1)
 				
-				for i = 1, #self.CardsAbove do
-					local	tempCard	=	self.CardsAbove[i]
+				local cardsAboveHead = self:GetEntities("CardAboveHead")
+				for i = 1, #cardsAboveHead do
 					--if not world:EntityHasComponent(tempCard, "LerpScale") then
 					--	world:CreateComponentAndAddTo("LerpScale", tempCard)
 					--end
@@ -192,10 +190,8 @@ PlayCardSystem.EntitiesAdded = function(self, dt, entities)
 					--world:GetComponent(tempCard, "LerpScale", "Time"):SetFloat(0.15)
 					--world:GetComponent(tempCard, "LerpScale", "Algorithm"):SetText("SmoothLerp")
 					--
-					world:KillEntity(tempCard)
+					world:KillEntity(cardsAboveHead[i])
 				end
-				self.CardsAbove 		= 	{ }
-				self.CardsAbove.__mode 	= 	"k"
 			end
 			
 			world:KillEntity(tEntity)

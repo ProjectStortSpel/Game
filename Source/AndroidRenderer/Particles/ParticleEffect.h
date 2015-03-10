@@ -1,7 +1,7 @@
 #ifndef PARTICLEEFFECT_H
 #define PARTICLEEFFECT_H
-#include "stdafx.h"
-#include "Shader.h"
+#include "../stdafx.h"
+#include "../Shader.h"
 #include <time.h>
 
 using glm::vec3;
@@ -19,7 +19,7 @@ namespace Renderer
 	{
 	public:
 		ParticleEffect();
-		ParticleEffect(const vec3 _pos, int _nParticles, float _lifeTime, float _scale, float _spriteSize, GLuint _texHandle, vec3 _color, Shader *_shaderProg);
+		ParticleEffect(const vec3 _pos, const vec3 _vel, int _nParticles, float _lifeTime, vec3 _scale, float _spriteSize, GLuint _texHandle, vec3 _color, Shader *_shaderProg);
 		~ParticleEffect();
 
 		GLuint GetTexHandle(){ return m_textureHandle; }
@@ -37,10 +37,10 @@ namespace Renderer
 		Shader *m_shader;
 
 		int m_nrParticles;
-		vec3 m_pos, m_accel, m_color;
+		vec3 m_pos, m_vel, m_accel, m_color;
 		float m_spriteSize, m_lifeTime;
 		float m_elapsedTime, m_removeDelayTime;
-		float m_scale;
+		vec3 m_scale;
 		int m_endPhase;
 		GLenum m_dstBlendFactor;
 
