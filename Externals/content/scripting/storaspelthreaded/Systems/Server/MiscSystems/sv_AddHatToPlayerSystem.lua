@@ -13,6 +13,7 @@ AddHatToPlayerSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Hat", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("PrevHat", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("NextHat", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("ThisHat", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("UnitEntityId", FilterType.RequiresOneOf)
 	
 	-- Setting up
@@ -28,14 +29,14 @@ end
 AddHatToPlayerSystem.SwitchHatOnUnit = function(self, player, Offset)
 	local thisip = world:GetComponent(player, "NetConnection", "IpAddress"):GetText()
 	local thisport = world:GetComponent(player, "NetConnection", "Port"):GetInt()
-	local entities = self:GetEntities("UnitEntityId")
-	for i = 1, #entities do
-		local entityId = entities[i]
-		local ip = world:GetComponent(entityId, "NetConnection", "IpAddress"):GetText()
-		local port = world:GetComponent(entityId, "NetConnection", "Port"):GetInt()
+	local players = self:GetEntities("UnitEntityId")
+	for i = 1, #players do
+		local playerId = players[i]
+		local ip = world:GetComponent(playerId, "NetConnection", "IpAddress"):GetText()
+		local port = world:GetComponent(playerId, "NetConnection", "Port"):GetInt()
 		if ip == thisip and port == thisport then
 			
-			local unitId = world:GetComponent(entityId, "UnitEntityId", "Id"):GetInt()
+			local unitId = world:GetComponent(playerId, "UnitEntityId", "Id"):GetInt()
 			
 			if world:EntityHasComponent(unitId, "Hat") then
 				local hatNr = world:GetComponent(unitId, "Hat", "Id"):GetInt(0)
@@ -45,6 +46,8 @@ AddHatToPlayerSystem.SwitchHatOnUnit = function(self, player, Offset)
 				world:GetComponent(unitId, "Hat", "Id"):SetInt(hatNr)
 				if hatNr > 0 then
 					self:SetHatToUnit(hatNr, unitId)
+				else
+					world:RemoveComponent("Hat", unitId)
 				end
 			else
 				local hatNr = (Offset) % (#self.HatTemplates + 1)
@@ -59,6 +62,7 @@ AddHatToPlayerSystem.SwitchHatOnUnit = function(self, player, Offset)
 end
 
 AddHatToPlayerSystem.SetHatToUnit = function(self, hatId, unitId)
+
 	local hatName = self.HatTemplates[hatId]
 	local hatEntity = world:CreateNewEntity(hatName)
 
@@ -82,7 +86,7 @@ AddHatToPlayerSystem.SetHatToUnit = function(self, hatId, unitId)
 	-- LERP THE HAT FOR EFFECT
 	local sx, sy, sz = world:GetComponent(hatEntity, "Scale", "X"):GetFloat3(0)
 	world:CreateComponentAndAddTo("LerpScale", hatEntity)
-	world:GetComponent(hatEntity, "LerpScale", "Time", 0):SetFloat4(0.2, sx, sy, sz)
+	world:GetComponent(hatEntity, "LerpScale", "Time", 0):SetFloat4(0.1, sx, sy, sz)
 	world:GetComponent(hatEntity, "LerpScale", "Algorithm", 0):SetText("SmoothLerp")
 	world:GetComponent(hatEntity, "Scale", "X", 0):SetFloat3(0, 0, 0)
 	
@@ -94,8 +98,16 @@ AddHatToPlayerSystem.EntitiesAdded = function(self, dt, entities)
 		local entityId = entities[n]
 		if world:EntityHasComponent( entityId, "PrevHat") then
 			self:SwitchHatOnUnit(entityId, -1)
+			world:KillEntity(entityId)
 		elseif world:EntityHasComponent( entityId, "NextHat") then
 			self:SwitchHatOnUnit(entityId, 1)
+			world:KillEntity(entityId)
+		elseif world:EntityHasComponent( entityId, "ThisHat") then
+			local hatId = world:GetComponent(entityId, "ThisHat", "hatId"):GetInt()
+			local unitId = world:GetComponent(entityId, "ThisHat", "unitId"):GetInt()
+			hatId = hatId % (#self.HatTemplates + 1)
+			self:SetHatToUnit(hatId, unitId)
+			world:KillEntity(entityId)
 		end
 	end
 end

@@ -49,10 +49,16 @@ GraphicDevice::~GraphicDevice()
 	delete m_pointerToPointlights;
 
 	for (std::map<int, ParticleSystem*>::iterator it = m_particleSystems.begin(); it != m_particleSystems.end(); ++it)
-	{
 		delete(it->second);
-	}
-	m_particleSystems.clear();
+
+	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); ++it)
+		delete(it->second);
+
+	for (std::map<const std::string, GLuint>::iterator it = m_textures.begin(); it != m_textures.end(); ++it)
+		glDeleteTextures(1, &(it->second));
+
+	for (int i = 0; i < m_surfaces.size(); i++)
+		delete(m_surfaces[i].second);
 
 	SDL_GL_DeleteContext(m_glContext);
 	// Close and destroy the window
