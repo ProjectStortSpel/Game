@@ -1,7 +1,7 @@
 #ifndef PARTICLEEFFECT_H
 #define PARTICLEEFFECT_H
-#include "stdafx.h"
-#include "Shader.h"
+#include "../stdafx.h"
+#include "../Shader.h"
 #include <time.h>
 
 using glm::vec3;

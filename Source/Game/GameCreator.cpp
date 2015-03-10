@@ -275,7 +275,7 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 	if (_worldType == WorldType::Server)
 	{
 		LoadingScreen::GetInstance().SetLoadingText("Loading server world.");
-		m_graphics->Render();
+		//m_graphics->Render();
 		std::vector<std::string> paths = HomePath::GetGameModePaths(HomePath::Type::Server);
 
 		for (int i = 0; i < paths.size(); ++i)
@@ -291,7 +291,7 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 	else
 	{
 		LoadingScreen::GetInstance().SetLoadingText("Loading client world.");
-		m_graphics->Render();
+		//m_graphics->Render();
 	}
     
 	LuaBridge::LuaWorldCreator worldCreator = LuaBridge::LuaWorldCreator(luaState);
