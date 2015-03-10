@@ -806,9 +806,7 @@ void GraphicsHigh::Clear()
 		delete(it->second);
 	m_meshs.clear();
 
-	for (std::map<const std::string, GLuint>::iterator it = m_textures.begin(); it != m_textures.end(); ++it)
-		glDeleteTextures(1, &(it->second));
-	m_textures.clear();
+	//Don't delete textures on High
 
 	for (int i = 0; i < m_surfaces.size(); i++)
 		delete(m_surfaces[i].second);
