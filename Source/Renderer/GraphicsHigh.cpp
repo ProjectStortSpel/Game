@@ -556,7 +556,6 @@ void GraphicsHigh::Render()
 	for (int i = 0; i < m_modelsWaterCorners.size(); i++)
 		m_modelsWaterCorners[i].Draw(viewMatrix, mat4(1));
 
-
 	//--------FORWARD RENDERING
 
 	//----Uniforms
@@ -570,8 +569,6 @@ void GraphicsHigh::Render()
 	//----DRAW MODELS
 	for (int i = 0; i < m_modelsForward.size(); i++)
 		m_modelsForward[i].Draw(viewMatrix, mat4(1));
-
-
 
 	//--------PARTICLES---------
 	glEnable(GL_POINT_SPRITE);
@@ -797,6 +794,10 @@ void GraphicsHigh::Clear()
 	m_modelsInterface.clear();
 	m_modelsWater.clear();
 	m_modelsWaterCorners.clear();
+
+	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); ++it)
+		delete(it->second);
+	m_meshs.clear();
 
 	float **tmpPtr = new float*[1];
 	BufferPointlights(0, tmpPtr);

@@ -49,10 +49,10 @@ GraphicDevice::~GraphicDevice()
 	delete m_pointerToPointlights;
 
 	for (std::map<int, ParticleSystem*>::iterator it = m_particleSystems.begin(); it != m_particleSystems.end(); ++it)
-	{
 		delete(it->second);
-	}
-	m_particleSystems.clear();
+
+	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); ++it)
+		delete(it->second);
 
 	SDL_GL_DeleteContext(m_glContext);
 	// Close and destroy the window
@@ -276,11 +276,12 @@ void GraphicDevice::SortModelsBasedOnDepth(std::vector<Model>* models)
 	std::sort(models->begin(), models->end(), sort_depth_model());
 }
 
-void GraphicDevice::AddParticleEffect(std::string _name, const vec3 _pos, int _nParticles, float _lifeTime, float _scale, float _spriteSize, std::string _texture, vec3 _color, int &_id)
+void GraphicDevice::AddParticleEffect(std::string _name, const vec3 _pos, const vec3 _vel, int _nParticles, float _lifeTime, vec3 _scale, float _spriteSize, std::string _texture, vec3 _color, int &_id)
 {
 	ParticleSystemToLoad tmpSystem;
 	tmpSystem.Name = _name;
 	tmpSystem.Pos = _pos;
+	tmpSystem.Vel = _vel;
 	tmpSystem.NrOfParticles = _nParticles;
 	tmpSystem.LifeTime = _lifeTime;
 	tmpSystem.Scale = _scale;
@@ -323,6 +324,7 @@ void GraphicDevice::BufferParticleSystems()
 		m_particleSystems.insert(std::pair<int, ParticleSystem*>(m_particleSystemsToLoad[i].Id,new ParticleSystem(
 			m_particleSystemsToLoad[i].Name,
 			m_particleSystemsToLoad[i].Pos,
+			m_particleSystemsToLoad[i].Vel,
 			m_particleSystemsToLoad[i].NrOfParticles,
 			m_particleSystemsToLoad[i].LifeTime,
 			m_particleSystemsToLoad[i].Scale,

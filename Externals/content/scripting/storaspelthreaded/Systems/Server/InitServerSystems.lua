@@ -76,7 +76,6 @@ require "sv_WeatherTornadoSystem"
 
 --	Spawn Systems
 package.path = package.path .. ";Systems/Server/SpawnSystems/?.lua"
---require "sv_SpawnSystem"
 require "sv_GiveSpawnLocationSystem"
 require "sv_FindSpawnpointSystem"
 require "sv_RespawnSystem"
