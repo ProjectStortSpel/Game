@@ -493,7 +493,7 @@ void ParticleSystem::CreateWaterSpawn()
 
 	m_dstBlendFactor = GL_ONE_MINUS_SRC_ALPHA;
 
-	m_accel = vec3(0.0, -0.6, 0.0);
+	m_accel = vec3(0.0, -0.4, 0.0);
 	vec3 v(0.0f);
 	float velocity, theta, phi;
 	float mtime = 0.0f, rate = (m_lifeTime / (float)m_nrParticles);
@@ -526,6 +526,7 @@ void ParticleSystem::CreateWaterSpawn()
 			v.x *= -1;
 
 		v.y = cosf(theta) * 0.12;
+		v.y = std::abs(v.y);
 		v.z = sinf(theta) * sinf(phi) * 0.2;
 		if ((posData[3 * i + 2] < 0 && v.z < 0) || (posData[3 * i + 2] > 0 && v.z > 0))
 			v.z *= -1;
