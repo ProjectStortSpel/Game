@@ -68,8 +68,6 @@ namespace ConnectHelper
 		NetworkInstance::GetClient()->AddNetworkHook("ContentFile", hook);
 	}
 
-	std::string name = "Pettson";
-
 	void Connect(std::string _gamemode)
 	{
 		gamemode = _gamemode;
