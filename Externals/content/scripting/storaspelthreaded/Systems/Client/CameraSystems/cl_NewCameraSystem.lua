@@ -10,9 +10,10 @@ NewCameraSystem.mouseY = 0
 NewCameraSystem.TouchSprite1 = nil
 NewCameraSystem.TouchSprite2 = nil
 NewCameraSystem.TouchScreen = nil
+NewCameraSystem.CameraButton = -1
 NewCameraSystem.Pressed = false
 NewCameraSystem.Moved = false
-NewCameraSystem.FreeCam = false
+NewCameraSystem.CameraSetting = 0
 NewCameraSystem.Help = false
 
 
@@ -30,16 +31,26 @@ NewCameraSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("CameraElement", FilterType.RequiresOneOf)
 	--self:AddComponentTypeToFilter("MapSize", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("MapSpecs", FilterType.RequiresOneOf)
-	
+	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("MyUnit", FilterType.RequiresOneOf)
 end
 
 NewCameraSystem.EntitiesAdded = function(self, dt, entities)
 	for n = 1, #entities do
-		if world:EntityHasComponent(entities[n], "CameraSystemComponent") then
-			self.FreeCam = not self.FreeCam
-			if self.FreeCam == true then
+		if world:EntityHasComponent(entities[n], "GameRunning") then
+			self.CameraButton = self:CreateInterfaceElement("camerabutton"..self.CameraSetting, "quad", 3.3, 1.4, -4, 0.35, 0.35)
+			self:AddEntityCommandToButton("CameraSystemComponent", self.CameraButton)
+			self:AddHoverSize(1.5, self.CameraButton)
+		elseif world:EntityHasComponent(entities[n], "CameraSystemComponent") then
+			self.CameraSetting = (self.CameraSetting + 1) % 4
+			self:RemoveElements()
+			if self.CameraSetting == 0 then
+				GraphicDevice.GetCamera():MoveToAndLookAt(	self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10-2,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
+															self.CameraUpX,0,self.CameraUpZ,
+															self.CameraLookAtX,0.5,self.CameraLookAtZ,
+															1)
+			elseif self.CameraSetting == 1 then
 				local aspectX, aspectY = GraphicDevice.GetAspectRatio()
-				local deltaaspectX = aspectY / aspectX
 				self.Help = true
 				local element = nil
 				local text = nil
@@ -64,13 +75,60 @@ NewCameraSystem.EntitiesAdded = function(self, dt, entities)
 				self:AddTextToTexture("touchside4", "ROTATE LEFT", 0, 1, 1, 1, text)
 				world:GetComponent(text, "Rotation", 0):SetFloat3(0, 0, 3.14159265359*0.5)
 				
-			else
-				self:RemoveElements()
+				self.CameraUpX = 0
+				self.CameraUpZ = -1
+				self.CameraDistance = 1
+				GraphicDevice.GetCamera():MoveToAndLookAt(	self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10-2,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
+															self.CameraUpX,0,self.CameraUpZ,
+															self.CameraLookAtX,0.5,self.CameraLookAtZ,
+															1)
+			elseif self.CameraSetting == 2 then
+				local mapSize = self:GetEntities("MapSpecs")
+				if #mapSize > 0 then
+					local mapX, mapZ = world:GetComponent(mapSize[1], "MapSpecs", "SizeX"):GetInt2()
+					
+					local aspectX, aspectY = GraphicDevice.GetAspectRatio()
+					local distX = aspectY * 0.1
+					local distZ = aspectX * 0.1
+					
+					if mapX >= mapZ then
+						self.CameraUpX = 0
+						self.CameraUpZ = -1
+						distX = mapX * distX
+						distZ = mapZ * distZ
+					else
+						self.CameraUpX = -1
+						self.CameraUpZ = 0
+						distX = mapZ * distX
+						distZ = mapX * distZ
+					end
+					
+					self.CameraDistance = math.max(distX, distZ)
+					
+					GraphicDevice.GetCamera():MoveToAndLookAt(	mapX*0.5-0.5,self.CameraDistance*10+0.5,mapZ*0.5-0.5,
+																self.CameraUpX,0,self.CameraUpZ,
+																mapX*0.5-0.5,0.5,mapZ*0.5-0.5,
+																1)
+				end
+			elseif self.CameraSetting == 3 then
+				self.CameraUpX = 0
+				self.CameraUpZ = -1
+				self.CameraDistance = 0.8
+				GraphicDevice.GetCamera():MoveToAndLookAt(	self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10-2,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
+															self.CameraUpX,0,self.CameraUpZ,
+															self.CameraLookAtX,0.5,self.CameraLookAtZ,
+															1)
 			end
+			
+			-- UPDATE BUTTON
+			world:KillEntity(self.CameraButton)
+			self.CameraButton = self:CreateInterfaceElement("camerabutton"..self.CameraSetting, "quad", 3.3, 1.4, -4, 0.35, 0.35)
+			self:AddEntityCommandToButton("CameraSystemComponent", self.CameraButton)
+			self:AddHoverSize(1.5, self.CameraButton)
+			
 			world:KillEntity(entities[n])
-		end
-		if world:EntityHasComponent(entities[n], "CameraInterestPoint") then
-			if self.FreeCam == false then
+		elseif world:EntityHasComponent(entities[n], "CameraInterestPoint") then
+			if self.CameraSetting == 0 then
 				self:DoCIP(entities[n])
 			end
 			world:KillEntity(entities[n])
@@ -79,15 +137,18 @@ NewCameraSystem.EntitiesAdded = function(self, dt, entities)
 end
 
 NewCameraSystem.Update = function(self, dt)
-	if self.FreeCam == true then
+	if self.CameraSetting == 1 then
 		self:DoFreeCam(dt)
+	elseif self.CameraSetting == 3 then
+		self:DoTPC()
 	else
-	
+		
 	end
 end
 
 
 NewCameraSystem.PostInitialize = function(self)
+
 	self.TouchScreen = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("Position", self.TouchScreen)
 	world:CreateComponentAndAddTo("Rotation", self.TouchScreen)
@@ -129,6 +190,22 @@ NewCameraSystem.PostInitialize = function(self)
 									self.CameraLookAtX,0.5,self.CameraLookAtZ,
 									1)
 	
+end
+
+NewCameraSystem.DoTPC = function(self, entityId)
+	local unitPosition = self:GetEntities("MyUnit")
+	if #unitPosition > 0 then
+		if world:EntityHasComponent(unitPosition[1], "Position") then
+			local unitX, unitY, unitZ = world:GetComponent(unitPosition[1], "Position", "X"):GetFloat3()
+			self.CameraLookAtX = unitX
+			self.CameraLookAtZ = unitZ
+			print(unitX .. " " .. self.CameraDistance*10-2 .. " " .. unitZ)
+			GraphicDevice.GetCamera():SetPosition(self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5, self.CameraDistance*10-2, self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5)
+			return
+		end
+	end
+	local noUnit = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("CameraSystemComponent", noUnit)
 end
 
 NewCameraSystem.DoCIP = function(self, entityId)
@@ -379,4 +456,43 @@ NewCameraSystem.RemoveElements = function(self)
 		end
 		self.Help = false
 	end
+end
+
+NewCameraSystem.CreateInterfaceElement = function(self, object, folder, posx, posy, posz, scalex, scaley)
+	local id = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("Model", id)
+	world:CreateComponentAndAddTo("Position", id)
+	world:CreateComponentAndAddTo("Rotation", id)
+	world:CreateComponentAndAddTo("Scale", id)
+	world:CreateComponentAndAddTo("PickBox", id)
+	world:CreateComponentAndAddTo("GameInterfaceElement", id)
+	local model = world:GetComponent(id, "Model", 0)
+	model:SetModel(object, folder, 3)
+	local position = world:GetComponent(id, "Position", 0)
+	position:SetFloat3(posx, posy, posz)
+	local scale = world:GetComponent(id, "Scale", 0)
+	scale:SetFloat3(scalex, scaley, 1)
+	local pickbox = world:GetComponent(id, "PickBox", 0)
+	pickbox:SetFloat2(1, 1)
+	local rotation = world:GetComponent(id, "Rotation", 0)
+	rotation:SetFloat3(0, 0, 0)
+	return id	
+end
+
+NewCameraSystem.AddConsoleCommandToButton = function(self, command, button)
+	world:CreateComponentAndAddTo("MenuConsoleCommand", button)
+	world:GetComponent(button, "MenuConsoleCommand", "Command"):SetText(command)
+end
+
+NewCameraSystem.AddEntityCommandToButton = function(self, command, button)
+	world:CreateComponentAndAddTo("MenuEntityCommand", button)
+	world:GetComponent(button, "MenuEntityCommand", "ComponentName"):SetText(command)
+end
+
+NewCameraSystem.AddHoverSize = function(self, deltascale, button)
+	local scale = world:GetComponent(button, "Scale", 0)
+	local sx, sy, sz = scale:GetFloat3()
+	world:CreateComponentAndAddTo("HoverSize", button)
+	local hoversize = world:GetComponent(button, "HoverSize", 0)
+	hoversize:SetFloat3(sx*deltascale, sy*deltascale, sz*deltascale)
 end

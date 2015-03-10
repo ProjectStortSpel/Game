@@ -105,20 +105,16 @@ UnitSystem.EntitiesAdded = function(self, dt, entities)
 			if world:EntityHasComponent(entity, "NetConnection") then
 				local ip = world:GetComponent(entity, "NetConnection", "IpAddress"):GetText()
 				local port = world:GetComponent(entity, "NetConnection", "Port"):GetInt()
-				local id = Net.StartPack("Client.SendPlayerUnitColor")
-				Net.WriteFloat(id, r)
-				Net.WriteFloat(id, g)
-				Net.WriteFloat(id, b)
+				local id = Net.StartPack("Client.SendMyUnitID")
+				Net.WriteInt(id, newEntityId)
 				Net.Send(id, ip, port)
 			else
 				-- CREATE TOTEM HAT ON AI
-				local totemHat = world:CreateNewEntity("totem".."Hat")
-				world:CreateComponentAndAddTo("Model", totemHat)
-				local model = world:GetComponent(totemHat, "Model", 0)
-				model:SetModel("totem", "totem", 0)
-				world:GetComponent(totemHat, "Color", 0):SetFloat3(r, g, b)
-				world:GetComponent(totemHat, "Parent", 0):SetInt(newEntityId)
-				world:GetComponent(totemHat, "ParentJoint", 0):SetInt(5)
+				local randomHat = math.random(0,100)
+				local hatRequest = world:CreateNewEntity()
+				world:CreateComponentAndAddTo("ThisHat", hatRequest)
+				world:GetComponent(hatRequest, "ThisHat", "hatId"):SetInt(randomHat)
+				world:GetComponent(hatRequest, "ThisHat", "unitId"):SetInt(newEntityId)
 			end
 						
 		elseif world:EntityHasComponent(entity, "RemoveUnit") then

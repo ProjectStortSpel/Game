@@ -30,3 +30,10 @@ NewComponent = ComponentType()
 NewComponent.Name = "NextHat"
 NewComponent.TableType = TableType.Map
 worldCreator:AddComponentType(NewComponent)
+
+NewComponent = ComponentType()
+NewComponent.Name = "ThisHat"
+NewComponent:AddVariable("hatId", ByteSize.Int)
+NewComponent:AddVariable("unitId", ByteSize.Int)
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
