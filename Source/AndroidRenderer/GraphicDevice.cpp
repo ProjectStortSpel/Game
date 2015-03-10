@@ -43,6 +43,9 @@ GraphicDevice::~GraphicDevice()
 	for (std::map<std::string, Shader*>::iterator it = m_particleShaders.begin(); it != m_particleShaders.end(); ++it)
 		delete(it->second);
 
+	for (std::map<const std::string, GLuint>::iterator it = m_textures.begin(); it != m_textures.end(); ++it)
+		glDeleteTextures(1, &(it->second));
+
 	for (int i = 0; i < m_surfaces.size(); i++)
 		delete(m_surfaces[i].second);
 
@@ -829,7 +832,6 @@ void GraphicDevice::Clear()
 {
 	m_modelIDcounter = 0;
 
-	SDL_Log("Clearing lists");
 	m_modelsForward.clear();
 	m_modelsViewspace.clear();
 	m_modelsInterface.clear();
@@ -852,22 +854,18 @@ void GraphicDevice::Clear()
 	BufferPointlights(0, tmpPtr);
 	delete[] tmpPtr;
 
-	SDL_Log("Deleting pointlights");
 	if (m_pointlightsPtr)
 		delete[] m_pointlightsPtr;
 
 	m_pointlightsPtr = NULL;
 	m_directionalLightPtr = NULL;
 
-	SDL_Log("Deleting particle effects");
 	for (std::map<int, ParticleEffect*>::iterator it = m_particleEffects.begin(); it != m_particleEffects.end(); ++it)
 	{
 		delete(it->second);
-		SDL_Log("HEJ!");
 	}
 		
 	m_particleEffects.clear();
-	SDL_Log("Done!");
 }
 
 void GraphicDevice::CreateFullscreenQuad()

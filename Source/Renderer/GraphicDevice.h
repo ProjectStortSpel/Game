@@ -222,7 +222,7 @@ namespace Renderer
 		Shader m_forwardShader;
 		Shader m_viewspaceShader;
 		Shader m_interfaceShader;
-		Shader m_shadowShaderForward;
+		Shader m_shadowShaderForward, m_shadowShaderForwardAnim;
 		Shader m_riverShader, m_riverCornerShader;
 		std::map<std::string, Shader> m_particleShaders;
 
