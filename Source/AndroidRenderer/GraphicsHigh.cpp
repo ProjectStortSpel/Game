@@ -43,6 +43,7 @@ bool GraphicsHigh::Init()
 		m_camera = new Camera(m_clientWidth, m_clientHeight);
 
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
+	InitRenderLists();
 #ifdef __ANDROID__
 	InitFBO();
 #endif
@@ -504,7 +505,15 @@ bool GraphicsHigh::InitShaders()
 
 	return true;
 }
-
+void GraphicsHigh::InitRenderLists()
+{
+	m_renderLists.push_back(RenderList(RENDER_FORWARD, &m_modelsForward, &m_forwardShader));
+	m_renderLists.push_back(RenderList(RENDER_VIEWSPACE, &m_modelsViewspace, &m_viewspaceShader));
+	m_renderLists.push_back(RenderList(RENDER_INTERFACE, &m_modelsInterface, &m_interfaceShader));
+	m_renderLists.push_back(RenderList(RENDER_RIVERWATER, &m_modelsWater, &m_riverShader));
+	m_renderLists.push_back(RenderList(RENDER_RIVERWATER_CORNER, &m_modelsWaterCorners, &m_riverCornerShader));
+	m_renderLists.push_back(RenderList(RENDER_DEFERRED, &m_modelsForward, &m_forwardShader)); // TODO: Not really a good solution but works
+}
 bool GraphicsHigh::InitBuffers()
 {
 	InitStandardBuffers();

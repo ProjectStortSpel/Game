@@ -14,6 +14,7 @@ using namespace glm;
 
 GraphicDevice::GraphicDevice()
 {
+	m_useAnimations = false;
 	m_SDLinitialized = false;
 	m_pointlightsPtr = 0;
 	m_particleID = 0;
@@ -22,6 +23,7 @@ GraphicDevice::GraphicDevice()
 
 GraphicDevice::GraphicDevice(Camera _camera)
 {
+	m_useAnimations = false;
 	m_camera = new Camera(_camera);
 	m_SDLinitialized = true;
 	m_pointlightsPtr = 0;

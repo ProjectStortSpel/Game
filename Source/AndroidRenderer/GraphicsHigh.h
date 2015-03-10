@@ -35,6 +35,7 @@ namespace Renderer
 	private:
 		bool InitSDLWindow();
 		bool InitShaders();
+		void InitRenderLists();
 		bool InitBuffers();
 		bool InitLightBuffers();
 

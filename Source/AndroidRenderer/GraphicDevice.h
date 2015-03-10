@@ -22,6 +22,7 @@ Author: Christian
 
 namespace Renderer
 {
+#define RENDER_DEFERRED 0
 #define RENDER_FORWARD  1
 #define RENDER_VIEWSPACE  2
 #define RENDER_INTERFACE  3
