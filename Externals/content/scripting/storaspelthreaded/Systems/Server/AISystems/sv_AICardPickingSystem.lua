@@ -805,7 +805,8 @@ AICardPickingSystem.InitPlayerSpecifics = function(self, _aiEntity)
 	self.Directions[doubleIndex] 		= x
 	self.Directions[doubleIndex + 1] 	= y
 	
-	self.TargetCheckpoints[playerNo] = world:GetComponent(unitID, "TargetCheckpoint", 0):GetInt(0)
+	self.TargetCheckpoints[playerNo] = world:GetComponent(unitID, "TargetCheckpoint", 0):GetInt(0)	
+
 	
 	--print(self.Positions[doubleIndex], self.Positions[doubleIndex + 1], self.Directions[doubleIndex], self.Directions[doubleIndex + 1], self.Spawnpoints[doubleIndex], self.Spawnpoints[doubleIndex + 1], self.TargetCheckpoints[playerNo])
 end
