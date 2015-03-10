@@ -173,7 +173,7 @@ DealCardsSystem.CalculateCardTypeBalance = function(self, numCards, moveCardsLef
 	CardCount.TurnCardCountMax = math.ceil(0.4 * CardCount.Remaining) -- 4 / 3
 	
 	CardCount.AbilityCardCountMin = math.ceil(0.1 * CardCount.Remaining) -- 1 / 1
-	CardCount.AbilityCardCountMax = math.ceil(0.2 * CardCount.Remaining) -- 2 / 2
+	CardCount.AbilityCardCountMax = math.ceil(0.3 * CardCount.Remaining) -- 2 / 2
 	----------------------------------------------------------------------------------------------
 	
 	CardCount.MoveCardCount = math.random(CardCount.MoveCardCountMin, CardCount.MoveCardCountMax)
