@@ -27,6 +27,7 @@ require "sv_SendPlayerInformation"
 package.path = package.path .. ";Systems/Server/AISystems/?.lua"
 require "sv_AICardPickingSystem"
 require "sv_AddAISystem"
+require "sv_AIDynamicScripting"
 
 --	Move Systems
 package.path = package.path .. ";Systems/Server/MoveSystems/?.lua"
@@ -124,6 +125,7 @@ worldCreator:AddSystemToCurrentGroup(UnitSystem)
 worldCreator:AddSystemToCurrentGroup(OffsetUnitSystem)
 worldCreator:AddSystemToCurrentGroup(AddAISystem)
 worldCreator:AddSystemToCurrentGroup(AICardPickingSystem)
+worldCreator:AddSystemToCurrentGroup(AIDynamicScripting)
 worldCreator:AddSystemToCurrentGroup(PostMoveSystem)
 
 worldCreator:AddSystemToCurrentGroup(TestMoveSystem)

@@ -65,6 +65,7 @@ NewComponent = ComponentType()
 NewComponent.Name = "PlayerCounter"
 NewComponent.TableType = TableType.Map
 --PlayerCounterComponent:AddVariable("MaxPlayers", ByteSize.Int)
+NewComponent:AddVariable("AIs", ByteSize.Int)
 NewComponent:AddVariable("Players", ByteSize.Int)
 NewComponent:AddVariable("Spectators", ByteSize.Int)
 worldCreator:AddComponentType(NewComponent)

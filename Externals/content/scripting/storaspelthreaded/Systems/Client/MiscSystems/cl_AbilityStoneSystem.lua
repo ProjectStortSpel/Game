@@ -40,7 +40,7 @@ ClientAbilityStoneSystem.AddTextTimer = function(self, entity, timeCounter)
 	world:GetComponent(id, "Scale", 0):SetFloat3(0.960, 0.480, 1.0)
 	
 	world:CreateComponentAndAddTo("TextTexture", id)
-	world:GetComponent(id, "TextTexture", "Name"):SetText(entity + lifeSpan)
+	world:GetComponent(id, "TextTexture", "Name"):SetText(entity .. lifeSpan)
 	world:GetComponent(id, "TextTexture", "Text"):SetText(tostring(lifeSpan))
 	world:GetComponent(id, "TextTexture", "FontIndex"):SetInt(0)
 	world:GetComponent(id, "TextTexture", "R"):SetFloat(1)

@@ -44,27 +44,27 @@ namespace LuaBridge
 
 			std::vector<Rule> script = ds->GetScript( );
 
-			DSLibrary::iterator it = scriptLibrary.find( playerid );
-
 			scriptLibrary[playerid] = script;
 
-			LuaEmbedder::PushBool( _l, true );
+			LuaEmbedder::PushBool( _l, false );
 			return 1;
 		}
 
 		int	UpdateScriptWeight( lua_State* _l )
 		{
 			float fitness = LuaEmbedder::PullFloat( _l, 1 );
+			int _book_index = LuaEmbedder::PullInt( _l, 2 );
+
+			rulebook* book = rm.GetRulebook( _book_index );
 
 			DynamicScripting* ds = DynamicScripting::Instance( );
 
-			rulebook* book = rm.GetRulebook( 0 );
-
+			ds->SetRuleBook( book );
 			ds->AdjustWeight( fitness );
-
-			if ( index >= 0 )
+			
+			if ( _book_index >= 0 )
 			{
-				rm.StoreRulebook( index );
+				rm.StoreRulebook( _book_index );
 			}
 
 			LuaEmbedder::PushBool( _l, true );
@@ -74,13 +74,13 @@ namespace LuaBridge
 
 		int	SetScript( lua_State* _l )
 		{
-			DSData* dsd = LuaEmbedder::PullObject<DSData>( _l, "DSData", 1 );
+			//DSData* dsd = LuaEmbedder::PullObject<DSData>( _l, "DSData", 1 );
 
-			index = LuaEmbedder::PullInt( _l, 2 );
+			index = LuaEmbedder::PullInt( _l, 1 );
 
 			DynamicScripting* ds = DynamicScripting::Instance( );
 
-			ds->SetScript( dsd->rules );
+			ds->SetScript( scriptLibrary[index] );
 
 			return 0;
 		}
@@ -141,11 +141,12 @@ namespace LuaBridge
 					std::stringstream ss( rb[id].script );
 					std::string this_is_a_string;
 					std::getline( ss, this_is_a_string, ' ' );
-					int nr_of_stuff = 0;
-
+					int nr_of_stuff = 1;
+					printf( "looking for %s\n", this_is_a_string.c_str( ) );
 					while ( std::getline( ss, this_is_a_string, ' ' ) )
 					{
 						LuaEmbedder::PushFloat( _l, atof( this_is_a_string.c_str( )) );
+						printf( "found this %s\n", this_is_a_string.c_str( ) );
 						++nr_of_stuff;
 					}
 
@@ -160,9 +161,9 @@ namespace LuaBridge
 
 		int SetRuleBook( lua_State* _l )
 		{
-			int index = LuaEmbedder::PullInt( _l, 1 );
+			int _index = LuaEmbedder::PullInt( _l, 1 );
 
-			rulebook* book = rm.GetRulebook( index );
+			rulebook* book = rm.GetRulebook( _index );
 
 			DynamicScripting* ds = DynamicScripting::Instance( );
 
