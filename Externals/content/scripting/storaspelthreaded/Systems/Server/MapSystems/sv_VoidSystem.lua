@@ -77,6 +77,13 @@ VoidSystem.EntitiesAdded = function(self, dt, entities)
 							world:GetComponent(units[i], "LerpPosition", "Time"):SetFloat4(1, tmpX, -10, voidZ)
 							world:GetComponent(units[i], "LerpPosition", "Algorithm"):SetText("ExponentialLerp")
 							
+							if not world:EntityHasComponent(units[i], "Animation") then
+								world:CreateComponentAndAddTo("Animation", units[i])
+							end
+							world:GetComponent(units[i], "Animation", "Id"):SetInt(7)
+							world:GetComponent(units[i], "Animation", "FrameTime"):SetFloat(0.01)
+							world:GetComponent(units[i], "Animation", "Time"):SetFloat(1)
+							
 							hitVoid = true
 							
 							break

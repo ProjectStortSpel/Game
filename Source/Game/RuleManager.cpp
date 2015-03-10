@@ -32,10 +32,10 @@ int RuleManager::ReadRulebook( const char* _rulebook_path )
 	{
 		while ( std::getline( input_file, this_is_a_line ) )
 		{
-			// type weight_PF weight_DS
+			//weight_DS type weight_PF 
 
 			/*
-			1 Void 10 450
+			450 1 Void 10 
 			*/
 			//std::stringstream sstream( this_is_a_line );
 			std::stringstream ss;
@@ -48,7 +48,7 @@ int RuleManager::ReadRulebook( const char* _rulebook_path )
 			ss << this_is_a_line.c_str();
 			if (std::getline(ss, buffer, ' '))
 			{
-				std::getline(ss, buffer, ' ');
+				//std::getline(ss, buffer, ' ');
 				Dynamic_Script_weight = atof(buffer.c_str());
 			}
 			else

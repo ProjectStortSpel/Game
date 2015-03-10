@@ -39,6 +39,7 @@ worldCreator:AddComponentType(NewComponent)
 -- Checkpoint Component
 NewComponent = ComponentType()
 NewComponent.Name = "Checkpoint"
+NewComponent.SyncNetwork = true
 NewComponent.TableType = TableType.Map
 NewComponent:AddVariable("Number", ByteSize.Int)
 worldCreator:AddComponentType(NewComponent)

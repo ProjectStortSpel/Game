@@ -12,8 +12,8 @@ ShowNextCheckpointSystem.Initialize = function ( self )
 	self:UsingUpdate()
 	
 	--	Filters
-	self:AddComponentTypeToFilter("Particle", FilterType.Mandatory)
-	self:AddComponentTypeToFilter("CheckpointReached", FilterType.Mandatory)
+	self:AddComponentTypeToFilter("Particle", 			FilterType.Mandatory)
+	self:AddComponentTypeToFilter("CheckpointReached",	FilterType.Mandatory)
 end
 
 ShowNextCheckpointSystem.FadeIn = function(self, lightToFade, dt)
@@ -124,6 +124,25 @@ Net.Receive("Client.NewTargetCheckpoint",
 	local	cpID	=	Net.ReadInt(id)
 	local	X		=	Net.ReadFloat(id)
 	local	Z		=	Net.ReadFloat(id)
+	local	C1		=	Net.ReadInt(id)
+	local	C2		=	Net.ReadInt(id)
+	
+	if C1 ~= -1 then
+		local	newEntity	=	world:CreateNewEntity()
+		world:CreateComponentAndAddTo("GlowCheckpoint", newEntity)
+		
+		world:GetComponent(newEntity, "GlowCheckpoint", "Stage"):SetInt(C1)
+		
+		if C2 ~= -1 then
+			newEntity	=	world:CreateNewEntity()
+			world:CreateComponentAndAddTo("GlowCheckpoint", newEntity)
+			
+			world:GetComponent(newEntity, "GlowCheckpoint", "Stage"):SetInt(C2)
+		end
+	end
+	
+
+	
 	
 	local	newParticle	=	world:CreateNewEntity()
 	world:CreateComponentAndAddTo("Position", newParticle)

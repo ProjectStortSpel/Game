@@ -14,9 +14,10 @@ Author: Christian
 #include "TextRenderer.h"
 #include "SkyBox.h"
 #include "ModelLoader.h"
-#include "ParticleEffect.h"
-#include "Fire.h"
-#include "Smoke.h"
+#include "Particles/ParticleEffect.h"
+#include "Particles/Fire.h"
+#include "Particles/Smoke.h"
+#include "Particles/Waterfall.h"
 
 namespace Renderer
 {
