@@ -303,7 +303,7 @@ AICardPickingSystem.SendCards = function(self)
 		local unit = world:GetComponent(playerEntity, "UnitEntityId", "Id"):GetInt()
 		
 		world:CreateComponentAndAddTo("HasSelectedCards", playerEntity)
-		if not world:EntityHasComponent("UnitSelectedCards", unit) then
+		if not world:EntityHasComponent(unit, "UnitSelectedCards") then
 			world:CreateComponentAndAddTo("UnitSelectedCards", unit)
 		end
 		

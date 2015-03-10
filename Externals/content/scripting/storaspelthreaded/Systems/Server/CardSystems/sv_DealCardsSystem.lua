@@ -289,7 +289,7 @@ Net.Receive("Server.SelectCards",
 			Net.SendEntityKill(selectedCards[n], ip, port)
 		end
 		
-		if not world:EntityHasComponent("UnitSelectedCards", pUnit) then
+		if not world:EntityHasComponent(pUnit, "UnitSelectedCards") then
 			world:CreateComponentAndAddTo("UnitSelectedCards", pUnit)
 		end
 		
