@@ -55,6 +55,7 @@ namespace Renderer
 		void CreateFire();
 		void CreateSmoke();
 		void CreateWaterfall();
+		void CreateWaterSpawn();
 	};
 }
 #endif
