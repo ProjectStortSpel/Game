@@ -289,7 +289,9 @@ Net.Receive("Server.SelectCards",
 			Net.SendEntityKill(selectedCards[n], ip, port)
 		end
 		
-		world:CreateComponentAndAddTo("UnitSelectedCards", pUnit)
+		if not world:EntityHasComponent(pUnit, "UnitSelectedCards") then
+			world:CreateComponentAndAddTo("UnitSelectedCards", pUnit)
+		end
 		
 		local	id	=	world:CreateNewEntity()
 		world:CreateComponentAndAddTo("NotifyStartNewRound", id)

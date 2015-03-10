@@ -73,15 +73,15 @@ StartNewRoundSystem.EntitiesAdded = function(self, dt, entities)
 				local id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo("NewRound", id)
 
-				--for i = 1, #units do
-				--	if world:EntityHasComponent(units[i], "UnitSelectedCards") then
-				--		world:RemoveComponentFrom("UnitSelectedCards", units[i])
-				--	end
-				--end
-				
-				for i = 1, #readyUnits do
-					world:RemoveComponentFrom("UnitSelectedCards", readyUnits[i])
+				for i = 1, #units do
+					if world:EntityHasComponent(units[i], "UnitSelectedCards") then
+						world:RemoveComponentFrom("UnitSelectedCards", units[i])
+					end
 				end
+				
+				--for i = 1, #readyUnits do
+					--world:RemoveComponentFrom("UnitSelectedCards", readyUnits[i])
+				--end
 				
 				local newId = world:CreateNewEntity()
 				world:CreateComponentAndAddTo("SetPickingPhaseTimer", newId)

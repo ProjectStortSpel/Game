@@ -303,7 +303,9 @@ AICardPickingSystem.SendCards = function(self)
 		local unit = world:GetComponent(playerEntity, "UnitEntityId", "Id"):GetInt()
 		
 		world:CreateComponentAndAddTo("HasSelectedCards", playerEntity)
-		world:CreateComponentAndAddTo("UnitSelectedCards", unit)
+		if not world:EntityHasComponent(unit, "UnitSelectedCards") then
+			world:CreateComponentAndAddTo("UnitSelectedCards", unit)
+		end
 		
 		local DealingSettings = self:GetEntities("DealingSettings")
 		local cardsPerHand, cardsToPick = world:GetComponent(DealingSettings[1], "DealingSettings", 0):GetInt2(0)
