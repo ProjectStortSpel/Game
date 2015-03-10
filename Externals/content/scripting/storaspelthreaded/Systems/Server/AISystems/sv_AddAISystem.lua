@@ -43,6 +43,7 @@ AddAISystem.EntitiesAdded = function(self, dt, entities)
 	
 	local ais = self:GetEntities("AI")
 	local voids = self:GetEntities("Void")
+	local nonWalkable = self:GetEntities("NotWalkable")
 	
 	for	i = 1, #ais do 
 		
@@ -77,33 +78,25 @@ AddAISystem.EntitiesAdded = function(self, dt, entities)
 				
 				world:CreateComponentAndAddTo("NeedUnit", ais[i])
 				
-				local param = PFParam()
-				local object = "Void"
 				local onTheSpotValue = 0.0
 				local weight = 1
 				local length = 2
 				local power = 2
 				
-				--local bookIndex = DynamicScripting.LoadRuleBook("content/dynamicscripting/map.txt")
+				local bookIndex = DynamicScripting.LoadRuleBook("content/dynamicscripting/map.txt")
 				
-				--local fail = DynamicScripting.GenerateScript(playerNumber)
+				DynamicScripting.SetRuleBook( bookIndex );
 				
-				--local fail = DynamicScripting.GenerateScript()
-				
-				--local found, weight = DynamicScripting.GetWeightFrom(object, playerNumber)
+				local fail = DynamicScripting.GenerateScript(playerNumber)
 				
 				--DynamicScripting.UpdateWeight(math.random())
 				
-				for j = 1, #voids do
-					
-					local x, y = world:GetComponent(voids[j], "MapPosition", 0):GetInt2(0)
-					
-					param:AddPosition(x, y)
-				end
+				local found, weight = DynamicScripting.GetWeightFrom("Void", playerNumber)
+				self:PFstuff( found, voids, playerNumber, "Void", onTheSpotValue, weight, length, power )
 				
-				PotentialFieldHandler.InitPF(param, playerNumber, object, onTheSpotValue, weight, length, power)
+				local found, weight = DynamicScripting.GetWeightFrom("NotWalkable", playerNumber)
+				self:PFstuff( found, nonWalkable, playerNumber, "NotWalkable", onTheSpotValue, weight, length, power )
 				
-				-- Sum all the pfs.
 				PotentialFieldHandler.SumPFs(playerNumber)
 				
 				io.write("AI ", i, " Added. Player Nr: ", playerNumber, "\n")
@@ -112,6 +105,21 @@ AddAISystem.EntitiesAdded = function(self, dt, entities)
 				print("Could not add AI, no spawnpoints left")
 			end
 		end
+	end
+end
+
+AddAISystem.PFstuff = function(self, found, superstuff, playerNumber, object, onTheSpotValue, weight, length, power)
+	if found then
+		local param = PFParam()
+		for j = 1, #superstuff do
+			
+			local x, y = world:GetComponent(superstuff[j], "MapPosition", 0):GetInt2(0)
+			
+			param:AddPosition(x, y)
+		end
+		
+		PotentialFieldHandler.InitPF(param, playerNumber, object, onTheSpotValue, weight, length, power)
+		
 	end
 end
 

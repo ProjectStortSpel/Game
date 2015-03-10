@@ -117,7 +117,9 @@ AutoPickCards.StealCardsFrom = function(self, playerIndex)
 	end
 	
 	--	Update unit status
-	world:CreateComponentAndAddTo("UnitSelectedCards", playerUnit)
+	if not world:EntityHasComponent("UnitSelectedCards", playerUnit) then
+		world:CreateComponentAndAddTo("UnitSelectedCards", playerUnit)
+	end
 end
 
 AutoPickCards.EntitiesAdded = function(self, dt, entities)
