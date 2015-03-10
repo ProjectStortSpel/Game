@@ -328,7 +328,7 @@ const char* ConsoleManager::GetFunctionMatch(const char* _command)
 
 const char* ConsoleManager::GetPreviousHistory()
 {
-	size_t size = m_commandHistory.size() - 1;
+	long long size = (long long)m_commandHistory.size() - 1;
 	if (size < 0)
 		return 0;
 
@@ -340,7 +340,7 @@ const char* ConsoleManager::GetPreviousHistory()
 
 const char* ConsoleManager::GetNextHistory()
 {
-	int size = m_commandHistory.size() - 1;
+	long long size = (long long)m_commandHistory.size() - 1;
 	if (size < 0)
 		return 0;
 

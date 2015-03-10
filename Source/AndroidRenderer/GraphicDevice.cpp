@@ -43,6 +43,12 @@ GraphicDevice::~GraphicDevice()
 	for (std::map<std::string, Shader*>::iterator it = m_particleShaders.begin(); it != m_particleShaders.end(); ++it)
 		delete(it->second);
 
+	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); ++it)
+		delete(it->second);
+
+	for (int i = 0; i < m_surfaces.size(); i++)
+		delete(m_surfaces[i].second);
+
 #ifdef __ANDROID__
 	glDeleteBuffers(1, &m_fullscreenQuadBuffer);
 #endif
@@ -170,6 +176,12 @@ void GraphicDevice::InitStandardShaders()
 	m_particleShaders["fire"]->AddShader("content/shaders/android/AndroidFireShaderVS.glsl", GL_VERTEX_SHADER);
 	m_particleShaders["fire"]->AddShader("content/shaders/android/AndroidFireShaderFS.glsl", GL_FRAGMENT_SHADER);
 	m_particleShaders["fire"]->FinalizeShaderProgram();
+
+	m_particleShaders["waterfall"] = new Shader();
+	m_particleShaders["waterfall"]->InitShaderProgram();
+	m_particleShaders["waterfall"]->AddShader("content/shaders/android/AndroidWaterfallShaderVS.glsl", GL_VERTEX_SHADER);
+	m_particleShaders["waterfall"]->AddShader("content/shaders/android/AndroidWaterfallShaderFS.glsl", GL_FRAGMENT_SHADER);
+	m_particleShaders["waterfall"]->FinalizeShaderProgram();
 	
 	//m_fullscreen
 	m_fullscreen.InitShaderProgram();
@@ -710,11 +722,12 @@ void GraphicDevice::SortModelsBasedOnDepth(std::vector<Model>* models)
 	std::sort(models->begin(), models->end(), sort_depth());
 }
 
-void GraphicDevice::AddParticleEffect(std::string _name, const vec3 _pos, int _nParticles, float _lifeTime, float _scale, float _spriteSize, std::string _texture, vec3 _color, int &_id)
+void GraphicDevice::AddParticleEffect(std::string _name, const vec3 _pos, const vec3 _vel, int _nParticles, float _lifeTime, vec3 _scale, float _spriteSize, std::string _texture, vec3 _color, int &_id)
 {
 	ParticleSystemToLoad tmpSystem;
 	tmpSystem.Name = _name;
 	tmpSystem.Pos = _pos;
+	tmpSystem.Vel = _vel;
 	tmpSystem.NrOfParticles = _nParticles;
 	tmpSystem.LifeTime = _lifeTime;
 	tmpSystem.Scale = _scale;
@@ -760,6 +773,7 @@ void GraphicDevice::BufferParticleSystems()
 		{
 			m_particleEffects.insert(std::pair<int, ParticleEffect*>(m_particleSystemsToLoad[i].Id, new Fire(
 				m_particleSystemsToLoad[i].Pos,
+				m_particleSystemsToLoad[i].Vel,
 				m_particleSystemsToLoad[i].NrOfParticles,
 				m_particleSystemsToLoad[i].LifeTime,
 				m_particleSystemsToLoad[i].Scale,
@@ -772,6 +786,20 @@ void GraphicDevice::BufferParticleSystems()
 		{
 			m_particleEffects.insert(std::pair<int, ParticleEffect*>(m_particleSystemsToLoad[i].Id, new Smoke(
 				m_particleSystemsToLoad[i].Pos,
+				m_particleSystemsToLoad[i].Vel,
+				m_particleSystemsToLoad[i].NrOfParticles,
+				m_particleSystemsToLoad[i].LifeTime,
+				m_particleSystemsToLoad[i].Scale,
+				m_particleSystemsToLoad[i].SpriteSize,
+				AddTexture(m_particleSystemsToLoad[i].TextureName, GL_TEXTURE1),
+				m_particleSystemsToLoad[i].Color,
+				m_particleShaders[m_particleSystemsToLoad[i].Name])));
+		}
+		else if (m_particleSystemsToLoad[i].Name == "waterfall")
+		{
+			m_particleEffects.insert(std::pair<int, ParticleEffect*>(m_particleSystemsToLoad[i].Id, new Waterfall(
+				m_particleSystemsToLoad[i].Pos,
+				m_particleSystemsToLoad[i].Vel,
 				m_particleSystemsToLoad[i].NrOfParticles,
 				m_particleSystemsToLoad[i].LifeTime,
 				m_particleSystemsToLoad[i].Scale,
@@ -810,6 +838,18 @@ void GraphicDevice::Clear()
 	m_modelsInterface.clear();
 	m_modelsWater.clear();
 	m_modelsWaterCorners.clear();
+
+	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); ++it)
+		delete(it->second);
+	m_meshs.clear();
+
+	for (std::map<const std::string, GLuint>::iterator it = m_textures.begin(); it != m_textures.end(); ++it)
+		glDeleteTextures(1, &(it->second));
+	m_textures.clear();
+
+	for (int i = 0; i < m_surfaces.size(); i++)
+		delete(m_surfaces[i].second);
+	m_surfaces.clear();
 
 	float **tmpPtr = new float*[1];
 	BufferPointlights(0, tmpPtr);

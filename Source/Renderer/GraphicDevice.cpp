@@ -49,10 +49,16 @@ GraphicDevice::~GraphicDevice()
 	delete m_pointerToPointlights;
 
 	for (std::map<int, ParticleSystem*>::iterator it = m_particleSystems.begin(); it != m_particleSystems.end(); ++it)
-	{
 		delete(it->second);
-	}
-	m_particleSystems.clear();
+
+	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); ++it)
+		delete(it->second);
+
+	for (std::map<const std::string, GLuint>::iterator it = m_textures.begin(); it != m_textures.end(); ++it)
+		glDeleteTextures(1, &(it->second));
+
+	for (int i = 0; i < m_surfaces.size(); i++)
+		delete(m_surfaces[i].second);
 
 	SDL_GL_DeleteContext(m_glContext);
 	// Close and destroy the window
@@ -147,12 +153,6 @@ void GraphicDevice::InitStandardShaders()
 	m_shadowShaderForward.AddShader("content/shaders/shadowShaderForwardFS.glsl", GL_FRAGMENT_SHADER);
 	m_shadowShaderForward.FinalizeShaderProgram();
 
-	// ShadowShader animated forward geometry
-	m_shadowShaderForwardAnim.InitShaderProgram();
-	m_shadowShaderForwardAnim.AddShader("content/shaders/shadowShaderForwardAnimVS.glsl", GL_VERTEX_SHADER);
-	m_shadowShaderForwardAnim.AddShader("content/shaders/shadowShaderForwardFS.glsl", GL_FRAGMENT_SHADER);
-	m_shadowShaderForwardAnim.FinalizeShaderProgram();
-
 	// SkyBox
 	m_skyBoxShader.InitShaderProgram();
 	m_skyBoxShader.AddShader("content/shaders/skyboxShaderVS.glsl", GL_VERTEX_SHADER);
@@ -176,9 +176,6 @@ void GraphicDevice::InitStandardBuffers()
 
 	//Shadow forward shader
 	m_shadowShaderForward.CheckUniformLocation("diffuseTex", 1);
-
-	//Shadow animated forward shader
-	m_shadowShaderForwardAnim.CheckUniformLocation("diffuseTex", 1);
 }
 bool GraphicDevice::InitSkybox()
 {
@@ -285,11 +282,12 @@ void GraphicDevice::SortModelsBasedOnDepth(std::vector<Model>* models)
 	std::sort(models->begin(), models->end(), sort_depth_model());
 }
 
-void GraphicDevice::AddParticleEffect(std::string _name, const vec3 _pos, int _nParticles, float _lifeTime, float _scale, float _spriteSize, std::string _texture, vec3 _color, int &_id)
+void GraphicDevice::AddParticleEffect(std::string _name, const vec3 _pos, const vec3 _vel, int _nParticles, float _lifeTime, vec3 _scale, float _spriteSize, std::string _texture, vec3 _color, int &_id)
 {
 	ParticleSystemToLoad tmpSystem;
 	tmpSystem.Name = _name;
 	tmpSystem.Pos = _pos;
+	tmpSystem.Vel = _vel;
 	tmpSystem.NrOfParticles = _nParticles;
 	tmpSystem.LifeTime = _lifeTime;
 	tmpSystem.Scale = _scale;
@@ -332,6 +330,7 @@ void GraphicDevice::BufferParticleSystems()
 		m_particleSystems.insert(std::pair<int, ParticleSystem*>(m_particleSystemsToLoad[i].Id,new ParticleSystem(
 			m_particleSystemsToLoad[i].Name,
 			m_particleSystemsToLoad[i].Pos,
+			m_particleSystemsToLoad[i].Vel,
 			m_particleSystemsToLoad[i].NrOfParticles,
 			m_particleSystemsToLoad[i].LifeTime,
 			m_particleSystemsToLoad[i].Scale,

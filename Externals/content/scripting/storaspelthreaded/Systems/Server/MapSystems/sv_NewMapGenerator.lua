@@ -63,7 +63,7 @@ end
 MapGenerator.EntitiesAdded = function(self, dt, entities)
 	--self:GenerateMap(os.time()%29181249, 4, 4)
 	--self:GenerateMap(23246299, 8, 4)
-	self:GenerateMap(14123, 10, 10)
+	self:GenerateMap(14123, 2, 4)
 	--self:GenerateMap(23239474, 4, 4)
 	--self:GenerateMap(5747, 4, 4)
 	--self:GenerateMap(1338, 2, 4)
@@ -762,7 +762,13 @@ MapGenerator.SetTileType = function(self, X, Z, TileType)
 	self.TileTypes[self:GetListIndex(X, Z)]	=	TileType
 	
 	--	Update the pathfinder
+	local walkable = self:IsWalkable(X, Z)
 	PathfinderHandler.SetTileWalkable(X, Z, self:IsWalkable(X, Z))
+	
+	--local newEntity = world:CreateNewEntity()
+	--world:CreateComponentAndAddTo("TileWalkabilityHasChanged", newEntity)
+	--world:GetComponent(newEntity, "MapSpecs", 0):SetInt2(X, Z)
+	--world:GetComponent(newEntity, "MapSpecs", "Walkable"):SetBool(walkable)
 end
 
 --	Removes the current tile by setting it to Void
@@ -1140,15 +1146,20 @@ MapGenerator.FixRiverEffects = function(self, riverTiles)
 			world:CreateComponentAndAddTo("SyncNetwork", newParticle)
 			
 			world:GetComponent(newParticle, "Position", "X"):SetFloat3(posAX, 0.40, posAY)
-			world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.6, 0.6, 0.6)
+			world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.8, 0.8, 0.8)
 			
 			world:GetComponent(newParticle, "Particle", "aName"):SetText("smoke")
-			world:GetComponent(newParticle, "Particle", "bTexture"):SetText("content/textures/smoke1.png")
+			world:GetComponent(newParticle, "Particle", "bTexture"):SetText("content/textures/wassertmp.png")
 			world:GetComponent(newParticle, "Particle", "cParticles"):SetInt(40)
-			world:GetComponent(newParticle, "Particle", "dLifetime"):SetFloat(600)
-			world:GetComponent(newParticle, "Particle", "eScale"):SetFloat(0.15)
-			world:GetComponent(newParticle, "Particle", "fSpriteSize"):SetFloat(0.6)
-			world:GetComponent(newParticle, "Particle", "gId"):SetInt(-1)
+			world:GetComponent(newParticle, "Particle", "dLifetime"):SetFloat(0.6)
+			world:GetComponent(newParticle, "Particle", "eScaleX"):SetFloat(0.12)
+			world:GetComponent(newParticle, "Particle", "eScaleY"):SetFloat(0.15)
+			world:GetComponent(newParticle, "Particle", "eScaleZ"):SetFloat(0.12)
+			world:GetComponent(newParticle, "Particle", "fVelocityX"):SetFloat(0)
+			world:GetComponent(newParticle, "Particle", "fVelocityY"):SetFloat(0)
+			world:GetComponent(newParticle, "Particle", "fVelocityZ"):SetFloat(0)
+			world:GetComponent(newParticle, "Particle", "gSpriteSize"):SetFloat(0.6)
+			world:GetComponent(newParticle, "Particle", "hId"):SetInt(-1)
 		elseif isLastTile then
 		
 			local	newParticle	=	world:CreateNewEntity()
@@ -1157,17 +1168,22 @@ MapGenerator.FixRiverEffects = function(self, riverTiles)
 			world:CreateComponentAndAddTo("Particle", newParticle)
 			world:CreateComponentAndAddTo("SyncNetwork", newParticle)
 			
-			world:GetComponent(newParticle, "Position", "X"):SetFloat3(posAX + 0.6*dirAX, 0.23, posAY + 0.6*dirAY)
+			world:GetComponent(newParticle, "Position", "X"):SetFloat3(posAX + 0.35*dirAX, 0.43, posAY + 0.35*dirAY)
 			
-			world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.3, 0.3, 0.6)
+			world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.0, 0.0, 0.0)
 			
-			world:GetComponent(newParticle, "Particle", "aName"):SetText("fire")
-			world:GetComponent(newParticle, "Particle", "bTexture"):SetText("content/textures/firewhite.png")
+			world:GetComponent(newParticle, "Particle", "aName"):SetText("waterfall")
+			world:GetComponent(newParticle, "Particle", "bTexture"):SetText("content/textures/wassertmp.png")
 			world:GetComponent(newParticle, "Particle", "cParticles"):SetInt(50)
-			world:GetComponent(newParticle, "Particle", "dLifetime"):SetFloat(800)
-			world:GetComponent(newParticle, "Particle", "eScale"):SetFloat(0.05)
-			world:GetComponent(newParticle, "Particle", "fSpriteSize"):SetFloat(0.6)
-			world:GetComponent(newParticle, "Particle", "gId"):SetInt(-1)
+			world:GetComponent(newParticle, "Particle", "dLifetime"):SetFloat(2.5)
+			world:GetComponent(newParticle, "Particle", "eScaleX"):SetFloat(0.09*dirAY)
+			world:GetComponent(newParticle, "Particle", "eScaleY"):SetFloat(0.12)
+			world:GetComponent(newParticle, "Particle", "eScaleZ"):SetFloat(0.09*dirAX)
+			world:GetComponent(newParticle, "Particle", "fVelocityX"):SetFloat(dirAX*0.3)
+			world:GetComponent(newParticle, "Particle", "fVelocityY"):SetFloat(0.055)
+			world:GetComponent(newParticle, "Particle", "fVelocityZ"):SetFloat(dirAY*0.3)
+			world:GetComponent(newParticle, "Particle", "gSpriteSize"):SetFloat(1.2)
+			world:GetComponent(newParticle, "Particle", "hId"):SetInt(-1)
 		end
 		
 	end

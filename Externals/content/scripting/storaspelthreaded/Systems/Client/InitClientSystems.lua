@@ -1,9 +1,10 @@
 --	Misc Systems
 package.path = package.path .. ";Systems/Client/MiscSystems/?.lua"
---require "cl_PlayerIndicatorSystem"
+require "cl_PlayerIndicatorSystem"
 require "cl_ClientNetworkMessageSystem"
 require "cl_FlowingWaterSystem"
 require "cl_ChatSystem"
+require "cl_GlowNextCheckpointSystem"
 require "cl_ShowNextCheckpointSystem"
 require "cl_LobbySystem"
 require "cl_VisualizeSelectedCards"
@@ -49,7 +50,7 @@ worldCreator:AddSystemToCurrentGroup(SortCardIndexSystem)
 worldCreator:AddSystemToCurrentGroup(PickingTimerSystem)
 worldCreator:AddSystemToCurrentGroup(NotificationSystem)
 worldCreator:AddSystemToCurrentGroup(GameInterfaceSystem)
---worldCreator:AddSystemToCurrentGroup(PlayerIndicatorSystem)
+worldCreator:AddSystemToCurrentGroup(PlayerIndicatorSystem)
 worldCreator:AddSystemToCurrentGroup(CardSelectSystem)
 worldCreator:AddSystemToCurrentGroup(NewCameraSystem)
 worldCreator:AddSystemToCurrentGroup(CardPickedPositionSystem)
@@ -63,6 +64,7 @@ worldCreator:AddSystemToCurrentGroup(CardHoverSystem)
 worldCreator:AddSystemToCurrentGroup(LobbySystem)
 worldCreator:AddSystemToCurrentGroup(CardAddModelSystem)
 worldCreator:AddSystemToCurrentGroup(ShowNextCheckpointSystem)
+worldCreator:AddSystemToCurrentGroup(GlowNextCheckpointSystem)
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(VisualizeSelectedCards)
