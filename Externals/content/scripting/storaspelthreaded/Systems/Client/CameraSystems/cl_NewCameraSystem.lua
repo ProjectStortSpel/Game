@@ -38,7 +38,7 @@ end
 NewCameraSystem.EntitiesAdded = function(self, dt, entities)
 	for n = 1, #entities do
 		if world:EntityHasComponent(entities[n], "GameRunning") then
-			self.CameraButton = self:CreateInterfaceElement("camerabutton"..self.CameraSetting, "quad", 3.3, 1.4, -4, 0.35, 0.35)
+			self.CameraButton = self:CreateInterfaceElement("camerabutton"..self.CameraSetting, "quad", 3.3, 1.4, -4, 0.45, 0.45)
 			self:AddEntityCommandToButton("CameraSystemComponent", self.CameraButton)
 			self:AddHoverSize(1.5, self.CameraButton)
 		elseif world:EntityHasComponent(entities[n], "CameraSystemComponent") then
@@ -105,9 +105,9 @@ NewCameraSystem.EntitiesAdded = function(self, dt, entities)
 					
 					self.CameraDistance = math.max(distX, distZ)
 					
-					GraphicDevice.GetCamera():MoveToAndLookAt(	mapX*0.5-0.5,self.CameraDistance*10+0.5,mapZ*0.5-0.5,
+					GraphicDevice.GetCamera():MoveToAndLookAt(	mapX*0.5-0.5-self.CameraUpX,self.CameraDistance*10+0.5,mapZ*0.5-0.5-self.CameraUpZ,
 																self.CameraUpX,0,self.CameraUpZ,
-																mapX*0.5-0.5,0.5,mapZ*0.5-0.5,
+																mapX*0.5-0.5-self.CameraUpX,0.5,mapZ*0.5-0.5-self.CameraUpZ,
 																1)
 				end
 			elseif self.CameraSetting == 3 then
@@ -122,7 +122,7 @@ NewCameraSystem.EntitiesAdded = function(self, dt, entities)
 			
 			-- UPDATE BUTTON
 			world:KillEntity(self.CameraButton)
-			self.CameraButton = self:CreateInterfaceElement("camerabutton"..self.CameraSetting, "quad", 3.3, 1.4, -4, 0.35, 0.35)
+			self.CameraButton = self:CreateInterfaceElement("camerabutton"..self.CameraSetting, "quad", 3.3, 1.4, -4, 0.45, 0.45)
 			self:AddEntityCommandToButton("CameraSystemComponent", self.CameraButton)
 			self:AddHoverSize(1.5, self.CameraButton)
 			
