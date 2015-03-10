@@ -113,7 +113,7 @@ worldCreator:AddComponentType(NewComponent)
 NewComponent = ComponentType()
 NewComponent.Name = "TileWalkabilityHasChanged"
 NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("Walkable", ByteSize.Bool)
 NewComponent:AddVariable("X", ByteSize.Int)
 NewComponent:AddVariable("Y", ByteSize.Int)
-NewComponent:AddVariable("Walkable", ByteSize.Bool)
 worldCreator:AddComponentType(NewComponent)
