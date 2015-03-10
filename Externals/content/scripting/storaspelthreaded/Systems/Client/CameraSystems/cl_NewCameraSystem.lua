@@ -195,11 +195,19 @@ end
 NewCameraSystem.DoTPC = function(self, entityId)
 	local unitPosition = self:GetEntities("MyUnit")
 	if #unitPosition > 0 then
-		if world:EntityHasComponent(unitPosition[1], "Position") then
-			local unitX, unitY, unitZ = world:GetComponent(unitPosition[1], "Position", "X"):GetFloat3()
-			self.CameraLookAtX = unitX
-			self.CameraLookAtZ = unitZ
-			GraphicDevice.GetCamera():SetPosition(self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5, self.CameraDistance*10-2, self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5)
+		if world:EntityHasComponent(unitPosition[1], "MapPosition") then
+			local unitX, unitZ = world:GetComponent(unitPosition[1], "MapPosition", 0):GetInt2()
+			local unitDirX, unitDirZ = world:GetComponent(unitPosition[1], "Direction", "X"):GetInt2()
+			if self.CameraUpX ~= unitDirX or self.CameraUpZ ~= unitDirZ or self.CameraLookAtX ~= unitX or self.CameraLookAtZ ~= unitZ then
+				self.CameraUpX = unitDirX
+				self.CameraUpZ = unitDirZ
+				self.CameraLookAtX = unitX
+				self.CameraLookAtZ = unitZ
+				GraphicDevice.GetCamera():MoveToAndLookAt(	self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10-2,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
+										self.CameraUpX,0,self.CameraUpZ,
+										self.CameraLookAtX,0.5,self.CameraLookAtZ,
+										1)
+			end
 			return
 		end
 	end
