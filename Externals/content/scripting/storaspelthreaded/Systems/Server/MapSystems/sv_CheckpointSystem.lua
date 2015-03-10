@@ -15,6 +15,7 @@ CheckpointSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Player", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("MapSpecs", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("PlayerCounter", FilterType.RequiresOneOf)
 end
 
 CheckpointSystem.AddTotemPiece = function(self, playerNumber, checkpoint, colorX, colorY, colorZ)
@@ -49,6 +50,17 @@ CheckpointSystem.HasReachedFinish = function(self, entityId)
 	if not world:EntityHasComponent(playerId, "AI") then
 		--	Make the player a spectator
 		world:CreateComponentAndAddTo("IsSpectator", playerId)
+		
+		local counterEntities = self:GetEntities("PlayerCounter")
+		local specCounterComp = world:GetComponent(counterEntities[1], "PlayerCounter", "Spectators")
+		local number = specCounterComp:GetInt(0)
+		number = number + 1
+		world:SetComponent(counterEntities[1], "PlayerCounter", "Spectators", number)
+		
+		local playerCounterComp = world:GetComponent(counterEntities[1], "PlayerCounter", "Players")
+		number = playerCounterComp:GetInt(0)
+		number = number - 1
+		world:SetComponent(counterEntities[1], "PlayerCounter", "Players", number)
 	else
 		-- Else if the player is an AI, remove the unit.
 		world:KillEntity(entityId)

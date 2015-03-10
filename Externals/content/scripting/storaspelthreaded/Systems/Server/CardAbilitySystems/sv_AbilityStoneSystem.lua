@@ -41,8 +41,6 @@ AbilityStoneSystem.UpdateLifeTime = function(self, entity)
 		if lifeSpan:GetInt() <= 0 then
 			world:KillEntity(timers[j])
 		end
-		
-	
 	end
 	
 	for i = 1, #stones do
@@ -55,9 +53,13 @@ AbilityStoneSystem.UpdateLifeTime = function(self, entity)
 		local x, z = world:GetComponent(parent, "MapPosition", 0):GetInt2()
 		
 		if lifeSpan:GetInt() <= 0 then
-
 			
 			PathfinderHandler.SetTileWalkable(x,z, true)
+			local newEntity = world:CreateNewEntity()
+			world:CreateComponentAndAddTo("TileWalkabilityHasChanged", newEntity)
+			world:GetComponent(newEntity, "TileWalkabilityHasChanged", 0):SetInt2(x, z)
+			world:GetComponent(newEntity, "TileWalkabilityHasChanged", "Walkable"):SetBool(true)
+			
 			world:RemoveComponentFrom("NotWalkable", parent)
 			world:KillEntity(stones[i])
 		else
@@ -65,10 +67,6 @@ AbilityStoneSystem.UpdateLifeTime = function(self, entity)
 			world:CreateComponentAndAddTo("StoneTimerText", text)
 			self:AddTextToTexture("StoneText"..i, lifeSpan:GetInt(), 0, 0.5, 0.5, 0.2, text)
 		end
-	
-		
-
-		
 	end
 
 	local uStone = self:GetEntities("UnitStone")
@@ -136,6 +134,10 @@ AbilityStoneSystem.PlaceStone = function(self, entity)
 				world:CreateComponentAndAddTo("LerpPosition", stone)
 				
 				PathfinderHandler.SetTileWalkable(X,Z, false)
+				local newEntity = world:CreateNewEntity()
+				world:CreateComponentAndAddTo("TileWalkabilityHasChanged", newEntity)
+				world:GetComponent(newEntity, "TileWalkabilityHasChanged", 0):SetInt2(X, Z)
+				world:GetComponent(newEntity, "TileWalkabilityHasChanged", "Walkable"):SetBool(false)
 				
 				math.randomseed( os.time() )
 				math.random(); math.random(); math.random(); -- pop the not randomized values (blame lua)

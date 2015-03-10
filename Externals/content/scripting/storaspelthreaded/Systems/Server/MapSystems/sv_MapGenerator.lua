@@ -776,11 +776,14 @@ MapGenerator.GeneratePathfindingData = function(self)
 			inputData:AddTile( 1, self:IsWalkable(X-1, Z-1) )
 		end
 	end
-		
 	
 	inputData:SetSize(self.MapSizeX, self.MapSizeZ)
 	PathfinderHandler.SetData(inputData)
 	--PathfinderHandler.SetTileWalkable( 4, 7, true );
+	--local newEntity = world:CreateNewEntity()
+	--world:CreateComponentAndAddTo("TileWalkabilityHasChanged", newEntity)
+	--world:GetComponent(newEntity, "TileWalkabilityHasChanged", 0):SetInt2(X, Z)
+	--world:GetComponent(newEntity, "TileWalkabilityHasChanged", "Walkable"):SetBool(walkable)
 end
 
 
