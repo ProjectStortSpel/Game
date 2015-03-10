@@ -1189,6 +1189,17 @@ void GameCreator::ConsoleName(std::string _command, std::vector<Console::Argumen
 			name = _args->at(0).Number;
 
 		ConnectHelper::SetName(name.c_str());
+
+		if (NetworkInstance::GetClient()->IsConnected())
+		{
+			auto ph = NetworkInstance::GetClient()->GetPacketHandler();
+			auto id = ph->StartPack("LuaPacket");
+			ph->WriteString(id, "CLIENT_SET_NAME");
+			ph->WriteString(id, name.c_str());
+			NetworkInstance::GetClient()->Send(ph->EndPack(id));
+		}
+
+
 	}
 }
 

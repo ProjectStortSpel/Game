@@ -56,6 +56,7 @@ namespace LuaBridge
 		int MaxConnections(lua_State* L);
 		int ConnectedClients(lua_State* L);
 		int GetPlayerName(lua_State* L);
+		int SetPlayerName(lua_State* L);
 
 		int SendEntity(lua_State* L);
 		int SendEntityKill(lua_State* L);
@@ -116,7 +117,7 @@ namespace LuaBridge
 			LuaEmbedder::AddFunction(L, "MaxConnections", &MaxConnections, "Net");
 			LuaEmbedder::AddFunction(L, "ConnectedClients", &ConnectedClients, "Net"); 
 			LuaEmbedder::AddFunction(L, "GetPlayerName", &GetPlayerName, "Net");
-			LuaEmbedder::AddFunction(L, "GetPlayerName", &GetPlayerName, "Net");
+			LuaEmbedder::AddFunction(L, "SetPlayerName", &SetPlayerName, "Net");
 
 			LuaEmbedder::AddFunction(L, "SendEntity", &SendEntity, "Net");
 			LuaEmbedder::AddFunction(L, "SendEntityKill", &SendEntityKill, "Net");
@@ -538,6 +539,25 @@ namespace LuaBridge
 			else
 				LuaEmbedder::PushString(L, "");
 			return 1;
+		}
+
+		int SetPlayerName(lua_State* L)
+		{
+			Network::ServerNetwork* server = NetworkInstance::GetServer();
+			if (server->IsRunning())
+			{
+				std::string ip = LuaEmbedder::PullString(L, 1).c_str();
+				const int port = LuaEmbedder::PullInt(L, 2);
+				std::string name = LuaEmbedder::PullString(L, 3).c_str();
+				Network::NetConnection nc(ip.c_str(), port);
+				std::string newName = ClientManager::SetPlayerName(nc, name.c_str());
+				LuaEmbedder::PushString(L, newName);
+			}
+			else
+				LuaEmbedder::PushString(L, "");
+
+			return 1;
+
 		}
 
 		int MaxConnections(lua_State* L)

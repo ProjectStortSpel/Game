@@ -11,6 +11,7 @@
 
 #include <map>
 #include <queue>
+#include <sstream>
 
 namespace ClientManager
 {
@@ -82,13 +83,38 @@ namespace ClientManager
 		return connectedClients;
 	}
 
-	std::string GetPlayerName(Network::NetConnection _nc)
+	std::string GetPlayerName(Network::NetConnection& _nc)
 	{
 		if (names.find(_nc) != names.end())
 		{
 			return names[_nc];
 		}
 		return "UntitledName";
+	}
+
+	std::string SetPlayerName(Network::NetConnection& _nc, const char* _name)
+	{
+		if (names.find(_nc) != names.end())
+		{
+			std::stringstream newName;
+			newName << _name;
+
+			int counter = 0;
+			for (auto it = names.begin(); it != names.end(); ++it)
+			{
+				++counter;
+				if (it->second == _name)
+				{
+					newName << counter;
+					break;
+				}
+			}
+
+			names[_nc] = newName.str();
+			return newName.str();
+		}
+		else
+			return "";
 	}
 
 	static int Upload(void* ptr)
@@ -256,8 +282,22 @@ namespace ClientManager
 	{
 		if (clients.find(_nc) != clients.end())
 		{
+			std::stringstream newName;
 			clients[_nc] = clients[_nc] | Name;
-			names[_nc] = _ph->ReadString(_id);
+			newName << _ph->ReadString(_id);
+			int counter = 0;
+
+			for (auto it = names.begin(); it != names.end(); ++it)
+			{
+				++counter;
+				if (it->second == newName.str())
+				{
+					newName << counter;
+					break;
+				}
+			}
+
+			names[_nc] = newName.str();
 		}
 		else
 		{

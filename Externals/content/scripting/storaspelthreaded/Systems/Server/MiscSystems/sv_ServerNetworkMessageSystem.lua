@@ -5,7 +5,7 @@ ServerNetworkMessageSystem.Initialize = function(self)
 	--	Set Name
 	self:SetName("ServerNetworkMessageSystem")
 	
-	--self:UsingEntitiesAdded()
+	self:UsingEntitiesAdded()
 	
 	self:InitializeNetworkEvents()
 	
@@ -13,6 +13,7 @@ ServerNetworkMessageSystem.Initialize = function(self)
 	--	Set Filter
 	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("Player", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("PlayerNameChanged", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("PlayerCounter", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("MapSpecs", FilterType.RequiresOneOf)
 	
@@ -27,6 +28,35 @@ ServerNetworkMessageSystem.PostInitialize = function(self)
 	world:SetComponent(playerCounter, "PlayerCounter", "AIs", 0)
 	world:SetComponent(playerCounter, "PlayerCounter", "Players", 0)
 	world:SetComponent(playerCounter, "PlayerCounter", "Spectators", 0)
+end
+
+ServerNetworkMessageSystem.EntitiesAdded = function(self, dt, entities)
+	for n = 1, #entities do
+		local entity = entities[n]
+		
+		if world:EntityHasComponent(entity, "PlayerNameChanged") then
+		
+			local players 	= self:GetEntities("Player")
+			local pnIp 		= world:GetComponent(entity, "PlayerNameChanged", "IpAddress"):GetText()
+			local pnPort 	= world:GetComponent(entity, "PlayerNameChanged", "Port"):GetInt()
+			local pnName 	= world:GetComponent(entity, "PlayerNameChanged", "Name"):GetText()
+		
+			for i = 1, #players do
+				
+				local ip 	= world:GetComponent(players[i], "NetConnection", "IpAddress"):GetText()
+				local port 	= world:GetComponent(players[i], "NetConnection", "Port"):GetInt()
+				
+				if pnIp == ip and pnPort == port then
+					world:SetComponent(players[i], "PlayerName", "Name", pnName);
+					world:KillEntity(entity)
+					return
+				end
+				
+			end
+		
+		end
+		
+	end
 end
 
 ServerNetworkMessageSystem.CounterComponentChanged = function(self, _change, _component)
@@ -233,13 +263,16 @@ ServerNetworkMessageSystem.OnPasswordInvalid = function(self, _ip, _port, _messa
 	print("ServerNetworkMessageSystem.OnPasswordInvalid - Not implemented!")
 end
 
-Net.Receive("SERVER_RECEIVE_PLAYER_NAME", 
+Net.Receive("CLIENT_SET_NAME", 
 	function(id, ip, port)
 		
-		print("SERVER_RECEIVE_PLAYER_NAME")
+		print("CLIENT_SET_NAME")
 		
 		local name = Net.ReadString(id)
-
+		name = Net.SetPlayerName(ip, port, name)
+		
+		print("Name: " .. name)
+	
 		local newEntity = world:CreateNewEntity()
 		world:CreateComponentAndAddTo("PlayerNameChanged", newEntity)
 		world:SetComponent(newEntity, "PlayerNameChanged", "Name", name)

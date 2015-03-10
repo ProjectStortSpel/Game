@@ -29,16 +29,19 @@ end
 
 ScoreboardSystem.SpawnMenu = function(self)
 
-	local background = self:CreateElement("gamemenubackground", "quad", 0, -0, -4.1, 3, 3)
+	local background = self:CreateElement("gamemenubackground", "quad", 0, -0, -3.5, 3, 3)
 
 	local players = self:GetEntities("ScoreboardPlayer")
 	local name = ""
+	local r, g, b = 0
 	for i = 1, #players do
-		print(i)
 		name = world:GetComponent(players[i], "ScoreboardPlayer", "Name"):GetText()			
-		print(name)
-		local text = self:CreateElement("left", "text", -0.50, 1.5-i*0.22, -3.0, 3.0, 0.16)
-		self:AddTextToTexture("SCBRD"..i, name, 0, 0, 1, 1, text)
+		r = world:GetComponent(players[i], "ScoreboardPlayer", "R"):GetFloat()
+		g = world:GetComponent(players[i], "ScoreboardPlayer", "G"):GetFloat()
+		b = world:GetComponent(players[i], "ScoreboardPlayer", "B"):GetFloat()
+		
+		local text = self:CreateElement("left", "text", -1.00, 1.0-i*0.16, -3.0, 3.0, 0.12)
+		self:AddTextToTexture("SCBRD"..i, name, 0, r, g, b, text)
 		
 	end
 	
