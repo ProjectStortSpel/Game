@@ -43,10 +43,10 @@ Smoke::Smoke(const vec3 _pos, const vec3 _vel, int _nParticles, float _lifeTime,
 		v.z = sinf(theta) * sinf(phi) * 6 * m_scale.z;
 		// Scale to set the magnitude of the velocity (speed)
 		velocity = glm::mix(1.25f, 1.5f, (float)(rand() % 101) / 100) * 1.2f;
-		v = v * velocity;
-		m_velData[3 * i] = v.x + m_vel.x;
-		m_velData[3 * i + 1] = v.y + m_vel.y;
-		m_velData[3 * i + 2] = v.z + m_vel.z;
+		v = v * velocity + m_vel;
+		m_velData[3 * i] = v.x;
+		m_velData[3 * i + 1] = v.y;
+		m_velData[3 * i + 2] = v.z;
 
 		m_timeData[i] = mtime;
 		mtime += rate;

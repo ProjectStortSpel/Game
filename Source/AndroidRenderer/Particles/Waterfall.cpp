@@ -12,7 +12,7 @@ Waterfall::Waterfall(const vec3 _pos, const vec3 _vel, int _nParticles, float _l
 	//..-----Smoke-----..
 	// Create and allocate buffers A and B for m_posBuf, m_velBuf and m_startTime
 	m_dstBlendFactor = GL_ONE_MINUS_SRC_ALPHA;
-	m_accel = vec3(0.0f, 0.0f, 0.0f);
+	m_accel = vec3(0.0, -0.8, 0.0);
 	vec3 v(0.0f);
 	float velocity, theta, phi;
 	float mtime = 0.0f, rate = (m_lifeTime / (float)m_nrParticles);
@@ -52,10 +52,10 @@ Waterfall::Waterfall(const vec3 _pos, const vec3 _vel, int _nParticles, float _l
 
 		// Scale to set the magnitude of the velocity (speed)
 		velocity = glm::mix(1.25f, 1.5f, (float)(rand() % 101) / 100) * 1.2;
-		v = v * velocity;
-		m_velData[3 * i] = v.x + m_vel.x;
-		m_velData[3 * i + 1] = v.y + m_vel.y;
-		m_velData[3 * i + 2] = v.z + m_vel.z;
+		v = v * velocity + m_vel;
+		m_velData[3 * i] = v.x;
+		m_velData[3 * i + 1] = v.y;
+		m_velData[3 * i + 2] = v.z;
 
 		m_timeData[i] = mtime;
 		mtime += rate;
