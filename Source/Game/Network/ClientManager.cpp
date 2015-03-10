@@ -15,11 +15,15 @@
 namespace ClientManager
 {
 
+
+
+
 #define FileChunkSize 10240
 	enum State
 	{
-		Connecting,
-		Connected
+		Connecting = 1,
+		Name = 2,
+		Connected = 4
 	};
 
 	struct Job
@@ -29,6 +33,11 @@ namespace ClientManager
 		Network::NetConnection nc;
 	};
 
+	inline State operator|(State a, State b)
+	{
+		return static_cast<State>(static_cast<int>(a) | static_cast<int>(b));
+	}
+
 	//struct Client
 	//{
 	//	State state;
@@ -36,6 +45,7 @@ namespace ClientManager
 	//};
 
 	std::map<Network::NetConnection, State> clients;
+	std::map<Network::NetConnection, std::string> names;
 	std::queue<Job> jobs;
 	SDL_Thread* jobThread;
 	SDL_mutex* jobMutex;
@@ -66,10 +76,19 @@ namespace ClientManager
 		std::vector<Network::NetConnection> connectedClients;
 		for (auto it = clients.begin(); it != clients.end(); ++it)
 		{
-			if (it->second == Connected)
+			if (it->second & Connected)
 				connectedClients.push_back(it->first);
 		}
 		return connectedClients;
+	}
+
+	std::string GetPlayerName(Network::NetConnection _nc)
+	{
+		if (names.find(_nc) != names.end())
+		{
+			return names[_nc];
+		}
+		return "UntitledName";
 	}
 
 	static int Upload(void* ptr)
@@ -94,7 +113,7 @@ namespace ClientManager
 			FileSystem::File::Close(file);
 
 			int bytesLeft;
-			
+
 			unsigned char* data;
 			std::string str;
 			if (binary)
@@ -122,7 +141,7 @@ namespace ClientManager
 				data = (unsigned char*)str.c_str();
 				bytesLeft = str.size();
 			}
-			
+
 
 			int currentPos = 0;
 			bool firstPart = true;
@@ -143,7 +162,7 @@ namespace ClientManager
 
 				//last part?
 				ph.WriteByte(id, size == bytesLeft);
-			
+
 				ph.WriteInt(id, size);
 				ph.WriteBytes(id, data, size);
 
@@ -176,7 +195,7 @@ namespace ClientManager
 		done = true;
 		return 0;
 	}
-	
+
 	void Update()
 	{
 		if (!running && !jobs.empty())
@@ -203,6 +222,7 @@ namespace ClientManager
 		//Upload();
 	}
 
+	void AcknowledgeName(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
 	void RequestGameModeFileList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
 	void RequestGameModeFile(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
 	void RequestContentFileList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
@@ -214,7 +234,10 @@ namespace ClientManager
 		//Network::NetMessageHook hook = std::bind(&NetworkGameMode, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 		//NetworkInstance::GetClient()->AddNetworkHook("GameMode", hook);
 
-		Network::NetMessageHook hook = std::bind(&RequestGameModeFileList, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+		Network::NetMessageHook hook = std::bind(&AcknowledgeName, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+		NetworkInstance::GetServer()->AddNetworkHook("SEND_PLAYER_NAME", hook);
+
+		hook = std::bind(&RequestGameModeFileList, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 		NetworkInstance::GetServer()->AddNetworkHook("RequestGameModeFileList", hook);
 
 		hook = std::bind(&RequestGameModeFile, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
@@ -228,6 +251,23 @@ namespace ClientManager
 
 		hook = std::bind(&GameModeLoaded, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 		NetworkInstance::GetServer()->AddNetworkHook("GameModeLoaded", hook);
+	}
+	void AcknowledgeName(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
+	{
+		if (clients.find(_nc) != clients.end())
+		{
+			clients[_nc] = clients[_nc] | Name;
+			names[_nc] = _ph->ReadString(_id);
+		}
+		else
+		{
+			names[_nc] = "NotConnectedPlayer";
+			SDL_Log("Tried to set name on a player not connected!?");
+		}
+
+		uint64_t id = _ph->StartPack("SERVER_ACKNOWLEDGE_NAME");
+		NetworkInstance::GetServer()->Send(_ph->EndPack(id), _nc);
+
 	}
 
 	void RequestGameModeFileList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
@@ -266,7 +306,7 @@ namespace ClientManager
 
 		if (resources->find(filename) != resources->end())
 		{
-			
+
 			resource = resources->at(filename);
 
 			Job job;
@@ -290,30 +330,30 @@ namespace ClientManager
 			bool firstPart = true;
 			while (bytesLeft > 0)
 			{
-				uint64_t id = _ph->StartPack("GameModeFile");
-				_ph->WriteString(id, resource.File.c_str());
+			uint64_t id = _ph->StartPack("GameModeFile");
+			_ph->WriteString(id, resource.File.c_str());
 
-				if (firstPart)
-				{
-					_ph->WriteByte(id, 1);
-					firstPart = false;
-				}
-				else
-					_ph->WriteByte(id, 0);
+			if (firstPart)
+			{
+			_ph->WriteByte(id, 1);
+			firstPart = false;
+			}
+			else
+			_ph->WriteByte(id, 0);
 
-				int size = bytesLeft > FileChunkSize ? FileChunkSize : bytesLeft;
+			int size = bytesLeft > FileChunkSize ? FileChunkSize : bytesLeft;
 
-				_ph->WriteInt(id, size);
+			_ph->WriteInt(id, size);
 
-				unsigned char* data = (unsigned char*)FileSystem::File::Read(file, size);
+			unsigned char* data = (unsigned char*)FileSystem::File::Read(file, size);
 
-				_ph->WriteBytes(id, data, size);
+			_ph->WriteBytes(id, data, size);
 
-				delete data;
+			delete data;
 
-				NetworkInstance::GetServer()->Send(_ph->EndPack(id), _nc);
+			NetworkInstance::GetServer()->Send(_ph->EndPack(id), _nc);
 
-				bytesLeft -= size;
+			bytesLeft -= size;
 			}*/
 		}
 	}
@@ -377,30 +417,30 @@ namespace ClientManager
 			bool firstPart = true;
 			while (bytesLeft > 0)
 			{
-				uint64_t id = _ph->StartPack("ContentFile");
-				_ph->WriteString(id, resource.File.c_str());
+			uint64_t id = _ph->StartPack("ContentFile");
+			_ph->WriteString(id, resource.File.c_str());
 
-				if (firstPart)
-				{
-					_ph->WriteByte(id, 1);
-					firstPart = false;
-				}
-				else
-					_ph->WriteByte(id, 0);
+			if (firstPart)
+			{
+			_ph->WriteByte(id, 1);
+			firstPart = false;
+			}
+			else
+			_ph->WriteByte(id, 0);
 
-				int size = bytesLeft > FileChunkSize ? FileChunkSize : bytesLeft;
+			int size = bytesLeft > FileChunkSize ? FileChunkSize : bytesLeft;
 
-				_ph->WriteInt(id, size);
+			_ph->WriteInt(id, size);
 
-				unsigned char* data = (unsigned char*)FileSystem::File::Read(file, size);
+			unsigned char* data = (unsigned char*)FileSystem::File::Read(file, size);
 
-				_ph->WriteBytes(id, data, size);
+			_ph->WriteBytes(id, data, size);
 
-				delete data;
+			delete data;
 
-				NetworkInstance::GetServer()->Send(_ph->EndPack(id), _nc);
+			NetworkInstance::GetServer()->Send(_ph->EndPack(id), _nc);
 
-				bytesLeft -= size;
+			bytesLeft -= size;
 			}*/
 		}
 	}
@@ -409,8 +449,11 @@ namespace ClientManager
 	{
 		if (clients.find(_nc) != clients.end())
 		{
-
-			clients[_nc] = Connected;
+			int hest = clients[_nc];
+			if (clients[_nc] & Name)
+				clients[_nc] = Connected | Name;
+			else
+				SDL_Log("Connecting without setting name.");
 
 			for (int i = 0; i < LuaBridge::LuaNetworkEvents::g_onPlayerConnected.size(); ++i)
 			{

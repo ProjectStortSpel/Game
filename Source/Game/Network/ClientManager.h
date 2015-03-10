@@ -4,6 +4,7 @@
 #include "Network/PacketHandler.h"
 
 #include <vector>
+#include <string>
 
 namespace ClientManager
 {
@@ -16,7 +17,7 @@ namespace ClientManager
 
 	void SetAllClientsToConnecting();
 	std::vector<Network::NetConnection> GetConnectedClients();
-
+	std::string GetPlayerName(Network::NetConnection _nc);
 
 	//add callback to tell gamecreator to load the gamemode
 }

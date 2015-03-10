@@ -275,7 +275,7 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 	if (_worldType == WorldType::Server)
 	{
 		LoadingScreen::GetInstance().SetLoadingText("Loading server world.");
-		m_graphics->Render();
+		//m_graphics->Render();
 		std::vector<std::string> paths = HomePath::GetGameModePaths(HomePath::Type::Server);
 
 		for (int i = 0; i < paths.size(); ++i)
@@ -291,7 +291,7 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 	else
 	{
 		LoadingScreen::GetInstance().SetLoadingText("Loading client world.");
-		m_graphics->Render();
+		//m_graphics->Render();
 	}
     
 	LuaBridge::LuaWorldCreator worldCreator = LuaBridge::LuaWorldCreator(luaState);
@@ -1188,24 +1188,7 @@ void GameCreator::ConsoleName(std::string _command, std::vector<Console::Argumen
 		else
 			name = _args->at(0).Number;
 
-		Network::ClientNetwork* client = NetworkInstance::GetClient();
-		Network::PacketHandler* ph = client->GetPacketHandler();
-		auto id = ph->StartPack("LuaPacket");
-		ph->WriteString(id, "SERVER_RECEIVE_PLAYER_NAME");
-		ph->WriteString(id, name.c_str());
-		auto packet = ph->EndPack(id);
-		client->Send(packet);
-
-
-		for (int i = 0; i < 100; ++i)
-		{
-			if (m_clientWorld->HasComponent(i, "PlayerName"))
-			{
-				SDL_Log("Found the right entity");
-				m_clientWorld->SetComponent(i, "PlayerName", "Name", (void*)name.c_str(), false);
-				break;
-			}
-		}
+		ConnectHelper::SetName(name.c_str());
 	}
 }
 
