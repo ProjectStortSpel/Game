@@ -35,9 +35,9 @@ GlowNextCheckpointSystem.Update = function(self, dt)
 	end
 	self.TotalTime	=	self.TotalTime + dt
 	
-	local	R	=	0.75 + math.sin(2.5*self.TotalTime)*0.25
-	local	G	=	0.75 + math.sin(2.5*self.TotalTime)*0.25
-	local	B	=	0.75 + math.sin(2.5*self.TotalTime)*0.25
+	local	R	=	0.6 + math.sin(2.25*self.TotalTime)*0.25
+	local	G	=	0.6 + math.sin(2.0*self.TotalTime)*0.25
+	local	B	=	0.6 + math.sin(2.0*self.TotalTime)*0.25
 	world:GetComponent(self.CurrentGlowing, "Color", 0):SetFloat3(R,G,B)
 
 end
@@ -81,11 +81,11 @@ GlowNextCheckpointSystem.EntitiesAdded = function(self, dt, newEntities)
 			world:CreateComponentAndAddTo("Color", newGlow)
 			world:CreateComponentAndAddTo("GlowingCheckpoint", newGlow)
 			
-			world:GetComponent(newGlow, "Model", 0):SetModel("rune5", "runes", 1)
+			world:GetComponent(newGlow, "Model", 0):SetModel("rune" .. math.random(1, 11), "runes", 1)
 			world:GetComponent(newGlow, "Position", 0):SetFloat3(X, 0.08, Z)
-			world:GetComponent(newGlow, "Rotation", 0):SetFloat3(0, 0, 0)--math.pi/4 * math.random(1, 10), 0)
+			world:GetComponent(newGlow, "Rotation", 0):SetFloat3(0, math.pi/4 * math.random(1, 10), 0)
 			world:GetComponent(newGlow, "Scale", 0):SetFloat3(0.5, 1.0, 0.5)
-			world:GetComponent(newGlow, "Color", 0):SetFloat3(0.25, 0.25, 0.25)
+			world:GetComponent(newGlow, "Color", 0):SetFloat3(0.15, 0.15, 0.15)
 			world:GetComponent(newGlow, "GlowingCheckpoint", "Stage"):SetInt(cNumber)
 			
 			print("ADDED newGlow with id " .. newGlow .. " with number " .. cNumber)

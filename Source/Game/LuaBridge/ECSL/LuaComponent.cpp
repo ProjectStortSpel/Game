@@ -535,7 +535,6 @@ namespace LuaBridge
 		int modelNameOffset = ECSL::ComponentTypeManager::GetInstance().GetComponentType(modelComponentId)->GetVariables()->at("ModelName").GetOffset();
 		int modelPathOffset = ECSL::ComponentTypeManager::GetInstance().GetComponentType(modelComponentId)->GetVariables()->at("ModelPath").GetOffset();
 		int modelRenderTypeOffset = ECSL::ComponentTypeManager::GetInstance().GetComponentType(modelComponentId)->GetVariables()->at("RenderType").GetOffset();
-		int modelRenderShadowOffset = ECSL::ComponentTypeManager::GetInstance().GetComponentType(modelComponentId)->GetVariables()->at("RenderShadow").GetOffset();
 
 		for (int i = 0; i < modelName.size(); i++)
 			m_dataLocation[modelNameOffset + i] = modelName[i];
@@ -547,16 +546,9 @@ namespace LuaBridge
 
 		*(int*)(m_dataLocation + modelRenderTypeOffset) = renderType;
 
-		bool renderShadow = true;
-		if (LuaEmbedder::IsBool(L, 4))
-			renderShadow = LuaEmbedder::PullBool(L, 4);
-
-		*(int*)(m_dataLocation + modelRenderShadowOffset) = renderShadow ? 1 : 0;
-		
-
 		bool notifyNetwork = true;
-		if (LuaEmbedder::IsBool(L, 5))
-			notifyNetwork = LuaEmbedder::PullBool(L, 5);
+		if (LuaEmbedder::IsBool(L, 4))
+			notifyNetwork = LuaEmbedder::PullBool(L, 4);
 
 		ComponentHasChanged(notifyNetwork);
 		return 0;
