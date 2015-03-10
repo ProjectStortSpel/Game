@@ -16,7 +16,7 @@ PickingTimerSystem.LeftEndEntity = -1
 PickingTimerSystem.RightEndEntity = -1
 
 PickingTimerSystem.Hidden = true
-
+PickingTimerSystem.ChangeHidden = false
 
 PickingTimerSystem.Initialize = function ( self )
 	--	Set Name
@@ -124,6 +124,19 @@ end
 
 PickingTimerSystem.Update = function( self, dt )
 	
+	if self.ChangeHidden then
+		if self.Hidden then
+			world:CreateComponentAndAddTo("Hide", self.BarEntity)
+			world:CreateComponentAndAddTo("Hide", self.LeftEndEntity)
+			world:CreateComponentAndAddTo("Hide", self.RightEndEntity)
+		else
+			world:RemoveComponentFrom("Hide", self.BarEntity)
+			world:RemoveComponentFrom("Hide", self.LeftEndEntity)
+			world:RemoveComponentFrom("Hide", self.RightEndEntity)
+		end
+		self.ChangeHidden = false
+	end
+
 	if self.FullTime ~= -1.0 then
 		local PrevTime = self.CurrentTime
 		
@@ -174,18 +187,14 @@ end
 
 PickingTimerSystem.Show = function(self)
 	if self.Hidden then
-		world:RemoveComponentFrom("Hide", self.BarEntity)
-		world:RemoveComponentFrom("Hide", self.LeftEndEntity)
-		world:RemoveComponentFrom("Hide", self.RightEndEntity)
 		self.Hidden = false
+		self.ChangeHidden = true
 	end
 end
 PickingTimerSystem.Hide = function(self)
 	if not self.Hidden then
-		world:CreateComponentAndAddTo("Hide", self.BarEntity)
-		world:CreateComponentAndAddTo("Hide", self.LeftEndEntity)
-		world:CreateComponentAndAddTo("Hide", self.RightEndEntity)
 		self.Hidden = true
+		self.ChangeHidden = true
 	end
 end
 
