@@ -167,16 +167,20 @@ DealCardsSystem.CalculateCardTypeBalance = function(self, numCards, moveCardsLef
 	-- The values below are (sort of) percentage-based. Change them to balance the cards dealt! --
 	----------------------------------------------------------------------------------------------
 	CardCount.MoveCardCountMin = math.ceil(0.3 * CardCount.Remaining) -- 3 / 2
-	CardCount.MoveCardCountMax = math.ceil(0.6 * CardCount.Remaining) -- 5 / 3
+	CardCount.MoveCardCountMax = math.ceil(0.5 * CardCount.Remaining) -- 4 / 3
 	
-	CardCount.TurnCardCountMin = math.ceil(0.3 * CardCount.Remaining) -- 3 / 2
-	CardCount.TurnCardCountMax = math.ceil(0.5 * CardCount.Remaining) -- 4 / 3
+	CardCount.TurnCardCountMin = math.ceil(0.2 * CardCount.Remaining) -- 3 / 1
+	CardCount.TurnCardCountMax = math.ceil(0.4 * CardCount.Remaining) -- 4 / 2
 	
-	CardCount.AbilityCardCountMin = math.ceil(0.0 * CardCount.Remaining) -- 0 / 0
-	CardCount.AbilityCardCountMax = math.ceil(0.1 * CardCount.Remaining) -- 1 / 1
+	CardCount.AbilityCardCountMin = math.ceil(0.1 * CardCount.Remaining) -- 1 / 1
+	CardCount.AbilityCardCountMax = math.ceil(0.3 * CardCount.Remaining) -- 2 / 2
 	----------------------------------------------------------------------------------------------
 	
-	CardCount.MoveCardCount = math.random(CardCount.MoveCardCountMin, CardCount.MoveCardCountMax)
+	if CardCount.MoveCardCountMin < CardCount.MoveCardCountMax then
+		CardCount.MoveCardCount = math.random(CardCount.MoveCardCountMin, CardCount.MoveCardCountMax)
+	else
+		CardCount.MoveCardCount = CardCount.MoveCardCountMin
+	end
 	
 	CardCount.Remaining = CardCount.Remaining - CardCount.MoveCardCount
 	if CardCount.Remaining < CardCount.TurnCardCountMax then
@@ -186,7 +190,11 @@ DealCardsSystem.CalculateCardTypeBalance = function(self, numCards, moveCardsLef
 		CardCount.TurnCardCountMin = CardCount.Remaining - CardCount.AbilityCardCountMax
 	end
 	
-	CardCount.TurnCardCount = math.random(CardCount.TurnCardCountMin, CardCount.TurnCardCountMax)
+	if CardCount.TurnCardCountMin < CardCount.TurnCardCountMax then
+		CardCount.TurnCardCount = math.random(CardCount.TurnCardCountMin, CardCount.TurnCardCountMax)
+	else
+		CardCount.TurnCardCount = CardCount.TurnCardCountMin
+	end
 	
 	CardCount.Remaining = CardCount.Remaining - CardCount.TurnCardCount
 	if CardCount.Remaining < CardCount.AbilityCardCountMax then
@@ -196,7 +204,11 @@ DealCardsSystem.CalculateCardTypeBalance = function(self, numCards, moveCardsLef
 		CardCount.AbilityCardCountMin = CardCount.Remaining
 	end
 	
-	CardCount.AbilityCardCount = math.random(CardCount.AbilityCardCountMin, CardCount.AbilityCardCountMax)
+	if CardCount.AbilityCardCountMin < CardCount.AbilityCardCountMax then
+		CardCount.AbilityCardCount = math.random(CardCount.AbilityCardCountMin, CardCount.AbilityCardCountMax)
+	else
+		CardCount.AbilityCardCount =  CardCount.AbilityCardCountMin
+	end
 	
 	if CardCount.MoveCardCount > moveCardsLeft then
 		CardCount.TurnCardCount = CardCount.TurnCardCount + CardCount.MoveCardCount - moveCardsLeft

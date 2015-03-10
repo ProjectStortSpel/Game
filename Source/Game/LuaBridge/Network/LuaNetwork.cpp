@@ -114,7 +114,8 @@ namespace LuaBridge
 			LuaEmbedder::AddFunction(L, "IsRunning", &IsRunning, "Net");
 			LuaEmbedder::AddFunction(L, "Kick", &Kick, "Net");
 			LuaEmbedder::AddFunction(L, "MaxConnections", &MaxConnections, "Net");
-			LuaEmbedder::AddFunction(L, "ConnectedClients", &ConnectedClients, "Net");
+			LuaEmbedder::AddFunction(L, "ConnectedClients", &ConnectedClients, "Net"); 
+			LuaEmbedder::AddFunction(L, "GetPlayerName", &GetPlayerName, "Net");
 			LuaEmbedder::AddFunction(L, "GetPlayerName", &GetPlayerName, "Net");
 
 			LuaEmbedder::AddFunction(L, "SendEntity", &SendEntity, "Net");

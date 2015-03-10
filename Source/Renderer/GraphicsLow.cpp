@@ -139,17 +139,17 @@ void GraphicsLow::WriteShadowMapDepth()
 	}
 
 	//--------ANIMATED DEFERRED RENDERING !!! ATTENTION: WORK IN PROGRESS !!!
-	m_shadowShaderForwardAnim.UseProgram();
+	m_animationShader.UseProgram();
 	for (int i = 0; i < m_modelsAnimated.size(); i++)
 	{
 		for (int j = 0; j < m_modelsAnimated[i].anim.size(); j++)
 		{
 			std::stringstream ss;
 			ss << "anim[" << j << "]";
-			m_shadowShaderForwardAnim.SetUniVariable(ss.str().c_str(), mat4x4, &m_modelsAnimated[i].anim[j]);
+			m_animationShader.SetUniVariable(ss.str().c_str(), mat4x4, &m_modelsAnimated[i].anim[j]);
 			ss.str(std::string());
 		}
-		m_modelsAnimated[i].DrawForwardGeometry((*m_shadowMap->GetViewMatrix()), shadowProjection, &m_shadowShaderForwardAnim);
+		m_modelsAnimated[i].Draw((*m_shadowMap->GetViewMatrix()), shadowProjection, &m_animationShader);
 	}
 	//------------------------------------------------
 
@@ -615,6 +615,18 @@ void GraphicsLow::Clear()
 	m_modelsInterface.clear();
 	m_modelsWater.clear();
 	m_modelsWaterCorners.clear();
+
+	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); ++it)
+		delete(it->second);
+	m_meshs.clear();
+
+	for (std::map<const std::string, GLuint>::iterator it = m_textures.begin(); it != m_textures.end(); ++it)
+		glDeleteTextures(1, &(it->second));
+	m_textures.clear();
+
+	for (int i = 0; i < m_surfaces.size(); i++)
+		delete(m_surfaces[i].second);
+	m_surfaces.clear();
 
 	BufferPointlights(0, 0);
 	BufferDirectionalLight(0);
