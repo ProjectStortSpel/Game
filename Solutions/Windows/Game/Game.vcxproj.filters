@@ -296,6 +296,9 @@
     <ClCompile Include="..\..\..\Source\Game\Systems\GenerateIslandSystem.cpp">
       <Filter>Game\Profilers\Systems\Island</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Game\LoadingScreen.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h">
@@ -493,6 +496,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Game\Systems\GenerateIslandSystem.h">
       <Filter>Game\Profilers\Systems\Island</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Game\LoadingScreen.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -761,6 +761,7 @@ void GraphicDevice::BufferParticleSystems()
 		{
 			m_particleEffects.insert(std::pair<int, ParticleEffect*>(m_particleSystemsToLoad[i].Id, new Fire(
 				m_particleSystemsToLoad[i].Pos,
+				m_particleSystemsToLoad[i].Vel,
 				m_particleSystemsToLoad[i].NrOfParticles,
 				m_particleSystemsToLoad[i].LifeTime,
 				m_particleSystemsToLoad[i].Scale,
@@ -773,6 +774,7 @@ void GraphicDevice::BufferParticleSystems()
 		{
 			m_particleEffects.insert(std::pair<int, ParticleEffect*>(m_particleSystemsToLoad[i].Id, new Smoke(
 				m_particleSystemsToLoad[i].Pos,
+				m_particleSystemsToLoad[i].Vel,
 				m_particleSystemsToLoad[i].NrOfParticles,
 				m_particleSystemsToLoad[i].LifeTime,
 				m_particleSystemsToLoad[i].Scale,

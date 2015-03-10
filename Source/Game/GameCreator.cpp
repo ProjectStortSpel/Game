@@ -41,6 +41,8 @@
 
 #include <iomanip>
 
+#include "LoadingScreen.h"
+
 GameCreator::GameCreator() :
 m_graphics(0), m_input(0), m_clientWorld(0), m_serverWorld(0), m_clientWorldProfiler(0), m_serverWorldProfiler(0), m_console(0), m_remoteConsole(0), m_consoleManager(Console::ConsoleManager::GetInstance()), m_frameCounter(new Utility::FrameCounter()), m_running(true),
 m_graphicalSystems(std::vector<GraphicalSystem*>()), m_timeScale(1.0f)
@@ -272,6 +274,8 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 
 	if (_worldType == WorldType::Server)
 	{
+		LoadingScreen::GetInstance().SetLoadingText("Loading server world.");
+		m_graphics->Render();
 		std::vector<std::string> paths = HomePath::GetGameModePaths(HomePath::Type::Server);
 
 		for (int i = 0; i < paths.size(); ++i)
@@ -283,6 +287,11 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 				ResourceManager::AddGamemodeResource(files[j]);
 			}
 		}
+	}
+	else
+	{
+		LoadingScreen::GetInstance().SetLoadingText("Loading client world.");
+		m_graphics->Render();
 	}
     
 	LuaBridge::LuaWorldCreator worldCreator = LuaBridge::LuaWorldCreator(luaState);
@@ -808,7 +817,7 @@ void GameCreator::Reload()
 	}
 
 	ResourceManager::Clear();
-
+	
 	HomePath::SetGameMode(m_gameMode);
 		
 	NetworkInstance::GetClientNetworkHelper()->ResetNetworkMaps();
@@ -1085,7 +1094,12 @@ void GameCreator::ConsoleStopGame(std::string _command, std::vector<Console::Arg
 
 void GameCreator::ConsoleGameMode(std::string _command, std::vector<Console::Argument>* _args)
 {
-    if (NetworkInstance::GetServer()->IsRunning() || !NetworkInstance::GetClient()->IsConnected())
+	if (NetworkInstance::GetServer()->IsRunning() && NetworkInstance::GetClient()->IsConnected())
+	{
+		if (m_gameMode != "storaspelthreaded")
+			GameMode("storaspelthreaded");
+	}
+    else if (NetworkInstance::GetServer()->IsRunning() || !NetworkInstance::GetClient()->IsConnected())
     {
         if (_args->size() == 0)
         {
@@ -1120,10 +1134,21 @@ void GameCreator::ConsoleHostSettings(std::string _command, std::vector<Console:
 		NetworkInstance::GetServer()->Stop();
 
 	unsigned int maxConnections = NetworkInstance::GetServer()->GetMaxConnections();
-	bool hosting = NetworkInstance::GetServer()->Start(port, password.c_str(), maxConnections);
 
-	if(serverType == 0) // ListenServer
-		bool connected = NetworkInstance::GetClient()->Connect("127.0.0.1", password.c_str(), port, 0);
+	if (!NetworkInstance::GetServer()->Start(port, password.c_str(), maxConnections))
+	{
+		NetworkInstance::GetServer()->Stop();
+		return;
+	}
+
+	if (serverType == 0) // ListenServer
+	{
+		if (!NetworkInstance::GetClient()->Connect("127.0.0.1", password.c_str(), port, 0))
+		{
+			NetworkInstance::GetClient()->Disconnect();
+			return;
+		}
+	}
 
 	std::vector<Console::Argument> args;
 	args.push_back(Console::Argument(gamemode.c_str()));
