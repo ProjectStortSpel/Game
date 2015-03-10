@@ -110,9 +110,10 @@ namespace Renderer
 	{
 		std::string Name;
 		vec3 Pos;
+		vec3 Vel;
 		int NrOfParticles;
 		float LifeTime;
-		float Scale;
+		vec3 Scale;
 		float SpriteSize;
 		std::string TextureName;
 		vec3 Color;
@@ -153,8 +154,8 @@ namespace Renderer
 		virtual bool ActiveModel(int _id, bool _active){ return false; };  // TODO: no virtual
 
 		// ANIMATIONS
-		//glm::mat4 GetJointMatrix(int _modelId, int _jointId); // IN PC GD
-		//bool SetAnimation(int _modelId, int _animId, float _frameTime); // IN PC GD
+		glm::mat4 GetJointMatrix(int _modelId, int _jointId); // IN PC GD
+		bool SetAnimation(int _modelId, int _animId, float _frameTime); // IN PC GD
 
 		// TEXTURES
 		virtual bool ChangeModelTexture(int _id, std::string _fileDir, int _textureType = TEXTURE_DIFFUSE){ m_modelTextures.push_back({ _id, _fileDir, _textureType }); return false; };
@@ -171,7 +172,7 @@ namespace Renderer
 		void CreateWrappedTextTexture(const std::string& textureName, const std::string& textString, int fontIndex, SDL_Color color, unsigned int wrapLength, glm::ivec2 size = glm::ivec2(-1, -1));
 		
 		// PARTICLES
-		void AddParticleEffect(std::string _name, const vec3 _pos, int _nParticles, float _lifeTime, float _scale, float _spriteSize, std::string _texture, vec3 _color, int &_id);
+		void AddParticleEffect(std::string _name, const vec3 _pos, const vec3 _vel, int _nParticles, float _lifeTime, vec3 _scale, float _spriteSize, std::string _texture, vec3 _color, int &_id);
 		void RemoveParticleEffect(int _id);
 		void SetParticleAcceleration(int _id, float x, float y, float z);
 

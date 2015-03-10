@@ -29,8 +29,8 @@ void main()
 	if(Time >= VertexStartTime)
 	{
 		sizeFactor = 1.0+(age/ParticleLifetime)*0.75;
-		if(age < 150.0)
-			Transp = age/150.0 - age/ParticleLifetime;
+		if(age < 0.150)
+			Transp = age/0.150 - age/ParticleLifetime;
 		else
 			Transp = 1.0 - age / ParticleLifetime;
 	}
