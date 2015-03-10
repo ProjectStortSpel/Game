@@ -199,7 +199,6 @@ NewCameraSystem.DoTPC = function(self, entityId)
 			local unitX, unitY, unitZ = world:GetComponent(unitPosition[1], "Position", "X"):GetFloat3()
 			self.CameraLookAtX = unitX
 			self.CameraLookAtZ = unitZ
-			print(unitX .. " " .. self.CameraDistance*10-2 .. " " .. unitZ)
 			GraphicDevice.GetCamera():SetPosition(self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5, self.CameraDistance*10-2, self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5)
 			return
 		end
