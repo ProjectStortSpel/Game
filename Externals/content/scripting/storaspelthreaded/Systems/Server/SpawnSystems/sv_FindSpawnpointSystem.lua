@@ -158,6 +158,10 @@ FindSpawnpointSystem.EntitiesAdded = function(self, dt, newEntities)
 			local	unitId	=	world:GetComponent(newEntity, "Spawn", "UnitEntityId"):GetInt()
 			local	tempX, tempZ	=	world:GetComponent(unitId, "Spawnpoint", "X"):GetInt2()
 			
+			if world:EntityHasComponent(newEntity, "UnitDead") then
+				world:RemoveComponentFrom("UnitDead", unitId)
+			end
+			
 			local	originalX		=	tempX
 			local	originalZ		=	tempZ
 			
