@@ -1,18 +1,18 @@
-#include "Smoke.h"
+#include "Waterfall.h"
 
 using namespace Renderer;
 
-Smoke::Smoke()
+Waterfall::Waterfall()
 {
 }
 
-Smoke::Smoke(const vec3 _pos, const vec3 _vel, int _nParticles, float _lifeTime, vec3 _scale, float _spriteSize, GLuint _texHandle, vec3 _color, Shader *_shaderProg) : ParticleEffect(_pos, _vel, _nParticles, _lifeTime, _scale, _spriteSize, _texHandle, _color, _shaderProg)
+Waterfall::Waterfall(const vec3 _pos, const vec3 _vel, int _nParticles, float _lifeTime, vec3 _scale, float _spriteSize, GLuint _texHandle, vec3 _color, Shader *_shaderProg) : ParticleEffect(_pos, _vel, _nParticles, _lifeTime, _scale, _spriteSize, _texHandle, _color, _shaderProg)
 {
 	//----Init starts here------------------
 	//..-----Smoke-----..
 	// Create and allocate buffers A and B for m_posBuf, m_velBuf and m_startTime
 	m_dstBlendFactor = GL_ONE_MINUS_SRC_ALPHA;
-	m_accel = vec3(0.0f, 0.0f, 0.0f);
+	m_accel = vec3(0.0, -0.8, 0.0);
 	vec3 v(0.0f);
 	float velocity, theta, phi;
 	float mtime = 0.0f, rate = (m_lifeTime / (float)m_nrParticles);
@@ -26,11 +26,13 @@ Smoke::Smoke(const vec3 _pos, const vec3 _vel, int _nParticles, float _lifeTime,
 	srand(time(NULL));
 	for (GLuint i = 0; i < m_nrParticles; i++) {
 		vec3 pos;
-		pos = vec3(((float)(rand() % 101) - 50.0), 0.0f, ((float)(rand() % 101) - 50.0));
-		pos = glm::normalize(pos) * float(((float)(rand() % 21) / 10 - 1.0)) * 1.5f;
+		pos = vec3(((float)(rand() % 91) - 45)*0.1, 0.0f, ((float)(rand() % 91 - 45))*0.1);
+		pos = glm::normalize(pos) * ((float)(rand() % 9 - 4)) * 0.5f;
 		pos.x *= m_scale.x;
 		pos.y *= m_scale.y;
 		pos.z *= m_scale.z;
+
+
 		m_posData[3 * i] = pos.x;
 		m_posData[3 * i + 1] = pos.y;
 		m_posData[3 * i + 2] = pos.z;
@@ -38,15 +40,22 @@ Smoke::Smoke(const vec3 _pos, const vec3 _vel, int _nParticles, float _lifeTime,
 		// Pick the direction of the velocity
 		theta = glm::mix(0.0f, (float)M_PI / 6.0f, (float)(rand() % 101) / 100);
 		phi = glm::mix(0.0f, (float)(2 * M_PI), (float)(rand() % 101) / 100);
-		v.x = sinf(theta) * cosf(phi) * 6 * m_scale.x;
-		v.y = cosf(theta) * 0.10;
-		v.z = sinf(theta) * sinf(phi) * 6 * m_scale.z;
+
+		v.x = sinf(theta) * cosf(phi) * 0.1;
+		if ((m_posData[3 * i] < 0 && v.x < 0) || (m_posData[3 * i] > 0 && v.x > 0))
+			v.x *= -1;
+
+		v.y = cosf(theta) * 0.1;
+		v.z = sinf(theta) * sinf(phi) * 0.1;
+		if ((m_posData[3 * i + 2] < 0 && v.z < 0) || (m_posData[3 * i + 2] > 0 && v.z > 0))
+			v.z *= -1;
+
 		// Scale to set the magnitude of the velocity (speed)
-		velocity = glm::mix(1.25f, 1.5f, (float)(rand() % 101) / 100) * 1.2f;
-		v = v * velocity;
-		m_velData[3 * i] = v.x + m_vel.x;
-		m_velData[3 * i + 1] = v.y + m_vel.y;
-		m_velData[3 * i + 2] = v.z + m_vel.z;
+		velocity = glm::mix(1.25f, 1.5f, (float)(rand() % 101) / 100) * 1.2;
+		v = v * velocity + m_vel;
+		m_velData[3 * i] = v.x;
+		m_velData[3 * i + 1] = v.y;
+		m_velData[3 * i + 2] = v.z;
 
 		m_timeData[i] = mtime;
 		mtime += rate;
@@ -74,12 +83,12 @@ Smoke::Smoke(const vec3 _pos, const vec3 _vel, int _nParticles, float _lifeTime,
 }
 
 
-Smoke::~Smoke()
+Waterfall::~Waterfall()
 {
 	//Delete eventuella buffers osv
 }
 
-void Smoke::Render(float _dt)
+void Waterfall::Render(float _dt)
 {
 	glBlendFunc(GL_SRC_ALPHA, m_dstBlendFactor);
 

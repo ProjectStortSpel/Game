@@ -616,6 +616,10 @@ void GraphicsLow::Clear()
 	m_modelsWater.clear();
 	m_modelsWaterCorners.clear();
 
+	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); ++it)
+		delete(it->second);
+	m_meshs.clear();
+
 	BufferPointlights(0, 0);
 	BufferDirectionalLight(0);
 
