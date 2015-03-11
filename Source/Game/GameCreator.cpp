@@ -597,7 +597,7 @@ void GameCreator::StartGame(int argc, char** argv)
 	Utility::FrameCounter totalCounter;
 	
 	// Remove to enable audio
-	Audio::SetVolume(0);
+	Audio::SetVolume(128);
 
 	while (m_running)
 	{
