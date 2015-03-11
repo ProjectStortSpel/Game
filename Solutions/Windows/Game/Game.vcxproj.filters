@@ -302,7 +302,7 @@
     <ClCompile Include="..\..\..\Source\Game\LoadingScreen.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\LoadingScreen\LuaLoadingScreen.cpp">
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\LoadingScreen\LuaLoadingScreen.cpp">
       <Filter>Lua Bridge\LoadingScreen</Filter>
     </ClCompile>
   </ItemGroup>
@@ -506,7 +506,7 @@
     <ClInclude Include="..\..\..\Source\Game\LoadingScreen.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\LoadingScreen\LuaLoadingScreen.h">
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\LoadingScreen\LuaLoadingScreen.h">
       <Filter>Lua Bridge\LoadingScreen</Filter>
     </ClInclude>
   </ItemGroup>

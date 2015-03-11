@@ -220,6 +220,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\FileLoader\LuaFileLoader.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\File\LuaFile.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\Input\LuaInput.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\LoadingScreen\LuaLoadingScreen.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\LuaBridge.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\Math\LuaMatrix.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\Network\LuaNetwork.cpp" />
@@ -263,7 +264,6 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClCompile Include="..\..\..\Source\Game\Systems\SlerpRotationSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\SyncEntitiesSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\TextInput.cpp" />
-    <ClCompile Include="..\..\..\Source\LoadingScreen\LuaLoadingScreen.cpp" />
     <ClCompile Include="MapIslandCreatorSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -289,6 +289,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\FileLoader\LuaFileLoader.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\File\LuaFile.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Input\LuaInput.h" />
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\LoadingScreen\LuaLoadingScreen.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Math\LuaMatrix.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Network\LuaNetwork.h" />
@@ -332,7 +333,6 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClInclude Include="..\..\..\Source\Game\Systems\SlerpRotationSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\SyncEntitiesSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\TextInput.h" />
-    <ClInclude Include="..\..\..\Source\LoadingScreen\LuaLoadingScreen.h" />
     <ClInclude Include="MapIslandCreatorSystem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
