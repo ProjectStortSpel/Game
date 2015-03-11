@@ -31,6 +31,14 @@ NewComponent:AddVariable("IpAddress", ByteSize.Text)
 NewComponent:AddVariable("Port", ByteSize.Int)
 worldCreator:AddComponentType(NewComponent)
 
+--	PlayerNameRemoved Component
+NewComponent = ComponentType()
+NewComponent.Name = "PlayerNameRemoved"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("IpAddress", ByteSize.Text)
+NewComponent:AddVariable("Port", ByteSize.Int)
+worldCreator:AddComponentType(NewComponent)
+
 -- Inactive Player Component
 NewComponent = ComponentType()
 NewComponent.Name = "InactivePlayer"

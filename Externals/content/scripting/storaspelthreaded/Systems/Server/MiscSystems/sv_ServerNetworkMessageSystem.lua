@@ -183,6 +183,11 @@ local entities = self:GetEntities("Player");
 		else
 			print("Player disconnected")
 			self:CounterComponentChanged(-1, "Players")
+			
+			local nameRemove = world:CreateNewEntity()
+			world:CreateComponentAndAddTo("PlayerNameRemoved", nameRemove)
+			world:GetComponent(nameRemove, "PlayerNameRemoved", "IpAddress"):SetText(_ip)
+			world:GetComponent(nameRemove, "PlayerNameRemoved", "Port"):SetInt(_port)
 		end
 	end
 	
@@ -255,6 +260,12 @@ ServerNetworkMessageSystem.OnPlayerTimedOut = function(self, _ip, _port, _messag
 		else
 			print("Player timed out")
 			self:CounterComponentChanged(-1, "Players")
+			
+			local nameRemove = world:CreateNewEntity()
+			world:CreateComponentAndAddTo("PlayerNameRemoved", nameRemove)
+			world:GetComponent(nameRemove, "PlayerNameRemoved", "IpAddress"):SetText(_ip)
+			world:GetComponent(nameRemove, "PlayerNameRemoved", "Port"):SetInt(_port)
+			
 		end
 	end
 	

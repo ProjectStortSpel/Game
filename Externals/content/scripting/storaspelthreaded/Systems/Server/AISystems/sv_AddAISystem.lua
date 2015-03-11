@@ -117,6 +117,7 @@ AddAISystem.EntitiesAdded = function(self, dt, entities)
 			
 				local rng = math.random(1, #self.Names)
 				local newName = "BOT " .. self.Names[rng]
+				self.Names[rng] = nil
 
 				local playerNumber = noOfPlayers + 1
 				world:GetComponent(ais[i], "PlayerName", "Name"):SetString(newName)
