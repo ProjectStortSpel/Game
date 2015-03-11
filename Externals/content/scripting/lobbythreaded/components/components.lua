@@ -132,3 +132,12 @@ HideComponent.Name = "Hide"
 HideComponent.SyncNetwork = true
 HideComponent.TableType = TableType.Map
 worldCreator:AddComponentType(HideComponent)
+
+
+--	PlayerName Component
+NewComponent = ComponentType()
+NewComponent.Name = "PlayerName"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("Name", ByteSize.Text)
+worldCreator:AddComponentType(NewComponent)
+
