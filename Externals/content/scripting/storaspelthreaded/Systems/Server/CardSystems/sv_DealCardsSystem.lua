@@ -91,6 +91,7 @@ DealCardsSystem.DealCards = function (self, numCards)
 		local port = world:GetComponent(players[i], "NetConnection", "Port"):GetInt()
 		
 		Cards.MoveCount, Cards.TurnCount, Cards.AbilityCount = self:CalculateCardTypeBalance(numCards, Cards.MoveLeft, Cards.TurnLeft, Cards.AbilityLeft)
+		print("M: ", Cards.MoveCount, "T: ", Cards.TurnCount, "A: ", Cards.AbilityCount)
 		for j = 1, Cards.MoveCount do
 			Cards.MoveLeft = self:DealCardToPlayer(Cards.Move, Cards.MoveLeft, players[i], ip, port)
 		end
@@ -169,17 +170,17 @@ DealCardsSystem.CalculateCardTypeBalance = function(self, numCards, moveCardsLef
 	CardCount.MoveCardCountMin = math.ceil(0.3 * CardCount.Remaining) -- 3 / 2
 	CardCount.MoveCardCountMax = math.ceil(0.5 * CardCount.Remaining) -- 4 / 3
 	
-	CardCount.TurnCardCountMin = math.ceil(0.2 * CardCount.Remaining) -- 3 / 1
+	CardCount.TurnCardCountMin = math.ceil(0.2 * CardCount.Remaining) -- 2 / 1
 	CardCount.TurnCardCountMax = math.ceil(0.4 * CardCount.Remaining) -- 4 / 2
 	
 	CardCount.AbilityCardCountMin = math.ceil(0.1 * CardCount.Remaining) -- 1 / 1
-	CardCount.AbilityCardCountMax = math.ceil(0.3 * CardCount.Remaining) -- 2 / 2
+	CardCount.AbilityCardCountMax = math.ceil(0.2 * CardCount.Remaining) -- 2 / 1
 	----------------------------------------------------------------------------------------------
 	
 	if CardCount.MoveCardCountMin < CardCount.MoveCardCountMax then
 		CardCount.MoveCardCount = math.random(CardCount.MoveCardCountMin, CardCount.MoveCardCountMax)
 	else
-		CardCount.MoveCardCount = CardCount.MoveCardCountMin
+		CardCount.MoveCardCount = CardCount.MoveCardCountMax
 	end
 	
 	CardCount.Remaining = CardCount.Remaining - CardCount.MoveCardCount
@@ -193,7 +194,7 @@ DealCardsSystem.CalculateCardTypeBalance = function(self, numCards, moveCardsLef
 	if CardCount.TurnCardCountMin < CardCount.TurnCardCountMax then
 		CardCount.TurnCardCount = math.random(CardCount.TurnCardCountMin, CardCount.TurnCardCountMax)
 	else
-		CardCount.TurnCardCount = CardCount.TurnCardCountMin
+		CardCount.TurnCardCount = CardCount.TurnCardCountMax
 	end
 	
 	CardCount.Remaining = CardCount.Remaining - CardCount.TurnCardCount
@@ -207,7 +208,7 @@ DealCardsSystem.CalculateCardTypeBalance = function(self, numCards, moveCardsLef
 	if CardCount.AbilityCardCountMin < CardCount.AbilityCardCountMax then
 		CardCount.AbilityCardCount = math.random(CardCount.AbilityCardCountMin, CardCount.AbilityCardCountMax)
 	else
-		CardCount.AbilityCardCount =  CardCount.AbilityCardCountMin
+		CardCount.AbilityCardCount =  CardCount.AbilityCardCountMax
 	end
 	
 	if CardCount.MoveCardCount > moveCardsLeft then
@@ -288,7 +289,9 @@ Net.Receive("Server.SelectCards",
 			Net.SendEntityKill(selectedCards[n], ip, port)
 		end
 		
-		world:CreateComponentAndAddTo("UnitSelectedCards", pUnit)
+		if not world:EntityHasComponent(pUnit, "UnitSelectedCards") then
+			world:CreateComponentAndAddTo("UnitSelectedCards", pUnit)
+		end
 		
 		local	id	=	world:CreateNewEntity()
 		world:CreateComponentAndAddTo("NotifyStartNewRound", id)

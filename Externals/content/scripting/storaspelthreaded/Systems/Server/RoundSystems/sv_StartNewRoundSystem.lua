@@ -32,25 +32,56 @@ StartNewRoundSystem.EntitiesAdded = function(self, dt, entities)
 	for n = 1, #entities do
 		local entity = entities[n]
 		if world:EntityHasComponent(entity, "NotifyStartNewRound") then
-			local numReadyUnits = #self:GetEntities("UnitSelectedCards")
-			local units = self:GetEntities("Unit")
-	
+			--local numReadyUnits = #self:GetEntities("UnitSelectedCards")
+			local readyUnits = self:GetEntities("UnitSelectedCards")
+			local readyPlayerUnits = {}
+			readyPlayerUnits.__mode = "k"
+			local numReadyPlayerUnits = 0
 			
-			if not onlyAIs then
-				numReadyUnits = numReadyUnits + noOfAIs
+			for unit = 1, #readyUnits do
+				
+				local playerEntity = world:GetComponent(readyUnits[unit], "PlayerEntityId", 0):GetInt(0)
+				local isAI = world:EntityHasComponent(playerEntity, "AI", 0)
+				
+				if not isAI then
+					--readyPlayerUnits[#readyPlayerUnits + 1] = readyUnits[unit]
+					numReadyPlayerUnits = numReadyPlayerUnits + 1
+				end
 			end
+			
+			--local numReadyPlayerUnits = #readyPlayerUnits
+			
+			local numReadyUnits = 0
+			
+			if onlyAIs then
+				--numReadyPlayerUnits = noOfPlayers
+				numReadyUnits = noOfPlayers
+			else
+				--numReadyUnits = numReadyUnits + noOfAIs
+				--numReadyPlayerUnits = numReadyPlayerUnits + noOfAIs
+				numReadyUnits = numReadyPlayerUnits + noOfAIs
+			end
+			
+			local units = self:GetEntities("Unit")
 			
 			--print("NumReadyUnits: " .. numReadyUnits)
 			--print("NoOfPlayers: " .. noOfPlayers)
-
+			
+			--if noOfPlayers <= numReadyPlayerUnits and onlyOnce then
 			if noOfPlayers <= numReadyUnits and onlyOnce then
 			
 				local id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo("NewRound", id)
 
 				for i = 1, #units do
-					world:RemoveComponentFrom("UnitSelectedCards", units[i])
+					if world:EntityHasComponent(units[i], "UnitSelectedCards") then
+						world:RemoveComponentFrom("UnitSelectedCards", units[i])
+					end
 				end
+				
+				--for i = 1, #readyUnits do
+					--world:RemoveComponentFrom("UnitSelectedCards", readyUnits[i])
+				--end
 				
 				local newId = world:CreateNewEntity()
 				world:CreateComponentAndAddTo("SetPickingPhaseTimer", newId)

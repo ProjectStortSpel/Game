@@ -47,7 +47,7 @@ AddHatToPlayerSystem.SwitchHatOnUnit = function(self, player, Offset)
 				if hatNr > 0 then
 					self:SetHatToUnit(hatNr, unitId)
 				else
-					world:RemoveComponent("Hat", unitId)
+					world:RemoveComponentFrom("Hat", unitId)
 				end
 			else
 				local hatNr = (Offset) % (#self.HatTemplates + 1)

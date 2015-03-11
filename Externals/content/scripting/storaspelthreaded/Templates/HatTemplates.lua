@@ -1,6 +1,6 @@
 local Hat = EntityTemplate()
 Hat.Name = "totemHat"
-Hat:SetModel("Model", "totem", "totem" , 0)
+Hat:SetModel("Model", "totem", "totem", 0)
 Hat:SetFloat3("Position", -0.14, 0.2, 0.1)
 Hat:SetFloat3("Rotation", 0.2, 0, 0.6)
 Hat:SetFloat3("Scale", 1.4, 1.4, 1.4)
@@ -11,7 +11,7 @@ EntityTemplateManager:AddTemplate(Hat)
 
 Hat = EntityTemplate()
 Hat.Name = "stoneHat"
-Hat:SetModel("Model", "smallstone", "smallstone" , 0)
+Hat:SetModel("Model", "smallstone", "smallstone", 0)
 Hat:SetFloat3("Position", -0.14, 0.2, 0.1)
 Hat:SetFloat3("Rotation", 0.2, 0, 0.6)
 Hat:SetFloat3("Scale", 0.14, 0.14, 0.14)
@@ -22,7 +22,7 @@ EntityTemplateManager:AddTemplate(Hat)
 
 Hat = EntityTemplate()
 Hat.Name = "arrowHat"
-Hat:SetModel("Model", "arrow", "arrow" , 0)
+Hat:SetModel("Model", "arrow", "arrow", 0)
 Hat:SetFloat3("Position", 0.0, 1.5, 0.05)
 Hat:SetFloat3("Rotation", 0, 0, 0)
 Hat:SetFloat3("Scale", 0.4, 0.4, 0.4)
