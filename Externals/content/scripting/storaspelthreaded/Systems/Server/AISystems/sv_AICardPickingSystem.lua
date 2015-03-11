@@ -20,6 +20,8 @@ AICardPickingSystem.RiverDirections = {}
 AICardPickingSystem.RiverDirections.__mode = "k"
 AICardPickingSystem.TempStones = {}
 AICardPickingSystem.TempStones.__mode = "k"
+AICardPickingSystem.SimStones = {}
+AICardPickingSystem.SimStones.__mode = "k"
 
 -- TODO: Remove this
 AICardPickingSystem.ERROR = false
@@ -76,12 +78,6 @@ AICardPickingSystem.Update = function(self, dt)
 		return
 	end
 	
-	local AIs = self:GetEntities("AI")
-	
-	if #AIs == 0 or #self.PermutationsArray <= self.PermutationIndex then
-		return
-	end
-	
 	local startTime, endTime
 	local timeTaken = 0.0
 	
@@ -91,6 +87,7 @@ AICardPickingSystem.Update = function(self, dt)
 	startTime = os.clock()
 	
 	local aiIndex = self.CurrentAI
+	local AIs = self:GetEntities("AI")
 	local noOfAIs = #AIs
 	
 	while timeTaken < timeLimit do

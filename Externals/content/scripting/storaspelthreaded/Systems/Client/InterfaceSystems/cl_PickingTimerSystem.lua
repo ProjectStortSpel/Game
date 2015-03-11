@@ -3,9 +3,9 @@ PickingTimerSystem = System()
 
 PickingTimerSystem.TotalSize = 25.0
 PickingTimerSystem.Scale = 0.2
-PickingTimerSystem.EndOffset = 0.06
+PickingTimerSystem.EndOffset = 0.08
 
-PickingTimerSystem.FullChopTime = 1.0
+PickingTimerSystem.FullChopTime = 0.5
 
 PickingTimerSystem.FullTime = -1.0
 PickingTimerSystem.CurrentTime = 0.0
@@ -116,9 +116,9 @@ PickingTimerSystem.SpawnWood = function(self)
 	world:GetComponent(sideEntity, "Position", 0):SetFloat3(Transform.PositionX, 2.0, -3.9999)
 	world:GetComponent(sideEntity, "Scale", 0):SetFloat3(self.Scale, self.Scale, 1.0)
 	world:GetComponent(sideEntity, "Rotation", 0):SetFloat3(0.0, 0.0, 0.0)
-	world:GetComponent(sideEntity, "LerpPosition", "Time"):SetFloat4(0.7, Transform.PositionX, 0.0, -3.9999)
+	world:GetComponent(sideEntity, "LerpPosition", "Time"):SetFloat4(0.5, Transform.PositionX, 1.0 + 0.3 * (math.random() * 2.0 - 1), -3.9999)
 	world:GetComponent(sideEntity, "LerpPosition", "Algorithm"):SetText("ExponentialLerp")
-	world:GetComponent(sideEntity, "LerpScale", "Time"):SetFloat4(0.7, 0.0, 0.0, 0.0)
+	world:GetComponent(sideEntity, "LerpScale", "Time"):SetFloat4(0.5, 0.0, 0.0, 0.0)
 	world:GetComponent(sideEntity, "LerpScale", "Algorithm"):SetText("ExponentialLerp")
 end
 
@@ -155,7 +155,7 @@ PickingTimerSystem.Update = function( self, dt )
 		--end
 		
 		-- Audio
-		local ticRate = 1.0
+		--[[local ticRate = 1.0
 		if self.CurrentTime < 10.0 then
 			ticRate = 2.0
 		end
@@ -170,7 +170,7 @@ PickingTimerSystem.Update = function( self, dt )
 					Audio.PlaySound("Tic2", false)
 				end
 			end
-		end
+		end--]]
 	end
 end
 
