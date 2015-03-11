@@ -28,6 +28,7 @@
     <ClCompile Include="..\..\..\Source\AndroidRenderer\Particles\ParticleEffect.cpp" />
     <ClCompile Include="..\..\..\Source\AndroidRenderer\Particles\Smoke.cpp" />
     <ClCompile Include="..\..\..\Source\AndroidRenderer\Particles\Waterfall.cpp" />
+    <ClCompile Include="..\..\..\Source\AndroidRenderer\Particles\WaterSpawn.cpp" />
     <ClCompile Include="..\..\..\Source\AndroidRenderer\Shader.cpp" />
     <ClCompile Include="..\..\..\Source\AndroidRenderer\ShadowMap.cpp" />
     <ClCompile Include="..\..\..\Source\AndroidRenderer\SkyBox.cpp" />
@@ -44,6 +45,7 @@
     <ClInclude Include="..\..\..\Source\AndroidRenderer\Particles\ParticleEffect.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\Particles\Smoke.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\Particles\Waterfall.h" />
+    <ClInclude Include="..\..\..\Source\AndroidRenderer\Particles\WaterSpawn.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\Shader.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\ShadowMap.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\SkyBox.h" />
