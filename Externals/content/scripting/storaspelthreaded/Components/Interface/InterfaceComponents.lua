@@ -6,3 +6,4 @@ package.path = package.path .. ";Components/Interface/?.lua"
 
 require "ButtonComponents"
 require "MenuComponents"
+require "LoadingScreenComponents"

@@ -13,9 +13,16 @@ class LoadingScreen
 {
 private:
 	Renderer::GraphicDevice* m_graphicDevice;
-	char m_r, m_g, m_b;
+	float m_r, m_g, m_b;
 
 	int m_backgroundModel, m_textModel;
+	glm::mat4 m_backgroundMatrix, m_textMatrix;
+	
+	float m_color[3];
+	float m_scaleX, m_scaleY;
+
+	bool m_isActive;
+	int m_accessLevel;
 
 public:
 
@@ -24,8 +31,15 @@ public:
 	static LoadingScreen& GetInstance();
 	void SetGraphicsDevice(Renderer::GraphicDevice* _graphicDevice);
 
-	void SetTextColor(char r, char g, char b);
+	void SetTextColor(float _r, float _g, float _b);
 	void SetLoadingText(std::string _text);
+
+	void SetActive();
+	void SetInactive(int _level);
+
+	void SetNeedForce(int _value) { if (_value > m_accessLevel) m_accessLevel = _value; }
+
+	bool IsActive();
 };
 
 

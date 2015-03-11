@@ -135,6 +135,13 @@ CheckpointSystem.EntitiesAdded = function(self, dt, newEntities)
 			
 			self.MapCenterX = tX * 0.5
 			self.MapCenterZ = tZ * 0.5
+			
+			-- Remove LoadingScreen for dedicated server
+			local id = world:CreateNewEntity()
+			world:CreateComponentAndAddTo("LoadingScreenDelay", id)
+			world:GetComponent(id, "LoadingScreenDelay", "Delay"):SetInt(1)
+			world:GetComponent(id, "LoadingScreenDelay", "AccessLevel"):SetInt(1)
+			
 		end
 		
 	end

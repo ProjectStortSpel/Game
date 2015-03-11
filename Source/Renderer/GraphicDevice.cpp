@@ -684,6 +684,13 @@ bool GraphicDevice::RemoveModel(int _id)
 			return true;
 		}
 	}
+
+	if (m_modelsToLoad.find(_id) != m_modelsToLoad.end())
+	{
+		m_modelsToLoad.erase(_id);
+		return true;
+	}
+
 	return false;
 }
 bool GraphicDevice::ActiveModel(int _id, bool _active)

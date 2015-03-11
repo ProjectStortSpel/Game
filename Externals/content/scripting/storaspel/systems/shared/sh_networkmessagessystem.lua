@@ -75,6 +75,6 @@ networkMessagesSystem.OnPlayerConnected = function(self, _ip, _port, _message)
 	
 	for i = 1, #entities do
 		Net.SendEntity(entities[i], _ip, _port)	
-		Console.Print("Send Entity: " .. entities[i])
+		-- Console.Print("Send Entity: " .. entities[i])
 	end	
 end

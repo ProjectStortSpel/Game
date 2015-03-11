@@ -3,10 +3,10 @@
 #include "NetworkInstance.h"
 #include "FileSystem/File.h"
 #include "FileSystem/MD5.h"
+#include "Console/Console.h"
 #include "Game/ResourceManager.h"
 #include "Game/HomePath.h"
 
-#include "Console/Console.h"
 #include "Game/LoadingScreen.h"
 
 #include <map>
@@ -47,6 +47,19 @@ namespace ConnectHelper
 	void NetworkContentFileList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
 	void NetworkContentFile(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
 
+	void LoadGameMode()
+	{
+		if (!NetworkInstance::GetServer()->IsRunning())
+			loadGameModeHook(gamemode);
+		else
+			LoadingScreen::GetInstance().SetInactive(0);
+
+		Network::PacketHandler* ph = NetworkInstance::GetClient()->GetPacketHandler();
+		uint64_t id = ph->StartPack("GameModeLoaded");
+		NetworkInstance::GetClient()->Send(ph->EndPack(id));
+		state = Done;
+	}
+
 	void Initialize()
 	{
 		//Network::NetMessageHook hook = std::bind(&NetworkGameMode, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
@@ -70,6 +83,8 @@ namespace ConnectHelper
 
 	void Connect(std::string _gamemode)
 	{
+		LoadingScreen::GetInstance().SetActive();
+		LoadingScreen::GetInstance().SetLoadingText("Syncing files with the server.");
 		gamemode = _gamemode;
 		missingFiles.clear();
 
@@ -178,7 +193,6 @@ namespace ConnectHelper
 			{
 				bytesDownloaded = 0;
 				percent = 0;
-				Console::ConsoleManager::GetInstance().AddToCommandQueue("SetLoadingText \"Downloading Gamemode: 0%\"", false);
 				LoadingScreen::GetInstance().SetLoadingText("Downloading Gamemode: 0%");
 
 
@@ -264,8 +278,7 @@ namespace ConnectHelper
 					{
 						percent = p;
 						std::stringstream ss;
-						ss << "SetLoadingText \"Downloading Gamemode: " << p << "%\"";
-						Console::ConsoleManager::GetInstance().AddToCommandQueue(ss.str().c_str(), false);
+						ss << "Downloading Gamemode: " << p << "%";
 						LoadingScreen::GetInstance().SetLoadingText(ss.str().c_str());
 					}
 
@@ -279,8 +292,7 @@ namespace ConnectHelper
 			{
 				percent = p;
 				std::stringstream ss;
-				ss << "SetLoadingText \"Downloading Gamemode: " << p << "%\"";
-				Console::ConsoleManager::GetInstance().AddToCommandQueue(ss.str().c_str(), false);
+				ss << "Downloading Gamemode: " << p << "%";
 				LoadingScreen::GetInstance().SetLoadingText(ss.str().c_str());
 			}
 		}
@@ -346,20 +358,12 @@ namespace ConnectHelper
 			if (missingFiles.empty())
 			{
 				//Load GameMode
-
-				if (!NetworkInstance::GetServer()->IsRunning())
-					loadGameModeHook(gamemode);
-
-				Network::PacketHandler* ph = NetworkInstance::GetClient()->GetPacketHandler();
-				uint64_t id = ph->StartPack("GameModeLoaded");
-				NetworkInstance::GetClient()->Send(ph->EndPack(id));
-				state = Done;
+				LoadGameMode();
 			}
 			else
 			{
 				bytesDownloaded = 0;
 				percent = 0;
-				Console::ConsoleManager::GetInstance().AddToCommandQueue("SetLoadingText \"Downloading Content: 0%\"", false);
 				LoadingScreen::GetInstance().SetLoadingText("Downloading Content: 0%");
 
 				Network::PacketHandler* ph = NetworkInstance::GetClient()->GetPacketHandler();
@@ -425,13 +429,7 @@ namespace ConnectHelper
 				if (missingFiles.empty())
 				{
 					//Load GameMode
-					if (!NetworkInstance::GetServer()->IsRunning())
-						loadGameModeHook(gamemode);
-
-					Network::PacketHandler* ph = NetworkInstance::GetClient()->GetPacketHandler();
-					uint64_t id = ph->StartPack("GameModeLoaded");
-					NetworkInstance::GetClient()->Send(ph->EndPack(id));
-					state = Done;
+					LoadGameMode();
 				}
 				else
 				{
@@ -439,8 +437,7 @@ namespace ConnectHelper
 					{
 						percent = p;
 						std::stringstream ss;
-						ss << "SetLoadingText \"Downloading Content: " << p << "%\"";
-						Console::ConsoleManager::GetInstance().AddToCommandQueue(ss.str().c_str(), false);
+						ss << "Downloading Content: " << p << "%";
 						LoadingScreen::GetInstance().SetLoadingText(ss.str().c_str());
 					}
 
@@ -454,8 +451,7 @@ namespace ConnectHelper
 			{
 				percent = p;
 				std::stringstream ss;
-				ss << "SetLoadingText \"Downloading Content: " << p << "%\"";
-				Console::ConsoleManager::GetInstance().AddToCommandQueue(ss.str().c_str(), false);
+				ss << "Downloading Content: " << p << "%";
 				LoadingScreen::GetInstance().SetLoadingText(ss.str().c_str());
 			}
 		}

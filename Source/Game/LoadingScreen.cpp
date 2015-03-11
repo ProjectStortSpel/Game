@@ -1,5 +1,7 @@
 #include "LoadingScreen.h"
 #include "Console/Console.h"
+#include "HomePath.h"
+#include "Game/Quaternion.h"
 
 LoadingScreen::LoadingScreen()
 {
@@ -8,9 +10,20 @@ LoadingScreen::LoadingScreen()
 	m_b = 0;
 	m_graphicDevice = 0;
 
+	m_color[0] = 0;
+	m_color[1] = 0;
+	m_color[2] = 0;
 
-	//m_backgroundModel = m_graphicDevice->LoadModel()
-	//m_textModel = m_graphicDevice->LoadModel()
+	m_scaleX = 1.0f;
+	m_scaleY = 0.1f;
+
+	//m_textMatrix
+
+	m_textMatrix = glm::mat4(1);
+	m_backgroundMatrix = glm::mat4(1);
+
+	m_isActive = false;
+	m_accessLevel = 0;
 }
 
 LoadingScreen::~LoadingScreen()
@@ -26,19 +39,96 @@ LoadingScreen& LoadingScreen::GetInstance()
 void LoadingScreen::SetGraphicsDevice(Renderer::GraphicDevice* _graphicDevice)
 {
 	m_graphicDevice = _graphicDevice;
+
+	//m_graphicDevice->
+	m_backgroundMatrix = glm::mat4(1);
+	m_backgroundMatrix *= glm::translate(glm::vec3(0, 0, -2.000));
+
+	//scale
+	int width, height;
+	m_graphicDevice->GetWindowSize(width, height);
+	m_backgroundMatrix *= glm::scale(glm::vec3(4.0f, 4.0f * ((float)height / (float)width), 1.0f));
 }
 
-void LoadingScreen::SetTextColor(char r, char g, char b)
+void LoadingScreen::SetTextColor(float _r, float _g, float _b)
 {
-	m_r = r;
-	m_g = g;
-	m_b = b;
+	m_r = _r;
+	m_g = _g;
+	m_b = _b;
 }
 
 void LoadingScreen::SetLoadingText(std::string _text)
 {
-	//SDL_Color color = { static_cast<Uint8>(255 * m_r), static_cast<Uint8>(255 * m_g), static_cast<Uint8>(255 * m_b), 0 };
-	//m_graphicDevice->CreateTextTexture("loadingtext", _text, 0, color);
-	SDL_Log("LoadingScreen: %s", _text.c_str());
-	Console::ConsoleManager::GetInstance().AddMessage(_text.c_str());
+	if (m_isActive)
+	{
+		SDL_Color color = { static_cast<Uint8>(255 * m_r), static_cast<Uint8>(255 * m_g), static_cast<Uint8>(255 * m_b), 0 };
+		float ratio = m_graphicDevice->CreateTextTexture("loadingscreentext", _text, 0, color);
+		m_graphicDevice->ChangeModelTexture(m_textModel, "loadingscreentext");
+
+
+		m_textMatrix = glm::mat4(1);
+
+		//translate
+		m_textMatrix *= glm::translate(glm::vec3(0, 0, -1.001));
+
+		//scale
+		float scaleX = m_scaleX;
+		float scaleY = m_scaleY;
+		if (m_scaleY * ratio > m_scaleX)
+			scaleY = scaleX / ratio;
+		else
+			scaleX = scaleY * ratio;
+
+		m_textMatrix *= glm::scale(glm::vec3(scaleX, scaleY, 1));
+
+		SDL_Log("LoadingScreen: %s", _text.c_str());
+		m_graphicDevice->Update(0.0f);
+		m_graphicDevice->Render();
+	}
+}
+
+void LoadingScreen::SetActive()
+{
+	if (!m_isActive)
+	{
+		std::vector<std::string> dirs;
+		std::string dir = HomePath::GetHomePath();
+		dir.append("models/quad/");
+		dirs.push_back(dir);
+		m_backgroundModel = m_graphicDevice->LoadModel(dirs, "loadingscreen.object", &m_backgroundMatrix, RENDER_VIEWSPACE, &m_color[0], false, false);
+
+		dirs.clear();
+		dir = HomePath::GetHomePath();
+		dir.append("models/text/");
+		dirs.push_back(dir);
+		m_textModel = m_graphicDevice->LoadModel(dirs, "quad.object", &m_textMatrix, RENDER_INTERFACE, &m_color[0], false, false);
+
+		//m_graphicDevice->ActiveModel(m_backgroundModel, true);
+		//m_graphicDevice->ActiveModel(m_textModel, true);
+		m_isActive = true;
+
+		m_graphicDevice->Update(0.0f);
+		m_graphicDevice->Render();
+	}
+}
+
+void LoadingScreen::SetInactive(int _level)
+{
+	if (m_isActive && _level >= m_accessLevel)
+	{
+		m_graphicDevice->RemoveModel(m_backgroundModel);
+		m_graphicDevice->RemoveModel(m_textModel);
+
+		//m_graphicDevice->ActiveModel(m_backgroundModel, false);
+		//m_graphicDevice->ActiveModel(m_textModel, false);
+		m_isActive = false;
+		m_accessLevel = 0;
+		m_graphicDevice->Update(0.0f);
+		m_graphicDevice->Render();
+	}
+}
+
+bool LoadingScreen::IsActive()
+{
+	return m_isActive;
 }

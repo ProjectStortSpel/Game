@@ -12,6 +12,9 @@ package.path = package.path .. ";Systems/Shared/AnimationSystems/?.lua"
 require "sh_AddAnimationSystem"
 require "sh_UpdateAnimationSystem"
 
+package.path = package.path .. ";Systems/Shared/LoadingScreenSystems/?.lua"
+require "sh_LoadingScreenSystem"
+
 --worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(AddLerpPositionSystem)
 worldCreator:AddSystemToCurrentGroup(UpdateLerpPositionSystem)
@@ -24,3 +27,6 @@ worldCreator:AddSystemToCurrentGroup(KillAfterLerpSystem)
 --worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(AddAnimationSystem)
 worldCreator:AddSystemToCurrentGroup(UpdateAnimationSystem)
+
+--worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(LoadingScreenSystem)
