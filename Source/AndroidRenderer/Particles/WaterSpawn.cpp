@@ -1,18 +1,18 @@
-#include "Waterfall.h"
+#include "WaterSpawn.h"
 
 using namespace Renderer;
 
-Waterfall::Waterfall()
+WaterSpawn::WaterSpawn()
 {
 }
 
-Waterfall::Waterfall(const vec3 _pos, const vec3 _vel, int _nParticles, float _lifeTime, vec3 _scale, float _spriteSize, GLuint _texHandle, vec3 _color, Shader *_shaderProg) : ParticleEffect(_pos, _vel, _nParticles, _lifeTime, _scale, _spriteSize, _texHandle, _color, _shaderProg)
+WaterSpawn::WaterSpawn(const vec3 _pos, const vec3 _vel, int _nParticles, float _lifeTime, vec3 _scale, float _spriteSize, GLuint _texHandle, vec3 _color, Shader *_shaderProg) : ParticleEffect(_pos, _vel, _nParticles, _lifeTime, _scale, _spriteSize, _texHandle, _color, _shaderProg)
 {
 	//----Init starts here------------------
 	//..-----Smoke-----..
 	// Create and allocate buffers A and B for m_posBuf, m_velBuf and m_startTime
 	m_dstBlendFactor = GL_ONE_MINUS_SRC_ALPHA;
-	m_accel = vec3(0.0, -0.8, 0.0);
+	m_accel = vec3(0.0f, -0.4, 0.0f);
 	vec3 v(0.0f);
 	float velocity, theta, phi;
 	float mtime = 0.0f, rate = (m_lifeTime / (float)m_nrParticles);
@@ -26,12 +26,11 @@ Waterfall::Waterfall(const vec3 _pos, const vec3 _vel, int _nParticles, float _l
 	srand(time(NULL));
 	for (GLuint i = 0; i < m_nrParticles; i++) {
 		vec3 pos;
-		pos = vec3(((float)(rand() % 91) - 45)*0.1, 0.0f, ((float)(rand() % 91 - 45))*0.1);
-		pos = glm::normalize(pos) * ((float)(rand() % 9 - 4)) * 0.5f;
+		pos = vec3(((float)(rand() % 91) - 45)*0.05, 0.0f, ((float)(rand() % 91 - 45))*0.05);
+		pos = glm::normalize(pos) * ((float)(rand() % 9 - 4));
 		pos.x *= m_scale.x;
 		pos.y *= m_scale.y;
 		pos.z *= m_scale.z;
-
 
 		m_posData[3 * i] = pos.x;
 		m_posData[3 * i + 1] = pos.y;
@@ -41,16 +40,17 @@ Waterfall::Waterfall(const vec3 _pos, const vec3 _vel, int _nParticles, float _l
 		theta = glm::mix(0.0f, (float)M_PI / 6.0f, (float)(rand() % 101) / 100);
 		phi = glm::mix(0.0f, (float)(2 * M_PI), (float)(rand() % 101) / 100);
 
-		v.x = sinf(theta) * cosf(phi) * 0.1;
-		v.y = cosf(theta) * 0.1;
-		v.z = sinf(theta) * sinf(phi) * 0.1;
+		v.x = sinf(theta) * cosf(phi) * 0.2;
+		v.y = cosf(theta) * 0.12;
+		v.y = std::abs(v.y);
+		v.z = sinf(theta) * sinf(phi) * 0.2;
 
 		// Scale to set the magnitude of the velocity (speed)
 		velocity = glm::mix(1.25f, 1.5f, (float)(rand() % 101) / 100) * 1.2;
-		v = v * velocity + m_vel;
-		m_velData[3 * i] = v.x;
-		m_velData[3 * i + 1] = v.y;
-		m_velData[3 * i + 2] = v.z;
+		v = v * velocity;
+		m_velData[3 * i] = v.x + m_vel.x;
+		m_velData[3 * i + 1] = v.y + m_vel.y;
+		m_velData[3 * i + 2] = v.z + m_vel.z;
 
 		m_timeData[i] = mtime;
 		mtime += rate;
@@ -78,12 +78,12 @@ Waterfall::Waterfall(const vec3 _pos, const vec3 _vel, int _nParticles, float _l
 }
 
 
-Waterfall::~Waterfall()
+WaterSpawn::~WaterSpawn()
 {
 	//Delete eventuella buffers osv
 }
 
-void Waterfall::Render(float _dt)
+void WaterSpawn::Render(float _dt)
 {
 	glBlendFunc(GL_SRC_ALPHA, m_dstBlendFactor);
 

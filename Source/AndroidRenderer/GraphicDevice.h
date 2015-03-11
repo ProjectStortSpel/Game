@@ -18,6 +18,7 @@ Author: Christian
 #include "Particles/Fire.h"
 #include "Particles/Smoke.h"
 #include "Particles/Waterfall.h"
+#include "Particles/WaterSpawn.h"
 
 namespace Renderer
 {

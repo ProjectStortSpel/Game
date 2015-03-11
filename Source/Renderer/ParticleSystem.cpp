@@ -380,13 +380,9 @@ void ParticleSystem::CreateWaterfall()
 		phi = glm::mix(0.0f, (float)(2 * M_PI), (float)(rand() % 101) / 100);
 
 		v.x = sinf(theta) * cosf(phi) * 0.1;
-		if ((posData[3 * i] < 0 && v.x < 0) || (posData[3 * i] > 0 && v.x > 0))
-			v.x *= -1;
-
 		v.y = cosf(theta) * 0.1;
+		v.y = std::max(std::abs(v.y), 0.02f);
 		v.z = sinf(theta) * sinf(phi) * 0.1;
-		if ((posData[3 * i + 2] < 0 && v.z < 0) || (posData[3 * i + 2] > 0 && v.z > 0))
-			v.z *= -1;
 
 		// Scale to set the magnitude of the velocity (speed)
 		velocity = glm::mix(1.25f, 1.5f, (float)(rand() % 101) / 100) * 1.2;
@@ -522,14 +518,10 @@ void ParticleSystem::CreateWaterSpawn()
 		phi = glm::mix(0.0f, (float)(2 * M_PI), (float)(rand() % 101) / 100);
 
 		v.x = sinf(theta) * cosf(phi) * 0.2;
-		if ((posData[3 * i] < 0 && v.x < 0) || (posData[3 * i] > 0 && v.x > 0))
-			v.x *= -1;
 
 		v.y = cosf(theta) * 0.12;
 		v.y = std::abs(v.y);
 		v.z = sinf(theta) * sinf(phi) * 0.2;
-		if ((posData[3 * i + 2] < 0 && v.z < 0) || (posData[3 * i + 2] > 0 && v.z > 0))
-			v.z *= -1;
 
 		// Scale to set the magnitude of the velocity (speed)
 		velocity = glm::mix(1.25f, 1.5f, (float)(rand() % 101) / 100) * 1.2;

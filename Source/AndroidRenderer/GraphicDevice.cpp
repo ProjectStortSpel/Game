@@ -182,6 +182,12 @@ void GraphicDevice::InitStandardShaders()
 	m_particleShaders["waterfall"]->AddShader("content/shaders/android/AndroidWaterfallShaderVS.glsl", GL_VERTEX_SHADER);
 	m_particleShaders["waterfall"]->AddShader("content/shaders/android/AndroidWaterfallShaderFS.glsl", GL_FRAGMENT_SHADER);
 	m_particleShaders["waterfall"]->FinalizeShaderProgram();
+
+	m_particleShaders["waterspawn"] = new Shader();
+	m_particleShaders["waterspawn"]->InitShaderProgram();
+	m_particleShaders["waterspawn"]->AddShader("content/shaders/android/AndroidSmokeShaderVS.glsl", GL_VERTEX_SHADER);
+	m_particleShaders["waterspawn"]->AddShader("content/shaders/android/AndroidSmokeShaderFS.glsl", GL_FRAGMENT_SHADER);
+	m_particleShaders["waterspawn"]->FinalizeShaderProgram();
 	
 	//m_fullscreen
 	m_fullscreen.InitShaderProgram();
@@ -798,6 +804,19 @@ void GraphicDevice::BufferParticleSystems()
 		else if (m_particleSystemsToLoad[i].Name == "waterfall")
 		{
 			m_particleEffects.insert(std::pair<int, ParticleEffect*>(m_particleSystemsToLoad[i].Id, new Waterfall(
+				m_particleSystemsToLoad[i].Pos,
+				m_particleSystemsToLoad[i].Vel,
+				m_particleSystemsToLoad[i].NrOfParticles,
+				m_particleSystemsToLoad[i].LifeTime,
+				m_particleSystemsToLoad[i].Scale,
+				m_particleSystemsToLoad[i].SpriteSize,
+				AddTexture(m_particleSystemsToLoad[i].TextureName, GL_TEXTURE1),
+				m_particleSystemsToLoad[i].Color,
+				m_particleShaders[m_particleSystemsToLoad[i].Name])));
+		}
+		else if (m_particleSystemsToLoad[i].Name == "waterspawn")
+		{
+			m_particleEffects.insert(std::pair<int, ParticleEffect*>(m_particleSystemsToLoad[i].Id, new WaterSpawn(
 				m_particleSystemsToLoad[i].Pos,
 				m_particleSystemsToLoad[i].Vel,
 				m_particleSystemsToLoad[i].NrOfParticles,
