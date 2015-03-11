@@ -127,6 +127,8 @@ ServerNetworkMessageSystem.OnPlayerConnected = function(self, _ip, _port, _messa
 		Net.SendEntity(sync[i], _ip, _port)	
 		--Console.Print("Send Entity: " .. sync[i])
 	end	
+	
+	Net.Send(Net.StartPack("RemoveLoadingScreen"), _ip, _port)	
 
 end
 

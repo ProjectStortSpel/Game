@@ -122,6 +122,9 @@ bool GameCreator::InitializeGraphics()
         }
     }
 #endif
+	m_graphics->AddFont("content/fonts/barthowheel.ttf", 72);
+	m_graphics->AddFont("content/fonts/verdanab.ttf", 72);
+	LoadingScreen::GetInstance().SetGraphicsDevice(m_graphics);
     return true;
 	//LuaEmbedder::AddObject<Renderer::GraphicDevice>("GraphicDevice", m_graphics, "graphics");
 }
@@ -462,7 +465,7 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 
     if (_worldType == WorldType::Client)
     {
-        m_clientWorld = worldCreator.CreateWorld(1000);
+		m_clientWorld = worldCreator.CreateWorld(worldCreator.GetMaxNumberOfEntities());
 		LuaEmbedder::CollectGarbageFull();
         LuaEmbedder::AddObject<ECSL::World>(luaState, "World", m_clientWorld, "world");
         m_clientWorld->PostInitializeSystems();
@@ -470,7 +473,7 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
     }
     else
     {
-        m_serverWorld = worldCreator.CreateWorld(1000);
+		m_serverWorld = worldCreator.CreateWorld(worldCreator.GetMaxNumberOfEntities());
 		LuaEmbedder::CollectGarbageFull();
         LuaEmbedder::AddObject<ECSL::World>(luaState, "World", m_serverWorld, "world");
         m_serverWorld->PostInitializeSystems();
@@ -850,7 +853,10 @@ void GameCreator::Reload()
 	m_graphics->Clear();
 
 	LuaBridge::LuaGraphicDevice::SetGraphicDevice(m_graphics);
-    
+
+	if (NetworkInstance::GetServer()->IsRunning() || NetworkInstance::GetClient()->IsConnected())
+		LoadingScreen::GetInstance().SetActive();
+
     if (!NetworkInstance::GetClient()->IsConnected() && NetworkInstance::GetServer()->IsRunning())
     {
         LuaBridge::SetIOLuaState(m_serverLuaState);
@@ -901,6 +907,9 @@ void GameCreator::Reload()
 		ph->WriteString(id, m_gameMode.c_str());
 		NetworkInstance::GetServer()->Broadcast(ph->EndPack(id));
 	}
+
+	if (NetworkInstance::GetServer()->IsRunning() != NetworkInstance::GetClient()->IsConnected())
+		LoadingScreen::GetInstance().SetInactive(0);
 }
 
 void GameCreator::LuaPacket(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
@@ -925,7 +934,7 @@ void GameCreator::NetworkGameMode(Network::PacketHandler* _ph, uint64_t& _id, Ne
 {
 	if (!NetworkInstance::GetServer()->IsRunning())
 	{
-		GameMode("loadingscreen");
+		//GameMode("loadingscreen");
 		ConnectHelper::Connect(_ph->ReadString(_id));
 	}
 	else
@@ -1257,6 +1266,7 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 
 		m_console->SetGraphicDevice(m_graphics);
 		LuaBridge::LuaGraphicDevice::SetGraphicDevice(m_graphics);
+		LoadingScreen::GetInstance().SetGraphicsDevice(m_graphics);
 		for (int n = 0; n < m_graphicalSystems.size(); ++n)
 		{
 			GraphicalSystem* tSystem = m_graphicalSystems.at(n);
@@ -1327,6 +1337,7 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 
 		m_console->SetGraphicDevice(m_graphics);
 		LuaBridge::LuaGraphicDevice::SetGraphicDevice(m_graphics);
+		LoadingScreen::GetInstance().SetGraphicsDevice(m_graphics);
 		for (int n = 0; n < m_graphicalSystems.size(); ++n)
 		{
 			GraphicalSystem* tSystem = m_graphicalSystems.at(n);

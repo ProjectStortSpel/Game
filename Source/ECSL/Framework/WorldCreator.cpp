@@ -6,6 +6,7 @@ WorldCreator::WorldCreator() : m_worldInitialized(false)
 {
 	m_systemWorkGroups = new std::vector<SystemWorkGroup*>();
 	m_componentTypeIds = new std::vector<unsigned int>();
+	m_maxNumberOfEntities = 1000;
 }
 
 WorldCreator::~WorldCreator()
