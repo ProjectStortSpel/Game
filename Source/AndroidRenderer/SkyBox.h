@@ -14,13 +14,15 @@ private:
 	GLuint vboCubeVertices;
 	GLuint iboCubeIndices;
 
+	float m_rotSpeed, m_rotAngle;
+
 public:
-	SkyBox(GLuint _texHandle, float _camFarPlane, GLuint loc);
+	SkyBox(GLuint _texHandle, float _camFarPlane, GLuint loc, float _rotationSpeed);
 	SkyBox();
 	~SkyBox();
 
 	void BindBuffers(float _camFarPlane);
-	void Draw(GLuint _shaderProgHandle, Camera *_cam);
+	void Draw(GLuint _shaderProgHandle, Camera *_cam, float _dt);
 };
 
 #endif
