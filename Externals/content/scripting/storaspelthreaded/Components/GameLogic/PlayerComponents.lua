@@ -22,6 +22,15 @@ NewComponent.TableType = TableType.Map
 NewComponent:AddVariable("Name", ByteSize.Text)
 worldCreator:AddComponentType(NewComponent)
 
+--	PlayerNameChanged Component
+NewComponent = ComponentType()
+NewComponent.Name = "PlayerNameChanged"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("Name", ByteSize.Text)
+NewComponent:AddVariable("IpAddress", ByteSize.Text)
+NewComponent:AddVariable("Port", ByteSize.Int)
+worldCreator:AddComponentType(NewComponent)
+
 -- Inactive Player Component
 NewComponent = ComponentType()
 NewComponent.Name = "InactivePlayer"

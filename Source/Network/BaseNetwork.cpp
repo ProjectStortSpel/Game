@@ -200,9 +200,6 @@ void BaseNetwork::Update(float _dt)
 		m_packetHandler->EndUnpack(id);
 	}
 
-
-
-
 }
 
 void BaseNetwork::HandlePacket(Packet* _packet)
