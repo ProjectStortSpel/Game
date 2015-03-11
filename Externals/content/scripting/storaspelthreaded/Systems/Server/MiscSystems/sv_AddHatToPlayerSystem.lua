@@ -46,6 +46,8 @@ AddHatToPlayerSystem.SwitchHatOnUnit = function(self, player, Offset)
 				world:GetComponent(unitId, "Hat", "Id"):SetInt(hatNr)
 				if hatNr > 0 then
 					self:SetHatToUnit(hatNr, unitId)
+				else
+					world:RemoveComponentFrom("Hat", unitId)
 				end
 			else
 				local hatNr = (Offset) % (#self.HatTemplates + 1)
@@ -60,6 +62,7 @@ AddHatToPlayerSystem.SwitchHatOnUnit = function(self, player, Offset)
 end
 
 AddHatToPlayerSystem.SetHatToUnit = function(self, hatId, unitId)
+
 	local hatName = self.HatTemplates[hatId]
 	local hatEntity = world:CreateNewEntity(hatName)
 
@@ -83,7 +86,7 @@ AddHatToPlayerSystem.SetHatToUnit = function(self, hatId, unitId)
 	-- LERP THE HAT FOR EFFECT
 	local sx, sy, sz = world:GetComponent(hatEntity, "Scale", "X"):GetFloat3(0)
 	world:CreateComponentAndAddTo("LerpScale", hatEntity)
-	world:GetComponent(hatEntity, "LerpScale", "Time", 0):SetFloat4(0.2, sx, sy, sz)
+	world:GetComponent(hatEntity, "LerpScale", "Time", 0):SetFloat4(0.1, sx, sy, sz)
 	world:GetComponent(hatEntity, "LerpScale", "Algorithm", 0):SetText("SmoothLerp")
 	world:GetComponent(hatEntity, "Scale", "X", 0):SetFloat3(0, 0, 0)
 	

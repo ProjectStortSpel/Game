@@ -43,6 +43,12 @@ GraphicDevice::~GraphicDevice()
 	for (std::map<std::string, Shader*>::iterator it = m_particleShaders.begin(); it != m_particleShaders.end(); ++it)
 		delete(it->second);
 
+	for (std::map<const std::string, GLuint>::iterator it = m_textures.begin(); it != m_textures.end(); ++it)
+		glDeleteTextures(1, &(it->second));
+
+	for (int i = 0; i < m_surfaces.size(); i++)
+		delete(m_surfaces[i].second);
+
 #ifdef __ANDROID__
 	glDeleteBuffers(1, &m_fullscreenQuadBuffer);
 #endif
@@ -170,6 +176,18 @@ void GraphicDevice::InitStandardShaders()
 	m_particleShaders["fire"]->AddShader("content/shaders/android/AndroidFireShaderVS.glsl", GL_VERTEX_SHADER);
 	m_particleShaders["fire"]->AddShader("content/shaders/android/AndroidFireShaderFS.glsl", GL_FRAGMENT_SHADER);
 	m_particleShaders["fire"]->FinalizeShaderProgram();
+
+	m_particleShaders["waterfall"] = new Shader();
+	m_particleShaders["waterfall"]->InitShaderProgram();
+	m_particleShaders["waterfall"]->AddShader("content/shaders/android/AndroidWaterfallShaderVS.glsl", GL_VERTEX_SHADER);
+	m_particleShaders["waterfall"]->AddShader("content/shaders/android/AndroidWaterfallShaderFS.glsl", GL_FRAGMENT_SHADER);
+	m_particleShaders["waterfall"]->FinalizeShaderProgram();
+
+	m_particleShaders["waterspawn"] = new Shader();
+	m_particleShaders["waterspawn"]->InitShaderProgram();
+	m_particleShaders["waterspawn"]->AddShader("content/shaders/android/AndroidSmokeShaderVS.glsl", GL_VERTEX_SHADER);
+	m_particleShaders["waterspawn"]->AddShader("content/shaders/android/AndroidSmokeShaderFS.glsl", GL_FRAGMENT_SHADER);
+	m_particleShaders["waterspawn"]->FinalizeShaderProgram();
 	
 	//m_fullscreen
 	m_fullscreen.InitShaderProgram();
@@ -783,6 +801,32 @@ void GraphicDevice::BufferParticleSystems()
 				m_particleSystemsToLoad[i].Color,
 				m_particleShaders[m_particleSystemsToLoad[i].Name])));
 		}
+		else if (m_particleSystemsToLoad[i].Name == "waterfall")
+		{
+			m_particleEffects.insert(std::pair<int, ParticleEffect*>(m_particleSystemsToLoad[i].Id, new Waterfall(
+				m_particleSystemsToLoad[i].Pos,
+				m_particleSystemsToLoad[i].Vel,
+				m_particleSystemsToLoad[i].NrOfParticles,
+				m_particleSystemsToLoad[i].LifeTime,
+				m_particleSystemsToLoad[i].Scale,
+				m_particleSystemsToLoad[i].SpriteSize,
+				AddTexture(m_particleSystemsToLoad[i].TextureName, GL_TEXTURE1),
+				m_particleSystemsToLoad[i].Color,
+				m_particleShaders[m_particleSystemsToLoad[i].Name])));
+		}
+		else if (m_particleSystemsToLoad[i].Name == "waterspawn")
+		{
+			m_particleEffects.insert(std::pair<int, ParticleEffect*>(m_particleSystemsToLoad[i].Id, new WaterSpawn(
+				m_particleSystemsToLoad[i].Pos,
+				m_particleSystemsToLoad[i].Vel,
+				m_particleSystemsToLoad[i].NrOfParticles,
+				m_particleSystemsToLoad[i].LifeTime,
+				m_particleSystemsToLoad[i].Scale,
+				m_particleSystemsToLoad[i].SpriteSize,
+				AddTexture(m_particleSystemsToLoad[i].TextureName, GL_TEXTURE1),
+				m_particleSystemsToLoad[i].Color,
+				m_particleShaders[m_particleSystemsToLoad[i].Name])));
+		}
 	}
 	m_particleSystemsToLoad.clear();
 
@@ -807,33 +851,40 @@ void GraphicDevice::Clear()
 {
 	m_modelIDcounter = 0;
 
-	SDL_Log("Clearing lists");
 	m_modelsForward.clear();
 	m_modelsViewspace.clear();
 	m_modelsInterface.clear();
 	m_modelsWater.clear();
 	m_modelsWaterCorners.clear();
 
+	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); ++it)
+		delete(it->second);
+	m_meshs.clear();
+
+	for (std::map<const std::string, GLuint>::iterator it = m_textures.begin(); it != m_textures.end(); ++it)
+		glDeleteTextures(1, &(it->second));
+	m_textures.clear();
+
+	for (int i = 0; i < m_surfaces.size(); i++)
+		delete(m_surfaces[i].second);
+	m_surfaces.clear();
+
 	float **tmpPtr = new float*[1];
 	BufferPointlights(0, tmpPtr);
 	delete[] tmpPtr;
 
-	SDL_Log("Deleting pointlights");
 	if (m_pointlightsPtr)
 		delete[] m_pointlightsPtr;
 
 	m_pointlightsPtr = NULL;
 	m_directionalLightPtr = NULL;
 
-	SDL_Log("Deleting particle effects");
 	for (std::map<int, ParticleEffect*>::iterator it = m_particleEffects.begin(); it != m_particleEffects.end(); ++it)
 	{
 		delete(it->second);
-		SDL_Log("HEJ!");
 	}
 		
 	m_particleEffects.clear();
-	SDL_Log("Done!");
 }
 
 void GraphicDevice::CreateFullscreenQuad()

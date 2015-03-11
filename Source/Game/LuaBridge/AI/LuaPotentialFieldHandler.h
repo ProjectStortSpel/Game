@@ -16,10 +16,10 @@ namespace LuaBridge
 		/* If something else should be added, don't forget to add it into the map in InitPFHandler.*/
 		enum ObjectType
 		{
+			NotWalkable,
 			//Edge,
 			//Hole,
-			NotWalkable,
-			RiverEnd,
+			//RiverEnd,
 			Unit,
 			Void,
 			NoOfEnums

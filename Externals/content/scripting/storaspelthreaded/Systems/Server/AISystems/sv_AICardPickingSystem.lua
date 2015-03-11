@@ -1,7 +1,7 @@
 AICardPickingSystem = System()
 --AICardPickingSystem.PrintSimulation = 0
 AICardPickingSystem.AICheat = 0
-AICardPickingSystem.PermutationsDone = false
+AICardPickingSystem.InitDone = false
 AICardPickingSystem.PermutationIndex = 1
 AICardPickingSystem.PermutationsArray = ''
 AICardPickingSystem.TimeLimitPerUpdateInMs = 1.0
@@ -11,6 +11,12 @@ AICardPickingSystem.NoOfCheckpoints = 0
 AICardPickingSystem.CardsPerHand = 0
 AICardPickingSystem.CardsToPick = 0
 AICardPickingSystem.CurrentAI = 1
+AICardPickingSystem.MapSizeX = 0
+AICardPickingSystem.MapSizeY = 0
+AICardPickingSystem.Map = {}
+AICardPickingSystem.Map.__mode = "k"
+AICardPickingSystem.TempStones = {}
+AICardPickingSystem.TempStones.__mode = "k"
 
 -- TODO: Remove this
 AICardPickingSystem.ERROR = false
@@ -56,6 +62,7 @@ AICardPickingSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("DealingSettings", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("AutoPickCards", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("NewRound", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("TileWalkabilityHasChanged", FilterType.RequiresOneOf)
 	
 	self:AddComponentTypeToFilter("HasSelectedCards", FilterType.Excluded)
 end
@@ -296,7 +303,9 @@ AICardPickingSystem.SendCards = function(self)
 		local unit = world:GetComponent(playerEntity, "UnitEntityId", "Id"):GetInt()
 		
 		world:CreateComponentAndAddTo("HasSelectedCards", playerEntity)
-		world:CreateComponentAndAddTo("UnitSelectedCards", unit)
+		if not world:EntityHasComponent(unit, "UnitSelectedCards") then
+			world:CreateComponentAndAddTo("UnitSelectedCards", unit)
+		end
 		
 		local DealingSettings = self:GetEntities("DealingSettings")
 		local cardsPerHand, cardsToPick = world:GetComponent(DealingSettings[1], "DealingSettings", 0):GetInt2(0)
@@ -330,7 +339,7 @@ AICardPickingSystem.SendCards = function(self)
 		world:CreateComponentAndAddTo("NotifyStartNewRound", id)
 		world:GetComponent(id, "NotifyStartNewRound", "IsAI"):SetBool(true) 
 	end
-	print("AI sent cards")
+	--print("AI sent cards")
 end
 
 AICardPickingSystem.SimulateCards = function(self, _playerNumber, _targetCheckpointNumber, _pickedcards)
@@ -561,13 +570,15 @@ AICardPickingSystem.SimulateMoveForward = function(self, _posX, _posY, _dirX, _d
 		posX = posX + _dirX * forward
 		posY = posY + _dirY * forward
 		
-		if self:TileHasComponent("NotWalkable", posX, posY) then
+		if self:LocalMapHasComponent("NotWalkable", posX, posY) then
+		--if self:TileHasComponent("NotWalkable", posX, posY) then
 			
 			--print("Stone at", posX, posY)
 			posX = posX - _dirX * forward
 			posY = posY - _dirY * forward
 			
-		elseif self:TileHasComponent("Void", posX, posY) and not _jump then
+		elseif self:LocalMapHasComponent("Void", posX, posY) and not _jump then
+		--elseif self:TileHasComponent("Void", posX, posY) and not _jump then
 			
 			fellDown = true
 			if self.PrintSimulation == 1 then
@@ -575,14 +586,16 @@ AICardPickingSystem.SimulateMoveForward = function(self, _posX, _posY, _dirX, _d
 			end
 			break
 		end
-				
-		if not _riverMove and i == _iterations and self:TileHasComponent("River", posX, posY) then
+		
+		if not _riverMove and i == _iterations and self:LocalMapHasComponent("River", posX, posY) then
+		--if not _riverMove and i == _iterations and self:TileHasComponent("River", posX, posY) then
 			
 			local waterDirX, waterDirY, waterSpeed = self:GetRiverVariables(posX, posY)
 			
 			for j = 1, waterSpeed do
 			
-				if self:TileHasComponent("River", posX + waterDirX, posY + waterDirY) then
+				if self:LocalMapHasComponent("River", posX + waterDirX, posY + waterDirY) then
+				--if self:TileHasComponent("River", posX + waterDirX, posY + waterDirY) then
 					posX = posX + waterDirX
 					posY = posY + waterDirY
 					waterDirX, waterDirY, waterSpeed = self:GetRiverVariables(posX, posY)
@@ -662,12 +675,39 @@ AICardPickingSystem.TileHasComponent = function(self, _component, _posX, _posY)
 	return returnValue
 end
 
+AICardPickingSystem.LocalMapHasComponent = function(self, _component, _posX, _posY)
+	
+	--local mapSize = self:GetEntities("MapSpecs")
+	--local mapSizeComp = world:GetComponent(mapSize[1], "MapSpecs", "SizeX")
+	--local mapX, mapY = mapSizeComp:GetInt2()
+	--local tiles = self:GetEntities("TileComp")
+	local mapX, mapY = self.MapSizeX, self.MapSizeY
+	local returnValue
+		
+	if -1 < _posX and _posX < mapX and -1 < _posY and _posY < mapY then
+		--print(self.Map[mapX * _posY + _posX + 1], _component)
+		if self.Map[mapX * _posY + _posX + 1] == _component then
+			returnValue = true
+			--print("true")
+		end
+		--print("false")
+	else
+		if not self.ERROR then
+			print("ERROR, trying to get entity from tile outside the boundaries in AICardPickingSystem.TileHasComponent.")
+			self.ERROR = true
+		end
+		returnValue = false
+	end
+	
+	return returnValue
+end
+
 AICardPickingSystem.GetRiverVariables = function(self, _posX, _posY)
 	
-	local mapSize = self:GetEntities("MapSpecs")
-	local mapX = world:GetComponent(mapSize[1], "MapSpecs", "SizeX"):GetInt()
+	local mapSizeEntities = self:GetEntities("MapSpecs")
+	local mapX = world:GetComponent(mapSizeEntities[1], "MapSpecs", "SizeX"):GetInt()
 	local tiles = self:GetEntities("TileComp")
-	local dirX, dirY, speed = world:GetComponent(tiles[mapX * _posY + _posX + 1], "River", 0):GetInt3()
+	local dirX, dirY, speed = world:GetComponent(tiles[mapX * _posY + _posX + 1], "River", 0):GetInt3(0)
 	
 	return dirX, dirY, speed
 end
@@ -769,6 +809,108 @@ AICardPickingSystem.SaveCheckpoints = function(self)
 	self.NoOfCheckpoints = #checkpoints
 end
 
+AICardPickingSystem.SaveMap = function(self)
+	
+	local mapSizeEntities = self:GetEntities("MapSpecs")
+	local mapX, mapY = world:GetComponent(mapSizeEntities[1], "MapSpecs", "SizeX"):GetInt2(0)
+	self.MapSizeX = mapX
+	self.MapSizeY = mapY
+	local tiles = self:GetEntities("TileComp")
+	
+	for y = 0, mapY - 1 do
+		for x = 0, mapX - 1 do
+			
+			if world:EntityHasComponent(tiles[mapX * y + x + 1], "Void") then
+			
+				self.Map[mapX * y + x + 1] = "Void"
+				--io.write("O")
+				
+			elseif world:EntityHasComponent(tiles[mapX * y + x + 1], "NotWalkable") then
+				
+				self.Map[mapX * y + x + 1] = "NotWalkable"
+				--io.write("X")
+				
+			elseif world:EntityHasComponent(tiles[mapX * y + x + 1], "River") then
+				
+				local dirX, dirY, speed = world:GetComponent(tiles[mapX * y + x + 1], "River", 0):GetInt3(0)
+				
+				if dirX == 1 then
+					self.Map[mapX * y + x + 1] = "RiverRight"
+					--io.write("R")
+				elseif dirX == -1 then
+					self.Map[mapX * y + x + 1] = "RiverLeft"
+					--io.write("L")
+				elseif dirY == 1 then
+					self.Map[mapX * y + x + 1] = "RiverDown"
+					--io.write("D")
+				elseif dirY == -1 then
+					self.Map[mapX * y + x + 1] = "RiverUp"
+					--io.write("U")
+				else
+					print("Error: Could not decide the direction of the river when saving map in AICardPickingSystem")
+				end
+				
+			else
+				
+				self.Map[mapX * y + x + 1] = ""
+				--io.write(" ")
+			end
+			
+			self.TempStones[mapX * y + x + 1] = false
+			--if self.TempStones[mapX * y + x + 1] == false then
+			--	io.write(" ")
+			--else
+			--	io.write("x")
+			--end
+		end
+		--io.write("\n")
+	end
+end
+
+AICardPickingSystem.ChangeTileWalkability = function(self, _entity)
+	
+	local mapSizeEntities = self:GetEntities("MapSpecs")
+	local mapX, mapY = world:GetComponent(mapSizeEntities[1], "MapSpecs", "SizeX"):GetInt2(0)
+	
+	local tileX, tileY = world:GetComponent(_entity, "TileWalkabilityHasChanged", "X"):GetInt2(0)
+	local walkable = world:GetComponent(_entity, "TileWalkabilityHasChanged", "Walkable"):GetBool(0)
+	
+	--print()
+	--print(tileX, tileY, walkable)
+	--print(walkable, self.TempStones[mapX * tileY + tileX + 1])
+	
+	if walkable then
+		self.TempStones[mapX * tileY + tileX + 1] = false
+	else
+		self.TempStones[mapX * tileY + tileX + 1] = true
+	end
+	
+	--print(walkable, self.TempStones[mapX * tileY + tileX + 1])
+	
+	self.TempStones[mapX * tileY + tileX + 1] = not walkable
+	
+	--print()
+	--print("Changed Tile Walkability")
+	--print()
+	
+	world:KillEntity(_entity)
+	
+	--for stoneY = 0, mapY - 1 do
+	--	for stoneX = 0, mapX - 1 do
+	--	
+	--		if self.TempStones[mapX * stoneY + stoneX + 1] then
+	--			io.write("x")
+	--		elseif not self.TempStones[mapX * stoneY + stoneX + 1] then
+	--			io.write(" ")
+	--		else
+	--			io.write("Fail")
+	--		end
+	--		
+	--	end
+	--	io.write("\n")
+	--end
+end
+
 AICardPickingSystem.InitPlayerSpecifics = function(self, _aiEntity)
 
 	local mapSpecs = self:GetEntities("MapSpecs")
@@ -804,6 +946,7 @@ AICardPickingSystem.InitPlayerSpecifics = function(self, _aiEntity)
 	x, y = world:GetComponent(unitID, "Direction", 0):GetInt2(0)
 	self.Directions[doubleIndex] 		= x
 	self.Directions[doubleIndex + 1] 	= y
+	
 	
 	self.TargetCheckpoints[playerNo] = world:GetComponent(unitID, "TargetCheckpoint", 0):GetInt(0)
 	
@@ -869,21 +1012,19 @@ AICardPickingSystem.EntitiesAdded = function(self, dt, entities)
 			gotCards = true
 			
 		-- If an AI was added, do permutations if it is the first AI.
-		elseif world:EntityHasComponent(entities[i], "AI") and not self.PermutationsDone then
+		elseif world:EntityHasComponent(entities[i], "AI") and not self.InitDone then
 		
 			local dealingSettings = self:GetEntities("DealingSettings")
 			local cardsPerHand, cardsToPick = world:GetComponent(dealingSettings[1], "DealingSettings", 0):GetInt2(0)
 			
-			if not self.PermutationsDone then
-				
-				self.CardsPerHand = cardsPerHand
-				self.CardsToPick = cardsToPick
-				
-				self:SaveCheckpoints()
-				self:AllocatePlayerArrays()
-				self.PermutationsArray = CombinationMath.Permutations(cardsPerHand, cardsToPick)
-				self.PermutationsDone = true
-			end
+			self.CardsPerHand = cardsPerHand
+			self.CardsToPick = cardsToPick
+			
+			self:SaveCheckpoints()
+			self:SaveMap()
+			self:AllocatePlayerArrays()
+			self.PermutationsArray = CombinationMath.Permutations(cardsPerHand, cardsToPick)
+			self.InitDone = true
 			
 			--self:InitPlayerSpecifics(entities[i])
 			
@@ -892,6 +1033,10 @@ AICardPickingSystem.EntitiesAdded = function(self, dt, entities)
 			print("AIs picking time is over!", (self.PermutationIndex - 1) / 5)
 			
 			self:SendCards()
+			
+		elseif world:EntityHasComponent(entities[i], "TileWalkabilityHasChanged") then
+			
+			self:ChangeTileWalkability(entities[i])
 			
 			--local AIs = self:GetEntities("AI")
 			--

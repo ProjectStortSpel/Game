@@ -415,7 +415,7 @@ MapGenerator.FixRiverCorner = function(self, RiverA, RiverB)
 	end
 	
 	--	Set the model for the corner
-	world:GetComponent(RiverB, "Model", 0):SetModel("rivercorner", "rivercorner", 0, 0)
+	world:GetComponent(RiverB, "Model", 0):SetModel("rivercorner", "rivercorner", 0)
 	
 	local 	dirAX, dirAY 	= 	world:GetComponent(RiverA, "River", 0):GetInt2()
 	local 	dirBX, dirBY 	= 	world:GetComponent(RiverB, "River", 0):GetInt2()
@@ -682,7 +682,8 @@ MapGenerator.CreateSpawnpoint = function(self, X, Z)
 	
 	local	newCheckpoint	=	self:GenerateEmptyTile(X, Z)
 	world:CreateComponentAndAddTo("Model", newCheckpoint)
-	world:GetComponent(newCheckpoint, "Model", 0):SetModel("grass", "grass", 0, 0)
+	world:GetComponent(newCheckpoint, "Model", 0):SetModel("grass", "grass", 0)
+	world:CreateComponentAndAddTo("NoShadow", newCheckpoint)
 	
 	local newSpawnId = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("AvailableSpawnpoint", newSpawnId)
