@@ -73,7 +73,7 @@ void DynamicScripting::GenerateScript()
 
 			randomValue = RandomFloat() * m_totalSum;
 
-			while (selectedRule < 0)
+			while ( selectedRule < 0 && ruleId < this->m_ruleBook->size() )
 			{
 				weightSum += (*m_ruleBook)[ruleId].weight;
 				if (weightSum > randomValue)
@@ -85,8 +85,10 @@ void DynamicScripting::GenerateScript()
 					ruleId++;
 				}
 			}
-
-			ruleAddedToScript = InsertToScript((*m_ruleBook)[selectedRule]);
+			if ( selectedRule != -1 )
+			{
+				ruleAddedToScript = InsertToScript( ( *m_ruleBook )[selectedRule] );
+			}
 			noOfTries++;
 		}
 	}
