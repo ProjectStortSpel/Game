@@ -18,6 +18,7 @@ namespace ConnectHelper
 	{
 		//Password, 
 		//GameMode,
+		NameOrLoadingScreen,
 		AcknowledgeName,
 		GameModeFileList,
 		GameModeFiles,
@@ -40,6 +41,7 @@ namespace ConnectHelper
 	void BindNetworkEvents();
 	void Reset();
 
+	void NetworkLoadingScreen(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
 	void NetworkAcknowledgeName(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
 	//void NetworkGameMode(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
 	void NetworkGameModeFileList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
@@ -65,7 +67,10 @@ namespace ConnectHelper
 		//Network::NetMessageHook hook = std::bind(&NetworkGameMode, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 		//NetworkInstance::GetClient()->AddNetworkHook("GameMode", hook);
 
-		Network::NetMessageHook hook = std::bind(&NetworkAcknowledgeName, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+		Network::NetMessageHook hook = std::bind(&NetworkLoadingScreen, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+		NetworkInstance::GetClient()->AddNetworkHook("LoadingScreen", hook); 
+		
+		hook = std::bind(&NetworkAcknowledgeName, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 		NetworkInstance::GetClient()->AddNetworkHook("SERVER_ACKNOWLEDGE_NAME", hook);
 
 		hook = std::bind(&NetworkGameModeFileList, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
@@ -93,7 +98,7 @@ namespace ConnectHelper
 		ph->WriteString(id, name.c_str());
 		NetworkInstance::GetClient()->Send(ph->EndPack(id));
 
-		state = AcknowledgeName;
+		state = NameOrLoadingScreen;
 	}
 
 	void SetLoadGameModeHook(LoadGameModeHook _hook)
@@ -111,9 +116,46 @@ namespace ConnectHelper
 
 	}*/
 
+	void NetworkLoadingScreen(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
+	{
+		if (state == NameOrLoadingScreen)
+		{
+			std::string path = HomePath::GetDownloadHomePath();
+			path.append("loadingscreen.png");
+
+			char firstPart = _ph->ReadByte(_id);
+			char lastPart = _ph->ReadByte(_id);
+
+			int size = _ph->ReadInt(_id);
+
+			unsigned char* data = _ph->ReadBytes(_id, size);
+
+			if (firstPart == 1)
+			{
+				LoadingScreen::GetInstance().SetLoadingText("Downloading Loadingscreen background.");
+				FileSystem::File::Create(path);
+			}
+
+			SDL_RWops* file;
+			FileSystem::File::Append(path, &file);
+			FileSystem::File::Write(file, data, size);
+			Sint64 fileSize = FileSystem::File::GetFileSize(file);
+			FileSystem::File::Close(file);
+
+			if (lastPart == 1)
+			{
+				LoadingScreen::GetInstance().SetLoadingText(" ");
+				LoadingScreen::GetInstance().SetBackground(path);
+				SDL_Log("Downloaded loadingscreen.");
+
+				state = AcknowledgeName;
+			}
+		}
+	}
+
 	void NetworkAcknowledgeName(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
 	{
-		if (state == AcknowledgeName)
+		if (state == AcknowledgeName || state == NameOrLoadingScreen)
 		{
 			//Request Gamemode File List
 			Network::PacketHandler* ph = NetworkInstance::GetClient()->GetPacketHandler();
