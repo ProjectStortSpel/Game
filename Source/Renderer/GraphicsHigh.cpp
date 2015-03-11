@@ -157,6 +157,12 @@ bool GraphicsHigh::InitShaders()
 	m_shadowShaderDeferred.AddShader("content/shaders/shadowShaderDeferredFS.glsl", GL_FRAGMENT_SHADER);
 	m_shadowShaderDeferred.FinalizeShaderProgram();
 
+	// ShadowShader animated deferred geometry
+	m_shadowShaderAnim.InitShaderProgram();
+	m_shadowShaderAnim.AddShader("content/shaders/shadowShaderAnimVS.glsl", GL_VERTEX_SHADER);
+	m_shadowShaderAnim.AddShader("content/shaders/shadowShaderAnimFS.glsl", GL_FRAGMENT_SHADER);
+	m_shadowShaderAnim.FinalizeShaderProgram();
+
 	return true;
 }
 void GraphicsHigh::InitRenderLists()
@@ -246,14 +252,12 @@ bool GraphicsHigh::InitForward()
 }
 bool GraphicsHigh::InitRandomVector()
 {
-	int texSizeX, texSizeY;
 	m_randomVectors = GraphicDevice::AddTexture("content/textures/vectormap.png", GL_TEXTURE21);
 
 	return true;
 }
 bool GraphicsHigh::InitTextRenderer()
 {
-	int texSizeX, texSizeY;
 	GLuint m_textImage = GraphicDevice::AddTexture("content/textures/SimpleText.png", GL_TEXTURE20);
 	return m_textRenderer.Init(m_textImage, m_clientWidth, m_clientHeight);
 }
@@ -333,8 +337,8 @@ void GraphicsHigh::WriteShadowMapDepth()
 	glEnable(GL_POLYGON_OFFSET_FILL);
 	glPolygonOffset(4.5, 18000.0);
 
-	glActiveTexture(GL_TEXTURE10);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	//glActiveTexture(GL_TEXTURE10);
+	//glBindTexture(GL_TEXTURE_2D, 0);
 
 	mat4 shadowProjection = *m_shadowMap->GetProjectionMatrix();
 	//----Render deferred geometry-----------
@@ -405,7 +409,7 @@ void GraphicsHigh::WriteShadowMapDepth()
 	//------------------------------------------------
 
 	//----Animated
-	m_animationShader.UseProgram();
+	m_shadowShaderAnim.UseProgram();
 	//----DRAW MODELS
 	for (int i = 0; i < m_modelsAnimated.size(); i++)
 	{
@@ -422,7 +426,7 @@ void GraphicsHigh::WriteShadowMapDepth()
 		delete[] anim_data;
 
 		// DRAW MODEL
-		m_modelsAnimated[i].Draw((*m_shadowMap->GetViewMatrix()), shadowProjection, &m_animationShader);
+		m_modelsAnimated[i].DrawGeometry((*m_shadowMap->GetViewMatrix()), shadowProjection, &m_shadowShaderAnim);
 	}
 
 
@@ -556,6 +560,9 @@ void GraphicsHigh::Render()
 	for (int i = 0; i < m_modelsWaterCorners.size(); i++)
 		m_modelsWaterCorners[i].Draw(viewMatrix, mat4(1));
 
+
+	
+
 	//--------FORWARD RENDERING
 
 	//----Uniforms
@@ -582,7 +589,7 @@ void GraphicsHigh::Render()
 	{
 		Shader* thisShader = it->second->GetShaderPtr();
 		thisShader->UseProgram();
-		
+
 		thisShader->SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 
 		glEnable(GL_TEXTURE_2D);
@@ -799,9 +806,7 @@ void GraphicsHigh::Clear()
 		delete(it->second);
 	m_meshs.clear();
 
-	for (std::map<const std::string, GLuint>::iterator it = m_textures.begin(); it != m_textures.end(); ++it)
-		glDeleteTextures(1, &(it->second));
-	m_textures.clear();
+	//Don't delete textures on High
 
 	for (int i = 0; i < m_surfaces.size(); i++)
 		delete(m_surfaces[i].second);
