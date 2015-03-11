@@ -1,10 +1,10 @@
 AICardPickingSystem = System()
 --AICardPickingSystem.PrintSimulation = 0
-AICardPickingSystem.AICheat = 0
+AICardPickingSystem.AICheat = 1
 AICardPickingSystem.InitDone = false
 AICardPickingSystem.PermutationIndex = 1
 AICardPickingSystem.PermutationsArray = ''
-AICardPickingSystem.TimeLimitPerUpdateInMs = 1.0
+AICardPickingSystem.TimeLimitPerUpdateInMs = 15.0
 AICardPickingSystem.CheckpointPositions = {}
 AICardPickingSystem.CheckpointPositions.__mode = "k"
 AICardPickingSystem.NoOfCheckpoints = 0
@@ -291,7 +291,7 @@ AICardPickingSystem.PickCards = function( self, _playerNumber )
 --timeTaken8 = (endTime - startTime)
 			
 --startTime = CombinationMath.ClockCycles()
-			io.write("\nPlayer ", _playerNumber, "\n")
+			--io.write("\nPlayer ", _playerNumber, "\n")
 			-- Save the cards which where used.
 			for card = 1, cardsToPick do
 				
@@ -300,12 +300,12 @@ AICardPickingSystem.PickCards = function( self, _playerNumber )
 				
 				self.ChosenCardsArray[arrayIndex] = charVar
 				--self.ChosenCardsArray[arrayIndex] = cardsToSim[card]
-				io.write("Id: ", charVar, " ", cardsToSim[card], ", ")
+				--io.write("Id: ", charVar, " ", cardsToSim[card], ", ")
 			end
 	
 --endTime = CombinationMath.ClockCycles()
 --timeTaken9 = (endTime - startTime)
-			io.write("\n SimCPsReached: ", simCPsReached, ", dist: ", dist, ", nextDist: ", nextDist, "\n")
+			--io.write("\n SimCPsReached: ", simCPsReached, ", dist: ", dist, ", nextDist: ", nextDist, "\n")
 		end
 	end
 	
