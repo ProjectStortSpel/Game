@@ -453,7 +453,7 @@ void GraphicsHigh::Render()
 	glViewport(0, 0, m_clientWidth, m_clientHeight);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
 	//----Uniforms
 	m_deferredShader1.UseProgram();
 	m_deferredShader1.SetUniVariable("TexFlag", glint, &m_debugTexFlag);
@@ -522,15 +522,20 @@ void GraphicsHigh::Render()
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_forwardFBO);
 
 	glEnable(GL_DEPTH_TEST);
-
+	
 	// DRAW SKYBOX
 	glDisable(GL_CULL_FACE);
+	glDepthMask(GL_FALSE);
 	m_skyBoxShader.UseProgram();
-	m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera);
-	glEnable(GL_CULL_FACE);
-	// -----------
+	m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera, m_dt);
+
 	glEnable(GL_BLEND);
 
+	m_skyboxClouds->Draw(m_skyBoxShader.GetShaderProgram(), m_camera, m_dt);
+	glEnable(GL_CULL_FACE);
+	glDepthMask(GL_TRUE);
+	// -----------
+	
 	//-------Render water-------------
 	m_riverShader.UseProgram();
 	m_riverShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);

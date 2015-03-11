@@ -12,14 +12,15 @@ private:
 	GLuint m_VAOHandle;
 	GLuint m_vboCubeVertices;
 	GLuint m_iboCubeIndices;
+	float m_rotSpeed, m_rotAngle;
 
 public:
-	SkyBox(GLuint _texHandle, float _camFarPlane);
+	SkyBox(GLuint _texHandle, float _camFarPlane, float _rotationSpeed);
 	SkyBox();
 	~SkyBox();
 
 	void BindBuffers(float _camFarPlane);
-	void Draw(GLuint _shaderProgHandle, Camera *_cam);
+	void Draw(GLuint _shaderProgHandle, Camera *_cam, float _dt);
 };
 
 #endif

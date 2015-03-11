@@ -190,12 +190,16 @@ void GraphicsLow::Render()
     
 	// DRAW SKYBOX
 	glDisable(GL_CULL_FACE);
+	glDepthMask(GL_FALSE);
 	m_skyBoxShader.UseProgram();
-	m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera);
-	glEnable(GL_CULL_FACE);
-	// -----------
+	m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera, m_dt);
+
 	glEnable(GL_BLEND);
 
+	m_skyboxClouds->Draw(m_skyBoxShader.GetShaderProgram(), m_camera, m_dt);
+	glEnable(GL_CULL_FACE);
+	glDepthMask(GL_TRUE);
+	// -----------
 
 	//------FORWARD RENDERING--------------------------------------------
 	m_forwardShader.UseProgram();
