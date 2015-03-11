@@ -88,7 +88,24 @@ void LoadingScreen::SetLoadingText(std::string _text)
 	}
 }
 
-void LoadingScreen::SetBackground(std::vector<std::string> _paths, std::string _text)
+void LoadingScreen::SetBackground(std::string _path)
+{
+	if (m_isActive)
+	{
+		if (FileSystem::File::Exist(_path))
+		{
+			m_graphicDevice->ChangeModelTexture(m_backgroundModel, _path);
+			SDL_Log("Set Loadingscreen background: %s", _path.c_str());
+
+			m_graphicDevice->Update(0.0f);
+			m_graphicDevice->Render();
+			return;
+		}
+		SDL_Log("Couldn't find background: %s", _path.c_str());
+	}
+}
+
+void LoadingScreen::SetBackground(std::vector<std::string> _paths, std::string _file)
 {
 	if (m_isActive)
 	{
@@ -96,18 +113,18 @@ void LoadingScreen::SetBackground(std::vector<std::string> _paths, std::string _
 		for (int i = 0; i < _paths.size(); ++i)
 		{
 			std::string path = _paths[i];
-			path.append(_text);
+			path.append(_file);
 
 			if (FileSystem::File::Exist(path))
 			{
 				m_graphicDevice->ChangeModelTexture(m_backgroundModel, path);
-				SDL_Log("Set Loadingscreen background: %s", _text.c_str());
+				SDL_Log("Set Loadingscreen background: %s", _file.c_str());
 
 				m_graphicDevice->Update(0.0f);
 				m_graphicDevice->Render();
 				return;
 			}
-			SDL_Log("Couldn't find background: %s", _text.c_str());
+			SDL_Log("Couldn't find background: %s", _file.c_str());
 		}
 	}
 }

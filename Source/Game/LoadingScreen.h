@@ -34,7 +34,8 @@ public:
 
 	void SetTextColor(float _r, float _g, float _b);
 	void SetLoadingText(std::string _text);
-	void SetBackground(std::vector<std::string> _paths, std::string _text);
+	void SetBackground(std::string _path);
+	void SetBackground(std::vector<std::string> _paths, std::string _file);
 
 	void SetActive();
 	void SetInactive(int _level);
