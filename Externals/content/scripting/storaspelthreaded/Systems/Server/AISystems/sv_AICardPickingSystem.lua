@@ -1,10 +1,11 @@
 AICardPickingSystem = System()
 --AICardPickingSystem.PrintSimulation = 0
-AICardPickingSystem.AICheat = 1
+AICardPickingSystem.AICheat = 0
 AICardPickingSystem.InitDone = false
+AICardPickingSystem.TimeToPick = false
 AICardPickingSystem.PermutationIndex = 1
 AICardPickingSystem.PermutationsArray = ''
-AICardPickingSystem.TimeLimitPerUpdateInMs = 15.0
+AICardPickingSystem.TimeLimitPerUpdateInMs = 10.0
 AICardPickingSystem.CheckpointPositions = {}
 AICardPickingSystem.CheckpointPositions.__mode = "k"
 AICardPickingSystem.NoOfCheckpoints = 0
@@ -71,59 +72,55 @@ end
 
 AICardPickingSystem.Update = function(self, dt)
 	
+	if not self.TimeToPick then
+		return
+	end
+	
 	local AIs = self:GetEntities("AI")
 	
 	if #AIs == 0 or #self.PermutationsArray <= self.PermutationIndex then
 		return
 	end
 	
-	local cards = self:GetEntities("AICard")	
+	local startTime, endTime
+	local timeTaken = 0.0
 	
-	if #cards >= #AIs * self.CardsPerHand then
+	local timeLimit = self.TimeLimitPerUpdateInMs
+	local cardsToPick = self.CardsToPick
+	
+	startTime = os.clock()
+	
+	local aiIndex = self.CurrentAI
+	local noOfAIs = #AIs
+	
+	while timeTaken < timeLimit do
 		
-		local startTime, endTime
-		local timeTaken = 0.0
-		
-		local startTime2, endTime2
-		local timeTaken2 = 0.0
-		
-		local timeLimit = self.TimeLimitPerUpdateInMs
-		local cardsToPick = self.CardsToPick
-				
-		startTime = os.clock()
-		
-		local aiIndex = self.CurrentAI
-		local noOfAIs = #AIs
-		
-		while timeTaken < timeLimit do
+		if noOfAIs < aiIndex then
 			
-			if noOfAIs < aiIndex then
-				
-				local permutationIndex = self.PermutationIndex + cardsToPick
-				self.PermutationIndex = permutationIndex
-				
-				if permutationIndex > #self.PermutationsArray then
-					print("AI done with all permutations")
-					self:SendCards()
-					return
-				end
-				
-				aiIndex = 1
+			local permutationIndex = self.PermutationIndex + cardsToPick
+			self.PermutationIndex = permutationIndex
+			
+			if permutationIndex > #self.PermutationsArray then
+				print("AI done with all permutations")
+				self:SendCards()
+				return
 			end
 			
-			local playerNumber = world:GetComponent(AIs[aiIndex], "PlayerNumber", 0):GetInt(0)
-			
-			PotentialFieldHandler.UseMyPF(playerNumber)
-			self:PickCards(playerNumber)
-			
-			endTime = os.clock()
-			timeTaken = (endTime - startTime) * 1000
-			
-			aiIndex = aiIndex + 1
+			aiIndex = 1
 		end
 		
-		self.CurrentAI = aiIndex
+		local playerNumber = world:GetComponent(AIs[aiIndex], "PlayerNumber", 0):GetInt(0)
+		
+		PotentialFieldHandler.UseMyPF(playerNumber)
+		self:PickCards(playerNumber)
+		
+		endTime = os.clock()
+		timeTaken = (endTime - startTime) * 1000
+		
+		aiIndex = aiIndex + 1
 	end
+	
+	self.CurrentAI = aiIndex
 end
 
 AICardPickingSystem.GetAIsCardSet = function(self, _AI, _cards)
@@ -324,7 +321,8 @@ AICardPickingSystem.PickCards = function( self, _playerNumber )
 end
 
 AICardPickingSystem.SendCards = function(self)
-		
+	
+	self.TimeToPick = false
 	local AIs = self:GetEntities("AI")
 	
 	for ai = 1, #AIs do
@@ -1312,6 +1310,7 @@ AICardPickingSystem.EntitiesAdded = function(self, dt, entities)
 	
 	if gotCards then
 	
+		self.TimeToPick = true
 		self:ResetValuesPreRound()
 		self:UpdateCards()
 		
