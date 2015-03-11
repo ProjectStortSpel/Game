@@ -66,7 +66,7 @@ void SkyBox::Draw(GLuint _shaderProgHandle, Camera *_cam, float _dt)
 	if (m_rotAngle > 360.0)
 		m_rotAngle -= 360.0f;
 
-	mat4 MVP = *_cam->GetProjMatrix() * (*_cam->GetViewMatrix()) * glm::rotate(m_rotAngle, vec3(0.0, 1.0, 0.0)) * glm::translate(mat4(1.0f), *_cam->GetPos());
+	mat4 MVP = *_cam->GetProjMatrix() * (*_cam->GetViewMatrix()) * glm::translate(mat4(1.0f), *_cam->GetPos()) * glm::rotate(m_rotAngle, vec3(0.0, 1.0, 0.0));
 
 	glUniformMatrix4fv(location, 1, GL_FALSE, &MVP[0][0]);
 	
