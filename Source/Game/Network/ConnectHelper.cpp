@@ -17,7 +17,8 @@ namespace ConnectHelper
 	enum State
 	{
 		//Password, 
-		//GameMode, 
+		//GameMode,
+		AcknowledgeName,
 		GameModeFileList,
 		GameModeFiles,
 		ContentFileList,
@@ -27,6 +28,7 @@ namespace ConnectHelper
 
 	State state;
 	std::string gamemode;
+	std::string name = "DefaultName";
 	std::map<std::string, ResourceManager::Resource> missingFiles;
 
 	LoadGameModeHook loadGameModeHook;
@@ -38,6 +40,7 @@ namespace ConnectHelper
 	void BindNetworkEvents();
 	void Reset();
 
+	void NetworkAcknowledgeName(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
 	//void NetworkGameMode(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
 	void NetworkGameModeFileList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
 	void NetworkGameModeFile(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc);
@@ -62,7 +65,10 @@ namespace ConnectHelper
 		//Network::NetMessageHook hook = std::bind(&NetworkGameMode, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 		//NetworkInstance::GetClient()->AddNetworkHook("GameMode", hook);
 
-		Network::NetMessageHook hook = std::bind(&NetworkGameModeFileList, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+		Network::NetMessageHook hook = std::bind(&NetworkAcknowledgeName, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+		NetworkInstance::GetClient()->AddNetworkHook("SERVER_ACKNOWLEDGE_NAME", hook);
+
+		hook = std::bind(&NetworkGameModeFileList, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 		NetworkInstance::GetClient()->AddNetworkHook("GameModeFileList", hook);
 
 		hook = std::bind(&NetworkGameModeFile, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
@@ -82,14 +88,12 @@ namespace ConnectHelper
 		gamemode = _gamemode;
 		missingFiles.clear();
 
-		
-
-		//Request Gamemode File List
 		Network::PacketHandler* ph = NetworkInstance::GetClient()->GetPacketHandler();
-		uint64_t id = ph->StartPack("RequestGameModeFileList");
+		uint64_t id = ph->StartPack("SEND_PLAYER_NAME");
+		ph->WriteString(id, name.c_str());
 		NetworkInstance::GetClient()->Send(ph->EndPack(id));
 
-		state = GameModeFileList;
+		state = AcknowledgeName;
 	}
 
 	void SetLoadGameModeHook(LoadGameModeHook _hook)
@@ -97,10 +101,28 @@ namespace ConnectHelper
 		loadGameModeHook = _hook;
 	}
 
+	void SetName(const char* _name)
+	{
+		name = _name;
+	}
+
 	/*void NetworkGameMode(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
 	{
 
 	}*/
+
+	void NetworkAcknowledgeName(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
+	{
+		if (state == AcknowledgeName)
+		{
+			//Request Gamemode File List
+			Network::PacketHandler* ph = NetworkInstance::GetClient()->GetPacketHandler();
+			uint64_t id = ph->StartPack("RequestGameModeFileList");
+			NetworkInstance::GetClient()->Send(ph->EndPack(id));
+
+			state = GameModeFileList;
+		}
+	}
 
 	void NetworkGameModeFileList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
 	{
@@ -133,12 +155,12 @@ namespace ConnectHelper
 					//Don't download luafiles on IOS.
 
 					//Kolla om sista 4 teknerna i r.File == ".lua"
-					
+
 					//Console::ConsoleManager::GetInstance().AddToCommandQueue("disconnect;stop;gamemode lobby");
 					//return;
 #endif
 
-                    
+
 					ResourceManager::Resource temp;
 					temp.File = filename;
 					temp.Location = HomePath::GetDownloadGameModePath(gamemode);
@@ -176,10 +198,10 @@ namespace ConnectHelper
 
 				Network::PacketHandler* ph = NetworkInstance::GetClient()->GetPacketHandler();
 				uint64_t id = ph->StartPack("RequestGameModeFile");
-				
+
 				ph->WriteString(id, missingFiles.begin()->second.File.c_str());
-				
-				
+
+
 				//ph->WriteInt(id, missingFiles.size());
 
 				//for (auto it = missingFiles.begin(); it != missingFiles.end(); ++it)
@@ -189,9 +211,9 @@ namespace ConnectHelper
 				//}
 				NetworkInstance::GetClient()->Send(ph->EndPack(id));
 				state = GameModeFiles;
-			}			
+			}
 		}
-		
+
 	}
 
 	void NetworkGameModeFile(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
@@ -227,20 +249,20 @@ namespace ConnectHelper
 			if (lastPart == 1)
 			{
 				FileSystem::MD5::MD5Data MD5 = FileSystem::MD5::MD5_File(r.Location);
-                if (r.MD5 != MD5)
-                {
-                    FileSystem::File::Delete(r.Location);
-                    SDL_Log("Failed to download gamemode file (md5 mismatch): %s", filename.c_str());
+				if (r.MD5 != MD5)
+				{
+					FileSystem::File::Delete(r.Location);
+					SDL_Log("Failed to download gamemode file (md5 mismatch): %s", filename.c_str());
 					FileSystem::MD5::MD5_Print(r.MD5);
 					FileSystem::MD5::MD5_Print(MD5);
 					Console::ConsoleManager::GetInstance().AddToCommandQueue("disconnect;stop;gamemode lobby", false);
-                    return;
-                }
-                
-                SDL_Log("Downloaded gamemode file: %s", filename.c_str());
-                
+					return;
+				}
+
+				SDL_Log("Downloaded gamemode file: %s", filename.c_str());
+
 				missingFiles.erase(filename);
-				
+
 				if (missingFiles.empty())
 				{
 					//Request Content File List
@@ -298,7 +320,7 @@ namespace ConnectHelper
 
 				ResourceManager::Resource r;
 				bool hasFile = ResourceManager::CreateResource(gamemode, filename, r, HomePath::Type::Client, true);
-                
+
 
 				if (!hasFile || md5 != r.MD5)
 				{
@@ -398,10 +420,10 @@ namespace ConnectHelper
 					Console::ConsoleManager::GetInstance().AddToCommandQueue("disconnect;stop;gamemode lobby", false);
 					return;
 				}
-                
-                SDL_Log("Downloaded content file: %s", filename.c_str());
 
-                
+				SDL_Log("Downloaded content file: %s", filename.c_str());
+
+
 				missingFiles.erase(filename);
 
 				if (missingFiles.empty())
@@ -434,6 +456,5 @@ namespace ConnectHelper
 			}
 		}
 	}
-
 
 }

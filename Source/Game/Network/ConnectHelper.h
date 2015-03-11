@@ -13,6 +13,7 @@ namespace ConnectHelper
 	void Initialize();
 	void Connect(std::string _gamemode);
 	
+	void SetName(const char* _name);
 	void SetLoadGameModeHook(LoadGameModeHook _hook);
 	//add callback to tell gamecreator to load the gamemode
 }

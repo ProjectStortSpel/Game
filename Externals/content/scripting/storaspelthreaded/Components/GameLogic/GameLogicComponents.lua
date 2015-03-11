@@ -39,3 +39,5 @@ require "MapRaterComponents"
 require "WeatherComponents"
 
 require "MiscComponents"
+
+require "ScoreboardComponents"

@@ -566,9 +566,10 @@ void GameCreator::StartGame(int argc, char** argv)
 	m_consoleManager.AddCommand("Quit", std::bind(&GameCreator::ConsoleStopGame, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager.AddCommand("GameMode", std::bind(&GameCreator::ConsoleGameMode, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager.AddCommand("HostSettings", std::bind(&GameCreator::ConsoleHostSettings, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager.AddCommand("Name", std::bind(&GameCreator::ConsoleName, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager.AddCommand("Start", std::bind(&GameCreator::ConsoleStartTemp, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager.AddCommand("ChangeGraphics", std::bind(&GameCreator::ChangeGraphicsSettings, this, std::placeholders::_1, std::placeholders::_2));
-	m_consoleManager.AddCommand("timeScale", std::bind(&GameCreator::ChangeTimeScale, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager.AddCommand("TimeScale", std::bind(&GameCreator::ChangeTimeScale, this, std::placeholders::_1, std::placeholders::_2));
 	
     InitializeLobby();
     
@@ -757,18 +758,21 @@ void GameCreator::StartGame(int argc, char** argv)
 void GameCreator::UpdateNetwork(float _dt)
 {
 	Network::ServerNetwork* server = NetworkInstance::GetServer();
-	if (server->IsRunning())
-	{
-		server->Update(_dt);
-		while (server->PopAndExecutePacket() > 0) {}
-	}
-
 	Network::ClientNetwork* client = NetworkInstance::GetClient();
-	if (client->IsConnected())
-	{
+
+	bool serverRunning = server->IsRunning();
+	bool clientConnected = client->IsConnected();
+
+	if (serverRunning)
+		server->Update(_dt);
+	if (clientConnected)
 		client->Update(_dt);
+
+	if (serverRunning)
+		while (server->PopAndExecutePacket() > 0) {}
+
+	if (clientConnected)
 		while (client->PopAndExecutePacket() > 0) {}
-	}
 }
 
 void GameCreator::GameMode(std::string _gamemode)
@@ -1181,6 +1185,31 @@ void GameCreator::ConsoleHostSettings(std::string _command, std::vector<Console:
 	//gamemode.insert(0, std::string("gamemode "));
 	//m_consoleManager->AddToCommandQueue(gamemode.c_str());
 
+}
+
+void GameCreator::ConsoleName(std::string _command, std::vector<Console::Argument>* _args)
+{
+	if (_args->size() > 0)
+	{
+		std::string name = "";
+		if (_args->at(0).ArgType == Console::ArgumentType::Text)
+			name = _args->at(0).Text;
+		else
+			name = _args->at(0).Number;
+
+		ConnectHelper::SetName(name.c_str());
+
+		if (NetworkInstance::GetClient()->IsConnected())
+		{
+			auto ph = NetworkInstance::GetClient()->GetPacketHandler();
+			auto id = ph->StartPack("LuaPacket");
+			ph->WriteString(id, "CLIENT_SET_NAME");
+			ph->WriteString(id, name.c_str());
+			NetworkInstance::GetClient()->Send(ph->EndPack(id));
+		}
+
+
+	}
 }
 
 void GameCreator::ConsoleStartTemp(std::string _command, std::vector<Console::Argument>* _args)
