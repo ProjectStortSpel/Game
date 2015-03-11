@@ -3,7 +3,7 @@ PickingTimerSystem = System()
 
 PickingTimerSystem.TotalSize = 25.0
 PickingTimerSystem.Scale = 0.2
-PickingTimerSystem.EndOffset = 0.07
+PickingTimerSystem.EndOffset = 0.06
 
 PickingTimerSystem.FullChopTime = 1.0
 
@@ -54,7 +54,7 @@ PickingTimerSystem.PostInitialize = function(self)
 	world:CreateComponentAndAddTo("Scale", id)
 	world:CreateComponentAndAddTo("Hide", id)
 	world:GetComponent(id, "Model", 0):SetModel("clock", "quad", 3)
-	world:GetComponent(id, "Position", 0):SetFloat3(-endPosition, 2.0, -4.0)
+	world:GetComponent(id, "Position", 0):SetFloat3(-endPosition, 2.0, -3.99999)
 	world:GetComponent(id, "Scale", 0):SetFloat3(self.Scale, self.Scale, 1.0)
 	world:GetComponent(id, "Rotation", 0):SetFloat3(0.0, 0.0, 0.0)
 	self.LeftEndEntity = id
@@ -66,7 +66,7 @@ PickingTimerSystem.PostInitialize = function(self)
 	world:CreateComponentAndAddTo("Scale", id)
 	world:CreateComponentAndAddTo("Hide", id)
 	world:GetComponent(id, "Model", 0):SetModel("clock_flipped", "quad", 3)
-	world:GetComponent(id, "Position", 0):SetFloat3(endPosition, 2.0, -4.0)
+	world:GetComponent(id, "Position", 0):SetFloat3(endPosition, 2.0, -3.99999)
 	world:GetComponent(id, "Scale", 0):SetFloat3(self.Scale, self.Scale, 1.0)
 	world:GetComponent(id, "Rotation", 0):SetFloat3(0.0, 0.0, 0.0)
 	self.RightEndEntity = id
