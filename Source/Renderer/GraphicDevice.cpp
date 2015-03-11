@@ -194,8 +194,15 @@ bool GraphicDevice::InitSkybox()
 		return false;
 
 	m_skyBoxShader.UseProgram();
-	m_skybox = new SkyBox(texHandle, m_camera->GetFarPlane());
-	m_vramUsage += (w*h * 6 * 4 * sizeof(float));
+	m_skybox = new SkyBox(texHandle, m_camera->GetFarPlane(), 0.f);
+
+	texHandle = TextureLoader::LoadCubeMap("content/textures/skybox", GL_TEXTURE1, w, h);
+	if (texHandle < 0)
+		return false;
+
+	m_skyboxClouds = new SkyBox(texHandle, m_camera->GetFarPlane()*0.8f, 0.0003f);
+
+	m_vramUsage += (w*h * 6 * 4 * sizeof(float) * 2);
 
 	return true;
 }

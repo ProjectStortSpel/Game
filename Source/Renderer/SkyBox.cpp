@@ -11,10 +11,11 @@ SkyBox::~SkyBox()
 	glDeleteBuffers(1, &m_iboCubeIndices);
 }
 
-SkyBox::SkyBox(GLuint _texHandle, float _camFarPlane)
+SkyBox::SkyBox(GLuint _texHandle, float _camFarPlane, float _rotationSpeed)
 {
 	m_textureHandle = _texHandle;
 	BindBuffers(_camFarPlane*0.55);
+	m_rotAngle = _rotationSpeed;
 }
 
 void SkyBox::BindBuffers(float _far)
@@ -59,8 +60,9 @@ void SkyBox::BindBuffers(float _far)
 void SkyBox::Draw(GLuint _shaderProgHandle, Camera *_cam)
 {
 	GLuint location = glGetUniformLocation(_shaderProgHandle, "MVP");
+	//m_rotAngle += 0.0002f;
 
-	mat4 MVP = *_cam->GetProjMatrix() * (*_cam->GetViewMatrix()) * glm::translate(mat4(1.0f), *_cam->GetPos());
+	mat4 MVP = *_cam->GetProjMatrix() * (*_cam->GetViewMatrix()) * glm::rotate(m_rotAngle, vec3(0.0, 1.0, 0.0)) * glm::translate(mat4(1.0f), *_cam->GetPos());
 
 	glUniformMatrix4fv(location, 1, GL_FALSE, &MVP[0][0]);
 	
