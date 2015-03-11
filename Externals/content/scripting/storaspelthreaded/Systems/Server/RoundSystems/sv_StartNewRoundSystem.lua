@@ -72,5 +72,4 @@ StartNewRoundSystem.EntitiesAdded = function(self, dt, entities)
 			world:KillEntity(entity)
 		end
 	end
-	print("bye")
 end
