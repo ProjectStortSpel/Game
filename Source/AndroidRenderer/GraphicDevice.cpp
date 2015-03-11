@@ -260,7 +260,7 @@ bool GraphicDevice::InitSkybox()
 		return false;
 
 	loc = glGetAttribLocation(m_skyboxCloudsShader.GetShaderProgram(), "VertexPoint");
-	m_skyboxClouds = new SkyBox(texHandle, m_camera->GetFarPlane(), loc, 0.012f);
+	m_skyboxClouds = new SkyBox(texHandle, m_camera->GetFarPlane(), loc, 0.010f);
 
 	return true;
 }

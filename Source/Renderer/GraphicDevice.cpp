@@ -202,7 +202,7 @@ bool GraphicDevice::InitSkybox()
 	if (texHandle < 0)
 		return false;
 
-	m_skyboxClouds = new SkyBox(texHandle, m_camera->GetFarPlane(), 0.012f);
+	m_skyboxClouds = new SkyBox(texHandle, m_camera->GetFarPlane(), 0.010f);
 	m_vramUsage += (w*h * 5 * 4 * sizeof(float));
 	
 	return true;
