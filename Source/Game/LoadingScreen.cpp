@@ -2,6 +2,7 @@
 #include "Console/Console.h"
 #include "HomePath.h"
 #include "Game/Quaternion.h"
+#include "FileSystem/File.h"
 
 LoadingScreen::LoadingScreen()
 {
@@ -81,9 +82,50 @@ void LoadingScreen::SetLoadingText(std::string _text)
 
 		m_textMatrix *= glm::scale(glm::vec3(scaleX, scaleY, 1));
 
-		SDL_Log("LoadingScreen: %s", _text.c_str());
+		SDL_Log("Loadingscreen: %s", _text.c_str());
 		//m_graphicDevice->Update(0.0f);
 		//m_graphicDevice->Render();
+	}
+}
+
+void LoadingScreen::SetBackground(std::string _path)
+{
+	if (m_isActive)
+	{
+		if (FileSystem::File::Exist(_path))
+		{
+			m_graphicDevice->ChangeModelTexture(m_backgroundModel, _path);
+			SDL_Log("Set Loadingscreen background: %s", _path.c_str());
+
+			//m_graphicDevice->Update(0.0f);
+			//m_graphicDevice->Render();
+			return;
+		}
+		SDL_Log("Couldn't find background: %s", _path.c_str());
+	}
+}
+
+void LoadingScreen::SetBackground(std::vector<std::string> _paths, std::string _file)
+{
+	if (m_isActive)
+	{
+
+		for (int i = 0; i < _paths.size(); ++i)
+		{
+			std::string path = _paths[i];
+			path.append(_file);
+
+			if (FileSystem::File::Exist(path))
+			{
+				m_graphicDevice->ChangeModelTexture(m_backgroundModel, path);
+				SDL_Log("Set Loadingscreen background: %s", _file.c_str());
+
+				//m_graphicDevice->Update(0.0f);
+				//m_graphicDevice->Render();
+				return;
+			}
+			SDL_Log("Couldn't find background: %s", _file.c_str());
+		}
 	}
 }
 
@@ -91,16 +133,15 @@ void LoadingScreen::SetActive()
 {
 	if (!m_isActive)
 	{
-		std::vector<std::string> dirs;
-		std::string dir = HomePath::GetHomePath();
-		dir.append("models/quad/");
-		dirs.push_back(dir);
+		std::vector<std::string> dirs = HomePath::GetHomePaths(HomePath::Type::Server);
+		for (int i = 0; i < dirs.size(); ++i)
+			dirs[i].append("models/quad/");
 		m_backgroundModel = m_graphicDevice->LoadModel(dirs, "loadingscreen.object", &m_backgroundMatrix, RENDER_VIEWSPACE, &m_color[0], false, false);
 
 		dirs.clear();
-		dir = HomePath::GetHomePath();
-		dir.append("models/text/");
-		dirs.push_back(dir);
+		dirs = HomePath::GetHomePaths(HomePath::Type::Server);
+		for (int i = 0; i < dirs.size(); ++i)
+			dirs[i].append("models/text/");
 		m_textModel = m_graphicDevice->LoadModel(dirs, "quad.object", &m_textMatrix, RENDER_INTERFACE, &m_color[0], false, false);
 
 		//m_graphicDevice->ActiveModel(m_backgroundModel, true);

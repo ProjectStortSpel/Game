@@ -29,6 +29,7 @@
 #include "LuaBridge/Resource/LuaResource.h"
 #include "Game/Network/ConnectHelper.h"
 #include "Game/Network/ClientManager.h"
+#include "FileSystem/File.h"
 
 #include "Game/ResourceManager.h"
 #include "FileSystem/Directory.h"
@@ -859,7 +860,29 @@ void GameCreator::Reload()
 	LuaBridge::LuaGraphicDevice::SetGraphicDevice(m_graphics);
 
 	if (NetworkInstance::GetServer()->IsRunning() || NetworkInstance::GetClient()->IsConnected())
+	{
 		LoadingScreen::GetInstance().SetActive();
+
+		if (NetworkInstance::GetServer()->IsRunning())
+		{
+			std::vector<std::string> paths;
+			paths.push_back(HomePath::GetSecondaryHomePath());
+			std::vector<std::string> gmPaths = HomePath::GetGameModePaths(HomePath::Type::Server);
+
+			for (int i = 0; i < gmPaths.size(); ++i)
+				paths.push_back(gmPaths[i]);
+
+			for (int i = 0; i < paths.size(); ++i)
+			{
+				std::string path = paths[i];
+				path.append("loadingscreen.png");
+				if (FileSystem::File::Exist(path))
+				{
+					LoadingScreen::GetInstance().SetBackground(path);
+				}
+			}
+		}
+	}
 
     if (!NetworkInstance::GetClient()->IsConnected() && NetworkInstance::GetServer()->IsRunning())
     {

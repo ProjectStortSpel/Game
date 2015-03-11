@@ -9,12 +9,15 @@ SkyBox::~SkyBox()
 	glDeleteVertexArrays(1, &m_VAOHandle);
 	glDeleteBuffers(1, &m_vboCubeVertices);
 	glDeleteBuffers(1, &m_iboCubeIndices);
+	glDeleteTextures(1, &m_textureHandle);
 }
 
-SkyBox::SkyBox(GLuint _texHandle, float _camFarPlane)
+SkyBox::SkyBox(GLuint _texHandle, float _camFarPlane, float _rotationSpeed)
 {
 	m_textureHandle = _texHandle;
 	BindBuffers(_camFarPlane*0.55);
+	m_rotSpeed = _rotationSpeed;
+	m_rotAngle = 0.0f;
 }
 
 void SkyBox::BindBuffers(float _far)
@@ -56,11 +59,14 @@ void SkyBox::BindBuffers(float _far)
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 }
 
-void SkyBox::Draw(GLuint _shaderProgHandle, Camera *_cam)
+void SkyBox::Draw(GLuint _shaderProgHandle, Camera *_cam, float _dt)
 {
 	GLuint location = glGetUniformLocation(_shaderProgHandle, "MVP");
+	m_rotAngle += (m_rotSpeed * _dt);
+	if (m_rotAngle > 360.0)
+		m_rotAngle -= 360.0f;
 
-	mat4 MVP = *_cam->GetProjMatrix() * (*_cam->GetViewMatrix()) * glm::translate(mat4(1.0f), *_cam->GetPos());
+	mat4 MVP = *_cam->GetProjMatrix() * (*_cam->GetViewMatrix()) * glm::translate(mat4(1.0f), *_cam->GetPos()) * glm::rotate(m_rotAngle, vec3(0.0, 1.0, 0.0));
 
 	glUniformMatrix4fv(location, 1, GL_FALSE, &MVP[0][0]);
 	
