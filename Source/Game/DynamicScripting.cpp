@@ -25,7 +25,7 @@ DynamicScripting::DynamicScripting()
 {
 	srand(time(0));
 	m_ruleBook = NULL;
-	m_noOfScriptsToUse = 3;
+	m_noOfScriptsToUse = 2;
 }
 
 DynamicScripting::~DynamicScripting()

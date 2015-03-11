@@ -19,6 +19,7 @@
 #include "Network/LuaNetwork.h"
 #include "Resource/LuaResource.h"
 #include "Audio/LuaAudio.h"
+#include "LoadingScreen/LuaLoadingScreen.h"
 
 namespace LuaBridge
 {
@@ -63,5 +64,6 @@ namespace LuaBridge
 	LuaEmbedder::AddFunction(L, "GenerateIslandMesh", &GenerateIslandMesh, "MapCreation");
     
     LuaAudio::Embed(L);
+	LuaLoadingScreen::Embed(L);
   }
 }

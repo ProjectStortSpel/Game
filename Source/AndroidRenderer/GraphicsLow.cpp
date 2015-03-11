@@ -590,6 +590,13 @@ bool GraphicsLow::RemoveModel(int _id)
 		}
 	}
 
+	if (m_modelsToLoad.find(_id) != m_modelsToLoad.end())
+	{
+		m_modelsToLoad.erase(_id);
+
+		return true;
+	}
+
 	return false;
 }
 bool GraphicsLow::ActiveModel(int _id, bool _active)

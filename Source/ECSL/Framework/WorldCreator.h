@@ -39,12 +39,15 @@ namespace ECSL
 		World* CreateWorld(unsigned int _entityCount);
 
 		bool IsWorldInitialized() const { return m_worldInitialized; }
+		void SetMaxNumberOfEntities(int _value) { m_maxNumberOfEntities = _value; }
+		int GetMaxNumberOfEntities() const { return m_maxNumberOfEntities; }
 		
 		std::vector<SystemWorkGroup*>* GetSystemWorkGroups() const { return m_systemWorkGroups; }
 
 	private:
 
 		bool m_worldInitialized;
+		int m_maxNumberOfEntities;
 		std::vector<SystemWorkGroup*>* m_systemWorkGroups;
 		std::vector<unsigned int>* m_componentTypeIds;
 

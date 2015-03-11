@@ -17,6 +17,7 @@ namespace LuaBridge
     LuaEmbedder::EmbedClassFunction<LuaWorldCreator>(L, "WorldCreator", "AddSystemGroup", &LuaWorldCreator::AddSystemGroup);
     LuaEmbedder::EmbedClassFunction<LuaWorldCreator>(L, "WorldCreator", "CreateWorld", &LuaWorldCreator::CreateWorld);
     LuaEmbedder::EmbedClassFunction<LuaWorldCreator>(L, "WorldCreator", "IsWorldInitialized", &LuaWorldCreator::IsWorldInitialized);
+	LuaEmbedder::EmbedClassFunction<LuaWorldCreator>(L, "WorldCreator", "SetMaxNumberOfEntities", &LuaWorldCreator::SetMaxNumberOfEntities);
   }
   
   int LuaWorldCreator::AddComponentType(lua_State* L)
@@ -65,5 +66,11 @@ namespace LuaBridge
   {
     LuaEmbedder::PushBool(L, WorldCreator::IsWorldInitialized());
     return 1;
+  }
+
+  int LuaWorldCreator::SetMaxNumberOfEntities(lua_State* L)
+  {
+	  WorldCreator::SetMaxNumberOfEntities(LuaEmbedder::PullInt(L, 1));
+	  return 0;
   }
 }
