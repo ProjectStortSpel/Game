@@ -208,7 +208,7 @@ namespace Renderer
 		std::vector<std::pair<std::string, SDL_Surface*>> m_surfaces;
 
 		// Skybox
-		SkyBox *m_skybox;
+		SkyBox *m_skybox, *m_skyboxClouds;
 
 		// Particles
 		int m_particleID;

@@ -305,6 +305,66 @@ namespace ClientManager
 			SDL_Log("Tried to set name on a player not connected!?");
 		}
 
+		//Search loadingscreen background
+		std::vector<std::string> paths;
+		paths.push_back(HomePath::GetSecondaryHomePath());
+		std::vector<std::string> gmPaths = HomePath::GetGameModePaths(HomePath::Type::Server);
+
+		for (int i = 0; i < gmPaths.size(); ++i)
+			paths.push_back(gmPaths[i]);
+
+		for (int i = 0; i < paths.size(); ++i)
+		{
+			std::string path = paths[i];
+			path.append("loadingscreen.png");
+			if (FileSystem::File::Exist(path))
+			{
+				//Send loadingscreen background
+				SDL_RWops* file;
+				FileSystem::File::Open(path, &file);
+				Sint64 size = FileSystem::File::GetFileSize(file);
+				unsigned char* fileData = (unsigned char*)FileSystem::File::Read(file, size);
+				FileSystem::File::Close(file);
+
+				int bytesLeft = size;
+
+				unsigned char* data = fileData;
+
+
+				int currentPos = 0;
+				bool firstPart = true;
+				while (bytesLeft > 0)
+				{
+					uint64_t id = _ph->StartPack("LoadingScreen");
+
+					if (firstPart)
+					{
+						_ph->WriteByte(id, 1);
+						firstPart = false;
+					}
+					else
+						_ph->WriteByte(id, 0);
+
+					int size = bytesLeft > FileChunkSize ? FileChunkSize : bytesLeft;
+
+					//last part?
+					_ph->WriteByte(id, size == bytesLeft);
+
+					_ph->WriteInt(id, size);
+					_ph->WriteBytes(id, data, size);
+
+					data += size;
+
+					NetworkInstance::GetServer()->Send(_ph->EndPack(id), _nc);
+
+					bytesLeft -= size;
+				}
+
+				delete fileData;
+				break;
+			}
+		}
+
 		uint64_t id = _ph->StartPack("SERVER_ACKNOWLEDGE_NAME");
 		NetworkInstance::GetServer()->Send(_ph->EndPack(id), _nc);
 
