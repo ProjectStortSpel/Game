@@ -10,7 +10,7 @@ ScoreboardSystem.Initialize = function(self)
 	
 	
 	--	Set Filter
-	self:AddComponentTypeToFilter("Player", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("UnitEntityId", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("PlayerNameChanged", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("ScoreboardPlayer", FilterType.RequiresOneOf)
 end
@@ -19,19 +19,22 @@ ScoreboardSystem.EntitiesAdded = function(self, dt, addedEntities)
 
 	for n = 1, #addedEntities do
 		
-		if world:EntityHasComponent( addedEntities[n], "Player") then
+		if world:EntityHasComponent( addedEntities[n], "Player") then -- Exists thanks to UnitEntityId
 		
 			local ip 	= world:GetComponent(addedEntities[n], "NetConnection", "IpAddress"):GetText()
 			local port 	= world:GetComponent(addedEntities[n], "NetConnection", "Port"):GetInt()
 			local name = world:GetComponent(addedEntities[n], "PlayerName", "Name"):GetText()
 			
+			local unitId = world:GetComponent(addedEntities[n], "UnitEntityId", "Id"):GetInt()
+			local R, G, B	=	world:GetComponent(unitId, "Color", "X"):GetFloat3()
+			
 			local scrbrdP = world:CreateNewEntity()
 			world:CreateComponentAndAddTo("ScoreboardPlayer", scrbrdP)
 			world:CreateComponentAndAddTo("SyncNetwork", scrbrdP)
 			world:GetComponent(scrbrdP, "ScoreboardPlayer", "Name"):SetText(name)
-			world:SetComponent(scrbrdP, "ScoreboardPlayer", "R", 1)
-			world:SetComponent(scrbrdP, "ScoreboardPlayer", "G", 1)
-			world:SetComponent(scrbrdP, "ScoreboardPlayer", "B", 1)
+			world:GetComponent(scrbrdP, "ScoreboardPlayer", "R"):SetFloat(R)
+			world:GetComponent(scrbrdP, "ScoreboardPlayer", "G"):SetFloat(G)
+			world:GetComponent(scrbrdP, "ScoreboardPlayer", "B"):SetFloat(B)
 			world:SetComponent(scrbrdP, "ScoreboardPlayer", "IpAddress", ip)
 			world:SetComponent(scrbrdP, "ScoreboardPlayer", "Port", port)
 		
@@ -49,7 +52,6 @@ ScoreboardSystem.EntitiesAdded = function(self, dt, addedEntities)
 			
 				if pnIp == ip and pnPort == port then
 					world:SetComponent(scrbrdPlayers[i], "ScoreboardPlayer", "Name", pnName)
-					print(pnName)
 				end
 			
 			end

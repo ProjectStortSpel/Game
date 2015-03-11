@@ -266,13 +266,9 @@ end
 Net.Receive("CLIENT_SET_NAME", 
 	function(id, ip, port)
 		
-		print("CLIENT_SET_NAME")
-		
 		local name = Net.ReadString(id)
 		name = Net.SetPlayerName(ip, port, name)
 		
-		print("Name: " .. name)
-	
 		local newEntity = world:CreateNewEntity()
 		world:CreateComponentAndAddTo("PlayerNameChanged", newEntity)
 		world:SetComponent(newEntity, "PlayerNameChanged", "Name", name)

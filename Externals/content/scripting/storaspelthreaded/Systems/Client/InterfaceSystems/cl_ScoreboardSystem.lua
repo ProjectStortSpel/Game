@@ -1,27 +1,45 @@
 ScoreboardSystem = System()
 ScoreboardSystem.Name = "Scoreboard"
+ScoreboardSystem.GameStarted = false
 
 ScoreboardSystem.Initialize = function ( self )
 	--	Set Name
 	self:SetName("ScoreboardSystem")
 	
 	--	Toggle EntitiesAdded
-	--self:UsingEntitiesAdded()
+	self:UsingEntitiesAdded()
 	self:UsingUpdate()
 
 	--	Set Filter
 	self:AddComponentTypeToFilter(self.Name, FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter(self.Name.."Element", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("ScoreboardPlayer", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf)
 	
 end
 
+ScoreboardSystem.EntitiesAdded = function(self, dt, entities)
+
+	for n = 1, #entities do
+	
+		if world:EntityHasComponent(entities[n], "GameRunning") then	
+			self.GameStarted = true
+		end
+	
+	end
+
+end
+
 ScoreboardSystem.Update = function(self, dt)
+
+	if not self.GameStarted then
+		return
+	end
+		
+
 	if Input.GetKeyState(Key.Tab) == InputState.Pressed then
 		self:SpawnMenu()
-		print("HEEJ")
 	elseif Input.GetKeyState(Key.Tab) == InputState.Released then
-		print("DÅ")
 		self:RemoveMenu()
 	end
 
@@ -29,7 +47,7 @@ end
 
 ScoreboardSystem.SpawnMenu = function(self)
 
-	local background = self:CreateElement("gamemenubackground", "quad", 0, -0, -3.5, 3, 3)
+	--local background = self:CreateElement("gamemenubackground", "quad", 0, -0, -3.5, 3, 3)
 
 	local players = self:GetEntities("ScoreboardPlayer")
 	local name = ""
@@ -39,8 +57,10 @@ ScoreboardSystem.SpawnMenu = function(self)
 		r = world:GetComponent(players[i], "ScoreboardPlayer", "R"):GetFloat()
 		g = world:GetComponent(players[i], "ScoreboardPlayer", "G"):GetFloat()
 		b = world:GetComponent(players[i], "ScoreboardPlayer", "B"):GetFloat()
+
+		local button = self:CreateElement("shade", "quad", -0.0, 1.40-i*0.22, -4.0, 4.0, 0.2)
 		
-		local text = self:CreateElement("left", "text", -1.00, 1.0-i*0.16, -3.0, 3.0, 0.12)
+		local text = self:CreateElement("left", "text", -1.85, 1.48-i*0.22, -3.999, 3.0, 0.16)
 		self:AddTextToTexture("SCBRD"..i, name, 0, r, g, b, text)
 		
 	end
