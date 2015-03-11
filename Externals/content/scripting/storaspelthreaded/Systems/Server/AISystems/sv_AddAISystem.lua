@@ -119,7 +119,7 @@ AddAISystem.EntitiesAdded = function(self, dt, entities)
 				local newName = "BOT " .. self.Names[rng]
 
 				local playerNumber = noOfPlayers + 1
-				world:SetComponent(ais[i], "PlayerName", "Name", newName)
+				world:GetComponent(ais[i], "PlayerName", "Name"):SetString(newName)
 				world:SetComponent(ais[i], "PlayerNumber", "Number", playerNumber)
 				
 				self:CounterComponentChanged(1, "Players")

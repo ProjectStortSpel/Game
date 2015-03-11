@@ -6,7 +6,7 @@ ScoreboardSystem.Initialize = function(self)
 	
 	--	Toggle EntitiesAdded
 	self:UsingEntitiesAdded()
-	self:UsingEntitiesRemoved()
+	--self:UsingEntitiesRemoved()
 	
 	
 	--	Set Filter
@@ -23,7 +23,7 @@ ScoreboardSystem.EntitiesAdded = function(self, dt, addedEntities)
 		
 			local ip 	= world:GetComponent(addedEntities[n], "NetConnection", "IpAddress"):GetText()
 			local port 	= world:GetComponent(addedEntities[n], "NetConnection", "Port"):GetInt()
-			local name = world:GetComponent(addedEntities[n], "PlayerName", "Name"):GetText()
+			local name = world:GetComponent(addedEntities[n], "PlayerName", "Name"):GetString()
 			
 			local unitId = world:GetComponent(addedEntities[n], "UnitEntityId", "Id"):GetInt()
 			local R, G, B	=	world:GetComponent(unitId, "Color", "X"):GetFloat3()
@@ -42,7 +42,7 @@ ScoreboardSystem.EntitiesAdded = function(self, dt, addedEntities)
 		
 			local pnIp 		= world:GetComponent(addedEntities[n], "PlayerNameChanged", "IpAddress"):GetText()
 			local pnPort 	= world:GetComponent(addedEntities[n], "PlayerNameChanged", "Port"):GetInt()
-			local pnName 	= world:GetComponent(addedEntities[n], "PlayerNameChanged", "Name"):GetText()
+			local pnName 	= world:GetComponent(addedEntities[n], "PlayerNameChanged", "Name"):GetString()
 	
 			local scrbrdPlayers = self:GetEntities("ScoreboardPlayer")
 			for i = 1, #scrbrdPlayers do

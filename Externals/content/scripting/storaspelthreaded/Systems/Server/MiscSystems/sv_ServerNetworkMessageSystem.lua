@@ -39,7 +39,7 @@ ServerNetworkMessageSystem.EntitiesAdded = function(self, dt, entities)
 			local players 	= self:GetEntities("Player")
 			local pnIp 		= world:GetComponent(entity, "PlayerNameChanged", "IpAddress"):GetText()
 			local pnPort 	= world:GetComponent(entity, "PlayerNameChanged", "Port"):GetInt()
-			local pnName 	= world:GetComponent(entity, "PlayerNameChanged", "Name"):GetText()
+			local pnName 	= world:GetComponent(entity, "PlayerNameChanged", "Name"):GetString()
 		
 			for i = 1, #players do
 				
@@ -47,7 +47,7 @@ ServerNetworkMessageSystem.EntitiesAdded = function(self, dt, entities)
 				local port 	= world:GetComponent(players[i], "NetConnection", "Port"):GetInt()
 				
 				if pnIp == ip and pnPort == port then
-					world:SetComponent(players[i], "PlayerName", "Name", pnName);
+					world:GetComponent(players[i], "PlayerName", "Name"):SetString(pnName)
 					world:KillEntity(entity)
 					return
 				end
@@ -128,7 +128,7 @@ ServerNetworkMessageSystem.OnPlayerConnected = function(self, _ip, _port, _messa
 	world:CreateComponentAndAddTo("ActiveNetConnection", newPlayer)
 	
 	local name = Net.GetPlayerName(_ip, _port)
-	world:SetComponent(newPlayer, "PlayerName", "Name", name);
+	world:GetComponent(newPlayer, "PlayerName", "Name"):SetString(name)
 	print(name .. " connected")
 	
 	if addSpectator then
@@ -273,7 +273,7 @@ Net.Receive("CLIENT_SET_NAME",
 		
 		local newEntity = world:CreateNewEntity()
 		world:CreateComponentAndAddTo("PlayerNameChanged", newEntity)
-		world:SetComponent(newEntity, "PlayerNameChanged", "Name", name)
+		world:GetComponent(newEntity, "PlayerNameChanged", "Name"):SetString(name)
 		world:SetComponent(newEntity, "PlayerNameChanged", "IpAddress", ip)
 		world:SetComponent(newEntity, "PlayerNameChanged", "Port", port)
 		
