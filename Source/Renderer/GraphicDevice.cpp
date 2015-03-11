@@ -46,6 +46,7 @@ GraphicDevice::GraphicDevice(Camera _camera, int x, int y)
 GraphicDevice::~GraphicDevice()
 {
 	delete(m_skybox);
+	delete(m_skyboxClouds);
 	delete m_pointerToPointlights;
 
 	for (std::map<int, ParticleSystem*>::iterator it = m_particleSystems.begin(); it != m_particleSystems.end(); ++it)
@@ -195,15 +196,15 @@ bool GraphicDevice::InitSkybox()
 
 	m_skyBoxShader.UseProgram();
 	m_skybox = new SkyBox(texHandle, m_camera->GetFarPlane(), 0.f);
+	m_vramUsage += (w*h * 6 * 4 * sizeof(float));
 
-	texHandle = TextureLoader::LoadCubeMap("content/textures/skybox", GL_TEXTURE1, w, h);
+	texHandle = TextureLoader::LoadCubeMap("content/textures/clouds", GL_TEXTURE1, w, h);
 	if (texHandle < 0)
 		return false;
 
-	m_skyboxClouds = new SkyBox(texHandle, m_camera->GetFarPlane()*0.8f, 0.0003f);
-
-	m_vramUsage += (w*h * 6 * 4 * sizeof(float) * 2);
-
+	m_skyboxClouds = new SkyBox(texHandle, m_camera->GetFarPlane() * 0.7f, 0.014f);
+	m_vramUsage += (w*h * 5 * 4 * sizeof(float));
+	
 	return true;
 }
 #pragma endregion in the order they are initialized
