@@ -77,6 +77,12 @@ NewComponent.Name = "NotWalkable"
 NewComponent.TableType = TableType.Map
 worldCreator:AddComponentType(NewComponent)
 
+--River end component
+NewComponent = ComponentType()
+NewComponent.Name = "RiverEnd"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
+
 -- Available Spawnpoint
 NewComponent = ComponentType()
 NewComponent.Name = "AvailableSpawnpoint"
@@ -114,7 +120,7 @@ worldCreator:AddComponentType(NewComponent)
 NewComponent = ComponentType()
 NewComponent.Name = "TileWalkabilityHasChanged"
 NewComponent.TableType = TableType.Map
-NewComponent:AddVariable("Walkable", ByteSize.Bool)
+NewComponent:AddVariable("Time", ByteSize.Int)
 NewComponent:AddVariable("X", ByteSize.Int)
 NewComponent:AddVariable("Y", ByteSize.Int)
 worldCreator:AddComponentType(NewComponent)

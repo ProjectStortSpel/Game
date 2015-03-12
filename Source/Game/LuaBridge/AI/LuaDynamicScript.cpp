@@ -60,9 +60,9 @@ namespace LuaBridge
 			DynamicScripting* ds = DynamicScripting::Instance( );
 
 			ds->SetRuleBook( book );
-			ds->AdjustWeight( fitness );
+			bool noError = ds->AdjustWeight( fitness );
 			
-			if ( _book_index >= 0 )
+			if ( _book_index >= 0 && noError )
 			{
 				rm.StoreRulebook( _book_index );
 			}

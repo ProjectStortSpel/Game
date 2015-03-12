@@ -47,7 +47,7 @@ void LoadingScreen::SetGraphicsDevice(Renderer::GraphicDevice* _graphicDevice)
 
 	//scale
 	int width, height;
-	m_graphicDevice->GetWindowSize(width, height);
+	m_graphicDevice->GetFramebufferSize(width, height);
 	m_backgroundMatrix *= glm::scale(glm::vec3(2.004f, 2.004f * ((float)height / (float)width), 1.0f));
 }
 
