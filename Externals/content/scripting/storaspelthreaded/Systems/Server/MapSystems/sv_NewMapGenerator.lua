@@ -1178,7 +1178,7 @@ MapGenerator.CreateGrassEntity = function(self, X, Z)
 	local	newGrass	=	self:CreateTileEntity(X, Z)
 	world:CreateComponentAndAddTo("Model", newGrass)
 	world:GetComponent(newGrass, "Model", 0):SetModel("grass", "grass", 0)
-	world:CreateComponentAndAddTo("NoShadow", newGrass)
+	--world:CreateComponentAndAddTo("NoShadow", newGrass)
 	world:GetComponent(newGrass, "Rotation", 0):SetFloat3(0, math.pi * 0.5 * math.random(0, 4), 0)
 	
 	world:CreateComponentAndAddTo("StaticModel", newGrass)
@@ -1456,6 +1456,7 @@ MapGenerator.FixRiverEffects = function(self, riverTiles)
 			world:GetComponent(newParticle, "Particle", "fVelocityZ"):SetFloat(0)
 			world:GetComponent(newParticle, "Particle", "gSpriteSize"):SetFloat(0.40)
 			world:GetComponent(newParticle, "Particle", "hId"):SetInt(-1)
+			world:GetComponent(newParticle, "Particle", "iOnlyOnce"):SetInt(0)
 		end
 		if isLastTile then
 			
@@ -1482,6 +1483,7 @@ MapGenerator.FixRiverEffects = function(self, riverTiles)
 				world:GetComponent(newParticle, "Particle", "fVelocityZ"):SetFloat(dirAY*0.3)
 				world:GetComponent(newParticle, "Particle", "gSpriteSize"):SetFloat(1.2)
 				world:GetComponent(newParticle, "Particle", "hId"):SetInt(-1)
+				world:GetComponent(newParticle, "Particle", "iOnlyOnce"):SetInt(0)
 				
 					--- THIS IS FOR STONE METEOR IMPACT ---
 				--newParticle	=	world:CreateNewEntity()
@@ -1497,17 +1499,18 @@ MapGenerator.FixRiverEffects = function(self, riverTiles)
 				--world:GetComponent(newParticle, "Particle", "aName"):SetText("explosion")
 				--world:GetComponent(newParticle, "Particle", "bTexture"):SetText("content/textures/dust.png")
 				--world:GetComponent(newParticle, "Particle", "cParticles"):SetInt(15)
-				--world:GetComponent(newParticle, "Particle", "dLifetime"):SetFloat(1.8)
+				--world:GetComponent(newParticle, "Particle", "dLifetime"):SetFloat(1.0)
 				--world:GetComponent(newParticle, "Particle", "eScaleX"):SetFloat(0.01)
 				--world:GetComponent(newParticle, "Particle", "eScaleY"):SetFloat(0.01)
 				--world:GetComponent(newParticle, "Particle", "eScaleZ"):SetFloat(0.01)
 				--world:GetComponent(newParticle, "Particle", "fVelocityX"):SetFloat(0)
 				--world:GetComponent(newParticle, "Particle", "fVelocityY"):SetFloat(0)
 				--world:GetComponent(newParticle, "Particle", "fVelocityZ"):SetFloat(0)
-				--world:GetComponent(newParticle, "Particle", "gSpriteSize"):SetFloat(2.1)
+				--world:GetComponent(newParticle, "Particle", "gSpriteSize"):SetFloat(2.5)
 				--world:GetComponent(newParticle, "Particle", "hId"):SetInt(-1)
-				
-					--THIS IS FOR THROWING STONE IMPACT--
+				--world:GetComponent(newParticle, "Particle", "iOnlyOnce"):SetInt(1)
+				--
+				--	--THIS IS FOR THROWING STONE IMPACT--
 				--newParticle	=	world:CreateNewEntity()
 				--world:CreateComponentAndAddTo("Position", newParticle)
 				--world:CreateComponentAndAddTo("Color", newParticle)
@@ -1521,7 +1524,7 @@ MapGenerator.FixRiverEffects = function(self, riverTiles)
 				--world:GetComponent(newParticle, "Particle", "aName"):SetText("explosion")
 				--world:GetComponent(newParticle, "Particle", "bTexture"):SetText("content/textures/dust.png")
 				--world:GetComponent(newParticle, "Particle", "cParticles"):SetInt(15)
-				--world:GetComponent(newParticle, "Particle", "dLifetime"):SetFloat(0.8)
+				--world:GetComponent(newParticle, "Particle", "dLifetime"):SetFloat(1.4)
 				--world:GetComponent(newParticle, "Particle", "eScaleX"):SetFloat(0.01)
 				--world:GetComponent(newParticle, "Particle", "eScaleY"):SetFloat(0.01)
 				--world:GetComponent(newParticle, "Particle", "eScaleZ"):SetFloat(0.01)
@@ -1530,6 +1533,9 @@ MapGenerator.FixRiverEffects = function(self, riverTiles)
 				--world:GetComponent(newParticle, "Particle", "fVelocityZ"):SetFloat(0)
 				--world:GetComponent(newParticle, "Particle", "gSpriteSize"):SetFloat(1.1)
 				--world:GetComponent(newParticle, "Particle", "hId"):SetInt(-1)
+				--world:GetComponent(newParticle, "Particle", "iOnlyOnce"):SetInt(1)
+				
+				
 			else
 				if self:GetTileType(posAX + dirAX, posAY + dirAY) ~= self.Hole then 
 					if self:IsRiver(posAX - dirAX, posAY - dirAY) then

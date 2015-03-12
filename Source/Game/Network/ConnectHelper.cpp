@@ -342,6 +342,7 @@ namespace ConnectHelper
 
 	void NetworkContentFileList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
 	{
+		SDL_Log("NetworkContentFileList");
 		if (state == ContentFileList)
 		{
 
