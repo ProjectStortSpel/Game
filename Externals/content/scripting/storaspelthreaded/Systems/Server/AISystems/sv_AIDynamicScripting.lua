@@ -65,17 +65,17 @@ AIDynamicScripting.EntitiesAdded = function(self, dt, entities)
 						local toChange = 1 -( superCounter / (nrOfPlayers-1) );
 						DynamicScripting.UpdateWeight(toChange, bookIndex);
 						
-						DynamicScripting.SetRuleBook( bookIndex );
-						
-						local fail = DynamicScripting.GenerateScript(plyNr);
-						
-						if not fail
-						then
-							print("updateing PF");
-							
-							self:UpdatePF( plyNr, "Void" );
-							self:UpdatePF( plyNr, "NotWalkable" );
-						end
+						--DynamicScripting.SetRuleBook( bookIndex );
+						--
+						--local fail = DynamicScripting.GenerateScript(plyNr);
+						--
+						--if not fail
+						--then
+						--	print("updateing PF");
+						--	
+						--	self:UpdatePF( plyNr, "Void" );
+						--	self:UpdatePF( plyNr, "NotWalkable" );
+						--end
 					end
 					
 				end
@@ -103,10 +103,8 @@ AIDynamicScripting.EntitiesAdded = function(self, dt, entities)
 end
 
 AIDynamicScripting.UpdatePF = function(self, playerNumber, object )
-	local onTheSpotValue = 0.0;
-	local length = 2;
 	local power = 2;
-	local found, weight = DynamicScripting.GetWeightFrom(object, playerNumber)
+	local found, weight, length, onTheSpotValue = DynamicScripting.GetWeightFrom(object, playerNumber)
 	if found 
 	then
 		local superstuff = self:GetEntities(object);
