@@ -102,9 +102,9 @@ namespace ClientManager
 			int counter = 0;
 			for (auto it = names.begin(); it != names.end(); ++it)
 			{
-				++counter;
 				if (it->second == _name)
 				{
+					++counter;
 					newName << counter;
 					break;
 				}
@@ -289,9 +289,9 @@ namespace ClientManager
 
 			for (auto it = names.begin(); it != names.end(); ++it)
 			{
-				++counter;
 				if (it->second == newName.str())
 				{
+					++counter;
 					newName << counter;
 					break;
 				}

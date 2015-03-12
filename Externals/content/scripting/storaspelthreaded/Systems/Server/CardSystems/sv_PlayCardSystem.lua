@@ -118,6 +118,13 @@ PlayCardSystem.PlayCard = function(self, unitToPlay, cardToPlay)
 				world:GetComponent(cardsAboveHead[n], "Color", 0):SetFloat3(0.4, 0.4, 0.4)
 			end
 		end
+		
+		if world:GetComponent(cardToPlay, "CardAction", "Action"):GetText() == "TurnAround" then
+			local audioId = Net.StartPack("Client.PlaySound")
+			Net.WriteString(audioId, "TurnAround")
+			Net.WriteBool(audioId, false)
+			Net.Broadcast(audioId)
+		end
 	end
 	
 	world:RemoveComponentFrom("CardStep", cardToPlay)

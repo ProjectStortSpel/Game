@@ -647,8 +647,11 @@ void ServerNetwork::NetConnectionLost(NetConnection& _connection)
 
 	if (SDL_LockMutex(m_connectedClientsLock) == 0)
 	{
-		if(m_connectedClients->find(_connection) != m_connectedClients->end())
+		if (m_connectedClients->find(_connection) != m_connectedClients->end())
+		{
 			(*m_connectedClients)[_connection]->ShutdownSocket(1);
+			(*m_connectedClients)[_connection]->CloseSocket();
+		}
 		SDL_UnlockMutex(m_connectedClientsLock);
 	}
 	else if (NET_DEBUG > 0)
