@@ -44,6 +44,8 @@ void update()
 		else {
 			// The particle is alive, update.
 			Position += Velocity * DeltaTime;
+			float velMultiplier = max(1.0f - ((Time - VertexStartTime) / ParticleLifetime), 0.85f);
+			Velocity *= (velMultiplier*velMultiplier);
 			Velocity += Accel * DeltaTime;			
 		}
 	}
@@ -61,10 +63,8 @@ void render()
 	Transp = 0.0;
 	if(Time >= VertexStartTime)
 	{
-		sizeFactor = 1.0-(age/ParticleLifetime)*0.5;
+		sizeFactor = 1.0+(age/ParticleLifetime)*0.7;
 		
-		if(age/ParticleLifetime > 0.8f)
-			sizeFactor *= 0.5f;
 		Transp = 1.0 - age / ParticleLifetime;
 	}
 

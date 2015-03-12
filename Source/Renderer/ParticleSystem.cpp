@@ -89,7 +89,7 @@ void ParticleSystem::CreateExplosion()
 {
 	// Create and allocate buffers A and B for m_posBuf, m_velBuf and m_startTime
 	m_dstBlendFactor = GL_ONE_MINUS_SRC_ALPHA;
-	m_accel = vec3(0.0f * m_scale.x, 0.0f * m_scale.y, 0.0f * m_scale.z);
+	m_accel = vec3(0.0f, -0.8f, 0.0f);
 	vec3 v(0.0f);
 	float velocity, theta, phi;
 	float mtime = 0.0f, rate = 0.0f; // (m_lifeTime / (float)m_nrParticles);//0.00075f;
@@ -118,7 +118,7 @@ void ParticleSystem::CreateExplosion()
 		//	v.y *= 2;
 		v.z = sin((float)(rand() % (int)(2 * M_PI * 1000) + 1) / 1000);      //((float)(rand() % 101)/100 -0.5)*0.1; 
 
-		v = glm::normalize(v) * (((float)(rand() % 501)+1000.f) / 3000.f);
+		v = glm::normalize(v) * (((float)(rand() % 1001)+300.f) / 500.f);
 
 		// Scale to set the magnitude of the velocity (speed)
 		velocity = glm::mix(1.25f, 1.5f, (float)(rand() % 101) / 100);
