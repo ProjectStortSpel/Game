@@ -164,8 +164,8 @@ void LoadingScreen::SetInactive(int _level)
 		//m_graphicDevice->ActiveModel(m_textModel, false);
 		m_isActive = false;
 		m_accessLevel = 0;
-		m_graphicDevice->Update(0.0f);
-		m_graphicDevice->Render();
+		//m_graphicDevice->Update(0.0f);
+		//m_graphicDevice->Render();
 	}
 }
 
