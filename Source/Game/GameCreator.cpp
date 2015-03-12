@@ -454,15 +454,17 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
         m_graphicalSystems.push_back(graphicalSystem);
         worldCreator.AddSystemGroup();
         worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
+		graphicalSystem = new ParticleSystem(m_graphics);
+		m_graphicalSystems.push_back(graphicalSystem);
+		worldCreator.AddSystemGroup();
+		worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
         //worldCreator.AddSystemGroup();
         worldCreator.AddSystemToCurrentGroup<ResetChangedSystem>();
     }
     
 
-	graphicalSystem = new ParticleSystem(m_graphics);
-	m_graphicalSystems.push_back(graphicalSystem);
-	worldCreator.AddSystemGroup();
-	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
+
+
 
     if (_worldType == WorldType::Client)
     {
