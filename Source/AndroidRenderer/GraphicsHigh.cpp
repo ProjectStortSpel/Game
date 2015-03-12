@@ -292,22 +292,25 @@ void GraphicsHigh::Render()
 	SortModelsBasedOnDepth(&m_modelsInterface);
 	for (int i = 0; i < m_modelsInterface.size(); i++)
 	{
-		mat4 modelMatrix;
-		if (m_modelsInterface[i].modelMatrix == NULL)
-			modelMatrix = glm::translate(glm::vec3(1));
-		else
-			modelMatrix = *m_modelsInterface[i].modelMatrix;
-		
-		mat4 modelViewMatrix = modelMatrix;
-		m_interfaceShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
-		
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, m_modelsInterface[i].texID);
-		
-		m_interfaceShader.SetUniVariable("BlendColor", vector3, m_modelsInterface[i].color);
-		
-		m_modelsInterface[i].bufferPtr->draw(m_interfaceShader.GetShaderProgram());
-		glBindTexture(GL_TEXTURE_2D, 0);
+		if (m_modelsInterface[i].active)
+		{
+			mat4 modelMatrix;
+			if (m_modelsInterface[i].modelMatrix == NULL)
+				modelMatrix = glm::translate(glm::vec3(1));
+			else
+				modelMatrix = *m_modelsInterface[i].modelMatrix;
+			
+			mat4 modelViewMatrix = modelMatrix;
+			m_interfaceShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
+			
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, m_modelsInterface[i].texID);
+			
+			m_interfaceShader.SetUniVariable("BlendColor", vector3, m_modelsInterface[i].color);
+			
+			m_modelsInterface[i].bufferPtr->draw(m_interfaceShader.GetShaderProgram());
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, oldFBO);
