@@ -1,7 +1,7 @@
 #include "DynamicScripting.h"
 #define MAX_NO_OF_TRIES 100
 #define MINIMUM_WEIGHT 1
-#define MAXIMUM_WEIGHT 100
+#define MAXIMUM_WEIGHT 10000
 
 
 DynamicScripting* DynamicScripting::m_instance = 0;
