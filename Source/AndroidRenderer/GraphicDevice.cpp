@@ -229,7 +229,7 @@ void GraphicDevice::GetWindowSize(int &x, int &y)
 	y = m_clientHeight; 
 }
 
-void GraphicDevice::GetWindowSize(int &x, int &y)
+void GraphicDevice::GetFramebufferSize(int &x, int &y)
 {
 #ifdef __ANDROID__
 	x = m_framebufferWidth;
