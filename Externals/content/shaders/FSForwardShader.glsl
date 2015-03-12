@@ -162,6 +162,9 @@ void main()
 	// Diffuse tex
 	vec4 albedo_tex = texture( diffuseTex, TexCoord );
 
+	if(albedo_tex.a == 0.0f)
+		discard;
+
 	// Normal data
 	vec3 normal_map	  = texture( normalTex, TexCoord ).rgb;
 	normal_map = (normal_map * 2.0f) - 1.0f;

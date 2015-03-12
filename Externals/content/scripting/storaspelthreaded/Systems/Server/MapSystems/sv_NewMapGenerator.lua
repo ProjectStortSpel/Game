@@ -1033,11 +1033,6 @@ MapGenerator.SetTileType = function(self, X, Z, TileType)
 	--	Update the pathfinder
 	local walkable = self:IsWalkable(X, Z)
 	PathfinderHandler.SetTileWalkable(X, Z, self:IsWalkable(X, Z))
-	
-	--local newEntity = world:CreateNewEntity()
-	--world:CreateComponentAndAddTo("TileWalkabilityHasChanged", newEntity)
-	--world:GetComponent(newEntity, "MapSpecs", 0):SetInt2(X, Z)
-	--world:GetComponent(newEntity, "MapSpecs", "Walkable"):SetBool(walkable)
 end
 
 --	Removes the current tile by setting it to Void
@@ -1184,7 +1179,7 @@ MapGenerator.CreateGrassEntity = function(self, X, Z)
 	local	newGrass	=	self:CreateTileEntity(X, Z)
 	world:CreateComponentAndAddTo("Model", newGrass)
 	world:GetComponent(newGrass, "Model", 0):SetModel("grass", "grass", 0)
-	--world:CreateComponentAndAddTo("NoShadow", newGrass)
+	world:CreateComponentAndAddTo("NoShadow", newGrass)
 	world:GetComponent(newGrass, "Rotation", 0):SetFloat3(0, math.pi * 0.5 * math.random(0, 4), 0)
 	
 	world:CreateComponentAndAddTo("StaticModel", newGrass)
@@ -1481,7 +1476,7 @@ MapGenerator.FixRiverEffects = function(self, riverTiles)
 				world:GetComponent(newParticle, "Particle", "aName"):SetText("waterfall")
 				world:GetComponent(newParticle, "Particle", "bTexture"):SetText("content/textures/wassertmp.png")
 				world:GetComponent(newParticle, "Particle", "cParticles"):SetInt(50)
-				world:GetComponent(newParticle, "Particle", "dLifetime"):SetFloat(3.6)
+				world:GetComponent(newParticle, "Particle", "dLifetime"):SetFloat(3.0)
 				world:GetComponent(newParticle, "Particle", "eScaleX"):SetFloat(0.09*dirAY)
 				world:GetComponent(newParticle, "Particle", "eScaleY"):SetFloat(0.12)
 				world:GetComponent(newParticle, "Particle", "eScaleZ"):SetFloat(0.09*dirAX)
@@ -1490,6 +1485,54 @@ MapGenerator.FixRiverEffects = function(self, riverTiles)
 				world:GetComponent(newParticle, "Particle", "fVelocityZ"):SetFloat(dirAY*0.3)
 				world:GetComponent(newParticle, "Particle", "gSpriteSize"):SetFloat(1.2)
 				world:GetComponent(newParticle, "Particle", "hId"):SetInt(-1)
+				
+					--- THIS IS FOR STONE METEOR IMPACT ---
+				--newParticle	=	world:CreateNewEntity()
+				--world:CreateComponentAndAddTo("Position", newParticle)
+				--world:CreateComponentAndAddTo("Color", newParticle)
+				--world:CreateComponentAndAddTo("Particle", newParticle)
+				--world:CreateComponentAndAddTo("SyncNetwork", newParticle)
+				--
+				--world:GetComponent(newParticle, "Position", "X"):SetFloat3(posAX + 0.35*dirAX, 1.7, posAY + 0.35*dirAY)
+				--
+				--world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.0, 0.0, 0.0)
+				--
+				--world:GetComponent(newParticle, "Particle", "aName"):SetText("explosion")
+				--world:GetComponent(newParticle, "Particle", "bTexture"):SetText("content/textures/dust.png")
+				--world:GetComponent(newParticle, "Particle", "cParticles"):SetInt(15)
+				--world:GetComponent(newParticle, "Particle", "dLifetime"):SetFloat(1.8)
+				--world:GetComponent(newParticle, "Particle", "eScaleX"):SetFloat(0.01)
+				--world:GetComponent(newParticle, "Particle", "eScaleY"):SetFloat(0.01)
+				--world:GetComponent(newParticle, "Particle", "eScaleZ"):SetFloat(0.01)
+				--world:GetComponent(newParticle, "Particle", "fVelocityX"):SetFloat(0)
+				--world:GetComponent(newParticle, "Particle", "fVelocityY"):SetFloat(0)
+				--world:GetComponent(newParticle, "Particle", "fVelocityZ"):SetFloat(0)
+				--world:GetComponent(newParticle, "Particle", "gSpriteSize"):SetFloat(2.1)
+				--world:GetComponent(newParticle, "Particle", "hId"):SetInt(-1)
+				
+					--THIS IS FOR THROWING STONE IMPACT--
+				--newParticle	=	world:CreateNewEntity()
+				--world:CreateComponentAndAddTo("Position", newParticle)
+				--world:CreateComponentAndAddTo("Color", newParticle)
+				--world:CreateComponentAndAddTo("Particle", newParticle)
+				--world:CreateComponentAndAddTo("SyncNetwork", newParticle)
+				--
+				--world:GetComponent(newParticle, "Position", "X"):SetFloat3(posAX + 0.35*dirAX, 2.5, posAY + 0.35*dirAY)
+				--
+				--world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.0, 0.0, 0.0)
+				--
+				--world:GetComponent(newParticle, "Particle", "aName"):SetText("explosion")
+				--world:GetComponent(newParticle, "Particle", "bTexture"):SetText("content/textures/dust.png")
+				--world:GetComponent(newParticle, "Particle", "cParticles"):SetInt(15)
+				--world:GetComponent(newParticle, "Particle", "dLifetime"):SetFloat(0.8)
+				--world:GetComponent(newParticle, "Particle", "eScaleX"):SetFloat(0.01)
+				--world:GetComponent(newParticle, "Particle", "eScaleY"):SetFloat(0.01)
+				--world:GetComponent(newParticle, "Particle", "eScaleZ"):SetFloat(0.01)
+				--world:GetComponent(newParticle, "Particle", "fVelocityX"):SetFloat(0)
+				--world:GetComponent(newParticle, "Particle", "fVelocityY"):SetFloat(0)
+				--world:GetComponent(newParticle, "Particle", "fVelocityZ"):SetFloat(0)
+				--world:GetComponent(newParticle, "Particle", "gSpriteSize"):SetFloat(1.1)
+				--world:GetComponent(newParticle, "Particle", "hId"):SetInt(-1)
 			else
 				if self:GetTileType(posAX + dirAX, posAY + dirAY) ~= self.Hole then 
 					if self:IsRiver(posAX - dirAX, posAY - dirAY) then

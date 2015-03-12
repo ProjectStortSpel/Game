@@ -113,6 +113,7 @@ private:
 	std::string					m_gameMode;
 
 	bool						m_running;
+	unsigned	int				m_entityCount;
 	
 	Utility::FrameCounter m_inputCounter;
 	Utility::FrameCounter m_clientWorldCounter;
