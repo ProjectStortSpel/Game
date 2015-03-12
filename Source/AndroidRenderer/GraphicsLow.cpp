@@ -117,6 +117,20 @@ void GraphicsLow::Render()
 
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_TEXTURE_2D);
+
+	m_animationShader.UseProgram();
+	for (int i = 0; i < m_modelsAnimated.size(); i++)
+	{
+		for (int j = 0; j < m_modelsAnimated[i].anim.size(); j++)
+		{
+			std::stringstream ss;
+			ss << "anim[" << j << "]";
+			m_animationShader.SetUniVariable(ss.str().c_str(), mat4x4, &m_modelsAnimated[i].anim[j]);
+			ss.str(std::string());
+		}
+
+		m_modelsAnimated[i].Draw(viewMatrix, projectionMatrix, &m_animationShader);
+	}
 	
 	if (m_modelsForward.size() > 0)
 	{
@@ -158,20 +172,6 @@ void GraphicsLow::Render()
 
 	}
 	
-	//--------ANIMATED DEFERRED RENDERING !!! ATTENTION: WORK IN PROGRESS !!!
-	m_animationShader.UseProgram();
-	for (int i = 0; i < m_modelsAnimated.size(); i++)
-	{
-		for (int j = 0; j < m_modelsAnimated[i].anim.size(); j++)
-		{
-			std::stringstream ss;
-			ss << "anim[" << j << "]";
-			m_animationShader.SetUniVariable(ss.str().c_str(), mat4x4, &m_modelsAnimated[i].anim[j]);
-			ss.str(std::string());
-		}
-
-		m_modelsAnimated[i].Draw(viewMatrix, projectionMatrix, &m_animationShader);
-	}
 	
 	//--------PARTICLES---------
 	glDepthMask(GL_FALSE);
@@ -243,7 +243,7 @@ void GraphicsLow::Render()
 	glDisable(GL_BLEND);
 #ifdef __ANDROID__
 	// DRAW FULLSCREEN
-	glViewport(0, 0, m_clientWidth, m_clientHeight);
+	glViewport(0, 0, m_framebufferWidth, m_framebufferHeight);
 
 	m_fullscreen.UseProgram();
 

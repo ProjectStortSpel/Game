@@ -19,11 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\Source\AndroidRenderer\AModel.cpp" />
     <ClCompile Include="..\..\..\Source\AndroidRenderer\Buffer.cpp" />
     <ClCompile Include="..\..\..\Source\AndroidRenderer\Camera.cpp" />
     <ClCompile Include="..\..\..\Source\AndroidRenderer\GraphicDevice.cpp" />
     <ClCompile Include="..\..\..\Source\AndroidRenderer\GraphicsHigh.cpp" />
     <ClCompile Include="..\..\..\Source\AndroidRenderer\GraphicsLow.cpp" />
+    <ClCompile Include="..\..\..\Source\AndroidRenderer\Model.cpp" />
     <ClCompile Include="..\..\..\Source\AndroidRenderer\Particles\Explosion.cpp" />
     <ClCompile Include="..\..\..\Source\AndroidRenderer\Particles\Fire.cpp" />
     <ClCompile Include="..\..\..\Source\AndroidRenderer\Particles\ParticleEffect.cpp" />
@@ -35,11 +37,13 @@
     <ClCompile Include="..\..\..\Source\AndroidRenderer\SkyBox.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Source\AndroidRenderer\AModel.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\Buffer.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\Camera.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\GraphicDevice.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\GraphicsHigh.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\GraphicsLow.h" />
+    <ClInclude Include="..\..\..\Source\AndroidRenderer\Model.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\ModelExporter.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\ModelLoader.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\Particles\Explosion.h" />
@@ -55,6 +59,7 @@
     <ClInclude Include="..\..\..\Source\AndroidRenderer\TextureLoader.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidAnimationShaderVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\android\AndroidExplosionShaderFS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\android\AndroidExplosionShaderVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\android\AndroidFireShaderFS.glsl" />

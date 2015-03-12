@@ -618,8 +618,6 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 
 	// Import Mesh
 	Buffer* mesh = AddMesh(obj.mesh, shaderPtr, true);
-	
-	SDL_Log("Buffer AModel, Tex: %s", obj.text.c_str());
 
 	// Import Texture
 	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
@@ -791,6 +789,7 @@ void GraphicDevice::BufferLightsToGPU_GD()
 		m_riverShader.SetUniVariable("dirlightColor", vector3, &m_lightDefaults[0]);
 		m_riverCornerShader.SetUniVariable("dirlightIntensity", vector3, &m_lightDefaults[0]);
 		m_riverCornerShader.SetUniVariable("dirlightColor", vector3, &m_lightDefaults[0]);
+		m_animationShader.SetUniVariable("dirlightIntensity", vector3, &m_lightDefaults[0]);
 		m_animationShader.SetUniVariable("dirlightColor", vector3, &m_lightDefaults[0]);
 	}
 
@@ -830,6 +829,9 @@ void GraphicDevice::BufferLightsToGPU_GD()
 				m_animationShader.SetUniVariable(ss.str().c_str(), glfloat, &m_lightDefaults[9]);
 				ss.str(std::string());
 			}
+			delete[] m_pointlightsPtr;
+			m_pointlightsPtr = 0;
+			m_nrOfLightsToBuffer = 0;
 		}
 		else
 		{
