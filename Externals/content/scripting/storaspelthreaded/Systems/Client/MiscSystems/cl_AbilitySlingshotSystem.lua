@@ -1,11 +1,11 @@
-ClientAbilityStoneSystem = System()
+ClientAbilitySlingshotSystem = System()
 
-ClientAbilityStoneSystem.Initialize = function ( self )
+ClientAbilitySlingshotSystem.Initialize = function ( self )
 	--	Set Name
-	self:SetName("ClientAbilityStoneSystem")
+	self:SetName("ClientAbilitySlingshotSystem")
 end
 
-Net.Receive("SERVER_STONE_IMPACT_PARTICLE",
+Net.Receive("SERVER_BULLET_IMPACT_PARTICLE",
 	function(id, ip, port)
 		local x = Net.ReadFloat(id)
 		local y = Net.ReadFloat(id)
