@@ -34,6 +34,9 @@ require "HostMenuSystem"
 require "IPConnectSystem"
 require "HowToSystem"
 
+package.path = package.path .. ";systems/Misc/?.lua"
+require "PlayerNameSystem"
+
 -- Templates
 package.path = package.path .. ";templates/?.lua"
 require "templates"
@@ -54,5 +57,7 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(IPConnectSystem)
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(HowToSystem)
+worldCreator:AddSystemGroup()
+worldCreator:AddSystemToCurrentGroup(PlayerNameSystem)
 
 end

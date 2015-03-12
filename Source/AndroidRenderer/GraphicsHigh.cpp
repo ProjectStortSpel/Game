@@ -150,16 +150,16 @@ void GraphicsHigh::Render()
 	mat4 viewMatrix = *m_camera->GetViewMatrix();
 
 	glDisable(GL_CULL_FACE);
+	glDepthMask(GL_FALSE);
 	// DRAW SKYBOX
 	m_skyBoxShader.UseProgram();
-	m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera);
-	// -----------
-
-	glEnable(GL_CULL_FACE);
-
-	glClear(GL_DEPTH_BUFFER_BIT);
-	glEnable(GL_TEXTURE_2D);
+	m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera, m_dt);
 	glEnable(GL_BLEND);
+
+	m_skyboxClouds->Draw(m_skyBoxShader.GetShaderProgram(), m_camera, m_dt);
+	glEnable(GL_CULL_FACE);
+	glDepthMask(GL_TRUE);
+	// -----------
 
 	if (m_modelsForward.size() > 0)
 	{
@@ -699,6 +699,13 @@ bool GraphicsHigh::RemoveModel(int _id)
 
 			return true;
 		}
+	}
+
+	if (m_modelsToLoad.find(_id) != m_modelsToLoad.end())
+	{
+		m_modelsToLoad.erase(_id);
+
+		return true;
 	}
 
 	return false;

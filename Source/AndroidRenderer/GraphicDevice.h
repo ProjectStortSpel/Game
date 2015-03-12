@@ -18,6 +18,7 @@ Author: Christian
 #include "Particles/Fire.h"
 #include "Particles/Smoke.h"
 #include "Particles/Waterfall.h"
+#include "Particles/WaterSpawn.h"
 
 namespace Renderer
 {
@@ -139,7 +140,8 @@ namespace Renderer
 		// WINDOW
 		//SDL_Window*	GetSDL_Window(){ return m_window; } // IN PC GD
 		//SDL_GLContext GetSDL_GLContext(){ return m_glContext; } // IN PC GD
-		void GetWindowSize(int &x, int &y){ x = m_clientWidth; y = m_clientHeight; }
+		void GetWindowSize(int &x, int &y);
+		void GetFramebufferSize(int &x, int &y);
 		//void GetWindowPos(int &x, int &y); // IN PC GD
 		void ResizeWindow(int _width, int _height);
 		virtual void SetTitle(std::string _title){};
@@ -219,7 +221,7 @@ namespace Renderer
 		std::vector<std::pair<std::string, SDL_Surface*>> m_surfaces;
 
 		// Skybox
-		SkyBox *m_skybox;
+		SkyBox *m_skybox, *m_skyboxClouds;
 
 		// Particles
 		int m_particleID;
@@ -229,7 +231,7 @@ namespace Renderer
 
 		// Shaders
 		Shader m_fullscreen;
-		Shader m_skyBoxShader;
+		Shader m_skyBoxShader, m_skyboxCloudsShader;
 		Shader m_forwardShader;
 		Shader m_viewspaceShader;
 		Shader m_interfaceShader;

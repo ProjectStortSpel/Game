@@ -43,6 +43,7 @@ namespace LuaBridge
     int AddSystemGroup(lua_State* L);
     int CreateWorld(lua_State* L);
     int IsWorldInitialized(lua_State* L);
+	int SetMaxNumberOfEntities(lua_State* L);
     
   private:
       bool m_skipComponentTypes;

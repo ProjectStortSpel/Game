@@ -33,6 +33,7 @@ GraphicDevice::~GraphicDevice()
 {
 	delete(m_camera);
 	delete(m_skybox);
+	delete(m_skyboxClouds);
 
 	if (m_pointlightsPtr)
 		delete [] m_pointlightsPtr;
@@ -129,6 +130,7 @@ void GraphicDevice::InitStandardBuffers()
 {
 	//Skybox shader
 	m_skyBoxShader.CheckUniformLocation("cubemap", 1);
+	m_skyboxCloudsShader.CheckUniformLocation("cubemap", 2);
 
 	//Particle shaders
 	for (std::map<std::string, Shader*>::iterator it = m_particleShaders.begin(); it != m_particleShaders.end(); ++it)
@@ -151,6 +153,11 @@ void GraphicDevice::InitStandardShaders()
 	m_skyBoxShader.AddShader("content/shaders/android/AndroidSkyboxShaderVS.glsl", GL_VERTEX_SHADER);
 	m_skyBoxShader.AddShader("content/shaders/android/AndroidSkyboxShaderFS.glsl", GL_FRAGMENT_SHADER);
 	m_skyBoxShader.FinalizeShaderProgram();
+
+	m_skyboxCloudsShader.InitShaderProgram();
+	m_skyboxCloudsShader.AddShader("content/shaders/android/AndroidSkyboxShaderVS.glsl", GL_VERTEX_SHADER);
+	m_skyboxCloudsShader.AddShader("content/shaders/android/AndroidSkyboxShaderFS.glsl", GL_FRAGMENT_SHADER);
+	m_skyboxCloudsShader.FinalizeShaderProgram();
 
 	// Viewspace shader
 	m_viewspaceShader.InitShaderProgram();
@@ -182,6 +189,12 @@ void GraphicDevice::InitStandardShaders()
 	m_particleShaders["waterfall"]->AddShader("content/shaders/android/AndroidWaterfallShaderVS.glsl", GL_VERTEX_SHADER);
 	m_particleShaders["waterfall"]->AddShader("content/shaders/android/AndroidWaterfallShaderFS.glsl", GL_FRAGMENT_SHADER);
 	m_particleShaders["waterfall"]->FinalizeShaderProgram();
+
+	m_particleShaders["waterspawn"] = new Shader();
+	m_particleShaders["waterspawn"]->InitShaderProgram();
+	m_particleShaders["waterspawn"]->AddShader("content/shaders/android/AndroidSmokeShaderVS.glsl", GL_VERTEX_SHADER);
+	m_particleShaders["waterspawn"]->AddShader("content/shaders/android/AndroidSmokeShaderFS.glsl", GL_FRAGMENT_SHADER);
+	m_particleShaders["waterspawn"]->FinalizeShaderProgram();
 	
 	//m_fullscreen
 	m_fullscreen.InitShaderProgram();
@@ -210,6 +223,23 @@ void GraphicDevice::PollEvent(SDL_Event _event)
 	}
 }
 
+void GraphicDevice::GetWindowSize(int &x, int &y)
+{ 
+	x = m_clientWidth; 
+	y = m_clientHeight; 
+}
+
+void GraphicDevice::GetFramebufferSize(int &x, int &y)
+{
+#ifdef __ANDROID__
+	x = m_framebufferWidth;
+	y = m_framebufferHeight;
+#else
+	x = m_clientWidth;
+	y = m_clientHeight;
+#endif
+}
+
 void GraphicDevice::ResizeWindow(int _width, int _height)
 {
 	// GRAPHIC CARD WORK GROUPS OF 16x16
@@ -233,13 +263,21 @@ void GraphicDevice::ResizeWindow(int _width, int _height)
 bool GraphicDevice::InitSkybox()
 {
 	int w, h;
+	m_skyBoxShader.UseProgram();
 	GLuint texHandle = TextureLoader::LoadCubeMap("content/textures/skybox", GL_TEXTURE1, w, h);
 	if (texHandle < 0)
 		return false;
 
-	m_skyBoxShader.UseProgram();
 	GLuint loc = glGetAttribLocation(m_skyBoxShader.GetShaderProgram(), "VertexPoint");
-	m_skybox = new SkyBox(texHandle, m_camera->GetFarPlane(), loc);
+	m_skybox = new SkyBox(texHandle, m_camera->GetFarPlane(), loc, 0.0f);
+
+	m_skyboxCloudsShader.UseProgram();
+	texHandle = TextureLoader::LoadCubeMap("content/textures/clouds", GL_TEXTURE2, w, h);
+	if (texHandle < 0)
+		return false;
+
+	loc = glGetAttribLocation(m_skyboxCloudsShader.GetShaderProgram(), "VertexPoint");
+	m_skyboxClouds = new SkyBox(texHandle, m_camera->GetFarPlane(), loc, 0.010f);
 
 	return true;
 }
@@ -798,6 +836,19 @@ void GraphicDevice::BufferParticleSystems()
 		else if (m_particleSystemsToLoad[i].Name == "waterfall")
 		{
 			m_particleEffects.insert(std::pair<int, ParticleEffect*>(m_particleSystemsToLoad[i].Id, new Waterfall(
+				m_particleSystemsToLoad[i].Pos,
+				m_particleSystemsToLoad[i].Vel,
+				m_particleSystemsToLoad[i].NrOfParticles,
+				m_particleSystemsToLoad[i].LifeTime,
+				m_particleSystemsToLoad[i].Scale,
+				m_particleSystemsToLoad[i].SpriteSize,
+				AddTexture(m_particleSystemsToLoad[i].TextureName, GL_TEXTURE1),
+				m_particleSystemsToLoad[i].Color,
+				m_particleShaders[m_particleSystemsToLoad[i].Name])));
+		}
+		else if (m_particleSystemsToLoad[i].Name == "waterspawn")
+		{
+			m_particleEffects.insert(std::pair<int, ParticleEffect*>(m_particleSystemsToLoad[i].Id, new WaterSpawn(
 				m_particleSystemsToLoad[i].Pos,
 				m_particleSystemsToLoad[i].Vel,
 				m_particleSystemsToLoad[i].NrOfParticles,

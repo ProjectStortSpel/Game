@@ -28,10 +28,10 @@ UpdateCardPickTimer.Update = function(self, dt)
 			world:CreateComponentAndAddTo("AutoPickCards", id)
 			world:KillEntity(Timers[1])
 			
-			local audioId = Net.StartPack("Client.FadeOutSound")
-			Net.WriteString(audioId, "PickingMusic")
-			Net.WriteInt(audioId, 200)
-			Net.Broadcast(audioId)
+			--local audioId = Net.StartPack("Client.FadeOutSound")
+			--Net.WriteString(audioId, "PickingMusic")
+			--Net.WriteInt(audioId, 200)
+			--Net.Broadcast(audioId)
 		end
 	end
 

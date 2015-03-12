@@ -21,6 +21,9 @@
     <ClCompile Include="..\..\..\Source\AndroidRenderer\Particles\Waterfall.cpp">
       <Filter>ParticleEffects</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\AndroidRenderer\Particles\WaterSpawn.cpp">
+      <Filter>ParticleEffects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\AndroidRenderer\Buffer.h" />
@@ -45,6 +48,9 @@
       <Filter>ParticleEffects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\AndroidRenderer\Particles\Waterfall.h">
+      <Filter>ParticleEffects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\AndroidRenderer\Particles\WaterSpawn.h">
       <Filter>ParticleEffects</Filter>
     </ClInclude>
   </ItemGroup>

@@ -64,7 +64,7 @@ CreateDeckSystem.CreateDeck = function (self)
 	CardPrio[#CardPrio+1] = true
 	
 	CardAction[#CardAction+1] = "Backward"
-	NrOfCards[#NrOfCards+1] = 4 * NrOfPlayers
+	NrOfCards[#NrOfCards+1] = 3 * NrOfPlayers
 	CardPrio[#CardPrio+1] = true
 	
 	CardAction[#CardAction+1] = "TurnRight"
@@ -76,7 +76,7 @@ CreateDeckSystem.CreateDeck = function (self)
 	CardPrio[#CardPrio+1] = false
 
 	CardAction[#CardAction+1] = "TurnAround"
-	NrOfCards[#NrOfCards+1] = 2 * NrOfPlayers
+	NrOfCards[#NrOfCards+1] = 1 * NrOfPlayers
 	CardPrio[#CardPrio+1] = false
 
 	CardAction[#CardAction+1] = "Guard"
@@ -110,9 +110,9 @@ CreateDeckSystem.CreateDeck = function (self)
 	math.randomseed(mySeed)
 	for i = 1, #CardAction do
 		local type = ""
-		if CardAction[i] == "Forward" or CardAction[i] == "Backward" then
+		if CardAction[i] == "Forward" or CardAction[i] == "Backward" or CardAction[i] == "TurnAround" then
 			type = "CardTypeMove"
-		elseif CardAction[i] == "TurnRight" or CardAction[i] == "TurnLeft" or CardAction[i] == "TurnAround" then
+		elseif CardAction[i] == "TurnRight" or CardAction[i] == "TurnLeft" then
 			type = "CardTypeTurn"
 		else
 			type = "CardTypeAbility"

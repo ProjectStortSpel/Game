@@ -18,6 +18,7 @@ LobbySystem.Initialize = function ( self )
 	self:AddComponentTypeToFilter("LobbyPlayerStartMSG", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("UnitEntityId", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("PlayerNameChanged", FilterType.RequiresOneOf)
 end
 
 LobbySystem.PostInitialize = function ( self )
@@ -47,7 +48,7 @@ LobbySystem.EntitiesAdded = function(self, dt, entities)
 				self:SpawnMenu()
 			elseif world:EntityHasComponent( entityId, self.Name.."Element") then
 			
-			elseif world:EntityHasComponent( entityId, "UnitEntityId") then
+			elseif world:EntityHasComponent( entityId, "UnitEntityId") or world:EntityHasComponent( entityId, "PlayerNameChanged") then
 				self.UpdateMe = true
 			elseif world:EntityHasComponent( entityId, "LobbyPlayerReadyMSG") then
 				self:ToggleReady(entityId)
@@ -72,12 +73,13 @@ LobbySystem.UpdatePlayers = function(self)
 		local entityId = entities[i]
 		local unitId = world:GetComponent(entityId, "UnitEntityId", "Id"):GetInt()
 		
-		local name = "Ugha Buggah"
+		local name = world:GetComponent(entityId, "PlayerName", "Name"):GetString()
+		print(name)
 		local ip = " ";
 		local readyText = " ";
 		if world:EntityHasComponent(entityId, "NetConnection") then
 			ip = world:GetComponent(entityId, "NetConnection", "IpAddress"):GetText()
-			name = "Player" -- TODO: FETCH PLAYERNAME
+			
 			if world:EntityHasComponent(entityId, "LobbyPlayerReady") then
 				readyText = "Ready"
 				readyplayers = readyplayers + 1

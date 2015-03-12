@@ -305,8 +305,6 @@ const char* ConsoleManager::GetFunctionMatch(const char* _command)
 	for (int n = 0; n < strlen(cmd.c_str()); ++n)
 		cmd[n] = tolower(cmd[n]);
 
-
-
 	char buffer[256];
 #ifdef WIN32
 	sprintf_s(buffer, "^(%s)(.*)?$", cmd.c_str());

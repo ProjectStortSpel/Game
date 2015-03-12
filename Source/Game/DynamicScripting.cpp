@@ -73,7 +73,7 @@ void DynamicScripting::GenerateScript()
 
 			randomValue = RandomFloat() * m_totalSum;
 
-			while (selectedRule < 0)
+			while ( selectedRule < 0 && ruleId < this->m_ruleBook->size() )
 			{
 				weightSum += (*m_ruleBook)[ruleId].weight;
 				if (weightSum > randomValue)
@@ -85,8 +85,10 @@ void DynamicScripting::GenerateScript()
 					ruleId++;
 				}
 			}
-
-			ruleAddedToScript = InsertToScript((*m_ruleBook)[selectedRule]);
+			if ( selectedRule != -1 )
+			{
+				ruleAddedToScript = InsertToScript( ( *m_ruleBook )[selectedRule] );
+			}
 			noOfTries++;
 		}
 	}
@@ -108,14 +110,14 @@ bool DynamicScripting::InsertToScript(Rule _rule)
 	return true;
 }
 
-void DynamicScripting::AdjustWeight(float _fitness)
+bool DynamicScripting::AdjustWeight(float _fitness)
 {
 	int noOfActiveScripts = m_script.size();
-
+	Sum( );
 	/* If we have no active scripts or more than we should have, something is wrong.*/
 	if (noOfActiveScripts <= 0 || m_ruleBook->size() < noOfActiveScripts)
 	{
-		return;
+		return false;
 	}
 
 	unsigned int noOfInactiveScripts = m_ruleBook->size() - noOfActiveScripts;
@@ -151,6 +153,15 @@ void DynamicScripting::AdjustWeight(float _fitness)
 	}
 
 	DistributeLeftOvers(leftOver);
+	float temp_sum = m_totalSum;
+	Sum( );
+	
+	if ( abs( temp_sum - m_totalSum ) > 0.1f )
+	{
+		//printf( "FACK SUPER FUCKING BIG ERROR IN DS\n" );
+		return false;
+	}
+	return true;
 }
 
 float DynamicScripting::FitnessFunction(float _fitness)

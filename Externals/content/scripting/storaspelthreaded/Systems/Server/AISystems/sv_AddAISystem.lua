@@ -1,4 +1,6 @@
 AddAISystem = System()
+AddAISystem.Names = {}
+AddAISystem.Names.__mode = "k"
 
 AddAISystem.Initialize = function(self)
 	self:SetName("AI System")
@@ -12,8 +14,54 @@ AddAISystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("MapSpecs", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf)
 	
+	self:AddNames()
+	
 	Console.AddCommand("AddAI", self.AddAI)
 	Console.AddCommand("AI", self.FillWithAIs)
+end
+
+
+AddAISystem.AddNames = function(self)
+
+	self.Names[#self.Names+1] = "Albert"
+	self.Names[#self.Names+1] = "Allen"
+	self.Names[#self.Names+1] = "Bert"
+	self.Names[#self.Names+1] = "Bob"
+	self.Names[#self.Names+1] = "Cecil"
+	self.Names[#self.Names+1] = "Clarence"
+	self.Names[#self.Names+1] = "Elliot"
+	self.Names[#self.Names+1] = "Elmer"
+	self.Names[#self.Names+1] = "Ernie"
+	self.Names[#self.Names+1] = "Eugene"
+	self.Names[#self.Names+1] = "Fergus"
+	self.Names[#self.Names+1] = "Ferris"
+	self.Names[#self.Names+1] = "Frasier"
+	self.Names[#self.Names+1] = "Fred"
+	self.Names[#self.Names+1] = "George"
+	self.Names[#self.Names+1] = "Graham"
+	self.Names[#self.Names+1] = "Harvey"
+	self.Names[#self.Names+1] = "Irwin"
+	self.Names[#self.Names+1] = "Lester"
+	self.Names[#self.Names+1] = "Marvin"
+	self.Names[#self.Names+1] = "Neil"
+	self.Names[#self.Names+1] = "Niles"
+	self.Names[#self.Names+1] = "Oliver"
+	self.Names[#self.Names+1] = "Opie"
+	self.Names[#self.Names+1] = "Toby"
+	self.Names[#self.Names+1] = "Ulric"
+	self.Names[#self.Names+1] = "Ulysses"
+	self.Names[#self.Names+1] = "Uri"
+	self.Names[#self.Names+1] = "Waldo"
+	self.Names[#self.Names+1] = "Wally"
+	self.Names[#self.Names+1] = "Niklas"
+	self.Names[#self.Names+1] = "Carl"
+	self.Names[#self.Names+1] = "Johannes"
+	self.Names[#self.Names+1] = "Erik"
+	self.Names[#self.Names+1] = "Anders"
+	self.Names[#self.Names+1] = "Marcus"
+	self.Names[#self.Names+1] = "Christian"
+	self.Names[#self.Names+1] = "Pontus"
+
 end
 
 AddAISystem.AddAI = function(_command, ...)
@@ -67,9 +115,12 @@ AddAISystem.EntitiesAdded = function(self, dt, entities)
 			
 			if availableSpawnsLeft > 0 then
 			
-				local newName = "Player_" .. tostring(noOfPlayers + 1)
+				local rng = math.random(1, #self.Names)
+				local newName = "BOT " .. self.Names[rng]
+				self.Names[rng] = nil
+
 				local playerNumber = noOfPlayers + 1
-				world:SetComponent(ais[i], "PlayerName", "Name", newName)
+				world:GetComponent(ais[i], "PlayerName", "Name"):SetString(newName)
 				world:SetComponent(ais[i], "PlayerNumber", "Number", playerNumber)
 				
 				self:CounterComponentChanged(1, "Players")
@@ -91,10 +142,10 @@ AddAISystem.EntitiesAdded = function(self, dt, entities)
 				
 				--DynamicScripting.UpdateWeight(math.random())
 				
-				local found, weight = DynamicScripting.GetWeightFrom("Void", playerNumber)
+				local found, weight, length, onTheSpotValue = DynamicScripting.GetWeightFrom("Void", playerNumber)
 				self:PFstuff( found, voids, playerNumber, "Void", onTheSpotValue, weight, length, power )
 				
-				local found, weight = DynamicScripting.GetWeightFrom("NotWalkable", playerNumber)
+				local found, weight, length, onTheSpotValue = DynamicScripting.GetWeightFrom("NotWalkable", playerNumber)
 				self:PFstuff( found, nonWalkable, playerNumber, "NotWalkable", onTheSpotValue, weight, length, power )
 				
 				PotentialFieldHandler.SumPFs(playerNumber)

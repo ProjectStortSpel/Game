@@ -96,10 +96,7 @@ WeatherTornadoSystem.RemoveSpin = function(self, unit)
 		
 		local dirX, dirZ = world:GetComponent(unit, "Direction", 0):GetInt2()
 		local lRotation = 0
-		
-		print("RemoveSpin")
-		print("dirX: " .. dirX)
-		print("dirZ: " .. dirZ)
+
 		if dirX == 0 and dirZ == 1 then -- 0°
 			lRotation = 0
 		elseif dirX == 1 and dirZ == 0 then -- 90°

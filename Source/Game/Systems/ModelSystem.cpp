@@ -32,6 +32,7 @@ void ModelSystem::Initialize()
 
 	AddComponentTypeToFilter("Model", ECSL::FilterType::Mandatory);
 	AddComponentTypeToFilter("Render", ECSL::FilterType::Excluded);
+	AddComponentTypeToFilter("AddedToRenderer", ECSL::FilterType::Excluded);
 
 }
 
@@ -69,7 +70,7 @@ void ModelSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::ve
 			noShadow = true;
 		}
 
-		CreateComponentAndAddTo("Render", entityId);
+		CreateComponentAndAddTo(m_renderId, entityId);
 		glm::mat4*	Matrix;
 		Matrix = (glm::mat4*)GetComponent(entityId, m_renderId, "Mat");
 		int* ModelId = (int*)GetComponent(entityId, m_renderId, "ModelId");
@@ -101,7 +102,7 @@ void ModelSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::ve
 
 		if (!HasComponent(entityId, m_colorId))
 		{
-			CreateComponentAndAddTo("Color", entityId);
+			CreateComponentAndAddTo(m_colorId, entityId);
 			float* _Color = (float*)GetComponent(entityId, m_colorId, "X");
 			_Color[0] = 0.0f;
 			_Color[1] = 0.0f;

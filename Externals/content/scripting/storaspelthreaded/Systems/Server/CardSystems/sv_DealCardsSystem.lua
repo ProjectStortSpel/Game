@@ -50,12 +50,12 @@ DealCardsSystem.EntitiesAdded = function(self, dt, entities)
 	end
 	
 	if dealCards then
-		local audioId = Net.StartPack("Client.FadeInSoundC")
-		Net.WriteString(audioId, "InGame")
-		Net.WriteString(audioId, "PickingMusic")
-		Net.WriteInt(audioId, 200)
-		Net.WriteBool(audioId, false)
-		Net.Broadcast(audioId)
+		--local audioId = Net.StartPack("Client.FadeInSoundC")
+		--Net.WriteString(audioId, "InGame")
+		--Net.WriteString(audioId, "PickingMusic")
+		--Net.WriteInt(audioId, 200)
+		--Net.WriteBool(audioId, false)
+		--Net.Broadcast(audioId)
 	end
 end
 
@@ -170,11 +170,11 @@ DealCardsSystem.CalculateCardTypeBalance = function(self, numCards, moveCardsLef
 	CardCount.MoveCardCountMin = math.ceil(0.3 * CardCount.Remaining) -- 3 / 2
 	CardCount.MoveCardCountMax = math.ceil(0.5 * CardCount.Remaining) -- 4 / 3
 	
-	CardCount.TurnCardCountMin = math.ceil(0.2 * CardCount.Remaining) -- 3 / 1
+	CardCount.TurnCardCountMin = math.ceil(0.2 * CardCount.Remaining) -- 2 / 1
 	CardCount.TurnCardCountMax = math.ceil(0.4 * CardCount.Remaining) -- 4 / 2
 	
 	CardCount.AbilityCardCountMin = math.ceil(0.1 * CardCount.Remaining) -- 1 / 1
-	CardCount.AbilityCardCountMax = math.ceil(0.3 * CardCount.Remaining) -- 2 / 2
+	CardCount.AbilityCardCountMax = math.ceil(0.2 * CardCount.Remaining) -- 2 / 1
 	----------------------------------------------------------------------------------------------
 	
 	if CardCount.MoveCardCountMin < CardCount.MoveCardCountMax then
