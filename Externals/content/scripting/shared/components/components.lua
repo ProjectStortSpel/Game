@@ -5,6 +5,11 @@ NullComponent.SyncNetwork = true
 NullComponent.TableType = TableType.Map
 worldCreator:AddComponentType(NullComponent)
 
+NullComponent = ComponentType()
+NullComponent.Name = "AddedToRenderer"
+NullComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NullComponent)
+
 -- Parent Component
 local ParentComponent = ComponentType()
 ParentComponent.Name = "Parent"
