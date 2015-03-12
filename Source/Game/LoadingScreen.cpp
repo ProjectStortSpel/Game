@@ -83,8 +83,8 @@ void LoadingScreen::SetLoadingText(std::string _text)
 		m_textMatrix *= glm::scale(glm::vec3(scaleX, scaleY, 1));
 
 		SDL_Log("Loadingscreen: %s", _text.c_str());
-		m_graphicDevice->Update(0.0f);
-		m_graphicDevice->Render();
+		//m_graphicDevice->Update(0.0f);
+		//m_graphicDevice->Render();
 	}
 }
 
@@ -97,8 +97,8 @@ void LoadingScreen::SetBackground(std::string _path)
 			m_graphicDevice->ChangeModelTexture(m_backgroundModel, _path);
 			SDL_Log("Set Loadingscreen background: %s", _path.c_str());
 
-			m_graphicDevice->Update(0.0f);
-			m_graphicDevice->Render();
+			//m_graphicDevice->Update(0.0f);
+			//m_graphicDevice->Render();
 			return;
 		}
 		SDL_Log("Couldn't find background: %s", _path.c_str());
@@ -120,8 +120,8 @@ void LoadingScreen::SetBackground(std::vector<std::string> _paths, std::string _
 				m_graphicDevice->ChangeModelTexture(m_backgroundModel, path);
 				SDL_Log("Set Loadingscreen background: %s", _file.c_str());
 
-				m_graphicDevice->Update(0.0f);
-				m_graphicDevice->Render();
+				//m_graphicDevice->Update(0.0f);
+				//m_graphicDevice->Render();
 				return;
 			}
 			SDL_Log("Couldn't find background: %s", _file.c_str());
@@ -148,8 +148,8 @@ void LoadingScreen::SetActive()
 		//m_graphicDevice->ActiveModel(m_textModel, true);
 		m_isActive = true;
 
-		m_graphicDevice->Update(0.0f);
-		m_graphicDevice->Render();
+		//m_graphicDevice->Update(0.0f);
+		//m_graphicDevice->Render();
 	}
 }
 
@@ -164,8 +164,8 @@ void LoadingScreen::SetInactive(int _level)
 		//m_graphicDevice->ActiveModel(m_textModel, false);
 		m_isActive = false;
 		m_accessLevel = 0;
-		m_graphicDevice->Update(0.0f);
-		m_graphicDevice->Render();
+		//m_graphicDevice->Update(0.0f);
+		//m_graphicDevice->Render();
 	}
 }
 
