@@ -7,6 +7,7 @@ require "sh_UpdateLerpScaleSystem"
 require "sh_AddLerpRotationSystem"
 require "sh_UpdateLerpRotationSystem"
 require "sh_KillAfterLerpSystem"
+require "sh_AddEntityAfterLerpSystem"
 
 package.path = package.path .. ";Systems/Shared/AnimationSystems/?.lua"
 require "sh_AddAnimationSystem"
@@ -23,7 +24,7 @@ worldCreator:AddSystemToCurrentGroup(UpdateLerpScaleSystem)
 worldCreator:AddSystemToCurrentGroup(AddLerpRotationSystem)
 worldCreator:AddSystemToCurrentGroup(UpdateLerpRotationSystem)
 worldCreator:AddSystemToCurrentGroup(KillAfterLerpSystem)
-
+worldCreator:AddSystemToCurrentGroup(AddEntityAfterLerpSystem)
 --worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(AddAnimationSystem)
 worldCreator:AddSystemToCurrentGroup(UpdateAnimationSystem)

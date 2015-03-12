@@ -114,6 +114,7 @@ ShowNextCheckpointSystem.SpawnSmoke = function(self, oldParticle)
 	world:GetComponent(newParticle, "Particle", "fVelocityZ"):SetFloat(0)
 	world:GetComponent(newParticle, "Particle", "gSpriteSize"):SetFloat(0.4)
 	world:GetComponent(newParticle, "Particle", "hId"):SetInt(-1)
+	world:GetComponent(newParticle, "Particle", "iOnlyOnce"):SetInt(0)
 	
 end
 
@@ -170,6 +171,7 @@ Net.Receive("Client.NewTargetCheckpoint",
 	world:GetComponent(newParticle, "Particle", "fVelocityZ"):SetFloat(0)
 	world:GetComponent(newParticle, "Particle", "gSpriteSize"):SetFloat(0.6)
 	world:GetComponent(newParticle, "Particle", "hId"):SetInt(-1)
+	world:GetComponent(newParticle, "Particle", "iOnlyOnce"):SetInt(0)
 	
 	--	Fade in timer
 	world:GetComponent(newParticle, "FadeInLight", "CurrentTime"):SetFloat(0.0)

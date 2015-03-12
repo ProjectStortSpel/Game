@@ -104,7 +104,7 @@ void ParticleSystem::CreateExplosion()
 	for (GLuint i = 0; i < m_nrParticles; i++) {
 		posData[3 * i] = ((float)(rand() % 9) - 4)*0.5 * m_scale.x;
 		posData[3 * i + 1] = ((float)(rand() % 9) - 4)*0.5 * m_scale.y;
-		posData[3 * i + 2] = ((float)(rand() % 9 - 4))*0.5 * m_scale.z;
+		posData[3 * i + 2] = ((float)(rand() % 9) - 4)*0.5 * m_scale.z;
 
 		// Pick the direction of the velocity
 		theta = glm::mix(0.0f, (float)M_PI / 6.0f, (float)(rand() % 101) / 100);

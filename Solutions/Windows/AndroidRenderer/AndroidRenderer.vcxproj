@@ -24,6 +24,7 @@
     <ClCompile Include="..\..\..\Source\AndroidRenderer\GraphicDevice.cpp" />
     <ClCompile Include="..\..\..\Source\AndroidRenderer\GraphicsHigh.cpp" />
     <ClCompile Include="..\..\..\Source\AndroidRenderer\GraphicsLow.cpp" />
+    <ClCompile Include="..\..\..\Source\AndroidRenderer\Particles\Explosion.cpp" />
     <ClCompile Include="..\..\..\Source\AndroidRenderer\Particles\Fire.cpp" />
     <ClCompile Include="..\..\..\Source\AndroidRenderer\Particles\ParticleEffect.cpp" />
     <ClCompile Include="..\..\..\Source\AndroidRenderer\Particles\Smoke.cpp" />
@@ -41,6 +42,7 @@
     <ClInclude Include="..\..\..\Source\AndroidRenderer\GraphicsLow.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\ModelExporter.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\ModelLoader.h" />
+    <ClInclude Include="..\..\..\Source\AndroidRenderer\Particles\Explosion.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\Particles\Fire.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\Particles\ParticleEffect.h" />
     <ClInclude Include="..\..\..\Source\AndroidRenderer\Particles\Smoke.h" />
@@ -53,6 +55,8 @@
     <ClInclude Include="..\..\..\Source\AndroidRenderer\TextureLoader.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidExplosionShaderFS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidExplosionShaderVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\android\AndroidFireShaderFS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\android\AndroidFireShaderVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\android\AndroidForwardFS.glsl" />
