@@ -225,12 +225,18 @@ void GraphicDevice::PollEvent(SDL_Event _event)
 
 void GraphicDevice::GetWindowSize(int &x, int &y)
 { 
-#ifdef __ANDROID__
-	x = m_framebufferWidth; 
-	y = m_framebufferHeight;
-#else
 	x = m_clientWidth; 
 	y = m_clientHeight; 
+}
+
+void GraphicDevice::GetWindowSize(int &x, int &y)
+{
+#ifdef __ANDROID__
+	x = m_framebufferWidth;
+	y = m_framebufferHeight;
+#else
+	x = m_clientWidth;
+	y = m_clientHeight;
 #endif
 }
 
