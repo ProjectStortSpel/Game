@@ -46,6 +46,9 @@ CheckpointSystem.HasReachedFinish = function(self, entityId)
 	world:CreateComponentAndAddTo("TakeCardStepsFromUnit", newId)
 	world:GetComponent(newId, "TakeCardStepsFromUnit", "Unit"):SetInt(entityId)
 	
+	newId = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("PlayerReachedFinish", newId)
+	
 	-- If the unit is not controlled by an AI
 	if not world:EntityHasComponent(playerId, "AI") then
 		--	Make the player a spectator

@@ -65,6 +65,8 @@ GenerateIslandComponent.Name = "GenerateIsland"
 GenerateIslandComponent.SyncNetwork = true
 GenerateIslandComponent.TableType = TableType.Array
 GenerateIslandComponent:AddVariable("Map", ByteSize.String)
+GenerateIslandComponent:AddVariable("OffsetX", ByteSize.Int)
+GenerateIslandComponent:AddVariable("OffsetZ", ByteSize.Int)
 GenerateIslandComponent:AddVariable("SizeX", ByteSize.Int)
 GenerateIslandComponent:AddVariable("SizeZ", ByteSize.Int)
 worldCreator:AddComponentType(GenerateIslandComponent)

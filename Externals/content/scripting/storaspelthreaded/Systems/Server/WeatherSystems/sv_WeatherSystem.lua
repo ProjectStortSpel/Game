@@ -31,10 +31,10 @@ WeatherSystem.EntitiesAdded = function(self, dt, newEntities)
 			local	actualWeatherChance	=	math.random(1, 100)
 			self.WeatherChance	=	(self.WeatherChance+1)*1.5
 			print("Weather forecast, " .. self.WeatherChance .. "% chance of weather")
-			--if actualWeatherChance <= self.WeatherChance then
+			if actualWeatherChance <= self.WeatherChance then
 				self:SpawnWeather()
 				self.WeatherChance	=	0
-			--end
+			end
 			
 		end
 		

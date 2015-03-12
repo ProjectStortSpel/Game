@@ -829,9 +829,9 @@ void GraphicDevice::BufferLightsToGPU_GD()
 				m_animationShader.SetUniVariable(ss.str().c_str(), glfloat, &m_lightDefaults[9]);
 				ss.str(std::string());
 			}
-			delete[] m_pointlightsPtr;
-			m_pointlightsPtr = 0;
-			m_nrOfLightsToBuffer = 0;
+			//delete[] m_pointlightsPtr;
+			//m_pointlightsPtr = 0;
+			//m_nrOfLightsToBuffer = 0;
 		}
 		else
 		{

@@ -82,7 +82,7 @@ GlowNextCheckpointSystem.EntitiesAdded = function(self, dt, newEntities)
 			world:CreateComponentAndAddTo("GlowingCheckpoint", newGlow)
 			
 			world:GetComponent(newGlow, "Model", 0):SetModel("rune" .. math.random(1, 11), "runes", 1)
-			world:GetComponent(newGlow, "Position", 0):SetFloat3(X, 0.08, Z)
+			world:GetComponent(newGlow, "Position", 0):SetFloat3(X, 0.1, Z)
 			world:GetComponent(newGlow, "Rotation", 0):SetFloat3(0, math.pi/4 * math.random(1, 10), 0)
 			world:GetComponent(newGlow, "Scale", 0):SetFloat3(0.5, 1.0, 0.5)
 			world:GetComponent(newGlow, "Color", 0):SetFloat3(0.15, 0.15, 0.15)

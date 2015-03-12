@@ -118,7 +118,9 @@ void GraphicsLow::Render()
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_TEXTURE_2D);
 
+	//--------ANIMATED DEFERRED RENDERING !!! ATTENTION: WORK IN PROGRESS !!!
 	m_animationShader.UseProgram();
+	m_animationShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
 	for (int i = 0; i < m_modelsAnimated.size(); i++)
 	{
 		for (int j = 0; j < m_modelsAnimated[i].anim.size(); j++)
@@ -243,7 +245,7 @@ void GraphicsLow::Render()
 	glDisable(GL_BLEND);
 #ifdef __ANDROID__
 	// DRAW FULLSCREEN
-	glViewport(0, 0, m_framebufferWidth, m_framebufferHeight);
+	glViewport(0, 0, m_clientWidth, m_clientHeight);
 
 	m_fullscreen.UseProgram();
 
