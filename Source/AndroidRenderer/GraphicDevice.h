@@ -140,7 +140,8 @@ namespace Renderer
 		// WINDOW
 		//SDL_Window*	GetSDL_Window(){ return m_window; } // IN PC GD
 		//SDL_GLContext GetSDL_GLContext(){ return m_glContext; } // IN PC GD
-		void GetWindowSize(int &x, int &y){ x = m_clientWidth; y = m_clientHeight; }
+		void GetWindowSize(int &x, int &y);
+		void GetFramebufferSize(int &x, int &y);
 		//void GetWindowPos(int &x, int &y); // IN PC GD
 		void ResizeWindow(int _width, int _height);
 		virtual void SetTitle(std::string _title){};
