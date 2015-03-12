@@ -1234,15 +1234,29 @@ MapGenerator.CreateStoneEntity = function(self, X, Z)
 	world:CreateComponentAndAddTo("Model", newStone)
 	world:CreateComponentAndAddTo("StaticModel", newStone)
 	
-	world:GetComponent(newStone, "Model", 0):SetModel("smallstone", "smallstone", 0)
-	world:GetComponent(newStone, "Position", 0):SetFloat3(X, 0.5 + 0.1* math.random(-1, 1), Z)
+	if math.random(1, 100) < 40 then
+		world:GetComponent(newStone, "Model", 0):SetModel("bush", "bush", 0)
+		world:GetComponent(newStone, "Position", 0):SetFloat3(X, 0.3 + 0.1* math.random(-1, 1), Z)
+		world:GetComponent(newStone, "Rotation", 0):SetFloat3
+		(
+			math.pi * 0.005 * math.random(0, 25), 
+			math.pi/180 * math.random(1, 360), 
+			math.pi * 0.005 * math.random(0, 25)
+		)
+	else
+		world:GetComponent(newStone, "Model", 0):SetModel("smallstone", "smallstone", 0)
+		world:GetComponent(newStone, "Position", 0):SetFloat3(X, 0.7 + 0.1* math.random(-1, 1), Z)
+		world:GetComponent(newStone, "Rotation", 0):SetFloat3
+		(
+			math.pi * 0.005 * math.random(0, 25), 
+			math.pi * 0.01 * math.random(0, 100), 
+			math.pi * 0.005 * math.random(0, 25)
+		)
+	end
+	
+	
 	world:GetComponent(newStone, "MapPosition", 0):SetInt2(X, Z)
-	world:GetComponent(newStone, "Rotation", 0):SetFloat3
-	(
-		math.pi * 0.005 * math.random(0, 25), 
-		math.pi * 0.01 * math.random(0, 100), 
-		math.pi * 0.005 * math.random(0, 25)
-	)
+
 	world:GetComponent(newStone, "Scale", 0):SetFloat3
 	(
 		0.8 + 0.1* math.random(-1, 1), 
@@ -1509,6 +1523,7 @@ MapGenerator.CreateEdgePiece = function(self, X, Z, isCorner, EdgeDirection)
 	if isCorner then
 		world:GetComponent(newEdge, "Model", 0):SetModel("edgeoutercorner", "edgeoutercorner", 1)
 	else
+		local	regularCorner	=	true
 		if self:IsRiver(X, Z) then
 			
 			local	dirX, dirZ	=	self:GetRiverDirection(self:GetTileType(X, Z))
@@ -1518,15 +1533,15 @@ MapGenerator.CreateEdgePiece = function(self, X, Z, isCorner, EdgeDirection)
 				local	tDirX, tDirZ	=	self:GetRiverDirection(self.RiverUp + EdgeDirection)
 				if tDirX == dirX and tDirZ == dirZ then
 					world:GetComponent(newEdge, "Model", 0):SetModel("edgeriver", "edgeriver", 1)
-				else
-					world:GetComponent(newEdge, "Model", 0):SetModel("edgeflat", "edgeflat", 1)
+					regularCorner	=	false
 				end
-			else
-				world:GetComponent(newEdge, "Model", 0):SetModel("edgeflat", "edgeflat", 1)
 			end
-		else
-			world:GetComponent(newEdge, "Model", 0):SetModel("edgeflat", "edgeflat", 1)
 		end
+		
+		if regularCorner then
+			world:GetComponent(newEdge, "Model", 0):SetModel("edgeflat" .. math.random(1, 4), "edgeflat", 1)
+		end
+		
 	end
 	
 	return	newEdge
