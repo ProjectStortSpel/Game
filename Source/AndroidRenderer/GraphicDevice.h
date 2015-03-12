@@ -20,6 +20,8 @@ Author: Christian
 #include "Particles/Waterfall.h"
 #include "Particles/WaterSpawn.h"
 #include "Particles/Explosion.h"
+#include "Model.h"
+#include "AModel.h"
 
 namespace Renderer
 {
@@ -34,46 +36,6 @@ namespace Renderer
 #define TEXTURE_NORMAL		1
 #define TEXTURE_SPECULAR	2
 
-
-
-	struct Model
-	{
-		bool operator== (const Model &m) { return Compare(m); }
-		bool operator!= (const Model &m) { return !Compare(m); }
-
-		Model(){}
-		Model(Buffer* buffer, GLuint tex, GLuint nor, GLuint spe, int id, bool active, mat4* model, float* col, bool shadow)
-		{
-			bufferPtr = buffer;
-			texID = tex;
-			norID = nor;
-			speID = spe;
-			
-			this->id = id;
-			this->active = active;
-			this->modelMatrix = model;
-			this->color = col;
-			this->castShadow = shadow;
-		}
-		bool Compare(Model m)
-		{
-			if (texID != m.texID) return false;
-			if (bufferPtr != m.bufferPtr) return false;
-			if (speID != m.speID) return false;
-			if (norID != m.norID) return false;
-			return true;
-		}
-		Buffer* bufferPtr;
-		GLuint texID;
-		GLuint norID;
-		GLuint speID;
-		
-		int id;
-		bool active;
-		mat4* modelMatrix;
-		float* color;
-		bool castShadow;
-	};
 
 	struct ModelToLoad
 	{
@@ -187,7 +149,7 @@ namespace Renderer
 		virtual void ToggleSimpleText(){};
 		virtual void ToggleSimpleText(bool _on){};
 
-		// ÖVRIGT
+		// ï¿½VRIGT
 		void SetDebugTexFlag(int _flag) { return; }
 		void Clear(); // virtual in PC
 		int GetVRamUsage(){ return -1; }
@@ -207,10 +169,10 @@ namespace Renderer
 
 		// Models
 		int m_modelIDcounter;
-		//bool m_useAnimations;
+		bool m_useAnimations;
 		//std::vector<RenderList> m_renderLists;
 		std::vector<Model> m_modelsForward, m_modelsViewspace, m_modelsInterface, m_modelsWater, m_modelsWaterCorners;
-		//std::vector<AModel> m_modelsAnimated;
+		std::vector<AModel> m_modelsAnimated;
 		std::map<int, ModelToLoad*> m_modelsToLoad;
 		std::map<int, ModelToLoadFromSource*> m_modelsToLoadFromSource;
 		std::map<int, std::vector<ModelToLoad*>> m_staticModelsToLoad;
@@ -236,6 +198,7 @@ namespace Renderer
 		Shader m_forwardShader;
 		Shader m_viewspaceShader;
 		Shader m_interfaceShader;
+		Shader m_animationShader;
 		//Shader m_shadowShaderForward;
 		Shader m_riverShader, m_riverCornerShader;
 		std::map<std::string, Shader*> m_particleShaders;
@@ -260,10 +223,10 @@ namespace Renderer
 		virtual void BufferModels();	// TODO: no virtual
 		virtual void BufferModel(int _modelId, ModelToLoad* _modelToLoad);	// TODO: no virtual
 		void BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoad);
-		//void BufferAModel(int _modelId, ModelToLoad* _modelToLoad);
+		void BufferAModel(int _modelId, ModelToLoad* _modelToLoad);
 
 		// Data
-		virtual Buffer* AddMesh(std::string _fileDir, Shader *_shaderProg) = 0; // TODO: no virtual
+		virtual Buffer* AddMesh(std::string _fileDir, Shader *_shaderProg, bool animated = false) = 0; // TODO: no virtual
 		virtual Buffer* AddMesh(ModelToLoadFromSource* _modelToLoad, Shader *_shaderProg) = 0; // TODO: no virtual
 		void SortModelsBasedOnDepth(std::vector<Model>* models);
 		void BufferStaticModel(std::pair<int, std::vector<ModelToLoad*>> _staticModel);
