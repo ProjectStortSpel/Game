@@ -25,7 +25,7 @@ DynamicScripting::DynamicScripting()
 {
 	srand(time(0));
 	m_ruleBook = NULL;
-	m_noOfScriptsToUse = 2;
+	m_noOfScriptsToUse = 3;
 }
 
 DynamicScripting::~DynamicScripting()
@@ -110,14 +110,14 @@ bool DynamicScripting::InsertToScript(Rule _rule)
 	return true;
 }
 
-void DynamicScripting::AdjustWeight(float _fitness)
+bool DynamicScripting::AdjustWeight(float _fitness)
 {
 	int noOfActiveScripts = m_script.size();
-
+	Sum( );
 	/* If we have no active scripts or more than we should have, something is wrong.*/
 	if (noOfActiveScripts <= 0 || m_ruleBook->size() < noOfActiveScripts)
 	{
-		return;
+		return false;
 	}
 
 	unsigned int noOfInactiveScripts = m_ruleBook->size() - noOfActiveScripts;
@@ -153,6 +153,15 @@ void DynamicScripting::AdjustWeight(float _fitness)
 	}
 
 	DistributeLeftOvers(leftOver);
+	float temp_sum = m_totalSum;
+	Sum( );
+	
+	if ( abs( temp_sum - m_totalSum ) > 0.1f )
+	{
+		//printf( "FACK SUPER FUCKING BIG ERROR IN DS\n" );
+		return false;
+	}
+	return true;
 }
 
 float DynamicScripting::FitnessFunction(float _fitness)

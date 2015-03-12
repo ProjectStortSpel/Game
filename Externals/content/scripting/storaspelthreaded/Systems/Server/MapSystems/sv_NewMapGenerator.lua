@@ -62,9 +62,9 @@ MapGenerator.Initialize = function(self)
 end
 
 MapGenerator.EntitiesAdded = function(self, dt, entities)
-	--self:GenerateMap(os.time()%29181249, 4, 4)
+	self:GenerateMap(os.time()%29181249, 4, 4)
 	--self:GenerateMap(23246299, 8, 4)
-	self:GenerateMap(1579125, 8, 5)
+	--self:GenerateMap(1579125, 5, 5)
 	--self:GenerateMap(23239474, 4, 4)
 	--self:GenerateMap(5747, 4, 4)
 	--self:GenerateMap(1338, 2, 4)
@@ -837,17 +837,36 @@ MapGenerator.PlaceAllSpawnpoints = function(self)
 	--	originX/Z is the position of the first
 	--	checkpoint
 	local	originX, originZ	=	-1, -1
+	local	lastCheckpoint		=	-1
+	local	lastX, lastZ		=	-1, -1
 	for Z = 0, self.MapSizeZ-1 do
 		for X = 0, self.MapSizeX-1 do
-			if self:GetTileType(X, Z) == self.Checkpoint then
+			local	tempType	=	self:GetTileType(X, Z)
+			if tempType == self.Checkpoint then
 				originX	=	X
 				originZ	=	Z
-				break
 			end
 		end
 	end
 	
-	local	tempDistance	=	math.floor(self.Players/2)
+	for Z = 0, self.MapSizeZ-1 do
+		for X = 0, self.MapSizeX-1 do
+			local	tempType	=	self:GetTileType(X, Z)
+			if tempType >= self.Checkpoint then
+				
+				if self:GetDistanceBetween(X, Z, originX, originZ) >= lastCheckpoint then
+					lastCheckpoint	=	self:GetDistanceBetween(X, Z, originX, originZ)
+					lastX			=	X
+					lastZ			=	Z
+				end
+			end
+		end
+	end
+
+	
+	local	maxDistance		=	self.Players -- self:GetDistanceBetween(originX, originZ, lastX, lastZ)
+	originX, originZ		=	lastX, lastZ
+	local	tempDistance	=	math.ceil(maxDistance/2) 
 	local	maxDifference	=	1
 	while true do
 		local	spawnpointsFound	=	0
@@ -883,8 +902,8 @@ MapGenerator.PlaceAllSpawnpoints = function(self)
 			tempDistance	=	tempDistance+1
 		end
 		
-		if tempDistance > self.Players then
-			tempDistance	=	0
+		if tempDistance > maxDistance then
+			tempDistance	=	math.ceil(maxDistance/2)
 			maxDifference	=	maxDifference+1
 		end
 	end
@@ -1013,11 +1032,6 @@ MapGenerator.SetTileType = function(self, X, Z, TileType)
 	--	Update the pathfinder
 	local walkable = self:IsWalkable(X, Z)
 	PathfinderHandler.SetTileWalkable(X, Z, self:IsWalkable(X, Z))
-	
-	--local newEntity = world:CreateNewEntity()
-	--world:CreateComponentAndAddTo("TileWalkabilityHasChanged", newEntity)
-	--world:GetComponent(newEntity, "MapSpecs", 0):SetInt2(X, Z)
-	--world:GetComponent(newEntity, "MapSpecs", "Walkable"):SetBool(walkable)
 end
 
 --	Removes the current tile by setting it to Void
@@ -1164,7 +1178,7 @@ MapGenerator.CreateGrassEntity = function(self, X, Z)
 	local	newGrass	=	self:CreateTileEntity(X, Z)
 	world:CreateComponentAndAddTo("Model", newGrass)
 	world:GetComponent(newGrass, "Model", 0):SetModel("grass", "grass", 0)
-	--world:CreateComponentAndAddTo("NoShadow", newGrass)
+	world:CreateComponentAndAddTo("NoShadow", newGrass)
 	world:GetComponent(newGrass, "Rotation", 0):SetFloat3(0, math.pi * 0.5 * math.random(0, 4), 0)
 	
 	world:CreateComponentAndAddTo("StaticModel", newGrass)
@@ -1234,15 +1248,29 @@ MapGenerator.CreateStoneEntity = function(self, X, Z)
 	world:CreateComponentAndAddTo("Model", newStone)
 	world:CreateComponentAndAddTo("StaticModel", newStone)
 	
-	world:GetComponent(newStone, "Model", 0):SetModel("smallstone", "smallstone", 0)
-	world:GetComponent(newStone, "Position", 0):SetFloat3(X, 0.5 + 0.1* math.random(-1, 1), Z)
+	if math.random(1, 100) < 40 then
+		world:GetComponent(newStone, "Model", 0):SetModel("bush", "bush", 0)
+		world:GetComponent(newStone, "Position", 0):SetFloat3(X, 0.5, Z)
+		world:GetComponent(newStone, "Rotation", 0):SetFloat3
+		(
+			0, 
+			math.pi/180 * math.random(1, 360), 
+			0
+		)
+	else
+		world:GetComponent(newStone, "Model", 0):SetModel("smallstone", "smallstone", 0)
+		world:GetComponent(newStone, "Position", 0):SetFloat3(X, 0.6 + 0.1* math.random(-1, 1), Z)
+		world:GetComponent(newStone, "Rotation", 0):SetFloat3
+		(
+			math.pi * 0.005 * math.random(0, 25), 
+			math.pi * 0.01 * math.random(0, 100), 
+			math.pi * 0.005 * math.random(0, 25)
+		)
+	end
+	
+	
 	world:GetComponent(newStone, "MapPosition", 0):SetInt2(X, Z)
-	world:GetComponent(newStone, "Rotation", 0):SetFloat3
-	(
-		math.pi * 0.005 * math.random(0, 25), 
-		math.pi * 0.01 * math.random(0, 100), 
-		math.pi * 0.005 * math.random(0, 25)
-	)
+
 	world:GetComponent(newStone, "Scale", 0):SetFloat3
 	(
 		0.8 + 0.1* math.random(-1, 1), 
@@ -1445,7 +1473,7 @@ MapGenerator.FixRiverEffects = function(self, riverTiles)
 				world:GetComponent(newParticle, "Particle", "aName"):SetText("waterfall")
 				world:GetComponent(newParticle, "Particle", "bTexture"):SetText("content/textures/wassertmp.png")
 				world:GetComponent(newParticle, "Particle", "cParticles"):SetInt(50)
-				world:GetComponent(newParticle, "Particle", "dLifetime"):SetFloat(3.6)
+				world:GetComponent(newParticle, "Particle", "dLifetime"):SetFloat(3.0)
 				world:GetComponent(newParticle, "Particle", "eScaleX"):SetFloat(0.09*dirAY)
 				world:GetComponent(newParticle, "Particle", "eScaleY"):SetFloat(0.12)
 				world:GetComponent(newParticle, "Particle", "eScaleZ"):SetFloat(0.09*dirAX)
@@ -1454,6 +1482,54 @@ MapGenerator.FixRiverEffects = function(self, riverTiles)
 				world:GetComponent(newParticle, "Particle", "fVelocityZ"):SetFloat(dirAY*0.3)
 				world:GetComponent(newParticle, "Particle", "gSpriteSize"):SetFloat(1.2)
 				world:GetComponent(newParticle, "Particle", "hId"):SetInt(-1)
+				
+					--- THIS IS FOR STONE METEOR IMPACT ---
+				--newParticle	=	world:CreateNewEntity()
+				--world:CreateComponentAndAddTo("Position", newParticle)
+				--world:CreateComponentAndAddTo("Color", newParticle)
+				--world:CreateComponentAndAddTo("Particle", newParticle)
+				--world:CreateComponentAndAddTo("SyncNetwork", newParticle)
+				--
+				--world:GetComponent(newParticle, "Position", "X"):SetFloat3(posAX + 0.35*dirAX, 1.7, posAY + 0.35*dirAY)
+				--
+				--world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.0, 0.0, 0.0)
+				--
+				--world:GetComponent(newParticle, "Particle", "aName"):SetText("explosion")
+				--world:GetComponent(newParticle, "Particle", "bTexture"):SetText("content/textures/dust.png")
+				--world:GetComponent(newParticle, "Particle", "cParticles"):SetInt(15)
+				--world:GetComponent(newParticle, "Particle", "dLifetime"):SetFloat(1.8)
+				--world:GetComponent(newParticle, "Particle", "eScaleX"):SetFloat(0.01)
+				--world:GetComponent(newParticle, "Particle", "eScaleY"):SetFloat(0.01)
+				--world:GetComponent(newParticle, "Particle", "eScaleZ"):SetFloat(0.01)
+				--world:GetComponent(newParticle, "Particle", "fVelocityX"):SetFloat(0)
+				--world:GetComponent(newParticle, "Particle", "fVelocityY"):SetFloat(0)
+				--world:GetComponent(newParticle, "Particle", "fVelocityZ"):SetFloat(0)
+				--world:GetComponent(newParticle, "Particle", "gSpriteSize"):SetFloat(2.1)
+				--world:GetComponent(newParticle, "Particle", "hId"):SetInt(-1)
+				
+					--THIS IS FOR THROWING STONE IMPACT--
+				--newParticle	=	world:CreateNewEntity()
+				--world:CreateComponentAndAddTo("Position", newParticle)
+				--world:CreateComponentAndAddTo("Color", newParticle)
+				--world:CreateComponentAndAddTo("Particle", newParticle)
+				--world:CreateComponentAndAddTo("SyncNetwork", newParticle)
+				--
+				--world:GetComponent(newParticle, "Position", "X"):SetFloat3(posAX + 0.35*dirAX, 2.5, posAY + 0.35*dirAY)
+				--
+				--world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.0, 0.0, 0.0)
+				--
+				--world:GetComponent(newParticle, "Particle", "aName"):SetText("explosion")
+				--world:GetComponent(newParticle, "Particle", "bTexture"):SetText("content/textures/dust.png")
+				--world:GetComponent(newParticle, "Particle", "cParticles"):SetInt(15)
+				--world:GetComponent(newParticle, "Particle", "dLifetime"):SetFloat(0.8)
+				--world:GetComponent(newParticle, "Particle", "eScaleX"):SetFloat(0.01)
+				--world:GetComponent(newParticle, "Particle", "eScaleY"):SetFloat(0.01)
+				--world:GetComponent(newParticle, "Particle", "eScaleZ"):SetFloat(0.01)
+				--world:GetComponent(newParticle, "Particle", "fVelocityX"):SetFloat(0)
+				--world:GetComponent(newParticle, "Particle", "fVelocityY"):SetFloat(0)
+				--world:GetComponent(newParticle, "Particle", "fVelocityZ"):SetFloat(0)
+				--world:GetComponent(newParticle, "Particle", "gSpriteSize"):SetFloat(1.1)
+				--world:GetComponent(newParticle, "Particle", "hId"):SetInt(-1)
 			else
 				if self:GetTileType(posAX + dirAX, posAY + dirAY) ~= self.Hole then 
 					if self:IsRiver(posAX - dirAX, posAY - dirAY) then
@@ -1509,6 +1585,7 @@ MapGenerator.CreateEdgePiece = function(self, X, Z, isCorner, EdgeDirection)
 	if isCorner then
 		world:GetComponent(newEdge, "Model", 0):SetModel("edgeoutercorner", "edgeoutercorner", 1)
 	else
+		local	regularCorner	=	true
 		if self:IsRiver(X, Z) then
 			
 			local	dirX, dirZ	=	self:GetRiverDirection(self:GetTileType(X, Z))
@@ -1518,15 +1595,15 @@ MapGenerator.CreateEdgePiece = function(self, X, Z, isCorner, EdgeDirection)
 				local	tDirX, tDirZ	=	self:GetRiverDirection(self.RiverUp + EdgeDirection)
 				if tDirX == dirX and tDirZ == dirZ then
 					world:GetComponent(newEdge, "Model", 0):SetModel("edgeriver", "edgeriver", 1)
-				else
-					world:GetComponent(newEdge, "Model", 0):SetModel("edgeflat", "edgeflat", 1)
+					regularCorner	=	false
 				end
-			else
-				world:GetComponent(newEdge, "Model", 0):SetModel("edgeflat", "edgeflat", 1)
 			end
-		else
-			world:GetComponent(newEdge, "Model", 0):SetModel("edgeflat", "edgeflat", 1)
 		end
+		
+		if regularCorner then
+			world:GetComponent(newEdge, "Model", 0):SetModel("edgeflat" .. math.random(1, 4), "edgeflat", 1)
+		end
+		
 	end
 	
 	return	newEdge
