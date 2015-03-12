@@ -68,7 +68,7 @@ AbilitySlingshotSystem.AddBullet = function(self, posX, posZ, targetPosX, target
 
 	local bullet = world:CreateNewEntity("SlingShotProjectile")
 	world:CreateComponentAndAddTo("AddEntityAfterLerp", bullet)
-	
+
 	world:GetComponent(bullet, "Position", 0):SetFloat3(posX, 1, posZ)
 	world:GetComponent(bullet, "LerpPosition", "X"):SetFloat(targetPosX)
 	world:GetComponent(bullet, "LerpPosition", "Y"):SetFloat(1)
