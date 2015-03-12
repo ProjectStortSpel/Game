@@ -2,12 +2,13 @@
 package.path = package.path .. ";Systems/Server/GameLogicSystems/?.lua"
 require "sv_LobbySystem"
 require "sv_StageSystem"
+require "sv_FinishSystem"
 
 --	Map Systems
 package.path = package.path .. ";Systems/Server/MapSystems/?.lua"
-require "sv_NewMapGenerator"
+--require "sv_NewMapGenerator"
 require "sv_MapRaterSystem"
---require "sv_CreateMapSystem"
+require "sv_CreateMapSystem"
 require "sv_RiverSystem"
 require "sv_VoidSystem"
 require "sv_CheckpointSystem"
@@ -112,8 +113,9 @@ require "sv_ScoreboardSystem"
 --worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(LobbySystem)
 worldCreator:AddSystemToCurrentGroup(StageSystem)
-worldCreator:AddSystemToCurrentGroup(MapGenerator)
---worldCreator:AddSystemToCurrentGroup(CreateMapSystem)
+worldCreator:AddSystemToCurrentGroup(FinishSystem)
+--worldCreator:AddSystemToCurrentGroup(MapGenerator)
+worldCreator:AddSystemToCurrentGroup(CreateMapSystem)
 worldCreator:AddSystemToCurrentGroup(MapRater)
 worldCreator:AddSystemToCurrentGroup(RiverSystem)
 worldCreator:AddSystemToCurrentGroup(VoidSystem)
