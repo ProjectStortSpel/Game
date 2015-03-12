@@ -208,17 +208,6 @@ MapGenerator.LoadMap = function(self, MapName)
 	tInputData:SetSize(self.MapSizeX, self.MapSizeZ)
 	PathfinderHandler.SetData(tInputData)
 	
-	--	Add void border
-	for Z = 0, self.MapSizeZ-1 do
-		self:SetTileType(0, Z, self.Void)
-		self:SetTileType(self.MapSizeX-1, Z, self.Void)
-	end
-	--	Add void border
-	for X = 0, self.MapSizeX-1 do
-		self:SetTileType(X, 0, self.Void)
-		self:SetTileType(X, self.MapSizeZ-1, self.Void)
-	end
-	
 	--	Read map
 	local	tempType
 	local	numberOfPlayers		=	0
@@ -226,7 +215,7 @@ MapGenerator.LoadMap = function(self, MapName)
 	for Z = 0, mapSizeZ-1 do
 		for X = 0, mapSizeX-1 do
 			tempType	=	self:GetASCIIToTileType(mapString[Z*mapSizeX+X+1])
-			self:SetTileType(self.VoidMargin+X, self.VoidMargin+Z, tempType)
+			self:SetTileType(self.VoidMargin + X, self.VoidMargin + Z, tempType)
 			
 			if tempType == self.Spawnpoint then
 				numberOfPlayers	=	numberOfPlayers+1
@@ -1900,8 +1889,12 @@ MapGenerator.GenerateIslandBelow = function(self)
 	world:CreateComponentAndAddTo("SyncNetwork", generateIsland)
 	world:CreateComponentAndAddTo("GenerateIsland", generateIsland)
 	world:GetComponent(generateIsland, "GenerateIsland", "Map"):SetString(stringMap)
+	world:GetComponent(generateIsland, "GenerateIsland", "OffsetX"):SetInt(0*self.VoidMargin)
+	world:GetComponent(generateIsland, "GenerateIsland", "OffsetZ"):SetInt(0*self.VoidMargin)
 	world:GetComponent(generateIsland, "GenerateIsland", "SizeX"):SetInt(self.MapSizeX)
 	world:GetComponent(generateIsland, "GenerateIsland", "SizeZ"):SetInt(self.MapSizeZ)
+	
+	print("ISLAND CREATED!")
 end
 
 
