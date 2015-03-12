@@ -73,12 +73,13 @@ LobbySystem.UpdatePlayers = function(self)
 		local entityId = entities[i]
 		local unitId = world:GetComponent(entityId, "UnitEntityId", "Id"):GetInt()
 		
-		local name = "Ugha Buggah"
+		local name = world:GetComponent(entityId, "PlayerName", "Name"):GetString()
+		print(name)
 		local ip = " ";
 		local readyText = " ";
 		if world:EntityHasComponent(entityId, "NetConnection") then
 			ip = world:GetComponent(entityId, "NetConnection", "IpAddress"):GetText()
-			name = world:GetComponent(entityId, "PlayerName", "Name"):GetText()
+			
 			if world:EntityHasComponent(entityId, "LobbyPlayerReady") then
 				readyText = "Ready"
 				readyplayers = readyplayers + 1

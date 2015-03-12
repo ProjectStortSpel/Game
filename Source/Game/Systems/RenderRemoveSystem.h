@@ -18,9 +18,10 @@ public:
 	void Initialize();
 
 	void EntitiesRemoved(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities);
+	void EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities);
 
 private:
-	void UpdateMatrix(unsigned int _entityId);
+	unsigned	int	m_addedToRendererId;
 };
 
 #endif

@@ -33,7 +33,8 @@ void main()
 	skin += anim[int(VertexJointIndex.w)] * weights.w;
     
 	//skin += mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, weights.x, 0, 1);
-
+    
+    WorldPos = (M * vec4(VertexPosition, 1.0)).xyz;
 	ViewPos = (V * M * vec4(VertexPosition, 1.0)).xyz;
 	gl_Position = P * V * M * skin * vec4(VertexPosition, 1.0);
 

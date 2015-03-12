@@ -227,6 +227,23 @@ void GraphicDevice::PollEvent(SDL_Event _event)
 	}
 }
 
+void GraphicDevice::GetWindowSize(int &x, int &y)
+{ 
+	x = m_clientWidth; 
+	y = m_clientHeight; 
+}
+
+void GraphicDevice::GetFramebufferSize(int &x, int &y)
+{
+#ifdef __ANDROID__
+	x = m_framebufferWidth;
+	y = m_framebufferHeight;
+#else
+	x = m_clientWidth;
+	y = m_clientHeight;
+#endif
+}
+
 void GraphicDevice::ResizeWindow(int _width, int _height)
 {
 	// GRAPHIC CARD WORK GROUPS OF 16x16
