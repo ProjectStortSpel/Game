@@ -170,7 +170,11 @@ namespace ConnectHelper
 	{
 		if (state == GameModeFileList)
 		{
-			bytesToDownload = 0;
+			bool firstPacket = _ph->ReadByte(_id);
+
+			if (firstPacket)
+				bytesToDownload = 0;
+
 			int numFiles = _ph->ReadInt(_id);
 
 			for (int i = 0; i < numFiles; ++i)
@@ -222,37 +226,42 @@ namespace ConnectHelper
 				}*/
 			}
 
-			if (missingFiles.empty())
+			bool lastPacket = _ph->ReadByte(_id);
+
+			if (lastPacket)
 			{
-				//Request Content File List
-				Network::PacketHandler* ph = NetworkInstance::GetClient()->GetPacketHandler();
-				uint64_t id = ph->StartPack("RequestContentFileList");
-				NetworkInstance::GetClient()->Send(ph->EndPack(id));
+				if (missingFiles.empty())
+				{
+					//Request Content File List
+					Network::PacketHandler* ph = NetworkInstance::GetClient()->GetPacketHandler();
+					uint64_t id = ph->StartPack("RequestContentFileList");
+					NetworkInstance::GetClient()->Send(ph->EndPack(id));
 
-				state = ContentFileList;
-			}
-			else
-			{
-				bytesDownloaded = 0;
-				percent = 0;
-				LoadingScreen::GetInstance().SetLoadingText("Downloading Gamemode: 0%");
-
-
-				Network::PacketHandler* ph = NetworkInstance::GetClient()->GetPacketHandler();
-				uint64_t id = ph->StartPack("RequestGameModeFile");
-
-				ph->WriteString(id, missingFiles.begin()->second.File.c_str());
+					state = ContentFileList;
+				}
+				else
+				{
+					bytesDownloaded = 0;
+					percent = 0;
+					LoadingScreen::GetInstance().SetLoadingText("Downloading Gamemode: 0%");
 
 
-				//ph->WriteInt(id, missingFiles.size());
+					Network::PacketHandler* ph = NetworkInstance::GetClient()->GetPacketHandler();
+					uint64_t id = ph->StartPack("RequestGameModeFile");
 
-				//for (auto it = missingFiles.begin(); it != missingFiles.end(); ++it)
-				//{
-				//	//Filename
-				//	ph->WriteString(id, it->second.File.c_str());
-				//}
-				NetworkInstance::GetClient()->Send(ph->EndPack(id));
-				state = GameModeFiles;
+					ph->WriteString(id, missingFiles.begin()->second.File.c_str());
+
+
+					//ph->WriteInt(id, missingFiles.size());
+
+					//for (auto it = missingFiles.begin(); it != missingFiles.end(); ++it)
+					//{
+					//	//Filename
+					//	ph->WriteString(id, it->second.File.c_str());
+					//}
+					NetworkInstance::GetClient()->Send(ph->EndPack(id));
+					state = GameModeFiles;
+				}
 			}
 		}
 
@@ -346,7 +355,11 @@ namespace ConnectHelper
 		if (state == ContentFileList)
 		{
 
-			bytesToDownload = 0;
+			bool firstPacket = _ph->ReadByte(_id);
+
+			if (firstPacket)
+				bytesToDownload = 0;
+
 			int numFiles = _ph->ReadInt(_id);
 
 			for (int i = 0; i < numFiles; ++i)
@@ -397,25 +410,29 @@ namespace ConnectHelper
 				SDL_Log("I have: %s", filename.c_str());
 				}*/
 			}
+			bool lastPacket = _ph->ReadByte(_id);
 
-			if (missingFiles.empty())
+			if (lastPacket)
 			{
-				//Load GameMode
-				LoadGameMode();
-			}
-			else
-			{
-				bytesDownloaded = 0;
-				percent = 0;
-				LoadingScreen::GetInstance().SetLoadingText("Downloading Content: 0%");
+				if (missingFiles.empty())
+				{
+					//Load GameMode
+					LoadGameMode();
+				}
+				else
+				{
+					bytesDownloaded = 0;
+					percent = 0;
+					LoadingScreen::GetInstance().SetLoadingText("Downloading Content: 0%");
 
-				Network::PacketHandler* ph = NetworkInstance::GetClient()->GetPacketHandler();
-				uint64_t id = ph->StartPack("RequestContentFile");
+					Network::PacketHandler* ph = NetworkInstance::GetClient()->GetPacketHandler();
+					uint64_t id = ph->StartPack("RequestContentFile");
 
-				ph->WriteString(id, missingFiles.begin()->second.File.c_str());
+					ph->WriteString(id, missingFiles.begin()->second.File.c_str());
 
-				NetworkInstance::GetClient()->Send(ph->EndPack(id));
-				state = ContentFiles;
+					NetworkInstance::GetClient()->Send(ph->EndPack(id));
+					state = ContentFiles;
+				}
 			}
 		}
 

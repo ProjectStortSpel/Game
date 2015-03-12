@@ -62,9 +62,10 @@ MapGenerator.Initialize = function(self)
 end
 
 MapGenerator.EntitiesAdded = function(self, dt, entities)
-	self:GenerateMap(os.time()%29181249, 4, 4)
+	--self:GenerateMap(os.time()%29181249, 4, 4)
 	--self:GenerateMap(23246299, 8, 4)
 	--self:GenerateMap(1579125, 5, 5)
+	self:GenerateMap(1579125, 8, 5)
 	--self:GenerateMap(23239474, 4, 4)
 	--self:GenerateMap(5747, 4, 4)
 	--self:GenerateMap(1338, 2, 4)
@@ -1461,6 +1462,8 @@ MapGenerator.FixRiverEffects = function(self, riverTiles)
 		if isLastTile then
 			
 			if self:GetTileType(posAX + dirAX, posAY + dirAY) == self.Void then
+				--riverTiles[waterA]
+				world:CreateComponentAndAddTo("RiverEnd", riverTiles[waterA])
 				local	newParticle	=	world:CreateNewEntity()
 				world:CreateComponentAndAddTo("Position", newParticle)
 				world:CreateComponentAndAddTo("Color", newParticle)

@@ -19,7 +19,7 @@ namespace LuaBridge
 			NotWalkable,
 			//Edge,
 			//Hole,
-			//RiverEnd,
+			RiverEnd,
 			Unit,
 			Void,
 			NoOfEnums

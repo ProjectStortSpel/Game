@@ -1,7 +1,8 @@
 #include "DynamicScripting.h"
 #define MAX_NO_OF_TRIES 100
 #define MINIMUM_WEIGHT 1
-#define MAXIMUM_WEIGHT 100
+#define MAXIMUM_WEIGHT 10000
+
 
 DynamicScripting* DynamicScripting::m_instance = 0;
 
@@ -25,7 +26,7 @@ DynamicScripting::DynamicScripting()
 {
 	srand(time(0));
 	m_ruleBook = NULL;
-	m_noOfScriptsToUse = 3;
+	m_noOfScriptsToUse = 4;
 }
 
 DynamicScripting::~DynamicScripting()
@@ -120,6 +121,12 @@ bool DynamicScripting::AdjustWeight(float _fitness)
 		return false;
 	}
 
+	std::vector<float> old_weights;
+	for ( int i = 0; i < m_ruleBook->size( ); i++ )
+	{
+		old_weights.push_back( (*m_ruleBook)[i].weight );
+	}
+
 	unsigned int noOfInactiveScripts = m_ruleBook->size() - noOfActiveScripts;
 	float adjustment = FitnessFunction(_fitness);
 	/* The weight should always be the same so we must adjust the inactive scripts also.*/
@@ -159,6 +166,12 @@ bool DynamicScripting::AdjustWeight(float _fitness)
 	if ( abs( temp_sum - m_totalSum ) > 0.1f )
 	{
 		//printf( "FACK SUPER FUCKING BIG ERROR IN DS\n" );
+
+		for ( int i = 0; i < m_ruleBook->size( ); i++ )
+		{
+			( *m_ruleBook )[i].weight = old_weights[i];
+		}
+		old_weights.clear( );
 		return false;
 	}
 	return true;
