@@ -33,6 +33,7 @@ GraphicDevice::~GraphicDevice()
 {
 	delete(m_camera);
 	delete(m_skybox);
+	delete(m_skyboxClouds);
 
 	if (m_pointlightsPtr)
 		delete [] m_pointlightsPtr;
@@ -129,6 +130,7 @@ void GraphicDevice::InitStandardBuffers()
 {
 	//Skybox shader
 	m_skyBoxShader.CheckUniformLocation("cubemap", 1);
+	m_skyboxCloudsShader.CheckUniformLocation("cubemap", 2);
 
 	//Particle shaders
 	for (std::map<std::string, Shader*>::iterator it = m_particleShaders.begin(); it != m_particleShaders.end(); ++it)
@@ -151,6 +153,11 @@ void GraphicDevice::InitStandardShaders()
 	m_skyBoxShader.AddShader("content/shaders/android/AndroidSkyboxShaderVS.glsl", GL_VERTEX_SHADER);
 	m_skyBoxShader.AddShader("content/shaders/android/AndroidSkyboxShaderFS.glsl", GL_FRAGMENT_SHADER);
 	m_skyBoxShader.FinalizeShaderProgram();
+
+	m_skyboxCloudsShader.InitShaderProgram();
+	m_skyboxCloudsShader.AddShader("content/shaders/android/AndroidSkyboxShaderVS.glsl", GL_VERTEX_SHADER);
+	m_skyboxCloudsShader.AddShader("content/shaders/android/AndroidSkyboxShaderFS.glsl", GL_FRAGMENT_SHADER);
+	m_skyboxCloudsShader.FinalizeShaderProgram();
 
 	// Viewspace shader
 	m_viewspaceShader.InitShaderProgram();
@@ -239,13 +246,21 @@ void GraphicDevice::ResizeWindow(int _width, int _height)
 bool GraphicDevice::InitSkybox()
 {
 	int w, h;
+	m_skyBoxShader.UseProgram();
 	GLuint texHandle = TextureLoader::LoadCubeMap("content/textures/skybox", GL_TEXTURE1, w, h);
 	if (texHandle < 0)
 		return false;
 
-	m_skyBoxShader.UseProgram();
 	GLuint loc = glGetAttribLocation(m_skyBoxShader.GetShaderProgram(), "VertexPoint");
-	m_skybox = new SkyBox(texHandle, m_camera->GetFarPlane(), loc);
+	m_skybox = new SkyBox(texHandle, m_camera->GetFarPlane(), loc, 0.0f);
+
+	m_skyboxCloudsShader.UseProgram();
+	texHandle = TextureLoader::LoadCubeMap("content/textures/clouds", GL_TEXTURE2, w, h);
+	if (texHandle < 0)
+		return false;
+
+	loc = glGetAttribLocation(m_skyboxCloudsShader.GetShaderProgram(), "VertexPoint");
+	m_skyboxClouds = new SkyBox(texHandle, m_camera->GetFarPlane(), loc, 0.010f);
 
 	return true;
 }
