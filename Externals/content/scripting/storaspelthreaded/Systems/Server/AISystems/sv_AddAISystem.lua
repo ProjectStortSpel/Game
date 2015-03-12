@@ -91,10 +91,10 @@ AddAISystem.EntitiesAdded = function(self, dt, entities)
 				
 				--DynamicScripting.UpdateWeight(math.random())
 				
-				local found, weight = DynamicScripting.GetWeightFrom("Void", playerNumber)
+				local found, weight, length, onTheSpotValue = DynamicScripting.GetWeightFrom("Void", playerNumber)
 				self:PFstuff( found, voids, playerNumber, "Void", onTheSpotValue, weight, length, power )
 				
-				local found, weight = DynamicScripting.GetWeightFrom("NotWalkable", playerNumber)
+				local found, weight, length, onTheSpotValue = DynamicScripting.GetWeightFrom("NotWalkable", playerNumber)
 				self:PFstuff( found, nonWalkable, playerNumber, "NotWalkable", onTheSpotValue, weight, length, power )
 				
 				PotentialFieldHandler.SumPFs(playerNumber)

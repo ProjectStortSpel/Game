@@ -744,9 +744,9 @@ AICardPickingSystem.SimulateRiverMove = function(self, _posX, _posY)
 	elseif self.Map[arrayIndex] == "NotWalkable" or self.TempStones[arrayIndex] then
 		posX = _posX
 		posY = _posY
-		print()
-		print("Cannot riverpush, stone in the way")
-		print()
+		--print()
+		--print("Cannot riverpush, stone in the way")
+		--print()
 	end
 	
 	return fellDown, posX, posY
