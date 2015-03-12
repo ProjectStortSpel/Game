@@ -77,6 +77,12 @@ NewComponent.Name = "NotWalkable"
 NewComponent.TableType = TableType.Map
 worldCreator:AddComponentType(NewComponent)
 
+--River end component
+NewComponent = ComponentType()
+NewComponent.Name = "RiverEnd"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
+
 -- Available Spawnpoint
 NewComponent = ComponentType()
 NewComponent.Name = "AvailableSpawnpoint"
