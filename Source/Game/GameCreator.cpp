@@ -430,8 +430,8 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 
     if (_includeMasterServer)
     {
-        //worldCreator.AddSystemGroup();
-        //worldCreator.AddSystemToCurrentGroup<MasterServerSystem>();
+       worldCreator.AddSystemGroup();
+       worldCreator.AddSystemToCurrentGroup<MasterServerSystem>();
     }
     
     if (_worldType == WorldType::Server)
