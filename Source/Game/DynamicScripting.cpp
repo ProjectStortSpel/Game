@@ -117,7 +117,7 @@ bool DynamicScripting::AdjustWeight(float _fitness)
 	/* If we have no active scripts or more than we should have, something is wrong.*/
 	if (noOfActiveScripts <= 0 || m_ruleBook->size() < noOfActiveScripts)
 	{
-		return;
+		return false;
 	}
 
 	unsigned int noOfInactiveScripts = m_ruleBook->size() - noOfActiveScripts;
@@ -158,7 +158,7 @@ bool DynamicScripting::AdjustWeight(float _fitness)
 	
 	if ( abs( temp_sum - m_totalSum ) > 0.1f )
 	{
-		printf( "FACK SUPER FUCKING BIG ERROR IN DS\n" );
+		//printf( "FACK SUPER FUCKING BIG ERROR IN DS\n" );
 		return false;
 	}
 	return true;
