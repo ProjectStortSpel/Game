@@ -5,14 +5,13 @@ ScoreboardSystem.Initialize = function(self)
 	self:SetName("ScoreboardSystem")
 	
 	--	Toggle EntitiesAdded
-	self:UsingEntitiesAdded()
-	self:UsingEntitiesRemoved()
-	
+	self:UsingEntitiesAdded()	
 	
 	--	Set Filter
 	self:AddComponentTypeToFilter("UnitEntityId", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("PlayerNameChanged", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("ScoreboardPlayer", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("PlayerNameRemoved", FilterType.RequiresOneOf)
 end
 
 ScoreboardSystem.EntitiesAdded = function(self, dt, addedEntities)
@@ -23,7 +22,7 @@ ScoreboardSystem.EntitiesAdded = function(self, dt, addedEntities)
 		
 			local ip 	= world:GetComponent(addedEntities[n], "NetConnection", "IpAddress"):GetText()
 			local port 	= world:GetComponent(addedEntities[n], "NetConnection", "Port"):GetInt()
-			local name = world:GetComponent(addedEntities[n], "PlayerName", "Name"):GetText()
+			local name = world:GetComponent(addedEntities[n], "PlayerName", "Name"):GetString()
 			
 			local unitId = world:GetComponent(addedEntities[n], "UnitEntityId", "Id"):GetInt()
 			local R, G, B	=	world:GetComponent(unitId, "Color", "X"):GetFloat3()
@@ -38,11 +37,25 @@ ScoreboardSystem.EntitiesAdded = function(self, dt, addedEntities)
 			world:SetComponent(scrbrdP, "ScoreboardPlayer", "IpAddress", ip)
 			world:SetComponent(scrbrdP, "ScoreboardPlayer", "Port", port)
 		
+		elseif world:EntityHasComponent(addedEntities[n], "AI") then
+			local name = world:GetComponent(addedEntities[n], "PlayerName", "Name"):GetString()
+			
+			local unitId = world:GetComponent(addedEntities[n], "UnitEntityId", "Id"):GetInt()
+			local R, G, B	=	world:GetComponent(unitId, "Color", "X"):GetFloat3()
+			
+			local scrbrdP = world:CreateNewEntity()
+			world:CreateComponentAndAddTo("ScoreboardPlayer", scrbrdP)
+			world:CreateComponentAndAddTo("SyncNetwork", scrbrdP)
+			world:GetComponent(scrbrdP, "ScoreboardPlayer", "Name"):SetText(name)
+			world:GetComponent(scrbrdP, "ScoreboardPlayer", "R"):SetFloat(R)
+			world:GetComponent(scrbrdP, "ScoreboardPlayer", "G"):SetFloat(G)
+			world:GetComponent(scrbrdP, "ScoreboardPlayer", "B"):SetFloat(B)
+		
 		elseif world:EntityHasComponent(addedEntities[n], "PlayerNameChanged") then
 		
 			local pnIp 		= world:GetComponent(addedEntities[n], "PlayerNameChanged", "IpAddress"):GetText()
 			local pnPort 	= world:GetComponent(addedEntities[n], "PlayerNameChanged", "Port"):GetInt()
-			local pnName 	= world:GetComponent(addedEntities[n], "PlayerNameChanged", "Name"):GetText()
+			local pnName 	= world:GetComponent(addedEntities[n], "PlayerNameChanged", "Name"):GetString()
 	
 			local scrbrdPlayers = self:GetEntities("ScoreboardPlayer")
 			for i = 1, #scrbrdPlayers do
@@ -52,11 +65,32 @@ ScoreboardSystem.EntitiesAdded = function(self, dt, addedEntities)
 			
 				if pnIp == ip and pnPort == port then
 					world:SetComponent(scrbrdPlayers[i], "ScoreboardPlayer", "Name", pnName)
+					break
 				end
 			
 			end
 
-		end
+		elseif world:EntityHasComponent(addedEntities[n], "PlayerNameRemoved") then
 		
+			local pnIp 		= world:GetComponent(addedEntities[n], "PlayerNameRemoved", "IpAddress"):GetText()
+			local pnPort 	= world:GetComponent(addedEntities[n], "PlayerNameRemoved", "Port"):GetInt()
+			
+			local scrbrdPlayers = self:GetEntities("ScoreboardPlayer")
+			for i = 1, #scrbrdPlayers do
+			
+				local ip 	= world:GetComponent(scrbrdPlayers[i], "ScoreboardPlayer", "IpAddress"):GetText()
+				local port 	= world:GetComponent(scrbrdPlayers[i], "ScoreboardPlayer", "Port"):GetInt()
+				
+				if pnIp == ip and pnPort == port then
+					world:KillEntity(scrbrdPlayers[i])
+					break
+				end
+			
+			end	
+
+			world:KillEntity(addedEntities[n])
+			
+		end
+			
 	end 
 end

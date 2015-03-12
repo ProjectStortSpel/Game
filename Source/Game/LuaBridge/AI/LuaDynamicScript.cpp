@@ -60,9 +60,9 @@ namespace LuaBridge
 			DynamicScripting* ds = DynamicScripting::Instance( );
 
 			ds->SetRuleBook( book );
-			ds->AdjustWeight( fitness );
+			bool noError = ds->AdjustWeight( fitness );
 			
-			if ( _book_index >= 0 )
+			if ( _book_index >= 0 && noError )
 			{
 				rm.StoreRulebook( _book_index );
 			}
@@ -142,11 +142,11 @@ namespace LuaBridge
 					std::string this_is_a_string;
 					std::getline( ss, this_is_a_string, ' ' );
 					int nr_of_stuff = 1;
-					printf( "looking for %s\n", this_is_a_string.c_str( ) );
+					//printf( "looking for %s\n", this_is_a_string.c_str( ) );
 					while ( std::getline( ss, this_is_a_string, ' ' ) )
 					{
 						LuaEmbedder::PushFloat( _l, atof( this_is_a_string.c_str( )) );
-						printf( "found this %s\n", this_is_a_string.c_str( ) );
+						//printf( "found this %s\n", this_is_a_string.c_str( ) );
 						++nr_of_stuff;
 					}
 

@@ -101,9 +101,9 @@ static unsigned int LoadTexture(SDL_Surface* surface, GLenum textureSlot)
 static unsigned int LoadCubeMap(const char* file, GLenum textureSlot, int &height, int &width)
 {
 	GLuint texHandle;
-	glActiveTexture(textureSlot);
 	glEnable(GL_TEXTURE_CUBE_MAP);
 	glGenTextures(1, &texHandle);
+	glActiveTexture(textureSlot);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, texHandle);
 
 	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -156,6 +156,9 @@ static unsigned int LoadCubeMap(const char* file, GLenum textureSlot, int &heigh
 		stbi_image_free(imgData);
 		delete [] data;
 	}
+
+	//glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+	//glDisable(GL_TEXTURE_CUBE_MAP);
 
 	return texHandle;
 }

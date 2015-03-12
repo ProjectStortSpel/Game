@@ -86,21 +86,28 @@ void GraphicsLow::Render()
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glViewport(0, 0, m_framebufferWidth, m_framebufferHeight);
+	glEnable(GL_DEPTH_TEST);
 	//--------Uniforms-------------------------------------------------------------------------
 	mat4 projectionMatrix = *m_camera->GetProjMatrix();
 	mat4 viewMatrix = *m_camera->GetViewMatrix();
 
 	glDisable(GL_CULL_FACE);
+	glDepthMask(GL_FALSE);
 	// DRAW SKYBOX
 	m_skyBoxShader.UseProgram();
-	m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera);
-	// -----------
+	glActiveTexture(GL_TEXTURE1);
+	m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera, m_dt);
+	glEnable(GL_BLEND);
 
+	m_skyboxCloudsShader.UseProgram();
+	glActiveTexture(GL_TEXTURE2);
+	m_skyboxClouds->Draw(m_skyboxCloudsShader.GetShaderProgram(), m_camera, m_dt);
 	glEnable(GL_CULL_FACE);
+	glDepthMask(GL_TRUE);
+	// -----------
 
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_BLEND);
 	
 	if (m_modelsForward.size() > 0)
 	{

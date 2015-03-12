@@ -125,6 +125,7 @@ namespace Renderer
 		SDL_Window*	GetSDL_Window(){ return m_window; }
 		SDL_GLContext GetSDL_GLContext(){ return m_glContext; }
 		void GetWindowSize(int &x, int &y){ x = m_clientWidth; y = m_clientHeight; }
+		void GetFramebufferSize(int &x, int &y) { GetWindowSize(x, y); }
 		void GetWindowPos(int &x, int &y);
 		void ResizeWindow(int _width, int _height);
 		virtual void SetTitle(std::string _title){};// = 0;

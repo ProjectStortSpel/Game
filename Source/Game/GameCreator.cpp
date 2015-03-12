@@ -430,8 +430,8 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 
     if (_includeMasterServer)
     {
-        //worldCreator.AddSystemGroup();
-        //worldCreator.AddSystemToCurrentGroup<MasterServerSystem>();
+       worldCreator.AddSystemGroup();
+       worldCreator.AddSystemToCurrentGroup<MasterServerSystem>();
     }
     
     if (_worldType == WorldType::Server)
@@ -454,15 +454,17 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
         m_graphicalSystems.push_back(graphicalSystem);
         worldCreator.AddSystemGroup();
         worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
+		graphicalSystem = new ParticleSystem(m_graphics);
+		m_graphicalSystems.push_back(graphicalSystem);
+		worldCreator.AddSystemGroup();
+		worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
         //worldCreator.AddSystemGroup();
         worldCreator.AddSystemToCurrentGroup<ResetChangedSystem>();
     }
     
 
-	graphicalSystem = new ParticleSystem(m_graphics);
-	m_graphicalSystems.push_back(graphicalSystem);
-	worldCreator.AddSystemGroup();
-	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
+
+
 
     if (_worldType == WorldType::Client)
     {
@@ -597,7 +599,7 @@ void GameCreator::StartGame(int argc, char** argv)
 	Utility::FrameCounter totalCounter;
 	
 	// Remove to enable audio
-	Audio::SetVolume(0);
+	Audio::SetVolume(128);
 
 	while (m_running)
 	{
