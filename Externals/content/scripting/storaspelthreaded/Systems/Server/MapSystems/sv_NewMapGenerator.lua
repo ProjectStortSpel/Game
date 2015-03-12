@@ -15,6 +15,8 @@ MapGenerator.Rivers					=	0		--	How many rivers the map should contain
 MapGenerator.RiverTiles				=	0		--	How many rivers tiles the map should contain
 MapGenerator.TileTypes 				= 	{}
 MapGenerator.TileTypes.__mode 		= 	"k"
+MapGenerator.RootFilePath			= 	"content/maps/"
+
 
 
 --	 _______ _____ _      ______ 	 _________     _______  ______  _____ 
@@ -62,12 +64,15 @@ MapGenerator.Initialize = function(self)
 end
 
 MapGenerator.EntitiesAdded = function(self, dt, entities)
-	self:GenerateMap(os.time()%29181249, 4, 4)
+	--self:GenerateMap(os.time()%29181249, 4, 4)
 	--self:GenerateMap(23246299, 8, 4)
-	--self:GenerateMap(1579125, 5, 5)
+	self:GenerateMap(1579125, 5, 5)
+	--self:GenerateMap(1579125, 8, 5)
 	--self:GenerateMap(23239474, 4, 4)
 	--self:GenerateMap(5747, 4, 4)
 	--self:GenerateMap(1338, 2, 4)
+	
+	--self:LoadMap("map")
 end
 
 MapGenerator.PostInitialize = function(self)
@@ -184,6 +189,49 @@ MapGenerator.GenerateMap = function(self, MapSeed, NumberOfPlayers, NumberOfChec
 	self:CreateMap()
 end
 
+--	Will load a map from a specified file
+MapGenerator.LoadMap = function(self, MapName)
+	
+	--	Create the map content variable
+	local	mapSizeX, mapSizeZ, mapString
+	
+	mapSizeX, mapSizeZ, mapString	=	File.LoadMap(self.RootFilePath .. MapName .. ".txt")
+	self.MapSizeX	=	mapSizeX + 2*self.VoidMargin
+	self.MapSizeZ	=	mapSizeZ + 2*self.VoidMargin
+	
+	local	tInputData	= 	InputData()
+	for Z = 0, self.MapSizeZ-1 do
+		for X = 0, self.MapSizeX-1 do
+			tInputData:AddTile( 1, false )
+			self.TileTypes[#self.TileTypes+1]	=	self.Void
+		end
+	end
+	tInputData:SetSize(self.MapSizeX, self.MapSizeZ)
+	PathfinderHandler.SetData(tInputData)
+	
+	--	Read map
+	local	tempType
+	local	numberOfPlayers		=	0
+	local	numberOfCheckpoints	=	0
+	for Z = 0, mapSizeZ-1 do
+		for X = 0, mapSizeX-1 do
+			tempType	=	self:GetASCIIToTileType(mapString[Z*mapSizeX+X+1])
+			self:SetTileType(self.VoidMargin + X, self.VoidMargin + Z, tempType)
+			
+			if tempType == self.Spawnpoint then
+				numberOfPlayers	=	numberOfPlayers+1
+			elseif tempType >= self.Checkpoint then
+				numberOfCheckpoints	=	numberOfCheckpoints+1
+			end
+		end
+	end
+	
+	self.Players		=	numberOfPlayers
+	self.Checkpoints	=	numberOfCheckpoints
+	
+	self:FixEmptyTiles()
+	self:CreateMap()
+end
 
 --	  _____ _____             _____ _____ 
 --	 / ____|  __ \     /\    / ____/ ____|
@@ -923,13 +971,19 @@ MapGenerator.PlaceCheckpoints = function(self)
 
 	local	centerX, centerZ	=	self:GetCenterOfMap()
 	local	lastX, lastZ		=	self:GetRandomTileOfType(self.Grass)--self:GetRandomPositionWithinMargin(self.VoidMargin, self.VoidMargin)
-	local	tempDistance		=	math.ceil(self:GetDistanceBetween(self.VoidMargin, self.VoidMargin, centerX, centerZ))--math.ceil(self:GetDistanceBetween(self.VoidMargin, self.VoidMargin, centerX, centerZ))
-	
+	local	tempDistance		=	self.MapSizeX+self.MapSizeZ*0.8--math.ceil(self:GetDistanceBetween(self.VoidMargin, self.VoidMargin, centerX, centerZ))--math.ceil(self:GetDistanceBetween(self.VoidMargin, self.VoidMargin, centerX, centerZ))
+	local	tX, tZ	=	-1, -1
 	for n = 0, self.Checkpoints-1 do
 		tempDistance		=	math.ceil(self:GetDistanceBetween(lastX, lastZ, centerX, centerZ))
 		while true do
 			
-			local	tX, tZ	=	self:GetPositionXDistanceAwayFrom(lastX, lastZ, tempDistance)
+			for nTry = 1, 10 do 
+				tX, tZ	=	self:GetPositionXDistanceAwayFrom(lastX, lastZ, tempDistance)
+				
+				if self:GetTileType(tX, tZ) == self.Grass then
+					break
+				end
+			end
 			if self:GetTileType(tX, tZ) == self.Grass then
 				local	isNearCheckpoint	=	false
 				for tempCheckpoint = self.Checkpoint, self.Checkpoint+n do
@@ -1178,7 +1232,7 @@ MapGenerator.CreateGrassEntity = function(self, X, Z)
 	local	newGrass	=	self:CreateTileEntity(X, Z)
 	world:CreateComponentAndAddTo("Model", newGrass)
 	world:GetComponent(newGrass, "Model", 0):SetModel("grass", "grass", 0)
-	world:CreateComponentAndAddTo("NoShadow", newGrass)
+	--world:CreateComponentAndAddTo("NoShadow", newGrass)
 	world:GetComponent(newGrass, "Rotation", 0):SetFloat3(0, math.pi * 0.5 * math.random(0, 4), 0)
 	
 	world:CreateComponentAndAddTo("StaticModel", newGrass)
@@ -1456,10 +1510,13 @@ MapGenerator.FixRiverEffects = function(self, riverTiles)
 			world:GetComponent(newParticle, "Particle", "fVelocityZ"):SetFloat(0)
 			world:GetComponent(newParticle, "Particle", "gSpriteSize"):SetFloat(0.40)
 			world:GetComponent(newParticle, "Particle", "hId"):SetInt(-1)
+			world:GetComponent(newParticle, "Particle", "iOnlyOnce"):SetInt(0)
 		end
 		if isLastTile then
 			
 			if self:GetTileType(posAX + dirAX, posAY + dirAY) == self.Void then
+				--riverTiles[waterA]
+				world:CreateComponentAndAddTo("RiverEnd", riverTiles[waterA])
 				local	newParticle	=	world:CreateNewEntity()
 				world:CreateComponentAndAddTo("Position", newParticle)
 				world:CreateComponentAndAddTo("Color", newParticle)
@@ -1482,6 +1539,7 @@ MapGenerator.FixRiverEffects = function(self, riverTiles)
 				world:GetComponent(newParticle, "Particle", "fVelocityZ"):SetFloat(dirAY*0.3)
 				world:GetComponent(newParticle, "Particle", "gSpriteSize"):SetFloat(1.2)
 				world:GetComponent(newParticle, "Particle", "hId"):SetInt(-1)
+				world:GetComponent(newParticle, "Particle", "iOnlyOnce"):SetInt(0)
 				
 					--- THIS IS FOR STONE METEOR IMPACT ---
 				--newParticle	=	world:CreateNewEntity()
@@ -1497,17 +1555,18 @@ MapGenerator.FixRiverEffects = function(self, riverTiles)
 				--world:GetComponent(newParticle, "Particle", "aName"):SetText("explosion")
 				--world:GetComponent(newParticle, "Particle", "bTexture"):SetText("content/textures/dust.png")
 				--world:GetComponent(newParticle, "Particle", "cParticles"):SetInt(15)
-				--world:GetComponent(newParticle, "Particle", "dLifetime"):SetFloat(1.8)
+				--world:GetComponent(newParticle, "Particle", "dLifetime"):SetFloat(1.0)
 				--world:GetComponent(newParticle, "Particle", "eScaleX"):SetFloat(0.01)
 				--world:GetComponent(newParticle, "Particle", "eScaleY"):SetFloat(0.01)
 				--world:GetComponent(newParticle, "Particle", "eScaleZ"):SetFloat(0.01)
 				--world:GetComponent(newParticle, "Particle", "fVelocityX"):SetFloat(0)
 				--world:GetComponent(newParticle, "Particle", "fVelocityY"):SetFloat(0)
 				--world:GetComponent(newParticle, "Particle", "fVelocityZ"):SetFloat(0)
-				--world:GetComponent(newParticle, "Particle", "gSpriteSize"):SetFloat(2.1)
+				--world:GetComponent(newParticle, "Particle", "gSpriteSize"):SetFloat(2.5)
 				--world:GetComponent(newParticle, "Particle", "hId"):SetInt(-1)
-				
-					--THIS IS FOR THROWING STONE IMPACT--
+				--world:GetComponent(newParticle, "Particle", "iOnlyOnce"):SetInt(1)
+				--
+				--	--THIS IS FOR THROWING STONE IMPACT--
 				--newParticle	=	world:CreateNewEntity()
 				--world:CreateComponentAndAddTo("Position", newParticle)
 				--world:CreateComponentAndAddTo("Color", newParticle)
@@ -1521,7 +1580,7 @@ MapGenerator.FixRiverEffects = function(self, riverTiles)
 				--world:GetComponent(newParticle, "Particle", "aName"):SetText("explosion")
 				--world:GetComponent(newParticle, "Particle", "bTexture"):SetText("content/textures/dust.png")
 				--world:GetComponent(newParticle, "Particle", "cParticles"):SetInt(15)
-				--world:GetComponent(newParticle, "Particle", "dLifetime"):SetFloat(0.8)
+				--world:GetComponent(newParticle, "Particle", "dLifetime"):SetFloat(1.4)
 				--world:GetComponent(newParticle, "Particle", "eScaleX"):SetFloat(0.01)
 				--world:GetComponent(newParticle, "Particle", "eScaleY"):SetFloat(0.01)
 				--world:GetComponent(newParticle, "Particle", "eScaleZ"):SetFloat(0.01)
@@ -1530,6 +1589,9 @@ MapGenerator.FixRiverEffects = function(self, riverTiles)
 				--world:GetComponent(newParticle, "Particle", "fVelocityZ"):SetFloat(0)
 				--world:GetComponent(newParticle, "Particle", "gSpriteSize"):SetFloat(1.1)
 				--world:GetComponent(newParticle, "Particle", "hId"):SetInt(-1)
+				--world:GetComponent(newParticle, "Particle", "iOnlyOnce"):SetInt(1)
+				
+				
 			else
 				if self:GetTileType(posAX + dirAX, posAY + dirAY) ~= self.Hole then 
 					if self:IsRiver(posAX - dirAX, posAY - dirAY) then
@@ -1783,7 +1845,7 @@ MapGenerator.PlaceTrees = function(self)
 			local randZ = tZ+(math.random(0, 1)-0.5)*0.8
 			world:GetComponent(newTree, "Position", 0):SetFloat3(randX, 0.40, randZ)
 			world:GetComponent(newTree, "Rotation", 0):SetFloat3(math.pi * 0.01 * math.random(0, 10), math.pi * 0.01 * math.random(0, 100), math.pi * 0.01 * math.random(0, 10))
-			local randScale = 0.9 - math.sin(math.random(0, 360)) * 0.2
+			local randScale = 1.0 - math.sin(math.random(0, 360)) * 0.2
 			world:GetComponent(newTree, "Scale", 0):SetFloat3(0, 0, 0)
 			world:GetComponent(newTree, "Color", 0):SetFloat3(math.random(), math.random(), math.random())
 			world:GetComponent(newTree, "Model", 0):SetModel("tree", "tree", 1)
@@ -1836,8 +1898,12 @@ MapGenerator.GenerateIslandBelow = function(self)
 	world:CreateComponentAndAddTo("SyncNetwork", generateIsland)
 	world:CreateComponentAndAddTo("GenerateIsland", generateIsland)
 	world:GetComponent(generateIsland, "GenerateIsland", "Map"):SetString(stringMap)
+	world:GetComponent(generateIsland, "GenerateIsland", "OffsetX"):SetInt(0*self.VoidMargin)
+	world:GetComponent(generateIsland, "GenerateIsland", "OffsetZ"):SetInt(0*self.VoidMargin)
 	world:GetComponent(generateIsland, "GenerateIsland", "SizeX"):SetInt(self.MapSizeX)
 	world:GetComponent(generateIsland, "GenerateIsland", "SizeZ"):SetInt(self.MapSizeZ)
+	
+	print("ISLAND CREATED!")
 end
 
 
@@ -2053,7 +2119,41 @@ MapGenerator.CanWalkBetween = function(self, X1, Z1, X2, Z2)
 	end
 end
 
-
+MapGenerator.GetASCIIToTileType = function(self, Char)
+	
+	if Char == 111 then
+		return	self.Void
+		
+	elseif Char == 46 then
+		return	self.Grass
+		
+	elseif Char == 104 then
+		return	self.Hole
+		
+	elseif Char == 120 then
+		return	self.Stone
+		
+	elseif Char >= 49 and Char <= 57 then
+		return	self.Checkpoint + (Char-49)
+		
+	elseif Char == 117 then
+		return	self.RiverUp
+		
+	elseif Char == 100 then
+		return	self.RiverDown
+		
+	elseif Char == 108 then
+		return	self.RiverLeft
+		
+	elseif Char == 114 then
+		return	self.RiverRight
+		
+	elseif Char == 115 then
+		return	self.Spawnpoint
+	end
+	
+	return	self.UNDEFINED
+end
 
 MapGenerator.PrintDebugMessage = function(self, Message)
 	if self.DebugInfo then

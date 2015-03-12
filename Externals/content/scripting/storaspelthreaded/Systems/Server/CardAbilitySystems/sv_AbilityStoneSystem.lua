@@ -131,6 +131,7 @@ AbilityStoneSystem.PlaceStone = function(self, entity)
 				world:CreateComponentAndAddTo("Parent", stone)
 				world:CreateComponentAndAddTo("AbilityStone", stone)
 				world:CreateComponentAndAddTo("LerpPosition", stone)
+				world:CreateComponentAndAddTo("AddEntityAfterLerp", stone)
 				
 				local newEntity = world:CreateNewEntity()
 				world:CreateComponentAndAddTo("TileWalkabilityHasChanged", newEntity)
@@ -148,6 +149,7 @@ AbilityStoneSystem.PlaceStone = function(self, entity)
 				world:GetComponent(stone, "LerpPosition", "Z"):SetFloat(0)
 				world:GetComponent(stone, "LerpPosition", "Time"):SetFloat(0.7)
 				world:GetComponent(stone, "LerpPosition", "Algorithm"):SetText("NormalLerp")
+				world:GetComponent(stone, "AddEntityAfterLerp", "ComponentName"):SetText("AddStoneImpact")
 				
 				self:AddTimer(stone,X,Z)
 				

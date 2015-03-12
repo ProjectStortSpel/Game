@@ -24,6 +24,11 @@
     <ClCompile Include="..\..\..\Source\AndroidRenderer\Particles\WaterSpawn.cpp">
       <Filter>ParticleEffects</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\AndroidRenderer\Particles\Explosion.cpp">
+      <Filter>ParticleEffects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\AndroidRenderer\AModel.cpp" />
+    <ClCompile Include="..\..\..\Source\AndroidRenderer\Model.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\AndroidRenderer\Buffer.h" />
@@ -53,6 +58,11 @@
     <ClInclude Include="..\..\..\Source\AndroidRenderer\Particles\WaterSpawn.h">
       <Filter>ParticleEffects</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\AndroidRenderer\Particles\Explosion.h">
+      <Filter>ParticleEffects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\AndroidRenderer\AModel.h" />
+    <ClInclude Include="..\..\..\Source\AndroidRenderer\Model.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
@@ -137,6 +147,15 @@
     </None>
     <None Include="..\..\..\Externals\content\shaders\android\AndroidWaterfallShaderVS.glsl">
       <Filter>Shaders\ParticleEffects</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidExplosionShaderFS.glsl">
+      <Filter>Shaders\ParticleEffects</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidExplosionShaderVS.glsl">
+      <Filter>Shaders\ParticleEffects</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidAnimationShaderVS.glsl">
+      <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
 </Project>
