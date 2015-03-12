@@ -430,8 +430,8 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 
     if (_includeMasterServer)
     {
-        //worldCreator.AddSystemGroup();
-        //worldCreator.AddSystemToCurrentGroup<MasterServerSystem>();
+       worldCreator.AddSystemGroup();
+       worldCreator.AddSystemToCurrentGroup<MasterServerSystem>();
     }
     
     if (_worldType == WorldType::Server)
@@ -597,7 +597,7 @@ void GameCreator::StartGame(int argc, char** argv)
 	Utility::FrameCounter totalCounter;
 	
 	// Remove to enable audio
-	Audio::SetVolume(0);
+	Audio::SetVolume(128);
 
 	while (m_running)
 	{

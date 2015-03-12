@@ -53,7 +53,7 @@ OptionMenuSystem.EntitiesAdded = function(self, dt, entities)
 end
 
 OptionMenuSystem.SpawnMenu = function(self)
-	local background = self:CreateElement("gamemenubackground", "quad", 0, -0, -3.1, 3, 3)
+	local background = self:CreateElement("gamemenubackground", "quad", 0, -0, -3.1, 1.6, 1.9)
 	
 	local button = nil
 	button = self:CreateElement("graphicslow", "quad", 0, 0.4, -3, 0.6, 0.3)

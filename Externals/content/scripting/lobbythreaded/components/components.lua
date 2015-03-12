@@ -138,6 +138,6 @@ worldCreator:AddComponentType(HideComponent)
 NewComponent = ComponentType()
 NewComponent.Name = "PlayerName"
 NewComponent.TableType = TableType.Map
-NewComponent:AddVariable("Name", ByteSize.Text)
+NewComponent:AddVariable("Name", ByteSize.String)
 worldCreator:AddComponentType(NewComponent)
 

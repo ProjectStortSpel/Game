@@ -20,6 +20,8 @@ AICardPickingSystem.RiverDirections = {}
 AICardPickingSystem.RiverDirections.__mode = "k"
 AICardPickingSystem.TempStones = {}
 AICardPickingSystem.TempStones.__mode = "k"
+AICardPickingSystem.SimStones = {}
+AICardPickingSystem.SimStones.__mode = "k"
 
 -- TODO: Remove this
 AICardPickingSystem.ERROR = false
@@ -76,12 +78,6 @@ AICardPickingSystem.Update = function(self, dt)
 		return
 	end
 	
-	local AIs = self:GetEntities("AI")
-	
-	if #AIs == 0 or #self.PermutationsArray <= self.PermutationIndex then
-		return
-	end
-	
 	local startTime, endTime
 	local timeTaken = 0.0
 	
@@ -91,6 +87,7 @@ AICardPickingSystem.Update = function(self, dt)
 	startTime = os.clock()
 	
 	local aiIndex = self.CurrentAI
+	local AIs = self:GetEntities("AI")
 	local noOfAIs = #AIs
 	
 	while timeTaken < timeLimit do
@@ -331,7 +328,9 @@ AICardPickingSystem.SendCards = function(self)
 		local unit = world:GetComponent(playerEntity, "UnitEntityId", "Id"):GetInt()
 		
 		world:CreateComponentAndAddTo("HasSelectedCards", playerEntity)
-		world:CreateComponentAndAddTo("UnitSelectedCards", unit)
+		if world:EntityHasComponent(unit, "UnitSelectedCards") then
+			world:CreateComponentAndAddTo("UnitSelectedCards", unit)
+		end
 		
 		local DealingSettings = self:GetEntities("DealingSettings")
 		local cardsPerHand, cardsToPick = world:GetComponent(DealingSettings[1], "DealingSettings", 0):GetInt2(0)
@@ -747,9 +746,9 @@ AICardPickingSystem.SimulateRiverMove = function(self, _posX, _posY)
 	elseif self.Map[arrayIndex] == "NotWalkable" or self.TempStones[arrayIndex] then
 		posX = _posX
 		posY = _posY
-		print()
-		print("Cannot riverpush, stone in the way")
-		print()
+		--print()
+		--print("Cannot riverpush, stone in the way")
+		--print()
 	end
 	
 	return fellDown, posX, posY
