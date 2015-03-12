@@ -15,6 +15,7 @@ ParticleComponent:AddVariable("fVelocityY", ByteSize.Float)
 ParticleComponent:AddVariable("fVelocityZ", ByteSize.Float)
 ParticleComponent:AddVariable("gSpriteSize", ByteSize.Float)
 ParticleComponent:AddVariable("hId", ByteSize.Int)
+ParticleComponent:AddVariable("iOnlyOnce", ByteSize.Int)
 worldCreator:AddComponentType(ParticleComponent)
 
 --local ParticleComponent = ComponentType()

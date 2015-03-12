@@ -19,6 +19,7 @@ Author: Christian
 #include "Particles/Smoke.h"
 #include "Particles/Waterfall.h"
 #include "Particles/WaterSpawn.h"
+#include "Particles/Explosion.h"
 #include "Model.h"
 #include "AModel.h"
 

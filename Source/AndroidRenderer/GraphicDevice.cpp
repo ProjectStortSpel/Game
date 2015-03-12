@@ -199,6 +199,12 @@ void GraphicDevice::InitStandardShaders()
 	m_particleShaders["waterspawn"]->AddShader("content/shaders/android/AndroidSmokeShaderVS.glsl", GL_VERTEX_SHADER);
 	m_particleShaders["waterspawn"]->AddShader("content/shaders/android/AndroidSmokeShaderFS.glsl", GL_FRAGMENT_SHADER);
 	m_particleShaders["waterspawn"]->FinalizeShaderProgram();
+
+	m_particleShaders["explosion"] = new Shader();
+	m_particleShaders["explosion"]->InitShaderProgram();
+	m_particleShaders["explosion"]->AddShader("content/shaders/android/AndroidExplosionShaderVS.glsl", GL_VERTEX_SHADER);
+	m_particleShaders["explosion"]->AddShader("content/shaders/android/AndroidExplosionShaderFS.glsl", GL_FRAGMENT_SHADER);
+	m_particleShaders["explosion"]->FinalizeShaderProgram();
 	
 	//m_fullscreen
 	m_fullscreen.InitShaderProgram();
@@ -924,7 +930,20 @@ void GraphicDevice::BufferParticleSystems()
 	// ParticleSystems to add
 	for (int i = 0; i < m_particleSystemsToLoad.size(); i++)
 	{
-		if (m_particleSystemsToLoad[i].Name == "fire")
+		if (m_particleSystemsToLoad[i].Name == "explosion")
+		{
+			m_particleEffects.insert(std::pair<int, ParticleEffect*>(m_particleSystemsToLoad[i].Id, new Explosion(
+				m_particleSystemsToLoad[i].Pos,
+				m_particleSystemsToLoad[i].Vel,
+				m_particleSystemsToLoad[i].NrOfParticles,
+				m_particleSystemsToLoad[i].LifeTime,
+				m_particleSystemsToLoad[i].Scale,
+				m_particleSystemsToLoad[i].SpriteSize,
+				AddTexture(m_particleSystemsToLoad[i].TextureName, GL_TEXTURE1),
+				m_particleSystemsToLoad[i].Color,
+				m_particleShaders[m_particleSystemsToLoad[i].Name])));
+		}
+		else if (m_particleSystemsToLoad[i].Name == "fire")
 		{
 			m_particleEffects.insert(std::pair<int, ParticleEffect*>(m_particleSystemsToLoad[i].Id, new Fire(
 				m_particleSystemsToLoad[i].Pos,
