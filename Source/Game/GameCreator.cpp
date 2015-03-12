@@ -465,7 +465,7 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 
 
 
-
+	m_entityCount = worldCreator.GetMaxNumberOfEntities();
     if (_worldType == WorldType::Client)
     {
 		m_clientWorld = worldCreator.CreateWorld(worldCreator.GetMaxNumberOfEntities());
@@ -1280,7 +1280,7 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 	
 	if ((*_args)[0].ArgType == Console::ArgumentType::Text)
 	{
-		for (int i = 0; i < 1000; ++i)
+		for (int i = 0; i < m_entityCount; ++i)
 		{
 			if (m_clientWorld && m_clientWorld->HasComponent(i, "Render"))
 				m_clientWorld->RemoveComponentFrom("Render", i);
@@ -1333,7 +1333,7 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 
 	if ((*_args)[0].ArgType == Console::ArgumentType::Text)
 	{
-		for (int i = 0; i < 1000; ++i)
+		for (int i = 0; i < m_entityCount; ++i)
 		{
 			if (m_clientWorld && m_clientWorld->HasComponent(i, "Render"))
 				m_clientWorld->RemoveComponentFrom("Render", i);
