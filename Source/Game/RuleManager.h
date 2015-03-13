@@ -43,6 +43,7 @@ public:
 		Returns true if it was able to store the data.
 	*/
 	bool		StoreRulebook( int _index );
+
 };
 
 #endif //RULEMANAGER_H

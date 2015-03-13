@@ -93,3 +93,9 @@ NewComponent.Name = "NoSubSteps"
 NewComponent.TableType = TableType.Map
 NewComponent:AddVariable("Counter", ByteSize.Int)
 worldCreator:AddComponentType(NewComponent)
+
+-- PlayerReachedFinish Component
+NewComponent = ComponentType()
+NewComponent.Name = "PlayerReachedFinish"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)

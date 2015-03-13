@@ -23,17 +23,23 @@ void GenerateIslandSystem::Initialize()
 	m_generateIslandMapId = ECSL::ComponentTypeManager::GetInstance().GetComponentType(m_generateIslandId)->GetVariables()->at("Map").GetOffset();
 	m_generateIslandSizeXId = ECSL::ComponentTypeManager::GetInstance().GetComponentType(m_generateIslandId)->GetVariables()->at("SizeX").GetOffset();
 	m_generateIslandSizeZId = ECSL::ComponentTypeManager::GetInstance().GetComponentType(m_generateIslandId)->GetVariables()->at("SizeZ").GetOffset();
+	m_generateIslandOffsetXId = ECSL::ComponentTypeManager::GetInstance().GetComponentType(m_generateIslandId)->GetVariables()->at("OffsetX").GetOffset();
+	m_generateIslandOffsetZId = ECSL::ComponentTypeManager::GetInstance().GetComponentType(m_generateIslandId)->GetVariables()->at("OffsetZ").GetOffset();
 	
 	m_renderId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Render");
 }
 
 void GenerateIslandSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities)
 {
+
+#if !defined(__IOS__) && !defined(__ANDROID__)
 	for (unsigned int entityId : _entities)
 	{
 		std::string map = GetString(entityId, m_generateIslandId, m_generateIslandMapId);
 		int sizeX = *((int*)GetComponent(entityId, m_generateIslandId, m_generateIslandSizeXId));
 		int sizeZ = *((int*)GetComponent(entityId, m_generateIslandId, m_generateIslandSizeZId));
+		int offsetX = *((int*)GetComponent(entityId, m_generateIslandId, m_generateIslandOffsetXId));
+		int offsetZ = *((int*)GetComponent(entityId, m_generateIslandId, m_generateIslandOffsetZId));
 
 		std::vector<std::string> stringMap;
 		for (int z = 0; z < sizeZ; ++z)
@@ -49,7 +55,7 @@ void GenerateIslandSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, cons
 		float* color = (float*)GetComponent(entityId, m_renderId, "ColorX");
 		int* modelId = (int*)GetComponent(entityId, m_renderId, "ModelId");
 
-		*modelMatrix = glm::translate(glm::vec3(0.0f, 0.15f, 0.0f));
+		*modelMatrix = glm::translate(glm::vec3((float)offsetX, 0.15f, (float)offsetZ));
 		color[0] = 0.0f;
 		color[1] = 0.0f;
 		color[2] = 0.0f;
@@ -72,4 +78,5 @@ void GenerateIslandSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, cons
 		model.CastShadow = false;
 		*modelId = m_graphics->LoadModel(&model);
 	}
+#endif
 }
