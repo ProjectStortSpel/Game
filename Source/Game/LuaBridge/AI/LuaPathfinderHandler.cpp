@@ -88,7 +88,8 @@ namespace LuaBridge
 				ret_value = INT_MAX;
 			}
 
-			LuaEmbedder::PushInt(_l, ret_value);
+			LuaEmbedder::PushFloat( _l, total_cost );
+			//LuaEmbedder::PushInt( _l, ret_value );
 
 			return 1;
 		}

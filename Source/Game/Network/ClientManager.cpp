@@ -102,9 +102,9 @@ namespace ClientManager
 			int counter = 0;
 			for (auto it = names.begin(); it != names.end(); ++it)
 			{
-				++counter;
 				if (it->second == _name)
 				{
+					++counter;
 					newName << counter;
 					break;
 				}
@@ -289,9 +289,9 @@ namespace ClientManager
 
 			for (auto it = names.begin(); it != names.end(); ++it)
 			{
-				++counter;
 				if (it->second == newName.str())
 				{
+					++counter;
 					newName << counter;
 					break;
 				}
@@ -374,12 +374,31 @@ namespace ClientManager
 	{
 		//Send filelist
 		std::map<std::string, ResourceManager::Resource>* resources = ResourceManager::GetGamemodeResources();
-		uint64_t id = _ph->StartPack("GameModeFileList");
 
-		//number of files
-		_ph->WriteInt(id, resources->size());
+		unsigned int numFiles = resources->size();
+		bool firstPacket = true;
+		bool newPacket = true;
+		unsigned int filesLeftToPack = 0;
+		uint64_t id;
 		for (auto it = resources->begin(); it != resources->end(); ++it)
 		{
+			if (newPacket)
+			{
+				id = _ph->StartPack("GameModeFileList");
+
+				//Is this the first packet?
+				_ph->WriteByte(id, firstPacket);
+
+				filesLeftToPack = numFiles > 50 ? 50 : numFiles;
+				numFiles -= filesLeftToPack;
+
+				//number of files in this packet
+				_ph->WriteInt(id, filesLeftToPack);
+
+				newPacket = false;
+				firstPacket = false;
+			}
+
 			ResourceManager::Resource* r = &it->second;
 
 			//Filename
@@ -392,9 +411,16 @@ namespace ClientManager
 			{
 				_ph->WriteByte(id, r->MD5.data[j]);
 			}
-		}
-		NetworkInstance::GetServer()->Send(_ph->EndPack(id), _nc);
 
+			--filesLeftToPack;
+			if (filesLeftToPack == 0)
+			{
+				//Is this the last packet?
+				_ph->WriteByte(id, numFiles == 0);
+				NetworkInstance::GetServer()->Send(_ph->EndPack(id), _nc);
+				newPacket = true;
+			}
+		}
 	}
 
 	void RequestGameModeFile(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
@@ -462,12 +488,31 @@ namespace ClientManager
 	{
 		//Send filelist
 		std::map<std::string, ResourceManager::Resource>* resources = ResourceManager::GetContentResources();
-		uint64_t id = _ph->StartPack("ContentFileList");
-
-		//number of files
-		_ph->WriteInt(id, resources->size());
+		
+		unsigned int numFiles = resources->size();
+		bool firstPacket = true;
+		bool newPacket = true;
+		unsigned int filesLeftToPack = 0;
+		uint64_t id;
 		for (auto it = resources->begin(); it != resources->end(); ++it)
 		{
+			if (newPacket)
+			{
+				id = _ph->StartPack("ContentFileList");
+
+				//Is this the first packet?
+				_ph->WriteByte(id, firstPacket);
+
+				filesLeftToPack = numFiles > 50 ? 50 : numFiles;
+				numFiles -= filesLeftToPack;
+
+				//number of files in this packet
+				_ph->WriteInt(id, filesLeftToPack);
+
+				newPacket = false;
+				firstPacket = false;
+			}
+
 			ResourceManager::Resource* r = &it->second;
 
 			//Filename
@@ -480,8 +525,16 @@ namespace ClientManager
 			{
 				_ph->WriteByte(id, r->MD5.data[j]);
 			}
+
+			--filesLeftToPack;
+			if (filesLeftToPack == 0)
+			{
+				//Is this the last packet?
+				_ph->WriteByte(id, numFiles == 0);
+				NetworkInstance::GetServer()->Send(_ph->EndPack(id), _nc);
+				newPacket = true;
+			}
 		}
-		NetworkInstance::GetServer()->Send(_ph->EndPack(id), _nc);
 	}
 
 	void RequestContentFile(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)

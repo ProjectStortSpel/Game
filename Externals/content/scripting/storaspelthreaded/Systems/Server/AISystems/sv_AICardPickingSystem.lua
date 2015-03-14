@@ -22,6 +22,9 @@ AICardPickingSystem.TempStones = {}
 AICardPickingSystem.TempStones.__mode = "k"
 AICardPickingSystem.SimStones = {}
 AICardPickingSystem.SimStones.__mode = "k"
+AICardPickingSystem.StoneLifeSpanSet = false
+AICardPickingSystem.StoneLifeSpan = 0
+--AICardPickingSystem.PrintThis = false
 
 -- TODO: Remove this
 AICardPickingSystem.ERROR = false
@@ -41,6 +44,8 @@ AICardPickingSystem.Spawnpoints = {}
 AICardPickingSystem.Spawnpoints.__mode = "k"
 AICardPickingSystem.UnitEntityIds = {}
 AICardPickingSystem.UnitEntityIds.__mode = "k"
+AICardPickingSystem.SimulationGhosts = {}
+AICardPickingSystem.SimulationGhosts.__mode = "k"
 
 AICardPickingSystem.ChosenCardsArray = {}
 AICardPickingSystem.ChosenCardsArray.__mode = "k"
@@ -293,6 +298,12 @@ AICardPickingSystem.PickCards = function( self, _playerNumber )
 				local arrayIndex = (_playerNumber - 1) * cardsToPick + card
 				
 				self.ChosenCardsArray[arrayIndex] = charVar
+				
+				local	finalRotation	=	self:GetGhostRotation(simDirX, simDirY)
+				world:GetComponent(self.SimulationGhosts[_playerNumber], "Position", "X"):SetFloat3(simPosX, 0.5, simPosY)
+				--world:GetComponent(self.SimulationGhost, "Direction", "X"):SetInt2(dirX, dirY)
+				world:GetComponent(self.SimulationGhosts[_playerNumber], "Rotation", "Y"):SetFloat(finalRotation)
+				
 				--self.ChosenCardsArray[arrayIndex] = cardsToSim[card]
 				--io.write("Id: ", charVar, " ", cardsToSim[card], ", ")
 			end
@@ -368,17 +379,21 @@ end
 AICardPickingSystem.SimulateCards = function(self, _playerNumber, _targetCheckpointNumber, _pickedcards)
 	
 	
-	local startTime = 0
-	local endTime = 0
-	local timeTaken1 = 0
-	local timeTaken2 = 0
-	local timeTaken3 = 0
-	local timeTaken4 = 0
-	local timeTaken5 = 0
-	local timeTaken6 = 0
-	local timeTaken7 = 0
-	local timeTaken8 = 0
-	local timeTaken9 = 0
+--local startTime = 0
+--local endTime = 0
+--local timeTaken1 = 0
+--local timeTaken2 = 0
+--local timeTaken3 = 0
+--local timeTaken4 = 0
+--local timeTaken5 = 0
+--local timeTaken6 = 0
+--local timeTaken7 = 0
+--local timeTaken8 = 0
+--local timeTaken9 = 0
+
+--self.Sleep(1000)
+	
+	local simStoneAdded = false
 	
 	--startTime = CombinationMath.ClockCycles()
 	
@@ -406,6 +421,11 @@ AICardPickingSystem.SimulateCards = function(self, _playerNumber, _targetCheckpo
 	local checkPointsReached = 0
 	local targetCheckpointNumber = _targetCheckpointNumber
 	
+	
+	
+	--local printThis = false
+	
+	
 	for n = 1, #_pickedcards do
 		
 --		startTime = CombinationMath.ClockCycles()
@@ -423,12 +443,25 @@ AICardPickingSystem.SimulateCards = function(self, _playerNumber, _targetCheckpo
 		--	print()
 		--end
 		
+		--if n == 1 then
+		--	if _pickedcards[1] == "Stone" and _pickedcards[2] == "Stone" and _pickedcards[3] == "Backward" then
+		--		--print("This is the shit")
+		--		--printThis = true
+		--		--print(posX, posY, #_pickedcards)
+		--		self.PrintThis = true
+		--	else
+		--		self.PrintThis = false
+		--	end
+		--	
+		--end
+		
+		
 		if cardName == "Forward" then
 			
 			--startTime = CombinationMath.ClockCycles()
 			
 			--fellDown, posX, posY = self:SimulateMoveForward(posX, posY, dirX, dirY, true, false, 1, false)
-			fellDown, posX, posY = self:SimulateForward(posX, posY, dirX, dirY)
+			fellDown, posX, posY = self:SimulateForward(posX, posY, dirX, dirY, n)
 			
 --print("After forward:   ", posX, posY, dirX, dirY)
 			--endTime = CombinationMath.ClockCycles()
@@ -441,7 +474,7 @@ AICardPickingSystem.SimulateCards = function(self, _playerNumber, _targetCheckpo
 			--startTime = CombinationMath.ClockCycles()
 			
 			--fellDown, posX, posY = self:SimulateMoveForward(posX, posY, dirX, dirY, false, false, 1, false)
-			fellDown, posX, posY = self:SimulateForward(posX, posY, -dirX, -dirY)
+			fellDown, posX, posY = self:SimulateForward(posX, posY, -dirX, -dirY, n)
 --print("After backward: ", posX, posY, dirX, dirY)
 			
 			--endTime = CombinationMath.ClockCycles()
@@ -454,7 +487,7 @@ AICardPickingSystem.SimulateCards = function(self, _playerNumber, _targetCheckpo
 			--startTime = CombinationMath.ClockCycles()
 		
 			--fellDown, posX, posY, dirX, dirY = self:SimulateTurnLeft(posX, posY, dirX, dirY, 1)
-			fellDown, posX, posY, dirX, dirY = self:SimulateLeft(posX, posY, dirX, dirY)
+			fellDown, posX, posY, dirX, dirY = self:SimulateLeft(posX, posY, dirX, dirY, n)
 --print("After turn left: ", posX, posY, dirX, dirY)
 			
 			--endTime = CombinationMath.ClockCycles()
@@ -467,7 +500,7 @@ AICardPickingSystem.SimulateCards = function(self, _playerNumber, _targetCheckpo
 			--startTime = CombinationMath.ClockCycles()
 		
 			--fellDown, posX, posY, dirX, dirY = self:SimulateTurnLeft(posX, posY, dirX, dirY, 3)
-			fellDown, posX, posY, dirX, dirY = self:SimulateRight(posX, posY, dirX, dirY)
+			fellDown, posX, posY, dirX, dirY = self:SimulateRight(posX, posY, dirX, dirY, n)
 --print("After turn right: ", posX, posY, dirX, dirY)
 			
 			--endTime = CombinationMath.ClockCycles()
@@ -481,7 +514,7 @@ AICardPickingSystem.SimulateCards = function(self, _playerNumber, _targetCheckpo
 		
 			--fellDown, posX, posY, dirX, dirY = self:SimulateTurnLeft(posX, posY, dirX, dirY, 2)
 			if self.Map[arrayIndex] == "River" then
-				fellDown, posX, posY = self:SimulateRiverMove(posX, posY)
+				fellDown, posX, posY = self:SimulateRiverMove(posX, posY, n)
 			end
 			
 			dirX = -dirX
@@ -499,7 +532,7 @@ AICardPickingSystem.SimulateCards = function(self, _playerNumber, _targetCheckpo
 		
 			--fellDown, posX, posY, dirX, dirY = self:SimulateTurnLeft(posX, posY, dirX, dirY, 0)
 			if self.Map[arrayIndex] == "River" then
-				fellDown, posX, posY = self:SimulateRiverMove(posX, posY)
+				fellDown, posX, posY = self:SimulateRiverMove(posX, posY, n)
 			end
 			
 --print("After Stand still: ", posX, posY, dirX, dirY)
@@ -513,7 +546,7 @@ AICardPickingSystem.SimulateCards = function(self, _playerNumber, _targetCheckpo
 			--startTime = CombinationMath.ClockCycles()
 		
 			--fellDown, posX, posY = self:SimulateMoveForward(posX, posY, dirX, dirY, true, false, 2, false)
-			fellDown, posX, posY = self:SimulateSprint(posX, posY, dirX, dirY)
+			fellDown, posX, posY = self:SimulateSprint(posX, posY, dirX, dirY, n)
 			
 --print("After Sprint: ", posX, posY, dirX, dirY)
 			--endTime = CombinationMath.ClockCycles()
@@ -524,7 +557,8 @@ AICardPickingSystem.SimulateCards = function(self, _playerNumber, _targetCheckpo
 		elseif cardName == "Stone" then
 			
 			--fellDown, posX, posY = self:SimulateMoveForward(posX, posY, dirX, dirY, true, false, 1, false)
-			fellDown, posX, posY = self:SimulateForward(posX, posY, dirX, dirY)
+			fellDown, posX, posY = self:SimulateStone(posX, posY, dirX, dirY, n)
+			simStoneAdded = true
 			
 --print("After Stone:     ", posX, posY, dirX, dirY)
 		else
@@ -547,10 +581,33 @@ AICardPickingSystem.SimulateCards = function(self, _playerNumber, _targetCheckpo
 			
 			checkPointsReached = checkPointsReached + 1
 			targetCheckpointNumber = targetCheckpointNumber + 1
+			
+			-- Hax. If it reached the last checkpoint, it is preferable to go there with as few cards as possible.
+			if self.NoOfCheckpoints < targetCheckpointNumber  then
+				
+				checkPointsReached = checkPointsReached + #_pickedcards - n
+				--print("Reaching last checkpoint. Adding ", #_pickedcards - n, " to checkPointsReached")
+				targetCheckpointNumber = targetCheckpointNumber - 1
+			end
+			
 		end
+		
+		--if printThis then
+		--	print(posX, posY)
+		--end
 			
 		--endTime = CombinationMath.ClockCycles()
 		--timeTaken9 = (endTime - startTime)
+	end
+	
+	if simStoneAdded then
+		local mapX = self.MapSizeX
+		local mapY = self.MapSizeY
+		for y = 0, mapY - 1 do
+			for x = 0, mapX - 1 do
+				self.SimStones[mapX * y + x + 1] = 0
+			end
+		end
 	end
 	
 	--if self.PrintSimulation == 1 then
@@ -568,6 +625,19 @@ AICardPickingSystem.SimulateCards = function(self, _playerNumber, _targetCheckpo
 	--if timeTaken9 ~= 0 then print(timeTaken9, "Reached Checkpoint") end
 	--
 	--self.Sleep(100)
+	
+	
+	--if _pickedcards[1] == "Stone" and _pickedcards[2] == "Stone" and _pickedcards[3] == "Backward" then
+	
+		--local	finalRotation	=	self:GetGhostRotation(dirX, dirY)
+		--world:GetComponent(self.SimulationGhost, "Position", "X"):SetFloat3(posX, 0.5, posY)
+		--world:GetComponent(self.SimulationGhost, "Direction", "X"):SetInt2(dirX, dirY)
+		--world:GetComponent(self.SimulationGhost, "Rotation", "Y"):SetFloat(finalRotation)
+		--world:GetComponent(self.SimulationGhost, "Color", "X"):SetFloat3(1, 1, 1)
+		
+	--end
+	
+	
 	
 	return fellDown, checkPointsReached, posX, posY, dirX, dirY
 end
@@ -664,7 +734,7 @@ AICardPickingSystem.ReachedCheckpoint = function(self, _targetCheckpointNumber, 
 	return false
 end
 
-AICardPickingSystem.SimulateForward = function(self, _posX, _posY, _dirX, _dirY)
+AICardPickingSystem.SimulateForward = function(self, _posX, _posY, _dirX, _dirY, _step)
 	
 	local fellDown = false
 	local posX = _posX
@@ -678,7 +748,25 @@ AICardPickingSystem.SimulateForward = function(self, _posX, _posY, _dirX, _dirY)
 	if self.Map[arrayIndex] == "Void" then
 		fellDown = true
 	else
-		if self.Map[arrayIndex] == "NotWalkable" or self.TempStones[arrayIndex] then
+		--if self.SimStones[arrayIndex] > 0 then
+		--	print(_step, self.SimStones[arrayIndex])
+		--end
+		--if self.PrintThis then
+		--
+		--	io.write("\n\n")
+		--	for stoneY = 0, self.MapSizeY - 1 do
+		--		for stoneX = 0, self.MapSizeX - 1 do
+		--			io.write(self.SimStones[self.MapSizeX * stoneY + stoneX + 1])
+		--		end
+		--		io.write("\n")
+		--	end
+		--	
+		--	print(_step, self.SimStones[arrayIndex])
+		--end
+		if self.Map[arrayIndex] == "NotWalkable" or _step <= self.TempStones[arrayIndex] or _step <= self.SimStones[arrayIndex] then
+			--if _step <= self.SimStones[arrayIndex] then
+			--	print("Sim stone in the way")
+			--end
 			posX = _posX
 			posY = _posY
 			-- Change index to check if river where we currently are.
@@ -686,45 +774,14 @@ AICardPickingSystem.SimulateForward = function(self, _posX, _posY, _dirX, _dirY)
 		end
 		
 		if self.Map[arrayIndex] == "River" then
-			fellDown, posX, posY = self:SimulateRiverMove(posX, posY)
+			fellDown, posX, posY = self:SimulateRiverMove(posX, posY, _step)
 		end
 	end
 	
 	return fellDown, posX, posY
 end
 
-AICardPickingSystem.SimulateSprint = function(self, _posX, _posY, _dirX, _dirY)
-	
-	local fellDown = false
-	local posX = _posX
-	local posY = _posY
-	
-	posX = posX + _dirX
-	posY = posY + _dirY
-	
-	local arrayIndex = self.MapSizeX * posY + posX + 1
-	
-	-- The first step is different from regular forward as we do not need to check another step if it falls down or is blocked by a not walkable. If it is blocked, check for river.
-	if self.Map[arrayIndex] == "Void" then
-		return true, _posX, _posY
-	elseif self.Map[arrayIndex] == "NotWalkable" or self.TempStones[arrayIndex] then
-		posX = _posX
-		posY = _posY
-		-- Change index to check if river where we currently are.
-		arrayIndex = self.MapSizeX * posY + posX + 1
-		
-		if self.Map[arrayIndex] == "River" then
-			fellDown, posX, posY = self:SimulateRiverMove(posX, posY)
-		end
-		
-		return fellDown, posX, posY
-	end
-	
-	-- The last "step" of the sprint works like a forward.
-	return self:SimulateForward(posX, posY, _dirX, _dirY)
-end
-
-AICardPickingSystem.SimulateRiverMove = function(self, _posX, _posY)
+AICardPickingSystem.SimulateRiverMove = function(self, _posX, _posY, _step)
 	
 	local fellDown = false
 	local posX = _posX
@@ -741,7 +798,7 @@ AICardPickingSystem.SimulateRiverMove = function(self, _posX, _posY)
 	if self.Map[arrayIndex] == "Void" then
 		fellDown = true
 		--print("Fell down because of river")
-	elseif self.Map[arrayIndex] == "NotWalkable" or self.TempStones[arrayIndex] then
+	elseif self.Map[arrayIndex] == "NotWalkable" or _step <= self.TempStones[arrayIndex] or _step <= self.SimStones[arrayIndex] then
 		posX = _posX
 		posY = _posY
 		print()
@@ -752,7 +809,7 @@ AICardPickingSystem.SimulateRiverMove = function(self, _posX, _posY)
 	return fellDown, posX, posY
 end
 
-AICardPickingSystem.SimulateLeft = function(self, _posX, _posY, _dirX, _dirY)
+AICardPickingSystem.SimulateLeft = function(self, _posX, _posY, _dirX, _dirY, _step)
 	
 	local fellDown = false
 	local posX, posY = _posX, _posY
@@ -761,13 +818,13 @@ AICardPickingSystem.SimulateLeft = function(self, _posX, _posY, _dirX, _dirY)
 	local dirY = -_dirX
 	
 	if self.Map[self.MapSizeX * posY + posX + 1] == "River" then
-		fellDown, posX, posY = self:SimulateRiverMove(posX, posY)
+		fellDown, posX, posY = self:SimulateRiverMove(posX, posY, _step)
 	end
 	
 	return fellDown, posX, posY, dirX, dirY
 end
 
-AICardPickingSystem.SimulateRight = function(self, _posX, _posY, _dirX, _dirY)
+AICardPickingSystem.SimulateRight = function(self, _posX, _posY, _dirX, _dirY, _step)
 	
 	local fellDown = false
 	local posX, posY = _posX, _posY
@@ -776,10 +833,77 @@ AICardPickingSystem.SimulateRight = function(self, _posX, _posY, _dirX, _dirY)
 	local dirY = _dirX
 	
 	if self.Map[self.MapSizeX * posY + posX + 1] == "River" then
-		fellDown, posX, posY = self:SimulateRiverMove(posX, posY)
+		fellDown, posX, posY = self:SimulateRiverMove(posX, posY, _step)
 	end
 	
 	return fellDown, posX, posY, dirX, dirY
+end
+
+AICardPickingSystem.SimulateSprint = function(self, _posX, _posY, _dirX, _dirY, _step)
+	
+	local fellDown = false
+	local posX = _posX
+	local posY = _posY
+	
+	posX = posX + _dirX
+	posY = posY + _dirY
+	
+	local arrayIndex = self.MapSizeX * posY + posX + 1
+	
+	-- The first step is different from regular forward as we do not need to check another step if it falls down or is blocked by a not walkable. If it is blocked, check for river.
+	if self.Map[arrayIndex] == "Void" then
+		return true, _posX, _posY
+	elseif self.Map[arrayIndex] == "NotWalkable" or _step <= self.TempStones[arrayIndex] or _step <= self.SimStones[arrayIndex] then
+		posX = _posX
+		posY = _posY
+		-- Change index to check if river where we currently are.
+		arrayIndex = self.MapSizeX * posY + posX + 1
+		
+		if self.Map[arrayIndex] == "River" then
+			fellDown, posX, posY = self:SimulateRiverMove(posX, posY, _step)
+		end
+		
+		return fellDown, posX, posY
+	end
+	
+	-- The last "step" of the sprint works like a forward.
+	return self:SimulateForward(posX, posY, _dirX, _dirY, _step)
+end
+
+AICardPickingSystem.SimulateStone = function(self, _posX, _posY, _dirX, _dirY, _step)
+	
+	local fellDown = false
+	local posX = _posX
+	local posY = _posY
+	local layStone = true
+	
+	posX = posX + _dirX
+	posY = posY + _dirY
+	
+	local arrayIndex = self.MapSizeX * posY + posX + 1
+	
+	if self.Map[arrayIndex] == "Void" then
+		fellDown = true
+	else
+		if self.Map[arrayIndex] == "NotWalkable" or _step <= self.TempStones[arrayIndex] or _step <= self.SimStones[arrayIndex] then
+			posX = _posX
+			posY = _posY
+			-- Change index to check if river where we currently are.
+			arrayIndex = self.MapSizeX * posY + posX + 1
+			layStone = false
+		end
+		
+		if self.Map[arrayIndex] == "River" then
+			fellDown, posX, posY = self:SimulateRiverMove(posX, posY, _step)
+		end
+	end
+	
+	if layStone then
+		--print("adding sim stone", _posX, _posY)
+		self.SimStones[self.MapSizeX * _posY + _posX + 1] = self.StoneLifeSpan + _step - 1
+	end
+	
+	return fellDown, posX, posY
 end
 
 AICardPickingSystem.SimulateMoveForward = function(self, _posX, _posY, _dirX, _dirY, _forwards, _jump, _iterations, _riverMove)
@@ -955,14 +1079,14 @@ AICardPickingSystem.ChangeCardInSet = function(self, _cardIndex, _cardSet)
 	
 	local cardactioncomp = world:GetComponent(_cardSet[_cardIndex], "CardAction", 0)
 	
-		if _cardIndex ==  1 then cardactioncomp:SetText("Forward")
-	elseif _cardIndex ==  2 then cardactioncomp:SetText("Forward")
+		if _cardIndex ==  1 then cardactioncomp:SetText("TurnLeft")
+	elseif _cardIndex ==  2 then cardactioncomp:SetText("TurnLeft")
 	elseif _cardIndex ==  3 then cardactioncomp:SetText("Backward")
 	elseif _cardIndex ==  4 then cardactioncomp:SetText("Backward")
-	elseif _cardIndex ==  5 then cardactioncomp:SetText("TurnRight")
-	elseif _cardIndex ==  6 then cardactioncomp:SetText("TurnLeft")
-	elseif _cardIndex ==  7 then cardactioncomp:SetText("TurnAround")
-	elseif _cardIndex ==  8 then cardactioncomp:SetText("Forward")
+	elseif _cardIndex ==  5 then cardactioncomp:SetText("Backward")
+	elseif _cardIndex ==  6 then cardactioncomp:SetText("Backward")
+	elseif _cardIndex ==  7 then cardactioncomp:SetText("Stone")
+	elseif _cardIndex ==  8 then cardactioncomp:SetText("Stone")
 	elseif _cardIndex ==  9 then cardactioncomp:SetText("Forward")
 	elseif _cardIndex == 10 then cardactioncomp:SetText("Forward")
 	elseif _cardIndex == 11 then cardactioncomp:SetText("Backward")
@@ -982,26 +1106,26 @@ AICardPickingSystem.ChangeCardActionString = function(self, _cardIndex)
 	
 	local action = "Forward"
 	
-		if _cardIndex ==  1 then action = "Forward"
-	elseif _cardIndex ==  2 then action = "Forward"
-	elseif _cardIndex ==  3 then action = "Backward"
-	elseif _cardIndex ==  4 then action = "Backward"
-	elseif _cardIndex ==  5 then action = "TurnRight"
-	elseif _cardIndex ==  6 then action = "TurnLeft"
-	elseif _cardIndex ==  7 then action = "TurnAround"
-	elseif _cardIndex ==  8 then action = "Forward"
-	elseif _cardIndex ==  9 then action = "Forward"
-	elseif _cardIndex == 10 then action = "Forward"
-	elseif _cardIndex == 11 then action = "Backward"
-	elseif _cardIndex == 12 then action = "Backward"
-	elseif _cardIndex == 13 then action = "TurnRight"
-	elseif _cardIndex == 14 then action = "TurnLeft"
-	elseif _cardIndex == 15 then action = "TurnAround"
-	elseif _cardIndex == 16 then action = "TurnRight"
-	elseif _cardIndex == 17 then action = "TurnLeft"
-	elseif _cardIndex == 18 then action = "TurnAround"
-	elseif _cardIndex == 19 then action = "Backward"
-	elseif _cardIndex == 20 then action = "TurnLeft"
+		if _cardIndex ==  1 then action = ("TurnLeft")
+	elseif _cardIndex ==  2 then action = ("TurnLeft")
+	elseif _cardIndex ==  3 then action = ("Backward")
+	elseif _cardIndex ==  4 then action = ("Backward")
+	elseif _cardIndex ==  5 then action = ("Backward")
+	elseif _cardIndex ==  6 then action = ("Backward")
+	elseif _cardIndex ==  7 then action = ("Stone")
+	elseif _cardIndex ==  8 then action = ("Stone")
+	elseif _cardIndex ==  9 then action = ("Forward")
+	elseif _cardIndex == 10 then action = ("Forward")
+	elseif _cardIndex == 11 then action = ("Backward")
+	elseif _cardIndex == 12 then action = ("Backward")
+	elseif _cardIndex == 13 then action = ("TurnRight")
+	elseif _cardIndex == 14 then action = ("TurnLeft")
+	elseif _cardIndex == 15 then action = ("TurnAround")
+	elseif _cardIndex == 16 then action = ("TurnRight")
+	elseif _cardIndex == 17 then action = ("TurnLeft")
+	elseif _cardIndex == 18 then action = ("TurnAround")
+	elseif _cardIndex == 19 then action = ("Backward")
+	elseif _cardIndex == 20 then action = ("TurnLeft")
 	end
 	
 	return action
@@ -1106,7 +1230,8 @@ AICardPickingSystem.SaveMap = function(self)
 				--io.write(" ")
 			end
 			
-			self.TempStones[mapX * y + x + 1] = false
+			self.TempStones[mapX * y + x + 1] = 0
+			self.SimStones[mapX * y + x + 1] = 0
 			--if self.TempStones[mapX * y + x + 1] == false then
 			--	io.write(" ")
 			--else
@@ -1117,45 +1242,23 @@ AICardPickingSystem.SaveMap = function(self)
 	end
 end
 
-AICardPickingSystem.ChangeTileWalkability = function(self, _entity)
+AICardPickingSystem.UpdateTileWalkability = function(self, _entity)
 	
-	local mapSizeEntities = self:GetEntities("MapSpecs")
-	local mapX, mapY = world:GetComponent(mapSizeEntities[1], "MapSpecs", "SizeX"):GetInt2(0)
+	local lifeTime, tileX, tileY = world:GetComponent(_entity, "TileWalkabilityHasChanged", 0):GetInt3(0)
 	
-	local tileX, tileY = world:GetComponent(_entity, "TileWalkabilityHasChanged", "X"):GetInt2(0)
-	local walkable = world:GetComponent(_entity, "TileWalkabilityHasChanged", "Walkable"):GetBool(0)
-	
-	--print()
-	--print(tileX, tileY, walkable)
-	--print(walkable, self.TempStones[mapX * tileY + tileX + 1])
-	
-	if walkable then
-		self.TempStones[mapX * tileY + tileX + 1] = false
-	else
-		self.TempStones[mapX * tileY + tileX + 1] = true
+	if not self.StoneLifeSpanSet then
+		self.StoneLifeSpanSet = true
+		self.StoneLifeSpan = lifeTime
 	end
 	
-	--print(walkable, self.TempStones[mapX * tileY + tileX + 1])
-	
-	self.TempStones[mapX * tileY + tileX + 1] = not walkable
-	
-	--print()
-	--print("Changed Tile Walkability")
-	--print()
+	self.TempStones[self.MapSizeX * tileY + tileX + 1] = lifeTime
 	
 	world:KillEntity(_entity)
 	
-	--for stoneY = 0, mapY - 1 do
-	--	for stoneX = 0, mapX - 1 do
-	--	
-	--		if self.TempStones[mapX * stoneY + stoneX + 1] then
-	--			io.write("x")
-	--		elseif not self.TempStones[mapX * stoneY + stoneX + 1] then
-	--			io.write(" ")
-	--		else
-	--			io.write("Fail")
-	--		end
-	--		
+	--io.write("\n\n")
+	--for stoneY = 0, self.MapSizeY - 1 do
+	--	for stoneX = 0, self.MapSizeX - 1 do
+	--		io.write(self.TempStones[self.MapSizeX * stoneY + stoneX + 1])
 	--	end
 	--	io.write("\n")
 	--end
@@ -1211,6 +1314,9 @@ AICardPickingSystem.AllocatePlayerArrays = function(self)
 	for player = 1, noOfSpawnPoints do
 		
 		self.TargetCheckpoints[player] = 1
+		self.SimulationGhosts[player] = world:CreateNewEntity("Ghost")
+		world:GetComponent(self.SimulationGhosts[player], "Model", 0):SetModel("cavemenghost", "caveman", 1, false)		
+		world:GetComponent(self.SimulationGhosts[player], "Color", "X"):SetFloat3(1, 1, 1)
 		
 		local doubleIndex = (player - 1) * 2 + 1 
 		
@@ -1274,33 +1380,24 @@ AICardPickingSystem.EntitiesAdded = function(self, dt, entities)
 			self:SaveMap()
 			self:AllocatePlayerArrays()
 			self.PermutationsArray = CombinationMath.Permutations(cardsPerHand, cardsToPick)
+	
+--self.SimulationGhost = world:CreateNewEntity("Ghost")
+--world:GetComponent(self.SimulationGhost, "Model", 0):SetModel("cavemenghost", "caveman", 1, false)
+
 			self.InitDone = true
 			
 			--self:InitPlayerSpecifics(entities[i])
 			
 		elseif world:EntityHasComponent(entities[i], "AutoPickCards") then
 			
-			print("AIs picking time is over!", (self.PermutationIndex - 1) / 5)
+			print("AIs picking time is over!", (self.PermutationIndex - 1) / self.CardsToPick)
 			
 			self:SendCards()
 			
 		elseif world:EntityHasComponent(entities[i], "TileWalkabilityHasChanged") then
 			
-			self:ChangeTileWalkability(entities[i])
+			self:UpdateTileWalkability(entities[i])
 			
-			--local AIs = self:GetEntities("AI")
-			--
-			--for n = 1, #AIs do
-			--	
-			--	self:SendCards(AIs[n])
-			--end
-		--elseif world:EntityHasComponent(entities[i], "NewRound") then
-			
-			--print()
-			--print()
-			--print("NewRound AI")
-			--print()
-			--print()
 		end
 		
 	end
@@ -1320,6 +1417,25 @@ AICardPickingSystem.EntitiesAdded = function(self, dt, entities)
 		--self:UpdatePlayerComponents()
 	end
 	--print("entities added done ai")
+end
+
+AICardPickingSystem.GetGhostRotation = function(self, dirX, dirZ)
+
+	local	returnRotation	=	0
+	if dirX == 1 then
+		returnRotation	=	math.pi/2
+	end
+	if dirX == -1 then
+		returnRotation	=	-math.pi/2
+	end
+	if dirZ == -1 then
+		returnRotation	=	-math.pi
+	end
+	if dirZ == 1 then
+		returnRotation	=	0
+	end
+	
+	return returnRotation
 end
 
 --AICardPickingSystem.AddExtraCostIfFellDown = function(self, _fellDown, _cardsLeftToPick)

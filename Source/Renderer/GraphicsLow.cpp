@@ -9,6 +9,7 @@ using namespace glm;
 
 GraphicsLow::GraphicsLow()
 {
+	SDL_Log("Starting graphics low");
 	m_stringToInt = new char[2];
 	m_useAnimations = true;
 	m_modelIDcounter = 0;
@@ -21,6 +22,7 @@ GraphicsLow::GraphicsLow()
 
 GraphicsLow::GraphicsLow(Camera _camera, int x, int y) : GraphicDevice(_camera, x, y)
 {
+	SDL_Log("Starting graphics low");
 	m_stringToInt = new char[2];
 	m_useAnimations = true;
 	m_modelIDcounter = 0;
@@ -51,7 +53,8 @@ bool GraphicsLow::Init()
 	if (!m_SDLinitialized)
 		m_camera = new Camera(m_clientWidth, m_clientHeight);
 
-    if (!InitGLEW()) { ERRORMSG("GLEW_VERSION_4_0 FAILED.\n INCOMPATIBLE GRAPHICS DRIVER\n"); return false; }
+	if (!InitGLEW()) { SDL_Log("GLEW_VERSION_4_3 FAILED"); 
+								ERRORMSG("GLEW_VERSION_4_0 FAILED.\n INCOMPATIBLE GRAPHICS DRIVER\n"); return false; }
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
 	InitRenderLists();
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }

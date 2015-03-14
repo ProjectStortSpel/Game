@@ -73,12 +73,13 @@ LobbySystem.UpdatePlayers = function(self)
 		local entityId = entities[i]
 		local unitId = world:GetComponent(entityId, "UnitEntityId", "Id"):GetInt()
 		
-		local name = "Ugha Buggah"
+		local name = world:GetComponent(entityId, "PlayerName", "Name"):GetString()
+		print(name)
 		local ip = " ";
 		local readyText = " ";
 		if world:EntityHasComponent(entityId, "NetConnection") then
 			ip = world:GetComponent(entityId, "NetConnection", "IpAddress"):GetText()
-			name = world:GetComponent(entityId, "PlayerName", "Name"):GetText()
+			
 			if world:EntityHasComponent(entityId, "LobbyPlayerReady") then
 				readyText = "Ready"
 				readyplayers = readyplayers + 1
@@ -95,10 +96,10 @@ LobbySystem.UpdatePlayers = function(self)
 		
 		local button = self:CreateElement("shade", "quad", -1.85, 1.20-i*0.22, -4.0, 1.78, 0.2)
 		
-		local text = self:CreateElement("left", "text", -2.70, 1.28-i*0.22, -3.999, 3.0, 0.16)
+		local text = self:CreateElement("left", "text", -2.70, 1.28-i*0.22, -3.99, 3.0, 0.16)
 		world:CreateComponentAndAddTo("LobbyMenuPlayer", text)
 		self:AddTextToTexture("LMSPname"..i, name, 0, r, g, b, text)
-		text = self:CreateElement("right", "text", -1.00, 1.28-i*0.22, -3.999, 1.6, 0.16)	
+		text = self:CreateElement("right", "text", -1.00, 1.28-i*0.22, -3.99, 1.6, 0.16)	
 		self:AddTextToTexture("LMSPready"..i, readyText, 0, r, g, b, text)
 	end
 	

@@ -24,6 +24,8 @@ private:
 	unsigned int m_generateIslandMapId;
 	unsigned int m_generateIslandSizeXId;
 	unsigned int m_generateIslandSizeZId;
+	unsigned int m_generateIslandOffsetXId;
+	unsigned int m_generateIslandOffsetZId;
 
 	unsigned int m_renderId;
 };

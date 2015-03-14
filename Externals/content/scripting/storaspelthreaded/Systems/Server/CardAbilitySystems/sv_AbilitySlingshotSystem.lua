@@ -67,13 +67,15 @@ end
 AbilitySlingshotSystem.AddBullet = function(self, posX, posZ, targetPosX, targetPosZ, lerpTime)
 
 	local bullet = world:CreateNewEntity("SlingShotProjectile")
-	
+	world:CreateComponentAndAddTo("AddEntityAfterLerp", bullet)
+
 	world:GetComponent(bullet, "Position", 0):SetFloat3(posX, 1, posZ)
 	world:GetComponent(bullet, "LerpPosition", "X"):SetFloat(targetPosX)
 	world:GetComponent(bullet, "LerpPosition", "Y"):SetFloat(1)
 	world:GetComponent(bullet, "LerpPosition", "Z"):SetFloat(targetPosZ)
 	world:GetComponent(bullet, "LerpPosition", "Time"):SetFloat(lerpTime*math.abs(posX-targetPosX+posZ-targetPosZ))
 	world:GetComponent(bullet, "LerpPosition", "Algorithm"):SetText("NormalLerp")
+	world:GetComponent(bullet, "AddEntityAfterLerp", "ComponentName"):SetText("AddBulletImpact")
 
 end
 

@@ -35,7 +35,7 @@ namespace LuaBridge
 			m_uniqueObjects.insert(std::pair<std::string, ObjectType>("NotWalkable", ObjectType::NotWalkable));
 			//m_uniqueObjects.insert(std::pair<std::string, ObjectType>("Edge", ObjectType::Edge));
 			//m_uniqueObjects.insert(std::pair<std::string, ObjectType>("Hole", ObjectType::Hole));
-			//m_uniqueObjects.insert(std::pair<std::string, ObjectType>("RiverEnd", ObjectType::RiverEnd));
+			m_uniqueObjects.insert(std::pair<std::string, ObjectType>("RiverEnd", ObjectType::RiverEnd));
 			m_uniqueObjects.insert(std::pair<std::string, ObjectType>("Unit", ObjectType::Unit));
 			m_uniqueObjects.insert(std::pair<std::string, ObjectType>("Void", ObjectType::Void));
 

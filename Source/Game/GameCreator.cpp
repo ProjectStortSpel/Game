@@ -430,8 +430,8 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 
     if (_includeMasterServer)
     {
-        //worldCreator.AddSystemGroup();
-        //worldCreator.AddSystemToCurrentGroup<MasterServerSystem>();
+       worldCreator.AddSystemGroup();
+       worldCreator.AddSystemToCurrentGroup<MasterServerSystem>();
     }
     
     if (_worldType == WorldType::Server)
@@ -454,16 +454,18 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
         m_graphicalSystems.push_back(graphicalSystem);
         worldCreator.AddSystemGroup();
         worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
+		graphicalSystem = new ParticleSystem(m_graphics);
+		m_graphicalSystems.push_back(graphicalSystem);
+		worldCreator.AddSystemGroup();
+		worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
         //worldCreator.AddSystemGroup();
         worldCreator.AddSystemToCurrentGroup<ResetChangedSystem>();
     }
     
 
-	graphicalSystem = new ParticleSystem(m_graphics);
-	m_graphicalSystems.push_back(graphicalSystem);
-	worldCreator.AddSystemGroup();
-	worldCreator.AddLuaSystemToCurrentGroup(graphicalSystem);
 
+
+	m_entityCount = worldCreator.GetMaxNumberOfEntities();
     if (_worldType == WorldType::Client)
     {
 		m_clientWorld = worldCreator.CreateWorld(worldCreator.GetMaxNumberOfEntities());
@@ -632,6 +634,7 @@ void GameCreator::StartGame(int argc, char** argv)
 		m_serverWorldCounter.Reset();
 		/*	Update world (systems, entities, etc)	*/
 		
+
 		m_serverWorldProfiler->Begin();
         if (m_serverWorld)
            m_serverWorld->Update(dt);
@@ -673,56 +676,42 @@ void GameCreator::StartGame(int argc, char** argv)
 		m_graphicsCounter.Tick();
 
 		/*	DEBUG PRINT INFO	*/
-		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_0) == Input::InputState::PRESSED)
-			m_graphics->debugModelInfo = !m_graphics->debugModelInfo;
 
-		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_Z) == Input::InputState::PRESSED)
-			showDebugInfo = !showDebugInfo;
-
-		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_X) == Input::InputState::PRESSED)
-		{
-			if (!m_serverWorldProfiler->IsActive())
-				m_clientWorldProfiler->Toggle();
-		}
-
-		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_C) == Input::InputState::PRESSED)
-		{
-			if (!m_clientWorldProfiler->IsActive())
-				m_serverWorldProfiler->Toggle();
-		}
-
-		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_V) == Input::InputState::PRESSED)
-		{
-			if (m_clientWorldProfiler->IsActive())
-				m_clientWorldProfiler->PreviousView();
-			if (m_serverWorldProfiler->IsActive())
-				m_serverWorldProfiler->PreviousView();
-		}
-
-
-		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_B) == Input::InputState::PRESSED)
-		{
-			if (m_clientWorldProfiler->IsActive())
-				m_clientWorldProfiler->NextView();
-			if (m_serverWorldProfiler->IsActive())
-				m_serverWorldProfiler->NextView();
-		}
-
-		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F8) == Input::InputState::PRESSED)
+		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F1) == Input::InputState::PRESSED)
 		{
 			if (m_clientWorldProfiler->IsActive())
 				m_clientWorldProfiler->LogDisplayedStatistics();
 			if (m_serverWorldProfiler->IsActive())
 				m_serverWorldProfiler->LogDisplayedStatistics();
 		}
-
-		if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F1) == Input::InputState::PRESSED)
-        {
-            if (m_serverWorld)
-                m_serverWorld->LogWorldData();
-            if (m_clientWorld)
-                m_clientWorld->LogWorldData();
-        }
+		else if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F2) == Input::InputState::PRESSED)
+			showDebugInfo = !showDebugInfo;
+		else if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F3) == Input::InputState::PRESSED)
+			m_graphics->debugModelInfo = !m_graphics->debugModelInfo;
+		else if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F4) == Input::InputState::PRESSED)
+		{
+			if (!m_serverWorldProfiler->IsActive())
+				m_clientWorldProfiler->Toggle();
+		}
+		else if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F5) == Input::InputState::PRESSED)
+		{
+			if (!m_clientWorldProfiler->IsActive())
+				m_serverWorldProfiler->Toggle();
+		}
+		else if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F6) == Input::InputState::PRESSED)
+		{
+			if (m_clientWorldProfiler->IsActive())
+				m_clientWorldProfiler->PreviousView();
+			if (m_serverWorldProfiler->IsActive())
+				m_serverWorldProfiler->PreviousView();
+		}
+		else if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F7) == Input::InputState::PRESSED)
+		{
+			if (m_clientWorldProfiler->IsActive())
+				m_clientWorldProfiler->NextView();
+			if (m_serverWorldProfiler->IsActive())
+				m_serverWorldProfiler->NextView();
+		}
 
 		if (showDebugInfo)
 		{
@@ -1278,7 +1267,7 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 	
 	if ((*_args)[0].ArgType == Console::ArgumentType::Text)
 	{
-		for (int i = 0; i < 1000; ++i)
+		for (int i = 0; i < m_entityCount; ++i)
 		{
 			if (m_clientWorld && m_clientWorld->HasComponent(i, "Render"))
 				m_clientWorld->RemoveComponentFrom("Render", i);
@@ -1331,7 +1320,7 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 
 	if ((*_args)[0].ArgType == Console::ArgumentType::Text)
 	{
-		for (int i = 0; i < 1000; ++i)
+		for (int i = 0; i < m_entityCount; ++i)
 		{
 			if (m_clientWorld && m_clientWorld->HasComponent(i, "Render"))
 				m_clientWorld->RemoveComponentFrom("Render", i);
@@ -1388,6 +1377,7 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 			
 
 		m_console->SetGraphicDevice(m_graphics);
+		
 		LuaBridge::LuaGraphicDevice::SetGraphicDevice(m_graphics);
 		LoadingScreen::GetInstance().SetGraphicsDevice(m_graphics);
 		for (int n = 0; n < m_graphicalSystems.size(); ++n)

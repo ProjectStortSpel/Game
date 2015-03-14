@@ -35,15 +35,14 @@ public:
 
 	std::vector<float> ReadDataFromFile()
 	{
+		std::vector<float> data;
 		int size = 0;
-		SDL_RWread(fileIn, (char*)&size, sizeof(int), 1);
-		std::vector<float> data(size / sizeof(float));
-		SDL_RWread(fileIn, (char*)&data[0], size, 1);
-		//int size;
-		//ifile.read((char*)&size, sizeof(int));
-		//std::vector<float> data(size / sizeof(float));
-		///ifile.read((char*)&data[0], size);
-
+		int result = SDL_RWread(fileIn, (char*)&size, sizeof(int), 1);
+		if (result != 0)
+		{
+			data.resize(size / sizeof(float));
+			SDL_RWread(fileIn, (char*)&data[0], size, 1);
+		}
 		return data;
 	}
 };

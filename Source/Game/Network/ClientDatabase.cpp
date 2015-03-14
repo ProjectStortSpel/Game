@@ -13,7 +13,7 @@ ClientDatabase::ClientDatabase()
 {
 	Logger::GetInstance().AddGroup("MasterServer", false);
 
-	m_client.SetMaxTimeOutIntervall(60);
+	m_client.SetMaxTimeOutIntervall(15);
 	m_client.SetMaxTimeOutCounter(2);
 	m_client.SetRemoteAddress(m_ipAddress.c_str());
 	m_client.SetServerPassword(m_password.c_str());

@@ -52,6 +52,7 @@ namespace Renderer
 		int m_endPhase;
 		GLenum m_dstBlendFactor;
 
+		void CreateExplosion();
 		void CreateFire();
 		void CreateSmoke();
 		void CreateWaterfall();

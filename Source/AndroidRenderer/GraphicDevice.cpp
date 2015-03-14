@@ -18,6 +18,8 @@ GraphicDevice::GraphicDevice()
 	m_pointlightsPtr = 0;
 	m_particleID = 0;
 	m_elapsedTime = 0.0f;
+	
+	m_useAnimations = true;
 }
 
 GraphicDevice::GraphicDevice(Camera _camera)
@@ -27,6 +29,8 @@ GraphicDevice::GraphicDevice(Camera _camera)
 	m_pointlightsPtr = 0;
 	m_particleID = 0;
 	m_elapsedTime = 0.0f;
+	
+	m_useAnimations = true;
 }
 
 GraphicDevice::~GraphicDevice()
@@ -195,6 +199,12 @@ void GraphicDevice::InitStandardShaders()
 	m_particleShaders["waterspawn"]->AddShader("content/shaders/android/AndroidSmokeShaderVS.glsl", GL_VERTEX_SHADER);
 	m_particleShaders["waterspawn"]->AddShader("content/shaders/android/AndroidSmokeShaderFS.glsl", GL_FRAGMENT_SHADER);
 	m_particleShaders["waterspawn"]->FinalizeShaderProgram();
+
+	m_particleShaders["explosion"] = new Shader();
+	m_particleShaders["explosion"]->InitShaderProgram();
+	m_particleShaders["explosion"]->AddShader("content/shaders/android/AndroidExplosionShaderVS.glsl", GL_VERTEX_SHADER);
+	m_particleShaders["explosion"]->AddShader("content/shaders/android/AndroidExplosionShaderFS.glsl", GL_FRAGMENT_SHADER);
+	m_particleShaders["explosion"]->FinalizeShaderProgram();
 	
 	//m_fullscreen
 	m_fullscreen.InitShaderProgram();
@@ -221,6 +231,23 @@ void GraphicDevice::PollEvent(SDL_Event _event)
 	default:
 		break;
 	}
+}
+
+void GraphicDevice::GetWindowSize(int &x, int &y)
+{ 
+	x = m_clientWidth; 
+	y = m_clientHeight; 
+}
+
+void GraphicDevice::GetFramebufferSize(int &x, int &y)
+{
+#ifdef __ANDROID__
+	x = m_framebufferWidth;
+	y = m_framebufferHeight;
+#else
+	x = m_clientWidth;
+	y = m_clientHeight;
+#endif
 }
 
 void GraphicDevice::ResizeWindow(int _width, int _height)
@@ -268,11 +295,34 @@ bool GraphicDevice::InitSkybox()
 
 bool GraphicDevice::SetAnimation(int _modelId, int _animId, float _frameTime)
 {
+	std::vector<AModel> *modelList = &m_modelsAnimated;
+	for (int i = 0; i < (*modelList).size(); i++)
+	{
+		if ((*modelList)[i].id == _modelId)
+		{
+			if ((*modelList)[i].SetAnimation(_animId))
+			{
+				(*modelList)[i].SetFrameTime(_frameTime);
+				return true;
+			}	
+		}
+	}
 	return false;
 }
 glm::mat4 GraphicDevice::GetJointMatrix(int _modelId, int _jointId)
 {
-	return glm::mat4(1);
+	std::vector<AModel> *modelList = &m_modelsAnimated;
+	for (int i = 0; i < (*modelList).size(); i++)
+	{
+		if ((*modelList)[i].id == _modelId)
+		{
+			if ((*modelList)[i].anim.size() > _jointId)
+				return (*modelList)[i].anim[_jointId] * glm::inverse((*modelList)[i].joints[_jointId]);
+			else
+				break;
+		}
+	}
+	return glm::mat4(1.0f);
 }
 
 GLuint GraphicDevice::AddTexture(std::string _fileDir, GLenum _textureSlot)
@@ -514,6 +564,12 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	}
 	// Import Object
 	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dirs, _modelToLoad->File);
+	
+	if (obj.animated && m_useAnimations)
+	{
+		BufferAModel(_modelId, _modelToLoad);
+		return;
+	}
 
 	// Import Texture
 	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
@@ -551,6 +607,67 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 		m_modelsWaterCorners.push_back(model);
 	else
 		m_modelsForward.push_back(model);
+}
+
+void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
+{
+	ObjectData obj = ModelLoader::importObject(_modelToLoad->Dirs, _modelToLoad->File);
+
+	Shader *shaderPtr = &m_animationShader;
+	std::vector<AModel> *modelList = &m_modelsAnimated;
+
+	// Import Mesh
+	Buffer* mesh = AddMesh(obj.mesh, shaderPtr, true);
+
+	// Import Texture
+	GLuint texture = AddTexture(obj.text, GL_TEXTURE1);
+	shaderPtr->CheckUniformLocation("diffuseTex", 1);
+
+	// Import Normal map
+	GLuint normal = AddTexture(obj.norm, GL_TEXTURE2);
+	shaderPtr->CheckUniformLocation("normalTex", 2);
+
+	// Import Specc Glow map
+	GLuint specular = AddTexture(obj.spec, GL_TEXTURE3);
+	shaderPtr->CheckUniformLocation("specularTex", 3);
+
+	AModel model = AModel(_modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color, mesh, texture, normal, specular);
+
+	// Import Skeleton
+	std::vector<JointData> joints = ModelLoader::importJoints(obj.joints);
+
+	// Add skeleton
+	for (int i = 0; i < joints.size(); i++)
+	{
+		model.joints.push_back(joints[i].mat);
+	}
+
+	// Add animation base
+	for (int i = 0; i < joints.size(); i++)
+	{
+		int index = i;//joints.size() - i - 1;
+		model.animation.push_back(Joint(joints[index].parent));
+		model.anim.push_back(joints[index].mat);
+		model.extra.push_back(mat4(1));
+	}
+
+	// Import Animations
+	for (int i = 0; i < obj.anim.size(); i++)
+	{
+		std::vector<AnimData> anim = ModelLoader::importAnimation(obj.anim[i]);
+		for (int j = 0; j < anim.size(); j++)
+		{
+			model.AddKeyFrame(obj.anim[i], anim[j].frame, anim[j].joint, anim[j].mat);
+		}
+	}
+
+	// Pre-calc frames
+	model.PreCalculateAnimations();
+
+	// Push back the model
+	model.name = _modelToLoad->File;
+	model.name.erase(model.name.end() - 7, model.name.end());
+	modelList->push_back(model);
 }
 
 void GraphicDevice::BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoad)
@@ -659,6 +776,10 @@ void GraphicDevice::BufferLightsToGPU_GD()
 		m_riverCornerShader.SetUniVariable("dirlightDirection", vector3, &m_dirLightDirection);
 		m_riverCornerShader.SetUniVariable("dirlightIntensity", vector3, &intens);
 		m_riverCornerShader.SetUniVariable("dirlightColor", vector3, &color);
+		
+		m_animationShader.SetUniVariable("dirlightDirection", vector3, &m_dirLightDirection);
+		m_animationShader.SetUniVariable("dirlightIntensity", vector3, &intens);
+		m_animationShader.SetUniVariable("dirlightColor", vector3, &color);
 	}
 	else
 	{
@@ -668,6 +789,8 @@ void GraphicDevice::BufferLightsToGPU_GD()
 		m_riverShader.SetUniVariable("dirlightColor", vector3, &m_lightDefaults[0]);
 		m_riverCornerShader.SetUniVariable("dirlightIntensity", vector3, &m_lightDefaults[0]);
 		m_riverCornerShader.SetUniVariable("dirlightColor", vector3, &m_lightDefaults[0]);
+		m_animationShader.SetUniVariable("dirlightIntensity", vector3, &m_lightDefaults[0]);
+		m_animationShader.SetUniVariable("dirlightColor", vector3, &m_lightDefaults[0]);
 	}
 
 	// ------------Pointlights------------
@@ -681,23 +804,34 @@ void GraphicDevice::BufferLightsToGPU_GD()
 				ss << "pointlights[" << i << "].Position";
 				m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[0]);
 				m_riverShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[0]);
-				m_riverCornerShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[0]);		ss.str(std::string());
+				m_riverCornerShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[0]);
+				m_animationShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[0]);
+				ss.str(std::string());
 
 				ss << "pointlights[" << i << "].Intensity";
 				m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[3]);
 				m_riverShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[3]);
-				m_riverCornerShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[3]);		ss.str(std::string());
+				m_riverCornerShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[3]);
+				m_animationShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[3]);
+				ss.str(std::string());
 
 				ss << "pointlights[" << i << "].Color";
 				m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[6]);
 				m_riverShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[6]);
-				m_riverCornerShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[6]);		ss.str(std::string());
+				m_riverCornerShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[6]);
+				m_animationShader.SetUniVariable(ss.str().c_str(), vector3, &m_lightDefaults[6]);
+				ss.str(std::string());
 
 				ss << "pointlights[" << i << "].Range";
 				m_forwardShader.SetUniVariable(ss.str().c_str(), glfloat, &m_lightDefaults[9]);
 				m_riverShader.SetUniVariable(ss.str().c_str(), glfloat, &m_lightDefaults[9]);
-				m_riverCornerShader.SetUniVariable(ss.str().c_str(), glfloat, &m_lightDefaults[9]);		ss.str(std::string());
+				m_riverCornerShader.SetUniVariable(ss.str().c_str(), glfloat, &m_lightDefaults[9]);
+				m_animationShader.SetUniVariable(ss.str().c_str(), glfloat, &m_lightDefaults[9]);
+				ss.str(std::string());
 			}
+			//delete[] m_pointlightsPtr;
+			//m_pointlightsPtr = 0;
+			//m_nrOfLightsToBuffer = 0;
 		}
 		else
 		{
@@ -707,22 +841,30 @@ void GraphicDevice::BufferLightsToGPU_GD()
 				ss << "pointlights[" << i << "].Position";
 				m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][0]);		
 				m_riverShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][0]);		
-				m_riverCornerShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][0]);		ss.str(std::string());
+				m_riverCornerShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][0]);
+				m_animationShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][0]);
+				ss.str(std::string());
 
 				ss << "pointlights[" << i << "].Intensity";
 				m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][3]);		
 				m_riverShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][3]);		
-				m_riverCornerShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][3]);		ss.str(std::string());
+				m_riverCornerShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][3]);
+				m_animationShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][3]);
+				ss.str(std::string());
 
 				ss << "pointlights[" << i << "].Color";
 				m_forwardShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][6]);		
 				m_riverShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][6]);		
-				m_riverCornerShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][6]);		ss.str(std::string());
+				m_riverCornerShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][6]);
+				m_animationShader.SetUniVariable(ss.str().c_str(), vector3, &m_pointlightsPtr[i][6]);
+				ss.str(std::string());
 
 				ss << "pointlights[" << i << "].Range";
 				m_forwardShader.SetUniVariable(ss.str().c_str(), glfloat, &m_pointlightsPtr[i][9]);		
 				m_riverShader.SetUniVariable(ss.str().c_str(), glfloat, &m_pointlightsPtr[i][9]);		
-				m_riverCornerShader.SetUniVariable(ss.str().c_str(), glfloat, &m_pointlightsPtr[i][9]);		ss.str(std::string());
+				m_riverCornerShader.SetUniVariable(ss.str().c_str(), glfloat, &m_pointlightsPtr[i][9]);
+				m_animationShader.SetUniVariable(ss.str().c_str(), glfloat, &m_pointlightsPtr[i][9]);
+				ss.str(std::string());
 			}
 		}
 		delete[] m_pointlightsPtr;
@@ -790,7 +932,20 @@ void GraphicDevice::BufferParticleSystems()
 	// ParticleSystems to add
 	for (int i = 0; i < m_particleSystemsToLoad.size(); i++)
 	{
-		if (m_particleSystemsToLoad[i].Name == "fire")
+		if (m_particleSystemsToLoad[i].Name == "explosion")
+		{
+			m_particleEffects.insert(std::pair<int, ParticleEffect*>(m_particleSystemsToLoad[i].Id, new Explosion(
+				m_particleSystemsToLoad[i].Pos,
+				m_particleSystemsToLoad[i].Vel,
+				m_particleSystemsToLoad[i].NrOfParticles,
+				m_particleSystemsToLoad[i].LifeTime,
+				m_particleSystemsToLoad[i].Scale,
+				m_particleSystemsToLoad[i].SpriteSize,
+				AddTexture(m_particleSystemsToLoad[i].TextureName, GL_TEXTURE1),
+				m_particleSystemsToLoad[i].Color,
+				m_particleShaders[m_particleSystemsToLoad[i].Name])));
+		}
+		else if (m_particleSystemsToLoad[i].Name == "fire")
 		{
 			m_particleEffects.insert(std::pair<int, ParticleEffect*>(m_particleSystemsToLoad[i].Id, new Fire(
 				m_particleSystemsToLoad[i].Pos,
@@ -866,6 +1021,7 @@ void GraphicDevice::Clear()
 {
 	m_modelIDcounter = 0;
 
+	m_modelsAnimated.clear();
 	m_modelsForward.clear();
 	m_modelsViewspace.clear();
 	m_modelsInterface.clear();
@@ -927,7 +1083,6 @@ void GraphicDevice::CreateFullscreenQuad()
 void GraphicDevice::BufferStaticModel(std::pair<int, std::vector<ModelToLoad*>> _staticModel)
 {
 	ObjectData obj = ModelLoader::importObject(_staticModel.second[0]->Dirs, _staticModel.second[0]->File);
-
 	ModelExporter modelExporter;
 	modelExporter.OpenFileForRead(obj.mesh.c_str());
 	std::vector<float> positionData = modelExporter.ReadDataFromFile();
@@ -936,15 +1091,12 @@ void GraphicDevice::BufferStaticModel(std::pair<int, std::vector<ModelToLoad*>> 
 	std::vector<float> bitanData = modelExporter.ReadDataFromFile();
 	std::vector<float> texCoordData = modelExporter.ReadDataFromFile();
 	modelExporter.CloseFile();
-
 	ModelToLoadFromSource* modelToLoadFromSource = new ModelToLoadFromSource();
-
 	modelToLoadFromSource->positions.resize(_staticModel.second.size() * positionData.size());
 	modelToLoadFromSource->normals.resize(_staticModel.second.size() * normalData.size());
 	modelToLoadFromSource->tangents.resize(_staticModel.second.size() * tanData.size());
 	modelToLoadFromSource->bitangents.resize(_staticModel.second.size() * bitanData.size());
 	modelToLoadFromSource->texCoords.resize(_staticModel.second.size() * texCoordData.size());
-
 	unsigned int vertexCount = (unsigned int)positionData.size() / 3;
 	for (unsigned int i = 0; i < (unsigned int)_staticModel.second.size(); ++i)
 	{
@@ -980,9 +1132,7 @@ void GraphicDevice::BufferStaticModel(std::pair<int, std::vector<ModelToLoad*>> 
 			modelToLoadFromSource->texCoords[i * vertexCount * 2 + j * 2 + 1] = texCoord[1];
 		}
 	}
-
 	*_staticModel.second[0]->MatrixPtr = glm::mat4(1.0f);
-
 	char nameBuffer[16];
 	sprintf(nameBuffer, "Static%d", _staticModel.first);
 	modelToLoadFromSource->key = std::string(nameBuffer);
@@ -994,7 +1144,6 @@ void GraphicDevice::BufferStaticModel(std::pair<int, std::vector<ModelToLoad*>> 
 	modelToLoadFromSource->Color = _staticModel.second[0]->Color;
 	modelToLoadFromSource->CastShadow = _staticModel.second[0]->CastShadow;
 	m_modelsToLoadFromSource[_staticModel.first] = modelToLoadFromSource;
-
 	for (ModelToLoad* modelToLoad : _staticModel.second)
 		delete modelToLoad;
 }
