@@ -10,7 +10,7 @@ Packet::Packet()
 
 }
 
-Packet::Packet(unsigned char* _data, unsigned short _length, NetConnection _sender)
+Packet::Packet(char* _data, unsigned short _length, NetConnection _sender)
 {
 	Data = _data;
 	Length = new unsigned short(_length);

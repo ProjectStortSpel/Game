@@ -189,7 +189,7 @@ void ClientNetwork::ReceivePackets(const std::string _name)
 			*m_currentTimeOutIntervall = 0.0f;
 
 			Packet* p = new Packet();
-			p->Data = new unsigned char[dataReceived];
+			p->Data = new char[dataReceived];
 			*p->Length = dataReceived;
 			*p->Sender = m_socket->GetNetConnection();
 			memcpy(p->Data, m_packetData, dataReceived);

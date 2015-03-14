@@ -31,6 +31,9 @@
     <Filter Include="Source\BaseNetwork">
       <UniqueIdentifier>{2ddb1c89-e36c-4da6-88f6-317c7e67f62b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Rijndael">
+      <UniqueIdentifier>{33ec3f41-53ca-44c0-8666-0bb7c58ccebe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Source\Network\PacketHandler.cpp">
@@ -62,6 +65,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Network\BaseNetwork.cpp">
       <Filter>Source\BaseNetwork</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Network\Rijndael.cpp">
+      <Filter>Source\Rijndael</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -98,6 +104,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Network\BaseNetwork.h">
       <Filter>Source\BaseNetwork</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Network\Rijndael.h">
+      <Filter>Source\Rijndael</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
