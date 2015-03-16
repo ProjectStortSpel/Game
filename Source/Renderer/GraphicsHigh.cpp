@@ -7,6 +7,7 @@ GraphicsHigh::GraphicsHigh()
 {
 	SDL_Log("Starting graphics high");
 	debugModelInfo = false;
+	hideInderface = false;
 
 	mark = 0;
 	timer = 0;
@@ -26,6 +27,7 @@ GraphicsHigh::GraphicsHigh(Camera _camera, int x, int y) : GraphicDevice(_camera
 {
 	SDL_Log("Starting graphics high");
 	debugModelInfo = false;
+	hideInderface = false;
 	m_useAnimations = true;
 	m_renderSimpleText = true;
 	m_modelIDcounter = 0;
