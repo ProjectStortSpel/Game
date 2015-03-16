@@ -5,7 +5,9 @@ using namespace glm;
 
 GraphicsHigh::GraphicsHigh()
 {
+	SDL_Log("Starting graphics high");
 	debugModelInfo = false;
+	hideInderface = false;
 
 	mark = 0;
 	timer = 0;
@@ -23,7 +25,9 @@ GraphicsHigh::GraphicsHigh()
 
 GraphicsHigh::GraphicsHigh(Camera _camera, int x, int y) : GraphicDevice(_camera, x, y)
 {
+	SDL_Log("Starting graphics high");
 	debugModelInfo = false;
+	hideInderface = false;
 	m_useAnimations = true;
 	m_renderSimpleText = true;
 	m_modelIDcounter = 0;
@@ -307,7 +311,6 @@ void GraphicsHigh::Update(float _dt)
 
 	if (debugModelInfo)
 		PrintModelInfo();
-
 
 	BufferModels();
 	BufferLightsToGPU();
@@ -627,14 +630,16 @@ void GraphicsHigh::Render()
 		m_modelsViewspace[i].Draw(mat4(1), mat4(1));
 
 	//--------INTERFACE RENDERING
-	//----Uniforms
-	m_interfaceShader.UseProgram();
-	m_interfaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
-	//----DRAW MODELS
-	SortModelsBasedOnDepth(&m_modelsInterface);
-	for (int i = 0; i < m_modelsInterface.size(); i++)
-		m_modelsInterface[i].Draw(mat4(1), mat4(1));
-
+	if (!hideInderface)
+	{
+		//----Uniforms
+		m_interfaceShader.UseProgram();
+		m_interfaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
+		//----DRAW MODELS
+		SortModelsBasedOnDepth(&m_modelsInterface);
+		for (int i = 0; i < m_modelsInterface.size(); i++)
+			m_modelsInterface[i].Draw(mat4(1), mat4(1));
+	}
 	glDisable(GL_BLEND);
 	glDisable(GL_TEXTURE_2D);
 
