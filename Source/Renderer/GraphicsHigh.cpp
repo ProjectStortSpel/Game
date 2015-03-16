@@ -312,7 +312,6 @@ void GraphicsHigh::Update(float _dt)
 	if (debugModelInfo)
 		PrintModelInfo();
 
-
 	BufferModels();
 	BufferLightsToGPU();
 	BufferSurfaces();
@@ -631,14 +630,16 @@ void GraphicsHigh::Render()
 		m_modelsViewspace[i].Draw(mat4(1), mat4(1));
 
 	//--------INTERFACE RENDERING
-	//----Uniforms
-	m_interfaceShader.UseProgram();
-	m_interfaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
-	//----DRAW MODELS
-	SortModelsBasedOnDepth(&m_modelsInterface);
-	for (int i = 0; i < m_modelsInterface.size(); i++)
-		m_modelsInterface[i].Draw(mat4(1), mat4(1));
-
+	if (!hideInderface)
+	{
+		//----Uniforms
+		m_interfaceShader.UseProgram();
+		m_interfaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
+		//----DRAW MODELS
+		SortModelsBasedOnDepth(&m_modelsInterface);
+		for (int i = 0; i < m_modelsInterface.size(); i++)
+			m_modelsInterface[i].Draw(mat4(1), mat4(1));
+	}
 	glDisable(GL_BLEND);
 	glDisable(GL_TEXTURE_2D);
 
