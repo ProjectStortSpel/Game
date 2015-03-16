@@ -712,6 +712,10 @@ void GameCreator::StartGame(int argc, char** argv)
 			if (m_serverWorldProfiler->IsActive())
 				m_serverWorldProfiler->NextView();
 		}
+		else if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F8) == Input::InputState::PRESSED)
+		{
+			m_graphics->hideInderface = !m_graphics->hideInderface;
+		}
 
 		if (showDebugInfo)
 		{
