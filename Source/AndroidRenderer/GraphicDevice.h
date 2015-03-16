@@ -89,6 +89,7 @@ namespace Renderer
 	{
 	public:
 		bool debugModelInfo;
+		bool hideInderface;
 
 		GraphicDevice();
 		GraphicDevice(Camera _camera);
