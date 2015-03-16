@@ -5,6 +5,7 @@ using namespace glm;
 
 GraphicsHigh::GraphicsHigh()
 {
+	SDL_Log("Starting graphics high");
 	debugModelInfo = false;
 
 	mark = 0;
@@ -23,6 +24,7 @@ GraphicsHigh::GraphicsHigh()
 
 GraphicsHigh::GraphicsHigh(Camera _camera, int x, int y) : GraphicDevice(_camera, x, y)
 {
+	SDL_Log("Starting graphics high");
 	debugModelInfo = false;
 	m_useAnimations = true;
 	m_renderSimpleText = true;
