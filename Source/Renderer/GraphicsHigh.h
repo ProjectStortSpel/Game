@@ -39,7 +39,7 @@ namespace Renderer
 		void Clear();
 		
 	private:
-		void PrintModelInfo();
+		void PrintModelInfo(int setting);
 
 		bool InitGLEW();
 		bool InitDeferred();

@@ -44,7 +44,8 @@ bool GraphicsHigh::Init()
 
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
 #ifdef __ANDROID__
-	InitFBO();
+	if (m_clientWidth > 1400)
+		InitFBO();
 #endif
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	if (!InitSkybox()) { ERRORMSG("INIT SKYBOX FAILED\n"); return false; }
@@ -142,11 +143,12 @@ void GraphicsHigh::Render()
 	glEnable(GL_DEPTH_TEST);
 
 #if defined(__ANDROID__)
-    GLint oldFBO = 0;
-    glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
+	GLint oldFBO = 0;
+	if (m_clientWidth > 1400)
+		glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 #elif defined(__IOS__)
-    GLint oldFBO;
-    glGetIntegerv(GL_FRAMEBUFFER, &oldFBO);
+	GLint oldFBO;
+	glGetIntegerv(GL_FRAMEBUFFER, &oldFBO);
 #endif
 
 
@@ -176,7 +178,14 @@ void GraphicsHigh::Render()
 	{
 		WriteShadowMapDepth();
 
-		glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
+#if defined(__ANDROID__)
+		if (m_clientWidth > 1400)
+			glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
+		else
+			glBindFramebuffer(GL_FRAMEBUFFER, oldFBO);
+#elif defined(__IOS__)
+		glBindFramebuffer(GL_FRAMEBUFFER, oldFBO);
+#endif
 		glViewport(0, 0, m_framebufferWidth, m_framebufferHeight);
 
 		//------FORWARD RENDERING--------------------------------------------
@@ -226,7 +235,7 @@ void GraphicsHigh::Render()
 		{
 			m_modelsWaterCorners[i].Draw(viewMatrix, &m_riverCornerShader);
 		}
-		
+
 		//--------ANIMATED DEFERRED RENDERING !!! ATTENTION: WORK IN PROGRESS !!!
 		m_animationShader.UseProgram();
 		m_animationShader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
@@ -244,9 +253,9 @@ void GraphicsHigh::Render()
 			m_modelsAnimated[i].Draw(viewMatrix, projectionMatrix, &m_animationShader);
 		}
 	}
-	
+
 	glViewport(0, 0, m_framebufferWidth, m_framebufferHeight);
-	
+
 
 
 	//--------PARTICLES---------
@@ -302,15 +311,15 @@ void GraphicsHigh::Render()
 				modelMatrix = glm::translate(glm::vec3(1));
 			else
 				modelMatrix = *m_modelsInterface[i].modelMatrix;
-			
+
 			mat4 modelViewMatrix = modelMatrix;
 			m_interfaceShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
-			
+
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, m_modelsInterface[i].texID);
-			
+
 			m_interfaceShader.SetUniVariable("BlendColor", vector3, m_modelsInterface[i].color);
-			
+
 			m_modelsInterface[i].bufferPtr->draw(m_interfaceShader.GetShaderProgram());
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
@@ -320,20 +329,22 @@ void GraphicsHigh::Render()
 
 	glDisable(GL_BLEND);
 #ifdef __ANDROID__
-	// DRAW FULLSCREEN
-	glViewport(0, 0, m_clientWidth, m_clientHeight);
+	if (m_clientWidth > 1400)
+	{
+		// DRAW FULLSCREEN
+		glViewport(0, 0, m_clientWidth, m_clientHeight);
 
-	m_fullscreen.UseProgram();
+		m_fullscreen.UseProgram();
 
-	// Skicka in outputImage
-	glActiveTexture(GL_TEXTURE4);
-	glBindTexture(GL_TEXTURE_2D, m_outputImage);
+		// Skicka in outputImage
+		glActiveTexture(GL_TEXTURE4);
+		glBindTexture(GL_TEXTURE_2D, m_outputImage);
 
-	glBindBuffer(GL_ARRAY_BUFFER, m_fullscreenQuadBuffer);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
-	glEnableVertexAttribArray(0);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-    
+		glBindBuffer(GL_ARRAY_BUFFER, m_fullscreenQuadBuffer);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
+		glEnableVertexAttribArray(0);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+	}
 #endif
     
 	glDisable(GL_TEXTURE_2D);
@@ -386,11 +397,13 @@ bool GraphicsHigh::InitSDLWindow()
 	m_framebufferWidth = m_clientWidth;
 	m_framebufferHeight = m_clientHeight;
 
+#ifdef __ANDROID__
 	if (m_clientWidth > 1400)
 	{
 		m_framebufferWidth = 1280;
 		m_framebufferHeight = m_framebufferWidth * float(float(m_clientHeight) / float(m_clientWidth));
 	}
+#endif
 
 	m_glContext = SDL_GL_CreateContext(m_window);
 
