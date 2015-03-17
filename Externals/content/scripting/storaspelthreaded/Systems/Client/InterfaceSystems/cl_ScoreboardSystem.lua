@@ -1,6 +1,7 @@
 ScoreboardSystem = System()
 ScoreboardSystem.Name = "Scoreboard"
 ScoreboardSystem.GameStarted = false
+ScoreboardSystem.RemoveMenuRequest = false
 
 ScoreboardSystem.Initialize = function ( self )
 	--	Set Name
@@ -35,14 +36,17 @@ ScoreboardSystem.Update = function(self, dt)
 	if not self.GameStarted then
 		return
 	end
-		
-
-	if Input.GetKeyState(Key.Tab) == InputState.Pressed then
-		self:SpawnMenu()
-	elseif Input.GetKeyState(Key.Tab) == InputState.Released then
+	
+	if self.RemoveMenuRequest then
 		self:RemoveMenu()
+		self.RemoveMenuRequest = false
+	else
+		if Input.GetKeyState(Key.Tab) == InputState.Pressed then
+			self:SpawnMenu()
+		elseif Input.GetKeyState(Key.Tab) == InputState.Released then
+			self.RemoveMenuRequest = true
+		end
 	end
-
 end
 
 ScoreboardSystem.SpawnMenu = function(self)
@@ -69,22 +73,10 @@ ScoreboardSystem.SpawnMenu = function(self)
 end
 
 ScoreboardSystem.RemoveMenu = function(self)
-
 	local entities = self:GetEntities(self.Name.."Element")
 	for i = 1, #entities do
 		world:KillEntity(entities[i])
 	end
-	
-end
-
-ScoreboardSystem.AddConsoleCommandToButton = function(self, command, button)
-	world:CreateComponentAndAddTo("MenuConsoleCommand", button)
-	world:GetComponent(button, "MenuConsoleCommand", "Command"):SetText(command)
-end
-
-ScoreboardSystem.AddEntityCommandToButton = function(self, command, button)
-	world:CreateComponentAndAddTo("MenuEntityCommand", button)
-	world:GetComponent(button, "MenuEntityCommand", "ComponentName"):SetText(command)
 end
 
 ScoreboardSystem.CreateElement = function(self, object, folder, posx, posy, posz, scalex, scaley)
