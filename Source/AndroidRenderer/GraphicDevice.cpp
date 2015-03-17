@@ -55,7 +55,8 @@ GraphicDevice::~GraphicDevice()
 		delete(m_surfaces[i].second);
 
 #ifdef __ANDROID__
-	glDeleteBuffers(1, &m_fullscreenQuadBuffer);
+	if (m_clientWidth > 1400)
+		glDeleteBuffers(1, &m_fullscreenQuadBuffer);
 #endif
 	SDL_GL_DeleteContext(m_glContext);
 	// Close and destroy the window
