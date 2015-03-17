@@ -34,6 +34,7 @@ namespace Renderer
 		void drawInstanced(GLint base, int instances, std::vector<glm::mat4> *inMats, std::vector<glm::mat3> *normalMats, float *color = nullptr);
 
 		void setCount(GLsizei count);
+		int getCount() { return (int)m_Count; }
 
 		GLuint getVAO() { return m_VAO; }
 

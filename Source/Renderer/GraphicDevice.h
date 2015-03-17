@@ -109,7 +109,7 @@ namespace Renderer
 	class DECLSPEC GraphicDevice
 	{
 	public:
-		bool debugModelInfo;
+		int debugModelInfo;
 		bool hideInderface;
 
 		GraphicDevice();
