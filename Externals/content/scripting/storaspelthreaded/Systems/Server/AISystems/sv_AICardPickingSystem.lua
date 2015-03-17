@@ -3,7 +3,7 @@ AICardPickingSystem = System()
 --AICardPickingSystem.PrintThis = false
 AICardPickingSystem.ERROR = false -- TODO: Remove this
 
-AICardPickingSystem.AICheat = true
+AICardPickingSystem.AICheat = false
 AICardPickingSystem.TimeLimitPerUpdateInMs = 10.0
 
 -- Flags to indicate if init is done and when to pick cards.
@@ -1154,6 +1154,8 @@ AICardPickingSystem.EntitiesAdded = function(self, dt, entities)
 		
 	local gotCards = false
 	
+	--print("hej ai entity")
+	
 	for i = 1, #entities do
 		
 		if world:EntityHasComponent(entities[i], "AICard") then
@@ -1194,6 +1196,8 @@ AICardPickingSystem.EntitiesAdded = function(self, dt, entities)
 		end
 		
 	end
+	
+	--print("asldkj")
 	
 	if gotCards then
 	
