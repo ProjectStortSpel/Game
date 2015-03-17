@@ -76,14 +76,16 @@ AddAISystem.AddAI = function(_command, ...)
 	end
 	
 	for i = 1, noToAdd do
-		local newAI = world:CreateNewEntity("AI")
+		--local newAI = world:CreateNewEntity("AI")
+		world:CreateNewEntity("AI")
 	end
 end
 
 AddAISystem.FillWithAIs = function(_command, ...)
 	
 	for i = 1, 10 do
-		local newAI = world:CreateNewEntity("AI")
+		--local newAI = world:CreateNewEntity("AI")
+		world:CreateNewEntity("AI")
 	end
 end
 
@@ -92,7 +94,6 @@ AddAISystem.EntitiesAdded = function(self, dt, entities)
 	local ais = self:GetEntities("AI")
 	local voids = self:GetEntities("Void")
 	local nonWalkable = self:GetEntities("NotWalkable")
-	local riverEnd = self:GetEntities("RiverEnd")
 	
 	for	i = 1, #ais do 
 		
@@ -118,7 +119,7 @@ AddAISystem.EntitiesAdded = function(self, dt, entities)
 			
 				local rng = math.random(1, #self.Names)
 				local newName = "BOT " .. self.Names[rng]
-				self.Names[rng] = nil
+				table.remove(self.Names, rng)
 
 				local playerNumber = noOfPlayers + 1
 				world:GetComponent(ais[i], "PlayerName", "Name"):SetString(newName)
@@ -136,11 +137,8 @@ AddAISystem.EntitiesAdded = function(self, dt, entities)
 				local power = 2
 				
 				local bookIndex = DynamicScripting.LoadRuleBook("content/dynamicscripting/map.txt")
-				
-				DynamicScripting.SetRuleBook( bookIndex );
-				
+				DynamicScripting.SetRuleBook( bookIndex )
 				local fail = DynamicScripting.GenerateScript(playerNumber)
-				
 				--DynamicScripting.UpdateWeight(math.random())
 				
 				local found, onTheSpotValue, weight, length, power = DynamicScripting.GetWeightFrom("Void", playerNumber)

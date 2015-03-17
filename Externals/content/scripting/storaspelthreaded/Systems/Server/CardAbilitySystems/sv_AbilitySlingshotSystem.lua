@@ -76,6 +76,11 @@ AbilitySlingshotSystem.AddBullet = function(self, posX, posZ, targetPosX, target
 	world:GetComponent(bullet, "LerpPosition", "Time"):SetFloat(lerpTime*math.abs(posX-targetPosX+posZ-targetPosZ))
 	world:GetComponent(bullet, "LerpPosition", "Algorithm"):SetText("NormalLerp")
 	world:GetComponent(bullet, "AddEntityAfterLerp", "ComponentName"):SetText("AddBulletImpact")
+	
+	local audioId = Net.StartPack("Client.PlaySound")
+	Net.WriteString(audioId, "Throw")
+	Net.WriteBool(audioId, false)
+	Net.Broadcast(audioId)
 
 end
 
