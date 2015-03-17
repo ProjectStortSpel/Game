@@ -29,10 +29,6 @@ CardPositionSystem.EntitiesAdded = function(self, dt, newEntities)
 		local py = self.UpOffset
 		local pz = -4.0
 		
-		if px > 2.2 or px < -2.2 then
-			print("2 : 1 - Very very wrong! px: ", px, i, entityCount)
-		end
-		
 		if not world:EntityHasComponent(entity, "LerpPosition") then
 			world:CreateComponentAndAddTo("LerpPosition", entity)
 		end
