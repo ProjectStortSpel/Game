@@ -6,7 +6,7 @@ using namespace glm;
 GraphicsHigh::GraphicsHigh()
 {
 	SDL_Log("Starting graphics high");
-	debugModelInfo = false;
+	debugModelInfo = 0;
 	hideInderface = false;
 
 	mark = 0;
@@ -26,7 +26,7 @@ GraphicsHigh::GraphicsHigh()
 GraphicsHigh::GraphicsHigh(Camera _camera, int x, int y) : GraphicDevice(_camera, x, y)
 {
 	SDL_Log("Starting graphics high");
-	debugModelInfo = false;
+	debugModelInfo = 0;
 	hideInderface = false;
 	m_useAnimations = true;
 	m_renderSimpleText = true;
@@ -309,8 +309,8 @@ void GraphicsHigh::Update(float _dt)
 	}
 	m_glTimerValues.clear();
 
-	if (debugModelInfo)
-		PrintModelInfo();
+	if (debugModelInfo > 0)
+		PrintModelInfo(debugModelInfo);
 
 	BufferModels();
 	BufferLightsToGPU();
@@ -835,7 +835,7 @@ void GraphicsHigh::Clear()
 		//delete m_pointerToPointlights;
 }
 
-void GraphicsHigh::PrintModelInfo()
+void GraphicsHigh::PrintModelInfo(int setting)
 {
 	int xoffset;
 
@@ -845,7 +845,10 @@ void GraphicsHigh::PrintModelInfo()
 	for (int i = 0; i < m_modelsAnimated.size(); i++)
 	{
 		m_textRenderer.RenderSimpleText(std::to_string(m_modelsAnimated[i].animations.size()), xoffset, i + 2);
-		m_textRenderer.RenderSimpleText(m_modelsAnimated[i].name, xoffset + 4, i + 2);
+		if (setting == 1)
+			m_textRenderer.RenderSimpleText(m_modelsAnimated[i].name, xoffset + 4, i + 2);
+		else
+			m_textRenderer.RenderSimpleText(std::to_string(m_modelsAnimated[i].bufferPtr->getCount()), xoffset + 4, i + 2);
 	}
 
 	xoffset = 32;
@@ -854,7 +857,10 @@ void GraphicsHigh::PrintModelInfo()
 	for (int i = 0; i < m_modelsDeferred.size(); i++)
 	{
 		m_textRenderer.RenderSimpleText(std::to_string(m_modelsDeferred[i].instances.size()), xoffset, i + 2);
-		m_textRenderer.RenderSimpleText(m_modelsDeferred[i].name, xoffset+4, i + 2);
+		if (setting == 1)
+			m_textRenderer.RenderSimpleText(m_modelsDeferred[i].name, xoffset+4, i + 2);
+		else
+			m_textRenderer.RenderSimpleText(std::to_string(m_modelsDeferred[i].bufferPtr->getCount()), xoffset + 4, i + 2);
 	}
 
 	xoffset = 62;
@@ -863,7 +869,10 @@ void GraphicsHigh::PrintModelInfo()
 	for (int i = 0; i < m_modelsForward.size(); i++)
 	{
 		m_textRenderer.RenderSimpleText(std::to_string(m_modelsForward[i].instances.size()), xoffset, i + 2);
-		m_textRenderer.RenderSimpleText(m_modelsForward[i].name, xoffset+4, i + 2);
+		if (setting == 1)
+			m_textRenderer.RenderSimpleText(m_modelsForward[i].name, xoffset+4, i + 2);
+		else
+			m_textRenderer.RenderSimpleText(std::to_string(m_modelsForward[i].bufferPtr->getCount()), xoffset + 4, i + 2);
 	}
 
 	xoffset = 92;
@@ -872,7 +881,10 @@ void GraphicsHigh::PrintModelInfo()
 	for (int i = 0; i < m_modelsViewspace.size(); i++)
 	{
 		m_textRenderer.RenderSimpleText(std::to_string(m_modelsViewspace[i].instances.size()), xoffset, i + 2);
-		m_textRenderer.RenderSimpleText(m_modelsViewspace[i].name, xoffset+4, i + 2);
+		if (setting == 1)
+			m_textRenderer.RenderSimpleText(m_modelsViewspace[i].name, xoffset+4, i + 2);
+		else
+			m_textRenderer.RenderSimpleText(std::to_string(m_modelsViewspace[i].bufferPtr->getCount()), xoffset + 4, i + 2);
 	}
 
 	xoffset = 122;
@@ -881,6 +893,9 @@ void GraphicsHigh::PrintModelInfo()
 	for (int i = 0; i < m_modelsInterface.size(); i++)
 	{
 		m_textRenderer.RenderSimpleText(std::to_string(m_modelsInterface[i].instances.size()), xoffset, i + 2);
-		m_textRenderer.RenderSimpleText(m_modelsInterface[i].name, xoffset+4, i + 2);
+		if (setting == 1)
+			m_textRenderer.RenderSimpleText(m_modelsInterface[i].name, xoffset+4, i + 2);
+		else
+			m_textRenderer.RenderSimpleText(std::to_string(m_modelsInterface[i].bufferPtr->getCount()), xoffset + 4, i + 2);
 	}
 }
