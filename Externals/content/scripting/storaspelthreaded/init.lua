@@ -1,5 +1,5 @@
 --	MaxNumberOfEntities
-worldCreator:SetMaxNumberOfEntities(1000)
+worldCreator:SetMaxNumberOfEntities(10000)
 
 --	Game Components
 package.path = package.path .. ";Components/?.lua"

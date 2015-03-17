@@ -91,7 +91,6 @@ DealCardsSystem.DealCards = function (self, numCards)
 		local port = world:GetComponent(players[i], "NetConnection", "Port"):GetInt()
 		
 		Cards.MoveCount, Cards.TurnCount, Cards.AbilityCount = self:CalculateCardTypeBalance(numCards, Cards.MoveLeft, Cards.TurnLeft, Cards.AbilityLeft)
-		print("M: ", Cards.MoveCount, "T: ", Cards.TurnCount, "A: ", Cards.AbilityCount)
 		for j = 1, Cards.MoveCount do
 			Cards.MoveLeft = self:DealCardToPlayer(Cards.Move, Cards.MoveLeft, players[i], ip, port)
 		end
