@@ -119,7 +119,7 @@ AddAISystem.EntitiesAdded = function(self, dt, entities)
 			
 				local rng = math.random(1, #self.Names)
 				local newName = "BOT " .. self.Names[rng]
-				self.Names[rng] = nil
+				table.remove(self.Names, rng)
 
 				local playerNumber = noOfPlayers + 1
 				world:GetComponent(ais[i], "PlayerName", "Name"):SetString(newName)
@@ -137,18 +137,18 @@ AddAISystem.EntitiesAdded = function(self, dt, entities)
 				local power = 2
 				
 				local bookIndex = DynamicScripting.LoadRuleBook("content/dynamicscripting/map.txt")
-				
-				DynamicScripting.SetRuleBook( bookIndex );
-				
+				DynamicScripting.SetRuleBook( bookIndex )
 				local fail = DynamicScripting.GenerateScript(playerNumber)
-				
 				--DynamicScripting.UpdateWeight(math.random())
 				
-				local found, weight, length, onTheSpotValue = DynamicScripting.GetWeightFrom("Void", playerNumber)
+				local found, onTheSpotValue, weight, length, power = DynamicScripting.GetWeightFrom("Void", playerNumber)
 				self:PFstuff( found, voids, playerNumber, "Void", onTheSpotValue, weight, length, power )
 				
-				local found, weight, length, onTheSpotValue = DynamicScripting.GetWeightFrom("NotWalkable", playerNumber)
+				local found, onTheSpotValue, weight, length, power = DynamicScripting.GetWeightFrom("NotWalkable", playerNumber)
 				self:PFstuff( found, nonWalkable, playerNumber, "NotWalkable", onTheSpotValue, weight, length, power )
+				
+				local found, onTheSpotValue, weight, length, power = DynamicScripting.GetWeightFrom("RiverEnd", playerNumber)
+				self:PFstuff( found, riverEnd, playerNumber, "RiverEnd", onTheSpotValue, weight, length, power )
 				
 				PotentialFieldHandler.SumPFs(playerNumber)
 				
