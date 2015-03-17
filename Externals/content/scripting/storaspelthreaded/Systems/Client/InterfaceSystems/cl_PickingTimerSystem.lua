@@ -123,19 +123,6 @@ PickingTimerSystem.SpawnWood = function(self)
 end
 
 PickingTimerSystem.Update = function( self, dt )
-	
-	if self.ChangeHidden then
-		if self.Hidden then
-			world:CreateComponentAndAddTo("Hide", self.BarEntity)
-			world:CreateComponentAndAddTo("Hide", self.LeftEndEntity)
-			world:CreateComponentAndAddTo("Hide", self.RightEndEntity)
-		else
-			world:RemoveComponentFrom("Hide", self.BarEntity)
-			world:RemoveComponentFrom("Hide", self.LeftEndEntity)
-			world:RemoveComponentFrom("Hide", self.RightEndEntity)
-		end
-		self.ChangeHidden = false
-	end
 
 	if self.FullTime ~= -1.0 then
 		local PrevTime = self.CurrentTime
@@ -146,13 +133,6 @@ PickingTimerSystem.Update = function( self, dt )
 		if self.CurrentTime < 0.0 then
 			self:Reset()
 		end
-		--self:AlignBar()
-		
-		--if #Timers > 0 then
-			--local drawTimer = Timers[1]
-			--local scale = world:GetComponent(drawTimer, "Scale", 0)
-			--scale:SetFloat3(self.timer*self.size, 0.1, 1)
-		--end
 		
 		-- Audio
 		--[[local ticRate = 1.0
@@ -172,6 +152,21 @@ PickingTimerSystem.Update = function( self, dt )
 			end
 		end--]]
 	end
+	
+	if self.ChangeHidden then
+		if not self.Hidden then
+			world:CreateComponentAndAddTo("Hide", self.BarEntity)
+			world:CreateComponentAndAddTo("Hide", self.LeftEndEntity)
+			world:CreateComponentAndAddTo("Hide", self.RightEndEntity)
+			self.Hidden = true
+		else
+			world:RemoveComponentFrom("Hide", self.BarEntity)
+			world:RemoveComponentFrom("Hide", self.LeftEndEntity)
+			world:RemoveComponentFrom("Hide", self.RightEndEntity)
+			self.Hidden = false
+		end
+		self.ChangeHidden = false
+	end
 end
 
 PickingTimerSystem.EntitiesAdded = function(self, dt, entities)
@@ -187,13 +182,11 @@ end
 
 PickingTimerSystem.Show = function(self)
 	if self.Hidden then
-		self.Hidden = false
 		self.ChangeHidden = true
 	end
 end
 PickingTimerSystem.Hide = function(self)
 	if not self.Hidden then
-		self.Hidden = true
 		self.ChangeHidden = true
 	end
 end
