@@ -42,7 +42,8 @@ bool GraphicsLow::Init()
 
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
 #ifdef __ANDROID__
-    InitFBO();
+	if (m_clientWidth > 1400)
+		InitFBO();
 #endif
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	if (!InitSkybox()) { ERRORMSG("INIT SKYBOX FAILED\n"); return false; }
@@ -87,7 +88,8 @@ void GraphicsLow::Render()
 
 #if defined(__ANDROID__)
     GLint oldFBO = 0;
-    glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
+	if (m_clientWidth > 1400)
+		glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 #elif defined(__IOS__)
     GLint oldFBO;
     glGetIntegerv(GL_FRAMEBUFFER, &oldFBO);
@@ -244,20 +246,22 @@ void GraphicsLow::Render()
 
 	glDisable(GL_BLEND);
 #ifdef __ANDROID__
-	// DRAW FULLSCREEN
-	glViewport(0, 0, m_clientWidth, m_clientHeight);
+	if (m_clientWidth > 1400)
+	{
+		// DRAW FULLSCREEN
+		glViewport(0, 0, m_clientWidth, m_clientHeight);
 
-	m_fullscreen.UseProgram();
+		m_fullscreen.UseProgram();
 
-	// Skicka in outputImage
-	glActiveTexture(GL_TEXTURE4);
-	glBindTexture(GL_TEXTURE_2D, m_outputImage);
+		// Skicka in outputImage
+		glActiveTexture(GL_TEXTURE4);
+		glBindTexture(GL_TEXTURE_2D, m_outputImage);
 
-	glBindBuffer(GL_ARRAY_BUFFER, m_fullscreenQuadBuffer);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
-	glEnableVertexAttribArray(0);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-
+		glBindBuffer(GL_ARRAY_BUFFER, m_fullscreenQuadBuffer);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
+		glEnableVertexAttribArray(0);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+	}
 #endif
     
 	glDisable(GL_TEXTURE_2D);

@@ -29,7 +29,7 @@ Net.Receive("SERVER_BULLET_IMPACT_PARTICLE",
 	world:GetComponent(newParticle, "Particle", "fVelocityX"):SetFloat(0)
 	world:GetComponent(newParticle, "Particle", "fVelocityY"):SetFloat(0)
 	world:GetComponent(newParticle, "Particle", "fVelocityZ"):SetFloat(0)
-	world:GetComponent(newParticle, "Particle", "gSpriteSize"):SetFloat(1.1)
+	world:GetComponent(newParticle, "Particle", "gSpriteSize"):SetFloat(1.4)
 	world:GetComponent(newParticle, "Particle", "hId"):SetInt(-1)
 	world:GetComponent(newParticle, "Particle", "iOnlyOnce"):SetInt(1)
 	

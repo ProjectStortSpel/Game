@@ -26,14 +26,13 @@ LobbySystem.PostInitialize = function ( self )
 end
 
 LobbySystem.Update = function(self, dt)
-	if self.UpdateMe == true then
-		self:RemoveMenu()
-		self:UpdatePlayers()
-		self.UpdateMe = false
-	end
 	if self.UpdateRequest == true then
 		self.UpdateMe = true
 		self.UpdateRequest = false
+	elseif self.UpdateMe == true then
+		self:RemoveMenu()
+		self:UpdatePlayers()
+		self.UpdateMe = false
 	end
 end
 
@@ -201,9 +200,9 @@ LobbySystem.AddTextToTexture = function(self, n, text, font, r, g, b, button)
 	world:GetComponent(button, "TextTexture", "Name"):SetText(n) -- TODO: NAME CANT BE MORE THAN 3 CHARS? WTF?
 	world:GetComponent(button, "TextTexture", "Text"):SetText(text)
 	world:GetComponent(button, "TextTexture", "FontIndex"):SetInt(font)
-	world:GetComponent(button, "TextTexture", "R"):SetFloat(1)
-	world:GetComponent(button, "TextTexture", "G"):SetFloat(1)
-	world:GetComponent(button, "TextTexture", "B"):SetFloat(1)
+	world:GetComponent(button, "TextTexture", "R"):SetFloat(1.0)
+	world:GetComponent(button, "TextTexture", "G"):SetFloat(1.0)
+	world:GetComponent(button, "TextTexture", "B"):SetFloat(1.0)
 	world:CreateComponentAndAddTo("Color", button)
 	world:GetComponent(button, "Color", "X"):SetFloat(r)
 	world:GetComponent(button, "Color", "Y"):SetFloat(g)

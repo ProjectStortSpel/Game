@@ -50,7 +50,7 @@ void ShadowMap::CreateShadowMapTexture(GLuint _textureUnit)
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthTex, 0);
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-	{ SDL_Log("Error: FrameBufferObject is not complete!"); }
+	{ SDL_Log("Error: FrameBufferObject SHADOW is not complete!"); }
 	
 	// Revert to the default framebuffer for now 
 	glBindFramebuffer(GL_FRAMEBUFFER, oldFBO); 

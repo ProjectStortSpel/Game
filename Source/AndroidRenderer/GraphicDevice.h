@@ -88,7 +88,8 @@ namespace Renderer
 	class DECLSPEC GraphicDevice
 	{
 	public:
-		bool debugModelInfo;
+		int debugModelInfo;
+		bool hideInderface;
 
 		GraphicDevice();
 		GraphicDevice(Camera _camera);

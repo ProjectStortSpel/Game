@@ -687,7 +687,9 @@ void GameCreator::StartGame(int argc, char** argv)
 		else if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F2) == Input::InputState::PRESSED)
 			showDebugInfo = !showDebugInfo;
 		else if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F3) == Input::InputState::PRESSED)
-			m_graphics->debugModelInfo = !m_graphics->debugModelInfo;
+		{
+			m_graphics->debugModelInfo = (m_graphics->debugModelInfo + 1) % 3;
+		}
 		else if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F4) == Input::InputState::PRESSED)
 		{
 			if (!m_serverWorldProfiler->IsActive())
@@ -711,6 +713,10 @@ void GameCreator::StartGame(int argc, char** argv)
 				m_clientWorldProfiler->NextView();
 			if (m_serverWorldProfiler->IsActive())
 				m_serverWorldProfiler->NextView();
+		}
+		else if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F8) == Input::InputState::PRESSED)
+		{
+			m_graphics->hideInderface = !m_graphics->hideInderface;
 		}
 
 		if (showDebugInfo)

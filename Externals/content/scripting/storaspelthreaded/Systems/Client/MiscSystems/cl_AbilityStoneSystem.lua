@@ -29,7 +29,7 @@ Net.Receive("SERVER_STONE_IMPACT_PARTICLE",
 	world:GetComponent(newParticle, "Particle", "fVelocityX"):SetFloat(0)
 	world:GetComponent(newParticle, "Particle", "fVelocityY"):SetFloat(0)
 	world:GetComponent(newParticle, "Particle", "fVelocityZ"):SetFloat(0)
-	world:GetComponent(newParticle, "Particle", "gSpriteSize"):SetFloat(2.5)
+	world:GetComponent(newParticle, "Particle", "gSpriteSize"):SetFloat(2.8)
 	world:GetComponent(newParticle, "Particle", "hId"):SetInt(-1)
 	world:GetComponent(newParticle, "Particle", "iOnlyOnce"):SetInt(1)
 	

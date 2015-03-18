@@ -76,14 +76,16 @@ AddAISystem.AddAI = function(_command, ...)
 	end
 	
 	for i = 1, noToAdd do
-		local newAI = world:CreateNewEntity("AI")
+		--local newAI = world:CreateNewEntity("AI")
+		world:CreateNewEntity("AI")
 	end
 end
 
 AddAISystem.FillWithAIs = function(_command, ...)
 	
 	for i = 1, 10 do
-		local newAI = world:CreateNewEntity("AI")
+		--local newAI = world:CreateNewEntity("AI")
+		world:CreateNewEntity("AI")
 	end
 end
 
@@ -115,42 +117,53 @@ AddAISystem.EntitiesAdded = function(self, dt, entities)
 			local availableSpawnsLeft = noOfSpawnpoints - noOfPlayers
 			
 			if availableSpawnsLeft > 0 then
-			
+				
+				--print("haj")
 				local rng = math.random(1, #self.Names)
+				--print("haj2")
 				local newName = "BOT " .. self.Names[rng]
-				self.Names[rng] = nil
+				--print("haj3")
+				table.remove(self.Names, rng)
+				--print("haj4")
 
 				local playerNumber = noOfPlayers + 1
 				world:GetComponent(ais[i], "PlayerName", "Name"):SetString(newName)
 				world:SetComponent(ais[i], "PlayerNumber", "Number", playerNumber)
+				--print("haj5")
 				
 				self:CounterComponentChanged(1, "Players")
 				self:CounterComponentChanged(1, "AIs")
 				availableSpawnsLeft = availableSpawnsLeft - 1
 				
 				world:CreateComponentAndAddTo("NeedUnit", ais[i])
+				--print("haj6")
 				
 				local onTheSpotValue = 0.0
 				local weight = 1
 				local length = 2
 				local power = 2
+				--print("haj7")
 				
 				local bookIndex = DynamicScripting.LoadRuleBook("content/dynamicscripting/map.txt")
-				
-				DynamicScripting.SetRuleBook( bookIndex );
-				
+				DynamicScripting.SetRuleBook( bookIndex )
 				local fail = DynamicScripting.GenerateScript(playerNumber)
-				
 				--DynamicScripting.UpdateWeight(math.random())
+				--print("haj8")
 				
 				local found, onTheSpotValue, weight, length, power = DynamicScripting.GetWeightFrom("Void", playerNumber)
+				--print("haj9")
 				self:PFstuff( found, voids, playerNumber, "Void", onTheSpotValue, weight, length, power )
+				--print("haj10")
 				
 				local found, onTheSpotValue, weight, length, power = DynamicScripting.GetWeightFrom("NotWalkable", playerNumber)
+				--print("haj11")
 				self:PFstuff( found, nonWalkable, playerNumber, "NotWalkable", onTheSpotValue, weight, length, power )
+				--print("haj12")
 				
 				local found, onTheSpotValue, weight, length, power = DynamicScripting.GetWeightFrom("RiverEnd", playerNumber)
+				--print("haj13")
 				self:PFstuff( found, riverEnd, playerNumber, "RiverEnd", onTheSpotValue, weight, length, power )
+				--print("haj14")
 				
 				PotentialFieldHandler.SumPFs(playerNumber)
 				
