@@ -338,7 +338,12 @@ void GraphicsHigh::Render()
 
 		// Skicka in outputImage
 		glActiveTexture(GL_TEXTURE4);
-		glBindTexture(GL_TEXTURE_2D, m_outputImage);
+		
+
+	//	if (m_modelsForward.size() > 0 || m_modelsAnimated.size() > 0)
+	//		glBindTexture(GL_TEXTURE_2D, m_shadowMap->GetDepthTexHandle());
+	//	else
+			glBindTexture(GL_TEXTURE_2D, m_outputImage);
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_fullscreenQuadBuffer);
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
@@ -347,9 +352,9 @@ void GraphicsHigh::Render()
 	}
 #endif
     
-	glDisable(GL_TEXTURE_2D);
+	//glDisable(GL_TEXTURE_2D);
 	glUseProgram(0);
-	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_DEPTH_TEST);
 
 	SDL_GL_SwapWindow(m_window);
 }
@@ -515,6 +520,10 @@ void GraphicsHigh::CreateShadowMap()
 	m_riverCornerShader.UseProgram();
 	m_riverCornerShader.SetUniVariable("BiasMatrix", mat4x4, m_shadowMap->GetBiasMatrix());
 	m_riverCornerShader.CheckUniformLocation("ShadowDepthTex", 0);
+
+	m_animationShader.UseProgram();
+	m_animationShader.SetUniVariable("BiasMatrix", mat4x4, m_shadowMap->GetBiasMatrix());
+	m_animationShader.CheckUniformLocation("ShadowDepthTex", 0);
 
 	m_shadowShader.CheckUniformLocation("diffuseTex", 1);
 }
