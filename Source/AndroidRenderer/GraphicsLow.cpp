@@ -666,7 +666,11 @@ Buffer* GraphicsLow::AddMesh(std::string _fileDir, Shader *_shaderProg, bool ani
 		{ jwLocs,	 4, GL_FLOAT, (const GLvoid*)jointWeightData.data(), (GLsizeiptr)(jointWeightData.size() * sizeof(float)) },
 	};
 
-	retbuffer->init(bufferData, sizeof(bufferData) / sizeof(bufferData[0]), _shaderProg->GetShaderProgram());
+	int bufferDatas = sizeof(bufferData) / sizeof(bufferData[0]);
+	if (animated == false)
+		bufferDatas -= 2;
+
+	retbuffer->init(bufferData, bufferDatas, _shaderProg->GetShaderProgram());
 	retbuffer->setCount((int)positionData.size() / 3);
 	
 	m_meshs.insert(std::pair<const std::string, Buffer*>(_fileDir, retbuffer));
@@ -687,12 +691,12 @@ Buffer* GraphicsLow::AddMesh(ModelToLoadFromSource* _modelToLoad, Shader *_shade
 	std::vector<float> tanData = _modelToLoad->tangents;
 	std::vector<float> bitanData = _modelToLoad->bitangents;
 	std::vector<float> texCoordData = _modelToLoad->texCoords;
-	std::vector<float> jointIndexData;
-	std::vector<float> jointWeightData;
+	//std::vector<float> jointIndexData;
+	//std::vector<float> jointWeightData;
 
 	Buffer* retbuffer = new Buffer();
 
-	std::map<GLuint, GLuint> vpLocs, vnLocs, tanLocs, bitanLocs, tcLocs, jiLocs, jwLocs;
+	std::map<GLuint, GLuint> vpLocs, vnLocs, tanLocs, bitanLocs, tcLocs;// , jiLocs, jwLocs;
 	vpLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexPosition");
 	vpLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexPosition");
 	vpLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexPosition");
@@ -728,7 +732,7 @@ Buffer* GraphicsLow::AddMesh(ModelToLoadFromSource* _modelToLoad, Shader *_shade
 	tcLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexTexCoord");
 	tcLocs[m_animationShader.GetShaderProgram()] = glGetAttribLocation(m_animationShader.GetShaderProgram(), "VertexTexCoord");
 	
-	jiLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexJointIndex");
+	/*jiLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexJointIndex");
 	jiLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexJointIndex");
 	jiLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexJointIndex");
 	jiLocs[m_riverShader.GetShaderProgram()]	= glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexJointIndex");
@@ -740,7 +744,7 @@ Buffer* GraphicsLow::AddMesh(ModelToLoadFromSource* _modelToLoad, Shader *_shade
 	jwLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexJointWeight");
 	jwLocs[m_riverShader.GetShaderProgram()]	= glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexJointWeight");
 	jwLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexJointWeight");
-	jwLocs[m_animationShader.GetShaderProgram()] = glGetAttribLocation(m_animationShader.GetShaderProgram(), "VertexJointWeight");
+	jwLocs[m_animationShader.GetShaderProgram()] = glGetAttribLocation(m_animationShader.GetShaderProgram(), "VertexJointWeight");*/
 
 	_shaderProg->UseProgram();
 	BufferData bufferData[] =
@@ -750,8 +754,8 @@ Buffer* GraphicsLow::AddMesh(ModelToLoadFromSource* _modelToLoad, Shader *_shade
 		{ tanLocs,	 3, GL_FLOAT, (const GLvoid*)tanData.data(), (GLsizeiptr)(tanData.size()   * sizeof(float)) },
 		{ bitanLocs,     3, GL_FLOAT, (const GLvoid*)bitanData.data(), (GLsizeiptr)(bitanData.size()   * sizeof(float)) },
 		{ tcLocs,	 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), (GLsizeiptr)(texCoordData.size() * sizeof(float)) },
-		{ jiLocs,	 4, GL_FLOAT, (const GLvoid*)jointIndexData.data(), (GLsizeiptr)(jointIndexData.size() * sizeof(float)) },
-		{ jwLocs,	 4, GL_FLOAT, (const GLvoid*)jointWeightData.data(), (GLsizeiptr)(jointWeightData.size() * sizeof(float)) },
+		//{ jiLocs,	 4, GL_FLOAT, (const GLvoid*)jointIndexData.data(), (GLsizeiptr)(jointIndexData.size() * sizeof(float)) },
+		//{ jwLocs,	 4, GL_FLOAT, (const GLvoid*)jointWeightData.data(), (GLsizeiptr)(jointWeightData.size() * sizeof(float)) },
 	};
 
 	retbuffer->init(bufferData, sizeof(bufferData) / sizeof(bufferData[0]), _shaderProg->GetShaderProgram());

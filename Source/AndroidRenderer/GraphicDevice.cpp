@@ -528,7 +528,13 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 {
 	Shader *shaderPtr = NULL;
 
-	if (_modelToLoad->RenderType == RENDER_FORWARD)
+	if (_modelToLoad->RenderType == RENDER_DEFERRED)
+	{
+		shaderPtr = &m_forwardShader;
+		m_forwardShader.UseProgram();
+		//SDL_Log("Deferred requested. Selecting FORWARD");
+	}
+	else if (_modelToLoad->RenderType == RENDER_FORWARD)
 	{
 		shaderPtr = &m_forwardShader;
 		m_forwardShader.UseProgram();
@@ -552,12 +558,6 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	{
 		shaderPtr = &m_riverCornerShader;
 		m_riverCornerShader.UseProgram();
-	}
-	else if (_modelToLoad->RenderType == 0)
-	{
-		shaderPtr = &m_forwardShader;
-		m_forwardShader.UseProgram();
-		//SDL_Log("Deferred requested. Selecting FORWARD");
 	}
 	else
 	{
@@ -594,9 +594,8 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 
 	Model model = Model(mesh, texture, normal, specular, _modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color, _modelToLoad->CastShadow); // plus modelID o matrixPointer, active
 
-
 	// Push back the model
-	if (_modelToLoad->RenderType == RENDER_FORWARD)
+	if (_modelToLoad->RenderType == RENDER_FORWARD || _modelToLoad->RenderType == RENDER_DEFERRED)
 		m_modelsForward.push_back(model);
 	else if (_modelToLoad->RenderType == RENDER_VIEWSPACE)
 		m_modelsViewspace.push_back(model);
@@ -673,13 +672,16 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 
 void GraphicDevice::BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoad)
 {
-	// Temporary fix for water
-	if (_modelToLoad->RenderType == 5 || _modelToLoad->RenderType == 6)
-		_modelToLoad->RenderType = 0;
-  
+
 	Shader *shaderPtr = NULL;
 
-	if (_modelToLoad->RenderType == RENDER_FORWARD)
+	if (_modelToLoad->RenderType == RENDER_DEFERRED)
+	{
+		shaderPtr = &m_forwardShader;
+		m_forwardShader.UseProgram();
+		//SDL_Log("Deferred requested. Selecting FORWARD");
+	}
+	else if (_modelToLoad->RenderType == RENDER_FORWARD)
 	{
 		shaderPtr = &m_forwardShader;
 		m_forwardShader.UseProgram();
@@ -693,12 +695,6 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoa
 	{
 		shaderPtr = &m_interfaceShader;
 		m_interfaceShader.UseProgram();
-	}
-	else if (_modelToLoad->RenderType == 0)
-	{
-		shaderPtr = &m_forwardShader;
-		m_forwardShader.UseProgram();
-		//SDL_Log("Deferred requested. Selecting FORWARD");
 	}
 	else
 	{
@@ -727,9 +723,8 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoa
 
 	Model model = Model(mesh, texture, normal, specular, _modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color, _modelToLoad->CastShadow); // plus modelID o matrixPointer, active
 
-
 	// Push back the model
-	if (_modelToLoad->RenderType == RENDER_FORWARD)
+	if (_modelToLoad->RenderType == RENDER_FORWARD || _modelToLoad->RenderType == RENDER_DEFERRED)
 		m_modelsForward.push_back(model);
 	else if (_modelToLoad->RenderType == RENDER_VIEWSPACE)
 		m_modelsViewspace.push_back(model);
