@@ -39,17 +39,18 @@ void main()
 	Material.Ks			= specglow_map.x;
 	Material.Shininess  = specglow_map.y * 254.0f + 1.0f;
 	float glow			= specglow_map.z;
-	float blendFactor	= specglow_map.w;
 
 	vec3 ambient = vec3(1.0);
 	vec3 diffuse = vec3(0.0);
 	vec3 spec    = vec3(0.0)*specglow_map.xyz;
 
-	vec4 coloradded;
-	if( AddColor != vec3(0.0) )
-		coloradded = vec4((1.0f-blendFactor)*albedo_tex.xyz + blendFactor * AddColor, albedo_tex.a);
-	else
-		coloradded = albedo_tex;
+	float blendFactor = mod(int(specglow_map.a*99), 50)/50;//(specTexture.a-0.5f)*2;
+	vec3 AddedColor = AddColor;
+	if (specglow_map.a < 0.5)
+		AddedColor = vec3(1) - AddColor; // ANTICOLOR? Good or bad? I like
 
-	ColorData = vec4(ambient + diffuse, 1.0) * coloradded + vec4(spec, 0.0f) + vec4(normal_map, 0.0f)*0.00000001;
+	if( AddColor != vec3(0.0) )
+		albedo_tex.xyz = (1.0f-blendFactor)*albedo_tex.xyz + blendFactor * AddedColor; 
+
+	ColorData = vec4(ambient + diffuse, 1.0) * albedo_tex + vec4(spec, 0.0f) + vec4(normal_map, 0.0f)*0.00000001;
 }
