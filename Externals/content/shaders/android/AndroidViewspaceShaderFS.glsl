@@ -53,9 +53,9 @@ void main()
 	vec3 spec    = vec3(0.0);
 	
 	float blendFactor = mod(int(specglow_map.a*99), 50)/50;//(specTexture.a-0.5f)*2;
-	vec3 AddedColor = AddColor;
+	vec3 AddedColor = BlendColor;
 	if (specglow_map.a < 0.5)
-		AddedColor = vec3(1) - AddColor; // ANTICOLOR? Good or bad? I like
+		AddedColor = vec3(1) - BlendColor; // ANTICOLOR? Good or bad? I like
 
 	if( AddColor != vec3(0.0) )
 		albedo_tex.xyz = (1.0f-blendFactor)*albedo_tex.xyz + blendFactor * AddedColor; 
