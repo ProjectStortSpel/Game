@@ -14,10 +14,9 @@ varying vec3 Normal;
 varying vec3 Tan;
 varying vec3 BiTan;
 varying vec2 TexCoord;
-varying vec3 ViewPos;
+varying vec4 ViewPos;
 
-uniform mat4 M;
-uniform mat4 V;
+uniform mat4 MV;
 uniform mat4 P;
 uniform mat3 NormalMatrix;
 
@@ -36,8 +35,8 @@ void main()
     
 	//skin += mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, weights.x, 0, 1);
 
-	ViewPos = (V * M * skin * vec4(VertexPosition, 1.0)).xyz;
-	gl_Position = P * V * M * skin * vec4(VertexPosition, 1.0);
+	ViewPos = MV * skin * vec4(VertexPosition, 1.0);
+	gl_Position = P * MV * skin * vec4(VertexPosition, 1.0);
 
 	Normal = normalize( NormalMatrix * (skin * vec4(VertexNormal, 0.0)).xyz );
 	Tan = normalize( NormalMatrix * (skin * vec4(VertexTangent, 0.0)).xyz );
