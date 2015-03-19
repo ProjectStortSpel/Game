@@ -71,7 +71,7 @@ MapGenerator.EntitiesAdded = function(self, dt, entities)
 	--self:GenerateMap(23239474, 4, 4)
 	--self:GenerateMap(5747, 4, 4)
 	--self:GenerateMap(1338, 2, 4)
-	self:GenerateMap(19890320, 6, 3)
+	self:GenerateMap(2341243, 6, 4)
 	
 	--self:LoadMap("map")
 end
