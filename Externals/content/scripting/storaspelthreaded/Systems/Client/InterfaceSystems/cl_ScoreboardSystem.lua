@@ -23,7 +23,9 @@ end
 
 ScoreboardSystem.PostInitialize = function(self)
 
-	self.Button = self:CreateGameInterfaceElement("scoreboardbutton", "quad", -3.9, -0.9, -4, 1.0, 0.5)
+	local aspectX, aspectY = GraphicDevice.GetAspectRatio()
+
+	self.Button = self:CreateGameInterfaceElement("scoreboardbutton", "quad", -3.9*aspectX, -0.9, -4, 1.0, 0.5)
 	self:AddHoverSize(1.1, self.Button)
 	
 end
