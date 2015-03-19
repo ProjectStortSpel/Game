@@ -58,7 +58,7 @@ void main()
 	if (specglow_map.a < 0.5)
 		AddedColor = vec3(1) - BlendColor; // ANTICOLOR? Good or bad? I like
 
-	if( AddColor != vec3(0.0) )
+	if( BlendColor != vec3(0.0) )
 		albedo_tex.xyz = (1.0f-blendFactor)*albedo_tex.xyz + blendFactor * AddedColor; 
 
 	gl_FragColor = vec4(ambient + diffuse, 1.0) * albedo_tex + vec4(spec, 0.0) + vec4(normal_map, 0.0)*0.00000001;
