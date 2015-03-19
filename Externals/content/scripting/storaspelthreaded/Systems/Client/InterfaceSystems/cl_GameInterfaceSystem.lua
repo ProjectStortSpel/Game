@@ -15,11 +15,14 @@ end
 
 
 GameInterfaceSystem.PostInitialize = function(self)
-	local menubutton = self:CreateElement("gamemenubutton", "quad", 3.9, -1.4, -4, 1.0, 0.5)
+
+	local aspectX, aspectY = GraphicDevice.GetAspectRatio()
+
+	local menubutton = self:CreateElement("gamemenubutton", "quad", 3.9*aspectX, -1.4, -4, 1.0, 0.5)
 	self:AddEntityCommandToButton("GameMenu", menubutton)
 	self:AddHoverSize(1.1, menubutton)
 
-	local socialbutton = self:CreateElement("socialmenubutton", "quad", -3.9, -1.4, -4, 1.0, 0.5)
+	local socialbutton = self:CreateElement("socialmenubutton", "quad", -3.9*aspectX, -1.4, -4, 1.0, 0.5)
 	self:AddEntityCommandToButton("RconMenu", socialbutton)
 	self:AddHoverSize(1.1, socialbutton)
 
