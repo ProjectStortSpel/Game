@@ -21,7 +21,9 @@ HostSettingsSystem.EntitiesAdded = function(self, dt, addedEntities)
 			self.settingsId = entity
 			local name 		= world:GetComponent(entity, "HostSettings", "Name"):GetText()
 			local map 		= world:GetComponent(entity, "HostSettings", "Map"):GetText()
+			local addais 	= world:GetComponent(entity, "HostSettings", "AddAIs"):GetInt()
 			local fillai 	= world:GetComponent(entity, "HostSettings", "FillAI"):GetInt()
+			local autoStart 	= world:GetComponent(entity, "HostSettings", "AutoStart"):GetInt()
 			local allowSpec	= world:GetComponent(entity, "HostSettings", "AllowSpectators"):GetInt()
 		
 			-- Load Map
@@ -31,7 +33,9 @@ HostSettingsSystem.EntitiesAdded = function(self, dt, addedEntities)
 		
 			print("name: " .. name)
 			print("map: " .. map)
+			print("addais: " .. tostring(addais))
 			print("fillai: " .. tostring(fillai))
+			print("autoStart: " .. tostring(autoStart))
 			print("allowSpec: " .. tostring(allowSpec))
 			
 			
@@ -45,6 +49,13 @@ HostSettingsSystem.EntitiesAdded = function(self, dt, addedEntities)
 			
 			if world:GetComponent(self.settingsId, "HostSettings", "FillAI"):GetInt() == 1 then
 				Console.AddToCommandQueue("AI")
+			end
+			
+			local addais = world:GetComponent(self.settingsId, "HostSettings", "AddAIs"):GetInt()
+			
+			if 0 < addais then
+				local command = "AddAI " .. tostring(addais)
+				Console.AddToCommandQueue(command)
 			end			
 		end
 		

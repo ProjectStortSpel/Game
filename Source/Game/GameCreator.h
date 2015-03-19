@@ -138,7 +138,9 @@ private:
 	// HOST SETTINGS
 	std::string m_name;
 	std::string m_map;
+	int m_addAIs;
 	int m_fillAI;
+	int m_autoStart;
 	int m_allowSpectators;
 
 };
