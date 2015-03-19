@@ -22,6 +22,7 @@ CardAddModelSystem.EntitiesAdded = function(self, dt, entities)
 		world:CreateComponentAndAddTo("Model", entityId)
 		world:CreateComponentAndAddTo("Position", entityId)
 		world:CreateComponentAndAddTo("Rotation", entityId)
+		world:CreateComponentAndAddTo("Color", entityId)
 		world:CreateComponentAndAddTo("Scale", entityId)
 		world:CreateComponentAndAddTo("PickBox", entityId)
 		
@@ -37,6 +38,9 @@ CardAddModelSystem.EntitiesAdded = function(self, dt, entities)
 		local rotation = world:GetComponent(entityId, "Rotation", 0)
 		rotation:SetFloat3(0, 0, 0)
 		
+		local color = world:GetComponent(entityId, "Color", 0)
+		color:SetFloat3(0.5, 0.4, 0.3)
+		
 		local model = world:GetComponent(entityId, "Model", 0)
 		local action = world:GetComponent(entityId, "CardAction", 0):GetText()
 		local	modelName		=	string.lower(action)
@@ -49,6 +53,12 @@ CardAddModelSystem.EntitiesAdded = function(self, dt, entities)
 		-- PRIO TEXT WOOOOOT?!?!?!?
 		local prio = world:GetComponent(entityId, "CardPrio", 0):GetInt()
 		
+		if prio > 0 and prio < 10 then 
+			color:SetFloat3(1, 1, 0.6)
+		end
+		
+		
+		-- PRIO SIGN
 		local id = world:CreateNewEntity()
 		world:CreateComponentAndAddTo("Model", id)
 		world:CreateComponentAndAddTo("Parent", id)
@@ -57,11 +67,30 @@ CardAddModelSystem.EntitiesAdded = function(self, dt, entities)
 		world:CreateComponentAndAddTo("Rotation", id)
 		world:CreateComponentAndAddTo("Scale", id)
 		local model = world:GetComponent(id, "Model", 0)
-		model:SetModel("right", "text", 3, false)
+		model:SetModel("cardspeed", "quad", 3)
 		local parent = world:GetComponent(id, "Parent", 0)
 		parent:SetInt(entityId)
 		local position = world:GetComponent(id, "Position", 0)
-		position:SetFloat3(0.24, 0.47, 0.01)
+		position:SetFloat3(0.18, 0.35, 0.01)
+		local scale = world:GetComponent(id, "Scale", 0)
+		scale:SetFloat3(0.30, 0.30, 1)
+		local rotation = world:GetComponent(id, "Rotation", 0)
+		rotation:SetFloat3(0, 0, 0)
+		
+		-- PRIO TEXT
+		id = world:CreateNewEntity()
+		world:CreateComponentAndAddTo("Model", id)
+		world:CreateComponentAndAddTo("Parent", id)
+		world:CreateComponentAndAddTo("KillWhenOrphan", id)
+		world:CreateComponentAndAddTo("Position", id)
+		world:CreateComponentAndAddTo("Rotation", id)
+		world:CreateComponentAndAddTo("Scale", id)
+		local model = world:GetComponent(id, "Model", 0)
+		model:SetModel("quad", "text", 3)
+		local parent = world:GetComponent(id, "Parent", 0)
+		parent:SetInt(entityId)
+		local position = world:GetComponent(id, "Position", 0)
+		position:SetFloat3(0.18, 0.35, 0.02)
 		local scale = world:GetComponent(id, "Scale", 0)
 		scale:SetFloat3(0.30, 0.15, 1)
 		local rotation = world:GetComponent(id, "Rotation", 0)
