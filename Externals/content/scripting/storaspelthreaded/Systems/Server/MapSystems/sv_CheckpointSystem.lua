@@ -49,26 +49,33 @@ CheckpointSystem.HasReachedFinish = function(self, entityId)
 	newId = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("PlayerReachedFinish", newId)
 	
+	local counterEntities = self:GetEntities("PlayerCounter")
+	
 	-- If the unit is not controlled by an AI
 	if not world:EntityHasComponent(playerId, "AI") then
 		--	Make the player a spectator
 		world:CreateComponentAndAddTo("IsSpectator", playerId)
 		
-		local counterEntities = self:GetEntities("PlayerCounter")
 		local specCounterComp = world:GetComponent(counterEntities[1], "PlayerCounter", "Spectators")
 		local number = specCounterComp:GetInt(0)
 		number = number + 1
 		world:SetComponent(counterEntities[1], "PlayerCounter", "Spectators", number)
-		
-		local playerCounterComp = world:GetComponent(counterEntities[1], "PlayerCounter", "Players")
-		number = playerCounterComp:GetInt(0)
-		number = number - 1
-		world:SetComponent(counterEntities[1], "PlayerCounter", "Players", number)
 	else
 		-- Else if the player is an AI, remove the unit.
+		
+		local AIComp = world:GetComponent(counterEntities[1], "PlayerCounter", "AIs")
+		local number = AIComp:GetInt(0)
+		number = number - 1
+		world:SetComponent(counterEntities[1], "PlayerCounter", "AIs", number)
+		
 		world:KillEntity(entityId)
-		-- The "ai-player" will be removed in TakeCardsFromPlayerSystem when its cards have been removed.
+		-- The "ai-player-entity" will be removed in TakeCardsFromPlayerSystem when its cards have been removed.
 	end
+	
+	local playerCounterComp = world:GetComponent(counterEntities[1], "PlayerCounter", "Players")
+	local number = playerCounterComp:GetInt(0)
+	number = number - 1
+	world:SetComponent(counterEntities[1], "PlayerCounter", "Players", number)
 end
 
 CheckpointSystem.CheckCheckpoint = function(self, entityId, posX, posZ)

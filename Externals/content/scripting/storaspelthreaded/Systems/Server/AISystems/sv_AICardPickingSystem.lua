@@ -704,7 +704,7 @@ AICardPickingSystem.SimulateForward = function(self, _posX, _posY, _dirX, _dirY,
 		--	
 		--	print(_step, self.SimStones[arrayIndex])
 		--end
-		if self.Map[arrayIndex] == "NotWalkable" or _step <= self.TempStones[arrayIndex] or _step <= self.SimStones[arrayIndex] then
+		if self.Map[arrayIndex] == "NotWalkable" or _step < self.TempStones[arrayIndex] or _step <= self.SimStones[arrayIndex] then
 			--if _step <= self.SimStones[arrayIndex] then
 			--	print("Sim stone in the way")
 			--end
@@ -739,7 +739,7 @@ AICardPickingSystem.SimulateRiverMove = function(self, _posX, _posY, _step)
 	if self.Map[arrayIndex] == "Void" then
 		fellDown = true
 		--print("Fell down because of river")
-	elseif self.Map[arrayIndex] == "NotWalkable" or _step <= self.TempStones[arrayIndex] or _step <= self.SimStones[arrayIndex] then
+	elseif self.Map[arrayIndex] == "NotWalkable" or _step < self.TempStones[arrayIndex] or _step <= self.SimStones[arrayIndex] then
 		posX = _posX
 		posY = _posY
 		--print()
@@ -794,7 +794,7 @@ AICardPickingSystem.SimulateSprint = function(self, _posX, _posY, _dirX, _dirY, 
 	-- The first step is different from regular forward as we do not need to check another step if it falls down or is blocked by a not walkable. If it is blocked, check for river.
 	if self.Map[arrayIndex] == "Void" then
 		return true, _posX, _posY
-	elseif self.Map[arrayIndex] == "NotWalkable" or _step <= self.TempStones[arrayIndex] or _step <= self.SimStones[arrayIndex] then
+	elseif self.Map[arrayIndex] == "NotWalkable" or _step < self.TempStones[arrayIndex] or _step <= self.SimStones[arrayIndex] then
 		posX = _posX
 		posY = _posY
 		-- Change index to check if river where we currently are.
@@ -826,7 +826,7 @@ AICardPickingSystem.SimulateStone = function(self, _posX, _posY, _dirX, _dirY, _
 	if self.Map[arrayIndex] == "Void" then
 		fellDown = true
 	else
-		if self.Map[arrayIndex] == "NotWalkable" or _step <= self.TempStones[arrayIndex] or _step <= self.SimStones[arrayIndex] then
+		if self.Map[arrayIndex] == "NotWalkable" or _step < self.TempStones[arrayIndex] or _step <= self.SimStones[arrayIndex] then
 			posX = _posX
 			posY = _posY
 			-- Change index to check if river where we currently are.
@@ -845,27 +845,6 @@ AICardPickingSystem.SimulateStone = function(self, _posX, _posY, _dirX, _dirY, _
 	end
 	
 	return fellDown, posX, posY
-end
-
-AICardPickingSystem.TileHasComponent = function(self, _component, _posX, _posY)
-	
-	local mapSize = self:GetEntities("MapSpecs")
-	local mapSizeComp = world:GetComponent(mapSize[1], "MapSpecs", "SizeX")
-	local mapX, mapY = mapSizeComp:GetInt2()
-	local tiles = self:GetEntities("TileComp")
-	local returnValue
-		
-	if -1 < _posX and _posX < mapX and -1 < _posY and _posY < mapY then
-		returnValue = world:EntityHasComponent(tiles[mapX * _posY + _posX + 1], _component)
-	else
-		if not self.ERROR then
-			print("ERROR, trying to get entity from tile outside the boundaries in AICardPickingSystem.TileHasComponent.")
-			self.ERROR = true
-		end
-		returnValue = false
-	end
-	
-	return returnValue
 end
 
 AICardPickingSystem.GetLocalRiverVariables = function(self, _posX, _posY)
@@ -1059,8 +1038,8 @@ end
 
 AICardPickingSystem.InitPlayerSpecifics = function(self, _aiEntity)
 
-	local mapSpecs = self:GetEntities("MapSpecs")
-	local noOfSpawnPoints = world:GetComponent(mapSpecs[1], "MapSpecs", "NoOfSpawnpoints"):GetInt(0)
+	--local mapSpecs = self:GetEntities("MapSpecs")
+	--local noOfSpawnPoints = world:GetComponent(mapSpecs[1], "MapSpecs", "NoOfSpawnpoints"):GetInt(0)
 	local playerNo = world:GetComponent(_aiEntity, "PlayerNumber", 0):GetInt(0)
 	local unitID = world:GetComponent(_aiEntity, "UnitEntityId", 0):GetInt(0)
 	
@@ -1073,7 +1052,21 @@ AICardPickingSystem.InitPlayerSpecifics = function(self, _aiEntity)
 	x, y = world:GetComponent(unitID, "MapPosition", 0):GetInt2(0)
 	
 	-- Check if the AI ended up in a void, if so use its spawnpoint. The AI gets new cards before the units positions are updated.
-	if self:TileHasComponent("Void", x, y) then
+	local mapX, mapY = self.MapSizeX, self.MapSizeY
+	local inVoid = false	
+	
+	-- If the pos is in inside the boundaries, check if it is in a void.
+	if -1 < x and x < mapX and -1 < y and y < mapY then
+		if self.Map[mapX * y + x + 1] == "Void" then
+			inVoid = true
+		end
+	-- Else the pos is outside the boundaries, which is also void.
+	else
+		inVoid = true
+	end
+	
+	
+	if inVoid then
 		
 		--print()
 		--print()
@@ -1234,6 +1227,27 @@ AICardPickingSystem.GetGhostRotation = function(self, dirX, dirZ)
 	
 	return returnRotation
 end
+
+--AICardPickingSystem.TileHasComponent = function(self, _component, _posX, _posY)
+--	
+--	local mapSize = self:GetEntities("MapSpecs")
+--	local mapSizeComp = world:GetComponent(mapSize[1], "MapSpecs", "SizeX")
+--	local mapX, mapY = mapSizeComp:GetInt2()
+--	local tiles = self:GetEntities("TileComp")
+--	local returnValue
+--		
+--	if -1 < _posX and _posX < mapX and -1 < _posY and _posY < mapY then
+--		returnValue = world:EntityHasComponent(tiles[mapX * _posY + _posX + 1], _component)
+--	else
+--		if not self.ERROR then
+--			print("ERROR, trying to get entity from tile outside the boundaries in AICardPickingSystem.TileHasComponent.")
+--			self.ERROR = true
+--		end
+--		returnValue = false
+--	end
+--	
+--	return returnValue
+--end
 
 --AICardPickingSystem.OldSimulateCards = function(self, _playerNumber, _targetCheckpointNumber, _pickedcards)
 --	
