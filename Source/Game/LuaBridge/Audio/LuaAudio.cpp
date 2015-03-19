@@ -26,6 +26,7 @@ namespace LuaBridge
 		int SetSoundPosition(lua_State* L);
 		int FadeInSound(lua_State* L);
 		int FadeOutSound(lua_State* L);
+		int SetVolume(lua_State* L);
 		
 		int ChannelExists(lua_State* L);
 		
@@ -211,6 +212,13 @@ namespace LuaBridge
 			std::string channelName = LuaEmbedder::PullString(L, 1);
 			int ms = LuaEmbedder::PullInt(L, 2);
 			Audio::FadeOutSound(channelName, ms);
+			return 0;
+		}
+		int SetVolume(lua_State* L)
+		{
+			std::string channelName = LuaEmbedder::PullString(L, 1);
+			int volume = LuaEmbedder::PullInt(L, 2);
+			Audio::SetVolume(channelName, volume);
 			return 0;
 		}
 		
