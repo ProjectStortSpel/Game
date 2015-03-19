@@ -597,9 +597,6 @@ void GameCreator::StartGame(int argc, char** argv)
 	float bytesToMegaBytes = 1.f / (1024.f*1024.f);
 	bool showDebugInfo = false;
 	Utility::FrameCounter totalCounter;
-	
-	// Remove to enable audio
-	Audio::SetVolume(128);
 
 	while (m_running)
 	{
