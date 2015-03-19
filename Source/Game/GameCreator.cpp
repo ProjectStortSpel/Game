@@ -597,9 +597,6 @@ void GameCreator::StartGame(int argc, char** argv)
 	float bytesToMegaBytes = 1.f / (1024.f*1024.f);
 	bool showDebugInfo = false;
 	Utility::FrameCounter totalCounter;
-	
-	// Remove to enable audio
-	Audio::SetVolume(128);
 
 	while (m_running)
 	{
@@ -687,7 +684,9 @@ void GameCreator::StartGame(int argc, char** argv)
 		else if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F2) == Input::InputState::PRESSED)
 			showDebugInfo = !showDebugInfo;
 		else if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F3) == Input::InputState::PRESSED)
-			m_graphics->debugModelInfo = !m_graphics->debugModelInfo;
+		{
+			m_graphics->debugModelInfo = (m_graphics->debugModelInfo + 1) % 3;
+		}
 		else if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F4) == Input::InputState::PRESSED)
 		{
 			if (!m_serverWorldProfiler->IsActive())

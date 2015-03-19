@@ -108,6 +108,11 @@ UnitSystem.EntitiesAdded = function(self, dt, entities)
 				local id = Net.StartPack("Client.SendMyUnitID")
 				Net.WriteInt(id, newEntityId)
 				Net.Send(id, ip, port)
+				
+				local audioId = Net.StartPack("Client.PlaySound")
+				Net.WriteString(audioId, "Bird")
+				Net.WriteBool(audioId, true)
+				Net.Send(id, ip, port)
 			else
 				-- CREATE TOTEM HAT ON AI
 				local randomHat = math.random(0,100)

@@ -8,7 +8,7 @@ varying vec3 Normal;
 varying vec3 Tan;
 varying vec3 BiTan;
 varying vec2 TexCoord;
-varying vec3 ViewPos;
+varying vec4 ViewPos;
 
 
 //Input textures
@@ -55,14 +55,14 @@ void phongModelDirLight(out vec3 ambient, out vec3 diffuse, out vec3 spec)
 
 	ambient = dirlightColor * dirlightIntensity.x;
 
-	vec3 E = normalize(ViewPos);
+	vec3 E = normalize(ViewPos.xyz);
 
 	float diffuseFactor = dot( lightVec, NmNormal );
 
 	if(diffuseFactor > 0.0)
 	{
 		// For shadows
-		vec4 worldPos = InvViewMatrix * vec4(ViewPos, 1.0);
+		vec4 worldPos = InvViewMatrix * ViewPos;
 		vec4 shadowCoord = BiasMatrix * ShadowViewProj * worldPos;
 
 		float shadow = 1.0;
@@ -91,7 +91,7 @@ void phongModel(Pointlight pointlight, out vec3 ambient, out vec3 diffuse, out v
 	diffuse = vec3(0.0);
 	spec    = vec3(0.0);
 
-	vec3 lightVec = (ViewMatrix * vec4(pointlight.Position, 1.0)).xyz - ViewPos;
+	vec3 lightVec = (ViewMatrix * vec4(pointlight.Position, 1.0)).xyz - ViewPos.xyz;
 	float d = length(lightVec);
 
 	if(d > pointlight.Range)
@@ -99,7 +99,7 @@ void phongModel(Pointlight pointlight, out vec3 ambient, out vec3 diffuse, out v
 	lightVec /= d; //normalizing
         
 	ambient = pointlight.Color * pointlight.Intensity.x;
-	vec3 E = normalize(ViewPos);
+	vec3 E = normalize(ViewPos.xyz);
 	float diffuseFactor = dot( lightVec, NmNormal );
 
 	if(diffuseFactor > 0.0)

@@ -90,9 +90,9 @@ namespace Renderer
 		AModel();
 		~AModel();
 
-		void Draw(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, Shader* shaderptr);
-		void DrawGeometry(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, Shader* shaderptr);
-		void DrawForwardGeometry(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, Shader* shaderptr);
+		void Draw(glm::mat4 viewMatrix, Shader* shaderptr);
+		void DrawGeometry(glm::mat4 viewMatrix, Shader* shaderptr);
+		void DrawForwardGeometry(glm::mat4 viewMatrix, Shader* shaderptr);
 		void Update(float _dt);
 
 		bool PreCalculateAnimations();
