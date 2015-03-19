@@ -52,7 +52,7 @@ void main()
 	vec3 diffuse = vec3(0.0);
 	vec3 spec    = vec3(0.0);
 	
-	float mMod = spec_map.a*99.0 - 50.0 * floor((spec_map.a*99.0)/50.0);
+	float mMod = specglow_map.a*99.0 - 50.0 * floor((specglow_map.a*99.0)/50.0);
 	float blendFactor = mMod/50.0;//(specTexture.a-0.5f)*2;
 	vec3 AddedColor = BlendColor;
 	if (specglow_map.a < 0.5)
