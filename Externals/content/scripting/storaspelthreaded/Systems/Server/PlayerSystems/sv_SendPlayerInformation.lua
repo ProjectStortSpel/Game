@@ -23,7 +23,7 @@ SendPlayerInformation.EntitiesAdded = function(self, dt, entities)
 			
 			local audioId = Net.StartPack("Client.PlaySound")
 			Net.WriteString(audioId, "IngameTheme")
-			Net.WriteBool(audioId, false)
+			Net.WriteBool(audioId, true)
 			Net.Broadcast(audioId)
 		end
 		
