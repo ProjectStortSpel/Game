@@ -59,31 +59,31 @@ CreateDeckSystem.CreateDeck = function (self)
 	
 	----------------------------------------------------------
 	-- ADD NEW CARDS HERE
-	CardAction[#CardAction+1] = "Forward"
+	CardAction[#CardAction+1] = "SlingShot"
 	NrOfCards[#NrOfCards+1] = 6 * NrOfPlayers
 	CardPrio[#CardPrio+1] = true
 	
-	CardAction[#CardAction+1] = "Backward"
+	CardAction[#CardAction+1] = "SlingShot"
 	NrOfCards[#NrOfCards+1] = 3 * NrOfPlayers
 	CardPrio[#CardPrio+1] = true
 	
-	CardAction[#CardAction+1] = "TurnRight"
+	CardAction[#CardAction+1] = "SlingShot"
 	NrOfCards[#NrOfCards+1] = 4 * NrOfPlayers
 	CardPrio[#CardPrio+1] = false
 
-	CardAction[#CardAction+1] = "TurnLeft"
+	CardAction[#CardAction+1] = "SlingShot"
 	NrOfCards[#NrOfCards+1] = 4 * NrOfPlayers
 	CardPrio[#CardPrio+1] = false
 
-	CardAction[#CardAction+1] = "TurnAround"
+	CardAction[#CardAction+1] = "SlingShot"
 	NrOfCards[#NrOfCards+1] = 1 * NrOfPlayers
 	CardPrio[#CardPrio+1] = false
 
-	CardAction[#CardAction+1] = "Guard"
+	CardAction[#CardAction+1] = "SlingShot"
 	NrOfCards[#NrOfCards+1] = 2 * NrOfPlayers
 	CardPrio[#CardPrio+1] = false
 	
-	CardAction[#CardAction+1] = "Sprint"
+	CardAction[#CardAction+1] = "SlingShot"
 	NrOfCards[#NrOfCards+1] = 2 * NrOfPlayers
 	CardPrio[#CardPrio+1] = true
 
@@ -91,7 +91,7 @@ CreateDeckSystem.CreateDeck = function (self)
 	NrOfCards[#NrOfCards+1] = 2 * NrOfPlayers
 	CardPrio[#CardPrio+1] = true
 	
-	CardAction[#CardAction+1] = "Stone"
+	CardAction[#CardAction+1] = "SlingShot"
 	NrOfCards[#NrOfCards+1] = 2 * NrOfPlayers
 	CardPrio[#CardPrio+1] = true
 	
