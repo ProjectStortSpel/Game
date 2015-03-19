@@ -19,22 +19,19 @@ FinishSystem.EntitiesAdded = function(self, dt, entities)
 	
 		if world:EntityHasComponent(entity, "PlayerReachedFinish") then
 			
-			print("A")
 			local playerCounter = self:GetEntities("PlayerCounter")
 			if #playerCounter <= 0 then -- Should never happend
-				print("B")
+				print("Warning: PlayerCounter does not exist")
 				world:KillEntity(entity)
 				return
 			end
-			print("C")
 
 			local noPlayers = world:GetComponent(playerCounter[1], "PlayerCounter", "Players"):GetInt() -- Number of players still playing
-			print("D")
+			print("Number of players left:", noPlayers)
 			if noPlayers <= 0 then
-			print("E")
+				print("Everyone has reached the finish, do a reload.")
 				Console.AddToCommandQueue("reload")
 			end
-			print("F")
 			world:KillEntity(entity)
 		end
 	
