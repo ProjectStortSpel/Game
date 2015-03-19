@@ -53,10 +53,10 @@ GameMenuSystem.EntitiesAdded = function(self, dt, entities)
 end
 
 GameMenuSystem.SpawnMenu = function(self)
-	--local background = self:CreateElement("transparentbackground", "quad", 0, -0, -3.12, 5.8, 5.3)
+	local background = self:CreateElement("transparentbackground", "quad", 0, -0, -3.02, 7, 7)
 	--background = self:CreateElement("gamemenubackground", "quad", 0, -0, -3.1, 1.8, 2.3)
 		
-	local button = nil
+	local button = nil	
 	button = self:CreateElement("options", "quad", 0, 0.5, -3, 0.6, 0.3)
 	self:AddEntityCommandToButton("OptionMenu", button)
 	self:AddHoverSize(1.1, button)	
@@ -65,8 +65,12 @@ GameMenuSystem.SpawnMenu = function(self)
 	self:AddConsoleCommandToButton("disconnect;stop;gamemode lobby", button)
 	self:AddHoverSize(1.1, button)	
 
-	button = self:CreateElement("quit", "quad", 0, -0.6, -3, 0.6, 0.3)
+	button = self:CreateElement("quit", "quad", 0, -0.1, -3, 0.6, 0.3)
 	self:AddConsoleCommandToButton("quit", button)
+	self:AddHoverSize(1.1, button)
+	
+	button = self:CreateElement("resume", "quad", 0, -0.6, -3, 0.6, 0.3)
+	self:AddConsoleCommandToButton("resume", button)
 	self:AddHoverSize(1.1, button)	
 end
 

@@ -15,14 +15,17 @@ end
 
 
 GameInterfaceSystem.PostInitialize = function(self)
-	local menubutton = self:CreateElement("gamemenubutton", "quad", 3.3, -1.4, -4, 0.35, 0.35)
+	local menubutton = self:CreateElement("gamemenubutton", "quad", 3.9, -1.4, -4, 1.0, 0.5)
 	self:AddEntityCommandToButton("GameMenu", menubutton)
-	self:AddHoverSize(1.5, menubutton)
+	self:AddHoverSize(1.1, menubutton)
 
-	local rconbutton = self:CreateElement("rconmenubutton", "quad", -3.3, -1.4, -4, 0.35, 0.35)
-	local rotation = world:GetComponent(rconbutton, "Rotation", 0)
-	self:AddEntityCommandToButton("RconMenu", rconbutton)
-	self:AddHoverSize(1.5, rconbutton)
+	local scorebutton = self:CreateElement("scoreboardbutton", "quad", -3.9, -0.9, -4, 1.0, 0.5)
+	self:AddEntityCommandToButton("RconMenu", scorebutton)
+	self:AddHoverSize(1.1, scorebutton)
+	
+	local socialbutton = self:CreateElement("socialmenubutton", "quad", -3.9, -1.4, -4, 1.0, 0.5)
+	self:AddEntityCommandToButton("RconMenu", socialbutton)
+	self:AddHoverSize(1.1, socialbutton)
 
 end
 
