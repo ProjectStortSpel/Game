@@ -444,7 +444,7 @@ void GraphicsHigh::Render()
 	// Get Camera matrices
 	mat4 projectionMatrix = *m_camera->GetProjMatrix();
 	mat4 viewMatrix = *m_camera->GetViewMatrix();
-
+	
 	// --
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
