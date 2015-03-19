@@ -52,7 +52,8 @@ void main()
 	vec3 diffuse = vec3(0.0);
 	vec3 spec    = vec3(0.0);
 	
-	float blendFactor = mod(int(specglow_map.a*99), 50)/50;//(specTexture.a-0.5f)*2;
+	float mMod = spec_map.a*99.0 - 50.0 * floor((spec_map.a*99.0)/50.0);
+	float blendFactor = mMod/50.0;//(specTexture.a-0.5f)*2;
 	vec3 AddedColor = BlendColor;
 	if (specglow_map.a < 0.5)
 		AddedColor = vec3(1) - BlendColor; // ANTICOLOR? Good or bad? I like
