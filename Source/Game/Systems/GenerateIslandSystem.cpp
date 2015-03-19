@@ -31,15 +31,14 @@ void GenerateIslandSystem::Initialize()
 
 void GenerateIslandSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities)
 {
-
-#if !defined(__IOS__) && !defined(__ANDROID__)
 	for (unsigned int entityId : _entities)
 	{
 		std::string map = GetString(entityId, m_generateIslandId, m_generateIslandMapId);
 		int sizeX = *((int*)GetComponent(entityId, m_generateIslandId, m_generateIslandSizeXId));
 		int sizeZ = *((int*)GetComponent(entityId, m_generateIslandId, m_generateIslandSizeZId));
-		int offsetX = *((int*)GetComponent(entityId, m_generateIslandId, m_generateIslandOffsetXId));
-		int offsetZ = *((int*)GetComponent(entityId, m_generateIslandId, m_generateIslandOffsetZId));
+		int offsetX, offsetZ;
+		memcpy(&offsetX, GetComponent(entityId, m_generateIslandId, m_generateIslandOffsetXId), sizeof(int));
+		memcpy(&offsetZ, GetComponent(entityId, m_generateIslandId, m_generateIslandOffsetZId), sizeof(int));
 
 		std::vector<std::string> stringMap;
 		for (int z = 0; z < sizeZ; ++z)
@@ -78,5 +77,4 @@ void GenerateIslandSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, cons
 		model.CastShadow = false;
 		*modelId = m_graphics->LoadModel(&model);
 	}
-#endif
 }
