@@ -64,6 +64,7 @@ Net.Receive("Client.PlaySound",
 		local name = Net.ReadString(id)
 		local loop = Net.ReadBool(id)
 		Audio.PlaySound(name, loop)
+		print("Sound: " .. name)
 	end
 )
 Net.Receive("Client.PlaySoundC",
