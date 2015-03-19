@@ -2,6 +2,8 @@ ScoreboardSystem = System()
 ScoreboardSystem.Name = "Scoreboard"
 ScoreboardSystem.GameStarted = false
 ScoreboardSystem.RemoveMenuRequest = false
+ScoreboardSystem.Button = nil
+ScoreboardSystem.Showing = false
 
 ScoreboardSystem.Initialize = function ( self )
 	--	Set Name
@@ -16,6 +18,13 @@ ScoreboardSystem.Initialize = function ( self )
 	self:AddComponentTypeToFilter(self.Name.."Element", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("ScoreboardPlayer", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf)
+	
+end
+
+ScoreboardSystem.PostInitialize = function(self)
+
+	self.Button = self:CreateGameInterfaceElement("scoreboardbutton", "quad", -3.9, -0.9, -4, 1.0, 0.5)
+	self:AddHoverSize(1.1, self.Button)
 	
 end
 
@@ -41,16 +50,21 @@ ScoreboardSystem.Update = function(self, dt)
 		self:RemoveMenu()
 		self.RemoveMenuRequest = false
 	else
-		if Input.GetKeyState(Key.Tab) == InputState.Pressed then
+		if world:EntityHasComponent(self.Button, "OnPickBoxHit") then
+			if not self.Showing then
+				self:SpawnMenu()
+			end
+		elseif Input.GetKeyState(Key.Tab) == InputState.Pressed then
 			self:SpawnMenu()
-		elseif Input.GetKeyState(Key.Tab) == InputState.Released then
+		elseif Input.GetKeyState(Key.Tab) ~= InputState.Down and self.Showing then
 			self.RemoveMenuRequest = true
 		end
 	end
 end
 
 ScoreboardSystem.SpawnMenu = function(self)
-
+	
+	self.Showing = true
 	--local background = self:CreateElement("gamemenubackground", "quad", 0, -0, -3.5, 3, 3)
 
 	local players = self:GetEntities("ScoreboardPlayer")
@@ -73,6 +87,7 @@ ScoreboardSystem.SpawnMenu = function(self)
 end
 
 ScoreboardSystem.RemoveMenu = function(self)
+	self.Showing = false
 	local entities = self:GetEntities(self.Name.."Element")
 	for i = 1, #entities do
 		world:KillEntity(entities[i])
@@ -97,6 +112,29 @@ ScoreboardSystem.CreateElement = function(self, object, folder, posx, posy, posz
 	return id	
 end
 
+
+ScoreboardSystem.CreateGameInterfaceElement = function(self, object, folder, posx, posy, posz, scalex, scaley)
+	local id = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("Model", id)
+	world:CreateComponentAndAddTo("Position", id)
+	world:CreateComponentAndAddTo("Rotation", id)
+	world:CreateComponentAndAddTo("Scale", id)
+	world:CreateComponentAndAddTo("PickBox", id)
+	world:CreateComponentAndAddTo("GameInterfaceElement", id)
+	local model = world:GetComponent(id, "Model", 0)
+	model:SetModel(object, folder, 3)
+	local position = world:GetComponent(id, "Position", 0)
+	position:SetFloat3(posx, posy, posz)
+	local scale = world:GetComponent(id, "Scale", 0)
+	scale:SetFloat3(scalex, scaley, 1)
+	local pickbox = world:GetComponent(id, "PickBox", 0)
+	pickbox:SetFloat2(1, 1)
+	local rotation = world:GetComponent(id, "Rotation", 0)
+	rotation:SetFloat3(0, 0, 0)
+	return id	
+end
+
+
 ScoreboardSystem.AddTextToTexture = function(self, n, text, font, r, g, b, button)
 	world:CreateComponentAndAddTo("TextTexture", button)
 	world:GetComponent(button, "TextTexture", "Name"):SetText(n) -- TODO: NAME CANT BE MORE THAN 3 CHARS? WTF?
@@ -109,4 +147,12 @@ ScoreboardSystem.AddTextToTexture = function(self, n, text, font, r, g, b, butto
 	world:GetComponent(button, "Color", "X"):SetFloat(r)
 	world:GetComponent(button, "Color", "Y"):SetFloat(g)
 	world:GetComponent(button, "Color", "Z"):SetFloat(b)
+end
+
+ScoreboardSystem.AddHoverSize = function(self, deltascale, button)
+	local scale = world:GetComponent(button, "Scale", 0)
+	local sx, sy, sz = scale:GetFloat3()
+	world:CreateComponentAndAddTo("HoverSize", button)
+	local hoversize = world:GetComponent(button, "HoverSize", 0)
+	hoversize:SetFloat3(sx*deltascale, sy*deltascale, sz*deltascale)
 end

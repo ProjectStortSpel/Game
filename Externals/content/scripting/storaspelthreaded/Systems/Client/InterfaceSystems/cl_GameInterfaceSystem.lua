@@ -19,10 +19,6 @@ GameInterfaceSystem.PostInitialize = function(self)
 	self:AddEntityCommandToButton("GameMenu", menubutton)
 	self:AddHoverSize(1.1, menubutton)
 
-	local scorebutton = self:CreateElement("scoreboardbutton", "quad", -3.9, -0.9, -4, 1.0, 0.5)
-	self:AddEntityCommandToButton("RconMenu", scorebutton)
-	self:AddHoverSize(1.1, scorebutton)
-	
 	local socialbutton = self:CreateElement("socialmenubutton", "quad", -3.9, -1.4, -4, 1.0, 0.5)
 	self:AddEntityCommandToButton("RconMenu", socialbutton)
 	self:AddHoverSize(1.1, socialbutton)
