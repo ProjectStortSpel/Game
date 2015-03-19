@@ -188,16 +188,39 @@ void GraphicsHigh::Render()
 #endif
 		glViewport(0, 0, m_framebufferWidth, m_framebufferHeight);
 
+		
+		mat4 shadowVP = (*m_shadowMap->GetProjectionMatrix()) * (*m_shadowMap->GetViewMatrix());
+		mat4 invViewMatrix = glm::inverse(viewMatrix);
+		//--------ANIMATED DEFERRED RENDERING !!! ATTENTION: WORK IN PROGRESS !!!
+		m_animationShader.UseProgram();
+		m_animationShader.SetUniVariable("P", mat4x4, &projectionMatrix);
+		m_animationShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
+		m_animationShader.SetUniVariable("InvViewMatrix", mat4x4, &invViewMatrix);
+
+		m_animationShader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
+
+		for (int i = 0; i < m_modelsAnimated.size(); i++)
+		{
+			for (int j = 0; j < m_modelsAnimated[i].anim.size(); j++)
+			{
+				std::stringstream ss;
+				ss << "anim[" << j << "]";
+				m_animationShader.SetUniVariable(ss.str().c_str(), mat4x4, &m_modelsAnimated[i].anim[j]);
+				ss.str(std::string());
+			}
+
+			m_modelsAnimated[i].Draw(viewMatrix, &m_animationShader);
+		}
+
 		//------FORWARD RENDERING--------------------------------------------
 		//glEnable(GL_BLEND);
 
 		m_forwardShader.UseProgram();
 		m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 		m_forwardShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
-		glm::mat4 invViewMatrix = glm::inverse(viewMatrix);
 		m_forwardShader.SetUniVariable("InvViewMatrix", mat4x4, &invViewMatrix);
 
-		mat4 shadowVP = (*m_shadowMap->GetProjectionMatrix()) * (*m_shadowMap->GetViewMatrix());
+		
 		m_forwardShader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
 
 		glActiveTexture(GL_TEXTURE0);
@@ -236,22 +259,6 @@ void GraphicsHigh::Render()
 			m_modelsWaterCorners[i].Draw(viewMatrix, &m_riverCornerShader);
 		}
 
-		//--------ANIMATED DEFERRED RENDERING !!! ATTENTION: WORK IN PROGRESS !!!
-		m_animationShader.UseProgram();
-		m_animationShader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
-		m_animationShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
-		for (int i = 0; i < m_modelsAnimated.size(); i++)
-		{
-			for (int j = 0; j < m_modelsAnimated[i].anim.size(); j++)
-			{
-				std::stringstream ss;
-				ss << "anim[" << j << "]";
-				m_animationShader.SetUniVariable(ss.str().c_str(), mat4x4, &m_modelsAnimated[i].anim[j]);
-				ss.str(std::string());
-			}
-
-			m_modelsAnimated[i].Draw(viewMatrix, projectionMatrix, &m_animationShader);
-		}
 	}
 
 	glViewport(0, 0, m_framebufferWidth, m_framebufferHeight);

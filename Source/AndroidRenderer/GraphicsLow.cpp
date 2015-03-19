@@ -122,7 +122,9 @@ void GraphicsLow::Render()
 
 	//--------ANIMATED DEFERRED RENDERING !!! ATTENTION: WORK IN PROGRESS !!!
 	m_animationShader.UseProgram();
+	m_animationShader.SetUniVariable("P", mat4x4, &projectionMatrix);
 	m_animationShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
+
 	for (int i = 0; i < m_modelsAnimated.size(); i++)
 	{
 		for (int j = 0; j < m_modelsAnimated[i].anim.size(); j++)
@@ -133,7 +135,7 @@ void GraphicsLow::Render()
 			ss.str(std::string());
 		}
 
-		m_modelsAnimated[i].Draw(viewMatrix, projectionMatrix, &m_animationShader);
+		m_modelsAnimated[i].Draw(viewMatrix, &m_animationShader);
 	}
 	
 	if (m_modelsForward.size() > 0)
