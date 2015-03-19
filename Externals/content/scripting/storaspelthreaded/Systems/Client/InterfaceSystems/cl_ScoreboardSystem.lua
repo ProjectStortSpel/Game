@@ -50,7 +50,7 @@ ScoreboardSystem.Update = function(self, dt)
 		self:RemoveMenu()
 		self.RemoveMenuRequest = false
 	else
-		if world:EntityHasComponent(self.Button, "OnPickBoxHit") then
+		if world:EntityHasComponent(self.Button, "OnPickBoxHit") and Input.GetTouchState(0) == InputState.Down then
 			if not self.Showing then
 				self:SpawnMenu()
 			end
