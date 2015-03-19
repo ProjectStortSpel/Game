@@ -39,7 +39,7 @@ CardAddModelSystem.EntitiesAdded = function(self, dt, entities)
 		rotation:SetFloat3(0, 0, 0)
 		
 		local color = world:GetComponent(entityId, "Color", 0)
-		color:SetFloat3(0, 0, 0)
+		color:SetFloat3(0.5, 0.4, 0.3)
 		
 		local model = world:GetComponent(entityId, "Model", 0)
 		local action = world:GetComponent(entityId, "CardAction", 0):GetText()
