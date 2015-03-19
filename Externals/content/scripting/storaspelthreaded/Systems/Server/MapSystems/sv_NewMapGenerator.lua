@@ -65,7 +65,7 @@ end
 
 MapGenerator.EntitiesAdded = function(self, dt, entities)
 	--self:GenerateMap(os.time()%12345, 10, 10)
-	self:GenerateMap(23246299, 8, 4)
+	self:GenerateMap(23246299, 6, 4)
 	--self:GenerateMap(1579125, 5, 5)
 	--self:GenerateMap(1579125, 8, 5)
 	--self:GenerateMap(23239474, 4, 4)
