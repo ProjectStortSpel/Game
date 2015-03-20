@@ -49,14 +49,6 @@ DealCardsSystem.EntitiesAdded = function(self, dt, entities)
 		end
 	end
 	
-	if dealCards then
-		--local audioId = Net.StartPack("Client.FadeInSoundC")
-		--Net.WriteString(audioId, "InGame")
-		--Net.WriteString(audioId, "PickingMusic")
-		--Net.WriteInt(audioId, 200)
-		--Net.WriteBool(audioId, false)
-		--Net.Broadcast(audioId)
-	end
 end
 
 DealCardsSystem.DealCards = function (self, numCards)

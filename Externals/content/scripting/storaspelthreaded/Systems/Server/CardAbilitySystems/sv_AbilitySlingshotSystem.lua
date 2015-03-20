@@ -28,12 +28,14 @@ AbilitySlingshotSystem.CheckUnits = function(self, mapPosX, mapPosZ, currentPosX
 		-- If the position is the same as the projectiles current position
 		-- Add a bullet
 		if targetPosX == currentPosX and targetPosZ == currentPosZ then
-			self:AddBullet(mapPosX, mapPosZ, targetPosX, targetPosZ, 0.1)
+			self:AddBullet(mapPosX, mapPosZ, targetPosX, targetPosZ, 0.1, true)
 			
 			if not world:EntityHasComponent(units[i], "ActionGuard") then
 				local newId = world:CreateNewEntity()
 				world:CreateComponentAndAddTo("TakeCardStepsFromUnit", newId)
 				world:GetComponent(newId, "TakeCardStepsFromUnit", "Unit"):SetInt(units[i])
+
+				
 			else
 				print("BLOCKED BITCH")
 			end
@@ -54,7 +56,7 @@ AbilitySlingshotSystem.CheckNotWalkable = function(self, mapPosX, mapPosZ, curre
 	
 		local targetPosX, targetPosZ = world:GetComponent(entities[i], "MapPosition", 0):GetInt2()
 		if targetPosX == currentPosX and targetPosZ == currentPosZ then
-			self:AddBullet(mapPosX, mapPosZ, targetPosX, targetPosZ, 0.1)
+			self:AddBullet(mapPosX, mapPosZ, targetPosX, targetPosZ, 0.1, false)
 			return true
 		end
 	
@@ -64,10 +66,16 @@ AbilitySlingshotSystem.CheckNotWalkable = function(self, mapPosX, mapPosZ, curre
 	
 end
 
-AbilitySlingshotSystem.AddBullet = function(self, posX, posZ, targetPosX, targetPosZ, lerpTime)
+AbilitySlingshotSystem.AddBullet = function(self, posX, posZ, targetPosX, targetPosZ, lerpTime, isPlayer)
+
+	local afterLerpText = "AddBulletImpact"
+	if isPlayer then
+		afterLerpText = "AddBulletImpactPlayer"
+	end
 
 	local bullet = world:CreateNewEntity("SlingShotProjectile")
 	world:CreateComponentAndAddTo("AddEntityAfterLerp", bullet)
+	world:CreateComponentAndAddTo("KillAfterLerp", bullet)
 
 	world:GetComponent(bullet, "Position", 0):SetFloat3(posX, 1, posZ)
 	world:GetComponent(bullet, "LerpPosition", "X"):SetFloat(targetPosX)
@@ -75,8 +83,8 @@ AbilitySlingshotSystem.AddBullet = function(self, posX, posZ, targetPosX, target
 	world:GetComponent(bullet, "LerpPosition", "Z"):SetFloat(targetPosZ)
 	world:GetComponent(bullet, "LerpPosition", "Time"):SetFloat(lerpTime*math.abs(posX-targetPosX+posZ-targetPosZ))
 	world:GetComponent(bullet, "LerpPosition", "Algorithm"):SetText("NormalLerp")
-	world:GetComponent(bullet, "AddEntityAfterLerp", "ComponentName"):SetText("AddBulletImpact")
-	
+	world:GetComponent(bullet, "AddEntityAfterLerp", "ComponentName"):SetText(afterLerpText)
+	print(afterLerpText)
 	local audioId = Net.StartPack("Client.PlaySound")
 	Net.WriteString(audioId, "Throw")
 	Net.WriteBool(audioId, false)
@@ -144,16 +152,4 @@ AbilitySlingshotSystem.Update = function(self, dt)
 		world:RemoveComponentFrom("UnitSlingShot", entities[i])
 	end
 
-	local slingshots = self:GetEntities("SlingShotProjectile")
-	for i = 1, #slingshots do
-		local posX, _, posZ	 = world:GetComponent(slingshots[i], "Position", 0):GetFloat3()
-		
-		local tX = world:GetComponent(slingshots[i], "LerpingPosition", "tX"):GetFloat(0)
-		local tZ = world:GetComponent(slingshots[i], "LerpingPosition", "tZ"):GetFloat(0)		
-		
-		if posX == tX and posZ == tZ then
-			world:KillEntity(slingshots[i])
-		end
-	end
-	
 end

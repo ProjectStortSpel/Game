@@ -71,6 +71,7 @@ namespace Audio
 	std::vector<std::pair<std::string, glm::vec3>> g_soundPositionQueue;
 	std::vector<FadeInParams> g_soundFadeInQueue;
 	std::vector<std::pair<std::string, int>> g_soundFadeOutQueue;
+	std::vector<std::pair<std::string, int>> g_soundVolumeQueue;
 	
 	std::vector<int> g_channelRemoveQueue;
 	
@@ -261,12 +262,17 @@ namespace Audio
 				distance = (Uint8)(255.0f * (l - g_near) / (g_far - g_near));
 			Mix_SetPosition(g_channels[position.first], 0, distance);
 		}
+		for (std::pair<std::string, int> volume : g_soundVolumeQueue)
+		{
+			if (g_channels.find(volume.first) == g_channels.end())
+				continue;
+			Mix_Volume(g_channels[volume.first], volume.second);
+		}
 		g_loadSoundQueue.clear();
 		g_playSoundQueue.clear();
 		g_soundStateQueue.clear();
 		g_soundPositionQueue.clear();
-		
-		Mix_Volume(-1, g_volume);
+		g_soundVolumeQueue.clear();
 	}
 	
 	void Quit()
@@ -391,6 +397,11 @@ namespace Audio
 	void FadeOutSound(const std::string& channelName, int ms)
 	{
 		g_soundFadeOutQueue.push_back(std::pair<std::string, int>(channelName, ms));
+	}
+	
+	void SetVolume(const std::string& channelName, int volume)
+	{
+		g_soundVolumeQueue.push_back(std::pair<std::string, int>(channelName, volume));
 	}
 	
 	bool ChannelExists(const std::string& channelName)

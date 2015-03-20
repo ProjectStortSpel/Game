@@ -111,7 +111,7 @@ UnitSystem.EntitiesAdded = function(self, dt, entities)
 				
 				local audioId = Net.StartPack("Client.PlaySound")
 				Net.WriteString(audioId, "Bird")
-				Net.WriteBool(audioId, false)
+				Net.WriteBool(audioId, true)
 				Net.Send(id, ip, port)
 			else
 				-- CREATE TOTEM HAT ON AI
