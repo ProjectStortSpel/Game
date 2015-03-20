@@ -93,8 +93,7 @@ end
 AbilityStoneSystem.AddTimer = function(self, entity, X, Z)
 	
 	local timerAbove = world:CreateNewEntity("StoneTimer")
-	local R, G, B = world:GetComponent(entity, "Color", "X"):GetFloat3()
-	
+
 	world:GetComponent(timerAbove, "Position", 0):SetFloat3(X, 1.2, Z)
 	world:GetComponent(timerAbove, "Rotation", 0):SetFloat3(1.5 * math.pi, math.pi * 0.25, 0.0)
 	world:GetComponent(timerAbove, "Scale", 0):SetFloat3(0.7,0.7,0.7)
@@ -102,8 +101,6 @@ AbilityStoneSystem.AddTimer = function(self, entity, X, Z)
 	world:GetComponent(timerAbove, "Model", "ModelPath"):SetText("quad")
 	world:GetComponent(timerAbove, "Model", "RenderType"):SetInt(1)
 	world:GetComponent(timerAbove, "StoneTimer", "LifeSpan"):SetInt(self.LifeSpan)
-	world:GetComponent(timerAbove, "Color", "X"):SetFloat3(R,G,B)	
-	
 end
 
 AbilityStoneSystem.PlaceStone = function(self, entity)
