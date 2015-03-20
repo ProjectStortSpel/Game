@@ -4,6 +4,11 @@ ScoreboardSystem.GameStarted = false
 ScoreboardSystem.RemoveMenuRequest = false
 ScoreboardSystem.Button = nil
 ScoreboardSystem.Showing = false
+ScoreboardSystem.NumberOfCheckpoints	=	0
+ScoreboardSystem.TotalTime				=	0.0
+ScoreboardSystem.UpdateTimer			=	0.0
+ScoreboardSystem.UpdateFrequence		=	1/2
+
 
 ScoreboardSystem.Initialize = function ( self )
 	--	Set Name
@@ -18,6 +23,9 @@ ScoreboardSystem.Initialize = function ( self )
 	self:AddComponentTypeToFilter(self.Name.."Element", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("ScoreboardPlayer", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("MapSpecs", FilterType.RequiresOneOf)
+	
+	self:AddComponentTypeToFilter("PlayerStats", FilterType.RequiresOneOf)
 	
 end
 
@@ -37,6 +45,11 @@ ScoreboardSystem.EntitiesAdded = function(self, dt, entities)
 		if world:EntityHasComponent(entities[n], "GameRunning") then	
 			self.GameStarted = true
 		end
+		
+		if world:EntityHasComponent(entities[n], "MapSpecs") then
+		
+			self.NumberOfCheckpoints	=	world:GetComponent(entities[n], "MapSpecs", "NoOfCheckpoints"):GetInt()
+		end
 	
 	end
 
@@ -48,9 +61,12 @@ ScoreboardSystem.Update = function(self, dt)
 		return
 	end
 	
+	self.TotalTime	=	self.TotalTime + dt
+	
 	if self.RemoveMenuRequest then
 		self:RemoveMenu()
 		self.RemoveMenuRequest = false
+		self.UpdateTimer = 0.0
 	else
 		if world:EntityHasComponent(self.Button, "OnPickBoxHit") and Input.GetTouchState(0) == InputState.Down then
 			if not self.Showing then
@@ -61,28 +77,103 @@ ScoreboardSystem.Update = function(self, dt)
 		elseif Input.GetKeyState(Key.Tab) ~= InputState.Down and self.Showing then
 			self.RemoveMenuRequest = true
 		end
+		
+		--	This part is not working as it should
+		if self.Showing then
+			self.UpdateTimer	=	self.UpdateTimer + dt
+			if self.UpdateTimer >= self.UpdateFrequence then
+				--self:RemoveMenu()
+				--self:SpawnMenu()
+				self.UpdateTimer = 0.0
+			end
+		end
 	end
 end
 
 ScoreboardSystem.SpawnMenu = function(self)
-	
+	print("LOL")
 	self.Showing = true
 	--local background = self:CreateElement("gamemenubackground", "quad", 0, -0, -3.5, 3, 3)
 
 	local players = self:GetEntities("ScoreboardPlayer")
+	local playerStats = self:GetEntities("PlayerStats")
 	local name = ""
 	local r, g, b = 0
+	local cardsPlayed, playerDeaths, playerGoal, playerPlace = 0
+	local button, text	=	0
+	
+	local	rowBackground	=	0
+	local	textObject		=	0
+	
+	local	nameOffset			=	-1.85
+	local	cardsOffet			=	nameOffset + 1.50
+	local	deathsOffset		=	cardsOffet + 0.75
+	local	checkpointOffset	=	deathsOffset + 0.75
+	local	rowOffset			=	0.2
+	
+	
+	rowBackground	=	self:CreateElement("shade",	"quad", -0.0,	1.40-0*rowOffset,	-4.000,	4.0,	0.2)
+	world:CreateComponentAndAddTo("Color", rowBackground)
+	world:GetComponent(rowBackground, "Color", "X"):SetFloat3(0.1, 0.1, 0.1)
+	
+	--	Name
+	textObject		=	self:CreateElement("left", 	"text",	nameOffset,	1.48-0*rowOffset,	-3.999,	3.0,	0.16)
+	self:AddTextToTexture("TopRowName", "Name", 0, 1, 1, 1, textObject)
+	
+	--	Cards
+	textObject		=	self:CreateElement("center", 	"text",	cardsOffet,	1.48-0*rowOffset,	-3.999,	3.0,	0.16)
+	self:AddTextToTexture("TopRowCards", "Cards Played", 0, 1, 1, 1, textObject)
+	
+	--	Deaths
+	textObject		=	self:CreateElement("center", 	"text",	deathsOffset,	1.48-0*rowOffset,	-3.999,	3.0,	0.16)
+	self:AddTextToTexture("TopRowDeaths", "Deaths", 0, 1, 1, 1, textObject)
+	
+	--	Checkpoints
+	textObject		=	self:CreateElement("center", 	"text",	checkpointOffset,	1.48-0*rowOffset,	-3.999,	3.0,	0.16)
+	self:AddTextToTexture("TopRowCheckpoints", "Checkpoint", 0, 1, 1, 1, textObject)
+	
 	for i = 1, #players do
 		name = world:GetComponent(players[i], "ScoreboardPlayer", "Name"):GetText()			
 		r = world:GetComponent(players[i], "ScoreboardPlayer", "R"):GetFloat()
 		g = world:GetComponent(players[i], "ScoreboardPlayer", "G"):GetFloat()
 		b = world:GetComponent(players[i], "ScoreboardPlayer", "B"):GetFloat()
-
-		local button = self:CreateElement("shade", "quad", -0.0, 1.40-i*0.22, -4.0, 4.0, 0.2)
 		
-		local text = self:CreateElement("left", "text", -1.85, 1.48-i*0.22, -3.999, 3.0, 0.16)
-		self:AddTextToTexture("SCBRD"..i, name, 0, r, g, b, text)
+		for statsI = 1, #playerStats do
+			
+			if world:GetComponent(playerStats[statsI], "PlayerStats", "PlayerNumber"):GetInt() == i then
+				cardsPlayed		=	world:GetComponent(playerStats[statsI], "PlayerStats", "CardsPlayed"):GetInt()
+				playerDeaths	=	world:GetComponent(playerStats[statsI], "PlayerStats", "Deaths"):GetInt()
+				playerGoal		=	world:GetComponent(playerStats[statsI], "PlayerStats", "GoalCheckpoint"):GetInt()
+				playerPlace		=	world:GetComponent(playerStats[statsI], "PlayerStats", "Place"):GetInt()
+				break
+			end
+			
+		end
 		
+		rowBackground	=	self:CreateElement("scoreboardbg",	"quad", -0.0,	1.40-i*rowOffset,	-4.000,	4.0,	0.2)
+		
+		if i % 2 == 0 then
+			if not world:EntityHasComponent(rowBackground, "Color") then
+				world:CreateComponentAndAddTo("Color", rowBackground)
+			end
+			world:GetComponent(rowBackground, "Color", "X"):SetFloat3(0.1, 0.1, 0.1)
+		end
+		
+		--	Player Name
+		textObject		=	self:CreateElement("left", 	"text",	nameOffset,	1.48-i*rowOffset,	-3.999,	3.0,	0.16)
+		self:AddTextToTexture("SCBRDNAME" .. i, name, 0, r, g, b, textObject)
+		
+		--	Player Cards
+		textObject		=	self:CreateElement("center", 	"text",	cardsOffet,	1.48-i*rowOffset,	-3.999,	3.0,	0.16)
+		self:AddTextToTexture("SCBRDCARDS" .. i, cardsPlayed, 0, r, g, b, textObject)
+		
+		--	Player Deaths
+		textObject		=	self:CreateElement("center", 	"text",	deathsOffset,	1.48-i*rowOffset,	-3.999,	3.0,	0.16)
+		self:AddTextToTexture("SCBRDDEATHS" .. i, playerDeaths, 0, r, g, b, textObject)
+		
+		--	Player Checkpoint
+		textObject		=	self:CreateElement("center", 	"text",	checkpointOffset,	1.48-i*rowOffset,	-3.999,	3.0,	0.16)
+		self:AddTextToTexture("SCBRDCHECKPOINTS" .. i, playerGoal .. "/" .. self.NumberOfCheckpoints, 0, r, g, b, textObject)
 	end
 	
 	
