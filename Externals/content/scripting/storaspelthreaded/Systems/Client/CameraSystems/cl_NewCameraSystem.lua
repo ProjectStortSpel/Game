@@ -132,6 +132,12 @@ NewCameraSystem.EntitiesAdded = function(self, dt, entities)
 				self:DoCIP(entities[n])
 			end
 			world:KillEntity(entities[n])
+		elseif world:EntityHasComponent(entities[n], "MapSpecs") then
+		
+			local mapX, mapZ = world:GetComponent(entities[n], "MapSpecs", "SizeX"):GetInt2()
+			
+			GraphicDevice.SetShadowmapBounds(mapX-3, mapZ-3, mapX*0.5, 0.5, mapZ*0.5)
+		
 		end
 	end
 end

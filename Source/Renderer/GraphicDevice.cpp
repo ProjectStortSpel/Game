@@ -1013,3 +1013,9 @@ void GraphicDevice::BufferStaticModel(std::pair<int, std::vector<ModelToLoad*>> 
 	for (ModelToLoad* modelToLoad : _staticModel.second)
 		delete modelToLoad;
 }
+
+void GraphicDevice::SetShadowMapData(float _width, float _height, vec3 _target)
+{
+	m_dirLightshadowMapTarget = _target;
+	m_shadowMap->SetBounds(_width, _height);
+}

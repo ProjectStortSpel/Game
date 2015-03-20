@@ -470,7 +470,7 @@ void GraphicsLow::BufferLightsToGPU()
 		m_animationShader.SetUniVariable("dirlightIntensity", vector3, &intens);
 		m_animationShader.SetUniVariable("dirlightColor", vector3, &color);
 
-		m_shadowMap->UpdateViewMatrix(vec3(8.0f, 0.0f, 8.0f) - (10.0f*normalize(m_dirLightDirection)), vec3(8.0f, 0.0f, 8.0f));
+		m_shadowMap->UpdateViewMatrix(m_dirLightshadowMapTarget - (10.0f*normalize(m_dirLightDirection)), m_dirLightshadowMapTarget);
 	}
 	else
 	{
@@ -588,8 +588,8 @@ void GraphicsLow::CreateShadowMap()
 {
 	int resolution = 1024;
 	m_dirLightDirection = vec3(0.0, -1.0, 1.0);
-	vec3 midMap = vec3(8.0, 0.0, 8.0);
-	vec3 lightPos = midMap - (10.0f*normalize(m_dirLightDirection));
+	vec3 target = vec3(0.0, 0.0, 0.0);
+	vec3 lightPos = target - (10.0f*normalize(m_dirLightDirection));
 	m_shadowMap = new ShadowMap(lightPos, lightPos + normalize(m_dirLightDirection), resolution);
 	m_shadowMap->CreateShadowMapTexture(GL_TEXTURE10);
 

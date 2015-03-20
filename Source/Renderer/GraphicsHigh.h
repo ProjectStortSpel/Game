@@ -61,7 +61,6 @@ namespace Renderer
 		float m_lightDefaults[19];
 
 		//Le shadowmap
-		ShadowMap *m_shadowMap;
 		void WriteShadowMapDepth();
 
 		// Timer for shader run time

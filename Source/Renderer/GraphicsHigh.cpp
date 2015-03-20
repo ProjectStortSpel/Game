@@ -744,7 +744,7 @@ void GraphicsHigh::BufferLightsToGPU()
 		glBufferData(GL_SHADER_STORAGE_BUFFER, 9 * sizeof(float), m_pointerToDirectionalLights, GL_STATIC_DRAW);
 
 		m_dirLightDirection = vec3(m_pointerToDirectionalLights[0], m_pointerToDirectionalLights[1], m_pointerToDirectionalLights[2]);
-		m_shadowMap->UpdateViewMatrix(vec3(8.0f, 0.0f, 8.0f) - (10.0f*normalize(m_dirLightDirection)), vec3(8.0f, 0.0f, 8.0f));
+		m_shadowMap->UpdateViewMatrix(m_dirLightshadowMapTarget - (10.0f*normalize(m_dirLightDirection)), m_dirLightshadowMapTarget);
 
 		m_pointerToDirectionalLights = 0;
 	}
@@ -755,8 +755,8 @@ void GraphicsHigh::CreateShadowMap()
 {
 	int resolution = 2048*2;
 	m_dirLightDirection = vec3(0.0, -1.0, 1.0);
-	vec3 midMap = vec3(8.0, 0.0, 8.0);
-	vec3 lightPos = midMap - (10.0f*normalize(m_dirLightDirection));
+	vec3 target = vec3(0.0, 0.0, 0.0);
+	vec3 lightPos = target - (10.0f*normalize(m_dirLightDirection));
 	m_shadowMap = new ShadowMap(lightPos, lightPos + normalize(m_dirLightDirection), resolution);
 	m_shadowMap->CreateShadowMapTexture(GL_TEXTURE10);
 
@@ -777,6 +777,8 @@ void GraphicsHigh::CreateShadowMap()
 	m_riverCornerShader.CheckUniformLocation("ShadowDepthTex", 10);
 
 	m_vramUsage += (resolution*resolution*sizeof(float));
+	//m_shadowMap->SetBounds(4.0f, 4.0f);
+	//m_dirLightshadowMapTarget = vec3(0.0);
 }
 
 bool GraphicsHigh::RenderSimpleText(std::string _text, int _x, int _y)
