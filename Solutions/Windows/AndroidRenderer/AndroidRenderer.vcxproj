@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\Externals\content\shaders\android\AndroidAnimationShaderVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidAnimShadowShaderVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\android\AndroidExplosionShaderFS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\android\AndroidExplosionShaderVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\android\AndroidFireShaderFS.glsl" />
