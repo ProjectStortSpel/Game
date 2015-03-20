@@ -66,7 +66,7 @@ OptionMenuSystem.SpawnMenu = function(self)
 	--self:AddEntityCommandToButton("NotificationBox", button)	
 	self:AddHoverSize(1.1, button)
 	
-	button = self:CreateElement("back", "quad", 2, -1, -3, 0.6, 0.3)
+	button = self:CreateElement("returnknapp", "quad", 2.3, -1.2, -3, 0.4, 0.4)
 	self:AddHoverSize(1.1, button)
 	
 	self.Active = true

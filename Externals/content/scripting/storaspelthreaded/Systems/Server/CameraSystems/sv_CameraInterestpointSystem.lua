@@ -38,6 +38,7 @@ CameraInterestpointSystem.EntitiesAdded = function(self, dt, entities)
 					Net.WriteFloat(cipID, dx)
 					Net.WriteFloat(cipID, dz)
 					Net.WriteFloat(cipID, 0.8)
+					Net.WriteFloat(cipID, 0.5)
 					Net.Send(cipID, ip, port)
 				end
 			end
@@ -57,6 +58,7 @@ CameraInterestpointSystem.EntitiesAdded = function(self, dt, entities)
 			Net.WriteFloat(cipID, dx)
 			Net.WriteFloat(cipID, dz)
 			Net.WriteFloat(cipID, d)
+			Net.WriteFloat(cipID, 0.5)
 			Net.Broadcast(cipID)
 			world:KillEntity( entityId )
 		end

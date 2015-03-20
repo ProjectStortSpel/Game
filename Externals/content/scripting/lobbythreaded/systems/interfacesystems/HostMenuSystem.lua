@@ -452,7 +452,7 @@ HostMenuSystem.SpawnMenu = function(self)
 	world:GetComponent(cb, "BoolSetting", "SettingsName"):SetText("ServerType")
 	world:GetComponent(cb, "BoolSetting", "Value"):SetInt(0)
 	
-	local button = self:CreateElement("back", "quad", 2, -1, -3, 0.6, 0.3)
+	local button = self:CreateElement("returnknapp", "quad", 2.3, -1.2, -3, 0.4, 0.4)
 	self:AddConsoleCommandToButton("back", button)	
 	self:AddHoverSize(1.1, button)
 	

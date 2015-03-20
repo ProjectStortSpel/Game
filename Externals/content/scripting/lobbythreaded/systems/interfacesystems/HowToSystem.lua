@@ -116,7 +116,7 @@ HowToSystem.CreateEntites = function(self)
 	local tutorial = self:CreateElement("tutorial", "quad", 0.8, 1.0, -3.0, 1.1, 1.1)
 	table.insert(self.Entities, tutorial)
 	
-	local button = self:CreateElement("back", "quad", 2, -1, -3, 0.6, 0.3)
+	local button = self:CreateElement("returnknapp", "quad", 2.3, -1.2, -3, 0.4, 0.4)
 	self:AddHoverSize(1.1, button)
 	
 	self.Active = true

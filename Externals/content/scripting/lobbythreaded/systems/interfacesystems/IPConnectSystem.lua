@@ -227,9 +227,9 @@ IPConnectSystem.CreateBackButton = function(self)
 	world:CreateComponentAndAddTo("PickBox", id)
 	world:CreateComponentAndAddTo("IPConnectEntry", id)
 	
-	world:GetComponent(id, "Model", 0):SetModel("back", "quad", 2)
-	world:GetComponent(id, "Position", 0):SetFloat3(2, -1, -3)
-	world:GetComponent(id, "Scale", 0):SetFloat3(0.6, 0.3, 1.0)
+	world:GetComponent(id, "Model", 0):SetModel("returnknapp", "quad", 2)
+	world:GetComponent(id, "Position", 0):SetFloat3(2.3, -1.2, -3)
+	world:GetComponent(id, "Scale", 0):SetFloat3(0.4, 0.4, 1.0)
 	world:GetComponent(id, "PickBox", 0):SetFloat2(1.0, 1.0)
 	world:GetComponent(id, "Rotation", 0):SetFloat3(0.0, 0.0, 0.0)
 	

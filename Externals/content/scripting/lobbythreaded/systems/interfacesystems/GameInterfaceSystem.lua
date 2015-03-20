@@ -80,7 +80,7 @@ GameInterfaceSystem.CreateDistantIsland = function(self)
 		0, 1.2, 5,
 		0, 1, -1,
 		0, 0, -1,
-		1
+		10
 	)
 end
 
