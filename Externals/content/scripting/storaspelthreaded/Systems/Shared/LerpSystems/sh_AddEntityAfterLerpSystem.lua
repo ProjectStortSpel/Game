@@ -12,6 +12,37 @@ AddEntityAfterLerpSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("LerpingPosition", FilterType.Mandatory)
 end
 
+AddEntityAfterLerpSystem.BulletImpact = function(self, entity, hitPlayer)
+	
+	local x, y, z = world:GetComponent(entity, "Position", 0):GetFloat3()
+	local id = -1
+	
+	if hitPlayer then
+		id = Net.StartPack("SERVER_BULLET_IMPACT_PLAYER_PARTICLE")
+	else
+		id = Net.StartPack("SERVER_BULLET_IMPACT_PARTICLE")
+	end
+	
+	Net.WriteFloat(id, x)
+	Net.WriteFloat(id, y)
+	Net.WriteFloat(id, z)
+	Net.Broadcast(id)
+
+	-- SOUND
+	local audioId = Net.StartPack("Client.PlaySound")
+	Net.WriteString(audioId, "SmallStoneImpact" .. math.random(1, 2))
+	Net.WriteBool(audioId, false)
+	Net.Broadcast(audioId)
+	
+	if hitPlayer then
+		audioId = Net.StartPack("Client.PlaySound")
+		Net.WriteString(audioId, "HitByStone" .. math.random(1, 2))
+		Net.WriteBool(audioId, false)
+		Net.Broadcast(audioId)
+	end
+	
+end
+
 AddEntityAfterLerpSystem.EntitiesRemoved = function(self, dt, entities)
 	for i = 1, #entities do
 		local entity = entities[i]
@@ -30,15 +61,15 @@ AddEntityAfterLerpSystem.EntitiesRemoved = function(self, dt, entities)
 			Net.Broadcast(id)
 				
 		elseif compName == "AddBulletImpact" then
+			self:BulletImpact(entity, false)
 		
-			local x, y, z = world:GetComponent(entity, "Position", 0):GetFloat3()
-			
-			local id = Net.StartPack("SERVER_BULLET_IMPACT_PARTICLE")
-			Net.WriteFloat(id, x)
-			Net.WriteFloat(id, y)
-			Net.WriteFloat(id, z)
-			Net.Broadcast(id)
+		elseif compName == "AddBulletImpactPlayer" then
+			self:BulletImpact(entity, true)
+		end
 		
+						
+		if world:EntityHasComponent(entity, "AddEntityAfterLerp") then
+			world:RemoveComponentFrom("AddEntityAfterLerp", entity)
 		end
 		
 	end

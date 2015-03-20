@@ -26,6 +26,7 @@ public:
 
 	void CreateShadowMapTexture(GLuint _textureUnit);
 	void ChangeResolution(int res);
+	void SetBounds(float _width, float _height);
 
 	int GetResolution(){ return m_resolution; }
 	

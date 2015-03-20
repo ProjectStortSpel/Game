@@ -3,8 +3,7 @@ in vec3 Normal;
 in vec3 Tan;
 in vec3 BiTan;
 in vec2 TexCoord;
-in vec3 ViewPos;
-in vec3 WorldPos;
+in vec4 ViewPos;
 
 out vec4 ColorData;
 
@@ -14,7 +13,7 @@ uniform sampler2D normalTex;
 uniform sampler2D specularTex;
 uniform sampler2D ShadowDepthTex;
 
-uniform mat4 ViewMatrix;
+uniform mat4 V;
 uniform mat4 BiasMatrix;
 uniform mat4 ShadowViewProj;
 
@@ -48,18 +47,18 @@ void phongModelDirLight(out vec3 ambient, out vec3 diffuse, out vec3 spec)
     diffuse = vec3(0.0);
     spec    = vec3(0.0);
 
-    vec3 lightVec = -normalize(( ViewMatrix*vec4(dirlightDirection, 0.0) ).xyz);
+    vec3 lightVec = -normalize(( V*vec4(dirlightDirection, 0.0) ).xyz);
 
 	ambient = dirlightColor * dirlightIntensity.x;
 
-	vec3 E = normalize(ViewPos);
+	vec3 E = normalize(ViewPos.xyz);
 
 	float diffuseFactor = dot( lightVec, NmNormal );
 
 	if(diffuseFactor > 0)
 	{
 		// For shadows
-		vec4 worldPosition = vec4(WorldPos, 1.0);
+		vec4 worldPosition = inverse(V) * ViewPos;
 		vec4 shadowCoord = BiasMatrix * ShadowViewProj * worldPosition;
 		
 		float shadow = 1.0;
@@ -88,7 +87,7 @@ void phongModel(int index, out vec3 ambient, out vec3 diffuse, out vec3 spec) {
 	diffuse = vec3(0.0);
 	spec    = vec3(0.0);
 
-	vec3 lightVec = (ViewMatrix * vec4(pointlights[index].Position, 1.0)).xyz - ViewPos;
+	vec3 lightVec = (V * vec4(pointlights[index].Position, 1.0) - ViewPos).xyz;
 	float d = length(lightVec);
 
 	if(d > pointlights[index].Range)
@@ -96,7 +95,7 @@ void phongModel(int index, out vec3 ambient, out vec3 diffuse, out vec3 spec) {
 	lightVec /= d; //normalizing
         
 	ambient = pointlights[index].Color * pointlights[index].Intensity.x;
-	vec3 E = normalize(ViewPos);
+	vec3 E = normalize(ViewPos.xyz);
 	float diffuseFactor = dot( lightVec, NmNormal );
 
 	if(diffuseFactor > 0)

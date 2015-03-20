@@ -280,6 +280,7 @@ namespace ClientManager
 	}
 	void AcknowledgeName(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
 	{
+		//SDL_Log("AcknowledgeName");
 		if (clients.find(_nc) != clients.end())
 		{
 			std::stringstream newName;
@@ -372,6 +373,7 @@ namespace ClientManager
 
 	void RequestGameModeFileList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
 	{
+		//SDL_Log("RequestGameModeFileList");
 		//Send filelist
 		std::map<std::string, ResourceManager::Resource>* resources = ResourceManager::GetGamemodeResources();
 
@@ -380,51 +382,64 @@ namespace ClientManager
 		bool newPacket = true;
 		unsigned int filesLeftToPack = 0;
 		uint64_t id;
-		for (auto it = resources->begin(); it != resources->end(); ++it)
+
+		if (resources->empty())
 		{
-			if (newPacket)
+			id = _ph->StartPack("GameModeFileList");
+			_ph->WriteByte(id, true);
+			_ph->WriteInt(id, 0);
+			_ph->WriteByte(id, true);
+			NetworkInstance::GetServer()->Send(_ph->EndPack(id), _nc);
+		}
+		else
+		{
+			for (auto it = resources->begin(); it != resources->end(); ++it)
 			{
-				id = _ph->StartPack("GameModeFileList");
+				if (newPacket)
+				{
+					id = _ph->StartPack("GameModeFileList");
 
-				//Is this the first packet?
-				_ph->WriteByte(id, firstPacket);
+					//Is this the first packet?
+					_ph->WriteByte(id, firstPacket);
 
-				filesLeftToPack = numFiles > 50 ? 50 : numFiles;
-				numFiles -= filesLeftToPack;
+					filesLeftToPack = numFiles > 50 ? 50 : numFiles;
+					numFiles -= filesLeftToPack;
 
-				//number of files in this packet
-				_ph->WriteInt(id, filesLeftToPack);
+					//number of files in this packet
+					_ph->WriteInt(id, filesLeftToPack);
 
-				newPacket = false;
-				firstPacket = false;
-			}
+					newPacket = false;
+					firstPacket = false;
+				}
 
-			ResourceManager::Resource* r = &it->second;
+				ResourceManager::Resource* r = &it->second;
 
-			//Filename
-			_ph->WriteString(id, r->File.c_str());
-			//Filesize
-			_ph->WriteInt(id, r->Size);
+				//Filename
+				_ph->WriteString(id, r->File.c_str());
+				//Filesize
+				_ph->WriteInt(id, r->Size);
 
-			//MD5
-			for (int j = 0; j < 16; ++j)
-			{
-				_ph->WriteByte(id, r->MD5.data[j]);
-			}
+				//MD5
+				for (int j = 0; j < 16; ++j)
+				{
+					_ph->WriteByte(id, r->MD5.data[j]);
+				}
 
-			--filesLeftToPack;
-			if (filesLeftToPack == 0)
-			{
-				//Is this the last packet?
-				_ph->WriteByte(id, numFiles == 0);
-				NetworkInstance::GetServer()->Send(_ph->EndPack(id), _nc);
-				newPacket = true;
+				--filesLeftToPack;
+				if (filesLeftToPack == 0)
+				{
+					//Is this the last packet?
+					_ph->WriteByte(id, numFiles == 0);
+					NetworkInstance::GetServer()->Send(_ph->EndPack(id), _nc);
+					newPacket = true;
+				}
 			}
 		}
 	}
 
 	void RequestGameModeFile(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
 	{
+		//SDL_Log("RequestGameModeFile");
 		std::map<std::string, ResourceManager::Resource>* resources = ResourceManager::GetGamemodeResources();
 
 		std::string filename = _ph->ReadString(_id);
@@ -486,6 +501,7 @@ namespace ClientManager
 
 	void RequestContentFileList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
 	{
+		//SDL_Log("RequestContentFileList");
 		//Send filelist
 		std::map<std::string, ResourceManager::Resource>* resources = ResourceManager::GetContentResources();
 		
@@ -494,51 +510,64 @@ namespace ClientManager
 		bool newPacket = true;
 		unsigned int filesLeftToPack = 0;
 		uint64_t id;
-		for (auto it = resources->begin(); it != resources->end(); ++it)
+
+		if (resources->empty())
 		{
-			if (newPacket)
+			id = _ph->StartPack("ContentFileList");
+			_ph->WriteByte(id, true);
+			_ph->WriteInt(id, 0);
+			_ph->WriteByte(id, true);
+			NetworkInstance::GetServer()->Send(_ph->EndPack(id), _nc);
+		}
+		else
+		{
+			for (auto it = resources->begin(); it != resources->end(); ++it)
 			{
-				id = _ph->StartPack("ContentFileList");
+				if (newPacket)
+				{
+					id = _ph->StartPack("ContentFileList");
 
-				//Is this the first packet?
-				_ph->WriteByte(id, firstPacket);
+					//Is this the first packet?
+					_ph->WriteByte(id, firstPacket);
 
-				filesLeftToPack = numFiles > 50 ? 50 : numFiles;
-				numFiles -= filesLeftToPack;
+					filesLeftToPack = numFiles > 50 ? 50 : numFiles;
+					numFiles -= filesLeftToPack;
 
-				//number of files in this packet
-				_ph->WriteInt(id, filesLeftToPack);
+					//number of files in this packet
+					_ph->WriteInt(id, filesLeftToPack);
 
-				newPacket = false;
-				firstPacket = false;
-			}
+					newPacket = false;
+					firstPacket = false;
+				}
 
-			ResourceManager::Resource* r = &it->second;
+				ResourceManager::Resource* r = &it->second;
 
-			//Filename
-			_ph->WriteString(id, r->File.c_str());
-			//Filesize
-			_ph->WriteInt(id, r->Size);
+				//Filename
+				_ph->WriteString(id, r->File.c_str());
+				//Filesize
+				_ph->WriteInt(id, r->Size);
 
-			//MD5
-			for (int j = 0; j < 16; ++j)
-			{
-				_ph->WriteByte(id, r->MD5.data[j]);
-			}
+				//MD5
+				for (int j = 0; j < 16; ++j)
+				{
+					_ph->WriteByte(id, r->MD5.data[j]);
+				}
 
-			--filesLeftToPack;
-			if (filesLeftToPack == 0)
-			{
-				//Is this the last packet?
-				_ph->WriteByte(id, numFiles == 0);
-				NetworkInstance::GetServer()->Send(_ph->EndPack(id), _nc);
-				newPacket = true;
+				--filesLeftToPack;
+				if (filesLeftToPack == 0)
+				{
+					//Is this the last packet?
+					_ph->WriteByte(id, numFiles == 0);
+					NetworkInstance::GetServer()->Send(_ph->EndPack(id), _nc);
+					newPacket = true;
+				}
 			}
 		}
 	}
 
 	void RequestContentFile(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
 	{
+		//SDL_Log("RequestContentFile");
 		std::map<std::string, ResourceManager::Resource>* resources = ResourceManager::GetContentResources();
 
 		std::string filename = _ph->ReadString(_id);
@@ -600,6 +629,7 @@ namespace ClientManager
 
 	void GameModeLoaded(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
 	{
+		//SDL_Log("GameModeLoaded");
 		if (clients.find(_nc) != clients.end())
 		{
 			int hest = clients[_nc];

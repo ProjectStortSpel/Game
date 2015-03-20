@@ -49,14 +49,6 @@ DealCardsSystem.EntitiesAdded = function(self, dt, entities)
 		end
 	end
 	
-	if dealCards then
-		--local audioId = Net.StartPack("Client.FadeInSoundC")
-		--Net.WriteString(audioId, "InGame")
-		--Net.WriteString(audioId, "PickingMusic")
-		--Net.WriteInt(audioId, 200)
-		--Net.WriteBool(audioId, false)
-		--Net.Broadcast(audioId)
-	end
 end
 
 DealCardsSystem.DealCards = function (self, numCards)
@@ -91,7 +83,6 @@ DealCardsSystem.DealCards = function (self, numCards)
 		local port = world:GetComponent(players[i], "NetConnection", "Port"):GetInt()
 		
 		Cards.MoveCount, Cards.TurnCount, Cards.AbilityCount = self:CalculateCardTypeBalance(numCards, Cards.MoveLeft, Cards.TurnLeft, Cards.AbilityLeft)
-		print("M: ", Cards.MoveCount, "T: ", Cards.TurnCount, "A: ", Cards.AbilityCount)
 		for j = 1, Cards.MoveCount do
 			Cards.MoveLeft = self:DealCardToPlayer(Cards.Move, Cards.MoveLeft, players[i], ip, port)
 		end

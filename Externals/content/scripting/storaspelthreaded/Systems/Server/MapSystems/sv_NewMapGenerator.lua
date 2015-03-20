@@ -64,15 +64,16 @@ MapGenerator.Initialize = function(self)
 end
 
 MapGenerator.EntitiesAdded = function(self, dt, entities)
-	--self:GenerateMap(os.time()%29181249, 4, 4)
-	--self:GenerateMap(23246299, 8, 4)
-	self:GenerateMap(1579125, 5, 5)
+	--self:GenerateMap(os.time()%12345, 10, 10)
+	self:GenerateMap(23246299, 4, 3)
+	--self:GenerateMap(1579125, 5, 5)
 	--self:GenerateMap(1579125, 8, 5)
 	--self:GenerateMap(23239474, 4, 4)
 	--self:GenerateMap(5747, 4, 4)
 	--self:GenerateMap(1338, 2, 4)
+	--self:GenerateMap(19890320, 6, 3)
 	
-	--self:LoadMap("map")
+	--self:LoadMap("riverends")
 end
 
 MapGenerator.PostInitialize = function(self)
@@ -1195,6 +1196,10 @@ MapGenerator.CreateMap = function(self)
 	world:GetComponent(dataEntity, "MapSpecs", "NoOfCheckpoints"):SetInt(self.Checkpoints)
 	world:GetComponent(dataEntity, "MapSpecs", "SizeX"):SetInt2(self.MapSizeX, self.MapSizeZ)
 	
+	----	Set shadowmap data
+	--local	cX, cZ	=	self:GetCenterOfMap()
+	--GraphicDevice.SetShadowmapBounds(self.MapSizeX-3*self.VoidMargin, self.MapSizeZ-3*self.VoidMargin, cX, 0.5, cZ)
+	
 	-- Initialize potential fields
 	PotentialFieldHandler.InitPFHandler(self.MapSizeX, self.MapSizeZ, self.Players)
 	
@@ -1206,7 +1211,7 @@ MapGenerator.CreateMap = function(self)
 	local 	newLight 	= 	world:CreateNewEntity()
 	world:CreateComponentAndAddTo("DirectionalLight", newLight)
 	world:CreateComponentAndAddTo("SyncNetwork", newLight)
-    world:GetComponent(newLight, "DirectionalLight", 0):SetDirectionalLight(math.sin(math.random(1, 360)), -1.0, math.sin(math.random(1, 360)), 0.45, 0.65, 0.65, R, G, B)
+    world:GetComponent(newLight, "DirectionalLight", 0):SetDirectionalLight(math.sin(math.random(1, 360)), -1.0, math.sin(math.random(1, 360)), 0.35, 0.65, 0.65, R, G, B)
 	
 	
 end
@@ -1535,11 +1540,24 @@ MapGenerator.FixRiverEffects = function(self, riverTiles)
 				world:GetComponent(newParticle, "Particle", "eScaleY"):SetFloat(0.12)
 				world:GetComponent(newParticle, "Particle", "eScaleZ"):SetFloat(0.09*dirAX)
 				world:GetComponent(newParticle, "Particle", "fVelocityX"):SetFloat(dirAX*0.3)
-				world:GetComponent(newParticle, "Particle", "fVelocityY"):SetFloat(0.055)
+				world:GetComponent(newParticle, "Particle", "fVelocityY"):SetFloat(0.065)
 				world:GetComponent(newParticle, "Particle", "fVelocityZ"):SetFloat(dirAY*0.3)
 				world:GetComponent(newParticle, "Particle", "gSpriteSize"):SetFloat(1.2)
 				world:GetComponent(newParticle, "Particle", "hId"):SetInt(-1)
 				world:GetComponent(newParticle, "Particle", "iOnlyOnce"):SetInt(0)
+				
+				--	Create a small river stone
+				local	newRiverStone 	= 	world:CreateNewEntity()
+				world:CreateComponentAndAddTo("Position", newRiverStone)
+				world:CreateComponentAndAddTo("Rotation", newRiverStone)
+				world:CreateComponentAndAddTo("Scale", newRiverStone)
+				world:CreateComponentAndAddTo("SyncNetwork", newRiverStone)
+				world:CreateComponentAndAddTo("Model", newRiverStone)
+				
+				world:GetComponent(newRiverStone, "Position", 0):SetFloat3(posAX + 0.45*dirAX, 0.335, posAY + 0.45*dirAY)
+				world:GetComponent(newRiverStone, "Rotation", 0):SetFloat3(0, math.pi/2*math.abs(dirAX), 0)
+				world:GetComponent(newRiverStone, "Scale", 0):SetFloat3(1.2, 1, 1)
+				world:GetComponent(newRiverStone, "Model", 0):SetModel("riverstone", "riverstone", 1)
 				
 					--- THIS IS FOR STONE METEOR IMPACT ---
 				--newParticle	=	world:CreateNewEntity()

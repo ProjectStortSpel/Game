@@ -64,6 +64,7 @@ Net.Receive("Client.PlaySound",
 		local name = Net.ReadString(id)
 		local loop = Net.ReadBool(id)
 		Audio.PlaySound(name, loop)
+		print("Sound: " .. name)
 	end
 )
 Net.Receive("Client.PlaySoundC",
@@ -123,5 +124,12 @@ Net.Receive("Client.FadeOutSound",
 		local channelName = Net.ReadString(id)
 		local ms = Net.ReadInt(id)
 		Audio.FadeOutSound(channelName, ms)
+	end
+)
+Net.Receive("Client.SetVolume",
+	function(id, ip, port)
+		local channelName = Net.ReadString(id)
+		local volume = Net.ReadInt(id)
+		Audio.SetVolume(channelName, volume)
 	end
 )

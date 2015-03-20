@@ -49,3 +49,15 @@ NewComponent:AddVariable("hatId", ByteSize.Int)
 NewComponent:AddVariable("unitId", ByteSize.Int)
 NewComponent.TableType = TableType.Map
 worldCreator:AddComponentType(NewComponent)
+
+NewComponent = ComponentType()
+NewComponent.Name = "WinScreen"
+NewComponent:AddVariable("TimeToDelay", ByteSize.Float)
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
+
+NewComponent = ComponentType()
+NewComponent.Name = "DisplayPostMatch"
+NewComponent.SyncNetwork = true
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)

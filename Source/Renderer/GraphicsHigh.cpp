@@ -6,7 +6,8 @@ using namespace glm;
 GraphicsHigh::GraphicsHigh()
 {
 	SDL_Log("Starting graphics high");
-	debugModelInfo = false;
+	debugModelInfo = 0;
+	hideInderface = false;
 
 	mark = 0;
 	timer = 0;
@@ -25,7 +26,8 @@ GraphicsHigh::GraphicsHigh()
 GraphicsHigh::GraphicsHigh(Camera _camera, int x, int y) : GraphicDevice(_camera, x, y)
 {
 	SDL_Log("Starting graphics high");
-	debugModelInfo = false;
+	debugModelInfo = 0;
+	hideInderface = false;
 	m_useAnimations = true;
 	m_renderSimpleText = true;
 	m_modelIDcounter = 0;
@@ -307,9 +309,8 @@ void GraphicsHigh::Update(float _dt)
 	}
 	m_glTimerValues.clear();
 
-	if (debugModelInfo)
-		PrintModelInfo();
-
+	if (debugModelInfo > 0)
+		PrintModelInfo(debugModelInfo);
 
 	BufferModels();
 	BufferLightsToGPU();
@@ -443,7 +444,7 @@ void GraphicsHigh::Render()
 	// Get Camera matrices
 	mat4 projectionMatrix = *m_camera->GetProjMatrix();
 	mat4 viewMatrix = *m_camera->GetViewMatrix();
-
+	
 	// --
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
@@ -629,14 +630,16 @@ void GraphicsHigh::Render()
 		m_modelsViewspace[i].Draw(mat4(1), mat4(1));
 
 	//--------INTERFACE RENDERING
-	//----Uniforms
-	m_interfaceShader.UseProgram();
-	m_interfaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
-	//----DRAW MODELS
-	SortModelsBasedOnDepth(&m_modelsInterface);
-	for (int i = 0; i < m_modelsInterface.size(); i++)
-		m_modelsInterface[i].Draw(mat4(1), mat4(1));
-
+	if (!hideInderface)
+	{
+		//----Uniforms
+		m_interfaceShader.UseProgram();
+		m_interfaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
+		//----DRAW MODELS
+		SortModelsBasedOnDepth(&m_modelsInterface);
+		for (int i = 0; i < m_modelsInterface.size(); i++)
+			m_modelsInterface[i].Draw(mat4(1), mat4(1));
+	}
 	glDisable(GL_BLEND);
 	glDisable(GL_TEXTURE_2D);
 
@@ -741,7 +744,7 @@ void GraphicsHigh::BufferLightsToGPU()
 		glBufferData(GL_SHADER_STORAGE_BUFFER, 9 * sizeof(float), m_pointerToDirectionalLights, GL_STATIC_DRAW);
 
 		m_dirLightDirection = vec3(m_pointerToDirectionalLights[0], m_pointerToDirectionalLights[1], m_pointerToDirectionalLights[2]);
-		m_shadowMap->UpdateViewMatrix(vec3(8.0f, 0.0f, 8.0f) - (10.0f*normalize(m_dirLightDirection)), vec3(8.0f, 0.0f, 8.0f));
+		m_shadowMap->UpdateViewMatrix(m_dirLightshadowMapTarget - (10.0f*normalize(m_dirLightDirection)), m_dirLightshadowMapTarget);
 
 		m_pointerToDirectionalLights = 0;
 	}
@@ -752,8 +755,8 @@ void GraphicsHigh::CreateShadowMap()
 {
 	int resolution = 2048*2;
 	m_dirLightDirection = vec3(0.0, -1.0, 1.0);
-	vec3 midMap = vec3(8.0, 0.0, 8.0);
-	vec3 lightPos = midMap - (10.0f*normalize(m_dirLightDirection));
+	vec3 target = vec3(0.0, 0.0, 0.0);
+	vec3 lightPos = target - (10.0f*normalize(m_dirLightDirection));
 	m_shadowMap = new ShadowMap(lightPos, lightPos + normalize(m_dirLightDirection), resolution);
 	m_shadowMap->CreateShadowMapTexture(GL_TEXTURE10);
 
@@ -774,6 +777,8 @@ void GraphicsHigh::CreateShadowMap()
 	m_riverCornerShader.CheckUniformLocation("ShadowDepthTex", 10);
 
 	m_vramUsage += (resolution*resolution*sizeof(float));
+	//m_shadowMap->SetBounds(4.0f, 4.0f);
+	//m_dirLightshadowMapTarget = vec3(0.0);
 }
 
 bool GraphicsHigh::RenderSimpleText(std::string _text, int _x, int _y)
@@ -832,7 +837,7 @@ void GraphicsHigh::Clear()
 		//delete m_pointerToPointlights;
 }
 
-void GraphicsHigh::PrintModelInfo()
+void GraphicsHigh::PrintModelInfo(int setting)
 {
 	int xoffset;
 
@@ -842,7 +847,10 @@ void GraphicsHigh::PrintModelInfo()
 	for (int i = 0; i < m_modelsAnimated.size(); i++)
 	{
 		m_textRenderer.RenderSimpleText(std::to_string(m_modelsAnimated[i].animations.size()), xoffset, i + 2);
-		m_textRenderer.RenderSimpleText(m_modelsAnimated[i].name, xoffset + 4, i + 2);
+		if (setting == 1)
+			m_textRenderer.RenderSimpleText(m_modelsAnimated[i].name, xoffset + 4, i + 2);
+		else
+			m_textRenderer.RenderSimpleText(std::to_string(m_modelsAnimated[i].bufferPtr->getCount()), xoffset + 4, i + 2);
 	}
 
 	xoffset = 32;
@@ -851,7 +859,10 @@ void GraphicsHigh::PrintModelInfo()
 	for (int i = 0; i < m_modelsDeferred.size(); i++)
 	{
 		m_textRenderer.RenderSimpleText(std::to_string(m_modelsDeferred[i].instances.size()), xoffset, i + 2);
-		m_textRenderer.RenderSimpleText(m_modelsDeferred[i].name, xoffset+4, i + 2);
+		if (setting == 1)
+			m_textRenderer.RenderSimpleText(m_modelsDeferred[i].name, xoffset+4, i + 2);
+		else
+			m_textRenderer.RenderSimpleText(std::to_string(m_modelsDeferred[i].bufferPtr->getCount()), xoffset + 4, i + 2);
 	}
 
 	xoffset = 62;
@@ -860,7 +871,10 @@ void GraphicsHigh::PrintModelInfo()
 	for (int i = 0; i < m_modelsForward.size(); i++)
 	{
 		m_textRenderer.RenderSimpleText(std::to_string(m_modelsForward[i].instances.size()), xoffset, i + 2);
-		m_textRenderer.RenderSimpleText(m_modelsForward[i].name, xoffset+4, i + 2);
+		if (setting == 1)
+			m_textRenderer.RenderSimpleText(m_modelsForward[i].name, xoffset+4, i + 2);
+		else
+			m_textRenderer.RenderSimpleText(std::to_string(m_modelsForward[i].bufferPtr->getCount()), xoffset + 4, i + 2);
 	}
 
 	xoffset = 92;
@@ -869,7 +883,10 @@ void GraphicsHigh::PrintModelInfo()
 	for (int i = 0; i < m_modelsViewspace.size(); i++)
 	{
 		m_textRenderer.RenderSimpleText(std::to_string(m_modelsViewspace[i].instances.size()), xoffset, i + 2);
-		m_textRenderer.RenderSimpleText(m_modelsViewspace[i].name, xoffset+4, i + 2);
+		if (setting == 1)
+			m_textRenderer.RenderSimpleText(m_modelsViewspace[i].name, xoffset+4, i + 2);
+		else
+			m_textRenderer.RenderSimpleText(std::to_string(m_modelsViewspace[i].bufferPtr->getCount()), xoffset + 4, i + 2);
 	}
 
 	xoffset = 122;
@@ -878,6 +895,9 @@ void GraphicsHigh::PrintModelInfo()
 	for (int i = 0; i < m_modelsInterface.size(); i++)
 	{
 		m_textRenderer.RenderSimpleText(std::to_string(m_modelsInterface[i].instances.size()), xoffset, i + 2);
-		m_textRenderer.RenderSimpleText(m_modelsInterface[i].name, xoffset+4, i + 2);
+		if (setting == 1)
+			m_textRenderer.RenderSimpleText(m_modelsInterface[i].name, xoffset+4, i + 2);
+		else
+			m_textRenderer.RenderSimpleText(std::to_string(m_modelsInterface[i].bufferPtr->getCount()), xoffset + 4, i + 2);
 	}
 }

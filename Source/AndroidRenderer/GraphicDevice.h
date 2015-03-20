@@ -25,10 +25,11 @@ Author: Christian
 
 namespace Renderer
 {
+#define RENDER_DEFERRED 0
 #define RENDER_FORWARD  1
 #define RENDER_VIEWSPACE  2
 #define RENDER_INTERFACE  3
-//#define RENDER_ANIMATED  4
+#define RENDER_ANIMATED  4
 #define RENDER_RIVERWATER 5
 #define RENDER_RIVERWATER_CORNER 6
 
@@ -88,7 +89,8 @@ namespace Renderer
 	class DECLSPEC GraphicDevice
 	{
 	public:
-		bool debugModelInfo;
+		int debugModelInfo;
+		bool hideInderface;
 
 		GraphicDevice();
 		GraphicDevice(Camera _camera);
@@ -153,6 +155,7 @@ namespace Renderer
 		void SetDebugTexFlag(int _flag) { return; }
 		void Clear(); // virtual in PC
 		int GetVRamUsage(){ return -1; }
+		virtual void SetShadowMapData(float _width, float _height, vec3 _target){};
 
 	protected:
 		SDL_GLContext	m_glContext;

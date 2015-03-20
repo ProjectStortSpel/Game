@@ -37,6 +37,7 @@ namespace Audio
 	void DECLSPEC FadeInSound(const std::string &name, int ms, bool loop = false);
 	void DECLSPEC FadeInSound(const std::string &name, const std::string& channelName, int ms, bool loop = false);
 	void DECLSPEC FadeOutSound(const std::string& channelName, int ms);
+	void DECLSPEC SetVolume(const std::string& channelName, int volume);
 	
 	bool DECLSPEC ChannelExists(const std::string& channelName);
 }

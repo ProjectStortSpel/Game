@@ -47,7 +47,6 @@ namespace Renderer
 
 		char *m_stringToInt;
 		//Le shadowmap
-		ShadowMap *m_shadowMap;
 		void WriteShadowMapDepth();
 
 		// Timer for shader run time

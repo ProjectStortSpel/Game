@@ -597,9 +597,6 @@ void GameCreator::StartGame(int argc, char** argv)
 	float bytesToMegaBytes = 1.f / (1024.f*1024.f);
 	bool showDebugInfo = false;
 	Utility::FrameCounter totalCounter;
-	
-	// Remove to enable audio
-	Audio::SetVolume(128);
 
 	while (m_running)
 	{
@@ -687,7 +684,9 @@ void GameCreator::StartGame(int argc, char** argv)
 		else if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F2) == Input::InputState::PRESSED)
 			showDebugInfo = !showDebugInfo;
 		else if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F3) == Input::InputState::PRESSED)
-			m_graphics->debugModelInfo = !m_graphics->debugModelInfo;
+		{
+			m_graphics->debugModelInfo = (m_graphics->debugModelInfo + 1) % 3;
+		}
 		else if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F4) == Input::InputState::PRESSED)
 		{
 			if (!m_serverWorldProfiler->IsActive())
@@ -711,6 +710,10 @@ void GameCreator::StartGame(int argc, char** argv)
 				m_clientWorldProfiler->NextView();
 			if (m_serverWorldProfiler->IsActive())
 				m_serverWorldProfiler->NextView();
+		}
+		else if (m_input->GetKeyboard()->GetKeyState(SDL_SCANCODE_F8) == Input::InputState::PRESSED)
+		{
+			m_graphics->hideInderface = !m_graphics->hideInderface;
 		}
 
 		if (showDebugInfo)
@@ -1102,7 +1105,10 @@ void GameCreator::ConsoleReload(std::string _command, std::vector<Console::Argum
 		delete [](data);
 
 		m_serverWorld->SetComponent(id, "HostSettings", "Port", &port);
+		//printf("\n\nReload, m_addAIs = %i\n\n\n", m_addAIs);
+		m_serverWorld->SetComponent(id, "HostSettings", "AddAIs", &m_addAIs);
 		m_serverWorld->SetComponent(id, "HostSettings", "FillAI", &m_fillAI);
+		m_serverWorld->SetComponent(id, "HostSettings", "AutoStart", &m_autoStart);
 		m_serverWorld->SetComponent(id, "HostSettings", "AllowSpectators", &m_allowSpectators);
 
     }
@@ -1145,9 +1151,11 @@ void GameCreator::ConsoleHostSettings(std::string _command, std::vector<Console:
 	m_map					= _args->at(2).Text;
 	std::string gamemode	= _args->at(3).Text;
 	unsigned int port		= (unsigned int)_args->at(4).Number;
-	m_fillAI				= _args->at(5).Number;
-	m_allowSpectators		= _args->at(6).Number;
-	int serverType			= _args->at(7).Number;
+	m_addAIs				= (unsigned int)_args->at(5).Number;
+	m_fillAI				= _args->at(6).Number;
+	m_autoStart				= _args->at(7).Number;
+	m_allowSpectators		= _args->at(8).Number;
+	int serverType			= _args->at(9).Number;
 
 	if (NetworkInstance::GetClient()->IsConnected())
 		NetworkInstance::GetClient()->Disconnect();
@@ -1189,7 +1197,9 @@ void GameCreator::ConsoleHostSettings(std::string _command, std::vector<Console:
 	delete [] data;
 
 	m_serverWorld->SetComponent(id, "HostSettings", "Port", &port);
+	m_serverWorld->SetComponent(id, "HostSettings", "AddAIs", &m_addAIs);
 	m_serverWorld->SetComponent(id, "HostSettings", "FillAI", &m_fillAI);
+	m_serverWorld->SetComponent(id, "HostSettings", "AutoStart", &m_autoStart);
 	m_serverWorld->SetComponent(id, "HostSettings", "AllowSpectators", &m_allowSpectators);
 	m_serverWorld->SetComponent(id, "HostSettings", "ServerType", &serverType);
 
@@ -1275,6 +1285,13 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 			if (m_clientWorld && m_clientWorld->HasComponent(i, "Particle"))
 				m_clientWorld->CreateComponentAndAddTo("Hide", i);
 
+
+			if (m_clientWorld && m_clientWorld->HasComponent(i, "DirectionalLight"))
+				m_clientWorld->CreateComponentAndAddTo("Hide", i);
+
+			if (m_clientWorld && m_clientWorld->HasComponent(i, "Pointlight"))
+				m_clientWorld->CreateComponentAndAddTo("Hide", i);
+
 			if (m_serverWorld && m_serverWorld->HasComponent(i, "Render"))
 				m_serverWorld->RemoveComponentFrom("Render", i);
 		}
@@ -1326,6 +1343,12 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 				m_clientWorld->RemoveComponentFrom("Render", i);
 
 			if (m_clientWorld && m_clientWorld->HasComponent(i, "Particle"))
+				m_clientWorld->CreateComponentAndAddTo("Hide", i);
+
+			if (m_clientWorld && m_clientWorld->HasComponent(i, "DirectionalLight"))
+				m_clientWorld->CreateComponentAndAddTo("Hide", i);
+
+			if (m_clientWorld && m_clientWorld->HasComponent(i, "Pointlight"))
 				m_clientWorld->CreateComponentAndAddTo("Hide", i);
             
 			if (m_serverWorld && m_serverWorld->HasComponent(i, "Render"))
