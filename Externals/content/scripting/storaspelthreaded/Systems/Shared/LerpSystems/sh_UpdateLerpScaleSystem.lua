@@ -39,7 +39,7 @@ UpdateLerpScaleSystem.Update = function(self, dt)
 				scales[i]:SetFloat3(X, Y, Z, false)
 				timers[i]:SetFloat(_timer, false)
 			else
-				scales[i]:SetFloat3(tX, tY, tZ, false)
+				scales[i]:SetFloat3(tX, tY, tZ)
 				world:RemoveComponentFrom("LerpingScale", entity)
 			end	
 		end
