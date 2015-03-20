@@ -60,6 +60,8 @@ CheckpointSystem.HasReachedFinish = function(self, entityId)
 		local number = specCounterComp:GetInt(0)
 		number = number + 1
 		world:SetComponent(counterEntities[1], "PlayerCounter", "Spectators", number)
+		local playerNum = world:GetComponent(entityId, "PlayerNumber", 0):GetInt()
+		self:SendWinScreen(playerNum)
 	else
 		-- Else if the player is an AI, remove the unit.
 		
@@ -236,4 +238,24 @@ CheckpointSystem.SendInfoToClient = function(self, player, nextCheckpoint)
 	
 end
 
+CheckpointSystem.SendWinScreen = function(self, player)
 
+	local	allPlayers	=	self:GetEntities("Player")
+	local	playerId	=	-1
+	for pId = 1, #allPlayers do
+		if player == world:GetComponent(allPlayers[pId], "PlayerNumber", "Number"):GetInt() then
+			playerId	=	allPlayers[pId]
+			break
+		end
+	end
+	if playerId == -1 then
+		return
+	end
+
+	--	Get connection information
+	local	IP		= 	world:GetComponent(playerId, "NetConnection", "IpAddress"):GetText()
+	local	PORT	= 	world:GetComponent(playerId, "NetConnection", "Port"):GetInt()
+	
+	local id = Net.StartPack("Client.PrintMessage")
+	Net.Send(id, IP, PORT)
+end

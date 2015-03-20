@@ -2,6 +2,7 @@ HowToSystem = System()
 HowToSystem.Entities = {}
 HowToSystem.Entities.__mode = "k"
 HowToSystem.Active = false
+HowToSystem.RequestRelease = false
 
 HowToSystem.Update = function(self, dt)
 	if self.RequestRelease then

@@ -51,6 +51,8 @@ GameInterfaceSystem.PostInitialize = function(self)
 end
 
 GameInterfaceSystem.CreateDistantIsland = function(self)
+
+	local	X, Y, Z	=	1, 0, 0
 	local id = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("Model", id)
 	world:CreateComponentAndAddTo("Position", id)
@@ -58,10 +60,27 @@ GameInterfaceSystem.CreateDistantIsland = function(self)
 	world:CreateComponentAndAddTo("Scale", id)
 	world:CreateComponentAndAddTo("Spin", id)
 	world:GetComponent(id, "Spin", 0):SetFloat3(0, 0.25, 0)
-	world:GetComponent(id, "Model", 0):SetModel("miniisland", "distantisland", 2)
-	world:GetComponent(id, "Position", 0):SetFloat3(1.0, -0.5, -5.1)
+	world:GetComponent(id, "Model", 0):SetModel("miniisland", "distantisland", 0)
+	world:GetComponent(id, "Position", 0):SetFloat3(X, Y, Z)
 	world:GetComponent(id, "Rotation", 0):SetFloat3(0.174532925, 0, 0)
 	world:GetComponent(id, "Scale", 0):SetFloat3(2.0, 2.0, 2.0)
 	self.Island = id
+	
+
+	
+	--	Generate directional light
+	local	R,G,B		=	0.9,0.8,0.7
+	local 	newLight 	= 	world:CreateNewEntity()
+	world:CreateComponentAndAddTo("DirectionalLight", newLight)
+    world:GetComponent(newLight, "DirectionalLight", 0):SetDirectionalLight(0.5, -0.6, -0.5, 0.55, 0.65, 0.65, R, G, B)
+	
+	--	Move camera
+	GraphicDevice.GetCamera():MoveToAndLookAt
+	(
+		0, 0.8, 5,
+		0, 1, -1,
+		0, 0.5, -1,
+		1
+	)
 end
 
