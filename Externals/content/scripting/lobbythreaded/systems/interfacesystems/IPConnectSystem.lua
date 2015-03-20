@@ -7,6 +7,7 @@ IPConnectSystem.TextEntity = -1
 IPConnectSystem.BackgroundConnectText = -1
 IPConnectSystem.BackgroundExampleText = -1
 IPConnectSystem.ConnectEntity = -1
+IPConnectSystem.BackEntity = -1
 IPConnectSystem.RequestRelease = false
 
 IPConnectSystem.Initialize = function(self)
@@ -42,11 +43,9 @@ IPConnectSystem.Update = function(self, dt)
 					else
 						Console.AddToCommandQueue("connect " .. self.TextInput)
 					end
-					self:Deactivate()
 				end
-			else
-				self:Deactivate()
 				
+				self:Deactivate()
 				local id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo("ConnectMenu", id)
 			end
@@ -75,6 +74,8 @@ IPConnectSystem.Activate = function(self)
 	
 	self:CreateBackground()
 	self:CreateConnectButton()
+	self:CreateBackButton()
+	
 	self:UpdateText()
 end
 
@@ -85,6 +86,7 @@ IPConnectSystem.Deactivate = function(self)
 	self.TextInput = ""
 	self:DeleteTextEntity()
 	self:DeleteConnectButton()
+	self:DeleteBackButton()
 	self:DeleteBackground()
 end
 
@@ -216,6 +218,30 @@ IPConnectSystem.DeleteBackground = function(self)
 	end
 end
 
+IPConnectSystem.CreateBackButton = function(self)
+	local id = world:CreateNewEntity()
+	world:CreateComponentAndAddTo("Model", id)
+	world:CreateComponentAndAddTo("Position", id)
+	world:CreateComponentAndAddTo("Rotation", id)
+	world:CreateComponentAndAddTo("Scale", id)
+	world:CreateComponentAndAddTo("PickBox", id)
+	world:CreateComponentAndAddTo("IPConnectEntry", id)
+	
+	world:GetComponent(id, "Model", 0):SetModel("returnknapp", "quad", 2)
+	world:GetComponent(id, "Position", 0):SetFloat3(2.3, -1.2, -3)
+	world:GetComponent(id, "Scale", 0):SetFloat3(0.4, 0.4, 1.0)
+	world:GetComponent(id, "PickBox", 0):SetFloat2(1.0, 1.0)
+	world:GetComponent(id, "Rotation", 0):SetFloat3(0.0, 0.0, 0.0)
+	
+	local scale = world:GetComponent(id, "Scale", 0)
+	local sx, sy, sz = scale:GetFloat3()
+	world:CreateComponentAndAddTo("HoverSize", id)
+	local hoversize = world:GetComponent(id, "HoverSize", 0)
+	hoversize:SetFloat3(sx * 1.1, sy * 1.1, sz * 1.1)
+
+	self.BackEntity = id	
+end
+
 IPConnectSystem.CreateConnectButton = function(self)
 	local id = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("Model", id)
@@ -244,5 +270,12 @@ IPConnectSystem.DeleteConnectButton = function(self)
 	if self.ConnectEntity ~= -1 then
 		world:KillEntity(self.ConnectEntity)
 		self.ConnectEntity = -1
+	end
+end
+
+IPConnectSystem.DeleteBackButton = function(self)
+	if self.BackEntity ~= -1 then
+		world:KillEntity(self.BackEntity)
+		self.BackEntity = -1
 	end
 end

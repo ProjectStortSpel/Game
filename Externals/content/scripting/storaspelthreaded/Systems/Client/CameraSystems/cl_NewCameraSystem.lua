@@ -190,12 +190,11 @@ NewCameraSystem.PostInitialize = function(self)
 	lposition:SetFloat3(0, 0, 1)		
 	local lscale = world:GetComponent(self.TouchSprite2, "Scale", 0)
 	lscale:SetFloat3(0.05, 0.05, 0.05)	
-			
-	GraphicDevice.GetCamera():MoveToAndLookAt(	self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10-2,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
-									self.CameraUpX,0,self.CameraUpZ,
-									self.CameraLookAtX,0.5,self.CameraLookAtZ,
-									1)
 	
+	GraphicDevice.GetCamera():MoveToAndLookAt(	-15,20,-35,
+												0,1,0.5,
+												0,0,0,
+												0)
 end
 
 NewCameraSystem.DoTPC = function(self, entityId)
@@ -228,11 +227,12 @@ NewCameraSystem.DoCIP = function(self, entityId)
 	self.CameraLookAtX = world:GetComponent(entityId, "CameraInterestPoint", "AtX"):GetFloat(0)
 	self.CameraLookAtZ = world:GetComponent(entityId, "CameraInterestPoint", "AtZ"):GetFloat(0)
 	self.CameraDistance = world:GetComponent(entityId, "CameraInterestPoint", "Distance"):GetFloat(0)
+	local lerptime = world:GetComponent(entityId, "CameraInterestPoint", "Time"):GetFloat(0)
 
 	GraphicDevice.GetCamera():MoveToAndLookAt(	self.CameraLookAtX-self.CameraUpX*self.CameraDistance*7.5,self.CameraDistance*10-2,self.CameraLookAtZ-self.CameraUpZ*self.CameraDistance*7.5,
 									self.CameraUpX,0,self.CameraUpZ,
 									self.CameraLookAtX,0.5,self.CameraLookAtZ,
-									0.5)
+									lerptime)
 end
 
 NewCameraSystem.DoFreeCam = function(self, dt)
@@ -425,11 +425,13 @@ Net.Receive("Client.SendCIP",
 		local UpX = Net.ReadFloat(id)
 		local UpZ = Net.ReadFloat(id)
 		local Distance = Net.ReadFloat(id)
+		local Time = Net.ReadFloat(id)
 		world:GetComponent(entity, "CameraInterestPoint", "AtX"):SetFloat(AtX)
 		world:GetComponent(entity, "CameraInterestPoint", "AtZ"):SetFloat(AtZ)
 		world:GetComponent(entity, "CameraInterestPoint", "UpX"):SetFloat(UpX)
 		world:GetComponent(entity, "CameraInterestPoint", "UpZ"):SetFloat(UpZ)
 		world:GetComponent(entity, "CameraInterestPoint", "Distance"):SetFloat(Distance)
+		world:GetComponent(entity, "CameraInterestPoint", "Time"):SetFloat(Time)
 	end 
 )
 

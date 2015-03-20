@@ -11,6 +11,7 @@ require "cl_VisualizeSelectedCards"
 require "cl_FadeTreeSystem"
 require "cl_AbilityStoneSystem"
 require "cl_AbilitySlingshotSystem"
+require "cl_WinScreenSystem"
 
 --	Interface Systems
 package.path = package.path .. ";Systems/Client/InterfaceSystems/?.lua"
@@ -21,6 +22,7 @@ require "cl_GameInterfaceSystem"
 require "cl_PickingTimerSystem"
 require "cl_NotificationSystem"
 require "cl_ScoreboardSystem"
+require "cl_PostMatchScoreboardSystem"
 
 --	Card Systems
 package.path = package.path .. ";Systems/Client/CardSystems/?.lua"
@@ -74,7 +76,8 @@ worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(VisualizeSelectedCards)
 worldCreator:AddSystemToCurrentGroup(FadeTreeSystem)
 
-
+worldCreator:AddSystemToCurrentGroup(WinScreenSystem)
+worldCreator:AddSystemToCurrentGroup(PostMatchScoreboardSystem)
 
 
 
