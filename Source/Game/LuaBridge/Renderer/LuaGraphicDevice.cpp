@@ -37,6 +37,8 @@ namespace LuaBridge
 		int CreateTextTexture(lua_State* L);
 		int CreateWrappedTextTexture(lua_State* L);
 		
+		int SetShadowmapBounds(lua_State* L);
+
 		void Embed(lua_State* L)
 		{
 			LuaEmbedder::AddFunction(L, "GetTouchPosition", &GetTouchPosition, "GraphicDevice");
@@ -56,6 +58,7 @@ namespace LuaBridge
 			LuaEmbedder::AddFunction(L, "AddFont", &AddFont, "GraphicDevice");
 			LuaEmbedder::AddFunction(L, "CreateTextTexture", &CreateTextTexture, "GraphicDevice");
 			LuaEmbedder::AddFunction(L, "CreateWrappedTextTexture", &CreateWrappedTextTexture, "GraphicDevice");
+			LuaEmbedder::AddFunction(L, "SetShadowmapBounds", &SetShadowmapBounds, "GraphicDevice");
 		}
 		
 		void SetGraphicDevice(Renderer::GraphicDevice* graphicDevice)
@@ -413,6 +416,22 @@ namespace LuaBridge
 			//int h = LuaEmbedder::PullInt(9);
 			//glm::ivec2 size = glm::ivec2(w, h);
 			g_graphicDevice->CreateWrappedTextTexture(textureName, textString, fontIndex, color, wrapLength);
+			return 0;
+		}
+
+		int SetShadowmapBounds(lua_State* L)
+		{
+
+			float	tWidth = LuaEmbedder::PullFloat(L, 1);
+			float	tHeight = LuaEmbedder::PullFloat(L, 2);
+			float	targetX = LuaEmbedder::PullFloat(L, 3);
+			float	targetY = LuaEmbedder::PullFloat(L, 4);
+			float	targetZ = LuaEmbedder::PullFloat(L, 5);
+
+
+			float	halfMapSize = std::max(tWidth, tHeight) * 1.4142f * 0.5f;
+			g_graphicDevice->SetShadowMapData(halfMapSize, halfMapSize, vec3(targetX, targetY, targetZ));
+			
 			return 0;
 		}
 	}

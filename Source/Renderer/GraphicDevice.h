@@ -175,6 +175,8 @@ namespace Renderer
 		virtual void Clear(){};// = 0;
 		int GetVRamUsage(){ return m_vramUsage; }
 
+		void SetShadowMapData(float _width, float _height, vec3 _target);
+
 	protected:
 		SDL_GLContext	m_glContext;
 		bool			m_SDLinitialized;
@@ -233,6 +235,11 @@ namespace Renderer
 		int		m_numberOfPointlights;
 		float*	m_pointerToDirectionalLights;
 		int		m_numberOfDirectionalLights;
+
+		//Le shadowmap
+		ShadowMap *m_shadowMap;
+		void WriteShadowMapDepth();
+		vec3 m_dirLightshadowMapTarget;
 
 		// BASIC
 		virtual void InitRenderLists() { return; }

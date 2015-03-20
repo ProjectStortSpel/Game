@@ -19,8 +19,9 @@ HowToSystem.Update = function(self, dt)
 				local id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo(compname, id)
 			end
-		elseif self.Active then
-			self:RemoveMenu()
+			if self.Active then
+				self:RemoveMenu()
+			end
 		end
 		
 	end
@@ -57,11 +58,15 @@ HowToSystem.Initialize = function(self)
 	self:UsingUpdate()
 	self:UsingEntitiesAdded()
 	self:AddComponentTypeToFilter("HowToMenu", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("HowToMenuElement", FilterType.RequiresOneOf)
 end
 
 HowToSystem.EntitiesAdded = function(self, dt, entities)
-	if #self.Entities <= 0 then
-		self:CreateEntites()
+	for n = 1, #entities do
+		local entityId = entities[n]
+		if world:EntityHasComponent(entityId, "HowToMenu") then
+			self:CreateEntites()
+		end
 	end
 end
 
@@ -110,6 +115,9 @@ HowToSystem.CreateEntites = function(self)
 	
 	local tutorial = self:CreateElement("tutorial", "quad", 0.8, 1.0, -3.0, 1.1, 1.1)
 	table.insert(self.Entities, tutorial)
+	
+	local button = self:CreateElement("returnknapp", "quad", 2.3, -1.2, -3, 0.4, 0.4)
+	self:AddHoverSize(1.1, button)
 	
 	self.Active = true
 end

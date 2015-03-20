@@ -31,6 +31,7 @@ CameraFocusPlayerAtStartSystem.EntitiesAdded = function(self, dt, entities)
 			Net.WriteFloat(cipID, -unitDirX)
 			Net.WriteFloat(cipID, -unitDirZ)
 			Net.WriteFloat(cipID, 0.4)
+			Net.WriteFloat(cipID, 3.0)
 			Net.Send(cipID, ip, port)
 		end
 	end

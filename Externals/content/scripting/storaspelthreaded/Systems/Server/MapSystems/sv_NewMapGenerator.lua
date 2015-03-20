@@ -65,7 +65,7 @@ end
 
 MapGenerator.EntitiesAdded = function(self, dt, entities)
 	--self:GenerateMap(os.time()%12345, 10, 10)
-	self:GenerateMap(23246299, 6, 4)
+	self:GenerateMap(23246299, 4, 3)
 	--self:GenerateMap(1579125, 5, 5)
 	--self:GenerateMap(1579125, 8, 5)
 	--self:GenerateMap(23239474, 4, 4)
@@ -1195,6 +1195,10 @@ MapGenerator.CreateMap = function(self)
 	world:GetComponent(dataEntity, "MapSpecs", "NoOfSpawnpoints"):SetInt(self.Players)
 	world:GetComponent(dataEntity, "MapSpecs", "NoOfCheckpoints"):SetInt(self.Checkpoints)
 	world:GetComponent(dataEntity, "MapSpecs", "SizeX"):SetInt2(self.MapSizeX, self.MapSizeZ)
+	
+	----	Set shadowmap data
+	--local	cX, cZ	=	self:GetCenterOfMap()
+	--GraphicDevice.SetShadowmapBounds(self.MapSizeX-3*self.VoidMargin, self.MapSizeZ-3*self.VoidMargin, cX, 0.5, cZ)
 	
 	-- Initialize potential fields
 	PotentialFieldHandler.InitPFHandler(self.MapSizeX, self.MapSizeZ, self.Players)

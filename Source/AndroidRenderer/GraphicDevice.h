@@ -155,6 +155,7 @@ namespace Renderer
 		void SetDebugTexFlag(int _flag) { return; }
 		void Clear(); // virtual in PC
 		int GetVRamUsage(){ return -1; }
+		virtual void SetShadowMapData(float _width, float _height, vec3 _target){};
 
 	protected:
 		SDL_GLContext	m_glContext;

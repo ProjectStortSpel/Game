@@ -26,15 +26,14 @@ MainMenuSystem.Update = function(self, dt)
 			local pressedButton = pressedButtons[1]
 			if world:EntityHasComponent(pressedButton, "MenuConsoleCommand") then
 				local command = world:GetComponent(pressedButton, "MenuConsoleCommand", "Command"):GetString()
-				self:RemoveMenu()
 				Console.AddToCommandQueue(command)
 			end
 			if world:EntityHasComponent(pressedButton, "MenuEntityCommand") then
 				local compname = world:GetComponent(pressedButton, "MenuEntityCommand", "ComponentName"):GetText()
-				self:RemoveMenu()
 				local id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo(compname, id)
 			end
+			self:RemoveMenu()
 		end
 	end
 	
@@ -59,15 +58,15 @@ MainMenuSystem.CreateButtons = function(self)
 	self:AddEntityCommandToButton("ConnectMenu", menubutton)
 	self:AddHoverSize(1.5, menubutton)
 
-	local menubutton = self:CreateElement("howto", "quad", -2, -0.0, -5, 1, 0.5)
+	menubutton = self:CreateElement("howto", "quad", -2, -0.0, -5, 1, 0.5)
 	self:AddEntityCommandToButton("HowToMenu", menubutton)
 	self:AddHoverSize(1.5, menubutton)
 
-	local menubutton = self:CreateElement("options", "quad", -2, -0.6, -5, 1, 0.5)
+	menubutton = self:CreateElement("options", "quad", -2, -0.6, -5, 1, 0.5)
 	self:AddEntityCommandToButton("OptionMenu", menubutton)
 	self:AddHoverSize(1.5, menubutton)
 
-	local menubutton = self:CreateElement("quit", "quad", -2, -1.2, -5, 1, 0.5)
+	menubutton = self:CreateElement("quit", "quad", -2, -1.2, -5, 1, 0.5)
 	self:AddConsoleCommandToButton("quit", menubutton)
 	self:AddHoverSize(1.5, menubutton)
 	
