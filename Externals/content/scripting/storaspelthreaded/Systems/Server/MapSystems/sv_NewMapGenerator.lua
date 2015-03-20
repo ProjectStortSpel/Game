@@ -1211,7 +1211,7 @@ MapGenerator.CreateMap = function(self)
 	local 	newLight 	= 	world:CreateNewEntity()
 	world:CreateComponentAndAddTo("DirectionalLight", newLight)
 	world:CreateComponentAndAddTo("SyncNetwork", newLight)
-    world:GetComponent(newLight, "DirectionalLight", 0):SetDirectionalLight(math.sin(math.random(1, 360)), -1.0, math.sin(math.random(1, 360)), 0.45, 0.65, 0.65, R, G, B)
+    world:GetComponent(newLight, "DirectionalLight", 0):SetDirectionalLight(math.sin(math.random(1, 360)), -1.0, math.sin(math.random(1, 360)), 0.35, 0.65, 0.65, R, G, B)
 	
 	
 end
