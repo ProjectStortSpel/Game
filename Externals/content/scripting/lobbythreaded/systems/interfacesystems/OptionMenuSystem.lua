@@ -30,8 +30,9 @@ OptionMenuSystem.Update = function(self, dt)
 				local id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo(compname, id)
 			end
-		elseif self.Active then
-			self:RemoveMenuToMain()
+			if self.Active then
+				self:RemoveMenuToMain()
+			end
 		end
 	end
 	
@@ -63,6 +64,9 @@ OptionMenuSystem.SpawnMenu = function(self)
 	button = self:CreateElement("graphicshigh", "quad", 0, -0.4, -3, 0.6, 0.3)
 	self:AddConsoleCommandToButton("changegraphics high", button)	
 	--self:AddEntityCommandToButton("NotificationBox", button)	
+	self:AddHoverSize(1.1, button)
+	
+	button = self:CreateElement("back", "quad", 2, -1, -3, 0.6, 0.3)
 	self:AddHoverSize(1.1, button)
 	
 	self.Active = true
