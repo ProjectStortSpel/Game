@@ -794,7 +794,7 @@ void GraphicDevice::BufferLightsToGPU_GD()
 	{
 		if (m_nrOfLightsToBuffer == 0)
 		{
-			for (int i = 0; i < 1; i++)
+			for (int i = 0; i < 2; i++)
 			{
 				std::stringstream ss;
 				ss << "pointlights[" << i << "].Position";
@@ -831,7 +831,7 @@ void GraphicDevice::BufferLightsToGPU_GD()
 		}
 		else
 		{
-			for (int i = 0; i < 1; i++)
+			for (int i = 0; i < 2; i++)
 			{
 				std::stringstream ss;
 				ss << "pointlights[" << i << "].Position";
