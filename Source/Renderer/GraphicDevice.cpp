@@ -46,13 +46,20 @@ GraphicDevice::GraphicDevice(Camera _camera, int x, int y)
 GraphicDevice::~GraphicDevice()
 {
 	delete(m_skybox);
+	delete(m_skyboxClouds);
 	delete m_pointerToPointlights;
 
 	for (std::map<int, ParticleSystem*>::iterator it = m_particleSystems.begin(); it != m_particleSystems.end(); ++it)
-	{
 		delete(it->second);
-	}
-	m_particleSystems.clear();
+
+	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); ++it)
+		delete(it->second);
+
+	for (std::map<const std::string, GLuint>::iterator it = m_textures.begin(); it != m_textures.end(); ++it)
+		glDeleteTextures(1, &(it->second));
+
+	for (int i = 0; i < m_surfaces.size(); i++)
+		delete(m_surfaces[i].second);
 
 	SDL_GL_DeleteContext(m_glContext);
 	// Close and destroy the window
@@ -147,6 +154,12 @@ void GraphicDevice::InitStandardShaders()
 	m_shadowShaderForward.AddShader("content/shaders/shadowShaderForwardFS.glsl", GL_FRAGMENT_SHADER);
 	m_shadowShaderForward.FinalizeShaderProgram();
 
+	// ShadowShader animated forward geometry
+	m_shadowShaderForwardAnim.InitShaderProgram();
+	m_shadowShaderForwardAnim.AddShader("content/shaders/shadowShaderForwardAnimVS.glsl", GL_VERTEX_SHADER);
+	m_shadowShaderForwardAnim.AddShader("content/shaders/shadowShaderForwardFS.glsl", GL_FRAGMENT_SHADER);
+	m_shadowShaderForwardAnim.FinalizeShaderProgram();
+
 	// SkyBox
 	m_skyBoxShader.InitShaderProgram();
 	m_skyBoxShader.AddShader("content/shaders/skyboxShaderVS.glsl", GL_VERTEX_SHADER);
@@ -170,6 +183,9 @@ void GraphicDevice::InitStandardBuffers()
 
 	//Shadow forward shader
 	m_shadowShaderForward.CheckUniformLocation("diffuseTex", 1);
+
+	//Shadow animated forward shader
+	m_shadowShaderForwardAnim.CheckUniformLocation("diffuseTex", 1);
 }
 bool GraphicDevice::InitSkybox()
 {
@@ -179,9 +195,16 @@ bool GraphicDevice::InitSkybox()
 		return false;
 
 	m_skyBoxShader.UseProgram();
-	m_skybox = new SkyBox(texHandle, m_camera->GetFarPlane());
+	m_skybox = new SkyBox(texHandle, m_camera->GetFarPlane(), 0.f);
 	m_vramUsage += (w*h * 6 * 4 * sizeof(float));
 
+	texHandle = TextureLoader::LoadCubeMap("content/textures/clouds", GL_TEXTURE1, w, h);
+	if (texHandle < 0)
+		return false;
+
+	m_skyboxClouds = new SkyBox(texHandle, m_camera->GetFarPlane(), 0.010f);
+	m_vramUsage += (w*h * 5 * 4 * sizeof(float));
+	
 	return true;
 }
 #pragma endregion in the order they are initialized
@@ -259,7 +282,7 @@ struct sort_depth_instance
 {
 	inline bool operator() (const Instance& a, const Instance& b)
 	{
-		return (*a.modelMatrix)[3][2] > (*b.modelMatrix)[3][2];
+		return (*a.modelMatrix)[3][2] < (*b.modelMatrix)[3][2]; // SÄG TILL ANDERS OM DU HADE TÄNKT ÄNDRA DETTA
 	}
 };
 struct sort_depth_model
@@ -276,26 +299,12 @@ void GraphicDevice::SortModelsBasedOnDepth(std::vector<Model>* models)
 	std::sort(models->begin(), models->end(), sort_depth_model());
 }
 
-void GraphicDevice::CreateParticleSystems()
-{
-	//glEnable(GL_POINT_SPRITE);
-	//m_particleSystems[m_particleID] = (new ParticleSystem("fire", vec3(11.0f, 0.55f, 8.0f), 100, 700, 0.05f, 0.6f, AddTexture("content/textures/firewhite.png", GL_TEXTURE1), vec3(0.8f, 0.f, 0.0f), &m_particleShader));
-	//m_particleID++;
-	//m_particleSystems.push_back(new ParticleSystem("smoke", vec3(11.0f, 0.0f, 9.0f), 15, 1800, 0.05f, 1.6f, AddTexture("content/textures/smoke1.png", GL_TEXTURE1), vec3(0.5f, 0.f, 0.f), &m_particleShader));
-	int tmpID;
-	
-	//AddParticleEffect("fire", vec3(11.0f, 0.55f, 8.0f), 100, 700, 0.05f, 0.6f, "content/textures/fire3.png", vec3(0.0f, 8.f, 0.0f), tmpID);
-
-//	AddParticleEffect("fire", vec3(8.0f, 0.55f, 8.0f), 100, 1100, 0.05f, 0.6f, "content/textures/firewhite4.png", vec3(0.9f, 0.f, 0.0f), tmpID);
-	//AddParticleEffect("fire", vec3(8.0f, 0.55f, 5.0f), 100, 700, 0.05f, 0.6f, "content/textures/smoke1.png", vec3(0.2f, 0.f, 1.0f), tmpID);
-	//AddParticleEffect("smoke", vec3(11.0f, 0.0f, 9.0f), 15, 1800, 0.05f, 1.6f, "content/textures/smoke1.png", vec3(0.0f, 0.f, 0.f), tmpID);
-}
-
-void GraphicDevice::AddParticleEffect(std::string _name, const vec3 _pos, int _nParticles, float _lifeTime, float _scale, float _spriteSize, std::string _texture, vec3 _color, int &_id)
+void GraphicDevice::AddParticleEffect(std::string _name, const vec3 _pos, const vec3 _vel, int _nParticles, float _lifeTime, vec3 _scale, float _spriteSize, std::string _texture, vec3 _color, int &_id)
 {
 	ParticleSystemToLoad tmpSystem;
 	tmpSystem.Name = _name;
 	tmpSystem.Pos = _pos;
+	tmpSystem.Vel = _vel;
 	tmpSystem.NrOfParticles = _nParticles;
 	tmpSystem.LifeTime = _lifeTime;
 	tmpSystem.Scale = _scale;
@@ -321,6 +330,24 @@ void GraphicDevice::RemoveParticleEffect(int _id)
 
 void GraphicDevice::BufferParticleSystems()
 {
+
+	// ParticleSystems to add
+	for (int i = 0; i < m_particleSystemsToLoad.size(); i++)
+	{
+		m_particleSystems.insert(std::pair<int, ParticleSystem*>(m_particleSystemsToLoad[i].Id, new ParticleSystem(
+			m_particleSystemsToLoad[i].Name,
+			m_particleSystemsToLoad[i].Pos,
+			m_particleSystemsToLoad[i].Vel,
+			m_particleSystemsToLoad[i].NrOfParticles,
+			m_particleSystemsToLoad[i].LifeTime,
+			m_particleSystemsToLoad[i].Scale,
+			m_particleSystemsToLoad[i].SpriteSize,
+			AddTexture(m_particleSystemsToLoad[i].TextureName, GL_TEXTURE1),
+			m_particleSystemsToLoad[i].Color
+			)));
+	}
+	m_particleSystemsToLoad.clear();
+
 	// ParticleSystems to remove
 	for (int i = m_particlesIdToRemove.size()-1; i >= 0; i--)
 	{
@@ -332,31 +359,19 @@ void GraphicDevice::BufferParticleSystems()
 		}
 	}
 
-	// ParticleSystems to add
-	for (int i = 0; i < m_particleSystemsToLoad.size(); i++)
-	{
-		m_particleSystems.insert(std::pair<int, ParticleSystem*>(m_particleSystemsToLoad[i].Id,new ParticleSystem(
-			m_particleSystemsToLoad[i].Name,
-			m_particleSystemsToLoad[i].Pos,
-			m_particleSystemsToLoad[i].NrOfParticles,
-			m_particleSystemsToLoad[i].LifeTime,
-			m_particleSystemsToLoad[i].Scale,
-			m_particleSystemsToLoad[i].SpriteSize,
-			AddTexture(m_particleSystemsToLoad[i].TextureName, GL_TEXTURE1),
-			m_particleSystemsToLoad[i].Color
-			)));
-	}
-	m_particleSystemsToLoad.clear();
+
 
 }
 
-int GraphicDevice::LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color)
+int GraphicDevice::LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color, bool _castShadow, bool _isStatic)
 {
-	int modelID = m_modelIDcounter;
-	m_modelIDcounter++;
+	int modelID;
 
-	//	Lägg till i en lista, följande
-	//	std::string _dir, std::string _file, glm::mat4 *_matrixPtr, int _renderType
+	if (!_isStatic)
+	{
+		modelID = m_modelIDcounter;
+		m_modelIDcounter++;
+	}
 
 	ModelToLoad* modelToLoad = new ModelToLoad();
 	modelToLoad->Dirs = _dirs;
@@ -364,7 +379,34 @@ int GraphicDevice::LoadModel(std::vector<std::string> _dirs, std::string _file, 
 	modelToLoad->MatrixPtr = _matrixPtr;
 	modelToLoad->RenderType = _renderType;
 	modelToLoad->Color = _color;
-	m_modelsToLoad[modelID] = modelToLoad;
+	modelToLoad->CastShadow = _castShadow;
+
+	if (_isStatic)
+	{
+		for (std::map<int, std::vector<ModelToLoad*>>::iterator it = m_staticModelsToLoad.begin(); it != m_staticModelsToLoad.end(); it++)
+		{
+			if (!it->second.empty() &&
+				it->second[0]->Dirs == _dirs &&
+				it->second[0]->File == _file &&
+				it->second[0]->RenderType == _renderType &&
+				it->second[0]->CastShadow == _castShadow &&
+					(it->second[0]->Color == _color ||
+						(it->second[0]->Color[0] == _color[0] &&
+						 it->second[0]->Color[1] == _color[1] &&
+						 it->second[0]->Color[2] == _color[2])))
+			{
+				it->second.push_back(modelToLoad);
+				return it->first;
+			}
+		}
+
+		// If does not already exists
+		modelID = m_modelIDcounter;
+		m_modelIDcounter++;
+		m_staticModelsToLoad[modelID].push_back(modelToLoad);
+	}
+	else
+		m_modelsToLoad[modelID] = modelToLoad;
 
 	return modelID;
 }
@@ -384,6 +426,8 @@ int GraphicDevice::LoadModel(ModelToLoadFromSource* _modelToLoad)
 }
 void GraphicDevice::BufferModels()
 {
+	for (auto pair : m_staticModelsToLoad)
+		BufferStaticModel(pair);
 	for (auto pair : m_modelsToLoad)
 	{
 		BufferModel(pair.first, pair.second);
@@ -396,6 +440,7 @@ void GraphicDevice::BufferModels()
 	}
 	m_modelsToLoad.clear();
 	m_modelsToLoadFromSource.clear();
+	m_staticModelsToLoad.clear();
 }
 
 void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
@@ -445,9 +490,9 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	// Create model
 	Model model;
 	if (_modelToLoad->RenderType != RENDER_INTERFACE) // TODO: BETTER FIX
-		model = Model(mesh, texture, normal, specular);
+		model = Model(mesh, texture, normal, specular, _modelToLoad->CastShadow);
 	else
-		model = Model(mesh, texture, NULL, NULL);
+		model = Model(mesh, texture, NULL, NULL, _modelToLoad->CastShadow);
 	//for the matrices (modelView + normal)
 	m_vramUsage += (16 + 9) * sizeof(float);
 
@@ -505,9 +550,9 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoa
 	// Create model
 	Model model;
 	if (_modelToLoad->RenderType != RENDER_INTERFACE) // TODO: BETTER FIX
-	model = Model(mesh, texture, normal, specular);
+		model = Model(mesh, texture, normal, specular, _modelToLoad->CastShadow);
 	else
-	model = Model(mesh, texture, NULL, NULL);
+		model = Model(mesh, texture, NULL, NULL, _modelToLoad->CastShadow);
 	//for the matrices (modelView + normal)
 	m_vramUsage += (16 + 9) * sizeof(float);
 	for (int i = 0; i < modelList->size(); i++)
@@ -562,13 +607,9 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 	for (int i = 0; i < joints.size(); i++)
 	{
 		int index = i;//joints.size() - i - 1;
-		model.animation.push_back(Joint(
-			joints[index].mat[0][0], joints[index].mat[0][1], joints[index].mat[0][2], joints[index].mat[0][3],
-			joints[index].mat[1][0], joints[index].mat[1][1], joints[index].mat[1][2], joints[index].mat[1][3],
-			joints[index].mat[2][0], joints[index].mat[2][1], joints[index].mat[2][2], joints[index].mat[2][3],
-			joints[index].mat[3][0], joints[index].mat[3][1], joints[index].mat[3][2], joints[index].parent//index - joints[index].parent - 1
-			));
+		model.animation.push_back(Joint(joints[index].parent));
 		model.anim.push_back(joints[index].mat);
+		model.extra.push_back(mat4(1));
 	}
 
 	// Import Animations
@@ -609,6 +650,22 @@ bool GraphicDevice::SetAnimation(int _modelId, int _animId, float _frameTime)
 	}
 	return false;
 }
+glm::mat4 GraphicDevice::GetJointMatrix(int _modelId, int _jointId)
+{
+	std::vector<AModel> *modelList = &m_modelsAnimated;
+	for (int i = 0; i < (*modelList).size(); i++)
+	{
+		if ((*modelList)[i].id == _modelId)
+		{
+			if ((*modelList)[i].anim.size() > _jointId)
+				return (*modelList)[i].anim[_jointId] * glm::inverse((*modelList)[i].joints[_jointId]);
+			else
+				break;
+		}
+	}
+	return glm::mat4(1);
+}
+
 
 bool GraphicDevice::RemoveModel(int _id)
 {
@@ -638,6 +695,13 @@ bool GraphicDevice::RemoveModel(int _id)
 			return true;
 		}
 	}
+
+	if (m_modelsToLoad.find(_id) != m_modelsToLoad.end())
+	{
+		m_modelsToLoad.erase(_id);
+		return true;
+	}
+
 	return false;
 }
 bool GraphicDevice::ActiveModel(int _id, bool _active)
@@ -804,7 +868,8 @@ bool GraphicDevice::BufferModelTexture(int _id, std::string _fileDir, int _textu
 						(*modelList)[i].bufferPtr,
 						(*modelList)[i].texID,
 						(*modelList)[i].norID,
-						(*modelList)[i].speID
+						(*modelList)[i].speID,
+						(*modelList)[i].castShadow
 						);
 					found = true;
 					renderType = m_renderLists[k].RenderType;
@@ -872,4 +937,79 @@ void GraphicDevice::UpdateTextureIndex(GLuint newTexture, GLuint oldTexture)
 void GraphicDevice::SetParticleAcceleration(int _id, float x, float y, float z)
 {
 	m_particleSystems[_id]->SetAccel(vec3(x, y, z));
+}
+
+void GraphicDevice::BufferStaticModel(std::pair<int, std::vector<ModelToLoad*>> _staticModel)
+{
+	ObjectData obj = ModelLoader::importObject(_staticModel.second[0]->Dirs, _staticModel.second[0]->File);
+
+	ModelExporter modelExporter;
+	modelExporter.OpenFileForRead(obj.mesh.c_str());
+	std::vector<float> positionData = modelExporter.ReadDataFromFile();
+	std::vector<float> normalData = modelExporter.ReadDataFromFile();
+	std::vector<float> tanData = modelExporter.ReadDataFromFile();
+	std::vector<float> bitanData = modelExporter.ReadDataFromFile();
+	std::vector<float> texCoordData = modelExporter.ReadDataFromFile();
+	modelExporter.CloseFile();
+
+	ModelToLoadFromSource* modelToLoadFromSource = new ModelToLoadFromSource();
+
+	modelToLoadFromSource->positions.resize(_staticModel.second.size() * positionData.size());
+	modelToLoadFromSource->normals.resize(_staticModel.second.size() * normalData.size());
+	modelToLoadFromSource->tangents.resize(_staticModel.second.size() * tanData.size());
+	modelToLoadFromSource->bitangents.resize(_staticModel.second.size() * bitanData.size());
+	modelToLoadFromSource->texCoords.resize(_staticModel.second.size() * texCoordData.size());
+
+	unsigned int vertexCount = (unsigned int)positionData.size() / 3;
+	for (unsigned int i = 0; i < (unsigned int)_staticModel.second.size(); ++i)
+	{
+		glm::mat4 model = *_staticModel.second[i]->MatrixPtr;
+		glm::mat4 transposeInverseModel = glm::transpose(glm::inverse(model));
+
+		for (unsigned int j = 0; j < vertexCount; ++j)
+		{
+			glm::vec4 position = glm::vec4(positionData[j * 3], positionData[j * 3 + 1], positionData[j * 3 + 2], 1.0f);
+			glm::vec4 normal = glm::vec4(normalData[j * 3], normalData[j * 3 + 1], normalData[j * 3 + 2], 0.0f);
+			glm::vec4 tangent = glm::vec4(tanData[j * 3], tanData[j * 3 + 1], tanData[j * 3 + 2], 0.0f);
+			glm::vec4 bitangent = glm::vec4(bitanData[j * 3], bitanData[j * 3 + 1], bitanData[j * 3 + 2], 0.0f);
+			glm::vec2 texCoord = glm::vec2(texCoordData[j * 2], texCoordData[j * 2 + 1]);
+
+			position = model * position;
+			normal = transposeInverseModel * normal;
+			tangent = transposeInverseModel * tangent;
+			bitangent = transposeInverseModel * bitangent;
+
+			modelToLoadFromSource->positions[i * vertexCount * 3 + j * 3 + 0] = position[0];
+			modelToLoadFromSource->positions[i * vertexCount * 3 + j * 3 + 1] = position[1];
+			modelToLoadFromSource->positions[i * vertexCount * 3 + j * 3 + 2] = position[2];
+			modelToLoadFromSource->normals[i * vertexCount * 3 + j * 3 + 0] = normal[0];
+			modelToLoadFromSource->normals[i * vertexCount * 3 + j * 3 + 1] = normal[1];
+			modelToLoadFromSource->normals[i * vertexCount * 3 + j * 3 + 2] = normal[2];
+			modelToLoadFromSource->tangents[i * vertexCount * 3 + j * 3 + 0] = tangent[0];
+			modelToLoadFromSource->tangents[i * vertexCount * 3 + j * 3 + 1] = tangent[1];
+			modelToLoadFromSource->tangents[i * vertexCount * 3 + j * 3 + 2] = tangent[2];
+			modelToLoadFromSource->bitangents[i * vertexCount * 3 + j * 3 + 0] = bitangent[0];
+			modelToLoadFromSource->bitangents[i * vertexCount * 3 + j * 3 + 1] = bitangent[1];
+			modelToLoadFromSource->bitangents[i * vertexCount * 3 + j * 3 + 2] = bitangent[2];
+			modelToLoadFromSource->texCoords[i * vertexCount * 2 + j * 2 + 0] = texCoord[0];
+			modelToLoadFromSource->texCoords[i * vertexCount * 2 + j * 2 + 1] = texCoord[1];
+		}
+	}
+
+	*_staticModel.second[0]->MatrixPtr = glm::mat4(1.0f);
+
+	char nameBuffer[16];
+	sprintf(nameBuffer, "Static%d", _staticModel.first);
+	modelToLoadFromSource->key = std::string(nameBuffer);
+	modelToLoadFromSource->diffuseTextureFilepath = obj.text;
+	modelToLoadFromSource->normalTextureFilepath = obj.norm;
+	modelToLoadFromSource->specularTextureFilepath = obj.spec;
+	modelToLoadFromSource->MatrixPtr = _staticModel.second[0]->MatrixPtr;
+	modelToLoadFromSource->RenderType = _staticModel.second[0]->RenderType;
+	modelToLoadFromSource->Color = _staticModel.second[0]->Color;
+	modelToLoadFromSource->CastShadow = _staticModel.second[0]->CastShadow;
+	m_modelsToLoadFromSource[_staticModel.first] = modelToLoadFromSource;
+
+	for (ModelToLoad* modelToLoad : _staticModel.second)
+		delete modelToLoad;
 }

@@ -57,7 +57,7 @@ CardAddModelSystem.EntitiesAdded = function(self, dt, entities)
 		world:CreateComponentAndAddTo("Rotation", id)
 		world:CreateComponentAndAddTo("Scale", id)
 		local model = world:GetComponent(id, "Model", 0)
-		model:SetModel("right", "text", 3)
+		model:SetModel("right", "text", 3, false)
 		local parent = world:GetComponent(id, "Parent", 0)
 		parent:SetInt(entityId)
 		local position = world:GetComponent(id, "Position", 0)
@@ -93,21 +93,30 @@ CardAddModelSystem.CreateArrow = function(self, unit)
 		world:CreateComponentAndAddTo("Rotation", arrow)
 		world:CreateComponentAndAddTo("Scale", arrow)
 		world:CreateComponentAndAddTo("LerpScale", arrow)
-		world:GetComponent(arrow, "Position", 0):SetFloat3(0.0, 1.5, 0.05)
-		world:GetComponent(arrow, "Rotation", 0):SetFloat3(0.0, 0.0, 0.0)
+		world:CreateComponentAndAddTo("Color", arrow)
+		world:CreateComponentAndAddTo("NoShadow", arrow)
+		local ux, uy, uz = world:GetComponent(unit, "Position", 0):GetFloat3(0)
+		world:GetComponent(arrow, "Position", 0):SetFloat3(0.0, 0.51-uy, 0.1)
+		world:GetComponent(arrow, "Rotation", 0):SetFloat3(math.pi*0.5, 0.0, math.pi)
 		world:GetComponent(arrow, "Scale", 0):SetFloat3(0.0, 0.0, 0.0)
-		world:GetComponent(arrow, "Model", 0):SetModel("arrow", "arrow", 1)
+		world:GetComponent(arrow, "Model", 0):SetModel("playerarrow", "quad", 1)
 		world:GetComponent(arrow, "Parent", 0):SetInt(unit)
-		world:GetComponent(arrow, "LerpScale", "Time", 0):SetFloat4(0.2, 0.4, 0.4, 0.4)
+		world:GetComponent(arrow, "LerpScale", "Time", 0):SetFloat4(0.2, 1.0, 1.0, 1.0)
 		world:GetComponent(arrow, "LerpScale", "Algorithm", 0):SetText("SmoothLerp")
-		world:GetComponent(arrow, "LerpScale", "KillWhenFinished", 0):SetBool(false)
+		local cx, cy, cz = world:GetComponent(unit, "Color", 0):GetFloat3()
+		world:GetComponent(arrow, "Color", 0):SetFloat3(cx, cy, cz)
 		self.Arrow = arrow
 	end
 end
 
 CardAddModelSystem.RemoveArrow = function(self)
 	if self.Arrow ~= -1 then
-		world:KillEntity(self.Arrow)
+		if not world:EntityHasComponent(self.Arrow, "LerpScale") then
+			world:CreateComponentAndAddTo("LerpScale", self.Arrow)
+		end
+		world:CreateComponentAndAddTo("KillAfterLerp", self.Arrow)
+		world:GetComponent(self.Arrow, "LerpScale", "Time", 0):SetFloat4(0.2, 0.0, 0.0, 0.0)
+		world:GetComponent(self.Arrow, "LerpScale", "Algorithm", 0):SetText("SmoothLerp")
 		self.Arrow = -1
 	end
 end

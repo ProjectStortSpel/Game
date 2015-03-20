@@ -11,6 +11,7 @@ namespace LuaBridge
 	{
 		extern RuleManager rm;
 		extern int id;
+		extern DSLibrary scriptLibrary;
 
 		struct DSData
 		{
@@ -28,6 +29,8 @@ namespace LuaBridge
 				int			t = LuaEmbedder::PullInt( _l, 3 );
 
 				Rule to_add;
+
+				//LuaEmbedder::PushArray()
 
 				to_add.ruleType = ( RuleType )t;
 				to_add.script = s;
@@ -48,6 +51,14 @@ namespace LuaBridge
 		int		SetScript( lua_State* _l );
 
 		int		GetRuleTypeInt( lua_State* _l );
+
+		int		GetWeightFrom( lua_State* _l );
+
+		int		SetNoOfScriptsToUse(lua_State* _l);
+
+		int		SetRuleBook( lua_State* _l );
+
+		int		RuleIndex( const rulebook &rb, const std::string &object );
 	}
 }
 #endif // LUADYNAMICSCRIPT_H

@@ -39,7 +39,7 @@ namespace Renderer
 		void Clear();
 		
 	private:
-		void PrintModelInfo();
+		void PrintModelInfo(int setting);
 
 		bool InitGLEW();
 		bool InitDeferred();
@@ -79,6 +79,7 @@ namespace Renderer
 		Shader m_fullScreenShader;
 		Shader m_deferredShader1, m_compDeferredPass2Shader;
 		Shader m_shadowShaderDeferred;
+		Shader m_shadowShaderAnim;
 
 		// SimpleText
 		bool m_renderSimpleText;

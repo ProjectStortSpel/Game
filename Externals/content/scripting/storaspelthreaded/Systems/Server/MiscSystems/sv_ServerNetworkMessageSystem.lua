@@ -5,7 +5,7 @@ ServerNetworkMessageSystem.Initialize = function(self)
 	--	Set Name
 	self:SetName("ServerNetworkMessageSystem")
 	
-	--self:UsingEntitiesAdded()
+	self:UsingEntitiesAdded()
 	
 	self:InitializeNetworkEvents()
 	
@@ -13,6 +13,7 @@ ServerNetworkMessageSystem.Initialize = function(self)
 	--	Set Filter
 	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("Player", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("PlayerNameChanged", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("PlayerCounter", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("MapSpecs", FilterType.RequiresOneOf)
 	
@@ -24,10 +25,39 @@ ServerNetworkMessageSystem.PostInitialize = function(self)
 	local playerCounter = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("PlayerCounter", playerCounter)
 
+	world:SetComponent(playerCounter, "PlayerCounter", "AIs", 0)
 	world:SetComponent(playerCounter, "PlayerCounter", "Players", 0)
 	world:SetComponent(playerCounter, "PlayerCounter", "Spectators", 0)
 end
 
+ServerNetworkMessageSystem.EntitiesAdded = function(self, dt, entities)
+	for n = 1, #entities do
+		local entity = entities[n]
+		
+		if world:EntityHasComponent(entity, "PlayerNameChanged") then
+		
+			local players 	= self:GetEntities("Player")
+			local pnIp 		= world:GetComponent(entity, "PlayerNameChanged", "IpAddress"):GetText()
+			local pnPort 	= world:GetComponent(entity, "PlayerNameChanged", "Port"):GetInt()
+			local pnName 	= world:GetComponent(entity, "PlayerNameChanged", "Name"):GetString()
+		
+			for i = 1, #players do
+				
+				local ip 	= world:GetComponent(players[i], "NetConnection", "IpAddress"):GetText()
+				local port 	= world:GetComponent(players[i], "NetConnection", "Port"):GetInt()
+				
+				if pnIp == ip and pnPort == port then
+					world:GetComponent(players[i], "PlayerName", "Name"):SetString(pnName)
+					world:KillEntity(entity)
+					return
+				end
+				
+			end
+		
+		end
+		
+	end
+end
 
 ServerNetworkMessageSystem.CounterComponentChanged = function(self, _change, _component)
 	
@@ -44,18 +74,15 @@ ServerNetworkMessageSystem.AddPlayer = function(self, _ip, _port, _spectator)
 	world:SetComponent(player, "NetConnection", "IpAddress", _ip)
 	world:SetComponent(player, "NetConnection", "Port", _port)
 	world:CreateComponentAndAddTo("ActiveNetConnection", player)
-	
-
 
 end
-
 
 ServerNetworkMessageSystem.OnPlayerConnected = function(self, _ip, _port, _message)
 
 	local addSpectator = false
 	local counterEntities = self:GetEntities("PlayerCounter")
 	local counterComp = world:GetComponent(counterEntities[1], "PlayerCounter", 0)
-	local noOfPlayers, noOfSpectators = counterComp:GetInt2()
+	local noOfAIs, noOfPlayers, noOfSpectators = counterComp:GetInt3()
 
 	local mapSpecs = self:GetEntities("MapSpecs")
 	local maxPlayers = 1
@@ -72,7 +99,7 @@ ServerNetworkMessageSystem.OnPlayerConnected = function(self, _ip, _port, _messa
 		
 			local ip = world:GetComponent(entities[i], "NetConnection", "IpAddress"):GetText()
 			local port = world:GetComponent(entities[i], "NetConnection", "Port"):GetInt()	
-
+			
 			if _ip == ip and _port == port then
 				world:CreateComponentAndAddTo("ActiveNetConnection", entities[i])
 				playerFound = true
@@ -100,32 +127,25 @@ ServerNetworkMessageSystem.OnPlayerConnected = function(self, _ip, _port, _messa
 	world:SetComponent(newPlayer, "NetConnection", "Port", _port);
 	world:CreateComponentAndAddTo("ActiveNetConnection", newPlayer)
 	
+	local name = Net.GetPlayerName(_ip, _port)
+	world:GetComponent(newPlayer, "PlayerName", "Name"):SetString(name)
+	print(name .. " connected")
+	
 	if addSpectator then
-	
-		local newName = "Spectator_" .. tostring(noOfSpectators + 1)
-		world:SetComponent(newPlayer, "PlayerName", "Name", newName);
-	
-	
 		world:CreateComponentAndAddTo("IsSpectator", newPlayer)
 		self:CounterComponentChanged(1, "Spectators")
-		
-		print("Spectator: " .. newPlayer .. " connected")
 	else
-	
-		local newName = "Player_" .. tostring(noOfPlayers + 1)
-		world:SetComponent(newPlayer, "PlayerName", "Name", newName);
-		
 		self:CounterComponentChanged(1, "Players")
-		
-		print("Player: " .. newPlayer .. " connected")
 	end
 	
 	local sync = self:GetEntities("SyncNetwork");
 	
 	for i = 1, #sync do
 		Net.SendEntity(sync[i], _ip, _port)	
-		Console.Print("Send Entity: " .. sync[i])
+		--Console.Print("Send Entity: " .. sync[i])
 	end	
+	
+	Net.Send(Net.StartPack("RemoveLoadingScreen"), _ip, _port)	
 
 end
 
@@ -163,6 +183,11 @@ local entities = self:GetEntities("Player");
 		else
 			print("Player disconnected")
 			self:CounterComponentChanged(-1, "Players")
+			
+			local nameRemove = world:CreateNewEntity()
+			world:CreateComponentAndAddTo("PlayerNameRemoved", nameRemove)
+			world:GetComponent(nameRemove, "PlayerNameRemoved", "IpAddress"):SetText(_ip)
+			world:GetComponent(nameRemove, "PlayerNameRemoved", "Port"):SetInt(_port)
 		end
 	end
 	
@@ -235,6 +260,12 @@ ServerNetworkMessageSystem.OnPlayerTimedOut = function(self, _ip, _port, _messag
 		else
 			print("Player timed out")
 			self:CounterComponentChanged(-1, "Players")
+			
+			local nameRemove = world:CreateNewEntity()
+			world:CreateComponentAndAddTo("PlayerNameRemoved", nameRemove)
+			world:GetComponent(nameRemove, "PlayerNameRemoved", "IpAddress"):SetText(_ip)
+			world:GetComponent(nameRemove, "PlayerNameRemoved", "Port"):SetInt(_port)
+			
 		end
 	end
 	
@@ -245,3 +276,17 @@ ServerNetworkMessageSystem.OnPasswordInvalid = function(self, _ip, _port, _messa
 	print("ServerNetworkMessageSystem.OnPasswordInvalid - Not implemented!")
 end
 
+Net.Receive("CLIENT_SET_NAME", 
+	function(id, ip, port)
+		
+		local name = Net.ReadString(id)
+		name = Net.SetPlayerName(ip, port, name)
+		
+		local newEntity = world:CreateNewEntity()
+		world:CreateComponentAndAddTo("PlayerNameChanged", newEntity)
+		world:GetComponent(newEntity, "PlayerNameChanged", "Name"):SetString(name)
+		world:SetComponent(newEntity, "PlayerNameChanged", "IpAddress", ip)
+		world:SetComponent(newEntity, "PlayerNameChanged", "Port", port)
+		
+	end 
+)

@@ -18,6 +18,7 @@ LobbySystem.Initialize = function ( self )
 	self:AddComponentTypeToFilter("LobbyPlayerStartMSG", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("UnitEntityId", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("PlayerNameChanged", FilterType.RequiresOneOf)
 end
 
 LobbySystem.PostInitialize = function ( self )
@@ -25,14 +26,13 @@ LobbySystem.PostInitialize = function ( self )
 end
 
 LobbySystem.Update = function(self, dt)
-	if self.UpdateMe == true then
-		self:RemoveMenu()
-		self:UpdatePlayers()
-		self.UpdateMe = false
-	end
 	if self.UpdateRequest == true then
 		self.UpdateMe = true
 		self.UpdateRequest = false
+	elseif self.UpdateMe == true then
+		self:RemoveMenu()
+		self:UpdatePlayers()
+		self.UpdateMe = false
 	end
 end
 
@@ -47,7 +47,7 @@ LobbySystem.EntitiesAdded = function(self, dt, entities)
 				self:SpawnMenu()
 			elseif world:EntityHasComponent( entityId, self.Name.."Element") then
 			
-			elseif world:EntityHasComponent( entityId, "UnitEntityId") then
+			elseif world:EntityHasComponent( entityId, "UnitEntityId") or world:EntityHasComponent( entityId, "PlayerNameChanged") then
 				self.UpdateMe = true
 			elseif world:EntityHasComponent( entityId, "LobbyPlayerReadyMSG") then
 				self:ToggleReady(entityId)
@@ -72,34 +72,33 @@ LobbySystem.UpdatePlayers = function(self)
 		local entityId = entities[i]
 		local unitId = world:GetComponent(entityId, "UnitEntityId", "Id"):GetInt()
 		
-		local name = "Ugha Buggah"
+		local name = world:GetComponent(entityId, "PlayerName", "Name"):GetString()
+		print(name)
 		local ip = " ";
 		local readyText = " ";
 		if world:EntityHasComponent(entityId, "NetConnection") then
 			ip = world:GetComponent(entityId, "NetConnection", "IpAddress"):GetText()
-			name = "Player" -- TODO: FETCH PLAYERNAME
+			
 			if world:EntityHasComponent(entityId, "LobbyPlayerReady") then
-				readyText = "Ready "
+				readyText = "Ready"
 				readyplayers = readyplayers + 1
 			end
 		else
 			if not world:EntityHasComponent(entityId, "LobbyPlayerReady") then
 				world:CreateComponentAndAddTo("LobbyPlayerReady", entityId)
 			end
-			readyText = "Ready "
+			readyText = "Ready"
 			readyplayers = readyplayers + 1
 		end
 		
 		local r, g, b = world:GetComponent(unitId, "Color", "X"):GetFloat3(0)
 		
-		local button = self:CreateElement("shade", "quad", 0, 1.20-i*0.22, -4.0, 3.6, 0.2)
+		local button = self:CreateElement("shade", "quad", -1.85, 1.20-i*0.22, -4.0, 1.78, 0.2)
 		
-		local text = self:CreateElement("left", "text", -1.70, 1.28-i*0.22, -3.999, 3.0, 0.16)
+		local text = self:CreateElement("left", "text", -2.70, 1.28-i*0.22, -3.99, 3.0, 0.16)
 		world:CreateComponentAndAddTo("LobbyMenuPlayer", text)
 		self:AddTextToTexture("LMSPname"..i, name, 0, r, g, b, text)
-		text = self:CreateElement("center", "text", 0, 1.28-i*0.22, -3.999, 3.56, 0.16)
-		self:AddTextToTexture("LMSPip"..i, ip, 0, r, g, b, text)
-		text = self:CreateElement("right", "text", 1.70, 1.28-i*0.22, -3.999, 1.6, 0.16)	
+		text = self:CreateElement("right", "text", -1.00, 1.28-i*0.22, -3.99, 1.6, 0.16)	
 		self:AddTextToTexture("LMSPready"..i, readyText, 0, r, g, b, text)
 	end
 	
@@ -201,9 +200,9 @@ LobbySystem.AddTextToTexture = function(self, n, text, font, r, g, b, button)
 	world:GetComponent(button, "TextTexture", "Name"):SetText(n) -- TODO: NAME CANT BE MORE THAN 3 CHARS? WTF?
 	world:GetComponent(button, "TextTexture", "Text"):SetText(text)
 	world:GetComponent(button, "TextTexture", "FontIndex"):SetInt(font)
-	world:GetComponent(button, "TextTexture", "R"):SetFloat(1)
-	world:GetComponent(button, "TextTexture", "G"):SetFloat(1)
-	world:GetComponent(button, "TextTexture", "B"):SetFloat(1)
+	world:GetComponent(button, "TextTexture", "R"):SetFloat(1.0)
+	world:GetComponent(button, "TextTexture", "G"):SetFloat(1.0)
+	world:GetComponent(button, "TextTexture", "B"):SetFloat(1.0)
 	world:CreateComponentAndAddTo("Color", button)
 	world:GetComponent(button, "Color", "X"):SetFloat(r)
 	world:GetComponent(button, "Color", "Y"):SetFloat(g)

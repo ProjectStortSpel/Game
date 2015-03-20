@@ -9,6 +9,7 @@ using namespace glm;
 
 GraphicsLow::GraphicsLow()
 {
+	SDL_Log("Starting graphics low");
 	m_stringToInt = new char[2];
 	m_useAnimations = true;
 	m_modelIDcounter = 0;
@@ -21,6 +22,7 @@ GraphicsLow::GraphicsLow()
 
 GraphicsLow::GraphicsLow(Camera _camera, int x, int y) : GraphicDevice(_camera, x, y)
 {
+	SDL_Log("Starting graphics low");
 	m_stringToInt = new char[2];
 	m_useAnimations = true;
 	m_modelIDcounter = 0;
@@ -51,7 +53,8 @@ bool GraphicsLow::Init()
 	if (!m_SDLinitialized)
 		m_camera = new Camera(m_clientWidth, m_clientHeight);
 
-    if (!InitGLEW()) { ERRORMSG("GLEW_VERSION_4_0 FAILED.\n INCOMPATIBLE GRAPHICS DRIVER\n"); return false; }
+	if (!InitGLEW()) { SDL_Log("GLEW_VERSION_4_3 FAILED"); 
+								ERRORMSG("GLEW_VERSION_4_0 FAILED.\n INCOMPATIBLE GRAPHICS DRIVER\n"); return false; }
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
 	InitRenderLists();
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
@@ -60,8 +63,6 @@ bool GraphicsLow::Init()
 	CreateShadowMap();
 	if (!InitLightBuffers()) { ERRORMSG("INIT LIGHTBUFFER FAILED\n"); return false; }
 
-	CreateParticleSystems();
-	
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -110,45 +111,48 @@ void GraphicsLow::WriteShadowMapDepth()
 	//Forward models
 	for (int i = 0; i < m_modelsForward.size(); i++)
 	{
-		std::vector<mat4> MVPVector(m_modelsForward[i].instances.size());
-		std::vector<mat3> normalMatVector(m_modelsForward[i].instances.size());
-
-		int nrOfInstances = 0;
-
-		for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
+		if (m_modelsForward[i].castShadow)
 		{
-			if (m_modelsForward[i].instances[j].active) // IS MODEL ACTIVE?
+			std::vector<mat4> MVPVector(m_modelsForward[i].instances.size());
+			std::vector<mat3> normalMatVector(m_modelsForward[i].instances.size());
+
+			int nrOfInstances = 0;
+
+			for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
 			{
-				mat4 modelMatrix;
-				if (m_modelsForward[i].instances[j].modelMatrix == NULL)
-					modelMatrix = glm::translate(glm::vec3(1));
-				else
-					modelMatrix = *m_modelsForward[i].instances[j].modelMatrix;
+				if (m_modelsForward[i].instances[j].active) // IS MODEL ACTIVE?
+				{
+					mat4 modelMatrix;
+					if (m_modelsForward[i].instances[j].modelMatrix == NULL)
+						modelMatrix = glm::translate(glm::vec3(1));
+					else
+						modelMatrix = *m_modelsForward[i].instances[j].modelMatrix;
 
-				mat4 mvp = shadowProjection * (*m_shadowMap->GetViewMatrix()) * modelMatrix;
-				MVPVector[nrOfInstances] = mvp;
+					mat4 mvp = shadowProjection * (*m_shadowMap->GetViewMatrix()) * modelMatrix;
+					MVPVector[nrOfInstances] = mvp;
 
-				nrOfInstances++;
+					nrOfInstances++;
+				}
 			}
-		}
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
 
-		m_modelsForward[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector);
+			m_modelsForward[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector);
+		}
 	}
 
 	//--------ANIMATED DEFERRED RENDERING !!! ATTENTION: WORK IN PROGRESS !!!
-	m_animationShader.UseProgram();
+	m_shadowShaderForwardAnim.UseProgram();
 	for (int i = 0; i < m_modelsAnimated.size(); i++)
 	{
 		for (int j = 0; j < m_modelsAnimated[i].anim.size(); j++)
 		{
 			std::stringstream ss;
 			ss << "anim[" << j << "]";
-			m_animationShader.SetUniVariable(ss.str().c_str(), mat4x4, &m_modelsAnimated[i].anim[j]);
+			m_shadowShaderForwardAnim.SetUniVariable(ss.str().c_str(), mat4x4, &m_modelsAnimated[i].anim[j]);
 			ss.str(std::string());
 		}
-		m_modelsAnimated[i].Draw((*m_shadowMap->GetViewMatrix()), shadowProjection, &m_animationShader);
+		m_modelsAnimated[i].DrawForwardGeometry((*m_shadowMap->GetViewMatrix()), shadowProjection, &m_shadowShaderForwardAnim);
 	}
 	//------------------------------------------------
 
@@ -189,12 +193,16 @@ void GraphicsLow::Render()
     
 	// DRAW SKYBOX
 	glDisable(GL_CULL_FACE);
+	glDepthMask(GL_FALSE);
 	m_skyBoxShader.UseProgram();
-	m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera);
-	glEnable(GL_CULL_FACE);
-	// -----------
+	m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera, m_dt);
+
 	glEnable(GL_BLEND);
 
+	m_skyboxClouds->Draw(m_skyBoxShader.GetShaderProgram(), m_camera, m_dt);
+	glEnable(GL_CULL_FACE);
+	glDepthMask(GL_TRUE);
+	// -----------
 
 	//------FORWARD RENDERING--------------------------------------------
 	m_forwardShader.UseProgram();
@@ -208,8 +216,8 @@ void GraphicsLow::Render()
 
 	//--------ANIMATED DEFERRED RENDERING !!! ATTENTION: WORK IN PROGRESS !!!
 	m_animationShader.UseProgram();
+	//m_animationShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
 	m_animationShader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
-	m_animationShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
 	for (int i = 0; i < m_modelsAnimated.size(); i++)
 	{
 		for (int j = 0; j < m_modelsAnimated[i].anim.size(); j++)
@@ -518,9 +526,6 @@ void GraphicsLow::BufferLightsToGPU()
 
 		}
 
-		for (int i = 0; i < 3; i++)
-			delete m_pointerToPointlights[i];
-
 		delete[] m_pointerToPointlights;
 		m_pointerToPointlights = 0;
 		m_nrOfLightsToBuffer = 0;
@@ -570,9 +575,6 @@ void GraphicsLow::BufferLightsToGPU()
 			m_animationShader.SetUniVariable(s.c_str(), glfloat, &m_pointerToPointlights[i][9]);
 
 		}
-		
-		for (int i = 0; i < 3; i++)
-			delete m_pointerToPointlights[i];
 
 		delete[] m_pointerToPointlights;
 
@@ -620,6 +622,18 @@ void GraphicsLow::Clear()
 	m_modelsInterface.clear();
 	m_modelsWater.clear();
 	m_modelsWaterCorners.clear();
+
+	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); ++it)
+		delete(it->second);
+	m_meshs.clear();
+
+	for (std::map<const std::string, GLuint>::iterator it = m_textures.begin(); it != m_textures.end(); ++it)
+		glDeleteTextures(1, &(it->second));
+	m_textures.clear();
+
+	for (int i = 0; i < m_surfaces.size(); i++)
+		delete(m_surfaces[i].second);
+	m_surfaces.clear();
 
 	BufferPointlights(0, 0);
 	BufferDirectionalLight(0);

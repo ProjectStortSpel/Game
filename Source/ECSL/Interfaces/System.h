@@ -60,6 +60,11 @@ namespace ECSL
 
 		void ClearMessages() { m_messages->clear(); }
 
+		void SetString(unsigned int _eId, const std::string& _componentType, const unsigned int _index, const char* _value);
+		void SetString(unsigned int _eId, unsigned int _componentTypeId, const unsigned int _index, const char* _value);
+		std::string GetString(unsigned int _eId, const std::string& _componentType, const unsigned int _index);
+		std::string GetString(unsigned int _eId, unsigned int _componentTypeId, const unsigned int _index);
+
 	protected:
 		DataLocation GetComponent(unsigned int _entityId, const std::string& _componentType, const std::string& _variableName);
 		DataLocation GetComponent(unsigned int _entityId, const std::string& _componentType, unsigned int _index);

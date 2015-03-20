@@ -92,7 +92,6 @@ FindSpawnpointSystem.SpawnUnitAt = function(self, X, Z, unitToSpawn)
 	world:GetComponent(unitToSpawn, "LerpPosition", "Z"):SetFloat(Z)
 	world:GetComponent(unitToSpawn, "LerpPosition", "Time"):SetFloat(0)
 	world:GetComponent(unitToSpawn, "LerpPosition", "Algorithm"):SetText("PlayerMove")
-	world:GetComponent(unitToSpawn, "LerpPosition", "KillWhenFinished"):SetBool(false)
 	
 	if not world:EntityHasComponent(unitToSpawn, "UnitWantTileOffset") then
 		world:CreateComponentAndAddTo("UnitWantTileOffset", unitToSpawn)
@@ -158,6 +157,10 @@ FindSpawnpointSystem.EntitiesAdded = function(self, dt, newEntities)
 			
 			local	unitId	=	world:GetComponent(newEntity, "Spawn", "UnitEntityId"):GetInt()
 			local	tempX, tempZ	=	world:GetComponent(unitId, "Spawnpoint", "X"):GetInt2()
+			
+			if world:EntityHasComponent(unitId, "UnitDead") then
+				world:RemoveComponentFrom("UnitDead", unitId)
+			end
 			
 			local	originalX		=	tempX
 			local	originalZ		=	tempZ

@@ -78,31 +78,39 @@ void ParticleSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const std:
 		float*		Lifetime;
 		float*		Color;
 		float*		Scale;
+		float*		Velocity;
 		float*		SpriteSize;
 		int*		Particles;
 		int*		ID;
+		bool		Kill;
 		std::string	Name;
 		std::string	Texture;
 
 		char* ParticleData;
-		ParticleData	=	(char*)GetComponent(entityId, "Particle", "Name");
+		ParticleData	=	(char*)GetComponent(entityId, "Particle", "aName");
 		Name			=	std::string(ParticleData);
 
-		ParticleData	=	(char*)GetComponent(entityId, "Particle", "Texture");
+		ParticleData	=	(char*)GetComponent(entityId, "Particle", "bTexture");
 		Texture			=	std::string(ParticleData);
 
 		Position = (float*)GetComponent(entityId, "Position", "X");
 
 		Color = (float*)GetComponent(entityId, "Color", "X");
-		Lifetime = (float*)GetComponent(entityId, "Particle", "Lifetime");
-		SpriteSize = (float*)GetComponent(entityId, "Particle", "SpriteSize");
-		Particles = (int*)GetComponent(entityId, "Particle", "Particles");
-		Scale = (float*)GetComponent(entityId, "Particle", "Scale");
+		Lifetime = (float*)GetComponent(entityId, "Particle", "dLifetime");
+		SpriteSize = (float*)GetComponent(entityId, "Particle", "gSpriteSize");
+		Particles = (int*)GetComponent(entityId, "Particle", "cParticles");
+		Scale = (float*)GetComponent(entityId, "Particle", "eScaleX");
+		Velocity = (float*)GetComponent(entityId, "Particle", "fVelocityX");
+		Kill = (*(int*)GetComponent(entityId, "Particle", "iOnlyOnce")) == 1;
 
 
-		ID = (int*)GetComponent(entityId, "Particle", "Id");
+
+		ID = (int*)GetComponent(entityId, "Particle", "hId");
 //#if  !defined(__ANDROID__) && !defined(__IOS__)
-		m_graphics->AddParticleEffect(Name, glm::vec3(Position[0], Position[1], Position[2]), *Particles, *Lifetime, *Scale, *SpriteSize, Texture, glm::vec3(Color[0], Color[1], Color[2]), *ID);
+		m_graphics->AddParticleEffect(Name, glm::vec3(Position[0], Position[1], Position[2]), glm::vec3(Velocity[0], Velocity[1], Velocity[2]), *Particles, *Lifetime, glm::vec3(Scale[0], Scale[1], Scale[2]), *SpriteSize, Texture, glm::vec3(Color[0], Color[1], Color[2]), *ID);
+
+		if (Kill)
+			KillEntity(entityId);
 //#endif
 	}
 }
@@ -111,7 +119,7 @@ void ParticleSystem::EntitiesRemoved(const ECSL::RuntimeInfo& _runtime, const st
 {
 	for (auto entityId : _entities)
 	{
-		int*	ID	= (int*)GetComponent(entityId, "Particle", "Id");
+		int*	ID	= (int*)GetComponent(entityId, "Particle", "hId");
 
 //#if  !defined(__ANDROID__) && !defined(__IOS__) 
 		if( HasComponent(entityId, "Hide") )

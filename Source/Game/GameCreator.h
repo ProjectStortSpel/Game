@@ -67,6 +67,7 @@ private:
 
 	void ConsoleGameMode(std::string _command, std::vector<Console::Argument>* _args);
 	void ConsoleHostSettings(std::string _command, std::vector<Console::Argument>* _args);
+	void ConsoleName(std::string _command, std::vector<Console::Argument>* _args);
 	void ConsoleReload(std::string _command, std::vector<Console::Argument>* _args);
 	void ConsoleStartTemp(std::string _command, std::vector<Console::Argument>* _args);
 	void ConsoleStopGame(std::string _command, std::vector<Console::Argument>* _args);
@@ -79,7 +80,6 @@ private:
 	void ChangeGraphicsSettings(std::string _command, std::vector<Console::Argument>* _args);
 
 	void ChangeTimeScale(std::string _command, std::vector<Console::Argument>* _args);
-
 
 	void OnBannedFromServer(Network::NetConnection _nc, const char* _message);
 	void OnConnectedToServer(Network::NetConnection _nc, const char* _message);
@@ -113,6 +113,7 @@ private:
 	std::string					m_gameMode;
 
 	bool						m_running;
+	unsigned	int				m_entityCount;
 	
 	Utility::FrameCounter m_inputCounter;
 	Utility::FrameCounter m_clientWorldCounter;

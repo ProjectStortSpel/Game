@@ -203,6 +203,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClCompile Include="..\..\..\Source\Game\GameConsole.cpp" />
     <ClCompile Include="..\..\..\Source\Game\GameCreator.cpp" />
     <ClCompile Include="..\..\..\Source\Game\HomePath.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\LoadingScreen.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\AI\LuaCombinationMath.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\AI\LuaDynamicScript.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\AI\LuaPathfinderHandler.cpp" />
@@ -219,6 +220,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\FileLoader\LuaFileLoader.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\File\LuaFile.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\Input\LuaInput.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\LuaBridge\LoadingScreen\LuaLoadingScreen.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\LuaBridge.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\Math\LuaMatrix.cpp" />
     <ClCompile Include="..\..\..\Source\Game\LuaBridge\Network\LuaNetwork.cpp" />
@@ -247,9 +249,9 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClCompile Include="..\..\..\Source\Game\ResourceManager.cpp" />
     <ClCompile Include="..\..\..\Source\Game\RuleManager.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\AddTextToTextureSystem.cpp" />
-    <ClCompile Include="..\..\..\Source\Game\Systems\AModelSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\CameraSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\DirectionalLightSystem.cpp" />
+    <ClCompile Include="..\..\..\Source\Game\Systems\GenerateIslandSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\MasterServerSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\ModelSystem.cpp" />
     <ClCompile Include="..\..\..\Source\Game\Systems\ParticleSystem.cpp" />
@@ -270,6 +272,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClInclude Include="..\..\..\Source\Game\GameConsole.h" />
     <ClInclude Include="..\..\..\Source\Game\GameCreator.h" />
     <ClInclude Include="..\..\..\Source\Game\HomePath.h" />
+    <ClInclude Include="..\..\..\Source\Game\LoadingScreen.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\AI\LuaCombinationMath.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\AI\LuaDynamicScript.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\AI\LuaPathfinderHandler.h" />
@@ -286,6 +289,7 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\FileLoader\LuaFileLoader.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\File\LuaFile.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Input\LuaInput.h" />
+    <ClInclude Include="..\..\..\Source\Game\LuaBridge\LoadingScreen\LuaLoadingScreen.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\LuaBridge.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Math\LuaMatrix.h" />
     <ClInclude Include="..\..\..\Source\Game\LuaBridge\Network\LuaNetwork.h" />
@@ -314,9 +318,9 @@ xcopy "$(SolutionDir)..\..\Externals\Content" "$(OutDir)content" /d /y /s /e </C
     <ClInclude Include="..\..\..\Source\Game\ResourceManager.h" />
     <ClInclude Include="..\..\..\Source\Game\RuleManager.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\AddTextToTextureSystem.h" />
-    <ClInclude Include="..\..\..\Source\Game\Systems\AModelSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\CameraSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\DirectionalLightSystem.h" />
+    <ClInclude Include="..\..\..\Source\Game\Systems\GenerateIslandSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\MasterServerSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\ModelSystem.h" />
     <ClInclude Include="..\..\..\Source\Game\Systems\ParticleSystem.h" />

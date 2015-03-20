@@ -71,8 +71,22 @@ AModelComponent:AddVariable("RenderType", ByteSize.Int)
 worldCreator:AddComponentType(AModelComponent)
 
 -- Hide Component
+local NoShadowComponent = ComponentType()
+NoShadowComponent.Name = "NoShadow"
+NoShadowComponent.SyncNetwork = true
+NoShadowComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NoShadowComponent)
+
+-- Hide Component
 local HideComponent = ComponentType()
 HideComponent.Name = "Hide"
 HideComponent.SyncNetwork = true
 HideComponent.TableType = TableType.Map
 worldCreator:AddComponentType(HideComponent)
+
+-- Static Model Component
+local StaticModelComponent = ComponentType()
+StaticModelComponent.Name = "StaticModel"
+StaticModelComponent.SyncNetwork = true
+StaticModelComponent.TableType = TableType.Map
+worldCreator:AddComponentType(StaticModelComponent)

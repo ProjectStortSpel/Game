@@ -25,10 +25,10 @@ AudioUnitDeathSystem.Update = function(self, dt, taskIndex, taskCount)
 			
 			if self.PrevPosYTable[entity] ~= nil then
 				if y <= self.AudioDeathPosY and self.PrevPosYTable[entity] > self.AudioDeathPosY then
-					local audioId = Net.StartPack("Client.PlaySound")
-					Net.WriteString(audioId, "No")
-					Net.WriteBool(audioId, false)
-					Net.Broadcast(audioId)
+					--local audioId = Net.StartPack("Client.PlaySound")
+					--Net.WriteString(audioId, "No")
+					--Net.WriteBool(audioId, false)
+					--Net.Broadcast(audioId)
 				end
 			end
 		  

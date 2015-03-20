@@ -4,11 +4,13 @@ require "cl_PlayerIndicatorSystem"
 require "cl_ClientNetworkMessageSystem"
 require "cl_FlowingWaterSystem"
 require "cl_ChatSystem"
+require "cl_GlowNextCheckpointSystem"
 require "cl_ShowNextCheckpointSystem"
 require "cl_LobbySystem"
 require "cl_VisualizeSelectedCards"
 require "cl_FadeTreeSystem"
 require "cl_AbilityStoneSystem"
+require "cl_AbilitySlingshotSystem"
 
 --	Interface Systems
 package.path = package.path .. ";Systems/Client/InterfaceSystems/?.lua"
@@ -18,6 +20,7 @@ require "cl_GameMenuSystem"
 require "cl_GameInterfaceSystem"
 require "cl_PickingTimerSystem"
 require "cl_NotificationSystem"
+require "cl_ScoreboardSystem"
 
 --	Card Systems
 package.path = package.path .. ";Systems/Client/CardSystems/?.lua"
@@ -58,11 +61,14 @@ worldCreator:AddSystemToCurrentGroup(FlowingWaterSystem)
 worldCreator:AddSystemToCurrentGroup(SortSelectedCardsSystem)
 worldCreator:AddSystemToCurrentGroup(GameMenuSystem)
 worldCreator:AddSystemToCurrentGroup(CardHoverSystem)
+worldCreator:AddSystemToCurrentGroup(ScoreboardSystem)
 worldCreator:AddSystemToCurrentGroup(ClientAbilityStoneSystem)
+worldCreator:AddSystemToCurrentGroup(ClientAbilitySlingshotSystem)
 
 worldCreator:AddSystemToCurrentGroup(LobbySystem)
 worldCreator:AddSystemToCurrentGroup(CardAddModelSystem)
 worldCreator:AddSystemToCurrentGroup(ShowNextCheckpointSystem)
+worldCreator:AddSystemToCurrentGroup(GlowNextCheckpointSystem)
 
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(VisualizeSelectedCards)

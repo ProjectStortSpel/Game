@@ -7,16 +7,8 @@ GameInterfaceSystem.Island = -1
 GameInterfaceSystem.Rotation = 0.0
 
 
-GameInterfaceSystem.Update = function(self, dt)
-		
-	self.Rotation = self.Rotation + dt
-	world:GetComponent(self.Island, "Rotation", 0):SetFloat3(0.174532925, self.Rotation, 0.0)
-end
-
 GameInterfaceSystem.Initialize = function(self)
 	self:SetName("GameInterfaceSystem")
-	self:UsingUpdate()
-	self:UsingEntitiesAdded()
 	self:AddComponentTypeToFilter(self.Name.."Element", FilterType.RequiresOneOf)
 end
 
@@ -64,9 +56,11 @@ GameInterfaceSystem.CreateDistantIsland = function(self)
 	world:CreateComponentAndAddTo("Position", id)
 	world:CreateComponentAndAddTo("Rotation", id)
 	world:CreateComponentAndAddTo("Scale", id)
+	world:CreateComponentAndAddTo("Spin", id)
+	world:GetComponent(id, "Spin", 0):SetFloat3(0, 0.25, 0)
 	world:GetComponent(id, "Model", 0):SetModel("miniisland", "distantisland", 2)
 	world:GetComponent(id, "Position", 0):SetFloat3(1.0, -0.5, -5.1)
-	world:GetComponent(id, "Rotation", 0):SetFloat3(0, 0, 0)
+	world:GetComponent(id, "Rotation", 0):SetFloat3(0.174532925, 0, 0)
 	world:GetComponent(id, "Scale", 0):SetFloat3(2.0, 2.0, 2.0)
 	self.Island = id
 end

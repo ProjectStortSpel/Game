@@ -64,6 +64,55 @@ void AModel::Draw(mat4 viewMatrix, mat4 projectionMatrix, Shader* shaderptr)
 	}
 }
 
+void AModel::DrawGeometry(mat4 viewMatrix, mat4 projectionMatrix, Shader* shaderptr)
+{
+	if (active) // IS MODEL ACTIVE?
+	{
+		mat4 M;
+		if (modelMatrix == NULL)
+			M = glm::translate(glm::vec3(1));
+		else
+			M = *modelMatrix;
+
+		mat4 V = viewMatrix;
+		mat4 P = projectionMatrix;
+
+		shaderptr->SetUniVariable("M", mat4x4, &M);
+		shaderptr->SetUniVariable("V", mat4x4, &V);
+		shaderptr->SetUniVariable("P", mat4x4, &P);
+
+		bufferPtr->draw();
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+}
+
+void AModel::DrawForwardGeometry(mat4 viewMatrix, mat4 projectionMatrix, Shader* shaderptr)
+{
+	if (active) // IS MODEL ACTIVE?
+	{
+		mat4 M;
+		if (modelMatrix == NULL)
+			M = glm::translate(glm::vec3(1));
+		else
+			M = *modelMatrix;
+
+		mat4 V = viewMatrix;
+		mat4 P = projectionMatrix;
+
+		shaderptr->SetUniVariable("M", mat4x4, &M);
+		shaderptr->SetUniVariable("V", mat4x4, &V);
+		shaderptr->SetUniVariable("P", mat4x4, &P);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texID);
+
+		bufferPtr->draw();
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+}
+
 void AModel::Update(float _dt)
 {
 	clock += _dt;
@@ -76,7 +125,7 @@ void AModel::Update(float _dt)
 
 		Animation* animptr = &animations[animId];
 		for (int i = 0; i < animptr->joints.size(); i++)
-			anim[i] = animptr->joints[i].frames[currentframe];
+			anim[i] = extra[i] * animptr->joints[i].frames[currentframe];
 	}
 }
 

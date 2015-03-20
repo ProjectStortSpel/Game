@@ -238,11 +238,20 @@ void GameConsole::HostListenServer(std::string _command, std::vector<Console::Ar
         }
     }
     
-    bool hosting = NetworkInstance::GetServer()->Start(port, pw.c_str(), connections);
-    
     //LuaEmbedder::AddBool("Server", hosting);
-    
-    bool connected = NetworkInstance::GetClient()->Connect("127.0.0.1", pw.c_str(), port, 0);
+	if (!NetworkInstance::GetServer()->Start(port, pw.c_str(), connections))
+	{
+		NetworkInstance::GetServer()->Stop();
+		return;
+	}
+	if (!NetworkInstance::GetClient()->Connect("127.0.0.1", pw.c_str(), port, 0))
+	{
+		NetworkInstance::GetServer()->Stop();
+		NetworkInstance::GetClient()->Disconnect();
+		return;
+	}
+	NetworkInstance::GetServer()->Stop();
+	NetworkInstance::GetClient()->Disconnect();
 }
 
 

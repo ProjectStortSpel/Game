@@ -110,6 +110,9 @@ HowToSystem.CreateEntites = function(self)
 	local tutorial = self:CreateElement("tutorial", "quad", 0.8, 1.0, -3.0, 1.1, 1.1)
 	table.insert(self.Entities, tutorial)
 	
+	local prio = self:CreateElement("prio", "quad", 1.5, -1.0, -3.0, 1.1, 1.1)
+	table.insert(self.Entities, prio)
+	
 	self.Active = true
 end
 

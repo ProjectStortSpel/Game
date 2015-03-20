@@ -232,7 +232,7 @@ void ClientNetwork::Send(Packet* _packet)
 	}
 
 
-	float bytesSent = m_socket->Send((char*)_packet->Data, *_packet->Length);
+	int bytesSent = m_socket->Send((char*)_packet->Data, *_packet->Length);
 
 	if (bytesSent > 0)
 	{

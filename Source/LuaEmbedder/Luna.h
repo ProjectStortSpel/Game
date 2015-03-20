@@ -816,6 +816,7 @@ namespace LuaEmbedder
 				lua_pushstring(A, "k");
 				lua_settable(A, a);
 				
+				int top = lua_gettop(B);
 				lua_newtable(B);
 				int b = lua_gettop(B);
 				lua_pushstring(B, "__mode");

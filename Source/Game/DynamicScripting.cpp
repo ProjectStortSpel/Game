@@ -1,7 +1,8 @@
 #include "DynamicScripting.h"
 #define MAX_NO_OF_TRIES 100
 #define MINIMUM_WEIGHT 1
-#define MAXIMUM_WEIGHT 100
+#define MAXIMUM_WEIGHT 10000
+
 
 DynamicScripting* DynamicScripting::m_instance = 0;
 
@@ -25,7 +26,7 @@ DynamicScripting::DynamicScripting()
 {
 	srand(time(0));
 	m_ruleBook = NULL;
-	m_noOfScriptsToUse = 0;
+	m_noOfScriptsToUse = 4;
 }
 
 DynamicScripting::~DynamicScripting()
@@ -49,17 +50,18 @@ void DynamicScripting::Sum()
 
 void DynamicScripting::GenerateScript()
 {
+	m_script.clear();
 	unsigned int	noOfTries;
 	bool			ruleAddedToScript;
 
 	Sum();
 
-	for (unsigned int i = 0; i < m_ruleBook->size(); i++)
+	for (unsigned int i = 0; i < m_noOfScriptsToUse; i++)
 	{
 		noOfTries			= 0;
 		ruleAddedToScript	= false;
 
-		unsigned int ruleId, selectedRule;
+		int ruleId, selectedRule;
 		float weightSum = 0;
 		float randomValue;
 
@@ -72,7 +74,7 @@ void DynamicScripting::GenerateScript()
 
 			randomValue = RandomFloat() * m_totalSum;
 
-			while (selectedRule < 0)
+			while ( selectedRule < 0 && ruleId < this->m_ruleBook->size() )
 			{
 				weightSum += (*m_ruleBook)[ruleId].weight;
 				if (weightSum > randomValue)
@@ -84,8 +86,10 @@ void DynamicScripting::GenerateScript()
 					ruleId++;
 				}
 			}
-
-			ruleAddedToScript = InsertToScript((*m_ruleBook)[selectedRule]);
+			if ( selectedRule != -1 )
+			{
+				ruleAddedToScript = InsertToScript( ( *m_ruleBook )[selectedRule] );
+			}
 			noOfTries++;
 		}
 	}
@@ -107,14 +111,20 @@ bool DynamicScripting::InsertToScript(Rule _rule)
 	return true;
 }
 
-void DynamicScripting::AdjustWeight(float _fitness)
+bool DynamicScripting::AdjustWeight(float _fitness)
 {
 	int noOfActiveScripts = m_script.size();
-
+	Sum( );
 	/* If we have no active scripts or more than we should have, something is wrong.*/
-	if (0 <= noOfActiveScripts || m_ruleBook->size() < noOfActiveScripts)
+	if (noOfActiveScripts <= 0 || m_ruleBook->size() < noOfActiveScripts)
 	{
-		return;
+		return false;
+	}
+
+	std::vector<float> old_weights;
+	for ( int i = 0; i < m_ruleBook->size( ); i++ )
+	{
+		old_weights.push_back( (*m_ruleBook)[i].weight );
 	}
 
 	unsigned int noOfInactiveScripts = m_ruleBook->size() - noOfActiveScripts;
@@ -150,6 +160,21 @@ void DynamicScripting::AdjustWeight(float _fitness)
 	}
 
 	DistributeLeftOvers(leftOver);
+	float temp_sum = m_totalSum;
+	Sum( );
+	
+	if ( abs( temp_sum - m_totalSum ) > 0.1f )
+	{
+		//printf( "FACK SUPER FUCKING BIG ERROR IN DS\n" );
+
+		for ( int i = 0; i < m_ruleBook->size( ); i++ )
+		{
+			( *m_ruleBook )[i].weight = old_weights[i];
+		}
+		old_weights.clear( );
+		return false;
+	}
+	return true;
 }
 
 float DynamicScripting::FitnessFunction(float _fitness)
@@ -192,10 +217,10 @@ bool DynamicScripting::IsInScript( Rule _rule )
 	{
 		if ( _rule == m_script [i] )
 		{
-			return false;
+			return true;
 		}
 	}
-	return true;
+	return false;
 }
 
 bool DynamicScripting::IsTypeInScript( Rule _rule )
@@ -204,10 +229,10 @@ bool DynamicScripting::IsTypeInScript( Rule _rule )
 	{
 		if ( _rule / m_script [i] )
 		{
-			return false;
+			return true;
 		}
 	}
-	return true;
+	return false;
 }
 
 void DynamicScripting::DistributeLeftOvers(float _leftOver)
@@ -271,4 +296,9 @@ void DynamicScripting::DistributeLeftOvers(float _leftOver)
 
 	/* If we still have leftOvers, recursively call this method.*/
 	DistributeLeftOvers(leftOver);
+}
+
+void DynamicScripting::SetNumberOfScripts(unsigned int _noOfScriptsToUse)
+{
+	m_noOfScriptsToUse = _noOfScriptsToUse;
 }

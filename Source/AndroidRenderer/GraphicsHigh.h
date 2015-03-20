@@ -23,7 +23,7 @@ namespace Renderer
 
 		// MODELLOADER
 		bool PreLoadModel(std::vector<std::string> _dirs, std::string _file, int _renderType = RENDER_FORWARD);
-		int LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_FORWARD, float* _color = nullptr);
+		int LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType = RENDER_FORWARD, float* _color = nullptr, bool _castShadow = true, bool _isStatic = false);
 		bool RemoveModel(int _id);
 		bool ActiveModel(int _id, bool _active);
 
@@ -50,7 +50,7 @@ namespace Renderer
 		void WriteShadowMapDepth();
 
 		// Meshs
-		Buffer* AddMesh(std::string _fileDir, Shader *_shaderProg);
+		Buffer* AddMesh(std::string _fileDir, Shader *_shaderProg, bool animated = false);
 		Buffer* AddMesh(ModelToLoadFromSource* _modelToLoad, Shader *_shaderProg);
 	};
 }

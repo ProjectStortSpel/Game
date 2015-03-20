@@ -11,7 +11,7 @@ WeatherTornadoSystem.Initialize = function(self)
 	self:UsingEntitiesAdded()
 
 	--	Set Filter
-	self:AddComponentTypeToFilter("NewStep", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("MoveRiver", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("DealCards", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("WeatherTornado", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("TestMoveSuccess",FilterType.RequiresOneOf)
@@ -39,7 +39,7 @@ WeatherTornadoSystem.EntitiesAdded = function(self, dt, newEntities)
 			world:KillEntity(tEntity)
 		end
 		
-		if world:EntityHasComponent(tEntity, "NewStep") then
+		if world:EntityHasComponent(tEntity, "MoveRiver") then
 			for i = 1, #self.TornadoIds do
 				self:MoveTornado(self.TornadoIds[i])
 				
@@ -85,20 +85,18 @@ WeatherTornadoSystem.RemoveSpin = function(self, unit)
 	
 		posX, posZ = world:GetComponent(unit, "MapPosition", 0):GetInt2()
 	
-		world:CreateComponentAndAddTo("LerpPosition", unit)
+		if not world:EntityHasComponent(unit, "LerpPosition") then
+			world:CreateComponentAndAddTo("LerpPosition", unit)
+		end
 		world:GetComponent(unit, "LerpPosition", "X"):SetFloat(posX)
 		world:GetComponent(unit, "LerpPosition", "Y"):SetFloat(0.5)
 		world:GetComponent(unit, "LerpPosition", "Z"):SetFloat(posZ)
 		world:GetComponent(unit, "LerpPosition", "Time"):SetFloat(0.5)
 		world:GetComponent(unit, "LerpPosition", "Algorithm"):SetText("NormalLerp")
-		world:GetComponent(unit, "LerpPosition", "KillWhenFinished"):SetBool(false)
 		
 		local dirX, dirZ = world:GetComponent(unit, "Direction", 0):GetInt2()
 		local lRotation = 0
-		
-		print("RemoveSpin")
-		print("dirX: " .. dirX)
-		print("dirZ: " .. dirZ)
+
 		if dirX == 0 and dirZ == 1 then -- 0°
 			lRotation = 0
 		elseif dirX == 1 and dirZ == 0 then -- 90°
@@ -109,14 +107,14 @@ WeatherTornadoSystem.RemoveSpin = function(self, unit)
 			lRotation = 3 * math.pi / 2
 		end
 		
-		
-		world:CreateComponentAndAddTo("LerpRotation", unit)
+		if not world:EntityHasComponent(unit, "LerpRotation") then
+			world:CreateComponentAndAddTo("LerpRotation", unit)
+		end
 		world:GetComponent(unit, "LerpRotation", "X"):SetFloat(0)
 		world:GetComponent(unit, "LerpRotation", "Y"):SetFloat(lRotation)
 		world:GetComponent(unit, "LerpRotation", "Z"):SetFloat(0)
 		world:GetComponent(unit, "LerpRotation", "Time"):SetFloat(0.5)
 		world:GetComponent(unit, "LerpRotation", "Algorithm"):SetText("NormalLerp")
-		world:GetComponent(unit, "LerpRotation", "KillWhenFinished"):SetBool(false)
 		
 	end
 
@@ -163,7 +161,6 @@ WeatherTornadoSystem.AddTornado = function(self)
 	world:GetComponent(id, "LerpScale", "Z"):SetFloat(1.0)
 	world:GetComponent(id, "LerpScale", "Time"):SetFloat(2.5)
 	world:GetComponent(id, "LerpScale", "Algorithm"):SetText("NormalLerp")
-	world:GetComponent(id, "LerpScale", "KillWhenFinished"):SetBool(false)
 	
 	return id
 end
@@ -210,7 +207,6 @@ WeatherTornadoSystem.MoveTornado = function(self, id)
 				world:GetComponent(id, "LerpPosition", "Z"):SetFloat(tPosZ)
 				world:GetComponent(id, "LerpPosition", "Time"):SetFloat(1.0)
 				world:GetComponent(id, "LerpPosition", "Algorithm"):SetText("NormalLerp")
-				world:GetComponent(id, "LerpPosition", "KillWhenFinished"):SetBool(false)
 				
 				world:GetComponent(id, "MapPosition", 0):SetInt2(tPosX, tPosZ)
 				
@@ -234,18 +230,24 @@ WeatherTornadoSystem.CheckCollision = function(self, id, unit)
 	
 	if posX == playerX and posZ == playerZ then
 		print("COLLISION WITH A PLAYER. YOU SPIN ME RIGHT ROUND, BABY RIGHT ROUND!")
+		
+		if world:EntityHasComponent(unit, "ActionGuard") then
+			return
+		end
+		
 		if not world:EntityHasComponent(unit, "Spin") then
 		
 			world:CreateComponentAndAddTo("Spin", unit)
 			world:GetComponent(unit, "Spin", 0):SetFloat3(0, 40, 0)
 			
-			world:CreateComponentAndAddTo("LerpPosition", unit)
+			if not world:EntityHasComponent(unit, "LerpPosition") then
+				world:CreateComponentAndAddTo("LerpPosition", unit)
+			end
 			world:GetComponent(unit, "LerpPosition", "X"):SetFloat(posX)
 			world:GetComponent(unit, "LerpPosition", "Y"):SetFloat(1.5)
 			world:GetComponent(unit, "LerpPosition", "Z"):SetFloat(posZ)
 			world:GetComponent(unit, "LerpPosition", "Time"):SetFloat(0.5)
 			world:GetComponent(unit, "LerpPosition", "Algorithm"):SetText("NormalLerp")
-			world:GetComponent(unit, "LerpPosition", "KillWhenFinished"):SetBool(false)
 
 			local dirRng = math.random(4)
 			local dirX = 0
@@ -264,11 +266,7 @@ WeatherTornadoSystem.CheckCollision = function(self, id, unit)
 				dirX = 0
 				dirZ = -1
 			end
-			
-			print("Collision")
-			print("dirX: " .. dirX)
-			print("dirZ: " .. dirZ)
-			
+
 			world:GetComponent(unit, "Direction", 0):SetInt2(dirX,dirZ)
 
 		end
@@ -285,6 +283,6 @@ WeatherTornadoSystem.CancelTornado = function(self, id)
 	world:GetComponent(id, "LerpScale", "Z"):SetFloat(0.0)
 	world:GetComponent(id, "LerpScale", "Time"):SetFloat(1.0)
 	world:GetComponent(id, "LerpScale", "Algorithm"):SetText("NormalLerp")
-	world:GetComponent(id, "LerpScale", "KillWhenFinished"):SetBool(true)
+	world:CreateComponentAndAddTo("KillAfterLerp", id)
 	
 end

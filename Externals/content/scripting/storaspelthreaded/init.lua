@@ -1,3 +1,6 @@
+--	MaxNumberOfEntities
+worldCreator:SetMaxNumberOfEntities(10000)
+
 --	Game Components
 package.path = package.path .. ";Components/?.lua"
 require "InitComponents" -- Add more components into InitComponents.lua instead of here!
@@ -36,3 +39,18 @@ require "InitSharedSystems" -- Add more client systems into InitSharedSystems.lu
 --	Misc
 package.path = package.path .. ";Misc/?.lua"
 require "InitMisc"
+
+-- LoadingScreen
+if Server then
+	LoadingScreen.SetAccessLevel(1)
+elseif Client then
+	LoadingScreen.SetAccessLevel(2)	
+	
+	Net.Receive("RemoveLoadingScreen", function(id, ip, port)
+		local id = world:CreateNewEntity()
+		world:CreateComponentAndAddTo("LoadingScreenDelay", id)
+		world:GetComponent(id, "LoadingScreenDelay", "Delay"):SetInt(5)
+		world:GetComponent(id, "LoadingScreenDelay", "AccessLevel"):SetInt(2)
+	end)
+	
+end

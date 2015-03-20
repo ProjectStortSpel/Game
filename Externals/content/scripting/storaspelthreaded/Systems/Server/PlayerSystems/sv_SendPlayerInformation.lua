@@ -6,7 +6,6 @@ SendPlayerInformation.Initialize = function(self)
 	--	Toggle EntitiesAdded
 	self:UsingEntitiesAdded()
 	
-	self:AddComponentTypeToFilter("Unit", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("Player", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf)
 end
@@ -21,6 +20,11 @@ SendPlayerInformation.EntitiesAdded = function(self, dt, entities)
 			for i = 1, #allPlayers do
 				self:SendGameStartedInformation(allPlayers[i])
 			end
+			
+			local audioId = Net.StartPack("Client.PlaySound")
+			Net.WriteString(audioId, "IngameTheme")
+			Net.WriteBool(audioId, false)
+			Net.Broadcast(audioId)
 		end
 		
 		
@@ -31,12 +35,12 @@ end
 SendPlayerInformation.SendGameStartedInformation = function(self, playerId)
 
 	local	unitEntityId	=	world:GetComponent(playerId, "UnitEntityId", "Id"):GetInt()
-	
 	--	Get connection information
 	local	IP		= 	world:GetComponent(playerId, "NetConnection", "IpAddress"):GetText()
 	local	PORT	= 	world:GetComponent(playerId, "NetConnection", "Port"):GetInt()
 	
 	local	id	=	Net.StartPack("Client.GetPlayerEntityId")
-					Net.WriteInt(id, Net.ToClientID(unitEntityId))
+					Net.WriteInt(id, unitEntityId)
 					Net.Send(id, IP, PORT)
+	
 end

@@ -5,7 +5,9 @@ using namespace glm;
 
 GraphicsHigh::GraphicsHigh()
 {
-	debugModelInfo = false;
+	SDL_Log("Starting graphics high");
+	debugModelInfo = 0;
+	hideInderface = false;
 
 	mark = 0;
 	timer = 0;
@@ -23,7 +25,9 @@ GraphicsHigh::GraphicsHigh()
 
 GraphicsHigh::GraphicsHigh(Camera _camera, int x, int y) : GraphicDevice(_camera, x, y)
 {
-	debugModelInfo = false;
+	SDL_Log("Starting graphics high");
+	debugModelInfo = 0;
+	hideInderface = false;
 	m_useAnimations = true;
 	m_renderSimpleText = true;
 	m_modelIDcounter = 0;
@@ -79,9 +83,6 @@ bool GraphicsHigh::Init()
 	CreateShadowMap();
 	if (!InitLightBuffers()) { ERRORMSG("INIT LIGHTBUFFER FAILED\n"); return false; }
 	glGenBuffers(1, &m_animationBuffer);
-
-
-	CreateParticleSystems();
 	
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
@@ -159,6 +160,12 @@ bool GraphicsHigh::InitShaders()
 	m_shadowShaderDeferred.AddShader("content/shaders/shadowShaderDeferredVS.glsl", GL_VERTEX_SHADER);
 	m_shadowShaderDeferred.AddShader("content/shaders/shadowShaderDeferredFS.glsl", GL_FRAGMENT_SHADER);
 	m_shadowShaderDeferred.FinalizeShaderProgram();
+
+	// ShadowShader animated deferred geometry
+	m_shadowShaderAnim.InitShaderProgram();
+	m_shadowShaderAnim.AddShader("content/shaders/shadowShaderAnimVS.glsl", GL_VERTEX_SHADER);
+	m_shadowShaderAnim.AddShader("content/shaders/shadowShaderAnimFS.glsl", GL_FRAGMENT_SHADER);
+	m_shadowShaderAnim.FinalizeShaderProgram();
 
 	return true;
 }
@@ -249,14 +256,12 @@ bool GraphicsHigh::InitForward()
 }
 bool GraphicsHigh::InitRandomVector()
 {
-	int texSizeX, texSizeY;
 	m_randomVectors = GraphicDevice::AddTexture("content/textures/vectormap.png", GL_TEXTURE21);
 
 	return true;
 }
 bool GraphicsHigh::InitTextRenderer()
 {
-	int texSizeX, texSizeY;
 	GLuint m_textImage = GraphicDevice::AddTexture("content/textures/SimpleText.png", GL_TEXTURE20);
 	return m_textRenderer.Init(m_textImage, m_clientWidth, m_clientHeight);
 }
@@ -304,9 +309,8 @@ void GraphicsHigh::Update(float _dt)
 	}
 	m_glTimerValues.clear();
 
-	if (debugModelInfo)
-		PrintModelInfo();
-
+	if (debugModelInfo > 0)
+		PrintModelInfo(debugModelInfo);
 
 	BufferModels();
 	BufferLightsToGPU();
@@ -336,36 +340,39 @@ void GraphicsHigh::WriteShadowMapDepth()
 	glEnable(GL_POLYGON_OFFSET_FILL);
 	glPolygonOffset(4.5, 18000.0);
 
-	glActiveTexture(GL_TEXTURE10);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	//glActiveTexture(GL_TEXTURE10);
+	//glBindTexture(GL_TEXTURE_2D, 0);
 
 	mat4 shadowProjection = *m_shadowMap->GetProjectionMatrix();
 	//----Render deferred geometry-----------
 	for (int i = 0; i < m_modelsDeferred.size(); i++)
 	{
-		std::vector<mat4> MVPVector(m_modelsDeferred[i].instances.size());
-		std::vector<mat3> normalMatVector(m_modelsDeferred[i].instances.size());
-
-		int nrOfInstances = 0;
-
-		for (int j = 0; j < m_modelsDeferred[i].instances.size(); j++)
+		if (m_modelsDeferred[i].castShadow)
 		{
-			if (m_modelsDeferred[i].instances[j].active) // IS MODEL ACTIVE?
+			std::vector<mat4> MVPVector(m_modelsDeferred[i].instances.size());
+			std::vector<mat3> normalMatVector(m_modelsDeferred[i].instances.size());
+
+			int nrOfInstances = 0;
+
+			for (int j = 0; j < m_modelsDeferred[i].instances.size(); j++)
 			{
-				mat4 modelMatrix;
-				if (m_modelsDeferred[i].instances[j].modelMatrix == NULL)
-					modelMatrix = glm::translate(glm::vec3(1));
-				else
-					modelMatrix = *m_modelsDeferred[i].instances[j].modelMatrix;
+				if (m_modelsDeferred[i].instances[j].active) // IS MODEL ACTIVE?
+				{
+					mat4 modelMatrix;
+					if (m_modelsDeferred[i].instances[j].modelMatrix == NULL)
+						modelMatrix = glm::translate(glm::vec3(1));
+					else
+						modelMatrix = *m_modelsDeferred[i].instances[j].modelMatrix;
 
-				mat4 mvp = shadowProjection * (*m_shadowMap->GetViewMatrix()) * modelMatrix;
-				MVPVector[nrOfInstances] = mvp;
+					mat4 mvp = shadowProjection * (*m_shadowMap->GetViewMatrix()) * modelMatrix;
+					MVPVector[nrOfInstances] = mvp;
 
-				nrOfInstances++;
+					nrOfInstances++;
+				}
 			}
-		}
 
-		m_modelsDeferred[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector, 0);
+			m_modelsDeferred[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector, 0);
+		}
 	}
 
 	//------Forward------------------------------------
@@ -373,36 +380,39 @@ void GraphicsHigh::WriteShadowMapDepth()
 	//Forward models
 	for (int i = 0; i < m_modelsForward.size(); i++)
 	{
-		std::vector<mat4> MVPVector(m_modelsForward[i].instances.size());
-		std::vector<mat3> normalMatVector(m_modelsForward[i].instances.size());
-
-		int nrOfInstances = 0;
-
-		for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
+		if (m_modelsForward[i].castShadow)
 		{
-			if (m_modelsForward[i].instances[j].active) // IS MODEL ACTIVE?
+			std::vector<mat4> MVPVector(m_modelsForward[i].instances.size());
+			std::vector<mat3> normalMatVector(m_modelsForward[i].instances.size());
+
+			int nrOfInstances = 0;
+
+			for (int j = 0; j < m_modelsForward[i].instances.size(); j++)
 			{
-				mat4 modelMatrix;
-				if (m_modelsForward[i].instances[j].modelMatrix == NULL)
-					modelMatrix = glm::translate(glm::vec3(1));
-				else
-					modelMatrix = *m_modelsForward[i].instances[j].modelMatrix;
+				if (m_modelsForward[i].instances[j].active) // IS MODEL ACTIVE?
+				{
+					mat4 modelMatrix;
+					if (m_modelsForward[i].instances[j].modelMatrix == NULL)
+						modelMatrix = glm::translate(glm::vec3(1));
+					else
+						modelMatrix = *m_modelsForward[i].instances[j].modelMatrix;
 
-				mat4 mvp = shadowProjection * (*m_shadowMap->GetViewMatrix()) * modelMatrix;
-				MVPVector[nrOfInstances] = mvp;
+					mat4 mvp = shadowProjection * (*m_shadowMap->GetViewMatrix()) * modelMatrix;
+					MVPVector[nrOfInstances] = mvp;
 
-				nrOfInstances++;
+					nrOfInstances++;
+				}
 			}
-		}
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
 
-		m_modelsForward[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector, 0);
+			m_modelsForward[i].bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector, 0);
+		}
 	}
 	//------------------------------------------------
 
 	//----Animated
-	m_animationShader.UseProgram();
+	m_shadowShaderAnim.UseProgram();
 	//----DRAW MODELS
 	for (int i = 0; i < m_modelsAnimated.size(); i++)
 	{
@@ -419,7 +429,7 @@ void GraphicsHigh::WriteShadowMapDepth()
 		delete[] anim_data;
 
 		// DRAW MODEL
-		m_modelsAnimated[i].Draw((*m_shadowMap->GetViewMatrix()), shadowProjection, &m_animationShader);
+		m_modelsAnimated[i].DrawGeometry((*m_shadowMap->GetViewMatrix()), shadowProjection, &m_shadowShaderAnim);
 	}
 
 
@@ -434,7 +444,7 @@ void GraphicsHigh::Render()
 	// Get Camera matrices
 	mat4 projectionMatrix = *m_camera->GetProjMatrix();
 	mat4 viewMatrix = *m_camera->GetViewMatrix();
-
+	
 	// --
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
@@ -446,7 +456,7 @@ void GraphicsHigh::Render()
 	glViewport(0, 0, m_clientWidth, m_clientHeight);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
 	//----Uniforms
 	m_deferredShader1.UseProgram();
 	m_deferredShader1.SetUniVariable("TexFlag", glint, &m_debugTexFlag);
@@ -515,15 +525,20 @@ void GraphicsHigh::Render()
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_forwardFBO);
 
 	glEnable(GL_DEPTH_TEST);
-
+	
 	// DRAW SKYBOX
 	glDisable(GL_CULL_FACE);
+	glDepthMask(GL_FALSE);
 	m_skyBoxShader.UseProgram();
-	m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera);
-	glEnable(GL_CULL_FACE);
-	// -----------
+	m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera, m_dt);
+
 	glEnable(GL_BLEND);
 
+	m_skyboxClouds->Draw(m_skyBoxShader.GetShaderProgram(), m_camera, m_dt);
+	glEnable(GL_CULL_FACE);
+	glDepthMask(GL_TRUE);
+	// -----------
+	
 	//-------Render water-------------
 	m_riverShader.UseProgram();
 	m_riverShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
@@ -554,6 +569,8 @@ void GraphicsHigh::Render()
 		m_modelsWaterCorners[i].Draw(viewMatrix, mat4(1));
 
 
+	
+
 	//--------FORWARD RENDERING
 
 	//----Uniforms
@@ -568,8 +585,6 @@ void GraphicsHigh::Render()
 	for (int i = 0; i < m_modelsForward.size(); i++)
 		m_modelsForward[i].Draw(viewMatrix, mat4(1));
 
-
-
 	//--------PARTICLES---------
 	glEnable(GL_POINT_SPRITE);
 	glDepthMask(GL_FALSE);
@@ -582,7 +597,7 @@ void GraphicsHigh::Render()
 	{
 		Shader* thisShader = it->second->GetShaderPtr();
 		thisShader->UseProgram();
-		
+
 		thisShader->SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 
 		glEnable(GL_TEXTURE_2D);
@@ -615,14 +630,16 @@ void GraphicsHigh::Render()
 		m_modelsViewspace[i].Draw(mat4(1), mat4(1));
 
 	//--------INTERFACE RENDERING
-	//----Uniforms
-	m_interfaceShader.UseProgram();
-	m_interfaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
-	//----DRAW MODELS
-	SortModelsBasedOnDepth(&m_modelsInterface);
-	for (int i = 0; i < m_modelsInterface.size(); i++)
-		m_modelsInterface[i].Draw(mat4(1), mat4(1));
-
+	if (!hideInderface)
+	{
+		//----Uniforms
+		m_interfaceShader.UseProgram();
+		m_interfaceShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
+		//----DRAW MODELS
+		SortModelsBasedOnDepth(&m_modelsInterface);
+		for (int i = 0; i < m_modelsInterface.size(); i++)
+			m_modelsInterface[i].Draw(mat4(1), mat4(1));
+	}
 	glDisable(GL_BLEND);
 	glDisable(GL_TEXTURE_2D);
 
@@ -795,6 +812,16 @@ void GraphicsHigh::Clear()
 	m_modelsWater.clear();
 	m_modelsWaterCorners.clear();
 
+	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); ++it)
+		delete(it->second);
+	m_meshs.clear();
+
+	//Don't delete textures on High
+
+	for (int i = 0; i < m_surfaces.size(); i++)
+		delete(m_surfaces[i].second);
+	m_surfaces.clear();
+
 	float **tmpPtr = new float*[1];
 	BufferPointlights(0, tmpPtr);
 	delete [] tmpPtr;
@@ -808,7 +835,7 @@ void GraphicsHigh::Clear()
 		//delete m_pointerToPointlights;
 }
 
-void GraphicsHigh::PrintModelInfo()
+void GraphicsHigh::PrintModelInfo(int setting)
 {
 	int xoffset;
 
@@ -818,7 +845,10 @@ void GraphicsHigh::PrintModelInfo()
 	for (int i = 0; i < m_modelsAnimated.size(); i++)
 	{
 		m_textRenderer.RenderSimpleText(std::to_string(m_modelsAnimated[i].animations.size()), xoffset, i + 2);
-		m_textRenderer.RenderSimpleText(m_modelsAnimated[i].name, xoffset + 4, i + 2);
+		if (setting == 1)
+			m_textRenderer.RenderSimpleText(m_modelsAnimated[i].name, xoffset + 4, i + 2);
+		else
+			m_textRenderer.RenderSimpleText(std::to_string(m_modelsAnimated[i].bufferPtr->getCount()), xoffset + 4, i + 2);
 	}
 
 	xoffset = 32;
@@ -827,7 +857,10 @@ void GraphicsHigh::PrintModelInfo()
 	for (int i = 0; i < m_modelsDeferred.size(); i++)
 	{
 		m_textRenderer.RenderSimpleText(std::to_string(m_modelsDeferred[i].instances.size()), xoffset, i + 2);
-		m_textRenderer.RenderSimpleText(m_modelsDeferred[i].name, xoffset+4, i + 2);
+		if (setting == 1)
+			m_textRenderer.RenderSimpleText(m_modelsDeferred[i].name, xoffset+4, i + 2);
+		else
+			m_textRenderer.RenderSimpleText(std::to_string(m_modelsDeferred[i].bufferPtr->getCount()), xoffset + 4, i + 2);
 	}
 
 	xoffset = 62;
@@ -836,7 +869,10 @@ void GraphicsHigh::PrintModelInfo()
 	for (int i = 0; i < m_modelsForward.size(); i++)
 	{
 		m_textRenderer.RenderSimpleText(std::to_string(m_modelsForward[i].instances.size()), xoffset, i + 2);
-		m_textRenderer.RenderSimpleText(m_modelsForward[i].name, xoffset+4, i + 2);
+		if (setting == 1)
+			m_textRenderer.RenderSimpleText(m_modelsForward[i].name, xoffset+4, i + 2);
+		else
+			m_textRenderer.RenderSimpleText(std::to_string(m_modelsForward[i].bufferPtr->getCount()), xoffset + 4, i + 2);
 	}
 
 	xoffset = 92;
@@ -845,7 +881,10 @@ void GraphicsHigh::PrintModelInfo()
 	for (int i = 0; i < m_modelsViewspace.size(); i++)
 	{
 		m_textRenderer.RenderSimpleText(std::to_string(m_modelsViewspace[i].instances.size()), xoffset, i + 2);
-		m_textRenderer.RenderSimpleText(m_modelsViewspace[i].name, xoffset+4, i + 2);
+		if (setting == 1)
+			m_textRenderer.RenderSimpleText(m_modelsViewspace[i].name, xoffset+4, i + 2);
+		else
+			m_textRenderer.RenderSimpleText(std::to_string(m_modelsViewspace[i].bufferPtr->getCount()), xoffset + 4, i + 2);
 	}
 
 	xoffset = 122;
@@ -854,6 +893,9 @@ void GraphicsHigh::PrintModelInfo()
 	for (int i = 0; i < m_modelsInterface.size(); i++)
 	{
 		m_textRenderer.RenderSimpleText(std::to_string(m_modelsInterface[i].instances.size()), xoffset, i + 2);
-		m_textRenderer.RenderSimpleText(m_modelsInterface[i].name, xoffset+4, i + 2);
+		if (setting == 1)
+			m_textRenderer.RenderSimpleText(m_modelsInterface[i].name, xoffset+4, i + 2);
+		else
+			m_textRenderer.RenderSimpleText(std::to_string(m_modelsInterface[i].bufferPtr->getCount()), xoffset + 4, i + 2);
 	}
 }

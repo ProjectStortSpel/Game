@@ -105,11 +105,21 @@ UnitSystem.EntitiesAdded = function(self, dt, entities)
 			if world:EntityHasComponent(entity, "NetConnection") then
 				local ip = world:GetComponent(entity, "NetConnection", "IpAddress"):GetText()
 				local port = world:GetComponent(entity, "NetConnection", "Port"):GetInt()
-				local id = Net.StartPack("Client.SendPlayerUnitColor")
-				Net.WriteFloat(id, r)
-				Net.WriteFloat(id, g)
-				Net.WriteFloat(id, b)
+				local id = Net.StartPack("Client.SendMyUnitID")
+				Net.WriteInt(id, newEntityId)
 				Net.Send(id, ip, port)
+				
+				local audioId = Net.StartPack("Client.PlaySound")
+				Net.WriteString(audioId, "Bird")
+				Net.WriteBool(audioId, false)
+				Net.Send(id, ip, port)
+			else
+				-- CREATE TOTEM HAT ON AI
+				local randomHat = math.random(0,100)
+				local hatRequest = world:CreateNewEntity()
+				world:CreateComponentAndAddTo("ThisHat", hatRequest)
+				world:GetComponent(hatRequest, "ThisHat", "hatId"):SetInt(randomHat)
+				world:GetComponent(hatRequest, "ThisHat", "unitId"):SetInt(newEntityId)
 			end
 						
 		elseif world:EntityHasComponent(entity, "RemoveUnit") then
@@ -117,7 +127,11 @@ UnitSystem.EntitiesAdded = function(self, dt, entities)
 			self.FreeSlots[#self.FreeSlots + 1] = plyNum
 			--table.insert(self.FreeSlots, plyNum)
 			local unitId = world:GetComponent(entity, "RemoveUnit", "UnitEntityId"):GetInt()
-			world:KillEntity(unitId)
+			if world:EntityHasComponent(unitId, "LerpPosition") or world:EntityHasComponent(unitId, "LerpingPosition") then
+				world:CreateComponentAndAddTo("KillAfterLerp", unitId)
+			else
+				world:KillEntity(unitId)
+			end
 			world:KillEntity(entity)
 		end
 		

@@ -9,6 +9,12 @@ NewComponent.TableType = TableType.Map
 NewComponent.SyncNetwork = true
 worldCreator:AddComponentType(NewComponent)
 
+--	MyUnit Component
+NewComponent = ComponentType()
+NewComponent.Name = "MyUnit"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
+
 --	PlayerEntityId Component
 NewComponent = ComponentType()
 NewComponent.Name = "PlayerEntityId"
@@ -97,7 +103,7 @@ worldCreator:AddComponentType(NewComponent)
 NewComponent = ComponentType()
 NewComponent.Name = "UnitGhost"
 NewComponent.TableType = TableType.Map
-NewComponent:AddVariable("Id", ByteSize.Reference)
+NewComponent:AddVariable("Id", ByteSize.Int)
 worldCreator:AddComponentType(NewComponent)
 
 -- UnitVisualizer Component

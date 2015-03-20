@@ -163,25 +163,45 @@ end
 
 HostMenuSystem.Activate = function(self, entity)
 	
-	local textId = world:GetComponent(entity, "BoundToEntity", "EntityId"):GetInt() -- Get textId
-	
+	local textId 		= world:GetComponent(entity, "BoundToEntity", "EntityId"):GetInt() -- Get textId
 	local text 			= world:GetComponent(textId, "TextTexture", "Text"):GetText()
 	local textName 		= world:GetComponent(textId, "TextTexture", "Name"):GetText()
 	local boundBackdrop = world:GetComponent(textId, "BoundToEntity", "EntityId"):GetInt()
 	local X, Y, Z 		= world:GetComponent(textId, "Position", 0):GetFloat3()
-
 	Input.StartTextInput()
 	Input.SetTextInput(text)
-	print("Activate")
-	
+
 	--print("Activate textInput on text with backdrop#" .. boundBackdrop .. " bound to it")
 	
-	world:KillEntity(textId) -- Kill the old text
 	self.ActiveTextId = self:CreateText("left", "text", X, Y, Z, 2.5, 0.065, boundBackdrop)
 	self:AddTextToTexture(textName, text .. "_", 0,0,0,0, self.ActiveTextId)
 	world:SetComponent(boundBackdrop, "BoundToEntity", "EntityId", self.ActiveTextId)
 	
 	
+	
+	if world:EntityHasComponent(textId, "StringSetting") then
+		local sName  = world:GetComponent(textId, "StringSetting", "SettingsName"):GetText()
+		world:CreateComponentAndAddTo("StringSetting", self.ActiveTextId)
+		world:GetComponent(self.ActiveTextId, "StringSetting", "SettingsName"):SetText(sName)
+		world:GetComponent(self.ActiveTextId, "StringSetting", "Value"):SetText(text)
+	elseif world:EntityHasComponent(textId, "IntSetting") then		
+		local sName  = world:GetComponent(textId, "IntSetting", "SettingsName"):GetText()
+		world:CreateComponentAndAddTo("IntSetting", self.ActiveTextId)
+		world:GetComponent(self.ActiveTextId, "IntSetting", "SettingsName"):SetText(sName)
+		world:GetComponent(self.ActiveTextId, "IntSetting", "Value"):SetInt(text)
+		
+	elseif world:EntityHasComponent(textId, "BoolSetting") then
+		local sName  = world:GetComponent(textId, "BoolSetting", "SettingsName"):GetText()
+		world:CreateComponentAndAddTo("BoolSetting", self.ActiveTextId)
+		world:GetComponent(self.ActiveTextId, "BoolSetting", "SettingsName"):SetText(sName)
+		world:GetComponent(self.ActiveTextId, "BoolSetting", "Value"):SetInt(text)
+	else
+		print("MISSING SETTINGS")
+	end
+	
+	
+	
+	world:KillEntity(textId) -- Kill the old text	
 	
 	self.IsTextBoxActive = true
 	
@@ -191,24 +211,50 @@ HostMenuSystem.Deactivate = function(self, entity)
 
 	Input.StopTextInput()
 
-	if self.ActiveTextId ~= -1 and entity ~= nil then
-		
+	if self.ActiveTextId ~= -1 then
 		local textId = self.ActiveTextId
-	
+
 		local text 			= world:GetComponent(textId, "TextTexture", "Text"):GetText()
 		local textName 		= world:GetComponent(textId, "TextTexture", "Name"):GetText()
 		local boundBackdrop = world:GetComponent(textId, "BoundToEntity", "EntityId"):GetInt()
 		local X, Y, Z 		= world:GetComponent(textId, "Position", 0):GetFloat3()
 		text = string.sub(text, 1, string.len(text) - 1)
-
-		world:KillEntity(textId) -- Kill the old text
 		self.ActiveTextId = self:CreateText("left", "text", X, Y, Z, 2.5, 0.065, boundBackdrop)
 		self:AddTextToTexture(textName, text, 0,0,0,0, self.ActiveTextId)
 		world:SetComponent(boundBackdrop, "BoundToEntity", "EntityId", self.ActiveTextId)
-	
+
+		if entity ~= nil then
+			local textId2 = world:GetComponent(entity, "BoundToEntity", "EntityId"):GetInt() -- Get textId
+			if textId == textId2 then
+				world:SetComponent(entity, "BoundToEntity", "EntityId", self.ActiveTextId)
+			end
+		end
+		
+		if world:EntityHasComponent(textId, "StringSetting") then
+			print("StringSetting")
+			local sName  = world:GetComponent(textId, "StringSetting", "SettingsName"):GetText()
+			world:CreateComponentAndAddTo("StringSetting", self.ActiveTextId)
+			world:GetComponent(self.ActiveTextId, "StringSetting", "SettingsName"):SetText(sName)
+			world:GetComponent(self.ActiveTextId, "StringSetting", "Value"):SetText(text)
+		elseif world:EntityHasComponent(textId, "IntSetting") then	
+			print("IntSetting")
+			local sName  = world:GetComponent(textId, "IntSetting", "SettingsName"):GetText()
+			world:CreateComponentAndAddTo("IntSetting", self.ActiveTextId)
+			world:GetComponent(self.ActiveTextId, "IntSetting", "SettingsName"):SetText(sName)
+			world:GetComponent(self.ActiveTextId, "IntSetting", "Value"):SetInt(text)
+		elseif world:EntityHasComponent(textId, "BoolSetting") then		
+			print("BoolSetting")
+			local sName  = world:GetComponent(textId, "BoolSetting", "SettingsName"):GetText()
+			world:CreateComponentAndAddTo("BoolSetting", self.ActiveTextId)
+			world:GetComponent(self.ActiveTextId, "BoolSetting", "SettingsName"):SetText(sName)
+			world:GetComponent(self.ActiveTextId, "BoolSetting", "Value"):SetInt(text)
+		else
+			print("MISSING SETTINGS")
+		end
+		
+		world:KillEntity(textId) -- Kill the old text
 	end
-	
-	
+		
 	self.IsTextBoxActive = false
 	self.ActiveTextId = -1
 	
@@ -216,7 +262,7 @@ end
 
 HostMenuSystem.ApplySettings = function(self, entity)
 
-local entities = self:GetEntities()
+	local entities = self:GetEntities(self.Name.."Element")
 	local e = world:CreateNewEntity()
 	world:CreateComponentAndAddTo("HostSettings", e)
 	
@@ -225,16 +271,19 @@ local entities = self:GetEntities()
 		if world:EntityHasComponent(entities[i], "BoolSetting") then
 			local name = world:GetComponent(entities[i], "BoolSetting", "SettingsName"):GetText()
 			local value = world:GetComponent(entities[i], "BoolSetting", "Value"):GetInt()
+			print("BoolSetting: " .. value)
 			world:GetComponent(e, "HostSettings", name):SetInt(value)
 			
 		elseif world:EntityHasComponent(entities[i], "IntSetting") then
 			local name = world:GetComponent(entities[i], "IntSetting", "SettingsName"):GetText()
 			local value = world:GetComponent(entities[i], "IntSetting", "Value"):GetInt()
+			print("IntSetting: " .. value)
 			world:GetComponent(e, "HostSettings", name):SetInt(value)
 			
 		elseif world:EntityHasComponent(entities[i], "StringSetting") then
 			local name = world:GetComponent(entities[i], "StringSetting", "SettingsName"):GetText()
 			local value = world:GetComponent(entities[i], "StringSetting", "Value"):GetText()
+			print("StringSetting: " .. value)
 			world:GetComponent(e, "HostSettings", name):SetText(value)
 			
 		end
@@ -352,7 +401,7 @@ HostMenuSystem.SpawnMenu = function(self)
 	world:GetComponent(text, "IntSetting", "Value"):SetInt(6112)
 	self:AddEntityCommandToButton("ActiveTextInput", backdrop, text)
 	
-	-- GameMode TEXT
+	-- Map TEXT
 	backdrop = self:CreateElement("whiteshade", "quad", 0.52, 0.160, -2, 0.73, 0.09)
 	text = self:CreateText("left", "text", 0.16, 0.20, -1.99, 2.5, 0.065, backdrop)	
 	self:AddTextToTexture("B"..5, "map", 0, 0, 0, 0, text)

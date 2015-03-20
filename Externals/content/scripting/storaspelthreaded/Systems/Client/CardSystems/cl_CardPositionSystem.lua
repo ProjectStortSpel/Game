@@ -29,17 +29,12 @@ CardPositionSystem.EntitiesAdded = function(self, dt, newEntities)
 		local py = self.UpOffset
 		local pz = -4.0
 		
-		if px > 2.2 or px < -2.2 then
-			print("2 : 1 - Very very wrong! px: ", px, i, entityCount)
-		end
-		
 		if not world:EntityHasComponent(entity, "LerpPosition") then
 			world:CreateComponentAndAddTo("LerpPosition", entity)
 		end
 		
 		world:GetComponent(entity, "LerpPosition", "Time"):SetFloat4(0.1, px, py, pz)
 		world:GetComponent(entity, "LerpPosition", "Algorithm"):SetText("SmootherLerp")
-		world:GetComponent(entity, "LerpPosition", "KillWhenFinished"):SetBool(false)
 	end
 end
 
@@ -59,6 +54,5 @@ CardPositionSystem.EntitiesRemoved = function(self, dt, newEntities)
 		end
 		world:GetComponent(entity, "LerpPosition", "Time"):SetFloat4(0.1, px, py, pz)
 		world:GetComponent(entity, "LerpPosition", "Algorithm"):SetText("SmootherLerp")
-		world:GetComponent(entity, "LerpPosition", "KillWhenFinished"):SetBool(false)
 	end
 end

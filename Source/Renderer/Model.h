@@ -31,7 +31,7 @@ namespace Renderer
 		bool operator== (const Model &m) { return Compare(m); }
 		bool operator!= (const Model &m) { return !Compare(m); }
 
-		Model(Buffer* buffer, GLuint tex, GLuint nor, GLuint spe);
+		Model(Buffer* buffer, GLuint tex, GLuint nor, GLuint spe, bool shadow);
 		Model();
 		~Model();
 
@@ -41,6 +41,7 @@ namespace Renderer
 		GLuint texID;
 		GLuint norID;
 		GLuint speID;
+		bool castShadow;
 
 		std::vector<Instance> instances;
 

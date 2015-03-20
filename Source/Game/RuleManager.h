@@ -8,15 +8,15 @@
 #include <stdlib.h>
 #include <sstream>
 
-typedef  std::map<int, rulebook> rulebase;
-typedef	std::map<int, std::string> filelocation;
+typedef  std::map<int, rulebook> DSLibrary;
+typedef	std::map<int, std::string> Filelocations;
 
 class RuleManager
 {
 private:
 	int				count;
-	rulebase		m_ruleBase;
-	filelocation	m_fileLocations;
+	DSLibrary		m_library;
+	Filelocations	m_fileLocations;
 public:
 
 	RuleManager( );
@@ -43,6 +43,7 @@ public:
 		Returns true if it was able to store the data.
 	*/
 	bool		StoreRulebook( int _index );
+
 };
 
 #endif //RULEMANAGER_H

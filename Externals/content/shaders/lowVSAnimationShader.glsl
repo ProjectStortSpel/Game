@@ -16,7 +16,7 @@ out vec3 Normal;
 out vec3 Tan;
 out vec3 BiTan;
 out vec2 TexCoord;
-out vec3 ViewPos;
+out vec4 ViewPos;
 
 const int nrOfJoints = 36;
 uniform mat4 anim[nrOfJoints];
@@ -30,11 +30,11 @@ void main()
 	skin += anim[int(VertexJointIndex.y)] * weights.y;
 	skin += anim[int(VertexJointIndex.z)] * weights.z;
 	skin += anim[int(VertexJointIndex.w)] * weights.w;
-    
-	//skin += mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, weights.x, 0, 1);
 
-	ViewPos = (V * M * skin * vec4(VertexPosition, 1.0)).xyz;
-	gl_Position = P * V * M * skin * vec4(VertexPosition, 1.0);
+	//skin += mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, weights.x, 0, 1);
+    
+	ViewPos = V * M * skin * vec4(VertexPosition, 1.0);
+	gl_Position = P * ViewPos;
 
 	Normal = normalize( NormalMatrix * (skin * vec4(VertexNormal, 0.0)).xyz );
 	Tan = normalize( NormalMatrix * (skin * vec4(VertexTangent, 0.0)).xyz );
