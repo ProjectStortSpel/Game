@@ -44,7 +44,7 @@ namespace Renderer
 		ShadowMap *m_shadowMap;
 
 		// Shaders
-		Shader m_shadowShader;
+		Shader m_shadowShader, m_animShadowShader;
 
 		void CreateShadowMap();
 		void WriteShadowMapDepth();

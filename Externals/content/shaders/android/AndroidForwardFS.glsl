@@ -10,7 +10,6 @@ varying vec3 BiTan;
 varying vec2 TexCoord;
 varying vec4 ViewPos;
 
-
 //Input textures
 uniform sampler2D ShadowDepthTex;
 uniform sampler2D diffuseTex;

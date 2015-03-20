@@ -1105,7 +1105,10 @@ void GameCreator::ConsoleReload(std::string _command, std::vector<Console::Argum
 		delete [](data);
 
 		m_serverWorld->SetComponent(id, "HostSettings", "Port", &port);
+		//printf("\n\nReload, m_addAIs = %i\n\n\n", m_addAIs);
+		m_serverWorld->SetComponent(id, "HostSettings", "AddAIs", &m_addAIs);
 		m_serverWorld->SetComponent(id, "HostSettings", "FillAI", &m_fillAI);
+		m_serverWorld->SetComponent(id, "HostSettings", "AutoStart", &m_autoStart);
 		m_serverWorld->SetComponent(id, "HostSettings", "AllowSpectators", &m_allowSpectators);
 
     }
@@ -1148,9 +1151,11 @@ void GameCreator::ConsoleHostSettings(std::string _command, std::vector<Console:
 	m_map					= _args->at(2).Text;
 	std::string gamemode	= _args->at(3).Text;
 	unsigned int port		= (unsigned int)_args->at(4).Number;
-	m_fillAI				= _args->at(5).Number;
-	m_allowSpectators		= _args->at(6).Number;
-	int serverType			= _args->at(7).Number;
+	m_addAIs				= (unsigned int)_args->at(5).Number;
+	m_fillAI				= _args->at(6).Number;
+	m_autoStart				= _args->at(7).Number;
+	m_allowSpectators		= _args->at(8).Number;
+	int serverType			= _args->at(9).Number;
 
 	if (NetworkInstance::GetClient()->IsConnected())
 		NetworkInstance::GetClient()->Disconnect();
@@ -1192,7 +1197,9 @@ void GameCreator::ConsoleHostSettings(std::string _command, std::vector<Console:
 	delete [] data;
 
 	m_serverWorld->SetComponent(id, "HostSettings", "Port", &port);
+	m_serverWorld->SetComponent(id, "HostSettings", "AddAIs", &m_addAIs);
 	m_serverWorld->SetComponent(id, "HostSettings", "FillAI", &m_fillAI);
+	m_serverWorld->SetComponent(id, "HostSettings", "AutoStart", &m_autoStart);
 	m_serverWorld->SetComponent(id, "HostSettings", "AllowSpectators", &m_allowSpectators);
 	m_serverWorld->SetComponent(id, "HostSettings", "ServerType", &serverType);
 
