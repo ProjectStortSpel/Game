@@ -168,7 +168,7 @@ FindSpawnpointSystem.EntitiesAdded = function(self, dt, newEntities)
 			
 			if not self:IsEmpty(tempX, tempZ) then
 				
-				local	distanceAround	=	1
+				local	distanceAround			=	5
 				local	tilesDistance			=	{}
 						tilesDistance.__mode 	= 	"k"
 						
