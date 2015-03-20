@@ -131,7 +131,7 @@ void LoadingScreen::SetBackground(std::vector<std::string> _paths, std::string _
 
 void LoadingScreen::SetActive()
 {
-	//SDL_Log("SetActive");
+	SDL_Log("SetActive");
 	if (!m_isActive)
 	{
 		std::vector<std::string> dirs = HomePath::GetHomePaths(HomePath::Type::Server);
@@ -156,7 +156,7 @@ void LoadingScreen::SetActive()
 
 void LoadingScreen::SetInactive(int _level)
 {
-	//SDL_Log("SetInactive");
+	SDL_Log("SetInactive");
 	if (m_isActive && _level >= m_accessLevel)
 	{
 		m_graphicDevice->RemoveModel(m_backgroundModel);

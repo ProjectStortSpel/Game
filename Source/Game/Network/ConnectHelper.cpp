@@ -119,7 +119,7 @@ namespace ConnectHelper
 
 	void NetworkLoadingScreen(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
 	{
-		//SDL_Log("NetworkLoadingScreen");
+		SDL_Log("NetworkLoadingScreen");
 		if (state == NameOrLoadingScreen)
 		{
 			std::string path = HomePath::GetDownloadHomePath();
@@ -171,7 +171,7 @@ namespace ConnectHelper
 
 	void NetworkGameModeFileList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
 	{
-		//SDL_Log("NetworkGameModeFileList");
+		SDL_Log("NetworkGameModeFileList");
 		if (state == GameModeFileList)
 		{
 			bool firstPacket = _ph->ReadByte(_id);
@@ -273,7 +273,7 @@ namespace ConnectHelper
 
 	void NetworkGameModeFile(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
 	{
-		//SDL_Log("NetworkGameModeFile");
+		SDL_Log("NetworkGameModeFile");
 		if (state == GameModeFiles)
 		{
 			std::string filename = _ph->ReadString(_id);
@@ -356,7 +356,7 @@ namespace ConnectHelper
 
 	void NetworkContentFileList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
 	{
-		//SDL_Log("NetworkContentFileList");
+		SDL_Log("NetworkContentFileList");
 		if (state == ContentFileList)
 		{
 
@@ -445,7 +445,7 @@ namespace ConnectHelper
 
 	void NetworkContentFile(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
 	{
-		//SDL_Log("NetworkContentFile");
+		SDL_Log("NetworkContentFile");
 		if (state == ContentFiles)
 		{
 

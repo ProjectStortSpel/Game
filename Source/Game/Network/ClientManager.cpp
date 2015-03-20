@@ -280,7 +280,7 @@ namespace ClientManager
 	}
 	void AcknowledgeName(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
 	{
-		//SDL_Log("AcknowledgeName");
+		SDL_Log("AcknowledgeName");
 		if (clients.find(_nc) != clients.end())
 		{
 			std::stringstream newName;
@@ -373,10 +373,10 @@ namespace ClientManager
 
 	void RequestGameModeFileList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
 	{
-		//SDL_Log("RequestGameModeFileList");
+		SDL_Log("RequestGameModeFileList");
 		//Send filelist
 		std::map<std::string, ResourceManager::Resource>* resources = ResourceManager::GetGamemodeResources();
-
+		
 		unsigned int numFiles = resources->size();
 		bool firstPacket = true;
 		bool newPacket = true;
@@ -427,7 +427,7 @@ namespace ClientManager
 
 	void RequestGameModeFile(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
 	{
-		//SDL_Log("RequestGameModeFile");
+		SDL_Log("RequestGameModeFile");
 		std::map<std::string, ResourceManager::Resource>* resources = ResourceManager::GetGamemodeResources();
 
 		std::string filename = _ph->ReadString(_id);
@@ -489,7 +489,7 @@ namespace ClientManager
 
 	void RequestContentFileList(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
 	{
-		//SDL_Log("RequestContentFileList");
+		SDL_Log("RequestContentFileList");
 		//Send filelist
 		std::map<std::string, ResourceManager::Resource>* resources = ResourceManager::GetContentResources();
 		
@@ -543,7 +543,7 @@ namespace ClientManager
 
 	void RequestContentFile(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
 	{
-		//SDL_Log("RequestContentFile");
+		SDL_Log("RequestContentFile");
 		std::map<std::string, ResourceManager::Resource>* resources = ResourceManager::GetContentResources();
 
 		std::string filename = _ph->ReadString(_id);
@@ -605,7 +605,7 @@ namespace ClientManager
 
 	void GameModeLoaded(Network::PacketHandler* _ph, uint64_t& _id, Network::NetConnection& _nc)
 	{
-		//SDL_Log("GameModeLoaded");
+		SDL_Log("GameModeLoaded");
 		if (clients.find(_nc) != clients.end())
 		{
 			int hest = clients[_nc];

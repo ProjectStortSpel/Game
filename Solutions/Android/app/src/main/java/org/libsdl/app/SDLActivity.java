@@ -1,5 +1,6 @@
 package org.libsdl.app;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -8,6 +9,7 @@ import java.util.List;
 
 import android.app.*;
 import android.content.*;
+import android.content.res.AssetManager;
 import android.view.*;
 import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.EditorInfo;
@@ -19,7 +21,6 @@ import android.util.Log;
 import android.graphics.*;
 import android.media.*;
 import android.hardware.*;
-
 
 /**
  SDL Activity
@@ -43,6 +44,8 @@ public class SDLActivity extends Activity {
 
     // Audio
     protected static AudioTrack mAudioTrack;
+
+    private AssetManager mAssetManager;
 
     // Load the .so
     static {
@@ -75,6 +78,21 @@ public class SDLActivity extends Activity {
         mHasFocus = true;
     }
 
+    private static native void onCreateJNI(AssetManager assetManager);
+
+    public String[] GetSubDirectories(String directoryPath)
+    {
+        try
+        {
+            return mAssetManager.list(directoryPath);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     // Setup
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +117,9 @@ public class SDLActivity extends Activity {
         mLayout.addView(mSurface);
 
         setContentView(mLayout);
+
+        mAssetManager = getAssets();
+        onCreateJNI(mAssetManager);
     }
 
     // Events

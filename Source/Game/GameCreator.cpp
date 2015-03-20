@@ -285,6 +285,8 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 		for (int i = 0; i < paths.size(); ++i)
 		{
 			std::vector<std::string> files = FileSystem::Directory::GetAllFiles(paths[i]);
+			SDL_Log("Path: %s", paths[i].c_str());
+			SDL_Log("File count: %d", files.size());
 
 			for (int j = 0; j < files.size(); ++j)
 			{
