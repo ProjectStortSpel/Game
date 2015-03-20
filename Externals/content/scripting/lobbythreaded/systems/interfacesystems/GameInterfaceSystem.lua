@@ -72,7 +72,7 @@ GameInterfaceSystem.CreateDistantIsland = function(self)
 	local	R,G,B		=	0.9,0.8,0.7
 	local 	newLight 	= 	world:CreateNewEntity()
 	world:CreateComponentAndAddTo("DirectionalLight", newLight)
-    world:GetComponent(newLight, "DirectionalLight", 0):SetDirectionalLight(1.0, -1.0, 0.0, 0.55, 0.65, 0.65, R, G, B)
+    world:GetComponent(newLight, "DirectionalLight", 0):SetDirectionalLight(0.5, -0.6, -0.5, 0.55, 0.65, 0.65, R, G, B)
 	
 	--	Move camera
 	GraphicDevice.GetCamera():MoveToAndLookAt
