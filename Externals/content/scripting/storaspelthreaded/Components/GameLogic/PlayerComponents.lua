@@ -99,3 +99,15 @@ NewComponent = ComponentType()
 NewComponent.Name = "PlayerReachedFinish"
 NewComponent.TableType = TableType.Map
 worldCreator:AddComponentType(NewComponent)
+
+--	PlayerStats
+NewComponent = ComponentType()
+NewComponent.Name = "PlayerStats"
+NewComponent.TableType = TableType.Map
+NewComponent.SyncNetwork 	=	true
+NewComponent:AddVariable("PlayerNumber", ByteSize.Int)
+NewComponent:AddVariable("CardsPlayed", ByteSize.Int)
+NewComponent:AddVariable("Deaths", ByteSize.Int)
+NewComponent:AddVariable("GoalCheckpoint", ByteSize.Int)
+NewComponent:AddVariable("Place", ByteSize.Int)
+worldCreator:AddComponentType(NewComponent)

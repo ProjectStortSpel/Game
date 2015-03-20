@@ -3,7 +3,6 @@
 local	NewComponent		=	ComponentType()
 NewComponent.Name 			= 	"PlayedCard"
 NewComponent.TableType		= 	TableType.Map
-NewComponent.SyncNetwork 	= 	true
 NewComponent:AddVariable("CardAction", 		ByteSize.Text)
 NewComponent:AddVariable("CardPriority", 	ByteSize.Int)
 NewComponent:AddVariable("PlayerNumber", 	ByteSize.Int)
@@ -13,7 +12,6 @@ worldCreator:AddComponentType(NewComponent)
 NewComponent				=	ComponentType()
 NewComponent.Name 			= 	"CheckpointReached"
 NewComponent.TableType		= 	TableType.Map
-NewComponent.SyncNetwork 	= 	true
 NewComponent:AddVariable("CheckpointNumber", 	ByteSize.Int)
 NewComponent:AddVariable("PlayerNumber", 		ByteSize.Int)
 worldCreator:AddComponentType(NewComponent)
@@ -22,7 +20,6 @@ worldCreator:AddComponentType(NewComponent)
 NewComponent				=	ComponentType()
 NewComponent.Name 			= 	"UnitDied"
 NewComponent.TableType		= 	TableType.Map
-NewComponent.SyncNetwork 	=	true
 NewComponent:AddVariable("PlayerNumber", 		ByteSize.Int)
 NewComponent:AddVariable("X", 					ByteSize.Int)
 NewComponent:AddVariable("Z", 					ByteSize.Int)

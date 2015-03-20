@@ -22,7 +22,6 @@ require "cl_GameInterfaceSystem"
 require "cl_PickingTimerSystem"
 require "cl_NotificationSystem"
 require "cl_ScoreboardSystem"
-require "cl_PostMatchScoreboardSystem"
 
 --	Card Systems
 package.path = package.path .. ";Systems/Client/CardSystems/?.lua"
@@ -77,7 +76,6 @@ worldCreator:AddSystemToCurrentGroup(VisualizeSelectedCards)
 worldCreator:AddSystemToCurrentGroup(FadeTreeSystem)
 
 worldCreator:AddSystemToCurrentGroup(WinScreenSystem)
-worldCreator:AddSystemToCurrentGroup(PostMatchScoreboardSystem)
 
 
 
