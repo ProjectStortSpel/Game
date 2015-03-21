@@ -14,12 +14,6 @@
 #include <dirent.h>
 #endif
 
-#ifdef __ANDROID__
-#include <jni.h>
-#include <android/asset_manager.h>
-#include <android/asset_manager_jni.h>
-#endif
-
 #ifdef WIN32
 std::wstring s2ws(const std::string& s)
 {
@@ -38,14 +32,16 @@ std::wstring s2ws(const std::string& s)
 #include <algorithm>
 
 #ifdef __ANDROID__
+#include <jni.h>
+#include <android/asset_manager.h>
+#include <android/asset_manager_jni.h>
 extern "C"
 {
-	AAssetManager* g_assetManager = NULL;
-	JNIEnv* g_env = NULL;
-	JNIEXPORT void JNICALL Java_org_libsdl_app_SDLActivity_onCreateJNI(JNIEnv* env, void* reserved, jobject assetManager)
+	std::string g_assetDirectory;
+	jstring Java_org_libsdl_app_SDLActivity_setAssetDirectory(JNIEnv* env, jobject obj, jstring directoryPath)
 	{
-		g_env = env;
-		g_assetManager = AAssetManager_fromJava(env, assetManager);
+		g_assetDirectory = env->GetStringUTFChars(directoryPath, NULL);
+		SDL_Log("Asset directory: %s", g_assetDirectory.c_str());
 	}
 };
 #endif
@@ -175,13 +171,6 @@ namespace FileSystem
                 }
                 closedir (dir);
             }
-            #ifdef __ANDROID__
-	    if (result.empty())
-	    {
-		    jmethod method = g_env->GetMethodID(env->FindClass("class/path/ListDataClass"), "GetSubDirectories", "(L[class/path/ListDataClass;)V");
-		    int count = g_env->GetArrayLength(method);
-	    }
-	    #endif
             
             return result;
         }
@@ -202,20 +191,6 @@ namespace FileSystem
                 }
                 closedir (dir);
             }
-#ifdef __ANDROID__
-		else
-		{
-			auto assetDir = AAssetManager_openDir(g_assetManager, path.c_str());
-			while (true)
-			{
-				const char* assetDirString = AAssetDir_getNextFileName(assetDir);
-				if (assetDirString == NULL)
-					break;
-				result.push_back(std::string(assetDirString));
-			}
-			AAssetDir_close(assetDir);
-		}
-#endif
             return result;
         }
         

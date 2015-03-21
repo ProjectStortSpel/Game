@@ -1,6 +1,10 @@
 package org.libsdl.app;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -45,8 +49,6 @@ public class SDLActivity extends Activity {
     // Audio
     protected static AudioTrack mAudioTrack;
 
-    private AssetManager mAssetManager;
-
     // Load the .so
     static {
         System.loadLibrary("SDL2");
@@ -78,18 +80,62 @@ public class SDLActivity extends Activity {
         mHasFocus = true;
     }
 
-    private static native void onCreateJNI(AssetManager assetManager);
+    private native void setAssetDirectory(String directory);
+    private void copyAssetDirectory(AssetManager assetManager, String source, String destination) throws IOException {
+        InputStream sourceStream = null;
+        File destinationFile;
 
-    public String[] GetSubDirectories(String directoryPath)
-    {
-        try
-        {
-            return mAssetManager.list(directoryPath);
+        boolean isDirectory = false;
+        try {
+            sourceStream = assetManager.open(source);
         }
-        catch (IOException e)
-        {
+        catch (FileNotFoundException e) {
+            isDirectory = true;
+        }
+
+        destinationFile = new File(destination);
+
+        if (isDirectory) {
+            if (!destinationFile.exists()) {
+                destinationFile.mkdir();
+            }
+
+            String assets[] = assetManager.list(source);
+            for (String asset : assets) {
+                copyAssetDirectory(assetManager, source + "/" + asset, destination + "/" + asset);
+            }
+        }
+        else {
+            int count, bufferSize = 8096;
+            byte[] data = new byte[bufferSize];
+
+            FileOutputStream destinationStream = new FileOutputStream(destinationFile);
+            while ((count = sourceStream.read(data, 0, bufferSize)) != -1) {
+                destinationStream.write(data, 0, count);
+            }
+
+            sourceStream.close();
+            destinationStream.close();
+        }
+    }
+    private void unpack(Context context) {
+        try {
+            String directory = context.getCacheDir().getPath();
+
+            AssetManager assetManager = context.getAssets();
+            String[] assets = assetManager.list("");
+            Log.v("SDL/MARCUS", "Copying assets...");
+            long startTime = System.currentTimeMillis();
+            for (String asset : assets) {
+                copyAssetDirectory(assetManager, asset, directory + "/" + asset);
+            }
+            long endTime = System.currentTimeMillis();
+            Log.v("SDL/MARCUS", "Completed copying assets. Elapsed time: " + ((endTime - startTime) / 1000.0) + " s");
+
+            setAssetDirectory(directory);
+        }
+        catch (IOException e) {
             e.printStackTrace();
-            return null;
         }
     }
 
@@ -118,8 +164,7 @@ public class SDLActivity extends Activity {
 
         setContentView(mLayout);
 
-        mAssetManager = getAssets();
-        onCreateJNI(mAssetManager);
+        unpack(this);
     }
 
     // Events
