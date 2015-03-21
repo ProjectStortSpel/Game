@@ -1,9 +1,8 @@
 
 //Rijndael.cpp
 
-#include <cstring>
-#include <exception>
 #include "Rijndael.h"
+#include <assert.h>
 
 const int CRijndael::sm_alog[256] =
 {
@@ -941,12 +940,19 @@ CRijndael::~CRijndael()
 // blockSize  - The block size in bytes of this Rijndael (16, 24 or 32 bytes).
 void CRijndael::MakeKey(char const* key, char const* chain, int keylength, int blockSize)
 {
-	if (NULL == key)
-		throw runtime_error("Empty key");
-	if (!(16 == keylength || 24 == keylength || 32 == keylength))
-		throw runtime_error("Incorrect key length");
-	if (!(16 == blockSize || 24 == blockSize || 32 == blockSize))
-		throw runtime_error("Incorrect block length");
+	assert(key);
+	assert((16 == keylength || 24 == keylength || 32 == keylength));
+	assert((16 == blockSize || 24 == blockSize || 32 == blockSize));
+
+#ifndef _DEBUG
+	if (!key)
+		return;
+	if (16 != keylength && 24 != keylength && 32 != keylength)
+		return;
+	if (16 != blockSize && 24 != blockSize && 32 != blockSize)
+		return;
+#endif
+
 	m_keylength = keylength;
 	m_blockSize = blockSize;
 	//Initialize the chain
@@ -1048,8 +1054,13 @@ void CRijndael::MakeKey(char const* key, char const* chain, int keylength, int b
 // result     - The ciphertext generated from a plaintext using the key
 void CRijndael::DefEncryptBlock(char const* in, char* result)
 {
-	if (false == m_bKeyInit)
-		throw runtime_error(sm_szErrorMsg1);
+	assert(m_bKeyInit);
+
+#ifndef _DEBUG
+	if (!m_bKeyInit)
+		return;
+#endif
+
 	int* Ker = m_Ke[0];
 	int t0 = ((unsigned char)*(in++) << 24);
 	t0 |= ((unsigned char)*(in++) << 16);
@@ -1123,8 +1134,13 @@ void CRijndael::DefEncryptBlock(char const* in, char* result)
 // result     - The plaintext generated from a ciphertext using the session key.
 void CRijndael::DefDecryptBlock(char const* in, char* result)
 {
-	if (false == m_bKeyInit)
-		throw runtime_error(sm_szErrorMsg1);
+	assert(m_bKeyInit);
+
+#ifndef _DEBUG
+	if (!m_bKeyInit)
+		return;
+#endif
+
 	int* Kdr = m_Kd[0];
 	int t0 = ((unsigned char)*(in++) << 24);
 	t0 = t0 | ((unsigned char)*(in++) << 16);
@@ -1196,8 +1212,13 @@ void CRijndael::DefDecryptBlock(char const* in, char* result)
 // result       - The ciphertext generated from a plaintext using the key.
 void CRijndael::EncryptBlock(char const* in, char* result)
 {
-	if (false == m_bKeyInit)
-		throw runtime_error(sm_szErrorMsg1);
+	assert(m_bKeyInit);
+
+#ifndef _DEBUG
+	if (!m_bKeyInit)
+		return;
+#endif
+
 	if (DEFAULT_BLOCK_SIZE == m_blockSize)
 	{
 		DefEncryptBlock(in, result);
@@ -1246,8 +1267,13 @@ void CRijndael::EncryptBlock(char const* in, char* result)
 // result     - The plaintext generated from a ciphertext using the session key.
 void CRijndael::DecryptBlock(char const* in, char* result)
 {
-	if (false == m_bKeyInit)
-		throw runtime_error(sm_szErrorMsg1);
+	assert(m_bKeyInit);
+
+#ifndef _DEBUG
+	if (!m_bKeyInit)
+		return;
+#endif
+
 	if (DEFAULT_BLOCK_SIZE == m_blockSize)
 	{
 		DefDecryptBlock(in, result);
@@ -1293,11 +1319,16 @@ void CRijndael::DecryptBlock(char const* in, char* result)
 
 void CRijndael::Encrypt(char const* in, char* result, size_t n, int iMode)
 {
-	if (false == m_bKeyInit)
-		throw runtime_error(sm_szErrorMsg1);
-	//n should be > 0 and multiple of m_blockSize
-	if (0 == n || n%m_blockSize != 0)
-		throw runtime_error(sm_szErrorMsg2);
+	assert(m_bKeyInit);
+	assert(n == 0 || n % m_blockSize == 0);
+
+#ifndef _DEBUG
+	if (!m_bKeyInit)
+		return;
+	if (n != 0 && n % m_blockSize != 0)
+		return;
+#endif
+
 	int i;
 	char const* pin;
 	char* presult;
@@ -1336,11 +1367,16 @@ void CRijndael::Encrypt(char const* in, char* result, size_t n, int iMode)
 
 void CRijndael::Decrypt(char const* in, char* result, size_t n, int iMode)
 {
-	if (false == m_bKeyInit)
-		throw runtime_error(sm_szErrorMsg1);
-	//n should be > 0 and multiple of m_blockSize
-	if (0 == n || n%m_blockSize != 0)
-		throw runtime_error(sm_szErrorMsg2);
+	assert(m_bKeyInit);
+	assert(0 == n || n % m_blockSize == 0);
+
+#ifndef _DEBUG
+	if (!m_bKeyInit)
+		return;
+	if (n != 0 && n % m_blockSize != 0)
+		return;
+#endif
+	
 	int i;
 	char const* pin;
 	char* presult;
@@ -1376,4 +1412,57 @@ void CRijndael::Decrypt(char const* in, char* result, size_t n, int iMode)
 			presult += m_blockSize;
 		}
 	}
+}
+
+//Auxiliary Function
+void CRijndael::Xor(char* buff, char const* chain)
+{
+	assert(m_bKeyInit);
+
+#ifndef _DEBUG
+	if (!m_bKeyInit)
+		return;
+#endif
+
+	for (int i = 0; i<m_blockSize; i++)
+		*(buff++) ^= *(chain++);
+}
+
+//Get Key Length
+int CRijndael::GetKeyLength()
+{
+	assert(m_bKeyInit);
+
+#ifndef _DEBUG
+	if (!m_bKeyInit)
+		return -1;
+#endif
+
+	return m_keylength;
+}
+
+//Block Size
+int	CRijndael::GetBlockSize()
+{
+	assert(m_bKeyInit);
+
+#ifndef _DEBUG
+	if (!m_bKeyInit)
+		return -1;
+#endif
+
+	return m_blockSize;
+}
+
+//Number of Rounds
+int CRijndael::GetRounds()
+{
+	assert(m_bKeyInit);
+
+#ifndef _DEBUG
+	if (!m_bKeyInit)
+		return -1;
+#endif
+
+	return m_iROUNDS;
 }

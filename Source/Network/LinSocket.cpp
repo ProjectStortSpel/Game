@@ -346,28 +346,19 @@ int LinSocket::Send(char* _buffer, int _length, int _flags)
 	char* encryptedData = 0;
 	short packetSize = 0;
 
-	try
-	{
-		packetSize = _length; // Get the size of the un-encrypted data packet
-		short padding = packetSize % *m_rijndaelBlockSize; // how much padding the encrypted packet will need
+	packetSize = _length; // Get the size of the un-encrypted data packet
+	short padding = packetSize % *m_rijndaelBlockSize; // how much padding the encrypted packet will need
 
-		if (padding) // if padding wasn't a multiply of blockSize
-			packetSize += *m_rijndaelBlockSize - padding; // add the required padding to the packetSize
+	if (padding) // if padding wasn't a multiply of blockSize
+		packetSize += *m_rijndaelBlockSize - padding; // add the required padding to the packetSize
 
-		encryptedData	= new char[packetSize + 1];
-		memset(encryptedData, 0, packetSize + 1);
+	encryptedData	= new char[packetSize + 1];
+	memset(encryptedData, 0, packetSize + 1);
 
-		m_rijndael->Encrypt(_buffer, encryptedData, packetSize, CRijndael::ECB); // Encrypt the packet using the ECB mode. This is not ideal for encryption but since we are not able to randomize the key each time
+	m_rijndael->Encrypt(_buffer, encryptedData, packetSize, CRijndael::ECB); // Encrypt the packet using the ECB mode. This is not ideal for encryption but since we are not able to randomize the key each time
 																					   // (since the encryption and decryption will happend on different clients) and we can't base the encryption on previously data
 																					   // since the server might receive packets from another client which a third client will not have, which in turn will mess up the
 																					   // encryption steps.
-
-	}
-	catch (exception& roException)
-	{
-		SDL_Log("Exception", roException.what());
-	}
-
 
 	short len = htons(packetSize);
 	short totalDataSent = 0;
@@ -408,24 +399,6 @@ int LinSocket::Receive(char* _buffer, int _length, int _flags)
 		len = ntohs(len);
 		int sizeReceived = recv(*m_socket, (void*)_buffer, (int)len, MSG_WAITALL);
 
-		try
-		{
-			char* decryptedData = new char[sizeReceived + 1];
-			memset(decryptedData, 0, sizeReceived + 1);
-
-			m_rijndael->Decrypt(_buffer, decryptedData, sizeReceived, CRijndael::ECB); // Encrypt the packet using the ECB mode. This is not ideal for encryption but since we are not able to randomize the key each time
-																					 // (since the encryption and decryption will happend on different clients) and we can't base the encryption on previously data
-																					 // since the server might receive packets from another client which a third client will not have, which in turn will mess up the
-																					 // encryption steps.
-
-			memcpy(_buffer, decryptedData, sizeReceived+1);
-			SAFE_DELETE_ARRAY(decryptedData);
-
-		}
-		catch (exception& roException)
-		{
-			SDL_Log("Exception", roException.what());
-		}
 
 		if (sizeReceived < len)
 		{
@@ -442,6 +415,18 @@ int LinSocket::Receive(char* _buffer, int _length, int _flags)
 
 			return -1;
 		}
+
+		char* decryptedData = new char[sizeReceived + 1];
+		memset(decryptedData, 0, sizeReceived + 1);
+
+		m_rijndael->Decrypt(_buffer, decryptedData, sizeReceived, CRijndael::ECB); // Encrypt the packet using the ECB mode. This is not ideal for encryption but since we are not able to randomize the key each time
+		// (since the encryption and decryption will happend on different clients) and we can't base the encryption on previously data
+		// since the server might receive packets from another client which a third client will not have, which in turn will mess up the
+		// encryption steps.
+
+		memcpy(_buffer, decryptedData, sizeReceived+1);
+		SAFE_DELETE_ARRAY(decryptedData);
+
 
 		if (NET_DEBUG == 2)
 			DebugLog("Received packet with size %d.", LogSeverity::Info, sizeReceived);

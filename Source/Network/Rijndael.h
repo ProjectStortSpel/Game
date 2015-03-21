@@ -4,11 +4,11 @@
 #ifndef __RIJNDAEL_H__
 #define __RIJNDAEL_H__
 
-#include <exception>
+
 #include <stdexcept>
 #include <cstring>
 #include <string>
-#include <assert.h>
+
 
 using namespace std;
 
@@ -76,13 +76,8 @@ public:
 	void MakeKey(char const* key, char const* chain, int keylength = DEFAULT_BLOCK_SIZE, int blockSize = DEFAULT_BLOCK_SIZE);
 
 private:
-	//Auxiliary Function
-	void Xor(char* buff, char const* chain)
-	{
-		assert(m_bKeyInit);
-		for (int i = 0; i<m_blockSize; i++)
-			*(buff++) ^= *(chain++);
-	}
+	
+	void Xor(char* buff, char const* chain);
 
 	//Convenience method to encrypt exactly one block of plaintext, assuming
 	//Rijndael's default block size (128-bit).
@@ -111,26 +106,10 @@ public:
 
 	void Decrypt(char const* in, char* result, size_t n, int iMode = ECB);
 
-	//Get Key Length
-	int GetKeyLength()
-	{
-		assert(m_bKeyInit);
-		return m_keylength;
-	}
+	int GetKeyLength();
+	int GetBlockSize();
+	int GetRounds();
 
-	//Block Size
-	int	GetBlockSize()
-	{
-		assert(m_bKeyInit);
-		return m_blockSize;
-	}
-
-	//Number of Rounds
-	int GetRounds()
-	{
-		assert(m_bKeyInit);
-		return m_iROUNDS;
-	}
 
 	void ResetChain()
 	{
