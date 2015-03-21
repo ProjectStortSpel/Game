@@ -20,6 +20,10 @@ LinSocket::LinSocket()
 	m_localPort = new int(0);
 	m_active = new int(1);
 	m_socket = new int(0);
+	m_rijndaelBlockSize = new short(16); // block size of the encrypted data (any packet larger then this will be divided into several blocks)
+
+	m_rijndael = new CRijndael();
+	m_rijndael->MakeKey("R2fö5Ø!89qå*3v5T", CRijndael::sm_chain0, *m_rijndaelBlockSize, *m_rijndaelBlockSize); // Create the key used for encrypt the data
 
 	Initialize();
 
@@ -53,6 +57,10 @@ LinSocket::LinSocket(int _socket)
 	m_localPort = new int(0);
 	m_active = new int(1);
 	m_socket = new int(0);
+	m_rijndaelBlockSize = new short(16); // block size of the encrypted data (any packet larger then this will be divided into several blocks)
+
+	m_rijndael = new CRijndael();
+	m_rijndael->MakeKey("R2fö5Ø!89qå*3v5T", CRijndael::sm_chain0, *m_rijndaelBlockSize, *m_rijndaelBlockSize); // Create the key used for encrypt the data
 
 	Initialize();
 
@@ -85,6 +93,10 @@ LinSocket::LinSocket(int _domain, int _type, int _protocol)
 	m_localPort = new int(0);
 	m_active = new int(1);
 	m_socket = new int(0);
+	m_rijndaelBlockSize = new short(16); // block size of the encrypted data (any packet larger then this will be divided into several blocks)
+
+	m_rijndael = new CRijndael();
+	m_rijndael->MakeKey("R2fö5Ø!89qå*3v5T", CRijndael::sm_chain0, *m_rijndaelBlockSize, *m_rijndaelBlockSize); // Create the key used for encrypt the data
 
 	Initialize();
 
@@ -120,6 +132,9 @@ LinSocket::~LinSocket()
 	SAFE_DELETE(m_remotePort);
 	SAFE_DELETE(m_localPort);
 	SAFE_DELETE(m_active);
+	SAFE_DELETE(m_rijndaelBlockSize);
+	SAFE_DELETE(m_rijndael);
+
 }
 
 bool LinSocket::Initialize(void)
@@ -334,19 +349,15 @@ int LinSocket::Send(char* _buffer, int _length, int _flags)
 	try
 	{
 		packetSize = _length; // Get the size of the un-encrypted data packet
-		short blockSize = 16; // block size of the encrypted data (any packet larger then this will be divided into several blocks)
-		short padding = packetSize % blockSize; // how much padding the encrypted packet will need
-
-		CRijndael oRijndael;
-		oRijndael.MakeKey("R2fö5Ø!89qå*3v5T", CRijndael::sm_chain0, blockSize, blockSize); // Create the key used for encrypt the data
+		short padding = packetSize % *m_rijndaelBlockSize; // how much padding the encrypted packet will need
 
 		if (padding) // if padding wasn't a multiply of blockSize
-			packetSize += blockSize - padding; // add the required padding to the packetSize
+			packetSize += *m_rijndaelBlockSize - padding; // add the required padding to the packetSize
 
-		encryptedData		= new char[packetSize + 1];
+		encryptedData	= new char[packetSize + 1];
 		memset(encryptedData, 0, packetSize + 1);
 
-		oRijndael.Encrypt(_buffer, encryptedData, packetSize, CRijndael::ECB); // Encrypt the packet using the ECB mode. This is not ideal for encryption but since we are not able to randomize the key each time
+		m_rijndael->Encrypt(_buffer, encryptedData, packetSize, CRijndael::ECB); // Encrypt the packet using the ECB mode. This is not ideal for encryption but since we are not able to randomize the key each time
 																					   // (since the encryption and decryption will happend on different clients) and we can't base the encryption on previously data
 																					   // since the server might receive packets from another client which a third client will not have, which in turn will mess up the
 																					   // encryption steps.
@@ -399,15 +410,10 @@ int LinSocket::Receive(char* _buffer, int _length, int _flags)
 
 		try
 		{
-			short blockSize = 16;
-
-			CRijndael oRijndael;
-			oRijndael.MakeKey("R2fö5Ø!89qå*3v5T", CRijndael::sm_chain0, blockSize, blockSize); // Create the key used to decrypt the recived package
-
 			char* decryptedData = new char[sizeReceived + 1];
 			memset(decryptedData, 0, sizeReceived + 1);
 
-			oRijndael.Decrypt(_buffer, decryptedData, sizeReceived, CRijndael::ECB); // Encrypt the packet using the ECB mode. This is not ideal for encryption but since we are not able to randomize the key each time
+			m_rijndael->Decrypt(_buffer, decryptedData, sizeReceived, CRijndael::ECB); // Encrypt the packet using the ECB mode. This is not ideal for encryption but since we are not able to randomize the key each time
 																					 // (since the encryption and decryption will happend on different clients) and we can't base the encryption on previously data
 																					 // since the server might receive packets from another client which a third client will not have, which in turn will mess up the
 																					 // encryption steps.
