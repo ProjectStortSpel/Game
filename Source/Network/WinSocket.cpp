@@ -321,7 +321,6 @@ ISocket* WinSocket::Accept(void)
 
 int WinSocket::Send(char* _buffer, int _length, int _flags)
 {
-	char* unencryptedData = 0;
 	char* encryptedData = 0;
 	short packetSize = 0;
 
@@ -337,14 +336,11 @@ int WinSocket::Send(char* _buffer, int _length, int _flags)
 		if (padding) // if padding wasn't a multiply of blockSize
 			packetSize += blockSize - padding; // add the required padding to the packetSize
 
-		unencryptedData	= new char[packetSize + 1];
-		encryptedData		= new char[packetSize + 1];
-		
-		memcpy(unencryptedData, _buffer, packetSize + 1);
+		encryptedData	= new char[packetSize + 1];
 		memset(encryptedData, 0, packetSize + 1);
 
 		//Test ECB
-		oRijndael.Encrypt(unencryptedData, encryptedData, packetSize, CRijndael::ECB); // Encrypt the packet using the ECB mode. This is not ideal for encryption but since we are not able to randomize the key each time
+		oRijndael.Encrypt(_buffer, encryptedData, packetSize, CRijndael::ECB); // Encrypt the packet using the ECB mode. This is not ideal for encryption but since we are not able to randomize the key each time
 																					   // (since the encryption and decryption will happend on different clients) and we can't base the encryption on previously data
 																					   // since the server might receive packets from another client which a third client will not have, which in turn will mess up the
 																					   // encryption steps.
@@ -382,8 +378,6 @@ int WinSocket::Send(char* _buffer, int _length, int _flags)
 	else if (bytesSent < 0 && NET_DEBUG == 2)
 		DebugLog("Failed to send header packet of size %d. Error code: %d", LogSeverity::Info, bytesSent, WSAGetLastError());
 
-
-	SAFE_DELETE_ARRAY(unencryptedData);
 	SAFE_DELETE_ARRAY(encryptedData);
 
 	return totalDataSent;
