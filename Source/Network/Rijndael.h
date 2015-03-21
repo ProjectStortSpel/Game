@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include <cstring>
 #include <string>
+#include <assert.h>
 
 using namespace std;
 
@@ -78,8 +79,7 @@ private:
 	//Auxiliary Function
 	void Xor(char* buff, char const* chain)
 	{
-		if (false == m_bKeyInit)
-			throw runtime_error(sm_szErrorMsg1);
+		assert(m_bKeyInit);
 		for (int i = 0; i<m_blockSize; i++)
 			*(buff++) ^= *(chain++);
 	}
@@ -114,24 +114,21 @@ public:
 	//Get Key Length
 	int GetKeyLength()
 	{
-		if (false == m_bKeyInit)
-			throw runtime_error(sm_szErrorMsg1);
+		assert(m_bKeyInit);
 		return m_keylength;
 	}
 
 	//Block Size
 	int	GetBlockSize()
 	{
-		if (false == m_bKeyInit)
-			throw runtime_error(sm_szErrorMsg1);
+		assert(m_bKeyInit);
 		return m_blockSize;
 	}
 
 	//Number of Rounds
 	int GetRounds()
 	{
-		if (false == m_bKeyInit)
-			throw runtime_error(sm_szErrorMsg1);
+		assert(m_bKeyInit);
 		return m_iROUNDS;
 	}
 
