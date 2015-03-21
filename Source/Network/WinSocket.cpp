@@ -3,7 +3,7 @@
 #include <WS2tcpip.h>
 
 #include "WinSocket.h"
-
+#include "Rijndael.h"
 using namespace Network;
 
 WinSocket::WinSocket()
@@ -321,14 +321,49 @@ ISocket* WinSocket::Accept(void)
 
 int WinSocket::Send(char* _buffer, int _length, int _flags)
 {
-	short len = htons(_length);
+	char* unencryptedData = 0;
+	char* encryptedData = 0;
+	short packetSize = 0;
+
+	try
+	{
+		packetSize = _length; // Get the size of the un-encrypted data packet
+		short blockSize = 16; // block size of the encrypted data (any packet larger then this will be divided into several blocks)
+		short padding = packetSize % blockSize; // how much padding the encrypted packet will need
+
+		CRijndael oRijndael;
+		oRijndael.MakeKey("R2fö5Ø!89qå*3v5T", CRijndael::sm_chain0, blockSize, blockSize); // Create the key used for encrypt the data
+
+		if (padding) // if padding wasn't a multiply of blockSize
+			packetSize += blockSize - padding; // add the required padding to the packetSize
+
+		unencryptedData	= new char[packetSize + 1];
+		encryptedData		= new char[packetSize + 1];
+		
+		memcpy(unencryptedData, _buffer, packetSize + 1);
+		memset(encryptedData, 0, packetSize + 1);
+
+		//Test ECB
+		oRijndael.Encrypt(unencryptedData, encryptedData, packetSize, CRijndael::ECB); // Encrypt the packet using the ECB mode. This is not ideal for encryption but since we are not able to randomize the key each time
+																					   // (since the encryption and decryption will happend on different clients) and we can't base the encryption on previously data
+																					   // since the server might receive packets from another client which a third client will not have, which in turn will mess up the
+																					   // encryption steps.
+
+	}
+	catch (exception& roException)
+	{
+		SDL_Log("Exception", roException.what());
+	}
+
+
+	short len = htons(packetSize);
 	short totalDataSent = 0;
 
 
 	int bytesSent = send(m_socket, (char*)&len, 2, _flags);
 	if (bytesSent == 2)
 	{
-		bytesSent = send(m_socket, _buffer, _length, _flags);
+		bytesSent = send(m_socket, encryptedData, packetSize, _flags);
 		totalDataSent = bytesSent + 2;
 
 		if (NET_DEBUG == 2)
@@ -347,6 +382,10 @@ int WinSocket::Send(char* _buffer, int _length, int _flags)
 	else if (bytesSent < 0 && NET_DEBUG == 2)
 		DebugLog("Failed to send header packet of size %d. Error code: %d", LogSeverity::Info, bytesSent, WSAGetLastError());
 
+
+	SAFE_DELETE_ARRAY(unencryptedData);
+	SAFE_DELETE_ARRAY(encryptedData);
+
 	return totalDataSent;
 }
 
@@ -360,6 +399,28 @@ int WinSocket::Receive(char* _buffer, int _length, int _flags)
 	{
 		len = ntohs(len);
 		int sizeReceived = recv(m_socket, _buffer, (int)len, MSG_WAITALL);
+
+		try
+		{
+			short blockSize = 16;
+
+			CRijndael oRijndael;
+			oRijndael.MakeKey("R2fö5Ø!89qå*3v5T", CRijndael::sm_chain0, blockSize, blockSize);
+
+			char* decryptedData = new char[sizeReceived + 1];
+			memset(decryptedData, 0, sizeReceived + 1);
+
+			oRijndael.Decrypt(_buffer, decryptedData, sizeReceived, CRijndael::ECB);
+
+			memcpy(_buffer, decryptedData, sizeReceived+1);
+			SAFE_DELETE_ARRAY(decryptedData);
+
+		}
+		catch (exception& roException)
+		{
+			SDL_Log("Exception", roException.what());
+		}
+
 		totalDataReceived = sizeReceived + 2;
 
 		if (sizeReceived < len)

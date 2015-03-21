@@ -25,7 +25,7 @@ BaseNetwork::BaseNetwork()
 
 	m_usageDataTimer = new float(0.f);
 
-	m_maxTimeOutIntervall = new float(5.0f);
+	m_maxTimeOutIntervall = new float(120.0f);
 	m_maxIntervallCounter = new int(4);
 
 	m_customPackets = new std::queue<Packet*>();

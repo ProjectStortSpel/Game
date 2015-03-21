@@ -3,7 +3,6 @@
 #include <algorithm>
 
 #include "NetTypeMessageID.h"
-#include "Rijndael.h"
 
 #ifdef WIN32
 #else
@@ -15,7 +14,6 @@ using namespace Network;
 ServerNetwork::ServerNetwork()
 	: BaseNetwork()
 {
-
 	m_running = new bool(false);
 	m_maxConnections = new unsigned int(64);
 	m_listenSocket = 0;
@@ -649,11 +647,8 @@ void ServerNetwork::NetConnectionLost(NetConnection& _connection)
 
 	if (SDL_LockMutex(m_connectedClientsLock) == 0)
 	{
-		if (m_connectedClients->find(_connection) != m_connectedClients->end())
-		{
+		if(m_connectedClients->find(_connection) != m_connectedClients->end())
 			(*m_connectedClients)[_connection]->ShutdownSocket(1);
-			(*m_connectedClients)[_connection]->CloseSocket();
-		}
 		SDL_UnlockMutex(m_connectedClientsLock);
 	}
 	else if (NET_DEBUG > 0)
