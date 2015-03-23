@@ -7,6 +7,9 @@ namespace LuaBridge
 {
 	namespace LuaAudio
 	{
+		int SetVolume(lua_State* L);
+		int GetVolume(lua_State* L);
+
 		int SetDistance(lua_State* L);
 		int SetCameraPosition(lua_State* L);
 		
@@ -32,6 +35,9 @@ namespace LuaBridge
 		
 		void Embed(lua_State* L)
 		{
+			LuaEmbedder::AddFunction(L, "SetVolume", SetVolume, "Audio");
+			LuaEmbedder::AddFunction(L, "GetVolume", GetVolume, "Audio");
+
 			LuaEmbedder::AddFunction(L, "SetDistance", SetDistance, "Audio");
 			LuaEmbedder::AddFunction(L, "SetCameraPosition", SetCameraPosition, "Audio");
 			
@@ -56,6 +62,19 @@ namespace LuaBridge
 			LuaEmbedder::AddFunction(L, "ChannelExists", ChannelExists, "Audio");
 		}
 		
+		int SetVolume(lua_State* L)
+		{
+			float volume = LuaEmbedder::PullFloat(L, 1);
+			Audio::SetVolume(volume);
+			return 0;
+		}
+
+		int GetVolume(lua_State* L)
+		{
+			LuaEmbedder::PushFloat(L, Audio::GetVolume());
+			return 1;
+		}
+
 		int SetDistance(lua_State* L)
 		{
 			float near = LuaEmbedder::PullFloat(L, 1);

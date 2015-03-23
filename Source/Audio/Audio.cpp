@@ -346,6 +346,11 @@ namespace Audio
 		g_volume = volume;
 	}
 	
+	float GetVolume()
+	{
+		return g_volume;
+	}
+
 	void SetDistance(float near, float far)
 	{
 		g_near = near;
