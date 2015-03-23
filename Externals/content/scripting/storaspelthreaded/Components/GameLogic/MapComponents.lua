@@ -81,6 +81,7 @@ worldCreator:AddComponentType(NewComponent)
 NewComponent = ComponentType()
 NewComponent.Name = "RiverEnd"
 NewComponent.TableType = TableType.Map
+NewComponent.SyncNetwork = true
 worldCreator:AddComponentType(NewComponent)
 
 -- Available Spawnpoint
