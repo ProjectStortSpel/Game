@@ -58,6 +58,15 @@ MenuEntityCommand.TableType = TableType.Map
 MenuEntityCommand:AddVariable("ComponentName", ByteSize.Text)
 worldCreator:AddComponentType(MenuEntityCommand)
 
+-- Menu EntityCommand
+local MenuSlider = ComponentType()
+MenuSlider.Name = "MenuSlider"
+MenuSlider.TableType = TableType.Map
+MenuSlider:AddVariable("ConsoleCommand", ByteSize.Text)
+MenuSlider:AddVariable("Min", ByteSize.Float)
+MenuSlider:AddVariable("Max", ByteSize.Float)
+worldCreator:AddComponentType(MenuSlider)
+
 -- NotificationPopup
 local NotificationPopup = ComponentType()
 NotificationPopup.Name = "NotificationPopup"

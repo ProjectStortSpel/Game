@@ -10,6 +10,8 @@ worldCreator:AddComponentType(PickBox)
 local OnPickBoxHit = ComponentType()
 OnPickBoxHit.Name = "OnPickBoxHit"
 OnPickBoxHit.TableType = TableType.Map
+OnPickBoxHit:AddVariable("X", ByteSize.Float)
+OnPickBoxHit:AddVariable("Y", ByteSize.Float)
 worldCreator:AddComponentType(OnPickBoxHit)
 
 -- ReadyButton
