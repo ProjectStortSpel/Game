@@ -12,8 +12,8 @@ namespace Renderer
 	class DECLSPEC GraphicsLow : public GraphicDevice
 	{
 	public:
-		GraphicsLow();
-		GraphicsLow(Camera _camera, int x, int y);
+		GraphicsLow(bool _fullscreen);
+		GraphicsLow(Camera _camera, int x, int y, bool _fullscreen);
 		~GraphicsLow();
 
 		bool Init();

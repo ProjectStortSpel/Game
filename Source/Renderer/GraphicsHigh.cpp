@@ -3,7 +3,7 @@
 using namespace Renderer;
 using namespace glm;
 
-GraphicsHigh::GraphicsHigh()
+GraphicsHigh::GraphicsHigh(bool _fullscreen) : GraphicDevice(_fullscreen)
 {
 	SDL_Log("Starting graphics high");
 	debugModelInfo = 0;
@@ -21,9 +21,10 @@ GraphicsHigh::GraphicsHigh()
 	m_pointerToDirectionalLights = 0;
 	m_pointerToPointlights = 0;
     m_FBOsCreated = false;
+	m_graphicsSetting = GRAPHICS_HIGH;
 }
 
-GraphicsHigh::GraphicsHigh(Camera _camera, int x, int y) : GraphicDevice(_camera, x, y)
+GraphicsHigh::GraphicsHigh(Camera _camera, int x, int y, bool _fullscreen) : GraphicDevice(_camera, x, y, _fullscreen)
 {
 	SDL_Log("Starting graphics high");
 	debugModelInfo = 0;
@@ -37,6 +38,7 @@ GraphicsHigh::GraphicsHigh(Camera _camera, int x, int y) : GraphicDevice(_camera
 	m_pointerToDirectionalLights = 0;
 	m_pointerToPointlights = 0;
     m_FBOsCreated = false;
+	m_graphicsSetting = GRAPHICS_HIGH;
 }
 
 GraphicsHigh::~GraphicsHigh()

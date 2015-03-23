@@ -110,12 +110,12 @@ bool GameCreator::InitializeGraphics()
 	m_graphics = new Renderer::GraphicsLow();
     m_graphics->Init();
 #else
-    m_graphics = new Renderer::GraphicsHigh();
+    m_graphics = new Renderer::GraphicsHigh(false);
     if (!m_graphics->Init())
     {
         SDL_Log("Switching to OpenGL 4.0");
         delete(m_graphics);
-        m_graphics = new Renderer::GraphicsLow();
+		m_graphics = new Renderer::GraphicsLow(false);
         if (!m_graphics->Init())
         {
             SDL_Log("Failed to initialize graphics.");
@@ -572,6 +572,7 @@ void GameCreator::StartGame(int argc, char** argv)
 	m_consoleManager.AddCommand("Name", std::bind(&GameCreator::ConsoleName, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager.AddCommand("Start", std::bind(&GameCreator::ConsoleStartTemp, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager.AddCommand("ChangeGraphics", std::bind(&GameCreator::ChangeGraphicsSettings, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager.AddCommand("ToggleFullscreen", std::bind(&GameCreator::ToggleFullscreen, this, std::placeholders::_1, std::placeholders::_2));
 	m_consoleManager.AddCommand("TimeScale", std::bind(&GameCreator::ChangeTimeScale, this, std::placeholders::_1, std::placeholders::_2));
 	
     InitializeLobby();
@@ -1362,17 +1363,18 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 			Camera tmpCam = *m_graphics->GetCamera();
 			int windowx, windowy;
 			m_graphics->GetWindowPos(windowx, windowy);
+			bool fullscreen = m_graphics->GetFullscreen();
 
 		//	SDL_Window*	tmpWindow = m_graphics->GetSDL_Window();
 		//	SDL_GLContext* tmpContext = m_graphics->GetSDL_GLContext();*/
 			delete(m_graphics);
 
-			m_graphics = new Renderer::GraphicsHigh(tmpCam, windowx, windowy);
+			m_graphics = new Renderer::GraphicsHigh(tmpCam, windowx, windowy, fullscreen);
 			if (!m_graphics->Init())
 			{
 				SDL_Log("Switching to OpenGL 4.0");
 				delete(m_graphics);
-				m_graphics = new Renderer::GraphicsLow();
+				m_graphics = new Renderer::GraphicsLow(fullscreen);
 				m_graphics->Init();
 			}
 		}
@@ -1383,13 +1385,14 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 			Camera tmpCam				= *m_graphics->GetCamera();
 			int windowx, windowy;
 			m_graphics->GetWindowPos(windowx, windowy);
+			bool fullscreen = m_graphics->GetFullscreen();
 			//SDL_Window*	tmpWindow		=  m_graphics->GetSDL_Window();
 			//SDL_GLContext tmpContext	=  m_graphics->GetSDL_GLContext();
 
 
 			delete(m_graphics);
 
-			m_graphics = new Renderer::GraphicsLow(tmpCam, windowx, windowy);
+			m_graphics = new Renderer::GraphicsLow(tmpCam, windowx, windowy, fullscreen);
 			m_graphics->Init();
 		}
 		if (m_input)
@@ -1409,6 +1412,78 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 			GraphicalSystem* tSystem = m_graphicalSystems.at(n);
 			tSystem->SetGraphics(m_graphics);
 		}
+	}
+#endif
+}
+
+void GameCreator::ToggleFullscreen(std::string _command, std::vector<Console::Argument>* _args)
+{
+#if !defined(__IOS__) && !defined(__ANDROID__)
+
+	for (int i = 0; i < m_entityCount; ++i)
+	{
+		if (m_clientWorld && m_clientWorld->HasComponent(i, "Render"))
+			m_clientWorld->RemoveComponentFrom("Render", i);
+
+		if (m_clientWorld && m_clientWorld->HasComponent(i, "Particle"))
+			m_clientWorld->CreateComponentAndAddTo("Hide", i);
+
+		if (m_clientWorld && m_clientWorld->HasComponent(i, "DirectionalLight"))
+			m_clientWorld->CreateComponentAndAddTo("Hide", i);
+
+		if (m_clientWorld && m_clientWorld->HasComponent(i, "Pointlight"))
+			m_clientWorld->CreateComponentAndAddTo("Hide", i);
+
+		if (m_serverWorld && m_serverWorld->HasComponent(i, "Render"))
+			m_serverWorld->RemoveComponentFrom("Render", i);
+	}
+
+	bool fullscreen = m_graphics->GetFullscreen();
+	int windowx, windowy;
+	if (fullscreen)
+	{
+		windowx = 100;
+		windowy = 100;
+	}
+	else
+		m_graphics->GetWindowPos(windowx, windowy);
+
+	if (m_graphics->GetGraphicsSetting() == GRAPHICS_HIGH)
+	{
+		m_graphics->Clear();
+		Camera tmpCam = *m_graphics->GetCamera();
+		delete(m_graphics);
+
+		m_graphics = new Renderer::GraphicsHigh(tmpCam, windowx, windowy, 1-fullscreen);
+		m_graphics->Init();
+	}
+
+	else if (m_graphics->GetGraphicsSetting() == GRAPHICS_LOW)
+	{
+		m_graphics->Clear();
+		Camera tmpCam = *m_graphics->GetCamera();
+
+		delete(m_graphics);
+
+		m_graphics = new Renderer::GraphicsLow(tmpCam, windowx, windowy, 1-fullscreen);
+		m_graphics->Init();
+	}
+	if (m_input)
+	{
+		delete m_input;
+		InitializeInput();
+	}
+
+
+
+	m_console->SetGraphicDevice(m_graphics);
+
+	LuaBridge::LuaGraphicDevice::SetGraphicDevice(m_graphics);
+	LoadingScreen::GetInstance().SetGraphicsDevice(m_graphics);
+	for (int n = 0; n < m_graphicalSystems.size(); ++n)
+	{
+		GraphicalSystem* tSystem = m_graphicalSystems.at(n);
+		tSystem->SetGraphics(m_graphics);
 	}
 #endif
 }
