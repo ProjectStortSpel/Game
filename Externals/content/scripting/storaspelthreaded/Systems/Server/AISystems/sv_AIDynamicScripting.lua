@@ -32,7 +32,7 @@ AIDynamicScripting.EntitiesAdded = function(self, dt, entities)
 					self:UpdatePF( plyNr, "Unit" );
 					
 	
-					io.write("\n--- AI nr: ", plyNr, " uses these scripts ---\nOn the spot Weight Length Power\n")
+					io.write("\n--- AI nr: ", plyNr, " uses these scripts ---\n\tSpot\tWeight\tLength\tPower\n")
 					self:PrintMyScript(plyNr, "Void")
 					self:PrintMyScript(plyNr, "NotWalkable")
 					self:PrintMyScript(plyNr, "Unit")
@@ -120,7 +120,7 @@ AIDynamicScripting.PrintMyScript = function(self, _playerNumber, _object)
 		tab = "\t"
 	end
 	
-	io.write(_object, tab, "On the spot: ", onTheSpotValue, " Weight: ", weight, " Length: ", length, " Power: ", power, "\n")
+	io.write(_object, tab, onTheSpotValue, "\t", weight, "\t", length, "\t", power, "\n")
 end
 
 AIDynamicScripting.UpdatePF = function(self, playerNumber, object )
