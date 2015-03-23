@@ -155,12 +155,6 @@ bool GraphicsHigh::InitShaders()
 	m_riverCornerShader.AddShader("content/shaders/riverCornerFS.glsl", GL_FRAGMENT_SHADER);
 	m_riverCornerShader.FinalizeShaderProgram();
 
-	// ShadowShader deferred geometry
-	m_shadowShaderDeferred.InitShaderProgram();
-	m_shadowShaderDeferred.AddShader("content/shaders/shadowShaderDeferredVS.glsl", GL_VERTEX_SHADER);
-	m_shadowShaderDeferred.AddShader("content/shaders/shadowShaderDeferredFS.glsl", GL_FRAGMENT_SHADER);
-	m_shadowShaderDeferred.FinalizeShaderProgram();
-
 	// ShadowShader animated deferred geometry
 	m_shadowShaderAnim.InitShaderProgram();
 	m_shadowShaderAnim.AddShader("content/shaders/shadowShaderAnimVS.glsl", GL_VERTEX_SHADER);
@@ -460,9 +454,10 @@ void GraphicsHigh::Render()
 	//----Uniforms
 	m_deferredShader1.UseProgram();
 	m_deferredShader1.SetUniVariable("TexFlag", glint, &m_debugTexFlag);
+	m_deferredShader1.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 	//----DRAW MODELS
 	for (int i = 0; i < m_modelsDeferred.size(); i++)
-		m_modelsDeferred[i].Draw(viewMatrix, projectionMatrix);
+		m_modelsDeferred[i].Draw(viewMatrix);
 
 	//--------ANIMATED DEFERRED RENDERING !!! ATTENTION: WORK IN PROGRESS !!!
 	//----Uniforms
@@ -553,7 +548,7 @@ void GraphicsHigh::Render()
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
 	//----DRAW MODELS
 	for (int i = 0; i < m_modelsWater.size(); i++)
-		m_modelsWater[i].Draw(viewMatrix, mat4(1));
+		m_modelsWater[i].Draw(viewMatrix);
 
 	//-------Render water corners-------------
 	m_riverCornerShader.UseProgram();
@@ -566,10 +561,9 @@ void GraphicsHigh::Render()
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
 	//----DRAW MODELS
 	for (int i = 0; i < m_modelsWaterCorners.size(); i++)
-		m_modelsWaterCorners[i].Draw(viewMatrix, mat4(1));
+		m_modelsWaterCorners[i].Draw(viewMatrix);
 
 
-	
 
 	//--------FORWARD RENDERING
 
@@ -583,7 +577,7 @@ void GraphicsHigh::Render()
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
 	//----DRAW MODELS
 	for (int i = 0; i < m_modelsForward.size(); i++)
-		m_modelsForward[i].Draw(viewMatrix, mat4(1));
+		m_modelsForward[i].Draw(viewMatrix);
 
 	//--------PARTICLES---------
 	glEnable(GL_POINT_SPRITE);
@@ -627,7 +621,7 @@ void GraphicsHigh::Render()
 	//----DRAW MODELS
 	SortModelsBasedOnDepth(&m_modelsViewspace);
 	for (int i = 0; i < m_modelsViewspace.size(); i++)
-		m_modelsViewspace[i].Draw(mat4(1), mat4(1));
+		m_modelsViewspace[i].Draw(mat4(1));
 
 	//--------INTERFACE RENDERING
 	if (!hideInderface)
@@ -638,7 +632,7 @@ void GraphicsHigh::Render()
 		//----DRAW MODELS
 		SortModelsBasedOnDepth(&m_modelsInterface);
 		for (int i = 0; i < m_modelsInterface.size(); i++)
-			m_modelsInterface[i].Draw(mat4(1), mat4(1));
+			m_modelsInterface[i].Draw(mat4(1));
 	}
 	glDisable(GL_BLEND);
 	glDisable(GL_TEXTURE_2D);

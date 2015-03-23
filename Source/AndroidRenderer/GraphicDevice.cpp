@@ -595,7 +595,9 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoad* _modelToLoad)
 	Model model = Model(mesh, texture, normal, specular, _modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color, _modelToLoad->CastShadow); // plus modelID o matrixPointer, active
 
 	// Push back the model
-	if (_modelToLoad->RenderType == RENDER_FORWARD || _modelToLoad->RenderType == RENDER_DEFERRED)
+	if (_modelToLoad->RenderType == RENDER_DEFERRED)
+		m_modelsDeferred.push_back(model);
+	else if (_modelToLoad->RenderType == RENDER_FORWARD)
 		m_modelsForward.push_back(model);
 	else if (_modelToLoad->RenderType == RENDER_VIEWSPACE)
 		m_modelsViewspace.push_back(model);
@@ -724,7 +726,9 @@ void GraphicDevice::BufferModel(int _modelId, ModelToLoadFromSource* _modelToLoa
 	Model model = Model(mesh, texture, normal, specular, _modelId, true, _modelToLoad->MatrixPtr, _modelToLoad->Color, _modelToLoad->CastShadow); // plus modelID o matrixPointer, active
 
 	// Push back the model
-	if (_modelToLoad->RenderType == RENDER_FORWARD || _modelToLoad->RenderType == RENDER_DEFERRED)
+	if (_modelToLoad->RenderType == RENDER_DEFERRED)
+		m_modelsDeferred.push_back(model);
+	else if (_modelToLoad->RenderType == RENDER_FORWARD)
 		m_modelsForward.push_back(model);
 	else if (_modelToLoad->RenderType == RENDER_VIEWSPACE)
 		m_modelsViewspace.push_back(model);
@@ -1050,6 +1054,7 @@ void GraphicDevice::Clear()
 
 	m_modelsAnimated.clear();
 	m_modelsForward.clear();
+	m_modelsDeferred.clear();
 	m_modelsViewspace.clear();
 	m_modelsInterface.clear();
 	m_modelsWater.clear();

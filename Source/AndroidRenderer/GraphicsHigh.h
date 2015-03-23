@@ -46,7 +46,7 @@ namespace Renderer
 		vec3 m_dirLightshadowMapTarget;
 
 		// Shaders
-		Shader m_shadowShader, m_animShadowShader;
+		Shader m_shadowShader, m_shadowDeferredShader, m_animShadowShader;
 
 		void CreateShadowMap();
 		void WriteShadowMapDepth();
