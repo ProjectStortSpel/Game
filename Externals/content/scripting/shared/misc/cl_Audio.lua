@@ -64,7 +64,6 @@ Net.Receive("Client.PlaySound",
 		local name = Net.ReadString(id)
 		local loop = Net.ReadBool(id)
 		Audio.PlaySound(name, loop)
-		print("Sound: " .. name)
 	end
 )
 Net.Receive("Client.PlaySoundC",
@@ -72,7 +71,6 @@ Net.Receive("Client.PlaySoundC",
 		local name = Net.ReadString(id)
 		local channelName = Net.ReadString(id)
 		local loop = Net.ReadBool(id)
-		
 		Audio.PlaySound(name, channelName, loop)
 	end
 )
@@ -97,13 +95,9 @@ Net.Receive("Client.StopSound",
 Net.Receive("Client.SetSoundPosition",
 	function(id, ip, port)
 		local channelName = Net.ReadString(id)
-		print("channelName: " .. channelName)
 		local x = Net.ReadFloat(id)
-		print("x: " .. x)
 		local y = Net.ReadFloat(id)
-		print("y: " .. y)
 		local z = Net.ReadFloat(id)
-		print("z: " .. z)
 		
 		Audio.SetSoundPosition(channelName, x, y, z)
 	end

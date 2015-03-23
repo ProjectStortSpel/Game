@@ -218,7 +218,7 @@ namespace Audio
 			if (playSound.useChannelName)
 			{
 				g_channels[playSound.channelName] = channel;
-				g_channelVolumes[playSound.channelName] = g_volume;
+				g_channelVolumes[playSound.channelName] = MIX_MAX_VOLUME;
 			}
 		}
 		for (std::vector<FadeInParams>::iterator soundFadeInQueueIt = g_soundFadeInQueue.begin(); soundFadeInQueueIt != g_soundFadeInQueue.end();)
@@ -242,7 +242,7 @@ namespace Audio
 			if (soundFadeInQueueIt->useChannelName)
 			{
 				g_channels[soundFadeInQueueIt->channelName] = channel;
-				g_channelVolumes[soundFadeInQueueIt->channelName] = g_volume;
+				g_channelVolumes[soundFadeInQueueIt->channelName] = MIX_MAX_VOLUME;
 			}
 			soundFadeInQueueIt = g_soundFadeInQueue.erase(soundFadeInQueueIt);
 		}
