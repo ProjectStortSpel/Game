@@ -53,7 +53,11 @@ TestMoveSystem.RecursiveMove = function(self, unitToMove, allUnits, allNonWalkab
 			if X == posX and Z == posZ then
 				
 				if world:EntityHasComponent(allUnits[n], "ActionGuard") then
-					print("BLOCKED, BITCH!")
+					-- SOUND
+					local audioId = Net.StartPack("Client.PlaySound")
+					Net.WriteString(audioId, "BlockVoice" .. math.random(1, 3))
+					Net.WriteBool(audioId, false)
+					Net.Broadcast(audioId)
 					return false
 				end
 				
@@ -66,6 +70,11 @@ TestMoveSystem.RecursiveMove = function(self, unitToMove, allUnits, allNonWalkab
 				world:GetComponent(newCheck, "CheckCheckpointForEntity", "EntityId"):SetInt(allUnits[n])
 				world:GetComponent(newCheck, "CheckCheckpointForEntity", "PosX"):SetInt(posX+dirX)
 				world:GetComponent(newCheck, "CheckCheckpointForEntity", "PosZ"):SetInt(posZ+dirZ)
+				
+				local audioId = Net.StartPack("Client.PlaySound")
+				Net.WriteString(audioId, "Laugh" .. math.random(1, 4))
+				Net.WriteBool(audioId, false)
+				Net.Broadcast(audioId)
 				
 				break
 				
