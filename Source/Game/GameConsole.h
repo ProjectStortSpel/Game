@@ -49,6 +49,8 @@ public:
 	void ToggleText(std::string _command, std::vector<Console::Argument>* _args);
 
 	void ECSLMemoryUsage(std::string _command, std::vector<Console::Argument>* _args);
+	
+	void SetAudioVolume(std::string _command, std::vector<Console::Argument>* _args);
 
 	void SetWorld(ECSL::World* _world){ m_world = _world; }
 private:

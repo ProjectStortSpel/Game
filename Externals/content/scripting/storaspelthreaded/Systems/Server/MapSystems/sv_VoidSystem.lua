@@ -12,6 +12,7 @@ VoidSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("Unit", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("CheckVoid", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("Void", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("FallDownSound", FilterType.RequiresOneOf)
 end
 
 VoidSystem.EntitiesAdded = function(self, dt, entities)
@@ -77,9 +78,12 @@ VoidSystem.EntitiesAdded = function(self, dt, entities)
 							--	Move the unit
 							if not world:EntityHasComponent(units[i], "LerpPosition") then
 								world:CreateComponentAndAddTo("LerpPosition", units[i])
+								world:CreateComponentAndAddTo("AddEntityAfterLerp", units[i])
 							end
 							world:GetComponent(units[i], "LerpPosition", "Time"):SetFloat4(1, tmpX, -10, voidZ)
 							world:GetComponent(units[i], "LerpPosition", "Algorithm"):SetText("ExponentialLerp")
+							
+							world:GetComponent(units[i], "AddEntityAfterLerp", "ComponentName"):SetText("FallDownSound")
 							
 							if not world:EntityHasComponent(units[i], "Animation") then
 								world:CreateComponentAndAddTo("Animation", units[i])
@@ -88,6 +92,7 @@ VoidSystem.EntitiesAdded = function(self, dt, entities)
 							world:GetComponent(units[i], "Animation", "FrameTime"):SetFloat(0.01)
 							world:GetComponent(units[i], "Animation", "Time"):SetFloat(1)
 							
+
 							hitVoid = true
 							
 							break
@@ -98,6 +103,26 @@ VoidSystem.EntitiesAdded = function(self, dt, entities)
 			end
 			
 			world:KillEntity( entity )
+			
+		elseif world:EntityHasComponent( entity, "FallDownSound") then
+		
+			local x, y, z = world:GetComponent(entity, "FallDownSound", 0):GetFloat3()
+		
+			local audioId = Net.StartPack("Client.PlaySoundC")
+			Net.WriteString(audioId, "FallingDown" .. math.random(1,3))
+			Net.WriteString(audioId, "FallDownChannel")
+			Net.WriteBool(audioId, false)
+			Net.Broadcast(audioId)
+			
+			audioId = Net.StartPack("Client.SetSoundPosition")
+			Net.WriteString(audioId, "FallDownChannel")
+			Net.WriteFloat(audioId, x)
+			Net.WriteFloat(audioId, y)
+			Net.WriteFloat(audioId, z)
+			Net.Broadcast(audioId)
+			
+			world:KillEntity( entity )
+			
 		end
 	end
 end

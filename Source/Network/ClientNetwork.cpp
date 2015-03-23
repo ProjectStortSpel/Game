@@ -122,7 +122,8 @@ bool ClientNetwork::Connect()
 
 	SAFE_DELETE(m_socket);
 	m_socket = ISocket::CreateSocket();
-	m_socket->Bind(*m_incomingPort);
+	if (!m_socket->Bind(*m_incomingPort))
+		return false;
 
 	*m_connected = m_socket->Connect(m_remoteAddress->c_str(), *m_outgoingPort);
 

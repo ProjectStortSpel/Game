@@ -59,15 +59,26 @@ AddEntityAfterLerpSystem.EntitiesRemoved = function(self, dt, entities)
 			Net.WriteFloat(id, y)
 			Net.WriteFloat(id, z)
 			Net.Broadcast(id)
+			
+			local audioId = Net.StartPack("Client.PlaySound")
+			Net.WriteString(audioId, "BigStoneImpact")
+			Net.WriteBool(audioId, false)
+			Net.Broadcast(audioId)
 				
 		elseif compName == "AddBulletImpact" then
 			self:BulletImpact(entity, false)
 		
 		elseif compName == "AddBulletImpactPlayer" then
 			self:BulletImpact(entity, true)
+		elseif compName == "FallDownSound" then
+		
+			local x, y, z = world:GetComponent(entity, "Position", 0):GetFloat3()
+			local newEntity = world:CreateNewEntity()
+			world:CreateComponentAndAddTo("FallDownSound", newEntity)
+			world:GetComponent(newEntity, "FallDownSound", 0):SetFloat3(x, y, z)
+			
 		end
 		
-						
 		if world:EntityHasComponent(entity, "AddEntityAfterLerp") then
 			world:RemoveComponentFrom("AddEntityAfterLerp", entity)
 		end

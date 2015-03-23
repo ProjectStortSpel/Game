@@ -77,7 +77,13 @@ WeatherWindSystem.TickWeather = function(self, weatherEntity)
 			
 			local	tUnit	=	allUnits[i]
 			
-			if not world:EntityHasComponent(tUnit, "UnitDead") and not world:EntityHasComponent(tUnit, "ActionGuard") then
+			if world:EntityHasComponent(tUnit, "ActionGuard") then
+				-- SOUND
+					local audioId = Net.StartPack("Client.PlaySound")
+					Net.WriteString(audioId, "BlockVoice" .. math.random(1, 3))
+					Net.WriteBool(audioId, false)
+					Net.Broadcast(audioId)
+			elseif not world:EntityHasComponent(tUnit, "UnitDead") then
 			
 				local	posX, posZ	=	world:GetComponent(tUnit, "MapPosition", "X"):GetInt2()
 				

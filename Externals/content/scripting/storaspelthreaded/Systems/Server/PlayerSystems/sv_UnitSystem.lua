@@ -110,6 +110,7 @@ UnitSystem.EntitiesAdded = function(self, dt, entities)
 			world:GetComponent(newEntityId, "PlayerStats", "GoalCheckpoint"):SetInt(0)
 			
 			if world:EntityHasComponent(entity, "NetConnection") then
+			  
 				local ip = world:GetComponent(entity, "NetConnection", "IpAddress"):GetText()
 				local port = world:GetComponent(entity, "NetConnection", "Port"):GetInt()
 				local id = Net.StartPack("Client.SendMyUnitID")
@@ -119,7 +120,7 @@ UnitSystem.EntitiesAdded = function(self, dt, entities)
 				local audioId = Net.StartPack("Client.PlaySound")
 				Net.WriteString(audioId, "Bird")
 				Net.WriteBool(audioId, true)
-				Net.Send(id, ip, port)
+				Net.Send(audioId, ip, port)
 			else
 				-- CREATE TOTEM HAT ON AI
 				local randomHat = math.random(0,100)

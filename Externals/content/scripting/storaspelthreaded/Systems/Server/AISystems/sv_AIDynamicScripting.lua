@@ -30,6 +30,13 @@ AIDynamicScripting.EntitiesAdded = function(self, dt, entities)
 				then
 					local plyNr = world:GetComponent(playerEntity, "PlayerNumber", 0):GetInt(0);
 					self:UpdatePF( plyNr, "Unit" );
+					
+	
+					io.write("\n--- AI nr: ", plyNr, " uses these scripts ---\n\tSpot\tWeight\tLength\tPower\n")
+					self:PrintMyScript(plyNr, "Void")
+					self:PrintMyScript(plyNr, "NotWalkable")
+					self:PrintMyScript(plyNr, "Unit")
+					self:PrintMyScript(plyNr, "RiverEnd")
 				end
 			end
 			
@@ -102,9 +109,22 @@ AIDynamicScripting.EntitiesAdded = function(self, dt, entities)
 
 end
 
+AIDynamicScripting.PrintMyScript = function(self, _playerNumber, _object)
+	
+	local found, onTheSpotValue, weight, length, power = DynamicScripting.GetWeightFrom(_object, _playerNumber)
+	
+	local tab = ""
+	if _object == "Void" or _object == "Unit" then
+		tab = "\t\t"
+	else
+		tab = "\t"
+	end
+	
+	io.write(_object, tab, onTheSpotValue, "\t", weight, "\t", length, "\t", power, "\n")
+end
+
 AIDynamicScripting.UpdatePF = function(self, playerNumber, object )
-	local power = 2;
-	local found, weight, length, onTheSpotValue = DynamicScripting.GetWeightFrom(object, playerNumber)
+	local found, onTheSpotValue, weight, length, power = DynamicScripting.GetWeightFrom(object, playerNumber)
 	if found 
 	then
 		local superstuff = self:GetEntities(object);

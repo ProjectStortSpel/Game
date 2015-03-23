@@ -37,7 +37,11 @@ AbilitySlingshotSystem.CheckUnits = function(self, mapPosX, mapPosZ, currentPosX
 
 				
 			else
-				print("BLOCKED BITCH")
+					-- SOUND
+				local audioId = Net.StartPack("Client.PlaySound")
+				Net.WriteString(audioId, "BlockVoice" .. math.random(1, 3))
+				Net.WriteBool(audioId, false)
+				Net.Broadcast(audioId)
 			end
 			
 			return true
