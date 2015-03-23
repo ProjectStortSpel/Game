@@ -56,9 +56,10 @@ namespace Audio
 	float g_near, g_far;
 	glm::vec3 g_cameraPosition;
 	
-	int g_volume = MIX_MAX_VOLUME;
+	float g_volume = 1.0f;
 	
 	std::map<std::string, int> g_channels;
+	std::map<std::string, int> g_channelVolumes;
 	
 	std::vector<std::string> g_loadMusicQueue;
 	std::vector<AudioState> g_musicStateQueue;
@@ -132,6 +133,7 @@ namespace Audio
 				if (channel == channelPair.second)
 				{
 					g_channels.erase(channelPair.first);
+					g_channelVolumes.erase(channelPair.first);
 					break;
 				}
 			}
@@ -216,6 +218,7 @@ namespace Audio
 			if (playSound.useChannelName)
 			{
 				g_channels[playSound.channelName] = channel;
+				g_channelVolumes[playSound.channelName] = g_volume;
 			}
 		}
 		for (std::vector<FadeInParams>::iterator soundFadeInQueueIt = g_soundFadeInQueue.begin(); soundFadeInQueueIt != g_soundFadeInQueue.end();)
@@ -237,7 +240,10 @@ namespace Audio
 				continue;
 			}
 			if (soundFadeInQueueIt->useChannelName)
+			{
 				g_channels[soundFadeInQueueIt->channelName] = channel;
+				g_channelVolumes[soundFadeInQueueIt->channelName] = g_volume;
+			}
 			soundFadeInQueueIt = g_soundFadeInQueue.erase(soundFadeInQueueIt);
 		}
 		for (std::vector<std::pair<std::string, int>>::iterator soundFadeOutQueueIt = g_soundFadeOutQueue.begin(); soundFadeOutQueueIt != g_soundFadeOutQueue.end();)
@@ -293,13 +299,20 @@ namespace Audio
 		{
 			if (g_channels.find(volume.first) == g_channels.end())
 				continue;
-			Mix_Volume(g_channels[volume.first], volume.second);
+			Mix_Volume(g_channels[volume.first], (Uint8)(g_volume * (float)volume.second));
+			g_channelVolumes[volume.first] = volume.second;
 		}
 		g_loadSoundQueue.clear();
 		g_playSoundQueue.clear();
 		g_soundStateQueue.clear();
 		//g_soundPositionQueue.clear();
 		g_soundVolumeQueue.clear();
+		
+		for (std::pair<std::string, int> channelVolume : g_channelVolumes)
+		{
+			Uint8 volume = (Uint8)(g_volume * (float)channelVolume.second);
+			Mix_Volume(g_channels[channelVolume.first], volume);
+		}
 	}
 	
 	void Quit()
@@ -328,7 +341,7 @@ namespace Audio
 		SDL_DestroyMutex(g_soundVolumeMutex);
 	}
 	
-	void SetVolume(int volume)
+	void SetVolume(float volume)
 	{
 		g_volume = volume;
 	}
