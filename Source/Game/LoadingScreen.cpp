@@ -70,7 +70,7 @@ void LoadingScreen::SetLoadingText(std::string _text)
 		m_textMatrix = glm::mat4(1);
 
 		//translate
-		m_textMatrix *= glm::translate(glm::vec3(0, 0, -1.001));
+		m_textMatrix *= glm::translate(glm::vec3(0, -0.45, -1.001));
 
 		//scale
 		float scaleX = m_scaleX;

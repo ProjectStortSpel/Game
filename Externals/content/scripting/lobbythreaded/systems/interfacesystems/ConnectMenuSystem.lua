@@ -28,8 +28,6 @@ ConnectMenuSystem.Update = function(self, dt)
 				local id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo(compname, id)
 			end
-		elseif self.Active then
-			self:RemoveMenuToMain()
 		end
 		
 	end
@@ -123,6 +121,11 @@ ConnectMenuSystem.SpawnMenu = function(self)
 	
 	button = self:CreateElement("host", "quad", -0.6, -0.85, -2, 0.5, 0.20)
 	self:AddEntityCommandToButton("HostMenu", button)
+	self:AddHoverSize(1.1, button)
+	
+	button = self:CreateElement("returnknapp", "quad", 2.3, -1.2, -3, 0.4, 0.4)
+	self:AddConsoleCommandToButton("back", button)
+	self:AddEntityCommandToButton("MainMenu", button)
 	self:AddHoverSize(1.1, button)
 	
 	self.Active = true

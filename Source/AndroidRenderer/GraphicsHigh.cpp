@@ -554,8 +554,8 @@ void GraphicsHigh::CreateShadowMap()
 {
 	int resolution = 1024;
 	m_dirLightDirection = vec3(0.0f, -1.0f, 1.0f);
-	vec3 midMap = vec3(8.0f, 0.0f, 8.0f);
-	vec3 lightPos = midMap - (10.0f*normalize(m_dirLightDirection));
+	vec3 target = vec3(0.0, 0.0, 0.0);
+	vec3 lightPos = target - (10.0f*normalize(m_dirLightDirection));
 	m_shadowMap = new ShadowMap(lightPos, lightPos + normalize(m_dirLightDirection), resolution);
 	m_shadowMap->CreateShadowMapTexture(GL_TEXTURE0);
 
@@ -963,7 +963,13 @@ void GraphicsHigh::BufferLightsToGPU()
 {
 	if (m_directionalLightPtr)
 	{
-		m_shadowMap->UpdateViewMatrix(vec3(8.0f, 0.0f, 8.0f) - (10.0f*normalize(m_dirLightDirection)), vec3(8.0f, 0.0f, 8.0f));
+		m_shadowMap->UpdateViewMatrix(m_dirLightshadowMapTarget - (10.0f*normalize(m_dirLightDirection)), m_dirLightshadowMapTarget);
 	}
 	BufferLightsToGPU_GD();
+}
+
+void GraphicsHigh::SetShadowMapData(float _width, float _height, vec3 _target)
+{
+	m_dirLightshadowMapTarget = _target;
+	m_shadowMap->SetBounds(_width, _height);
 }

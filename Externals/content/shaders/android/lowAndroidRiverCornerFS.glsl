@@ -30,7 +30,7 @@ struct Pointlight {
 	vec3 Color;
 	float Range;
 }; 
-uniform Pointlight pointlights[1];
+uniform Pointlight pointlights[2];
 
 struct MaterialInfo {
 	float Ks;
@@ -159,11 +159,16 @@ void main()
 		spec    += s;
 	}
 
+    vec3 a,d,s;
     //för varje ljus-----------
 	if( length(pointlights[0].Intensity) > 0.0)
 	{
-		vec3 a,d,s;
 		phongModel(pointlights[0], a, d, s);
+		diffuse += d; ambient += a; spec += s;
+	}
+	if( length(pointlights[1].Intensity) > 0.0)
+	{
+		phongModel(pointlights[1], a, d, s);
 		diffuse += d; ambient += a; spec += s;
 	}
 

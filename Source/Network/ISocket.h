@@ -3,6 +3,7 @@
 
 #include "Stdafx.h"
 #include "NetConnection.h"
+#include "Rijndael.h"
 
 namespace Network
 {
@@ -63,6 +64,9 @@ namespace Network
 		int* m_remotePort;
 		int* m_localPort;
 		int* m_active;
+
+		CRijndael* m_rijndael;
+		const short* m_rijndaelBlockSize;
 
 	private:
 

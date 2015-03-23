@@ -135,6 +135,7 @@ GlowNextCheckpointSystem.EntitiesAdded = function(self, dt, newEntities)
 			world:GetComponent(newGlow, "Scale", 0):SetFloat3(0.5, 1.0, 0.5)
 			world:GetComponent(newGlow, "Color", 0):SetFloat3(0.2, 0.2, 0.2)
 			world:GetComponent(newGlow, "GlowingCheckpoint", "Stage"):SetInt(cNumber)
+			world:CreateComponentAndAddTo("NoShadow", newGlow)
 		end
 		
 	end

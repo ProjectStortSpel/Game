@@ -23,6 +23,7 @@ void PointlightSystem::Initialize()
 
 	/*	Rendersystem wants Position, Scale, Rotation and Render	*/
 	AddComponentTypeToFilter("Pointlight", ECSL::FilterType::Mandatory);
+	AddComponentTypeToFilter("Hide", ECSL::FilterType::Excluded);
 
 
 	std::vector<unsigned int> bitsetComponents;
@@ -72,7 +73,17 @@ void PointlightSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, const st
 
 void PointlightSystem::EntitiesRemoved(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities)
 {
-	UpdatePointLights();
+	bool	doRebuff	=	false;
+	for (auto entityId : _entities)
+	{
+		if (HasComponent(entityId, "Hide"))
+			RemoveComponentFrom("Hide", entityId);
+		else
+			doRebuff	=	true;
+	}
+
+	if (doRebuff)
+		UpdatePointLights();
 }
 
 

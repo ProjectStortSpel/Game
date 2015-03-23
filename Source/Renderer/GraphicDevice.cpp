@@ -16,7 +16,7 @@ GraphicDevice::GraphicDevice()
 
 	m_windowPosX = 70;
 	m_windowPosY = 2;
-	m_windowCaption = "Project SWEET POTATO PIE";
+	m_windowCaption = "Neanderfall";
 	m_SDLinitialized = false;
 	
 	m_pointerToPointlights = NULL;
@@ -32,7 +32,7 @@ GraphicDevice::GraphicDevice(Camera _camera, int x, int y)
 	m_camera = new Camera(_camera);
 	m_windowPosX = x;
 	m_windowPosY = y;
-	m_windowCaption = "Project SWEET POTATO PIE";
+	m_windowCaption = "Neanderfall";
 	m_SDLinitialized = true;
 
 	m_pointerToPointlights = NULL;
@@ -1012,4 +1012,10 @@ void GraphicDevice::BufferStaticModel(std::pair<int, std::vector<ModelToLoad*>> 
 
 	for (ModelToLoad* modelToLoad : _staticModel.second)
 		delete modelToLoad;
+}
+
+void GraphicDevice::SetShadowMapData(float _width, float _height, vec3 _target)
+{
+	m_dirLightshadowMapTarget = _target;
+	m_shadowMap->SetBounds(_width, _height);
 }

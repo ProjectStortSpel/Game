@@ -317,7 +317,7 @@ void ServerNetwork::ReceivePackets(ISocket* _socket, const std::string _name)
 				DebugLog("Failed to lock timeout. Error: %s.", LogSeverity::Error, SDL_GetError());
 
 			Packet* p = new Packet();
-			p->Data = new unsigned char[dataReceived];
+			p->Data = new char[dataReceived];
 			*p->Length = dataReceived;
 			*p->Sender = _socket->GetNetConnection();
 			memcpy(p->Data, packetData, dataReceived);
@@ -647,11 +647,8 @@ void ServerNetwork::NetConnectionLost(NetConnection& _connection)
 
 	if (SDL_LockMutex(m_connectedClientsLock) == 0)
 	{
-		if (m_connectedClients->find(_connection) != m_connectedClients->end())
-		{
+		if(m_connectedClients->find(_connection) != m_connectedClients->end())
 			(*m_connectedClients)[_connection]->ShutdownSocket(1);
-			(*m_connectedClients)[_connection]->CloseSocket();
-		}
 		SDL_UnlockMutex(m_connectedClientsLock);
 	}
 	else if (NET_DEBUG > 0)

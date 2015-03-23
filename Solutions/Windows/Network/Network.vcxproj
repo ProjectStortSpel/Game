@@ -26,6 +26,7 @@
     <ClCompile Include="..\..\..\Source\Network\NetConnection.cpp" />
     <ClCompile Include="..\..\..\Source\Network\Packet.cpp" />
     <ClCompile Include="..\..\..\Source\Network\PacketHandler.cpp" />
+    <ClCompile Include="..\..\..\Source\Network\Rijndael.cpp" />
     <ClCompile Include="..\..\..\Source\Network\ServerNetwork.cpp" />
     <ClCompile Include="..\..\..\Source\Network\Stdafx.cpp" />
     <ClCompile Include="..\..\..\Source\Network\WinSocket.cpp" />
@@ -40,6 +41,7 @@
     <ClInclude Include="..\..\..\Source\Network\Network.h" />
     <ClInclude Include="..\..\..\Source\Network\Packet.h" />
     <ClInclude Include="..\..\..\Source\Network\PacketHandler.h" />
+    <ClInclude Include="..\..\..\Source\Network\Rijndael.h" />
     <ClInclude Include="..\..\..\Source\Network\ServerNetwork.h" />
     <ClInclude Include="..\..\..\Source\Network\Stdafx.h" />
     <ClInclude Include="..\..\..\Source\Network\WinSocket.h" />
