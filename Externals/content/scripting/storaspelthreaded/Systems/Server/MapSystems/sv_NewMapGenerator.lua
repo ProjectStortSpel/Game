@@ -64,8 +64,8 @@ MapGenerator.Initialize = function(self)
 end
 
 MapGenerator.EntitiesAdded = function(self, dt, entities)
-	--self:GenerateMap(os.time()%12345, 10, 10)
-	self:GenerateMap(23246299, 4, 3)
+	self:GenerateMap(9786948, 2, 3)
+	--self:GenerateMap(4, 2, 2)
 	--self:GenerateMap(1579125, 5, 5)
 	--self:GenerateMap(1579125, 8, 5)
 	--self:GenerateMap(23239474, 4, 4)
@@ -168,14 +168,14 @@ MapGenerator.GenerateMap = function(self, MapSeed, NumberOfPlayers, NumberOfChec
 	--	Create all rivers
 	local	tNumberOfTiles	=	self:GetPlayableTiles()
 	self.Rivers				=	math.ceil((self.MapSizeX*self.MapSizeZ)/tNumberOfTiles)
-	self.RiverTiles			=	math.ceil(math.sqrt(tNumberOfTiles)*1.90)
+	self.RiverTiles			=	math.ceil(math.sqrt(tNumberOfTiles)*1.50)
 	self:PrintDebugMessage("Carving " .. self.RiverTiles .. " river tiles")
 	self:PrintDebugMessage("Carving " .. self.Rivers .. " rivers")
 	self:CreateRivers()
 	
 	self:CarveVoidHoles()
 	
-	local	numberOfStones	=	math.floor(self:GetPlayableTiles() / (math.ceil(2*math.sqrt(self.MapSizeX*self.MapSizeZ))))
+	local	numberOfStones	=	math.floor(self:GetPlayableTiles() / (math.ceil(2.5*math.sqrt(self.MapSizeX*self.MapSizeZ))))
 	self:PrintDebugMessage("Placing " .. numberOfStones .. " stones")
 	self:PlaceStones(numberOfStones)
 	--	Place spawnpoints
@@ -670,7 +670,7 @@ MapGenerator.PlaceStoneNear = function(self, X, Z, Distance)
 		if tileType ~= self.Void and tileType ~= self.Stone and tileType < self.Checkpoint then
 			
 			if self:NumberOfAdjacentTiles(tX, tZ) == 4 then
-				self:SetTileType(tX, tZ, self.Stone)
+				--self:SetTileType(tX, tZ, self.Stone)
 				return tX, tZ
 			end
 		end
@@ -735,10 +735,11 @@ MapGenerator.CarveVoidMargin = function(self)
 end
 
 
-MapGenerator.CarveVoidHoleNear = function(self, X, Z, Radius)
+MapGenerator.CarveVoidHoleNear = function(self, X, Z, Radius, MaxCarves)
 
 	local	voidCarved			=	0
 	local	tIterations			=	math.ceil(Radius/2)
+	print("ITERATIONS: " .. tIterations)
 	local	offsetX, offsetZ	=	math.random(0, 10)*0.1, math.random(0, 10)*0.1
 	for tZ = -tIterations, tIterations do
 		for tX = -tIterations, tIterations do
@@ -746,6 +747,10 @@ MapGenerator.CarveVoidHoleNear = function(self, X, Z, Radius)
 				if self:GetDistanceBetween(X+offsetX, Z+offsetZ, X+tX, Z+tZ) < Radius then
 					self:SetTileType(X+tX, Z+tZ, self.Void)
 					voidCarved	=	voidCarved+1
+					
+					if voidCarved >= MaxCarves then
+						break
+					end
 				end
 			end
 		end
@@ -758,7 +763,7 @@ end
 MapGenerator.CarveVoidHoles = function(self)
 	
 	local	tNumberOfTiles	=	self:GetPlayableTiles()
-			tNumberOfTiles	=	math.floor(0.50*math.sqrt(tNumberOfTiles))
+			tNumberOfTiles	=	math.floor(0.80*math.sqrt(tNumberOfTiles))
 	if tNumberOfTiles == 0 then
 		return
 	end
@@ -773,7 +778,7 @@ MapGenerator.CarveVoidHoles = function(self)
 		end
 		
 		if self:GetTileType(tX, tZ) ~= self.Void then
-			tNumberOfTiles	=	tNumberOfTiles - self:CarveVoidHoleNear(tX, tZ, math.random(10, 18)*0.1)
+			tNumberOfTiles	=	tNumberOfTiles - self:CarveVoidHoleNear(tX, tZ, math.random(10, 18)*0.1, tNumberOfTiles)
 		end
 	end
 	
@@ -972,10 +977,11 @@ MapGenerator.PlaceCheckpoints = function(self)
 
 	local	centerX, centerZ	=	self:GetCenterOfMap()
 	local	lastX, lastZ		=	self:GetRandomTileOfType(self.Grass)--self:GetRandomPositionWithinMargin(self.VoidMargin, self.VoidMargin)
-	local	tempDistance		=	self.MapSizeX+self.MapSizeZ*0.8--math.ceil(self:GetDistanceBetween(self.VoidMargin, self.VoidMargin, centerX, centerZ))--math.ceil(self:GetDistanceBetween(self.VoidMargin, self.VoidMargin, centerX, centerZ))
+	local	tempDistance		=	math.sqrt(2*self.MapSizeX + 2*self.MapSizeZ)--math.ceil(self:GetDistanceBetween(self.VoidMargin, self.VoidMargin, centerX, centerZ))--math.ceil(self:GetDistanceBetween(self.VoidMargin, self.VoidMargin, centerX, centerZ))
+	local	originalDistance	=	tempDistance
 	local	tX, tZ	=	-1, -1
 	for n = 0, self.Checkpoints-1 do
-		tempDistance		=	math.ceil(self:GetDistanceBetween(lastX, lastZ, centerX, centerZ))
+		tempDistance		=	originalDistance
 		while true do
 			
 			for nTry = 1, 10 do 
@@ -993,6 +999,7 @@ MapGenerator.PlaceCheckpoints = function(self)
 						break
 					end
 				end
+				
 				if not isNearCheckpoint then
 					if self:CanWalkBetween(tX, tZ, lastX, lastZ) then
 						self:SetTileType(tX, tZ, self.Checkpoint+n)
@@ -1011,7 +1018,7 @@ MapGenerator.PlaceCheckpoints = function(self)
 			else
 				tempDistance	=	tempDistance - 1
 				if tempDistance < 0 then
-					tempDistance		=	math.ceil(self:GetDistanceBetween(self.VoidMargin, self.VoidMargin, centerX, centerZ))
+					tempDistance		=	originalDistance
 				end
 			end
 		end
@@ -1970,11 +1977,6 @@ MapGenerator.GetPositionXDistanceAwayFrom = function(self, X, Z, Distance)
 			nTries = nTries+1
 			
 			if nTries >= nMaxTries then
-				if self.DebugInfo then
-					print("!!! ERROR OCCURED IN GetPositionXDistanceAwayFrom(" .. X .. ", " .. Z .. ", " .. Distance .. ") !!!")
-					print("!!! Max number of tries reached and no position found !!!")
-				end
-				
 				break
 			end
 		end
@@ -2020,11 +2022,6 @@ MapGenerator.GetRandomTileOfType = function(self, Type)
 		print("!!! Max number of tries reached and no position found !!!")
 	end
 	return	-1, -1
-end
-
---	Returns true if there is a path from (X1, Z1) to (X2, Z2)
-MapGenerator.CanWalkBetween = function(self, X1, Z1, X2, Z2)
-	return	PathfinderHandler.GeneratePath(X1, Z1, X2, Z2) ~= 2147483647
 end
 
 --	Get number of neighbours
@@ -2130,7 +2127,8 @@ end
 MapGenerator.CanWalkBetween = function(self, X1, Z1, X2, Z2)
 	local	tCost	=	PathfinderHandler.GeneratePath(X1, Z1, X2, Z2)
 	
-	if tCost == 2147483647 then
+	if tCost <= 0 or tCost >= self.MapSizeX*self.MapSizeZ then
+		print(X1,Z1,X2,Z2, "not walkable!")
 		return false
 	else
 		return true

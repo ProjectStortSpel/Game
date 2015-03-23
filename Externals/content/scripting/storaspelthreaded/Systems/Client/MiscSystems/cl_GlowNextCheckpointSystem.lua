@@ -108,9 +108,9 @@ GlowNextCheckpointSystem.Update = function(self, dt)
 	self.TotalTime	=	self.TotalTime + dt
 	self.GlowTimer	=	self.GlowTimer + dt
 	
-	local	R	=	0.6 + math.sin(0.10*self.TotalTime)*0.25
-	local	G	=	0.6 + math.sin(0.10*self.TotalTime*self.TotalTime)*0.25
-	local	B	=	0.6 + math.sin(0.10*self.TotalTime*self.TotalTime*self.TotalTime)*0.25
+	local	R	=	0.6 + math.sin(self.TotalTime)*0.25
+	local	G	=	0.6 + math.sin(self.TotalTime+self.TotalTime)*0.25
+	local	B	=	0.6 + math.sin(self.TotalTime+self.TotalTime+self.TotalTime)*0.25
 	world:GetComponent(self.TargetRune, "Color", 0):SetFloat3(R,G,B)
 	
 	--	Update the glowing light
