@@ -39,6 +39,10 @@ require "cl_SendSelectedCardsSystem"
 package.path = package.path .. ";Systems/Client/CameraSystems/?.lua"
 require "cl_NewCameraSystem"
 
+--	Audio System
+package.path = package.path .. ";Systems/Client/AudioSystems/?.lua"
+require "cl_AudioRiverSystem"
+
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ClientNetworkMessageSystem)
 
@@ -71,12 +75,13 @@ worldCreator:AddSystemToCurrentGroup(CardAddModelSystem)
 worldCreator:AddSystemToCurrentGroup(ShowNextCheckpointSystem)
 worldCreator:AddSystemToCurrentGroup(GlowNextCheckpointSystem)
 
+worldCreator:AddSystemToCurrentGroup(AudioRiverSystem)
+
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(VisualizeSelectedCards)
 worldCreator:AddSystemToCurrentGroup(FadeTreeSystem)
 
 worldCreator:AddSystemToCurrentGroup(WinScreenSystem)
-
 
 
 
