@@ -129,15 +129,19 @@ Net.Receive("Client.NewTargetCheckpoint",
 	local	C2		=	Net.ReadInt(id)
 	
 	if C1 ~= -1 then
-		local	newEntity	=	world:CreateNewEntity()
-		world:CreateComponentAndAddTo("GlowCheckpoint", newEntity)
+		local	newEntity	=	-1
 		
-		world:GetComponent(newEntity, "GlowCheckpoint", "Stage"):SetInt(C1)
-		
-		if C2 ~= -1 then
+		if C2 == -1 then
 			newEntity	=	world:CreateNewEntity()
 			world:CreateComponentAndAddTo("GlowCheckpoint", newEntity)
+			world:GetComponent(newEntity, "GlowCheckpoint", "Stage"):SetInt(-1)
+		else
+			newEntity	=	world:CreateNewEntity()
+			world:CreateComponentAndAddTo("GlowCheckpoint", newEntity)
+			world:GetComponent(newEntity, "GlowCheckpoint", "Stage"):SetInt(C1)
 			
+			newEntity	=	world:CreateNewEntity()
+			world:CreateComponentAndAddTo("GlowCheckpoint", newEntity)
 			world:GetComponent(newEntity, "GlowCheckpoint", "Stage"):SetInt(C2)
 		end
 	end
