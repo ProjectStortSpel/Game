@@ -67,5 +67,10 @@ AddEntityAfterLerpSystem.EntitiesRemoved = function(self, dt, entities)
 			self:BulletImpact(entity, true)
 		end
 		
+						
+		if world:EntityHasComponent(entity, "AddEntityAfterLerp") then
+			world:RemoveComponentFrom("AddEntityAfterLerp", entity)
+		end
+		
 	end
 end

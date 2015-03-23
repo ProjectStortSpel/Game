@@ -29,6 +29,7 @@ namespace Renderer
 
 		void BufferPointlights(int _nrOfLights, float **_lightPointers);
 		void BufferDirectionalLight(float *_lightPointer);
+		void SetShadowMapData(float _width, float _height, vec3 _target);
 		
 		void Clear();
 
@@ -42,9 +43,10 @@ namespace Renderer
 
 		// Shadow 
 		ShadowMap *m_shadowMap;
+		vec3 m_dirLightshadowMapTarget;
 
 		// Shaders
-		Shader m_shadowShader;
+		Shader m_shadowShader, m_animShadowShader;
 
 		void CreateShadowMap();
 		void WriteShadowMapDepth();

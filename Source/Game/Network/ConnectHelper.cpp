@@ -130,7 +130,7 @@ namespace ConnectHelper
 
 			int size = _ph->ReadInt(_id);
 
-			unsigned char* data = _ph->ReadBytes(_id, size);
+			char* data = _ph->ReadBytes(_id, size);
 
 			if (firstPart == 1)
 			{
@@ -291,7 +291,7 @@ namespace ConnectHelper
 
 			int p = (int)(((float)bytesDownloaded / (float)bytesToDownload) * 100);
 
-			unsigned char* data = _ph->ReadBytes(_id, size);
+			char* data = _ph->ReadBytes(_id, size);
 
 			if (firstPart == 1)
 				FileSystem::File::Create(r.Location);
@@ -464,7 +464,7 @@ namespace ConnectHelper
 
 			int p = (int)(((float)bytesDownloaded / (float)bytesToDownload) * 100);
 
-			unsigned char* data = _ph->ReadBytes(_id, size);
+			char* data = _ph->ReadBytes(_id, size);
 
 			if (firstPart == 1)
 				FileSystem::File::Create(r.Location);

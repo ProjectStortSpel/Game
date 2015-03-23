@@ -97,3 +97,11 @@ template:SetFloat3("Position", 0.0, 1.0, 0.0)
 template:SetFloat3("Rotation", 0.0, 0.0, 0.0)
 template:SetFloat3("Scale", 1, 1, 1)
 EntityTemplateManager:AddTemplate(template)
+
+template = EntityTemplate()
+template.Name = "Mesh"
+template:SetFloat3("Position", 0.0, 0.0, 0.0)
+template:SetFloat3("Rotation", 0.0, 0.0, 0.0)
+template:SetFloat3("Scale", 1.0, 1.0, 1.0)
+template:SetModel("Model", "checkpoint1", "checkpoint" , 0)
+EntityTemplateManager:AddTemplate(template)

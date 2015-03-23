@@ -60,15 +60,19 @@ VoidSystem.EntitiesAdded = function(self, dt, entities)
 
 						-- If the voids' position is the same as the unit
 						if tmpX == voidX and tmpZ == voidZ then
+						
 							-- Add Unit dead component
 							if not world:EntityHasComponent(units[i], "UnitDead") then
+								print("UNIT IS NOW DEAD!")
 								world:CreateComponentAndAddTo("UnitDead", units[i])
+								
+								--	Spawn rating entity
+								local	unitDied	=	world:CreateNewEntity()
+								world:CreateComponentAndAddTo("UnitDied", unitDied)
+								world:GetComponent(unitDied, "UnitDied", "PlayerNumber"):SetInt3(world:GetComponent(units[i], "PlayerNumber", 0):GetInt(), voidX, voidZ)
 							end
 							
-							--	Spawn rating entity
-							local	unitDied	=	world:CreateNewEntity()
-							world:CreateComponentAndAddTo("UnitDied", unitDied)
-							world:GetComponent(unitDied, "UnitDied", "PlayerNumber"):SetInt3(world:GetComponent(units[i], "PlayerNumber", 0):GetInt(), voidX, voidZ)
+
 							
 							--	Move the unit
 							if not world:EntityHasComponent(units[i], "LerpPosition") then

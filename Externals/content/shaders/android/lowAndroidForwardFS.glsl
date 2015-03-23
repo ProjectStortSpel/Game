@@ -28,7 +28,7 @@ struct Pointlight {
 	vec3 Color;
 	float Range;
 }; 
-uniform Pointlight pointlights[1];
+uniform Pointlight pointlights[2];
 
 struct MaterialInfo {
 	float Ks;
@@ -106,6 +106,9 @@ void main()
 {
 	vec4 albedo_tex = texture2D( diffuseTex, TexCoord );
 
+	if(albedo_tex.a == 0.0)
+		discard;
+
 	// Normal data
 	vec3 normal_map	  = texture2D( normalTex, TexCoord ).rgb;
 	normal_map = (normal_map * 2.0) - 1.0;
@@ -148,9 +151,12 @@ void main()
 	if( length(pointlights[0].Intensity) > 0.0)
 	{
 		phongModel(pointlights[0], a, d, s);
-		ambient += a;
-		diffuse += d;  
-		spec	+= s;
+		diffuse += d; ambient += a; spec += s;
+	}
+	if( length(pointlights[1].Intensity) > 0.0)
+	{
+		phongModel(pointlights[1], a, d, s);
+		diffuse += d; ambient += a; spec += s;
 	}
 
 	float glow = spec_map.z;

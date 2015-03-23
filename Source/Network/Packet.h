@@ -12,13 +12,13 @@ namespace Network
 	{
 	public:
 		Packet(void);
-		Packet(unsigned char* _data, unsigned short _length, NetConnection _sender = NetConnection());
+		Packet(char* _data, unsigned short _length, NetConnection _sender = NetConnection());
 
 		~Packet();
 
 	public:
 
-		unsigned char* Data;
+		char* Data;
 		unsigned short* Length;
 		NetConnection* Sender;
 	};

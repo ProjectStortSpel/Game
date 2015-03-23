@@ -13,6 +13,7 @@ CameraInterestPoint:AddVariable("AtZ", ByteSize.Float)
 CameraInterestPoint:AddVariable("UpX", ByteSize.Float)
 CameraInterestPoint:AddVariable("UpZ", ByteSize.Float)
 CameraInterestPoint:AddVariable("Distance", ByteSize.Float)
+CameraInterestPoint:AddVariable("Time", ByteSize.Float)
 worldCreator:AddComponentType(CameraInterestPoint)
 
 -- Camera Component

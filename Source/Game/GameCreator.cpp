@@ -1285,6 +1285,13 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 			if (m_clientWorld && m_clientWorld->HasComponent(i, "Particle"))
 				m_clientWorld->CreateComponentAndAddTo("Hide", i);
 
+
+			if (m_clientWorld && m_clientWorld->HasComponent(i, "DirectionalLight"))
+				m_clientWorld->CreateComponentAndAddTo("Hide", i);
+
+			if (m_clientWorld && m_clientWorld->HasComponent(i, "Pointlight"))
+				m_clientWorld->CreateComponentAndAddTo("Hide", i);
+
 			if (m_serverWorld && m_serverWorld->HasComponent(i, "Render"))
 				m_serverWorld->RemoveComponentFrom("Render", i);
 		}
@@ -1336,6 +1343,12 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 				m_clientWorld->RemoveComponentFrom("Render", i);
 
 			if (m_clientWorld && m_clientWorld->HasComponent(i, "Particle"))
+				m_clientWorld->CreateComponentAndAddTo("Hide", i);
+
+			if (m_clientWorld && m_clientWorld->HasComponent(i, "DirectionalLight"))
+				m_clientWorld->CreateComponentAndAddTo("Hide", i);
+
+			if (m_clientWorld && m_clientWorld->HasComponent(i, "Pointlight"))
 				m_clientWorld->CreateComponentAndAddTo("Hide", i);
             
 			if (m_serverWorld && m_serverWorld->HasComponent(i, "Render"))

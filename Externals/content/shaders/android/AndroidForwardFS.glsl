@@ -10,7 +10,6 @@ varying vec3 BiTan;
 varying vec2 TexCoord;
 varying vec4 ViewPos;
 
-
 //Input textures
 uniform sampler2D ShadowDepthTex;
 uniform sampler2D diffuseTex;
@@ -36,7 +35,7 @@ struct Pointlight {
 	vec3 Color;
 	float Range;
 }; 
-uniform Pointlight pointlights[1];
+uniform Pointlight pointlights[2];
 
 struct MaterialInfo {
 	float Ks;
@@ -67,7 +66,7 @@ void phongModelDirLight(out vec3 ambient, out vec3 diffuse, out vec3 spec)
 
 		float shadow = 1.0;
 		vec4 shadowCoordinateWdivide = shadowCoord / shadowCoord.w;
-		shadowCoordinateWdivide.z -= 0.02;
+		shadowCoordinateWdivide.z -= 0.01;
 		float distanceFromLight = texture2D(ShadowDepthTex, shadowCoordinateWdivide.st).z;
 		
 		if (shadowCoord.w > 0.0)
@@ -126,6 +125,9 @@ void main()
 {
 	vec4 albedo_tex = texture2D( diffuseTex, TexCoord );
 
+	//if(albedo_tex.a == 0.0)
+	//	discard;
+
 	// Normal data
 	vec3 normal_map	  = texture2D( normalTex, TexCoord ).rgb;
 	normal_map = (normal_map * 2.0) - 1.0;
@@ -162,11 +164,16 @@ void main()
 		spec    += s;
 	}
 
+	vec3 a,d,s;
     //för varje ljus-----------
 	if( length(pointlights[0].Intensity) > 0.0)
 	{
-		vec3 a,d,s;
 		phongModel(pointlights[0], a, d, s);
+		diffuse += d; ambient += a; spec += s;
+	}
+	if( length(pointlights[1].Intensity) > 0.0)
+	{
+		phongModel(pointlights[1], a, d, s);
 		diffuse += d; ambient += a; spec += s;
 	}
 

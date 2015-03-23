@@ -35,7 +35,7 @@ void main()
     
 	//skin += mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, weights.x, 0, 1);
 
-	ViewPos = MV * skin * vec4(VertexPosition, 1.0);
+	ViewPos = MV * vec4(VertexPosition, 1.0); //MV * skin * vec4(VertexPosition, 1.0);
 	gl_Position = P * MV * skin * vec4(VertexPosition, 1.0);
 
 	Normal = normalize( NormalMatrix * (skin * vec4(VertexNormal, 0.0)).xyz );
