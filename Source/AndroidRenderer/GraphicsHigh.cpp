@@ -180,14 +180,10 @@ void GraphicsHigh::WriteShadowMapDepth()
 		mat4 mvp = shadowViewProj * modelMatrix;
 		m_animShadowShader.SetUniVariable("MVP", mat4x4, &mvp);
 
-		//glActiveTexture(GL_TEXTURE1);
-		//glBindTexture(GL_TEXTURE_2D, m_modelsAnimated[i].texID);
-
 		m_modelsAnimated[i].bufferPtr->draw(m_animShadowShader.GetShaderProgram());
 
 	}
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	//glBindFramebuffer(GL_FRAMEBUFFER, oldFBO);
 	glCullFace(GL_BACK);
 	//------------------------------
 }
