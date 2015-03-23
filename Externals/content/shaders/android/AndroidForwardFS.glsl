@@ -125,8 +125,8 @@ void main()
 {
 	vec4 albedo_tex = texture2D( diffuseTex, TexCoord );
 
-	//if(albedo_tex.a == 0.0)
-	//	discard;
+	if(albedo_tex.a == 0.0)
+		discard;
 
 	// Normal data
 	vec3 normal_map	  = texture2D( normalTex, TexCoord ).rgb;

@@ -148,6 +148,12 @@ void GraphicDevice::InitStandardShaders()
 	m_interfaceShader.AddShader("content/shaders/FSInterfaceShader.glsl", GL_FRAGMENT_SHADER);
 	m_interfaceShader.FinalizeShaderProgram();
 
+	// ShadowShader deferred geometry
+	m_shadowShaderDeferred.InitShaderProgram();
+	m_shadowShaderDeferred.AddShader("content/shaders/shadowShaderDeferredVS.glsl", GL_VERTEX_SHADER);
+	m_shadowShaderDeferred.AddShader("content/shaders/shadowShaderDeferredFS.glsl", GL_FRAGMENT_SHADER);
+	m_shadowShaderDeferred.FinalizeShaderProgram();
+
 	// ShadowShader forward geometry
 	m_shadowShaderForward.InitShaderProgram();
 	m_shadowShaderForward.AddShader("content/shaders/shadowShaderForwardVS.glsl", GL_VERTEX_SHADER);
