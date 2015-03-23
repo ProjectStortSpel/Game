@@ -208,7 +208,7 @@ void GraphicsHigh::Render()
 	glDepthMask(GL_TRUE);
 	// -----------
 
-	if (m_modelsForward.size() > 0 || m_modelsAnimated.size() > 0)
+	if (m_modelsDeferred.size() > 0 || m_modelsForward.size() > 0)
 	{
 		WriteShadowMapDepth();
 
@@ -225,7 +225,8 @@ void GraphicsHigh::Render()
 		
 		mat4 shadowVP = (*m_shadowMap->GetProjectionMatrix()) * (*m_shadowMap->GetViewMatrix());
 		mat4 invViewMatrix = glm::inverse(viewMatrix);
-		//--------ANIMATED DEFERRED RENDERING !!! ATTENTION: WORK IN PROGRESS !!!
+		
+		//--------ANIMATED MODELS
 		m_animationShader.UseProgram();
 		m_animationShader.SetUniVariable("P", mat4x4, &projectionMatrix);
 		m_animationShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
@@ -260,12 +261,10 @@ void GraphicsHigh::Render()
 		
 		m_forwardShader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
 
-		
+		//----Deferred models with forward shader----
+		for (int i = 0; i < m_modelsDeferred.size(); i++)
+			m_modelsDeferred[i].Draw(viewMatrix, &m_forwardShader);
 
-		for (int i = 0; i < m_modelsForward.size(); i++)
-		{
-			m_modelsForward[i].Draw(viewMatrix, &m_forwardShader);
-		}
 		//-------------------------------------------------------------------------
 
 		//-------Render water-------------
@@ -295,6 +294,9 @@ void GraphicsHigh::Render()
 			m_modelsWaterCorners[i].Draw(viewMatrix, &m_riverCornerShader);
 		}
 
+		//------FORWARD RENDERING---Forward models-----
+		for (int i = 0; i < m_modelsForward.size(); i++)
+			m_modelsForward[i].Draw(viewMatrix, &m_forwardShader);
 	}
 
 	glViewport(0, 0, m_framebufferWidth, m_framebufferHeight);
