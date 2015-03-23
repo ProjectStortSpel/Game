@@ -97,6 +97,7 @@ MapGenerator.PostInitialize = function(self)
 	--world:GetComponent(newParticle, "Particle", "Scale"):SetFloat(0.05)
 	--world:GetComponent(newParticle, "Particle", "SpriteSize"):SetFloat(0.6)
 	--world:GetComponent(newParticle, "Particle", "Id"):SetInt(-1)
+	
 end
 
 MapGenerator.GenerateMap = function(self, MapSeed, NumberOfPlayers, NumberOfCheckpoints)
@@ -190,6 +191,7 @@ MapGenerator.GenerateMap = function(self, MapSeed, NumberOfPlayers, NumberOfChec
 	--	Create the actual map
 	self:PrintDebugMessage("Creating map")
 	self:CreateMap()
+	
 end
 
 --	Will load a map from a specified file
@@ -1158,6 +1160,28 @@ MapGenerator.CreateMap = function(self)
 	world:CreateComponentAndAddTo("SyncNetwork", newLight)
     world:GetComponent(newLight, "DirectionalLight", 0):SetDirectionalLight(math.sin(math.random(1, 360)), -1.0, math.sin(math.random(1, 360)), 0.35, 0.65, 0.65, R, G, B)
 	
+	local	newParticle	=	world:CreateNewEntity()
+	world:CreateComponentAndAddTo("Position", newParticle)
+	world:CreateComponentAndAddTo("Color", newParticle)
+	world:CreateComponentAndAddTo("Particle", newParticle)
+	world:CreateComponentAndAddTo("SyncNetwork", newParticle)
+	
+	world:GetComponent(newParticle, "Position", "X"):SetFloat3(self.MapSizeX/2, 1.7, self.MapSizeZ/2)
+	world:GetComponent(newParticle, "Color", "X"):SetFloat3(0.0, 0.0, 0.0)
+	
+	world:GetComponent(newParticle, "Particle", "aName"):SetText("fireflies")
+	world:GetComponent(newParticle, "Particle", "bTexture"):SetText("content/textures/circlefade.png")
+	world:GetComponent(newParticle, "Particle", "cParticles"):SetInt(math.floor(self.MapSizeX*self.MapSizeZ * 0.20))
+	world:GetComponent(newParticle, "Particle", "dLifetime"):SetFloat(25.0)
+	world:GetComponent(newParticle, "Particle", "eScaleX"):SetFloat(self.MapSizeX-1)
+	world:GetComponent(newParticle, "Particle", "eScaleY"):SetFloat(3.0)
+	world:GetComponent(newParticle, "Particle", "eScaleZ"):SetFloat(self.MapSizeZ-1)
+	world:GetComponent(newParticle, "Particle", "fVelocityX"):SetFloat(0)
+	world:GetComponent(newParticle, "Particle", "fVelocityY"):SetFloat(0)
+	world:GetComponent(newParticle, "Particle", "fVelocityZ"):SetFloat(0)
+	world:GetComponent(newParticle, "Particle", "gSpriteSize"):SetFloat(0.18)
+	world:GetComponent(newParticle, "Particle", "hId"):SetInt(-1)
+	world:GetComponent(newParticle, "Particle", "iOnlyOnce"):SetInt(0)
 	
 end
 
