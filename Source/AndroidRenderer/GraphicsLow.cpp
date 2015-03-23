@@ -397,7 +397,7 @@ void GraphicsLow::BufferPointlights(int _nrOfLights, float **_lightPointers)
 	else if (_nrOfLights >= 1)
 	{
 		m_pointlightsPtr = _lightPointers;
-		m_nrOfLightsToBuffer = std::min(_nrOfLights, 3);
+		m_nrOfLightsToBuffer = std::min(_nrOfLights, 2);
 	}
 }
 
