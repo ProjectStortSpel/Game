@@ -105,6 +105,29 @@ void GraphicsHigh::WriteShadowMapDepth()
 
 	mat4 shadowViewProj = (*m_shadowMap->GetProjectionMatrix()) * (*m_shadowMap->GetViewMatrix());
 
+	m_shadowDeferredShader.UseProgram();
+	//Forward models
+	for (int i = 0; i < m_modelsDeferred.size(); i++)
+	{
+		if (m_modelsDeferred[i].castShadow && m_modelsDeferred[i].active)
+		{
+			mat4 modelMatrix;
+			if (m_modelsDeferred[i].modelMatrix == NULL)
+			{
+				modelMatrix = glm::translate(glm::vec3(1));
+				SDL_Log("model: %d has no model matrix", i);
+			}
+			else
+				modelMatrix = *m_modelsDeferred[i].modelMatrix;
+
+			mat4 mvp = shadowViewProj * modelMatrix;
+			m_shadowDeferredShader.SetUniVariable("MVP", mat4x4, &mvp);
+
+			m_modelsDeferred[i].bufferPtr->draw(m_shadowDeferredShader.GetShaderProgram());
+		}
+	}
+	//------------------------------------------------
+
 	m_shadowShader.UseProgram();
 	//Forward models
 	for (int i = 0; i < m_modelsForward.size(); i++)
@@ -157,11 +180,10 @@ void GraphicsHigh::WriteShadowMapDepth()
 		mat4 mvp = shadowViewProj * modelMatrix;
 		m_animShadowShader.SetUniVariable("MVP", mat4x4, &mvp);
 
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, m_modelsAnimated[i].texID);
+		//glActiveTexture(GL_TEXTURE1);
+		//glBindTexture(GL_TEXTURE_2D, m_modelsAnimated[i].texID);
 
 		m_modelsAnimated[i].bufferPtr->draw(m_animShadowShader.GetShaderProgram());
-		glBindTexture(GL_TEXTURE_2D, 0);
 
 	}
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
@@ -478,10 +500,16 @@ bool GraphicsHigh::InitShaders()
 	m_shadowShader.AddShader("content/shaders/android/AndroidShadowShaderFS.glsl", GL_FRAGMENT_SHADER);
 	m_shadowShader.FinalizeShaderProgram();
 
+	// ShadowShader deferred (no transparency) geometry
+	m_shadowDeferredShader.InitShaderProgram();
+	m_shadowDeferredShader.AddShader("content/shaders/android/AndroidShadowShaderDeferredVS.glsl", GL_VERTEX_SHADER);
+	m_shadowDeferredShader.AddShader("content/shaders/android/AndroidShadowShaderDeferredFS.glsl", GL_FRAGMENT_SHADER);
+	m_shadowDeferredShader.FinalizeShaderProgram();
+
 	// Animation shadowShader geometry
 	m_animShadowShader.InitShaderProgram();
 	m_animShadowShader.AddShader("content/shaders/android/AndroidAnimShadowShaderVS.glsl", GL_VERTEX_SHADER);
-	m_animShadowShader.AddShader("content/shaders/android/AndroidShadowShaderFS.glsl", GL_FRAGMENT_SHADER);
+	m_animShadowShader.AddShader("content/shaders/android/AndroidShadowShaderDeferredFS.glsl", GL_FRAGMENT_SHADER);
 	m_animShadowShader.FinalizeShaderProgram();
 
 	// River water shader
@@ -578,7 +606,6 @@ void GraphicsHigh::CreateShadowMap()
 	m_animationShader.CheckUniformLocation("ShadowDepthTex", 0);
 
 	m_shadowShader.CheckUniformLocation("diffuseTex", 1);
-	m_animShadowShader.CheckUniformLocation("diffuseTex", 1);
 }
 
 bool GraphicsHigh::PreLoadModel(std::vector<std::string> _dirs, std::string _file, int _renderType)
@@ -789,6 +816,7 @@ Buffer* GraphicsHigh::AddMesh(std::string _fileDir, Shader *_shaderProg, bool an
 	vpLocs[m_riverShader.GetShaderProgram()]	 = glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexPosition");
 	vpLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexPosition");
 	vpLocs[m_shadowShader.GetShaderProgram()]	= glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexPosition");
+	vpLocs[m_shadowDeferredShader.GetShaderProgram()] = glGetAttribLocation(m_shadowDeferredShader.GetShaderProgram(), "VertexPosition");
 	vpLocs[m_animShadowShader.GetShaderProgram()] = glGetAttribLocation(m_animShadowShader.GetShaderProgram(), "VertexPosition");
 	vpLocs[m_animationShader.GetShaderProgram()] = glGetAttribLocation(m_animationShader.GetShaderProgram(), "VertexPosition");
 
@@ -798,6 +826,7 @@ Buffer* GraphicsHigh::AddMesh(std::string _fileDir, Shader *_shaderProg, bool an
 	vnLocs[m_riverShader.GetShaderProgram()]	 = glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexNormal");
 	vnLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexNormal");
 	vnLocs[m_shadowShader.GetShaderProgram()]	= glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexNormal");
+	vnLocs[m_shadowDeferredShader.GetShaderProgram()] = glGetAttribLocation(m_shadowDeferredShader.GetShaderProgram(), "VertexNormal");
 	vnLocs[m_animShadowShader.GetShaderProgram()] = glGetAttribLocation(m_animShadowShader.GetShaderProgram(), "VertexNormal");
 	vnLocs[m_animationShader.GetShaderProgram()] = glGetAttribLocation(m_animationShader.GetShaderProgram(), "VertexNormal");
 	
@@ -807,6 +836,7 @@ Buffer* GraphicsHigh::AddMesh(std::string _fileDir, Shader *_shaderProg, bool an
 	tanLocs[m_riverShader.GetShaderProgram()]	 = glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexTangent");
 	tanLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexTangent");
 	tanLocs[m_shadowShader.GetShaderProgram()]	 = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexTangent");
+	tanLocs[m_shadowDeferredShader.GetShaderProgram()] = glGetAttribLocation(m_shadowDeferredShader.GetShaderProgram(), "VertexTangent");
 	tanLocs[m_animShadowShader.GetShaderProgram()] = glGetAttribLocation(m_animShadowShader.GetShaderProgram(), "VertexTangent");
 	tanLocs[m_animationShader.GetShaderProgram()] = glGetAttribLocation(m_animationShader.GetShaderProgram(), "VertexTangent");
 
@@ -816,6 +846,7 @@ Buffer* GraphicsHigh::AddMesh(std::string _fileDir, Shader *_shaderProg, bool an
 	bitanLocs[m_riverShader.GetShaderProgram()]		= glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexBiTangent");
 	bitanLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexBiTangent");
 	bitanLocs[m_shadowShader.GetShaderProgram()]	= glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexBiTangent");
+	bitanLocs[m_shadowDeferredShader.GetShaderProgram()] = glGetAttribLocation(m_shadowDeferredShader.GetShaderProgram(), "VertexBiTangent");
 	bitanLocs[m_animShadowShader.GetShaderProgram()] = glGetAttribLocation(m_animShadowShader.GetShaderProgram(), "VertexBiTangent");
 	bitanLocs[m_animationShader.GetShaderProgram()] = glGetAttribLocation(m_animationShader.GetShaderProgram(), "VertexBiTangent");
 	
@@ -825,6 +856,7 @@ Buffer* GraphicsHigh::AddMesh(std::string _fileDir, Shader *_shaderProg, bool an
 	tcLocs[m_riverShader.GetShaderProgram()]	= glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexTexCoord");
 	tcLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexTexCoord");
 	tcLocs[m_shadowShader.GetShaderProgram()]	= glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexTexCoord");
+	tcLocs[m_shadowDeferredShader.GetShaderProgram()] = glGetAttribLocation(m_shadowDeferredShader.GetShaderProgram(), "VertexTexCoord");
 	tcLocs[m_animShadowShader.GetShaderProgram()] = glGetAttribLocation(m_animShadowShader.GetShaderProgram(), "VertexTexCoord");
 	tcLocs[m_animationShader.GetShaderProgram()] = glGetAttribLocation(m_animationShader.GetShaderProgram(), "VertexTexCoord");
 	
@@ -893,6 +925,7 @@ Buffer* GraphicsHigh::AddMesh(ModelToLoadFromSource* _modelToLoad, Shader *_shad
 	vpLocs[m_riverShader.GetShaderProgram()]	 = glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexPosition");
 	vpLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexPosition");
 	vpLocs[m_shadowShader.GetShaderProgram()]	= glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexPosition");
+	vpLocs[m_shadowDeferredShader.GetShaderProgram()] = glGetAttribLocation(m_shadowDeferredShader.GetShaderProgram(), "VertexPosition");
 	//vpLocs[m_animationShader.GetShaderProgram()] = glGetAttribLocation(m_animationShader.GetShaderProgram(), "VertexPosition");
 
 	vnLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexNormal");
@@ -901,6 +934,7 @@ Buffer* GraphicsHigh::AddMesh(ModelToLoadFromSource* _modelToLoad, Shader *_shad
 	vnLocs[m_riverShader.GetShaderProgram()]	 = glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexNormal");
 	vnLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexNormal");
 	vnLocs[m_shadowShader.GetShaderProgram()]	 = glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexNormal");
+	vnLocs[m_shadowDeferredShader.GetShaderProgram()] = glGetAttribLocation(m_shadowDeferredShader.GetShaderProgram(), "VertexNormal");
 	//vnLocs[m_animationShader.GetShaderProgram()] = glGetAttribLocation(m_animationShader.GetShaderProgram(), "VertexNormal");
 	
 	tanLocs[m_forwardShader.GetShaderProgram()]	  = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTangent");
@@ -909,6 +943,7 @@ Buffer* GraphicsHigh::AddMesh(ModelToLoadFromSource* _modelToLoad, Shader *_shad
 	tanLocs[m_riverShader.GetShaderProgram()]	 = glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexTangent");
 	tanLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexTangent");
 	tanLocs[m_shadowShader.GetShaderProgram()]	= glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexTangent");
+	tanLocs[m_shadowDeferredShader.GetShaderProgram()] = glGetAttribLocation(m_shadowDeferredShader.GetShaderProgram(), "VertexTangent");
 	//tanLocs[m_animationShader.GetShaderProgram()] = glGetAttribLocation(m_animationShader.GetShaderProgram(), "VertexTangent");
 
 	bitanLocs[m_forwardShader.GetShaderProgram()]	= glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexBiTangent");
@@ -917,6 +952,7 @@ Buffer* GraphicsHigh::AddMesh(ModelToLoadFromSource* _modelToLoad, Shader *_shad
 	bitanLocs[m_riverShader.GetShaderProgram()]		= glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexBiTangent");
 	bitanLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexBiTangent");
 	bitanLocs[m_shadowShader.GetShaderProgram()]	= glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexBiTangent");
+	bitanLocs[m_shadowDeferredShader.GetShaderProgram()] = glGetAttribLocation(m_shadowDeferredShader.GetShaderProgram(), "VertexBiTangent");
 	//bitanLocs[m_animationShader.GetShaderProgram()] = glGetAttribLocation(m_animationShader.GetShaderProgram(), "VertexBiTangent");
 	
 	tcLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTexCoord");
@@ -925,6 +961,7 @@ Buffer* GraphicsHigh::AddMesh(ModelToLoadFromSource* _modelToLoad, Shader *_shad
 	tcLocs[m_riverShader.GetShaderProgram()]	= glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexTexCoord");
 	tcLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexTexCoord");
 	tcLocs[m_shadowShader.GetShaderProgram()]	= glGetAttribLocation(m_shadowShader.GetShaderProgram(), "VertexTexCoord");
+	tcLocs[m_shadowDeferredShader.GetShaderProgram()] = glGetAttribLocation(m_shadowDeferredShader.GetShaderProgram(), "VertexTexCoord");
 	//tcLocs[m_animationShader.GetShaderProgram()] = glGetAttribLocation(m_animationShader.GetShaderProgram(), "VertexTexCoord");
 	
 	/*jiLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexJointIndex");
