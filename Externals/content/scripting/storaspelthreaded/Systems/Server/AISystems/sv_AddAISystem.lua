@@ -102,25 +102,24 @@ AddAISystem.EntitiesAdded = function(self, dt, entities)
 	
 	for	i = 1, #entities do 
 		
-		--print(world:EntityHasComponent(entities[i], "UnitEntityId"))
-		--print("new entity")
+	--print("new entity, does it have UnitEntityId? ", world:EntityHasComponent(entities[i], "UnitEntityId"))
 		if world:EntityHasComponent(entities[i], "HostSettings") then
 			
-			--print("host settings")
+		--print("host settings")
 			self.AutoStart = world:GetComponent(entities[i], "HostSettings", "AutoStart"):GetInt()
-			--print("host settings done")
+		--print("host settings done")
 			
 		elseif world:EntityHasComponent(entities[i], "Spawn") and self.AutoStart == 1 then
 			
-			--print("do the auto start")
+		--print("do the auto start")
 			Console.AddToCommandQueue("start")
-			Console.AddToCommandQueue("timescale 2")
+			--Console.AddToCommandQueue("timescale 3")
 			self.AutoStart = 0
-			--print("auto start done")
+		--print("auto start done")
 			
 		elseif world:EntityHasComponent(entities[i], "AI") and not world:EntityHasComponent(entities[i], "UnitEntityId") then
 			
-			--print("an ai without unit")
+		--print("an ai without unit")
 			local GameRunning = self:GetEntities("GameRunning")
 			if #GameRunning > 0 then
 				print("Trying to add AI when the game has already started.")
@@ -128,7 +127,7 @@ AddAISystem.EntitiesAdded = function(self, dt, entities)
 				return
 			end
 			
-			--print("game is not yet running")
+		--print("game is not yet running")
 			
 			local counterEntities = self:GetEntities("PlayerCounter")			
 			local mapSpecsEntities = self:GetEntities("MapSpecs")
@@ -137,15 +136,15 @@ AddAISystem.EntitiesAdded = function(self, dt, entities)
 			local noOfSpawnpoints = world:GetComponent(mapSpecsEntities[1], "MapSpecs", "NoOfSpawnpoints"):GetInt(0)
 			local availableSpawnsLeft = noOfSpawnpoints - noOfPlayers
 			
-			--print("variables init")
+		--print("variables init")
 			
 			if availableSpawnsLeft > 0 then
 				
-				--print(availableSpawnsLeft, " spawnpoints left")
+			--print(availableSpawnsLeft, " spawnpoints left")
 				local rng = math.random(1, #self.Names)
 				local newName = "BOT " .. self.Names[rng]
 				table.remove(self.Names, rng)
-				--print("bot name added")
+			--print("bot name added")
 
 				local playerNumber = noOfPlayers + 1
 				world:GetComponent(entities[i], "PlayerName", "Name"):SetString(newName)

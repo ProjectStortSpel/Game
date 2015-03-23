@@ -63,6 +63,13 @@ namespace LuaBridge
 		int		GeneratePathfinderPath(lua_State* _l);
 
 		/*
+		LuaIsPathWalkable:
+		int (x, y)	: start position
+		int (x, y)	: goal position
+		*/
+		int		LuaIsPathWalkable(lua_State* _l);
+
+		/*
 			SetTileWalkable:
 			int (x, y)	: tile position
 			bool		: walkable
