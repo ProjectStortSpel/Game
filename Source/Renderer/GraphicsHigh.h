@@ -77,7 +77,6 @@ namespace Renderer
 		// Shaders
 		Shader m_fullScreenShader;
 		Shader m_deferredShader1, m_compDeferredPass2Shader;
-		Shader m_shadowShaderDeferred;
 		Shader m_shadowShaderAnim;
 
 		// SimpleText
@@ -86,7 +85,6 @@ namespace Renderer
 
 		// Modelloader
 		int m_modelIDcounter;
-		std::vector<Model> m_modelsDeferred;
 
 		// Pointlights buffer
 		GLuint m_pointlightBuffer, m_dirLightBuffer, m_animationBuffer;

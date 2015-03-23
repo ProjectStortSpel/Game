@@ -35,7 +35,7 @@ namespace Renderer
 		Model();
 		~Model();
 
-		void Draw(glm::mat4 viewMatrix, glm::mat4 projectionMatrix);
+		void Draw(glm::mat4 viewMatrix);
 
 		Buffer* bufferPtr;
 		GLuint texID;
