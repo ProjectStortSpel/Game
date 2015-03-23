@@ -198,7 +198,7 @@ namespace Renderer
 		int m_modelIDcounter;
 		bool m_useAnimations;
 		std::vector<RenderList> m_renderLists;
-		std::vector<Model> m_modelsForward, m_modelsViewspace, m_modelsInterface, m_modelsWater, m_modelsWaterCorners;
+		std::vector<Model> m_modelsDeferred, m_modelsForward, m_modelsViewspace, m_modelsInterface, m_modelsWater, m_modelsWaterCorners;
 		std::vector<Model*> m_shadowModelsForward, m_shadowModelsDeferred;
 		std::vector<AModel> m_modelsAnimated;
 		std::map<int, ModelToLoad*>					m_modelsToLoad;
@@ -226,7 +226,7 @@ namespace Renderer
 		Shader m_forwardShader;
 		Shader m_viewspaceShader;
 		Shader m_interfaceShader;
-		Shader m_shadowShaderForward, m_shadowShaderForwardAnim;
+		Shader m_shadowShaderDeferred, m_shadowShaderForward, m_shadowShaderForwardAnim;
 		Shader m_riverShader, m_riverCornerShader;
 		std::map<std::string, Shader> m_particleShaders;
 
