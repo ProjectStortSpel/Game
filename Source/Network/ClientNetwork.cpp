@@ -122,7 +122,8 @@ bool ClientNetwork::Connect()
 
 	SAFE_DELETE(m_socket);
 	m_socket = ISocket::CreateSocket();
-	m_socket->Bind(*m_incomingPort);
+	if (!m_socket->Bind(*m_incomingPort))
+		return false;
 
 	*m_connected = m_socket->Connect(m_remoteAddress->c_str(), *m_outgoingPort);
 
@@ -189,7 +190,7 @@ void ClientNetwork::ReceivePackets(const std::string _name)
 			*m_currentTimeOutIntervall = 0.0f;
 
 			Packet* p = new Packet();
-			p->Data = new unsigned char[dataReceived];
+			p->Data = new char[dataReceived];
 			*p->Length = dataReceived;
 			*p->Sender = m_socket->GetNetConnection();
 			memcpy(p->Data, m_packetData, dataReceived);

@@ -230,7 +230,7 @@ namespace FileSystem
 			SDL_RWwrite(_file, _text.c_str(), 1, _text.size());
 		}
 
-		void Write(SDL_RWops* _file, const unsigned char* data, int size)
+		void Write(SDL_RWops* _file, const char* data, int size)
 		{
 			if (!_file)
 				return;

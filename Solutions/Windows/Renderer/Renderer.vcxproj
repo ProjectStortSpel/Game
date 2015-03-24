@@ -71,6 +71,8 @@
     <None Include="..\..\..\Externals\content\shaders\lowVSForwardShader.glsl" />
     <None Include="..\..\..\Externals\content\shaders\particles\particleExplosionFS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\particles\particleExplosionVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\particles\particleFirefliesFS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\particles\particleFirefliesVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\particles\particleFireFS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\particles\particleFireVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\particles\particleSmokeFS.glsl" />

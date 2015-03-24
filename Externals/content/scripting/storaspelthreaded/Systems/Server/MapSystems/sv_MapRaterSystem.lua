@@ -10,6 +10,7 @@ MapRater.SEPARATOR				=	"	"
 MapRater.PlayersLeftToWin		=	0
 MapRater.NumberOfPlayers		=	0
 MapRater.CurrentRound			=	0
+MapRater.CurrentPlace			=	1
 
 
 MapRater.NumberOfCheckpoints				=	0
@@ -34,6 +35,7 @@ MapRater.Initialize = function(self)
 	self:AddComponentTypeToFilter("CheckpointReached",	FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("NewRound",			FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("UnitDied",			FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("PlayerStats",		FilterType.RequiresOneOf)
 	
 	self:AddComponentTypeToFilter("MapSpecs",			FilterType.RequiresOneOf)
 end
@@ -64,6 +66,14 @@ MapRater.EntitiesAdded = function(self, dt, newEntities)
 		elseif world:EntityHasComponent(newEntity, "UnitDied") then
 			local	playerNumber	=	world:GetComponent(newEntity, "UnitDied", "PlayerNumber"):GetInt()
 			self.PlayersDeaths[playerNumber]	=	self.PlayersDeaths[playerNumber] + 1
+			
+			local	playerStats		=	self:GetEntities("PlayerStats")
+			for tempStat = 1, #playerStats do
+				if world:GetComponent(playerStats[tempStat], "PlayerStats", "PlayerNumber"):GetInt() == playerNumber then
+					world:GetComponent(playerStats[tempStat], "PlayerStats", "Deaths"):SetInt(self.PlayersDeaths[playerNumber])
+					break
+				end
+			end
 			world:KillEntity(newEntity)
 		elseif world:EntityHasComponent(newEntity, "NewRound") then
 			self.CurrentRound	=	self.CurrentRound+1
@@ -111,7 +121,16 @@ MapRater.CardPlayed = function(self, cardEntity)
 	local 	cardAction 		= 	world:GetComponent(cardEntity, "PlayedCard", "CardAction"):GetText()
 	local 	cardPriority	= 	world:GetComponent(cardEntity, "PlayedCard", "CardPriority"):GetInt()
 	
+
+	
 	self.PlayersCardCount[playerNumber]	=	self.PlayersCardCount[playerNumber]+1
+	
+	local	playerStats		=	self:GetEntities("PlayerStats")
+	for tempStat = 1, #playerStats do
+		if world:GetComponent(playerStats[tempStat], "PlayerStats", "PlayerNumber"):GetInt() == playerNumber then
+			world:GetComponent(playerStats[tempStat], "PlayerStats", "CardsPlayed"):SetInt(self.PlayersCardCount[playerNumber])
+		end
+	end
 end
 
 
@@ -131,7 +150,27 @@ MapRater.CheckpointReached = function(self, checkpointEntity)
 	self.CheckpointRoundDifferences[playerNumber][checkpointNumber]	=	self.CurrentRound
 	if checkpointNumber == self.NumberOfCheckpoints then
 		self.PlayersLeftToWin	=	self.PlayersLeftToWin-1
+		
+		local	playerStats		=	self:GetEntities("PlayerStats")
+		for tempStat = 1, #playerStats do
+			if world:GetComponent(playerStats[tempStat], "PlayerStats", "PlayerNumber"):GetInt() == playerNumber then
+				world:GetComponent(playerStats[tempStat], "PlayerStats", "Place"):SetInt(self.CurrentPlace)
+			end
+		end
+		
+		self.CurrentPlace	=	self.CurrentPlace+1
 	end
+	
+	local	playerStats		=	self:GetEntities("PlayerStats")
+	for tempStat = 1, #playerStats do
+		if world:GetComponent(playerStats[tempStat], "PlayerStats", "PlayerNumber"):GetInt() == playerNumber then
+			world:GetComponent(playerStats[tempStat], "PlayerStats", "GoalCheckpoint"):SetInt(checkpointNumber)
+		end
+	end
+	
+
+	
+
 end
 
 MapRater.GetCheckpointListIndex = function(self, Player, Checkpoint)

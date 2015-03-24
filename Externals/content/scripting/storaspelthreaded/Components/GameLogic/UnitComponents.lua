@@ -115,3 +115,10 @@ NewComponent:AddVariable("CardId", ByteSize.Reference)
 NewComponent:AddVariable("CardDenied", ByteSize.Int)
 worldCreator:AddComponentType(NewComponent)
 
+NewComponent = ComponentType()
+NewComponent.Name = "FallDownSound"
+NewComponent.TableType = TableType.Map
+NewComponent:AddVariable("X", ByteSize.Float)
+NewComponent:AddVariable("Y", ByteSize.Float)
+NewComponent:AddVariable("Z", ByteSize.Float)
+worldCreator:AddComponentType(NewComponent)

@@ -98,6 +98,7 @@ Net.Receive("Client.SetSoundPosition",
 		local x = Net.ReadFloat(id)
 		local y = Net.ReadFloat(id)
 		local z = Net.ReadFloat(id)
+		
 		Audio.SetSoundPosition(channelName, x, y, z)
 	end
 )
@@ -123,5 +124,12 @@ Net.Receive("Client.FadeOutSound",
 		local channelName = Net.ReadString(id)
 		local ms = Net.ReadInt(id)
 		Audio.FadeOutSound(channelName, ms)
+	end
+)
+Net.Receive("Client.SetVolume",
+	function(id, ip, port)
+		local channelName = Net.ReadString(id)
+		local volume = Net.ReadInt(id)
+		Audio.SetVolume(channelName, volume)
 	end
 )

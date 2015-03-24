@@ -34,6 +34,9 @@ namespace Renderer
 #define TEXTURE_NORMAL		1
 #define TEXTURE_SPECULAR	2
 
+#define GRAPHICS_LOW 0
+#define GRAPHICS_HIGH 1
+
 	struct GLTimerValue
 	{
 		std::string name;
@@ -112,8 +115,8 @@ namespace Renderer
 		int debugModelInfo;
 		bool hideInderface;
 
-		GraphicDevice();
-		GraphicDevice(Camera _camera, int x, int y);
+		GraphicDevice(bool _fullscreen);
+		GraphicDevice(Camera _camera, int x, int y, bool _fullscreen);
 		virtual ~GraphicDevice();
 
 		// BASIC
@@ -175,6 +178,12 @@ namespace Renderer
 		virtual void Clear(){};// = 0;
 		int GetVRamUsage(){ return m_vramUsage; }
 
+		void SetShadowMapData(float _width, float _height, vec3 _target);
+
+		int GetGraphicsSetting(){ return m_graphicsSetting; }
+
+		bool GetFullscreen(){ return m_startFullscreen; }
+
 	protected:
 		SDL_GLContext	m_glContext;
 		bool			m_SDLinitialized;
@@ -182,6 +191,9 @@ namespace Renderer
 		float			m_dt, m_elapsedTime;
 		int				m_fps;
 		int				m_debugTexFlag;
+		
+		int m_graphicsSetting;
+		bool m_startFullscreen;
 
 		// Window
 		SDL_Window*		m_window;
@@ -196,7 +208,7 @@ namespace Renderer
 		int m_modelIDcounter;
 		bool m_useAnimations;
 		std::vector<RenderList> m_renderLists;
-		std::vector<Model> m_modelsForward, m_modelsViewspace, m_modelsInterface, m_modelsWater, m_modelsWaterCorners;
+		std::vector<Model> m_modelsDeferred, m_modelsForward, m_modelsViewspace, m_modelsInterface, m_modelsWater, m_modelsWaterCorners;
 		std::vector<Model*> m_shadowModelsForward, m_shadowModelsDeferred;
 		std::vector<AModel> m_modelsAnimated;
 		std::map<int, ModelToLoad*>					m_modelsToLoad;
@@ -224,7 +236,7 @@ namespace Renderer
 		Shader m_forwardShader;
 		Shader m_viewspaceShader;
 		Shader m_interfaceShader;
-		Shader m_shadowShaderForward, m_shadowShaderForwardAnim;
+		Shader m_shadowShaderDeferred, m_shadowShaderForward, m_shadowShaderForwardAnim;
 		Shader m_riverShader, m_riverCornerShader;
 		std::map<std::string, Shader> m_particleShaders;
 
@@ -233,6 +245,11 @@ namespace Renderer
 		int		m_numberOfPointlights;
 		float*	m_pointerToDirectionalLights;
 		int		m_numberOfDirectionalLights;
+
+		//Le shadowmap
+		ShadowMap *m_shadowMap;
+		void WriteShadowMapDepth();
+		vec3 m_dirLightshadowMapTarget;
 
 		// BASIC
 		virtual void InitRenderLists() { return; }

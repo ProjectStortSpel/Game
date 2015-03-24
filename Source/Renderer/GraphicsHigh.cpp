@@ -3,7 +3,7 @@
 using namespace Renderer;
 using namespace glm;
 
-GraphicsHigh::GraphicsHigh()
+GraphicsHigh::GraphicsHigh(bool _fullscreen) : GraphicDevice(_fullscreen)
 {
 	SDL_Log("Starting graphics high");
 	debugModelInfo = 0;
@@ -21,9 +21,10 @@ GraphicsHigh::GraphicsHigh()
 	m_pointerToDirectionalLights = 0;
 	m_pointerToPointlights = 0;
     m_FBOsCreated = false;
+	m_graphicsSetting = GRAPHICS_HIGH;
 }
 
-GraphicsHigh::GraphicsHigh(Camera _camera, int x, int y) : GraphicDevice(_camera, x, y)
+GraphicsHigh::GraphicsHigh(Camera _camera, int x, int y, bool _fullscreen) : GraphicDevice(_camera, x, y, _fullscreen)
 {
 	SDL_Log("Starting graphics high");
 	debugModelInfo = 0;
@@ -37,6 +38,7 @@ GraphicsHigh::GraphicsHigh(Camera _camera, int x, int y) : GraphicDevice(_camera
 	m_pointerToDirectionalLights = 0;
 	m_pointerToPointlights = 0;
     m_FBOsCreated = false;
+	m_graphicsSetting = GRAPHICS_HIGH;
 }
 
 GraphicsHigh::~GraphicsHigh()
@@ -154,12 +156,6 @@ bool GraphicsHigh::InitShaders()
 	m_riverCornerShader.AddShader("content/shaders/VSForwardShader.glsl", GL_VERTEX_SHADER);
 	m_riverCornerShader.AddShader("content/shaders/riverCornerFS.glsl", GL_FRAGMENT_SHADER);
 	m_riverCornerShader.FinalizeShaderProgram();
-
-	// ShadowShader deferred geometry
-	m_shadowShaderDeferred.InitShaderProgram();
-	m_shadowShaderDeferred.AddShader("content/shaders/shadowShaderDeferredVS.glsl", GL_VERTEX_SHADER);
-	m_shadowShaderDeferred.AddShader("content/shaders/shadowShaderDeferredFS.glsl", GL_FRAGMENT_SHADER);
-	m_shadowShaderDeferred.FinalizeShaderProgram();
 
 	// ShadowShader animated deferred geometry
 	m_shadowShaderAnim.InitShaderProgram();
@@ -460,9 +456,10 @@ void GraphicsHigh::Render()
 	//----Uniforms
 	m_deferredShader1.UseProgram();
 	m_deferredShader1.SetUniVariable("TexFlag", glint, &m_debugTexFlag);
+	m_deferredShader1.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 	//----DRAW MODELS
 	for (int i = 0; i < m_modelsDeferred.size(); i++)
-		m_modelsDeferred[i].Draw(viewMatrix, projectionMatrix);
+		m_modelsDeferred[i].Draw(viewMatrix);
 
 	//--------ANIMATED DEFERRED RENDERING !!! ATTENTION: WORK IN PROGRESS !!!
 	//----Uniforms
@@ -553,7 +550,7 @@ void GraphicsHigh::Render()
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
 	//----DRAW MODELS
 	for (int i = 0; i < m_modelsWater.size(); i++)
-		m_modelsWater[i].Draw(viewMatrix, mat4(1));
+		m_modelsWater[i].Draw(viewMatrix);
 
 	//-------Render water corners-------------
 	m_riverCornerShader.UseProgram();
@@ -566,10 +563,9 @@ void GraphicsHigh::Render()
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
 	//----DRAW MODELS
 	for (int i = 0; i < m_modelsWaterCorners.size(); i++)
-		m_modelsWaterCorners[i].Draw(viewMatrix, mat4(1));
+		m_modelsWaterCorners[i].Draw(viewMatrix);
 
 
-	
 
 	//--------FORWARD RENDERING
 
@@ -583,7 +579,7 @@ void GraphicsHigh::Render()
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_pointlightBuffer);
 	//----DRAW MODELS
 	for (int i = 0; i < m_modelsForward.size(); i++)
-		m_modelsForward[i].Draw(viewMatrix, mat4(1));
+		m_modelsForward[i].Draw(viewMatrix);
 
 	//--------PARTICLES---------
 	glEnable(GL_POINT_SPRITE);
@@ -627,7 +623,7 @@ void GraphicsHigh::Render()
 	//----DRAW MODELS
 	SortModelsBasedOnDepth(&m_modelsViewspace);
 	for (int i = 0; i < m_modelsViewspace.size(); i++)
-		m_modelsViewspace[i].Draw(mat4(1), mat4(1));
+		m_modelsViewspace[i].Draw(mat4(1));
 
 	//--------INTERFACE RENDERING
 	if (!hideInderface)
@@ -638,7 +634,7 @@ void GraphicsHigh::Render()
 		//----DRAW MODELS
 		SortModelsBasedOnDepth(&m_modelsInterface);
 		for (int i = 0; i < m_modelsInterface.size(); i++)
-			m_modelsInterface[i].Draw(mat4(1), mat4(1));
+			m_modelsInterface[i].Draw(mat4(1));
 	}
 	glDisable(GL_BLEND);
 	glDisable(GL_TEXTURE_2D);
@@ -744,7 +740,7 @@ void GraphicsHigh::BufferLightsToGPU()
 		glBufferData(GL_SHADER_STORAGE_BUFFER, 9 * sizeof(float), m_pointerToDirectionalLights, GL_STATIC_DRAW);
 
 		m_dirLightDirection = vec3(m_pointerToDirectionalLights[0], m_pointerToDirectionalLights[1], m_pointerToDirectionalLights[2]);
-		m_shadowMap->UpdateViewMatrix(vec3(8.0f, 0.0f, 8.0f) - (10.0f*normalize(m_dirLightDirection)), vec3(8.0f, 0.0f, 8.0f));
+		m_shadowMap->UpdateViewMatrix(m_dirLightshadowMapTarget - (10.0f*normalize(m_dirLightDirection)), m_dirLightshadowMapTarget);
 
 		m_pointerToDirectionalLights = 0;
 	}
@@ -755,8 +751,8 @@ void GraphicsHigh::CreateShadowMap()
 {
 	int resolution = 2048*2;
 	m_dirLightDirection = vec3(0.0, -1.0, 1.0);
-	vec3 midMap = vec3(8.0, 0.0, 8.0);
-	vec3 lightPos = midMap - (10.0f*normalize(m_dirLightDirection));
+	vec3 target = vec3(0.0, 0.0, 0.0);
+	vec3 lightPos = target - (10.0f*normalize(m_dirLightDirection));
 	m_shadowMap = new ShadowMap(lightPos, lightPos + normalize(m_dirLightDirection), resolution);
 	m_shadowMap->CreateShadowMapTexture(GL_TEXTURE10);
 
@@ -777,6 +773,8 @@ void GraphicsHigh::CreateShadowMap()
 	m_riverCornerShader.CheckUniformLocation("ShadowDepthTex", 10);
 
 	m_vramUsage += (resolution*resolution*sizeof(float));
+	//m_shadowMap->SetBounds(4.0f, 4.0f);
+	//m_dirLightshadowMapTarget = vec3(0.0);
 }
 
 bool GraphicsHigh::RenderSimpleText(std::string _text, int _x, int _y)

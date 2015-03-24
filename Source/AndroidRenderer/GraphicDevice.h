@@ -155,6 +155,7 @@ namespace Renderer
 		void SetDebugTexFlag(int _flag) { return; }
 		void Clear(); // virtual in PC
 		int GetVRamUsage(){ return -1; }
+		virtual void SetShadowMapData(float _width, float _height, vec3 _target){};
 
 	protected:
 		SDL_GLContext	m_glContext;
@@ -173,7 +174,7 @@ namespace Renderer
 		int m_modelIDcounter;
 		bool m_useAnimations;
 		//std::vector<RenderList> m_renderLists;
-		std::vector<Model> m_modelsForward, m_modelsViewspace, m_modelsInterface, m_modelsWater, m_modelsWaterCorners;
+		std::vector<Model> m_modelsDeferred, m_modelsForward, m_modelsViewspace, m_modelsInterface, m_modelsWater, m_modelsWaterCorners;
 		std::vector<AModel> m_modelsAnimated;
 		std::map<int, ModelToLoad*> m_modelsToLoad;
 		std::map<int, ModelToLoadFromSource*> m_modelsToLoadFromSource;

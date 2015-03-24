@@ -232,6 +232,12 @@ WeatherTornadoSystem.CheckCollision = function(self, id, unit)
 		print("COLLISION WITH A PLAYER. YOU SPIN ME RIGHT ROUND, BABY RIGHT ROUND!")
 		
 		if world:EntityHasComponent(unit, "ActionGuard") then
+			-- SOUND
+			local audioId = Net.StartPack("Client.PlaySoundC")
+			Net.WriteString(audioId, "BlockVoice" .. math.random(1, 3))
+			Net.WriteString(audioId, "BlockVoice" .. unit)
+			Net.WriteBool(audioId, false)
+			Net.Broadcast(audioId)
 			return
 		end
 		

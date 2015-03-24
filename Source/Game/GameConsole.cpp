@@ -3,6 +3,7 @@
 #include <string>
 #include "LuaEmbedder/LuaEmbedder.h"
 #include "Network/ClientDatabase.h"
+#include "Audio/Audio.h"
 
 GameConsole::GameConsole(Renderer::GraphicDevice* _graphics, ECSL::World* _world)
 {
@@ -475,6 +476,25 @@ void GameConsole::ECSLMemoryUsage(std::string _command, std::vector<Console::Arg
 	m_consoleManager->AddMessage(ss.str().c_str());
 }
 
+void GameConsole::SetMusicVolume(string _command, std::vector< Console::Argument >* _args)
+{
+	float volume = _args->at(0).Number;
+	Audio::SetMusicVolume(volume);
+}
+
+void GameConsole::SetSoundVolume(string _command, std::vector< Console::Argument >* _args)
+{
+	float volume = _args->at(0).Number;
+	Audio::SetSoundVolume(volume);
+}
+
+void GameConsole::SetMasterVolume(string _command, std::vector< Console::Argument >* _args)
+{
+	float volume = _args->at(0).Number;
+	Audio::SetMasterVolume(volume);
+}
+
+
 void GameConsole::ListCommands(std::string _command, std::vector<Console::Argument>* _args)
 {
 	m_consoleManager->AddMessage("Command           -   Arg1, Arg2, Arg3, ...");
@@ -519,5 +539,9 @@ void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 	m_consoleManager->AddCommand("AddPointlight", std::bind(&GameConsole::AddPointlight, this, std::placeholders::_1, std::placeholders::_2));
 
 	m_consoleManager->AddCommand("MemoryUsage", std::bind(&GameConsole::ECSLMemoryUsage, this, std::placeholders::_1, std::placeholders::_2));
+
+	m_consoleManager->AddCommand("MusicVolume", std::bind(&GameConsole::SetMusicVolume, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager->AddCommand("SoundVolume", std::bind(&GameConsole::SetSoundVolume, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager->AddCommand("Volume", std::bind(&GameConsole::SetMasterVolume, this, std::placeholders::_1, std::placeholders::_2));
 }
 

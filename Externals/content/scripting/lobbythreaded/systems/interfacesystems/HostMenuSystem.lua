@@ -63,16 +63,14 @@ HostMenuSystem.Update = function(self, dt)
 			
 			if world:EntityHasComponent(pressedButton, "MenuConsoleCommand") then
 				self:MenuConsoleCommandPressed(pressedButton)
+				self:Deactivate()
+				self:RemoveMenu()
 			end
 			
 			if world:EntityHasComponent(pressedButton, "MenuEntityCommand") then
 				self:MenuEntityCommandPressed(pressedButton)
 			end
 			
-			
-		else
-			self:Deactivate()
-			self:RemoveMenu()
 		end
 	end
 	
@@ -296,7 +294,9 @@ HostMenuSystem.ApplySettings = function(self, entity)
 	local gamemode 		= world:GetComponent(e, "HostSettings", "GameMode"):GetText()
 	local port 			= world:GetComponent(e, "HostSettings", "Port"):GetInt()
 	--local maxusers 	= world:GetComponent(e, "HostSettings", "MaxUsers"):GetInt()
+	local addais		= world:GetComponent(e, "HostSettings", "AddAIs"):GetInt()
 	local fillai 		= world:GetComponent(e, "HostSettings", "FillAI"):GetInt()
+	local autoStart 	= world:GetComponent(e, "HostSettings", "AutoStart"):GetInt()
 	local allowSpec		= world:GetComponent(e, "HostSettings", "AllowSpectators"):GetInt()
 	local serverType	= world:GetComponent(e, "HostSettings", "ServerType"):GetInt()
 	
@@ -305,12 +305,14 @@ HostMenuSystem.ApplySettings = function(self, entity)
 	print("map: " .. map)
 	print("gamemode: " .. gamemode)
 	print("port: " .. port)
+	print("addais: " .. addais)
 	print("fillai: " .. tostring(fillai))
+	print("autoStart: " .. tostring(autoStart))
 	print("allowSpec: " .. tostring(allowSpec))
 	print("serverType: " .. tostring(serverType))
 	
 	self:RemoveMenu()
-	local cmd = string.format("hostsettings %s %s %s %s %d %d %d %d", name, password, map, gamemode, port, fillai, allowSpec, serverType)
+	local cmd = string.format("hostsettings %s %s %s %s %d %d %d %d %d %d", name, password, map, gamemode, port, addais, fillai, autoStart, allowSpec, serverType)
 	Console.AddToCommandQueue(cmd)
 	
 end
@@ -350,14 +352,20 @@ HostMenuSystem.SpawnMenu = function(self)
 	text = self:CreateText("left", "text", -0.87, 0.160, -1.99, 2.5, 0.065)	
 	self:AddTextToTexture("A"..5, "Server Map:", 0, 0, 0, 0, text)
 	
+	text = self:CreateText("left", "text", -0.87, 0.055, -1.99, 2.5, 0.065)	
+	self:AddTextToTexture("A"..6, "AIs to add:", 0, 0, 0, 0, text)
+	
 	text = self:CreateText("left", "text", -0.87, -0.055, -1.99, 2.5, 0.065)	
-	self:AddTextToTexture("A"..6, "Fill empty slots with AIs:", 0, 0, 0, 0, text)
+	self:AddTextToTexture("A"..7, "Fill empty slots with AIs:", 0, 0, 0, 0, text)
 	
 	text = self:CreateText("left", "text", -0.87, -0.160, -1.99, 2.5, 0.065)	
-	self:AddTextToTexture("A"..7, "Allow Spectators: ", 0, 0, 0, 0, text)
+	self:AddTextToTexture("A"..8, "Auto Start:", 0, 0, 0, 0, text)
 	
 	text = self:CreateText("left", "text", -0.87, -0.255, -1.99, 2.5, 0.065)	
-	self:AddTextToTexture("A"..8, "Dedicated Server: ", 0, 0, 0, 0, text)
+	self:AddTextToTexture("A"..9, "Allow Spectators: ", 0, 0, 0, 0, text)
+	
+	text = self:CreateText("left", "text", -0.87, -0.350, -1.99, 2.5, 0.065)	
+	self:AddTextToTexture("A"..10, "Dedicated Server: ", 0, 0, 0, 0, text)
 	
 	
 	
@@ -410,25 +418,43 @@ HostMenuSystem.SpawnMenu = function(self)
 	world:GetComponent(text, "StringSetting", "Value"):SetText("map")
 	self:AddEntityCommandToButton("ActiveTextInput", backdrop, text)
 	
+	-- Add AIs INT
+	local defaultAIsToAdd = 0
+	backdrop = self:CreateElement("whiteshade", "quad", 0.52, 0.055, -2, 0.73, 0.09)
+	text = self:CreateText("left", "text", 0.16, 0.085, -1.99, 2.5, 0.065, backdrop)	
+	self:AddTextToTexture("B"..6, tostring(defaultAIsToAdd), 0, 0, 0, 0, text)
+	world:CreateComponentAndAddTo("IntSetting", text)
+	world:GetComponent(text, "IntSetting", "SettingsName"):SetText("AddAIs")
+	world:GetComponent(text, "IntSetting", "Value"):SetInt(defaultAIsToAdd)
+	self:AddEntityCommandToButton("ActiveTextInput", backdrop, text)
+	
 	-- FillAI CHECKBOX
 	local cb = self:CreateCheckbox("unchecked", "checkbox", 0.2, -0.09, -1.99, 0.07, 0.07, false)
 	world:CreateComponentAndAddTo("BoolSetting", cb)
 	world:GetComponent(cb, "BoolSetting", "SettingsName"):SetText("FillAI")
 	world:GetComponent(cb, "BoolSetting", "Value"):SetInt(0)
 	
+	-- AutoStart CHECKBOX
+	local cb = self:CreateCheckbox("unchecked", "checkbox", 0.2, -0.19, -1.99, 0.07, 0.07, false)
+	world:CreateComponentAndAddTo("BoolSetting", cb)
+	world:GetComponent(cb, "BoolSetting", "SettingsName"):SetText("AutoStart")
+	world:GetComponent(cb, "BoolSetting", "Value"):SetInt(0)
+	
 	-- AllowSpectators CHECKBOX
-	local cb = self:CreateCheckbox("checked", "checkbox", 0.2, -0.190, -1.99, 0.07, 0.07, true)
+	local cb = self:CreateCheckbox("checked", "checkbox", 0.2, -0.290, -1.99, 0.07, 0.07, true)
 	world:CreateComponentAndAddTo("BoolSetting", cb)
 	world:GetComponent(cb, "BoolSetting", "SettingsName"):SetText("AllowSpectators")
 	world:GetComponent(cb, "BoolSetting", "Value"):SetInt(1)
 	
 	-- ServerType CHECKBOX
-	local cb = self:CreateCheckbox("unchecked", "checkbox", 0.2, -0.3, -1.99, 0.07, 0.07, false)
+	local cb = self:CreateCheckbox("unchecked", "checkbox", 0.2, -0.39, -1.99, 0.07, 0.07, false)
 	world:CreateComponentAndAddTo("BoolSetting", cb)
 	world:GetComponent(cb, "BoolSetting", "SettingsName"):SetText("ServerType")
 	world:GetComponent(cb, "BoolSetting", "Value"):SetInt(0)
 	
-	
+	local button = self:CreateElement("returnknapp", "quad", 2.3, -1.2, -3, 0.4, 0.4)
+	self:AddConsoleCommandToButton("back", button)	
+	self:AddHoverSize(1.1, button)
 	
 end
 

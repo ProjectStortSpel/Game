@@ -1,6 +1,6 @@
 local Hat = EntityTemplate()
 Hat.Name = "totemHat"
-Hat:SetModel("Model", "totem", "totem", 0)
+Hat:SetModel("Model", "totemhat", "totemhat", 0)
 Hat:SetFloat3("Position", -0.14, 0.2, 0.1)
 Hat:SetFloat3("Rotation", 0.2, 0, 0.6)
 Hat:SetFloat3("Scale", 1.4, 1.4, 1.4)

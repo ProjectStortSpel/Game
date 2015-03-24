@@ -16,13 +16,13 @@ OptionMenuSystem.Initialize = function(self)
 end
 
 OptionMenuSystem.Update = function(self, dt)
-	if self.RequestRelease then
-		local pressedButtons = self:GetEntities("OnPickBoxHit")
-		if #pressedButtons > 0 then
-			local pressedButton = pressedButtons[1]
+
+	local pressedButtons = self:GetEntities("OnPickBoxHit")
+	if #pressedButtons > 0 then
+		local pressedButton = pressedButtons[1]
+		if self.RequestRelease then
 			if world:EntityHasComponent(pressedButton, "MenuConsoleCommand") then
 				local command = world:GetComponent(pressedButton, "MenuConsoleCommand", "Command"):GetText()
-				self:RemoveMenu()
 				Console.AddToCommandQueue(command)
 			end
 			if world:EntityHasComponent(pressedButton, "MenuEntityCommand") then
@@ -31,8 +31,6 @@ OptionMenuSystem.Update = function(self, dt)
 				local id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo(compname, id)
 			end
-		else
-			self:RemoveMenu()
 		end
 	end
 	
@@ -53,15 +51,36 @@ OptionMenuSystem.EntitiesAdded = function(self, dt, entities)
 end
 
 OptionMenuSystem.SpawnMenu = function(self)
-	local background = self:CreateElement("gamemenubackground", "quad", 0, -0, -3.1, 1.6, 1.9)
+	local background = self:CreateElement("transparentbackground", "quad", 0, -0, -2.22, 7, 7)
 	
 	local button = nil
-	button = self:CreateElement("graphicslow", "quad", 0, 0.4, -3, 0.6, 0.3)
+	local text = nil
+	
+	text = self:CreateText("left", "text", -1.3, 0.7, -2.2, 0.6, 0.1)	
+	self:AddTextToTexture("graphicsettings", "Graphic Settings", 0, 1, 1, 1, text)
+		
+	button = self:CreateElement("graphicslow", "quad", -1, 0.3, -2.2, 0.6, 0.3)
 	self:AddConsoleCommandToButton("changegraphics low", button)	
+	self:AddEntityCommandToButton("GameMenu", button)
 	self:AddHoverSize(1.1, button)
 	
-	button = self:CreateElement("graphicshigh", "quad", 0, -0.4, -3, 0.6, 0.3)
+	button = self:CreateElement("graphicshigh", "quad", -1, 0.0, -2.2, 0.6, 0.3)
 	self:AddConsoleCommandToButton("changegraphics high", button)	
+	self:AddEntityCommandToButton("GameMenu", button)
+	self:AddHoverSize(1.1, button)
+	
+	text = self:CreateText("left", "text", 0.7, 0.7, -2.2, 0.6, 0.1)	
+	self:AddTextToTexture("soundsettings", "Sound Settings", 0, 1, 1, 1, text)
+	
+	text = self:CreateText("left", "text", 0.8, 0.4, -2.2, 0.6, 0.1)	
+	self:AddTextToTexture("volume", "Volume:", 0, 1, 1, 1, text)
+	
+	button = self:CreateElement("slider", "quad", 1.2, 0.2, -2.2, 0.8, 0.2)
+	local currentvolume = Audio.GetVolume()
+	self:AddSliderToButton("volume", 0.0, 1.0, currentvolume*0.5-0.5, button)	
+
+	button = self:CreateElement("back", "quad", 0, -0.6, -2.2, 0.6, 0.3)
+	self:AddEntityCommandToButton("GameMenu", button)
 	self:AddHoverSize(1.1, button)
 end
 
@@ -91,6 +110,34 @@ OptionMenuSystem.CreateElement = function(self, object, folder, posx, posy, posz
 	local rotation = world:GetComponent(id, "Rotation", 0)
 	rotation:SetFloat3(0, 0, 0)
 	return id	
+end
+
+OptionMenuSystem.CreateText = function(self, object, folder, posx, posy, posz, scalex, scaley)
+	local id = world:CreateNewEntity("Text")
+	world:CreateComponentAndAddTo(self.Name.."Element", id)
+	world:GetComponent(id, "Model", 0):SetModel(object, folder, 3)
+	world:GetComponent(id, "Position", 0):SetFloat3(posx, posy, posz)
+	world:GetComponent(id, "Scale", 0):SetFloat3(scalex, scaley, 1)
+	world:GetComponent(id, "Rotation", 0):SetFloat3(0, 0, 0)
+	return id		
+end
+
+OptionMenuSystem.AddTextToTexture = function(self, n, text, font, r, g, b, button)
+	world:CreateComponentAndAddTo("TextTexture", button)
+	world:GetComponent(button, "TextTexture", "Name"):SetText(n) -- TODO: NAME CANT BE MORE THAN 3 CHARS? WTF?
+	world:GetComponent(button, "TextTexture", "Text"):SetText(text)
+	world:GetComponent(button, "TextTexture", "FontIndex"):SetInt(font)
+	world:GetComponent(button, "TextTexture", "R"):SetFloat(r)
+	world:GetComponent(button, "TextTexture", "G"):SetFloat(g)
+	world:GetComponent(button, "TextTexture", "B"):SetFloat(b)
+end
+
+OptionMenuSystem.AddSliderToButton = function(self, command, minvalue, maxvalue, current, button)
+	world:CreateComponentAndAddTo("MenuSlider", button)
+	world:GetComponent(button, "MenuSlider", "ConsoleCommand"):SetText(command)
+	world:GetComponent(button, "MenuSlider", "Min"):SetFloat(minvalue)
+	world:GetComponent(button, "MenuSlider", "Max"):SetFloat(maxvalue)
+	world:GetComponent(button, "MenuSlider", "Current"):SetFloat(current)
 end
 
 OptionMenuSystem.AddConsoleCommandToButton = function(self, command, button)

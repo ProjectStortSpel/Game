@@ -28,7 +28,7 @@ AModel::~AModel()
 {
 }
 
-void AModel::Draw(mat4 viewMatrix, mat4 projectionMatrix, Shader* shaderptr)
+void AModel::Draw(mat4 viewMatrix, Shader* shaderptr)
 {
 	if (active) // IS MODEL ACTIVE?
 	{
@@ -38,14 +38,10 @@ void AModel::Draw(mat4 viewMatrix, mat4 projectionMatrix, Shader* shaderptr)
 		else
 			M = *modelMatrix;
 
-		mat4 V = viewMatrix;
-		mat4 P = projectionMatrix;
-		mat3 normalMatrix = glm::transpose(glm::inverse(mat3(viewMatrix * M)));
+		mat4 MV = viewMatrix * M;
+		mat3 normalMatrix = glm::transpose(glm::inverse(mat3(MV)));
 
-		shaderptr->SetUniVariable("BlendColor", vector3, color);
-		shaderptr->SetUniVariable("M", mat4x4, &M);
-		shaderptr->SetUniVariable("V", mat4x4, &V);
-		shaderptr->SetUniVariable("P", mat4x4, &P);
+		shaderptr->SetUniVariable("MV", mat4x4, &MV);
 		shaderptr->SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
 
 
@@ -58,28 +54,7 @@ void AModel::Draw(mat4 viewMatrix, mat4 projectionMatrix, Shader* shaderptr)
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_2D, speID);
 
-		bufferPtr->draw(shaderptr->GetShaderProgram());
-
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
-}
-
-void AModel::DrawGeometry(mat4 viewMatrix, mat4 projectionMatrix, Shader* shaderptr)
-{
-	if (active) // IS MODEL ACTIVE?
-	{
-		mat4 M;
-		if (modelMatrix == NULL)
-			M = glm::translate(glm::vec3(1));
-		else
-			M = *modelMatrix;
-
-		mat4 V = viewMatrix;
-		mat4 P = projectionMatrix;
-
-		shaderptr->SetUniVariable("M", mat4x4, &M);
-		shaderptr->SetUniVariable("V", mat4x4, &V);
-		shaderptr->SetUniVariable("P", mat4x4, &P);
+		shaderptr->SetUniVariable("BlendColor", vector3, color);
 
 		bufferPtr->draw(shaderptr->GetShaderProgram());
 
@@ -87,30 +62,31 @@ void AModel::DrawGeometry(mat4 viewMatrix, mat4 projectionMatrix, Shader* shader
 	}
 }
 
-void AModel::DrawForwardGeometry(mat4 viewMatrix, mat4 projectionMatrix, Shader* shaderptr)
+void AModel::DrawGeometry(mat4 viewMatrix, Shader* shaderptr)
 {
-	if (active) // IS MODEL ACTIVE?
-	{
-		mat4 M;
-		if (modelMatrix == NULL)
-			M = glm::translate(glm::vec3(1));
-		else
-			M = *modelMatrix;
+}
 
-		mat4 V = viewMatrix;
-		mat4 P = projectionMatrix;
+void AModel::DrawForwardGeometry(mat4 viewMatrix, Shader* shaderptr)
+{
+	//if (active) // IS MODEL ACTIVE?
+	//{
+	//	mat4 M;
+	//	if (modelMatrix == NULL)
+	//		M = glm::translate(glm::vec3(1));
+	//	else
+	//		M = *modelMatrix;
 
-		shaderptr->SetUniVariable("M", mat4x4, &M);
-		shaderptr->SetUniVariable("V", mat4x4, &V);
-		shaderptr->SetUniVariable("P", mat4x4, &P);
+	//	mat4 MV = viewMatrix * M;
 
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, texID);
+	//	shaderptr->SetUniVariable("MV", mat4x4, &MV);
 
-		bufferPtr->draw(shaderptr->GetShaderProgram());
+	//	glActiveTexture(GL_TEXTURE1);
+	//	glBindTexture(GL_TEXTURE_2D, texID);
 
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
+	//	bufferPtr->draw(shaderptr->GetShaderProgram());
+
+	//	glBindTexture(GL_TEXTURE_2D, 0);
+	//}
 }
 
 void AModel::Update(float _dt)

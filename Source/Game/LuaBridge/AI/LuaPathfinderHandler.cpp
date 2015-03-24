@@ -14,6 +14,7 @@ namespace LuaBridge
 			LuaEmbedder::AddFunction(_l, "SetTileWalkable", &SetTileWalkable, "PathfinderHandler");
 			LuaEmbedder::AddFunction(_l, "SetData", &SetPathfinderData, "PathfinderHandler");
 			LuaEmbedder::AddFunction(_l, "GeneratePath", &GeneratePathfinderPath, "PathfinderHandler");
+			LuaEmbedder::AddFunction(_l, "IsPathWalkable", &LuaIsPathWalkable, "PathfinderHandler");
 		}
 
 		int		SetPathfinderTurningCost(lua_State* _l)
@@ -90,6 +91,32 @@ namespace LuaBridge
 
 			LuaEmbedder::PushFloat( _l, total_cost );
 			//LuaEmbedder::PushInt( _l, ret_value );
+
+			return 1;
+		}
+
+		int		LuaIsPathWalkable(lua_State* _l)
+		{
+			int nodesVisited = 0;
+			bool ret_value = false;
+
+			Pathfinder* pathfinder = Pathfinder::Instance();
+
+			coord start = coord(LuaEmbedder::PullInt(_l, 1), LuaEmbedder::PullInt(_l, 2));
+			coord goal = coord(LuaEmbedder::PullInt(_l, 3), LuaEmbedder::PullInt(_l, 4));
+			float total_cost;
+			nodesVisited = pathfinder->GeneratePath(start, goal, total_cost).size();
+
+			if (nodesVisited == 0)
+			{
+				ret_value = false;
+			}
+			else
+			{
+				ret_value = true;
+			}
+
+			LuaEmbedder::PushBool( _l, ret_value );
 
 			return 1;
 		}

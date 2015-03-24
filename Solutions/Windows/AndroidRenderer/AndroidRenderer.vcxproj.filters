@@ -157,5 +157,14 @@
     <None Include="..\..\..\Externals\content\shaders\android\AndroidAnimationShaderVS.glsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidAnimShadowShaderVS.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidShadowShaderDeferredFS.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidShadowShaderDeferredVS.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

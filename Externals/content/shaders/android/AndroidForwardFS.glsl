@@ -8,8 +8,7 @@ varying vec3 Normal;
 varying vec3 Tan;
 varying vec3 BiTan;
 varying vec2 TexCoord;
-varying vec3 ViewPos;
-
+varying vec4 ViewPos;
 
 //Input textures
 uniform sampler2D ShadowDepthTex;
@@ -36,7 +35,7 @@ struct Pointlight {
 	vec3 Color;
 	float Range;
 }; 
-uniform Pointlight pointlights[1];
+uniform Pointlight pointlights[2];
 
 struct MaterialInfo {
 	float Ks;
@@ -55,19 +54,19 @@ void phongModelDirLight(out vec3 ambient, out vec3 diffuse, out vec3 spec)
 
 	ambient = dirlightColor * dirlightIntensity.x;
 
-	vec3 E = normalize(ViewPos);
+	vec3 E = normalize(ViewPos.xyz);
 
 	float diffuseFactor = dot( lightVec, NmNormal );
 
 	if(diffuseFactor > 0.0)
 	{
 		// For shadows
-		vec4 worldPos = InvViewMatrix * vec4(ViewPos, 1.0);
+		vec4 worldPos = InvViewMatrix * ViewPos;
 		vec4 shadowCoord = BiasMatrix * ShadowViewProj * worldPos;
 
 		float shadow = 1.0;
 		vec4 shadowCoordinateWdivide = shadowCoord / shadowCoord.w;
-		shadowCoordinateWdivide.z -= 0.02;
+		shadowCoordinateWdivide.z -= 0.01;
 		float distanceFromLight = texture2D(ShadowDepthTex, shadowCoordinateWdivide.st).z;
 		
 		if (shadowCoord.w > 0.0)
@@ -91,7 +90,7 @@ void phongModel(Pointlight pointlight, out vec3 ambient, out vec3 diffuse, out v
 	diffuse = vec3(0.0);
 	spec    = vec3(0.0);
 
-	vec3 lightVec = (ViewMatrix * vec4(pointlight.Position, 1.0)).xyz - ViewPos;
+	vec3 lightVec = (ViewMatrix * vec4(pointlight.Position, 1.0)).xyz - ViewPos.xyz;
 	float d = length(lightVec);
 
 	if(d > pointlight.Range)
@@ -99,7 +98,7 @@ void phongModel(Pointlight pointlight, out vec3 ambient, out vec3 diffuse, out v
 	lightVec /= d; //normalizing
         
 	ambient = pointlight.Color * pointlight.Intensity.x;
-	vec3 E = normalize(ViewPos);
+	vec3 E = normalize(ViewPos.xyz);
 	float diffuseFactor = dot( lightVec, NmNormal );
 
 	if(diffuseFactor > 0.0)
@@ -125,6 +124,9 @@ void phongModel(Pointlight pointlight, out vec3 ambient, out vec3 diffuse, out v
 void main() 
 {
 	vec4 albedo_tex = texture2D( diffuseTex, TexCoord );
+
+	if(albedo_tex.a == 0.0)
+		discard;
 
 	// Normal data
 	vec3 normal_map	  = texture2D( normalTex, TexCoord ).rgb;
@@ -162,11 +164,16 @@ void main()
 		spec    += s;
 	}
 
+	vec3 a,d,s;
     //för varje ljus-----------
 	if( length(pointlights[0].Intensity) > 0.0)
 	{
-		vec3 a,d,s;
 		phongModel(pointlights[0], a, d, s);
+		diffuse += d; ambient += a; spec += s;
+	}
+	if( length(pointlights[1].Intensity) > 0.0)
+	{
+		phongModel(pointlights[1], a, d, s);
 		diffuse += d; ambient += a; spec += s;
 	}
 

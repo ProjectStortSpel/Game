@@ -69,3 +69,8 @@ void ShadowMap::ChangeResolution(int res)
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_resolution, m_resolution, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, NULL);
 	glBindTexture(GL_TEXTURE_2D, 0); 
 }
+
+void ShadowMap::SetBounds(float _width, float _height)
+{
+	m_projectionMatrix = glm::ortho(-_width, _width, -_height, _height, 1.5f, 10.f + std::max(_width, _height));
+}

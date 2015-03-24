@@ -93,13 +93,20 @@ LobbySystem.UpdatePlayers = function(self)
 		
 		local r, g, b = world:GetComponent(unitId, "Color", "X"):GetFloat3(0)
 		
-		local button = self:CreateElement("shade", "quad", -1.85, 1.20-i*0.22, -4.0, 1.78, 0.2)
+		local button = self:CreateElement("scoreboardbg", "quad", -1.85, 1.20-i*0.20, -4.0, 1.78, 0.2)
 		
-		local text = self:CreateElement("left", "text", -2.70, 1.28-i*0.22, -3.99, 3.0, 0.16)
+		local text = self:CreateElement("left", "text", -2.65, 1.28-i*0.20, -3.99, 3.0, 0.16)
 		world:CreateComponentAndAddTo("LobbyMenuPlayer", text)
 		self:AddTextToTexture("LMSPname"..i, name, 0, r, g, b, text)
-		text = self:CreateElement("right", "text", -1.00, 1.28-i*0.22, -3.99, 1.6, 0.16)	
+		text = self:CreateElement("right", "text", -1.05, 1.28-i*0.20, -3.99, 1.6, 0.16)	
 		self:AddTextToTexture("LMSPready"..i, readyText, 0, r, g, b, text)
+		
+		if i % 2 == 0 then
+			if not world:EntityHasComponent(button, "Color") then
+				world:CreateComponentAndAddTo("Color", button)
+			end
+			world:GetComponent(button, "Color", "X"):SetFloat3(0.1, 0.1, 0.1)
+		end
 	end
 	
 	if #entities == readyplayers then
