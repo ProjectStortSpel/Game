@@ -123,7 +123,7 @@ ConnectMenuSystem.SpawnMenu = function(self)
 	self:AddEntityCommandToButton("HostMenu", button)
 	self:AddHoverSize(1.1, button)
 	
-	button = self:CreateElement("returnknapp", "quad", 2.3, -1.2, -3, 0.4, 0.4)
+	button = self:CreateElement("returnknapp", "quad", -2.3, -1.2, -3, 0.4, 0.4)
 	self:AddConsoleCommandToButton("back", button)
 	self:AddEntityCommandToButton("MainMenu", button)
 	self:AddHoverSize(1.1, button)

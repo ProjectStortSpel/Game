@@ -130,7 +130,7 @@ HowToSystem.CreateEntites = function(self)
 	local prio = self:CreateTexture("prio", "quad", 1.5, -1.0, -3.0, 1.1, 1.1)
 	table.insert(self.Entities, prio)
 	
-	local button = self:CreateButton("returnknapp", "quad", 2.3, -1.2, -3, 0.4, 0.4)
+	local button = self:CreateButton("returnknapp", "quad", -2.3, -1.2, -3, 0.4, 0.4)
 	self:AddHoverSize(1.1, button)
 	
 	self.Active = true
