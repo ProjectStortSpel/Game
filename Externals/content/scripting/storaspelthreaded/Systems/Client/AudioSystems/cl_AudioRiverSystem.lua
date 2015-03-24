@@ -18,10 +18,10 @@ AudioRiverSystem.EntitiesAdded = function(self, dt, entities)
 			
 			if world:EntityHasComponent(entity, "RiverEnd") then
 				Audio.PlaySound("WaterfallLoop", soundName, true)
-				Audio.SetSoundVolume(soundName, 24)
+				Audio.SetSoundVolume(soundName, 18)
 			else
 				Audio.PlaySound("RiverWaterLoop", soundName, true)
-				Audio.SetSoundVolume(soundName, 12)
+				Audio.SetSoundVolume(soundName, 10)
 			end
 			
 			Audio.SetSoundPosition(soundName, x, y, z)

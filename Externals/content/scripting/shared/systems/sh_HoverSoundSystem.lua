@@ -18,7 +18,9 @@ HoverSoundSystem.EntitiesAdded = function(self, dt, entities)
 		local entityId = entities[n]
 		local sound = world:GetComponent(entityId, "HoverSound", "Sound"):GetText()
 		
-		Audio.PlaySound(sound, sound .. entityId, false)
+		local soundname = sound .. entityId
+		Audio.PlaySound(sound, soundname, false)
+		Audio.SetSoundVolume(soundname, 12)
 	end
 end
 

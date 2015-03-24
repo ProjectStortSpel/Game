@@ -53,6 +53,11 @@ OffsetUnitSystem.UpdateUnitLerp = function(self, unitId)
 			Net.WriteString(audioId, "WaterSplash" .. unitId)
 			Net.WriteBool(audioId, false)
 			Net.Broadcast(audioId)
+			
+			audioId = Net.StartPack("Client.SetVolume")
+			Net.WriteString(audioId, "WaterSplash" .. unitId)
+			Net.WriteInt(audioId, 20)
+			Net.Broadcast(audioId)
 		end
 	elseif yOffset - pY < 0 then
 		world:GetComponent(unitId, "LerpPosition", "Algorithm"):SetText("EnterRiver")
@@ -62,6 +67,11 @@ OffsetUnitSystem.UpdateUnitLerp = function(self, unitId)
 			Net.WriteString(audioId, "WaterSplash")
 			Net.WriteString(audioId, "WaterSplash" .. unitId)
 			Net.WriteBool(audioId, false)
+			Net.Broadcast(audioId)
+			
+			audioId = Net.StartPack("Client.SetVolume")
+			Net.WriteString(audioId, "WaterSplash" .. unitId)
+			Net.WriteInt(audioId, 64)
 			Net.Broadcast(audioId)
 		end
 	end

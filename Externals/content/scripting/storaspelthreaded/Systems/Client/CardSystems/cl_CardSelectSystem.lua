@@ -90,6 +90,7 @@ CardSelectSystem.Update = function(self, dt)
 				end
 				world:CreateComponentAndAddTo("CardHolding", card)
 				Audio.PlaySound("Cards3", "Cards3", false)
+				Audio.SetSoundVolume("Cards3", 55)
 			end
 		else
 			local rX = mX * aspectX * 7

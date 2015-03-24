@@ -40,7 +40,7 @@ end
 
 CardHoverSystem.EntitiesAdded = function(self, dt, entities)
 	
-	Audio.PlaySound("Cards1", "Cards1111", false)
+	--Audio.PlaySound("Cards1", "Cards1111", false)
 
 	for n = 1, #entities do
 		local entityId = entities[n]
