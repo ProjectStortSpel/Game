@@ -57,19 +57,19 @@ GameMenuSystem.SpawnMenu = function(self)
 	--background = self:CreateElement("gamemenubackground", "quad", 0, -0, -3.1, 1.8, 2.3)
 		
 	local button = nil	
-	button = self:CreateElement("options", "quad", 0, 0.5, -2.2, 0.6, 0.3)
+	button = self:CreateButton("options", "quad", 0, 0.5, -2.2, 0.6, 0.3)
 	self:AddEntityCommandToButton("OptionMenu", button)
 	self:AddHoverSize(1.1, button)	
 	
-	button = self:CreateElement("lobby", "quad", 0, 0.2, -2.2, 0.6, 0.3)
+	button = self:CreateButton("lobby", "quad", 0, 0.2, -2.2, 0.6, 0.3)
 	self:AddConsoleCommandToButton("disconnect;stop;gamemode lobby", button)
 	self:AddHoverSize(1.1, button)	
 
-	button = self:CreateElement("quit", "quad", 0, -0.1, -2.2, 0.6, 0.3)
+	button = self:CreateButton("quit", "quad", 0, -0.1, -2.2, 0.6, 0.3)
 	self:AddConsoleCommandToButton("quit", button)
 	self:AddHoverSize(1.1, button)
 	
-	button = self:CreateElement("resume", "quad", 0, -0.7, -2.2, 0.6, 0.3)
+	button = self:CreateButton("resume", "quad", 0, -0.7, -2.2, 0.6, 0.3)
 	self:AddConsoleCommandToButton("resume", button)
 	self:AddHoverSize(1.1, button)	
 end
@@ -81,6 +81,21 @@ GameMenuSystem.RemoveMenu = function(self)
 	end
 end
 
+GameMenuSystem.CreateButton = function(self, object, folder, posx, posy, posz, scalex, scaley)
+	local id = world:CreateNewEntity("Button")
+	world:CreateComponentAndAddTo(self.Name.."Element", id)
+	local model = world:GetComponent(id, "Model", 0)
+	model:SetModel(object, folder, 3)
+	local position = world:GetComponent(id, "Position", 0)
+	position:SetFloat3(posx, posy, posz)
+	local scale = world:GetComponent(id, "Scale", 0)
+	scale:SetFloat3(scalex, scaley, 1)
+	local pickbox = world:GetComponent(id, "PickBox", 0)
+	pickbox:SetFloat2(1, 1)
+	local rotation = world:GetComponent(id, "Rotation", 0)
+	rotation:SetFloat3(0, 0, 0)
+	return id	
+end
 
 GameMenuSystem.CreateElement = function(self, object, folder, posx, posy, posz, scalex, scaley)
 	local id = world:CreateNewEntity()

@@ -70,3 +70,9 @@ GenerateIslandComponent:AddVariable("OffsetZ", ByteSize.Int)
 GenerateIslandComponent:AddVariable("SizeX", ByteSize.Int)
 GenerateIslandComponent:AddVariable("SizeZ", ByteSize.Int)
 worldCreator:AddComponentType(GenerateIslandComponent)
+
+local HoverSound = ComponentType()
+HoverSound.Name = "HoverSound"
+HoverSound.TableType = TableType.Map
+HoverSound:AddVariable("Sound", ByteSize.Text)
+worldCreator:AddComponentType(HoverSound)

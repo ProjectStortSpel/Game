@@ -60,12 +60,12 @@ OptionMenuSystem.SpawnMenu = function(self)
 	text = self:CreateText("center", "text", -0.7, 0.8, -2.2, 0.6, 0.1)	
 	self:AddTextToTexture("graphicsettings", "Graphic Settings", 0, 1, 1, 1, text)
 		
-	button = self:CreateElement("graphicslow", "quad", -0.7, 0.4, -2.2, 0.6, 0.3)
+	button = self:CreateButton("graphicslow", "quad", -0.7, 0.4, -2.2, 0.6, 0.3)
 	self:AddConsoleCommandToButton("changegraphics low", button)	
 	self:AddEntityCommandToButton("GameMenu", button)
 	self:AddHoverSize(1.1, button)
 	
-	button = self:CreateElement("graphicshigh", "quad", -0.7, 0.1, -2.2, 0.6, 0.3)
+	button = self:CreateButton("graphicshigh", "quad", -0.7, 0.1, -2.2, 0.6, 0.3)
 	self:AddConsoleCommandToButton("changegraphics high", button)	
 	self:AddEntityCommandToButton("GameMenu", button)
 	self:AddHoverSize(1.1, button)
@@ -95,7 +95,7 @@ OptionMenuSystem.SpawnMenu = function(self)
 	self:AddSliderToButton("musicvolume", 0.0, 1.0, currentvolume, 0.05, button)
 	
 	-- BACK
-	button = self:CreateElement("back", "quad", 0, -0.7, -2.2, 0.6, 0.3)
+	button = self:CreateButton("back", "quad", 0, -0.7, -2.2, 0.6, 0.3)
 	self:AddEntityCommandToButton("GameMenu", button)
 	self:AddHoverSize(1.1, button)
 end
@@ -105,6 +105,21 @@ OptionMenuSystem.RemoveMenu = function(self)
 	for i = 1, #entities do
 		world:KillEntity(entities[i])
 	end
+end
+OptionMenuSystem.CreateButton = function(self, object, folder, posx, posy, posz, scalex, scaley)
+	local id = world:CreateNewEntity("Button")
+	world:CreateComponentAndAddTo(self.Name.."Element", id)
+	local model = world:GetComponent(id, "Model", 0)
+	model:SetModel(object, folder, 3)
+	local position = world:GetComponent(id, "Position", 0)
+	position:SetFloat3(posx, posy, posz)
+	local scale = world:GetComponent(id, "Scale", 0)
+	scale:SetFloat3(scalex, scaley, 1)
+	local pickbox = world:GetComponent(id, "PickBox", 0)
+	pickbox:SetFloat2(1, 1)
+	local rotation = world:GetComponent(id, "Rotation", 0)
+	rotation:SetFloat3(0, 0, 0)
+	return id	
 end
 
 OptionMenuSystem.CreateElement = function(self, object, folder, posx, posy, posz, scalex, scaley)

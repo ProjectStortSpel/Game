@@ -18,11 +18,11 @@ GameInterfaceSystem.PostInitialize = function(self)
 
 	local aspectX, aspectY = GraphicDevice.GetAspectRatio()
 
-	local menubutton = self:CreateElement("gamemenubutton", "quad", 3.9*aspectX, -1.4, -4, 1.0, 0.5)
+	local menubutton = self:CreateButton("gamemenubutton", "quad", 3.9*aspectX, -1.4, -4, 1.0, 0.5)
 	self:AddEntityCommandToButton("GameMenu", menubutton)
 	self:AddHoverSize(1.1, menubutton)
 
-	local socialbutton = self:CreateElement("socialmenubutton", "quad", -3.9*aspectX, -1.4, -4, 1.0, 0.5)
+	local socialbutton = self:CreateButton("socialmenubutton", "quad", -3.9*aspectX, -1.4, -4, 1.0, 0.5)
 	self:AddEntityCommandToButton("RconMenu", socialbutton)
 	self:AddHoverSize(1.1, socialbutton)
 
@@ -52,6 +52,21 @@ GameInterfaceSystem.Update = function(self, dt)
 	end
 end
 
+GameInterfaceSystem.CreateButton = function(self, object, folder, posx, posy, posz, scalex, scaley)
+	local id = world:CreateNewEntity("Button")
+	world:CreateComponentAndAddTo(self.Name.."Element", id)
+	local model = world:GetComponent(id, "Model", 0)
+	model:SetModel(object, folder, 3)
+	local position = world:GetComponent(id, "Position", 0)
+	position:SetFloat3(posx, posy, posz)
+	local scale = world:GetComponent(id, "Scale", 0)
+	scale:SetFloat3(scalex, scaley, 1)
+	local pickbox = world:GetComponent(id, "PickBox", 0)
+	pickbox:SetFloat2(1, 1)
+	local rotation = world:GetComponent(id, "Rotation", 0)
+	rotation:SetFloat3(0, 0, 0)
+	return id	
+end
 
 GameInterfaceSystem.CreateElement = function(self, object, folder, posx, posy, posz, scalex, scaley)
 	local id = world:CreateNewEntity()

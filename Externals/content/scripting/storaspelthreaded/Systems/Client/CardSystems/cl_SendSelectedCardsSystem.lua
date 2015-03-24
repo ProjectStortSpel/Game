@@ -50,6 +50,11 @@ SendSelectedCardsSystem.EntitiesAdded = function(self, dt, entities)
 	for n = 1, #entities do
 		local entityId = entities[n]
 		if world:EntityHasComponent(entityId, "CardSelected") then
+		
+		
+			Audio.PlaySound("Cards2", "Cards2"..entityId, false)
+			
+			
 			local cards = self:GetEntities("CardSelected")
 			
 			local DealingSettings = self:GetEntities("DealingSettings")
