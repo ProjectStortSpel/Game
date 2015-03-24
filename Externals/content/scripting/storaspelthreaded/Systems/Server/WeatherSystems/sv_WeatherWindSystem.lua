@@ -9,7 +9,7 @@ WeatherWindSystem.Initialize = function(self)
 	self:UsingEntitiesAdded()
 
 	--	Set Filter
-	self:AddComponentTypeToFilter("NewStep", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("WeatherStep", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("WeatherWind", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("Unit", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("IsTree", FilterType.RequiresOneOf)
@@ -43,7 +43,7 @@ WeatherWindSystem.EntitiesAdded = function(self, dt, newEntities)
 			world:GetComponent(tEntity, "Direction", "X"):SetInt(dirX)
 			world:GetComponent(tEntity, "Direction", "Z"):SetInt(dirZ)
 			
-		elseif world:EntityHasComponent(tEntity, "NewStep") then
+		elseif world:EntityHasComponent(tEntity, "WeatherStep") then
 			
 			self.CurrentStep	=	self.CurrentStep+1
 		end

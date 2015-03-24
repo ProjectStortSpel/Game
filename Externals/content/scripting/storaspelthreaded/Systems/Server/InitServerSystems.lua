@@ -84,6 +84,7 @@ require "sv_PostSpawnSystem"
 --	Round Systems
 package.path = package.path .. ";Systems/Server/RoundSystems/?.lua"
 require "sv_StepTimerSystem"
+require "sv_WeatherTimerSystem"
 require "sv_NewStepSystem"
 require "sv_StartNewRoundSystem"
 require "sv_PlayCardTimerSystem"
@@ -170,6 +171,7 @@ worldCreator:AddSystemToCurrentGroup(PostSpawnSystem)
 
 
 worldCreator:AddSystemToCurrentGroup(StartNewRoundSystem)
+worldCreator:AddSystemToCurrentGroup(WeatherTimerSystem)
 worldCreator:AddSystemToCurrentGroup(StepTimerSystem)
 worldCreator:AddSystemToCurrentGroup(NewStepSystem)
 worldCreator:AddSystemToCurrentGroup(PlayCardTimerSystem)

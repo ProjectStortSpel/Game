@@ -11,7 +11,7 @@ WeatherTornadoSystem.Initialize = function(self)
 	self:UsingEntitiesAdded()
 
 	--	Set Filter
-	self:AddComponentTypeToFilter("MoveRiver", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("WeatherStep", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("DealCards", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("WeatherTornado", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("TestMoveSuccess",FilterType.RequiresOneOf)
@@ -39,7 +39,7 @@ WeatherTornadoSystem.EntitiesAdded = function(self, dt, newEntities)
 			world:KillEntity(tEntity)
 		end
 		
-		if world:EntityHasComponent(tEntity, "MoveRiver") then
+		if world:EntityHasComponent(tEntity, "WeatherStep") then
 			for i = 1, #self.TornadoIds do
 				self:MoveTornado(self.TornadoIds[i])
 				

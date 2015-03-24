@@ -175,8 +175,8 @@ PlayCardSystem.EntitiesAdded = function(self, dt, entities)
 				world:CreateComponentAndAddTo("SyncNetwork", id)
 
 				id = world:CreateNewEntity()
-				world:CreateComponentAndAddTo("StepTimer", id)
-				world:GetComponent(id, "StepTimer", "Time"):SetFloat(1)
+				world:CreateComponentAndAddTo("WeatherStepTimer", id)
+				world:GetComponent(id, "WeatherStepTimer", "Time"):SetFloat(1)
 				
 				local cardsAboveHead = self:GetEntities("CardAboveHead")
 				for i = 1, #cardsAboveHead do
