@@ -14,8 +14,12 @@ namespace Audio
 	void DECLSPEC Update();
 	void DECLSPEC Quit();
 	
-	void DECLSPEC SetVolume(float volume);
-	float DECLSPEC GetVolume();
+	void DECLSPEC SetMusicVolume(float volume);
+	float DECLSPEC GetMusicVolume();
+	void DECLSPEC SetSoundVolume(float volume);
+	float DECLSPEC GetSoundVolume();
+	void DECLSPEC SetMasterVolume(float volume);
+	float DECLSPEC GetMasterVolume();
 	
 	void DECLSPEC SetDistance(float near, float far);
 	void DECLSPEC SetCameraPosition(glm::vec3 position);
@@ -38,7 +42,7 @@ namespace Audio
 	void DECLSPEC FadeInSound(const std::string &name, int ms, bool loop = false);
 	void DECLSPEC FadeInSound(const std::string &name, const std::string& channelName, int ms, bool loop = false);
 	void DECLSPEC FadeOutSound(const std::string& channelName, int ms);
-	void DECLSPEC SetVolume(const std::string& channelName, int volume);
+	void DECLSPEC SetSoundVolume(const std::string& channelName, int volume);
 	
 	bool DECLSPEC ChannelExists(const std::string& channelName);
 	

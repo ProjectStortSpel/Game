@@ -1,5 +1,7 @@
 Audio.SetDistance(1.0, 15.0)
 
+Audio.LoadMusic("audio/ingametheme.wav")
+
 Audio.LoadSound("BigStoneImpact", "audio/bigstoneimpact.wav")
 Audio.LoadSound("Bird", "audio/bird.wav")
 Audio.LoadSound("BlockVoice1", "audio/blockvoice.wav")
@@ -15,7 +17,6 @@ Audio.LoadSound("FallingWhistleShort", "audio/fallingwhistleshort.wav")
 Audio.LoadSound("FallingWhistleWithImpact", "audio/fallingwhistlewithimpact.wav")
 Audio.LoadSound("HitByStone1", "audio/hitbystone.wav")
 Audio.LoadSound("HitByStone2", "audio/hitbystone2.wav")
-Audio.LoadSound("IngameTheme", "audio/ingametheme.wav")
 Audio.LoadSound("Laugh1", "audio/laugh.wav")
 Audio.LoadSound("Laugh2", "audio/laugh2.wav")
 Audio.LoadSound("Laugh3", "audio/laugh3.wav")

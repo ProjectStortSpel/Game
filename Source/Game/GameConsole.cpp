@@ -476,14 +476,24 @@ void GameConsole::ECSLMemoryUsage(std::string _command, std::vector<Console::Arg
 	m_consoleManager->AddMessage(ss.str().c_str());
 }
 
-void GameConsole::SetAudioVolume(string _command, std::vector< Console::Argument >* _args)
+void GameConsole::SetMusicVolume(string _command, std::vector< Console::Argument >* _args)
 {
 	float volume = _args->at(0).Number;
-	Audio::SetVolume(volume);
-	std::stringstream ss;
-	ss << "Audio volume is now set to " << volume;
-	m_consoleManager->AddMessage(ss.str().c_str());
+	Audio::SetMusicVolume(volume);
 }
+
+void GameConsole::SetSoundVolume(string _command, std::vector< Console::Argument >* _args)
+{
+	float volume = _args->at(0).Number;
+	Audio::SetSoundVolume(volume);
+}
+
+void GameConsole::SetMasterVolume(string _command, std::vector< Console::Argument >* _args)
+{
+	float volume = _args->at(0).Number;
+	Audio::SetMasterVolume(volume);
+}
+
 
 void GameConsole::ListCommands(std::string _command, std::vector<Console::Argument>* _args)
 {
@@ -530,6 +540,8 @@ void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 
 	m_consoleManager->AddCommand("MemoryUsage", std::bind(&GameConsole::ECSLMemoryUsage, this, std::placeholders::_1, std::placeholders::_2));
 
-	m_consoleManager->AddCommand("Volume", std::bind(&GameConsole::SetAudioVolume, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager->AddCommand("MusicVolume", std::bind(&GameConsole::SetMusicVolume, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager->AddCommand("SoundVolume", std::bind(&GameConsole::SetSoundVolume, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager->AddCommand("Volume", std::bind(&GameConsole::SetMasterVolume, this, std::placeholders::_1, std::placeholders::_2));
 }
 
