@@ -524,16 +524,16 @@ void GraphicsHigh::Render()
 	glEnable(GL_DEPTH_TEST);
 	
 	// DRAW SKYBOX
-	//glDisable(GL_CULL_FACE);
-	//glDepthMask(GL_FALSE);
-	//m_skyBoxShader.UseProgram();
-	//m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera, m_dt);
-	//
-	//glEnable(GL_BLEND);
-	//
-	//m_skyboxClouds->Draw(m_skyBoxShader.GetShaderProgram(), m_camera, m_dt);
-	//glEnable(GL_CULL_FACE);
-	//glDepthMask(GL_TRUE);
+	glDisable(GL_CULL_FACE);
+	glDepthMask(GL_FALSE);
+	m_skyBoxShader.UseProgram();
+	m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera, m_dt);
+
+	glEnable(GL_BLEND);
+
+	m_skyboxClouds->Draw(m_skyBoxShader.GetShaderProgram(), m_camera, m_dt);
+	glEnable(GL_CULL_FACE);
+	glDepthMask(GL_TRUE);
 	// -----------
 	
 	//-------Render water-------------
