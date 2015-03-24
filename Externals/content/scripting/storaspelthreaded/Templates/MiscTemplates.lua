@@ -61,6 +61,7 @@ template:SetModel("Model", "pebble", "pebble" , 0)
 template:AddComponent("SyncNetwork")
 template:AddComponent("SlingShotProjectile")
 template:AddComponent("LerpPosition")
+template:AddComponent("TargetUnit")
 EntityTemplateManager:AddTemplate(template)
 
 template = EntityTemplate()

@@ -75,7 +75,7 @@ MapGenerator.EntitiesAdded = function(self, dt, entities)
 	--self:GenerateMap(1338, 2, 4)
 	--self:GenerateMap(19890320, 6, 3)
 	
-	--self:LoadMap("riverends")
+	--self:LoadMap("testmap")
 end
 
 MapGenerator.PostInitialize = function(self)
@@ -1182,6 +1182,36 @@ MapGenerator.CreateMap = function(self)
 	world:GetComponent(newParticle, "Particle", "gSpriteSize"):SetFloat(0.18)
 	world:GetComponent(newParticle, "Particle", "hId"):SetInt(-1)
 	world:GetComponent(newParticle, "Particle", "iOnlyOnce"):SetInt(0)
+	
+	local	newSmallIsland		=	0
+	local	offsetX, offsetZ	=	0, 0
+	local	cX, cZ				=	self:GetCenterOfMap()
+	local	randomAngle, radius	=	0, 0
+	local	rScale				=	0
+	
+	for n = 1, 5 do
+	
+		randomAngle	=	2*math.pi*math.random()-math.pi
+		
+		radius		=	math.random(6, 7)*0.1*math.sqrt(self.MapSizeX^2+self.MapSizeZ^2)
+		offsetX		=	cX + radius*math.cos(randomAngle)
+		offsetZ		=	cZ + radius*math.sin(randomAngle)
+		rScale		=	1 + math.random()
+		
+		newSmallIsland	= world:CreateNewEntity()
+		world:CreateComponentAndAddTo("Model", 		newSmallIsland)
+		world:CreateComponentAndAddTo("Position", 	newSmallIsland)
+		world:CreateComponentAndAddTo("Rotation", 	newSmallIsland)
+		world:CreateComponentAndAddTo("Scale", 		newSmallIsland)
+		world:CreateComponentAndAddTo("SyncNetwork",newSmallIsland)
+		world:CreateComponentAndAddTo("NoShadow",	newSmallIsland)
+		world:GetComponent(newSmallIsland, "Model", 0):SetModel("miniisland", "distantisland", 0)
+		world:GetComponent(newSmallIsland, "Position", 0):SetFloat3(offsetX, math.random(-4, 3), offsetZ)
+		world:GetComponent(newSmallIsland, "Rotation", 0):SetFloat3(0, 2*math.pi*math.random(), 0)
+		world:GetComponent(newSmallIsland, "Scale", 0):SetFloat3(rScale,rScale,rScale)
+	
+	end
+
 	
 end
 

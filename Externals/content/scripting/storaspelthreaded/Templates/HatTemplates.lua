@@ -32,12 +32,45 @@ Hat:AddComponent("SyncNetwork")
 EntityTemplateManager:AddTemplate(Hat)
 
 Hat = EntityTemplate()
-Hat.Name = "arrowHat"
-Hat:SetModel("Model", "arrow", "arrow", 0)
-Hat:SetFloat3("Position", 0.0, 1.5, 0.05)
-Hat:SetFloat3("Rotation", 0, 0, 0)
-Hat:SetFloat3("Scale", 0.4, 0.4, 0.4)
+Hat.Name = "totemtopHat"
+Hat:SetModel("Model", "totemtop", "totemtop", 0)
+Hat:SetFloat3("Position", -0.04, 0.061, 0.045)
+Hat:SetFloat3("Rotation", 0.2, 0, 0.6)
+Hat:SetFloat3("Scale", 1.1, 1.1, 1.1)
+Hat:SetFloat3("Color", 0, 0, 0) 		-- ADDS PLAYER COLOR
+Hat:SetInt("ParentJoint", 5) 			-- OPTIONAL: ADDS HAT TO HEAD JOINT
+Hat:AddComponent("SyncNetwork")
+EntityTemplateManager:AddTemplate(Hat)
+
+Hat = EntityTemplate()
+Hat.Name = "islandHat"
+Hat:SetModel("Model", "miniisland", "distantisland", 0)
+Hat:SetFloat3("Position", 0.0, 0.0, 0.0)
+Hat:SetFloat3("Rotation", 0.2, 0, 0.6)
+Hat:SetFloat3("Scale", 0.5, 0.5, 0.5)
 Hat:SetFloat3("Color", 1, 1, 1) 		-- ADDS PLAYER COLOR
---Hat:SetInt("ParentJoint", 5) 			-- OPTIONAL: ADDS HAT TO HEAD JOINT
+Hat:SetInt("ParentJoint", 5) 			-- OPTIONAL: ADDS HAT TO HEAD JOINT
+Hat:AddComponent("SyncNetwork")
+EntityTemplateManager:AddTemplate(Hat)
+
+Hat = EntityTemplate()
+Hat.Name = "bushHat"
+Hat:SetModel("Model", "bush", "bush", 0)
+Hat:SetFloat3("Position", 0.0, 0.0, 0.0)
+Hat:SetFloat3("Rotation", 0.2, 0, 0.6)
+Hat:SetFloat3("Scale", 0.5, 0.5, 0.5)
+Hat:SetFloat3("Color", 1, 1, 1) 		-- ADDS PLAYER COLOR
+Hat:SetInt("ParentJoint", 5) 			-- OPTIONAL: ADDS HAT TO HEAD JOINT
+Hat:AddComponent("SyncNetwork")
+EntityTemplateManager:AddTemplate(Hat)
+
+Hat = EntityTemplate()
+Hat.Name = "topHat"
+Hat:SetModel("Model", "tophat", "tophat", 0)
+Hat:SetFloat3("Position", -0.025, 0.030, 0.05)
+Hat:SetFloat3("Rotation", 0.2, 0, 0.6)
+Hat:SetFloat3("Scale", 1.0, 1.0, 1.0)
+Hat:SetFloat3("Color", 0.2, 0.2, 0.2) 		-- ADDS PLAYER COLOR
+Hat:SetInt("ParentJoint", 5) 			-- OPTIONAL: ADDS HAT TO HEAD JOINT
 Hat:AddComponent("SyncNetwork")
 EntityTemplateManager:AddTemplate(Hat)
