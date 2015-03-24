@@ -19,8 +19,13 @@ end
 OffsetUnitSystem.IsTileRiver = function(self, X, Z)
 	
 	local	tileList	=	self:GetEntities("TileOffset")
+	local 	tileIndex 	= 	self:GetListIndex(X, Z)
 	
-	return world:EntityHasComponent(tileList[self:GetListIndex(X, Z)], "River")
+	if tileIndex <= 0 or tileIndex > #tileList then
+		return false
+	end
+	
+	return world:EntityHasComponent(tileList[tileIndex], "River")
 end
 
 OffsetUnitSystem.UpdateUnitLerp = function(self, unitId)
@@ -41,8 +46,24 @@ OffsetUnitSystem.UpdateUnitLerp = function(self, unitId)
 	
 	if yOffset - pY > 0 then
 		world:GetComponent(unitId, "LerpPosition", "Algorithm"):SetText("ExitRiver")
+		
+		if self:IsTileRiver(tX, tZ) or self:IsTileRiver(oldX, oldZ) then
+			local audioId = Net.StartPack("Client.PlaySoundC")
+			Net.WriteString(audioId, "WaterSplash")
+			Net.WriteString(audioId, "WaterSplash" .. unitId)
+			Net.WriteBool(audioId, false)
+			Net.Broadcast(audioId)
+		end
 	elseif yOffset - pY < 0 then
 		world:GetComponent(unitId, "LerpPosition", "Algorithm"):SetText("EnterRiver")
+		
+		if self:IsTileRiver(tX, tZ) or self:IsTileRiver(oldX, oldZ) then
+			local audioId = Net.StartPack("Client.PlaySoundC")
+			Net.WriteString(audioId, "WaterSplash")
+			Net.WriteString(audioId, "WaterSplash" .. unitId)
+			Net.WriteBool(audioId, false)
+			Net.Broadcast(audioId)
+		end
 	end
 	
 	world:GetComponent(unitId, "LerpPosition", "Y"):SetFloat(yOffset)

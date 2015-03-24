@@ -158,6 +158,7 @@
 		0339F9971A740B5900FA04DD /* libGLEW.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0339F9931A740B5900FA04DD /* libGLEW.dylib */; };
 		0339F9981A740B5900FA04DD /* liblua.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0339F9941A740B5900FA04DD /* liblua.a */; };
 		0339F9AE1A7433D800FA04DD /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03F5A8021A73DB9B00D54F14 /* OpenGL.framework */; };
+		035314AA1AC1932C00542ECB /* Rijndael.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035314A81AC1932C00542ECB /* Rijndael.cpp */; };
 		035C22CD1A73D68600EE9624 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 035C22CC1A73D68600EE9624 /* Images.xcassets */; };
 		035C22D01A73D68600EE9624 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 035C22CE1A73D68600EE9624 /* Main.storyboard */; };
 		0372F5F11A9F44A100802321 /* SDL2_mixer.framework in Resources */ = {isa = PBXBuildFile; fileRef = 0372F5F01A9F44A100802321 /* SDL2_mixer.framework */; };
@@ -489,7 +490,9 @@
 		0339F9921A740B5900FA04DD /* libGLEW.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGLEW.a; path = ../../Externals/lib/OSX/libGLEW.a; sourceTree = "<group>"; };
 		0339F9931A740B5900FA04DD /* libGLEW.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libGLEW.dylib; path = ../../Externals/lib/OSX/libGLEW.dylib; sourceTree = "<group>"; };
 		0339F9941A740B5900FA04DD /* liblua.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblua.a; path = ../../Externals/lib/OSX/liblua.a; sourceTree = "<group>"; };
-		035C22BF1A73D68600EE9624 /* StoraSpel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StoraSpel.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		035314A81AC1932C00542ECB /* Rijndael.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Rijndael.cpp; sourceTree = "<group>"; };
+		035314A91AC1932C00542ECB /* Rijndael.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Rijndael.h; sourceTree = "<group>"; };
+		035C22BF1A73D68600EE9624 /* StoraSpel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = StoraSpel.app; path = Neanderfall.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		035C22C31A73D68600EE9624 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		035C22CC1A73D68600EE9624 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		035C22CF1A73D68600EE9624 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -1168,6 +1171,8 @@
 		031D98321AB236110099620B /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				035314A81AC1932C00542ECB /* Rijndael.cpp */,
+				035314A91AC1932C00542ECB /* Rijndael.h */,
 				031D98331AB236110099620B /* BaseNetwork.cpp */,
 				031D98341AB236110099620B /* BaseNetwork.h */,
 				031D98351AB236110099620B /* ClientNetwork.cpp */,
@@ -1320,9 +1325,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		035C22BE1A73D68600EE9624 /* StoraSpel */ = {
+		035C22BE1A73D68600EE9624 /* Neanderfall */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 035C22DF1A73D68600EE9624 /* Build configuration list for PBXNativeTarget "StoraSpel" */;
+			buildConfigurationList = 035C22DF1A73D68600EE9624 /* Build configuration list for PBXNativeTarget "Neanderfall" */;
 			buildPhases = (
 				035C22BB1A73D68600EE9624 /* Sources */,
 				035C22BC1A73D68600EE9624 /* Frameworks */,
@@ -1332,7 +1337,7 @@
 			);
 			dependencies = (
 			);
-			name = StoraSpel;
+			name = Neanderfall;
 			productName = StoraSpel;
 			productReference = 035C22BF1A73D68600EE9624 /* StoraSpel.app */;
 			productType = "com.apple.product-type.application";
@@ -1344,14 +1349,14 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0610;
-				ORGANIZATIONNAME = CardBordGames;
+				ORGANIZATIONNAME = "Cardboard Games";
 				TargetAttributes = {
 					035C22BE1A73D68600EE9624 = {
 						CreatedOnToolsVersion = 6.1.1;
 					};
 				};
 			};
-			buildConfigurationList = 035C22BA1A73D68600EE9624 /* Build configuration list for PBXProject "StoraSpel" */;
+			buildConfigurationList = 035C22BA1A73D68600EE9624 /* Build configuration list for PBXProject "Neanderfall" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -1364,7 +1369,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				035C22BE1A73D68600EE9624 /* StoraSpel */,
+				035C22BE1A73D68600EE9624 /* Neanderfall */,
 			);
 		};
 /* End PBXProject section */
@@ -1478,6 +1483,7 @@
 				031D98BB1AB236110099620B /* ECSLProfiler.cpp in Sources */,
 				031D989A1AB236110099620B /* LuaPathfinderHandler.cpp in Sources */,
 				031D98961AB236110099620B /* HomePath.cpp in Sources */,
+				035314AA1AC1932C00542ECB /* Rijndael.cpp in Sources */,
 				031D98761AB236110099620B /* DataSlimArray.cpp in Sources */,
 				031D98D41AB236110099620B /* TextInput.cpp in Sources */,
 				031D98E41AB236110099620B /* ClientNetwork.cpp in Sources */,
@@ -1656,7 +1662,7 @@
 					"-I../../Externals/Include/OSX",
 					"-I../../Source",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Neanderfall;
 			};
 			name = Debug;
 		};
@@ -1684,14 +1690,14 @@
 					"-I../../Externals/Include/OSX",
 					"-I../../Source",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Neanderfall;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		035C22BA1A73D68600EE9624 /* Build configuration list for PBXProject "StoraSpel" */ = {
+		035C22BA1A73D68600EE9624 /* Build configuration list for PBXProject "Neanderfall" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				035C22DD1A73D68600EE9624 /* Debug */,
@@ -1700,7 +1706,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		035C22DF1A73D68600EE9624 /* Build configuration list for PBXNativeTarget "StoraSpel" */ = {
+		035C22DF1A73D68600EE9624 /* Build configuration list for PBXNativeTarget "Neanderfall" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				035C22E01A73D68600EE9624 /* Debug */,
