@@ -322,6 +322,11 @@ void ServerNetwork::ReceivePackets(ISocket* _socket, const std::string _name)
 			*p->Sender = _socket->GetNetConnection();
 			memcpy(p->Data, packetData, dataReceived);
 
+			/* IF THE CHANGE DOSEN'T WORK, UNCOMMENT THIS
+				HandlePacket(p);
+			*/ 
+
+			/* AND COMMENT FROM HERE */
 			if (_socket->GetActive() > 1 || m_packetHandler->GetNetTypeMessageId(p) == NetTypeMessageId::ID_PASSWORD_ATTEMPT)
 				HandlePacket(p);
 			else
@@ -329,6 +334,7 @@ void ServerNetwork::ReceivePackets(ISocket* _socket, const std::string _name)
 				DebugLog("Discarding packet received from %s:%d while not authenticated.", LogSeverity::Warning, p->Sender->GetIpAddress(), p->Sender->GetPort());
 				SAFE_DELETE(p);
 			}
+			/* TO HERE */
 
 			if (SDL_LockMutex(m_dataReceiveLock) == 0)
 			{

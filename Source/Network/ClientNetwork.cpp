@@ -226,11 +226,17 @@ void ClientNetwork::Send(Packet* _packet)
 		return;
 	}
 
+	/* IF THE CHANGE DOSEN'T WORK, UNCOMMENT THIS
+	HandlePacket(p);
+	*/
+
+	/* AND COMMENT FROM HERE */
 	if (m_socket->GetActive() != 2 && m_packetHandler->GetNetTypeMessageId(_packet) != NetTypeMessageId::ID_PASSWORD_ATTEMPT)
 	{
 		DebugLog("Tried to send a message while not authenticated to server.", LogSeverity::Warning);
 		return;
 	}
+	/* TO HERE */
 
 	int bytesSent = m_socket->Send((char*)_packet->Data, *_packet->Length);
 
