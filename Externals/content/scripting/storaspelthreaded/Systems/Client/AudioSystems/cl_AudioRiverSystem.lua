@@ -21,7 +21,7 @@ AudioRiverSystem.EntitiesAdded = function(self, dt, entities)
 				Audio.SetSoundVolume(soundName, 128)
 			else
 				Audio.PlaySound("RiverWaterLoop", soundName, true)
-				Audio.SetSoundVolume(soundName, 32)
+				Audio.SetSoundVolume(soundName, 16)
 			end
 			
 			Audio.SetSoundPosition(soundName, x, y, z)

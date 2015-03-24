@@ -233,8 +233,9 @@ WeatherTornadoSystem.CheckCollision = function(self, id, unit)
 		
 		if world:EntityHasComponent(unit, "ActionGuard") then
 			-- SOUND
-			local audioId = Net.StartPack("Client.PlaySound")
+			local audioId = Net.StartPack("Client.PlaySoundC")
 			Net.WriteString(audioId, "BlockVoice" .. math.random(1, 3))
+			Net.WriteString(audioId, "BlockVoice" .. unit)
 			Net.WriteBool(audioId, false)
 			Net.Broadcast(audioId)
 			return
