@@ -56,30 +56,46 @@ OptionMenuSystem.SpawnMenu = function(self)
 	local button = nil
 	local text = nil
 	
-	text = self:CreateText("left", "text", -1.3, 0.7, -2.2, 0.6, 0.1)	
+	-- GRAPHIC SETTINGS
+	text = self:CreateText("center", "text", -0.7, 0.8, -2.2, 0.6, 0.1)	
 	self:AddTextToTexture("graphicsettings", "Graphic Settings", 0, 1, 1, 1, text)
 		
-	button = self:CreateElement("graphicslow", "quad", -1, 0.3, -2.2, 0.6, 0.3)
+	button = self:CreateElement("graphicslow", "quad", -0.7, 0.4, -2.2, 0.6, 0.3)
 	self:AddConsoleCommandToButton("changegraphics low", button)	
 	self:AddEntityCommandToButton("GameMenu", button)
 	self:AddHoverSize(1.1, button)
 	
-	button = self:CreateElement("graphicshigh", "quad", -1, 0.0, -2.2, 0.6, 0.3)
+	button = self:CreateElement("graphicshigh", "quad", -0.7, 0.1, -2.2, 0.6, 0.3)
 	self:AddConsoleCommandToButton("changegraphics high", button)	
 	self:AddEntityCommandToButton("GameMenu", button)
 	self:AddHoverSize(1.1, button)
 	
-	text = self:CreateText("left", "text", 0.7, 0.7, -2.2, 0.6, 0.1)	
+	
+	-- SOUND SETTINGS
+	text = self:CreateText("center", "text", 0.7, 0.8, -2.2, 0.6, 0.1)	
 	self:AddTextToTexture("soundsettings", "Sound Settings", 0, 1, 1, 1, text)
 	
-	text = self:CreateText("left", "text", 0.8, 0.4, -2.2, 0.6, 0.1)	
-	self:AddTextToTexture("volume", "Volume:", 0, 1, 1, 1, text)
+	text = self:CreateText("left", "text", 0.4, 0.58, -2.2, 0.6, 0.08)	
+	self:AddTextToTexture("mastervolume", "Master volume:", 0, 1, 1, 1, text)
+	text = self:CreateText("left", "text", 0.4, 0.28, -2.2, 0.6, 0.08)	
+	self:AddTextToTexture("sfxvolume", "SFX:", 0, 1, 1, 1, text)
+	text = self:CreateText("left", "text", 0.4, -0.02, -2.2, 0.6, 0.08)	
+	self:AddTextToTexture("musicvolume", "Music:", 0, 1, 1, 1, text)
 	
-	button = self:CreateElement("slider", "quad", 1.2, 0.2, -2.2, 0.8, 0.2)
+	button = self:CreateElement("slider", "quad", 0.8, 0.4, -2.2, 0.8, 0.2)
+	local currentvolume = Audio.GetMasterVolume()
+	self:AddSliderToButton("volume", 0.0, 1.0, currentvolume, 0.05, button)	
+	
+	button = self:CreateElement("slider", "quad", 0.8, 0.1, -2.2, 0.8, 0.2)
 	local currentvolume = Audio.GetVolume()
-	self:AddSliderToButton("volume", 0.0, 1.0, currentvolume*0.5-0.5, button)	
+	self:AddSliderToButton("soundvolume", 0.0, 1.0, currentvolume, 0.05, button)	
 
-	button = self:CreateElement("back", "quad", 0, -0.6, -2.2, 0.6, 0.3)
+	button = self:CreateElement("slider", "quad", 0.8, -0.2, -2.2, 0.8, 0.2)
+	local currentvolume = Audio.GetMusicVolume()
+	self:AddSliderToButton("musicvolume", 0.0, 1.0, currentvolume, 0.05, button)
+	
+	-- BACK
+	button = self:CreateElement("back", "quad", 0, -0.7, -2.2, 0.6, 0.3)
 	self:AddEntityCommandToButton("GameMenu", button)
 	self:AddHoverSize(1.1, button)
 end
@@ -132,12 +148,13 @@ OptionMenuSystem.AddTextToTexture = function(self, n, text, font, r, g, b, butto
 	world:GetComponent(button, "TextTexture", "B"):SetFloat(b)
 end
 
-OptionMenuSystem.AddSliderToButton = function(self, command, minvalue, maxvalue, current, button)
+OptionMenuSystem.AddSliderToButton = function(self, command, minvalue, maxvalue, current, step, button)
 	world:CreateComponentAndAddTo("MenuSlider", button)
 	world:GetComponent(button, "MenuSlider", "ConsoleCommand"):SetText(command)
 	world:GetComponent(button, "MenuSlider", "Min"):SetFloat(minvalue)
 	world:GetComponent(button, "MenuSlider", "Max"):SetFloat(maxvalue)
 	world:GetComponent(button, "MenuSlider", "Current"):SetFloat(current)
+	world:GetComponent(button, "MenuSlider", "Step"):SetFloat(step)
 end
 
 OptionMenuSystem.AddConsoleCommandToButton = function(self, command, button)
