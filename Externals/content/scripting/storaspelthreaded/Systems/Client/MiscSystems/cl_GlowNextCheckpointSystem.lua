@@ -36,16 +36,16 @@ GlowNextCheckpointSystem.EntitiesAdded = function(self, dt, newEntities)
 			
 			local	cNumber		=	world:GetComponent(newEntity, "GlowCheckpoint", "Stage"):GetInt()
 			
+			local	allGlowing	=	self:GetEntities("GlowingCheckpoint")
+			for tGlowing = 1, #allGlowing do
+				if world:EntityHasComponent(allGlowing[tGlowing], "Pointlight") then
+					world:RemoveComponentFrom("Pointlight", allGlowing[tGlowing])
+					break
+				end
+			end
+			
 			print("cNumber: " .. cNumber)
 			if cNumber == -1 then
-				local	allGlowing	=	self:GetEntities("GlowingCheckpoint")
-				for tGlowing = 1, #allGlowing do
-					if world:EntityHasComponent(allGlowing[tGlowing], "Pointlight") then
-						world:RemoveComponentFrom("Pointlight", allGlowing[tGlowing])
-						break
-					end
-				end
-				
 				self.TargetRune	=	self:GetGlowingRune(self.CurrentGlowStage)
 				self.CurrentGlowStage	=	-1
 				self.GlowingRuneEnt		=	-1
