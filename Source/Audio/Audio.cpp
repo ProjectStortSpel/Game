@@ -54,7 +54,9 @@ namespace Audio
 	float g_near, g_far;
 	glm::vec3 g_cameraPosition;
 	
-	float g_volume = 1.0f;
+	float g_masterVolume = 1.0f;
+	float g_musicVolume = 1.0f;
+	float g_soundVolume = 1.0f;
 	
 	std::map<std::string, int> g_channels;
 	std::map<std::string, int> g_channelVolumes;
@@ -297,7 +299,6 @@ namespace Audio
 		{
 			if (g_channels.find(volume.first) == g_channels.end())
 				continue;
-			Mix_Volume(g_channels[volume.first], (Uint8)(g_volume * (float)volume.second));
 			g_channelVolumes[volume.first] = volume.second;
 		}
 		g_loadSoundQueue.clear();
@@ -306,9 +307,14 @@ namespace Audio
 		//g_soundPositionQueue.clear();
 		g_soundVolumeQueue.clear();
 		
+		if (Mix_PlayingMusic() == 1)
+		{
+			Mix_VolumeMusic((Uint8)((float)MIX_MAX_VOLUME * g_musicVolume * g_masterVolume));
+		}
+		
 		for (std::pair<std::string, int> channelVolume : g_channelVolumes)
 		{
-			Uint8 volume = (Uint8)(g_volume * (float)channelVolume.second);
+			Uint8 volume = (Uint8)(g_masterVolume * g_soundVolume * (float)channelVolume.second);
 			Mix_Volume(g_channels[channelVolume.first], volume);
 		}
 	}
@@ -335,14 +341,34 @@ namespace Audio
 		SDL_DestroyMutex(g_soundVolumeMutex);
 	}
 	
-	void SetVolume(float volume)
+	void SetSoundVolume(float volume)
 	{
-		g_volume = volume;
+		g_soundVolume = volume;
 	}
 	
-	float GetVolume()
+	float GetSoundVolume()
 	{
-		return g_volume;
+		return g_soundVolume;
+	}
+	
+	void SetMusicVolume(float volume)
+	{
+		g_musicVolume = volume;
+	}
+	
+	float GetMusicVolume()
+	{
+		return g_musicVolume;
+	}
+	
+	void SetMasterVolume(float volume)
+	{
+		g_masterVolume = volume;
+	}
+	
+	float GetMasterVolume()
+	{
+		return g_masterVolume;
 	}
 
 	void SetDistance(float near, float far)
@@ -527,7 +553,7 @@ namespace Audio
 		SDL_UnlockMutex(g_soundFadeOutMutex);
 	}
 	
-	void SetVolume(const std::string& channelName, int volume)
+	void SetSoundVolume(const std::string& channelName, int volume)
 	{
 		SDL_LockMutex(g_soundVolumeMutex);
 		

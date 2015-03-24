@@ -69,7 +69,7 @@ GameMenuSystem.SpawnMenu = function(self)
 	self:AddConsoleCommandToButton("quit", button)
 	self:AddHoverSize(1.1, button)
 	
-	button = self:CreateElement("resume", "quad", 0, -0.6, -2.2, 0.6, 0.3)
+	button = self:CreateElement("resume", "quad", 0, -0.7, -2.2, 0.6, 0.3)
 	self:AddConsoleCommandToButton("resume", button)
 	self:AddHoverSize(1.1, button)	
 end

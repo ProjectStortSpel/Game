@@ -256,7 +256,6 @@ bool LinSocket::Bind(const int _port)
 	address.sin_family = PF_INET;
 	address.sin_port = htons(_port);
 	address.sin_addr.s_addr = INADDR_ANY;
-
 	if (bind(*m_socket, (sockaddr*)&address, sizeof(address)) == -1	)
 	{
 		if (NET_DEBUG > 0)

@@ -6,7 +6,7 @@ AbilitySlingshotSystem.Initialize = function(self)
 	self:SetName("AbilitySlingshotSystem")
 	
 	--	Toggle EntitiesAdded
-	--self:UsingEntitiesAdded()
+	self:UsingEntitiesAdded()
 	self:UsingUpdate()
 	
 	--	Filters
@@ -15,6 +15,60 @@ AbilitySlingshotSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("SlingShotProjectile",	FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("NotWalkable", 			FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("MapSpecs", 				FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("DealCards", 				FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("HasStunnedIndicator", 	FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("StunnedIndicator", 	FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("AddStunnedIndicator", 	FilterType.RequiresOneOf)
+	
+end
+
+AbilitySlingshotSystem.EntitiesAdded = function(self, dt, entities)
+
+	for n = 1, #entities do
+		local entityId = entities[n]
+
+		if world:EntityHasComponent( entityId, "DealCards") then
+		
+			local units = self:GetEntities("HasStunnedIndicator")
+			for i = 1, #units do
+				world:RemoveComponentFrom("HasStunnedIndicator", units[i])
+			end
+			
+			local indicators = self:GetEntities("StunnedIndicator")
+			for i = 1, #indicators do
+				world:KillEntity(indicators[i])
+			end
+		
+		elseif world:EntityHasComponent(entityId, "AddStunnedIndicator") then
+
+			local parentId = world:GetComponent(entityId, "AddStunnedIndicator", "Unit"):GetInt()
+			world:CreateComponentAndAddTo("HasStunnedIndicator", parentId)
+
+			local stunnedIndicator = world:CreateNewEntity()
+			world:CreateComponentAndAddTo("StunnedIndicator", stunnedIndicator)
+			world:CreateComponentAndAddTo("SyncNetwork", stunnedIndicator)
+			world:CreateComponentAndAddTo("Parent", stunnedIndicator)
+			world:CreateComponentAndAddTo("ParentJoint", stunnedIndicator)
+			world:CreateComponentAndAddTo("Position", stunnedIndicator)
+			world:CreateComponentAndAddTo("Scale", stunnedIndicator)
+			world:CreateComponentAndAddTo("Rotation", stunnedIndicator)
+			world:CreateComponentAndAddTo("Model", stunnedIndicator)
+			world:CreateComponentAndAddTo("Spin", stunnedIndicator)
+			world:CreateComponentAndAddTo("NoShadow", stunnedIndicator)
+			
+			world:GetComponent(stunnedIndicator, "Model", 0):SetModel("superlowpolystun", "superlowpolystun", 1)
+			world:GetComponent(stunnedIndicator, "Position", 0):SetFloat3(0, 0, 0)
+			world:GetComponent(stunnedIndicator, "Rotation", 0):SetFloat3(0.2, 0, 0.6)
+			world:GetComponent(stunnedIndicator, "Scale", 0):SetFloat3(0.5,0.5,0.5)
+			world:GetComponent(stunnedIndicator, "Spin", 0):SetFloat3(0,-5,0)
+			world:GetComponent(stunnedIndicator, "Parent", 0):SetInt(parentId)
+			world:GetComponent(stunnedIndicator, "ParentJoint", 0):SetInt(5)
+			
+			world:KillEntity(entityId)
+			
+		end
+	end
+	
 end
 
 AbilitySlingshotSystem.CheckUnits = function(self, mapPosX, mapPosZ, currentPosX, currentPosZ)
@@ -28,7 +82,7 @@ AbilitySlingshotSystem.CheckUnits = function(self, mapPosX, mapPosZ, currentPosX
 		-- If the position is the same as the projectiles current position
 		-- Add a bullet
 		if targetPosX == currentPosX and targetPosZ == currentPosZ then
-			self:AddBullet(mapPosX, mapPosZ, targetPosX, targetPosZ, 0.1, true)
+			self:AddBullet(mapPosX, mapPosZ, targetPosX, targetPosZ, 0.1, true, units[i])
 			
 			if not world:EntityHasComponent(units[i], "ActionGuard") then
 				local newId = world:CreateNewEntity()
@@ -61,7 +115,7 @@ AbilitySlingshotSystem.CheckNotWalkable = function(self, mapPosX, mapPosZ, curre
 	
 		local targetPosX, targetPosZ = world:GetComponent(entities[i], "MapPosition", 0):GetInt2()
 		if targetPosX == currentPosX and targetPosZ == currentPosZ then
-			self:AddBullet(mapPosX, mapPosZ, targetPosX, targetPosZ, 0.1, false)
+			self:AddBullet(mapPosX, mapPosZ, targetPosX, targetPosZ, 0.1, false, entities[i])
 			return true
 		end
 	
@@ -71,7 +125,7 @@ AbilitySlingshotSystem.CheckNotWalkable = function(self, mapPosX, mapPosZ, curre
 	
 end
 
-AbilitySlingshotSystem.AddBullet = function(self, posX, posZ, targetPosX, targetPosZ, lerpTime, isPlayer)
+AbilitySlingshotSystem.AddBullet = function(self, posX, posZ, targetPosX, targetPosZ, lerpTime, isPlayer, unitId)
 
 	local afterLerpText = "AddBulletImpact"
 	if isPlayer then
@@ -89,7 +143,7 @@ AbilitySlingshotSystem.AddBullet = function(self, posX, posZ, targetPosX, target
 	world:GetComponent(bullet, "LerpPosition", "Time"):SetFloat(lerpTime*math.abs(posX-targetPosX+posZ-targetPosZ))
 	world:GetComponent(bullet, "LerpPosition", "Algorithm"):SetText("NormalLerp")
 	world:GetComponent(bullet, "AddEntityAfterLerp", "ComponentName"):SetText(afterLerpText)
-	print(afterLerpText)
+	world:GetComponent(bullet, "TargetUnit", "Unit"):SetInt(unitId)
 	local audioId = Net.StartPack("Client.PlaySound")
 	Net.WriteString(audioId, "Throw")
 	Net.WriteBool(audioId, false)
@@ -131,7 +185,7 @@ AbilitySlingshotSystem.Update = function(self, dt)
 			if currentPosX < 1 or currentPosZ < 1
 			or currentPosX > mapSizeX or currentPosZ > mapSizeZ then
 				-- Outside the map, create a new bullet
-				self:AddBullet(mapPosX-(dirX+dirZ)*0.4, mapPosZ+(dirX-dirZ)*0.4, currentPosX, currentPosZ, 0.1)
+				self:AddBullet(mapPosX-(dirX+dirZ)*0.4, mapPosZ+(dirX-dirZ)*0.4, currentPosX, currentPosZ, 0.1, false, -1)
 				break
 			else
 				-- Go through all units and check if the projectile collide with something
