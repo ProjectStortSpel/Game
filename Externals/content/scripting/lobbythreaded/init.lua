@@ -41,6 +41,10 @@ require "PlayerNameSystem"
 package.path = package.path .. ";templates/?.lua"
 require "templates"
 
+--	Misc
+package.path = package.path .. ";misc/?.lua"
+require "InitMisc"
+
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(GameInterfaceSystem)
 worldCreator:AddSystemGroup()	

@@ -25,6 +25,7 @@ end
 CardSelectSystem.EntitiesRemoved = function(self, dt, newEntities)
 	local cards = self:GetEntities("CardHolding")
 	if #cards > 0 then
+		
 	else
 		self.Holding = false
 	end
@@ -88,6 +89,7 @@ CardSelectSystem.Update = function(self, dt)
 					world:RemoveComponentFrom("SelectCard", card)
 				end
 				world:CreateComponentAndAddTo("CardHolding", card)
+				Audio.PlaySound("Cards3", "Cards3", false)
 			end
 		else
 			local rX = mX * aspectX * 7

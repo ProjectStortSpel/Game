@@ -13,7 +13,17 @@ Button:AddComponent("Position")
 Button:AddComponent("Rotation")
 Button:AddComponent("Scale")
 Button:AddComponent("PickBox")
+Button:AddComponent("HoverSound")
+Button:SetString("HoverSound", "Click1")
 EntityTemplateManager:AddTemplate(Button)
+
+local Texture = EntityTemplate()
+Texture.Name = "Texture"
+Texture:AddComponent("Model")
+Texture:AddComponent("Position")
+Texture:AddComponent("Rotation")
+Texture:AddComponent("Scale")
+EntityTemplateManager:AddTemplate(Texture)
 
 local Text = EntityTemplate()
 Text.Name = "Text"

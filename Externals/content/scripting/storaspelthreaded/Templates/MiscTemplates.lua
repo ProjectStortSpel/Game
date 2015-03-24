@@ -71,6 +71,8 @@ template:AddComponent("Position")
 template:AddComponent("Rotation")
 template:AddComponent("Scale")
 template:AddComponent("PickBox")
+template:AddComponent("HoverSound")
+template:SetString("HoverSound", "Click1")
 EntityTemplateManager:AddTemplate(template)
 
 template = EntityTemplate()

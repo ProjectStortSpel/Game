@@ -189,7 +189,7 @@ end
 
 ScoreboardSystem.CreateElement = function(self, object, folder, posx, posy, posz, scalex, scaley)
 	local id = world:CreateNewEntity()
-	world:CreateComponentAndAddTo("SyncNetwork", id)
+	--world:CreateComponentAndAddTo("SyncNetwork", id)
 	world:CreateComponentAndAddTo("Model", id)
 	world:CreateComponentAndAddTo("Position", id)
 	world:CreateComponentAndAddTo("Rotation", id)
@@ -207,12 +207,7 @@ end
 
 
 ScoreboardSystem.CreateGameInterfaceElement = function(self, object, folder, posx, posy, posz, scalex, scaley)
-	local id = world:CreateNewEntity()
-	world:CreateComponentAndAddTo("Model", id)
-	world:CreateComponentAndAddTo("Position", id)
-	world:CreateComponentAndAddTo("Rotation", id)
-	world:CreateComponentAndAddTo("Scale", id)
-	world:CreateComponentAndAddTo("PickBox", id)
+	local id = world:CreateNewEntity("Button")
 	world:CreateComponentAndAddTo("GameInterfaceElement", id)
 	local model = world:GetComponent(id, "Model", 0)
 	model:SetModel(object, folder, 3)
