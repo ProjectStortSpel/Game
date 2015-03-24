@@ -30,3 +30,28 @@ local TempTimer = ComponentType()
 TempTimer.Name = "TempTimer"
 TempTimer.TableType = TableType.Map
 worldCreator:AddComponentType(TempTimer)
+
+-- StunnedIndicator Component
+local StunnedIndicator = ComponentType()
+StunnedIndicator.Name = "StunnedIndicator"
+StunnedIndicator.TableType = TableType.Map
+worldCreator:AddComponentType(StunnedIndicator)
+
+-- RemoveStunnedIndicator Component
+local RemoveStunnedIndicator = ComponentType()
+RemoveStunnedIndicator.Name = "RemoveStunnedIndicator"
+RemoveStunnedIndicator.TableType = TableType.Map
+worldCreator:AddComponentType(RemoveStunnedIndicator)
+
+-- HasStunnedIndicator Component
+local HasStunnedIndicator = ComponentType()
+HasStunnedIndicator.Name = "HasStunnedIndicator"
+HasStunnedIndicator.TableType = TableType.Map
+worldCreator:AddComponentType(HasStunnedIndicator)
+
+-- TargetUnit Component
+local TargetUnit = ComponentType()
+TargetUnit.Name = "TargetUnit"
+TargetUnit.TableType = TableType.Map
+TargetUnit:AddVariable("Unit", ByteSize.Reference)
+worldCreator:AddComponentType(TargetUnit)

@@ -75,7 +75,7 @@ MapGenerator.EntitiesAdded = function(self, dt, entities)
 	--self:GenerateMap(1338, 2, 4)
 	--self:GenerateMap(19890320, 6, 3)
 	
-	--self:LoadMap("riverends")
+	--self:LoadMap("testmap")
 end
 
 MapGenerator.PostInitialize = function(self)
