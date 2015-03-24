@@ -51,8 +51,6 @@ namespace Audio
 	Mix_Music* g_music = NULL;
 	std::map<std::string, Mix_Chunk*> g_sounds;
 	
-	
-	
 	float g_near, g_far;
 	glm::vec3 g_cameraPosition;
 	
@@ -317,11 +315,7 @@ namespace Audio
 	
 	void Quit()
 	{
-		for (std::pair<std::string, Mix_Chunk*> sound : g_sounds)
-			Mix_FreeChunk(sound.second);
-		
-		if (g_music != NULL)
-			Mix_FreeMusic(g_music);
+		Reset();
 		
 		Mix_CloseAudio();
 		
@@ -545,5 +539,38 @@ namespace Audio
 	bool ChannelExists(const std::string& channelName)
 	{
 		return g_channels.find(channelName) != g_channels.end();
+	}
+	
+	void Reset()
+	{
+		for (std::pair<std::string, int> channelPair : g_channels)
+			Mix_HaltChannel(channelPair.second);
+		g_channels.clear();
+		g_channelVolumes.clear();
+		for (std::pair<std::string, Mix_Chunk*> sound : g_sounds)
+			Mix_FreeChunk(sound.second);
+		g_sounds.clear();
+		
+		if (g_music != NULL)
+		{
+			Mix_HaltMusic();
+			Mix_FreeMusic(g_music);
+			g_music = NULL;
+		}
+		
+		g_loadMusicQueue.clear();
+		g_musicStateQueue.clear();
+		g_musicFadeInQueue.clear();
+		g_musicFadeOutQueue.clear();
+		
+		g_loadSoundQueue.clear();
+		g_playSoundQueue.clear();
+		g_soundStateQueue.clear();
+		g_soundPositionQueue.clear();
+		g_soundFadeInQueue.clear();
+		g_soundFadeOutQueue.clear();
+		g_soundVolumeQueue.clear();
+		
+		g_channelRemoveQueue.clear();
 	}
 }

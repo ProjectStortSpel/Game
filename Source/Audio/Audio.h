@@ -41,6 +41,8 @@ namespace Audio
 	void DECLSPEC SetVolume(const std::string& channelName, int volume);
 	
 	bool DECLSPEC ChannelExists(const std::string& channelName);
+	
+	void DECLSPEC Reset();
 }
 
 #endif

@@ -829,6 +829,8 @@ void GameCreator::Reload()
 	LuaEmbedder::Quit();
 	ECSL::ComponentTypeManager::GetInstance().Clear();
 	ECSL::EntityTemplateManager::GetInstance().Clear();
+	
+	Audio::Reset();
 
     if (NetworkInstance::GetClient()->IsConnected() && NetworkInstance::GetServer()->IsRunning())
     {
