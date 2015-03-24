@@ -53,7 +53,7 @@ void main()
 		if(allNormalData.z > 0)
 			NormalData.w = specglow_map.y*0.5;						// a = spec shine + normal.z flag
 		else
-			NormalData.w = specglow_map.y*0.5 + 0.5;
+			NormalData.w = specglow_map.y*0.5 + 0.5;	//negative normal
 			
 	}
 	else if(TexFlag == 1) //diffuse only
