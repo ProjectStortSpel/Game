@@ -66,6 +66,7 @@ MenuSlider:AddVariable("ConsoleCommand", ByteSize.Text)
 MenuSlider:AddVariable("Min", ByteSize.Float)
 MenuSlider:AddVariable("Max", ByteSize.Float)
 MenuSlider:AddVariable("Current", ByteSize.Float)
+MenuSlider:AddVariable("Step", ByteSize.Float)
 worldCreator:AddComponentType(MenuSlider)
 
 -- Menu EntityCommand
