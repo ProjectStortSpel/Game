@@ -21,8 +21,6 @@ AddEntityAfterLerpSystem.BulletImpact = function(self, entity, hitPlayer)
 		
 		local unitId = world:GetComponent(entity, "TargetUnit", "Unit"):GetInt()
 	
-		print("BulletImpact unitId: " .. unitId)
-	
 		if not world:EntityHasComponent(unitId, "HasStunnedIndicator") then
 			local newEntity = world:CreateNewEntity()
 			world:CreateComponentAndAddTo("AddStunnedIndicator", newEntity)

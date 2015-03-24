@@ -43,8 +43,7 @@ AbilitySlingshotSystem.EntitiesAdded = function(self, dt, entities)
 
 			local parentId = world:GetComponent(entityId, "AddStunnedIndicator", "Unit"):GetInt()
 			world:CreateComponentAndAddTo("HasStunnedIndicator", parentId)
-			print("AbilitySlingshotSystem.EntitiesAdded parentId: " .. parentId)
-			
+
 			local stunnedIndicator = world:CreateNewEntity()
 			world:CreateComponentAndAddTo("StunnedIndicator", stunnedIndicator)
 			world:CreateComponentAndAddTo("SyncNetwork", stunnedIndicator)
