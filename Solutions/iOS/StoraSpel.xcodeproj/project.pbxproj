@@ -157,6 +157,7 @@
 		0321DDEF1A77E4D5000EE6A6 /* libSDL2_ttf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0321DDED1A77E4D5000EE6A6 /* libSDL2_ttf.a */; settings = {ATTRIBUTES = (Weak, ); }; };
 		0321DDF01A77E4D5000EE6A6 /* libSDL2_ttfSim.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0321DDEE1A77E4D5000EE6A6 /* libSDL2_ttfSim.a */; settings = {ATTRIBUTES = (Weak, ); }; };
 		03244CCC1A7372C800D4E53B /* content in Resources */ = {isa = PBXBuildFile; fileRef = 03244CCB1A7372C800D4E53B /* content */; };
+		035314A71AC185FB00542ECB /* Rijndael.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 035314A51AC185FB00542ECB /* Rijndael.cpp */; };
 		035C22B11A73B76300EE9624 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 035C22B01A73B76300EE9624 /* Default-568h@2x.png */; };
 		035C22B21A73C8BA00EE9624 /* liblua.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0365626C1A7315BA00F5A3BF /* liblua.a */; settings = {ATTRIBUTES = (Weak, ); }; };
 		035C22B31A73C8BA00EE9624 /* libluaSim.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0365626D1A7315BA00F5A3BF /* libluaSim.a */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -491,6 +492,8 @@
 		0321DDED1A77E4D5000EE6A6 /* libSDL2_ttf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_ttf.a; path = ../../Externals/lib/iOS/libSDL2_ttf.a; sourceTree = "<group>"; };
 		0321DDEE1A77E4D5000EE6A6 /* libSDL2_ttfSim.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_ttfSim.a; path = ../../Externals/lib/iOS/libSDL2_ttfSim.a; sourceTree = "<group>"; };
 		03244CCB1A7372C800D4E53B /* content */ = {isa = PBXFileReference; lastKnownFileType = folder; name = content; path = ../../Externals/content; sourceTree = "<group>"; };
+		035314A51AC185FB00542ECB /* Rijndael.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Rijndael.cpp; sourceTree = "<group>"; };
+		035314A61AC185FB00542ECB /* Rijndael.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Rijndael.h; sourceTree = "<group>"; };
 		035C22B01A73B76300EE9624 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		03655DE01A7312E100F5A3BF /* StoraSpel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StoraSpel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0365626C1A7315BA00F5A3BF /* liblua.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblua.a; path = ../../Externals/lib/iOS/liblua.a; sourceTree = "<group>"; };
@@ -1224,6 +1227,8 @@
 		031D965D1AB235B90099620B /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				035314A51AC185FB00542ECB /* Rijndael.cpp */,
+				035314A61AC185FB00542ECB /* Rijndael.h */,
 				031D965E1AB235B90099620B /* BaseNetwork.cpp */,
 				031D965F1AB235B90099620B /* BaseNetwork.h */,
 				031D96601AB235B90099620B /* ClientNetwork.cpp */,
@@ -1447,6 +1452,7 @@
 				031D96BE1AB235B90099620B /* LuaWorldCreator.cpp in Sources */,
 				031D96871AB235B90099620B /* BitSet.cpp in Sources */,
 				031D96BB1AB235B90099620B /* LuaEntityTemplateManager.cpp in Sources */,
+				035314A71AC185FB00542ECB /* Rijndael.cpp in Sources */,
 				031D96911AB235B90099620B /* DataTable.cpp in Sources */,
 				031D97011AB235B90099620B /* NetConnection.cpp in Sources */,
 				031D96EA1AB235B90099620B /* RotationSystem.cpp in Sources */,

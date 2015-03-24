@@ -10,8 +10,6 @@
 #include <string>
 
 
-using namespace std;
-
 //Rijndael (pronounced Reindaal) is a block cipher, designed by Joan Daemen and Vincent Rijmen as a candidate algorithm for the AES.
 //The cipher has a variable block length and key length. The authors currently specify how to use keys with a length
 //of 128, 192, or 256 bits to encrypt blocks with al length of 128, 192 or 256 bits (all nine combinations of
