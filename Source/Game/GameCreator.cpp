@@ -658,7 +658,6 @@ void GameCreator::StartGame(int argc, char** argv)
 		m_luaGarbageCollectionCounter.Tick();
 		
 		Audio::SetCameraPosition(*m_graphics->GetCamera()->GetPos());
-		Audio::SetDistance(1.0f, 20.0f);
 		Audio::Update();
 
 		m_networkCounter.Reset();
@@ -830,6 +829,8 @@ void GameCreator::Reload()
 	LuaEmbedder::Quit();
 	ECSL::ComponentTypeManager::GetInstance().Clear();
 	ECSL::EntityTemplateManager::GetInstance().Clear();
+	
+	Audio::Reset();
 
     if (NetworkInstance::GetClient()->IsConnected() && NetworkInstance::GetServer()->IsRunning())
     {

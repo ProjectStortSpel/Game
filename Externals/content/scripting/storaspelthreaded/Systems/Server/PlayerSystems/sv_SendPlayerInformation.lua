@@ -21,10 +21,7 @@ SendPlayerInformation.EntitiesAdded = function(self, dt, entities)
 				self:SendGameStartedInformation(allPlayers[i])
 			end
 			
-			local audioId = Net.StartPack("Client.PlaySoundC")
-			Net.WriteString(audioId, "IngameTheme")
-			Net.WriteString(audioId, "IngameTheme")
-			Net.WriteBool(audioId, true)
+			local audioId = Net.StartPack("Client.PlayMusic")
 			Net.Broadcast(audioId)
 		end
 		

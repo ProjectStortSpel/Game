@@ -148,8 +148,9 @@ AbilityStoneSystem.PlaceStone = function(self, entity)
 				world:GetComponent(stone, "LerpPosition", "Algorithm"):SetText("NormalLerp")
 				world:GetComponent(stone, "AddEntityAfterLerp", "ComponentName"):SetText("AddStoneImpact")
 
-				local audioId = Net.StartPack("Client.PlaySound")
+				local audioId = Net.StartPack("Client.PlaySoundC")
 				Net.WriteString(audioId, "FallingWhistleShort")
+				Net.WriteString(audioId, "FallingWhistleShort" .. stone)
 				Net.WriteBool(audioId, false)
 				Net.Broadcast(audioId)
 				

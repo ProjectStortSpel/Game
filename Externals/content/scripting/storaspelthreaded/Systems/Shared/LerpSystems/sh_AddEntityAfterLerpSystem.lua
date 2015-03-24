@@ -16,8 +16,18 @@ AddEntityAfterLerpSystem.BulletImpact = function(self, entity, hitPlayer)
 	
 	local x, y, z = world:GetComponent(entity, "Position", 0):GetFloat3()
 	local id = -1
+	local addBirds = false
 	
 	if hitPlayer then
+	
+		local unitId = world:GetComponent(entity, "TargetUnit", "Unit"):GetInt()
+		
+		if not world:EntityHasComponent(unitId, "HasStunnedIndicator") then
+			addBirds = true
+			world:CreateComponentAndAddTo("HasStunnedIndicator", unitId)
+		end
+		
+	
 		id = Net.StartPack("SERVER_BULLET_IMPACT_PLAYER_PARTICLE")
 	else
 		id = Net.StartPack("SERVER_BULLET_IMPACT_PARTICLE")
@@ -26,17 +36,20 @@ AddEntityAfterLerpSystem.BulletImpact = function(self, entity, hitPlayer)
 	Net.WriteFloat(id, x)
 	Net.WriteFloat(id, y)
 	Net.WriteFloat(id, z)
+	Net.WriteBool(id, addBirds)
 	Net.Broadcast(id)
 
 	-- SOUND
-	local audioId = Net.StartPack("Client.PlaySound")
+	local audioId = Net.StartPack("Client.PlaySoundC")
 	Net.WriteString(audioId, "SmallStoneImpact" .. math.random(1, 2))
+	Net.WriteString(audioId, "SmallStoneImpact" .. entity)
 	Net.WriteBool(audioId, false)
 	Net.Broadcast(audioId)
 	
 	if hitPlayer then
-		audioId = Net.StartPack("Client.PlaySound")
+		audioId = Net.StartPack("Client.PlaySoundC")
 		Net.WriteString(audioId, "HitByStone" .. math.random(1, 2))
+		Net.WriteString(audioId, "HitByStone" .. entity)
 		Net.WriteBool(audioId, false)
 		Net.Broadcast(audioId)
 	end
