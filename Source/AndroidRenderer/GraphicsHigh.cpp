@@ -702,6 +702,15 @@ int GraphicsHigh::LoadModel(std::vector<std::string> _dirs, std::string _file, g
 
 bool GraphicsHigh::RemoveModel(int _id)
 {
+	for (int i = 0; i < m_modelsDeferred.size(); i++)
+	{
+		if (m_modelsDeferred[i].id == _id)
+		{
+			m_modelsDeferred.erase(m_modelsDeferred.begin() + i);
+
+			return true;
+		}
+	}
 	for (int i = 0; i < m_modelsForward.size(); i++)
 	{
 		if (m_modelsForward[i].id == _id)
@@ -737,18 +746,35 @@ bool GraphicsHigh::RemoveModel(int _id)
 			return true;
 		}
 	}
-
-	if (m_modelsToLoad.find(_id) != m_modelsToLoad.end())
+	for (int i = 0; i < m_modelsWater.size(); i++)
 	{
-		m_modelsToLoad.erase(_id);
-
-		return true;
+		if (m_modelsWater[i].id == _id)
+		{
+			m_modelsWater.erase(m_modelsWater.begin() + i);
+			return true;
+		}
+	}
+	for (int i = 0; i < m_modelsWaterCorners.size(); i++)
+	{
+		if (m_modelsWaterCorners[i].id == _id)
+		{
+			m_modelsWaterCorners.erase(m_modelsWaterCorners.begin() + i);
+			return true;
+		}
 	}
 
 	return false;
 }
 bool GraphicsHigh::ActiveModel(int _id, bool _active)
 {
+	for (int i = 0; i < m_modelsDeferred.size(); i++)
+	{
+		if (m_modelsDeferred[i].id == _id)
+		{
+			m_modelsDeferred[i].active = _active;
+			return true;
+		}
+	}
 	for (int i = 0; i < m_modelsForward.size(); i++)
 	{
 		if (m_modelsForward[i].id == _id)
@@ -778,6 +804,22 @@ bool GraphicsHigh::ActiveModel(int _id, bool _active)
 		if (m_modelsAnimated[i].id == _id)
 		{
 			m_modelsAnimated[i].active = _active;
+			return true;
+		}
+	}
+	for (int i = 0; i < m_modelsWater.size(); i++)
+	{
+		if (m_modelsWater[i].id == _id)
+		{
+			m_modelsWater[i].active = _active;
+			return true;
+		}
+	}
+	for (int i = 0; i < m_modelsWaterCorners.size(); i++)
+	{
+		if (m_modelsWaterCorners[i].id == _id)
+		{
+			m_modelsWaterCorners[i].active = _active;
 			return true;
 		}
 	}

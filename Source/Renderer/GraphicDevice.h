@@ -255,7 +255,7 @@ namespace Renderer
 		virtual void InitRenderLists() { return; }
 		void InitStandardShaders();
 		void InitStandardBuffers();
-		bool InitSDLWindow(int _width = 1280, int _height = 720);
+		bool InitSDLWindow(int _width = 1920, int _height = 1080);
 
 		// Models
 		void BufferModels();

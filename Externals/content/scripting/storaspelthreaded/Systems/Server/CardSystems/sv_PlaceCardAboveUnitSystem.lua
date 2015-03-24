@@ -68,7 +68,7 @@ PlaceCardAboveUnitSystem.EntitiesAdded = function(self, dt, entities)
 						model:SetModel("forward", "cards", 2)
 					end
 					world:GetComponent(cardEntity, "Position", 0):SetFloat3(0.0, 2.0 + #self.CardEntities * 0.001, 0.0)
-					world:GetComponent(cardEntity, "Rotation", 0):SetFloat3(1.5 * math.pi, math.pi, 0.0)
+					world:GetComponent(cardEntity, "Rotation", 0):SetFloat3(0.2, 0, 0.6)
 					world:GetComponent(cardEntity, "Scale", 0):SetFloat3(1.5, 1.5, 1.5)
 					world:GetComponent(cardEntity, "Parent", 0):SetInt(unit)
 					world:GetComponent(cardEntity, "ParentJoint", 0):SetInt(5)
