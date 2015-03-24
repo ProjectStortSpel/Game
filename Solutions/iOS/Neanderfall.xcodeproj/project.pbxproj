@@ -495,7 +495,7 @@
 		035314A51AC185FB00542ECB /* Rijndael.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Rijndael.cpp; sourceTree = "<group>"; };
 		035314A61AC185FB00542ECB /* Rijndael.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Rijndael.h; sourceTree = "<group>"; };
 		035C22B01A73B76300EE9624 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
-		03655DE01A7312E100F5A3BF /* StoraSpel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StoraSpel.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		03655DE01A7312E100F5A3BF /* Neanderfall.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Neanderfall.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0365626C1A7315BA00F5A3BF /* liblua.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblua.a; path = ../../Externals/lib/iOS/liblua.a; sourceTree = "<group>"; };
 		0365626D1A7315BA00F5A3BF /* libluaSim.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libluaSim.a; path = ../../Externals/lib/iOS/libluaSim.a; sourceTree = "<group>"; };
 		0365626E1A7315BA00F5A3BF /* libSDL2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2.a; path = ../../Externals/lib/iOS/libSDL2.a; sourceTree = "<group>"; };
@@ -1274,7 +1274,7 @@
 		03655DE11A7312E100F5A3BF /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				03655DE01A7312E100F5A3BF /* StoraSpel.app */,
+				03655DE01A7312E100F5A3BF /* Neanderfall.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1330,9 +1330,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		03655DDF1A7312E100F5A3BF /* StoraSpel */ = {
+		03655DDF1A7312E100F5A3BF /* Neanderfall */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 03655E031A7312E200F5A3BF /* Build configuration list for PBXNativeTarget "StoraSpel" */;
+			buildConfigurationList = 03655E031A7312E200F5A3BF /* Build configuration list for PBXNativeTarget "Neanderfall" */;
 			buildPhases = (
 				03655DDC1A7312E100F5A3BF /* Sources */,
 				03655DDD1A7312E100F5A3BF /* Frameworks */,
@@ -1343,9 +1343,9 @@
 			);
 			dependencies = (
 			);
-			name = StoraSpel;
+			name = Neanderfall;
 			productName = StoraSpel;
-			productReference = 03655DE01A7312E100F5A3BF /* StoraSpel.app */;
+			productReference = 03655DE01A7312E100F5A3BF /* Neanderfall.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -1355,14 +1355,14 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0610;
-				ORGANIZATIONNAME = CardBordGames;
+				ORGANIZATIONNAME = "Cardboard Games";
 				TargetAttributes = {
 					03655DDF1A7312E100F5A3BF = {
 						CreatedOnToolsVersion = 6.1.1;
 					};
 				};
 			};
-			buildConfigurationList = 03655DDB1A7312E100F5A3BF /* Build configuration list for PBXProject "StoraSpel" */;
+			buildConfigurationList = 03655DDB1A7312E100F5A3BF /* Build configuration list for PBXProject "Neanderfall" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -1375,7 +1375,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				03655DDF1A7312E100F5A3BF /* StoraSpel */,
+				03655DDF1A7312E100F5A3BF /* Neanderfall */,
 			);
 		};
 /* End PBXProject section */
@@ -1689,7 +1689,7 @@
 					../../Externals/lib/iOS,
 					/Users/Erik/Desktop/StoraSpel/Game/Externals/lib/iOS,
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Neanderfall;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -1708,7 +1708,7 @@
 					../../Externals/lib/iOS,
 					/Users/Erik/Desktop/StoraSpel/Game/Externals/lib/iOS,
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Neanderfall;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -1716,7 +1716,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		03655DDB1A7312E100F5A3BF /* Build configuration list for PBXProject "StoraSpel" */ = {
+		03655DDB1A7312E100F5A3BF /* Build configuration list for PBXProject "Neanderfall" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				03655E011A7312E200F5A3BF /* Debug */,
@@ -1725,7 +1725,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		03655E031A7312E200F5A3BF /* Build configuration list for PBXNativeTarget "StoraSpel" */ = {
+		03655E031A7312E200F5A3BF /* Build configuration list for PBXNativeTarget "Neanderfall" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				03655E041A7312E200F5A3BF /* Debug */,
