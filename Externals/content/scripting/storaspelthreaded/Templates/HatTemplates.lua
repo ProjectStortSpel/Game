@@ -15,7 +15,7 @@ Hat:SetModel("Model", "stone", "stone", 0)
 Hat:SetFloat3("Position", 0, 0, 0)
 Hat:SetFloat3("Rotation", 0, 0, -4.14)
 Hat:SetFloat3("Scale", 1, 1, 1)
-Hat:SetFloat3("Color", 0, 0, 0) 		-- ADDS PLAYER COLOR
+Hat:SetFloat3("Color", 1, 1, 1) 		-- ADDS PLAYER COLOR
 Hat:SetInt("ParentJoint", 1) 			-- OPTIONAL: ADDS HAT TO HEAD JOINT
 Hat:AddComponent("SyncNetwork")
 EntityTemplateManager:AddTemplate(Hat)

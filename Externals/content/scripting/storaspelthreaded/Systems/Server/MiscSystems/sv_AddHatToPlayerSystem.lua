@@ -22,13 +22,12 @@ end
 
 AddHatToPlayerSystem.PopulateHats = function(self)
 	self.HatTemplates[#self.HatTemplates + 1] = "totemHat"
-	self.HatTemplates[#self.HatTemplates + 1] = "eggMan"
 	self.HatTemplates[#self.HatTemplates + 1] = "stoneHat"
 	self.HatTemplates[#self.HatTemplates + 1] = "totemtopHat"
 	self.HatTemplates[#self.HatTemplates + 1] = "islandHat"
 	self.HatTemplates[#self.HatTemplates + 1] = "bushHat"
 	self.HatTemplates[#self.HatTemplates + 1] = "topHat"
-	
+	self.HatTemplates[#self.HatTemplates + 1] = "eggMan"
 end
 
 AddHatToPlayerSystem.SwitchHatOnUnit = function(self, player, Offset)
