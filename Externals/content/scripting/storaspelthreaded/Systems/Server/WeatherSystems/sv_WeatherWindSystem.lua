@@ -43,6 +43,20 @@ WeatherWindSystem.EntitiesAdded = function(self, dt, newEntities)
 			world:GetComponent(tEntity, "Direction", "X"):SetInt(dirX)
 			world:GetComponent(tEntity, "Direction", "Z"):SetInt(dirZ)
 			
+			local	allTrees	=	self:GetEntities("IsTree")
+			for i = 1, #allTrees do
+				local Tree = allTrees[i]
+				if not world:EntityHasComponent(Tree, "LerpRotation") then
+					world:CreateComponentAndAddTo("LerpRotation", Tree)
+				end
+				local TreeX, TreeY, TreeZ = world:GetComponent(Tree, "Rotation", "X"):GetFloat3(0)
+				world:GetComponent(Tree, "LerpRotation", "X"):SetFloat(dirZ*0.1)
+				world:GetComponent(Tree, "LerpRotation", "Y"):SetFloat(TreeY)
+				world:GetComponent(Tree, "LerpRotation", "Z"):SetFloat(-dirX*0.1)
+				world:GetComponent(Tree, "LerpRotation", "Time"):SetFloat(0.5)
+				world:GetComponent(Tree, "LerpRotation", "Algorithm"):SetText("NormalLerp")
+			end
+			
 		elseif world:EntityHasComponent(tEntity, "WeatherStep") then
 			
 			self.CurrentStep	=	self.CurrentStep+1
@@ -87,9 +101,9 @@ WeatherWindSystem.TickWeather = function(self, weatherEntity)
 			if not world:EntityHasComponent(Tree, "LerpRotation") then
 				world:CreateComponentAndAddTo("LerpRotation", Tree)
 			end
-			world:GetComponent(Tree, "LerpRotation", "X"):SetFloat(TreeX)
+			world:GetComponent(Tree, "LerpRotation", "X"):SetFloat(0)
 			world:GetComponent(Tree, "LerpRotation", "Y"):SetFloat(TreeY)
-			world:GetComponent(Tree, "LerpRotation", "Z"):SetFloat(TreeZ)
+			world:GetComponent(Tree, "LerpRotation", "Z"):SetFloat(0)
 			world:GetComponent(Tree, "LerpRotation", "Time"):SetFloat(1.5)
 			world:GetComponent(Tree, "LerpRotation", "Algorithm"):SetText("NormalLerp")
 		end
