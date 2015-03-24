@@ -76,7 +76,6 @@ AddEntityAfterLerpSystem.EntitiesRemoved = function(self, dt, entities)
 				
 		elseif compName == "AddBulletImpact" then
 			self:BulletImpact(entity, false)
-		
 		elseif compName == "AddBulletImpactPlayer" then
 			self:BulletImpact(entity, true)
 		elseif compName == "FallDownSound" then
