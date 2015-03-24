@@ -172,7 +172,7 @@ end
 
 OptionMenuSystem.AddConsoleCommandToButton = function(self, command, button)
 	world:CreateComponentAndAddTo("MenuConsoleCommand", button)
-	world:GetComponent(button, "MenuConsoleCommand", "Command"):SetText(command)
+	world:GetComponent(button, "MenuConsoleCommand", "Command"):SetString(command)
 end
 
 OptionMenuSystem.AddEntityCommandToButton = function(self, command, button)
