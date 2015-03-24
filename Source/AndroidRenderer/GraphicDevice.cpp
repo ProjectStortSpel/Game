@@ -1164,14 +1164,13 @@ void GraphicDevice::BufferStaticModel(std::pair<int, std::vector<ModelToLoad*>> 
 			modelToLoadFromSource->texCoords[i * vertexCount * 2 + j * 2 + 1] = texCoord[1];
 		}
 	}
-	*_staticModel.second[0]->MatrixPtr = glm::mat4(1.0f);
 	char nameBuffer[16];
 	sprintf(nameBuffer, "Static%d", _staticModel.first);
 	modelToLoadFromSource->key = std::string(nameBuffer);
 	modelToLoadFromSource->diffuseTextureFilepath = obj.text;
 	modelToLoadFromSource->normalTextureFilepath = obj.norm;
 	modelToLoadFromSource->specularTextureFilepath = obj.spec;
-	modelToLoadFromSource->MatrixPtr = _staticModel.second[0]->MatrixPtr;
+	modelToLoadFromSource->MatrixPtr = NULL;
 	modelToLoadFromSource->RenderType = _staticModel.second[0]->RenderType;
 	modelToLoadFromSource->Color = _staticModel.second[0]->Color;
 	modelToLoadFromSource->CastShadow = _staticModel.second[0]->CastShadow;
