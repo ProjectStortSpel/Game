@@ -22,6 +22,7 @@ end
 
 AddHatToPlayerSystem.PopulateHats = function(self)
 	self.HatTemplates[#self.HatTemplates + 1] = "totemHat"
+	self.HatTemplates[#self.HatTemplates + 1] = "eggMan"
 	self.HatTemplates[#self.HatTemplates + 1] = "stoneHat"
 	self.HatTemplates[#self.HatTemplates + 1] = "arrowHat"
 end
