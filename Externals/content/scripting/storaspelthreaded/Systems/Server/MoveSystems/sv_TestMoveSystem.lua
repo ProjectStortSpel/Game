@@ -59,6 +59,11 @@ TestMoveSystem.RecursiveMove = function(self, unitToMove, allUnits, allNonWalkab
 					Net.WriteString(audioId, "BlockVoice" .. allUnits[n])
 					Net.WriteBool(audioId, false)
 					Net.Broadcast(audioId)
+					
+					audioId = Net.StartPack("Client.SetSoundVolume")
+					Net.WriteString(audioId, "BlockVoice" .. unitId)
+					Net.WriteInt(audioId, 20)
+					Net.Broadcast(audioId)
 					return false
 				end
 				
@@ -76,6 +81,11 @@ TestMoveSystem.RecursiveMove = function(self, unitToMove, allUnits, allNonWalkab
 				Net.WriteString(audioId, "Laugh" .. math.random(1, 4))
 				Net.WriteString(audioId, "Laugh" .. allUnits[n])
 				Net.WriteBool(audioId, false)
+				Net.Broadcast(audioId)
+				
+				audioId = Net.StartPack("Client.SetSoundVolume")
+				Net.WriteString(audioId, "Laugh" .. unitId)
+				Net.WriteInt(audioId, 20)
 				Net.Broadcast(audioId)
 				
 				break

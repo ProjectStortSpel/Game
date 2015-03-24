@@ -49,14 +49,14 @@ OffsetUnitSystem.UpdateUnitLerp = function(self, unitId)
 		
 		if self:IsTileRiver(tX, tZ) or self:IsTileRiver(oldX, oldZ) then
 			local audioId = Net.StartPack("Client.PlaySoundC")
-			Net.WriteString(audioId, "WaterSplash")
-			Net.WriteString(audioId, "WaterSplash" .. unitId)
+			Net.WriteString(audioId, "LeavingWater")
+			Net.WriteString(audioId, "LeavingWater" .. unitId)
 			Net.WriteBool(audioId, false)
 			Net.Broadcast(audioId)
 			
-			audioId = Net.StartPack("Client.SetVolume")
-			Net.WriteString(audioId, "WaterSplash" .. unitId)
-			Net.WriteInt(audioId, 20)
+			audioId = Net.StartPack("Client.SetSoundVolume")
+			Net.WriteString(audioId, "LeavingWater" .. unitId)
+			Net.WriteInt(audioId, 84)
 			Net.Broadcast(audioId)
 		end
 	elseif yOffset - pY < 0 then
@@ -69,9 +69,9 @@ OffsetUnitSystem.UpdateUnitLerp = function(self, unitId)
 			Net.WriteBool(audioId, false)
 			Net.Broadcast(audioId)
 			
-			audioId = Net.StartPack("Client.SetVolume")
+			audioId = Net.StartPack("Client.SetSoundVolume")
 			Net.WriteString(audioId, "WaterSplash" .. unitId)
-			Net.WriteInt(audioId, 64)
+			Net.WriteInt(audioId, 34)
 			Net.Broadcast(audioId)
 		end
 	end

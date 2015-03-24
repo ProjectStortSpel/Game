@@ -1,4 +1,4 @@
-Audio.SetDistance(0.5, 18.0)
+Audio.SetDistance(0.4, 15.0)
 
 Audio.LoadMusic("audio/ingametheme.wav")
 
@@ -27,6 +27,7 @@ Audio.LoadSound("Laugh1", "audio/laugh.wav")
 Audio.LoadSound("Laugh2", "audio/laugh2.wav")
 Audio.LoadSound("Laugh3", "audio/laugh3.wav")
 Audio.LoadSound("Laugh4", "audio/laugh4.wav")
+Audio.LoadSound("LeavingWater", "audio/leavingwater.wav")
 Audio.LoadSound("OhOh", "audio/oh-oh.wav")
 Audio.LoadSound("RiverWaterLoop", "audio/riverwaterloop.wav")
 Audio.LoadSound("SmallStoneImpact1", "audio/smallstoneimpact.wav")

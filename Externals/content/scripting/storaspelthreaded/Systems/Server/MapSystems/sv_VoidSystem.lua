@@ -114,6 +114,11 @@ VoidSystem.EntitiesAdded = function(self, dt, entities)
 			Net.WriteBool(audioId, false)
 			Net.Broadcast(audioId)
 			
+			audioId = Net.StartPack("Client.SetSoundVolume")
+			Net.WriteString(audioId, "FallDownChannel")
+			Net.WriteInt(audioId, 20)
+			Net.Broadcast(audioId)
+			
 			audioId = Net.StartPack("Client.SetSoundPosition")
 			Net.WriteString(audioId, "FallDownChannel")
 			Net.WriteFloat(audioId, x)

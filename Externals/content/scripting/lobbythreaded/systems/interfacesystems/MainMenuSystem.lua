@@ -18,7 +18,7 @@ MainMenuSystem.PostInitialize = function(self)
 
 	self:SpawnMenu()
 	Audio.PlaySound("Wind", "Wind", true)
-	Audio.SetSoundVolume("Wind", 80)
+	Audio.SetSoundVolume("Wind", 70)
 end
 MainMenuSystem.Update = function(self, dt)
 	if self.RequestRelease then
