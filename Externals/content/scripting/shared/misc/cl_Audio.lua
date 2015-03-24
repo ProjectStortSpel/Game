@@ -126,10 +126,10 @@ Net.Receive("Client.FadeOutSound",
 		Audio.FadeOutSound(channelName, ms)
 	end
 )
-Net.Receive("Client.SetVolume",
+Net.Receive("Client.SetSoundVolume",
 	function(id, ip, port)
 		local channelName = Net.ReadString(id)
 		local volume = Net.ReadInt(id)
-		Audio.SetVolume(channelName, volume)
+		Audio.SetSoundVolume(channelName, volume)
 	end
 )
