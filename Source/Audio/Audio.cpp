@@ -55,7 +55,7 @@ namespace Audio
 	glm::vec3 g_cameraPosition;
 	
 	float g_masterVolume = 1.0f;
-	float g_musicVolume = 1.0f;
+	float g_musicVolume = 0.3f;
 	float g_soundVolume = 1.0f;
 	
 	std::map<std::string, int> g_channels;
