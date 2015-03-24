@@ -30,8 +30,6 @@ BaseNetwork::BaseNetwork()
 
 	m_customPackets = new std::queue<Packet*>();
 	m_systemPackets = new std::queue<Packet*>();
-	m_inactivePackets = new std::queue<Packet*>();
-
 
 	m_systemFunctions = new std::map < char, NetMessageHook >();
 	m_customFunctions = new std::map < std::string, NetMessageHook >();
@@ -70,15 +68,6 @@ BaseNetwork::~BaseNetwork()
 		}
 		
 		SAFE_DELETE(m_customPackets);
-
-		for (unsigned int i = 0; i < m_inactivePackets->size(); ++i)
-		{
-			auto packet = m_inactivePackets->front();
-			SAFE_DELETE(packet);
-			m_inactivePackets->pop();
-		}
-
-		SAFE_DELETE(m_inactivePackets);
 
 		SDL_UnlockMutex(m_customPacketLock);
 
@@ -231,37 +220,6 @@ void BaseNetwork::HandlePacket(Packet* _packet)
 	}
 }
 
-void BaseNetwork::HandleInactivePacket()
-{
-	if (SDL_LockMutex(m_customPacketLock) == 0)
-	{
-		size_t iSize = m_inactivePackets->size();
-		size_t cSize = m_customPackets->size();
-
-		if (iSize == 0)
-		{
-			SDL_UnlockMutex(m_customPacketLock);
-			return;
-		}
-
-		for (int i = 0; i < iSize; ++i)
-		{
-			m_customPackets->push(m_inactivePackets->front());
-			m_inactivePackets->pop();
-		}
-
-
-		for (int i = 0; i < cSize; ++i)
-		{
-			m_customPackets->push(m_customPackets->front());
-			m_customPackets->pop();
-		}
-
-		SDL_UnlockMutex(m_customPacketLock);
-	}
-	else if (NET_DEBUG > 0)
-		DebugLog("Failed to lock custom packet.", LogSeverity::Error);
-}
 
 int BaseNetwork::PopAndExecutePacket(void)
 {
