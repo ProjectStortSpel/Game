@@ -16,27 +16,25 @@ AddEntityAfterLerpSystem.BulletImpact = function(self, entity, hitPlayer)
 	
 	local x, y, z = world:GetComponent(entity, "Position", 0):GetFloat3()
 	local id = -1
-	local addBirds = false
 	
 	if hitPlayer then
-	
+		
 		local unitId = world:GetComponent(entity, "TargetUnit", "Unit"):GetInt()
-		
-		if not world:EntityHasComponent(unitId, "HasStunnedIndicator") then
-			addBirds = true
-			world:CreateComponentAndAddTo("HasStunnedIndicator", unitId)
-		end
-		
 	
-		id = Net.StartPack("SERVER_BULLET_IMPACT_PLAYER_PARTICLE")
-	else
-		id = Net.StartPack("SERVER_BULLET_IMPACT_PARTICLE")
+		print("BulletImpact unitId: " .. unitId)
+	
+		if not world:EntityHasComponent(unitId, "HasStunnedIndicator") then
+			local newEntity = world:CreateNewEntity()
+			world:CreateComponentAndAddTo("AddStunnedIndicator", newEntity)
+			world:GetComponent(newEntity, "AddStunnedIndicator", 0):SetInt(unitId)
+		end
+	
 	end
 	
+	id = Net.StartPack("SERVER_BULLET_IMPACT_PARTICLE")
 	Net.WriteFloat(id, x)
 	Net.WriteFloat(id, y)
 	Net.WriteFloat(id, z)
-	Net.WriteBool(id, addBirds)
 	Net.Broadcast(id)
 
 	-- SOUND

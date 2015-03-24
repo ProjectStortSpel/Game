@@ -17,6 +17,8 @@ AbilitySlingshotSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("MapSpecs", 				FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("DealCards", 				FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("HasStunnedIndicator", 	FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("StunnedIndicator", 	FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("AddStunnedIndicator", 	FilterType.RequiresOneOf)
 	
 end
 
@@ -32,8 +34,38 @@ AbilitySlingshotSystem.EntitiesAdded = function(self, dt, entities)
 				world:RemoveComponentFrom("HasStunnedIndicator", units[i])
 			end
 			
-			local id = Net.StartPack("REMOVE_STUNNED_INDICATOR")
-			Net.Broadcast(id)
+			local indicators = self:GetEntities("StunnedIndicator")
+			for i = 1, #indicators do
+				world:KillEntity(indicators[i])
+			end
+		
+		elseif world:EntityHasComponent(entityId, "AddStunnedIndicator") then
+
+			local parentId = world:GetComponent(entityId, "AddStunnedIndicator", "Unit"):GetInt()
+			world:CreateComponentAndAddTo("HasStunnedIndicator", parentId)
+			print("AbilitySlingshotSystem.EntitiesAdded parentId: " .. parentId)
+			
+			local stunnedIndicator = world:CreateNewEntity()
+			world:CreateComponentAndAddTo("StunnedIndicator", stunnedIndicator)
+			world:CreateComponentAndAddTo("SyncNetwork", stunnedIndicator)
+			world:CreateComponentAndAddTo("Parent", stunnedIndicator)
+			world:CreateComponentAndAddTo("ParentJoint", stunnedIndicator)
+			world:CreateComponentAndAddTo("Position", stunnedIndicator)
+			world:CreateComponentAndAddTo("Scale", stunnedIndicator)
+			world:CreateComponentAndAddTo("Rotation", stunnedIndicator)
+			world:CreateComponentAndAddTo("Model", stunnedIndicator)
+			world:CreateComponentAndAddTo("Spin", stunnedIndicator)
+			world:CreateComponentAndAddTo("NoShadow", stunnedIndicator)
+			
+			world:GetComponent(stunnedIndicator, "Model", 0):SetModel("superlowpolystun", "superlowpolystun", 1)
+			world:GetComponent(stunnedIndicator, "Position", 0):SetFloat3(0, 0, 0)
+			world:GetComponent(stunnedIndicator, "Rotation", 0):SetFloat3(0.2, 0, 0.6)
+			world:GetComponent(stunnedIndicator, "Scale", 0):SetFloat3(0.5,0.5,0.5)
+			world:GetComponent(stunnedIndicator, "Spin", 0):SetFloat3(0,-5,0)
+			world:GetComponent(stunnedIndicator, "Parent", 0):SetInt(parentId)
+			world:GetComponent(stunnedIndicator, "ParentJoint", 0):SetInt(5)
+			
+			world:KillEntity(entityId)
 			
 		end
 	end

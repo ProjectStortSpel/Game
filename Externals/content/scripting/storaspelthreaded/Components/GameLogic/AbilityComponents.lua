@@ -37,11 +37,13 @@ StunnedIndicator.Name = "StunnedIndicator"
 StunnedIndicator.TableType = TableType.Map
 worldCreator:AddComponentType(StunnedIndicator)
 
--- RemoveStunnedIndicator Component
-local RemoveStunnedIndicator = ComponentType()
-RemoveStunnedIndicator.Name = "RemoveStunnedIndicator"
-RemoveStunnedIndicator.TableType = TableType.Map
-worldCreator:AddComponentType(RemoveStunnedIndicator)
+-- AddStunnedIndicator Component
+local AddStunnedIndicator = ComponentType()
+AddStunnedIndicator.Name = "AddStunnedIndicator"
+AddStunnedIndicator.TableType = TableType.Map
+AddStunnedIndicator:AddVariable("Unit", ByteSize.Reference)
+AddStunnedIndicator.SyncNetwork = true
+worldCreator:AddComponentType(AddStunnedIndicator)
 
 -- HasStunnedIndicator Component
 local HasStunnedIndicator = ComponentType()

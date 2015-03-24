@@ -64,7 +64,7 @@ MapGenerator.Initialize = function(self)
 end
 
 MapGenerator.EntitiesAdded = function(self, dt, entities)
-	self:GenerateMap(os.time() % 249018024, 5, 5)
+	--self:GenerateMap(os.time() % 249018024, 5, 5)
 	--self:GenerateMap(182039436, 2, 3)
 	
 	--self:GenerateMap(4, 2, 2)
@@ -75,7 +75,7 @@ MapGenerator.EntitiesAdded = function(self, dt, entities)
 	--self:GenerateMap(1338, 2, 4)
 	--self:GenerateMap(19890320, 6, 3)
 	
-	--self:LoadMap("testmap")
+	self:LoadMap("testmap")
 end
 
 MapGenerator.PostInitialize = function(self)
