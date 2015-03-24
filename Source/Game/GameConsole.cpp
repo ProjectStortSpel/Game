@@ -476,19 +476,19 @@ void GameConsole::ECSLMemoryUsage(std::string _command, std::vector<Console::Arg
 	m_consoleManager->AddMessage(ss.str().c_str());
 }
 
-void GameConsole::SetMusicVolume(string _command, std::vector< Console::Argument >* _args)
+void GameConsole::SetMusicVolume(std::string _command, std::vector< Console::Argument >* _args)
 {
 	float volume = _args->at(0).Number;
 	Audio::SetMusicVolume(volume);
 }
 
-void GameConsole::SetSoundVolume(string _command, std::vector< Console::Argument >* _args)
+void GameConsole::SetSoundVolume(std::string _command, std::vector< Console::Argument >* _args)
 {
 	float volume = _args->at(0).Number;
 	Audio::SetSoundVolume(volume);
 }
 
-void GameConsole::SetMasterVolume(string _command, std::vector< Console::Argument >* _args)
+void GameConsole::SetMasterVolume(std::string _command, std::vector< Console::Argument >* _args)
 {
 	float volume = _args->at(0).Number;
 	Audio::SetMasterVolume(volume);
