@@ -199,6 +199,7 @@ end
 
 ConnectMenuSystem.CreateTexture = function(self, object, folder, posx, posy, posz, scalex, scaley)
 	local id = world:CreateNewEntity("Texture")
+	world:CreateComponentAndAddTo(self.Name.."Element", id)
 	world:GetComponent(id, "Model", 0):SetModel(object, folder, 2)
 	world:GetComponent(id, "Position", 0):SetFloat3(posx, posy, posz)
 	world:GetComponent(id, "Scale", 0):SetFloat3(scalex, scaley, 1)
