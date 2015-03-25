@@ -28,10 +28,11 @@ BaseNetwork::BaseNetwork()
 	/* CHANGE THESE NUMBERS */
 	/*	maxTimeOutIntervall is the number between each PING message
 		maxIntervallCounter is the number of times the system is allowed to miss
-		when the maxIntervallCounter is reached the player will be counted as disconnected (timed out)
+		 An int will be increased each time we send a PING but don't receive a PONG,
+		 and when the int reaches maxIntervallCounter the player will be counted as disconnected (timed out)
 	*/
-	m_maxTimeOutIntervall = new float(5); // Indicator of the time between each PING message is sent
-	m_maxIntervallCounter = new int(2);	  // Counter for how many max allowed misses (if you didn't receive any PONG for X times)
+	m_maxTimeOutIntervall = new float(5);
+	m_maxIntervallCounter = new int(2);
 
 	m_customPackets = new std::queue<Packet*>();
 	m_systemPackets = new std::queue<Packet*>();
