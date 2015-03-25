@@ -81,7 +81,7 @@ OffsetUnitSystem.UpdateUnitLerp = function(self, unitId)
 			Net.Broadcast(audioId)
 			audioId = Net.StartPack("Client.SetSoundVolume")
 			Net.WriteString(audioId, "WaterSplash" .. unitId)
-			Net.WriteInt(audioId, 34)
+			Net.WriteInt(audioId, 25)
 			Net.Broadcast(audioId)
 		end
 	end

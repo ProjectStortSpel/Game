@@ -155,7 +155,7 @@ WeatherWindSystem.TickWeather = function(self, weatherEntity)
 		Net.Broadcast(audioId)
 		audioId = Net.StartPack("Client.SetSoundVolume")
 		Net.WriteString(audioId, "StrongWind" .. weatherEntity)
-		Net.WriteInt(audioId, 128)
+		Net.WriteInt(audioId, 80)
 		Net.Broadcast(audioId)
 		
 		print("WIND!!!")
