@@ -1189,11 +1189,11 @@ MapGenerator.CreateMap = function(self)
 	local	randomAngle, radius	=	0, 0
 	local	rScale				=	0
 	
-	for n = 1, 5 do
+	for n = 1, 6 do
 	
 		randomAngle	=	2*math.pi*math.random()-math.pi
 		
-		radius		=	math.random(6, 7)*0.1*math.sqrt(self.MapSizeX^2+self.MapSizeZ^2)
+		radius		=	math.random(7, 11)*0.1*math.sqrt(self.MapSizeX^2+self.MapSizeZ^2)
 		offsetX		=	cX + radius*math.cos(randomAngle)
 		offsetZ		=	cZ + radius*math.sin(randomAngle)
 		rScale		=	1 + math.random()
@@ -1206,7 +1206,7 @@ MapGenerator.CreateMap = function(self)
 		world:CreateComponentAndAddTo("SyncNetwork",newSmallIsland)
 		world:CreateComponentAndAddTo("NoShadow",	newSmallIsland)
 		world:GetComponent(newSmallIsland, "Model", 0):SetModel("miniisland", "distantisland", 0)
-		world:GetComponent(newSmallIsland, "Position", 0):SetFloat3(offsetX, math.random(-4, 3), offsetZ)
+		world:GetComponent(newSmallIsland, "Position", 0):SetFloat3(offsetX, math.random(-3, 2), offsetZ)
 		world:GetComponent(newSmallIsland, "Rotation", 0):SetFloat3(0, 2*math.pi*math.random(), 0)
 		world:GetComponent(newSmallIsland, "Scale", 0):SetFloat3(rScale,rScale,rScale)
 	
