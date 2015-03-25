@@ -231,10 +231,25 @@ void ClientNetwork::Send(Packet* _packet)
 	*/
 
 	/* AND COMMENT FROM HERE */
-	if (m_socket->GetActive() != 2 && m_packetHandler->GetNetTypeMessageId(_packet) != NetTypeMessageId::ID_PASSWORD_ATTEMPT)
+	if (m_socket->GetActive() == 1)
 	{
-		DebugLog("Tried to send a message while not authenticated to server.", LogSeverity::Warning);
-		return;
+		bool discardPacket = true;
+
+		if (m_packetHandler->GetNetTypeMessageId(_packet) == NetTypeMessageId::ID_PASSWORD_ATTEMPT ||
+			m_packetHandler->GetNetTypeMessageId(_packet) == NetTypeMessageId::ID_PING ||
+			m_packetHandler->GetNetTypeMessageId(_packet) == NetTypeMessageId::ID_PONG
+			)
+		{
+			discardPacket = false;
+		}
+
+		if (discardPacket)
+		{
+			DebugLog("Trying to send a message while not authenticated to server", LogSeverity::Warning);
+			SAFE_DELETE(_packet);
+			return;
+		}
+		
 	}
 	/* TO HERE */
 
