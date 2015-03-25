@@ -66,7 +66,7 @@ namespace Network
 		char ReadByte(uint64_t _id);
 		// Read raw bytes from a packet
 		// Should always be called from a function bound with Addstd::function<void(PacketHandler*, uint64_t, NetConnection)>
-		unsigned char* ReadBytes(uint64_t _id, int size);
+		char* ReadBytes(uint64_t _id, int size);
 		// Read an int from a packet
 		// Should always be called from a function bound with Addstd::function<void(PacketHandler*, uint64_t, NetConnection)>
 		short ReadShort(uint64_t _id);
@@ -87,20 +87,20 @@ namespace Network
 
 		struct PacketSendInfo
 		{
-			unsigned char Data[MAX_PACKET_SIZE];
-			unsigned char* Position;
+			char Data[MAX_PACKET_SIZE];
+			char* Position;
 		};
 
 		struct PacketReceiveInfo
 		{
 			Packet* PacketData;
-			unsigned char* Position;
+			char* Position;
 		};
 
 		PacketSendInfo* GetPacketSendInfo(uint64_t _id);
 		PacketReceiveInfo* GetPacketReceiveInfo(uint64_t _id);
 
-		bool IsOutOfBounds(unsigned char* _begin, unsigned char* _position, unsigned short _length);
+		bool IsOutOfBounds(char* _begin, char* _position, unsigned short _length);
 
 	private:
 

@@ -19,9 +19,9 @@ Model::~Model()
 {
 }
 
-void Model::Draw(mat4 viewMatrix, mat4 projectionMatrix)
+void Model::Draw(mat4 viewMatrix)
 {
-	std::vector<mat4> MVPVector(instances.size());
+	std::vector<mat4> MVVector(instances.size());
 	std::vector<mat3> normalMatVector(instances.size());
 	float* colors = new float[instances.size() * 3];
 
@@ -33,15 +33,14 @@ void Model::Draw(mat4 viewMatrix, mat4 projectionMatrix)
 		{
 			mat4 modelMatrix;
 			if (instances[j].modelMatrix == NULL)
-				modelMatrix = glm::translate(glm::vec3(1));
+				modelMatrix = glm::mat4(1.0f);
 			else
 				modelMatrix = *instances[j].modelMatrix;
 
 			mat4 modelViewMatrix = mat4();
 			modelViewMatrix = viewMatrix * modelMatrix;
 
-			mat4 mvp = projectionMatrix * modelViewMatrix;
-			MVPVector[nrOfInstances] = mvp;
+			MVVector[nrOfInstances] = modelViewMatrix;
 
 			mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
 			normalMatVector[nrOfInstances] = normalMatrix;
@@ -68,7 +67,7 @@ void Model::Draw(mat4 viewMatrix, mat4 projectionMatrix)
 		glBindTexture(GL_TEXTURE_2D, speID);
 	}
 	//m_modelsDeferred[i].bufferPtr->draw();
-	bufferPtr->drawInstanced(0, nrOfInstances, &MVPVector, &normalMatVector, colors);
+	bufferPtr->drawInstanced(0, nrOfInstances, &MVVector, &normalMatVector, colors);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	delete [] colors;
 }

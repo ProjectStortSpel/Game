@@ -11,12 +11,12 @@ WeatherSystem.Initialize = function(self)
 	self:UsingEntitiesAdded()
 
 	--	Set Filter
-	self:AddComponentTypeToFilter("NewRound", FilterType.Mandatory)
+	self:AddComponentTypeToFilter("DealCards", FilterType.Mandatory)
 end
 
 WeatherSystem.PostInitialize = function(self)
 	self.WeatherList[#self.WeatherList+1]	=	"Tornado"
-	
+	self.WeatherList[#self.WeatherList+1]	=	"Wind"
 	
 
 end
@@ -26,7 +26,7 @@ WeatherSystem.EntitiesAdded = function(self, dt, newEntities)
 	for n = 1, #newEntities do
 		local	tEntity	=	newEntities[n]
 		
-		if world:EntityHasComponent(tEntity, "NewRound") then
+		if world:EntityHasComponent(tEntity, "DealCards") then
 				
 			local	actualWeatherChance	=	math.random(1, 100)
 			self.WeatherChance	=	(self.WeatherChance+1)*1.5

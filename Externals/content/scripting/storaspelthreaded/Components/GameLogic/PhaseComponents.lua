@@ -62,6 +62,13 @@ NewComponent.SyncNetwork = true
 NewComponent.TableType = TableType.Map
 worldCreator:AddComponentType(NewComponent)
 
+--	Weather Step
+NewComponent = ComponentType()
+NewComponent.Name = "WeatherStep"
+NewComponent.SyncNetwork = true
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
+
 --	Play Cards
 NewComponent = ComponentType()
 NewComponent.Name = "PlayCard"

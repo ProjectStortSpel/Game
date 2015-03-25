@@ -122,7 +122,8 @@ bool ClientNetwork::Connect()
 
 	SAFE_DELETE(m_socket);
 	m_socket = ISocket::CreateSocket();
-	m_socket->Bind(*m_incomingPort);
+	if (!m_socket->Bind(*m_incomingPort))
+		return false;
 
 	*m_connected = m_socket->Connect(m_remoteAddress->c_str(), *m_outgoingPort);
 
@@ -189,7 +190,7 @@ void ClientNetwork::ReceivePackets(const std::string _name)
 			*m_currentTimeOutIntervall = 0.0f;
 
 			Packet* p = new Packet();
-			p->Data = new unsigned char[dataReceived];
+			p->Data = new char[dataReceived];
 			*p->Length = dataReceived;
 			*p->Sender = m_socket->GetNetConnection();
 			memcpy(p->Data, m_packetData, dataReceived);
@@ -225,14 +226,34 @@ void ClientNetwork::Send(Packet* _packet)
 		return;
 	}
 
-	if (m_packetHandler->GetNetTypeMessageId(_packet) == NetTypeMessageId::ID_CUSTOM_PACKET && m_socket->GetActive() != 2)
+	/* IF THE CHANGE DOSEN'T WORK, UNCOMMENT THIS       (THEN CONTINUE TO READ YA LAZY BASTARD; ROW 233)
+	HandlePacket(p);
+	*/
+
+	/* AND COMMENT FROM HERE */
+	if (m_socket->GetActive() == 1)
 	{
-		m_inactivePackets->push(_packet);
-		return;
+		bool discardPacket = true;
+
+		if (m_packetHandler->GetNetTypeMessageId(_packet) == NetTypeMessageId::ID_PASSWORD_ATTEMPT ||
+			m_packetHandler->GetNetTypeMessageId(_packet) == NetTypeMessageId::ID_PING ||
+			m_packetHandler->GetNetTypeMessageId(_packet) == NetTypeMessageId::ID_PONG
+			)
+		{
+			discardPacket = false;
+		}
+
+		if (discardPacket)
+		{
+			DebugLog("Trying to send a message while not authenticated to server", LogSeverity::Warning);
+			SAFE_DELETE(_packet);
+			return;
+		}
+		
 	}
+	/* TO HERE */
 
-
-	float bytesSent = m_socket->Send((char*)_packet->Data, *_packet->Length);
+	int bytesSent = m_socket->Send((char*)_packet->Data, *_packet->Length);
 
 	if (bytesSent > 0)
 	{
@@ -330,12 +351,6 @@ void ClientNetwork::NetConnectionAccepted(PacketHandler* _packetHandler, uint64_
 		DebugLog("Password accepted. Connected to %s:%d.", LogSeverity::Info, _connection.GetIpAddress(), _connection.GetPort());
 
 	m_socket->SetActive(2);
-
-	for (int i = 0; i < m_inactivePackets->size(); ++i)
-	{
-		Send(m_inactivePackets->front());
-		m_inactivePackets->pop();
-	}
 
 	TriggerEvent(m_onConnectedToServer, _connection, 0);
 

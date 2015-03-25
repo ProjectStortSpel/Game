@@ -27,13 +27,18 @@ CameraInterestpointSystem.EntitiesAdded = function(self, dt, entities)
 					local x, y, z = world:GetComponent(unitId, "Position", 0):GetFloat3(0)
 					local dx, dz = world:GetComponent(unitId, "Direction", 0):GetInt2(0)
 					
+					if world:EntityHasComponent(unitId, "UnitDead") then
+						x, z = world:GetComponent(unitId, "Spawnpoint", "X"):GetInt2(0)
+					end
+					
 					-- CAMERA INTEREST POINT
 					local cipID = Net.StartPack("Client.SendCIP")
-					Net.WriteFloat(cipID, 6.5-dx*2)
-					Net.WriteFloat(cipID, 6.5-dz*2)
+					Net.WriteFloat(cipID, x)
+					Net.WriteFloat(cipID, z)
 					Net.WriteFloat(cipID, dx)
 					Net.WriteFloat(cipID, dz)
-					Net.WriteFloat(cipID, 1.0)
+					Net.WriteFloat(cipID, 0.8)
+					Net.WriteFloat(cipID, 0.5)
 					Net.Send(cipID, ip, port)
 				end
 			end
@@ -53,6 +58,7 @@ CameraInterestpointSystem.EntitiesAdded = function(self, dt, entities)
 			Net.WriteFloat(cipID, dx)
 			Net.WriteFloat(cipID, dz)
 			Net.WriteFloat(cipID, d)
+			Net.WriteFloat(cipID, 0.5)
 			Net.Broadcast(cipID)
 			world:KillEntity( entityId )
 		end

@@ -1,5 +1,6 @@
 #include "NetworkHelper.h"
 #include <algorithm>
+#include <assert.h>
 
 NetworkHelper::NetworkHelper(ECSL::World** _world)
 {
@@ -341,7 +342,13 @@ unsigned int NetworkHelper::NetToHost(unsigned int _idN)
 	{
 		return m_NtoH[_idN];
 	}
-	return 0;
+	else
+	{
+		unsigned int idH = (*m_world)->CreateNewEntity();
+		m_NtoH[_idN] = idH;
+		m_HtoN[idH] = _idN;
+		return idH;
+	}
 }
 
 unsigned int NetworkHelper::HostToNet(unsigned int _idH)
@@ -350,5 +357,8 @@ unsigned int NetworkHelper::HostToNet(unsigned int _idH)
 	{
 		return m_HtoN[_idH];
 	}
+	
+	assert(false);
+
 	return 0;
 }

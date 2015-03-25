@@ -42,7 +42,8 @@ bool GraphicsLow::Init()
 
 	if (!InitShaders()) { ERRORMSG("INIT SHADERS FAILED\n"); return false; }
 #ifdef __ANDROID__
-    InitFBO();
+	if (m_clientWidth > 1400)
+		InitFBO();
 #endif
 	if (!InitBuffers()) { ERRORMSG("INIT BUFFERS FAILED\n"); return false; }
 	if (!InitSkybox()) { ERRORMSG("INIT SKYBOX FAILED\n"); return false; }
@@ -60,6 +61,7 @@ bool GraphicsLow::Init()
 
 void GraphicsLow::Update(float _dt)
 {
+  
 	m_dt = _dt;
 	m_camera->Update(_dt);
 
@@ -68,6 +70,14 @@ void GraphicsLow::Update(float _dt)
 	BufferSurfaces();
 	BufferModelTextures();
 	BufferParticleSystems();
+	
+	for (int i = 0; i < m_modelsAnimated.size(); i++)
+	{
+		if (m_modelsAnimated[i].active) // IS MODEL ACTIVE?
+		{
+			m_modelsAnimated[i].Update(_dt);
+		}
+	}
 }
 
 void GraphicsLow::Render()
@@ -78,7 +88,8 @@ void GraphicsLow::Render()
 
 #if defined(__ANDROID__)
     GLint oldFBO = 0;
-    glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
+	if (m_clientWidth > 1400)
+		glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 #elif defined(__IOS__)
     GLint oldFBO;
     glGetIntegerv(GL_FRAMEBUFFER, &oldFBO);
@@ -86,60 +97,58 @@ void GraphicsLow::Render()
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glViewport(0, 0, m_framebufferWidth, m_framebufferHeight);
+	glEnable(GL_DEPTH_TEST);
 	//--------Uniforms-------------------------------------------------------------------------
 	mat4 projectionMatrix = *m_camera->GetProjMatrix();
 	mat4 viewMatrix = *m_camera->GetViewMatrix();
 
 	glDisable(GL_CULL_FACE);
+	glDepthMask(GL_FALSE);
 	// DRAW SKYBOX
 	m_skyBoxShader.UseProgram();
-	m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera);
-	// -----------
+	glActiveTexture(GL_TEXTURE1);
+	m_skybox->Draw(m_skyBoxShader.GetShaderProgram(), m_camera, m_dt);
+	glEnable(GL_BLEND);
 
+	m_skyboxCloudsShader.UseProgram();
+	glActiveTexture(GL_TEXTURE2);
+	m_skyboxClouds->Draw(m_skyboxCloudsShader.GetShaderProgram(), m_camera, m_dt);
 	glEnable(GL_CULL_FACE);
+	glDepthMask(GL_TRUE);
+	// -----------
 
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_BLEND);
 
-	if (m_modelsForward.size() > 0)
+	//--------ANIMATED MODELS
+	m_animationShader.UseProgram();
+	m_animationShader.SetUniVariable("P", mat4x4, &projectionMatrix);
+	m_animationShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
+
+	for (int i = 0; i < m_modelsAnimated.size(); i++)
+	{
+		for (int j = 0; j < m_modelsAnimated[i].anim.size(); j++)
+		{
+			std::stringstream ss;
+			ss << "anim[" << j << "]";
+			m_animationShader.SetUniVariable(ss.str().c_str(), mat4x4, &m_modelsAnimated[i].anim[j]);
+			ss.str(std::string());
+		}
+
+		m_modelsAnimated[i].Draw(viewMatrix, &m_animationShader);
+	}
+	
+	if (m_modelsDeferred.size() > 0 || m_modelsForward.size() > 0)
 	{
 		//------FORWARD RENDERING--------------------------------------------
 		m_forwardShader.UseProgram();
 		m_forwardShader.SetUniVariable("ProjectionMatrix", mat4x4, &projectionMatrix);
 		m_forwardShader.SetUniVariable("ViewMatrix", mat4x4, &viewMatrix);
 
-		for (int i = 0; i < m_modelsForward.size(); i++)
-		{
-			if (m_modelsForward[i].active) // IS MODEL ACTIVE?
-			{
-				mat4 modelMatrix;
-				if (m_modelsForward[i].modelMatrix == NULL)
-					modelMatrix = glm::translate(glm::vec3(1));
-				else
-					modelMatrix = *m_modelsForward[i].modelMatrix;
+		//----Deferred models with forward shader----
+		for (int i = 0; i < m_modelsDeferred.size(); i++)
+			m_modelsDeferred[i].Draw(viewMatrix, &m_forwardShader);
 
-				mat4 modelViewMatrix = viewMatrix * modelMatrix;
-				m_forwardShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
-
-				mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-				m_forwardShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
-
-				glActiveTexture(GL_TEXTURE1);
-				glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].texID);
-
-				glActiveTexture(GL_TEXTURE2);
-				glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].norID);
-
-				glActiveTexture(GL_TEXTURE3);
-				glBindTexture(GL_TEXTURE_2D, m_modelsForward[i].speID);
-
-				m_forwardShader.SetUniVariable("BlendColor", vector3, m_modelsForward[i].color);
-
-				m_modelsForward[i].bufferPtr->draw(m_forwardShader.GetShaderProgram());
-				glBindTexture(GL_TEXTURE_2D, 0);
-			}
-		}
 		//-------------------------------------------------------------------------
 
 		//-------Render water-------------
@@ -153,31 +162,7 @@ void GraphicsLow::Render()
 		//----DRAW MODELS
 		for (int i = 0; i < m_modelsWater.size(); i++)
 		{
-			mat4 modelMatrix;
-			if (m_modelsWater[i].modelMatrix == NULL)
-				modelMatrix = glm::translate(glm::vec3(1));
-			else
-				modelMatrix = *m_modelsWater[i].modelMatrix;
-
-			mat4 modelViewMatrix = viewMatrix * modelMatrix;
-			m_riverShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
-
-			mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-			m_riverShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
-
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, m_modelsWater[i].texID);
-
-			glActiveTexture(GL_TEXTURE2);
-			glBindTexture(GL_TEXTURE_2D, m_modelsWater[i].norID);
-
-			glActiveTexture(GL_TEXTURE3);
-			glBindTexture(GL_TEXTURE_2D, m_modelsWater[i].speID);
-
-			m_riverShader.SetUniVariable("BlendColor", vector3, m_modelsWater[i].color);
-
-			m_modelsWater[i].bufferPtr->draw(m_riverShader.GetShaderProgram());
-			glBindTexture(GL_TEXTURE_2D, 0);
+			m_modelsWater[i].Draw(viewMatrix, &m_riverShader);
 		}
 
 		//-------Render water corners-------------
@@ -188,34 +173,15 @@ void GraphicsLow::Render()
 		//----DRAW MODELS
 		for (int i = 0; i < m_modelsWaterCorners.size(); i++)
 		{
-			mat4 modelMatrix;
-			if (m_modelsWaterCorners[i].modelMatrix == NULL)
-				modelMatrix = glm::translate(glm::vec3(1));
-			else
-				modelMatrix = *m_modelsWaterCorners[i].modelMatrix;
-
-			mat4 modelViewMatrix = viewMatrix * modelMatrix;
-			m_riverCornerShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
-
-			mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-			m_riverCornerShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
-
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, m_modelsWaterCorners[i].texID);
-
-			glActiveTexture(GL_TEXTURE2);
-			glBindTexture(GL_TEXTURE_2D, m_modelsWaterCorners[i].norID);
-
-			glActiveTexture(GL_TEXTURE3);
-			glBindTexture(GL_TEXTURE_2D, m_modelsWaterCorners[i].speID);
-
-			m_riverCornerShader.SetUniVariable("BlendColor", vector3, m_modelsWaterCorners[i].color);
-
-			m_modelsWaterCorners[i].bufferPtr->draw(m_riverCornerShader.GetShaderProgram());
-			glBindTexture(GL_TEXTURE_2D, 0);
+			m_modelsWaterCorners[i].Draw(viewMatrix, &m_riverCornerShader);
 		}
 
+		//------FORWARD RENDERING---Forward models-----
+		for (int i = 0; i < m_modelsForward.size(); i++)
+			m_modelsForward[i].Draw(viewMatrix, &m_forwardShader);
+
 	}
+	
 	
 	//--------PARTICLES---------
 	glDepthMask(GL_FALSE);
@@ -251,35 +217,7 @@ void GraphicsLow::Render()
 	SortModelsBasedOnDepth(&m_modelsViewspace);
 	for (int i = 0; i < m_modelsViewspace.size(); i++)
 	{
-		if (m_modelsViewspace[i].active) // IS MODEL ACTIVE?
-		{
-			mat4 modelMatrix;
-			if (m_modelsViewspace[i].modelMatrix == NULL)
-				modelMatrix = glm::translate(glm::vec3(1));
-			else
-                modelMatrix = *m_modelsViewspace[i].modelMatrix;
-            
-
-			mat4 modelViewMatrix = modelMatrix;
-			m_viewspaceShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
-
-			mat3 normalMatrix = glm::transpose(glm::inverse(mat3(modelViewMatrix)));
-			m_viewspaceShader.SetUniVariable("NormalMatrix", mat3x3, &normalMatrix);
-
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, m_modelsViewspace[i].texID);
-
-			glActiveTexture(GL_TEXTURE2);
-			glBindTexture(GL_TEXTURE_2D, m_modelsViewspace[i].norID);
-
-			glActiveTexture(GL_TEXTURE3);
-			glBindTexture(GL_TEXTURE_2D, m_modelsViewspace[i].speID);
-
-			m_viewspaceShader.SetUniVariable("BlendColor", vector3, m_modelsViewspace[i].color);
-
-			m_modelsViewspace[i].bufferPtr->draw(m_viewspaceShader.GetShaderProgram());
-			glBindTexture(GL_TEXTURE_2D, 0);
-		}
+		m_modelsViewspace[i].Draw(glm::mat4(1.0f), &m_viewspaceShader);
 	}
 
 	// RENDER INTERFACE
@@ -289,22 +227,22 @@ void GraphicsLow::Render()
 	SortModelsBasedOnDepth(&m_modelsInterface);
 	for (int i = 0; i < m_modelsInterface.size(); i++)
 	{
-		if (m_modelsInterface[i].active) // IS MODEL ACTIVE?
+		if (m_modelsInterface[i].active)
 		{
 			mat4 modelMatrix;
 			if (m_modelsInterface[i].modelMatrix == NULL)
 				modelMatrix = glm::translate(glm::vec3(1));
 			else
 				modelMatrix = *m_modelsInterface[i].modelMatrix;
-
+			
 			mat4 modelViewMatrix = modelMatrix;
 			m_interfaceShader.SetUniVariable("ModelViewMatrix", mat4x4, &modelViewMatrix);
-
+			
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, m_modelsInterface[i].texID);
-
+			
 			m_interfaceShader.SetUniVariable("BlendColor", vector3, m_modelsInterface[i].color);
-
+			
 			m_modelsInterface[i].bufferPtr->draw(m_interfaceShader.GetShaderProgram());
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
@@ -314,20 +252,22 @@ void GraphicsLow::Render()
 
 	glDisable(GL_BLEND);
 #ifdef __ANDROID__
-	// DRAW FULLSCREEN
-	glViewport(0, 0, m_clientWidth, m_clientHeight);
+	if (m_clientWidth > 1400)
+	{
+		// DRAW FULLSCREEN
+		glViewport(0, 0, m_clientWidth, m_clientHeight);
 
-	m_fullscreen.UseProgram();
+		m_fullscreen.UseProgram();
 
-	// Skicka in outputImage
-	glActiveTexture(GL_TEXTURE4);
-	glBindTexture(GL_TEXTURE_2D, m_outputImage);
+		// Skicka in outputImage
+		glActiveTexture(GL_TEXTURE4);
+		glBindTexture(GL_TEXTURE_2D, m_outputImage);
 
-	glBindBuffer(GL_ARRAY_BUFFER, m_fullscreenQuadBuffer);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
-	glEnableVertexAttribArray(0);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-
+		glBindBuffer(GL_ARRAY_BUFFER, m_fullscreenQuadBuffer);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
+		glEnableVertexAttribArray(0);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+	}
 #endif
     
 	glDisable(GL_TEXTURE_2D);
@@ -414,6 +354,11 @@ bool GraphicsLow::InitShaders()
 	m_riverCornerShader.AddShader("content/shaders/android/lowAndroidForwardVS.glsl", GL_VERTEX_SHADER);
 	m_riverCornerShader.AddShader("content/shaders/android/lowAndroidRiverCornerFS.glsl", GL_FRAGMENT_SHADER);
 	m_riverCornerShader.FinalizeShaderProgram();
+	
+	m_animationShader.InitShaderProgram();
+	m_animationShader.AddShader("content/shaders/android/AndroidAnimationShaderVS.glsl", GL_VERTEX_SHADER);
+	m_animationShader.AddShader("content/shaders/android/lowAndroidForwardFS.glsl", GL_FRAGMENT_SHADER);
+	m_animationShader.FinalizeShaderProgram();
 
 	return true;
 }
@@ -456,7 +401,7 @@ void GraphicsLow::BufferPointlights(int _nrOfLights, float **_lightPointers)
 	else if (_nrOfLights >= 1)
 	{
 		m_pointlightsPtr = _lightPointers;
-		m_nrOfLightsToBuffer = std::min(_nrOfLights, 3);
+		m_nrOfLightsToBuffer = std::min(_nrOfLights, 2);
 	}
 }
 
@@ -512,10 +457,15 @@ bool GraphicsLow::PreLoadModel(std::vector<std::string> _dirs, std::string _file
 
 	return true;
 }
-int GraphicsLow::LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color, bool _castShadow)
+int GraphicsLow::LoadModel(std::vector<std::string> _dirs, std::string _file, glm::mat4 *_matrixPtr, int _renderType, float* _color, bool _castShadow, bool _isStatic)
 {
-	int modelID = m_modelIDcounter;
-	m_modelIDcounter++;
+	int modelID;
+
+	if (!_isStatic)
+	{
+		modelID = m_modelIDcounter;
+		m_modelIDcounter++;
+	}
 	
 	ModelToLoad* modelToLoad = new ModelToLoad();
 	modelToLoad->Dirs = _dirs;
@@ -524,13 +474,48 @@ int GraphicsLow::LoadModel(std::vector<std::string> _dirs, std::string _file, gl
 	modelToLoad->RenderType = _renderType;
 	modelToLoad->Color = _color;
 	modelToLoad->CastShadow = _castShadow;
-	m_modelsToLoad[modelID] = modelToLoad;
+
+	if (_isStatic)
+	{
+		for (std::map<int, std::vector<ModelToLoad*>>::iterator it = m_staticModelsToLoad.begin(); it != m_staticModelsToLoad.end(); it++)
+		{
+			if (!it->second.empty() &&
+				it->second[0]->Dirs == _dirs &&
+				it->second[0]->File == _file &&
+				it->second[0]->RenderType == _renderType &&
+				it->second[0]->CastShadow == _castShadow &&
+					(it->second[0]->Color == _color ||
+						(it->second[0]->Color[0] == _color[0] &&
+						 it->second[0]->Color[1] == _color[1] &&
+						 it->second[0]->Color[2] == _color[2])))
+			{
+				it->second.push_back(modelToLoad);
+				return it->first;
+			}
+		}
+
+		// If does not already exists
+		modelID = m_modelIDcounter;
+		m_modelIDcounter++;
+		m_staticModelsToLoad[modelID].push_back(modelToLoad);
+	}
+	else
+		m_modelsToLoad[modelID] = modelToLoad;
 
 	return modelID;
 }
 
 bool GraphicsLow::RemoveModel(int _id)
 {
+	for (int i = 0; i < m_modelsDeferred.size(); i++)
+	{
+		if (m_modelsDeferred[i].id == _id)
+		{
+			m_modelsDeferred.erase(m_modelsDeferred.begin() + i);
+
+			return true;
+		}
+	}
 	for (int i = 0; i < m_modelsForward.size(); i++)
 	{
 		if (m_modelsForward[i].id == _id)
@@ -558,11 +543,50 @@ bool GraphicsLow::RemoveModel(int _id)
 			return true;
 		}
 	}
+	for (int i = 0; i < m_modelsAnimated.size(); i++)
+	{
+		if (m_modelsAnimated[i].id == _id)
+		{
+			m_modelsAnimated.erase(m_modelsAnimated.begin() + i);
+			return true;
+		}
+	}
+	for (int i = 0; i < m_modelsWater.size(); i++)
+	{
+		if (m_modelsWater[i].id == _id)
+		{
+			m_modelsWater.erase(m_modelsWater.begin() + i);
+			return true;
+		}
+	}
+	for (int i = 0; i < m_modelsWaterCorners.size(); i++)
+	{
+		if (m_modelsWaterCorners[i].id == _id)
+		{
+			m_modelsWaterCorners.erase(m_modelsWaterCorners.begin() + i);
+			return true;
+		}
+	}
+
+	if (m_modelsToLoad.find(_id) != m_modelsToLoad.end())
+	{
+		m_modelsToLoad.erase(_id);
+
+		return true;
+	}
 
 	return false;
 }
 bool GraphicsLow::ActiveModel(int _id, bool _active)
 {
+	for (int i = 0; i < m_modelsDeferred.size(); i++)
+	{
+		if (m_modelsDeferred[i].id == _id)
+		{
+			m_modelsDeferred[i].active = _active;
+			return true;
+		}
+	}
 	for (int i = 0; i < m_modelsForward.size(); i++)
 	{
 		if (m_modelsForward[i].id == _id)
@@ -587,10 +611,34 @@ bool GraphicsLow::ActiveModel(int _id, bool _active)
 			return true;
 		}
 	}
+	for (int i = 0; i < m_modelsAnimated.size(); i++)
+	{
+		if (m_modelsAnimated[i].id == _id)
+		{
+			m_modelsAnimated[i].active = _active;
+			return true;
+		}
+	}
+	for (int i = 0; i < m_modelsWater.size(); i++)
+	{
+		if (m_modelsWater[i].id == _id)
+		{
+			m_modelsWater[i].active = _active;
+			return true;
+		}
+	}
+	for (int i = 0; i < m_modelsWaterCorners.size(); i++)
+	{
+		if (m_modelsWaterCorners[i].id == _id)
+		{
+			m_modelsWaterCorners[i].active = _active;
+			return true;
+		}
+	}
 	return false;
 }
 
-Buffer* GraphicsLow::AddMesh(std::string _fileDir, Shader *_shaderProg)
+Buffer* GraphicsLow::AddMesh(std::string _fileDir, Shader *_shaderProg, bool animated)
 {
 	for (std::map<const std::string, Buffer*>::iterator it = m_meshs.begin(); it != m_meshs.end(); it++)
 	{		
@@ -605,40 +653,61 @@ Buffer* GraphicsLow::AddMesh(std::string _fileDir, Shader *_shaderProg)
 	std::vector<float> tanData = modelExporter.ReadDataFromFile();
 	std::vector<float> bitanData = modelExporter.ReadDataFromFile();
 	std::vector<float> texCoordData = modelExporter.ReadDataFromFile();
+	std::vector<float> jointIndexData = modelExporter.ReadDataFromFile();
+	std::vector<float> jointWeightData = modelExporter.ReadDataFromFile();
 	modelExporter.CloseFile();
 
 	Buffer* retbuffer = new Buffer();
 
-	std::map<GLuint, GLuint> vpLocs, vnLocs, tanLocs, bitanLocs, tcLocs;
+	std::map<GLuint, GLuint> vpLocs, vnLocs, tanLocs, bitanLocs, tcLocs, jiLocs, jwLocs;
 	vpLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexPosition");
 	vpLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexPosition");
 	vpLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexPosition");
 	vpLocs[m_riverShader.GetShaderProgram()]	 = glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexPosition");
 	vpLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexPosition");
+	vpLocs[m_animationShader.GetShaderProgram()] = glGetAttribLocation(m_animationShader.GetShaderProgram(), "VertexPosition");
 
 	vnLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexNormal");
 	vnLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexNormal");
 	vnLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexNormal");
 	vnLocs[m_riverShader.GetShaderProgram()]	 = glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexNormal");
 	vnLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexNormal");
-
+	vnLocs[m_animationShader.GetShaderProgram()] = glGetAttribLocation(m_animationShader.GetShaderProgram(), "VertexNormal");
+	
 	tanLocs[m_forwardShader.GetShaderProgram()]	  = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTangent");
 	tanLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexTangent");
 	tanLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexTangent");
 	tanLocs[m_riverShader.GetShaderProgram()]	 = glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexTangent");
 	tanLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexTangent");
+	tanLocs[m_animationShader.GetShaderProgram()] = glGetAttribLocation(m_animationShader.GetShaderProgram(), "VertexTangent");
 
 	bitanLocs[m_forwardShader.GetShaderProgram()]	= glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexBiTangent");
 	bitanLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexBiTangent");
 	bitanLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexBiTangent");
 	bitanLocs[m_riverShader.GetShaderProgram()]		= glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexBiTangent");
 	bitanLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexBiTangent");
-
+	bitanLocs[m_animationShader.GetShaderProgram()] = glGetAttribLocation(m_animationShader.GetShaderProgram(), "VertexBiTangent");
+	
 	tcLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTexCoord");
 	tcLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexTexCoord");
 	tcLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexTexCoord");
 	tcLocs[m_riverShader.GetShaderProgram()]	= glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexTexCoord");
 	tcLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexTexCoord");
+	tcLocs[m_animationShader.GetShaderProgram()] = glGetAttribLocation(m_animationShader.GetShaderProgram(), "VertexTexCoord");
+	
+	jiLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexJointIndex");
+	jiLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexJointIndex");
+	jiLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexJointIndex");
+	jiLocs[m_riverShader.GetShaderProgram()]	= glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexJointIndex");
+	jiLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexJointIndex");
+	jiLocs[m_animationShader.GetShaderProgram()] = glGetAttribLocation(m_animationShader.GetShaderProgram(), "VertexJointIndex");
+	
+	jwLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexJointWeight");
+	jwLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexJointWeight");
+	jwLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexJointWeight");
+	jwLocs[m_riverShader.GetShaderProgram()]	= glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexJointWeight");
+	jwLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexJointWeight");
+	jwLocs[m_animationShader.GetShaderProgram()] = glGetAttribLocation(m_animationShader.GetShaderProgram(), "VertexJointWeight");
 
 	_shaderProg->UseProgram();
 	BufferData bufferData[] =
@@ -646,11 +715,17 @@ Buffer* GraphicsLow::AddMesh(std::string _fileDir, Shader *_shaderProg)
 		{ vpLocs,	 3, GL_FLOAT, (const GLvoid*)positionData.data(), (GLsizeiptr)(positionData.size() * sizeof(float)) },
 		{ vnLocs,	 3, GL_FLOAT, (const GLvoid*)normalData.data(), (GLsizeiptr)(normalData.size()   * sizeof(float)) },
 		{ tanLocs,	 3, GL_FLOAT, (const GLvoid*)tanData.data(), (GLsizeiptr)(tanData.size()   * sizeof(float)) },
-		{ bitanLocs, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), (GLsizeiptr)(bitanData.size()   * sizeof(float)) },
-		{ tcLocs,	 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), (GLsizeiptr)(texCoordData.size() * sizeof(float)) }
+		{ bitanLocs,     3, GL_FLOAT, (const GLvoid*)bitanData.data(), (GLsizeiptr)(bitanData.size()   * sizeof(float)) },
+		{ tcLocs,	 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), (GLsizeiptr)(texCoordData.size() * sizeof(float)) },
+		{ jiLocs,	 4, GL_FLOAT, (const GLvoid*)jointIndexData.data(), (GLsizeiptr)(jointIndexData.size() * sizeof(float)) },
+		{ jwLocs,	 4, GL_FLOAT, (const GLvoid*)jointWeightData.data(), (GLsizeiptr)(jointWeightData.size() * sizeof(float)) },
 	};
 
-	retbuffer->init(bufferData, sizeof(bufferData) / sizeof(bufferData[0]), _shaderProg->GetShaderProgram());
+	int bufferDatas = sizeof(bufferData) / sizeof(bufferData[0]);
+	if (animated == false)
+		bufferDatas -= 2;
+
+	retbuffer->init(bufferData, bufferDatas, _shaderProg->GetShaderProgram());
 	retbuffer->setCount((int)positionData.size() / 3);
 	
 	m_meshs.insert(std::pair<const std::string, Buffer*>(_fileDir, retbuffer));
@@ -671,29 +746,60 @@ Buffer* GraphicsLow::AddMesh(ModelToLoadFromSource* _modelToLoad, Shader *_shade
 	std::vector<float> tanData = _modelToLoad->tangents;
 	std::vector<float> bitanData = _modelToLoad->bitangents;
 	std::vector<float> texCoordData = _modelToLoad->texCoords;
+	//std::vector<float> jointIndexData;
+	//std::vector<float> jointWeightData;
 
 	Buffer* retbuffer = new Buffer();
 
-	std::map<GLuint, GLuint> vpLocs, vnLocs, tanLocs, bitanLocs, tcLocs;
+	std::map<GLuint, GLuint> vpLocs, vnLocs, tanLocs, bitanLocs, tcLocs;// , jiLocs, jwLocs;
 	vpLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexPosition");
 	vpLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexPosition");
 	vpLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexPosition");
+	vpLocs[m_riverShader.GetShaderProgram()]	 = glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexPosition");
+	vpLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexPosition");
+	vpLocs[m_animationShader.GetShaderProgram()] = glGetAttribLocation(m_animationShader.GetShaderProgram(), "VertexPosition");
 
 	vnLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexNormal");
 	vnLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexNormal");
 	vnLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexNormal");
-
+	vnLocs[m_riverShader.GetShaderProgram()]	 = glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexNormal");
+	vnLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexNormal");
+	vnLocs[m_animationShader.GetShaderProgram()] = glGetAttribLocation(m_animationShader.GetShaderProgram(), "VertexNormal");
+	
 	tanLocs[m_forwardShader.GetShaderProgram()]	  = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTangent");
 	tanLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexTangent");
 	tanLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexTangent");
+	tanLocs[m_riverShader.GetShaderProgram()]	 = glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexTangent");
+	tanLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexTangent");
+	tanLocs[m_animationShader.GetShaderProgram()] = glGetAttribLocation(m_animationShader.GetShaderProgram(), "VertexTangent");
 
 	bitanLocs[m_forwardShader.GetShaderProgram()]	= glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexBiTangent");
 	bitanLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexBiTangent");
 	bitanLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexBiTangent");
-
+	bitanLocs[m_riverShader.GetShaderProgram()]		= glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexBiTangent");
+	bitanLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexBiTangent");
+	bitanLocs[m_animationShader.GetShaderProgram()] = glGetAttribLocation(m_animationShader.GetShaderProgram(), "VertexBiTangent");
+	
 	tcLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexTexCoord");
 	tcLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexTexCoord");
 	tcLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexTexCoord");
+	tcLocs[m_riverShader.GetShaderProgram()]	= glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexTexCoord");
+	tcLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexTexCoord");
+	tcLocs[m_animationShader.GetShaderProgram()] = glGetAttribLocation(m_animationShader.GetShaderProgram(), "VertexTexCoord");
+	
+	/*jiLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexJointIndex");
+	jiLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexJointIndex");
+	jiLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexJointIndex");
+	jiLocs[m_riverShader.GetShaderProgram()]	= glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexJointIndex");
+	jiLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexJointIndex");
+	jiLocs[m_animationShader.GetShaderProgram()] = glGetAttribLocation(m_animationShader.GetShaderProgram(), "VertexJointIndex");
+	
+	jwLocs[m_forwardShader.GetShaderProgram()]	 = glGetAttribLocation(m_forwardShader.GetShaderProgram(), "VertexJointWeight");
+	jwLocs[m_viewspaceShader.GetShaderProgram()] = glGetAttribLocation(m_viewspaceShader.GetShaderProgram(), "VertexJointWeight");
+	jwLocs[m_interfaceShader.GetShaderProgram()] = glGetAttribLocation(m_interfaceShader.GetShaderProgram(), "VertexJointWeight");
+	jwLocs[m_riverShader.GetShaderProgram()]	= glGetAttribLocation(m_riverShader.GetShaderProgram(), "VertexJointWeight");
+	jwLocs[m_riverCornerShader.GetShaderProgram()] = glGetAttribLocation(m_riverCornerShader.GetShaderProgram(), "VertexJointWeight");
+	jwLocs[m_animationShader.GetShaderProgram()] = glGetAttribLocation(m_animationShader.GetShaderProgram(), "VertexJointWeight");*/
 
 	_shaderProg->UseProgram();
 	BufferData bufferData[] =
@@ -701,8 +807,10 @@ Buffer* GraphicsLow::AddMesh(ModelToLoadFromSource* _modelToLoad, Shader *_shade
 		{ vpLocs,	 3, GL_FLOAT, (const GLvoid*)positionData.data(), (GLsizeiptr)(positionData.size() * sizeof(float)) },
 		{ vnLocs,	 3, GL_FLOAT, (const GLvoid*)normalData.data(), (GLsizeiptr)(normalData.size()   * sizeof(float)) },
 		{ tanLocs,	 3, GL_FLOAT, (const GLvoid*)tanData.data(), (GLsizeiptr)(tanData.size()   * sizeof(float)) },
-		{ bitanLocs, 3, GL_FLOAT, (const GLvoid*)bitanData.data(), (GLsizeiptr)(bitanData.size()   * sizeof(float)) },
-		{ tcLocs,	 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), (GLsizeiptr)(texCoordData.size() * sizeof(float)) }
+		{ bitanLocs,     3, GL_FLOAT, (const GLvoid*)bitanData.data(), (GLsizeiptr)(bitanData.size()   * sizeof(float)) },
+		{ tcLocs,	 2, GL_FLOAT, (const GLvoid*)texCoordData.data(), (GLsizeiptr)(texCoordData.size() * sizeof(float)) },
+		//{ jiLocs,	 4, GL_FLOAT, (const GLvoid*)jointIndexData.data(), (GLsizeiptr)(jointIndexData.size() * sizeof(float)) },
+		//{ jwLocs,	 4, GL_FLOAT, (const GLvoid*)jointWeightData.data(), (GLsizeiptr)(jointWeightData.size() * sizeof(float)) },
 	};
 
 	retbuffer->init(bufferData, sizeof(bufferData) / sizeof(bufferData[0]), _shaderProg->GetShaderProgram());
@@ -716,4 +824,18 @@ Buffer* GraphicsLow::AddMesh(ModelToLoadFromSource* _modelToLoad, Shader *_shade
 void GraphicsLow::BufferLightsToGPU()
 {
 	BufferLightsToGPU_GD();
+}
+
+void GraphicsLow::SetShadowMapData(float _width, float _height, vec3 _target)
+{
+	m_dirLightshadowMapTarget = _target;
+	m_shadowMapWidth = _width;
+	m_shadowMapHeight = _height;
+}
+
+void GraphicsLow::GetShadowMapData(float &_width, float &_height, vec3 &_target)
+{
+	_target = m_dirLightshadowMapTarget;
+	_width = m_shadowMapWidth;
+	_height = m_shadowMapHeight;
 }

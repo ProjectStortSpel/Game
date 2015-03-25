@@ -1,6 +1,9 @@
 #ifndef AUDIO_H
 #define AUDIO_H
 
+#if defined(WIN32) && defined(_DEBUG)
+#include <VLD/vld.h>
+#endif
 #include <SDL/SDL.h>
 #include <string>
 #include <glm/glm.hpp>
@@ -11,7 +14,12 @@ namespace Audio
 	void DECLSPEC Update();
 	void DECLSPEC Quit();
 	
-	void DECLSPEC SetVolume(int volume);
+	void DECLSPEC SetMusicVolume(float volume);
+	float DECLSPEC GetMusicVolume();
+	void DECLSPEC SetSoundVolume(float volume);
+	float DECLSPEC GetSoundVolume();
+	void DECLSPEC SetMasterVolume(float volume);
+	float DECLSPEC GetMasterVolume();
 	
 	void DECLSPEC SetDistance(float near, float far);
 	void DECLSPEC SetCameraPosition(glm::vec3 position);
@@ -34,8 +42,11 @@ namespace Audio
 	void DECLSPEC FadeInSound(const std::string &name, int ms, bool loop = false);
 	void DECLSPEC FadeInSound(const std::string &name, const std::string& channelName, int ms, bool loop = false);
 	void DECLSPEC FadeOutSound(const std::string& channelName, int ms);
+	void DECLSPEC SetSoundVolume(const std::string& channelName, int volume);
 	
 	bool DECLSPEC ChannelExists(const std::string& channelName);
+	
+	void DECLSPEC Reset();
 }
 
 #endif

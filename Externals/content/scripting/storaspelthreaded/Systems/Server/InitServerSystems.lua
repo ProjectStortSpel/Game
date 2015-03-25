@@ -2,12 +2,12 @@
 package.path = package.path .. ";Systems/Server/GameLogicSystems/?.lua"
 require "sv_LobbySystem"
 require "sv_StageSystem"
+require "sv_FinishSystem"
 
 --	Map Systems
 package.path = package.path .. ";Systems/Server/MapSystems/?.lua"
 require "sv_NewMapGenerator"
 require "sv_MapRaterSystem"
---require "sv_CreateMapSystem"
 require "sv_RiverSystem"
 require "sv_VoidSystem"
 require "sv_CheckpointSystem"
@@ -27,6 +27,7 @@ require "sv_SendPlayerInformation"
 package.path = package.path .. ";Systems/Server/AISystems/?.lua"
 require "sv_AICardPickingSystem"
 require "sv_AddAISystem"
+require "sv_AIDynamicScripting"
 
 --	Move Systems
 package.path = package.path .. ";Systems/Server/MoveSystems/?.lua"
@@ -75,7 +76,6 @@ require "sv_WeatherTornadoSystem"
 
 --	Spawn Systems
 package.path = package.path .. ";Systems/Server/SpawnSystems/?.lua"
---require "sv_SpawnSystem"
 require "sv_GiveSpawnLocationSystem"
 require "sv_FindSpawnpointSystem"
 require "sv_RespawnSystem"
@@ -84,6 +84,7 @@ require "sv_PostSpawnSystem"
 --	Round Systems
 package.path = package.path .. ";Systems/Server/RoundSystems/?.lua"
 require "sv_StepTimerSystem"
+require "sv_WeatherTimerSystem"
 require "sv_NewStepSystem"
 require "sv_StartNewRoundSystem"
 require "sv_PlayCardTimerSystem"
@@ -93,6 +94,7 @@ package.path = package.path .. ";Systems/Server/CameraSystems/?.lua"
 require "sv_CameraInterestpointSystem"
 require "sv_CameraNewRoundSystem"
 require "sv_CameraMovePhaseSystem"
+require "sv_CameraFocusPlayerAtStartSystem"
 
 --	Misc Systems
 package.path = package.path .. ";Systems/Server/MiscSystems/?.lua"
@@ -105,12 +107,14 @@ require "sv_HostSettingsSystem"
 require "sv_OffsetUnitSystem"
 require "sv_FadeTreeSystem"
 require "sv_ChatSystem"
+require "sv_AddHatToPlayerSystem"
+require "sv_ScoreboardSystem"
 
 --worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(LobbySystem)
 worldCreator:AddSystemToCurrentGroup(StageSystem)
+worldCreator:AddSystemToCurrentGroup(FinishSystem)
 worldCreator:AddSystemToCurrentGroup(MapGenerator)
---worldCreator:AddSystemToCurrentGroup(CreateMapSystem)
 worldCreator:AddSystemToCurrentGroup(MapRater)
 worldCreator:AddSystemToCurrentGroup(RiverSystem)
 worldCreator:AddSystemToCurrentGroup(VoidSystem)
@@ -122,6 +126,7 @@ worldCreator:AddSystemToCurrentGroup(UnitSystem)
 worldCreator:AddSystemToCurrentGroup(OffsetUnitSystem)
 worldCreator:AddSystemToCurrentGroup(AddAISystem)
 worldCreator:AddSystemToCurrentGroup(AICardPickingSystem)
+worldCreator:AddSystemToCurrentGroup(AIDynamicScripting)
 worldCreator:AddSystemToCurrentGroup(PostMoveSystem)
 
 worldCreator:AddSystemToCurrentGroup(TestMoveSystem)
@@ -166,6 +171,7 @@ worldCreator:AddSystemToCurrentGroup(PostSpawnSystem)
 
 
 worldCreator:AddSystemToCurrentGroup(StartNewRoundSystem)
+worldCreator:AddSystemToCurrentGroup(WeatherTimerSystem)
 worldCreator:AddSystemToCurrentGroup(StepTimerSystem)
 worldCreator:AddSystemToCurrentGroup(NewStepSystem)
 worldCreator:AddSystemToCurrentGroup(PlayCardTimerSystem)
@@ -176,6 +182,7 @@ worldCreator:AddSystemToCurrentGroup(PlayCardTimerSystem)
 worldCreator:AddSystemToCurrentGroup(CameraInterestpointSystem)
 worldCreator:AddSystemToCurrentGroup(CameraNewRoundSystem)
 worldCreator:AddSystemToCurrentGroup(CameraMovePhaseSystem)
+worldCreator:AddSystemToCurrentGroup(CameraFocusPlayerAtStartSystem)
 
 worldCreator:AddSystemToCurrentGroup(TotemPoleSystem)
 worldCreator:AddSystemToCurrentGroup(MoveTotemPieceSystem)
@@ -197,6 +204,9 @@ worldCreator:AddSystemToCurrentGroup(ClearServerSelectedSystem)	--	Temp
 worldCreator:AddSystemToCurrentGroup(FadeTreeSystem) -- TEMP
 worldCreator:AddSystemToCurrentGroup(FindSpawnpointSystem)
 worldCreator:AddSystemToCurrentGroup(ChatSystem)
+
+worldCreator:AddSystemToCurrentGroup(AddHatToPlayerSystem)
+worldCreator:AddSystemToCurrentGroup(ScoreboardSystem)
 
 --	Audio Systems
 package.path = package.path .. ";Systems/Server/AudioSystems/?.lua"

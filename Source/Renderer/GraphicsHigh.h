@@ -13,8 +13,8 @@ namespace Renderer
 	class DECLSPEC GraphicsHigh : public GraphicDevice
 	{
 	public:
-		GraphicsHigh();
-		GraphicsHigh(Camera _camera, int x, int y);
+		GraphicsHigh(bool _fullscreen);
+		GraphicsHigh(Camera _camera, int x, int y, bool _fullscreen);
 		~GraphicsHigh();
 
 		bool Init();
@@ -39,7 +39,7 @@ namespace Renderer
 		void Clear();
 		
 	private:
-		void PrintModelInfo();
+		void PrintModelInfo(int setting);
 
 		bool InitGLEW();
 		bool InitDeferred();
@@ -61,7 +61,6 @@ namespace Renderer
 		float m_lightDefaults[19];
 
 		//Le shadowmap
-		ShadowMap *m_shadowMap;
 		void WriteShadowMapDepth();
 
 		// Timer for shader run time
@@ -78,7 +77,7 @@ namespace Renderer
 		// Shaders
 		Shader m_fullScreenShader;
 		Shader m_deferredShader1, m_compDeferredPass2Shader;
-		Shader m_shadowShaderDeferred;
+		Shader m_shadowShaderAnim;
 
 		// SimpleText
 		bool m_renderSimpleText;
@@ -86,7 +85,6 @@ namespace Renderer
 
 		// Modelloader
 		int m_modelIDcounter;
-		std::vector<Model> m_modelsDeferred;
 
 		// Pointlights buffer
 		GLuint m_pointlightBuffer, m_dirLightBuffer, m_animationBuffer;

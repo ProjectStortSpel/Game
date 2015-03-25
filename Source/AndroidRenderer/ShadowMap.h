@@ -18,6 +18,7 @@ private:
 	mat4 m_viewMatrix;
 	mat4 m_projectionMatrix;
 	mat4 m_biasMatrix;
+	float m_width, m_height;
 
 public:
 	ShadowMap(vec3 lightPos, vec3 target, int res);
@@ -26,6 +27,8 @@ public:
 
 	void CreateShadowMapTexture(GLuint _textureUnit);
 	void ChangeResolution(int res);
+	void SetBounds(float _width, float _height);
+	void GetBounds(float &_width, float &_height){ _width = m_width; _height = m_height; }
 
 	int GetResolution(){ return m_resolution; }
 	

@@ -7,7 +7,7 @@ namespace LuaBridge
 		std::vector<PF> m_PFs;
 		std::vector<PF> m_summedPFs;
 		std::map<std::string, ObjectType> m_uniqueObjects;
-		std::vector<std::vector<float>> m_onTheSpotValues; // The value a field receives on the spot of an item.
+		std::vector<std::vector<float>> m_onTheSpotValues;	// The value a field receives on the spot of an item.
 		std::vector<std::vector<float>> m_weights;
 		std::vector<std::vector<unsigned int>> m_length;
 		std::vector<std::vector<unsigned int>> m_power;
@@ -32,10 +32,10 @@ namespace LuaBridge
 			m_mapSize.y = LuaEmbedder::PullInt(L, 2);
 			m_maxNoOfAIs = LuaEmbedder::PullInt(L, 3);
 
-			//m_uniqueObjects.insert(std::pair<std::string, ObjectType>("NotWalkable", ObjectType::NotWalkable));
-			//m_uniqueObjects.insert(std::pair<std::string, ObjectType>("Edge", ObjectType::Unit));
-			//m_uniqueObjects.insert(std::pair<std::string, ObjectType>("Hole", ObjectType::Unit));
-			m_uniqueObjects.insert(std::pair<std::string, ObjectType>("RiverEnd", ObjectType::Unit));
+			m_uniqueObjects.insert(std::pair<std::string, ObjectType>("NotWalkable", ObjectType::NotWalkable));
+			//m_uniqueObjects.insert(std::pair<std::string, ObjectType>("Edge", ObjectType::Edge));
+			//m_uniqueObjects.insert(std::pair<std::string, ObjectType>("Hole", ObjectType::Hole));
+			m_uniqueObjects.insert(std::pair<std::string, ObjectType>("RiverEnd", ObjectType::RiverEnd));
 			m_uniqueObjects.insert(std::pair<std::string, ObjectType>("Unit", ObjectType::Unit));
 			m_uniqueObjects.insert(std::pair<std::string, ObjectType>("Void", ObjectType::Void));
 
@@ -73,10 +73,13 @@ namespace LuaBridge
 			ai -= 1;
 
 			int objectType = m_uniqueObjects.at(LuaEmbedder::PullString(L, 3));
-			m_onTheSpotValues[ai][objectType] = LuaEmbedder::PullInt(L, 4);
-			m_weights[ai][objectType] = LuaEmbedder::PullInt(L, 5);
-			m_length[ai][objectType] = LuaEmbedder::PullInt(L, 6);
-			m_power[ai][objectType] = LuaEmbedder::PullInt(L, 7);
+
+			m_onTheSpotValues[ai][objectType] = LuaEmbedder::PullFloat(L, 4);
+			m_weights[ai][objectType] = LuaEmbedder::PullFloat(L, 5);
+			unsigned int len = LuaEmbedder::PullFloat(L, 6);
+			m_length[ai][objectType] = len;
+			unsigned int power = LuaEmbedder::PullFloat(L, 7);
+			m_power[ai][objectType] = power;
 
 			ClearPF(ai, objectType);
 
@@ -93,10 +96,12 @@ namespace LuaBridge
 			ai -= 1;
 
 			int objectType = m_uniqueObjects.at(LuaEmbedder::PullString(L, 3));
-			m_onTheSpotValues[ai][objectType] = LuaEmbedder::PullInt(L, 4);
-			m_weights[ai][objectType] = LuaEmbedder::PullInt(L, 5);
-			m_length[ai][objectType] = LuaEmbedder::PullInt(L, 6);
-			m_power[ai][objectType] = LuaEmbedder::PullInt(L, 7);
+			m_onTheSpotValues[ai][objectType] = LuaEmbedder::PullFloat(L, 4);
+			m_weights[ai][objectType] = LuaEmbedder::PullFloat(L, 5);
+			unsigned int len = LuaEmbedder::PullFloat(L, 6);
+			m_length[ai][objectType] = len;
+			unsigned int power = LuaEmbedder::PullFloat(L, 7);
+			m_power[ai][objectType] = power;
 
 			ClearPF(ai, objectType);
 

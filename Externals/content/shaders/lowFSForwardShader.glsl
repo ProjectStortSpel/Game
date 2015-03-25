@@ -62,7 +62,7 @@ void phongModelDirLight(out vec3 ambient, out vec3 diffuse, out vec3 spec)
 		
 		float shadow = 1.0;
 		vec4 shadowCoordinateWdivide = shadowCoord / shadowCoord.w;
-		shadowCoordinateWdivide.z -= 0.0005;
+		shadowCoordinateWdivide.z -= 0.0030;
 		float distanceFromLight = texture(ShadowDepthTex, shadowCoordinateWdivide.st).x;
 		
 		if (shadowCoord.w > 0.0)
@@ -120,6 +120,9 @@ void main()
 {
 	// Diffuse tex
 	vec4 albedo_tex = texture( diffuseTex, TexCoord );
+
+	if(albedo_tex.a == 0.0f)
+		discard;
 
 	// Normal data
 	vec3 normal_map	  = texture( normalTex, TexCoord ).rgb;

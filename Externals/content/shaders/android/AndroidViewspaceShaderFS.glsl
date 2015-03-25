@@ -47,17 +47,19 @@ void main()
 	Material.Ks			= specglow_map.x;
 	Material.Shininess  = specglow_map.y * 254.0 + 1.0;
 	float glow			= specglow_map.z;
-	float blendFactor = specglow_map.w;
 
 	vec3 ambient = vec3(1.0);
 	vec3 diffuse = vec3(0.0);
 	vec3 spec    = vec3(0.0);
 	
-	vec4 coloradded;
-	if( BlendColor != vec3(0.0) )
-		coloradded = vec4((1.0-blendFactor)*albedo_tex.xyz + blendFactor * BlendColor, albedo_tex.a);
-	else
-		coloradded = albedo_tex;
+	float mMod = specglow_map.a*99.0 - 50.0 * floor((specglow_map.a*99.0)/50.0);
+	float blendFactor = mMod/50.0;//(specTexture.a-0.5f)*2;
+	vec3 AddedColor = BlendColor;
+	if (specglow_map.a < 0.5)
+		AddedColor = vec3(1) - BlendColor; // ANTICOLOR? Good or bad? I like
 
-	gl_FragColor = vec4(ambient + diffuse, 1.0) * coloradded + vec4(spec, 0.0) + vec4(normal_map, 0.0)*0.00000001;
+	if( BlendColor != vec3(0.0) )
+		albedo_tex.xyz = (1.0-blendFactor)*albedo_tex.xyz + blendFactor * AddedColor;
+
+	gl_FragColor = vec4(ambient + diffuse, 1.0) * albedo_tex + vec4(spec, 0.0) + vec4(normal_map, 0.0)*0.00000001;
 }

@@ -28,11 +28,9 @@ void main()
 	Transp = 0.0;
 	if(Time >= VertexStartTime)
 	{
-		sizeFactor = 1.0+(age/ParticleLifetime)*0.75;
-		if(age < 150.0)
-			Transp = age/150.0 - age/ParticleLifetime;
-		else
-			Transp = 1.0 - age / ParticleLifetime;
+		sizeFactor = 1.0+(age/ParticleLifetime)*0.7;
+
+		Transp = 1.0 - age / ParticleLifetime;
 	}
 
 	gl_PointSize = 200.0 * Size * sizeFactor /-eyep.z;

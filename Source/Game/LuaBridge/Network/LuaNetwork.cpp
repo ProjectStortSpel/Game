@@ -10,8 +10,8 @@ namespace LuaBridge
 	namespace LuaNetwork
 	{
 
-        lua_State* g_clientLuaState;
-        lua_State* g_serverLuaState;
+		lua_State* g_clientLuaState;
+		lua_State* g_serverLuaState;
 
 		//Shared
 		int Receive(lua_State* L);
@@ -40,7 +40,8 @@ namespace LuaBridge
 		int SendToServer(lua_State* L);
 		int Connect(lua_State* L);
 		int Disconnect(lua_State* L);
-		int IsConnected(lua_State* L);	
+		int IsConnected(lua_State* L);
+		int Name(lua_State* L);
 		int ToClientID(lua_State* L);
 		int ToServerID(lua_State* L);
 
@@ -54,6 +55,8 @@ namespace LuaBridge
 		int Kick(lua_State* L);
 		int MaxConnections(lua_State* L);
 		int ConnectedClients(lua_State* L);
+		int GetPlayerName(lua_State* L);
+		int SetPlayerName(lua_State* L);
 
 		int SendEntity(lua_State* L);
 		int SendEntityKill(lua_State* L);
@@ -76,7 +79,7 @@ namespace LuaBridge
 
 			LuaEmbedder::AddFunction(L, "ResetNetworkMaps", &ResetNetworkMaps, "Net");
 
-			
+
 
 			//LuaEmbedder::AddFunction("WriteByte", &WriteByte, "Net");
 			LuaEmbedder::AddFunction(L, "WriteFloat", &WriteFloat, "Net");
@@ -98,6 +101,7 @@ namespace LuaBridge
 			LuaEmbedder::AddFunction(L, "Connect", &Connect, "Net");
 			LuaEmbedder::AddFunction(L, "Disconnect", &Disconnect, "Net");
 			LuaEmbedder::AddFunction(L, "IsConnected", &IsConnected, "Net");
+			LuaEmbedder::AddFunction(L, "Name", &Name, "Net");
 
 			LuaEmbedder::AddFunction(L, "ToServerID", &ToServerID, "Net");
 			LuaEmbedder::AddFunction(L, "ToClientID", &ToClientID, "Net");
@@ -111,24 +115,26 @@ namespace LuaBridge
 			LuaEmbedder::AddFunction(L, "IsRunning", &IsRunning, "Net");
 			LuaEmbedder::AddFunction(L, "Kick", &Kick, "Net");
 			LuaEmbedder::AddFunction(L, "MaxConnections", &MaxConnections, "Net");
-			LuaEmbedder::AddFunction(L, "ConnectedClients", &ConnectedClients, "Net");
+			LuaEmbedder::AddFunction(L, "ConnectedClients", &ConnectedClients, "Net"); 
+			LuaEmbedder::AddFunction(L, "GetPlayerName", &GetPlayerName, "Net");
+			LuaEmbedder::AddFunction(L, "SetPlayerName", &SetPlayerName, "Net");
 
 			LuaEmbedder::AddFunction(L, "SendEntity", &SendEntity, "Net");
 			LuaEmbedder::AddFunction(L, "SendEntityKill", &SendEntityKill, "Net");
 			LuaEmbedder::AddFunction(L, "BroadcastEntity", &BroadcastEntity, "Net");
 			LuaEmbedder::AddFunction(L, "BroadcastEntityKill", &BroadcastEntityKill, "Net");
 		}
-        
-        void SetClientLuaState(lua_State* L)
-        {
-            g_clientLuaState = L;
-        }
-        
-        void SetServerLuaState(lua_State* L)
-        {
-            g_serverLuaState = L;
-        }
-        
+
+		void SetClientLuaState(lua_State* L)
+		{
+			g_clientLuaState = L;
+		}
+
+		void SetServerLuaState(lua_State* L)
+		{
+			g_serverLuaState = L;
+		}
+
 		//Shared
 
 		Network::PacketHandler* GetPacketHandler(lua_State* L)
@@ -137,9 +143,9 @@ namespace LuaBridge
 			Network::ClientNetwork* client = NetworkInstance::GetClient();
 
 			Network::PacketHandler* ph = NULL;
-            
-            lua_State* parent = LuaEmbedder::LuaChildrenParentMap.find(L) != LuaEmbedder::LuaChildrenParentMap.end() ? LuaEmbedder::LuaChildrenParentMap[L] : L;
-            
+
+			lua_State* parent = LuaEmbedder::LuaChildrenParentMap.find(L) != LuaEmbedder::LuaChildrenParentMap.end() ? LuaEmbedder::LuaChildrenParentMap[L] : L;
+
 			if (server->IsRunning() && parent == g_serverLuaState)
 			{
 				ph = server->GetPacketHandler();
@@ -164,7 +170,7 @@ namespace LuaBridge
 
 			if (!ph)
 				return 0;
-			
+
 			std::string identifier = LuaEmbedder::PullString(L, 1);
 			uint64_t id = ph->StartPack("LuaPacket");
 
@@ -190,12 +196,12 @@ namespace LuaBridge
 
 		int ResetNetworkMaps(lua_State* L)
 		{
-            lua_State* parent = LuaEmbedder::LuaChildrenParentMap.find(L) != LuaEmbedder::LuaChildrenParentMap.end() ? LuaEmbedder::LuaChildrenParentMap[L] : L;
-            
-            if (parent == g_clientLuaState)
-                NetworkInstance::GetClientNetworkHelper()->ResetNetworkMaps();
-            else if (parent == g_serverLuaState)
-                NetworkInstance::GetServerNetworkHelper()->ResetNetworkMaps();
+			lua_State* parent = LuaEmbedder::LuaChildrenParentMap.find(L) != LuaEmbedder::LuaChildrenParentMap.end() ? LuaEmbedder::LuaChildrenParentMap[L] : L;
+
+			if (parent == g_clientLuaState)
+				NetworkInstance::GetClientNetworkHelper()->ResetNetworkMaps();
+			else if (parent == g_serverLuaState)
+				NetworkInstance::GetServerNetworkHelper()->ResetNetworkMaps();
 			return 0;
 		}
 
@@ -392,6 +398,20 @@ namespace LuaBridge
 			LuaEmbedder::PushBool(L, NetworkInstance::GetClient()->IsConnected());
 			return 1;
 		}
+		int Name(lua_State* L)
+		{
+			std::string name = LuaEmbedder::PullString(L, 1);
+
+			if (name.length() > 0)
+			{
+				uint64_t id = NetworkInstance::GetClient()->GetPacketHandler()->StartPack("LuaPacket");
+				NetworkInstance::GetClient()->GetPacketHandler()->WriteString(id, name.c_str());
+				Network::Packet* packet = NetworkInstance::GetClient()->GetPacketHandler()->EndPack(id);
+				NetworkInstance::GetClient()->Send(packet);
+			}
+			LuaEmbedder::PushString(L, name);
+			return 1;
+		}
 		int ToServerID(lua_State* L)
 		{
 			unsigned int idH = LuaEmbedder::PullInt(L, 1);
@@ -496,7 +516,7 @@ namespace LuaBridge
 			if (server->IsRunning())
 			{
 				std::vector<Network::NetConnection> nc = ClientManager::GetConnectedClients();// server->GetConnectedClients();
-				
+
 				for (int i = 0; i < nc.size(); ++i)
 				{
 					LuaEmbedder::PushString(L, nc[i].GetIpAddress());
@@ -505,7 +525,40 @@ namespace LuaBridge
 				return nc.size() * 2;
 			}
 			return 0;
-		}		
+		}
+
+		int GetPlayerName(lua_State* L)
+		{
+			Network::ServerNetwork* server = NetworkInstance::GetServer();
+			if (server->IsRunning())
+			{
+				Network::NetConnection nc(LuaEmbedder::PullString(L, 1).c_str(), LuaEmbedder::PullInt(L, 2));
+				LuaEmbedder::PushString(L, ClientManager::GetPlayerName(nc));
+
+			}
+			else
+				LuaEmbedder::PushString(L, "");
+			return 1;
+		}
+
+		int SetPlayerName(lua_State* L)
+		{
+			Network::ServerNetwork* server = NetworkInstance::GetServer();
+			if (server->IsRunning())
+			{
+				std::string ip = LuaEmbedder::PullString(L, 1).c_str();
+				const int port = LuaEmbedder::PullInt(L, 2);
+				std::string name = LuaEmbedder::PullString(L, 3).c_str();
+				Network::NetConnection nc(ip.c_str(), port);
+				std::string newName = ClientManager::SetPlayerName(nc, name.c_str());
+				LuaEmbedder::PushString(L, newName);
+			}
+			else
+				LuaEmbedder::PushString(L, "");
+
+			return 1;
+
+		}
 
 		int MaxConnections(lua_State* L)
 		{
@@ -610,7 +663,7 @@ namespace LuaBridge
 			unsigned int id = LuaEmbedder::PullInt(L, 1);
 
 			Network::Packet* p = NetworkInstance::GetServerNetworkHelper()->WriteEntityAll(server->GetPacketHandler(), id);
-            std::vector<Network::NetConnection> NCs = ClientManager::GetConnectedClients();
+			std::vector<Network::NetConnection> NCs = ClientManager::GetConnectedClients();
 
 			bool exclude = false;
 			Network::NetConnection nc;
@@ -644,7 +697,7 @@ namespace LuaBridge
 			unsigned int id = LuaEmbedder::PullInt(L, 1);
 
 			Network::Packet* p = NetworkInstance::GetServerNetworkHelper()->WriteEntityKill(server->GetPacketHandler(), id);
-            std::vector<Network::NetConnection> NCs = ClientManager::GetConnectedClients();
+			std::vector<Network::NetConnection> NCs = ClientManager::GetConnectedClients();
 
 
 			bool exclude = false;
@@ -820,9 +873,9 @@ namespace LuaBridge
 
 			if (LuaEmbedder::IsString(L, 1) && LuaEmbedder::IsInt(L, 2) && LuaEmbedder::IsString(L, 3))
 			{
-				ip		= LuaEmbedder::PullString(L, 1);
-				port	= LuaEmbedder::PullInt(L, 2);
-				pw		= LuaEmbedder::PullString(L, 3);
+				ip = LuaEmbedder::PullString(L, 1);
+				port = LuaEmbedder::PullInt(L, 2);
+				pw = LuaEmbedder::PullString(L, 3);
 			}
 			else if (LuaEmbedder::IsString(L, 1) && LuaEmbedder::IsInt(L, 2))
 			{
@@ -1023,7 +1076,7 @@ namespace LuaBridge
 			LuaEmbedder::AddFunction(L, "WriteString", &WriteString, "Server");
 			LuaEmbedder::AddFunction(L, "WriteBool", &WriteBool, "Server");
 			LuaEmbedder::AddFunction(L, "WriteInt", &WriteInt, "Server");
-			
+
 
 			//LuaEmbedder::AddFunction("ReadByte", &ReadByte, "Server");
 			LuaEmbedder::AddFunction(L, "ReadFloat", &ReadFloat, "Server");
@@ -1172,7 +1225,7 @@ namespace LuaBridge
 			unsigned int port = LuaEmbedder::PullInt(L, 2);
 			std::string reason = "";
 
-			if(LuaEmbedder::IsString(L, 3))
+			if (LuaEmbedder::IsString(L, 3))
 				reason = LuaEmbedder::PullString(L, 3);
 
 			Network::NetConnection nc(ip.c_str(), port);
@@ -1313,9 +1366,9 @@ namespace LuaBridge
 			if (!server->IsRunning())
 				return 0;
 
-			unsigned int id		= LuaEmbedder::PullInt(L, 1);
-			std::string ip		= LuaEmbedder::PullString(L, 2);
-			unsigned int port	= LuaEmbedder::PullInt(L, 3);
+			unsigned int id = LuaEmbedder::PullInt(L, 1);
+			std::string ip = LuaEmbedder::PullString(L, 2);
+			unsigned int port = LuaEmbedder::PullInt(L, 3);
 
 			Network::Packet* p = NetworkInstance::GetServerNetworkHelper()->WriteEntityKill(server->GetPacketHandler(), id);
 			Network::NetConnection nc(ip.c_str(), port);
@@ -1333,7 +1386,7 @@ namespace LuaBridge
 			unsigned int id = LuaEmbedder::PullInt(L, 1);
 
 			Network::Packet* p = NetworkInstance::GetServerNetworkHelper()->WriteEntityAll(server->GetPacketHandler(), id);
-            std::vector<Network::NetConnection> NCs = ClientManager::GetConnectedClients();
+			std::vector<Network::NetConnection> NCs = ClientManager::GetConnectedClients();
 			server->Send(p, NCs);
 
 			return 0;
@@ -1347,7 +1400,7 @@ namespace LuaBridge
 			unsigned int id = LuaEmbedder::PullInt(L, 1);
 
 			Network::Packet* p = NetworkInstance::GetServerNetworkHelper()->WriteEntityKill(server->GetPacketHandler(), id);
-            std::vector<Network::NetConnection> NCs = ClientManager::GetConnectedClients();
+			std::vector<Network::NetConnection> NCs = ClientManager::GetConnectedClients();
 			server->Send(p, NCs);
 
 			return 0;

@@ -14,6 +14,8 @@ LobbySystem.Initialize = function ( self )
 	self:AddComponentTypeToFilter(self.Name.."Element", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("LobbyPlayerReady", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("LobbyPlayerStart", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("NextHat", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("PrevHat", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("LobbyMenuActive", FilterType.RequiresOneOf)
 end
@@ -58,6 +60,12 @@ LobbySystem.EntitiesAdded = function(self, dt, entities)
 			elseif world:EntityHasComponent( entityId, "LobbyPlayerStart") then
 				Net.SendToServer(Net.StartPack("Server.StartCheck"))
 				world:KillEntity(entityId)
+			elseif world:EntityHasComponent( entityId, "NextHat") then
+				Net.SendToServer(Net.StartPack("Server.NextHat"))
+				world:KillEntity(entityId)
+			elseif world:EntityHasComponent( entityId, "PrevHat") then
+				Net.SendToServer(Net.StartPack("Server.PrevHat"))
+				world:KillEntity(entityId)
 			end
 		end
 	end
@@ -70,6 +78,16 @@ LobbySystem.SpawnMenu = function(self)
 	
 	button = self:CreateElement("start", "quad", 1, -1.3, -4, 0.8, 0.4)
 	self:AddEntityCommandToButton("LobbyPlayerStart", button)
+	self:AddHoverSize(1.1, button)
+	
+	
+	button = self:CreateElement("smallarrow", "quad", 0.7, 0.3, -4, 0.4, 0.4)
+	self:AddEntityCommandToButton("NextHat", button)
+	self:AddHoverSize(1.1, button)
+	
+	button = self:CreateElement("smallarrow", "quad", -0.7, 0.3, -4, 0.4, 0.4)
+	world:GetComponent(button, "Rotation", 0):SetFloat3(0, 0, math.pi)
+	self:AddEntityCommandToButton("PrevHat", button)
 	self:AddHoverSize(1.1, button)
 end
 
@@ -97,12 +115,7 @@ LobbySystem.AddHoverSize = function(self, deltascale, button)
 end
 
 LobbySystem.CreateElement = function(self, object, folder, posx, posy, posz, scalex, scaley)
-	local id = world:CreateNewEntity()
-	world:CreateComponentAndAddTo("Model", id)
-	world:CreateComponentAndAddTo("Position", id)
-	world:CreateComponentAndAddTo("Rotation", id)
-	world:CreateComponentAndAddTo("Scale", id)
-	world:CreateComponentAndAddTo("PickBox", id)
+	local id = world:CreateNewEntity("Button")
 	world:CreateComponentAndAddTo(self.Name.."Element", id)
 	local model = world:GetComponent(id, "Model", 0)
 	model:SetModel(object, folder, 3)

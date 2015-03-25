@@ -23,15 +23,15 @@ NewStepSystem.EntitiesAdded = function(self, dt, entities)
 
 			self.Step = 1
 			local id = world:CreateNewEntity()
-			world:CreateComponentAndAddTo("NewStep", id)
-			world:KillEntity( entity )
+			world:CreateComponentAndAddTo("WeatherStepTimer", id)
+			world:GetComponent(id, "WeatherStepTimer", "Time"):SetFloat(0)
 
 		elseif world:EntityHasComponent( entity, "NewStep") then
 			--print("\n\nNEW STEP!")
 			
 			local DealingSettings = self:GetEntities("DealingSettings")
 			local cardsPerHand, cardsToPick = world:GetComponent(DealingSettings[1], "DealingSettings", 0):GetInt2(0)
-			
+
 			if self.Step <= cardsToPick then
 			
 				io.write("Step ", self.Step, " ")

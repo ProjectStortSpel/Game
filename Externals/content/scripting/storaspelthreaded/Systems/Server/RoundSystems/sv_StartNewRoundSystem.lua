@@ -12,26 +12,45 @@ StartNewRoundSystem.Initialize = function(self)
 	self:AddComponentTypeToFilter("UnitSelectedCards", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("Unit", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("NotifyStartNewRound", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("PlayerCounter", FilterType.RequiresOneOf)
 end
 
 StartNewRoundSystem.EntitiesAdded = function(self, dt, entities)
-	local onlyOnce = true
+	
+	local onlyOnce = true -- To make sure this is run only once.
+	local counterEntities = self:GetEntities("PlayerCounter")
+	local counterComp = world:GetComponent(counterEntities[1], "PlayerCounter", 0)
+	local noOfAIs = counterComp:GetInt(0)
+	local noOfPlayers = counterComp:GetInt(1)
+	
+	local onlyAIs = false
+	
+	if noOfAIs == noOfPlayers then
+		onlyAIs = true
+	end
+	
 	for n = 1, #entities do
 		local entity = entities[n]
 		if world:EntityHasComponent(entity, "NotifyStartNewRound") then
-			local numReadyUnits = #self:GetEntities("UnitSelectedCards")
-			local units = self:GetEntities("Unit")
-	
-			--print("NumReadyUnits: " .. numReadyUnits)
-			--print("NumUnits: " .. #units)
-
-			if numReadyUnits == #units and onlyOnce then
+			local readyUnits = self:GetEntities("UnitSelectedCards")
+			local numReadyUnits = #readyUnits
 			
+			if onlyAIs then
+				numReadyUnits = noOfPlayers
+			else
+				numReadyUnits = numReadyUnits + noOfAIs
+			end
+			
+			--print("NumReadyUnits: " .. numReadyUnits)
+			--print("NoOfPlayers: " .. noOfPlayers)
+			
+			if noOfPlayers <= numReadyUnits and onlyOnce then
+				
 				local id = world:CreateNewEntity()
 				world:CreateComponentAndAddTo("NewRound", id)
-
-				for i = 1, #units do
-					world:RemoveComponentFrom("UnitSelectedCards", units[i])
+				
+				for i = 1, #readyUnits do
+					world:RemoveComponentFrom("UnitSelectedCards", readyUnits[i])
 				end
 				
 				local newId = world:CreateNewEntity()
@@ -39,7 +58,6 @@ StartNewRoundSystem.EntitiesAdded = function(self, dt, entities)
 				world:GetComponent(newId, "SetPickingPhaseTimer", "Amount"):SetFloat(0)
 				
 				onlyOnce = false
-				--break	-- To make sure this is run only once.
 				
 				self.CurrentRound = self.CurrentRound + 1
 				io.write("\n-------------------------- Round ", self.CurrentRound, " -------------------------\n")

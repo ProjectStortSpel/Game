@@ -35,40 +35,36 @@ AbilityStoneSystem.UpdateLifeTime = function(self, entity)
 	for j = 1 , #timers do
 	
 		local lifeSpan = world:GetComponent(timers[j], "StoneTimer", "LifeSpan")
-		local count = lifeSpan:GetInt()
-		lifeSpan:SetInt(count - 1)
+		local count = lifeSpan:GetInt() - 1
+		lifeSpan:SetInt(count)
 		
-		if lifeSpan:GetInt() <= 0 then
+		if count <= 0 then
 			world:KillEntity(timers[j])
 		end
-		
-	
 	end
 	
 	for i = 1, #stones do
 	
 		local lifeSpan = world:GetComponent(stones[i], "AbilityStone", "LifeSpan")
-		local count = lifeSpan:GetInt()
-		lifeSpan:SetInt(count - 1)
+		local count = lifeSpan:GetInt() - 1
+		lifeSpan:SetInt(count)
 		
 		local parent = world:GetComponent(stones[i], "Parent", "EntityId"):GetInt()
 		local x, z = world:GetComponent(parent, "MapPosition", 0):GetInt2()
 		
-		if lifeSpan:GetInt() <= 0 then
-
-			
-			PathfinderHandler.SetTileWalkable(x,z, true)
+		local newEntity = world:CreateNewEntity()
+		world:CreateComponentAndAddTo("TileWalkabilityHasChanged", newEntity)
+		world:GetComponent(newEntity, "TileWalkabilityHasChanged", 0):SetInt3(count, x, z)
+		--world:GetComponent(newEntity, "TileWalkabilityHasChanged", "Walkable"):SetBool(true)
+		
+		if count <= 0 then
 			world:RemoveComponentFrom("NotWalkable", parent)
 			world:KillEntity(stones[i])
 		else
-			local text = self:CreateElement("quad", "text", x, 1.51, z, 0.46, 0.46)
+			local text = self:CreateElement("quad", "text", x, 1.22, z, 0.46, 0.46)
 			world:CreateComponentAndAddTo("StoneTimerText", text)
 			self:AddTextToTexture("StoneText"..i, lifeSpan:GetInt(), 0, 0.5, 0.5, 0.2, text)
 		end
-	
-		
-
-		
 	end
 
 	local uStone = self:GetEntities("UnitStone")
@@ -97,17 +93,14 @@ end
 AbilityStoneSystem.AddTimer = function(self, entity, X, Z)
 	
 	local timerAbove = world:CreateNewEntity("StoneTimer")
-	local R, G, B = world:GetComponent(entity, "Color", "X"):GetFloat3()
-	
-	world:GetComponent(timerAbove, "Position", 0):SetFloat3(X, 1.5, Z)
+
+	world:GetComponent(timerAbove, "Position", 0):SetFloat3(X, 1.2, Z)
 	world:GetComponent(timerAbove, "Rotation", 0):SetFloat3(1.5 * math.pi, math.pi * 0.25, 0.0)
 	world:GetComponent(timerAbove, "Scale", 0):SetFloat3(0.7,0.7,0.7)
 	world:GetComponent(timerAbove, "Model", "ModelName"):SetText("timer")
 	world:GetComponent(timerAbove, "Model", "ModelPath"):SetText("quad")
 	world:GetComponent(timerAbove, "Model", "RenderType"):SetInt(1)
 	world:GetComponent(timerAbove, "StoneTimer", "LifeSpan"):SetInt(self.LifeSpan)
-	world:GetComponent(timerAbove, "Color", "X"):SetFloat3(R,G,B)	
-	
 end
 
 AbilityStoneSystem.PlaceStone = function(self, entity)
@@ -125,7 +118,8 @@ AbilityStoneSystem.PlaceStone = function(self, entity)
 		for i = 1, #tiles do
 		
 			local mapX, mapZ = world:GetComponent(tiles[i], "MapPosition", 0):GetInt2()
-				if mapX == X and mapZ == Z then
+			
+			if mapX == X and mapZ == Z then
 				
 				world:CreateComponentAndAddTo("NotWalkable", tiles[i])
 				
@@ -134,8 +128,12 @@ AbilityStoneSystem.PlaceStone = function(self, entity)
 				world:CreateComponentAndAddTo("Parent", stone)
 				world:CreateComponentAndAddTo("AbilityStone", stone)
 				world:CreateComponentAndAddTo("LerpPosition", stone)
+				world:CreateComponentAndAddTo("AddEntityAfterLerp", stone)
 				
-				PathfinderHandler.SetTileWalkable(X,Z, false)
+				local newEntity = world:CreateNewEntity()
+				world:CreateComponentAndAddTo("TileWalkabilityHasChanged", newEntity)
+				world:GetComponent(newEntity, "TileWalkabilityHasChanged", 0):SetInt3(self.LifeSpan, X, Z)
+				--world:GetComponent(newEntity, "TileWalkabilityHasChanged", "Walkable"):SetBool(false)
 				
 				math.randomseed( os.time() )
 				math.random(); math.random(); math.random(); -- pop the not randomized values (blame lua)
@@ -148,6 +146,23 @@ AbilityStoneSystem.PlaceStone = function(self, entity)
 				world:GetComponent(stone, "LerpPosition", "Z"):SetFloat(0)
 				world:GetComponent(stone, "LerpPosition", "Time"):SetFloat(0.7)
 				world:GetComponent(stone, "LerpPosition", "Algorithm"):SetText("NormalLerp")
+				world:GetComponent(stone, "AddEntityAfterLerp", "ComponentName"):SetText("AddStoneImpact")
+
+				local audioId = Net.StartPack("Client.PlaySoundC")
+				Net.WriteString(audioId, "FallingWhistleShort")
+				Net.WriteString(audioId, "FallingWhistleShort" .. stone)
+				Net.WriteBool(audioId, false)
+				Net.Broadcast(audioId)
+				audioId = Net.StartPack("Client.SetSoundPosition")
+				Net.WriteString(audioId, "FallingWhistleShort" .. stone)
+				Net.WriteFloat(audioId, X)
+				Net.WriteFloat(audioId, 0.5)
+				Net.WriteFloat(audioId, Z)
+				Net.Broadcast(audioId)
+				audioId = Net.StartPack("Client.SetSoundVolume")
+				Net.WriteString(audioId, "FallingWhistleShort" .. stone)
+				Net.WriteInt(audioId, 10)
+				Net.Broadcast(audioId)
 				
 				self:AddTimer(stone,X,Z)
 				

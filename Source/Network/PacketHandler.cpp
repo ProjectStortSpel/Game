@@ -176,7 +176,7 @@ Packet* PacketHandler::EndPack(uint64_t _id)
 		unsigned short length = (unsigned short)(psi->Position - psi->Data);
 
 		Packet* p = new Packet();
-		p->Data = new unsigned char[length];
+		p->Data = new char[length];
 		memcpy(p->Data, psi->Data, length);
 		*p->Length = length;
 
@@ -185,10 +185,11 @@ Packet* PacketHandler::EndPack(uint64_t _id)
 		{
 			// remove but dont deallocate
 			//might work
-			PacketSendInfo* to_be_deleted = m_packetSendInfoMap->at( _id );
-			m_packetSendInfoMap->erase(_id);
+			//PacketSendInfo* to_be_deleted = m_packetSendInfoMap->at( _id );
+			
 			//might work
-			delete to_be_deleted;
+			SAFE_DELETE(psi);
+			m_packetSendInfoMap->erase(_id);
 			SDL_UnlockMutex(m_sendLock);
 		}
 		else if(NET_DEBUG > 0)
@@ -372,9 +373,9 @@ char PacketHandler::ReadByte(uint64_t _id)
 	return var;
 }
 
-unsigned char* PacketHandler::ReadBytes(uint64_t _id, int size)
+char* PacketHandler::ReadBytes(uint64_t _id, int size)
 {
-	unsigned char* var = NULL;
+	char* var = NULL;
 	PacketReceiveInfo* pri = GetPacketReceiveInfo(_id);
 	if (pri)
 	{
@@ -488,7 +489,7 @@ float PacketHandler::ReadFloat(uint64_t _id)
 }
 
 
-bool PacketHandler::IsOutOfBounds(unsigned char* _begin, unsigned char* _position, unsigned short _length)
+bool PacketHandler::IsOutOfBounds(char* _begin, char* _position, unsigned short _length)
 {
 
 	if (_position - _begin > _length)

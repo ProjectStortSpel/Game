@@ -39,7 +39,7 @@ UpdateLerpPositionSystem.Update = function(self, dt)
 				positions[i]:SetFloat3(X, Y, Z, false)
 				timers[i]:SetFloat(_timer, false)
 			else
-				positions[i]:SetFloat3(tX, tY, tZ, false)
+				positions[i]:SetFloat3(tX, tY, tZ)
 				world:RemoveComponentFrom("LerpingPosition", entity)
 			end	
 		end

@@ -15,18 +15,16 @@ end
 
 
 GameInterfaceSystem.PostInitialize = function(self)
-	local menubutton = self:CreateElement("gamemenubutton", "quad", 3.3, -1.4, -4, 0.35, 0.35)
-	self:AddEntityCommandToButton("GameMenu", menubutton)
-	self:AddHoverSize(1.5, menubutton)
 
-	local rconbutton = self:CreateElement("rconmenubutton", "quad", -3.3, -1.4, -4, 0.35, 0.35)
-	local rotation = world:GetComponent(rconbutton, "Rotation", 0)
-	self:AddEntityCommandToButton("RconMenu", rconbutton)
-	self:AddHoverSize(1.5, rconbutton)
-	
-	local camerabutton = self:CreateElement("camerabutton", "quad", 3.3, 1.4, -4, 0.35, 0.35)
-	self:AddEntityCommandToButton("CameraSystemComponent", camerabutton)
-	self:AddHoverSize(1.5, camerabutton)
+	local aspectX, aspectY = GraphicDevice.GetAspectRatio()
+
+	local menubutton = self:CreateButton("gamemenubutton", "quad", 3.9*aspectX, -1.4, -4, 1.0, 0.5)
+	self:AddEntityCommandToButton("GameMenu", menubutton)
+	self:AddHoverSize(1.1, menubutton)
+
+	local socialbutton = self:CreateButton("socialmenubutton", "quad", -3.9*aspectX, -1.4, -4, 1.0, 0.5)
+	self:AddEntityCommandToButton("RconMenu", socialbutton)
+	self:AddHoverSize(1.1, socialbutton)
 
 end
 
@@ -54,6 +52,21 @@ GameInterfaceSystem.Update = function(self, dt)
 	end
 end
 
+GameInterfaceSystem.CreateButton = function(self, object, folder, posx, posy, posz, scalex, scaley)
+	local id = world:CreateNewEntity("Button")
+	world:CreateComponentAndAddTo(self.Name.."Element", id)
+	local model = world:GetComponent(id, "Model", 0)
+	model:SetModel(object, folder, 3)
+	local position = world:GetComponent(id, "Position", 0)
+	position:SetFloat3(posx, posy, posz)
+	local scale = world:GetComponent(id, "Scale", 0)
+	scale:SetFloat3(scalex, scaley, 1)
+	local pickbox = world:GetComponent(id, "PickBox", 0)
+	pickbox:SetFloat2(1, 1)
+	local rotation = world:GetComponent(id, "Rotation", 0)
+	rotation:SetFloat3(0, 0, 0)
+	return id	
+end
 
 GameInterfaceSystem.CreateElement = function(self, object, folder, posx, posy, posz, scalex, scaley)
 	local id = world:CreateNewEntity()

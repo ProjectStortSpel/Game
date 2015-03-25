@@ -30,10 +30,12 @@ private:
 	unsigned int m_positionId, m_rotationId;
 	unsigned int m_scaleId;
 	unsigned int m_colorId;
-	unsigned int m_renderId, m_renderOffset, m_colorOffset;
+	unsigned int m_renderId, m_renderModel, m_renderOffset, m_colorOffset;
 	unsigned int m_worldToViewSpaceId;
+	unsigned int m_staticModelId;
 
 	unsigned int m_parentId;
+	unsigned int m_parentJointId;
 	unsigned int m_isparentId;
 
 	std::map<unsigned int, std::vector<unsigned int>> m_Parents;

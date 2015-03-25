@@ -20,6 +20,9 @@ SendPlayerInformation.EntitiesAdded = function(self, dt, entities)
 			for i = 1, #allPlayers do
 				self:SendGameStartedInformation(allPlayers[i])
 			end
+			
+			local audioId = Net.StartPack("Client.PlayMusic")
+			Net.Broadcast(audioId)
 		end
 		
 		

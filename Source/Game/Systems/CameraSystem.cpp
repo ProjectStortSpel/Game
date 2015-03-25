@@ -56,7 +56,7 @@ void CameraSystem::Update(const ECSL::RuntimeInfo& _runtime)
 											 m_input->GetTouch()->GetdY((SDL_FingerID)0) * 1500.0f);
 	}*/
 
-#else
+#elif defined(_DEBUG)
 	if (m_input->GetKeyboard()->IsTextInputActive())
 		return;
 	/*	Fulhax just nu, enbart för att slippa ha det i gameloopen (REN OCH FIN)	*/

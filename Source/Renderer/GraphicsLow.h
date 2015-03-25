@@ -12,8 +12,8 @@ namespace Renderer
 	class DECLSPEC GraphicsLow : public GraphicDevice
 	{
 	public:
-		GraphicsLow();
-		GraphicsLow(Camera _camera, int x, int y);
+		GraphicsLow(bool _fullscreen);
+		GraphicsLow(Camera _camera, int x, int y, bool _fullscreen);
 		~GraphicsLow();
 
 		bool Init();
@@ -47,7 +47,6 @@ namespace Renderer
 
 		char *m_stringToInt;
 		//Le shadowmap
-		ShadowMap *m_shadowMap;
 		void WriteShadowMapDepth();
 
 		// Timer for shader run time

@@ -9,9 +9,10 @@ WeatherWindSystem.Initialize = function(self)
 	self:UsingEntitiesAdded()
 
 	--	Set Filter
-	self:AddComponentTypeToFilter("NewStep", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("WeatherStep", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("WeatherWind", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("Unit", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("IsTree", FilterType.RequiresOneOf)
 end
 
 WeatherWindSystem.EntitiesAdded = function(self, dt, newEntities)
@@ -24,10 +25,9 @@ WeatherWindSystem.EntitiesAdded = function(self, dt, newEntities)
 		if world:EntityHasComponent(tEntity, "WeatherWind") then
 		
 			--	Randomize which round to play it on
-			local	numberOfSteps	=	5+1 - self.CurrentStep%5
-			local	stepToTrigger	=	math.random(1, 5)
-			
-			world:GetComponent(tEntity, "Weather", "StepToHappen"):SetInt(1)
+			--local	numberOfSteps	=	5+1 - self.CurrentStep%5
+			local	stepToTrigger	=	math.random(2, 5)
+			world:GetComponent(tEntity, "Weather", "StepToHappen"):SetInt(stepToTrigger)
 			world:GetComponent(tEntity, "Weather", "StageToHappen"):SetInt(0)
 			world:GetComponent(tEntity, "WeatherWind", "Force"):SetInt(1)
 			
@@ -39,23 +39,44 @@ WeatherWindSystem.EntitiesAdded = function(self, dt, newEntities)
 			end
 			
 			world:CreateComponentAndAddTo("Direction", tEntity)
-			world:GetComponent(tEntity, "Direction", "X"):SetInt(1)
-			world:GetComponent(tEntity, "Direction", "Z"):SetInt(0)
+			world:GetComponent(tEntity, "Direction", "X"):SetInt(dirX)
+			world:GetComponent(tEntity, "Direction", "Z"):SetInt(dirZ)
 			
-		elseif world:EntityHasComponent(tEntity, "NewStep") then
+			local	allTrees	=	self:GetEntities("IsTree")
+			for i = 1, #allTrees do
+				local Tree = allTrees[i]
+				if not world:EntityHasComponent(Tree, "LerpRotation") then
+					world:CreateComponentAndAddTo("LerpRotation", Tree)
+				end
+				local TreeX, TreeY, TreeZ = world:GetComponent(Tree, "Rotation", "X"):GetFloat3(0)
+				world:GetComponent(Tree, "LerpRotation", "X"):SetFloat(dirZ*0.2)
+				world:GetComponent(Tree, "LerpRotation", "Y"):SetFloat(TreeY)
+				world:GetComponent(Tree, "LerpRotation", "Z"):SetFloat(-dirX*0.2)
+				world:GetComponent(Tree, "LerpRotation", "Time"):SetFloat(0.5)
+				world:GetComponent(Tree, "LerpRotation", "Algorithm"):SetText("NormalLerp")
+			end
 			
-			self.CurrentStep	=	self.CurrentStep+1
+			-- Play strong wind sound!
+			local audioId = Net.StartPack("Client.PlaySoundC")
+			Net.WriteString(audioId, "StrongWind")
+			Net.WriteString(audioId, "StrongWindForcast")
+			Net.WriteBool(audioId, false)
+			Net.Broadcast(audioId)
+			audioId = Net.StartPack("Client.SetSoundVolume")
+			Net.WriteString(audioId, "StrongWindForcast")
+			Net.WriteInt(audioId, 20)
+			Net.Broadcast(audioId)
+			
+		elseif world:EntityHasComponent(tEntity, "WeatherStep") then
+			--self.CurrentStep	=	self.CurrentStep+1
+			local	currentWind	=	self:GetEntities("WeatherWind")
+			if #currentWind ~= 0 then
+				print("NUMBER OF WEATHERS: " .. #currentWind)
+				self:TickWeather(currentWind[1])
+			end
 		end
 		
 	end
-	
-	--	Get current weather
-	local	currentWind	=	self:GetEntities("WeatherWind")
-	if #currentWind ~= 0 then
-		print("NUMBER OF WEATHERS: " .. #currentWind)
-		self:TickWeather(currentWind[1])
-	end
-	
 end
 
 WeatherWindSystem.TickWeather = function(self, weatherEntity)
@@ -63,21 +84,59 @@ WeatherWindSystem.TickWeather = function(self, weatherEntity)
 	--	Reduce steps left
 	local	stepsLeft	=	world:GetComponent(weatherEntity, "Weather", "StepToHappen"):GetInt()
 	world:GetComponent(weatherEntity, "Weather", "StepToHappen"):SetInt(stepsLeft-1)
-	
 	if stepsLeft-1 <= 0 then
 	
 		local	allUnits	=	self:GetEntities("Unit")
+		local	allTrees	=	self:GetEntities("IsTree")
 		local	dirX, dirZ	=	world:GetComponent(weatherEntity, "Direction", "X"):GetInt2()
 		local	windForce	=	world:GetComponent(weatherEntity, "WeatherWind", "Force"):GetInt()
 		
 		print("Wind direction " .. dirX .. ", " .. dirZ)
+		
+		for i = 1, #allTrees do
+			local Tree = allTrees[i]
+			local TreeX, TreeY, TreeZ = world:GetComponent(Tree, "Rotation", "X"):GetFloat3(0)
+			
+			if not world:EntityHasComponent(Tree, "LerpingRotation") then
+				world:CreateComponentAndAddTo("LerpingRotation", Tree)
+			end
+			world:GetComponent(Tree, "LerpingRotation", "Time"):SetFloat8(0.5, 0, TreeX, TreeY, TreeZ, dirZ*0.5, 0, -dirX*0.5)
+			world:GetComponent(Tree, "LerpingRotation", "Algorithm"):SetText("NormalLerp")
+
+			if not world:EntityHasComponent(Tree, "LerpRotation") then
+				world:CreateComponentAndAddTo("LerpRotation", Tree)
+			end
+			world:GetComponent(Tree, "LerpRotation", "X"):SetFloat(0)
+			world:GetComponent(Tree, "LerpRotation", "Y"):SetFloat(TreeY)
+			world:GetComponent(Tree, "LerpRotation", "Z"):SetFloat(0)
+			world:GetComponent(Tree, "LerpRotation", "Time"):SetFloat(1.5)
+			world:GetComponent(Tree, "LerpRotation", "Algorithm"):SetText("NormalLerp")
+		end
 		
 		for i = 1, #allUnits do
 		
 			
 			local	tUnit	=	allUnits[i]
 			
-			if not world:EntityHasComponent(tUnit, "UnitDead") then
+			if world:EntityHasComponent(tUnit, "ActionGuard") then
+				-- SOUND
+					local audioId = Net.StartPack("Client.PlaySoundC")
+					Net.WriteString(audioId, "BlockVoice" .. math.random(1, 3))
+					Net.WriteString(audioId, "BlockVoice" .. tUnit)
+					Net.WriteBool(audioId, false)
+					Net.Broadcast(audioId)
+					local px, py, pz = world:GetComponent(tUnit, "Position", 0):GetFloat3()
+					audioId = Net.StartPack("Client.SetSoundPosition")
+					Net.WriteString(audioId, "BlockVoice" .. tUnit)
+					Net.WriteFloat(audioId, px)
+					Net.WriteFloat(audioId, py)
+					Net.WriteFloat(audioId, pz)
+					Net.Broadcast(audioId)
+					audioId = Net.StartPack("Client.SetSoundVolume")
+					Net.WriteString(audioId, "BlockVoice" .. tUnit)
+					Net.WriteInt(audioId, 128)
+					Net.Broadcast(audioId)
+			elseif not world:EntityHasComponent(tUnit, "UnitDead") then
 			
 				local	posX, posZ	=	world:GetComponent(tUnit, "MapPosition", "X"):GetInt2()
 				
@@ -93,6 +152,16 @@ WeatherWindSystem.TickWeather = function(self, weatherEntity)
 			end
 		end
 		
+		-- Play strong wind sound!
+		local audioId = Net.StartPack("Client.PlaySoundC")
+		Net.WriteString(audioId, "StrongWind")
+		Net.WriteString(audioId, "StrongWind" .. weatherEntity)
+		Net.WriteBool(audioId, false)
+		Net.Broadcast(audioId)
+		audioId = Net.StartPack("Client.SetSoundVolume")
+		Net.WriteString(audioId, "StrongWind" .. weatherEntity)
+		Net.WriteInt(audioId, 80)
+		Net.Broadcast(audioId)
 		
 		print("WIND!!!")
 	

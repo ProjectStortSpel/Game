@@ -3,6 +3,7 @@
 #include <string>
 #include "LuaEmbedder/LuaEmbedder.h"
 #include "Network/ClientDatabase.h"
+#include "Audio/Audio.h"
 
 GameConsole::GameConsole(Renderer::GraphicDevice* _graphics, ECSL::World* _world)
 {
@@ -238,11 +239,20 @@ void GameConsole::HostListenServer(std::string _command, std::vector<Console::Ar
         }
     }
     
-    bool hosting = NetworkInstance::GetServer()->Start(port, pw.c_str(), connections);
-    
     //LuaEmbedder::AddBool("Server", hosting);
-    
-    bool connected = NetworkInstance::GetClient()->Connect("127.0.0.1", pw.c_str(), port, 0);
+	if (!NetworkInstance::GetServer()->Start(port, pw.c_str(), connections))
+	{
+		NetworkInstance::GetServer()->Stop();
+		return;
+	}
+	if (!NetworkInstance::GetClient()->Connect("127.0.0.1", pw.c_str(), port, 0))
+	{
+		NetworkInstance::GetServer()->Stop();
+		NetworkInstance::GetClient()->Disconnect();
+		return;
+	}
+	NetworkInstance::GetServer()->Stop();
+	NetworkInstance::GetClient()->Disconnect();
 }
 
 
@@ -466,6 +476,25 @@ void GameConsole::ECSLMemoryUsage(std::string _command, std::vector<Console::Arg
 	m_consoleManager->AddMessage(ss.str().c_str());
 }
 
+void GameConsole::SetMusicVolume(std::string _command, std::vector< Console::Argument >* _args)
+{
+	float volume = _args->at(0).Number;
+	Audio::SetMusicVolume(volume);
+}
+
+void GameConsole::SetSoundVolume(std::string _command, std::vector< Console::Argument >* _args)
+{
+	float volume = _args->at(0).Number;
+	Audio::SetSoundVolume(volume);
+}
+
+void GameConsole::SetMasterVolume(std::string _command, std::vector< Console::Argument >* _args)
+{
+	float volume = _args->at(0).Number;
+	Audio::SetMasterVolume(volume);
+}
+
+
 void GameConsole::ListCommands(std::string _command, std::vector<Console::Argument>* _args)
 {
 	m_consoleManager->AddMessage("Command           -   Arg1, Arg2, Arg3, ...");
@@ -510,5 +539,9 @@ void GameConsole::SetupHooks(Console::ConsoleManager* _consoleManager)
 	m_consoleManager->AddCommand("AddPointlight", std::bind(&GameConsole::AddPointlight, this, std::placeholders::_1, std::placeholders::_2));
 
 	m_consoleManager->AddCommand("MemoryUsage", std::bind(&GameConsole::ECSLMemoryUsage, this, std::placeholders::_1, std::placeholders::_2));
+
+	m_consoleManager->AddCommand("MusicVolume", std::bind(&GameConsole::SetMusicVolume, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager->AddCommand("SoundVolume", std::bind(&GameConsole::SetSoundVolume, this, std::placeholders::_1, std::placeholders::_2));
+	m_consoleManager->AddCommand("Volume", std::bind(&GameConsole::SetMasterVolume, this, std::placeholders::_1, std::placeholders::_2));
 }
 

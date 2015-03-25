@@ -1,7 +1,7 @@
 WeatherTornadoSystem					=	System()
 WeatherTornadoSystem.TornadoIds			=	{}
 WeatherTornadoSystem.TornadoIds.__mode 	= "k"
-WeatherTornadoSystem.NoTornados			=	1
+WeatherTornadoSystem.NoTornados			=	10
 
 WeatherTornadoSystem.Initialize = function(self)
 	--	Set Name
@@ -11,7 +11,7 @@ WeatherTornadoSystem.Initialize = function(self)
 	self:UsingEntitiesAdded()
 
 	--	Set Filter
-	self:AddComponentTypeToFilter("NewStep", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("WeatherStep", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("DealCards", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("WeatherTornado", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("TestMoveSuccess",FilterType.RequiresOneOf)
@@ -39,7 +39,7 @@ WeatherTornadoSystem.EntitiesAdded = function(self, dt, newEntities)
 			world:KillEntity(tEntity)
 		end
 		
-		if world:EntityHasComponent(tEntity, "NewStep") then
+		if world:EntityHasComponent(tEntity, "WeatherStep") then
 			for i = 1, #self.TornadoIds do
 				self:MoveTornado(self.TornadoIds[i])
 				
@@ -96,10 +96,7 @@ WeatherTornadoSystem.RemoveSpin = function(self, unit)
 		
 		local dirX, dirZ = world:GetComponent(unit, "Direction", 0):GetInt2()
 		local lRotation = 0
-		
-		print("RemoveSpin")
-		print("dirX: " .. dirX)
-		print("dirZ: " .. dirZ)
+
 		if dirX == 0 and dirZ == 1 then -- 0°
 			lRotation = 0
 		elseif dirX == 1 and dirZ == 0 then -- 90°
@@ -233,6 +230,28 @@ WeatherTornadoSystem.CheckCollision = function(self, id, unit)
 	
 	if posX == playerX and posZ == playerZ then
 		print("COLLISION WITH A PLAYER. YOU SPIN ME RIGHT ROUND, BABY RIGHT ROUND!")
+		
+		if world:EntityHasComponent(unit, "ActionGuard") then
+			-- SOUND
+			local audioId = Net.StartPack("Client.PlaySoundC")
+			Net.WriteString(audioId, "BlockVoice" .. math.random(1, 3))
+			Net.WriteString(audioId, "BlockVoice" .. unit)
+			Net.WriteBool(audioId, false)
+			Net.Broadcast(audioId)
+			local px, py, pz = world:GetComponent(unit, "Position", 0):GetFloat3()
+			audioId = Net.StartPack("Client.SetSoundPosition")
+			Net.WriteString(audioId, "BlockVoice" .. unit)
+			Net.WriteFloat(audioId, px)
+			Net.WriteFloat(audioId, py)
+			Net.WriteFloat(audioId, pz)
+			Net.Broadcast(audioId)
+			audioId = Net.StartPack("Client.SetSoundVolume")
+			Net.WriteString(audioId, "BlockVoice" .. unit)
+			Net.WriteInt(audioId, 128)
+			Net.Broadcast(audioId)
+			return
+		end
+		
 		if not world:EntityHasComponent(unit, "Spin") then
 		
 			world:CreateComponentAndAddTo("Spin", unit)
@@ -264,11 +283,7 @@ WeatherTornadoSystem.CheckCollision = function(self, id, unit)
 				dirX = 0
 				dirZ = -1
 			end
-			
-			print("Collision")
-			print("dirX: " .. dirX)
-			print("dirZ: " .. dirZ)
-			
+
 			world:GetComponent(unit, "Direction", 0):SetInt2(dirX,dirZ)
 
 		end

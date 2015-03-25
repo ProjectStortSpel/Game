@@ -23,6 +23,7 @@ void DirectionalLightSystem::Initialize()
 	SetEntitiesRemovedTaskCount(1);
 
 	AddComponentTypeToFilter("DirectionalLight", ECSL::FilterType::Mandatory);
+	AddComponentTypeToFilter("Hide", ECSL::FilterType::Excluded);
 
 
 	std::vector<unsigned int> bitsetComponents;
@@ -72,7 +73,17 @@ void DirectionalLightSystem::EntitiesAdded(const ECSL::RuntimeInfo& _runtime, co
 
 void DirectionalLightSystem::EntitiesRemoved(const ECSL::RuntimeInfo& _runtime, const std::vector<unsigned int>& _entities)
 {
-	UpdateDirectionalLight();
+	bool	doRebuff = false;
+	for (auto entityId : _entities)
+	{
+		if (HasComponent(entityId, "Hide"))
+			RemoveComponentFrom("Hide", entityId);
+		else
+			doRebuff = true;
+	}
+
+	if (doRebuff)
+		UpdateDirectionalLight();
 }
 
 

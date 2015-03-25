@@ -317,21 +317,39 @@ void ServerNetwork::ReceivePackets(ISocket* _socket, const std::string _name)
 				DebugLog("Failed to lock timeout. Error: %s.", LogSeverity::Error, SDL_GetError());
 
 			Packet* p = new Packet();
-			p->Data = new unsigned char[dataReceived];
+			p->Data = new char[dataReceived];
 			*p->Length = dataReceived;
 			*p->Sender = _socket->GetNetConnection();
 			memcpy(p->Data, packetData, dataReceived);
 
-			if (_socket->GetActive() == 1 && m_packetHandler->GetNetTypeMessageId(p) == NetTypeMessageId::ID_CUSTOM_PACKET)
+			/* IF THE CHANGE DOSEN'T WORK, UNCOMMENT THIS       (THEN CONTINUE TO READ YA LAZY BASTARD; ROW 329)
+				HandlePacket(p);
+			*/ 
+
+			/* AND COMMENT FROM HERE */
+			if (_socket->GetActive() == 1)
 			{
-				if (SDL_LockMutex(m_customPacketLock) == 0)
+				bool discardPacket = true;
+
+				if (m_packetHandler->GetNetTypeMessageId(p) == NetTypeMessageId::ID_PASSWORD_ATTEMPT ||
+					m_packetHandler->GetNetTypeMessageId(p) == NetTypeMessageId::ID_PING ||
+					m_packetHandler->GetNetTypeMessageId(p) == NetTypeMessageId::ID_PONG
+					)
 				{
-					m_inactivePackets->push(p);
-					SDL_UnlockMutex(m_customPacketLock);
+					discardPacket = false;
 				}
+
+				if (discardPacket)
+				{
+					DebugLog("Discarding packet received from %s:%d while not authenticated.", LogSeverity::Warning, p->Sender->GetIpAddress(), p->Sender->GetPort());
+					SAFE_DELETE(p);
+				}
+				else
+					HandlePacket(p);
 			}
 			else
 				HandlePacket(p);
+			/* TO HERE */
 
 			if (SDL_LockMutex(m_dataReceiveLock) == 0)
 			{
@@ -570,7 +588,6 @@ void ServerNetwork::SetOnServerShutdown(NetEvent& _function)
 }
 
 
-
 void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t& _id, NetConnection& _connection)
 {
 	char type = _packetHandler->GetNetTypeMessageId(_id);
@@ -605,8 +622,6 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t& 
 		else if (NET_DEBUG > 0)
 			DebugLog("Failed to lock connectedClients. Error: %s", LogSeverity::Error, SDL_GetError());
 
-
-		HandleInactivePacket();
 
 		uint64_t id3 = _packetHandler->StartPack(NetTypeMessageId::ID_REMOTE_CONNECTION_ACCEPTED);
 		_packetHandler->WriteString(id3, _connection.GetIpAddress());

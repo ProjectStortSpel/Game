@@ -12,8 +12,8 @@ ShowNextCheckpointSystem.Initialize = function ( self )
 	self:UsingUpdate()
 	
 	--	Filters
-	self:AddComponentTypeToFilter("Particle", FilterType.Mandatory)
-	self:AddComponentTypeToFilter("CheckpointReached", FilterType.Mandatory)
+	self:AddComponentTypeToFilter("Particle", 			FilterType.Mandatory)
+	self:AddComponentTypeToFilter("CheckpointReached",	FilterType.Mandatory)
 end
 
 ShowNextCheckpointSystem.FadeIn = function(self, lightToFade, dt)
@@ -105,10 +105,16 @@ ShowNextCheckpointSystem.SpawnSmoke = function(self, oldParticle)
 	world:GetComponent(newParticle, "Particle", "aName"):SetText("smoke")
 	world:GetComponent(newParticle, "Particle", "bTexture"):SetText("content/textures/smoke1.png")
 	world:GetComponent(newParticle, "Particle", "cParticles"):SetInt(8)
-	world:GetComponent(newParticle, "Particle", "dLifetime"):SetFloat(1700)
-	world:GetComponent(newParticle, "Particle", "eScale"):SetFloat(0.008)
-	world:GetComponent(newParticle, "Particle", "fSpriteSize"):SetFloat(0.4)
-	world:GetComponent(newParticle, "Particle", "gId"):SetInt(-1)
+	world:GetComponent(newParticle, "Particle", "dLifetime"):SetFloat(1.7)
+	world:GetComponent(newParticle, "Particle", "eScaleX"):SetFloat(0.008)
+	world:GetComponent(newParticle, "Particle", "eScaleY"):SetFloat(0.008)
+	world:GetComponent(newParticle, "Particle", "eScaleZ"):SetFloat(0.008)
+	world:GetComponent(newParticle, "Particle", "fVelocityX"):SetFloat(0)
+	world:GetComponent(newParticle, "Particle", "fVelocityY"):SetFloat(0)
+	world:GetComponent(newParticle, "Particle", "fVelocityZ"):SetFloat(0)
+	world:GetComponent(newParticle, "Particle", "gSpriteSize"):SetFloat(0.4)
+	world:GetComponent(newParticle, "Particle", "hId"):SetInt(-1)
+	world:GetComponent(newParticle, "Particle", "iOnlyOnce"):SetInt(0)
 	
 end
 
@@ -119,6 +125,29 @@ Net.Receive("Client.NewTargetCheckpoint",
 	local	cpID	=	Net.ReadInt(id)
 	local	X		=	Net.ReadFloat(id)
 	local	Z		=	Net.ReadFloat(id)
+	local	C1		=	Net.ReadInt(id)
+	local	C2		=	Net.ReadInt(id)
+	
+	if C1 ~= -1 then
+		local	newEntity	=	-1
+		
+		if C2 == -1 then
+			newEntity	=	world:CreateNewEntity()
+			world:CreateComponentAndAddTo("GlowCheckpoint", newEntity)
+			world:GetComponent(newEntity, "GlowCheckpoint", "Stage"):SetInt(-1)
+		else
+			newEntity	=	world:CreateNewEntity()
+			world:CreateComponentAndAddTo("GlowCheckpoint", newEntity)
+			world:GetComponent(newEntity, "GlowCheckpoint", "Stage"):SetInt(C1)
+			
+			newEntity	=	world:CreateNewEntity()
+			world:CreateComponentAndAddTo("GlowCheckpoint", newEntity)
+			world:GetComponent(newEntity, "GlowCheckpoint", "Stage"):SetInt(C2)
+		end
+	end
+	
+
+	
 	
 	local	newParticle	=	world:CreateNewEntity()
 	world:CreateComponentAndAddTo("Position", newParticle)
@@ -137,10 +166,16 @@ Net.Receive("Client.NewTargetCheckpoint",
 	world:GetComponent(newParticle, "Particle", "aName"):SetText("fire")
 	world:GetComponent(newParticle, "Particle", "bTexture"):SetText("content/textures/firewhite.png")
 	world:GetComponent(newParticle, "Particle", "cParticles"):SetInt(80)
-	world:GetComponent(newParticle, "Particle", "dLifetime"):SetFloat(1200)
-	world:GetComponent(newParticle, "Particle", "eScale"):SetFloat(0.016)
-	world:GetComponent(newParticle, "Particle", "fSpriteSize"):SetFloat(0.6)
-	world:GetComponent(newParticle, "Particle", "gId"):SetInt(-1)
+	world:GetComponent(newParticle, "Particle", "dLifetime"):SetFloat(1.2)
+	world:GetComponent(newParticle, "Particle", "eScaleX"):SetFloat(0.016)
+	world:GetComponent(newParticle, "Particle", "eScaleY"):SetFloat(0.016)
+	world:GetComponent(newParticle, "Particle", "eScaleZ"):SetFloat(0.016)
+	world:GetComponent(newParticle, "Particle", "fVelocityX"):SetFloat(0)
+	world:GetComponent(newParticle, "Particle", "fVelocityY"):SetFloat(0)
+	world:GetComponent(newParticle, "Particle", "fVelocityZ"):SetFloat(0)
+	world:GetComponent(newParticle, "Particle", "gSpriteSize"):SetFloat(0.6)
+	world:GetComponent(newParticle, "Particle", "hId"):SetInt(-1)
+	world:GetComponent(newParticle, "Particle", "iOnlyOnce"):SetInt(0)
 	
 	--	Fade in timer
 	world:GetComponent(newParticle, "FadeInLight", "CurrentTime"):SetFloat(0.0)

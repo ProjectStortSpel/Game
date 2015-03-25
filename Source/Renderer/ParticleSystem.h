@@ -11,7 +11,7 @@ namespace Renderer
 	class ParticleSystem
 	{
 	public:
-		ParticleSystem(std::string _type, const vec3 _pos, int _nParticles, float _lifeTime, float _scale, float _spriteSize, GLuint _texHandle, vec3 _color);
+		ParticleSystem(std::string _type, const vec3 _pos, const vec3 _vel, int _nParticles, float _lifeTime, vec3 _scale, float _spriteSize, GLuint _texHandle, vec3 _color);
 		~ParticleSystem();
 
 		GLuint GetTexHandle(){ return m_textureHandle; }
@@ -45,15 +45,19 @@ namespace Renderer
 
 		int m_nrParticles;
 		int m_drawBuf;
-		vec3 m_pos, m_accel, m_color;
+		vec3 m_pos, m_vel, m_accel, m_color;
 		float m_spriteSize, m_lifeTime;
 		float m_elapsedTime, m_removeDelayTime;
-		float m_scale;
+		vec3 m_scale;
 		int m_endPhase;
 		GLenum m_dstBlendFactor;
 
+		void CreateExplosion();
 		void CreateFire();
 		void CreateSmoke();
+		void CreateWaterfall();
+		void CreateWaterSpawn();
+		void CreateFireflies();
 	};
 }
 #endif
