@@ -1050,3 +1050,12 @@ void GraphicsHigh::SetShadowMapData(float _width, float _height, vec3 _target)
 	m_dirLightshadowMapTarget = _target;
 	m_shadowMap->SetBounds(_width, _height);
 }
+
+void GraphicsHigh::GetShadowMapData(float &_width, float &_height, vec3 &_target)
+{
+	_target = m_dirLightshadowMapTarget;
+	float w, h;
+	m_shadowMap->GetBounds(w, h);
+	_width = w;
+	_height = h;
+}

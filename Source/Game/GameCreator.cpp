@@ -1299,6 +1299,10 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 				m_serverWorld->RemoveComponentFrom("Render", i);
 		}
 
+		glm::vec3 shadowTarget;
+		float shadowW, shadowH;
+		m_graphics->GetShadowMapData(shadowW, shadowH, shadowTarget);
+
 		if (strcmp((*_args)[0].Text, "high") == 0)
 		{
 			m_graphics->Clear();
@@ -1318,6 +1322,8 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 			m_graphics = new Renderer::GraphicsLow(tmpCam);
 			m_graphics->Init();
 		}
+		m_graphics->SetShadowMapData(shadowW, shadowH, shadowTarget);
+
 		if (m_input)
 		{
 			delete m_input;

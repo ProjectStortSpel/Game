@@ -825,3 +825,17 @@ void GraphicsLow::BufferLightsToGPU()
 {
 	BufferLightsToGPU_GD();
 }
+
+void GraphicsLow::SetShadowMapData(float _width, float _height, vec3 _target)
+{
+	m_dirLightshadowMapTarget = _target;
+	m_shadowMapWidth = _width;
+	m_shadowMapHeight = _height;
+}
+
+void GraphicsLow::GetShadowMapData(float &_width, float &_height, vec3 &_target)
+{
+	_target = m_dirLightshadowMapTarget;
+	_width = m_shadowMapWidth;
+	_height = m_shadowMapHeight;
+}
