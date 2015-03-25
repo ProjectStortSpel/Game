@@ -121,7 +121,7 @@ bool GraphicDevice::InitSDLWindow(int _width, int _height)
 	if (m_startFullscreen)
 		Flags = SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP;
 	else
-		Flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP;
+		Flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
 	int				SizeX = _width;	//1280
 	int				SizeY = _height;	//720
 	if (SDL_Init(SDL_INIT_VIDEO) == -1){

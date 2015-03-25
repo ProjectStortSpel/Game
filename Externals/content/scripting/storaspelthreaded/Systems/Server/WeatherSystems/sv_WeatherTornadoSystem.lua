@@ -1,7 +1,7 @@
 WeatherTornadoSystem					=	System()
 WeatherTornadoSystem.TornadoIds			=	{}
 WeatherTornadoSystem.TornadoIds.__mode 	= "k"
-WeatherTornadoSystem.NoTornados			=	1
+WeatherTornadoSystem.NoTornados			=	10
 
 WeatherTornadoSystem.Initialize = function(self)
 	--	Set Name

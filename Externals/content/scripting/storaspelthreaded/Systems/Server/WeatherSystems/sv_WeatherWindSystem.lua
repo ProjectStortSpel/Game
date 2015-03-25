@@ -25,9 +25,8 @@ WeatherWindSystem.EntitiesAdded = function(self, dt, newEntities)
 		if world:EntityHasComponent(tEntity, "WeatherWind") then
 		
 			--	Randomize which round to play it on
-			local	numberOfSteps	=	5+1 - self.CurrentStep%5
+			--local	numberOfSteps	=	5+1 - self.CurrentStep%5
 			local	stepToTrigger	=	math.random(2, 5)
-			
 			world:GetComponent(tEntity, "Weather", "StepToHappen"):SetInt(stepToTrigger)
 			world:GetComponent(tEntity, "Weather", "StageToHappen"):SetInt(0)
 			world:GetComponent(tEntity, "WeatherWind", "Force"):SetInt(1)
@@ -50,27 +49,34 @@ WeatherWindSystem.EntitiesAdded = function(self, dt, newEntities)
 					world:CreateComponentAndAddTo("LerpRotation", Tree)
 				end
 				local TreeX, TreeY, TreeZ = world:GetComponent(Tree, "Rotation", "X"):GetFloat3(0)
-				world:GetComponent(Tree, "LerpRotation", "X"):SetFloat(dirZ*0.1)
+				world:GetComponent(Tree, "LerpRotation", "X"):SetFloat(dirZ*0.2)
 				world:GetComponent(Tree, "LerpRotation", "Y"):SetFloat(TreeY)
-				world:GetComponent(Tree, "LerpRotation", "Z"):SetFloat(-dirX*0.1)
+				world:GetComponent(Tree, "LerpRotation", "Z"):SetFloat(-dirX*0.2)
 				world:GetComponent(Tree, "LerpRotation", "Time"):SetFloat(0.5)
 				world:GetComponent(Tree, "LerpRotation", "Algorithm"):SetText("NormalLerp")
 			end
 			
-		elseif world:EntityHasComponent(tEntity, "WeatherStep") then
+			-- Play strong wind sound!
+			local audioId = Net.StartPack("Client.PlaySoundC")
+			Net.WriteString(audioId, "StrongWind")
+			Net.WriteString(audioId, "StrongWindForcast")
+			Net.WriteBool(audioId, false)
+			Net.Broadcast(audioId)
+			audioId = Net.StartPack("Client.SetSoundVolume")
+			Net.WriteString(audioId, "StrongWindForcast")
+			Net.WriteInt(audioId, 20)
+			Net.Broadcast(audioId)
 			
-			self.CurrentStep	=	self.CurrentStep+1
+		elseif world:EntityHasComponent(tEntity, "WeatherStep") then
+			--self.CurrentStep	=	self.CurrentStep+1
+			local	currentWind	=	self:GetEntities("WeatherWind")
+			if #currentWind ~= 0 then
+				print("NUMBER OF WEATHERS: " .. #currentWind)
+				self:TickWeather(currentWind[1])
+			end
 		end
 		
 	end
-	
-	--	Get current weather
-	local	currentWind	=	self:GetEntities("WeatherWind")
-	if #currentWind ~= 0 then
-		print("NUMBER OF WEATHERS: " .. #currentWind)
-		self:TickWeather(currentWind[1])
-	end
-	
 end
 
 WeatherWindSystem.TickWeather = function(self, weatherEntity)
@@ -78,7 +84,6 @@ WeatherWindSystem.TickWeather = function(self, weatherEntity)
 	--	Reduce steps left
 	local	stepsLeft	=	world:GetComponent(weatherEntity, "Weather", "StepToHappen"):GetInt()
 	world:GetComponent(weatherEntity, "Weather", "StepToHappen"):SetInt(stepsLeft-1)
-	
 	if stepsLeft-1 <= 0 then
 	
 		local	allUnits	=	self:GetEntities("Unit")
