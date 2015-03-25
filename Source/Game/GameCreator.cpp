@@ -1299,6 +1299,10 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 				m_serverWorld->RemoveComponentFrom("Render", i);
 		}
 
+		glm::vec3 shadowTarget;
+		float shadowW, shadowH;
+		m_graphics->GetShadowMapData(shadowW, shadowH, shadowTarget);
+
 		if (strcmp((*_args)[0].Text, "high") == 0)
 		{
 			m_graphics->Clear();
@@ -1318,6 +1322,8 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 			m_graphics = new Renderer::GraphicsLow(tmpCam);
 			m_graphics->Init();
 		}
+		m_graphics->SetShadowMapData(shadowW, shadowH, shadowTarget);
+
 		if (m_input)
 		{
 			delete m_input;
@@ -1358,6 +1364,10 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
                 m_serverWorld->RemoveComponentFrom("Render", i);
 		}
 
+		glm::vec3 shadowTarget;
+		float shadowW, shadowH;
+		m_graphics->GetShadowMapData(shadowW, shadowH, shadowTarget);
+
 		if (strcmp((*_args)[0].Text, "high") == 0)
 		{
 			m_graphics->Clear();
@@ -1365,7 +1375,7 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 			int windowx, windowy;
 			m_graphics->GetWindowPos(windowx, windowy);
 			bool fullscreen = m_graphics->GetFullscreen();
-
+			
 		//	SDL_Window*	tmpWindow = m_graphics->GetSDL_Window();
 		//	SDL_GLContext* tmpContext = m_graphics->GetSDL_GLContext();*/
 			delete(m_graphics);
@@ -1396,6 +1406,7 @@ void GameCreator::ChangeGraphicsSettings(std::string _command, std::vector<Conso
 			m_graphics = new Renderer::GraphicsLow(tmpCam, windowx, windowy, fullscreen);
 			m_graphics->Init();
 		}
+		m_graphics->SetShadowMapData(shadowW, shadowH, shadowTarget);
 		if (m_input)
 		{
 			delete m_input;
@@ -1449,6 +1460,10 @@ void GameCreator::ToggleFullscreen(std::string _command, std::vector<Console::Ar
 	else
 		m_graphics->GetWindowPos(windowx, windowy);
 
+	glm::vec3 shadowTarget;
+	float shadowW, shadowH;
+	m_graphics->GetShadowMapData(shadowW, shadowH, shadowTarget);
+
 	if (m_graphics->GetGraphicsSetting() == GRAPHICS_HIGH)
 	{
 		m_graphics->Clear();
@@ -1469,6 +1484,8 @@ void GameCreator::ToggleFullscreen(std::string _command, std::vector<Console::Ar
 		m_graphics = new Renderer::GraphicsLow(tmpCam, windowx, windowy, 1-fullscreen);
 		m_graphics->Init();
 	}
+	m_graphics->SetShadowMapData(shadowW, shadowH, shadowTarget);
+
 	if (m_input)
 	{
 		delete m_input;

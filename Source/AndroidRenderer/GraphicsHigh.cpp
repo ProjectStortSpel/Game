@@ -114,7 +114,7 @@ void GraphicsHigh::WriteShadowMapDepth()
 			mat4 modelMatrix;
 			if (m_modelsDeferred[i].modelMatrix == NULL)
 			{
-				modelMatrix = glm::translate(glm::vec3(1));
+				modelMatrix = glm::mat4(1.0f);
 				SDL_Log("model: %d has no model matrix", i);
 			}
 			else
@@ -137,7 +137,7 @@ void GraphicsHigh::WriteShadowMapDepth()
 			mat4 modelMatrix;
 			if (m_modelsForward[i].modelMatrix == NULL)
 			{
-				modelMatrix = glm::translate(glm::vec3(1));
+				modelMatrix = glm::mat4(1.0f);
 				SDL_Log("model: %d has no model matrix", i);
 			}
 			else
@@ -171,7 +171,7 @@ void GraphicsHigh::WriteShadowMapDepth()
 		mat4 modelMatrix;
 		if (m_modelsAnimated[i].modelMatrix == NULL)
 		{
-			modelMatrix = glm::translate(glm::vec3(1));
+			modelMatrix = glm::mat4(1.0f);
 			SDL_Log("model: %d has no model matrix", i);
 		}
 		else
@@ -1049,4 +1049,13 @@ void GraphicsHigh::SetShadowMapData(float _width, float _height, vec3 _target)
 {
 	m_dirLightshadowMapTarget = _target;
 	m_shadowMap->SetBounds(_width, _height);
+}
+
+void GraphicsHigh::GetShadowMapData(float &_width, float &_height, vec3 &_target)
+{
+	_target = m_dirLightshadowMapTarget;
+	float w, h;
+	m_shadowMap->GetBounds(w, h);
+	_width = w;
+	_height = h;
 }

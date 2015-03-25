@@ -29,6 +29,8 @@ namespace Renderer
 
 		void BufferPointlights(int _nrOfLights, float **_lightPointers);
 		void BufferDirectionalLight(float *_lightPointer);
+		void SetShadowMapData(float _width, float _height, vec3 _target);
+		void GetShadowMapData(float &_width, float &_height, vec3 &_target);
 		
 		void Clear();
 
@@ -39,6 +41,9 @@ namespace Renderer
 		bool InitLightBuffers();
 
 		void BufferLightsToGPU();
+
+		//Shadow map info (used when switching to High settings)
+		float m_shadowMapWidth, m_shadowMapHeight;
 
 		// Shaders
 		//Shader m_fullscreen;

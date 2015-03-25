@@ -34,7 +34,7 @@ void AModel::Draw(mat4 viewMatrix, Shader* shaderptr)
 	{
 		mat4 M;
 		if (modelMatrix == NULL)
-			M = glm::translate(glm::vec3(1));
+			M = glm::mat4(1.0f);
 		else
 			M = *modelMatrix;
 

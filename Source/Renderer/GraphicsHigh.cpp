@@ -356,7 +356,7 @@ void GraphicsHigh::WriteShadowMapDepth()
 				{
 					mat4 modelMatrix;
 					if (m_modelsDeferred[i].instances[j].modelMatrix == NULL)
-						modelMatrix = glm::translate(glm::vec3(1));
+						modelMatrix = glm::mat4(1.0f);
 					else
 						modelMatrix = *m_modelsDeferred[i].instances[j].modelMatrix;
 
@@ -389,7 +389,7 @@ void GraphicsHigh::WriteShadowMapDepth()
 				{
 					mat4 modelMatrix;
 					if (m_modelsForward[i].instances[j].modelMatrix == NULL)
-						modelMatrix = glm::translate(glm::vec3(1));
+						modelMatrix = glm::mat4(1.0f);
 					else
 						modelMatrix = *m_modelsForward[i].instances[j].modelMatrix;
 

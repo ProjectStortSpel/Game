@@ -33,7 +33,7 @@ void Model::Draw(mat4 viewMatrix)
 		{
 			mat4 modelMatrix;
 			if (instances[j].modelMatrix == NULL)
-				modelMatrix = glm::translate(glm::vec3(1));
+				modelMatrix = glm::mat4(1.0f);
 			else
 				modelMatrix = *instances[j].modelMatrix;
 

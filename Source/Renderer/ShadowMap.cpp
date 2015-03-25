@@ -72,5 +72,7 @@ void ShadowMap::ChangeResolution(int res)
 
 void ShadowMap::SetBounds(float _width, float _height)
 {
+	m_width = _width;
+	m_height = _height;
 	m_projectionMatrix = glm::ortho(-_width, _width, -_height, _height, 1.5f, 10.f + std::max(_width, _height));
 }
