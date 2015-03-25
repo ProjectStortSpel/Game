@@ -226,12 +226,17 @@ void ClientNetwork::Send(Packet* _packet)
 		return;
 	}
 
-	if (m_packetHandler->GetNetTypeMessageId(_packet) == NetTypeMessageId::ID_CUSTOM_PACKET && m_socket->GetActive() != 2)
+	/* IF THE CHANGE DOSEN'T WORK, UNCOMMENT THIS       (THEN CONTINUE TO READ YA LAZY BASTARD; ROW 233)
+	HandlePacket(p);
+	*/
+
+	/* AND COMMENT FROM HERE */
+	if (m_socket->GetActive() != 2 && m_packetHandler->GetNetTypeMessageId(_packet) != NetTypeMessageId::ID_PASSWORD_ATTEMPT)
 	{
-		m_inactivePackets->push(_packet);
+		DebugLog("Tried to send a message while not authenticated to server.", LogSeverity::Warning);
 		return;
 	}
-
+	/* TO HERE */
 
 	int bytesSent = m_socket->Send((char*)_packet->Data, *_packet->Length);
 
@@ -331,12 +336,6 @@ void ClientNetwork::NetConnectionAccepted(PacketHandler* _packetHandler, uint64_
 		DebugLog("Password accepted. Connected to %s:%d.", LogSeverity::Info, _connection.GetIpAddress(), _connection.GetPort());
 
 	m_socket->SetActive(2);
-
-	for (int i = 0; i < m_inactivePackets->size(); ++i)
-	{
-		Send(m_inactivePackets->front());
-		m_inactivePackets->pop();
-	}
 
 	TriggerEvent(m_onConnectedToServer, _connection, 0);
 

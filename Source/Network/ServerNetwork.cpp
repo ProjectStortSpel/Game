@@ -322,16 +322,19 @@ void ServerNetwork::ReceivePackets(ISocket* _socket, const std::string _name)
 			*p->Sender = _socket->GetNetConnection();
 			memcpy(p->Data, packetData, dataReceived);
 
-			if (_socket->GetActive() == 1 && m_packetHandler->GetNetTypeMessageId(p) == NetTypeMessageId::ID_CUSTOM_PACKET)
-			{
-				if (SDL_LockMutex(m_customPacketLock) == 0)
-				{
-					m_inactivePackets->push(p);
-					SDL_UnlockMutex(m_customPacketLock);
-				}
-			}
-			else
+			/* IF THE CHANGE DOSEN'T WORK, UNCOMMENT THIS       (THEN CONTINUE TO READ YA LAZY BASTARD; ROW 329)
 				HandlePacket(p);
+			*/ 
+
+			/* AND COMMENT FROM HERE */
+			if (_socket->GetActive() > 1 || m_packetHandler->GetNetTypeMessageId(p) == NetTypeMessageId::ID_PASSWORD_ATTEMPT)
+				HandlePacket(p);
+			else
+			{
+				DebugLog("Discarding packet received from %s:%d while not authenticated.", LogSeverity::Warning, p->Sender->GetIpAddress(), p->Sender->GetPort());
+				SAFE_DELETE(p);
+			}
+			/* TO HERE */
 
 			if (SDL_LockMutex(m_dataReceiveLock) == 0)
 			{
@@ -604,8 +607,6 @@ void ServerNetwork::NetPasswordAttempt(PacketHandler* _packetHandler, uint64_t& 
 		else if (NET_DEBUG > 0)
 			DebugLog("Failed to lock connectedClients. Error: %s", LogSeverity::Error, SDL_GetError());
 
-
-		HandleInactivePacket();
 
 		uint64_t id3 = _packetHandler->StartPack(NetTypeMessageId::ID_REMOTE_CONNECTION_ACCEPTED);
 		_packetHandler->WriteString(id3, _connection.GetIpAddress());
