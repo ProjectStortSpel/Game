@@ -120,6 +120,17 @@ WeatherWindSystem.TickWeather = function(self, weatherEntity)
 					Net.WriteString(audioId, "BlockVoice" .. tUnit)
 					Net.WriteBool(audioId, false)
 					Net.Broadcast(audioId)
+					local px, py, pz = world:GetComponent(tUnit, "Position", 0):GetFloat3()
+					audioId = Net.StartPack("Client.SetSoundPosition")
+					Net.WriteString(audioId, "BlockVoice" .. tUnit)
+					Net.WriteFloat(audioId, px)
+					Net.WriteFloat(audioId, py)
+					Net.WriteFloat(audioId, pz)
+					Net.Broadcast(audioId)
+					audioId = Net.StartPack("Client.SetSoundVolume")
+					Net.WriteString(audioId, "BlockVoice" .. tUnit)
+					Net.WriteInt(audioId, 128)
+					Net.Broadcast(audioId)
 			elseif not world:EntityHasComponent(tUnit, "UnitDead") then
 			
 				local	posX, posZ	=	world:GetComponent(tUnit, "MapPosition", "X"):GetInt2()
@@ -136,6 +147,16 @@ WeatherWindSystem.TickWeather = function(self, weatherEntity)
 			end
 		end
 		
+		-- Play strong wind sound!
+		local audioId = Net.StartPack("Client.PlaySoundC")
+		Net.WriteString(audioId, "StrongWind")
+		Net.WriteString(audioId, "StrongWind" .. weatherEntity)
+		Net.WriteBool(audioId, false)
+		Net.Broadcast(audioId)
+		audioId = Net.StartPack("Client.SetSoundVolume")
+		Net.WriteString(audioId, "StrongWind" .. weatherEntity)
+		Net.WriteInt(audioId, 128)
+		Net.Broadcast(audioId)
 		
 		print("WIND!!!")
 	
