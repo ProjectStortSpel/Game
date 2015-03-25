@@ -42,11 +42,21 @@ AddEntityAfterLerpSystem.BulletImpact = function(self, entity, hitPlayer)
 	Net.WriteBool(audioId, false)
 	Net.Broadcast(audioId)
 	
+	audioId = Net.StartPack("Client.SetSoundVolume")
+	Net.WriteString(audioId, "SmallStoneImpact" .. entity)
+	Net.WriteInt(audioId, 15)
+	Net.Broadcast(audioId)
+	
 	if hitPlayer then
 		audioId = Net.StartPack("Client.PlaySoundC")
 		Net.WriteString(audioId, "HitByStone" .. math.random(1, 2))
 		Net.WriteString(audioId, "HitByStone" .. entity)
 		Net.WriteBool(audioId, false)
+		Net.Broadcast(audioId)
+		
+		audioId = Net.StartPack("Client.SetSoundVolume")
+		Net.WriteString(audioId, "HitByStone" .. entity)
+		Net.WriteInt(audioId, 18)
 		Net.Broadcast(audioId)
 	end
 	
@@ -69,9 +79,15 @@ AddEntityAfterLerpSystem.EntitiesRemoved = function(self, dt, entities)
 			Net.WriteFloat(id, z)
 			Net.Broadcast(id)
 			
-			local audioId = Net.StartPack("Client.PlaySound")
+			local audioId = Net.StartPack("Client.PlaySoundC")
 			Net.WriteString(audioId, "BigStoneImpact")
+			Net.WriteString(audioId, "BigStoneImpactChannel")
 			Net.WriteBool(audioId, false)
+			Net.Broadcast(audioId)
+			
+			audioId = Net.StartPack("Client.SetSoundVolume")
+			Net.WriteString(audioId, "BigStoneImpactChannel")
+			Net.WriteInt(audioId, 60)
 			Net.Broadcast(audioId)
 				
 		elseif compName == "AddBulletImpact" then

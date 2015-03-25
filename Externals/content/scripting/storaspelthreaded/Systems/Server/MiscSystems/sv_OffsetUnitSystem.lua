@@ -56,7 +56,7 @@ OffsetUnitSystem.UpdateUnitLerp = function(self, unitId)
 			
 			audioId = Net.StartPack("Client.SetSoundVolume")
 			Net.WriteString(audioId, "LeavingWater" .. unitId)
-			Net.WriteInt(audioId, 84)
+			Net.WriteInt(audioId, 94)
 			Net.Broadcast(audioId)
 		end
 	elseif yOffset - pY < 0 then
