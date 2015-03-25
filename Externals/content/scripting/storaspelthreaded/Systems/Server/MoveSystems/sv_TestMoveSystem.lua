@@ -85,7 +85,7 @@ TestMoveSystem.RecursiveMove = function(self, unitToMove, allUnits, allNonWalkab
 				
 				audioId = Net.StartPack("Client.SetSoundVolume")
 				Net.WriteString(audioId, "Laugh" .. allUnits[n])
-				Net.WriteInt(audioId, 6)
+				Net.WriteInt(audioId, 4)
 				Net.Broadcast(audioId)
 				
 				break

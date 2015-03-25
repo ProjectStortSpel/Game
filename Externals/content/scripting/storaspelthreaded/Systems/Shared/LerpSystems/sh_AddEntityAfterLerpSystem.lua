@@ -44,7 +44,7 @@ AddEntityAfterLerpSystem.BulletImpact = function(self, entity, hitPlayer)
 	
 	audioId = Net.StartPack("Client.SetSoundVolume")
 	Net.WriteString(audioId, "SmallStoneImpact" .. entity)
-	Net.WriteInt(audioId, 10)
+	Net.WriteInt(audioId, 5)
 	Net.Broadcast(audioId)
 	
 	if hitPlayer then
@@ -56,7 +56,7 @@ AddEntityAfterLerpSystem.BulletImpact = function(self, entity, hitPlayer)
 		
 		audioId = Net.StartPack("Client.SetSoundVolume")
 		Net.WriteString(audioId, "HitByStone" .. entity)
-		Net.WriteInt(audioId, 15)
+		Net.WriteInt(audioId, 8)
 		Net.Broadcast(audioId)
 	end
 	
