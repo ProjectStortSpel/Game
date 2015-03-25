@@ -26,7 +26,7 @@ WeatherWindSystem.EntitiesAdded = function(self, dt, newEntities)
 		
 			--	Randomize which round to play it on
 			local	numberOfSteps	=	5+1 - self.CurrentStep%5
-			local	stepToTrigger	=	math.random(1, 5)
+			local	stepToTrigger	=	math.random(2, 5)
 			
 			world:GetComponent(tEntity, "Weather", "StepToHappen"):SetInt(stepToTrigger)
 			world:GetComponent(tEntity, "Weather", "StageToHappen"):SetInt(0)

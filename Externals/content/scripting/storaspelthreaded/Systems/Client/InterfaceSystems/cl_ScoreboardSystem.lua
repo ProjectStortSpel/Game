@@ -99,7 +99,7 @@ ScoreboardSystem.SpawnMenu = function(self)
 	local playerStats = self:GetEntities("PlayerStats")
 	local name = ""
 	local r, g, b = 0
-	local cardsPlayed, playerDeaths, playerGoal, playerPlace = 0
+	local cardsPlayed, playerDeaths, playerGoal, playerPlace = 0, 0, 0, 0
 	local button, text	=	0
 	
 	local	rowBackground	=	0
@@ -138,6 +138,7 @@ ScoreboardSystem.SpawnMenu = function(self)
 		g = world:GetComponent(players[i], "ScoreboardPlayer", "G"):GetFloat()
 		b = world:GetComponent(players[i], "ScoreboardPlayer", "B"):GetFloat()
 		
+		local	playerFound	=	false
 		for statsI = 1, #playerStats do
 			
 			if world:GetComponent(playerStats[statsI], "PlayerStats", "PlayerNumber"):GetInt() == i then
@@ -145,35 +146,51 @@ ScoreboardSystem.SpawnMenu = function(self)
 				playerDeaths	=	world:GetComponent(playerStats[statsI], "PlayerStats", "Deaths"):GetInt()
 				playerGoal		=	world:GetComponent(playerStats[statsI], "PlayerStats", "GoalCheckpoint"):GetInt()
 				playerPlace		=	world:GetComponent(playerStats[statsI], "PlayerStats", "Place"):GetInt()
+				playerFound		=	true
 				break
 			end
 			
 		end
 		
-		rowBackground	=	self:CreateElement("scoreboardbg",	"quad", -0.0,	1.40-i*rowOffset,	-4.000,	4.0,	0.2)
 		
+		rowBackground	=	self:CreateElement("scoreboardbg",	"quad", -0.0,	1.40-i*rowOffset,	-4.000,	4.0,	0.2)
 		if i % 2 == 0 then
 			if not world:EntityHasComponent(rowBackground, "Color") then
 				world:CreateComponentAndAddTo("Color", rowBackground)
 			end
 			world:GetComponent(rowBackground, "Color", "X"):SetFloat3(0.1, 0.1, 0.1)
 		end
-		
 		--	Player Name
 		textObject		=	self:CreateElement("left", 	"text",	nameOffset,	1.48-i*rowOffset,	-3.999,	3.0,	0.16)
 		self:AddTextToTexture("SCBRDNAME" .. i, name, 0, r, g, b, textObject)
 		
-		--	Player Cards
-		textObject		=	self:CreateElement("center", 	"text",	cardsOffet,	1.48-i*rowOffset,	-3.999,	3.0,	0.16)
-		self:AddTextToTexture("SCBRDCARDS" .. i, cardsPlayed, 0, r, g, b, textObject)
-		
-		--	Player Deaths
-		textObject		=	self:CreateElement("center", 	"text",	deathsOffset,	1.48-i*rowOffset,	-3.999,	3.0,	0.16)
-		self:AddTextToTexture("SCBRDDEATHS" .. i, playerDeaths, 0, r, g, b, textObject)
-		
-		--	Player Checkpoint
-		textObject		=	self:CreateElement("center", 	"text",	checkpointOffset,	1.48-i*rowOffset,	-3.999,	3.0,	0.16)
-		self:AddTextToTexture("SCBRDCHECKPOINTS" .. i, playerGoal .. "/" .. self.NumberOfCheckpoints, 0, r, g, b, textObject)
+		if not playerFound then
+			
+			--	Player Cards
+			textObject		=	self:CreateElement("center", 	"text",	cardsOffet,	1.48-i*rowOffset,	-3.999,	3.0,	0.16)
+			self:AddTextToTexture("SCBRDCARDS" .. i, "N/A", 0, r, g, b, textObject)
+
+			--	Player Deaths
+			textObject		=	self:CreateElement("center", 	"text",	deathsOffset,	1.48-i*rowOffset,	-3.999,	3.0,	0.16)
+			self:AddTextToTexture("SCBRDDEATHS" .. i, "N/A", 0, r, g, b, textObject)
+
+			--	Player Checkpoint
+			textObject		=	self:CreateElement("center", 	"text",	checkpointOffset,	1.48-i*rowOffset,	-3.999,	3.0,	0.16)
+			self:AddTextToTexture("SCBRDCHECKPOINTS" .. i, "N/A", 0, r, g, b, textObject)
+			
+		else
+			--	Player Cards
+			textObject		=	self:CreateElement("center", 	"text",	cardsOffet,	1.48-i*rowOffset,	-3.999,	3.0,	0.16)
+			self:AddTextToTexture("SCBRDCARDS" .. i, cardsPlayed, 0, r, g, b, textObject)
+
+			--	Player Deaths
+			textObject		=	self:CreateElement("center", 	"text",	deathsOffset,	1.48-i*rowOffset,	-3.999,	3.0,	0.16)
+			self:AddTextToTexture("SCBRDDEATHS" .. i, playerDeaths, 0, r, g, b, textObject)
+
+			--	Player Checkpoint
+			textObject		=	self:CreateElement("center", 	"text",	checkpointOffset,	1.48-i*rowOffset,	-3.999,	3.0,	0.16)
+			self:AddTextToTexture("SCBRDCHECKPOINTS" .. i, playerGoal .. "/" .. self.NumberOfCheckpoints, 0, r, g, b, textObject)
+		end
 	end
 	
 	
