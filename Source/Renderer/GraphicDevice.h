@@ -180,6 +180,8 @@ namespace Renderer
 
 		void SetShadowMapData(float _width, float _height, vec3 _target);
 
+		void GetShadowMapData(float &_width, float &_height, vec3 &_target);
+
 		int GetGraphicsSetting(){ return m_graphicsSetting; }
 
 		bool GetFullscreen(){ return m_startFullscreen; }
