@@ -66,7 +66,8 @@ GameInterfaceSystem.CreateDistantIsland = function(self)
 	world:GetComponent(id, "Scale", 0):SetFloat3(2.0, 2.0, 2.0)
 	self.Island = id
 	
-
+	--  Set the shadow map to look at the island
+	GraphicDevice.SetShadowmapBounds(4, 4, X, Y, Z)
 	
 	--	Generate directional light
 	local	R,G,B		=	0.9,0.8,0.7

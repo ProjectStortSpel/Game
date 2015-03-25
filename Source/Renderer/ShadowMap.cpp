@@ -28,7 +28,7 @@ ShadowMap::~ShadowMap()
 
 void ShadowMap::CreateShadowMapTexture(GLuint _textureUnit)
 {
-	GLfloat border[] = { 1.0, 0.0, 0.0, 0.0 };
+	GLfloat border[] = { 1.0, 1.0, 1.0, 1.0 };
 
 	//The shadow maptexture  
 	glGenTextures(1, &m_depthTex); 
