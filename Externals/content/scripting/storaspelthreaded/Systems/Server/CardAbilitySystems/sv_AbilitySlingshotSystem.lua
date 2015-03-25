@@ -42,7 +42,9 @@ AbilitySlingshotSystem.EntitiesAdded = function(self, dt, entities)
 		elseif world:EntityHasComponent(entityId, "AddStunnedIndicator") then
 
 			local parentId = world:GetComponent(entityId, "AddStunnedIndicator", "Unit"):GetInt()
-			world:CreateComponentAndAddTo("HasStunnedIndicator", parentId)
+			if not world:EntityHasComponent(parentId, "HasStunnedIndicator") then
+				world:CreateComponentAndAddTo("HasStunnedIndicator", parentId)
+			end
 
 			local stunnedIndicator = world:CreateNewEntity()
 			world:CreateComponentAndAddTo("StunnedIndicator", stunnedIndicator)

@@ -327,13 +327,28 @@ void ServerNetwork::ReceivePackets(ISocket* _socket, const std::string _name)
 			*/ 
 
 			/* AND COMMENT FROM HERE */
-			if (_socket->GetActive() > 1 || m_packetHandler->GetNetTypeMessageId(p) == NetTypeMessageId::ID_PASSWORD_ATTEMPT)
-				HandlePacket(p);
-			else
+			if (_socket->GetActive() == 1)
 			{
-				DebugLog("Discarding packet received from %s:%d while not authenticated.", LogSeverity::Warning, p->Sender->GetIpAddress(), p->Sender->GetPort());
-				SAFE_DELETE(p);
+				bool discardPacket = true;
+
+				if (m_packetHandler->GetNetTypeMessageId(p) == NetTypeMessageId::ID_PASSWORD_ATTEMPT ||
+					m_packetHandler->GetNetTypeMessageId(p) == NetTypeMessageId::ID_PING ||
+					m_packetHandler->GetNetTypeMessageId(p) == NetTypeMessageId::ID_PONG
+					)
+				{
+					discardPacket = false;
+				}
+
+				if (discardPacket)
+				{
+					DebugLog("Discarding packet received from %s:%d while not authenticated.", LogSeverity::Warning, p->Sender->GetIpAddress(), p->Sender->GetPort());
+					SAFE_DELETE(p);
+				}
+				else
+					HandlePacket(p);
 			}
+			else
+				HandlePacket(p);
 			/* TO HERE */
 
 			if (SDL_LockMutex(m_dataReceiveLock) == 0)
