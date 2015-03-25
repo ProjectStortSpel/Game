@@ -97,7 +97,13 @@ AbilitySlingshotSystem.CheckUnits = function(self, mapPosX, mapPosZ, currentPosX
 				Net.WriteString(audioId, "BlockVoice" .. units[i])
 				Net.WriteBool(audioId, false)
 				Net.Broadcast(audioId)
-				
+				local px, py, pz = world:GetComponent(units[i], "Position", 0):GetFloat3()
+				audioId = Net.StartPack("Client.SetSoundPosition")
+				Net.WriteString(audioId, "BlockVoice" .. units[i])
+				Net.WriteFloat(audioId, px)
+				Net.WriteFloat(audioId, py)
+				Net.WriteFloat(audioId, pz)
+				Net.Broadcast(audioId)
 				audioId = Net.StartPack("Client.SetSoundVolume")
 				Net.WriteString(audioId, "BlockVoice" .. units[i])
 				Net.WriteInt(audioId, 12)
@@ -152,9 +158,16 @@ AbilitySlingshotSystem.AddBullet = function(self, posX, posZ, targetPosX, target
 	world:GetComponent(bullet, "LerpPosition", "Algorithm"):SetText("NormalLerp")
 	
 	world:GetComponent(bullet, "TargetUnit", "Unit"):SetInt(unitId)
-	local audioId = Net.StartPack("Client.PlaySound")
+	local audioId = Net.StartPack("Client.PlaySoundC")
 	Net.WriteString(audioId, "Throw")
+	Net.WriteString(audioId, "Throw" .. bullet)
 	Net.WriteBool(audioId, false)
+	Net.Broadcast(audioId)
+	audioId = Net.StartPack("Client.SetSoundPosition")
+	Net.WriteString(audioId, "Throw" .. bullet)
+	Net.WriteFloat(audioId, posX)
+	Net.WriteFloat(audioId, 1.0)
+	Net.WriteFloat(audioId, posZ)
 	Net.Broadcast(audioId)
 
 end

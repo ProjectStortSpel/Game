@@ -238,6 +238,17 @@ WeatherTornadoSystem.CheckCollision = function(self, id, unit)
 			Net.WriteString(audioId, "BlockVoice" .. unit)
 			Net.WriteBool(audioId, false)
 			Net.Broadcast(audioId)
+			local px, py, pz = world:GetComponent(unit, "Position", 0):GetFloat3()
+			audioId = Net.StartPack("Client.SetSoundPosition")
+			Net.WriteString(audioId, "BlockVoice" .. unit)
+			Net.WriteFloat(audioId, px)
+			Net.WriteFloat(audioId, py)
+			Net.WriteFloat(audioId, pz)
+			Net.Broadcast(audioId)
+			audioId = Net.StartPack("Client.SetSoundVolume")
+			Net.WriteString(audioId, "BlockVoice" .. unit)
+			Net.WriteInt(audioId, 128)
+			Net.Broadcast(audioId)
 			return
 		end
 		
