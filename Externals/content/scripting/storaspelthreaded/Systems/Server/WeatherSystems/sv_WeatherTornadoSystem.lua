@@ -1,7 +1,7 @@
 WeatherTornadoSystem					=	System()
 WeatherTornadoSystem.TornadoIds			=	{}
 WeatherTornadoSystem.TornadoIds.__mode 	= "k"
-WeatherTornadoSystem.NoTornados			=	10
+WeatherTornadoSystem.NoTornados			=	1
 
 WeatherTornadoSystem.Initialize = function(self)
 	--	Set Name
@@ -156,9 +156,9 @@ WeatherTornadoSystem.AddTornado = function(self)
 	world:GetComponent(id, "Model", "RenderType"):SetInt(1)
 	
 	world:CreateComponentAndAddTo("LerpScale", id)
-	world:GetComponent(id, "LerpScale", "X"):SetFloat(1.0)
-	world:GetComponent(id, "LerpScale", "Y"):SetFloat(1.0)
-	world:GetComponent(id, "LerpScale", "Z"):SetFloat(1.0)
+	world:GetComponent(id, "LerpScale", "X"):SetFloat(0.5)
+	world:GetComponent(id, "LerpScale", "Y"):SetFloat(0.5)
+	world:GetComponent(id, "LerpScale", "Z"):SetFloat(0.5)
 	world:GetComponent(id, "LerpScale", "Time"):SetFloat(2.5)
 	world:GetComponent(id, "LerpScale", "Algorithm"):SetText("NormalLerp")
 	
@@ -200,13 +200,24 @@ WeatherTornadoSystem.MoveTornado = function(self, id)
 			if tPosX == testX and tPosZ == testZ then
 				
 			
-				
-				world:CreateComponentAndAddTo("LerpPosition", id)
+				if not world:EntityHasComponent(id, "LerpPosition") then
+					world:CreateComponentAndAddTo("LerpPosition", id)
+				end
 				world:GetComponent(id, "LerpPosition", "X"):SetFloat(tPosX)
 				world:GetComponent(id, "LerpPosition", "Y"):SetFloat(0.5)
 				world:GetComponent(id, "LerpPosition", "Z"):SetFloat(tPosZ)
 				world:GetComponent(id, "LerpPosition", "Time"):SetFloat(1.0)
 				world:GetComponent(id, "LerpPosition", "Algorithm"):SetText("NormalLerp")
+				
+				if not world:EntityHasComponent(id, "LerpScale") then
+					world:CreateComponentAndAddTo("LerpScale", id)
+				end
+				world:GetComponent(id, "LerpScale", "X"):SetFloat(1.0)
+				world:GetComponent(id, "LerpScale", "Y"):SetFloat(1.0)
+				world:GetComponent(id, "LerpScale", "Z"):SetFloat(1.0)
+				world:GetComponent(id, "LerpScale", "Time"):SetFloat(1.0)
+				world:GetComponent(id, "LerpScale", "Algorithm"):SetText("NormalLerp")
+				
 				
 				world:GetComponent(id, "MapPosition", 0):SetInt2(tPosX, tPosZ)
 				
