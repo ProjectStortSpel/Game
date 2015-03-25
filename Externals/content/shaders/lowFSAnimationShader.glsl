@@ -63,7 +63,7 @@ void phongModelDirLight(out vec3 ambient, out vec3 diffuse, out vec3 spec)
 		
 		float shadow = 1.0;
 		vec4 shadowCoordinateWdivide = shadowCoord / shadowCoord.w;
-		shadowCoordinateWdivide.z -= 0.0005;
+		shadowCoordinateWdivide.z -= 0.0060;
 		float distanceFromLight = texture(ShadowDepthTex, shadowCoordinateWdivide.st).x;
 		
 		if (shadowCoord.w > 0.0)
