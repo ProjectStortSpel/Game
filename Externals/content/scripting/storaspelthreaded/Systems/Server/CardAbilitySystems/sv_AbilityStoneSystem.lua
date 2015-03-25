@@ -156,7 +156,7 @@ AbilityStoneSystem.PlaceStone = function(self, entity)
 				
 				audioId = Net.StartPack("Client.SetSoundVolume")
 				Net.WriteString(audioId, "FallingWhistleShort" .. stone)
-				Net.WriteInt(audioId, 30)
+				Net.WriteInt(audioId, 10)
 				Net.Broadcast(audioId)
 				
 				self:AddTimer(stone,X,Z)

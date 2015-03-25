@@ -90,13 +90,18 @@ AbilitySlingshotSystem.CheckUnits = function(self, mapPosX, mapPosZ, currentPosX
 				world:GetComponent(newId, "TakeCardStepsFromUnit", "Unit"):SetInt(units[i])
 
 				
-			--else
-			--		-- SOUND
-			--	local audioId = Net.StartPack("Client.PlaySoundC")
-			--	Net.WriteString(audioId, "BlockVoice" .. math.random(1, 3))
-			--	Net.WriteString(audioId, "BlockVoice" .. units[i])
-			--	Net.WriteBool(audioId, false)
-			--	Net.Broadcast(audioId)
+			else
+					-- SOUND
+				local audioId = Net.StartPack("Client.PlaySoundC")
+				Net.WriteString(audioId, "BlockVoice" .. math.random(1, 3))
+				Net.WriteString(audioId, "BlockVoice" .. units[i])
+				Net.WriteBool(audioId, false)
+				Net.Broadcast(audioId)
+				
+				audioId = Net.StartPack("Client.SetSoundVolume")
+				Net.WriteString(audioId, "BlockVoice" .. units[i])
+				Net.WriteInt(audioId, 12)
+				Net.Broadcast(audioId)
 			end
 			
 			return true
