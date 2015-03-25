@@ -22,7 +22,7 @@ OptionMenuSystem.Update = function(self, dt)
 		local pressedButton = pressedButtons[1]
 		if self.RequestRelease then
 			if world:EntityHasComponent(pressedButton, "MenuConsoleCommand") then
-				local command = world:GetComponent(pressedButton, "MenuConsoleCommand", "Command"):GetText()
+				local command = world:GetComponent(pressedButton, "MenuConsoleCommand", "Command"):GetString()
 				Console.AddToCommandQueue(command)
 			end
 			if world:EntityHasComponent(pressedButton, "MenuEntityCommand") then
