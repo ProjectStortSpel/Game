@@ -226,7 +226,7 @@ void ClientNetwork::Send(Packet* _packet)
 		return;
 	}
 
-	/* IF THE CHANGE DOSEN'T WORK, UNCOMMENT THIS
+	/* IF THE CHANGE DOSEN'T WORK, UNCOMMENT THIS       (THEN CONTINUE TO READ YA LAZY BASTARD; ROW 233)
 	HandlePacket(p);
 	*/
 

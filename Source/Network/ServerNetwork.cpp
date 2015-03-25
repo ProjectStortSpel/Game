@@ -322,7 +322,7 @@ void ServerNetwork::ReceivePackets(ISocket* _socket, const std::string _name)
 			*p->Sender = _socket->GetNetConnection();
 			memcpy(p->Data, packetData, dataReceived);
 
-			/* IF THE CHANGE DOSEN'T WORK, UNCOMMENT THIS
+			/* IF THE CHANGE DOSEN'T WORK, UNCOMMENT THIS       (THEN CONTINUE TO READ YA LAZY BASTARD; ROW 329)
 				HandlePacket(p);
 			*/ 
 
