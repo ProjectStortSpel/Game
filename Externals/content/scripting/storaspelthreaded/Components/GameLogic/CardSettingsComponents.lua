@@ -105,13 +105,6 @@ NewComponent:AddVariable("Time", ByteSize.Float)
 NewComponent.TableType = TableType.Map
 worldCreator:AddComponentType(NewComponent)
 
---	WeatherStep Timer
-NewComponent = ComponentType()
-NewComponent.Name = "WeatherStepTimer"
-NewComponent:AddVariable("Time", ByteSize.Float)
-NewComponent.TableType = TableType.Map
-worldCreator:AddComponentType(NewComponent)
-
 -- Server Selected Card component
 NewComponent = ComponentType()
 NewComponent.Name = "ServerSelectedCard"

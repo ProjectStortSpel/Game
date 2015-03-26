@@ -21,6 +21,7 @@ end
 WeatherSystem.PostInitialize = function(self)
 	self.WeatherList[#self.WeatherList+1]	=	"Tornado"
 	self.WeatherList[#self.WeatherList+1]	=	"Wind"
+	self.WeatherList[#self.WeatherList+1]	=	"Rain"
 end
 
 WeatherSystem.Update = function(self, dt)
