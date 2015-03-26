@@ -117,8 +117,9 @@ UnitSystem.EntitiesAdded = function(self, dt, entities)
 				Net.WriteInt(id, newEntityId)
 				Net.Send(id, ip, port)
 				
-				local audioId = Net.StartPack("Client.PlaySound")
-				Net.WriteString(audioId, "Bird")
+				local audioId = Net.StartPack("Client.PlaySoundC")
+				Net.WriteString(audioId, "Background")
+				Net.WriteString(audioId, "Background")
 				Net.WriteBool(audioId, true)
 				Net.Send(audioId, ip, port)
 			else

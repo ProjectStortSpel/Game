@@ -273,5 +273,11 @@
     <None Include="..\..\..\Externals\content\shaders\particles\particleExplosionVS.glsl">
       <Filter>shaders\ParticleShaders</Filter>
     </None>
+    <None Include="..\..\..\Externals\content\shaders\particles\particleFirefliesFS.glsl">
+      <Filter>shaders\ParticleShaders</Filter>
+    </None>
+    <None Include="..\..\..\Externals\content\shaders\particles\particleFirefliesVS.glsl">
+      <Filter>shaders\ParticleShaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

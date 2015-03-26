@@ -2,6 +2,7 @@
 package.path = package.path .. ";../shared/systems/?.lua"
 require "sh_PickboxSystem"
 require "sh_HoverSizeSystem"
+require "sh_HoverSoundSystem"
 --require "sh_AddTextToTextureSystem"
 require "sh_ParentSystem"
 require "sh_NotificationBoxSystem"
@@ -14,6 +15,8 @@ worldCreator:AddSystemToCurrentGroup(PickBoxSystem)
 
 --worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(HoverSizeSystem)
+
+worldCreator:AddSystemToCurrentGroup(HoverSoundSystem)
 
 worldCreator:AddSystemToCurrentGroup(NotificationBoxSystem)
 

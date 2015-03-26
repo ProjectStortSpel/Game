@@ -79,6 +79,8 @@ private:
 
 	void ChangeGraphicsSettings(std::string _command, std::vector<Console::Argument>* _args);
 
+	void ToggleFullscreen(std::string _command, std::vector<Console::Argument>* _args);
+
 	void ChangeTimeScale(std::string _command, std::vector<Console::Argument>* _args);
 
 	void OnBannedFromServer(Network::NetConnection _nc, const char* _message);

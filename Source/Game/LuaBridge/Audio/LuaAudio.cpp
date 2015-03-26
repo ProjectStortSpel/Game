@@ -7,6 +7,13 @@ namespace LuaBridge
 {
 	namespace LuaAudio
 	{
+		int SetMusicVolume(lua_State* L);
+		int GetMusicVolume(lua_State* L);
+		int SetVolume(lua_State* L);
+		int GetVolume(lua_State* L);
+		int SetMasterVolume(lua_State* L);
+		int GetMasterVolume(lua_State* L);
+
 		int SetDistance(lua_State* L);
 		int SetCameraPosition(lua_State* L);
 		
@@ -32,6 +39,13 @@ namespace LuaBridge
 		
 		void Embed(lua_State* L)
 		{
+			LuaEmbedder::AddFunction(L, "SetMusicVolume", SetMusicVolume, "Audio");
+			LuaEmbedder::AddFunction(L, "GetMusicVolume", GetMusicVolume, "Audio");
+			LuaEmbedder::AddFunction(L, "SetVolume", SetVolume, "Audio");
+			LuaEmbedder::AddFunction(L, "GetVolume", GetVolume, "Audio");
+			LuaEmbedder::AddFunction(L, "SetMasterVolume", SetMasterVolume, "Audio");
+			LuaEmbedder::AddFunction(L, "GetMasterVolume", GetMasterVolume, "Audio");
+
 			LuaEmbedder::AddFunction(L, "SetDistance", SetDistance, "Audio");
 			LuaEmbedder::AddFunction(L, "SetCameraPosition", SetCameraPosition, "Audio");
 			
@@ -56,6 +70,45 @@ namespace LuaBridge
 			LuaEmbedder::AddFunction(L, "ChannelExists", ChannelExists, "Audio");
 		}
 		
+		int SetMusicVolume(lua_State* L)
+		{
+			float volume = LuaEmbedder::PullFloat(L, 1);
+			Audio::SetMusicVolume(volume);
+			return 0;
+		}
+
+		int GetMusicVolume(lua_State* L)
+		{
+			LuaEmbedder::PushFloat(L, Audio::GetMusicVolume());
+			return 1;
+		}
+		
+		int SetVolume(lua_State* L)
+		{
+			float volume = LuaEmbedder::PullFloat(L, 1);
+			Audio::SetSoundVolume(volume);
+			return 0;
+		}
+
+		int GetVolume(lua_State* L)
+		{
+			LuaEmbedder::PushFloat(L, Audio::GetSoundVolume());
+			return 1;
+		}
+		
+		int SetMasterVolume(lua_State* L)
+		{
+			float volume = LuaEmbedder::PullFloat(L, 1);
+			Audio::SetMasterVolume(volume);
+			return 0;
+		}
+
+		int GetMasterVolume(lua_State* L)
+		{
+			LuaEmbedder::PushFloat(L, Audio::GetMasterVolume());
+			return 1;
+		}
+
 		int SetDistance(lua_State* L)
 		{
 			float near = LuaEmbedder::PullFloat(L, 1);
@@ -76,7 +129,19 @@ namespace LuaBridge
 		int LoadMusic(lua_State* L)
 		{
 			std::string filepath = LuaEmbedder::PullString(L, 1);
-			Audio::LoadMusic(filepath);
+			HomePath::Type type = LuaEmbedder::PullBool(L, "Client") ? HomePath::Type::Client : HomePath::Type::Server;
+			std::vector<std::string> paths = HomePath::GetPaths(type);
+
+			for (int i = 0; i < paths.size(); ++i)
+			{
+				paths[i].append(filepath);
+
+				if (FileSystem::File::Exist(paths[i]))
+				{
+					Audio::LoadMusic(paths[i]);
+					break;
+				}
+			}
 			return 0;
 		}
 		int PlayMusic(lua_State* L)
@@ -219,7 +284,7 @@ namespace LuaBridge
 		{
 			std::string channelName = LuaEmbedder::PullString(L, 1);
 			int volume = LuaEmbedder::PullInt(L, 2);
-			Audio::SetVolume(channelName, volume);
+			Audio::SetSoundVolume(channelName, volume);
 			return 0;
 		}
 		

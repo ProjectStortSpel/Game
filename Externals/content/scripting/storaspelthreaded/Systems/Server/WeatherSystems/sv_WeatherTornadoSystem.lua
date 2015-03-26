@@ -11,7 +11,7 @@ WeatherTornadoSystem.Initialize = function(self)
 	self:UsingEntitiesAdded()
 
 	--	Set Filter
-	self:AddComponentTypeToFilter("MoveRiver", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("WeatherStep", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("DealCards", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("WeatherTornado", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("TestMoveSuccess",FilterType.RequiresOneOf)
@@ -39,7 +39,7 @@ WeatherTornadoSystem.EntitiesAdded = function(self, dt, newEntities)
 			world:KillEntity(tEntity)
 		end
 		
-		if world:EntityHasComponent(tEntity, "MoveRiver") then
+		if world:EntityHasComponent(tEntity, "WeatherStep") then
 			for i = 1, #self.TornadoIds do
 				self:MoveTornado(self.TornadoIds[i])
 				
@@ -156,9 +156,9 @@ WeatherTornadoSystem.AddTornado = function(self)
 	world:GetComponent(id, "Model", "RenderType"):SetInt(1)
 	
 	world:CreateComponentAndAddTo("LerpScale", id)
-	world:GetComponent(id, "LerpScale", "X"):SetFloat(1.0)
-	world:GetComponent(id, "LerpScale", "Y"):SetFloat(1.0)
-	world:GetComponent(id, "LerpScale", "Z"):SetFloat(1.0)
+	world:GetComponent(id, "LerpScale", "X"):SetFloat(0.5)
+	world:GetComponent(id, "LerpScale", "Y"):SetFloat(0.5)
+	world:GetComponent(id, "LerpScale", "Z"):SetFloat(0.5)
 	world:GetComponent(id, "LerpScale", "Time"):SetFloat(2.5)
 	world:GetComponent(id, "LerpScale", "Algorithm"):SetText("NormalLerp")
 	
@@ -200,13 +200,24 @@ WeatherTornadoSystem.MoveTornado = function(self, id)
 			if tPosX == testX and tPosZ == testZ then
 				
 			
-				
-				world:CreateComponentAndAddTo("LerpPosition", id)
+				if not world:EntityHasComponent(id, "LerpPosition") then
+					world:CreateComponentAndAddTo("LerpPosition", id)
+				end
 				world:GetComponent(id, "LerpPosition", "X"):SetFloat(tPosX)
 				world:GetComponent(id, "LerpPosition", "Y"):SetFloat(0.5)
 				world:GetComponent(id, "LerpPosition", "Z"):SetFloat(tPosZ)
 				world:GetComponent(id, "LerpPosition", "Time"):SetFloat(1.0)
 				world:GetComponent(id, "LerpPosition", "Algorithm"):SetText("NormalLerp")
+				
+				if not world:EntityHasComponent(id, "LerpScale") then
+					world:CreateComponentAndAddTo("LerpScale", id)
+				end
+				world:GetComponent(id, "LerpScale", "X"):SetFloat(1.0)
+				world:GetComponent(id, "LerpScale", "Y"):SetFloat(1.0)
+				world:GetComponent(id, "LerpScale", "Z"):SetFloat(1.0)
+				world:GetComponent(id, "LerpScale", "Time"):SetFloat(1.0)
+				world:GetComponent(id, "LerpScale", "Algorithm"):SetText("NormalLerp")
+				
 				
 				world:GetComponent(id, "MapPosition", 0):SetInt2(tPosX, tPosZ)
 				
@@ -233,9 +244,21 @@ WeatherTornadoSystem.CheckCollision = function(self, id, unit)
 		
 		if world:EntityHasComponent(unit, "ActionGuard") then
 			-- SOUND
-			local audioId = Net.StartPack("Client.PlaySound")
+			local audioId = Net.StartPack("Client.PlaySoundC")
 			Net.WriteString(audioId, "BlockVoice" .. math.random(1, 3))
+			Net.WriteString(audioId, "BlockVoice" .. unit)
 			Net.WriteBool(audioId, false)
+			Net.Broadcast(audioId)
+			local px, py, pz = world:GetComponent(unit, "Position", 0):GetFloat3()
+			audioId = Net.StartPack("Client.SetSoundPosition")
+			Net.WriteString(audioId, "BlockVoice" .. unit)
+			Net.WriteFloat(audioId, px)
+			Net.WriteFloat(audioId, py)
+			Net.WriteFloat(audioId, pz)
+			Net.Broadcast(audioId)
+			audioId = Net.StartPack("Client.SetSoundVolume")
+			Net.WriteString(audioId, "BlockVoice" .. unit)
+			Net.WriteInt(audioId, 128)
 			Net.Broadcast(audioId)
 			return
 		end

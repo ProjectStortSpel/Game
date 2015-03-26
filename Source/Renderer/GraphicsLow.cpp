@@ -7,7 +7,7 @@
 using namespace Renderer;
 using namespace glm;
 
-GraphicsLow::GraphicsLow()
+GraphicsLow::GraphicsLow(bool _fullscreen) : GraphicDevice(_fullscreen)
 {
 	SDL_Log("Starting graphics low");
 	m_stringToInt = new char[2];
@@ -18,9 +18,10 @@ GraphicsLow::GraphicsLow()
 	m_nrOfLightsToBuffer = 0;
     m_pointerToDirectionalLights = 0;
 	m_pointerToPointlights = 0;
+	m_graphicsSetting = GRAPHICS_LOW;
 }
 
-GraphicsLow::GraphicsLow(Camera _camera, int x, int y) : GraphicDevice(_camera, x, y)
+GraphicsLow::GraphicsLow(Camera _camera, int x, int y, bool _fullscreen) : GraphicDevice(_camera, x, y, _fullscreen)
 {
 	SDL_Log("Starting graphics low");
 	m_stringToInt = new char[2];
@@ -31,6 +32,7 @@ GraphicsLow::GraphicsLow(Camera _camera, int x, int y) : GraphicDevice(_camera, 
 	m_nrOfLightsToBuffer = 0;
 	m_pointerToDirectionalLights = 0;
 	m_pointerToPointlights = 0;
+	m_graphicsSetting = GRAPHICS_LOW;
 }
 
 GraphicsLow::~GraphicsLow()
@@ -124,7 +126,7 @@ void GraphicsLow::WriteShadowMapDepth()
 				{
 					mat4 modelMatrix;
 					if (m_modelsDeferred[i].instances[j].modelMatrix == NULL)
-						modelMatrix = glm::translate(glm::vec3(1));
+						modelMatrix = glm::mat4(1.0f);
 					else
 						modelMatrix = *m_modelsDeferred[i].instances[j].modelMatrix;
 
@@ -157,7 +159,7 @@ void GraphicsLow::WriteShadowMapDepth()
 				{
 					mat4 modelMatrix;
 					if (m_modelsForward[i].instances[j].modelMatrix == NULL)
-						modelMatrix = glm::translate(glm::vec3(1));
+						modelMatrix = glm::mat4(1.0f);
 					else
 						modelMatrix = *m_modelsForward[i].instances[j].modelMatrix;
 

@@ -64,7 +64,7 @@ ConnectMenuSystem.EntitiesRemoved = function(self, dt, entities)
 end
 
 ConnectMenuSystem.SpawnMenu = function(self)
-	local background = self:CreateElement("joinserver", "quad", 0, 0.6, -2.1, 1.0, 1.0)
+	local background = self:CreateTexture("joinserver", "quad", 0, 0.6, -2.1, 1.0, 1.0)
 	local servers = self:GetEntities("ServerListEntry")
 	local button = nil
 
@@ -123,7 +123,7 @@ ConnectMenuSystem.SpawnMenu = function(self)
 	self:AddEntityCommandToButton("HostMenu", button)
 	self:AddHoverSize(1.1, button)
 	
-	button = self:CreateElement("returnknapp", "quad", 2.3, -1.2, -3, 0.4, 0.4)
+	button = self:CreateElement("returnknapp", "quad", -2.3, -1.2, -3, 0.4, 0.4)
 	self:AddConsoleCommandToButton("back", button)
 	self:AddEntityCommandToButton("MainMenu", button)
 	self:AddHoverSize(1.1, button)
@@ -193,6 +193,16 @@ ConnectMenuSystem.CreateElement = function(self, object, folder, posx, posy, pos
 	world:GetComponent(id, "Position", 0):SetFloat3(posx, posy, posz)
 	world:GetComponent(id, "Scale", 0):SetFloat3(scalex, scaley, 1)
 	world:GetComponent(id, "PickBox", 0):SetFloat2(1, 1)
+	world:GetComponent(id, "Rotation", 0):SetFloat3(0, 0, 0)
+	return id	
+end
+
+ConnectMenuSystem.CreateTexture = function(self, object, folder, posx, posy, posz, scalex, scaley)
+	local id = world:CreateNewEntity("Texture")
+	world:CreateComponentAndAddTo(self.Name.."Element", id)
+	world:GetComponent(id, "Model", 0):SetModel(object, folder, 2)
+	world:GetComponent(id, "Position", 0):SetFloat3(posx, posy, posz)
+	world:GetComponent(id, "Scale", 0):SetFloat3(scalex, scaley, 1)
 	world:GetComponent(id, "Rotation", 0):SetFloat3(0, 0, 0)
 	return id	
 end

@@ -155,7 +155,8 @@ namespace Renderer
 		void SetDebugTexFlag(int _flag) { return; }
 		void Clear(); // virtual in PC
 		int GetVRamUsage(){ return -1; }
-		virtual void SetShadowMapData(float _width, float _height, vec3 _target){};
+		virtual void SetShadowMapData(float _width, float _height, vec3 _target) = 0;
+		virtual void GetShadowMapData(float &_width, float &_height, vec3 &_target) = 0;
 
 	protected:
 		SDL_GLContext	m_glContext;
@@ -169,6 +170,9 @@ namespace Renderer
 
 		// Camera
 		Camera* m_camera;
+
+		//Shadow map info
+		vec3 m_dirLightshadowMapTarget;
 
 		// Models
 		int m_modelIDcounter;

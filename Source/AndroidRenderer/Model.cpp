@@ -30,7 +30,7 @@ void Model::Draw(mat4 viewMatrix, Shader* shader)
 	{
 		mat4 modelMatrix;
 		if (this->modelMatrix == NULL)
-			modelMatrix = glm::translate(glm::vec3(1));
+			modelMatrix = glm::mat4(1.0f);
 		else
 			modelMatrix = *this->modelMatrix;
 

@@ -10,8 +10,6 @@ AudioRiverSystem.Initialize = function(self)
 end
 
 AudioRiverSystem.EntitiesAdded = function(self, dt, entities)
-
-
 	if entities ~= nil then
 		for i = 1, #entities do
 			local entity = entities[i]
@@ -20,10 +18,10 @@ AudioRiverSystem.EntitiesAdded = function(self, dt, entities)
 			
 			if world:EntityHasComponent(entity, "RiverEnd") then
 				Audio.PlaySound("WaterfallLoop", soundName, true)
-				Audio.SetSoundVolume(soundName, 128)
+				Audio.SetSoundVolume(soundName, 8)
 			else
 				Audio.PlaySound("RiverWaterLoop", soundName, true)
-				Audio.SetSoundVolume(soundName, 64)
+				Audio.SetSoundVolume(soundName, 6)
 			end
 			
 			Audio.SetSoundPosition(soundName, x, y, z)
@@ -36,8 +34,6 @@ AudioRiverSystem.EntitiesRemoved = function(self, dt, entities)
 		for i = 1, #entities do
 			local entity = entities[i]
 			local soundName = "RiverWaterLoop" .. entity
-			
-			print("Stop sound!")
 			
 			Audio.StopSound(soundName)
 		end

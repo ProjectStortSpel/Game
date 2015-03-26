@@ -10,7 +10,7 @@
 using namespace Renderer;
 using namespace glm;
 
-GraphicDevice::GraphicDevice()
+GraphicDevice::GraphicDevice(bool _fullscreen)
 {
 	m_useAnimations = false;
 
@@ -18,6 +18,7 @@ GraphicDevice::GraphicDevice()
 	m_windowPosY = 2;
 	m_windowCaption = "Neanderfall";
 	m_SDLinitialized = false;
+	m_startFullscreen = _fullscreen;
 	
 	m_pointerToPointlights = NULL;
 	m_pointerToDirectionalLights = NULL;
@@ -27,13 +28,14 @@ GraphicDevice::GraphicDevice()
 	m_modelIDcounter = 0;
 	m_elapsedTime = 0.0f;
 }
-GraphicDevice::GraphicDevice(Camera _camera, int x, int y)
+GraphicDevice::GraphicDevice(Camera _camera, int x, int y, bool _fullscreen)
 {
 	m_camera = new Camera(_camera);
 	m_windowPosX = x;
 	m_windowPosY = y;
 	m_windowCaption = "Neanderfall";
 	m_SDLinitialized = true;
+	m_startFullscreen = _fullscreen;
 
 	m_pointerToPointlights = NULL;
 	m_pointerToDirectionalLights = NULL;
@@ -115,7 +117,11 @@ void GraphicDevice::GetWindowPos(int &x, int &y)
 bool GraphicDevice::InitSDLWindow(int _width, int _height)
 {
 	// WINDOW SETTINGS
-	unsigned int	Flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
+	unsigned int	Flags;
+	if (m_startFullscreen)
+		Flags = SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP;
+	else
+		Flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
 	int				SizeX = _width;	//1280
 	int				SizeY = _height;	//720
 	if (SDL_Init(SDL_INIT_VIDEO) == -1){
@@ -1024,4 +1030,13 @@ void GraphicDevice::SetShadowMapData(float _width, float _height, vec3 _target)
 {
 	m_dirLightshadowMapTarget = _target;
 	m_shadowMap->SetBounds(_width, _height);
+}
+
+void GraphicDevice::GetShadowMapData(float &_width, float &_height, vec3 &_target)
+{
+	_target = m_dirLightshadowMapTarget;
+	float w, h;
+	m_shadowMap->GetBounds(w, h);
+	_width = w; 
+	_height = h;
 }

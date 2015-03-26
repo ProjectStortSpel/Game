@@ -109,9 +109,14 @@ VoidSystem.EntitiesAdded = function(self, dt, entities)
 			local x, y, z = world:GetComponent(entity, "FallDownSound", 0):GetFloat3()
 		
 			local audioId = Net.StartPack("Client.PlaySoundC")
-			Net.WriteString(audioId, "FallingDown" .. math.random(1,3))
+			Net.WriteString(audioId, "FallingDown" .. math.random(1,4))
 			Net.WriteString(audioId, "FallDownChannel")
 			Net.WriteBool(audioId, false)
+			Net.Broadcast(audioId)
+			
+			audioId = Net.StartPack("Client.SetSoundVolume")
+			Net.WriteString(audioId, "FallDownChannel")
+			Net.WriteInt(audioId, 12)
 			Net.Broadcast(audioId)
 			
 			audioId = Net.StartPack("Client.SetSoundPosition")

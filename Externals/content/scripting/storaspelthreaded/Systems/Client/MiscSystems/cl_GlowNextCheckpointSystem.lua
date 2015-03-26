@@ -36,16 +36,16 @@ GlowNextCheckpointSystem.EntitiesAdded = function(self, dt, newEntities)
 			
 			local	cNumber		=	world:GetComponent(newEntity, "GlowCheckpoint", "Stage"):GetInt()
 			
+			local	allGlowing	=	self:GetEntities("GlowingCheckpoint")
+			for tGlowing = 1, #allGlowing do
+				if world:EntityHasComponent(allGlowing[tGlowing], "Pointlight") then
+					world:RemoveComponentFrom("Pointlight", allGlowing[tGlowing])
+					break
+				end
+			end
+			
 			print("cNumber: " .. cNumber)
 			if cNumber == -1 then
-				local	allGlowing	=	self:GetEntities("GlowingCheckpoint")
-				for tGlowing = 1, #allGlowing do
-					if world:EntityHasComponent(allGlowing[tGlowing], "Pointlight") then
-						world:RemoveComponentFrom("Pointlight", allGlowing[tGlowing])
-						break
-					end
-				end
-				
 				self.TargetRune	=	self:GetGlowingRune(self.CurrentGlowStage)
 				self.CurrentGlowStage	=	-1
 				self.GlowingRuneEnt		=	-1
@@ -108,9 +108,9 @@ GlowNextCheckpointSystem.Update = function(self, dt)
 	self.TotalTime	=	self.TotalTime + dt
 	self.GlowTimer	=	self.GlowTimer + dt
 	
-	local	R	=	0.6 + math.sin(0.10*self.TotalTime)*0.25
-	local	G	=	0.6 + math.sin(0.10*self.TotalTime*self.TotalTime)*0.25
-	local	B	=	0.6 + math.sin(0.10*self.TotalTime*self.TotalTime*self.TotalTime)*0.25
+	local	R	=	0.6 + math.sin(self.TotalTime)*0.25
+	local	G	=	0.6 + math.sin(self.TotalTime+self.TotalTime)*0.25
+	local	B	=	0.6 + math.sin(self.TotalTime+self.TotalTime+self.TotalTime)*0.25
 	world:GetComponent(self.TargetRune, "Color", 0):SetFloat3(R,G,B)
 	
 	--	Update the glowing light

@@ -3,7 +3,7 @@
 using namespace Renderer;
 using namespace glm;
 
-GraphicsHigh::GraphicsHigh()
+GraphicsHigh::GraphicsHigh(bool _fullscreen) : GraphicDevice(_fullscreen)
 {
 	SDL_Log("Starting graphics high");
 	debugModelInfo = 0;
@@ -21,9 +21,10 @@ GraphicsHigh::GraphicsHigh()
 	m_pointerToDirectionalLights = 0;
 	m_pointerToPointlights = 0;
     m_FBOsCreated = false;
+	m_graphicsSetting = GRAPHICS_HIGH;
 }
 
-GraphicsHigh::GraphicsHigh(Camera _camera, int x, int y) : GraphicDevice(_camera, x, y)
+GraphicsHigh::GraphicsHigh(Camera _camera, int x, int y, bool _fullscreen) : GraphicDevice(_camera, x, y, _fullscreen)
 {
 	SDL_Log("Starting graphics high");
 	debugModelInfo = 0;
@@ -37,6 +38,7 @@ GraphicsHigh::GraphicsHigh(Camera _camera, int x, int y) : GraphicDevice(_camera
 	m_pointerToDirectionalLights = 0;
 	m_pointerToPointlights = 0;
     m_FBOsCreated = false;
+	m_graphicsSetting = GRAPHICS_HIGH;
 }
 
 GraphicsHigh::~GraphicsHigh()
@@ -354,7 +356,7 @@ void GraphicsHigh::WriteShadowMapDepth()
 				{
 					mat4 modelMatrix;
 					if (m_modelsDeferred[i].instances[j].modelMatrix == NULL)
-						modelMatrix = glm::translate(glm::vec3(1));
+						modelMatrix = glm::mat4(1.0f);
 					else
 						modelMatrix = *m_modelsDeferred[i].instances[j].modelMatrix;
 
@@ -387,7 +389,7 @@ void GraphicsHigh::WriteShadowMapDepth()
 				{
 					mat4 modelMatrix;
 					if (m_modelsForward[i].instances[j].modelMatrix == NULL)
-						modelMatrix = glm::translate(glm::vec3(1));
+						modelMatrix = glm::mat4(1.0f);
 					else
 						modelMatrix = *m_modelsForward[i].instances[j].modelMatrix;
 

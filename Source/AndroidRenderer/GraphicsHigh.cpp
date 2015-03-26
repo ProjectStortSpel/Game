@@ -114,7 +114,7 @@ void GraphicsHigh::WriteShadowMapDepth()
 			mat4 modelMatrix;
 			if (m_modelsDeferred[i].modelMatrix == NULL)
 			{
-				modelMatrix = glm::translate(glm::vec3(1));
+				modelMatrix = glm::mat4(1.0f);
 				SDL_Log("model: %d has no model matrix", i);
 			}
 			else
@@ -137,7 +137,7 @@ void GraphicsHigh::WriteShadowMapDepth()
 			mat4 modelMatrix;
 			if (m_modelsForward[i].modelMatrix == NULL)
 			{
-				modelMatrix = glm::translate(glm::vec3(1));
+				modelMatrix = glm::mat4(1.0f);
 				SDL_Log("model: %d has no model matrix", i);
 			}
 			else
@@ -171,7 +171,7 @@ void GraphicsHigh::WriteShadowMapDepth()
 		mat4 modelMatrix;
 		if (m_modelsAnimated[i].modelMatrix == NULL)
 		{
-			modelMatrix = glm::translate(glm::vec3(1));
+			modelMatrix = glm::mat4(1.0f);
 			SDL_Log("model: %d has no model matrix", i);
 		}
 		else
@@ -180,14 +180,10 @@ void GraphicsHigh::WriteShadowMapDepth()
 		mat4 mvp = shadowViewProj * modelMatrix;
 		m_animShadowShader.SetUniVariable("MVP", mat4x4, &mvp);
 
-		//glActiveTexture(GL_TEXTURE1);
-		//glBindTexture(GL_TEXTURE_2D, m_modelsAnimated[i].texID);
-
 		m_modelsAnimated[i].bufferPtr->draw(m_animShadowShader.GetShaderProgram());
 
 	}
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	//glBindFramebuffer(GL_FRAMEBUFFER, oldFBO);
 	glCullFace(GL_BACK);
 	//------------------------------
 }
@@ -706,6 +702,15 @@ int GraphicsHigh::LoadModel(std::vector<std::string> _dirs, std::string _file, g
 
 bool GraphicsHigh::RemoveModel(int _id)
 {
+	for (int i = 0; i < m_modelsDeferred.size(); i++)
+	{
+		if (m_modelsDeferred[i].id == _id)
+		{
+			m_modelsDeferred.erase(m_modelsDeferred.begin() + i);
+
+			return true;
+		}
+	}
 	for (int i = 0; i < m_modelsForward.size(); i++)
 	{
 		if (m_modelsForward[i].id == _id)
@@ -741,18 +746,35 @@ bool GraphicsHigh::RemoveModel(int _id)
 			return true;
 		}
 	}
-
-	if (m_modelsToLoad.find(_id) != m_modelsToLoad.end())
+	for (int i = 0; i < m_modelsWater.size(); i++)
 	{
-		m_modelsToLoad.erase(_id);
-
-		return true;
+		if (m_modelsWater[i].id == _id)
+		{
+			m_modelsWater.erase(m_modelsWater.begin() + i);
+			return true;
+		}
+	}
+	for (int i = 0; i < m_modelsWaterCorners.size(); i++)
+	{
+		if (m_modelsWaterCorners[i].id == _id)
+		{
+			m_modelsWaterCorners.erase(m_modelsWaterCorners.begin() + i);
+			return true;
+		}
 	}
 
 	return false;
 }
 bool GraphicsHigh::ActiveModel(int _id, bool _active)
 {
+	for (int i = 0; i < m_modelsDeferred.size(); i++)
+	{
+		if (m_modelsDeferred[i].id == _id)
+		{
+			m_modelsDeferred[i].active = _active;
+			return true;
+		}
+	}
 	for (int i = 0; i < m_modelsForward.size(); i++)
 	{
 		if (m_modelsForward[i].id == _id)
@@ -782,6 +804,22 @@ bool GraphicsHigh::ActiveModel(int _id, bool _active)
 		if (m_modelsAnimated[i].id == _id)
 		{
 			m_modelsAnimated[i].active = _active;
+			return true;
+		}
+	}
+	for (int i = 0; i < m_modelsWater.size(); i++)
+	{
+		if (m_modelsWater[i].id == _id)
+		{
+			m_modelsWater[i].active = _active;
+			return true;
+		}
+	}
+	for (int i = 0; i < m_modelsWaterCorners.size(); i++)
+	{
+		if (m_modelsWaterCorners[i].id == _id)
+		{
+			m_modelsWaterCorners[i].active = _active;
 			return true;
 		}
 	}
@@ -1011,4 +1049,13 @@ void GraphicsHigh::SetShadowMapData(float _width, float _height, vec3 _target)
 {
 	m_dirLightshadowMapTarget = _target;
 	m_shadowMap->SetBounds(_width, _height);
+}
+
+void GraphicsHigh::GetShadowMapData(float &_width, float &_height, vec3 &_target)
+{
+	_target = m_dirLightshadowMapTarget;
+	float w, h;
+	m_shadowMap->GetBounds(w, h);
+	_width = w;
+	_height = h;
 }

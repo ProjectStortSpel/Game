@@ -72,6 +72,8 @@
     <None Include="..\..\..\Externals\content\shaders\android\AndroidInterfaceFS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\android\AndroidInterfaceVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\android\AndroidRiverShaderVS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidShadowShaderDeferredFS.glsl" />
+    <None Include="..\..\..\Externals\content\shaders\android\AndroidShadowShaderDeferredVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\android\AndroidShadowShaderFS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\android\AndroidShadowShaderVS.glsl" />
     <None Include="..\..\..\Externals\content\shaders\android\AndroidSkyboxShaderFS.glsl" />

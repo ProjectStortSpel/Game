@@ -34,6 +34,9 @@ namespace Renderer
 #define TEXTURE_NORMAL		1
 #define TEXTURE_SPECULAR	2
 
+#define GRAPHICS_LOW 0
+#define GRAPHICS_HIGH 1
+
 	struct GLTimerValue
 	{
 		std::string name;
@@ -112,8 +115,8 @@ namespace Renderer
 		int debugModelInfo;
 		bool hideInderface;
 
-		GraphicDevice();
-		GraphicDevice(Camera _camera, int x, int y);
+		GraphicDevice(bool _fullscreen);
+		GraphicDevice(Camera _camera, int x, int y, bool _fullscreen);
 		virtual ~GraphicDevice();
 
 		// BASIC
@@ -177,6 +180,12 @@ namespace Renderer
 
 		void SetShadowMapData(float _width, float _height, vec3 _target);
 
+		void GetShadowMapData(float &_width, float &_height, vec3 &_target);
+
+		int GetGraphicsSetting(){ return m_graphicsSetting; }
+
+		bool GetFullscreen(){ return m_startFullscreen; }
+
 	protected:
 		SDL_GLContext	m_glContext;
 		bool			m_SDLinitialized;
@@ -184,6 +193,9 @@ namespace Renderer
 		float			m_dt, m_elapsedTime;
 		int				m_fps;
 		int				m_debugTexFlag;
+		
+		int m_graphicsSetting;
+		bool m_startFullscreen;
 
 		// Window
 		SDL_Window*		m_window;
@@ -245,7 +257,7 @@ namespace Renderer
 		virtual void InitRenderLists() { return; }
 		void InitStandardShaders();
 		void InitStandardBuffers();
-		bool InitSDLWindow(int _width = 1280, int _height = 720);
+		bool InitSDLWindow(int _width = 1600, int _height = 900);
 
 		// Models
 		void BufferModels();

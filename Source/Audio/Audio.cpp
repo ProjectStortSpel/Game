@@ -51,14 +51,15 @@ namespace Audio
 	Mix_Music* g_music = NULL;
 	std::map<std::string, Mix_Chunk*> g_sounds;
 	
-	
-	
 	float g_near, g_far;
 	glm::vec3 g_cameraPosition;
 	
-	int g_volume = MIX_MAX_VOLUME;
+	float g_masterVolume = 1.0f;
+	float g_musicVolume = 0.3f;
+	float g_soundVolume = 1.0f;
 	
 	std::map<std::string, int> g_channels;
+	std::map<std::string, int> g_channelVolumes;
 	
 	std::vector<std::string> g_loadMusicQueue;
 	std::vector<AudioState> g_musicStateQueue;
@@ -132,6 +133,7 @@ namespace Audio
 				if (channel == channelPair.second)
 				{
 					g_channels.erase(channelPair.first);
+					g_channelVolumes.erase(channelPair.first);
 					break;
 				}
 			}
@@ -216,6 +218,7 @@ namespace Audio
 			if (playSound.useChannelName)
 			{
 				g_channels[playSound.channelName] = channel;
+				g_channelVolumes[playSound.channelName] = MIX_MAX_VOLUME;
 			}
 		}
 		for (std::vector<FadeInParams>::iterator soundFadeInQueueIt = g_soundFadeInQueue.begin(); soundFadeInQueueIt != g_soundFadeInQueue.end();)
@@ -237,7 +240,10 @@ namespace Audio
 				continue;
 			}
 			if (soundFadeInQueueIt->useChannelName)
+			{
 				g_channels[soundFadeInQueueIt->channelName] = channel;
+				g_channelVolumes[soundFadeInQueueIt->channelName] = MIX_MAX_VOLUME;
+			}
 			soundFadeInQueueIt = g_soundFadeInQueue.erase(soundFadeInQueueIt);
 		}
 		for (std::vector<std::pair<std::string, int>>::iterator soundFadeOutQueueIt = g_soundFadeOutQueue.begin(); soundFadeOutQueueIt != g_soundFadeOutQueue.end();)
@@ -293,22 +299,29 @@ namespace Audio
 		{
 			if (g_channels.find(volume.first) == g_channels.end())
 				continue;
-			Mix_Volume(g_channels[volume.first], volume.second);
+			g_channelVolumes[volume.first] = volume.second;
 		}
 		g_loadSoundQueue.clear();
 		g_playSoundQueue.clear();
 		g_soundStateQueue.clear();
 		//g_soundPositionQueue.clear();
 		g_soundVolumeQueue.clear();
+		
+		if (Mix_PlayingMusic() == 1)
+		{
+			Mix_VolumeMusic((Uint8)((float)MIX_MAX_VOLUME * g_musicVolume * g_masterVolume));
+		}
+		
+		for (std::pair<std::string, int> channelVolume : g_channelVolumes)
+		{
+			Uint8 volume = (Uint8)(g_masterVolume * g_soundVolume * (float)channelVolume.second);
+			Mix_Volume(g_channels[channelVolume.first], volume);
+		}
 	}
 	
 	void Quit()
 	{
-		for (std::pair<std::string, Mix_Chunk*> sound : g_sounds)
-			Mix_FreeChunk(sound.second);
-		
-		if (g_music != NULL)
-			Mix_FreeMusic(g_music);
+		Reset();
 		
 		Mix_CloseAudio();
 		
@@ -328,11 +341,36 @@ namespace Audio
 		SDL_DestroyMutex(g_soundVolumeMutex);
 	}
 	
-	void SetVolume(int volume)
+	void SetSoundVolume(float volume)
 	{
-		g_volume = volume;
+		g_soundVolume = volume;
 	}
 	
+	float GetSoundVolume()
+	{
+		return g_soundVolume;
+	}
+	
+	void SetMusicVolume(float volume)
+	{
+		g_musicVolume = volume;
+	}
+	
+	float GetMusicVolume()
+	{
+		return g_musicVolume;
+	}
+	
+	void SetMasterVolume(float volume)
+	{
+		g_masterVolume = volume;
+	}
+	
+	float GetMasterVolume()
+	{
+		return g_masterVolume;
+	}
+
 	void SetDistance(float near, float far)
 	{
 		g_near = near;
@@ -515,7 +553,7 @@ namespace Audio
 		SDL_UnlockMutex(g_soundFadeOutMutex);
 	}
 	
-	void SetVolume(const std::string& channelName, int volume)
+	void SetSoundVolume(const std::string& channelName, int volume)
 	{
 		SDL_LockMutex(g_soundVolumeMutex);
 		
@@ -527,5 +565,38 @@ namespace Audio
 	bool ChannelExists(const std::string& channelName)
 	{
 		return g_channels.find(channelName) != g_channels.end();
+	}
+	
+	void Reset()
+	{
+		for (std::pair<std::string, int> channelPair : g_channels)
+			Mix_HaltChannel(channelPair.second);
+		g_channels.clear();
+		g_channelVolumes.clear();
+		for (std::pair<std::string, Mix_Chunk*> sound : g_sounds)
+			Mix_FreeChunk(sound.second);
+		g_sounds.clear();
+		
+		if (g_music != NULL)
+		{
+			Mix_HaltMusic();
+			Mix_FreeMusic(g_music);
+			g_music = NULL;
+		}
+		
+		g_loadMusicQueue.clear();
+		g_musicStateQueue.clear();
+		g_musicFadeInQueue.clear();
+		g_musicFadeOutQueue.clear();
+		
+		g_loadSoundQueue.clear();
+		g_playSoundQueue.clear();
+		g_soundStateQueue.clear();
+		g_soundPositionQueue.clear();
+		g_soundFadeInQueue.clear();
+		g_soundFadeOutQueue.clear();
+		g_soundVolumeQueue.clear();
+		
+		g_channelRemoveQueue.clear();
 	}
 }

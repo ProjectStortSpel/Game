@@ -7,7 +7,7 @@ ShadowMap::ShadowMap(vec3 lightPos, vec3 target, int res)
 	m_targetDirection = target;
 
 	m_resolution = res;
-	m_projectionMatrix = glm::ortho(-10.0, 10.0, -10.0, 10.0, 2.5, 18.0); 
+	m_projectionMatrix = glm::ortho(-10.0, 10.0, -10.0, 10.0, 2.5, 20.0); 
 	//glm::perspective(45.0f, (float)res / (float)res, 1.0f, 50.0f);
 	m_viewMatrix = glm::lookAt(m_lightPosition, m_targetDirection, vec3(0.0f, 1.0f, 0.0f));
 
@@ -71,5 +71,7 @@ void ShadowMap::ChangeResolution(int res)
 
 void ShadowMap::SetBounds(float _width, float _height)
 {
-	m_projectionMatrix = glm::ortho(-_width, _width, -_height, _height, 2.5f, 10.f + std::max(_width, _height));
+	m_width = _width;
+	m_height = _height;
+	m_projectionMatrix = glm::ortho(-_width, _width, -_height, _height, 2.5f, 15.f + std::max(_width, _height));
 }

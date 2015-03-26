@@ -39,10 +39,15 @@ end
 
 
 CardHoverSystem.EntitiesAdded = function(self, dt, entities)
+	
+	--Audio.PlaySound("Cards1", "Cards1111", false)
+
 	for n = 1, #entities do
 		local entityId = entities[n]
 		local rotation = world:GetComponent(entityId, "Rotation", 0)
 		rotation:SetFloat3(0, 0, 0)
+		
+		
 		
 		--Audio.FadeInSound("TorchFire", "CardHover" .. entityId, 500, true)
 	end

@@ -33,8 +33,8 @@ void main()
 
 	//skin += mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, weights.x, 0, 1);
     
-	ViewPos = V * M * skin * vec4(VertexPosition, 1.0);
-	gl_Position = P * ViewPos;
+	ViewPos = V * M * vec4(VertexPosition, 1.0); //V * M * skin * vec4(VertexPosition, 1.0);
+	gl_Position = P * V * M * skin * vec4(VertexPosition, 1.0);
 
 	Normal = normalize( NormalMatrix * (skin * vec4(VertexNormal, 0.0)).xyz );
 	Tan = normalize( NormalMatrix * (skin * vec4(VertexTangent, 0.0)).xyz );

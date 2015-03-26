@@ -70,13 +70,24 @@ HowToSystem.EntitiesAdded = function(self, dt, entities)
 	end
 end
 
-HowToSystem.CreateElement = function(self, object, folder, posx, posy, posz, scalex, scaley)
+
+
+HowToSystem.CreateButton = function(self, object, folder, posx, posy, posz, scalex, scaley)
 	local id = world:CreateNewEntity("Button")
 	world:CreateComponentAndAddTo("HowToMenuElement", id)
 	world:GetComponent(id, "Model", 0):SetModel(object, folder, 2)
 	world:GetComponent(id, "Position", 0):SetFloat3(posx, posy, posz)
 	world:GetComponent(id, "Scale", 0):SetFloat3(scalex, scaley, 1)
 	world:GetComponent(id, "PickBox", 0):SetFloat2(1, 1)
+	world:GetComponent(id, "Rotation", 0):SetFloat3(0, 0, 0)
+	return id	
+end
+
+HowToSystem.CreateTexture = function(self, object, folder, posx, posy, posz, scalex, scaley)
+	local id = world:CreateNewEntity("Texture")
+	world:GetComponent(id, "Model", 0):SetModel(object, folder, 2)
+	world:GetComponent(id, "Position", 0):SetFloat3(posx, posy, posz)
+	world:GetComponent(id, "Scale", 0):SetFloat3(scalex, scaley, 1)
 	world:GetComponent(id, "Rotation", 0):SetFloat3(0, 0, 0)
 	return id	
 end
@@ -107,19 +118,19 @@ HowToSystem.CreateEntites = function(self)
 	--self:AddHoverSize(1.5, menubutton)
 	--table.insert(self.Entities, menubutton)
 	
-	local specials = self:CreateElement("rules", "quad", -1.0, -0.5, -3.0, 1.4, 1.4)
+	local specials = self:CreateTexture("rules", "quad", -1.0, -0.5, -3.0, 1.4, 1.4)
 	table.insert(self.Entities, specials)
 	
-	local cards = self:CreateElement("cards", "quad", -1.1, 0.5, -3.0, 1.1, 1.1)
+	local cards = self:CreateTexture("cards", "quad", -1.1, 0.5, -3.0, 1.1, 1.1)
 	table.insert(self.Entities, cards)
 	
-	local tutorial = self:CreateElement("tutorial", "quad", 0.8, 1.0, -3.0, 1.1, 1.1)
+	local tutorial = self:CreateTexture("tutorial", "quad", 0.8, 1.0, -3.0, 1.1, 1.1)
 	table.insert(self.Entities, tutorial)
 	
-	local prio = self:CreateElement("prio", "quad", 1.5, -1.0, -3.0, 1.1, 1.1)
+	local prio = self:CreateTexture("prio", "quad", 1.5, -1.0, -3.0, 1.1, 1.1)
 	table.insert(self.Entities, prio)
 	
-	local button = self:CreateElement("returnknapp", "quad", 2.3, -1.2, -3, 0.4, 0.4)
+	local button = self:CreateButton("returnknapp", "quad", -2.3, -1.2, -3, 0.4, 0.4)
 	self:AddHoverSize(1.1, button)
 	
 	self.Active = true
