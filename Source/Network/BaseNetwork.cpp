@@ -31,8 +31,8 @@ BaseNetwork::BaseNetwork()
 		 An int will be increased each time we send a PING but don't receive a PONG,
 		 and when the int reaches maxIntervallCounter the player will be counted as disconnected (timed out)
 	*/
-	m_maxTimeOutIntervall = new float(5);
-	m_maxIntervallCounter = new int(2);
+	m_maxTimeOutIntervall = new float(10);
+	m_maxIntervallCounter = new int(3);
 
 	m_customPackets = new std::queue<Packet*>();
 	m_systemPackets = new std::queue<Packet*>();
