@@ -55,7 +55,6 @@
     <ClCompile Include="..\..\..\Source\Renderer\TextRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\Externals\content\shaders\CSDeferredPass2.glsl" />
     <None Include="..\..\..\Externals\content\shaders\FSAnimationShader.glsl" />
     <None Include="..\..\..\Externals\content\shaders\FSDeferredPass1.glsl" />
     <None Include="..\..\..\Externals\content\shaders\FSForwardShader.glsl" />
@@ -64,6 +63,7 @@
     <None Include="..\..\..\Externals\content\shaders\fullscreen.gs" />
     <None Include="..\..\..\Externals\content\shaders\fullscreen.ps" />
     <None Include="..\..\..\Externals\content\shaders\fullscreen.vs" />
+    <None Include="..\..\..\Externals\content\shaders\highCSDeferredPass2.glsl" />
     <None Include="..\..\..\Externals\content\shaders\lowFSAnimationShader.glsl" />
     <None Include="..\..\..\Externals\content\shaders\lowFSForwardShader.glsl" />
     <None Include="..\..\..\Externals\content\shaders\lowRiverCornerFS.glsl" />
