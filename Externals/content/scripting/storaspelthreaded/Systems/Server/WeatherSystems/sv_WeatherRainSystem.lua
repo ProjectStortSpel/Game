@@ -24,13 +24,13 @@ WeatherRainSystem.EntitiesAdded = function(self, dt, newEntities)
 		if world:EntityHasComponent(tEntity, "WeatherRain") then
 			-- Play strong wind sound!
 			local audioId = Net.StartPack("Client.PlaySoundC")
-			Net.WriteString(audioId, "leavingwater")
+			Net.WriteString(audioId, "LeavingWater")
 			Net.WriteString(audioId, "WeatherRainForcast")
 			Net.WriteBool(audioId, false)
 			Net.Broadcast(audioId)
 			audioId = Net.StartPack("Client.SetSoundVolume")
 			Net.WriteString(audioId, "WeatherRainForcast")
-			Net.WriteInt(audioId, 20)
+			Net.WriteInt(audioId, 80)
 			Net.Broadcast(audioId)
 			self.firstStep = true
 			
@@ -53,7 +53,7 @@ WeatherRainSystem.EntitiesAdded = function(self, dt, newEntities)
 		elseif world:EntityHasComponent(tEntity, "DealCards") then
 			local	currentRain	=	self:GetEntities("WeatherRain")
 			if #currentRain ~= 0 then
-				world:KillEntity(currentRain)
+				world:KillEntity(currentRain[1])
 				local	dirLight	=	self:GetEntities("DirectionalLight")
 				if #dirLight ~= 0 then
 					local	R,G,B		=	0.8,0.7,0.6
