@@ -1089,7 +1089,11 @@ AICardPickingSystem.InitPlayerSpecifics = function(self, _aiEntity)
 	
 	self.TargetCheckpoints[playerNo] = world:GetComponent(unitID, "TargetCheckpoint", 0):GetInt(0)
 	
-	--print(self.Positions[doubleIndex], self.Positions[doubleIndex + 1], self.Directions[doubleIndex], self.Directions[doubleIndex + 1], self.Spawnpoints[doubleIndex], self.Spawnpoints[doubleIndex + 1], self.TargetCheckpoints[playerNo])
+	--print(self.Positions[doubleIndex], self.Positions[doubleIndex + 1], self.Directions[doubleIndex], self.Directions[doubleIndex + 1], self.Spawnpoints[doubleIndex], self.Spawnpoints[doubleIndex + 1], self.TargetCheckpoints[playerNo]))
+	
+	local red, green, blue = world:GetComponent(unitID, "Color", "X"):GetFloat3()
+	
+	world:GetComponent(self.SimulationGhosts[playerNo], "Color", "X"):SetFloat3(red, green, blue)
 end
 
 AICardPickingSystem.AllocatePlayerArrays = function(self)
