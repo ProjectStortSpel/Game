@@ -42,11 +42,13 @@ WeatherRainSystem.EntitiesAdded = function(self, dt, newEntities)
 			end
 			
 		elseif world:EntityHasComponent(tEntity, "WeatherStep") then
-			
-			if self.firstStep then
-				self.firstStep = false
-			else
-				self:TickWeather()
+			local	currentRain	=	self:GetEntities("WeatherRain")
+			if #currentRain ~= 0 then
+				if self.firstStep then
+					self.firstStep = false
+				else
+					self:TickWeather()
+				end
 			end
 		elseif world:EntityHasComponent(tEntity, "DealCards") then
 			local	currentRain	=	self:GetEntities("WeatherRain")
