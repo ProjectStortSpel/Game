@@ -157,8 +157,8 @@ end
 
 UnitSystem.PopulateColors = function(self)
 	self.Colors[#self.Colors + 1] = "006401" -- GREEN
-	self.Colors[#self.Colors + 1] = "FF0000" -- RED
-	self.Colors[#self.Colors + 1] = "3333EE" -- BLUE
+	self.Colors[#self.Colors + 1] = "EE1111" -- RED
+	self.Colors[#self.Colors + 1] = "3377FF" -- BLUE
 	self.Colors[#self.Colors + 1] = "FFDB33" -- YELLOW
 	
 	self.Colors[#self.Colors + 1] = "FFA6FE" -- PINK
@@ -169,12 +169,12 @@ UnitSystem.PopulateColors = function(self)
 	self.Colors[#self.Colors + 1] = "553333" -- BROWN
 	
 	self.Colors[#self.Colors + 1] = "01FFFE" -- TEAL
-
-	self.Colors[#self.Colors + 1] = "88FF00" -- LIME GREEN
+    
+	self.Colors[#self.Colors + 1] = "66FF22" -- LIME GREEN
 	self.Colors[#self.Colors + 1] = "010067" -- DARK BLUE
 	self.Colors[#self.Colors + 1] = "670001" -- DARK RED
 
-	self.Colors[#self.Colors + 1] = "FF00F6" -- MANGETA
+	self.Colors[#self.Colors + 1] = "EE33EE" -- MANGETA
 	
 	self.Colors[#self.Colors + 1] = "007DB5"
 	self.Colors[#self.Colors + 1] = "FFEEE8"
