@@ -156,17 +156,27 @@ UnitSystem.GetPlayerColor = function(self, colorId)
 end
 
 UnitSystem.PopulateColors = function(self)
-	self.Colors[#self.Colors + 1] = "00FF00"
-	self.Colors[#self.Colors + 1] = "0000FF"
-	self.Colors[#self.Colors + 1] = "FF0000"
-	self.Colors[#self.Colors + 1] = "01FFFE"
-	self.Colors[#self.Colors + 1] = "FFA6FE"
-	self.Colors[#self.Colors + 1] = "FFDB66"
-	self.Colors[#self.Colors + 1] = "006401"
-	self.Colors[#self.Colors + 1] = "010067"
-	self.Colors[#self.Colors + 1] = "95003A"
+	self.Colors[#self.Colors + 1] = "006401" -- GREEN
+	self.Colors[#self.Colors + 1] = "FF0000" -- RED
+	self.Colors[#self.Colors + 1] = "3333EE" -- BLUE
+	self.Colors[#self.Colors + 1] = "FFDB33" -- YELLOW
+	
+	self.Colors[#self.Colors + 1] = "FFA6FE" -- PINK
+	self.Colors[#self.Colors + 1] = "FE6600" -- ORANGE
+	self.Colors[#self.Colors + 1] = "7E2DD2" -- VIOLET
+	self.Colors[#self.Colors + 1] = "EEEEEE" -- WHITE
+	self.Colors[#self.Colors + 1] = "111111" -- BLACK
+	self.Colors[#self.Colors + 1] = "553333" -- BROWN
+	
+	self.Colors[#self.Colors + 1] = "01FFFE" -- TEAL
+
+	self.Colors[#self.Colors + 1] = "88FF00" -- LIME GREEN
+	self.Colors[#self.Colors + 1] = "010067" -- DARK BLUE
+	self.Colors[#self.Colors + 1] = "670001" -- DARK RED
+
+	self.Colors[#self.Colors + 1] = "FF00F6" -- MANGETA
+	
 	self.Colors[#self.Colors + 1] = "007DB5"
-	self.Colors[#self.Colors + 1] = "FF00F6"
 	self.Colors[#self.Colors + 1] = "FFEEE8"
 	self.Colors[#self.Colors + 1] = "774D00"
 	self.Colors[#self.Colors + 1] = "90FB92"
@@ -175,14 +185,14 @@ UnitSystem.PopulateColors = function(self)
 	self.Colors[#self.Colors + 1] = "FF937E"
 	self.Colors[#self.Colors + 1] = "6A826C"
 	self.Colors[#self.Colors + 1] = "FF029D"
-	self.Colors[#self.Colors + 1] = "FE8900"
-	self.Colors[#self.Colors + 1] = "7A4782"
-	self.Colors[#self.Colors + 1] = "7E2DD2"
+
+
+	self.Colors[#self.Colors + 1] = "7A4782" 
 	self.Colors[#self.Colors + 1] = "85A900"
 	self.Colors[#self.Colors + 1] = "FF0056"
 	self.Colors[#self.Colors + 1] = "A42400"
 	self.Colors[#self.Colors + 1] = "00AE7E"
-	self.Colors[#self.Colors + 1] = "683D3B"
+
 	self.Colors[#self.Colors + 1] = "BDC6FF"
 	self.Colors[#self.Colors + 1] = "263400"
 	self.Colors[#self.Colors + 1] = "BDD393"
