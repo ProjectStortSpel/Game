@@ -31,8 +31,8 @@ AIDynamicScripting.EntitiesAdded = function(self, dt, entities)
 					local plyNr = world:GetComponent(playerEntity, "PlayerNumber", 0):GetInt(0);
 					self:UpdatePF( plyNr, "Unit" );
 					
-	
-					io.write("\n--- AI nr: ", plyNr, " uses these scripts ---\n\tSpot\tWeight\tLength\tPower\n")
+					local red, green, blue = world:GetComponent(units[j], "Color", "X"):GetFloat3()
+					io.write("\n--- AI nr ", plyNr, " color ", red, ", ", green, ", ", blue, " uses ---\n\t\tSpot\tWeight\tLength\tPower\n")
 					self:PrintMyScript(plyNr, "Void")
 					self:PrintMyScript(plyNr, "NotWalkable")
 					self:PrintMyScript(plyNr, "Unit")

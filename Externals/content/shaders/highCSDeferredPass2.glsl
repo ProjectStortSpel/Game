@@ -293,7 +293,7 @@ void phongModelDirLight(out vec3 ambient, out vec3 diffuse, out vec3 spec)
 		float shadow = 1.0;
 		//Shadow AMD fix. Temp? No PCF filtering
 		vec4 shadowCoordinateWdivide = shadowCoord / shadowCoord.w;
-		shadowCoordinateWdivide.z -= 0.0005;
+		shadowCoordinateWdivide.z -= 0.0022;
 		float distanceFromLight = texture(ShadowDepthTex, shadowCoordinateWdivide.st).z;
 		
 		if (shadowCoord.w > 0.0)

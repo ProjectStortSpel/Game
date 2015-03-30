@@ -44,6 +44,10 @@ require "cl_NewCameraSystem"
 package.path = package.path .. ";Systems/Client/AudioSystems/?.lua"
 require "cl_AudioRiverSystem"
 
+--	Audio System
+package.path = package.path .. ";Systems/Client/WeatherSystems/?.lua"
+require "cl_WeatherRainSystem"
+
 worldCreator:AddSystemGroup()
 worldCreator:AddSystemToCurrentGroup(ClientNetworkMessageSystem)
 
@@ -86,7 +90,7 @@ worldCreator:AddSystemToCurrentGroup(FadeTreeSystem)
 worldCreator:AddSystemToCurrentGroup(WinScreenSystem)
 
 
-
+worldCreator:AddSystemToCurrentGroup(WeatherRainSystem)
 
 
 

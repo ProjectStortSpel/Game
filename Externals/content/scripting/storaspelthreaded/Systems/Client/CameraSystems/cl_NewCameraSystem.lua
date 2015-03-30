@@ -136,7 +136,7 @@ NewCameraSystem.EntitiesAdded = function(self, dt, entities)
 		
 			local mapX, mapZ = world:GetComponent(entities[n], "MapSpecs", "SizeX"):GetInt2()
 			
-			GraphicDevice.SetShadowmapBounds(mapX-3, mapZ-3, mapX*0.5, 0.5, mapZ*0.5)
+			GraphicDevice.SetShadowmapBounds(mapX-2, mapZ-2, mapX*0.5, 0.5, mapZ*0.5)
 		
 		end
 	end

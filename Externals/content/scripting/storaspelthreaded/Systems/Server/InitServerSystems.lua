@@ -73,6 +73,7 @@ package.path = package.path .. ";Systems/Server/WeatherSystems/?.lua"
 require "sv_WeatherSystem"
 require "sv_WeatherWindSystem"
 require "sv_WeatherTornadoSystem"
+require "sv_WeatherRainSystem"
 
 --	Spawn Systems
 package.path = package.path .. ";Systems/Server/SpawnSystems/?.lua"
@@ -84,7 +85,6 @@ require "sv_PostSpawnSystem"
 --	Round Systems
 package.path = package.path .. ";Systems/Server/RoundSystems/?.lua"
 require "sv_StepTimerSystem"
-require "sv_WeatherTimerSystem"
 require "sv_NewStepSystem"
 require "sv_StartNewRoundSystem"
 require "sv_PlayCardTimerSystem"
@@ -163,6 +163,7 @@ worldCreator:AddSystemToCurrentGroup(AbilityStoneSystem)
 worldCreator:AddSystemToCurrentGroup(WeatherSystem)
 worldCreator:AddSystemToCurrentGroup(WeatherWindSystem)
 worldCreator:AddSystemToCurrentGroup(WeatherTornadoSystem)
+worldCreator:AddSystemToCurrentGroup(WeatherRainSystem)
 
 worldCreator:AddSystemToCurrentGroup(GiveSpawnLocationSystem)
 
@@ -171,7 +172,6 @@ worldCreator:AddSystemToCurrentGroup(PostSpawnSystem)
 
 
 worldCreator:AddSystemToCurrentGroup(StartNewRoundSystem)
-worldCreator:AddSystemToCurrentGroup(WeatherTimerSystem)
 worldCreator:AddSystemToCurrentGroup(StepTimerSystem)
 worldCreator:AddSystemToCurrentGroup(NewStepSystem)
 worldCreator:AddSystemToCurrentGroup(PlayCardTimerSystem)
