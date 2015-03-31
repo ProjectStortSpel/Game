@@ -97,9 +97,11 @@ LobbySystem.UpdatePlayers = function(self)
 		
 		local text = self:CreateElement("left", "text", -2.65, 1.28-i*0.20, -3.99, 3.0, 0.16)
 		world:CreateComponentAndAddTo("LobbyMenuPlayer", text)
-		self:AddTextToTexture("LMSPname"..i, name, 0, r, g, b, text)
+		self:AddTextToTexture("LMSPname"..i, name, 0, text)
+		self:LinkColor(text, unitId)
 		text = self:CreateElement("right", "text", -1.05, 1.28-i*0.20, -3.99, 1.6, 0.16)	
-		self:AddTextToTexture("LMSPready"..i, readyText, 0, r, g, b, text)
+		self:AddTextToTexture("LMSPready"..i, readyText, 0, text)
+		self:LinkColor(text, unitId)
 		
 		if i % 2 == 0 then
 			if not world:EntityHasComponent(button, "Color") then
@@ -202,7 +204,7 @@ LobbySystem.CreateElement = function(self, object, folder, posx, posy, posz, sca
 	return id	
 end
 
-LobbySystem.AddTextToTexture = function(self, n, text, font, r, g, b, button)
+LobbySystem.AddTextToTexture = function(self, n, text, font, button)
 	world:CreateComponentAndAddTo("TextTexture", button)
 	world:GetComponent(button, "TextTexture", "Name"):SetText(n) -- TODO: NAME CANT BE MORE THAN 3 CHARS? WTF?
 	world:GetComponent(button, "TextTexture", "Text"):SetText(text)
@@ -211,9 +213,13 @@ LobbySystem.AddTextToTexture = function(self, n, text, font, r, g, b, button)
 	world:GetComponent(button, "TextTexture", "G"):SetFloat(1.0)
 	world:GetComponent(button, "TextTexture", "B"):SetFloat(1.0)
 	world:CreateComponentAndAddTo("Color", button)
-	world:GetComponent(button, "Color", "X"):SetFloat(r)
-	world:GetComponent(button, "Color", "Y"):SetFloat(g)
-	world:GetComponent(button, "Color", "Z"):SetFloat(b)
+end
+
+LobbySystem.LinkColor = function(self, text, unit)
+	world:CreateComponentAndAddTo("Parent", text)
+	world:GetComponent(text, "Parent", 0):SetInt(unit)
+	world:CreateComponentAndAddTo("NoParentMatrix", text)
+	world:CreateComponentAndAddTo("ParentColor", text)
 end
 
 Net.Receive("Server.ReadyCheck", 

@@ -25,7 +25,7 @@ NewComponent.TableType = TableType.Map
 NewComponent:AddVariable("Stage", ByteSize.Int)
 worldCreator:AddComponentType(NewComponent)
 
-
+-- HATS
 NewComponent = ComponentType()
 NewComponent.Name = "Hat"
 NewComponent:AddVariable("Id", ByteSize.Int)
@@ -49,6 +49,32 @@ NewComponent:AddVariable("hatId", ByteSize.Int)
 NewComponent:AddVariable("unitId", ByteSize.Int)
 NewComponent.TableType = TableType.Map
 worldCreator:AddComponentType(NewComponent)
+
+-- PLAYERCOLORS
+NewComponent = ComponentType()
+NewComponent.Name = "PlayerColor"
+NewComponent:AddVariable("Id", ByteSize.Int)
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
+
+NewComponent = ComponentType()
+NewComponent.Name = "PrevColor"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
+
+NewComponent = ComponentType()
+NewComponent.Name = "NextColor"
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
+
+NewComponent = ComponentType()
+NewComponent.Name = "ThisColor"
+NewComponent:AddVariable("colorNr", ByteSize.Int)
+NewComponent:AddVariable("unitId", ByteSize.Int)
+NewComponent.TableType = TableType.Map
+worldCreator:AddComponentType(NewComponent)
+
+
 
 NewComponent = ComponentType()
 NewComponent.Name = "WinScreen"

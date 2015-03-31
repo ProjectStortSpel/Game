@@ -16,6 +16,8 @@ LobbySystem.Initialize = function ( self )
 	self:AddComponentTypeToFilter("LobbyPlayerStart", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("NextHat", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("PrevHat", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("NextColor", FilterType.RequiresOneOf)
+	self:AddComponentTypeToFilter("PrevColor", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("GameRunning", FilterType.RequiresOneOf)
 	self:AddComponentTypeToFilter("LobbyMenuActive", FilterType.RequiresOneOf)
 end
@@ -66,6 +68,12 @@ LobbySystem.EntitiesAdded = function(self, dt, entities)
 			elseif world:EntityHasComponent( entityId, "PrevHat") then
 				Net.SendToServer(Net.StartPack("Server.PrevHat"))
 				world:KillEntity(entityId)
+			elseif world:EntityHasComponent( entityId, "NextColor") then
+				Net.SendToServer(Net.StartPack("Server.NextColor"))
+				world:KillEntity(entityId)
+			elseif world:EntityHasComponent( entityId, "PrevColor") then
+				Net.SendToServer(Net.StartPack("Server.PrevColor"))
+				world:KillEntity(entityId)
 			end
 		end
 	end
@@ -88,6 +96,16 @@ LobbySystem.SpawnMenu = function(self)
 	button = self:CreateElement("smallarrow", "quad", -0.7, 0.3, -4, 0.4, 0.4)
 	world:GetComponent(button, "Rotation", 0):SetFloat3(0, 0, math.pi)
 	self:AddEntityCommandToButton("PrevHat", button)
+	self:AddHoverSize(1.1, button)
+	
+	
+	button = self:CreateElement("smallarrow", "quad", 0.7, -0.3, -4, 0.4, 0.4)
+	self:AddEntityCommandToButton("NextColor", button)
+	self:AddHoverSize(1.1, button)
+	
+	button = self:CreateElement("smallarrow", "quad", -0.7, -0.3, -4, 0.4, 0.4)
+	world:GetComponent(button, "Rotation", 0):SetFloat3(0, 0, math.pi)
+	self:AddEntityCommandToButton("PrevColor", button)
 	self:AddHoverSize(1.1, button)
 end
 

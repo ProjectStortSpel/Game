@@ -54,7 +54,9 @@ void RenderSystem::Initialize()
 	m_renderOffset = ECSL::ComponentTypeManager::GetInstance().GetComponentType(m_renderId)->GetVariables()->at("Mat").GetOffset();
 	m_colorOffset = ECSL::ComponentTypeManager::GetInstance().GetComponentType(m_renderId)->GetVariables()->at("ColorX").GetOffset();
 	m_parentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("Parent");
+	m_parentNoMatrixId = ECSL::ComponentTypeManager::GetInstance().GetTableId("NoParentMatrix");
 	m_parentJointId = ECSL::ComponentTypeManager::GetInstance().GetTableId("ParentJoint");
+	m_parentColorId = ECSL::ComponentTypeManager::GetInstance().GetTableId("ParentColor");
 	m_isparentId = ECSL::ComponentTypeManager::GetInstance().GetTableId("IsParent");
 	m_worldToViewSpaceId = ECSL::ComponentTypeManager::GetInstance().GetTableId("WorldToViewSpace");
 	m_staticModelId = ECSL::ComponentTypeManager::GetInstance().GetTableId("StaticModel");
@@ -138,14 +140,21 @@ void RenderSystem::UpdateMatrix(unsigned int _entityId)
 	if (HasComponent(_entityId, m_parentId))
 	{
 		int* Parent = (int*)GetComponent(_entityId, m_parentId, 0);
-		//GET PARENT MATRIX
-		*Matrix = *(glm::mat4*)GetComponent(*Parent, m_renderId, m_renderOffset);
-
+		if (!HasComponent(_entityId, m_parentNoMatrixId))
+		{
+			//GET PARENT MATRIX
+			*Matrix = *(glm::mat4*)GetComponent(*Parent, m_renderId, m_renderOffset);
+		}
 		if (HasComponent(_entityId, m_parentJointId))
 		{
 			int* parentJointID = (int*)GetComponent(_entityId, m_parentJointId, 0);
 			int* parentModelID = (int*)GetComponent(*Parent, m_renderId, m_renderModel);
 			*Matrix = *Matrix * m_graphics->GetJointMatrix(*parentModelID, *parentJointID);
+		}
+		if (HasComponent(_entityId, m_parentColorId))
+		{
+			float* parentColor = (float*)GetComponent(*Parent, m_colorId, 0);
+			Color = parentColor;
 		}
 	}
 

@@ -35,6 +35,8 @@ private:
 	unsigned int m_staticModelId;
 
 	unsigned int m_parentId;
+	unsigned int m_parentColorId;
+	unsigned int m_parentNoMatrixId;
 	unsigned int m_parentJointId;
 	unsigned int m_isparentId;
 

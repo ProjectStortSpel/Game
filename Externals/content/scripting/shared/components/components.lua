@@ -17,7 +17,19 @@ ParentComponent.TableType = TableType.Map
 ParentComponent.SyncNetwork = true
 ParentComponent:AddVariable("EntityId", ByteSize.Reference)
 worldCreator:AddComponentType(ParentComponent)
--- Parent Component
+-- NoParentMatrix Component
+local NoParentMatrixComponent = ComponentType()
+NoParentMatrixComponent.Name = "NoParentMatrix"
+NoParentMatrixComponent.TableType = TableType.Map
+NoParentMatrixComponent.SyncNetwork = true
+worldCreator:AddComponentType(NoParentMatrixComponent)
+-- ParentColor Component
+local ParentColorComponent = ComponentType()
+ParentColorComponent.Name = "ParentColor"
+ParentColorComponent.TableType = TableType.Map
+ParentColorComponent.SyncNetwork = true
+worldCreator:AddComponentType(ParentColorComponent)
+-- ParentJoint Component
 local ParentJointComponent = ComponentType()
 ParentJointComponent.Name = "ParentJoint"
 ParentJointComponent.TableType = TableType.Map

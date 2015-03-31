@@ -108,6 +108,7 @@ require "sv_OffsetUnitSystem"
 require "sv_FadeTreeSystem"
 require "sv_ChatSystem"
 require "sv_AddHatToPlayerSystem"
+require "sv_AddColorToPlayerSystem"
 require "sv_ScoreboardSystem"
 
 --worldCreator:AddSystemGroup()
@@ -206,6 +207,7 @@ worldCreator:AddSystemToCurrentGroup(FindSpawnpointSystem)
 worldCreator:AddSystemToCurrentGroup(ChatSystem)
 
 worldCreator:AddSystemToCurrentGroup(AddHatToPlayerSystem)
+worldCreator:AddSystemToCurrentGroup(AddColorToPlayerSystem)
 worldCreator:AddSystemToCurrentGroup(ScoreboardSystem)
 
 --	Audio Systems

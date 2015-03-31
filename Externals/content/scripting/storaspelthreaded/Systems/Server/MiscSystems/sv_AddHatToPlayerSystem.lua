@@ -70,13 +70,6 @@ AddHatToPlayerSystem.SetHatToUnit = function(self, hatId, unitId)
 	local hatName = self.HatTemplates[hatId]
 	local hatEntity = world:CreateNewEntity(hatName)
 
-	-- SET COLOR
-	local hr, hg, hb = world:GetComponent(hatEntity, "Color", "X"):GetFloat3(0)
-	if not (hr == 0 and hg == 0 and hb == 0) then 
-		local r, g, b = world:GetComponent(unitId, "Color", "X"):GetFloat3(0)
-		world:GetComponent(hatEntity, "Color", 0):SetFloat3(r, g, b)
-	end
-	
 	-- SET PARENT
 	world:CreateComponentAndAddTo("Parent", hatEntity)
 	world:GetComponent(hatEntity, "Parent", 0):SetInt(unitId)
@@ -86,14 +79,7 @@ AddHatToPlayerSystem.SetHatToUnit = function(self, hatId, unitId)
 	if world:EntityHasComponent(hatEntity, "ParentJoint") then 
 		world:GetComponent(hatEntity, "ParentJoint", 0):SetInt(5)
 	end
-	
-	-- LERP THE HAT FOR EFFECT
-	local sx, sy, sz = world:GetComponent(hatEntity, "Scale", "X"):GetFloat3(0)
-	world:CreateComponentAndAddTo("LerpScale", hatEntity)
-	world:GetComponent(hatEntity, "LerpScale", "Time", 0):SetFloat4(0.1, sx, sy, sz)
-	world:GetComponent(hatEntity, "LerpScale", "Algorithm", 0):SetText("SmoothLerp")
-	world:GetComponent(hatEntity, "Scale", "X", 0):SetFloat3(0, 0, 0)
-	
+
 	world:GetComponent(unitId, "Hat", "hatId"):SetInt(hatEntity)
 end
 

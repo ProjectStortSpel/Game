@@ -34,6 +34,9 @@ Unit.Name = "Unit"
 	Unit:SetFloat3("Position", -1337, -1337, -1337)
 	Unit:SetFloat3("Rotation", 0.0, math.pi, 0.0)
 	Unit:SetFloat3("Scale", 0.8, 0.8, 0.8)
+	Unit:SetFloat3("Color", 1, 1, 1)
+	
+	Unit:AddComponent("PlayerColor")
 	
 	--	Game Logic
 	Unit:AddComponent("PlayerNumber")			--	The number of the player [1, Number of players]
