@@ -12,7 +12,7 @@ ComponentType::ComponentType(const std::string& _name,
 	/* Calculate total byte size for component type */
 	for (auto it = m_variables->begin(); it != m_variables->end(); ++it)
 	{
-		it->second.SetOffset(m_byteSize);
+		//it->second.SetOffset(m_byteSize);
 		m_byteSize += it->second.GetByteSize();
 	}
 }

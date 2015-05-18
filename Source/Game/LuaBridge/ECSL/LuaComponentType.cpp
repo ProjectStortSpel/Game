@@ -79,6 +79,7 @@ namespace LuaBridge
 	int byteSize = ECSL::GetByteSizeFromType(ECSL::ComponentDataType(variableDataType));
 
 	ECSL::ComponentVariable variable = ECSL::ComponentVariable(variableName, byteSize);
+	variable.SetOffset(m_byteOffset);
     m_variables.insert(std::pair<std::string, ECSL::ComponentVariable>(variableName, variable));
 
 	m_offsetToType.insert(std::pair<unsigned int, ECSL::ComponentDataType>(m_byteOffset, ECSL::ComponentDataType(variableDataType)));
