@@ -428,11 +428,11 @@ void GameCreator::InitializeWorld(std::string _gameMode, WorldType _worldType, b
 		worldCreator.AddSystemToCurrentGroup<SpinSystem>();
     }    
 
-    if (_includeMasterServer)
+    /*if (_includeMasterServer)
     {
        worldCreator.AddSystemGroup();
        worldCreator.AddSystemToCurrentGroup<MasterServerSystem>();
-    }
+    }*/
     
     if (_worldType == WorldType::Server)
     {
