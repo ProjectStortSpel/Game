@@ -112,7 +112,7 @@ ConnectMenuSystem.SpawnMenu = function(self)
 	
 	
 	button = self:CreateElement("refresh", "quad", 0.6, -0.85, -2, 0.5, 0.20)
-	self:AddEntityCommandToButton("RefreshServerList", button)
+	--self:AddEntityCommandToButton("RefreshServerList", button)
 	self:AddHoverSize(1.1, button)	
 	
 	button = self:CreateElement("connect", "quad", 0.0, -0.85, -2, 0.5, 0.20)
