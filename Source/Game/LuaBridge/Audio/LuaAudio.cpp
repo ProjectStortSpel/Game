@@ -1,6 +1,6 @@
 #include "LuaAudio.h"
 #include "Audio/Audio.h"
-#include "Game/HomePath.h"'
+#include "Game/HomePath.h"
 #include "FileSystem/File.h"
 
 namespace LuaBridge
