@@ -101,6 +101,11 @@ end
 IPConnectSystem.UpdateText = function(self)
 	local textInput = self:GetValidatedInputString()
 	
+	if textInput ~= self.TextInput then
+		Audio.PlaySound("Click1", self.TextInput, false)
+		Audio.SetSoundVolume(self.TextInput, 12)
+	end
+	
 	self:DeleteTextEntity()
 
 	local id = world:CreateNewEntity()

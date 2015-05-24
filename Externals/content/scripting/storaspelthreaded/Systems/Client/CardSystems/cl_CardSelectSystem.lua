@@ -53,6 +53,8 @@ CardSelectSystem.Update = function(self, dt)
 				world:RemoveComponentFrom("SelectCard", card)
 			end
 			world:CreateComponentAndAddTo("CardHolding", card)
+			Audio.PlaySound("Cards3", "Cards3", false)
+			Audio.SetSoundVolume("Cards3", 55)
 			self.pickRequest = card
 			self.pickRequestBreak = true
 		end
