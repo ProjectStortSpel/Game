@@ -180,11 +180,11 @@ void GraphicsLow::WriteShadowMapDepth()
 	m_shadowShaderForwardAnim.UseProgram();
 	for (int i = 0; i < m_modelsAnimated.size(); i++)
 	{
-		for (int j = 0; j < m_modelsAnimated[i].anim.size(); j++)
+		for (int j = 0; j < m_modelsAnimated[i].animMatrices.size(); j++)
 		{
 			std::stringstream ss;
 			ss << "anim[" << j << "]";
-			m_shadowShaderForwardAnim.SetUniVariable(ss.str().c_str(), mat4x4, &m_modelsAnimated[i].anim[j]);
+			m_shadowShaderForwardAnim.SetUniVariable(ss.str().c_str(), mat4x4, &m_modelsAnimated[i].animMatrices[j]);
 			ss.str(std::string());
 		}
 		m_modelsAnimated[i].DrawForwardGeometry((*m_shadowMap->GetViewMatrix()), shadowProjection, &m_shadowShaderForwardAnim);
@@ -244,11 +244,11 @@ void GraphicsLow::Render()
 	m_animationShader.SetUniVariable("ShadowViewProj", mat4x4, &shadowVP);
 	for (int i = 0; i < m_modelsAnimated.size(); i++)
 	{
-		for (int j = 0; j < m_modelsAnimated[i].anim.size(); j++)
+		for (int j = 0; j < m_modelsAnimated[i].animMatrices.size(); j++)
 		{
 			std::stringstream ss;
 			ss << "anim[" << j << "]";
-			m_animationShader.SetUniVariable(ss.str().c_str(), mat4x4, &m_modelsAnimated[i].anim[j]);
+			m_animationShader.SetUniVariable(ss.str().c_str(), mat4x4, &m_modelsAnimated[i].animMatrices[j]);
 			ss.str(std::string());
 		}
 

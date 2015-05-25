@@ -1,4 +1,16 @@
 local Hat = EntityTemplate()
+Hat.Name = "nerzhulHat"
+Hat:SetModel("Model", "nerzhul", "nerzhul", 0)
+Hat:SetFloat3("Position", 0.05, -0.06, 0.14)
+Hat:SetFloat3("Rotation", 0.2, 0, 0.6)
+Hat:SetFloat3("Scale", 0.25, 0.25, 0.25)
+Hat:SetFloat3("Color", 1, 1, 1)
+Hat:AddComponent("ParentColor") 		-- ADDS PLAYER COLOR
+Hat:SetInt("ParentJoint", 5) 			-- OPTIONAL: ADDS HAT TO HEAD JOINT
+Hat:AddComponent("SyncNetwork")
+EntityTemplateManager:AddTemplate(Hat)
+
+Hat = EntityTemplate()
 Hat.Name = "totemHat"
 Hat:SetModel("Model", "totemhat", "totemhat", 0)
 Hat:SetFloat3("Position", -0.14, 0.2, 0.1)

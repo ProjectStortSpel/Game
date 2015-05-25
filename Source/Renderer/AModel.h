@@ -112,10 +112,10 @@ namespace Renderer
 		GLuint speID;
 		//GLuint jointBuffer;
 		GLuint* animBuffer;
-		std::vector<glm::mat4> extra;
-		std::vector<glm::mat4> joints;
-		std::vector<glm::mat4> anim;
-		std::vector<Joint> animation;
+		std::vector<glm::mat4> influenceMatrices;
+		std::vector<glm::mat4> jointMatrices;
+		std::vector<glm::mat4> animMatrices;
+		std::vector<Joint> skeleton;
 		std::vector<Animation> animations;
 		int animId;
 

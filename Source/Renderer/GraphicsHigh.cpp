@@ -413,12 +413,12 @@ void GraphicsHigh::WriteShadowMapDepth()
 	for (int i = 0; i < m_modelsAnimated.size(); i++)
 	{
 		// BUFFER JOINT MATRIXES
-		float *anim_data = new float[m_modelsAnimated[i].anim.size() * 16];
-		for (int j = 0; j < m_modelsAnimated[i].anim.size(); j++)
+		float *anim_data = new float[m_modelsAnimated[i].animMatrices.size() * 16];
+		for (int j = 0; j < m_modelsAnimated[i].animMatrices.size(); j++)
 		{
-			memcpy(&anim_data[16 * j], &m_modelsAnimated[i].anim[j], 16 * sizeof(float));
+			memcpy(&anim_data[16 * j], &m_modelsAnimated[i].animMatrices[j], 16 * sizeof(float));
 		}
-		int anim_data_size = 16 * m_modelsAnimated[i].anim.size() * sizeof(float);
+		int anim_data_size = 16 * m_modelsAnimated[i].animMatrices.size() * sizeof(float);
 		glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 6, m_animationBuffer, 0, anim_data_size);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, anim_data_size, anim_data, GL_STATIC_DRAW);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, m_animationBuffer);
@@ -469,12 +469,12 @@ void GraphicsHigh::Render()
 	for (int i = 0; i < m_modelsAnimated.size(); i++)
 	{
 		// BUFFER JOINT MATRIXES
-		float *anim_data = new float[m_modelsAnimated[i].anim.size() * 16];
-		for (int j = 0; j < m_modelsAnimated[i].anim.size(); j++)
+		float *anim_data = new float[m_modelsAnimated[i].animMatrices.size() * 16];
+		for (int j = 0; j < m_modelsAnimated[i].animMatrices.size(); j++)
 		{
-			memcpy(&anim_data[16 * j], &m_modelsAnimated[i].anim[j], 16 * sizeof(float));
+			memcpy(&anim_data[16 * j], &m_modelsAnimated[i].animMatrices[j], 16 * sizeof(float));
 		}
-		int anim_data_size = 16 * m_modelsAnimated[i].anim.size() * sizeof(float);
+		int anim_data_size = 16 * m_modelsAnimated[i].animMatrices.size() * sizeof(float);
 		glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 6, m_animationBuffer, 0, anim_data_size);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, anim_data_size, anim_data, GL_STATIC_DRAW);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, m_animationBuffer);

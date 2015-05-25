@@ -612,18 +612,17 @@ void GraphicDevice::BufferAModel(int _modelId, ModelToLoad* _modelToLoad)
 	// Add skeleton
 	for (int i = 0; i < joints.size(); i++)
 	{
-		model.joints.push_back(joints[i].mat);
+		model.jointMatrices.push_back(joints[i].mat);
 	}
 
 	// Add animation base
 	for (int i = 0; i < joints.size(); i++)
 	{
 		int index = i;//joints.size() - i - 1;
-		model.animation.push_back(Joint(joints[index].parent));
-		model.anim.push_back(joints[index].mat);
-		model.extra.push_back(mat4(1));
+		model.skeleton.push_back(Joint(joints[index].parent));
+		model.animMatrices.push_back(joints[index].mat);
+		model.influenceMatrices.push_back(mat4(1));
 	}
-
 	// Import Animations
 	for (int i = 0; i < obj.anim.size(); i++)
 	{
@@ -669,8 +668,8 @@ glm::mat4 GraphicDevice::GetJointMatrix(int _modelId, int _jointId)
 	{
 		if ((*modelList)[i].id == _modelId)
 		{
-			if ((*modelList)[i].anim.size() > _jointId)
-				return (*modelList)[i].anim[_jointId] * glm::inverse((*modelList)[i].joints[_jointId]);
+			if ((*modelList)[i].animMatrices.size() > _jointId)
+				return (*modelList)[i].animMatrices[_jointId] * glm::inverse((*modelList)[i].jointMatrices[_jointId]);
 			else
 				break;
 		}

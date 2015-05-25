@@ -125,7 +125,7 @@ void AModel::Update(float _dt)
 
 		Animation* animptr = &animations[animId];
 		for (int i = 0; i < animptr->joints.size(); i++)
-			anim[i] = extra[i] * animptr->joints[i].frames[currentframe];
+			animMatrices[i] = animptr->joints[i].frames[currentframe] * influenceMatrices[i];
 	}
 }
 
@@ -133,25 +133,28 @@ bool AModel::PreCalculateAnimations()
 {
 	for (int k = 0; k < animations.size(); k++)
 	{
-		for (int j = 0; j < animations[k].maxFrame; j++)
+		Animation* animptr = &animations[k];
+		for (int j = 0; j < animptr->maxFrame; j++)
 		{
 			std::vector<glm::mat4> tempMat4;
-			Animation* animptr = &animations[k];
+			for (int i = 0; i < skeleton.size(); i++)
+				tempMat4.push_back(glm::mat4(1));
 			for (int i = 0; i < animptr->joints.size(); i++)
 			{
-				animptr->joints[i].lastFrame = &animations[k].maxFrame;
-				tempMat4.push_back(animptr->joints[i].getFrame(j + 1));
+				int jointID = animptr->joints[i].jointId;
+				animptr->joints[i].lastFrame = &animptr->maxFrame;
+				tempMat4[jointID] = animptr->joints[i].getFrame(j + 1);
 			}
-			for (int i = 0; i < animptr->joints.size(); i++)
+			for (int i = 0; i < tempMat4.size(); i++)
 			{
-				if (animation[i].parent >= 0)
+				if (skeleton[i].parent >= 0)
 				{
-					tempMat4[i] = tempMat4[int(animation[i].parent)] * tempMat4[i];
+					tempMat4[i] = tempMat4[int(skeleton[i].parent)] * tempMat4[i];
 				}
 			}
-			for (int i = 0; i < animptr->joints.size(); i++)
+			for (int i = 0; i < tempMat4.size(); i++)
 			{
-				glm::mat4 mat = tempMat4[i] * joints[i];
+				glm::mat4 mat = tempMat4[i] * jointMatrices[i];
 				animptr->joints[i].frames.push_back(mat);
 			}
 		}

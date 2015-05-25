@@ -21,6 +21,7 @@ AddHatToPlayerSystem.Initialize = function(self)
 end
 
 AddHatToPlayerSystem.PopulateHats = function(self)
+	self.HatTemplates[#self.HatTemplates + 1] = "nerzhulHat"
 	self.HatTemplates[#self.HatTemplates + 1] = "totemHat"
 	self.HatTemplates[#self.HatTemplates + 1] = "stoneHat"
 	self.HatTemplates[#self.HatTemplates + 1] = "totemtopHat"
