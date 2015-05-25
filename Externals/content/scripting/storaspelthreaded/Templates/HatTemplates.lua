@@ -83,7 +83,7 @@ EntityTemplateManager:AddTemplate(Hat)
 Hat = EntityTemplate()
 Hat.Name = "eastwoodhat"
 Hat:SetModel("Model", "eastwoodhat", "eastwoodhat", 0)
-Hat:SetFloat3("Position", -0.025, 0.030, 0.05)
+Hat:SetFloat3("Position", 0.02, -0.030, 0.05)
 Hat:SetFloat3("Rotation", 0.2, 0, 0.6)
 Hat:SetFloat3("Scale", 1.0, 1.0, 1.0)
 Hat:SetFloat3("Color", 1, 1, 1)
