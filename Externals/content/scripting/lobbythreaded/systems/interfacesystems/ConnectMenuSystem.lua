@@ -112,7 +112,7 @@ ConnectMenuSystem.SpawnMenu = function(self)
 	
 	
 	button = self:CreateElement("refresh", "quad", 0.6, -0.85, -2, 0.5, 0.20)
-	self:AddEntityCommandToButton("RefreshServerList", button)
+	--self:AddEntityCommandToButton("RefreshServerList", button)
 	self:AddHoverSize(1.1, button)	
 	
 	button = self:CreateElement("connect", "quad", 0.0, -0.85, -2, 0.5, 0.20)
@@ -120,7 +120,9 @@ ConnectMenuSystem.SpawnMenu = function(self)
 	self:AddHoverSize(1.1, button)
 	
 	button = self:CreateElement("host", "quad", -0.6, -0.85, -2, 0.5, 0.20)
-	self:AddEntityCommandToButton("HostMenu", button)
+	if not System.Android then
+		self:AddEntityCommandToButton("HostMenu", button)
+	end
 	self:AddHoverSize(1.1, button)
 	
 	button = self:CreateElement("returnknapp", "quad", -2.3, -1.2, -3, 0.4, 0.4)

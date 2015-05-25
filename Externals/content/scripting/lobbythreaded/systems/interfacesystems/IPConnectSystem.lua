@@ -33,21 +33,29 @@ IPConnectSystem.Update = function(self, dt)
 			local pressedButtons = self:GetEntities("OnPickBoxHit")
 			if #pressedButtons > 0 then
 				local pressedButton = pressedButtons[1]
-				if world:EntityHasComponent(pressedButton, "HoverSize") then
-					local textInput = self.TextInput
-					if string.find(textInput, ":") ~= nil then
-						local colonStart, colonEnd = string.find(textInput, ":")
-						local ip = string.sub(textInput, 1, colonStart - 1)
-						local port = string.sub(textInput, colonEnd + 1, string.len(textInput))
-						Console.AddToCommandQueue("connect " .. ip .. " " .. port)
-					else
-						Console.AddToCommandQueue("connect " .. self.TextInput)
+				if pressedButton == self.ConnectEntity then
+					if world:EntityHasComponent(pressedButton, "HoverSize") then
+						local textInput = self.TextInput
+						if string.find(textInput, ":") ~= nil then
+							local colonStart, colonEnd = string.find(textInput, ":")
+							local ip = string.sub(textInput, 1, colonStart - 1)
+							local port = string.sub(textInput, colonEnd + 1, string.len(textInput))
+							Console.AddToCommandQueue("connect " .. ip .. " " .. port)
+						else
+							Console.AddToCommandQueue("connect " .. self.TextInput)
+						end
 					end
+				elseif pressedButton == self.BackEntity then
+					self:Deactivate()
+					local id = world:CreateNewEntity()
+					world:CreateComponentAndAddTo("ConnectMenu", id)
 				end
-				
-				self:Deactivate()
-				local id = world:CreateNewEntity()
-				world:CreateComponentAndAddTo("ConnectMenu", id)
+			else
+				if Input.IsTextInputActive() then
+					Input.StopTextInput()
+				else
+					Input.StartTextInput()
+				end
 			end
 		end
 		
@@ -92,6 +100,11 @@ end
 
 IPConnectSystem.UpdateText = function(self)
 	local textInput = self:GetValidatedInputString()
+	
+	if textInput ~= self.TextInput then
+		Audio.PlaySound("Click1", self.TextInput, false)
+		Audio.SetSoundVolume(self.TextInput, 12)
+	end
 	
 	self:DeleteTextEntity()
 

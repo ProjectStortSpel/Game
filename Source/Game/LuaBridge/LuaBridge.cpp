@@ -64,5 +64,11 @@ namespace LuaBridge
     
     LuaAudio::Embed(L);
 	LuaLoadingScreen::Embed(L);
+
+#ifdef __ANDROID__
+	LuaEmbedder::AddBool(L, "Android", true, "System");
+#else
+	LuaEmbedder::AddBool(L, "Android", false, "System");
+#endif
   }
 }

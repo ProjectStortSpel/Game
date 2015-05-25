@@ -61,12 +61,12 @@ OptionMenuSystem.SpawnMenu = function(self)
 	self:AddTextToTexture("graphicsettings", "Graphic Settings", 0, 1, 1, 1, text)
 		
 	button = self:CreateButton("graphicslow", "quad", -0.7, 0.4, -2.2, 0.6, 0.3)
-	self:AddConsoleCommandToButton("changegraphics low", button)	
+	--self:AddConsoleCommandToButton("changegraphics low", button)	
 	self:AddEntityCommandToButton("GameMenu", button)
 	self:AddHoverSize(1.1, button)
 	
 	button = self:CreateButton("graphicshigh", "quad", -0.7, 0.1, -2.2, 0.6, 0.3)
-	self:AddConsoleCommandToButton("changegraphics high", button)	
+	--self:AddConsoleCommandToButton("changegraphics high", button)	
 	self:AddEntityCommandToButton("GameMenu", button)
 	self:AddHoverSize(1.1, button)
 	
